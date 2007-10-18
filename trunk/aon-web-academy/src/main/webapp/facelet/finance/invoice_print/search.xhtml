@@ -1,0 +1,150 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:h="http://java.sun.com/jsf/html">
+<body>
+
+<ui:composition template="/facelet/templates/aon.ui.form.xhtml">
+
+	<ui:define name="head">
+		<ui:include src="/facelet/shared/head.xhtml" />
+	</ui:define>		
+
+	<ui:define name="content">
+		<h:form id="InvoicePrintForm">
+
+			<t:div styleClass="aon-content-toolbar">
+				<t:div styleClass="aon-content-toolbar-internal">
+				<t:div styleClass="aon-content-toolbar-item-group">
+					<t:commandButton id="search" value="#{bundle.aon_search}"
+						action="invoice_print_list"
+						actionListener="#{invoicePrint.onSearch}"
+						styleClass="aon-content-toolbar-item aon-content-toolbar-item-search"
+						onmouseover="this.className='aon-content-toolbar-item aon-content-toolbar-item-hover aon-content-toolbar-item-search'"
+						onmouseout="this.className='aon-content-toolbar-item aon-content-toolbar-item-search'" 
+						accesskey="#{bundle.aon_key_search}"/>
+					<h:commandButton id="clear" value="#{bundle.aon_clear}"
+						type="reset"
+						styleClass="aon-content-toolbar-item aon-content-toolbar-item-reset"
+						onmouseover="this.className='aon-content-toolbar-item aon-content-toolbar-item-hover aon-content-toolbar-item-reset'"
+						onmouseout="this.className='aon-content-toolbar-item aon-content-toolbar-item-reset'" />
+				</t:div>
+				</t:div>
+			</t:div>
+			<t:div styleClass="aon-content-subtitle" id="aon-content-subtitle"
+				forceId="#{true}">
+				<t:div styleClass="aon-content-subtitle-internal">
+				<h:outputText value="#{bundle.aon_search_header}" />
+				</t:div>
+			</t:div>
+			<t:div styleClass="aon_content">
+				<t:div forceId="#{true}" id="aon-scroll-area">
+					<t:div styleClass="aon-scroll-area-internal">
+						<h:panelGrid columns="2" styleClass="aon-form-table"
+							columnClasses="aon-form-table-column-odd,aon-form-table-column-even">
+
+							<h:outputLabel for="Invoice_type"
+								value="#{financeBundle.aon_type}"
+								styleClass="aon-form-input-text-label aon-form-table-column-odd-label" />
+							<h:selectOneMenu id="Invoice_type"
+								styleClass="aon-form-selectOneMenu-field"
+								value="#{invoicePrint.type}"
+								onchange="submit();">
+								<f:selectItems value="#{invoicePrint.invoiceTypes}" />
+							</h:selectOneMenu>
+
+							<h:outputLabel for="Invoice_series"
+								styleClass="aon-form-input-text-label"
+								value="#{financeBundle.aon_series_number}" />
+							<h:panelGrid columns="5">
+								<t:inputText id="Invoice_series"
+									onblur="toUpperCase(this);"
+									value="#{invoicePrint.series}"
+									styleClass="aon-form-input-text" forceId="#{true}" size="3"
+									maxlength="3">
+									<f:validateLength maximum="3" />
+								</t:inputText>
+								<h:outputLabel for="Invoice_number_from" value="#{financeBundle.finance_date_from}"
+									styleClass="aon-form-input-text-label" />								
+								<t:inputText id="Invoice_number_from"
+									value="#{invoicePrint.fromNumber}"
+									styleClass="aon-form-input-text" forceId="#{true}"
+									size="7" />
+								<h:outputLabel for="Invoice_number_to" value="#{financeBundle.finance_date_to}"
+									styleClass="aon-form-input-text-label" />								
+								<t:inputText id="Invoice_number_to"
+									value="#{invoicePrint.toNumber}"
+									styleClass="aon-form-input-text" forceId="#{true}"
+									size="7" />
+							</h:panelGrid>
+							
+							<t:outputLabel for="Customer_Lookup_id" value="#{customerBundle.customer_customer}" 
+								styleClass="aon-form-input-text-label" />
+							<t:div>
+								<t:inputText id="Customer_Lookup_id" forceId="#{true}"
+									styleClass="aon-form-input-text" size="5" 
+									onchange="return findBeanLookupExt(event,'#{facesContext.externalContext.requestContextPath}','customerLookup','Customer_Lookup_id','Customer_id|Customer_Lookup_id,Customer_full_name|Customer_full_name');"
+									value="#{invoicePrint.registry.id}" />
+								<h:commandButton id="find_Customer_Lookup_id"
+									styleClass="aon-form-lookup-button" value="" immediate="true"
+									onclick="lookupSearchWindow(this, 'placeList', '#{customerLookup.encodedSearchPagePath}','Customer_id|Customer_Lookup_id,Customer_full_name|Customer_full_name');return false;" />
+								<t:inputText id="Customer_full_name" forceId="#{true}"
+									disabledOnClientSide="true"
+									value="#{invoicePrint.registry.name}"
+									styleClass="aon-form-input-text-disabled" size="40" />
+							</t:div>
+							
+							<t:outputLabel for="Supplier_Lookup_id"
+								styleClass="aon-form-lookup-label" 
+								value="#{financeBundle.aon_supplier}" rendered="#{accountInvoice.purchase}"/>
+							<t:div rendered="#{accountInvoice.purchase}">
+								<t:inputText id="Supplier_Lookup_id" size="5" forceId="#{true}"
+									styleClass="aon-form-input-text"
+									onchange="return findBeanLookup(event,'#{facesContext.externalContext.requestContextPath}','supplierLookup');"
+									value="#{accountInvoice.header.registry.id}" 
+									valueChangeListener="#{accountInvoice.onRegistryChange}"/>
+								<h:commandButton id="find_Supplier_Lookup_id"
+									styleClass="aon-form-lookup-button" value="" immediate="true"
+									onclick="lookupSearchWindow(this, 'placeList', '#{supplierLookup.encodedSearchPagePath}');return false;" />	
+								<t:inputText id="Supplier_full_name" forceId="#{true}"
+									styleClass="aon-form-input-text" size="40" 
+									value="#{accountInvoice.header.name}"/>
+							</t:div>
+
+							<h:outputLabel
+								styleClass="aon-form-input-text-label aon-form-table-column-odd-label"
+								for="Invoice_issue_date1" value="#{appBundle.aon_date}" />
+							<t:div>
+								<h:outputLabel for="Invoice_fromDate" value="#{financeBundle.finance_date_from}"
+									styleClass="aon-form-input-text-label" />								
+								<t:inputCalendar id="Invoice_fromDate" size="10"
+									value="#{invoicePrint.fromDate}"
+									monthYearRowClass="yearMonthHeader" weekRowClass="weekHeader"
+									currentDayCellClass="currentDayCell" renderAsPopup="true"
+									styleClass="aon-form-input-text" popupButtonStyleClass="aon-form-calendar-button"
+									popupTodayString="#{bundle.aon_popup_today}"
+									popupWeekString="#{bundle.aon_popup_week}" />
+								<h:outputLabel for="Invoice_toDate" value="#{financeBundle.finance_date_to}"
+									styleClass="aon-form-input-text-label" />								
+								<t:inputCalendar id="Invoice_toDate" size="10"
+									value="#{invoicePrint.toDate}"
+									monthYearRowClass="yearMonthHeader" weekRowClass="weekHeader"
+									currentDayCellClass="currentDayCell" renderAsPopup="true"
+									styleClass="aon-form-input-text" popupButtonStyleClass="aon-form-calendar-button"
+									popupTodayString="#{bundle.aon_popup_today}"
+									popupWeekString="#{bundle.aon_popup_week}" />
+							</t:div>
+
+						</h:panelGrid>
+					</t:div>
+				</t:div>
+			</t:div>
+		</h:form>
+		<h:form id="placeList" target="list" />
+	</ui:define>
+</ui:composition>
+
+</body>
+</html>

@@ -1,0 +1,105 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:h="http://java.sun.com/jsf/html">
+<body>
+
+<ui:composition>
+
+	<t:div styleClass="aon-content-subtitle" id="aon-content-subtitle"
+		forceId="#{true}">
+		<t:div styleClass="aon-content-subtitle-internal">
+			<h:outputText value="#{bundle.aon_search_header}" />
+		</t:div>
+	</t:div>
+	<t:div forceId="#{true}" id="aon-scroll-area">
+		<t:div styleClass="aon-scroll-area-internal">
+			<h:panelGrid columns="2" styleClass="aon-form-table"
+				columnClasses="aon-form-table-column-odd,aon-form-table-column-even">
+				
+				<h:outputLabel
+					styleClass="aon-form-input-text-label aon-form-table-column-odd-label"
+					for="AlumnLoan_material" value="#{appBundle.loan_material}" />
+				<t:inputText id="AlumnLoan_material" size="50"
+					styleClass="aon-form-input-text" onblur="toUpperCase(this);"
+					valueChangeListener="#{loanAlias.addExpression}" />
+
+				<h:outputLabel
+					styleClass="aon-form-input-text-label aon-form-table-column-odd-label"
+					for="AlumnLoan_comments" value="#{appBundle.loan_comments}" />
+				<t:inputText id="AlumnLoan_comments" size="50"
+					styleClass="aon-form-input-text"
+					valueChangeListener="#{loanAlias.addExpression}" />
+
+				<h:outputLabel
+					styleClass="aon-form-input-text-label aon-form-table-column-odd-label"
+					value="#{appBundle.loan_date}" />
+				<h:panelGrid columns="4">
+					<h:outputLabel for="AlumnLoan_endDate-From"
+						styleClass="aon-form-input-text-label"
+						value="#{appBundle.aon_date_from}" />
+					<t:inputCalendar size="8" id="AlumnLoan_loanDate-From"
+						valueChangeListener="#{loanAlias.addLoanDateFromExpression}"
+						monthYearRowClass="yearMonthHeader" weekRowClass="weekHeader"
+						currentDayCellClass="currentDayCell" renderAsPopup="true"
+						styleClass="aon-form-input-text" popupButtonStyleClass="aon-form-calendar-button"
+						popupTodayString="#{bundle.aon_popup_today}"
+						popupWeekString="#{bundle.aon_popup_week}" />
+					
+					<h:outputLabel for="AlumnLoan_loanDate-To"
+						styleClass="aon-form-input-text-label"
+						value="#{appBundle.aon_date_to}" />
+					<t:inputCalendar size="8" id="AlumnLoan_loanDate-To"
+						valueChangeListener="#{loanAlias.addLoanDateToExpression}"
+						monthYearRowClass="yearMonthHeader" weekRowClass="weekHeader"
+						currentDayCellClass="currentDayCell" renderAsPopup="true"
+						styleClass="aon-form-input-text" popupButtonStyleClass="aon-form-calendar-button"
+						popupTodayString="#{bundle.aon_popup_today}"
+						popupWeekString="#{bundle.aon_popup_week}" />	
+				</h:panelGrid>
+									
+				<h:outputLabel
+					styleClass="aon-form-input-text-label aon-form-table-column-odd-label"
+					value="#{appBundle.loan_end_date}" />
+				<h:panelGrid columns="4">
+					<h:outputLabel for="AlumnLoan_endDate-From"
+						styleClass="aon-form-input-text-label"
+						value="#{appBundle.aon_date_from}" />
+					<t:inputCalendar size="8" id="AlumnLoan_endDate-From"
+						valueChangeListener="#{loanAlias.addEndDateFromExpression}"
+						monthYearRowClass="yearMonthHeader" weekRowClass="weekHeader"
+						currentDayCellClass="currentDayCell" renderAsPopup="true"
+						styleClass="aon-form-input-text" popupButtonStyleClass="aon-form-calendar-button"
+						popupTodayString="#{bundle.aon_popup_today}"
+						popupWeekString="#{bundle.aon_popup_week}" />
+					
+					<h:outputLabel for="AlumnLoan_endDate-To"
+						styleClass="aon-form-input-text-label"
+						value="#{appBundle.aon_date_to}" />
+					<t:inputCalendar size="8" id="AlumnLoan_endDate-To"
+						valueChangeListener="#{loanAlias.addEndDateToExpression}"
+						monthYearRowClass="yearMonthHeader" weekRowClass="weekHeader"
+						currentDayCellClass="currentDayCell" renderAsPopup="true"
+						styleClass="aon-form-input-text" popupButtonStyleClass="aon-form-calendar-button"
+						popupTodayString="#{bundle.aon_popup_today}"
+						popupWeekString="#{bundle.aon_popup_week}" />
+						
+					<h:outputLabel for="AlumnLoan_not_returned"
+						styleClass="aon-form-input-text-label"
+						value="#{appBundle.loan_not_returned}" />
+					<h:selectBooleanCheckbox 
+						styleClass="aon-form-input-text"
+						id="AlumnLoan_not_returned" 
+						valueChangeListener="#{loanAlias.addLoanNotReturnedExpression}" />		
+						
+				</h:panelGrid>
+					
+			</h:panelGrid>
+		</t:div>
+	</t:div>
+</ui:composition>
+
+</body>
+</html>

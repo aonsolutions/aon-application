@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE bean-config 
+	PUBLIC "-//CODE-AON//DTD Bean Config//EN" 
+	"http://co-de.com/aon/bean-config.dtd">
+
+<bean-config>
+	
+	<bean description="">
+		<pojo>com.code.aon.product.Item</pojo>
+		<listeners>
+	        <listener>com.code.aon.ui.product.event.ItemListener</listener>
+		</listeners>
+	</bean>
+	
+	<bean description="">
+		<pojo>com.code.aon.customer.Customer</pojo>
+		<vetoListeners>
+	        <vetoListener>com.code.aon.customer.event.CustomerBeanListener</vetoListener>
+		</vetoListeners>
+	</bean>
+	
+	<bean description="">
+		<pojo>com.code.aon.finance.InvoiceDetail</pojo>
+		<listeners>
+	        <listener>com.code.aon.finance.event.InvoiceDetailBeanListener</listener>
+		</listeners>
+		<vetoListeners>
+	        <vetoListener>com.code.aon.finance.event.InvoiceDetailBeanVetoListener</vetoListener>
+		</vetoListeners>
+	</bean>
+	
+	<bean description="">
+		<pojo>com.code.aon.finance.Invoice</pojo>
+		<listeners>
+	        <listener>com.code.aon.finance.event.InvoiceBeanListener</listener>
+		</listeners>
+	</bean>
+
+	<bean description="">
+		<pojo>com.code.aon.academy.Course</pojo>
+		<vetoListeners>
+	        <vetoListener>com.code.aon.academy.event.CourseVetoListener</vetoListener>
+		</vetoListeners>
+	</bean>
+	
+	<bean description="">
+		<pojo>com.code.aon.academy.CourseAlumn</pojo>
+		<vetoListeners>
+	        <vetoListener>com.code.aon.academy.event.CourseAlumnVetoListener</vetoListener>
+		</vetoListeners>
+	</bean>
+	
+	<bean description="Listener para escribir los acumulados por cuenta">
+		<pojo>com.code.aon.account.AccountEntryDetail</pojo>
+		<listeners>
+	        <listener>com.code.aon.account.event.AccountSummaryBeanListener</listener>
+		</listeners>
+		<vetoListeners>
+	        <vetoListener>com.code.aon.account.event.AccountSummaryBeanVetoListener</vetoListener>
+		</vetoListeners>
+	</bean>
+	
+</bean-config>

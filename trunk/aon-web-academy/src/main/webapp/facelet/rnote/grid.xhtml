@@ -1,0 +1,298 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:h="http://java.sun.com/jsf/html">
+<body>
+
+<ui:composition template="/facelet/templates/aon.ui.form.xhtml">
+
+	<ui:define name="head">
+		<ui:include src="/facelet/shared/head.xhtml" />
+	</ui:define>
+
+	<ui:define name="content">
+
+		<h:form id="rnoteForm">
+
+			<t:div id="aon-content-menu" styleClass="aon-content-menu-aux"
+				forceId="#{true}" style="margin-left:16px;margin-right:16px;">
+				<h:outputText
+					value="#{customer.to.registry.name} #{customer.to.registry.surname}, #{customerBundle.customer_document}: #{customer.to.registry.document}" />
+			</t:div>
+
+			<t:div id="aon-scroll-area" forceId="#{true}">
+				<t:div styleClass="aon-scroll-area-internal" style="padding-top:0">
+
+					<t:div styleClass="aon-content-menu" rendered="#{!customer.new}"
+						id="aon-content-menu" forceId="#{true}">
+						<t:panelGrid columns="6" cellpadding="0" cellspacing="0"
+							border="0">
+							<t:panelGroup>
+								<t:commandLink id="customer_data" forceId="#{true}"
+									value="#{appBundle.aon_alumn_data}" action="customer_form"
+									styleClass="aon-content-menu-item" />
+							</t:panelGroup>
+							<t:panelGroup>
+								<t:commandLink id="personal_data" value="#{appBundle.aon_personal_data}"
+									action="personal_data" styleClass="aon-content-menu-item"/>
+							</t:panelGroup>
+							<t:panelGroup>
+								<t:commandLink id="economic_data" forceId="#{true}"
+									value="#{appBundle.aon_economic_data}"
+									actionListener="#{customerFee.onCustomerFee}"
+									action="economic_data" styleClass="aon-content-menu-item" />
+							</t:panelGroup>
+							<t:panelGroup>
+								<t:commandLink id="customer_rnote"
+									value="#{appBundle.aon_monitoring}" forceId="#{true}"
+									styleClass="aon-content-menu-item-active" />
+							</t:panelGroup>
+							<t:panelGroup>
+								<t:commandLink id="customer_relationship" forceId="#{true}"
+									value="#{appBundle.aon_rRelationship}"
+									actionListener="#{rRelationship.onSearch}"
+									action="rrelationship" styleClass="aon-content-menu-item" />
+							</t:panelGroup>
+							<t:panelGroup>
+								<t:commandLink id="customer_absence" forceId="#{true}" value="#{appBundle.absence_absences}"
+									action="absence" styleClass="aon-content-menu-item" />						
+							</t:panelGroup>	
+						</t:panelGrid>
+					</t:div>
+
+					<t:div styleClass="aon-content-toolbar" forceId="#{true}"
+						id="aon-content-toolbar">
+						<t:div styleClass="aon-content-toolbar-internal">
+							<t:div styleClass="aon-content-toolbar-item-group">
+								<h:commandButton id="save" value="#{bundle.aon_save}"
+									styleClass="aon-content-toolbar-item aon-content-toolbar-item-save"
+									onmouseover="this.className='aon-content-toolbar-item aon-content-toolbar-item-hover aon-content-toolbar-item-save'"
+									onmouseout="this.className='aon-content-toolbar-item aon-content-toolbar-item-save'"
+									actionListener="#{rnote.onAccept}" rendered="#{rnote.to!=null}"
+									onclick="return (confirm('#{bundle.aon_save_confirm}'));"
+									accesskey="#{bundle.aon_key_save}" />
+								<h:commandButton id="cancel" value="#{bundle.aon_cancel}"
+									immediate="#{true}"
+									styleClass="aon-content-toolbar-item aon-content-toolbar-item-cancel"
+									onmouseover="this.className='aon-content-toolbar-item aon-content-toolbar-item-hover aon-content-toolbar-item-cancel'"
+									onmouseout="this.className='aon-content-toolbar-item aon-content-toolbar-item-cancel'"
+									actionListener="#{rnote.onCancel}" rendered="#{rnote.to!=null}"
+									onclick="return (confirm('#{bundle.aon_cancel_confirm}'));"
+									accesskey="#{bundle.aon_key_cancel}" />
+								<h:commandButton id="remove" value="#{bundle.aon_remove}"
+									styleClass="aon-content-toolbar-item aon-content-toolbar-item-delete"
+									onmouseover="this.className='aon-content-toolbar-item aon-content-toolbar-item-hover aon-content-toolbar-item-delete'"
+									onmouseout="this.className='aon-content-toolbar-item aon-content-toolbar-item-delete'"
+									actionListener="#{rnote.onRemove}"
+									rendered="#{rnote.to!=null and !rnote.new}"
+									onclick="return (confirm('#{bundle.aon_remove_confirm}'));"
+									accesskey="#{bundle.aon_key_remove}" />
+								<h:commandButton id="reset" value="#{bundle.aon_reset}"
+									styleClass="aon-content-toolbar-item aon-content-toolbar-item-new"
+									onmouseover="this.className='aon-content-toolbar-item aon-content-toolbar-item-hover aon-content-toolbar-item-new'"
+									onmouseout="this.className='aon-content-toolbar-item aon-content-toolbar-item-new'"
+									actionListener="#{rnote.onReset}" rendered="#{!rnote.new}"
+									accesskey="#{bundle.aon_key_new}" />
+							</t:div>
+						</t:div>
+					</t:div>
+
+					<t:div styleClass="aon-table-hack">
+						<t:dataTable id="rnoteDataList" value="#{rnote.model}" rows="20"
+							var="to" rowIndexVar="rowIndex"
+							rendered="#{rnote.model.rowCount > 0 or rnote.new}"
+							rowOnMouseOver="selectRow( this )"
+							rowOnMouseOut="unselectRow( this )" rowOnClick="sendRow( this )"
+							styleClass="aon-edit-table" headerClass="aon-edit-table-header"
+							footerClass="aon-edit-table-footer"
+							rowClasses="aon-edit-table-row-odd,aon-edit-table-row-even"
+							columnClasses="aon-edit-table-body aon-edit-table-body-icon, 
+								aon-edit-table-body aon-edit-table-body-string,
+								aon-edit-table-body aon-edit-table-body-string,
+								aon-edit-table-body aon-edit-table-body-string,
+								aon-edit-table-body aon-edit-table-body-string,
+								aon-edit-table-body aon-edit-table-body-buttons">
+
+							<t:column>
+								<f:facet name="header">
+									<f:verbatim>&#160;</f:verbatim>
+								</f:facet>
+								<t:commandLink immediate="#{true}"
+									styleClass="aon-table-row-selected"
+									rendered="#{to.id!=rnote.to.id}"
+									actionListener="#{rnote.onSelect}" />
+								<f:verbatim>&#160;</f:verbatim>
+								<f:facet name="footer">
+									<t:div>
+										<t:commandButton id="reset" alt="[#{bundle.aon_reset}]"
+											styleClass="aon-edit-table-icon-button aon-edit-table-icon-button-new"
+											actionListener="#{rnote.onReset}" rendered="#{!rnote.new}"
+											value="" accesskey="#{bundle.aon_key_new_line}">
+										</t:commandButton>
+									</t:div>
+								</f:facet>
+							</t:column>
+
+							<t:column>
+								<f:facet name="header">
+									<t:outputText value="#{appBundle.aon_description}" />
+								</f:facet>
+								<t:outputText value="#{to.description}"
+									rendered="#{to!=rnote.to}" />
+								<t:div rendered="#{to==rnote.to}">
+									<t:inputText id="RegistryNote_description-Edit"
+										forceId="#{true}" styleClass="aon-form-input-text"
+										maxlength="64" style="width:90%"
+										value="#{rnote.to.description}" />
+								</t:div>
+								<f:facet name="footer">
+									<t:div rendered="#{rnote.new}">
+										<t:inputText id="RegistryNote_description-New"
+											forceId="#{true}" styleClass="aon-form-input-text"
+											maxlength="64" style="width:90%"
+											value="#{rnote.to.description}" />
+									</t:div>
+								</f:facet>
+							</t:column>
+
+							<t:column width="85">
+								<f:facet name="header">
+									<h:outputText value="#{appBundle.aon_date}" />
+								</f:facet>
+								<t:outputText value="#{to.noteDate}"
+									rendered="#{to.id!=rnote.to.id}">
+									<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+										timeZone="#{timeZoneController.timeZoneId}" />
+								</t:outputText>
+								<t:inputCalendar size="8" required="true"
+									rendered="#{to.id==rnote.to.id}" value="#{rnote.to.noteDate}"
+									monthYearRowClass="yearMonthHeader" weekRowClass="weekHeader"
+									currentDayCellClass="currentDayCell" renderAsPopup="true"
+									styleClass="aon-form-input-text"
+									popupButtonStyleClass="aon-form-calendar-button"
+									popupTodayString="#{bundle.aon_popup_today}"
+									popupWeekString="#{bundle.aon_popup_week}" />
+								<f:facet name="footer">
+									<t:div>
+										<t:inputCalendar size="8" rendered="#{rnote.new}"
+											value="#{rnote.to.noteDate}"
+											monthYearRowClass="yearMonthHeader" weekRowClass="weekHeader"
+											forceId="true"
+											popupButtonStyleClass="aon-form-calendar-button"
+											currentDayCellClass="currentDayCell" required="true"
+											renderAsPopup="true" styleClass="aon-form-input-text"
+											popupTodayString="#{bundle.aon_popup_today}"
+											popupWeekString="#{bundle.aon_popup_week}" />
+									</t:div>
+								</f:facet>
+							</t:column>
+
+							<t:column  width="85">
+								<f:facet name="header">
+									<t:outputText value="#{registryBundle.aon_type}" />
+								</f:facet>
+								<t:outputText value="#{to.notetype}"
+									rendered="#{to.id!=rnote.to.id}" />
+								<t:div rendered="#{to==rnote.to}">
+									<h:selectOneMenu 
+										id="RegistryNote_notetype-Edit"
+										value="#{rnote.to.notetype}"
+										styleClass="aon-form-selectOneMenu-field"
+										forceId="#{true}" 
+										rendered="#{to==rnote.to}">
+										<f:selectItems value="#{registryCollections.noteTypes}" />
+									</h:selectOneMenu>
+								</t:div>
+								<f:facet name="footer">
+									<t:div rendered="#{rnote.new}">
+										<h:selectOneMenu 
+											id="RegistryNote_notetype-New"
+											value="#{rnote.to.notetype}"
+											styleClass="aon-form-selectOneMenu-field"
+											forceId="#{true}" >
+											<f:selectItems value="#{registryCollections.noteTypes}" />
+										</h:selectOneMenu>
+									</t:div>
+								</f:facet>
+							</t:column>
+
+							<t:column>
+								<f:facet name="header">
+									<t:outputText value="#{appBundle.aon_comments}" />
+								</f:facet>
+								<t:outputText value="#{to.shortComments}"
+									rendered="#{to.id!=rnote.to.id}" title="#{to.comments}" />
+								<t:div rendered="#{to==rnote.to}">
+									<t:inputTextarea id="RegistryNote_comments-Edit"
+										forceId="#{true}" styleClass="aon-form-input-text"
+										style="width:90%" rows="5" value="#{rnote.to.comments}" />
+								</t:div>
+								<f:facet name="footer">
+									<t:div rendered="#{rnote.new}">
+										<t:inputTextarea id="RegistryNote_comments-New"
+											forceId="#{true}" styleClass="aon-form-input-text"
+											style="width:90%" rows="5" value="#{rnote.to.comments}" />
+									</t:div>
+								</f:facet>
+							</t:column>
+
+							<t:column>
+								<f:facet name="header">
+									<f:verbatim>&#160;</f:verbatim>
+								</f:facet>
+								<t:commandButton title="#{bundle.aon_accept}"
+									actionListener="#{rnote.onAccept}"
+									onclick="return (confirm('#{bundle.aon_accept_confirm}'));"
+									styleClass="aon-edit-table-icon-button aon-edit-table-icon-button-save"
+									value="" rendered="#{to.id==rnote.to.id}"
+									accesskey="#{bundle.aon_key_save_line}" />
+								<t:commandButton title="#{bundle.aon_cancel}"
+									actionListener="#{rnote.onCancel}" immediate="#{true}"
+									onclick="return (confirm('#{bundle.aon_cancel_confirm}'));"
+									styleClass="aon-edit-table-icon-button aon-edit-table-icon-button-cancel"
+									value="" accesskey="#{bundle.aon_key_cancel_line}"
+									rendered="#{to.id==rnote.to.id}" />
+								<t:commandButton title="#{bundle.aon_remove}"
+									actionListener="#{rnote.onRemove}"
+									onclick="return (confirm('#{bundle.aon_remove_confirm}'));"
+									styleClass="aon-edit-table-icon-button aon-edit-table-icon-button-delete"
+									value="" accesskey="#{bundle.aon_key_remove_line}"
+									rendered="#{to.id==rnote.to.id}" />
+								<f:verbatim rendered="#{to.id!=rnote.to.id}">&#160;</f:verbatim>
+								<f:facet name="footer">
+									<t:div>
+										<f:verbatim rendered="#{!rnote.new}">&#160;</f:verbatim>
+										<t:commandButton title="#{bundle.aon_accept}"
+											actionListener="#{rnote.onAccept}"
+											onclick="return (confirm('#{bundle.aon_accept_confirm}'));"
+											styleClass="aon-edit-table-icon-button aon-edit-table-icon-button-save"
+											value="" accesskey="#{bundle.aon_key_save_line}"
+											rendered="#{rnote.new}" />
+										<t:commandButton title="#{bundle.aon_cancel}"
+											actionListener="#{rnote.onCancel}" immediate="#{true}"
+											onclick="return (confirm('#{bundle.aon_cancel_confirm}'));"
+											styleClass="aon-edit-table-icon-button aon-edit-table-icon-button-cancel"
+											value="" accesskey="#{bundle.aon_key_cancel_line}"
+											rendered="#{rnote.new}" />
+									</t:div>
+								</f:facet>
+							</t:column>
+						</t:dataTable>
+					</t:div>
+
+					<ui:include src="/facelet/shared/dataScroller.xhtml">
+						<ui:param name="dataTable" value="rnoteDataList" />
+						<ui:param name="model" value="#{rnote.model}" />
+						<ui:param name="showNote" value="#{true}" />
+					</ui:include>
+
+				</t:div>
+			</t:div>
+		</h:form>
+		<h:form id="placeList" target="list" />
+	</ui:define>
+</ui:composition>
+</body>
+</html>
