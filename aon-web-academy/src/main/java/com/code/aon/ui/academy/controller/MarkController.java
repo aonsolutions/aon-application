@@ -1,0 +1,63 @@
+package com.code.aon.ui.academy.controller;
+
+import java.util.Iterator;
+import java.util.List;
+
+import com.code.aon.academy.Course;
+import com.code.aon.academy.CourseAcademicSkill;
+import com.code.aon.academy.CourseAlumn;
+import com.code.aon.academy.dao.IAcademyAlias;
+import com.code.aon.common.BeanManager;
+import com.code.aon.common.IManagerBean;
+import com.code.aon.common.ITransferObject;
+import com.code.aon.common.ManagerBeanException;
+import com.code.aon.ql.Criteria;
+import com.code.aon.ql.ast.Expression;
+import com.code.aon.ql.util.ExpressionException;
+import com.code.aon.ql.util.ExpressionUtilities;
+import com.code.aon.ui.form.BasicController;
+import com.code.aon.ui.menu.jsf.MenuEvent;
+
+public class MarkController extends BasicController {
+
+	@SuppressWarnings("unused")
+	public void onNewSearch(MenuEvent menuevent){
+		onEditSearch(null);
+	}
+	
+	public void updateCriteria(CourseAlumn courseAlumn, int evaluation) throws ManagerBeanException{
+		try{
+			Criteria criteria = new Criteria();
+			criteria.addEqualExpression(this.getFieldName(IAcademyAlias.MARK_ALUMN_ID),courseAlumn==null?new Integer(-1):courseAlumn.getId());
+			criteria.addEqualExpression(this.getFieldName(IAcademyAlias.MARK_EVALUATION),new Integer(evaluation));
+			IManagerBean courseAcademicSkillBean = BeanManager.getManagerBean(CourseAcademicSkill.class);
+			Criteria courseAcademicSkillCriteria = new Criteria();
+			Course course = courseAlumn==null?null:courseAlumn.getCourse(); 
+			courseAcademicSkillCriteria.addEqualExpression(courseAcademicSkillBean.getFieldName(IAcademyAlias.COURSE_ACADEMICSKILL_COURSE_ID), course==null?new Integer(-1):course.getId());
+			List<ITransferObject> listCourseAcademicSkill = courseAcademicSkillBean.getList(courseAcademicSkillCriteria);
+			if (listCourseAcademicSkill.isEmpty()){
+				criteria.addExpression(this.getFieldName(IAcademyAlias.MARK_SUBJECT_ID),String.valueOf("-1"));
+			}else{
+				Iterator<ITransferObject> iterCourseAcademicSkill = listCourseAcademicSkill.iterator();
+				Expression orExpression = null;
+				while (iterCourseAcademicSkill.hasNext()){
+					CourseAcademicSkill courseAcademicSkill = (CourseAcademicSkill)iterCourseAcademicSkill.next();
+					if (orExpression == null){
+						orExpression = ExpressionUtilities.getEqualExpression(this.getFieldName(IAcademyAlias.MARK_SUBJECT_ID),courseAcademicSkill.getId());
+					}else{
+						Expression expr2 = ExpressionUtilities.getEqualExpression(this.getFieldName(IAcademyAlias.MARK_SUBJECT_ID),courseAcademicSkill.getId());
+						orExpression = ExpressionUtilities.getOrExpression(orExpression, expr2);
+					}
+				}
+				criteria.addExpression(orExpression);
+			}
+			criteria.addOrder(this.getFieldName(IAcademyAlias.MARK_EVALUATION));
+			criteria.addOrder(this.getFieldName(IAcademyAlias.MARK_ALUMN_ID));
+			criteria.addOrder(this.getFieldName(IAcademyAlias.MARK_SUBJECT_ID));
+			this.setCriteria(criteria);
+		} catch (ExpressionException e) {
+			throw new ManagerBeanException(e);
+		}
+	}
+	
+}

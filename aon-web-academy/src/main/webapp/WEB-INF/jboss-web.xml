@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<!-- The jboss-web element is the root element.
+<!DOCTYPE jboss-web PUBLIC
+    "-//JBoss//DTD Web Application 2.4//EN"
+	"http://www.jboss.org/j2ee/dtd/jboss-web_3_2.dtd"> 
+-->
+<jboss-web>
+
+	<!-- Isolate nh classes from other deployments 
+	<class-loading>
+		<loader-repository>
+			transtools.com:loader=aon-academy.war
+		</loader-repository>
+	</class-loading>
+	-->
+	
+	<security-domain flushOnSessionInvalidation="true">java:/jaas/aon-academy</security-domain>
+
+	<!-- The context-root element specifies the context root of a web
+	application. It may be given here for standalone wars.
+	-->
+	<context-root>/aon-academy</context-root>
+	
+	<resource-env-ref>
+	  <resource-env-ref-name>jdbc/AonAcademy</resource-env-ref-name>
+	  <jndi-name>java:/AonAcademyDS</jndi-name>
+	</resource-env-ref>
+
+</jboss-web>

@@ -1,0 +1,102 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:h="http://java.sun.com/jsf/html">
+<body>
+
+<ui:composition template="/facelet/templates/aon.ui.form.xhtml">
+	<ui:define name="content">
+
+		<h:form id="accountList">
+			<!-- start toolbar navigation -->
+			<t:div styleClass="aon-content-toolbar" forceId="#{true}"
+				id="aon-content-toolbar">
+				<t:div styleClass="aon-content-toolbar-internal">
+					<t:div styleClass="aon-content-toolbar-item-group">
+						<h:commandButton id="reset" value="#{bundle.aon_reset}"
+							accesskey="#{bundle.aon_key_new}" action="account_form"
+							actionListener="#{account.onReset}"
+							styleClass="aon-content-toolbar-item"
+							onmouseout="this.className='aon-content-toolbar-item'"
+							onmouseover="this.className='aon-content-toolbar-item aon-content-toolbar-item-hover'">
+						</h:commandButton>
+						<h:commandButton id="search" value="#{bundle.aon_search}"
+							accesskey="#{bundle.aon_key_search}" action="account_search"
+							actionListener="#{account.onEditSearch}"
+							styleClass="aon-content-toolbar-item"
+							onmouseout="this.className='aon-content-toolbar-item'"
+							onmouseover="this.className='aon-content-toolbar-item aon-content-toolbar-item-hover'">
+						</h:commandButton>
+
+					</t:div>
+				</t:div>
+			</t:div>
+			<!-- end toolbar navigation -->
+
+			<!--  aon-region-body -->
+			<t:div forceId="#{true}" id="aon-scroll-area">
+				<t:div styleClass="aon-scroll-area-internal">
+
+					<t:div>
+						<t:dataTable rowOnMouseOver="selectRow( this )" forceId="#{true}"
+							rowOnMouseOut="unselectRow( this )" rowOnClick="sendRow( this )"
+							rowClasses="aon-table-row-odd, aon-table-row-even"
+							id="accountData" value="#{account.model}" rows="20" var="to"
+							styleClass="aon-table" headerClass="aon-table-header"
+							columnClasses="aon-table-body aon-table-body-string,aon-table-body-string,aon-table-body-string,aon-table-body-icon">
+
+							<t:column>
+								<f:facet name="header">
+									<h:outputText value="#{accountBundle.aon_account_id}" />
+								</f:facet>
+								<h:commandLink id="account_null" action="account_form"
+									actionListener="#{account.onSelect}"
+									styleClass="aon-table-row-selected">
+								</h:commandLink>
+								<h:outputText value="#{to.id}" />
+							</t:column>
+
+							<t:column>
+								<f:facet name="header">
+									<h:outputText value="#{accountBundle.aon_account_description}" />
+								</f:facet>
+								<h:outputText value="#{to.description}" />
+							</t:column>
+
+							<t:column>
+								<f:facet name="header">
+									<h:outputText value="#{accountBundle.aon_account_alias}" />
+								</f:facet>
+								<h:outputText value="#{to.alias}" />
+							</t:column>
+
+							<t:column>
+								<f:facet name="header">
+									<h:outputText value="#{accountBundle.aon_account_entryEnabled}" />
+								</f:facet>
+								<t:div styleClass="#{to.entryEnabled?'aon-table-boolean-check-on':'aon-table-boolean-check-off'}">
+									<f:verbatim>&#160;</f:verbatim>
+								</t:div>
+							</t:column>
+							
+						</t:dataTable>
+						
+						<ui:include src="/facelet/shared/dataScroller.xhtml">
+							<ui:param name="dataTable" value="accountData" />
+							<ui:param name="model" value="#{account.model}" />
+						</ui:include>
+						
+					</t:div>
+				</t:div>
+			</t:div>
+		</h:form>
+		<h:form id="placeList" target="list" />
+	</ui:define>
+
+</ui:composition>
+
+</body>
+</html>

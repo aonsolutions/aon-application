@@ -1,0 +1,1064 @@
+<?xml version="1.0"?>
+<!DOCTYPE faces-config PUBLIC
+  "-//Sun Microsystems, Inc.//DTD JavaServer Faces Config 1.1//EN"
+  "http://java.sun.com/dtd/web-facesconfig_1_1.dtd">
+
+<faces-config>
+
+	<!--  *************** CONVERTERS ***************** -->
+	<converter>
+		<description>Conversor para los CourseStatus</description>
+		<converter-id>aonCourseStatusConverter</converter-id>
+		<converter-class>com.code.aon.ui.academy.converter.CourseStatusConverter</converter-class>
+	</converter>
+	
+	<converter>
+		<description>Conversor Vacío para Integer</description>
+		<converter-id>IntegerEmptyConverter</converter-id>
+		<converter-class>com.code.aon.ui.academy.converter.IntegerEmptyConverter</converter-class>
+	</converter>
+	
+
+	<!--  *************** COLLECTIONS ***************** -->
+	<managed-bean>
+		<managed-bean-name>academyCollections</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.academy.controller.AcademyCollectionsController
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
+
+	<!-- ************* COURSE ***************** -->
+	<managed-bean>
+		<managed-bean-name>course</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.academy.controller.CourseController
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.academy.Course</value>
+		</managed-property>
+		<managed-property>
+			<property-name>listenerClasses</property-name>
+			<list-entries>
+				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+				<value>#{courseInstructorChildListener}</value>
+				<value>#{courseAlumnChildListener}</value>
+				<value>#{courseScheduleChildListener}</value>
+				<value>#{courseControllerListener}</value>
+				<value>#{courseAcademicSkillChildListener}</value>
+				<value>#{courseAlumnMarkChildListener}</value>
+				<value>#{courseAlumnAbsenceChildListener}</value>
+				<value>#{courseEvaluationChildListener}</value>
+				<value>#{courseObservationChildListener}</value>
+				<value>#{courseMarksListener}</value>
+			</list-entries>
+		</managed-property>
+	</managed-bean>
+	
+	<managed-bean>
+		<managed-bean-name>courseControllerListener</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.academy.event.CourseControllerListener
+		</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+	</managed-bean>
+	
+	<!-- ************* COURSE INSTRUCTOR ***************** -->
+	<managed-bean>
+		<managed-bean-name>courseInstructor</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.academy.controller.CourseInstructorController
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.academy.CourseInstructor</value>
+		</managed-property>
+		<managed-property>
+			<property-name>cascadeDelete</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>masterControllerName</property-name>
+			<value>course</value>
+		</managed-property>
+		<managed-property>
+			<property-name>propertyMap</property-name>
+			<map-entries>
+				<map-entry>
+					<key>id</key>
+					<value>course.id</value>
+				</map-entry>
+			</map-entries>
+		</managed-property>
+	</managed-bean>
+	
+	<managed-bean>
+		<managed-bean-name>courseInstructorChildListener</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.form.listener.LinesControllerListener
+		</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+		<managed-property>
+			<property-name>childBean</property-name>
+			<value>courseInstructor</value>
+		</managed-property>
+		<managed-property>
+			<property-name>aliasMap</property-name>
+			<map-entries>
+				<map-entry>
+					<key>CourseInstructor_course_id</key>
+                    <value>id</value>
+				</map-entry>
+			</map-entries>
+		</managed-property>
+	</managed-bean>
+
+	<!-- ************* COURSE ACADEMICSKILL ***************** -->
+	<managed-bean>
+		<managed-bean-name>courseAcademicSkill</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.academy.controller.CourseAcademicSkillController
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.academy.CourseAcademicSkill</value>
+		</managed-property>
+		<managed-property>
+			<property-name>cascadeDelete</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>masterControllerName</property-name>
+			<value>course</value>
+		</managed-property>
+		<managed-property>
+			<property-name>propertyMap</property-name>
+			<map-entries>
+				<map-entry>
+					<key>id</key>
+					<value>course.id</value>
+				</map-entry>
+			</map-entries>
+		</managed-property>
+	</managed-bean>
+	
+	<managed-bean>
+		<managed-bean-name>courseAcademicSkillChildListener</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.form.listener.LinesControllerListener
+		</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+		<managed-property>
+			<property-name>childBean</property-name>
+			<value>courseAcademicSkill</value>
+		</managed-property>
+		<managed-property>
+			<property-name>aliasMap</property-name>
+			<map-entries>
+				<map-entry>
+					<key>CourseAcademicSkill_course_id</key>
+                    <value>id</value>
+				</map-entry>
+			</map-entries>
+		</managed-property>
+	</managed-bean>
+
+	
+	<!-- ************* COURSE INSTRUCTOR ***************** -->
+	<managed-bean>
+		<managed-bean-name>instructorCourse</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.academy.controller.InstructorCourseController
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.academy.CourseInstructor</value>
+		</managed-property>
+		<managed-property>
+			<property-name>cascadeDelete</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>masterControllerName</property-name>
+			<value>employee</value>
+		</managed-property>
+		<managed-property>
+			<property-name>propertyMap</property-name>
+			<map-entries>
+				<map-entry>
+					<key>id</key>
+					<value>employee.id</value>
+				</map-entry>
+			</map-entries>
+		</managed-property>
+	</managed-bean>
+	
+	<!-- ************* COURSE ALUMN ***************** -->
+	<managed-bean>
+		<managed-bean-name>courseAlumn</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.academy.controller.CourseAlumnController
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.academy.CourseAlumn</value>
+		</managed-property>
+		<managed-property>
+			<property-name>cascadeDelete</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>masterControllerName</property-name>
+			<value>course</value>
+		</managed-property>
+		<managed-property>
+			<property-name>propertyMap</property-name>
+			<map-entries>
+				<map-entry>
+					<key>id</key>
+					<value>course.id</value>
+				</map-entry>
+			</map-entries>
+		</managed-property>
+	</managed-bean>
+	
+	<managed-bean>
+		<managed-bean-name>courseAlumnChildListener</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.form.listener.LinesControllerListener
+		</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+		<managed-property>
+			<property-name>childBean</property-name>
+			<value>courseAlumn</value>
+		</managed-property>
+		<managed-property>
+			<property-name>aliasMap</property-name>
+			<map-entries>
+				<map-entry>
+					<key>CourseAlumn_course_id</key>
+                    <value>id</value>
+				</map-entry>
+			</map-entries>
+		</managed-property>
+	</managed-bean>
+
+	<!-- ************* COURSE ALUMN MARK ***************** -->
+	<managed-bean>
+		<managed-bean-name>courseAlumnMark</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.academy.controller.CourseAlumnMarkController
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.academy.CourseAlumn</value>
+		</managed-property>
+		<managed-property>
+			<property-name>listenerClasses</property-name>
+			<list-entries>
+				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+				<value>#{courseAlumnMarkControllerListener}</value>
+				<value>#{courseAlumnEvaluationObservationControllerListener}</value>
+			</list-entries>
+		</managed-property>
+		<managed-property>
+			<property-name>masterControllerName</property-name>
+			<value>course</value>
+		</managed-property>
+		<managed-property>
+			<property-name>propertyMap</property-name>
+			<map-entries>
+				<map-entry>
+					<key>id</key>
+					<value>course.id</value>
+				</map-entry>
+			</map-entries>
+		</managed-property>
+	</managed-bean>
+	
+	<managed-bean>
+		<managed-bean-name>courseAlumnMarkChildListener</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.form.listener.LinesControllerListener
+		</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+		<managed-property>
+			<property-name>childBean</property-name>
+			<value>courseAlumnMark</value>
+		</managed-property>
+		<managed-property>
+			<property-name>aliasMap</property-name>
+			<map-entries>
+				<map-entry>
+					<key>CourseAlumn_course_id</key>
+                    <value>id</value>
+				</map-entry>
+			</map-entries>
+		</managed-property>
+	</managed-bean>
+	
+	<managed-bean>
+		<managed-bean-name>courseAlumnMarkControllerListener</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.academy.event.CourseAlumnMarkControllerListener
+		</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+	</managed-bean>
+
+	<managed-bean>
+		<managed-bean-name>courseAlumnEvaluationObservationControllerListener</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.academy.event.CourseAlumnEvaluationObservationControllerListener
+		</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+	</managed-bean>
+	
+	
+	<!-- ************* COURSE ALUMN ABSENCE ***************** -->
+	<managed-bean>
+		<managed-bean-name>courseAlumnAbsence</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.form.LinesController
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.academy.CourseAlumn</value>
+		</managed-property>
+		<managed-property>
+			<property-name>listenerClasses</property-name>
+			<list-entries>
+				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+				<value>#{courseAlumnAbsenceControllerListener}</value>
+			</list-entries>
+		</managed-property>
+		<managed-property>
+			<property-name>masterControllerName</property-name>
+			<value>course</value>
+		</managed-property>
+		<managed-property>
+			<property-name>propertyMap</property-name>
+			<map-entries>
+				<map-entry>
+					<key>id</key>
+					<value>course.id</value>
+				</map-entry>
+			</map-entries>
+		</managed-property>
+	</managed-bean>
+	
+	<managed-bean>
+		<managed-bean-name>courseAlumnAbsenceChildListener</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.form.listener.LinesControllerListener
+		</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+		<managed-property>
+			<property-name>childBean</property-name>
+			<value>courseAlumnAbsence</value>
+		</managed-property>
+		<managed-property>
+			<property-name>aliasMap</property-name>
+			<map-entries>
+				<map-entry>
+					<key>CourseAlumn_course_id</key>
+                    <value>id</value>
+				</map-entry>
+			</map-entries>
+		</managed-property>
+	</managed-bean>
+	
+	<managed-bean>
+		<managed-bean-name>courseAlumnAbsenceControllerListener</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.academy.event.CourseAlumnAbsenceControllerListener
+		</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+	</managed-bean>
+	
+	<!-- ************* COURSE SCHEDULE ***************** -->
+	<managed-bean>
+		<managed-bean-name>courseSchedule</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.form.LinesController
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.academy.CourseSchedule</value>
+		</managed-property>
+		<managed-property>
+			<property-name>cascadeDelete</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>masterControllerName</property-name>
+			<value>course</value>
+		</managed-property>
+		<managed-property>
+			<property-name>propertyMap</property-name>
+			<map-entries>
+				<map-entry>
+					<key>id</key>
+					<value>course.id</value>
+				</map-entry>
+			</map-entries>
+		</managed-property>
+	</managed-bean>
+	
+	<managed-bean>
+		<managed-bean-name>courseScheduleChildListener</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.form.listener.LinesControllerListener
+		</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+		<managed-property>
+			<property-name>childBean</property-name>
+			<value>courseSchedule</value>
+		</managed-property>
+		<managed-property>
+			<property-name>aliasMap</property-name>
+			<map-entries>
+				<map-entry>
+					<key>CourseSchedule_course_id</key>
+                    <value>id</value>
+				</map-entry>
+			</map-entries>
+		</managed-property>
+	</managed-bean>
+	
+	<!-- ************* COURSE LEVELS ***************** -->
+	<managed-bean>
+		<managed-bean-name>courseLevel</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.form.BasicController
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.academy.CourseLevel</value>
+		</managed-property>
+	</managed-bean>
+	
+	<!-- ************* COURSE SUBJECTS ***************** -->
+	<managed-bean>
+		<managed-bean-name>courseSubject</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.form.BasicController
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.academy.CourseSubject</value>
+		</managed-property>
+	</managed-bean>
+
+	<!-- ************* COURSE EVALUATION ***************** -->
+	<managed-bean>
+		<managed-bean-name>courseEvaluation</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.form.LinesController
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.academy.CourseEvaluation</value>
+		</managed-property>
+		<managed-property>
+			<property-name>cascadeDelete</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>masterControllerName</property-name>
+			<value>course</value>
+		</managed-property>
+		<managed-property>
+			<property-name>propertyMap</property-name>
+			<map-entries>
+				<map-entry>
+					<key>id</key>
+					<value>course.id</value>
+				</map-entry>
+			</map-entries>
+		</managed-property>
+	</managed-bean>
+	
+	<managed-bean>
+		<managed-bean-name>courseEvaluationChildListener</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.form.listener.LinesControllerListener
+		</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+		<managed-property>
+			<property-name>childBean</property-name>
+			<value>courseEvaluation</value>
+		</managed-property>
+		<managed-property>
+			<property-name>aliasMap</property-name>
+			<map-entries>
+				<map-entry>
+					<key>CourseEvaluation_course_id</key>
+					<value>id</value>
+				</map-entry>
+			</map-entries>
+		</managed-property>
+	</managed-bean>
+
+
+	<!-- ************* COURSE OBSERVATION ***************** -->
+	<managed-bean>
+		<managed-bean-name>courseObservation</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.form.LinesController
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.academy.CourseObservation</value>
+		</managed-property>
+		<managed-property>
+			<property-name>cascadeDelete</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>masterControllerName</property-name>
+			<value>course</value>
+		</managed-property>
+		<managed-property>
+			<property-name>propertyMap</property-name>
+			<map-entries>
+				<map-entry>
+					<key>id</key>
+					<value>course.id</value>
+				</map-entry>
+			</map-entries>
+		</managed-property>
+	</managed-bean>
+	
+	<managed-bean>
+		<managed-bean-name>courseObservationChildListener</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.form.listener.LinesControllerListener
+		</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+		<managed-property>
+			<property-name>childBean</property-name>
+			<value>courseObservation</value>
+		</managed-property>
+		<managed-property>
+			<property-name>aliasMap</property-name>
+			<map-entries>
+				<map-entry>
+					<key>CourseObservation_course_id</key>
+					<value>id</value>
+				</map-entry>
+			</map-entries>
+		</managed-property>
+	</managed-bean>
+
+
+	<!-- ************* ACADEMIC YEARS ***************** -->
+	<managed-bean>
+		<managed-bean-name>academicYear</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.form.BasicController
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.academy.AcademicYear</value>
+		</managed-property>
+	</managed-bean>
+	
+	<!-- ************* ACADEMIC SKILL ***************** -->
+	<managed-bean>
+		<managed-bean-name>academicSkill</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.form.BasicController
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.academy.AcademicSkill</value>
+		</managed-property>
+	</managed-bean>
+
+	<!-- ************* QUALIFICATION ***************** -->
+	<managed-bean>
+		<managed-bean-name>qualification</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.form.BasicController
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.academy.Qualification</value>
+		</managed-property>
+	</managed-bean>
+
+	<!-- ************* OBSERVATION ***************** -->
+	<managed-bean>
+		<managed-bean-name>observation</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.form.BasicController
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.academy.Observation</value>
+		</managed-property>
+	</managed-bean>
+
+	<!-- ************* QUALITY SKILL ***************** -->
+	<managed-bean>
+		<managed-bean-name>qualitySkill</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.form.BasicController
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.academy.QualitySkill</value>
+		</managed-property>
+	</managed-bean>
+
+	<!-- ************* COURSELOOKUP ***************** -->
+	<managed-bean>
+		<managed-bean-name>courseLookup</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.form.LookupController
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>foreignPojo</property-name>
+			<value>com.code.aon.academy.Course</value>
+		</managed-property>
+		<managed-property>
+			<property-name>aliasPrefix</property-name>
+			<value>Course</value>
+		</managed-property>
+		<managed-property>
+			<property-name>foreignJoinProperties</property-name>
+			<list-entries>
+				<value>academicYear.id</value>
+				<value>code</value>				
+			</list-entries>
+		</managed-property>
+		<managed-property>
+			<property-name>foreignDisplayProperties</property-name>
+			<list-entries>
+				<value>id</value>
+				<value>description</value>
+			</list-entries>
+		</managed-property>
+		<managed-property>
+			<description>Needed for Search Select Window</description>
+			<property-name>searchPagePath</property-name>
+			<value>/facelet/sw/courseSearch.faces</value>
+		</managed-property>
+		<managed-property>
+			<property-name>listenerClasses</property-name>
+			<list-entries>
+				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+				<value>#{courseLookupListener}</value>
+			</list-entries>
+		</managed-property>
+	</managed-bean>
+
+	<managed-bean>
+		<managed-bean-name>courseLookupListener</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.academy.event.CourseLookupListener
+		</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+	</managed-bean>
+
+	<!-- ************* MARK ***************** -->
+	<managed-bean>
+		<managed-bean-name>mark</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.academy.controller.MarkController
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.academy.Mark</value>
+		</managed-property>
+		<managed-property>
+			<property-name>listenerClasses</property-name>
+			<list-entries>
+				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+				<value>#{markControllerListener}</value>
+			</list-entries>
+		</managed-property>
+	</managed-bean>
+	
+	<managed-bean>
+		<managed-bean-name>markControllerListener</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.academy.event.MarkControllerListener
+		</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+	</managed-bean>
+	
+	<!-- ************* evaluation_observation ***************** -->
+	<managed-bean>
+		<managed-bean-name>evaluation_observation</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.academy.controller.EvaluationObservationController
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.academy.EvaluationObservation</value>
+		</managed-property>
+		<managed-property>
+			<property-name>listenerClasses</property-name>
+			<list-entries>
+				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+				<value>#{evaluationObservationControllerListener}</value>
+			</list-entries>
+		</managed-property>
+	</managed-bean>
+	
+	<managed-bean>
+		<managed-bean-name>evaluationObservationControllerListener</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.academy.event.EvaluationObservationControllerListener
+		</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+	</managed-bean>
+	
+	<!-- ************* ABSENCE ***************** -->
+	<managed-bean>
+		<managed-bean-name>absence_coursealumn</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.academy.controller.AbsenceController
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.academy.Absence</value>
+		</managed-property>
+		<managed-property>
+			<property-name>listenerClasses</property-name>
+			<list-entries>
+				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+				<value>#{absenceControllerListener}</value>
+			</list-entries>
+		</managed-property>
+	</managed-bean>
+	
+	<managed-bean>
+		<managed-bean-name>absenceControllerListener</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.academy.event.AbsenceControllerListener
+		</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+	</managed-bean>
+	
+	<!-- ************* ALUMNLOAN ***************** -->
+	<managed-bean>
+		<managed-bean-name>loan</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.academy.controller.AlumnLoanController
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.academy.AlumnLoan</value>
+		</managed-property>
+	</managed-bean>
+
+
+	<!-- ************* ALUMNLOAN ***************** -->
+	<managed-bean>
+		<managed-bean-name>courseMark</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.academy.controller.CourseMarkController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
+
+	<managed-bean>
+		<managed-bean-name>courseMarksListener</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.academy.event.CourseMarksControllerListener
+		</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+	</managed-bean>
+
+	<!-- ************* REPORT ***************** -->
+	<managed-bean>
+		<managed-bean-name>courseDetailPrinter</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.academy.print.CourseDetailListPrinter
+		</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+	</managed-bean>
+	
+	<managed-bean>
+		<managed-bean-name>alumnPrinter</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.academy.print.AlumnPrinter
+		</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+	</managed-bean>
+
+	<managed-bean>
+		<managed-bean-name>markPrinter</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.academy.print.MarkPrinter
+		</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+	</managed-bean>
+
+	<managed-bean>
+		<managed-bean-name>markTemplatePrinter</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.academy.print.MarkTemplatePrinter
+		</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+	</managed-bean>
+
+	<managed-bean>
+		<managed-bean-name>absenceTemplatePrinter</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.academy.print.AbsenceTemplatePrinter
+		</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+	</managed-bean>
+
+	<managed-bean>
+		<managed-bean-name>alumnObservationPrinter</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.academy.print.AlumnObservationPrinter
+		</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+	</managed-bean>
+
+	<managed-bean>
+		<managed-bean-name>pendingAlumnLoanPrinter</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.academy.print.PendingAlumnLoanPrinter
+		</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+	</managed-bean>
+
+	<managed-bean>
+		<managed-bean-name>courseEvaluationPrinter</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.academy.print.CourseEvaluationPrinter
+		</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+	</managed-bean>
+
+	<!-- =================== Course ========================== -->
+	  <navigation-rule>
+	    <navigation-case>
+	      <from-outcome>course_form</from-outcome>
+	      <to-view-id>/facelet/course/form.faces</to-view-id>
+	    </navigation-case>
+	    <navigation-case>
+	      <from-outcome>course_list</from-outcome>
+	      <to-view-id>/facelet/course/list.faces</to-view-id>
+	    </navigation-case>
+	    <navigation-case>
+	      <from-outcome>course_search</from-outcome>
+	      <to-view-id>/facelet/course/search.faces</to-view-id>
+	    </navigation-case>
+	    <navigation-case>
+			<from-outcome>course_sw</from-outcome>
+			<to-view-id>/facelet/sw/course.faces</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>course_sw_search</from-outcome>
+			<to-view-id>/facelet/sw/courseSearch.faces</to-view-id>
+		</navigation-case>
+	  </navigation-rule>
+  
+	<!-- =================== Course Alumn Marks ========================== -->
+	  <navigation-rule>
+	    <navigation-case>
+	      <from-outcome>course_alumn_mark_data</from-outcome>
+	      <to-view-id>/facelet/course/alumn_mark/grid.faces</to-view-id>
+	    </navigation-case>
+	  </navigation-rule>
+
+	<!-- =================== Course Mark ========================== -->
+	  <navigation-rule>
+	    <navigation-case>
+	      <from-outcome>course_mark_data</from-outcome>
+	      <to-view-id>/facelet/course/marks/grid.faces</to-view-id>
+	    </navigation-case>
+	  </navigation-rule>
+	  
+	<!-- =================== Course AcademicSkill ========================== -->
+	  <navigation-rule>
+	    <navigation-case>
+	      <from-outcome>course_academicSkill_data</from-outcome>
+	      <to-view-id>/facelet/course/academicSkill/grid.faces</to-view-id>
+	    </navigation-case>
+	  </navigation-rule>
+
+	<!-- =================== Course Alumn ========================== -->
+	  <navigation-rule>
+	    <navigation-case>
+	      <from-outcome>course_alumn_data</from-outcome>
+	      <to-view-id>/facelet/course/alumn/grid.faces</to-view-id>
+	    </navigation-case>
+	  </navigation-rule>
+	  
+	<!-- =================== Course Alumn Absence ========================== -->
+	  <navigation-rule>
+	    <navigation-case>
+	      <from-outcome>course_alumn_absence_data</from-outcome>
+	      <to-view-id>/facelet/course/alumn_absence/grid.faces</to-view-id>
+	    </navigation-case>
+	  </navigation-rule>
+
+	<!-- =================== Mark Search ========================== -->
+	  <navigation-rule>
+	    <navigation-case>
+	      <from-outcome>mark_search</from-outcome>
+	      <to-view-id>/facelet/mark/search.faces</to-view-id>
+	    </navigation-case>
+	    <navigation-case>
+	      <from-outcome>mark_list</from-outcome>
+	      <to-view-id>/facelet/mark/list.faces</to-view-id>
+	    </navigation-case>
+	  </navigation-rule>
+
+	<!-- =================== AlumnLoan ========================== -->
+	  <navigation-rule>
+	    <navigation-case>
+	      <from-outcome>loan_search</from-outcome>
+	      <to-view-id>/facelet/loan/search.faces</to-view-id>
+	    </navigation-case>
+	    <navigation-case>
+	      <from-outcome>loan_list</from-outcome>
+	      <to-view-id>/facelet/loan/list.faces</to-view-id>
+	    </navigation-case>
+	    <navigation-case>
+	      <from-outcome>loan_form</from-outcome>
+	      <to-view-id>/facelet/loan/form.faces</to-view-id>
+	    </navigation-case>
+	  </navigation-rule>
+
+	<!-- =================== Course Evaluation ========================== -->
+	  <navigation-rule>
+	    <navigation-case>
+	      <from-outcome>course_evaluation_data</from-outcome>
+	      <to-view-id>/facelet/course/evaluation/grid.faces</to-view-id>
+	    </navigation-case>
+	  </navigation-rule>
+
+  <!-- =================== Application Menu Navigation Rules ================= -->	
+  <navigation-rule>
+	<navigation-case>
+		<from-outcome>content</from-outcome>
+		<to-view-id>/facelet/homepage/content.faces</to-view-id>
+	</navigation-case>
+	<navigation-case>
+        <from-outcome>firstContent</from-outcome>
+        <to-view-id>/facelet/homepage/firstContent.faces</to-view-id>
+    </navigation-case>
+    <navigation-case>
+      <from-outcome>course</from-outcome>
+      <to-view-id>/facelet/course/search.faces</to-view-id>
+    </navigation-case>    
+    <navigation-case>
+      <from-outcome>academic_year</from-outcome>
+      <to-view-id>/facelet/course/auxiliary/academic_year/grid.faces</to-view-id>
+    </navigation-case>    
+    <navigation-case>
+      <from-outcome>course_subject</from-outcome>
+      <to-view-id>/facelet/course/auxiliary/subject/grid.faces</to-view-id>
+    </navigation-case>    
+    <navigation-case>
+      <from-outcome>course_level</from-outcome>
+      <to-view-id>/facelet/course/auxiliary/level/grid.faces</to-view-id>
+    </navigation-case>  
+     <navigation-case>
+      <from-outcome>academic_skill</from-outcome>
+      <to-view-id>/facelet/auxiliary/academic_skill/grid.faces</to-view-id>
+    </navigation-case>    
+    <navigation-case>
+      <from-outcome>qualification</from-outcome>
+      <to-view-id>/facelet/auxiliary/qualification/grid.faces</to-view-id>
+    </navigation-case>    
+     <navigation-case>
+      <from-outcome>observation</from-outcome>
+      <to-view-id>/facelet/auxiliary/observation/grid.faces</to-view-id>
+    </navigation-case>    
+	<navigation-case>
+		<from-outcome>mark</from-outcome>
+		<to-view-id>/facelet/mark/search.faces</to-view-id>
+	</navigation-case>
+	<navigation-case>
+		<from-outcome>loan</from-outcome>
+		<to-view-id>/facelet/loan/search.faces</to-view-id>
+	</navigation-case>
+     <navigation-case>
+      <from-outcome>quality_skill</from-outcome>
+      <to-view-id>/facelet/auxiliary/quality_skill/grid.faces</to-view-id>
+    </navigation-case>    
+ </navigation-rule>
+</faces-config>

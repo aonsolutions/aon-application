@@ -1,0 +1,337 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:h="http://java.sun.com/jsf/html">
+<body>
+
+<ui:composition>
+
+		<t:dataTable id="customerFeeDataList" value="#{customerFee.model}" 
+			rows="20" var="to" rowIndexVar="rowIndex"
+			rowOnMouseOver="selectRow( this )"
+			rowOnMouseOut="unselectRow( this )" 
+			rowOnClick="sendRow( this )"
+			styleClass="aon-edit-table" headerClass="aon-edit-table-header" footerClass="aon-edit-table-footer"
+			rowClasses="aon-edit-table-row-odd,aon-edit-table-row-even"
+			columnClasses="aon-edit-table-body aon-edit-table-body-icon, 
+				aon-edit-table-body aon-edit-table-body-string,
+				aon-edit-table-body aon-edit-table-body-number,
+				aon-edit-table-body aon-edit-table-body-number,
+				aon-edit-table-body aon-edit-table-body-number,
+				aon-edit-table-body aon-edit-table-body-string,								
+				aon-edit-table-body aon-edit-table-body-string,								
+				aon-edit-table-body aon-edit-table-body-string,								
+				aon-edit-table-body aon-edit-table-body-string,								
+				aon-edit-table-body aon-edit-table-body-string,								
+				aon-edit-table-body aon-edit-table-body-buttons">
+
+			<t:column>
+				<f:facet name="header">
+					<f:verbatim>&#160;</f:verbatim>
+				</f:facet>
+				<t:commandLink immediate="#{true}"  
+					styleClass="aon-table-row-selected"
+					rendered="#{to.id!=customerFee.to.id}"
+					actionListener="#{customerFee.onSelect}" />
+				<f:verbatim>&#160;</f:verbatim>
+				<f:facet name="footer">
+					<t:div>
+						<t:commandButton id="reset" alt="[#{bundle.aon_reset}]"
+							styleClass="aon-edit-table-icon-button aon-edit-table-icon-button-new"
+							actionListener="#{customerFee.onReset}"
+							rendered="#{!customerFee.new}" value=""
+							accesskey="#{bundle.aon_key_new_line}">
+						</t:commandButton>
+					</t:div>
+				</f:facet>
+			</t:column>
+			
+			<t:column width="270">
+				<f:facet name="header">
+					<t:outputText value="#{appBundle.fee_item}" />
+				</f:facet>
+				<t:outputText value="#{to.description}" rendered="#{to!=customerFee.to}" />
+				<t:div rendered="#{to==customerFee.to}">
+					<t:inputText id="Item_Lookup_product_code-Edit" size="5" forceId="#{true}"
+						styleClass="aon-form-input-text"
+						onchange="return findBeanLookupExt(event,'#{facesContext.externalContext.requestContextPath}','itemLookup','Item_Lookup_product_code-Edit[#{rowIndex}]','Item_product_code|Item_Lookup_product_code-Edit[#{rowIndex}],Item_id|Item_Lookup_id-Edit[#{rowIndex}],Item_price|Item_Lookup_price-Edit[#{rowIndex}],Item_full_name|Item_full_name-Edit[#{rowIndex}]');"
+						value="#{customerFee.to.item.product.code}" />
+					<h:commandButton id="find_Item_Lookup_id-Edit"
+						styleClass="aon-form-lookup-button" value="" immediate="true"
+						onclick="lookupSearchWindow(this, 'placeList', '#{itemLookup.encodedSearchPagePath}','Item_product_code|Item_Lookup_product_code-Edit[#{rowIndex}],Item_id|Item_Lookup_id-Edit[#{rowIndex}],Item_price|Item_Lookup_price-Edit[#{rowIndex}],Item_full_name|Item_full_name-Edit[#{rowIndex}]');return false;" />
+					<t:inputHidden id="Item_Lookup_id-Edit" forceId="#{true}"
+						value="#{customerFee.to.item.id}" required="true" />
+					<t:inputText id="Item_full_name-Edit" forceId="#{true}"
+						styleClass="aon-form-input-text"
+						size="27" value="#{customerFee.to.description}" />
+				</t:div>
+				<f:facet name="footer">
+					<t:div rendered="#{customerFee.new}">
+						<t:inputText id="Item_Lookup_product_code-New" size="5" forceId="#{true}"
+							styleClass="aon-form-input-text"
+							onchange="return findBeanLookupExt(event,'#{facesContext.externalContext.requestContextPath}','itemLookup','Item_Lookup_product_code-New','Item_product_code|Item_Lookup_product_code-New,Item_id|Item_Lookup_id-New,Item_price|Item_Lookup_price-New,Item_full_name|Item_full_name-New');"
+							value="#{customerFee.to.item.product.code}" />
+						<h:commandButton id="find_Item_Lookup_id-New"
+							styleClass="aon-form-lookup-button" value="" immediate="true"
+							onclick="lookupSearchWindow(this, 'placeList', '#{itemLookup.encodedSearchPagePath}','Item_product_code|Item_Lookup_product_code-New,Item_id|Item_Lookup_id-New,Item_price|Item_Lookup_price-New,Item_full_name|Item_full_name-New');return false;" />
+						<t:inputHidden id="Item_Lookup_id-New" forceId="#{true}"
+							value="#{customerFee.to.item.id}" required="true" />
+						<t:inputText id="Item_full_name-New" forceId="#{true}"
+							styleClass="aon-form-input-text"
+							size="27" value="#{customerFee.to.description}" />
+					</t:div>
+				</f:facet>
+			</t:column>
+			
+			<t:column width="30">
+				<f:facet name="header">
+					<h:outputText value="#{appBundle.fee_quantity}" />
+				</f:facet>
+				<h:outputText value="#{to.quantity}" rendered="#{to.id!=customerFee.to.id}" >
+					<f:convertNumber pattern="#,##0.00" />
+				</h:outputText>	
+				<h:inputText rendered="#{to.id==customerFee.to.id}" 
+					styleClass="aon-form-input-text" size="5"
+					value="#{customerFee.to.quantity}"/>
+				<f:verbatim>&#160;</f:verbatim>
+				<f:facet name="footer">
+					<h:inputText rendered="#{customerFee.new}" 
+						styleClass="aon-form-input-text" size="5"
+						value="#{customerFee.to.quantity}"/>
+				</f:facet>
+			</t:column>
+			
+			<t:column width="70">
+				<f:facet name="header">
+					<h:outputText value="#{salesBundle.aon_customer_fee_price}" />
+				</f:facet>
+				<h:outputText value="#{to.price}" 
+					rendered="#{to.id!=customerFee.to.id}" >
+					<f:convertNumber pattern="#,##0.00" />
+				</h:outputText>	
+				<t:inputText id="Item_Lookup_price-Edit" forceId="#{true}"
+					rendered="#{to.id==customerFee.to.id}" 
+					styleClass="aon-form-input-text" size="10"
+					value="#{customerFee.to.price}" />
+				<f:verbatim>&#160;</f:verbatim>
+				<f:facet name="footer">
+					<t:inputText id="Item_Lookup_price-New" forceId="#{true}"
+						rendered="#{customerFee.new}" 
+						styleClass="aon-form-input-text" size="10"
+						value="#{customerFee.to.price}"/>
+				</f:facet>
+			</t:column>
+			
+			<t:column width="30">
+				<f:facet name="header">
+					<h:outputText value="#{appBundle.fee_discount_expr}" />
+				</f:facet>
+				<h:outputText value="#{to.discountExpression.discountExpr}" rendered="#{to.id!=customerFee.to.id}" />
+				<h:inputText rendered="#{to.id==customerFee.to.id}" 
+					styleClass="aon-form-input-text" size="5"
+					value="#{customerFee.to.discountExpression.discountExpr}" />
+				<f:verbatim>&#160;</f:verbatim>
+				<f:facet name="footer">
+					<h:inputText rendered="#{customerFee.new}" 
+						styleClass="aon-form-input-text" size="5"
+						value="#{customerFee.to.discountExpression.discountExpr}" />
+				</f:facet>
+			</t:column>
+			
+			<t:column width="85">
+				<f:facet name="header">
+					<h:outputText value="#{appBundle.aon_initial_date_abrv}" />
+				</f:facet>
+				<t:outputText value="#{to.initialDate}" rendered="#{to.id!=customerFee.to.id}">
+					<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+						timeZone="#{timeZoneController.timeZoneId}" />
+				</t:outputText>
+				<t:inputCalendar size="8" required="true"
+					rendered="#{to.id==customerFee.to.id}"
+					value="#{customerFee.to.initialDate}"
+					monthYearRowClass="yearMonthHeader" weekRowClass="weekHeader"
+					currentDayCellClass="currentDayCell" renderAsPopup="true"
+					styleClass="aon-form-input-text" popupButtonStyleClass="aon-form-calendar-button"
+					popupTodayString="#{bundle.aon_popup_today}"
+					popupWeekString="#{bundle.aon_popup_week}" />
+				<f:facet name="footer">
+					<t:div>
+						<t:inputCalendar size="8" required="true"
+							rendered="#{customerFee.new}" value="#{customerFee.to.initialDate}"
+							monthYearRowClass="yearMonthHeader"
+							weekRowClass="weekHeader" forceId="true"
+							popupButtonStyleClass="aon-form-calendar-button"
+							currentDayCellClass="currentDayCell"
+							renderAsPopup="true" styleClass="aon-form-input-text"
+							popupTodayString="#{bundle.aon_popup_today}"
+							popupWeekString="#{bundle.aon_popup_week}"/>
+					</t:div>
+				</f:facet>
+			</t:column>
+			
+			<t:column width="85">
+				<f:facet name="header">
+					<h:outputText value="#{appBundle.aon_final_date_abrv}" />
+				</f:facet>
+				<t:outputText value="#{to.finalDate}" rendered="#{to.id!=customerFee.to.id}">
+					<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+						timeZone="#{timeZoneController.timeZoneId}" />
+				</t:outputText>
+				<t:inputCalendar size="8" 
+					rendered="#{to.id==customerFee.to.id}"
+					value="#{customerFee.to.finalDate}"
+					monthYearRowClass="yearMonthHeader" weekRowClass="weekHeader"
+					currentDayCellClass="currentDayCell" renderAsPopup="true"
+					styleClass="aon-form-input-text" popupButtonStyleClass="aon-form-calendar-button"
+					popupTodayString="#{bundle.aon_popup_today}"
+					popupWeekString="#{bundle.aon_popup_week}" />
+				<f:facet name="footer">
+					<t:div>
+						<t:inputCalendar size="8"
+							rendered="#{customerFee.new}" value="#{customerFee.to.finalDate}"
+							monthYearRowClass="yearMonthHeader"
+							weekRowClass="weekHeader" forceId="true"
+							popupButtonStyleClass="aon-form-calendar-button"
+							currentDayCellClass="currentDayCell"
+							renderAsPopup="true" styleClass="aon-form-input-text"
+							popupTodayString="#{bundle.aon_popup_today}"
+							popupWeekString="#{bundle.aon_popup_week}"/>
+					</t:div>
+				</f:facet>
+			</t:column>
+
+			<t:column width="85">
+				<f:facet name="header">
+					<h:outputText value="#{appBundle.aon_billing_date_abrv}" />
+				</f:facet>
+				<h:outputText value="#{to.billingDateMonth}" rendered="#{to.id!=customerFee.to.id}" />
+				<h:outputText value=" / #{to.billingDateYear}" rendered="#{to.id!=customerFee.to.id}" />
+				<t:div rendered="#{to.id==customerFee.to.id}">
+					<h:selectOneMenu value="#{customerFee.to.billingDateMonth}"
+						styleClass="aon-form-selectOneMenu-field">
+						<f:selectItems value="#{academyCollections.months}" />
+					</h:selectOneMenu>
+					<t:div>
+						<h:outputLabel for="BillingDate_Year-Edit"
+							value="#{appBundle.aon_year}:" />
+						<h:inputText id="BillingDate_Year-Edit" required="true"
+							styleClass="aon-form-input-text" size="5"
+							value="#{customerFee.to.billingDateYear}" />
+					</t:div>
+				</t:div>		
+				<f:verbatim>&#160;</f:verbatim>
+				<f:facet name="footer">
+					<t:div rendered="#{customerFee.new}">
+						<h:selectOneMenu value="#{customerFee.to.billingDateMonth}"
+							styleClass="aon-form-selectOneMenu-field">
+							<f:selectItems value="#{academyCollections.months}" />
+						</h:selectOneMenu>
+						<t:div>
+							<h:outputLabel for="BillingDate_Year-New"
+								value="#{appBundle.aon_year}:" />
+							<h:inputText id="BillingDate_Year-New" required="true"
+								styleClass="aon-form-input-text" size="5"
+								value="#{customerFee.to.billingDateYear}" />
+						</t:div>		
+					</t:div>	
+				</f:facet>
+			</t:column>			
+			
+			<t:column width="70">
+				<f:facet name="header">
+					<h:outputText value="#{appBundle.fee_period}" />
+				</f:facet>
+				<h:outputText value="#{to.period}" rendered="#{to.id!=customerFee.to.id}" />
+				<h:selectOneMenu value="#{customerFee.to.period}"
+					styleClass="aon-form-selectOneMenu-field"
+					rendered="#{to==customerFee.to}">
+					<f:selectItems value="#{salesCollections.billingPeriods}" />
+				</h:selectOneMenu>	
+				<f:verbatim>&#160;</f:verbatim>
+				<f:facet name="footer">
+					<h:selectOneMenu value="#{customerFee.to.period}"
+						styleClass="aon-form-selectOneMenu-field"
+						rendered="#{customerFee.new}">
+						<f:selectItems value="#{salesCollections.billingPeriods}" />
+					</h:selectOneMenu>	
+				</f:facet>
+			</t:column>
+			
+			<t:column width="50">
+				<f:facet name="header">
+					<h:outputText value="#{salesBundle.aon_customer_fee_workplace_abrv}" />
+				</f:facet>
+				<h:outputText value="#{to.workPlace.id}" rendered="#{to.id!=customerFee.to.id}" />
+				<h:selectOneMenu value="#{customerFee.to.workPlace.id}"
+					styleClass="aon-form-selectOneMenu-field"
+					rendered="#{to==customerFee.to}">
+					<f:selectItems value="#{companyCollections.workPlaces}" />
+				</h:selectOneMenu>	
+				<f:verbatim>&#160;</f:verbatim>
+				<f:facet name="footer">
+					<h:selectOneMenu value="#{customerFee.to.workPlace.id}"
+						styleClass="aon-form-selectOneMenu-field"
+						rendered="#{customerFee.new}">
+						<f:selectItems value="#{companyCollections.workPlaces}" />
+					</h:selectOneMenu>	
+				</f:facet>
+			</t:column>
+			
+			<t:column>
+				<f:facet name="header">
+					<f:verbatim>&#160;</f:verbatim>
+				</f:facet>
+				<t:commandButton title="#{bundle.aon_accept}" 
+					actionListener="#{customerFee.onAccept}"
+					onclick="return (confirm('#{bundle.aon_accept_confirm}'));" 
+					styleClass="aon-edit-table-icon-button aon-edit-table-icon-button-save"
+					value=""
+					rendered="#{to.id==customerFee.to.id}"
+					accesskey="#{bundle.aon_key_save_line}"/>
+				<t:commandButton title="#{bundle.aon_cancel}" 
+					actionListener="#{customerFee.onCancel}"
+					immediate="#{true}" 
+					onclick="return (confirm('#{bundle.aon_cancel_confirm}'));" 
+					styleClass="aon-edit-table-icon-button aon-edit-table-icon-button-cancel"
+					value="" accesskey="#{bundle.aon_key_cancel_line}"
+					rendered="#{to.id==customerFee.to.id}"/>
+				<t:commandButton title="#{bundle.aon_remove}" 
+					actionListener="#{customerFee.onRemove}" 
+					onclick="return (confirm('#{bundle.aon_remove_confirm}'));" 
+					styleClass="aon-edit-table-icon-button aon-edit-table-icon-button-delete"
+					value="" accesskey="#{bundle.aon_key_remove_line}"
+					rendered="#{to.id==customerFee.to.id}"/>
+				<f:verbatim rendered="#{to.id!=customerFee.to.id}">&#160;</f:verbatim>
+				<f:facet name="footer">
+					<t:div>
+						<f:verbatim rendered="#{!customerFee.new}">&#160;</f:verbatim>
+						<t:commandButton title="#{bundle.aon_accept}" 
+							actionListener="#{customerFee.onAccept}"
+							onclick="return (confirm('#{bundle.aon_accept_confirm}'));" 
+							styleClass="aon-edit-table-icon-button aon-edit-table-icon-button-save"
+							value="" accesskey="#{bundle.aon_key_save_line}"
+							rendered="#{customerFee.new}"/>
+						<t:commandButton title="#{bundle.aon_cancel}" 
+							actionListener="#{customerFee.onCancel}"
+							immediate="#{true}" 
+							onclick="return (confirm('#{bundle.aon_cancel_confirm}'));" 
+							styleClass="aon-edit-table-icon-button aon-edit-table-icon-button-cancel"
+							value="" accesskey="#{bundle.aon_key_cancel_line}"
+							rendered="#{customerFee.new}"/>
+					</t:div>
+				</f:facet>		
+			</t:column>
+			
+		</t:dataTable>
+
+	<ui:include src="/facelet/shared/dataScroller.xhtml">
+		<ui:param name="dataTable" value="customerFeeDataList" />
+		<ui:param name="model" value="#{customerFee.model}" />
+		<ui:param name="showNote" value="#{true}" />
+	</ui:include>
+
+</ui:composition>
+</body>
+</html>	

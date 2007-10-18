@@ -1,0 +1,86 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:f="http://java.sun.com/jsf/core" 
+	xmlns:t="http://myfaces.apache.org/tomahawk"	
+	xmlns:h="http://java.sun.com/jsf/html"	
+	xmlns:c="http://java.sun.com/jstl/core"			
+	xmlns:ui="http://java.sun.com/jsf/facelets">
+<c:forEach items="#{aonConfiguration.applicationBundleList}" var="appBundle">
+	<f:loadBundle basename="#{appBundle.value}" var="#{appBundle.key}" />
+</c:forEach>
+<f:view>
+	<head>
+		<title>
+			<ui:insert name="title">Title</ui:insert>					
+		</title>
+		<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+		<meta http-equiv="Expires" content="0" />
+		<meta http-equiv="Pragma" content="no-cache" />
+		<meta http-equiv="Cache-Control" content="no-store" />
+		<c:forEach items="#{aonConfiguration.styleSheets}" var="styleSheet">	
+			<t:stylesheet path="#{styleSheet}" />
+		</c:forEach>
+		<script type='text/javascript' src="${facesContext.externalContext.requestContextPath}/js/Form.js">
+			// nothing
+		</script>
+		<script type='text/javascript' src="${facesContext.externalContext.requestContextPath}/js/Window.js">
+			// nothing
+		</script>
+		<script type='text/javascript' src="${facesContext.externalContext.requestContextPath}/js/Utils.js">
+			// nothing
+		</script>
+		<ui:insert name="head"/>
+	</head>
+	<body id="aon-body" scroll="no" onload="windowLoaded();" onresize="aonResizeBody();">
+		<!-- *********** header ********  -->
+		
+		
+		<t:div id="aon-window-popup-header" forceId="#{true}" >	
+			<t:div styleClass="aon-header" id="aon-header-container" forceId="#{true}">
+			 	<t:div styleClass="aon-all-width">
+					<h:panelGrid columns="2" styleClass="aon-table-default"
+						columnClasses="aon-header-leftGroup,aon-header-rightGroup" dir="true">
+						<h:panelGroup>						
+							<t:div styleClass="aon-logo">
+								<h:graphicImage
+									url="#{aonConfiguration.applicationLogoContextRelativePath}"
+									alt="#{appBundle.aon_application_title}"
+								/>
+							</t:div>
+							<t:div styleClass="aon-applicationName">
+								<h:outputText value="#{appBundle.aon_application_title}" />
+							</t:div>						
+						</h:panelGroup>
+						<t:div>
+							<f:verbatim>&#160;</f:verbatim>
+						</t:div>
+				</h:panelGrid>		
+				</t:div>	
+				<t:div styleClass="aon-header-bottom">
+					<f:verbatim>&#160;</f:verbatim>
+				</t:div>	
+			</t:div>	
+		</t:div>
+		<!-- *********** content ********  -->
+		<t:div styleClass="aon-window-popup-body">
+			<t:div styleClass="aon-errors">
+				<t:messages showSummary="false" showDetail="true"/>
+			</t:div>
+			<t:div styleClass="aon-all-width">
+				<ui:insert name="content"/>
+			</t:div>		
+		</t:div>
+		<!-- *********** footer ********  -->
+		<t:div id="aon-window-popup-footer" forceId="#{true}" styleClass="aon-foot" >
+				<h:panelGrid columns="2" 
+					columnClasses="aon-foot-leftGroup,aon-foot-rightGroup" dir="true">
+					<h:panelGroup>
+						<t:div styleClass="aon-foot-leftGroup-item"><h:outputText value="#{appBundle.aon_footer}" /></t:div>
+					</h:panelGroup>
+					<h:panelGroup>
+						<f:verbatim>&#160;</f:verbatim>
+					</h:panelGroup>
+				</h:panelGrid>			
+		</t:div>			
+	</body>
+</f:view>	
+</html>
