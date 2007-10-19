@@ -1,0 +1,69 @@
+<!DOCTYPE hibernate-configuration PUBLIC
+	"-//Hibernate/Hibernate Configuration DTD 3.0//EN"
+	"http://hibernate.sourceforge.net/hibernate-configuration-3.0.dtd">
+
+<hibernate-configuration>
+
+	<session-factory>
+
+		<property name="connection.url">jdbc:mysql://192.168.2.4:3306/aon_account?autoReconnect=true</property>		
+		<property name="connection.username">dbuser</property>		
+		<property name="show_sql">true</property>		
+		<property name="dialect">org.hibernate.dialect.MySQLInnoDBDialect</property>
+		<property name="connection.driver_class">org.gjt.mm.mysql.Driver</property>		
+		<property name="connection.password">serubd2000</property>		
+
+		<!-- Mapping files -->
+		<mapping class="com.code.aon.account.bridge.CreditorAccount"/>
+		<mapping class="com.code.aon.account.bridge.CustomerAccount"/>
+		<mapping class="com.code.aon.account.bridge.LeasingAccount"/>
+		<mapping class="com.code.aon.account.bridge.LoanAccount"/>
+		<mapping class="com.code.aon.account.bridge.RegistryBankAccount"/>
+		<mapping class="com.code.aon.account.bridge.SupplierAccount"/>		
+		<mapping class="com.code.aon.account.bridge.AccountEntryInvoice"/>
+		<mapping class="com.code.aon.account.bridge.AccountEntryFinanceBatch"/>
+		<mapping class="com.code.aon.account.bridge.AccountEntryFinanceTracking"/>
+		
+		<mapping class="com.code.aon.account.Account"/>
+		<mapping class="com.code.aon.account.Period"/>
+		<mapping class="com.code.aon.account.AutoConcept"/>
+		<mapping class="com.code.aon.account.AccountEntry"/>
+		<mapping class="com.code.aon.account.AccountEntryDetail"/>
+		<mapping class="com.code.aon.account.AccountSummary"/>
+		<mapping class="com.code.aon.account.Loan"/>
+		<mapping class="com.code.aon.account.Leasing"/>
+		
+		<mapping class="com.code.aon.finance.Invoice"/>
+		<mapping class="com.code.aon.finance.InvoiceDetail"/>
+		<mapping class="com.code.aon.finance.RegistryBank"/>
+		<mapping class="com.code.aon.finance.Bank"/>
+		<mapping class="com.code.aon.finance.Creditor"/>
+		<mapping class="com.code.aon.finance.Finance"/>
+		<mapping class="com.code.aon.finance.FinanceBatch"/>
+		<mapping class="com.code.aon.finance.FinanceTracking"/>
+		<mapping class="com.code.aon.finance.PayMethod"/>
+				
+		<mapping class="com.code.aon.registry.Registry"/>
+		<mapping class="com.code.aon.registry.RegistryAddress"/>
+		<mapping class="com.code.aon.registry.RegistryMedia"/>
+		
+		<mapping class="com.code.aon.geozone.GeoZone"/>
+		<mapping class="com.code.aon.geozone.Country"/>
+		
+		<mapping class="com.code.aon.product.Item"/>
+		<mapping class="com.code.aon.product.Product"/>
+		<mapping class="com.code.aon.product.ProductCategory"/>
+		<mapping class="com.code.aon.product.ProductCategoryGroup"/>
+		<mapping class="com.code.aon.product.Brand"/>
+		<mapping class="com.code.aon.product.Tax"/>
+		
+		<mapping class="com.code.aon.customer.Customer"/>
+		<mapping class="com.code.aon.customer.CustomerSegment"/>
+		
+		<mapping class="com.code.aon.product.Tariff"/>
+		
+		<mapping class="com.code.aon.purchase.SupplierSegment"/>
+		<mapping class="com.code.aon.purchase.Supplier"/>
+	</session-factory>
+
+</hibernate-configuration>
