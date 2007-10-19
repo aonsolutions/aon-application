@@ -1,0 +1,70 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:h="http://java.sun.com/jsf/html">
+<body id="aon-body">
+
+<ui:composition template="/facelet/templates/aon.ui.formWindow.xhtml">
+
+	<ui:define name="content">
+
+		<h:form id="reportManager" styleClass="aon-form">
+			<t:div styleClass="aon-content-title" forceId="#{true}"
+				id="aon-window-popup-title">
+			<t:div styleClass="aon-content-title-internal">
+					<h:outputText value="#{bundle.aon_listing}" />
+				</t:div>	
+			</t:div>
+
+			<t:div styleClass="aon-content-toolbar" id="aon-content-toolbar" forceId="#{true}">
+				<t:div styleClass="aon-content-toolbar-internal">
+					<t:div styleClass="aon-content-toolbar-item-group">
+						<h:commandButton id="accept" value="#{bundle.aon_accept}"
+							action="#{report.onExecute}"
+							styleClass="aon-content-toolbar-item aon-content-toolbar-item-save"
+							onmouseover="this.className='aon-content-toolbar-item aon-content-toolbar-item-hover aon-content-toolbar-item-save'"
+							onmouseout="this.className='aon-content-toolbar-item aon-content-toolbar-item-save'" 
+							accesskey="#{bundle.aon_key_accept}"/>
+						<h:commandButton id="cancel" value="#{bundle.aon_cancel}"
+							action="#{report.onCancel}"
+							onclick="window.close();return false;"
+							styleClass="aon-content-toolbar-item aon-content-toolbar-item-cancel"
+							onmouseover="this.className='aon-content-toolbar-item aon-content-toolbar-item-hover aon-content-toolbar-item-cancel'"
+							onmouseout="this.className='aon-content-toolbar-item aon-content-toolbar-item-cancel'" 
+							accesskey="#{bundle.aon_key_cancel}"/>
+					</t:div>
+				</t:div>
+			</t:div>
+			<t:div id="aon-scroll-area" forceId="#{true}">
+				<t:div styleClass="aon-scroll-area-internal">
+					<t:div>
+						<h:panelGrid columns="2" styleClass="aon-form-table"
+							columnClasses="aon-form-table-column-odd,aon-form-table-column-even">
+							<h:outputLabel for="reportKey"
+								value="#{bundle.aon_output_template}"
+								styleClass="aon-form-input-text-label" />
+							<t:inputText id="reportKey" value="#{report.reportKey}" size="18"
+								disabledOnClientSide="true" forceId="#{true}"
+								styleClass="aon-form-input-text" />
+							<h:outputLabel for="outputFormat"
+								value="#{bundle.aon_output_format}"
+								styleClass="aon-form-input-text-label" />
+							<h:selectOneMenu id="outputFormat" value="#{report.outputFormat}"
+								styleClass="aon-form-selectOneMenu-field">
+								<f:selectItems value="#{report.outputFormats}" />
+							</h:selectOneMenu>
+						</h:panelGrid>
+					</t:div>
+				</t:div>
+			</t:div>
+
+		</h:form>
+		<ui:include src="/facelet/reports/head.xhtml" />
+
+	</ui:define>
+</ui:composition>
+
+</body>
+</html>

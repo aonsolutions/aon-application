@@ -1,0 +1,34 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:h="http://java.sun.com/jsf/html">
+<body>
+
+<ui:composition template="/facelet/calculator/expensesGross/form.xhtml">
+
+	<ui:define name="calculation">
+		<t:div id="aon-scroll-area-result" forceId="#{true}">
+			<t:div styleClass="aon-scroll-area-internal">
+				<t:panelTabbedPane styleClass="aon-tabpanel" style="width:70%;"
+									activeTabStyleClass="aon-tabpanel-active" 
+									inactiveTabStyleClass="aon-tabpanel-inactive" 
+								   	serverSideTabSwitch="true">
+		
+					<t:panelTab id="company" label="#{appBundle.calculator_company}" >
+						<ui:include src="/facelet/calculator/expensesGross/tabs/company.xhtml" />
+					</t:panelTab>
+					
+					<t:panelTab id="employee" label="#{appBundle.calculator_employee}" >
+						<ui:include src="/facelet/calculator/expensesGross/tabs/employee.xhtml" />
+					</t:panelTab>
+				</t:panelTabbedPane>
+			</t:div>
+		</t:div>
+	</ui:define>
+
+</ui:composition>
+
+</body>
+</html>

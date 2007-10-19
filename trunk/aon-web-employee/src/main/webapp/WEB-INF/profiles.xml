@@ -1,0 +1,46 @@
+<?xml version='1.0' ?>
+<storage>
+	<domain>
+		<id>localhost</id>
+		<access-policy>
+			<id>Nominal</id>
+			<max-def-users>3</max-def-users>
+			<max-all-users>3</max-all-users>
+			<max-ses-user>1</max-ses-user>
+			<ex-if-exceeded>true</ex-if-exceeded>
+		</access-policy>
+		<application>
+			<id>aon-employee</id>
+			<datasource-metadata>
+				<connection-url>jdbc:mysql://localhost:3306/aon_employee?autoReconnect=true</connection-url>
+				<driver-class>org.gjt.mm.mysql.Driver</driver-class>
+				<username>dbuser</username>
+				<password>serubd2000</password>
+			</datasource-metadata>
+			<profiles>
+				<relation>
+					<id>Administrador</id>
+					<list>
+						<id>Manager</id>
+					</list>
+				</relation>
+			</profiles>
+			<users>
+				<relation>
+					<id>invitado</id>
+					<list>
+						<id>Administrador</id>
+					</list>
+				</relation>
+			</users>
+		</application>
+		<standalone>
+			<user>
+				<id>invitado</id>
+				<name>Invitado</name>
+				<description>Acceso Administrador</description>
+				<password>KpdRbDVLaISM29j1SiJqClWyHtE44getbFy7nACqWuo=</password>
+			</user>
+		</standalone>
+	</domain>
+</storage>

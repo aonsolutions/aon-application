@@ -1,0 +1,88 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:h="http://java.sun.com/jsf/html">
+<body>
+
+<ui:composition template="/facelet/templates/aon.ui.formWindow.xhtml">
+
+	<ui:define name="head">
+		<ui:include src="/facelet/fileUpload/head.xhtml" />
+	</ui:define>
+
+	<ui:define name="content">
+
+		<t:saveState value="#{fileUpload.listener}" />
+		<t:saveState value="#{fileUpload.returnPage}" />
+		<t:saveState value="#{fileUpload.fileName}" />
+		<t:saveState value="#{fileUpload.bundle}" />
+
+		<h:form id="fileUploadForm" enctype="multipart/form-data">
+			<t:div styleClass="aon-content-title" forceId="#{true}"
+				id="aon-window-popup-title">
+				<t:div styleClass="aon-content-title-internal">
+					<h:outputText value="#{fileUpload.insertLabel}" />
+				</t:div>
+			</t:div>
+
+			<t:div styleClass="aon-content-toolbar" id="aon-content-toolbar"
+				forceId="#{true}">
+				<t:div styleClass="aon-content-toolbar-internal">
+					<t:div styleClass="aon-content-toolbar-item-group">
+						<h:commandButton id="accept" value="#{bundle.aon_accept}"
+							actionListener="#{fileUpload.upload}"
+							rendered="#{!fileUpload.uploaded}"
+							styleClass="aon-content-toolbar-item aon-content-toolbar-item-save"
+							onmouseover="this.className='aon-content-toolbar-item aon-content-toolbar-item-hover aon-content-toolbar-item-save'"
+							onmouseout="this.className='aon-content-toolbar-item aon-content-toolbar-item-save'" />
+						<h:commandButton id="cancel" value="#{bundle.aon_cancel}"
+							actionListener="#{fileUpload.onCancel}"
+							rendered="#{!fileUpload.uploaded}"
+							onclick="window.close();return false;"
+							styleClass="aon-content-toolbar-item aon-content-toolbar-item-cancel"
+							onmouseover="this.className='aon-content-toolbar-item aon-content-toolbar-item-hover aon-content-toolbar-item-cancel'"
+							onmouseout="this.className='aon-content-toolbar-item aon-content-toolbar-item-cancel'" />
+						<h:commandButton id="close" value="#{bundle.aon_close}"
+							actionListener="#{fileUpload.onClose}"
+							rendered="#{fileUpload.uploaded}"
+							onclick="window.close();reloadOpener();return true;"
+							styleClass="aon-content-toolbar-item aon-content-toolbar-item-close"
+							onmouseover="this.className='aon-content-toolbar-item aon-content-toolbar-item-hover aon-content-toolbar-item-close'"
+							onmouseout="this.className='aon-content-toolbar-item aon-content-toolbar-item-close'" />
+					</t:div>
+				</t:div>
+			</t:div>
+
+			<t:div id="aon-scroll-area" forceId="#{true}">
+				<t:div styleClass="aon-scroll-area-internal">
+					<t:div>
+						<h:panelGrid columns="2" styleClass="aon-form-table"
+							columnClasses="aon-form-table-column-odd,aon-form-table-column-even">
+							<t:div rendered="#{fileUpload.uploaded}" />
+							<h:outputFormat value="#{fileUpload.insertedLabel}"
+								rendered="#{fileUpload.uploaded}">
+								<f:param value="#{fileUpload.fileName}" />
+							</h:outputFormat>
+
+							<h:outputLabel for="photo" value="#{fileUpload.elementLabel}"
+								styleClass="aon-form-input-text-label"
+								rendered="#{!fileUpload.uploaded}" />
+							<t:inputFileUpload id="photo" value="#{fileUpload.uploadFile}"
+								rendered="#{!fileUpload.uploaded}" accept="image/*"
+								storage="file" binding="#{fileUpload.component}" />
+						</h:panelGrid>
+					</t:div>
+				</t:div>
+			</t:div>
+
+			<t:inputText id="returnPage" forceId="#{true}"
+				value="#{fileUpload.returnPage}" style="display:none" />
+		</h:form>
+
+	</ui:define>
+</ui:composition>
+
+</body>
+</html>

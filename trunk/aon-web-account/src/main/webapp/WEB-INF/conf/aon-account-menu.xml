@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root key="AON_ACCOUNT" descriptionKey="aon_application_menu_title" ref="firstContent">
+	<menu ref="content" key="aon_masters" descriptionKey="aon_masters_desc">
+		<option contextRelative="false" external="false"  ref="account"
+			key="account" descriptionKey="account_desc"/>
+		<option contextRelative="false" external="false"  ref="autConcept"
+			key="autConcept" descriptionKey="autConcept_desc"/>
+		<option contextRelative="false" external="false"  ref="accountLoanEntry"
+			key="account_loan_entry" descriptionKey="account_loan_entry_desc">
+			<actionListener action="#{accountLoan.onReset}" />
+		</option>
+		<option contextRelative="false" external="false"  ref="accountLeasingEntry"
+			key="account_leasing_entry" descriptionKey="account_leasing_entry_desc">
+			<actionListener action="#{accountLeasing.onReset}" />
+		</option>
+	</menu>
+	<menu ref="content" key="aon_account_entries" descriptionKey="aon_account_entries_desc">
+		<option contextRelative="false" external="false"  ref="accountEntry"
+			key="account_entry" descriptionKey="account_entry_desc"/>
+		<option contextRelative="false" external="false"  ref="accountInvoiceEntry"
+			key="account_invoice_entry" descriptionKey="account_invoice_entry_desc">
+			<actionListener action="#{accountInvoice.onReset}" />
+		</option>
+		<option contextRelative="false" external="false"  ref="accountExpenseEntry"
+			key="account_expense_entry" descriptionKey="account_expense_entry_desc">
+			<actionListener action="#{accountExpense.onReset}" />
+		</option>
+		<option contextRelative="false" external="false"  ref="accountSalaryEntry"
+			key="account_salary_entry" descriptionKey="account_salary_entry_desc">
+			<actionListener action="#{accountSalary.onReset}" />
+		</option>
+		<option contextRelative="false" external="false"  ref="accountSocialInsuranceEntry"
+			key="account_social_insurance_entry" descriptionKey="account_social_insurance_entry_desc">
+			<actionListener action="#{accountSocialInsurance.onReset}" />
+		</option>
+		<option contextRelative="false" external="false"  ref="accountLoanFeeEntry"
+			key="account_loan_fee_entry" descriptionKey="account_loan_fee_entry_desc">
+			<actionListener action="#{accountLoanFee.onReset}" />
+		</option>
+		<option contextRelative="false" external="false"  ref="accountLeasingFeeEntry"
+			key="account_leasing_fee_entry" descriptionKey="account_leasing_fee_entry_desc">
+			<actionListener action="#{accountLeasingFee.onReset}" />
+		</option>
+	</menu>
+	<menu ref="content" key="aon_reports" descriptionKey="aon_reports_desc">
+		<option contextRelative="false" external="false"  ref="accountEntryProfitAndLoss"
+			key="account_profit_and_loss" descriptionKey="account_profit_and_loss_desc">
+			<actionListener action="#{accountEntryReport.onProfitAndLoss}" />
+		</option>
+		<option contextRelative="false" external="false"  ref="accountEntryAbstract"
+			key="account_abstract" descriptionKey="account_abstract_desc">
+			<actionListener action="#{accountEntryReport.onAbstract}" />
+		</option>	
+		<option contextRelative="false" external="false"  ref="accountEntryDaybook"
+			key="account_daybook" descriptionKey="account_daybook_desc">
+			<actionListener action="#{accountEntryReport.onDayBook}" />
+		</option>	
+	</menu>
+	<menu ref="content" key="aon_utilities" descriptionKey="aon_utilities_desc">
+		<option contextRelative="false" external="false"  ref="accPeriod"
+			key="accPeriod" descriptionKey="accPeriod_desc"/>
+		<option contextRelative="false" external="false"  ref="defaultParams"
+			key="account_default_params_desc" descriptionKey="account_default_params_desc">
+			<actionListener action="#{accAppParams.loadParameters}" />
+		</option>	
+	</menu>
+</root>

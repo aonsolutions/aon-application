@@ -1,0 +1,126 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:h="http://java.sun.com/jsf/html">
+<body>
+
+<ui:composition template="/facelet/templates/aon.ui.form.xhtml">
+
+<ui:define name="head">
+	<ui:include src="/facelet/shared/head.xhtml" />
+	<script>
+		function loadInnerWindow() {
+			var wpChild = document.getElementById('WorkPlace_child');
+			if (wpChild)
+				loadWorkPlaceChild(wpChild);
+		}
+
+		function loadWorkPlaceChild(wpChild) {
+			if (wpChild.selectedIndex == 0) {
+				document.getElementById('WorkPlace_workactivity').style.display='block';
+				document.getElementById('WorkPlace_employee').style.display='none';
+			} else {
+				document.getElementById('WorkPlace_workactivity').style.display='none';
+				document.getElementById('WorkPlace_employee').style.display='block';
+			}
+		}
+	</script>
+</ui:define>
+
+
+<ui:define name="content">
+	
+	<h:form id="treeForm">
+
+		<t:div styleClass="aon-content-menu" id="aon-content-menu" forceId="#{true}">
+			<t:panelGrid columns="2" cellpadding="0" cellspacing="0" border="0">
+				<t:panelGroup>
+					<t:commandLink id="calendars_form" forceId="#{true}" 
+						value="Arbol" 
+						styleClass="aon-content-menu-item-active" />
+				</t:panelGroup>	
+				<t:panelGroup>
+					<t:commandLink id="calendars_data" forceId="#{true}" value="#{rBundle.aon_calendar_data}"
+						actionListener="#{calendars.onSchedule}" action="calendars_calendar" 
+						styleClass="aon-content-menu-item" />
+				</t:panelGroup>
+			</t:panelGrid>
+		</t:div>
+
+		<t:div styleClass="aon-content-toolbar" id="aon-content-toolbar" forceId="#{true}">
+			<t:div styleClass="aon-content-toolbar-internal">
+				<t:div styleClass="aon-content-toolbar-item-group">
+					<t:commandButton id="save_workplace" value="#{bundle.aon_save}"
+						actionListener="#{calendars.onAcceptWorkPlace}" 
+						onclick="return (confirm('#{bundle.aon_accept_confirm}'))"
+						rendered="#{calendars.companyNode}"
+						styleClass="aon-content-toolbar-item aon-content-toolbar-item-save"
+						onmouseover="this.className='aon-content-toolbar-item aon-content-toolbar-item-hover aon-content-toolbar-item-save'"
+						onmouseout="this.className='aon-content-toolbar-item aon-content-toolbar-item-save'" 
+						accesskey="#{bundle.aon_key_save}"/>
+					<t:commandButton id="save_activity" value="#{bundle.aon_save}"
+						actionListener="#{calendars.onAcceptWorkPlaceChild}" 
+						onclick="return (confirm('#{bundle.aon_accept_confirm}'))"
+						rendered="#{calendars.workPlaceNode}"
+						styleClass="aon-content-toolbar-item aon-content-toolbar-item-save"
+						onmouseover="this.className='aon-content-toolbar-item aon-content-toolbar-item-hover aon-content-toolbar-item-save'"
+						onmouseout="this.className='aon-content-toolbar-item aon-content-toolbar-item-save'" 
+						accesskey="#{bundle.aon_key_save}"/>
+					<t:commandButton id="save_employee" value="#{bundle.aon_save}"
+						actionListener="#{calendars.onAcceptEmployee}" 
+						onclick="return (confirm('#{bundle.aon_accept_confirm}'))"
+						rendered="#{calendars.workActivityNode or calendars.employeeNode and !calendars.transfering}"
+						styleClass="aon-content-toolbar-item aon-content-toolbar-item-save"
+						onmouseover="this.className='aon-content-toolbar-item aon-content-toolbar-item-hover aon-content-toolbar-item-save'"
+						onmouseout="this.className='aon-content-toolbar-item aon-content-toolbar-item-save'" 
+						accesskey="#{bundle.aon_key_save}"/>
+					<t:commandButton id="transfer_employee" value="#{appBundle.aon_transfer}"
+						actionListener="#{calendars.onTransfering}" 
+						rendered="#{calendars.employeeNode and !calendars.transfering}"
+						styleClass="aon-content-toolbar-item aon-content-toolbar-item-save"
+						onmouseover="this.className='aon-content-toolbar-item aon-content-toolbar-item-hover aon-content-toolbar-item-save'"
+						onmouseout="this.className='aon-content-toolbar-item aon-content-toolbar-item-save'" 
+						accesskey="#{bundle.aon_key_save}"/>
+					<t:commandButton id="save_transfer" value="#{bundle.aon_save}"
+						actionListener="#{calendars.onAcceptTransfer}" 
+						onclick="return (confirm('#{bundle.aon_accept_confirm}'))"
+						rendered="#{calendars.employeeNode and calendars.transfering}"
+						styleClass="aon-content-toolbar-item aon-content-toolbar-item-save"
+						onmouseover="this.className='aon-content-toolbar-item aon-content-toolbar-item-hover aon-content-toolbar-item-save'"
+						onmouseout="this.className='aon-content-toolbar-item aon-content-toolbar-item-save'" 
+						accesskey="#{bundle.aon_key_save}"/>
+				</t:div>
+			</t:div>
+		</t:div>
+
+		<t:div id="aon-scroll-area" forceId="#{true}">
+			<t:div styleClass="aon-scroll-area-internal" style="padding-top:0;" >
+				<t:panelGrid columns="2" cellpadding="0" cellspacing="0" >
+				   	<t:panelGroup style="padding:0.8em 1em 0 0;width:250px;" >
+						<ui:include src="/facelet/calendars/tree.xhtml" />
+					</t:panelGroup>
+					<t:panelGroup>
+						<t:div styleClass="aon-form-group" rendered="#{calendars.companyNode}" >
+							<ui:include src="/facelet/calendars/actions/workplace.xhtml" />
+						</t:div>					
+						<t:div styleClass="aon-form-group" 
+								rendered="#{calendars.workPlaceNode or calendars.workActivityNode or calendars.employeeNode and !calendars.transfering}" >
+							<ui:include src="/facelet/calendars/actions/workactivity.xhtml" />
+						</t:div>
+						<t:div styleClass="aon-form-group" rendered="#{calendars.transfering}" >
+							<ui:include src="/facelet/calendars/actions/transfer.xhtml" />
+						</t:div>					
+					</t:panelGroup>
+				</t:panelGrid>
+			</t:div>
+		</t:div>
+
+	</h:form>
+
+	<h:form id="placeList" target="list" />
+</ui:define>
+</ui:composition>
+
+</body>
+</html>

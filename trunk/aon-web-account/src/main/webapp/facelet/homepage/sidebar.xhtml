@@ -1,0 +1,109 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core" 
+	xmlns:t="http://myfaces.apache.org/tomahawk"      
+	xmlns:h="http://java.sun.com/jsf/html">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+</head>
+<body>
+
+<ui:composition>
+
+<t:div id="aon-sidebar" forceId="#{true}" styleClass="aon-sidebar aon-sidebar-#{treeMenu.hidden ? 'hidden' : 'visible'}">	
+	<h:form id="treeMenuForm" styleClass="aon-form">
+
+		 <t:div
+			styleClass="aon-sidebar-button-showSidebar aon-sidebar-button-showSidebar-#{treeMenu.hidden ? 'hidden' : 'visible'}">
+			<h:commandLink immediate="true" actionListener="#{treeMenu.toggleVisibility}">
+				<f:verbatim>&#160;</f:verbatim>
+			</h:commandLink>
+		</t:div> 
+		
+		<t:div styleClass="aon-sidebar-menu" rendered="#{!treeMenu.hidden}">		
+			<t:div styleClass="aon-sidebar-title" >
+				<h:outputText value="#{treeMenu.title}"/>
+			<!-- 
+				style="padding:1px 16px 1px 5px;"
+				<t:selectOneMenu id="Application_menus" value="#{menuController.selectedMenu}" 
+					valueChangeListener="#{menuController.onMenuChange}" onchange="submit();"
+					style="width=85%;">
+					<f:selectItems value="#{menuController.menus}" />
+				</t:selectOneMenu>
+			 -->	
+			</t:div>
+				<t:tree2 
+					value="#{treeMenu.treeModel}"
+					id="sidebar-tree"
+					var="sbnode"
+					varNodeToggler="sbnt"
+					showRootNode="false"
+					showLines="true"
+					showNav="false"				
+					clientSideToggle="false"
+					imageLocation="#{aonConfiguration.stylePath}/images/sidebar"
+	            >
+					<f:facet name="root">					
+						<h:commandLink immediate="true" action="#{sbnt.toggleExpanded}">
+							<h:outputText value="#{sbnode.description}"/>
+	                    </h:commandLink>	
+	                    			
+					</f:facet>
+					<f:facet name="menu">
+						<t:div styleClass="#{(sbnode.identifier==treeMenu.menuModel.selectedNodeId) ? 'aon-sidebar-menu-selected': ''}" >			
+							<t:div styleClass="aon-sidebar-menu-branch">
+								<h:commandLink immediate="true" action="#{treeMenu.nodeAction}"
+									actionListener="#{treeMenu.menuIconPressed}">
+									
+									<t:div
+										styleClass="aon-sidebar-menu-branch-icon aon-sidebar-menu-branch-iconMinus"
+										rendered="#{sbnt.nodeExpanded}">
+										<f:verbatim>&#160;</f:verbatim>
+									</t:div>
+									<t:div
+										styleClass="aon-sidebar-menu-branch-icon aon-sidebar-menu-branch-iconPlus"
+										rendered="#{!sbnt.nodeExpanded}">
+										<f:verbatim>&#160;</f:verbatim>
+									</t:div>
+								</h:commandLink>
+								<h:commandLink styleClass="aon-sidebar-menu-branch-link"
+									immediate="true"
+									action="#{treeMenu.nodeAction}"
+									actionListener="#{treeMenu.menuPressed}">
+									<h:outputText value="#{sbnode.description}" />
+								</h:commandLink>
+							</t:div>						
+						</t:div>
+					</f:facet>
+					<f:facet name="option">
+						<t:div 
+							styleClass="#{(sbnode.identifier==treeMenu.menuModel.selectedNodeId) ? ' aon-sidebar-menu-selected' : '' }" >			
+							<t:div styleClass="aon-sidebar-menu-leaf">
+								<h:commandLink styleClass="aon-sidebar-menu-leaf-link"
+									target="#{sbnode.menuItem.target}"
+									immediate="true"
+									action="#{treeMenu.nodeAction}"
+									actionListener="#{treeMenu.optionPressed}"
+									rendered="#{!sbnode.menuItem.external}">
+									<h:outputText value="#{sbnode.description}" />
+								</h:commandLink>
+								<h:outputLink styleClass="aon-sidebar-menu-leaf-link"
+									target="#{sbnode.menuItem.target}"
+									value="#{sbnode.optionValue}"
+									rendered="#{sbnode.menuItem.external}">
+									<h:outputText value="#{sbnode.description}" />
+								</h:outputLink>
+	 						</t:div>
+						</t:div>				
+					</f:facet>
+				</t:tree2>
+
+		</t:div>
+	</h:form>		
+</t:div>			
+
+</ui:composition>
+	
+</body>
+</html>

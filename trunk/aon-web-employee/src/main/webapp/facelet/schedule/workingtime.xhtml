@@ -1,0 +1,185 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:h="http://java.sun.com/jsf/html">
+<body>
+
+<ui:composition >
+
+	<t:div styleClass="aon-form-group">
+		<h:panelGrid columns="6" dir="true" 
+					columnClasses="aon-form-table-column-odd, aon-form-table-column-even, 
+									aon-form-table-column-odd, aon-form-table-column-even,
+									aon-form-table-column-odd, aon-form-table-column-even">
+			<h:outputLabel for="Agreement" value="#{appBundle.aon_agreement_time}"
+				styleClass="aon-form-input-text-label aon-form-table-column-odd-label" 
+				rendered="#{workingTime.agreementAmount > 0}" />
+			<h:outputText id="Agreement" value="#{workingTime.agreementAmount}" 
+						rendered="#{workingTime.agreementAmount > 0}" />
+
+			<h:outputLabel for="Esteemed" value="#{appBundle.aon_esteemed_time}"
+				styleClass="aon-form-input-text-label aon-form-table-column-odd-label" />
+			<h:outputText id="Esteemed" value="#{workingTime.amount}" />
+
+			<t:selectBooleanCheckbox id="avoidSpread" styleClass="radio" 
+				value="#{workingTime.addSpreadEventAllowed}" valueChangeListener="#{workingTime.addSpreadEventAllowed}"
+				onclick="this.form.submit();" />
+			<h:outputLabel for="avoidSpread" value="Permitir eventos propagados" styleClass="aon-form-input-text-label" />
+		</h:panelGrid>
+	</t:div >
+
+	<t:div styleClass="aon-form-collapsiblePanel">
+		<t:collapsiblePanel value="false" styleClass="aon-form-collapsiblePanel-title" 
+				title="#{plannerBundle.aon_planner_working_label}" >
+			<t:div styleClass="aon-form-collapsiblePanel-body" >
+
+				<t:dataTable id="workingTimeData" var="to"
+					value="#{workingTime.model}" 
+					styleClass="aon-table" headerClass="aon-table-header" footerClass="aon-table-footer" 
+					rows="20" rowClasses="aon-table-row-odd, aon-table-row-even"
+					rowOnMouseOver="selectRow( this )" rowOnMouseOut="unselectRow( this )" rowOnClick="sendRow( this )"
+					cellpadding="0" cellspacing="0"
+					columnClasses="aon-table-body aon-table-body-nowrap,
+								   aon-table-body aon-table-body-nowrap,
+								   aon-table-body aon-table-body-nowrap,
+								   aon-table-body aon-table-body-nowrap,
+								   aon-table-body aon-table-body-nowrap,
+								   aon-table-body aon-table-body-string">
+		
+					<h:column>
+						<f:facet name="header">
+							<h:outputText value="#{plannerBundle.aon_planner_subject_label}" />
+						</f:facet>
+						<h:outputText value="#{to.title}" />
+						<t:commandLink immediate="#{true}"  
+							styleClass="aon-table-row-selected"
+							action="#{planner.eventOutcome}" actionListener="#{workingTime.onSelect}" />
+					</h:column>
+		
+					<h:column>
+						<f:facet name="header">
+							<h:outputText value="#{plannerBundle.aon_planner_event_category}" />
+						</f:facet>
+						<h:outputText value="#{to.category}" />
+					</h:column>
+		
+					<h:column>
+						<f:facet name="header">
+							<h:outputText value="#{appBundle.aon_start_date}" />
+						</f:facet>
+						<t:outputText value="#{to.startTime}" >
+							<f:convertDateTime pattern="#{bundle.aon_date_pattern}" timeZone="#{timeZoneController.timeZoneId}" />
+						</t:outputText>
+					</h:column>
+		
+					<h:column>
+						<f:facet name="header">
+							<h:outputText value="#{appBundle.aon_end_date}" />
+						</f:facet>
+						<t:outputText value="#{to.until}" >
+							<f:convertDateTime pattern="#{bundle.aon_date_pattern}" timeZone="#{timeZoneController.timeZoneId}" />
+						</t:outputText>
+					</h:column>
+		
+					<h:column>
+						<f:facet name="header">
+							<h:outputText value="#{appBundle.aon_gap}" />
+						</f:facet>
+						<t:outputText value="#{to.startTime}" >
+							<f:convertDateTime pattern="#{appBundle.aon_time_pattern}" timeZone="#{timeZoneController.timeZoneId}" />
+						</t:outputText>
+						<f:verbatim>&#160;-&#160;</f:verbatim>
+						<t:outputText value="#{to.endTime}" >
+							<f:convertDateTime pattern="#{appBundle.aon_time_pattern}" timeZone="#{timeZoneController.timeZoneId}" />
+						</t:outputText>
+					</h:column>
+
+					<h:column>
+						<f:facet name="header">
+							<h:outputText value="#{appBundle.aon_frecuency}" />
+						</f:facet>
+						<h:outputText value="#{to.frecuency}" />
+					</h:column>
+				</t:dataTable>
+			</t:div>
+		</t:collapsiblePanel>
+		<t:commandButton id="reset_workingtime" forceId="#{true}" value="#{bundle.aon_reset}" 
+			styleClass="aon-form-button"
+			action="#{planner.eventOutcome}" actionListener="#{workingTime.onReset}" />
+	</t:div>
+
+	<t:div styleClass="aon-form-collapsiblePanel">
+		<t:collapsiblePanel value="false" styleClass="aon-form-collapsiblePanel-title" 
+				title="#{plannerBundle.aon_planner_event_label}s" >
+			<t:div styleClass="aon-form-collapsiblePanel-body" >
+				<t:dataTable id="holidays" var="to"
+					value="#{planner.events}" 
+					styleClass="aon-table" headerClass="aon-table-header" footerClass="aon-table-footer" 
+					rows="20" rowClasses="aon-table-row-odd, aon-table-row-even"
+					rowOnMouseOver="selectRow( this )" rowOnMouseOut="unselectRow( this )" rowOnClick="sendRow( this )"
+					cellpadding="0" cellspacing="0"
+					columnClasses="aon-table-body aon-table-body-string,
+								   aon-table-body aon-table-body-string,
+								   aon-table-body aon-table-body-string,
+								   aon-table-body aon-table-body-string,
+								   aon-table-body aon-table-body-string">
+		
+					<h:column>
+						<f:facet name="header">
+							<h:outputText value="#{plannerBundle.aon_planner_subject_label}" />
+						</f:facet>
+						<h:outputText value="#{to.title}" />
+						<t:commandLink id="select_holiday" forceId="#{true}" immediate="#{true}" 
+							styleClass="aon-table-row-selected" 
+							action="#{planner.eventOutcome}" actionListener="#{planner.onSelectEvent}" />
+					</h:column>
+		
+					<h:column>
+						<f:facet name="header">
+							<h:outputText value="#{plannerBundle.aon_planner_event_category}" />
+						</f:facet>
+						<h:outputText value="#{to.category}" />
+					</h:column>
+		
+					<h:column>
+						<f:facet name="header">
+							<h:outputText value="#{appBundle.aon_start_date}" />
+						</f:facet>
+						<t:outputText value="#{to.startTime}" >
+							<f:convertDateTime pattern="#{bundle.aon_date_pattern}" timeZone="#{timeZoneController.timeZoneId}" />
+						</t:outputText>
+					</h:column>
+		
+					<h:column>
+						<f:facet name="header">
+							<h:outputText value="#{appBundle.aon_end_date}" />
+						</f:facet>
+						<t:outputText value="#{to.until}" >
+							<f:convertDateTime pattern="#{bundle.aon_date_pattern}" timeZone="#{timeZoneController.timeZoneId}" />
+						</t:outputText>
+					</h:column>
+		
+					<h:column>
+						<f:facet name="header">
+							<h:outputText value="Frecuencia" />
+						</f:facet>
+						<h:outputText value="#{to.frecuency}" />
+					</h:column>
+				</t:dataTable>
+			</t:div>
+		</t:collapsiblePanel>
+		<t:commandButton id="reset_event" forceId="#{true}" value="#{plannerBundle.aon_planner_new_event}" 
+			styleClass="aon-form-button" 
+			action="#{planner.eventOutcome}" actionListener="#{planner.onNewEvent}" />
+		<t:commandButton id="reset_holiday" forceId="#{true}" value="#{bundle.aon_reset} Festivo" 
+			styleClass="aon-form-button" 
+			action="#{planner.eventOutcome}" actionListener="#{planner.onNewEvent}" />
+	</t:div>
+
+</ui:composition>
+
+</body>
+</html>
+ 

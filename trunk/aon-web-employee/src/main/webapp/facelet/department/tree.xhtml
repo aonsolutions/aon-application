@@ -1,0 +1,139 @@
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:h="http://java.sun.com/jsf/html">
+<body>
+<ui:composition template="/facelet/templates/aon.ui.content.xhtml">
+
+	<ui:define name="content">
+	
+	<h:form id="treeForm">
+
+		<t:div styleClass="aon-content-toolbar" id="aon-content-toolbar"
+			forceId="#{true}">
+			<t:div styleClass="aon-content-toolbar-internal">
+				<t:div styleClass="aon-content-toolbar-item-group">
+					<t:commandButton id="save" value="#{bundle.aon_save}"
+						forceId="#{true}" actionListener="#{department.accept}"
+						onclick="return (confirm('#{bundle.aon_save_confirm}'))"
+						styleClass="aon-content-toolbar-item aon-content-toolbar-item-save"
+						onmouseover="this.className='aon-content-toolbar-item aon-content-toolbar-item-hover aon-content-toolbar-item-save'"
+						onmouseout="this.className='aon-content-toolbar-item aon-content-toolbar-item-save'"
+						accesskey="#{bundle.aon_key_save}" />
+					<t:commandButton id="reset" value="#{bundle.aon_reset}"
+						disabled="#{department.new}"
+						actionListener="#{department.onReset}"
+						styleClass="aon-content-toolbar-item aon-content-toolbar-item-reset"
+						onmouseover="this.className='aon-content-toolbar-item aon-content-toolbar-item-hover aon-content-toolbar-item-reset'"
+						onmouseout="this.className='aon-content-toolbar-item aon-content-toolbar-item-reset'"
+						accesskey="#{bundle.aon_key_new}" />
+					<t:commandButton id="cancel" value="#{bundle.aon_cancel}"
+						forceId="#{true}" 
+						actionListener="#{department.onCancel}"
+						onclick="return (confirm('#{bundle.aon_cancel_confirm}'))"
+						styleClass="aon-content-toolbar-item aon-content-toolbar-item-cancel"
+						onmouseover="this.className='aon-content-toolbar-item aon-content-toolbar-item-hover aon-content-toolbar-item-cancel'"
+						onmouseout="this.className='aon-content-toolbar-item aon-content-toolbar-item-cancel'" 
+						accesskey="#{bundle.aon_key_cancel}"/>	
+					<t:commandButton id="remove" value="#{bundle.aon_remove}"
+						rendered="#{!department.new and tree.treeModel.selectedNode != tree.treeModel.root}" forceId="#{true}"
+						actionListener="#{department.remove}"
+						onclick="return (confirm('#{bundle.aon_remove_confirm}'))"
+						styleClass="aon-content-toolbar-item aon-content-toolbar-item-delete"
+						onmouseover="this.className='aon-content-toolbar-item aon-content-toolbar-item-hover aon-content-toolbar-item-delete'"
+						onmouseout="this.className='aon-content-toolbar-item aon-content-toolbar-item-delete'" 
+						accesskey="#{bundle.aon_key_remove}"/>	
+				</t:div>
+			</t:div>
+		</t:div>
+
+		<t:div id="aon-scroll-area" forceId="#{true}">
+			<t:div styleClass="aon-scroll-area-internal">
+				<t:div >
+
+						<h:panelGrid columns="2">
+							<t:tree2 id="tree" value="#{tree.treeModel}"
+								clientSideToggle="false" showLines="false" showNav="true"
+								binding="#{tree.htmlTree}" var="node" varNodeToggler="t">
+
+								<f:facet name="root">
+									<t:div styleClass="aon-tree-menu-root">
+										<t:graphicImage rendered="#{t.nodeExpanded}"
+											url="#{node.iconOpen}" />
+										<t:graphicImage rendered="#{!t.nodeExpanded}"
+											url="#{node.iconClose}" />
+										<h:commandLink id="treeRootId"
+											rendered="#{!t.nodeSelected}"
+											styleClass="#{tree.selected ? ' aon-tree-menu-branch-link-selected' : 'aon-tree-menu-root-link' }"
+											action="#{tree.treeTextAction}"
+											actionListener="#{tree.pressed}">
+											<h:outputText value="#{node.description}" />
+										</h:commandLink>
+									</t:div>
+								</f:facet>
+
+								<f:facet name="branch">
+									<t:div styleClass="aon-tree-menu-branch">
+										<t:graphicImage rendered="#{t.nodeExpanded}"
+											url="#{node.iconOpen}" />
+										<t:graphicImage rendered="#{!t.nodeExpanded}"
+											url="#{node.iconClose}" />
+										<h:commandLink id="#{tree.folderId}"
+											rendered="#{!t.nodeSelected}"
+											styleClass="#{tree.selected ? ' aon-tree-menu-branch-link-selected' : 'aon-tree-menu-branch-link' }"
+											action="#{tree.treeTextAction}"
+											actionListener="#{tree.pressed}">
+											<h:outputText value="#{node.description}" />
+										</h:commandLink>
+									</t:div>
+								</f:facet>
+
+								<f:facet name="leaf">
+									<h:panelGroup>
+										<t:graphicImage rendered="#{t.nodeExpanded}"
+											url="#{node.iconOpen}" />
+										<t:graphicImage rendered="#{!t.nodeExpanded}"
+											url="#{node.iconClose}" />
+										<h:commandLink id="#{tree.nodeId}"
+											rendered="#{!t.nodeSelected}"
+											styleClass="#{tree.selected ? ' aon-tree-menu-leaf-link-selected' : 'aon-tree-menu-leaf-link' }"
+											action="#{tree.nodeAction}" actionListener="#{tree.pressed}">
+											<h:outputText value="#{node.description}" />
+										</h:commandLink>
+									</h:panelGroup>
+								</f:facet>
+
+							</t:tree2>
+							
+							<h:panelGrid columns="2" cellpadding="0" cellspacing="0"
+								styleClass="aon-form-table"
+								columnClasses="aon-form-table-column-odd,aon-form-table-column-even">
+								
+								<h:outputLabel for="Department_parent" 
+									styleClass="aon-form-input-text-label" rendered="#{department.new}"
+									value="#{appBundle.department_parent}" />
+								<h:inputText id="Department_parent" 
+									value="#{department.to.parent.description}" 
+									styleClass="aon-form-input-text" rendered="#{department.new}"
+									size="30" disabled="#{true}"/>
+
+								<h:outputLabel for="Department_description" 
+									styleClass="aon-form-input-text-label"
+									value="#{rBundle.aon_description}" />
+								<h:inputText id="Department_description" 
+									value="#{department.to.description}" 
+									styleClass="aon-form-input-text"
+									required="false" size="30" />
+							</h:panelGrid>		
+						</h:panelGrid>
+
+				</t:div>
+			</t:div>
+		</t:div>
+		</h:form>
+	</ui:define>
+</ui:composition>
+
+</body>
+</html>
