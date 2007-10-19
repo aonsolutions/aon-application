@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<dao>
+	<bean class="com.code.aon.finance.Invoice" sqlName="invoice">
+		<alias names="id,series,number,registry_id,registryAddress_id,issueDate,securityLevel,status,registryName,registryDocument,type,taxFree,surcharge,withholding" />
+		<hibernate names="id,series,number,registry.id,registryAddress.id,issueDate,securityLevel,status,registryName,registryDocument,type,taxFree,surcharge,withholding" />
+	</bean>
+	
+	<bean class="com.code.aon.finance.InvoiceDetail" sqlName="invoice_detail">
+		<alias names="deliveryDetail,description,discountExpression,id,invoice_id,item_id,line,price,quantity,source,item_product_type,taxableBase,taxes,,workPlace_id" />
+		<hibernate names="deliveryDetail,description,discountExpression,id,invoice.id,item.id,line,price,quantity,source,item.product.type,taxableBase,taxes,workPlace.id" />
+	</bean>
+	
+	<bean class="com.code.aon.finance.Finance" sqlName="finance">
+		<alias names="amount,bankAccount,bank_id,concept,dueDate,expenses,financeStatus,id,invoice_id,payMethod_id,payMethod_type,payment,registry_id,securityLevel,invoice_series,invoice_number,invoice_issueDate" />
+		<hibernate names="amount,bankAccount,bank.id,concept,dueDate,expenses,financeStatus,id,invoice.id,payMethod.id,payMethod.type,payment,registry.id,securityLevel,invoice.series,invoice.number,invoice.issueDate" />
+	</bean>
+	
+	<bean class="com.code.aon.finance.Creditor">
+		<alias names="id,registry_id,status,registry_name,registry_surname,registry_alias,registry_document,withholding,scope_id"/>
+		<hibernate names="id,registry.id,status,registry.name,registry.surname,registry.alias,registry.document,withholding,scope.id"/>
+	</bean>
+</dao>
