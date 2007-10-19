@@ -1,0 +1,141 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core" 
+	xmlns:t="http://myfaces.apache.org/tomahawk"      
+	xmlns:c="http://java.sun.com/jstl/core"			
+	xmlns:h="http://java.sun.com/jsf/html">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+	<c:forEach items="#{aonConfiguration.styleSheets}" var="styleSheet">	
+		<t:stylesheet path="#{styleSheet}" />
+	</c:forEach>
+</head>
+<body>
+
+<ui:composition>
+	<t:div id="aon-scroll-area">
+	<t:div styleClass="aon-scroll-area-internal">		
+		<t:div styleClass="aon-content-tree">	
+		
+			<h:form id="contentMenuForm">
+				<t:tree2
+					value="#{contentMenu.menu}"
+					id="content-tree"
+					var="cnode"
+					varNodeToggler="cnt"
+					binding="#{contentMenu.htmlTree}"
+					showRootNode="false"
+					showLines="false"
+					showNav="false"				
+					clientSideToggle="false"
+				>
+					<f:facet name="root">
+						<t:div styleClass="aon-content-tree-branch">
+							<h:commandLink
+								immediate="true"
+								action="#{cnt.toggleExpanded}"
+								id="contentMenuRoot"
+							>
+								<t:div styleClass="aon-content-tree-branch-name">				
+									<h:outputText value="#{cnode.description}"/>
+								</t:div>
+		                    </h:commandLink>
+							<t:div styleClass="aon-content-tree-branch-description">
+								<h:outputText value="#{cnode.largeDescription}"/>
+							</t:div>
+						</t:div>
+					</f:facet>
+					<f:facet name="menu">
+						<t:div styleClass="aon-content-tree-branch">
+							<h:commandLink styleClass="aon-content-tree-branch-link"
+								action="#{contentMenu.menuAction}"
+								actionListener="#{contentMenu.pressed}"
+								id="#{treeMenu.menuId}"
+							>
+								<t:div styleClass="aon-content-tree-branch-name">	
+									<h:outputText value="#{cnode.description}"/>
+								</t:div>
+								
+								<t:div styleClass="aon-content-tree-branch-description">
+									<h:outputText value="#{cnode.largeDescription}"/>
+								</t:div>
+							</h:commandLink>
+						</t:div>
+					</f:facet>
+					<f:facet name="option">
+						<t:div>
+						<t:div styleClass="aon-content-tree-leaf" rendered="#{!cnode.menuItem.external}">
+							<h:commandLink styleClass="aon-content-tree-leaf-link"
+								target="#{cnode.menuItem.target}"
+								action="#{contentMenu.nodeAction}"
+								actionListener="#{contentMenu.pressed}"
+								id="#{treeMenu.nodeId}">
+															
+								<t:div styleClass="aon-content-tree-leaf-name">				
+									<h:outputText value="#{cnode.description}" />
+								</t:div>
+								<t:div styleClass="aon-content-tree-leaf-description">
+									<h:outputText value="#{cnode.largeDescription}"/>
+								</t:div>
+							</h:commandLink>
+						</t:div>
+						
+						<t:div styleClass="aon-content-tree-leaf" 
+							rendered="#{cnode.menuItem.external and !cnode.menuItem.contextRelative}">
+							<h:outputLink styleClass="aon-content-tree-leaf-link"
+								target="#{cnode.menuItem.target}" 
+								value="#{cnode.menuItem.reference}">								
+							
+								<t:div styleClass="aon-content-tree-leaf-name">				
+									<h:outputText value="#{cnode.description}" />
+								</t:div>
+								<t:div styleClass="aon-content-tree-leaf-description">
+									<h:outputText value="#{cnode.largeDescription}"/>
+								</t:div>
+							</h:outputLink>
+						</t:div>
+
+						<t:div styleClass="aon-content-tree-leaf aon-content-tree-leaf_report" 
+							rendered="#{cnode.menuItem.external and cnode.menuItem.contextRelative and !cnode.hyperView}">
+							<h:outputLink styleClass="aon-content-tree-leaf-link"
+								target="#{cnode.menuItem.target}"
+								value="#{facesContext.externalContext.requestContextPath}#{cnode.menuItem.reference}">
+															
+								<t:div styleClass="aon-content-tree-leaf-name">				
+									<h:outputText value="#{cnode.description}" />
+								</t:div>
+												
+								<t:div styleClass="aon-content-tree-leaf-description">
+									<h:outputText value="#{cnode.largeDescription}"/>
+								</t:div>
+							</h:outputLink>	
+						</t:div>
+
+						<t:div styleClass="aon-content-tree-leaf aon-content-tree-leaf_hyperview" 
+							rendered="#{cnode.menuItem.external and cnode.menuItem.contextRelative and cnode.hyperView}">
+							<h:outputLink styleClass="aon-content-tree-leaf-link"
+								target="#{cnode.menuItem.target}"
+								value="#{facesContext.externalContext.requestContextPath}#{cnode.menuItem.reference}">
+								<t:div styleClass="aon-content-tree-leaf-name">				
+									<h:outputText value="#{cnode.description}" />
+								</t:div>				
+								<t:div styleClass="aon-content-tree-leaf-description">
+									<h:outputText value="#{cnode.largeDescription}"/>
+								</t:div>
+							</h:outputLink>		
+						</t:div>
+						</t:div>
+					</f:facet>
+				</t:tree2>
+			</h:form>		
+		</t:div>
+	</t:div>
+	</t:div>
+</ui:composition>	
+	
+</body>
+</html>
+
+
+

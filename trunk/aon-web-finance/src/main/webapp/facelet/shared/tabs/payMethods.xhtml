@@ -1,0 +1,204 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:h="http://java.sun.com/jsf/html">
+<body>
+
+<ui:composition>
+
+	<t:div styleClass="aon-form-group" rendered="#{!finance.new}">
+		<t:div styleClass="aon-form-group-title">
+			<t:outputLabel for="#{dataTable}" value="#{financeBundle.aon_pay_methods}" />
+		</t:div>
+
+		<t:div styleClass="aon-form-group-body">
+
+			<t:dataTable id="#{dataTable}" value="#{controllerAlias.model}"
+				var="to" rowOnMouseOver="selectRow( this )"
+				rowOnMouseOut="unselectRow( this )" rowOnClick="sendRow( this )"
+				styleClass="aon-edit-table" headerClass="aon-edit-table-header"
+				footerClass="aon-edit-table-footer" rows="20" rowIndexVar="rowIndex"
+				rowClasses="aon-edit-table-row-odd,aon-edit-table-row-even"
+				columnClasses=" aon-edit-table-body-icon,
+						aon-edit-table-body aon-edit-table-body-string,
+						aon-edit-table-body aon-edit-table-body-number,
+						aon-edit-table-body aon-edit-table-body-number,
+						aon-edit-table-body aon-edit-table-body-number,
+						aon-edit-table-body aon-edit-table-body-string,
+						aon-edit-table-body-buttons">
+
+				<h:column>
+					<f:facet name="header">
+						<f:verbatim>&#160;</f:verbatim>
+					</f:facet>
+					<f:verbatim>&#160;</f:verbatim>
+					<t:commandLink immediate="#{true}"
+						rendered="#{to!=controllerAlias.to}"
+						styleClass="aon-table-row-selected"
+						actionListener="#{controllerAlias.onSelect}">
+					</t:commandLink>
+					<f:facet name="footer">
+						<t:div>
+							<t:commandButton id="reset"
+								styleClass="aon-edit-table-icon-button aon-edit-table-icon-button-new"
+								value="" immediate="#{true}"
+								rendered="#{!controllerAlias.new and controllerAlias.model.rowCount == 0}"
+								actionListener="#{controllerAlias.onReset}"
+								accesskey="#{bundle.aon_key_new_line}">
+							</t:commandButton>
+						</t:div>
+					</f:facet>
+				</h:column>
+
+				<t:column>
+					<f:facet name="header">
+						<t:outputText value="#{financeBundle.aon_pay_method}" />
+					</f:facet>
+					<t:outputText value="#{to.payment.name}"
+						rendered="#{to!=controllerAlias.to}" />
+					<h:selectOneMenu value="#{controllerAlias.to.payment.id}"
+						styleClass="aon-form-selectOneMenu-field"
+						rendered="#{to==controllerAlias.to}"
+						valueChangeListener="#{controllerAlias.onChangePayMethod}">
+						<f:selectItems value="#{financeCollections.payMethods}" />
+					</h:selectOneMenu>
+					<f:facet name="footer">
+						<t:div>
+							<h:selectOneMenu value="#{controllerAlias.to.payment.id}"
+								styleClass="aon-form-selectOneMenu-field"
+								rendered="#{controllerAlias.new}"
+								valueChangeListener="#{controllerAlias.onChangePayMethod}">
+								<f:selectItems value="#{financeCollections.payMethods}" />
+							</h:selectOneMenu>
+						</t:div>
+					</f:facet>
+				</t:column>
+
+				<t:column>
+					<f:facet name="header">
+						<t:outputText value="#{financeBundle.aon_number_of_payments}" />
+					</f:facet>
+					<t:outputText value="#{to.numberOfPayments}"
+						rendered="#{to!=controllerAlias.to}" />
+					<t:inputText value="#{controllerAlias.to.numberOfPayments}"
+						styleClass="aon-form-input-text"
+						rendered="#{to==controllerAlias.to}" required="#{true}" size="5" />
+					<f:facet name="footer">
+						<t:div>
+							<t:inputText value="#{controllerAlias.to.numberOfPayments}"
+								styleClass="aon-form-input-text"
+								rendered="#{controllerAlias.new}" required="#{true}" size="5" />
+						</t:div>
+					</f:facet>
+				</t:column>
+
+				<t:column>
+					<f:facet name="header">
+						<t:outputText value="#{financeBundle.aon_days_to_first_payment}" />
+					</f:facet>
+					<t:outputText value="#{to.daysToFirstPayment}"
+						rendered="#{to!=controllerAlias.to}" />
+					<t:inputText value="#{controllerAlias.to.daysToFirstPayment}"
+						styleClass="aon-form-input-text"
+						rendered="#{to==controllerAlias.to}" required="#{true}" size="5" />
+					<f:facet name="footer">
+						<t:div>
+							<t:inputText value="#{controllerAlias.to.daysToFirstPayment}"
+								styleClass="aon-form-input-text"
+								rendered="#{controllerAlias.new}" required="#{true}" size="5" />
+						</t:div>
+					</f:facet>
+				</t:column>
+
+				<t:column>
+					<f:facet name="header">
+						<t:outputText value="#{financeBundle.aon_days_between_payments}" />
+					</f:facet>
+					<t:outputText value="#{to.daysBetweenPayments}"
+						rendered="#{to!=controllerAlias.to}" />
+					<t:inputText value="#{controllerAlias.to.daysBetweenPayments}"
+						styleClass="aon-form-input-text"
+						rendered="#{to==controllerAlias.to}" required="#{true}" size="5" />
+					<f:facet name="footer">
+						<t:div>
+							<t:inputText value="#{controllerAlias.to.daysBetweenPayments}"
+								styleClass="aon-form-input-text"
+								rendered="#{controllerAlias.new}" required="#{true}" size="5" />
+						</t:div>
+					</f:facet>
+				</t:column>
+
+				<t:column>
+					<f:facet name="header">
+						<t:outputText value="#{financeBundle.aon_payment_days}" />
+					</f:facet>
+					<t:outputText value="#{to.paymentDays}"
+						rendered="#{to!=controllerAlias.to}" />
+					<t:inputText value="#{controllerAlias.to.paymentDays}"
+						styleClass="aon-form-input-text"
+						rendered="#{to==controllerAlias.to}" required="#{true}" size="5" />
+					<f:facet name="footer">
+						<t:div>
+							<t:inputText value="#{controllerAlias.to.paymentDays}"
+								styleClass="aon-form-input-text"
+								rendered="#{controllerAlias.new}" required="#{true}" size="5" />
+						</t:div>
+					</f:facet>
+				</t:column>
+
+				<t:column>
+					<f:facet name="header">
+						<f:verbatim>&#160;</f:verbatim>
+					</f:facet>
+					<t:div>
+						<f:verbatim rendered="#{to!=controllerAlias.to}">&#160;</f:verbatim>
+						<t:commandButton title="#{bundle.aon_save}"
+							actionListener="#{controllerAlias.onAccept}"
+							rendered="#{to==controllerAlias.to}" value=""
+							styleClass="aon-edit-table-icon-button aon-edit-table-icon-button-save"
+							accesskey="#{bundle.aon_key_save_line}" />
+						<t:commandButton title="#{bundle.aon_cancel}"
+							actionListener="#{controllerAlias.onCancel}" immediate="#{true}"
+							onclick="return (confirm('#{bundle.aon_cancel_confirm}'));"
+							styleClass="aon-edit-table-icon-button aon-edit-table-icon-button-cancel"
+							value="" rendered="#{to==controllerAlias.to}"
+							accesskey="#{bundle.aon_key_cancel_line}" />
+						<t:commandButton title="#{bundle.aon_remove}"
+							actionListener="#{controllerAlias.onRemove}"
+							onclick="return (confirm('#{bundle.aon_remove_confirm}'));"
+							rendered="#{to==controllerAlias.to}"
+							styleClass="aon-edit-table-icon-button aon-edit-table-icon-button-delete"
+							value="" accesskey="#{bundle.aon_key_remove_line}" />
+					</t:div>
+					<f:facet name="footer">
+						<t:div>
+							<f:verbatim rendered="#{!controllerAlias.new}">&#160;</f:verbatim>
+							<t:commandButton title="#{bundle.aon_save}"
+								actionListener="#{controllerAlias.onAccept}"
+								rendered="#{controllerAlias.new}" value=""
+								styleClass="aon-edit-table-icon-button aon-edit-table-icon-button-save"
+								accesskey="#{bundle.aon_key_save_line}" />
+							<t:commandButton title="#{bundle.aon_cancel}"
+								actionListener="#{controllerAlias.onCancel}" immediate="#{true}"
+								onclick="return (confirm('#{bundle.aon_cancel_confirm}'));"
+								rendered="#{controllerAlias.new}"
+								styleClass="aon-edit-table-icon-button aon-edit-table-icon-button-cancel"
+								value="" accesskey="#{bundle.aon_key_cancel_line}" />
+						</t:div>
+					</f:facet>
+				</t:column>
+			</t:dataTable>
+
+			<ui:include src="/facelet/shared/dataScroller.xhtml">
+				<ui:param name="dataTable" value="#{dataTable}" />
+				<ui:param name="model" value="#{controllerAlias.model}" />
+				<ui:param name="showNote" value="#{false}" />
+			</ui:include>
+
+		</t:div>
+	</t:div>		
+</ui:composition>
+</body>
+</html>

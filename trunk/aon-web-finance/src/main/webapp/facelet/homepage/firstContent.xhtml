@@ -1,0 +1,40 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:ui="http://java.sun.com/jsf/facelets">
+<body style="margin:0;padding:0;">
+
+<ui:composition template="/facelet/templates/aon.ui.content.xhtml">
+
+	<ui:define name="header"></ui:define>
+
+	<ui:define name="content">
+		<t:div id="aon-scroll-area" forceId="#{true}">
+			<t:div styleClass="aon-auxiliary-window-content">
+				<t:div style="text-align:center">
+					<t:graphicImage id="preview" rendered="#{company.withLogo}" url="company.logo"/>
+	
+					<t:div  style="font-size:14px;padding:1em;">
+						<h:outputText value="#{company.companyLabel}" />
+					</t:div>
+				</t:div>
+
+				<t:div styleClass="aon-auxiliary-window-helpInfo">
+					<t:div style="font-size:11px;padding:1em 0;">
+						<h:outputText value="#{financeBundle.aon_application_description}" style="font-weight:bold;"/>
+					</t:div>
+					<t:div><h:outputText value="#{financeBundle.aon_footer_right}" /></t:div>
+					<t:div><h:outputText value="#{financeBundle.aon_copyright_information1}" /></t:div>
+					<t:div><h:outputText value="#{financeBundle.aon_copyright_information2}" /></t:div>
+					<t:div><h:outputText value="#{financeBundle.aon_copyright_information3}" /></t:div>				
+				</t:div>
+			</t:div>
+		</t:div>
+	</ui:define>
+  
+</ui:composition>
+
+</body>
+</html>

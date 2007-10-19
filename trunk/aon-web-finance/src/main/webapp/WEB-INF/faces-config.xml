@@ -1,0 +1,530 @@
+<?xml version="1.0"?>
+<!DOCTYPE faces-config PUBLIC
+  "-//Sun Microsystems, Inc.//DTD JavaServer Faces Config 1.1//EN"
+  "http://java.sun.com/dtd/web-facesconfig_1_1.dtd">
+
+<faces-config>
+
+	<application>
+		<message-bundle>com.code.aon.ui.common.i18n.messages</message-bundle>
+		<locale-config>
+			<default-locale>es</default-locale>
+			<supported-locale>en</supported-locale>
+		</locale-config>
+		<view-handler>com.sun.facelets.FaceletViewHandler</view-handler>  
+	</application>
+	
+	<!-- ************** COMMON ****************** -->
+	<managed-bean>
+		<managed-bean-name>enviroment</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.form.EnviromentController
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
+
+	<managed-bean>
+		<managed-bean-name>windowClose</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.form.listener.WindowCloseListener
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
+
+	<!-- **************** REPORT *************** -->
+	<managed-bean>
+		<managed-bean-name>report</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.report.controller.ReportManager
+		</managed-bean-class>
+		<managed-bean-scope>request</managed-bean-scope>
+	</managed-bean>
+
+	<!--  *************** 
+		AON CONFIGURATION
+		***************** -->
+	<managed-bean>
+		<managed-bean-name>aonConfiguration</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.common.controller.ConfigurationController
+		</managed-bean-class>
+		<managed-bean-scope>application</managed-bean-scope>
+		<managed-property>
+			<property-name>
+				applicationLogoContextRelativePath
+			</property-name>
+			<value>/images/logo.gif</value>
+		</managed-property>
+		<managed-property>
+			<property-name>style</property-name>
+			<value>blue</value>
+		</managed-property>
+		<managed-property>
+			<property-name>userStyleSheets</property-name>
+			<list-entries>
+				<value>/css/hyperview.css</value>
+				<value>/css/aon-solutions.css</value>
+			</list-entries>
+		</managed-property>
+		<managed-property>
+			<property-name>applicationBundles</property-name>
+			<map-entries>
+				<map-entry>
+					<key>bundle</key>
+					<value>#{facesContext.application.messageBundle}</value>
+				</map-entry>
+				<map-entry>
+					<key>financeBundle</key>
+                    <value>com.code.aon.ui.finance.i18n.messages</value>
+				</map-entry>
+				<map-entry>
+					<key>registryBundle</key>
+                    <value>com.code.aon.ui.registry.i18n.messages</value>
+				</map-entry>
+			</map-entries>
+		</managed-property>
+	</managed-bean>
+
+	<!-- ******************
+		TIMEZONE CONTROLLER
+		*******************  	 -->
+	<managed-bean>
+		<managed-bean-name>timeZoneController</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.common.controller.TimeZoneController
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
+
+
+	<!-- *****************
+		RUNNABLE HYPERVIEW
+		******************  	 -->
+	<managed-bean>
+		<managed-bean-name>runnableTree</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.hyperview.controller.HyperViewRunnableController
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
+
+	<!-- ********************
+		HYPERVIEW RUNNER BEAN
+		*********************  	 -->
+	<managed-bean>
+		<managed-bean-name>hyperviewRunner</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.hyperview.controller.HyperviewRunnerController
+		</managed-bean-class>
+		<managed-bean-scope>request</managed-bean-scope>
+	</managed-bean>
+
+	<!-- ******************************
+		WORKSTATION TREE EXPORT MANAGER
+		*******************************  	 -->
+	<managed-bean>
+		<managed-bean-name>exportManager</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.hyperview.controller.HyperViewExportManager
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>contextRelativeLogoPath</property-name>
+			<value>/images/logo.gif</value>
+		</managed-property>
+
+	</managed-bean>
+
+	<!-- ************** EXCEPTION HANDLER ****************** -->
+	<managed-bean>
+		<managed-bean-name>exceptionBean</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.common.controller.ExceptionBean
+		</managed-bean-class>
+		<managed-bean-scope>request</managed-bean-scope>
+	</managed-bean>
+	
+	<!-- ************** MENU CONFIGURATION ****************** -->
+	<managed-bean>
+		<managed-bean-name>menuManager</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.menu.jsf.MenuManager</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>menuModels</property-name>
+			<list-entries>
+				<value-class>com.code.aon.ui.menu.jsf.IMenuModel</value-class>
+				<value>#{menuModel}</value>
+			</list-entries>
+		</managed-property>		
+    </managed-bean> 
+
+	<managed-bean>
+		<managed-bean-name>menuModel</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.menu.jsf.MenuModel</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>xml</property-name>
+			<value>/WEB-INF/conf/aon-finance-menu.xml</value>
+		</managed-property>		
+		<managed-property>
+			<property-name>security</property-name>
+			<value>false</value>
+		</managed-property>		
+		<managed-property>
+			<property-name>bundleBaseName</property-name>
+			<value>com.code.aon.ui.finance.i18n.menu</value>
+		</managed-property>		
+    </managed-bean> 	
+
+	<managed-bean>
+		<managed-bean-name>treeMenu</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.menu.jsf.TreeMenu</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>menuManager</property-name>
+			<value>#{menuManager}</value>
+		</managed-property>		
+    </managed-bean> 	
+
+	<managed-bean>
+		<managed-bean-name>contentMenu</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.menu.jsf.ContentMenu</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>menuManager</property-name>
+			<value>#{menuManager}</value>
+		</managed-property>		
+    </managed-bean> 	
+	
+	<managed-bean>
+		<managed-bean-name>breadCrumbList</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.menu.jsf.BreadCrumbList</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>menuManager</property-name>
+			<value>#{menuManager}</value>
+		</managed-property>		
+    </managed-bean>
+    
+    <!--  **** REGISTRY COLLECTIONS **** -->
+	<managed-bean>
+		<managed-bean-name>registryCollections</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.registry.controller.RegistryCollectionsController
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
+    
+    <!-- ************* CUSTOMER LOOKUP ***************** -->
+	<managed-bean>
+		<managed-bean-name>customerLookup</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.customer.controller.CustomerLookupController
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>foreignPojo</property-name>
+			<value>com.code.aon.customer.Customer</value>
+		</managed-property>
+		<managed-property>
+			<property-name>aliasPrefix</property-name>
+			<value>Customer_Lookup</value>
+		</managed-property>
+		<managed-property>
+			<property-name>foreignJoinProperties</property-name>
+			<list-entries>
+				<value>id</value>
+			</list-entries>
+		</managed-property>
+		<managed-property>
+			<description>Needed for Search Select Window</description>
+			<property-name>searchPagePath</property-name>
+			<value>/finance/facelet/sw/customerSearch.faces</value>
+		</managed-property>
+	</managed-bean>
+	
+	<!-- ************* SUPPLIER LOOKUP ***************** -->
+	<managed-bean>
+		<managed-bean-name>supplierLookup</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.purchase.controller.SupplierLookupController
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>foreignPojo</property-name>
+			<value>com.code.aon.purchase.Supplier</value>
+		</managed-property>
+		<managed-property>
+			<property-name>aliasPrefix</property-name>
+			<value>Supplier_Lookup</value>
+		</managed-property>
+		<managed-property>
+			<property-name>foreignJoinProperties</property-name>
+			<list-entries>
+				<value>id</value>
+			</list-entries>
+		</managed-property>
+		<managed-property>
+			<description>Needed for Search Select Window</description>
+			<property-name>searchPagePath</property-name>
+			<value>/finance/facelet/sw/supplierSearch.faces</value>
+		</managed-property>
+	</managed-bean>
+	
+	<!--  **** COMPANY **** -->
+	<managed-bean>
+		<managed-bean-name>company</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.company.controller.CompanyController
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.company.Company</value>
+		</managed-property>
+		<managed-property>
+			<property-name>listenerClasses</property-name>
+			<list-entries>
+				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+				<value>#{companyControllerListener}</value>
+				<value>#{companyLogoControllerListener}</value>
+				<value>#{companyRBankChildListener}</value>
+				<value>#{companyRPayMethodChildListener}</value>
+			</list-entries>
+		</managed-property>
+	</managed-bean>
+	
+	<managed-bean>
+		<managed-bean-name>companyLogoControllerListener</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.company.event.CompanyLogoControllerListener
+		</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+	</managed-bean>
+
+	<managed-bean>
+		<managed-bean-name>companyControllerListener</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.company.event.CompanyControllerListener
+		</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+	</managed-bean>
+	
+	<managed-bean>
+		<managed-bean-name>companyAddress</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.form.BasicController
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.registry.RegistryAddress</value>
+		</managed-property>
+		<managed-property>
+			<property-name>listenerClasses</property-name>
+			<list-entries>
+				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+				<value>#{companyAddressListener}</value>
+				<value>#{companyRegistryChildListener}</value>
+			</list-entries>
+		</managed-property>
+	</managed-bean>
+	
+	<managed-bean>
+		<managed-bean-name>companyAddressListener</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.registry.event.AddressListener
+		</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+	</managed-bean>
+
+	<managed-bean>
+		<managed-bean-name>companyRegistryChildListener</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.form.listener.ChildControllerListener
+		</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+		<managed-property>
+			<property-name>masterBean</property-name>
+			<value>company</value>
+		</managed-property>
+		<managed-property>
+			<property-name>masterPropertyName</property-name>
+			<value>registry</value>
+		</managed-property>
+	</managed-bean>
+	
+	<!-- **** COMPANY RBANK **** -->
+	<managed-bean>
+		<managed-bean-name>companyRbank</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.form.LinesController
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.finance.RegistryBank</value>
+		</managed-property>
+		<managed-property>
+			<property-name>cascadeDelete</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>masterControllerName</property-name>
+			<value>company</value>
+		</managed-property>
+		<managed-property>
+			<property-name>propertyMap</property-name>
+			<map-entries>
+				<map-entry>
+					<key>id</key>
+					<value>registry.id</value>
+				</map-entry>
+			</map-entries>
+		</managed-property>
+	</managed-bean>
+	
+	<managed-bean>
+		<managed-bean-name>companyRBankChildListener</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.form.listener.LinesControllerListener
+		</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+		<managed-property>
+			<property-name>childBean</property-name>
+			<value>companyRbank</value>
+		</managed-property>
+		<managed-property>
+			<property-name>aliasMap</property-name>
+			<map-entries>
+				<map-entry>
+					<key>RegistryBank_registry_id</key>
+                    <value>id</value>
+				</map-entry>
+			</map-entries>
+		</managed-property>
+	</managed-bean>
+
+	<!-- **** COMPANY RPAYMETHOD **** -->
+	<managed-bean>
+		<managed-bean-name>companyRpayMethod</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.finance.controller.RegistryRPayMethodController
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.finance.RegistryPayMethod</value>
+		</managed-property>
+		<managed-property>
+			<property-name>cascadeDelete</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>masterControllerName</property-name>
+			<value>company</value>
+		</managed-property>
+		<managed-property>
+			<property-name>propertyMap</property-name>
+			<map-entries>
+				<map-entry>
+					<key>id</key>
+					<value>registry.id</value>
+				</map-entry>
+			</map-entries>
+		</managed-property>
+	</managed-bean>
+	
+	<managed-bean>
+		<managed-bean-name>companyRPayMethodChildListener</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.form.listener.LinesControllerListener
+		</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+		<managed-property>
+			<property-name>childBean</property-name>
+			<value>companyRpayMethod</value>
+		</managed-property>
+		<managed-property>
+			<property-name>aliasMap</property-name>
+			<map-entries>
+				<map-entry>
+					<key>RegistryPayMethod_registry_id</key>
+                    <value>id</value>
+				</map-entry>
+			</map-entries>
+		</managed-property>
+	</managed-bean>	
+	
+    <!-- ************** CONVERTERS ****************** -->
+    <converter>
+		<description>Conversor para los Enum</description>
+		<converter-for-class>java.lang.Enum</converter-for-class>
+		<converter-class>com.code.aon.ui.converter.EnumLocaleConverter</converter-class>
+	</converter>
+	<converter>
+		<description>Conversor Vacío para Integer</description>
+		<converter-id>IntegerEmptyConverter</converter-id>
+		<converter-class>com.code.aon.ui.finance.converter.IntegerEmptyConverter</converter-class>
+	</converter>	
+	<!-- =================== Navigation Rules ================= -->
+	
+	<!-- =================== Select Windows ================= -->
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>customer_sw</from-outcome>
+			<to-view-id>/finance/facelet/sw/customer.faces</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>customer_sw_search</from-outcome>
+			<to-view-id>/finance/facelet/sw/customerSearch.faces</to-view-id>
+		</navigation-case>
+	</navigation-rule>
+	
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>supplier_sw</from-outcome>
+			<to-view-id>/finance/facelet/sw/supplier.faces</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>supplier_sw_search</from-outcome>
+			<to-view-id>/finance/facelet/sw/supplierSearch.faces</to-view-id>
+		</navigation-case>
+	</navigation-rule>
+	
+  <!-- =================== Company Administration ================= -->
+  <navigation-rule>
+    <navigation-case>
+      <from-outcome>company_form</from-outcome>
+      <to-view-id>/finance/facelet/company/company.faces</to-view-id>
+    </navigation-case>
+    <navigation-case>
+      <from-outcome>company_init</from-outcome>
+      <to-view-id>/finance/facelet/homepage/firstContent.faces</to-view-id>
+    </navigation-case>
+  </navigation-rule>
+  
+  <!-- ********************************* -->
+  <!-- ************ MENU *************** -->
+  <!-- ********************************* -->
+  
+  <navigation-rule>
+    <navigation-case>
+      <from-outcome>company</from-outcome>
+      <to-view-id>/finance/facelet/company/company.faces</to-view-id>
+    </navigation-case>
+  </navigation-rule>
+
+</faces-config>

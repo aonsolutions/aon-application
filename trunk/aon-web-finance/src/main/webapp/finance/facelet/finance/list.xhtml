@@ -1,0 +1,109 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:h="http://java.sun.com/jsf/html">
+<body>
+
+<ui:composition template="/facelet/templates/aon.ui.form.xhtml">
+	<ui:define name="content">
+	
+		<h:form id="financeList">
+			<t:div styleClass="aon-content-toolbar" forceId="#{true}"
+				id="aon-content-toolbar">
+				<t:div styleClass="aon-content-toolbar-internal">
+					<t:div styleClass="aon-content-toolbar-item-group">
+						<t:commandButton value="#{bundle.aon_search}"
+							actionListener="#{finance.onEditSearch}" action="finance_search"
+							styleClass="aon-content-toolbar-item aon-content-toolbar-item-search"
+							onmouseover="this.className='aon-content-toolbar-item aon-content-toolbar-item-hover aon-content-toolbar-item-search'"
+							onmouseout="this.className='aon-content-toolbar-item aon-content-toolbar-item-search'" 
+							accesskey="#{bundle.aon_key_search}"/>
+					</t:div>
+				</t:div>
+			</t:div>
+
+			<t:div forceId="#{true}" id="aon-scroll-area">
+				<t:div styleClass="aon-scroll-area-internal">
+					<t:div styleClass="aon-table-hack">
+						<t:dataTable id="financeDataList" cellpadding="0" cellspacing="0"
+							var="to" value="#{finance.model}" rows="20"
+							rendered="#{finance.model.rowCount > 0}"
+							styleClass="aon-table" headerClass="aon-table-header"
+							rowClasses="aon-table-row-odd,aon-table-row-even"
+							columnClasses="aon-table-body aon-table-body-string,aon-table-body aon-table-body-string,aon-table-body aon-table-body-string,aon-table-body aon-table-body-string,aon-table-body aon-table-body-number"
+							rowOnMouseOver="selectRow( this )"
+							rowOnMouseOut="unselectRow( this )" rowOnClick="sendRow( this )">
+
+							<h:column>
+								<f:facet name="header">
+									<h:outputText value="#{financeBundle.aon_id}" />
+								</f:facet>
+								<h:outputText value="#{to.invoice.series} / #{to.invoice.number}" />
+								<t:commandLink immediate="#{true}"
+									styleClass="aon-table-row-selected" action="finance_form"
+									actionListener="#{finance.onSelect}" />
+							</h:column>
+
+							<h:column>
+								<f:facet name="header">
+									<h:panelGroup>
+										<h:outputText value="#{finance.payment?(financeBundle.aon_creditor):(financeBundle.aon_debtor)}" />
+									</h:panelGroup>
+								</f:facet>
+								<h:outputText
+									value="#{to.registry.name}, #{to.registry.surname}" />
+							</h:column>
+
+							<h:column>
+								<f:facet name="header">
+									<h:panelGroup>
+										<h:outputText value="#{financeBundle.aon_date}" />
+									</h:panelGroup>
+								</f:facet>
+								<h:outputText value="#{to.dueDate}">
+									<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+										timeZone="#{timeZoneController.timeZoneId}" />
+								</h:outputText>
+							</h:column>
+
+							<h:column>
+								<f:facet name="header">
+									<h:panelGroup>
+										<h:outputText value="#{financeBundle.aon_status}" />
+									</h:panelGroup>
+								</f:facet>
+								<h:outputText value="#{to.financeStatus}" />
+							</h:column>
+							
+							<h:column>
+								<f:facet name="header">
+									<h:panelGroup>
+										<h:outputText value="#{financeBundle.aon_amount}" />
+									</h:panelGroup>
+								</f:facet>
+								<h:outputText value="#{to.amount}" >
+									<f:convertNumber pattern="#,##0.00" />
+								</h:outputText>
+							</h:column>
+						</t:dataTable>
+					</t:div>
+
+					<ui:include src="/facelet/shared/dataScroller.xhtml">
+						<ui:param name="dataTable" value="financeDataList" />
+						<ui:param name="model" value="#{finance.model}" />
+						<ui:param name="showNote" value="#{true}" />
+					</ui:include>
+
+				</t:div>
+			</t:div>
+		</h:form>
+		<h:form id="placeList" target="list" />
+
+	</ui:define>
+
+</ui:composition>
+
+</body>
+</html>
