@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<dao>
+	<bean class="com.code.aon.account.AccountEntryDetail" sqlName="account_entry_detail">
+		<alias names="accountEntry_id,accountEntry_entryDate,accountEntry_accountPeriod,account_id,balancingAccount_id,concept,credit,debit,id,line" />
+		<hibernate names="accountEntry.id,accountEntry.entryDate,accountEntry.accountPeriod,account.id,balancingAccount.id,concept,credit,debit,id,line" />
+	</bean>
+</dao>

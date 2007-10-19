@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<dao>
+	<bean class="com.code.aon.academy.CourseAlumn" sqlName="course_alumn">
+		<alias names="course_id,customer_id,id,course_academicYear_id,course_startDate,status" />
+		<hibernate names="course.id,customer.id,id,course.academicYear.id,course.startDate,status" />
+	</bean>
+	<bean class="com.code.aon.academy.Mark" sqlName="mark">
+		<alias names="alumn_course_academicYear_id,alumn_course_courseLevel_id,alumn_course_courseSubject_id,alumn_course_id,alumn_customer_registry_name,alumn_customer_registry_surname,alumn_id,evaluation,id,mark,subject_academicSkill_id,subject_id" />
+		<hibernate names="alumn.course.academicYear.id,alumn.course.courseLevel.id,alumn.course.courseSubject.id,alumn.course.id,alumn.customer.registry.name,alumn.customer.registry.surname,alumn.id,evaluation,id,mark,subject.academicSkill.id,subject.id" />
+	</bean>
+</dao>
