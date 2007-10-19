@@ -1,0 +1,95 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:h="http://java.sun.com/jsf/html">
+<body>
+
+<ui:composition template="/facelet/templates/aon.ui.frame.xhtml">
+
+	<ui:define name="content">
+		
+		<t:div styleClass="aon-header" id="aon-header-container" forceId="#{true}">
+			<h:panelGrid columns="2" styleClass="aon-table-default"
+					columnClasses="aon-header-leftGroup,aon-header-rightGroup" dir="true">
+				<h:panelGroup>
+					<t:div styleClass="aon-logo">
+						<h:graphicImage
+							url="#{aonConfiguration.applicationLogoContextRelativePath}"
+							alt="#{appBundle.aon_application_title}"/>
+					</t:div>
+					<t:div styleClass="aon-applicationName">
+						<h:outputText value="#{appBundle.aon_application}" /> 
+					</t:div>				
+				</h:panelGroup>
+	
+				<t:panelGrid columns="2" styleClass="aon-table-default" cellpadding="0"
+					columnClasses="aon-header-userAdOnLeft, aon-header-userAdOnRight" >
+
+					<t:div rendered="#{aonConfiguration.properties.middleHeader == null}">
+						<f:verbatim>&#160;</f:verbatim>
+					</t:div>
+			
+					<t:div rendered="#{aonConfiguration.properties.middleHeader != null}">
+						<h:outputText escape="false" value="#{aonConfiguration.properties.middleHeader}" />
+					</t:div>
+
+					<t:panelGroup>		
+						<t:div styleClass="aon-header-menu">
+							<t:div styleClass="aon-header-menu-item">
+								<h:outputLink styleClass="aon-header-menu-item-link"
+									target="_top" 
+									value="${facesContext.externalContext.requestContextPath}">
+									<h:outputText value="#{bundle.aon_home}" />
+								</h:outputLink>
+							</t:div>
+							<t:div styleClass="aon-header-menu-item">
+								<h:outputLink styleClass="aon-header-menu-item-link"
+									onclick="window.open('${facesContext.externalContext.requestContextPath}/facelet/about/accelerators.faces','','height=401,width=500,status=no,toolbar=no,menubar=no,location=no');"
+									value="#">
+									<h:outputText value="#{bundle.aon_help}" />
+								</h:outputLink>
+							</t:div>
+							<t:div styleClass="aon-header-menu-item">
+								<h:outputLink styleClass="aon-header-menu-item-link" style="border-right:0;"
+									onclick="window.open('${facesContext.externalContext.requestContextPath}/facelet/about/content.faces','','height=401,width=505,status=no,toolbar=no,menubar=no,location=no,resizable=no');"
+									value="#" >
+									<h:outputText value="#{bundle.aon_about}"  />
+								</h:outputLink>
+							</t:div>
+						<!--
+							<t:div styleClass="aon-header-menu-item">
+								<h:outputLink styleClass="aon-header-menu-item-link"
+									target="_blank"
+									value="#{user.adminConsoleUrl}">
+									<h:outputText value="Seguridad" />
+								</h:outputLink>
+							</t:div>
+						-->
+							<t:div styleClass="aon-header-menu-item" >
+								<h:form style="display:inline;" >
+									<h:commandLink styleClass="aon-header-menu-item-link" style="border-right:0;"
+											onclick="parent.window.close();"
+											target="_top" 
+											actionListener="#{user.onLogout}">
+										<h:outputText value="#{securityBundle.aon_login_user_logout}" />
+									</h:commandLink>
+								</h:form>
+							</t:div>
+						</t:div>
+						<t:div styleClass="aon-header-userAdOnRight">
+							<h:outputText value="#{securityBundle.aon_login_user}: " styleClass="aon-header-information-description"/>
+							<h:outputText value="#{user.userManager.userFromPrincipal.name}" styleClass="aon-header-information-item" />
+						</t:div>
+					</t:panelGroup>
+				</t:panelGrid>
+			</h:panelGrid>	
+			<t:div styleClass="aon-header-bottom">
+				<f:verbatim>&#160;</f:verbatim>
+			</t:div>	
+		</t:div>
+	</ui:define>
+</ui:composition>
+</body>
+</html>

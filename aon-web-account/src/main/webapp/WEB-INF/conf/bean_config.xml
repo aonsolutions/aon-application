@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE bean-config 
+	PUBLIC "-//CODE-AON//DTD Bean Config//EN" 
+	"http://co-de.com/aon/bean-config.dtd">
+
+<bean-config>
+	
+	<bean description="Listener para escribir los acumulados por cuenta">
+		<pojo>com.code.aon.account.AccountEntryDetail</pojo>
+		<listeners>
+	        <listener>com.code.aon.account.event.AccountSummaryBeanListener</listener>
+		</listeners>
+		<vetoListeners>
+	        <vetoListener>com.code.aon.account.event.AccountSummaryBeanVetoListener</vetoListener>
+		</vetoListeners>
+	</bean>
+
+</bean-config>

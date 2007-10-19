@@ -1,0 +1,87 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:h="http://java.sun.com/jsf/html">
+<body>
+
+<ui:composition template="/facelet/templates/aon.ui.form.xhtml">
+	<ui:define name="content">
+
+		<h:form id="autConceptList">
+
+			<ui:include src="/facelet/shared/gridToolbar.xhtml">
+				<ui:param name="controller" value="#{autConcept}" />
+			</ui:include>
+
+			<t:div forceId="#{true}" id="aon-scroll-area">
+				<t:div styleClass="aon-scroll-area-internal">
+					<t:div styleClass="aon-table-hack">
+						<t:dataTable id="autConceptDataList" value="#{autConcept.model}"
+							rows="20" var="to" rowOnMouseOver="selectRow( this )"
+							rowOnMouseOut="unselectRow( this )" rowOnClick="sendRow( this )"
+							styleClass="aon-edit-table" headerClass="aon-edit-table-header"
+							footerClass="aon-edit-table-footer"
+							rowClasses="aon-table-row-odd, aon-table-row-even"
+							columnClasses="aon-edit-table-body aon-edit-table-body-string, aon-edit-table-body-string, aon-edit-table-body-string, aon-edit-table-body aon-edit-table-body-buttons">
+
+							<h:column>
+								<f:facet name="header">
+									<h:outputText value="#{accountBundle.aon_autConcept_description}" />
+								</f:facet>
+
+								<t:commandLink immediate="#{true}"
+									styleClass="aon-table-row-selected"
+									rendered="#{to.id!=autConcept.to.id}"
+									actionListener="#{autConcept.onSelect}" />
+
+								<t:outputText value="#{to.description}" id="Period_description-LABEL"
+									rendered="#{to.id!=autConcept.to.id}" />
+								<t:outputLabel for="Period_description-EDIT"
+									value="#{accountBundle.aon_autConcept_description}" rendered="#{false}" />
+								<t:inputText rendered="#{to.id==autConcept.to.id}"
+									disabled="true" id="Period_description-EDIT" style="width:100%"
+									styleClass="aon-form-input-text" value="#{autConcept.to.description}"
+									required="#{true}" />
+
+								<f:facet name="footer">
+									<t:div id="Period_description-NEW-DIV">
+										<t:commandButton id="reset" alt="[#{bundle.aon_reset}]"
+											value=""
+											styleClass="aon-edit-table-icon-button aon-edit-table-icon-button-new"
+											actionListener="#{autConcept.onReset}"
+											rendered="#{!autConcept.new}"
+											accesskey="#{bundle.aon_key_new_line}">
+										</t:commandButton>
+										<h:outputLabel for="Period_description-NEW"
+											value="#{accountBundle.aon_autConcept_description}" rendered="#{false}" />
+										<h:inputText id="Period_description-NEW" rendered="#{autConcept.new}"
+											style="width:100%" styleClass="aon-form-input-text"
+											value="#{autConcept.to.description}" required="#{true}" />
+									</t:div>
+								</f:facet>
+							</h:column>
+
+							<ui:include src="/facelet/shared/gridLineToolbar.xhtml">
+								<ui:param name="controller" value="#{autConcept}" />
+							</ui:include>
+
+						</t:dataTable>
+					</t:div>
+
+					<ui:include src="/facelet/shared/dataScroller.xhtml">
+						<ui:param name="dataTable" value="autConceptDataList" />
+						<ui:param name="model" value="#{autConcept.model}" />
+					</ui:include>
+
+				</t:div>
+			</t:div>
+		</h:form>
+		<h:form id="placeList" target="list" />
+	</ui:define>
+
+</ui:composition>
+
+</body>
+</html>

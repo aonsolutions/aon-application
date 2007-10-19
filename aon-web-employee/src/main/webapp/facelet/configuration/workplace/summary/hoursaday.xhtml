@@ -1,0 +1,220 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:h="http://java.sun.com/jsf/html">
+<body>
+<ui:composition template="/facelet/templates/aon.ui.form.xhtml">
+
+	<ui:define name="content">
+
+		<h:form id="workplaceScheduleForm">
+
+			<t:div styleClass="aon-content-menu-aux" >
+				<h:outputText value="#{workplace.to.description}" />
+			</t:div>
+
+			<t:div id="aon-content-menu" forceId="#{true}" styleClass="aon-content-menu" rendered="#{!workplace.new}" >
+				<t:panelGrid columns="4" cellpadding="0" cellspacing="0" border="0">
+					<t:panelGroup>
+							<t:commandLink id="workplace_data" forceId="#{true}" value="#{appBundle.aon_workplace_data}" 
+								action="workplace_form" 
+								styleClass="aon-content-menu-item" />
+					</t:panelGroup>
+					<t:panelGroup>
+							<t:commandLink id="workplace_calendar" forceId="#{true}" value="#{rBundle.aon_calendar_data}"
+								actionListener="#{workplace.onSchedule}" action="#{planner.calendarOutcome}" 
+								styleClass="aon-content-menu-item" />
+					</t:panelGroup>	
+					<t:panelGroup>	
+							<t:commandLink id="employee_incidences" forceId="#{true}" value="#{appBundle.aon_employee_incidences}"
+								actionListener="#{incidences.onWorkPlace}" action="workplace_incidences" 
+								styleClass="aon-content-menu-item" />
+					</t:panelGroup>	
+					<t:panelGroup>
+							<t:commandLink id="workplace_hoursaday" forceId="#{true}" value="#{appBundle.aon_employee_hoursaday}"
+								actionListener="#{weeklysummary.onInit}" action="workplace_hoursaday" 
+								styleClass="aon-content-menu-item-active" />
+					</t:panelGroup>	
+				</t:panelGrid>
+			</t:div>
+		
+			<!--  toolbar navigation -->
+			<t:div id="aon-content-toolbar" forceId="#{true}" styleClass="aon-content-toolbar" >
+				<t:div styleClass="aon-content-toolbar-internal">
+					<t:div styleClass="aon-content-toolbar-item-group">
+						<t:commandButton id="cancel" value="#{bundle.aon_cancel}"
+							forceId="#{true}" immediate="#{true}" action="workplace"
+							actionListener="#{workplace.onCancel}"
+							onclick="return (confirm('#{bundle.aon_cancel_confirm}'))"
+							styleClass="aon-content-toolbar-item aon-content-toolbar-item-cancel"
+							onmouseover="this.className='aon-content-toolbar-item aon-content-toolbar-item-hover aon-content-toolbar-item-cancel'"
+							onmouseout="this.className='aon-content-toolbar-item aon-content-toolbar-item-cancel'" 
+							accesskey="#{bundle.aon_key_cancel}"/>
+					</t:div>
+				</t:div>
+			</t:div>
+		
+			<t:div id="aon-scroll-area" forceId="#{true}">
+				<t:div styleClass="aon-scroll-area-internal">
+					<!-- start of bag panel -->
+					<!-- start of flow layout -->
+					<h:panelGrid columns="2" cellspacing="0" cellpadding="0" dir="true" 
+								columnClasses="aon-form-table-column-odd-label, aon-form-table-mainColumn"> 
+		
+					   	<t:div style="padding:0em 1em 0 0;" >
+						   	<t:div id="plannerNavigator" forceId="#{true}" style="border:#CCC 1px solid;padding:1em" >
+						        <t:inputCalendar
+						            monthYearRowClass="yearMonthHeader"
+						            weekRowClass="weekHeader"
+						            currentDayCellClass="currentDayCell"
+						            value="#{weeklysummary.date}"
+						            valueChangeListener="#{weeklysummary.calendarValueChanged}" />
+							</t:div>
+						</t:div>
+
+					    <t:panelGrid columns="1" cellpadding="0" cellspacing="0" width="100%" border="0">
+							<t:div style="white-space:nowrap;padding-right:5px;">
+								<t:commandLink styleClass="aon-datascroller-buttons aon-datascroller-button-previous" />
+								<h:outputText value="#{weeklysummary.date}" styleClass="aon-datascroller-text" style="padding:0 0.5em;" >
+									<f:convertDateTime type="date" pattern="EEE, d MMM yyyy" timeZone="ETC/GMT-2" />
+								</h:outputText>
+								<t:commandLink styleClass="aon-datascroller-buttons aon-datascroller-button-next" />
+						    </t:div>
+
+							<t:div >
+								<t:dataTable id="HoursDataList" var="to" value="#{weeklysummary.sumaries}" 
+									styleClass="aon-edit-table" style="width:100%;"
+									headerClass="aon-edit-table-header"
+									footerClass="aon-edit-table-footer" rowIndexVar="rowIndex"
+									rows="20"
+									rowClasses="aon-edit-table-row-odd,aon-edit-table-row-even"
+									rowOnMouseOver="selectRow( this )"
+									rowOnMouseOut="unselectRow( this )" rowOnClick="sendRow( this )"
+									cellpadding="0" cellspacing="0"
+									columnClasses="aon-edit-table-body aon-edit-table-body-string,
+													aon-edit-table-body aon-edit-table-body-string,
+													aon-edit-table-body aon-edit-table-body-string,
+													aon-edit-table-body aon-edit-table-body-string,
+													aon-edit-table-body aon-edit-table-body-string,
+													aon-edit-table-body aon-edit-table-body-string,
+													aon-edit-table-body aon-edit-table-body-string,
+													aon-edit-table-body aon-edit-table-body-string,
+													aon-edit-table-body aon-edit-table-body-string,
+												   	aon-edit-table-body aon-edit-table-body-buttons">
+
+									<h:column>
+										<f:facet name="header">
+											<t:outputText value="#{appBundle.record_employee}" />
+										</f:facet>
+										<t:outputText value="#{to.name}" />
+										<t:commandLink
+											styleClass="aon-table-row-selected"
+											rendered="#{to!=weeklysummary.selected}"
+											actionListener="#{weeklysummary.onSelect}" />
+									</h:column>
+
+									<h:column>
+										<f:facet name="header">
+											<t:outputText value="L" />
+										</f:facet>
+										<t:outputText value="#{to.m}" rendered="#{to!=weeklysummary.selected}" />
+										<t:inputText styleClass="aon-form-input-text"
+											rendered="#{to==weeklysummary.selected}" id="Weeklysummary_m-Edit"
+											forceId="#{true}" value="#{weeklysummary.selected.m}" size="3" />
+									</h:column>
+									<h:column>
+										<f:facet name="header">
+											<t:outputText value="M" />
+										</f:facet>
+										<t:outputText value="#{to.t}" rendered="#{to!=weeklysummary.selected}" />
+										<t:inputText styleClass="aon-form-input-text"
+											rendered="#{to==weeklysummary.selected}" id="Weeklysummary_t-Edit"
+											forceId="#{true}" value="#{weeklysummary.selected.t}" size="3" />
+									</h:column>
+									<h:column>
+										<f:facet name="header">
+											<t:outputText value="Mi" />
+										</f:facet>
+										<t:outputText value="#{to.w}" rendered="#{to!=weeklysummary.selected}" />
+										<t:inputText styleClass="aon-form-input-text"
+											rendered="#{to==weeklysummary.selected}" id="Weeklysummary_w-Edit"
+											forceId="#{true}" value="#{weeklysummary.selected.w}" size="3" />
+									</h:column>
+									<h:column>
+										<f:facet name="header">
+											<t:outputText value="J" />
+										</f:facet>
+										<t:outputText value="#{to.th}" rendered="#{to!=weeklysummary.selected}" />
+										<t:inputText styleClass="aon-form-input-text"
+											rendered="#{to==weeklysummary.selected}" id="Weeklysummary_th-Edit"
+											forceId="#{true}" value="#{weeklysummary.selected.th}" size="3" />
+									</h:column>
+									<h:column>
+										<f:facet name="header">
+											<t:outputText value="V" />
+										</f:facet>
+										<t:outputText value="#{to.f}" rendered="#{to!=weeklysummary.selected}" />
+										<t:inputText styleClass="aon-form-input-text"
+											rendered="#{to==weeklysummary.selected}" id="Weeklysummary_f-Edit"
+											forceId="#{true}" value="#{weeklysummary.selected.f}" size="3" />
+									</h:column>
+									<h:column>
+										<f:facet name="header">
+											<t:outputText value="S" />
+										</f:facet>
+										<t:outputText value="#{to.s}" rendered="#{to!=weeklysummary.selected}" />
+										<t:inputText styleClass="aon-form-input-text"
+											rendered="#{to==weeklysummary.selected}" id="Weeklysummary_s-Edit"
+											forceId="#{true}" value="#{weeklysummary.selected.s}" size="3" />
+									</h:column>
+									<h:column>
+										<f:facet name="header">
+											<t:outputText value="D" />
+										</f:facet>
+										<t:outputText value="#{to.su}" rendered="#{to!=weeklysummary.selected}" />
+										<t:inputText styleClass="aon-form-input-text"
+											rendered="#{to==weeklysummary.selected}" id="Weeklysummary_su-Edit"
+											forceId="#{true}" value="#{weeklysummary.selected.su}" size="3" />
+									</h:column>
+									<h:column>
+										<f:facet name="header">
+											<t:outputText value="Total" />
+										</f:facet>
+										<t:outputText value="#{to.total}" />
+									</h:column>
+
+									<t:column width="60">
+										<f:facet name="header">
+											<f:verbatim>&#160;</f:verbatim>
+										</f:facet>
+										<t:div rendered="#{to==weeklysummary.selected}">
+											<t:commandButton title="#{bundle.aon_save}"
+												styleClass="aon-edit-table-icon-button aon-edit-table-icon-button-save" value=""
+												actionListener="#{weeklysummary.onAdd}" />
+											<t:commandButton title="#{bundle.aon_cancel}"
+												styleClass="aon-edit-table-icon-button aon-edit-table-icon-button-cancel" value=""
+												onclick="return (confirm('#{bundle.aon_cancel_confirm}'));"
+												actionListener="#{weeklysummary.onCancel}" immediate="true" />
+											<t:commandButton title="#{bundle.aon_remove}"
+												styleClass="aon-edit-table-icon-button aon-edit-table-icon-button-delete" value=""
+												actionListener="#{weeklysummary.onRemove}" immediate="true"
+												onclick="return (confirm('#{bundle.aon_remove_confirm}'));" />
+										</t:div>
+									</t:column>
+								</t:dataTable>
+						    </t:div>
+						</t:panelGrid>
+					</h:panelGrid>
+
+				</t:div>
+			</t:div>
+		
+		</h:form>
+
+	</ui:define>
+
+</ui:composition>
+</body>
+</html>

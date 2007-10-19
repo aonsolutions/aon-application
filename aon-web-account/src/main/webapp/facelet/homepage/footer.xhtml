@@ -1,0 +1,31 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core" 
+	xmlns:t="http://myfaces.apache.org/tomahawk"      
+	xmlns:h="http://java.sun.com/jsf/html">
+<body>	
+
+<ui:composition template="/facelet/templates/aon.ui.frame.xhtml">
+
+<ui:define name="content">
+	<t:div styleClass="aon-foot" id="aon-foot" forceId="#{true}">	
+		<h:panelGrid columns="2" styleClass="aon-table-default" columnClasses="aon-foot-leftGroup,aon-foot-rightGroup" dir="true">
+			<h:panelGroup>
+				<t:div styleClass="aon-foot-leftGroup-item"><h:outputText value="#{accountBundle.aon_application_footer}" /></t:div>
+			</h:panelGroup>
+			
+			<h:panelGroup rendered="#{aonConfiguration.properties.rightFooter == null}">
+				<f:verbatim>&#160;</f:verbatim>
+			</h:panelGroup>
+
+			<h:panelGroup rendered="#{aonConfiguration.properties.rightFooter != null}">
+				<h:outputText escape="false" value="#{aonConfiguration.properties.rightFooter}" />
+			</h:panelGroup>
+		</h:panelGrid>			
+	</t:div>
+  </ui:define>  
+</ui:composition>
+
+</body>
+</html>

@@ -1,0 +1,104 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:h="http://java.sun.com/jsf/html">
+<body>
+
+<ui:composition template="/facelet/templates/aon.ui.content.xhtml">
+
+	<ui:define name="head">
+		<ui:include src="/facelet/shared/head.xhtml" />
+	</ui:define>
+
+	<ui:define name="content">
+		
+		<h:form id="recordForm">
+
+			<t:div styleClass="aon-content-subtitle" id="aon-content-subtitle"
+				forceId="#{true}">
+				<t:div styleClass="aon-content-subtitle-internal">
+				<h:outputText
+					value="#{course.new?(bundle.aon_reset):(bundle.aon_editing)}"/>
+				</t:div>
+			</t:div>
+			
+			<t:div id="aon-scroll-area" forceId="#{true}">
+				<t:div styleClass="aon-scroll-area-internal">
+
+					<h:panelGrid columns="2" cellpadding="0" cellspacing="0"
+						styleClass="aon-form-table" style="width:100%"
+						columnClasses="aon-form-table-column-odd,aon-form-table-column-even">
+
+							<t:outputLabel for="Employee_id"
+								styleClass="aon-form-input-text-label"
+								value="#{appBundle.record_employee}" />
+							<h:panelGroup>
+								<t:inputText id="Employee_id" size="5" forceId="#{true}"
+									styleClass="aon-form-input-text" required="true"
+									onchange="findLookupAndSubmit(this.form, event,'#{facesContext.externalContext.request.contextPath}','com.code.aon.company.resources.Employee');"
+									value="#{course.employee.id}" 
+									valueChangeListener="#{record.employeeChanged}"/>
+								<h:commandButton styleClass="aon-form-lookup-button"
+									id="findEmployee" value="" immediate="true"
+									onclick="selectWindow(this, 'placeList', '#{employeeSearch.encodedPagePath}');return false;" />	
+							</h:panelGroup>
+							
+							<t:outputLabel for="Employee_registry_document"
+								styleClass="aon-form-input-text-label"
+								value="#{rBundle.aon_cif}" />
+							<t:inputText id="Employee_registry_document" forceId="#{true}"
+									styleClass="aon-form-input-text-disabled" disabled="true"
+									size="40" value="#{course.employee.registry.document}" />
+							
+							<t:outputLabel for="Employee_registry_name"
+								styleClass="aon-form-input-text-label"
+								value="#{rBundle.aon_name}" />
+							<t:inputText id="Employee_registry_name" forceId="#{true}"
+									styleClass="aon-form-input-text-disabled" disabled="true"
+									size="40" value="#{course.employee.registry.name}" />
+									
+							<t:outputLabel for="Employee_registry_surname"
+								styleClass="aon-form-input-text-label"
+								value="#{rBundle.aon_surname}" />
+							<t:inputText id="Employee_registry_surname" forceId="#{true}"
+									styleClass="aon-form-input-text-disabled" disabled="true"
+									size="40" value="#{course.employee.registry.surname}" />
+					</h:panelGrid>
+					
+					<t:panelTabbedPane styleClass="aon-tabpanel" 
+									activeTabStyleClass="aon-tabpanel-active" 
+									inactiveTabStyleClass="aon-tabpanel-inactive" 
+									serverSideTabSwitch="true"
+									rendered="#{course.employee.id!=null}" style="width:590px;">
+
+					 	<t:tabChangeListener type="com.code.aon.ui.record.controller.RecordController" />
+
+						<t:panelTab id="courses" label="#{appBundle.record_courses}" >
+							<ui:include src="/facelet/record/tabs/course.xhtml" />
+						</t:panelTab>
+						
+						<t:panelTab id="works" label="#{appBundle.record_works}" >
+							<ui:include src="/facelet/record/tabs/work.xhtml" />
+						</t:panelTab>
+
+						<t:panelTab id="position" label="#{appBundle.record_position}" >
+							<ui:include src="/facelet/record/tabs/position.xhtml" />
+						</t:panelTab>
+						
+						<t:panelTab id="contract" label="#{appBundle.record_contracts}" >
+							<ui:include src="/facelet/record/tabs/contract.xhtml" />
+						</t:panelTab>
+					</t:panelTabbedPane>
+
+				</t:div>
+			</t:div>
+		</h:form>
+
+		<h:form id="placeList" target="list" />
+	</ui:define>
+</ui:composition>
+
+</body>
+</html>

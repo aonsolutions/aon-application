@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<root ref="firstContent" key="aon_employee_management" descriptionKey="aon_application_menu_title">
+	<menu ref="content" key="aon_configuration" >
+		<option ref="company" key="aon_company" descriptionKey="aon_company" />
+		<option ref="incidence" key="aon_incidence_types" descriptionKey="aon_incidence_types" />
+		<option ref="evaluate" key="aon_evaluate_types" descriptionKey="aon_evaluate_types" />
+		<option ref="expenditures" key="aon_expenditures_items" descriptionKey="aon_expenditures_items" />
+	</menu>
+	<menu ref="content" key="aon_calendar_management" >
+		<option ref="calendars_form" key="aon_calendars" descriptionKey="aon_calendars" >
+			<actionListener action="#{calendars.onLoad}" />
+		</option>
+		<option ref="incidences_form" key="aon_employee_incidences" descriptionKey="aon_employee_incidences" >
+			<actionListener action="#{incidences.onLoad}" />
+		</option>
+	</menu>
+	<menu ref="content" key="aon_employee_management" >
+		<option ref="employee" key="aon_employee" >
+			<actionListener action="#{employee.onReset}"/>
+		</option>
+		<option ref="employee_expenditures" key="aon_employee_expenditures" descriptionKey="aon_employee_expenditures" >
+			<actionListener action="#{expenditures.onReset}" />
+		</option>
+	</menu>
+	<option ref="record" key="aon_record" descriptionKey="aon_record"  >
+		<actionListener action="#{record.onReset}"/>
+	</option>
+	<option ref="curriculum" key="aon_cv_management" >
+		<actionListener action="#{curriculum.onReset}" />
+	</option>
+	<menu ref="content" key="aon_reports" >
+		<option ref="employee_hours" key="aon_hours" descriptionKey="aon_hours"  >
+			<actionListener action="#{hourssummary.onLoad}" />
+		</option>
+		<option ref="incidences_report" key="aon_employee_incidences" descriptionKey="aon_employee_incidences" >
+			<actionListener action="#{incidencesReport.onReset}" />
+		</option>
+		<option ref="expenditures_report" key="aon_employee_expenditures" descriptionKey="aon_employee_expenditures" >
+			<actionListener action="#{expendituresReport.onReset}" />
+		</option>
+		<option ref="resources_report" key="aon_employee_resources" descriptionKey="aon_employee_resources" >
+			<actionListener action="#{resourcesReport.onReset}" />
+		</option>
+		<option ref="seniority_report" key="aon_employee_seniority" descriptionKey="aon_employee_seniority" >
+			<actionListener action="#{seniorityReport.onReset}" />
+		</option>
+	</menu>
+	<menu ref="content" key="aon_utilities" >
+		<menu ref="content" key="aon_salary_calculation" >
+			<option ref="expenses_from_gross_salary" key="aon_expenses_from_gross_salary" descriptionKey="aon_expenses_from_gross_salary_desc" />
+			<option ref="expenses_from_net_salary" key="aon_expenses_from_net_salary" descriptionKey="aon_expenses_from_net_salary_desc" />
+			<option ref="worker_dismissal" key="aon_worker_dismissal" descriptionKey="aon_worker_dismissal_desc" />
+		</menu>
+	</menu>
+</root>
