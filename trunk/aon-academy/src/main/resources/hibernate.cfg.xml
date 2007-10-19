@@ -1,0 +1,75 @@
+<!DOCTYPE hibernate-configuration PUBLIC
+	"-//Hibernate/Hibernate Configuration DTD 3.0//EN"
+	"http://hibernate.sourceforge.net/hibernate-configuration-3.0.dtd">
+
+<hibernate-configuration>
+
+	<session-factory>
+
+		<property name="connection.url">jdbc:mysql://192.168.2.4:3306/aon_academy?autoReconnect=true</property>
+		<property name="connection.username">dbuser</property>		
+		<property name="show_sql">false</property>		
+		<property name="dialect">org.hibernate.dialect.MySQLInnoDBDialect</property>
+		<property name="connection.driver_class">org.gjt.mm.mysql.Driver</property>		
+		<property name="connection.password">serubd2000</property>		
+
+		<!-- Mapping files -->
+		<mapping class="com.code.aon.academy.Course"/>
+		<mapping class="com.code.aon.academy.CourseAlumn"/>
+		<mapping class="com.code.aon.academy.CourseInstructor"/>
+		<mapping class="com.code.aon.academy.CourseLevel"/>
+		<mapping class="com.code.aon.academy.CourseSchedule"/>
+		<mapping class="com.code.aon.academy.CourseSubject"/>
+		<mapping class="com.code.aon.academy.AcademicYear"/>
+		<mapping class="com.code.aon.academy.AlumnLoan"/>
+		<mapping class="com.code.aon.academy.AcademicSkill"/>
+		<mapping class="com.code.aon.academy.Qualification"/>				
+		<mapping class="com.code.aon.academy.Absence"/>
+		<mapping class="com.code.aon.academy.CourseAcademicSkill"/>
+		<mapping class="com.code.aon.academy.Mark"/>
+		<mapping class="com.code.aon.academy.EvaluationObservation"/>
+		<mapping class="com.code.aon.academy.Observation"/>
+		<mapping class="com.code.aon.academy.QualitySkill"/>
+		<mapping class="com.code.aon.academy.CourseEvaluation"/>
+		<mapping class="com.code.aon.academy.CourseObservation"/>
+		
+		<mapping class="com.code.aon.customer.Customer"/>
+		<mapping class="com.code.aon.sales.CustomerFee"/>
+		<mapping class="com.code.aon.customer.CustomerSegment"/>
+		<mapping class="com.code.aon.sales.Seller"/>
+		<mapping class="com.code.aon.sales.Sales"/>
+		<mapping class="com.code.aon.sales.SalesDetail"/>
+		<mapping class="com.code.aon.sales.PointOfSale"/>
+		<mapping class="com.code.aon.sales.SalesAttachment"/>
+		<mapping class="com.code.aon.sales.SalesType"/>
+		<mapping class="com.code.aon.sales.FinanceSales"/>
+
+		<mapping class="com.code.aon.product.Tariff"/>
+		<mapping class="com.code.aon.product.Item"/>
+		<mapping class="com.code.aon.product.Product"/>
+		<mapping class="com.code.aon.product.Tax"/>
+		<mapping class="com.code.aon.product.ProductCategory"/>
+		<mapping class="com.code.aon.product.ProductCategoryGroup"/>
+		<mapping class="com.code.aon.product.Brand"/>
+
+		<mapping class="com.code.aon.company.resources.Employee"/>
+		<mapping class="com.code.aon.company.WorkPlace"/>
+		<mapping class="com.code.aon.company.WorkActivity"/>
+		
+		<mapping class="com.code.aon.finance.Finance"/>
+		<mapping class="com.code.aon.finance.Invoice"/>
+		<mapping class="com.code.aon.finance.InvoiceDetail"/>
+		<mapping class="com.code.aon.finance.Bank"/>
+		<mapping class="com.code.aon.finance.PayMethod"/>
+		
+		<mapping class="com.code.aon.registry.Registry"/>
+		<mapping class="com.code.aon.registry.RegistryAddress"/>
+		<mapping class="com.code.aon.registry.RegistryMedia"/>
+		<mapping class="com.code.aon.registry.RegistryAttachment"/>
+		<mapping class="com.code.aon.registry.Category"/>		
+		
+		<mapping class="com.code.aon.geozone.GeoZone"/>
+		
+	</session-factory>
+
+</hibernate-configuration>
