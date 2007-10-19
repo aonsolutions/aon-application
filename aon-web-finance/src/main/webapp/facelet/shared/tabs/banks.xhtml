@@ -1,0 +1,158 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:h="http://java.sun.com/jsf/html">
+<body>
+
+<ui:composition>
+
+	<t:div styleClass="aon-form-group" rendered="#{!finance.new}">
+		<t:div styleClass="aon-form-group-title">
+			<t:outputLabel for="#{dataTable}" value="#{financeBundle.aon_banks}" />
+		</t:div>
+
+		<t:div styleClass="aon-form-group-body">
+
+			<t:dataTable id="#{dataTable}" value="#{controllerAlias.model}" var="to"
+				rowOnMouseOver="selectRow( this )"
+				rowOnMouseOut="unselectRow( this )" rowOnClick="sendRow( this )"
+				styleClass="aon-edit-table" headerClass="aon-edit-table-header"
+				footerClass="aon-edit-table-footer" rows="20" rowIndexVar="rowIndex"
+				rowClasses="aon-edit-table-row-odd,aon-edit-table-row-even"
+				columnClasses=" aon-edit-table-body-icon,
+							aon-edit-table-body aon-edit-table-body-string,
+							aon-edit-table-body aon-edit-table-body-string,
+							aon-edit-table-body-buttons">
+
+				<h:column>
+					<f:facet name="header">
+						<f:verbatim>&#160;</f:verbatim>
+					</f:facet>
+					<f:verbatim>&#160;</f:verbatim>
+					<t:commandLink immediate="#{true}" rendered="#{to!=controllerAlias.to}"
+						styleClass="aon-table-row-selected"
+						actionListener="#{controllerAlias.onSelect}">
+					</t:commandLink>
+					<f:facet name="footer">
+						<t:div>
+							<t:commandButton id="reset"
+								styleClass="aon-edit-table-icon-button aon-edit-table-icon-button-new"
+								value="" immediate="#{true}"
+								rendered="#{!controllerAlias.new}"
+								actionListener="#{controllerAlias.onReset}"
+								accesskey="#{bundle.aon_key_new_line}">
+							</t:commandButton>
+						</t:div>
+					</f:facet>
+				</h:column>
+
+				<t:column width="300">
+					<f:facet name="header">
+						<t:outputText value="#{financeBundle.aon_bank_name}" />
+					</f:facet>
+					<t:outputText value="#{to.bank.name}"
+						rendered="#{to!=controllerAlias.to}" />
+					<t:div rendered="#{to==controllerAlias.to}">
+						<t:inputText id="Bank_Lookup_id-Edit" size="5" forceId="#{true}"
+							styleClass="aon-form-input-text"
+							onchange="return findBeanLookup(event,'#{facesContext.externalContext.requestContextPath}','bankLookup','Bank_Lookup_id-Edit[#{rowIndex}],Bank_Lookup_name-Edit[#{rowIndex}]');"
+							value="#{controllerAlias.to.bank.id}" />
+						<h:commandButton id="find_Bank_Lookup_id-Edit"
+							styleClass="aon-form-lookup-button" value="" immediate="true"
+							onclick="lookupSearchWindow(this, 'placeList', '#{bankLookup.encodedSearchPagePath}','Bank_Lookup_id-Edit[#{rowIndex}],Bank_Lookup_name-Edit[#{rowIndex}]');return false;" />
+						<t:inputText id="Bank_Lookup_name-Edit" forceId="#{true}"
+							styleClass="aon-form-input-text-disabled"
+							disabledOnClientSide="true" size="30"
+							value="#{controllerAlias.to.bank.name}" />
+					</t:div>
+					<f:facet name="footer">
+						<t:div rendered="#{controllerAlias.new}">
+							<t:inputText id="Bank_Lookup_id-New" size="5" forceId="#{true}"
+								styleClass="aon-form-input-text"
+								onchange="return findBeanLookup(event,'#{facesContext.externalContext.requestContextPath}','bankLookup','Bank_Lookup_id-New,Bank_Lookup_name-New');"
+								value="#{controllerAlias.to.bank.id}" />
+							<h:commandButton id="find_Bank_Lookup_id-New"
+								styleClass="aon-form-lookup-button" value="" immediate="true"
+								onclick="lookupSearchWindow(this, 'placeList', '#{bankLookup.encodedSearchPagePath}','Bank_Lookup_id-New,Bank_Lookup_name-New');return false;" />
+							<t:inputText id="Bank_Lookup_name-New" forceId="#{true}"
+								styleClass="aon-form-input-text-disabled"
+								disabledOnClientSide="true" size="30"
+								value="#{controllerAlias.to.bank.name}" />
+						</t:div>
+					</f:facet>
+				</t:column>
+
+				<t:column width="50">
+					<f:facet name="header">
+						<t:outputText value="#{financeBundle.aon_bank_account}" />
+					</f:facet>
+					<t:outputText value="#{to.bankAccount}"
+						rendered="#{to!=controllerAlias.to}" />
+					<t:inputText value="#{controllerAlias.to.bankAccount}"
+						styleClass="aon-form-input-text" rendered="#{to==controllerAlias.to}"
+						required="#{true}" size="35" />
+					<f:facet name="footer">
+						<t:div>
+							<t:inputText value="#{controllerAlias.to.bankAccount}"
+								styleClass="aon-form-input-text" rendered="#{controllerAlias.new}"
+								required="#{true}" size="35" />
+						</t:div>
+					</f:facet>
+				</t:column>
+
+				<h:column>
+					<f:facet name="header">
+						<f:verbatim>&#160;</f:verbatim>
+					</f:facet>
+					<t:div>
+						<f:verbatim rendered="#{to!=controllerAlias.to}">&#160;</f:verbatim>
+						<t:commandButton title="#{bundle.aon_save}"
+							actionListener="#{controllerAlias.onAccept}"
+							rendered="#{to==controllerAlias.to}" value=""
+							styleClass="aon-edit-table-icon-button aon-edit-table-icon-button-save"
+							accesskey="#{bundle.aon_key_save_line}" />
+						<t:commandButton title="#{bundle.aon_cancel}"
+							actionListener="#{controllerAlias.onCancel}" immediate="#{true}"
+							onclick="return (confirm('#{bundle.aon_cancel_confirm}'));"
+							styleClass="aon-edit-table-icon-button aon-edit-table-icon-button-cancel"
+							value="" rendered="#{to==controllerAlias.to}"
+							accesskey="#{bundle.aon_key_cancel_line}" />
+						<t:commandButton title="#{bundle.aon_remove}"
+							actionListener="#{controllerAlias.onRemove}"
+							onclick="return (confirm('#{bundle.aon_remove_confirm}'));"
+							rendered="#{to==controllerAlias.to}"
+							styleClass="aon-edit-table-icon-button aon-edit-table-icon-button-delete"
+							value="" accesskey="#{bundle.aon_key_remove_line}" />
+					</t:div>
+					<f:facet name="footer">
+						<t:div>
+							<f:verbatim rendered="#{!controllerAlias.new}">&#160;</f:verbatim>
+							<t:commandButton title="#{bundle.aon_save}"
+								actionListener="#{controllerAlias.onAccept}"
+								rendered="#{controllerAlias.new}" value=""
+								styleClass="aon-edit-table-icon-button aon-edit-table-icon-button-save"
+								accesskey="#{bundle.aon_key_save_line}" />
+							<t:commandButton title="#{bundle.aon_cancel}"
+								actionListener="#{controllerAlias.onCancel}" immediate="#{true}"
+								onclick="return (confirm('#{bundle.aon_cancel_confirm}'));"
+								rendered="#{controllerAlias.new}"
+								styleClass="aon-edit-table-icon-button aon-edit-table-icon-button-cancel"
+								value="" accesskey="#{bundle.aon_key_cancel_line}" />
+						</t:div>
+					</f:facet>
+				</h:column>
+			</t:dataTable>
+
+			<ui:include src="/facelet/shared/dataScroller.xhtml">
+				<ui:param name="dataTable" value="#{dataTable}" />
+				<ui:param name="model" value="#{controllerAlias.model}" />
+				<ui:param name="showNote" value="#{false}" />
+			</ui:include>
+
+		</t:div>
+	</t:div>	
+</ui:composition>
+</body>
+</html>
