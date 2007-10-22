@@ -13,6 +13,7 @@
 	<packaging>war</packaging>
 	<version>1.0.0</version>
 	<description>APLICACION WEB DE ACADEMIAS</description>
+	<name>APLICACION WEB DE ACADEMIAS</name>
 	<build>
 		<finalName>aon-academy</finalName>
 	</build>
