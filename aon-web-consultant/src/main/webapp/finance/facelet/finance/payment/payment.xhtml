@@ -103,8 +103,26 @@
 								popupTodayString="#{bundle.aon_popup_today}"
 								popupWeekString="#{bundle.aon_popup_week}" />
 
-							<t:outputLabel for="Finance_totalAmount"
+							<t:outputLabel for="Finance_amount"
 								value="#{financeBundle.finance_amount}"
+								styleClass="aon-form-lookup-label" />
+							<t:inputText id="Finance_amount" size="5" forceId="#{true}"
+								styleClass="aon-form-input-text-disabled"
+								value="#{financePayment.to.amount}" disabled="true">
+									<f:convertNumber pattern="#,##0.00" />
+							</t:inputText>
+
+							<t:outputLabel for="Finance_expenses"
+								value="#{financeBundle.finance_expenses}"
+								styleClass="aon-form-lookup-label" />
+							<t:inputText id="Finance_expenses" size="5" forceId="#{true}"
+								styleClass="aon-form-input-text-disabled"
+								value="#{financePayment.to.expenses}" disabled="true">
+									<f:convertNumber pattern="#,##0.00" />
+							</t:inputText>
+
+							<t:outputLabel for="Finance_totalAmount"
+								value="#{financeBundle.finance_total}"
 								styleClass="aon-form-lookup-label" />
 							<t:inputText id="Finance_totalAmount" size="5" forceId="#{true}"
 								styleClass="aon-form-input-text-disabled"
@@ -112,10 +130,10 @@
 									<f:convertNumber pattern="#,##0.00" />
 							</t:inputText>
 
-							<t:outputLabel for="Finance_payment"
+							<t:outputLabel for="Finance_payed_amount"
 								value="#{financeBundle.finance_paid}"
 								styleClass="aon-form-lookup-label" />
-							<t:inputText id="Finance_expenses" size="5" forceId="#{true}"
+							<t:inputText id="Finance_payed_amount" size="5" forceId="#{true}"
 								styleClass="aon-form-input"
 								value="#{financePayment.payedAmount}" />			
 
