@@ -35,6 +35,7 @@ import com.code.aon.finance.Finance;
 import com.code.aon.finance.FinanceBatch;
 import com.code.aon.finance.FinanceBatchDetail;
 import com.code.aon.finance.Invoice;
+import com.code.aon.finance.RegistryBank;
 import com.code.aon.finance.dao.IFinanceAlias;
 import com.code.aon.finance.enumeration.FinanceBatchStatus;
 import com.code.aon.finance.enumeration.FinanceBatchType;
@@ -213,7 +214,7 @@ public class FBatchController extends BasicController {
         }
     }
 
-	@SuppressWarnings("unused")
+    @SuppressWarnings({"unused","unchecked"})
 	public void onBatchSelected(ActionEvent event) {
         FinanceBatch fBatch = (FinanceBatch)getTo();
         if (!FinanceBatchStatus.TODO.equals(fBatch.getFinanceBatchStatus())) {
@@ -285,6 +286,7 @@ public class FBatchController extends BasicController {
 		}
 	}
 
+	@SuppressWarnings("unchecked")
     private Company obtainCompany() throws ManagerBeanException {
         IManagerBean companyBean = BeanManager.getManagerBean(Company.class);
         Iterator iter = companyBean.getList(null).iterator();
@@ -314,10 +316,11 @@ public class FBatchController extends BasicController {
         faces.responseComplete();
 	}
 
-    @SuppressWarnings("unused")
+	@SuppressWarnings({"unused","unchecked"})
     public void onRecord(ActionEvent event) throws ManagerBeanException {
         FinanceBatch fbatch = (FinanceBatch)this.getTo();
-
+        fbatch.setRegistryBank(fbatch.getRegistryBank().getId() == null?null:fbatch.getRegistryBank());
+        
         List<Finance> financeList = new LinkedList<Finance>();
         Iterator iterator = fbatch.getDetailList().iterator();
         while (iterator.hasNext()) {
@@ -367,9 +370,10 @@ public class FBatchController extends BasicController {
         fbatch.setFinanceBatchStatus(FinanceBatchStatus.RECORDED);
         getManagerBean().update(fbatch);
         loadDetails(fbatch);
+        fbatch.setRegistryBank(new RegistryBank());
     }
 
-    @SuppressWarnings("unused")
+	@SuppressWarnings({"unused","unchecked"})
     public void onUnrecord(ActionEvent event) throws ManagerBeanException {
         FinanceBatch fbatch = (FinanceBatch)this.getTo();
 
@@ -436,9 +440,11 @@ public class FBatchController extends BasicController {
             FinanceTrackingWriter.removeLastTrackingByType(fbatchDetail.getFinance(), FinanceTrackingType.RECORDED);
         }
         
+        fbatch.setRegistryBank(fbatch.getRegistryBank().getId() == null?null:fbatch.getRegistryBank());
         fbatch.setFinanceBatchStatus(fbatch.getFinanceBatchType().equals(FinanceBatchType.NONE) ? FinanceBatchStatus.TODO : FinanceBatchStatus.DONE);
         getManagerBean().update(fbatch);
         loadDetails(fbatch);
+        fbatch.setRegistryBank(new RegistryBank());
     }
 
     public Double getModelToTotal(){
