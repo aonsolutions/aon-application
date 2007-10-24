@@ -72,6 +72,7 @@
 				</executions>
 			</plugin>
 		</plugins>
+		<!-- 
 		<extensions>
 			<extension>
 				<groupId>org.apache.maven.wagon</groupId>
@@ -79,6 +80,7 @@
 				<version>1.0-beta-2</version>
 			</extension>
 		</extensions>
+		 -->
 	</build>
 
 
@@ -86,25 +88,25 @@
 		<repository>
 			<id>inhouse</id>
 			<name>Inhouse Internal Release Repository</name>
-			<url>
-				dav:http://192.168.2.4:8080/archiva/repository/inhouse
-			</url>
-			<!-- 
 				<url>
 				scp://192.168.2.4/DOCUMENTOS/MAVEN/maven2_repositories/inhouse
 				</url>
+			<!-- 
+			<url>
+				dav:http://192.168.2.4:8080/archiva/repository/inhouse
+			</url>
 			-->
 		</repository>
 		<snapshotRepository>
 			<id>inhouse_snapshot</id>
 			<name>Inhouse Internal Snapshot Repository</name>
+				<url>
+				scp://192.168.2.4/DOCUMENTOS/MAVEN/maven2_repositories/inhouse_snapshot
+				</url>
+			<!-- 
 			<url>
 				dav:http://192.168.2.4:8080/archiva/repository/inhouse_snapshot
 			</url>
-			<!-- 
-				<url>
-				scp://192.168.2.4/DOCUMENTOS/MAVEN/maven2_repositories/inhouse_snapshot
-				</url> 
 			-->
 		</snapshotRepository>
 	</distributionManagement>
@@ -130,11 +132,11 @@
 				</reportSets>
 			</plugin>
 			<!-- 
-			<plugin>
+				<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-javadoc-plugin</artifactId>
-			</plugin>
-			 -->
+				</plugin>
+			-->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-jxr-plugin</artifactId>
