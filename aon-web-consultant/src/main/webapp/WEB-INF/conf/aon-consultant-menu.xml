@@ -75,9 +75,7 @@
 			<actionListener action="#{company.onLoad}" />
 		</option> 
 		<menu ref="content" key="aon_user_management" descriptionKey="aon_user_management_desc" role="GestionUsuarios">
-			<option key="aon_user" descriptionKey="aon_user_desc" ref="user" role="Usuarios">
-				<actionListener action="#{user.onReset}" />
-			</option>
+			<option key="aon_user" descriptionKey="aon_user_desc" ref="user" role="Usuarios"/>
 			<option key="aon_work_group" descriptionKey="aon_work_group_desc" ref="workgroup" role="GruposTrabajo">
 				<actionListener action="#{workGroup.onSearch}" />
 			</option>
