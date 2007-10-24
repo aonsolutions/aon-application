@@ -135,7 +135,23 @@
 								styleClass="aon-form-lookup-label" />
 							<t:inputText id="Finance_payed_amount" size="5" forceId="#{true}"
 								styleClass="aon-form-input"
-								value="#{financePayment.payedAmount}" />			
+								value="#{financePayment.payedAmount}" />
+								
+							<h:outputLabel for="RegistryBank_Lookup_id"
+								styleClass="aon-form-input-text-label" value="#{financeBundle.aon_bank}" />
+							<t:selectOneMenu id="RegistryBank_Lookup_id"
+								styleClass="aon-form-selectOneMenu-field" forceId="#{true}"
+								onchange="return findBeanLookupExt(event,'#{facesContext.externalContext.requestContextPath}','rBankLookup','RegistryBank_Lookup_id','RegistryBank_id|RegistryBank_Lookup_id,RegistryBank_bankAccount|RegistryBank_Lookup_bankAccount');"
+								value="#{financePayment.registryBank.id}" >
+								<f:selectItem itemDisabled="true" itemValue="" itemLabel="-" />
+								<f:selectItems value="#{financeCollections.companyBanks}" />
+							</t:selectOneMenu>
+
+							<h:outputLabel for="RegistryBank_Lookup_bankAccount"
+								styleClass="aon-form-input-text-label" value="#{financeBundle.aon_bank_account}" />
+							<t:inputText id="RegistryBank_Lookup_bankAccount" value="#{financePayment.registryBank.bankAccount}"
+								styleClass="aon-form-input-text-disabled" forceId="#{true}"
+								disabledOnClientSide="true" size="35" />
 
 					</h:panelGrid>
 					<!-- end of flow layout -->
