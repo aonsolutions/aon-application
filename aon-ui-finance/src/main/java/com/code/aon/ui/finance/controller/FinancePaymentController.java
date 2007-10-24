@@ -20,6 +20,7 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.finance.Finance;
 import com.code.aon.finance.FinanceTracking;
+import com.code.aon.finance.RegistryBank;
 import com.code.aon.finance.dao.IFinanceAlias;
 import com.code.aon.finance.enumeration.FinanceStatus;
 import com.code.aon.finance.enumeration.FinanceTrackingType;
@@ -50,6 +51,8 @@ public class FinancePaymentController extends BasicController {
 	private Date fromDate;
 	
 	private Date toDate;
+	
+	private RegistryBank registryBank;
 	
 	private AccountEntryFinanceWriter writer;
 	
@@ -125,6 +128,14 @@ public class FinancePaymentController extends BasicController {
 		this.toDate = toDate;
 	}
 
+	public RegistryBank getRegistryBank() {
+		return registryBank;
+	}
+
+	public void setRegistryBank(RegistryBank registryBank) {
+		this.registryBank = registryBank;
+	}
+
 	public AccountEntryFinanceWriter getWriter() {
 		if(writer == null){
 			writer = new AccountEntryFinanceWriter();
@@ -155,6 +166,7 @@ public class FinancePaymentController extends BasicController {
 			paymentDate = new Date();
 			fromDate = null;
 			toDate = null;
+			registryBank = new RegistryBank();
 			getCriteria().addEqualExpression(getManagerBean().getFieldName(IFinanceAlias.FINANCE_PAYMENT), payment );
 		} catch (ManagerBeanException e) {
 			LOGGER.log(Level.SEVERE, "Error initializing search", e);
@@ -208,6 +220,7 @@ public class FinancePaymentController extends BasicController {
 			FinanceRecordingTo recordingTo = new FinanceRecordingTo();
 			List<Finance> list = new LinkedList<Finance>();
 			list.add(finance);
+			recordingTo.setRegistryBank((getRegistryBank().getId()== null?null:getRegistryBank()));
 			recordingTo.setFinanceList(list);
 			recordingTo.setDate(getPaymentDate());
 			recordingTo.setType((finance.isPayment()?AccountEntryType.PAYMENT:AccountEntryType.COLLECTION));
