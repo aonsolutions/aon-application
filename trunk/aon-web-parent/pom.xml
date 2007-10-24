@@ -123,6 +123,12 @@
 			<version>1.0</version>
 			<scope>provided</scope>
 			<optional>true</optional>
+			<exclusions>
+				<exclusion>
+					<groupId>castor</groupId>
+					<artifactId>castor</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>javax.servlet</groupId>
@@ -144,4 +150,3 @@
 		</dependency>
 	</dependencies>
 </project>
-
