@@ -153,6 +153,24 @@
 							styleClass="aon-form-input-text-disabled" forceId="#{true}" >
 							<f:convertNumber pattern="#,##0.00" />
 						</t:inputText>	
+
+						<h:outputLabel for="Finance_expenses"
+							styleClass="aon-form-input-text-label"
+							value="#{financeBundle.finance_expenses}" />
+						<t:inputText id="Finance_expenses"
+							value="#{finance.to.expenses}" size="15" disabled="#{!finance.pending}"
+							styleClass="aon-form-input-text" forceId="#{true}" >
+							<f:convertNumber pattern="#,##0.00" />
+						</t:inputText>
+						
+						<h:outputLabel for="Finance_total"
+							styleClass="aon-form-input-text-label"
+							value="#{financeBundle.finance_total}" />
+						<t:inputText id="Finance_total"
+							value="#{finance.to.totalAmount}" size="15" disabled="true"
+							styleClass="aon-form-input-text-disabled" forceId="#{true}" >
+							<f:convertNumber pattern="#,##0.00" />
+						</t:inputText>	
 						
 						<h:outputLabel for="Finance_financeStatus"
 							styleClass="aon-form-input-text-label"
