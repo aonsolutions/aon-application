@@ -370,7 +370,7 @@ public class FBatchController extends BasicController {
         fbatch.setFinanceBatchStatus(FinanceBatchStatus.RECORDED);
         getManagerBean().update(fbatch);
         loadDetails(fbatch);
-        fbatch.setRegistryBank(new RegistryBank());
+        fbatch.setRegistryBank(fbatch.getRegistryBank() == null?new RegistryBank():fbatch.getRegistryBank());
     }
 
 	@SuppressWarnings({"unused","unchecked"})
@@ -444,7 +444,7 @@ public class FBatchController extends BasicController {
         fbatch.setFinanceBatchStatus(fbatch.getFinanceBatchType().equals(FinanceBatchType.NONE) ? FinanceBatchStatus.TODO : FinanceBatchStatus.DONE);
         getManagerBean().update(fbatch);
         loadDetails(fbatch);
-        fbatch.setRegistryBank(new RegistryBank());
+        fbatch.setRegistryBank(fbatch.getRegistryBank() == null?new RegistryBank():fbatch.getRegistryBank());
     }
 
     public Double getModelToTotal(){
