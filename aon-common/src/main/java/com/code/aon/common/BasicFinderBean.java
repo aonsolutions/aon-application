@@ -150,16 +150,4 @@ public class BasicFinderBean implements IFinderBean {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see com.code.aon.common.IFinderBean#setId(com.code.aon.common.ITransferObject, java.lang.String, java.lang.Object)
-	 */
-	public void setProperty(ITransferObject to, String propertyName, Object value) throws ManagerBeanException {
-		try {
-			dao.setProperty(to, propertyName, value);
-		} catch (DAOException e) {
-			throw new ManagerBeanException(e.getMessage(), e);
-		}
-	}
-
 }

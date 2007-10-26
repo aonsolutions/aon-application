@@ -53,17 +53,6 @@ public interface IDAO {
 	void setId(ITransferObject to, Serializable id) throws DAOException;
 
 	/**
-	 * Assign the Value for the Transfer Object. //JORGE ****
-	 * 
-	 * @param to the to
-	 * @param propertyName the name of property
-	 * @param value the value
-	 * 
-	 * @throws DAOException the DAO exception
-	 */
-	void setProperty(ITransferObject to, String propertyName, Object value) throws DAOException;
-
-	/**
 	 * Return a <code>Collection</code> of
 	 * <code>com.code.aon.common.ITransferObject</code> that carries out the
 	 * criteria.

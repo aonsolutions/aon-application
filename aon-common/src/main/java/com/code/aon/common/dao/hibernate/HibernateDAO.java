@@ -82,7 +82,6 @@ public class HibernateDAO extends AbstractFieldMapper implements IDAO {
 	 */
 	public Serializable getId(ITransferObject to) {
 		return this.classMetaData.getIdentifier(to,EntityMode.POJO);
-		
 	}
 
 	/*
@@ -91,14 +90,6 @@ public class HibernateDAO extends AbstractFieldMapper implements IDAO {
 	 */
 	public void setId(ITransferObject to, Serializable id) {
 		this.classMetaData.setIdentifier( to, id, EntityMode.POJO );
-	}
-
-	/*
-	 * (non-Javadoc) //JORGE ******
-	 * @see com.code.aon.common.dao.IDAO#set(com.code.aon.common.ITransferObject, java.io.String, java.lang.Object)
-	 */
-	public void setProperty(ITransferObject to, String propertyName, Object value) {
-		this.classMetaData.setPropertyValue(to, propertyName, value, EntityMode.POJO);
 	}
 
     /* 

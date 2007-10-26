@@ -112,15 +112,4 @@ public interface IFinderBean {
      * @throws ManagerBeanException if an unexpected error occurs.
 	 */
 	void setId(ITransferObject to, Serializable id) throws ManagerBeanException;
-
-	/**
-	 * Set the Transfer Object Value <code>Property</code>.
-	 * 
-	 * @param to Transfer Object.
-	 * @param propertyName Name of Property.
-	 * @param value Value Property
-     * @throws ManagerBeanException if an unexpected error occurs.
-	 */
-	void setProperty(ITransferObject to, String propertyName, Object value) throws ManagerBeanException;
-
 }
