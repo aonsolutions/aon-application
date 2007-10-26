@@ -3,6 +3,7 @@
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:f="http://java.sun.com/jsf/core" 
 	xmlns:t="http://myfaces.apache.org/tomahawk"            
+	xmlns:s="http://myfaces.apache.org/sandbox"            
 	xmlns:h="http://java.sun.com/jsf/html">
 <body>
 
@@ -13,13 +14,28 @@
 	</ui:define>
 
 	<ui:define name="content">
+		
 		<h:form id="feeInvoicingForm" styleClass="aon-form">
+		
+			<s:modalDialog
+		       dialogId="viewDialog"
+		       dialogVar="viewDialog"
+		       closeButton="false">
+		       <t:div styleClass="aon-timer">		       		
+		       		<h:graphicImage value="/css/images/content/aon-timer.gif" />
+		       		<t:div styleClass="aon-timer-title" >
+		       			<t:outputText value="#{appBundle.aon_in_progress}" /> 
+		       		</t:div>
+  			   </t:div>
+			</s:modalDialog>
+		
 			<t:div styleClass="aon-content-toolbar">
 				<t:div styleClass="aon-content-toolbar-internal">
 				<t:div styleClass="aon-content-toolbar-item-group">
 					<t:commandLink id="feeInvoicing" value="#{financeBundle.aon_to_invoice}"
 						forceId="#{true}" action="fee_invoicing_list"
 						actionListener="#{feeInvoicing.onInvoice}"
+						onclick="viewDialog.show();"							
 						styleClass="aon-content-toolbar-item aon-content-toolbar-item-print"
 						onmouseover="this.className='aon-content-toolbar-item aon-content-toolbar-item-hover aon-content-toolbar-item-print'"
 						onmouseout="this.className='aon-content-toolbar-item aon-content-toolbar-item-print'"
