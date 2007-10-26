@@ -48,6 +48,16 @@ public class CustomerController extends BasicController {
         this.onReset((ActionEvent)event);
     }
 
+	/**
+     * On editSearch. Method launched by the menu
+     * 
+     * @param event the event
+     */
+    @SuppressWarnings("unused")
+    public void onEditSearch(MenuEvent event) {
+        this.onEditSearch((ActionEvent)event);
+    }
+
     /**
      * On reset. Sends a cancel to the media and address controllers to avoid having editing any of them
      * 
