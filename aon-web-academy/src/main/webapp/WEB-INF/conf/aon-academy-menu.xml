@@ -1,21 +1,29 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <root id="root" key="AON_APP" descriptionKey="aon_application_menu_title" ref="firstContent">
 
-	<option key="aon_customer" descriptionKey="aon_customer_desc" ref="customer"/>
+	<option key="aon_customer" descriptionKey="aon_customer_desc" ref="customer">
+		<actionListener action="#{customer.onEditSearch}"/>
+	</option>
 
 	<menu ref="content" key="aon_academic_management" descriptionKey="aon_academic_management_desc">
-		<option key="aon_course" descriptionKey="aon_course_desc" ref="course"/>
+		<option key="aon_course" descriptionKey="aon_course_desc" ref="course">
+			<actionListener action="#{course.onEditSearch}"/>
+		</option>
 		<option key="aon_employee" descriptionKey="aon_employee_desc" ref="employee">
 			<actionListener action="#{employee.onReset}" />
 		</option>
 		<option key="aon_mark_search" descriptionKey="aon_mark_search_desc" ref="mark">
 			<actionListener action="#{mark.onNewSearch}" />
 		</option>
-		<option key="aon_loan" descriptionKey="aon_loan_desc" ref="loan"/>
+		<option key="aon_loan" descriptionKey="aon_loan_desc" ref="loan">
+			<actionListener action="#{loan.onEditSearch}"/>
+		</option>
 	</menu>
 
 	<menu id="aon_administrative_management" ref="content" key="aon_administrative_management" descriptionKey="aon_administrative_management_desc">
-		<option id="aon_invoice_management" key="aon_invoice_management" descriptionKey="aon_invoice_management_desc" ref="invoiceManagement"/>
+		<option id="aon_invoice_management" key="aon_invoice_management" descriptionKey="aon_invoice_management_desc" ref="invoiceManagement">
+			<actionListener action="#{feeInvoicing.onEditSearch}"/>
+		</option>
 		<option key="aon_invoice_print" descriptionKey="aon_invoice_print_desc" ref="invoicePrint">
 			<actionListener action="#{invoicePrint.onEditSearch}"/>
 		</option>
