@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import javax.faces.event.ActionEvent;
 import javax.faces.event.ValueChangeEvent;
 
 import com.code.aon.academy.Course;
@@ -20,10 +21,15 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionException;
 import com.code.aon.ui.form.BasicController;
+import com.code.aon.ui.menu.jsf.MenuEvent;
 
 public class CourseController extends BasicController implements ICollectionProvider {
 	
 	private static final Logger LOGGER = Logger.getLogger(CourseController.class.getName());
+	
+	public void onEditSearch(MenuEvent event){
+		this.onEditSearch((ActionEvent)event);
+	}
 
 	public void addEqualExpression(ValueChangeEvent event) throws ManagerBeanException, ExpressionException {
 	    if (event.getNewValue() != null && !event.getNewValue().equals(new Integer(Integer.MAX_VALUE))) {

@@ -3,6 +3,7 @@ package com.code.aon.ui.academy.controller;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import javax.faces.event.ActionEvent;
 import javax.faces.event.ValueChangeEvent;
 
 import com.code.aon.academy.AlumnLoan;
@@ -11,11 +12,16 @@ import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ui.form.BasicController;
+import com.code.aon.ui.menu.jsf.MenuEvent;
 
 public class AlumnLoanController extends BasicController {
 	
 	private static final Logger LOGGER = Logger.getLogger(AlumnLoanController.class.getName());
 	
+	public void onEditSearch(MenuEvent event){
+		this.onEditSearch((ActionEvent)event);
+	}
+
 	public void addLoanDateFromExpression(ValueChangeEvent event){
 		if(event.getNewValue() != null){
 			try {
