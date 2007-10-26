@@ -88,6 +88,10 @@ public class FeeInvoicingController extends BasicController {
 		this.invoicingParams = invoicingParams;
 	}
 	
+	public void onEditSearch(MenuEvent event){
+		this.onEditSearch((ActionEvent)event);
+	}
+	
 	@SuppressWarnings("unused")
 	public void onInitialize(MenuEvent event){
 		this.invoicingParams = new InvoicingParameters();
