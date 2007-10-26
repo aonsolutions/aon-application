@@ -64,11 +64,28 @@ public class HibernateUtil {
     /**
      * 
      */
-    private static boolean MUST_CLOSE_SESSION = true;
+    private static ThreadLocal<Boolean> MUST_CLOSE_SESSION = new ThreadLocal<Boolean>(){
+    	
+    	/**
+    	 * @return B
+    	 */
+    	protected Boolean initialValue() {
+    		return new Boolean(true);
+    	}
+    };
     /**
      * 
      */
-    private static boolean MUST_BEGIN_TRANSACTION = true;
+    private static ThreadLocal<Boolean>  MUST_BEGIN_TRANSACTION = new ThreadLocal<Boolean>(){
+    	
+    	/**
+    	 * @return B
+    	 */
+    	protected Boolean initialValue() {
+    		return new Boolean(true);
+    	}
+    };
+
     
     private static IConfigurationFactory configurationFactory = DefaultConfigurationFactory.getInstance();
     
@@ -284,7 +301,7 @@ public class HibernateUtil {
      * @param mustCloseSession
      */
     public static void setCloseSession(boolean mustCloseSession) {
-        HibernateUtil.MUST_CLOSE_SESSION = mustCloseSession;
+        HibernateUtil.MUST_CLOSE_SESSION.set(new Boolean(mustCloseSession));
     }
     
     /**
@@ -292,7 +309,7 @@ public class HibernateUtil {
      * @return boolean
      */
     public static boolean mustCloseSession() {
-        return HibernateUtil.MUST_CLOSE_SESSION;
+        return HibernateUtil.MUST_CLOSE_SESSION.get().booleanValue();
     }
 
     /**
@@ -300,7 +317,7 @@ public class HibernateUtil {
      * @param mustBeginTransaction
      */
     public static void setBeginTransaction(boolean mustBeginTransaction) {
-        HibernateUtil.MUST_BEGIN_TRANSACTION = mustBeginTransaction;
+        HibernateUtil.MUST_BEGIN_TRANSACTION.set(new Boolean(mustBeginTransaction));
     }
 
     /**
@@ -308,7 +325,7 @@ public class HibernateUtil {
      * @return boolean
      */
     public static boolean mustBeginTransaction() {
-        return HibernateUtil.MUST_BEGIN_TRANSACTION;
+        return HibernateUtil.MUST_BEGIN_TRANSACTION.get().booleanValue();
     }
 
     /**
