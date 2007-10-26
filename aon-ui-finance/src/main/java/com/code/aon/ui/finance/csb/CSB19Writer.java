@@ -83,7 +83,7 @@ public class CSB19Writer {
 	
 	private Individual createIndividual(FinanceBatchDetail fBatchDetail) throws ManagerBeanException {
 		Individual individual = new Individual();
-		individual.setAmount(new Double(fBatchDetail.getFinance().getAmount()));
+		individual.setAmount(new Double(fBatchDetail.getFinance().getTotalAmount()));
 		Account detailAccount = new Account();
 		detailAccount.parse(fBatchDetail.getFinance().getBankAccount());
 		individual.setAccount(detailAccount);

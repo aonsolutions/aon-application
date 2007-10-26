@@ -78,7 +78,7 @@ public class CSB32Writer {
 		individual.setAccount(ccc);
 		individual.setAceptedCode(new Integer(2));
 		individual.setAditionalData(fBatchDetail.getFinance().getId().toString());
-		individual.setAmount(new Double(fBatchDetail.getFinance().getAmount()));
+		individual.setAmount(new Double(fBatchDetail.getFinance().getTotalAmount()));
 		individual.setDocumentNumber(fBatchDetail.getFinance().getInvoice().getSeries() + "/" + fBatchDetail.getFinance().getInvoice().getNumber());
 		individual.setDocumentType(new Integer(2)); // RECIBO
 		individual.setEfectPayed(fBatchDetail.getFinance().getRegistry().getName() + " " + fBatchDetail.getFinance().getRegistry().getSurname());
