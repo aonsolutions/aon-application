@@ -1,0 +1,133 @@
+<?xml version="1.0"?>
+<!DOCTYPE faces-config PUBLIC
+  "-//Sun Microsystems, Inc.//DTD JavaServer Faces Config 1.1//EN"
+  "http://java.sun.com/dtd/web-facesconfig_1_1.dtd">
+
+<faces-config>
+	<!-- ************** LANGUAGE ************** -->
+	<managed-bean>
+		<managed-bean-name>i18n</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.cms.controller.I18NController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
+
+	<!-- ************** CONFIG ************** -->
+	<managed-bean>
+		<managed-bean-name>config</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.cms.controller.ConfigController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.cms.Config</value>
+		</managed-property>
+	</managed-bean>
+
+	<!-- ************** LANGUAGE ************** -->
+	<managed-bean>
+		<managed-bean-name>language</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.cms.controller.LanguageController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.cms.Language</value>
+		</managed-property>
+	</managed-bean>
+
+	<!-- ************** GENERIC PAGE ************** -->
+	<managed-bean>
+		<managed-bean-name>generic_page</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.cms.controller.GenericPageController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.cms.GenericPage</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojoI18n</property-name>
+			<value>com.code.aon.cms.GenericPageDetail</value>
+		</managed-property>
+		<managed-property>
+			<property-name>joinAlias</property-name>
+			<value>GenericPageDetail_generic_page_id</value>
+		</managed-property>
+		<managed-property>
+			<property-name>languageAlias</property-name>
+			<value>GenericPageDetail_language_id</value>
+		</managed-property>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>true</value>
+		</managed-property>
+	</managed-bean>
+
+	<!-- ************** MENU ************** -->
+	<managed-bean>
+		<managed-bean-name>menu</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.cms.controller.MenuController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.cms.Menu</value>
+		</managed-property>
+	</managed-bean>
+
+	<!-- ************** MENU OPTION ************** -->
+	<managed-bean>
+		<managed-bean-name>menu_option</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.cms.controller.MenuOptionController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.cms.MenuOption</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojoI18n</property-name>
+			<value>com.code.aon.cms.MenuOptionDetail</value>
+		</managed-property>
+		<managed-property>
+			<property-name>joinAlias</property-name>
+			<value>MenuOptionDetail_menu_option_id</value>
+		</managed-property>
+		<managed-property>
+			<property-name>languageAlias</property-name>
+			<value>MenuOptionDetail_language_id</value>
+		</managed-property>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>true</value>
+		</managed-property>
+	</managed-bean>
+
+	<!-- ************** TEMPLATES ************** -->
+	<managed-bean>
+		<managed-bean-name>template</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.cms.controller.TemplateController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
+
+	<!-- ************** GENERATOR ************** -->
+	<managed-bean>
+		<managed-bean-name>generator</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.cms.controller.GeneratorController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.cms.Config</value>
+		</managed-property>
+	</managed-bean>
+
+	<!-- ************** PREVIEW ************** -->
+	<managed-bean>
+		<managed-bean-name>preview</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.cms.controller.PreviewController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
+
+	<!-- ************** GALLERY ************** -->
+	<managed-bean>
+		<managed-bean-name>gallery</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.cms.controller.GalleryController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
+
+</faces-config>
