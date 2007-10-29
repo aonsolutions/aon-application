@@ -10,6 +10,7 @@ import java.util.List;
 import javax.faces.context.FacesContext;
 import javax.faces.el.ValueBinding;
 import javax.faces.event.ActionEvent;
+import javax.faces.event.PhaseId;
 import javax.faces.event.ValueChangeEvent;
 import javax.faces.model.SelectItem;
 
@@ -46,6 +47,7 @@ import com.code.aon.product.enumeration.TaxType;
 import com.code.aon.product.strategy.IPriceStrategy;
 import com.code.aon.product.strategy.TaxBreakDown;
 import com.code.aon.ql.Criteria;
+import com.code.aon.ql.Projection;
 import com.code.aon.ql.util.ExpressionException;
 import com.code.aon.registry.RegistryAddress;
 import com.code.aon.registry.dao.IRegistryAlias;
@@ -93,14 +95,53 @@ public class FeeInvoicingController extends BasicController {
 	}
 	
 	@SuppressWarnings("unused")
-	public void onInitialize(MenuEvent event){
+	public void onInitialize(MenuEvent event) throws ManagerBeanException{
 		this.invoicingParams = new InvoicingParameters();
+		this.invoicingParams.setNumber(obtainMaxNumber(null));
 		this.invoicingParams.setSecurityLevel(SecurityLevel.OFFICIAL);
 		this.invoicingParams.setInvoiceDate(new Date());
 		Calendar calendar = new GregorianCalendar();
 		calendar.setTime(new Date());
 		invoicingParams.setMonth(Month.getMonthByValue(calendar.get(Calendar.MONTH)));
 		invoicingParams.setYear(calendar.get(Calendar.YEAR));
+	}
+
+	private int obtainMaxNumber(String series) throws ManagerBeanException {
+		IManagerBean invoiceBean = BeanManager.getManagerBean(Invoice.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(invoiceBean.getFieldName(IFinanceAlias.INVOICE_SERIES), series);
+		Projection projection = Projection.max(invoiceBean.getFieldName(IFinanceAlias.INVOICE_NUMBER));
+		Object value = invoiceBean.getUniqueResult(projection, criteria);
+		if(value != null){
+			return ((Integer)value).intValue() + 1;
+		}
+		return 1;
+	}
+	
+	public void onSeriesChanged(ValueChangeEvent event) throws ManagerBeanException{
+		if (event.getPhaseId() == PhaseId.ANY_PHASE) {
+			event.setPhaseId(PhaseId.INVOKE_APPLICATION );
+			event.queue();
+		}
+		if (event.getPhaseId() == PhaseId.INVOKE_APPLICATION) {
+			int number = obtainMaxNumber((String)event.getNewValue());
+			if(this.getTo() != null){
+				((Invoice)this.getTo()).setNumber(number);	
+			}
+			if(getInvoicingParams() != null){
+				getInvoicingParams().setNumber(number);
+			}
+		}
+	}
+
+	public void onSeriesChangedInvoicing(ValueChangeEvent event) throws ManagerBeanException{
+		if (event.getPhaseId() == PhaseId.ANY_PHASE) {
+			event.setPhaseId(PhaseId.INVOKE_APPLICATION );
+			event.queue();
+		}
+		if (event.getPhaseId() == PhaseId.INVOKE_APPLICATION) {
+			getInvoicingParams().setNumber(obtainMaxNumber((String)event.getNewValue()));	
+		}
 	}
 
 	@SuppressWarnings({"unused","unchecked"})
