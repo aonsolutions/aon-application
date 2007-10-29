@@ -184,17 +184,17 @@
         <load-on-startup>1</load-on-startup>
     </servlet>
     
-   	<!-- Deploy Servlet --> 
+   	<!-- Deploy Servlet
     <servlet>
 		<servlet-name>autodeploy</servlet-name>
 		<servlet-class>com.code.aon.bridge.servlet.DeployServlet</servlet-class>
 		<init-param>
 			<param-name>name</param-name>
-			<param-value>consultant</param-value>
+			<param-value>aon-web-consultant.war</param-value>
 		</init-param>
 		<load-on-startup>2</load-on-startup>
 	</servlet>
- 	
+  -->
     <!-- Lookup Bean Servlet -->
 	<servlet>
 		<servlet-name>LookupBeanServlet</servlet-name>
