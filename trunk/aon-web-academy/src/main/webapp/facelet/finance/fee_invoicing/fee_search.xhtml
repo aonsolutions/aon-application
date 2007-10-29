@@ -14,21 +14,8 @@
 	</ui:define>
 
 	<ui:define name="content">
-		
 		<h:form id="feeInvoicingForm" styleClass="aon-form">
-		
-			<s:modalDialog
-		       dialogId="viewDialog"
-		       dialogVar="viewDialog"
-		       closeButton="false">
-		       <t:div styleClass="aon-timer">		       		
-		       		<h:graphicImage value="/css/images/content/aon-timer.gif" />
-		       		<t:div styleClass="aon-timer-title" >
-		       			<t:outputText value="#{appBundle.aon_in_progress}" /> 
-		       		</t:div>
-  			   </t:div>
-			</s:modalDialog>
-		
+
 			<t:div styleClass="aon-content-toolbar">
 				<t:div styleClass="aon-content-toolbar-internal">
 				<t:div styleClass="aon-content-toolbar-item-group">
@@ -65,13 +52,13 @@
 							styleClass="aon-form-input-text-label"
 							value="#{financeBundle.aon_series_number}" />
 						<h:panelGrid columns="2">
-							<t:inputText id="Invoice_series"
-								onblur="toUpperCase(this);" required="true"
+							<t:selectOneMenu id="Invoice_series"
 								value="#{feeInvoicing.invoicingParams.series}"
-								styleClass="aon-form-input-text" forceId="#{true}" size="3"
-								maxlength="3">
-								<f:validateLength maximum="3" />
-							</t:inputText>
+								styleClass="aon-form-selectOneMenu-field"
+								onchange="submit();" valueChangeListener="#{feeInvoicing.onSeriesChanged}">
+								<f:selectItem itemValue="" itemDisabled="true" itemLabel="-" />
+								<f:selectItems value="#{configCollections.series}" />
+							</t:selectOneMenu>
 							<t:inputText id="Invoice_number" required="true"
 								value="#{feeInvoicing.invoicingParams.number}"
 								styleClass="aon-form-input-text" forceId="#{true}"
@@ -143,6 +130,19 @@
 					</h:panelGrid>
 				</t:div>
 			</t:div>
+
+			<s:modalDialog
+		       dialogId="viewDialog"
+		       dialogVar="viewDialog"
+		       closeButton="false">
+		       <t:div styleClass="aon-timer">		       		
+		       		<h:graphicImage value="/css/images/content/aon-timer.gif" />
+		       		<t:div styleClass="aon-timer-title" >
+		       			<t:outputText value="#{appBundle.aon_in_progress}" /> 
+		       		</t:div>
+  			   </t:div>
+			</s:modalDialog>
+
 		</h:form>
 		<h:form id="placeList" target="list" />
 	</ui:define>

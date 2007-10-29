@@ -115,12 +115,14 @@
 								styleClass="aon-form-input-text-label"
 								value="#{financeBundle.aon_series_number}" />
 							<h:panelGrid columns="2" cellpadding="0" cellspacing="0">
-								<h:selectOneMenu id="Invoice_series"
+								<t:selectOneMenu id="Invoice_series"
 									value="#{feeInvoicing.to.series}"
 									disabled="#{!feeInvoicing.new or feeInvoicing.recorded}"
-									styleClass="aon-form-selectOneMenu-field">
+									styleClass="aon-form-selectOneMenu-field"
+									onchange="submit();" valueChangeListener="#{feeInvoicing.onSeriesChanged}">
+									<f:selectItem itemValue="" itemDisabled="true" itemLabel="-" />
 									<f:selectItems value="#{configCollections.series}" />
-								</h:selectOneMenu>
+								</t:selectOneMenu>
 								<t:inputText id="Invoice_number"
 									value="#{feeInvoicing.to.number}"
 									disabled="#{!feeInvoicing.new or feeInvoicing.recorded}"
