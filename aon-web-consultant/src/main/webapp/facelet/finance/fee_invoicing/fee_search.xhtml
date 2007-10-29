@@ -3,6 +3,7 @@
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:f="http://java.sun.com/jsf/core" 
 	xmlns:t="http://myfaces.apache.org/tomahawk"            
+	xmlns:s="http://myfaces.apache.org/sandbox"            
 	xmlns:h="http://java.sun.com/jsf/html">
 <body>
 
@@ -14,12 +15,14 @@
 
 	<ui:define name="content">
 		<h:form id="feeInvoicingForm" styleClass="aon-form">
+
 			<t:div styleClass="aon-content-toolbar">
 				<t:div styleClass="aon-content-toolbar-internal">
 				<t:div styleClass="aon-content-toolbar-item-group">
 					<t:commandLink id="feeInvoicing" value="#{financeBundle.aon_to_invoice}"
 						forceId="#{true}" action="fee_invoicing_list"
 						actionListener="#{feeInvoicing.onInvoice}"
+						onclick="viewDialog.show();"							
 						styleClass="aon-content-toolbar-item aon-content-toolbar-item-print"
 						onmouseover="this.className='aon-content-toolbar-item aon-content-toolbar-item-hover aon-content-toolbar-item-print'"
 						onmouseout="this.className='aon-content-toolbar-item aon-content-toolbar-item-print'"
@@ -49,11 +52,13 @@
 							styleClass="aon-form-input-text-label"
 							value="#{financeBundle.aon_series_number}" />
 						<h:panelGrid columns="2">
-							<h:selectOneMenu id="Invoice_series"
+							<t:selectOneMenu id="Invoice_series"
 								value="#{feeInvoicing.invoicingParams.series}"
-								styleClass="aon-form-selectOneMenu-field">
+								styleClass="aon-form-selectOneMenu-field"
+								onchange="submit();" valueChangeListener="#{feeInvoicing.onSeriesChanged}">
+								<f:selectItem itemValue="" itemDisabled="true" itemLabel="-" />
 								<f:selectItems value="#{configCollections.series}" />
-							</h:selectOneMenu>
+							</t:selectOneMenu>
 							<t:inputText id="Invoice_number" required="true"
 								value="#{feeInvoicing.invoicingParams.number}"
 								styleClass="aon-form-input-text" forceId="#{true}"
@@ -111,7 +116,7 @@
 							value="#{feeInvoicing.invoicingParams.securityLevel}">
 							<f:selectItems value="#{financeCollections.securityLevels}" />
 						</h:selectOneMenu>
-							
+						
  						<h:outputLabel for="CustomerFee_WorkPlace" 
  							value="#{salesBundle.aon_customer_fee_workplace}"
 							styleClass="aon-form-input-text-label" />
@@ -125,6 +130,19 @@
 					</h:panelGrid>
 				</t:div>
 			</t:div>
+			
+			<s:modalDialog
+		       dialogId="viewDialog"
+		       dialogVar="viewDialog"
+		       closeButton="false">
+		       <t:div styleClass="aon-timer">		       		
+		       		<h:graphicImage value="/css/images/content/aon-timer.gif" />
+		       		<t:div styleClass="aon-timer-title" >
+		       			<t:outputText value="#{appBundle.aon_in_progress}" /> 
+		       		</t:div>
+  			   </t:div>
+			</s:modalDialog>
+			
 		</h:form>
 		<h:form id="placeList" target="list" />
 	</ui:define>

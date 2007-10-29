@@ -115,13 +115,14 @@
 								styleClass="aon-form-input-text-label"
 								value="#{financeBundle.aon_series_number}" />
 							<h:panelGrid columns="2" cellpadding="0" cellspacing="0">
-								<t:inputText id="Invoice_series"
+								<t:selectOneMenu id="Invoice_series"
 									value="#{feeInvoicing.to.series}"
 									disabled="#{!feeInvoicing.new or feeInvoicing.recorded}"
-									styleClass="aon-form-input-text" forceId="#{true}" size="3"
-									maxlength="3" onblur="toUpperCase(this);">
-									<f:validateLength maximum="3" />
-								</t:inputText>
+									styleClass="aon-form-selectOneMenu-field"
+									onchange="submit();" valueChangeListener="#{feeInvoicing.onSeriesChanged}">
+									<f:selectItem itemValue="" itemDisabled="true" itemLabel="-" />
+									<f:selectItems value="#{configCollections.series}" />
+								</t:selectOneMenu>
 								<t:inputText id="Invoice_number"
 									value="#{feeInvoicing.to.number}"
 									disabled="#{!feeInvoicing.new or feeInvoicing.recorded}"
@@ -160,8 +161,8 @@
 								value="#{feeInvoicing.to.status}">
 								<f:selectItems value="#{financeCollections.invoiceStatuses}" />
 							</h:selectOneMenu>
-							
 						</h:panelGrid>
+
 						<h:panelGrid columns="2" cellpadding="0" cellspacing="0"
 							styleClass="aon-form-table"
 							columnClasses="aon-form-table-column-odd,aon-form-table-column-even">
@@ -224,7 +225,16 @@
 								rowIndexVar="rowIndex" rowOnMouseOut="unselectRow( this )"
 								rowOnClick="sendRow( this )" rendered="#{!feeInvoicing.new}"
 								rowClasses="aon-edit-table-row-odd,aon-edit-table-row-even"
-								columnClasses="aon-edit-table-body aon-edit-table-body-icon,aon-edit-table-body aon-edit-table-body-string,aon-edit-table-body aon-edit-table-body-number,aon-edit-table-body aon-edit-table-body-number,aon-edit-table-body aon-edit-table-body-number,aon-edit-table-body aon-edit-table-body-number,aon-edit-table-body aon-edit-table-body-number,aon-edit-table-body aon-edit-table-body-number,aon-edit-table-body aon-edit-table-body-buttons">
+								columnClasses="aon-edit-table-body aon-edit-table-body-icon,
+									aon-edit-table-body aon-edit-table-body-string,
+									aon-edit-table-body aon-edit-table-body-number,
+									aon-edit-table-body aon-edit-table-body-number,
+									aon-edit-table-body aon-edit-table-body-number,
+									aon-edit-table-body aon-edit-table-body-number,
+									aon-edit-table-body aon-edit-table-body-number,
+									aon-edit-table-body aon-edit-table-body-number,
+									aon-edit-table-body aon-edit-table-body-string,
+									aon-edit-table-body aon-edit-table-body-buttons">
 
 								<h:column>
 									<f:facet name="header">
@@ -382,6 +392,27 @@
 												<f:convertNumber pattern="#,##0.00" />
 											</t:outputText>
 										</t:div>
+									</f:facet>
+								</t:column>
+								
+								<t:column>
+									<f:facet name="header">
+										<t:outputText value="#{financeBundle.aon_invoice_workplace}" />
+									</f:facet>
+									<t:outputText id="InvoiceDetail_workPlace_id"
+										rendered="#{to!=feeInvoicingDetail.to}"
+										value="#{to.workPlace.description}" forceId="#{true}"/>
+									<h:selectOneMenu value="#{feeInvoicingDetail.to.workPlace.id}"
+										styleClass="aon-form-selectOneMenu-field"
+										rendered="#{to==feeInvoicingDetail.to}">
+										<f:selectItems value="#{companyCollections.workPlaces}" />
+									</h:selectOneMenu>	
+									<f:facet name="footer">
+										<h:selectOneMenu value="#{feeInvoicingDetail.to.workPlace.id}"
+											styleClass="aon-form-selectOneMenu-field"
+											rendered="#{feeInvoicingDetail.new}">
+											<f:selectItems value="#{companyCollections.workPlaces}" />
+										</h:selectOneMenu>	
 									</f:facet>
 								</t:column>
 

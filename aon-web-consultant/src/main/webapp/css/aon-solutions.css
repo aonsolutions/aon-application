@@ -178,3 +178,22 @@
   .aon-dd{
   padding-right:2em;
   }
+  
+ /*********************************/	  
+/**********  TIMER *************/
+/*********************************/	
+.aon-timer{
+	background-color:#fff;
+	border:#ccc 1px outset;
+	padding:10px 20px;
+	background-color:#f2f2f2;
+}
+.aon-timer-title{
+	background-color:#ccc;
+	color:#000;
+	margin:1px;
+	font-size:1.1em;
+	font-weight:bold;
+	text-align:center;
+	text-transform:uppercase;
+	}  
