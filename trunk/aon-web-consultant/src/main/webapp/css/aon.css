@@ -90,7 +90,7 @@ body#aon-body{
 
 /* Shows an image in the content region when there is no selected an option  */
 .aon-content-home{	
-	background:transparent url("../images/aon-home.jpg") left top no-repeat;
+	/*background:transparent url("../images/aon-home.jpg") left top no-repeat;*/
 	}
 /*****************
 * HEADER   *
