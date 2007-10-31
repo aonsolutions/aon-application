@@ -26,12 +26,17 @@
 	_font-size:5px;
 	}
 .aon-logo{
-	display:inline;
-	
+	background:transparent url("images/content/orange-logo.gif") left top no-repeat;
+	padding:15px 110px;
+}
+.aon-auxiliary-window-content{
+	background:transparent url("images/content/orange-home.jpg") left top no-repeat;
 	}
+/*
 .aon-logo img{
 	height:45px;
 	}
+*/
 .aon-applicationName{
 	display:inline;
 	position:absolute;
