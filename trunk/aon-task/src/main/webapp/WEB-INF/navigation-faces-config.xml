@@ -1,0 +1,92 @@
+<?xml version="1.0"?>
+<!DOCTYPE faces-config PUBLIC
+  "-//Sun Microsystems, Inc.//DTD JavaServer Faces Config 1.1//EN"
+  "http://java.sun.com/dtd/web-facesconfig_1_1.dtd">
+
+<faces-config>
+
+    <!-- =================== Dossier Type ================= -->	
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>dossier_type_list</from-outcome>
+			<to-view-id>/facelet/dossier/dossier_type/list.faces</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>dossier_type_form</from-outcome>
+			<to-view-id>/facelet/dossier/dossier_type/form.faces</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>dossier_type_search</from-outcome>
+			<to-view-id>/facelet/dossier/dossier_type/search.faces</to-view-id>
+		</navigation-case>
+	</navigation-rule>	
+
+    <!-- =================== Employee ================= -->	
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>employee_list</from-outcome>
+			<to-view-id>/facelet/employee/list.faces</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>employee_form</from-outcome>
+			<to-view-id>/facelet/employee/form.faces</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>employee_search</from-outcome>
+			<to-view-id>/facelet/employee/search.faces</to-view-id>
+		</navigation-case>
+	</navigation-rule>	
+	
+	<!-- =================== Customer ================= -->	
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>customer_list</from-outcome>
+			<to-view-id>/facelet/customer/list.faces</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>customer_form</from-outcome>
+			<to-view-id>/facelet/customer/form.faces</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>customer_search</from-outcome>
+			<to-view-id>/facelet/customer/search.faces</to-view-id>
+		</navigation-case>
+	</navigation-rule>	
+
+    <!-- =================== Dossier ================= -->	
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>dossier_list</from-outcome>
+			<to-view-id>/facelet/dossier/list.faces</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>dossier_form</from-outcome>
+			<to-view-id>/facelet/dossier/form.faces</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>dossier_search</from-outcome>
+			<to-view-id>/facelet/dossier/search.faces</to-view-id>
+		</navigation-case>
+	</navigation-rule>	
+  
+  <!-- =================== Application Menu Navigation Rules ================= -->	
+  <navigation-rule>
+	<navigation-case>
+		<from-outcome>firstContent</from-outcome>
+		<to-view-id>/facelet/homepage/firstContent.iface</to-view-id>
+	</navigation-case>
+	<navigation-case>
+		<from-outcome>content</from-outcome>
+		<to-view-id>/facelet/homepage/content.iface</to-view-id>
+	</navigation-case>
+	<navigation-case>
+		<from-outcome>work_group</from-outcome>
+		<to-view-id>/facelet/workGroup/grid.iface</to-view-id>
+	</navigation-case>
+	<navigation-case>
+		<from-outcome>customer</from-outcome>
+		<to-view-id>/facelet/customer/form.iface</to-view-id>
+	</navigation-case>
+  </navigation-rule>
+
+</faces-config>
