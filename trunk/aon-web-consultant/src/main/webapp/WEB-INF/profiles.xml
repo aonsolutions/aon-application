@@ -9,9 +9,9 @@
 			<max-ses-user>-1</max-ses-user>
 		</access-policy>
 		<application>
-			<id>consultant</id>
+			<id>aon-consultant.war</id>
 			<datasource-metadata>
-				<connection-url>jdbc:mysql://192.168.2.4:3306/aon_consultant?autoReconnect=true</connection-url>
+				<connection-url>jdbc:mysql://localhost:3306/aon?autoReconnect=true</connection-url>
 				<driver-class>org.gjt.mm.mysql.Driver</driver-class>
 				<username>dbuser</username>
 				<password>serubd2000</password>
