@@ -393,6 +393,7 @@ public class TaskController extends BasicController implements ITaskController {
             IManagerBean managerBean = BeanManager.getManagerBean(UserWorkGroup.class);
             Criteria criteria = new Criteria();
             criteria.addEqualExpression(managerBean.getFieldName(IConfigAlias.USER_WORK_GROUP_WORK_GROUP_ID), workGroupId);
+            criteria.addOrder(managerBean.getFieldName(IConfigAlias.USER_WORK_GROUP_USER_NAME));
             Iterator iterator = managerBean.getList(criteria).iterator();
             while (iterator.hasNext()) {
             	UserWorkGroup userWorkGroup = (UserWorkGroup)iterator.next();
