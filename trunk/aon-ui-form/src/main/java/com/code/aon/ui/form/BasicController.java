@@ -351,7 +351,7 @@ public class BasicController extends AbstractPojoController implements IControll
             addMessage(e.getMessage());
             throw new AbortProcessingException(e.getMessage(), e);
         } catch (ManagerBeanException e) {
-            LOGGER.severe(">>>> onReset " + e.getMessage());
+            LOGGER.severe(">>>> onCancel " + e.getMessage());
             addMessage(e.getMessage());
             throw new AbortProcessingException(e.getMessage(), e);
         }

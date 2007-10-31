@@ -6,10 +6,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.Map;
 import java.util.logging.Logger;
 
-import javax.faces.application.FacesMessage;
-
 import org.apache.commons.beanutils.PropertyUtils;
-import org.apache.myfaces.shared_impl.util.MessageUtils;
 import org.hibernate.annotations.Cascade;
 
 import com.code.aon.common.BeanManager;
@@ -19,6 +16,7 @@ import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.annotations.AonPOJOInitializationInvalidateRestoreNull;
 import com.code.aon.ui.common.lookup.LookupUtils;
+import com.code.aon.ui.util.AonUtil;
 
 /**
  * Abstract POJO Controller.
@@ -183,8 +181,7 @@ public class AbstractPojoController {
 	 * @param message
 	 */
 	protected void addMessage(String message) {
-		String[] args = { message };
-		MessageUtils.addMessage(FacesMessage.SEVERITY_FATAL, AON_ERROR, args);
+		AonUtil.addErrorMessage(message);
 	}
 
 }
