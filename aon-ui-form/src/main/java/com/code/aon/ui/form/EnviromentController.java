@@ -8,16 +8,15 @@ import java.util.Properties;
 import java.util.ResourceBundle;
 import java.util.StringTokenizer;
 
-import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
 import javax.faces.el.ValueBinding;
 
 import org.apache.commons.lang.ClassUtils;
-import org.apache.myfaces.shared_impl.util.MessageUtils;
 
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionException;
+import com.code.aon.ui.util.AonUtil;
 
 /**
  * Environment Controller.
@@ -137,9 +136,9 @@ public class EnviromentController {
                 controller.getModel().setRowIndex(0);
                 controller.onSelect(null);
             } catch (ManagerBeanException e) {
-                MessageUtils.addMessage(FacesMessage.SEVERITY_FATAL, e.getMessage(), null);
+        		AonUtil.addFatalMessage( e.getMessage());
             } catch (ExpressionException e) {
-                MessageUtils.addMessage(FacesMessage.SEVERITY_FATAL, e.getMessage(), null);
+        		AonUtil.addFatalMessage( e.getMessage());
             }
         } else {
             controller.onReset(null);

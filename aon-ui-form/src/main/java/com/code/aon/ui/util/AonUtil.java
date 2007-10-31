@@ -4,6 +4,10 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.text.MessageFormat;
+import java.util.Locale;
+import java.util.MissingResourceException;
+import java.util.ResourceBundle;
 import java.util.logging.Logger;
 
 import javax.faces.application.FacesMessage;
@@ -11,8 +15,6 @@ import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 import javax.faces.el.ValueBinding;
 import javax.faces.event.AbortProcessingException;
-
-import org.apache.myfaces.shared_impl.util.MessageUtils;
 
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
@@ -27,6 +29,12 @@ import com.code.aon.ui.form.IController;
  * AonUtil includes some common methods.
  */
 public class AonUtil {
+
+	/** Suffix for message details (<code>_detail</code>) */
+	private static final String DETAIL_SUFFIX = "_detail";
+
+	/** Default bundle for messages (<code>javax.faces.Messages</code>) */
+	private static final String DEFAULT_BUNDLE = "javax.faces.Messages";
 
 	/** Key to identify an aon error. (value is ""aon_error"") */
 	public static final String AON_ERROR = "aon_error";
@@ -118,7 +126,7 @@ public class AonUtil {
 	 * 
 	 * @return the manager bean
 	 */
-	public static IManagerBean getManagerBean(Class clazz) {
+	public static IManagerBean getManagerBean(Class<? extends ITransferObject> clazz) {
 		try {
 			return BeanManager.getManagerBean(clazz);
 		} catch (ManagerBeanException e) {
@@ -299,8 +307,7 @@ public class AonUtil {
 	 */
 
 	public static void addFatalMessage(String message) {
-		String[] args = { message };
-		MessageUtils.addMessage(FacesMessage.SEVERITY_FATAL, AonUtil.AON_ERROR, args);
+		addMessage(message, FacesMessage.SEVERITY_FATAL);
 	}
 
 	/**
@@ -311,8 +318,7 @@ public class AonUtil {
 	 *            the message
 	 */
 	public static void addErrorMessage(String message) {
-		String[] args = { message };
-		MessageUtils.addMessage(FacesMessage.SEVERITY_ERROR, AonUtil.AON_ERROR, args);
+		addMessage(message, FacesMessage.SEVERITY_ERROR);
 	}
 
 	/**
@@ -322,8 +328,7 @@ public class AonUtil {
 	 *            the message
 	 */
 	public static void addInfoMessage(String message) {
-		String[] args = { message };
-		MessageUtils.addMessage(FacesMessage.SEVERITY_INFO, AonUtil.AON_ERROR, args);
+		addMessage(message, FacesMessage.SEVERITY_INFO);
 	}
 
 	/**
@@ -334,8 +339,157 @@ public class AonUtil {
 	 *            the message
 	 */
 	public static void addWarningMessage(String message) {
-		String[] args = { message };
-		MessageUtils.addMessage(FacesMessage.SEVERITY_WARN, AonUtil.AON_ERROR, args);
+		addMessage(message, FacesMessage.SEVERITY_WARN);
 	}
 
+	/**
+	 * @param message
+	 * @param severity
+	 */
+	public static void addMessage(String message, FacesMessage.Severity severity) {
+		String[] args = { message };
+		FacesContext ctx = FacesContext.getCurrentInstance();
+		FacesMessage msg = getMessage(ctx, AonUtil.AON_ERROR, args);
+		msg.setSeverity(severity);
+	}
+
+	/**
+	 * @param context
+	 * @param messageId
+	 * @param params
+	 * @return d
+	 */
+	public static FacesMessage getMessage(FacesContext context, String messageId, Object params[]) {
+		if (context == null || messageId == null)
+			throw new NullPointerException(" context " + context + " messageId " + messageId);
+		Locale locale = getCurrentLocale();
+		if (null == locale)
+			throw new NullPointerException(" locale " + locale);
+		FacesMessage message = getMessage(locale, messageId, params);
+		if (message != null) {
+			return message;
+		}
+		// TODO /FIX: Note that this has fallback behavior to default Locale for
+		// message,
+		// but similar behavior above does not. The methods should probably
+		// behave
+		locale = Locale.getDefault();
+		return getMessage(locale, messageId, params);
+
+	}
+
+	/**
+	 * 
+	 * @return currently applicable Locale for this request.
+	 */
+	public static Locale getCurrentLocale() {
+		Locale locale;
+
+		FacesContext context = FacesContext.getCurrentInstance();
+		if (context != null && context.getViewRoot() != null) {
+			locale = context.getViewRoot().getLocale();
+			if (locale == null)
+				locale = Locale.getDefault();
+		} else {
+			locale = Locale.getDefault();
+		}
+
+		return locale;
+	}
+
+	/**
+	 * @param locale
+	 * @param messageId
+	 * @param params
+	 * @return message
+	 */
+	public static FacesMessage getMessage(Locale locale, String messageId, Object params[]) {
+		String summary = null;
+		String detail = null;
+		String bundleName = FacesContext.getCurrentInstance().getApplication().getMessageBundle();
+		ResourceBundle bundle = null;
+
+		if (bundleName != null) {
+			try {
+				bundle = ResourceBundle.getBundle(bundleName, locale, getCurrentLoader(bundleName));
+				summary = bundle.getString(messageId);
+			} catch (MissingResourceException e) {
+				// NoOp
+			}
+		}
+
+		if (summary == null) {
+			try {
+				bundle = ResourceBundle.getBundle(DEFAULT_BUNDLE, locale, getCurrentLoader(DEFAULT_BUNDLE));
+				if (bundle == null) {
+					throw new NullPointerException();
+				}
+				summary = bundle.getString(messageId);
+			} catch (MissingResourceException e) {
+				// NoOp
+			}
+		}
+
+		if (summary == null) {
+			summary = messageId;
+		}
+
+		if (bundle == null) {
+			throw new NullPointerException("Unable to locate ResrouceBundle: bundle is null");
+		}
+		summary = substituteParams(locale, summary, params);
+
+		try {
+			detail = substituteParams(locale, bundle.getString(messageId + DETAIL_SUFFIX), params);
+		} catch (MissingResourceException e) {
+			// NoOp
+		}
+
+		return new FacesMessage(summary, detail);
+	}
+
+	/**
+	 * Gets the ClassLoader associated with the current thread. Returns the
+	 * class loader associated with the specified default object if no context
+	 * loader is associated with the current thread.
+	 * 
+	 * @param defaultObject
+	 *            The default object to use to determine the class loader (if
+	 *            none associated with current thread.)
+	 * @return ClassLoader
+	 */
+	protected static ClassLoader getCurrentLoader(Object defaultObject) {
+		ClassLoader loader = Thread.currentThread().getContextClassLoader();
+		if (loader == null) {
+			loader = defaultObject.getClass().getClassLoader();
+		}
+		return loader;
+	}
+
+	/**
+	 * Uses <code>MessageFormat</code> and the supplied parameters to fill in
+	 * the param placeholders in the String.
+	 * 
+	 * @param locale
+	 *            The <code>Locale</code> to use when performing the
+	 *            substitution.
+	 * @param msgtext
+	 *            The original parameterized String.
+	 * @param params
+	 *            The params to fill in the String with.
+	 * @return The updated String.
+	 */
+	public static String substituteParams(Locale locale, String msgtext, Object params[]) {
+		String localizedStr = null;
+		if (params == null || msgtext == null)
+			return msgtext;
+		StringBuffer b = new StringBuffer(100);
+		MessageFormat mf = new MessageFormat(msgtext);
+		if (locale != null) {
+			mf.setLocale(locale);
+			b.append(mf.format((params)));
+			localizedStr = b.toString();
+		}
+		return localizedStr;
+	}
 }

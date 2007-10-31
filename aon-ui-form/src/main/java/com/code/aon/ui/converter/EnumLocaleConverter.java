@@ -42,7 +42,8 @@ public class EnumLocaleConverter implements Converter {
      * @param c
      * @return Class
      */
-    protected Class getEnumClass( FacesContext ctx, UIComponent c ) {
+    @SuppressWarnings("unchecked")
+	protected Class getEnumClass( FacesContext ctx, UIComponent c ) {
     	return c.getValueBinding("value").getType(ctx);
     }
 	
