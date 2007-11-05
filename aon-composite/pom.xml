@@ -8,7 +8,7 @@
 		<version>1.0.0</version>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
-	<groupId>aon-composite</groupId>
+	<groupId>com.code.aon</groupId>
 	<artifactId>aon.composite</artifactId>
 	<version>1.0.0</version>
 	<description>AON COMPOSITE</description>
