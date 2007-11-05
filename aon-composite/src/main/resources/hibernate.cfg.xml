@@ -25,7 +25,8 @@
 		<mapping class="com.code.aon.product.Product"/>		
 		<mapping class="com.code.aon.product.Tax"/>
 		<mapping class="com.code.aon.product.Brand"/>
-		<mapping class="com.code.aon.product.ProductCategory"/>		
+		<mapping class="com.code.aon.product.ProductCategory"/>
+		<mapping class="com.code.aon.product.ProductCategoryGroup"/>	
 	</session-factory>
 
 </hibernate-configuration>
