@@ -16,16 +16,15 @@
 	<dependencies>
 		<dependency>
 			<groupId>com.code.aon</groupId>
-			<artifactId>aon.commercial</artifactId>
+			<artifactId>aon.tas</artifactId>
 			<version>1.0.0</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.code.aon</groupId>
-			<artifactId>aon.tas</artifactId>
+			<artifactId>aon.commercial</artifactId>
 			<version>1.0.0</version>
 			<scope>compile</scope>
 		</dependency>
 	</dependencies>
 </project>
-
