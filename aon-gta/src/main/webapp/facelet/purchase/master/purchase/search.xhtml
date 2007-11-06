@@ -1,0 +1,186 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:h="http://java.sun.com/jsf/html">
+<body>
+
+<ui:composition template="/facelet/templates/aon.ui.form.xhtml">
+
+	<ui:define name="head">
+		<ui:include src="/facelet/shared/head.xhtml" />
+		<script type='text/javascript'
+			src="${facesContext.externalContext.requestContextPath}/js/SupplierLookup.js">
+			// nothing
+		</script>		
+		<t:stylesheet path="/jscalendar-1.0/calendar-system.css" />
+		<script type='text/javascript'
+			src="${facesContext.externalContext.requestContextPath}/jscalendar-1.0/calendar.js">
+			// nothing
+		</script>
+		<script type='text/javascript'
+			src="${facesContext.externalContext.requestContextPath}/jscalendar-1.0/lang/calendar-es.js">
+			// nothing
+		</script>
+		<script type='text/javascript'
+			src="${facesContext.externalContext.requestContextPath}/jscalendar-1.0/calendar-setup.js">
+			// nothing
+		</script>
+	</ui:define>		
+
+	<ui:define name="content">
+		<h:form id="incomeForm">
+
+			<t:div styleClass="aon-content-toolbar">
+				<t:div styleClass="aon-content-toolbar-internal">
+				<t:div styleClass="aon-content-toolbar-item-group">
+					<t:commandButton id="search" value="#{bundle.aon_search}"
+						action="purchase_list" actionListener="#{income.onSearch}"
+						styleClass="aon-content-toolbar-item aon-content-toolbar-item-search"
+						onmouseover="this.className='aon-content-toolbar-item aon-content-toolbar-item-hover aon-content-toolbar-item-search'"
+						onmouseout="this.className='aon-content-toolbar-item aon-content-toolbar-item-search'" 
+						accesskey="#{bundle.aon_key_search}"/>
+					<t:commandButton id="cancel" value="#{bundle.aon_cancel}"
+						action="purchase_list" actionListener="#{income.onCancel}"
+						styleClass="aon-content-toolbar-item aon-content-toolbar-item-cancel"
+						onmouseover="this.className='aon-content-toolbar-item aon-content-toolbar-item-hover aon-content-toolbar-item-cancel'"
+						onmouseout="this.className='aon-content-toolbar-item aon-content-toolbar-item-cancel'" 
+						accesskey="#{bundle.aon_key_cancel}"/>
+					<h:commandButton id="clear" value="#{bundle.aon_clear}"
+						type="reset"
+						styleClass="aon-content-toolbar-item aon-content-toolbar-item-reset"
+						onmouseover="this.className='aon-content-toolbar-item aon-content-toolbar-item-hover aon-content-toolbar-item-reset'"
+						onmouseout="this.className='aon-content-toolbar-item aon-content-toolbar-item-reset'" />
+					<t:commandButton id="reset" value="#{bundle.aon_reset}"
+						action="purchase_form" actionListener="#{income.onReset}"
+						styleClass="aon-content-toolbar-item aon-content-toolbar-item-new"
+						onmouseover="this.className='aon-content-toolbar-item aon-content-toolbar-item-hover aon-content-toolbar-item-new'"
+						onmouseout="this.className='aon-content-toolbar-item aon-content-toolbar-item-new'" 
+						accesskey="#{bundle.aon_key_new}"/>
+				</t:div>
+				</t:div>
+			</t:div>
+
+			<t:div styleClass="aon-content-subtitle" id="aon-content-subtitle"
+				forceId="#{true}">
+				<t:div styleClass="aon-content-subtitle-internal">
+				<h:outputText value="#{bundle.aon_search_header}" />
+				</t:div>
+			</t:div>
+
+			<t:div forceId="#{true}" id="aon-scroll-area">
+				<t:div styleClass="aon-scroll-area-internal">
+					<h:panelGrid columns="2" styleClass="aon-form-table"
+						columnClasses="aon-form-table-column-odd,aon-form-table-column-even">
+
+						<h:outputLabel
+							styleClass="aon-form-input-text-label aon-form-table-column-odd-label"
+							for="Income_series" 
+							value="#{purchaseBundle.aon_series_number}" />
+						<t:div>
+							<t:inputText id="Income_series" size="5"
+								styleClass="aon-form-input-text" onblur="toUpperCase(this);"
+								valueChangeListener="#{income.addExpression}" />
+							<t:inputText id="Income_number" size="15"
+								styleClass="aon-form-input-text"
+								valueChangeListener="#{income.addExpression}" />
+						</t:div>
+						
+						<t:outputLabel for="Supplier_id"
+							styleClass="aon-form-input-text-label"
+							value="#{purchaseBundle.aon_supplier}" />
+						<h:panelGroup>
+							<t:inputText id="Supplier_id" size="5" forceId="#{true}"
+								styleClass="aon-form-input-text"
+								onchange="return findSupplierLookup(event,'#{facesContext.externalContext.request.contextPath}','com.code.aon.purchase.Supplier');"
+								valueChangeListener="#{income.addSupplierEqualExpression}"/>
+							<h:commandButton id="findSupplier"
+								styleClass="aon-form-lookup-button"
+								onclick="selectWindow(this, 'placeList', '#{supplierSearch.encodedPagePath}');return false;"
+								value="" immediate="true" />
+							<t:inputText id="Supplier_full_name" forceId="#{true}"
+								styleClass="aon-form-input-text-disabled"
+								disabled="true" size="40" />	
+						</h:panelGroup>
+
+						<h:outputLabel
+							styleClass="aon-form-input-text-label aon-form-table-column-odd-label"
+							for="Income_startDate" value="#{purchaseBundle.aon_date}" />
+						<t:div>
+							<t:div styleClass="aon-form-unit aon-form-layout-unit-inline-label-block">
+								<h:outputLabel value="#{purchaseBundle.aon_date_from}" 
+								styleClass="aon-form-input-text-label aon-form-layout-label-block" />
+								<t:div styleClass="aon-form-nowrap">
+								<t:inputText styleClass="aon-form-input-text"
+										id="Income_issueDate1" 
+										forceId="#{true}"
+										valueChangeListener="#{income.addIssueDateGreaterThanExpression}"
+										size="10" maxlength="12">
+										<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+											timeZone="#{timeZoneController.timeZoneId}" />
+									</t:inputText>
+									<t:commandButton styleClass="aon-form-lookup-button"
+										id="Income_issueDate1_button" forceId="#{true}" value=""
+										immediate="true" />
+									<script type="text/javascript">
+									  Calendar.setup( {
+										inputField  : "Income_issueDate1", button : "Income_issueDate1_button",
+										ifFormat    : "%d/%m/%Y" } );
+									</script>
+								</t:div>
+							</t:div>
+							<t:div styleClass="aon-form-unit aon-form-layout-unit-inline-label-block">
+								<h:outputLabel value="#{purchaseBundle.aon_date_to}" 
+								styleClass="aon-form-input-text-label aon-form-layout-label-block" />
+								<t:div styleClass="aon-form-nowrap">
+									<t:inputText styleClass="aon-form-input-text"
+										id="Income_issueDate2" 
+										forceId="#{true}"
+										valueChangeListener="#{income.addIssueDateLessThanExpression}"
+										size="10" maxlength="12">
+										<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+											timeZone="#{timeZoneController.timeZoneId}" />
+									</t:inputText>
+									<t:commandButton styleClass="aon-form-lookup-button"
+										id="Income_issueDate2_button" forceId="#{true}" value=""
+										immediate="true" />
+									<script type="text/javascript">
+									  Calendar.setup( {
+										inputField  : "Income_issueDate2", button : "Income_issueDate2_button",
+										ifFormat    : "%d/%m/%Y" } );
+									</script>
+								</t:div>
+							</t:div>
+						</t:div>
+						
+						<h:outputLabel
+							styleClass="aon-form-input-text-label aon-form-table-column-odd-label"
+							for="Income_supplier_registry_document" 
+							value="#{purchaseBundle.aon_supplier_document}" />
+						<t:inputText id="Income_supplier_registry_document" size="15"
+							styleClass="aon-form-input-text"
+							valueChangeListener="#{income.addSupplierExpression}" />
+
+						<t:outputLabel for="Income_status"
+							styleClass="aon-form-selectOneMenu-label"
+							value="#{purchaseBundle.aon_status}" />
+						<h:selectOneMenu id="Income_status" 
+							styleClass="aon-form-selectOneMenu-field"
+							valueChangeListener="#{income.addEqualExpression}"
+							converter="aonIncomeStatusConverter">
+							<f:selectItem itemDisabled="true" itemLabel="-" itemValue=""/>
+							<f:selectItems value="#{warehouseCollections.incomeStatuses}" />
+						</h:selectOneMenu>
+							
+
+					</h:panelGrid>
+				</t:div>.
+			</t:div>
+		</h:form>
+		<h:form id="placeList" target="list" />
+	</ui:define>
+</ui:composition>
+
+</body>
+</html>

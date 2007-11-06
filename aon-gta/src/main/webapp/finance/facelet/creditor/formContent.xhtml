@@ -1,0 +1,114 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:h="http://java.sun.com/jsf/html">
+<body>
+
+<ui:composition>
+
+	<t:div styleClass="aon-content-subtitle" id="aon-content-subtitle"
+		forceId="#{true}">
+		<t:div styleClass="aon-content-subtitle-internal">
+			<h:outputText
+				value="#{creditorAlias.new?(bundle.aon_reset):(bundle.aon_editing)}" />
+		</t:div>
+	</t:div>
+
+	<t:div id="aon-scroll-area" forceId="#{true}">
+		<t:div styleClass="aon-scroll-area-internal">
+
+			<h:panelGrid columns="2" cellpadding="0" cellspacing="0"
+				styleClass="aon-form-table"
+				columnClasses="aon-form-table-column-odd,aon-form-table-column-even">
+
+				<h:outputLabel for="Creditor_id"
+					styleClass="aon-form-input-text-label"
+					value="#{registryBundle.aon_id}" />
+				<h:inputText id="Creditor_id" value="#{creditorAlias.to.id}"
+					styleClass="aon-form-input-text" forceId="#{true}"
+					required="#{true}" size="15" disabled="#{true}" />
+
+				<t:outputLabel for="Creditor_registry_document"
+					styleClass="aon-form-input-text-label"
+					value="#{registryBundle.aon_cif}" />
+				<t:inputText id="Creditor_registry_document" styleClass="aon-form-input-text"
+					forceId="#{true}" value="#{creditorAlias.to.registry.document}" size="16"
+					onblur="toUpperCase(this);">
+					<f:validateLength minimum="1" maximum="16" />
+				</t:inputText>
+
+				<t:outputLabel for="Creditor_registry_name"
+					styleClass="aon-form-input-text-label"
+					value="#{registryBundle.aon_name}" />
+				<t:inputText id="Creditor_registry_name" value="#{creditorAlias.to.registry.name}"
+					styleClass="aon-form-input-text" forceId="#{true}" size="64">
+					<f:validateLength minimum="1" maximum="64" />
+				</t:inputText>
+
+				<t:outputLabel for="Creditor_registry_surname"
+					styleClass="aon-form-input-text-label"
+					value="#{registryBundle.aon_surname}" />
+				<t:inputText id="Creditor_registry_surname" styleClass="aon-form-input-text"
+					forceId="#{true}" value="#{creditorAlias.to.registry.surname}" size="64">
+					<f:validateLength minimum="1" maximum="64" />
+				</t:inputText>
+
+				<t:outputLabel for="Creditor_registry_alias"
+					styleClass="aon-form-input-text-label"
+					value="#{registryBundle.aon_alias}" />
+				<t:inputText id="Creditor_registry_alias" value="#{creditorAlias.to.registry.alias}"
+					styleClass="aon-form-input-text" forceId="#{true}" size="32"
+					onblur="toUpperCase(this);">
+					<f:validateLength minimum="1" maximum="32" />
+				</t:inputText>
+
+				<h:outputLabel for="Creditor_status"
+					styleClass="aon-form-input-text-label"
+					value="#{registryBundle.aon_status}" />
+				<h:selectOneMenu id="Creditor_status"
+					styleClass="aon-form-selectOneMenu-field"
+					value="#{creditorAlias.to.status}">
+					<f:selectItems value="#{financeCollections.creditorStatuses}" />
+				</h:selectOneMenu>
+			</h:panelGrid>
+
+			<t:panelTabbedPane styleClass="aon-tabpanel" style="width:100%;"
+				rendered="#{viewDetails}" activeTabStyleClass="aon-tabpanel-active"
+				inactiveTabStyleClass="aon-tabpanel-inactive"
+				serverSideTabSwitch="true">
+
+				<t:panelTab id="address" label="#{registryBundle.aon_addresses}">
+					<ui:include src="/facelet/shared/tabs/addresses.xhtml" >
+						<ui:param name="controllerAlias" value="#{creditorAddress}" />
+						<ui:param name="dataTable" value="creditorAddressDataList" />
+					</ui:include>
+				</t:panelTab>
+
+				<t:panelTab id="medias" label="#{registryBundle.aon_media}">
+					<ui:include src="/facelet/shared/tabs/medias.xhtml" >
+						<ui:param name="controllerAlias" value="#{creditorMedia}" />
+						<ui:param name="dataTable" value="creditorMediaDataList" />
+					</ui:include>
+				</t:panelTab>
+
+				<t:panelTab id="finance_data" label="#{financeBundle.aon_finance_data}">
+					<ui:include src="/facelet/shared/tabs/banks.xhtml">
+						<ui:param name="controllerAlias" value="#{creditorRbank}" />
+						<ui:param name="dataTable" value="bankDataList" />
+					</ui:include>
+					<ui:include src="/facelet/shared/tabs/payMethods.xhtml">
+						<ui:param name="controllerAlias" value="#{creditorRpayMethod}" />
+						<ui:param name="dataTable" value="payMethodDataList" />
+					</ui:include>
+				</t:panelTab>
+
+			</t:panelTabbedPane>
+		</t:div>
+	</t:div>
+
+</ui:composition>
+
+</body>
+</html>
