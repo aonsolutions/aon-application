@@ -77,8 +77,7 @@ public class Employee implements ITransferObject, IEntity, ILookupObject {
 	@OneToOne()
 	@org.hibernate.annotations.Cascade({org.hibernate.annotations.CascadeType.SAVE_UPDATE,
 										org.hibernate.annotations.CascadeType.MERGE, 
-										org.hibernate.annotations.CascadeType.PERSIST,
-										org.hibernate.annotations.CascadeType.DELETE_ORPHAN})
+										org.hibernate.annotations.CascadeType.PERSIST})
 	@PrimaryKeyJoinColumn 
 	public Registry getRegistry() {
 		return registry;
