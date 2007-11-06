@@ -3,6 +3,7 @@ package com.code.aon.commercial;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -82,7 +83,8 @@ public class Target implements ITransferObject, ILookupObject, ITaxInfo{
 	 * 
 	 * @return the registry
 	 */
-	@OneToOne 
+	@OneToOne(cascade={CascadeType.PERSIST, CascadeType.MERGE})
+	@org.hibernate.annotations.Cascade(value = org.hibernate.annotations.CascadeType.SAVE_UPDATE)
 	@PrimaryKeyJoinColumn 
 	public Registry getRegistry() {
 		return registry;
