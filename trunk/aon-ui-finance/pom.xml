@@ -10,7 +10,6 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.code.aon</groupId>
 	<artifactId>aon.ui.finance</artifactId>
-	<packaging>jar</packaging>
 	<version>1.0.0</version>
 	<description>AON UI FINANCE</description>
 	<name>AON UI FINANCE</name>
@@ -95,4 +94,3 @@
 		</dependency>
 	</dependencies>
 </project>
-
