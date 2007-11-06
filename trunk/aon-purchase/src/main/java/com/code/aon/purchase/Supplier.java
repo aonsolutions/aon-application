@@ -15,6 +15,7 @@ import com.code.aon.common.ILookupObject;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.config.IScopable;
 import com.code.aon.config.Scope;
+import com.code.aon.purchase.dao.IPurchaseAlias;
 import com.code.aon.purchase.enumeration.SupplierStatus;
 import com.code.aon.registry.Registry;
 
@@ -114,7 +115,7 @@ public class Supplier extends Registry implements ITransferObject, ILookupObject
 	 * 
 	 * @return the map
 	 */
-	/*@Transient
+	@Transient
     public Map<String,Object> getLookups() {
         Map<String,Object> map = new HashMap<String,Object>();
         map.put(IPurchaseAlias.SUPPLIER_ID, getId());
@@ -123,5 +124,5 @@ public class Supplier extends Registry implements ITransferObject, ILookupObject
         map.put(IPurchaseAlias.SUPPLIER_DOCUMENT, getDocument());
         map.put(SUPPLIER_FULL_NAME, getName() + " " + ((getSurname() == null) ? "" : getSurname()) );
         return map;
-    }*/
+    }
 }
