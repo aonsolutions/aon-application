@@ -334,6 +334,8 @@ public class EmployeeController extends BasicController {
 		} catch (ManagerBeanException e) {
 			Utils.addMessage( "aon_employee_calendar_creation_exception", true );
             throw new AbortProcessingException(e.getMessage(), e);
+		} catch (NullPointerException e) {
+			LOGGER.severe( e.getMessage() );
 		}
 	}
 
