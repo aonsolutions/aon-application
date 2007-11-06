@@ -1,0 +1,175 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:h="http://java.sun.com/jsf/html">
+<body>
+
+<ui:composition template="/facelet/templates/aon.ui.form.xhtml">
+
+	<ui:define name="head">
+		<ui:include src="/facelet/shared/head.xhtml" />
+	</ui:define>
+		
+	<ui:define name="content">
+
+		<h:form id="warehouseList">
+			<!--  toolbar navigation -->
+			<t:div styleClass="aon-content-toolbar" forceId="#{true}"
+				id="aon-content-toolbar">
+				<t:div styleClass="aon-content-toolbar-internal">
+				<t:div styleClass="aon-content-toolbar-item-group">
+					<h:commandButton id="save" value="#{bundle.aon_save}"
+						styleClass="aon-content-toolbar-item aon-content-toolbar-item-save"
+						onmouseover="this.className='aon-content-toolbar-item aon-content-toolbar-item-hover aon-content-toolbar-item-save'"
+						onmouseout="this.className='aon-content-toolbar-item aon-content-toolbar-item-save'"
+						actionListener="#{warehouse.onAccept}"
+						rendered="#{warehouse.to!=null}"
+						onclick="return (confirm('#{bundle.aon_save_confirm}'));" 
+						accesskey="#{bundle.aon_key_save}"/>
+					<h:commandButton id="cancel" value="#{bundle.aon_cancel}"
+						immediate="#{true}" 
+						styleClass="aon-content-toolbar-item aon-content-toolbar-item-cancel"
+						onmouseover="this.className='aon-content-toolbar-item aon-content-toolbar-item-hover aon-content-toolbar-item-cancel'"
+						onmouseout="this.className='aon-content-toolbar-item aon-content-toolbar-item-cancel'"
+						actionListener="#{warehouse.onCancel}"
+						rendered="#{warehouse.to!=null}"
+						onclick="return (confirm('#{bundle.aon_cancel_confirm}'));" 
+						accesskey="#{bundle.aon_key_cancel}"/>
+					<h:commandButton id="remove" value="#{bundle.aon_remove}"
+						styleClass="aon-content-toolbar-item aon-content-toolbar-item-delete"
+						onmouseover="this.className='aon-content-toolbar-item aon-content-toolbar-item-hover aon-content-toolbar-item-delete'"
+						onmouseout="this.className='aon-content-toolbar-item aon-content-toolbar-item-delete'"
+						actionListener="#{warehouse.onRemove}" 
+						rendered="#{warehouse.to!=null and !warehouse.new}"
+						onclick="return (confirm('#{bundle.aon_remove_confirm}'));" 
+						accesskey="#{bundle.aon_key_remove}"/>
+					<h:commandButton id="reset" value="#{bundle.aon_reset}"
+						styleClass="aon-content-toolbar-item aon-content-toolbar-item-new"
+						onmouseover="this.className='aon-content-toolbar-item aon-content-toolbar-item-hover aon-content-toolbar-item-new'"
+						onmouseout="this.className='aon-content-toolbar-item aon-content-toolbar-item-new'"
+						actionListener="#{warehouse.onReset}"
+						rendered="#{!warehouse.new}" 
+						accesskey="#{bundle.aon_key_new}"/>
+				</t:div>
+				</t:div>
+			</t:div>
+
+			<t:div forceId="#{true}" id="aon-scroll-area">
+				<t:div styleClass="aon-scroll-area-internal">
+					<t:div styleClass="aon-table-hack">
+						<t:dataTable id="warehouseDataList" value="#{warehouse.model}" 
+							rows="20" var="to" rowIndexVar="rowIndex"
+							rendered="#{warehouse.model.rowCount > 0 or warehouse.new}"
+							rowOnMouseOver="selectRow( this )"
+							rowOnMouseOut="unselectRow( this )" 
+							rowOnClick="sendRow( this )"
+							sortColumn="#{warehouse.sort}" 
+							sortAscending="#{warehouse.ascending}"
+							styleClass="aon-edit-table" headerClass="aon-edit-table-header" footerClass="aon-edit-table-footer"
+							rowClasses="aon-edit-table-row-odd,aon-edit-table-row-even"
+							columnClasses="aon-edit-table-mainColumn aon-edit-table-body aon-edit-table-body-string, aon-edit-table-body aon-edit-table-body-buttons">
+
+							<h:column>
+								<f:facet name="header">
+									<t:commandSortHeader columnName="Warehouse_name" arrow="true"
+										actionListener="#{warehouse.sort}" 
+										styleClass="aon-table-header-link">
+										<h:outputText value="#{warehouseBundle.aon_warehouse_name}" />
+									</t:commandSortHeader>
+								</f:facet>
+								<t:commandLink immediate="#{true}"  
+									styleClass="aon-table-row-selected"
+									rendered="#{to.id!=warehouse.to.id}"
+									actionListener="#{warehouse.onSelect}" />
+								<h:outputText value="#{to.name}" rendered="#{to.id!=warehouse.to.id}" />
+								<h:inputText rendered="#{to.id==warehouse.to.id}" 
+									styleClass="aon-form-input-text" size="40"
+									value="#{warehouse.to.name}" required="#{true}" />
+								<f:verbatim>&#160;</f:verbatim>
+								<f:facet name="footer">
+									<t:div>
+										<t:commandButton id="reset" alt="[#{bundle.aon_reset}]"
+											styleClass="aon-edit-table-icon-button aon-edit-table-icon-button-new"
+											value=""
+											actionListener="#{warehouse.onReset}"
+											rendered="#{!warehouse.new}"
+											accesskey="#{bundle.aon_key_new_line}">
+										</t:commandButton>
+										<h:inputText rendered="#{warehouse.new}" 
+											styleClass="aon-form-input-text"
+											value="#{warehouse.to.name}"
+											required="#{true}" size="40"/>
+									</t:div>
+								</f:facet>
+							</h:column>
+
+							<h:column>
+								<f:facet name="header">
+									<f:verbatim>&#160;</f:verbatim>
+								</f:facet>
+			
+								<t:commandButton title="#{bundle.aon_accept}" 
+								actionListener="#{warehouse.onAccept}"
+								onclick="return (confirm('#{bundle.aon_accept_confirm}'));" 
+								styleClass="aon-edit-table-icon-button aon-edit-table-icon-button-save"
+								value=""
+								rendered="#{to.id==warehouse.to.id}"
+								accesskey="#{bundle.aon_key_save_line}"/>
+						
+								<t:commandButton title="#{bundle.aon_cancel}" 
+								actionListener="#{warehouse.onCancel}"
+								immediate="#{true}" 
+								onclick="return (confirm('#{bundle.aon_cancel_confirm}'));" 
+								styleClass="aon-edit-table-icon-button aon-edit-table-icon-button-cancel"
+								value="" accesskey="#{bundle.aon_key_cancel_line}"
+								rendered="#{to.id==warehouse.to.id}"/>
+					
+								<t:commandButton title="#{bundle.aon_remove}" 
+								actionListener="#{warehouse.onRemove}" 
+								onclick="return (confirm('#{bundle.aon_remove_confirm}'));" 
+								styleClass="aon-edit-table-icon-button aon-edit-table-icon-button-delete"
+								value="" accesskey="#{bundle.aon_key_remove_line}"
+								rendered="#{to.id==warehouse.to.id}"/>
+								<f:verbatim rendered="#{to.id!=warehouse.to.id}">&#160;</f:verbatim>
+								<f:facet name="footer">
+									<t:div>
+										<f:verbatim rendered="#{!warehouse.new}">&#160;</f:verbatim>
+										<t:commandButton title="#{bundle.aon_accept}" 
+										actionListener="#{warehouse.onAccept}"
+										onclick="return (confirm('#{bundle.aon_accept_confirm}'));" 
+										styleClass="aon-edit-table-icon-button aon-edit-table-icon-button-save"
+										value="" accesskey="#{bundle.aon_key_save_line}"
+										rendered="#{warehouse.new}"/>
+								
+										<t:commandButton title="#{bundle.aon_cancel}" 
+										actionListener="#{warehouse.onCancel}"
+										immediate="#{true}" 
+										onclick="return (confirm('#{bundle.aon_cancel_confirm}'));" 
+										styleClass="aon-edit-table-icon-button aon-edit-table-icon-button-cancel"
+										value="" accesskey="#{bundle.aon_key_cancel_line}"
+										rendered="#{warehouse.new}"/>
+									</t:div>
+								</f:facet>		
+							</h:column>
+							
+						</t:dataTable>
+					</t:div>
+
+					<ui:include src="/facelet/shared/dataScroller.xhtml">
+						<ui:param name="dataTable" value="warehouseDataList" />
+						<ui:param name="model" value="#{warehouse.model}" />
+						<ui:param name="showNote" value="#{true}" />
+					</ui:include>
+
+				</t:div>
+			</t:div>
+		</h:form>
+		<h:form id="placeList" target="list" />
+	</ui:define>
+
+</ui:composition>
+
+</body>
+</html>

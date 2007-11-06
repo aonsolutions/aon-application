@@ -1,0 +1,107 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:h="http://java.sun.com/jsf/html">
+<body>
+
+<ui:composition template="/facelet/templates/aon.ui.form.xhtml">
+
+	<ui:define name="head">
+		<script type="text/javascript">
+			window.onload = function()
+			{
+				document.getElementById("Supplier_id").focus();
+			}
+		</script>
+	</ui:define>
+
+	<ui:define name="content">
+
+		<h:form id="SupplierSearch">
+			<t:div styleClass="aon-content-toolbar">
+				<t:div styleClass="aon-content-toolbar-internal">
+				<t:div styleClass="aon-content-toolbar-item-group">
+					<t:commandButton id="search" value="#{bundle.aon_search}"
+						action="supplier_list" actionListener="#{supplier.onSearch}"
+						styleClass="aon-content-toolbar-item aon-content-toolbar-item-search"
+						onmouseover="this.className='aon-content-toolbar-item aon-content-toolbar-item-hover aon-content-toolbar-item-search'"
+						onmouseout="this.className='aon-content-toolbar-item aon-content-toolbar-item-search'" 
+						accesskey="#{bundle.aon_key_search}"/>
+					<t:commandButton id="cancel" value="#{bundle.aon_cancel}"
+						action="supplier_list" actionListener="#{supplier.onCancel}"
+						styleClass="aon-content-toolbar-item aon-content-toolbar-item-cancel"
+						onmouseover="this.className='aon-content-toolbar-item aon-content-toolbar-item-hover aon-content-toolbar-item-cancel'"
+						onmouseout="this.className='aon-content-toolbar-item aon-content-toolbar-item-cancel'" 
+						accesskey="#{bundle.aon_key_cancel}"/>
+					<h:commandButton id="clear" value="#{bundle.aon_clear}"
+						type="reset"
+						styleClass="aon-content-toolbar-item aon-content-toolbar-item-reset"
+						onmouseover="this.className='aon-content-toolbar-item aon-content-toolbar-item-hover aon-content-toolbar-item-reset'"
+						onmouseout="this.className='aon-content-toolbar-item aon-content-toolbar-item-reset'" />
+					<t:commandButton id="reset" value="#{bundle.aon_reset}"
+						action="supplier_form" actionListener="#{supplier.onReset}"
+						styleClass="aon-content-toolbar-item aon-content-toolbar-item-new"
+						onmouseover="this.className='aon-content-toolbar-item aon-content-toolbar-item-hover aon-content-toolbar-item-new'"
+						onmouseout="this.className='aon-content-toolbar-item aon-content-toolbar-item-new'" 
+						accesskey="#{bundle.aon_key_new}"/>
+				</t:div>
+				</t:div>
+			</t:div>
+
+			<t:div styleClass="aon-content-subtitle" id="aon-content-subtitle"
+				forceId="#{true}">
+				<t:div styleClass="aon-content-subtitle-internal">
+				<h:outputText value="#{bundle.aon_search_header}" />
+				</t:div>
+			</t:div>
+
+			<t:div forceId="#{true}" id="aon-scroll-area">
+				<t:div styleClass="aon-scroll-area-internal">
+					<h:panelGrid columns="2" styleClass="aon-form-table"
+						columnClasses="aon-form-table-column-odd,aon-form-table-column-even">
+
+						<t:outputLabel for="Supplier_id"
+							value="#{purchaseBundle.supplier_code}"
+							styleClass="aon-form-input-text-label aon-form-table-column-odd-label" />
+						<t:inputText id="Supplier_id" size="10"
+							valueChangeListener="#{supplier.addExpression}"
+							styleClass="aon-form-input-text" />
+
+						<t:outputLabel for="Supplier_document"
+							value="#{purchaseBundle.supplier_document}"
+							styleClass="aon-form-input-text-label aon-form-table-column-odd-label" />
+						<t:inputText id="Supplier_document" size="20"
+							valueChangeListener="#{supplier.addExpression}"
+							styleClass="aon-form-input-text" onblur="toUpperCase(this);" />
+
+						<t:outputLabel for="Supplier_name"
+							value="#{purchaseBundle.supplier_name}"
+							styleClass="aon-form-input-text-label aon-form-table-column-odd-label" />
+						<t:inputText id="Supplier_name" size="40"
+							valueChangeListener="#{supplier.addExpression}"
+							styleClass="aon-form-input-text" />
+
+						<t:outputLabel for="Supplier_surname"
+							value="#{purchaseBundle.supplier_surname}"
+							styleClass="aon-form-input-text-label aon-form-table-column-odd-label" />
+						<t:inputText id="Supplier_surname" size="40"
+							valueChangeListener="#{supplier.addExpression}"
+							styleClass="aon-form-input-text" />
+
+						<t:outputLabel for="Supplier_alias"
+							value="#{purchaseBundle.supplier_alias}"
+							styleClass="aon-form-input-text-label aon-form-table-column-odd-label" />
+						<t:inputText id="Supplier_alias" size="40"
+							valueChangeListener="#{supplier.addExpression}"
+							styleClass="aon-form-input-text" onblur="toUpperCase(this);" />
+					</h:panelGrid>
+				</t:div>
+			</t:div>
+		</h:form>
+	</ui:define>
+</ui:composition>
+
+</body>
+</html>

@@ -1,0 +1,481 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<!DOCTYPE report-config 
+	PUBLIC "-//CODE-AON//DTD Report Config//EN" 
+	"http://co-de.com/aon/report-config.dtd">
+
+<report-config>
+	<default-config>
+		<fetch-mode paginated="false" />
+		<!-- 
+		<params>
+			<param id="logoImageFile" value="com/code/aon/ui/gta/report/resources/logo.gif" />
+		</params>
+		 -->
+	</default-config>
+
+	<report id="TASMake" description="Make report">
+		<template path="/com/code/aon/ui/tas/resources/report/Make.jasper" />
+		<bean key="com.code.aon.tas.Make" />
+		<criteria provider="#{TASMake}" />
+		<params>
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.tas.i18n.messages" />
+			<param id="logoImageFile" value="#{company.getAttachAsInputStream}" />
+			<param id="company" value="#{company.obtainCompany}" />
+		</params>
+	</report>
+	
+	<report id="TASModel" description="Model report">
+		<template path="/com/code/aon/ui/tas/resources/report/Model.jasper" />
+		<bean key="com.code.aon.tas.Model" />
+		<criteria provider="#{TASModel}" />
+		<params>
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.tas.i18n.messages" />
+			<param id="logoImageFile" value="#{company.getAttachAsInputStream}" />
+			<param id="company" value="#{company.obtainCompany}" />
+		</params>
+	</report>
+
+	<report id="TASItem" description="TasItem report">
+		<template path="/com/code/aon/ui/tas/resources/report/TASItem.jasper" />
+		<bean key="com.code.aon.tas.TasItem" />
+		<criteria provider="#{TASItem}" />
+		<params>
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.tas.i18n.messages" />
+			<param id="logoImageFile" value="#{company.getAttachAsInputStream}" />
+			<param id="company" value="#{company.obtainCompany}" />
+		</params>
+	</report>
+
+	<report id="SupportOrder" description="SupportOrder report">
+		<template path="/com/code/aon/ui/tas/resources/report/SupportOrder.jasper" />
+		<bean key="com.code.aon.tas.SupportOrder" />
+		<criteria provider="#{SupportOrder}" />
+		<params>
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.tas.i18n.messages" />
+			<param id="logoImageFile" value="#{company.getAttachAsInputStream}" />
+			<param id="company" value="#{company.obtainCompany}" />
+		</params>
+	</report>
+	
+	<report id="SupportOrderForm" description="SupportOrder report">
+		<template path="/com/code/aon/ui/tas/resources/report/SupportOrderForm.jasper" />
+		<collection provider="#{SupportOrder}"/>
+		
+		<params>
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.tas.i18n.messages" />
+			<param id="company" value="#{company.obtainCompany}" />
+			<param id="logoImageFile" value="#{company.getAttachAsInputStream}" />
+			<param id="phone" value="#{company.obtainPhone}" />
+			<param id="fax" value="#{company.obtainFax}" />
+			<param id="address" value="#{company.obtainAddress}" />
+		</params>
+		
+	</report>
+
+	<!--  **********************************************************
+						Product Auxiliary Entities  
+		  ********************************************************** -->
+
+	<report id="productCategory" description="Categories report">
+		<template path="/com/code/aon/ui/product/report/category.jasper" />
+		<bean key="com.code.aon.product.ProductCategory" />
+		<criteria provider="#{productCategory}" />
+		<params>
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.product.i18n.messages" />
+			<param id="logoImageFile" value="#{company.getAttachAsInputStream}" />
+			<param id="company" value="#{company.obtainCompany}" />
+		</params>
+	</report>
+
+	<report id="tax" description="Taxs report">
+		<template path="/com/code/aon/ui/product/report/tax.jasper" />
+		<bean key="com.code.aon.product.Tax" />
+		<criteria provider="#{tax}" />
+		<params>
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.product.i18n.messages" />
+			<param id="logoImageFile" value="#{company.getAttachAsInputStream}" />
+			<param id="company" value="#{company.obtainCompany}" />
+		</params>
+	</report>
+
+	<!--  **********************************************************
+						Product Master Entities  
+		  ********************************************************** -->
+	<report id="item" description="Items report">
+		<template path="/com/code/aon/ui/product/report/item.jasper" />
+		<bean key="com.code.aon.product.Item" />
+		<criteria provider="#{item}" />
+		<params>
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.product.i18n.messages" />
+			<param id="logoImageFile" value="#{company.getAttachAsInputStream}" />
+			<param id="company" value="#{company.obtainCompany}" />
+		</params>
+	</report>
+
+	<report id="itemPrices" description="Items report">
+		<template path="/com/code/aon/ui/product/report/item.jasper" />
+		<collection provider="#{itemPrices}" />
+		<params>
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.product.i18n.messages" />
+		</params>
+	</report>
+
+	<!--  **********************************************************
+						COMPOSITION 
+		  ********************************************************** -->
+
+	<report id="composition" description="Composition's Report">
+		<template path="/com/code/aon/ui/composition/report/composition.jasper"/>
+		<collection provider="#{composition}"/>
+
+		<params>
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.composition.i18n.messages" />
+		</params>
+		
+		<nested-report report="compositionExpenses"/>
+		<nested-report report="compositionDetail"/>
+	</report>
+	
+	<report id="compositionExpenses" description="CompositionExpenses' Subreport">
+		<template path="/com/code/aon/ui/composition/report/compositionExpenses.jasper"/>
+	</report>
+	
+	<report id="compositionDetail" description="CompositionDetail's Subreport">
+		<template path="/com/code/aon/ui/composition/report/compositionDetail.jasper"/>
+	</report>
+
+	<!--  **********************************************************
+						INVENTORY 
+		  ********************************************************** -->
+
+	<report id="inventory" description="Inventory Report">
+		<template path="/com/code/aon/ui/warehouse/report/inventory.jasper" />
+		<bean key="com.code.aon.warehouse.Inventory" />
+		<criteria provider="#{inventory}" />
+		<params>
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.warehouse.i18n.messages" />
+			<param id="logoImageFile" value="#{company.getAttachAsInputStream}" />
+			<param id="company" value="#{company.obtainCompany}" />
+		</params>
+	</report>
+	
+	<report id="inventory_close" description="Inventory Count report">
+		<template path="/com/code/aon/ui/warehouse/report/count.jasper" />
+		<collection provider="#{inventoryDetail}" />
+		<params>
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.warehouse.i18n.messages" />
+			<param id="logoImageFile" value="#{company.getAttachAsInputStream}" />
+			<param id="company" value="#{company.obtainCompany}" />
+		</params>
+	</report>
+	
+	<report id="inventory_valued" description="Valued Inventory report">
+		<template path="/com/code/aon/ui/warehouse/report/valued.jasper" />
+		<collection provider="#{inventoryDetail}" />
+		<params>
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.warehouse.i18n.messages" />
+			<param id="logoImageFile" value="#{company.getAttachAsInputStream}" />
+			<param id="company" value="#{company.obtainCompany}" />			
+		</params>
+	</report>
+	
+	<!--  **********************************************************
+						OFFER 
+		  ********************************************************** -->
+		  
+	<report id="offer" description="Offers's Report">
+		<template path="/com/code/aon/ui/gta/report/offer.jasper"/>
+		<collection provider="#{tasOffer}"/>
+
+		<params>
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.commercial.i18n.messages" />
+			<param id="PriceStrategy" value="#{offerDetail.getPriceStrategy}" />
+			<param id="logoImageFile" value="#{company.getAttachAsInputStream}" />
+			<param id="company" value="#{company.obtainCompany}" />
+			<param id="phone" value="#{company.obtainPhone}" />
+			<param id="fax" value="#{company.obtainFax}" />
+			<param id="address" value="#{company.obtainAddress}" />
+		</params>
+		
+		<nested-report report="offerDetail"/>
+		<nested-report report="vatBreakDown"/>
+	</report>
+	
+	<report id="offerDetail" description="OfferDetail' Subreport">
+		<template path="/com/code/aon/ui/gta/report/offerDetail.jasper"/>
+	</report>
+	
+	<report id="vatBreakDown" description="VatBreakDown's Subreport">
+		<template path="/com/code/aon/ui/gta/report/vatBreakDown.jasper"/>
+	</report>	  
+
+	<!--  **********************************************************
+						PURCHASE 
+		  ********************************************************** -->
+		  
+	<report id="income" description="Income's Report">
+		<template path="/com/code/aon/ui/gta/report/income.jasper"/>
+		<collection provider="#{income}"/>
+
+		<params>
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.purchase.i18n.messages" />
+			<param id="company" value="#{company.obtainCompany}" />
+			<param id="PriceStrategy" value="#{incomeDetail.getPriceStrategy}" />
+			<param id="address" value="#{company.obtainAddress}" />
+		</params>
+		<nested-report report="incomeDetail"/>
+		<nested-report report="vatBreakDown"/>
+	</report>
+	
+	<report id="incomeDetail" description="IncomeDetail's Subreport">
+		<template path="/com/code/aon/ui/gta/report/incomeDetail.jasper"/>
+	</report>
+	
+	<report id="incomeList" description="Income's List">
+		<template path="/com/code/aon/ui/warehouse/report/incomeList.jasper"/>
+		<bean key="com.code.aon.warehouse.Income" />
+		<criteria provider="#{income}"/>
+
+		<params>
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.warehouse.i18n.messages" />
+			<param id="PriceStrategy" value="#{deliveryDetail.getPriceStrategy}" />
+			<param id="logoImageFile" value="#{company.getAttachAsInputStream}" />
+			<param id="company" value="#{company.obtainCompany}" />
+		</params>
+	</report>
+
+	<!--  **********************************************************
+						SALES
+		  ********************************************************** -->
+
+	<report id="salesInvoice" description="Sales Invoice's Report">
+		<template path="/com/code/aon/ui/gta/report/salesInvoice.jasper"/>
+		<collection provider="#{salesInvoicing}"/>
+
+		<!-- 
+		<nested-report report="finance"/>
+		 -->
+		<params>
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.finance.i18n.messages" />
+			<param id="company" value="#{company.obtainCompany}" />
+			<param id="PriceStrategy" value="#{salesInvoicingDetail.getPriceStrategy}" />
+			<param id="logoImageFile" value="#{company.getAttachAsInputStream}" />
+			<param id="customer" value="#{salesInvoicing.getCustomer}" />
+			<param id="phone" value="#{company.obtainPhone}" />
+			<param id="fax" value="#{company.obtainFax}" />
+			<param id="address" value="#{company.obtainAddress}" />
+			<param id="tasDelivery" value="#{salesInvoicing.obtainTasDelivery}" />
+		</params>
+		<nested-report report="invoiceDetail"/>
+		<nested-report report="vatBreakDown"/>
+	</report>
+	
+	<report id="invoiceDetail" description="InvoiceDetail's Subreport">
+		<template path="/com/code/aon/ui/gta/report/invoiceDetail.jasper"/>
+	</report>
+	
+	<report id="salesInvoiceList" description="Sales Invoice's List">
+		<template path="/com/code/aon/ui/finance/report/salesInvoiceList.jasper"/>
+		<bean key="com.code.aon.finance.Invoice" />
+		<criteria provider="#{salesInvoicing}"/>
+
+		<params>
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.finance.i18n.messages" />
+			<param id="company" value="#{company.obtainCompany}" />
+			<param id="PriceStrategy" value="#{salesInvoicingDetail.getPriceStrategy}" />
+			<param id="logoImageFile" value="#{company.getAttachAsInputStream}" />
+			<param id="customer" value="#{salesInvoicing.getCustomer}" />
+		</params>
+	</report>
+	
+	<report id="invoice" description="Invoice's Report">
+		<template path="/com/code/aon/ui/gta/report/purchaseInvoice.jasper"/>
+		<collection provider="#{invoicing}"/>
+
+		<!-- 
+		<nested-report report="finance"/>
+		 -->
+		<params>
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.finance.i18n.messages" />
+			<param id="company" value="#{company.obtainCompany}" />
+			<param id="PriceStrategy" value="#{invoicingDetail.getPriceStrategy}" />
+			<param id="address" value="#{company.obtainAddress}" />
+		</params>
+		<nested-report report="purchaseInvoiceDetail"/>
+		<nested-report report="vatBreakDown"/>
+	</report>
+	
+	<report id="purchaseInvoiceDetail" description="PurchaseInvoiceDetail's Subreport">
+		<template path="/com/code/aon/ui/gta/report/purchaseInvoiceDetail.jasper"/>
+	</report>
+	
+	<report id="invoiceList" description="Sales Invoice's List">
+		<template path="/com/code/aon/ui/finance/report/invoiceList.jasper"/>
+		<bean key="com.code.aon.finance.Invoice" />
+		<criteria provider="#{invoicing}"/>
+
+		<params>
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.finance.i18n.messages" />
+			<param id="company" value="#{company.obtainCompany}" />
+			<param id="PriceStrategy" value="#{invoicingDetail.getPriceStrategy}" />
+			<param id="logoImageFile" value="#{company.getAttachAsInputStream}" />
+		</params>
+	</report>
+	
+	<report id="finance" description="Finance's Subreport">
+		<template path="/com/code/aon/ui/sales/report/finance.jasper"/>
+	</report>
+	
+	<report id="delivery" description="Delivery's Report">
+		<template path="/com/code/aon/ui/gta/report/delivery.jasper"/>
+		<collection provider="#{delivery}"/>
+
+		<params>
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.warehouse.i18n.messages" />
+			<param id="PriceStrategy" value="#{deliveryDetail.getPriceStrategy}" />
+			<param id="logoImageFile" value="#{company.getAttachAsInputStream}" />
+			<param id="company" value="#{company.obtainCompany}" />
+			<param id="phone" value="#{company.obtainPhone}" />
+			<param id="fax" value="#{company.obtainFax}" />
+			<param id="address" value="#{company.obtainAddress}" />
+			<param id="tasDelivery" value="#{delivery.obtainTasDelivery}" />
+		</params>
+		<nested-report report="deliveryDetail"/>
+		<nested-report report="vatBreakDown"/>
+	</report>
+	
+	<report id="deliveryDetail" description="DeliveryDetail's Subreport">
+		<template path="/com/code/aon/ui/gta/report/deliveryDetail.jasper"/>
+	</report>
+	
+	<report id="deliveryList" description="Delivery's List">
+		<template path="/com/code/aon/ui/warehouse/report/deliveryList.jasper"/>
+		<bean key="com.code.aon.warehouse.Delivery" />
+		<criteria provider="#{delivery}"/>
+
+		<params>
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.warehouse.i18n.messages" />
+			<param id="PriceStrategy" value="#{deliveryDetail.getPriceStrategy}" />
+			<param id="logoImageFile" value="#{company.getAttachAsInputStream}" />
+			<param id="company" value="#{company.obtainCompany}" />
+		</params>
+	</report>
+	
+		<!--  **********************************************************
+						FinanceList
+		  ********************************************************** -->
+		  
+	<report id="financeList" description="Finance's List">
+		<template path="/com/code/aon/ui/finance/report/financeList.jasper" />
+		<bean key="com.code.aon.finance.Finance" />
+		<criteria provider="#{financeChecking}"/>
+		
+		<params>
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.finance.i18n.messages" />
+			<param id="logoImageFile" value="#{company.getAttachAsInputStream}" />
+			<param id="company" value="#{company.obtainCompany}" />
+			<param id="payment" value="#{financeChecking.getPayment}" />
+		</params>
+	</report>
+	
+	<!--  *********  FinanceBatchList  ********* -->
+	<report id="fBatchList" description="Finance Batch List">
+		<template path="/com/code/aon/ui/finance/report/fBatchList.jasper" />
+		<collection provider="#{fBatchPrinter}" />
+		<params>
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.finance.i18n.messages" />
+			<param id="logoImageFile" value="#{company.getAttachAsInputStream}" />
+			<param id="company" value="#{company.obtainCompany}" />
+		</params>
+	</report>
+
+	<!--  *********  FinanceBatch  ********* -->
+	<report id="fBatch" description="Finance Batches' Report">
+		<template path="/com/code/aon/ui/finance/report/fBatch.jasper"/>
+		<collection provider="#{fbatch}"/>
+
+		<params>
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.finance.i18n.messages" />
+			<param id="company" value="#{company.obtainCompany}" />
+			<param id="logoImageFile" value="#{company.getAttachAsInputStream}" />
+			<param id="total" value="#{fbatch.getToTotal}" />
+		</params>
+		
+		<nested-report report="fBatchDetail"/>
+	</report>
+	
+	<report id="fBatchDetail" description="Finance Batch Details">
+		<template path="/com/code/aon/ui/finance/report/fBatchDetail.jasper"/>
+	</report>
+	
+	
+	<!--  **********************************************************
+						Account Report
+		  ********************************************************** -->
+
+	<!--  *********  Diary  ********* -->
+	<report id="diary" description="Diary">
+		<template path="/com/code/aon/ui/account/report/diary.jasper"/>
+		<bean key="com.code.aon.account.AccountEntryDetail" />
+		<criteria provider="#{accountEntryReport}"/>
+
+		<params>
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.account.i18n.messages" />
+			<param id="logoImageFile" value="#{company.getAttachAsInputStream}" />
+			<param id="company" value="#{company.obtainCompany}" />
+			<param id="fromDate" value="#{accountEntryReport.getFromDate}" />
+			<param id="toDate" value="#{accountEntryReport.getToDate}" />
+			<param id="period" value="#{accountEntryReport.getPeriod}" />
+		</params>
+	</report>
+	
+	<!--  *********  Abstract  ********* -->
+	<report id="abstract" description="Abstract">
+		<template path="/com/code/aon/ui/account/report/abstract.jasper"/>
+		<bean key="com.code.aon.account.AccountEntryDetail" />
+		<criteria provider="#{accountEntryReport}"/>
+
+		<params>
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.account.i18n.messages" />
+			<param id="logoImageFile" value="#{company.getAttachAsInputStream}" />
+			<param id="company" value="#{company.obtainCompany}" />
+			<param id="fromDate" value="#{accountEntryReport.getFromDate}" />
+			<param id="toDate" value="#{accountEntryReport.getToDate}" />
+			<param id="period" value="#{accountEntryReport.getPeriod}" />
+		</params>
+	</report> 
+	
+	<!--  *********  Profit And Loss  ********* -->
+	<report id="profitAndLoss" description="ProfitAndLoss">
+		<template path="/com/code/aon/ui/account/report/profitAndLoss.jasper"/>
+		<collection provider="#{accountSummaryReport}"/>
+
+		<params>
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.account.i18n.messages" />
+			<param id="logoImageFile" value="#{company.getAttachAsInputStream}" />
+			<param id="company" value="#{company.obtainCompany}" />
+			<param id="fromDate" value="#{accountSummaryReport.getFromDate}" />
+			<param id="toDate" value="#{accountSummaryReport.getToDate}" />
+			<param id="period" value="#{accountSummaryReport.getPeriod}" />
+			<param id="grossMargin" value="#{accountSummaryReport.getGrossMargin}" />
+			<param id="totalExpenses" value="#{accountSummaryReport.getTotalExpenses}" />
+			<param id="totalResult" value="#{accountSummaryReport.getTotalResult}" />
+		</params>
+	</report>
+
+	<report id="profitAndLossMonthly" description="ProfitAndLossMonthly">
+		<template path="/com/code/aon/ui/account/report/profitAndLossMonthly.jasper"/>
+		<collection provider="#{accountMonthlyReport}"/>
+
+		<params>
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.account.i18n.messages" />
+			<param id="logoImageFile" value="#{company.getAttachAsInputStream}" />
+			<param id="company" value="#{company.obtainCompany}" />
+			<param id="fromDate" value="#{accountSummaryReport.getFromDate}" />
+			<param id="toDate" value="#{accountSummaryReport.getToDate}" />
+			<param id="period" value="#{accountSummaryReport.getPeriod}" />
+		</params>
+	</report>
+
+</report-config>

@@ -1,0 +1,63 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:h="http://java.sun.com/jsf/html">
+<body>
+
+<ui:composition template="/facelet/templates/aon.ui.formWindow.xhtml">
+
+	<ui:define name="content">
+
+		<h:form id="bankForm" styleClass="aon-form">
+
+			<h:inputHidden value="#{bankLookup.parameters}" />
+
+			<t:div styleClass="aon-content-title" forceId="#{true}"
+				id="aon-window-popup-title">
+				<t:div styleClass="aon-content-title-internal">
+					<h:outputText value="#{bankBundle.aon_bank}" />
+				</t:div>
+			</t:div>
+
+			<!-- start toolbar navigation -->
+			<t:div styleClass="aon-content-toolbar">
+				<t:div styleClass="aon-content-toolbar-internal">
+					<t:div styleClass="aon-content-toolbar-item-group">
+
+						<h:commandButton id="search" value="#{bundle.aon_search}"
+							accesskey="#{bundle.aon_key_search}" action="bank_sw"
+							actionListener="#{bankLookup.onSearch}"
+							styleClass="aon-content-toolbar-item"
+							onmouseout="this.className='aon-content-toolbar-item'"
+							onmouseover="this.className='aon-content-toolbar-item aon-content-toolbar-item-hover'">
+						</h:commandButton>
+						<h:commandButton id="cancel" value="#{bundle.aon_cancel}"
+							onclick="window.close();return false;"
+							accesskey="#{bundle.aon_key_cancel}"
+							styleClass="aon-content-toolbar-item"
+							onmouseout="this.className='aon-content-toolbar-item'"
+							onmouseover="this.className='aon-content-toolbar-item aon-content-toolbar-item-hover'">
+						</h:commandButton>
+						<h:commandButton type="reset" id="clear"
+							value="#{bundle.aon_clear}" styleClass="aon-content-toolbar-item"
+							onmouseout="this.className='aon-content-toolbar-item'"
+							onmouseover="this.className='aon-content-toolbar-item aon-content-toolbar-item-hover'">
+						</h:commandButton>
+
+					</t:div>
+				</t:div>
+			</t:div>
+			<!-- end toolbar navigation -->
+
+			<ui:include src="/account/facelet/bank/searchContent.xhtml">
+				<ui:param name="bankAlias" value="#{bankLookup}" />
+			</ui:include>
+
+		</h:form>
+	</ui:define>
+</ui:composition>
+
+</body>
+</html>

@@ -1,0 +1,206 @@
+<?xml version="1.0"?>
+<!DOCTYPE faces-config PUBLIC
+  "-//Sun Microsystems, Inc.//DTD JavaServer Faces Config 1.1//EN"
+  "http://java.sun.com/dtd/web-facesconfig_1_1.dtd">
+
+<faces-config>
+	<!-- ************** EXTERNAL LOOKUPS (RELOCATE) ****************** -->
+	<!-- ************* CUSTOMERLOOKUP ***************** -->
+	<managed-bean>
+		<managed-bean-name>customerLookup</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.customer.controller.CustomerLookupController
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>foreignPojo</property-name>
+			<value>com.code.aon.customer.Customer</value>
+		</managed-property>
+		<managed-property>
+			<property-name>aliasPrefix</property-name>
+			<value>Customer_Lookup</value>
+		</managed-property>
+		<managed-property>
+			<property-name>foreignJoinProperties</property-name>
+			<list-entries>
+				<value>id</value>
+			</list-entries>
+		</managed-property>
+		<managed-property>
+			<property-name>foreignDisplayProperties</property-name>
+			<list-entries>
+				<value>registry.document</value>
+			</list-entries>
+		</managed-property>
+		<managed-property>
+			<description>Needed for Search Select Window</description>
+			<property-name>searchPagePath</property-name>
+			<value>/account/facelet/sw/customerSearch.faces</value>
+		</managed-property>
+	</managed-bean>
+	
+	<!-- ************* SUPPLIER ***************** -->
+	<managed-bean>
+		<managed-bean-name>supplierLookup</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.purchase.controller.SupplierLookupController
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>foreignPojo</property-name>
+			<value>com.code.aon.purchase.Supplier</value>
+		</managed-property>
+		<managed-property>
+			<property-name>aliasPrefix</property-name>
+			<value>Supplier_Lookup</value>
+		</managed-property>
+		<managed-property>
+			<property-name>foreignJoinProperties</property-name>
+			<list-entries>
+				<value>id</value>
+			</list-entries>
+		</managed-property>
+		<managed-property>
+			<property-name>foreignDisplayProperties</property-name>
+			<list-entries>
+				<value>document</value>
+			</list-entries>
+		</managed-property>
+		<managed-property>
+			<description>Needed for Search Select Window</description>
+			<property-name>searchPagePath</property-name>
+			<value>/account/facelet/sw/supplierSearch.faces</value>
+		</managed-property>
+	</managed-bean>
+	
+	<!-- ************* CREDITOR ***************** -->
+	<managed-bean>
+		<managed-bean-name>creditorLookup</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.finance.controller.CreditorLookupController
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>foreignPojo</property-name>
+			<value>com.code.aon.finance.Creditor</value>
+		</managed-property>
+		<managed-property>
+			<property-name>aliasPrefix</property-name>
+			<value>Creditor_Lookup</value>
+		</managed-property>
+		<managed-property>
+			<property-name>foreignJoinProperties</property-name>
+			<list-entries>
+				<value>id</value>
+			</list-entries>
+		</managed-property>
+		<managed-property>
+			<property-name>foreignDisplayProperties</property-name>
+			<list-entries>
+				<value>registry.document</value>
+			</list-entries>
+		</managed-property>
+		<managed-property>
+			<description>Needed for Search Select Window</description>
+			<property-name>searchPagePath</property-name>
+			<value>/account/facelet/sw/creditorSearch.faces</value>
+		</managed-property>
+	</managed-bean>
+	
+	<!-- ************* BANK ***************** 
+	<managed-bean>
+		<managed-bean-name>bankLookup</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.form.LookupController
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>foreignPojo</property-name>
+			<value>com.code.aon.finance.Bank</value>
+		</managed-property>
+		<managed-property>
+			<property-name>aliasPrefix</property-name>
+			<value>Bank_Lookup</value>
+		</managed-property>
+		<managed-property>
+			<property-name>foreignJoinProperties</property-name>
+			<list-entries>
+				<value>id</value>
+			</list-entries>
+		</managed-property>
+		<managed-property>
+			<property-name>foreignDisplayProperties</property-name>
+			<list-entries>
+				<value>name</value>
+			</list-entries>
+		</managed-property>
+		<managed-property>
+			<description>Needed for Search Select Window</description>
+			<property-name>searchPagePath</property-name>
+			<value>/account/facelet/sw/bankSearch.faces</value>
+		</managed-property>
+	</managed-bean>
+	-->
+	
+		<!-- ************* EXTERNAL NAVIGATION RULES (RELOCATE) ***************** -->
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>customer_sw</from-outcome>
+			<to-view-id>/account/facelet/sw/customer.faces</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>customer_sw_search</from-outcome>
+			<to-view-id>/account/facelet/sw/customerSearch.faces</to-view-id>
+		</navigation-case>
+	</navigation-rule>
+	
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>supplier_sw</from-outcome>
+			<to-view-id>/account/facelet/sw/supplier.faces</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>supplier_sw_search</from-outcome>
+			<to-view-id>/account/facelet/sw/supplierSearch.faces</to-view-id>
+		</navigation-case>
+	</navigation-rule>
+	
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>creditor_sw</from-outcome>
+			<to-view-id>/account/facelet/sw/creditor.faces</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>creditor_sw_search</from-outcome>
+			<to-view-id>/account/facelet/sw/creditorSearch.faces</to-view-id>
+		</navigation-case>
+	</navigation-rule>
+	
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>bank_sw</from-outcome>
+			<to-view-id>/account/facelet/sw/bank.faces</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>bank_sw_search</from-outcome>
+			<to-view-id>/account/facelet/sw/bankSearch.faces</to-view-id>
+		</navigation-case>
+	</navigation-rule>
+</faces-config>
+
