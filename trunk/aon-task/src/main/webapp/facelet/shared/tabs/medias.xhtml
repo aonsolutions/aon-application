@@ -21,9 +21,9 @@
 				toggleOnClick="#{controllerAlias.to == null}"
 				selectionListener="#{controllerAlias.onSelect}" />
 			<f:facet name="header">
-				<f:verbatim>&#160;</f:verbatim>
+				<aon:outputText value="&#160;"/>
 			</f:facet>
-			<f:verbatim>&#160;</f:verbatim>
+			<aon:outputText value="&#160;"/>
 			<f:facet name="footer">
 				<aon:div>
 					<aon:commandButton id="reset"
@@ -93,7 +93,7 @@
 
 		<aon:column>
 			<f:facet name="header">
-				<f:verbatim>&#160;</f:verbatim>
+				<aon:outputText value="&#160;"/>
 			</f:facet>
 			<aon:div>
 				<f:verbatim rendered="#{to!=controllerAlias.to}">&#160;</f:verbatim>
