@@ -22,7 +22,7 @@
 			columnClasses="aon-datascroller-text,aon-datascroller-buttons">
 			<t:dataScroller for="#{dataTable}"
 				rowsCountVar="rowsCount" firstRowIndexVar="firstRowIndex"
-				lastRowIndexVar="lastRowIndex" rendered="#{model.rowCount>0}">
+				lastRowIndexVar="lastRowIndex" rendered="#{model.rowCount>20}">
 				<h:outputFormat value="#{bundle.aon_scroll}">
 					<f:param value="#{firstRowIndex}" />
 					<f:param value="#{lastRowIndex}" />
