@@ -40,10 +40,11 @@ public class CourseController extends BasicController implements ICollectionProv
 		}
 	}
 	
+	@SuppressWarnings("unchecked")
 	public Collection getCollection(){
 		List<ReportCourse> reportCourseList = new LinkedList<ReportCourse>();
 		try {
-			Iterator iter = ((List)this.getModel().getWrappedData()).iterator();
+			Iterator iter = this.getManagerBean().getList(this.getCriteria()).iterator();
 			while(iter.hasNext()){
 				Course course = (Course)iter.next();
 				ReportCourse reportCourse = new ReportCourse();
