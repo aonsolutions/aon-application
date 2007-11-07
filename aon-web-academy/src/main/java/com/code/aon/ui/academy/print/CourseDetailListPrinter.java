@@ -34,6 +34,7 @@ public class CourseDetailListPrinter implements ICollectionProvider {
 	
 	private static final String COURSE_CONTROLLER_NAME = "course";
 
+	@SuppressWarnings("unchecked")
 	public Collection getCollection() {
 		List<ReportCourseAlumn> reportCourseAlumnList = new LinkedList<ReportCourseAlumn>();
 		try {
@@ -58,6 +59,7 @@ public class CourseDetailListPrinter implements ICollectionProvider {
 		return reportCourseAlumnList;
 	}
 
+	@SuppressWarnings("unchecked")
 	private String obtainPreviousCourse(CourseAlumn courseAlumn) {
 		try {
 			IManagerBean courseAlumnBean = BeanManager.getManagerBean(CourseAlumn.class);
@@ -78,11 +80,12 @@ public class CourseDetailListPrinter implements ICollectionProvider {
 		return null;
 	}
 
+	@SuppressWarnings("unchecked")
 	private List obtainCourseAlumnList() throws ManagerBeanException, ExpressionException {
 		CourseController courseController = (CourseController)AonUtil.getController(COURSE_CONTROLLER_NAME);
 		IManagerBean courseAlumnBean = BeanManager.getManagerBean(CourseAlumn.class.getName());
 		Criteria criteria = new Criteria();
-		Iterator iter = ((List)courseController.getModel().getWrappedData()).iterator();
+		Iterator iter = ((List)courseController.getManagerBean().getList(courseController.getCriteria())).iterator();
 		while(iter.hasNext()){
 			Course course = (Course)iter.next();
 			criteria.addOrExpression(courseAlumnBean.getFieldName(IAcademyAlias.COURSE_ALUMN_COURSE_ID), course.getId().toString());
@@ -90,6 +93,7 @@ public class CourseDetailListPrinter implements ICollectionProvider {
 		return courseAlumnBean.getList(criteria);
 	}
 
+	@SuppressWarnings("unchecked")
 	private Date obtainBirthDate(Registry registry) {
 		try {
 			IManagerBean personBean = BeanManager.getManagerBean(Person.class);
@@ -105,6 +109,7 @@ public class CourseDetailListPrinter implements ICollectionProvider {
 		return null;
 	}
 
+	@SuppressWarnings("unchecked")
 	private String obtainPhone(Registry registry) {
 		try {
 			IManagerBean registryMediaBean = BeanManager.getManagerBean(RegistryMedia.class);
@@ -121,6 +126,7 @@ public class CourseDetailListPrinter implements ICollectionProvider {
 		return null;
 	}
 	
+	@SuppressWarnings("unchecked")
 	private String obtainCellular(Registry registry) {
 		try {
 			IManagerBean registryMediaBean = BeanManager.getManagerBean(RegistryMedia.class);
