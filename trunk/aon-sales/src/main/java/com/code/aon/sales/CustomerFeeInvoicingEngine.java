@@ -140,7 +140,7 @@ public class CustomerFeeInvoicingEngine implements IInvoicingEngine {
 		Registry registry = obtainInvoicingGroupRegistry(customerFee.getCustomer().getRegistry());
 		invoice.setRegistry(registry);
 		invoice.setRegistryDocument(registry.getDocument());
-		invoice.setRegistryName(registry.getName() + " " + registry.getSurname());
+		invoice.setRegistryName((registry.getName() == null?"":registry.getName()) + " " + (registry.getSurname()==null?"":registry.getSurname()));
 		invoice.setSeries(params.getSeries());
 		invoice.setType(InvoiceType.SALES);
 		invoice.setStatus(InvoiceStatus.PENDING);
