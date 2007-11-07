@@ -65,54 +65,7 @@
 			</band>
 			</groupHeader>
 			<groupFooter>
-			<band height="60"  isSplitAllowed="true" >
-				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
-					<reportElement
-						x="301"
-						y="43"
-						width="141"
-						height="17"
-						key="textField-21"/>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
-					<textElement textAlignment="Right" verticalAlignment="Middle">
-						<font pdfFontName="Helvetica-Bold" size="10" isBold="true"/>
-					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$R{aon_invoice_total} + ":"]]></textFieldExpression>
-				</textField>
-				<textField isStretchWithOverflow="false" pattern="#,##0.00" isBlankWhenNull="true" evaluationTime="Group" evaluationGroup="invoiceGroup"  hyperlinkType="None"  hyperlinkTarget="Self" >
-					<reportElement
-						x="442"
-						y="43"
-						width="93"
-						height="17"
-						key="textField-22"/>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" leftPadding="5" rightBorder="None" rightBorderColor="#000000" rightPadding="5" bottomBorder="None" bottomBorderColor="#000000"/>
-					<textElement textAlignment="Right" verticalAlignment="Middle">
-						<font pdfFontName="Helvetica-Bold" size="10" isBold="true"/>
-					</textElement>
-				<textFieldExpression   class="java.lang.Double"><![CDATA[new Double($V{invoiceTotal}.doubleValue() + $V{taxTotal}.doubleValue())]]></textFieldExpression>
-				</textField>
-				<subreport  isUsingCache="true">
-					<reportElement
-						x="0"
-						y="1"
-						width="535"
-						height="35"
-						key="subreport-2"/>
-					<parametersMapExpression><![CDATA[$P{REPORT_PARAMETERS_MAP}]]></parametersMapExpression>
-					<dataSourceExpression><![CDATA[new com.code.aon.ui.report.jr.JRBeanCollectionDataSource($P{PriceStrategy}.getTaxBreakDowns($V{currentPreInvoice}, $V{currentPreInvoice}))]]></dataSourceExpression>
-					<returnValue subreportVariable="taxTotal" toVariable="taxTotal"/>
-					<subreportExpression  class="net.sf.jasperreports.engine.JasperReport"><![CDATA[$P{nestedReports}.get("taxBreakDown")]]></subreportExpression>
-				</subreport>
-				<line direction="TopDown">
-					<reportElement
-						x="0"
-						y="0"
-						width="535"
-						height="0"
-						key="line-3"/>
-					<graphicElement stretchType="NoStretch"/>
-				</line>
+			<band height="0"  isSplitAllowed="true" >
 			</band>
 			</groupFooter>
 		</group>
@@ -125,7 +78,7 @@
 			</band>
 		</title>
 		<pageHeader>
-			<band height="80"  isSplitAllowed="true" >
+			<band height="95"  isSplitAllowed="true" >
 				<image  scaleImage="RetainShape" vAlign="Top" hAlign="Left" onErrorType="Blank" isUsingCache="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						mode="Opaque"
@@ -180,15 +133,11 @@
 					</textElement>
 				<textFieldExpression   class="java.lang.String"><![CDATA[$P{params}.getMonth().getName($P{REPORT_LOCALE}) + " " + $P{params}.getYear()]]></textFieldExpression>
 				</textField>
-			</band>
-		</pageHeader>
-		<columnHeader>
-			<band height="15"  isSplitAllowed="true" >
 				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						mode="Opaque"
 						x="0"
-						y="0"
+						y="80"
 						width="227"
 						height="15"
 						forecolor="#FFFFFF"
@@ -204,7 +153,7 @@
 					<reportElement
 						mode="Opaque"
 						x="442"
-						y="0"
+						y="80"
 						width="93"
 						height="15"
 						forecolor="#FFFFFF"
@@ -220,7 +169,7 @@
 					<reportElement
 						mode="Opaque"
 						x="371"
-						y="0"
+						y="80"
 						width="71"
 						height="15"
 						forecolor="#FFFFFF"
@@ -236,7 +185,7 @@
 					<reportElement
 						mode="Opaque"
 						x="299"
-						y="0"
+						y="80"
 						width="72"
 						height="15"
 						forecolor="#FFFFFF"
@@ -252,7 +201,7 @@
 					<reportElement
 						mode="Opaque"
 						x="227"
-						y="0"
+						y="80"
 						width="72"
 						height="15"
 						forecolor="#FFFFFF"
@@ -265,9 +214,54 @@
 				<textFieldExpression   class="java.lang.String"><![CDATA[$R{aon_quantity}]]></textFieldExpression>
 				</textField>
 			</band>
+		</pageHeader>
+		<columnHeader>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
 		</columnHeader>
 		<detail>
-			<band height="14"  isSplitAllowed="true" >
+			<band height="31"  isSplitAllowed="true" >
+				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="300"
+						y="14"
+						width="141"
+						height="17"
+						key="textField-21"
+						positionType="Float"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font pdfFontName="Helvetica-Bold" size="10" isBold="true"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$R{aon_invoice_total} + ":"]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="false" pattern="#,##0.00" isBlankWhenNull="true" evaluationTime="Group" evaluationGroup="invoiceGroup"  hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="441"
+						y="14"
+						width="93"
+						height="17"
+						key="textField-22"
+						positionType="Float"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" leftPadding="5" rightBorder="None" rightBorderColor="#000000" rightPadding="5" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font pdfFontName="Helvetica-Bold" size="10" isBold="true"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.Double"><![CDATA[new Double($V{invoiceTotal}.doubleValue() + $V{taxTotal}.doubleValue())]]></textFieldExpression>
+				</textField>
+				<subreport  isUsingCache="true">
+					<reportElement
+						x="67"
+						y="17"
+						width="233"
+						height="14"
+						key="subreport-2"
+						positionType="Float"/>
+					<parametersMapExpression><![CDATA[$P{REPORT_PARAMETERS_MAP}]]></parametersMapExpression>
+					<dataSourceExpression><![CDATA[new com.code.aon.ui.report.jr.JRBeanCollectionDataSource($P{PriceStrategy}.getTaxBreakDowns($V{currentPreInvoice}, $V{currentPreInvoice}))]]></dataSourceExpression>
+					<returnValue subreportVariable="taxTotal" toVariable="taxTotal"/>
+					<subreportExpression  class="net.sf.jasperreports.engine.JasperReport"><![CDATA[$P{nestedReports}.get("taxBreakDown")]]></subreportExpression>
+				</subreport>
 				<subreport  isUsingCache="true">
 					<reportElement
 						x="0"
@@ -280,6 +274,16 @@
 					<returnValue subreportVariable="invoiceTotal" toVariable="invoiceTotal"/>
 					<subreportExpression  class="net.sf.jasperreports.engine.JasperReport"><![CDATA[$P{nestedReports}.get("preInvoicingDetail")]]></subreportExpression>
 				</subreport>
+				<line direction="TopDown">
+					<reportElement
+						x="0"
+						y="14"
+						width="535"
+						height="0"
+						key="line-3"
+						positionType="Float"/>
+					<graphicElement stretchType="NoStretch"/>
+				</line>
 			</band>
 		</detail>
 		<columnFooter>
