@@ -24,6 +24,7 @@ public class CourseControllerListener extends ControllerAdapter {
 	public void beforeModelInitialized(ControllerEvent event) throws ControllerListenerException {
 		try {
 			Criteria criteria = event.getController().getCriteria();
+			criteria.addOrder(event.getController().getManagerBean().getFieldName(IAcademyAlias.COURSE_CODE));
 			criteria.addOrder(event.getController().getManagerBean().getFieldName(IAcademyAlias.COURSE_START_DATE),false);
 		} catch (ManagerBeanException e) {
 			throw new ControllerListenerException(e);
