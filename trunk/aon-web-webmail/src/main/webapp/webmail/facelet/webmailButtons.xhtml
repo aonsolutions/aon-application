@@ -1,0 +1,191 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" 
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ice="http://www.icesoft.com/icefaces/component"
+	xmlns:aon="http://www.code.es/aon-components"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:h="http://java.sun.com/jsf/html">
+<body>
+
+<ui:composition>
+
+	<aon:div styleClass="aon-title-toolbar">
+	<aon:div styleClass="aon-content-toolbar">
+		
+
+				<aon:div styleClass="aon-content-toolbar-group">
+				
+
+						<aon:commandButton
+							id="newFolder"
+							title="#{appBundle.aon_webmail_newfolder}"
+							actionListener="#{folder.openNewFolderPanelPopup}"
+							styleClass="aon-icon-commandButton aon-icon-newFolder">
+						</aon:commandButton>
+					
+						<aon:commandButton
+							id="deleteFolder_n"
+							rendered="#{folder.folder.deleteable}"
+							title="#{appBundle.aon_webmail_delfolder}"
+							actionListener="#{folder.deleteFolder}"
+							styleClass="aon-icon-commandButton aon-icon-deleteFolder">
+						</aon:commandButton>
+						<aon:commandButton
+							id="deleteFolder_d"
+							rendered="#{!folder.folder.deleteable}"
+							title="#{appBundle.aon_webmail_delfolder}"
+							styleClass="aon-icon-commandButton-disabled aon-icon-deleteFolder-disabled">
+						</aon:commandButton>
+					
+					
+			
+						<aon:commandButton
+							id="renameFolder_n"
+							rendered="#{folder.folder.renameable}"
+							title="#{appBundle.aon_webmail_renamefolder}"
+							actionListener="#{folder.openRenameFolderPanelPopup}"
+							styleClass="aon-icon-commandButton aon-icon-renameFolder">
+						</aon:commandButton>
+						<aon:commandButton
+							id="renameFolder_d"
+							rendered="#{!folder.folder.renameable}"
+							title="#{appBundle.aon_webmail_renamefolder}"					
+							styleClass="aon-icon-commandButton-disabled aon-icon-renameFolder-disabled">
+						</aon:commandButton>
+					
+				</aon:div>
+		
+				
+			
+						<aon:commandButton
+								id="refreshAccounts"
+								action="folder"
+								actionListener="#{folder.refresh}"
+								title="#{appBundle.aon_webmail_refresh}"
+								value="#{appBundle.aon_webmail_refresh}"
+								styleClass="aon-content-toolbar-item aon-icon-refresh"
+								>
+						</aon:commandButton>
+					
+						<aon:commandButton
+							id="newMailMessage"
+							title="#{appBundle.aon_webmail_newmail}"
+							action="messageNew"
+							actionListener="#{message.createNewMessage}"
+							value="#{appBundle.aon_webmail_newmail}"
+							styleClass="aon-content-toolbar-item aon-icon-newMail"
+							>
+						</aon:commandButton>
+			
+				
+	
+				<aon:commandButton
+					id="contacts"
+					title="#{appBundle.aon_webmail_email}"
+					action="emails"
+					value="#{appBundle.aon_webmail_email}"
+					styleClass="aon-content-toolbar-item aon-icon-agenda"
+					>
+				</aon:commandButton>
+		
+	
+				<aon:commandButton
+					id="signature"
+					title="#{appBundle.aon_webmail_signature}"
+					action="signature_list"
+					value="#{appBundle.aon_webmail_signature}"
+					styleClass="aon-content-toolbar-item aon-icon-signature">
+				</aon:commandButton>
+	
+				<aon:commandButton
+					id="mailAccount"
+					title="#{appBundle.aon_webmail_mailAccount}"
+					action="mailAccount_list"
+					value="#{appBundle.aon_webmail_mailAccount}"
+					styleClass="aon-content-toolbar-item aon-icon-mailAccount">
+				</aon:commandButton>
+
+				<aon:commandButton
+					id="mailAccountCahnge"
+					title="#{appBundle.aon_webmail_mailAccountChange}"
+					action="mailAccount_change"
+					actionListener="#{mailAccount.onInit}"
+					value="#{appBundle.aon_webmail_mailAccountChange}"
+					styleClass="aon-content-toolbar-item aon-icon-mailAccountChange">
+				</aon:commandButton>
+
+				<aon:commandButton
+					id="blackListCB"
+					rendered="#{blacklist.blackListConfigured}"
+					title="#{appBundle.aon_webmail_black_white_list}"
+					action="bwlist"
+					actionListener="#{blacklist.onLoad}"
+					value="#{appBundle.aon_webmail_black_white_list}"
+					styleClass="aon-content-toolbar-item aon-icon-mail-spam">
+				</aon:commandButton>
+				
+	</aon:div>
+	</aon:div>
+		
+		<ice:panelPopup styleClass="aon-popup-"
+			modal="true"
+			rendered="true"
+			style="z-index:999; top: 200px; left: 200px; width: 300px; position:absolute; background: #FFFFFF;"
+			visible="#{folder.showNewFolderPanelPopup}">
+		
+			<f:facet name="header">
+				<h:panelGrid id="popupHeader2" width="100%" cellpadding="0" cellspacing="0" columns="2" 
+				columnClasses="popupIcon,aon-text-right popupButton">
+					<aon:outputText value="#{appBundle.aon_webmail_folder_create_new}"/>
+					<aon:commandButton id="popupClose2" type="button" image="/images/icefaces/popupclose.gif"
+						actionListener="#{folder.closeNewFolderPanelPopup}" style="cursor: pointer;"/>
+				</h:panelGrid>
+			</f:facet>
+		
+			<f:facet name="body">
+				<h:panelGrid id="popupBody2" width="100%" cellpadding="0" cellspacing="0" columns="1"
+					columnClasses="popupIcon,aon-text-right popupButton">
+					<aon:outputText value="#{appBundle.aon_webmail_folder_name}:" />
+					<aon:inputText id="newFolderName"
+						size="40"
+						value="#{folder.newFolderName}"/>
+					<aon:commandButton id="closeModal2" 
+						styleClass="aon-icon-commandButton aon-icon-accept"
+						actionListener="#{folder.createFolder}" value="Ok"/>
+				</h:panelGrid>
+			</f:facet>
+		</ice:panelPopup>
+		
+		<ice:panelPopup styleClass="aon-popup-"
+			modal="true"
+			rendered="true"
+			visible="#{folder.showRenameFolderPanelPopup}"
+			style="z-index:999; top: 200px; left: 200px; width: 300px; position:absolute; background: #FFFFFF;">
+		
+			<f:facet name="header">
+				<h:panelGrid id="popupHeader" width="100%" cellpadding="0" cellspacing="0" columns="2" 
+					columnClasses="popupIcon,aon-text-right popupButton">
+					<aon:outputText value="#{appBundle.aon_webmail_folder_rename}"/>
+					<aon:commandButton id="popupClose" type="button" image="/images/icefaces/popupclose.gif"
+						actionListener="#{folder.closeRenameFolderPanelPopup}" style="cursor: pointer;"/>
+				</h:panelGrid>
+			</f:facet>
+		
+			<f:facet name="body">
+				<h:panelGrid id="popupBody" width="100%" cellpadding="0" cellspacing="0" column="1"
+					columnClasses="popupIcon,aon-text-right popupButton">
+					<aon:outputText value="#{appBundle.aon_webmail_folder_name}:" />
+					<aon:inputText id="renameFolderName"
+						size="40"
+						value="#{folder.renameFolderName}"/>
+					<aon:commandButton id="closeModal"
+						styleClass="aon-icon-commandButton aon-icon-accept"
+						actionListener="#{folder.renameFolder}" value="Ok"/>
+				</h:panelGrid>
+			</f:facet>
+		</ice:panelPopup>
+</ui:composition>
+
+</body>
+</html>
