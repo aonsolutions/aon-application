@@ -440,7 +440,7 @@
 								footerClass="aon-edit-table-footer" rows="20"
 								rowOnMouseOver="selectRow( this )"
 								rowOnMouseOut="unselectRow( this )" 
-								rowOnClick="sendRow( this )"
+								rowOnClick="sendRow( this )" rowIndexVar="rowIndex"
 								rowClasses="aon-edit-table-row-odd,aon-edit-table-row-even"
 								columnClasses="aon-edit-table-body-icon,
 									aon-edit-table-body aon-edit-table-body-string,
@@ -531,26 +531,32 @@
 									</f:facet>
 									<t:outputText value="#{financeTo.bank.name}" rendered="#{financeTo!=accountInvoice.currentFinance}" />
 									<t:div rendered="#{financeTo==accountInvoice.currentFinance}">
-										<t:inputText id="Bank_Lookup_id-Edit" size="5" forceId="#{true}"
+										<t:inputHidden id="Bank_Lookup_id-Edit" size="5" forceId="#{true}"
 											styleClass="aon-form-input-text"
-											onchange="return findBeanLookup(event,'#{facesContext.externalContext.requestContextPath}','bankLookup','Bank_Lookup_id-Edit[#{rowIndex}],Bank_Lookup_name-Edit[#{rowIndex}]');"
-											value="#{accountInvoice.currentFinance.bank.id}"/>
+											value="#{accountInvoice.currentFinance.bank.id}" />
+										<t:inputText id="Bank_Lookup_code-Edit" size="5" forceId="#{true}"
+											styleClass="aon-form-input-text"
+											onchange="return findBeanLookupExt(event,'#{facesContext.externalContext.requestContextPath}','bankLookup','Bank_Lookup_code-Edit[#{rowIndex}]','Bank_id|Bank_Lookup_id-Edit[#{rowIndex}],Bank_code|Bank_Lookup_code-Edit[#{rowIndex}],Bank_name|Bank_Lookup_name-Edit[#{rowIndex}]');"
+											value="#{accountInvoice.currentFinance.bank.code}" />
 										<h:commandButton id="find_Bank_Lookup_id-Edit"
 											styleClass="aon-form-lookup-button" value="" immediate="true"
-											onclick="lookupSearchWindow(this, 'placeList', '#{bankLookup.encodedSearchPagePath}','Bank_Lookup_id-Edit[#{rowIndex}],Bank_Lookup_name-Edit[#{rowIndex}]');return false;" />	
+											onclick="lookupSearchWindow(this, 'placeList', '#{bankLookup.encodedSearchPagePath}','Bank_id|Bank_Lookup_id-Edit[#{rowIndex}],Bank_code|Bank_Lookup_code-Edit[#{rowIndex}],Bank_name|Bank_Lookup_name-Edit[#{rowIndex}]');return false;" />
 										<t:inputText id="Bank_Lookup_name-Edit" forceId="#{true}"
 											styleClass="aon-form-input-text-disabled" disabledOnClientSide="true"
 											size="30" value="#{accountInvoice.currentFinance.bank.name}"/>
 									</t:div>
 									<f:facet name="footer">
 										<t:div rendered="#{accountInvoice.newFinance}">
-											<t:inputText id="Bank_Lookup_id-New" size="5" forceId="#{true}"
+											<t:inputHidden id="Bank_Lookup_id-New" size="5" forceId="#{true}"
 												styleClass="aon-form-input-text"
-												onchange="return findBeanLookup(event,'#{facesContext.externalContext.requestContextPath}','bankLookup','Bank_Lookup_id-New,Bank_Lookup_name-New');"
-												value="#{accountInvoice.currentFinance.bank.id}"/>
+												value="#{accountInvoice.currentFinance.bank.id}" />
+											<t:inputText id="Bank_Lookup_code-New" size="5" forceId="#{true}"
+												styleClass="aon-form-input-text"
+												onchange="return findBeanLookupExt(event,'#{facesContext.externalContext.requestContextPath}','bankLookup','Bank_Lookup_code-New','Bank_id|Bank_Lookup_id-New,Bank_code|Bank_Lookup_code-New,Bank_name|Bank_Lookup_name-New');"
+												value="#{accountInvoice.currentFinance.bank.code}" />
 											<h:commandButton id="find_Bank_Lookup_id-New"
 												styleClass="aon-form-lookup-button" value="" immediate="true"
-												onclick="lookupSearchWindow(this, 'placeList', '#{bankLookup.encodedSearchPagePath}','Bank_Lookup_id-New,Bank_Lookup_name-New');return false;" />	
+												onclick="lookupSearchWindow(this, 'placeList', '#{bankLookup.encodedSearchPagePath}','Bank_id|Bank_Lookup_id-New,Bank_code|Bank_Lookup_code-New,Bank_name|Bank_Lookup_name-New');return false;" />
 											<t:inputText id="Bank_Lookup_name-New" forceId="#{true}"
 												styleClass="aon-form-input-text-disabled" disabledOnClientSide="true"
 												size="30" value="#{accountInvoice.currentFinance.bank.name}"/>
