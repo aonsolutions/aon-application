@@ -197,6 +197,19 @@ public class Orderer {
 		this.numRegs = numRegs;
 	}
 
-	
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	public String toString(){
+		String description = "ORDERER ";
+		description += "CODE "+code+"; ";
+		description += "SUFIX "+sufix+"; ";
+		description += "MAKE_DATE "+makeDate+"; ";
+		description += "START_DATE "+startDate+"; ";
+		description += "NAME "+name+"; ";
+		description += "ACCOUNT "+account.getCcc()+"; ";
+		description += "PROC "+procedure+"; ";
+		return description;
+	}
 	
 }

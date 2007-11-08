@@ -150,6 +150,19 @@ public class Presenter {
 		this.sufix = sufix;
 	}
 
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	public String toString(){
+		String description = "PRESENTER ";
+		description += "CODE "+code+"; ";
+		description += "SUFIX "+sufix+"; ";
+		description += "MAKE_DATE "+makeDate+"; ";
+		description += "NAME "+name+"; ";
+		description += "ENTITY "+entity+"; ";
+		description += "OFFICE "+office+"; ";
+		return description;
+	}
 
 	
 }
