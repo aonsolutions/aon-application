@@ -13,7 +13,6 @@ import com.code.aon.common.event.ManagerBeanListenerAdapter;
 import com.code.aon.finance.InvoiceDetail;
 import com.code.aon.finance.InvoiceTax;
 import com.code.aon.finance.dao.IFinanceAlias;
-import com.code.aon.finance.enumeration.InvoiceSource;
 import com.code.aon.product.Tax;
 import com.code.aon.product.TaxDetail;
 import com.code.aon.product.dao.IProductAlias;
@@ -37,7 +36,7 @@ public class InvoiceDetailBeanListener extends ManagerBeanListenerAdapter {
 	@Override
 	public void beanInserted(ManagerBeanEvent evt) throws ManagerBeanException {
 		InvoiceDetail invoiceDetail = (InvoiceDetail)evt.getTo();
-		if(!invoiceDetail.getSource().equals(InvoiceSource.ACCOUNT)){
+		if(invoiceDetail.getItem() != null){
 			InvoiceTax invoiceDetailVat = getInvoiceTax(invoiceDetail, invoiceDetail.getItem().getProduct().getVat(), false);
 			IManagerBean invoiceTaxBean = BeanManager.getManagerBean(InvoiceTax.class);
 			invoiceTaxBean.insert(invoiceDetailVat);
@@ -58,7 +57,7 @@ public class InvoiceDetailBeanListener extends ManagerBeanListenerAdapter {
 	@Override
 	public void beanUpdated(ManagerBeanEvent evt) throws ManagerBeanException {
 		InvoiceDetail invoiceDetail = (InvoiceDetail)evt.getTo();
-		if(!invoiceDetail.getSource().equals(InvoiceSource.ACCOUNT)){
+		if(invoiceDetail.getItem() != null){
 			InvoiceTax invoiceDetailVat = getInvoiceTax(invoiceDetail, invoiceDetail.getItem().getProduct().getVat(), true);
 			IManagerBean invoiceTaxBean = BeanManager.getManagerBean(InvoiceTax.class);
 			invoiceTaxBean.update(invoiceDetailVat);
@@ -110,6 +109,7 @@ public class InvoiceDetailBeanListener extends ManagerBeanListenerAdapter {
 	 * 
 	 * @return the invoice tax
 	 */
+	@SuppressWarnings("unchecked")
 	private InvoiceTax obtainInvoiceTax(InvoiceDetail invoiceDetail) {
 		try {
 			IManagerBean invoiceTaxBean = BeanManager.getManagerBean(InvoiceTax.class);
@@ -133,6 +133,7 @@ public class InvoiceDetailBeanListener extends ManagerBeanListenerAdapter {
 	 * 
 	 * @return the tax
 	 */
+	@SuppressWarnings("unchecked")
 	private Tax obtainTax(Integer id, Date date) {
 		try {
 			IManagerBean taxDetailBean = BeanManager.getManagerBean(TaxDetail.class);
