@@ -178,5 +178,23 @@ public class Individual {
 		this.accountUserPCode = accountUserPCode;
 	}
 
-	
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	public String toString(){
+		String description = "INDIVIDUAL ";
+		description += "REF_CODE "+referenceCode+"; ";
+		description += "NAME "+name+"; ";
+		description += "ACCOUNT "+account.getCcc()+"; ";
+		description += "AMOUNT "+amount+"; ";
+		description += "RET_CODE "+returnCode+"; ";
+		description += "INT_CODE "+internalCode+"; ";
+		description += "CONCEPT "+concept+"; ";
+		description += "ACCOUNT_1 "+accountUserName+"; ";
+		description += "ACCOUNT_2 "+accountUserAddress+"; ";
+		description += "ACCOUNT_3 "+accountUserAddress2+"; ";
+		description += "ACCOUNT_4 "+accountUserPCode+"; ";
+		return description;
+	}
+
 }

@@ -89,10 +89,11 @@ public abstract class AbstractFileFiller implements FileFiller {
 	 */
 	protected void writeErrorsFile(){
 		if (exceptions.size()>0){
+			(new File(filePath)).renameTo(new File(filePath+".err"));
 			Iterator iterErr = exceptions.iterator();
 			PrintWriter outputErr = null;
 			try {
-				outputErr = assignPrintWriter(filePath+".err");
+				outputErr = assignPrintWriter(filePath);
             } catch (FileNotFoundException e) {
             } catch (UnsupportedEncodingException e) {
             }

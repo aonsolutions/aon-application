@@ -220,5 +220,26 @@ public class Individual {
 		this.expiryDate = expiryDate;
 	}
 
-	
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
+	 */
+	public String toString(){
+		String description = "INDIVIDUAL ";
+		description += "CODE "+referenceCode+"; ";
+		description += "NAME "+name+"; ";
+		description += "ACCOUNT "+account.getCcc()+"; ";
+		description += "AMOUNT "+amount+"; ";
+		description += "RET_CODE "+returnCode+"; ";
+		description += "INT_CODE "+internalCode+"; ";
+		description += "CONCEPT "+concept+"; ";
+		description += "EXP_DATE "+expiryDate+"; ";
+		description += "ACCOUNT_USER_ADD "+accountUserAddress+"; ";
+		description += "ACCOUNT_USER_ADD_2 "+accountUserAddress2+"; ";
+		description += "ACCOUNT_USER_PCODE "+accountUserPCode+"; ";
+		description += "ORDERER_COUNTRY "+ordererCounty+"; ";
+		description += "COUNTRY "+country+"; ";
+		description += "INIT_DATE "+initDate+"; ";
+		return description;
+	}
+
 }

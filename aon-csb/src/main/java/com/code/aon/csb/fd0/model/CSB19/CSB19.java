@@ -220,7 +220,7 @@ public class CSB19 extends AbstractFileFiller {
 		
 		Orderer orderer = new Orderer();
 		Account ccc1 = new Account();
-		ccc1.parse("00000000000000000000");
+		ccc1.parse("10000000000000000000");
 		orderer.setAccount(ccc1);
 		orderer.setCode("CODE");
 		orderer.setMakeDate(new Date());
@@ -249,7 +249,7 @@ public class CSB19 extends AbstractFileFiller {
 		Individual individual2 = new Individual();
 		individual2.setAmount(12.02);
 		Account ccc3 = new Account();
-		ccc3.parse("00000000000000000000");
+		ccc3.parse("10000000000000000000");
 		individual2.setAccount(ccc3);
 		individual2.setConcept("CONCEPT");
 		individual2.setInternalCode("CODE");

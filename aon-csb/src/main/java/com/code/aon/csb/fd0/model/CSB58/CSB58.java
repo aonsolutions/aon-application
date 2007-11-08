@@ -271,7 +271,7 @@ public class CSB58 extends AbstractFileFiller {
 
 		lot.addOrderer(orderer);
 		
-		String filePath = "c:/tmp/csb/CSB58.txt";
+		String filePath = "c:/tmp/CSB58.txt";
 		FileFiller csb58 = new CSB58(lot,filePath);
 		csb58.create();
 	}
