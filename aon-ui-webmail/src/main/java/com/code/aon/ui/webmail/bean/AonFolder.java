@@ -185,6 +185,8 @@ public class AonFolder extends AonMessageSortableList {
     		return false;
     	}else if (SENT_FOLDER_NAME.equals(folder.getName())){
     		return false;
+    	}else if (SPAM_FOLDER_NAME.equals(folder.getName())){
+    		return false;
     	}
     	return true;
     }
