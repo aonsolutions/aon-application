@@ -30,6 +30,7 @@ import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.SecurityLevel;
+import com.code.aon.company.WorkPlace;
 import com.code.aon.finance.Bank;
 import com.code.aon.finance.Finance;
 import com.code.aon.finance.Invoice;
@@ -233,7 +234,7 @@ public class AccountInvoiceController {
 		this.setNewDetail(false);
 	}
 	
-	@SuppressWarnings("unused")
+	@SuppressWarnings({"unused","unchecked"})
 	public void onRemoveDetail(ActionEvent event){
 		((LinkedList)this.details.getWrappedData()).remove(this.currentDetail);
 	}
@@ -270,7 +271,7 @@ public class AccountInvoiceController {
 		this.setNewFinance(false);
 	}
 	
-	@SuppressWarnings("unused")
+	@SuppressWarnings({"unchecked", "unused"})
 	public void onRemoveFinance(ActionEvent event){
 		((LinkedList)this.finances.getWrappedData()).remove(this.currentFinance);
 	}
@@ -300,6 +301,7 @@ public class AccountInvoiceController {
 		return finance;
 	}
 	
+	@SuppressWarnings("unchecked")
 	public void onTaxChange(ValueChangeEvent event) throws ManagerBeanException{
 		if(event.getNewValue() != null){
 			IManagerBean taxBean = BeanManager.getManagerBean(Tax.class);
@@ -317,6 +319,7 @@ public class AccountInvoiceController {
 		}
 	}
 	
+	@SuppressWarnings("unchecked")
 	public void onPayMethodChange(ValueChangeEvent event) throws ManagerBeanException {
 		if(event.getNewValue() != null){
 			IManagerBean payMethodBean = BeanManager.getManagerBean(PayMethod.class);
@@ -329,6 +332,7 @@ public class AccountInvoiceController {
 		}
 	}
 	
+	@SuppressWarnings("unchecked")
 	public void onRegistryChange(ValueChangeEvent event) throws ManagerBeanException {
 		if(event.getNewValue() != null){
 			IManagerBean registryBean = BeanManager.getManagerBean(Registry.class);
@@ -384,6 +388,7 @@ public class AccountInvoiceController {
 	 * 
 	 * @return the invoice total
 	 */
+	@SuppressWarnings("unchecked")
 	private double getInvoiceTotal() {
 		double total = 0.0;
 		Iterator iter = ((List)details.getWrappedData()).iterator();
@@ -399,6 +404,7 @@ public class AccountInvoiceController {
 	 * 
 	 * @return the double
 	 */
+	@SuppressWarnings("unchecked")
 	private double obtainVATandSurchargeQuota() {
 		double total = 0.0;
 		Iterator iter = ((List)details.getWrappedData()).iterator();
@@ -414,6 +420,7 @@ public class AccountInvoiceController {
 	 * 
 	 * @return the double
 	 */
+	@SuppressWarnings("unchecked")
 	private double obtainTotalTaxableBase() {
 		double total = 0.0;
 		Iterator iter = ((List)details.getWrappedData()).iterator();
@@ -429,6 +436,7 @@ public class AccountInvoiceController {
 	 * 
 	 * @return the double
 	 */
+	@SuppressWarnings("unchecked")
 	private double obtainTotalRetention() {
 		double total = 0.0;
 		Iterator iter = ((List)details.getWrappedData()).iterator();
@@ -482,7 +490,8 @@ public class AccountInvoiceController {
 		}
 		return 1;
 	}
-
+	
+	@SuppressWarnings("unchecked")
 	private void insertInvoiceDetails(Invoice invoice) {
 		try {
 			IManagerBean invoiceDetailBean = BeanManager.getManagerBean(InvoiceDetail.class);
@@ -495,6 +504,7 @@ public class AccountInvoiceController {
 				invoiceDetail.setInvoice(invoice);
 				invoiceDetail.setItem(null);
 				invoiceDetail.setSource(InvoiceSource.ACCOUNT);
+				invoiceDetail.setWorkPlace(obtainWorkPlace());
 				invoiceDetail.setTaxableBase(detail.getTaxableBase());
 				invoiceDetail = (InvoiceDetail) invoiceDetailBean.insert(invoiceDetail);
 				insertInvoiceTaxes(invoiceDetail, detail);
@@ -504,6 +514,16 @@ public class AccountInvoiceController {
 		}
 	}
 	
+	@SuppressWarnings("unchecked")
+	private WorkPlace obtainWorkPlace() throws ManagerBeanException {
+		IManagerBean workPlaceBean = BeanManager.getManagerBean(WorkPlace.class);
+		Iterator iter = workPlaceBean.getList(null).iterator();
+		if(iter.hasNext()){
+			return (WorkPlace)iter.next();
+		}
+		return null;
+	}
+
 	private void insertInvoiceTaxes(InvoiceDetail invoiceDetail, AccountInvoiceDetail detail) {
 		try {
 			IManagerBean invoiceTaxBean = BeanManager.getManagerBean(InvoiceTax.class);
@@ -529,6 +549,7 @@ public class AccountInvoiceController {
 		
 	}
 
+	@SuppressWarnings("unchecked")
 	private void insertFinances(Invoice invoice) {
 		try {
 			IManagerBean financeBean = BeanManager.getManagerBean(Finance.class);
@@ -558,6 +579,7 @@ public class AccountInvoiceController {
 		}
 	}
 	
+	@SuppressWarnings("unchecked")
 	private void deleteAccountEntryDetails(AccountEntry accountEntry) {
 		try {
 			IManagerBean accountEntryDetailBean = BeanManager.getManagerBean(AccountEntryDetail.class);
@@ -581,6 +603,7 @@ public class AccountInvoiceController {
 		}
 	}
 	
+	@SuppressWarnings("unchecked")
 	private void deleteInvoiceDetails(Invoice invoice) {
 		try {
 			IManagerBean invoiceDetailBean = BeanManager.getManagerBean(InvoiceDetail.class);
@@ -603,6 +626,7 @@ public class AccountInvoiceController {
 		}
 	}
 	
+	@SuppressWarnings("unchecked")
 	private void deleteFinances(Invoice invoice) {
 		try {
 			IManagerBean financeBean = BeanManager.getManagerBean(Finance.class);
