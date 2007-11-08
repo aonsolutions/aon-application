@@ -189,6 +189,11 @@
      <url-pattern>*.iface</url-pattern>
    </servlet-mapping>
 
+	<servlet-mapping>
+		<servlet-name>Main Dispatch Servlet</servlet-name>
+		<url-pattern>*.jspx</url-pattern>
+	</servlet-mapping>
+	
    <!-- blocking request Mapping -->
    <servlet-mapping>
      <servlet-name>Main Dispatch Servlet</servlet-name>
@@ -349,7 +354,7 @@
 		<welcome-file>index.html</welcome-file>
 	</welcome-file-list>
 
-	<!-- Security Constraint   
+    <!-- Security Constraint -->
 	<security-constraint>
 		<web-resource-collection>
 			<web-resource-name>facelet</web-resource-name>
@@ -371,17 +376,15 @@
 	<login-config>
 		<auth-method>FORM</auth-method>
 		<form-login-config>
-			<form-login-page>/login/login.seam</form-login-page>
-			<form-error-page>
-				/login/LoginError.jsp?aon_login_error_code=666
-			</form-error-page>
+			<form-login-page>/login/login.jspx</form-login-page>
+			<form-error-page>/login/LoginError.jsp?aon_login_error_code=666</form-error-page>
 		</form-login-config>
 	</login-config>
 
 	<security-role>
 		<role-name>Manager</role-name>
 	</security-role>
--->
+
 	<resource-env-ref>
 		<resource-env-ref-name>jdbc/CMS</resource-env-ref-name>
 		<resource-env-ref-type>javax.sql.DataSource</resource-env-ref-type>
