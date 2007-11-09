@@ -262,7 +262,7 @@
 							styleClass="aon-form-input-text-label aon-form-table-column-odd-label"
 							rendered="#{task.sourceAssigned}" />
 						<t:inputText id="Task_sender" forceId="#{true}"
-							value="#{task.to.sender.registry.name} #{task.to.sender.registry.surname}" required="#{true}"
+							value="#{task.to.sender.name}" required="#{true}"
 							styleClass="aon-form-input-text" size="60"
 							disabled="#{true}" rendered="#{task.sourceAssigned}" />
 
