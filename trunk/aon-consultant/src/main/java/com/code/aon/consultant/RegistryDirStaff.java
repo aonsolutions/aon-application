@@ -33,7 +33,7 @@ public class RegistryDirStaff implements ITransferObject {
 	
 	private double percentShare;
 	
-	private Integer shareNumber;
+	private int shareNumber;
 	
 	private double nominalValue;
 	
@@ -115,11 +115,11 @@ public class RegistryDirStaff implements ITransferObject {
 	}
 
 	@Column(name="share_number")
-	public Integer getShareNumber() {
+	public int getShareNumber() {
 		return shareNumber;
 	}
 
-	public void setShareNumber(Integer shareNumber) {
+	public void setShareNumber(int shareNumber) {
 		this.shareNumber = shareNumber;
 	}
 
