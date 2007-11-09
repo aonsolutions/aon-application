@@ -56,11 +56,11 @@
 			</band>
 			</groupHeader>
 			<groupFooter>
-			<band height="60"  isSplitAllowed="true" >
+			<band height="17"  isSplitAllowed="true" >
 				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						x="301"
-						y="43"
+						y="0"
 						width="141"
 						height="17"
 						key="textField-21"/>
@@ -73,7 +73,7 @@
 				<textField isStretchWithOverflow="false" pattern="#,##0.00" isBlankWhenNull="true" evaluationTime="Group" evaluationGroup="invoiceGroup"  hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						x="442"
-						y="43"
+						y="0"
 						width="93"
 						height="17"
 						key="textField-22"/>
@@ -83,25 +83,14 @@
 					</textElement>
 				<textFieldExpression   class="java.lang.Double"><![CDATA[new Double($V{invoiceTotal}.doubleValue() + $V{taxTotal}.doubleValue())]]></textFieldExpression>
 				</textField>
-				<subreport  isUsingCache="true">
-					<reportElement
-						x="0"
-						y="1"
-						width="535"
-						height="35"
-						key="subreport-2"/>
-					<parametersMapExpression><![CDATA[$P{REPORT_PARAMETERS_MAP}]]></parametersMapExpression>
-					<dataSourceExpression><![CDATA[new com.code.aon.ui.report.jr.JRBeanCollectionDataSource($P{PriceStrategy}.getTaxBreakDowns($V{currentInvoice}, $V{currentInvoice}))]]></dataSourceExpression>
-					<returnValue subreportVariable="taxTotal" toVariable="taxTotal"/>
-					<subreportExpression  class="net.sf.jasperreports.engine.JasperReport"><![CDATA[$P{nestedReports}.get("taxBreakDown")]]></subreportExpression>
-				</subreport>
 				<line direction="TopDown">
 					<reportElement
 						x="0"
 						y="0"
 						width="535"
 						height="0"
-						key="line-3"/>
+						key="line-3"
+						positionType="Float"/>
 					<graphicElement stretchType="NoStretch"/>
 				</line>
 			</band>
@@ -204,7 +193,19 @@
 			</band>
 		</columnHeader>
 		<detail>
-			<band height="160"  isSplitAllowed="true" >
+			<band height="174"  isSplitAllowed="true" >
+				<subreport  isUsingCache="true">
+					<reportElement
+						x="0"
+						y="160"
+						width="535"
+						height="14"
+						key="subreport-2"/>
+					<parametersMapExpression><![CDATA[$P{REPORT_PARAMETERS_MAP}]]></parametersMapExpression>
+					<dataSourceExpression><![CDATA[new com.code.aon.ui.report.jr.JRBeanCollectionDataSource($P{PriceStrategy}.getTaxBreakDowns($V{currentInvoice}, $V{currentInvoice}))]]></dataSourceExpression>
+					<returnValue subreportVariable="taxTotal" toVariable="taxTotal"/>
+					<subreportExpression  class="net.sf.jasperreports.engine.JasperReport"><![CDATA[$P{nestedReports}.get("taxBreakDown")]]></subreportExpression>
+				</subreport>
 				<subreport  isUsingCache="true">
 					<reportElement
 						x="0"
