@@ -14,13 +14,6 @@
 	</bean>
 	
 	<bean description="">
-		<pojo>com.code.aon.customer.Customer</pojo>
-		<vetoListeners>
-	        <vetoListener>com.code.aon.customer.event.CustomerBeanListener</vetoListener>
-		</vetoListeners>
-	</bean>
-	
-	<bean description="">
 		<pojo>com.code.aon.finance.InvoiceDetail</pojo>
 		<listeners>
 	        <listener>com.code.aon.finance.event.InvoiceDetailBeanListener</listener>
