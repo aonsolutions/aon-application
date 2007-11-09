@@ -470,7 +470,7 @@ public class DailyTrackingController extends BasicController {
     	createCriteria().addOrder(dailyTrackingBean.getFieldName(IProjectAlias.DAILY_TRACKING_CUSTOMER_ID));
     	ReportManager manager = (ReportManager)AonUtil.getRegisteredBean("report");
         manager.setReportKey("dailyTrackingByCustomer");
-        manager.setOutputFormat(getOutputFormat());
+        manager.setOutputFormat((getOutputFormat()== null?OutputFormat.PDF:getOutputFormat()));
         String outcome = manager.onExecute();
         return outcome;
     }
@@ -480,7 +480,7 @@ public class DailyTrackingController extends BasicController {
     	createCriteria().addOrder(dailyTrackingBean.getFieldName(IProjectAlias.DAILY_TRACKING_USER_ID));
     	ReportManager manager = (ReportManager)AonUtil.getRegisteredBean("report");
         manager.setReportKey("dailyTrackingByUser");
-        manager.setOutputFormat(getOutputFormat());
+        manager.setOutputFormat((getOutputFormat()== null?OutputFormat.PDF:getOutputFormat()));
         String outcome = manager.onExecute();
         return outcome;
     }
