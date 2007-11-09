@@ -2,8 +2,11 @@ package com.code.aon.ui.finance.csb;
 
 import java.io.File;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.Iterator;
 import java.util.List;
+
+import org.apache.commons.lang.StringUtils;
 
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
@@ -18,8 +21,14 @@ import com.code.aon.csb.fd0.model.CSB19.data.Orderer;
 import com.code.aon.csb.fd0.model.CSB19.data.Presenter;
 import com.code.aon.finance.FinanceBatch;
 import com.code.aon.finance.FinanceBatchDetail;
+import com.code.aon.finance.Invoice;
+import com.code.aon.finance.InvoiceDetail;
 import com.code.aon.finance.RegistryBank;
+import com.code.aon.finance.dao.IFinanceAlias;
 import com.code.aon.finance.enumeration.FinanceBatchType;
+import com.code.aon.finance.invoicing.InvoicePriceStrategy;
+import com.code.aon.product.enumeration.TaxType;
+import com.code.aon.product.strategy.TaxBreakDown;
 import com.code.aon.ql.Criteria;
 import com.code.aon.registry.RegistryAddress;
 import com.code.aon.registry.dao.IRegistryAlias;
@@ -30,6 +39,7 @@ public class CSB19Writer {
 	
 	private static final String FINANCE_BATCH_DETAIL_CONTROLLER_NAME = "fBatchDetail";
 
+	@SuppressWarnings("unchecked")
 	public File createCSB19(Company company, FinanceBatch fbatch) throws ManagerBeanException {
 		Lot lot = new Lot();
 		try {
@@ -64,7 +74,7 @@ public class CSB19Writer {
 		Iterator iter = ((List)fBatchDetailController.getModel().getWrappedData()).iterator();
 		while(iter.hasNext()){
 			FinanceBatchDetail fBatchDetail = (FinanceBatchDetail)iter.next();
-			Individual individual  = createIndividual(fBatchDetail);
+			Individual individual  = createIndividual(fBatchDetail, lot.getType());
 			orderer.addIndividual(individual);
 		}
 		
@@ -81,7 +91,7 @@ public class CSB19Writer {
 		}
 	}
 	
-	private Individual createIndividual(FinanceBatchDetail fBatchDetail) throws ManagerBeanException {
+	private Individual createIndividual(FinanceBatchDetail fBatchDetail, int lotType) throws ManagerBeanException {
 		Individual individual = new Individual();
 		individual.setAmount(new Double(fBatchDetail.getFinance().getTotalAmount()));
 		Account detailAccount = new Account();
@@ -99,9 +109,64 @@ public class CSB19Writer {
 			individual.setAccountUserAddress2(detailAddress.getCity());
             individual.setAccountUserPCode(new Integer(detailAddress.getZip()));
 		}
+		if(lotType == Lot.EXTENDED){
+			addExtendedData(individual, fBatchDetail.getFinance().getInvoice());
+		}
 		return individual;
 	}
 	
+	@SuppressWarnings("unchecked")
+	private void addExtendedData(Individual individual, Invoice invoice) throws ManagerBeanException {
+		SimpleDateFormat format = new SimpleDateFormat();
+		format.applyLocalizedPattern("dd/MM/yy");
+		individual.addConcept("DEL " + format.format(invoice.getDate()));
+		IManagerBean invoiceDetailBean = BeanManager.getManagerBean(InvoiceDetail.class);
+		InvoicePriceStrategy strategy = new InvoicePriceStrategy();
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(invoiceDetailBean.getFieldName(IFinanceAlias.INVOICE_DETAIL_INVOICE_ID), invoice.getId());
+		Iterator iter = invoiceDetailBean.getList(criteria).iterator();
+		for(int i = 0;i<5 && iter.hasNext();i++){
+			InvoiceDetail detail = (InvoiceDetail)iter.next();
+			String descConcept = new String();
+			String priceConcep = new String();
+			if(detail.getDescription().length() > 40){
+				descConcept = detail.getDescription().substring(0,39);
+				priceConcep = (detail.getDescription().length() > 48?detail.getDescription().substring(40,47):detail.getDescription().substring(40,detail.getDescription().length()));
+			}else{
+				descConcept = detail.getDescription();
+			}
+			individual.addConcept(descConcept);
+			priceConcep = priceConcep + " " 
+						  + detail.getQuantity() + " " 
+						  + detail.getPrice() + " "
+						  + detail.getItem().getProduct().getVat().getPercentage() + "% "
+						  + strategy.getBasePrice(detail);
+			individual.addConcept(priceConcep);
+		}
+		if(iter.hasNext()){
+			double total = 0.0;
+			while(iter.hasNext()){
+				InvoiceDetail detail = (InvoiceDetail)iter.next();
+				total += detail.getTaxableBase();
+			}
+			individual.addConcept("OTROS CONCEPTOS");
+			individual.addConcept(StringUtils.repeat(" ", 30) + total);
+		}
+		Iterator taxIter = strategy.getTaxBreakDowns(invoice, invoice).iterator();
+		for(int i=0;i<2;i++){
+			if(taxIter.hasNext()){
+				TaxBreakDown taxBreakDown = (TaxBreakDown)taxIter.next();
+				if(taxBreakDown.getTaxType().equals(TaxType.VAT)){
+					String taxConcept = "BASE:" + taxBreakDown.getBase();
+					taxConcept = taxConcept + StringUtils.repeat(" ", 19 - taxConcept.length());
+					taxConcept = taxConcept + taxBreakDown.getTaxPercent() + "% IVA" + ": " + taxBreakDown.getTaxQuota();
+					individual.addConcept(taxConcept);
+				}
+			}
+		}
+	}
+
+	@SuppressWarnings("unchecked")
 	private RegistryAddress obtainRegistryAddress(Integer registryId) throws ManagerBeanException {
 		IManagerBean rAddressBean = BeanManager.getManagerBean(RegistryAddress.class);
 		Criteria criteria = new Criteria();

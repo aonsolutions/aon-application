@@ -200,6 +200,10 @@
 			<value>true</value>
 		</managed-property>
 		<managed-property>
+			<property-name>pageLimit</property-name>
+			<value>400000</value>
+		</managed-property>
+		<managed-property>
 			<property-name>pojo</property-name>
 			<value>com.code.aon.finance.FinanceBatchDetail</value>
 		</managed-property>
@@ -232,6 +236,10 @@
 		<managed-property>
 			<property-name>queryOnStartUP</property-name>
 			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pageLimit</property-name>
+			<value>400000</value>
 		</managed-property>
 		<managed-property>
 			<property-name>pojo</property-name>
