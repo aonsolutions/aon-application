@@ -52,7 +52,7 @@ public class RegistryDirStaffController extends BasicController {
 		Iterator iter = ((List)getModel().getWrappedData()).iterator();
 		while(iter.hasNext()){
 			RegistryDirStaff rDirStaff = (RegistryDirStaff)iter.next();
-			total += rDirStaff.getShareNumber().intValue();
+			total += rDirStaff.getShareNumber();
 		}
 		return total;
 	}
