@@ -1,0 +1,65 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:aon="http://www.code.es/aon-components"
+	xmlns:c="http://java.sun.com/jstl/core">
+<body>
+
+<ui:composition>
+	<aon:form id="companyForm">
+
+		<aon:panelGrid columns="2" dir="true" styleClass="aon-title-toolbar"
+			cellpadding="0" cellspacing="0"
+			columnClasses="aon-content-title,aon-content-toolbar">
+
+			<aon:div styleClass="aon-content-title-internal">
+				<aon:outputText value="#{appBundle.aon_web_info}" />
+			</aon:div>
+
+			<aon:div styleClass="aon-content-toolbar-internal">
+				<aon:div styleClass="aon-content-toolbar-item-group">
+					<aon:commandButton id="generate"
+						value="#{appBundle.aon_web_info_generate}"
+						styleClass="aon-content-toolbar-item aon-icon-accept"
+						actionListener="#{generator.onGenerate}"
+						onmouseout="this.className='aon-content-toolbar-item aon-icon-accept'"
+						onmouseover="this.className='aon-content-toolbar-item aon-icon-accept aon-content-toolbar-item-hover'" />
+					<aon:commandButton id="web" value="#{appBundle.aon_web_info_view}"
+						styleClass="aon-content-toolbar-item aon-icon-accept"
+						action="#{generator.getWebPage}" rendered="#{generator.generate}"
+						onmouseout="this.className='aon-content-toolbar-item aon-icon-accept'"
+						onmouseover="this.className='aon-content-toolbar-item aon-icon-accept aon-content-toolbar-item-hover'" />
+				</aon:div>
+			</aon:div>
+		</aon:panelGrid>
+
+		<aon:div styleClass="aon-scroll-area">
+
+			<aon:div style="width:99%;">
+
+				<aon:panelTabSet id="menuTabSet">
+
+					<aon:panelTab id="general" label="#{registryBundle.aon_main_data}">
+						<ui:include src="/facelet/registry/company/tabs/general.xhtml" />
+					</aon:panelTab>
+
+					<aon:panelTab rendered="#{!company.new}" id="webInfo"
+						label="#{registryBundle.aon_company_web_info}">
+						<ui:include src="/facelet/registry/company/tabs/web-info.xhtml" />
+					</aon:panelTab>
+
+					<aon:panelTab rendered="#{!company.new}" id="images"
+						label="#{registryBundle.aon_company_images}">
+						<ui:include src="/facelet/registry/company/tabs/images.xhtml" />
+					</aon:panelTab>
+
+				</aon:panelTabSet>
+			</aon:div>
+		</aon:div>
+
+	</aon:form>
+</ui:composition>
+
+</body>
+</html>

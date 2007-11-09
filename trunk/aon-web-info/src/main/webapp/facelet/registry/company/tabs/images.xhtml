@@ -1,0 +1,116 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ice="http://www.icesoft.com/icefaces/component"
+	xmlns:aon="http://www.code.es/aon-components">
+<body>
+
+<ui:composition>
+			
+			
+	<aon:panelGrid cellpadding="5" cellspacing="0" border="0" columns="2" style="width:100%"
+	columnClasses="aon-midle-width,aon-midle-width">	
+			<aon:div >
+	
+			<aon:editDataTable id="companyImages" value="#{companyImages.model}"
+				var="to" rows="20" 
+				styleClass="aon-editTable"
+				columnClasses="aon-editTable-icon,
+					aon-editTable-cell">
+		
+				<aon:column>
+					<aon:rowSelector multiple="false"
+						toggleOnClick="#{companyImages.to == null}"
+						selectionListener="#{companyImages.onSelect}" />
+					<f:facet name="header">
+						<f:verbatim>&#160;</f:verbatim>
+					</f:facet>
+					<f:verbatim>&#160;</f:verbatim>
+					<f:facet name="footer">
+						<aon:div>
+									<aon:commandButton id="reset"
+						styleClass="aon-editTable-button aon-icon-reset"
+						value="" rendered="#{!companyImages.new}"
+						actionListener="#{companyImages.onReset}"
+						accesskey="#{bundle.aon_key_new_line}">
+					</aon:commandButton>
+						</aon:div>
+					</f:facet>
+				</aon:column>
+		
+				<aon:column>
+					<f:facet name="header">
+						<aon:outputText value="#{registryBundle.aon_registry_attach_description}" />
+					</f:facet>
+					<aon:outputText value="#{to.description}"/>
+				</aon:column>
+		
+			</aon:editDataTable>
+		
+			<ui:include src="/facelet/shared/dataScroller.xhtml">
+				<ui:param name="dataTable" value="companyImages" />
+				<ui:param name="model" value="#{companyImages.model}" />
+				<ui:param name="showNote" value="#{false}" />
+			</ui:include>
+		</aon:div>	
+		
+		<aon:div styleClass="aon-group" rendered="#{companyImages.to != null and !companyImages.new}">	
+			<aon:div styleClass="aon-group-title">		
+				<aon:outputLabel for="RegistryAttachment_preview"
+					value="#{registryBundle.aon_company_logo_preview}" />
+			</aon:div>
+			<aon:div styleClass="aon-group-body">
+				<aon:div styleClass="aon-section-toolbar" >
+		
+					<aon:commandButton id="save_image" value="#{bundle.aon_save}"					
+						styleClass="aon-icon-accept aon-content-toolbar-item aon-icon"
+						actionListener="#{companyImages.onAccept}"
+						onmouseout="this.className='aon-icon-accept aon-content-toolbar-item'"
+						onmouseover="this.className='aon-icon-accept aon-content-toolbar-item aon-content-toolbar-item-hover'"
+						/>
+					<aon:commandButton id="remove_image" value="#{bundle.aon_remove}"					
+						styleClass="aon-icon-delete aon-content-toolbar-item"
+						rendered="#{!companyImages.new}"
+						actionListener="#{companyImages.onRemove}"
+						onmouseout="this.className='aon-icon-delete aon-content-toolbar-item'"
+						onmouseover="this.className='aon-icon-delete aon-content-toolbar-item aon-content-toolbar-item-hover'"
+						/>	
+					<aon:commandButton id="cancel_image" value="#{bundle.aon_cancel}"					
+						styleClass="aon-icon-cancel aon-content-toolbar-item"
+						actionListener="#{companyImages.onCancel}"
+						onmouseout="this.className='aon-icon-cancel aon-content-toolbar-item'"
+						onmouseover="this.className='aon-icon-cancel aon-content-toolbar-item aon-content-toolbar-item-hover'"
+						/>	
+				</aon:div>		
+				<aon:div rendered="#{companyImages.to != null}">		
+					<aon:outputLabel for="RegistryAttachment_inputFile"
+						rendered="#{companyImages.new}"
+						value="#{registryBundle.aon_registry_attach_file}" />
+					<aon:inputFile id="RegistryAttachment_inputFile"
+						rendered="#{companyImages.new}"
+						uploadDirectory="/tmp"
+						uniqueFolder="false"
+						progressListener="#{companyImages.progress}"
+						actionListener="#{companyImages.fileUploaded}">
+						<aon:outputProgress id="image_progress" value="#{companyImages.percent}"/>
+					</aon:inputFile>				
+					<aon:outputLabel for="RegistryAttachment_description"
+						value="#{registryBundle.aon_registry_attach_description}" />
+						<aon:inputText id="RegistryAttachment_description"
+						styleClass="aon-inputText" size="45"
+						maxlength="50" value="#{companyImages.to.description}" />					
+				</aon:div>
+				<aon:div styleClass="aon-text-center ">
+					<aon:graphicImage id="RegistryAttachment_preview"
+						url="#{companyImages.imageUrl}" styleClass="aon-border"/>	
+				</aon:div>	
+			</aon:div>			
+		</aon:div>	
+			
+		
+
+	</aon:panelGrid>
+</ui:composition>
+</body>
+</html>
