@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<digester-rules>
+	<object-create-rule pattern="*/report-config" classname="com.code.aon.ui.report.config.ReportConfigurationManager"/>
+
+	<pattern value="report-config/default-config">
+		<object-create-rule classname="com.code.aon.ui.report.config.ReportConfig"/>
+
+		<set-next-rule methodname="setDefaultConfig"/>
+	</pattern>
+	
+	<pattern value="*/report">
+		<object-create-rule classname="com.code.aon.ui.report.config.ReportConfig"/>
+		<set-properties-rule>
+      		<alias attr-name="id" prop-name="id" />
+      		<alias attr-name="description" prop-name="description" />
+	    </set-properties-rule>
+	    
+		<pattern value="template">
+			<call-method-rule methodname="setTemplate" paramcount="1"/>
+			<call-param-rule paramnumber='0' attrname="path"/>
+		</pattern>
+		
+		<pattern value="bean">
+			<set-properties-rule>
+    	  		<alias attr-name="key" prop-name="beanKey" />
+		    </set-properties-rule>
+		</pattern>
+
+		<pattern value="criteria">
+			<set-properties-rule>
+    	  		<alias attr-name="provider" prop-name="criteriaProvider" />
+		    </set-properties-rule>
+		</pattern>
+		
+		<pattern value="collection">
+			<set-properties-rule>
+    	  		<alias attr-name="provider" prop-name="collectionProvider" />
+		    </set-properties-rule>
+		</pattern>
+		
+		<pattern value="nested-report">
+			<call-method-rule methodname="addNestedReport" paramcount="1"/>
+			<call-param-rule paramnumber='0' attrname="report"/>
+		</pattern>
+
+		<pattern value="dynamic-params">
+			<set-properties-rule>
+		  		<alias attr-name="provider" prop-name="dynamicParamsProvider" />
+		    </set-properties-rule>
+		</pattern>
+
+		<set-next-rule methodname="addReport"/>
+	</pattern>
+
+	<pattern value="*/fetch-mode">
+		<object-create-rule classname="com.code.aon.ui.report.config.ReportFetchMode"/>
+		<set-properties-rule>
+      		<alias attr-name="paginated" prop-name="paginated" />
+      		<alias attr-name="page-count" prop-name="pageCount" />
+      		<alias attr-name="virtualizer-max-size" prop-name="virtualizerPageMax" />
+	    </set-properties-rule>
+		<set-next-rule methodname="setFetchMode"/>
+	</pattern>	
+
+	<pattern value="*/params/param">
+		<call-method-rule methodname="addParam" paramcount="2" />
+		<call-param-rule attrname="id" paramnumber="0"/>
+		<call-param-rule attrname="value" paramnumber="1"/>
+	</pattern>	
+	
+</digester-rules>
