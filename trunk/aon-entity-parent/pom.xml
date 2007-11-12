@@ -11,7 +11,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.code.aon</groupId>
 	<artifactId>aon.entity.parent</artifactId>
-	<version>1.0.0</version>
+	<version>1.0.1</version>
 	<packaging>pom</packaging>
 	<description>
 		POM padre de los proyectos entity (no UI) de AON
@@ -20,49 +20,9 @@
 
 	<dependencies>
 		<dependency>
-			<groupId>org.hibernate</groupId>
-			<artifactId>hibernate-commons-annotations</artifactId>
-			<version>3.3.0.ga</version>
-			<scope>provided</scope>
-			<!-- 
-				Para los deploys en JBOSS no es necesario meter estas librerías, puesto que ya van. 
-				<scope>compile</scope>
-			-->
-		</dependency>
-		<dependency>
-			<groupId>org.hibernate</groupId>
-			<artifactId>hibernate-annotations</artifactId>
-			<version>3.2.1.ga</version>
-			<scope>provided</scope>
-			<!-- 
-				Para los deploys en JBOSS no es necesario meter estas librerías, puesto que ya van. 
-				<scope>compile</scope>
-			-->
-		</dependency>
-		<dependency>
-			<groupId>org.hibernate</groupId>
-			<artifactId>hibernate-validator</artifactId>
-			<version>3.0.0.ga</version>
-			<scope>provided</scope>
-			<!-- 
-				Para los deploys en JBOSS no es necesario meter estas librerías, puesto que ya van. 
-				<scope>compile</scope>
-			-->
-		</dependency>
-		<dependency>
-			<groupId>org.hibernate</groupId>
-			<artifactId>hibernate</artifactId>
-			<version>3.2.4.sp1</version>
-			<scope>provided</scope>
-			<!-- 
-				Para los deploys en JBOSS no es necesario meter estas librerías, puesto que ya van. 
-				<scope>compile</scope>
-			-->
-		</dependency>
-		<dependency>
 			<groupId>com.code.aon</groupId>
-			<artifactId>aon-framework</artifactId>
-			<version>1.9.12</version>
+			<artifactId>aon.common</artifactId>
+			<version>1.9.15-SNAPSHOT</version>
 			<scope>compile</scope>
 		</dependency>
 	</dependencies>
