@@ -205,22 +205,34 @@ public interface ICompanyAlias {
 	String  WEB_INFO_COMPANY_ID = WEB_INFO_ENTRY.getAliasNames()[1];
 
 	/** 
+	* Alias value: WebInfo_content
+	* Hibernate value: WebInfo.content
+	*/
+	String  WEB_INFO_CONTENT = WEB_INFO_ENTRY.getAliasNames()[2];
+
+	/** 
 	* Alias value: WebInfo_id
 	* Hibernate value: WebInfo.id
 	*/
-	String  WEB_INFO_ID = WEB_INFO_ENTRY.getAliasNames()[2];
+	String  WEB_INFO_ID = WEB_INFO_ENTRY.getAliasNames()[3];
 
 	/** 
 	* Alias value: WebInfo_schedule
 	* Hibernate value: WebInfo.schedule
 	*/
-	String  WEB_INFO_SCHEDULE = WEB_INFO_ENTRY.getAliasNames()[3];
+	String  WEB_INFO_SCHEDULE = WEB_INFO_ENTRY.getAliasNames()[4];
 
 	/** 
 	* Alias value: WebInfo_slogan
 	* Hibernate value: WebInfo.slogan
 	*/
-	String  WEB_INFO_SLOGAN = WEB_INFO_ENTRY.getAliasNames()[4];
+	String  WEB_INFO_SLOGAN = WEB_INFO_ENTRY.getAliasNames()[5];
+
+	/** 
+	* Alias value: WebInfo_title
+	* Hibernate value: WebInfo.title
+	*/
+	String  WEB_INFO_TITLE = WEB_INFO_ENTRY.getAliasNames()[6];
 
 
 

@@ -24,6 +24,10 @@ public class WebInfo implements ITransferObject {
 	
 	private String slogan;
 
+	private String title;
+
+	private String content;
+
 	@Id
 	@Column(nullable=false)
 	@GeneratedValue
@@ -45,7 +49,7 @@ public class WebInfo implements ITransferObject {
 		this.company = company;
 	}
 
-	@Column(name="commercial_description", length=64)
+	@Column(name="commercial_description")
 	public String getCommercialDescription() {
 		return commercialDescription;
 	}
@@ -54,7 +58,6 @@ public class WebInfo implements ITransferObject {
 		this.commercialDescription = commercialDescription;
 	}
 
-	@Column(length=64)
 	public String getSchedule() {
 		return schedule;
 	}
@@ -70,5 +73,21 @@ public class WebInfo implements ITransferObject {
 
 	public void setSlogan(String slogan) {
 		this.slogan = slogan;
+	}
+
+	public String getTitle() {
+		return title;
+	}
+
+	public void setTitle(String title) {
+		this.title = title;
+	}
+
+	public String getContent() {
+		return content;
+	}
+
+	public void setContent(String content) {
+		this.content = content;
 	}
 }

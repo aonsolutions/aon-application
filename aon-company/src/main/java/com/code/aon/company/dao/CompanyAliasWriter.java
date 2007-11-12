@@ -22,7 +22,7 @@ public class CompanyAliasWriter {
 	 * @throws IOException
 	 */
 	public static void main(String[] args) throws IOException {
-		File file = new File("/PROYECTOS/aon-company/src/com/code/aon/company/dao/ICompanyAlias.java");
+		File file = new File("/AON-PROJECT/aon-company/src/main/java/com/code/aon/company/dao/ICompanyAlias.java");
 		String[] classes = new String[6]; 
 		classes[0] = Company.class.getName();
 		classes[1] = Employee.class.getName();
