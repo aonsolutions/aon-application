@@ -14,6 +14,10 @@ import com.code.aon.cms.Header;
 import com.code.aon.cms.HeaderDetail;
 import com.code.aon.cms.Footer;
 import com.code.aon.cms.FooterDetail;
+import com.code.aon.cms.Link;
+import com.code.aon.cms.LinkDetail;
+import com.code.aon.cms.LinkCategory;
+import com.code.aon.cms.LinkCategoryDetail;
 
 /** 
 * Interface for holding entity properties constants.
@@ -89,70 +93,76 @@ public interface ICMSAlias {
 	String  CONFIG_FTP_PASSWORD = CONFIG_ENTRY.getAliasNames()[3];
 
 	/** 
+	* Alias value: Config_ftp_path
+	* Hibernate value: Config.ftp_path
+	*/
+	String  CONFIG_FTP_PATH = CONFIG_ENTRY.getAliasNames()[4];
+
+	/** 
 	* Alias value: Config_ftp_server
 	* Hibernate value: Config.ftp_server
 	*/
-	String  CONFIG_FTP_SERVER = CONFIG_ENTRY.getAliasNames()[4];
+	String  CONFIG_FTP_SERVER = CONFIG_ENTRY.getAliasNames()[5];
 
 	/** 
 	* Alias value: Config_ftp_user
 	* Hibernate value: Config.ftp_user
 	*/
-	String  CONFIG_FTP_USER = CONFIG_ENTRY.getAliasNames()[5];
+	String  CONFIG_FTP_USER = CONFIG_ENTRY.getAliasNames()[6];
 
 	/** 
 	* Alias value: Config_host
 	* Hibernate value: Config.host
 	*/
-	String  CONFIG_HOST = CONFIG_ENTRY.getAliasNames()[6];
+	String  CONFIG_HOST = CONFIG_ENTRY.getAliasNames()[7];
 
 	/** 
 	* Alias value: Config_id
 	* Hibernate value: Config.id
 	*/
-	String  CONFIG_ID = CONFIG_ENTRY.getAliasNames()[7];
+	String  CONFIG_ID = CONFIG_ENTRY.getAliasNames()[8];
 
 	/** 
 	* Alias value: Config_online
 	* Hibernate value: Config.online
 	*/
-	String  CONFIG_ONLINE = CONFIG_ENTRY.getAliasNames()[8];
+	String  CONFIG_ONLINE = CONFIG_ENTRY.getAliasNames()[9];
 
 	/** 
 	* Alias value: Config_preview_host
 	* Hibernate value: Config.preview_host
 	*/
-	String  CONFIG_PREVIEW_HOST = CONFIG_ENTRY.getAliasNames()[9];
+	String  CONFIG_PREVIEW_HOST = CONFIG_ENTRY.getAliasNames()[10];
 
 	/** 
 	* Alias value: Config_smtp_auth
 	* Hibernate value: Config.smtp_auth
 	*/
-	String  CONFIG_SMTP_AUTH = CONFIG_ENTRY.getAliasNames()[10];
+	String  CONFIG_SMTP_AUTH = CONFIG_ENTRY.getAliasNames()[11];
 
 	/** 
 	* Alias value: Config_smtp_password
 	* Hibernate value: Config.smtp_password
 	*/
-	String  CONFIG_SMTP_PASSWORD = CONFIG_ENTRY.getAliasNames()[11];
+	String  CONFIG_SMTP_PASSWORD = CONFIG_ENTRY.getAliasNames()[12];
 
 	/** 
 	* Alias value: Config_smtp_server
 	* Hibernate value: Config.smtp_server
 	*/
-	String  CONFIG_SMTP_SERVER = CONFIG_ENTRY.getAliasNames()[12];
+	String  CONFIG_SMTP_SERVER = CONFIG_ENTRY.getAliasNames()[13];
 
 	/** 
 	* Alias value: Config_smtp_user
 	* Hibernate value: Config.smtp_user
 	*/
-	String  CONFIG_SMTP_USER = CONFIG_ENTRY.getAliasNames()[13];
+	String  CONFIG_SMTP_USER = CONFIG_ENTRY.getAliasNames()[14];
 
 	/** 
 	* Alias value: Config_template
 	* Hibernate value: Config.template
 	*/
-	String  CONFIG_TEMPLATE = CONFIG_ENTRY.getAliasNames()[14];
+	String  CONFIG_TEMPLATE = CONFIG_ENTRY.getAliasNames()[15];
 
 
 
@@ -589,6 +599,142 @@ public interface ICMSAlias {
 	* Hibernate value: FooterDetail.language.id
 	*/
 	String  FOOTER_DETAIL_LANGUAGE_ID = FOOTER_DETAIL_ENTRY.getAliasNames()[3];
+
+
+
+	/** 
+	* DAOConstantsEntry for Link entity.
+	*/ 
+	DAOConstantsEntry LINK_ENTRY = DAOConstants.getDAOConstant(Link.class);
+
+	/** 
+	* Alias value: Link_active
+	* Hibernate value: Link.active
+	*/
+	String  LINK_ACTIVE = LINK_ENTRY.getAliasNames()[0];
+
+	/** 
+	* Alias value: Link_alias
+	* Hibernate value: Link.alias
+	*/
+	String  LINK_ALIAS = LINK_ENTRY.getAliasNames()[1];
+
+	/** 
+	* Alias value: Link_id
+	* Hibernate value: Link.id
+	*/
+	String  LINK_ID = LINK_ENTRY.getAliasNames()[2];
+
+	/** 
+	* Alias value: Link_linkCategory_id
+	* Hibernate value: Link.linkCategory.id
+	*/
+	String  LINK_LINK_CATEGORY_ID = LINK_ENTRY.getAliasNames()[3];
+
+	/** 
+	* Alias value: Link_position
+	* Hibernate value: Link.position
+	*/
+	String  LINK_POSITION = LINK_ENTRY.getAliasNames()[4];
+
+	/** 
+	* Alias value: Link_url
+	* Hibernate value: Link.url
+	*/
+	String  LINK_URL = LINK_ENTRY.getAliasNames()[5];
+
+
+
+	/** 
+	* DAOConstantsEntry for LinkDetail entity.
+	*/ 
+	DAOConstantsEntry LINK_DETAIL_ENTRY = DAOConstants.getDAOConstant(LinkDetail.class);
+
+	/** 
+	* Alias value: LinkDetail_id
+	* Hibernate value: LinkDetail.id
+	*/
+	String  LINK_DETAIL_ID = LINK_DETAIL_ENTRY.getAliasNames()[0];
+
+	/** 
+	* Alias value: LinkDetail_label
+	* Hibernate value: LinkDetail.label
+	*/
+	String  LINK_DETAIL_LABEL = LINK_DETAIL_ENTRY.getAliasNames()[1];
+
+	/** 
+	* Alias value: LinkDetail_language_id
+	* Hibernate value: LinkDetail.language.id
+	*/
+	String  LINK_DETAIL_LANGUAGE_ID = LINK_DETAIL_ENTRY.getAliasNames()[2];
+
+	/** 
+	* Alias value: LinkDetail_link_id
+	* Hibernate value: LinkDetail.link.id
+	*/
+	String  LINK_DETAIL_LINK_ID = LINK_DETAIL_ENTRY.getAliasNames()[3];
+
+
+
+	/** 
+	* DAOConstantsEntry for LinkCategory entity.
+	*/ 
+	DAOConstantsEntry LINK_CATEGORY_ENTRY = DAOConstants.getDAOConstant(LinkCategory.class);
+
+	/** 
+	* Alias value: LinkCategory_active
+	* Hibernate value: LinkCategory.active
+	*/
+	String  LINK_CATEGORY_ACTIVE = LINK_CATEGORY_ENTRY.getAliasNames()[0];
+
+	/** 
+	* Alias value: LinkCategory_alias
+	* Hibernate value: LinkCategory.alias
+	*/
+	String  LINK_CATEGORY_ALIAS = LINK_CATEGORY_ENTRY.getAliasNames()[1];
+
+	/** 
+	* Alias value: LinkCategory_id
+	* Hibernate value: LinkCategory.id
+	*/
+	String  LINK_CATEGORY_ID = LINK_CATEGORY_ENTRY.getAliasNames()[2];
+
+	/** 
+	* Alias value: LinkCategory_position
+	* Hibernate value: LinkCategory.position
+	*/
+	String  LINK_CATEGORY_POSITION = LINK_CATEGORY_ENTRY.getAliasNames()[3];
+
+
+
+	/** 
+	* DAOConstantsEntry for LinkCategoryDetail entity.
+	*/ 
+	DAOConstantsEntry LINK_CATEGORY_DETAIL_ENTRY = DAOConstants.getDAOConstant(LinkCategoryDetail.class);
+
+	/** 
+	* Alias value: LinkCategoryDetail_id
+	* Hibernate value: LinkCategoryDetail.id
+	*/
+	String  LINK_CATEGORY_DETAIL_ID = LINK_CATEGORY_DETAIL_ENTRY.getAliasNames()[0];
+
+	/** 
+	* Alias value: LinkCategoryDetail_label
+	* Hibernate value: LinkCategoryDetail.label
+	*/
+	String  LINK_CATEGORY_DETAIL_LABEL = LINK_CATEGORY_DETAIL_ENTRY.getAliasNames()[1];
+
+	/** 
+	* Alias value: LinkCategoryDetail_language_id
+	* Hibernate value: LinkCategoryDetail.language.id
+	*/
+	String  LINK_CATEGORY_DETAIL_LANGUAGE_ID = LINK_CATEGORY_DETAIL_ENTRY.getAliasNames()[2];
+
+	/** 
+	* Alias value: LinkCategoryDetail_linkCategory_id
+	* Hibernate value: LinkCategoryDetail.linkCategory.id
+	*/
+	String  LINK_CATEGORY_DETAIL_LINK_CATEGORY_ID = LINK_CATEGORY_DETAIL_ENTRY.getAliasNames()[3];
 
 
 }
