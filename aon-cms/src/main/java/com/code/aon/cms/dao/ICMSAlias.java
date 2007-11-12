@@ -18,6 +18,10 @@ import com.code.aon.cms.Link;
 import com.code.aon.cms.LinkDetail;
 import com.code.aon.cms.LinkCategory;
 import com.code.aon.cms.LinkCategoryDetail;
+import com.code.aon.cms.Faq;
+import com.code.aon.cms.FaqDetail;
+import com.code.aon.cms.FaqCategory;
+import com.code.aon.cms.FaqCategoryDetail;
 
 /** 
 * Interface for holding entity properties constants.
@@ -735,6 +739,142 @@ public interface ICMSAlias {
 	* Hibernate value: LinkCategoryDetail.linkCategory.id
 	*/
 	String  LINK_CATEGORY_DETAIL_LINK_CATEGORY_ID = LINK_CATEGORY_DETAIL_ENTRY.getAliasNames()[3];
+
+
+
+	/** 
+	* DAOConstantsEntry for Faq entity.
+	*/ 
+	DAOConstantsEntry FAQ_ENTRY = DAOConstants.getDAOConstant(Faq.class);
+
+	/** 
+	* Alias value: Faq_active
+	* Hibernate value: Faq.active
+	*/
+	String  FAQ_ACTIVE = FAQ_ENTRY.getAliasNames()[0];
+
+	/** 
+	* Alias value: Faq_alias
+	* Hibernate value: Faq.alias
+	*/
+	String  FAQ_ALIAS = FAQ_ENTRY.getAliasNames()[1];
+
+	/** 
+	* Alias value: Faq_faqCategory_id
+	* Hibernate value: Faq.faqCategory.id
+	*/
+	String  FAQ_FAQ_CATEGORY_ID = FAQ_ENTRY.getAliasNames()[2];
+
+	/** 
+	* Alias value: Faq_id
+	* Hibernate value: Faq.id
+	*/
+	String  FAQ_ID = FAQ_ENTRY.getAliasNames()[3];
+
+	/** 
+	* Alias value: Faq_position
+	* Hibernate value: Faq.position
+	*/
+	String  FAQ_POSITION = FAQ_ENTRY.getAliasNames()[4];
+
+
+
+	/** 
+	* DAOConstantsEntry for FaqDetail entity.
+	*/ 
+	DAOConstantsEntry FAQ_DETAIL_ENTRY = DAOConstants.getDAOConstant(FaqDetail.class);
+
+	/** 
+	* Alias value: FaqDetail_answer
+	* Hibernate value: FaqDetail.answer
+	*/
+	String  FAQ_DETAIL_ANSWER = FAQ_DETAIL_ENTRY.getAliasNames()[0];
+
+	/** 
+	* Alias value: FaqDetail_faq_id
+	* Hibernate value: FaqDetail.faq.id
+	*/
+	String  FAQ_DETAIL_FAQ_ID = FAQ_DETAIL_ENTRY.getAliasNames()[1];
+
+	/** 
+	* Alias value: FaqDetail_id
+	* Hibernate value: FaqDetail.id
+	*/
+	String  FAQ_DETAIL_ID = FAQ_DETAIL_ENTRY.getAliasNames()[2];
+
+	/** 
+	* Alias value: FaqDetail_language_id
+	* Hibernate value: FaqDetail.language.id
+	*/
+	String  FAQ_DETAIL_LANGUAGE_ID = FAQ_DETAIL_ENTRY.getAliasNames()[3];
+
+	/** 
+	* Alias value: FaqDetail_question
+	* Hibernate value: FaqDetail.question
+	*/
+	String  FAQ_DETAIL_QUESTION = FAQ_DETAIL_ENTRY.getAliasNames()[4];
+
+
+
+	/** 
+	* DAOConstantsEntry for FaqCategory entity.
+	*/ 
+	DAOConstantsEntry FAQ_CATEGORY_ENTRY = DAOConstants.getDAOConstant(FaqCategory.class);
+
+	/** 
+	* Alias value: FaqCategory_active
+	* Hibernate value: FaqCategory.active
+	*/
+	String  FAQ_CATEGORY_ACTIVE = FAQ_CATEGORY_ENTRY.getAliasNames()[0];
+
+	/** 
+	* Alias value: FaqCategory_alias
+	* Hibernate value: FaqCategory.alias
+	*/
+	String  FAQ_CATEGORY_ALIAS = FAQ_CATEGORY_ENTRY.getAliasNames()[1];
+
+	/** 
+	* Alias value: FaqCategory_id
+	* Hibernate value: FaqCategory.id
+	*/
+	String  FAQ_CATEGORY_ID = FAQ_CATEGORY_ENTRY.getAliasNames()[2];
+
+	/** 
+	* Alias value: FaqCategory_position
+	* Hibernate value: FaqCategory.position
+	*/
+	String  FAQ_CATEGORY_POSITION = FAQ_CATEGORY_ENTRY.getAliasNames()[3];
+
+
+
+	/** 
+	* DAOConstantsEntry for FaqCategoryDetail entity.
+	*/ 
+	DAOConstantsEntry FAQ_CATEGORY_DETAIL_ENTRY = DAOConstants.getDAOConstant(FaqCategoryDetail.class);
+
+	/** 
+	* Alias value: FaqCategoryDetail_faqCategory_id
+	* Hibernate value: FaqCategoryDetail.faqCategory.id
+	*/
+	String  FAQ_CATEGORY_DETAIL_FAQ_CATEGORY_ID = FAQ_CATEGORY_DETAIL_ENTRY.getAliasNames()[0];
+
+	/** 
+	* Alias value: FaqCategoryDetail_id
+	* Hibernate value: FaqCategoryDetail.id
+	*/
+	String  FAQ_CATEGORY_DETAIL_ID = FAQ_CATEGORY_DETAIL_ENTRY.getAliasNames()[1];
+
+	/** 
+	* Alias value: FaqCategoryDetail_label
+	* Hibernate value: FaqCategoryDetail.label
+	*/
+	String  FAQ_CATEGORY_DETAIL_LABEL = FAQ_CATEGORY_DETAIL_ENTRY.getAliasNames()[2];
+
+	/** 
+	* Alias value: FaqCategoryDetail_language_id
+	* Hibernate value: FaqCategoryDetail.language.id
+	*/
+	String  FAQ_CATEGORY_DETAIL_LANGUAGE_ID = FAQ_CATEGORY_DETAIL_ENTRY.getAliasNames()[3];
 
 
 }

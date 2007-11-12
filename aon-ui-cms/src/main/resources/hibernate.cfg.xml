@@ -30,6 +30,10 @@
 		<mapping class="com.code.aon.cms.LinkDetail"/>
 		<mapping class="com.code.aon.cms.LinkCategory"/>
 		<mapping class="com.code.aon.cms.LinkCategoryDetail"/>
+		<mapping class="com.code.aon.cms.Faq"/>
+		<mapping class="com.code.aon.cms.FaqDetail"/>
+		<mapping class="com.code.aon.cms.FaqCategory"/>
+		<mapping class="com.code.aon.cms.FaqCategoryDetail"/>
 
 	</session-factory>
 

@@ -74,7 +74,7 @@
     </navigation-case>
   </navigation-rule>
   
-  <!-- ================================================= LINK CATEGORY -->
+  <!-- ================================================= LINK -->
   <navigation-rule>
     <navigation-case>
       <from-outcome>link_list</from-outcome>
@@ -83,6 +83,30 @@
     <navigation-case>
       <from-outcome>link_form</from-outcome>
       <to-view-id>/facelet/content/link_category/link/form.iface</to-view-id>
+    </navigation-case>
+  </navigation-rule>
+  
+  <!-- ================================================= FAQ CATEGORY -->
+  <navigation-rule>
+    <navigation-case>
+      <from-outcome>faq_category_list</from-outcome>
+      <to-view-id>/facelet/content/faq_category/list.iface</to-view-id>
+    </navigation-case>
+    <navigation-case>
+      <from-outcome>faq_category_form</from-outcome>
+      <to-view-id>/facelet/content/faq_category/form.iface</to-view-id>
+    </navigation-case>
+  </navigation-rule>
+  
+  <!-- ================================================= FAQ -->
+  <navigation-rule>
+    <navigation-case>
+      <from-outcome>faq_list</from-outcome>
+      <to-view-id>/facelet/content/faq_category/faq/list.iface</to-view-id>
+    </navigation-case>
+    <navigation-case>
+      <from-outcome>faq_form</from-outcome>
+      <to-view-id>/facelet/content/faq_category/faq/form.iface</to-view-id>
     </navigation-case>
   </navigation-rule>
   
