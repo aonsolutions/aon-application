@@ -26,6 +26,10 @@
 		<mapping class="com.code.aon.cms.HeaderDetail"/>
 		<mapping class="com.code.aon.cms.Footer"/>
 		<mapping class="com.code.aon.cms.FooterDetail"/>
+		<mapping class="com.code.aon.cms.Link"/>
+		<mapping class="com.code.aon.cms.LinkDetail"/>
+		<mapping class="com.code.aon.cms.LinkCategory"/>
+		<mapping class="com.code.aon.cms.LinkCategoryDetail"/>
 
 	</session-factory>
 

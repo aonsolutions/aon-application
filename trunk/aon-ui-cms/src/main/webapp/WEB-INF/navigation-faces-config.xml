@@ -62,6 +62,30 @@
     </navigation-case>
   </navigation-rule>
 
+  <!-- ================================================= LINK CATEGORY -->
+  <navigation-rule>
+    <navigation-case>
+      <from-outcome>link_category_list</from-outcome>
+      <to-view-id>/facelet/content/link_category/list.iface</to-view-id>
+    </navigation-case>
+    <navigation-case>
+      <from-outcome>link_category_form</from-outcome>
+      <to-view-id>/facelet/content/link_category/form.iface</to-view-id>
+    </navigation-case>
+  </navigation-rule>
+  
+  <!-- ================================================= LINK CATEGORY -->
+  <navigation-rule>
+    <navigation-case>
+      <from-outcome>link_list</from-outcome>
+      <to-view-id>/facelet/content/link_category/link/list.iface</to-view-id>
+    </navigation-case>
+    <navigation-case>
+      <from-outcome>link_form</from-outcome>
+      <to-view-id>/facelet/content/link_category/link/form.iface</to-view-id>
+    </navigation-case>
+  </navigation-rule>
+  
   <!-- =================================================== TEMPLATES -->
   <navigation-rule>
     <navigation-case>
