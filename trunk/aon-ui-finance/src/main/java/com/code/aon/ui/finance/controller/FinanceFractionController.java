@@ -69,7 +69,7 @@ public class FinanceFractionController {
 		this.isNew = isNew;
 	}
 
-	@SuppressWarnings("all")
+	@SuppressWarnings({"unused","unchecked"})
 	public void onFractionFinance(ActionEvent event) throws ManagerBeanException{
 		initializeController();
 		FinanceController financeController = (FinanceController)AonUtil.getController(FINANCE_CONTROLLER_NAME);
@@ -83,17 +83,21 @@ public class FinanceFractionController {
 		getFractionModel().setWrappedData(list);
 	}
 	
-	@SuppressWarnings("unused")
+	@SuppressWarnings({"unused","unchecked"})
 	public void onAcceptFractions(ActionEvent event) throws ManagerBeanException{
 		IManagerBean financeBean = BeanManager.getManagerBean(Finance.class);
 		List list = (List)getFractionModel().getWrappedData();
 		Finance finance = (Finance) list.get(0);
 		targetFinance.setAmount(finance.getAmount());
+		targetFinance.setBank((targetFinance.getBank().getId() == null?null:targetFinance.getBank()));
+		targetFinance.setPayMethod((targetFinance.getPayMethod().getId() == null?null:targetFinance.getPayMethod()));
 		financeBean.update(targetFinance);
 		ResourceBundle bundle = ResourceBundle.getBundle(AonUtil.getConfigurationController().getApplicationBundles().get("financeBundle"),FacesContext.getCurrentInstance().getViewRoot().getLocale());
 		FinanceTrackingWriter.addFinanceTracking(targetFinance, FinanceTrackingType.FRACTIONED, bundle.getString("aon_finance_tracking_fractioned"));
 		for(int i = 1;i<list.size();i++){
 			finance = (Finance)list.get(i);
+			finance.setBank((finance.getBank().getId() == null?null:finance.getBank()));
+			finance.setPayMethod((finance.getPayMethod().getId() == null?null:finance.getPayMethod()));
 			financeBean.insert(finance);
 		}
 		initializeFinanceControllerList(((List)getFractionModel().getWrappedData()));
@@ -105,6 +109,7 @@ public class FinanceFractionController {
 		this.fractionModel = null;
 	}
 	
+	@SuppressWarnings("unchecked")
 	private void initializeFinanceControllerList(List list) throws ManagerBeanException {
 		try {
 			FinanceController financeController = (FinanceController)AonUtil.getController(FINANCE_CONTROLLER_NAME);
@@ -142,7 +147,7 @@ public class FinanceFractionController {
 		this.setNew(false);
 	}
 	
-	@SuppressWarnings("unused")
+	@SuppressWarnings({"unused","unchecked"})
 	public void onRemoveFraction(ActionEvent event){
 		((LinkedList)getFractionModel().getWrappedData()).remove(this.currentFinance);
 	}
@@ -176,6 +181,7 @@ public class FinanceFractionController {
 		return finance;
 	}
 	
+	@SuppressWarnings("unchecked")
 	private double obtainPendingAmount() {
 		double pending = targetFinance.getTotalAmount();
 		Iterator iter =  ((List)getFractionModel().getWrappedData()).iterator();
