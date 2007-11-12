@@ -18,7 +18,7 @@
 
 	<issueManagement>
 		<system>Bugzilla</system>
-		<url>http://192.168.2.4/bugzilla/</url>
+		<url>http://bugzilla.code.es/</url>
 	</issueManagement>
 
 	<build>
@@ -42,22 +42,14 @@
 				<artifactId>maven-jar-plugin</artifactId>
 				<configuration>
 					<archive>
-						<manifestSections>
-							<manifestSection>
-								<name>${project.name}</name>
-								<manifestEntries>
-									<Implementation-Title>
-										${project.name}
-									</Implementation-Title>
-									<Implementation-Version>
-										${project.version}
-									</Implementation-Version>
-									<Implementation-Vendor>
-										Consulting &amp; Development
-									</Implementation-Vendor>
-								</manifestEntries>
-							</manifestSection>
-						</manifestSections>
+						<manifest>
+							<addDefaultSpecificationEntries>
+								true
+							</addDefaultSpecificationEntries>
+							<addDefaultImplementationEntries>
+								true
+							</addDefaultImplementationEntries>
+						</manifest>
 					</archive>
 				</configuration>
 			</plugin>
@@ -71,16 +63,50 @@
 					</execution>
 				</executions>
 			</plugin>
+			<plugin>
+				<groupId>ch.elca.el4j.maven.plugins</groupId>
+				<artifactId>maven-depgraph-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>FULLGRAPH</id>
+						<phase>install</phase>
+						<goals>
+							<goal>fullgraph</goal>
+						</goals>
+						<configuration>
+							<outDir>/target/graph</outDir>
+							<outFile>
+								${pom.artifactId}-${pom.version}-full.png
+							</outFile>
+						</configuration>
+					</execution>
+					<execution>
+						<id>AON-FULLGRAPH</id>
+						<phase>install</phase>
+						<goals>
+							<goal>fullgraph</goal>
+						</goals>
+						<configuration>
+							<outDir>/target/graph</outDir>
+							<outFile>
+								${pom.artifactId}-${pom.version}-aon.png
+							</outFile>
+							<groupFilter>com.code.aon</groupFilter>
+						</configuration>
+					</execution>
+				</executions>
+				<version>1.2</version>
+			</plugin>
 		</plugins>
 		<!-- 
-		<extensions>
+			<extensions>
 			<extension>
-				<groupId>org.apache.maven.wagon</groupId>
-				<artifactId>wagon-webdav</artifactId>
-				<version>1.0-beta-2</version>
+			<groupId>org.apache.maven.wagon</groupId>
+			<artifactId>wagon-webdav</artifactId>
+			<version>1.0-beta-2</version>
 			</extension>
-		</extensions>
-		 -->
+			</extensions>
+		-->
 	</build>
 
 
@@ -88,25 +114,25 @@
 		<repository>
 			<id>inhouse</id>
 			<name>Inhouse Internal Release Repository</name>
-				<url>
-				scp://192.168.2.4/DOCUMENTOS/MAVEN/maven2_repositories/inhouse
-				</url>
-			<!-- 
 			<url>
-				dav:http://192.168.2.4:8080/archiva/repository/inhouse
+				scp://192.168.2.4/DOCUMENTOS/MAVEN/maven2_repositories/inhouse
 			</url>
+			<!-- 
+				<url>
+				dav:http://192.168.2.4:8080/archiva/repository/inhouse
+				</url>
 			-->
 		</repository>
 		<snapshotRepository>
 			<id>inhouse_snapshot</id>
 			<name>Inhouse Internal Snapshot Repository</name>
-				<url>
-				scp://192.168.2.4/DOCUMENTOS/MAVEN/maven2_repositories/inhouse_snapshot
-				</url>
-			<!-- 
 			<url>
-				dav:http://192.168.2.4:8080/archiva/repository/inhouse_snapshot
+				scp://192.168.2.4/DOCUMENTOS/MAVEN/maven2_repositories/inhouse_snapshot
 			</url>
+			<!-- 
+				<url>
+				dav:http://192.168.2.4:8080/archiva/repository/inhouse_snapshot
+				</url>
 			-->
 		</snapshotRepository>
 	</distributionManagement>
@@ -121,6 +147,7 @@
 				<reportSets>
 					<reportSet>
 						<reports>
+							<report>index</report>
 							<report>dependencies</report>
 							<report>mailing-list</report>
 							<report>project-team</report>
@@ -141,19 +168,24 @@
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-jxr-plugin</artifactId>
 			</plugin>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>jdepend-maven-plugin</artifactId>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-javadoc-plugin</artifactId>
+				<configuration>
+					<aggregate>true</aggregate>
+					<debug>true</debug>
+					<links>
+						<link>
+							http://java.sun.com/javaee/5/docs/api
+						</link>
+					</links>
+				</configuration>
+			</plugin>
 		</plugins>
 	</reporting>
-	<mailingLists>
-		<mailingList></mailingList>
-	</mailingLists>
-	<developers>
-		<developer>
-			<id>jurkiri</id>
-			<name>Joseba Urkiri</name>
-			<organization>Consulting &amp; Development</organization>
-			<organizationUrl>http://code.es</organizationUrl>
-			<email>jurkiri@co-de.com</email>
-		</developer>
-	</developers>
 </project>
 
