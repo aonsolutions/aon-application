@@ -9,6 +9,7 @@ import java.util.List;
 
 import javax.faces.context.FacesContext;
 import javax.faces.el.ValueBinding;
+import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 import javax.faces.event.PhaseId;
 import javax.faces.event.ValueChangeEvent;
@@ -32,6 +33,7 @@ import com.code.aon.config.dao.IConfigAlias;
 import com.code.aon.customer.Customer;
 import com.code.aon.customer.dao.ICustomerAlias;
 import com.code.aon.finance.Finance;
+import com.code.aon.finance.FinanceTracking;
 import com.code.aon.finance.Invoice;
 import com.code.aon.finance.dao.IFinanceAlias;
 import com.code.aon.finance.enumeration.InvoiceStatus;
@@ -334,18 +336,39 @@ public class FeeInvoicingController extends BasicController {
 		try {
 			IManagerBean financeBean = BeanManager.getManagerBean(Finance.class);
 			IController feeFinanceController = AonUtil.getController(FEE_FINANCE_CONTROLLER_NAME);
-			Iterator iter = ((List)feeFinanceController.getModel().getWrappedData()).iterator();
-			while(iter.hasNext()){
-				Finance finance = (Finance)iter.next();
-				financeBean.remove(finance);
+			List financeList = ((List)feeFinanceController.getModel().getWrappedData());
+			if(existFinanceTrackings(financeList)){
+				AonUtil.addInfoMessage("No se puede generar vencimientos automaticamente. Alguno de ellos tiene operaciones anteriores.");
+				throw new AbortProcessingException();
+			}else{
+				Iterator iter = financeList.iterator();
+				while(iter.hasNext()){
+					Finance finance = (Finance)iter.next();
+					financeBean.remove(finance);
+				}
+				getFinanceGenerator().generateFinances(invoice, getPriceStrategy().getTotalPrice(invoice, invoice));
+				feeFinanceController.onSearch(null);
 			}
-			getFinanceGenerator().generateFinances(invoice, getPriceStrategy().getTotalPrice(invoice, invoice));
-			feeFinanceController.onSearch(null);
 		} catch (ManagerBeanException e) {
 			throw new ManagerBeanException("Error generating finances for invoice with id= " + invoice.getId(),e);
 		}
 	}
 	
+	@SuppressWarnings("unchecked")
+	private boolean existFinanceTrackings(List financeList) throws ManagerBeanException {
+		IManagerBean financeTrackingBean = BeanManager.getManagerBean(FinanceTracking.class);
+		Iterator iter = financeList.iterator();
+		while(iter.hasNext()){
+			Criteria criteria = new Criteria();
+			Finance finance = (Finance)iter.next();
+			criteria.addEqualExpression(financeTrackingBean.getFieldName(IFinanceAlias.FINANCE_TRACKING_FINANCE_ID), finance.getId());
+			if(financeTrackingBean.getCount(criteria) > 0){
+				return true;
+			}
+		}
+		return false;
+	}
+
 	@SuppressWarnings("unused")
 	public void onRecordInvoice(ActionEvent event) throws ManagerBeanException, ExpressionException{
 		Invoice invoice = (Invoice)this.getTo();
