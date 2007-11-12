@@ -8,6 +8,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.faces.context.FacesContext;
+import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 
 import com.code.aon.account.AccountEntry;
@@ -175,6 +176,10 @@ public class FinancePaymentController extends BasicController {
 	
 	@SuppressWarnings("unused")
 	public void onPayment(ActionEvent event) throws ManagerBeanException{
+		if(getPayedAmount()==0){
+			AonUtil.addInfoMessage("No se puede realizar un pago de importe 0.0");
+			throw new AbortProcessingException();
+		}
 		ResourceBundle bundle = ResourceBundle.getBundle(AonUtil.getConfigurationController().getApplicationBundles().get("financeBundle"),FacesContext.getCurrentInstance().getViewRoot().getLocale());
 		Finance finance = (Finance)this.getTo();
 		if(finance.getPayMethod().getId() == null){
