@@ -133,6 +133,11 @@ public class FaqController extends BasicI18nController {
 
 	public void reorderObjects() throws ManagerBeanException {
 		Criteria criteria = new Criteria();
+		try {
+			criteria.addExpression(getManagerBean().getFieldName(ICMSAlias.FAQ_FAQ_CATEGORY_ID), "" + getCurrentFaqCategory().getId());
+		} catch (ExpressionException e) {
+			throw new ManagerBeanException(e);
+		}
 		criteria.addOrder(getManagerBean().getFieldName(ICMSAlias.FAQ_POSITION));
 		List<ITransferObject> list = getManagerBean().getList(criteria);
 		for (int i = 0; i < list.size(); i++) {

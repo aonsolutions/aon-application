@@ -124,8 +124,13 @@ public class LinkController extends BasicI18nController {
     	move((Link) this.model.getRowData(), 1);    	
     }
 
-	public void reorderObjects() throws ManagerBeanException {
+	public void reorderObjects() throws ManagerBeanException{
 		Criteria criteria = new Criteria();
+		try {
+			criteria.addExpression(getManagerBean().getFieldName(ICMSAlias.LINK_LINK_CATEGORY_ID), "" + getCurrentLinkCategory().getId());
+		} catch (ExpressionException e) {
+			throw new ManagerBeanException(e);
+		}
 		criteria.addOrder(getManagerBean().getFieldName(ICMSAlias.LINK_POSITION));
 		List<ITransferObject> list = getManagerBean().getList(criteria);
 		for (int i = 0; i < list.size(); i++) {
