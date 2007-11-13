@@ -13,6 +13,6 @@ public class BrandController extends GridController {
 	 * The empty constructor.
 	 */
 	public BrandController() {
-		super(IProductAlias.BRAND_ID);
+		super();
 	}
 }

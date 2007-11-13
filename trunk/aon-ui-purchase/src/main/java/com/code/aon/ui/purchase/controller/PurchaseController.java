@@ -13,7 +13,7 @@ public class PurchaseController extends GridController {
 	 * The empty constructor.
 	 */
 	public PurchaseController(){
-		super(IPurchaseAlias.PURCHASE_ID);
+		super();
 	}
 	
 	/**

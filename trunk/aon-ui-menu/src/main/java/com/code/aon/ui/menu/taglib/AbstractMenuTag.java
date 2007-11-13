@@ -149,7 +149,7 @@ public abstract class AbstractMenuTag extends TagSupport { // $codepro.audit.dis
 	 * undefined, it will be tried to create a new instance of {@link ResourceBundle}
 	 * using the <code>basename</code> and <code>locale</code> properties.
 	 * If none of these properties is defined, the tag will try to find a parent
-	 * tag that will be a {@link javax.faces.webapp.UIComponentTag}, in which case
+	 * tag that will be a {javax.faces.webapp.UIComponentTag}, in which case
 	 * it will use the basename returned by the method
 	 * <code>FacesContext.getCurrentInstance().getApplication().getMessageBundle()</code>
 	 * and the locale returned by the method

@@ -10,7 +10,7 @@ import javax.faces.el.ValueBinding;
 import javax.faces.event.ActionEvent;
 import javax.faces.webapp.UIComponentTag;
 
-import org.apache.myfaces.shared_impl.util.ClassUtils;
+import org.apache.myfaces.shared_tomahawk.util.ClassUtils;
 
 import com.code.aon.ui.menu.IActionListener;
 import com.code.aon.ui.menu.IMenuItem;

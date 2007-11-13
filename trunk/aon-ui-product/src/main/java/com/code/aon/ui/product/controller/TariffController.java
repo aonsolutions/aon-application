@@ -13,6 +13,6 @@ public class TariffController extends GridController {
 	 * The empty constructor.
 	 */
 	public TariffController() {
-		super(IProductAlias.TARIFF_ID);
+		super();
 	}
 }

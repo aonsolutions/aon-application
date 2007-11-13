@@ -18,7 +18,7 @@ public class PayMethodController extends GridController {
 	 * Default constructor 
 	 */
 	public PayMethodController() {
-		super(IFinanceAlias.PAY_METHOD_ID);
+		super();
 	}
 	
 	/**
