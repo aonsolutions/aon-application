@@ -235,4 +235,13 @@
 			<handler-class>com.code.aon.faces.component.selectBooleanCheckbox.SelectBooleanCheckboxHandler</handler-class>
 		</component>
 	</tag>
+	
+	<tag>
+		<tag-name>inputRichText</tag-name>
+		<component>
+			<component-type>com.code.aon.faces.HtmlInputRichText</component-type>
+			<handler-class>com.code.aon.faces.component.inputRichText.InputRichTextHandler</handler-class>
+		</component>
+	</tag>
+	
 </facelet-taglib>
