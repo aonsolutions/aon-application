@@ -1,21 +1,20 @@
 package com.code.aon.ui.webmail.controller;
 
-import com.code.aon.groupware.Contact;
-import com.icesoft.faces.component.selectinputtext.SelectInputText;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
-import javax.faces.event.ActionEvent;
-import javax.faces.event.ValueChangeEvent;
-import javax.faces.model.SelectItem;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
+import java.util.logging.Logger;
+
+import javax.faces.event.ValueChangeEvent;
+import javax.faces.model.SelectItem;
+
+import com.code.aon.groupware.Contact;
+import com.icesoft.faces.component.selectinputtext.SelectInputText;
 
 public class AutoCompleteEmailBean {
 
-    private static Log log = LogFactory.getLog(AutoCompleteEmailBean.class);
+    private static Logger LOGGER = Logger.getLogger(AutoCompleteEmailDictionary.class.getName());
 
     // list of cities, used for auto complete list.
     private static List dictionary;
@@ -123,7 +122,7 @@ public class AutoCompleteEmailBean {
                 matchList.add(dictionary.get(insert + i));
             }
         } catch (Throwable e) {
-            log.error("Erorr finding autocomplete matches", e);
+            LOGGER.severe("Erorr finding autocomplete matches");
         }
         // assign new matchList
         if (this.matchesList != null) {

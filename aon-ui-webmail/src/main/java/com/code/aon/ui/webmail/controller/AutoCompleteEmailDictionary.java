@@ -4,11 +4,9 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.logging.Logger;
 
 import javax.faces.model.SelectItem;
-
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
@@ -24,19 +22,17 @@ import com.code.aon.webmail.dao.IWebMailAlias;
 
 public class AutoCompleteEmailDictionary {
 
-    private static Log log = LogFactory.getLog(AutoCompleteEmailDictionary.class);
+    private static Logger LOGGER = Logger.getLogger(AutoCompleteEmailDictionary.class.getName());
 
     private static List dictionary;
 
     public AutoCompleteEmailDictionary() {
         // initialize the ditionary
         try {
-            log.info("initializing dictionary");
+        	LOGGER.info("initializing dictionary");
             init();
         } catch (Exception e) {
-            if (log.isErrorEnabled()) {
-                log.error("Error initializtin sorting list");
-            }
+        	LOGGER.severe("Error initializtin sorting list");
         }
     }
 
