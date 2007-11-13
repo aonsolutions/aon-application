@@ -4,8 +4,7 @@
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:aon="http://www.code.es/aon-components"
 	xmlns:c="http://java.sun.com/jstl/core"
-	xmlns:ice="http://www.icesoft.com/icefaces/component"
-	xmlns:fck="http://www.fck-faces.org/fck-faces">
+	xmlns:ice="http://www.icesoft.com/icefaces/component">
 <body>
 
 <ui:composition template="/facelet/templates/aon.ui.main.xhtml">
@@ -93,7 +92,7 @@
 									<aon:outputLabel for="GenericPageDetail_content"
 										styleClass="aon-form-input-text-label"
 										value="#{appBundle.generic_page_content}" />
-									<fck:editor id="GenericPageDetail_content" toolbarSet="Default" value="#{generic_page.toI18n.content}"/>
+									<aon:inputRichText id="GenericPageDetail_content" toolbarSet="Default" value="#{generic_page.toI18n.content}"/>
 		
 									<aon:outputLabel for="GenericPage_menu"
 										styleClass="aon-form-input-text-label"

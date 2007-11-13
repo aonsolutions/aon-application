@@ -1,2 +1,2 @@
 <%@page pageEncoding="UTF-8" isErrorPage="true"%>
-<jsp:forward page="/login/login.seam" />
+<jsp:forward page="/login/login.jspx" />

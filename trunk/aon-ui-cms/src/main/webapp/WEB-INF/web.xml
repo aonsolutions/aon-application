@@ -6,8 +6,8 @@
 						http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd">
 
 	<context-param>
-		<param-name>org.jboss.jbossfaces.WAR_BUNDLES_JSF_IMPL</param-name>
-		<param-value>true</param-value>
+		<param-name>org.fckfaces.CUSTOM_CONFIGURATIONS_PATH</param-name>
+		<param-value>/FCKeditor/fckconfig.js</param-value>
 	</context-param>
 
 	<context-param>
@@ -48,18 +48,6 @@
 		<param-name>facelets.SKIP_COMMENTS</param-name>
 		<param-value>true</param-value>
 	</context-param>
-
-	<context-param>
-		<description>
-			A semicolon (;) delimitted list of paths to Facelet tag
-			libraries, relative to your application's root. These
-			libraries will be loaded when the first request hits the
-			FaceletViewHandler for page compilation.
-		</description>
-		<param-name>facelets.LIBRARIES</param-name>
-		<param-value>/WEB-INF/aon-components.taglib.xml</param-value>
-	</context-param>
-
 
 	<context-param>
 		<description>
@@ -140,7 +128,7 @@
 			the application will run in asynchronous mode.
 		</description>
 		<param-name>com.icesoft.faces.synchronousUpdate</param-name>
-		<param-value>false</param-value>
+		<param-value>true</param-value>
 	</context-param>
 
 	<context-param>
@@ -153,24 +141,6 @@
 		<param-name>com.icesoft.faces.uploadMaxFileSize</param-name>
 		<param-value>16777216</param-value>
 	</context-param>
-
-	<!-- Listener, that does all the startup work (configuration, init). --> 
-	<listener>
-		<listener-class>
-			org.apache.myfaces.webapp.StartupServletContextListener
-		</listener-class>
-	</listener>
-
-	<listener>
-		<listener-class>
-			com.icesoft.faces.util.event.servlet.ContextEventRepeater
-		</listener-class>
-	</listener>
-	<listener>
-		<listener-class>
-			com.icesoft.faces.webapp.http.servlet.SessionDispatcher$Listener
-		</listener-class>
-	</listener>
 
 	<!-- Persistent Faces Servlet -->
 	<servlet>
@@ -200,12 +170,6 @@
      <url-pattern>/block/*</url-pattern>
    </servlet-mapping>
 
-   <!-- blocking request Mapping -->
-   <servlet-mapping>
-     <servlet-name>Main Dispatch Servlet</servlet-name>
-     <url-pattern>*.seam</url-pattern>
-   </servlet-mapping>
-
 	<!-- Faces Servlet -->
 	<servlet>
 		<servlet-name>Faces Servlet</servlet-name>
@@ -223,19 +187,12 @@
 
 	<!-- FCK Faces Servlet -->
 	<servlet>
-		<servlet-name>FCK Faces Servlet</servlet-name>
-		<servlet-class>org.fckfaces.util.Servlet</servlet-class>
-		<init-param>
-			<description>
-				Allows to specify the path of the FCKeditor resources
-			</description>
-			<param-name>customResourcePath</param-name>
-			<param-value>/</param-value>
-		</init-param>
+		<servlet-name>InputRichText Servlet</servlet-name>
+		<servlet-class>com.code.aon.faces.component.inputRichText.InputRichTextServlet</servlet-class>
 		<load-on-startup>1</load-on-startup>
 	</servlet>
 	<servlet-mapping>
-		<servlet-name>FCK Faces Servlet</servlet-name>
+		<servlet-name>InputRichText Servlet</servlet-name>
 		<url-pattern>/fckfaces/*</url-pattern>
 	</servlet-mapping>
 
@@ -347,6 +304,18 @@
 		<url-pattern>
 			/FCKeditor/editor/filemanager/upload/jsp/upload
 		</url-pattern>
+	</servlet-mapping>
+
+	<servlet>
+		<servlet-name>Tomcat Push Servlet</servlet-name>
+		<servlet-class>
+			com.icesoft.faces.webapp.http.servlet.TomcatPushServlet
+		</servlet-class>
+		<load-on-startup>1</load-on-startup>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>Tomcat Push Servlet</servlet-name>
+		<url-pattern>/block/receive-updated-views/*</url-pattern>
 	</servlet-mapping>
 
 	<!-- Welcome File List -->
