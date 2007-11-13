@@ -67,8 +67,6 @@
 							rowOnMouseOver="selectRow( this )"
 							rowOnMouseOut="unselectRow( this )" 
 							rowOnClick="sendRow( this )"
-							sortColumn="#{TASMake.sort}" 
-							sortAscending="#{TASMake.ascending}"
 							rowClasses="aon-edit-table-row-odd,aon-edit-table-row-even"
 							styleClass="aon-edit-table" headerClass="aon-edit-table-header" 
 							footerClass="aon-edit-table-footer"
@@ -88,11 +86,7 @@
 							</h:column>
 							<h:column>
 								<f:facet name="header">
-									<t:commandSortHeader columnName="Make_name" arrow="true"
-										actionListener="#{TASMake.sort}" 
-										styleClass="aon-table-header-link">
-										<h:outputText value="#{tasBundle.make_name}" />
-									</t:commandSortHeader>
+									<h:outputText value="#{tasBundle.make_name}" />
 								</f:facet>
 								<t:commandLink immediate="#{true}"  
 									styleClass="aon-table-row-selected"

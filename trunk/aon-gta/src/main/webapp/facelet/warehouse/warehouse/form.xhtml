@@ -65,19 +65,13 @@
 							rowOnMouseOver="selectRow( this )"
 							rowOnMouseOut="unselectRow( this )" 
 							rowOnClick="sendRow( this )"
-							sortColumn="#{warehouse.sort}" 
-							sortAscending="#{warehouse.ascending}"
 							styleClass="aon-edit-table" headerClass="aon-edit-table-header" footerClass="aon-edit-table-footer"
 							rowClasses="aon-edit-table-row-odd,aon-edit-table-row-even"
 							columnClasses="aon-edit-table-mainColumn aon-edit-table-body aon-edit-table-body-string, aon-edit-table-body aon-edit-table-body-buttons">
 
 							<h:column>
 								<f:facet name="header">
-									<t:commandSortHeader columnName="Warehouse_name" arrow="true"
-										actionListener="#{warehouse.sort}" 
-										styleClass="aon-table-header-link">
-										<h:outputText value="#{warehouseBundle.aon_warehouse_name}" />
-									</t:commandSortHeader>
+									<h:outputText value="#{warehouseBundle.aon_warehouse_name}" />
 								</f:facet>
 								<t:commandLink immediate="#{true}"  
 									styleClass="aon-table-row-selected"
