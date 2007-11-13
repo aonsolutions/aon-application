@@ -200,6 +200,11 @@ public class EmployeeController extends BasicController {
 	}
 
 	@SuppressWarnings("unused")
+	public void onEditSearch(MenuEvent event) throws ManagerBeanException {
+		this.onEditSearch( (ActionEvent) event );
+	}
+
+	@SuppressWarnings("unused")
 	public void workingPlaceChanged(ValueChangeEvent event) throws ManagerBeanException {
 		this.isResourceDirty = true;
 		Integer workPlaceId = (Integer) event.getNewValue();
