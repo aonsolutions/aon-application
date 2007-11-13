@@ -117,6 +117,13 @@
 		</component>
 	</tag>
 	<tag>
+		<tag-name>selectOneRadio</tag-name>
+		<component>
+			<component-type>com.code.aon.faces.SelectOneRadio</component-type>
+			<handler-class>com.code.aon.faces.component.selectOneRadio.SelectOneRadioHandler</handler-class>
+		</component>
+	</tag>
+	<tag>
 		<tag-name>inputSecret</tag-name>
 		<component>
 			<component-type>com.code.aon.faces.InputSecret</component-type>
