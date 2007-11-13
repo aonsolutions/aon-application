@@ -4,8 +4,7 @@
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:aon="http://www.code.es/aon-components"
 	xmlns:c="http://java.sun.com/jstl/core"
-	xmlns:ice="http://www.icesoft.com/icefaces/component"
-	xmlns:fck="http://www.fck-faces.org/fck-faces">
+	xmlns:ice="http://www.icesoft.com/icefaces/component">
 <body>
 
 <ui:composition template="/facelet/templates/aon.ui.main.xhtml">
@@ -80,8 +79,7 @@
 							<aon:outputLabel for="Signature_signature"
 								styleClass="aon-form-input-text-label"
 								value="#{appBundle.aon_webmail_signature_signature}" />
-							<fck:editor id="Signature_signature" 
-								value="#{signature.to.signature}"/>
+							<aon:inputRichText id="Signature_signature" value="#{signature.to.signature}"/>
 
 							<aon:outputLabel for="Signature_active" 
 								value="#{appBundle.aon_webmail_signature_active}" />

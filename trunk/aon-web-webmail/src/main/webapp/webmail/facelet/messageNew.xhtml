@@ -5,8 +5,7 @@
 	xmlns:ice="http://www.icesoft.com/icefaces/component"
 	xmlns:aon="http://www.code.es/aon-components"
 	xmlns:c="http://java.sun.com/jstl/core"
-	xmlns:h="http://java.sun.com/jsf/html"
-	xmlns:fck="http://www.fck-faces.org/fck-faces">
+	xmlns:h="http://java.sun.com/jsf/html">
 <body>
 
 <ui:composition template="/facelet/templates/aon.ui.main.xhtml">
@@ -162,9 +161,7 @@
 							<aon:panelGroup
 									scrollWidth="100%"
 									 >
-					
-								<fck:editor id="NewMail_Content" 
-									value="#{message.content}"/>
+ 								<aon:inputRichText value="#{message.content}" />
 
 							</aon:panelGroup>
 
