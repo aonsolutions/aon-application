@@ -83,7 +83,7 @@ public class CustomerFeeInvoicingEngine implements IInvoicingEngine {
 				getInvoicingFeedBack().addMessage("\t" + "Invoice: " + invoice.getSeries() + "/" + invoice.getNumber());
 				counter++;
 			}
-			InvoiceDetail invoiceDetail = createInvoiceDetail(customerFee, invoice);
+			InvoiceDetail invoiceDetail = createInvoiceDetail(customerFee, invoice, params);
 			getInvoicingDAO().insertInvoiceDetail(invoiceDetail);
 			getInvoicingDAO().updateSource(customerFee);
 			getInvoicingFeedBack().addMessage("\t \t" + "InvoiceDetail: " + invoiceDetail.getDescription() + " price= " + invoiceDetail.getTaxableBase());
@@ -115,7 +115,7 @@ public class CustomerFeeInvoicingEngine implements IInvoicingEngine {
         return ExpressionUtilities.getAndExpression(ExpressionUtilities.getAndExpression(billingExpr, initialExpr), ExpressionUtilities.getOrExpression(finalExpr, finalNullExpr));
 	}
 
-	private InvoiceDetail createInvoiceDetail(CustomerFee customerFee, Invoice invoice) {
+	private InvoiceDetail createInvoiceDetail(CustomerFee customerFee, Invoice invoice, InvoicingParameters params) {
 		InvoiceDetail invoiceDetail = new InvoiceDetail();
 		invoiceDetail.setDeliveryDetail(null);
 		invoiceDetail.setInvoice(invoice);
@@ -125,7 +125,7 @@ public class CustomerFeeInvoicingEngine implements IInvoicingEngine {
             invoiceDetail.setDescription(invoiceDetail.getDescription() + " - " + customerFee.getCustomer().getRegistry().getName() + " " + customerFee.getCustomer().getRegistry().getSurname());
         }
         invoiceDetail.setDiscountExpression(customerFee.getDiscountExpression());
-		invoiceDetail.setPrice(customerFee.getPrice());
+		invoiceDetail.setPrice(customerFee.getPrice() * calculateCorrectionFactor(customerFee, params));
 		invoiceDetail.setQuantity(customerFee.getQuantity());
 		invoiceDetail.setSource(InvoiceSource.FEE);
 		invoiceDetail.setTaxes(0.0);
@@ -178,4 +178,26 @@ public class CustomerFeeInvoicingEngine implements IInvoicingEngine {
 		}
 		return counter;
 	}
+
+	private double calculateCorrectionFactor(CustomerFee customerFee, InvoicingParameters params) {
+		if (customerFee.getPeriod().getValue() == 0) {
+			return 1;
+		} else {
+			Calendar calendar = new GregorianCalendar(params.getYear(), params.getMonth().getValue(), 1, 0, 0, 0);
+			Date fromInv = calendar.getTime();
+			calendar.add(Calendar.MONTH, customerFee.getPeriod().getValue());
+			calendar.add(Calendar.DATE, -1);
+			Date toInv = calendar.getTime();
+
+			Date iniFee = (customerFee.getInitialDate().before(fromInv)) ? fromInv : customerFee.getInitialDate();
+			Date endFee = (customerFee.getFinalDate() == null || customerFee.getFinalDate().after(toInv)) ? toInv : customerFee.getFinalDate();
+
+			return (double)daysBetween(iniFee, endFee) / (double)daysBetween(fromInv, toInv);
+		}
+	}
+
+	private long daysBetween(Date from, Date to) {
+		return ((to.getTime() - from.getTime()) / ((60 * 60 * 1000) * 24)) + 1;
+	}
+
 }
