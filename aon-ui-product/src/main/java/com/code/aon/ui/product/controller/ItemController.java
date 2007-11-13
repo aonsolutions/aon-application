@@ -30,7 +30,7 @@ public class ItemController extends GridController {
 	 * The empty constructor.
 	 */
 	public ItemController() {
-		super(IProductAlias.ITEM_ID);
+		super();
 	}
 	
 	/**

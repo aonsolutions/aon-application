@@ -24,7 +24,7 @@ import javax.faces.model.SelectItem;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.myfaces.custom.date.HtmlInputDate;
 import org.apache.myfaces.custom.tabbedpane.HtmlPanelTabbedPane;
-import org.apache.myfaces.shared_impl.util.MessageUtils;
+import org.apache.myfaces.shared_tomahawk.util.MessageUtils;
 
 import net.fortuna.ical4j.model.Recur;
 

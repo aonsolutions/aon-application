@@ -15,7 +15,7 @@ public class TaxController extends GridController {
 	 * The empty constructor.
 	 */
 	public TaxController() {
-		super(IProductAlias.TAX_ID);
+		super();
 	}
 	
 	/**

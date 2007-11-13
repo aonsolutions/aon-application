@@ -14,7 +14,7 @@ public class ProductCategoryController extends GridController {
 	 * The empty constructor.
 	 */
 	public ProductCategoryController() {
-		super(IProductAlias.PRODUCT_PRODUCT_CATEGORY_ID);
+		super();
 	}
 	
     /**

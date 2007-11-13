@@ -8,7 +8,7 @@ import javax.faces.context.FacesContext;
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 
-import org.apache.myfaces.shared_impl.util.MessageUtils;
+import org.apache.myfaces.shared_tomahawk.util.MessageUtils;
 
 import com.code.aon.calculator.Calculator;
 import com.code.aon.calculator.CalculatorException;

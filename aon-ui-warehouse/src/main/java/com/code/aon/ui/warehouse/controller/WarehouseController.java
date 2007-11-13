@@ -18,7 +18,7 @@ public class WarehouseController extends GridController {
 	 * Default constructor
 	 */
 	public WarehouseController() {
-		super(IWarehouseAlias.WAREHOUSE_NAME);
+		super();
 	}
 
 	/* (non-Javadoc)
