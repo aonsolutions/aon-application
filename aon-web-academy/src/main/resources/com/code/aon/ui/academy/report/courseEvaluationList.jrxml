@@ -130,7 +130,7 @@
 			</band>
 		</columnHeader>
 		<detail>
-			<band height="60"  isSplitAllowed="true" >
+			<band height="75"  isSplitAllowed="true" >
 				<subreport  isUsingCache="true">
 					<reportElement
 						x="0"
@@ -145,7 +145,7 @@
 				<subreport  isUsingCache="true">
 					<reportElement
 						x="0"
-						y="45"
+						y="61"
 						width="535"
 						height="14"
 						key="subreport-2"
@@ -174,7 +174,7 @@
 					<reportElement
 						mode="Opaque"
 						x="0"
-						y="29"
+						y="45"
 						width="535"
 						height="14"
 						forecolor="#FFFFFF"

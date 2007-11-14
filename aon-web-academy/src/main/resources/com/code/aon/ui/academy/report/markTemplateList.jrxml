@@ -159,7 +159,7 @@
 						</cellContents>
 						</crosstabRowHeader>
 					</rowGroup>
-					<columnGroup name="academicSkill" height="25" headerPosition="Center">
+					<columnGroup name="academicSkill" height="25" headerPosition="Stretch">
 						<bucket>
 							<bucketExpression class="java.lang.String"><![CDATA[$F{academicSkill}.getDescription()]]></bucketExpression>
 						</bucket>
@@ -171,7 +171,7 @@
 						mode="Opaque"
 						x="0"
 						y="0"
-						width="50"
+						width="80"
 						height="25"
 						forecolor="#FFFFFF"
 						backcolor="#000000"
@@ -189,14 +189,14 @@
 					<measure name="academicSkill_Nothing" class="java.lang.String">
 						<measureExpression><![CDATA[" "]]></measureExpression>
 					</measure>
-					<crosstabCell width="50" height="20">
+					<crosstabCell width="80" height="20">
 						<cellContents mode="Transparent">
 					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="1Point" rightBorderColor="#000000" bottomBorder="1Point" bottomBorderColor="#000000"/>
-				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+				<textField isStretchWithOverflow="true" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						x="0"
 						y="0"
-						width="50"
+						width="80"
 						height="20"
 						key="textField"/>
 					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
@@ -212,7 +212,7 @@
 					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="1Point" rightBorderColor="#000000" bottomBorder="1Point" bottomBorderColor="#000000"/>
 						</cellContents>
 					</crosstabCell>
-					<crosstabCell width="50" height="0" rowTotalGroup="alumn">
+					<crosstabCell width="80" height="0" rowTotalGroup="alumn">
 						<cellContents mode="Transparent">
 					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="1Point" rightBorderColor="#000000" bottomBorder="1Point" bottomBorderColor="#000000"/>
 						</cellContents>

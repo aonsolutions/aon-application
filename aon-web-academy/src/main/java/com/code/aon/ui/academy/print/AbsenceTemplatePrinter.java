@@ -20,6 +20,7 @@ public class AbsenceTemplatePrinter implements ICollectionProvider{
 	
 	private static final String COURSE_ALUMN_CONTROLLER_NAME = "courseAlumn";
 
+	@SuppressWarnings("unchecked")
 	public Collection getCollection() {
 		List<CourseAlumn> list = new LinkedList<CourseAlumn>();
 		try{
@@ -36,5 +37,4 @@ public class AbsenceTemplatePrinter implements ICollectionProvider{
 		}
 		return list;
 	}
-
 }

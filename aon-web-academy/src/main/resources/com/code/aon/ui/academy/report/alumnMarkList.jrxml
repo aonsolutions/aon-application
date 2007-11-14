@@ -26,11 +26,8 @@
 	<subDataset name="MARKS_SDS" >
 
 
-		<field name="id" class="java.lang.Integer"/>
-		<field name="subject" class="com.code.aon.academy.CourseAcademicSkill"/>
-		<field name="alumn" class="com.code.aon.academy.CourseAlumn"/>
-		<field name="evaluation" class="java.lang.Integer"/>
-		<field name="mark" class="java.lang.Double"/>
+		<field name="mark" class="com.code.aon.academy.Mark"/>
+		<field name="code" class="java.lang.String"/>
 
 	</subDataset>
 
@@ -60,6 +57,7 @@
 	<parameter name="company" isForPrompting="false" class="com.code.aon.company.Company"/>
 	<parameter name="evaluation" isForPrompting="false" class="java.lang.Integer"/>
 	<parameter name="nestedReports" isForPrompting="false" class="java.util.Map"/>
+	<parameter name="encode" isForPrompting="false" class="java.lang.Boolean"/>
 
 	<field name="courseAlumn" class="com.code.aon.academy.CourseAlumn"/>
 	<field name="marks" class="java.util.ArrayList"/>
@@ -207,6 +205,9 @@
 						key="crosstab-1">
 							<printWhenExpression><![CDATA[(($F{marks}.isEmpty())?new Boolean(false):new Boolean(true))]]></printWhenExpression>
 						</reportElement>
+
+					<crosstabParameter name="encode" class="java.lang.Boolean" >						<parameterValueExpression><![CDATA[$P{encode}]]></parameterValueExpression>
+					</crosstabParameter>
 					<crosstabDataset>
 						<dataset >
 							<datasetRun subDataset="MARKS_SDS">
@@ -220,7 +221,7 @@
 						</cellContents>
 					</crosstabHeaderCell>					<rowGroup name="subject" width="95">
 						<bucket>
-							<bucketExpression class="java.lang.String"><![CDATA[$F{subject}.getAcademicSkill().getDescription()]]></bucketExpression>
+							<bucketExpression class="java.lang.String"><![CDATA[$F{mark}.getSubject().getAcademicSkill().getDescription()]]></bucketExpression>
 						</bucket>
 						<crosstabRowHeader>
 						<cellContents mode="Transparent">
@@ -243,7 +244,7 @@
 					</rowGroup>
 					<columnGroup name="evaluation" height="25" headerPosition="Center">
 						<bucket>
-							<bucketExpression class="java.lang.Integer"><![CDATA[$F{evaluation}]]></bucketExpression>
+							<bucketExpression class="java.lang.Integer"><![CDATA[new Integer($F{mark}.getEvaluation())]]></bucketExpression>
 						</bucket>
 						<crosstabColumnHeader>
 						<cellContents mode="Transparent">
@@ -252,8 +253,11 @@
 						</crosstabColumnHeader>
 					</columnGroup>
 
-					<measure name="mark_Average" class="java.lang.Double" calculation="Average">
-						<measureExpression><![CDATA[$F{mark}]]></measureExpression>
+					<measure name="mark" class="java.lang.Double">
+						<measureExpression><![CDATA[new Double($F{mark}.getMark())]]></measureExpression>
+					</measure>
+					<measure name="code" class="java.lang.String">
+						<measureExpression><![CDATA[$F{code}]]></measureExpression>
 					</measure>
 					<crosstabCell width="85" height="15">
 						<cellContents mode="Transparent">
@@ -269,7 +273,7 @@
 					<textElement textAlignment="Center" verticalAlignment="Middle">
 						<font size="8"/>
 					</textElement>
-				<textFieldExpression   class="java.lang.Double"><![CDATA[$V{mark_Average}]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.String"><![CDATA[($P{encode}.booleanValue() == true?$V{code}:$V{mark}.toString()) ]]></textFieldExpression>
 				</textField>
 						</cellContents>
 					</crosstabCell>
@@ -1601,6 +1605,7 @@
 					</textElement>
 				<text><![CDATA[Firma alumno/tutor:]]></text>
 				</staticText>
+				<elementGroup><!--  Start: 1 !-->
 				<staticText>
 					<reportElement
 						x="5"
@@ -1614,6 +1619,7 @@
 					</textElement>
 				<text><![CDATA[Asignatura]]></text>
 				</staticText>
+				</elementGroup><!-- End 1 !-->
 				<staticText>
 					<reportElement
 						x="6"
