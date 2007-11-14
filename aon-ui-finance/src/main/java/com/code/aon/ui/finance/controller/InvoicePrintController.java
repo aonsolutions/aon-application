@@ -118,6 +118,7 @@ public class InvoicePrintController extends BasicController implements ICollecti
 		super.onEditSearch(event);
 	}
 
+	@SuppressWarnings("unchecked")
 	public Collection getCollection() {
 		try {
 			return this.search(0, this.getModel().getRowCount());
