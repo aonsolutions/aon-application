@@ -224,6 +224,23 @@
 				</map-entry>
 			</map-entries>
 		</managed-property>
+		<managed-property>
+			<property-name>listenerClasses</property-name>
+			<list-entries>
+				<value-class>
+					com.code.aon.ui.form.event.IControllerListener
+				</value-class>
+				<value>#{fBatchDetailControllerListener}</value>
+			</list-entries>
+		</managed-property>
+	</managed-bean>
+	
+	<managed-bean>
+		<managed-bean-name>fBatchDetailControllerListener</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.finance.event.FBatchDetailControllerListener
+		</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
 	</managed-bean>
 	
 	<!-- ************* FINANCE ***************** -->
