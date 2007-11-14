@@ -197,8 +197,8 @@ public class AbsenceController extends BasicController {
     private void initDates(){
     	days = "";
     	GregorianCalendar gc = new GregorianCalendar();
-    	gc.setTime(course.getStartDate()==null?new Date():course.getStartDate());
-    	month = gc.get(GregorianCalendar.MONTH);
+    	gc.setTime(new Date());
+    	month = gc.get(GregorianCalendar.MONTH) + 1;
     	year = gc.get(GregorianCalendar.YEAR);
     }
     
