@@ -59,6 +59,7 @@
 			<param id="logoImageFile" value="#{company.getAttachAsInputStream}" />
 			<param id="company" value="#{company.obtainCompany}" />
 			<param id="evaluation" value="#{courseAlumnMark.getEvaluation}" />
+			<param id="encode" value="#{markPrinter.isEncodedMarks}" />
 		</params>
 	</report>
 	
