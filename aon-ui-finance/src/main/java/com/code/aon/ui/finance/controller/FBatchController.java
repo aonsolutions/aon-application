@@ -207,6 +207,10 @@ public class FBatchController extends BasicController {
             LinesController fBatchDetailController = (LinesController)AonUtil.getController(FINANCE_BATCH_DETAIL_CONTROLLER_NAME);
             Criteria criteria = new Criteria();
             criteria.addEqualExpression(fBatchDetailController.getFieldName(IFinanceAlias.FINANCE_BATCH_DETAIL_FINANCE_BATCH_ID), fbatch.getId());
+            criteria.addOrder(fBatchDetailController.getFieldName(IFinanceAlias.FINANCE_BATCH_DETAIL_FINANCE_INVOICE_SERIES));
+            criteria.addOrder(fBatchDetailController.getFieldName(IFinanceAlias.FINANCE_BATCH_DETAIL_FINANCE_INVOICE_NUMBER));
+            criteria.addOrder(fBatchDetailController.getFieldName(IFinanceAlias.FINANCE_BATCH_DETAIL_FINANCE_DUE_DATE));
+
             fBatchDetailController.setCriteria(criteria);
             fBatchDetailController.onSearch(null);
         } catch (ManagerBeanException e) {
