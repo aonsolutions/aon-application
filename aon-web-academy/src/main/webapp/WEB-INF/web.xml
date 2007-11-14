@@ -193,7 +193,7 @@
 		<servlet-class>com.code.aon.bridge.servlet.DeployServlet</servlet-class>
 		<init-param>
 			<param-name>name</param-name>
-			<param-value>aon-academy.war</param-value>
+			<param-value>aon-web-academy.war</param-value>
 		</init-param>
 		<load-on-startup>2</load-on-startup>
 	</servlet>
