@@ -20,11 +20,6 @@ public class CourseVetoListener extends ManagerBeanVetoListenerAdapter {
         vetoableBeanSaved(evt);
     }
 
-    @Override
-    public void vetoableBeanUpdated(ManagerBeanEvent evt) throws ManagerBeanVetoListenerException {
-        vetoableBeanSaved(evt);
-    }
-
 	private void vetoableBeanSaved(ManagerBeanEvent evt) {
 		Course course = (Course)evt.getTo();
 		String description = "";
@@ -49,5 +44,4 @@ public class CourseVetoListener extends ManagerBeanVetoListenerAdapter {
             course.setDescription(description);
         }
     }
-
 }
