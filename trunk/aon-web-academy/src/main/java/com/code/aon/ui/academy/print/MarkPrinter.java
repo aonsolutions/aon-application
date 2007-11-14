@@ -17,9 +17,11 @@ import com.code.aon.academy.CourseAlumn;
 import com.code.aon.academy.CourseSchedule;
 import com.code.aon.academy.EvaluationObservation;
 import com.code.aon.academy.Mark;
+import com.code.aon.academy.Qualification;
 import com.code.aon.academy.dao.IAcademyAlias;
 import com.code.aon.academy.enumeration.CourseAlumnStatus;
 import com.code.aon.academy.print.ReportMark;
+import com.code.aon.academy.print.ReportMarkTo;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.ICollectionProvider;
 import com.code.aon.common.IManagerBean;
@@ -30,11 +32,23 @@ import com.code.aon.ui.academy.controller.CourseController;
 import com.code.aon.ui.util.AonUtil;
 
 public class MarkPrinter implements ICollectionProvider{
-
+	
 	private static final Logger LOGGER = Logger.getLogger(MarkPrinter.class.getName());
 	
 	private static final String COURSE_CONTROLLER_NAME = "course";
 	
+	private boolean encodedMarks;
+	
+
+	public boolean isEncodedMarks() {
+		return encodedMarks;
+	}
+
+	public void setEncodedMarks(boolean encodedMarks) {
+		this.encodedMarks = encodedMarks;
+	}
+
+	@SuppressWarnings("unchecked")
 	public Collection getCollection() {
 		List<ReportMark> reportMarkList = new LinkedList<ReportMark>();
 		try{
@@ -62,15 +76,24 @@ public class MarkPrinter implements ICollectionProvider{
 		return reportMarkList;
 	}
 
-	private List<Mark> obtainMarks(CourseAlumn courseAlumn){
+	@SuppressWarnings("unchecked")
+	private List<ReportMarkTo> obtainMarks(CourseAlumn courseAlumn){
 		try {
 			IManagerBean markBean = BeanManager.getManagerBean(Mark.class);
 			Criteria criteria = new Criteria();
 			criteria.addEqualExpression(markBean.getFieldName(IAcademyAlias.MARK_ALUMN_ID), courseAlumn.getId());
-			List<Mark> marksLst = new ArrayList<Mark>();
+			criteria.addOrder(markBean.getFieldName(IAcademyAlias.MARK_EVALUATION));
+			criteria.addOrder(markBean.getFieldName(IAcademyAlias.MARK_SUBJECT_ID));
+			List<ReportMarkTo> marksLst = new ArrayList<ReportMarkTo>();
 			Iterator iter = markBean.getList(criteria).iterator();
 			while (iter.hasNext()){
-				marksLst.add((Mark)iter.next());
+				Mark mark = (Mark)iter.next();
+				ReportMarkTo markTo = new ReportMarkTo();
+				markTo.setMark(mark);
+				marksLst.add(markTo);
+			}
+			if(isEncodedMarks()){
+				marksLst = encodeMarks(marksLst);
 			}
 			return marksLst;
 		} catch (ManagerBeanException e) {
@@ -79,6 +102,36 @@ public class MarkPrinter implements ICollectionProvider{
 		return null;
 	}
 
+	@SuppressWarnings("unchecked")
+	private List<ReportMarkTo> encodeMarks(List<ReportMarkTo> marksLst) {
+		Iterator iter = marksLst.iterator();
+		List<ReportMarkTo> returnList = new ArrayList<ReportMarkTo>();
+		while(iter.hasNext()){
+			ReportMarkTo to = (ReportMarkTo)iter.next();
+			to.setCode(obtainMarkCode(to.getMark().getMark()));
+			returnList.add(to);
+		}
+		return returnList;
+	}
+
+	@SuppressWarnings("unchecked")
+	private String obtainMarkCode(double mark) {
+		try {
+			IManagerBean qualificationBean = BeanManager.getManagerBean(Qualification.class);
+			Criteria criteria = new Criteria();
+			criteria.addLessThanOrEqualExpression(qualificationBean.getFieldName(IAcademyAlias.QUALIFICATION_MIN_VALUE), mark);
+			criteria.addGreaterThanOrEqualExpression(qualificationBean.getFieldName(IAcademyAlias.QUALIFICATION_MAX_VALUE), mark);
+			Iterator iter = qualificationBean.getList(criteria).iterator();
+			if(iter.hasNext()){
+				return ((Qualification)iter.next()).getCode();
+			}
+		} catch (ManagerBeanException e) {
+			LOGGER.log(Level.SEVERE, "Error obtaining code for mark: " + mark, e);
+		}
+		return "";
+	}
+
+	@SuppressWarnings("unchecked")
 	private List<Absence> obtainAbsences(CourseAlumn courseAlumn){
 		try {
 			IManagerBean absenceBean = BeanManager.getManagerBean(Absence.class);
@@ -96,6 +149,7 @@ public class MarkPrinter implements ICollectionProvider{
 		return null;
 	}
 	
+	@SuppressWarnings("unchecked")
 	private List<EvaluationObservation> obtainObservations(CourseAlumn courseAlumn){
 		try {
 			IManagerBean evaluationObservationBean = BeanManager.getManagerBean(EvaluationObservation.class);
@@ -113,6 +167,7 @@ public class MarkPrinter implements ICollectionProvider{
 		return null;
 	}
 	
+	@SuppressWarnings("unchecked")
 	private String obtainCourseSchedule(CourseAlumn courseAlumn){
 		Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
 		try {
