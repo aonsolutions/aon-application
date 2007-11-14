@@ -48,15 +48,30 @@ public class CompanyCollectionsController {
 
 	public List<SelectItem> getWorkPlaces() throws ManagerBeanException{
 		List<SelectItem> workPlaces = new LinkedList<SelectItem>();
-		IManagerBean workplaceBean = BeanManager.getManagerBean(WorkPlace.class);
-		Criteria criteria = new Criteria();
-		criteria.addOrder(workplaceBean.getFieldName(ICompanyAlias.WORK_PLACE_ID));
-		Iterator<ITransferObject> iter = workplaceBean.getList(criteria).iterator();
+		Iterator<ITransferObject> iter = obtainWorkplaces().iterator();
 		while(iter.hasNext()){
 			WorkPlace workPlace = (WorkPlace)iter.next();
 			workPlaces.add( new SelectItem(workPlace.getId(), workPlace.getId().toString()));
 		}
 		return workPlaces;
+	}
+
+
+	public List<SelectItem> getWorkPlacesDetailed() throws ManagerBeanException{
+		List<SelectItem> workPlaces = new LinkedList<SelectItem>();
+		Iterator<ITransferObject> iter = obtainWorkplaces().iterator();
+		while(iter.hasNext()){
+			WorkPlace workPlace = (WorkPlace)iter.next();
+			workPlaces.add( new SelectItem(workPlace.getId(), workPlace.getDescription()));
+		}
+		return workPlaces;
+	}
+	
+	private List<ITransferObject> obtainWorkplaces() throws ManagerBeanException{
+		IManagerBean workplaceBean = BeanManager.getManagerBean(WorkPlace.class);
+		Criteria criteria = new Criteria();
+		criteria.addOrder(workplaceBean.getFieldName(ICompanyAlias.WORK_PLACE_ID));
+		return workplaceBean.getList(criteria);
 	}
 
 }
