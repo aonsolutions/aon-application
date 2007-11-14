@@ -5,12 +5,13 @@
 		<actionListener action="#{customer.onEditSearch}"/>
 	</option>
 
+	<option key="aon_course" descriptionKey="aon_course_desc" ref="course">
+		<actionListener action="#{course.onEditSearch}"/>
+	</option>
+
 	<menu ref="content" key="aon_academic_management" descriptionKey="aon_academic_management_desc">
-		<option key="aon_course" descriptionKey="aon_course_desc" ref="course">
-			<actionListener action="#{course.onEditSearch}"/>
-		</option>
 		<option key="aon_employee" descriptionKey="aon_employee_desc" ref="employee">
-			<actionListener action="#{employee.onReset}" />
+			<actionListener action="#{employee.onEditSearch}" />
 		</option>
 		<option key="aon_mark_search" descriptionKey="aon_mark_search_desc" ref="mark">
 			<actionListener action="#{mark.onNewSearch}" />
