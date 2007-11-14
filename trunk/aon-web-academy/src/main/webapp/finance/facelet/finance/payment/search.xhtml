@@ -26,6 +26,11 @@
 							onmouseout="this.className='aon-content-toolbar-item aon-content-toolbar-item-search'"
 							actionListener="#{financePayment.onSearch}"
 							accesskey="#{bundle.aon_key_search}" />
+						<h:commandButton id="clear" value="#{bundle.aon_clear}"
+							type="reset"
+							styleClass="aon-content-toolbar-item aon-content-toolbar-item-reset"
+							onmouseover="this.className='aon-content-toolbar-item aon-content-toolbar-item-hover aon-content-toolbar-item-reset'"
+							onmouseout="this.className='aon-content-toolbar-item aon-content-toolbar-item-reset'" />
 					</t:div>
 				</t:div>
 			</t:div>
@@ -91,13 +96,12 @@
 								styleClass="aon-form-input-text-label"
 								value="#{financeBundle.aon_series_number}" />
 							<h:panelGrid columns="2">
-								<t:inputText id="Finance_invoice_series"
-									onblur="toUpperCase(this);"
-									value="#{financePayment.series}"
-									styleClass="aon-form-input-text" forceId="#{true}" size="6"
-									maxlength="5">
-									<f:validateLength maximum="5" />
-								</t:inputText>
+								<t:selectOneMenu id="Finance_invoice_series"
+									styleClass="aon-form-selectOneMenu-field"
+									value="#{financePayment.series}">
+									<f:selectItem itemValue="" itemDisabled="true" itemLabel="-" />
+									<f:selectItems value="#{configCollections.series}" />
+								</t:selectOneMenu>
 								<t:inputText id="Finance_invoice_number"
 									value="#{financePayment.number}"
 									styleClass="aon-form-input-text" forceId="#{true}"
