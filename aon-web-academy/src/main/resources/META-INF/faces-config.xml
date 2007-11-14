@@ -926,6 +926,14 @@
 	</managed-bean>
 
 	<managed-bean>
+		<managed-bean-name>courseAbsenceTemplatePrinter</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.academy.print.CourseAbsenceTemplatePrinter
+		</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+	</managed-bean>
+
+	<managed-bean>
 		<managed-bean-name>alumnObservationPrinter</managed-bean-name>
 		<managed-bean-class>
 			com.code.aon.ui.academy.print.AlumnObservationPrinter
