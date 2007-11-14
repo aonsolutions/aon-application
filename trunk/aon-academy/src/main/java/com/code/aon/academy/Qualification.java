@@ -16,9 +16,9 @@ public class Qualification implements ITransferObject {
 	
 	private String code;
 	
-	private int minValue;
+	private double minValue;
 	
-	private int maxValue;
+	private double maxValue;
 
 	@Id
 	@GeneratedValue
@@ -41,20 +41,20 @@ public class Qualification implements ITransferObject {
 	}
 
 	@Column(name="min_value",nullable=false)
-	public int getMinValue() {
+	public double getMinValue() {
 		return minValue;
 	}
 
-	public void setMinValue(int minValue) {
+	public void setMinValue(double minValue) {
 		this.minValue = minValue;
 	}
 
 	@Column(name="max_value",nullable=false)
-	public int getMaxValue() {
+	public double getMaxValue() {
 		return maxValue;
 	}
 
-	public void setMaxValue(int maxValue) {
+	public void setMaxValue(double maxValue) {
 		this.maxValue = maxValue;
 	}
 }
