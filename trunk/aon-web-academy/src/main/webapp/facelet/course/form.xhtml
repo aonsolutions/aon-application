@@ -209,9 +209,23 @@
 								required="true" value="#{course.to.alumnLimit}"
 								size="5" maxlength="3"/>
 						
-						</h:panelGrid>		
-					
+						</h:panelGrid>
+
 					</h:panelGrid>
+					
+					<h:panelGrid columns="2" cellpadding="0" cellspacing="0"
+						styleClass="aon-form-table" rendered="#{!course.new}"
+						columnClasses="aon-form-table-column-odd,aon-form-table-column-even">
+
+						<t:outputLabel for="Course_description"
+							styleClass="aon-form-input-text-label"
+							value="#{appBundle.aon_description}" />
+						<t:inputText id="Course_description"
+							styleClass="aon-form-input-text" forceId="#{true}"
+							required="true" value="#{course.to.description}"
+							size="98" maxlength="64"/>
+						
+					</h:panelGrid>	
 					
 					<ui:include src="/facelet/course/instructor/grid.xhtml" />
 					
