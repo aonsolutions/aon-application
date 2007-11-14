@@ -5,14 +5,13 @@ import java.util.List;
 import com.code.aon.academy.Absence;
 import com.code.aon.academy.CourseAlumn;
 import com.code.aon.academy.EvaluationObservation;
-import com.code.aon.academy.Mark;
 import com.code.aon.common.ITransferObject;
 
 public class ReportMark implements ITransferObject {
 
 	private CourseAlumn courseAlumn;
 	
-	private List<Mark> marks;
+	private List<ReportMarkTo> marks;
 
 	private List<Absence> absences;
 
@@ -31,14 +30,14 @@ public class ReportMark implements ITransferObject {
 	/**
 	 * @return the marks
 	 */
-	public List<Mark> getMarks() {
+	public List<ReportMarkTo> getMarks() {
 		return marks;
 	}
 
 	/**
 	 * @param marks the marks to set
 	 */
-	public void setMarks(List<Mark> marks) {
+	public void setMarks(List<ReportMarkTo> marks) {
 		this.marks = marks;
 	}
 
