@@ -13,9 +13,9 @@ import com.code.aon.ui.report.controller.ReportManager;
 import com.code.aon.ui.util.AonUtil;
 
 public class CourseAlumnMarkController extends LinesController {
-
-	private int evaluation = 1;
 	
+	private int evaluation = 1;
+
 	/**
 	 * @return the evaluation
 	 */
@@ -52,5 +52,4 @@ public class CourseAlumnMarkController extends LinesController {
         String outcome = manager.onExecute();
         return outcome;
 	}
-
 }

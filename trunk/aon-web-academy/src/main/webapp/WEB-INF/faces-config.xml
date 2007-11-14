@@ -992,6 +992,21 @@
 				</map-entry>
 			</map-entries>
 		</managed-property>
+		<managed-property>
+			<property-name>listenerClasses</property-name>
+			<list-entries>
+				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+				<value>#{courseAlumnControllerListener}</value>
+			</list-entries>
+		</managed-property>
+	</managed-bean>
+
+	<managed-bean>
+		<managed-bean-name>courseAlumnControllerListener</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.academy.event.CourseAlumnControllerListener
+		</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
 	</managed-bean>
 	
 	<managed-bean>
@@ -2077,7 +2092,7 @@
     </navigation-case>
     <navigation-case>
       <from-outcome>employee</from-outcome>
-      <to-view-id>/facelet/employee/form.faces</to-view-id>
+      <to-view-id>/facelet/employee/search.faces</to-view-id>
     </navigation-case>
     <navigation-case>
       <from-outcome>item</from-outcome>
