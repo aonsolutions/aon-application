@@ -370,6 +370,14 @@
 								</h:column>
 							</t:dataTable>
 							<t:div style="text-align:right;">
+								<t:commandButton title="#{financeBundle.aon_select_all}"
+									styleClass="aon-form-button-plus"
+									value="#{financeBundle.aon_select_all}"
+									onclick="checkAll(); return false;" />
+								<t:commandButton title="#{financeBundle.aon_select_none}"
+									styleClass="aon-form-button-minus"
+									value="#{financeBundle.aon_select_none}"
+									onclick="checkNone(); return false;" />
 								<t:commandButton title="#{financeBundle.aon_add_batch}"
 									styleClass="aon-form-button"
 									value="#{financeBundle.aon_add_batch}"
