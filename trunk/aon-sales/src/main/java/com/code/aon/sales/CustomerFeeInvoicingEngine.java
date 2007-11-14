@@ -4,13 +4,18 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
 
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.Month;
+import com.code.aon.customer.Customer;
+import com.code.aon.customer.dao.ICustomerAlias;
 import com.code.aon.finance.Invoice;
 import com.code.aon.finance.InvoiceDetail;
+import com.code.aon.finance.InvoicingGroup;
 import com.code.aon.finance.InvoicingGroupDetail;
 import com.code.aon.finance.dao.IFinanceAlias;
 import com.code.aon.finance.enumeration.InvoiceSource;
@@ -22,6 +27,7 @@ import com.code.aon.finance.invoicing.IInvoicingFeedBack;
 import com.code.aon.finance.invoicing.InvoicingParameters;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.ast.Expression;
+import com.code.aon.ql.util.ExpressionException;
 import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.registry.Registry;
 import com.code.aon.sales.dao.ISalesAlias;
@@ -50,6 +56,17 @@ public class CustomerFeeInvoicingEngine implements IInvoicingEngine {
 
 	@SuppressWarnings("unchecked")
 	public void invoice(InvoicingParameters params) throws ManagerBeanException {
+		try {
+			Criteria criteria = createInvoicingCriteria(params);
+			List invoicedList = invoiceGroupFees(criteria, params);
+			List feeList = obtainFeeList(updateCriteria(criteria,invoicedList));
+			invoiceFees(feeList, params);
+		} catch (ExpressionException e) {
+			throw new ManagerBeanException(e);
+		}
+	}
+
+	private Criteria createInvoicingCriteria(InvoicingParameters params) throws ManagerBeanException {
 		IManagerBean customerFeeBean = BeanManager.getManagerBean(CustomerFee.class);
 		Criteria criteria = new Criteria();
 		Expression dateExpression = createFromToExpression(params.getMonth(), params.getYear());
@@ -65,10 +82,15 @@ public class CustomerFeeInvoicingEngine implements IInvoicingEngine {
 		}
 		criteria.addOrder(customerFeeBean.getFieldName(ISalesAlias.CUSTOMER_FEE_CUSTOMER_REGISTRY_SURNAME));
 		criteria.addOrder(customerFeeBean.getFieldName(ISalesAlias.CUSTOMER_FEE_CUSTOMER_REGISTRY_NAME));
-		Iterator iter = customerFeeBean.getList(criteria).iterator();
+		return criteria;
+	}
+
+	@SuppressWarnings("unchecked")
+	private void invoiceFees(List feeList, InvoicingParameters params) throws ManagerBeanException {
 		int counter = params.getNumber();
 		Invoice invoice = null;
 		Integer previousCustomerId = new Integer(Integer.MIN_VALUE);
+		Iterator iter = feeList.iterator();
 		while(iter.hasNext()){
 			CustomerFee customerFee = (CustomerFee)iter.next();
 			if(!previousCustomerId.equals(customerFee.getCustomer().getId())){
@@ -92,6 +114,89 @@ public class CustomerFeeInvoicingEngine implements IInvoicingEngine {
 		if(invoice != null){
 			getInvoicingDAO().createFinances(invoice);
 		}
+	}
+
+	@SuppressWarnings("unchecked")
+	private List invoiceGroupFees(Criteria criteria, InvoicingParameters params) throws ManagerBeanException, ExpressionException {
+		List<Integer> invoicedList = new LinkedList<Integer>();
+		IManagerBean invoicigGroupBean = BeanManager.getManagerBean(InvoicingGroup.class);
+		Iterator iter = invoicigGroupBean.getList(null).iterator();
+		while(iter.hasNext()){
+			InvoicingGroup group = (InvoicingGroup)iter.next();
+			List list = invoiceGroup(group, criteria, params);
+			invoicedList.addAll(list);
+		}
+		return invoicedList;
+	}
+
+	@SuppressWarnings("unchecked")
+	private List invoiceGroup(InvoicingGroup group, Criteria criteria, InvoicingParameters params) throws ManagerBeanException, ExpressionException {
+		List<Integer> invoicedList = new LinkedList<Integer>();
+		IManagerBean invoicingGroupDetailBean = BeanManager.getManagerBean(InvoicingGroupDetail.class);
+		IManagerBean customerFeeBean = BeanManager.getManagerBean(CustomerFee.class);
+		Criteria groupCriteria = new Criteria();
+		Expression exp = null;
+		exp = ExpressionUtilities.getOrExpression(exp, ExpressionUtilities.getEqualExpression(customerFeeBean.getFieldName(ISalesAlias.CUSTOMER_FEE_CUSTOMER_ID), group.getParent().getId()));
+		Criteria parentCriteria = new Criteria();
+		parentCriteria.addEqualExpression(invoicingGroupDetailBean.getFieldName(IFinanceAlias.INVOICING_GROUP_DETAIL_INVOICING_GROUP_ID), group.getId());
+		Iterator iter = invoicingGroupDetailBean.getList(parentCriteria).iterator();
+		while(iter.hasNext()){
+			InvoicingGroupDetail detail = (InvoicingGroupDetail)iter.next();
+			exp = ExpressionUtilities.getOrExpression(exp, ExpressionUtilities.getEqualExpression(customerFeeBean.getFieldName(ISalesAlias.CUSTOMER_FEE_CUSTOMER_ID), detail.getChild().getId()));
+		}
+		groupCriteria.addExpression(ExpressionUtilities.getAndExpression(criteria.getExpression(), exp));
+		invoicedList.add(group.getParent().getId());
+		Invoice invoice = createInvoice(group, params);
+		getInvoicingDAO().insertInvoice(invoice);
+		getInvoicingFeedBack().addMessage("\t" + "Invoice: " + invoice.getSeries() + "/" + invoice.getNumber());
+		params.setNumber(params.getNumber()+1);
+		Iterator feeIter = customerFeeBean.getList(groupCriteria).iterator();
+		while(feeIter.hasNext()){
+			CustomerFee fee = (CustomerFee)feeIter.next();
+			InvoiceDetail invoiceDetail = createInvoiceDetail(fee, invoice, params);
+			getInvoicingDAO().insertInvoiceDetail(invoiceDetail);
+			getInvoicingDAO().updateSource(fee);
+			getInvoicingFeedBack().addMessage("\t \t" + "InvoiceDetail: " + invoiceDetail.getDescription() + " price= " + invoiceDetail.getTaxableBase());			
+			invoicedList.add(fee.getCustomer().getId());
+		}
+		getInvoicingDAO().createFinances(invoice);
+		return invoicedList;
+	}
+
+	private Invoice createInvoice(InvoicingGroup group, InvoicingParameters params) throws ManagerBeanException {
+		Invoice invoice = new Invoice();
+		invoice.setNumber(params.getNumber());
+		invoice.setIssueDate(params.getInvoiceDate());
+		invoice.setRegistry(group.getParent());
+		invoice.setRegistryDocument(group.getParent().getDocument());
+		invoice.setRegistryName((group.getParent().getName() == null?"":group.getParent().getName()) + " " + (group.getParent().getSurname()==null?"":group.getParent().getSurname()));
+		invoice.setSeries(params.getSeries());
+		invoice.setType(InvoiceType.SALES);
+		invoice.setStatus(InvoiceStatus.PENDING);
+		invoice.setSecurityLevel(params.getSecurityLevel());
+		invoice.setWithholding(obtainRelatedCustomer(group.getParent()).isWithholding());
+		return invoice;
+	}
+
+	@SuppressWarnings("unchecked")
+	private List obtainFeeList(Criteria updatedCriteria) throws ManagerBeanException {
+		IManagerBean customerFeeBean = BeanManager.getManagerBean(CustomerFee.class);
+		return customerFeeBean.getList(updatedCriteria);
+	}
+
+	@SuppressWarnings("unchecked")
+	private Criteria updateCriteria(Criteria criteria, List invoicedList) throws ManagerBeanException {
+		IManagerBean customerFeeBean = BeanManager.getManagerBean(CustomerFee.class);
+		Iterator iter = invoicedList.iterator();
+		Expression exp =  null;
+		while(iter.hasNext()){
+			Integer id = (Integer)iter.next();
+			exp = ExpressionUtilities.getAndExpression(exp, ExpressionUtilities.getNotEqualExpression(customerFeeBean.getFieldName(ISalesAlias.CUSTOMER_FEE_CUSTOMER_ID), id));
+		}
+		if(exp != null){
+			criteria.addExpression(exp);
+		}
+		return criteria;
 	}
 
 	private Expression createFromToExpression(Month month, int year) throws ManagerBeanException {
@@ -137,7 +242,7 @@ public class CustomerFeeInvoicingEngine implements IInvoicingEngine {
 		Invoice invoice = new Invoice();
 		invoice.setNumber(counter);
 		invoice.setIssueDate(params.getInvoiceDate());
-		Registry registry = obtainInvoicingGroupRegistry(customerFee.getCustomer().getRegistry());
+		Registry registry = customerFee.getCustomer().getRegistry();
 		invoice.setRegistry(registry);
 		invoice.setRegistryDocument(registry.getDocument());
 		invoice.setRegistryName((registry.getName() == null?"":registry.getName()) + " " + (registry.getSurname()==null?"":registry.getSurname()));
@@ -149,19 +254,6 @@ public class CustomerFeeInvoicingEngine implements IInvoicingEngine {
 		return invoice;
 	}
 	
-	@SuppressWarnings("unchecked")
-	private Registry obtainInvoicingGroupRegistry(Registry registry) throws ManagerBeanException {
-		IManagerBean invoicingGroupDetailBean = BeanManager.getManagerBean(InvoicingGroupDetail.class);
-		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(invoicingGroupDetailBean.getFieldName(IFinanceAlias.INVOICING_GROUP_DETAIL_CHILD_ID), registry.getId());
-		Iterator iter = invoicingGroupDetailBean.getList(criteria).iterator();
-		if(iter.hasNext()){
-			InvoicingGroupDetail groupDetail = (InvoicingGroupDetail)iter.next();
-			return groupDetail.getInvoicingGroup().getParent();
-		}
-		return registry;
-	}
-
 	@SuppressWarnings("unchecked")
 	private int calculateNextNumber(int counter, String series) throws ManagerBeanException {
 		IManagerBean invoiceBean = BeanManager.getManagerBean(Invoice.class);
@@ -198,6 +290,18 @@ public class CustomerFeeInvoicingEngine implements IInvoicingEngine {
 
 	private long daysBetween(Date from, Date to) {
 		return ((to.getTime() - from.getTime()) / ((60 * 60 * 1000) * 24)) + 1;
+	}
+
+	@SuppressWarnings("unchecked")
+	private Customer obtainRelatedCustomer(Registry parent) throws ManagerBeanException {
+		IManagerBean customerBean = BeanManager.getManagerBean(Customer.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(customerBean.getFieldName(ICustomerAlias.CUSTOMER_ID), parent.getId());
+		Iterator iter = customerBean.getList(criteria).iterator();
+		if(iter.hasNext()){
+			return (Customer)iter.next();
+		}
+		return null;
 	}
 
 }
