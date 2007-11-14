@@ -107,17 +107,17 @@
 								</f:facet>
 								<h:outputText value="#{to.minValue}" rendered="#{to.id!=qualification.to.id}" />
 								<t:inputText rendered="#{to.id==qualification.to.id}" 
-									styleClass="aon-form-input-text" size="6" maxlength="3"
+									styleClass="aon-form-input-text" size="6"
 									value="#{qualification.to.minValue}" required="#{true}" >
-									<f:validateLongRange minimum="0" maximum="100"/>
+									<f:validateDoubleRange minimum="0" maximum="100"/>
 								</t:inputText>	
 								<f:verbatim>&#160;</f:verbatim>
 								<f:facet name="footer">
 									<t:inputText rendered="#{qualification.new}" 
 										styleClass="aon-form-input-text"
 										value="#{qualification.to.minValue}"
-										required="#{true}" size="6" maxlength="3" >
-										<f:validateLongRange minimum="0" maximum="100"/>
+										required="#{true}" size="6">
+										<f:validateDoubleRange minimum="0" maximum="100"/>
 									</t:inputText>	
 								</f:facet>
 							</h:column>
@@ -128,17 +128,17 @@
 								</f:facet>
 								<h:outputText value="#{to.maxValue}" rendered="#{to.id!=qualification.to.id}" />
 								<t:inputText rendered="#{to.id==qualification.to.id}" 
-									styleClass="aon-form-input-text" size="6" maxlength="3"
+									styleClass="aon-form-input-text" size="6"
 									value="#{qualification.to.maxValue}" required="#{true}" >
-									<f:validateLongRange minimum="0" maximum="100"/>
+									<f:validateDoubleRange minimum="0" maximum="100"/>
 								</t:inputText>	
 								<f:verbatim>&#160;</f:verbatim>
 								<f:facet name="footer">
 									<t:inputText rendered="#{qualification.new}" 
 										styleClass="aon-form-input-text"
 										value="#{qualification.to.maxValue}"
-										required="#{true}" size="6" maxlength="3" >
-										<f:validateLongRange minimum="0" maximum="100"/>
+										required="#{true}" size="6">
+										<f:validateDoubleRange minimum="0" maximum="100"/>
 									</t:inputText>	
 								</f:facet>
 							</h:column>
