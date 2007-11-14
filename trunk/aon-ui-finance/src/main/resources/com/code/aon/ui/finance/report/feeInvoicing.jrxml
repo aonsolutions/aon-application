@@ -200,7 +200,8 @@
 						y="160"
 						width="535"
 						height="14"
-						key="subreport-2"/>
+						key="subreport-2"
+						positionType="Float"/>
 					<parametersMapExpression><![CDATA[$P{REPORT_PARAMETERS_MAP}]]></parametersMapExpression>
 					<dataSourceExpression><![CDATA[new com.code.aon.ui.report.jr.JRBeanCollectionDataSource($P{PriceStrategy}.getTaxBreakDowns($V{currentInvoice}, $V{currentInvoice}))]]></dataSourceExpression>
 					<returnValue subreportVariable="taxTotal" toVariable="taxTotal"/>
