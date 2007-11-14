@@ -63,6 +63,8 @@ public class InputRichTextServlet extends HttpServlet {
 	        	response.setContentType("text/javascript;");
 	        } else if (uri.endsWith(".gif")) {
 	        	response.setContentType("image/gif;");
+	        } else if (uri.endsWith(".xml")) {
+	        	response.setContentType("application/xml;");
 	        }
 	        
 	        InputStream is = cl.getResourceAsStream(path);
