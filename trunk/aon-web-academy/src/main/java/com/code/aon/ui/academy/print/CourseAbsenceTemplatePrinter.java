@@ -21,17 +21,18 @@ import com.code.aon.ql.Criteria;
 import com.code.aon.ui.academy.controller.CourseController;
 import com.code.aon.ui.util.AonUtil;
 
-public class AbsenceTemplatePrinter implements ICollectionProvider {
-
+public class CourseAbsenceTemplatePrinter implements ICollectionProvider {
+	
 	private static final String COURSE_CONTROLLER_NAME = "course";
 
 	@SuppressWarnings("unchecked")
 	public Collection getCollection() {
 		List<AbsenceReportTo> list = new ArrayList<AbsenceReportTo>();
-		CourseController courseController = (CourseController) AonUtil.getController(COURSE_CONTROLLER_NAME);
 		try {
-			if (courseController.getTo() != null) {
-				Course course = (Course) courseController.getTo();
+			CourseController courseController = (CourseController)AonUtil.getController(COURSE_CONTROLLER_NAME);
+			Iterator iter = courseController.getManagerBean().getList(courseController.getCriteria()).iterator();
+			while(iter.hasNext()){
+				Course course = (Course)iter.next();
 				AbsenceReportTo absenceReportTo = new AbsenceReportTo();
 				absenceReportTo.setCourse(course);
 				absenceReportTo.setCourseAlumns(obtainCourseAlumnList(course));
@@ -46,21 +47,21 @@ public class AbsenceTemplatePrinter implements ICollectionProvider {
 	}
 
 	@SuppressWarnings("unchecked")
-	private List obtainCourseAlumnList(Course course)throws ManagerBeanException {
+	private List obtainCourseAlumnList(Course course) throws ManagerBeanException {
 		IManagerBean courseAlumnBean = BeanManager.getManagerBean(CourseAlumn.class);
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(courseAlumnBean.getFieldName(IAcademyAlias.COURSE_ALUMN_COURSE_ID), course.getId());
 		return courseAlumnBean.getList(criteria);
 	}
-
+	
 	@SuppressWarnings("unchecked")
-	private Employee obtainCourseInstructor(Course course)throws ManagerBeanException {
+	private Employee obtainCourseInstructor(Course course) throws ManagerBeanException {
 		IManagerBean courseInstructorBean = BeanManager.getManagerBean(CourseInstructor.class);
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(courseInstructorBean.getFieldName(IAcademyAlias.COURSE_INSTRUCTOR_COURSE_ID),course.getId());
+		criteria.addEqualExpression(courseInstructorBean.getFieldName(IAcademyAlias.COURSE_INSTRUCTOR_COURSE_ID), course.getId());
 		Iterator iter = courseInstructorBean.getList(criteria).iterator();
-		if (iter.hasNext()) {
-			return ((CourseInstructor) iter.next()).getEmployee();
+		if(iter.hasNext()){
+			return ((CourseInstructor)iter.next()).getEmployee();
 		}
 		return null;
 	}
