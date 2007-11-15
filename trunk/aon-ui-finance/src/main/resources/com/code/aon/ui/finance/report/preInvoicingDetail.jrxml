@@ -70,7 +70,9 @@
 						y="0"
 						width="71"
 						height="14"
-						key="textField-2"/>
+						key="textField-2">
+							<printWhenExpression><![CDATA[new Boolean($F{price}.doubleValue() != 0)]]></printWhenExpression>
+						</reportElement>
 					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" leftPadding="5" rightBorder="None" rightBorderColor="#000000" rightPadding="5" bottomBorder="None" bottomBorderColor="#999999"/>
 					<textElement textAlignment="Right" verticalAlignment="Middle">
 						<font size="8"/>
@@ -83,7 +85,9 @@
 						y="0"
 						width="72"
 						height="14"
-						key="textField-3"/>
+						key="textField-3">
+							<printWhenExpression><![CDATA[new Boolean($F{price}.doubleValue() != 0)]]></printWhenExpression>
+						</reportElement>
 					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" leftPadding="5" rightBorder="None" rightBorderColor="#000000" rightPadding="5" bottomBorder="None" bottomBorderColor="#999999"/>
 					<textElement textAlignment="Right" verticalAlignment="Middle">
 						<font size="8"/>
@@ -109,7 +113,9 @@
 						y="0"
 						width="93"
 						height="14"
-						key="textField-5"/>
+						key="textField-5">
+							<printWhenExpression><![CDATA[new Boolean($F{price}.doubleValue() != 0)]]></printWhenExpression>
+						</reportElement>
 					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" leftPadding="5" rightBorder="None" rightBorderColor="#000000" rightPadding="5" bottomBorder="None" bottomBorderColor="#999999"/>
 					<textElement textAlignment="Right" verticalAlignment="Middle">
 						<font size="8"/>
