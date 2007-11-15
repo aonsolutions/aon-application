@@ -73,14 +73,4 @@ function focusTableRow() {
 	} catch(e) {}
 }
 
-function checkAll() {
-	for (var i=0;document.getElementById('Row_checked['+i+']')!=null;i++) {
-		document.getElementById('Row_checked['+i+']').checked=true;
-	}
-}
-function checkNone() {
-	for (var i=0;document.getElementById('Row_checked['+i+']')!=null;i++) {
-		document.getElementById('Row_checked['+i+']').checked=false;
-	}
-}
 window.onload=focusTableRow;
