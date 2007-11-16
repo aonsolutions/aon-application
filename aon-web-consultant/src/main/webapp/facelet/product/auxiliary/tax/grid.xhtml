@@ -72,19 +72,13 @@
 							rowOnMouseOver="selectRow( this )"
 							rowOnMouseOut="unselectRow( this )" 
 							rowOnClick="sendRow( this )"
-							sortColumn="#{tax.sort}" 
-							sortAscending="#{tax.ascending}"
 							styleClass="aon-edit-table" headerClass="aon-edit-table-header" footerClass="aon-edit-table-footer"
 							rowClasses="aon-edit-table-row-odd,aon-edit-table-row-even"
 							columnClasses="aon-edit-table-mainColumn aon-edit-table-body aon-edit-table-body-string, aon-edit-table-body aon-edit-table-body-string, aon-edit-table-body aon-edit-table-body-string, aon-edit-table-body aon-edit-table-body-number, aon-edit-table-body aon-edit-table-body-number, aon-edit-table-body aon-edit-table-body-buttons">
 
 							<h:column>
 								<f:facet name="header">
-									<t:commandSortHeader columnName="tax_name" arrow="true"
-										actionListener="#{tax.sort}" 
-										styleClass="aon-table-header-link">
-										<h:outputText value="#{productBundle.tax_description}" />
-									</t:commandSortHeader>
+									<h:outputText value="#{productBundle.tax_description}" />
 								</f:facet>
 								<t:commandLink immediate="#{true}"  
 									styleClass="aon-table-row-selected"
@@ -113,11 +107,7 @@
 							</h:column>
 							<h:column>
 								<f:facet name="header">
-									<t:commandSortHeader columnName="Tax_type" arrow="true"
-										actionListener="#{tax.sort}" 
-										styleClass="aon-table-header-link">
-										<h:outputText value="#{productBundle.tax_type}" />
-									</t:commandSortHeader>
+									<h:outputText value="#{productBundle.tax_type}" />
 								</f:facet>
 								<h:outputText value="#{to.type}" rendered="#{to.id!=tax.to.id}" />
 								<h:selectOneMenu styleClass="aon-form-selectOneMenu-field" 
@@ -140,11 +130,7 @@
 							</h:column>
 							<h:column>
 								<f:facet name="header">
-									<t:commandSortHeader columnName="Tax_start_date" arrow="true"
-										actionListener="#{tax.sort}" 
-										styleClass="aon-table-header-link">
-										<h:outputText value="#{productBundle.tax_start_date}" />
-									</t:commandSortHeader>
+									<h:outputText value="#{productBundle.tax_start_date}" />
 								</f:facet>
 								<h:outputText value="#{to.startDate}" rendered="#{to.id!=tax.to.id}" >
 									<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
@@ -175,11 +161,7 @@
 							</h:column>
 							<h:column>
 								<f:facet name="header">
-									<t:commandSortHeader columnName="Tax_percentage" arrow="true"
-										actionListener="#{tax.sort}" 
-										styleClass="aon-table-header-link">
-										<h:outputText value="#{productBundle.tax_percentage}" />
-									</t:commandSortHeader>
+									<h:outputText value="#{productBundle.tax_percentage}" />
 								</f:facet>
 								<h:outputText value="#{to.percentage}" rendered="#{to.id!=tax.to.id}" />
 								<h:inputText rendered="#{to.id==tax.to.id}" size="6"
@@ -195,11 +177,7 @@
 							</h:column>
 							<h:column>
 								<f:facet name="header">
-									<t:commandSortHeader columnName="Tax_surcharge" arrow="true"
-										actionListener="#{tax.sort}" 
-										styleClass="aon-table-header-link">
-										<h:outputText value="#{productBundle.tax_surcharge}" />
-									</t:commandSortHeader>
+									<h:outputText value="#{productBundle.tax_surcharge}" />
 								</f:facet>
 								<h:outputText value="#{to.surcharge}" rendered="#{to.id!=tax.to.id}" />
 								<h:inputText rendered="#{to.id==tax.to.id}" 
