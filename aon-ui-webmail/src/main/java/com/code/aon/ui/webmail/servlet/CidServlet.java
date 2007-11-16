@@ -14,7 +14,6 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.code.aon.ui.common.lookup.ServleJSFtUtil;
 import com.code.aon.ui.webmail.bean.AonMessage;
 import com.code.aon.ui.webmail.controller.MessageController;
 
@@ -32,7 +31,7 @@ public class CidServlet extends HttpServlet {
 
 		MessageController messageController = (MessageController) ServleJSFtUtil.getManagedBean( request, response, "message" );
     	AonMessage aonMessage = messageController.getMessage();
-    	
+
 		try{
 			MimeMessage message = ( MimeMessage ) aonMessage.getMessage();
 			Object content = message.getContent();
