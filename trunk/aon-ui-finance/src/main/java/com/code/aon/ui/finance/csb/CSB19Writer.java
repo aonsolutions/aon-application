@@ -3,6 +3,7 @@ package com.code.aon.ui.finance.csb;
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
@@ -24,6 +25,7 @@ import com.code.aon.finance.FinanceBatchDetail;
 import com.code.aon.finance.Invoice;
 import com.code.aon.finance.InvoiceDetail;
 import com.code.aon.finance.RegistryBank;
+import com.code.aon.finance.csb.CSBOutput;
 import com.code.aon.finance.dao.IFinanceAlias;
 import com.code.aon.finance.enumeration.FinanceBatchType;
 import com.code.aon.finance.invoicing.InvoicePriceStrategy;
@@ -40,7 +42,7 @@ public class CSB19Writer {
 	private static final String FINANCE_BATCH_DETAIL_CONTROLLER_NAME = "fBatchDetail";
 
 	@SuppressWarnings("unchecked")
-	public File createCSB19(Company company, FinanceBatch fbatch) throws ManagerBeanException {
+	public CSBOutput createCSB19(Company company, FinanceBatch fbatch) throws ManagerBeanException {
 		Lot lot = new Lot();
 		try {
 		if(fbatch.getFinanceBatchType().equals(FinanceBatchType.CSB_19_D)){
@@ -82,8 +84,10 @@ public class CSB19Writer {
 		
 		File file = File.createTempFile("CSB19_", ".txt");
 		FileFiller csb19 = new CSB19(lot, file.getAbsolutePath());
-		csb19.create();
-		return file;
+		CSBOutput output = new CSBOutput();
+		output.setFile(file);
+		output.setErrors(csb19.create());
+		return output;
 		} catch (ManagerBeanException e) {
 			throw new ManagerBeanException("Error creating CSB", e);
 		} catch (IOException e) {
@@ -107,7 +111,11 @@ public class CSB19Writer {
 		if(detailAddress != null){
 			individual.setAccountUserAddress(detailAddress.getAddress() + " " + detailAddress.getAddress2() + " " + detailAddress.getAddress3());
 			individual.setAccountUserAddress2(detailAddress.getCity());
-            individual.setAccountUserPCode(new Integer(detailAddress.getZip()));
+			try {
+				individual.setAccountUserPCode(new Integer(detailAddress.getZip()));
+			} catch (NumberFormatException e) {
+				individual.setAccountUserPCode(new Integer(0));
+			}
 		}
 		if(lotType == Lot.EXTENDED){
 			addExtendedData(individual, fBatchDetail.getFinance().getInvoice());
@@ -177,4 +185,5 @@ public class CSB19Writer {
 		}
 		return null;
 	}
+
 }

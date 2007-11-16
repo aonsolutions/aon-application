@@ -20,6 +20,7 @@ import com.code.aon.csb.fd0.model.CSB58.data.Presenter;
 import com.code.aon.finance.FinanceBatch;
 import com.code.aon.finance.FinanceBatchDetail;
 import com.code.aon.finance.RegistryBank;
+import com.code.aon.finance.csb.CSBOutput;
 import com.code.aon.ql.Criteria;
 import com.code.aon.registry.RegistryAddress;
 import com.code.aon.registry.dao.IRegistryAlias;
@@ -30,7 +31,7 @@ public class CSB58Writer {
 	
 	private static final String FINANCE_BATCH_DETAIL_CONTROLLER_NAME = "fBatchDetail";
 
-	public File createCSB58(Company company, FinanceBatch fbatch) throws ManagerBeanException {
+	public CSBOutput createCSB58(Company company, FinanceBatch fbatch) throws ManagerBeanException {
 		try {
 			Lot lot = new Lot();
 			
@@ -65,8 +66,10 @@ public class CSB58Writer {
 		
 			File file = File.createTempFile("CSB58_", ".txt");
 			FileFiller csb58 = new CSB58(lot, file.getAbsolutePath());
-			csb58.create();
-			return file;
+			CSBOutput output = new CSBOutput();
+			output.setFile(file);
+			output.setErrors(csb58.create());
+			return output;
 		} catch (IOException e) {
 			throw new ManagerBeanException(e);
 		}
@@ -90,7 +93,11 @@ public class CSB58Writer {
 		if(customerAddress != null){
 			individual.setAccountUserAddress(customerAddress.getAddress());
 			individual.setAccountUserAddress2(customerAddress.getAddress2());
-			individual.setAccountUserPCode(new Integer(customerAddress.getZip()));
+			try {
+				individual.setAccountUserPCode(new Integer(customerAddress.getZip()));
+			} catch (NumberFormatException e) {
+				individual.setAccountUserPCode(new Integer(0));
+			}
 			individual.setOrdererCounty(customerAddress.getCity());
 		}
 		individual.setInitDate(new Date());
