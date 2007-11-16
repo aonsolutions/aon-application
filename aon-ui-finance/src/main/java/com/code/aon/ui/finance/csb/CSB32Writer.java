@@ -19,6 +19,7 @@ import com.code.aon.csb.fd0.model.CSB32.data.Lot;
 import com.code.aon.finance.FinanceBatch;
 import com.code.aon.finance.FinanceBatchDetail;
 import com.code.aon.finance.RegistryBank;
+import com.code.aon.finance.csb.CSBOutput;
 import com.code.aon.ql.Criteria;
 import com.code.aon.registry.RegistryAddress;
 import com.code.aon.registry.dao.IRegistryAlias;
@@ -29,7 +30,7 @@ public class CSB32Writer {
 
 	private static final String FINANCE_BATCH_DETAIL_CONTROLLER_NAME = "fBatchDetail";
 
-	public File createCSB32(Company company, FinanceBatch fbatch) throws ManagerBeanException {
+	public CSBOutput createCSB32(Company company, FinanceBatch fbatch) throws ManagerBeanException {
 		try {
 			Lot lot = new Lot();
 			RegistryBank companyRBank = fbatch.getRegistryBank();
@@ -64,8 +65,10 @@ public class CSB32Writer {
 			
 			File file = File.createTempFile("CSB32_", ".txt");
 			FileFiller csb32 = new CSB32(lot, file.getAbsolutePath());
-			csb32.create();
-			return file;
+			CSBOutput output = new CSBOutput();
+			output.setFile(file);
+			output.setErrors(csb32.create());
+			return output;
 		} catch (IOException e) {
 			throw new ManagerBeanException(e);
 		}
@@ -89,15 +92,24 @@ public class CSB32Writer {
 		RegistryAddress customerAddress = obtainRegistryAddress(fBatchDetail.getFinance().getRegistry().getId());
 		if(customerAddress != null){
 			individual.setPayedPost(customerAddress.getCity());
-			individual.setPayedPostPostalCode(new Integer(customerAddress.getZip()));
-			individual.setPayedPostProvince(new Integer(customerAddress.getZip().substring(0, 1)));
+			try {
+				individual.setPayedPostPostalCode(new Integer(customerAddress.getZip()));
+				individual.setPayedPostProvince(new Integer(customerAddress.getZip().substring(0, 1)));
+			} catch (NumberFormatException e) {
+				individual.setPayedPostPostalCode(new Integer(0));
+				individual.setPayedPostProvince(new Integer(0));
+			}
 			individual.setPayedAddress(customerAddress.getAddress() + customerAddress.getAddress2());
 		}
 		individual.setPaymentDate(fBatchDetail.getFinance().getDueDate());
 		RegistryAddress companyAddress = obtainRegistryAddress(company.getId());
 		if(companyAddress != null){
 			individual.setPaymentPost(companyAddress.getCity());
-			individual.setProvinceNumber(new Integer(companyAddress.getZip().substring(0, 1)));
+			try {
+				individual.setProvinceNumber(new Integer(companyAddress.getZip().substring(0, 1)));
+			} catch (NumberFormatException e) {
+				individual.setProvinceNumber(new Integer(0));
+			}
 		}
 		return individual;
 	}
