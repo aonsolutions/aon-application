@@ -3,8 +3,8 @@
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:s="http://myfaces.apache.org/sandbox"            
 	xmlns:h="http://java.sun.com/jsf/html">
-
 <body>
 
 <ui:composition template="/facelet/templates/aon.ui.content.xhtml">
@@ -72,18 +72,21 @@
 							styleClass="aon-content-toolbar-item aon-content-toolbar-item-search"
 							onmouseover="this.className='aon-content-toolbar-item aon-content-toolbar-item-hover aon-content-toolbar-item-search'"
 							onmouseout="this.className='aon-content-toolbar-item aon-content-toolbar-item-search'"
+							onclick="viewDialog.show();"
 							action="fbatch_form" actionListener="#{fbatch.onCreateDisk}" />	
 						<h:commandButton id="record" value="#{financeBundle.aon_record}"
 							rendered="#{fbatch.done or !fbatch.diskMode}"
 							styleClass="aon-content-toolbar-item aon-content-toolbar-item-search"
 							onmouseover="this.className='aon-content-toolbar-item aon-content-toolbar-item-hover aon-content-toolbar-item-search'"
 							onmouseout="this.className='aon-content-toolbar-item aon-content-toolbar-item-search'"
+							onclick="viewDialog.show();"
 							action="fbatch_form" actionListener="#{fbatch.onRecord}" />
 						<h:commandButton id="unrecord" value="#{financeBundle.aon_unrecord}"
 							rendered="#{fbatch.recorded}"
 							styleClass="aon-content-toolbar-item aon-content-toolbar-item-search"
 							onmouseover="this.className='aon-content-toolbar-item aon-content-toolbar-item-hover aon-content-toolbar-item-search'"
 							onmouseout="this.className='aon-content-toolbar-item aon-content-toolbar-item-search'"
+							onclick="viewDialog.show();"
 							action="fbatch_form" actionListener="#{fbatch.onUnrecord}" />
 					</t:div>
 				</t:div>
@@ -103,15 +106,12 @@
 						<h:panelGrid columns="2" dir="true" styleClass="aon-form-table"
 							columnClasses="aon-form-table-column-odd,aon-form-table-column-even">
 	
-							<h:outputLabel for="FinanceBatch_payment"
+							<h:outputLabel for="FinanceBatch_id"
 								styleClass="aon-form-input-text-label"
-								value="#{financeBundle.aon_fbatch_type}" />
-							<t:selectOneMenu id="FinanceBatch_payment"
-								styleClass="aon-form-selectOneMenu-field" forceId="#{true}"
-								value="#{fbatch.to.payment}" disabled="#{!fbatch.new}">
-								<f:selectItem itemLabel="#{financeBundle.aon_payment}" itemValue="#{true}" />
-								<f:selectItem itemLabel="#{financeBundle.aon_charge}" itemValue="#{false}" />
-							</t:selectOneMenu>
+								value="#{financeBundle.aon_code}" />
+							<h:inputText id="FinanceBatch_id" value="#{fbatch.to.id}"
+								styleClass="aon-form-input-text" forceId="#{true}"
+								required="#{true}" size="8" disabled="#{true}" />
 
 							<h:outputLabel for="FinanceBatch_issueDate"
 								styleClass="aon-form-input-text-label" value="#{financeBundle.aon_date}" />
@@ -125,6 +125,16 @@
 								popupTodayString="#{bundle.aon_popup_today}"
 								popupWeekString="#{bundle.aon_popup_week}" />
 
+							<h:outputLabel for="FinanceBatch_payment"
+								styleClass="aon-form-input-text-label"
+								value="#{financeBundle.aon_fbatch_type}" />
+							<t:selectOneMenu id="FinanceBatch_payment"
+								styleClass="aon-form-selectOneMenu-field" forceId="#{true}"
+								value="#{fbatch.to.payment}" disabled="#{!fbatch.new}">
+								<f:selectItem itemLabel="#{financeBundle.aon_payment}" itemValue="#{true}" />
+								<f:selectItem itemLabel="#{financeBundle.aon_charge}" itemValue="#{false}" />
+							</t:selectOneMenu>
+
 							<h:outputLabel for="FinanceBatch_financeBatchType"
 								styleClass="aon-form-input-text-label" value="#{financeBundle.aon_disk_type}" />
 							<h:selectOneMenu id="FinanceBatch_financeBatchType"
@@ -134,15 +144,14 @@
 								<f:selectItems value="#{financeCollections.financeBatchTypes}" />
 							</h:selectOneMenu>
 	
-							<h:outputLabel for="FinanceBatch_financeBatchStatus"
+							<h:outputLabel for="FinanceBatch_totalRegs"
 								styleClass="aon-form-input-text-label"
-								value="#{financeBundle.aon_status}" />
-							<h:selectOneMenu id="FinanceBatch_financeBatchStatus"
-								styleClass="aon-form-selectOneMenu-field" forceId="#{true}"
-								value="#{fbatch.to.financeBatchStatus}" disabled="#{true}" >
-								<f:selectItems value="#{financeCollections.financeBatchStatus}" />
-							</h:selectOneMenu>
-	
+								value="#{financeBundle.aon_total_regs}" />
+							<t:inputText id="FinanceBatch_totalRegs"
+								styleClass="aon-form-input-text-disabled"
+								disabled="true" size="8"
+								value="#{fbatch.toTotalDetails}" forceId="#{true}" />
+							
 						</h:panelGrid>
 						
 						<h:panelGrid columns="2" dir="true" styleClass="aon-form-table"
@@ -172,13 +181,22 @@
 								styleClass="aon-form-input-text-disabled" forceId="#{true}"
 								disabledOnClientSide="true" size="35" />
 
-							<h:outputLabel for="FinanceBatch_total"
+							<h:outputLabel for="FinanceBatch_financeBatchStatus"
 								styleClass="aon-form-input-text-label"
-								value="#{financeBundle.aon_total}" />
-							<t:inputText id="FinanceBatch_total"
+								value="#{financeBundle.aon_status}" />
+							<h:selectOneMenu id="FinanceBatch_financeBatchStatus"
+								styleClass="aon-form-selectOneMenu-field" forceId="#{true}"
+								value="#{fbatch.to.financeBatchStatus}" disabled="#{true}" >
+								<f:selectItems value="#{financeCollections.financeBatchStatus}" />
+							</h:selectOneMenu>
+	
+							<h:outputLabel for="FinanceBatch_totalAmount"
+								styleClass="aon-form-input-text-label"
+								value="#{financeBundle.aon_total_amount}" />
+							<t:inputText id="FinanceBatch_totalAmount"
 								styleClass="aon-form-input-text-disabled"
 								disabled="true" size="15"
-								value="#{fbatch.toTotal}" forceId="#{true}" >
+								value="#{fbatch.toTotalAmount}" forceId="#{true}" >
 								<f:convertNumber pattern="#,##0.00" />
 							</t:inputText>	
 							
@@ -194,6 +212,13 @@
 						</t:div>
 
 						<t:div styleClass="aon-form-group-body">
+							<t:div id="downloadDiv" forceId="#{true}" rendered="#{fbatch.file!=null}">
+								<t:commandButton title="#{financeBundle.aon_download_disk}"
+									styleClass="aon-form-button"
+									value="#{financeBundle.aon_download_disk}"
+									onclick="document.getElementById('downloadDiv').style.display='none';"
+									actionListener="#{fbatch.downloadDisk}" />
+							</t:div>
 							<t:dataTable id="fBatchDetailData" var="to" value="#{fBatchDetail.model}"
 								rendered="#{fBatchDetail.model.rowCount > 0}"
 								styleClass="aon-edit-table" headerClass="aon-edit-table-header"
@@ -285,6 +310,21 @@
 						</t:div>
 
 						<t:div styleClass="aon-form-group-body">
+							<t:div>
+								<t:commandButton title="#{financeBundle.aon_select_all}"
+									styleClass="aon-form-button-plus"
+									value="#{financeBundle.aon_select_all}"
+									onclick="checkAll(); return false;" />
+								<t:commandButton title="#{financeBundle.aon_select_none}"
+									styleClass="aon-form-button-minus"
+									value="#{financeBundle.aon_select_none}"
+									onclick="checkNone(); return false;" />
+								<t:commandButton title="#{financeBundle.aon_add_batch}"
+									styleClass="aon-form-button"
+									value="#{financeBundle.aon_add_batch}"
+									onclick="viewDialog.show();"
+									actionListener="#{fbatch.onBatchSelected}" />
+							</t:div>
 							<t:dataTable id="financeData" var="to" value="#{finance.model}"
 								rendered="#{finance.model.rowCount > 0}"
 								styleClass="aon-edit-table" headerClass="aon-edit-table-header"
@@ -369,24 +409,23 @@
 									</h:outputText>
 								</h:column>
 							</t:dataTable>
-							<t:div style="text-align:right;">
-								<t:commandButton title="#{financeBundle.aon_select_all}"
-									styleClass="aon-form-button-plus"
-									value="#{financeBundle.aon_select_all}"
-									onclick="checkAll(); return false;" />
-								<t:commandButton title="#{financeBundle.aon_select_none}"
-									styleClass="aon-form-button-minus"
-									value="#{financeBundle.aon_select_none}"
-									onclick="checkNone(); return false;" />
-								<t:commandButton title="#{financeBundle.aon_add_batch}"
-									styleClass="aon-form-button"
-									value="#{financeBundle.aon_add_batch}"
-									actionListener="#{fbatch.onBatchSelected}" />
-							</t:div>
 						</t:div>
 					</t:div>
 				</t:div>
 			</t:div>
+
+			<s:modalDialog
+		       dialogId="viewDialog"
+		       dialogVar="viewDialog"
+		       closeButton="false">
+		       <t:div styleClass="aon-timer">		       		
+		       		<h:graphicImage value="/css/images/content/aon-timer.gif" />
+		       		<t:div styleClass="aon-timer-title" >
+		       			<t:outputText value="#{appBundle.aon_in_progress}" /> 
+		       		</t:div>
+  			   </t:div>
+			</s:modalDialog>
+
 		</h:form>
 		<h:form id="placeList" target="list" />
 
