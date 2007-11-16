@@ -37,20 +37,21 @@
     background-color: #535353;
     border: 1px solid #000;
     border-bottom: 1px solid #fff;
-    margin:30px 30px 0 30px;   
+    margin:30px 30px 0 30px;  
+   
 }
 .aon-popup-Hdr{
 	background-color:#304055;
-	   border: 1px solid #000;
-    border-bottom: 1px solid #fff;
-    	line-height:18px; 
+	border: 1px solid #000;
+  border-bottom: 1px solid #fff;
+  line-height:18px; 
+  background-image:none !important;
 	}
 /* Pop up title cell */
 .aon-popup-title{
 	color:#fff;
 	text-align:left;
 	font-weight:bold;	
-	background-color:#304055;
 	padding:3px 0 3px 1em;
 	}
 .aon-popup-title-span{
