@@ -80,6 +80,7 @@ public class FBatchControllerListener extends ControllerAdapter {
 		FBatchController fBatchController = (FBatchController)event.getController();
 		FinanceBatch fBatch = (FinanceBatch)fBatchController.getTo();
 		fBatchController.loadAvailableFinances(fBatch.isPayment());
+		fBatchController.setFile(null);
 	}
 
     @Override
