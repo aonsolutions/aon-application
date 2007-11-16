@@ -234,13 +234,11 @@
 	<servlet>
 		<servlet-name>InputRichText Servlet</servlet-name>
 		<servlet-class>com.code.aon.faces.component.inputRichText.InputRichTextServlet</servlet-class>
-		<!-- 
 		<init-param>
-			<description>Allows to specify the path of the FCKeditor resources</description>
+			<description>Allows to specify the path of the resources</description>
 			<param-name>customResourcePath</param-name>
 			<param-value>/</param-value>
 		</init-param>
-		 -->
 		<load-on-startup>1</load-on-startup>
 	</servlet>
 	<servlet-mapping>
