@@ -248,9 +248,13 @@ public class AonMessage {
 			LOGGER.log(Level.ALL,"Can not recover address.",e);
 			throw new WebmailException(e);
 		}
-		InternetAddress tmpAddress = (InternetAddress) addresses[0];
-		String sender = getDisplayAddressFull((Address)tmpAddress);
-		return sender;
+		if (addresses!=null && addresses.length>0){
+			InternetAddress tmpAddress = (InternetAddress) addresses[0];
+			String sender = getDisplayAddressFull((Address)tmpAddress);
+			return sender;
+		}else{
+			return "";
+		}
 	}
 
 	public void setSender(String from) throws WebmailException {
@@ -304,10 +308,11 @@ public class AonMessage {
 			LOGGER.log(Level.ALL,"Can not recover address.",e);
 			throw new WebmailException(e);
 		}
-		InternetAddress tmpAddress = (InternetAddress) addresses[0];
-		String sender = getDisplayAddressShort((Address)tmpAddress);
-		if (sender==null)
-			sender = "";
+		String sender = "";
+		if (addresses!=null && addresses.length>0){
+			InternetAddress tmpAddress = (InternetAddress) addresses[0];
+			sender = getDisplayAddressShort((Address)tmpAddress);
+		}
 		if (sender.length()>maxLength)
 			return sender.substring(0,maxLength)+"..";
 		return sender.substring(0,sender.length());
@@ -321,10 +326,11 @@ public class AonMessage {
 			LOGGER.log(Level.ALL,"Can not recover address.",e);
 			throw new WebmailException(e);
 		}
-		InternetAddress tmpAddress = (InternetAddress) addresses[0];
-		String sender = getDisplayEmail((Address)tmpAddress);
-		if (sender==null)
-			sender = "";
+		String sender = "";
+		if (addresses!=null && addresses.length>0){
+			InternetAddress tmpAddress = (InternetAddress) addresses[0];
+			sender = getDisplayEmail((Address)tmpAddress);
+		}
 		return sender;
 	}
 
@@ -544,7 +550,6 @@ public class AonMessage {
 					String disposition = part.getDisposition();
 					if ((disposition != null)
 							&& (disposition.equalsIgnoreCase(Part.ATTACHMENT))
-//									|| (part.isMimeType("image/*") && disposition.equalsIgnoreCase(Part.INLINE)))
 						){
 						attachPosition++;
 						AonAttachment attach = new AonAttachment();
