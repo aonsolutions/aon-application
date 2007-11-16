@@ -67,19 +67,13 @@
 							rowOnMouseOver="selectRow( this )"
 							rowOnMouseOut="unselectRow( this )" 
 							rowOnClick="sendRow( this )"
-							sortColumn="#{productCategory.sort}" 
-							sortAscending="#{productCategory.ascending}"
 							styleClass="aon-edit-table" headerClass="aon-edit-table-header" footerClass="aon-edit-table-footer"
 							rowClasses="aon-edit-table-row-odd,aon-edit-table-row-even"
 							columnClasses="aon-edit-table-body aon-edit-table-body-string, aon-edit-table-body aon-edit-table-body-buttons">
 
 							<h:column>
 								<f:facet name="header">
-									<t:commandSortHeader columnName="ProductCategory_name" arrow="true"
-										actionListener="#{productCategory.sort}" 
-										styleClass="aon-table-header-link">
-										<h:outputText value="#{productBundle.productCategory_description}" />
-									</t:commandSortHeader>
+									<h:outputText value="#{productBundle.productCategory_description}" />
 								</f:facet>
 								<t:commandLink immediate="#{true}"  
 									styleClass="aon-table-row-selected"
