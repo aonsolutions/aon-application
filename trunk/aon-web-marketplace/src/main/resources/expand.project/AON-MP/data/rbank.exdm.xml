@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<table tableName="rbank">
+    <columns>
+        <column
+            label="Identificador unico de la Cuenta Bancaria de la Persona o Empresa"
+            name="id" sqlType="integer" type="integer"/>
+        <column
+            label="Identificador del Registro de la Persona o Empresa"
+            name="registry" sqlType="integer" type="integer"/>
+        <column label="Identificador de la Entidad Bancaria" name="bank"
+            sqlType="integer" type="integer"/>
+        <column
+            label="Numero de Cuenta Bancaria de la Persona o Empresa"
+            length="30" name="bank_account" sqlType="char" type="string"/>
+        <column label="Sufijo de Cuenta Bancaria para Remesas"
+            length="3" name="sufix" sqlType="char" type="string"/>
+    </columns>
+    <virtualColumns/>
+    <primaryKey>
+        <column name="id"/>
+    </primaryKey>
+    <joins>
+        <join description="rbank_ibfk_1" foreignPath="data/registry.exdm.xml">
+            <sourceColumns>
+                <column name="registry"/>
+            </sourceColumns>
+        </join>
+        <join description="rbank_ibfk_2" foreignPath="data/bank.exdm.xml">
+            <sourceColumns>
+                <column name="bank"/>
+            </sourceColumns>
+        </join>
+    </joins>
+    <descriptionColumns/>
+</table>
