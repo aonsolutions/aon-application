@@ -387,6 +387,10 @@ public class BlackListController {
 		closeNewPanelPopup(event);
 	}
 
+	public boolean isBlackList(){
+		return list_type==LIST_BLACK_TYPE?true:false; 
+	}
+	
     //*************************************************************
     // NEW POPUP END
     //*************************************************************
