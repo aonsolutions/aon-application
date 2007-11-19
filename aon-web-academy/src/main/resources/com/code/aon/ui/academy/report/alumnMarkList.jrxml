@@ -201,7 +201,7 @@
 						x="5"
 						y="77"
 						width="520"
-						height="190"
+						height="235"
 						key="crosstab-1">
 							<printWhenExpression><![CDATA[(($F{marks}.isEmpty())?new Boolean(false):new Boolean(true))]]></printWhenExpression>
 						</reportElement>
@@ -273,7 +273,7 @@
 					<textElement textAlignment="Center" verticalAlignment="Middle">
 						<font size="8"/>
 					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[($P{encode}.booleanValue() == true?$V{code}:$V{mark}.toString()) ]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.String"><![CDATA[($P{encode}.booleanValue() == true?$V{code}:$V{mark}.toString())]]></textFieldExpression>
 				</textField>
 						</cellContents>
 					</crosstabCell>
@@ -299,9 +299,9 @@
 				<crosstab >
 					<reportElement
 						x="5"
-						y="274"
+						y="325"
 						width="520"
-						height="205"
+						height="150"
 						key="crosstab-2">
 							<printWhenExpression><![CDATA[(($F{absences}.isEmpty())?new Boolean(false):new Boolean(true))]]></printWhenExpression>
 						</reportElement>
@@ -432,8 +432,8 @@
 						</crosstabColumnHeader>
 					</columnGroup>
 
-					<measure name="comments_First" class="java.lang.String" calculation="First">
-						<measureExpression><![CDATA[$F{comments}]]></measureExpression>
+					<measure name="comments_First" class="java.lang.String" incrementerFactoryClass="com.code.aon.ui.academy.print.utils.CommentsIncrementorFactory">
+						<measureExpression><![CDATA[$F{comments} + "\n"]]></measureExpression>
 					</measure>
 					<crosstabCell width="415" height="30">
 						<cellContents mode="Transparent">
@@ -1209,9 +1209,9 @@
 					<reportElement
 						mode="Transparent"
 						x="98"
-						y="274"
+						y="325"
 						width="85"
-						height="205"
+						height="150"
 						key="rectangle-91"/>
 					<graphicElement stretchType="NoStretch"/>
 				</rectangle>
@@ -1219,9 +1219,9 @@
 					<reportElement
 						mode="Transparent"
 						x="5"
-						y="274"
+						y="325"
 						width="95"
-						height="205"
+						height="150"
 						key="rectangle-92"/>
 					<graphicElement stretchType="NoStretch"/>
 				</rectangle>
@@ -1229,9 +1229,9 @@
 					<reportElement
 						mode="Transparent"
 						x="183"
-						y="274"
+						y="325"
 						width="85"
-						height="205"
+						height="150"
 						key="rectangle-93"/>
 					<graphicElement stretchType="NoStretch"/>
 				</rectangle>
@@ -1239,9 +1239,9 @@
 					<reportElement
 						mode="Transparent"
 						x="268"
-						y="274"
+						y="325"
 						width="85"
-						height="205"
+						height="150"
 						key="rectangle-94"/>
 					<graphicElement stretchType="NoStretch"/>
 				</rectangle>
@@ -1249,9 +1249,9 @@
 					<reportElement
 						mode="Transparent"
 						x="353"
-						y="274"
+						y="325"
 						width="85"
-						height="205"
+						height="150"
 						key="rectangle-95"/>
 					<graphicElement stretchType="NoStretch"/>
 				</rectangle>
@@ -1259,16 +1259,16 @@
 					<reportElement
 						mode="Transparent"
 						x="438"
-						y="274"
+						y="325"
 						width="87"
-						height="205"
+						height="150"
 						key="rectangle-96"/>
 					<graphicElement stretchType="NoStretch"/>
 				</rectangle>
 				<line direction="TopDown">
 					<reportElement
 						x="98"
-						y="299"
+						y="350"
 						width="427"
 						height="0"
 						key="line-1"/>
@@ -1348,7 +1348,7 @@
 					<reportElement
 						mode="Transparent"
 						x="471"
-						y="279"
+						y="330"
 						width="23"
 						height="16"
 						key="staticText-6"/>
@@ -1362,7 +1362,7 @@
 					<reportElement
 						mode="Transparent"
 						x="385"
-						y="279"
+						y="330"
 						width="23"
 						height="16"
 						key="staticText-7"/>
@@ -1376,7 +1376,7 @@
 					<reportElement
 						mode="Transparent"
 						x="298"
-						y="279"
+						y="330"
 						width="23"
 						height="16"
 						key="staticText-8"/>
@@ -1390,7 +1390,7 @@
 					<reportElement
 						mode="Transparent"
 						x="214"
-						y="279"
+						y="330"
 						width="23"
 						height="16"
 						key="staticText-9"/>
@@ -1404,7 +1404,7 @@
 					<reportElement
 						mode="Transparent"
 						x="132"
-						y="279"
+						y="330"
 						width="23"
 						height="16"
 						key="staticText-10"/>
@@ -1547,14 +1547,14 @@
 					<reportElement
 						x="278"
 						y="676"
-						width="84"
+						width="130"
 						height="20"
 						key="staticText-16"/>
 					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
 					<textElement>
 						<font/>
 					</textElement>
-				<text><![CDATA[Firma profesor:]]></text>
+				<text><![CDATA[Firma Jefe de Estudios:]]></text>
 				</staticText>
 				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
@@ -1603,7 +1603,7 @@
 					<textElement>
 						<font/>
 					</textElement>
-				<text><![CDATA[Firma alumno/tutor:]]></text>
+				<text><![CDATA[Firma Profesor:]]></text>
 				</staticText>
 				<elementGroup><!--  Start: 1 !-->
 				<staticText>
@@ -1623,7 +1623,7 @@
 				<staticText>
 					<reportElement
 						x="6"
-						y="275"
+						y="326"
 						width="89"
 						height="23"
 						key="staticText-19"/>
@@ -1646,6 +1646,186 @@
 					</textElement>
 				<text><![CDATA[Observaciones:]]></text>
 				</staticText>
+				<rectangle>
+					<reportElement
+						mode="Transparent"
+						x="5"
+						y="267"
+						width="96"
+						height="15"
+						key="rectangle-101"/>
+					<graphicElement stretchType="NoStretch"/>
+				</rectangle>
+				<rectangle>
+					<reportElement
+						mode="Transparent"
+						x="101"
+						y="267"
+						width="85"
+						height="15"
+						key="rectangle-102"/>
+					<graphicElement stretchType="NoStretch"/>
+				</rectangle>
+				<rectangle>
+					<reportElement
+						mode="Transparent"
+						x="186"
+						y="267"
+						width="85"
+						height="15"
+						key="rectangle-103"/>
+					<graphicElement stretchType="NoStretch"/>
+				</rectangle>
+				<rectangle>
+					<reportElement
+						mode="Transparent"
+						x="271"
+						y="267"
+						width="85"
+						height="15"
+						key="rectangle-104"/>
+					<graphicElement stretchType="NoStretch"/>
+				</rectangle>
+				<rectangle>
+					<reportElement
+						mode="Transparent"
+						x="355"
+						y="267"
+						width="85"
+						height="15"
+						key="rectangle-105"/>
+					<graphicElement stretchType="NoStretch"/>
+				</rectangle>
+				<rectangle>
+					<reportElement
+						mode="Transparent"
+						x="440"
+						y="267"
+						width="85"
+						height="15"
+						key="rectangle-106"/>
+					<graphicElement stretchType="NoStretch"/>
+				</rectangle>
+				<rectangle>
+					<reportElement
+						mode="Transparent"
+						x="5"
+						y="282"
+						width="96"
+						height="15"
+						key="rectangle-107"/>
+					<graphicElement stretchType="NoStretch"/>
+				</rectangle>
+				<rectangle>
+					<reportElement
+						mode="Transparent"
+						x="101"
+						y="282"
+						width="85"
+						height="15"
+						key="rectangle-108"/>
+					<graphicElement stretchType="NoStretch"/>
+				</rectangle>
+				<rectangle>
+					<reportElement
+						mode="Transparent"
+						x="186"
+						y="282"
+						width="85"
+						height="15"
+						key="rectangle-109"/>
+					<graphicElement stretchType="NoStretch"/>
+				</rectangle>
+				<rectangle>
+					<reportElement
+						mode="Transparent"
+						x="271"
+						y="282"
+						width="85"
+						height="15"
+						key="rectangle-110"/>
+					<graphicElement stretchType="NoStretch"/>
+				</rectangle>
+				<rectangle>
+					<reportElement
+						mode="Transparent"
+						x="355"
+						y="282"
+						width="85"
+						height="15"
+						key="rectangle-111"/>
+					<graphicElement stretchType="NoStretch"/>
+				</rectangle>
+				<rectangle>
+					<reportElement
+						mode="Transparent"
+						x="440"
+						y="282"
+						width="85"
+						height="15"
+						key="rectangle-112"/>
+					<graphicElement stretchType="NoStretch"/>
+				</rectangle>
+				<rectangle>
+					<reportElement
+						mode="Transparent"
+						x="5"
+						y="297"
+						width="96"
+						height="15"
+						key="rectangle-113"/>
+					<graphicElement stretchType="NoStretch"/>
+				</rectangle>
+				<rectangle>
+					<reportElement
+						mode="Transparent"
+						x="101"
+						y="297"
+						width="85"
+						height="15"
+						key="rectangle-114"/>
+					<graphicElement stretchType="NoStretch"/>
+				</rectangle>
+				<rectangle>
+					<reportElement
+						mode="Transparent"
+						x="186"
+						y="297"
+						width="85"
+						height="15"
+						key="rectangle-115"/>
+					<graphicElement stretchType="NoStretch"/>
+				</rectangle>
+				<rectangle>
+					<reportElement
+						mode="Transparent"
+						x="271"
+						y="297"
+						width="85"
+						height="15"
+						key="rectangle-116"/>
+					<graphicElement stretchType="NoStretch"/>
+				</rectangle>
+				<rectangle>
+					<reportElement
+						mode="Transparent"
+						x="355"
+						y="297"
+						width="85"
+						height="15"
+						key="rectangle-117"/>
+					<graphicElement stretchType="NoStretch"/>
+				</rectangle>
+				<rectangle>
+					<reportElement
+						mode="Transparent"
+						x="440"
+						y="297"
+						width="85"
+						height="15"
+						key="rectangle-118"/>
+					<graphicElement stretchType="NoStretch"/>
+				</rectangle>
 			</band>
 		</detail>
 		<columnFooter>
