@@ -126,7 +126,7 @@
 											styleClass="aon-float-left"
 											value="#{whiteTo.selected}">
 										</aon:selectBooleanCheckbox>
-										 <aon:outputText value="* #{whiteTo.email}" styleClass="aon-highlight aon-italic" rendered="#{whiteTo.added}" />
+										 <aon:outputText value="#{whiteTo.email}" styleClass="aon-highlight aon-italic" rendered="#{whiteTo.added}" />
 			                           	 <aon:outputText value="#{whiteTo.email}" rendered="#{!whiteTo.added}" />
 			                        </aon:column>
 			                        
@@ -146,7 +146,7 @@
 											styleClass="aon-float-left"
 											value="#{blackTo.selected}">
 										</aon:selectBooleanCheckbox>
-			                            <aon:outputText value="* #{blackTo.email}" styleClass="aon-highlight aon-italic" rendered="#{blackTo.added}" />
+			                            <aon:outputText value="#{blackTo.email}" styleClass="aon-highlight aon-italic" rendered="#{blackTo.added}" />
 			                            <aon:outputText value="#{blackTo.email}" rendered="#{!blackTo.added}" />
 			                        </aon:column>
 								</aon:dataTable>
