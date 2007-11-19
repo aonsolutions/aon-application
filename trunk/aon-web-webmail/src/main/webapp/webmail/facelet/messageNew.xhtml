@@ -45,13 +45,6 @@
 												styleClass="aon-icon-cancel aon-content-toolbar-item">
 										</aon:commandButton>
 										<aon:commandButton
-											id="addEmail"
-											title="#{appBundle.aon_webmail_email}"
-											value="#{appBundle.aon_webmail_email}"
-											actionListener="#{message.openEmailsPanelPopup}"
-											styleClass="aon-icon-agenda aon-content-toolbar-item">
-										</aon:commandButton>
-										<aon:commandButton
 											id="addAttachButton"
 											title="#{appBundle.aon_webmail_addattach}"
 											value="#{appBundle.aon_webmail_addattach}"
@@ -69,8 +62,10 @@
 									
 									<aon:panelGrid columns="2" cellpadding="0" cellspacing="0" style="border-right:#ccc 1px solid;padding-right:1em;">
 										
-										<aon:outputLabel for="NewMail_to" styleClass="aon-text-bold"
-											value="#{appBundle.aon_webmail_to}: " />
+										<aon:commandButton id="addToEmail" 
+											actionListener="#{message.openEmailsToPanelPopup}"
+											styleClass="aon-icon-commandButton aon-icon-search" 
+											value="#{appBundle.aon_webmail_to}:"/>
 										<aon:div>
 											<aon:inputText id="NewMail_to"
 												size="60"
@@ -78,16 +73,20 @@
 											
 										</aon:div>
 	
-										<aon:outputLabel for="NewMail_cc" styleClass="aon-text-bold"
-											value="#{appBundle.aon_webmail_cc}: " />
+										<aon:commandButton id="addCcEmail" 
+											actionListener="#{message.openEmailsCcPanelPopup}" 
+											styleClass="aon-icon-commandButton aon-icon-search" 
+											value="#{appBundle.aon_webmail_cc}:"/>
 										<aon:div>
 											<aon:inputText id="NewMail_cc"
 												size="60"
 												value="#{message.recipientsCc}"/>								
 										</aon:div>
 	
-										<aon:outputLabel for="NewMail_Bcc" styleClass="aon-text-bold"
-											value="#{appBundle.aon_webmail_bcc}: " />
+										<aon:commandButton id="addBccEmail" 
+											actionListener="#{message.openEmailsBccPanelPopup}" 
+											styleClass="aon-icon-commandButton aon-icon-search" 
+											value="#{appBundle.aon_webmail_bcc}:"/>
 										<aon:div>
 											<aon:inputText id="NewMail_Bcc"
 												size="60"
@@ -189,20 +188,11 @@
 										</aon:div>										
 										
 										<aon:div styleClass="aon-section-toolbar">
-											<aon:panelGrid cellpadding="2" cellspacing="0" border="0" columns="5"
-												columnClasses="aon-vertical-align-middle,aon-vertical-align-middle">
-												
-												<aon:selectOneRadio value="#{message.selectedDestinyContainer}"
-												partialSubmit="true" style="border:0;">
-												<f:selectItems value="#{message.destinyContainers}" style="border:0;"/>
-												</aon:selectOneRadio>
-												
-												<aon:div style="padding-top:5px;padding-left:1em;">
-													<aon:commandButton id="selectEmail" 
-													actionListener="#{message.acceptAllEmailItems}" 
-													value="Add" styleClass="aon-icon-commandButton aon-icon-accept"/>
-												</aon:div>
-											</aon:panelGrid>
+											<aon:div style="padding-top:5px;padding-left:1em;">
+												<aon:commandButton id="selectEmail" 
+												actionListener="#{message.acceptAllEmailItems}" 
+												value="Add" styleClass="aon-icon-commandButton aon-icon-accept"/>
+											</aon:div>
 										</aon:div>
 										
 										<aon:dataTable
