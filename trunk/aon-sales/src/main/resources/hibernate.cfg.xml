@@ -56,14 +56,11 @@
 		<mapping class="com.code.aon.company.resources.Resource"/>
 		<mapping class="com.code.aon.company.resources.Employee"/>
 
-		<!-- AON-EMPLOYEE Mapping files -->		
-		<mapping class="com.code.aon.employee.WorkGroup"/>
-		<mapping class="com.code.aon.employee.Expenditures"/>
-		<mapping class="com.code.aon.employee.ExpendituresItems"/>
-
 		<!-- AON-GEOZONE Mapping files -->		
 		<mapping class="com.code.aon.geozone.GeoZone"/>			
 		
+		<!-- AON-CONFIG Mapping files -->		
+		<mapping class="com.code.aon.config.Scope"/>			
 	</session-factory>
 
 </hibernate-configuration>

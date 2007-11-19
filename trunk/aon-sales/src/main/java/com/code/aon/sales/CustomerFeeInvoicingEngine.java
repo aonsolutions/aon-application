@@ -13,6 +13,7 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.Month;
 import com.code.aon.customer.Customer;
 import com.code.aon.customer.dao.ICustomerAlias;
+import com.code.aon.customer.enumeration.CustomerStatus;
 import com.code.aon.finance.Invoice;
 import com.code.aon.finance.InvoiceDetail;
 import com.code.aon.finance.InvoicingGroup;
@@ -80,6 +81,7 @@ public class CustomerFeeInvoicingEngine implements IInvoicingEngine {
 		if(params.getWorkPlaceId() != null){
 			criteria.addEqualExpression(customerFeeBean.getFieldName(ISalesAlias.CUSTOMER_FEE_WORK_PLACE_ID), params.getWorkPlaceId());
 		}
+		criteria.addEqualExpression(customerFeeBean.getFieldName(ISalesAlias.CUSTOMER_FEE_CUSTOMER_STATUS), CustomerStatus.ACTIVE);
 		criteria.addOrder(customerFeeBean.getFieldName(ISalesAlias.CUSTOMER_FEE_CUSTOMER_REGISTRY_SURNAME));
 		criteria.addOrder(customerFeeBean.getFieldName(ISalesAlias.CUSTOMER_FEE_CUSTOMER_REGISTRY_NAME));
 		return criteria;

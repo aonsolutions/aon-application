@@ -15,7 +15,7 @@ import com.code.aon.sales.Seller;
 public class SalesAliasWriter {
 
 	public static void main(String[] args) throws Exception{
-		File file = new File("/PROYECTOS/aon-sales/src/com/code/aon/sales/dao/ISalesAlias.java");
+		File file = new File("/AON-PROJECT/aon-sales/src/main/java/com/code/aon/sales/dao/ISalesAlias.java");
 		String[] classes = new String[8];
 		classes[0] = CustomerFee.class.getName();
 		classes[1] = FinanceSales.class.getName();
