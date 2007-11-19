@@ -41,6 +41,20 @@
 							confirmActionListener="#{blacklist.onLoad}"
 							confirmAction="blacklist"
 							accesskey="#{appBundle.aon_webmail_black_white_list_reload}"/>
+						<aon:commandButton
+							id="addWhiteList"
+							value="#{appBundle.aon_webmail_add_white_list}" 
+							styleClass="aon-icon-commandButton aon-icon-white-list aon-italic aon-bold"
+							title="#{appBundle.aon_webmail_add_white_list}"
+							actionListener="#{blacklist.openNewWhitePanelPopup}">
+						</aon:commandButton>
+						<aon:commandButton
+							id="addBlackList"
+							value="#{appBundle.aon_webmail_add_black_list}" 
+							styleClass="aon-icon-commandButton aon-icon-black-list aon-italic aon-bold"
+							title="#{appBundle.aon_webmail_add_black_list}"
+							actionListener="#{blacklist.openNewBlackPanelPopup}" >
+						</aon:commandButton>
 					</aon:div>
 			
 					<!-- end toolbar navigation -->
@@ -110,16 +124,8 @@
 											styleClass="aon-float-left"
 											value="#{whiteTo.selected}">
 										</aon:selectBooleanCheckbox>
-			                            <aon:outputText value="N" rendered="#{whiteTo.added}" />
-			                            <aon:outputText value="#{whiteTo.email}"/>
-			                            <f:facet name="footer">
-											<aon:div>
-												<aon:commandButton alt="[#{bundle.aon_reset}]"
-													styleClass="aon-editTable-button aon-icon-reset"
-													actionListener="#{whitelist.openNewBlackPanelPopup}" value="">
-												</aon:commandButton>
-											</aon:div>
-										</f:facet>
+			                            <aon:outputText value="#{whiteTo.email}(N)" rendered="#{whiteTo.added}" />
+			                            <aon:outputText value="#{whiteTo.email}" rendered="#{!whiteTo.added}" />
 			                        </aon:column>
 			                        
 			                    </aon:dataTable>
@@ -137,16 +143,8 @@
 											styleClass="aon-float-left"
 											value="#{blackTo.selected}">
 										</aon:selectBooleanCheckbox>
-			                            <aon:outputText value="N" rendered="#{blackTo.added}" />
-			                            <aon:outputText value="#{blackTo.email}"/>
-			                            <f:facet name="footer">
-											<aon:div>
-												<aon:commandButton alt="[#{bundle.aon_reset}]"
-													styleClass="aon-editTable-button aon-icon-reset"
-													actionListener="#{blacklist.openNewBlackPanelPopup}" value="">
-												</aon:commandButton>
-											</aon:div>
-										</f:facet>
+			                            <aon:outputText value="#{blackTo.email}(N)" rendered="#{blackTo.added}" />
+			                            <aon:outputText value="#{blackTo.email}" rendered="#{!blackTo.added}" />
 			                        </aon:column>
 								</aon:dataTable>
 							</aon:panelGrid>	
