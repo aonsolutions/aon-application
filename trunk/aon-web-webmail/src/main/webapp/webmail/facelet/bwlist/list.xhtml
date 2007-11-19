@@ -44,14 +44,14 @@
 						<aon:commandButton
 							id="addWhiteList"
 							value="#{appBundle.aon_webmail_add_white_list}" 
-							styleClass="aon-icon-commandButton aon-icon-white-list aon-italic aon-bold"
+							styleClass="aon-content-toolbar-item aon-icon-white-list"
 							title="#{appBundle.aon_webmail_add_white_list}"
 							actionListener="#{blacklist.openNewWhitePanelPopup}">
 						</aon:commandButton>
 						<aon:commandButton
 							id="addBlackList"
 							value="#{appBundle.aon_webmail_add_black_list}" 
-							styleClass="aon-icon-commandButton aon-icon-black-list aon-italic aon-bold"
+							styleClass="aon-content-toolbar-item aon-icon-black-list"
 							title="#{appBundle.aon_webmail_add_black_list}"
 							actionListener="#{blacklist.openNewBlackPanelPopup}" >
 						</aon:commandButton>
@@ -104,19 +104,21 @@
 								value="#{blacklist.addContactsToWhite}" />
 							<aon:outputLabel for="blacklist_score"
 								escape="false" 
-								styleClass="aon-form-input-text-label"
+								styleClass="aon-icon-agenda aon-icon"
 								value="#{appBundle.aon_webmail_add_contacts_to_white_list}" />
 						</aon:panelGrid>
 					</aon:panelGroup>
 					
-							<aon:panelGrid columns="2" cellpadding="0" cellspacing="0">
+							<aon:panelGrid columns="2" cellpadding="0" cellspacing="5">
 	
 			                    <aon:dataTable id="whiteList" 
 						                    	var="whiteTo" 
-						                    	value="#{blacklist.whiteLst}" >
+						                    	value="#{blacklist.whiteLst}" 
+						                    	cellpadding="0" cellpacing="0"
+						                    	rowClasses="aon-dataTable-odd,aon-dataTable-even">
 			                        <aon:column>
 			                            <f:facet name="header">
-											<aon:div>
+											<aon:div styleClass="aon-icon-trash">
 				                                <aon:outputText value="#{appBundle.aon_webmail_blacklist_white}"/>
 											</aon:div>
 			                            </f:facet>
@@ -124,18 +126,19 @@
 											styleClass="aon-float-left"
 											value="#{whiteTo.selected}">
 										</aon:selectBooleanCheckbox>
-			                            <aon:outputText value="#{whiteTo.email}(N)" rendered="#{whiteTo.added}" />
-			                            <aon:outputText value="#{whiteTo.email}" rendered="#{!whiteTo.added}" />
+										 <aon:outputText value="* #{whiteTo.email}" styleClass="aon-highlight aon-italic" rendered="#{whiteTo.added}" />
+			                           	 <aon:outputText value="#{whiteTo.email}" rendered="#{!whiteTo.added}" />
 			                        </aon:column>
 			                        
 			                    </aon:dataTable>
 			                    		
 			                    <aon:dataTable id="blackList" 
 						                    	var="blackTo" 
-						                    	value="#{blacklist.blackLst}" >
+						                    	value="#{blacklist.blackLst}" 
+						                    	rowClasses="aon-dataTable-odd,aon-dataTable-even">
 			                        <aon:column>
 			                            <f:facet name="header">
-											<aon:div>
+											<aon:div styleClass="aon-icon-trash">
 				                                <aon:outputText value="#{appBundle.aon_webmail_blacklist_black}"/>
 											</aon:div>
 			                            </f:facet>
@@ -143,7 +146,7 @@
 											styleClass="aon-float-left"
 											value="#{blackTo.selected}">
 										</aon:selectBooleanCheckbox>
-			                            <aon:outputText value="#{blackTo.email}(N)" rendered="#{blackTo.added}" />
+			                            <aon:outputText value="* #{blackTo.email}" styleClass="aon-highlight aon-italic" rendered="#{blackTo.added}" />
 			                            <aon:outputText value="#{blackTo.email}" rendered="#{!blackTo.added}" />
 			                        </aon:column>
 								</aon:dataTable>
@@ -161,17 +164,23 @@
 				visible="#{blacklist.showNewPanelPopup}">
 			
 				<f:facet name="header">
-					<h:panelGrid id="popupHeaderBlackList" width="100%" cellpadding="0" cellspacing="0" columns="2" 
-					columnClasses="popupIcon,aon-text-right popupButton">
-						<aon:outputText value="#{appBundle.aon_webmail_blacklist_black_new}"/>
-						<aon:commandButton id="popupCloseBlackList" type="button" image="/images/icefaces/popupclose.gif"
-							actionListener="#{blacklist.closeNewPanelPopup}" style="cursor: pointer;"/>
+							<h:panelGrid id="popupHeaderBlackList" width="100%" cellpadding="0" cellspacing="0" columns="2" >
+						
+						<aon:outputText value="#{appBundle.aon_webmail_add_white_list}"
+							rendered="#{!blacklist.blackList}"/>
+						<aon:outputText value="#{appBundle.aon_webmail_add_black_list}"
+							rendered="#{blacklist.blackList}"/>
+						
+						<aon:div style="text-align:right">
+							<aon:commandButton id="popupCloseBlackList" type="button" image="/images/icefaces/popupclose.gif"
+								actionListener="#{blacklist.closeNewPanelPopup}" style="cursor: pointer;"/>
+						</aon:div>
 					</h:panelGrid>
 				</f:facet>
 			
 				<f:facet name="body">
-					<h:panelGrid id="popupBodyBlackList" width="100%" cellpadding="0" cellspacing="0" columns="1"
-						columnClasses="popupIcon,aon-text-right popupButton">
+					<h:panelGrid id="popupBodyBlackList" width="100%" cellpadding="0" cellspacing="0" columns="3"
+						columnClasses="aon-vertical-align-middle,aon-vertical-align-middle,aon-vertical-align-middle">
 						<aon:outputText value="#{appBundle.aon_webmail_email}:" />
 						<aon:inputText 
 							size="40"
