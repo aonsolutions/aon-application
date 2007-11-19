@@ -80,7 +80,7 @@
 							
 								<h:outputLink 
 									id="save"
-									value="webmail/save.jsp" 
+									value="#{webmail.context}/webmail/save.jsp" 
 									target="_blank"
 									styleClass="aon-icon aon-icon-mail-save aon-content-toolbar-item"
 									style="line-height:16px;">
@@ -89,7 +89,7 @@
 							
 								<h:outputLink 
 									id="print"
-									value="webmail/print.jsp" 
+									value="#{webmail.context}/webmail/print.jsp" 
 									target="_blank"
 									styleClass="aon-icon aon-icon-printer aon-content-toolbar-item"
 									style="line-height:16px;">
@@ -198,7 +198,7 @@
 									<aon:column>
 										<h:outputLink 
 											id="download"
-											value="webmail/download.jsp?pos=#{attachment.position}" 
+											value="#{webmail.context}/webmail/download.jsp?pos=#{attachment.position}" 
 											target="_blank">
 											#{attachment.fileName}
 										</h:outputLink>
@@ -207,7 +207,7 @@
 							</aon:panelGroup>
 							<!-- Message Body -->
 							<aon:panelGroup styleClass="aon-box" >
-								<iframe src="webmail/contentIframe.jsp?id=#{webmail.millis}" width="99%" height="430" frameborder="0">
+								<iframe src="#{webmail.context}/webmail/contentIframe.jsp?id=#{webmail.millis}" width="99%" height="430" frameborder="0">
 								</iframe>
 							</aon:panelGroup>
 						</aon:panelGroup>
