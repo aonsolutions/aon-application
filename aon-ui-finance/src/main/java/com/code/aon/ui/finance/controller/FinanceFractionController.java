@@ -150,6 +150,8 @@ public class FinanceFractionController {
 	@SuppressWarnings({"unused","unchecked"})
 	public void onRemoveFraction(ActionEvent event){
 		((LinkedList)getFractionModel().getWrappedData()).remove(this.currentFinance);
+		this.currentFinance = null;
+		this.setNew(false);
 	}
 
 	@SuppressWarnings("unused")
