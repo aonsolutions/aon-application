@@ -23,6 +23,18 @@ public class FinanceControllerListener extends ControllerAdapter{
 	private static final Logger LOGGER = Logger.getLogger(FinanceControllerListener.class.getName());
 	
 	@Override
+	public void beforeModelInitialized(ControllerEvent event) throws ControllerListenerException {
+		Criteria criteria;
+		try {
+			criteria = event.getController().getCriteria();
+			criteria.addOrder(event.getController().getFieldName(IFinanceAlias.FINANCE_REGISTRY_ID));
+			criteria.addOrder(event.getController().getFieldName(IFinanceAlias.FINANCE_DUE_DATE));
+		} catch (ManagerBeanException e) {
+			
+		}
+	}
+	
+	@Override
 	public void beforeBeanAdded(ControllerEvent event) throws ControllerListenerException {
 		FinanceController feeFinanceController = (FinanceController)event.getController();
 		Finance finance = (Finance)feeFinanceController.getTo();
