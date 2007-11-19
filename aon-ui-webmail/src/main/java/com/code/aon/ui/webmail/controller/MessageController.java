@@ -478,6 +478,8 @@ public class MessageController implements IAonFileListener,IFileUploadedListener
 	// EMAIL SELECTION POPUP
 	//********************************************************************************************
     
+    private String selectedDestinyContainer;
+
     private boolean showEmailsPanelPopup;
     
 	public boolean isShowEmailsPanelPopup() {
@@ -492,12 +494,27 @@ public class MessageController implements IAonFileListener,IFileUploadedListener
 		this.showEmailsPanelPopup = false;
 	}
 
-	public void openEmailsPanelPopup(ActionEvent event){
+	public void openEmailsToPanelPopup(ActionEvent event){
 		MultiSelectionEmailBean bean = (MultiSelectionEmailBean)AonUtil.getRegisteredBean(AonConstants.BEAN_MULTISELECTIONEMAIL);
 		bean.init();
 		this.showEmailsPanelPopup = true;
-		this.selectedDestinyContainer = null;
+		this.selectedDestinyContainer = CONTAINER_TO;
 	}
+
+	public void openEmailsCcPanelPopup(ActionEvent event){
+		MultiSelectionEmailBean bean = (MultiSelectionEmailBean)AonUtil.getRegisteredBean(AonConstants.BEAN_MULTISELECTIONEMAIL);
+		bean.init();
+		this.showEmailsPanelPopup = true;
+		this.selectedDestinyContainer = CONTAINER_CC;
+	}
+
+	public void openEmailsBccPanelPopup(ActionEvent event){
+		MultiSelectionEmailBean bean = (MultiSelectionEmailBean)AonUtil.getRegisteredBean(AonConstants.BEAN_MULTISELECTIONEMAIL);
+		bean.init();
+		this.showEmailsPanelPopup = true;
+		this.selectedDestinyContainer = CONTAINER_BCC;
+	}
+
 
 	public void acceptAllEmailItems(ActionEvent event){
 		closeEmailsPanelPopup(null);
@@ -520,30 +537,6 @@ public class MessageController implements IAonFileListener,IFileUploadedListener
         email = null;
 	}
 
-    private String selectedDestinyContainer;
-
-    /**
-	 * @return the selectedDestinyContainer
-	 */
-	public String getSelectedDestinyContainer() {
-		return selectedDestinyContainer;
-	}
-
-	/**
-	 * @param selectedDestinyContainer the selectedDestinyContainer to set
-	 */
-	public void setSelectedDestinyContainer(String selectedDestinyContainer) {
-		this.selectedDestinyContainer = selectedDestinyContainer;
-	}
-
-	public SelectItem[] getDestinyContainers() {
-    	return new SelectItem[]{
-    			new SelectItem(CONTAINER_TO),
-                new SelectItem(CONTAINER_CC),
-                new SelectItem(CONTAINER_BCC)
-        };
-    }
-    
 	private static final String CONTAINER_TO = "To";
 	private static final String CONTAINER_CC = "Cc";
 	private static final String CONTAINER_BCC = "Bcc";
