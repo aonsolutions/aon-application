@@ -47,7 +47,7 @@ public class MailAccountController extends BasicController {
 	}
 	
 	@SuppressWarnings("unused")
-	public void onChangeServer(RowSelectorEvent event){
+	public void onChangeServer(ActionEvent event){
 		error = null;
 		FolderController folderController = (FolderController)AonUtil.getRegisteredBean(AonConstants.BEAN_FOLDER);
 		if (folderController.getFolder()!=null){
@@ -59,12 +59,12 @@ public class MailAccountController extends BasicController {
 				e1.printStackTrace();
 			}
 		}
-		super.onSelect(new ActionEvent(event.getComponent()));
+		super.onSelect(event);
 		WebMailController webmail = (WebMailController)AonUtil.getRegisteredBean(AonConstants.BEAN_WEBMAIL);
 		webmail.getServer().disconnect();
 		MailAccount previous = webmail.getServer().getAccount();
 		try{
-			webmail.init((MailAccount)super.getTo());
+			webmail.init((MailAccount)super.getSelectedTO());
 		}catch (Exception e) {
 			error = e.getMessage();
 			webmail.init((MailAccount)previous);
