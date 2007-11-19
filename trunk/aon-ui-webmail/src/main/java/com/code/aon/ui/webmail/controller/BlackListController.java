@@ -128,16 +128,19 @@ public class BlackListController {
 	        whiteLst = new ArrayList<AonListEmail>();
 	        blackLst = new ArrayList<AonListEmail>();
 	        while ((line = rd.readLine()) != null) {
-	        	String[] a = pattern.split(line);
-	        	if (WHITE.equalsIgnoreCase(a[0])&&
-	        			!whiteLst.contains(a[1])){
-        			whiteLst.add(new AonListEmail(a[1]));
-	        	}else if (BLACK.equalsIgnoreCase(a[0])&&
-	        			!blackLst.contains(a[1])){
-        			blackLst.add(new AonListEmail(a[1]));
-	        	}else{
-	        		props.put(a[0], a[1]);
-	        	}
+        		try{
+		        	String[] a = pattern.split(line);
+		        	if (WHITE.equalsIgnoreCase(a[0])&&
+		        			!whiteLst.contains(a[1])){
+	        			whiteLst.add(new AonListEmail(a[1]));
+		        	}else if (BLACK.equalsIgnoreCase(a[0])&&
+		        			!blackLst.contains(a[1])){
+	        			blackLst.add(new AonListEmail(a[1]));
+		        	}else{
+		        			props.put(a[0], a[1]);
+		        	}
+        		}catch (Exception e) {
+				}
 	        }
 		    try {
 			    int score = new Integer(props.getProperty(SCORE)).intValue();
