@@ -8,6 +8,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.logging.Logger;
 
+import javax.faces.context.FacesContext;
 import javax.faces.event.AbortProcessingException;
 
 import com.code.aon.common.BeanManager;
@@ -120,4 +121,8 @@ public class WebMailController {
         return ""+new GregorianCalendar().getTimeInMillis();
     }
 
+    public String getContext(){
+    	return FacesContext.getCurrentInstance().getExternalContext().getRequestContextPath();
+    }
+    
 }
