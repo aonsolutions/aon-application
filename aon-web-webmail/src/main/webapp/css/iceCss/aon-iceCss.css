@@ -269,19 +269,7 @@ text-decoration:none;
 	border-right:#a1a6b1 1px solid;
 	line-height:2em;
 	}
-/********  FOOT  ***********/
-#aon-footer{
-	display:none;
-	background-color:#464647;
-	border-top:#848585 2px solid;
-	background:#3c3c3d url(images/aon-main-menu/aon-iceMnuBar.png) scroll left top repeat-x;
-	}
-#aon-footer .aon-outputText{
-	color:#e1e1e1;
-	font-size:0.7em;
-	font-weight:bold;
-	margin:2px 1.5em 2px 1.5em;
-	}
+
 /*******   CONTENIDO  ********/
 #aon-content{
 	 }
@@ -327,19 +315,18 @@ text-decoration:none;
 #aon-content .aon-content-toolbar .aon-content-toolbar-internal{
 	  }
 #aon-content .aon-content-toolbar-item{
-	color:#000;
+ 	color:#000;
  	text-transform:uppercase; 	
  	font-size:0.8em;
  	font-weight:bold;
+ 	padding:1px 5px 1px 16px;
+ 	margin:0 0 0 5px;
  	border:0;
  	border-right:#808080 1px solid;
  	text-align:left;
 	cursor:pointer;
 	width:auto;
 	overflow:visible;
- 	margin:0 0 0 5px;
- 	padding:1px 5px 1px 16px;
-
  } 
 
 #aon-content  .aon-content-toolbar-item-hover{
@@ -665,6 +652,18 @@ text-decoration:none;
  }
  .aon-icon-user{
 	background:transparent url(images/aon-icon/aon-icon-user.png) scroll left center no-repeat;	
+ }
+ .aon-icon-exit{
+	background:transparent url(images/aon-icon/aon-icon-exit.png) scroll left center no-repeat;	
+ }
+  .aon-icon-file-exit{
+	background:transparent url(images/aon-icon/aon-icon-file-exit.png) scroll left center no-repeat;	
+ }
+ .aon-icon-file-entrance{
+	background:transparent url(images/aon-icon/aon-icon-file-entrance.png) scroll left center no-repeat;	
+ }
+ .aon-icon-file-exit-cancel{
+	background:transparent url(images/aon-icon/aon-icon-file-exit-cancel.png) scroll left center no-repeat;	
  }
 /* otros */
 .aon-icon-agenda{
