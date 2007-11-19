@@ -181,7 +181,7 @@ public class MarkPrinter implements ICollectionProvider{
 			while (iter.hasNext()){
 				courseSchedule = (CourseSchedule)iter.next();
 				courseScheduleStr += courseSchedule.getDay().getShortName(locale);
-				hours += (courseSchedule.getEndTime().getTime() - courseSchedule.getStartTime().getTime())/1000/60/60;
+				hours += (courseSchedule.getEndTime().getTime() - courseSchedule.getStartTime().getTime())/1000.0/60.0/60.0;
 			}
 			return courseScheduleStr + " " + hours;
 		} catch (ManagerBeanException e) {
