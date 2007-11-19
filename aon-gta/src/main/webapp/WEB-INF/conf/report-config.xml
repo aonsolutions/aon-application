@@ -285,7 +285,6 @@
 			<param id="company" value="#{company.obtainCompany}" />
 			<param id="PriceStrategy" value="#{salesInvoicingDetail.getPriceStrategy}" />
 			<param id="logoImageFile" value="#{company.getAttachAsInputStream}" />
-			<param id="customer" value="#{salesInvoicing.getCustomer}" />
 		</params>
 	</report>
 	
