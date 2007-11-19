@@ -38,31 +38,56 @@
 		<aon:div  >
 			<aon:div >
 
+					<aon:outputText value="#{mailAccount.error}"/>
 					
 					<aon:dataTable id="mailAccountDataList" 
 						value="#{mailAccount.model}" var="to" rows="20"
-						styleClass="aon-dataTable" 
-						>
+						styleClass="aon-dataTable"
+						columnWidths="200,*,120" 
+						rowClasses="aon-dataTable-odd, aon-dataTable-even"
+						columnClasses="aon-table-body aon-table-body-string,
+							aon-table-body aon-table-body-string,
+							aon-table-body aon-table-body-icon">
 					
 							<aon:column>
-								<aon:rowSelector selectionListener="#{mailAccount.onSelect}" 
-									rendered="#{!mailAccount.currentToDefaultAccount}"/>
 								<f:facet name="header">
 									<aon:outputText value="#{appBundle.aon_webmail_mailAccount_name}" />
 								</f:facet>
-								<aon:outputText value="#{to.email}"/>
+								<aon:commandLink action="mailAccount_form" 
+									actionListener="#{mailAccount.onSelect}"
+									rendered="#{!mailAccount.currentToDefaultAccount}">
+									<aon:outputText value="#{to.email}"/>
+								</aon:commandLink>
+								<aon:outputText value="#{to.email}"
+									rendered="#{mailAccount.currentToDefaultAccount}"/>
 							</aon:column>
 
 							<aon:column>
 								<f:facet name="header">
 									<aon:outputText value="#{appBundle.aon_webmail_mailAccount_active}" />
 								</f:facet>
+								<aon:commandLink action="mailAccount_form" 
+									actionListener="#{mailAccount.onSelect}"
+									rendered="#{!mailAccount.currentToDefaultAccount}">
+									<aon:outputText value="#{appBundle.aon_webmail_mailAccount_user_account}" />
+								</aon:commandLink>
 								<aon:outputText value="#{appBundle.aon_webmail_mailAccount_default_account}" 
 									rendered="#{mailAccount.currentToDefaultAccount}"/>
-								<aon:outputText value="#{appBundle.aon_webmail_mailAccount_user_account}" 
-									rendered="#{!mailAccount.currentToDefaultAccount}"/>
 							</aon:column>
 
+							<aon:column>
+								<f:facet name="header">
+									<aon:outputText value="&nbsp;" />
+								</f:facet>
+								<aon:commandButton
+									id="mailAccountChange"
+									title="#{appBundle.aon_webmail_mailAccountChange}"
+									actionListener="#{mailAccount.onChangeServer}"
+									value="#{appBundle.aon_webmail_mailAccountChange}"
+									styleClass="aon-icon-commandButton aon-icon-mailAccountChange">
+								</aon:commandButton>
+							</aon:column>
+							
 						</aon:dataTable>
 						
 						<ui:include src="/facelet/shared/dataScroller.xhtml">
