@@ -147,6 +147,7 @@ public class CourseMarkController{
     	for (int i = 0; i < academicSkills.size(); i++){
         	AlumnMarkHeader alumnMarkHeader = new AlumnMarkHeader();
         	alumnMarkHeader.setPosition(i);
+        	alumnMarkHeader.setCode(((CourseAcademicSkill)academicSkills.get(i)).getAcademicSkill().getCode());
         	alumnMarkHeader.setDescription(((CourseAcademicSkill)academicSkills.get(i)).getAcademicSkill().getDescription());
         	alumnMarkHeaders.add(i,alumnMarkHeader);
     	}
@@ -205,6 +206,8 @@ public class CourseMarkController{
     	
     	private int position; 
     	
+    	private String code;
+    	
     	private String description;
 
 		/**
@@ -219,6 +222,14 @@ public class CourseMarkController{
 		 */
 		public void setPosition(int position) {
 			this.position = position;
+		}
+		
+		public String getCode() {
+			return code;
+		}
+
+		public void setCode(String code) {
+			this.code = code;
 		}
 
 		/**
