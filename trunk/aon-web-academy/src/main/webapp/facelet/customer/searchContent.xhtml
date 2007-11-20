@@ -20,6 +20,13 @@
 			<h:panelGrid columns="2" styleClass="aon-form-table"
 				columnClasses="aon-form-table-column-odd,aon-form-table-column-even">
 
+				<t:outputLabel for="Customer_id"
+					value="#{registryBundle.aon_id}"
+					styleClass="aon-form-input-text-label aon-form-table-column-odd-label" />
+				<t:inputText id="Customer_id" size="6"
+					valueChangeListener="#{customerAlias.addExpression}"
+					styleClass="aon-form-input-text" />
+					
 				<t:outputLabel for="Customer_registry_document"
 					value="#{registryBundle.aon_nif}"
 					styleClass="aon-form-input-text-label aon-form-table-column-odd-label" />
@@ -59,6 +66,7 @@
 					styleClass="aon-form-selectOneMenu-field"
 					converter="aonCustomerStatusConverter" forceId="#{true}"
 					valueChangeListener="#{customerAlias.addExpression}">
+					<f:selectItem itemDisabled="true" itemLabel="-" itemValue="" />
 					<f:selectItems value="#{customerCollections.customerStatuses}" />
 				</h:selectOneMenu>
 
