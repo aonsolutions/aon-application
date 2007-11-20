@@ -57,7 +57,12 @@
 				<aon:commandButton id="reset" value="#{bundle.aon_reset}"
 					actionListener="#{mailAccount.onReset}" rendered="#{!mailAccount.new}"
 					styleClass="aon-content-toolbar-item aon-icon-newMailAccount"
-					accesskey="#{bundle.aon_key_new}" />	
+					accesskey="#{bundle.aon_key_new}" />
+					<!-- 
+				<aon:commandButton id="newSignature" value="#{appBundle.aon_webmail_signature}"
+					action="signature_form" actionListener="#{signature.onReset}"
+					styleClass="aon-content-toolbar-item aon-icon-newSignature" />-->
+				
 			</aon:div>
 
 						<aon:panelGrid columns="2" dir="true" styleClass="aon-formTable"

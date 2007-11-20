@@ -70,6 +70,7 @@ text-decoration:none;
 #aon-content .aon-italic 		{ font-style:italic; }
 #aon-content .aon-underline 		{ border-bottom:1px solid; }
 #aon-content .aon-highlight 		{ background:#ffc; }
+#aon-content .aon-line-through 		{ text-decoration: line-through }
 
 #aon-content .aon-nowrap 		{ width:100%;margin:0 auto; white-space:nowrap;}
 
@@ -120,12 +121,14 @@ text-decoration:none;
 	left:5px;
 	top:3px;
 	border:#000 1px solid;	
+	background-color:#fff;
 	}
 
 #aon-content .aon-connection-control{
 	margin:0;
 	padding:0;
-}
+	background-color:#fff;
+	}
 
 #aon-content #aon-header .aon-applicationName .aon-outputText{
 	font-weight:bold;
@@ -1277,6 +1280,12 @@ text-decoration:none;
 	padding:0 0.5em 2px 0.5em;
 	font-size:0.9em;
 }
+.aon-group-body{
+	padding:0 1em;
+	}
+.aon-group-body-internal{
+	width:100%;
+	}	
 /*** calendar ****/
 .aon-calendar-Input{
 	margin:0 5px 0 2px;
