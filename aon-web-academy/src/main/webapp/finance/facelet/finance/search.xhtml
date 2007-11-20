@@ -196,6 +196,17 @@
 								<f:selectItem itemDisabled="true" itemLabel="-" itemValue=""/>
 								<f:selectItems value="#{financeCollections.payMethods}" />
 							</h:selectOneMenu>
+
+							<h:outputLabel for="Finance_financeStatus"
+								styleClass="aon-form-input-text-label"
+								value="#{financeBundle.finance_status}" />
+							<h:selectOneMenu id="Finance_financeStatus"
+								styleClass="aon-form-selectOneMenu-field"
+								converter="financeStatusConverter" forceId="#{true}"
+								valueChangeListener="#{finance.addExpression}">
+								<f:selectItem itemDisabled="true" itemLabel="-" itemValue=""/>
+								<f:selectItems value="#{financeCollections.financeStatuses}" />
+							</h:selectOneMenu>
 							
 					</h:panelGrid>
 				</t:div>
