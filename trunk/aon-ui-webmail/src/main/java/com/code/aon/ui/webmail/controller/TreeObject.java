@@ -148,4 +148,9 @@ public class TreeObject extends IceUserObject {
         }
     }
 
+    public void moveMessageToFolder(ActionEvent event) {
+    	MessageController messageController = (MessageController)AonUtil.getRegisteredBean(AonConstants.BEAN_MESSAGE);
+    	messageController.moveSelectedMessageAndMove(this.folder);
+    }
+    
 }
