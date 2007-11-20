@@ -3,6 +3,12 @@
 	<name>aon-web-webmail</name>
 	<comment></comment>
 	<projects>
+		<project>aon-webmail</project>
+		<project>aon-ui-common</project>
+		<project>aon-ql</project>
+		<project>aon-common</project>
+		<project>aon-components</project>
+		<project>aon-ui-webmail</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>
