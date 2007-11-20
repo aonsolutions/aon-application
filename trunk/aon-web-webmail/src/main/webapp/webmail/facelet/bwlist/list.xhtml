@@ -135,7 +135,7 @@
 					                        
 					                        <aon:column>
 					                            <f:facet name="header">
-													   <aon:outputText value="Cuentas"/>
+													   <aon:outputText value="#{appBundle.aon_webmail_black_white_list_accounts}"/>
 											    </f:facet>
 						                        <aon:outputText value="#{whiteTo.email}" styleClass="aon-bold" rendered="#{whiteTo.added and !whiteTo.selected}" />
 						                        <aon:outputText value="#{whiteTo.email}" styleClass="aon-line-through"  rendered="#{whiteTo.selected}" />
@@ -172,7 +172,7 @@
 						                        </aon:column>
 						                        <aon:column>
 						                            <f:facet name="header">											
-							                                <aon:outputText value="Cuentas"/>
+													   <aon:outputText value="#{appBundle.aon_webmail_black_white_list_accounts}"/>
 												    </f:facet>															
 							                            <aon:outputText value="#{blackTo.email}" styleClass="aon-bold" rendered="#{blackTo.added and !blackTo.selected}" />
 							                            <aon:outputText value="#{blackTo.email}" styleClass="aon-line-through" rendered="#{blackTo.selected}" />
