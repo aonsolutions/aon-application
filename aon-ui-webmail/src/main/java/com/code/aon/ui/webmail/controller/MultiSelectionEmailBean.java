@@ -28,6 +28,7 @@ public class MultiSelectionEmailBean {
 			IManagerBean bean = BeanManager.getManagerBean(Contact.class);
 			Criteria criteria = new Criteria();
 			criteria.addEqualExpression(bean.getFieldName(IGroupWareAlias.CONTACT_USER_ID), account.getUser().getId());
+			criteria.addOrder(bean.getFieldName(IGroupWareAlias.CONTACT_NAME));
 			List lst = lst = bean.getList(criteria);
             for (int i = 0, max = lst.size(); i < max; i++) {
             	SelectionEmail se = new SelectionEmail();
