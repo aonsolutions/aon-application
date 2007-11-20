@@ -194,7 +194,8 @@ public class FBatchController extends BasicController {
             if (!to.getFinanceBatchType().equals(FinanceBatchType.NONE)) {
                 criteria.addEqualExpression(controller.getFieldName(IFinanceAlias.FINANCE_PAY_METHOD_TYPE), PayMethodType.NEGOTIABLE_DOCUMENT);
                 if (!to.getFinanceBatchType().equals(FinanceBatchType.CSB_58)) {
-                    criteria.addNotNullExpression(controller.getFieldName(IFinanceAlias.FINANCE_BANK_ACCOUNT));
+                	criteria.addNotNullExpression(controller.getFieldName(IFinanceAlias.FINANCE_BANK_ACCOUNT));
+                	criteria.addExpression(ExpressionUtilities.getNotEqualExpression(controller.getFieldName(IFinanceAlias.FINANCE_BANK_ACCOUNT), ""));
                     if (!to.getFinanceBatchType().equals(FinanceBatchType.CSB_32)) {
                         criteria.addLessThanOrEqualExpression(controller.getFieldName(IFinanceAlias.FINANCE_DUE_DATE), to.getIssueDate());
                     }
