@@ -15,6 +15,7 @@ import java.util.logging.Logger;
 
 import javax.activation.DataHandler;
 import javax.activation.FileDataSource;
+import javax.faces.context.FacesContext;
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 import javax.faces.model.SelectItem;
@@ -716,5 +717,47 @@ public class MessageController implements IAonFileListener,IFileUploadedListener
 	public void nextMessage(ActionEvent event) {
 		setMessage(getNextMessage());
 	}
+
+	//********************************************************************************************
+	// DESTINY FOLDER SELECTION POPUP
+	//********************************************************************************************
+    
+    private boolean showFoldersPanelPopup;
+    
+	public boolean isShowFoldersPanelPopup() {
+		return showFoldersPanelPopup;
+	}
+
+	public void setShowFoldersPanelPopup(boolean showNewFolderPanelPopup) {
+		this.showFoldersPanelPopup = showFoldersPanelPopup;
+	}
+    
+	public void closeFoldersPanelPopup(ActionEvent event){
+		this.showFoldersPanelPopup = false;
+	}
+
+	public void openFoldersPanelPopup(ActionEvent event){
+		this.showFoldersPanelPopup = true;
+	}
+
+    public void moveSelectedMessageAndMove(AonFolder dest){
+    	AonMessage nextMessage = null; 
+    	if(isNextMessage()){
+    		nextMessage = getNextMessage();
+    	}else if (isPreviousMessage()){
+    		nextMessage = getPreviousMessage();
+    	}
+    	ArrayList<AonMessage> lst = new ArrayList<AonMessage>();
+		lst.add(this.message);
+		try{
+	    	message.getParent().moveMessages(lst, dest);
+		} catch (MessagingException e) {
+			AonUtil.addErrorMessage(e.getMessage());
+			throw new AbortProcessingException(e);
+		}
+    	setMessage(nextMessage);
+    	closeFoldersPanelPopup(null);
+	}
+
 
 }
