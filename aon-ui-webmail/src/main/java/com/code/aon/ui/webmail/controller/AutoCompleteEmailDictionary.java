@@ -83,6 +83,11 @@ public class AutoCompleteEmailDictionary {
                 if (tmpEmail != null && tmpEmail.getEmail() != null) {
                     dictionary.add(new SelectItem(tmpEmail, tmpEmail.getEmail()));
                 }
+                if (tmpEmail != null && 
+                		tmpEmail.getEmail() != null &&
+                		tmpEmail.getName() != null ){
+                    dictionary.add(new SelectItem(tmpEmail, tmpEmail.getName()+" <"+tmpEmail.getEmail()+">"));
+                }
             }
             emails.clear();
             Collections.sort(dictionary, LABEL_COMPARATOR);
