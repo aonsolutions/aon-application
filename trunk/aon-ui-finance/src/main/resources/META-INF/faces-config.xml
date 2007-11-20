@@ -749,6 +749,12 @@
 		<converter-id>fBatchTypeConverter</converter-id>
 		<converter-class>com.code.aon.ui.finance.converter.FinanceBatchTypeConverter</converter-class>
 	</converter>
+
+	<converter>
+		<description>Conversor para FinanceStatus</description>
+		<converter-id>financeStatusConverter</converter-id>
+		<converter-class>com.code.aon.ui.finance.converter.FinanceStatusConverter</converter-class>
+	</converter>
 	
   <!-- =================== Navigation Rules ================= -->
 	
