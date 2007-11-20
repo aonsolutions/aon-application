@@ -23,7 +23,6 @@
 	<import value="net.sf.jasperreports.engine.*" />
 	<import value="net.sf.jasperreports.engine.data.*" />
 
-	<parameter name="PriceStrategy" isForPrompting="false" class="com.code.aon.product.strategy.IPriceStrategy"/>
 	<parameter name="printHeaders" isForPrompting="false" class="java.lang.Boolean"/>
 	<parameter name="logoImageFile" isForPrompting="true" class="java.io.InputStream"/>
 	<parameter name="company" isForPrompting="false" class="com.code.aon.company.Company"/>
