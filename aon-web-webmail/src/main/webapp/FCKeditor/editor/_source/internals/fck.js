@@ -1,4 +1,4 @@
-﻿/*
+/*
  * FCKeditor - The text editor for Internet - http://www.fckeditor.net
  * Copyright (C) 2003-2007 Frederico Caldeira Knabben
  *
@@ -808,7 +808,7 @@ var FCKFocusManager = FCK.FocusManager =
 	Unlock : function()
 	{
 		if ( this._HasPendingBlur )
-			FCKFocusManager._Timer = window.setTimeout( FCKFocusManager_FireOnBlur, 100 ) ;
+			FCKFocusManager._Timer = window.setTimeout( FCKFocusManager_FireOnBlur, 10 ) ;
 
 		this.IsLocked = false ;
 	},
@@ -830,7 +830,7 @@ function FCKFocusManager_Win_OnBlur()
 	if ( typeof(FCK) != 'undefined' && FCK.HasFocus )
 	{
 		FCKFocusManager._ResetTimer() ;
-		FCKFocusManager._Timer = window.setTimeout( FCKFocusManager_FireOnBlur, 100 ) ;
+		FCKFocusManager._Timer = window.setTimeout( FCKFocusManager_FireOnBlur, 10 ) ;
 	}
 }
 
@@ -880,3 +880,5 @@ function reloadEditingArea()
 }
 
 FCK.LinkedField.onpropertychange=reloadEditingArea;
+
+
