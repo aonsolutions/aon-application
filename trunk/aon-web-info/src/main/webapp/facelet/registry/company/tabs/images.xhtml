@@ -2,7 +2,6 @@
 <html xmlns="http://www.w3.org/1999/xhtml"
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:f="http://java.sun.com/jsf/core"
-	xmlns:ice="http://www.icesoft.com/icefaces/component"
 	xmlns:aon="http://www.code.es/aon-components">
 <body>
 
@@ -24,9 +23,9 @@
 						toggleOnClick="#{companyImages.to == null}"
 						selectionListener="#{companyImages.onSelect}" />
 					<f:facet name="header">
-						<f:verbatim>&#160;</f:verbatim>
+						<aon:outputText value="&#160;"/>
 					</f:facet>
-					<f:verbatim>&#160;</f:verbatim>
+					<aon:outputText value="&#160;"/>
 					<f:facet name="footer">
 						<aon:div>
 									<aon:commandButton id="reset"
