@@ -6,6 +6,8 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
+import java.util.ResourceBundle;
 import java.util.logging.Logger;
 
 import javax.faces.context.FacesContext;
@@ -22,8 +24,10 @@ import com.code.aon.ui.webmail.bean.AonConstants;
 import com.code.aon.ui.webmail.bean.AonServer;
 import com.code.aon.ui.webmail.exception.WebmailException;
 import com.code.aon.webmail.MailAccount;
+import com.code.aon.webmail.Signature;
 import com.code.aon.webmail.dao.IWebMailAlias;
 import com.code.aon.webmail.enumeration.MailAccountStatus;
+import com.code.aon.webmail.enumeration.SignatureType;
 
 public class WebMailController {
 
@@ -59,6 +63,7 @@ public class WebMailController {
 			if (mailAccount!=null){
 				server = new AonServer(mailAccount);
 				server.createBasicFolders();
+				createDefaultSignature(mailAccount);
 			}else{
 	    		AonUtil.addErrorMessage("NOT VALID ACCOUNT");
 			}
@@ -71,6 +76,7 @@ public class WebMailController {
 	public void init(MailAccount mailAccount){
 		server = new AonServer(mailAccount);
 		server.createBasicFolders();
+		createDefaultSignature(mailAccount);
     	TreeController treeController = (TreeController)AonUtil.getRegisteredBean(AonConstants.BEAN_TREE);
 		try {
 			treeController.loadTree();
@@ -125,4 +131,27 @@ public class WebMailController {
     	return FacesContext.getCurrentInstance().getExternalContext().getRequestContextPath();
     }
     
+    private void createDefaultSignature(MailAccount mailAccount){
+        try {
+			IManagerBean signatureBean = BeanManager.getManagerBean(Signature.class);
+			Criteria criteria = new Criteria();
+			criteria.addEqualExpression(signatureBean.getFieldName(IWebMailAlias.SIGNATURE_MAIL_ACCOUNT_ID), mailAccount.getId());
+			if (signatureBean.getList(criteria).isEmpty()){
+	        	String BASE_NAME = "com.code.aon.ui.webmail.i18n.messages";
+	    		Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
+	            ResourceBundle bundle = ResourceBundle.getBundle(BASE_NAME, locale); 
+	        	Signature signature = new Signature();
+	        	signature.setActive(SignatureType.ACTIVE);
+	        	signature.setName(bundle.getString("aon_webmail_signature_defname"));
+	        	signature.setMailAccount(mailAccount);
+	        	signature.setSignature("<br><br><br><hr>"+
+	        			"<b><font size='4'>"+getLoggedUserName()+"</font></b><p>"+
+	        			"<b><font size='2'>"+getCompanyName()+"</font></b><p>"+
+	        			"<br>"+
+	        			"<i>"+bundle.getString("aon_webmail_signature_deftext")+"</i>");
+				signatureBean.insert(signature);
+			}
+		} catch (ManagerBeanException e) {
+		}
+    }
 }
