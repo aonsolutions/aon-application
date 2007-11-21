@@ -5,6 +5,7 @@ import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import javax.faces.event.AbortProcessingException;
 import javax.mail.AuthenticationFailedException;
 import javax.mail.Folder;
 import javax.mail.Message;
@@ -20,6 +21,7 @@ import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 
+import com.code.aon.ui.util.AonUtil;
 import com.code.aon.ui.webmail.exception.WebmailException;
 import com.code.aon.webmail.MailAccount;
 
@@ -256,10 +258,16 @@ public class AonServer {
             return true;
         } catch (SendFailedException e) {
         	LOGGER.log(Level.ALL,"Message send failed " , e);
-            return false;
+			AonUtil.addErrorMessage(e.getMessage());
+			throw new AbortProcessingException(e);
         } catch (MessagingException e) {
         	LOGGER.log(Level.ALL,"Message was not sent correctly " , e);
-            return false;
+			AonUtil.addErrorMessage(e.getMessage());
+			throw new AbortProcessingException(e);
+        } catch (Throwable e) {
+        	LOGGER.log(Level.ALL,"Message was not sent correctly " , e);
+			AonUtil.addErrorMessage(e.getMessage());
+			throw new AbortProcessingException(e);
         }
     }
 
