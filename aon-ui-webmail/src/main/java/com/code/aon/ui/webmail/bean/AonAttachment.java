@@ -60,6 +60,16 @@ public class AonAttachment{
 		return fileName;
 	}
 	
+	public String getFileSize(){
+		try {
+			int size = part.getSize();
+			size = size * 75 /100 / 1000;
+			return String.valueOf(size)+" Kb";
+		} catch (MessagingException e) {
+		}
+		return "";
+	}
+	
 	public void download() throws WebmailException {
 		try {
 			String filename = part.getFileName();
