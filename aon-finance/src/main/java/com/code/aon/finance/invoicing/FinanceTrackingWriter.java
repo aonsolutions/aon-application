@@ -40,7 +40,7 @@ public class FinanceTrackingWriter {
 			Criteria criteria = new Criteria();
 			criteria.addEqualExpression(financeTrackingBean.getFieldName(IFinanceAlias.FINANCE_TRACKING_TYPE), type);
 			criteria.addOrder(financeTrackingBean.getFieldName(IFinanceAlias.FINANCE_TRACKING_ID),false);
-			Iterator iter = financeTrackingBean.getList(criteria).iterator();
+			Iterator iter = financeTrackingBean.getList(criteria,0,1).iterator();
 			if(iter.hasNext()){
 				FinanceTracking tracking = (FinanceTracking)iter.next();
 				financeTrackingBean.remove(tracking);
