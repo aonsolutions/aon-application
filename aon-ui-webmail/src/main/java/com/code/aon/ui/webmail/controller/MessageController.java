@@ -870,6 +870,7 @@ public class MessageController implements IAonFileListener,IFileUploadedListener
 		List list = contactsBean.getList(criteria);
 		if (list.size()==0){
 			if (email.equals(contactName)){
+				contactName = "";
 				showAddContactPanelPopup = true;
 			}else{
 				saveToContacts(event);
