@@ -149,6 +149,13 @@
 											value="#{appBundle.aon_webmail_from}: " />
 										<aon:div>
 											<aon:outputText escape="false" converter="longString" value="#{message.message.sender}" />
+											<aon:commandButton
+												id="addToContacts"
+												title="#{appBundle.aon_webmail_email_add}"
+												actionListener="#{message.addToContacts}"
+												value="#{appBundle.aon_webmail_email_add}"
+												styleClass="aon-icon-commandButton aon-icon-agenda aon-italic aon-bold">
+											</aon:commandButton>
 											<aon:confirmButton id="add_white_list"
 												rendered="#{blacklist.whiteListEmail}"
 												value="#{appBundle.aon_webmail_add_white_list}" 
@@ -327,7 +334,35 @@
 				</f:facet>
 			</ice:panelPopup>			
 			
+			<ice:panelPopup styleClass="aon-popup-"
+				modal="true"
+				rendered="true"
+				style="z-index:999; top: 200px; left: 400px; width: 300px; position:absolute; background: #FFFFFF;"
+				visible="#{message.showAddContactPanelPopup}">
 			
+				<f:facet name="header">
+					<h:panelGrid id="popupAddContactHeader" width="100%" cellpadding="0" cellspacing="0" columns="2" 
+					columnClasses="popupIcon,aon-text-right popupButton">
+						<aon:outputText value="#{appBundle.aon_webmail_email_alias}"/>
+						<aon:commandButton id="popupCloseAddContact" type="button" image="/images/icefaces/popupclose.gif"
+							actionListener="#{message.closeAddContactPanelPopup}" style="cursor: pointer;"/>
+					</h:panelGrid>
+				</f:facet>
+			
+				<f:facet name="body">
+					<h:panelGrid id="popupAddContactBody" width="100%" cellpadding="0" cellspacing="0" columns="1"
+						columnClasses="popupIcon,aon-text-right popupButton">
+						<aon:outputText value="#{appBundle.aon_webmail_email_alias}" />
+						<aon:inputText id="Contact_name"
+							styleClass="aon-form-input-text"
+							size="70" maxlength="64"
+							value="#{message.contactName}" />
+						<aon:commandButton id="closeModalAddContact" 
+							styleClass="aon-icon-commandButton aon-icon-accept"
+							actionListener="#{message.saveToContacts}" value="Ok"/>
+					</h:panelGrid>
+				</f:facet>
+			</ice:panelPopup>			
 		</aon:form>
 		<aon:form id="placeList" target="list" />
 	</ui:define>
