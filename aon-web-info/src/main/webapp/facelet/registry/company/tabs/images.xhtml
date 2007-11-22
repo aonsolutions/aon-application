@@ -54,7 +54,7 @@
 			</ui:include>
 		</aon:div>	
 		
-		<aon:div styleClass="aon-group" rendered="#{companyImages.to != null and !companyImages.new}">	
+		<aon:div styleClass="aon-group" rendered="#{(companyImages.to != null) or (companyImages.new)}">	
 			<aon:div styleClass="aon-group-title">		
 				<aon:outputLabel for="RegistryAttachment_preview"
 					value="#{registryBundle.aon_company_logo_preview}" />
