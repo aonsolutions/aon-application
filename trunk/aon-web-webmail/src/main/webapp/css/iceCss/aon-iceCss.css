@@ -533,10 +533,12 @@ text-decoration:none;
 #aon-content .aon-noborder-table{
 	width:auto;
 	border:0;
+	background: transparent;
 	}
 #aon-content .aon-noborder-table td{
 	border:0;
-	}
+	background: transparent;
+}
 /****** DATA SCROLLER *********/  
 #aon-content .aon-datascroller{
 	border-top:#eaeaea 5px solid;
