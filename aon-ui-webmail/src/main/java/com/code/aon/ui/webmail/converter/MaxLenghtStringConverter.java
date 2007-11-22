@@ -4,7 +4,6 @@ import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 import javax.faces.convert.Converter;
 import javax.faces.convert.ConverterException;
-import java.util.regex.*;
 
 /**
  * Custom converter break the long line of string into several lines based on the
@@ -12,11 +11,16 @@ import java.util.regex.*;
  */
 public class MaxLenghtStringConverter implements Converter {
 
+	private static int max = 120;
 
-    public Object getAsObject(FacesContext context, UIComponent component,
+    public static int getMax() {
+		return max;
+	}
+
+	public Object getAsObject(FacesContext context, UIComponent component,
                               String valueStr) {
-	    if(valueStr.length() > 30)
-        return valueStr.substring(0, 30);
+	    if(valueStr.length() > max)
+        return valueStr.substring(0, max);
         else
         return valueStr;
     }
@@ -25,8 +29,8 @@ public class MaxLenghtStringConverter implements Converter {
     public String getAsString(FacesContext context, UIComponent component,
                               Object value) throws ConverterException {
     	String valueStr = (String)value; 
-	    if(valueStr.length() > 30)
-        return valueStr.substring(0, 30);
+	    if(valueStr.length() > max)
+        return valueStr.substring(0, max);
         else
         return valueStr;
     }
