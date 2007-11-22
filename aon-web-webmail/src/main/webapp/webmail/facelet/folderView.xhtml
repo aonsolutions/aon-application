@@ -55,6 +55,7 @@
 								</aon:commandButton>
 							
 								<aon:confirmButton id="deleteButton_n"
+									rendered="#{folder.folder.deleteableAllMessages}"
 									title="#{appBundle.aon_webmail_deletemail}"
 									confirmTitle="Confirmation Dialog" 
 									confirmMessage="#{bundle.aon_remove_confirm}"
@@ -62,6 +63,13 @@
 									confirmActionListener="#{folder.deleteCheckedMessages}"
 									value="#{appBundle.aon_webmail_deletemail}"
 									styleClass="aon-icon-mailDelete aon-content-toolbar-item" />
+								<aon:commandButton
+									rendered="#{!folder.folder.deleteableAllMessages}"
+									title="#{appBundle.aon_webmail_deletemail}"
+									actionListener="#{folder.deleteCheckedMessages}"
+									value="#{appBundle.aon_webmail_deletemail}"
+									styleClass="aon-icon-mailDelete aon-content-toolbar-item" >
+								</aon:commandButton>								
 							
 								<aon:commandButton
 									id="searchMail"
