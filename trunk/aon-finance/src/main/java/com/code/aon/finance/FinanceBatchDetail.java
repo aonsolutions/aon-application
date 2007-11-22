@@ -131,4 +131,15 @@ public class FinanceBatchDetail implements ITransferObject {
     public void setStatus(FinanceStatus status) {
         this.status = status;
     }
+    
+    @Override
+    public boolean equals(Object obj) {
+    	if(id == null){
+    		return super.equals(obj);
+    	}
+        if (obj instanceof FinanceBatchDetail) {
+            return (this.id.equals(((FinanceBatchDetail)obj).getId()));
+        }
+        return false;
+    }
 }
