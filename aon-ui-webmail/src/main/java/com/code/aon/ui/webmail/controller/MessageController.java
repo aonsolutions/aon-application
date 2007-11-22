@@ -44,6 +44,7 @@ import com.code.aon.ui.webmail.bean.AonFolder;
 import com.code.aon.ui.webmail.bean.AonMessage;
 import com.code.aon.ui.webmail.bean.AonMessageTracer;
 import com.code.aon.ui.webmail.bean.AonMessageUtils;
+import com.code.aon.ui.webmail.converter.MaxLenghtStringConverter;
 import com.code.aon.ui.webmail.exception.WebmailException;
 import com.code.aon.ui.webmail.listener.IAonFileListener;
 import com.code.aon.ui.webmail.listener.IFileUploadedListener;
@@ -89,8 +90,13 @@ public class MessageController implements IAonFileListener,IFileUploadedListener
 	 */
 	public void setMessage(AonMessage message) {
 		this.message = message;
+		afterSetMessage();
 	}
 
+
+	private void afterSetMessage(){
+		initShotMessageToCcBcc();
+	}
 	
 	
 	/**
@@ -759,5 +765,71 @@ public class MessageController implements IAonFileListener,IFileUploadedListener
     	closeFoldersPanelPopup(null);
 	}
 
+	//********************************************************************************************
+	// TO, CC, BCC LONG/SHOT
+	//********************************************************************************************
+    
+    private boolean shotMessageTo;
+    private boolean shotMessageCc;
 
+    private void initShotMessageToCcBcc(){
+        shotMessageTo = false;
+        shotMessageCc = false;
+    }
+    
+    public boolean isShotMessageTo() {
+    	return shotMessageTo;
+	}
+
+	public void changeShotMessageTo(ActionEvent event){
+    	shotMessageTo = !shotMessageTo;
+    }
+
+	private boolean isShotMessageToControl(){
+    	try {
+			if (message.getRecipientsTo().length()>MaxLenghtStringConverter.getMax())
+				return true;
+		} catch (Exception e) {
+		}
+		return false;
+	}
+	
+	public boolean isShotMessageToControlUp(){
+		if (isShotMessageToControl()) return shotMessageTo;
+		return false;
+	}
+	
+	public boolean isShotMessageToControlDown(){
+		if (isShotMessageToControl()) return !shotMessageTo;
+		return false;
+	}
+	
+    public boolean isShotMessageCc() {
+    	return shotMessageCc;
+	}
+
+	public void changeShotMessageCc(ActionEvent event){
+    	shotMessageCc = !shotMessageCc;
+    }
+	
+    private boolean isShotMessageCcControl() {
+    	try {
+			if (message.getRecipientsCc().length()>MaxLenghtStringConverter.getMax())
+				return true;
+		} catch (Exception e) {
+		}
+		return false;
+	}
+
+	public boolean isShotMessageCcControlUp(){
+		if (isShotMessageCcControl()) return shotMessageCc;
+		return false;
+	}
+	
+	public boolean isShotMessageCcControlDown(){
+		if (isShotMessageCcControl()) return !shotMessageCc;
+		return false;
+	}
+	
+	
 }
