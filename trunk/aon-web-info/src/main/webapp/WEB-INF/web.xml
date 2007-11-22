@@ -43,18 +43,6 @@
 		<param-name>facelets.SKIP_COMMENTS</param-name>
 		<param-value>true</param-value>
 	</context-param>
-<!-- 
-	<context-param>
-		<description>
-			A semicolon (;) delimitted list of paths to Facelet tag
-			libraries, relative to your application's root. These
-			libraries will be loaded when the first request hits the
-			FaceletViewHandler for page compilation.
-		</description>
-		<param-name>facelets.LIBRARIES</param-name>
-		<param-value>/WEB-INF/aon-components.taglib.xml</param-value>
-	</context-param>
- -->
  
 	<context-param>
 		<description>
@@ -143,47 +131,21 @@
 		<param-value>true</param-value>
 	</context-param>
 
+	<!-- UPLOAD DIR -->
+	<context-param>
+	    <param-name>com.icesoft.faces.uploadDirectory</param-name>
+	    <param-value>/uploads</param-value>
+	</context-param>
+	
+	<context-param>
+        <param-name>com.icesoft.faces.uploadDirectoryAbsolute</param-name>
+		<param-value>true</param-value>
+	</context-param>
+
 	<context-param>
 		<param-name>com.icesoft.faces.uploadMaxFileSize</param-name>
 		<param-value>16777216</param-value>
 	</context-param>
-
-	<context-param>
-		<param-name>
-			com.icesoft.faces.uploadDirectoryAbsolute
-		</param-name>
-		<param-value>true</param-value>
-	</context-param>
-
-	<!-- Main Dispatch Servlet -->
-	<servlet>
-		<servlet-name>Main Dispatch Servlet</servlet-name>
-		<servlet-class>
-			com.icesoft.faces.webapp.http.servlet.MainServlet
-		</servlet-class>
-		<load-on-startup>1</load-on-startup>
-	</servlet>
-
-	<servlet-mapping>
-		<servlet-name>Main Dispatch Servlet</servlet-name>
-		<url-pattern>/xmlhttp/*</url-pattern>
-	</servlet-mapping>
-
-	<servlet-mapping>
-		<servlet-name>Main Dispatch Servlet</servlet-name>
-		<url-pattern>*.iface</url-pattern>
-	</servlet-mapping>
-
-	<!-- blocking request Mapping -->
-	<servlet-mapping>
-		<servlet-name>Main Dispatch Servlet</servlet-name>
-		<url-pattern>/block/*</url-pattern>
-	</servlet-mapping>
-
-	<servlet-mapping>
-		<servlet-name>Main Dispatch Servlet</servlet-name>
-		<url-pattern>*.jspx</url-pattern>
-	</servlet-mapping>
 
 	<!-- Faces Servlet -->
 	<servlet>
@@ -198,6 +160,39 @@
 	<servlet-mapping>
 		<servlet-name>Faces Servlet</servlet-name>
 		<url-pattern>/faces/</url-pattern>
+	</servlet-mapping>
+
+	<servlet>
+		<servlet-name>Persistent Faces Servlet</servlet-name>
+		<servlet-class>
+			com.icesoft.faces.webapp.xmlhttp.PersistentFacesServlet
+		</servlet-class>
+		<load-on-startup>1</load-on-startup>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>Persistent Faces Servlet</servlet-name>
+		<url-pattern>/xmlhttp/*</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>Persistent Faces Servlet</servlet-name>
+		<url-pattern>*.iface</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>Persistent Faces Servlet</servlet-name>
+		<url-pattern>*.jspx</url-pattern>
+	</servlet-mapping>
+
+	<!-- Blocking Servlet -->
+	<servlet>
+		<servlet-name>Blocking Servlet</servlet-name>
+		<servlet-class>
+			com.icesoft.faces.webapp.xmlhttp.BlockingServlet
+		</servlet-class>
+		<load-on-startup>1</load-on-startup>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>Blocking Servlet</servlet-name>
+		<url-pattern>/block/*</url-pattern>
 	</servlet-mapping>
 
 	<!-- Lookup Bean Servlet -->
@@ -217,9 +212,7 @@
 	<!-- File Upload Servlet -->
 	<servlet>
 		<servlet-name>uploadServlet</servlet-name>
-		<servlet-class>
-			com.icesoft.faces.component.inputfile.FileUploadServlet
-		</servlet-class>
+         <servlet-class>com.icesoft.faces.component.inputfile.FileUploadServlet</servlet-class>
 		<load-on-startup>1</load-on-startup>
 	</servlet>
 	<servlet-mapping>
@@ -329,9 +322,7 @@
 		<auth-method>FORM</auth-method>
 		<form-login-config>
 			<form-login-page>/login/login.jspx</form-login-page>
-			<form-error-page>
-				/login/LoginError.jsp?aon_login_error_code=666
-			</form-error-page>
+			<form-error-page>/login/LoginError.jsp?aon_login_error_code=666</form-error-page>
 		</form-login-config>
 	</login-config>
 
