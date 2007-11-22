@@ -259,15 +259,15 @@ public class AonServer {
         } catch (SendFailedException e) {
         	LOGGER.log(Level.ALL,"Message send failed " , e);
 			AonUtil.addErrorMessage(e.getMessage());
-			throw new AbortProcessingException(e);
+			return false;
         } catch (MessagingException e) {
         	LOGGER.log(Level.ALL,"Message was not sent correctly " , e);
 			AonUtil.addErrorMessage(e.getMessage());
-			throw new AbortProcessingException(e);
+			return false;
         } catch (Throwable e) {
         	LOGGER.log(Level.ALL,"Message was not sent correctly " , e);
 			AonUtil.addErrorMessage(e.getMessage());
-			throw new AbortProcessingException(e);
+			return false;
         }
     }
 
