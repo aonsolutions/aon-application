@@ -29,6 +29,7 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.Month;
 import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.config.ApplicationParameter;
+import com.code.aon.config.Series;
 import com.code.aon.config.dao.IConfigAlias;
 import com.code.aon.customer.Customer;
 import com.code.aon.customer.dao.ICustomerAlias;
@@ -79,6 +80,8 @@ public class FeeInvoicingController extends BasicController {
 	private AccountEntryInvoiceWriter accountEntryInvoiceWriter;
 	
 	private List<SelectItem> addresses;
+	
+	private String seriesDescripition;
 
 	public FeeInvoicingController() {
 		this.invoicingParams = new InvoicingParameters();
@@ -86,6 +89,14 @@ public class FeeInvoicingController extends BasicController {
 
 	public InvoicingParameters getInvoicingParams() {
 		return invoicingParams;
+	}
+
+	public String getSeriesDescripition() {
+		return seriesDescripition;
+	}
+
+	public void setSeriesDescripition(String seriesDescripition) {
+		this.seriesDescripition = seriesDescripition;
 	}
 
 	public void setInvoicingParams(InvoicingParameters invoicingParams) {
@@ -108,10 +119,10 @@ public class FeeInvoicingController extends BasicController {
 		invoicingParams.setYear(calendar.get(Calendar.YEAR));
 	}
 
-	private int obtainMaxNumber(String series) throws ManagerBeanException {
+	private int obtainMaxNumber(String seriesId) throws ManagerBeanException {
 		IManagerBean invoiceBean = BeanManager.getManagerBean(Invoice.class);
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(invoiceBean.getFieldName(IFinanceAlias.INVOICE_SERIES), series);
+		criteria.addEqualExpression(invoiceBean.getFieldName(IFinanceAlias.INVOICE_SERIES), seriesId);
 		Projection projection = Projection.max(invoiceBean.getFieldName(IFinanceAlias.INVOICE_NUMBER));
 		Object value = invoiceBean.getUniqueResult(projection, criteria);
 		if(value != null){
@@ -132,6 +143,7 @@ public class FeeInvoicingController extends BasicController {
 			}
 			if(getInvoicingParams() != null){
 				getInvoicingParams().setNumber(number);
+				getInvoicingParams().setWorkPlaceId(obtainSeriesWorkPlace((String)event.getNewValue()));
 			}
 		}
 	}
@@ -144,6 +156,21 @@ public class FeeInvoicingController extends BasicController {
 		if (event.getPhaseId() == PhaseId.INVOKE_APPLICATION) {
 			getInvoicingParams().setNumber(obtainMaxNumber((String)event.getNewValue()));	
 		}
+	}
+
+	@SuppressWarnings("unchecked")
+	private Integer obtainSeriesWorkPlace(String seriesId) throws ManagerBeanException {
+		IManagerBean seriesBean = BeanManager.getManagerBean(Series.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(seriesBean.getFieldName(IConfigAlias.SERIES_ID), seriesId);
+		Iterator iter = seriesBean.getList(criteria).iterator();
+		if(iter.hasNext()){
+			Series series = (Series)iter.next(); 
+			if( series.getWorkPlace() != null){
+				return series.getWorkPlace().getId();
+			}
+		}
+		return null;
 	}
 
 	@SuppressWarnings({"unused","unchecked"})

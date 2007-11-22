@@ -5,6 +5,8 @@ import java.util.Iterator;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.config.Series;
+import com.code.aon.config.dao.IConfigAlias;
 import com.code.aon.customer.Customer;
 import com.code.aon.customer.dao.ICustomerAlias;
 import com.code.aon.finance.Invoice;
@@ -19,6 +21,7 @@ import com.code.aon.sales.enumeration.BillingPeriod;
 import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
+import com.code.aon.ui.sales.controller.FeeInvoicingController;
 import com.code.aon.ui.sales.controller.FeeInvoicingDetailController;
 import com.code.aon.ui.util.AonUtil;
 
@@ -52,6 +55,7 @@ public class FeeInvoicingControllerListener extends ControllerAdapter {
 	
 	@Override
 	public void afterBeanCreated(ControllerEvent event) throws ControllerListenerException {
+		((FeeInvoicingController)event.getController()).setSeriesDescripition("");
 		FeeInvoicingDetailController detailController = (FeeInvoicingDetailController)AonUtil.getController(FEE_INVOINCING_DETAIL_CONTROLLER_NAME);
 		detailController.setWorkPlace(null);
 	}
@@ -68,6 +72,16 @@ public class FeeInvoicingControllerListener extends ControllerAdapter {
 		detailController.setWorkPlace(null);
 	}
 	
+	@Override
+	public void afterBeanSelected(ControllerEvent event) throws ControllerListenerException {
+		try {
+			Invoice invoice = (Invoice)this.getController().getTo();
+			((FeeInvoicingController)this.getController()).setSeriesDescripition(obtainSeriesDescription(invoice.getSeries()));
+		} catch (ManagerBeanException e) {
+			throw new ControllerListenerException("Error obtaining series description");
+		}
+	}
+
 	@Override
 	public void afterBeanRemoved(ControllerEvent event) throws ControllerListenerException {
 		FeeInvoicingDetailController detailController = (FeeInvoicingDetailController)AonUtil.getController(FEE_INVOINCING_DETAIL_CONTROLLER_NAME);
@@ -104,4 +118,17 @@ public class FeeInvoicingControllerListener extends ControllerAdapter {
 		}
 		return null;
 	}
+	
+	@SuppressWarnings("unchecked")
+	private String obtainSeriesDescription(String series) throws ManagerBeanException {
+		IManagerBean seriesBean = BeanManager.getManagerBean(Series.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(seriesBean.getFieldName(IConfigAlias.SERIES_ID), series);
+		Iterator iter = seriesBean.getList(criteria).iterator();
+		if(iter.hasNext()){
+			return ((Series)iter.next()).getDescription();
+		}
+		return null;
+	}
+
 }
