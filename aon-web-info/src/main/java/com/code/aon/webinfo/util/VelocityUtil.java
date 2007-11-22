@@ -11,7 +11,6 @@ import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.Velocity;
 import org.apache.velocity.app.VelocityEngine;
 
-import com.code.aon.ui.util.AonUtil;
 import com.code.aon.webinfo.velocity.VelocityConstants;
 
 public class VelocityUtil extends VelocityEngine implements VelocityConstants {
