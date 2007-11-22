@@ -276,8 +276,6 @@ public class FBatchController extends BasicController {
 	@SuppressWarnings("unused")
 	public void onCreateDisk(ActionEvent event) throws ManagerBeanException {
 		FinanceBatch fbatch = (FinanceBatch)this.getTo();
-        fbatch.setFinanceBatchStatus(FinanceBatchStatus.DONE);
-        getManagerBean().update(fbatch);
 
         CSBOutput output = null;
         Company company = obtainCompany();
@@ -302,6 +300,8 @@ public class FBatchController extends BasicController {
         		}
         	} else {
         		file = output.getFile();
+                fbatch.setFinanceBatchStatus(FinanceBatchStatus.DONE);
+                getManagerBean().update(fbatch);
         	}
         }
 	}
@@ -339,9 +339,6 @@ public class FBatchController extends BasicController {
 	        faces.responseComplete();
 		} catch (IOException e) {
 			throw new ManagerBeanException(e);
-		} finally {
-			file.delete();
-	        file = null;
 		}
 	}
 

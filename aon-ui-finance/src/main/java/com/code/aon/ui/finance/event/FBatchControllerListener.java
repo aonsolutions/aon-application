@@ -8,17 +8,11 @@ import java.util.logging.Logger;
 
 import javax.faces.context.FacesContext;
 
-import com.code.aon.common.BeanManager;
-import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
-import com.code.aon.finance.Finance;
 import com.code.aon.finance.FinanceBatch;
 import com.code.aon.finance.FinanceBatchDetail;
 import com.code.aon.finance.dao.IFinanceAlias;
 import com.code.aon.finance.enumeration.FinanceBatchStatus;
-import com.code.aon.finance.enumeration.FinanceStatus;
-import com.code.aon.finance.enumeration.FinanceTrackingType;
-import com.code.aon.finance.invoicing.FinanceTrackingWriter;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.finance.controller.FBatchController;
 import com.code.aon.ui.finance.controller.FBatchDetailController;
@@ -84,23 +78,17 @@ public class FBatchControllerListener extends ControllerAdapter {
 	}
 
     @Override
+    @SuppressWarnings("unchecked")
 	public void beforeBeanRemoved(ControllerEvent event) throws ControllerListenerException {
         FBatchDetailController fBatchDetailController = (FBatchDetailController)AonUtil.getController(FINANCE_BATCH_DETAIL_CONTROLLER);
         Iterator iter = fBatchDetailController.getWrappedList().iterator();
-		try {
-			IManagerBean financeBean = BeanManager.getManagerBean(Finance.class);
-			while (iter.hasNext()) {
-				FinanceBatchDetail fBatchDetail = (FinanceBatchDetail)iter.next();
-                FinanceStatus financeStatus = (fBatchDetailController.wasFinanceReturned(fBatchDetail.getFinance())) ? FinanceStatus.RETURNED: FinanceStatus.PENDING;
-                fBatchDetail.getFinance().setFinanceStatus(financeStatus);
-				financeBean.update(fBatchDetail.getFinance());
-
-                FinanceTrackingWriter.removeLastTrackingByType(fBatchDetail.getFinance(), FinanceTrackingType.BATCHED);
-
-            }
-		} catch (ManagerBeanException e) {
-			LOGGER.log(Level.SEVERE, "Error updating finances in FinanceBatch with id=" + ((FinanceBatch)event.getController().getTo()).getId(), e);
-		}
+        int i = 0;
+		while (iter.hasNext()) {
+			FinanceBatchDetail fBatchDetail = (FinanceBatchDetail)iter.next();
+			fBatchDetailController.updateRelatedInfo(fBatchDetail);
+        	i++;
+        	System.out.println(i);
+        }
 	}
 
 }
