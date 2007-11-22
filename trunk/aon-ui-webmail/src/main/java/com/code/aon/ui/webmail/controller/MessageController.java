@@ -490,6 +490,10 @@ public class MessageController implements IAonFileListener,IFileUploadedListener
     
     private String selectedDestinyContainer;
 
+	public String getSelectedDestinyContainer() {
+		return selectedDestinyContainer;
+	}
+	
     private boolean showEmailsPanelPopup;
     
 	public boolean isShowEmailsPanelPopup() {
@@ -896,5 +900,5 @@ public class MessageController implements IAonFileListener,IFileUploadedListener
 		
 		showAddContactPanelPopup = false;
     }
-	
+
 }

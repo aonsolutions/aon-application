@@ -171,9 +171,21 @@
 								visible="#{message.showEmailsPanelPopup}">
 							
 								<f:facet name="header">
-									<aon:panelGrid id="popupEmailHeader2" width="100%" cellpadding="0" cellspacing="0" columns="2" 
+									<aon:panelGrid id="popupEmailHeader2" width="100%" cellpadding="0" cellspacing="0" columns="3" 
 										columnClasses="popupIcon,aon-text-right popupButton">
-										<aon:outputText value="#{appBundle.aon_webmail_message_selectEmail}"/>
+										<aon:div>
+											<aon:outputText 
+												rendered="#{message.selectedDestinyContainer=='To'}"
+												value="#{appBundle.aon_webmail_to}"/>
+											<aon:outputText 
+												rendered="#{message.selectedDestinyContainer=='Cc'}"
+												value="#{appBundle.aon_webmail_cc}"/>
+											<aon:outputText 
+												rendered="#{message.selectedDestinyContainer=='Bcc'}"
+												value="#{appBundle.aon_webmail_bcc}"/>
+											<aon:outputText value="-"/>
+											<aon:outputText value="#{appBundle.aon_webmail_message_selectEmail}"/>
+										</aon:div>
 										<aon:commandButton id="popupEmailClose2" type="button" image="/images/icefaces/popupclose.gif"
 											actionListener="#{message.closeEmailsPanelPopup}" style="cursor: pointer;"/>
 									</aon:panelGrid>
@@ -188,6 +200,9 @@
 												<aon:commandButton id="selectEmail" 
 												actionListener="#{message.acceptAllEmailItems}" 
 												value="" styleClass="aon-icon-commandButton aon-icon-accept"/>
+												<aon:commandButton id="exitEmail" 
+												actionListener="#{message.closeEmailsPanelPopup}" 
+												value="" styleClass="aon-icon-commandButton aon-icon-cancel"/>
 											</aon:div>
 										</aon:div>
 										
@@ -198,16 +213,13 @@
 											value="#{multiSelectionEmailBean.emails}"
 											columnClasses="aon-editTable-icon, aon-editTable-cell, aon-editTable-cell">
 											<aon:column id="selectionCol">
-												<aon:rowSelector 
-													value="#{to.selected}" 
-													multiple="true"
-													mouseOverClass="aon-table-row-hover"
-													selectedClass="aon-table-row-selected"
-													selectionListener="#{multiSelectionEmailBean.rowSelection}"/>
 												<f:facet name="header">
 													<aon:outputText value="&#160;" />
 												</f:facet>
-												<aon:outputText value="&#160;" />
+												<aon:selectBooleanCheckbox 
+													styleClass="aon-float-left"
+													value="#{to.selected}">
+												</aon:selectBooleanCheckbox>
 											</aon:column>
 											<aon:column>
 												<f:facet name="header">

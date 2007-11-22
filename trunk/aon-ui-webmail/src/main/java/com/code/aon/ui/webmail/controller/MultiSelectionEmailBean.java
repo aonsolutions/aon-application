@@ -12,13 +12,10 @@ import com.code.aon.ui.webmail.bean.AonConstants;
 import com.code.aon.groupware.Contact;
 import com.code.aon.groupware.dao.IGroupWareAlias;
 import com.code.aon.webmail.MailAccount;
-import com.code.aon.webmail.dao.IWebMailAlias;
-import com.icesoft.faces.component.ext.RowSelectorEvent;
 
 public class MultiSelectionEmailBean {
 
 	private List<SelectionEmail> emails; 
-    private List<Contact> selectedRows = new ArrayList<Contact>();
 
     public void init() {
         emails = new ArrayList<SelectionEmail>();
@@ -55,19 +52,17 @@ public class MultiSelectionEmailBean {
 		this.emails = emails;
 	}
 	
-    public void rowSelection(RowSelectorEvent e) {
+	/**
+	 * @return the selectedRows
+	 */
+	public List getSelectedRows() {
+	    List<Contact> selectedRows = new ArrayList<Contact>();
         selectedRows.clear();
         for (int i = emails.size()-1; i >= 0 ; i--) {
             if (emails.get(i).isSelected()) {
                 selectedRows.add(emails.get(i).getEmail());
             }
         }
-    }
-
-	/**
-	 * @return the selectedRows
-	 */
-	public List getSelectedRows() {
 		return selectedRows;
 	}
     
