@@ -690,8 +690,12 @@ text-decoration:none;
 	 background:transparent url(images/aon-icon/aon-icon-move.png) scroll left center no-repeat;
 	 cursor:pointer;
   }
-  
-  
+  .aon-icon-drop-down{
+	background:transparent url(images/aon-icon/aon-icon-drop-down.png) scroll left center no-repeat;
+ }
+   .aon-icon-drop-up{
+	background:transparent url(images/aon-icon/aon-icon-drop-up.png) scroll left center no-repeat;
+ }
  /*folder icons*/
 .aon-icon-folder{
 	background:transparent url(images/aon-icon/aon-icon-folder.png) scroll left center no-repeat;
