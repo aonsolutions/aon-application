@@ -50,7 +50,8 @@ public class AonAttachment{
 			}
 		} catch (MessagingException e1) {
 		}
-		if (fileName.indexOf("=?iso") >= 0) {
+		if ((fileName.indexOf("=?iso") >= 0) || 
+				(fileName.indexOf("=?ISO") >= 0)){
 			try {
 				fileName = MimeUtility.decodeWord(fileName);
 			}
