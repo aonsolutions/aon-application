@@ -168,16 +168,69 @@
 										<!-- To -->
 										<aon:outputText styleClass="aon-text-bold"
 													value="#{appBundle.aon_webmail_to}: " />
-										<aon:outputText escape="false" converter="longString" value="#{message.message.recipientsTo}" />
+										<aon:div>
+											<aon:panelGrid columns="2" cellpadding="0"
+												cellspacing="0">
+												<aon:div>
+													<aon:commandButton
+														rendered="#{message.shotMessageToControlDown}" 
+														actionListener="#{message.changeShotMessageTo}"
+														styleClass="aon-icon-commandButton aon-icon-drop-down">
+													</aon:commandButton>
+													<aon:commandButton
+														rendered="#{message.shotMessageToControlUp}" 
+														actionListener="#{message.changeShotMessageTo}"
+														styleClass="aon-icon-commandButton aon-icon-drop-up">
+													</aon:commandButton>
+												</aon:div>
+												<aon:div>
+													<aon:outputText escape="false"
+														rendered="#{!message.shotMessageTo}" 
+														converter="maxLenghtString" 
+														value="#{message.message.recipientsTo}" />
+													<aon:outputText escape="false" 
+														rendered="#{message.shotMessageTo}" 
+														converter="longString" 
+														value="#{message.message.recipientsTo}" />
+													<aon:outputText escape="false"
+														rendered="#{message.shotMessageToControlDown}" 
+														value="..." />
+												</aon:div>
+											</aon:panelGrid>
+										</aon:div>
 										<!-- Cc -->
 										<aon:outputText styleClass="aon-text-bold"
 												value="#{appBundle.aon_webmail_cc}: " />
-										<aon:outputText escape="false" converter="longString" value="#{message.message.recipientsCc}" />
-										<!-- Bcc -->
-										<aon:outputText 
-											styleClass="aon-text-bold"
-											value="#{appBundle.aon_webmail_bcc}: " />
-										<aon:outputText escape="false" converter="longString" value="#{message.message.recipientsBcc}" />
+										<aon:div>
+											<aon:panelGrid columns="2" cellpadding="0"
+												cellspacing="0">
+												<aon:div>
+													<aon:commandButton
+														rendered="#{message.shotMessageCcControlDown}" 
+														actionListener="#{message.changeShotMessageCc}"
+														styleClass="aon-icon-commandButton aon-icon-drop-down">
+													</aon:commandButton>
+													<aon:commandButton
+														rendered="#{message.shotMessageCcControlUp}" 
+														actionListener="#{message.changeShotMessageCc}"
+														styleClass="aon-icon-commandButton aon-icon-drop-up">
+													</aon:commandButton>
+												</aon:div>
+												<aon:div>
+													<aon:outputText escape="false"
+														rendered="#{!message.shotMessageCc}" 
+														converter="maxLenghtString" 
+														value="#{message.message.recipientsCc}" />
+													<aon:outputText escape="false" 
+														rendered="#{message.shotMessageCc}" 
+														converter="longString" 
+														value="#{message.message.recipientsCc}" />
+													<aon:outputText escape="false"
+														rendered="#{message.shotMessageCcControlDown}" 
+														value="..." />
+												</aon:div>
+											</aon:panelGrid>
+										</aon:div>
 									</aon:panelGrid>
 							</aon:div>
 							<aon:div styleClass="aon-box aon-box-outstanding2">
