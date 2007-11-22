@@ -14,8 +14,6 @@ import com.sun.jimi.core.Jimi;
 import com.sun.jimi.core.JimiException;
 import com.sun.jimi.core.raster.JimiRasterImage;
 
-import edu.emory.mathcs.backport.java.util.concurrent.helpers.NanoTimer;
-
 
 public class ImageUtil {
 
