@@ -2,6 +2,7 @@ package com.code.aon.ui.webmail.controller;
 
 import java.util.List;
 
+import javax.faces.event.ActionEvent;
 import javax.mail.MessagingException;
 import javax.servlet.http.HttpServletResponse;
 
@@ -19,6 +20,7 @@ public class AttachController {
     	MessageController messageController = (MessageController)AonUtil.getRegisteredBean(AonConstants.BEAN_MESSAGE);
     	AonMessage aonMessage = messageController.getMessage();
     	aonList = aonMessage.getAttachements();
+    	closeAttachsPanel(null);
     	return aonList;
     }
 
@@ -34,4 +36,23 @@ public class AttachController {
     	return aonMessage.isAttachment();
     }
     
+	//********************************************************************************************
+	// ATTACH SELECTION PANEL ON MESSAGEVIEW
+	//********************************************************************************************
+    
+    private boolean showAttachsPanel;
+    
+	public boolean isShowAttachsPanel() {
+		return showAttachsPanel;
+	}
+
+	public void closeAttachsPanel(ActionEvent event){
+		this.showAttachsPanel = false;
+	}
+
+	public void openAttachsPanel(ActionEvent event){
+		this.showAttachsPanel = true;
+	}
+
+
 }
