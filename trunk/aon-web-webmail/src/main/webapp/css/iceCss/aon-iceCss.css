@@ -529,6 +529,14 @@ text-decoration:none;
 #aon-content .aon-editTable .aon-editTable-row-hover a{	
 	color:#000 !important;
 	}
+/****** DATA SCROLLER *********/
+#aon-content .aon-noborder-table{
+	width:auto;
+	border:0;
+	}
+#aon-content .aon-noborder-table td{
+	border:0;
+	}
 /****** DATA SCROLLER *********/  
 #aon-content .aon-datascroller{
 	border-top:#eaeaea 5px solid;
