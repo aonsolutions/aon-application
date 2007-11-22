@@ -741,10 +741,6 @@ public class MessageController implements IAonFileListener,IFileUploadedListener
 		return showFoldersPanelPopup;
 	}
 
-	public void setShowFoldersPanelPopup(boolean showNewFolderPanelPopup) {
-		this.showFoldersPanelPopup = showFoldersPanelPopup;
-	}
-    
 	public void closeFoldersPanelPopup(ActionEvent event){
 		this.showFoldersPanelPopup = false;
 	}
