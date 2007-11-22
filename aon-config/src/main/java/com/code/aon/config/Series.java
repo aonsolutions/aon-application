@@ -45,7 +45,7 @@ public class Series implements ITransferObject {
 	}
 
 	@ManyToOne
-	@JoinColumn(name="workplace", nullable=false)
+	@JoinColumn(name="workplace")
 	public WorkPlace getWorkPlace() {
 		return workPlace;
 	}
