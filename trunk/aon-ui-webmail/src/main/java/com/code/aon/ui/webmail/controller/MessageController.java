@@ -34,8 +34,11 @@ import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.groupware.Contact;
+import com.code.aon.groupware.dao.IGroupWareAlias;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionException;
+import com.code.aon.ui.form.BasicController;
+import com.code.aon.ui.form.IController;
 import com.code.aon.ui.util.AonUtil;
 import com.code.aon.ui.webmail.bean.AonAttachment;
 import com.code.aon.ui.webmail.bean.AonConstants;
@@ -831,5 +834,67 @@ public class MessageController implements IAonFileListener,IFileUploadedListener
 		return false;
 	}
 	
+	//********************************************************************************************
+	// TO ADDED TO CONTACTS
+	//********************************************************************************************
+
+    private boolean showAddContactPanelPopup;
+    
+	public boolean isShowAddContactPanelPopup() {
+		return showAddContactPanelPopup;
+	}
+
+	public void closeAddContactPanelPopup(ActionEvent event){
+		this.showAddContactPanelPopup = false;
+	}
+
+	private String contactName;
+	
+	public String getContactName() {
+		return contactName;
+	}
+
+	public void setContactName(String contactName) {
+		this.contactName = contactName;
+	}
+
+	public void addToContacts(ActionEvent event) throws WebmailException, ManagerBeanException{
+		String email = message.getSenderEmail();
+		contactName = message.getSenderShort();
+		IManagerBean contactsBean = BeanManager.getManagerBean(Contact.class);
+		Criteria criteria = new Criteria();
+    	WebMailController webMailController = (WebMailController)AonUtil.getRegisteredBean(AonConstants.BEAN_WEBMAIL);
+       	MailAccount account = webMailController.getServer().getAccount();
+		criteria.addEqualExpression(contactsBean.getFieldName(IGroupWareAlias.CONTACT_USER_ID), account.getUser().getId());
+		criteria.addEqualExpression(contactsBean.getFieldName(IGroupWareAlias.CONTACT_EMAIL), email);
+		List list = contactsBean.getList(criteria);
+		if (list.size()==0){
+			if (email.equals(contactName)){
+				showAddContactPanelPopup = true;
+			}else{
+				saveToContacts(event);
+			}
+		}
+    }
+
+	public void saveToContacts(ActionEvent event) throws WebmailException, ManagerBeanException{
+		String email = message.getSenderEmail();
+		
+    	WebMailController webMailController = (WebMailController)AonUtil.getRegisteredBean(AonConstants.BEAN_WEBMAIL);
+       	MailAccount account = webMailController.getServer().getAccount();
+       	
+		Contact contact = new Contact();
+		contact.setUser(account.getUser());
+		contact.setEmail(email);
+		contact.setName(contactName);
+
+		IManagerBean contactsBean = BeanManager.getManagerBean(Contact.class);
+		contactsBean.insert(contact);
+		
+		BasicController contactController = (BasicController)AonUtil.getRegisteredBean(AonConstants.BEAN_EMAIL);
+		contactController.onSearch(null);
+		
+		showAddContactPanelPopup = false;
+    }
 	
 }
