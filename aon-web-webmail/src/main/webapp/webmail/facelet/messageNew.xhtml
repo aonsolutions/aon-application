@@ -198,11 +198,13 @@
 										<aon:div styleClass="aon-section-toolbar">
 											<aon:div style="padding-top:5px;padding-left:1em;">
 												<aon:commandButton id="selectEmail" 
-												actionListener="#{message.acceptAllEmailItems}" 
-												value="" styleClass="aon-icon-commandButton aon-icon-accept"/>
+													actionListener="#{message.acceptAllEmailItems}" 
+													value="#{appBundle.aon_webmail_accept}" 
+													styleClass="aon-icon-commandButton aon-icon-accept"/>
 												<aon:commandButton id="exitEmail" 
-												actionListener="#{message.closeEmailsPanelPopup}" 
-												value="" styleClass="aon-icon-commandButton aon-icon-cancel"/>
+													actionListener="#{message.closeEmailsPanelPopup}" 
+													value="#{appBundle.aon_webmail_cancel}" 
+													styleClass="aon-icon-commandButton aon-icon-cancel"/>
 											</aon:div>
 										</aon:div>
 										
