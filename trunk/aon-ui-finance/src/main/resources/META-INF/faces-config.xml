@@ -201,7 +201,7 @@
 		</managed-property>
 		<managed-property>
 			<property-name>pageLimit</property-name>
-			<value>400000</value>
+			<value>20</value>
 		</managed-property>
 		<managed-property>
 			<property-name>pojo</property-name>
@@ -256,7 +256,7 @@
 		</managed-property>
 		<managed-property>
 			<property-name>pageLimit</property-name>
-			<value>400000</value>
+			<value>20</value>
 		</managed-property>
 		<managed-property>
 			<property-name>pojo</property-name>
