@@ -1,11 +1,14 @@
 package com.code.aon.ui.webmail.controller;
 
+import java.util.LinkedList;
 import java.util.List;
 
-import javax.faces.event.ActionEvent;
+import javax.faces.model.SelectItem;
 import javax.mail.MessagingException;
 import javax.servlet.http.HttpServletResponse;
 
+import com.code.aon.common.ManagerBeanException;
+import com.code.aon.ql.util.ExpressionException;
 import com.code.aon.ui.util.AonUtil;
 import com.code.aon.ui.webmail.bean.AonAttachment;
 import com.code.aon.ui.webmail.bean.AonConstants;
@@ -14,13 +17,41 @@ import com.code.aon.ui.webmail.exception.WebmailException;
 
 public class AttachController {
 
+	private AonMessage aonMessage;
+	
 	private List<AonAttachment> aonList;
 	
-    public List<AonAttachment> getAttachments() throws WebmailException{
+	private int attachPos;
+	
+	public int getAttachPos() {
+		return attachPos;
+	}
+
+	public void setAttachPos(int attachPos) {
+		this.attachPos = attachPos;
+	}
+	
+    public AonAttachment getAttach() {
+		return aonList.get(attachPos);
+	}
+
+	public List<SelectItem> getAttachmentsDrop() throws ManagerBeanException, ExpressionException, WebmailException {
+		List<SelectItem> types = new LinkedList<SelectItem>();
+		for (AonAttachment aonAttachment : getAttachments()) {
+			String name = aonAttachment.getFileName()+" &lt;"+aonAttachment.getFileSize()+"&gt;";
+			types.add(new SelectItem(aonAttachment.getPosition()-1, name));
+		}
+		return types;
+	}
+
+	public List<AonAttachment> getAttachments() throws WebmailException{
     	MessageController messageController = (MessageController)AonUtil.getRegisteredBean(AonConstants.BEAN_MESSAGE);
-    	AonMessage aonMessage = messageController.getMessage();
-    	aonList = aonMessage.getAttachements();
-    	closeAttachsPanel(null);
+    	AonMessage currentMessage = messageController.getMessage();
+    	if (this.aonMessage != currentMessage){
+    		this.aonMessage = currentMessage;
+        	aonList = aonMessage.getAttachements();
+        	attachPos=0;
+    	}
     	return aonList;
     }
 
@@ -36,23 +67,4 @@ public class AttachController {
     	return aonMessage.isAttachment();
     }
     
-	//********************************************************************************************
-	// ATTACH SELECTION PANEL ON MESSAGEVIEW
-	//********************************************************************************************
-    
-    private boolean showAttachsPanel;
-    
-	public boolean isShowAttachsPanel() {
-		return showAttachsPanel;
-	}
-
-	public void closeAttachsPanel(ActionEvent event){
-		this.showAttachsPanel = false;
-	}
-
-	public void openAttachsPanel(ActionEvent event){
-		this.showAttachsPanel = true;
-	}
-
-
 }
