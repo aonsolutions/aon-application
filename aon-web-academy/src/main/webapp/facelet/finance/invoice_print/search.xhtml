@@ -55,17 +55,17 @@
 								<f:selectItems value="#{invoicePrint.invoiceTypes}" />
 							</h:selectOneMenu>
 
-							<h:outputLabel for="Invoice_series"
+							<h:outputLabel for="Series_Lookup_id"
 								styleClass="aon-form-input-text-label"
 								value="#{financeBundle.aon_series_number}" />
-							<h:panelGrid columns="5">
-								<t:inputText id="Invoice_series"
-									onblur="toUpperCase(this);"
-									value="#{invoicePrint.series}"
-									styleClass="aon-form-input-text" forceId="#{true}" size="3"
-									maxlength="3">
-									<f:validateLength maximum="3" />
-								</t:inputText>
+							<h:panelGrid columns="6">
+								<t:selectOneMenu id="Series_Lookup_id"
+									styleClass="aon-form-selectOneMenu-field" forceId="#{true}"
+									onchange="return findBeanLookupExt(event,'#{facesContext.externalContext.requestContextPath}','seriesLookup','Series_Lookup_id','Series_id|Series_Lookup_id,Series_description|Series_Lookup_description');"
+									value="#{invoicePrint.series}">
+									<f:selectItem itemValue="" itemDisabled="true" itemLabel="-" />
+									<f:selectItems value="#{configCollections.series}" />
+								</t:selectOneMenu>
 								<h:outputLabel for="Invoice_number_from" value="#{financeBundle.finance_date_from}"
 									styleClass="aon-form-input-text-label" />								
 								<t:inputText id="Invoice_number_from"
@@ -78,6 +78,11 @@
 									value="#{invoicePrint.toNumber}"
 									styleClass="aon-form-input-text" forceId="#{true}"
 									size="7" />
+								<t:inputText id="Series_Lookup_description"
+									styleClass="aon-form-input-text-disabled" forceId="#{true}"
+									readonly="true" disabledOnClientSide="true" size="50">
+								</t:inputText>
+									
 							</h:panelGrid>
 							
 							<t:outputLabel for="Customer_Lookup_id" value="#{customerBundle.customer_customer}" 
