@@ -254,47 +254,50 @@
 											value="#{appBundle.aon_webmail_date}: " />
 										<aon:outputText value="#{message.message.sentDateString}" />
 								</aon:panelGrid>
-							</aon:div>
-							<aon:div styleClass="aon-box aon-box-outstanding2">
-								<aon:div styleClass="aon-icon-attach aon-icon">
-									<aon:commandButton
-										id="popupAttachOpen"
-										rendered="#{attach.attachment and !attach.showAttachsPanel}"
-										title="#{appBundle.aon_webmail_addattach}"
-										value="#{appBundle.aon_webmail_addattach}"
-										actionListener="#{attach.openAttachsPanel}" 
-										styleClass="aon-icon-drop-down aon-icon-commandButton aon-bold">
-									</aon:commandButton>
-								</aon:div>
-								<aon:panelGroup rendered="#{attach.attachment and attach.showAttachsPanel}">
-									<aon:div styleClass="aon-icon-attach aon-icon">
-										<aon:commandButton id="popupAttachClose" 
+							
+								<aon:panelGroup rendered="#{attach.attachment}">
+								
+									
+										<aon:commandButton
+											id="popupAttachOpen"
+											rendered="#{attach.attachment and !attach.showAttachsPanel}"
+											title="#{appBundle.aon_webmail_addattach}"
 											value="#{appBundle.aon_webmail_addattach}"
-											styleClass="aon-icon-drop-up aon-icon-commandButton aon-bold"
-											actionListener="#{attach.closeAttachsPanel}" 
-											/>
-									</aon:div>
-									<aon:div styleClass="aon-box">
-										<aon:dataTable border="0"
-											id="attachDataTable"
-											rows="0"
-											var="attachment"
-											styleClass="aon-noborder-table"
-											value="#{attach.attachments}">
-											<aon:column style="border:0;">
-												<h:outputLink 
-													id="download"
-													value="#{webmail.context}/webmail/download.jsp?pos=#{attachment.position}" 
-													target="_blank">
-													#{attachment.fileName}
-												</h:outputLink>
-											</aon:column>
-											<aon:column>
-												<aon:outputText value="&lt;#{attachment.fileSize}&gt;" />
-											</aon:column>
-										</aon:dataTable>
-									</aon:div>
-								</aon:panelGroup>
+											actionListener="#{attach.openAttachsPanel}" 
+											styleClass="aon-icon-drop-down aon-icon-commandButton aon-bold">
+										</aon:commandButton>
+									
+									<aon:panelGroup rendered="#{attach.attachment and attach.showAttachsPanel}">
+										<aon:div styleClass="aon-icon-attach aon-icon">
+											<aon:commandButton id="popupAttachClose" 
+												value="#{appBundle.aon_webmail_addattach}"
+												styleClass="aon-icon-drop-up aon-icon-commandButton aon-bold"
+												actionListener="#{attach.closeAttachsPanel}" 
+												/>
+										</aon:div>
+										<aon:div styleClass="aon-box">
+											<aon:dataTable border="0"
+												id="attachDataTable"
+												rows="0"
+												var="attachment"
+												styleClass="aon-noborder-table"
+												value="#{attach.attachments}">
+												<aon:column style="border:0;">
+													<h:outputLink 
+														id="download"
+														value="#{webmail.context}/webmail/download.jsp?pos=#{attachment.position}" 
+														target="_blank">
+														#{attachment.fileName}
+													</h:outputLink>
+												</aon:column>
+												<aon:column>
+													<aon:outputText value="&lt;#{attachment.fileSize}&gt;" />
+												</aon:column>
+											</aon:dataTable>
+										</aon:div>
+									</aon:panelGroup>
+								
+							</aon:panelGroup>
 							</aon:div>
 							<!-- Message Body -->
 							<aon:panelGroup styleClass="aon-box" >
