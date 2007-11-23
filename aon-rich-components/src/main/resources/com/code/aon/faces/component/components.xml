@@ -39,8 +39,40 @@
     	<attribute name="styleClass" value="aon-form-input-text" />			
 	</component>
 
+	<component localName="commandLink" namespace="http://www.code.es/aon-rich-components">
+    	<attribute name="styleClass" value="aon-navigation-link" />			
+	</component>
+
 	<component localName="panelTabSet" namespace="http://www.code.es/aon-rich-components">
     	<attribute name="switchType" value="ajax" />			
+	</component>
+
+	<component localName="inputText" namespace="http://www.code.es/aon-rich-components">
+    	<attribute name="styleClass" value="aon-form-input-text" />			
+	</component>
+
+	<component localName="inputTextarea" namespace="http://www.code.es/aon-rich-components">
+    	<attribute name="styleClass" value="aon-form-input-text" />			
+	</component>
+
+	<component localName="inputSecret" namespace="http://www.code.es/aon-rich-components">
+    	<attribute name="styleClass" value="aon-inputSecret" />			
+	</component>
+
+	<component localName="selectOneMenu" namespace="http://www.code.es/aon-rich-components">
+    	<attribute name="styleClass" value="aon-selectOneMenu" />			
+	</component>
+
+	<component localName="selectOneRadio" namespace="http://www.code.es/aon-rich-components">
+    	<attribute name="styleClass" value="aon-selectOneRadio" />			
+	</component>
+
+	<component localName="selectBooleanCheckbox" namespace="http://www.code.es/aon-rich-components">
+    	<attribute name="styleClass" value="aon-selectBooleanCheckbox" />			
+	</component>
+
+	<component localName="selectManyCheckbox" namespace="http://www.code.es/aon-rich-components">
+    	<attribute name="styleClass" value="aon-selectManyCheckbox" />			
 	</component>
 
 </components>

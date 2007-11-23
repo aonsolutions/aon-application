@@ -3,67 +3,85 @@
   "-//Sun Microsystems, Inc.//DTD JSF Config 1.1//EN"
   "http://java.sun.com/dtd/web-facesconfig_1_1.dtd">
 <faces-config>
-
     <component>
         <component-type>com.code.aon.faces.Div</component-type>
         <component-class>org.ajax4jsf.component.html.HtmlAjaxOutputPanel</component-class>
     </component>
-
     <component>
         <component-type>com.code.aon.faces.PanelGrid</component-type>
         <component-class>javax.faces.component.html.HtmlPanelGrid</component-class>
     </component>
-
     <component>
         <component-type>com.code.aon.faces.GraphicImage</component-type>
         <component-class>javax.faces.component.html.HtmlGraphicImage</component-class>
     </component>
-
 	<component>
 		<component-type>com.code.aon.faces.OutputText</component-type>
 		<component-class>javax.faces.component.html.HtmlOutputText</component-class>
 	</component>
-    
     <component>
         <component-type>com.code.aon.faces.OutputLabel</component-type>
         <component-class>javax.faces.component.html.HtmlOutputLabel</component-class>
     </component>
-    
-
-
     <component>
         <component-type>com.code.aon.faces.Form</component-type>
         <component-class>org.ajax4jsf.component.html.AjaxForm</component-class>
     </component>
-
     <component>
         <component-type>com.code.aon.faces.PanelGroup</component-type>
         <component-class>javax.faces.component.html.HtmlPanelGroup</component-class>
     </component>
-    
     <component>
         <component-type>com.code.aon.faces.Messages</component-type>
         <component-class>org.richfaces.component.html.HtmlRichMessages</component-class>
     </component>
-    
     <component>
         <component-type>com.code.aon.faces.CommandButton</component-type>
         <component-class>org.ajax4jsf.component.html.HtmlAjaxCommandButton</component-class>
     </component>
-    
+    <component>
+        <component-type>com.code.aon.faces.CommandLink</component-type>
+        <component-class>org.ajax4jsf.component.html.HtmlAjaxCommandLink</component-class>
+    </component>
     <component>
         <component-type>com.code.aon.faces.PanelTab</component-type>
         <component-class>org.richfaces.component.html.HtmlTab</component-class>
     </component>
-    
     <component>
         <component-type>com.code.aon.faces.PanelTabSet</component-type>
         <component-class>org.richfaces.component.html.HtmlTabPanel</component-class>
     </component>
-    
     <component>
         <component-type>com.code.aon.faces.OutputConnectionStatus</component-type>
         <component-class>org.ajax4jsf.component.html.HtmlAjaxStatus</component-class>
+    </component>
+    <component>
+        <component-type>com.code.aon.faces.InputText</component-type>
+        <component-class>javax.faces.component.html.HtmlInputText</component-class>
+    </component>
+    <component>
+        <component-type>com.code.aon.faces.InputTextarea</component-type>
+        <component-class>javax.faces.component.html.HtmlInputTextarea</component-class>
+    </component>
+    <component>
+        <component-type>com.code.aon.faces.InputSecret</component-type>
+        <component-class>javax.faces.component.html.HtmlInputSecret</component-class>
+    </component>
+    <component>
+        <component-type>com.code.aon.faces.SelectOneMenu</component-type>
+        <component-class>javax.faces.component.html.HtmlSelectOneMenu</component-class>
+    </component>
+    <component>
+        <component-type>com.code.aon.faces.SelectOneRadio</component-type>
+        <component-class>javax.faces.component.html.HtmlSelectOneRadio</component-class>
+    </component>
+    <component>
+        <component-type>com.code.aon.faces.SelectBooleanCheckbox</component-type>
+        <component-class>javax.faces.component.html.HtmlSelectBooleanCheckbox</component-class>
+    </component>
+    <component>
+        <component-type>com.code.aon.faces.SelectManyCheckbox</component-type>
+        <component-class>javax.faces.component.html.HtmlSelectManyCheckbox</component-class>
     </component>
     
 	<!-- 
@@ -105,11 +123,6 @@
     </component>
     
     <component>
-        <component-type>com.code.aon.faces.CommandLink</component-type>
-        <component-class>com.icesoft.faces.component.ext.HtmlCommandLink</component-class>
-    </component>
-    
-    <component>
         <component-type>com.code.aon.faces.DataPaginator</component-type>
         <component-class>com.icesoft.faces.component.datapaginator.DataPaginator</component-class>
     </component>
@@ -120,45 +133,10 @@
     </component>
     
     <component>
-        <component-type>com.code.aon.faces.InputSecret</component-type>
-        <component-class>com.icesoft.faces.component.ext.HtmlInputSecret</component-class>
-    </component>
-    
-    <component>
-        <component-type>com.code.aon.faces.InputText</component-type>
-        <component-class>com.icesoft.faces.component.ext.HtmlInputText</component-class>
-    </component>
-    
-    <component>
-        <component-type>com.code.aon.faces.InputTextarea</component-type>
-        <component-class>com.icesoft.faces.component.ext.HtmlInputTextarea</component-class>
-    </component>
-    
-    <component>
         <component-type>com.code.aon.faces.OutputProgress</component-type>
         <component-class>com.icesoft.faces.component.outputprogress.OutputProgress</component-class>
     </component>
-    
-    <component>
-        <component-type>com.code.aon.faces.SelectBooleanCheckbox</component-type>
-        <component-class>com.icesoft.faces.component.ext.HtmlSelectBooleanCheckbox</component-class>
-    </component>
-    
-    <component>
-        <component-type>com.code.aon.faces.SelectManyCheckbox</component-type>
-        <component-class>com.icesoft.faces.component.ext.HtmlSelectManyCheckbox</component-class>
-    </component>
-    
-    <component>
-        <component-type>com.code.aon.faces.SelectOneMenu</component-type>
-        <component-class>com.icesoft.faces.component.ext.HtmlSelectOneMenu</component-class>
-    </component>
-    
-    <component>
-        <component-type>com.code.aon.faces.SelectOneRadio</component-type>
-        <component-class>com.icesoft.faces.component.ext.HtmlSelectOneRadio</component-class>
-    </component>
-    
+
     <component>
         <component-type>com.code.aon.faces.Column</component-type>
         <component-class>com.icesoft.faces.component.ext.UIColumn</component-class>
