@@ -350,5 +350,36 @@ public class FolderController implements ITreeListener{
 		return false;
 	}
 
-	
+	//********************************************************************************************
+	// DESTINY FOLDER SELECTION POPUP
+	//********************************************************************************************
+    private boolean showFoldersPanelPopup;
+    
+	public boolean isShowFoldersPanelPopup() {
+		return showFoldersPanelPopup;
+	}
+
+	public void closeFoldersPanelPopup(ActionEvent event){
+		this.showFoldersPanelPopup = false;
+	}
+
+	public void openFoldersPanelPopup(ActionEvent event){
+		this.showFoldersPanelPopup = true;
+	}
+
+    public void moveSelectedMessages(AonFolder dest){
+		try {
+			List<AonMessage> messages = folder.getSelectedMessages();
+			if ( messages.size()>0 ) {
+					folder.moveMessages(messages, dest);
+			}
+			folder.refresh();
+			closeFoldersPanelPopup(null);
+		} catch (MessagingException e) {
+			e.printStackTrace();
+		} catch (WebmailException e) {
+			e.printStackTrace();
+		}
+    }
+
 }
