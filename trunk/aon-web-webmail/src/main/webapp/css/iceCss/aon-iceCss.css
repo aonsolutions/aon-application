@@ -1029,7 +1029,9 @@ text-decoration:none;
  }
  
 /************ FORM CONTROLS  ********/
-
+#aon-content .aon-inputText{
+	border:#ababab 1px solid !important;
+	}
 #aon-content .aon-inputText-disabled{
 	border:#ababab 1px solid !important;
 	background-color:#f1f1f1;
@@ -1039,10 +1041,10 @@ text-decoration:none;
 	color:#666;
 	font-style:italic;
 	}
-#aon-content .on-inputText-number{
+#aon-content .aon-inputText-number{
   text-align:right;
   }
- #aon-content .on-inputText-icon{
+ #aon-content .aon-inputText-icon{
   text-align:center;
   }
   
