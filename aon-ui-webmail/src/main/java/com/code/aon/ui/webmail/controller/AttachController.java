@@ -32,7 +32,7 @@ public class AttachController {
 	}
 	
     public AonAttachment getAttach() {
-		return aonList.get(attachPos);
+   		return aonList.get(attachPos);
 	}
 
 	public List<SelectItem> getAttachmentsDrop() throws ManagerBeanException, ExpressionException, WebmailException {
@@ -64,7 +64,7 @@ public class AttachController {
     public boolean isAttachment() throws WebmailException{
     	MessageController messageController = (MessageController)AonUtil.getRegisteredBean(AonConstants.BEAN_MESSAGE);
     	AonMessage aonMessage = messageController.getMessage();
-    	return aonMessage.isAttachment();
+    	return aonMessage.isAttachment() && (aonMessage.getAttachements().size()>0);
     }
     
 }
