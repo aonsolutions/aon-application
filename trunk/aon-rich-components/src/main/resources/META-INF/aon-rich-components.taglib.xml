@@ -67,6 +67,13 @@
 		</component>
 	</tag>
 	<tag>
+		<tag-name>commandLink</tag-name>
+		<component>
+			<component-type>com.code.aon.faces.CommandLink</component-type>
+			<handler-class>com.code.aon.faces.component.AonComponentHandler</handler-class>
+		</component>
+	</tag>
+	<tag>
 		<tag-name>panelTab</tag-name>
 		<component>
 			<component-type>com.code.aon.faces.PanelTab</component-type>
@@ -84,6 +91,55 @@
 		<tag-name>outputConnectionStatus</tag-name>
 		<component>
 			<component-type>com.code.aon.faces.OutputConnectionStatus</component-type>
+			<handler-class>com.code.aon.faces.component.AonComponentHandler</handler-class>
+		</component>
+	</tag>
+	<tag>
+		<tag-name>inputText</tag-name>
+		<component>
+			<component-type>com.code.aon.faces.InputText</component-type>
+			<handler-class>com.code.aon.faces.component.AonComponentHandler</handler-class>
+		</component>
+	</tag>
+	<tag>
+		<tag-name>inputTextarea</tag-name>
+		<component>
+			<component-type>com.code.aon.faces.InputTextarea</component-type>
+			<handler-class>com.code.aon.faces.component.AonComponentHandler</handler-class>
+		</component>
+	</tag>
+	<tag>
+		<tag-name>inputSecret</tag-name>
+		<component>
+			<component-type>com.code.aon.faces.InputSecret</component-type>
+			<handler-class>com.code.aon.faces.component.AonComponentHandler</handler-class>
+		</component>
+	</tag>
+	<tag>
+		<tag-name>selectOneMenu</tag-name>
+		<component>
+			<component-type>com.code.aon.faces.SelectOneMenu</component-type>
+			<handler-class>com.code.aon.faces.component.AonComponentHandler</handler-class>
+		</component>
+	</tag>
+	<tag>
+		<tag-name>selectOneRadio</tag-name>
+		<component>
+			<component-type>com.code.aon.faces.SelectOneRadio</component-type>
+			<handler-class>com.code.aon.faces.component.AonComponentHandler</handler-class>
+		</component>
+	</tag>
+	<tag>
+		<tag-name>selectBooleanCheckbox</tag-name>
+		<component>
+			<component-type>com.code.aon.faces.SelectBooleanCheckbox</component-type>
+			<handler-class>com.code.aon.faces.component.AonComponentHandler</handler-class>
+		</component>
+	</tag>
+	<tag>
+		<tag-name>selectManyCheckbox</tag-name>
+		<component>
+			<component-type>com.code.aon.faces.SelectManyCheckbox</component-type>
 			<handler-class>com.code.aon.faces.component.AonComponentHandler</handler-class>
 		</component>
 	</tag>
@@ -140,13 +196,6 @@
 		</handler-class>
 	</tag>
 	<tag>
-		<tag-name>commandLink</tag-name>
-		<component>
-			<component-type>com.code.aon.faces.CommandLink</component-type>
-			<handler-class>com.code.aon.faces.component.commandLink.CommandLinkHandler</handler-class>
-		</component>
-	</tag>
-	<tag>
 		<tag-name>column</tag-name>
 		<component>
 			<component-type>com.code.aon.faces.Column</component-type>
@@ -179,34 +228,6 @@
 		<component>
 			<component-type>com.code.aon.faces.InputFile</component-type>
 			<handler-class>com.code.aon.faces.component.inputFile.InputFileHandler</handler-class>
-		</component>
-	</tag>
-	<tag>
-		<tag-name>selectOneRadio</tag-name>
-		<component>
-			<component-type>com.code.aon.faces.SelectOneRadio</component-type>
-			<handler-class>com.code.aon.faces.component.selectOneRadio.SelectOneRadioHandler</handler-class>
-		</component>
-	</tag>
-	<tag>
-		<tag-name>inputSecret</tag-name>
-		<component>
-			<component-type>com.code.aon.faces.InputSecret</component-type>
-			<handler-class>com.code.aon.faces.component.inputSecret.InputSecretHandler</handler-class>
-		</component>
-	</tag>
-	<tag>
-		<tag-name>inputText</tag-name>
-		<component>
-			<component-type>com.code.aon.faces.InputText</component-type>
-			<handler-class>com.code.aon.faces.component.inputText.InputTextHandler</handler-class>
-		</component>
-	</tag>
-	<tag>
-		<tag-name>inputTextarea</tag-name>
-		<component>
-			<component-type>com.code.aon.faces.InputTextarea</component-type>
-			<handler-class>com.code.aon.faces.component.inputTextArea.InputTextAreaHandler</handler-class>
 		</component>
 	</tag>
 	<tag>
@@ -253,31 +274,10 @@
 		</component>
 	</tag>
 	<tag>
-		<tag-name>selectBooleanCheckbox</tag-name>
-		<component>
-			<component-type>com.code.aon.faces.SelectBooleanCheckbox</component-type>
-			<handler-class>com.code.aon.faces.component.selectBooleanCheckbox.SelectBooleanCheckboxHandler</handler-class>
-		</component>
-	</tag>
-	<tag>
 		<tag-name>selectInputDate</tag-name>
 		<component>
 			<component-type>com.code.aon.faces.SelectInputDate</component-type>
 			<handler-class>com.code.aon.faces.component.selectInputDate.SelectInputDateHandler</handler-class>
-		</component>
-	</tag>
-	<tag>
-		<tag-name>selectOneMenu</tag-name>
-		<component>
-			<component-type>com.code.aon.faces.SelectOneMenu</component-type>
-			<handler-class>com.code.aon.faces.component.selectOneMenu.SelectOneMenuHandler</handler-class>
-		</component>
-	</tag>
-	<tag>
-		<tag-name>selectManyCheckbox</tag-name>
-		<component>
-			<component-type>com.code.aon.faces.SelectManyCheckbox</component-type>
-			<handler-class>com.code.aon.faces.component.selectManyCheckbox.SelectManyCheckboxHandler</handler-class>
 		</component>
 	</tag>
 	<tag>
