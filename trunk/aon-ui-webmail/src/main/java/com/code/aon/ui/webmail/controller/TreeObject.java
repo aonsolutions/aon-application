@@ -128,6 +128,14 @@ public class TreeObject extends IceUserObject {
     
     public void navigationDropAction(DropEvent event) {
         if (event.getEventType() == DndEvent.DROPPED) {
+    		AonMessage aonMessage = (AonMessage)event.getTargetDragValue();
+    		FolderController folderController = (FolderController)AonUtil.getRegisteredBean(AonConstants.BEAN_FOLDER);
+    		AonFolder sourceFolder = folderController.getFolder();
+    		if (!sourceFolder.getSelectedMessages().contains(aonMessage)) {
+        		aonMessage.setSelected(true);
+    		}
+    		moveFolderMessagesToFolder(null);
+        	/*
         	try {
         		AonMessage aonMessage = (AonMessage)event.getTargetDragValue();
         		FolderController folderController = (FolderController)AonUtil.getRegisteredBean(AonConstants.BEAN_FOLDER);
@@ -145,9 +153,15 @@ public class TreeObject extends IceUserObject {
 			} catch (WebmailException e) {
 				e.printStackTrace();
 			}
+        */
         }
     }
 
+    public void moveFolderMessagesToFolder(ActionEvent event) {
+   		FolderController folderController = (FolderController)AonUtil.getRegisteredBean(AonConstants.BEAN_FOLDER);
+   		folderController.moveSelectedMessages(this.folder);
+    }
+    
     public void moveMessageToFolder(ActionEvent event) {
     	MessageController messageController = (MessageController)AonUtil.getRegisteredBean(AonConstants.BEAN_MESSAGE);
     	messageController.moveSelectedMessageAndMove(this.folder);
