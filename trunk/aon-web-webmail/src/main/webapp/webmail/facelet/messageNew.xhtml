@@ -147,10 +147,9 @@
 										value="#{message.files}">
 										<aon:column>
 											<aon:commandLink
-													actionListener="#{attachment.fileDeleted}">
-												<aon:outputText value="#{attachment.file.name}" />
-												<aon:outputText value="&#160;" styleClass="aon-icon-commandButton aon-icon-delete" />
-
+												value="#{attachment.file.name}"
+												styleClass="aon-icon-commandButton aon-icon-delete"
+												actionListener="#{attachment.fileDeleted}">
 											</aon:commandLink>
 										</aon:column>
 								</aon:dataTable>
