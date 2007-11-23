@@ -153,19 +153,18 @@
 												id="addToContacts"
 												title="#{appBundle.aon_webmail_email_add}"
 												actionListener="#{message.addToContacts}"
-												value="#{appBundle.aon_webmail_email_add}"
 												styleClass="aon-icon-commandButton aon-icon-agenda aon-italic aon-bold">
 											</aon:commandButton>
 											<aon:confirmButton id="add_white_list"
 												rendered="#{blacklist.whiteListEmail}"
-												value="#{appBundle.aon_webmail_add_white_list}" 
+												title="#{appBundle.aon_webmail_add_white_list}" 
 												styleClass="aon-icon-commandButton aon-icon-white-list aon-italic aon-bold"
 												confirmTitle="Confirmation Dialog" 
 												confirmMessage="#{appBundle.aon_webmail_add_white_list}"
 												confirmActionListener="#{blacklist.onAddWhiteMessageFrom}" />
 											<aon:confirmButton id="add_black_list"
 												rendered="#{blacklist.blackListEmail}"
-												value="#{appBundle.aon_webmail_add_black_list}" 
+												title="#{appBundle.aon_webmail_add_black_list}" 
 												styleClass="aon-icon-commandButton aon-icon-black-list aon-italic aon-bold"
 												confirmTitle="Confirmation Dialog" 
 												confirmMessage="#{appBundle.aon_webmail_add_black_list}"
@@ -255,49 +254,31 @@
 										<aon:outputText value="#{message.message.sentDateString}" />
 								</aon:panelGrid>
 							
-								<aon:panelGroup rendered="#{attach.attachment}">
+								<aon:panelGroup rendered="#{attach.attachment}" styleClass="aon-icon aon-icon-attach">
+									<aon:outputText style="font-weight:bold;"
+										styleClass="aon-form-input-text-label"
+										value="#{appBundle.aon_webmail_attach_files}: " />
 								
+									<aon:selectOneMenu 
+										id="attach"
+										style="font-size: 0.9em;boder: #000 1px solid;"
+										styleClass="aon-inputText"
+										partialSubmit="true"
+										value="#{attach.attachPos}">
+										<f:selectItems value="#{attach.attachmentsDrop}" />
+									</aon:selectOneMenu> 
 									
-										<aon:commandButton
-											id="popupAttachOpen"
-											rendered="#{attach.attachment and !attach.showAttachsPanel}"
-											title="#{appBundle.aon_webmail_addattach}"
-											value="#{appBundle.aon_webmail_addattach}"
-											actionListener="#{attach.openAttachsPanel}" 
-											styleClass="aon-icon-drop-down aon-icon-commandButton aon-bold">
-										</aon:commandButton>
-									
-									<aon:panelGroup rendered="#{attach.attachment and attach.showAttachsPanel}">
-										<aon:div styleClass="aon-icon-attach aon-icon">
-											<aon:commandButton id="popupAttachClose" 
-												value="#{appBundle.aon_webmail_addattach}"
-												styleClass="aon-icon-drop-up aon-icon-commandButton aon-bold"
-												actionListener="#{attach.closeAttachsPanel}" 
-												/>
-										</aon:div>
-										<aon:div styleClass="aon-box">
-											<aon:dataTable border="0"
-												id="attachDataTable"
-												rows="0"
-												var="attachment"
-												styleClass="aon-noborder-table"
-												value="#{attach.attachments}">
-												<aon:column style="border:0;">
-													<h:outputLink 
-														id="download"
-														value="#{webmail.context}/webmail/download.jsp?pos=#{attachment.position}" 
-														target="_blank">
-														#{attachment.fileName}
-													</h:outputLink>
-												</aon:column>
-												<aon:column>
-													<aon:outputText value="&lt;#{attachment.fileSize}&gt;" />
-												</aon:column>
-											</aon:dataTable>
-										</aon:div>
-									</aon:panelGroup>
+									<h:outputLink 
+										id="download"
+										value="#{webmail.context}/webmail/download.jsp?pos=#{attach.attach.position}" 
+										target="_blank"
+										styleClass="aon-icon aon-icon-mail-save"
+										title="#{appBundle.aon_webmail_download}"
+										style="line-height:16px;">
+										&#160;
+									</h:outputLink>
 								
-							</aon:panelGroup>
+								</aon:panelGroup>
 							</aon:div>
 							<!-- Message Body -->
 							<aon:panelGroup styleClass="aon-box" >
