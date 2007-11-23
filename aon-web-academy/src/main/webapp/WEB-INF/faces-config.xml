@@ -544,6 +544,39 @@
 		</managed-property>
 	</managed-bean>
 	
+	<!-- ************* SERIES LOOKUP ***************** -->
+	<managed-bean>
+		<managed-bean-name>seriesLookup</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.form.LookupController
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>foreignPojo</property-name>
+			<value>com.code.aon.config.Series</value>
+		</managed-property>
+		<managed-property>
+			<property-name>aliasPrefix</property-name>
+			<value>Series</value>
+		</managed-property>
+		<managed-property>
+			<property-name>foreignJoinProperties</property-name>
+			<list-entries>
+				<value>id</value>
+			</list-entries>
+		</managed-property>
+		<managed-property>
+			<property-name>foreignDisplayProperties</property-name>
+			<list-entries>
+				<value>description</value>
+			</list-entries>
+		</managed-property>
+	</managed-bean>
+	
 	<!--  **** COMPANY **** -->
 	<managed-bean>
 		<managed-bean-name>company</managed-bean-name>
