@@ -124,7 +124,8 @@
 								<h:selectOneMenu styleClass="aon-form-selectOneMenu-field" 
 									rendered="#{to.id==series.to.id}"
 									valueChangeListener="#{series.onWorkPlaceChanged}"
-									required="#{true}" value="#{series.to.workPlace.id}">
+									value="#{series.to.workPlace.id}">
+									<f:selectItem itemValue="" itemLabel="-" itemDisabled="true" />
 									<f:selectItems value="#{companyCollections.workPlaces}" />
 								</h:selectOneMenu>
 								<f:verbatim>&#160;</f:verbatim>
@@ -132,7 +133,8 @@
 									<h:selectOneMenu styleClass="aon-form-selectOneMenu-field" 
 										rendered="#{series.new}"
 										valueChangeListener="#{series.onWorkPlaceChanged}"
-										required="#{true}" value="#{series.to.workPlace.id}">
+										value="#{series.to.workPlace.id}">
+										<f:selectItem itemValue="" itemLabel="-" itemDisabled="true" />
 										<f:selectItems value="#{companyCollections.workPlaces}" />
 									</h:selectOneMenu>
 								</f:facet>
