@@ -79,4 +79,18 @@
     	<attribute name="styleClass" value="aon-selectManyCheckbox" />			
 	</component>
 
+	<component localName="dataTable" namespace="http://www.code.es/aon-rich-components">
+    	<attribute name="styleClass" value="aon-table" />			
+    	<attribute name="headerClass" value="aon-table-header" />
+    	<attribute name="footerClass" value="aon-table-footer" />
+    	<attribute name="rowClasses" value="aon-table-row-odd, aon-table-row-even" />
+	</component>
+
+	<component localName="editDataTable" namespace="http://www.code.es/aon-rich-components">
+    	<attribute name="styleClass" value="aon-edit-table" />			
+    	<attribute name="headerClass" value="aon-edit-table-header" />
+    	<attribute name="footerClass" value="aon-edit-table-footer" />
+    	<attribute name="rowClasses" value="aon-edit-table-row-odd, aon-edit-table-row-even" />
+	</component>
+
 </components>
