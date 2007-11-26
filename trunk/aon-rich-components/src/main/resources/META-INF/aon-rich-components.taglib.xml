@@ -191,14 +191,15 @@
 			<handler-class>com.code.aon.faces.component.AonComponentHandler</handler-class>
 		</component>
 	</tag>
-    <!-- 
 	<tag>
 		<tag-name>dataPaginator</tag-name>
 		<component>
 			<component-type>com.code.aon.faces.DataPaginator</component-type>
-			<handler-class>com.code.aon.faces.component.dataPaginator.DataPaginatorHandler</handler-class>
+			<renderer-type>com.code.aon.faces.DataPaginatorRenderer</renderer-type>
+			<handler-class>com.code.aon.faces.component.richfaces.dataPaginator.DataPaginatorHandler</handler-class>
 		</component>
 	</tag>
+    <!-- 
     <tag>
         <tag-name>lookupButton</tag-name>
         <component>

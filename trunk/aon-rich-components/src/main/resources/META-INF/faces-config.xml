@@ -106,6 +106,13 @@
         <component-type>com.code.aon.faces.EditDataTable</component-type>
         <component-class>org.richfaces.component.html.HtmlDataTable</component-class>
     </component>
+    <component>
+        <component-type>com.code.aon.faces.DataPaginator</component-type>
+        <component-class>com.code.aon.faces.component.richfaces.dataPaginator.HtmlDataPaginator</component-class>
+        <component-extension>
+            <renderer-type>com.code.aon.faces.DataPaginatorRenderer</renderer-type>
+        </component-extension>
+    </component>
     
 	<!-- 
     <component>
@@ -130,11 +137,6 @@
         <component-extension>
             <renderer-type>com.code.aon.faces.Text</renderer-type>
         </component-extension>
-    </component>
-    
-    <component>
-        <component-type>com.code.aon.faces.DataPaginator</component-type>
-        <component-class>com.icesoft.faces.component.datapaginator.DataPaginator</component-class>
     </component>
     
     <component>
@@ -203,6 +205,11 @@
             <component-family>org.apache.myfaces.SubForm</component-family>
             <renderer-type>org.apache.myfaces.SubForm</renderer-type>
             <renderer-class>com.code.aon.faces.component.sandbox.subform.SubFormRenderer</renderer-class>
+        </renderer>
+        <renderer>
+            <component-family>com.code.aon.faces.DataPaginator</component-family>
+            <renderer-type>com.code.aon.faces.DataPaginatorRenderer</renderer-type>
+            <renderer-class>com.code.aon.faces.component.richfaces.dataPaginator.DataPaginatorRenderer</renderer-class>
         </renderer>
     </render-kit>
 </faces-config>
