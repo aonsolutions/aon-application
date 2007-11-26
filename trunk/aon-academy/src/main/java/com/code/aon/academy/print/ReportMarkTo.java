@@ -8,6 +8,8 @@ public class ReportMarkTo {
 
 	private String code;
 	
+	private String description;
+	
 	public Mark getMark() {
 		return mark;
 	}
@@ -22,5 +24,13 @@ public class ReportMarkTo {
 
 	public void setCode(String code) {
 		this.code = code;
+	}
+
+	public String getDescription() {
+		return description;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
 	}
 }

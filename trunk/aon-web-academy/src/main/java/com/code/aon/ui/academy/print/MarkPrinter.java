@@ -108,14 +108,18 @@ public class MarkPrinter implements ICollectionProvider{
 		List<ReportMarkTo> returnList = new ArrayList<ReportMarkTo>();
 		while(iter.hasNext()){
 			ReportMarkTo to = (ReportMarkTo)iter.next();
-			to.setCode(obtainMarkCode(to.getMark().getMark()));
+			Qualification qualification = obtainQualification(to.getMark().getMark());
+			if(qualification != null){
+				to.setCode(qualification.getCode());
+				to.setDescription(qualification.getDescription());
+			}
 			returnList.add(to);
 		}
 		return returnList;
 	}
 
 	@SuppressWarnings("unchecked")
-	private String obtainMarkCode(double mark) {
+	private Qualification obtainQualification(double mark) {
 		try {
 			IManagerBean qualificationBean = BeanManager.getManagerBean(Qualification.class);
 			Criteria criteria = new Criteria();
@@ -123,12 +127,12 @@ public class MarkPrinter implements ICollectionProvider{
 			criteria.addGreaterThanOrEqualExpression(qualificationBean.getFieldName(IAcademyAlias.QUALIFICATION_MAX_VALUE), mark);
 			Iterator iter = qualificationBean.getList(criteria).iterator();
 			if(iter.hasNext()){
-				return ((Qualification)iter.next()).getCode();
+				return ((Qualification)iter.next());
 			}
 		} catch (ManagerBeanException e) {
 			LOGGER.log(Level.SEVERE, "Error obtaining code for mark: " + mark, e);
 		}
-		return "";
+		return null;
 	}
 
 	@SuppressWarnings("unchecked")
@@ -180,6 +184,7 @@ public class MarkPrinter implements ICollectionProvider{
 			CourseSchedule courseSchedule;
 			while (iter.hasNext()){
 				courseSchedule = (CourseSchedule)iter.next();
+				courseScheduleStr = (courseScheduleStr.equals("")?courseScheduleStr:courseScheduleStr + "-");
 				courseScheduleStr += courseSchedule.getDay().getShortName(locale);
 				hours += (courseSchedule.getEndTime().getTime() - courseSchedule.getStartTime().getTime())/1000.0/60.0/60.0;
 			}
@@ -190,4 +195,9 @@ public class MarkPrinter implements ICollectionProvider{
 		return null;
 	}
 
+	@SuppressWarnings("unchecked")
+	public List getQualificationLegend() throws ManagerBeanException{
+		IManagerBean qualificationBean = BeanManager.getManagerBean(Qualification.class);
+		return qualificationBean.getList(null);
+	}
 }

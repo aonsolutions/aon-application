@@ -50,7 +50,7 @@
 		</params>
 	</report>
 	
-	<!--  *********  alumnMarks  ********* -->
+	<!--  *********  alumnMarkList  ********* -->
 	<report id="alumnMarkList" description="Alumn Mark report">
 		<template path="/com/code/aon/ui/academy/report/alumnMarkList.jasper" />
 		<collection provider="#{markPrinter}" />
@@ -60,8 +60,16 @@
 			<param id="company" value="#{company.obtainCompany}" />
 			<param id="evaluation" value="#{courseAlumnMark.getEvaluation}" />
 			<param id="encode" value="#{markPrinter.isEncodedMarks}" />
+			<param id="qualifications" value="#{markPrinter.getQualificationLegend}" />
 		</params>
+
+		<nested-report report="qualificationLegend"/>
 	</report>
+	
+	<report id="qualificationLegend" description="Qualification Legend">
+		<template path="/com/code/aon/ui/academy/report/qualificationLegend.jasper" />
+	</report>
+	
 	
 	<!--  *********  alumnMarkTemplate  ********* -->
 	<report id="markTemplateList" description="Alumn Mark Template report">
@@ -165,6 +173,18 @@
 		<template path="/com/code/aon/ui/academy/report/markList.jasper" />
 		<bean key="com.code.aon.academy.Mark" />
 		<criteria provider="#{mark}" />
+		<params>
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.academy.i18n.messages" />
+			<param id="logoImageFile" value="#{company.getAttachAsInputStream}" />
+			<param id="company" value="#{company.obtainCompany}" />
+		</params>
+	</report>
+	
+	<!--  *********  Observation  ********* -->  
+	<report id="observationList" description="Observations report">
+		<template path="/com/code/aon/ui/academy/report/observationList.jasper" />
+		<bean key="com.code.aon.academy.Observation" />
+		<criteria provider="#{observation}" />
 		<params>
 			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.academy.i18n.messages" />
 			<param id="logoImageFile" value="#{company.getAttachAsInputStream}" />
