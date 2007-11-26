@@ -7,18 +7,17 @@ import javax.el.MethodExpression;
 import javax.el.ValueExpression;
 import javax.el.VariableMapper;
 import javax.faces.component.UIComponent;
-import javax.faces.component.UIViewRoot;
 import javax.faces.event.ActionEvent;
 
 import com.code.aon.faces.component.AonComponentHandler;
 import com.code.aon.faces.component.MethodValueExpression;
+import com.code.aon.faces.component.myfaces.UIComponentTagUtils;
 import com.code.aon.faces.component.richfaces.lookup.ILookupTags;
 import com.sun.facelets.FaceletContext;
 import com.sun.facelets.el.VariableMapperWrapper;
 import com.sun.facelets.tag.MetaRuleset;
 import com.sun.facelets.tag.TagAttribute;
 import com.sun.facelets.tag.jsf.ComponentConfig;
-import com.sun.facelets.tag.jsf.ComponentSupport;
 
 /**
  * The Class ConfirmButtonHandler.
@@ -28,10 +27,6 @@ import com.sun.facelets.tag.jsf.ComponentSupport;
 public class ConfirmButtonHandler extends AonComponentHandler implements
 		ILookupTags {
 
-    private static final String COMPONENT_TYPE = "com.code.aon.faces.HtmlConfirmButton";
-    
-	private static final String CONFIRM_SHOW_WINDOW = "confirmShowWindow";
-	
 	private static final String CONFIRM_ACTION = "confirmAction";
 
 	private static final String CONFIRM_ACTION_LISTENER = "confirmActionListener";
@@ -42,11 +37,9 @@ public class ConfirmButtonHandler extends AonComponentHandler implements
 	
 	private static final String IMMEDIATE = "immediate";
 
-	private static final String TEMPLATE_PATH = "com/code/aon/faces/component/confirmButton/";
+	private static final String TEMPLATE_PATH = "com/code/aon/faces/component/richfaces/confirmButton/";
 	
 	private static final String TEMPLATE = TEMPLATE_PATH + "template.xhtml";
-	
-	private static final String INNER_TEMPLATE = TEMPLATE_PATH + "innerTemplate.xhtml";
 
 	private final static Class[] ACTION_SIG = new Class[0];
 
@@ -76,10 +69,15 @@ public class ConfirmButtonHandler extends AonComponentHandler implements
 		return mrs;
 	}
 
+	private String getShowScript( UIComponent button ) {
+		return "Richfaces.showModalPanel('idModalPanel');";
+	}
+	
 	@Override
-	protected void onComponentCreated(FaceletContext ctx, UIComponent c, UIComponent parent) {
-		addConfirmButtonState( ctx, c );
-		insertInnerTemplate(ctx, c);
+	protected void setAttributes(FaceletContext ctx, Object instance) {
+		super.setAttributes(ctx, instance);
+		UIComponent button = (UIComponent) instance;
+		UIComponentTagUtils.setStringProperty(ctx.getFacesContext(), button, "onclick", getShowScript(button) );		
 	}
 
 	@Override
@@ -116,23 +114,6 @@ public class ConfirmButtonHandler extends AonComponentHandler implements
         return new MethodValueExpression( ve, me );
 	}
 	
-	private void addConfirmButtonState( FaceletContext ctx, UIComponent component ) {
-		UIViewRoot root = ComponentSupport.getViewRoot(ctx, component);
-		String stateKey = getStateKey(component);
-		if (! root.getAttributes().containsKey(stateKey) ) {
-			root.getAttributes().put( stateKey, Boolean.FALSE );
-		}
-	}
-	
-	private String getStateKey( UIComponent component ) {
-		return COMPONENT_TYPE + "." + component.getId() + ".showWindow";
-	}
-
-	private ValueExpression getStateExpression( FaceletContext ctx, UIComponent component ) {
-		String expr = "#{view.attributes['" + getStateKey(component) + "']}";
-		return ctx.getExpressionFactory().createValueExpression( ctx, expr, Object.class );
-	}
-	
 	private void insertTemplate(FaceletContext ctx, UIComponent component, UIComponent parent) {
 		VariableMapper newMapper = new VariableMapperWrapper(ctx.getVariableMapper());
 		TagAttribute tagImmediate = getAttribute(IMMEDIATE); 
@@ -141,7 +122,6 @@ public class ConfirmButtonHandler extends AonComponentHandler implements
 		} else {
 			newMapper.setVariable(IMMEDIATE, ctx.getExpressionFactory().createValueExpression(ctx, "#{" + IMMEDIATE + "}", Boolean.class));
 		}
-		newMapper.setVariable(CONFIRM_SHOW_WINDOW, getStateExpression(ctx, component));
 		newMapper.setVariable(CONFIRM_TITLE, getValueExpression(ctx, titleTag));
 		newMapper.setVariable(CONFIRM_MESSAGE, getValueExpression(ctx, messageTag));
 		ValueExpression action = getMethodExpression(ctx, CONFIRM_ACTION, String.class, ACTION_SIG);
@@ -154,12 +134,6 @@ public class ConfirmButtonHandler extends AonComponentHandler implements
 			newMapper.setVariable( CONFIRM_ACTION_LISTENER, al );				
 		}
 		insertTemplate(ctx, parent, getTemplate(TEMPLATE), newMapper );
-	}
-
-	private void insertInnerTemplate(FaceletContext ctx, UIComponent component) {
-		VariableMapper newMapper = new VariableMapperWrapper(ctx.getVariableMapper());
-        newMapper.setVariable(CONFIRM_SHOW_WINDOW, getStateExpression(ctx, component));
-		insertTemplate(ctx, component, getTemplate(INNER_TEMPLATE), newMapper );
 	}
 	
 }

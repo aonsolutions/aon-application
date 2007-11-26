@@ -109,6 +109,13 @@
 		</component>
 	</tag>
 	<tag>
+		<tag-name>inputRichText</tag-name>
+		<component>
+			<component-type>com.code.aon.faces.HtmlInputRichText</component-type>
+			<handler-class>com.code.aon.faces.component.AonComponentHandler</handler-class>
+		</component>
+	</tag>
+	<tag>
 		<tag-name>inputSecret</tag-name>
 		<component>
 			<component-type>com.code.aon.faces.InputSecret</component-type>
@@ -143,6 +150,26 @@
 			<handler-class>com.code.aon.faces.component.AonComponentHandler</handler-class>
 		</component>
 	</tag>
+    <tag>
+        <tag-name>subForm</tag-name>
+        <component>
+            <component-type>org.apache.myfaces.SubForm</component-type>
+            <renderer-type>org.apache.myfaces.SubForm</renderer-type>
+        </component>
+    </tag>
+    <tag>
+        <tag-name>confirmButton</tag-name>
+        <component>
+            <component-type>com.code.aon.faces.CommandButton</component-type>
+            <handler-class>com.code.aon.faces.component.richfaces.confirmButton.ConfirmButtonHandler</handler-class>
+        </component>
+    </tag>
+	<tag>
+		<tag-name>actionListener</tag-name>
+		<handler-class>
+			com.code.aon.faces.component.actionListener.ActionListenerHandler
+		</handler-class>
+	</tag>
     <!-- 
     <tag>
         <tag-name>lookupButton</tag-name>
@@ -168,31 +195,10 @@
             <handler-class>com.code.aon.faces.component.lookup.button.popup.LookupButtonPopupHandler</handler-class>
         </component>
     </tag>
-    <tag>
-        <tag-name>subForm</tag-name>
-        <component>
-            <component-type>org.apache.myfaces.SubForm</component-type>
-            <renderer-type>org.apache.myfaces.SubForm</renderer-type>
-        </component>
-    </tag>
 	<tag>
 		<tag-name>joinProperty</tag-name>
 		<handler-class>
 			com.code.aon.faces.component.lookup.inputText.JoinPropertyHandler
-		</handler-class>
-	</tag>
-    <tag>
-        <tag-name>confirmButton</tag-name>
-        <component>
-            <component-type>javax.faces.HtmlCommandButton</component-type>
-            <renderer-type>javax.faces.Button</renderer-type>
-            <handler-class>com.code.aon.faces.component.confirmButton.ConfirmButtonHandler</handler-class>
-        </component>
-    </tag>
-	<tag>
-		<tag-name>actionListener</tag-name>
-		<handler-class>
-			com.code.aon.faces.component.actionListener.ActionListenerHandler
 		</handler-class>
 	</tag>
 	<tag>
@@ -278,13 +284,6 @@
 		<component>
 			<component-type>com.code.aon.faces.SelectInputDate</component-type>
 			<handler-class>com.code.aon.faces.component.selectInputDate.SelectInputDateHandler</handler-class>
-		</component>
-	</tag>
-	<tag>
-		<tag-name>inputRichText</tag-name>
-		<component>
-			<component-type>com.code.aon.faces.HtmlInputRichText</component-type>
-			<handler-class>com.code.aon.faces.component.inputRichText.InputRichTextHandler</handler-class>
 		</component>
 	</tag>
 	 -->
