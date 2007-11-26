@@ -100,14 +100,18 @@ public class WebMailController {
     }
 
     @SuppressWarnings("unchecked")
-    public String getCompanyName() throws ManagerBeanException {
-        IManagerBean companyBean = BeanManager.getManagerBean(Company.class);
-        List companyList = companyBean.getList(null);
-        if (companyList.size() > 0) {
-            Company company = (Company)companyList.get(0);
-            return company.getName();
-        }
-        return null;
+    public String getCompanyName(){
+        IManagerBean companyBean;
+		try {
+			companyBean = BeanManager.getManagerBean(Company.class);
+	        List companyList = companyBean.getList(null);
+	        if (companyList.size() > 0) {
+	            Company company = (Company)companyList.get(0);
+	            return company.getName();
+	        }
+		} catch (Exception e) {
+		}
+        return "";
     }
 
     public String getLoggedUserName() {
