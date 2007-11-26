@@ -33,7 +33,7 @@ public class MarkController extends BasicController {
 			IManagerBean courseAcademicSkillBean = BeanManager.getManagerBean(CourseAcademicSkill.class);
 			Criteria courseAcademicSkillCriteria = new Criteria();
 			Course course = courseAlumn==null?null:courseAlumn.getCourse(); 
-			courseAcademicSkillCriteria.addEqualExpression(courseAcademicSkillBean.getFieldName(IAcademyAlias.COURSE_ACADEMICSKILL_COURSE_ID), course==null?new Integer(-1):course.getId());
+			courseAcademicSkillCriteria.addEqualExpression(courseAcademicSkillBean.getFieldName(IAcademyAlias.COURSE_ACADEMIC_SKILL_COURSE_ID), course==null?new Integer(-1):course.getId());
 			List<ITransferObject> listCourseAcademicSkill = courseAcademicSkillBean.getList(courseAcademicSkillCriteria);
 			if (listCourseAcademicSkill.isEmpty()){
 				criteria.addExpression(this.getFieldName(IAcademyAlias.MARK_SUBJECT_ID),String.valueOf("-1"));

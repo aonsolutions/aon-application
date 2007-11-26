@@ -43,8 +43,8 @@ public class CourseAcademicSkillControllerListener extends ControllerAdapter {
 		try {
 			IManagerBean courseAcademicSkillBean = BeanManager.getManagerBean(CourseAcademicSkill.class);
 			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(courseAcademicSkillBean.getFieldName(IAcademyAlias.COURSE_ACADEMICSKILL_COURSE_ID), courseAcademicSkill.getCourse().getId());
-			criteria.addEqualExpression(courseAcademicSkillBean.getFieldName(IAcademyAlias.COURSE_ACADEMICSKILL_ACADEMICSKILL_ID), courseAcademicSkill.getAcademicSkill().getId());
+			criteria.addEqualExpression(courseAcademicSkillBean.getFieldName(IAcademyAlias.COURSE_ACADEMIC_SKILL_COURSE_ID), courseAcademicSkill.getCourse().getId());
+			criteria.addEqualExpression(courseAcademicSkillBean.getFieldName(IAcademyAlias.COURSE_ACADEMIC_SKILL_ACADEMIC_SKILL_ID), courseAcademicSkill.getAcademicSkill().getId());
 			if(courseAcademicSkillBean.getCount(criteria) > 0){
 				return true;
 			}

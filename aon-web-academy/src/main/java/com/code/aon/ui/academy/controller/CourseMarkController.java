@@ -141,7 +141,7 @@ public class CourseMarkController{
 	public void initCourse() throws ManagerBeanException{
     	IManagerBean courseAcademicSkillBean = BeanManager.getManagerBean(CourseAcademicSkill.class);
     	Criteria courseAcademicSkillCriteria = new Criteria();
-    	courseAcademicSkillCriteria.addEqualExpression(courseAcademicSkillBean.getFieldName(IAcademyAlias.COURSE_ACADEMICSKILL_COURSE_ID), course.getId());
+    	courseAcademicSkillCriteria.addEqualExpression(courseAcademicSkillBean.getFieldName(IAcademyAlias.COURSE_ACADEMIC_SKILL_COURSE_ID), course.getId());
     	academicSkills = courseAcademicSkillBean.getList(courseAcademicSkillCriteria);
     	alumnMarkHeaders = new LinkedList<AlumnMarkHeader>();
     	for (int i = 0; i < academicSkills.size(); i++){

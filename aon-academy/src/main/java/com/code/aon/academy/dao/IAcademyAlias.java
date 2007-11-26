@@ -1,5 +1,7 @@
 package com.code.aon.academy.dao;
 
+import com.code.aon.common.dao.DAOConstants;
+import com.code.aon.common.dao.DAOConstantsEntry;
 import com.code.aon.academy.Absence;
 import com.code.aon.academy.AcademicSkill;
 import com.code.aon.academy.AcademicYear;
@@ -18,8 +20,6 @@ import com.code.aon.academy.Mark;
 import com.code.aon.academy.Observation;
 import com.code.aon.academy.Qualification;
 import com.code.aon.academy.QualitySkill;
-import com.code.aon.common.dao.DAOConstants;
-import com.code.aon.common.dao.DAOConstantsEntry;
 
 /** 
 * Interface for holding entity properties constants.
@@ -28,7 +28,131 @@ public interface IAcademyAlias {
 
 
 
-	/**
+	/** 
+	* DAOConstantsEntry for Absence entity.
+	*/ 
+	DAOConstantsEntry ABSENCE_ENTRY = DAOConstants.getDAOConstant(Absence.class);
+
+	/** 
+	* Alias value: Absence_absenceDate
+	* Hibernate value: Absence.absenceDate
+	*/
+	String  ABSENCE_ABSENCE_DATE = ABSENCE_ENTRY.getAliasNames()[0];
+
+	/** 
+	* Alias value: Absence_comments
+	* Hibernate value: Absence.comments
+	*/
+	String  ABSENCE_COMMENTS = ABSENCE_ENTRY.getAliasNames()[1];
+
+	/** 
+	* Alias value: Absence_courseAlumn_id
+	* Hibernate value: Absence.courseAlumn.id
+	*/
+	String  ABSENCE_COURSE_ALUMN_ID = ABSENCE_ENTRY.getAliasNames()[2];
+
+	/** 
+	* Alias value: Absence_evaluation
+	* Hibernate value: Absence.evaluation
+	*/
+	String  ABSENCE_EVALUATION = ABSENCE_ENTRY.getAliasNames()[3];
+
+	/** 
+	* Alias value: Absence_id
+	* Hibernate value: Absence.id
+	*/
+	String  ABSENCE_ID = ABSENCE_ENTRY.getAliasNames()[4];
+
+
+
+	/** 
+	* DAOConstantsEntry for AcademicSkill entity.
+	*/ 
+	DAOConstantsEntry ACADEMIC_SKILL_ENTRY = DAOConstants.getDAOConstant(AcademicSkill.class);
+
+	/** 
+	* Alias value: AcademicSkill_code
+	* Hibernate value: AcademicSkill.code
+	*/
+	String  ACADEMIC_SKILL_CODE = ACADEMIC_SKILL_ENTRY.getAliasNames()[0];
+
+	/** 
+	* Alias value: AcademicSkill_description
+	* Hibernate value: AcademicSkill.description
+	*/
+	String  ACADEMIC_SKILL_DESCRIPTION = ACADEMIC_SKILL_ENTRY.getAliasNames()[1];
+
+	/** 
+	* Alias value: AcademicSkill_id
+	* Hibernate value: AcademicSkill.id
+	*/
+	String  ACADEMIC_SKILL_ID = ACADEMIC_SKILL_ENTRY.getAliasNames()[2];
+
+
+
+	/** 
+	* DAOConstantsEntry for AcademicYear entity.
+	*/ 
+	DAOConstantsEntry ACADEMIC_YEAR_ENTRY = DAOConstants.getDAOConstant(AcademicYear.class);
+
+	/** 
+	* Alias value: AcademicYear_description
+	* Hibernate value: AcademicYear.description
+	*/
+	String  ACADEMIC_YEAR_DESCRIPTION = ACADEMIC_YEAR_ENTRY.getAliasNames()[0];
+
+	/** 
+	* Alias value: AcademicYear_id
+	* Hibernate value: AcademicYear.id
+	*/
+	String  ACADEMIC_YEAR_ID = ACADEMIC_YEAR_ENTRY.getAliasNames()[1];
+
+
+
+	/** 
+	* DAOConstantsEntry for AlumnLoan entity.
+	*/ 
+	DAOConstantsEntry ALUMN_LOAN_ENTRY = DAOConstants.getDAOConstant(AlumnLoan.class);
+
+	/** 
+	* Alias value: AlumnLoan_comments
+	* Hibernate value: AlumnLoan.comments
+	*/
+	String  ALUMN_LOAN_COMMENTS = ALUMN_LOAN_ENTRY.getAliasNames()[0];
+
+	/** 
+	* Alias value: AlumnLoan_customer_id
+	* Hibernate value: AlumnLoan.customer.id
+	*/
+	String  ALUMN_LOAN_CUSTOMER_ID = ALUMN_LOAN_ENTRY.getAliasNames()[1];
+
+	/** 
+	* Alias value: AlumnLoan_endDate
+	* Hibernate value: AlumnLoan.endDate
+	*/
+	String  ALUMN_LOAN_END_DATE = ALUMN_LOAN_ENTRY.getAliasNames()[2];
+
+	/** 
+	* Alias value: AlumnLoan_id
+	* Hibernate value: AlumnLoan.id
+	*/
+	String  ALUMN_LOAN_ID = ALUMN_LOAN_ENTRY.getAliasNames()[3];
+
+	/** 
+	* Alias value: AlumnLoan_loanDate
+	* Hibernate value: AlumnLoan.loanDate
+	*/
+	String  ALUMN_LOAN_LOAN_DATE = ALUMN_LOAN_ENTRY.getAliasNames()[4];
+
+	/** 
+	* Alias value: AlumnLoan_material
+	* Hibernate value: AlumnLoan.material
+	*/
+	String  ALUMN_LOAN_MATERIAL = ALUMN_LOAN_ENTRY.getAliasNames()[5];
+
+
+
+	/** 
 	* DAOConstantsEntry for Course entity.
 	*/ 
 	DAOConstantsEntry COURSE_ENTRY = DAOConstants.getDAOConstant(Course.class);
@@ -108,6 +232,31 @@ public interface IAcademyAlias {
 
 
 	/** 
+	* DAOConstantsEntry for CourseAcademicSkill entity.
+	*/ 
+	DAOConstantsEntry COURSE_ACADEMIC_SKILL_ENTRY = DAOConstants.getDAOConstant(CourseAcademicSkill.class);
+
+	/** 
+	* Alias value: CourseAcademicSkill_academicSkill_id
+	* Hibernate value: CourseAcademicSkill.academicSkill.id
+	*/
+	String  COURSE_ACADEMIC_SKILL_ACADEMIC_SKILL_ID = COURSE_ACADEMIC_SKILL_ENTRY.getAliasNames()[0];
+
+	/** 
+	* Alias value: CourseAcademicSkill_course_id
+	* Hibernate value: CourseAcademicSkill.course.id
+	*/
+	String  COURSE_ACADEMIC_SKILL_COURSE_ID = COURSE_ACADEMIC_SKILL_ENTRY.getAliasNames()[1];
+
+	/** 
+	* Alias value: CourseAcademicSkill_id
+	* Hibernate value: CourseAcademicSkill.id
+	*/
+	String  COURSE_ACADEMIC_SKILL_ID = COURSE_ACADEMIC_SKILL_ENTRY.getAliasNames()[2];
+
+
+
+	/** 
 	* DAOConstantsEntry for CourseAlumn entity.
 	*/ 
 	DAOConstantsEntry COURSE_ALUMN_ENTRY = DAOConstants.getDAOConstant(CourseAlumn.class);
@@ -147,6 +296,45 @@ public interface IAcademyAlias {
 	* Hibernate value: CourseAlumn.status
 	*/
 	String  COURSE_ALUMN_STATUS = COURSE_ALUMN_ENTRY.getAliasNames()[5];
+
+
+
+	/** 
+	* DAOConstantsEntry for CourseEvaluation entity.
+	*/ 
+	DAOConstantsEntry COURSE_EVALUATION_ENTRY = DAOConstants.getDAOConstant(CourseEvaluation.class);
+
+	/** 
+	* Alias value: CourseEvaluation_course_id
+	* Hibernate value: CourseEvaluation.course.id
+	*/
+	String  COURSE_EVALUATION_COURSE_ID = COURSE_EVALUATION_ENTRY.getAliasNames()[0];
+
+	/** 
+	* Alias value: CourseEvaluation_evaluation
+	* Hibernate value: CourseEvaluation.evaluation
+	*/
+	String  COURSE_EVALUATION_EVALUATION = COURSE_EVALUATION_ENTRY.getAliasNames()[1];
+
+	/** 
+	* Alias value: CourseEvaluation_id
+	* Hibernate value: CourseEvaluation.id
+	*/
+	String  COURSE_EVALUATION_ID = COURSE_EVALUATION_ENTRY.getAliasNames()[2];
+
+	/** 
+	* Alias value: CourseEvaluation_qualitySkill_id
+	* Hibernate value: CourseEvaluation.qualitySkill.id
+	*/
+	String  COURSE_EVALUATION_QUALITY_SKILL_ID = COURSE_EVALUATION_ENTRY.getAliasNames()[3];
+
+	/** 
+	* Alias value: CourseEvaluation_quantity
+	* Hibernate value: CourseEvaluation.quantity
+	*/
+	String  COURSE_EVALUATION_QUANTITY = COURSE_EVALUATION_ENTRY.getAliasNames()[4];
+
+
 
 	/** 
 	* DAOConstantsEntry for CourseInstructor entity.
@@ -195,6 +383,31 @@ public interface IAcademyAlias {
 	* Hibernate value: CourseLevel.id
 	*/
 	String  COURSE_LEVEL_ID = COURSE_LEVEL_ENTRY.getAliasNames()[1];
+
+
+
+	/** 
+	* DAOConstantsEntry for CourseObservation entity.
+	*/ 
+	DAOConstantsEntry COURSE_OBSERVATION_ENTRY = DAOConstants.getDAOConstant(CourseObservation.class);
+
+	/** 
+	* Alias value: CourseObservation_course_id
+	* Hibernate value: CourseObservation.course.id
+	*/
+	String  COURSE_OBSERVATION_COURSE_ID = COURSE_OBSERVATION_ENTRY.getAliasNames()[0];
+
+	/** 
+	* Alias value: CourseObservation_id
+	* Hibernate value: CourseObservation.id
+	*/
+	String  COURSE_OBSERVATION_ID = COURSE_OBSERVATION_ENTRY.getAliasNames()[1];
+
+	/** 
+	* Alias value: CourseObservation_observation
+	* Hibernate value: CourseObservation.observation
+	*/
+	String  COURSE_OBSERVATION_OBSERVATION = COURSE_OBSERVATION_ENTRY.getAliasNames()[2];
 
 
 
@@ -255,181 +468,38 @@ public interface IAcademyAlias {
 
 
 	/** 
-	* DAOConstantsEntry for AcademicYear entity.
+	* DAOConstantsEntry for EvaluationObservation entity.
 	*/ 
-	DAOConstantsEntry ACADEMIC_YEAR_ENTRY = DAOConstants.getDAOConstant(AcademicYear.class);
+	DAOConstantsEntry EVALUATION_OBSERVATION_ENTRY = DAOConstants.getDAOConstant(EvaluationObservation.class);
 
 	/** 
-	* Alias value: AcademicYear_description
-	* Hibernate value: AcademicYear.description
+	* Alias value: EvaluationObservation_alumn_id
+	* Hibernate value: EvaluationObservation.alumn.id
 	*/
-	String  ACADEMIC_YEAR_DESCRIPTION = ACADEMIC_YEAR_ENTRY.getAliasNames()[0];
+	String  EVALUATION_OBSERVATION_ALUMN_ID = EVALUATION_OBSERVATION_ENTRY.getAliasNames()[0];
 
 	/** 
-	* Alias value: AcademicYear_id
-	* Hibernate value: AcademicYear.id
+	* Alias value: EvaluationObservation_comments
+	* Hibernate value: EvaluationObservation.comments
 	*/
-	String  ACADEMIC_YEAR_ID = ACADEMIC_YEAR_ENTRY.getAliasNames()[1];
-
-
+	String  EVALUATION_OBSERVATION_COMMENTS = EVALUATION_OBSERVATION_ENTRY.getAliasNames()[1];
 
 	/** 
-	* DAOConstantsEntry for AlumnLoan entity.
-	*/ 
-	DAOConstantsEntry ALUMN_LOAN_ENTRY = DAOConstants.getDAOConstant(AlumnLoan.class);
-
-	/** 
-	* Alias value: AlumnLoan_comments
-	* Hibernate value: AlumnLoan.comments
+	* Alias value: EvaluationObservation_evaluation
+	* Hibernate value: EvaluationObservation.evaluation
 	*/
-	String  ALUMN_LOAN_COMMENTS = ALUMN_LOAN_ENTRY.getAliasNames()[0];
+	String  EVALUATION_OBSERVATION_EVALUATION = EVALUATION_OBSERVATION_ENTRY.getAliasNames()[2];
 
 	/** 
-	* Alias value: AlumnLoan_customer_id
-	* Hibernate value: AlumnLoan.customer.id
+	* Alias value: EvaluationObservation_id
+	* Hibernate value: EvaluationObservation.id
 	*/
-	String  ALUMN_LOAN_CUSTOMER_ID = ALUMN_LOAN_ENTRY.getAliasNames()[1];
-
-	/** 
-	* Alias value: AlumnLoan_endDate
-	* Hibernate value: AlumnLoan.endDate
-	*/
-	String  ALUMN_LOAN_END_DATE = ALUMN_LOAN_ENTRY.getAliasNames()[2];
-
-	/** 
-	* Alias value: AlumnLoan_id
-	* Hibernate value: AlumnLoan.id
-	*/
-	String  ALUMN_LOAN_ID = ALUMN_LOAN_ENTRY.getAliasNames()[3];
-
-	/** 
-	* Alias value: AlumnLoan_loanDate
-	* Hibernate value: AlumnLoan.loanDate
-	*/
-	String  ALUMN_LOAN_LOAN_DATE = ALUMN_LOAN_ENTRY.getAliasNames()[4];
-
-	/** 
-	* Alias value: AlumnLoan_material
-	* Hibernate value: AlumnLoan.material
-	*/
-	String  ALUMN_LOAN_MATERIAL = ALUMN_LOAN_ENTRY.getAliasNames()[5];
+	String  EVALUATION_OBSERVATION_ID = EVALUATION_OBSERVATION_ENTRY.getAliasNames()[3];
 
 
 
 	/** 
-	* DAOConstantsEntry for AcademicSkill entity.
-	*/ 
-	DAOConstantsEntry ACADEMIC_SKILL_ENTRY = DAOConstants.getDAOConstant(AcademicSkill.class);
-
-	/** 
-	* Alias value: AcademicSkill_code
-	* Hibernate value: AcademicSkill.code
-	*/
-	String  ACADEMIC_SKILL_CODE = ACADEMIC_SKILL_ENTRY.getAliasNames()[0];
-
-	/** 
-	* Alias value: AcademicSkill_description
-	* Hibernate value: AcademicSkill.description
-	*/
-	String  ACADEMIC_SKILL_DESCRIPTION = ACADEMIC_SKILL_ENTRY.getAliasNames()[1];
-
-	/** 
-	* Alias value: AcademicSkill_id
-	* Hibernate value: AcademicSkill.id
-	*/
-	String  ACADEMIC_SKILL_ID = ACADEMIC_SKILL_ENTRY.getAliasNames()[2];
-
-
-
-	/** 
-	* DAOConstantsEntry for Qualification entity.
-	*/ 
-	DAOConstantsEntry QUALIFICATION_ENTRY = DAOConstants.getDAOConstant(Qualification.class);
-
-	/** 
-	* Alias value: Qualification_code
-	* Hibernate value: Qualification.code
-	*/
-	String  QUALIFICATION_CODE = QUALIFICATION_ENTRY.getAliasNames()[0];
-
-	/** 
-	* Alias value: Qualification_id
-	* Hibernate value: Qualification.id
-	*/
-	String  QUALIFICATION_ID = QUALIFICATION_ENTRY.getAliasNames()[1];
-
-	/** 
-	* Alias value: Qualification_maxValue
-	* Hibernate value: Qualification.maxValue
-	*/
-	String  QUALIFICATION_MAX_VALUE = QUALIFICATION_ENTRY.getAliasNames()[2];
-
-	/** 
-	* Alias value: Qualification_minValue
-	* Hibernate value: Qualification.minValue
-	*/
-	String  QUALIFICATION_MIN_VALUE = QUALIFICATION_ENTRY.getAliasNames()[3];
-
-	/**
-	* DAOConstantsEntry for Absence entity.
-	*/ 
-	DAOConstantsEntry ABSENCE_ENTRY = DAOConstants.getDAOConstant(Absence.class);
-	
-	/** 
-	* Alias value: Absence_absenceDate
-	* Hibernate value: Absence.absenceDate
-	*/
-	String  ABSENCE_ABSENCE_DATE = ABSENCE_ENTRY.getAliasNames()[0];
-
-	/** 
-	* Alias value: Absence_comments
-	* Hibernate value: Absence.comments
-	*/
-	String  ABSENCE_COMMENTS = ABSENCE_ENTRY.getAliasNames()[1];
-
-	/** 
-	* Alias value: Absence_courseAlumn_id
-	* Hibernate value: Absence.courseAlumn.id
-	*/
-	String  ABSENCE_COURSE_ALUMN_ID = ABSENCE_ENTRY.getAliasNames()[2];
-
-	/** 
-	* Alias value: Absence_evaluation
-	* Hibernate value: Absence.evaluation
-	*/
-	String  ABSENCE_EVALUATION = ABSENCE_ENTRY.getAliasNames()[3];
-
-	/** 
-	* Alias value: Absence_id
-	* Hibernate value: Absence.id
-	*/
-	String  ABSENCE_ID = ABSENCE_ENTRY.getAliasNames()[4];
-
-	/** 
-	* DAOConstantsEntry for CourseAcademicSkill entity.
-	*/ 
-	DAOConstantsEntry COURSE_ACADEMICSKILL_ENTRY = DAOConstants.getDAOConstant(CourseAcademicSkill.class);
-
-	/** 
-	* Alias value: CourseAcademicSkill_academicSkill_id
-	* Hibernate value: CourseAcademicSkill.academicSkill.id
-	*/
-	String  COURSE_ACADEMICSKILL_ACADEMICSKILL_ID = COURSE_ACADEMICSKILL_ENTRY.getAliasNames()[0];
-
-	/** 
-	* Alias value: CourseAcademicSkill_course_id
-	* Hibernate value: CourseAcademicSkill.course.id
-	*/
-	String  COURSE_ACADEMICSKILL_COURSE_ID = COURSE_ACADEMICSKILL_ENTRY.getAliasNames()[1];
-
-	/** 
-	* Alias value: CourseAcademicSkill_id
-	* Hibernate value: CourseAcademicSkill.id
-	*/
-	String  COURSE_ACADEMICSKILL_ID = COURSE_ACADEMICSKILL_ENTRY.getAliasNames()[2];
-
-	/** 
-	* DAOConstantsEntry for CourseAcademicSkill entity.
+	* DAOConstantsEntry for Mark entity.
 	*/ 
 	DAOConstantsEntry MARK_ENTRY = DAOConstants.getDAOConstant(Mark.class);
 
@@ -437,25 +507,25 @@ public interface IAcademyAlias {
 	* Alias value: Mark_alumn_course_academicYear_id
 	* Hibernate value: Mark.alumn.course.academicYear.id
 	*/
-	String  MARK_ALUMN_COURSE_ACADEMICYEAR_ID = ABSENCE_ENTRY.getAliasNames()[0];
-	
+	String  MARK_ALUMN_COURSE_ACADEMIC_YEAR_ID = MARK_ENTRY.getAliasNames()[0];
+
 	/** 
 	* Alias value: Mark_alumn_course_courseLevel_id
 	* Hibernate value: Mark.alumn.course.courseLevel.id
 	*/
-	String  MARK_ALUMN_COURSE_COURSELEVEL_ID = MARK_ENTRY.getAliasNames()[1];
-	
+	String  MARK_ALUMN_COURSE_COURSE_LEVEL_ID = MARK_ENTRY.getAliasNames()[1];
+
 	/** 
 	* Alias value: Mark_alumn_course_courseSubject_id
 	* Hibernate value: Mark.alumn.course.courseSubject.id
 	*/
-	String  MARK_ALUMN_COURSE_COURSESUBJECT_ID = MARK_ENTRY.getAliasNames()[2];
+	String  MARK_ALUMN_COURSE_COURSE_SUBJECT_ID = MARK_ENTRY.getAliasNames()[2];
 
 	/** 
 	* Alias value: Mark_alumn_course_id
 	* Hibernate value: Mark.alumn.course.id
 	*/
-	String  MARK_ALUMN_COURSE_ID = ABSENCE_ENTRY.getAliasNames()[3];
+	String  MARK_ALUMN_COURSE_ID = MARK_ENTRY.getAliasNames()[3];
 
 	/** 
 	* Alias value: Mark_alumn_customer_registry_name
@@ -474,30 +544,30 @@ public interface IAcademyAlias {
 	* Hibernate value: Mark.alumn.id
 	*/
 	String  MARK_ALUMN_ID = MARK_ENTRY.getAliasNames()[6];
-	
+
 	/** 
 	* Alias value: Mark_evaluation
 	* Hibernate value: Mark.evaluation
 	*/
 	String  MARK_EVALUATION = MARK_ENTRY.getAliasNames()[7];
-	
+
 	/** 
 	* Alias value: Mark_id
 	* Hibernate value: Mark.id
 	*/
 	String  MARK_ID = MARK_ENTRY.getAliasNames()[8];
-	
+
 	/** 
 	* Alias value: Mark_mark
 	* Hibernate value: Mark.mark
 	*/
 	String  MARK_MARK = MARK_ENTRY.getAliasNames()[9];
-	
+
 	/** 
 	* Alias value: Mark_subject_academicSkill_id
 	* Hibernate value: Mark.subject.academicSkill.id
 	*/
-	String  MARK_SUBJECT_ACADEMICSKILL_ID = MARK_ENTRY.getAliasNames()[10];
+	String  MARK_SUBJECT_ACADEMIC_SKILL_ID = MARK_ENTRY.getAliasNames()[10];
 
 	/** 
 	* Alias value: Mark_subject_id
@@ -505,34 +575,7 @@ public interface IAcademyAlias {
 	*/
 	String  MARK_SUBJECT_ID = MARK_ENTRY.getAliasNames()[11];
 
-	/** 
-	* DAOConstantsEntry for EvaluationObservation entity.
-	*/ 
-	DAOConstantsEntry EVALUATION_OBSERVATION_ENTRY = DAOConstants.getDAOConstant(EvaluationObservation.class);
 
-	/** 
-	* Alias value: EvaluationObservation_alumn_id
-	* Hibernate value: EvaluationObservation.alumn.id
-	*/
-	String  EVALUATION_OBSERVATION_ALUMN_ID = EVALUATION_OBSERVATION_ENTRY.getAliasNames()[0];
-	
-	/** 
-	* Alias value: EvaluationObservation_comments
-	* Hibernate value: EvaluationObservation.comments
-	*/
-	String  EVALUATION_OBSERVATION_COMMENTS = EVALUATION_OBSERVATION_ENTRY.getAliasNames()[1];
-	
-	/** 
-	* Alias value: EvaluationObservation_evaluation
-	* Hibernate value: EvaluationObservation.evaluation
-	*/
-	String  EVALUATION_OBSERVATION_EVALUATION = EVALUATION_OBSERVATION_ENTRY.getAliasNames()[2];
-	
-	/** 
-	* Alias value: EvaluationObservation_id
-	* Hibernate value: EvaluationObservation.id
-	*/
-	String  EVALUATION_OBSERVATION_ID = EVALUATION_OBSERVATION_ENTRY.getAliasNames()[3];
 
 	/** 
 	* DAOConstantsEntry for Observation entity.
@@ -550,6 +593,45 @@ public interface IAcademyAlias {
 	* Hibernate value: Observation.id
 	*/
 	String  OBSERVATION_ID = OBSERVATION_ENTRY.getAliasNames()[1];
+
+
+
+	/** 
+	* DAOConstantsEntry for Qualification entity.
+	*/ 
+	DAOConstantsEntry QUALIFICATION_ENTRY = DAOConstants.getDAOConstant(Qualification.class);
+
+	/** 
+	* Alias value: Qualification_code
+	* Hibernate value: Qualification.code
+	*/
+	String  QUALIFICATION_CODE = QUALIFICATION_ENTRY.getAliasNames()[0];
+
+	/** 
+	* Alias value: Qualification_description
+	* Hibernate value: Qualification.description
+	*/
+	String  QUALIFICATION_DESCRIPTION = QUALIFICATION_ENTRY.getAliasNames()[1];
+
+	/** 
+	* Alias value: Qualification_id
+	* Hibernate value: Qualification.id
+	*/
+	String  QUALIFICATION_ID = QUALIFICATION_ENTRY.getAliasNames()[2];
+
+	/** 
+	* Alias value: Qualification_maxValue
+	* Hibernate value: Qualification.maxValue
+	*/
+	String  QUALIFICATION_MAX_VALUE = QUALIFICATION_ENTRY.getAliasNames()[3];
+
+	/** 
+	* Alias value: Qualification_minValue
+	* Hibernate value: Qualification.minValue
+	*/
+	String  QUALIFICATION_MIN_VALUE = QUALIFICATION_ENTRY.getAliasNames()[4];
+
+
 
 	/** 
 	* DAOConstantsEntry for QualitySkill entity.
@@ -574,62 +656,5 @@ public interface IAcademyAlias {
 	*/
 	String  QUALITY_SKILL_ID = QUALITY_SKILL_ENTRY.getAliasNames()[2];
 
-	/** 
-	* DAOConstantsEntry for CourseEvaluation entity.
-	*/ 
-	DAOConstantsEntry COURSE_EVALUATION_ENTRY = DAOConstants.getDAOConstant(CourseEvaluation.class);
 
-	/** 
-	* Alias value: CourseEvaluation_course_id
-	* Hibernate value: CourseEvaluation.course.id
-	*/
-	String  COURSE_EVALUATION_COURSE_ID = COURSE_EVALUATION_ENTRY.getAliasNames()[0];
-
-	/** 
-	* Alias value: CourseEvaluation_evaluation
-	* Hibernate value: CourseEvaluation.evaluation
-	*/
-	String  COURSE_EVALUATION_EVALUATION = COURSE_EVALUATION_ENTRY.getAliasNames()[1];
-	
-	/** 
-	* Alias value: CourseEvaluation_id
-	* Hibernate value: CourseEvaluation.id
-	*/
-	String  COURSE_EVALUATION_CODE = COURSE_EVALUATION_ENTRY.getAliasNames()[2];
-
-	/** 
-	* Alias value: CourseEvaluation_qualitySkill_id
-	* Hibernate value: CourseEvaluation.qualitySkill.id
-	*/
-	String  COURSE_EVALUATION_QUALITY_SKILL_ID = COURSE_EVALUATION_ENTRY.getAliasNames()[3];
-
-	/** 
-	* Alias value: CourseEvaluation_quantity
-	* Hibernate value: CourseEvaluation.quantity
-	*/
-	String  COURSE_EVALUATION_QUANTITY = COURSE_EVALUATION_ENTRY.getAliasNames()[4];
-	
-	/** 
-	* DAOConstantsEntry for CourseObservation entity.
-	*/ 
-	DAOConstantsEntry COURSE_OBSERVATION_ENTRY = DAOConstants.getDAOConstant(CourseObservation.class);
-
-	/** 
-	* Alias value: CourseObservation_course_id
-	* Hibernate value: CourseObservation.course.id
-	*/
-	String  COURSE_OBSERVATION_COURSE_ID = COURSE_OBSERVATION_ENTRY.getAliasNames()[0];
-
-	/** 
-	* Alias value: CourseObservation_id
-	* Hibernate value: CourseObservation.id
-	*/
-	String  COURSE_OBSERVATION_CODE = COURSE_OBSERVATION_ENTRY.getAliasNames()[1];
-
-	/** 
-	* Alias value: CourseObservation_observation
-	* Hibernate value: CourseObservation.observation
-	*/
-	String  COURSE_OBSERVATION_OBSERVATION = COURSE_OBSERVATION_ENTRY.getAliasNames()[2];
-	
 }
