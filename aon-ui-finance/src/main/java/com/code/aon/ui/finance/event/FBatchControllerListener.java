@@ -16,6 +16,7 @@ import com.code.aon.finance.enumeration.FinanceBatchStatus;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.finance.controller.FBatchController;
 import com.code.aon.ui.finance.controller.FBatchDetailController;
+import com.code.aon.ui.finance.controller.FinanceController;
 import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
@@ -25,6 +26,7 @@ public class FBatchControllerListener extends ControllerAdapter {
 	
 	private static final Logger LOGGER = Logger.getLogger(FBatchControllerListener.class.getName());
 	
+	private static final String FINANCE_CONTROLLER = "finance"; 
 	private static final String FINANCE_BATCH_DETAIL_CONTROLLER = "fBatchDetail"; 
 	
 	@Override
@@ -74,20 +76,22 @@ public class FBatchControllerListener extends ControllerAdapter {
 		FBatchController fBatchController = (FBatchController)event.getController();
 		FinanceBatch fBatch = (FinanceBatch)fBatchController.getTo();
 		fBatchController.loadAvailableFinances(fBatch.isPayment());
-		fBatchController.setFile(null);
-	}
+		fBatchController.setCsbOutput(null);
+
+        FBatchDetailController fBatchDetailController = (FBatchDetailController)AonUtil.getController(FINANCE_BATCH_DETAIL_CONTROLLER);
+        fBatchDetailController.clearCheckedFinanceBatchDetails();
+        FinanceController financeController = (FinanceController)AonUtil.getController(FINANCE_CONTROLLER);
+        financeController.clearCheckedFinances();
+    }
 
     @Override
     @SuppressWarnings("unchecked")
 	public void beforeBeanRemoved(ControllerEvent event) throws ControllerListenerException {
         FBatchDetailController fBatchDetailController = (FBatchDetailController)AonUtil.getController(FINANCE_BATCH_DETAIL_CONTROLLER);
         Iterator iter = fBatchDetailController.getWrappedList().iterator();
-        int i = 0;
 		while (iter.hasNext()) {
 			FinanceBatchDetail fBatchDetail = (FinanceBatchDetail)iter.next();
-			fBatchDetailController.updateRelatedInfo(fBatchDetail);
-        	i++;
-        	System.out.println(i);
+			((FBatchController)event.getController()).updateRelatedInfo(fBatchDetail);
         }
 	}
 
