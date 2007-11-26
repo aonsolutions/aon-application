@@ -150,8 +150,10 @@
 							<t:inputText id="FinanceBatch_totalRegs"
 								styleClass="aon-form-input-text-disabled"
 								disabled="true" size="8"
-								value="#{fbatch.toTotalDetails}" forceId="#{true}" />
-							
+								value="#{fbatch.toTotalDetails}" forceId="#{true}" >
+								<f:convertNumber pattern="#,##0" />
+							</t:inputText>	
+
 						</h:panelGrid>
 						
 						<h:panelGrid columns="2" dir="true" styleClass="aon-form-table"
@@ -211,11 +213,7 @@
 								value="#{financeBundle.aon_included_finance}" />
 						</t:div>
 						<t:div styleClass="aon-form-group-body">
-							<t:div>
-								<t:commandButton title="#{financeBundle.aon_download_disk}"
-									styleClass="aon-form-button" rendered="#{fbatch.file!=null}"
-									value="#{financeBundle.aon_download_disk}"
-									actionListener="#{fbatch.downloadDisk}" />
+							<t:div rendered="#{!fbatch.recorded}">
 								<t:commandButton title="#{financeBundle.aon_select_all}"
 									styleClass="aon-form-button-plus"
 									onclick="viewDialog.show();"
@@ -230,7 +228,11 @@
 									styleClass="aon-form-button"
 									value="#{financeBundle.aon_remove_batch}"
 									onclick="viewDialog.show();"
-									actionListener="#{fBatchDetail.onRemoveSelected}" />
+									actionListener="#{fbatch.onRemoveSelected}" />
+								<t:commandButton title="#{fbatch.diskOk?(financeBundle.aon_download_disk):(financeBundle.aon_download_error)}"
+									styleClass="aon-form-button" rendered="#{fbatch.csbOutput!=null}"
+									value="#{fbatch.diskOk?(financeBundle.aon_download_disk):(financeBundle.aon_download_error)}"
+									actionListener="#{fbatch.downloadDisk}" />
 							</t:div>
 							<t:dataTable id="fBatchDetailData" var="to" value="#{fBatchDetail.model}"
 								rendered="#{fBatchDetail.model.rowCount > 0}"
@@ -326,13 +328,14 @@
 					</t:div>
 
 					<t:div styleClass="aon-form-group"
-						rendered="#{!fbatch.new and !fbatch.recorded and finance.model.rowCount > 0}">
+						rendered="#{!fbatch.new and !fbatch.recorded}">
 						<t:div styleClass="aon-form-group-title">
 							<t:outputLabel for="financeData"
 								value="#{financeBundle.aon_not_batched_finances}" />
 						</t:div>
 
-						<t:div styleClass="aon-form-group-body">
+						<t:div styleClass="aon-form-group-body"
+							rendered="#{finance.model.rowCount > 0}">
 							<t:div>
 								<t:commandButton title="#{financeBundle.aon_select_all}"
 									styleClass="aon-form-button-plus"
@@ -439,7 +442,7 @@
 						<ui:include src="/facelet/shared/dataScroller.xhtml">
 							<ui:param name="dataTable" value="financeData" />
 							<ui:param name="model" value="#{finance.model}" />
-							<ui:param name="showNote" value="#{false}" />
+							<ui:param name="showNote" value="#{true}" />
 						</ui:include>
 						
 					</t:div>
