@@ -22,6 +22,12 @@ import com.code.aon.cms.Faq;
 import com.code.aon.cms.FaqDetail;
 import com.code.aon.cms.FaqCategory;
 import com.code.aon.cms.FaqCategoryDetail;
+import com.code.aon.cms.Brand;
+import com.code.aon.cms.BrandDetail;
+import com.code.aon.cms.ProductCategory;
+import com.code.aon.cms.ProductCategoryDetail;
+import com.code.aon.cms.Product;
+import com.code.aon.cms.ProductDetail;
 
 /** 
 * Interface for holding entity properties constants.
@@ -875,6 +881,210 @@ public interface ICMSAlias {
 	* Hibernate value: FaqCategoryDetail.language.id
 	*/
 	String  FAQ_CATEGORY_DETAIL_LANGUAGE_ID = FAQ_CATEGORY_DETAIL_ENTRY.getAliasNames()[3];
+
+
+
+	/** 
+	* DAOConstantsEntry for Brand entity.
+	*/ 
+	DAOConstantsEntry BRAND_ENTRY = DAOConstants.getDAOConstant(Brand.class);
+
+	/** 
+	* Alias value: Brand_active
+	* Hibernate value: Brand.active
+	*/
+	String  BRAND_ACTIVE = BRAND_ENTRY.getAliasNames()[0];
+
+	/** 
+	* Alias value: Brand_alias
+	* Hibernate value: Brand.alias
+	*/
+	String  BRAND_ALIAS = BRAND_ENTRY.getAliasNames()[1];
+
+	/** 
+	* Alias value: Brand_id
+	* Hibernate value: Brand.id
+	*/
+	String  BRAND_ID = BRAND_ENTRY.getAliasNames()[2];
+
+
+
+	/** 
+	* DAOConstantsEntry for BrandDetail entity.
+	*/ 
+	DAOConstantsEntry BRAND_DETAIL_ENTRY = DAOConstants.getDAOConstant(BrandDetail.class);
+
+	/** 
+	* Alias value: BrandDetail_brand_id
+	* Hibernate value: BrandDetail.brand.id
+	*/
+	String  BRAND_DETAIL_BRAND_ID = BRAND_DETAIL_ENTRY.getAliasNames()[0];
+
+	/** 
+	* Alias value: BrandDetail_id
+	* Hibernate value: BrandDetail.id
+	*/
+	String  BRAND_DETAIL_ID = BRAND_DETAIL_ENTRY.getAliasNames()[1];
+
+	/** 
+	* Alias value: BrandDetail_label
+	* Hibernate value: BrandDetail.label
+	*/
+	String  BRAND_DETAIL_LABEL = BRAND_DETAIL_ENTRY.getAliasNames()[2];
+
+	/** 
+	* Alias value: BrandDetail_language_id
+	* Hibernate value: BrandDetail.language.id
+	*/
+	String  BRAND_DETAIL_LANGUAGE_ID = BRAND_DETAIL_ENTRY.getAliasNames()[3];
+
+
+
+	/** 
+	* DAOConstantsEntry for ProductCategory entity.
+	*/ 
+	DAOConstantsEntry PRODUCT_CATEGORY_ENTRY = DAOConstants.getDAOConstant(ProductCategory.class);
+
+	/** 
+	* Alias value: ProductCategory_active
+	* Hibernate value: ProductCategory.active
+	*/
+	String  PRODUCT_CATEGORY_ACTIVE = PRODUCT_CATEGORY_ENTRY.getAliasNames()[0];
+
+	/** 
+	* Alias value: ProductCategory_alias
+	* Hibernate value: ProductCategory.alias
+	*/
+	String  PRODUCT_CATEGORY_ALIAS = PRODUCT_CATEGORY_ENTRY.getAliasNames()[1];
+
+	/** 
+	* Alias value: ProductCategory_id
+	* Hibernate value: ProductCategory.id
+	*/
+	String  PRODUCT_CATEGORY_ID = PRODUCT_CATEGORY_ENTRY.getAliasNames()[2];
+
+	/** 
+	* Alias value: ProductCategory_parent_id
+	* Hibernate value: ProductCategory.parent.id
+	*/
+	String  PRODUCT_CATEGORY_PARENT_ID = PRODUCT_CATEGORY_ENTRY.getAliasNames()[3];
+
+
+
+	/** 
+	* DAOConstantsEntry for ProductCategoryDetail entity.
+	*/ 
+	DAOConstantsEntry PRODUCT_CATEGORY_DETAIL_ENTRY = DAOConstants.getDAOConstant(ProductCategoryDetail.class);
+
+	/** 
+	* Alias value: ProductCategoryDetail_id
+	* Hibernate value: ProductCategoryDetail.id
+	*/
+	String  PRODUCT_CATEGORY_DETAIL_ID = PRODUCT_CATEGORY_DETAIL_ENTRY.getAliasNames()[0];
+
+	/** 
+	* Alias value: ProductCategoryDetail_label
+	* Hibernate value: ProductCategoryDetail.label
+	*/
+	String  PRODUCT_CATEGORY_DETAIL_LABEL = PRODUCT_CATEGORY_DETAIL_ENTRY.getAliasNames()[1];
+
+	/** 
+	* Alias value: ProductCategoryDetail_language_id
+	* Hibernate value: ProductCategoryDetail.language.id
+	*/
+	String  PRODUCT_CATEGORY_DETAIL_LANGUAGE_ID = PRODUCT_CATEGORY_DETAIL_ENTRY.getAliasNames()[2];
+
+	/** 
+	* Alias value: ProductCategoryDetail_productCategory_id
+	* Hibernate value: ProductCategoryDetail.productCategory.id
+	*/
+	String  PRODUCT_CATEGORY_DETAIL_PRODUCT_CATEGORY_ID = PRODUCT_CATEGORY_DETAIL_ENTRY.getAliasNames()[3];
+
+
+
+	/** 
+	* DAOConstantsEntry for Product entity.
+	*/ 
+	DAOConstantsEntry PRODUCT_ENTRY = DAOConstants.getDAOConstant(Product.class);
+
+	/** 
+	* Alias value: Product_active
+	* Hibernate value: Product.active
+	*/
+	String  PRODUCT_ACTIVE = PRODUCT_ENTRY.getAliasNames()[0];
+
+	/** 
+	* Alias value: Product_alias
+	* Hibernate value: Product.alias
+	*/
+	String  PRODUCT_ALIAS = PRODUCT_ENTRY.getAliasNames()[1];
+
+	/** 
+	* Alias value: Product_brand_id
+	* Hibernate value: Product.brand.id
+	*/
+	String  PRODUCT_BRAND_ID = PRODUCT_ENTRY.getAliasNames()[2];
+
+	/** 
+	* Alias value: Product_id
+	* Hibernate value: Product.id
+	*/
+	String  PRODUCT_ID = PRODUCT_ENTRY.getAliasNames()[3];
+
+	/** 
+	* Alias value: Product_offerPrice
+	* Hibernate value: Product.offerPrice
+	*/
+	String  PRODUCT_OFFER_PRICE = PRODUCT_ENTRY.getAliasNames()[4];
+
+	/** 
+	* Alias value: Product_price
+	* Hibernate value: Product.price
+	*/
+	String  PRODUCT_PRICE = PRODUCT_ENTRY.getAliasNames()[5];
+
+	/** 
+	* Alias value: Product_productCategory_id
+	* Hibernate value: Product.productCategory.id
+	*/
+	String  PRODUCT_PRODUCT_CATEGORY_ID = PRODUCT_ENTRY.getAliasNames()[6];
+
+
+
+	/** 
+	* DAOConstantsEntry for ProductDetail entity.
+	*/ 
+	DAOConstantsEntry PRODUCT_DETAIL_ENTRY = DAOConstants.getDAOConstant(ProductDetail.class);
+
+	/** 
+	* Alias value: ProductDetail_id
+	* Hibernate value: ProductDetail.id
+	*/
+	String  PRODUCT_DETAIL_ID = PRODUCT_DETAIL_ENTRY.getAliasNames()[0];
+
+	/** 
+	* Alias value: ProductDetail_label
+	* Hibernate value: ProductDetail.label
+	*/
+	String  PRODUCT_DETAIL_LABEL = PRODUCT_DETAIL_ENTRY.getAliasNames()[1];
+
+	/** 
+	* Alias value: ProductDetail_language_id
+	* Hibernate value: ProductDetail.language.id
+	*/
+	String  PRODUCT_DETAIL_LANGUAGE_ID = PRODUCT_DETAIL_ENTRY.getAliasNames()[2];
+
+	/** 
+	* Alias value: ProductDetail_product_id
+	* Hibernate value: ProductDetail.product.id
+	*/
+	String  PRODUCT_DETAIL_PRODUCT_ID = PRODUCT_DETAIL_ENTRY.getAliasNames()[3];
+
+	/** 
+	* Alias value: ProductDetail_shortLabel
+	* Hibernate value: ProductDetail.shortLabel
+	*/
+	String  PRODUCT_DETAIL_SHORT_LABEL = PRODUCT_DETAIL_ENTRY.getAliasNames()[4];
 
 
 }

@@ -3,6 +3,8 @@ package com.code.aon.cms.dao;
 import java.io.File;
 import java.io.IOException;
 
+import com.code.aon.cms.Brand;
+import com.code.aon.cms.BrandDetail;
 import com.code.aon.cms.Config;
 import com.code.aon.cms.ConfigDetail;
 import com.code.aon.cms.Faq;
@@ -23,6 +25,10 @@ import com.code.aon.cms.LinkDetail;
 import com.code.aon.cms.Menu;
 import com.code.aon.cms.MenuOption;
 import com.code.aon.cms.MenuOptionDetail;
+import com.code.aon.cms.Product;
+import com.code.aon.cms.ProductCategory;
+import com.code.aon.cms.ProductCategoryDetail;
+import com.code.aon.cms.ProductDetail;
 import com.code.aon.common.dao.AliasWriter;
 
 public class CMSAliasWriter {
@@ -30,7 +36,7 @@ public class CMSAliasWriter {
 	public static void main(String[] args) throws IOException {
 
 		File file = new File("/AON-PROJECT/aon-cms/src/main/java/com/code/aon/cms/dao/ICMSAlias.java");
-		String[] classes = new String[20]; 
+		String[] classes = new String[26]; 
 		classes[0] = Language.class.getName();
 		classes[1] = Config.class.getName();
 		classes[2] = ConfigDetail.class.getName();
@@ -51,6 +57,12 @@ public class CMSAliasWriter {
 		classes[17] = FaqDetail.class.getName();
 		classes[18] = FaqCategory.class.getName();
 		classes[19] = FaqCategoryDetail.class.getName();
+		classes[20] = Brand.class.getName();
+		classes[21] = BrandDetail.class.getName();
+		classes[22] = ProductCategory.class.getName();
+		classes[23] = ProductCategoryDetail.class.getName();
+		classes[24] = Product.class.getName();
+		classes[25] = ProductDetail.class.getName();
 		AliasWriter writer = new AliasWriter("com.code.aon.cms.dao");
 		writer.write(classes, file);
 		System.out.println( file.getAbsolutePath() );
