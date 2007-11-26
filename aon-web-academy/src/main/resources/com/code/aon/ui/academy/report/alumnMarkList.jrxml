@@ -28,6 +28,7 @@
 
 		<field name="mark" class="com.code.aon.academy.Mark"/>
 		<field name="code" class="java.lang.String"/>
+		<field name="description" class="java.lang.String"/>
 
 	</subDataset>
 
@@ -55,9 +56,10 @@
 	<parameter name="printHeaders" isForPrompting="false" class="java.lang.Boolean"/>
 	<parameter name="logoImageFile" isForPrompting="true" class="java.io.InputStream"/>
 	<parameter name="company" isForPrompting="false" class="com.code.aon.company.Company"/>
-	<parameter name="evaluation" isForPrompting="false" class="java.lang.Integer"/>
 	<parameter name="nestedReports" isForPrompting="false" class="java.util.Map"/>
 	<parameter name="encode" isForPrompting="false" class="java.lang.Boolean"/>
+	<parameter name="evaluation" isForPrompting="false" class="java.lang.Integer"/>
+	<parameter name="qualifications" isForPrompting="false" class="java.util.ArrayList"/>
 
 	<field name="courseAlumn" class="com.code.aon.academy.CourseAlumn"/>
 	<field name="marks" class="java.util.ArrayList"/>
@@ -86,16 +88,6 @@
 				<rectangle>
 					<reportElement
 						mode="Transparent"
-						x="5"
-						y="487"
-						width="520"
-						height="175"
-						key="rectangle-97"/>
-					<graphicElement stretchType="NoStretch"/>
-				</rectangle>
-				<rectangle>
-					<reportElement
-						mode="Transparent"
 						x="94"
 						y="6"
 						width="431"
@@ -121,11 +113,11 @@
 				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						x="166"
-						y="29"
+						y="47"
 						width="355"
 						height="14"
 						key="textField-1"/>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" leftPadding="5" rightBorder="None" rightBorderColor="#000000" rightPadding="5" bottomBorder="None" bottomBorderColor="#999999"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" rightPadding="5" bottomBorder="None" bottomBorderColor="#999999"/>
 					<textElement verticalAlignment="Middle">
 						<font pdfFontName="Helvetica-Bold" size="10" isBold="true"/>
 					</textElement>
@@ -133,12 +125,12 @@
 				</textField>
 				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
-						x="276"
+						x="145"
 						y="12"
 						width="59"
 						height="14"
 						key="textField-2"/>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" leftPadding="5" rightBorder="None" rightBorderColor="#000000" rightPadding="5" bottomBorder="None" bottomBorderColor="#999999"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" rightPadding="5" bottomBorder="None" bottomBorderColor="#999999"/>
 					<textElement verticalAlignment="Middle">
 						<font pdfFontName="Helvetica-Bold" size="10" isBold="true"/>
 					</textElement>
@@ -146,12 +138,12 @@
 				</textField>
 				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
-						x="186"
+						x="297"
 						y="12"
 						width="38"
 						height="14"
 						key="textField-3"/>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" leftPadding="5" rightBorder="None" rightBorderColor="#000000" rightPadding="5" bottomBorder="None" bottomBorderColor="#999999"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" rightPadding="5" bottomBorder="None" bottomBorderColor="#999999"/>
 					<textElement verticalAlignment="Middle">
 						<font pdfFontName="Helvetica-Bold" size="10" isBold="true"/>
 					</textElement>
@@ -160,7 +152,7 @@
 				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						x="98"
-						y="29"
+						y="47"
 						width="62"
 						height="14"
 						key="textField-5"/>
@@ -172,7 +164,7 @@
 				</textField>
 				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
-						x="98"
+						x="209"
 						y="12"
 						width="80"
 						height="14"
@@ -185,7 +177,7 @@
 				</textField>
 				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
-						x="229"
+						x="98"
 						y="12"
 						width="42"
 						height="14"
@@ -196,12 +188,13 @@
 					</textElement>
 				<textFieldExpression   class="java.lang.String"><![CDATA[$R{course_academic_year}]]></textFieldExpression>
 				</textField>
+				<elementGroup><!--  Start: 1 !-->
 				<crosstab >
 					<reportElement
-						x="5"
+						x="0"
 						y="77"
-						width="520"
-						height="235"
+						width="535"
+						height="40"
 						key="crosstab-1">
 							<printWhenExpression><![CDATA[(($F{marks}.isEmpty())?new Boolean(false):new Boolean(true))]]></printWhenExpression>
 						</reportElement>
@@ -217,7 +210,22 @@
 						</dataset>
 					</crosstabDataset>
 					<crosstabHeaderCell>						<cellContents mode="Transparent">
+					<box topBorder="Thin" topBorderColor="#000000" leftBorder="Thin" leftBorderColor="#000000" rightBorder="Thin" rightBorderColor="#000000" bottomBorder="Thin" bottomBorderColor="#000000"/>
+				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						mode="Transparent"
+						x="0"
+						y="0"
+						width="95"
+						height="25"
+						key="textField-18"
+						stretchType="RelativeToTallestObject"/>
 					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font pdfFontName="Helvetica-Bold" size="8" isBold="true"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA["Habilidades:"]]></textFieldExpression>
+				</textField>
 						</cellContents>
 					</crosstabHeaderCell>					<rowGroup name="subject" width="95">
 						<bucket>
@@ -225,13 +233,13 @@
 						</bucket>
 						<crosstabRowHeader>
 						<cellContents mode="Transparent">
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="Thin" leftBorderColor="#000000" rightBorder="Thin" rightBorderColor="#000000" bottomBorder="Thin" bottomBorderColor="#000000"/>
 				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						x="0"
-						y="1"
-						width="91"
-						height="13"
+						y="0"
+						width="95"
+						height="15"
 						key="textField"/>
 					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
 					<textElement textAlignment="Center" verticalAlignment="Middle">
@@ -248,7 +256,22 @@
 						</bucket>
 						<crosstabColumnHeader>
 						<cellContents mode="Transparent">
+					<box topBorder="Thin" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="Thin" rightBorderColor="#000000" bottomBorder="Thin" bottomBorderColor="#000000"/>
+				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						mode="Transparent"
+						x="0"
+						y="0"
+						width="85"
+						height="25"
+						key="textField-18"
+						stretchType="RelativeToTallestObject"/>
 					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font pdfFontName="Helvetica-Bold" size="8" isBold="true"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$V{evaluation} + "º"]]></textFieldExpression>
+				</textField>
 						</cellContents>
 						</crosstabColumnHeader>
 					</columnGroup>
@@ -259,9 +282,12 @@
 					<measure name="code" class="java.lang.String">
 						<measureExpression><![CDATA[$F{code}]]></measureExpression>
 					</measure>
+					<measure name="description" class="java.lang.String">
+						<measureExpression><![CDATA[$F{description}]]></measureExpression>
+					</measure>
 					<crosstabCell width="85" height="15">
 						<cellContents mode="Transparent">
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="Thin" rightBorderColor="#000000" bottomBorder="Thin" bottomBorderColor="#000000"/>
 				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						x="0"
@@ -296,13 +322,15 @@
 					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="1Point" rightBorderColor="#000000" bottomBorder="1Point" bottomBorderColor="#000000"/>
 						</cellContents>
 					</whenNoDataCell>					</crosstab>
+				</elementGroup><!-- End 1 !-->
 				<crosstab >
 					<reportElement
-						x="5"
-						y="325"
-						width="520"
-						height="150"
-						key="crosstab-2">
+						x="0"
+						y="148"
+						width="535"
+						height="50"
+						key="crosstab-2"
+						positionType="Float">
 							<printWhenExpression><![CDATA[(($F{absences}.isEmpty())?new Boolean(false):new Boolean(true))]]></printWhenExpression>
 						</reportElement>
 					<crosstabDataset>
@@ -314,64 +342,95 @@
 						</dataset>
 					</crosstabDataset>
 					<crosstabHeaderCell>						<cellContents mode="Transparent">
+					<box topBorder="Thin" topBorderColor="#000000" leftBorder="Thin" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="Thin" bottomBorderColor="#000000"/>
+				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						mode="Transparent"
+						x="0"
+						y="0"
+						width="95"
+						height="25"
+						key="textField-18"
+						stretchType="RelativeToTallestObject"/>
 					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font pdfFontName="Helvetica-Bold" size="8" isBold="true"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA["Ausencias:"]]></textFieldExpression>
+				</textField>
 						</cellContents>
-					</crosstabHeaderCell>					<rowGroup name="courseAlumn" width="95">
-						<bucket>
-							<bucketExpression class="java.lang.Integer"><![CDATA[$F{courseAlumn}.getId()]]></bucketExpression>
-						</bucket>
-						<crosstabRowHeader>
-						<cellContents mode="Transparent">
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
-						</cellContents>
-						</crosstabRowHeader>
-					</rowGroup>
-					<columnGroup name="evaluation" height="25" headerPosition="Center">
+					</crosstabHeaderCell>					<rowGroup name="evaluation" width="95">
 						<bucket>
 							<bucketExpression class="java.lang.Integer"><![CDATA[$F{evaluation}]]></bucketExpression>
 						</bucket>
+						<crosstabRowHeader>
+						<cellContents mode="Transparent">
+					<box topBorder="None" topBorderColor="#000000" leftBorder="Thin" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="Thin" bottomBorderColor="#000000"/>
+				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						mode="Transparent"
+						x="0"
+						y="0"
+						width="95"
+						height="25"
+						key="textField-18"
+						stretchType="RelativeToTallestObject"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Center" verticalAlignment="Top">
+						<font pdfFontName="Helvetica-Bold" size="8" isBold="true"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$V{evaluation} + "º Evaluación:"]]></textFieldExpression>
+				</textField>
+						</cellContents>
+						</crosstabRowHeader>
+					</rowGroup>
+					<columnGroup name="courseAlumn" height="25">
+						<bucket>
+							<bucketExpression class="java.lang.Integer"><![CDATA[$F{courseAlumn}.getId()]]></bucketExpression>
+						</bucket>
 						<crosstabColumnHeader>
 						<cellContents mode="Transparent">
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<box topBorder="Thin" topBorderColor="#000000" leftBorder="Thin" leftBorderColor="#000000" rightBorder="Thin" rightBorderColor="#000000" bottomBorder="Thin" bottomBorderColor="#000000"/>
 						</cellContents>
 						</crosstabColumnHeader>
 					</columnGroup>
 
 					<measure name="absenceDate_First" class="java.lang.String" incrementerFactoryClass="com.code.aon.ui.academy.print.utils.CommentsIncrementorFactory">
-						<measureExpression><![CDATA[$F{absenceDate}.getDate()+"/"+($F{absenceDate}.getMonth()+1)+"/"+($F{absenceDate}.getYear()+1900)+"     "]]></measureExpression>
+						<measureExpression><![CDATA[$F{absenceDate}.getDate()+"/"+($F{absenceDate}.getMonth()+1)+"/"+($F{absenceDate}.getYear()+1900)+". "]]></measureExpression>
 					</measure>
-					<crosstabCell width="85" height="180">
+					<crosstabCell width="425" height="25">
 						<cellContents mode="Transparent">
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="Thin" leftBorderColor="#000000" rightBorder="Thin" rightBorderColor="#000000" bottomBorder="Thin" bottomBorderColor="#000000"/>
 				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
+						mode="Transparent"
 						x="0"
 						y="0"
-						width="84"
-						height="180"
+						width="425"
+						height="25"
 						key="textField"
 						stretchType="RelativeToTallestObject"/>
 					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
-					<textElement textAlignment="Center" verticalAlignment="Top">
+					<textElement textAlignment="Left" verticalAlignment="Top">
 						<font size="8"/>
 					</textElement>
 				<textFieldExpression   class="java.lang.String"><![CDATA[$V{absenceDate_First}]]></textFieldExpression>
 				</textField>
 						</cellContents>
 					</crosstabCell>
-					<crosstabCell width="0" height="180" columnTotalGroup="evaluation">
+					<crosstabCell width="0" height="25" columnTotalGroup="courseAlumn">
 						<cellContents mode="Transparent">
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="1Point" rightBorderColor="#000000" bottomBorder="1Point" bottomBorderColor="#000000"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
 						</cellContents>
 					</crosstabCell>
-					<crosstabCell width="85" height="0" rowTotalGroup="courseAlumn">
+					<crosstabCell width="425" height="0" rowTotalGroup="evaluation">
 						<cellContents mode="Transparent">
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="1Point" rightBorderColor="#000000" bottomBorder="1Point" bottomBorderColor="#000000"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
 						</cellContents>
 					</crosstabCell>
-					<crosstabCell width="0" height="0" rowTotalGroup="courseAlumn" columnTotalGroup="evaluation">
+					<crosstabCell width="0" height="0" rowTotalGroup="evaluation" columnTotalGroup="courseAlumn">
 						<cellContents mode="Transparent">
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="1Point" rightBorderColor="#000000" bottomBorder="1Point" bottomBorderColor="#000000"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
 						</cellContents>
 					</crosstabCell>
 					<whenNoDataCell>						<cellContents mode="Transparent">
@@ -380,11 +439,12 @@
 					</whenNoDataCell>					</crosstab>
 				<crosstab >
 					<reportElement
-						x="5"
-						y="487"
-						width="520"
-						height="175"
-						key="crosstab-3">
+						x="0"
+						y="213"
+						width="535"
+						height="50"
+						key="crosstab-3"
+						positionType="Float">
 							<printWhenExpression><![CDATA[(($F{observations}.isEmpty())?new Boolean(false):new Boolean(true))]]></printWhenExpression>
 						</reportElement>
 					<crosstabDataset>
@@ -396,15 +456,45 @@
 						</dataset>
 					</crosstabDataset>
 					<crosstabHeaderCell>						<cellContents mode="Transparent">
+					<box topBorder="Thin" topBorderColor="#000000" leftBorder="Thin" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="Thin" bottomBorderColor="#000000"/>
+				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						mode="Transparent"
+						x="0"
+						y="0"
+						width="95"
+						height="25"
+						key="textField-18"
+						stretchType="RelativeToTallestObject"/>
 					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font pdfFontName="Helvetica-Bold" size="8" isBold="true"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA["Observaciones:"]]></textFieldExpression>
+				</textField>
 						</cellContents>
-					</crosstabHeaderCell>					<rowGroup name="evaluation" width="100">
+					</crosstabHeaderCell>					<rowGroup name="evaluation" width="95">
 						<bucket>
-							<bucketExpression class="java.lang.String"><![CDATA[$F{evaluation}+" Evaluación:"]]></bucketExpression>
+							<bucketExpression class="java.lang.Integer"><![CDATA[$F{evaluation}]]></bucketExpression>
 						</bucket>
 						<crosstabRowHeader>
 						<cellContents mode="Transparent">
+					<box topBorder="None" topBorderColor="#000000" leftBorder="Thin" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="Thin" bottomBorderColor="#000000"/>
+				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						mode="Transparent"
+						x="0"
+						y="0"
+						width="95"
+						height="25"
+						key="textField-18"
+						stretchType="RelativeToTallestObject"/>
 					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Center" verticalAlignment="Top">
+						<font pdfFontName="Helvetica-Bold" size="8" isBold="true"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$V{evaluation} + "º Evaluación:"]]></textFieldExpression>
+				</textField>
 						</cellContents>
 						</crosstabRowHeader>
 					</rowGroup>
@@ -414,36 +504,23 @@
 						</bucket>
 						<crosstabColumnHeader>
 						<cellContents mode="Transparent">
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
-				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
-					<reportElement
-						x="0"
-						y="0"
-						width="400"
-						height="15"
-						key="textField"/>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
-					<textElement textAlignment="Center" verticalAlignment="Middle">
-						<font size="8"/>
-					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[""]]></textFieldExpression>
-				</textField>
+					<box topBorder="Thin" topBorderColor="#000000" leftBorder="Thin" leftBorderColor="#000000" rightBorder="Thin" rightBorderColor="#000000" bottomBorder="Thin" bottomBorderColor="#000000"/>
 						</cellContents>
 						</crosstabColumnHeader>
 					</columnGroup>
 
 					<measure name="comments_First" class="java.lang.String" incrementerFactoryClass="com.code.aon.ui.academy.print.utils.CommentsIncrementorFactory">
-						<measureExpression><![CDATA[$F{comments} + "\n"]]></measureExpression>
+						<measureExpression><![CDATA[$F{comments} + ". "]]></measureExpression>
 					</measure>
-					<crosstabCell width="415" height="30">
+					<crosstabCell width="425" height="25">
 						<cellContents mode="Transparent">
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="Thin" leftBorderColor="#000000" rightBorder="Thin" rightBorderColor="#000000" bottomBorder="Thin" bottomBorderColor="#000000"/>
 				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						x="0"
 						y="0"
-						width="415"
-						height="30"
+						width="425"
+						height="25"
 						key="textField"/>
 					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
 					<textElement textAlignment="Left" verticalAlignment="Top">
@@ -453,12 +530,12 @@
 				</textField>
 						</cellContents>
 					</crosstabCell>
-					<crosstabCell width="0" height="30" columnTotalGroup="alumn">
+					<crosstabCell width="0" height="25" columnTotalGroup="alumn">
 						<cellContents mode="Transparent">
 					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="1Point" rightBorderColor="#000000" bottomBorder="1Point" bottomBorderColor="#000000"/>
 						</cellContents>
 					</crosstabCell>
-					<crosstabCell width="415" height="0" rowTotalGroup="evaluation">
+					<crosstabCell width="425" height="0" rowTotalGroup="evaluation">
 						<cellContents mode="Transparent">
 					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="1Point" rightBorderColor="#000000" bottomBorder="1Point" bottomBorderColor="#000000"/>
 						</cellContents>
@@ -479,1060 +556,12 @@
 						width="180"
 						height="14"
 						key="textField-9"/>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" leftPadding="5" rightBorder="None" rightBorderColor="#000000" rightPadding="5" bottomBorder="None" bottomBorderColor="#999999"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" leftPadding="2" rightBorder="None" rightBorderColor="#000000" rightPadding="5" bottomBorder="None" bottomBorderColor="#999999"/>
 					<textElement verticalAlignment="Middle">
 						<font pdfFontName="Helvetica-Bold" size="10" isBold="true"/>
 					</textElement>
 				<textFieldExpression   class="java.lang.String"><![CDATA[$F{courseSchedule}+" Horas"]]></textFieldExpression>
 				</textField>
-				<rectangle>
-					<reportElement
-						mode="Transparent"
-						x="5"
-						y="77"
-						width="96"
-						height="25"
-						key="rectangle-4"/>
-					<graphicElement stretchType="NoStretch"/>
-				</rectangle>
-				<rectangle>
-					<reportElement
-						mode="Transparent"
-						x="101"
-						y="77"
-						width="85"
-						height="25"
-						key="rectangle-5"/>
-					<graphicElement stretchType="NoStretch"/>
-				</rectangle>
-				<rectangle>
-					<reportElement
-						mode="Transparent"
-						x="186"
-						y="77"
-						width="85"
-						height="25"
-						key="rectangle-11"/>
-					<graphicElement stretchType="NoStretch"/>
-				</rectangle>
-				<rectangle>
-					<reportElement
-						mode="Transparent"
-						x="271"
-						y="77"
-						width="85"
-						height="25"
-						key="rectangle-12"/>
-					<graphicElement stretchType="NoStretch"/>
-				</rectangle>
-				<rectangle>
-					<reportElement
-						mode="Transparent"
-						x="355"
-						y="77"
-						width="85"
-						height="25"
-						key="rectangle-13"/>
-					<graphicElement stretchType="NoStretch"/>
-				</rectangle>
-				<rectangle>
-					<reportElement
-						mode="Transparent"
-						x="440"
-						y="77"
-						width="85"
-						height="25"
-						key="rectangle-14"/>
-					<graphicElement stretchType="NoStretch"/>
-				</rectangle>
-				<rectangle>
-					<reportElement
-						mode="Transparent"
-						x="5"
-						y="102"
-						width="96"
-						height="15"
-						key="rectangle-15"/>
-					<graphicElement stretchType="NoStretch"/>
-				</rectangle>
-				<rectangle>
-					<reportElement
-						mode="Transparent"
-						x="101"
-						y="102"
-						width="85"
-						height="15"
-						key="rectangle-16"/>
-					<graphicElement stretchType="NoStretch"/>
-				</rectangle>
-				<rectangle>
-					<reportElement
-						mode="Transparent"
-						x="186"
-						y="102"
-						width="85"
-						height="15"
-						key="rectangle-17"/>
-					<graphicElement stretchType="NoStretch"/>
-				</rectangle>
-				<rectangle>
-					<reportElement
-						mode="Transparent"
-						x="271"
-						y="102"
-						width="85"
-						height="15"
-						key="rectangle-18"/>
-					<graphicElement stretchType="NoStretch"/>
-				</rectangle>
-				<rectangle>
-					<reportElement
-						mode="Transparent"
-						x="355"
-						y="102"
-						width="85"
-						height="15"
-						key="rectangle-19"/>
-					<graphicElement stretchType="NoStretch"/>
-				</rectangle>
-				<rectangle>
-					<reportElement
-						mode="Transparent"
-						x="440"
-						y="102"
-						width="85"
-						height="15"
-						key="rectangle-20"/>
-					<graphicElement stretchType="NoStretch"/>
-				</rectangle>
-				<rectangle>
-					<reportElement
-						mode="Transparent"
-						x="5"
-						y="117"
-						width="96"
-						height="15"
-						key="rectangle-22"/>
-					<graphicElement stretchType="NoStretch"/>
-				</rectangle>
-				<rectangle>
-					<reportElement
-						mode="Transparent"
-						x="101"
-						y="117"
-						width="85"
-						height="15"
-						key="rectangle-23"/>
-					<graphicElement stretchType="NoStretch"/>
-				</rectangle>
-				<rectangle>
-					<reportElement
-						mode="Transparent"
-						x="186"
-						y="117"
-						width="85"
-						height="15"
-						key="rectangle-24"/>
-					<graphicElement stretchType="NoStretch"/>
-				</rectangle>
-				<rectangle>
-					<reportElement
-						mode="Transparent"
-						x="271"
-						y="117"
-						width="85"
-						height="15"
-						key="rectangle-25"/>
-					<graphicElement stretchType="NoStretch"/>
-				</rectangle>
-				<rectangle>
-					<reportElement
-						mode="Transparent"
-						x="355"
-						y="117"
-						width="85"
-						height="15"
-						key="rectangle-26"/>
-					<graphicElement stretchType="NoStretch"/>
-				</rectangle>
-				<rectangle>
-					<reportElement
-						mode="Transparent"
-						x="440"
-						y="117"
-						width="85"
-						height="15"
-						key="rectangle-27"/>
-					<graphicElement stretchType="NoStretch"/>
-				</rectangle>
-				<rectangle>
-					<reportElement
-						mode="Transparent"
-						x="5"
-						y="132"
-						width="96"
-						height="15"
-						key="rectangle-29"/>
-					<graphicElement stretchType="NoStretch"/>
-				</rectangle>
-				<rectangle>
-					<reportElement
-						mode="Transparent"
-						x="101"
-						y="132"
-						width="85"
-						height="15"
-						key="rectangle-30"/>
-					<graphicElement stretchType="NoStretch"/>
-				</rectangle>
-				<rectangle>
-					<reportElement
-						mode="Transparent"
-						x="186"
-						y="132"
-						width="85"
-						height="15"
-						key="rectangle-31"/>
-					<graphicElement stretchType="NoStretch"/>
-				</rectangle>
-				<rectangle>
-					<reportElement
-						mode="Transparent"
-						x="271"
-						y="132"
-						width="85"
-						height="15"
-						key="rectangle-32"/>
-					<graphicElement stretchType="NoStretch"/>
-				</rectangle>
-				<rectangle>
-					<reportElement
-						mode="Transparent"
-						x="355"
-						y="132"
-						width="85"
-						height="15"
-						key="rectangle-33"/>
-					<graphicElement stretchType="NoStretch"/>
-				</rectangle>
-				<rectangle>
-					<reportElement
-						mode="Transparent"
-						x="440"
-						y="132"
-						width="85"
-						height="15"
-						key="rectangle-34"/>
-					<graphicElement stretchType="NoStretch"/>
-				</rectangle>
-				<rectangle>
-					<reportElement
-						mode="Transparent"
-						x="5"
-						y="147"
-						width="96"
-						height="15"
-						key="rectangle-36"/>
-					<graphicElement stretchType="NoStretch"/>
-				</rectangle>
-				<rectangle>
-					<reportElement
-						mode="Transparent"
-						x="101"
-						y="147"
-						width="85"
-						height="15"
-						key="rectangle-37"/>
-					<graphicElement stretchType="NoStretch"/>
-				</rectangle>
-				<rectangle>
-					<reportElement
-						mode="Transparent"
-						x="186"
-						y="147"
-						width="85"
-						height="15"
-						key="rectangle-38"/>
-					<graphicElement stretchType="NoStretch"/>
-				</rectangle>
-				<rectangle>
-					<reportElement
-						mode="Transparent"
-						x="271"
-						y="147"
-						width="85"
-						height="15"
-						key="rectangle-39"/>
-					<graphicElement stretchType="NoStretch"/>
-				</rectangle>
-				<rectangle>
-					<reportElement
-						mode="Transparent"
-						x="355"
-						y="147"
-						width="85"
-						height="15"
-						key="rectangle-40"/>
-					<graphicElement stretchType="NoStretch"/>
-				</rectangle>
-				<rectangle>
-					<reportElement
-						mode="Transparent"
-						x="440"
-						y="147"
-						width="85"
-						height="15"
-						key="rectangle-41"/>
-					<graphicElement stretchType="NoStretch"/>
-				</rectangle>
-				<rectangle>
-					<reportElement
-						mode="Transparent"
-						x="5"
-						y="162"
-						width="96"
-						height="15"
-						key="rectangle-43"/>
-					<graphicElement stretchType="NoStretch"/>
-				</rectangle>
-				<rectangle>
-					<reportElement
-						mode="Transparent"
-						x="101"
-						y="162"
-						width="85"
-						height="15"
-						key="rectangle-44"/>
-					<graphicElement stretchType="NoStretch"/>
-				</rectangle>
-				<rectangle>
-					<reportElement
-						mode="Transparent"
-						x="186"
-						y="162"
-						width="85"
-						height="15"
-						key="rectangle-45"/>
-					<graphicElement stretchType="NoStretch"/>
-				</rectangle>
-				<rectangle>
-					<reportElement
-						mode="Transparent"
-						x="271"
-						y="162"
-						width="85"
-						height="15"
-						key="rectangle-46"/>
-					<graphicElement stretchType="NoStretch"/>
-				</rectangle>
-				<rectangle>
-					<reportElement
-						mode="Transparent"
-						x="355"
-						y="162"
-						width="85"
-						height="15"
-						key="rectangle-47"/>
-					<graphicElement stretchType="NoStretch"/>
-				</rectangle>
-				<rectangle>
-					<reportElement
-						mode="Transparent"
-						x="440"
-						y="162"
-						width="85"
-						height="15"
-						key="rectangle-48"/>
-					<graphicElement stretchType="NoStretch"/>
-				</rectangle>
-				<rectangle>
-					<reportElement
-						mode="Transparent"
-						x="5"
-						y="177"
-						width="96"
-						height="15"
-						key="rectangle-50"/>
-					<graphicElement stretchType="NoStretch"/>
-				</rectangle>
-				<rectangle>
-					<reportElement
-						mode="Transparent"
-						x="101"
-						y="177"
-						width="85"
-						height="15"
-						key="rectangle-51"/>
-					<graphicElement stretchType="NoStretch"/>
-				</rectangle>
-				<rectangle>
-					<reportElement
-						mode="Transparent"
-						x="186"
-						y="177"
-						width="85"
-						height="15"
-						key="rectangle-52"/>
-					<graphicElement stretchType="NoStretch"/>
-				</rectangle>
-				<rectangle>
-					<reportElement
-						mode="Transparent"
-						x="271"
-						y="177"
-						width="85"
-						height="15"
-						key="rectangle-53"/>
-					<graphicElement stretchType="NoStretch"/>
-				</rectangle>
-				<rectangle>
-					<reportElement
-						mode="Transparent"
-						x="355"
-						y="177"
-						width="85"
-						height="15"
-						key="rectangle-54"/>
-					<graphicElement stretchType="NoStretch"/>
-				</rectangle>
-				<rectangle>
-					<reportElement
-						mode="Transparent"
-						x="440"
-						y="177"
-						width="85"
-						height="15"
-						key="rectangle-55"/>
-					<graphicElement stretchType="NoStretch"/>
-				</rectangle>
-				<rectangle>
-					<reportElement
-						mode="Transparent"
-						x="5"
-						y="192"
-						width="96"
-						height="15"
-						key="rectangle-57"/>
-					<graphicElement stretchType="NoStretch"/>
-				</rectangle>
-				<rectangle>
-					<reportElement
-						mode="Transparent"
-						x="101"
-						y="192"
-						width="85"
-						height="15"
-						key="rectangle-58"/>
-					<graphicElement stretchType="NoStretch"/>
-				</rectangle>
-				<rectangle>
-					<reportElement
-						mode="Transparent"
-						x="186"
-						y="192"
-						width="85"
-						height="15"
-						key="rectangle-59"/>
-					<graphicElement stretchType="NoStretch"/>
-				</rectangle>
-				<rectangle>
-					<reportElement
-						mode="Transparent"
-						x="271"
-						y="192"
-						width="85"
-						height="15"
-						key="rectangle-60"/>
-					<graphicElement stretchType="NoStretch"/>
-				</rectangle>
-				<rectangle>
-					<reportElement
-						mode="Transparent"
-						x="355"
-						y="192"
-						width="85"
-						height="15"
-						key="rectangle-61"/>
-					<graphicElement stretchType="NoStretch"/>
-				</rectangle>
-				<rectangle>
-					<reportElement
-						mode="Transparent"
-						x="440"
-						y="192"
-						width="85"
-						height="15"
-						key="rectangle-62"/>
-					<graphicElement stretchType="NoStretch"/>
-				</rectangle>
-				<rectangle>
-					<reportElement
-						mode="Transparent"
-						x="5"
-						y="207"
-						width="96"
-						height="15"
-						key="rectangle-64"/>
-					<graphicElement stretchType="NoStretch"/>
-				</rectangle>
-				<rectangle>
-					<reportElement
-						mode="Transparent"
-						x="101"
-						y="207"
-						width="85"
-						height="15"
-						key="rectangle-65"/>
-					<graphicElement stretchType="NoStretch"/>
-				</rectangle>
-				<rectangle>
-					<reportElement
-						mode="Transparent"
-						x="186"
-						y="207"
-						width="85"
-						height="15"
-						key="rectangle-66"/>
-					<graphicElement stretchType="NoStretch"/>
-				</rectangle>
-				<rectangle>
-					<reportElement
-						mode="Transparent"
-						x="271"
-						y="207"
-						width="85"
-						height="15"
-						key="rectangle-67"/>
-					<graphicElement stretchType="NoStretch"/>
-				</rectangle>
-				<rectangle>
-					<reportElement
-						mode="Transparent"
-						x="355"
-						y="207"
-						width="85"
-						height="15"
-						key="rectangle-68"/>
-					<graphicElement stretchType="NoStretch"/>
-				</rectangle>
-				<rectangle>
-					<reportElement
-						mode="Transparent"
-						x="440"
-						y="207"
-						width="85"
-						height="15"
-						key="rectangle-69"/>
-					<graphicElement stretchType="NoStretch"/>
-				</rectangle>
-				<rectangle>
-					<reportElement
-						mode="Transparent"
-						x="5"
-						y="222"
-						width="96"
-						height="15"
-						key="rectangle-71"/>
-					<graphicElement stretchType="NoStretch"/>
-				</rectangle>
-				<rectangle>
-					<reportElement
-						mode="Transparent"
-						x="101"
-						y="222"
-						width="85"
-						height="15"
-						key="rectangle-72"/>
-					<graphicElement stretchType="NoStretch"/>
-				</rectangle>
-				<rectangle>
-					<reportElement
-						mode="Transparent"
-						x="186"
-						y="222"
-						width="85"
-						height="15"
-						key="rectangle-73"/>
-					<graphicElement stretchType="NoStretch"/>
-				</rectangle>
-				<rectangle>
-					<reportElement
-						mode="Transparent"
-						x="271"
-						y="222"
-						width="85"
-						height="15"
-						key="rectangle-74"/>
-					<graphicElement stretchType="NoStretch"/>
-				</rectangle>
-				<rectangle>
-					<reportElement
-						mode="Transparent"
-						x="355"
-						y="222"
-						width="85"
-						height="15"
-						key="rectangle-75"/>
-					<graphicElement stretchType="NoStretch"/>
-				</rectangle>
-				<rectangle>
-					<reportElement
-						mode="Transparent"
-						x="440"
-						y="222"
-						width="85"
-						height="15"
-						key="rectangle-76"/>
-					<graphicElement stretchType="NoStretch"/>
-				</rectangle>
-				<rectangle>
-					<reportElement
-						mode="Transparent"
-						x="5"
-						y="237"
-						width="96"
-						height="15"
-						key="rectangle-78"/>
-					<graphicElement stretchType="NoStretch"/>
-				</rectangle>
-				<rectangle>
-					<reportElement
-						mode="Transparent"
-						x="101"
-						y="237"
-						width="85"
-						height="15"
-						key="rectangle-79"/>
-					<graphicElement stretchType="NoStretch"/>
-				</rectangle>
-				<rectangle>
-					<reportElement
-						mode="Transparent"
-						x="186"
-						y="237"
-						width="85"
-						height="15"
-						key="rectangle-80"/>
-					<graphicElement stretchType="NoStretch"/>
-				</rectangle>
-				<rectangle>
-					<reportElement
-						mode="Transparent"
-						x="271"
-						y="237"
-						width="85"
-						height="15"
-						key="rectangle-81"/>
-					<graphicElement stretchType="NoStretch"/>
-				</rectangle>
-				<rectangle>
-					<reportElement
-						mode="Transparent"
-						x="355"
-						y="237"
-						width="85"
-						height="15"
-						key="rectangle-82"/>
-					<graphicElement stretchType="NoStretch"/>
-				</rectangle>
-				<rectangle>
-					<reportElement
-						mode="Transparent"
-						x="440"
-						y="237"
-						width="85"
-						height="15"
-						key="rectangle-83"/>
-					<graphicElement stretchType="NoStretch"/>
-				</rectangle>
-				<rectangle>
-					<reportElement
-						mode="Transparent"
-						x="5"
-						y="252"
-						width="96"
-						height="15"
-						key="rectangle-85"/>
-					<graphicElement stretchType="NoStretch"/>
-				</rectangle>
-				<rectangle>
-					<reportElement
-						mode="Transparent"
-						x="101"
-						y="252"
-						width="85"
-						height="15"
-						key="rectangle-86"/>
-					<graphicElement stretchType="NoStretch"/>
-				</rectangle>
-				<rectangle>
-					<reportElement
-						mode="Transparent"
-						x="186"
-						y="252"
-						width="85"
-						height="15"
-						key="rectangle-87"/>
-					<graphicElement stretchType="NoStretch"/>
-				</rectangle>
-				<rectangle>
-					<reportElement
-						mode="Transparent"
-						x="271"
-						y="252"
-						width="85"
-						height="15"
-						key="rectangle-88"/>
-					<graphicElement stretchType="NoStretch"/>
-				</rectangle>
-				<rectangle>
-					<reportElement
-						mode="Transparent"
-						x="355"
-						y="252"
-						width="85"
-						height="15"
-						key="rectangle-89"/>
-					<graphicElement stretchType="NoStretch"/>
-				</rectangle>
-				<rectangle>
-					<reportElement
-						mode="Transparent"
-						x="440"
-						y="252"
-						width="85"
-						height="15"
-						key="rectangle-90"/>
-					<graphicElement stretchType="NoStretch"/>
-				</rectangle>
-				<rectangle>
-					<reportElement
-						mode="Transparent"
-						x="98"
-						y="325"
-						width="85"
-						height="150"
-						key="rectangle-91"/>
-					<graphicElement stretchType="NoStretch"/>
-				</rectangle>
-				<rectangle>
-					<reportElement
-						mode="Transparent"
-						x="5"
-						y="325"
-						width="95"
-						height="150"
-						key="rectangle-92"/>
-					<graphicElement stretchType="NoStretch"/>
-				</rectangle>
-				<rectangle>
-					<reportElement
-						mode="Transparent"
-						x="183"
-						y="325"
-						width="85"
-						height="150"
-						key="rectangle-93"/>
-					<graphicElement stretchType="NoStretch"/>
-				</rectangle>
-				<rectangle>
-					<reportElement
-						mode="Transparent"
-						x="268"
-						y="325"
-						width="85"
-						height="150"
-						key="rectangle-94"/>
-					<graphicElement stretchType="NoStretch"/>
-				</rectangle>
-				<rectangle>
-					<reportElement
-						mode="Transparent"
-						x="353"
-						y="325"
-						width="85"
-						height="150"
-						key="rectangle-95"/>
-					<graphicElement stretchType="NoStretch"/>
-				</rectangle>
-				<rectangle>
-					<reportElement
-						mode="Transparent"
-						x="438"
-						y="325"
-						width="87"
-						height="150"
-						key="rectangle-96"/>
-					<graphicElement stretchType="NoStretch"/>
-				</rectangle>
-				<line direction="TopDown">
-					<reportElement
-						x="98"
-						y="350"
-						width="427"
-						height="0"
-						key="line-1"/>
-					<graphicElement stretchType="NoStretch"/>
-				</line>
-				<staticText>
-					<reportElement
-						mode="Transparent"
-						x="135"
-						y="82"
-						width="23"
-						height="16"
-						key="staticText-1"/>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
-					<textElement>
-						<font/>
-					</textElement>
-				<text><![CDATA[1º estático]]></text>
-				</staticText>
-				<staticText>
-					<reportElement
-						mode="Transparent"
-						x="217"
-						y="82"
-						width="23"
-						height="16"
-						key="staticText-2"/>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
-					<textElement>
-						<font/>
-					</textElement>
-				<text><![CDATA[2º estático]]></text>
-				</staticText>
-				<staticText>
-					<reportElement
-						mode="Transparent"
-						x="301"
-						y="82"
-						width="23"
-						height="16"
-						key="staticText-3"/>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
-					<textElement>
-						<font/>
-					</textElement>
-				<text><![CDATA[3º estático]]></text>
-				</staticText>
-				<staticText>
-					<reportElement
-						mode="Transparent"
-						x="388"
-						y="82"
-						width="23"
-						height="16"
-						key="staticText-4"/>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
-					<textElement>
-						<font/>
-					</textElement>
-				<text><![CDATA[4º estático]]></text>
-				</staticText>
-				<staticText>
-					<reportElement
-						mode="Transparent"
-						x="474"
-						y="82"
-						width="23"
-						height="16"
-						key="staticText-5"/>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
-					<textElement>
-						<font/>
-					</textElement>
-				<text><![CDATA[5º estático]]></text>
-				</staticText>
-				<staticText>
-					<reportElement
-						mode="Transparent"
-						x="471"
-						y="330"
-						width="23"
-						height="16"
-						key="staticText-6"/>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
-					<textElement>
-						<font/>
-					</textElement>
-				<text><![CDATA[5º estático]]></text>
-				</staticText>
-				<staticText>
-					<reportElement
-						mode="Transparent"
-						x="385"
-						y="330"
-						width="23"
-						height="16"
-						key="staticText-7"/>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
-					<textElement>
-						<font/>
-					</textElement>
-				<text><![CDATA[4º estático]]></text>
-				</staticText>
-				<staticText>
-					<reportElement
-						mode="Transparent"
-						x="298"
-						y="330"
-						width="23"
-						height="16"
-						key="staticText-8"/>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
-					<textElement>
-						<font/>
-					</textElement>
-				<text><![CDATA[3º estático]]></text>
-				</staticText>
-				<staticText>
-					<reportElement
-						mode="Transparent"
-						x="214"
-						y="330"
-						width="23"
-						height="16"
-						key="staticText-9"/>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
-					<textElement>
-						<font/>
-					</textElement>
-				<text><![CDATA[2º estático]]></text>
-				</staticText>
-				<staticText>
-					<reportElement
-						mode="Transparent"
-						x="132"
-						y="330"
-						width="23"
-						height="16"
-						key="staticText-10"/>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
-					<textElement>
-						<font/>
-					</textElement>
-				<text><![CDATA[1º estático]]></text>
-				</staticText>
-				<line direction="TopDown">
-					<reportElement
-						x="5"
-						y="512"
-						width="520"
-						height="0"
-						key="line-2"/>
-					<graphicElement stretchType="NoStretch"/>
-				</line>
-				<line direction="TopDown">
-					<reportElement
-						x="98"
-						y="542"
-						width="427"
-						height="0"
-						key="line-3"/>
-					<graphicElement stretchType="NoStretch"/>
-				</line>
-				<line direction="TopDown">
-					<reportElement
-						x="98"
-						y="572"
-						width="427"
-						height="0"
-						key="line-4"/>
-					<graphicElement stretchType="NoStretch"/>
-				</line>
-				<line direction="TopDown">
-					<reportElement
-						x="98"
-						y="602"
-						width="427"
-						height="0"
-						key="line-5"/>
-					<graphicElement stretchType="NoStretch"/>
-				</line>
-				<line direction="TopDown">
-					<reportElement
-						x="98"
-						y="632"
-						width="427"
-						height="0"
-						key="line-6"/>
-					<graphicElement stretchType="NoStretch"/>
-				</line>
-				<line direction="TopDown">
-					<reportElement
-						x="98"
-						y="512"
-						width="0"
-						height="150"
-						key="line-8"/>
-					<graphicElement stretchType="NoStretch"/>
-				</line>
-				<staticText>
-					<reportElement
-						x="11"
-						y="519"
-						width="83"
-						height="17"
-						key="staticText-11"/>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
-					<textElement>
-						<font/>
-					</textElement>
-				<text><![CDATA[1º Evaluación]]></text>
-				</staticText>
-				<staticText>
-					<reportElement
-						x="11"
-						y="548"
-						width="83"
-						height="17"
-						key="staticText-12"/>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
-					<textElement>
-						<font/>
-					</textElement>
-				<text><![CDATA[2º Evaluación]]></text>
-				</staticText>
-				<staticText>
-					<reportElement
-						x="11"
-						y="579"
-						width="83"
-						height="17"
-						key="staticText-13"/>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
-					<textElement>
-						<font/>
-					</textElement>
-				<text><![CDATA[3º Evaluación]]></text>
-				</staticText>
-				<staticText>
-					<reportElement
-						x="11"
-						y="610"
-						width="83"
-						height="17"
-						key="staticText-14"/>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
-					<textElement>
-						<font/>
-					</textElement>
-				<text><![CDATA[4º Evaluación]]></text>
-				</staticText>
-				<staticText>
-					<reportElement
-						x="11"
-						y="639"
-						width="83"
-						height="17"
-						key="staticText-15"/>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
-					<textElement>
-						<font/>
-					</textElement>
-				<text><![CDATA[5º Evaluación]]></text>
-				</staticText>
 				<rectangle>
 					<reportElement
 						mode="Transparent"
@@ -1559,11 +588,11 @@
 				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						x="166"
-						y="46"
+						y="30"
 						width="355"
 						height="14"
 						key="textField-16"/>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" leftPadding="5" rightBorder="None" rightBorderColor="#000000" rightPadding="5" bottomBorder="None" bottomBorderColor="#999999"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" rightPadding="5" bottomBorder="None" bottomBorderColor="#999999"/>
 					<textElement verticalAlignment="Middle">
 						<font pdfFontName="Helvetica-Bold" size="10" isBold="true"/>
 					</textElement>
@@ -1572,7 +601,7 @@
 				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						x="98"
-						y="46"
+						y="30"
 						width="62"
 						height="14"
 						key="textField-17"/>
@@ -1605,227 +634,20 @@
 					</textElement>
 				<text><![CDATA[Firma Profesor:]]></text>
 				</staticText>
-				<elementGroup><!--  Start: 1 !-->
-				<staticText>
+				<subreport  isUsingCache="true">
 					<reportElement
-						x="5"
-						y="77"
-						width="96"
-						height="23"
-						key="staticText-18"/>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
-					<textElement textAlignment="Center" verticalAlignment="Middle">
-						<font pdfFontName="Helvetica-BoldOblique" size="10" isBold="true" isItalic="true"/>
-					</textElement>
-				<text><![CDATA[Asignatura]]></text>
-				</staticText>
-				</elementGroup><!-- End 1 !-->
-				<staticText>
-					<reportElement
-						x="6"
-						y="326"
-						width="89"
-						height="23"
-						key="staticText-19"/>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
-					<textElement textAlignment="Center" verticalAlignment="Middle">
-						<font pdfFontName="Helvetica-BoldOblique" size="10" isBold="true" isItalic="true"/>
-					</textElement>
-				<text><![CDATA[Ausencias:]]></text>
-				</staticText>
-				<staticText>
-					<reportElement
-						x="6"
-						y="488"
-						width="89"
-						height="23"
-						key="staticText-20"/>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
-					<textElement textAlignment="Center" verticalAlignment="Middle">
-						<font pdfFontName="Helvetica-BoldOblique" size="10" isBold="true" isItalic="true"/>
-					</textElement>
-				<text><![CDATA[Observaciones:]]></text>
-				</staticText>
-				<rectangle>
-					<reportElement
-						mode="Transparent"
-						x="5"
-						y="267"
-						width="96"
+						x="0"
+						y="121"
+						width="260"
 						height="15"
-						key="rectangle-101"/>
-					<graphicElement stretchType="NoStretch"/>
-				</rectangle>
-				<rectangle>
-					<reportElement
-						mode="Transparent"
-						x="101"
-						y="267"
-						width="85"
-						height="15"
-						key="rectangle-102"/>
-					<graphicElement stretchType="NoStretch"/>
-				</rectangle>
-				<rectangle>
-					<reportElement
-						mode="Transparent"
-						x="186"
-						y="267"
-						width="85"
-						height="15"
-						key="rectangle-103"/>
-					<graphicElement stretchType="NoStretch"/>
-				</rectangle>
-				<rectangle>
-					<reportElement
-						mode="Transparent"
-						x="271"
-						y="267"
-						width="85"
-						height="15"
-						key="rectangle-104"/>
-					<graphicElement stretchType="NoStretch"/>
-				</rectangle>
-				<rectangle>
-					<reportElement
-						mode="Transparent"
-						x="355"
-						y="267"
-						width="85"
-						height="15"
-						key="rectangle-105"/>
-					<graphicElement stretchType="NoStretch"/>
-				</rectangle>
-				<rectangle>
-					<reportElement
-						mode="Transparent"
-						x="440"
-						y="267"
-						width="85"
-						height="15"
-						key="rectangle-106"/>
-					<graphicElement stretchType="NoStretch"/>
-				</rectangle>
-				<rectangle>
-					<reportElement
-						mode="Transparent"
-						x="5"
-						y="282"
-						width="96"
-						height="15"
-						key="rectangle-107"/>
-					<graphicElement stretchType="NoStretch"/>
-				</rectangle>
-				<rectangle>
-					<reportElement
-						mode="Transparent"
-						x="101"
-						y="282"
-						width="85"
-						height="15"
-						key="rectangle-108"/>
-					<graphicElement stretchType="NoStretch"/>
-				</rectangle>
-				<rectangle>
-					<reportElement
-						mode="Transparent"
-						x="186"
-						y="282"
-						width="85"
-						height="15"
-						key="rectangle-109"/>
-					<graphicElement stretchType="NoStretch"/>
-				</rectangle>
-				<rectangle>
-					<reportElement
-						mode="Transparent"
-						x="271"
-						y="282"
-						width="85"
-						height="15"
-						key="rectangle-110"/>
-					<graphicElement stretchType="NoStretch"/>
-				</rectangle>
-				<rectangle>
-					<reportElement
-						mode="Transparent"
-						x="355"
-						y="282"
-						width="85"
-						height="15"
-						key="rectangle-111"/>
-					<graphicElement stretchType="NoStretch"/>
-				</rectangle>
-				<rectangle>
-					<reportElement
-						mode="Transparent"
-						x="440"
-						y="282"
-						width="85"
-						height="15"
-						key="rectangle-112"/>
-					<graphicElement stretchType="NoStretch"/>
-				</rectangle>
-				<rectangle>
-					<reportElement
-						mode="Transparent"
-						x="5"
-						y="297"
-						width="96"
-						height="15"
-						key="rectangle-113"/>
-					<graphicElement stretchType="NoStretch"/>
-				</rectangle>
-				<rectangle>
-					<reportElement
-						mode="Transparent"
-						x="101"
-						y="297"
-						width="85"
-						height="15"
-						key="rectangle-114"/>
-					<graphicElement stretchType="NoStretch"/>
-				</rectangle>
-				<rectangle>
-					<reportElement
-						mode="Transparent"
-						x="186"
-						y="297"
-						width="85"
-						height="15"
-						key="rectangle-115"/>
-					<graphicElement stretchType="NoStretch"/>
-				</rectangle>
-				<rectangle>
-					<reportElement
-						mode="Transparent"
-						x="271"
-						y="297"
-						width="85"
-						height="15"
-						key="rectangle-116"/>
-					<graphicElement stretchType="NoStretch"/>
-				</rectangle>
-				<rectangle>
-					<reportElement
-						mode="Transparent"
-						x="355"
-						y="297"
-						width="85"
-						height="15"
-						key="rectangle-117"/>
-					<graphicElement stretchType="NoStretch"/>
-				</rectangle>
-				<rectangle>
-					<reportElement
-						mode="Transparent"
-						x="440"
-						y="297"
-						width="85"
-						height="15"
-						key="rectangle-118"/>
-					<graphicElement stretchType="NoStretch"/>
-				</rectangle>
+						key="subreport-1"
+						positionType="Float">
+							<printWhenExpression><![CDATA[$P{encode}]]></printWhenExpression>
+						</reportElement>
+					<parametersMapExpression><![CDATA[$P{REPORT_PARAMETERS_MAP}]]></parametersMapExpression>
+					<dataSourceExpression><![CDATA[new com.code.aon.ui.report.jr.JRBeanCollectionDataSource($P{qualifications})]]></dataSourceExpression>
+					<subreportExpression  class="net.sf.jasperreports.engine.JasperReport"><![CDATA[$P{nestedReports}.get("qualificationLegend")]]></subreportExpression>
+				</subreport>
 			</band>
 		</detail>
 		<columnFooter>
