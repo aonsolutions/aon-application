@@ -38,6 +38,7 @@ public class FinanceTrackingWriter {
     	try {
 			IManagerBean financeTrackingBean = BeanManager.getManagerBean(FinanceTracking.class);
 			Criteria criteria = new Criteria();
+			criteria.addEqualExpression(financeTrackingBean.getFieldName(IFinanceAlias.FINANCE_TRACKING_FINANCE_ID), finance.getId());
 			criteria.addEqualExpression(financeTrackingBean.getFieldName(IFinanceAlias.FINANCE_TRACKING_TYPE), type);
 			criteria.addOrder(financeTrackingBean.getFieldName(IFinanceAlias.FINANCE_TRACKING_ID),false);
 			Iterator iter = financeTrackingBean.getList(criteria,0,1).iterator();
