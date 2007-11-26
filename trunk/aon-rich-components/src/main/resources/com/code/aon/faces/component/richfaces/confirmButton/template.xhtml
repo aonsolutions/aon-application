@@ -13,7 +13,7 @@
 		<aon:panelGroup styleClass="aon-popup-panel aon-confirm-box" >
 		
 			<rich:modalPanel 
-				id="idModalPanel"
+				id="#{confirmId}"
 				styleClass="aon-popup-" minWidth="300">
 
 				<f:facet name="header">
@@ -24,7 +24,7 @@
 				<f:facet name="controls">
 					<aon:commandButton type="button" styleClass="aon-popup-button-close" immediate="true"
 						image="/images/icefaces/popupclose.gif"
-						onclick="Richfaces.hideModalPanel('idModalPanel');">
+						onclick="Richfaces.hideModalPanel('#{confirmId}');">
 					</aon:commandButton>	
 				</f:facet>
 
@@ -40,7 +40,7 @@
 								action="#{confirmAction}"
 								styleClass="aon-popup-button"
 								immediate="#{immediate}"
-								onclick="Richfaces.hideModalPanel('idModalPanel');">
+								onclick="Richfaces.hideModalPanel('#{confirmId}');">
 								<f:setPropertyActionListener target="#{confirmShowWindow}" value="#{false}" />
 								<c:if test="#{confirmActionListener != null}">									
 									<aon:actionListener method="#{confirmActionListener}" />
@@ -48,7 +48,7 @@
 							</aon:commandButton>
 							<aon:commandButton value="#{bundle.aon_no}"
 								styleClass="aon-popup-button" immediate="true"
-								onclick="Richfaces.hideModalPanel('idModalPanel');">
+								onclick="Richfaces.hideModalPanel('#{confirmId}');">
 							</aon:commandButton>
 						</aon:div>
 					</aon:panelGrid>

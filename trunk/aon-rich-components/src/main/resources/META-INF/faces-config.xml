@@ -94,6 +94,18 @@
             <renderer-type>org.apache.myfaces.SubForm</renderer-type>
         </component-extension>
     </component>
+    <component>
+        <component-type>com.code.aon.faces.Column</component-type>
+        <component-class>org.richfaces.component.html.HtmlColumn</component-class>
+    </component>
+    <component>
+        <component-type>com.code.aon.faces.DataTable</component-type>
+        <component-class>org.richfaces.component.html.HtmlDataTable</component-class>
+    </component>
+    <component>
+        <component-type>com.code.aon.faces.EditDataTable</component-type>
+        <component-class>org.richfaces.component.html.HtmlDataTable</component-class>
+    </component>
     
 	<!-- 
     <component>
@@ -135,21 +147,6 @@
         <component-class>com.icesoft.faces.component.outputprogress.OutputProgress</component-class>
     </component>
 
-    <component>
-        <component-type>com.code.aon.faces.Column</component-type>
-        <component-class>com.icesoft.faces.component.ext.UIColumn</component-class>
-    </component>
-    
-    <component>
-        <component-type>com.code.aon.faces.DataTable</component-type>
-        <component-class>com.icesoft.faces.component.ext.HtmlDataTable</component-class>
-    </component>
-    
-    <component>
-        <component-type>com.code.aon.faces.EditDataTable</component-type>
-        <component-class>com.icesoft.faces.component.ext.HtmlDataTable</component-class>
-    </component>
-    
     <component>
         <component-type>com.code.aon.faces.MenuBar</component-type>
         <component-class>com.icesoft.faces.component.menubar.MenuBar</component-class>

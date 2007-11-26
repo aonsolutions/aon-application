@@ -170,7 +170,35 @@
 			com.code.aon.faces.component.actionListener.ActionListenerHandler
 		</handler-class>
 	</tag>
+	<tag>
+		<tag-name>dataTable</tag-name>
+		<component>
+			<component-type>com.code.aon.faces.DataTable</component-type>
+			<handler-class>com.code.aon.faces.component.AonComponentHandler</handler-class>
+		</component>
+	</tag>
+	<tag>
+		<tag-name>editDataTable</tag-name>
+		<component>
+			<component-type>com.code.aon.faces.EditDataTable</component-type>
+			<handler-class>com.code.aon.faces.component.AonComponentHandler</handler-class>
+		</component>
+	</tag>
+	<tag>
+		<tag-name>column</tag-name>
+		<component>
+			<component-type>com.code.aon.faces.Column</component-type>
+			<handler-class>com.code.aon.faces.component.AonComponentHandler</handler-class>
+		</component>
+	</tag>
     <!-- 
+	<tag>
+		<tag-name>dataPaginator</tag-name>
+		<component>
+			<component-type>com.code.aon.faces.DataPaginator</component-type>
+			<handler-class>com.code.aon.faces.component.dataPaginator.DataPaginatorHandler</handler-class>
+		</component>
+	</tag>
     <tag>
         <tag-name>lookupButton</tag-name>
         <component>
@@ -200,34 +228,6 @@
 		<handler-class>
 			com.code.aon.faces.component.lookup.inputText.JoinPropertyHandler
 		</handler-class>
-	</tag>
-	<tag>
-		<tag-name>column</tag-name>
-		<component>
-			<component-type>com.code.aon.faces.Column</component-type>
-			<handler-class>com.code.aon.faces.component.column.ColumnHandler</handler-class>
-		</component>
-	</tag>
-	<tag>
-		<tag-name>dataPaginator</tag-name>
-		<component>
-			<component-type>com.code.aon.faces.DataPaginator</component-type>
-			<handler-class>com.code.aon.faces.component.dataPaginator.DataPaginatorHandler</handler-class>
-		</component>
-	</tag>
-	<tag>
-		<tag-name>dataTable</tag-name>
-		<component>
-			<component-type>com.code.aon.faces.DataTable</component-type>
-			<handler-class>com.code.aon.faces.component.dataTable.DataTableHandler</handler-class>
-		</component>
-	</tag>
-	<tag>
-		<tag-name>editDataTable</tag-name>
-		<component>
-			<component-type>com.code.aon.faces.EditDataTable</component-type>
-			<handler-class>com.code.aon.faces.component.dataTable.EditDataTableHandler</handler-class>
-		</component>
 	</tag>
 	<tag>
 		<tag-name>inputFile</tag-name>
