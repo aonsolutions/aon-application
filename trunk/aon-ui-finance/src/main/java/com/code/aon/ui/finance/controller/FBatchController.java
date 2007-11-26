@@ -1,6 +1,5 @@
 package com.code.aon.ui.finance.controller;
 
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -34,6 +33,7 @@ import com.code.aon.company.Company;
 import com.code.aon.finance.Finance;
 import com.code.aon.finance.FinanceBatch;
 import com.code.aon.finance.FinanceBatchDetail;
+import com.code.aon.finance.FinanceTracking;
 import com.code.aon.finance.Invoice;
 import com.code.aon.finance.RegistryBank;
 import com.code.aon.finance.csb.CSBOutput;
@@ -71,17 +71,17 @@ public class FBatchController extends BasicController {
 
 	private static final String FINANCE_BATCH_DETAIL_CONTROLLER_NAME = "fBatchDetail";
 
-	private File file;
+	private CSBOutput csbOutput;
 
 	/** Determines if the fbatch is a payment or a charge. */
 	private Boolean payment;
 
-	public File getFile() {
-		return file;
+	public CSBOutput getCsbOutput() {
+		return csbOutput;
 	}
 
-	public void setFile(File file) {
-		this.file = file;
+	public void setCsbOutput(CSBOutput csbOutput) {
+		this.csbOutput = csbOutput;
 	}
 
 	/**
@@ -273,33 +273,87 @@ public class FBatchController extends BasicController {
         loadAvailableFinances(fBatch.isPayment());
 	}
 
-	@SuppressWarnings("unused")
+	@SuppressWarnings({"unused","unchecked"})
+	public void onRemoveSelected(ActionEvent event) {
+        FinanceBatch fBatch = (FinanceBatch)getTo();
+        if (!FinanceBatchStatus.TODO.equals(fBatch.getFinanceBatchStatus())) {
+            try {
+                fBatch.setFinanceBatchStatus(FinanceBatchStatus.TODO);
+                getManagerBean().update(fBatch);
+            } catch (ManagerBeanException e) {
+                LOGGER.log(Level.SEVERE, "Error updating FinanceBatch with id=" + fBatch.getId(), e);
+            }
+        }
+
+        FBatchDetailController fBatchDetailController = (FBatchDetailController)AonUtil.getController(FINANCE_BATCH_DETAIL_CONTROLLER_NAME);
+        try {
+			IManagerBean financeBatchDetailBean = BeanManager.getManagerBean(FinanceBatchDetail.class);
+
+			Iterator iterator = fBatchDetailController.getCheckedFinanceBatchDetails().iterator();
+	        while(iterator.hasNext()){
+	        	FinanceBatchDetail fBatchDetail = (FinanceBatchDetail)iterator.next();
+	        	financeBatchDetailBean.remove(fBatchDetail);
+
+	        	updateRelatedInfo(fBatchDetail);
+	        }
+		} catch (ManagerBeanException e) {
+			LOGGER.log(Level.SEVERE, "Error removing selected finances to the FinanceBatch with id=" + fBatch.getId(), e);
+		}
+
+		fBatchDetailController.clearCheckedFinanceBatchDetails();
+        loadDetails(fBatch);
+		loadAvailableFinances(fBatch.isPayment());
+    }
+
+	public void updateRelatedInfo(FinanceBatchDetail fBatchDetail) {
+		try {
+			IManagerBean financeBean = BeanManager.getManagerBean(Finance.class);
+			FinanceStatus financeStatus = (wasFinanceReturned(fBatchDetail.getFinance()))?FinanceStatus.RETURNED:FinanceStatus.PENDING;
+			fBatchDetail.getFinance().setFinanceStatus(financeStatus);
+			financeBean.update(fBatchDetail.getFinance());
+			FinanceTrackingWriter.removeLastTrackingByType(fBatchDetail.getFinance(), FinanceTrackingType.BATCHED);
+		} catch (ManagerBeanException e) {
+			LOGGER.log(Level.SEVERE,"Error updating finances in FinanceBatch with id="+ fBatchDetail.getFinanceBatch().getId(), e);
+		}
+	}
+
+	public boolean wasFinanceReturned(Finance finance) {
+		try {
+			IManagerBean trackingBean = BeanManager.getManagerBean(FinanceTracking.class);
+			Criteria criteria = new Criteria();
+			criteria.addEqualExpression(trackingBean.getFieldName(IFinanceAlias.FINANCE_TRACKING_FINANCE_ID),finance.getId());
+			criteria.addEqualExpression(trackingBean.getFieldName(IFinanceAlias.FINANCE_TRACKING_TYPE),FinanceTrackingType.RETURNED);
+			return (trackingBean.getCount(criteria) > 0);
+		} catch (ManagerBeanException e) {
+			LOGGER.log(Level.SEVERE,"Error obtaining FinanceTracking of Finance with id="+ finance.getId(), e);
+		}
+		return false;
+	}
+
+    @SuppressWarnings("unused")
 	public void onCreateDisk(ActionEvent event) throws ManagerBeanException {
 		FinanceBatch fbatch = (FinanceBatch)this.getTo();
 
-        CSBOutput output = null;
         Company company = obtainCompany();
         if (fbatch.getFinanceBatchType().equals(FinanceBatchType.CSB_19_D) || fbatch.getFinanceBatchType().equals(FinanceBatchType.CSB_19)) {
 			CSB19Writer csb19Writer = new CSB19Writer();
-			output = csb19Writer.createCSB19(company, fbatch);
+			csbOutput = csb19Writer.createCSB19(company, fbatch);
 		}
 		else if (fbatch.getFinanceBatchType().equals(FinanceBatchType.CSB_32)) {
 			CSB32Writer csb32Writer = new CSB32Writer();
-			output = csb32Writer.createCSB32(company, fbatch);
+			csbOutput = csb32Writer.createCSB32(company, fbatch);
 		}
 		else if (fbatch.getFinanceBatchType().equals(FinanceBatchType.CSB_58)) {
 			CSB58Writer csb58Writer = new CSB58Writer();
-			output = csb58Writer.createCSB58(company, fbatch);
+			csbOutput = csb58Writer.createCSB58(company, fbatch);
 		}
 
-        if (output != null) {
-        	if (output.getErrors().size() > 0) {
-        		Iterator<Exception> iterator = output.getErrors().iterator();
-        		while (iterator.hasNext()) {
-        			AonUtil.addErrorMessage(iterator.next().getMessage());
-        		}
+        if (csbOutput != null) {
+        	if (csbOutput.getErrors().size() > 0) {
+                String bundleName = AonUtil.getConfigurationController().getApplicationBundles().get("financeBundle");
+        		ResourceBundle bundle = ResourceBundle.getBundle(bundleName, FacesContext.getCurrentInstance().getViewRoot().getLocale());
+        		AonUtil.addErrorMessage(bundle.getString("aon_finance_batch_disk_error"));
         	} else {
-        		file = output.getFile();
                 fbatch.setFinanceBatchStatus(FinanceBatchStatus.DONE);
                 getManagerBean().update(fbatch);
         	}
@@ -317,13 +371,22 @@ public class FBatchController extends BasicController {
     }
 
 	@SuppressWarnings({"unused"})
+	public boolean isDiskOk() throws ManagerBeanException {
+		int errors = 0;
+		if (csbOutput != null) {
+			errors = csbOutput.getErrors().size();
+		}
+		return (errors==0);
+	}
+
+	@SuppressWarnings({"unused"})
 	public void downloadDisk(ActionEvent event) throws ManagerBeanException {
 		try {
 			FacesContext faces = FacesContext.getCurrentInstance();
 	        HttpServletResponse response = (HttpServletResponse) faces.getExternalContext().getResponse();
 
 	        OutputStream out = response.getOutputStream();
-	        InputStream input = new FileInputStream(file);
+	        InputStream input = new FileInputStream(csbOutput.getFile());
 	        int BUFFER = 2048;
 	        byte data[] = new byte[BUFFER];
 	        int count;
@@ -333,9 +396,13 @@ public class FBatchController extends BasicController {
 	        out.close();
 	        input.close();
 
+	        String fileName = ((FinanceBatch)this.getTo()).getFinanceBatchType().getName(AonUtil.getCurrentLocale());
+	        fileName += "-" + ((FinanceBatch)this.getTo()).getDescription();
+	        fileName = ((csbOutput.getErrors().size()>0)?"ERROR-":"") + fileName;
+
 	        response.setContentType(MimeType.MIME_TXT.getName());
 	        response.setContentLength(data.length);
-	        response.setHeader("Content-disposition", "attachment; filename=\"" + file.getName() + "\"");
+	        response.setHeader("Content-disposition", "attachment; filename=\"" + fileName + "\"");
 	        faces.responseComplete();
 		} catch (IOException e) {
 			throw new ManagerBeanException(e);
