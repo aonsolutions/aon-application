@@ -55,6 +55,10 @@
     	<attribute name="styleClass" value="aon-form-input-text" />			
 	</component>
 
+	<component localName="inputRichText" namespace="http://www.code.es/aon-rich-components">
+    	<attribute name="styleClass" value="aon-form-input-text" />			
+	</component>
+
 	<component localName="inputSecret" namespace="http://www.code.es/aon-rich-components">
     	<attribute name="styleClass" value="aon-inputSecret" />			
 	</component>
