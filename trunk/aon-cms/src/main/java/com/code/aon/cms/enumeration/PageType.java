@@ -20,8 +20,17 @@ public enum PageType implements IResourceable {
 	/**
 	 * Menu Page
 	 */
-	MENU;
+	MENU,
 
+	/**
+	 * Faq
+	 */
+	FAQ,
+
+	/**
+	 * Links
+	 */
+	LINK;
 
 	/**
 	 * Ruta base del fichero de mensajes.
