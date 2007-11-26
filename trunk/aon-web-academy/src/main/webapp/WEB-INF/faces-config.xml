@@ -832,6 +832,7 @@
 				<value>#{alumnLoanChildListener}</value>
 				<value>#{customerObservationListener}</value>
 				<value>#{alumnAbsenceListener}</value>
+				<value>#{alumnInactiveListener}</value>
 			</list-entries>
 		</managed-property>
 	</managed-bean>
@@ -849,6 +850,12 @@
 	<managed-bean>
 		<managed-bean-name>alumnAbsenceListener</managed-bean-name>
 		<managed-bean-class>com.code.aon.ui.academy.event.AlumnAbsenceListener</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+	</managed-bean>
+
+	<managed-bean>
+		<managed-bean-name>alumnInactiveListener</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.academy.event.AlumnInactiveControllerListener</managed-bean-class>
 		<managed-bean-scope>none</managed-bean-scope>
 	</managed-bean>
 
