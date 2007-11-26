@@ -12,6 +12,7 @@ import com.code.aon.academy.Course;
 import com.code.aon.academy.CourseAcademicSkill;
 import com.code.aon.academy.CourseAlumn;
 import com.code.aon.academy.dao.IAcademyAlias;
+import com.code.aon.academy.enumeration.CourseAlumnStatus;
 import com.code.aon.academy.print.ReportTemplateMark;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.ICollectionProvider;
@@ -65,6 +66,7 @@ public class MarkTemplatePrinter implements ICollectionProvider{
 			IManagerBean bean = BeanManager.getManagerBean(CourseAlumn.class);
 			Criteria criteria = new Criteria();
 			criteria.addEqualExpression(bean.getFieldName(IAcademyAlias.COURSE_ALUMN_COURSE_ID), course.getId());
+			criteria.addEqualExpression(bean.getFieldName(IAcademyAlias.COURSE_ALUMN_STATUS), CourseAlumnStatus.ACTIVE);
 			List<CourseAlumn> lst = new ArrayList<CourseAlumn>();
 			Iterator iter = bean.getList(criteria).iterator();
 			while (iter.hasNext()){

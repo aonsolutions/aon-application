@@ -13,6 +13,7 @@ import javax.faces.event.ValueChangeEvent;
 import com.code.aon.academy.Course;
 import com.code.aon.academy.CourseAlumn;
 import com.code.aon.academy.dao.IAcademyAlias;
+import com.code.aon.academy.enumeration.CourseAlumnStatus;
 import com.code.aon.academy.print.ReportCourse;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.ICollectionProvider;
@@ -63,6 +64,7 @@ public class CourseController extends BasicController implements ICollectionProv
 			IManagerBean courseAlumnBean = BeanManager.getManagerBean(CourseAlumn.class);
 			Criteria criteria = new Criteria();
 			criteria.addEqualExpression(courseAlumnBean.getFieldName(IAcademyAlias.COURSE_ALUMN_COURSE_ID), course.getId());
+			criteria.addEqualExpression(courseAlumnBean.getFieldName(IAcademyAlias.COURSE_ALUMN_STATUS), CourseAlumnStatus.ACTIVE);
 			return courseAlumnBean.getCount(criteria);
 		} catch (ManagerBeanException e) {
 			LOGGER.log(Level.SEVERE, "Error obtaining alumnCount for course with id= " + course.getId(), e);
