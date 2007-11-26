@@ -15,7 +15,7 @@ import com.code.aon.ui.util.AonUtil;
 public class CourseAlumnMarkControllerListener extends ControllerAdapter {
 
 	@Override
-	public void afterModelInitialized(ControllerEvent event) throws ControllerListenerException {
+	public void beforeModelInitialized(ControllerEvent event) throws ControllerListenerException {
 		try {
 			Criteria criteria = event.getController().getCriteria();
 			criteria.addEqualExpression(event.getController().getManagerBean().getFieldName(IAcademyAlias.COURSE_ALUMN_STATUS), CourseAlumnStatus.ACTIVE);

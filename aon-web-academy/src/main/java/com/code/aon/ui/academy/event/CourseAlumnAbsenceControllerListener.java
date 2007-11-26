@@ -2,8 +2,11 @@ package com.code.aon.ui.academy.event;
 
 import com.code.aon.academy.Course;
 import com.code.aon.academy.CourseAlumn;
+import com.code.aon.academy.dao.IAcademyAlias;
+import com.code.aon.academy.enumeration.CourseAlumnStatus;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.customer.Customer;
+import com.code.aon.ql.Criteria;
 import com.code.aon.ui.academy.controller.AbsenceController;
 import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
@@ -21,6 +24,16 @@ public class CourseAlumnAbsenceControllerListener extends ControllerAdapter {
 			absenceController.onSearchAbsences(null);
 		}catch (ManagerBeanException e) {
 		}
+	}
+
+	@Override
+	public void beforeModelInitialized(ControllerEvent event) throws ControllerListenerException {
+		try {
+			Criteria criteria = event.getController().getCriteria();
+			criteria.addEqualExpression(event.getController().getManagerBean().getFieldName(IAcademyAlias.COURSE_ALUMN_STATUS), CourseAlumnStatus.ACTIVE);
+		} catch (ManagerBeanException e) {
+		}
+		
 	}
 
 	private Customer getCustomer(ControllerEvent event) throws ManagerBeanException{

@@ -11,6 +11,7 @@ import java.util.logging.Logger;
 import com.code.aon.academy.Course;
 import com.code.aon.academy.CourseAlumn;
 import com.code.aon.academy.dao.IAcademyAlias;
+import com.code.aon.academy.enumeration.CourseAlumnStatus;
 import com.code.aon.academy.print.ReportCourseAlumn;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.ICollectionProvider;
@@ -90,6 +91,7 @@ public class CourseDetailListPrinter implements ICollectionProvider {
 			Course course = (Course)iter.next();
 			criteria.addOrExpression(courseAlumnBean.getFieldName(IAcademyAlias.COURSE_ALUMN_COURSE_ID), course.getId().toString());
 		}
+		criteria.addEqualExpression(courseAlumnBean.getFieldName(IAcademyAlias.COURSE_ALUMN_STATUS), CourseAlumnStatus.ACTIVE);
 		return courseAlumnBean.getList(criteria);
 	}
 

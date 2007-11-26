@@ -1,5 +1,6 @@
 package com.code.aon.ui.academy.event;
 
+import java.util.Iterator;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -10,6 +11,7 @@ import com.code.aon.academy.dao.IAcademyAlias;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.customer.enumeration.CustomerStatus;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
@@ -32,12 +34,12 @@ public class CourseAlumnControllerListener extends ControllerAdapter {
 	@Override
 	public void beforeBeanUpdated(ControllerEvent event) throws ControllerListenerException {
 		CourseAlumn courseAlumn = (CourseAlumn)event.getController().getTo();
-		if(existingAlumn(courseAlumn)){
+		if(!alumnChanged(courseAlumn) && existingAlumn(courseAlumn)){
 			AonUtil.addErrorMessage("No se puede añadir el mismo alumno dos veces en un curso");
 			throw new AbortProcessingException();
 		}
 	}
-
+	
 	@SuppressWarnings("unchecked")
 	private boolean existingAlumn(CourseAlumn courseAlumn) {
 		try {
@@ -50,6 +52,23 @@ public class CourseAlumnControllerListener extends ControllerAdapter {
 			}
 		} catch (ManagerBeanException e) {
 			LOGGER.log(Level.SEVERE, "Error checking if courseAlumn exists", e);
+		}
+		return false;
+	}
+	
+	@SuppressWarnings("unchecked")
+	private boolean alumnChanged(CourseAlumn courseAlumn) {
+		try {
+			IManagerBean courseAlumnBean = BeanManager.getManagerBean(CourseAlumn.class);
+			Criteria criteria = new Criteria();
+			criteria.addEqualExpression(courseAlumnBean.getFieldName(IAcademyAlias.COURSE_ALUMN_ID), courseAlumn.getId());
+			Iterator iter = courseAlumnBean.getList(criteria).iterator();
+			if(iter.hasNext()){
+				CourseAlumn dbCourseAlumn = (CourseAlumn)iter.next();
+				return dbCourseAlumn.getId().equals(courseAlumn.getId());
+			}
+		} catch (ManagerBeanException e) {
+			LOGGER.log(Level.SEVERE, "Error checking if alumn has changed exists", e);
 		}
 		return false;
 	}
