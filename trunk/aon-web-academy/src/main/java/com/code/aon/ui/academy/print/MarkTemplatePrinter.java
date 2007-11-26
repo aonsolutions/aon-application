@@ -81,7 +81,7 @@ public class MarkTemplatePrinter implements ICollectionProvider{
 		try {
 			IManagerBean bean = BeanManager.getManagerBean(CourseAcademicSkill.class);
 			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(bean.getFieldName(IAcademyAlias.COURSE_ACADEMICSKILL_COURSE_ID), course.getId());
+			criteria.addEqualExpression(bean.getFieldName(IAcademyAlias.COURSE_ACADEMIC_SKILL_COURSE_ID), course.getId());
 			List<CourseAcademicSkill> lst = new ArrayList<CourseAcademicSkill>();
 			Iterator iter = bean.getList(criteria).iterator();
 			while (iter.hasNext()){

@@ -179,7 +179,7 @@ public class AcademyCollectionsController {
 
             IManagerBean courseAcademicSkillBean = BeanManager.getManagerBean(CourseAcademicSkill.class);
             Criteria criteria = new Criteria();
-            criteria.addEqualExpression(courseAcademicSkillBean.getFieldName(IAcademyAlias.COURSE_ACADEMICSKILL_COURSE_ID), course.getId());
+            criteria.addEqualExpression(courseAcademicSkillBean.getFieldName(IAcademyAlias.COURSE_ACADEMIC_SKILL_COURSE_ID), course.getId());
             Iterator iter= courseAcademicSkillBean.getList(criteria).iterator();
             while(iter.hasNext()){
             	CourseAcademicSkill courseAcademicSkill = (CourseAcademicSkill)iter.next();
