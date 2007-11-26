@@ -93,4 +93,10 @@
     	<attribute name="rowClasses" value="aon-edit-table-row-odd, aon-edit-table-row-even" />
 	</component>
 
+	<component localName="dataPaginator" namespace="http://www.code.es/aon-rich-components">
+    	<attribute name="maxPages" alias="paginatorMaxPages" />			
+    	<attribute name="pagesVar" alias="pageCountVar" />
+    	<attribute name="paginator" ignore="true" />
+	</component>
+
 </components>
