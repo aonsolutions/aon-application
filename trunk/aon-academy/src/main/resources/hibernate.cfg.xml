@@ -34,8 +34,11 @@
 		<mapping class="com.code.aon.academy.CourseObservation"/>
 		
 		<mapping class="com.code.aon.customer.Customer"/>
-		<mapping class="com.code.aon.sales.CustomerFee"/>
 		<mapping class="com.code.aon.customer.CustomerSegment"/>
+		
+		<mapping class="com.code.aon.config.Scope"/>
+<!-- 
+		<mapping class="com.code.aon.sales.CustomerFee"/>
 		<mapping class="com.code.aon.sales.Seller"/>
 		<mapping class="com.code.aon.sales.Sales"/>
 		<mapping class="com.code.aon.sales.SalesDetail"/>
@@ -43,7 +46,7 @@
 		<mapping class="com.code.aon.sales.SalesAttachment"/>
 		<mapping class="com.code.aon.sales.SalesType"/>
 		<mapping class="com.code.aon.sales.FinanceSales"/>
-
+ -->
 		<mapping class="com.code.aon.product.Tariff"/>
 		<mapping class="com.code.aon.product.Item"/>
 		<mapping class="com.code.aon.product.Product"/>
@@ -53,15 +56,17 @@
 		<mapping class="com.code.aon.product.Brand"/>
 
 		<mapping class="com.code.aon.company.resources.Employee"/>
+		<mapping class="com.code.aon.company.resources.Resource"/>
 		<mapping class="com.code.aon.company.WorkPlace"/>
 		<mapping class="com.code.aon.company.WorkActivity"/>
 		
+<!-- 
 		<mapping class="com.code.aon.finance.Finance"/>
 		<mapping class="com.code.aon.finance.Invoice"/>
 		<mapping class="com.code.aon.finance.InvoiceDetail"/>
 		<mapping class="com.code.aon.finance.Bank"/>
 		<mapping class="com.code.aon.finance.PayMethod"/>
-		
+ -->		
 		<mapping class="com.code.aon.registry.Registry"/>
 		<mapping class="com.code.aon.registry.RegistryAddress"/>
 		<mapping class="com.code.aon.registry.RegistryMedia"/>
