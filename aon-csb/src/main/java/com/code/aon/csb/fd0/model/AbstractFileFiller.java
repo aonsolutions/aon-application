@@ -99,7 +99,7 @@ public abstract class AbstractFileFiller implements FileFiller {
             }
 			while (iterErr.hasNext()){
 				Fd0Exception fd0 = (Fd0Exception) iterErr.next();
-				outputErr.println(fd0.getDetail()+" "+fd0.getMessage());
+				outputErr.println(fd0.getMessage());
 			}
 			outputErr.flush();
 		}else{
