@@ -16,6 +16,8 @@ public class Qualification implements ITransferObject {
 	
 	private String code;
 	
+	private String description;
+	
 	private double minValue;
 	
 	private double maxValue;
@@ -38,6 +40,15 @@ public class Qualification implements ITransferObject {
 
 	public void setCode(String code) {
 		this.code = code;
+	}
+	
+	@Column(length=64)
+	public String getDescription() {
+		return description;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
 	}
 
 	@Column(name="min_value",nullable=false)
