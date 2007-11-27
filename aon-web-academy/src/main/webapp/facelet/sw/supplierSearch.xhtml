@@ -10,14 +10,14 @@
 
 	<ui:define name="content">
 
-		<h:form id="creditorForm" styleClass="aon-form">
+		<h:form id="supplierForm" styleClass="aon-form">
 
-			<h:inputHidden value="#{creditorLookup.parameters}" />
+			<h:inputHidden value="#{supplierLookup.parameters}" />
 
 			<t:div styleClass="aon-content-title" forceId="#{true}"
 				id="aon-window-popup-title">
 				<t:div styleClass="aon-content-title-internal">
-					<h:outputText value="#{accountBundle.aon_creditor}" />
+					<h:outputText value="#{purchaseBundle.supplier_supplier}" />
 				</t:div>
 			</t:div>
 
@@ -27,8 +27,8 @@
 					<t:div styleClass="aon-content-toolbar-item-group">
 
 						<h:commandButton id="search" value="#{bundle.aon_search}"
-							accesskey="#{bundle.aon_key_search}" action="creditor_sw"
-							actionListener="#{creditorLookup.onSearch}"
+							accesskey="#{bundle.aon_key_search}" action="supplier_sw"
+							actionListener="#{supplierLookup.onSearch}"
 							styleClass="aon-content-toolbar-item"
 							onmouseout="this.className='aon-content-toolbar-item'"
 							onmouseover="this.className='aon-content-toolbar-item aon-content-toolbar-item-hover'">
@@ -51,8 +51,8 @@
 			</t:div>
 			<!-- end toolbar navigation -->
 
-			<ui:include src="/account/facelet/creditor/searchContent.xhtml">
-				<ui:param name="creditorAlias" value="#{creditorLookup}" />
+			<ui:include src="/facelet/supplier/searchContent.xhtml">
+				<ui:param name="supplierAlias" value="#{supplierLookup}" />
 			</ui:include>
 
 		</h:form>
