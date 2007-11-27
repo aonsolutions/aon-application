@@ -10,13 +10,13 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import com.code.aon.csb.fd0.core.Account;
 import com.code.aon.csb.fd0.core.DiskRegisterLoader;
 import com.code.aon.csb.fd0.model.AbstractFileFiller;
 import com.code.aon.csb.fd0.model.FileFiller;
 import com.code.aon.csb.fd0.model.CSB19.check.CheckIndividual;
 import com.code.aon.csb.fd0.model.CSB19.check.CheckOrderer;
 import com.code.aon.csb.fd0.model.CSB19.check.CheckPresenter;
-import com.code.aon.csb.fd0.model.CSB19.data.Account;
 import com.code.aon.csb.fd0.model.CSB19.data.Individual;
 import com.code.aon.csb.fd0.model.CSB19.data.IndividualLine;
 import com.code.aon.csb.fd0.model.CSB19.data.Lot;

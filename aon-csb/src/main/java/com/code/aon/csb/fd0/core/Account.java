@@ -1,4 +1,4 @@
-package com.code.aon.csb.fd0.model.CSB34.data;
+package com.code.aon.csb.fd0.core;
 
 /**
  * A bank account structure
@@ -95,10 +95,12 @@ public class Account {
 	 * @param ccc the account string
 	 */
 	public void parse(String ccc) {
-		setCcc_e(ccc.substring(0, 4));
-		setCcc_o(ccc.substring(4, 8));
-		setCcc_dc(ccc.substring(8, 10));
-		setCcc_a(ccc.substring(10, 20));
+		if(ccc.length() == 20){
+			setCcc_e(ccc.substring(0, 4));
+			setCcc_o(ccc.substring(4, 8));
+			setCcc_dc(ccc.substring(8, 10));
+			setCcc_a(ccc.substring(10, 20));
+		}
 	}
 
 	/**
@@ -112,6 +114,9 @@ public class Account {
 	 * @return true if is a correct account
 	 */
 	public boolean isCorrect(){
+		if(getCcc_e() == null || getCcc_o() == null || getCcc_a() == null ){
+			return false;
+		}
 		String dc = calculaDC(getCcc_e(),getCcc_o(),getCcc_a());
 		return dc.equals(getCcc_dc());
 	}

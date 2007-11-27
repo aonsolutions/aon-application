@@ -2,6 +2,8 @@ package com.code.aon.csb.fd0.model.CSB32.data;
 
 import java.util.Date;
 
+import com.code.aon.csb.fd0.core.Account;
+
 public class Individual {
 
 	private String documentNumber;

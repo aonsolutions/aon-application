@@ -3,6 +3,8 @@ package com.code.aon.csb.fd0.model.CSB19.data;
 import java.util.ArrayList;
 import java.util.Iterator;
 
+import com.code.aon.csb.fd0.core.Account;
+
 public class Individual {
 
 	private String referenceCode;
