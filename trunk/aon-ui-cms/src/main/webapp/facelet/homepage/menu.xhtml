@@ -34,6 +34,15 @@
 						<aon:menuItem id="faq_category" value="#{menuBundle.cms_faq_category}"
 							actionListener="#{faq_category.onReset}" action="faq_category_list"
 							styleClass="aon-main-menu-leaf"/>
+						<aon:menuItem id="brand" value="#{menuBundle.cms_brand}"
+							actionListener="#{brand.onReset}" action="brand_list"
+							styleClass="aon-main-menu-leaf"/>
+						<aon:menuItem id="productCategory" value="#{menuBundle.cms_product_category}"
+							actionListener="#{productCategory.onReset}" action="product_category_list"
+							styleClass="aon-main-menu-leaf"/>
+						<aon:menuItem id="product" value="#{menuBundle.cms_product}"
+							actionListener="#{product.onReset}" action="product_list"
+							styleClass="aon-main-menu-leaf"/>
 					</aon:menuItem>
 					<aon:menuItem id="production" value="#{menuBundle.cms_production}">
 						<aon:menuItem id="template" value="#{menuBundle.cms_template}"

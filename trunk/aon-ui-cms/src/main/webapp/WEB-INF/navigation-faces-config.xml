@@ -110,6 +110,42 @@
     </navigation-case>
   </navigation-rule>
   
+  <!-- ================================================= BRAND -->
+  <navigation-rule>
+    <navigation-case>
+      <from-outcome>brand_list</from-outcome>
+      <to-view-id>/facelet/content/brand/list.iface</to-view-id>
+    </navigation-case>
+    <navigation-case>
+      <from-outcome>brand_form</from-outcome>
+      <to-view-id>/facelet/content/brand/form.iface</to-view-id>
+    </navigation-case>
+  </navigation-rule>
+  
+  <!-- ======================================= PRODUCT CATEGORY -->
+  <navigation-rule>
+    <navigation-case>
+      <from-outcome>product_category_list</from-outcome>
+      <to-view-id>/facelet/content/product_category/list.iface</to-view-id>
+    </navigation-case>
+    <navigation-case>
+      <from-outcome>product_category_form</from-outcome>
+      <to-view-id>/facelet/content/product_category/form.iface</to-view-id>
+    </navigation-case>
+  </navigation-rule>
+  
+  <!-- ======================================= PRODUCT -->
+  <navigation-rule>
+    <navigation-case>
+      <from-outcome>product_list</from-outcome>
+      <to-view-id>/facelet/content/product/list.iface</to-view-id>
+    </navigation-case>
+    <navigation-case>
+      <from-outcome>product_form</from-outcome>
+      <to-view-id>/facelet/content/product/form.iface</to-view-id>
+    </navigation-case>
+  </navigation-rule>
+  
   <!-- =================================================== TEMPLATES -->
   <navigation-rule>
     <navigation-case>

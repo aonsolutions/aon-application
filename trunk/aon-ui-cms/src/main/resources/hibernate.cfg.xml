@@ -34,6 +34,12 @@
 		<mapping class="com.code.aon.cms.FaqDetail"/>
 		<mapping class="com.code.aon.cms.FaqCategory"/>
 		<mapping class="com.code.aon.cms.FaqCategoryDetail"/>
+		<mapping class="com.code.aon.cms.Brand"/>
+		<mapping class="com.code.aon.cms.BrandDetail"/>
+		<mapping class="com.code.aon.cms.ProductCategory"/>
+		<mapping class="com.code.aon.cms.ProductCategoryDetail"/>
+		<mapping class="com.code.aon.cms.Product"/>
+		<mapping class="com.code.aon.cms.ProductDetail"/>
 
 	</session-factory>
 
