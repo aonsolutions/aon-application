@@ -71,6 +71,24 @@ public class ProductCategoryController extends BasicI18nController {
 		return title;
 	}
 
+	public List<SelectItem> getParentCategories() throws ManagerBeanException, ExpressionException {
+		List<SelectItem> categories = new LinkedList<SelectItem>();
+		IManagerBean categoryBean = BeanManager.getManagerBean(ProductCategory.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(categoryBean.getFieldName(ICMSAlias.PRODUCT_CATEGORY_ACTIVE),true);
+		criteria.addNullExpression(categoryBean.getFieldName(ICMSAlias.PRODUCT_CATEGORY_PARENT_ID));
+		List<ITransferObject> list = (List<ITransferObject>)categoryBean.getList(criteria);
+		SelectItem item = new SelectItem(null,"------");
+		categories.add(item);
+		for (int i = 0; i < list.size(); i++) {
+			ProductCategory pcd = (ProductCategory)list.get(i);
+			item = new SelectItem(pcd.getId(),pcd.getAlias());
+			if (getTo()!=null && !pcd.getId().equals(((ProductCategory)getTo()).getId()))
+				categories.add(item);
+		}
+		return categories;
+	}
+	
 	public List<SelectItem> getCategories() throws ManagerBeanException, ExpressionException {
 		List<SelectItem> categories = new LinkedList<SelectItem>();
 		IManagerBean categoryBean = BeanManager.getManagerBean(ProductCategory.class);

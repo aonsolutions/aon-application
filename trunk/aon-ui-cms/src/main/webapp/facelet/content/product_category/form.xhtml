@@ -80,6 +80,15 @@
 								size="50" maxlength="64"
 								value="#{productCategory.toI18n.label}" />
 
+							<aon:outputLabel for="productCategory_parent"
+								styleClass="aon-form-input-text-label"
+								value="#{appBundle.product_category_parent}" />
+							<aon:selectOneMenu id="productCategory_parent"  
+								styleClass="aon-form-selectOneMenu-field"
+								value="#{productCategory.to.parent.id}">
+								<f:selectItems value="#{productCategory.parentCategories}" />
+							</aon:selectOneMenu> 
+
 						</aon:panelGrid>
 					</aon:panelGrid>
 				</aon:div>
