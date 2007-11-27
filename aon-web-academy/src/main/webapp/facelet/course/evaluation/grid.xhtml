@@ -26,41 +26,41 @@
 				<t:panelGrid columns="7" cellpadding="0" cellspacing="0" border="0">
 					<t:panelGroup>						
 						<t:commandLink id="course_data" value="#{appBundle.course_course}" 
-							action="course_form" styleClass="aon-content-menu-item"	/>					
+							action="course_form" styleClass="aon-content-menu-item"	visibleOnUserRole="GruposGrupo"/>					
 					</t:panelGroup>
 					<t:panelGroup>						
 						<t:commandLink id="academicSkill_data" value="#{appBundle.academicSkill_academicSkills}" 
 							actionListener="#{courseAcademicSkill.onSearch}"
-							action="course_academicSkill_data" 
+							action="course_academicSkill_data" visibleOnUserRole="GruposHabilidades"
 							styleClass="aon-content-menu-item"	/>					
 					</t:panelGroup>
 					<t:panelGroup>						
 						<t:commandLink id="alumn_data" value="#{appBundle.aon_alumns}" 
-							action="course_alumn_data" 
+							action="course_alumn_data" visibleOnUserRole="GruposAlumnos"
 							styleClass="aon-content-menu-item"	/>					
 					</t:panelGroup>
 					<t:panelGroup>						
 						<t:commandLink id="alumn_absence_data" value="#{appBundle.absence_absences}" 
 							actionListener="#{courseAlumnAbsence.onSearch}" 
-							action="course_alumn_absence_data" 
+							action="course_alumn_absence_data" visibleOnUserRole="GruposAusencias"
 							styleClass="aon-content-menu-item"	/>					
 					</t:panelGroup>
 					<t:panelGroup>						
 						<t:commandLink id="evaluation_data" 
-							value="#{appBundle.course_evaluation}" 
+							value="#{appBundle.course_evaluation}" visibleOnUserRole="GruposVCalidad"
 							styleClass="aon-content-menu-item-active"	/>					
 					</t:panelGroup>
 					<t:panelGroup>						
 						<t:commandLink id="course_mark_data" 
 							value="#{appBundle.aon_mark_data}" 
-							action="course_mark_data" 
+							action="course_mark_data" visibleOnUserRole="GruposCalificaciones"
 							actionListener="#{courseMark.onSearch}" 
 							styleClass="aon-content-menu-item"	/>					
 					</t:panelGroup>
 					<t:panelGroup>						
 						<t:commandLink id="alumn_mark_data" value="#{appBundle.mark_print}" 
 							actionListener="#{courseAlumnMark.onSearch}" 
-							action="course_alumn_mark_data" 
+							action="course_alumn_mark_data" visibleOnUserRole="GruposObservaciones"
 							styleClass="aon-content-menu-item"	/>					
 					</t:panelGroup>
 				</t:panelGrid>

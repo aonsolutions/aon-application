@@ -32,32 +32,32 @@
 							<t:panelGroup>
 								<t:commandLink id="customer_data" forceId="#{true}"
 									value="#{appBundle.aon_alumn_data}" action="customer_form"
-									styleClass="aon-content-menu-item" />
+									styleClass="aon-content-menu-item" visibleOnUserRole="AlumnosDatosAlumno"/>
 							</t:panelGroup>
 							<t:panelGroup>						
 								<t:commandLink id="personal_data" value="#{appBundle.aon_personal_data}" 
-									styleClass="aon-content-menu-item-active"/>
+									styleClass="aon-content-menu-item-active" visibleOnUserRole="AlumnosDatosPersonales"/>
 							</t:panelGroup>
 							<t:panelGroup>						
 								<t:commandLink id="economic_data" forceId="#{true}" value="#{appBundle.aon_economic_data}"
 									actionListener="#{customerFee.onCustomerFee}" action="economic_data" 
-									styleClass="aon-content-menu-item" />						
+									styleClass="aon-content-menu-item" visibleOnUserRole="AlumnosDatosEconomicos"/>
 							</t:panelGroup>
 							<t:panelGroup>
 								<t:commandLink id="customer_rnote" forceId="#{true}"
-									value="#{appBundle.aon_monitoring}"
+									value="#{appBundle.aon_monitoring}" visibleOnUserRole="AlumnosSeguimiento"
 									actionListener="#{rnote.onSearch}" action="rnote"
 									styleClass="aon-content-menu-item" />
 							</t:panelGroup>
 							<t:panelGroup>
 								<t:commandLink id="customer_relationship" forceId="#{true}"
-									value="#{appBundle.aon_rRelationship}"
+									value="#{appBundle.aon_rRelationship}" visibleOnUserRole="AlumnosRelaciones"
 									actionListener="#{rRelationship.onSearch}"
 									action="rrelationship" styleClass="aon-content-menu-item" />
 							</t:panelGroup>
 							<t:panelGroup>
 								<t:commandLink id="customer_absence" forceId="#{true}" value="#{appBundle.absence_absences}"
-									action="absence" styleClass="aon-content-menu-item" />						
+									action="absence" styleClass="aon-content-menu-item" visibleOnUserRole="AlumnosAusencias"/>
 							</t:panelGroup>	
 						</t:panelGrid>
 					</t:div>
