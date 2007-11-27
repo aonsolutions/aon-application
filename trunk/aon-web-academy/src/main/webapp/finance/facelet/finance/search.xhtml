@@ -78,11 +78,11 @@
 							<t:div rendered="#{finance.payment}">
 								<t:inputText id="Supplier_Lookup_id" size="5" forceId="#{true}"
 									styleClass="aon-form-input-text"
-									onchange="return findBeanLookup(event,'#{facesContext.externalContext.requestContextPath}','supplierLookup');"
+									onchange="return findBeanLookupExt(event,'#{facesContext.externalContext.requestContextPath}','supplierLookup','Supplier_Lookup_id','Supplier_id|Supplier_Lookup_id,Supplier_full_name|Supplier_full_name');"
 									valueChangeListener="#{finance.addRegistryExpression}" />
 								<h:commandButton id="find_Supplier_Lookup_id"
 									styleClass="aon-form-lookup-button" value="" immediate="true"
-									onclick="lookupSearchWindow(this, 'placeList', '#{supplierLookup.encodedSearchPagePath}');return false;" />	
+									onclick="lookupSearchWindow(this, 'placeList', '#{supplierLookup.encodedSearchPagePath}','Supplier_id|Supplier_Lookup_id,Supplier_full_name|Supplier_full_name');return false;" />	
 								<t:inputText id="Supplier_full_name" forceId="#{true}"
 									styleClass="aon-form-input-text-disabled" disabled="true"
 									size="40" />
