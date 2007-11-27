@@ -258,6 +258,87 @@
 		<managed-bean-scope>none</managed-bean-scope>
 	</managed-bean>
 
+	<!-- ************** BRAND ************** -->
+	<managed-bean>
+		<managed-bean-name>brand</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.cms.controller.BrandController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.cms.Brand</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojoI18n</property-name>
+			<value>com.code.aon.cms.BrandDetail</value>
+		</managed-property>
+		<managed-property>
+			<property-name>joinAlias</property-name>
+			<value>BrandDetail_brand_id</value>
+		</managed-property>
+		<managed-property>
+			<property-name>languageAlias</property-name>
+			<value>BrandDetail_language_id</value>
+		</managed-property>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>true</value>
+		</managed-property>
+	</managed-bean>
+
+	<!-- ************** PRODUCT CATEGORY ************** -->
+	<managed-bean>
+		<managed-bean-name>productCategory</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.cms.controller.ProductCategoryController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.cms.ProductCategory</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojoI18n</property-name>
+			<value>com.code.aon.cms.ProductCategoryDetail</value>
+		</managed-property>
+		<managed-property>
+			<property-name>joinAlias</property-name>
+			<value>ProductCategoryDetail_productCategory_id</value>
+		</managed-property>
+		<managed-property>
+			<property-name>languageAlias</property-name>
+			<value>ProductCategoryDetail_language_id</value>
+		</managed-property>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>true</value>
+		</managed-property>
+	</managed-bean>
+
+	<!-- ************** PRODUCT ************** -->
+	<managed-bean>
+		<managed-bean-name>product</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.cms.controller.ProductController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.cms.Product</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojoI18n</property-name>
+			<value>com.code.aon.cms.ProductDetail</value>
+		</managed-property>
+		<managed-property>
+			<property-name>joinAlias</property-name>
+			<value>ProductDetail_product_id</value>
+		</managed-property>
+		<managed-property>
+			<property-name>languageAlias</property-name>
+			<value>ProductDetail_language_id</value>
+		</managed-property>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>true</value>
+		</managed-property>
+	</managed-bean>
+
 	<!-- ************** TEMPLATES ************** -->
 	<managed-bean>
 		<managed-bean-name>template</managed-bean-name>
