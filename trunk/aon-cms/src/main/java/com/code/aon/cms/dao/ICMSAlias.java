@@ -946,10 +946,10 @@ public interface ICMSAlias {
 	DAOConstantsEntry PRODUCT_CATEGORY_ENTRY = DAOConstants.getDAOConstant(ProductCategory.class);
 
 	/** 
-	* Alias value: ProductCategory_active
-	* Hibernate value: ProductCategory.active
+	* Alias value: ProductCategory_id
+	* Hibernate value: ProductCategory.id
 	*/
-	String  PRODUCT_CATEGORY_ACTIVE = PRODUCT_CATEGORY_ENTRY.getAliasNames()[0];
+	String  PRODUCT_CATEGORY_ID = PRODUCT_CATEGORY_ENTRY.getAliasNames()[0];
 
 	/** 
 	* Alias value: ProductCategory_alias
@@ -958,14 +958,14 @@ public interface ICMSAlias {
 	String  PRODUCT_CATEGORY_ALIAS = PRODUCT_CATEGORY_ENTRY.getAliasNames()[1];
 
 	/** 
-	* Alias value: ProductCategory_id
-	* Hibernate value: ProductCategory.id
+	* Alias value: ProductCategory_active
+	* Hibernate value: ProductCategory.active
 	*/
-	String  PRODUCT_CATEGORY_ID = PRODUCT_CATEGORY_ENTRY.getAliasNames()[2];
+	String  PRODUCT_CATEGORY_ACTIVE = PRODUCT_CATEGORY_ENTRY.getAliasNames()[2];
 
 	/** 
 	* Alias value: ProductCategory_parent_id
-	* Hibernate value: ProductCategory.parent.id
+	* Hibernate value: ProductCategory.parent<id
 	*/
 	String  PRODUCT_CATEGORY_PARENT_ID = PRODUCT_CATEGORY_ENTRY.getAliasNames()[3];
 

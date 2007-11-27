@@ -88,7 +88,7 @@ public class ProductCategory implements ITransferObject{
 	}
 
 	@ManyToOne(fetch = FetchType.EAGER)
-	@JoinColumn(name = "parent", nullable = false)
+	@JoinColumn(name = "parent", nullable = true)
 	public ProductCategory getParent() {
 		return parent;
 	}
