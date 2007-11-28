@@ -24,14 +24,6 @@
       <from-outcome>customer_search</from-outcome>
       <to-view-id>/facelet/sales/master/customer/search.faces</to-view-id>
     </navigation-case>
-    <navigation-case>
-      <from-outcome>old_customer_sw</from-outcome>
-      <to-view-id>/facelet/sw/customer.faces</to-view-id>
-    </navigation-case>
-    <navigation-case>
-      <from-outcome>old_customer_sw_search</from-outcome>
-      <to-view-id>/facelet/sw/customerSearch.faces</to-view-id>
-    </navigation-case>
   </navigation-rule>
 
    <!-- =================== Sales Invoicing ========================== -->

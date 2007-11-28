@@ -13,81 +13,80 @@
 	</ui:define>
 
 	<ui:define name="content">
-		<h:form>
+
+		<h:form id="supplierForm" styleClass="aon-form">
 
 			<t:div styleClass="aon-content-title" forceId="#{true}"
 				id="aon-window-popup-title">
 				<t:div styleClass="aon-content-title-internal">
-					<h:outputText value="#{purchaseBundle.aon_supplier}" />
+					<h:outputText value="#{purchaseBundle.supplier_supplier}" />
 				</t:div>
 			</t:div>
 
-			<t:div styleClass="aon-content-toolbar" id="aon-content-toolbar"
-				forceId="#{true}">
+			<!-- start toolbar navigation -->
+			<t:div styleClass="aon-content-toolbar" forceId="#{true}"
+				id="aon-content-toolbar">
 				<t:div styleClass="aon-content-toolbar-internal">
 					<t:div styleClass="aon-content-toolbar-item-group">
-						<t:commandButton id="search" value="#{bundle.aon_search}"
-							action="old_supplier_sw_search"
-							styleClass="aon-content-toolbar-item aon-content-toolbar-item-search"
-							onmouseover="this.className='aon-content-toolbar-item aon-content-toolbar-item-hover aon-content-toolbar-item-search'"
-							onmouseout="this.className='aon-content-toolbar-item aon-content-toolbar-item-search'"
-							accesskey="#{bundle.aon_key_search}" />
+
+						<h:commandButton id="search" value="#{bundle.aon_search}"
+							accesskey="#{bundle.aon_key_search}" action="supplier_sw_search"
+							actionListener="#{supplierLookup.onEditSearch}"
+							styleClass="aon-content-toolbar-item"
+							onmouseout="this.className='aon-content-toolbar-item'"
+							onmouseover="this.className='aon-content-toolbar-item aon-content-toolbar-item-hover'">
+						</h:commandButton>
 						<h:commandButton id="cancel" value="#{bundle.aon_cancel}"
 							onclick="window.close();return false;"
-							styleClass="aon-content-toolbar-item aon-content-toolbar-item-cancel"
-							onmouseover="this.className='aon-content-toolbar-item aon-content-toolbar-item-hover aon-content-toolbar-item-cancel'"
-							onmouseout="this.className='aon-content-toolbar-item aon-content-toolbar-item-cancel'"
-							accesskey="#{bundle.aon_key_cancel}" />
+							accesskey="#{bundle.aon_key_cancel}"
+							styleClass="aon-content-toolbar-item"
+							onmouseout="this.className='aon-content-toolbar-item'"
+							onmouseover="this.className='aon-content-toolbar-item aon-content-toolbar-item-hover'">
+						</h:commandButton>
+
 					</t:div>
 				</t:div>
 			</t:div>
+			<!-- end toolbar navigation -->
 
 			<t:div forceId="#{true}" id="aon-scroll-area">
 				<t:div styleClass="aon-scroll-area-internal">
 					<t:div styleClass="aon-table-hack">
+						<t:dataTable id="supplierData" styleClass="aon-table" var="to"
+							value="#{supplierLookup.model}" rows="20"
+							headerClass="aon-table-header" footerClass="aon-table-foot"
+							columnClasses="aon-table-body,aon-table-body,"
+							rowOnMouseOver="selectRow( this )"
+							rowOnMouseOut="unselectRow( this )" rowOnClick="sendRow( this )"
+							rowClasses="aon-table-row-odd, aon-table-row-even">
 
-						<t:dataTable id="supplierDataSW" styleClass="aon-table"
-							headerClass="aon-table-header" value="#{supplierSearch.model}"
-							cellpadding="0" cellspacing="0" var="to"
-							columnClasses="aon-table-body aon-table-body-number,aon-table-body aon-table-body-string"
-							rows="20" rowOnMouseOver="selectRow( this )"
-							rowOnMouseOut="unselectRow( this )" rowOnClick="sendRow( this )">
-
-							<h:column>
+							<t:column>
 								<f:facet name="header">
-									<h:outputText value="#{purchaseBundle.aon_supplier_id}" />
+									<h:outputText value="#{purchaseBundle.supplier_document}" />
 								</f:facet>
-								<t:div>
-									<t:commandLink
-										onclick="window.opener.update('#{supplierSearch.lookupsAsXML}');window.close();"
-										immediate="#{true}" styleClass="aon-table-row-selected"/>
-									<h:outputText value="#{to.id}" />
-								</t:div>
-							</h:column>
-							<h:column>
+								<h:commandLink styleClass="aon-table-row-selected"
+									onclick="window.opener.update('#{supplierLookup.lookupsAsXML}');window.close();return false;" />
+								<h:outputText value="#{to.document}" />
+							</t:column>
+							<t:column>
 								<f:facet name="header">
-									<h:outputText
-										value="#{purchaseBundle.aon_supplier_surname}, #{purchaseBundle.aon_supplier_name}" />
+									<h:outputText value="#{purchaseBundle.supplier_name}" />
 								</f:facet>
-								<t:div>
-									<h:outputText value="#{to.surname}, #{to.name}" />
-								</t:div>
-							</h:column>
+								<h:outputText value="#{to.name} #{to.surname}" />
+							</t:column>
 						</t:dataTable>
-
 					</t:div>
-
+					
 					<ui:include src="/facelet/shared/dataScroller.xhtml">
-						<ui:param name="dataTable" value="supplierDataSW" />
-						<ui:param name="model" value="#{supplierSearch.model}" />
+						<ui:param name="dataTable" value="supplierData" />
+						<ui:param name="model" value="#{supplierLookup.model}" />
 						<ui:param name="showNote" value="#{true}" />
 					</ui:include>
-
+					
 				</t:div>
-
 			</t:div>
-
 		</h:form>
+
 	</ui:define>
 </ui:composition>
 
