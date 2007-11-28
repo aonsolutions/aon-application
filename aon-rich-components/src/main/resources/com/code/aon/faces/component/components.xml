@@ -4,7 +4,7 @@
 	<!-- Basic input controls -->
 
 	<component localName="div" namespace="http://www.code.es/aon-rich-components">
-    	<attribute name="layout" value="block" force="true"/>			
+    	<attribute name="layout" value="block"/>			
 	</component>
 
 	<component localName="panelGrid" namespace="http://www.code.es/aon-rich-components">
