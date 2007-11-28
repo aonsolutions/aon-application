@@ -6,7 +6,7 @@
 <faces-config>
 	<!-- ************** EXTERNAL LOOKUPS (RELOCATE) ****************** -->
 	<!-- ************* CUSTOMERLOOKUP ***************** -->
-	<managed-bean>
+		<managed-bean>
 		<managed-bean-name>customerLookup</managed-bean-name>
 		<managed-bean-class>
 			com.code.aon.ui.customer.controller.CustomerLookupController
@@ -33,13 +33,14 @@
 		<managed-property>
 			<property-name>foreignDisplayProperties</property-name>
 			<list-entries>
+				<value>id</value>
 				<value>registry.document</value>
 			</list-entries>
 		</managed-property>
 		<managed-property>
 			<description>Needed for Search Select Window</description>
 			<property-name>searchPagePath</property-name>
-			<value>/account/facelet/sw/customerSearch.faces</value>
+			<value>/facelet/sw/customerSearch.faces</value>
 		</managed-property>
 	</managed-bean>
 	
@@ -77,7 +78,7 @@
 		<managed-property>
 			<description>Needed for Search Select Window</description>
 			<property-name>searchPagePath</property-name>
-			<value>/account/facelet/sw/supplierSearch.faces</value>
+			<value>/facelet/sw/supplierSearch.faces</value>
 		</managed-property>
 	</managed-bean>
 	
@@ -115,7 +116,7 @@
 		<managed-property>
 			<description>Needed for Search Select Window</description>
 			<property-name>searchPagePath</property-name>
-			<value>/account/facelet/sw/creditorSearch.faces</value>
+			<value>/facelet/sw/creditorSearch.faces</value>
 		</managed-property>
 	</managed-bean>
 	
@@ -162,33 +163,33 @@
 	<navigation-rule>
 		<navigation-case>
 			<from-outcome>customer_sw</from-outcome>
-			<to-view-id>/account/facelet/sw/customer.faces</to-view-id>
+			<to-view-id>/facelet/sw/customer.faces</to-view-id>
 		</navigation-case>
 		<navigation-case>
 			<from-outcome>customer_sw_search</from-outcome>
-			<to-view-id>/account/facelet/sw/customerSearch.faces</to-view-id>
+			<to-view-id>/facelet/sw/customerSearch.faces</to-view-id>
 		</navigation-case>
 	</navigation-rule>
 	
 	<navigation-rule>
 		<navigation-case>
 			<from-outcome>supplier_sw</from-outcome>
-			<to-view-id>/account/facelet/sw/supplier.faces</to-view-id>
+			<to-view-id>/facelet/sw/supplier.faces</to-view-id>
 		</navigation-case>
 		<navigation-case>
 			<from-outcome>supplier_sw_search</from-outcome>
-			<to-view-id>/account/facelet/sw/supplierSearch.faces</to-view-id>
+			<to-view-id>/facelet/sw/supplierSearch.faces</to-view-id>
 		</navigation-case>
 	</navigation-rule>
 	
 	<navigation-rule>
 		<navigation-case>
 			<from-outcome>creditor_sw</from-outcome>
-			<to-view-id>/account/facelet/sw/creditor.faces</to-view-id>
+			<to-view-id>/facelet/sw/creditor.faces</to-view-id>
 		</navigation-case>
 		<navigation-case>
 			<from-outcome>creditor_sw_search</from-outcome>
-			<to-view-id>/account/facelet/sw/creditorSearch.faces</to-view-id>
+			<to-view-id>/facelet/sw/creditorSearch.faces</to-view-id>
 		</navigation-case>
 	</navigation-rule>
 	
