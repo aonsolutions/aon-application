@@ -14,7 +14,7 @@ import javax.faces.webapp.UIComponentTag;
 
 import org.apache.myfaces.custom.tabbedpane.HtmlPanelTabbedPane;
 import org.apache.myfaces.custom.tabbedpane.TabChangeListener;
-import org.apache.myfaces.shared_impl.util.ClassUtils;
+import org.apache.myfaces.shared_tomahawk.util.ClassUtils;
 
 import com.sun.facelets.FaceletContext;
 import com.sun.facelets.FaceletException;
