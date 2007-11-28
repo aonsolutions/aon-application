@@ -1,18 +1,13 @@
 package com.code.aon.faces.component.richfaces.confirmButton;
 
-import java.net.URL;
-
-import javax.el.ExpressionFactory;
-import javax.el.MethodExpression;
 import javax.el.ValueExpression;
 import javax.el.VariableMapper;
 import javax.faces.component.UIComponent;
-import javax.faces.event.ActionEvent;
 
 import com.code.aon.faces.component.AonComponentHandler;
-import com.code.aon.faces.component.MethodValueExpression;
 import com.code.aon.faces.component.myfaces.UIComponentTagUtils;
 import com.code.aon.faces.component.richfaces.lookup.ILookupTags;
+import com.code.aon.faces.component.util.FaceletUtil;
 import com.sun.facelets.FaceletContext;
 import com.sun.facelets.el.VariableMapperWrapper;
 import com.sun.facelets.tag.MetaRuleset;
@@ -42,10 +37,6 @@ public class ConfirmButtonHandler extends AonComponentHandler implements
 	private static final String TEMPLATE_PATH = "com/code/aon/faces/component/richfaces/confirmButton/";
 	
 	private static final String TEMPLATE = TEMPLATE_PATH + "template.xhtml";
-
-	private final static Class[] ACTION_SIG = new Class[0];
-
-	private final static Class[] ACTION_LISTENER_SIG = new Class[] { ActionEvent.class };
 
 	private TagAttribute titleTag;
 
@@ -89,12 +80,7 @@ public class ConfirmButtonHandler extends AonComponentHandler implements
 	@Override
 	protected void onComponentPopulated(FaceletContext ctx, UIComponent c,
 			UIComponent parent) {
-		insertTemplate(ctx, c, parent);
-	}
-
-	private URL getTemplate(String resource) {
-		ClassLoader loader = this.getClass().getClassLoader();
-		return loader.getResource(resource);
+		insertTemplate(ctx, parent);
 	}
 
 	private ValueExpression getValueExpression(FaceletContext ctx,
@@ -102,25 +88,11 @@ public class ConfirmButtonHandler extends AonComponentHandler implements
 		return tag.getValueExpression(ctx, Object.class);
 	}
 
-	private ValueExpression getMethodExpression(FaceletContext ctx, String name, Class type, Class[] paramTypes ) {
-		ValueExpression valueExpression = null;
-		TagAttribute tag = getAttribute(name);
-		if (tag != null) {
-			ValueExpression ve = tag.getValueExpression(ctx, Object.class );
-			MethodExpression methodExpression = tag.getMethodExpression( ctx, type, paramTypes );
-			valueExpression = new MethodValueExpression( ve, methodExpression );
-		}
-		return valueExpression;
-	}
-
-	private ValueExpression getMethodEmptyExpression(FaceletContext ctx, String name, Class type, Class[] paramTypes ) {
-        ExpressionFactory f = ctx.getExpressionFactory();
-        ValueExpression ve = f.createValueExpression( ctx, "", Object.class );
-        MethodExpression me = f.createMethodExpression(ctx, name, type, paramTypes );
-        return new MethodValueExpression( ve, me );
+	public ValueExpression getMethodExpression(FaceletContext ctx, String name, Class type, Class[] paramTypes ) {
+		return FaceletUtil.getMethodExpression(ctx, getAttribute(name), type, paramTypes);
 	}
 	
-	private void insertTemplate(FaceletContext ctx, UIComponent component, UIComponent parent) {
+	private void insertTemplate(FaceletContext ctx, UIComponent parent) {
 		VariableMapper newMapper = new VariableMapperWrapper(ctx.getVariableMapper());
 		TagAttribute tagImmediate = getAttribute(IMMEDIATE); 
 		if( tagImmediate != null){
@@ -133,12 +105,12 @@ public class ConfirmButtonHandler extends AonComponentHandler implements
 		newMapper.setVariable(CONFIRM_TITLE, getValueExpression(ctx, titleTag));
 		newMapper.setVariable(CONFIRM_TITLE, getValueExpression(ctx, titleTag));
 		newMapper.setVariable(CONFIRM_MESSAGE, getValueExpression(ctx, messageTag));
-		ValueExpression action = getMethodExpression(ctx, CONFIRM_ACTION, String.class, ACTION_SIG);
+		ValueExpression action = getMethodExpression(ctx, CONFIRM_ACTION, String.class, FaceletUtil.ACTION_SIG);
 		if ( action == null ) {
-			action = getMethodEmptyExpression(ctx, CONFIRM_ACTION, String.class, ACTION_SIG);
+			action = FaceletUtil.getMethodEmptyExpression(ctx, CONFIRM_ACTION, String.class, FaceletUtil.ACTION_SIG);
 		}
 		newMapper.setVariable( CONFIRM_ACTION, action );
-		ValueExpression al = getMethodExpression(ctx, CONFIRM_ACTION_LISTENER, null, ACTION_LISTENER_SIG);
+		ValueExpression al = getMethodExpression(ctx, CONFIRM_ACTION_LISTENER, null, FaceletUtil.ACTION_LISTENER_SIG);
 		if ( al != null ) {
 			newMapper.setVariable( CONFIRM_ACTION_LISTENER, al );				
 		}

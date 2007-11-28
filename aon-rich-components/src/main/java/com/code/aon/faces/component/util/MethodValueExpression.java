@@ -1,4 +1,4 @@
-package com.code.aon.faces.component;
+package com.code.aon.faces.component.util;
 
 import java.io.Externalizable;
 import java.io.IOException;

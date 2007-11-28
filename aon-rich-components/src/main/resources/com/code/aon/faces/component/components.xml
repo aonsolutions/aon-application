@@ -99,4 +99,12 @@
     	<attribute name="paginator" ignore="true" />
 	</component>
 
+	<component localName="rowSelector" namespace="http://www.code.es/aon-rich-components">
+    	<attribute name="multiple" ignore="true" />
+    	<attribute name="selectedClass" ignore="true" />
+    	<attribute name="mouseOverClass" ignore="true" />
+    	<attribute name="event" value="onRowClick" />
+    	<attribute name="toggleOnClick" alias="rendered" />
+	</component>
+
 </components>
