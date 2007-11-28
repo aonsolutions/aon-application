@@ -10,6 +10,8 @@ import javax.faces.model.SelectItem;
 import javax.faces.model.SelectItemGroup;
 
 import com.code.aon.cms.BrandDetail;
+import com.code.aon.cms.Link;
+import com.code.aon.cms.LinkCategory;
 import com.code.aon.cms.ProductCategory;
 import com.code.aon.cms.ProductCategoryDetail;
 import com.code.aon.cms.dao.ICMSAlias;
@@ -20,6 +22,7 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionException;
 import com.code.aon.ui.cms.util.ControllerUtil;
+import com.code.aon.ui.util.AonUtil;
 import com.icesoft.faces.component.ext.RowSelectorEvent;
 
 
@@ -70,6 +73,19 @@ public class ProductCategoryController extends BasicI18nController {
 		}
 		return title;
 	}
+	
+	public void onSelectSubCategories(ActionEvent event) throws ManagerBeanException, ExpressionException {
+		cancelOnSelect = true;
+		SubCategoryController lc = (SubCategoryController)AonUtil.getController("subCategory");
+		IManagerBean moBean = BeanManager.getManagerBean(ProductCategory.class);
+		ProductCategory productCategory = (ProductCategory) this.getSelectedTO();
+		Criteria criteria = new Criteria();
+		criteria.addExpression(moBean.getFieldName(ICMSAlias.PRODUCT_CATEGORY_PARENT_ID), "" + productCategory.getId());
+		criteria.addOrder(moBean.getFieldName(ICMSAlias.PRODUCT_CATEGORY_ALIAS));
+		lc.setParent(productCategory);
+		lc.setCriteria(criteria);
+		lc.onSearch(event);
+	}
 
 	public List<SelectItem> getParentCategories() throws ManagerBeanException, ExpressionException {
 		List<SelectItem> categories = new LinkedList<SelectItem>();
@@ -96,27 +112,21 @@ public class ProductCategoryController extends BasicI18nController {
 		criteria.addEqualExpression(categoryBean.getFieldName(ICMSAlias.PRODUCT_CATEGORY_ACTIVE),true);
 		criteria.addNullExpression(categoryBean.getFieldName(ICMSAlias.PRODUCT_CATEGORY_PARENT_ID));
 		List<ITransferObject> list = (List<ITransferObject>)categoryBean.getList(criteria);
-		SelectItemGroup itemGroup;
+		SelectItem item;
 		for (int i = 0; i < list.size(); i++) {
 			ProductCategory pcd = (ProductCategory)list.get(i);
-			String name = pcd.getAlias();
-			itemGroup = new SelectItemGroup(name);
-			
+			item = new SelectItem(pcd.getId(),pcd.getAlias());
+			categories.add(item);
 			IManagerBean categorySubCatBean = BeanManager.getManagerBean(ProductCategory.class);
 			Criteria criteriaSubCat = new Criteria();
 			criteriaSubCat.addEqualExpression(categorySubCatBean.getFieldName(ICMSAlias.PRODUCT_CATEGORY_ACTIVE),true);
 			criteriaSubCat.addExpression(categorySubCatBean.getFieldName(ICMSAlias.PRODUCT_CATEGORY_PARENT_ID), ""+pcd.getId());
 			List<ITransferObject> listSubCat = (List<ITransferObject>)categorySubCatBean.getList(criteriaSubCat);
-			SelectItem item;
-			List<SelectItem> groupItems = new LinkedList<SelectItem>();
 			for (int j = 0; j < listSubCat.size(); j++) {
-				ProductCategory pcdSubCat = (ProductCategory)listSubCat.get(i);
-				item = new SelectItem(pcdSubCat.getId(),pcd.getAlias());
-				groupItems.add(item);
+				ProductCategory pcdSubCat = (ProductCategory)listSubCat.get(j);
+				item = new SelectItem(pcdSubCat.getId(),"&nbsp;&nbsp;&nbsp;&nbsp;"+pcd.getAlias());
+				categories.add(item);
 			}
-			itemGroup.setSelectItems(groupItems.toArray(new SelectItem[listSubCat.size()]));
-			
-			categories.add(itemGroup);
 		}
 		return categories;
 	}
