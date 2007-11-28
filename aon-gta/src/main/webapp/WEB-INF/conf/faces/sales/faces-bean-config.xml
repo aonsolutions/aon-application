@@ -50,7 +50,7 @@
 
 	<managed-bean>
 		<managed-bean-name>customerScopeListener</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.sales.event.CustomerScopeVetoListener</managed-bean-class>
+		<managed-bean-class>com.code.aon.ui.config.event.ScopeVetoListener</managed-bean-class>
 		<managed-bean-scope>none</managed-bean-scope>
 	</managed-bean>
 
