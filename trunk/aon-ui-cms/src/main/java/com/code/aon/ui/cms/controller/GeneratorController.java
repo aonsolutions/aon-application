@@ -7,8 +7,10 @@ import com.code.aon.ui.cms.Constants;
 import com.code.aon.ui.cms.util.ControllerUtil;
 import com.code.aon.ui.cms.util.VelocityUtil;
 import com.code.aon.ui.cms.velocity.CommonGenerator;
+import com.code.aon.ui.cms.velocity.FaqGenerator;
 import com.code.aon.ui.cms.velocity.GenericGenerator;
 import com.code.aon.ui.cms.velocity.HomepageGenerator;
+import com.code.aon.ui.cms.velocity.LinkGenerator;
 import com.code.aon.ui.cms.velocity.MenuGenerator;
 import com.code.aon.ui.form.BasicController;
 
@@ -46,10 +48,20 @@ public class GeneratorController extends BasicController implements Constants {
 		vu.addMessage("Creando páginas de menú... ", VelocityUtil.INFO);
 		MenuGenerator.generate(vu);
 
-		//Generar menus
+		//Generar generic
 		vu.addMessage("", VelocityUtil.INFO);
 		vu.addMessage("Creando páginas genéricas... ", VelocityUtil.INFO);
 		GenericGenerator.generate(vu);
+		
+		//Generar faq
+		vu.addMessage("", VelocityUtil.INFO);
+		vu.addMessage("Creando faq... ", VelocityUtil.INFO);
+		FaqGenerator.generate(vu);
+		
+		//Generar link
+		vu.addMessage("", VelocityUtil.INFO);
+		vu.addMessage("Creando link... ", VelocityUtil.INFO);
+		LinkGenerator.generate(vu);
 	}
 
 
