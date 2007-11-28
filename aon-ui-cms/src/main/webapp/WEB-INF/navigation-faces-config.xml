@@ -134,6 +134,18 @@
     </navigation-case>
   </navigation-rule>
   
+  <!-- ======================================= SUB CATEGORY -->
+  <navigation-rule>
+    <navigation-case>
+      <from-outcome>subcategory_list</from-outcome>
+      <to-view-id>/facelet/content/product_category/subcategory/list.iface</to-view-id>
+    </navigation-case>
+    <navigation-case>
+      <from-outcome>subcategory_form</from-outcome>
+      <to-view-id>/facelet/content/product_category/subcategory/form.iface</to-view-id>
+    </navigation-case>
+  </navigation-rule>
+  
   <!-- ======================================= PRODUCT -->
   <navigation-rule>
     <navigation-case>
