@@ -35,8 +35,17 @@ public enum Templates implements IResourceable {
 	/**
 	 * Menu Page
 	 */
-	MENU;
+	MENU,
 
+	/**
+	 * FAQS
+	 */
+	FAQ,
+	
+	/**
+	 * FAQS
+	 */
+	LINK;
 
 	/**
 	 * Ruta base del fichero de mensajes.
