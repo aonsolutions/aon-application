@@ -72,15 +72,15 @@ public class ApplicationsRenderer extends Renderer {
         println(DECLARATION, deep);
         println(startElement(APPLICATIONS), deep++);
         println(startElement(OPTIONS), deep++);
-        Iterator iter = storage.options().values().iterator();
-        while (iter.hasNext()) {
-        	IOption option = (IOption) iter.next();
+        Iterator<IOption> optIter = storage.options().values().iterator();
+        while (optIter.hasNext()) {
+        	IOption option = optIter.next();
     		println( startElement( OPTION, option.toProperties() ) + endElement(OPTION), deep );
         }
         println(endElement(OPTIONS), --deep);
-        iter = storage.applications().values().iterator();
-        while (iter.hasNext()) {
-            ((IApplication) iter.next()).accept(this);
+        Iterator<IApplication> appIter = storage.applications().values().iterator();
+        while (appIter.hasNext()) {
+            appIter.next().accept(this);
         }
         print(endElement(APPLICATIONS), --deep);
 	}
@@ -99,9 +99,10 @@ public class ApplicationsRenderer extends Renderer {
     public void visitApplication(IApplication application) {
         println(startElement(APPLICATION), deep);
         println(startElement(ID) + application.getId() + endElement(ID), ++deep);
-        Iterator iter = application.domains().iterator();
+        println(startElement(DESCRIPTION) + application.getDescription() + endElement(DESCRIPTION), deep);
+        Iterator<IDomain> iter = application.domains().iterator();
         while (iter.hasNext()) {
-            ((IDomain) iter.next()).accept(this);
+            iter.next().accept(this);
         }
         println(endElement(APPLICATION), --deep);
     }

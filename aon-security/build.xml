@@ -2,11 +2,11 @@
 <project basedir="." default="jboss-4.x.sar">
 
 	<property name="mgr" value="aon-security-mgr" />
-	<property name="client" value="aon.security.client" />
+	<property name="client" value="aon.security" />
 	<property name="version" value="1.2.5" />
 	<property name="jar.valve.name" value="valve-${version}" />
 
-	<property name="src.dir" value="src/main/java" />
+    <property name="src.dir" value="src/main/java" />
 	<property name="resources.dir" value="src/main/resources" />
 	<property name="build.dir" value="${java.io.tmpdir}/classes/security" />
 	<property name="mgr.dist.dir" value="dist" />
@@ -234,6 +234,8 @@
 	        <include name="com/code/aon/jaas/deployment/event/**"/>
 	        <include name="com/code/aon/jaas/storage/**"/>
 	        <include name="com/code/aon/jaas/vendor/deployment/ast/IVendorDescriptor.class"/>
+	        <include name="com/code/aon/jaas/valves/**"/>
+  	      	<exclude name="com/code/aon/jaas/valves/SecurityValve.class"/>
   	      	<exclude name="com/code/aon/jaas/vendor/tomcat/**"/>
 		 </fileset>
 	    </jar>
@@ -245,7 +247,7 @@
 	<target name="tomcat-5.5.x.sar" description="Builds Tomcat 5.5.x version." 
 			depends="compile-tomcat-5.5.x, security-client.jar">
 	    <!-- Build aon-security-mgr.jar -->
-		<jar jarfile="${mgr.dist.dir}/${mgr}-${version}.jar">
+		<jar jarfile="${tomcat.home}/server/lib/${mgr}-${version}.jar">
   	      <fileset dir="${build.dir}">
   	        <include name="com/code/aon/**"/>
   	        <exclude name="com/code/aon/jaas/auth/spi/InteriorLoginModule.*"/>
@@ -262,7 +264,7 @@
 	<target name="tomcat-6.0.x.sar" description="Builds Tomcat 5.5.x version." 
 			depends="compile-tomcat-6.0.x, security-client.jar">
 	    <!-- Build aon-security-mgr.jar -->
-		<jar jarfile="${mgr.dist.dir}/${mgr}-${version}.jar">
+		<jar jarfile="${tomcat.6.home}/lib/${mgr}-${version}.jar">
   	      <fileset dir="${build.dir}">
   	        <include name="com/code/aon/**"/>
   	        <exclude name="com/code/aon/jaas/auth/spi/InteriorLoginModule.*"/>
@@ -301,7 +303,7 @@
   	      	<exclude name="com/code/aon/jaas/vendor/tomcat/**"/>
 	      </fileset>
 	    </jar>
-    	<jar jarfile="${mgr.dist.dir}/${mgr}-${version}.sar">
+    	<jar jarfile="${jboss.server.home}/deploy/${mgr}-${version}.sar">
 
 			<fileset dir="${commons.beanutils.home}">
 				<include name="commons-beanutils.jar"/>

@@ -37,6 +37,9 @@ public class Application implements IApplication {
     /** Application identifier. */
     private String id;
 
+    /** Application description. */
+    private String description;
+
     /** Application context. */
     private String context;
 
@@ -100,10 +103,18 @@ public class Application implements IApplication {
     }
 
     /**
+     * Assign application description.
+     * 
+     * @param string
+     */
+	public void setDescription(String description) {
+		this.description = description;
+	}
+
+	/**
      * Assign application context.
      * 
-     * @param context
-     *            The context to set.
+     * @param string.
      */
     public void setContext(String context) {
         this.context = context;
@@ -191,6 +202,13 @@ public class Application implements IApplication {
     public void accept(INodeVisitor visitor) {
         visitor.visitApplication(this);
     }
+
+	/* (non-Javadoc)
+     * @see com.aon.jaas.client.ast.IApplication#getDescription()
+     */
+	public String getDescription() {
+		return this.description;
+	}
 
 	/* (non-Javadoc)
      * @see com.aon.jaas.client.ast.IApplication#getContext()
@@ -311,14 +329,14 @@ public class Application implements IApplication {
         IResource resource = (IResource) event.getPermission();
         AccessPermission access = 
         	new AccessPermission(resource.getName(), resource.getDescription());
-        Iterator iter = resource.patterns().iterator();
+        Iterator<String> iter = resource.patterns().iterator();
         while (iter.hasNext()) {
-            String urlPattern = (String) iter.next();
+            String urlPattern = iter.next();
             access.addPattern(urlPattern);
         }
         iter = resource.methods().iterator();
         while (iter.hasNext()) {
-            String method = (String) iter.next();
+            String method = iter.next();
             access.addMethod(method);
         }
         IRole role = (IRole) getRole(visitor.getActiveRole());

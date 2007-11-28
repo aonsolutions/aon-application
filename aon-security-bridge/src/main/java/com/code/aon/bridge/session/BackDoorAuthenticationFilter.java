@@ -84,11 +84,12 @@ public class BackDoorAuthenticationFilter implements Filter {
 				if( principal != null ) {
 					register( activeRequest, principal, username, bdp.getPassword() );
 				} else {
-					//Forward to Login Page.
-					HttpServletResponse httpResponse = (HttpServletResponse) response;
+//					//Forward to Login Page.
+//					HttpServletResponse httpResponse = (HttpServletResponse) response;
 					String targetUrl = activeRequest.getContext().getLoginConfig().getLoginPage();
-					httpResponse.sendRedirect( httpResponse.encodeRedirectURL( targetUrl ) );
-					return;
+					LOGGER.info( "doFilter:" + targetUrl );
+//					httpResponse.sendRedirect( httpResponse.encodeRedirectURL( targetUrl ) );
+//					return;
 				}
 			}
 		}
