@@ -34,6 +34,15 @@ public class ComponentInfo {
 	public String getFullName() {
 		return namespace + "/" + localName;
 	}
+	
+	public AttributeInfo getAttributeInfo( String name ) {
+		for( AttributeInfo ai : attributes ) {
+			if ( ai.getName().equals(name) ) {
+				return ai;
+			}
+		}
+		return null;
+	}
 
 	public List<AttributeInfo> getAttributes() {
 		return attributes;

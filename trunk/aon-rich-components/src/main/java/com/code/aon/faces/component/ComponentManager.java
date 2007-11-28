@@ -62,10 +62,15 @@ public class ComponentManager {
 		
 		return digester;
 	}	
-
-	public void updateMetaRuleset( AonComponentHandler aonComponent, MetaRuleset set ) {
+	
+	public ComponentInfo getComponentInfo( AonComponentHandler aonComponent ) {
 		Tag tag = aonComponent.getConfig().getTag();
 		ComponentInfo componentInfo = getComponent( tag );
+		return componentInfo;
+	}
+
+	public void updateMetaRuleset( AonComponentHandler aonComponent, MetaRuleset set ) {
+		ComponentInfo componentInfo = getComponentInfo( aonComponent );
 		if ( componentInfo != null ) {
 			for( AttributeInfo attribute : componentInfo.getAttributes() ) {
 				if ( attribute.isIgnore() ) {
@@ -78,8 +83,7 @@ public class ComponentManager {
 	}
 	
 	public void setAttributes( AonComponentHandler aonComponent, FaceletContext ctx, UIComponent component ) {
-		Tag tag = aonComponent.getConfig().getTag();
-		ComponentInfo componentInfo = getComponent( tag );
+		ComponentInfo componentInfo = getComponentInfo( aonComponent );
 		if ( componentInfo != null ) {
 			for( AttributeInfo attribute : componentInfo.getAttributes() ) {
 				attribute.update(aonComponent, ctx, component);

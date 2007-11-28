@@ -73,10 +73,9 @@ public class AttributeInfo {
 	}
 
 	public void update( AonComponentHandler aonComponent, FaceletContext ctx, UIComponent component ) {
-		if ( ! isIgnore() ) {
+		if ( (! isIgnore()) && (getValue() != null) ) {
 			if ( isForce() || (!aonComponent.hasValue(ctx, getName())) ) {
-				String finalName = StringUtils.defaultString(getAlias(), getName());	
-				getAttributeType().setValue(ctx.getFacesContext(), component, finalName, getValue());
+				getAttributeType().setValue(ctx.getFacesContext(), component, getName(), getValue());
 			}
 		}
 	}

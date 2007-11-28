@@ -199,6 +199,13 @@
 			<handler-class>com.code.aon.faces.component.richfaces.dataPaginator.DataPaginatorHandler</handler-class>
 		</component>
 	</tag>
+	<tag>
+		<tag-name>rowSelector</tag-name>
+		<component>
+			<component-type>com.code.aon.faces.RowSelector</component-type>
+			<handler-class>com.code.aon.faces.component.richfaces.rowSelector.RowSelectorHandler</handler-class>
+		</component>
+	</tag>
     <!-- 
     <tag>
         <tag-name>lookupButton</tag-name>
@@ -270,14 +277,6 @@
 		<tag-name>toolbar</tag-name>
 		<component>
 			<component-type>com.code.aon.faces.Toolbar</component-type>
-		</component>
-	</tag>
-	<tag>
-		<tag-name>rowSelector</tag-name>
-		<component>
-			<component-type>com.code.aon.faces.RowSelector</component-type>
-			<renderer-type>com.icesoft.faces.RowSelectorRenderer</renderer-type>
-			<handler-class>com.code.aon.faces.component.rowSelector.RowSelectorHandler</handler-class>
 		</component>
 	</tag>
 	<tag>

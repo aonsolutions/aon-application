@@ -7,10 +7,10 @@ import javax.faces.component.UIComponent;
 
 import org.apache.commons.lang.StringUtils;
 
+import com.code.aon.faces.component.util.FaceletUtil;
 import com.sun.facelets.FaceletContext;
 import com.sun.facelets.tag.MetaRuleset;
 import com.sun.facelets.tag.TagAttribute;
-import com.sun.facelets.tag.TagException;
 import com.sun.facelets.tag.jsf.ComponentConfig;
 import com.sun.facelets.tag.jsf.ComponentHandler;
 
@@ -37,17 +37,13 @@ public class AonComponentHandler extends ComponentHandler {
 		return config;
 	}
 
+	protected URL getTemplate(String resource) {
+		ClassLoader loader = this.getClass().getClassLoader();
+		return loader.getResource(resource);
+	}
+
 	protected void insertTemplate(FaceletContext ctx, UIComponent parent, URL template, VariableMapper newMapper ) {
-		VariableMapper orig = ctx.getVariableMapper();
-		ctx.setVariableMapper(newMapper);
-		try {
-			ctx.includeFacelet(parent, template);
-		} catch (Throwable th) {
-			throw new TagException(this.tag, "Error inserting template '"
-					+ template + "': " + th.getMessage());
-		} finally {
-			ctx.setVariableMapper(orig);
-		}
+		FaceletUtil.insertTemplate(ctx, this.tag, parent, template, newMapper);
 	}
 	
 	public boolean hasValue(FaceletContext ctx, String name) {
@@ -78,6 +74,10 @@ public class AonComponentHandler extends ComponentHandler {
 	protected void setAttributes( FaceletContext ctx, Object instance ) {
 		super.setAttributes(ctx, instance);
 		componentManager.setAttributes( this, ctx, (UIComponent) instance );
+	}
+
+	public static ComponentManager getComponentManager() {
+		return componentManager;
 	}
 	
 }
