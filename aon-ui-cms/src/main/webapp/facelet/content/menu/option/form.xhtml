@@ -101,7 +101,7 @@
 								value="#{appBundle.menu_option_level}" rendered="#{menu_option.visibleLevel}"/>
 							<aon:selectOneMenu id="MenuOption_level" rendered="#{menu_option.visibleLevel}" 
 								styleClass="aon-form-selectOneMenu-field"
-								value="#{menu_option.to.level}">
+								value="#{menu_option.to.level}" partialSubmit="true">
 								<f:selectItems value="#{menu_option.levels}" />
 							</aon:selectOneMenu> 
 
@@ -110,7 +110,8 @@
 								value="#{appBundle.menu_option_ident}" rendered="#{menu_option.visibleIdent}"/>
 							<aon:selectOneMenu id="MenuOption_ident" rendered="#{menu_option.visibleIdent}" 
 								styleClass="aon-form-selectOneMenu-field"
-								value="#{menu_option.to.ident}">
+								value="#{menu_option.to.ident}"
+								 partialSubmit="true">
 								<f:selectItems value="#{menu_option.idents}" />
 							</aon:selectOneMenu> 
 
