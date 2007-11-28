@@ -112,7 +112,7 @@ public class ConfigurationStorage implements INode, IStorage {
 		try {
 			File file = new File( base + this.application.getContext() + ".xml");
 			file.createNewFile();
-			this.storageManager = StorageManager.getInstance( file.toURL(), ConfigurationRenderer.getInstance() );
+			this.storageManager = StorageManager.getInstance( file.toURI().toURL(), ConfigurationRenderer.getInstance() );
 //			this.storageManager = new StorageManager( file.toURL(), ConfigurationRenderer.getInstance() );
 		} catch (IOException e) {
 			LOGGER.fatal(e.getMessage());

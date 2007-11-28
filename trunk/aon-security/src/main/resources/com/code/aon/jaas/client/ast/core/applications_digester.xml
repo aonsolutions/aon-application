@@ -10,13 +10,12 @@
 
 	<pattern value="*/application">
 		<object-create-rule classname="com.code.aon.jaas.client.ast.core.Application" />
-
 		<call-method-rule pattern="id" methodname="setId" paramcount="0" />
 
 		<pattern value="domain">
 			<object-create-rule classname="com.code.aon.jaas.client.ast.core.Domain" />
-
 			<call-method-rule pattern="id" methodname="setId" paramcount="0" />
+			<call-method-rule pattern="description" methodname="setDescription" paramcount="0" />
 			<set-next-rule methodname="addDomain"/>
 		</pattern>
 

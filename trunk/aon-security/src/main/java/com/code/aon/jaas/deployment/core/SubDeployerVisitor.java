@@ -111,9 +111,9 @@ public class SubDeployerVisitor implements INodeVisitor {
      * @see com.code.aon.jaas.deployment.ast.INodeVisitor#visitMethodPermission(com.code.aon.jaas.deployment.ast.IPermission)
      */
     public void visitMethodPermission(IPermission permission) {
-        Iterator iter = permission.roles().iterator();
+        Iterator<String> iter = permission.roles().iterator();
         while (iter.hasNext()) {
-            activeRole = (String) iter.next();
+            activeRole = iter.next();
             Iterator iterator = permission.resources().iterator();
             while (iterator.hasNext()) {
                 ((IMethod) iterator.next()).accept(this);
@@ -128,13 +128,12 @@ public class SubDeployerVisitor implements INodeVisitor {
      * @see com.code.aon.jaas.deployment.ast.INodeVisitor#visitSecurityConstraint(com.code.aon.jaas.deployment.ast.IPermission)
      */
     public void visitSecurityConstraint(IPermission permission) {
-        Iterator iter = permission.roles().iterator();
+        Iterator<String> iter = permission.roles().iterator();
         while (iter.hasNext()) {
-            activeRole = (String) iter.next();
-            Iterator iterator = permission.resources().iterator();
+            activeRole = iter.next();
+            Iterator<IResource> iterator = permission.resources().iterator();
             while (iterator.hasNext()) {
-                ((IResource) iterator.next()).accept(this);
-
+                iterator.next().accept(this);
             }
         }
     }
@@ -237,13 +236,13 @@ public class SubDeployerVisitor implements INodeVisitor {
      * @param descriptor
      */
     private void visitDescriptor(ISecurityDescriptor descriptor) {
-        Iterator iter = descriptor.roles().iterator();
-        while (iter.hasNext()) {
-            ((ISecurityRole) iter.next()).accept(this);
+        Iterator<ISecurityRole> srIter = descriptor.roles().iterator();
+        while (srIter.hasNext()) {
+        	srIter.next().accept(this);
         }
-        iter = descriptor.permissions().iterator();
-        while (iter.hasNext()) {
-            ((IPermission) iter.next()).accept(this);
+        Iterator<IPermission> permIter = descriptor.permissions().iterator();
+        while (permIter.hasNext()) {
+        	permIter.next().accept(this);
         }
     }
 

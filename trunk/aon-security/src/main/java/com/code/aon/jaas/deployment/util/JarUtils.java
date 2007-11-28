@@ -79,6 +79,6 @@ public class JarUtils {
         bos.close();
 
         // Return the file url to the extracted jar
-        return archiveFile.toURL();
+        return archiveFile.toURI().toURL();
     }
 }

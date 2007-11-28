@@ -143,15 +143,12 @@ public abstract class AbstractLoginModule implements LoginModule, IConstants {
      * @return true always. 
      */
 	public boolean commit() throws LoginException {
-LOGGER.debug( "Starting commit" + loginOk + " " + subject.getPrincipals() );
 		if (!loginOk) {
 			return false;
 		}
 		Set<Principal> principals = subject.getPrincipals();
 		Principal identity = getIdentity();
-LOGGER.debug( "Identity" + identity  );
 		principals.add(identity);
-LOGGER.debug( "Identity" + principals  );
 		roles4Subject(principals);
 		LOGGER.debug( "commit, loginOk=" + loginOk + " " + subject.getPrincipals() );
 		return true;

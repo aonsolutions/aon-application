@@ -71,9 +71,6 @@ public class DomainRenderer extends Renderer {
     /** Etiqueta de nombre de usuario. */
     private static final String NAME = "name";
 
-    /** Etiqueta de descripción de usuario. */
-    private static final String DESCRIPTION = "description";
-
     /** Etiqueta de clave de usuario. */
     private static final String PASSWORD = "password";
 
@@ -159,14 +156,14 @@ public class DomainRenderer extends Renderer {
         println(startElement(DOMAIN), deep++);
 		println( startElement(ID) + domain.getId() + endElement(ID), deep );
 		domain.getAccessPolicy().accept(this);
-		Iterator applications = domain.applications().iterator();
+		Iterator<IDomainApplication> applications = domain.applications().iterator();
 		while (applications.hasNext()) {
-			((IDomainApplication) applications.next()).accept(this);
+			applications.next().accept(this);
 		}
 		println(startElement(STANDALONE), deep++);
-		Iterator users = domain.standaloneUsers().values().iterator();
+		Iterator<IUser> users = domain.standaloneUsers().values().iterator();
 		while (users.hasNext()) {
-			((IUser) users.next()).accept(this);
+			users.next().accept(this);
 		}
 		println(endElement(STANDALONE), --deep);
 		println( endElement(DOMAIN), --deep );
@@ -183,15 +180,15 @@ public class DomainRenderer extends Renderer {
 			application.getDataSourceMetaData().accept(this);
 		println( endElement(DATASOURCE_METADATA), --deep );
 		println(startElement(PROFILES), deep++);
-		Iterator profiles = application.profiles().iterator();
+		Iterator<IRelation> profiles = application.profiles().iterator();
 		while (profiles.hasNext()) {
-			((IRelation) profiles.next()).accept(this);
+			profiles.next().accept(this);
 		}
 		println(endElement(PROFILES), --deep);
 		println(startElement(USERS), deep++);
-		Iterator users = application.users().iterator();
+		Iterator<IRelation> users = application.users().iterator();
 		while (users.hasNext()) {
-			((IRelation) users.next()).accept(this);
+			users.next().accept(this);
 		}
 		println(endElement(USERS), --deep);
 		println( endElement(APPLICATION), --deep );
@@ -204,7 +201,7 @@ public class DomainRenderer extends Renderer {
 		println(startElement(RELATION), deep);
 		println(startElement(ID) + relation.getId() + endElement(ID), ++deep);
 		println(startElement(LIST), deep++);
-		Iterator iter = relation.relations().iterator();
+		Iterator<String> iter = relation.relations().iterator();
 		while (iter.hasNext()) {
 			println(startElement(ID) + iter.next() + endElement(ID), deep);
 		}

@@ -5,7 +5,7 @@ import java.util.Collection;
 import com.code.aon.jaas.deployment.event.ISubDeployerListener;
 
 /**
- * Interfaz que define una aplicación, WAR, EAR a desplegar en el módulo de seguridad.
+ * WAR, EAR application to deploy.
  * 
  * @author Consulting & Development. Iñaki Ayerbe - 17-may-2004
  * @since 1.0
@@ -14,14 +14,21 @@ import com.code.aon.jaas.deployment.event.ISubDeployerListener;
 public interface IApplication extends INode, ISubDeployerListener {
 
     /**
-     * Devuelve el contexto de la aplicación.
+     * Return application description.
+     * 
+     * @return String
+     */
+	String getDescription();
+
+	/**
+     * Return application context.
      * 
      * @return String
      */
 	String getContext();
 
 	/**
-     * Devuelve el dominio de seguridad de la aplicación.
+     * Return application security-domain.
      * 
      * @return String
 	 */
@@ -42,14 +49,14 @@ public interface IApplication extends INode, ISubDeployerListener {
 	String getHashEncoding();
 
 	/**
-     * Devuelve una colección con los roles definidos para la entidad.
+     * Return an unmodifiable collection of application defined roles.
      * 
      * @return Collection
      */
 	Collection<IRole> roles();
 
 	/**
-     * Devuelve los roles definidos.
+     * Return application defined roles.
      * 
      * @return Collection
      */
@@ -64,14 +71,14 @@ public interface IApplication extends INode, ISubDeployerListener {
 	IRole getRole(String name);
 
     /**
-     * Devuelve una colección con las dominios definidos para la aplicación.
+     * Return an unmodifiable collection of application defined domains.
      * 
      * @return Collection
      */
 	Collection<IDomain> domains();
 
     /**
-     * Devuelve la dominio asociado al nombre pasado por parámetro.
+     * Return the application domain.
      * 
      * @param name String
      * @return IDomain
@@ -79,7 +86,7 @@ public interface IApplication extends INode, ISubDeployerListener {
 	IDomain getDomain(String name);
 
 	/**
-	 * Elimina el dominio, salvo el caso de tratarse del dominio por defecto.
+	 * Remove a domain from the application, except default domain: <b>localhost</b>.
 	 *   
 	 * @param domain
 	 * @return

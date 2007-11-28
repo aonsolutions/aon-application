@@ -18,70 +18,61 @@ import com.code.aon.jaas.client.ast.INodeVisitor;
  */
 public abstract class Renderer implements INodeVisitor {
 
-    /**
-     * Etiqueta de comienzo del fichero xml.
-     */
+    /** xml definition tag. */
     static final String DECLARATION = "<?xml version='1.0' encoding='ISO-8859-1' ?>";
 
-    /**
-     * Etiqueta de comienzo.
-     */
+    /** < tag. */
     static final String LT = "<";
 
-    /**
-     * Etiqueta final.
-     */
+    /** > tag. */
     static final String GT = ">";
 
-    /**
-     * Etiqueta final.
-     */
+    /** / tag. */
     static final String END = "/";
 
-	/** Etiqueta de aplicación. */
+	/** application tag. */
 	static final String APPLICATION = "application";
 
-	/** Etiqueta de domain. */
+	/** domain tag. */
 	static final String DOMAIN = "domain";
 
-    /** Etiqueta de id. */
+    /** id tag. */
 	static final String ID = "id";
 
-	/**
-     * Stream de Salida.
-     */
+	/** description tag. */
+    static final String DESCRIPTION = "description";
+
+	/** output stream. */
     PrintWriter out;
 
-    /**
-     * Profundidad de la linea.
-     */
+    /** line depth. */
     int deep;
 
     /**
-     * Construye la salida a fichero.
+     * Renders file output.
      * 
-     * @param obj INode
-     * @param out OutputStream
+     * @param INode
+     * @param OutputStream
      */
     public void render(INode obj, OutputStream out) {
         render(obj, new PrintWriter(out));
     }
 
     /**
-     * Construye la salida a fichero.
+     * Renders file output.
      * 
-     * @param obj INode
-     * @param out Writer
+     * @param INode
+     * @param Writer
      */
     public void render(INode obj, Writer out) {
         render(obj, new PrintWriter(out));
     }
 
     /**
-     * Construye la salida a fichero.
+     * Renders file output.
      * 
-     * @param obj INode
-     * @param out PrintWriter
+     * @param INode
+     * @param PrintWriter
      */
     public void render(INode obj, PrintWriter out) {
         this.out = out;
@@ -93,8 +84,8 @@ public abstract class Renderer implements INodeVisitor {
 	/**
      * Print a String and then terminate the line. 
      * 
-     * @param line String
-     * @param deep int
+     * @param String
+     * @param int
      */
     void println(String line, int deep) {
         while (deep-- > 0) {
@@ -104,10 +95,10 @@ public abstract class Renderer implements INodeVisitor {
     }
 
 	/**
-     * Print a String.
+     * Prints a String.
      * 
-     * @param line String
-     * @param deep int
+     * @param String
+     * @param int
      */
     void print(String line, int deep) {
         while (deep-- > 0) {
@@ -117,9 +108,9 @@ public abstract class Renderer implements INodeVisitor {
     }
 
     /**
-     * Escribe la etiqueta de inicio.
+     * Prints start tag.
      * 
-     * @param name String
+     * @param String
      * @return String
      */
     String startElement(String name) {
@@ -127,12 +118,13 @@ public abstract class Renderer implements INodeVisitor {
     }
 
     /**
-     * Escribe la etiqueta de inicio y le añade los atributos dados.
+     * Prints start element with attributes.
      * 
-     * @param name String
-     * @param attrs Properties
+     * @param String
+     * @param Properties
      * @return String
      */
+    @SuppressWarnings("unchecked")
     String startElement(String name, Properties attrs) {
     	StringBuffer label = new StringBuffer(name);
     	Enumeration enumeration = attrs.keys();
@@ -144,9 +136,9 @@ public abstract class Renderer implements INodeVisitor {
     }
 
     /**
-     * Escribe la etiqueta de fin.
+     * Prints end tag.
      * 
-     * @param name String
+     * @param String
      * @return String
      */
     String endElement(String name) {

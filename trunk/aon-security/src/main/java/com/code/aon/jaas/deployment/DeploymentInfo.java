@@ -21,66 +21,48 @@ import com.code.aon.jaas.deployment.util.FileUtis;
  */
 public class DeploymentInfo {
 
+	/** Tells If application only exits in the configuration resource file. */
+	public static final int WAR_DEPLOYMENT_FILE_NOT_FOUND = 0;
+
+	/** Tells deployment status is Deployed. */
+	public static final String DEPLOYED = "Deployed";
+    /** Tells deployment status is Starting. */
+	public static final String STARTING = "Starting";
+
     /** DeploymentInfo proper Logger. */
     private static final Log LOGGER = LogFactory.getLog( DeploymentInfo.class.getName() );
 
-    /**
-     * The initial construction timestamp
-     */
+    /** The initial construction timestamp. */
 	public Date date = new Date();
 
-    /**
-     * the URL identifing this SDI
-     */
+    /** the URL identifing this SDI. */
 	public URL url;
 
-    /**
-     * An optional URL to a local copy of the
-     * deployment
-     */
+    /** An optional URL to a local copy of the deployment. */
 	public URL localUrl;
 
-    /**
-     * The suffix of the deployment url
-     */
+    /** The suffix of the deployment url. */
 	public String shortName;
 
-	/**
-	 * Tell if deployment url is a file or a directory
-	 */
+	/** Tell if deployment url is a file or a directory */
 	public boolean isFile;
 
-    /**
-     * The last system time the deployment inited by
-     * the MainDeployer
-     */
+    /** The last system time the deployment inited by the MainDeployer. */
 	public long lastDeployed = 0;
 
-    /**
-     * use for "should we redeploy failed"
-     */
+    /** Use for "should we redeploy failed". */
 	public long lastModified = 0;
 
-    /**
-     * A free form status for the "state" can be
-     * Deployed/failed etc
-     */
+    /** A free form status for the "state" can be Deployed/Failed/Starting etc. */
 	public String status;
 
-    /**
-     * The current state of the deployment
-     */
+    /** The current state of the deployment. */
 	public DeploymentState state = DeploymentState.CONSTRUCTED;
 
-    /**
-     * The deployer that handles the deployment
-     */
+    /** The deployer that handles the deployment. */
 	public ISubDeployer deployer;
 
-    /**
-     * The application server name which this
-     * deployment is
-     */
+    /** The application server name which this deployment is. */
 	public String appServerName;
 
     /**
@@ -118,7 +100,7 @@ public class DeploymentInfo {
                     	File destFile = new File( destDir, files[i].getName() );
     					FileUtis.copyFile( files[i], destFile, true );
 					}
-					this.url = destDir.getParentFile().toURL();
+					this.url = destDir.getParentFile().toURI().toURL();
 		        	this.url.openStream().close();
 				} catch (IOException e1) {
 					LOGGER.fatal( "Unable to copy: " + srcDir + " in: " + destDir + ". " + e1.getMessage() );
@@ -129,6 +111,7 @@ public class DeploymentInfo {
         }
         shortName = getShortName( this.url.getFile() );
         isFile = new File( this.url.getFile() ).isFile();
+LOGGER.fatal( "Starting DeploymentInfo:" + isFile );
     }
 
     

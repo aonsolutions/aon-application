@@ -100,7 +100,7 @@ public class TomcatMainDeployer extends SecurityMBeanSupport
 	public void deploy(String url, String deploy) throws DeploymentException {
 		LOGGER.debug("TomcatMainDeployer deploying: String[" + url +"]");
 		try {
-			deploy( new File( getCatalinaBase() + url ).toURL() );
+			deploy( new File( getCatalinaBase() + url ).toURI().toURL() );
 		} catch (Exception e1) {
 			throw new DeploymentException(e1.getMessage(), e1);
 		}
@@ -122,7 +122,7 @@ public class TomcatMainDeployer extends SecurityMBeanSupport
 	public void undeploy(String name) throws DeploymentException {
 		String url = getCatalinaBase() + name;
 		try {
-			support.undeploy( new File( url ).toURL() );
+			support.undeploy( new File( url ).toURI().toURL() );
 		} catch (MalformedURLException e) {
 			throw new DeploymentException(e.getMessage(), e);
 		}
@@ -143,7 +143,7 @@ public class TomcatMainDeployer extends SecurityMBeanSupport
 	public void isDeployed(String name) throws DeploymentException {
 		String url = getCatalinaBase() + name;
 		try {
-			support.undeploy( new File( url ).toURL() );
+			support.undeploy( new File( url ).toURI().toURL() );
 		} catch (MalformedURLException e) {
 			throw new DeploymentException(e.getMessage(), e);
 		}
