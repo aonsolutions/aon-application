@@ -91,10 +91,9 @@
 							<aon:outputLabel for="FaqDetail_answer" style="width:100px"
 								styleClass="aon-form-input-text-label"
 								value="#{appBundle.faq_answer}" />
-							<aon:inputText id="FaqDetail_answer"
-								styleClass="aon-form-input-text aon-form-input-text-number"
-								required="true" size="80" maxlength="255"
-								value="#{faq.toI18n.answer}" />
+							<aon:inputRichText id="FaqDetail_answer" 
+								toolbarSet="Default" 
+								value="#{faq.toI18n.answer}"/>
 								
 						</aon:panelGrid>
 					</aon:panelGrid>
