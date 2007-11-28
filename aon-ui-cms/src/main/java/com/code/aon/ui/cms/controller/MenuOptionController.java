@@ -9,7 +9,11 @@ import javax.faces.event.ActionEvent;
 import javax.faces.event.ValueChangeEvent;
 import javax.faces.model.SelectItem;
 
+import com.code.aon.cms.Faq;
+import com.code.aon.cms.FaqCategory;
 import com.code.aon.cms.GenericPage;
+import com.code.aon.cms.Link;
+import com.code.aon.cms.LinkCategory;
 import com.code.aon.cms.Menu;
 import com.code.aon.cms.MenuOption;
 import com.code.aon.cms.MenuOptionDetail;
@@ -130,8 +134,8 @@ public class MenuOptionController extends BasicI18nController {
 	public boolean isVisibleLevel() {
 		MenuOption mo = (MenuOption)getTo();
 		if (mo != null && mo.getType() != null) {
-			if (!mo.getType().equals(PageType.EXTERNAL) && !mo.getType().equals(PageType.GENERIC)
-					&& !mo.getType().equals(PageType.MENU)) return true;
+			if (mo.getType().equals(PageType.LINK)) return true;
+			if (mo.getType().equals(PageType.FAQ)) return true;
 		}
 		return false;
 	}
@@ -139,7 +143,16 @@ public class MenuOptionController extends BasicI18nController {
 	public boolean isVisibleIdent() {
 		MenuOption mo = (MenuOption)getTo();
 		if (mo != null && mo.getType() != null) {
-			if (!mo.getType().equals(PageType.EXTERNAL)) return true;
+			if (mo.getType().equals(PageType.MENU)) return true;
+			if (mo.getType().equals(PageType.GENERIC)) return true;
+			if (mo.getType().equals(PageType.LINK)){
+				if (ContentLevel.SECTION.equals(mo.getLevel()))
+					return true;
+			}
+			if (mo.getType().equals(PageType.FAQ)){
+				if (ContentLevel.SECTION.equals(mo.getLevel()))
+					return true;
+			}
 		}
 		return false;
 	}
@@ -173,7 +186,48 @@ public class MenuOptionController extends BasicI18nController {
 		List<SelectItem> idents = new LinkedList<SelectItem>();
 		if (mo.getType().equals(PageType.GENERIC)) idents = getGenericPageList();
 		else if (mo.getType().equals(PageType.MENU)) idents = getMenuList();
+		else if (mo.getType().equals(PageType.FAQ)){
+			if (ContentLevel.SECTION.equals(mo.getLevel())){
+				idents = getFaqCategoryList();
+			}
+		}else if (mo.getType().equals(PageType.LINK)){
+			if (ContentLevel.SECTION.equals(mo.getLevel())){
+				idents = getLinkCategoryList();
+			}
+		}
 		return idents;
+	}
+
+	private List<SelectItem> getLinkCategoryList() throws ManagerBeanException {
+		List<SelectItem> linkCategory = new LinkedList<SelectItem>();
+		IManagerBean linkCategoryBean = BeanManager.getManagerBean(LinkCategory.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(linkCategoryBean.getFieldName(ICMSAlias.LINK_CATEGORY_ACTIVE), true);
+		List<ITransferObject> list = (List<ITransferObject>)linkCategoryBean.getList(criteria);
+		for (int i = 0; i < list.size(); i++) {
+			LinkCategory lc = (LinkCategory)list.get(i);
+			int id = lc.getId();
+			String name = lc.getAlias();
+			SelectItem item = new SelectItem(id, name);
+			linkCategory.add(item);
+		}
+		return linkCategory;
+	}
+
+	private List<SelectItem> getFaqCategoryList() throws ManagerBeanException {
+		List<SelectItem> faqCategory = new LinkedList<SelectItem>();
+		IManagerBean faqCategoryBean = BeanManager.getManagerBean(FaqCategory.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(faqCategoryBean.getFieldName(ICMSAlias.FAQ_CATEGORY_ACTIVE), true);
+		List<ITransferObject> list = (List<ITransferObject>)faqCategoryBean.getList(criteria);
+		for (int i = 0; i < list.size(); i++) {
+			FaqCategory gp = (FaqCategory)list.get(i);
+			int id = gp.getId();
+			String name = gp.getAlias();
+			SelectItem item = new SelectItem(id, name);
+			faqCategory.add(item);
+		}
+		return faqCategory;
 	}
 
 	private List<SelectItem> getGenericPageList() throws ManagerBeanException {
@@ -204,33 +258,6 @@ public class MenuOptionController extends BasicI18nController {
 			menus.add(item);
 		}
 		return menus;
-	}
-
-	public void onAccept(ActionEvent event) {
-		MenuOption mo = (MenuOption)getTo();
-		mo.setMenu(currentMenu);
-		try {
-			mo.setPosition(getLastPosition());
-		} catch (ManagerBeanException e) {
-			e.printStackTrace();
-		} catch (ExpressionException e) {
-			e.printStackTrace();
-		}
-		super.accept(event);
-	}
-
-	private int getLastPosition() throws ManagerBeanException, ExpressionException {
-		int position = 0;
-		Criteria criteria = new Criteria();
-		criteria.addExpression(getManagerBean().getFieldName(ICMSAlias.MENU_OPTION_MENU_ID), "" + currentMenu.getId());
-		criteria.addOrder(getManagerBean().getFieldName(ICMSAlias.MENU_OPTION_POSITION), false);
-		List<ITransferObject> list = (List<ITransferObject>)getManagerBean().getList(criteria);
-		if (list.size() > 0) {
-			MenuOption mo = (MenuOption)list.get(0);
-			position = mo.getPosition();
-			++position;
-		}
-		return position;
 	}
 
 	@SuppressWarnings("unchecked")
@@ -273,6 +300,7 @@ public class MenuOptionController extends BasicI18nController {
 
 	public void reorderObjects() throws ManagerBeanException {
 		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(getManagerBean().getFieldName(ICMSAlias.MENU_OPTION_MENU_ID),currentMenu.getId());
 		criteria.addOrder(getManagerBean().getFieldName(ICMSAlias.MENU_OPTION_POSITION));
 		List<ITransferObject> list = getManagerBean().getList(criteria);
 		for (int i = 0; i < list.size(); i++) {
@@ -284,6 +312,24 @@ public class MenuOptionController extends BasicI18nController {
 				getManagerBean().update(mo);
 			}
 		}
+	}
+
+	public int getLastPosition() {
+		int position = 0;
+		try{
+			Criteria criteria = new Criteria();
+			criteria.addExpression(getManagerBean().getFieldName(ICMSAlias.MENU_OPTION_MENU_ID), "" + getCurrentMenu().getId());
+			criteria.addOrder(getManagerBean().getFieldName(ICMSAlias.MENU_OPTION_POSITION), false);
+			List<ITransferObject> list = (List<ITransferObject>)getManagerBean().getList(criteria);
+			if (list.size() > 0) {
+				MenuOption mo = (MenuOption)list.get(0);
+				position = mo.getPosition();
+				++position;
+			}
+		}catch (ManagerBeanException e) {
+		} catch (ExpressionException e) {
+		}
+		return position;
 	}
 
 }
