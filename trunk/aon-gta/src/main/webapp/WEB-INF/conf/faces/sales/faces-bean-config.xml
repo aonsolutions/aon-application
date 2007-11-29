@@ -609,6 +609,24 @@
 		</managed-property>
 	</managed-bean>
 	
+	
+	<!-- ************* SERIES ***************** -->
+	<managed-bean>
+		<managed-bean-name>series</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.config.controller.SeriesController
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.config.Series</value>
+		</managed-property>
+	</managed-bean>
+	
 	<!-- ************* LISTENERS ************** -->
 
 	<managed-bean>
