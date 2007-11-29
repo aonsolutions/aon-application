@@ -29,7 +29,7 @@
 		<dependency>
 			<groupId>com.sun.facelets</groupId>
 			<artifactId>jsf-facelets</artifactId>
-			<version>1.1.11</version>
+			<version>1.1.14</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
@@ -65,20 +65,12 @@
 					<artifactId>commons-codec</artifactId>
 				</exclusion>
 				<exclusion>
-					<groupId>commons-fileupload</groupId>
-					<artifactId>commons-fileupload</artifactId>
-				</exclusion>
-				<exclusion>
 					<groupId>commons-validator</groupId>
 					<artifactId>commons-validator</artifactId>
 				</exclusion>
 				<exclusion>
 					<groupId>commons-logging</groupId>
 					<artifactId>commons-logging</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>commons-el</groupId>
-					<artifactId>commons-el</artifactId>
 				</exclusion>
 			</exclusions>
 		</dependency>
