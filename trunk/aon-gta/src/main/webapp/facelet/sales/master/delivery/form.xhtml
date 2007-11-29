@@ -27,10 +27,6 @@
 			// nothing
 		</script>
 		<script type='text/javascript'
-			src="${facesContext.externalContext.requestContextPath}/js/SupplierLookup.js">
-			// nothing
-		</script>
-		<script type='text/javascript'
 			src="${facesContext.externalContext.requestContextPath}/js/SupportOrderLookup.js">
 			// nothing
 		</script>
@@ -641,25 +637,24 @@
 											value="#{purchaseBundle.aon_income_number_required}"
 											style="display:none;color:#cc3333" />
 									</t:div>
-									<t:outputLabel for="Supplier_id"
+
+									<t:outputLabel for="Supplier_Lookup_id"
 										styleClass="aon-form-input-text-label"
 										value="#{purchaseBundle.aon_supplier}" />
-									<t:div styleClass="aon-form-nowrap">
-										<t:inputText id="Supplier_id" size="5" forceId="#{true}"
+									<t:div>
+										<t:inputText id="Supplier_Lookup_id" size="5" forceId="#{true}"
 											styleClass="aon-form-input-text"
-											onchange="return findSupplierLookup(event,'#{facesContext.externalContext.request.contextPath}','com.code.aon.purchase.Supplier','Supplier_id,Supplier_full_name');"
+											onchange="return findBeanLookupExt(event,'#{facesContext.externalContext.requestContextPath}','supplierLookup','Supplier_Lookup_id','Supplier_id|Supplier_Lookup_id,Supplier_full_name|Supplier_full_name,Supplier_document|Supplier_Lookup_document');"
 											value="#{salesPurchase.to.purchaseDetail.purchase.supplier.id}" />
-										<h:commandButton id="findSupplier"
-											styleClass="aon-form-lookup-button"
-											onclick="selectWindow(this, 'placeList', '#{supplierSearch.encodedPagePath}','Supplier_id,Supplier_full_name');return false;"
-											value="" immediate="true" />
-										<h:commandButton id="addSupplier"
-											styleClass="aon-form-new-button"
-											onclick="selectWindow(this, 'placeList', '#{supplierAdd.encodedPagePath}','Supplier_id,Supplier_full_name');return false;"
-											value="" immediate="true" />
+										<h:commandButton id="find_Supplier_Lookup_id"
+											styleClass="aon-form-lookup-button" value="" immediate="true"
+											onclick="lookupSearchWindow(this, 'placeList', '#{supplierLookup.encodedSearchPagePath}','Supplier_id|Supplier_Lookup_id,Supplier_full_name|Supplier_full_name,Supplier_document|Supplier_Lookup_document');return false;" />	
+										<h:commandButton id="new_Supplier_Lookup_id"
+											styleClass="aon-form-new-button" value="" immediate="true"
+											onclick="lookupNewWindow(this, 'placeList', '#{supplierLookup.encodedNewPagePath}','Supplier_id|Supplier_Lookup_id,Supplier_full_name|Supplier_full_name,Supplier_document|Supplier_Lookup_document');return false;" />	
 										<t:inputText id="Supplier_full_name" forceId="#{true}"
-											styleClass="aon-form-input-text-disabled" disabled="true"
-											size="30"
+											styleClass="aon-form-input-text-disabled"
+											size="40" disabled="true"
 											value="#{salesPurchase.to.purchaseDetail.purchase.supplier.name} #{salesPurchase.to.purchaseDetail.purchase.supplier.surname==null?' ':(salesPurchase.to.purchaseDetail.purchase.supplier.surname)}" />
 										<t:outputText id="Supplier_required" forceId="#{true}"
 											value="#{purchaseBundle.aon_income_supplier_required}"
@@ -815,7 +810,7 @@
 				document.getElementById( "Product_code_required" ).style.display = 'none';
 				document.getElementById( "Product_name_required" ).style.display = 'none';
 				document.getElementById( "Item_product_category_required" ).style.display = 'none';
-				if(document.getElementById("Supplier_id").value != ""){
+				if(document.getElementById("Supplier_Lookup_id").value != ""){
 					document.getElementById( "IncomeDetail_warehouse_id" ).disabled = true;
 				}
 				document.getElementById( "Income_series" ).focus();
@@ -841,14 +836,14 @@
 					document.getElementById( "Income_number" ).focus();
 					return false;
 				}
-				if(document.getElementById( "Supplier_id" ).value == ""){
+				if(document.getElementById( "Supplier_Lookup_id" ).value == ""){
 					document.getElementById( "Supplier_required" ).style.display = 'block';
 					document.getElementById( "Number_required" ).style.display = 'none';
 					document.getElementById( "Date_required" ).style.display = 'none';
 					document.getElementById( "Product_code_required" ).style.display = 'none';
 					document.getElementById( "Product_name_required" ).style.display = 'none';
 					document.getElementById( "Item_product_category_required" ).style.display = 'none';					
-					document.getElementById( "Supplier_id" ).focus();
+					document.getElementById( "Supplier_Lookup_id" ).focus();
 					return false;
 				}
 				if(document.getElementById( "Income_issueTime" ).value == ""){

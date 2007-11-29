@@ -21,7 +21,7 @@
 			id="aon-window-popup-title">
 			<t:div styleClass="aon-content-title-internal">
 				<h:outputText value="#{menuBundle.aon_supplier}"/>
-				<h:outputText value="#{supplierAdd.parameters}" style="visibility: hidden" />
+				<h:outputText value="#{supplierLookup.parameters}" style="visibility: hidden" />
 			</t:div>	
 		</t:div>
 
@@ -31,7 +31,7 @@
 				<t:div styleClass="aon-content-toolbar-internal">
 				<t:div styleClass="aon-content-toolbar-item-group">
 					<t:commandButton id="save" value="#{bundle.aon_save}"
-						forceId="#{true}" actionListener="#{supplierAdd.accept}"
+						forceId="#{true}" actionListener="#{supplierLookup.accept}"
 						onclick="return (confirm('#{bundle.aon_accept_confirm}'))"
 						styleClass="aon-content-toolbar-item aon-content-toolbar-item-save"
 						onmouseover="this.className='aon-content-toolbar-item aon-content-toolbar-item-hover aon-content-toolbar-item-save'"
@@ -39,7 +39,7 @@
 						disabled="#{address.to!=null || media.to!=null}"
 						accesskey="#{bundle.aon_key_save}"/>
 					<h:commandButton id="cancel" value="#{bundle.aon_cancel}"
-						rendered="#{supplierAdd.new}" immediate="#{true}"
+						rendered="#{supplierLookup.new}" immediate="#{true}"
 						onclick="if (confirm('#{bundle.aon_cancel_confirm}')) { window.close() } return false;"
 						styleClass="aon-content-toolbar-item aon-content-toolbar-item-cancel"
 						onmouseover="this.className='aon-content-toolbar-item aon-content-toolbar-item-hover aon-content-toolbar-item-cancel'"
@@ -47,9 +47,9 @@
 						disabled="#{address.to!=null || media.to!=null}"
 						accesskey="#{bundle.aon_key_cancel}"/>
 					<h:commandButton id="close" value="#{bundle.aon_close}"
-						rendered="#{!supplierAdd.new}" immediate="#{true}"
-						actionListener="#{supplierAdd.onCancel}"
-						onclick="window.opener.update('#{supplierAdd.toLookupsAsXML}');return false;"
+						rendered="#{!supplierLookup.new}" immediate="#{true}"
+						actionListener="#{supplierLookup.onCancel}"
+						onclick="window.opener.update('#{supplierLookup.TOLookupsAsXML}');return false;"
 						styleClass="aon-content-toolbar-item aon-content-toolbar-item-close"
 						onmouseover="this.className='aon-content-toolbar-item aon-content-toolbar-item-hover aon-content-toolbar-item-close'"
 						onmouseout="this.className='aon-content-toolbar-item aon-content-toolbar-item-close'" 
@@ -62,7 +62,7 @@
 			</t:div>
 
 			<ui:include src="/facelet/purchase/master/supplier/formContent.xhtml">
-				<ui:param name="supplierAlias" value="#{supplierAdd}"/>
+				<ui:param name="supplierAlias" value="#{supplierLookup}"/>
 				<ui:param name="viewDetails" value="#{false}"/>
 			</ui:include>
 
