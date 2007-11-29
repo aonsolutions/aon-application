@@ -22,6 +22,7 @@ import com.code.aon.jaas.valves.BackDoorAuthenticationValve;
 public class BackDoorAuthentication extends HttpServlet {
 
 	private static final long serialVersionUID = -1236276509878590335L;
+	private static final String AUTH_PAGE = "/auth/index.jsp";
 
 	/* (non-Javadoc)
 	 * @see javax.servlet.http.HttpServlet#service(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
@@ -31,7 +32,7 @@ public class BackDoorAuthentication extends HttpServlet {
 		//Get the active request
 		Request activeRequest = (Request) BackDoorAuthenticationValve.activeRequest.get();
 		String uri = activeRequest.getRequestURI();
-		uri = uri.substring( uri.lastIndexOf( "/" ), uri.lastIndexOf( ".auth" ) );
+		uri = uri.substring( uri.lastIndexOf( "/" ), uri.lastIndexOf( ".auth" ) ) + AUTH_PAGE;
 		String id = activeRequest.getSession( false ).getId();
 		activeRequest.recycle();
 		activeRequest.getCoyoteRequest().getCookies().recycle();
