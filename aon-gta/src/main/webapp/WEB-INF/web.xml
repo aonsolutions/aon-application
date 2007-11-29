@@ -36,12 +36,11 @@
           ,/WEB-INF/conf/faces/registry/faces-navigation-config.xml
           ,/WEB-INF/conf/faces/security/faces-bean-config.xml
           ,/WEB-INF/conf/faces/security/faces-navigation-config.xml
-          ,/WEB-INF/conf/faces/appParams/faces-bean-config.xml
-          ,/WEB-INF/conf/faces/appParams/faces-navigation-config.xml
+          ,/WEB-INF/conf/faces/config/faces-bean-config.xml
+          ,/WEB-INF/conf/faces/config/faces-navigation-config.xml
           ,/WEB-INF/conf/faces/finance/faces-bean-config.xml
           ,/WEB-INF/conf/faces/finance/faces-converter-config.xml
           ,/WEB-INF/conf/faces/finance/faces-navigation-config.xml
-          ,/WEB-INF/conf/faces/account/faces-config.xml
         </param-value>
     </context-param>
 <!-- 
@@ -215,11 +214,6 @@
 	</servlet>
 		
 	<servlet>
-		<servlet-name>CustomerLookupServlet</servlet-name>
-		<servlet-class>com.code.aon.ui.customer.servlet.CustomerLookupServlet</servlet-class>
-	</servlet>
-	
-	<servlet>
 		<servlet-name>SupportOrderLookupServlet</servlet-name>
 		<servlet-class>com.code.aon.ui.tas.servlet.SupportOrderLookupServlet</servlet-class>
 	</servlet>
@@ -305,11 +299,6 @@
 		<url-pattern>*.lookupBean</url-pattern>
 	</servlet-mapping>
 	
-	<servlet-mapping>
-		<servlet-name>CustomerLookupServlet</servlet-name>
-		<url-pattern>*.customerLookup</url-pattern>
-	</servlet-mapping>
-
 	<servlet-mapping>
 		<servlet-name>TargetLookupServlet</servlet-name>
 		<url-pattern>*.targetLookup</url-pattern>
