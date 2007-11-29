@@ -23,10 +23,6 @@
 			// nothing
 		</script>
 		<script type='text/javascript'
-			src="${facesContext.externalContext.requestContextPath}/js/CustomerLookup.js">
-			// nothing
-		</script>
-		<script type='text/javascript'
 			src="${facesContext.externalContext.requestContextPath}/js/SupportOrderLookup.js">
 			// nothing
 		</script>
@@ -205,7 +201,7 @@
 							<t:selectOneMenu id="SupportOrder_id" forceId="#{true}"
 								styleClass="aon-form-selectOneMenu-field"
 								value="#{delivery.supportOrderId}"
-								onchange="document.getElementById('Customer_id').disabled = true; submit();"
+								onchange="document.getElementById('Customer_Lookup_id').disabled = true; submit();"
 								rendered="#{delivery.new}">
 								<f:selectItem itemDisabled="true" itemLabel="#{commercialBundle.aon_select_support_order}" itemValue="" />
 								<f:selectItems value="#{TASCollections.pendingSupportOrders}" />
@@ -268,24 +264,24 @@
 							<f:selectItems value="#{warehouseCollections.warehouses}" />
 						</h:selectOneMenu>
 
-						<t:outputLabel for="Customer_id"
+						<t:outputLabel for="Customer_Lookup_id"
 							styleClass="aon-form-input-text-label"
 							value="#{warehouseBundle.aon_customer}" />
 						<t:div>
-							<t:inputText id="Customer_id" size="5" forceId="#{true}"
+							<t:inputText id="Customer_Lookup_id" size="5" forceId="#{true}"
 								disabled="#{!delivery.editable or (!delivery.new and delivery.supportOrderId != null)}"
 								styleClass="aon-form-input-text" required="true"
-								onchange="return findCustomerLookup(event,'#{facesContext.externalContext.request.contextPath}','com.code.aon.customer.Customer');"
+								onchange="return findBeanLookupExt(event,'#{facesContext.externalContext.requestContextPath}','customerLookup','Customer_Lookup_id','Customer_id|Customer_Lookup_id,Customer_full_name|Customer_full_name');"
 								value="#{delivery.to.customer.registry.id}"
 								valueChangeListener="#{delivery.customerData}" />
-							<h:commandButton id="findCustomer"
+							<h:commandButton id="find_Customer_Lookup_id"
 								rendered="#{delivery.new or delivery.supportOrderId == null}"
-								onclick="selectWindow(this, 'placeList', '#{customerSearch.encodedPagePath}');return false;"
+								onclick="lookupSearchWindow(this, 'placeList', '#{customerLookup.encodedSearchPagePath}','Customer_id|Customer_Lookup_id,Customer_full_name|Customer_full_name');return false;"	
 								value="" immediate="true" styleClass="aon-form-lookup-button"
 								disabled="#{!delivery.editable}" />
 							<h:commandButton id="addCustomer"
 								rendered="#{delivery.new or delivery.supportOrderId == null}"
-								onclick="selectWindow(this, 'placeList', '#{customerAdd.encodedPagePath}');return false;"
+								onclick="lookupNewWindow(this, 'placeList', '#{customerLookup.encodedNewPagePath}','Customer_id|Customer_Lookup_id,Customer_full_name|Customer_full_name');return false;"	
 								value="" immediate="true" styleClass="aon-form-new-button"
 								disabled="#{!delivery.editable}" />
 							<t:inputText id="Customer_full_name" forceId="#{true}"
@@ -902,7 +898,7 @@
 				document.getElementById( "Product_name_required" ).disabled = true;
 				document.getElementById( "Delivery_number" ).disabled = true;
 				document.getElementById( "Delivery_issueTime" ).disabled = true;
-				document.getElementById( "Customer_id" ).disabled = true;
+				document.getElementById( "Customer_Lookup_id" ).disabled = true;
 			}
 		</script>
 		<h:form id="placeList" target="list" />

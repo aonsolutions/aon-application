@@ -18,10 +18,6 @@
 			src="${facesContext.externalContext.requestContextPath}/js/itemLookup.js">
 			// nothing
 		</script>
-		<script type='text/javascript'
-			src="${facesContext.externalContext.requestContextPath}/js/CustomerLookup.js">
-			// nothing
-		</script>
 		<t:stylesheet path="/jscalendar-1.0/calendar-system.css" />
 		<script type='text/javascript'
 			src="${facesContext.externalContext.requestContextPath}/jscalendar-1.0/calendar.js">
@@ -205,31 +201,31 @@
 							<f:selectItems value="#{financeCollections.securityLevels}" />
 						</h:selectOneMenu>
 
-						<t:outputLabel for="Customer_id"
+						<t:outputLabel for="Customer_Lookup_id"
 							styleClass="aon-form-input-text-label"
 							value="#{financeBundle.aon_customer}" />
 						<h:panelGroup>
-							<t:inputText id="Customer_id" size="5" forceId="#{true}"
+							<t:inputText id="Customer_Lookup_id" size="5" forceId="#{true}"
 								styleClass="aon-form-input-text" required="true"
-								onchange="return findCustomerLookupAndSubmit(this.form, event,'#{facesContext.externalContext.request.contextPath}','com.code.aon.customer.Customer');"
+								onchange="return findBeanLookupAndSubmitExt(this.form, event,'#{facesContext.externalContext.requestContextPath}','customerLookup','Customer_Lookup_id','Customer_id|Customer_Lookup_id,Customer_full_name|Customer_full_name');"
 								value="#{salesInvoicing.to.registry.id}"
 								disabled="#{!salesInvoicing.editable}"
 								valueChangeListener="#{salesInvoicing.customerData}" />
-							<h:commandButton styleClass="aon-form-lookup-button"
-								id="findSupplier" value="" immediate="true"
-								disabled="#{!salesInvoicing.editable}"
-								onclick="selectWindow(this, 'placeList', '#{customerSearch.encodedPagePath}');return false;" />
+							<h:commandButton id="find_Customer_Lookup_id"
+								onclick="lookupSearchWindow(this, 'placeList', '#{customerLookup.encodedSearchPagePath}','Customer_id|Customer_Lookup_id,Customer_full_name|Customer_full_name');return false;"	
+								value="" immediate="true" styleClass="aon-form-lookup-button"
+								disabled="#{!salesInvoicing.editable}" />
 							<h:commandButton styleClass="aon-form-new-button"
 								id="addCustomer" value="" immediate="true"
 								disabled="#{!salesInvoicing.editable}"
-								onclick="selectWindow(this, 'placeList', '#{customerAdd.encodedPagePath}');return false;" />
+								onclick="lookupNewWindow(this, 'placeList', '#{customerLookup.encodedNewPagePath}','Customer_id|Customer_Lookup_id,Customer_full_name|Customer_full_name');return false;" />
 							<t:inputText id="Customer_full_name" forceId="#{true}"
 								styleClass="aon-form-input-text"
 								disabled="#{!salesInvoicing.editable}"
 								size="40"
 								value="#{salesInvoicing.to.registryName}" />
 						</h:panelGroup>
-						
+
 						<t:outputLabel for="DeliveryDetail_warehouse_id"
 							styleClass="aon-form-selectOneMenu-label"
 							value="#{purchaseBundle.aon_warehouse}" />
