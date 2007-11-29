@@ -87,6 +87,10 @@
       <from-outcome>customerSegment</from-outcome>
       <to-view-id>/facelet/sales/auxiliary/customer_segment/grid.faces</to-view-id>
    </navigation-case>   
+    <navigation-case>
+      <from-outcome>series</from-outcome>
+      <to-view-id>/facelet/config/series/grid.faces</to-view-id>
+    </navigation-case>
   </navigation-rule>
 
 </faces-config>
