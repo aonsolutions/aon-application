@@ -53,6 +53,7 @@
 								aon-table-body aon-table-body-string,
 								aon-table-body aon-table-body-string,
 								aon-table-body aon-table-body-string,
+								aon-table-body aon-table-body-string,
 								aon-table-body aon-table-body-number"
 							rowOnMouseOver="selectRow( this )"
 							rowOnMouseOut="unselectRow( this )" rowOnClick="sendRow( this )">
@@ -115,9 +116,18 @@
 							
 							<h:column>
 								<f:facet name="header">
+									<h:outputText value="#{financeBundle.aon_regs}" />
+								</f:facet>
+								<h:outputText value="#{fbatch.modelToTotalDetails}" >
+									<f:convertNumber pattern="#,##0" />
+								</h:outputText>	
+							</h:column>
+
+							<h:column>
+								<f:facet name="header">
 									<h:outputText value="#{financeBundle.aon_amount}" />
 								</f:facet>
-								<h:outputText value="#{fbatch.modelToTotal}" >
+								<h:outputText value="#{fbatch.modelToTotalAmount}" >
 									<f:convertNumber pattern="#,##0.00" />
 								</h:outputText>	
 							</h:column>
