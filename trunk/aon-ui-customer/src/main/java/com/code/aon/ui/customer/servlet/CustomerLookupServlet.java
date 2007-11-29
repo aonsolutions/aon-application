@@ -120,7 +120,7 @@ public class CustomerLookupServlet extends LookupServlet {
 		try {
 			IManagerBean rAddressBean = BeanManager.getManagerBean(RegistryAddress.class);
 			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(rAddressBean.getFieldName(IRegistryAlias.REGISTRY_ADDRESS_REGISTRY_ID),map.get("Customer_id"));
+			criteria.addEqualExpression(rAddressBean.getFieldName(IRegistryAlias.REGISTRY_ADDRESS_REGISTRY_ID),map.get("Customer_Lookup_id"));
 			Iterator iter = rAddressBean.getList(criteria).iterator();
 			if (iter.hasNext()) {
 				RegistryAddress rAddress = (RegistryAddress) iter.next();
