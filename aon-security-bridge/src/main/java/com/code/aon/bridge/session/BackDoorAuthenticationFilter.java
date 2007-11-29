@@ -16,12 +16,12 @@ import javax.crypto.SecretKey;
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
 import javax.servlet.FilterConfig;
+import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 import org.apache.catalina.Session;
 import org.apache.catalina.authenticator.Constants;
@@ -72,7 +72,6 @@ public class BackDoorAuthenticationFilter implements Filter {
 			} catch (RuntimeException e) {
 				LOGGER.warn( "Accesing directly. Cookie does no exits." + e.getMessage() );
 			}
-
 		if ( httpRequest.getUserPrincipal() == null && serSessionId != null ) {
 			BackDoorPrincipal bdp = deserialize( serSessionId );
 			if ( bdp != null ) {
@@ -83,13 +82,17 @@ public class BackDoorAuthenticationFilter implements Filter {
 					activeRequest.getContext().getRealm().authenticate( username, bdp.getPassword() ); 
 				if( principal != null ) {
 					register( activeRequest, principal, username, bdp.getPassword() );
+					RequestDispatcher disp = activeRequest.getRequestDispatcher( "/" );
+					disp.forward( activeRequest.getRequest(), activeRequest.getResponse() );
+					activeRequest.getResponse().finishResponse();
+					return;
 				} else {
-//					//Forward to Login Page.
-//					HttpServletResponse httpResponse = (HttpServletResponse) response;
+					//Forward to Login Page.
 					String targetUrl = activeRequest.getContext().getLoginConfig().getLoginPage();
-					LOGGER.info( "doFilter:" + targetUrl );
-//					httpResponse.sendRedirect( httpResponse.encodeRedirectURL( targetUrl ) );
-//					return;
+					RequestDispatcher disp = activeRequest.getRequestDispatcher( targetUrl );
+					disp.forward( activeRequest.getRequest(), activeRequest.getResponse() );
+					activeRequest.getResponse().finishResponse();
+					return;
 				}
 			}
 		}
