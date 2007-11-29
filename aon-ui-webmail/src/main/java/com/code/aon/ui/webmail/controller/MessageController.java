@@ -345,10 +345,12 @@ public class MessageController implements IAonFileListener,IFileUploadedListener
 	       	while (iter.hasNext()){
 		       	part=new MimeBodyPart();
 		       	BodyPart bp = iter.next();
-				part.setDataHandler(bp.getDataHandler());
-				part.setContentID(bp.getHeader("Content-ID")[0]);
-				part.setDisposition(Part.INLINE);
-				multipart1.addBodyPart(part);
+		       	if (bp != null){
+					part.setDataHandler(bp.getDataHandler());
+					part.setContentID(bp.getHeader("Content-ID")[0]);
+					part.setDisposition(Part.INLINE);
+					multipart1.addBodyPart(part);
+		       	}
 	       	}
        	}
 		if ( fileList.size() > 0 ) {
