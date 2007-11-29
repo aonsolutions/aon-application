@@ -75,6 +75,15 @@
 					<f:selectItems value="#{customerCollections.customerSegments}" />
 				</h:selectOneMenu>
 
+				<h:outputLabel for="Customer_scope_id"
+					styleClass="aon-form-input-text-label"
+					value="#{customerBundle.customer_scope}" />
+				<h:selectOneMenu id="Customer_scope_id"
+					styleClass="aon-form-selectOneMenu-field"
+					value="#{customerAlias.to.scope.id}">
+					<f:selectItems value="#{configCollections.scopes}" />
+				</h:selectOneMenu>
+
 				<h:outputLabel for="Customer_status"
 					styleClass="aon-form-input-text-label"
 					value="#{customerBundle.customer_status}" />
