@@ -1,5 +1,6 @@
 package com.code.aon.finance;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -67,8 +68,9 @@ public class Creditor implements ITransferObject, IScopable {
 	 * 
 	 * @return the registry
 	 */
-	@OneToOne 
-	@PrimaryKeyJoinColumn
+	@OneToOne(cascade={CascadeType.PERSIST, CascadeType.MERGE})
+	@org.hibernate.annotations.Cascade(value = org.hibernate.annotations.CascadeType.SAVE_UPDATE)
+	@PrimaryKeyJoinColumn 
 	public Registry getRegistry() {
 		return registry;
 	}
