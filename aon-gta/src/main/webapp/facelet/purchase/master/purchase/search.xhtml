@@ -10,10 +10,6 @@
 
 	<ui:define name="head">
 		<ui:include src="/facelet/shared/head.xhtml" />
-		<script type='text/javascript'
-			src="${facesContext.externalContext.requestContextPath}/js/SupplierLookup.js">
-			// nothing
-		</script>		
 		<t:stylesheet path="/jscalendar-1.0/calendar-system.css" />
 		<script type='text/javascript'
 			src="${facesContext.externalContext.requestContextPath}/jscalendar-1.0/calendar.js">
@@ -87,22 +83,21 @@
 								valueChangeListener="#{income.addExpression}" />
 						</t:div>
 						
-						<t:outputLabel for="Supplier_id"
+						<t:outputLabel for="Supplier_Lookup_id"
 							styleClass="aon-form-input-text-label"
 							value="#{purchaseBundle.aon_supplier}" />
-						<h:panelGroup>
-							<t:inputText id="Supplier_id" size="5" forceId="#{true}"
+						<t:div>
+							<t:inputText id="Supplier_Lookup_id" size="5" forceId="#{true}"
 								styleClass="aon-form-input-text"
-								onchange="return findSupplierLookup(event,'#{facesContext.externalContext.request.contextPath}','com.code.aon.purchase.Supplier');"
+								onchange="return findBeanLookupExt(event,'#{facesContext.externalContext.requestContextPath}','supplierLookup','Supplier_Lookup_id','Supplier_id|Supplier_Lookup_id,Supplier_full_name|Supplier_full_name');"
 								valueChangeListener="#{income.addSupplierEqualExpression}"/>
-							<h:commandButton id="findSupplier"
-								styleClass="aon-form-lookup-button"
-								onclick="selectWindow(this, 'placeList', '#{supplierSearch.encodedPagePath}');return false;"
-								value="" immediate="true" />
+							<h:commandButton id="find_Supplier_Lookup_id"
+								styleClass="aon-form-lookup-button" value="" immediate="true"
+								onclick="lookupSearchWindow(this, 'placeList', '#{supplierLookup.encodedSearchPagePath}','Supplier_id|Supplier_Lookup_id,Supplier_full_name|Supplier_full_name');return false;" />	
 							<t:inputText id="Supplier_full_name" forceId="#{true}"
 								styleClass="aon-form-input-text-disabled"
-								disabled="true" size="40" />	
-						</h:panelGroup>
+								disabled="true" size="40"/>	 		
+						</t:div>
 
 						<h:outputLabel
 							styleClass="aon-form-input-text-label aon-form-table-column-odd-label"

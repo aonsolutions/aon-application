@@ -114,7 +114,7 @@
        <param-name>config-file</param-name>
        <param-value>/WEB-INF/conf/bean_config.xml</param-value>
     </context-param> 
-
+<!-- 
 	<error-page>
 		<exception-type>java.lang.Throwable</exception-type>
 		<location>/facelet/error/JavaError.jsp</location>
@@ -129,7 +129,8 @@
 		<error-code>403</error-code>
 		<location>/facelet/error/HttpError.jsp?errorCode=403</location>
 	</error-page>
-
+ -->
+ 
 	<!-- Extensions Filter -->
 	<filter>
 		<filter-name>MyFacesExtensionsFilter</filter-name>
@@ -216,11 +217,6 @@
 	<servlet>
 		<servlet-name>CustomerLookupServlet</servlet-name>
 		<servlet-class>com.code.aon.ui.customer.servlet.CustomerLookupServlet</servlet-class>
-	</servlet>
-	
-	<servlet>
-		<servlet-name>SupplierLookupServlet</servlet-name>
-		<servlet-class>com.code.aon.ui.purchase.servlet.SupplierLookupServlet</servlet-class>
 	</servlet>
 	
 	<servlet>
@@ -322,11 +318,6 @@
 	<servlet-mapping>
 		<servlet-name>TasItemLookupServlet</servlet-name>
 		<url-pattern>*.tasItemLookup</url-pattern>
-	</servlet-mapping>
-	
-	<servlet-mapping>
-		<servlet-name>SupplierLookupServlet</servlet-name>
-		<url-pattern>*.supplierLookup</url-pattern>
 	</servlet-mapping>
 	
 	<servlet-mapping>
