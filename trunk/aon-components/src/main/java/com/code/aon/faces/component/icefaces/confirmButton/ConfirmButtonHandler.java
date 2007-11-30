@@ -43,7 +43,7 @@ public class ConfirmButtonHandler extends AonIceComponentHandler implements
 	
 	private static final String IMMEDIATE = "immediate";
 
-	private static final String TEMPLATE_PATH = "com/code/aon/faces/component/confirmButton/";
+	private static final String TEMPLATE_PATH = "com/code/aon/faces/component/icefaces/confirmButton/";
 	
 	private static final String TEMPLATE = TEMPLATE_PATH + "template.xhtml";
 	
