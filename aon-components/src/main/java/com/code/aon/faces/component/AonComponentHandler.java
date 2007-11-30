@@ -5,51 +5,40 @@ import java.net.URL;
 import javax.el.VariableMapper;
 import javax.faces.component.UIComponent;
 
-import org.apache.commons.lang.StringUtils;
-
+import com.code.aon.faces.component.util.FaceletUtil;
 import com.sun.facelets.FaceletContext;
-import com.sun.facelets.tag.TagAttribute;
-import com.sun.facelets.tag.TagException;
+import com.sun.facelets.tag.MetaRuleset;
 import com.sun.facelets.tag.jsf.ComponentConfig;
 import com.sun.facelets.tag.jsf.ComponentHandler;
 
-public abstract class AonComponentHandler extends ComponentHandler {
+public class AonComponentHandler extends ComponentHandler {
 
-    protected static final String PARTIAL_SUBMIT = "partialSubmit";
-    protected static final String FALSE = "false";
-
+    private ComponentConfig config;
+    
     /**
 	 * The Constructor.
 	 * 
 	 * @param config
 	 *            the config
 	 */
-	public AonComponentHandler(ComponentConfig config) {
+	public AonComponentHandler( ComponentConfig config) {
 		super(config);
+		this.config = config;
+	}
+	
+	public ComponentConfig getConfig() {
+		return config;
+	}
+
+	protected URL getTemplate(String resource) {
+		ClassLoader loader = this.getClass().getClassLoader();
+		return loader.getResource(resource);
 	}
 
 	protected void insertTemplate(FaceletContext ctx, UIComponent parent, URL template, VariableMapper newMapper ) {
-		VariableMapper orig = ctx.getVariableMapper();
-		ctx.setVariableMapper(newMapper);
-		try {
-			ctx.includeFacelet(parent, template);
-		} catch (Throwable th) {
-			throw new TagException(this.tag, "Error inserting template '"
-					+ template + "': " + th.getMessage());
-		} finally {
-			ctx.setVariableMapper(orig);
-		}
+		FaceletUtil.insertTemplate(ctx, this.tag, parent, template, newMapper);
 	}
 	
-	protected boolean hasValue(FaceletContext ctx, String name) {
-		TagAttribute tagAttribute = getAttribute(name);
-		if (tagAttribute != null) {
-			String value = tagAttribute.getValue(ctx);
-			return !StringUtils.isBlank(value);
-		}
-		return false;
-	}
-
 	public static String appendExpression(String expression, String value) {
 		StringBuffer sb = new StringBuffer(expression);
 		int offset = sb.length() - 1;
@@ -57,5 +46,22 @@ public abstract class AonComponentHandler extends ComponentHandler {
 		sb.insert(offset, value);
 		return sb.toString();
 	}
+	
+	public boolean hasValue(FaceletContext ctx, String name) {
+		return FaceletUtil.hasValue(ctx, tag, name);
+	}	
 
+	@Override
+	protected MetaRuleset createMetaRuleset(Class type) {
+		MetaRuleset set = super.createMetaRuleset(type);
+		ComponentManager.getInstance().updateMetaRuleset( tag, set );
+		return set;
+	}
+
+	@Override
+	protected void setAttributes( FaceletContext ctx, Object instance ) {
+		super.setAttributes(ctx, instance);
+		ComponentManager.getInstance().setAttributes( tag, ctx, (UIComponent) instance );
+	}
+	
 }
