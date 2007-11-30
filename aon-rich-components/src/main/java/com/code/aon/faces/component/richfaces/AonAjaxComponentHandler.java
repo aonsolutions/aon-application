@@ -1,0 +1,31 @@
+package com.code.aon.faces.component.richfaces;
+
+import javax.faces.component.UIComponent;
+
+import org.ajax4jsf.webapp.taglib.AjaxComponentHandler;
+
+import com.code.aon.faces.component.ComponentManager;
+import com.sun.facelets.FaceletContext;
+import com.sun.facelets.tag.MetaRuleset;
+import com.sun.facelets.tag.jsf.ComponentConfig;
+
+public class AonAjaxComponentHandler extends AjaxComponentHandler {
+
+	public AonAjaxComponentHandler(ComponentConfig config) {
+		super(config);
+	}
+
+	@Override
+	protected MetaRuleset createMetaRuleset(Class type) {
+		MetaRuleset set = super.createMetaRuleset(type);
+		ComponentManager.getInstance().updateMetaRuleset( tag, set );
+		return set;
+	}
+
+	@Override
+	protected void setAttributes( FaceletContext ctx, Object instance ) {
+		super.setAttributes(ctx, instance);
+		ComponentManager.getInstance().setAttributes( tag, ctx, (UIComponent) instance );
+	}
+
+}

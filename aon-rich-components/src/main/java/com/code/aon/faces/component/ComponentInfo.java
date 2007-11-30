@@ -3,11 +3,11 @@ package com.code.aon.faces.component;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.lang.builder.ToStringBuilder;
+
 public class ComponentInfo {
 
 	private String localName;
-	
-	private String namespace;
 	
 	private List<AttributeInfo> attributes;
 	
@@ -23,18 +23,6 @@ public class ComponentInfo {
 		this.localName = localName;
 	}
 
-	public String getNamespace() {
-		return namespace;
-	}
-
-	public void setNamespace(String namespace) {
-		this.namespace = namespace;
-	}
-
-	public String getFullName() {
-		return namespace + "/" + localName;
-	}
-	
 	public AttributeInfo getAttributeInfo( String name ) {
 		for( AttributeInfo ai : attributes ) {
 			if ( ai.getName().equals(name) ) {
@@ -50,6 +38,11 @@ public class ComponentInfo {
 
 	public void addAttribute(AttributeInfo attribute) {
 		this.attributes.add( attribute );
+	}
+	
+	@Override
+	public String toString() {
+	     return new ToStringBuilder(this).append("localName", localName).toString();
 	}
 	
 }
