@@ -3,7 +3,7 @@
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:ice="http://www.icesoft.com/icefaces/component"
-	xmlns:aon="http://www.code.es/aon-components"
+	xmlns:aon="http://www.code.es/aon-ice-components"
 	xmlns:c="http://java.sun.com/jstl/core"
 	xmlns:h="http://java.sun.com/jsf/html">
 <body>
@@ -165,7 +165,7 @@
 			</f:facet>
 		
 			<f:facet name="body">
-				<h:panelGrid id="popupBody" width="100%" cellpadding="0" cellspacing="0" column="1"
+				<h:panelGrid id="popupBody" width="100%" cellpadding="0" cellspacing="0" columns="1"
 					columnClasses="popupIcon,aon-text-right popupButton">
 					<aon:outputText value="#{appBundle.aon_webmail_folder_name}:" />
 					<aon:inputText id="renameFolderName"

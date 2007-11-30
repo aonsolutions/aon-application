@@ -264,7 +264,7 @@
 	<!-- FCK Faces Servlet -->
 	<servlet>
 		<servlet-name>InputRichText Servlet</servlet-name>
-		<servlet-class>com.code.aon.faces.component.inputRichText.InputRichTextServlet</servlet-class>
+		<servlet-class>com.code.aon.faces.component.icefaces.inputRichText.InputRichTextServlet</servlet-class>
 		<init-param>
 			<description>Allows to specify the path of the resources</description>
 			<param-name>customResourcePath</param-name>
@@ -339,7 +339,7 @@
 		<auth-method>FORM</auth-method>
 		<form-login-config>
 			<form-login-page>/login/login.jspx</form-login-page>
-			<form-error-page>/login/LoginError.jsp?aon_login_error_code=666</form-error-page>
+			<form-error-page>/login/errorlogin.jspx</form-error-page>
 		</form-login-config>
 	</login-config>
 
