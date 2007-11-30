@@ -42,7 +42,7 @@
 		<tag-name>form</tag-name>
 		<component>
 			<component-type>com.code.aon.faces.Form</component-type>
-			<handler-class>com.code.aon.faces.component.AonComponentHandler</handler-class>
+			<handler-class>com.code.aon.faces.component.richfaces.AonAjaxComponentHandler</handler-class>
 		</component>
 	</tag>
 	<tag>
@@ -63,14 +63,14 @@
 		<tag-name>commandButton</tag-name>
 		<component>
 			<component-type>com.code.aon.faces.CommandButton</component-type>
-			<handler-class>com.code.aon.faces.component.AonComponentHandler</handler-class>
+			<handler-class>com.code.aon.faces.component.richfaces.AonAjaxComponentHandler</handler-class>
 		</component>
 	</tag>
 	<tag>
 		<tag-name>commandLink</tag-name>
 		<component>
 			<component-type>com.code.aon.faces.CommandLink</component-type>
-			<handler-class>com.code.aon.faces.component.AonComponentHandler</handler-class>
+			<handler-class>com.code.aon.faces.component.richfaces.AonAjaxComponentHandler</handler-class>
 		</component>
 	</tag>
 	<tag>
@@ -84,7 +84,7 @@
 		<tag-name>panelTabSet</tag-name>
 		<component>
 			<component-type>com.code.aon.faces.PanelTabSet</component-type>
-			<handler-class>com.code.aon.faces.component.AonComponentHandler</handler-class>
+			<handler-class>com.code.aon.faces.component.richfaces.panelTab.PanelTabSetHandler</handler-class>
 		</component>
 	</tag>
 	<tag>
@@ -205,6 +205,10 @@
 			<component-type>com.code.aon.faces.RowSelector</component-type>
 			<handler-class>com.code.aon.faces.component.richfaces.rowSelector.RowSelectorHandler</handler-class>
 		</component>
+	</tag>
+	<tag>
+		<tag-name>valueChangeNotifier</tag-name>
+		<handler-class>com.code.aon.faces.component.sandbox.ValueChangeNotifierHandler</handler-class>
 	</tag>
     <!-- 
     <tag>

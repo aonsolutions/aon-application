@@ -9,6 +9,8 @@ import javax.el.VariableMapper;
 import javax.faces.component.UIComponent;
 import javax.faces.event.ActionEvent;
 
+import org.apache.commons.lang.StringUtils;
+
 import com.sun.facelets.FaceletContext;
 import com.sun.facelets.tag.Tag;
 import com.sun.facelets.tag.TagAttribute;
@@ -19,6 +21,15 @@ public class FaceletUtil {
 	public final static Class[] ACTION_SIG = new Class[0];
 
 	public final static Class[] ACTION_LISTENER_SIG = new Class[] { ActionEvent.class };
+	
+	public static boolean hasValue(FaceletContext ctx, Tag tag, String name) {
+		TagAttribute tagAttribute = tag.getAttributes().get(name);
+		if (tagAttribute != null) {
+			String value = tagAttribute.getValue(ctx);
+			return !StringUtils.isBlank(value);
+		}
+		return false;
+	}
 	
 	public static ValueExpression getMethodExpression(FaceletContext ctx, TagAttribute tag, Class type, Class[] paramTypes ) {
 		ValueExpression valueExpression = null;

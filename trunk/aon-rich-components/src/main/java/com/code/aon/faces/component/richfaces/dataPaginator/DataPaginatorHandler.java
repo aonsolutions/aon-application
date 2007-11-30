@@ -2,13 +2,17 @@ package com.code.aon.faces.component.richfaces.dataPaginator;
 
 import javax.faces.component.UIComponent;
 
-import com.code.aon.faces.component.AonComponentHandler;
+import org.richfaces.taglib.DataScrollerTagHandler;
+
+import com.code.aon.faces.component.ComponentManager;
 import com.code.aon.faces.component.myfaces.UIComponentTagUtils;
+import com.code.aon.faces.component.util.FaceletUtil;
 import com.sun.facelets.FaceletContext;
+import com.sun.facelets.tag.MetaRuleset;
 import com.sun.facelets.tag.TagAttribute;
 import com.sun.facelets.tag.jsf.ComponentConfig;
 
-public class DataPaginatorHandler extends AonComponentHandler {
+public class DataPaginatorHandler extends DataScrollerTagHandler {
 
 	private static final String PAGINATOR_ATTRIBUTE = "paginator";
 	
@@ -35,20 +39,28 @@ public class DataPaginatorHandler extends AonComponentHandler {
 	}
 	
 	private void setControlsValue( FaceletContext ctx, UIComponent component, String value ) {
-		if (! hasValue(ctx, BOUNDARY_CONTROLS_ATTRIBUTE) ) {
+		if (! FaceletUtil.hasValue(ctx, tag, BOUNDARY_CONTROLS_ATTRIBUTE) ) {
 			UIComponentTagUtils.setStringProperty( ctx.getFacesContext(), component, BOUNDARY_CONTROLS_ATTRIBUTE, value );			
 		}
-		if (! hasValue(ctx, STEP_CONTROLS_ATTRIBUTE) ) {		
+		if (! FaceletUtil.hasValue(ctx, tag, STEP_CONTROLS_ATTRIBUTE) ) {		
 			UIComponentTagUtils.setStringProperty( ctx.getFacesContext(), component, STEP_CONTROLS_ATTRIBUTE, value );
 		}
-		if (! hasValue(ctx, FAST_CONTROLS_ATTRIBUTE) ) {
+		if (! FaceletUtil.hasValue(ctx, tag, FAST_CONTROLS_ATTRIBUTE) ) {
 			UIComponentTagUtils.setStringProperty( ctx.getFacesContext(), component, FAST_CONTROLS_ATTRIBUTE, value );
 		}
 	}
 	
 	@Override
+	protected MetaRuleset createMetaRuleset(Class type) {
+		MetaRuleset set = super.createMetaRuleset(type);
+		ComponentManager.getInstance().updateMetaRuleset( tag, set );
+		return set;
+	}
+
+	@Override
 	protected void setAttributes(FaceletContext ctx, Object instance) {
 		super.setAttributes(ctx, instance);
+		ComponentManager.getInstance().setAttributes( tag, ctx, (UIComponent) instance );
 		UIComponent component = (UIComponent) instance;
 		if ( isPaginator(ctx) ) {
 			setControlsValue(ctx, component, AUTO_VALUE);

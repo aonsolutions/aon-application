@@ -2,9 +2,11 @@ package com.code.aon.faces.component;
 
 import javax.faces.component.UIComponent;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.builder.ToStringBuilder;
 
+import com.code.aon.faces.component.util.FaceletUtil;
 import com.sun.facelets.FaceletContext;
+import com.sun.facelets.tag.Tag;
 
 public class AttributeInfo {
 
@@ -72,12 +74,17 @@ public class AttributeInfo {
 		this.type = AttributeType.values()[type];
 	}
 
-	public void update( AonComponentHandler aonComponent, FaceletContext ctx, UIComponent component ) {
+	public void update( Tag tag, FaceletContext ctx, UIComponent component ) {
 		if ( (! isIgnore()) && (getValue() != null) ) {
-			if ( isForce() || (!aonComponent.hasValue(ctx, getName())) ) {
+			if ( isForce() || (!FaceletUtil.hasValue(ctx, tag, getName())) ) {
 				getAttributeType().setValue(ctx.getFacesContext(), component, getName(), getValue());
 			}
 		}
+	}
+	
+	@Override
+	public String toString() {
+	     return ToStringBuilder.reflectionToString(this);
 	}
 	
 }

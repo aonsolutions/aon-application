@@ -3,9 +3,9 @@ package com.code.aon.faces.component.util;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.code.aon.faces.component.AonComponentHandler;
 import com.code.aon.faces.component.AttributeInfo;
 import com.code.aon.faces.component.ComponentInfo;
+import com.code.aon.faces.component.ComponentManager;
 import com.sun.facelets.FaceletHandler;
 import com.sun.facelets.tag.Tag;
 import com.sun.facelets.tag.TagAttribute;
@@ -61,7 +61,7 @@ public class AonComponentConfig implements ComponentConfig {
     	for( TagAttribute attribute : tag.getAttributes().getAll() ) {
     		map.put( attribute.getLocalName(), attribute );
     	}
-		ComponentInfo componentInfo = AonComponentHandler.getComponentManager().getComponent(tag);
+		ComponentInfo componentInfo = ComponentManager.getInstance().getComponentInfo(tag);
 		if ( componentInfo != null ) {
 			for( AttributeInfo ainfo : componentInfo.getAttributes() ) {
 				if ( ainfo.isIgnore() ) {

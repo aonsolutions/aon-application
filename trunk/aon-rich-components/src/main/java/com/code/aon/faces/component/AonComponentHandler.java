@@ -5,21 +5,14 @@ import java.net.URL;
 import javax.el.VariableMapper;
 import javax.faces.component.UIComponent;
 
-import org.apache.commons.lang.StringUtils;
-
 import com.code.aon.faces.component.util.FaceletUtil;
 import com.sun.facelets.FaceletContext;
 import com.sun.facelets.tag.MetaRuleset;
-import com.sun.facelets.tag.TagAttribute;
 import com.sun.facelets.tag.jsf.ComponentConfig;
 import com.sun.facelets.tag.jsf.ComponentHandler;
 
 public class AonComponentHandler extends ComponentHandler {
 
-	private static final String COMPONENTS_RESOURCE = "components.xml";
-	
-	private static ComponentManager componentManager = new ComponentManager(COMPONENTS_RESOURCE);
-	
     private ComponentConfig config;
     
     /**
@@ -46,15 +39,6 @@ public class AonComponentHandler extends ComponentHandler {
 		FaceletUtil.insertTemplate(ctx, this.tag, parent, template, newMapper);
 	}
 	
-	public boolean hasValue(FaceletContext ctx, String name) {
-		TagAttribute tagAttribute = getAttribute(name);
-		if (tagAttribute != null) {
-			String value = tagAttribute.getValue(ctx);
-			return !StringUtils.isBlank(value);
-		}
-		return false;
-	}
-
 	public static String appendExpression(String expression, String value) {
 		StringBuffer sb = new StringBuffer(expression);
 		int offset = sb.length() - 1;
@@ -62,22 +46,22 @@ public class AonComponentHandler extends ComponentHandler {
 		sb.insert(offset, value);
 		return sb.toString();
 	}
+	
+	public boolean hasValue(FaceletContext ctx, String name) {
+		return FaceletUtil.hasValue(ctx, tag, name);
+	}	
 
 	@Override
 	protected MetaRuleset createMetaRuleset(Class type) {
 		MetaRuleset set = super.createMetaRuleset(type);
-		componentManager.updateMetaRuleset( this, set );
+		ComponentManager.getInstance().updateMetaRuleset( tag, set );
 		return set;
 	}
 
 	@Override
 	protected void setAttributes( FaceletContext ctx, Object instance ) {
 		super.setAttributes(ctx, instance);
-		componentManager.setAttributes( this, ctx, (UIComponent) instance );
-	}
-
-	public static ComponentManager getComponentManager() {
-		return componentManager;
+		ComponentManager.getInstance().setAttributes( tag, ctx, (UIComponent) instance );
 	}
 	
 }

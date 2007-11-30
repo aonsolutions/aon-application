@@ -1,76 +1,75 @@
-	package com.code.aon.faces.component;
+package com.code.aon.faces.component;
 
-import java.io.InputStream;
+import java.io.IOException;
+import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.faces.component.UIComponent;
 
-import org.apache.commons.digester.Digester;
-
 import com.sun.facelets.FaceletContext;
 import com.sun.facelets.tag.MetaRuleset;
 import com.sun.facelets.tag.Tag;
+import com.sun.facelets.util.Classpath;
 
 public class ComponentManager {
+
+	private static final String SUFFIX = ".aonlib.xml";
 	
-	private static final Logger LOGGER = Logger.getLogger(ComponentManager.class.getName());	
-
-	private Map<String,ComponentInfo> components;
-
-	public ComponentManager( String resource ) {
-		this.components = new HashMap<String, ComponentInfo>();
-		init(resource);
+    private final static Logger log = Logger.getLogger(ComponentManager.class.getName());	
+	
+	private static final ComponentManager SINGLETON = new ComponentManager();
+	
+	private Map<String,ComponentLibrary> libraries;
+	
+	private ComponentManager() {
+		this.libraries = new HashMap<String, ComponentLibrary>();
+		loadImplicit();
 	}
 	
-	private String getFullName( Tag tag ) {
-		return tag.getNamespace() + "/" + tag.getLocalName();
+    public void loadImplicit() {
+        ClassLoader cl = Thread.currentThread().getContextClassLoader();
+        try {
+	        URL[] urls = Classpath.search(cl, "META-INF/", SUFFIX);
+	        for (int i = 0; i < urls.length; i++) {
+	            try {
+	            	addComponentLibrary( urls[i] );
+	                log.info("Added Library from: " + urls[i]);
+	            } catch (Exception e) {
+	                log.log(Level.SEVERE, "Error Loading Library: " + urls[i], e);
+	            }
+	        }
+        } catch ( IOException ioe ) {
+        	log.log(Level.SEVERE, "Error searching files with suffix: " + SUFFIX, ioe);
+        }
+    }
+	
+	public static ComponentManager getInstance() {
+		return SINGLETON;
 	}
 	
-	public ComponentInfo getComponent( Tag tag ) {
-		return this.components.get( getFullName(tag) );
+	private void addComponentLibrary( URL resource ) {
+		ComponentLibrary library = new ComponentLibrary(resource);
+		this.libraries.put( library.getNamespace(), library );
 	}
-	
-	public void addComponent( ComponentInfo componentInfo ) {
-		this.components.put( componentInfo.getFullName(), componentInfo );
-	}
-
-	private void init( String resource ) {
-		try {
-			InputStream in = ComponentManager.class.getResourceAsStream(resource);
-			getDigester().parse( in );
-			in.close();
-		} catch ( Throwable th ) {
-			LOGGER.severe( th.getMessage() );
-		}
-	}
-	
-	private Digester getDigester() {
-		Digester digester = new Digester();
-		digester.setValidating(false);
-
-		digester.push( this );
-		
-		digester.addObjectCreate( "*/component", ComponentInfo.class );
-		digester.addSetProperties( "*/component" );
-		digester.addSetNext("*/component", "addComponent");
-
-		digester.addObjectCreate( "*/attribute", AttributeInfo.class );
-		digester.addSetProperties( "*/attribute" );
-		digester.addSetNext("*/attribute", "addAttribute");
-		
-		return digester;
-	}	
 	
 	public ComponentInfo getComponentInfo( AonComponentHandler aonComponent ) {
 		Tag tag = aonComponent.getConfig().getTag();
-		ComponentInfo componentInfo = getComponent( tag );
-		return componentInfo;
+		return getComponentInfo( tag );
 	}
 
-	public void updateMetaRuleset( AonComponentHandler aonComponent, MetaRuleset set ) {
-		ComponentInfo componentInfo = getComponentInfo( aonComponent );
+	public ComponentInfo getComponentInfo( Tag tag ) {
+		ComponentLibrary library = this.libraries.get(tag.getNamespace());
+		if ( library != null ) {
+			return library.getComponent( tag.getLocalName() );			
+		}
+		return null;
+	}
+	
+	public void updateMetaRuleset( Tag tag, MetaRuleset set ) {
+		ComponentInfo componentInfo = getComponentInfo( tag );
 		if ( componentInfo != null ) {
 			for( AttributeInfo attribute : componentInfo.getAttributes() ) {
 				if ( attribute.isIgnore() ) {
@@ -82,13 +81,14 @@ public class ComponentManager {
 		}
 	}
 	
-	public void setAttributes( AonComponentHandler aonComponent, FaceletContext ctx, UIComponent component ) {
-		ComponentInfo componentInfo = getComponentInfo( aonComponent );
+	public void setAttributes( Tag tag, FaceletContext ctx, UIComponent component ) {
+		ComponentInfo componentInfo = getComponentInfo( tag );
 		if ( componentInfo != null ) {
 			for( AttributeInfo attribute : componentInfo.getAttributes() ) {
-				attribute.update(aonComponent, ctx, component);
+				attribute.update( tag, ctx, component );
 			}
 		}
 	}
 
+	
 }
