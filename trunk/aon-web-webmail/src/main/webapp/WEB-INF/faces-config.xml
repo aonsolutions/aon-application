@@ -102,6 +102,13 @@
 		<managed-bean-scope>request</managed-bean-scope>
 	</managed-bean>
 
+	<!-- ***************** FAILED LOGIN ******************** -->
+	<managed-bean>
+		<managed-bean-name>failedLogin</managed-bean-name>
+		<managed-bean-class>com.code.aon.bridge.session.FailedLogin</managed-bean-class>
+		<managed-bean-scope>request</managed-bean-scope>
+	</managed-bean>
+
 	<!-- ************** REQUEST HANDLER ****************** -->
 	<managed-bean>
 		<managed-bean-name>requestController</managed-bean-name>
