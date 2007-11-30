@@ -139,6 +139,37 @@
 		<param-value>true</param-value> 
 	</context-param>
  -->	
+
+    <!-- Sessions Filter -->
+<!-- 
+	<filter>
+	   <filter-name>SessionFilter</filter-name>
+	   <filter-class>com.code.aon.bridge.session.SessionFilter</filter-class>
+	</filter>
+	<filter-mapping>
+	   <filter-name>SessionFilter</filter-name>
+		<url-pattern>*.jsp</url-pattern>
+	</filter-mapping>
+ -->
+ 
+	<!-- BackDoorAuthentication Filter -->
+	<filter>
+		<filter-name>BackDoorAuthenticationFilter</filter-name>
+		<filter-class>com.code.aon.bridge.session.BackDoorAuthenticationFilter</filter-class>
+	</filter>
+	<!-- Enables and Registers session for concurrent sessions -->
+	<filter-mapping>
+		<filter-name>BackDoorAuthenticationFilter</filter-name>
+		<url-pattern>/auth/*</url-pattern>
+	</filter-mapping>
+ 
+  	<!-- Listener, that enables Concurrent Sessions per User. -->
+<!-- 
+	<listener>
+		<listener-class>com.code.aon.bridge.session.ConcurrentSessionListener</listener-class>
+	</listener>
+ -->
+ 
   	<!-- Listener, that does all the startup work (configuration, init). -->
 <!--   	
 	<listener>
@@ -287,8 +318,12 @@
 			<url-pattern>/facelet/*</url-pattern>
 		</web-resource-collection>
 		<web-resource-collection>
+			<web-resource-name>webmail</web-resource-name>
+			<url-pattern>/webmail/*</url-pattern>
+		</web-resource-collection>
+		<web-resource-collection>
 			<web-resource-name>jsp</web-resource-name>
-			<url-pattern>*.jsp</url-pattern>
+			<url-pattern>/index.jsp</url-pattern>
 		</web-resource-collection>
 		<web-resource-collection>
 			<web-resource-name>faces</web-resource-name>
