@@ -105,4 +105,8 @@
     	<attribute name="toggleOnClick" alias="rendered" />
 	</component>
 
+	<component localName="mediaOutput">
+    	<attribute name="styleClass" value="aon-border" />			
+	</component>
+
 </components>
