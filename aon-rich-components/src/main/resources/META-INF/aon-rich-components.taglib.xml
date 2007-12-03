@@ -210,6 +210,13 @@
 		<tag-name>valueChangeNotifier</tag-name>
 		<handler-class>com.code.aon.faces.component.sandbox.ValueChangeNotifierHandler</handler-class>
 	</tag>
+	<tag>
+		<tag-name>mediaOutput</tag-name>
+		<component>
+			<component-type>com.code.aon.faces.MediaOutput</component-type>
+			<handler-class>com.code.aon.faces.component.richfaces.mediaOutput.MediaOutputHandler</handler-class>
+		</component>
+	</tag>
     <!-- 
     <tag>
         <tag-name>lookupButton</tag-name>

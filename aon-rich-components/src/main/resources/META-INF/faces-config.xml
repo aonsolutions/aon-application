@@ -117,6 +117,10 @@
         <component-type>com.code.aon.faces.RowSelector</component-type>
         <component-class>org.ajax4jsf.component.html.HtmlAjaxSupport</component-class>
     </component>
+    <component>
+        <component-type>com.code.aon.faces.MediaOutput</component-type>
+        <component-class>org.ajax4jsf.component.html.MediaOutput</component-class>
+    </component>
 	<!-- 
     <component>
         <component-type>com.code.aon.faces.HtmlLookupButton</component-type>
