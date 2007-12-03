@@ -132,7 +132,7 @@ public class ConfirmButtonHandler extends AonIceComponentHandler implements
 		if( tagImmediate != null){
 			newMapper.setVariable(IMMEDIATE, getValueExpression(ctx, tagImmediate) );
 		} else {
-			newMapper.setVariable(IMMEDIATE, ctx.getExpressionFactory().createValueExpression(ctx, "#{" + IMMEDIATE + "}", Boolean.class));
+			newMapper.setVariable(IMMEDIATE, ctx.getExpressionFactory().createValueExpression(ctx, "false", Boolean.class));
 		}
 		newMapper.setVariable(CONFIRM_SHOW_WINDOW, getStateExpression(ctx, component));
 		newMapper.setVariable(CONFIRM_TITLE, getValueExpression(ctx, titleTag));
