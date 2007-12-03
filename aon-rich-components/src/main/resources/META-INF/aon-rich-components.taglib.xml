@@ -203,6 +203,7 @@
 		<tag-name>rowSelector</tag-name>
 		<component>
 			<component-type>com.code.aon.faces.RowSelector</component-type>
+			<renderer-type>com.code.aon.faces.RowSelectorRenderer</renderer-type>
 			<handler-class>com.code.aon.faces.component.richfaces.rowSelector.RowSelectorHandler</handler-class>
 		</component>
 	</tag>
