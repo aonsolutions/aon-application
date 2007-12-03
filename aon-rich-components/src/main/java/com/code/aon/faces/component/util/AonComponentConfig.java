@@ -78,7 +78,7 @@ public class AonComponentConfig implements ComponentConfig {
 							ta = newTagAttributeValue( ta, ainfo.getValue() );
 							map.put( ta.getLocalName(), ta );
 						}
-					} else {
+					} else if ( ainfo.getValue() != null ) {
 						ta = new TagAttribute( tag.getLocation(), "", ainfo.getName(), ainfo.getName(), ainfo.getValue() );
 						map.put( ta.getLocalName(), ta );
 					}
