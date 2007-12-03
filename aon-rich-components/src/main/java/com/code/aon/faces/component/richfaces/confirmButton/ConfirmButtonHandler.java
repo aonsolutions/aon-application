@@ -98,7 +98,7 @@ public class ConfirmButtonHandler extends AonComponentHandler implements
 		if( tagImmediate != null){
 			newMapper.setVariable(IMMEDIATE, getValueExpression(ctx, tagImmediate) );
 		} else {
-			newMapper.setVariable(IMMEDIATE, ctx.getExpressionFactory().createValueExpression(ctx, "#{" + IMMEDIATE + "}", Boolean.class));
+			newMapper.setVariable(IMMEDIATE, ctx.getExpressionFactory().createValueExpression(ctx, "false", Boolean.class));
 		}
 		ValueExpression id = ctx.getExpressionFactory().createValueExpression(ctx, getPanelId(ctx), String.class);
 		newMapper.setVariable(CONFIRM_ID, id);

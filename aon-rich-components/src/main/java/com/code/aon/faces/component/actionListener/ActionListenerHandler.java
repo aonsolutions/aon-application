@@ -3,7 +3,6 @@ package com.code.aon.faces.component.actionListener;
 import java.io.IOException;
 import java.io.Serializable;
 
-import javax.el.ELContext;
 import javax.el.ELException;
 import javax.el.MethodExpression;
 import javax.faces.FacesException;
@@ -15,6 +14,7 @@ import javax.faces.el.MethodBinding;
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 import javax.faces.event.ActionListener;
+import javax.faces.event.MethodExpressionActionListener;
 
 import com.sun.facelets.FaceletContext;
 import com.sun.facelets.FaceletException;
@@ -48,7 +48,8 @@ public class ActionListenerHandler extends TagHandler {
 				ActionListener listener;
 
 				if (FacesAPI.getVersion() >= 12 && src instanceof ActionSource2) {
-					listener = new MethodActionListener(methodExpr);
+					listener = new MethodExpressionActionListener(
+                            this.method.getMethodExpression(ctx, null, ACTION_LISTENER_SIG));
 				} else {
 					listener = new LegacyMethodActionListener(
 							new LegacyMethodBinding(methodExpr));
@@ -78,27 +79,6 @@ public class ActionListenerHandler extends TagHandler {
 				throws AbortProcessingException {
 			FacesContext facescontext = FacesContext.getCurrentInstance();
 			this.method.invoke(facescontext, new Object[] { evt });
-		}
-
-	}
-
-	private static class MethodActionListener implements ActionListener,
-			Serializable {
-
-		private MethodExpression method;
-
-		public MethodActionListener() {
-		};
-
-		public MethodActionListener(MethodExpression method) {
-			this.method = method;
-		}
-
-		public void processAction(ActionEvent evt)
-				throws AbortProcessingException {
-			FacesContext faces = FacesContext.getCurrentInstance();
-			ELContext el = faces.getELContext();
-			this.method.invoke( el, new Object[] { evt });
 		}
 
 	}
