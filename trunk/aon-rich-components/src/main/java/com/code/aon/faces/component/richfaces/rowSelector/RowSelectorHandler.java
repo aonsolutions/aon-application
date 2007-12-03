@@ -81,13 +81,28 @@ public class RowSelectorHandler extends AjaxSupportHandler {
 		dataTable.setOnRowMouseOver(mouseOver.toString());
 	}
 	
+	private Map<String,Object> getAttributes( FaceletContext ctx ) {
+		return ctx.getFacesContext().getViewRoot().getAttributes();
+	}
+	
+	private boolean isTemplateInserted( FaceletContext ctx ) {
+		return getAttributes(ctx).containsKey(TEMPLATE_INSERTED);		
+	}
+
+	private void setTemplateInserted( FaceletContext ctx, boolean value ) {
+		if ( value ) {
+			getAttributes(ctx).put(TEMPLATE_INSERTED, "true");
+		} else {
+			getAttributes(ctx).remove(TEMPLATE_INSERTED);
+		}
+	}
+	
 	private void insertTemplate(FaceletContext ctx, UIComponent parent) {
-		Map<String, Object> map = ctx.getFacesContext().getExternalContext().getRequestMap();
-		if (!map.containsKey(TEMPLATE_INSERTED)) {
+		if (! isTemplateInserted(ctx) ) {
 			VariableMapper newMapper = new VariableMapperWrapper(ctx.getVariableMapper());
 			URL template = RowSelectorHandler.class.getResource(TEMPLATE);
 			FaceletUtil.insertTemplate(ctx, this.tag, parent, template, newMapper);
-			map.put(TEMPLATE_INSERTED, "true");
+			setTemplateInserted( ctx, true );
 		}
 	}
 
