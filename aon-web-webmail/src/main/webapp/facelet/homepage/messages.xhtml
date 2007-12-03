@@ -18,18 +18,15 @@
 						columns="2" columnClasses="aon-popup-title, aon-popup-title-closeButton">
 						<aon:outputText value="MENSAJES" />
 						<aon:commandButton type="button" styleClass="aon-popup-button-close" immediate="true"
-							image="">
+							image="/images/icefaces/popupclose.gif">
 						</aon:commandButton>							
 					</aon:panelGrid>
 				</f:facet>
 
 				<f:facet name="body">
-
-					<aon:div id="aon-errors" forceId="#{true}">
+					<aon:div id="aon-errors">
 						<aon:messages />
 					</aon:div>
-
-
 				</f:facet>
 
 			</ice:panelPopup>
