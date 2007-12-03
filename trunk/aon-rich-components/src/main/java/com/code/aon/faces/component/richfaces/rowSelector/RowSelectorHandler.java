@@ -1,19 +1,14 @@
 package com.code.aon.faces.component.richfaces.rowSelector;
 
 import java.io.IOException;
-import java.net.URL;
-import java.util.Map;
 
-import javax.el.VariableMapper;
 import javax.faces.component.UIComponent;
 
 import org.ajax4jsf.taglib.html.facelets.AjaxSupportHandler;
 import org.richfaces.component.html.HtmlDataTable;
 
 import com.code.aon.faces.component.util.AonComponentConfig;
-import com.code.aon.faces.component.util.FaceletUtil;
 import com.sun.facelets.FaceletContext;
-import com.sun.facelets.el.VariableMapperWrapper;
 import com.sun.facelets.tag.TagAttribute;
 import com.sun.facelets.tag.TagException;
 import com.sun.facelets.tag.jsf.ComponentConfig;
@@ -26,8 +21,6 @@ import com.sun.facelets.tag.jsf.ComponentSupport;
  */
 public class RowSelectorHandler extends AjaxSupportHandler {
 
-	private static final String TEMPLATE_INSERTED = "com.code.aon.faces.RowSelector.templateInserted";
-
 	private static final String MOUSE_OVER_CLASS_ATTRIBUTE = "mouseOverClass";
 	
 	private static final String MOUSE_OVER_CLASS_VALUE = "aon-table-row-hover";	
@@ -35,8 +28,6 @@ public class RowSelectorHandler extends AjaxSupportHandler {
 	private static final String SELECTED_CLASS_ATTRIBUTE = "selectedClass";
 	
 	private static final String SELECTED_CLASS_VALUE = "aon-table-row-selected";	
-
-	private static final String TEMPLATE = "template.xhtml";
 	
 	private ComponentConfig originalConfig;
 	
@@ -81,38 +72,12 @@ public class RowSelectorHandler extends AjaxSupportHandler {
 		dataTable.setOnRowMouseOver(mouseOver.toString());
 	}
 	
-	private Map<String,Object> getAttributes( FaceletContext ctx ) {
-		return ctx.getFacesContext().getViewRoot().getAttributes();
-	}
-	
-	private boolean isTemplateInserted( FaceletContext ctx ) {
-		return getAttributes(ctx).containsKey(TEMPLATE_INSERTED);		
-	}
-
-	private void setTemplateInserted( FaceletContext ctx, boolean value ) {
-		if ( value ) {
-			getAttributes(ctx).put(TEMPLATE_INSERTED, "true");
-		} else {
-			getAttributes(ctx).remove(TEMPLATE_INSERTED);
-		}
-	}
-	
-	private void insertTemplate(FaceletContext ctx, UIComponent parent) {
-		if (! isTemplateInserted(ctx) ) {
-			VariableMapper newMapper = new VariableMapperWrapper(ctx.getVariableMapper());
-			URL template = RowSelectorHandler.class.getResource(TEMPLATE);
-			FaceletUtil.insertTemplate(ctx, this.tag, parent, template, newMapper);
-			setTemplateInserted( ctx, true );
-		}
-	}
-
 	@Override
 	public void apply(FaceletContext ctx, UIComponent parent) throws IOException {
 		if (parent instanceof HtmlDataTable) {
 			HtmlDataTable dataTable = (HtmlDataTable) parent;
 			if (ComponentSupport.isNew(parent)) {
 				addRowClasses( ctx, dataTable );
-				insertTemplate( ctx, dataTable );
 			}
 		} else {
 			throw new TagException(this.tag,
