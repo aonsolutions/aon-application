@@ -41,7 +41,6 @@
 								styleClass="aon-popup-button"
 								immediate="#{immediate}"
 								onclick="Richfaces.hideModalPanel('#{confirmId}');">
-								<f:setPropertyActionListener target="#{confirmShowWindow}" value="#{false}" />
 								<c:if test="#{confirmActionListener != null}">									
 									<aon:actionListener method="#{confirmActionListener}" />
 								</c:if>
