@@ -21,7 +21,10 @@
 						alt="#{appBundle.aon_application_title}"/>
 				</t:div>
 				<t:div styleClass="aon-applicationName">
-					<h:outputText value="#{appBundle.aon_application_title}" /> 
+					<h:outputText value="#{appBundle.aon_application_title}" />
+					<h:outputText value="[" />
+					<h:outputText value="#{aonConfiguration.applicationVersion}" />
+					<h:outputText value="]" /> 
 				</t:div>				
 			</h:panelGroup>
 
