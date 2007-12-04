@@ -27,8 +27,9 @@ public class FinanceControllerListener extends ControllerAdapter{
 		Criteria criteria;
 		try {
 			criteria = event.getController().getCriteria();
-			criteria.addOrder(event.getController().getFieldName(IFinanceAlias.FINANCE_REGISTRY_ID));
 			criteria.addOrder(event.getController().getFieldName(IFinanceAlias.FINANCE_DUE_DATE));
+			criteria.addOrder(event.getController().getFieldName(IFinanceAlias.FINANCE_INVOICE_SERIES));
+			criteria.addOrder(event.getController().getFieldName(IFinanceAlias.FINANCE_INVOICE_NUMBER));
 		} catch (ManagerBeanException e) {
 			
 		}
@@ -74,6 +75,7 @@ public class FinanceControllerListener extends ControllerAdapter{
 		}
 	}
 
+	@SuppressWarnings("unchecked")
 	private Integer obtainRegistryBankId(Finance finance) {
 		try {
 			IManagerBean rBankBean = BeanManager.getManagerBean(RegistryBank.class);
@@ -91,6 +93,7 @@ public class FinanceControllerListener extends ControllerAdapter{
 		return null;
 	}
 	
+	@SuppressWarnings("unchecked")
 	private RegistryBank obtainRegistryBank(Integer registryBankId) {
 		try {
 			IManagerBean rBankBean = BeanManager.getManagerBean(RegistryBank.class);
