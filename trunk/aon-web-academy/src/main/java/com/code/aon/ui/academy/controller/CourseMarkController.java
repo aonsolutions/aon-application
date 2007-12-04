@@ -161,6 +161,8 @@ public class CourseMarkController{
     	Criteria courseAlumnCriteria = new Criteria();
     	courseAlumnCriteria.addEqualExpression(courseAlumnBean.getFieldName(IAcademyAlias.COURSE_ALUMN_COURSE_ID), course.getId());
     	courseAlumnCriteria.addEqualExpression(courseAlumnBean.getFieldName(IAcademyAlias.COURSE_ALUMN_STATUS), CourseAlumnStatus.ACTIVE);
+    	courseAlumnCriteria.addOrder(courseAlumnBean.getFieldName(IAcademyAlias.COURSE_ALUMN_CUSTOMER_REGISTRY_SURNAME));
+    	courseAlumnCriteria.addOrder(courseAlumnBean.getFieldName(IAcademyAlias.COURSE_ALUMN_CUSTOMER_REGISTRY_NAME));
     	List<ITransferObject> courseAlumnList = courseAlumnBean.getList(courseAlumnCriteria);
     	Iterator<ITransferObject> courseAlumnIter = courseAlumnList.iterator();
     	Criteria markCriteria;
