@@ -5,7 +5,7 @@
 	<parent>
 		<groupId>com.code.aon</groupId>
 		<artifactId>aon.ui.parent</artifactId>
-		<version>1.0.1</version>
+		<version>1.0.2</version>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.code.aon</groupId>
@@ -24,6 +24,18 @@
 			<artifactId>aon.ui.menu</artifactId>
 			<version>2.0.0-SNAPSHOT</version>
 			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.code.aon</groupId>
+			<artifactId>aon.security.bridge</artifactId>
+			<version>1.2.5</version>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.code.aon</groupId>
+			<artifactId>aon.security</artifactId>
+			<version>1.2.5</version>
+			<scope>provided</scope>
 		</dependency>
 	</dependencies>
 </project>
