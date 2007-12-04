@@ -313,6 +313,48 @@
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
 	
+	<!-- **************** ACCOUNT BASIC SUPPLIER ************************** -->
+	<managed-bean>
+		<managed-bean-name>accBasicSupplier</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.account.controller.AccountBasicSupplierController
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>false</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.purchase.Supplier</value>
+		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>accBasicSupplier</value>
+		</managed-property>
+	</managed-bean>
+
+	<!-- **************** ACCOUNT BASIC CREDITOR ************************** -->
+	<managed-bean>
+		<managed-bean-name>accBasicCreditor</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.account.controller.AccountBasicCreditorController
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>false</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.finance.Creditor</value>
+		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>accBasicCreditor</value>
+		</managed-property>
+	</managed-bean>
+	
 	<!-- ************* ACCOUNT LOOKUP ***************** -->
 	<managed-bean>
 		<managed-bean-name>accountLookup</managed-bean-name>
@@ -390,7 +432,7 @@
 		</managed-property>
 	</managed-bean>
 	
-	<!-- ************* LOAN LOOKUP ***************** -->
+	<!-- ************* LEASING LOOKUP ***************** -->
 	<managed-bean>
 		<managed-bean-name>leasingLookup</managed-bean-name>
 		<managed-bean-class>
@@ -633,6 +675,38 @@
     </navigation-case>
   </navigation-rule>
   
+  <!-- =================== ACCOUNT BASIC SUPPLIER ================= -->
+  <navigation-rule>
+    <navigation-case>
+      <from-outcome>accSupplier_form</from-outcome>
+      <to-view-id>/account/facelet/supplier/form.faces</to-view-id>
+    </navigation-case>
+    <navigation-case>
+      <from-outcome>accSupplier_list</from-outcome>
+      <to-view-id>/account/facelet/supplier/list.faces</to-view-id>
+    </navigation-case>
+    <navigation-case>
+      <from-outcome>accSupplier_search</from-outcome>
+      <to-view-id>/account/facelet/supplier/search.faces</to-view-id>
+    </navigation-case>
+  </navigation-rule>
+
+  <!-- =================== ACCOUNT BASIC CREDITOR ================= -->
+  <navigation-rule>
+    <navigation-case>
+      <from-outcome>accCreditor_form</from-outcome>
+      <to-view-id>/account/facelet/creditor/form.faces</to-view-id>
+    </navigation-case>
+    <navigation-case>
+      <from-outcome>accCreditor_list</from-outcome>
+      <to-view-id>/account/facelet/creditor/list.faces</to-view-id>
+    </navigation-case>
+    <navigation-case>
+      <from-outcome>accCreditor_search</from-outcome>
+      <to-view-id>/account/facelet/creditor/search.faces</to-view-id>
+    </navigation-case>
+  </navigation-rule>
+  
   <!-- =================== Application Menu Navigation Rules ================= -->	
   <navigation-rule>
 	<navigation-case>
@@ -706,6 +780,14 @@
 	<navigation-case>
 		<from-outcome>defaultParams</from-outcome>
 		<to-view-id>/account/facelet/acc_appParams/form.faces</to-view-id>
+	</navigation-case>	
+	<navigation-case>
+		<from-outcome>accSupplier</from-outcome>
+		<to-view-id>/account/facelet/supplier/search.faces</to-view-id>
+	</navigation-case>	
+	<navigation-case>
+		<from-outcome>accCreditor</from-outcome>
+		<to-view-id>/account/facelet/creditor/search.faces</to-view-id>
 	</navigation-case>	
 	
   <!-- =================== Application Select Windows Navigation Rules ================= -->	
