@@ -10,7 +10,7 @@
   <navigation-rule>
 	<navigation-case>
 		<from-outcome>company</from-outcome>
-		<to-view-id>/facelet/company/form.iface</to-view-id>
+		<to-view-id>/facelet/company/form.jsf</to-view-id>
 	</navigation-case>
   </navigation-rule>
 

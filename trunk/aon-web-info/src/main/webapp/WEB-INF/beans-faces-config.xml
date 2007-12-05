@@ -9,7 +9,7 @@
 	<managed-bean>
 		<managed-bean-name>company</managed-bean-name>
 		<managed-bean-class>
-			com.code.aon.webinfo.controller.ICECompanyController
+			com.code.aon.webinfo.controller.TomahawkCompanyController
 		</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
@@ -19,6 +19,10 @@
 		<managed-property>
 			<property-name>pojo</property-name>
 			<value>com.code.aon.company.Company</value>
+		</managed-property>
+		<managed-property>
+			<property-name>maximumSize</property-name>
+			<value>65535</value>
 		</managed-property>
 		<managed-property>
 			<property-name>listenerClasses</property-name>
@@ -35,7 +39,7 @@
 	<managed-bean>
 		<managed-bean-name>companyLogoControllerListener</managed-bean-name>
 		<managed-bean-class>
-			com.code.aon.webinfo.event.ICECompanyLogoControllerListener
+			com.code.aon.webinfo.event.CompanyLogoControllerListener
 		</managed-bean-class>
 		<managed-bean-scope>none</managed-bean-scope>
 	</managed-bean>
@@ -43,7 +47,7 @@
 	<managed-bean>
 		<managed-bean-name>companyControllerListener</managed-bean-name>
 		<managed-bean-class>
-			com.code.aon.webinfo.event.ICECompanyControllerListener
+			com.code.aon.webinfo.event.CompanyControllerListener
 		</managed-bean-class>
 		<managed-bean-scope>none</managed-bean-scope>
 	</managed-bean>
@@ -51,7 +55,7 @@
 	<managed-bean>
 		<managed-bean-name>webInfoControllerListener</managed-bean-name>
 		<managed-bean-class>
-			com.code.aon.webinfo.event.ICEWebInfoControllerListener
+			com.code.aon.webinfo.event.WebInfoControllerListener
 		</managed-bean-class>
 		<managed-bean-scope>none</managed-bean-scope>
 	</managed-bean>
@@ -59,7 +63,7 @@
 	<managed-bean>
 		<managed-bean-name>companyControllerImagesListener</managed-bean-name>
 		<managed-bean-class>
-			com.code.aon.webinfo.event.ICECompanyControllerImagesListener
+			com.code.aon.webinfo.event.CompanyControllerImagesListener
 		</managed-bean-class>
 		<managed-bean-scope>none</managed-bean-scope>
 	</managed-bean>
@@ -69,7 +73,7 @@
 	<managed-bean>
 		<managed-bean-name>companyAddress</managed-bean-name>
 		<managed-bean-class>
-			com.code.aon.ice.registry.ICEAddressController
+			com.code.aon.ui.form.BasicController
 		</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
@@ -115,7 +119,7 @@
 	<managed-bean>
 		<managed-bean-name>companyWebInfo</managed-bean-name>
 		<managed-bean-class>
-			com.code.aon.webinfo.controller.ICECompanyWebInfoController
+			com.code.aon.webinfo.controller.CompanyWebInfoController
 		</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
@@ -128,12 +132,16 @@
 	<managed-bean>
 		<managed-bean-name>companyImages</managed-bean-name>
 		<managed-bean-class>
-			com.code.aon.webinfo.controller.ICECompanyImagesController
+			com.code.aon.webinfo.controller.TomahawkFileController
 		</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
 			<property-name>pojo</property-name>
 			<value>com.code.aon.registry.RegistryAttachment</value>
+		</managed-property>
+		<managed-property>
+			<property-name>maximumSize</property-name>
+			<value>65535</value>
 		</managed-property>
 		<managed-property>
 			<property-name>listenerClasses</property-name>
@@ -147,7 +155,7 @@
 	<managed-bean>
 		<managed-bean-name>companyImagesControllerListener</managed-bean-name>
 		<managed-bean-class>
-			com.code.aon.webinfo.event.ICECompanyImagesControllerListener
+			com.code.aon.webinfo.event.CompanyImagesControllerListener
 		</managed-bean-class>
 		<managed-bean-scope>none</managed-bean-scope>
 	</managed-bean>

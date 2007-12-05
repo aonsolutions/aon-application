@@ -9,9 +9,6 @@
 		<locale-config>
 			<default-locale>es</default-locale>
 		</locale-config>
-        <view-handler>
-            com.icesoft.faces.facelets.D2DFaceletViewHandler
-        </view-handler>
 	</application>
 
 	<!--  *************** COLLECTIONS ***************** -->
@@ -29,7 +26,7 @@
 	</converter>
 
 	<lifecycle>
-          <phase-listener>com.code.aon.faces.component.sandbox.ValueChangePhaseListener</phase-listener>
+		<phase-listener>com.code.aon.faces.component.sandbox.ValueChangePhaseListener</phase-listener>
   	</lifecycle>
 	
 	<!--  *************** 
@@ -72,12 +69,13 @@
 		</managed-property>
 		<managed-property>
 			<property-name>style</property-name>
-			<value>iceCss</value>
+			<value>richCss</value>
 		</managed-property>
 		<managed-property>
 			<property-name>userStyleSheets</property-name>
 			<list-entries>
 				<value>/css/panelPopup.css</value>
+				<value>/css/aon-web-info.css</value>				
 			</list-entries>
 		</managed-property>		
 		<managed-property>
@@ -118,6 +116,13 @@
 		<managed-bean-class>
 			com.code.aon.ui.common.controller.ExceptionBean
 		</managed-bean-class>
+		<managed-bean-scope>request</managed-bean-scope>
+	</managed-bean>
+
+	<!-- ***************** FAILED LOGIN ******************** -->
+	<managed-bean>
+		<managed-bean-name>failedLogin</managed-bean-name>
+		<managed-bean-class>com.code.aon.bridge.session.FailedLogin</managed-bean-class>
 		<managed-bean-scope>request</managed-bean-scope>
 	</managed-bean>
 
