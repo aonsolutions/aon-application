@@ -12,15 +12,16 @@ import com.code.aon.company.WebInfo;
 import com.code.aon.company.dao.ICompanyAlias;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.form.BasicController;
+import com.code.aon.ui.form.IController;
 import com.code.aon.ui.util.AonUtil;
 
-public class ICECompanyWebInfoController extends BasicController {
+public class CompanyWebInfoController extends BasicController {
 	
 	private static final String COMPANY_CONTROLLER_NAME = "company";
 
 	@SuppressWarnings({"unchecked", "unused"})
 	public void onLoadWebInfo(ActionEvent event) throws ManagerBeanException{
-		ICECompanyController companyController = (ICECompanyController)AonUtil.getController(COMPANY_CONTROLLER_NAME);
+		IController companyController = (IController) AonUtil.getController(COMPANY_CONTROLLER_NAME);
 		Company company = ((Company)companyController.getTo());
 		IManagerBean webInfoBean = BeanManager.getManagerBean(WebInfo.class);
 		Criteria criteria = new Criteria();
