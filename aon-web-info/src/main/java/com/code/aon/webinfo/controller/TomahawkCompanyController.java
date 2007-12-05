@@ -2,12 +2,10 @@ package com.code.aon.webinfo.controller;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
-import java.util.EventObject;
 import java.util.Iterator;
 
 import javax.faces.application.Application;
@@ -33,29 +31,18 @@ import com.code.aon.registry.RegistryMedia;
 import com.code.aon.registry.dao.IRegistryAlias;
 import com.code.aon.registry.enumeration.AddressType;
 import com.code.aon.registry.enumeration.RegistryAttachmentType;
-import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.form.IController;
 import com.code.aon.ui.util.AonUtil;
-import com.icesoft.faces.component.ext.RowSelectorEvent;
-import com.icesoft.faces.component.inputfile.InputFile;
-import com.icesoft.faces.webapp.xmlhttp.PersistentFacesState;
-import com.icesoft.faces.webapp.xmlhttp.RenderingException;
 
-public class ICECompanyController extends BasicController {
+public class TomahawkCompanyController extends TomahawkFileController {
 
 	public static final String COMPANY_NAME = "company";
 	
 	/** COMPANY_ADDRESS_CONTROLLER_NAME. */
 	public static final String COMPANY_ADDRESS_CONTROLLER_NAME = "companyAddress";
 	
-	private InputFile file;
-	
-	private int percent;
-	
-	private PersistentFacesState state;
-
 	/** The attach. */
-	private RegistryAttachment attach;
+	private RegistryAttachment attachment;
 	
 	/** The phone. */
 	private RegistryMedia phone;
@@ -88,44 +75,10 @@ public class ICECompanyController extends BasicController {
 	private boolean webDirty;
 	
 
-	public ICECompanyController() {
+	public TomahawkCompanyController() {
 		super();
-		setState(PersistentFacesState.getInstance());
-	}
-
-    public void onSelect(RowSelectorEvent event){
-    	this.onSelect(new ActionEvent(event.getComponent()));
-    }
-
-	@Override
-	public void onSelect(ActionEvent event) {
-		super.onSelect(event);
-	}
-
-	public InputFile getFile() {
-		return file;
-	}
-
-	public void setFile(InputFile file) {
-		this.file = file;
 	}
 	
-	public int getPercent() {
-		return percent;
-	}
-
-	public void setPercent(int percent) {
-		this.percent = percent;
-	}
-
-	public PersistentFacesState getState() {
-		return state;
-	}
-
-	public void setState(PersistentFacesState state) {
-		this.state = state;
-	}
-
 	/**
      * Gets the company label.
      * 
@@ -141,18 +94,21 @@ public class ICECompanyController extends BasicController {
 	 * 
 	 * @return the attachment
 	 */
-	public RegistryAttachment getAttach() {
-		return attach;
+	public RegistryAttachment getAttachment() {
+		return attachment;
 	}
 
+	public static String getCOMPANY_ADDRESS_CONTROLLER_NAME() {
+		return COMPANY_ADDRESS_CONTROLLER_NAME;
+	}
 
 	/**
 	 * Sets the RegistryAttach.
 	 * 
 	 * @param attach the attachment
 	 */
-	public void setAttach(RegistryAttachment attach) {
-		this.attach = attach;
+	public void setAttachment(RegistryAttachment attachment) {
+		this.attachment = attachment;
 	}
 
 	/**
@@ -291,18 +247,6 @@ public class ICECompanyController extends BasicController {
 	}
 
 	/**
-	 * Checks if an image is attached.
-	 * 
-	 * @return true, if an image is attached
-	 */
-	public boolean isImageAttached(){
-		if(this.getAttach() != null && this.attach.getId() != null){
-			return true;
-		}
-		return false;
-	}
-
-	/**
 	 * On accept. Resets the flags of dirty
 	 * 
 	 * @param event the event
@@ -335,7 +279,7 @@ public class ICECompanyController extends BasicController {
 				super.onSelect(null);
 				loadMainAddress();
 			}else{
-				this.onReset(null);
+				super.onReset(null);
 				initControllerData();
 				this.mainAddress = new RegistryAddress();
 				this.mainAddress.setRegistry(new Registry());
@@ -511,53 +455,6 @@ public class ICECompanyController extends BasicController {
 		return (IController) vb.getValue(ctx);
 	}
 	
-	public boolean isWithLogo() throws ManagerBeanException {
-		return !(obtainCompanyLogo() == null);
-	}
-	
-	/**
-	 * Gets the attach as input stream.
-	 * 
-	 * @return the attach as input stream
-	 * 
-	 * @throws ManagerBeanException the manager bean exception
-	 * @throws IOException the IO exception
-	 */
-	public InputStream getAttachAsInputStream() throws IOException, ManagerBeanException{
-		File file = File.createTempFile("image", ".tmp");
-		
-		RegistryAttachment attach = obtainCompanyLogo();
-		if(attach != null){
-			FileOutputStream outputStream = new FileOutputStream(file);
-			outputStream.write(attach.getData());
-			outputStream.close();
-			return new FileInputStream(file);
-		}
-		return null;
-	}
-
-	/**
-	 * Obtains company logo.
-	 * 
-	 * @return the registry attachment
-	 * 
-	 * @throws ManagerBeanException the manager bean exception
-	 */
-	@SuppressWarnings("unchecked")
-	private RegistryAttachment obtainCompanyLogo() throws ManagerBeanException {
-		if(this.getTo() == null){
-			this.onLoad();
-		}
-		IManagerBean registryAttachBean = BeanManager.getManagerBean(RegistryAttachment.class);
-		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(registryAttachBean.getFieldName(IRegistryAlias.REGISTRY_ATTACHMENT_REGISTRY_ID), ((Company)this.getTo()).getId());
-		Iterator iter = registryAttachBean.getList(criteria).iterator();
-		if(iter.hasNext()){
-			return (RegistryAttachment)iter.next();
-		}
-		return null;
-	}
-	
 	/**
 	 * Obtains the company.
 	 * 
@@ -621,49 +518,13 @@ public class ICECompanyController extends BasicController {
 		return "/facelet/registry/company/form.xhtml";
 	}
 	
-	public void fileUploaded(ActionEvent event){
-		try {
-			InputFile inputFile = (InputFile)event.getSource();
-			if(inputFile.getStatus() == InputFile.SAVED){
-				RegistryAttachment attach = this.getAttach();
-				attach.setRegistryAttachmentType(RegistryAttachmentType.LOGO);
-				attach.setCategory(null);
-				InputStream fileStream = new FileInputStream(inputFile.getFile());
-				attach.setData(inputStream2ByteArray(fileStream));
-				attach.setDescription("");
-				attach.setRegistry((Company)this.getTo());
-				attach.setMimeType(MimeType.getByExtension(inputFile.getFileInfo().getFileName().substring(inputFile.getFileInfo().getFileName().lastIndexOf(".") + 1)));
-				IManagerBean attachBean = BeanManager.getManagerBean(RegistryAttachment.class);
-				if(attach.getId() == null){
-					this.setAttach((RegistryAttachment)attachBean.insert(attach));
-				}else{
-					this.setAttach((RegistryAttachment)attachBean.update(attach));
-				}
-				this.percent = -1;
-			}
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		} catch (ManagerBeanException e) {
-			e.printStackTrace();
-		}
+	@Override
+	public void updateFile(String fileName, byte[] data, MimeType mimeType) {
+		RegistryAttachment attach = getAttachment();
+		attach.setData(data);
+		attach.setMimeType(mimeType);
 	}
 	
-	private static byte[] inputStream2ByteArray(InputStream is) throws IOException {
-		int BUFFER_SIZE = 8192;
-		byte[] buffer = new byte[BUFFER_SIZE];
-		byte[] content = new byte[0];
-		int length;
-		while ((length = is.read(buffer)) > 0) {
-			byte[] tmp = content;
-			content = new byte[tmp.length + length];
-			System.arraycopy(tmp, 0, content, 0, tmp.length);
-			System.arraycopy(buffer, 0, content, tmp.length, length);
-		}
-		return content;
-	}
-
 	/**
 	 * Gets the child bean.
 	 * 
@@ -681,17 +542,5 @@ public class ICECompanyController extends BasicController {
 	public String getMasterFieldName(){
 		return IRegistryAlias.REGISTRY_ADDRESS_REGISTRY_ID;
 	}
-	
-	@SuppressWarnings("unused")
-	public void progress(EventObject event){
-		try {
-			InputFile inputFile = (InputFile)event.getSource();
-			this.percent = inputFile.getFileInfo().getPercent();
-			if(state != null){
-				state.render();
-			}
-		} catch (RenderingException e) {
-			e.printStackTrace();
-		}
-	}
+
 }

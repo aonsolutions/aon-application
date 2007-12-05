@@ -15,13 +15,13 @@ import com.code.aon.registry.enumeration.MediaType;
 import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
-import com.code.aon.webinfo.controller.ICECompanyController;
+import com.code.aon.webinfo.controller.TomahawkCompanyController;
 
 /**
  * Listener added to the CompanyController
  * 
  */
-public class ICECompanyControllerListener extends ControllerAdapter {
+public class CompanyControllerListener extends ControllerAdapter {
 
 	/**
 	 * Initializes controller fields and loads the addresses and medias of the company
@@ -34,7 +34,7 @@ public class ICECompanyControllerListener extends ControllerAdapter {
 	@SuppressWarnings("unchecked")
 	public void afterBeanSelected(ControllerEvent event) throws ControllerListenerException {
 		try {
-			ICECompanyController c = (ICECompanyController)event.getController();
+			TomahawkCompanyController c = (TomahawkCompanyController)event.getController();
 			Company company = (Company) c.getTo();
 			
 			Criteria criteriaMedia = new Criteria();
@@ -90,7 +90,7 @@ public class ICECompanyControllerListener extends ControllerAdapter {
 	@Override
 	public void afterBeanUpdated(ControllerEvent event) throws ControllerListenerException {
 		try{
-			ICECompanyController c = (ICECompanyController)event.getController();
+			TomahawkCompanyController c = (TomahawkCompanyController)event.getController();
 
 			if (c.isPhoneDirty()){
 				saveRegistryMedia(c.getPhone());
@@ -124,7 +124,7 @@ public class ICECompanyControllerListener extends ControllerAdapter {
 	@Override
 	public void afterBeanAdded(ControllerEvent event) throws ControllerListenerException {
 		try{
-			ICECompanyController c = (ICECompanyController)event.getController();
+			TomahawkCompanyController c = (TomahawkCompanyController)event.getController();
 
 			if (c.isPhoneDirty()){
 				c.getPhone().setMediaType(MediaType.FIXED_PHONE);
