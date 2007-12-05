@@ -106,7 +106,6 @@ public class ConfirmButtonHandler extends AonComponentHandler implements
 				ctx, getPanelId(ctx), String.class);
 		mapper.setVariable(CONFIRM_ID, id);
 		mapper.setVariable(CONFIRM_TITLE, getValueExpression(ctx, titleTag));
-		mapper.setVariable(CONFIRM_TITLE, getValueExpression(ctx, titleTag));
 		mapper.setVariable(CONFIRM_MESSAGE, getValueExpression(ctx,
 				messageTag));
 		ValueExpression action = getMethodExpression(ctx, CONFIRM_ACTION,
