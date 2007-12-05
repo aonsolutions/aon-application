@@ -9,7 +9,6 @@ import javax.faces.component.UIComponent;
 
 import com.code.aon.faces.component.AonComponentHandler;
 import com.code.aon.faces.component.myfaces.UIComponentTagUtils;
-import com.code.aon.faces.component.richfaces.lookup.ILookupTags;
 import com.code.aon.faces.component.util.FaceletUtil;
 import com.sun.facelets.FaceletContext;
 import com.sun.facelets.el.VariableMapperWrapper;
@@ -22,8 +21,7 @@ import com.sun.facelets.tag.jsf.ComponentConfig;
  * 
  * @author atellitu
  */
-public class ConfirmButtonHandler extends AonComponentHandler implements
-		ILookupTags {
+public class ConfirmButtonHandler extends AonComponentHandler {
 
 	private static final String CONFIRM_ID = "confirmId";
 
