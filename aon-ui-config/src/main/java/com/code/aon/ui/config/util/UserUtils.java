@@ -2,6 +2,8 @@ package com.code.aon.ui.config.util;
 
 import java.security.Principal;
 import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -14,7 +16,9 @@ import com.code.aon.jaas.auth.AuthPrincipal;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.ast.Expression;
 import com.code.aon.ql.util.ExpressionUtilities;
+import com.code.aon.config.Scope;
 import com.code.aon.config.User;
+import com.code.aon.config.UserScope;
 import com.code.aon.config.UserWorkGroup;
 import com.code.aon.config.dao.IConfigAlias;
 
@@ -40,7 +44,7 @@ public class UserUtils {
                 return ((User)iterator.next());
             }
         } catch (ManagerBeanException e) {
-            LOGGER.log(Level.SEVERE, "Error obtaining the USER related with the logged in user", e);
+        	LOGGER.log(Level.SEVERE, "Error obtaining the USER related with the logged in user", e);
         }
         return null;
 	}
@@ -62,4 +66,22 @@ public class UserUtils {
         }
         return expression;
     }
+	
+	@SuppressWarnings("unchecked")
+	public static List<Scope> getCurrentUserScopes(){
+		List<Scope> scopes = new LinkedList<Scope>();
+		User user = UserUtils.getLoggedUser();
+		try {
+			IManagerBean userScopeBean = BeanManager.getManagerBean(UserScope.class);
+			Criteria criteria = new Criteria();
+			criteria.addEqualExpression(userScopeBean.getFieldName(IConfigAlias.USER_SCOPE_USER_ID), user.getId());
+			Iterator iter = userScopeBean.getList(criteria).iterator();
+			while(iter.hasNext()){
+				scopes.add(((UserScope)iter.next()).getScope());
+			}
+		} catch (ManagerBeanException e) {
+			LOGGER.log(Level.SEVERE, "Error scopes related with the user" + user.getLogin(), e);
+		}
+		return scopes;
+	}
 }
