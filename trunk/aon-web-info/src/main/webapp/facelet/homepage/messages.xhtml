@@ -1,38 +1,34 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
 	xmlns:ui="http://java.sun.com/jsf/facelets"
-	xmlns:ice="http://www.icesoft.com/icefaces/component"
+	xmlns:rich="http://richfaces.org/rich"
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:h="http://java.sun.com/jsf/html"
-	xmlns:aon="http://www.code.es/aon-components">
+	xmlns:aon="http://www.code.es/aon-rich-components">
 
 	<aon:form rendered="#{errorMessages.visible}">
 		<aon:panelGroup styleClass="aon-popup-panel aon-confirm-box">
-		
-			<ice:panelPopup 
-				visible="true"
-				styleClass="aon-popup-" style="width:300px;">
+	
+			<rich:modalPanel minWidth="300" top="190px" left="350"
+				id="messagesModalPanel" showWhenRendered="true">
 
 				<f:facet name="header">
-					<aon:panelGrid width="100%" cellpadding="0" cellspacing="0"
-						columns="2" columnClasses="aon-popup-title, aon-popup-title-closeButton">
+					<aon:div styleClass="aon-popup-title">
 						<aon:outputText value="MENSAJES" />
-						<aon:commandButton type="button" styleClass="aon-popup-button-close" immediate="true"
-							image="/images/icefaces/popupclose.gif">
-						</aon:commandButton>							
-					</aon:panelGrid>
+					</aon:div>
 				</f:facet>
+				<f:facet name="controls">
+					<aon:commandButton type="button" styleClass="aon-popup-button-close" immediate="true"
+						image="/images/icefaces/popupclose.gif"
+						onclick="Richfaces.hideModalPanel('messagesModalPanel');">
+					</aon:commandButton>	
+				</f:facet>				
 
-				<f:facet name="body">
+				<aon:div id="aon-errors">
+					<aon:messages />
+				</aon:div>
 
-	<aon:div id="aon-errors">
-		<aon:messages />
-	</aon:div>
-
-
-				</f:facet>
-
-			</ice:panelPopup>
+			</rich:modalPanel>
 			
 		</aon:panelGroup>
 		
