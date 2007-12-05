@@ -1211,10 +1211,10 @@ text-decoration:none;
 
 /**** row selector ****/
 #aon-content .aon-portlet-body .aon-table-portletRow a,
- #aon-content .aon-portlet-body .aon-table-portletRow a:hover, 
- #aon-content .aon-portlet-body .aon-table-portletRow a:visited, 
- #aon-content .aon-portlet-body .aon-table-portletRow span
- #aon-content .aon-portlet-body .aon-table-row-hover {
+#aon-content .aon-portlet-body .aon-table-portletRow a:hover, 
+#aon-content .aon-portlet-body .aon-table-portletRow a:visited, 
+#aon-content .aon-portlet-body .aon-table-portletRow span
+#aon-content .aon-portlet-body .aon-table-row-hover {
 	color:#000 !important;
 	background-color:transparent !important;
 }
