@@ -11,8 +11,8 @@ import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
-import com.code.aon.company.WorkPlace;
 import com.code.aon.config.Scope;
+import com.code.aon.config.dao.IConfigAlias;
 import com.code.aon.customer.Customer;
 import com.code.aon.customer.dao.ICustomerAlias;
 import com.code.aon.ql.Criteria;
@@ -35,7 +35,7 @@ public class DeliveryTargetListener extends ControllerAdapter {
 	 * The class logger
 	 */
 	private static final Logger LOGGER = Logger.getLogger(DeliveryTargetListener.class.getName());
-
+	
 	/**
 	 * If exists, assigns the customer to the Delivery else
 	 * creates it and assigns
@@ -43,8 +43,10 @@ public class DeliveryTargetListener extends ControllerAdapter {
 	 * @see com.code.aon.ui.form.event.ControllerAdapter#beforeBeanAdded(com.code.aon.ui.form.event.ControllerEvent)
 	 */
 	@Override
+	@SuppressWarnings("unchecked")
 	public void beforeBeanAdded(ControllerEvent event) throws ControllerListenerException {
-		Delivery delivery = (Delivery)((DeliveryController)event.getController()).getTo();
+		DeliveryController deliveryController = (DeliveryController)event.getController(); 
+		Delivery delivery = (Delivery)deliveryController.getTo();
 		try {
 			IManagerBean customerBean = BeanManager.getManagerBean(Customer.class);
 			Criteria criteria = new Criteria();
@@ -58,6 +60,7 @@ public class DeliveryTargetListener extends ControllerAdapter {
 				if(iter.hasNext()){
 					Target target = (Target)iter.next();
 					delivery.getCustomer().setRegistry(target.getRegistry());
+					delivery.getCustomer().setScope(obtainScope(deliveryController.getScopeId()));
 					customerBean.insert(delivery.getCustomer());
 				}
 			}else{
@@ -75,8 +78,10 @@ public class DeliveryTargetListener extends ControllerAdapter {
 	 * @see com.code.aon.ui.form.event.ControllerAdapter#beforeBeanUpdated(com.code.aon.ui.form.event.ControllerEvent)
 	 */
 	@Override
+	@SuppressWarnings("unchecked")
 	public void beforeBeanUpdated(ControllerEvent event) throws ControllerListenerException {
-		Delivery delivery = (Delivery)((DeliveryController)event.getController()).getTo();
+		DeliveryController deliveryController = (DeliveryController)event.getController(); 
+		Delivery delivery = (Delivery)deliveryController.getTo();
 		try {
 			IManagerBean customerBean = BeanManager.getManagerBean(Customer.class);
 			Criteria criteria = new Criteria();
@@ -90,7 +95,7 @@ public class DeliveryTargetListener extends ControllerAdapter {
 				if(iter.hasNext()){
 					Target target = (Target)iter.next();
 					delivery.getCustomer().setRegistry(target.getRegistry());
-					delivery.getCustomer().setScope(obtainScope());
+					delivery.getCustomer().setScope(obtainScope(deliveryController.getScopeId()));
 					customerBean.insert(delivery.getCustomer());
 				}
 			}else{
@@ -106,10 +111,12 @@ public class DeliveryTargetListener extends ControllerAdapter {
 	 * 
 	 * @return workplace
 	 */
-	private Scope obtainScope() {
+	private Scope obtainScope(Integer scopeId) {
 		try {
 			IManagerBean scopeBean = BeanManager.getManagerBean(Scope.class);
-			List<ITransferObject> scopeLst = scopeBean.getList(null);
+			Criteria criteria = new Criteria();
+			criteria.addEqualExpression(scopeBean.getFieldName(IConfigAlias.SCOPE_ID), scopeId);
+			List<ITransferObject> scopeLst = scopeBean.getList(criteria);
 			if (scopeLst.size() > 0) {
 				Scope scope = (Scope)scopeLst.get(0);
 				return scope;
@@ -120,6 +127,4 @@ public class DeliveryTargetListener extends ControllerAdapter {
 		}
 		return null;
 	}
-
-	
 }

@@ -89,6 +89,8 @@ public class DeliveryController extends BasicController {
 	 */
 	private Integer warehouseId;
 	
+	private Integer scopeId;
+	
     /**
      * Returns the support order id
      * 
@@ -195,6 +197,15 @@ public class DeliveryController extends BasicController {
 	 */
 	public void setWarehouseId(Integer warehouseId) {
 		this.warehouseId = warehouseId;
+	}
+	
+
+	public Integer getScopeId() {
+		return scopeId;
+	}
+
+	public void setScopeId(Integer scopeId) {
+		this.scopeId = scopeId;
 	}
 
 	/**
@@ -420,6 +431,7 @@ public class DeliveryController extends BasicController {
 	 * @param event the event that contains customer ident
 	 * @throws ManagerBeanException
 	 */
+	@SuppressWarnings("unchecked")
 	public void customerData(ValueChangeEvent event) throws ManagerBeanException{
 		if(event.getNewValue() != null){
 			IManagerBean customerBean = BeanManager.getManagerBean(Customer.class);
@@ -448,6 +460,7 @@ public class DeliveryController extends BasicController {
 	/* (non-Javadoc)
 	 * @see com.code.aon.ui.form.BasicController#getCollection()
 	 */
+	@SuppressWarnings("unchecked")
 	public Collection getCollection(){
 		List<ITransferObject> l = new LinkedList<ITransferObject>();
 		l.add(obtainDelivery(((Delivery)this.getTo()).getId()));
@@ -460,6 +473,7 @@ public class DeliveryController extends BasicController {
 	 * @param deliveryId the ident of the delivery
 	 * @return the delivery of this ident
 	 */
+	@SuppressWarnings("unchecked")
 	private ITransferObject obtainDelivery(Integer deliveryId) {
 		try {
 			IManagerBean deliveryBean = BeanManager.getManagerBean(Delivery.class);
@@ -480,6 +494,7 @@ public class DeliveryController extends BasicController {
 	 * 
 	 * @return the tasdelivery
 	 */
+	@SuppressWarnings("unchecked")
 	public TasDelivery obtainTasDelivery(){
 		try {
 			IManagerBean tasDeliveryBean = BeanManager.getManagerBean(TasDelivery.class);
@@ -534,6 +549,7 @@ public class DeliveryController extends BasicController {
 	 * @throws ManagerBeanException
 	 * @throws ExpressionException
 	 */
+	@SuppressWarnings("unchecked")
 	public void addTargetExpression(ValueChangeEvent event)
 		throws ManagerBeanException, ExpressionException {
 	    if ((event.getNewValue() != null)
@@ -601,6 +617,7 @@ public class DeliveryController extends BasicController {
      * @return offers List
      * @throws ManagerBeanException
      */
+	@SuppressWarnings("unchecked")
     public List<SelectItem> getRelatedTASOffers() throws ManagerBeanException {
         LinkedList<SelectItem> offers = new LinkedList<SelectItem>();
         offerId = null;
@@ -634,5 +651,4 @@ public class DeliveryController extends BasicController {
         manager.setReportKey("delivery");
         manager.setOutputFormat(OutputFormat.PDF);
     }
-
 }
