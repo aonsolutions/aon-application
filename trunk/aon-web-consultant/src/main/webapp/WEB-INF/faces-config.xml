@@ -1858,7 +1858,7 @@
     </navigation-case>
     <navigation-case>
       <from-outcome>customer</from-outcome>
-      <to-view-id>/facelet/customer/form.faces</to-view-id>
+      <to-view-id>/facelet/customer/search.faces</to-view-id>
     </navigation-case>
     <navigation-case>
       <from-outcome>item</from-outcome>
@@ -1911,6 +1911,10 @@
     <navigation-case>
       <from-outcome>scope</from-outcome>
       <to-view-id>/facelet/config/scope/grid.faces</to-view-id>
+    </navigation-case>
+    <navigation-case>
+      <from-outcome>workplace</from-outcome>
+      <to-view-id>/facelet/registry/company/auxiliary/workplace/grid.faces</to-view-id>
     </navigation-case>
     <navigation-case>
       <from-outcome>not_available</from-outcome>
