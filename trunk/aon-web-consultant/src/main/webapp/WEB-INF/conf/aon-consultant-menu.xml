@@ -9,7 +9,7 @@
 		<option key="aon_relationship" descriptionKey="aon_relationship_desc" ref="relationship" role="TipoRelacion"/>
 	</menu>
 	
-	<menu id="aon_administrative_management" ref="content" key="aon_fee_management" descriptionKey="aon_fee_management_desc" role="GestionCuotas">
+	<menu id="aon_administrative_management" ref="content" key="aon_invoice_management" descriptionKey="aon_invoice_management_desc" role="GestionCuotas">
 		<option id="aon_invoice_management" key="aon_invoice_management" descriptionKey="aon_invoice_management_desc" ref="invoiceManagement"/>
 		<option key="aon_invoice_print" descriptionKey="aon_invoice_print_desc" ref="invoicePrint">
 			<actionListener action="#{invoicePrint.onEditSearch}"/>
@@ -33,13 +33,15 @@
 				<actionListener action="#{financePayment.onEditSearch}"/>
 			</option>
 			<option key="aon_fbatch" descriptionKey="aon_fbatch_desc" ref="fbatch" role="Remesas"/>
+		</menu>	
+		<menu ref="content" key="aon_auxiliar" descriptionKey="aon_auxiliar_desc" role="Auxiliares">
 			<option key="aon_bank" descriptionKey="aon_bank_desc" ref="bank" role="Bancos"/>
 			<option key="aon_pay_method" descriptionKey="aon_pay_method_desc" ref="pay_method" role="FormasDePago"/>
+			<option key="aon_item" descriptionKey="aon_item_desc" ref="item" role="Conceptos">
+				<actionListener action="#{item.onReset}"/>
+			</option>
+			<option key="aon_product_category" descriptionKey="aon_product_category_desc" ref="productCategory" role="Categorias"/>
 		</menu>	
-		<option key="aon_item" descriptionKey="aon_item_desc" ref="item" role="Conceptos">
-			<actionListener action="#{item.onReset}"/>
-		</option>
-		<option key="aon_product_category" descriptionKey="aon_product_category_desc" ref="productCategory" role="Categorias"/>
 	</menu>
 	
 	<menu ref="content" key="aon_time_management" descriptionKey="aon_time_management_desc" role="GestionTiempos">
@@ -74,6 +76,9 @@
 		<option key="aon_company" descriptionKey="aon_company_desc" ref="company" role="Empresa">
 			<actionListener action="#{company.onLoad}" />
 		</option> 
+		<option key="aon_workplace" descriptionKey="aon_workplace_desc" ref="workplace" role="Configuracion">
+			<actionListener action="#{workplace.onSearch}" />
+		</option>
 		<menu ref="content" key="aon_user_management" descriptionKey="aon_user_management_desc" role="GestionUsuarios">
 			<option key="aon_user" descriptionKey="aon_user_desc" ref="user" role="Usuarios"/>
 			<option key="aon_work_group" descriptionKey="aon_work_group_desc" ref="workgroup" role="GruposTrabajo">
