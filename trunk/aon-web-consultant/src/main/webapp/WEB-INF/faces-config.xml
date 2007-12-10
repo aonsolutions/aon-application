@@ -128,7 +128,7 @@
 		</managed-property>
 		<managed-property>
 			<property-name>style</property-name>
-			<value>blue</value>
+			<value>orange</value>
 		</managed-property>
 		<managed-property>
 			<property-name>userStyleSheets</property-name>
@@ -229,6 +229,13 @@
 		<managed-bean-name>configCollections</managed-bean-name>
 		<managed-bean-class>
 			com.code.aon.ui.config.controller.ConfigCollectionsController
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
+	<managed-bean>
+		<managed-bean-name>purchaseCollections</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.purchase.controller.PurchaseCollectionsController
 		</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
@@ -412,7 +419,7 @@
 		</managed-property>
 		<managed-property>
 			<property-name>aliasPrefix</property-name>
-			<value>Registry</value>
+			<value>Registry_Lookup</value>
 		</managed-property>
 		<managed-property>
 			<property-name>foreignJoinProperties</property-name>
