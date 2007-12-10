@@ -184,13 +184,13 @@
         <load-on-startup>1</load-on-startup>
     </servlet>
     
-   	<!-- Deploy Servlet -->
+   	<!-- Deploy Servlet --> 
     <servlet>
 		<servlet-name>autodeploy</servlet-name>
 		<servlet-class>com.code.aon.bridge.servlet.DeployServlet</servlet-class>
 		<init-param>
 			<param-name>name</param-name>
-			<param-value>aon-consultant.war</param-value>
+			<param-value>aon-web-consultant.war</param-value>
 		</init-param>
 		<load-on-startup>2</load-on-startup>
 	</servlet>
@@ -282,6 +282,10 @@
 			<role-name>Tesoreria</role-name>
 			<role-name>Vencimientos</role-name>
 			<role-name>Remesas</role-name>
+			<role-name>GruposFacturacion</role-name>
+			<role-name>UtilidadesTesoreria</role-name>
+			<role-name>ChecksTesoreria</role-name>
+			<role-name>ListadoCuotas</role-name>
 			<role-name>Bancos</role-name>
 			<role-name>FormasDePago</role-name>
 			<role-name>Conceptos</role-name>
@@ -297,6 +301,7 @@
 			<role-name>BandejaCampanas</role-name>
 			<role-name>Procesos</role-name>
 			<role-name>Configuracion</role-name>
+			<role-name>Centros</role-name>
 			<role-name>Empresa</role-name>
 			<role-name>GestionUsuarios</role-name>
 			<role-name>Usuarios</role-name>
@@ -328,6 +333,10 @@
 	<security-role><role-name>Tesoreria</role-name></security-role>
 	<security-role><role-name>Vencimientos</role-name></security-role>
 	<security-role><role-name>Remesas</role-name></security-role>
+	<security-role><role-name>GruposFacturacion</role-name></security-role>
+	<security-role><role-name>UtilidadesTesoreria</role-name></security-role>
+	<security-role><role-name>ChecksTesoreria</role-name></security-role>
+	<security-role><role-name>ListadoCuotas</role-name></security-role>
 	<security-role><role-name>Bancos</role-name></security-role>
 	<security-role><role-name>FormasDePago</role-name></security-role>
 	<security-role><role-name>Conceptos</role-name></security-role>
@@ -348,6 +357,7 @@
 	<security-role><role-name>Procesos</role-name></security-role>
 	
 	<security-role><role-name>Configuracion</role-name></security-role>
+	<security-role><role-name>Centros</role-name></security-role>
 	<security-role><role-name>Empresa</role-name></security-role>
 	<security-role><role-name>GestionUsuarios</role-name></security-role>
 	<security-role><role-name>Usuarios</role-name></security-role>
