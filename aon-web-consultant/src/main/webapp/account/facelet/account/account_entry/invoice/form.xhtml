@@ -73,7 +73,7 @@
 							value="#{accountBundle.aon_customer}" rendered="#{accountInvoice.sales}"/>
 						<t:div rendered="#{accountInvoice.sales}">
 							<t:inputText id="Customer_Lookup_id" size="5" forceId="#{true}"
-								styleClass="aon-form-input-text" required="true"
+								styleClass="aon-form-input-text"
 								onchange="return findBeanLookupExt(event,'#{facesContext.externalContext.requestContextPath}','customerLookup','Customer_Lookup_id','Customer_id|Customer_Lookup_id,Customer_full_name|Customer_full_name');"
 								value="#{accountInvoice.header.registry.id}"
 								valueChangeListener="#{accountInvoice.onRegistryChange}"/>
@@ -97,7 +97,7 @@
 							value="#{accountBundle.aon_supplier}" rendered="#{accountInvoice.purchase}"/>
 						<t:div rendered="#{accountInvoice.purchase}">
 							<t:inputText id="Supplier_Lookup_id" size="5" forceId="#{true}"
-								styleClass="aon-form-input-text" required="true"
+								styleClass="aon-form-input-text"
 								onchange="return findBeanLookupExt(event,'#{facesContext.externalContext.requestContextPath}','supplierLookup','Supplier_Lookup_id','Supplier_id|Supplier_Lookup_id,Supplier_full_name|Supplier_full_name');"
 								value="#{accountInvoice.header.registry.id}" 
 								valueChangeListener="#{accountInvoice.onRegistryChange}"/>
@@ -121,7 +121,7 @@
 							value="#{accountBundle.aon_creditor}" rendered="#{accountInvoice.expense}"/>
 						<t:div rendered="#{accountInvoice.expense}">
 							<t:inputText id="Creditor_Lookup_id" size="5" forceId="#{true}"
-								styleClass="aon-form-input-text" required="true"
+								styleClass="aon-form-input-text"
 								onchange="return findBeanLookupExt(event,'#{facesContext.externalContext.requestContextPath}','creditorLookup','Creditor_Lookup_id','Creditor_id|Creditor_Lookup_id,Creditor_full_name|Creditor_full_name');"
 								value="#{accountInvoice.header.registry.id}" 
 								valueChangeListener="#{accountInvoice.onRegistryChange}"/>
