@@ -11,7 +11,6 @@
 <ui:composition>
 
 	<aon:div styleClass="aon-section-toolbar">
- 		<!--
 		<aon:confirmButton id="save" value="#{bundle.aon_save}"
 			styleClass="aon-content-toolbar-item aon-icon-accept"
 			confirmTitle="Confirmation Dialog"
@@ -20,21 +19,6 @@
 			onmouseout="this.className='aon-content-toolbar-item aon-icon-accept';"
 			onmouseover="this.className='aon-content-toolbar-item aon-icon-accept aon-content-toolbar-item-hover';"
 			accesskey="#{bundle.aon_key_save}" />
-		-->
-		<aon:commandButton id="save" value="#{bundle.aon_save}"
-			styleClass="aon-content-toolbar-item aon-icon-accept"
-			onmouseout="this.className='aon-content-toolbar-item aon-icon-accept';"
-			onmouseover="this.className='aon-content-toolbar-item aon-icon-accept aon-content-toolbar-item-hover';"
-			onclick="Richfaces.showModalPanel('testt');"
-			accesskey="#{bundle.aon_key_save}">
-			<ui:include src="/facelet/registry/company/tabs/confirmButton.xhtml" >
-				<ui:param name="confirmId" value="testt" />
-				<ui:param name="immediate" value="false" />
-				<ui:param name="confirmTitle" value="Confirmation Dialog" />
-				<ui:param name="confirmMessage" value="#{bundle.aon_save_confirm}" />
-				<ui:param name="confirmActionListener" value="true" />
-			</ui:include>
-		</aon:commandButton>
 	</aon:div>
 
 	<aon:div style="float:left;margin-right:20px;">
