@@ -122,7 +122,7 @@ public class ConfirmButtonHandler extends AonComponentHandler {
 
 	@Override
 	protected void applyNextHandler(FaceletContext ctx, UIComponent component) {
-		URL path = getTemplate(TEMPLATE);
+		URL path = FaceletUtil.getTemplate(TEMPLATE);
 		VariableMapper orig = ctx.getVariableMapper();
 		ctx.setVariableMapper(new VariableMapperWrapper(orig));
 		try {
