@@ -14,6 +14,6 @@ public class RegistryLookupController extends LookupController {
 	@Override
 	protected void customizeLookupMap(ITransferObject to, Map<String, Object> map) {
 		Registry registry = (Registry)to;
-		map.put(REGISTRY_FULL_NAME, registry.getName() + " " + ((registry.getSurname() == null) ? "" : registry.getSurname()) );
+		map.put(REGISTRY_FULL_NAME, ((registry.getName() == null) ? "" : registry.getName()) + " " + ((registry.getSurname() == null) ? "" : registry.getSurname()) );
 	}
 }
