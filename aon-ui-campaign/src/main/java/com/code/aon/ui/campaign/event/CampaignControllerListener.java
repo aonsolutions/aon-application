@@ -17,6 +17,7 @@ import com.code.aon.config.WorkGroup;
 import com.code.aon.config.dao.IConfigAlias;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.ast.Expression;
+import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.ui.campaign.controller.CampaignController;
 import com.code.aon.ui.campaign.controller.CampaignDossierController;
 import com.code.aon.ui.config.util.UserUtils;
@@ -33,7 +34,12 @@ public class CampaignControllerListener extends ControllerAdapter {
     public void beforeModelInitialized(ControllerEvent event) throws ControllerListenerException {
         CampaignController controller = (CampaignController)event.getController();
         try {
-            controller.getCriteria().addExpression(obtainEmployeeWorkGroupsExpr(UserUtils.getLoggedUser()));
+        	Expression empWorkGroupsExpr = obtainEmployeeWorkGroupsExpr(UserUtils.getLoggedUser());
+        	if(empWorkGroupsExpr != null){
+                controller.getCriteria().addExpression(empWorkGroupsExpr);
+        	}else{
+        		controller.getCriteria().addExpression(ExpressionUtilities.getNullExpression(controller.getManagerBean().getFieldName(ICampaignAlias.CAMPAIGN_WORK_GROUP_ID)));
+        	}
             controller.getCriteria().addOrder(controller.getManagerBean().getFieldName(ICampaignAlias.CAMPAIGN_DESCRIPTION));
         } catch (ManagerBeanException e) {
             LOGGER.log(Level.SEVERE, "Error initializing Campaign Model", e);
