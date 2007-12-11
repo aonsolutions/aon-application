@@ -51,6 +51,10 @@
 						<id>Tesoreria</id>
 						<id>Vencimientos</id>
 						<id>Remesas</id>
+						<id>GruposFacturacion</id>
+						<id>UtilidadesTesoreria</id>
+						<id>ChecksTesoreria</id>
+						<id>ListadoCuotas</id>
 						<id>Bancos</id>
 						<id>FormasDePago</id>
 						<id>Conceptos</id>
