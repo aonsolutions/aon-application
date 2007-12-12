@@ -276,10 +276,10 @@
 								rowOnMouseOut="unselectRow( this )"
 								rowOnClick="sendRow( this )"								
 								rendered="#{!delivery.new}"				
-								rowIndexVar="rowIndex" rows="20"
+								rowIndexVar="rowIndex" rows="0" 
 								rowClasses="aon-edit-table-row-odd,aon-edit-table-row-even"
-								columnClasses="aon-edit-table-body aon-edit-table-body-icon,aon-edit-table-body aon-edit-table-body-string aon-edit-table-mainColumn,aon-edit-table-body aon-edit-table-body-number,aon-edit-table-body aon-edit-table-body-number,aon-edit-table-body aon-edit-table-body-number,aon-edit-table-body aon-edit-table-body-buttons">
-
+								columnClasses="aon-edit-table-body aon-edit-table-body-icon,aon-edit-table-body aon-edit-table-body-number,aon-edit-table-body aon-edit-table-body-string aon-edit-table-mainColumn,aon-edit-table-body aon-edit-table-body-number,aon-edit-table-body aon-edit-table-body-number,aon-edit-table-body aon-edit-table-body-number,aon-edit-table-body aon-edit-table-body-buttons">
+								<!-- rows="20" -->
 								<t:column styleClass="#{deliveryDetail.to==to?'aon-table-row-selected aon-edit-table-body aon-edit-table-body-icon':'aon-edit-table-body aon-edit-table-body-icon'}">
 									<f:facet name="header">
 										<f:verbatim>&#160;</f:verbatim>
@@ -302,6 +302,20 @@
 												rendered="#{!deliveryDetail.new and delivery.editable}"
 												accesskey="#{bundle.aon_key_new_line}" />
 											<f:verbatim rendered="#{deliveryDetail.new}">&#160;</f:verbatim>
+										</t:div>
+									</f:facet>
+								</t:column>
+
+								<t:column styleClass="#{deliveryDetail.to==to?'aon-table-row-selected aon-edit-table-body aon-edit-table-body-number':'aon-edit-table-body aon-edit-table-body-number'}">
+									<f:facet name="header">
+										<h:outputText value="#{productBundle.item_code}" />
+									</f:facet>
+									<t:outputText value="#{to.item.product.code}"
+										rendered="#{to!=deliveryDetail.to}" />
+
+									<f:facet name="footer">
+										<t:div>
+											<f:verbatim rendered="#{!deliveryDetail.new}">&#160;</f:verbatim>
 										</t:div>
 									</f:facet>
 								</t:column>
@@ -499,7 +513,7 @@
 									</f:facet>
 								</t:column>
 							</t:dataTable>
-							<t:div styleClass="aon-datascroller"
+							<!-- t:div styleClass="aon-datascroller"
 								rendered="#{deliveryDetail.model.rowCount > 20}">
 								<h:panelGrid columns="2"
 									columnClasses="aon-datascroller-text,aon-datascroller-buttons">
@@ -546,7 +560,7 @@
 										</t:dataScroller>
 									</t:div>
 								</h:panelGrid>
-							</t:div>
+							</t:div-->
 						</t:div>
 					</t:div>
 				</t:div>
