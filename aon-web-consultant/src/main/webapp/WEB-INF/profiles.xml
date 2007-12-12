@@ -37,6 +37,9 @@
 						<id>GruposTrabajo</id>
 						<id>Impuestos</id>
 						<id>CambioContrasena</id>
+						<id>UtilidadesConfiguracion</id>
+						<id>VolcadoDatos</id>
+						<id>RecuperacionDatos</id>
 					</list>
 				</relation>
 				<relation>
