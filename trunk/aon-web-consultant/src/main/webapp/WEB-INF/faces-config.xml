@@ -128,7 +128,7 @@
 		</managed-property>
 		<managed-property>
 			<property-name>style</property-name>
-			<value>blue</value>
+			<value>orange</value>
 		</managed-property>
 		<managed-property>
 			<property-name>userStyleSheets</property-name>
@@ -354,6 +354,16 @@
 			<value>#{menuManager}</value>
 		</managed-property>		
     </managed-bean> 
+    
+    <!-- ************** DUMPER ****************** -->
+	<managed-bean>
+		<managed-bean-name>dumper</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.dbdumper.controller.DumpController
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
+    
     
 	<!-- ************** EXTERNAL LOOKUPS (RELOCATE) ****************** -->
 	<!-- ************* CUSTOMERLOOKUP ***************** -->
@@ -1848,7 +1858,20 @@
       <from-outcome>user_form</from-outcome>
       <to-view-id>/facelet/user/form.faces</to-view-id>
     </navigation-case>
-   </navigation-rule> 
+   </navigation-rule>
+   
+   <!-- =================== Dump ========================== -->
+	<navigation-rule>
+	   	<navigation-case>
+			<from-outcome>recover</from-outcome>
+			<to-view-id>/facelet/dump/form.faces</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>recover_result</from-outcome>
+			<to-view-id>/facelet/dump/result.faces</to-view-id>
+		</navigation-case>
+	</navigation-rule>
+   
 	
 	 <!-- ********************************* -->
   	 <!-- ************ MENU *************** -->
@@ -1923,10 +1946,14 @@
       <from-outcome>workplace</from-outcome>
       <to-view-id>/facelet/registry/company/auxiliary/workplace/grid.faces</to-view-id>
     </navigation-case>
+	<navigation-case>
+		<from-outcome>dump</from-outcome>
+		<to-view-id>/facelet/dump/result.faces</to-view-id>
+	</navigation-case>
     <navigation-case>
       <from-outcome>not_available</from-outcome>
       <to-view-id>/facelet/not_available/form.faces</to-view-id>
-    </navigation-case>    
+    </navigation-case>
   </navigation-rule>
 </faces-config>
 
