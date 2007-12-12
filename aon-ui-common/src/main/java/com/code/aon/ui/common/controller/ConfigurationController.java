@@ -1,16 +1,25 @@
 package com.code.aon.ui.common.controller;
 
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.jar.Attributes;
+import java.util.jar.Manifest;
+import java.util.logging.Logger;
+
+import javax.faces.context.ExternalContext;
+import javax.faces.context.FacesContext;
 
 /**
  * The Class ConfigurationController is used to set some default configurable
  * parameters of the application.
  */
 public class ConfigurationController {
+	
+	private static final Logger LOGGER = Logger.getLogger(ConfigurationController.class.getName());
 
 	/** The Constant STYLE_SHEET_DIRECTORY. */
 	private static final String STYLE_SHEET_DIRECTORY = "/css/";
@@ -255,4 +264,27 @@ public class ConfigurationController {
 		}
 	}
 	
+	/**
+	 * Calculate application version.
+	 * 
+	 * @return the application version number
+	 */
+	public String getApplicationVersion() {
+		try {
+			ExternalContext ec = FacesContext.getCurrentInstance().getExternalContext();
+			InputStream in = ec.getResourceAsStream("META-INF/MANIFEST.MF");
+			Manifest m = new Manifest(in);
+			Attributes attrs = m.getMainAttributes();
+			String version = attrs.getValue("Implementation-Version");
+			if(version != null){
+				LOGGER.info(version);
+			}else{
+				LOGGER.warning("Imposible determinar la versión");
+			}
+			return version;
+		} catch (Throwable e) {
+			LOGGER.warning("Imposible determinar la versión" + e.getMessage());
+			return null;
+		}
+	}
 }
