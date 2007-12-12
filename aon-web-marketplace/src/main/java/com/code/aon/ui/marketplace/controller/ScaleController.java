@@ -25,7 +25,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 
-import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
@@ -933,6 +932,8 @@ public class ScaleController extends ExtendedScaleController {
 			Connection c = getConnection(database);
 	        PreparedStatement ps = c.prepareStatement(insert);
 	        if (getScale().getScaleModel() == ScaleModel.EUROSCALE) {
+	        	Date d = new Date();
+	        	String act = (new SimpleDateFormat("yymmddhhMM")).format(d);
 	            ps.setInt(1, sec);
 	            ps.setInt(2, mos);
 	            ps.setInt(3,fam);
@@ -942,6 +943,11 @@ public class ScaleController extends ExtendedScaleController {
 	            ps.setDouble(7, prc);
 	            ps.setString(8, txt);
 	            ps.setString(9, typ);
+	            ps.setString(10, bar);
+	            ps.setInt(11, new Integer(act).intValue());
+	            /*
+	            	codi_ident,secc_maqui,codi_sub,codi_fam,codigo,plu,euros,des_plu1,codi_pes,balenv,art_cb,prc3
+	            */
 	        }
 	        else {
 	            if (getScale().getScaleModel() == ScaleModel.DIBAL) {
