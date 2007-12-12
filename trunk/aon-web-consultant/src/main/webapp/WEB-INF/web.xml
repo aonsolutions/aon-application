@@ -196,13 +196,13 @@
         <load-on-startup>1</load-on-startup>
     </servlet>
     
-   	<!-- Deploy Servlet 
+   	<!-- Deploy Servlet  
     <servlet>
 		<servlet-name>autodeploy</servlet-name>
 		<servlet-class>com.code.aon.bridge.servlet.DeployServlet</servlet-class>
 		<init-param>
 			<param-name>name</param-name>
-			<param-value>aon-web-consultant.war</param-value>
+			<param-value>consultant</param-value>
 		</init-param>
 		<load-on-startup>2</load-on-startup>
 	</servlet>
@@ -329,6 +329,9 @@
 			<role-name>GruposTrabajo</role-name>
 			<role-name>Impuestos</role-name>
 			<role-name>CambioContrasena</role-name>
+			<role-name>UtilidadesConfiguracion</role-name>
+			<role-name>VolcadoDatos</role-name>
+			<role-name>RecuperacionDatos</role-name>
 			<role-name>BandejaEntrada</role-name>
 		</auth-constraint>
 	</security-constraint>
@@ -385,6 +388,9 @@
 	<security-role><role-name>GruposTrabajo</role-name></security-role>
 	<security-role><role-name>Impuestos</role-name></security-role>
 	<security-role><role-name>CambioContrasena</role-name></security-role>
+	<security-role><role-name>UtilidadesConfiguracion</role-name></security-role>
+	<security-role><role-name>VolcadoDatos</role-name></security-role>
+	<security-role><role-name>RecuperacionDatos</role-name></security-role>
 	<security-role><role-name>BandejaEntrada</role-name></security-role>
 
 	<resource-env-ref>
