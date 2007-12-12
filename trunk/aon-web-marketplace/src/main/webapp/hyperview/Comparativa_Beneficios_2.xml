@@ -19,7 +19,7 @@
        @com:=facturasGrupoCategoriaFecha(?, ?, pcategory_group.id, 0 ) as compras,&#xd;
        @ven:=facturasGrupoCategoriaFecha(?, ?, pcategory_group.id, 1 ) as ventas,&#xd;
        @fin:=inventarioGrupoCategoriaFecha(?, pcategory_group.id) as final,&#xd;
-       @ben:=(@ini + @com - @fin - @ven) AS beneficio,&#xd;
+       @ben:=(@ven + @fin - @ini - @com) AS beneficio,&#xd;
        ((@ben / @com) * 100) AS sobre_compras,&#xd;
        ((@ben / @ven) * 100) AS sobre_ventas&#xd;
 &#xd;
@@ -79,7 +79,7 @@
          FROM inventory, inventory_detail&#xd;
         WHERE inventory.id = inventory_detail.inventory&#xd;
           AND inventory.inventory_date = ?) AS final,&#xd;
-      @ben:=(@ini + @com - @fin - @ven) AS beneficio,&#xd;
+      @ben:=(@ven + @fin - @ini - @com) AS beneficio,&#xd;
       ((@ben / @com) * 100) AS sobre_compras,&#xd;
       ((@ben / @ven) * 100) AS sobre_ventas&#xd;
 </sentence>
@@ -181,7 +181,7 @@ GROUP BY 1, 2&#xd;
           AND inventory.id = inventory_detail.inventory&#xd;
           AND pcategory_group.id = ?&#xd;
           AND inventory.inventory_date = ?) AS final,&#xd;
-      @ben:=(@ini + @com - @fin - @ven) AS beneficio,&#xd;
+      @ben:=(@ven + @fin - @ini - @com) AS beneficio,&#xd;
      ((@ben / @com) * 100) AS sobre_compras,&#xd;
       ((@ben / @ven) * 100) AS sobre_ventas&#xd;
 </sentence>
