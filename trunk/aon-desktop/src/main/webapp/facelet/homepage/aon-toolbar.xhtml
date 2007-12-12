@@ -1,0 +1,29 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core" 
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:c="http://java.sun.com/jstl/core"			
+	xmlns:ice="http://www.icesoft.com/icefaces/component"
+	xmlns:aon="http://www.code.es/aon-components">
+<body>
+
+<ui:composition>
+	<aon:form>
+		<aon:div styleClass="aon-secondary-menu" rendered="#{desktop.validated}">
+			<c:forEach items="#{aonapps.applicationList}" var="app">
+				<ice:outputLink styleClass="aon-secondary-menu-application" value="#{app.context}" target="_blank">
+					<aon:outputText value="#{app.name}" style="text-transform:capitalize"/> 
+				</ice:outputLink>
+			</c:forEach>
+		</aon:div>
+		<aon:div styleClass="aon-secondary-menu" rendered="#{!desktop.validated}" style="width:100%">
+			<ice:outputLink style="background:red;width:100%;padding:5px" value="" target="_self">
+				<aon:outputText value="No esta validado correctamente, pinche aqui para intentarlo de nuevo." style="text-transform:capitalize"/> 
+			</ice:outputLink>
+		</aon:div>
+	</aon:form>
+</ui:composition>
+
+</body>
+</html>
