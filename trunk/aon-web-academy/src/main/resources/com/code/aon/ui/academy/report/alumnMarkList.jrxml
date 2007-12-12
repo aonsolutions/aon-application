@@ -227,7 +227,12 @@
 				<textFieldExpression   class="java.lang.String"><![CDATA["Habilidades:"]]></textFieldExpression>
 				</textField>
 						</cellContents>
-					</crosstabHeaderCell>					<rowGroup name="subject" width="200">
+					</crosstabHeaderCell>					<rowGroup name="subjectId" width="0">
+						<bucket>
+							<bucketExpression class="java.lang.Integer"><![CDATA[$F{mark}.getSubject().getId()]]></bucketExpression>
+						</bucket>
+					</rowGroup>
+					<rowGroup name="subject" width="200">
 						<bucket>
 							<bucketExpression class="java.lang.String"><![CDATA[$F{mark}.getSubject().getAcademicSkill().getDescription()]]></bucketExpression>
 						</bucket>
@@ -317,6 +322,16 @@
 					<crosstabCell width="0" height="0" rowTotalGroup="subject" columnTotalGroup="evaluation">
 						<cellContents mode="Transparent">
 					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="1Point" rightBorderColor="#000000" bottomBorder="1Point" bottomBorderColor="#000000"/>
+						</cellContents>
+					</crosstabCell>
+					<crosstabCell width="60" height="0" rowTotalGroup="subjectId">
+						<cellContents mode="Transparent">
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+						</cellContents>
+					</crosstabCell>
+					<crosstabCell width="0" height="0" rowTotalGroup="subjectId" columnTotalGroup="evaluation">
+						<cellContents mode="Transparent">
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
 						</cellContents>
 					</crosstabCell>
 					<whenNoDataCell>						<cellContents mode="Transparent">
