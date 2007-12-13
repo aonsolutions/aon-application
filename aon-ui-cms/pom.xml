@@ -6,7 +6,7 @@
 	<parent>
 		<groupId>com.code.aon</groupId>
 		<artifactId>aon.web.parent</artifactId>
-		<version>1.0.1</version>
+		<version>1.0.3</version>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.code.aon</groupId>
@@ -18,6 +18,12 @@
 	<dependencies>
 		<dependency>
 			<groupId>com.code.aon</groupId>
+			<artifactId>aon.security.bridge</artifactId>
+			<version>1.2.5</version>
+			<scope>runtime</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.code.aon</groupId>
 			<artifactId>aon.cms</artifactId>
 			<version>2.0.0-SNAPSHOT</version>
 			<scope>compile</scope>
@@ -25,7 +31,7 @@
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.components</artifactId>
-			<version>1.0.2-SNAPSHOT</version>
+			<version>1.1.0-SNAPSHOT</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
