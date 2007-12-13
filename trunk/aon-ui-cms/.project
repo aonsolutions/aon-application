@@ -3,6 +3,7 @@
 	<name>aon-ui-cms</name>
 	<comment></comment>
 	<projects>
+		<project>aon-cms</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>
