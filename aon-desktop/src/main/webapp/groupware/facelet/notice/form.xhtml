@@ -100,7 +100,7 @@
 								value="#{groupwareBundle.notice_work_group}" />
 							<aon:selectOneMenu id="Notice_workGroup_id"
 								value="#{notice.to.workGroup.id}" 
-								required="#{true}" partialSubmit="true"
+								partialSubmit="true"
 								valueChangeListener="#{notice.workGroupChange}">
 								<f:selectItems value="#{configCollections.workgroups}" />
 							</aon:selectOneMenu>
