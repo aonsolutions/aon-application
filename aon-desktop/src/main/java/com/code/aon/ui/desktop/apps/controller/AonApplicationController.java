@@ -7,10 +7,9 @@ import java.util.List;
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 
-import com.code.aon.bridge.plugin.UserUtils;
 import com.code.aon.bridge.plugin.UserManager;
+import com.code.aon.bridge.plugin.UserUtils;
 import com.code.aon.jaas.auth.AuthPrincipal;
 import com.code.aon.jaas.client.ast.core.Application;
 import com.code.aon.jaas.deployment.DeploymentException;
@@ -65,16 +64,15 @@ public class AonApplicationController extends BasicController {
 		UserManager um = new UserManager();
 		um.findUser(user.getShortName());
 		try {
-			UserUtils.addSharingUserCookies((HttpServletResponse)ec.getResponse(), ec.getUserPrincipal());
-			String jsessionid = ((HttpSession)ec.getSession(false)).getId();
 			List list = um.getUserApplications();
             for (int i = 0; i < list.size(); i++) {
 				Application app = (Application)list.get(i);
                 if (app != null && noContext.indexOf(app.getContext()) < 0) {
                 	String name = app.getId();
-                	name = name.replaceAll("aon-", "");
                 	name = name.replaceAll(".war", "");
-                	App a = new App(name, app.getContext() + "/webauthentication.auth?JSESSIONID=" + jsessionid);
+                	String context = name;
+                	name = name.replaceAll("aon-", "");
+                	App a = new App( name, ec.getRequestContextPath() + "/" + context + ".auth");
 					applicationList.add(a);
 				}
 			}
