@@ -133,24 +133,8 @@
         <param-name>com.icesoft.faces.uploadMaxFileSize</param-name>
         <param-value>10485760</param-value>
     </context-param>
-<!--     
-	<context-param> 
-		<param-name>org.jboss.jbossfaces.WAR_BUNDLES_JSF_IMPL</param-name> 
-		<param-value>true</param-value> 
-	</context-param>
- -->	
 
     <!-- Sessions Filter -->
-<!-- 
-	<filter>
-	   <filter-name>SessionFilter</filter-name>
-	   <filter-class>com.code.aon.bridge.session.SessionFilter</filter-class>
-	</filter>
-	<filter-mapping>
-	   <filter-name>SessionFilter</filter-name>
-		<url-pattern>*.jsp</url-pattern>
-	</filter-mapping>
- -->
  
 	<!-- BackDoorAuthentication Filter -->
 	<filter>
@@ -164,30 +148,10 @@
 	</filter-mapping>
  
   	<!-- Listener, that enables Concurrent Sessions per User. -->
-<!-- 
-	<listener>
-		<listener-class>com.code.aon.bridge.session.ConcurrentSessionListener</listener-class>
-	</listener>
- -->
  
   	<!-- Listener, that does all the startup work (configuration, init). -->
-<!--   	
-	<listener>
-		<listener-class>
-			org.apache.myfaces.webapp.StartupServletContextListener
-		</listener-class>
-	</listener>
-	<listener>
-		<listener-class>
-			com.icesoft.faces.util.event.servlet.ContextEventRepeater
-		</listener-class>
-	</listener>
-	<listener>
-		<listener-class>
-			com.icesoft.faces.webapp.http.servlet.SessionDispatcher$Listener
-		</listener-class>
-	</listener>
- -->
+  	
+	<!-- Faces Servlet -->
 	<servlet>
 		<servlet-name>Persistent Faces Servlet</servlet-name>
 		<servlet-class>
@@ -291,7 +255,7 @@
 		</servlet>
     -->
 	<session-config>
-		<session-timeout>600</session-timeout>
+		<session-timeout>240</session-timeout>
 	</session-config>
 	
 	<servlet>

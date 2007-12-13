@@ -12,6 +12,6 @@ Redirects the user to the address form page.
 <head>
 </head>
 <body>
-<jsp:forward page="webmail/facelet/folderView.iface" />
+<jsp:forward page="/webmail/facelet/folderView.iface" />
 </body>
 </html>
