@@ -25,6 +25,20 @@
 
 				<aon:div styleClass="aon-content-toolbar-internal">
 					<aon:div styleClass="aon-content-toolbar-item-group">
+						<aon:commandButton id="save" value="#{bundle.aon_save}"
+							forceId="#{true}" actionListener="#{user.accept}"
+							styleClass="aon-content-toolbar-item aon-content-toolbar-item-save"
+							onmouseover="this.className='aon-content-toolbar-item aon-content-toolbar-item-hover aon-content-toolbar-item-save'"
+							onmouseout="this.className='aon-content-toolbar-item aon-content-toolbar-item-save'"
+							accesskey="#{bundle.aon_key_save}" />
+						<aon:commandButton id="cancel" value="#{bundle.aon_cancel}"
+							forceId="#{true}" immediate="#{true}" action="user_list"
+							actionListener="#{user.onCancel}"
+							onclick="return (confirm('#{bundle.aon_cancel_confirm}'))"
+							styleClass="aon-content-toolbar-item aon-content-toolbar-item-cancel"
+							onmouseover="this.className='aon-content-toolbar-item aon-content-toolbar-item-hover aon-content-toolbar-item-cancel'"
+							onmouseout="this.className='aon-content-toolbar-item aon-content-toolbar-item-cancel'"
+							accesskey="#{bundle.aon_key_cancel}" />
 						<aon:commandButton id="search" value="#{bundle.aon_search}"
 							immediate="true" action="user_search"
 							actionListener="#{user.onEditSearch}"
@@ -72,6 +86,15 @@
 							<aon:inputText id="User_login" disabled="true"
 								styleClass="aon-inputText" required="true" size="20"
 								maxlength="16" value="#{user.to.login}" />
+
+							<aon:outputLabel for="userData"
+								value="#{securityBundle.aon_security_profiles}"
+								styleClass="aon-form-input-text-label" />
+							<aon:selectManyCheckbox id="userData"
+								value="#{user.userManager.relations}" layout="pageDirection"
+								layoutWidth="5" styleClass="selectManyCheckbox">
+								<f:selectItems value="#{user.userManager.profiles}" />
+							</aon:selectManyCheckbox>
 
 						</aon:panelGrid>
 					</aon:panelGrid>

@@ -10,17 +10,12 @@
 
 <ui:composition>
 	<aon:form>
-		<aon:div styleClass="aon-secondary-menu" rendered="#{desktop.validated}">
+		<aon:div styleClass="aon-secondary-menu" >
 			<c:forEach items="#{aonapps.applicationList}" var="app">
 				<ice:outputLink styleClass="aon-secondary-menu-application" value="#{app.context}" target="_blank">
 					<aon:outputText value="#{app.name}" style="text-transform:capitalize"/> 
 				</ice:outputLink>
 			</c:forEach>
-		</aon:div>
-		<aon:div styleClass="aon-secondary-menu" rendered="#{!desktop.validated}" style="width:100%">
-			<ice:outputLink style="background:red;width:100%;padding:5px" value="" target="_self">
-				<aon:outputText value="No esta validado correctamente, pinche aqui para intentarlo de nuevo." style="text-transform:capitalize"/> 
-			</ice:outputLink>
 		</aon:div>
 	</aon:form>
 </ui:composition>

@@ -9,7 +9,7 @@
 
 <ui:composition>
 	<aon:form>
-		<aon:div styleClass="aon-sidebarIcons-bottom" rendered="#{desktop.validated}">
+		<aon:div styleClass="aon-sidebarIcons-bottom">
 
 		<aon:commandLink styleClass="aon-icon-big aon-icon-big-home" action="home">
 			<aon:outputText value="#{appBundle.aon_home}"/>
@@ -35,7 +35,8 @@
 			<aon:outputText value="#{groupwareBundle.aon_favorites}"/>
 		</aon:commandLink>
 			
-		<aon:commandLink styleClass="aon-icon-big aon-icon-big-users" actionListener="#{user.onSearch}" action="user">
+		<aon:commandLink styleClass="aon-icon-big aon-icon-big-users" actionListener="#{user.onSearch}" action="user"
+			renderedOnUserRole="Manager">
 			<aon:outputText value="#{appBundle.aon_users}"/>
 		</aon:commandLink>
 
