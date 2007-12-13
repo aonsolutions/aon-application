@@ -68,10 +68,12 @@ public class AonApplicationController extends BasicController {
             for (int i = 0; i < list.size(); i++) {
 				Application app = (Application)list.get(i);
                 if (app != null && noContext.indexOf(app.getContext()) < 0) {
-                	String name = app.getId();
-                	name = name.replaceAll(".war", "");
-                	String context = name;
-                	name = name.replaceAll("aon-", "");
+                	String context = app.getContext();
+                	context = context.replaceAll(".war", "");
+                	String name = app.getDescription();
+                	if (name == null){
+                		name = context.replaceAll("aon-", "");
+                	}
                 	App a = new App( name, ec.getRequestContextPath() + "/" + context + ".auth");
 					applicationList.add(a);
 				}
