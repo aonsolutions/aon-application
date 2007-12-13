@@ -306,6 +306,16 @@
 		<url-pattern>/block/receive-updated-views/*</url-pattern>
 	</servlet-mapping>
 
+    <!-- BackDoorAuthentication Bean Servlet -->
+	<servlet>
+		<servlet-name>BackDoorAuthentication</servlet-name>
+		<servlet-class>com.code.aon.bridge.servlet.BackDoorAuthentication</servlet-class>
+	</servlet>
+	<servlet-mapping>
+        	<servlet-name>BackDoorAuthentication</servlet-name>
+	        <url-pattern>*.auth</url-pattern>
+	</servlet-mapping>
+
 	<!-- Welcome File List -->
 	<welcome-file-list>
 		<welcome-file>index.html</welcome-file>
