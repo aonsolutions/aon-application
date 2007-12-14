@@ -7,6 +7,7 @@
 <!ELEMENT bean EMPTY>
 <!ELEMENT criteria EMPTY>
 <!ELEMENT nested-report EMPTY>
+<!ELEMENT collection EMPTY>
 <!ELEMENT fetch-mode EMPTY>
 <!ELEMENT params (param)+>
 <!ELEMENT param EMPTY>
