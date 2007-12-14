@@ -69,7 +69,7 @@
 								<h:commandLink styleClass="aon-sidebar-menu-branch-link"
 									immediate="true"
 									action="#{treeMenu.nodeAction}"
-									actionListener="#{treeMenu.menuPressed}" id="menuCommand">
+									actionListener="#{treeMenu.menuPressed}" id="menu">
 									<h:outputText value="#{sbnode.description}" />
 								</h:commandLink>
 							</t:div>						
@@ -84,13 +84,13 @@
 									immediate="true"
 									action="#{treeMenu.nodeAction}"
 									actionListener="#{treeMenu.optionPressed}"
-									rendered="#{!sbnode.menuItem.external}" id="commandLeaf">
+									rendered="#{!sbnode.menuItem.external}" id="option">
 									<h:outputText value="#{sbnode.description}" />
 								</h:commandLink>
 								<h:outputLink styleClass="aon-sidebar-menu-leaf-link"
 									target="#{sbnode.menuItem.target}"
 									value="#{sbnode.optionValue}"
-									rendered="#{sbnode.menuItem.external}" id="linkLeaf">
+									rendered="#{sbnode.menuItem.external}" id="optionExternal">
 									<h:outputText value="#{sbnode.description}" />
 								</h:outputLink>
 	 						</t:div>
