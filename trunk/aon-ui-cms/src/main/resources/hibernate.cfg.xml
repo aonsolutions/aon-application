@@ -40,6 +40,10 @@
 		<mapping class="com.code.aon.cms.ProductCategoryDetail"/>
 		<mapping class="com.code.aon.cms.Product"/>
 		<mapping class="com.code.aon.cms.ProductDetail"/>
+		<mapping class="com.code.aon.cms.Article"/>
+		<mapping class="com.code.aon.cms.ArticleDetail"/>
+		<mapping class="com.code.aon.cms.ArticleCategory"/>
+		<mapping class="com.code.aon.cms.ArticleCategoryDetail"/>
 
 	</session-factory>
 
