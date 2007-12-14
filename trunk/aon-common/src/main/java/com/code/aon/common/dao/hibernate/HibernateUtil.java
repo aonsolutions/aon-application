@@ -127,8 +127,10 @@ public class HibernateUtil {
     public static void closeSession() { 
         Session s = session.get(getSessionFactoryName()).get(); 
         session.get(getSessionFactoryName()).set(null); 
-        if (s != null) 
-            s.close(); 
+        if (s != null) {
+            s.close();
+            LOGGER.finest("** Hibernate session closed" );
+        } 
     } 
 
     /**
