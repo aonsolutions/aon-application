@@ -5,8 +5,8 @@ import java.util.Collection;
 /**
  * Interface that provides a collection of objects.
  * 
- * @author Consulting & Development. 
- *
+ * @author Consulting & Development.
+ * 
  */
 
 public interface ICollectionProvider {
@@ -17,5 +17,6 @@ public interface ICollectionProvider {
 	 * @return The collection.
 	 */
 	Collection getCollection();
-	
+
+	Collection getCollection(boolean forceRefresh) throws ManagerBeanException;
 }
