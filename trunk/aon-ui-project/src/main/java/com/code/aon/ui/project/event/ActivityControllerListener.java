@@ -5,8 +5,12 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import com.code.aon.common.BeanManager;
+import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.project.Activity;
+import com.code.aon.project.dao.IProjectAlias;
+import com.code.aon.ql.Criteria;
 import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
@@ -23,7 +27,13 @@ public class ActivityControllerListener extends ControllerAdapter {
 	
 	@Override
 	public void beforeBeanUpdated(ControllerEvent event) throws ControllerListenerException {
-		checkActivityType(event);
+		try {
+			if(activityTypeChanged((Activity)event.getController().getTo())){
+				checkActivityType(event);
+			}
+		} catch (ManagerBeanException e) {
+			throw new ControllerListenerException("Error updating activity with id= " + ((Activity)event.getController().getTo()).getId());
+		}
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -41,5 +51,18 @@ public class ActivityControllerListener extends ControllerAdapter {
 		} catch (ManagerBeanException e) {
 			LOGGER.log(Level.SEVERE, "Error obtaining ActivityController model", e);
 		}
+	}
+	
+	@SuppressWarnings("unchecked")
+	private boolean activityTypeChanged(Activity activity) throws ManagerBeanException {
+		IManagerBean activityBean = BeanManager.getManagerBean(Activity.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(activityBean.getFieldName(IProjectAlias.ACTIVITY_ID), activity.getId());
+		Iterator iter = activityBean.getList(criteria, 0, 1).iterator();
+		if(iter.hasNext()){
+			Activity dbActivity = (Activity)iter.next();
+			return !activity.getActivityType().getId().equals(dbActivity.getActivityType().getId());
+		}
+		return true;
 	}
 }
