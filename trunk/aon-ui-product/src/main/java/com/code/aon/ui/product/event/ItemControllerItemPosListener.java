@@ -54,7 +54,8 @@ public class ItemControllerItemPosListener extends ControllerAdapter {
 			reloadItemPosModel(item.getId());
 			
 		} catch (ManagerBeanException e) {
-            AonUtil.addErrorMessage("PLU Duplicada");
+            AonUtil.addErrorMessage("Error al insertar PLU.");
+            LOGGER.log(Level.SEVERE, "Error al insertar PLU.", e);
 		}
 	}
 
