@@ -731,6 +731,26 @@ public class BasicController extends AbstractPojoController implements IControll
     }
 
     /**
+     * Get a collection that contains current <code>ITransferObject</code> associated to controller.
+     *  To use in reports.
+     *  
+     *  @return Collection
+     * @throws ManagerBeanException 
+     */
+    public Collection getCollection(boolean forceRefresh) throws ManagerBeanException {
+    	if (!forceRefresh) {
+    		return this.getCollection();
+    	}
+        if (this.getTo() != null) {
+        	List<ITransferObject> l = new LinkedList<ITransferObject>();
+            ITransferObject refreshed = getManagerBean().get( this.savedToId );
+            l.add(refreshed);
+            return l;
+        }
+        return null;
+    }
+
+    /**
      * Get the <code>List<ITransferObject></code> wrapped by the model associated to controller.
      * 
      * @return List<ITransferObject>

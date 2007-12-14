@@ -8,6 +8,7 @@ import org.hibernate.Query;
 import org.hibernate.Session;
 
 import com.code.aon.common.ICollectionProvider;
+import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
 
 public class InvoiceDetailByIncomePrinter implements ICollectionProvider {
@@ -30,5 +31,10 @@ public class InvoiceDetailByIncomePrinter implements ICollectionProvider {
         List results = q.list();
         TreeSet<InvoiceDetailByDeliveryCollectionProvider> treeSet = new TreeSet<InvoiceDetailByDeliveryCollectionProvider>(results);
 		return treeSet;
+	}
+	@Override
+	public Collection getCollection(boolean forceRefresh)
+			throws ManagerBeanException {
+		return getCollection();
 	}
 }
