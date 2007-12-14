@@ -3,6 +3,7 @@ package com.code.aon.ui.report.controller;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Collection;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.ResourceBundle;
@@ -128,19 +129,18 @@ public class ReportManager {
 		
 		boolean initTransState = HibernateUtil.mustBeginTransaction();
 		boolean initSessionState = HibernateUtil.mustCloseSession();
-		//if(initTransState){
 			HibernateUtil.setCloseSession( false );
-		//}
-//		if(initSessionState){
 			HibernateUtil.setBeginTransaction( false );
-//		}
 		try{
-			JRReport report = JRReportFactory.getJRReport(getReportKey());
-			Criteria criteria = getCriteria(report);
-			Collection collection = getCollection(report);
-
 			HibernateUtil.startSession();
 			HibernateUtil.beginTransaction();
+
+			JRReport report = JRReportFactory.getJRReport(getReportKey());
+			Criteria criteria = getCriteria(report);
+			List nestedList = report.getReportConfig().getNestedReports(); 
+			boolean force = (nestedList != null && !nestedList.isEmpty());  
+			Collection collection = getCollection(report, force);
+
 			 
 			String dp = report.getReportConfig().getDynamicParamsProvider();
 			LOGGER.info( dp );		
@@ -159,14 +159,19 @@ public class ReportManager {
 			ctx.responseComplete();
 			
 			HibernateUtil.commitTransaction();
-			HibernateUtil.closeSession();
 			return out;
+		} catch (Throwable t ){
+			HibernateUtil.rollbackTransaction();
+			return null;
 		} finally{
 			if(initTransState  != HibernateUtil.mustBeginTransaction()){
 				HibernateUtil.setBeginTransaction(initTransState);
 			}
 			if(initSessionState  != HibernateUtil.mustCloseSession()){
 				HibernateUtil.setCloseSession(initSessionState);
+			}
+			if ( HibernateUtil.mustCloseSession() ) {
+				HibernateUtil.closeSession();	
 			}
 		}
 	}
@@ -309,7 +314,7 @@ public class ReportManager {
 	 * @throws ReportException
 	 *             If an error ocurred.
 	 */
-	private Collection getCollection(JRReport report) throws ReportException {
+	private Collection getCollection(JRReport report, boolean forceRefresh) throws ReportException {
 		ReportConfig config = report.getReportConfig();
 		String provider = config.getCollectionProvider();
 		try {
@@ -322,16 +327,18 @@ public class ReportManager {
 					ICollectionProvider crpr = (ICollectionProvider) vb
 							.getValue(ctx);
 
-					return crpr.getCollection();
+					return crpr.getCollection(forceRefresh);
 				} 
 				// Collection provider is a class.
 				Class collectionProviderClass = Class.forName(provider);
 				ICollectionProvider collectionProvider = (ICollectionProvider) collectionProviderClass
 						.newInstance();
-				return collectionProvider.getCollection();
+				return collectionProvider.getCollection(forceRefresh);
 				
 			}
 			return null;
+		} catch (ManagerBeanException e) {
+			throw new ReportException(e.getMessage(), e);
 		} catch (ReferenceSyntaxException e) {
 			throw new ReportException(e.getMessage(), e);
 		} catch (PropertyNotFoundException e) {
