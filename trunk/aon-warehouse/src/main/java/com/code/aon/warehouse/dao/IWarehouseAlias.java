@@ -305,40 +305,46 @@ public interface IWarehouseAlias {
 	DAOConstantsEntry INVENTORY_DETAIL_ENTRY = DAOConstants.getDAOConstant(InventoryDetail.class);
 
 	/** 
-	* Alias value: InventoryDetail_actualQuantity
-	* Hibernate value: InventoryDetail.actualQuantity
-	*/
-	String  INVENTORY_DETAIL_ACTUAL_QUANTITY = INVENTORY_DETAIL_ENTRY.getAliasNames()[0];
-
-	/** 
-	* Alias value: InventoryDetail_cost
-	* Hibernate value: InventoryDetail.cost
-	*/
-	String  INVENTORY_DETAIL_COST = INVENTORY_DETAIL_ENTRY.getAliasNames()[1];
-
-	/** 
 	* Alias value: InventoryDetail_id
 	* Hibernate value: InventoryDetail.id
 	*/
-	String  INVENTORY_DETAIL_ID = INVENTORY_DETAIL_ENTRY.getAliasNames()[2];
+	String  INVENTORY_DETAIL_ID = INVENTORY_DETAIL_ENTRY.getAliasNames()[0];
 
 	/** 
 	* Alias value: InventoryDetail_inventory_id
 	* Hibernate value: InventoryDetail.inventory.id
 	*/
-	String  INVENTORY_DETAIL_INVENTORY_ID = INVENTORY_DETAIL_ENTRY.getAliasNames()[3];
+	String  INVENTORY_DETAIL_INVENTORY_ID = INVENTORY_DETAIL_ENTRY.getAliasNames()[1];
 
 	/** 
 	* Alias value: InventoryDetail_item_id
 	* Hibernate value: InventoryDetail.item.id
 	*/
-	String  INVENTORY_DETAIL_ITEM_ID = INVENTORY_DETAIL_ENTRY.getAliasNames()[4];
+	String  INVENTORY_DETAIL_ITEM_ID = INVENTORY_DETAIL_ENTRY.getAliasNames()[2];
+
+	/** 
+	* Alias value: InventoryDetail_actualQuantity
+	* Hibernate value: InventoryDetail.actualQuantity
+	*/
+	String  INVENTORY_DETAIL_ACTUAL_QUANTITY = INVENTORY_DETAIL_ENTRY.getAliasNames()[3];
 
 	/** 
 	* Alias value: InventoryDetail_realQuantity
 	* Hibernate value: InventoryDetail.realQuantity
 	*/
-	String  INVENTORY_DETAIL_REAL_QUANTITY = INVENTORY_DETAIL_ENTRY.getAliasNames()[5];
+	String  INVENTORY_DETAIL_REAL_QUANTITY = INVENTORY_DETAIL_ENTRY.getAliasNames()[4];
+
+	/** 
+	* Alias value: InventoryDetail_cost
+	* Hibernate value: InventoryDetail.cost
+	*/
+	String  INVENTORY_DETAIL_COST = INVENTORY_DETAIL_ENTRY.getAliasNames()[5];
+
+	/** 
+	* Alias value: InventoryDetail_item_product_code
+	* Hibernate value: InventoryDetail.item.product.code
+	*/
+	String  INVENTORY_DETAIL_ITEM_PRODUCT_CODE = INVENTORY_DETAIL_ENTRY.getAliasNames()[6];
 
 
 
