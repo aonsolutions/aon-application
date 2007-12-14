@@ -5,7 +5,7 @@
 <hibernate-configuration>
 
 	<session-factory>
-		<property name="connection.url">jdbc:mysql://192.168.2.4:3306/aon_gtm?autoReconnect=true</property>		
+		<property name="connection.url">jdbc:mysql://192.168.2.4:3306/aon_marketplace?autoReconnect=true</property>		
 		<property name="connection.username">dbuser</property>		
 		<property name="show_sql">true</property>		
 		<property name="dialect">org.hibernate.dialect.MySQLInnoDBDialect</property>
@@ -31,6 +31,9 @@
 		<mapping class="com.code.aon.product.Tax"/>
 		<mapping class="com.code.aon.product.Brand"/>
 		
+		<!-- AON-CONFIG Mapping files -->	
+		<mapping class="com.code.aon.config.Scope"/>
+
 		<!-- AON-REGISTRY Mapping files -->	
 		<mapping class="com.code.aon.registry.Registry"/>
 		<mapping class="com.code.aon.registry.RegistryAddress"/>
