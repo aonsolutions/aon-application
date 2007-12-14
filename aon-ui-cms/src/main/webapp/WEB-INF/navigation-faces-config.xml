@@ -158,6 +158,30 @@
     </navigation-case>
   </navigation-rule>
   
+  <!-- ================================================= ARTICLE CATEGORY -->
+  <navigation-rule>
+    <navigation-case>
+      <from-outcome>article_category_list</from-outcome>
+      <to-view-id>/facelet/content/article_category/list.iface</to-view-id>
+    </navigation-case>
+    <navigation-case>
+      <from-outcome>article_category_form</from-outcome>
+      <to-view-id>/facelet/content/article_category/form.iface</to-view-id>
+    </navigation-case>
+  </navigation-rule>
+  
+  <!-- ================================================= ARTICLE -->
+  <navigation-rule>
+    <navigation-case>
+      <from-outcome>article_list</from-outcome>
+      <to-view-id>/facelet/content/article_category/article/list.iface</to-view-id>
+    </navigation-case>
+    <navigation-case>
+      <from-outcome>article_form</from-outcome>
+      <to-view-id>/facelet/content/article_category/article/form.iface</to-view-id>
+    </navigation-case>
+  </navigation-rule>
+  
   <!-- =================================================== TEMPLATES -->
   <navigation-rule>
     <navigation-case>
