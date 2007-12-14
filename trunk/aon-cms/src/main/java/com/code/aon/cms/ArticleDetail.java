@@ -12,18 +12,20 @@ import javax.persistence.Table;
 import com.code.aon.common.ITransferObject;
 
 @Entity
-@Table(name = "product_i18n")
-public class ProductDetail implements ITransferObject {
+@Table(name = "article_i18n")
+public class ArticleDetail implements ITransferObject {
 
 	private Integer id;
 
-	private Product product;
+	private Article article;
 	
 	private Language language;
 
-	private String label;
+	private String title;
+	
+	private String subtitle;
 
-	private String shortLabel;
+	private String content;
 	
 	@Id
 	@GeneratedValue
@@ -37,13 +39,13 @@ public class ProductDetail implements ITransferObject {
 	}
 
 	@ManyToOne(fetch = FetchType.EAGER)
-	@JoinColumn(name = "product", nullable = false)
-	public Product getProduct() {
-		return product;
+	@JoinColumn(name = "article", nullable = false)
+	public Article getArticle() {
+		return article;
 	}
 
-	public void setProduct(Product product) {
-		this.product = product;
+	public void setArticle(Article article) {
+		this.article = article;
 	}
 
 	@ManyToOne
@@ -56,22 +58,30 @@ public class ProductDetail implements ITransferObject {
 		this.language = language;
 	}
 
-	@Column(name = "label", nullable = false)
-	public String getLabel() {
-		return label;
+	@Column(name = "title", nullable = false, length = 255)
+	public String getTitle() {
+		return title;
 	}
 
-	public void setLabel(String label) {
-		this.label = label;
+	public void setTitle(String title) {
+		this.title = title;
 	}
 
-	@Column(name = "short_label", nullable = false, length = 64)
-	public String getShortLabel() {
-		return shortLabel;
+	@Column(name = "subtitle", length = 255)
+	public String getSubtitle() {
+		return subtitle;
 	}
 
-	public void setShortLabel(String shortLabel) {
-		this.shortLabel = shortLabel;
+	public void setSubtitle(String subtitle) {
+		this.subtitle = subtitle;
 	}
 
+	@Column(name = "content")
+	public String getContent() {
+		return content;
+	}
+
+	public void setContent(String content) {
+		this.content = content;
+	}
 }
