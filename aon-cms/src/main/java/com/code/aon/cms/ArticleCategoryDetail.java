@@ -12,19 +12,17 @@ import javax.persistence.Table;
 import com.code.aon.common.ITransferObject;
 
 @Entity
-@Table(name = "product_i18n")
-public class ProductDetail implements ITransferObject {
+@Table(name = "article_category_i18n")
+public class ArticleCategoryDetail implements ITransferObject {
 
 	private Integer id;
 
-	private Product product;
+	private ArticleCategory articleCategory;
 	
 	private Language language;
 
 	private String label;
 
-	private String shortLabel;
-	
 	@Id
 	@GeneratedValue
 	@Column(name = "id", nullable = false)
@@ -37,13 +35,13 @@ public class ProductDetail implements ITransferObject {
 	}
 
 	@ManyToOne(fetch = FetchType.EAGER)
-	@JoinColumn(name = "product", nullable = false)
-	public Product getProduct() {
-		return product;
+	@JoinColumn(name = "article_category", nullable = false)
+	public ArticleCategory getArticleCategory() {
+		return articleCategory;
 	}
 
-	public void setProduct(Product product) {
-		this.product = product;
+	public void setArticleCategory(ArticleCategory articleCategory) {
+		this.articleCategory = articleCategory;
 	}
 
 	@ManyToOne
@@ -56,22 +54,13 @@ public class ProductDetail implements ITransferObject {
 		this.language = language;
 	}
 
-	@Column(name = "label", nullable = false)
+	@Column(name = "label", nullable = false, length = 64)
 	public String getLabel() {
 		return label;
 	}
 
 	public void setLabel(String label) {
 		this.label = label;
-	}
-
-	@Column(name = "short_label", nullable = false, length = 64)
-	public String getShortLabel() {
-		return shortLabel;
-	}
-
-	public void setShortLabel(String shortLabel) {
-		this.shortLabel = shortLabel;
 	}
 
 }

@@ -28,6 +28,10 @@ import com.code.aon.cms.ProductCategory;
 import com.code.aon.cms.ProductCategoryDetail;
 import com.code.aon.cms.Product;
 import com.code.aon.cms.ProductDetail;
+import com.code.aon.cms.Article;
+import com.code.aon.cms.ArticleDetail;
+import com.code.aon.cms.ArticleCategory;
+import com.code.aon.cms.ArticleCategoryDetail;
 
 /** 
 * Interface for holding entity properties constants.
@@ -1085,6 +1089,166 @@ public interface ICMSAlias {
 	* Hibernate value: ProductDetail.shortLabel
 	*/
 	String  PRODUCT_DETAIL_SHORT_LABEL = PRODUCT_DETAIL_ENTRY.getAliasNames()[4];
+
+
+
+	/** 
+	* DAOConstantsEntry for Article entity.
+	*/ 
+	DAOConstantsEntry ARTICLE_ENTRY = DAOConstants.getDAOConstant(Article.class);
+
+	/** 
+	* Alias value: Article_active
+	* Hibernate value: Article.active
+	*/
+	String  ARTICLE_ACTIVE = ARTICLE_ENTRY.getAliasNames()[0];
+
+	/** 
+	* Alias value: Article_alias
+	* Hibernate value: Article.alias
+	*/
+	String  ARTICLE_ALIAS = ARTICLE_ENTRY.getAliasNames()[1];
+
+	/** 
+	* Alias value: Article_articleCategory_id
+	* Hibernate value: Article.articleCategory.id
+	*/
+	String  ARTICLE_ARTICLE_CATEGORY_ID = ARTICLE_ENTRY.getAliasNames()[2];
+
+	/** 
+	* Alias value: Article_articleType
+	* Hibernate value: Article.articleType
+	*/
+	String  ARTICLE_ARTICLE_TYPE = ARTICLE_ENTRY.getAliasNames()[3];
+
+	/** 
+	* Alias value: Article_expireDate
+	* Hibernate value: Article.expireDate
+	*/
+	String  ARTICLE_EXPIRE_DATE = ARTICLE_ENTRY.getAliasNames()[4];
+
+	/** 
+	* Alias value: Article_id
+	* Hibernate value: Article.id
+	*/
+	String  ARTICLE_ID = ARTICLE_ENTRY.getAliasNames()[5];
+
+	/** 
+	* Alias value: Article_position
+	* Hibernate value: Article.position
+	*/
+	String  ARTICLE_POSITION = ARTICLE_ENTRY.getAliasNames()[6];
+
+	/** 
+	* Alias value: Article_publishDate
+	* Hibernate value: Article.publishDate
+	*/
+	String  ARTICLE_PUBLISH_DATE = ARTICLE_ENTRY.getAliasNames()[7];
+
+
+
+	/** 
+	* DAOConstantsEntry for ArticleDetail entity.
+	*/ 
+	DAOConstantsEntry ARTICLE_DETAIL_ENTRY = DAOConstants.getDAOConstant(ArticleDetail.class);
+
+	/** 
+	* Alias value: ArticleDetail_article_id
+	* Hibernate value: ArticleDetail.article.id
+	*/
+	String  ARTICLE_DETAIL_ARTICLE_ID = ARTICLE_DETAIL_ENTRY.getAliasNames()[0];
+
+	/** 
+	* Alias value: ArticleDetail_content
+	* Hibernate value: ArticleDetail.content
+	*/
+	String  ARTICLE_DETAIL_CONTENT = ARTICLE_DETAIL_ENTRY.getAliasNames()[1];
+
+	/** 
+	* Alias value: ArticleDetail_id
+	* Hibernate value: ArticleDetail.id
+	*/
+	String  ARTICLE_DETAIL_ID = ARTICLE_DETAIL_ENTRY.getAliasNames()[2];
+
+	/** 
+	* Alias value: ArticleDetail_language_id
+	* Hibernate value: ArticleDetail.language.id
+	*/
+	String  ARTICLE_DETAIL_LANGUAGE_ID = ARTICLE_DETAIL_ENTRY.getAliasNames()[3];
+
+	/** 
+	* Alias value: ArticleDetail_subtitle
+	* Hibernate value: ArticleDetail.subtitle
+	*/
+	String  ARTICLE_DETAIL_SUBTITLE = ARTICLE_DETAIL_ENTRY.getAliasNames()[4];
+
+	/** 
+	* Alias value: ArticleDetail_title
+	* Hibernate value: ArticleDetail.title
+	*/
+	String  ARTICLE_DETAIL_TITLE = ARTICLE_DETAIL_ENTRY.getAliasNames()[5];
+
+
+
+	/** 
+	* DAOConstantsEntry for ArticleCategory entity.
+	*/ 
+	DAOConstantsEntry ARTICLE_CATEGORY_ENTRY = DAOConstants.getDAOConstant(ArticleCategory.class);
+
+	/** 
+	* Alias value: ArticleCategory_active
+	* Hibernate value: ArticleCategory.active
+	*/
+	String  ARTICLE_CATEGORY_ACTIVE = ARTICLE_CATEGORY_ENTRY.getAliasNames()[0];
+
+	/** 
+	* Alias value: ArticleCategory_alias
+	* Hibernate value: ArticleCategory.alias
+	*/
+	String  ARTICLE_CATEGORY_ALIAS = ARTICLE_CATEGORY_ENTRY.getAliasNames()[1];
+
+	/** 
+	* Alias value: ArticleCategory_id
+	* Hibernate value: ArticleCategory.id
+	*/
+	String  ARTICLE_CATEGORY_ID = ARTICLE_CATEGORY_ENTRY.getAliasNames()[2];
+
+	/** 
+	* Alias value: ArticleCategory_position
+	* Hibernate value: ArticleCategory.position
+	*/
+	String  ARTICLE_CATEGORY_POSITION = ARTICLE_CATEGORY_ENTRY.getAliasNames()[3];
+
+
+
+	/** 
+	* DAOConstantsEntry for ArticleCategoryDetail entity.
+	*/ 
+	DAOConstantsEntry ARTICLE_CATEGORY_DETAIL_ENTRY = DAOConstants.getDAOConstant(ArticleCategoryDetail.class);
+
+	/** 
+	* Alias value: ArticleCategoryDetail_articleCategory_id
+	* Hibernate value: ArticleCategoryDetail.articleCategory.id
+	*/
+	String  ARTICLE_CATEGORY_DETAIL_ARTICLE_CATEGORY_ID = ARTICLE_CATEGORY_DETAIL_ENTRY.getAliasNames()[0];
+
+	/** 
+	* Alias value: ArticleCategoryDetail_id
+	* Hibernate value: ArticleCategoryDetail.id
+	*/
+	String  ARTICLE_CATEGORY_DETAIL_ID = ARTICLE_CATEGORY_DETAIL_ENTRY.getAliasNames()[1];
+
+	/** 
+	* Alias value: ArticleCategoryDetail_label
+	* Hibernate value: ArticleCategoryDetail.label
+	*/
+	String  ARTICLE_CATEGORY_DETAIL_LABEL = ARTICLE_CATEGORY_DETAIL_ENTRY.getAliasNames()[2];
+
+	/** 
+	* Alias value: ArticleCategoryDetail_language_id
+	* Hibernate value: ArticleCategoryDetail.language.id
+	*/
+	String  ARTICLE_CATEGORY_DETAIL_LANGUAGE_ID = ARTICLE_CATEGORY_DETAIL_ENTRY.getAliasNames()[3];
 
 
 }
