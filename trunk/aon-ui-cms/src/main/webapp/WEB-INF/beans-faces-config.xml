@@ -494,6 +494,33 @@
 		<managed-bean-scope>none</managed-bean-scope>
 	</managed-bean>
 
+	<!-- ************** HEADER ************** -->
+	<managed-bean>
+		<managed-bean-name>headers</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.cms.controller.HeaderController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.cms.Header</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojoI18n</property-name>
+			<value>com.code.aon.cms.HeaderDetail</value>
+		</managed-property>
+		<managed-property>
+			<property-name>joinAlias</property-name>
+			<value>HeaderDetail_header_id</value>
+		</managed-property>
+		<managed-property>
+			<property-name>languageAlias</property-name>
+			<value>HeaderDetail_language_id</value>
+		</managed-property>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>true</value>
+		</managed-property>
+	</managed-bean>
+	
 	<!-- ************** TEMPLATES ************** -->
 	<managed-bean>
 		<managed-bean-name>template</managed-bean-name>

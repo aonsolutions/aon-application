@@ -181,4 +181,18 @@ public class MenuController extends GridController {
 		moc.onSearch(event);
 	}
 
+	public List<SelectItem> getMenuList() throws ManagerBeanException {
+		List<SelectItem> menus = new LinkedList<SelectItem>();
+		IManagerBean menuBean = BeanManager.getManagerBean(Menu.class);
+		List<ITransferObject> list = (List<ITransferObject>)menuBean.getList(null);
+		for (int i = 0; i < list.size(); i++) {
+			Menu menu = (Menu)list.get(i);
+			int id = menu.getId();
+			String name = menu.getAlias();
+			SelectItem item = new SelectItem(id, name);
+			menus.add(item);
+		}
+		return menus;
+	}
+
 }

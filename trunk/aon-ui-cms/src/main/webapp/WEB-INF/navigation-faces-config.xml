@@ -158,6 +158,18 @@
     </navigation-case>
   </navigation-rule>
   
+  <!-- ======================================= HEADER -->
+  <navigation-rule>
+    <navigation-case>
+      <from-outcome>header_list</from-outcome>
+      <to-view-id>/facelet/content/header/list.iface</to-view-id>
+    </navigation-case>
+    <navigation-case>
+      <from-outcome>header_form</from-outcome>
+      <to-view-id>/facelet/content/header/form.iface</to-view-id>
+    </navigation-case>
+  </navigation-rule>
+  
   <!-- ================================================= ARTICLE CATEGORY -->
   <navigation-rule>
     <navigation-case>
