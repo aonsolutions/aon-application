@@ -368,7 +368,7 @@
 								rowIndexVar="rowIndex" rowOnMouseOut="unselectRow( this )"
 								rowOnClick="sendRow( this )" rendered="#{!invoicing.new}"
 								rowClasses="aon-edit-table-row-odd,aon-edit-table-row-even"
-								columnClasses="aon-edit-table-body aon-edit-table-body-icon,aon-edit-table-body aon-edit-table-body-string,aon-edit-table-body aon-edit-table-body-number,aon-edit-table-body aon-edit-table-body-number,aon-edit-table-body aon-edit-table-body-number,aon-edit-table-body aon-edit-table-body-number,aon-edit-table-body aon-edit-table-body-number,aon-edit-table-body aon-edit-table-body-number,,aon-edit-table-body aon-edit-table-body-number,aon-edit-table-body aon-edit-table-body-buttons">
+								columnClasses="aon-edit-table-body aon-edit-table-body-icon,aon-edit-table-body aon-edit-table-body-string,aon-edit-table-body aon-edit-table-body-string aon-edit-table-mainColumn,aon-edit-table-body aon-edit-table-body-number,aon-edit-table-body aon-edit-table-body-number,aon-edit-table-body aon-edit-table-body-number,aon-edit-table-body aon-edit-table-body-number,aon-edit-table-body aon-edit-table-body-number,aon-edit-table-body aon-edit-table-body-buttons">
 
 								<h:column>
 									<f:facet name="header">
@@ -395,7 +395,7 @@
 									<f:facet name="header">
 										<h:outputText value="#{productBundle.item_item}" />
 									</f:facet>
-									<t:outputText value="#{to.description}"
+									<t:outputText value="#{to.item.product.code}"
 										rendered="#{to!=invoicingDetail.to}" />
 
 									<h:panelGroup rendered="#{to==invoicingDetail.to}">
@@ -413,10 +413,6 @@
 										<h:commandButton id="addInvoice_item"
 											onclick="selectWindow(this, 'placeList', '#{itemAdd.encodedPagePath}','Item_id-Edit[#{rowIndex}],Item_product_code-Edit[#{rowIndex}],Item_full_name-Edit[#{rowIndex}],Item_purchase_price-Edit[#{rowIndex}],Item_taxes-Edit[#{rowIndex}],Item_expenses_percent-Edit[#{rowIndex}],Item_expenses_fixed-Edit[#{rowIndex}]');return false;"
 											value="" immediate="true" styleClass="aon-form-new-button" />
-										<t:inputText id="Item_full_name-Edit" size="40"
-											forceId="#{true}" required="#{true}"
-											styleClass="aon-form-input-text"
-											value="#{invoicingDetail.to.description}" />
 									</h:panelGroup>
 
 									<f:facet name="footer">
@@ -437,11 +433,35 @@
 												<h:commandButton id="addInvoice_item_new"
 													onclick="selectWindow(this, 'placeList', '#{itemAdd.encodedPagePath}','Item_id-New,Item_product_code-New,Item_full_name-New,Item_purchase_price-New,Item_taxes-New,Item_expenses_percent-New,Item_expenses_fixed-New');return false;"
 													value="" immediate="true" styleClass="aon-form-new-button" />
+											</h:panelGroup>
+											<f:verbatim rendered="#{!invoicingDetail.new}">&#160;</f:verbatim>
+										</t:div>
+									</f:facet>
+								</h:column>
+
+								<h:column>
+									<f:facet name="header">
+										<h:outputText value="#{productBundle.item_description}" />
+									</f:facet>
+									<t:outputText value="#{to.description}"
+										rendered="#{to!=invoicingDetail.to}" />
+
+									<h:panelGroup rendered="#{to==invoicingDetail.to}">
+										<t:inputText id="Item_full_name-Edit" size="40"
+											forceId="#{true}" required="#{true}"
+											styleClass="aon-form-input-text"
+											value="#{invoicingDetail.to.description}" />
+									</h:panelGroup>
+
+									<f:facet name="footer">
+										<t:div>
+											<h:panelGroup rendered="#{invoicingDetail.new}">
 												<t:inputText id="Item_full_name-New" size="40"
 													forceId="#{true}" required="#{true}"
 													styleClass="aon-form-input-text"
 													value="#{invoicingDetail.to.description}" />
 											</h:panelGroup>
+											<f:verbatim rendered="#{!invoicingDetail.new}">&#160;</f:verbatim>
 										</t:div>
 									</f:facet>
 								</h:column>
@@ -506,7 +526,7 @@
 									</f:facet>
 								</t:column>
 								
-								<h:column>
+								<t:column width="60">
 									<f:facet name="header">
 										<t:outputText value="#{purchaseBundle.aon_taxes}" />
 									</f:facet>
@@ -530,7 +550,7 @@
 											<f:verbatim rendered="#{!invoicingDetail.new}">&#160;</f:verbatim>
 										</t:div>
 									</f:facet>
-								</h:column>
+								</t:column>
 
 								<t:column width="60">
 									<f:facet name="header">
