@@ -243,4 +243,8 @@ public class TicketController implements ICollectionProvider {
 		}
 	}
 
+	@SuppressWarnings("unchecked")
+	public Collection getCollection(boolean arg0) throws ManagerBeanException {
+		return getCollection();
+	}
 }
