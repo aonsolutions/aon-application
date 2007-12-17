@@ -25,11 +25,12 @@ public class ItemItemposPrinter implements ICollectionProvider {
 	
 	private static final String ITEM_CONTROLLER_NAME = "item";
 
+	@SuppressWarnings("unchecked")
 	public Collection getCollection() {
 		List<ItemPos> reportItemposList = new LinkedList<ItemPos>();
 		try {
 			ItemController itemController = (ItemController)AonUtil.getController(ITEM_CONTROLLER_NAME);
-			Iterator iter = ((List)itemController.getModel().getWrappedData()).iterator();
+			Iterator iter = itemController.getManagerBean().getList(itemController.getCriteria()).iterator();
 			while(iter.hasNext()){
 				Item item = (Item)iter.next();
 				IManagerBean itemPosBean = BeanManager.getManagerBean(ItemPos.class);
@@ -49,5 +50,10 @@ public class ItemItemposPrinter implements ICollectionProvider {
 			LOGGER.log(Level.SEVERE, "Error obtaining Item with BarCode Collection", e);
 		}
 		return reportItemposList;
+	}
+
+	@SuppressWarnings("unchecked")
+	public Collection getCollection(boolean arg0) throws ManagerBeanException {
+		return getCollection();
 	}
 }
