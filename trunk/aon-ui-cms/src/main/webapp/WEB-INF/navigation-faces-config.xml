@@ -170,6 +170,18 @@
     </navigation-case>
   </navigation-rule>
   
+  <!-- ======================================= FOOTER -->
+  <navigation-rule>
+    <navigation-case>
+      <from-outcome>footer_list</from-outcome>
+      <to-view-id>/facelet/content/footer/list.iface</to-view-id>
+    </navigation-case>
+    <navigation-case>
+      <from-outcome>footer_form</from-outcome>
+      <to-view-id>/facelet/content/footer/form.iface</to-view-id>
+    </navigation-case>
+  </navigation-rule>
+  
   <!-- ================================================= ARTICLE CATEGORY -->
   <navigation-rule>
     <navigation-case>
