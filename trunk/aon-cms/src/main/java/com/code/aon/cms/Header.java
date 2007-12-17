@@ -5,8 +5,11 @@ import java.util.Set;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
@@ -26,8 +29,6 @@ public class Header implements ITransferObject {
 	private boolean language_menu = true;
 	
 	private LanguageMenuType language_menu_type;
-	
-	private boolean defaultHeader = false;
 	
 	private String css;
 	
@@ -55,7 +56,8 @@ public class Header implements ITransferObject {
 		this.alias = alias;
 	}
 
-	@Column(name = "menu")
+	@ManyToOne(fetch = FetchType.EAGER)
+	@JoinColumn(name = "menu", nullable = true)
 	public Menu getMenu() {
 		return menu;
 	}
@@ -82,15 +84,6 @@ public class Header implements ITransferObject {
 		this.language_menu_type = language_menu_type;
 	}
 
-	@Column(name = "defaultHeader", nullable = false)
-	public boolean isDefaultHeader() {
-		return defaultHeader;
-	}
-
-	public void setDefaultHeader(boolean defaultHeader) {
-		this.defaultHeader = defaultHeader;
-	}
-	
 	@Column(name = "css")
 	public String getCss() {
 		return css;

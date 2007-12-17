@@ -22,8 +22,6 @@ public class Footer implements ITransferObject {
 
 	private Menu menu;
 	
-	private boolean defaultFooter = false;
-
 	private Set<FooterDetail> details;
 
 	@Id
@@ -55,15 +53,6 @@ public class Footer implements ITransferObject {
 		this.menu = menu;
 	}
 	
-	@Column(name = "defaultFooter", nullable = false)
-	public boolean isDefaultFooter() {
-		return defaultFooter;
-	}
-
-	public void setDefaultFooter(boolean defaultFooter) {
-		this.defaultFooter = defaultFooter;
-	}
-
 	@OneToMany(mappedBy = "footer", cascade={CascadeType.REMOVE})
 	public Set<FooterDetail> getDetails() {
 		return this.details;
