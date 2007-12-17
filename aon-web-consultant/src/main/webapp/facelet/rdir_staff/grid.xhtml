@@ -357,7 +357,7 @@
 										timeZone="#{timeZoneController.timeZoneId}" />
 								</t:outputText>
 								<t:div id="RegistryDirStaff_dueDate_Div-Edit" forceId="#{true}">
-									<t:inputCalendar size="8" required="true"
+									<t:inputCalendar size="8"
 										id="RegistryDirStaff_dueDate-Edit"
 										rendered="#{to.id==rdirStaff.to.id}"
 										value="#{rdirStaff.to.dueDate}" forceId="#{true}"
@@ -375,7 +375,7 @@
 											monthYearRowClass="yearMonthHeader" weekRowClass="weekHeader"
 											forceId="#{true}"
 											popupButtonStyleClass="aon-form-calendar-button"
-											currentDayCellClass="currentDayCell" required="true"
+											currentDayCellClass="currentDayCell"
 											renderAsPopup="true" styleClass="aon-form-input-text"
 											popupTodayString="#{bundle.aon_popup_today}"
 											popupWeekString="#{bundle.aon_popup_week}" />
