@@ -178,4 +178,9 @@ public class TraceController implements ICollectionProvider {
 		traces.add(to);
 		return traces;
 	}
+
+	@SuppressWarnings("unchecked")
+	public Collection getCollection(boolean arg0) throws ManagerBeanException {
+		return getCollection();
+	}
 }
