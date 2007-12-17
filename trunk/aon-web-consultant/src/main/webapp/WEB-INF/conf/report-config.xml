@@ -45,7 +45,9 @@
 		<template path="/com/code/aon/ui/finance/report/salesInvoiceList.jasper"/>
 		<bean key="com.code.aon.finance.Invoice" />
 		<criteria provider="#{feeInvoicing}"/>
-
+		<!-- 
+		<fetch-mode paginated="true" page-count="500" virtualizer-max-size="50"/>
+		 -->
 		<params>
 			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.finance.i18n.messages" />
 			<param id="company" value="#{company.obtainCompany}" />
@@ -72,10 +74,15 @@
 		
 		<nested-report report="feeInvoicingDetail"/>
 		<nested-report report="taxBreakDown"/>
+		<nested-report report="feeInvoicingFinances"/>
 	</report>
 	
 	<report id="feeInvoicingDetail" description="feeInvoicing Details">
 		<template path="/com/code/aon/ui/finance/report/feeInvoicingDetail.jasper"/>
+	</report>
+
+	<report id="feeInvoicingFinances" description="feeInvoicing Finances">
+		<template path="/com/code/aon/ui/finance/report/feeInvoicingFinances.jasper"/>
 	</report>
 	
 	<!--  *********  InvoicePrint  ********* -->
@@ -95,6 +102,22 @@
 		
 		<nested-report report="feeInvoicingDetail"/>
 		<nested-report report="taxBreakDown"/>
+		<nested-report report="feeInvoicingFinances"/>
+	</report>
+
+	<!--  *********  Receipt  ********* -->
+	<report id="receipt" description="Receipt's Report">
+		<template path="/com/code/aon/ui/finance/report/receipt.jasper"/>
+		<collection provider="#{invoicePrint}"/>
+
+		<params>
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.finance.i18n.messages" />
+			<param id="company" value="#{company.obtainCompany}" />
+			<param id="PriceStrategy" value="#{feeInvoicing.getPriceStrategy}" />
+			<param id="logoImageFile" value="#{company.getAttachAsInputStream}" />
+		</params>
+		
+		<nested-report report="feeInvoicingDetail"/>
 	</report>
 	
 	<!--  *********  feeCheckingPrint  ********* -->
@@ -147,21 +170,6 @@
 		
 	</report>
 	
-	<!--  *********  Receipt  ********* -->
-	<report id="receipt" description="Receipt's Report">
-		<template path="/com/code/aon/ui/finance/report/receipt.jasper"/>
-		<collection provider="#{invoicePrint}"/>
-
-		<params>
-			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.finance.i18n.messages" />
-			<param id="company" value="#{company.obtainCompany}" />
-			<param id="PriceStrategy" value="#{feeInvoicing.getPriceStrategy}" />
-			<param id="logoImageFile" value="#{company.getAttachAsInputStream}" />
-		</params>
-		
-		<nested-report report="feeInvoicingDetail"/>
-	</report>
-	
 	<!--  *********  FinanceBatchList  ********* -->
 	<report id="fBatchList" description="Finance Batch List">
 		<template path="/com/code/aon/ui/finance/report/fBatchList.jasper" />
@@ -182,7 +190,7 @@
 			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.finance.i18n.messages" />
 			<param id="company" value="#{company.obtainCompany}" />
 			<param id="logoImageFile" value="#{company.getAttachAsInputStream}" />
-			<param id="total" value="#{fbatch.getToTotal}" />
+			<param id="total" value="#{fbatch.getToTotalAmount}" />
 		</params>
 		
 		<nested-report report="fBatchDetail"/>
