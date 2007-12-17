@@ -474,40 +474,34 @@ public interface ICMSAlias {
 	String  HEADER_CSS = HEADER_ENTRY.getAliasNames()[1];
 
 	/** 
-	* Alias value: Header_defaultHeader
-	* Hibernate value: Header.defaultHeader
-	*/
-	String  HEADER_DEFAULT_HEADER = HEADER_ENTRY.getAliasNames()[2];
-
-	/** 
 	* Alias value: Header_id
 	* Hibernate value: Header.id
 	*/
-	String  HEADER_ID = HEADER_ENTRY.getAliasNames()[3];
+	String  HEADER_ID = HEADER_ENTRY.getAliasNames()[2];
 
 	/** 
 	* Alias value: Header_javascript
 	* Hibernate value: Header.javascript
 	*/
-	String  HEADER_JAVASCRIPT = HEADER_ENTRY.getAliasNames()[4];
+	String  HEADER_JAVASCRIPT = HEADER_ENTRY.getAliasNames()[3];
 
 	/** 
 	* Alias value: Header_language_menu
 	* Hibernate value: Header.language_menu
 	*/
-	String  HEADER_LANGUAGE_MENU = HEADER_ENTRY.getAliasNames()[5];
+	String  HEADER_LANGUAGE_MENU = HEADER_ENTRY.getAliasNames()[4];
 
 	/** 
 	* Alias value: Header_language_menu_type
 	* Hibernate value: Header.language_menu_type
 	*/
-	String  HEADER_LANGUAGE_MENU_TYPE = HEADER_ENTRY.getAliasNames()[6];
+	String  HEADER_LANGUAGE_MENU_TYPE = HEADER_ENTRY.getAliasNames()[5];
 
 	/** 
 	* Alias value: Header_menu
 	* Hibernate value: Header.menu
 	*/
-	String  HEADER_MENU = HEADER_ENTRY.getAliasNames()[7];
+	String  HEADER_MENU = HEADER_ENTRY.getAliasNames()[6];
 
 
 
@@ -566,22 +560,16 @@ public interface ICMSAlias {
 	String  FOOTER_ALIAS = FOOTER_ENTRY.getAliasNames()[0];
 
 	/** 
-	* Alias value: Footer_defaultFooter
-	* Hibernate value: Footer.defaultFooter
-	*/
-	String  FOOTER_DEFAULT_FOOTER = FOOTER_ENTRY.getAliasNames()[1];
-
-	/** 
 	* Alias value: Footer_id
 	* Hibernate value: Footer.id
 	*/
-	String  FOOTER_ID = FOOTER_ENTRY.getAliasNames()[2];
+	String  FOOTER_ID = FOOTER_ENTRY.getAliasNames()[1];
 
 	/** 
 	* Alias value: Footer_menu
 	* Hibernate value: Footer.menu
 	*/
-	String  FOOTER_MENU = FOOTER_ENTRY.getAliasNames()[3];
+	String  FOOTER_MENU = FOOTER_ENTRY.getAliasNames()[2];
 
 
 
