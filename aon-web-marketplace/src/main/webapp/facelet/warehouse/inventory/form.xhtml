@@ -65,12 +65,12 @@
 						<t:outputLabel for="Inventory_id"
 							styleClass="aon-form-input-text-label aon-form-table-column-odd-label"
 							value="#{warehouseBundle.inventory_id}" />
-						<h:outputText value="#{inventory.to.id}" size="14" />
+						<h:outputText id="Inventory_id" forceId="#{true}" value="#{inventory.to.id}" />
 	
 						<t:outputLabel for="Inventory_inventoryDate"
 							styleClass="aon-form-input-text-label aon-form-table-column-odd-label"
 							value="#{warehouseBundle.inventory_date}" />
-						<h:outputText value="#{inventory.to.inventoryDate}">
+						<h:outputText id="Inventory_inventoryDate" forceId="#{true}" value="#{inventory.to.inventoryDate}">
 							<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
 								type="both" timeZone="#{timeZoneController.timeZoneId}" />
 						</h:outputText>
@@ -78,7 +78,7 @@
 						<t:outputLabel for="Inventory_description"
 							styleClass="aon-form-input-text-label aon-form-table-column-odd-label"
 							value="#{warehouseBundle.inventory_description}" />
-						<h:outputText value="#{inventory.to.description}" size="64" />
+						<h:outputText id="Inventory_description" forceId="#{true}" value="#{inventory.to.description}" />
 					</h:panelGrid>
 								
 					<t:div styleClass="aon-form-breakline">
