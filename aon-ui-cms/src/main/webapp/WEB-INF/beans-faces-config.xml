@@ -521,6 +521,33 @@
 		</managed-property>
 	</managed-bean>
 	
+	<!-- ************** FOOTER ************** -->
+	<managed-bean>
+		<managed-bean-name>footer</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.cms.controller.FooterController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.cms.Footer</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojoI18n</property-name>
+			<value>com.code.aon.cms.FooterDetail</value>
+		</managed-property>
+		<managed-property>
+			<property-name>joinAlias</property-name>
+			<value>FooterDetail_footer_id</value>
+		</managed-property>
+		<managed-property>
+			<property-name>languageAlias</property-name>
+			<value>FooterDetail_language_id</value>
+		</managed-property>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>true</value>
+		</managed-property>
+	</managed-bean>
+	
 	<!-- ************** TEMPLATES ************** -->
 	<managed-bean>
 		<managed-bean-name>template</managed-bean-name>
