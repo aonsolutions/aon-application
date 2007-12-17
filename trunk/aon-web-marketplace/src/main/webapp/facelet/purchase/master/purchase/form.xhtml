@@ -221,7 +221,7 @@
 								rowOnMouseOut="unselectRow( this )" rowOnClick="sendRow( this )"
 								rowIndexVar="rowIndex"
 								rowClasses="aon-edit-table-row-odd,aon-edit-table-row-even"
-								columnClasses="aon-edit-table-body aon-edit-table-body-icon,aon-edit-table-body aon-edit-table-body-number,aon-edit-table-body aon-edit-table-body-string aon-edit-table-mainColumn,aon-edit-table-body aon-edit-table-body-number,aon-edit-table-body aon-edit-table-body-number,aon-edit-table-body aon-edit-table-body-number,aon-edit-table-body aon-edit-table-body-number,aon-edit-table-body aon-edit-table-body-number,aon-edit-table-body aon-edit-table-body-buttons">
+								columnClasses="aon-edit-table-body aon-edit-table-body-icon,aon-edit-table-body aon-edit-table-body-string,aon-edit-table-body aon-edit-table-body-string aon-edit-table-mainColumn,aon-edit-table-body aon-edit-table-body-number,aon-edit-table-body aon-edit-table-body-number,aon-edit-table-body aon-edit-table-body-number,aon-edit-table-body aon-edit-table-body-number,aon-edit-table-body aon-edit-table-body-number,aon-edit-table-body aon-edit-table-body-buttons">
 
 								<h:column>
 									<f:facet name="header">
@@ -245,25 +245,11 @@
 									</f:facet>
 								</h:column>
 
-								<t:column styleClass="#{incomeDetail.to==to?'aon-table-row-selected aon-edit-table-body aon-edit-table-body-number':'aon-edit-table-body aon-edit-table-body-number'}">
-									<f:facet name="header">
-										<h:outputText value="#{productBundle.item_code}" />
-									</f:facet>
-									<t:outputText value="#{to.item.product.code}"
-										rendered="#{to!=incomeDetail.to}" />
-
-									<f:facet name="footer">
-										<t:div>
-											<f:verbatim rendered="#{!incomeDetail.new}">&#160;</f:verbatim>
-										</t:div>
-									</f:facet>
-								</t:column>
-
-								<h:column styleClass="#{incomeDetail.to==to?'aon-table-row-selected aon-edit-table-body aon-edit-table-body-string aon-edit-table-mainColumn':'aon-edit-table-body aon-edit-table-body-string aon-edit-table-mainColumn'}">
+								<h:column>
 									<f:facet name="header">
 										<h:outputText value="#{productBundle.item_item}" />
 									</f:facet>
-									<t:outputText value="#{to.description}"
+									<t:outputText value="#{to.item.product.code}"
 										rendered="#{to!=incomeDetail.to}" />
 
 									<h:panelGroup rendered="#{to==incomeDetail.to}">
@@ -281,10 +267,6 @@
 										<h:commandButton id="addInvoice_item"
 											onclick="selectWindow(this, 'placeList', '#{itemAdd.encodedPagePath}','Item_id-Edit[#{rowIndex}],Item_product_code-Edit[#{rowIndex}],Item_full_name-Edit[#{rowIndex}],Item_purchase_price-Edit[#{rowIndex}],Item_taxes-Edit[#{rowIndex}],Item_expenses_percent-Edit[#{rowIndex}],Item_expenses_fixed-Edit[#{rowIndex}]');return false;"
 											value="" immediate="true" styleClass="aon-form-new-button" />
-										<t:inputText id="Item_full_name-Edit"
-											size="40" forceId="#{true}" required="#{true}"
-											styleClass="aon-form-input-text"
-											value="#{incomeDetail.to.description}" />
 									</h:panelGroup>
 
 									<f:facet name="footer">
@@ -306,6 +288,29 @@
 													onclick="selectWindow(this, 'placeList', '#{itemAdd.encodedPagePath}','Item_id-New,Item_product_code-New,Item_full_name-New,Item_purchase_price-New,Item_taxes-New,Item_expenses_percent-New,Item_expenses_fixed-New');return false;"
 													value="" immediate="true"
 													styleClass="aon_button aon-form-new-button" />
+											</h:panelGroup>
+											<f:verbatim rendered="#{!incomeDetail.new}">&#160;</f:verbatim>
+										</t:div>
+									</f:facet>
+								</h:column>
+
+								<h:column>
+									<f:facet name="header">
+										<h:outputText value="#{productBundle.item_description}" />
+									</f:facet>
+									<t:outputText value="#{to.description}"
+										rendered="#{to!=incomeDetail.to}" />
+
+									<h:panelGroup rendered="#{to==incomeDetail.to}">
+										<t:inputText id="Item_full_name-Edit"
+											size="40" forceId="#{true}" required="#{true}"
+											styleClass="aon-form-input-text"
+											value="#{incomeDetail.to.description}" />
+									</h:panelGroup>
+
+									<f:facet name="footer">
+										<t:div>
+											<h:panelGroup rendered="#{incomeDetail.new}">
 												<t:inputText id="Item_full_name-New"
 													size="40" forceId="#{true}" required="#{true}"
 													styleClass="aon-form-input-text"

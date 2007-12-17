@@ -278,9 +278,9 @@
 								rendered="#{!delivery.new}"				
 								rowIndexVar="rowIndex" rows="0" 
 								rowClasses="aon-edit-table-row-odd,aon-edit-table-row-even"
-								columnClasses="aon-edit-table-body aon-edit-table-body-icon,aon-edit-table-body aon-edit-table-body-number,aon-edit-table-body aon-edit-table-body-string aon-edit-table-mainColumn,aon-edit-table-body aon-edit-table-body-number,aon-edit-table-body aon-edit-table-body-number,aon-edit-table-body aon-edit-table-body-number,aon-edit-table-body aon-edit-table-body-buttons">
+								columnClasses="aon-edit-table-body aon-edit-table-body-icon,aon-edit-table-body aon-edit-table-body-string,aon-edit-table-body aon-edit-table-body-string aon-edit-table-mainColumn,aon-edit-table-body aon-edit-table-body-number,aon-edit-table-body aon-edit-table-body-number,aon-edit-table-body aon-edit-table-body-number,aon-edit-table-body aon-edit-table-body-number,aon-edit-table-body aon-edit-table-body-buttons">
 								<!-- rows="20" -->
-								<t:column styleClass="#{deliveryDetail.to==to?'aon-table-row-selected aon-edit-table-body aon-edit-table-body-icon':'aon-edit-table-body aon-edit-table-body-icon'}">
+								<t:column>
 									<f:facet name="header">
 										<f:verbatim>&#160;</f:verbatim>
 									</f:facet>
@@ -306,29 +306,14 @@
 									</f:facet>
 								</t:column>
 
-								<t:column styleClass="#{deliveryDetail.to==to?'aon-table-row-selected aon-edit-table-body aon-edit-table-body-number':'aon-edit-table-body aon-edit-table-body-number'}">
+								<t:column>
 									<f:facet name="header">
-										<h:outputText value="#{productBundle.item_code}" />
+										<h:outputText value="#{productBundle.item_item}" />
 									</f:facet>
 									<t:outputText value="#{to.item.product.code}"
 										rendered="#{to!=deliveryDetail.to}" />
 
-									<f:facet name="footer">
-										<t:div>
-											<f:verbatim rendered="#{!deliveryDetail.new}">&#160;</f:verbatim>
-										</t:div>
-									</f:facet>
-								</t:column>
-
-								<t:column styleClass="#{deliveryDetail.to==to?'aon-table-row-selected aon-edit-table-body aon-edit-table-body-string aon-edit-table-mainColumn':'aon-edit-table-body aon-edit-table-body-string aon-edit-table-mainColumn'}">
-									<f:facet name="header">
-										<h:outputText value="#{productBundle.item_item}" />
-									</f:facet>
-									<t:outputText value="#{to.description}"
-										rendered="#{to!=deliveryDetail.to}" />
-
 									<h:panelGroup rendered="#{to==deliveryDetail.to}">
-										
 										<t:inputHidden id="Item_id-Edit" forceId="#{true}"
 											value="#{deliveryDetail.to.item.id}"
 											valueChangeListener="#{deliveryDetail.itemData}" />
@@ -343,9 +328,6 @@
 										<h:commandButton id="addInvoice_item"
 											onclick="selectWindow(this, 'placeList', '#{itemAdd.encodedPagePath}','Item_id-Edit[#{rowIndex}],Item_product_code-Edit[#{rowIndex}],Item_full_name-Edit[#{rowIndex}],Item_price-Edit[#{rowIndex}]');return false;"
 											value="" immediate="true" styleClass="aon-form-new-button" />
-										<t:inputText id="Item_full_name-Edit" size="30"
-											forceId="#{true}" styleClass="aon-form-input-text-disabled"
-											value="#{deliveryDetail.to.description}" />
 									</h:panelGroup>
 
 									<f:facet name="footer">
@@ -367,6 +349,28 @@
 													onclick="selectWindow(this, 'placeList', '#{itemAdd.encodedPagePath}','Item_id-New,Item_product_code-New,Item_full_name-New,Item_price-New');return false;"
 													value="" immediate="true"
 													styleClass="aon_button aon-form-new-button" />
+											</h:panelGroup>
+											<f:verbatim rendered="#{!deliveryDetail.new}">&#160;</f:verbatim>
+										</t:div>
+									</f:facet>
+								</t:column>
+
+								<t:column>
+									<f:facet name="header">
+										<h:outputText value="#{productBundle.item_description}" />
+									</f:facet>
+									<t:outputText value="#{to.description}"
+										rendered="#{to!=deliveryDetail.to}" />
+
+									<h:panelGroup rendered="#{to==deliveryDetail.to}">
+										<t:inputText id="Item_full_name-Edit" size="30"
+											forceId="#{true}" styleClass="aon-form-input-text-disabled"
+											value="#{deliveryDetail.to.description}" />
+									</h:panelGroup>
+
+									<f:facet name="footer">
+										<t:div>
+											<h:panelGroup rendered="#{deliveryDetail.new}">
 												<t:inputText id="Item_full_name-New" size="30"
 													forceId="#{true}" styleClass="aon-form-input-text-disabled"
 													value="#{deliveryDetail.to.description}" />
@@ -376,7 +380,7 @@
 									</f:facet>
 								</t:column>
 
-								<t:column styleClass="#{deliveryDetail.to==to?'aon-table-row-selected aon-edit-table-body aon-edit-table-body-number':'aon-edit-table-body aon-edit-table-body-number'}">
+								<t:column>
 									<f:facet name="header">
 										<t:outputText value="#{warehouseBundle.aon_quantity}" />
 									</f:facet>
@@ -401,7 +405,7 @@
 									</f:facet>
 								</t:column>
 
-								<t:column styleClass="#{deliveryDetail.to==to?'aon-table-row-selected aon-edit-table-body aon-edit-table-body-number':'aon-edit-table-body aon-edit-table-body-number'}">
+								<t:column>
 									<f:facet name="header">
 										<t:outputText value="#{warehouseBundle.aon_price}" />
 									</f:facet>
@@ -427,7 +431,7 @@
 									</f:facet>
 								</t:column>
 								
-								<t:column styleClass="#{deliveryDetail.to==to?'aon-table-row-selected aon-edit-table-body aon-edit-table-body-number':'aon-edit-table-body aon-edit-table-body-number'}">
+								<t:column>
 									<f:facet name="header">
 										<t:outputText value="#{warehouseBundle.aon_discount}" />
 									</f:facet>
@@ -448,7 +452,7 @@
 									</f:facet>
 								</t:column>
 
-								<t:column styleClass="#{deliveryDetail.to==to?'aon-table-row-selected aon-edit-table-body aon-edit-table-body-number':'aon-edit-table-body aon-edit-table-body-number'}">
+								<t:column>
 									<f:facet name="header">
 										<t:outputText value="#{warehouseBundle.aon_amount}" />
 									</f:facet>
@@ -470,7 +474,7 @@
 									</f:facet>
 								</t:column>
 								
-								<t:column styleClass="#{deliveryDetail.to==to?'aon-table-row-selected aon-edit-table-body aon-edit-table-body-buttons':'aon-edit-table-body aon-edit-table-body-buttons'}">
+								<t:column>
 									<f:facet name="header">
 										<f:verbatim>&#160;</f:verbatim>
 									</f:facet>
