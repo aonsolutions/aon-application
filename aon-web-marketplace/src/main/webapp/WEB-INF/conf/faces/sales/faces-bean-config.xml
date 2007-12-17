@@ -301,6 +301,7 @@
 			<list-entries>
 				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
 				<value>#{salesInvoicingDetailControllerListener}</value>
+				<value>#{invoicingDetailWorkPlaceVetoListener}</value>
 			</list-entries>
 		</managed-property>
 	</managed-bean>
