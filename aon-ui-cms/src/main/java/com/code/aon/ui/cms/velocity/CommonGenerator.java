@@ -58,7 +58,7 @@ public class CommonGenerator extends Generator {
 		try {
 			IManagerBean bean = BeanManager.getManagerBean(Header.class);
 			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(bean.getFieldName(ICMSAlias.HEADER_DEFAULT_HEADER), true);
+			//criteria.addEqualExpression(bean.getFieldName(ICMSAlias.HEADER_DEFAULT_HEADER), true);
 			List<ITransferObject> l = (List<ITransferObject>)bean.getList(criteria);
 			if (l.size() > 0) {
 				Header h = (Header)l.get(0);
@@ -78,7 +78,7 @@ public class CommonGenerator extends Generator {
 		try {
 			IManagerBean bean = BeanManager.getManagerBean(Footer.class);
 			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(bean.getFieldName(ICMSAlias.FOOTER_DEFAULT_FOOTER), true);
+			//criteria.addEqualExpression(bean.getFieldName(ICMSAlias.FOOTER_DEFAULT_FOOTER), true);
 			List<ITransferObject> l = (List<ITransferObject>)bean.getList(criteria);
 			if (l.size() > 0) {
 				Footer f = (Footer)l.get(0);

@@ -46,6 +46,9 @@
 						<aon:menuItem id="article_category" value="#{menuBundle.cms_article_category}"
 							actionListener="#{article_category.onReset}" action="article_category_list"
 							styleClass="aon-main-menu-leaf"/>
+						<aon:menuItem id="header" value="#{menuBundle.cms_header}"
+							actionListener="#{headers.onReset}" action="header_list"
+							styleClass="aon-main-menu-leaf"/>
 					</aon:menuItem>
 					<aon:menuItem id="production" value="#{menuBundle.cms_production}">
 						<aon:menuItem id="template" value="#{menuBundle.cms_template}"

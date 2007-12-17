@@ -27,6 +27,7 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionException;
 import com.code.aon.ui.cms.util.ControllerUtil;
+import com.code.aon.ui.util.AonUtil;
 import com.icesoft.faces.component.ext.RowSelectorEvent;
 
 
@@ -184,80 +185,18 @@ public class MenuOptionController extends BasicI18nController {
 	public List<SelectItem> getIdents() throws ManagerBeanException, ExpressionException {
 		MenuOption mo = (MenuOption)getTo();
 		List<SelectItem> idents = new LinkedList<SelectItem>();
-		if (mo.getType().equals(PageType.GENERIC)) idents = getGenericPageList();
-		else if (mo.getType().equals(PageType.MENU)) idents = getMenuList();
+		if (mo.getType().equals(PageType.GENERIC)) idents = ((GenericPageController)AonUtil.getController("generic_page")).getGenericPageList();
+		else if (mo.getType().equals(PageType.MENU)) idents = ((MenuController)AonUtil.getController("menu")).getMenuList();
 		else if (mo.getType().equals(PageType.FAQ)){
 			if (ContentLevel.SECTION.equals(mo.getLevel())){
-				idents = getFaqCategoryList();
+				idents = ((FaqCategoryController)AonUtil.getController("faq_category")).getFaqCategoryList();
 			}
 		}else if (mo.getType().equals(PageType.LINK)){
 			if (ContentLevel.SECTION.equals(mo.getLevel())){
-				idents = getLinkCategoryList();
+				idents = ((LinkCategoryController)AonUtil.getController("link_category")).getLinkCategoryList();
 			}
 		}
 		return idents;
-	}
-
-	private List<SelectItem> getLinkCategoryList() throws ManagerBeanException {
-		List<SelectItem> linkCategory = new LinkedList<SelectItem>();
-		IManagerBean linkCategoryBean = BeanManager.getManagerBean(LinkCategory.class);
-		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(linkCategoryBean.getFieldName(ICMSAlias.LINK_CATEGORY_ACTIVE), true);
-		List<ITransferObject> list = (List<ITransferObject>)linkCategoryBean.getList(criteria);
-		for (int i = 0; i < list.size(); i++) {
-			LinkCategory lc = (LinkCategory)list.get(i);
-			int id = lc.getId();
-			String name = lc.getAlias();
-			SelectItem item = new SelectItem(id, name);
-			linkCategory.add(item);
-		}
-		return linkCategory;
-	}
-
-	private List<SelectItem> getFaqCategoryList() throws ManagerBeanException {
-		List<SelectItem> faqCategory = new LinkedList<SelectItem>();
-		IManagerBean faqCategoryBean = BeanManager.getManagerBean(FaqCategory.class);
-		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(faqCategoryBean.getFieldName(ICMSAlias.FAQ_CATEGORY_ACTIVE), true);
-		List<ITransferObject> list = (List<ITransferObject>)faqCategoryBean.getList(criteria);
-		for (int i = 0; i < list.size(); i++) {
-			FaqCategory gp = (FaqCategory)list.get(i);
-			int id = gp.getId();
-			String name = gp.getAlias();
-			SelectItem item = new SelectItem(id, name);
-			faqCategory.add(item);
-		}
-		return faqCategory;
-	}
-
-	private List<SelectItem> getGenericPageList() throws ManagerBeanException {
-		List<SelectItem> generics = new LinkedList<SelectItem>();
-		IManagerBean genericBean = BeanManager.getManagerBean(GenericPage.class);
-		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(genericBean.getFieldName(ICMSAlias.GENERIC_PAGE_ACTIVE), true);
-		List<ITransferObject> list = (List<ITransferObject>)genericBean.getList(criteria);
-		for (int i = 0; i < list.size(); i++) {
-			GenericPage gp = (GenericPage)list.get(i);
-			int id = gp.getId();
-			String name = gp.getAlias();
-			SelectItem item = new SelectItem(id, name);
-			generics.add(item);
-		}
-		return generics;
-	}
-
-	private List<SelectItem> getMenuList() throws ManagerBeanException {
-		List<SelectItem> menus = new LinkedList<SelectItem>();
-		IManagerBean menuBean = BeanManager.getManagerBean(Menu.class);
-		List<ITransferObject> list = (List<ITransferObject>)menuBean.getList(null);
-		for (int i = 0; i < list.size(); i++) {
-			Menu menu = (Menu)list.get(i);
-			int id = menu.getId();
-			String name = menu.getAlias();
-			SelectItem item = new SelectItem(id, name);
-			menus.add(item);
-		}
-		return menus;
 	}
 
 	@SuppressWarnings("unchecked")
