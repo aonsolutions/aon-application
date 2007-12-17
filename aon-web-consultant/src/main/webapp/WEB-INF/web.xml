@@ -333,6 +333,7 @@
 			<role-name>VolcadoDatos</role-name>
 			<role-name>RecuperacionDatos</role-name>
 			<role-name>BandejaEntrada</role-name>
+			<role-name>MenuContabilidad</role-name>
 		</auth-constraint>
 	</security-constraint>
 
@@ -392,6 +393,8 @@
 	<security-role><role-name>VolcadoDatos</role-name></security-role>
 	<security-role><role-name>RecuperacionDatos</role-name></security-role>
 	<security-role><role-name>BandejaEntrada</role-name></security-role>
+
+	<security-role><role-name>MenuContabilidad</role-name></security-role>
 
 	<resource-env-ref>
 	  <resource-env-ref-name>jdbc/AonConsultant</resource-env-ref-name>
