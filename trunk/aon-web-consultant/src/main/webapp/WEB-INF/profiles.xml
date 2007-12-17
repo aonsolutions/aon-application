@@ -89,6 +89,12 @@
 						<id>BandejaEntrada</id>
 					</list>
 				</relation>
+				<relation>
+					<id>Contabilidad</id>
+					<list>
+						<id>MenuContabilidad</id>
+					</list>
+				</relation>
 			</profiles>
 			<users>
 				<relation>
