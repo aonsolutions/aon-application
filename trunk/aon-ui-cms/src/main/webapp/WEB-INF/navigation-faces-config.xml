@@ -206,6 +206,30 @@
     </navigation-case>
   </navigation-rule>
   
+  <!-- ========================================================= SIDEBAR -->
+  <navigation-rule>
+    <navigation-case>
+      <from-outcome>sidebar_list</from-outcome>
+      <to-view-id>/facelet/content/sidebar/list.iface</to-view-id>
+    </navigation-case>
+    <navigation-case>
+      <from-outcome>sidebar_form</from-outcome>
+      <to-view-id>/facelet/content/sidebar/form.iface</to-view-id>
+    </navigation-case>
+  </navigation-rule>
+
+  <!-- ================================================= SIDEBAR OPTION -->
+  <navigation-rule>
+    <navigation-case>
+      <from-outcome>sidebar_option_list</from-outcome>
+      <to-view-id>/facelet/content/sidebar/option/list.iface</to-view-id>
+    </navigation-case>
+    <navigation-case>
+      <from-outcome>sidebar_option_form</from-outcome>
+      <to-view-id>/facelet/content/sidebar/option/form.iface</to-view-id>
+    </navigation-case>
+  </navigation-rule>
+
   <!-- =================================================== TEMPLATES -->
   <navigation-rule>
     <navigation-case>
