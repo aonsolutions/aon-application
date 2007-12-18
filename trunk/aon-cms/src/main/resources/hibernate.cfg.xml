@@ -44,6 +44,9 @@
 		<mapping class="com.code.aon.cms.ArticleDetail"/>
 		<mapping class="com.code.aon.cms.ArticleCategory"/>
 		<mapping class="com.code.aon.cms.ArticleCategoryDetail"/>
+		<mapping class="com.code.aon.cms.Sidebar"/>
+		<mapping class="com.code.aon.cms.SidebarOption"/>
+		<mapping class="com.code.aon.cms.SidebarOptionDetail"/>
 
 	</session-factory>
 

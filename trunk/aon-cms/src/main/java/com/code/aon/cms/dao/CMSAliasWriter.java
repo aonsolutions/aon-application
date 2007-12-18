@@ -33,6 +33,9 @@ import com.code.aon.cms.Product;
 import com.code.aon.cms.ProductCategory;
 import com.code.aon.cms.ProductCategoryDetail;
 import com.code.aon.cms.ProductDetail;
+import com.code.aon.cms.Sidebar;
+import com.code.aon.cms.SidebarOption;
+import com.code.aon.cms.SidebarOptionDetail;
 import com.code.aon.common.dao.AliasWriter;
 
 public class CMSAliasWriter {
@@ -40,7 +43,7 @@ public class CMSAliasWriter {
 	public static void main(String[] args) throws IOException {
 
 		File file = new File("/AON-PROJECT/aon-cms/src/main/java/com/code/aon/cms/dao/ICMSAlias.java");
-		String[] classes = new String[30]; 
+		String[] classes = new String[33]; 
 		classes[0] = Language.class.getName();
 		classes[1] = Config.class.getName();
 		classes[2] = ConfigDetail.class.getName();
@@ -71,6 +74,9 @@ public class CMSAliasWriter {
 		classes[27] = ArticleDetail.class.getName();
 		classes[28] = ArticleCategory.class.getName();
 		classes[29] = ArticleCategoryDetail.class.getName();
+		classes[30] = Sidebar.class.getName();
+		classes[31] = SidebarOption.class.getName();
+		classes[32] = SidebarOptionDetail.class.getName();
 		AliasWriter writer = new AliasWriter("com.code.aon.cms.dao");
 		writer.write(classes, file);
 		System.out.println( file.getAbsolutePath() );
