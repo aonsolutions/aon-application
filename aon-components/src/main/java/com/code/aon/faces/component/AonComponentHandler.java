@@ -30,11 +30,6 @@ public class AonComponentHandler extends ComponentHandler {
 		return config;
 	}
 
-	protected URL getTemplate(String resource) {
-		ClassLoader loader = this.getClass().getClassLoader();
-		return loader.getResource(resource);
-	}
-
 	protected void insertTemplate(FaceletContext ctx, UIComponent parent, URL template, VariableMapper newMapper ) {
 		FaceletUtil.insertTemplate(ctx, this.tag, parent, template, newMapper);
 	}
