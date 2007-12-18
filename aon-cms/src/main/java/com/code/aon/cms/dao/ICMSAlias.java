@@ -32,6 +32,9 @@ import com.code.aon.cms.Article;
 import com.code.aon.cms.ArticleDetail;
 import com.code.aon.cms.ArticleCategory;
 import com.code.aon.cms.ArticleCategoryDetail;
+import com.code.aon.cms.Sidebar;
+import com.code.aon.cms.SidebarOption;
+import com.code.aon.cms.SidebarOptionDetail;
 
 /** 
 * Interface for holding entity properties constants.
@@ -498,10 +501,10 @@ public interface ICMSAlias {
 	String  HEADER_LANGUAGE_MENU_TYPE = HEADER_ENTRY.getAliasNames()[5];
 
 	/** 
-	* Alias value: Header_menu
-	* Hibernate value: Header.menu
+	* Alias value: Header_menu_id
+	* Hibernate value: Header.menu.id
 	*/
-	String  HEADER_MENU = HEADER_ENTRY.getAliasNames()[6];
+	String  HEADER_MENU_ID = HEADER_ENTRY.getAliasNames()[6];
 
 
 
@@ -566,10 +569,10 @@ public interface ICMSAlias {
 	String  FOOTER_ID = FOOTER_ENTRY.getAliasNames()[1];
 
 	/** 
-	* Alias value: Footer_menu
-	* Hibernate value: Footer.menu
+	* Alias value: Footer_menu_id
+	* Hibernate value: Footer.menu.id
 	*/
-	String  FOOTER_MENU = FOOTER_ENTRY.getAliasNames()[2];
+	String  FOOTER_MENU_ID = FOOTER_ENTRY.getAliasNames()[2];
 
 
 
@@ -1237,6 +1240,117 @@ public interface ICMSAlias {
 	* Hibernate value: ArticleCategoryDetail.language.id
 	*/
 	String  ARTICLE_CATEGORY_DETAIL_LANGUAGE_ID = ARTICLE_CATEGORY_DETAIL_ENTRY.getAliasNames()[3];
+
+
+
+	/** 
+	* DAOConstantsEntry for Sidebar entity.
+	*/ 
+	DAOConstantsEntry SIDEBAR_ENTRY = DAOConstants.getDAOConstant(Sidebar.class);
+
+	/** 
+	* Alias value: Sidebar_alias
+	* Hibernate value: Sidebar.alias
+	*/
+	String  SIDEBAR_ALIAS = SIDEBAR_ENTRY.getAliasNames()[0];
+
+	/** 
+	* Alias value: Sidebar_id
+	* Hibernate value: Sidebar.id
+	*/
+	String  SIDEBAR_ID = SIDEBAR_ENTRY.getAliasNames()[1];
+
+
+
+	/** 
+	* DAOConstantsEntry for SidebarOption entity.
+	*/ 
+	DAOConstantsEntry SIDEBAR_OPTION_ENTRY = DAOConstants.getDAOConstant(SidebarOption.class);
+
+	/** 
+	* Alias value: SidebarOption_active
+	* Hibernate value: SidebarOption.active
+	*/
+	String  SIDEBAR_OPTION_ACTIVE = SIDEBAR_OPTION_ENTRY.getAliasNames()[0];
+
+	/** 
+	* Alias value: SidebarOption_alias
+	* Hibernate value: SidebarOption.alias
+	*/
+	String  SIDEBAR_OPTION_ALIAS = SIDEBAR_OPTION_ENTRY.getAliasNames()[1];
+
+	/** 
+	* Alias value: SidebarOption_id
+	* Hibernate value: SidebarOption.id
+	*/
+	String  SIDEBAR_OPTION_ID = SIDEBAR_OPTION_ENTRY.getAliasNames()[2];
+
+	/** 
+	* Alias value: SidebarOption_ident
+	* Hibernate value: SidebarOption.ident
+	*/
+	String  SIDEBAR_OPTION_IDENT = SIDEBAR_OPTION_ENTRY.getAliasNames()[3];
+
+	/** 
+	* Alias value: SidebarOption_level
+	* Hibernate value: SidebarOption.level
+	*/
+	String  SIDEBAR_OPTION_LEVEL = SIDEBAR_OPTION_ENTRY.getAliasNames()[4];
+
+	/** 
+	* Alias value: SidebarOption_position
+	* Hibernate value: SidebarOption.position
+	*/
+	String  SIDEBAR_OPTION_POSITION = SIDEBAR_OPTION_ENTRY.getAliasNames()[5];
+
+	/** 
+	* Alias value: SidebarOption_side
+	* Hibernate value: SidebarOption.side
+	*/
+	String  SIDEBAR_OPTION_SIDE = SIDEBAR_OPTION_ENTRY.getAliasNames()[6];
+
+	/** 
+	* Alias value: SidebarOption_sidebar_id
+	* Hibernate value: SidebarOption.sidebar.id
+	*/
+	String  SIDEBAR_OPTION_SIDEBAR_ID = SIDEBAR_OPTION_ENTRY.getAliasNames()[7];
+
+	/** 
+	* Alias value: SidebarOption_type
+	* Hibernate value: SidebarOption.type
+	*/
+	String  SIDEBAR_OPTION_TYPE = SIDEBAR_OPTION_ENTRY.getAliasNames()[8];
+
+
+
+	/** 
+	* DAOConstantsEntry for SidebarOptionDetail entity.
+	*/ 
+	DAOConstantsEntry SIDEBAR_OPTION_DETAIL_ENTRY = DAOConstants.getDAOConstant(SidebarOptionDetail.class);
+
+	/** 
+	* Alias value: SidebarOptionDetail_id
+	* Hibernate value: SidebarOptionDetail.id
+	*/
+	String  SIDEBAR_OPTION_DETAIL_ID = SIDEBAR_OPTION_DETAIL_ENTRY.getAliasNames()[0];
+
+	/** 
+	* Alias value: SidebarOptionDetail_label
+	* Hibernate value: SidebarOptionDetail.label
+	*/
+	String  SIDEBAR_OPTION_DETAIL_LABEL = SIDEBAR_OPTION_DETAIL_ENTRY.getAliasNames()[1];
+
+	/** 
+	* Alias value: SidebarOptionDetail_language_id
+	* Hibernate value: SidebarOptionDetail.language.id
+	*/
+	String  SIDEBAR_OPTION_DETAIL_LANGUAGE_ID = SIDEBAR_OPTION_DETAIL_ENTRY.getAliasNames()[2];
+
+	/** 
+	* Alias value: SidebarOptionDetail_sidebar_option_id
+	* Hibernate value: SidebarOptionDetail.sidebar_option.id
+	*/
+	String  SIDEBAR_OPTION_DETAIL_SIDEBAR_OPTION_ID = SIDEBAR_OPTION_DETAIL_ENTRY.getAliasNames()[3];
 
 
 }
