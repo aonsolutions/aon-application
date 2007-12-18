@@ -1,7 +1,5 @@
 package com.code.aon.faces.component.icefaces.confirmButton;
 
-import java.net.URL;
-
 import javax.el.ExpressionFactory;
 import javax.el.MethodExpression;
 import javax.el.ValueExpression;
@@ -16,7 +14,6 @@ import com.code.aon.faces.component.util.FaceletUtil;
 import com.code.aon.faces.component.util.MethodValueExpression;
 import com.sun.facelets.FaceletContext;
 import com.sun.facelets.el.VariableMapperWrapper;
-import com.sun.facelets.tag.MetaRuleset;
 import com.sun.facelets.tag.TagAttribute;
 import com.sun.facelets.tag.jsf.ComponentConfig;
 import com.sun.facelets.tag.jsf.ComponentSupport;
@@ -81,11 +78,6 @@ public class ConfirmButtonHandler extends AonIceComponentHandler implements
 		insertTemplate(ctx, c, parent);
 	}
 
-	private URL getTemplate(String resource) {
-		ClassLoader loader = this.getClass().getClassLoader();
-		return loader.getResource(resource);
-	}
-
 	private ValueExpression getValueExpression(FaceletContext ctx,
 			TagAttribute tag) {
 		return tag.getValueExpression(ctx, Object.class);
@@ -146,13 +138,13 @@ public class ConfirmButtonHandler extends AonIceComponentHandler implements
 		if ( al != null ) {
 			newMapper.setVariable( CONFIRM_ACTION_LISTENER, al );				
 		}
-		FaceletUtil.insertTemplate(ctx, tag, parent, getTemplate(TEMPLATE), newMapper );
+		FaceletUtil.insertTemplate(ctx, tag, parent, FaceletUtil.getTemplate(TEMPLATE), newMapper );
 	}
 
 	private void insertInnerTemplate(FaceletContext ctx, UIComponent component) {
 		VariableMapper newMapper = new VariableMapperWrapper(ctx.getVariableMapper());
         newMapper.setVariable(CONFIRM_SHOW_WINDOW, getStateExpression(ctx, component));
-		FaceletUtil.insertTemplate(ctx, tag, component, getTemplate(INNER_TEMPLATE), newMapper);
+		FaceletUtil.insertTemplate(ctx, tag, component, FaceletUtil.getTemplate(INNER_TEMPLATE), newMapper);
 	}
 	
 }
