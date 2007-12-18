@@ -1,6 +1,8 @@
 package com.code.aon.faces.component.util;
 
+import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.logging.Logger;
 
 import javax.el.ExpressionFactory;
 import javax.el.MethodExpression;
@@ -18,9 +20,22 @@ import com.sun.facelets.tag.TagException;
 
 public class FaceletUtil {
 
+	private static final Logger LOGGER = Logger.getLogger(FaceletUtil.class.getName());	
+	
 	public final static Class[] ACTION_SIG = new Class[0];
 
 	public final static Class[] ACTION_LISTENER_SIG = new Class[] { ActionEvent.class };
+	
+	public static URL getTemplate(String resource) {
+		ClassLoader loader = FaceletUtil.class.getClassLoader();
+		URL url = loader.getResource(resource);
+		try {
+			url = new URL(null, url.toExternalForm(), new DummyHandler() );
+		} catch (MalformedURLException e) {
+			LOGGER.severe( e.getMessage() );
+		}
+		return url;
+	}
 	
 	public static boolean hasValue(FaceletContext ctx, Tag tag, String name) {
 		TagAttribute tagAttribute = tag.getAttributes().get(name);
