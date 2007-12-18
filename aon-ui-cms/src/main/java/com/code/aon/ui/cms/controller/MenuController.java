@@ -121,19 +121,6 @@ public class MenuController extends GridController {
 		}
 	}
 
-	public List<SelectItem> getMenuTypes() throws ManagerBeanException {
-		List<SelectItem> menuTypes = new LinkedList<SelectItem>();
-		Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
-		SelectItem item = new SelectItem("", "");
-		menuTypes.add(item);
-		for (MenuType menuType : MenuType.values()) {
-			String name = menuType.getName(locale);
-			item = new SelectItem(menuType, name);
-			menuTypes.add(item);
-		}
-		return menuTypes;
-	}
-
 	public int getCurrentTab() {
 		if (currentType == MenuType.TOP.ordinal()) return 1;
 		else if (currentType == MenuType.FOOT.ordinal()) return 2;
@@ -179,20 +166,6 @@ public class MenuController extends GridController {
 		moc.setCurrentMenu(menu);
 		moc.setCriteria(criteria);
 		moc.onSearch(event);
-	}
-
-	public List<SelectItem> getMenuList() throws ManagerBeanException {
-		List<SelectItem> menus = new LinkedList<SelectItem>();
-		IManagerBean menuBean = BeanManager.getManagerBean(Menu.class);
-		List<ITransferObject> list = (List<ITransferObject>)menuBean.getList(null);
-		for (int i = 0; i < list.size(); i++) {
-			Menu menu = (Menu)list.get(i);
-			int id = menu.getId();
-			String name = menu.getAlias();
-			SelectItem item = new SelectItem(id, name);
-			menus.add(item);
-		}
-		return menus;
 	}
 
 }

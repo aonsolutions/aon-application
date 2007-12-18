@@ -147,21 +147,5 @@ public class FaqCategoryController extends BasicI18nController {
 		}
 	}
 
-	public List<SelectItem> getFaqCategoryList() throws ManagerBeanException {
-		List<SelectItem> faqCategory = new LinkedList<SelectItem>();
-		IManagerBean faqCategoryBean = BeanManager.getManagerBean(FaqCategory.class);
-		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(faqCategoryBean.getFieldName(ICMSAlias.FAQ_CATEGORY_ACTIVE), true);
-		List<ITransferObject> list = (List<ITransferObject>)faqCategoryBean.getList(criteria);
-		for (int i = 0; i < list.size(); i++) {
-			FaqCategory gp = (FaqCategory)list.get(i);
-			int id = gp.getId();
-			String name = gp.getAlias();
-			SelectItem item = new SelectItem(id, name);
-			faqCategory.add(item);
-		}
-		return faqCategory;
-	}
-
 
 }

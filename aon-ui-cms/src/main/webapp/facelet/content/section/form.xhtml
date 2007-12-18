@@ -3,45 +3,52 @@
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:aon="http://www.code.es/aon-components"
-	xmlns:c="http://java.sun.com/jstl/core"
-	xmlns:ice="http://www.icesoft.com/icefaces/component">
+	xmlns:c="http://java.sun.com/jstl/core">
 <body>
 
 <ui:composition template="/facelet/templates/aon.ui.main.xhtml">
 
 	<ui:define name="content">
 
-		<aon:form id="menuForm" partialSubmit="true">
+		<aon:form id="sectionForm" partialSubmit="false">
 
-			<aon:div styleClass="aon-content-toolbar" forceId="#{true}" id="aon-content-toolbar">
+			<aon:div styleClass="aon-content-toolbar" forceId="#{true}"
+				id="aon-content-toolbar">
 				<aon:div styleClass="aon-content-toolbar-internal">
 					<aon:div styleClass="aon-content-toolbar-item-group">
 						<aon:confirmButton id="save"
-							value="#{bundle.aon_save}" rendered="#{menu.to!=null or menu.new}"
+							value="#{bundle.aon_save}" rendered="#{section.to!=null or section.new}"
 							confirmTitle="Confirmation Dialog" confirmMessage="#{bundle.aon_save_confirm}"
-							confirmActionListener="#{menu.onAccept}" confirmAction="menu_list"
+							confirmActionListener="#{section.onAccept}"
 							styleClass="aon-content-toolbar-item aon-icon-accept"
 							onmouseout="this.className='aon-content-toolbar-item aon-icon-accept'"
 							onmouseover="this.className='aon-content-toolbar-item aon-icon-accept aon-content-toolbar-item-hover'"
 							accesskey="#{bundle.aon_key_save}"/>
 						<aon:confirmButton id="cancel"
-							value="#{bundle.aon_cancel}" rendered="#{menu.to!=null or menu.new}" immediate="#{true}"
+							value="#{bundle.aon_cancel}" rendered="#{section.to!=null or section.new}" immediate="#{true}"
 							confirmTitle="Confirmation Dialog" confirmMessage="#{bundle.aon_cancel_confirm}"
-							confirmActionListener="#{menu.onCancel}" confirmAction="menu_list"
+							confirmActionListener="#{section.onCancel}" confirmAction="section_list"
 							styleClass="aon-content-toolbar-item aon-icon-cancel"
 							onmouseout="this.className='aon-content-toolbar-item aon-icon-cancel'"
 							onmouseover="this.className='aon-content-toolbar-item aon-icon-cancel aon-content-toolbar-item-hover'"
 							accesskey="#{bundle.aon_key_cancel}"/>
 						<aon:confirmButton id="remove"
-							value="#{bundle.aon_remove}" rendered="#{!menu.new and !menu.to.defaultMenu}" immediate="true"
+							value="#{bundle.aon_remove}" rendered="#{!section.new}" immediate="true"
 							confirmTitle="Confirmation Dialog" confirmMessage="#{bundle.aon_remove_confirm}"
-							confirmActionListener="#{menu.onRemove}" confirmAction="menu_list"
+							confirmActionListener="#{section.onRemoveI18n}" confirmAction="section_form"
 							styleClass="aon-content-toolbar-item aon-icon-delete"
 							onmouseout="this.className='aon-content-toolbar-item aon-icon-delete'"
 							onmouseover="this.className='aon-content-toolbar-item aon-icon-delete aon-content-toolbar-item-hover'"
 							accesskey="#{bundle.aon_key_remove}"/>
+						<aon:commandButton id="search"
+							value="#{bundle.aon_search}" immediate="true"
+							action="section_search" actionListener="#{section.onEditSearch}"
+							styleClass="aon-content-toolbar-item aon-icon-search"
+							onmouseout="this.className='aon-content-toolbar-item aon-icon-search'"
+							onmouseover="this.className='aon-content-toolbar-item aon-icon-search aon-content-toolbar-item-hover'"
+							accesskey="#{bundle.aon_key_search}"/>
 						<aon:commandButton id="reset" value="#{bundle.aon_reset}"
-							actionListener="#{menu.onReset}" rendered="#{!menu.new}"
+							actionListener="#{section.onReset}" rendered="#{!section.new}"
 							styleClass="aon-content-toolbar-item aon-icon-reset"
 							onmouseout="this.className='aon-content-toolbar-item aon-icon-reset'"
 							onmouseover="this.className='aon-content-toolbar-item aon-icon-reset aon-content-toolbar-item-hover'"
@@ -54,31 +61,31 @@
 				forceId="#{true}">
 				<aon:div styleClass="aon-content-subtitle-internal">
 					<aon:outputText
-						value="#{menu.new?(bundle.aon_reset):(bundle.aon_editing)}" />
+						value="#{section.new?(bundle.aon_reset):(bundle.aon_editing)}" />
 				</aon:div>
 			</aon:div>
 			<aon:div id="aon-scroll-area" forceId="#{true}">
 				<aon:div styleClass="aon-scroll-area-internal">
 
 					<aon:panelGrid columns="2">
-						<aon:panelGrid columns="2" dir="true" styleClass="aon-form-table" style="width:100%"
+						<aon:panelGrid columns="2" dir="true" styleClass="aon-form-table"
 							columnClasses="aon-form-table-column-odd,aon-form-table-column-even">
 
-							<aon:outputLabel for="Menu_alias"
+							<aon:outputLabel for="section_alias" style="width:100px"
 								styleClass="aon-form-input-text-label"
-								value="#{appBundle.menu_alias}" />
-							<aon:inputText id="Menu_alias"
+								value="#{appBundle.section_alias}" />
+							<aon:inputText id="section_alias"
 								styleClass="aon-form-input-text aon-form-input-text-number"
 								required="true" size="32" maxlength="32"
-								value="#{menu.to.alias}" />
+								value="#{section.to.alias}" />
 
-							<aon:outputLabel for="Menu_type"
+							<aon:outputLabel for="section_header"
 								styleClass="aon-form-input-text-label"
-								value="#{appBundle.menu_type}" />
-							<aon:selectOneMenu id="Menu_type" required="true" 
+								value="#{appBundle.section_header}" />
+							<aon:selectOneMenu id="section_header" 
 								styleClass="aon-form-selectOneMenu-field"
-								value="#{menu.to.type}" disabled="#{menu.to.defaultMenu}">
-								<f:selectItems value="#{collections.menuTypes}" />
+								value="#{section.to.header}">
+								<f:selectItems value="#{headers.languageTypes}" />
 							</aon:selectOneMenu> 
 
 						</aon:panelGrid>

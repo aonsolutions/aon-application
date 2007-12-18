@@ -91,20 +91,5 @@ public class GenericPageController extends BasicI18nController {
 		return menus;
 	}
 
-	public List<SelectItem> getGenericPageList() throws ManagerBeanException {
-		List<SelectItem> generics = new LinkedList<SelectItem>();
-		IManagerBean genericBean = BeanManager.getManagerBean(GenericPage.class);
-		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(genericBean.getFieldName(ICMSAlias.GENERIC_PAGE_ACTIVE), true);
-		List<ITransferObject> list = (List<ITransferObject>)genericBean.getList(criteria);
-		for (int i = 0; i < list.size(); i++) {
-			GenericPage gp = (GenericPage)list.get(i);
-			int id = gp.getId();
-			String name = gp.getAlias();
-			SelectItem item = new SelectItem(id, name);
-			generics.add(item);
-		}
-		return generics;
-	}
 
 }

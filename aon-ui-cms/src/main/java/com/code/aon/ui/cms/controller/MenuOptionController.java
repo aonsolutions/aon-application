@@ -119,19 +119,6 @@ public class MenuOptionController extends BasicI18nController {
 		return mod;
 	}
 
-	public List<SelectItem> getTypes() throws ManagerBeanException, ExpressionException {
-		List<SelectItem> types = new LinkedList<SelectItem>();
-		Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
-		SelectItem item = new SelectItem("", "");
-		types.add(item);
-		for (PageType pageType : PageType.values()) {
-			String name = pageType.getName(locale);
-			item = new SelectItem(pageType, name);
-			types.add(item);
-		}
-		return types;
-	}
-
 	public boolean isVisibleLevel() {
 		MenuOption mo = (MenuOption)getTo();
 		if (mo != null && mo.getType() != null) {
@@ -185,15 +172,15 @@ public class MenuOptionController extends BasicI18nController {
 	public List<SelectItem> getIdents() throws ManagerBeanException, ExpressionException {
 		MenuOption mo = (MenuOption)getTo();
 		List<SelectItem> idents = new LinkedList<SelectItem>();
-		if (mo.getType().equals(PageType.GENERIC)) idents = ((GenericPageController)AonUtil.getController("generic_page")).getGenericPageList();
-		else if (mo.getType().equals(PageType.MENU)) idents = ((MenuController)AonUtil.getController("menu")).getMenuList();
+		if (mo.getType().equals(PageType.GENERIC)) idents = ((CollectionsController)AonUtil.getRegisteredBean("collections")).getGenericPageList();
+		else if (mo.getType().equals(PageType.MENU)) idents = ((CollectionsController)AonUtil.getRegisteredBean("collections")).getMenuList();
 		else if (mo.getType().equals(PageType.FAQ)){
 			if (ContentLevel.SECTION.equals(mo.getLevel())){
-				idents = ((FaqCategoryController)AonUtil.getController("faq_category")).getFaqCategoryList();
+				idents = ((CollectionsController)AonUtil.getRegisteredBean("collections")).getFaqCategoryList();
 			}
 		}else if (mo.getType().equals(PageType.LINK)){
 			if (ContentLevel.SECTION.equals(mo.getLevel())){
-				idents = ((LinkCategoryController)AonUtil.getController("link_category")).getLinkCategoryList();
+				idents = ((CollectionsController)AonUtil.getRegisteredBean("collections")).getLinkCategoryList();
 			}
 		}
 		return idents;

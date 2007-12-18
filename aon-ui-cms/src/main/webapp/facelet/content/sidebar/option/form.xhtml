@@ -93,7 +93,7 @@
 							<aon:selectOneMenu id="SidebarOption_type" 
 								styleClass="aon-form-selectOneSidebar-field"
 								value="#{sidebar_option.to.type}" >
-								<f:selectItems value="#{sidebar_option.sidebarTypes}" />
+								<f:selectItems value="#{collections.sidebarTypes}" />
 							</aon:selectOneMenu> 
 
 							<aon:outputLabel for="SidebarOption_level"
@@ -102,7 +102,7 @@
 							<aon:selectOneMenu id="SidebarOption_level"  
 								styleClass="aon-form-selectOneSidebar-field"
 								value="#{sidebar_option.to.level}" >
-								<f:selectItems value="#{sidebar_option.contentLevels}" />
+								<f:selectItems value="#{collections.contentLevels}" />
 							</aon:selectOneMenu> 
 
 							<aon:outputLabel for="SidebarOption_side"
@@ -111,7 +111,7 @@
 							<aon:selectOneMenu id="SidebarOption_side" 
 								styleClass="aon-form-selectOneSidebar-field"
 								value="#{sidebar_option.to.side}" >
-								<f:selectItems value="#{sidebar_option.sidebarSides}" />
+								<f:selectItems value="#{collections.sidebarSides}" />
 							</aon:selectOneMenu> 
 
 						</aon:panelGrid>

@@ -230,6 +230,18 @@
     </navigation-case>
   </navigation-rule>
 
+  <!-- ================================================= SECTION -->
+  <navigation-rule>
+    <navigation-case>
+      <from-outcome>section_list</from-outcome>
+      <to-view-id>/facelet/content/section/list.iface</to-view-id>
+    </navigation-case>
+    <navigation-case>
+      <from-outcome>section_form</from-outcome>
+      <to-view-id>/facelet/content/section/form.iface</to-view-id>
+    </navigation-case>
+  </navigation-rule>
+  
   <!-- =================================================== TEMPLATES -->
   <navigation-rule>
     <navigation-case>

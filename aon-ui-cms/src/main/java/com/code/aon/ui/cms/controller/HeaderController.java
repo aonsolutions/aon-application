@@ -74,17 +74,5 @@ public class HeaderController extends BasicI18nController {
 		}
 		return "";
 	}
-	
-	public List<SelectItem> getLanguageTypes() throws ManagerBeanException {
-		List<SelectItem> types = new LinkedList<SelectItem>();
-		Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
-		SelectItem item;;
-		for (LanguageMenuType type : LanguageMenuType.values()) {
-			String name = type.getName(locale);
-			item = new SelectItem(type, name);
-			types.add(item);
-		}
-		return types;
-	}
 
 }
