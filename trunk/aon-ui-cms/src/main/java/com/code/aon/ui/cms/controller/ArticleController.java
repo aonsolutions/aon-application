@@ -163,16 +163,4 @@ public class ArticleController extends BasicI18nController {
 		}
 	}
 
-	public List<SelectItem> getTypes() throws ManagerBeanException {
-		List<SelectItem> articleTypes = new LinkedList<SelectItem>();
-		Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
-		SelectItem item;;
-		for (ArticleType articleType : ArticleType.values()) {
-			String name = articleType.getName(locale);
-			item = new SelectItem(articleType, name);
-			articleTypes.add(item);
-		}
-		return articleTypes;
-	}
-
 }

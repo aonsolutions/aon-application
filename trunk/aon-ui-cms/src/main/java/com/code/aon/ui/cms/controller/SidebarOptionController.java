@@ -88,41 +88,7 @@ public class SidebarOptionController extends BasicI18nController {
 		return sod;
 	}
 
-	public List<SelectItem> getSidebarTypes() throws ManagerBeanException, ExpressionException {
-		List<SelectItem> types = new LinkedList<SelectItem>();
-		Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
-		SelectItem item;
-		for (SidebarType sidebarType : SidebarType.values()) {
-			String name = sidebarType.getName(locale);
-			item = new SelectItem(sidebarType, name);
-			types.add(item);
-		}
-		return types;
-	}
 
-	public List<SelectItem> getSidebarSides() throws ManagerBeanException, ExpressionException {
-		List<SelectItem> types = new LinkedList<SelectItem>();
-		Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
-		SelectItem item;
-		for (SidebarSide sidebarSide : SidebarSide.values()) {
-			String name = sidebarSide.getName(locale);
-			item = new SelectItem(sidebarSide, name);
-			types.add(item);
-		}
-		return types;
-	}
-
-	public List<SelectItem> getContentLevels() throws ManagerBeanException, ExpressionException {
-		List<SelectItem> types = new LinkedList<SelectItem>();
-		Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
-		SelectItem item;
-		for (ContentLevel contentLevel : ContentLevel.values()) {
-			String name = contentLevel.getName(locale);
-			item = new SelectItem(contentLevel, name);
-			types.add(item);
-		}
-		return types;
-	}
 
 	@SuppressWarnings("unchecked")
 	private void move( SidebarOption so, int movement ) throws ManagerBeanException, ExpressionException {

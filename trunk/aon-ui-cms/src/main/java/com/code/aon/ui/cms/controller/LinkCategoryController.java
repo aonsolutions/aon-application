@@ -147,21 +147,5 @@ public class LinkCategoryController extends BasicI18nController {
 		}
 	}
 
-	public List<SelectItem> getLinkCategoryList() throws ManagerBeanException {
-		List<SelectItem> linkCategory = new LinkedList<SelectItem>();
-		IManagerBean linkCategoryBean = BeanManager.getManagerBean(LinkCategory.class);
-		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(linkCategoryBean.getFieldName(ICMSAlias.LINK_CATEGORY_ACTIVE), true);
-		List<ITransferObject> list = (List<ITransferObject>)linkCategoryBean.getList(criteria);
-		for (int i = 0; i < list.size(); i++) {
-			LinkCategory lc = (LinkCategory)list.get(i);
-			int id = lc.getId();
-			String name = lc.getAlias();
-			SelectItem item = new SelectItem(id, name);
-			linkCategory.add(item);
-		}
-		return linkCategory;
-	}
-
 
 }

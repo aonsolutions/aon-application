@@ -56,18 +56,4 @@ public class SidebarController extends GridController {
 		soc.onSearch(event);
 	}
 
-	public List<SelectItem> getSidebarList() throws ManagerBeanException {
-		List<SelectItem> menus = new LinkedList<SelectItem>();
-		IManagerBean sidebarBean = BeanManager.getManagerBean(Sidebar.class);
-		List<ITransferObject> list = (List<ITransferObject>)sidebarBean.getList(null);
-		for (int i = 0; i < list.size(); i++) {
-			Sidebar sidebar = (Sidebar)list.get(i);
-			int id = sidebar.getId();
-			String name = sidebar.getAlias();
-			SelectItem item = new SelectItem(id, name);
-			menus.add(item);
-		}
-		return menus;
-	}
-
 }

@@ -69,22 +69,5 @@ public class BrandController extends BasicI18nController {
 		return title;
 	}
 	
-	public List<SelectItem> getBrands() throws ManagerBeanException, ExpressionException {
-		List<SelectItem> brands = new LinkedList<SelectItem>();
-		IManagerBean brandBean = BeanManager.getManagerBean(Brand.class);
-		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(brandBean.getFieldName(ICMSAlias.BRAND_ACTIVE), true);
-		List<ITransferObject> list = (List<ITransferObject>)brandBean.getList(criteria);
-		SelectItem item;
-		for (int i = 0; i < list.size(); i++) {
-			Brand brand = (Brand)list.get(i);
-			int id = brand.getId();
-			String name = brand.getAlias();
-			item = new SelectItem(id, name);
-			brands.add(item);
-		}
-		return brands;
-	}
-
 
 }

@@ -78,7 +78,7 @@
 							<aon:selectOneMenu id="header_menu"  
 								styleClass="aon-form-selectOneMenu-field"
 								value="#{headers.to.menu.id}">
-								<f:selectItems value="#{menu.menuList}" />
+								<f:selectItems value="#{collections.menuList}" />
 							</aon:selectOneMenu> 
 
 							<aon:outputLabel for="header_menutype"
@@ -87,7 +87,7 @@
 							<aon:selectOneMenu id="header_menutype" 
 								styleClass="aon-form-selectOneMenu-field"
 								value="#{headers.to.language_menu_type}">
-								<f:selectItems value="#{headers.languageTypes}" />
+								<f:selectItems value="#{collections.languageTypes}" />
 							</aon:selectOneMenu> 
 							
 							<aon:outputLabel for="header_language_menu"
