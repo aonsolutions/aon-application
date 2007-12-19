@@ -31,6 +31,10 @@ public class Section implements ITransferObject {
 	
 	private boolean show_sidebar;
 	
+	private Menu menu;
+	
+	private boolean show_menu = true;
+	
 	@Id
 	@GeneratedValue
 	@Column(name = "id", nullable = false)
@@ -108,6 +112,23 @@ public class Section implements ITransferObject {
 		this.show_sidebar = show_sidebar;
 	}
 
-	
-	
+	@ManyToOne(fetch = FetchType.EAGER)
+	@JoinColumn(name = "menu", nullable = false)
+	public Menu getMenu() {
+		return menu;
+	}
+
+	public void setMenu(Menu menu) {
+		this.menu = menu;
+	}
+
+	@Column(name = "show_menu")
+	public boolean isShow_menu() {
+		return show_menu;
+	}
+
+	public void setShow_menu(boolean show_menu) {
+		this.show_menu = show_menu;
+	}
+
 }
