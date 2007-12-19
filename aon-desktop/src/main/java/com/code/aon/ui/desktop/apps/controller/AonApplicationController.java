@@ -71,10 +71,13 @@ public class AonApplicationController extends BasicController {
                 	String context = app.getContext();
                 	context = context.replaceAll(".war", "");
                 	String name = app.getDescription();
+                	System.out.println(">>>>>>>>>>>>>>>>> ctx = " + context  + " -- desc = " + name );
                 	if (name == null){
                 		name = context.replaceAll("aon-", "");
+                		name = context.replaceAll("/", "");
                 	}
-                	App a = new App( name, ec.getRequestContextPath() + "/" + context + ".auth");
+                	System.out.println(">>>>>>>>>>>>>>>>> ctx = " + context  + " -- desc = " + name );
+                	App a = new App( name, ec.getRequestContextPath() + context + ".auth");
 					applicationList.add(a);
 				}
 			}
