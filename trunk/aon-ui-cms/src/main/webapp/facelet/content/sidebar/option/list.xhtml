@@ -56,14 +56,13 @@
 					</aon:div>
 					
 					<aon:dataTable id="sidebarOptionDataList" styleClass="aon-dataTable"
-					 	columnWidths="120,200,50,*,50,60" 
+					 	columnWidths="120,*,50,60" 
 						value="#{sidebar_option.model}" var="to" rows="0"
 						rowClasses="aon-dataTable-odd, aon-dataTable-even"
 						columnClasses="aon-table-body aon-table-body-icon,
 							aon-table-body aon-table-body-string,
-							aon-table-body aon-table-body-string,
 							aon-table-body aon-table-body-icon,
-							aon-table-body aon-table-body-string">
+							aon-table-body aon-table-body-icon">
 
 							<aon:column>
 								<aon:rowSelector selectionListener="#{sidebar_option.onSelect}" toggleOnClick="true"/>
