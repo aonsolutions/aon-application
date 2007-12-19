@@ -46,13 +46,6 @@
 							onmouseout="this.className='aon-content-toolbar-item aon-icon-delete'"
 							onmouseover="this.className='aon-content-toolbar-item aon-icon-delete aon-content-toolbar-item-hover'"
 							accesskey="#{bundle.aon_key_remove}"/>
-						<aon:commandButton id="search"
-							value="#{bundle.aon_search}" immediate="true"
-							action="link_search" actionListener="#{link.onEditSearch}"
-							styleClass="aon-content-toolbar-item aon-icon-search"
-							onmouseout="this.className='aon-content-toolbar-item aon-icon-search'"
-							onmouseover="this.className='aon-content-toolbar-item aon-icon-search aon-content-toolbar-item-hover'"
-							accesskey="#{bundle.aon_key_search}"/>
 						<aon:commandButton id="reset" value="#{bundle.aon_reset}"
 							actionListener="#{link.onReset}" rendered="#{!link.new}"
 							styleClass="aon-content-toolbar-item aon-icon-reset"
