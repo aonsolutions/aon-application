@@ -2,18 +2,37 @@ package com.code.aon.ui.cms.controller;
 
 import java.util.ArrayList;
 
+import javax.faces.context.FacesContext;
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
+import javax.faces.event.ValueChangeEvent;
 
+import com.code.aon.cms.Brand;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ui.form.BasicController;
+import com.icesoft.faces.component.ext.RowSelectorEvent;
 
-public class SectionController extends BasicController {
+public class SectionController extends BasicController{
 
 	/** A list that contains the selected objects of the model. */
 	private ArrayList<ITransferObject> checkList= new ArrayList<ITransferObject>();
 
+	private boolean cancelOnSelect = false;
+
+	@SuppressWarnings("unused")
+	public void onSelect(RowSelectorEvent event) throws ManagerBeanException {
+		if (!cancelOnSelect) {
+			super.onSelect(new ActionEvent(event.getComponent()));
+			FacesContext.getCurrentInstance().getApplication().getNavigationHandler().handleNavigation(FacesContext.getCurrentInstance(), null, "section_form");
+		}
+		cancelOnSelect = false;
+	}
+	
+	public void onChecked(ValueChangeEvent event) throws ManagerBeanException {
+		cancelOnSelect = true; 
+	}
+	
 	/**
 	 * Gets the if the selected row is checked.
 	 * 
