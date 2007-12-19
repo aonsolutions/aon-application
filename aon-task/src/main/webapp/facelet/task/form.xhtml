@@ -58,7 +58,7 @@
 						<aon:commandButton id="search" value="#{bundle.aon_search}"
 							immediate="true" action="task_search"
 							actionListener="#{task.onEditSearch}"
-							styleClass="aon-content-toolbar-item aon-icon-search"
+							styleClass="aon-content-toolbar-item aon-icon-task-assume"
 							onmouseout="this.className='aon-content-toolbar-item aon-icon-search'"
 							onmouseover="this.className='aon-content-toolbar-item aon-icon-search aon-content-toolbar-item-hover'"
 							accesskey="#{bundle.aon_key_search}" />
@@ -71,8 +71,8 @@
 						<aon:commandButton id="assumeTask" value="#{projectBundle.task_assume}"
 							actionListener="#{task.onAssumeTask}"
 							styleClass="aon-content-toolbar-item"
-							onmouseover="this.className='aon-content-toolbar-item aon-content-toolbar-item-hover'"
-							onmouseout="this.className='aon-content-toolbar-item'"
+							onmouseover="this.className='aon-content-toolbar-item aon-icon-task-assume aon-content-toolbar-item-hover'"
+							onmouseout="this.className='aon-content-toolbar-item aon-icon-task-assume'"
 							rendered="#{!task.new and task.to.user.id == null}" />
 						<aon:commandButton id="startTask" value="#{projectBundle.task_start}"
 							actionListener="#{task.onStartTask}"
@@ -88,15 +88,15 @@
 							rendered="#{task.myTask and task.inProgress}" />
 						<aon:commandButton id="releaseTask" value="#{projectBundle.task_release}"
 							actionListener="#{task.onReleaseTask}"
-							styleClass="aon-content-toolbar-item"
-							onmouseover="this.className='aon-content-toolbar-item aon-content-toolbar-item-hover'"
-							onmouseout="this.className='aon-content-toolbar-item'"
+							styleClass="aon-content-toolbar-item aon-icon-task-liberate"
+							onmouseover="this.className='aon-icon-task-liberate aon-content-toolbar-item aon-content-toolbar-item-hover'"
+							onmouseout="this.className='aon-icon-task-liberate aon-content-toolbar-item'"
 							rendered="#{task.myTask and !task.finished and !task.deleted}" />
 						<aon:commandButton id="finishTask" value="#{projectBundle.task_finish}"
 							actionListener="#{task.onFinishTask}"
-							styleClass="aon-content-toolbar-item"
-							onmouseover="this.className='aon-content-toolbar-item aon-content-toolbar-item-hover'"
-							onmouseout="this.className='aon-content-toolbar-item'"
+							styleClass="aon-icon-task-finish aon-content-toolbar-item"
+							onmouseover="this.className='aon-icon-task-finish aon-content-toolbar-item aon-content-toolbar-item-hover'"
+							onmouseout="this.className='aon-icon-task-finish aon-content-toolbar-item'"
 							rendered="#{!task.new and !task.finished and !task.deleted}" />
 						<aon:commandButton id="reopenTask" value="#{projectBundle.task_reopen}"
 							actionListener="#{task.onReopenTask}"
