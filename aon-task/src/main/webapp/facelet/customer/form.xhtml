@@ -90,24 +90,24 @@
 								value="#{registryBundle.aon_cif}" />
 							<aon:inputText id="Customer_registry_document"
 								styleClass="aon-inputText" required="true" size="20"
-								maxlength="15" value="#{customer.to.registry.document}" />
+								maxlength="16" value="#{customer.to.registry.document}" />
 
 							<aon:outputLabel for="Customer_registry_name"
 								value="#{registryBundle.aon_name}" />
 							<aon:inputText id="Customer_registry_name"
 								styleClass="aon-inputText" required="true" size="60"
-								maxlength="45" value="#{customer.to.registry.name}" />
+								maxlength="64" value="#{customer.to.registry.name}" />
 
 							<aon:outputLabel for="Customer_registry_surname"
 								value="#{registryBundle.aon_surname}" />
 							<aon:inputText id="Customer_registry_surname"
-								styleClass="aon-inputText" required="true" size="60"
-								maxlength="45" value="#{customer.to.registry.surname}" />
+								styleClass="aon-inputText" size="60"
+								maxlength="64" value="#{customer.to.registry.surname}" />
 
 							<aon:outputLabel for="Customer_registry_alias"
 								value="#{customerBundle.customer_alias}" />
 							<aon:inputText id="Customer_registry_alias"
-								styleClass="aon-inputText" size="60" maxlength="45"
+								styleClass="aon-inputText" size="60" maxlength="32"
 								value="#{customer.to.registry.alias}" />
 								
 							<aon:outputLabel for="Customer_scope_id"
