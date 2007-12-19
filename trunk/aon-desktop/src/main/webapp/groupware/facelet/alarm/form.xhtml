@@ -31,14 +31,14 @@
 							onmouseover="this.className='aon-content-toolbar-item aon-icon-cancel aon-content-toolbar-item-hover'"
 							accesskey="#{bundle.aon_key_cancel}" />
 						<aon:commandButton id="alarm_delay" value="#{groupwareBundle.alarm_delay}"
-							styleClass="aon-content-toolbar-item"
-							onmouseout="this.className='aon-content-toolbar-item'"
-							onmouseover="this.className='aon-content-toolbar-item aon-content-toolbar-item-hover'"
+							styleClass="aon-content-toolbar-item aon-icon-alarms-postpone"
+							onmouseout="this.className='aon-content-toolbar-item aon-icon-alarms-postpone'"
+							onmouseover="this.className='aon-content-toolbar-item aon-content-toolbar-item-hover aon-icon-alarms-postpone'"
 							action="home" actionListener="#{alarm.onDelayAlarm}"/>	
 						<aon:commandButton id="alarm_finish" value="#{groupwareBundle.alarm_finish}"
-							styleClass="aon-content-toolbar-item"
-							onmouseout="this.className='aon-content-toolbar-item'"
-							onmouseover="this.className='aon-content-toolbar-item aon-content-toolbar-item-hover'"
+							styleClass="aon-content-toolbar-item aon-icon-alarms-finish"
+							onmouseout="this.className='aon-content-toolbar-item aon-icon-alarms-finish'"
+							onmouseover="this.className='aon-content-toolbar-item aon-content-toolbar-item-hover aon-icon-alarms-finish'"
 							action="home" actionListener="#{alarm.onFinishAlarm}"/>	
 					</aon:div>
 				</aon:div>
