@@ -294,6 +294,10 @@
 		<url-pattern>*.lookupBean</url-pattern>
 	</servlet-mapping>
 
+	<session-config>
+		<session-timeout>240</session-timeout>
+	</session-config>
+
 	<servlet>
 		<servlet-name>Tomcat Push Servlet</servlet-name>
 		<servlet-class>
