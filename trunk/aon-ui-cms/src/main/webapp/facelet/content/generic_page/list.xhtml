@@ -11,23 +11,22 @@
 
 		<aon:form id="genericPageList">
 			
-			<aon:panelGrid columns="2" dir="true" styleClass="aon-title-toolbar"
-			cellpadding="0" cellspacing="0" columnClasses="aon-content-title,aon-content-toolbar">
+			<aon:panelGrid columns="2" dir="true" styleClass="aon-title-toolbar" 
+				cellpadding="0" cellspacing="0" columnClasses="aon-content-title,aon-content-toolbar">
 			
 				<aon:div styleClass="aon-content-title-internal">
 					<aon:outputText value="#{appBundle.generic_page}" />					
 				</aon:div>		
 			
 				<!-- start toolbar navigation -->
-				<aon:div styleClass="aon-content-toolbar-internal">
-					<aon:div styleClass="aon-content-toolbar-item-group">
-						<aon:commandButton id="reset" value="#{bundle.aon_reset}"
+				<aon:div styleClass="aon-content-toolbar-internal" >
+						<aon:commandButton id="reset" value="#{bundle.aon_reset}" 
 							action="generic_page_form" actionListener="#{generic_page.onReset}"
 							styleClass="aon-content-toolbar-item aon-icon-reset"
 							onmouseout="this.className='aon-content-toolbar-item aon-icon-reset'"
 							onmouseover="this.className='aon-content-toolbar-item aon-icon-reset aon-content-toolbar-item-hover'"
 							accesskey="#{bundle.aon_key_new}"/>
-						<aon:confirmButton id="remove"
+						<aon:confirmButton id="remove" 
 							value="#{bundle.aon_remove}" rendered="#{!generic_page.checklistEmpty}" inmediate="true"
 							confirmTitle="Confirmation Dialog" confirmMessage="#{bundle.aon_remove_confirm}"
 							confirmActionListener="#{generic_page.onRemoveSelected}" confirmAction="generic_page_list"
@@ -35,13 +34,12 @@
 							onmouseout="this.className='aon-content-toolbar-item aon-icon-delete'"
 							onmouseover="this.className='aon-content-toolbar-item aon-icon-delete aon-content-toolbar-item-hover'"
 							accesskey="#{bundle.aon_key_remove}"/>
-						<aon:commandButton id="search" value="#{bundle.aon_search}"
+						<aon:commandButton id="search" value="#{bundle.aon_search}" 
 							action="generic_page_search" actionListener="#{generic_page.onEditSearch}"
 							styleClass="aon-content-toolbar-item aon-icon-search"
 							onmouseout="this.className='aon-content-toolbar-item aon-icon-search'"
 							onmouseover="this.className='aon-content-toolbar-item aon-icon-search aon-content-toolbar-item-hover'"
 							accesskey="#{bundle.aon_key_search}"/>
-					</aon:div>
 				</aon:div>
 			<!-- end toolbar navigation -->
 			</aon:panelGrid> 
