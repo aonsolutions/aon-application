@@ -35,6 +35,7 @@ import com.code.aon.cms.ArticleCategoryDetail;
 import com.code.aon.cms.Sidebar;
 import com.code.aon.cms.SidebarOption;
 import com.code.aon.cms.SidebarOptionDetail;
+import com.code.aon.cms.Section;
 
 /** 
 * Interface for holding entity properties constants.
@@ -1351,6 +1352,73 @@ public interface ICMSAlias {
 	* Hibernate value: SidebarOptionDetail.sidebar_option.id
 	*/
 	String  SIDEBAR_OPTION_DETAIL_SIDEBAR_OPTION_ID = SIDEBAR_OPTION_DETAIL_ENTRY.getAliasNames()[3];
+
+
+
+	/** 
+	* DAOConstantsEntry for Section entity.
+	*/ 
+	DAOConstantsEntry SECTION_ENTRY = DAOConstants.getDAOConstant(Section.class);
+
+	/** 
+	* Alias value: Section_alias
+	* Hibernate value: Section.alias
+	*/
+	String  SECTION_ALIAS = SECTION_ENTRY.getAliasNames()[0];
+
+	/** 
+	* Alias value: Section_footer_id
+	* Hibernate value: Section.footer.id
+	*/
+	String  SECTION_FOOTER_ID = SECTION_ENTRY.getAliasNames()[1];
+
+	/** 
+	* Alias value: Section_header_id
+	* Hibernate value: Section.header.id
+	*/
+	String  SECTION_HEADER_ID = SECTION_ENTRY.getAliasNames()[2];
+
+	/** 
+	* Alias value: Section_id
+	* Hibernate value: Section.id
+	*/
+	String  SECTION_ID = SECTION_ENTRY.getAliasNames()[3];
+
+	/** 
+	* Alias value: Section_menu_id
+	* Hibernate value: Section.menu.id
+	*/
+	String  SECTION_MENU_ID = SECTION_ENTRY.getAliasNames()[4];
+
+	/** 
+	* Alias value: Section_show_footer
+	* Hibernate value: Section.show_footer
+	*/
+	String  SECTION_SHOW_FOOTER = SECTION_ENTRY.getAliasNames()[5];
+
+	/** 
+	* Alias value: Section_show_header
+	* Hibernate value: Section.show_header
+	*/
+	String  SECTION_SHOW_HEADER = SECTION_ENTRY.getAliasNames()[6];
+
+	/** 
+	* Alias value: Section_show_menu
+	* Hibernate value: Section.show_menu
+	*/
+	String  SECTION_SHOW_MENU = SECTION_ENTRY.getAliasNames()[7];
+
+	/** 
+	* Alias value: Section_show_sidebar
+	* Hibernate value: Section.show_sidebar
+	*/
+	String  SECTION_SHOW_SIDEBAR = SECTION_ENTRY.getAliasNames()[8];
+
+	/** 
+	* Alias value: Section_sidebar_id
+	* Hibernate value: Section.sidebar.id
+	*/
+	String  SECTION_SIDEBAR_ID = SECTION_ENTRY.getAliasNames()[9];
 
 
 }
