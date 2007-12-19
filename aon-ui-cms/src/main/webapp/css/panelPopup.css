@@ -37,14 +37,22 @@
     background-color: #535353;
     border: 1px solid #000;
     border-bottom: 1px solid #fff;
-    margin:30px 30px 0 30px;   
+    margin:30px 30px 0 30px;  
+   
 }
-
+.aon-popup-Hdr{
+	background-color:#304055;
+	border: 1px solid #000;
+  border-bottom: 1px solid #fff;
+  line-height:18px; 
+  background-image:none !important;
+	}
 /* Pop up title cell */
 .aon-popup-title{
 	color:#fff;
 	text-align:left;
 	font-weight:bold;	
+	padding:3px 0 3px 1em;
 	}
 .aon-popup-title-span{
 	border:0px !important;
@@ -55,12 +63,12 @@
 /* Close button column. The button must be an grahpic image object. It can not be set with an image background */
 .aon-popup-title-closeButton{
 	text-align:right;
+	background-color:#304055;
+	
 	}
 /* Close button image*/
 .aon-popup-button-close{
-	border:0;
-	width:14px;
-	height:13px;	
+
 	}
 /**************************/
 /* ICE PANEL POP UP HEADER*/
