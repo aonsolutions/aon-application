@@ -12,8 +12,14 @@
 
 		<aon:form id="brandForm" partialSubmit="false">
 
-			<aon:div styleClass="aon-content-toolbar" forceId="#{true}"
-				id="aon-content-toolbar">
+			<aon:panelGrid columns="2" dir="true" styleClass="aon-title-toolbar"
+			cellpadding="0" cellspacing="0" columnClasses="aon-content-title,aon-content-toolbar">
+			
+				<aon:div styleClass="aon-content-title-internal">
+					<aon:outputText value="#{appBundle.brand}" />					
+				</aon:div>		
+			
+				<!-- start toolbar navigation -->
 				<aon:div styleClass="aon-content-toolbar-internal">
 					<aon:div styleClass="aon-content-toolbar-item-group">
 						<aon:confirmButton id="save"
@@ -40,13 +46,6 @@
 							onmouseout="this.className='aon-content-toolbar-item aon-icon-delete'"
 							onmouseover="this.className='aon-content-toolbar-item aon-icon-delete aon-content-toolbar-item-hover'"
 							accesskey="#{bundle.aon_key_remove}"/>
-						<aon:commandButton id="search"
-							value="#{bundle.aon_search}" immediate="true"
-							action="brand_search" actionListener="#{brand.onEditSearch}"
-							styleClass="aon-content-toolbar-item aon-icon-search"
-							onmouseout="this.className='aon-content-toolbar-item aon-icon-search'"
-							onmouseover="this.className='aon-content-toolbar-item aon-icon-search aon-content-toolbar-item-hover'"
-							accesskey="#{bundle.aon_key_search}"/>
 						<aon:commandButton id="reset" value="#{bundle.aon_reset}"
 							actionListener="#{brand.onReset}" rendered="#{!brand.new}"
 							styleClass="aon-content-toolbar-item aon-icon-reset"
@@ -55,7 +54,7 @@
 							accesskey="#{bundle.aon_key_new}" />
 					</aon:div>
 				</aon:div>
-			</aon:div>
+			</aon:panelGrid>
 
 			<aon:div styleClass="aon-content-subtitle" id="aon-content-subtitle"
 				forceId="#{true}">
