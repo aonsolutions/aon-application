@@ -125,13 +125,13 @@
 								value="#{projectBundle.aon_description}" />
 							<aon:inputText id="Task_descripcion"
 								styleClass="aon-inputText" required="true" size="60"
-								maxlength="50" value="#{task.to.description}" 
+								maxlength="128" value="#{task.to.description}" 
 								disabled="#{!task.new}"/>
 
 							<aon:outputLabel for="Task_startDate"
 								value="#{projectBundle.aon_initial_date}" />
 							<aon:selectInputDate id="Task_startDate" styleClass="aon-calendar-"
-								 required="true" style="z-index:2001;margin:0;vertical-align:middle;"
+								 style="z-index:2001;margin:0;vertical-align:middle;"
 								 imageDir="#{aonConfiguration.stylePath}/images/selectInputDate/"
 								 value="#{task.to.startDate}" renderAsPopup="true"
 								 popupDateFormat="#{bundle.aon_date_pattern}"
@@ -152,7 +152,7 @@
 							<aon:outputLabel for="Task_dueDate"
 								value="#{projectBundle.aon_due_date}" />
 							<aon:selectInputDate id="Task_dueDate" styleClass="aon-calendar-"
-								 required="true" style="z-index:2001;margin:0;vertical-align:middle;"
+								 required="#{true}" style="z-index:2001;margin:0;vertical-align:middle;"
 								 imageDir="#{aonConfiguration.stylePath}/images/selectInputDate/"
 								 value="#{task.to.dueDate}" renderAsPopup="true"
 								 popupDateFormat="#{bundle.aon_date_pattern}"
