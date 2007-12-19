@@ -79,7 +79,7 @@
 							styleClass="aon-content-toolbar-item"
 							onmouseover="this.className='aon-content-toolbar-item aon-content-toolbar-item-hover'"
 							onmouseout="this.className='aon-content-toolbar-item'"
-							rendered="#{task.myTask and task.pending}" />
+							rendered="#{!task.new and task.myTask and task.pending}" />
 						<aon:commandButton id="stopTask" value="#{projectBundle.task_stop}"
 							actionListener="#{task.onStopTask}"
 							styleClass="aon-content-toolbar-item"
@@ -91,7 +91,7 @@
 							styleClass="aon-content-toolbar-item aon-icon-task-liberate"
 							onmouseover="this.className='aon-icon-task-liberate aon-content-toolbar-item aon-content-toolbar-item-hover'"
 							onmouseout="this.className='aon-icon-task-liberate aon-content-toolbar-item'"
-							rendered="#{task.myTask and !task.finished and !task.deleted}" />
+							rendered="#{!task.new and task.myTask and !task.finished and !task.deleted}" />
 						<aon:commandButton id="finishTask" value="#{projectBundle.task_finish}"
 							actionListener="#{task.onFinishTask}"
 							styleClass="aon-icon-task-finish aon-content-toolbar-item"
@@ -189,6 +189,7 @@
 								rendered="#{task.new}" 
 								partialSubmit="true"
 								valueChangeListener="#{task.workGroupChange}">
+								<f:selectItem value="#{nullSelectItem.value}" />
 								<f:selectItems value="#{configCollections.workgroups}" />
 							</aon:selectOneMenu>
 							
@@ -197,12 +198,14 @@
 								rendered="#{task.new}"/>
 							<aon:selectOneMenu id="Task_user" value="#{task.to.user.id}"
 								rendered="#{task.new}" >
+								<f:selectItem value="#{nullSelectItem.value}" />
 								<f:selectItems value="#{task.users}" />
 							</aon:selectOneMenu>
 							
 							<aon:outputLabel for="Task_customer_id"
 								styleClass="aon-form-input-text-label"
-								value="#{projectBundle.aon_customer}" />
+								value="#{projectBundle.aon_customer}"
+								rendered="#{task.new or task.to.dossier.id != null}"/>
 							<aon:div styleClass="aon-nowrap" rendered="#{task.new}">	
 								<aon:lookupInputText id="Task_customer_id" lookup="#{customerLookup}"
 									valueChangeListener="#{task.customerChange}"
@@ -228,6 +231,7 @@
 							<aon:selectOneMenu id="Task_dossier_id" value="#{task.to.dossier.id}"
 								partialSubmit="true" rendered="#{task.new}" 
 								valueChangeListener="#{task.dossierChange}">
+								<f:selectItem value="#{nullSelectItem.value}" />
 								<f:selectItems value="#{task.dossiers}" />
 							</aon:selectOneMenu>
 							<aon:inputText id="Task_dossier"
@@ -240,6 +244,7 @@
 								rendered="#{task.new or task.to.activity.id != null}"/>
 							<aon:selectOneMenu id="Task_activity_id" value="#{task.to.activity.id}"
 								rendered="#{task.new}">
+								<f:selectItem value="#{nullSelectItem.value}" />
 								<f:selectItems value="#{task.activities}" />
 							</aon:selectOneMenu>
 							<aon:inputText id="Task_activity"
