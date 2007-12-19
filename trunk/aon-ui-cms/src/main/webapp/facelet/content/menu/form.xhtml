@@ -13,9 +13,15 @@
 
 		<aon:form id="menuForm" partialSubmit="true">
 
-			<aon:div styleClass="aon-content-toolbar" forceId="#{true}" id="aon-content-toolbar">
+			<aon:panelGrid columns="2" dir="true" styleClass="aon-title-toolbar" 
+				cellpadding="0" cellspacing="0" columnClasses="aon-content-title,aon-content-toolbar">
+			
+				<aon:div styleClass="aon-content-title-internal">
+					<aon:outputText value="#{appBundle.menu}" />					
+				</aon:div>		
+			
+				<!-- start toolbar navigation -->
 				<aon:div styleClass="aon-content-toolbar-internal">
-					<aon:div styleClass="aon-content-toolbar-item-group">
 						<aon:confirmButton id="save"
 							value="#{bundle.aon_save}" rendered="#{menu.to!=null or menu.new}"
 							confirmTitle="Confirmation Dialog" confirmMessage="#{bundle.aon_save_confirm}"
@@ -46,9 +52,8 @@
 							onmouseout="this.className='aon-content-toolbar-item aon-icon-reset'"
 							onmouseover="this.className='aon-content-toolbar-item aon-icon-reset aon-content-toolbar-item-hover'"
 							accesskey="#{bundle.aon_key_new}" />
-					</aon:div>
 				</aon:div>
-			</aon:div>
+			</aon:panelGrid>
 
 			<aon:div styleClass="aon-content-subtitle" id="aon-content-subtitle"
 				forceId="#{true}">
