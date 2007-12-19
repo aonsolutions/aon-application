@@ -19,7 +19,7 @@
 						<aon:confirmButton id="save"
 							value="#{bundle.aon_save}" rendered="#{section.to!=null or section.new}"
 							confirmTitle="Confirmation Dialog" confirmMessage="#{bundle.aon_save_confirm}"
-							confirmActionListener="#{section.onAccept}"
+							confirmActionListener="#{section.accept}"
 							styleClass="aon-content-toolbar-item aon-icon-accept"
 							onmouseout="this.className='aon-content-toolbar-item aon-icon-accept'"
 							onmouseover="this.className='aon-content-toolbar-item aon-icon-accept aon-content-toolbar-item-hover'"
@@ -82,11 +82,41 @@
 							<aon:outputLabel for="section_header"
 								styleClass="aon-form-input-text-label"
 								value="#{appBundle.section_header}" />
-							<aon:selectOneMenu id="section_header" 
-								styleClass="aon-form-selectOneMenu-field"
-								value="#{section.to.header}">
-								<f:selectItems value="#{headers.languageTypes}" />
-							</aon:selectOneMenu> 
+							<aon:div>
+								<aon:selectOneMenu id="section_header" 
+									styleClass="aon-form-selectOneMenu-field"
+									value="#{section.to.header.id}">
+									<f:selectItems value="#{collections.headerList}" />
+								</aon:selectOneMenu> 
+								<aon:selectBooleanCheckbox id="section_header_selected" 
+									value="#{section.to.show_header}" />
+							</aon:div>
+
+							<aon:outputLabel for="section_footer"
+								styleClass="aon-form-input-text-label"
+								value="#{appBundle.section_footer}" />
+							<aon:div>
+								<aon:selectOneMenu id="section_footer" 
+									styleClass="aon-form-selectOneMenu-field"
+									value="#{section.to.footer.id}">
+									<f:selectItems value="#{collections.footerList}" />
+								</aon:selectOneMenu> 
+								<aon:selectBooleanCheckbox id="section_footer_selected" 
+									value="#{section.to.show_footer}" />
+							</aon:div>
+
+							<aon:outputLabel for="section_sidebar"
+								styleClass="aon-form-input-text-label"
+								value="#{appBundle.section_sidebar}" />
+							<aon:div>
+								<aon:selectOneMenu id="section_sidebar" 
+									styleClass="aon-form-selectOneMenu-field"
+									value="#{section.to.sidebar.id}">
+									<f:selectItems value="#{collections.sidebarList}" />
+								</aon:selectOneMenu> 
+								<aon:selectBooleanCheckbox id="section_sidebar_selected" 
+									value="#{section.to.show_sidebar}" />
+							</aon:div>
 
 						</aon:panelGrid>
 					</aon:panelGrid>

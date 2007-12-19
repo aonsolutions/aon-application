@@ -9,7 +9,9 @@ import javax.faces.model.SelectItem;
 
 import com.code.aon.cms.Brand;
 import com.code.aon.cms.FaqCategory;
+import com.code.aon.cms.Footer;
 import com.code.aon.cms.GenericPage;
+import com.code.aon.cms.Header;
 import com.code.aon.cms.LinkCategory;
 import com.code.aon.cms.Menu;
 import com.code.aon.cms.Sidebar;
@@ -208,6 +210,34 @@ public class CollectionsController {
 			types.add(item);
 		}
 		return types;
+	}
+
+	public List<SelectItem> getHeaderList() throws ManagerBeanException {
+		List<SelectItem> itemList = new LinkedList<SelectItem>();
+		IManagerBean bean = BeanManager.getManagerBean(Header.class);
+		List<ITransferObject> list = (List<ITransferObject>)bean.getList(null);
+		for (int i = 0; i < list.size(); i++) {
+			Header header = (Header)list.get(i);
+			int id = header.getId();
+			String name = header.getAlias();
+			SelectItem item = new SelectItem(id, name);
+			itemList.add(item);
+		}
+		return itemList;
+	}
+
+	public List<SelectItem> getFooterList() throws ManagerBeanException {
+		List<SelectItem> itemList = new LinkedList<SelectItem>();
+		IManagerBean bean = BeanManager.getManagerBean(Footer.class);
+		List<ITransferObject> list = (List<ITransferObject>)bean.getList(null);
+		for (int i = 0; i < list.size(); i++) {
+			Footer footer = (Footer)list.get(i);
+			int id = footer.getId();
+			String name = footer.getAlias();
+			SelectItem item = new SelectItem(id, name);
+			itemList.add(item);
+		}
+		return itemList;
 	}
 
 
