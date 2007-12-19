@@ -190,6 +190,7 @@
 										value="#{projectBundle.aon_work_group}" />
 									<aon:selectOneMenu id="Task_workgroup"
 										value="#{periodTask.to.task.workGroup.id}" required="#{true}">
+										<f:selectItem value="#{nullSelectItem.value}" />
 										<f:selectItems value="#{configCollections.workgroups}" />
 									</aon:selectOneMenu>
 	 
@@ -221,6 +222,7 @@
 									<aon:selectOneMenu id="Task_dossier_id" rendered="#{periodTask.new}"
 										value="#{periodTask.to.task.dossier.id}" partialSubmit="true"
 										valueChangeListener="#{periodTask.dossierChange}">
+										<f:selectItem value="#{nullSelectItem.value}" />
 										<f:selectItems value="#{periodTask.dossiers}" />
 									</aon:selectOneMenu>
 									<aon:inputText id="Task_dossier"
@@ -232,6 +234,7 @@
 										value="#{projectBundle.activity_activity}" />
 									<aon:selectOneMenu id="Task_activity_id" rendered="#{periodTask.new}"
 										value="#{periodTask.to.task.activity.id}">
+										<f:selectItem value="#{nullSelectItem.value}" />
 										<f:selectItems value="#{periodTask.activities}" />
 									</aon:selectOneMenu>
 									<aon:inputText id="Task_activity"
