@@ -13,8 +13,14 @@
 
 		<aon:form id="faqCategoryForm" partialSubmit="false">
 
-			<aon:div styleClass="aon-content-toolbar" forceId="#{true}"
-				id="aon-content-toolbar">
+			<aon:panelGrid columns="2" dir="true" styleClass="aon-title-toolbar"
+			cellpadding="0" cellspacing="0" columnClasses="aon-content-title,aon-content-toolbar">
+			
+				<aon:div styleClass="aon-content-title-internal">
+					<aon:outputText value="#{appBundle.faq_category}" />					
+				</aon:div>		
+			
+				<!-- start toolbar navigation -->
 				<aon:div styleClass="aon-content-toolbar-internal">
 					<aon:div styleClass="aon-content-toolbar-item-group">
 						<aon:confirmButton id="save"
@@ -56,7 +62,7 @@
 							accesskey="#{bundle.aon_key_new}" />
 					</aon:div>
 				</aon:div>
-			</aon:div>
+			</aon:panelGrid>
 
 			<aon:div styleClass="aon-content-subtitle" id="aon-content-subtitle"
 				forceId="#{true}">
