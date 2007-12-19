@@ -25,11 +25,11 @@ public class Section implements ITransferObject {
 	
 	private Sidebar sidebar;
 	
-	private boolean show_header;
+	private boolean show_header = true;
 	
-	private boolean show_footer;
+	private boolean show_footer = true;
 	
-	private boolean show_sidebar;
+	private boolean show_sidebar = true;
 	
 	private Menu menu;
 	

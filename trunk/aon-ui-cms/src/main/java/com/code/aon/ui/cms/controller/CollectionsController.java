@@ -240,5 +240,20 @@ public class CollectionsController {
 		return itemList;
 	}
 
+	public List<SelectItem> getMenuSideList() throws ManagerBeanException {
+		List<SelectItem> menus = new LinkedList<SelectItem>();
+		IManagerBean menuBean = BeanManager.getManagerBean(Menu.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(menuBean.getFieldName(ICMSAlias.MENU_TYPE), MenuType.SIDEBAR);
+		List<ITransferObject> list = (List<ITransferObject>)menuBean.getList(criteria);
+		for (int i = 0; i < list.size(); i++) {
+			Menu menu = (Menu)list.get(i);
+			int id = menu.getId();
+			String name = menu.getAlias();
+			SelectItem item = new SelectItem(id, name);
+			menus.add(item);
+		}
+		return menus;
+	}
 
 }
