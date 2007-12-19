@@ -280,6 +280,12 @@ public interface ICMSAlias {
 	*/
 	String  GENERIC_PAGE_MENU = GENERIC_PAGE_ENTRY.getAliasNames()[4];
 
+	/** 
+	* Alias value: GenericPage_section_id
+	* Hibernate value: GenericPage.section.id
+	*/
+	String  GENERIC_PAGE_SECTION_ID = GENERIC_PAGE_ENTRY.getAliasNames()[5];
+
 
 
 	/** 
@@ -711,6 +717,12 @@ public interface ICMSAlias {
 	*/
 	String  LINK_CATEGORY_POSITION = LINK_CATEGORY_ENTRY.getAliasNames()[3];
 
+	/** 
+	* Alias value: LinkCategory_section_id
+	* Hibernate value: LinkCategory.section.id
+	*/
+	String  LINK_CATEGORY_SECTION_ID = LINK_CATEGORY_ENTRY.getAliasNames()[4];
+
 
 
 	/** 
@@ -846,6 +858,12 @@ public interface ICMSAlias {
 	* Hibernate value: FaqCategory.position
 	*/
 	String  FAQ_CATEGORY_POSITION = FAQ_CATEGORY_ENTRY.getAliasNames()[3];
+
+	/** 
+	* Alias value: FaqCategory_section_id
+	* Hibernate value: FaqCategory.section.id
+	*/
+	String  FAQ_CATEGORY_SECTION_ID = FAQ_CATEGORY_ENTRY.getAliasNames()[4];
 
 
 
@@ -1210,6 +1228,12 @@ public interface ICMSAlias {
 	* Hibernate value: ArticleCategory.position
 	*/
 	String  ARTICLE_CATEGORY_POSITION = ARTICLE_CATEGORY_ENTRY.getAliasNames()[3];
+
+	/** 
+	* Alias value: ArticleCategory_section_id
+	* Hibernate value: ArticleCategory.section.id
+	*/
+	String  ARTICLE_CATEGORY_SECTION_ID = ARTICLE_CATEGORY_ENTRY.getAliasNames()[4];
 
 
 

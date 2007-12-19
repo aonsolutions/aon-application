@@ -6,8 +6,11 @@ import java.util.Set;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
@@ -27,6 +30,8 @@ public class GenericPage implements ITransferObject {
 	
 	private Integer menu;
 
+	private Section section;
+	
 	private Set<GenericPageDetail> details;
 
 	@Id
@@ -83,6 +88,16 @@ public class GenericPage implements ITransferObject {
 
 	public void setDetails( Set<GenericPageDetail> details ) {
 		this.details = details;
+	}
+
+	@ManyToOne(fetch = FetchType.EAGER)
+	@JoinColumn(name = "section", nullable = false)
+	public Section getSection() {
+		return section;
+	}
+
+	public void setSection(Section section) {
+		this.section = section;
 	}
 
 }

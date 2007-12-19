@@ -5,8 +5,11 @@ import java.util.Set;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
@@ -24,6 +27,8 @@ public class LinkCategory implements ITransferObject {
 
 	private Integer position;
 
+	private Section section;
+	
 	private Set<LinkCategoryDetail> details;
 
 	private Set<Link> links;
@@ -83,4 +88,15 @@ public class LinkCategory implements ITransferObject {
 	public void setLinks( Set<Link> links) {
 		this.links = links;
 	}
+	
+	@ManyToOne(fetch = FetchType.EAGER)
+	@JoinColumn(name = "section", nullable = false)
+	public Section getSection() {
+		return section;
+	}
+
+	public void setSection(Section section) {
+		this.section = section;
+	}
+
 }

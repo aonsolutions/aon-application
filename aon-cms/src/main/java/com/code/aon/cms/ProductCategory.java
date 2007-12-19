@@ -42,6 +42,8 @@ public class ProductCategory implements ITransferObject{
      */
 	private boolean active = true;
 
+	private Section section;
+	
     /**
      * Parent
      */
@@ -97,5 +99,16 @@ public class ProductCategory implements ITransferObject{
 		this.parent = parent;
 	}
 
+	@ManyToOne(fetch = FetchType.EAGER)
+	@JoinColumn(name = "section", nullable = false)
+	public Section getSection() {
+		return section;
+	}
+
+	public void setSection(Section section) {
+		this.section = section;
+	}
+
+	
 
 }
