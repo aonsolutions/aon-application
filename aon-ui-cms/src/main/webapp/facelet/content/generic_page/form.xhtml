@@ -109,6 +109,15 @@
 												value="#{generic_page.to.menu}">
 												<f:selectItems value="#{generic_page.menus}" />
 											</aon:selectOneMenu> 
+
+											<aon:outputLabel for="GenericPage_section"
+												styleClass="aon-form-input-text-label"
+												value="#{appBundle.section}"/>
+											<aon:selectOneMenu id="GenericPage_section"  
+												styleClass="aon-form-selectOneMenu-field"
+												value="#{generic_page.to.section.id}">
+												<f:selectItems value="#{collections.sectionList}" />
+											</aon:selectOneMenu>
 				
 										</aon:panelGrid>
 									</aon:panelGrid>

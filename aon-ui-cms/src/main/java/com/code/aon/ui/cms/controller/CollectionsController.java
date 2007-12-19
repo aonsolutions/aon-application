@@ -14,6 +14,7 @@ import com.code.aon.cms.GenericPage;
 import com.code.aon.cms.Header;
 import com.code.aon.cms.LinkCategory;
 import com.code.aon.cms.Menu;
+import com.code.aon.cms.Section;
 import com.code.aon.cms.Sidebar;
 import com.code.aon.cms.dao.ICMSAlias;
 import com.code.aon.cms.enumeration.ArticleType;
@@ -254,6 +255,20 @@ public class CollectionsController {
 			menus.add(item);
 		}
 		return menus;
+	}
+
+	public List<SelectItem> getSectionList() throws ManagerBeanException {
+		List<SelectItem> itemList = new LinkedList<SelectItem>();
+		IManagerBean bean = BeanManager.getManagerBean(Section.class);
+		List<ITransferObject> list = (List<ITransferObject>)bean.getList(null);
+		for (int i = 0; i < list.size(); i++) {
+			Section section = (Section)list.get(i);
+			int id = section.getId();
+			String name = section.getAlias();
+			SelectItem item = new SelectItem(id, name);
+			itemList.add(item);
+		}
+		return itemList;
 	}
 
 }

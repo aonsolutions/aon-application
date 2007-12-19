@@ -100,7 +100,7 @@ public class ProductCategory implements ITransferObject{
 	}
 
 	@ManyToOne(fetch = FetchType.EAGER)
-	@JoinColumn(name = "section", nullable = false)
+	@JoinColumn(name = "section", nullable = true)
 	public Section getSection() {
 		return section;
 	}

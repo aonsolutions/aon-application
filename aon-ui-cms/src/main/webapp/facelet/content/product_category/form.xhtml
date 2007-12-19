@@ -86,15 +86,15 @@
 								size="50" maxlength="64"
 								value="#{productCategory.toI18n.label}" />
 
-							<aon:outputLabel for="productCategory_parent"
+							<aon:outputLabel for="productCategory_section"
 								styleClass="aon-form-input-text-label"
-								value="#{appBundle.product_category_parent}" />
-							<aon:selectOneMenu id="productCategory_parent"  
+								value="#{appBundle.section}"/>
+							<aon:selectOneMenu id="productCategory_section"  
 								styleClass="aon-form-selectOneMenu-field"
-								value="#{productCategory.to.parent.id}">
-								<f:selectItems value="#{productCategory.parentCategories}" />
-							</aon:selectOneMenu> 
-
+								value="#{productCategory.to.section.id}">
+								<f:selectItems value="#{collections.sectionList}" />
+							</aon:selectOneMenu>
+							
 						</aon:panelGrid>
 					</aon:panelGrid>
 				</aon:div>
