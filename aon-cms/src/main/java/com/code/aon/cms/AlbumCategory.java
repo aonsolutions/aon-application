@@ -5,8 +5,11 @@ import java.util.Set;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
@@ -23,6 +26,8 @@ public class AlbumCategory implements ITransferObject {
 	private boolean active;
 	
 	private int position;
+	
+	private Section section;
 	
 	private Set<AlbumCategoryDetail> details;
 
@@ -73,4 +78,15 @@ public class AlbumCategory implements ITransferObject {
 	public void setDetails(Set<AlbumCategoryDetail> details) {
 		this.details = details;
 	}
+	
+	@ManyToOne(fetch = FetchType.EAGER)
+	@JoinColumn(name = "section", nullable = false)
+	public Section getSection() {
+		return section;
+	}
+
+	public void setSection(Section section) {
+		this.section = section;
+	}
+
 }
