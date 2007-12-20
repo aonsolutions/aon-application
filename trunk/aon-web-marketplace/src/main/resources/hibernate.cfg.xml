@@ -6,9 +6,9 @@
 
 	<session-factory>
 
+		<!-- 
 		<property name="connection.provider_class">com.code.aon.common.dao.hibernate.DBCPConnectionProvider</property>
 		<property name="connection.service">jboss.admin:service=AonSecurity</property>
-		<!-- 
 		<property name="connection.service">Catalina:type=Security,name=AonSecurity</property>
 		 -->
 		<property name="connection.datasource">java:comp/env/jdbc/AonMarketplace</property>		
