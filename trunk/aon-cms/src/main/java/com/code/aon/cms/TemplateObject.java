@@ -1,7 +1,5 @@
 package com.code.aon.cms;
 
-import java.util.Date;
-
 import com.code.aon.common.ITransferObject;
 
 public class TemplateObject implements ITransferObject {
