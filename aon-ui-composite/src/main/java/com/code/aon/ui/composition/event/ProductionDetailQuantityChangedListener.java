@@ -1,8 +1,5 @@
 package com.code.aon.ui.composition.event;
 
-import javax.faces.context.FacesContext;
-import javax.faces.el.ValueBinding;
-
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.composition.Production;
 import com.code.aon.composition.ProductionDetail;
@@ -11,6 +8,7 @@ import com.code.aon.ui.composition.controller.ProductionDetailController;
 import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
+import com.code.aon.ui.util.AonUtil;
 
 public class ProductionDetailQuantityChangedListener extends ControllerAdapter {
 
@@ -29,8 +27,9 @@ public class ProductionDetailQuantityChangedListener extends ControllerAdapter {
         double coefficient = (iniQuantity==0) ? 0 : quantity / iniQuantity;
         try {
             productionDetailQuantityChanged(coefficient);
+            controller.initializeModel();
         } catch (ManagerBeanException e) {
-            throw new ControllerListenerException(e);
+        	throw new ControllerListenerException(e);
         }
     }
 
@@ -40,9 +39,7 @@ public class ProductionDetailQuantityChangedListener extends ControllerAdapter {
      * @param coefficient
      */
     private void productionDetailQuantityChanged(double coefficient) throws ManagerBeanException {
-        FacesContext ctx = FacesContext.getCurrentInstance();
-        ValueBinding vb = ctx.getApplication().createValueBinding("#{production}");
-        ProductionController controller = (ProductionController)vb.getValue(ctx);
+    	ProductionController controller = (ProductionController)AonUtil.getController("production");
         controller.changeProductionDetailQuantity(coefficient);
 
         double quantity = ((Production)controller.getTo()).getInitialQuantity();
