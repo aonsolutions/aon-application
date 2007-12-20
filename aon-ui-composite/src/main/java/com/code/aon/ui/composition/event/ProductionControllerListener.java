@@ -1,8 +1,5 @@
 package com.code.aon.ui.composition.event;
 
-import javax.faces.context.FacesContext;
-import javax.faces.el.ValueBinding;
-
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
@@ -17,6 +14,7 @@ import com.code.aon.ui.composition.controller.ProductionExpenseController;
 import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
+import com.code.aon.ui.util.AonUtil;
 
 public class ProductionControllerListener extends ControllerAdapter {
 
@@ -52,13 +50,10 @@ public class ProductionControllerListener extends ControllerAdapter {
      */
     @Override
     public void afterBeanCanceled(ControllerEvent event) throws ControllerListenerException {
-        FacesContext ctx = FacesContext.getCurrentInstance();
-        ValueBinding vb = ctx.getApplication().createValueBinding("#{productionExpense}");
-        ProductionExpenseController expenseController = (ProductionExpenseController)vb.getValue(ctx);
+        ProductionExpenseController expenseController = (ProductionExpenseController)AonUtil.getController("productionExpense");
         expenseController.onCancel(null);
 
-        vb = ctx.getApplication().createValueBinding("#{productionDetail}");
-        ProductionDetailController detailController = (ProductionDetailController)vb.getValue(ctx);
+        ProductionDetailController detailController = (ProductionDetailController)AonUtil.getController("productionDetail");
         detailController.onCancel(null);
     }
 
@@ -69,13 +64,8 @@ public class ProductionControllerListener extends ControllerAdapter {
      * @throws ControllerListenerException
      */
     private void reloadDetail(Production to) throws ControllerListenerException {
-        FacesContext ctx = FacesContext.getCurrentInstance();
-        ValueBinding vb = ctx.getApplication().createValueBinding("#{productionDetail}");
-        ProductionDetailController detailController = (ProductionDetailController)vb.getValue(ctx);
-        
-        ctx = FacesContext.getCurrentInstance();
-        vb = ctx.getApplication().createValueBinding("#{productionExpense}");
-        ProductionExpenseController expenseController = (ProductionExpenseController)vb.getValue(ctx);
+        ProductionExpenseController expenseController = (ProductionExpenseController)AonUtil.getController("productionExpense");
+        ProductionDetailController detailController = (ProductionDetailController)AonUtil.getController("productionDetail");
 
         IManagerBean bean;
         try {
