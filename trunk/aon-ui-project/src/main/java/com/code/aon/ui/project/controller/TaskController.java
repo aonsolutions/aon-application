@@ -13,6 +13,8 @@ import javax.faces.event.ValueChangeEvent;
 import javax.faces.model.DataModel;
 import javax.faces.model.SelectItem;
 
+import org.apache.commons.lang.StringUtils;
+
 import com.code.aon.campaign.ActivityProcess;
 import com.code.aon.campaign.Campaign;
 import com.code.aon.campaign.CampaignDossier;
@@ -325,17 +327,26 @@ public class TaskController extends BasicController implements ITaskController {
     }
 
     public void customerChange(ValueChangeEvent event) {
-        if (event.getNewValue() != null && !"".equals(event.getNewValue())) {
+        if ( event.getNewValue() != null && !"".equals(event.getNewValue())) {
             loadDossiers(new Integer(event.getNewValue().toString()));
         } else {
             dossiers = new LinkedList<SelectItem>();
         }
-        activities = new LinkedList<SelectItem>();
     }
 
+    public void customerPojoChange(ValueChangeEvent event) {
+        if ( event.getNewValue() != null ) {
+        	Customer customer = (Customer) event.getNewValue();
+            loadDossiers( customer.getId() );
+        } else {
+            dossiers = new LinkedList<SelectItem>();
+        }
+    }
+    
     @SuppressWarnings("unchecked")
     public void loadDossiers(Integer customerId) {
         dossiers = new LinkedList<SelectItem>();
+        activities = new LinkedList<SelectItem>();
         try {
             IManagerBean managerBean = BeanManager.getManagerBean(Dossier.class);
             Criteria criteria = new Criteria();
