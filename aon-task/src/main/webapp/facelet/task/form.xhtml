@@ -211,7 +211,8 @@
 									valueChangeListener="#{task.customerChange}"
 									value="#{task.to.dossier.customer.id}" size="5">
 								</aon:lookupInputText>
-								<aon:lookupButton lookup="#{customerLookup}" 
+								<aon:lookupButton lookup="#{customerLookup}"
+									valueChangeListener="#{task.customerPojoChange}" 
 									property="#{task.to.dossier.customer}"
 									windowTitle="#{projectBundle.aon_customer}" 
 									styleClass="aon-lookup-button aon-icon-lookup" />
