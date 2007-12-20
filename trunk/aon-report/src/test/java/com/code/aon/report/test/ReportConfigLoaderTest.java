@@ -23,8 +23,17 @@ public class ReportConfigLoaderTest extends TestCase {
 			URL url = ReportConfigLoaderTest.class.getResource( "report-config.xml" );
 			ReportConfigurationManager rc = parser.getConfiguration(url.openStream());
 			System.out.println( rc );
-			ReportConfig rcg= rc.getReport( "payform" );
+			ReportConfig rcg= rc.getReport( "salesInvoiceList" );
 			System.out.println( rcg );
+			assertEquals("/com/code/aon/ui/finance/report/salesInvoiceList.jasper", rcg.getTemplate() );
+			assertEquals("com.code.aon.finance.Invoice", rcg.getBeanKey()  );
+			assertEquals("#{feeInvoicing}", rcg.getCriteriaProvider() );
+			assertNotNull( rcg.getFetchMode() );
+			assertEquals(true, rcg.getFetchMode().isPaginated() );
+			assertEquals(100, rcg.getFetchMode().getPageCount() );
+			assertEquals(50, rcg.getFetchMode().getVirtualizerPageMax() );
+			assertNotNull( rcg.getParams());
+			assertEquals("#{company.obtainCompany}", rcg.getParams().get("company") );
 		} catch (Exception e) {
 			e.printStackTrace();
 			fail( e.getMessage() );
