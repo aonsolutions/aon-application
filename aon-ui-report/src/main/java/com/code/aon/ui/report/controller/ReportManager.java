@@ -2,8 +2,13 @@ package com.code.aon.ui.report.controller;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.Collection;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Locale;
 import java.util.Map;
 import java.util.ResourceBundle;
@@ -25,12 +30,13 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.common.dao.sql.DAOException;
 import com.code.aon.ql.Criteria;
-import com.code.aon.ui.report.IReportDynamicParamsProvider;
-import com.code.aon.ui.report.OutputFormat;
-import com.code.aon.ui.report.ReportException;
-import com.code.aon.ui.report.config.ReportConfig;
-import com.code.aon.ui.report.jr.JRReport;
-import com.code.aon.ui.report.jr.JRReportFactory;
+import com.code.aon.report.IReportDynamicParamsProvider;
+import com.code.aon.report.OutputFormat;
+import com.code.aon.report.ReportException;
+import com.code.aon.report.config.ReportConfig;
+import com.code.aon.report.config.ReportConfigurationParser;
+import com.code.aon.report.jr.JRReport;
+import com.code.aon.report.jr.JRReportFactory;
 
 /**
  * Bean Manager for running reports.
@@ -40,6 +46,31 @@ import com.code.aon.ui.report.jr.JRReportFactory;
  * 
  */
 public class ReportManager {
+
+	public static final String FACES_DEFAULT_REPORT_CONFIGURATION_FILE = "/WEB-INF/conf/report-config.xml";
+
+	public ReportManager() {
+		String configFile = System
+				.getProperty(ReportConfigurationParser.REPORT_CONFIGURATION_FILE_PROPERTY);
+		if (configFile == null) {
+			try {
+				ExternalContext ec = FacesContext.getCurrentInstance()
+						.getExternalContext();
+				configFile = ec
+						.getInitParameter(ReportConfigurationParser.REPORT_CONFIGURATION_FILE_PROPERTY);
+				if (configFile == null) {
+					configFile = FACES_DEFAULT_REPORT_CONFIGURATION_FILE;
+				}
+				URL url = ec.getResource(configFile);
+				System
+						.setProperty(
+								ReportConfigurationParser.REPORT_CONFIGURATION_FILE_PROPERTY,
+								url.toString());
+			} catch (MalformedURLException e) {
+				e.printStackTrace();
+			}
+		}
+	}
 
 	/**
 	 * Obtains a suitable <code>Logger</code>.
@@ -123,55 +154,54 @@ public class ReportManager {
 	 * @return The outcome (- null - because this method finalizes the reponse).
 	 * @throws ReportException
 	 *             If an error ocurred.
-	 * @throws DAOException 
+	 * @throws DAOException
 	 */
 	public String onExecute() throws ReportException, DAOException {
-		
+
 		boolean initTransState = HibernateUtil.mustBeginTransaction();
 		boolean initSessionState = HibernateUtil.mustCloseSession();
-			HibernateUtil.setCloseSession( false );
-			HibernateUtil.setBeginTransaction( false );
-		try{
+		// if(initTransState){
+		HibernateUtil.setCloseSession(false);
+		// }
+		// if(initSessionState){
+		HibernateUtil.setBeginTransaction(false);
+		// }
+		try {
+			JRReport report = JRReportFactory.getJRReport(getReportKey());
+			resolveCustomParameters(report);
+			Criteria criteria = getCriteria(report);
+			Collection collection = getCollection(report);
+
 			HibernateUtil.startSession();
 			HibernateUtil.beginTransaction();
 
-			JRReport report = JRReportFactory.getJRReport(getReportKey());
-			Criteria criteria = getCriteria(report);
-			List nestedList = report.getReportConfig().getNestedReports(); 
-			boolean force = (nestedList != null && !nestedList.isEmpty());  
-			Collection collection = getCollection(report, force);
-
-			 
 			String dp = report.getReportConfig().getDynamicParamsProvider();
-			LOGGER.info( dp );		
+			LOGGER.info(dp);
 			FacesContext ctx = FacesContext.getCurrentInstance();
-			if (dp!=null) {
-				ValueBinding vb = ctx.getApplication().createValueBinding( "#{" + dp + "}");
-				IReportDynamicParamsProvider dpp = (IReportDynamicParamsProvider) vb.getValue(ctx);
-				Map<String,Object> dynParams =  dpp.getDynamicParamsMap();
-				LOGGER.info( "" + dynParams.size() );
+			if (dp != null) {
+				ValueBinding vb = ctx.getApplication().createValueBinding(
+						"#{" + dp + "}");
+				IReportDynamicParamsProvider dpp = (IReportDynamicParamsProvider) vb
+						.getValue(ctx);
+				Map<String, Object> dynParams = dpp.getDynamicParamsMap();
+				LOGGER.info("" + dynParams.size());
 				report.setDynamicParams(dynParams);
-				LOGGER.info( "Dynamic params set!" );
+				LOGGER.info("Dynamic params set!");
 			}
 
-			String out = report.run(outputFormat, getOutputStrem(), getBundle(),
-					criteria, collection);
+			String out = report.run(outputFormat, getOutputStrem(),
+					getBundle(), criteria, collection);
 			ctx.responseComplete();
-			
+			report.setCustomParams(null);
 			HibernateUtil.commitTransaction();
+			HibernateUtil.closeSession();
 			return out;
-		} catch (Throwable t ){
-			HibernateUtil.rollbackTransaction();
-			return null;
-		} finally{
-			if(initTransState  != HibernateUtil.mustBeginTransaction()){
+		} finally {
+			if (initTransState != HibernateUtil.mustBeginTransaction()) {
 				HibernateUtil.setBeginTransaction(initTransState);
 			}
-			if(initSessionState  != HibernateUtil.mustCloseSession()){
+			if (initSessionState != HibernateUtil.mustCloseSession()) {
 				HibernateUtil.setCloseSession(initSessionState);
-			}
-			if ( HibernateUtil.mustCloseSession() ) {
-				HibernateUtil.closeSession();	
 			}
 		}
 	}
@@ -273,13 +303,13 @@ public class ReportManager {
 							.getValue(ctx);
 
 					return crpr.getCriteria();
-				} 
+				}
 				// Criteria provider is a class.
 				Class criteriaProviderClass = Class.forName(provider);
 				ICriteriaProvider criteriaProvider = (ICriteriaProvider) criteriaProviderClass
 						.newInstance();
 				return criteriaProvider.getCriteria();
-				
+
 			}
 			return null;
 		} catch (ReferenceSyntaxException e) {
@@ -298,7 +328,7 @@ public class ReportManager {
 			throw new ReportException(e.getMessage(), e);
 		}
 	}
-	
+
 	/**
 	 * Obtains the <code>java.util.Collection</code> that will be passed to
 	 * method <code>com.code.aon.common.IFinderBean.getList()</code>. If the
@@ -314,7 +344,7 @@ public class ReportManager {
 	 * @throws ReportException
 	 *             If an error ocurred.
 	 */
-	private Collection getCollection(JRReport report, boolean forceRefresh) throws ReportException {
+	private Collection getCollection(JRReport report) throws ReportException {
 		ReportConfig config = report.getReportConfig();
 		String provider = config.getCollectionProvider();
 		try {
@@ -324,21 +354,25 @@ public class ReportManager {
 					FacesContext ctx = FacesContext.getCurrentInstance();
 					ValueBinding vb = ctx.getApplication().createValueBinding(
 							provider);
-					ICollectionProvider crpr = (ICollectionProvider) vb
-							.getValue(ctx);
-
-					return crpr.getCollection(forceRefresh);
-				} 
+					Object c = vb.getValue(ctx);
+					if (c instanceof ICollectionProvider) {
+						ICollectionProvider crpr = (ICollectionProvider) c;
+						return crpr.getCollection();
+					} else {
+						if (c instanceof Collection) {
+							return (Collection) c;
+						}
+						return null;
+					}
+				}
 				// Collection provider is a class.
 				Class collectionProviderClass = Class.forName(provider);
 				ICollectionProvider collectionProvider = (ICollectionProvider) collectionProviderClass
 						.newInstance();
-				return collectionProvider.getCollection(forceRefresh);
-				
+				return collectionProvider.getCollection();
+
 			}
 			return null;
-		} catch (ManagerBeanException e) {
-			throw new ReportException(e.getMessage(), e);
 		} catch (ReferenceSyntaxException e) {
 			throw new ReportException(e.getMessage(), e);
 		} catch (PropertyNotFoundException e) {
@@ -353,4 +387,46 @@ public class ReportManager {
 			throw new ReportException(e.getMessage(), e);
 		}
 	}
+
+	private void resolveCustomParameters(JRReport report)
+			throws ReportException {
+		ReportConfig config = report.getReportConfig();
+		if (config.getParams() != null) {
+			LOGGER.fine("Passing Custom Parameters");
+			Map<String, Object> map = new HashMap<String, Object>();
+			Iterator<Object> iter = config.getParams().keySet().iterator();
+			while (iter.hasNext()) {
+				String key = (String) iter.next();
+				String value = (String) config.getParams().get(key);
+				if (value.startsWith("#")) {
+					String controllerName = value.substring(
+							value.indexOf("{") + 1, value.indexOf("."));
+					String methodName = value.substring(value.indexOf(".") + 1,
+							value.indexOf("}"));
+					FacesContext ctx = FacesContext.getCurrentInstance();
+					ValueBinding vb = ctx.getApplication().createValueBinding(
+							"#{" + controllerName + "}");
+					Object o = vb.getValue(ctx);
+					try {
+						Method m;
+						m = o.getClass().getMethod(methodName, new Class[0]);
+						Object obj = m.invoke(o, new Object[0]);
+						map.put(key, obj);
+					} catch (SecurityException e) {
+						e.printStackTrace();
+					} catch (NoSuchMethodException e) {
+						e.printStackTrace();
+					} catch (IllegalArgumentException e) {
+						e.printStackTrace();
+					} catch (IllegalAccessException e) {
+						e.printStackTrace();
+					} catch (InvocationTargetException e) {
+						e.printStackTrace();
+					}
+				}
+			}
+			report.setCustomParams(map);
+		}
+	}
+
 }
