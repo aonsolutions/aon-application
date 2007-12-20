@@ -79,5 +79,20 @@
 		<criteria provider="#{state}" />
 	</report>
 
+	<!--  *********  InvoiceList  ********* -->
+	<report id="salesInvoiceList" description="Sales Invoice's List">
+		<template path="/com/code/aon/ui/finance/report/salesInvoiceList.jasper"/>
+		<bean key="com.code.aon.finance.Invoice" />
+		<criteria provider="#{feeInvoicing}"/>
+		<fetch-mode paginated="true" page-count="100" virtualizer-max-size="50"/>
+		<params>
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.finance.i18n.messages" />
+			<param id="company" value="#{company.obtainCompany}" />
+			<param id="PriceStrategy" value="#{feeInvoicing.getPriceStrategy}" />
+			<param id="logoImageFile" value="#{company.getAttachAsInputStream}" />
+			<param id="customer" value="#{feeInvoicing.getCustomer}" />
+		</params>
+	</report>
+
 </report-config>
 
