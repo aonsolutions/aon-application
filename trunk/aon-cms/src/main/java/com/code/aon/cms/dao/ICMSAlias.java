@@ -1403,6 +1403,12 @@ public interface ICMSAlias {
 	*/
 	String  BANNER_CATEGORY_POSITION = BANNER_CATEGORY_ENTRY.getAliasNames()[3];
 
+	/** 
+	* Alias value: BannerCategory_section_id
+	* Hibernate value: BannerCategory.section.id
+	*/
+	String  BANNER_CATEGORY_SECTION_ID = BANNER_CATEGORY_ENTRY.getAliasNames()[4];
+
 
 
 	/** 
@@ -1569,6 +1575,12 @@ public interface ICMSAlias {
 	*/
 	String  DOWNLOAD_CATEGORY_POSITION = DOWNLOAD_CATEGORY_ENTRY.getAliasNames()[4];
 
+	/** 
+	* Alias value: DownloadCategory_section_id
+	* Hibernate value: DownloadCategory.section.id
+	*/
+	String  DOWNLOAD_CATEGORY_SECTION_ID = DOWNLOAD_CATEGORY_ENTRY.getAliasNames()[5];
+
 
 
 	/** 
@@ -1630,6 +1642,12 @@ public interface ICMSAlias {
 	* Hibernate value: AlbumCategory.position
 	*/
 	String  ALBUM_CATEGORY_POSITION = ALBUM_CATEGORY_ENTRY.getAliasNames()[3];
+
+	/** 
+	* Alias value: AlbumCategory_section_id
+	* Hibernate value: AlbumCategory.section.id
+	*/
+	String  ALBUM_CATEGORY_SECTION_ID = ALBUM_CATEGORY_ENTRY.getAliasNames()[4];
 
 
 
