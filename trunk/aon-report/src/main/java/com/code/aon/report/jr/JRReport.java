@@ -4,12 +4,15 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.sql.Connection;
 import java.util.Collection;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.Set;
 import java.util.logging.Logger;
+
+import org.apache.commons.lang.time.DateUtils;
 
 import net.sf.jasperreports.engine.JRDataSource;
 import net.sf.jasperreports.engine.JRDataSourceProvider;
@@ -57,6 +60,7 @@ public class JRReport {
 	private ReportConfig config;
 	
 	private Map<String, Object> dynParams = null;
+	private Map<String, Object> customParams = null;
 
 	/**
 	 * Constructs a report based on this report configuration.
@@ -89,10 +93,9 @@ public class JRReport {
 	 *             If an error ocurred.
 	 * 
 	 */
-	public JRDataSourceProvider getJRPagedDataSourceProvider(Criteria criteria)
+	public JRDataSourceProvider getJRPagedDataSourceProvider(Criteria criteria, int count)
 			throws ReportException {
 		IFinderBean bean = getFinderBean();
-		int count = 500;
 		Class clazz = bean.getPOJOClass();
 		JRPagedBeanDataSourceProvider dsp = new JRPagedBeanDataSourceProvider(
 				clazz, bean, criteria, count);
@@ -175,6 +178,7 @@ public class JRReport {
 		try {
 
 			if (JRExporterFactoryManager.accept(outputFormat)) {
+				Date startDate = new Date();
 				IJRExporterFactory factory;
 				factory = JRExporterFactoryManager
 						.getJRExporterFactory(outputFormat);
@@ -204,8 +208,12 @@ public class JRReport {
 					
 				JRDataSource ds = null;
 				if(config.getCollectionProvider() == null){
-					JRDataSourceProvider jrdsp = (hasCache) ? getJRPagedDataSourceProvider(criteria)
-							: getJRDataSourceProvider(criteria);
+					JRDataSourceProvider jrdsp  = null;
+					if (hasCache) {
+						jrdsp = getJRPagedDataSourceProvider(criteria, config.getFetchMode().getPageCount());
+					} else {
+						jrdsp = getJRDataSourceProvider(criteria);	
+					}
 					ds = jrdsp.create(null);
 				}else{
 					ds = new JRBeanCollectionDataSource(collection);
@@ -219,6 +227,9 @@ public class JRReport {
 				JRExporter exporter = factory.getJRExporter();
 				exporter.setParameters(map);
 				exporter.exportReport();
+				Date endDate = new Date();
+				long  delay = (new Date()).getTime() - startDate.getTime(); 
+				LOGGER.info(" Report execution : " + ((double)(delay/1000)) + " seconds.");
 				if (hasCache) {
 					cleanCache(map);
 				}
@@ -326,6 +337,10 @@ public class JRReport {
 	 */
 	protected void passCustomParameters(Map<Object, Object> map)
 			throws ReportException {
+		if (customParams != null) {
+			LOGGER.fine("Passing Custom Parameters");
+			map.putAll(customParams);
+		}
 	}
 
 	/**
@@ -362,11 +377,13 @@ public class JRReport {
 	}
 
 	public void setDynamicParams(Map<String, Object> dynParams) {
-		// TODO Auto-generated method stub
 		if(this.dynParams == null){
 			this.dynParams = new HashMap<String,Object>();
 		}
 		this.dynParams = dynParams;
 	}
 
+	public void setCustomParams(Map<String, Object> customParams) {
+		this.customParams = customParams;
+	}
 }
