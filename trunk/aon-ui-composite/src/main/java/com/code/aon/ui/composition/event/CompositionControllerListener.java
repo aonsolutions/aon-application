@@ -2,8 +2,6 @@ package com.code.aon.ui.composition.event;
 
 import java.util.List;
 
-import javax.faces.context.FacesContext;
-import javax.faces.el.ValueBinding;
 import javax.faces.model.SelectItem;
 
 import com.code.aon.common.BeanManager;
@@ -21,6 +19,7 @@ import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
 import com.code.aon.ui.product.controller.ProductCollectionsController;
+import com.code.aon.ui.util.AonUtil;
 
 public class CompositionControllerListener extends ControllerAdapter {
 
@@ -34,9 +33,7 @@ public class CompositionControllerListener extends ControllerAdapter {
     public void afterBeanCreated(ControllerEvent event) throws ControllerListenerException {
         double percentage = 0;
 
-        FacesContext ctx = FacesContext.getCurrentInstance();
-        ValueBinding vb = ctx.getApplication().createValueBinding("#{productCollections}");
-        ProductCollectionsController collections = (ProductCollectionsController)vb.getValue(ctx);
+        ProductCollectionsController collections = (ProductCollectionsController)AonUtil.getController("productCollections");
         IManagerBean bean;
         try {
             List vats = collections.getVatTaxes();
@@ -76,13 +73,10 @@ public class CompositionControllerListener extends ControllerAdapter {
      */
     @Override
     public void afterBeanCanceled(ControllerEvent event) throws ControllerListenerException {
-        FacesContext ctx = FacesContext.getCurrentInstance();
-        ValueBinding vb = ctx.getApplication().createValueBinding("#{compositionExpense}");
-        CompositionExpenseController expenseController = (CompositionExpenseController)vb.getValue(ctx);
+        CompositionExpenseController expenseController = (CompositionExpenseController)AonUtil.getController("compositionExpense");
         expenseController.onCancel(null);
 
-        vb = ctx.getApplication().createValueBinding("#{compositionDetail}");
-        CompositionDetailController detailController = (CompositionDetailController)vb.getValue(ctx);
+        CompositionDetailController detailController = (CompositionDetailController)AonUtil.getController("compositionDetail");
         detailController.onCancel(null);
     }
 
