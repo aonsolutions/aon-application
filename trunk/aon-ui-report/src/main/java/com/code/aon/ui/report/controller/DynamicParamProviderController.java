@@ -12,7 +12,7 @@ import javax.faces.el.ValueBinding;
 
 import org.apache.commons.beanutils.PropertyUtils;
 
-import com.code.aon.ui.report.IReportDynamicParamsProvider;
+import com.code.aon.report.IReportDynamicParamsProvider;
 
 public class DynamicParamProviderController implements
 		IReportDynamicParamsProvider {

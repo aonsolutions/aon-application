@@ -57,7 +57,7 @@ import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionException;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.form.EnviromentController;
-import com.code.aon.ui.report.OutputFormat;
+import com.code.aon.report.OutputFormat;
 import com.code.aon.ui.report.context.VContextController;
 import com.sun.org.apache.xml.internal.utils.XMLReaderManager;
 
