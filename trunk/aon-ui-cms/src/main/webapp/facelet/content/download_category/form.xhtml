@@ -94,6 +94,15 @@
 								required="true" size="50" maxlength="64"
 								value="#{download_category.to.image}" />
 
+							<aon:outputLabel for="DownloadCategory_section"
+								styleClass="aon-form-input-text-label"
+								value="#{appBundle.section}"/>
+							<aon:selectOneMenu id="DownloadCategory_section"  
+								styleClass="aon-form-selectOneMenu-field"
+								value="#{download_category.to.section.id}">
+								<f:selectItems value="#{collections.sectionList}" />
+							</aon:selectOneMenu>
+							
 						</aon:panelGrid>
 					</aon:panelGrid>
 				</aon:div>

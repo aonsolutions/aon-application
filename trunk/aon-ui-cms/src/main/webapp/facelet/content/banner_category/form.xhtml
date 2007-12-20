@@ -86,6 +86,15 @@
 								required="true" size="50" maxlength="64"
 								value="#{banner_category.toI18n.label}" />
 
+							<aon:outputLabel for="BannerCategory_section"
+								styleClass="aon-form-input-text-label"
+								value="#{appBundle.section}"/>
+							<aon:selectOneMenu id="BannerCategory_section"  
+								styleClass="aon-form-selectOneMenu-field"
+								value="#{banner_category.to.section.id}">
+								<f:selectItems value="#{collections.sectionList}" />
+							</aon:selectOneMenu>
+							
 						</aon:panelGrid>
 					</aon:panelGrid>
 				</aon:div>
