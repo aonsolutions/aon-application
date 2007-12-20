@@ -8,6 +8,7 @@
 <!ELEMENT criteria EMPTY>
 <!ELEMENT nested-report EMPTY>
 <!ELEMENT fetch-mode EMPTY>
+<!ELEMENT collection EMPTY>
 <!ELEMENT params (param)+>
 <!ELEMENT param EMPTY>
 <!ELEMENT dynamic-params EMPTY>
