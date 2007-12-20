@@ -3,14 +3,28 @@ package com.code.aon.cms.dao;
 import java.io.File;
 import java.io.IOException;
 
+import com.code.aon.cms.Album;
+import com.code.aon.cms.AlbumCategory;
+import com.code.aon.cms.AlbumCategoryDetail;
+import com.code.aon.cms.AlbumDetail;
+import com.code.aon.cms.AlbumImage;
+import com.code.aon.cms.AlbumImageDetail;
 import com.code.aon.cms.Article;
 import com.code.aon.cms.ArticleCategory;
 import com.code.aon.cms.ArticleCategoryDetail;
 import com.code.aon.cms.ArticleDetail;
+import com.code.aon.cms.Banner;
+import com.code.aon.cms.BannerCategory;
+import com.code.aon.cms.BannerCategoryDetail;
+import com.code.aon.cms.BannerDetail;
 import com.code.aon.cms.Brand;
 import com.code.aon.cms.BrandDetail;
 import com.code.aon.cms.Config;
 import com.code.aon.cms.ConfigDetail;
+import com.code.aon.cms.Download;
+import com.code.aon.cms.DownloadCategory;
+import com.code.aon.cms.DownloadCategoryDetail;
+import com.code.aon.cms.DownloadDetail;
 import com.code.aon.cms.Faq;
 import com.code.aon.cms.FaqCategory;
 import com.code.aon.cms.FaqCategoryDetail;
@@ -44,7 +58,7 @@ public class CMSAliasWriter {
 	public static void main(String[] args) throws IOException {
 
 		File file = new File("/AON-PROJECT/aon-cms/src/main/java/com/code/aon/cms/dao/ICMSAlias.java");
-		String[] classes = new String[34]; 
+		String[] classes = new String[48]; 
 		classes[0] = Language.class.getName();
 		classes[1] = Config.class.getName();
 		classes[2] = ConfigDetail.class.getName();
@@ -75,14 +89,27 @@ public class CMSAliasWriter {
 		classes[27] = ArticleDetail.class.getName();
 		classes[28] = ArticleCategory.class.getName();
 		classes[29] = ArticleCategoryDetail.class.getName();
-		classes[30] = Sidebar.class.getName();
-		classes[31] = SidebarOption.class.getName();
-		classes[32] = SidebarOptionDetail.class.getName();
-		classes[33] = Section.class.getName();
+		classes[30] = Banner.class.getName();
+		classes[31] = BannerDetail.class.getName();
+		classes[32] = BannerCategory.class.getName();
+		classes[33] = BannerCategoryDetail.class.getName();
+		classes[34] = Download.class.getName();
+		classes[35] = DownloadDetail.class.getName();
+		classes[36] = DownloadCategory.class.getName();
+		classes[37] = DownloadCategoryDetail.class.getName();
+		classes[38] = AlbumCategory.class.getName();
+		classes[39] = AlbumCategoryDetail.class.getName();
+		classes[40] = Album.class.getName();
+		classes[41] = AlbumDetail.class.getName();
+		classes[42] = AlbumImage.class.getName();
+		classes[43] = AlbumImageDetail.class.getName();
+		classes[44] = Sidebar.class.getName();
+		classes[45] = SidebarOption.class.getName();
+		classes[46] = SidebarOptionDetail.class.getName();
+		classes[47] = Section.class.getName();		
 		AliasWriter writer = new AliasWriter("com.code.aon.cms.dao");
 		writer.write(classes, file);
 		System.out.println( file.getAbsolutePath() );
 		System.out.println("Alias generados");
-		
 	}
 }

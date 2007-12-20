@@ -205,7 +205,79 @@
       <to-view-id>/facelet/content/article_category/article/form.iface</to-view-id>
     </navigation-case>
   </navigation-rule>
+
+  <!-- ================================================= BANNER CATEGORY -->
+  <navigation-rule>
+    <navigation-case>
+      <from-outcome>banner_category_list</from-outcome>
+      <to-view-id>/facelet/content/banner_category/list.iface</to-view-id>
+    </navigation-case>
+    <navigation-case>
+      <from-outcome>banner_category_form</from-outcome>
+      <to-view-id>/facelet/content/banner_category/form.iface</to-view-id>
+    </navigation-case>
+  </navigation-rule>
   
+  <!-- ================================================= BANNER -->
+  <navigation-rule>
+    <navigation-case>
+      <from-outcome>banner_list</from-outcome>
+      <to-view-id>/facelet/content/banner_category/banner/list.iface</to-view-id>
+    </navigation-case>
+    <navigation-case>
+      <from-outcome>banner_form</from-outcome>
+      <to-view-id>/facelet/content/banner_category/banner/form.iface</to-view-id>
+    </navigation-case>
+  </navigation-rule>
+
+  <!-- ================================================= DOWNLOAD CATEGORY -->
+  <navigation-rule>
+    <navigation-case>
+      <from-outcome>download_category_list</from-outcome>
+      <to-view-id>/facelet/content/download_category/list.iface</to-view-id>
+    </navigation-case>
+    <navigation-case>
+      <from-outcome>download_category_form</from-outcome>
+      <to-view-id>/facelet/content/download_category/form.iface</to-view-id>
+    </navigation-case>
+  </navigation-rule>
+  
+  <!-- ================================================= DOWNLOAD -->
+  <navigation-rule>
+    <navigation-case>
+      <from-outcome>download_list</from-outcome>
+      <to-view-id>/facelet/content/download_category/download/list.iface</to-view-id>
+    </navigation-case>
+    <navigation-case>
+      <from-outcome>download_form</from-outcome>
+      <to-view-id>/facelet/content/download_category/download/form.iface</to-view-id>
+    </navigation-case>
+  </navigation-rule>
+  
+  <!-- ================================================= ALBUM CATEGORY -->
+  <navigation-rule>
+    <navigation-case>
+      <from-outcome>album_category_list</from-outcome>
+      <to-view-id>/facelet/content/album_category/list.iface</to-view-id>
+    </navigation-case>
+    <navigation-case>
+      <from-outcome>album_category_form</from-outcome>
+      <to-view-id>/facelet/content/album_category/form.iface</to-view-id>
+    </navigation-case>
+  </navigation-rule>
+  
+  <!-- ================================================= ALBUM -->
+  <navigation-rule>
+    <navigation-case>
+      <from-outcome>album_list</from-outcome>
+      <to-view-id>/facelet/content/album_category/album/list.iface</to-view-id>
+    </navigation-case>
+    <navigation-case>
+      <from-outcome>album_form</from-outcome>
+      <to-view-id>/facelet/content/album_category/album/form.iface</to-view-id>
+    </navigation-case>
+  </navigation-rule>
+
   <!-- ========================================================= SIDEBAR -->
   <navigation-rule>
     <navigation-case>
@@ -241,7 +313,7 @@
       <to-view-id>/facelet/content/section/form.iface</to-view-id>
     </navigation-case>
   </navigation-rule>
-  
+
   <!-- =================================================== TEMPLATES -->
   <navigation-rule>
     <navigation-case>

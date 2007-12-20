@@ -46,6 +46,15 @@
 						<aon:menuItem id="article_category" value="#{menuBundle.cms_article_category}"
 							actionListener="#{article_category.onReset}" action="article_category_list"
 							styleClass="aon-main-menu-leaf"/>
+						<aon:menuItem id="banner_category" value="#{menuBundle.cms_banner_category}"
+							actionListener="#{banner_category.onReset}" action="banner_category_list"
+							styleClass="aon-main-menu-leaf"/>
+						<aon:menuItem id="download_category" value="#{menuBundle.cms_download_category}"
+							actionListener="#{download_category.onReset}" action="download_category_list"
+							styleClass="aon-main-menu-leaf"/>
+						<aon:menuItem id="album_category" value="#{menuBundle.cms_album_category}"
+							actionListener="#{album_category.onReset}" action="album_category_list"
+							styleClass="aon-main-menu-leaf"/>
 						<aon:menuItem id="header" value="#{menuBundle.cms_header}"
 							actionListener="#{headers.onReset}" action="header_list"
 							styleClass="aon-main-menu-leaf"/>
@@ -57,7 +66,7 @@
 							styleClass="aon-main-menu-leaf"/>
 						<aon:menuItem id="section" value="#{menuBundle.cms_section}"
 							actionListener="#{section.onReset}" action="section_list"
-							styleClass="aon-main-menu-leaf"/>
+							styleClass="aon-main-menu-leaf"/>							
 					</aon:menuItem>
 					<aon:menuItem id="production" value="#{menuBundle.cms_production}">
 						<aon:menuItem id="template" value="#{menuBundle.cms_template}"

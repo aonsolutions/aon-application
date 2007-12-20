@@ -32,6 +32,20 @@ import com.code.aon.cms.Article;
 import com.code.aon.cms.ArticleDetail;
 import com.code.aon.cms.ArticleCategory;
 import com.code.aon.cms.ArticleCategoryDetail;
+import com.code.aon.cms.Banner;
+import com.code.aon.cms.BannerDetail;
+import com.code.aon.cms.BannerCategory;
+import com.code.aon.cms.BannerCategoryDetail;
+import com.code.aon.cms.Download;
+import com.code.aon.cms.DownloadDetail;
+import com.code.aon.cms.DownloadCategory;
+import com.code.aon.cms.DownloadCategoryDetail;
+import com.code.aon.cms.AlbumCategory;
+import com.code.aon.cms.AlbumCategoryDetail;
+import com.code.aon.cms.Album;
+import com.code.aon.cms.AlbumDetail;
+import com.code.aon.cms.AlbumImage;
+import com.code.aon.cms.AlbumImageDetail;
 import com.code.aon.cms.Sidebar;
 import com.code.aon.cms.SidebarOption;
 import com.code.aon.cms.SidebarOptionDetail;
@@ -1265,6 +1279,572 @@ public interface ICMSAlias {
 	* Hibernate value: ArticleCategoryDetail.language.id
 	*/
 	String  ARTICLE_CATEGORY_DETAIL_LANGUAGE_ID = ARTICLE_CATEGORY_DETAIL_ENTRY.getAliasNames()[3];
+
+
+
+	/** 
+	* DAOConstantsEntry for Banner entity.
+	*/ 
+	DAOConstantsEntry BANNER_ENTRY = DAOConstants.getDAOConstant(Banner.class);
+
+	/** 
+	* Alias value: Banner_active
+	* Hibernate value: Banner.active
+	*/
+	String  BANNER_ACTIVE = BANNER_ENTRY.getAliasNames()[0];
+
+	/** 
+	* Alias value: Banner_alias
+	* Hibernate value: Banner.alias
+	*/
+	String  BANNER_ALIAS = BANNER_ENTRY.getAliasNames()[1];
+
+	/** 
+	* Alias value: Banner_bannerCategory_id
+	* Hibernate value: Banner.bannerCategory.id
+	*/
+	String  BANNER_BANNER_CATEGORY_ID = BANNER_ENTRY.getAliasNames()[2];
+
+	/** 
+	* Alias value: Banner_id
+	* Hibernate value: Banner.id
+	*/
+	String  BANNER_ID = BANNER_ENTRY.getAliasNames()[3];
+
+	/** 
+	* Alias value: Banner_position
+	* Hibernate value: Banner.position
+	*/
+	String  BANNER_POSITION = BANNER_ENTRY.getAliasNames()[4];
+
+	/** 
+	* Alias value: Banner_type
+	* Hibernate value: Banner.type
+	*/
+	String  BANNER_TYPE = BANNER_ENTRY.getAliasNames()[5];
+
+
+
+	/** 
+	* DAOConstantsEntry for BannerDetail entity.
+	*/ 
+	DAOConstantsEntry BANNER_DETAIL_ENTRY = DAOConstants.getDAOConstant(BannerDetail.class);
+
+	/** 
+	* Alias value: BannerDetail_banner_id
+	* Hibernate value: BannerDetail.banner.id
+	*/
+	String  BANNER_DETAIL_BANNER_ID = BANNER_DETAIL_ENTRY.getAliasNames()[0];
+
+	/** 
+	* Alias value: BannerDetail_description
+	* Hibernate value: BannerDetail.description
+	*/
+	String  BANNER_DETAIL_DESCRIPTION = BANNER_DETAIL_ENTRY.getAliasNames()[1];
+
+	/** 
+	* Alias value: BannerDetail_id
+	* Hibernate value: BannerDetail.id
+	*/
+	String  BANNER_DETAIL_ID = BANNER_DETAIL_ENTRY.getAliasNames()[2];
+
+	/** 
+	* Alias value: BannerDetail_image
+	* Hibernate value: BannerDetail.image
+	*/
+	String  BANNER_DETAIL_IMAGE = BANNER_DETAIL_ENTRY.getAliasNames()[3];
+
+	/** 
+	* Alias value: BannerDetail_label
+	* Hibernate value: BannerDetail.label
+	*/
+	String  BANNER_DETAIL_LABEL = BANNER_DETAIL_ENTRY.getAliasNames()[4];
+
+	/** 
+	* Alias value: BannerDetail_language_id
+	* Hibernate value: BannerDetail.language.id
+	*/
+	String  BANNER_DETAIL_LANGUAGE_ID = BANNER_DETAIL_ENTRY.getAliasNames()[5];
+
+	/** 
+	* Alias value: BannerDetail_url
+	* Hibernate value: BannerDetail.url
+	*/
+	String  BANNER_DETAIL_URL = BANNER_DETAIL_ENTRY.getAliasNames()[6];
+
+
+
+	/** 
+	* DAOConstantsEntry for BannerCategory entity.
+	*/ 
+	DAOConstantsEntry BANNER_CATEGORY_ENTRY = DAOConstants.getDAOConstant(BannerCategory.class);
+
+	/** 
+	* Alias value: BannerCategory_active
+	* Hibernate value: BannerCategory.active
+	*/
+	String  BANNER_CATEGORY_ACTIVE = BANNER_CATEGORY_ENTRY.getAliasNames()[0];
+
+	/** 
+	* Alias value: BannerCategory_alias
+	* Hibernate value: BannerCategory.alias
+	*/
+	String  BANNER_CATEGORY_ALIAS = BANNER_CATEGORY_ENTRY.getAliasNames()[1];
+
+	/** 
+	* Alias value: BannerCategory_id
+	* Hibernate value: BannerCategory.id
+	*/
+	String  BANNER_CATEGORY_ID = BANNER_CATEGORY_ENTRY.getAliasNames()[2];
+
+	/** 
+	* Alias value: BannerCategory_position
+	* Hibernate value: BannerCategory.position
+	*/
+	String  BANNER_CATEGORY_POSITION = BANNER_CATEGORY_ENTRY.getAliasNames()[3];
+
+
+
+	/** 
+	* DAOConstantsEntry for BannerCategoryDetail entity.
+	*/ 
+	DAOConstantsEntry BANNER_CATEGORY_DETAIL_ENTRY = DAOConstants.getDAOConstant(BannerCategoryDetail.class);
+
+	/** 
+	* Alias value: BannerCategoryDetail_bannerCategory_id
+	* Hibernate value: BannerCategoryDetail.bannerCategory.id
+	*/
+	String  BANNER_CATEGORY_DETAIL_BANNER_CATEGORY_ID = BANNER_CATEGORY_DETAIL_ENTRY.getAliasNames()[0];
+
+	/** 
+	* Alias value: BannerCategoryDetail_id
+	* Hibernate value: BannerCategoryDetail.id
+	*/
+	String  BANNER_CATEGORY_DETAIL_ID = BANNER_CATEGORY_DETAIL_ENTRY.getAliasNames()[1];
+
+	/** 
+	* Alias value: BannerCategoryDetail_label
+	* Hibernate value: BannerCategoryDetail.label
+	*/
+	String  BANNER_CATEGORY_DETAIL_LABEL = BANNER_CATEGORY_DETAIL_ENTRY.getAliasNames()[2];
+
+	/** 
+	* Alias value: BannerCategoryDetail_language_id
+	* Hibernate value: BannerCategoryDetail.language.id
+	*/
+	String  BANNER_CATEGORY_DETAIL_LANGUAGE_ID = BANNER_CATEGORY_DETAIL_ENTRY.getAliasNames()[3];
+
+
+
+	/** 
+	* DAOConstantsEntry for Download entity.
+	*/ 
+	DAOConstantsEntry DOWNLOAD_ENTRY = DAOConstants.getDAOConstant(Download.class);
+
+	/** 
+	* Alias value: Download_active
+	* Hibernate value: Download.active
+	*/
+	String  DOWNLOAD_ACTIVE = DOWNLOAD_ENTRY.getAliasNames()[0];
+
+	/** 
+	* Alias value: Download_alias
+	* Hibernate value: Download.alias
+	*/
+	String  DOWNLOAD_ALIAS = DOWNLOAD_ENTRY.getAliasNames()[1];
+
+	/** 
+	* Alias value: Download_downloadCategory_id
+	* Hibernate value: Download.downloadCategory.id
+	*/
+	String  DOWNLOAD_DOWNLOAD_CATEGORY_ID = DOWNLOAD_ENTRY.getAliasNames()[2];
+
+	/** 
+	* Alias value: Download_id
+	* Hibernate value: Download.id
+	*/
+	String  DOWNLOAD_ID = DOWNLOAD_ENTRY.getAliasNames()[3];
+
+	/** 
+	* Alias value: Download_position
+	* Hibernate value: Download.position
+	*/
+	String  DOWNLOAD_POSITION = DOWNLOAD_ENTRY.getAliasNames()[4];
+
+	/** 
+	* Alias value: Download_publishDate
+	* Hibernate value: Download.publishDate
+	*/
+	String  DOWNLOAD_PUBLISH_DATE = DOWNLOAD_ENTRY.getAliasNames()[5];
+
+	/** 
+	* Alias value: Download_size
+	* Hibernate value: Download.size
+	*/
+	String  DOWNLOAD_SIZE = DOWNLOAD_ENTRY.getAliasNames()[6];
+
+	/** 
+	* Alias value: Download_type
+	* Hibernate value: Download.type
+	*/
+	String  DOWNLOAD_TYPE = DOWNLOAD_ENTRY.getAliasNames()[7];
+
+
+
+	/** 
+	* DAOConstantsEntry for DownloadDetail entity.
+	*/ 
+	DAOConstantsEntry DOWNLOAD_DETAIL_ENTRY = DAOConstants.getDAOConstant(DownloadDetail.class);
+
+	/** 
+	* Alias value: DownloadDetail_description
+	* Hibernate value: DownloadDetail.description
+	*/
+	String  DOWNLOAD_DETAIL_DESCRIPTION = DOWNLOAD_DETAIL_ENTRY.getAliasNames()[0];
+
+	/** 
+	* Alias value: DownloadDetail_download_id
+	* Hibernate value: DownloadDetail.download.id
+	*/
+	String  DOWNLOAD_DETAIL_DOWNLOAD_ID = DOWNLOAD_DETAIL_ENTRY.getAliasNames()[1];
+
+	/** 
+	* Alias value: DownloadDetail_file
+	* Hibernate value: DownloadDetail.file
+	*/
+	String  DOWNLOAD_DETAIL_FILE = DOWNLOAD_DETAIL_ENTRY.getAliasNames()[2];
+
+	/** 
+	* Alias value: DownloadDetail_id
+	* Hibernate value: DownloadDetail.id
+	*/
+	String  DOWNLOAD_DETAIL_ID = DOWNLOAD_DETAIL_ENTRY.getAliasNames()[3];
+
+	/** 
+	* Alias value: DownloadDetail_language_id
+	* Hibernate value: DownloadDetail.language.id
+	*/
+	String  DOWNLOAD_DETAIL_LANGUAGE_ID = DOWNLOAD_DETAIL_ENTRY.getAliasNames()[4];
+
+	/** 
+	* Alias value: DownloadDetail_title
+	* Hibernate value: DownloadDetail.title
+	*/
+	String  DOWNLOAD_DETAIL_TITLE = DOWNLOAD_DETAIL_ENTRY.getAliasNames()[5];
+
+
+
+	/** 
+	* DAOConstantsEntry for DownloadCategory entity.
+	*/ 
+	DAOConstantsEntry DOWNLOAD_CATEGORY_ENTRY = DAOConstants.getDAOConstant(DownloadCategory.class);
+
+	/** 
+	* Alias value: DownloadCategory_active
+	* Hibernate value: DownloadCategory.active
+	*/
+	String  DOWNLOAD_CATEGORY_ACTIVE = DOWNLOAD_CATEGORY_ENTRY.getAliasNames()[0];
+
+	/** 
+	* Alias value: DownloadCategory_alias
+	* Hibernate value: DownloadCategory.alias
+	*/
+	String  DOWNLOAD_CATEGORY_ALIAS = DOWNLOAD_CATEGORY_ENTRY.getAliasNames()[1];
+
+	/** 
+	* Alias value: DownloadCategory_id
+	* Hibernate value: DownloadCategory.id
+	*/
+	String  DOWNLOAD_CATEGORY_ID = DOWNLOAD_CATEGORY_ENTRY.getAliasNames()[2];
+
+	/** 
+	* Alias value: DownloadCategory_image
+	* Hibernate value: DownloadCategory.image
+	*/
+	String  DOWNLOAD_CATEGORY_IMAGE = DOWNLOAD_CATEGORY_ENTRY.getAliasNames()[3];
+
+	/** 
+	* Alias value: DownloadCategory_position
+	* Hibernate value: DownloadCategory.position
+	*/
+	String  DOWNLOAD_CATEGORY_POSITION = DOWNLOAD_CATEGORY_ENTRY.getAliasNames()[4];
+
+
+
+	/** 
+	* DAOConstantsEntry for DownloadCategoryDetail entity.
+	*/ 
+	DAOConstantsEntry DOWNLOAD_CATEGORY_DETAIL_ENTRY = DAOConstants.getDAOConstant(DownloadCategoryDetail.class);
+
+	/** 
+	* Alias value: DownloadCategoryDetail_downloadCategory_id
+	* Hibernate value: DownloadCategoryDetail.downloadCategory.id
+	*/
+	String  DOWNLOAD_CATEGORY_DETAIL_DOWNLOAD_CATEGORY_ID = DOWNLOAD_CATEGORY_DETAIL_ENTRY.getAliasNames()[0];
+
+	/** 
+	* Alias value: DownloadCategoryDetail_id
+	* Hibernate value: DownloadCategoryDetail.id
+	*/
+	String  DOWNLOAD_CATEGORY_DETAIL_ID = DOWNLOAD_CATEGORY_DETAIL_ENTRY.getAliasNames()[1];
+
+	/** 
+	* Alias value: DownloadCategoryDetail_label
+	* Hibernate value: DownloadCategoryDetail.label
+	*/
+	String  DOWNLOAD_CATEGORY_DETAIL_LABEL = DOWNLOAD_CATEGORY_DETAIL_ENTRY.getAliasNames()[2];
+
+	/** 
+	* Alias value: DownloadCategoryDetail_language_id
+	* Hibernate value: DownloadCategoryDetail.language.id
+	*/
+	String  DOWNLOAD_CATEGORY_DETAIL_LANGUAGE_ID = DOWNLOAD_CATEGORY_DETAIL_ENTRY.getAliasNames()[3];
+
+
+
+	/** 
+	* DAOConstantsEntry for AlbumCategory entity.
+	*/ 
+	DAOConstantsEntry ALBUM_CATEGORY_ENTRY = DAOConstants.getDAOConstant(AlbumCategory.class);
+
+	/** 
+	* Alias value: AlbumCategory_active
+	* Hibernate value: AlbumCategory.active
+	*/
+	String  ALBUM_CATEGORY_ACTIVE = ALBUM_CATEGORY_ENTRY.getAliasNames()[0];
+
+	/** 
+	* Alias value: AlbumCategory_alias
+	* Hibernate value: AlbumCategory.alias
+	*/
+	String  ALBUM_CATEGORY_ALIAS = ALBUM_CATEGORY_ENTRY.getAliasNames()[1];
+
+	/** 
+	* Alias value: AlbumCategory_id
+	* Hibernate value: AlbumCategory.id
+	*/
+	String  ALBUM_CATEGORY_ID = ALBUM_CATEGORY_ENTRY.getAliasNames()[2];
+
+	/** 
+	* Alias value: AlbumCategory_position
+	* Hibernate value: AlbumCategory.position
+	*/
+	String  ALBUM_CATEGORY_POSITION = ALBUM_CATEGORY_ENTRY.getAliasNames()[3];
+
+
+
+	/** 
+	* DAOConstantsEntry for AlbumCategoryDetail entity.
+	*/ 
+	DAOConstantsEntry ALBUM_CATEGORY_DETAIL_ENTRY = DAOConstants.getDAOConstant(AlbumCategoryDetail.class);
+
+	/** 
+	* Alias value: AlbumCategoryDetail_albumCategory_id
+	* Hibernate value: AlbumCategoryDetail.albumCategory.id
+	*/
+	String  ALBUM_CATEGORY_DETAIL_ALBUM_CATEGORY_ID = ALBUM_CATEGORY_DETAIL_ENTRY.getAliasNames()[0];
+
+	/** 
+	* Alias value: AlbumCategoryDetail_id
+	* Hibernate value: AlbumCategoryDetail.id
+	*/
+	String  ALBUM_CATEGORY_DETAIL_ID = ALBUM_CATEGORY_DETAIL_ENTRY.getAliasNames()[1];
+
+	/** 
+	* Alias value: AlbumCategoryDetail_label
+	* Hibernate value: AlbumCategoryDetail.label
+	*/
+	String  ALBUM_CATEGORY_DETAIL_LABEL = ALBUM_CATEGORY_DETAIL_ENTRY.getAliasNames()[2];
+
+	/** 
+	* Alias value: AlbumCategoryDetail_language_id
+	* Hibernate value: AlbumCategoryDetail.language.id
+	*/
+	String  ALBUM_CATEGORY_DETAIL_LANGUAGE_ID = ALBUM_CATEGORY_DETAIL_ENTRY.getAliasNames()[3];
+
+
+
+	/** 
+	* DAOConstantsEntry for Album entity.
+	*/ 
+	DAOConstantsEntry ALBUM_ENTRY = DAOConstants.getDAOConstant(Album.class);
+
+	/** 
+	* Alias value: Album_active
+	* Hibernate value: Album.active
+	*/
+	String  ALBUM_ACTIVE = ALBUM_ENTRY.getAliasNames()[0];
+
+	/** 
+	* Alias value: Album_albumCategory_id
+	* Hibernate value: Album.albumCategory.id
+	*/
+	String  ALBUM_ALBUM_CATEGORY_ID = ALBUM_ENTRY.getAliasNames()[1];
+
+	/** 
+	* Alias value: Album_alias
+	* Hibernate value: Album.alias
+	*/
+	String  ALBUM_ALIAS = ALBUM_ENTRY.getAliasNames()[2];
+
+	/** 
+	* Alias value: Album_id
+	* Hibernate value: Album.id
+	*/
+	String  ALBUM_ID = ALBUM_ENTRY.getAliasNames()[3];
+
+	/** 
+	* Alias value: Album_image
+	* Hibernate value: Album.image
+	*/
+	String  ALBUM_IMAGE = ALBUM_ENTRY.getAliasNames()[4];
+
+	/** 
+	* Alias value: Album_itemsPerPage
+	* Hibernate value: Album.itemsPerPage
+	*/
+	String  ALBUM_ITEMS_PER_PAGE = ALBUM_ENTRY.getAliasNames()[5];
+
+	/** 
+	* Alias value: Album_position
+	* Hibernate value: Album.position
+	*/
+	String  ALBUM_POSITION = ALBUM_ENTRY.getAliasNames()[6];
+
+	/** 
+	* Alias value: Album_publishDate
+	* Hibernate value: Album.publishDate
+	*/
+	String  ALBUM_PUBLISH_DATE = ALBUM_ENTRY.getAliasNames()[7];
+
+
+
+	/** 
+	* DAOConstantsEntry for AlbumDetail entity.
+	*/ 
+	DAOConstantsEntry ALBUM_DETAIL_ENTRY = DAOConstants.getDAOConstant(AlbumDetail.class);
+
+	/** 
+	* Alias value: AlbumDetail_album_id
+	* Hibernate value: AlbumDetail.album.id
+	*/
+	String  ALBUM_DETAIL_ALBUM_ID = ALBUM_DETAIL_ENTRY.getAliasNames()[0];
+
+	/** 
+	* Alias value: AlbumDetail_alt
+	* Hibernate value: AlbumDetail.alt
+	*/
+	String  ALBUM_DETAIL_ALT = ALBUM_DETAIL_ENTRY.getAliasNames()[1];
+
+	/** 
+	* Alias value: AlbumDetail_description
+	* Hibernate value: AlbumDetail.description
+	*/
+	String  ALBUM_DETAIL_DESCRIPTION = ALBUM_DETAIL_ENTRY.getAliasNames()[2];
+
+	/** 
+	* Alias value: AlbumDetail_id
+	* Hibernate value: AlbumDetail.id
+	*/
+	String  ALBUM_DETAIL_ID = ALBUM_DETAIL_ENTRY.getAliasNames()[3];
+
+	/** 
+	* Alias value: AlbumDetail_language_id
+	* Hibernate value: AlbumDetail.language.id
+	*/
+	String  ALBUM_DETAIL_LANGUAGE_ID = ALBUM_DETAIL_ENTRY.getAliasNames()[4];
+
+	/** 
+	* Alias value: AlbumDetail_title
+	* Hibernate value: AlbumDetail.title
+	*/
+	String  ALBUM_DETAIL_TITLE = ALBUM_DETAIL_ENTRY.getAliasNames()[5];
+
+
+
+	/** 
+	* DAOConstantsEntry for AlbumImage entity.
+	*/ 
+	DAOConstantsEntry ALBUM_IMAGE_ENTRY = DAOConstants.getDAOConstant(AlbumImage.class);
+
+	/** 
+	* Alias value: AlbumImage_active
+	* Hibernate value: AlbumImage.active
+	*/
+	String  ALBUM_IMAGE_ACTIVE = ALBUM_IMAGE_ENTRY.getAliasNames()[0];
+
+	/** 
+	* Alias value: AlbumImage_album_id
+	* Hibernate value: AlbumImage.album.id
+	*/
+	String  ALBUM_IMAGE_ALBUM_ID = ALBUM_IMAGE_ENTRY.getAliasNames()[1];
+
+	/** 
+	* Alias value: AlbumImage_id
+	* Hibernate value: AlbumImage.id
+	*/
+	String  ALBUM_IMAGE_ID = ALBUM_IMAGE_ENTRY.getAliasNames()[2];
+
+	/** 
+	* Alias value: AlbumImage_image
+	* Hibernate value: AlbumImage.image
+	*/
+	String  ALBUM_IMAGE_IMAGE = ALBUM_IMAGE_ENTRY.getAliasNames()[3];
+
+	/** 
+	* Alias value: AlbumImage_position
+	* Hibernate value: AlbumImage.position
+	*/
+	String  ALBUM_IMAGE_POSITION = ALBUM_IMAGE_ENTRY.getAliasNames()[4];
+
+	/** 
+	* Alias value: AlbumImage_thumbnail
+	* Hibernate value: AlbumImage.thumbnail
+	*/
+	String  ALBUM_IMAGE_THUMBNAIL = ALBUM_IMAGE_ENTRY.getAliasNames()[5];
+
+
+
+	/** 
+	* DAOConstantsEntry for AlbumImageDetail entity.
+	*/ 
+	DAOConstantsEntry ALBUM_IMAGE_DETAIL_ENTRY = DAOConstants.getDAOConstant(AlbumImageDetail.class);
+
+	/** 
+	* Alias value: AlbumImageDetail_albumImage_id
+	* Hibernate value: AlbumImageDetail.albumImage.id
+	*/
+	String  ALBUM_IMAGE_DETAIL_ALBUM_IMAGE_ID = ALBUM_IMAGE_DETAIL_ENTRY.getAliasNames()[0];
+
+	/** 
+	* Alias value: AlbumImageDetail_alt
+	* Hibernate value: AlbumImageDetail.alt
+	*/
+	String  ALBUM_IMAGE_DETAIL_ALT = ALBUM_IMAGE_DETAIL_ENTRY.getAliasNames()[1];
+
+	/** 
+	* Alias value: AlbumImageDetail_description
+	* Hibernate value: AlbumImageDetail.description
+	*/
+	String  ALBUM_IMAGE_DETAIL_DESCRIPTION = ALBUM_IMAGE_DETAIL_ENTRY.getAliasNames()[2];
+
+	/** 
+	* Alias value: AlbumImageDetail_id
+	* Hibernate value: AlbumImageDetail.id
+	*/
+	String  ALBUM_IMAGE_DETAIL_ID = ALBUM_IMAGE_DETAIL_ENTRY.getAliasNames()[3];
+
+	/** 
+	* Alias value: AlbumImageDetail_language_id
+	* Hibernate value: AlbumImageDetail.language.id
+	*/
+	String  ALBUM_IMAGE_DETAIL_LANGUAGE_ID = ALBUM_IMAGE_DETAIL_ENTRY.getAliasNames()[4];
+
+	/** 
+	* Alias value: AlbumImageDetail_title
+	* Hibernate value: AlbumImageDetail.title
+	*/
+	String  ALBUM_IMAGE_DETAIL_TITLE = ALBUM_IMAGE_DETAIL_ENTRY.getAliasNames()[5];
 
 
 
