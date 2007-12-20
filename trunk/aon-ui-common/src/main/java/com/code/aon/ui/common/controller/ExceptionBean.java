@@ -5,6 +5,7 @@ import java.io.PrintStream;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
+import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
 import javax.faces.application.Application;
@@ -88,7 +89,13 @@ public class ExceptionBean {
 		FacesContext ctx = FacesContext.getCurrentInstance();
 		Locale locale = ctx.getApplication().getDefaultLocale();
 		ResourceBundle bundle = ResourceBundle.getBundle("com.code.aon.ui.common.i18n.error_messages", locale);
-		String m = bundle.getString("aon_http_error_" + getErrorCode());
+		String m = null;
+		try {
+		    m = bundle.getString("aon_http_error_" + getErrorCode());	
+		} catch (MissingResourceException e ) {
+			m = bundle.getString("aon_exception");
+		}
+		
 		return m;
 	}
 
