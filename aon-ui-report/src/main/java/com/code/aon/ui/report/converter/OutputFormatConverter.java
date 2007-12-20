@@ -7,7 +7,7 @@ import javax.faces.context.FacesContext;
 import javax.faces.convert.Converter;
 import javax.faces.convert.ConverterException;
 
-import com.code.aon.ui.report.OutputFormat;
+import com.code.aon.report.OutputFormat;
 
 
 /**
