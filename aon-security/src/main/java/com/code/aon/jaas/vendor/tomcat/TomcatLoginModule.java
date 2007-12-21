@@ -37,7 +37,8 @@ public class TomcatLoginModule extends XMLLoginModule {
 	/* (non-Javadoc)
 	 * @see com.code.aon.jaas.auth.spi.XMLLoginModule#roles4Subject(java.util.Set)
 	 */
-	protected void roles4Subject(Set principals) throws LoginException {
+	@SuppressWarnings("unchecked")
+	protected void roles4Subject(Set<Principal> principals) throws LoginException {
 		Group[] roleSets = getRoleSets();
 		for (int g = 0; g < roleSets.length; g++) {
 			Group group = roleSets[g];
@@ -55,9 +56,9 @@ public class TomcatLoginModule extends XMLLoginModule {
 	 */
 	protected Integer getActiveUsers(String host, String context) throws LoginException {
 		try {
-			MBeanServer server = (MBeanServer) MBeanServerFactory.findMBeanServer(null).get(0);
     		ObjectName objectName = new ObjectName( "Catalina:host=" + host + ",type=Host" );
-    		StandardHost standardHost = (StandardHost) server.getAttribute( objectName, "managedResource" );
+    		StandardHost standardHost = 
+    			(StandardHost) getMBeanServer().getAttribute( objectName, "managedResource" );
     		Context ctx = (Context) standardHost.findChild( context );
     		return ctx.getManager().getActiveSessions();
 		} catch(Exception e) {
@@ -65,6 +66,13 @@ public class TomcatLoginModule extends XMLLoginModule {
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see com.code.aon.jaas.auth.spi.AbstractLoginModule#getMBeanServer()
+	 */
+	@Override
+	protected MBeanServer getMBeanServer() {
+		return (MBeanServer) MBeanServerFactory.findMBeanServer(null).get(0);
+	}
 
 //	/**
 //	 * Recupera la lista con los usuarios activos de un dominio en el host pasado
@@ -80,7 +88,7 @@ public class TomcatLoginModule extends XMLLoginModule {
 //    protected List getActiveUsers(String host) {
 //    	List<Principal> list = new ArrayList<Principal>();
 //    	try {
-//			MBeanServer server = (MBeanServer) MBeanServerFactory.findMBeanServer(null).get(0);
+//			MBeanServer server = getMBeanServer();
 //			ObjectName jaasMgr = new ObjectName("Catalina:host=localhost,path=/aon-security,type=Manager");
 //			LOGGER.info( "********************************************************************" );
 //			LOGGER.info( "********************************************************************" );

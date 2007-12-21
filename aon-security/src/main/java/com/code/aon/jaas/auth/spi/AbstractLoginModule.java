@@ -5,6 +5,7 @@ import java.security.acl.Group;
 import java.util.Map;
 import java.util.Set;
 
+import javax.management.MBeanServer;
 import javax.security.auth.Subject;
 import javax.security.auth.callback.CallbackHandler;
 import javax.security.auth.login.LoginException;
@@ -23,6 +24,7 @@ import com.code.aon.jaas.auth.IConstants;
  * @author Consulting & Development. Iñaki Ayerbe - 11-nov-2004
  * @since 1.0
  */
+@SuppressWarnings( "unchecked" )
 public abstract class AbstractLoginModule implements LoginModule, IConstants {
 
     /** Obtiene un logger apropiado. */
@@ -245,4 +247,12 @@ public abstract class AbstractLoginModule implements LoginModule, IConstants {
 	 * @return
 	 */
     protected abstract Integer getActiveUsers(String host, String context) throws LoginException;
+
+    /**
+     * Returns <code>MBeanServer</code> current instance.
+     * 
+     * @return
+     */
+    protected abstract MBeanServer getMBeanServer();
+
 }

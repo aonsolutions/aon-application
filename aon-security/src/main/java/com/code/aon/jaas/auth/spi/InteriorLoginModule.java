@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.management.MBeanServer;
 import javax.security.auth.Subject;
 import javax.security.auth.callback.Callback;
 import javax.security.auth.callback.CallbackHandler;
@@ -34,6 +35,7 @@ import com.code.aon.jaas.auth.IConstants;
  * @author Consulting & Development. Iñaki Ayerbe - 09/02/2007
  *
  */
+@SuppressWarnings("unchecked")
 public class InteriorLoginModule extends AbstractLoginModule {
 
     /** Default identity to use in case of user and password are null */
@@ -267,6 +269,15 @@ public class InteriorLoginModule extends AbstractLoginModule {
 
 	@Override
 	protected Integer getActiveUsers(String host, String context) throws LoginException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see com.code.aon.jaas.auth.spi.AbstractLoginModule#getMBeanServer()
+	 */
+	@Override
+	protected MBeanServer getMBeanServer() {
 		// TODO Auto-generated method stub
 		return null;
 	}
