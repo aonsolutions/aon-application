@@ -27,8 +27,8 @@ import es.code.cdr.core.QueryManager;
 import es.code.cdr.core.QueryParameters;
 import es.code.cdr.core.SessionManager;
 import es.code.cdr.core.Widget;
-import es.code.cdr.core.event.WidgetEvent;
-import es.code.cdr.core.event.WidgetListener;
+import es.code.cdr.event.WidgetEvent;
+import es.code.cdr.event.WidgetListener;
 import es.code.cdr.ui.controller.DocumentsList;
 import es.code.cdr.ui.controller.WidgetLoadingException;
 
@@ -93,7 +93,7 @@ public class QueryMediator implements WidgetListener {
 		String sessionId = ( (HttpSession) ctx.getExternalContext().getSession( false ) ).getId();
 		List<Document> l = new ArrayList<Document>();
 		try {
-			Session session = SessionManager.getInstance().get( sessionId );
+			Session session = SessionManager.getInstance().getHierarchyManager( sessionId ).getWorkspace().getSession();
 			QueryResult result = 
 				QueryManager.getInstance().execute( session, parameters, Query.XPATH );
 			NodeIterator it = result.getNodes();

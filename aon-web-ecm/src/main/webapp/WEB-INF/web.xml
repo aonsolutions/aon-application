@@ -141,6 +141,16 @@
 		<url-pattern>*.jsp</url-pattern>
 	</filter-mapping>
 
+    <!-- BackDoorAuthentication Bean Servlet -->
+	<servlet>
+		<servlet-name>BackDoorAuthentication</servlet-name>
+		<servlet-class>com.code.aon.bridge.servlet.BackDoorAuthentication</servlet-class>
+	</servlet>
+    <servlet-mapping>
+        <servlet-name>BackDoorAuthentication</servlet-name>
+        <url-pattern>*.auth</url-pattern>
+    </servlet-mapping>
+
 	<servlet>
 		<servlet-name>Persistent Faces Servlet</servlet-name>
 		<servlet-class>
@@ -219,14 +229,34 @@
     <!-- Security Constraint-->  
 	<security-constraint>
 		<web-resource-collection>
-			<web-resource-name>login</web-resource-name>
-			<url-pattern>/login/*</url-pattern>
+			<web-resource-name>facelet</web-resource-name>
+			<url-pattern>/facelet/*</url-pattern>
+		</web-resource-collection>
+		<web-resource-collection>
+			<web-resource-name>jsp</web-resource-name>
+			<url-pattern>/index.jsp</url-pattern>
+		</web-resource-collection>
+		<web-resource-collection>
+			<web-resource-name>faces</web-resource-name>
+			<url-pattern>*.iface</url-pattern>
 		</web-resource-collection>
 		<auth-constraint>
 			<role-name>Manager</role-name>
+			<role-name>User</role-name>
+			<role-name>Guest</role-name>
 		</auth-constraint>
 	</security-constraint>
 
+	<login-config>
+		<auth-method>FORM</auth-method>
+		<form-login-config>
+			<form-login-page>/login/login.jspx</form-login-page>
+			<form-error-page>/login/errorlogin.jspx</form-error-page>
+		</form-login-config>
+	</login-config>
+
 	<security-role><role-name>Manager</role-name></security-role>
+	<security-role><role-name>User</role-name></security-role>
+	<security-role><role-name>Guest</role-name></security-role>
 
 </web-app>

@@ -16,9 +16,10 @@ import javax.jcr.RepositoryException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import es.code.cdr.core.SessionManager;
 import es.code.cdr.core.Widget;
-import es.code.cdr.core.event.WidgetEvent;
-import es.code.cdr.core.event.WidgetListener;
+import es.code.cdr.event.WidgetEvent;
+import es.code.cdr.event.WidgetListener;
 
 /**
  * @author Consulting & Development. Iñaki Ayerbe - 10/07/2007
@@ -82,6 +83,15 @@ public class CDRMediator implements WidgetListener {
 	 */
 	public ResourceBundle getBundle() {
 		return bundle;
+	}
+
+	/**
+	 * Returns the authenticated user name.
+	 * 
+	 * @return
+	 */
+	public String getUserName() {
+		return SessionManager.getInstance().getUserName();
 	}
 
 	/**
