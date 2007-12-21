@@ -88,7 +88,7 @@ public class JBossMainDeployer extends ServiceMBeanSupport implements
 			try {
 				ObjectName oname = new ObjectName( "jboss.system:type=ServerConfig" );
 				URL serverHomeURL = (URL) getServer().getAttribute( oname, "ServerHomeURL" );
-				url = new File( serverHomeURL.getPath() + "farm/" + file.getName() ).toURI().toURL();
+				url = new File( serverHomeURL.getPath() + "farm/" + file.getName() ).toURL();
 			} catch (Exception e) {
 				LOGGER.fatal( e.getMessage() );
 				throw new DeploymentException( e.getMessage(), e );

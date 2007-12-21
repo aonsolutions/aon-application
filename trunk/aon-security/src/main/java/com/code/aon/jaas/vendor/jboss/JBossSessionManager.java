@@ -8,7 +8,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.management.MBeanServer;
-import javax.management.MBeanServerFactory;
 import javax.management.ObjectName;
 import javax.security.auth.login.LoginException;
 
@@ -17,6 +16,7 @@ import org.apache.catalina.Session;
 import org.apache.catalina.core.StandardHost;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.jboss.mx.util.MBeanServerLocator;
 import org.jboss.system.ServiceMBeanSupport;
 
 import com.code.aon.jaas.auth.AuthPrincipal;
@@ -146,7 +146,7 @@ public class JBossSessionManager extends ServiceMBeanSupport
 	public List getActiveSessions(String context) throws DeploymentException {
 		List list = new ArrayList();
 		try {
-			MBeanServer server = (MBeanServer) MBeanServerFactory.findMBeanServer(null).get(0);
+			MBeanServer server = MBeanServerLocator.locateJBoss();
 //	Get MBean details for this object.
 			ObjectName objectName = new ObjectName( STANDARD_HOST );
 			StandardHost standardHost = 

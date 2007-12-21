@@ -11,8 +11,6 @@ import java.util.Map;
 
 import javax.management.InstanceNotFoundException;
 import javax.management.MBeanException;
-import javax.management.MBeanServer;
-import javax.management.MBeanServerFactory;
 import javax.management.MalformedObjectNameException;
 import javax.management.ObjectName;
 import javax.management.ReflectionException;
@@ -103,6 +101,7 @@ public abstract class XMLLoginModule extends AbstractLoginModule {
      * @param options, <code>Map</code>
      * 
 	 */
+	@SuppressWarnings( "unchecked" )
 	public void initialize(Subject subject, CallbackHandler callbackHandler, Map sharedState, Map options) {
 		super.initialize(subject, callbackHandler, sharedState, options);
 		// Check to see if password hashing has been enabled.
@@ -227,6 +226,24 @@ public abstract class XMLLoginModule extends AbstractLoginModule {
 	 */
 	protected Principal getIdentity() {
 		return identity;
+	}
+
+	@Override
+	protected Group[] getRoleSets() throws LoginException {
+        AuthGroup rolesGroup = new AuthGroup(ROLES_GROUP_NAME);
+        List<Principal> groups = new LinkedList<Principal>();
+        groups.add(rolesGroup);
+    	AuthPrincipal authPrincipal = (AuthPrincipal) getIdentity();
+        String domainName = authPrincipal.getDomain();
+        String context = authPrincipal.getContext();
+        IRelation relation = 
+        	this.authInfo.getUserRelation( domainName, context, authPrincipal.getShortName() );
+        if (relation != null) {
+            parseGroupMembers( rolesGroup, domainName, context, relation.relations() );
+        }
+        Group[] roleSets = new Group[groups.size()];
+        groups.toArray(roleSets);
+        return roleSets;
 	}
 
 	/**
@@ -384,12 +401,11 @@ public abstract class XMLLoginModule extends AbstractLoginModule {
 	 */
 	protected void validateLoggedUsers() throws LoginException {
 		AuthPrincipal principal = (AuthPrincipal) this.identity;
-        MBeanServer server = (MBeanServer) MBeanServerFactory.findMBeanServer(null).get(0);
 		String domain = principal.getDomain();
 		String context = principal.getContext();
 		IAccessPolicy access = this.authInfo.getAccessPolicy(domain);
 		try {
-			server.invoke( new ObjectName(this.sessionManagerObjectName), "authenticate",
+			getMBeanServer().invoke( new ObjectName(this.sessionManagerObjectName), "authenticate",
 					new Object[] { this.identity, getActiveUsers(domain, context), access },
 					new String[] { Principal.class.getName(), Integer.class.getName(), IAccessPolicy.class.getName() } );
 		} catch (InstanceNotFoundException e) {
@@ -421,41 +437,24 @@ public abstract class XMLLoginModule extends AbstractLoginModule {
         return this.authInfo.getUserPassword( authPrincipal.getDomain(), authPrincipal.getShortName() ); 
     }
 
-	@Override
-	protected Group[] getRoleSets() throws LoginException {
-        AuthGroup rolesGroup = new AuthGroup(ROLES_GROUP_NAME);
-        List<Principal> groups = new LinkedList<Principal>();
-        groups.add(rolesGroup);
-    	AuthPrincipal authPrincipal = (AuthPrincipal) getIdentity();
-        String domainName = authPrincipal.getDomain();
-        String context = authPrincipal.getContext();
-        IRelation relation = 
-        	this.authInfo.getUserRelation( domainName, context, authPrincipal.getShortName() );
-        if (relation != null) {
-            parseGroupMembers( rolesGroup, domainName, context, relation.relations() );
-        }
-        Group[] roleSets = new Group[groups.size()];
-        groups.toArray(roleSets);
-        return roleSets;
-	}
-
-    /**
+	/**
      * Load Domain applications and users. 
-     * 
-     * @param domain
-     */
-    protected void load(String domain) {
+	 * 
+	 * @param domain
+	 */
+	@SuppressWarnings("unchecked")
+	protected void load(String domain) {
     	try {
-	        MBeanServer server = (MBeanServer) MBeanServerFactory.findMBeanServer(null).get(0);
     		ObjectName name = new ObjectName(this.objectName);
-    		Collection apps = (Collection)server.invoke( name, "getSDApplications",
-											new Object[] { this.securityDomain },
-											new String[] { String.class.getName() } );
+    		Collection apps = 
+    			(Collection)getMBeanServer().invoke( name, "getSDApplications",
+    						new Object[] { this.securityDomain },
+							new String[] { String.class.getName() } );
 	        this.authInfo = new AuthInfo( apps );
     	} catch (Exception e) {
     		LOGGER.fatal( "Error loading Host[" + domain + "]." + e.getMessage() );
         }
-    }
+	}
 
 	/**
      * Traverses user relations and generates a comma separated list of roles the user has.
@@ -465,11 +464,11 @@ public abstract class XMLLoginModule extends AbstractLoginModule {
      * @param context
      * @param profiles
      */
-    private void parseGroupMembers(Group group, String domainName, String context, List profiles) 
+    private void parseGroupMembers(Group group, String domainName, String context, List<String> profiles) 
     		throws LoginException {
-        Iterator iter = profiles.iterator();
+        Iterator<String> iter = profiles.iterator();
         while (iter.hasNext()) {
-            String element = (String) iter.next();
+            String element = iter.next();
             /*
              * TODO Bug. A Profile and a Role with the same name, the Role will
              * never recognized. It means the Role will be consider as a
@@ -497,10 +496,9 @@ public abstract class XMLLoginModule extends AbstractLoginModule {
      */
 	private void settingFailedLoginException(String message, Object obj) {
     	try {
-	        MBeanServer server = (MBeanServer) MBeanServerFactory.findMBeanServer(null).get(0);
     		ObjectName name = new ObjectName(this.sessionManagerObjectName);
     		AuthenticationLoginException e = new AuthenticationLoginException( message, obj); 
-    		server.invoke( name, "fillLastLoginException", new Object[] { e }, new String[] { AuthenticationLoginException.class.getName() } );
+    		getMBeanServer().invoke( name, "fillLastLoginException", new Object[] { e }, new String[] { AuthenticationLoginException.class.getName() } );
     	} catch (Exception e) {
     		LOGGER.fatal( "Error setting FailedLoginException: " + e.getMessage() );
         }

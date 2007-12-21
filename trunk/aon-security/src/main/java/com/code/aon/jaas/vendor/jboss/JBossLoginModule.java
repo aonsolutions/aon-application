@@ -10,20 +10,20 @@ import java.util.List;
 import java.util.Set;
 
 import javax.management.MBeanServer;
-import javax.management.MBeanServerFactory;
 import javax.management.ObjectName;
 import javax.security.auth.login.LoginException;
+
+import org.jboss.mx.util.MBeanServerLocator;
 
 import com.code.aon.jaas.auth.AuthGroup;
 import com.code.aon.jaas.auth.AuthPrincipal;
 import com.code.aon.jaas.auth.NestableGroup;
 import com.code.aon.jaas.auth.spi.XMLLoginModule;
 
+@SuppressWarnings("unchecked")
 public class JBossLoginModule extends XMLLoginModule {
 
-	/*(non-Javadoc)
-	 * @see com.code.aon.jaas.auth.spi.AbstractLoginModule#createIdentity(java.lang.String)
-	 */
+	@Override
 	protected Principal createIdentity(String username) throws Exception {
 		Principal p = null;
 		if( principalClassName == null ) {
@@ -39,10 +39,8 @@ public class JBossLoginModule extends XMLLoginModule {
 		return p;
 	}
 
-	/*(non-Javadoc)
-	 * @see com.code.aon.jaas.auth.spi.AbstractLoginModule#roles4Subject(java.util.Set)
-	 */
-	protected void roles4Subject(Set principals) throws LoginException {
+	@Override
+	protected void roles4Subject(Set<Principal> principals) throws LoginException {
 		Group[] roleSets = getRoleSets();
 		for (int g = 0; g < roleSets.length; g++) {
 			Group group = roleSets[g];
@@ -67,17 +65,15 @@ public class JBossLoginModule extends XMLLoginModule {
 		}
 	}
 
-	/*(non-Javadoc)
-	 * @see com.code.aon.jaas.auth.spi.AbstractLoginModule#getActiveUsers(java.lang.String, java.lang.String)
-	 */
+	@Override
     protected Integer getActiveUsers(String host, String context) throws LoginException {
     	List list = new ArrayList();
     	try {
-			MBeanServer server = (MBeanServer) MBeanServerFactory.findMBeanServer(null).get(0);
 			ObjectName jaasMgr = new ObjectName("jboss.security:service=JaasSecurityManager");
 			Object[] params = { super.securityDomain };
 			String[] signature = { String.class.getName() };
-			List allUsers = (List) server.invoke( jaasMgr, "getAuthenticationCachePrincipals", params, signature );
+			List allUsers = 
+				(List) getMBeanServer().invoke( jaasMgr, "getAuthenticationCachePrincipals", params, signature );
 			Iterator iter = allUsers.iterator();
 			while (iter.hasNext()) {
 				Principal principal = (Principal) iter.next();
@@ -90,7 +86,12 @@ public class JBossLoginModule extends XMLLoginModule {
 		return list.size(); 
 	}
 
-    /**
+	@Override
+	protected MBeanServer getMBeanServer() {
+		return MBeanServerLocator.locateJBoss();
+	}
+
+	/**
 	 * Find or create a Group with the given name. Subclasses should use this
 	 * method to locate the 'Roles' group or create additional types of groups.
 	 * 
