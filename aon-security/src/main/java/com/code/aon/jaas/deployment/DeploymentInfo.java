@@ -100,7 +100,7 @@ public class DeploymentInfo {
                     	File destFile = new File( destDir, files[i].getName() );
     					FileUtis.copyFile( files[i], destFile, true );
 					}
-					this.url = destDir.getParentFile().toURI().toURL();
+					this.url = destDir.getParentFile().toURL();
 		        	this.url.openStream().close();
 				} catch (IOException e1) {
 					LOGGER.fatal( "Unable to copy: " + srcDir + " in: " + destDir + ". " + e1.getMessage() );
@@ -111,7 +111,6 @@ public class DeploymentInfo {
         }
         shortName = getShortName( this.url.getFile() );
         isFile = new File( this.url.getFile() ).isFile();
-LOGGER.fatal( "Starting DeploymentInfo:" + isFile );
     }
 
     

@@ -125,7 +125,7 @@ public class MainDeployer implements IDeployer {
             if ( loginConfigURL == null ) {
                 // Try as a file
                 String path = VendorFactoryManager.getVendorFactory( getDeployerInfo(null) ).create().getSecurityPath();
-                return new File(path + this.configResource).toURI().toURL();
+                return new File(path + this.configResource).toURL();
             }
             return loginConfigURL;
         }

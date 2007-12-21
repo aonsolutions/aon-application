@@ -68,7 +68,8 @@ public class AuthGroup extends AuthPrincipal implements Group {
      * @return true if the principal is a member of this group, false otherwise.
      * @see java.security.acl.Group#isMember(Principal)
      */
-    public boolean isMember(Principal member) {
+    @SuppressWarnings("unchecked")
+	public boolean isMember(Principal member) {
         // First see if there is a key with the member name
         boolean isMember = members.containsKey(member);
         if (!isMember) { // Check the AnybodyPrincipal & NobodyPrincipal special
@@ -120,12 +121,9 @@ public class AuthGroup extends AuthPrincipal implements Group {
         return prev != null;
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.lang.Object#toString()
-     */
-    public String toString() {
+    @SuppressWarnings("unchecked")
+    @Override
+	public String toString() {
         StringBuffer tmp = new StringBuffer(getName());
         tmp.append("(members:"); //$NON-NLS-1$
         Iterator iter = members.keySet().iterator();
