@@ -157,6 +157,7 @@ public class CustomerFeeInvoicingEngine implements IInvoicingEngine {
 		Iterator feeIter = customerFeeBean.getList(groupCriteria).iterator();
 		if(feeIter.hasNext()){
 			invoicedList.add(group.getParent().getId());
+			params.setNumber(calculateNextNumber(params.getNumber(), params.getSeries()));
 			Invoice invoice = createInvoice(group, params);
 			getInvoicingDAO().insertInvoice(invoice);
 			getInvoicingFeedBack().addMessage("\t" + "Invoice: " + invoice.getSeries() + "/" + invoice.getNumber());
