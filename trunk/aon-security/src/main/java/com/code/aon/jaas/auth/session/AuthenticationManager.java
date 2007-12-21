@@ -173,6 +173,7 @@ public class AuthenticationManager {
 	 * 
 	 * @param sessionId
 	 */
+	@SuppressWarnings("unchecked")
 	public void removeSession(String sessionId) {
 		SessionInfo info = getSessionInformation( sessionId );
 		if (info != null) {
@@ -237,9 +238,9 @@ public class AuthenticationManager {
      * @param event
      */
     protected void fireExpiredSession(ExpiredSessionEvent event) {
-        Iterator iter = listeners.iterator();
+        Iterator<ExpiredSessionListener> iter = listeners.iterator();
         while (iter.hasNext()) {
-        	ExpiredSessionListener l = (ExpiredSessionListener) iter.next();
+        	ExpiredSessionListener l = iter.next();
             l.expiredSession( event );
         }
     }
