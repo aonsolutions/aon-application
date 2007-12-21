@@ -8,12 +8,11 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
 import javax.faces.event.ValueChangeEvent;
 import javax.faces.model.DataModel;
 import javax.faces.model.SelectItem;
-
-import org.apache.commons.lang.StringUtils;
 
 import com.code.aon.campaign.ActivityProcess;
 import com.code.aon.campaign.Campaign;
@@ -58,6 +57,7 @@ public class TaskController extends BasicController implements ITaskController {
 
     private ArrayList<Task> checks = new ArrayList<Task>();
     
+    private boolean disableOnSelect;    
 
     public Expression getMyStatusExpression() {
         return myStatusExpression;
@@ -126,8 +126,19 @@ public class TaskController extends BasicController implements ITaskController {
         if(event.getNewValue() != null){
             setRowChecked(((Boolean)event.getNewValue()).booleanValue());
         }
+        this.disableOnSelect = true;
     }
 
+    @Override
+    public void onSelect(ActionEvent event){
+    	if(!this.disableOnSelect){
+        	super.onSelect( event );
+        	FacesContext context = FacesContext.getCurrentInstance();
+        	context.getApplication().getNavigationHandler().handleNavigation(context, null, "task_form");
+    	}
+    	this.disableOnSelect = false;
+    }
+    
 	@SuppressWarnings("unused")
     public void onSearch(MenuEvent event) {
     	obtainTaskInbox();
