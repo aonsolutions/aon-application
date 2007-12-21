@@ -20,11 +20,7 @@ import javax.faces.model.SelectItem;
 
 import com.code.aon.bridge.jmx.mbean.IConsoleAdmin;
 import com.code.aon.bridge.jmx.mbean.IOperation;
-import com.code.aon.bridge.jmx.mbean.core.JBossConsoleAdminFactory;
-import com.code.aon.bridge.jndi.IJNDIConstants;
-import com.code.aon.bridge.jndi.SecurityLocator;
-import com.code.aon.bridge.jndi.SecurityLocatorException;
-import com.code.aon.common.ManagerBeanException;
+import com.code.aon.bridge.jmx.mbean.Messages;
 import com.code.aon.jaas.auth.AuthPrincipal;
 import com.code.aon.jaas.auth.session.MaximumLoginException;
 import com.code.aon.jaas.auth.util.Util;
@@ -35,7 +31,6 @@ import com.code.aon.jaas.client.ast.IUser;
 import com.code.aon.jaas.client.ast.core.Relation;
 import com.code.aon.jaas.client.ast.core.User;
 import com.code.aon.jaas.deployment.DeploymentException;
-import com.code.aon.ui.util.AonUtil;
 
 /**
  * Clase responsable de las modificaciones a realizar sobre la información del usuario, 
@@ -47,6 +42,8 @@ import com.code.aon.ui.util.AonUtil;
  */
 
 public class UserManager implements Serializable {
+
+	private static final long serialVersionUID = 5967483672644450772L;
 
 	public static final String USER_DESCRIPTION = "Usuario Generado"; 
 	public static final String SECURITY_CONTEXT_NAME = "/aon-security"; 
@@ -83,14 +80,9 @@ public class UserManager implements Serializable {
 			setAvailableUser( false );
 			setChangePassword( false );
 			FacesContext ctx = FacesContext.getCurrentInstance();
-			bundle = ResourceBundle.getBundle( IOperation.MESSAGES_FILE, ctx.getViewRoot().getLocale() );
-			try {
-				console = SecurityLocator.getInstance().getConsole(IJNDIConstants.CONSOLE_FACTORY_CLASS);
-			} catch (SecurityLocatorException e) {
-				JBossConsoleAdminFactory FACTORY = new JBossConsoleAdminFactory();
-				if ( FACTORY.accept() )
-					console = FACTORY.createConsoleAdmin();
-        	}
+			if ( ctx != null )
+				bundle = ResourceBundle.getBundle( IOperation.MESSAGES_FILE, ctx.getViewRoot().getLocale() );
+			console = Utils.getSecurityConsole();
 		} catch (Exception e) {
 			LOGGER.severe(e.getMessage());
 		}
@@ -338,6 +330,30 @@ public class UserManager implements Serializable {
 	}
 
 	/**
+	 * Returns the list of application domains this context belongs to.
+	 * 
+	 * @param context
+	 * @return
+	 * @throws DeploymentException
+	 */
+	public List<String> getApplicationDomains(String context) throws DeploymentException {
+		List<String> l = new ArrayList<String>(); 
+		Object[] params = { context };
+		String[] sig = { String.class.getName() };
+		String oname = console.getAonSecurityName();
+		IApplication app = 
+			(IApplication) console.invoke( oname, IOperation.GET_APPLICATION4CTX, params, sig );
+		if ( app != null ) {
+			Iterator<IDomain> it = app.domains().iterator();
+			while (it.hasNext()) {
+				IDomain domain = it.next();
+				l.add( domain.getId() );
+			}
+		}
+		return l;
+	}
+
+	/**
 	 * Available profiles list defined, 
 	 * 
 	 * @return
@@ -346,8 +362,6 @@ public class UserManager implements Serializable {
 	public List<SelectItem> getProfiles() {
 		try {
 			return getAvailableProfiles( getApplication().getId(), getDomain() );
-		} catch (ManagerBeanException e) {
-			LOGGER.severe(e.getMessage());
 		} catch (DeploymentException e) {
 			LOGGER.severe(e.getMessage());
 		}
@@ -359,8 +373,7 @@ public class UserManager implements Serializable {
      * @return
      * @throws ManagerBeanException
      */
-    public List<SelectItem> getAvailableProfiles(String appId, IDomain domain) 
-    		throws ManagerBeanException {
+    public List<SelectItem> getAvailableProfiles(String appId, IDomain domain) {
         List<SelectItem> list = new ArrayList<SelectItem>();
     	Collection<IRelation> c = domain.getDomainApplication( appId ).profiles();
         Iterator<IRelation> iter = c.iterator();
@@ -455,15 +468,19 @@ public class UserManager implements Serializable {
 	public String accept(IApplication app, IDomain domain, String oldUserId) 
 			throws DeploymentException {
 		if ( isChangePassword() ) {
+			if ( bundle == null ) {
+				FacesContext ctx = FacesContext.getCurrentInstance();
+				bundle = ResourceBundle.getBundle( IOperation.MESSAGES_FILE, ctx.getViewRoot().getLocale() );
+			}
 			if ( ( isNew() && !isAvailableUser() ) || isCorrectPassword( app ) ) { 
 				if ( areEqualPasswords() ) {
 					setPassword( getNewPassword() );
 				} else {
-					AonUtil.addInfoMessage( bundle.getString("aon_security_new_passwd_error") );
+					Messages.addInfoMessage( bundle.getString("aon_security_new_passwd_error") );
 					return null;
 				}
 			} else {
-				AonUtil.addInfoMessage( bundle.getString("aon_security_passwd_error") );
+				Messages.addInfoMessage( bundle.getString("aon_security_passwd_error") );
 				return null;
 			}
 			this.user.changePasswd( encryptPassword( app ) );
