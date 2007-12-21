@@ -13,13 +13,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.StringTokenizer;
 
-import javax.management.InstanceNotFoundException;
 import javax.management.JMException;
 import javax.management.MBeanServer;
-import javax.management.MBeanServerFactory;
-import javax.management.MalformedObjectNameException;
 import javax.management.ObjectName;
-import javax.management.ReflectionException;
+import javax.security.auth.Subject;
+
+import org.jboss.mx.util.MBeanServerLocator;
 
 import com.code.aon.bridge.jmx.mbean.IConsoleAdmin;
 import com.code.aon.bridge.jmx.mbean.IMBeanInfo;
@@ -33,8 +32,6 @@ import com.code.aon.jaas.deployment.DeploymentException;
  * JBoss Console Administration class.
  * 
  * @author Consulting & Development. Iñaki Ayerbe - 16-nov-2004
- * @since 1.0
- *  
  */
 public class JBossConsoleAdmin implements IConsoleAdmin {
 
@@ -77,50 +74,32 @@ public class JBossConsoleAdmin implements IConsoleAdmin {
 		load();
 	}
 
-	/* (non-Javadoc)
-	 * @see com.code.aon.bridge.jmx.mbean.IConsoleAdmin#getAonMainDeployerName()
-	 */
+	@Override
 	public String getAonMainDeployerName() {
 		return AON_MAIN_DEPLOYER;
 	}
 
-	/* (non-Javadoc)
-	 * @see com.code.aon.bridge.jmx.mbean.IConsoleAdmin#getAonSecurityName()
-	 */
+	@Override
 	public String getAonSecurityName() {
 		return AON_SECURITY;
 	}
 
-	/* (non-Javadoc)
-	 * @see com.code.aon.bridge.jmx.mbean.IConsoleAdmin#getAonSessionManagerName()
-	 */
+	@Override
 	public String getAonSessionManagerName() {
 		return AON_SESSION_MANAGER;
 	}
 
-	/* (non-Javadoc)
-	 * @see com.aon.jmx.adaptor.mbean.IConsoleAdmin#listDeployedAsString()
-	 */
+	@Override
 	public String listDeployedAsString() throws DeploymentException {
 		try {
 			ObjectName name = new ObjectName(MAIN_DEPLOYER);
 			return (String) getMBeanServer().invoke(name, "listDeployedAsString", null, null);
-		} catch (MalformedObjectNameException e) {
-			throw new DeploymentException(e.getMessage(), e);
-		} catch (InstanceNotFoundException e) {
-			throw new DeploymentException(e.getMessage(), e);
-		} catch (javax.management.MBeanException e) {
-			throw new DeploymentException(e.getMessage(), e);
-		} catch (ReflectionException e) {
-			throw new DeploymentException(e.getMessage(), e);
-		} catch (JMException e) {
+		} catch (Exception e) {
 			throw new DeploymentException(e.getMessage(), e);
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see com.aon.jmx.adaptor.mbean.IConsoleAdmin#isDeployed(java.lang.String)
-	 */
+	@Override
 	public boolean isDeployed(String url) throws DeploymentException {
 		try {
 			ObjectName name = new ObjectName(MAIN_DEPLOYER);
@@ -129,22 +108,12 @@ public class JBossConsoleAdmin implements IConsoleAdmin {
 			Boolean bol = 
 				(Boolean) getMBeanServer().invoke( name, IOperation.ISDEPLOYED, params, sig ); 
 			return bol.booleanValue();
-		} catch (MalformedObjectNameException e) {
-			throw new DeploymentException(e.getMessage(), e);
-		} catch (InstanceNotFoundException e) {
-			throw new DeploymentException(e.getMessage(), e);
-		} catch (javax.management.MBeanException e) {
-			throw new DeploymentException(e.getMessage(), e);
-		} catch (ReflectionException e) {
-			throw new DeploymentException(e.getMessage(), e);
-		} catch (JMException e) {
+		} catch (Exception e) {
 			throw new DeploymentException(e.getMessage(), e);
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see com.code.aon.jmx.bridge.mbean.IConsoleAdmin#flushAuthenticationCache(java.lang.String)
-	 */
+	@Override
 	public void flushAuthenticationCache(String domain, Principal principal)
 			throws DeploymentException {
 		try {
@@ -152,58 +121,44 @@ public class JBossConsoleAdmin implements IConsoleAdmin {
 			Object[] params = { domain, principal };
 			String[] sig = { String.class.getName(), Principal.class.getName() };
 			getMBeanServer().invoke(name, "flushAuthenticationCache", params, sig);
-		} catch (MalformedObjectNameException e) {
-			throw new DeploymentException(e.getMessage(), e);
-		} catch (InstanceNotFoundException e) {
-			throw new DeploymentException(e.getMessage(), e);
-		} catch (javax.management.MBeanException e) {
-			throw new DeploymentException(e.getMessage(), e);
-		} catch (ReflectionException e) {
-			throw new DeploymentException(e.getMessage(), e);
-		} catch (JMException e) {
+		} catch (Exception e) {
 			throw new DeploymentException(e.getMessage(), e);
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see com.aon.jmx.adaptor.mbean.IConsoleAdmin#getServerHomeURL()
-	 */
+	@Override
+	public Subject getActiveSubject() throws DeploymentException {
+		try {
+			ObjectName name = new ObjectName( JAAS_SECURITY );
+			return (Subject) getMBeanServer().invoke( name, "getActiveSubject", null, null );
+		} catch (Exception e) {
+			throw new DeploymentException( e.getMessage(), e );
+		}		
+	}
+
+	@Override
 	public URL getServerHomeURL() throws DeploymentException {
 		try {
 			ObjectName name = new ObjectName(SERVER_CONFIG);
 			return (URL) getMBeanServer().getAttribute(name, "ServerHomeURL");
-		} catch (MalformedObjectNameException e) {
-			throw new DeploymentException(e.getMessage(), e);
-		} catch (InstanceNotFoundException e) {
-			throw new DeploymentException(e.getMessage(), e);
-		} catch (javax.management.MBeanException e) {
-			throw new DeploymentException(e.getMessage(), e);
-		} catch (ReflectionException e) {
-			throw new DeploymentException(e.getMessage(), e);
-		} catch (JMException e) {
+		} catch (Exception e) {
 			throw new DeploymentException(e.getMessage(), e);
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see com.code.aon.jmx.bridge.mbean.IConsoleAdmin#getDeployerHome()
-	 */
+	@Override
 	public String getDeployerHome() throws DeploymentException {
 		return getServerHomeURL().getPath() + "deploy/";
 	}
 
-	/* (non-Javadoc)
-	 * @see com.aon.jmx.adaptor.mbean.IConsoleAdmin#getServerInfo()
-	 */
+	@Override
 	public String getServerInfo() throws DeploymentException {
 		Object[] params = { EMPTY_STRING };
 		String[] sig = { String.class.getName() };
 		return (String) invoke( getAonMainDeployerName(), IOperation.GET_DEPLOYER_INFO, params, sig );
 	}
 
-	/* (non-Javadoc)
-	 * @see com.code.aon.bridge.jmx.mbean.IConsoleAdmin#deploy(java.lang.String)
-	 */
+	@Override
 	public void deploy(String name) throws DeploymentException {
 		try {
           Object[] params = { new File( getDeployerHome() + name ).toURL() };
@@ -214,34 +169,22 @@ public class JBossConsoleAdmin implements IConsoleAdmin {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see com.code.aon.bridge.jmx.mbean.IConsoleAdmin#invoke(java.lang.String, java.lang.String, java.lang.Object[], java.lang.String[])
-	 */
+	@Override
 	public Object invoke(String oname, String method, Object[] params, String[] sig) 
 			throws DeploymentException {
 		try {
 			return getMBeanServer().invoke( new ObjectName( oname ), method, params, sig );
-		} catch (MalformedObjectNameException e) {
-			throw new DeploymentException(e.getMessage(), e);
-		} catch (InstanceNotFoundException e) {
-			throw new DeploymentException(e.getMessage(), e);
-		} catch (javax.management.MBeanException e) {
-			throw new DeploymentException(e.getMessage(), e);
-		} catch (ReflectionException e) {
-			throw new DeploymentException(e.getMessage(), e);
-		} catch (JMException e) {
+		} catch (Exception e) {
 			throw new DeploymentException(e.getMessage(), e);
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see com.aon.jmx.adaptor.mbean.IConsoleAdmin#getMBeans(com.aon.jmx.adaptor.mbean.MBeanFilter)
-	 */
-	public List getMBeans(MBeanFilter filter) {
+	@Override
+	public List<IMBeanInfo> getMBeans(MBeanFilter filter) {
 		List<IMBeanInfo> list = new LinkedList<IMBeanInfo>();
-		Iterator iter = mbeans.values().iterator();
+		Iterator<IMBeanInfo> iter = mbeans.values().iterator();
 		while (iter.hasNext()) {
-			IMBeanInfo info = (IMBeanInfo) iter.next();
+			IMBeanInfo info = iter.next();
 			if (filter.accept(info)) {
 				list.add( info );
 			}
@@ -249,9 +192,7 @@ public class JBossConsoleAdmin implements IConsoleAdmin {
 		return list;
 	}
 
-	/* (non-Javadoc)
-	 * @see com.aon.jmx.adaptor.mbean.IConsoleAdmin#reload()
-	 */
+	@Override
 	public void load() throws DeploymentException {
 		StringTokenizer st = new StringTokenizer(listDeployedAsString(), DELIM);
 		mbeans = new HashMap<String, IMBeanInfo>();
@@ -268,28 +209,14 @@ public class JBossConsoleAdmin implements IConsoleAdmin {
 		}
 	}
 
-    /**
-     * Get MBeanServer.
-     * 
-     * @return MBeanServer
-     * @throws JMException
-     */
-    protected MBeanServer getMBeanServer() throws JMException {
-    	MBeanServer server = null;
-    	List servers = MBeanServerFactory.findMBeanServer(null);
-    	if (servers.size() > 0) {
-    		server = (MBeanServer) servers.get(0);
-    	}
-    	return server;
-//        RMIAdaptor server = null;
-//        try {
-//            InitialContext jndiContext = init();
-//            server = (RMIAdaptor) jndiContext.lookup("jmx/rmi/RMIAdaptor");
-//        } catch (NamingException e) {
-//            e.printStackTrace();
-//        }
-//        // FIN TO-DO.
-//        return server;
+	/**
+	 * Get MBeanServer.
+	 * 
+	 * @return MBeanServer
+	 * @throws JMException
+	 */
+	protected MBeanServer getMBeanServer() throws JMException {
+		return MBeanServerLocator.locateJBoss();
     }
 
     /**
