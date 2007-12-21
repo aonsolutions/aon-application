@@ -3,7 +3,7 @@
 
 	<property name="mgr" value="aon-security-mgr" />
 	<property name="client" value="aon.security" />
-	<property name="version" value="1.2.5" />
+	<property name="version" value="1.2.7" />
 	<property name="jar.valve.name" value="valve-${version}" />
 
     <property name="src.dir" value="src/main/java" />
@@ -220,25 +220,26 @@
 	<!-- BUILD aon-security-client									   		   -->
 	<!-- ===================================================================== -->
 	<target name="security-client.jar">
-	    <jar jarfile="${client.dist.dir}/${client}-${version}.jar">
-	      <fileset dir="${build.dir}">
-  	        <include name="com/code/aon/jaas/auth/AuthPrincipal.class"/>
-  	        <include name="com/code/aon/jaas/auth/IConstants.class"/>
-  	        <include name="com/code/aon/jaas/auth/session/**"/>
-  	        <include name="com/code/aon/jaas/auth/util/**"/>
-	        <include name="com/code/aon/jaas/client/ast/**"/>
-	        <include name="com/code/aon/jaas/client/xml/**"/>
-	      	<include name="com/code/aon/jaas/deployment/DeploymentException.class"/>
-	        <include name="com/code/aon/jaas/deployment/ast/*.class"/>
-	        <include name="com/code/aon/jaas/deployment/core/SubDeployerVisitor.class"/>
-	        <include name="com/code/aon/jaas/deployment/event/**"/>
-	        <include name="com/code/aon/jaas/storage/**"/>
-	        <include name="com/code/aon/jaas/vendor/deployment/ast/IVendorDescriptor.class"/>
-	        <include name="com/code/aon/jaas/valves/**"/>
-  	      	<exclude name="com/code/aon/jaas/valves/SecurityValve.class"/>
-  	      	<exclude name="com/code/aon/jaas/vendor/tomcat/**"/>
-		 </fileset>
-	    </jar>
+		<jar jarfile="${client.dist.dir}/${client}-${version}.jar">
+			<fileset dir="${build.dir}">
+				<include name="com/code/aon/jaas/auth/AuthGroup.class"/>
+				<include name="com/code/aon/jaas/auth/AuthPrincipal.class"/>
+				<include name="com/code/aon/jaas/auth/IConstants.class"/>
+				<include name="com/code/aon/jaas/auth/session/**"/>
+				<include name="com/code/aon/jaas/auth/util/**"/>
+				<include name="com/code/aon/jaas/client/ast/**"/>
+				<include name="com/code/aon/jaas/client/xml/**"/>
+				<include name="com/code/aon/jaas/deployment/DeploymentException.class"/>
+				<include name="com/code/aon/jaas/deployment/ast/*.class"/>
+				<include name="com/code/aon/jaas/deployment/core/SubDeployerVisitor.class"/>
+				<include name="com/code/aon/jaas/deployment/event/**"/>
+				<include name="com/code/aon/jaas/storage/**"/>
+				<include name="com/code/aon/jaas/vendor/deployment/ast/IVendorDescriptor.class"/>
+				<include name="com/code/aon/jaas/valves/**"/>
+				<exclude name="com/code/aon/jaas/valves/SecurityValve.class"/>
+				<exclude name="com/code/aon/jaas/vendor/tomcat/**"/>
+			</fileset>
+		</jar>
 	</target>
 
 	<!-- ================================================================== -->
