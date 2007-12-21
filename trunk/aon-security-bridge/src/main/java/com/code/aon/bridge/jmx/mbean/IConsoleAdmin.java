@@ -4,14 +4,14 @@ import java.net.URL;
 import java.security.Principal;
 import java.util.List;
 
+import javax.security.auth.Subject;
+
 import com.code.aon.jaas.deployment.DeploymentException;
 
 /**
  * This interface connects to application server MBeans. 
  * 
  * @author Consulting & Development. Iñaki Ayerbe - 16-nov-2004
- * @since 1.0
- *  
  */
 public interface IConsoleAdmin {
 
@@ -75,6 +75,13 @@ public interface IConsoleAdmin {
 	void flushAuthenticationCache(String domain, Principal principal) throws DeploymentException;
 
 	/**
+	 * Get the currently authenticated Subject.
+	 * 
+	 * @throws DeploymentException
+	 */
+	Subject getActiveSubject() throws DeploymentException;
+
+	/**
 	 * Return Deployer home directory where applications are deployed.
 	 * 
 	 * @return String
@@ -119,7 +126,7 @@ public interface IConsoleAdmin {
 	 * @param filter MBeanFilter
 	 * @return List
 	 */
-	List getMBeans(MBeanFilter filter);
+	List<IMBeanInfo> getMBeans(MBeanFilter filter);
 
 	/**
 	 * Load the list of <code>IMBeanInfo</code> that are deployed by the Application Server or 
