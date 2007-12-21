@@ -86,7 +86,7 @@
 			 							<aon:div styleClass="aon-section-toolbar">																				
 												
 											<aon:commandButton id="documentAdd"
-												title="#{menuBundle.aon_admin_document_new}"
+												title="#{menuBundle.aon_ecm_new}"
 												actionListener="#{manager.onNewDocument}"					
 												styleClass="aon-content-toolbar-item aon-icon-attach"
 												value="#{menuBundle.aon_ecm_add}" />
@@ -102,14 +102,14 @@
 												title="#{menuBundle.aon_admin_document_lock}"
 												actionListener="#{manager.documents.lock}"					
 												styleClass="aon-content-toolbar-item aon-icon-document-lock"
-												rendered="#{manager.menu.visible}" 
+												rendered="#{manager.menu.visible and !manager.documents.selected.locked}" 
 												value="#{menuBundle.aon_admin_document_lock}" />
 											
 											<aon:commandButton id="documentUnlock"
 												title="#{menuBundle.aon_admin_document_unlock}"
 												actionListener="#{manager.documents.unlock}"					
 												styleClass="aon-content-toolbar-item aon-icon-document-unlock"
-												rendered="#{manager.menu.visible}" 
+												rendered="#{manager.menu.visible and manager.documents.selected.locked}" 
 												value="#{menuBundle.aon_admin_document_unlock}" />
 											
 											<aon:confirmButton id="documentDelete"
@@ -135,74 +135,69 @@
 												rendered="#{manager.menu.visible and manager.documents.checkedOut}" 
 												value="#{menuBundle.aon_version_checkin}" />
 											
-											<aon:commandButton id="documentRestore"
+											<aon:commandButton id="restore"
 												title="#{menuBundle.aon_version_uncheckout}"
 												actionListener="#{manager.documents.restore}"
 												styleClass="aon-content-toolbar-item aon-icon-file-exit-cancel"
 												rendered="#{manager.menu.visible and manager.documents.checkedOut}"
 												value="#{menuBundle.aon_version_uncheckout}" />
 			 							</aon:div>
-			 										
-			 							<ice:panelTabSet styleClass="aon-panelTabSet">
-										    <!-- Controls to show/hide the table columns -->
-										    <ice:panelTab label="Propiedades">
-												<ui:include src="/facelet/admin/content/documentProperties.xhtml" />	
-										    </ice:panelTab>
 
-										    <!--
-										      The bean is responsible for streaming html documentation to
-										      this placeholder
-										    -->
-										    <ice:panelTab label="Versiones">
-												<ui:include src="/facelet/admin/content/documentVersionHistory.xhtml" />	
-										    </ice:panelTab>
-										
-										    <!--
-										      Template for component source code.  This servlet loads
-										      the component example jsp include as an xml stream
-										    -->
-										    <ice:panelTab label="Seguridad">
-										    </ice:panelTab>
-										</ice:panelTabSet>
-			
+										<aon:dataTable id="docDataList" 
+												value="#{manager.documents.model}" var="to"
+												styleClass="aon-dataTable">									
+											<aon:column>
+												<f:facet name="header">
+													<aon:outputText value="#{appBundle.aon_cdr_status}" />
+												</f:facet>
+												<aon:outputText value="#{to.status}"/>
+											</aon:column>
+
+											<aon:column>
+												<aon:rowSelector selectionListener="#{manager.documents.documentSelected}" />
+												<f:facet name="header">
+													<aon:outputText value="#{appBundle.aon_cdr_name}" />
+												</f:facet>
+												<aon:outputText value="#{to.name}"/>
+											</aon:column>
+				
+											<aon:column>
+												<f:facet name="header">
+													<aon:outputText value="#{appBundle.aon_cdr_name}" />
+												</f:facet>
+												<aon:outputText value="#{to.author}"/>
+											</aon:column>
+				
+											<aon:column>
+												<f:facet name="header">
+													<aon:outputText value="#{appBundle.aon_cdr_version}" />
+												</f:facet>
+												<aon:outputText value="#{to.version}"/>
+											</aon:column>
+
+											<aon:column>
+												<f:facet name="header">
+													<aon:outputText value="#{appBundle.aon_cdr_entrydate}" />
+												</f:facet>
+												<aon:outputText value="#{to.entryDate}">
+													<f:convertDateTime pattern="dd/MM/yyyy"/>
+												</aon:outputText>
+											</aon:column>
+										</aon:dataTable>
+
 									</aon:div>
 								</f:facet>
 
 								 <f:facet name="south">
-									<aon:dataTable id="docDataList" 
-											value="#{manager.documents.model}" var="to"
-											styleClass="aon-dataTable">									
-										<aon:column>
-											<f:facet name="header">
-												<aon:outputText value="#{appBundle.aon_cdr_status}" />
-											</f:facet>
-											<aon:outputText value="#{to.status}"/>
-										</aon:column>
-			
-										<aon:column>
-											<aon:rowSelector selectionListener="#{manager.documents.documentSelected}" />
-											<f:facet name="header">
-												<aon:outputText value="#{appBundle.aon_cdr_name}" />
-											</f:facet>
-											<aon:outputText value="#{to.name}"/>
-										</aon:column>
-			
-										<aon:column>
-											<f:facet name="header">
-												<aon:outputText value="#{appBundle.aon_cdr_name}" />
-											</f:facet>
-											<aon:outputText value="#{to.author}"/>
-										</aon:column>
-			
-										<aon:column>
-											<f:facet name="header">
-												<aon:outputText value="#{appBundle.aon_cdr_entrydate}" />
-											</f:facet>
-											<aon:outputText value="#{to.entryDate}">
-												<f:convertDateTime pattern="dd/MM/yyyy"/>
-											</aon:outputText>
-										</aon:column>
-									</aon:dataTable>		
+		 							<ice:panelTabSet styleClass="aon-panelTabSet" 
+		 									rendered="#{manager.documents.selected != null}" >
+									    <ice:panelTab label="#{menuBundle.aon_admin_document_properties}">
+											<ui:include src="/facelet/admin/content/documentProperties.xhtml" />	
+									    </ice:panelTab>
+									    <ice:panelTab label="#{menuBundle.aon_admin_document_versions}">
+											<ui:include src="/facelet/admin/content/documentVersionHistory.xhtml" />	
+									    </ice:panelTab>
+									</ice:panelTabSet>
 							     </f:facet>
 						    
 							</ice:panelBorder>

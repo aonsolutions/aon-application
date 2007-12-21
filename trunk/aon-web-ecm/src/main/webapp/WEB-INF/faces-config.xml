@@ -5,7 +5,7 @@
 
 <faces-config>
 	<application>
-		<message-bundle>es.code.cdr.ui.i18n.messages</message-bundle>
+		<message-bundle>com.code.aon.ui.common.i18n.messages</message-bundle>
 		<locale-config>
 			<default-locale>es</default-locale>
 		</locale-config>
@@ -73,16 +73,16 @@
 			<property-name>applicationBundles</property-name>
 			<map-entries>
 				<map-entry>
-					<key>bundle</key>
-					<value>com.code.aon.ui.common.i18n.messages</value>
-				</map-entry>
-				<map-entry>
 					<key>appBundle</key>
 					<value>es.code.cdr.ui.i18n.messages</value>
 				</map-entry>
 				<map-entry>
 					<key>menuBundle</key>
 					<value>es.code.cdr.ui.i18n.menu</value>
+				</map-entry>
+				<map-entry>
+					<key>securityBundle</key>
+					<value>com.code.aon.bridge.i18n.messages</value>
 				</map-entry>
 			</map-entries>
 		</managed-property>		
@@ -106,6 +106,13 @@
 		<managed-bean-scope>request</managed-bean-scope>
 	</managed-bean>
 
+	<!-- ***************** FAILED LOGIN ******************** -->
+	<managed-bean>
+		<managed-bean-name>failedLogin</managed-bean-name>
+		<managed-bean-class>com.code.aon.bridge.session.FailedLogin</managed-bean-class>
+		<managed-bean-scope>request</managed-bean-scope>
+	</managed-bean>
+
 	<!-- ************** REQUEST HANDLER ****************** -->
 	<managed-bean>
 		<managed-bean-name>requestController</managed-bean-name>
@@ -124,6 +131,11 @@
 	<managed-bean>
 		<managed-bean-name>search</managed-bean-name>
 		<managed-bean-class>es.code.cdr.ui.controller.query.QueryMediator</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
+	<managed-bean>
+		<managed-bean-name>permissions</managed-bean-name>
+		<managed-bean-class>es.code.cdr.ui.controller.Permissions</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
 
@@ -150,6 +162,10 @@
 	<navigation-case>
 		<from-outcome>advanced_search</from-outcome>
 		<to-view-id>/facelet/search/advanced.iface</to-view-id>
+	</navigation-case>
+	<navigation-case>
+		<from-outcome>permissions_list</from-outcome>
+		<to-view-id>/facelet/permissions/list.iface</to-view-id>
 	</navigation-case>
   </navigation-rule>
 

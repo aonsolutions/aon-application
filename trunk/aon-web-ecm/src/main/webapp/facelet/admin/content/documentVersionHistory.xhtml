@@ -13,14 +13,39 @@
 			rendered="#{manager.documents.selected != null}" >
 
 		<aon:dataTable id="docVersionList" 
-				value="#{manager.documents.selected.versionHistory}" var="to"
-				styleClass="aon-dataTable" style="font-size:1.1em;">
+				value="#{manager.documents.versionHistoryModel}" var="to"
+				styleClass="aon-dataTable" style="font-size:1.1em;"
+				 >
 
 			<aon:column>
 				<f:facet name="header">
-					<aon:outputText value="#{appBundle.aon_cdr_name}" />
+					<aon:outputText value="" />
+				</f:facet>
+				<aon:outputText style="display:inline;padding-left:16px;" styleClass="#{(to.name == manager.documents.selected.version)?'aon-icon aon-icon-checked':'aon-icon aon-icon-check'}" value="&#160;" />
+				<aon:commandButton id="downloadVersion"
+					title="#{menuBundle.aon_admin_document_download}"
+					actionListener="#{manager.documents.downloadVersion}"					
+					styleClass="aon-icon-commandButton aon-icon-mail-save"
+					style="background-position:left 5px;" />
+				<aon:commandButton id="restoreVersion"
+					title="#{menuBundle.aon_admin_document_download}"
+					actionListener="#{manager.documents.restoreVersion}"					
+					styleClass="aon-icon-commandButton aon-icon-mail-save"
+					style="background-position:left 5px;" />
+			</aon:column>
+
+			<aon:column>
+				<f:facet name="header">
+					<aon:outputText value="#{appBundle.aon_cdr_version}" />
 				</f:facet>
 				<aon:outputText value="#{to.UUID}"/>
+			</aon:column>
+
+			<aon:column>
+				<f:facet name="header">
+					<aon:outputText value="#{appBundle.aon_cdr_version}" />
+				</f:facet>
+				<aon:outputText value="#{to.name}"/>
 			</aon:column>
 
 			<aon:column>

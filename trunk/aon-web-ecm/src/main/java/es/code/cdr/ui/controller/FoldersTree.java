@@ -8,10 +8,10 @@ import java.util.Calendar;
 
 import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
+import javax.jcr.AccessDeniedException;
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
-import javax.jcr.Session;
 import javax.jcr.lock.LockException;
 import javax.servlet.http.HttpSession;
 import javax.swing.tree.DefaultMutableTreeNode;
@@ -19,6 +19,7 @@ import javax.swing.tree.DefaultTreeModel;
 
 import org.apache.jackrabbit.core.security.AnonymousPrincipal;
 
+import com.code.aon.ui.util.AonUtil;
 import com.icesoft.faces.component.tree.IceUserObject;
 
 import es.code.cdr.CDRQName;
@@ -28,7 +29,7 @@ import es.code.cdr.core.ContentRepository;
 import es.code.cdr.core.SessionManager;
 import es.code.cdr.core.Widget;
 import es.code.cdr.core.WidgetSupport;
-import es.code.cdr.core.event.WidgetListener;
+import es.code.cdr.event.WidgetListener;
 
 /**
  * @author Consulting & Development. Iñaki Ayerbe - 11/07/2007
@@ -55,10 +56,9 @@ public class FoldersTree implements Widget {
 	public FoldersTree() throws WidgetLoadingException {
         HttpSession session = 
         	(HttpSession) FacesContext.getCurrentInstance().getExternalContext().getSession( false ); 
-        Session jcrSession = SessionManager.getInstance().get( session.getId() );
+        Node root = SessionManager.getInstance().getHierarchyManager( session.getId() ).getRootNode();
         try {
-			Node cdr = 
-				jcrSession.getRootNode().getNode( ContentRepository.getNodeName( CDRQName.AON_CDR ) );
+			Node cdr = root.getNode( ContentRepository.getNodeName( CDRQName.AON_CDR ) );
 	        rootTreeNode = createDefaultMutableTreeNode( new Folder( cdr ) );
 	        model = new DefaultTreeModel( rootTreeNode );
 			load( rootTreeNode );
@@ -152,8 +152,10 @@ public class FoldersTree implements Widget {
 			DefaultMutableTreeNode newNode = createDefaultMutableTreeNode( newFolder );
 			selected.getWrapper().add( newNode );
 			setSelected( (CDRUserObject) newNode.getUserObject() );
+		} catch (AccessDeniedException e) {
+			AonUtil.addWarningMessage( e.getMessage() );
+			selectedNode.refresh( false );
 		} catch (RepositoryException e) {
-			e.printStackTrace();
 			selectedNode.refresh( false );
 		}
 	}
@@ -167,16 +169,22 @@ public class FoldersTree implements Widget {
 	 */
 	public void remove(ActionEvent event) throws RepositoryException, WidgetLoadingException {
 		Node selectedNode = selected.getFolder().getNode();
-		if( hasLockedNodes( selectedNode ) )
+		if ( hasLockedNodes( selectedNode ) )
             throw new LockException("Can't delete a locked node");
-		
-		selectedNode.remove();
+
+		Node parentNode = selectedNode.getParent();
 		DefaultMutableTreeNode treeNode = selected.getWrapper();
 		CDRUserObject userObject = 
 			(CDRUserObject) ( (DefaultMutableTreeNode) treeNode.getParent() ).getUserObject();
-		treeNode.removeFromParent();
+		selectedNode.remove();
+		try {
+			parentNode.save();
+			treeNode.removeFromParent();
+		} catch (AccessDeniedException e) {
+			AonUtil.addWarningMessage( e.getMessage() );
+			parentNode.refresh( false );
+		}
 		setSelected( userObject );
-		selected.getFolder().getNode().save();
 	}
 
 	/* (non-Javadoc)

@@ -6,7 +6,7 @@ package es.code.cdr.ui.controller;
 import es.code.cdr.beans.CDRNode;
 import es.code.cdr.core.Widget;
 import es.code.cdr.core.WidgetSupport;
-import es.code.cdr.core.event.WidgetListener;
+import es.code.cdr.event.WidgetListener;
 
 /**
  * @author Consulting & Development. Iñaki Ayerbe - 12/07/2007

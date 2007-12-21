@@ -14,9 +14,11 @@ import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
 import javax.faces.model.DataModel;
 import javax.faces.model.ListDataModel;
+import javax.jcr.AccessDeniedException;
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
+import javax.jcr.version.Version;
 import javax.servlet.http.HttpSession;
 
 import org.apache.jackrabbit.core.security.AnonymousPrincipal;
@@ -31,7 +33,7 @@ import es.code.cdr.beans.Document;
 import es.code.cdr.core.ContentRepository;
 import es.code.cdr.core.Widget;
 import es.code.cdr.core.WidgetSupport;
-import es.code.cdr.core.event.WidgetListener;
+import es.code.cdr.event.WidgetListener;
 import es.code.cdr.ui.controller.query.QueryMenu;
 
 /**
@@ -46,6 +48,8 @@ public class DocumentsList implements Widget {
 	DataModel model;
 	/** Selected Document node. */
 	Document selected;
+	/** Selected document version history model. */
+	DataModel versionHistoryModel;
 	/** Document uploading manager. */
 	DocumentUpload upload;
 
@@ -68,6 +72,19 @@ public class DocumentsList implements Widget {
 	 */
 	public void setModel(DataModel model) {
 		this.model = model;
+	}
+
+	/**
+	 * @return the version history
+	 */
+	public DataModel getVersionHistoryModel() {
+		try {
+			versionHistoryModel = new ListDataModel( selected.getVersionHistory() );
+		} catch (RepositoryException e) {
+			versionHistoryModel = new ListDataModel();
+			AonUtil.addErrorMessage( e.getMessage() );
+		}
+		return versionHistoryModel;
 	}
 
 	/**
@@ -151,6 +168,9 @@ public class DocumentsList implements Widget {
 			l.add( index, document );
 			model.setRowIndex( index );
 			setSelected( document );
+		} catch (AccessDeniedException e) {
+			AonUtil.addWarningMessage( e.getMessage() );
+			folderNode.refresh( false );
 		} catch (RepositoryException e) {
 			folderNode.refresh( false );
 		} finally {
@@ -178,6 +198,9 @@ public class DocumentsList implements Widget {
 			parent.save();
 			setSelected( null );
 			load( parent );
+		} catch (AccessDeniedException e) {
+			AonUtil.addWarningMessage( e.getMessage() );
+			parent.refresh( false );
 		} catch (RepositoryException e) {
 			if ( parent != null )
 				parent.refresh( false );
@@ -185,6 +208,8 @@ public class DocumentsList implements Widget {
 	}
 
 	/**
+	 * Downloads selected document.
+	 * 
 	 * @param event
 	 */
 	public void download(ActionEvent event) {
@@ -195,6 +220,26 @@ public class DocumentsList implements Widget {
 			session.setAttribute( selected.getName(), selected );
 //			String js = "window.open(\"" + URL_TO_PDF+ "\", 'popup_window');"; Con URL directamente.
 //			String js = "document.forms[0].action='http://localhost:8180/aon-cr/download?selected="+ selected.getName() +"';document.forms[0].submit();";
+			String js = "popup_window = window.open('download?selected="+ selected.getName() +"','popup_window','location=0,status=1,scrollbars=0,width=200,height=50');";
+			JavascriptContext.addJavascriptCall( FacesContext.getCurrentInstance(), js ); 
+		} catch (RepositoryException e) {
+			e.printStackTrace();
+			AonUtil.addErrorMessage( e.getMessage() );
+		}
+	}
+
+	/**
+	 * Downloads selected document version.
+	 * 
+	 * @param event
+	 */
+	public void downloadVersion(ActionEvent event) {
+		try {
+//	Removes selected document from current session.
+			HttpSession session = removeDocument4Download();
+			session.removeAttribute( selected.getName() );
+			Version version = (Version) versionHistoryModel.getRowData();
+			session.setAttribute( selected.getName(), selected.getDocument4Version( version ) );
 			String js = "popup_window = window.open('download?selected="+ selected.getName() +"','popup_window','location=0,status=1,scrollbars=0,width=200,height=50');";
 			JavascriptContext.addJavascriptCall( FacesContext.getCurrentInstance(), js ); 
 		} catch (RepositoryException e) {
@@ -211,7 +256,8 @@ public class DocumentsList implements Widget {
 	public void checkin(ActionEvent event) throws IOException {
 		try {
 			ExternalContext ec = FacesContext.getCurrentInstance().getExternalContext();
-			selected.checkin( getAuthor( ec ), upload.getResource() );
+			selected.setAuthor( getAuthor( ec ) );
+			selected.checkin( upload.getResource() );
 		} catch (RepositoryException e) {
 			AonUtil.addErrorMessage( e.getMessage() );
 		}
@@ -224,13 +270,20 @@ public class DocumentsList implements Widget {
 	 */
 	public void checkout(ActionEvent event) {
 		try {
-			download( event );
+			selected.refresh( false );
 			selected.checkout();
+			download( event );
 		} catch (RepositoryException e) {
 			AonUtil.addErrorMessage( e.getMessage() );
 		}
 	}
 
+	/**
+	 * Tells if the selected document is checked out, otherwise false.
+	 * 
+	 * @return
+	 * @throws RepositoryException
+	 */
 	public boolean isCheckedOut() throws RepositoryException {
 		return ( selected == null )? false: selected.isCheckedOut();
 	}
@@ -242,7 +295,23 @@ public class DocumentsList implements Widget {
 	 */
 	public void restore(ActionEvent event) {
 		try {
+			selected.refresh( false );
 			selected.restore();
+		} catch (RepositoryException e) {
+			AonUtil.addErrorMessage( e.getMessage() );
+		}
+	}
+
+	/**
+	 * Restores selected document version.
+	 * 
+	 * @param event
+	 */
+	public void restoreVersion(ActionEvent event) {
+		Version version = (Version) versionHistoryModel.getRowData();
+		try {
+			selected.refresh( false );
+			selected.restoreVersion( version.getName() );
 		} catch (RepositoryException e) {
 			AonUtil.addErrorMessage( e.getMessage() );
 		}
@@ -256,6 +325,7 @@ public class DocumentsList implements Widget {
 	 */
 	public void lock(ActionEvent event) {
         try {
+			selected.refresh( false );
 			selected.lock();
 		} catch (RepositoryException e) {
 			AonUtil.addErrorMessage( e.getMessage() );
@@ -271,6 +341,7 @@ public class DocumentsList implements Widget {
 	 */
 	public void unlock(ActionEvent event) {
         try {
+			selected.refresh( false );
 			selected.unlock();
 		} catch (RepositoryException e) {
 			AonUtil.addErrorMessage( e.getMessage() );
