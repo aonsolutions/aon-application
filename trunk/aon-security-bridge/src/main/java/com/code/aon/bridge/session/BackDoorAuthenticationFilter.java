@@ -39,26 +39,20 @@ import com.code.aon.jaas.valves.DesEncrypter;
  */
 public class BackDoorAuthenticationFilter implements Filter {
 
-	/** AuthenticationValve Log */
+	/** AuthenticationValve Logger */
 	private static final Log LOGGER = LogFactory.getLog( BackDoorAuthenticationFilter.class.getName() );
 	/** Authentication methods for login configuration. */
 	private static final String AUTH_TYPE = "PROGRAMMATIC_WEB_LOGIN";
 
-	/* (non-Javadoc)
-	 * @see javax.servlet.Filter#init(javax.servlet.FilterConfig)
-	 */
+	@Override
 	public void init(FilterConfig filterConfig) throws ServletException {
 	}
 
-	/* (non-Javadoc)
-	 * @see javax.servlet.Filter#destroy()
-	 */
+	@Override
 	public void destroy() {
 	}
 
-	/* (non-Javadoc)
-	 * @see javax.servlet.Filter#doFilter(javax.servlet.ServletRequest, javax.servlet.ServletResponse, javax.servlet.FilterChain)
-	 */
+	@Override
 	public void doFilter(ServletRequest request, ServletResponse response,
 			FilterChain chain) throws IOException, ServletException {
 		HttpServletRequest httpRequest = (HttpServletRequest) request;
@@ -99,7 +93,7 @@ public class BackDoorAuthenticationFilter implements Filter {
 		chain.doFilter( request, response );
 	}
 
-	private BackDoorPrincipal deserialize(String serSessionId) {
+	protected BackDoorPrincipal deserialize(String serSessionId) {
 		FileInputStream istream = null;
 		try {
 			SecretKey key = DesEncrypter.getSecretKeyInstance( BackDoorAuthenticationValve.SER_EXT + serSessionId );

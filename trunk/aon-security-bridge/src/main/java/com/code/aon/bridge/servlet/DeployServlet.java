@@ -6,10 +6,7 @@ import javax.servlet.http.HttpServlet;
 
 import com.code.aon.bridge.jmx.mbean.IConsoleAdmin;
 import com.code.aon.bridge.jmx.mbean.IOperation;
-import com.code.aon.bridge.jmx.mbean.core.JBossConsoleAdminFactory;
-import com.code.aon.bridge.jndi.IJNDIConstants;
-import com.code.aon.bridge.jndi.SecurityLocator;
-import com.code.aon.bridge.jndi.SecurityLocatorException;
+import com.code.aon.bridge.plugin.Utils;
 
 import com.code.aon.jaas.client.ast.IAccessPolicy;
 import com.code.aon.jaas.client.ast.IApplication;
@@ -26,20 +23,15 @@ import com.code.aon.jaas.deployment.DeploymentException;
  */
 public class DeployServlet extends HttpServlet {
 
+	private static final long serialVersionUID = -3412566142103096869L;
+
 	/*(non-Javadoc)
 	 * @see javax.servlet.GenericServlet#init(javax.servlet.ServletConfig)
 	 */
 	public void init(ServletConfig config) throws ServletException {
 		super.init(config);
 		try {
-			IConsoleAdmin console = null;
-			try {
-				console = SecurityLocator.getInstance().getConsole(IJNDIConstants.CONSOLE_FACTORY_CLASS);
-			} catch (SecurityLocatorException e) {
-				JBossConsoleAdminFactory FACTORY = new JBossConsoleAdminFactory();
-				if ( FACTORY.accept() )
-					console = FACTORY.createConsoleAdmin();
-        	}
+			IConsoleAdmin console = Utils.getSecurityConsole();
 			String appId = config.getInitParameter("name");
 			if ( console != null ) {
 				IApplication app = 

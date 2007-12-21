@@ -11,10 +11,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import com.code.aon.bridge.jmx.mbean.IConsoleAdmin;
 import com.code.aon.bridge.jmx.mbean.IOperation;
-import com.code.aon.bridge.jmx.mbean.core.JBossConsoleAdminFactory;
-import com.code.aon.bridge.jndi.IJNDIConstants;
-import com.code.aon.bridge.jndi.SecurityLocator;
-import com.code.aon.bridge.jndi.SecurityLocatorException;
+import com.code.aon.bridge.plugin.Utils;
 import com.code.aon.jaas.auth.session.AuthenticationLoginException;
 import com.code.aon.jaas.deployment.DeploymentException;
 
@@ -29,14 +26,7 @@ public class FailedLogin {
 	private String message;
 
 	public FailedLogin() throws DeploymentException {
-        IConsoleAdmin console = null;
-		try {
-			console = SecurityLocator.getInstance().getConsole(IJNDIConstants.CONSOLE_FACTORY_CLASS);
-		} catch (SecurityLocatorException e) {
-			JBossConsoleAdminFactory FACTORY = new JBossConsoleAdminFactory();
-			if ( FACTORY.accept() )
-				console = FACTORY.createConsoleAdmin();
-    	}
+        IConsoleAdmin console = Utils.getSecurityConsole();
 		String oname = console.getAonSessionManagerName();
 		AuthenticationLoginException e = 
 			(AuthenticationLoginException) console.invoke( oname, IOperation.GET_LASTLOGIN_EXCEPTION, new Object[] {IConsoleAdmin.EMPTY_STRING}, new String[] {String.class.getName()} );

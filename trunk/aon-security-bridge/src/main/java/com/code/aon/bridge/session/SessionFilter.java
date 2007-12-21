@@ -21,10 +21,7 @@ import org.apache.commons.logging.LogFactory;
 import com.code.aon.bridge.jmx.mbean.ConsoleAdminFactoryManager;
 import com.code.aon.bridge.jmx.mbean.IConsoleAdmin;
 import com.code.aon.bridge.jmx.mbean.IOperation;
-import com.code.aon.bridge.jmx.mbean.core.JBossConsoleAdminFactory;
-import com.code.aon.bridge.jndi.IJNDIConstants;
-import com.code.aon.bridge.jndi.SecurityLocator;
-import com.code.aon.bridge.jndi.SecurityLocatorException;
+import com.code.aon.bridge.plugin.Utils;
 import com.code.aon.jaas.auth.AuthPrincipal;
 import com.code.aon.jaas.auth.session.AuthenticationLoginException;
 import com.code.aon.jaas.auth.session.SessionInfo;
@@ -32,21 +29,16 @@ import com.code.aon.jaas.deployment.DeploymentException;
 
 /**
  * @author Consulting & Development. Iñaki Ayerbe - 15/05/2007
- *
  */
 public class SessionFilter implements Filter {
 
-    /** Obtiene un logger apropiado. */
+    /** Obtains the SessionFilter Logger. */
 	protected static final Log LOGGER = LogFactory.getLog( SessionFilter.class.getName() );
 
-	/*
-     * Does nothing.
-	 */
+	@Override
 	public void destroy() {	}
 
-	/* (non-Javadoc)
-	 * @see javax.servlet.Filter#doFilter(javax.servlet.ServletRequest, javax.servlet.ServletResponse, javax.servlet.FilterChain)
-	 */
+	@Override
 	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) 
 			throws IOException, ServletException {
 		HttpServletRequest httpRequest = (HttpServletRequest) request;
@@ -85,21 +77,12 @@ public class SessionFilter implements Filter {
 		chain.doFilter(request, response);
 	}
 
-	/* (non-Javadoc)
-	 * @see javax.servlet.Filter#init(javax.servlet.FilterConfig)
-	 */
+	@Override
 	public void init(FilterConfig filterConfig) throws ServletException {
 		Object[] params = {true};
         String[] sig = {Boolean.class.getName()};
-		IConsoleAdmin console = null;
 		try {
-			try {
-				console = SecurityLocator.getInstance().getConsole(IJNDIConstants.CONSOLE_FACTORY_CLASS);
-			} catch (SecurityLocatorException e) {
-				JBossConsoleAdminFactory FACTORY = new JBossConsoleAdminFactory();
-				if ( FACTORY.accept() )
-					console = FACTORY.createConsoleAdmin();
-	    	}
+			IConsoleAdmin console = Utils.getSecurityConsole();
 			String oname = console.getAonSessionManagerName();
 			console.invoke( oname, IOperation.ENABLE_CONCURRENT_SESSIONS, params, sig );
 		} catch (DeploymentException e) {
