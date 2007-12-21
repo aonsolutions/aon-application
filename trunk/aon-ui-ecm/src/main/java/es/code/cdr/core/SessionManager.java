@@ -1,12 +1,20 @@
 package es.code.cdr.core;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
+import javax.jcr.LoginException;
+import javax.jcr.RepositoryException;
 import javax.jcr.Session;
+import javax.jcr.SimpleCredentials;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.code.aon.bridge.plugin.UserManager;
+import com.code.aon.jaas.deployment.DeploymentException;
+import com.code.aon.jaas.valves.BackDoorPrincipal;
 
 /**
  * @author Consulting & Development. Iñaki Ayerbe - 02/07/2007
@@ -29,44 +37,113 @@ public class SessionManager {
 		return instance;
 	}
 
-	private Map<String, Session> sessions;
+	/** User manager. */
+	private UserManager userManager = new UserManager();
+	/** Hierarchies. */
+	private Map<String, HierarchyManager> hierarchies = new HashMap<String, HierarchyManager>();
 
 	/**
 	 */
 	private SessionManager() {
-		sessions = new HashMap<String, Session>();
 	}
 
 	/**
-	 * Put a <code>Session</code>
+	 * Returns the authenticated user name.
 	 * 
-	 * @param sessionId
-	 * @param session
+	 * @return
 	 */
-	public void put(String sessionId, Session session) {
-		LOGGER.debug("put(" + sessionId + " ," + session + ")");
-		sessions.put( sessionId, session );
-    }
+	public String getUserName() {
+		return userManager.getUserFromPrincipal().getName();
+	}
 
 	/**
-	 * Get a <code>Session</code>
+	 * Returns the list of domains this context belongs to.
+	 * 
+	 * @param ctx
+	 * @return
+	 * @throws DeploymentException
+	 */
+	public List<String> getApplicationDomains(String ctx) throws DeploymentException {
+		return  userManager.getApplicationDomains( ctx );
+	}
+
+	/**
+	 * Get a <code>HierarchyManager</code>
 	 * 
 	 * @param sessionId
 	 * @return
 	 */
-	public Session get(String sessionId) {
-		LOGGER.debug("get(" + sessionId + ")");
-		return (Session) sessions.get( sessionId );
+	public HierarchyManager getHierarchyManager(String sessionId) {
+		return (HierarchyManager) hierarchies.get( sessionId );
 	}
 
 	/**
-	 * Remove the <code>Session</code> bound to identifier passed by parameter.
+	 * Gets hierarchy manager for the repository using JCR session. 
+	 * Creates a new JCR session and hierarchy manager if not exist.
 	 * 
 	 * @param sessionId
+	 * @param bdp
+	 * @param workspaceId
 	 */
-	public void remove(String sessionId) {
-		LOGGER.debug("remove(" + sessionId + ")");
-        sessions.remove( sessionId );
+	public HierarchyManager getHierarchyManager(
+			String sessionId, BackDoorPrincipal bdp, String workspaceId) {
+		HierarchyManager hm = getHierarchyManager( sessionId );
+		if ( hm == null ) {
+			hm = new HierarchyManager( bdp.getPrincipal().getName() );
+			try {
+				hm.init( getSession( sessionId, bdp, workspaceId ).getRootNode() );
+				hierarchies.put( sessionId, hm );
+			} catch (RepositoryException e) {
+				LOGGER.error( e.getMessage(), e );
+			}
+		}
+		return hm;
 	}
+
+    /**
+     * Gets access controlled query manager. Use MgnlContext if possible.
+     * @param request
+     * @param repositoryID
+     * @param workspaceID
+     * @throws RepositoryException
+     */
+    protected QueryManager getQueryManager() throws RepositoryException {
+    	return null;
+    }
+
+	/**
+	 * Gets the JCR session while login, creates a new JCR session if not existing.
+	 * 
+	 * @param sessionId
+	 * @param bdp
+	 * @param workspaceId
+	 * 
+	 * @throws LoginException
+	 * @throws RepositoryException
+	 */
+	private Session getSession(String sessionId, BackDoorPrincipal bdp, String workspaceId)
+			throws LoginException, RepositoryException {
+		return getRepositorySession( sessionId, bdp, workspaceId );
+	}
+
+	/**
+	 * Get repository session.
+	 * 
+	 * @param sessionId
+	 * @param bdp
+	 * @param workspaceId
+	 * 
+	 * @throws LoginException
+	 * @throws RepositoryException
+	 */
+	private Session getRepositorySession(String sessionId, BackDoorPrincipal bdp, String workspaceId)
+			throws LoginException, RepositoryException {
+		HierarchyManager hm = getHierarchyManager( sessionId );
+        if ( hm == null ) {
+    		SimpleCredentials sc = new SimpleCredentials( bdp.getPrincipal().getName() , bdp.getPassword().toCharArray() );
+        	return ContentRepository.getSessionInstance( sc, workspaceId );
+        }
+        return hm.getWorkspace().getSession();
+    }
 
 }

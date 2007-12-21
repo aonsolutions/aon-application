@@ -11,6 +11,8 @@ import org.apache.jackrabbit.name.QName;
  */
 public interface IConstants {
 
+	static final String CDR_BUNDLE_NAME = "es.code.cdr.ui.i18n.messages";
+
 	static final String ES = "es";
 	static final String EN = "en";
 
@@ -22,9 +24,11 @@ public interface IConstants {
 	static final String UNKNOWN = "unknown";
 
 	static String 
+		JCR_ROOTVERSION = QName.NS_JCR_PREFIX + SEMICOLON + QName.JCR_ROOTVERSION.getLocalName(),
 		JCR_MIMETYPE = QName.NS_JCR_PREFIX + SEMICOLON + QName.JCR_MIMETYPE.getLocalName(),
 		JCR_ENCODING = QName.NS_JCR_PREFIX + SEMICOLON + QName.JCR_ENCODING.getLocalName(),
 		JCR_DATA = QName.NS_JCR_PREFIX + SEMICOLON + QName.JCR_DATA.getLocalName(),
+		JCR_FROZENNODE = QName.NS_JCR_PREFIX + SEMICOLON + QName.JCR_FROZENNODE.getLocalName(),
 		JCR_LASTMODIFIED = QName.NS_JCR_PREFIX + SEMICOLON + QName.JCR_LASTMODIFIED.getLocalName()
 	;
 }

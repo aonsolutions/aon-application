@@ -18,6 +18,7 @@ import es.code.repository.util.Path;
 
 import es.code.cdr.core.ContentRepository;
 import es.code.repository.IProvider;
+import es.code.repository.RepositoryInfo;
 
 /**
  * @author Consulting & Development. Iñaki Ayerbe - 29/06/2007
@@ -44,6 +45,7 @@ public class CDRInitializer implements ServletContextListener {
 		try {
 			is = getClass().getResourceAsStream( "/bootstrap.properties" );
 			bootstrap.load(is);
+			bootstrap.setProperty( RepositoryInfo.CONTEXT_PATH, "/aon-web-ecm" );
 		} catch (IOException e) {
 			LOGGER.error( "Unable to load due to an IOException: {}", e.getMessage() );
 		} finally {
@@ -67,6 +69,20 @@ public class CDRInitializer implements ServletContextListener {
 				LOGGER.info( "JAAS config file set by parent container or some other application"
 						+ "\nConfig in use " + System.getProperty( IProvider.JAAS_CONFIG_FILE_KEY )
 						+ "\nPlease make sure JAAS config has all necessary modules configured");
+			}
+		}
+		if ( StringUtils.isEmpty( System.getProperty( IProvider.PROFILE_MAPPINGS_FILE_KEY ) ) ) {
+			try {
+				String mappings = Path.getResource( "", IProvider.PROFILE_MAPPINGS, "" ).getFile();
+				System.setProperty( IProvider.PROFILE_MAPPINGS_FILE_KEY, mappings );
+			} catch (SecurityException se) {
+				LOGGER.error( "Failed to set " + IProvider.PROFILE_MAPPINGS_FILE_KEY + ", check application server settings. Aborting startup", se );
+				return;
+			}
+		} else {
+			if (LOGGER.isInfoEnabled()) {
+				LOGGER.info( "Profile mappings file set by parent container or some other application"
+						+ "\nProfile mappings in use " + System.getProperty( IProvider.PROFILE_MAPPINGS_FILE_KEY ) );
 			}
 		}
 

@@ -4,7 +4,7 @@
 package es.code.cdr.core;
 
 import es.code.cdr.beans.CDRNode;
-import es.code.cdr.core.event.WidgetListener;
+import es.code.cdr.event.WidgetListener;
 
 /**
  * @author Consulting & Development. Iñaki Ayerbe - 11/07/2007

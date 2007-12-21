@@ -1,7 +1,7 @@
 /**
  * 
  */
-package es.code.cdr.core.event;
+package es.code.cdr.event;
 
 import java.util.EventListener;
 

@@ -172,30 +172,30 @@ public class BootstrapTest extends TestCase {
 	 * XPATH query.
 	 */
 	public void testGetContent() {
-		String username = ContentRepository.getProvider().getProps().getProperty( IProvider.REPOSITORY_CONNECTION_USER );
-		String passwd = ContentRepository.getProvider().getProps().getProperty( IProvider.REPOSITORY_CONNECTION_PSWD );
-		try {
-			Session jcrSession = 
-				ContentRepository.getSessionInstance( new SimpleCredentials( username, passwd.toCharArray() ) );
-			assertNotNull( "Repository not properly configured.", jcrSession );
-			try {
-				QueryParameters params = new QueryParameters();
-				params.setBycontent( "subsecuente" );
-				QueryResult result = 
-					QueryManager.getInstance().execute( jcrSession, params, Query.XPATH );
-				NodeIterator it = result.getNodes();
-				while (it.hasNext()) {
-					Node n = it.nextNode();
-					System.out.println( n.getName() + " " + n.getPath() );
-				}
-			} catch (RepositoryException e) {
-				e.printStackTrace();
-			} catch (InvalidStatementException e) {
-				e.printStackTrace();
-			}
-		} catch (RepositoryException e) {
-			e.printStackTrace();
-		}
+//		String username = ContentRepository.getProvider().getRi().getProps().getProperty( IProvider.REPOSITORY_CONNECTION_USER );
+//		String passwd = ContentRepository.getProvider().getRi().getProps().getProperty( IProvider.REPOSITORY_CONNECTION_PSWD );
+//		try {
+//			Session jcrSession = 
+//				ContentRepository.getSessionInstance( new SimpleCredentials( username, passwd.toCharArray() ) );
+//			assertNotNull( "Repository not properly configured.", jcrSession );
+//			try {
+//				QueryParameters params = new QueryParameters();
+//				params.setBycontent( "subsecuente" );
+//				QueryResult result = 
+//					QueryManager.getInstance().execute( jcrSession, params, Query.XPATH );
+//				NodeIterator it = result.getNodes();
+//				while (it.hasNext()) {
+//					Node n = it.nextNode();
+//					System.out.println( n.getName() + " " + n.getPath() );
+//				}
+//			} catch (RepositoryException e) {
+//				e.printStackTrace();
+//			} catch (InvalidStatementException e) {
+//				e.printStackTrace();
+//			}
+//		} catch (RepositoryException e) {
+//			e.printStackTrace();
+//		}
 	}
 
 	private void printRepositoryProperties(Session jcrSession) {
