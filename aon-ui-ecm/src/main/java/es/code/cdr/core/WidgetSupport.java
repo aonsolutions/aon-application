@@ -4,8 +4,8 @@ import java.io.Serializable;
 
 import sun.awt.EventListenerAggregate;
 
-import es.code.cdr.core.event.WidgetEvent;
-import es.code.cdr.core.event.WidgetListener;
+import es.code.cdr.event.WidgetEvent;
+import es.code.cdr.event.WidgetListener;
 
 /**
  * @author Consulting & Development. Iñaki Ayerbe - 11/07/2007

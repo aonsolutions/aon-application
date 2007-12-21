@@ -17,6 +17,20 @@
 
 		<dependency>
 			<groupId>com.code.aon</groupId>
+			<artifactId>aon.security.bridge</artifactId>
+			<version>1.2.5</version>
+			<scope>compile</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>com.code.aon</groupId>
+			<artifactId>aon.security</artifactId>
+			<version>1.2.5</version>
+			<scope>provided</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>com.code.aon</groupId>
 			<artifactId>aon.common</artifactId>
 			<version>1.9.15-SNAPSHOT</version>
 			<scope>compile</scope>

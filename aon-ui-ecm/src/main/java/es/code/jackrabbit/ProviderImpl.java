@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.Hashtable;
+import java.util.Iterator;
 import java.util.Properties;
 
 import javax.jcr.LoginException;
@@ -38,10 +39,14 @@ import org.apache.jackrabbit.core.nodetype.xml.NodeTypeReader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.code.aon.jaas.client.ast.IDomain;
+
 import es.code.repository.util.Path;
 
 import es.code.cdr.CDRQName;
+import es.code.cdr.core.ContentRepository;
 import es.code.repository.IProvider;
+import es.code.repository.RepositoryInfo;
 import es.code.repository.RepositoryNotInitializedException;
 
 /**
@@ -54,7 +59,7 @@ public class ProviderImpl implements IProvider {
 	protected static final Logger LOGGER = LoggerFactory.getLogger( ProviderImpl.class.getName() );
 
 	/** Repository properties */
-	private Properties props;
+	private RepositoryInfo ri;
 
 	/** JCR repository instance */
 	private Repository repository;
@@ -62,23 +67,23 @@ public class ProviderImpl implements IProvider {
 	/*(non-Javadoc)
 	 * @see es.code.repository.IProvider#init(java.util.Properties)
 	 */
-	public void init(Properties props) throws IOException, RepositoryNotInitializedException {
-//		checkXmlSettings();
+	public void init(RepositoryInfo ri) throws IOException, RepositoryNotInitializedException {
+		this.ri = ri;
+		Properties props = this.ri.getProps();
 
-		this.props = props;
 		/* connect to repository */
-		String configFile = this.props.getProperty( REPOSITORY_CONFIG_FILENAME_KEY );
+		String configFile = props.getProperty( REPOSITORY_CONFIG_FILENAME_KEY );
 		URL configURL = Path.getResource( configFile, REPOSITORY, REPOSITORY_NAME_KEY );
 		configFile = Path.getAbsolutePath( configURL );
-		String repositoryHome = this.props.getProperty( REPOSITORY_HOME_KEY );
+		String repositoryHome = props.getProperty( REPOSITORY_HOME_KEY );
 		repositoryHome = Path.getAbsoluteFileSystemPath( repositoryHome ); 
     	if ( LOGGER.isDebugEnabled() )
     		LOGGER.debug( "Loading repository at {} (config file: {})", repositoryHome, configFile );
 //		boolean addShutdownTask = false;
-		final String repositoryName = this.props.getProperty( REPOSITORY_NAME_KEY );
+		final String repositoryName = props.getProperty( REPOSITORY_NAME_KEY );
 		final Hashtable<String, String> env = new Hashtable<String, String>();
-		env.put( Context.INITIAL_CONTEXT_FACTORY, this.props.getProperty( NAMING_FACTORY_CLASS_KEY ) );
-		env.put( Context.PROVIDER_URL, this.props.getProperty( PROVIDER_URL_KEY ) );
+		env.put( Context.INITIAL_CONTEXT_FACTORY, props.getProperty( NAMING_FACTORY_CLASS_KEY ) );
+		env.put( Context.PROVIDER_URL, props.getProperty( PROVIDER_URL_KEY ) );
 		try {
 			InitialContext ctx = new InitialContext(env);
 			// first try to find the existing object if any
@@ -91,6 +96,7 @@ public class ProviderImpl implements IProvider {
 				this.repository = (Repository) ctx.lookup(repositoryName);
 //				addShutdownTask = true;
 			}
+            validateWorkspaces();
 		} catch (NamingException e) {
 			LOGGER.error("Unable to initialize repository: " + e.getMessage(), e);
 			throw new RepositoryNotInitializedException(e);
@@ -101,7 +107,6 @@ public class ProviderImpl implements IProvider {
 			LOGGER.error("Unable to initialize repository: " + e.getMessage(), e);
 			throw new RepositoryNotInitializedException(e);
 		}
-
 //		if (addShutdownTask) {
 //			ShutdownManager.addShutdownTask(new ShutdownTask() {
 //
@@ -128,16 +133,12 @@ public class ProviderImpl implements IProvider {
 //		}
 	}
 
-	/*(non-Javadoc)
-	 * @see es.code.repository.IProvider#getProps()
-	 */
-	public Properties getProps() {
-		return props;
+	@Override
+	public RepositoryInfo getRi() {
+		return ri;
 	}
 
-	/*(non-Javadoc)
-	 * @see es.code.repository.IProvider#getUnderlineRepository()
-	 */
+	@Override
 	public Repository getUnderlineRepository() throws RepositoryNotInitializedException {
 		if (this.repository == null) {
 			throw new RepositoryNotInitializedException("Null repository"); //$NON-NLS-1$
@@ -145,11 +146,11 @@ public class ProviderImpl implements IProvider {
 		return this.repository;
 	}
 
-	/*(non-Javadoc)
-	 * @see es.code.repository.IProvider#getSessionInstance(javax.jcr.SimpleCredentials)
-	 */
-	public Session getSessionInstance(SimpleCredentials sc) throws LoginException, RepositoryException {
-		Session jcrSession = this.repository.login( sc );
+	@Override
+	public Session getSessionInstance(SimpleCredentials sc, String workspaceId) 
+				throws LoginException, RepositoryException {
+		String wsId = getDefaultWorkspaceName( workspaceId );
+		Session jcrSession = this.repository.login( sc, wsId );
 		InputStream xml = getNodeTypeDefinition( StringUtils.EMPTY );
 		registerNamespace( CDRQName.NS_AON_PREFIX, CDRQName.NS_AON_URI, jcrSession.getWorkspace() );
 		registerNodeTypes( jcrSession, xml );
@@ -162,9 +163,14 @@ public class ProviderImpl implements IProvider {
 		return jcrSession;
 	}
 
-	/*(non-Javadoc)
-	 * @see es.code.repository.IProvider#registerNamespace(java.lang.String, java.lang.String, javax.jcr.Workspace)
-	 */
+	@Override
+	public String getDefaultWorkspaceName(String workspaceId) {
+//	Checks if workspaceId name equals to "localhost"
+		return ( workspaceId.equals( IDomain.DEFAULT_DOMAIN_NAME ) )? 
+				ContentRepository.DEFAULT_WORKSPACE: workspaceId;
+	}
+
+	@Override
 	public void registerNamespace(String namespacePrefix, String uri, Workspace workspace) throws RepositoryException {
 		try {
 			workspace.getNamespaceRegistry().getURI(namespacePrefix);
@@ -175,61 +181,51 @@ public class ProviderImpl implements IProvider {
 		}
 	}
 
-	/*(non-Javadoc)
-	 * @see es.code.repository.IProvider#unregisterNamespace(java.lang.String, javax.jcr.Workspace)
-	 */
+	@Override
 	public void unregisterNamespace(String prefix, Workspace workspace) throws RepositoryException {
 		workspace.getNamespaceRegistry().unregisterNamespace(prefix);
 	}
 
-	/*(non-Javadoc)
-	 * @see es.code.repository.IProvider#registerNodeTypes()
-	 */
+	@Override
 	public void registerNodeTypes() throws RepositoryException {
 		registerNodeTypes( StringUtils.EMPTY );
 	}
 
-	/*(non-Javadoc)
-	 * @see es.code.repository.IProvider#registerNodeTypes(java.lang.String)
-	 */
+	@Override
 	public void registerNodeTypes(String configuration) throws RepositoryException {
 		if ( StringUtils.isEmpty( configuration ) ) {
-			configuration = (String) this.props.getProperty( CUSTOM_NODETYPES_KEY );
+			configuration = (String) this.ri.getProps().getProperty( CUSTOM_NODETYPES_KEY );
 		}
 		InputStream xml = getNodeTypeDefinition( configuration );
 		registerNodeTypes( xml );
 	}
 
-	/*(non-Javadoc)
-	 * @see es.code.repository.IProvider#registerNodeTypes(java.io.InputStream)
-	 */
+	@Override
 	public void registerNodeTypes(InputStream xmlStream) throws RepositoryException {
 		SimpleCredentials credentials = 
-			new SimpleCredentials( this.props.getProperty( IProvider.REPOSITORY_CONNECTION_USER )
-								, this.props.getProperty( IProvider.REPOSITORY_CONNECTION_PSWD ).toCharArray() );
+			new SimpleCredentials( this.ri.getProps().getProperty( IProvider.REPOSITORY_CONNECTION_USER )
+								, this.ri.getProps().getProperty( IProvider.REPOSITORY_CONNECTION_PSWD ).toCharArray() );
 		Session jcrSession = this.repository.login(credentials);
 		registerNodeTypes( jcrSession, xmlStream );
 	}
 
-	/*(non-Javadoc)
-	 * @see es.code.repository.IProvider#registerWorkspace(java.lang.String)
-	 */
+	@Override
 	public boolean registerWorkspace(String workspaceName) throws RepositoryException {
 		// check if workspace already exists
 		SimpleCredentials credentials = 
-				new SimpleCredentials( this.props.getProperty( IProvider.REPOSITORY_CONNECTION_USER )
-									, this.props.getProperty( IProvider.REPOSITORY_CONNECTION_PSWD ).toCharArray() );
+				new SimpleCredentials( this.ri.getProps().getProperty( IProvider.REPOSITORY_CONNECTION_USER )
+									, this.ri.getProps().getProperty( IProvider.REPOSITORY_CONNECTION_PSWD ).toCharArray() );
 		Session jcrSession = this.repository.login(credentials);
 		try {
+			String wsId = getDefaultWorkspaceName( workspaceName );
 			WorkspaceImpl defaultWorkspace = (WorkspaceImpl) jcrSession.getWorkspace();
 			String[] workspaceNames = defaultWorkspace.getAccessibleWorkspaceNames();
 
-			boolean alreadyExists = ArrayUtils.contains(workspaceNames, workspaceName);
+			boolean alreadyExists = ArrayUtils.contains( workspaceNames, wsId );
 			if (!alreadyExists) {
-				defaultWorkspace.createWorkspace(workspaceName);
+				defaultWorkspace.createWorkspace( wsId );
 			}
 			jcrSession.logout();
-
 			return !alreadyExists;
 		} catch (ClassCastException e) {
 			// this could happen if the repository provider does not have proper Shared API for the
@@ -242,7 +238,20 @@ public class ProviderImpl implements IProvider {
 		return false;
 	}
 
-	/**
+    /**
+     * Checks if all workspaces are present according to the , 
+     * creates any missing workspace
+     * 
+	 * @throws RepositoryException
+     */
+    private void validateWorkspaces() throws RepositoryException {
+        Iterator<String> names = this.ri.getWorkspaces().iterator();
+        while ( names.hasNext() ) {
+            registerWorkspace( names.next() );
+        }
+    }
+
+    /**
      * Node type registration is entirely dependent on the implementation. 
      * Refer JSR-170 specifications.
      * 
@@ -323,28 +332,4 @@ public class ProviderImpl implements IProvider {
 		return null;
 	}
 
-//	/**
-//	 * WORKAROUND for tomcat 5.0/jdk 1.5 problem tomcat\common\endorsed contains an xml-apis.jar 
-//	 * needed by tomcat and loaded before all xmsl stuff present in the jdk (1.4 naming problem). 
-//	 * In the xml-apis.jar file the TransformerFactoryImpl is set to 
-//	 * "org.apache.xalan.processor.TransformerFactoryImpl" instead of
-//	 * "com.sun.org.apache.xalan.internal.xsltc.trax.TransformerFactoryImpl". 
-//	 * solution: remove the file xml-apis.jar
-//	 * from the directory OR manually change the javax.xml.transform.TransformerFactory 
-//	 * system property
-//	 */
-//   protected void checkXmlSettings() {
-//       if (SystemUtils.isJavaVersionAtLeast(1.5f)
-//           && "org.apache.xalan.processor.TransformerFactoryImpl".equals(System
-//               .getProperty("javax.xml.transform.TransformerFactory"))) {
-//
-//    	   LOGGER.info("Java 1.5 detected, setting system property \"javax.xml.transform.TransformerFactory\" to "
-//               + "\"com.sun.org.apache.xalan.internal.xsltc.trax.TransformerFactoryImpl\"");
-//
-//           System.setProperty(
-//               "javax.xml.transform.TransformerFactory",
-//               "com.sun.org.apache.xalan.internal.xsltc.trax.TransformerFactoryImpl");
-//       }
-//   }
-//
 }

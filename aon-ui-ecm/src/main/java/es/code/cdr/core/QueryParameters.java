@@ -175,7 +175,7 @@ public class QueryParameters extends AbstractWidget {
     	if ( LANGUAGES == null ) {
     		FacesContext ctx = FacesContext.getCurrentInstance();
 	    	Locale locale = ctx.getExternalContext().getRequestLocale();
-	    	ResourceBundle bundle = ResourceBundle.getBundle( ctx.getApplication().getMessageBundle(), locale );
+	    	ResourceBundle bundle = ResourceBundle.getBundle( IConstants.CDR_BUNDLE_NAME, locale );
     		LANGUAGES = 
     			new SelectItem[]{
     		    	new SelectItem( IConstants.UNKNOWN, IConstants.EMPTY_STRING ),

@@ -6,12 +6,13 @@ import java.io.InputStream;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Collection;
 import java.util.Date;
+import java.util.List;
 
 import javax.jcr.Node;
 import javax.jcr.PathNotFoundException;
 import javax.jcr.RepositoryException;
+import javax.jcr.UnsupportedRepositoryOperationException;
 import javax.jcr.Value;
 import javax.jcr.version.Version;
 import javax.jcr.version.VersionHistory;
@@ -39,6 +40,8 @@ import es.code.cdr.ui.util.JCRUtils;
  *
  */
 public class Document implements CDRNode {
+
+	private static final long serialVersionUID = 1L;
 
 	/** Document class Logger */
 	private static final Logger LOGGER = LoggerFactory.getLogger( Document.class.getName() );
@@ -157,16 +160,12 @@ public class Document implements CDRNode {
 		setContent( resNode, resource );
 	}
 
-	/* (non-Javadoc)
-	 * @see es.code.cdr.beans.CDRNode#getNode()
-	 */
+	@Override
 	public Node getNode() {
 		return node;
 	}
 
-	/* (non-Javadoc)
-	 * @see es.code.cdr.beans.CDRNode#getStatus()
-	 */
+	@Override
 	public String getStatus() throws RepositoryException {
 		String status = "D";
 		Node contentNode = node.getNode( ContentRepository.getNodeName( CDRQName.AON_CONTENT ) );
@@ -177,27 +176,26 @@ public class Document implements CDRNode {
 		return status;
 	}
 
-	/* (non-Javadoc)
-	 * @see es.code.cdr.beans.CDRNode#getName()
-	 */
+	@Override
 	public String getName() throws RepositoryException {
 		return node.getName();
 	}
 
-	/* (non-Javadoc)
-	 * @see es.code.cdr.beans.CDRNode#getAuthor()
-	 */
+	@Override
 	public String getAuthor() throws RepositoryException {
 		String name = ContentRepository.getNodeName( CDRQName.AON_AUTHOR );
 		return node.getProperty( name ).getString();
 	}
 
-	/* (non-Javadoc)
-	 * @see es.code.cdr.beans.CDRNode#getEntryDate()
-	 */
+	@Override
 	public Date getEntryDate() throws RepositoryException {
 		String name = ContentRepository.getNodeName( CDRQName.AON_ENTRYDATE );
 		return node.getProperty( name ).getDate().getTime();
+	}
+
+	@Override
+	public String getVersion() throws RepositoryException {
+		return getContentNode().getBaseVersion().getName();
 	}
 
 	/**
@@ -284,70 +282,114 @@ public class Document implements CDRNode {
 	 * @return the node content <code>InputStream</code>
 	 */
 	public InputStream getContent() throws RepositoryException {
-		Node contentNode = node.getNode( ContentRepository.getNodeName( CDRQName.AON_CONTENT ) );
+		Node contentNode = getContentNode();
 		return contentNode.getProperty( IConstants.JCR_DATA ).getStream();
+	}
+
+	/**
+	 * @return the node content
+	 */
+	public Node getContentNode() throws RepositoryException {
+		return node.getNode( ContentRepository.getNodeName( CDRQName.AON_CONTENT ) );
 	}
 
 	/**
 	 * @return the mimetype
 	 */
 	public String getMimeType() throws RepositoryException {
-		Node contentNode = node.getNode( ContentRepository.getNodeName( CDRQName.AON_CONTENT ) );
+		Node contentNode = getContentNode();
 		return contentNode.getProperty( IConstants.JCR_MIMETYPE ).getString();
 	}
 
-	public Collection getVersionHistory() throws RepositoryException {
+	/**
+	 * Creates a <code>Document</code> for selected version.
+	 * 
+	 * @param version
+	 * @return
+	 * @throws UnsupportedRepositoryOperationException
+	 * @throws RepositoryException
+	 */
+	public Document getDocument4Version(Version version) 
+			throws UnsupportedRepositoryOperationException, RepositoryException {
+		Document documentByVersion = new Document ( this.node );
+//        Node frozenNode = version.getNode( IConstants.JCR_FROZENNODE );
+//        Node resNode = documentByVersion.getContentNode();
+//		resNode.setProperty( IConstants.JCR_DATA, frozenNode.getProperty( IConstants.JCR_DATA ).getStream() );
+//		resNode.setProperty( IConstants.JCR_LASTMODIFIED, version.getCreated().getTimeInMillis() );
+		return documentByVersion;
+	}
+
+	/**
+	 * Returns the document version history.
+	 *  
+	 * @return
+	 * @throws RepositoryException
+	 */
+	public List<Version> getVersionHistory() throws RepositoryException {
 		ArrayList<Version> l = new ArrayList<Version>();
-		Node contentNode = node.getNode( ContentRepository.getNodeName( CDRQName.AON_CONTENT ) );
+		Node contentNode = getContentNode();
 		VersionHistory vh = contentNode.getVersionHistory();
 		for(VersionIterator vi = vh.getAllVersions(); vi.hasNext();) {
-			l.add( vi.nextVersion() );
+			Version version = vi.nextVersion();
+            if( !version.getName().equals( IConstants.JCR_ROOTVERSION ) )
+            	l.add( version );
 		}
 		return l;
 	}
 
-	public Version checkin() throws RepositoryException {
-		Node contentNode = node.getNode( ContentRepository.getNodeName( CDRQName.AON_CONTENT ) );
-		return contentNode.checkin();
+	public void save() throws RepositoryException {
+		node.save();
 	}
 
-	public Version checkin(String author, URL resource) throws IOException, RepositoryException {
-		setAuthor( author );
-		Node contentNode = node.getNode( ContentRepository.getNodeName( CDRQName.AON_CONTENT ) );
-		setContent( contentNode, resource );
-		contentNode.save();
+	public void refresh(boolean bol) throws RepositoryException {
+		node.refresh( bol );
+	}
+
+	public Version checkin(URL resource) throws IOException, RepositoryException {
+		setContent( getContentNode(), resource );
+		node.save();
 		Version version = checkin();
-//		unlock();
+		unlock();
 		return version;
 	}
 
+	public Version checkin() throws RepositoryException {
+		return getContentNode().checkin();
+	}
+
 	public void checkout() throws RepositoryException {
-//		lock();
-		Node contentNode = node.getNode( ContentRepository.getNodeName( CDRQName.AON_CONTENT ) );
-		contentNode.checkout();
+		lock();
+		getContentNode().checkout();
 	}
 
 	public boolean isCheckedOut() throws RepositoryException {
-		Node contentNode = node.getNode( ContentRepository.getNodeName( CDRQName.AON_CONTENT ) );
-		return contentNode.isCheckedOut();
+		return getContentNode().isCheckedOut();
 	}
 
 	public void restore() throws RepositoryException {
-		try {
-//            String lockToken = node.getLock().getLockToken();
-//			unlock();
-//			node.getSession().removeLockToken( lockToken );
-			Node contentNode = node.getNode( ContentRepository.getNodeName( CDRQName.AON_CONTENT ) );
-			contentNode.restore( contentNode.getBaseVersion(), true );
-		} catch(RepositoryException e) {e.printStackTrace();}
+        String lockToken = node.getLock().getLockToken();
+		unlock();
+		node.getSession().removeLockToken( lockToken );
+		Node contentNode = getContentNode();
+		contentNode.restore( contentNode.getBaseVersion(), true );
 	}
 
-	public void lock() throws RepositoryException {
+	public void restoreVersion(String versionId) throws RepositoryException {
+		Node contentNode = getContentNode();
+        contentNode.restore( versionId, true );
+        contentNode.save();
+	}
+
+    public void lock() throws RepositoryException {
 		node.lock( true, false );
 	}
 
 	public void unlock() throws RepositoryException {
 		node.unlock();
+	}
+
+	public boolean isLocked() throws RepositoryException {
+        return node.isLocked();
 	}
 
 	private void setContent(Node resNode, URL resource) throws IOException, RepositoryException {
@@ -373,6 +415,5 @@ public class Document implements CDRNode {
 		Calendar lastModified = Calendar.getInstance();
 		lastModified.setTimeInMillis(file.lastModified());
 		resNode.setProperty( IConstants.JCR_LASTMODIFIED, lastModified );
-		
 	}
 }

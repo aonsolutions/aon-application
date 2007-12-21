@@ -21,6 +21,8 @@ import es.code.cdr.core.ContentRepository;
  */
 public class Folder implements CDRNode {
 
+	private static final long serialVersionUID = 8494047319282391384L;
+
 	/** Wrapped JCR node. */
 	Node node;
 
@@ -75,16 +77,12 @@ public class Folder implements CDRNode {
 		return node.getNode( relPath );
 	}
 
-	/* (non-Javadoc)
-	 * @see es.code.cdr.beans.CDRNode#getNode()
-	 */
+	@Override
 	public Node getNode() {
 		return node;
 	}
 
-	/* (non-Javadoc)
-	 * @see es.code.cdr.beans.CDRNode#getStatus()
-	 */
+	@Override
 	public String getStatus() throws RepositoryException {
 		String status = "N";
 		if ( node.isLocked() ) 
@@ -94,27 +92,26 @@ public class Folder implements CDRNode {
 		return status;
 	}
 
-	/* (non-Javadoc)
-	 * @see es.code.cdr.beans.CDRNode#getName()
-	 */
+	@Override
 	public String getName() throws RepositoryException {
 		return node.getName();
 	}
 
-	/* (non-Javadoc)
-	 * @see es.code.cdr.beans.CDRNode#getAuthor()
-	 */
+	@Override
 	public String getAuthor() throws RepositoryException {
 		String name = ContentRepository.getNodeName( CDRQName.AON_AUTHOR );
 		return node.getProperty( name ).getName();
 	}
 
-	/* (non-Javadoc)
-	 * @see es.code.cdr.beans.CDRNode#getEntryDate()
-	 */
+	@Override
 	public Date getEntryDate() throws RepositoryException {
 		String name = ContentRepository.getNodeName( CDRQName.AON_ENTRYDATE );
 		return node.getProperty( name ).getDate().getTime();
+	}
+
+	@Override
+	public String getVersion() throws RepositoryException {
+		return node.getBaseVersion().getName();
 	}
 
 }

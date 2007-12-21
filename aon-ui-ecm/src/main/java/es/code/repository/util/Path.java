@@ -67,15 +67,8 @@ public class Path {
 			return path;
 		}
 //		String root = null;
-//		IConsoleAdmin console = null;
 //		try {
-//			try {
-//				console = SecurityLocator.getInstance().getConsole( IJNDIConstants.CONSOLE_FACTORY_CLASS );
-//			} catch (SecurityLocatorException e) {
-//				JBossConsoleAdminFactory FACTORY = new JBossConsoleAdminFactory();
-//				if ( FACTORY.accept() )
-//					console = FACTORY.createConsoleAdmin();
-//			}
+//			IConsoleAdmin console = Utils.getSecurityConsole();
 //			root = console.getDeployerHome();
 //		} catch (DeploymentException e) {
 //		} catch (NullPointerException e) {

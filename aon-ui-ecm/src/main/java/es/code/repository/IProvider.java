@@ -6,7 +6,6 @@ package es.code.repository;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Properties;
 
 import javax.jcr.Repository;
 import javax.jcr.RepositoryException;
@@ -22,10 +21,12 @@ public interface IProvider {
 
     /** JAAS config file key. */
     static final String JAAS_CONFIG_FILE_KEY = "java.security.auth.login.config";
+    /** Role mappings file key. */
+    static final String PROFILE_MAPPINGS_FILE_KEY = "java.security.auth.PROFILE.mapping";
 	/** Repository connection user. */
-    public static final String REPOSITORY_CONNECTION_USER = "connection.jcr.user";
+    static final String REPOSITORY_CONNECTION_USER = "connection.jcr.user";
     /** Repository connection password.*/
-    public static final String REPOSITORY_CONNECTION_PSWD = "connection.jcr.password";
+    static final String REPOSITORY_CONNECTION_PSWD = "connection.jcr.password";
 
     static final String REPOSITORY_CONFIG_FILENAME_KEY = "repository.config";
 
@@ -43,6 +44,8 @@ public interface IProvider {
 
 	static final String JAAS = "resources/jaas.config";
 
+	static final String PROFILE_MAPPINGS = "resources/profilemappings.properties";
+
 	static final String REPOSITORY = "resources/repository.xml";
 
 	static final String NODETYPES = "resources/custom-nodetypes.xml";
@@ -51,17 +54,18 @@ public interface IProvider {
 	 * Initializes repository, this depends on the underlying repository implementation. Use any available method to get
 	 * the instance of Repository.
 	 * 
-	 * @param props key value pars as define in bootstrap.properties
+	 * @param ri key value pars as define in bootstrap.properties
 	 * @throws IOException
 	 * @throws RepositoryNotInitializedException
 	 */
-	void init(Properties props) throws IOException, RepositoryNotInitializedException;
+	void init(RepositoryInfo ri) throws IOException, RepositoryNotInitializedException;
 
 	/**
-	 * Gets properties.
+	 * Gets repository information.
+	 * 
 	 * @return
 	 */
-	Properties getProps();
+	RepositoryInfo getRi();
 
     /**
      * Gets the repository instance initialized on init() call.
@@ -70,14 +74,25 @@ public interface IProvider {
     Repository getUnderlineRepository() throws RepositoryNotInitializedException;
 
     /**
-     * Gets the session.
+     * Gets the JCR session.
+     * 
      * @param sc
+     * @param workspaceId
      * @return
      * @throws RepositoryException
      */
-	Session getSessionInstance(SimpleCredentials sc) throws RepositoryException;
+	Session getSessionInstance(SimpleCredentials sc, String workspaceId) throws RepositoryException;
 
-    /**
+	/**
+	 * Gets the default workspace bound to localhost domain, otherwise return 
+	 * the workspace name.
+	 * 
+	 * @param workspaceId
+	 * @return
+	 */
+	String getDefaultWorkspaceName(String workspaceId);
+
+	/**
      * Register namespace with the repository. Refer JCR-170 specifications.
      * @param prefix namespace prefix
      * @param uri namespace URI

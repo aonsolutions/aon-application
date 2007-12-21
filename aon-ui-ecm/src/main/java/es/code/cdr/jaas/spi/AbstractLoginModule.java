@@ -21,6 +21,7 @@ import org.apache.commons.logging.LogFactory;
  * @author Consulting & Development. Iñaki Ayerbe - 11-nov-2004
  * @since 1.0
  */
+@SuppressWarnings("unchecked")
 public abstract class AbstractLoginModule implements LoginModule, IConstants {
 
     /** Obtiene un logger apropiado. */

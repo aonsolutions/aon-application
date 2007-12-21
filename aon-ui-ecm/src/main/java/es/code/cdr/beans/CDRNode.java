@@ -40,4 +40,9 @@ public interface CDRNode extends Serializable {
 	 */
 	Date getEntryDate() throws RepositoryException;
 	
+	/**
+	 * @return the version
+	 */
+	String getVersion() throws RepositoryException;
+
 }
