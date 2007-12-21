@@ -17,6 +17,7 @@ import javax.management.MBeanServerFactory;
 import javax.management.MalformedObjectNameException;
 import javax.management.ObjectName;
 import javax.management.ReflectionException;
+import javax.security.auth.Subject;
 
 import com.code.aon.bridge.jmx.mbean.IConsoleAdmin;
 import com.code.aon.bridge.jmx.mbean.IMBeanInfo;
@@ -24,6 +25,7 @@ import com.code.aon.bridge.jmx.mbean.IOperation;
 import com.code.aon.bridge.jmx.mbean.MBeanFilter;
 import com.code.aon.jaas.deployment.DeploymentException;
 
+@SuppressWarnings("unchecked")
 public class TomcatConsoleAdmin implements IConsoleAdmin {
 
     /** Field DELIM (value is "";"") */
@@ -38,31 +40,23 @@ public class TomcatConsoleAdmin implements IConsoleAdmin {
     /** Map of applications deployed in Tomcat webapps diretory. */
     private Map<String, IMBeanInfo> mbeans;
 
-    /* (non-Javadoc)
-	 * @see com.code.aon.bridge.jmx.mbean.IConsoleAdmin#getAonMainDeployerName()
-	 */
+	@Override
 	public String getAonMainDeployerName() {
 		return AON_MAIN_DEPLOYER;
 	}
 
-	/* (non-Javadoc)
-	 * @see com.code.aon.bridge.jmx.mbean.IConsoleAdmin#getAonSecurityName()
-	 */
+	@Override
 	public String getAonSecurityName() {
 		return AON_SECURITY;
 	}
 
-	/* (non-Javadoc)
-	 * @see com.code.aon.bridge.jmx.mbean.IConsoleAdmin#getAonSessionManagerName()
-	 */
+	@Override
 	public String getAonSessionManagerName() {
 		return AON_SESSION_MANAGER;
 	}
 
-	/*(non-Javadoc)
-	 * @see com.code.aon.bridge.jmx.mbean.IConsoleAdmin#listDeployedAsString()
-	 */
-    public String listDeployedAsString() throws DeploymentException {
+	@Override
+	public String listDeployedAsString() throws DeploymentException {
     	try {
     		StringBuffer sb = new StringBuffer(); 
             Iterator iter = getMBeanServer().queryNames( new ObjectName("*:*"), null).iterator();
@@ -85,9 +79,7 @@ public class TomcatConsoleAdmin implements IConsoleAdmin {
 		} 
 	}
 
-	/*(non-Javadoc)
-	 * @see com.code.aon.bridge.jmx.mbean.IConsoleAdmin#isDeployed(java.lang.String)
-	 */
+	@Override
 	public boolean isDeployed(String name) throws DeploymentException {
 	    Object[] params = { name };
 	    String[] sig = { String.class.getName() };
@@ -95,18 +87,18 @@ public class TomcatConsoleAdmin implements IConsoleAdmin {
 	    return bol.booleanValue();
 	}
 
-	/*(non-Javadoc)
-	 * @see com.code.aon.bridge.jmx.mbean.IConsoleAdmin#flushAuthenticationCache(java.lang.String, java.security.Principal)
-	 */
-	public void flushAuthenticationCache(String domain, Principal principal)
-			throws DeploymentException {
+	@Override
+	public void flushAuthenticationCache(String domain, Principal principal) throws DeploymentException {
 		// TODO Auto-generated method stub
-
 	}
 
-	/*(non-Javadoc)
-	 * @see com.code.aon.bridge.jmx.mbean.IConsoleAdmin#getServerHomeURL()
-	 */
+	@Override
+	public Subject getActiveSubject() throws DeploymentException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
 	public URL getServerHomeURL() throws DeploymentException {
 		try {
 			Object[] params = { EMPTY_STRING };
@@ -119,34 +111,26 @@ public class TomcatConsoleAdmin implements IConsoleAdmin {
 		}
 	}
 
-	/*(non-Javadoc)
-	 * @see com.code.aon.bridge.jmx.mbean.IConsoleAdmin#getDeployerHome()
-	 */
+	@Override
 	public String getDeployerHome() throws DeploymentException {
-		return getServerHomeURL().getPath() + "webapps/"; //$NON-NLS-1$
+		return getServerHomeURL().getPath() + "webapps/";
 	}
 
-	/*(non-Javadoc)
-	 * @see com.code.aon.bridge.jmx.mbean.IConsoleAdmin#getServerInfo()
-	 */
+	@Override
 	public String getServerInfo() throws DeploymentException {
 		Object[] params = { EMPTY_STRING };
 		String[] sig = { String.class.getName() };
 		return (String) invoke( getAonMainDeployerName(), IOperation.GET_DEPLOYER_INFO, params, sig );
 	}
 
-	/*(non-Javadoc)
-	 * @see com.code.aon.bridge.jmx.mbean.IConsoleAdmin#deploy(java.lang.String)
-	 */
+	@Override
 	public void deploy(String name) throws DeploymentException {
        Object[] params = { name, EMPTY_STRING };
        String[] sig = { String.class.getName(), String.class.getName() };
        invoke( getAonMainDeployerName(), IOperation.DEPLOY, params, sig );
 	}
 
-	/*(non-Javadoc)
-	 * @see com.code.aon.bridge.jmx.mbean.IConsoleAdmin#invoke(java.lang.String, java.lang.Object[], java.lang.String[])
-	 */
+	@Override
 	public Object invoke(String oname, String method, Object[] params, String[] sig)
 			throws DeploymentException {
 		try {
@@ -162,9 +146,7 @@ public class TomcatConsoleAdmin implements IConsoleAdmin {
 		}
 	}
 
-	/*(non-Javadoc)
-	 * @see com.code.aon.bridge.jmx.mbean.IConsoleAdmin#getMBeans(com.code.aon.bridge.jmx.mbean.MBeanFilter)
-	 */
+	@Override
 	public List getMBeans(MBeanFilter filter) {
 		List<IMBeanInfo> list = new LinkedList<IMBeanInfo>();
 		Iterator iter = mbeans.values().iterator();
@@ -177,9 +159,7 @@ public class TomcatConsoleAdmin implements IConsoleAdmin {
 		return list;
 	}
 
-	/*(non-Javadoc)
-	 * @see com.code.aon.bridge.jmx.mbean.IConsoleAdmin#reload()
-	 */
+	@Override
 	public void load() throws DeploymentException {
 		String home = getDeployerHome();
 		StringTokenizer st = new StringTokenizer(listDeployedAsString(), DELIM);
