@@ -9,12 +9,16 @@ import javax.faces.event.ValueChangeEvent;
 import com.code.aon.cms.Album;
 import com.code.aon.cms.AlbumCategory;
 import com.code.aon.cms.AlbumDetail;
+import com.code.aon.cms.AlbumImage;
 import com.code.aon.cms.dao.ICMSAlias;
+import com.code.aon.common.BeanManager;
+import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionException;
 import com.code.aon.ui.cms.util.ControllerUtil;
+import com.code.aon.ui.util.AonUtil;
 import com.icesoft.faces.component.ext.RowSelectorEvent;
 
 public class AlbumController extends BasicI18nController {
@@ -122,6 +126,19 @@ public class AlbumController extends BasicI18nController {
 		cancelOnSelect = true; 
     	move((Album) this.model.getRowData(), 1);    	
     }
+
+	public void onSelectAlbumImages(ActionEvent event) throws ManagerBeanException, ExpressionException {
+		cancelOnSelect = true;
+		AlbumImageController aic = (AlbumImageController)AonUtil.getController("albumImage");
+		IManagerBean albumImageBean = BeanManager.getManagerBean(AlbumImage.class);
+		Album album = (Album) this.getSelectedTO();
+		Criteria criteria = new Criteria();
+		criteria.addExpression(albumImageBean.getFieldName(ICMSAlias.ALBUM_IMAGE_ALBUM_ID), "" + album.getId());
+		criteria.addOrder(albumImageBean.getFieldName(ICMSAlias.ALBUM_IMAGE_POSITION));
+		aic.setCurrentAlbum(album);
+		aic.setCriteria(criteria);
+		aic.onSearch(event);
+	}
 
 	public void reorderObjects() throws ManagerBeanException{
 		Criteria criteria = new Criteria();

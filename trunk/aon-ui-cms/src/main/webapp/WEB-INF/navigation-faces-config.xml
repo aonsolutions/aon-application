@@ -278,6 +278,18 @@
     </navigation-case>
   </navigation-rule>
 
+  <!-- ================================================= ALBUM IMAGE -->
+  <navigation-rule>
+    <navigation-case>
+      <from-outcome>albumImage_list</from-outcome>
+      <to-view-id>/facelet/content/album_category/album/image/list.iface</to-view-id>
+    </navigation-case>
+    <navigation-case>
+      <from-outcome>albumImage_form</from-outcome>
+      <to-view-id>/facelet/content/album_category/album/image/form.iface</to-view-id>
+    </navigation-case>
+  </navigation-rule>
+
   <!-- ========================================================= SIDEBAR -->
   <navigation-rule>
     <navigation-case>
