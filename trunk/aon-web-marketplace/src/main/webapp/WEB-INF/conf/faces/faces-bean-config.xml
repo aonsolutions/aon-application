@@ -141,10 +141,6 @@
 					<key>hyperviewBundle</key>
                     <value>com.code.aon.ui.hyperview.i18n.messages</value>
 				</map-entry>
-				<map-entry>
-					<key>securityBundle</key>
-                    <value>com.code.aon.bridge.i18n.messages</value>
-				</map-entry>
 			</map-entries>
 		</managed-property>
  	</managed-bean>
