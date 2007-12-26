@@ -125,6 +125,25 @@ public class FBatchController extends BasicController implements ICollectionProv
         return !FinanceBatchType.NONE.equals(((FinanceBatch)this.getTo()).getFinanceBatchType());
     }
 
+    @SuppressWarnings("unchecked")
+    public void onRBankChanged(ValueChangeEvent event) {
+    	if(event.getNewValue() != null){
+    		try {
+				IManagerBean rBankBean = BeanManager.getManagerBean(RegistryBank.class);
+				Criteria criteria = new Criteria();
+				criteria.addEqualExpression(rBankBean.getFieldName(IFinanceAlias.REGISTRY_BANK_ID), event.getNewValue());
+				Iterator iter =rBankBean.getList(criteria, 0, 1).iterator();
+				if(iter.hasNext()){
+					((FinanceBatch)this.getTo()).setRegistryBank((RegistryBank)iter.next());
+				}
+			} catch (ManagerBeanException e) {
+				LOGGER.log(Level.SEVERE, "Error obtaining bank info", e);
+				AonUtil.addErrorMessage("Error obtaining bank info");
+				throw new AbortProcessingException(e);
+			}
+    	}
+    }
+    
 	/**
 	 * Adds to criteria the generic equal expression.
 	 * 
