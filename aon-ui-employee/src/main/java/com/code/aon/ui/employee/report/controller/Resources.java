@@ -350,4 +350,9 @@ public class Resources implements ICollectionProvider {
 		Integer newValue = (Integer) event.getNewValue();
 		return oldValue == null || newValue.intValue() != oldValue.intValue();
 	}
+
+	@Override
+	public Collection getCollection(boolean forceRefresh) throws ManagerBeanException {
+		return this.getCollection();
+	}
 }
