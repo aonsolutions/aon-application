@@ -17,12 +17,6 @@
 		<!-- AON-CONFIG Mapping files -->		
 		<mapping class="com.code.aon.config.ApplicationParameter"/>
 		
-		<!-- AON-TAS Mapping files -->		
-		<mapping class="com.code.aon.tas.Make"/>
-		<mapping class="com.code.aon.tas.Model"/>
-		<mapping class="com.code.aon.tas.TasItem"/>
-		<mapping class="com.code.aon.tas.SupportOrder"/>
-
 		<!-- AON-PRODUCT Mapping files -->		
 		<mapping class="com.code.aon.product.Product"/>
 		<mapping class="com.code.aon.product.Brand"/>
@@ -80,12 +74,7 @@
 		<mapping class="com.code.aon.sales.FinanceSales"/>
 		<mapping class="com.code.aon.sales.PointOfSale"/>
 		
-		<!-- AON-SALES-PURCHASE Mapping files
-		<mapping class="com.code.aon.salesPurchase.SalesPurchase"/>
-		 -->
-		 
 		<!-- AON-REGISTRY Mapping files -->	
-		<mapping class="com.code.aon.company.Company"/>
 		<mapping class="com.code.aon.registry.Registry"/>
 		<mapping class="com.code.aon.registry.Category"/>
 		<mapping class="com.code.aon.registry.RegistryAttachment"/>
@@ -106,24 +95,11 @@
 		<mapping class="com.code.aon.composition.ProductionDetail"/>
 		<mapping class="com.code.aon.composition.ProductionExpense"/>				
 		
-		<!-- AON-COMMERCIAL Mapping files -->
-		<mapping class="com.code.aon.commercial.Offer"/>
-		<mapping class="com.code.aon.commercial.OfferDetail"/>
-		<mapping class="com.code.aon.commercial.Target"/>
-		
-		<!-- AON-TAS Mapping files -->
-		<mapping class="com.code.aon.tasCommercial.TasOffer"/>
-		<mapping class="com.code.aon.tasDelivery.TasDelivery"/>
-		
-		<!-- AON-EMPLOYEE Mapping files	
-		<mapping class="com.code.aon.employee.Expenditures"/>
-		<mapping class="com.code.aon.employee.ExpendituresItems"/>
-		 -->
-		 
 		<!-- AON-PLANNER Mapping files -->
 		<mapping class="com.code.aon.planner.core.IncidenceType"/>
 
 		<!-- AON-COMPANY Mapping files -->	
+		<mapping class="com.code.aon.company.Company"/>
 		<mapping class="com.code.aon.company.WorkPlace"/>
 		<mapping class="com.code.aon.company.WorkActivity"/>
 		<mapping class="com.code.aon.company.resources.Employee"/>
