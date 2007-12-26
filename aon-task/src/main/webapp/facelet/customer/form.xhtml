@@ -130,10 +130,10 @@
 	
 							<aon:panelTab id="dossiers"
 								label="#{projectBundle.dossier_dossiers}">
-								<aon:panelGroup rendered="#{ICEDossier.form}">
+								<aon:panelGroup rendered="#{dossier.form}">
 									<ui:include src="/facelet/dossier/form.xhtml" />
 								</aon:panelGroup>
-								<aon:panelGroup rendered="#{!ICEDossier.form}">
+								<aon:panelGroup rendered="#{!dossier.form}">
 									<ui:include src="/facelet/dossier/list.xhtml" />
 								</aon:panelGroup>
 							</aon:panelTab>
