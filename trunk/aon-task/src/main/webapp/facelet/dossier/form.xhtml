@@ -9,34 +9,34 @@
 <ui:composition>
 			<aon:div styleClass="aon-section-toolbar">
 				<aon:confirmButton id="saveDossier" value="#{bundle.aon_save}"
-					rendered="#{ICEDossier.to!=null or ICEDossier.new}"
+					rendered="#{dossier.to!=null or dossier.new}"
 					styleClass="aon-content-toolbar-item aon-icon-accept"
 					confirmTitle="Confirmation Dialog"
 					confirmMessage="#{bundle.aon_save_confirm}"
-					confirmActionListener="#{ICEDossier.accept}"
+					confirmActionListener="#{dossier.accept}"
 					onmouseout="this.className='aon-content-toolbar-item aon-icon-accept'"
 					onmouseover="this.className='aon-content-toolbar-item aon-content-toolbar-item-hover aon-icon-accept'"
 					accesskey="#{bundle.aon_key_save}" />
 				<aon:confirmButton id="cancelDossier" value="#{bundle.aon_cancel}"
-					rendered="#{ICEDossier.to!=null or ICEDossier.new}"
+					rendered="#{dossier.to!=null or dossier.new}"
 					styleClass="aon-content-toolbar-item aon-icon-cancel"
 					immediate="#{true}" confirmTitle="Confirmation Dialog"
 					confirmMessage="#{bundle.aon_cancel_confirm}"
-					confirmActionListener="#{ICEDossier.onCancel}"
+					confirmActionListener="#{dossier.onCancel}"
 					onmouseout="this.className='aon-content-toolbar-item aon-icon-cancel'"
 					onmouseover="this.className='aon-content-toolbar-item aon-content-toolbar-item-hover aon-icon-cancel'"
 					accesskey="#{bundle.aon_key_cancel}" />
 				<aon:confirmButton id="removeDossier" value="#{bundle.aon_remove}"
-					rendered="#{!ICEDossier.new}"
+					rendered="#{!dossier.new}"
 					styleClass="aon-content-toolbar-item aon-icon-delete"
 					immediate="true" confirmTitle="Confirmation Dialog"
 					confirmMessage="#{bundle.aon_remove_confirm}"
-					confirmActionListener="#{ICEDossier.onRemove}"
+					confirmActionListener="#{dossier.onRemove}"
 					onmouseout="this.className='aon-content-toolbar-item aon-icon-delete'"
 					onmouseover="this.className='aon-content-toolbar-item aon-content-toolbar-item-hover aon-icon-delete'"
 					accesskey="#{bundle.aon_key_remove}" />
 				<aon:commandButton id="resetDossier" value="#{bundle.aon_reset}"
-					actionListener="#{ICEDossier.onReset}" rendered="#{!ICEDossier.new}"
+					actionListener="#{dossier.onReset}" rendered="#{!dossier.new}"
 					styleClass="aon-content-toolbar-item aon-icon-reset"
 					onmouseout="this.className='aon-content-toolbar-item aon-icon-reset'"
 					onmouseover="this.className='aon-content-toolbar-item aon-content-toolbar-item-hover aon-icon-reset'"
@@ -51,7 +51,7 @@
 					<aon:outputLabel for="Dossier_dossierType_id"
 						value="#{projectBundle.aon_type}" />
 					<aon:selectOneMenu id="Dossier_dossierType_id"
-						value="#{ICEDossier.to.dossierType.id}">
+						value="#{dossier.to.dossierType.id}">
 						<f:selectItems value="#{projectCollections.dossierTypes}" />
 					</aon:selectOneMenu>
 
@@ -59,23 +59,23 @@
 						value="#{projectBundle.dossier_number}" />
 					<aon:inputText id="Dossier_number" styleClass="aon-inputText"
 						required="true" size="18" maxlength="15"
-						value="#{ICEDossier.to.number}" />
+						value="#{dossier.to.number}" />
 
 					<aon:outputLabel for="Dossier_location"
 						value="#{projectBundle.dossier_location}" />
 					<aon:inputText id="Dossier_location" styleClass="aon-inputText"
-						size="25" maxlength="20" value="#{ICEDossier.to.location}" />
+						size="25" maxlength="20" value="#{dossier.to.location}" />
 
 					<aon:outputLabel for="Dossier_status"
 						value="#{projectBundle.aon_status}" />
-					<aon:selectOneMenu id="Dossier_status" value="#{ICEDossier.to.status}">
+					<aon:selectOneMenu id="Dossier_status" value="#{dossier.to.status}">
 						<f:selectItems value="#{projectCollections.dossierStatus}" />
 					</aon:selectOneMenu>
 
 				</aon:panelGrid>
 			
 
-			<aon:div styleClass="aon-form-group" rendered="#{!ICEDossier.new}">
+			<aon:div styleClass="aon-form-group" rendered="#{!dossier.new}">
 				<aon:div styleClass="aon-form-group-title">
 					<aon:outputLabel for="activityDataList"
 						value="#{projectBundle.activity_activities}" />
@@ -92,7 +92,7 @@
 						<aon:column>
 							<aon:rowSelector multiple="false"
 								toggleOnClick="#{activity.to == null}"
-								selectionListener="#{activity.onSelect}" />
+								actionListener="#{activity.onSelect}" />
 							<f:facet name="header">
 								<aon:outputText value="&#160;" />
 							</f:facet>
@@ -116,12 +116,12 @@
 								rendered="#{to!=activity.to}" />
 							<aon:selectOneMenu rendered="#{to==activity.to}"
 								value="#{activity.to.activityType.id}">
-								<f:selectItems value="#{ICEDossier.activityTypes}" />
+								<f:selectItems value="#{dossier.activityTypes}" />
 							</aon:selectOneMenu>
 							<f:facet name="footer">
 								<aon:selectOneMenu rendered="#{activity.new}"
 									value="#{activity.to.activityType.id}">
-									<f:selectItems value="#{ICEDossier.activityTypes}" />
+									<f:selectItems value="#{dossier.activityTypes}" />
 								</aon:selectOneMenu>
 							</f:facet>
 						</aon:column>
