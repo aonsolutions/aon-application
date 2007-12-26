@@ -172,7 +172,8 @@
 							<t:selectOneMenu id="RegistryBank_Lookup_id"
 								styleClass="aon-form-selectOneMenu-field" forceId="#{true}"
 								onchange="return findBeanLookupExt(event,'#{facesContext.externalContext.requestContextPath}','rBankLookup','RegistryBank_Lookup_id','RegistryBank_id|RegistryBank_Lookup_id,RegistryBank_bankAccount|RegistryBank_Lookup_bankAccount');"
-								value="#{fbatch.to.registryBank.id}" disabled="#{!fbatch.todo}">
+								value="#{fbatch.to.registryBank.id}" disabled="#{!fbatch.todo}"
+								valueChangeListener="#{fbatch.onRBankChanged}">
 								<f:selectItem itemDisabled="true" itemValue="" itemLabel="-" />
 								<f:selectItems value="#{financeCollections.companyBanks}" />
 							</t:selectOneMenu>
