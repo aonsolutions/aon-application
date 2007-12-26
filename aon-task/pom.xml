@@ -14,6 +14,9 @@
 	<version>2.0.2</version>
 	<description>AON TASK</description>
 	<name>AON TASK</name>
+	<build>
+		<finalName>aon-task</finalName>
+	</build>
 	<dependencies>
 		<dependency>
 			<groupId>com.code.aon</groupId>
