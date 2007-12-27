@@ -326,6 +326,30 @@
     </navigation-case>
   </navigation-rule>
 
+  <!-- ===================================================== MODULAR PAGE -->
+  <navigation-rule>
+    <navigation-case>
+      <from-outcome>modular_page_list</from-outcome>
+      <to-view-id>/facelet/content/modular_page/list.iface</to-view-id>
+    </navigation-case>
+    <navigation-case>
+      <from-outcome>modular_page_form</from-outcome>
+      <to-view-id>/facelet/content/modular_page/form.iface</to-view-id>
+    </navigation-case>
+  </navigation-rule>
+
+  <!-- ================================================= MODULAR PAGE OPTION -->
+  <navigation-rule>
+    <navigation-case>
+      <from-outcome>modular_page_option_list</from-outcome>
+      <to-view-id>/facelet/content/modular_page/option/list.iface</to-view-id>
+    </navigation-case>
+    <navigation-case>
+      <from-outcome>modular_page_option_form</from-outcome>
+      <to-view-id>/facelet/content/modular_page/option/form.iface</to-view-id>
+    </navigation-case>
+  </navigation-rule>
+
   <!-- =================================================== TEMPLATES -->
   <navigation-rule>
     <navigation-case>
