@@ -50,6 +50,9 @@ import com.code.aon.cms.Sidebar;
 import com.code.aon.cms.SidebarOption;
 import com.code.aon.cms.SidebarOptionDetail;
 import com.code.aon.cms.Section;
+import com.code.aon.cms.ModularPage;
+import com.code.aon.cms.ModularPageOption;
+import com.code.aon.cms.ModularPageOptionDetail;
 
 /** 
 * Interface for holding entity properties constants.
@@ -2041,6 +2044,123 @@ public interface ICMSAlias {
 	* Hibernate value: Section.sidebar.id
 	*/
 	String  SECTION_SIDEBAR_ID = SECTION_ENTRY.getAliasNames()[9];
+
+
+
+	/** 
+	* DAOConstantsEntry for ModularPage entity.
+	*/ 
+	DAOConstantsEntry MODULAR_PAGE_ENTRY = DAOConstants.getDAOConstant(ModularPage.class);
+
+	/** 
+	* Alias value: ModularPage_active
+	* Hibernate value: ModularPage.active
+	*/
+	String  MODULAR_PAGE_ACTIVE = MODULAR_PAGE_ENTRY.getAliasNames()[0];
+
+	/** 
+	* Alias value: ModularPage_alias
+	* Hibernate value: ModularPage.alias
+	*/
+	String  MODULAR_PAGE_ALIAS = MODULAR_PAGE_ENTRY.getAliasNames()[1];
+
+	/** 
+	* Alias value: ModularPage_homepage
+	* Hibernate value: ModularPage.homepage
+	*/
+	String  MODULAR_PAGE_HOMEPAGE = MODULAR_PAGE_ENTRY.getAliasNames()[2];
+
+	/** 
+	* Alias value: ModularPage_id
+	* Hibernate value: ModularPage.id
+	*/
+	String  MODULAR_PAGE_ID = MODULAR_PAGE_ENTRY.getAliasNames()[3];
+
+	/** 
+	* Alias value: ModularPage_modularType
+	* Hibernate value: ModularPage.modularType
+	*/
+	String  MODULAR_PAGE_MODULAR_TYPE = MODULAR_PAGE_ENTRY.getAliasNames()[4];
+
+
+
+	/** 
+	* DAOConstantsEntry for ModularPageOption entity.
+	*/ 
+	DAOConstantsEntry MODULAR_PAGE_OPTION_ENTRY = DAOConstants.getDAOConstant(ModularPageOption.class);
+
+	/** 
+	* Alias value: ModularPageOption_active
+	* Hibernate value: ModularPageOption.active
+	*/
+	String  MODULAR_PAGE_OPTION_ACTIVE = MODULAR_PAGE_OPTION_ENTRY.getAliasNames()[0];
+
+	/** 
+	* Alias value: ModularPageOption_alias
+	* Hibernate value: ModularPageOption.alias
+	*/
+	String  MODULAR_PAGE_OPTION_ALIAS = MODULAR_PAGE_OPTION_ENTRY.getAliasNames()[1];
+
+	/** 
+	* Alias value: ModularPageOption_id
+	* Hibernate value: ModularPageOption.id
+	*/
+	String  MODULAR_PAGE_OPTION_ID = MODULAR_PAGE_OPTION_ENTRY.getAliasNames()[2];
+
+	/** 
+	* Alias value: ModularPageOption_ident
+	* Hibernate value: ModularPageOption.ident
+	*/
+	String  MODULAR_PAGE_OPTION_IDENT = MODULAR_PAGE_OPTION_ENTRY.getAliasNames()[3];
+
+	/** 
+	* Alias value: ModularPageOption_modular_page_id
+	* Hibernate value: ModularPageOption.modular_page.id
+	*/
+	String  MODULAR_PAGE_OPTION_MODULAR_PAGE_ID = MODULAR_PAGE_OPTION_ENTRY.getAliasNames()[4];
+
+	/** 
+	* Alias value: ModularPageOption_position
+	* Hibernate value: ModularPageOption.position
+	*/
+	String  MODULAR_PAGE_OPTION_POSITION = MODULAR_PAGE_OPTION_ENTRY.getAliasNames()[5];
+
+	/** 
+	* Alias value: ModularPageOption_type
+	* Hibernate value: ModularPageOption.type
+	*/
+	String  MODULAR_PAGE_OPTION_TYPE = MODULAR_PAGE_OPTION_ENTRY.getAliasNames()[6];
+
+
+
+	/** 
+	* DAOConstantsEntry for ModularPageOptionDetail entity.
+	*/ 
+	DAOConstantsEntry MODULAR_PAGE_OPTION_DETAIL_ENTRY = DAOConstants.getDAOConstant(ModularPageOptionDetail.class);
+
+	/** 
+	* Alias value: ModularPageOptionDetail_id
+	* Hibernate value: ModularPageOptionDetail.id
+	*/
+	String  MODULAR_PAGE_OPTION_DETAIL_ID = MODULAR_PAGE_OPTION_DETAIL_ENTRY.getAliasNames()[0];
+
+	/** 
+	* Alias value: ModularPageOptionDetail_label
+	* Hibernate value: ModularPageOptionDetail.label
+	*/
+	String  MODULAR_PAGE_OPTION_DETAIL_LABEL = MODULAR_PAGE_OPTION_DETAIL_ENTRY.getAliasNames()[1];
+
+	/** 
+	* Alias value: ModularPageOptionDetail_language_id
+	* Hibernate value: ModularPageOptionDetail.language.id
+	*/
+	String  MODULAR_PAGE_OPTION_DETAIL_LANGUAGE_ID = MODULAR_PAGE_OPTION_DETAIL_ENTRY.getAliasNames()[2];
+
+	/** 
+	* Alias value: ModularPageOptionDetail_modular_page_option_id
+	* Hibernate value: ModularPageOptionDetail.modular_page_option.id
+	*/
+	String  MODULAR_PAGE_OPTION_DETAIL_MODULAR_PAGE_OPTION_ID = MODULAR_PAGE_OPTION_DETAIL_ENTRY.getAliasNames()[3];
 
 
 }
