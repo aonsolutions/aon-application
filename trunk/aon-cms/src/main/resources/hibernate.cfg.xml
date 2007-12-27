@@ -62,6 +62,9 @@
 		<mapping class="com.code.aon.cms.SidebarOption"/>
 		<mapping class="com.code.aon.cms.SidebarOptionDetail"/>
 		<mapping class="com.code.aon.cms.Section"/>
+		<mapping class="com.code.aon.cms.ModularPage"/>
+		<mapping class="com.code.aon.cms.ModularPageOption"/>
+		<mapping class="com.code.aon.cms.ModularPageOptionDetail"/>
 
 	</session-factory>
 
