@@ -21,6 +21,7 @@ import com.code.aon.cms.enumeration.ArticleType;
 import com.code.aon.cms.enumeration.ContentLevel;
 import com.code.aon.cms.enumeration.LanguageMenuType;
 import com.code.aon.cms.enumeration.MenuType;
+import com.code.aon.cms.enumeration.ModularPageOptionType;
 import com.code.aon.cms.enumeration.PageType;
 import com.code.aon.cms.enumeration.SidebarSide;
 import com.code.aon.cms.enumeration.SidebarType;
@@ -269,6 +270,18 @@ public class CollectionsController {
 			itemList.add(item);
 		}
 		return itemList;
+	}
+
+	public List<SelectItem> getModularPageOptionTypes() throws ManagerBeanException, ExpressionException {
+		List<SelectItem> types = new LinkedList<SelectItem>();
+		Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
+		SelectItem item;
+		for (ModularPageOptionType pageType : ModularPageOptionType.values()) {
+			String name = pageType.getName(locale);
+			item = new SelectItem(pageType, name);
+			types.add(item);
+		}
+		return types;
 	}
 
 }
