@@ -124,31 +124,36 @@
         <component-type>com.code.aon.faces.MediaOutput</component-type>
         <component-class>org.ajax4jsf.component.html.MediaOutput</component-class>
     </component>
-	<!-- 
+    <component>
+        <component-type>com.code.aon.faces.SelectInputDate</component-type>
+        <component-class>org.richfaces.component.html.HtmlCalendar</component-class>
+    </component>
     <component>
         <component-type>com.code.aon.faces.HtmlLookupButton</component-type>
-        <component-class>com.code.aon.faces.component.lookup.button.HtmlLookupButton</component-class>
-        <component-extension>
-            <renderer-type>com.code.aon.faces.Button</renderer-type>
-        </component-extension>
+        <component-class>com.code.aon.faces.component.richfaces.lookup.button.HtmlLookupButton</component-class>
     </component>
-
-    <component>
-        <component-type>com.code.aon.faces.LookupButtonPopup</component-type>
-        <component-class>com.code.aon.faces.component.lookup.button.popup.LookupButtonPopup</component-class>
-        <component-extension>
-            <renderer-type>com.code.aon.faces.LookupButtonPopup</renderer-type>
-        </component-extension>
-    </component>
-
     <component>
         <component-type>com.code.aon.faces.HtmlLookupInputText</component-type>
-        <component-class>com.code.aon.faces.component.lookup.inputText.HtmlLookupInputText</component-class>
-        <component-extension>
-            <renderer-type>com.code.aon.faces.Text</renderer-type>
-        </component-extension>
+        <component-class>com.code.aon.faces.component.richfaces.lookup.inputText.HtmlLookupInputText</component-class>
     </component>
-    
+    <render-kit>
+        <renderer>
+            <component-family>org.apache.myfaces.SubForm</component-family>
+            <renderer-type>org.apache.myfaces.SubForm</renderer-type>
+            <renderer-class>com.code.aon.faces.component.sandbox.subform.SubFormRenderer</renderer-class>
+        </renderer>
+        <renderer>
+            <component-family>com.code.aon.faces.DataPaginator</component-family>
+            <renderer-type>com.code.aon.faces.DataPaginatorRenderer</renderer-type>
+            <renderer-class>com.code.aon.faces.component.richfaces.dataPaginator.DataPaginatorRenderer</renderer-class>
+        </renderer>
+        <renderer>
+            <component-family>com.code.aon.faces.RowSelector</component-family>
+            <renderer-type>com.code.aon.faces.RowSelectorRenderer</renderer-type>
+            <renderer-class>com.code.aon.faces.component.richfaces.rowSelector.RowSelectorRenderer</renderer-class>
+        </renderer>
+    </render-kit>
+	<!-- 
     <component>
         <component-type>com.code.aon.faces.InputFile</component-type>
         <component-class>com.icesoft.faces.component.inputfile.InputFile</component-class>
@@ -168,50 +173,5 @@
         <component-type>com.code.aon.faces.MenuItem</component-type>
         <component-class>com.icesoft.faces.component.menubar.MenuItem</component-class>
     </component>
-    
-    <component>
-        <component-type>com.code.aon.faces.OutputStyle</component-type>
-        <component-class>com.icesoft.faces.component.style.OutputStyle</component-class>
-    </component>
-    
-    <component>
-        <component-type>com.code.aon.faces.SelectInputDate</component-type>
-        <component-class>com.icesoft.faces.component.selectinputdate.SelectInputDate</component-class>
-    </component>
-    
-    <render-kit>
-        <renderer>
-            <component-family>javax.faces.Command</component-family>
-            <renderer-type>com.code.aon.faces.Button</renderer-type>
-            <renderer-class>com.icesoft.faces.component.ext.renderkit.ButtonRenderer</renderer-class>
-        </renderer>
-        <renderer>
-            <component-family>javax.faces.Input</component-family>
-            <renderer-type>com.code.aon.faces.Text</renderer-type>
-            <renderer-class>com.icesoft.faces.component.ext.renderkit.TextRenderer</renderer-class>
-        </renderer>
-        <renderer>
-            <component-family>com.code.aon.faces.LookupButtonPopupFamily</component-family>
-            <renderer-type>com.code.aon.faces.LookupButtonPopup</renderer-type>
-            <renderer-class>com.code.aon.faces.component.lookup.button.popup.LookupButtonPopupRenderer</renderer-class>
-        </renderer>
-    </render-kit>
     -->
-    <render-kit>
-        <renderer>
-            <component-family>org.apache.myfaces.SubForm</component-family>
-            <renderer-type>org.apache.myfaces.SubForm</renderer-type>
-            <renderer-class>com.code.aon.faces.component.sandbox.subform.SubFormRenderer</renderer-class>
-        </renderer>
-        <renderer>
-            <component-family>com.code.aon.faces.DataPaginator</component-family>
-            <renderer-type>com.code.aon.faces.DataPaginatorRenderer</renderer-type>
-            <renderer-class>com.code.aon.faces.component.richfaces.dataPaginator.DataPaginatorRenderer</renderer-class>
-        </renderer>
-        <renderer>
-            <component-family>com.code.aon.faces.RowSelector</component-family>
-            <renderer-type>com.code.aon.faces.RowSelectorRenderer</renderer-type>
-            <renderer-class>com.code.aon.faces.component.richfaces.rowSelector.RowSelectorRenderer</renderer-class>
-        </renderer>
-    </render-kit>
 </faces-config>

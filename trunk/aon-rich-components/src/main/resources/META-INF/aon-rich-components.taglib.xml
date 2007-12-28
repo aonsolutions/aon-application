@@ -218,31 +218,32 @@
 			<handler-class>com.code.aon.faces.component.richfaces.mediaOutput.MediaOutputHandler</handler-class>
 		</component>
 	</tag>
-    <!-- 
+	<tag>
+		<tag-name>selectInputDate</tag-name>
+		<component>
+			<component-type>com.code.aon.faces.SelectInputDate</component-type>
+			<handler-class>com.code.aon.faces.component.AonComponentHandler</handler-class>
+		</component>
+	</tag>
     <tag>
         <tag-name>lookupButton</tag-name>
         <component>
             <component-type>com.code.aon.faces.HtmlLookupButton</component-type>
-            <renderer-type>com.code.aon.faces.Button</renderer-type>
-            <handler-class>com.code.aon.faces.component.lookup.button.LookupButtonHandler</handler-class>
+            <handler-class>com.code.aon.faces.component.richfaces.lookup.button.LookupButtonHandler</handler-class>
         </component>
     </tag>
     <tag>
         <tag-name>lookupInputText</tag-name>
         <component>
             <component-type>com.code.aon.faces.HtmlLookupInputText</component-type>
-            <renderer-type>com.code.aon.faces.Text</renderer-type>
-            <handler-class>com.code.aon.faces.component.lookup.inputText.LookupInputTextHandler</handler-class>
+            <handler-class>com.code.aon.faces.component.richfaces.lookup.inputText.LookupInputTextHandler</handler-class>
         </component>
     </tag>
     <tag>
         <tag-name>lookupButtonPopup</tag-name>
-        <component>
-            <component-type>com.code.aon.faces.LookupButtonPopup</component-type>
-            <renderer-type>com.code.aon.faces.LookupButtonPopup</renderer-type>
-            <handler-class>com.code.aon.faces.component.lookup.button.popup.LookupButtonPopupHandler</handler-class>
-        </component>
+		<handler-class>com.code.aon.faces.component.richfaces.lookup.button.popup.LookupButtonPopupHandler</handler-class>
     </tag>
+    <!-- 
 	<tag>
 		<tag-name>joinProperty</tag-name>
 		<handler-class>
@@ -275,27 +276,6 @@
 		<component>
 			<component-type>com.code.aon.faces.MenuItem</component-type>
 			<handler-class>com.code.aon.faces.component.menuBar.MenuItemHandler</handler-class>
-		</component>
-	</tag>
-	<tag>
-		<tag-name>outputStyle</tag-name>
-		<component>
-			<component-type>com.code.aon.faces.OutputStyle</component-type>
-			<handler-class>com.code.aon.faces.component.outputStyle.OutputStyleHandler</handler-class>
-		</component>
-	</tag>
-	<tag>
-	<tag>
-		<tag-name>toolbar</tag-name>
-		<component>
-			<component-type>com.code.aon.faces.Toolbar</component-type>
-		</component>
-	</tag>
-	<tag>
-		<tag-name>selectInputDate</tag-name>
-		<component>
-			<component-type>com.code.aon.faces.SelectInputDate</component-type>
-			<handler-class>com.code.aon.faces.component.selectInputDate.SelectInputDateHandler</handler-class>
 		</component>
 	</tag>
 	 -->

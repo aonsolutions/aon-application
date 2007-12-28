@@ -4,6 +4,7 @@ import com.code.aon.faces.component.AonComponentHandler;
 import com.code.aon.faces.component.myfaces.UIComponentTagUtils;
 import com.code.aon.faces.component.richfaces.lookup.ILookupTags;
 import com.code.aon.faces.component.sandbox.ValueChangeNotifierHandler;
+import com.code.aon.faces.component.util.FaceletUtil;
 import com.code.aon.faces.component.util.HTML;
 import com.sun.facelets.FaceletContext;
 import com.sun.facelets.tag.jsf.ComponentConfig;
@@ -32,13 +33,13 @@ public class LookupInputTextHandler extends AonComponentHandler implements ILook
 
 	private void setValueChangeNotifier( FaceletContext ctx, HtmlLookupInputText text ) {
 		String lookup = getRequiredAttribute(LOOKUP).getValue();
-		String valueChangeListener = appendExpression( lookup, VALUE_CHANGE_LISTENER);
+		String valueChangeListener = FaceletUtil.appendExpression( lookup, VALUE_CHANGE_LISTENER);
 		ValueChangeNotifierHandler.setupClassListener(ctx, text, valueChangeListener);
 	}
 
 	private void setDisabled( FaceletContext ctx, HtmlLookupInputText text ) {
 		String lookup = getRequiredAttribute(LOOKUP).getValue();
-		String disabled = appendExpression( lookup, DISABLED_METHOD);
+		String disabled = FaceletUtil.appendExpression( lookup, DISABLED_METHOD);
 		UIComponentTagUtils.setStringProperty(ctx.getFacesContext(), text, HTML.DISABLED_ATTR, disabled );
 	}
 	
