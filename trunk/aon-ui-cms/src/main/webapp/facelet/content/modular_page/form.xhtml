@@ -79,6 +79,15 @@
 								required="true" size="32" maxlength="32"
 								value="#{modular_page.to.alias}" />
 
+							<aon:outputLabel for="Modular_page_section"
+								styleClass="aon-form-input-text-label"
+								value="#{appBundle.section}"/>
+							<aon:selectOneMenu id="Modular_page_section"  
+								styleClass="aon-form-selectOneMenu-field"
+								value="#{modular_page.to.section.id}">
+								<f:selectItems value="#{collections.sectionList}" />
+							</aon:selectOneMenu>
+											
 						</aon:panelGrid>
 					</aon:panelGrid>
 				</aon:div>
