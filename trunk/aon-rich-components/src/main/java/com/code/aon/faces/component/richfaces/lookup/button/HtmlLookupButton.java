@@ -16,10 +16,6 @@ public class HtmlLookupButton extends HtmlAjaxCommandButton implements ILookupTa
      */
     public static final String COMPONENT_TYPE =
             "com.code.aon.faces.HtmlLookupButton";
-    /**
-     * String constant renderer type
-     */
-    public static final String RENDERER_TYPE = "com.code.aon.faces.Button";
    	
     private LookupButtonType actionType;
     
@@ -30,13 +26,6 @@ public class HtmlLookupButton extends HtmlAjaxCommandButton implements ILookupTa
     private MethodBinding valueChangeListener;
     
 	private Object[] _state;    
-    
-    /**
-     * default no args constructor
-     */
-    public HtmlLookupButton() {
-        setRendererType(RENDERER_TYPE);
-    }
     
     public void setActionType(LookupButtonType type) {
     	this.actionType = type;
