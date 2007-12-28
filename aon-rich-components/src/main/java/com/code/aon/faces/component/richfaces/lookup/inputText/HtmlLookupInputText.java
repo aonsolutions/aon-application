@@ -18,10 +18,6 @@ public class HtmlLookupInputText extends HtmlInputText implements ILookupTags, I
      */
     public static final String COMPONENT_TYPE =
             "com.code.aon.faces.HtmlLookupInputText";
-    /**
-     * String constant renderer type
-     */
-    public static final String RENDERER_TYPE = "com.code.aon.faces.Text";
     
     private ValueBinding property;
     
@@ -36,7 +32,6 @@ public class HtmlLookupInputText extends HtmlInputText implements ILookupTags, I
      * default no args constructor
      */
     public HtmlLookupInputText() {
-        setRendererType(RENDERER_TYPE);
         this.joinBindingsMap = Collections.emptyMap();
     }
     
