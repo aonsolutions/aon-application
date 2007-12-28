@@ -2,7 +2,6 @@ package com.code.aon.ui.cms.controller;
 
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Locale;
 
 import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
@@ -13,14 +12,13 @@ import com.code.aon.cms.Sidebar;
 import com.code.aon.cms.SidebarOption;
 import com.code.aon.cms.SidebarOptionDetail;
 import com.code.aon.cms.dao.ICMSAlias;
-import com.code.aon.cms.enumeration.ContentLevel;
-import com.code.aon.cms.enumeration.SidebarSide;
 import com.code.aon.cms.enumeration.SidebarType;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionException;
 import com.code.aon.ui.cms.util.ControllerUtil;
+import com.code.aon.ui.util.AonUtil;
 import com.icesoft.faces.component.ext.RowSelectorEvent;
 
 
@@ -160,6 +158,25 @@ public class SidebarOptionController extends BasicI18nController {
 		} catch (ExpressionException e) {
 		}
 		return position;
+	}
+	
+	public boolean isVisibleIdent() {
+		SidebarOption to = (SidebarOption)getTo();
+		if (to != null && to.getType() != null) {
+			return true;
+		}
+		return false;
+	}
+
+	public List<SelectItem> getIdents() throws ManagerBeanException, ExpressionException {
+		SidebarOption mo = (SidebarOption)getTo();
+		List<SelectItem> idents = new LinkedList<SelectItem>();
+		if (mo.getType().equals(SidebarType.GENERIC)) idents = ((CollectionsController)AonUtil.getRegisteredBean("collections")).getGenericPageList();
+		else if (mo.getType().equals(SidebarType.MENU)) idents = ((CollectionsController)AonUtil.getRegisteredBean("collections")).getMenuList();
+		else if (mo.getType().equals(SidebarType.LINK)) idents = ((CollectionsController)AonUtil.getRegisteredBean("collections")).getLinkCategoryList();
+		else if (mo.getType().equals(SidebarType.BANNER)) idents = ((CollectionsController)AonUtil.getRegisteredBean("collections")).getBannerList();
+		else if (mo.getType().equals(SidebarType.ARTICLE)) idents = ((CollectionsController)AonUtil.getRegisteredBean("collections")).getArticleList();
+		return idents;
 	}
 
 }

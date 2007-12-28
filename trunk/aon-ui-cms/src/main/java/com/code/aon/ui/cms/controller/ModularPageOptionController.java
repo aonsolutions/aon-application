@@ -1,20 +1,24 @@
 package com.code.aon.ui.cms.controller;
 
+import java.util.LinkedList;
 import java.util.List;
 
 import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
 import javax.faces.event.ValueChangeEvent;
+import javax.faces.model.SelectItem;
 
 import com.code.aon.cms.ModularPage;
 import com.code.aon.cms.ModularPageOption;
 import com.code.aon.cms.ModularPageOptionDetail;
 import com.code.aon.cms.dao.ICMSAlias;
+import com.code.aon.cms.enumeration.ModularPageOptionType;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionException;
 import com.code.aon.ui.cms.util.ControllerUtil;
+import com.code.aon.ui.util.AonUtil;
 import com.icesoft.faces.component.ext.RowSelectorEvent;
 
 
@@ -154,6 +158,23 @@ public class ModularPageOptionController extends BasicI18nController {
 		} catch (ExpressionException e) {
 		}
 		return position;
+	}
+
+	public boolean isVisibleIdent() {
+		ModularPageOption to = (ModularPageOption)getTo();
+		if (to != null && to.getType() != null) {
+			return true;
+		}
+		return false;
+	}
+
+	public List<SelectItem> getIdents() throws ManagerBeanException, ExpressionException {
+		ModularPageOption mo = (ModularPageOption)getTo();
+		List<SelectItem> idents = new LinkedList<SelectItem>();
+		if (mo.getType().equals(ModularPageOptionType.GENERIC)) idents = ((CollectionsController)AonUtil.getRegisteredBean("collections")).getGenericPageList();
+		else if (mo.getType().equals(ModularPageOptionType.BANNER)) idents = ((CollectionsController)AonUtil.getRegisteredBean("collections")).getBannerList();
+		else if (mo.getType().equals(ModularPageOptionType.ARTICLE)) idents = ((CollectionsController)AonUtil.getRegisteredBean("collections")).getArticleList();
+		return idents;
 	}
 
 }

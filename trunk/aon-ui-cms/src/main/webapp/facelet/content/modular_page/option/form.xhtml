@@ -91,8 +91,18 @@
 								value="#{appBundle.modular_page_option_type}" />
 							<aon:selectOneMenu id="Modular_pageOption_type" 
 								styleClass="aon-form-selectOneModular_page-field"
-								value="#{modular_page_option.to.type}" >
+								value="#{modular_page_option.to.type}" 
+								partialSubmit="true">
 								<f:selectItems value="#{collections.modularPageOptionTypes}" />
+							</aon:selectOneMenu> 
+
+							<aon:outputLabel for="Modular_pageOption_ident"
+								styleClass="aon-form-input-text-label"
+								value="#{appBundle.modular_page_option_ident}" rendered="#{modular_page_option.visibleIdent}"/>
+							<aon:selectOneMenu id="Modular_pageOption_ident" rendered="#{modular_page_option.visibleIdent}" 
+								styleClass="aon-form-selectOneMenu-field"
+								value="#{modular_page_option.to.ident}">
+								<f:selectItems value="#{modular_page_option.idents}" />
 							</aon:selectOneMenu> 
 
 						</aon:panelGrid>

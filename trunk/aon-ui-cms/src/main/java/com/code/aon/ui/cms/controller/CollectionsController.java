@@ -7,6 +7,8 @@ import java.util.Locale;
 import javax.faces.context.FacesContext;
 import javax.faces.model.SelectItem;
 
+import com.code.aon.cms.Article;
+import com.code.aon.cms.Banner;
 import com.code.aon.cms.Brand;
 import com.code.aon.cms.FaqCategory;
 import com.code.aon.cms.Footer;
@@ -284,4 +286,31 @@ public class CollectionsController {
 		return types;
 	}
 
+	public List<SelectItem> getArticleList() throws ManagerBeanException {
+		List<SelectItem> itemList = new LinkedList<SelectItem>();
+		IManagerBean bean = BeanManager.getManagerBean(Article.class);
+		List<ITransferObject> list = (List<ITransferObject>)bean.getList(null);
+		for (int i = 0; i < list.size(); i++) {
+			Article article = (Article)list.get(i);
+			int id = article.getId();
+			String name = article.getAlias();
+			SelectItem item = new SelectItem(id, name);
+			itemList.add(item);
+		}
+		return itemList;
+	}
+
+	public List<SelectItem> getBannerList() throws ManagerBeanException {
+		List<SelectItem> itemList = new LinkedList<SelectItem>();
+		IManagerBean bean = BeanManager.getManagerBean(Banner.class);
+		List<ITransferObject> list = (List<ITransferObject>)bean.getList(null);
+		for (int i = 0; i < list.size(); i++) {
+			Banner banner = (Banner)list.get(i);
+			int id = banner .getId();
+			String name = banner.getAlias();
+			SelectItem item = new SelectItem(id, name);
+			itemList.add(item);
+		}
+		return itemList;
+	}
 }

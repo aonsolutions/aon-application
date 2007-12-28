@@ -91,8 +91,18 @@
 								value="#{appBundle.sidebar_option_type}" />
 							<aon:selectOneMenu id="SidebarOption_type" 
 								styleClass="aon-form-selectOneSidebar-field"
-								value="#{sidebar_option.to.type}" >
+								value="#{sidebar_option.to.type}" 
+								partialSubmit="true">
 								<f:selectItems value="#{collections.sidebarTypes}" />
+							</aon:selectOneMenu> 
+
+							<aon:outputLabel for="SidebarOption_ident"
+								styleClass="aon-form-input-text-label"
+								value="#{appBundle.sidebar_option_ident}" rendered="#{sidebar_option.visibleIdent}"/>
+							<aon:selectOneMenu id="SidebarOption_ident" rendered="#{sidebar_option.visibleIdent}" 
+								styleClass="aon-form-selectOneMenu-field"
+								value="#{sidebar_option.to.ident}">
+								<f:selectItems value="#{sidebar_option.idents}" />
 							</aon:selectOneMenu> 
 
 							<aon:outputLabel for="SidebarOption_level"
