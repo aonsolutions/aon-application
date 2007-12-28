@@ -18,19 +18,9 @@ public enum ModularPageOptionType implements IResourceable {
 	BANNER,
 
 	/**
-	 * Menu Page
-	 */
-	MENU,
-
-	/**
 	 * Article
 	 */
-	ARTICLE,
-
-	/**
-	 * Links
-	 */
-	LINK;
+	ARTICLE;
 
 	/**
 	 * Ruta base del fichero de mensajes.
