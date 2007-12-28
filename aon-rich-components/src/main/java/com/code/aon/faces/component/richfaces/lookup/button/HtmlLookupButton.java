@@ -1,13 +1,15 @@
 package com.code.aon.faces.component.richfaces.lookup.button;
 
-import javax.faces.component.html.HtmlCommandButton;
 import javax.faces.context.FacesContext;
+import javax.faces.el.MethodBinding;
 import javax.faces.el.ValueBinding;
+
+import org.ajax4jsf.component.html.HtmlAjaxCommandButton;
 
 import com.code.aon.faces.component.richfaces.lookup.ILookupComponent;
 import com.code.aon.faces.component.richfaces.lookup.ILookupTags;
 
-public class HtmlLookupButton extends HtmlCommandButton implements ILookupTags, ILookupComponent {
+public class HtmlLookupButton extends HtmlAjaxCommandButton implements ILookupTags, ILookupComponent {
 
     /**
      * String constant component type
@@ -24,6 +26,8 @@ public class HtmlLookupButton extends HtmlCommandButton implements ILookupTags, 
     private ValueBinding property;
     
     private ValueBinding lookup;
+    
+    private MethodBinding valueChangeListener;
     
 	private Object[] _state;    
     
@@ -58,6 +62,14 @@ public class HtmlLookupButton extends HtmlCommandButton implements ILookupTags, 
 		this.lookup = lookup;
 	}
 
+	public MethodBinding getValueChangeListener() {
+		return this.valueChangeListener;
+	}
+
+	public void setValueChangeListener(MethodBinding valueChangeListener) {
+		this.valueChangeListener = valueChangeListener;
+	}
+
 	public ValueBinding getProperty() {
     	if (null != this.property) {
             return this.property;
@@ -82,6 +94,7 @@ public class HtmlLookupButton extends HtmlCommandButton implements ILookupTags, 
   		lookup = (ValueBinding) this._state[1];
   		property = (ValueBinding) this._state[2];  
   		actionType = (LookupButtonType) this._state[3];  		
+  		valueChangeListener = (MethodBinding) this._state[4];  	
   	}  
    
     /**
@@ -93,12 +106,13 @@ public class HtmlLookupButton extends HtmlCommandButton implements ILookupTags, 
      */
   	public Object saveState(FacesContext _context) {  
   		if (_state == null) {  
-  			_state = new Object[4];  
+  			_state = new Object[5];  
   		}  
   		_state[0] = super.saveState(_context);  
   		_state[1] = lookup;
   		_state[2] = property;
   		_state[3] = actionType;  
+  		_state[4] = valueChangeListener;  
   		return _state;  
   	}
 	

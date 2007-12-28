@@ -34,14 +34,6 @@ public class AonComponentHandler extends ComponentHandler {
 		FaceletUtil.insertTemplate(ctx, this.tag, parent, template, newMapper);
 	}
 	
-	public static String appendExpression(String expression, String value) {
-		StringBuffer sb = new StringBuffer(expression);
-		int offset = sb.length() - 1;
-		sb.insert(offset++, '.');
-		sb.insert(offset, value);
-		return sb.toString();
-	}
-	
 	public boolean hasValue(FaceletContext ctx, String name) {
 		return FaceletUtil.hasValue(ctx, tag, name);
 	}	

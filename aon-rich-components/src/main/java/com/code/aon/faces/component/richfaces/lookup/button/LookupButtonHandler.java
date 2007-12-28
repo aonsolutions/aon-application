@@ -1,10 +1,15 @@
 package com.code.aon.faces.component.richfaces.lookup.button;
 
-import com.code.aon.faces.component.AonComponentHandler;
+import javax.el.MethodExpression;
+import javax.faces.event.ValueChangeEvent;
+
 import com.code.aon.faces.component.myfaces.UIComponentTagUtils;
+import com.code.aon.faces.component.richfaces.AonAjaxComponentHandler;
 import com.code.aon.faces.component.richfaces.lookup.ILookupTags;
+import com.code.aon.faces.component.util.FaceletUtil;
 import com.code.aon.faces.component.util.HTML;
 import com.sun.facelets.FaceletContext;
+import com.sun.facelets.el.LegacyMethodBinding;
 import com.sun.facelets.tag.MetaRuleset;
 import com.sun.facelets.tag.TagAttribute;
 import com.sun.facelets.tag.jsf.ComponentConfig;
@@ -14,7 +19,7 @@ import com.sun.facelets.tag.jsf.ComponentConfig;
  * 
  * @author atellitu
  */
-public class LookupButtonHandler extends AonComponentHandler implements ILookupTags {
+public class LookupButtonHandler extends AonAjaxComponentHandler implements ILookupTags {
 
    	private static final String LIST_STYLE_CLASS = "aon-form-lookup-button";
 
@@ -35,6 +40,8 @@ public class LookupButtonHandler extends AonComponentHandler implements ILookupT
    	private static final String TEMPLATE = "template";
    	
    	private static final String DEFAULT_TEMPLATE = "/facelet/lookup/panelPopup.xhtml";
+   	
+   	private static final Class[] VALUE_LISTENER_ARGS = {ValueChangeEvent.class};
    	
    	private String lookup;
    	
@@ -86,13 +93,13 @@ public class LookupButtonHandler extends AonComponentHandler implements ILookupT
 		String actionListener = null;
 		switch ( button.getActionType() ) {
 			case LIST:
-				actionListener = appendExpression( lookup, LIST_ACTION_LISTENER);
+				actionListener = FaceletUtil.appendExpression( lookup, LIST_ACTION_LISTENER);
 				break;
 			case NEW:
-				actionListener = appendExpression( lookup, NEW_ACTION_LISTENER);				
+				actionListener = FaceletUtil.appendExpression( lookup, NEW_ACTION_LISTENER);				
 				break;
 			case SEARCH:
-				actionListener = appendExpression( lookup, SEARCH_ACTION_LISTENER);				
+				actionListener = FaceletUtil.appendExpression( lookup, SEARCH_ACTION_LISTENER);				
 				break;
 		}
 		UIComponentTagUtils.setActionListenerProperty( ctx.getFacesContext(), button, actionListener);
@@ -112,11 +119,16 @@ public class LookupButtonHandler extends AonComponentHandler implements ILookupT
 		button.setValue("");
 		LookupButtonType type = getType(ctx); 
 		button.setActionType( type );
-		if (! hasValue(ctx, HTML.STYLE_CLASS_ATTR) ) {
+		if (! FaceletUtil.hasValue(ctx, tag, HTML.STYLE_CLASS_ATTR) ) {
 			UIComponentTagUtils.setStringProperty(ctx.getFacesContext(), button, HTML.STYLE_CLASS_ATTR, getStyleClass(type) );
 		}
-		if (! hasValue(ctx, HTML.TITLE_ATTR) ) {
+		if (! FaceletUtil.hasValue(ctx, tag, HTML.TITLE_ATTR) ) {
 			UIComponentTagUtils.setStringProperty(ctx.getFacesContext(), button, HTML.TITLE_ATTR, getTitle(type) );			
+		}
+		TagAttribute vcl = getAttribute("valueChangeListener");
+		if ( vcl != null ) {
+			MethodExpression me = vcl.getMethodExpression(ctx, null, VALUE_LISTENER_ARGS);
+			button.setValueChangeListener( new LegacyMethodBinding(me) );
 		}
 		setActionListener(ctx, button);
 	}

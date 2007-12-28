@@ -98,4 +98,12 @@ public class FaceletUtil {
 		return getBooleanValueExpression(ctx, tag, false);
 	}
 	
+	public static String appendExpression(String expression, String value) {
+		StringBuffer sb = new StringBuffer(expression);
+		int offset = sb.length() - 1;
+		sb.insert(offset++, '.');
+		sb.insert(offset, value);
+		return sb.toString();
+	}
+	
 }
