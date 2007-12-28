@@ -2082,6 +2082,12 @@ public interface ICMSAlias {
 	*/
 	String  MODULAR_PAGE_MODULAR_TYPE = MODULAR_PAGE_ENTRY.getAliasNames()[4];
 
+	/** 
+	* Alias value: ModularPage_section_id
+	* Hibernate value: ModularPage.section.id
+	*/
+	String  MODULAR_PAGE_SECTION_ID = MODULAR_PAGE_ENTRY.getAliasNames()[5];
+
 
 
 	/** 
