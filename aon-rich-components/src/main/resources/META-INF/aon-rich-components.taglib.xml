@@ -63,14 +63,14 @@
 		<tag-name>commandButton</tag-name>
 		<component>
 			<component-type>com.code.aon.faces.CommandButton</component-type>
-			<handler-class>com.code.aon.faces.component.richfaces.AonAjaxComponentHandler</handler-class>
+			<handler-class>com.code.aon.faces.component.richfaces.AonAjaxCommandHandler</handler-class>
 		</component>
 	</tag>
 	<tag>
 		<tag-name>commandLink</tag-name>
 		<component>
 			<component-type>com.code.aon.faces.CommandLink</component-type>
-			<handler-class>com.code.aon.faces.component.richfaces.AonAjaxComponentHandler</handler-class>
+			<handler-class>com.code.aon.faces.component.richfaces.AonAjaxCommandHandler</handler-class>
 		</component>
 	</tag>
 	<tag>
@@ -181,7 +181,7 @@
 		<tag-name>editDataTable</tag-name>
 		<component>
 			<component-type>com.code.aon.faces.EditDataTable</component-type>
-			<handler-class>com.code.aon.faces.component.AonComponentHandler</handler-class>
+			<handler-class>com.code.aon.faces.component.richfaces.editDataTable.EditDataTableHandler</handler-class>
 		</component>
 	</tag>
 	<tag>
