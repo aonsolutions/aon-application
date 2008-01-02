@@ -21,8 +21,9 @@
 				</f:facet>
 				<f:facet name="controls">
 					<aon:commandButton type="button" styleClass="aon-popup-button-close" immediate="true"
-						image="/images/icefaces/popupclose.gif"
-						onclick="Richfaces.hideModalPanel('#{confirmId}');">
+						image="/images/icefaces/popupclose.gif">
+						<rich:componentControl for="#{confirmId}" event="onclick"
+							disableDefault="true" operation="hide"/>
 					</aon:commandButton>	
 				</f:facet>
 
@@ -37,15 +38,17 @@
 							<aon:commandButton value="#{bundle.aon_yes}"
 								action="#{confirmAction}"
 								styleClass="aon-popup-button"
-								immediate="#{immediate}"
-								onclick="Richfaces.hideModalPanel('#{confirmId}');">
+								immediate="#{immediate}">
 								<c:if test="#{confirmActionListener != null}">									
 									<aon:actionListener method="#{confirmActionListener}" />
 								</c:if>
+								<rich:componentControl for="#{confirmId}" event="onclick"
+									disableDefault="true" operation="hide"/>
 							</aon:commandButton>
 							<aon:commandButton value="#{bundle.aon_no}"
-								styleClass="aon-popup-button" immediate="true"
-								onclick="Richfaces.hideModalPanel('#{confirmId}');">
+								styleClass="aon-popup-button" immediate="true">
+								<rich:componentControl for="#{confirmId}" event="onclick"
+									disableDefault="true" operation="hide"/>
 							</aon:commandButton>
 						</aon:div>
 					</aon:panelGrid>
