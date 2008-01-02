@@ -7,7 +7,6 @@ import javax.el.VariableMapper;
 import javax.faces.FacesException;
 import javax.faces.component.UIComponent;
 
-import com.code.aon.faces.component.myfaces.UIComponentTagUtils;
 import com.code.aon.faces.component.richfaces.AonAjaxCommandHandler;
 import com.code.aon.faces.component.util.FaceletUtil;
 import com.sun.facelets.FaceletContext;
@@ -38,6 +37,8 @@ public class ConfirmButtonHandler extends AonAjaxCommandHandler {
 	private static final String TEMPLATE_PATH = "com/code/aon/faces/component/richfaces/confirmButton/";
 
 	private static final String TEMPLATE = TEMPLATE_PATH + "template.xhtml";
+	
+	private static final String INNER_TEMPLATE = TEMPLATE_PATH + "innerTemplate.xhtml";
 
 	private TagAttribute titleTag;
 
@@ -67,18 +68,20 @@ public class ConfirmButtonHandler extends AonAjaxCommandHandler {
 		return getId(ctx) + "ModelPanel";
 	}
 
-	private String getShowScript(FaceletContext ctx) {
-		return "Richfaces.showModalPanel('" + getPanelId(ctx) + "');";
-	}
-
 	@Override
-	protected void setAttributes(FaceletContext ctx, Object instance) {
-		super.setAttributes(ctx, instance);
-		UIComponent button = (UIComponent) instance;
-		UIComponentTagUtils.setStringProperty(ctx.getFacesContext(), button,
-				"onclick", getShowScript(ctx));
+	protected void onComponentCreated(FaceletContext ctx, UIComponent c,
+			UIComponent parent) {
+		insertInnerTemplate(ctx, c);
 	}
 
+	private void insertInnerTemplate(FaceletContext ctx, UIComponent component) {
+		VariableMapper newMapper = new VariableMapperWrapper(ctx.getVariableMapper());
+		ValueExpression id = ctx.getExpressionFactory().createValueExpression(
+				ctx, getPanelId(ctx), String.class);
+		newMapper.setVariable(CONFIRM_ID, id);
+		FaceletUtil.insertTemplate(ctx, tag, component, FaceletUtil.getTemplate(INNER_TEMPLATE), newMapper);
+	}
+	
 	private ValueExpression getValueExpression(FaceletContext ctx,
 			TagAttribute tag) {
 		return tag.getValueExpression(ctx, Object.class);
@@ -137,4 +140,5 @@ public class ConfirmButtonHandler extends AonAjaxCommandHandler {
 			ctx.setVariableMapper(orig);
 		}
 	}
+	
 }
