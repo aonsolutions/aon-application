@@ -538,7 +538,7 @@ text-decoration:none;
 #aon-content .aon-noborder-table td{
 	border:0;
 	background: transparent;
-}
+	}
 /****** DATA SCROLLER *********/  
 #aon-content .aon-datascroller{
 	border-top:#eaeaea 5px solid;
@@ -593,7 +593,8 @@ text-decoration:none;
 /*******  ICONS  *********/
 
 .aon-icon{
-	padding-left:20px;margin-right:10px;
+	padding-left:20px;
+	margin-right:10px;
 	}
 .aon-icon-commandButton{
 	padding:0 0 0 16px;
@@ -724,6 +725,9 @@ text-decoration:none;
  }
 .aon-icon-renameFolder-disabled{
 	background:transparent url(images/aon-icon/aon-icon-renameFolder-disabled.png) scroll left center no-repeat;
+ }
+.aon-icon-zip{
+	background:transparent url(images/aon-icon/aon-icon-zip.png) scroll left center no-repeat;
  }
 
 /* account */
@@ -1029,9 +1033,7 @@ text-decoration:none;
  }
  
 /************ FORM CONTROLS  ********/
-#aon-content .aon-inputText{
-	border:#ababab 1px solid !important;
-	}
+
 #aon-content .aon-inputText-disabled{
 	border:#ababab 1px solid !important;
 	background-color:#f1f1f1;
@@ -1041,10 +1043,10 @@ text-decoration:none;
 	color:#666;
 	font-style:italic;
 	}
-#aon-content .aon-inputText-number{
+#aon-content .on-inputText-number{
   text-align:right;
   }
- #aon-content .aon-inputText-icon{
+ #aon-content .on-inputText-icon{
   text-align:center;
   }
   
