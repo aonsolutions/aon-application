@@ -623,18 +623,11 @@ public class ICELookupBean {
 	 *            the event
 	 */
 	public void onListSelect(ActionEvent event) {
-		PhaseId phaseId = event.getPhaseId();
-		if (phaseId.equals(PhaseId.APPLY_REQUEST_VALUES)) {
-			event.setPhaseId(PhaseId.UPDATE_MODEL_VALUES);
-			event.queue();
-		} else if (phaseId.equals(PhaseId.UPDATE_MODEL_VALUES)) {
-			fireValueChangeListener(event.getComponent());
-			onSelect(null);
-			updateSourcePojo();
-			setShowWindow(false);
-			clearModel();
-		}
-
+		fireValueChangeListener(event.getComponent());
+		onSelect(null);
+		updateSourcePojo();
+		setShowWindow(false);
+		clearModel();
 	}
 
 	/**

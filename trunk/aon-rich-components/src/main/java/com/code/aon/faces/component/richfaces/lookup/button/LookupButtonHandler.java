@@ -1,10 +1,13 @@
 package com.code.aon.faces.component.richfaces.lookup.button;
 
 import javax.el.MethodExpression;
+import javax.el.ValueExpression;
+import javax.faces.component.UIComponent;
 import javax.faces.event.ValueChangeEvent;
 
 import com.code.aon.faces.component.myfaces.UIComponentTagUtils;
 import com.code.aon.faces.component.richfaces.AonAjaxComponentHandler;
+import com.code.aon.faces.component.richfaces.IRichFacesTags;
 import com.code.aon.faces.component.richfaces.lookup.ILookupTags;
 import com.code.aon.faces.component.util.FaceletUtil;
 import com.code.aon.faces.component.util.HTML;
@@ -19,7 +22,7 @@ import com.sun.facelets.tag.jsf.ComponentConfig;
  * 
  * @author atellitu
  */
-public class LookupButtonHandler extends AonAjaxComponentHandler implements ILookupTags {
+public class LookupButtonHandler extends AonAjaxComponentHandler implements ILookupTags, IRichFacesTags {
 
    	private static final String LIST_STYLE_CLASS = "aon-form-lookup-button";
 
@@ -35,17 +38,9 @@ public class LookupButtonHandler extends AonAjaxComponentHandler implements ILoo
    	
    	private static final String NEW_ACTION_LISTENER = "onShowNewWindow";
    	
-   	private static final String WINDOW_TITLE = "windowTitle";
-   	
-   	private static final String TEMPLATE = "template";
-   	
-   	private static final String DEFAULT_TEMPLATE = "/facelet/lookup/panelPopup.xhtml";
-   	
    	private static final Class[] VALUE_LISTENER_ARGS = {ValueChangeEvent.class};
    	
-   	private String lookup;
-   	
-   	private String windowTitle;
+   	private TagAttribute lookup;
    	
    	/**
 	 * The Constructor.
@@ -54,8 +49,7 @@ public class LookupButtonHandler extends AonAjaxComponentHandler implements ILoo
 	 */
 	public LookupButtonHandler(ComponentConfig config) {
 		super( config );
-		lookup = getRequiredAttribute(LOOKUP).getValue();		
-		windowTitle = getRequiredAttribute(WINDOW_TITLE).getValue();
+		lookup = getRequiredAttribute(LOOKUP);		
 	}
 
 	@Override
@@ -91,18 +85,26 @@ public class LookupButtonHandler extends AonAjaxComponentHandler implements ILoo
 	
 	private void setActionListener( FaceletContext ctx, HtmlLookupButton button ) {
 		String actionListener = null;
+		String value = lookup.getValue();
 		switch ( button.getActionType() ) {
 			case LIST:
-				actionListener = FaceletUtil.appendExpression( lookup, LIST_ACTION_LISTENER);
+				actionListener = FaceletUtil.appendExpression( value, LIST_ACTION_LISTENER);
 				break;
 			case NEW:
-				actionListener = FaceletUtil.appendExpression( lookup, NEW_ACTION_LISTENER);				
+				actionListener = FaceletUtil.appendExpression( value, NEW_ACTION_LISTENER);				
 				break;
 			case SEARCH:
-				actionListener = FaceletUtil.appendExpression( lookup, SEARCH_ACTION_LISTENER);				
+				actionListener = FaceletUtil.appendExpression( value, SEARCH_ACTION_LISTENER);				
 				break;
 		}
 		UIComponentTagUtils.setActionListenerProperty( ctx.getFacesContext(), button, actionListener);
+	}
+	
+	public static String getModalPanelId(FaceletContext ctx, TagAttribute lookupTag) {
+		String value = FaceletUtil.appendExpression(lookupTag.getValue(), "beanName" );
+		ValueExpression id = ctx.getExpressionFactory().createValueExpression(
+				ctx, value, String.class);		
+		return id.getValue(ctx) + "ModalPanel";
 	}
 	
 	/**
@@ -115,7 +117,6 @@ public class LookupButtonHandler extends AonAjaxComponentHandler implements ILoo
 	protected void setAttributes(FaceletContext ctx, Object instance) {
 		super.setAttributes(ctx, instance);
 		HtmlLookupButton button = (HtmlLookupButton) instance;
-		// button.setPartialSubmit( true );
 		button.setValue("");
 		LookupButtonType type = getType(ctx); 
 		button.setActionType( type );
@@ -131,5 +132,9 @@ public class LookupButtonHandler extends AonAjaxComponentHandler implements ILoo
 			button.setValueChangeListener( new LegacyMethodBinding(me) );
 		}
 		setActionListener(ctx, button);
+		String id = getModalPanelId(ctx, lookup) + "ReRender";
+		String value = FaceletUtil.updateList(ctx, getAttribute(RERENDER), id);
+		UIComponentTagUtils.setStringProperty(ctx.getFacesContext(), button, RERENDER, value);
 	}
+	
 }

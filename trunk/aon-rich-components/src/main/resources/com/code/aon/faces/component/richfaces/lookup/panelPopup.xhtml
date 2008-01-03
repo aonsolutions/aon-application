@@ -1,0 +1,57 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:aon="http://www.code.es/aon-rich-components">
+<body>
+
+<ui:composition>
+
+	<aon:form>
+		<aon:panelGroup id="#{lookupId}ReRender" styleClass="aon-popup-panel aon-confirm-box">
+			
+			<rich:modalPanel 
+				id="#{lookupId}"
+				rendered="#{lookup.showWindow}" showWhenRendered="true"
+				styleClass="aon-popup-" minWidth="480">
+
+				<f:facet name="header">
+					<aon:div styleClass="aon-popup-title">
+						<aon:outputText value="#{windowTitle}"/>
+					</aon:div>
+				</f:facet>
+				<f:facet name="controls">
+					<aon:commandButton type="button" styleClass="aon-popup-button-close" immediate="true"
+						image="/images/icefaces/popupclose.gif">
+						<rich:componentControl for="#{lookupId}" event="onclick"
+							disableDefault="true" operation="hide"/>
+					</aon:commandButton>	
+				</f:facet>
+
+				<aon:panelGrid cellpadding="0" cellspacing="0" columns="1" width="100%">
+
+					<c:if test="#{(lookup.listPagePath != null) and (lookup.selectedPanel == 'list')}">
+						<a4j:include viewId="listContent.xhtml" />
+					</c:if>
+
+					<c:if test="#{(lookup.searchPagePath != null) and (lookup.selectedPanel == 'search')}">
+						<a4j:include viewId="searchContent.xhtml" />					
+					</c:if>
+
+					<c:if test="#{(lookup.newPagePath != null) and (lookup.selectedPanel == 'form')}">
+						<a4j:include viewId="formContent.xhtml" />
+					</c:if>
+
+				</aon:panelGrid>
+
+			</rich:modalPanel>
+		</aon:panelGroup>
+	</aon:form>
+
+</ui:composition>
+
+</body>
+</html>

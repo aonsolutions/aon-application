@@ -8,12 +8,14 @@ import javax.el.VariableMapper;
 import javax.faces.component.UIComponent;
 import javax.faces.component.UIViewRoot;
 
+import com.code.aon.faces.component.richfaces.IRichFacesTags;
 import com.code.aon.faces.component.richfaces.lookup.ILookupTags;
+import com.code.aon.faces.component.richfaces.lookup.button.LookupButtonHandler;
+import com.code.aon.faces.component.util.FaceletUtil;
 import com.sun.facelets.FaceletContext;
 import com.sun.facelets.el.VariableMapperWrapper;
 import com.sun.facelets.tag.TagAttribute;
 import com.sun.facelets.tag.TagConfig;
-import com.sun.facelets.tag.TagException;
 import com.sun.facelets.tag.TagHandler;
 import com.sun.facelets.tag.jsf.ComponentSupport;
 
@@ -22,15 +24,23 @@ import com.sun.facelets.tag.jsf.ComponentSupport;
  * 
  * @author atellitu
  */
-public class LookupButtonPopupHandler extends TagHandler implements ILookupTags {
+public class LookupButtonPopupHandler extends TagHandler implements ILookupTags, IRichFacesTags {
 
 	private static final String COMPONENT_TYPE = "com.code.aon.faces.LookupButtonPopup";
+	
+	private static final String LOOKUP_ID = "lookupId";
+	
+   	private static final String WINDOW_TITLE = "windowTitle";
+   	
+   	private static final String LOOKUP_RE_RENDER = "lookupReRender";
 
-	private static final String TEMPLATE = "template";
+	private static final String TEMPLATE_PATH = "com/code/aon/faces/component/richfaces/lookup/";
 
-	private static final String DEFAULT_TEMPLATE = "/facelet/lookup/panelPopup.xhtml";
+	private static final String TEMPLATE = TEMPLATE_PATH + "panelPopup.xhtml";
 
 	private TagAttribute lookup;
+	
+   	private TagAttribute windowTitle;	
 
 	/**
 	 * The Constructor.
@@ -41,6 +51,7 @@ public class LookupButtonPopupHandler extends TagHandler implements ILookupTags 
 	public LookupButtonPopupHandler(TagConfig config) {
 		super(config);
 		lookup = getRequiredAttribute(LOOKUP);
+		windowTitle = getRequiredAttribute(WINDOW_TITLE);
 	}
 
 	private boolean isInsertTemplate(FaceletContext ctx, UIComponent parent) {
@@ -60,27 +71,21 @@ public class LookupButtonPopupHandler extends TagHandler implements ILookupTags 
 		return insert;
 	}
 
-	private String getPath(FaceletContext ctx) {
-		TagAttribute templateTag = getAttribute(TEMPLATE);
-		return (templateTag != null) ? templateTag.getValue(ctx)
-				: DEFAULT_TEMPLATE;
-	}
-
-	private void insertTemplate(FaceletContext ctx, UIComponent parent) {
-		String path = getPath(ctx);
-		VariableMapper orig = ctx.getVariableMapper();
-		ctx.setVariableMapper(new VariableMapperWrapper(orig));
-		try {
-			ValueExpression ve = lookup.getValueExpression(ctx, Object.class);
-			ctx.getVariableMapper().setVariable(LOOKUP, ve);
-			ctx.includeFacelet(parent, path);
-		} catch (Throwable th) {
-			throw new TagException(this.tag, "Error inserting template '"
-					+ path + "': " + th.getMessage());
-		} finally {
-			ctx.setVariableMapper(orig);
+	private void insertTemplate(FaceletContext ctx, UIComponent component) {
+		VariableMapper newMapper = new VariableMapperWrapper(ctx.getVariableMapper());
+		newMapper.setVariable(LOOKUP, lookup.getValueExpression(ctx, Object.class));
+		String idString = LookupButtonHandler.getModalPanelId(ctx, lookup);
+		ValueExpression id = ctx.getExpressionFactory().createValueExpression(
+				ctx, idString, String.class);
+		newMapper.setVariable(LOOKUP_ID, id);
+		newMapper.setVariable(WINDOW_TITLE, windowTitle.getValueExpression(ctx, Object.class));
+		TagAttribute reRender = getAttribute(RERENDER);
+		if ( reRender != null ) {
+			newMapper.setVariable(LOOKUP_RE_RENDER, reRender.getValueExpression(ctx, Object.class));
 		}
+		FaceletUtil.insertTemplate(ctx, tag, component, FaceletUtil.getTemplate(TEMPLATE), newMapper);
 	}
+	
 
 	@Override
 	public void apply(FaceletContext ctx, UIComponent parent) {
