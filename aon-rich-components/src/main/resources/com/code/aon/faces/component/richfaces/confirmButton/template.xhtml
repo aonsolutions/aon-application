@@ -8,10 +8,11 @@
 	xmlns:aon="http://www.code.es/aon-rich-components">
 
 	<aon:subForm>
-		<aon:panelGroup styleClass="aon-popup-panel aon-confirm-box" >
-		
+		<aon:panelGroup id="#{confirmId}ReRender" styleClass="aon-popup-panel aon-confirm-box">
+			
 			<rich:modalPanel 
 				id="#{confirmId}"
+				rendered="#{confirmShowWindow}" showWhenRendered="true"
 				styleClass="aon-popup-" minWidth="300">
 
 				<f:facet name="header">
@@ -30,7 +31,7 @@
 				<aon:panelGrid columns="1" style="width:100%;">
 					<aon:div styleClass="aon-popup-question">
 						<aon:div styleClass="">			
-							<aon:outputText value="#{confirmMessage}" />				
+							<aon:outputText value="#{confirmMessage}" />
 						</aon:div>
 					</aon:div>
 					<aon:panelGrid columns="1"  style="width:100%;">
@@ -57,7 +58,6 @@
 			</rich:modalPanel>
 			
 		</aon:panelGroup>
-		
 	</aon:subForm>
 
 </ui:composition>

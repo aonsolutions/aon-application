@@ -11,8 +11,10 @@ import javax.el.VariableMapper;
 import javax.faces.component.UIComponent;
 import javax.faces.event.ActionEvent;
 
+import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 
+import com.code.aon.faces.component.myfaces.UIComponentTagUtils;
 import com.sun.facelets.FaceletContext;
 import com.sun.facelets.tag.Tag;
 import com.sun.facelets.tag.TagAttribute;
@@ -104,6 +106,20 @@ public class FaceletUtil {
 		sb.insert(offset++, '.');
 		sb.insert(offset, value);
 		return sb.toString();
+	}
+
+	public static String updateList(FaceletContext ctx, TagAttribute tag, String value ) {
+		String result = value;
+		if (tag != null) {
+			String current = tag.getValue(ctx);
+			if (! StringUtils.isBlank(current) ) {
+				String[] ids = StringUtils.split(current, " ,");
+				if (! ArrayUtils.contains(ids, value) ) {
+					result = current + ", " + value;
+				}
+			}
+		}
+		return result;
 	}
 	
 }

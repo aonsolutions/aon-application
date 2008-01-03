@@ -1,6 +1,13 @@
 <?xml version="1.0"?>
 <components namespace="http://www.code.es/aon-rich-components">
 
+	<component localName="confirmButton">
+    	<attribute name="confirmAction" ignore="true" />			
+    	<attribute name="confirmActionListener" ignore="true" />
+    	<attribute name="confirmTitle" ignore="true" />
+    	<attribute name="confirmMessage" ignore="true" />
+	</component>
+
 	<component localName="selectInputDate">
     	<attribute name="popupDateFormat" alias="datePattern" />			
     	<attribute name="renderAsPopup" alias="popup" value="true" type="1" />
