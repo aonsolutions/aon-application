@@ -42,6 +42,8 @@ public enum SidebarType implements IResourceable {
      */
     private static final String MSG_KEY_PREFIX = "aon_enum_sidebar_type_";
 
+    private static final String VM_SIDEBAR_KEY_PREFIX = "aon_enum_sidebar_vm_";
+
     public String getName() {
 		ResourceBundle bundle = ResourceBundle.getBundle(BASE_NAME);
 		return bundle.getString(MSG_KEY_PREFIX + toString());
@@ -50,6 +52,11 @@ public enum SidebarType implements IResourceable {
 	public String getName(Locale locale) {
 		ResourceBundle bundle = ResourceBundle.getBundle(BASE_NAME, locale);
 		return bundle.getString(MSG_KEY_PREFIX + toString());
+	}
+
+	public String getTemplateName() {
+		ResourceBundle bundle = ResourceBundle.getBundle(BASE_NAME);
+		return bundle.getString(VM_SIDEBAR_KEY_PREFIX + toString());
 	}
 
 }

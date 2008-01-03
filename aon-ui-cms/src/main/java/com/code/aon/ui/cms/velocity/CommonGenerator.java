@@ -4,6 +4,7 @@ import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
@@ -14,8 +15,14 @@ import com.code.aon.cms.Header;
 import com.code.aon.cms.HeaderDetail;
 import com.code.aon.cms.Language;
 import com.code.aon.cms.Menu;
+import com.code.aon.cms.Section;
+import com.code.aon.cms.Sidebar;
+import com.code.aon.cms.SidebarOption;
+import com.code.aon.cms.SidebarOptionDetail;
 import com.code.aon.cms.dao.ICMSAlias;
+import com.code.aon.cms.enumeration.ContentLevel;
 import com.code.aon.cms.enumeration.MenuType;
+import com.code.aon.cms.enumeration.SidebarSide;
 import com.code.aon.cms.enumeration.Templates;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
@@ -28,69 +35,44 @@ import com.code.aon.ui.cms.util.VelocityUtil;
 import com.code.aon.ui.cms.velocity.attribute.FooterHandler;
 import com.code.aon.ui.cms.velocity.attribute.HeaderHandler;
 import com.code.aon.ui.cms.velocity.attribute.LanguageHandler;
+import com.code.aon.ui.cms.velocity.attribute.SidebarOptionHandler;
 
 public class CommonGenerator extends Generator {
 
-	public static void chargeContext(VelocityUtil vu) {
+	public static void chargeContext(VelocityUtil vu, Section section) {
+		
 		// $default_menu from default sidebar menu in database
-		vu.addMessage(" - Menu por defecto", VelocityUtil.INFO);
-		try {
-			IManagerBean bean = BeanManager.getManagerBean(Menu.class);
-			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(bean.getFieldName(ICMSAlias.MENU_DEFAULT_MENU), true);
-			criteria.addEqualExpression(bean.getFieldName(ICMSAlias.MENU_TYPE), MenuType.SIDEBAR);
-			List<ITransferObject> l = (List<ITransferObject>)bean.getList(criteria);
-			if (l.size() > 0) {
-				Menu m = (Menu)l.get(0);
-				vu.put("default_menu", MenuGenerator.getMenuOptionList(m));
-				vu.addMessage(" - Menu " + m.getAlias() + " cargado.", VelocityUtil.INFO);
-			}
-			else {
-				vu.addMessage(" - No existe menu por defecto.", VelocityUtil.WARN);
-			}
-		} catch (ManagerBeanException e) {
-			e.printStackTrace();
-			vu.addMessage(" - Se produjo un error, el menu no se ha cargado.", VelocityUtil.ERROR);
+		if (section.isShow_menu()){
+			vu.addMessage(" - Menu por defecto", VelocityUtil.INFO);
+			Menu m = section.getMenu();
+			vu.put("default_menu", MenuGenerator.getMenuOptionList(m));
+			vu.addMessage(" - Menu " + m.getAlias() + " cargado.", VelocityUtil.INFO);
 		}
 
 		// $default_header from default header in database
-		vu.addMessage(" - Cabecera por defecto", VelocityUtil.INFO);
-		try {
-			IManagerBean bean = BeanManager.getManagerBean(Header.class);
-			Criteria criteria = new Criteria();
-			//criteria.addEqualExpression(bean.getFieldName(ICMSAlias.HEADER_DEFAULT_HEADER), true);
-			List<ITransferObject> l = (List<ITransferObject>)bean.getList(criteria);
-			if (l.size() > 0) {
-				Header h = (Header)l.get(0);
-				vu.put("default_header", getHeaderHandler(h));
-				vu.addMessage(" - Cabecera " + h.getAlias() + " cargada.", VelocityUtil.INFO);
-			}
-			else {
-				vu.addMessage(" - No existe cabecera por defecto.", VelocityUtil.WARN);
-			}
-		} catch (ManagerBeanException e) {
-			e.printStackTrace();
-			vu.addMessage(" - Se produjo un error, la cabecera no se ha cargada.", VelocityUtil.ERROR);
+		if (section.isShow_header()){
+			vu.addMessage(" - Cabecera por defecto", VelocityUtil.INFO);
+			Header h = section.getHeader();
+			vu.put("default_header", getHeaderHandler(h));
+			vu.addMessage(" - Cabecera " + h.getAlias() + " cargada.", VelocityUtil.INFO);
+		}
+		
+		// $default_sidebar from default header in database
+		if (section.isShow_sidebar()){
+			vu.addMessage(" - Sidebar por defecto", VelocityUtil.INFO);
+			Sidebar sb = section.getSidebar();
+			vu.put("default_sidebar_left", getSidebarHandler(sb, SidebarSide.LEFT));
+			vu.addMessage(" - Sidebar left " + sb.getAlias() + " cargada.", VelocityUtil.INFO);
+			vu.put("default_sidebar_right", getSidebarHandler(sb, SidebarSide.RIGHT));
+			vu.addMessage(" - Sidebar right " + sb.getAlias() + " cargada.", VelocityUtil.INFO);
 		}
 		
 		// $default_footer from default footer in database
-		vu.addMessage(" - Pie de página por defecto", VelocityUtil.INFO);
-		try {
-			IManagerBean bean = BeanManager.getManagerBean(Footer.class);
-			Criteria criteria = new Criteria();
-			//criteria.addEqualExpression(bean.getFieldName(ICMSAlias.FOOTER_DEFAULT_FOOTER), true);
-			List<ITransferObject> l = (List<ITransferObject>)bean.getList(criteria);
-			if (l.size() > 0) {
-				Footer f = (Footer)l.get(0);
-				vu.put("default_footer", getFooterHandler(f));
-				vu.addMessage(" - Pie de página " + f.getAlias() + " cargado.", VelocityUtil.INFO);
-			}
-			else {
-				vu.addMessage(" - No existe pie de página por defecto.", VelocityUtil.WARN);
-			}
-		} catch (ManagerBeanException e) {
-			e.printStackTrace();
-			vu.addMessage(" - Se produjo un error, el pie de página no se ha cargado.", VelocityUtil.ERROR);
+		if (section.isShow_footer()){
+			vu.addMessage(" - Pie de página por defecto", VelocityUtil.INFO);
+			Footer f = section.getFooter();
+			vu.put("default_footer", getFooterHandler(f));
+			vu.addMessage(" - Pie de página " + f.getAlias() + " cargado.", VelocityUtil.INFO);
 		}
 		
 		// $default_css from config
@@ -146,6 +128,39 @@ public class CommonGenerator extends Generator {
 			e.printStackTrace();
 		}
 		return null;
+	}
+
+	private static ArrayList<SidebarOptionHandler> getSidebarHandler(Sidebar s, SidebarSide sidebarSide) {
+		ArrayList<SidebarOptionHandler> list = new ArrayList<SidebarOptionHandler>();
+		try {
+			IManagerBean bean = BeanManager.getManagerBean(SidebarOption.class);
+			Criteria criteria = new Criteria();
+			criteria.addEqualExpression(bean.getFieldName(ICMSAlias.SIDEBAR_OPTION_SIDEBAR_ID), s.getId());
+			criteria.addEqualExpression(bean.getFieldName(ICMSAlias.SIDEBAR_OPTION_ACTIVE), true);
+			criteria.addEqualExpression(bean.getFieldName(ICMSAlias.SIDEBAR_OPTION_SIDE), sidebarSide);
+			criteria.addOrder(bean.getFieldName(ICMSAlias.SIDEBAR_OPTION_POSITION));
+			List<ITransferObject> sidebarOption_lst = (List<ITransferObject>)bean.getList(criteria);
+			Iterator<ITransferObject> sidebarOption_iter = sidebarOption_lst.iterator();
+			while (sidebarOption_iter.hasNext()) {
+				SidebarOption sidebarOption = (SidebarOption)sidebarOption_iter.next(); 
+				
+				bean = BeanManager.getManagerBean(SidebarOptionDetail.class);
+				criteria = new Criteria();
+				criteria.addEqualExpression(bean.getFieldName(ICMSAlias.SIDEBAR_OPTION_DETAIL_SIDEBAR_OPTION_ID), s.getId());
+				criteria.addEqualExpression(bean.getFieldName(ICMSAlias.SIDEBAR_OPTION_DETAIL_LANGUAGE_ID), ControllerUtil.getCurrentLanguage().getId());
+				List<ITransferObject> sidebarOptionDetail_lst = (List<ITransferObject>)bean.getList(criteria);
+				Iterator<ITransferObject> sidebarOptionDetail_iter = sidebarOptionDetail_lst.iterator();
+				while (sidebarOptionDetail_iter.hasNext()) {
+					SidebarOptionDetail current = (SidebarOptionDetail)sidebarOptionDetail_iter.next();
+					
+					SidebarOptionHandler current_h = new SidebarOptionHandler(current);
+					list.add(current_h);
+				}
+			}
+		} catch (ManagerBeanException e) {
+			e.printStackTrace();
+		}
+		return list;
 	}
 
 	private static FooterHandler getFooterHandler(Footer f) {

@@ -45,7 +45,12 @@ public enum Templates implements IResourceable {
 	/**
 	 * FAQS
 	 */
-	LINK;
+	LINK,
+
+	/**
+	 * MODULAR
+	 */
+	MODULAR;
 
 	/**
 	 * Ruta base del fichero de mensajes.

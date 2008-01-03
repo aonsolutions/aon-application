@@ -6,6 +6,7 @@ import java.util.StringTokenizer;
 
 import javax.servlet.http.HttpSession;
 
+import com.code.aon.cms.GenericPage;
 import com.code.aon.cms.GenericPageDetail;
 import com.code.aon.cms.dao.ICMSAlias;
 import com.code.aon.cms.enumeration.Templates;
@@ -45,6 +46,30 @@ public class GenericGenerator extends Generator {
 		} catch (ManagerBeanException e) {
 			e.printStackTrace();
 		}
+	}
+
+	public static Object getGenericHandler(Integer ident) {
+		try {
+			IManagerBean bean = BeanManager.getManagerBean(GenericPage.class);
+			Criteria criteria = new Criteria();
+			criteria.addEqualExpression(bean.getFieldName(ICMSAlias.GENERIC_PAGE_ID), ident);
+			List<ITransferObject> l = (List<ITransferObject>)bean.getList(criteria);
+			
+			GenericPage gp = (GenericPage)l.get(0);
+			if (gp.isActive()) {
+				IManagerBean beanDetail = BeanManager.getManagerBean(GenericPageDetail.class);
+				criteria = new Criteria();
+				criteria.addEqualExpression(beanDetail.getFieldName(ICMSAlias.GENERIC_PAGE_DETAIL_LANGUAGE_ID), ControllerUtil.getCurrentLanguage().getId());
+				criteria.addEqualExpression(beanDetail.getFieldName(ICMSAlias.GENERIC_PAGE_DETAIL_GENERIC_PAGE_ID), ident);
+				List<ITransferObject> ld = (List<ITransferObject>)beanDetail.getList(criteria);
+				GenericPageDetail gpd = (GenericPageDetail)ld.get(0);
+				GenericPageHandler gph = new GenericPageHandler(gpd);
+				return gph;
+			}
+		} catch (ManagerBeanException e) {
+			e.printStackTrace();
+		}
+		return null;
 	}
 
 }
