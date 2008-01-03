@@ -6,24 +6,31 @@ import javax.el.ValueExpression;
 import javax.el.VariableMapper;
 import javax.faces.FacesException;
 import javax.faces.component.UIComponent;
+import javax.faces.component.UIViewRoot;
 
+import com.code.aon.faces.component.myfaces.UIComponentTagUtils;
 import com.code.aon.faces.component.richfaces.AonAjaxCommandHandler;
+import com.code.aon.faces.component.richfaces.IRichFacesTags;
 import com.code.aon.faces.component.util.FaceletUtil;
 import com.sun.facelets.FaceletContext;
 import com.sun.facelets.el.VariableMapperWrapper;
-import com.sun.facelets.tag.MetaRuleset;
 import com.sun.facelets.tag.TagAttribute;
 import com.sun.facelets.tag.jsf.ComponentConfig;
+import com.sun.facelets.tag.jsf.ComponentSupport;
 
 /**
  * The Class ConfirmButtonHandler.
  * 
  * @author atellitu
  */
-public class ConfirmButtonHandler extends AonAjaxCommandHandler {
+public class ConfirmButtonHandler extends AonAjaxCommandHandler implements IRichFacesTags {
 
 	private static final String CONFIRM_ID = "confirmId";
 
+    private static final String COMPONENT_TYPE = "com.code.aon.faces.HtmlConfirmButton";
+	
+	private static final String CONFIRM_SHOW_WINDOW = "confirmShowWindow";
+	
 	private static final String CONFIRM_ACTION = "confirmAction";
 
 	private static final String CONFIRM_ACTION_LISTENER = "confirmActionListener";
@@ -57,28 +64,42 @@ public class ConfirmButtonHandler extends AonAjaxCommandHandler {
 	}
 
 	@Override
-	protected MetaRuleset createMetaRuleset(Class type) {
-		MetaRuleset mrs = super.createMetaRuleset(type);
-		mrs.ignore(CONFIRM_ACTION).ignore(CONFIRM_ACTION_LISTENER);
-		mrs.ignore(CONFIRM_TITLE).ignore(CONFIRM_MESSAGE);
-		return mrs;
+	protected void setAttributes(FaceletContext ctx, Object instance) {
+		super.setAttributes(ctx, instance);
+		String id = getModalPanelId(ctx) + "ReRender";
+		String value = FaceletUtil.updateList(ctx, getAttribute(RERENDER), id);
+		UIComponentTagUtils.setStringProperty(ctx.getFacesContext(), (UIComponent)instance, RERENDER, value);
 	}
-
-	private String getPanelId(FaceletContext ctx) {
-		return getId(ctx) + "ModelPanel";
+	
+	private String getModalPanelId(FaceletContext ctx) {
+		return getId(ctx) + "ModalPanel";
 	}
 
 	@Override
 	protected void onComponentCreated(FaceletContext ctx, UIComponent c,
 			UIComponent parent) {
+		addConfirmButtonState( ctx, c );		
 		insertInnerTemplate(ctx, c);
 	}
 
+	private void addConfirmButtonState( FaceletContext ctx, UIComponent component ) {
+		UIViewRoot root = ComponentSupport.getViewRoot(ctx, component);
+		String stateKey = getStateKey(component);
+		root.getAttributes().put( stateKey, Boolean.FALSE );
+	}
+	
+	private String getStateKey( UIComponent component ) {
+		return COMPONENT_TYPE + "." + component.getId() + ".showWindow";
+	}
+
+	private ValueExpression getStateExpression( FaceletContext ctx, UIComponent component ) {
+		String expr = "#{view.attributes['" + getStateKey(component) + "']}";
+		return ctx.getExpressionFactory().createValueExpression( ctx, expr, Object.class );
+	}
+	
 	private void insertInnerTemplate(FaceletContext ctx, UIComponent component) {
 		VariableMapper newMapper = new VariableMapperWrapper(ctx.getVariableMapper());
-		ValueExpression id = ctx.getExpressionFactory().createValueExpression(
-				ctx, getPanelId(ctx), String.class);
-		newMapper.setVariable(CONFIRM_ID, id);
+		newMapper.setVariable(CONFIRM_SHOW_WINDOW, getStateExpression(ctx, component));
 		FaceletUtil.insertTemplate(ctx, tag, component, FaceletUtil.getTemplate(INNER_TEMPLATE), newMapper);
 	}
 	
@@ -93,7 +114,7 @@ public class ConfirmButtonHandler extends AonAjaxCommandHandler {
 				paramTypes);
 	}
 
-	private void addAttribues( FaceletContext ctx ) {
+	private void addAttribues( FaceletContext ctx, UIComponent component ) {
 		VariableMapper mapper = ctx.getVariableMapper();
 		TagAttribute tagImmediate = getAttribute(IMMEDIATE);
 		if (tagImmediate != null) {
@@ -104,8 +125,9 @@ public class ConfirmButtonHandler extends AonAjaxCommandHandler {
 					.createValueExpression(ctx, "false", Boolean.class));
 		}
 		ValueExpression id = ctx.getExpressionFactory().createValueExpression(
-				ctx, getPanelId(ctx), String.class);
+				ctx, getModalPanelId(ctx), String.class);
 		mapper.setVariable(CONFIRM_ID, id);
+		mapper.setVariable(CONFIRM_SHOW_WINDOW, getStateExpression(ctx, component));
 		mapper.setVariable(CONFIRM_TITLE, getValueExpression(ctx, titleTag));
 		mapper.setVariable(CONFIRM_MESSAGE, getValueExpression(ctx,
 				messageTag));
@@ -130,7 +152,7 @@ public class ConfirmButtonHandler extends AonAjaxCommandHandler {
 		ctx.setVariableMapper(new VariableMapperWrapper(orig));
 		try {
 			super.nextHandler.apply(ctx, component);
-			addAttribues(ctx);
+			addAttribues(ctx, component);
 			ctx.includeFacelet(component, path );
 		} catch (Exception e) {
 			throw new FacesException("UIInclude component "
