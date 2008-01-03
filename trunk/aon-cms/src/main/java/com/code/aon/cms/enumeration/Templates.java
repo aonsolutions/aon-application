@@ -50,7 +50,12 @@ public enum Templates implements IResourceable {
 	/**
 	 * MODULAR
 	 */
-	MODULAR;
+	MODULAR,
+
+	/**
+	 * ARTICLE
+	 */
+	ARTICLE;
 
 	/**
 	 * Ruta base del fichero de mensajes.
