@@ -30,7 +30,12 @@ public enum PageType implements IResourceable {
 	/**
 	 * Links
 	 */
-	LINK;
+	LINK,
+
+	/**
+	 * Modular
+	 */
+	MODULAR;
 
 	/**
 	 * Ruta base del fichero de mensajes.
