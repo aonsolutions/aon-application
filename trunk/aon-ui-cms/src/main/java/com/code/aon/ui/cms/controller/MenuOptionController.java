@@ -134,11 +134,11 @@ public class MenuOptionController extends BasicI18nController {
 			if (mo.getType().equals(PageType.MENU)) return true;
 			if (mo.getType().equals(PageType.GENERIC)) return true;
 			if (mo.getType().equals(PageType.LINK)){
-				if (ContentLevel.SECTION.equals(mo.getLevel()))
+				if (ContentLevel.CATEGORY.equals(mo.getLevel()))
 					return true;
 			}
 			if (mo.getType().equals(PageType.FAQ)){
-				if (ContentLevel.SECTION.equals(mo.getLevel()))
+				if (ContentLevel.CATEGORY.equals(mo.getLevel()))
 					return true;
 			}
 		}
@@ -175,11 +175,11 @@ public class MenuOptionController extends BasicI18nController {
 		if (mo.getType().equals(PageType.GENERIC)) idents = ((CollectionsController)AonUtil.getRegisteredBean("collections")).getGenericPageList();
 		else if (mo.getType().equals(PageType.MENU)) idents = ((CollectionsController)AonUtil.getRegisteredBean("collections")).getMenuList();
 		else if (mo.getType().equals(PageType.FAQ)){
-			if (ContentLevel.SECTION.equals(mo.getLevel())){
+			if (ContentLevel.CATEGORY.equals(mo.getLevel())){
 				idents = ((CollectionsController)AonUtil.getRegisteredBean("collections")).getFaqCategoryList();
 			}
 		}else if (mo.getType().equals(PageType.LINK)){
-			if (ContentLevel.SECTION.equals(mo.getLevel())){
+			if (ContentLevel.CATEGORY.equals(mo.getLevel())){
 				idents = ((CollectionsController)AonUtil.getRegisteredBean("collections")).getLinkCategoryList();
 			}
 		}

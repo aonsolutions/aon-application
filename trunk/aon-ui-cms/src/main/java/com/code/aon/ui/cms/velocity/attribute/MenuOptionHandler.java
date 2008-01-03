@@ -115,7 +115,7 @@ public class MenuOptionHandler {
 					List<ITransferObject> l = (List<ITransferObject>)bean.getList(criteria);
 					if (l.size() > 0) {
 						FaqCategory fc = (FaqCategory)l.get(0);
-						String faq = Templates.LINK.getHtmlName();
+						String faq = Templates.FAQ.getHtmlName();
 						faq = faq.replaceAll("%NAME%", fc.getAlias());
 						return faq;
 					}
