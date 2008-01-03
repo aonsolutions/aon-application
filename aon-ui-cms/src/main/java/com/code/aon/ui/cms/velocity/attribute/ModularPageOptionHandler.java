@@ -2,6 +2,8 @@ package com.code.aon.ui.cms.velocity.attribute;
 
 import com.code.aon.cms.ModularPageOptionDetail;
 import com.code.aon.cms.enumeration.ModularPageOptionType;
+import com.code.aon.ui.cms.velocity.ArticleGenerator;
+import com.code.aon.ui.cms.velocity.BannerGenerator;
 import com.code.aon.ui.cms.velocity.GenericGenerator;
 
 public class ModularPageOptionHandler {
@@ -13,10 +15,10 @@ public class ModularPageOptionHandler {
 	public ModularPageOptionHandler(ModularPageOptionDetail mpod) {
 		template = mpod.getModular_page_option().getType().getTemplateName();
 		if (mpod.getModular_page_option().getType().equals(ModularPageOptionType.ARTICLE)) {
-			content = null;
+			content = ArticleGenerator.getArticleHandler(mpod.getModular_page_option().getIdent());
 		}
 		else if (mpod.getModular_page_option().getType().equals(ModularPageOptionType.BANNER)) {
-			content = null;
+			content = BannerGenerator.getBannerHandler(mpod.getModular_page_option().getIdent());
 		}
 		else if (mpod.getModular_page_option().getType().equals(ModularPageOptionType.GENERIC)) {
 			content = GenericGenerator.getGenericHandler(mpod.getModular_page_option().getIdent());
