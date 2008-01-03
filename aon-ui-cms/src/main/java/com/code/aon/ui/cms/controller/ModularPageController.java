@@ -87,4 +87,4 @@ public class ModularPageController extends GridController {
 		mp.setActive(active);
 		getManagerBean().update(mp);
 	}
-	}
+}

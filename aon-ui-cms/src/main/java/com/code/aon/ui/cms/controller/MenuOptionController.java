@@ -141,6 +141,7 @@ public class MenuOptionController extends BasicI18nController {
 				if (ContentLevel.CATEGORY.equals(mo.getLevel()))
 					return true;
 			}
+			if (mo.getType().equals(PageType.MODULAR)) return true;
 		}
 		return false;
 	}
@@ -173,6 +174,7 @@ public class MenuOptionController extends BasicI18nController {
 		MenuOption mo = (MenuOption)getTo();
 		List<SelectItem> idents = new LinkedList<SelectItem>();
 		if (mo.getType().equals(PageType.GENERIC)) idents = ((CollectionsController)AonUtil.getRegisteredBean("collections")).getGenericPageList();
+		else if (mo.getType().equals(PageType.MODULAR)) idents = ((CollectionsController)AonUtil.getRegisteredBean("collections")).getModularPageList();
 		else if (mo.getType().equals(PageType.MENU)) idents = ((CollectionsController)AonUtil.getRegisteredBean("collections")).getMenuList();
 		else if (mo.getType().equals(PageType.FAQ)){
 			if (ContentLevel.CATEGORY.equals(mo.getLevel())){

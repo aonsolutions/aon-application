@@ -8,6 +8,7 @@ import com.code.aon.cms.Link;
 import com.code.aon.cms.LinkCategory;
 import com.code.aon.cms.MenuOption;
 import com.code.aon.cms.MenuOptionDetail;
+import com.code.aon.cms.ModularPage;
 import com.code.aon.cms.dao.ICMSAlias;
 import com.code.aon.cms.enumeration.ContentLevel;
 import com.code.aon.cms.enumeration.PageType;
@@ -119,6 +120,23 @@ public class MenuOptionHandler {
 						faq = faq.replaceAll("%NAME%", fc.getAlias());
 						return faq;
 					}
+				}
+			} catch (ManagerBeanException e) {
+				e.printStackTrace();
+			}
+			return null;
+		}
+		if (mod.getMenu_option().getType() == PageType.MODULAR) {
+			try {
+				IManagerBean modularBean = BeanManager.getManagerBean(ModularPage.class);
+				Criteria criteria_detail = new Criteria();
+				criteria_detail.addEqualExpression(modularBean.getFieldName(ICMSAlias.MODULAR_PAGE_ID), ident);
+				List<ITransferObject> ld = (List<ITransferObject>)modularBean.getList(criteria_detail);
+				if (ld.size() > 0) {
+					ModularPage mp = (ModularPage)ld.get(0);
+					String link = Templates.MODULAR.getHtmlName();
+					link = link.replaceAll("%NAME%", mp.getAlias());
+					return link;
 				}
 			} catch (ManagerBeanException e) {
 				e.printStackTrace();

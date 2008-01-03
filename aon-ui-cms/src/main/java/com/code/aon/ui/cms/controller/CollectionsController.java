@@ -16,6 +16,7 @@ import com.code.aon.cms.GenericPage;
 import com.code.aon.cms.Header;
 import com.code.aon.cms.LinkCategory;
 import com.code.aon.cms.Menu;
+import com.code.aon.cms.ModularPage;
 import com.code.aon.cms.Section;
 import com.code.aon.cms.Sidebar;
 import com.code.aon.cms.dao.ICMSAlias;
@@ -312,5 +313,21 @@ public class CollectionsController {
 			itemList.add(item);
 		}
 		return itemList;
+	}
+	
+	public List<SelectItem> getModularPageList() throws ManagerBeanException {
+		List<SelectItem> modular = new LinkedList<SelectItem>();
+		IManagerBean modularBean = BeanManager.getManagerBean(ModularPage.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(modularBean.getFieldName(ICMSAlias.MODULAR_PAGE_ACTIVE), true);
+		List<ITransferObject> list = (List<ITransferObject>)modularBean.getList(criteria);
+		for (int i = 0; i < list.size(); i++) {
+			ModularPage mp = (ModularPage)list.get(i);
+			int id = mp.getId();
+			String name = mp.getAlias();
+			SelectItem item = new SelectItem(id, name);
+			modular.add(item);
+		}
+		return modular;
 	}
 }
