@@ -9,9 +9,9 @@ import com.code.aon.ui.cms.util.VelocityUtil;
 import com.code.aon.ui.cms.velocity.CommonGenerator;
 import com.code.aon.ui.cms.velocity.FaqGenerator;
 import com.code.aon.ui.cms.velocity.GenericGenerator;
-import com.code.aon.ui.cms.velocity.HomepageGenerator;
 import com.code.aon.ui.cms.velocity.LinkGenerator;
 import com.code.aon.ui.cms.velocity.MenuGenerator;
+import com.code.aon.ui.cms.velocity.ModularPageGenerator;
 import com.code.aon.ui.form.BasicController;
 
 public class GeneratorController extends BasicController implements Constants {
@@ -28,11 +28,6 @@ public class GeneratorController extends BasicController implements Constants {
 		vu.setTemplate_path(template_path);
 		vu.initialize();
 
-		//Cargar datos comunes a todas las paginas
-		vu.addMessage("", VelocityUtil.INFO);
-		vu.addMessage("Cargando configuraciones comunes en el contexto  '" + ControllerUtil.getCurrentConfig().getTemplate() + "' ...", VelocityUtil.INFO);
-		CommonGenerator.chargeContext(vu);
-		
 		//Generar index.php de seleccion automatica de idioma
 		vu.addMessage("", VelocityUtil.INFO);
 		vu.addMessage("Creando página de seleccion de idioma... ", VelocityUtil.INFO);
@@ -40,8 +35,8 @@ public class GeneratorController extends BasicController implements Constants {
 
 		//Generar index.html del idioma seleccionado
 		vu.addMessage("", VelocityUtil.INFO);
-		vu.addMessage("Creando página de inicio (homepage)... ", VelocityUtil.INFO);
-		HomepageGenerator.generate(vu);
+		vu.addMessage("Creando páginas modulare (homepage...)... ", VelocityUtil.INFO);
+		ModularPageGenerator.generate(vu);
 
 		//Generar menus
 		vu.addMessage("", VelocityUtil.INFO);

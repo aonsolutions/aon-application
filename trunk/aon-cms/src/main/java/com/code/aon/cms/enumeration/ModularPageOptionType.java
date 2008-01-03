@@ -32,6 +32,8 @@ public enum ModularPageOptionType implements IResourceable {
      */
     private static final String MSG_KEY_PREFIX = "aon_enum_modular_page_option_type_";
 
+    private static final String VM_MODULE_KEY_PREFIX =  "aon_enum_modular_page_option_vm_";
+
     public String getName() {
 		ResourceBundle bundle = ResourceBundle.getBundle(BASE_NAME);
 		return bundle.getString(MSG_KEY_PREFIX + toString());
@@ -40,6 +42,11 @@ public enum ModularPageOptionType implements IResourceable {
 	public String getName(Locale locale) {
 		ResourceBundle bundle = ResourceBundle.getBundle(BASE_NAME, locale);
 		return bundle.getString(MSG_KEY_PREFIX + toString());
+	}
+
+	public String getTemplateName() {
+		ResourceBundle bundle = ResourceBundle.getBundle(BASE_NAME);
+		return bundle.getString(VM_MODULE_KEY_PREFIX + toString());
 	}
 
 }
