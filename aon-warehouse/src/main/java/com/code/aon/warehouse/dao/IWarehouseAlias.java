@@ -341,10 +341,10 @@ public interface IWarehouseAlias {
 	String  INVENTORY_DETAIL_COST = INVENTORY_DETAIL_ENTRY.getAliasNames()[5];
 
 	/** 
-	* Alias value: InventoryDetail_item_product_code
-	* Hibernate value: InventoryDetail.item.product.code
+	* Alias value: InventoryDetail_item_product_name
+	* Hibernate value: InventoryDetail.item.product.name
 	*/
-	String  INVENTORY_DETAIL_ITEM_PRODUCT_CODE = INVENTORY_DETAIL_ENTRY.getAliasNames()[6];
+	String  INVENTORY_DETAIL_ITEM_PRODUCT_NAME = INVENTORY_DETAIL_ENTRY.getAliasNames()[6];
 
 
 
