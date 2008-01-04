@@ -2,7 +2,6 @@ package com.code.aon.faces.component.richfaces.lookup.button;
 
 import javax.el.MethodExpression;
 import javax.el.ValueExpression;
-import javax.faces.component.UIComponent;
 import javax.faces.event.ValueChangeEvent;
 
 import com.code.aon.faces.component.myfaces.UIComponentTagUtils;

@@ -199,6 +199,10 @@
 			<handler-class>com.code.aon.faces.component.richfaces.dataPaginator.DataPaginatorHandler</handler-class>
 		</component>
 	</tag>
+    <tag>
+        <tag-name>dataScroller</tag-name>
+		<handler-class>com.code.aon.faces.component.richfaces.dataScroller.DataScrollerHandler</handler-class>
+    </tag>
 	<tag>
 		<tag-name>rowSelector</tag-name>
 		<component>
