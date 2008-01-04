@@ -1,6 +1,7 @@
 package com.code.aon.faces.component.util;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import com.code.aon.faces.component.AttributeInfo;
@@ -18,13 +19,17 @@ public class AonComponentConfig implements ComponentConfig {
 	
 	private Tag tag;
 
-	public AonComponentConfig( ComponentConfig config ) {
+	public AonComponentConfig( ComponentConfig config, List<AttributeInfo> extraAttributes ) {
     	this.config = config;
-    	this.tag = duplicate( config.getTag() );
+    	this.tag = duplicate( config.getTag(), extraAttributes );
 	}
 	
-	private Tag duplicate( Tag tag ) {
-		TagAttributes attributes = newTagAttributes( tag );
+	public AonComponentConfig( ComponentConfig config ) {
+		this( config, null );
+	}
+	
+	private Tag duplicate( Tag tag, List<AttributeInfo> extraAttributes ) {
+		TagAttributes attributes = newTagAttributes( tag, extraAttributes );
 		return new Tag(tag, attributes);
 	}
 
@@ -56,34 +61,41 @@ public class AonComponentConfig implements ComponentConfig {
     	return new TagAttribute( ta.getLocation(), ta.getNamespace(), ta.getLocalName(), ta.getQName(), value );
     }
     
-    private TagAttributes newTagAttributes( Tag tag ) {
+    private void proccess( List<AttributeInfo> attributes, Tag tag, Map<String,TagAttribute> map ) {
+		for( AttributeInfo ainfo : attributes ) {    	
+			if ( ainfo.isIgnore() ) {
+				map.remove( ainfo.getName() );
+			} else {
+				TagAttribute ta = map.get( ainfo.getName() );
+				if ( ta != null ) {
+					if ( ainfo.getAlias() != null  ) {
+						map.remove( ta.getLocalName() );
+						ta = newTagAttribute( ta, ainfo.getAlias() );
+						map.put( ta.getLocalName(), ta );
+					}
+					if ( ainfo.isForce() ) {
+						ta = newTagAttributeValue( ta, ainfo.getValue() );
+						map.put( ta.getLocalName(), ta );
+					}
+				} else if ( ainfo.getValue() != null ) {
+					ta = new TagAttribute( tag.getLocation(), "", ainfo.getName(), ainfo.getName(), ainfo.getValue() );
+					map.put( ta.getLocalName(), ta );
+				}
+			}
+		}
+    }
+    
+    private TagAttributes newTagAttributes( Tag tag, List<AttributeInfo> extraAttributes ) {
     	Map<String,TagAttribute> map = new HashMap<String, TagAttribute>();
     	for( TagAttribute attribute : tag.getAttributes().getAll() ) {
     		map.put( attribute.getLocalName(), attribute );
     	}
 		ComponentInfo componentInfo = ComponentManager.getInstance().getComponentInfo(tag);
 		if ( componentInfo != null ) {
-			for( AttributeInfo ainfo : componentInfo.getAttributes() ) {
-				if ( ainfo.isIgnore() ) {
-					map.remove( ainfo.getName() );
-				} else {
-					TagAttribute ta = map.get( ainfo.getName() );
-					if ( ta != null ) {
-						if ( ainfo.getAlias() != null  ) {
-							map.remove( ta.getLocalName() );
-							ta = newTagAttribute( ta, ainfo.getAlias() );
-							map.put( ta.getLocalName(), ta );
-						}
-						if ( ainfo.isForce() ) {
-							ta = newTagAttributeValue( ta, ainfo.getValue() );
-							map.put( ta.getLocalName(), ta );
-						}
-					} else if ( ainfo.getValue() != null ) {
-						ta = new TagAttribute( tag.getLocation(), "", ainfo.getName(), ainfo.getName(), ainfo.getValue() );
-						map.put( ta.getLocalName(), ta );
-					}
-				}
-			}
+			proccess( componentInfo.getAttributes(), tag, map );
+		}
+		if ( extraAttributes != null ) {
+			proccess( extraAttributes, tag, map );			
 		}
 		TagAttribute[] array = new TagAttribute[map.size()];
 		return new TagAttributes( map.values().toArray(array) );
