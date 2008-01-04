@@ -350,6 +350,30 @@
     </navigation-case>
   </navigation-rule>
 
+  <!-- ========================================== DIRECT ACCESS GROUP -->
+  <navigation-rule>
+    <navigation-case>
+      <from-outcome>direct_access_group_list</from-outcome>
+      <to-view-id>/facelet/content/direct_access_group/list.iface</to-view-id>
+    </navigation-case>
+    <navigation-case>
+      <from-outcome>direct_access_group_form</from-outcome>
+      <to-view-id>/facelet/content/direct_access_group/form.iface</to-view-id>
+    </navigation-case>
+  </navigation-rule>
+
+  <!-- ============================================== DIRECT ACCESS -->
+  <navigation-rule>
+    <navigation-case>
+      <from-outcome>direct_access_list</from-outcome>
+      <to-view-id>/facelet/content/direct_access_group/direct_access/list.iface</to-view-id>
+    </navigation-case>
+    <navigation-case>
+      <from-outcome>direct_access_form</from-outcome>
+      <to-view-id>/facelet/content/direct_access_group/direct_access/form.iface</to-view-id>
+    </navigation-case>
+  </navigation-rule>
+
   <!-- =================================================== TEMPLATES -->
   <navigation-rule>
     <navigation-case>

@@ -963,7 +963,87 @@
 		<managed-bean-class>com.code.aon.ui.cms.event.ModularPageOptionControllerListener</managed-bean-class>
 		<managed-bean-scope>none</managed-bean-scope>
 	</managed-bean>
-		
+
+	<!-- ************** DIRECT ACCESS GROUP ************** -->
+	<managed-bean>
+		<managed-bean-name>direct_access_group</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.cms.controller.DirectAccessGroupController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.cms.DirectAccessGroup</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojoI18n</property-name>
+			<value>com.code.aon.cms.DirectAccessGroupDetail</value>
+		</managed-property>
+		<managed-property>
+			<property-name>joinAlias</property-name>
+			<value>DirectAccessGroupDetail_directAccessGroup_id</value>
+		</managed-property>
+		<managed-property>
+			<property-name>languageAlias</property-name>
+			<value>DirectAccessGroupDetail_language_id</value>
+		</managed-property>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>listenerClasses</property-name>
+			<list-entries>
+				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+				<value>#{directAccessGroupListener}</value>
+			</list-entries>
+		</managed-property>
+	</managed-bean>
+
+	<managed-bean>
+		<managed-bean-name>directAccessGroupListener</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.cms.event.DirectAccessGroupControllerListener</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+	</managed-bean>		
+
+	<!-- ************** DIRECT ACCESS ************** -->
+	<managed-bean>
+		<managed-bean-name>direct_access</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.cms.controller.DirectAccessController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.cms.DirectAccess</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojoI18n</property-name>
+			<value>com.code.aon.cms.DirectAccessDetail</value>
+		</managed-property>
+		<managed-property>
+			<property-name>joinAlias</property-name>
+			<value>DirectAccessDetail_directAccess_id</value>
+		</managed-property>
+		<managed-property>
+			<property-name>languageAlias</property-name>
+			<value>DirectAccessDetail_language_id</value>
+		</managed-property>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>listenerClasses</property-name>
+			<list-entries>
+				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+				<value>#{directAccessControllerListener}</value>
+			</list-entries>
+		</managed-property>
+	</managed-bean>
+
+	<managed-bean>
+		<managed-bean-name>directAccessControllerListener</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.cms.event.DirectAccessControllerListener</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+	</managed-bean>
+
 	<!-- ************** TEMPLATES ************** -->
 	<managed-bean>
 		<managed-bean-name>template</managed-bean-name>

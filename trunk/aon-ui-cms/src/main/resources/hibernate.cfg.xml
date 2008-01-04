@@ -69,6 +69,10 @@
 		<mapping class="com.code.aon.cms.ModularPage"/>
 		<mapping class="com.code.aon.cms.ModularPageOption"/>
 		<mapping class="com.code.aon.cms.ModularPageOptionDetail"/>
+		<mapping class="com.code.aon.cms.DirectAccessGroup"/>
+		<mapping class="com.code.aon.cms.DirectAccessGroupDetail"/>
+		<mapping class="com.code.aon.cms.DirectAccess"/>
+		<mapping class="com.code.aon.cms.DirectAccessDetail"/>
 
 	</session-factory>
 

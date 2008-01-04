@@ -15,6 +15,7 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.cms.util.ControllerUtil;
 import com.code.aon.ui.cms.util.VelocityUtil;
+import com.code.aon.ui.cms.velocity.attribute.MenuHandler;
 import com.code.aon.ui.cms.velocity.attribute.MenuOptionHandler;
 
 public class MenuGenerator extends Generator {
@@ -84,4 +85,21 @@ public class MenuGenerator extends Generator {
 		}
 	}
 	
+	public static Object getMenuHandler(Integer ident) {
+		try {
+			IManagerBean bean = BeanManager.getManagerBean(Menu.class);
+			Criteria criteria = new Criteria();
+			criteria.addEqualExpression(bean.getFieldName(ICMSAlias.MENU_ID), ident);
+			List<ITransferObject> l = (List<ITransferObject>)bean.getList(criteria);
+			if  (l.size()>0) {
+				Menu menu = (Menu)l.get(0);
+				MenuHandler mh = new MenuHandler(menu);
+				return mh;
+			}
+		} catch (ManagerBeanException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+
 }
