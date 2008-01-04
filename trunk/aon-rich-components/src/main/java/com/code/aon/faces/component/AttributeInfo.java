@@ -26,6 +26,12 @@ public class AttributeInfo {
 		type = AttributeType.STRING;
 	}
 
+	public AttributeInfo( String name, String value ) {
+		this();
+		setName(name);
+		setValue(value);
+	}
+	
 	public String getName() {
 		return name;
 	}

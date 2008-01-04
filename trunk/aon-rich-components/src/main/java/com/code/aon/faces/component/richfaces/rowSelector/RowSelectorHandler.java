@@ -1,16 +1,25 @@
 package com.code.aon.faces.component.richfaces.rowSelector;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.faces.component.UIComponent;
+import javax.faces.component.UIViewRoot;
 
 import org.ajax4jsf.taglib.html.facelets.AjaxSupportHandler;
 import org.richfaces.component.html.HtmlDataTable;
 
+import com.code.aon.faces.component.AttributeInfo;
+import com.code.aon.faces.component.myfaces.UIComponentTagUtils;
+import com.code.aon.faces.component.richfaces.IRichFacesTags;
+import com.code.aon.faces.component.richfaces.editDataTable.EditDataTableHandler;
 import com.code.aon.faces.component.util.AonComponentConfig;
+import com.code.aon.faces.component.util.FaceletUtil;
 import com.sun.facelets.FaceletContext;
 import com.sun.facelets.tag.TagAttribute;
 import com.sun.facelets.tag.TagException;
+import com.sun.facelets.tag.TagHandler;
 import com.sun.facelets.tag.jsf.ComponentConfig;
 import com.sun.facelets.tag.jsf.ComponentSupport;
 
@@ -19,7 +28,7 @@ import com.sun.facelets.tag.jsf.ComponentSupport;
  * 
  * @author atellitu
  */
-public class RowSelectorHandler extends AjaxSupportHandler {
+public class RowSelectorHandler extends TagHandler implements IRichFacesTags {
 
 	private static final String MOUSE_OVER_CLASS_ATTRIBUTE = "mouseOverClass";
 	
@@ -29,7 +38,9 @@ public class RowSelectorHandler extends AjaxSupportHandler {
 	
 	private static final String SELECTED_CLASS_VALUE = "aon-table-row-selected";	
 	
-	private ComponentConfig originalConfig;
+	private ComponentConfig config;
+	
+	private TagHandler ajaxSupportHandler;
 	
 	/**
 	 * The Constructor.
@@ -38,13 +49,13 @@ public class RowSelectorHandler extends AjaxSupportHandler {
 	 *            the config
 	 */
 	public RowSelectorHandler(ComponentConfig config) {
-		super( new AonComponentConfig(config) );
-		this.originalConfig = config;
+		super( config );
+		this.config = config;
 	}
 
 	private String getValue(FaceletContext ctx, String name, String _default ) {
 		String value = _default;
-		TagAttribute tag = originalConfig.getTag().getAttributes().get(name);
+		TagAttribute tag = getAttribute(name);
 		if (tag != null) {
 			value = tag.getValue(ctx);
 		}
@@ -72,6 +83,22 @@ public class RowSelectorHandler extends AjaxSupportHandler {
 		dataTable.setOnRowMouseOver(mouseOver.toString());
 	}
 	
+	private TagHandler getSupportHandler(FaceletContext ctx, UIComponent component) {
+		if ( this.ajaxSupportHandler == null ) {
+			List<AttributeInfo> attributes = new ArrayList<AttributeInfo>();
+			UIViewRoot root = ComponentSupport.getViewRoot(ctx, component);
+			String id = (String) root.getAttributes().get( EditDataTableHandler.EDIT_DATA_TABLE_ID );
+			if ( id != null ) {
+				String value = FaceletUtil.updateList(ctx, getAttribute(RERENDER), id);
+				AttributeInfo info = new AttributeInfo(RERENDER, value);
+				attributes.add(info);
+			}
+			AonComponentConfig aonConfig = new AonComponentConfig(config, attributes); 
+			ajaxSupportHandler = new AjaxSupportHandler(aonConfig);
+		}
+		return this.ajaxSupportHandler;
+	}
+	
 	@Override
 	public void apply(FaceletContext ctx, UIComponent parent) throws IOException {
 		if (parent instanceof HtmlDataTable) {
@@ -83,7 +110,7 @@ public class RowSelectorHandler extends AjaxSupportHandler {
 			throw new TagException(this.tag,
 					"Parent is not of type org.richfaces.component.html.HtmlDataTable, type is: " + parent);
 		}
-		super.apply(ctx, parent);
+		getSupportHandler(ctx, parent).apply(ctx, parent);
 	}
 
 }
