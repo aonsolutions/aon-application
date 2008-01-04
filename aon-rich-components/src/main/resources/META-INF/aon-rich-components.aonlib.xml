@@ -1,6 +1,10 @@
 <?xml version="1.0"?>
 <components namespace="http://www.code.es/aon-rich-components">
 
+	<component localName="lookupButton">
+    	<attribute name="immediate" value="true" type="1" />
+	</component>
+
 	<component localName="confirmButton">
     	<attribute name="confirmAction" ignore="true" />			
     	<attribute name="confirmActionListener" ignore="true" />
