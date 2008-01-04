@@ -37,6 +37,8 @@ public class DirectAccess implements ITransferObject {
 
 	private Integer position;
 
+	private String image;
+
 	private Set<DirectAccessDetail> details;
 
 	@Id
@@ -122,5 +124,15 @@ public class DirectAccess implements ITransferObject {
 	public void setDetails( Set<DirectAccessDetail> details ) {
 		this.details = details;
 	}
+
+	@Column(length=255)
+	public String getImage() {
+		return image;
+	}
+
+	public void setImage(String image) {
+		this.image = image;
+	}
+
 
 }

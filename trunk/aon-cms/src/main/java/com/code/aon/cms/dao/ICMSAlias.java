@@ -2272,22 +2272,28 @@ public interface ICMSAlias {
 	String  DIRECT_ACCESS_IDENT = DIRECT_ACCESS_ENTRY.getAliasNames()[4];
 
 	/** 
+	* Alias value: DirectAccess_image
+	* Hibernate value: DirectAccess.image
+	*/
+	String  DIRECT_ACCESS_IMAGE = DIRECT_ACCESS_ENTRY.getAliasNames()[5];
+
+	/** 
 	* Alias value: DirectAccess_level
 	* Hibernate value: DirectAccess.level
 	*/
-	String  DIRECT_ACCESS_LEVEL = DIRECT_ACCESS_ENTRY.getAliasNames()[5];
+	String  DIRECT_ACCESS_LEVEL = DIRECT_ACCESS_ENTRY.getAliasNames()[6];
 
 	/** 
 	* Alias value: DirectAccess_position
 	* Hibernate value: DirectAccess.position
 	*/
-	String  DIRECT_ACCESS_POSITION = DIRECT_ACCESS_ENTRY.getAliasNames()[6];
+	String  DIRECT_ACCESS_POSITION = DIRECT_ACCESS_ENTRY.getAliasNames()[7];
 
 	/** 
 	* Alias value: DirectAccess_type
 	* Hibernate value: DirectAccess.type
 	*/
-	String  DIRECT_ACCESS_TYPE = DIRECT_ACCESS_ENTRY.getAliasNames()[7];
+	String  DIRECT_ACCESS_TYPE = DIRECT_ACCESS_ENTRY.getAliasNames()[8];
 
 
 
