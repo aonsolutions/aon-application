@@ -2,7 +2,11 @@ package com.code.aon.ui.cms.velocity.attribute;
 
 import com.code.aon.cms.SidebarOptionDetail;
 import com.code.aon.cms.enumeration.SidebarType;
+import com.code.aon.ui.cms.velocity.ArticleGenerator;
+import com.code.aon.ui.cms.velocity.BannerGenerator;
 import com.code.aon.ui.cms.velocity.GenericGenerator;
+import com.code.aon.ui.cms.velocity.LinkGenerator;
+import com.code.aon.ui.cms.velocity.MenuGenerator;
 
 public class SidebarOptionHandler {
 
@@ -13,19 +17,19 @@ public class SidebarOptionHandler {
 	public SidebarOptionHandler(SidebarOptionDetail sidebarOptionDetail) {
 		template = sidebarOptionDetail.getSidebar_option().getType().getTemplateName();
 		if (sidebarOptionDetail.getSidebar_option().getType().equals(SidebarType.ARTICLE)) {
-			content = null;
+			content = ArticleGenerator.getArticleHandler(sidebarOptionDetail.getSidebar_option().getIdent());
 		}
 		else if (sidebarOptionDetail.getSidebar_option().getType().equals(SidebarType.BANNER)) {
-			content = null;
+			content = BannerGenerator.getBannerHandler(sidebarOptionDetail.getSidebar_option().getIdent());
 		}
 		else if (sidebarOptionDetail.getSidebar_option().getType().equals(SidebarType.GENERIC)) {
 			content = GenericGenerator.getGenericHandler(sidebarOptionDetail.getSidebar_option().getIdent());
 		}
 		else if (sidebarOptionDetail.getSidebar_option().getType().equals(SidebarType.LINK)) {
-			content = null;
+			content = LinkGenerator.getLinkCategoryHandler(sidebarOptionDetail.getSidebar_option().getIdent());
 		}
 		else if (sidebarOptionDetail.getSidebar_option().getType().equals(SidebarType.MENU)) {
-			content = null;
+			content = MenuGenerator.getMenuHandler(sidebarOptionDetail.getSidebar_option().getIdent());
 		}
 	}
 

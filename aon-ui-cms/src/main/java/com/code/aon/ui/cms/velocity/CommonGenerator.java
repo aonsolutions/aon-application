@@ -146,13 +146,12 @@ public class CommonGenerator extends Generator {
 				
 				bean = BeanManager.getManagerBean(SidebarOptionDetail.class);
 				criteria = new Criteria();
-				criteria.addEqualExpression(bean.getFieldName(ICMSAlias.SIDEBAR_OPTION_DETAIL_SIDEBAR_OPTION_ID), s.getId());
+				criteria.addEqualExpression(bean.getFieldName(ICMSAlias.SIDEBAR_OPTION_DETAIL_SIDEBAR_OPTION_ID), sidebarOption.getId());
 				criteria.addEqualExpression(bean.getFieldName(ICMSAlias.SIDEBAR_OPTION_DETAIL_LANGUAGE_ID), ControllerUtil.getCurrentLanguage().getId());
 				List<ITransferObject> sidebarOptionDetail_lst = (List<ITransferObject>)bean.getList(criteria);
 				Iterator<ITransferObject> sidebarOptionDetail_iter = sidebarOptionDetail_lst.iterator();
 				while (sidebarOptionDetail_iter.hasNext()) {
 					SidebarOptionDetail current = (SidebarOptionDetail)sidebarOptionDetail_iter.next();
-					
 					SidebarOptionHandler current_h = new SidebarOptionHandler(current);
 					list.add(current_h);
 				}

@@ -21,6 +21,10 @@ import com.code.aon.cms.Brand;
 import com.code.aon.cms.BrandDetail;
 import com.code.aon.cms.Config;
 import com.code.aon.cms.ConfigDetail;
+import com.code.aon.cms.DirectAccess;
+import com.code.aon.cms.DirectAccessDetail;
+import com.code.aon.cms.DirectAccessGroup;
+import com.code.aon.cms.DirectAccessGroupDetail;
 import com.code.aon.cms.Download;
 import com.code.aon.cms.DownloadCategory;
 import com.code.aon.cms.DownloadCategoryDetail;
@@ -61,7 +65,7 @@ public class CMSAliasWriter {
 	public static void main(String[] args) throws IOException {
 
 		File file = new File("/AON-PROJECT/aon-cms/src/main/java/com/code/aon/cms/dao/ICMSAlias.java");
-		String[] classes = new String[51]; 
+		String[] classes = new String[55]; 
 		classes[0] = Language.class.getName();
 		classes[1] = Config.class.getName();
 		classes[2] = ConfigDetail.class.getName();
@@ -113,6 +117,10 @@ public class CMSAliasWriter {
 		classes[48] = ModularPage.class.getName();
 		classes[49] = ModularPageOption.class.getName();
 		classes[50] = ModularPageOptionDetail.class.getName();		
+		classes[51] = DirectAccessGroup.class.getName();
+		classes[52] = DirectAccessGroupDetail.class.getName();
+		classes[53] = DirectAccess.class.getName();
+		classes[54] = DirectAccessDetail.class.getName();
 		AliasWriter writer = new AliasWriter("com.code.aon.cms.dao");
 		writer.write(classes, file);
 		System.out.println( file.getAbsolutePath() );

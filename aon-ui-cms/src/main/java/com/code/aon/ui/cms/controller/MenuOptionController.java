@@ -27,6 +27,7 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionException;
 import com.code.aon.ui.cms.util.ControllerUtil;
+import com.code.aon.ui.cms.util.MenuOptionUtil;
 import com.code.aon.ui.util.AonUtil;
 import com.icesoft.faces.component.ext.RowSelectorEvent;
 
@@ -121,71 +122,36 @@ public class MenuOptionController extends BasicI18nController {
 
 	public boolean isVisibleLevel() {
 		MenuOption mo = (MenuOption)getTo();
-		if (mo != null && mo.getType() != null) {
-			if (mo.getType().equals(PageType.LINK)) return true;
-			if (mo.getType().equals(PageType.FAQ)) return true;
+		if (mo != null) {
+			return MenuOptionUtil.isVisibleLevel(mo.getType());
 		}
 		return false;
 	}
 
 	public boolean isVisibleIdent() {
 		MenuOption mo = (MenuOption)getTo();
-		if (mo != null && mo.getType() != null) {
-			if (mo.getType().equals(PageType.MENU)) return true;
-			if (mo.getType().equals(PageType.GENERIC)) return true;
-			if (mo.getType().equals(PageType.LINK)){
-				if (ContentLevel.CATEGORY.equals(mo.getLevel()))
-					return true;
-			}
-			if (mo.getType().equals(PageType.FAQ)){
-				if (ContentLevel.CATEGORY.equals(mo.getLevel()))
-					return true;
-			}
-			if (mo.getType().equals(PageType.MODULAR)) return true;
+		if (mo != null) {
+			return MenuOptionUtil.isVisibleIdent(mo.getType(), mo.getLevel());
 		}
 		return false;
 	}
 
 	public boolean isVisibleUrl() {
 		MenuOption mo = (MenuOption)getTo();
-		if (mo != null && mo.getType() != null) {
-			if (mo.getType().equals(PageType.EXTERNAL)) return true;
+		if (mo != null) {
+			return MenuOptionUtil.isVisibleUrl(mo.getType());
 		}
 		return false;
 	}
 
 	public List<SelectItem> getLevels() throws ManagerBeanException, ExpressionException {
 		MenuOption mo = (MenuOption)getTo();
-		List<SelectItem> levels = new LinkedList<SelectItem>();
-		if (mo.getType() != null) {
-			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
-			SelectItem item = new SelectItem("", "");
-			levels.add(item);
-			for (ContentLevel contentLevel : ContentLevel.values()) {
-				String name = contentLevel.getName(locale);
-				item = new SelectItem(contentLevel, name);
-				levels.add(item);
-			}
-		}
-		return levels;
+		return MenuOptionUtil.getLevels(mo.getType());
 	}
 
 	public List<SelectItem> getIdents() throws ManagerBeanException, ExpressionException {
 		MenuOption mo = (MenuOption)getTo();
-		List<SelectItem> idents = new LinkedList<SelectItem>();
-		if (mo.getType().equals(PageType.GENERIC)) idents = ((CollectionsController)AonUtil.getRegisteredBean("collections")).getGenericPageList();
-		else if (mo.getType().equals(PageType.MODULAR)) idents = ((CollectionsController)AonUtil.getRegisteredBean("collections")).getModularPageList();
-		else if (mo.getType().equals(PageType.MENU)) idents = ((CollectionsController)AonUtil.getRegisteredBean("collections")).getMenuList();
-		else if (mo.getType().equals(PageType.FAQ)){
-			if (ContentLevel.CATEGORY.equals(mo.getLevel())){
-				idents = ((CollectionsController)AonUtil.getRegisteredBean("collections")).getFaqCategoryList();
-			}
-		}else if (mo.getType().equals(PageType.LINK)){
-			if (ContentLevel.CATEGORY.equals(mo.getLevel())){
-				idents = ((CollectionsController)AonUtil.getRegisteredBean("collections")).getLinkCategoryList();
-			}
-		}
-		return idents;
+		return MenuOptionUtil.getIdents(mo.getType(),mo.getLevel());
 	}
 
 	@SuppressWarnings("unchecked")

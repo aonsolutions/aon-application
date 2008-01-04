@@ -53,6 +53,10 @@ import com.code.aon.cms.Section;
 import com.code.aon.cms.ModularPage;
 import com.code.aon.cms.ModularPageOption;
 import com.code.aon.cms.ModularPageOptionDetail;
+import com.code.aon.cms.DirectAccessGroup;
+import com.code.aon.cms.DirectAccessGroupDetail;
+import com.code.aon.cms.DirectAccess;
+import com.code.aon.cms.DirectAccessDetail;
 
 /** 
 * Interface for holding entity properties constants.
@@ -2167,6 +2171,160 @@ public interface ICMSAlias {
 	* Hibernate value: ModularPageOptionDetail.modular_page_option.id
 	*/
 	String  MODULAR_PAGE_OPTION_DETAIL_MODULAR_PAGE_OPTION_ID = MODULAR_PAGE_OPTION_DETAIL_ENTRY.getAliasNames()[3];
+
+
+
+	/** 
+	* DAOConstantsEntry for DirectAccessGroup entity.
+	*/ 
+	DAOConstantsEntry DIRECT_ACCESS_GROUP_ENTRY = DAOConstants.getDAOConstant(DirectAccessGroup.class);
+
+	/** 
+	* Alias value: DirectAccessGroup_active
+	* Hibernate value: DirectAccessGroup.active
+	*/
+	String  DIRECT_ACCESS_GROUP_ACTIVE = DIRECT_ACCESS_GROUP_ENTRY.getAliasNames()[0];
+
+	/** 
+	* Alias value: DirectAccessGroup_alias
+	* Hibernate value: DirectAccessGroup.alias
+	*/
+	String  DIRECT_ACCESS_GROUP_ALIAS = DIRECT_ACCESS_GROUP_ENTRY.getAliasNames()[1];
+
+	/** 
+	* Alias value: DirectAccessGroup_id
+	* Hibernate value: DirectAccessGroup.id
+	*/
+	String  DIRECT_ACCESS_GROUP_ID = DIRECT_ACCESS_GROUP_ENTRY.getAliasNames()[2];
+
+	/** 
+	* Alias value: DirectAccessGroup_section_id
+	* Hibernate value: DirectAccessGroup.section.id
+	*/
+	String  DIRECT_ACCESS_GROUP_SECTION_ID = DIRECT_ACCESS_GROUP_ENTRY.getAliasNames()[3];
+
+
+
+	/** 
+	* DAOConstantsEntry for DirectAccessGroupDetail entity.
+	*/ 
+	DAOConstantsEntry DIRECT_ACCESS_GROUP_DETAIL_ENTRY = DAOConstants.getDAOConstant(DirectAccessGroupDetail.class);
+
+	/** 
+	* Alias value: DirectAccessGroupDetail_directAccessGroup_id
+	* Hibernate value: DirectAccessGroupDetail.directAccessGroup.id
+	*/
+	String  DIRECT_ACCESS_GROUP_DETAIL_DIRECT_ACCESS_GROUP_ID = DIRECT_ACCESS_GROUP_DETAIL_ENTRY.getAliasNames()[0];
+
+	/** 
+	* Alias value: DirectAccessGroupDetail_id
+	* Hibernate value: DirectAccessGroupDetail.id
+	*/
+	String  DIRECT_ACCESS_GROUP_DETAIL_ID = DIRECT_ACCESS_GROUP_DETAIL_ENTRY.getAliasNames()[1];
+
+	/** 
+	* Alias value: DirectAccessGroupDetail_label
+	* Hibernate value: DirectAccessGroupDetail.label
+	*/
+	String  DIRECT_ACCESS_GROUP_DETAIL_LABEL = DIRECT_ACCESS_GROUP_DETAIL_ENTRY.getAliasNames()[2];
+
+	/** 
+	* Alias value: DirectAccessGroupDetail_language_id
+	* Hibernate value: DirectAccessGroupDetail.language.id
+	*/
+	String  DIRECT_ACCESS_GROUP_DETAIL_LANGUAGE_ID = DIRECT_ACCESS_GROUP_DETAIL_ENTRY.getAliasNames()[3];
+
+
+
+	/** 
+	* DAOConstantsEntry for DirectAccess entity.
+	*/ 
+	DAOConstantsEntry DIRECT_ACCESS_ENTRY = DAOConstants.getDAOConstant(DirectAccess.class);
+
+	/** 
+	* Alias value: DirectAccess_active
+	* Hibernate value: DirectAccess.active
+	*/
+	String  DIRECT_ACCESS_ACTIVE = DIRECT_ACCESS_ENTRY.getAliasNames()[0];
+
+	/** 
+	* Alias value: DirectAccess_alias
+	* Hibernate value: DirectAccess.alias
+	*/
+	String  DIRECT_ACCESS_ALIAS = DIRECT_ACCESS_ENTRY.getAliasNames()[1];
+
+	/** 
+	* Alias value: DirectAccess_directAccessGroup_id
+	* Hibernate value: DirectAccess.directAccessGroup.id
+	*/
+	String  DIRECT_ACCESS_DIRECT_ACCESS_GROUP_ID = DIRECT_ACCESS_ENTRY.getAliasNames()[2];
+
+	/** 
+	* Alias value: DirectAccess_id
+	* Hibernate value: DirectAccess.id
+	*/
+	String  DIRECT_ACCESS_ID = DIRECT_ACCESS_ENTRY.getAliasNames()[3];
+
+	/** 
+	* Alias value: DirectAccess_ident
+	* Hibernate value: DirectAccess.ident
+	*/
+	String  DIRECT_ACCESS_IDENT = DIRECT_ACCESS_ENTRY.getAliasNames()[4];
+
+	/** 
+	* Alias value: DirectAccess_level
+	* Hibernate value: DirectAccess.level
+	*/
+	String  DIRECT_ACCESS_LEVEL = DIRECT_ACCESS_ENTRY.getAliasNames()[5];
+
+	/** 
+	* Alias value: DirectAccess_position
+	* Hibernate value: DirectAccess.position
+	*/
+	String  DIRECT_ACCESS_POSITION = DIRECT_ACCESS_ENTRY.getAliasNames()[6];
+
+	/** 
+	* Alias value: DirectAccess_type
+	* Hibernate value: DirectAccess.type
+	*/
+	String  DIRECT_ACCESS_TYPE = DIRECT_ACCESS_ENTRY.getAliasNames()[7];
+
+
+
+	/** 
+	* DAOConstantsEntry for DirectAccessDetail entity.
+	*/ 
+	DAOConstantsEntry DIRECT_ACCESS_DETAIL_ENTRY = DAOConstants.getDAOConstant(DirectAccessDetail.class);
+
+	/** 
+	* Alias value: DirectAccessDetail_directAccess_id
+	* Hibernate value: DirectAccessDetail.directAccess.id
+	*/
+	String  DIRECT_ACCESS_DETAIL_DIRECT_ACCESS_ID = DIRECT_ACCESS_DETAIL_ENTRY.getAliasNames()[0];
+
+	/** 
+	* Alias value: DirectAccessDetail_id
+	* Hibernate value: DirectAccessDetail.id
+	*/
+	String  DIRECT_ACCESS_DETAIL_ID = DIRECT_ACCESS_DETAIL_ENTRY.getAliasNames()[1];
+
+	/** 
+	* Alias value: DirectAccessDetail_label
+	* Hibernate value: DirectAccessDetail.label
+	*/
+	String  DIRECT_ACCESS_DETAIL_LABEL = DIRECT_ACCESS_DETAIL_ENTRY.getAliasNames()[2];
+
+	/** 
+	* Alias value: DirectAccessDetail_language_id
+	* Hibernate value: DirectAccessDetail.language.id
+	*/
+	String  DIRECT_ACCESS_DETAIL_LANGUAGE_ID = DIRECT_ACCESS_DETAIL_ENTRY.getAliasNames()[3];
+
+	/** 
+	* Alias value: DirectAccessDetail_url
+	* Hibernate value: DirectAccessDetail.url
+	*/
+	String  DIRECT_ACCESS_DETAIL_URL = DIRECT_ACCESS_DETAIL_ENTRY.getAliasNames()[4];
 
 
 }
