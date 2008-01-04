@@ -23,8 +23,9 @@
 				</f:facet>
 				<f:facet name="controls">
 					<aon:form>				
-						<aon:commandButton type="button" styleClass="aon-popup-button-close" immediate="true"
-							image="/images/icefaces/popupclose.gif">
+						<aon:commandButton type="button"
+							styleClass="aon-popup-button-close" image="/images/icefaces/popupclose.gif"
+							actionListener="#{lookup.onCloseWindow}" immediate="true">
 							<rich:componentControl for="#{lookupId}" event="onclick"
 								disableDefault="true" operation="hide"/>
 						</aon:commandButton>
