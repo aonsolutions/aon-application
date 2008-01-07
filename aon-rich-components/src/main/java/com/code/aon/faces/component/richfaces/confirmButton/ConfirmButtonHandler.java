@@ -40,6 +40,8 @@ public class ConfirmButtonHandler extends AonAjaxCommandHandler implements IRich
 	private static final String CONFIRM_MESSAGE = "confirmMessage";
 
 	private static final String IMMEDIATE = "immediate";
+	
+	private static final String CONFIRM_RE_RENDER = "confirmReRender";
 
 	private static final String TEMPLATE_PATH = "com/code/aon/faces/component/richfaces/confirmButton/";
 
@@ -67,8 +69,7 @@ public class ConfirmButtonHandler extends AonAjaxCommandHandler implements IRich
 	protected void setAttributes(FaceletContext ctx, Object instance) {
 		super.setAttributes(ctx, instance);
 		String id = getModalPanelId(ctx) + "ReRender";
-		String value = FaceletUtil.updateList(ctx, getAttribute(RERENDER), id);
-		UIComponentTagUtils.setStringProperty(ctx.getFacesContext(), (UIComponent)instance, RERENDER, value);
+		UIComponentTagUtils.setStringProperty(ctx.getFacesContext(), (UIComponent)instance, RERENDER, id);
 	}
 	
 	private String getModalPanelId(FaceletContext ctx) {
@@ -142,6 +143,10 @@ public class ConfirmButtonHandler extends AonAjaxCommandHandler implements IRich
 				null, FaceletUtil.ACTION_LISTENER_SIG);
 		if (al != null) {
 			mapper.setVariable(CONFIRM_ACTION_LISTENER, al);
+		}
+		TagAttribute reRender = getAttribute(RERENDER);
+		if (reRender != null) {
+			mapper.setVariable(CONFIRM_RE_RENDER, getValueExpression(ctx, reRender));
 		}
 	}
 

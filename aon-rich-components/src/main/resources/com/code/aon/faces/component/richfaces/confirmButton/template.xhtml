@@ -23,6 +23,7 @@
 				<f:facet name="controls">
 					<aon:commandButton type="button" styleClass="aon-popup-button-close" immediate="true"
 						image="/images/icefaces/popupclose.gif">
+						<f:setPropertyActionListener target="#{confirmShowWindow}" value="false" />						
 						<rich:componentControl for="#{confirmId}" event="onclick"
 							disableDefault="true" operation="hide"/>
 					</aon:commandButton>	
@@ -37,17 +38,19 @@
 					<aon:panelGrid columns="1"  style="width:100%;">
 						<aon:div styleClass="aon-popup-buttons" >
 							<aon:commandButton value="#{bundle.aon_yes}"
-								action="#{confirmAction}"
+								action="#{confirmAction}" reRender="#{confirmReRender}"
 								styleClass="aon-popup-button"
 								immediate="#{immediate}">
 								<c:if test="#{confirmActionListener != null}">									
 									<aon:actionListener method="#{confirmActionListener}" />
 								</c:if>
+								<f:setPropertyActionListener target="#{confirmShowWindow}" value="false" />								
 								<rich:componentControl for="#{confirmId}" event="onclick"
 									disableDefault="true" operation="hide"/>
 							</aon:commandButton>
 							<aon:commandButton value="#{bundle.aon_no}"
 								styleClass="aon-popup-button" immediate="true">
+								<f:setPropertyActionListener target="#{confirmShowWindow}" value="false" />								
 								<rich:componentControl for="#{confirmId}" event="onclick"
 									disableDefault="true" operation="hide"/>
 							</aon:commandButton>
