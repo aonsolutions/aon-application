@@ -50,6 +50,10 @@
 				</exclusion>
 				<exclusion>
 					<groupId>com.code.aon</groupId>
+					<artifactId>aon.tas</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>com.code.aon</groupId>
 					<artifactId>aon.commercial</artifactId>
 				</exclusion>
 			</exclusions>
