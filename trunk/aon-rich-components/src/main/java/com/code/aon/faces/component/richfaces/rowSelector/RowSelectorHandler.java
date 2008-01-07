@@ -11,7 +11,6 @@ import org.ajax4jsf.taglib.html.facelets.AjaxSupportHandler;
 import org.richfaces.component.html.HtmlDataTable;
 
 import com.code.aon.faces.component.AttributeInfo;
-import com.code.aon.faces.component.myfaces.UIComponentTagUtils;
 import com.code.aon.faces.component.richfaces.IRichFacesTags;
 import com.code.aon.faces.component.richfaces.editDataTable.EditDataTableHandler;
 import com.code.aon.faces.component.util.AonComponentConfig;
