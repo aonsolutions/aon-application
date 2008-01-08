@@ -61,7 +61,7 @@
 							accesskey="#{bundle.aon_key_cancel}" />
 						<t:commandButton id="remove" value="#{bundle.aon_remove}"
 							forceId="#{true}" immediate="#{true}"
-							onclick="return (confirm('#{bundle.aon_remove_confirm}'))"
+							onclick="if(confirm('#{bundle.aon_remove_confirm}')){viewDialog.show();}else{ return false; }"
 							action="sales_invoicing_list"
 							actionListener="#{salesInvoicing.onRemove}"
 							rendered="#{!salesInvoicing.new}"
@@ -382,6 +382,7 @@
 							<t:div style="text-align:right;">
 								<t:commandButton title="#{financeBundle.aon_transfer}"
 									styleClass="aon-form-button"
+									onclick="viewDialog.show();"
 									value="#{financeBundle.aon_transfer}"
 									actionListener="#{salesInvoicing.onInvoice}"
 									accesskey="#{bundle.aon_key_invoice}" />

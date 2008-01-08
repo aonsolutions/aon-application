@@ -3,6 +3,7 @@
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:s="http://myfaces.apache.org/sandbox"            
 	xmlns:h="http://java.sun.com/jsf/html">
 <body>
 
@@ -71,7 +72,7 @@
 							rendered="#{!delivery.new and delivery.editable }"
 							forceId="#{true}" immediate="#{true}" action="delivery_list"
 							actionListener="#{delivery.onRemove}"
-							onclick="return (confirm('#{bundle.aon_remove_confirm}'))"
+							onclick="if(confirm('#{bundle.aon_remove_confirm}')){viewDialog.show();}else{ return false; }"
 							styleClass="aon-content-toolbar-item aon-content-toolbar-item-delete"
 							onmouseover="this.className='aon-content-toolbar-item aon-content-toolbar-item-hover aon-content-toolbar-item-delete'"
 							onmouseout="this.className='aon-content-toolbar-item aon-content-toolbar-item-delete'"
@@ -98,7 +99,7 @@
 							value="#{warehouseBundle.aon_to_invoice}" forceId="#{true}"
 							rendered="#{!delivery.new and delivery.editable }"
 							actionListener="#{salesInvoicing.onImportDelivery}"
-							action="sales_invoicing_form"
+							action="sales_invoicing_form" onclick="viewDialog.show();"
 							styleClass="aon-content-toolbar-item aon-content-toolbar-item-save"
 							onmouseover="this.className='aon-content-toolbar-item aon-content-toolbar-item-hover aon-content-toolbar-item-save'"
 							onmouseout="this.className='aon-content-toolbar-item aon-content-toolbar-item-save'"
@@ -176,7 +177,8 @@
 							</t:inputText>
 							<t:commandButton styleClass="aon-form-lookup-button"
 								id="Delivery_issueTime_button" forceId="#{true}" value=""
-								immediate="true" disabled="#{!delivery.editable}" />
+								immediate="true" disabled="#{!delivery.editable}" 
+								onclick="viewDialog.show();"/>
 							<script type="text/javascript">
 						  Calendar.setup( {
 							inputField  : "Delivery_issueTime", button : "Delivery_issueTime_button",
@@ -780,6 +782,19 @@
 			</t:div>
 			<t:inputHidden id="withPurchase"
 				value="#{salesPurchase.withPurchase}" forceId="#{true}" />
+				
+			<s:modalDialog
+		       dialogId="viewDialog"
+		       dialogVar="viewDialog"
+		       closeButton="false">
+		       <t:div styleClass="aon-timer">		       		
+		       		<h:graphicImage value="/css/images/content/aon-timer.gif" />
+		       		<t:div styleClass="aon-timer-title" >
+		       			<t:outputText value="#{appBundle.aon_in_progress}" /> 
+		       		</t:div>
+  			   </t:div>
+			</s:modalDialog>
+				
 		</h:form>
 		<script>
 			function calcPrice(index){		
