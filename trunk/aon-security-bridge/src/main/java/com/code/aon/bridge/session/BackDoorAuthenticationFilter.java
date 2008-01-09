@@ -78,16 +78,14 @@ public class BackDoorAuthenticationFilter implements Filter {
 					register( activeRequest, principal, username, bdp.getPassword() );
 					RequestDispatcher disp = activeRequest.getRequestDispatcher( "/" );
 					disp.forward( activeRequest.getRequest(), activeRequest.getResponse() );
-					activeRequest.getResponse().finishResponse();
-					return;
 				} else {
 					//Forward to Login Page.
 					String targetUrl = activeRequest.getContext().getLoginConfig().getLoginPage();
 					RequestDispatcher disp = activeRequest.getRequestDispatcher( targetUrl );
 					disp.forward( activeRequest.getRequest(), activeRequest.getResponse() );
-					activeRequest.getResponse().finishResponse();
-					return;
 				}
+				activeRequest.getResponse().finishResponse();
+				return;
 			}
 		}
 		chain.doFilter( request, response );

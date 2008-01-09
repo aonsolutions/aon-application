@@ -22,7 +22,9 @@ public interface IOperation {
     					GET_APPLICATION 			= "getApplication",
     					GET_APPLICATION4CTX			= "getApplication4Ctx",
 
+    					GET_DOMAIN_NAMES_IMPORT		= "getDomainNames2Import",
     					GET_DOMAIN 					= "getDomain",
+						ADD_DOMAIN 					= "addDomain",
     					REMOVE_DOMAIN 				= "removeDomain",
 						UPDATE_DOMAIN 				= "updateDomain",
 						UPDATE_DOMAIN_ACCESSPOLICY 	= "updateAccessPolicy",
