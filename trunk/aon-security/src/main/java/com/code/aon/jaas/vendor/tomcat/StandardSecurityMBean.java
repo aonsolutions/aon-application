@@ -60,6 +60,23 @@ public interface StandardSecurityMBean extends com.code.aon.jaas.vendor.tomcat.S
 
    /**
     * (non-Javadoc)
+    * @see com.code.aon.jaas.storage.IOperation#getDomains2Import(java.lang.String)
+    */
+  java.util.List getDomainNames2Import(java.lang.String appId) ;
+
+   /**
+    * Problems with Tomcat forces me to implement this wrapper around addUser base method.
+    */
+  void addDomain(java.lang.String appId,java.lang.String domain,java.lang.String flag) throws com.code.aon.jaas.storage.StorageException;
+
+   /**
+    * (non-Javadoc)
+    * @see com.code.aon.jaas.storage.IOperation#addDomain(java.lang.String, com.code.aon.jaas.client.ast.IDomain, Boolean)
+    */
+  void addDomain(java.lang.String appId,com.code.aon.jaas.client.ast.IDomain domain,java.lang.Boolean flag) throws com.code.aon.jaas.storage.StorageException;
+
+   /**
+    * (non-Javadoc)
     * @see com.code.aon.jaas.storage.IOperation#getDomain(java.lang.String, java.lang.String)
     */
   com.code.aon.jaas.client.ast.IDomain getDomain(java.lang.String appContext,java.lang.String domainId) ;

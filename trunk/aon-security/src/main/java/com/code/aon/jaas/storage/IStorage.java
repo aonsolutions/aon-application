@@ -1,35 +1,59 @@
 package com.code.aon.jaas.storage;
 
+import java.io.File;
 import java.net.URL;
 
+/**
+ * 
+ * @author Consulting & Development. Iñaki Ayerbe - 13-sep-2006
+ * @since 1.0
+ */
 public interface IStorage {
 
+	/** Indicates <b>xml<b> storage files extension. */
+	static final String XML = "xml";
+
 	/**
-	 * Inicializa el responsable de serializar el contenedor.
+	 * Initializes storage manager.
 	 *  
 	 * @param storageManager
 	 */
-	public void initialize(StorageManager storageManager);
+	void initialize(StorageManager storageManager);
 
 	/**
-	 * Elimina el almacenamiento físico.
+	 * Tells if the application deployed file or domain files have been updated outside.
+	 * 
 	 * @return
-	 *  
-	 * @throws StorageException
 	 */
-	public boolean erase() throws StorageException;
+	boolean isDirty();
 
 	/**
-	 * Devuelve la URL con el contenido del contenedor.
+	 * Gets the directory where application resources are stored.
 	 * 
 	 * @throws StorageException
 	 */
-	public URL read() throws StorageException;
+	File getStorageDir();
 
 	/**
-	 * Serializa el contenido del contenedor.
+	 * Removes physical storage.
+	 * 
+	 * @return
+	 * @throws StorageException
+	 */
+	boolean erase() throws StorageException;
+
+	/**
+	 * Returns the application server URL content.
 	 * 
 	 * @throws StorageException
 	 */
-	public void write() throws StorageException;
+	URL read() throws StorageException;
+
+	/**
+	 * Serializes content.
+	 * 
+	 * @throws StorageException
+	 */
+	void write() throws StorageException;
+
 }

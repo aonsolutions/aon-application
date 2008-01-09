@@ -10,6 +10,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 
 /**
  * @author Consulting & Development. Iñaki Ayerbe - 24/10/2007
@@ -164,5 +166,21 @@ public class FileUtis {
         }
         return count;
     }
+
+	/**
+	 * Gets current IP dirty file.
+	 * 
+	 * @return
+	 * @throws IOException 
+	 */
+	public static File getDirtyFile(String parentFilePath) throws IOException {
+		String dirtyFileName = ".dirty";
+		try {
+			dirtyFileName = InetAddress.getLocalHost().getHostAddress() + dirtyFileName;
+		} catch (UnknownHostException e) {
+		}
+		return new File( parentFilePath + File.separator + dirtyFileName );
+	}
+
 
 }

@@ -15,6 +15,11 @@ import com.code.aon.jaas.deployment.event.IDeployerListener;
 
 public interface IDeployer {
 
+    /** Resource name. */
+	static final String RESOURCE_NAME = "deployed.xml";
+    /** Default Config Resource name. */
+	static final String DEFAULT_CONFIG_RESOURCE_NAME = "aon.workspace/" + RESOURCE_NAME;
+
 	/**
 	 * Add an <code>IDeployerListener</code>.
 	 * 
