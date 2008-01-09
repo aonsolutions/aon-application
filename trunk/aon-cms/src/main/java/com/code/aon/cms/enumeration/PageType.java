@@ -35,8 +35,13 @@ public enum PageType implements IResourceable {
 	/**
 	 * Modular
 	 */
-	MODULAR;
+	MODULAR,
 
+	/**
+	 * DIRECT_ACCESS
+	 */
+	DIRECT_ACCESS;
+	
 	/**
 	 * Ruta base del fichero de mensajes.
 	 */

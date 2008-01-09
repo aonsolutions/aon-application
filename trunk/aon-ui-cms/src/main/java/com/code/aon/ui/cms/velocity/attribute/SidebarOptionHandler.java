@@ -4,6 +4,7 @@ import com.code.aon.cms.SidebarOptionDetail;
 import com.code.aon.cms.enumeration.SidebarType;
 import com.code.aon.ui.cms.velocity.ArticleGenerator;
 import com.code.aon.ui.cms.velocity.BannerGenerator;
+import com.code.aon.ui.cms.velocity.DirectAccessGenerator;
 import com.code.aon.ui.cms.velocity.GenericGenerator;
 import com.code.aon.ui.cms.velocity.LinkGenerator;
 import com.code.aon.ui.cms.velocity.MenuGenerator;
@@ -30,6 +31,9 @@ public class SidebarOptionHandler {
 		}
 		else if (sidebarOptionDetail.getSidebar_option().getType().equals(SidebarType.MENU)) {
 			content = MenuGenerator.getMenuHandler(sidebarOptionDetail.getSidebar_option().getIdent());
+		}
+		else if (sidebarOptionDetail.getSidebar_option().getType().equals(SidebarType.DIRECT_ACCESS)) {
+			content = DirectAccessGenerator.getDirectAccessHandler(sidebarOptionDetail.getSidebar_option().getIdent());
 		}
 	}
 

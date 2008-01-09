@@ -10,6 +10,8 @@ import javax.faces.model.SelectItem;
 import com.code.aon.cms.Article;
 import com.code.aon.cms.Banner;
 import com.code.aon.cms.Brand;
+import com.code.aon.cms.DirectAccess;
+import com.code.aon.cms.DirectAccessGroup;
 import com.code.aon.cms.FaqCategory;
 import com.code.aon.cms.Footer;
 import com.code.aon.cms.GenericPage;
@@ -329,5 +331,21 @@ public class CollectionsController {
 			modular.add(item);
 		}
 		return modular;
+	}
+
+	public List<SelectItem> getDirectAccessList() throws ManagerBeanException {
+		List<SelectItem> accesses = new LinkedList<SelectItem>();
+		IManagerBean bean = BeanManager.getManagerBean(DirectAccessGroup.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(bean.getFieldName(ICMSAlias.DIRECT_ACCESS_GROUP_ACTIVE), true);
+		List<ITransferObject> list = (List<ITransferObject>)bean.getList(criteria);
+		for (int i = 0; i < list.size(); i++) {
+			DirectAccessGroup da = (DirectAccessGroup)list.get(i);
+			int id = da.getId();
+			String name = da.getAlias();
+			SelectItem item = new SelectItem(id, name);
+			accesses.add(item);
+		}
+		return accesses;
 	}
 }
