@@ -33,7 +33,7 @@ public interface IOperation {
      * @param securityDomain
      * @return Collection
      */
-	Collection applications();
+	Collection<IApplication> applications();
 
     /**
      * Return a unmodifiable collection of securityDomain applications.
@@ -41,7 +41,7 @@ public interface IOperation {
      * @param securityDomain
      * @return Collection
      */
-	Collection getSDApplications(String securityDomain);
+	Collection<IApplication> getSDApplications(String securityDomain);
 
     /**
      * Return a unmodifiable collection of user applications.
@@ -77,6 +77,15 @@ public interface IOperation {
 	Properties getDSMDProperties(Principal principal);
 
     /**
+     * Return a collection of domain names bound to the application passed by parameter for
+     * import.
+     * 
+     * @param appId
+     * @return Collection
+     */
+	List<String> getDomainNames2Import(String appId);
+
+	/**
      * Return the <code>IDomain</code>.
      * 
      * @param appContext
@@ -135,6 +144,15 @@ public interface IOperation {
 	 * @param dsmd
 	 */
 	void updateDSMD(String appId, String domainId, IDataSourceMetaData metadata) throws StorageException;
+
+	/**
+	 * Add the the <code>IDomain</code>, and serialize it.
+	 * 
+	 * @param appId
+	 * @param domain
+	 * @param flag Indicates if the domain is being imported.
+	 */
+	void addDomain(String appId, IDomain domain, Boolean flag) throws StorageException ;
 
 	/**
 	 * Update the the <code>IDomain</code>, and serialize it.

@@ -1,7 +1,3 @@
-/*
- * Created on 19-oct-2006
- *
- */
 package com.code.aon.jaas.storage;
 
 import java.io.File;
@@ -18,17 +14,16 @@ import com.code.aon.jaas.client.ast.INodeVisitor;
 import com.code.aon.jaas.client.xml.ConfigurationRenderer;
 
 /**
+ * Configuration storage manager. This class saves context <b>xml</b> file.
  * 
  * @author Consulting & Development. Iñaki Ayerbe - 19-oct-2006
  * @since 1.0
- *  
  */
-
 public class ConfigurationStorage implements INode, IStorage {
 
-    private static final long serialVersionUID = 3649749915276348353L;
+	private static final long serialVersionUID = -6127147371658566439L;
 
-	/** Logger adecuado para la clase. */
+	/** ConfigurationStorage Logger. */
     private static final Log LOGGER = LogFactory.getLog( ConfigurationStorage.class.getName() );
 
     /** Path label. */
@@ -40,8 +35,9 @@ public class ConfigurationStorage implements INode, IStorage {
 	/** Privileged label. */
 	private static final String PRIVILEGED = "privileged";
 
-    /** Indica el encargado de serializar la seguridad en el fichero 
-     * <b>Catalina/localhost/</b><code>application.getId()</code><b>.xml</b> */
+    /** Tells storage manager of serializing context resource
+     * <b>Catalina/localhost/</b><code>application.getId()</code><b>.xml</b> 
+     */
 	private transient StorageManager storageManager;
 
 	IApplication application;
@@ -98,30 +94,37 @@ public class ConfigurationStorage implements INode, IStorage {
 	}
 
 	/* (non-Javadoc)
-	 * @see com.code.aon.jaas.storage.IStorage#erase()
+	 * @see com.code.aon.jaas.storage.IStorage#getStorageDir()
 	 */
+	@Override
+	public File getStorageDir() {
+		return 
+			new File ( System.getProperty("catalina.home") + File.separator + "/conf/Catalina/localhost/" );
+	}
+
+	@Override
 	public boolean erase() throws StorageException {
 		throw new UnsupportedOperationException(); 
 	}
 
-	/* (non-Javadoc)
-	 * @see com.code.aon.jaas.storage.IStorage#initialize(com.code.aon.jaas.storage.StorageManager)
-	 */
+	@Override
 	public void initialize(StorageManager storageManager) {
-		String base = System.getProperty("catalina.home") + File.separator + "/conf/Catalina/localhost/";
 		try {
-			File file = new File( base + this.application.getContext() + ".xml");
+			File file = 
+				new File( getStorageDir().getCanonicalPath() + this.application.getContext() + "." + XML );
 			file.createNewFile();
 			this.storageManager = StorageManager.getInstance( file.toURL(), ConfigurationRenderer.getInstance() );
-//			this.storageManager = new StorageManager( file.toURL(), ConfigurationRenderer.getInstance() );
 		} catch (IOException e) {
 			LOGGER.fatal(e.getMessage());
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see com.code.aon.jaas.storage.IStorage#read()
-	 */
+	@Override
+	public boolean isDirty() {
+		throw new UnsupportedOperationException(); 
+	}
+
+	@Override
 	public URL read() throws StorageException {
 		try {
 			return this.storageManager.read();
@@ -132,9 +135,7 @@ public class ConfigurationStorage implements INode, IStorage {
 	    }
 	}
 
-	/* (non-Javadoc)
-	 * @see com.code.aon.jaas.storage.IStorage#write()
-	 */
+	@Override
 	public void write() throws StorageException {
 		this.storageManager.write(this);
 	}

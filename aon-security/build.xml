@@ -3,7 +3,7 @@
 
 	<property name="mgr" value="aon-security-mgr" />
 	<property name="client" value="aon.security" />
-	<property name="version" value="1.2.7" />
+	<property name="version" value="1.2.9" />
 	<property name="jar.valve.name" value="valve-${version}" />
 
     <property name="src.dir" value="src/main/java" />
@@ -151,20 +151,21 @@
 
 	<!-- COMPILE FOR Tomcat 5.5.x -->
 	<target name="compile-tomcat-5.5.x" description="Compile for Tomcat 5.5.x" depends="copy" >
-	    <javac destdir="${build.dir}"
-	           optimize="${javac.optimize}"
-	           debug="${javac.debug}"
-			   depend="${javac.depend}"
-			   verbose="${javac.verbose}"
-			   deprecation="${javac.deprecation}"
-			   includeAntRuntime="${javac.include.ant.runtime}"
-			   includeJavaRuntime="${javac.include.java.runtime}"
-			   failonerror="${javac.fail.onerror}">
+		<javac destdir="${build.dir}"
+				optimize="${javac.optimize}"
+				debug="${javac.debug}"
+				depend="${javac.depend}"
+				verbose="${javac.verbose}"
+				deprecation="${javac.deprecation}"
+				includeAntRuntime="${javac.include.ant.runtime}"
+				includeJavaRuntime="${javac.include.java.runtime}"
+				failonerror="${javac.fail.onerror}"
+				target="1.5">
 			<src path="${src.dir}"/>
 			<classpath refid="tomcat.5.javac.classpath"/>
-	        <exclude name="com/code/aon/jaas/vendor/jboss/**"/>
-  	      	<exclude name="com/code/aon/jaas/valves/SecurityValve.*"/>
-	    </javac>
+			<exclude name="com/code/aon/jaas/vendor/jboss/**"/>
+			<exclude name="com/code/aon/jaas/valves/SecurityValve.*"/>
+		</javac>
 	</target>
 
 	<!-- COMPILE FOR Tomcat 6.0.x -->

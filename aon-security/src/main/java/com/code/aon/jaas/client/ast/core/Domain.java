@@ -37,21 +37,12 @@ public class Domain implements IDomain {
 	private Map<String, IUser> standalone = new HashMap<String, IUser>();
 
     /**
-     * Establece el identificador del dominio.
+     * Assigns domain identifier.
      * 
      * @param string
      */
 	public void setId(String string) {
 		this.id = string;
-	}
-
-	/**
-	 * Establece la política de la aplicación.
-	 * 
-	 * @param accessPolicy
-	 */
-	public void setAccessPolicy(IAccessPolicy accessPolicy) {
-		this.accessPolicy = accessPolicy;
 	}
 
 	/**
@@ -77,6 +68,13 @@ public class Domain implements IDomain {
 	 */
 	public String getId() {
 		return this.id;
+	}
+
+	/* (non-Javadoc)
+	 * @see com.code.aon.jaas.client.ast.IDomain#setAccessPolicy(com.code.aon.jaas.client.ast.IAccessPolicy)
+	 */
+	public void setAccessPolicy(IAccessPolicy accessPolicy) {
+		this.accessPolicy = accessPolicy;
 	}
 
 	/* (non-Javadoc)

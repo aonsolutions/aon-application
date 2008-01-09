@@ -29,6 +29,7 @@ import com.code.aon.jaas.client.ast.core.AstLoader;
 import com.code.aon.jaas.client.xml.ApplicationsRenderer;
 
 import com.code.aon.jaas.deployment.event.IDeployerListener;
+import com.code.aon.jaas.deployment.util.FileUtis;
 
 import com.code.aon.jaas.storage.ApplicationsStorage;
 import com.code.aon.jaas.storage.IOperation;
@@ -71,7 +72,10 @@ public class JBossSecurity extends ServiceMBeanSupport
 	 * @jmx:managed-operation
      */
 	public Collection applications() {
-		LOGGER.debug("Retrieving deployed applications" );
+		sanityCheck();
+		if ( LOGGER.isDebugEnabled() )
+			LOGGER.debug("Retrieving deployed applications" );
+
 		return this.storage.applications();
 	}
 
@@ -81,7 +85,10 @@ public class JBossSecurity extends ServiceMBeanSupport
 	 * @jmx:managed-operation
      */
     public IApplication getApplication(String name) {
-		LOGGER.debug("Retrieving application for: NAME[" + name + "]" );
+		sanityCheck();
+		if ( LOGGER.isDebugEnabled() )
+			LOGGER.debug("Retrieving application for: NAME[" + name + "]" );
+
 		return this.storage.getApplication(name);   
 	}
 
@@ -91,7 +98,10 @@ public class JBossSecurity extends ServiceMBeanSupport
 	 * @jmx:managed-operation
 	 */
 	public IApplication getApplication4Ctx(String ctx) {
-		LOGGER.debug("Retrieving application for: CONTEXT[" + ctx + "]");
+		sanityCheck();
+		if ( LOGGER.isDebugEnabled() )
+			LOGGER.debug("Retrieving application for: CONTEXT[" + ctx + "]");
+
 		return this.storage.getApplication4Ctx(ctx);   
 	}
 
@@ -101,7 +111,10 @@ public class JBossSecurity extends ServiceMBeanSupport
 	 * @jmx:managed-operation
      */
 	public Collection getSDApplications(String securityDomain) {
-		LOGGER.debug("Retrieving deployed applications for: SECURITY-DOMAIN[" + securityDomain + "]" );
+		sanityCheck();
+		if ( LOGGER.isDebugEnabled() )
+			LOGGER.debug("Retrieving deployed applications for: SECURITY-DOMAIN[" + securityDomain + "]" );
+
 		return this.storage.getSDApplications(securityDomain);
 	}
 
@@ -111,8 +124,24 @@ public class JBossSecurity extends ServiceMBeanSupport
 	 * @jmx:managed-operation
      */
 	public List getUserApplications(String domainId, String userId) {
-		LOGGER.debug("Retrieving user applications for: DOMAIN[" + domainId + "], USER [" + userId + "]" );
+		sanityCheck();
+		if ( LOGGER.isDebugEnabled() )
+			LOGGER.debug("Retrieving user applications for: DOMAIN[" + domainId + "], USER [" + userId + "]" );
+
 		return this.storage.getUserApplications( domainId, userId );
+	}
+
+	/**(non-Javadoc)
+	 * @see com.code.aon.jaas.storage.IOperation#getDomainNames2Import(java.lang.String)
+	 * 
+	 * @jmx:managed-operation
+	 */
+	public List getDomainNames2Import(String appId) {
+		sanityCheck();
+		if ( LOGGER.isDebugEnabled() )
+			LOGGER.debug("Retrieving domain names to import for: APPLICATION[" + appId + "]" );
+
+		return this.storage.getDomainNames2Import( appId );
 	}
 
 	/**(non-Javadoc)
@@ -121,8 +150,23 @@ public class JBossSecurity extends ServiceMBeanSupport
 	 * @jmx:managed-operation
 	 */
 	public Properties getDSMDProperties(Principal principal) {
-		LOGGER.debug("Retrieving DataSource properties for: PRINCIPAL[" + principal + "]" );
+		sanityCheck();
+		if ( LOGGER.isDebugEnabled() )
+			LOGGER.debug("Retrieving DataSource properties for: PRINCIPAL[" + principal + "]" );
+
 		return this.storage.getDSMDProperties(principal);
+	}
+
+	/**(non-Javadoc)
+	 * @see com.code.aon.jaas.storage.IOperation#addDomain(java.lang.String, com.code.aon.jaas.client.ast.IDomain, Boolean)
+     * 
+	 * @jmx:managed-operation
+	 */
+	public void addDomain(String appId, IDomain domain, Boolean flag) throws StorageException {
+		if ( LOGGER.isDebugEnabled() )
+			LOGGER.debug("Adding a domain " + domain.getId() + " for: APPLICATION[" + appId + "]" );
+
+		this.storage.addDomain( appId, domain, flag );
 	}
 
 	/** (non-Javadoc)
@@ -131,7 +175,10 @@ public class JBossSecurity extends ServiceMBeanSupport
 	 * @jmx:managed-operation
 	 */
 	public IDomain getDomain(String appContext, String domainId) {
-		LOGGER.debug("Retrieving IDomain for: CONTEXT[" + appContext + "]" );
+		sanityCheck();
+		if ( LOGGER.isDebugEnabled() )
+			LOGGER.debug("Retrieving IDomain for: CONTEXT[" + appContext + "]" );
+
 		return this.storage.getDomain(appContext, domainId);
 	}
 
@@ -141,7 +188,9 @@ public class JBossSecurity extends ServiceMBeanSupport
 	 * @jmx:managed-operation
 	 */
 	public void addUser(String appId, String domainId, IUser user, String oldUserId) throws StorageException {
-		LOGGER.debug("Adding IUser " + user.getId() + " for: DOMAIN[" + domainId + "], APPLICATION[" + appId + "]" );
+		if ( LOGGER.isDebugEnabled() )
+			LOGGER.debug("Adding IUser " + user.getId() + " for: DOMAIN[" + domainId + "], APPLICATION[" + appId + "]" );
+
 		this.storage.addUser( appId, domainId, user, oldUserId );
 	}
 
@@ -151,7 +200,10 @@ public class JBossSecurity extends ServiceMBeanSupport
 	 * @jmx:managed-operation
 	 */
 	public IUser getUser(Principal principal) {
-		LOGGER.debug("Retrieving IUser for: PRINCIPAL[" + principal + "]" );
+		sanityCheck();
+		if ( LOGGER.isDebugEnabled() )
+			LOGGER.debug("Retrieving IUser for: PRINCIPAL[" + principal + "]" );
+
 		return this.storage.getUser(principal);
 	}
 
@@ -161,7 +213,10 @@ public class JBossSecurity extends ServiceMBeanSupport
 	 * @jmx:managed-operation
 	 */
 	public IUser getUser(String appContext, String domainId, String userId) {
-		LOGGER.debug("Retrieving IUser for: USERNAME[" + userId + "]" );
+		sanityCheck();
+		if ( LOGGER.isDebugEnabled() )
+			LOGGER.debug("Retrieving IUser for: USERNAME[" + userId + "]" );
+
 		return this.storage.getUser( appContext, domainId, userId );
 	}
 
@@ -172,7 +227,9 @@ public class JBossSecurity extends ServiceMBeanSupport
 	 */
 	public void initApplicationDeployed(String appId, String domainId, Boolean privileged, String contextExtraInfo, IAccessPolicy accessPolicy, IDataSourceMetaData metadata) 
 				throws StorageException {
-		LOGGER.info("Initializing Deployed Application for: NAME[" + appId + "]" );
+		if ( LOGGER.isDebugEnabled() )
+			LOGGER.debug("Initializing Deployed Application for: NAME[" + appId + "]" );
+
 		this.storage.initApplicationDeployed(appId, domainId, privileged, contextExtraInfo, accessPolicy, metadata);
 	}
 
@@ -182,7 +239,9 @@ public class JBossSecurity extends ServiceMBeanSupport
 	 * @jmx:managed-operation
 	 */
 	public IDomain removeDomain(String appId, IDomain domain) throws StorageException {
-		LOGGER.debug("Removing domain from: APPLICATION[" + appId + "]" );
+		if ( LOGGER.isDebugEnabled() )
+			LOGGER.debug("Removing domain from: APPLICATION[" + appId + "]" );
+
 		return this.storage.removeDomain( appId, domain );
 	}
 
@@ -192,7 +251,9 @@ public class JBossSecurity extends ServiceMBeanSupport
 	 * @jmx:managed-operation
 	 */
 	public IRelation removeProfile(String appId, String domainId, IRelation relation) throws StorageException {
-		LOGGER.debug("Removing profile relation from: DOMAIN[" + domainId + "], APPLICATION[" + appId + "]" );
+		if ( LOGGER.isDebugEnabled() )
+			LOGGER.debug("Removing profile relation from: DOMAIN[" + domainId + "], APPLICATION[" + appId + "]" );
+
 		return this.storage.removeProfile( appId, domainId, relation );
 	}
 
@@ -202,7 +263,9 @@ public class JBossSecurity extends ServiceMBeanSupport
 	 * @jmx:managed-operation
 	 */
 	public IRelation removeRelation(String appId, String domainId, IRelation relation) throws StorageException {
-		LOGGER.debug("Removing user relation from: DOMAIN[" + domainId + "], APPLICATION[" + appId + "]" );
+		if ( LOGGER.isDebugEnabled() )
+			LOGGER.debug("Removing user relation from: DOMAIN[" + domainId + "], APPLICATION[" + appId + "]" );
+
 		return this.storage.removeRelation( appId, domainId, relation );
 	}
 
@@ -212,7 +275,9 @@ public class JBossSecurity extends ServiceMBeanSupport
 	 * @jmx:managed-operation
 	 */
 	public IUser removeUser(String appId, String domainId, IUser user) throws StorageException {
-		LOGGER.debug("Removing user for: DOMAIN[" + domainId + "], APPLICATION[" + appId + "]" );
+		if ( LOGGER.isDebugEnabled() )
+			LOGGER.debug("Removing user for: DOMAIN[" + domainId + "], APPLICATION[" + appId + "]" );
+
 		return this.storage.removeUser( appId, domainId, user );
 	}
 
@@ -222,7 +287,9 @@ public class JBossSecurity extends ServiceMBeanSupport
 	 * @jmx:managed-operation
 	 */
 	public void updateAccessPolicy(String appId, String domainId, IAccessPolicy accessPolicy) throws StorageException {
-		LOGGER.debug("Updating Access Policy for: NAME[" + appId + "] and DOMAIN[" + domainId + "]" );
+		if ( LOGGER.isDebugEnabled() )
+			LOGGER.debug("Updating Access Policy for: NAME[" + appId + "] and DOMAIN[" + domainId + "]" );
+
 		this.storage.updateAccessPolicy(appId, domainId, accessPolicy);
 	}
 
@@ -232,7 +299,9 @@ public class JBossSecurity extends ServiceMBeanSupport
 	 * @jmx:managed-operation
 	 */
 	public void updateDSMD(String appId, String domainId, IDataSourceMetaData metadata) throws StorageException {
-		LOGGER.debug("Updating Datasource Properties for: NAME[" + appId + "] and DOMAIN[" + domainId + "]" );
+		if ( LOGGER.isDebugEnabled() )
+			LOGGER.debug("Updating Datasource Properties for: NAME[" + appId + "] and DOMAIN[" + domainId + "]" );
+
 		this.storage.updateDSMD(appId, domainId, metadata);
 	}
 
@@ -242,7 +311,9 @@ public class JBossSecurity extends ServiceMBeanSupport
 	 * @jmx:managed-operation
 	 */
 	public void updateDomain(String appId, IDomain domain) throws StorageException {
-		LOGGER.debug("Adding domain to: APPLICATION[" + appId + "]" );
+		if ( LOGGER.isDebugEnabled() )
+			LOGGER.debug("Adding domain to: APPLICATION[" + appId + "]" );
+
 		this.storage.updateDomain( appId, domain );
 	}
 
@@ -252,7 +323,9 @@ public class JBossSecurity extends ServiceMBeanSupport
 	 * @jmx:managed-operation
 	 */
 	public IRelation updateProfile(String appId, String domainId, IRelation relation) throws StorageException {
-		LOGGER.debug("Updating profile relation for: DOMAIN[" + domainId + "], APPLICATION[" + appId + "]" );
+		if ( LOGGER.isDebugEnabled() )
+			LOGGER.debug("Updating profile relation for: DOMAIN[" + domainId + "], APPLICATION[" + appId + "]" );
+
 		return this.storage.updateProfile( appId, domainId, relation );
 	}
 
@@ -262,7 +335,9 @@ public class JBossSecurity extends ServiceMBeanSupport
 	 * @jmx:managed-operation
 	 */
 	public IRelation updateRelation(String appId, String domainId, IRelation relation) throws StorageException {
-		LOGGER.debug("Updating user relation for: DOMAIN[" + domainId + "], APPLICATION[" + appId + "]" );
+		if ( LOGGER.isDebugEnabled() )
+			LOGGER.debug("Updating user relation for: DOMAIN[" + domainId + "], APPLICATION[" + appId + "]" );
+
 		return this.storage.updateRelation( appId, domainId, relation );
 	}
 
@@ -272,7 +347,9 @@ public class JBossSecurity extends ServiceMBeanSupport
 	 * @jmx:managed-operation
 	 */
 	public IUser updateUser(String appId, String domainId, IUser user, String oldUserId) throws StorageException {
-		LOGGER.debug("Updating IUser " + user.getId() + " for: DOMAIN[" + domainId + "], APPLICATION[" + appId + "]" );
+		if ( LOGGER.isDebugEnabled() )
+			LOGGER.debug("Updating IUser " + user.getId() + " for: DOMAIN[" + domainId + "], APPLICATION[" + appId + "]" );
+
 		return this.storage.updateUser( appId, domainId, user, oldUserId );
 	}
 
@@ -297,14 +374,13 @@ public class JBossSecurity extends ServiceMBeanSupport
     /* (non-Javadoc)
      * @see org.jboss.system.ServiceMBeanSupport#startService()
      */
-    protected void startService() throws Exception {
+	protected void startService() throws Exception {
 		ObjectName oname = new ObjectName(JBossMainDeployerMBean.OBJECT_NAME);
 		URL config = 
 			(URL) server.invoke(oname, "getConfigResource", new Object[] { null }, new String[] { String.class.getName() });
 		this.storage.as = 
 			(ApplicationsStorage) AstLoader.getInstance().parse( 0, config.openStream() );
 		this.storage.as.initialize( StorageManager.getInstance( config, ApplicationsRenderer.getInstance() ) );
-//		this.storage.as.initialize( new StorageManager( config, ApplicationsRenderer.getInstance() ) );
 		Object[] params = { this.storage.as };
 		String[] sig = { IDeployerListener.class.getName() };
 		server.invoke( oname, "addDeployerListener", params, sig );
@@ -312,11 +388,13 @@ public class JBossSecurity extends ServiceMBeanSupport
 		while (iter.hasNext()) {
 			IApplication app = (IApplication) iter.next();
 			ObjectName name = new ObjectName("jboss.system:type=ServerConfig");
-            URL appURL = (URL)getServer().getAttribute(name, "ServerHomeURL");
+			URL appURL = (URL)getServer().getAttribute(name, "ServerHomeURL");
 			appURL = new URL("file:" + appURL.getPath() + "deploy/" + app.getId());
 			server.invoke(oname, "deploy", new Object[] { appURL }, new String[] { URL.class.getName() });
 		}
-    }
+		String dirtyFile = this.storage.as.getStorageDir().getCanonicalPath();
+		FileUtis.getDirtyFile( dirtyFile ).createNewFile();
+	}
 
     /* (non-Javadoc)
      * @see org.jboss.system.ServiceMBeanSupport#stopService()
@@ -351,6 +429,24 @@ public class JBossSecurity extends ServiceMBeanSupport
 		Object[] params = { domain };
 		String[] signature = { String.class.getName() };
 		getServer().invoke(jaasMgr, "flushAuthenticationCache", params, signature);
+	}
+
+	/**
+	 * Verifies if applications must be re-deployed because another 
+	 * entity( Application Server, ... ) has updated application or domains resource files.
+	 */
+	private void sanityCheck() {
+		if ( this.storage.as.isDirty() ) {
+			try {
+				if ( LOGGER.isDebugEnabled() )
+					LOGGER.debug( "Re-Loading applications and domains because of an external update has been made." );
+
+				stopService();
+				startService();
+			} catch (Exception e) {
+				LOGGER.fatal( e.getMessage(), e );
+			}
+		}
 	}
 
 }

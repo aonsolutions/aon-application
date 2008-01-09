@@ -1,10 +1,7 @@
-/*
- * Created on 13-sep-2006
- *
- */
 package com.code.aon.jaas.storage;
 
 import java.io.File;
+import java.io.FileFilter;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -15,40 +12,28 @@ import java.util.Map;
 import com.code.aon.jaas.client.ast.INode;
 
 import com.code.aon.jaas.client.xml.Renderer;
+import com.code.aon.jaas.deployment.util.FileUtis;
 
 /**
- * Clase responsable de serializar los ficheros XML con la información de las aplicaciones y entidades
- * desplegadas en el módulo de seguridad.
+ * Serializes applications and domains xml files deployed inside.
  * 
  * @author Consulting & Development. Iñaki Ayerbe - 13-sep-2005
  * @since 1.0
  *
  */
-
 public class StorageManager {
 
 	/** Map of <code>StorageManager</code> by <code>URL</code> */
 	private static final Map<URL, StorageManager> MANAGERS = new HashMap<URL, StorageManager>();
 
-    /** Indica el traductor del fichero de seguridad. */
+    /** XML file renderer. */
     Renderer renderer;
 
-    /** Indica la <code>URL</code> donde leer y escribir. */
+    /** Where the resoure must read or write to. */
     URL url;
 
-    /** Indica el estado del monitor. */
+    /** Tells if the current resource is writing. */
     boolean writing = false;
-
-//    /**
-//     * Construye un objeto de la clase.
-//     * 
-//     * @param url
-//     * @param renderer
-//     */
-//    public StorageManager(URL url, Renderer renderer) {
-//        this.renderer = renderer;
-//        this.url = url;
-//    }
 
     /**
      * Returns a <code>StorageManager</code> instance.
@@ -72,7 +57,7 @@ public class StorageManager {
 	}
 
 	/**
-     * Elimina fisicamente el fichero de seguridad.
+     * Erases current resource.
      * 
      * @throws IOException
      * @throws InterruptedException
@@ -84,7 +69,7 @@ public class StorageManager {
     }
 
     /**
-     * Lee el fichero de seguridad.
+     * Read current resource.
      * 
      * @return URL
      * @throws IOException
@@ -100,8 +85,7 @@ public class StorageManager {
     }
 
     /**
-     * Escribe en el fichero cada una de las políticas de seguridad de cada aplicación 
-     * junto con los usuarios definidos.
+     * Writes current resource file.
      * 
      * @param policy
      */
@@ -112,7 +96,7 @@ public class StorageManager {
     }
 
     /**
-     * Establece el estado del monitor.
+     * Sets the currrent resource starts writing.
      * 
      * @param b
      */
@@ -121,7 +105,7 @@ public class StorageManager {
     }
 
     /**
-     * Devuelve el estado del monitor.
+     * Returns the currrent resource is writing.
      * 
      * @return boolean
      */
@@ -130,44 +114,70 @@ public class StorageManager {
     }
 
     /**
-     *  Pinta el fichero de seguridad basandose en el traductor adecuado.
+     * Renders application or domains resource file.
      * 
      * @author Consulting & Development. Iñaki Ayerbe - 17-may-2004
      * @since 1.0
      *  
      */
-    protected class RendererThread extends Thread {
+	protected class RendererThread extends Thread {
+
+		/** Application or Domain instance this class will render. */
+		INode node;
 
         /**
-         * // TODO [iayerbe] Documéntame!
-         */
-        INode node;
-
-        /**
-         * // TODO [iayerbe] Documéntame!
+         * Constructor
          * 
          * @param policy
          */
-        public RendererThread(INode node) {
-            this.node = node;
-        }
+		public RendererThread(INode node) {
+			this.node = node;
+		}
 
-        /*
-         * (non-Javadoc)
-         * 
-         * @see java.lang.Runnable#run()
-         */
-        public void run() {
-            synchronized (renderer) {
-                try {
-                    renderer.render(node, new FileOutputStream(url.getPath()));
-                    setWriting(false);
-                } catch (FileNotFoundException e) {
-                    e.printStackTrace();
-                }
-                renderer.notify();
-            }
-        }
-    }
+		@Override
+		public void run() {
+			synchronized (renderer) {
+				try {
+					renderer.render(node, new FileOutputStream(url.getPath()));
+					setWriting(false);
+				} catch (FileNotFoundException e) {
+					e.printStackTrace();
+				}
+				try {
+					deleteAllDirtyFiles();
+					createDirtyFile();
+				} catch (IOException e) {
+					// Ignore
+				}
+				renderer.notify();
+			}
+		}
+	}
 
+	/**
+	 * Creates a 0 size file that tells other application servers using the same 
+	 * COMMON-RESOURCE directory, the application has changed. 
+	 * @throws IOException 
+	 */
+	protected void createDirtyFile() throws IOException {
+		String dirtyFile = new File( this.url.getFile() ).getParentFile().getCanonicalPath();
+		FileUtis.getDirtyFile( dirtyFile ).createNewFile();
+	}
+
+	private void deleteAllDirtyFiles() {
+		File[] dirtyFiles = 
+			new File ( this.url.getFile() ).getParentFile().listFiles( new DirtyFileFilter() );
+		for (int i = 0; i < dirtyFiles.length; i++) {
+			dirtyFiles[i].delete();
+		}
+	}
+
+	class DirtyFileFilter implements FileFilter {
+
+		@Override
+		public boolean accept(File pathname) {
+			return pathname.getName().indexOf( "dirty" ) > -1 ;
+		}
+
+	}
 }

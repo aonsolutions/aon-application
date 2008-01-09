@@ -43,11 +43,8 @@ import com.code.aon.jaas.vendor.VendorFactoryManager;
  */
 public class MainDeployer implements IDeployer {
 
-    /** Obtains a proper Logger. */
+    /** MainDeployer Logger. */
     private static final Log LOGGER = LogFactory.getLog( MainDeployer.class.getName() );
-
-    /** Default Config Resource name. */
-	static final String DEFAULT_CONFIG_RESOURCE_NAME = "aon.workspace/deployed.xml";
 
 	/** URL map -> DeploymentInfo */
     private final Map<URL, DeploymentInfo> deploymentMap = new LinkedHashMap<URL, DeploymentInfo>();

@@ -155,12 +155,12 @@ public class DomainApplication implements IDomainApplication {
 	 * @see com.code.aon.jaas.client.ast.IDomainApplication#isProfileInUsers(java.lang.String)
 	 */
 	public boolean isProfileInUsers(String profile) {
-		Iterator iter = users.values().iterator();
+		Iterator<IRelation> iter = users.values().iterator();
 		while (iter.hasNext()) {
-			IRelation relation = (IRelation) iter.next();
-			Iterator iterator = relation.relations().iterator();
+			IRelation relation = iter.next();
+			Iterator<String> iterator = relation.relations().iterator();
 			while (iterator.hasNext()) {
-				if ( ((String) iterator.next()).equals(profile) ) {
+				if ( iterator.next().equals(profile) ) {
 					return true;
 				}
 			}

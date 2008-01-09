@@ -1,7 +1,3 @@
-/*
- * Created on 13-sep-2006
- *
- */
 package com.code.aon.jaas.storage;
 
 import java.io.File;
@@ -31,32 +27,33 @@ import com.code.aon.jaas.deployment.DeploymentException;
 import com.code.aon.jaas.deployment.ast.AstException;
 import com.code.aon.jaas.deployment.event.DeployerEvent;
 import com.code.aon.jaas.deployment.event.IDeployerListener;
+import com.code.aon.jaas.deployment.util.FileUtis;
 
 /**
+ * Applications storage manager. This class saves <b>deployed.xml</b> file.
  * 
  * @author Consulting & Development. Iñaki Ayerbe - 13-sep-2006
  * @since 1.0
  *  
  */
-
 public class ApplicationsStorage implements INode, IStorage, IDeployerListener {
 
-	private static final long serialVersionUID = -3167187674242554304L;
+	private static final long serialVersionUID = -3828039834213639137L;
 
-	/** Logger adecuado para la clase. */
+	/** ApplicationsStorage Logger. */
     private static final Log LOGGER = LogFactory.getLog( ApplicationsStorage.class.getName() );
 
-    /** Indica el encargado de serializar la seguridad en el fichero <b>aon.workspace/deployed.xml</b> */
+    /** Tells storage manager of serializing configuration resource <b>deployed.xml</b> file. */
 	private transient StorageManager storageManager;
 
-	/** Opciones a utilizar en el despliegue de las aplicaciones. */
+	/** Deployment options. */
 	private Map<String, IOption> options = new HashMap<String, IOption>();
 
-	/** Mapa de aplicaciones desplegadas. */
+	/** Deployment applications. */
 	private Map<String, IApplication> applications = new LinkedHashMap<String, IApplication>();
 
 	/**
-	 * Añade una opción. 
+	 * Adds an option. 
 	 * 
 	 * @param application
 	 */
@@ -65,7 +62,7 @@ public class ApplicationsStorage implements INode, IStorage, IDeployerListener {
 	}
 
     /**
-     * Devuelve las opciones a tener en cuenta en los despliegues.
+     * Returns deployment options.
      * 
      * @return
      */
@@ -74,7 +71,7 @@ public class ApplicationsStorage implements INode, IStorage, IDeployerListener {
 	}
 
 	/**
-	 * Añade una aplicación. 
+	 * Adds an application. 
 	 * 
 	 * @param application
 	 */
@@ -85,7 +82,7 @@ public class ApplicationsStorage implements INode, IStorage, IDeployerListener {
 	}
 
     /**
-     * Devuelve el mapa, no modificable, de aplicaciones registradas en el módulo de seguridad.
+     * Returns a map of deployment applications.
      * 
      * @return
      */
@@ -94,8 +91,7 @@ public class ApplicationsStorage implements INode, IStorage, IDeployerListener {
 	}
 
     /**
-     * Devuelve la aplicación vinculada al nombre pasado por parámetro. Devuelve <tt>nulo</tt> sino
-     * existe la aplicación para ese nombre.
+     * Returns the application for given name. <tt>Null</tt> if application does not exist.
      * 
      * @param name
      * @return
@@ -105,8 +101,8 @@ public class ApplicationsStorage implements INode, IStorage, IDeployerListener {
 	}
 
     /**
-     * Devuelve la aplicación vinculada al contexto. Devuelve <tt>nulo</tt> sino
-     * existe la aplicación para ese contexto.
+     * Returns the application for given context name. <tt>Null</tt> 
+     * if application does not exist.
      * 
      * @param ctx
      * @return
@@ -122,18 +118,7 @@ public class ApplicationsStorage implements INode, IStorage, IDeployerListener {
 	}
 
 	/**
-	 * Devuelve el directorio donde se encuentra el fichero con las aplicaciones 
-	 * desplegadas en el módulo de seguridad.
-	 *  
-	 * @return
-	 * @throws IOException
-	 */
-	public String getParent() throws IOException {
-		return new File( this.storageManager.getUrl().getFile() ).getParentFile().getCanonicalPath();
-	}
-
-	/**
-	 * Re-emplaza el dominio en todas las aplicaciones desplegadas.
+	 * Replaces a domain in all deployed applications.
 	 *  
 	 * @param app
 	 * @param domain
@@ -144,7 +129,7 @@ public class ApplicationsStorage implements INode, IStorage, IDeployerListener {
 	 */
 	public void replaceDomainsInApplication(IApplication app, IDomain domain) 
 				throws IOException, AstException {
-		File resource = new File( getParent() + File.separator + domain.getId() + ".xml");
+		File resource = new File( getStorageDir().getCanonicalPath() + File.separator + domain.getId() + "." + XML );
 		DomainStorage es = 
 			(DomainStorage) AstLoader.getInstance().parse( 1, resource.toURL().openStream() );
 		( (Application)app ).replaceDomain( domain.getId(), es.getDomain() );
@@ -154,6 +139,7 @@ public class ApplicationsStorage implements INode, IStorage, IDeployerListener {
 	/* (non-Javadoc)
 	 * @see com.code.aon.jaas.client.ast.INode#accept(com.code.aon.jaas.client.ast.INodeVisitor)
 	 */
+	@Override
 	public void accept(INodeVisitor visitor) {
 	    visitor.visitDeployed(this);
 	}
@@ -161,27 +147,38 @@ public class ApplicationsStorage implements INode, IStorage, IDeployerListener {
 	/* (non-Javadoc)
 	 * @see com.code.aon.jaas.client.ast.INode#getId()
 	 */
+	@Override
 	public String getId() {
 		return ApplicationsStorage.class.getName();
 	}
 
-	/* (non-Javadoc)
-	 * @see com.code.aon.jaas.storage.IStorage#initialize(com.code.aon.jaas.storage.StorageManager)
-	 */
+	@Override
 	public void initialize(StorageManager storageManager) {
 		this.storageManager = storageManager;
 	}
 
-	/* (non-Javadoc)
-	 * @see com.code.aon.jaas.storage.IStorage#erase()
-	 */
+	@Override
+	public boolean isDirty() {
+		try {
+			LOGGER.fatal( "isDirty " + FileUtis.getDirtyFile( getStorageDir().getCanonicalPath() ) + " " + FileUtis.getDirtyFile( getStorageDir().getCanonicalPath() ).exists() ) ;
+			return !FileUtis.getDirtyFile( getStorageDir().getCanonicalPath() ).exists();
+		} catch (IOException e) {
+			LOGGER.fatal( e.getMessage() );
+			return true;
+		}
+	}
+
+	@Override
+	public File getStorageDir() {
+		return new File( this.storageManager.getUrl().getFile() ).getParentFile();
+	}
+
+	@Override
 	public boolean erase() throws StorageException {
 		throw new UnsupportedOperationException(); 
 	}
 
-	/* (non-Javadoc)
-	 * @see com.code.aon.jaas.storage.IStorage#read()
-	 */
+	@Override
 	public URL read() throws StorageException {
 		try {
 			return this.storageManager.read();
@@ -192,9 +189,7 @@ public class ApplicationsStorage implements INode, IStorage, IDeployerListener {
 	    }
 	}
 
-	/* (non-Javadoc)
-	 * @see com.code.aon.jaas.storage.IStorage#write()
-	 */
+	@Override
 	public void write() throws StorageException {
 		this.storageManager.write(this);
 	}
@@ -217,7 +212,8 @@ public class ApplicationsStorage implements INode, IStorage, IDeployerListener {
 	    	while (iter.hasNext()) {
 				IDomain domain = iter.next();
 				try {
-					File resource = new File( getParent() + File.separator + domain.getId() + ".xml");
+					File resource = 
+						new File( getStorageDir().getCanonicalPath() + File.separator + domain.getId() + "." + XML);
 					DomainStorage es = 
 						(DomainStorage) AstLoader.getInstance().parse( 1, resource.toURL().openStream() );
 //	TODO. Asociar a cada aplicacion solamente la parte del objeto IDomain que le interesa
@@ -241,7 +237,8 @@ public class ApplicationsStorage implements INode, IStorage, IDeployerListener {
 				IDomain domain = iter.next();
 				LOGGER.debug( "applicationDeployed dominios a desplegar:" + domain.getId() + " " + domain.hashCode() );
 				try {
-					File resource = new File( getParent() + File.separator + domain.getId() + ".xml");
+					File resource = 
+						new File( getStorageDir().getCanonicalPath() + File.separator + domain.getId() + "." + XML);
 					DomainStorage es = new DomainStorage();
 //	Check if domain file already exist, if true reads the file and adds the new domain data. 
 					if ( resource.exists() ) {
@@ -295,7 +292,8 @@ public class ApplicationsStorage implements INode, IStorage, IDeployerListener {
 		while (iter.hasNext()) {
 			IDomain domain = iter.next();
 			try {
-				File resource = new File( getParent() + File.separator + domain.getId() + ".xml");
+				File resource = 
+					new File( getStorageDir().getCanonicalPath() + File.separator + domain.getId() + "." + XML );
 				DomainStorage es = (DomainStorage) AstLoader.getInstance().parse( 1, resource.toURL().openStream() );
 				es.getDomain().remove(appName);
 				es.initialize( StorageManager.getInstance( resource.toURL(), DomainRenderer.getInstance() ) );
