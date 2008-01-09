@@ -106,7 +106,7 @@ public class DomainManager implements Serializable {
 	 * @throws DeploymentException 
 	 */
 	public void saveProfile(IRelation relation) throws DeploymentException {
-		Object[] params = { this.application, domainId, relation };
+		Object[] params = { this.application.getId(), domainId, relation };
 		String[] sig = { String.class.getName(), String.class.getName(), IRelation.class.getName() };
 		String oname = this.console.getAonSecurityName();
 		this.console.invoke( oname, IOperation.UPDATE_PROFILE, params, sig );
