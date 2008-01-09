@@ -55,8 +55,13 @@ public enum Templates implements IResourceable {
 	/**
 	 * ARTICLE
 	 */
-	ARTICLE;
+	ARTICLE,
 
+	/**
+	 * ARTICLE
+	 */
+	DIRECT_ACCESS;
+	
 	/**
 	 * Ruta base del fichero de mensajes.
 	 */

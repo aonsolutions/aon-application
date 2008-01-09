@@ -30,7 +30,12 @@ public enum SidebarType implements IResourceable {
 	/**
 	 * Links
 	 */
-	LINK;
+	LINK,
+
+	/**
+	 * DirectAccessGroup
+	 */
+	DIRECT_ACCESS;
 
 	/**
 	 * Ruta base del fichero de mensajes.

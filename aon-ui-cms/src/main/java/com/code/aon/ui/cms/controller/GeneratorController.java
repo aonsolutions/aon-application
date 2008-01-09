@@ -7,6 +7,7 @@ import com.code.aon.ui.cms.Constants;
 import com.code.aon.ui.cms.util.ControllerUtil;
 import com.code.aon.ui.cms.util.VelocityUtil;
 import com.code.aon.ui.cms.velocity.CommonGenerator;
+import com.code.aon.ui.cms.velocity.DirectAccessGenerator;
 import com.code.aon.ui.cms.velocity.FaqGenerator;
 import com.code.aon.ui.cms.velocity.GenericGenerator;
 import com.code.aon.ui.cms.velocity.LinkGenerator;
@@ -57,6 +58,11 @@ public class GeneratorController extends BasicController implements Constants {
 		vu.addMessage("", VelocityUtil.INFO);
 		vu.addMessage("Creando link... ", VelocityUtil.INFO);
 		LinkGenerator.generate(vu);
+		
+		//Generar direct access
+		vu.addMessage("", VelocityUtil.INFO);
+		vu.addMessage("Creando acceso directo... ", VelocityUtil.INFO);
+		DirectAccessGenerator.generate(vu);
 	}
 
 

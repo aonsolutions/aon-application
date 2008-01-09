@@ -4,6 +4,7 @@ import com.code.aon.cms.ModularPageOptionDetail;
 import com.code.aon.cms.enumeration.ModularPageOptionType;
 import com.code.aon.ui.cms.velocity.ArticleGenerator;
 import com.code.aon.ui.cms.velocity.BannerGenerator;
+import com.code.aon.ui.cms.velocity.DirectAccessGenerator;
 import com.code.aon.ui.cms.velocity.GenericGenerator;
 
 public class ModularPageOptionHandler {
@@ -22,6 +23,9 @@ public class ModularPageOptionHandler {
 		}
 		else if (mpod.getModular_page_option().getType().equals(ModularPageOptionType.GENERIC)) {
 			content = GenericGenerator.getGenericHandler(mpod.getModular_page_option().getIdent());
+		}
+		else if (mpod.getModular_page_option().getType().equals(ModularPageOptionType.DIRECT_ACCESS)) {
+			content = DirectAccessGenerator.getDirectAccessHandler(mpod.getModular_page_option().getIdent());
 		}
 	}
 
