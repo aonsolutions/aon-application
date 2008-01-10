@@ -96,10 +96,30 @@
 												required="true" size="100" maxlength="255"
 												value="#{generic_page.toI18n.title}" />
 				
+											<aon:outputLabel for="GenericPageDetail_richTextEnabled"
+												styleClass="aon-form-input-text-label"
+												value="#{appBundle.generic_page_richtext_enabled}" />
+											<aon:selectBooleanCheckbox id="GenericPageDetail_richTextEnabled"
+												partialSubmit="true" 
+												value="#{generic_page.richTextEnabled}" />
+				
 											<aon:outputLabel for="GenericPageDetail_content"
 												styleClass="aon-form-input-text-label"
-												value="#{appBundle.generic_page_content}" />
-											<aon:inputRichText id="GenericPageDetail_content" toolbarSet="Default" value="#{generic_page.toI18n.content}"/>
+												value="#{appBundle.generic_page_content}" 
+												rendered="#{generic_page.richTextEnabled}" />
+											<aon:inputRichText id="GenericPageDetail_content"
+												rendered="#{generic_page.richTextEnabled}" 
+												toolbarSet="Default" 
+												value="#{generic_page.toI18n.content}"/>
+				
+											<aon:outputLabel for="GenericPageDetail_content_TA"
+												styleClass="aon-form-input-text-label"
+												value="#{appBundle.generic_page_content}" 
+												rendered="#{!generic_page.richTextEnabled}"/>
+											<aon:inputTextarea id="GenericPageDetail_content_TA"
+												rendered="#{!generic_page.richTextEnabled}" 
+												cols="60" rows="20" 
+												value="#{generic_page.toI18n.content}"/>
 				
 											<aon:outputLabel for="GenericPage_menu"
 												styleClass="aon-form-input-text-label"

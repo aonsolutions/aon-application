@@ -28,6 +28,16 @@ public class GenericPageController extends BasicI18nController {
 
 	private boolean cancelOnSelect = false;
 
+	private boolean richTextEnabled = true;
+
+	public boolean isRichTextEnabled() {
+		return richTextEnabled;
+	}
+
+	public void setRichTextEnabled(boolean richTextEnabled) {
+		this.richTextEnabled = richTextEnabled;
+	}
+
 	@SuppressWarnings("unused")
 	public void onSelect(RowSelectorEvent event) throws ManagerBeanException {
 		if (!cancelOnSelect) {
