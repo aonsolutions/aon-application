@@ -1,10 +1,6 @@
 package com.code.aon.ui.cms.velocity;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.StringTokenizer;
-
-import javax.servlet.http.HttpSession;
 
 import com.code.aon.cms.GenericPage;
 import com.code.aon.cms.GenericPageDetail;
@@ -39,6 +35,7 @@ public class GenericGenerator extends Generator {
 					if (gph.getKeywords() != null && !gph.getKeywords().equals("")) vu.put("keywords", gph.getKeywords());
 					else vu.remove("keywords");
 					vu.addMessage(" Generando Página Genérica '" + gpd.getGeneric_page().getAlias() + "'.", VelocityUtil.INFO);
+					CommonGenerator.chargeContext(vu, gpd.getGeneric_page().getSection());
 					generate(vu, Templates.GENERIC, gpd.getGeneric_page().getAlias());
 					vu.remove("generic");
 				}

@@ -9,10 +9,13 @@ public class DirectAccessHandler {
 
 	private String label;
 	
+	private String image;
+	
 	private String url;
 
 	public DirectAccessHandler (DirectAccessDetail detail) {
 		label = detail.getLabel();
+		image = detail.getDirectAccess().getImage();
 		url = getDirectAccessLink(detail);
 	}
 	

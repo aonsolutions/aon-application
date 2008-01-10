@@ -11,6 +11,7 @@ import javax.faces.model.SelectItem;
 import com.code.aon.cms.Link;
 import com.code.aon.cms.LinkCategory;
 import com.code.aon.cms.LinkCategoryDetail;
+import com.code.aon.cms.LinkConfig;
 import com.code.aon.cms.dao.ICMSAlias;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
@@ -26,6 +27,12 @@ import com.icesoft.faces.component.ext.RowSelectorEvent;
 public class LinkCategoryController extends BasicI18nController {
 
 	private boolean cancelOnSelect = false;
+
+	@Override
+	public void onReset(ActionEvent event) {
+		((GeneratorConfigController)AonUtil.getRegisteredBean("generator_config")).initSection(LinkConfig.class);
+		super.onReset(event);
+	}
 
 	@SuppressWarnings("unused")
 	public void onSelect(RowSelectorEvent event) throws ManagerBeanException {

@@ -1,16 +1,16 @@
 package com.code.aon.ui.cms.controller;
 
-import java.util.LinkedList;
 import java.util.List;
 
 import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
 import javax.faces.event.ValueChangeEvent;
-import javax.faces.model.SelectItem;
 
 import com.code.aon.cms.Faq;
 import com.code.aon.cms.FaqCategory;
 import com.code.aon.cms.FaqCategoryDetail;
+import com.code.aon.cms.FaqConfig;
+import com.code.aon.cms.Section;
 import com.code.aon.cms.dao.ICMSAlias;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
@@ -27,6 +27,12 @@ public class FaqCategoryController extends BasicI18nController {
 
 	private boolean cancelOnSelect = false;
 
+	@Override
+	public void onReset(ActionEvent event) {
+		((GeneratorConfigController)AonUtil.getRegisteredBean("generator_config")).initSection(FaqConfig.class);
+		super.onReset(event);
+	}
+	
 	@SuppressWarnings("unused")
 	public void onSelect(RowSelectorEvent event) throws ManagerBeanException {
 		if (!cancelOnSelect) {
@@ -148,4 +154,6 @@ public class FaqCategoryController extends BasicI18nController {
 	}
 
 
+
+	
 }
