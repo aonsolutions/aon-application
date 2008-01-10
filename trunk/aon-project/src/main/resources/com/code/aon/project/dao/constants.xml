@@ -11,8 +11,8 @@
 	</bean>
 	
 	<bean class="com.code.aon.project.DailyTracking" sqlName="daily_tracking">
-		<alias names="id,user_id,trackingDate,trackingDuration,jobType_id,customer_id,dossier_id,activity_id,comments" />
-		<hibernate names="id,user.id,trackingDate,trackingDuration,jobType.id,customer&lt;id,dossier.id,activity.id,comments" />
+		<alias names="id,user_id,trackingDate,trackingDuration,jobType_id,customer_id,customer_registry_name,customer_registry_surname,dossier_id,activity_id,comments" />
+		<hibernate names="id,user.id,trackingDate,trackingDuration,jobType.id,customer&lt;id,customer.registry.name,customer.registry.surname,dossier.id,activity.id,comments" />
 	</bean>
 	
 </dao>
