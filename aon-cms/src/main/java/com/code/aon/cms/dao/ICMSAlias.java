@@ -2305,34 +2305,40 @@ public interface ICMSAlias {
 	DAOConstantsEntry DIRECT_ACCESS_DETAIL_ENTRY = DAOConstants.getDAOConstant(DirectAccessDetail.class);
 
 	/** 
+	* Alias value: DirectAccessDetail_description
+	* Hibernate value: DirectAccessDetail.description
+	*/
+	String  DIRECT_ACCESS_DETAIL_DESCRIPTION = DIRECT_ACCESS_DETAIL_ENTRY.getAliasNames()[0];
+
+	/** 
 	* Alias value: DirectAccessDetail_directAccess_id
 	* Hibernate value: DirectAccessDetail.directAccess.id
 	*/
-	String  DIRECT_ACCESS_DETAIL_DIRECT_ACCESS_ID = DIRECT_ACCESS_DETAIL_ENTRY.getAliasNames()[0];
+	String  DIRECT_ACCESS_DETAIL_DIRECT_ACCESS_ID = DIRECT_ACCESS_DETAIL_ENTRY.getAliasNames()[1];
 
 	/** 
 	* Alias value: DirectAccessDetail_id
 	* Hibernate value: DirectAccessDetail.id
 	*/
-	String  DIRECT_ACCESS_DETAIL_ID = DIRECT_ACCESS_DETAIL_ENTRY.getAliasNames()[1];
+	String  DIRECT_ACCESS_DETAIL_ID = DIRECT_ACCESS_DETAIL_ENTRY.getAliasNames()[2];
 
 	/** 
 	* Alias value: DirectAccessDetail_label
 	* Hibernate value: DirectAccessDetail.label
 	*/
-	String  DIRECT_ACCESS_DETAIL_LABEL = DIRECT_ACCESS_DETAIL_ENTRY.getAliasNames()[2];
+	String  DIRECT_ACCESS_DETAIL_LABEL = DIRECT_ACCESS_DETAIL_ENTRY.getAliasNames()[3];
 
 	/** 
 	* Alias value: DirectAccessDetail_language_id
 	* Hibernate value: DirectAccessDetail.language.id
 	*/
-	String  DIRECT_ACCESS_DETAIL_LANGUAGE_ID = DIRECT_ACCESS_DETAIL_ENTRY.getAliasNames()[3];
+	String  DIRECT_ACCESS_DETAIL_LANGUAGE_ID = DIRECT_ACCESS_DETAIL_ENTRY.getAliasNames()[4];
 
 	/** 
 	* Alias value: DirectAccessDetail_url
 	* Hibernate value: DirectAccessDetail.url
 	*/
-	String  DIRECT_ACCESS_DETAIL_URL = DIRECT_ACCESS_DETAIL_ENTRY.getAliasNames()[4];
+	String  DIRECT_ACCESS_DETAIL_URL = DIRECT_ACCESS_DETAIL_ENTRY.getAliasNames()[5];
 
 
 
