@@ -2,6 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml"
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:c="http://java.sun.com/jstl/core"
 	xmlns:rich="http://richfaces.org/rich"
 	xmlns:a4j="http://richfaces.org/a4j"
 	xmlns:aon="http://www.code.es/aon-rich-components">
@@ -34,25 +35,19 @@
 
 				<aon:panelGrid id="lookupContent" cellpadding="0" cellspacing="0" width="100%">
 					<aon:form>
-						<aon:panelGroup
-							rendered="#{(lookup.searchPagePath != null) and (lookup.selectedPanel == 'search')}"
-						>
-							<ui:include src="searchContent.xhtml" />
-						</aon:panelGroup>
+
+						<c:if test="#{(lookup.listPagePath != null) and (lookup.selectedPanel == 'list')}">
+							<a4j:include viewId="listContent.xhtml" />
+						</c:if>
 	
-						<aon:panelGroup
-							rendered="#{(lookup.listPagePath != null) and (lookup.selectedPanel == 'list')}"
-						>
-							<ui:include src="listContent.xhtml" />
-						</aon:panelGroup>
-	
-						<!--
-						<aon:panelGroup
-							rendered="#{(lookup.newPagePath != null) and (lookup.selectedPanel == 'form')}"
-						>
-							<ui:include src="formContent.xhtml" />
-						</aon:panelGroup>
-	 					-->
+						<c:if test="#{(lookup.searchPagePath != null) and (lookup.selectedPanel == 'search')}">
+							<a4j:include viewId="searchContent.xhtml" />					
+						</c:if>
+
+						<c:if test="#{(lookup.newPagePath != null) and (lookup.selectedPanel == 'form')}">
+							<a4j:include viewId="formContent.xhtml" />
+						</c:if>
+
 					</aon:form>
 				</aon:panelGrid>
 
