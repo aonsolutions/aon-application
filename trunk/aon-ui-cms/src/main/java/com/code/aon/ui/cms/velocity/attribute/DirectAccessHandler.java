@@ -9,12 +9,15 @@ public class DirectAccessHandler {
 
 	private String label;
 	
+	private String description;
+	
 	private String image;
 	
 	private String url;
 
 	public DirectAccessHandler (DirectAccessDetail detail) {
 		label = detail.getLabel();
+		description = detail.getDescription();
 		image = detail.getDirectAccess().getImage();
 		url = getDirectAccessLink(detail);
 	}
@@ -34,5 +37,13 @@ public class DirectAccessHandler {
 	public String getUrl() {
 		return url;
 	}
-	
+
+	public String getDescription() {
+		return description;
+	}
+
+	public String getImage() {
+		return image;
+	}
+
 }
