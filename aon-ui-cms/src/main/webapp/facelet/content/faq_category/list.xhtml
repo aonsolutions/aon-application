@@ -55,6 +55,26 @@
 						</aon:div>
 					</aon:div>
 					
+					<aon:outputLabel for="FaqCategory_section"
+						styleClass="aon-form-input-text-label"
+						value="#{appBundle.section}"/>
+					<aon:selectOneMenu id="FaqCategory_section"  
+						styleClass="aon-form-selectOneMenu-field"
+						value="#{generator_config.sectionId}">
+						<f:selectItem itemLabel="-" itemValue="-1" />
+						<f:selectItems value="#{collections.sectionList}" />
+					</aon:selectOneMenu>
+					
+					<aon:confirmButton id="save"
+						value="#{bundle.aon_save}" 
+						confirmTitle="Confirmation Dialog" 
+						confirmMessage="#{bundle.aon_save_confirm}"
+						confirmActionListener="#{generator_config.onSaveFaqConfig}"
+						styleClass="aon-content-toolbar-item aon-icon-accept"
+						onmouseout="this.className='aon-content-toolbar-item aon-icon-accept'"
+						onmouseover="this.className='aon-content-toolbar-item aon-icon-accept aon-content-toolbar-item-hover'"
+						accesskey="#{bundle.aon_key_save}"/>
+					
 					<aon:dataTable id="faqCategoryDataList" styleClass="aon-dataTable"
 					 	columnWidths="120,200,*,50,50,60" 
 						value="#{faq_category.model}" var="to" rows="0"

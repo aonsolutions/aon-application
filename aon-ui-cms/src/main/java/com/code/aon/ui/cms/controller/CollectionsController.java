@@ -55,7 +55,7 @@ public class CollectionsController {
 	public List<SelectItem> getArticleTypes() throws ManagerBeanException {
 		List<SelectItem> articleTypes = new LinkedList<SelectItem>();
 		Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
-		SelectItem item;;
+		SelectItem item;
 		for (ArticleType articleType : ArticleType.values()) {
 			String name = articleType.getName(locale);
 			item = new SelectItem(articleType, name);

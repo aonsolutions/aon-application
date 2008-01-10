@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.code.aon.cms.FaqCategoryDetail;
+import com.code.aon.cms.FaqConfig;
 import com.code.aon.cms.dao.ICMSAlias;
 import com.code.aon.cms.enumeration.Templates;
 import com.code.aon.common.BeanManager;
@@ -11,6 +12,8 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ql.Criteria;
+import com.code.aon.ui.cms.controller.FaqCategoryController;
+import com.code.aon.ui.cms.controller.GeneratorConfigController;
 import com.code.aon.ui.cms.util.ControllerUtil;
 import com.code.aon.ui.cms.util.VelocityUtil;
 import com.code.aon.ui.cms.velocity.attribute.FaqCategoryHandler;
@@ -32,12 +35,14 @@ public class FaqGenerator extends Generator {
 					fchList.add(fch);
 					vu.put("faq_category", fch);
 					vu.addMessage(" Generando categoria Faq '" + fcd.getFaqCategory().getAlias() + "'.", VelocityUtil.INFO);
+					CommonGenerator.chargeContext(vu, fcd.getFaqCategory().getSection());
 					generate(vu, Templates.FAQ, fcd.getFaqCategory().getAlias());
 					vu.remove("faq_category");
 				}
 			}
 			vu.put("faq_categories", fchList);
 			vu.addMessage(" Generando listado categoria Faq.", VelocityUtil.INFO);
+			CommonGenerator.chargeContext(vu, ((FaqConfig)GeneratorConfigController.currentConfig(FaqConfig.class)).getSection());
 			generate(vu, Templates.FAQ, FAQ_CATEGORY_LIST_PAGE);
 			vu.remove("faq_categories");
 		} catch (ManagerBeanException e) {

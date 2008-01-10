@@ -7,6 +7,7 @@ import com.code.aon.cms.dao.ICMSAlias;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ql.Criteria;
+import com.code.aon.ui.cms.controller.FaqCategoryController;
 import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
@@ -14,8 +15,9 @@ import com.code.aon.ui.form.event.ControllerListenerException;
 public class FaqCategoryControllerListener extends ControllerAdapter {
 
 	@Override
-	public void beforeBeanAdded(ControllerEvent event) throws ControllerListenerException {
-		FaqCategory faqCategory = (FaqCategory)event.getController().getTo();
+	public void beforeBeanAdded(ControllerEvent event) throws ControllerListenerException{
+		FaqCategoryController controller = (FaqCategoryController) event.getController();
+		FaqCategory faqCategory = (FaqCategory)controller.getTo();
 		faqCategory.setActive(true);
 		faqCategory.setPosition(getLastPosition(event));
 	}

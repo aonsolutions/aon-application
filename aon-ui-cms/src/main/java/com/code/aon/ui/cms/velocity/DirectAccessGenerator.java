@@ -68,6 +68,7 @@ public class DirectAccessGenerator extends Generator {
 					if (accessList != null && accessList.size() > 0) {  
 						vu.put("direct_access_list", accessList);
 						vu.addMessage(" Generando accesos directos " + group.getAlias() + ".", VelocityUtil.INFO);
+						CommonGenerator.chargeContext(vu, group.getSection());
 						generate(vu, Templates.DIRECT_ACCESS, group.getAlias());
 						vu.remove("direct_access_list");
 					}

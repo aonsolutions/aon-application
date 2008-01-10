@@ -1076,4 +1076,11 @@
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
 
+	<!-- ************** GENERATOR CONFIG ************** -->
+	<managed-bean>
+		<managed-bean-name>generator_config</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.cms.controller.GeneratorConfigController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
+
 </faces-config>
