@@ -69,6 +69,8 @@
 		<mapping class="com.code.aon.cms.DirectAccessGroupDetail"/>
 		<mapping class="com.code.aon.cms.DirectAccess"/>
 		<mapping class="com.code.aon.cms.DirectAccessDetail"/>
+		<mapping class="com.code.aon.cms.FaqConfig"/>
+		<mapping class="com.code.aon.cms.LinkConfig"/>
 
 	</session-factory>
 
