@@ -23,6 +23,8 @@ public class DirectAccessDetail implements ITransferObject {
 
 	private String label;
 
+	private String description;
+	
 	private String url;
 
 	@Id
@@ -65,7 +67,7 @@ public class DirectAccessDetail implements ITransferObject {
 		this.label = label;
 	}
 
-	@Column(name = "url", length = 255)
+	@Column(name = "url", length = 255, nullable = false)
 	public String getUrl() {
 		return url;
 	}
@@ -74,4 +76,14 @@ public class DirectAccessDetail implements ITransferObject {
 		this.url = url;
 	}
 
+	@Column(name = "description", nullable = false)
+	public String getDescription() {
+		return description;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
+	}
+
+	
 }
