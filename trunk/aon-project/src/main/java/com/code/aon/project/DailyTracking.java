@@ -9,6 +9,8 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 
 import com.code.aon.common.ITransferObject;
 import com.code.aon.config.User;
@@ -58,6 +60,7 @@ public class DailyTracking implements ITransferObject {
 	}
 
     @Column(name="tracking_date", nullable=false)
+    @Temporal(TemporalType.DATE)
     public Date getTrackingDate() {
         return trackingDate;
     }
