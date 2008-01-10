@@ -32,6 +32,7 @@ import com.code.aon.cms.DownloadDetail;
 import com.code.aon.cms.Faq;
 import com.code.aon.cms.FaqCategory;
 import com.code.aon.cms.FaqCategoryDetail;
+import com.code.aon.cms.FaqConfig;
 import com.code.aon.cms.FaqDetail;
 import com.code.aon.cms.Footer;
 import com.code.aon.cms.FooterDetail;
@@ -43,6 +44,7 @@ import com.code.aon.cms.Language;
 import com.code.aon.cms.Link;
 import com.code.aon.cms.LinkCategory;
 import com.code.aon.cms.LinkCategoryDetail;
+import com.code.aon.cms.LinkConfig;
 import com.code.aon.cms.LinkDetail;
 import com.code.aon.cms.Menu;
 import com.code.aon.cms.MenuOption;
@@ -65,7 +67,7 @@ public class CMSAliasWriter {
 	public static void main(String[] args) throws IOException {
 
 		File file = new File("/AON-PROJECT/aon-cms/src/main/java/com/code/aon/cms/dao/ICMSAlias.java");
-		String[] classes = new String[55]; 
+		String[] classes = new String[57]; 
 		classes[0] = Language.class.getName();
 		classes[1] = Config.class.getName();
 		classes[2] = ConfigDetail.class.getName();
@@ -121,6 +123,8 @@ public class CMSAliasWriter {
 		classes[52] = DirectAccessGroupDetail.class.getName();
 		classes[53] = DirectAccess.class.getName();
 		classes[54] = DirectAccessDetail.class.getName();
+		classes[55] = FaqConfig.class.getName();
+		classes[56] = LinkConfig.class.getName();
 		AliasWriter writer = new AliasWriter("com.code.aon.cms.dao");
 		writer.write(classes, file);
 		System.out.println( file.getAbsolutePath() );

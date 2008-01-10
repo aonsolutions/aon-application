@@ -57,6 +57,8 @@ import com.code.aon.cms.DirectAccessGroup;
 import com.code.aon.cms.DirectAccessGroupDetail;
 import com.code.aon.cms.DirectAccess;
 import com.code.aon.cms.DirectAccessDetail;
+import com.code.aon.cms.FaqConfig;
+import com.code.aon.cms.LinkConfig;
 
 /** 
 * Interface for holding entity properties constants.
@@ -2331,6 +2333,44 @@ public interface ICMSAlias {
 	* Hibernate value: DirectAccessDetail.url
 	*/
 	String  DIRECT_ACCESS_DETAIL_URL = DIRECT_ACCESS_DETAIL_ENTRY.getAliasNames()[4];
+
+
+
+	/** 
+	* DAOConstantsEntry for FaqConfig entity.
+	*/ 
+	DAOConstantsEntry FAQ_CONFIG_ENTRY = DAOConstants.getDAOConstant(FaqConfig.class);
+
+	/** 
+	* Alias value: FaqConfig_id
+	* Hibernate value: FaqConfig.id
+	*/
+	String  FAQ_CONFIG_ID = FAQ_CONFIG_ENTRY.getAliasNames()[0];
+
+	/** 
+	* Alias value: FaqConfig_section_id
+	* Hibernate value: FaqConfig.section.id
+	*/
+	String  FAQ_CONFIG_SECTION_ID = FAQ_CONFIG_ENTRY.getAliasNames()[1];
+
+
+
+	/** 
+	* DAOConstantsEntry for LinkConfig entity.
+	*/ 
+	DAOConstantsEntry LINK_CONFIG_ENTRY = DAOConstants.getDAOConstant(LinkConfig.class);
+
+	/** 
+	* Alias value: LinkConfig_id
+	* Hibernate value: LinkConfig.id
+	*/
+	String  LINK_CONFIG_ID = LINK_CONFIG_ENTRY.getAliasNames()[0];
+
+	/** 
+	* Alias value: LinkConfig_section_id
+	* Hibernate value: LinkConfig.section.id
+	*/
+	String  LINK_CONFIG_SECTION_ID = LINK_CONFIG_ENTRY.getAliasNames()[1];
 
 
 }
