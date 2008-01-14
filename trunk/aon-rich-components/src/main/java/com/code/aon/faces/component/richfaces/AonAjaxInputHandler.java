@@ -39,10 +39,13 @@ public class AonAjaxInputHandler extends AonComponentHandler implements IRichFac
 	
 	private TagAttribute reRender;
 	
+	private boolean ajaxNeeded;
+	
 	public AonAjaxInputHandler(ComponentConfig config) {
 		super(config);
 		partialSubmit = getAttribute(PARTIAL_SUBMIT);
 		reRender = getAttribute(RERENDER);
+		ajaxNeeded = (partialSubmit != null) || (reRender != null);
 	}
 	
 	@Override
@@ -68,9 +71,13 @@ public class AonAjaxInputHandler extends AonComponentHandler implements IRichFac
 	}
 
 	public boolean isAjaxNeeded() {
-		return (partialSubmit != null) || (reRender != null);
+		return ajaxNeeded;
 	}
-	
+
+	public void setAjaxNeeded(boolean ajaxNeeded) {
+		this.ajaxNeeded = ajaxNeeded;
+	}
+
 	private String getAjaxEvent() {
 		ComponentInfo info = ComponentManager.getInstance().getComponentInfo(this);
 		if ( info != null ) {

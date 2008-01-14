@@ -6,6 +6,7 @@ import java.util.List;
 
 import javax.faces.component.UIComponent;
 
+import com.code.aon.faces.component.richfaces.lookup.inputText.LookupInputTextHandler;
 import com.code.aon.faces.component.util.BasicComponentConfig;
 import com.sun.facelets.FaceletContext;
 import com.sun.facelets.tag.TagAttribute;
@@ -23,6 +24,8 @@ public class RegionableInputHandler extends TagHandler implements IRichFacesTags
 	private static final String REGION_RENDERER_TYPE = "org.ajax4jsf.components.AjaxRegionRenderer";
 
 	private static final String REGION_COMPONENT_TYPE = "org.ajax4jsf.AjaxRegion";
+	
+	private static final String LOOKUP_INPUT_TEXT_COMPONENT_TYPE = "com.code.aon.faces.HtmlLookupInputText";
 
 	private ComponentConfig config;
 	
@@ -40,10 +43,17 @@ public class RegionableInputHandler extends TagHandler implements IRichFacesTags
 		super( config );
 		this.config = config;
 	}
+	
+	private AonAjaxInputHandler newInputHandler() {
+		if ( LOOKUP_INPUT_TEXT_COMPONENT_TYPE.equals(config.getComponentType()) ) {
+			return new LookupInputTextHandler(config);
+		}
+		return new AonAjaxInputHandler(config);
+	}
 
-	private TagHandler getMainHandler(FaceletContext ctx, UIComponent component) {
+	private TagHandler getMainHandler() {
 		if ( this.inputHandler == null ) {
-			inputHandler = new AonAjaxInputHandler(config);
+			inputHandler = newInputHandler();
 			if ( this.inputHandler.isAjaxNeeded() ) {
 				List<TagAttribute> list = Collections.emptyList();
 				BasicComponentConfig regionConfig = new BasicComponentConfig(config, list );
@@ -61,7 +71,7 @@ public class RegionableInputHandler extends TagHandler implements IRichFacesTags
 	
 	@Override
 	public void apply(FaceletContext ctx, UIComponent parent) throws IOException {
-		getMainHandler(ctx, parent).apply(ctx, parent);
+		getMainHandler().apply(ctx, parent);
 	}
 
 }
