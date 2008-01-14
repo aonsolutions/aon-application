@@ -13,7 +13,6 @@ import javax.faces.context.FacesContext;
 import javax.faces.el.MethodBinding;
 import javax.faces.el.ValueBinding;
 import javax.faces.event.ActionEvent;
-import javax.faces.event.PhaseId;
 import javax.faces.event.ValueChangeEvent;
 import javax.faces.model.DataModel;
 
@@ -613,7 +612,7 @@ public class ICELookupBean {
 	 */
 	public void onListCancel(ActionEvent event) {
 		setSelectedPanel(SEARCH_ID);
-		onCancel(event);
+		onEditSearch(event);
 	}
 
 	/**

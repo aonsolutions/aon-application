@@ -1,7 +1,7 @@
 package com.code.aon.faces.component.richfaces;
 
 import java.io.IOException;
-import java.util.Collections;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.faces.component.UIComponent;
@@ -55,8 +55,12 @@ public class RegionableInputHandler extends TagHandler implements IRichFacesTags
 		if ( this.inputHandler == null ) {
 			inputHandler = newInputHandler();
 			if ( this.inputHandler.isAjaxNeeded() ) {
-				List<TagAttribute> list = Collections.emptyList();
-				BasicComponentConfig regionConfig = new BasicComponentConfig(config, list );
+				List<TagAttribute> attributes = new ArrayList<TagAttribute>();
+				TagAttribute rendered = inputHandler.getRendered();
+				if ( rendered != null ) {
+					attributes.add(rendered);
+				}
+				BasicComponentConfig regionConfig = new BasicComponentConfig(config, attributes );
 				regionConfig.setComponentType(REGION_COMPONENT_TYPE);
 				regionConfig.setRendererType(REGION_RENDERER_TYPE);
 				regionConfig.setNextHandler( inputHandler );
