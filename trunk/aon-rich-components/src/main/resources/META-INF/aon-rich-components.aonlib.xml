@@ -93,7 +93,8 @@
 	</component>
 
 	<component localName="selectManyCheckbox">
-    	<attribute name="styleClass" value="aon-selectManyCheckbox" />			
+    	<attribute name="styleClass" value="aon-selectManyCheckbox" />	
+    	<attribute name="partialSubmit" value="onclick" ignore="true" />		
 	</component>
 
 	<component localName="dataTable">

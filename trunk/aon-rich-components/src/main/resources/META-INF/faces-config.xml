@@ -56,6 +56,10 @@
         <component-class>org.ajax4jsf.component.html.HtmlAjaxStatus</component-class>
     </component>
     <component>
+        <component-type>com.code.aon.faces.InputHidden</component-type>
+        <component-class>javax.faces.component.html.HtmlInputHidden</component-class>
+    </component>
+    <component>
         <component-type>com.code.aon.faces.InputText</component-type>
         <component-class>javax.faces.component.html.HtmlInputText</component-class>
     </component>
@@ -80,12 +84,24 @@
         <component-class>javax.faces.component.html.HtmlSelectOneRadio</component-class>
     </component>
     <component>
+        <component-type>com.code.aon.faces.SelectOneListbox</component-type>
+        <component-class>javax.faces.component.html.HtmlSelectOneListbox</component-class>
+    </component>
+    <component>
         <component-type>com.code.aon.faces.SelectBooleanCheckbox</component-type>
         <component-class>javax.faces.component.html.HtmlSelectBooleanCheckbox</component-class>
     </component>
     <component>
         <component-type>com.code.aon.faces.SelectManyCheckbox</component-type>
         <component-class>javax.faces.component.html.HtmlSelectManyCheckbox</component-class>
+    </component>
+    <component>
+        <component-type>com.code.aon.faces.SelectManyMenu</component-type>
+        <component-class>javax.faces.component.html.HtmlSelectManyMenu</component-class>
+    </component>
+    <component>
+        <component-type>com.code.aon.faces.SelectManyListbox</component-type>
+        <component-class>javax.faces.component.html.HtmlSelectManyListbox</component-class>
     </component>
     <component>
         <component-type>org.apache.myfaces.SubForm</component-type>
@@ -136,6 +152,26 @@
         <component-type>com.code.aon.faces.HtmlLookupInputText</component-type>
         <component-class>com.code.aon.faces.component.richfaces.lookup.inputText.HtmlLookupInputText</component-class>
     </component>
+    <component>
+        <component-type>com.code.aon.faces.MenuBar</component-type>
+        <component-class>org.richfaces.component.html.HtmlToolBar</component-class>
+    </component>
+    <component>
+        <component-type>com.code.aon.faces.DropDownMenu</component-type>
+        <component-class>org.richfaces.component.html.HtmlDropDownMenu</component-class>
+    </component>
+    <component>
+        <component-type>com.code.aon.faces.MenuGroup</component-type>
+        <component-class>org.richfaces.component.html.HtmlMenuGroup</component-class>
+    </component>
+    <component>
+        <component-type>com.code.aon.faces.MenuItem</component-type>
+        <component-class>org.richfaces.component.html.HtmlMenuItem</component-class>
+    </component>
+    <component>
+        <component-type>com.code.aon.faces.MenuSeparator</component-type>
+        <component-class>org.richfaces.component.html.HtmlMenuSeparator</component-class>
+    </component>
     <render-kit>
         <renderer>
             <component-family>org.apache.myfaces.SubForm</component-family>
@@ -153,25 +189,4 @@
             <renderer-class>com.code.aon.faces.component.richfaces.rowSelector.RowSelectorRenderer</renderer-class>
         </renderer>
     </render-kit>
-	<!-- 
-    <component>
-        <component-type>com.code.aon.faces.InputFile</component-type>
-        <component-class>com.icesoft.faces.component.inputfile.InputFile</component-class>
-    </component>
-    
-    <component>
-        <component-type>com.code.aon.faces.OutputProgress</component-type>
-        <component-class>com.icesoft.faces.component.outputprogress.OutputProgress</component-class>
-    </component>
-
-    <component>
-        <component-type>com.code.aon.faces.MenuBar</component-type>
-        <component-class>com.icesoft.faces.component.menubar.MenuBar</component-class>
-    </component>
-    
-    <component>
-        <component-type>com.code.aon.faces.MenuItem</component-type>
-        <component-class>com.icesoft.faces.component.menubar.MenuItem</component-class>
-    </component>
-    -->
 </faces-config>

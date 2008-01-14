@@ -95,6 +95,13 @@
 		</component>
 	</tag>
 	<tag>
+		<tag-name>inputHidden</tag-name>
+		<component>
+			<component-type>com.code.aon.faces.InputHidden</component-type>
+			<handler-class>com.code.aon.faces.component.AonComponentHandler</handler-class>
+		</component>
+	</tag>
+	<tag>
 		<tag-name>inputText</tag-name>
 		<component>
 			<component-type>com.code.aon.faces.InputText</component-type>
@@ -105,49 +112,70 @@
 		<tag-name>inputTextarea</tag-name>
 		<component>
 			<component-type>com.code.aon.faces.InputTextarea</component-type>
-			<handler-class>com.code.aon.faces.component.AonComponentHandler</handler-class>
+			<handler-class>com.code.aon.faces.component.richfaces.RegionableInputHandler</handler-class>
 		</component>
 	</tag>
 	<tag>
 		<tag-name>inputRichText</tag-name>
 		<component>
 			<component-type>com.code.aon.faces.HtmlInputRichText</component-type>
-			<handler-class>com.code.aon.faces.component.AonComponentHandler</handler-class>
+			<handler-class>com.code.aon.faces.component.richfaces.RegionableInputHandler</handler-class>
 		</component>
 	</tag>
 	<tag>
 		<tag-name>inputSecret</tag-name>
 		<component>
 			<component-type>com.code.aon.faces.InputSecret</component-type>
-			<handler-class>com.code.aon.faces.component.AonComponentHandler</handler-class>
+			<handler-class>com.code.aon.faces.component.richfaces.RegionableInputHandler</handler-class>
 		</component>
 	</tag>
 	<tag>
 		<tag-name>selectOneMenu</tag-name>
 		<component>
 			<component-type>com.code.aon.faces.SelectOneMenu</component-type>
-			<handler-class>com.code.aon.faces.component.AonComponentHandler</handler-class>
+			<handler-class>com.code.aon.faces.component.richfaces.RegionableInputHandler</handler-class>
 		</component>
 	</tag>
 	<tag>
 		<tag-name>selectOneRadio</tag-name>
 		<component>
 			<component-type>com.code.aon.faces.SelectOneRadio</component-type>
-			<handler-class>com.code.aon.faces.component.AonComponentHandler</handler-class>
+			<handler-class>com.code.aon.faces.component.richfaces.RegionableInputHandler</handler-class>
+		</component>
+	</tag>
+	<tag>
+		<tag-name>selectOneListbox</tag-name>
+		<component>
+			<component-type>com.code.aon.faces.SelectOneListbox</component-type>
+			<handler-class>com.code.aon.faces.component.richfaces.RegionableInputHandler</handler-class>
 		</component>
 	</tag>
 	<tag>
 		<tag-name>selectBooleanCheckbox</tag-name>
 		<component>
 			<component-type>com.code.aon.faces.SelectBooleanCheckbox</component-type>
-			<handler-class>com.code.aon.faces.component.AonComponentHandler</handler-class>
+			<handler-class>com.code.aon.faces.component.richfaces.RegionableInputHandler</handler-class>
 		</component>
 	</tag>
 	<tag>
 		<tag-name>selectManyCheckbox</tag-name>
 		<component>
 			<component-type>com.code.aon.faces.SelectManyCheckbox</component-type>
-			<handler-class>com.code.aon.faces.component.AonComponentHandler</handler-class>
+			<handler-class>com.code.aon.faces.component.richfaces.RegionableInputHandler</handler-class>
+		</component>
+	</tag>
+	<tag>
+		<tag-name>selectManyMenu</tag-name>
+		<component>
+			<component-type>com.code.aon.faces.SelectManyMenu</component-type>
+			<handler-class>com.code.aon.faces.component.richfaces.RegionableInputHandler</handler-class>
+		</component>
+	</tag>
+	<tag>
+		<tag-name>selectManyListbox</tag-name>
+		<component>
+			<component-type>com.code.aon.faces.SelectManyListbox</component-type>
+			<handler-class>com.code.aon.faces.component.richfaces.RegionableInputHandler</handler-class>
 		</component>
 	</tag>
     <tag>
@@ -247,40 +275,45 @@
         <tag-name>lookupButtonPopup</tag-name>
 		<handler-class>com.code.aon.faces.component.richfaces.lookup.button.popup.LookupButtonPopupHandler</handler-class>
     </tag>
-    <!-- 
 	<tag>
 		<tag-name>joinProperty</tag-name>
 		<handler-class>
-			com.code.aon.faces.component.lookup.inputText.JoinPropertyHandler
+			com.code.aon.faces.component.richfaces.lookup.inputText.JoinPropertyHandler
 		</handler-class>
-	</tag>
-	<tag>
-		<tag-name>inputFile</tag-name>
-		<component>
-			<component-type>com.code.aon.faces.InputFile</component-type>
-			<handler-class>com.code.aon.faces.component.inputFile.InputFileHandler</handler-class>
-		</component>
-	</tag>
-	<tag>
-		<tag-name>outputProgress</tag-name>
-		<component>
-			<component-type>com.code.aon.faces.OutputProgress</component-type>
-			<handler-class>com.code.aon.faces.component.outputProgress.OutputProgressHandler</handler-class>
-		</component>
 	</tag>
 	<tag>
 		<tag-name>menuBar</tag-name>
 		<component>
 			<component-type>com.code.aon.faces.MenuBar</component-type>
-			<handler-class>com.code.aon.faces.component.menuBar.MenuBarHandler</handler-class>
+			<handler-class>com.code.aon.faces.component.AonComponentHandler</handler-class>
+		</component>
+	</tag>
+	<tag>
+		<tag-name>dropDownMenu</tag-name>
+		<component>
+			<component-type>com.code.aon.faces.DropDownMenu</component-type>
+			<handler-class>com.code.aon.faces.component.richfaces.menu.DropDownMenuHandler</handler-class>
+		</component>
+	</tag>
+	<tag>
+		<tag-name>menuGroup</tag-name>
+		<component>
+			<component-type>com.code.aon.faces.MenuGroup</component-type>
+			<handler-class>com.code.aon.faces.component.AonComponentHandler</handler-class>
 		</component>
 	</tag>
 	<tag>
 		<tag-name>menuItem</tag-name>
 		<component>
 			<component-type>com.code.aon.faces.MenuItem</component-type>
-			<handler-class>com.code.aon.faces.component.menuBar.MenuItemHandler</handler-class>
+			<handler-class>com.code.aon.faces.component.AonComponentHandler</handler-class>
 		</component>
 	</tag>
-	 -->
+	<tag>
+		<tag-name>menuSeparator</tag-name>
+		<component>
+			<component-type>com.code.aon.faces.MenuSeparator</component-type>
+			<handler-class>com.code.aon.faces.component.AonComponentHandler</handler-class>
+		</component>
+	</tag>
 </facelet-taglib>
