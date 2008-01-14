@@ -40,7 +40,12 @@ public enum PageType implements IResourceable {
 	/**
 	 * DIRECT_ACCESS
 	 */
-	DIRECT_ACCESS;
+	DIRECT_ACCESS,
+	
+	/**
+	 * ALBUM_IMAGES
+	 */
+	ALBUM_IMAGES;
 	
 	/**
 	 * Ruta base del fichero de mensajes.

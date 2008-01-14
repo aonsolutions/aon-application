@@ -6,6 +6,7 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ui.cms.Constants;
 import com.code.aon.ui.cms.util.ControllerUtil;
 import com.code.aon.ui.cms.util.VelocityUtil;
+import com.code.aon.ui.cms.velocity.AlbumGenerator;
 import com.code.aon.ui.cms.velocity.CommonGenerator;
 import com.code.aon.ui.cms.velocity.DirectAccessGenerator;
 import com.code.aon.ui.cms.velocity.FaqGenerator;
@@ -63,6 +64,11 @@ public class GeneratorController extends BasicController implements Constants {
 		vu.addMessage("", VelocityUtil.INFO);
 		vu.addMessage("Creando acceso directo... ", VelocityUtil.INFO);
 		DirectAccessGenerator.generate(vu);
+		
+		//Generar image album
+		vu.addMessage("", VelocityUtil.INFO);
+		vu.addMessage("Creando album imagenes... ", VelocityUtil.INFO);
+		AlbumGenerator.generate(vu);
 	}
 
 

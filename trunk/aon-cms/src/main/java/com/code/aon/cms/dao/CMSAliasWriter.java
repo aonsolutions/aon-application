@@ -6,6 +6,7 @@ import java.io.IOException;
 import com.code.aon.cms.Album;
 import com.code.aon.cms.AlbumCategory;
 import com.code.aon.cms.AlbumCategoryDetail;
+import com.code.aon.cms.AlbumConfig;
 import com.code.aon.cms.AlbumDetail;
 import com.code.aon.cms.AlbumImage;
 import com.code.aon.cms.AlbumImageDetail;
@@ -67,7 +68,7 @@ public class CMSAliasWriter {
 	public static void main(String[] args) throws IOException {
 
 		File file = new File("/AON-PROJECT/aon-cms/src/main/java/com/code/aon/cms/dao/ICMSAlias.java");
-		String[] classes = new String[57]; 
+		String[] classes = new String[58]; 
 		classes[0] = Language.class.getName();
 		classes[1] = Config.class.getName();
 		classes[2] = ConfigDetail.class.getName();
@@ -125,6 +126,7 @@ public class CMSAliasWriter {
 		classes[54] = DirectAccessDetail.class.getName();
 		classes[55] = FaqConfig.class.getName();
 		classes[56] = LinkConfig.class.getName();
+		classes[57] = AlbumConfig.class.getName();
 		AliasWriter writer = new AliasWriter("com.code.aon.cms.dao");
 		writer.write(classes, file);
 		System.out.println( file.getAbsolutePath() );

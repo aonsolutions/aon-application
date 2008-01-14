@@ -9,6 +9,7 @@ import javax.faces.event.ValueChangeEvent;
 import com.code.aon.cms.Album;
 import com.code.aon.cms.AlbumCategory;
 import com.code.aon.cms.AlbumCategoryDetail;
+import com.code.aon.cms.AlbumConfig;
 import com.code.aon.cms.dao.ICMSAlias;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
@@ -23,6 +24,12 @@ import com.icesoft.faces.component.ext.RowSelectorEvent;
 public class AlbumCategoryController extends BasicI18nController {
 
 	private boolean cancelOnSelect = false;
+
+	@Override
+	public void onReset(ActionEvent event) {
+		((GeneratorConfigController)AonUtil.getRegisteredBean("generator_config")).initSection(AlbumConfig.class);
+		super.onReset(event);
+	}
 
 	@SuppressWarnings("unused")
 	public void onSelect(RowSelectorEvent event) throws ManagerBeanException {
