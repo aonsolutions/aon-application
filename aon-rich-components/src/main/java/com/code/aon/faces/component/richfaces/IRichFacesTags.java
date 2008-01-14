@@ -4,4 +4,6 @@ public interface IRichFacesTags {
 
 	String RERENDER = "reRender";
 	
+	String EVENT = "event";
+	
 }
