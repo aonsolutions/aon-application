@@ -7,6 +7,8 @@ import java.util.Locale;
 import javax.faces.context.FacesContext;
 import javax.faces.model.SelectItem;
 
+import com.code.aon.cms.Album;
+import com.code.aon.cms.AlbumCategory;
 import com.code.aon.cms.FaqCategory;
 import com.code.aon.cms.GenericPageDetail;
 import com.code.aon.cms.LinkCategory;
@@ -22,6 +24,7 @@ import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.cms.controller.CollectionsController;
+import com.code.aon.ui.cms.velocity.AlbumGenerator;
 import com.code.aon.ui.cms.velocity.FaqGenerator;
 import com.code.aon.ui.cms.velocity.LinkGenerator;
 import com.code.aon.ui.util.AonUtil;
@@ -33,6 +36,7 @@ public class MenuOptionUtil {
 		if (type != null) {
 			if (type.equals(PageType.LINK)) return true;
 			if (type.equals(PageType.FAQ)) return true;
+			if (type.equals(PageType.ALBUM_IMAGES)) return true;
 		}
 		return false;
 	}
@@ -51,6 +55,12 @@ public class MenuOptionUtil {
 			}
 			if (type.equals(PageType.MODULAR)) return true;
 			if (type.equals(PageType.DIRECT_ACCESS)) return true;
+			if (type.equals(PageType.ALBUM_IMAGES)){
+				if (ContentLevel.SECTION.equals(level))
+					return true;
+				if (ContentLevel.CATEGORY.equals(level))
+					return true;
+			}
 		}
 		return false;
 	}
@@ -90,6 +100,13 @@ public class MenuOptionUtil {
 		}else if (type.equals(PageType.LINK)){
 			if (ContentLevel.CATEGORY.equals(level)){
 				idents = ((CollectionsController)AonUtil.getRegisteredBean("collections")).getLinkCategoryList();
+			}
+		}else if (type.equals(PageType.ALBUM_IMAGES)){
+			if (ContentLevel.SECTION.equals(level)){
+				idents = ((CollectionsController)AonUtil.getRegisteredBean("collections")).getAlbumCategoryList();
+			}
+			if (ContentLevel.CATEGORY.equals(level)){
+				idents = ((CollectionsController)AonUtil.getRegisteredBean("collections")).getAlbumList();
 			}
 		}
 		return idents;
@@ -196,6 +213,42 @@ public class MenuOptionUtil {
 					String link = Templates.MODULAR.getHtmlName();
 					link = link.replaceAll("%NAME%", mp.getAlias());
 					return link;
+				}
+			} catch (ManagerBeanException e) {
+				e.printStackTrace();
+			}
+			return null;
+		}
+		if (pageType == PageType.ALBUM_IMAGES) {
+			try {
+				if (level.equals(ContentLevel.TOP)){
+					String category = Templates.ALBUM_IMAGES.getHtmlName();
+					category = category.replaceAll("%NAME%", AlbumGenerator.ALBUM_LIST_PAGE);
+					return category;
+				}else if (level.equals(ContentLevel.SECTION)){
+					IManagerBean bean = BeanManager.getManagerBean(AlbumCategory.class);
+					Criteria criteria = new Criteria();
+					criteria.addEqualExpression(bean.getFieldName(ICMSAlias.ALBUM_CATEGORY_ID), ident);
+					criteria.addEqualExpression(bean.getFieldName(ICMSAlias.ALBUM_CATEGORY_ACTIVE), true);
+					List<ITransferObject> l = (List<ITransferObject>)bean.getList(criteria);
+					if (l.size() > 0) {
+						AlbumCategory ac = (AlbumCategory)l.get(0);
+						String album = Templates.ALBUM_IMAGES.getHtmlName();
+						album = album.replaceAll("%NAME%", ac.getAlias());
+						return album;
+					}
+				}else if (level.equals(ContentLevel.CATEGORY)){
+					IManagerBean bean = BeanManager.getManagerBean(Album.class);
+					Criteria criteria = new Criteria();
+					criteria.addEqualExpression(bean.getFieldName(ICMSAlias.ALBUM_ID), ident);
+					criteria.addEqualExpression(bean.getFieldName(ICMSAlias.ALBUM_ACTIVE), true);
+					List<ITransferObject> l = (List<ITransferObject>)bean.getList(criteria);
+					if (l.size() > 0) {
+						Album a = (Album)l.get(0);
+						String album = Templates.ALBUM_IMAGES.getHtmlName();
+						album = album.replaceAll("%NAME%", a.getAlias());
+						return album;
+					}
 				}
 			} catch (ManagerBeanException e) {
 				e.printStackTrace();

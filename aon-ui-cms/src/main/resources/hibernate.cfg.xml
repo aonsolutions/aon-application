@@ -75,6 +75,7 @@
 		<mapping class="com.code.aon.cms.DirectAccessDetail"/>
 		<mapping class="com.code.aon.cms.FaqConfig"/>
 		<mapping class="com.code.aon.cms.LinkConfig"/>
+		<mapping class="com.code.aon.cms.AlbumConfig"/>
 
 	</session-factory>
 

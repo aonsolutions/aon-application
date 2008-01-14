@@ -7,6 +7,8 @@ import java.util.Locale;
 import javax.faces.context.FacesContext;
 import javax.faces.model.SelectItem;
 
+import com.code.aon.cms.Album;
+import com.code.aon.cms.AlbumCategory;
 import com.code.aon.cms.Article;
 import com.code.aon.cms.Banner;
 import com.code.aon.cms.Brand;
@@ -348,4 +350,37 @@ public class CollectionsController {
 		}
 		return accesses;
 	}
+	
+	public List<SelectItem> getAlbumCategoryList() throws ManagerBeanException {
+		List<SelectItem> select_list = new LinkedList<SelectItem>();
+		IManagerBean bean = BeanManager.getManagerBean(AlbumCategory.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(bean.getFieldName(ICMSAlias.ALBUM_CATEGORY_ACTIVE), true);
+		List<ITransferObject> list = (List<ITransferObject>)bean.getList(criteria);
+		for (int i = 0; i < list.size(); i++) {
+			AlbumCategory ac = (AlbumCategory)list.get(i);
+			int id = ac.getId();
+			String name = ac.getAlias();
+			SelectItem item = new SelectItem(id, name);
+			select_list.add(item);
+		}
+		return select_list;
+	}
+
+	public List<SelectItem> getAlbumList() throws ManagerBeanException {
+		List<SelectItem> select_list = new LinkedList<SelectItem>();
+		IManagerBean bean = BeanManager.getManagerBean(Album.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(bean.getFieldName(ICMSAlias.ALBUM_ACTIVE), true);
+		List<ITransferObject> list = (List<ITransferObject>)bean.getList(criteria);
+		for (int i = 0; i < list.size(); i++) {
+			Album a = (Album)list.get(i);
+			int id = a.getId();
+			String name = a.getAlias();
+			SelectItem item = new SelectItem(id, name);
+			select_list.add(item);
+		}
+		return select_list;
+	}
+
 }

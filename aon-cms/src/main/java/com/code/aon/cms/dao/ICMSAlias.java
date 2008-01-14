@@ -59,6 +59,7 @@ import com.code.aon.cms.DirectAccess;
 import com.code.aon.cms.DirectAccessDetail;
 import com.code.aon.cms.FaqConfig;
 import com.code.aon.cms.LinkConfig;
+import com.code.aon.cms.AlbumConfig;
 
 /** 
 * Interface for holding entity properties constants.
@@ -2377,6 +2378,25 @@ public interface ICMSAlias {
 	* Hibernate value: LinkConfig.section.id
 	*/
 	String  LINK_CONFIG_SECTION_ID = LINK_CONFIG_ENTRY.getAliasNames()[1];
+
+
+
+	/** 
+	* DAOConstantsEntry for AlbumConfig entity.
+	*/ 
+	DAOConstantsEntry ALBUM_CONFIG_ENTRY = DAOConstants.getDAOConstant(AlbumConfig.class);
+
+	/** 
+	* Alias value: AlbumConfig_id
+	* Hibernate value: AlbumConfig.id
+	*/
+	String  ALBUM_CONFIG_ID = ALBUM_CONFIG_ENTRY.getAliasNames()[0];
+
+	/** 
+	* Alias value: AlbumConfig_section_id
+	* Hibernate value: AlbumConfig.section.id
+	*/
+	String  ALBUM_CONFIG_SECTION_ID = ALBUM_CONFIG_ENTRY.getAliasNames()[1];
 
 
 }
