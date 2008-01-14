@@ -158,6 +158,34 @@ public class CollectionsController {
 		return menus;
 	}
 
+	public List<SelectItem> getMenuSideList() throws ManagerBeanException {
+		return getMenuList(MenuType.SIDEBAR);
+	}
+
+	public List<SelectItem> getMenuTopList() throws ManagerBeanException {
+		return getMenuList(MenuType.TOP);
+	}
+
+	public List<SelectItem> getMenuFootList() throws ManagerBeanException {
+		return getMenuList(MenuType.FOOT);
+	}
+
+	public List<SelectItem> getMenuList(MenuType type) throws ManagerBeanException {
+		List<SelectItem> menus = new LinkedList<SelectItem>();
+		IManagerBean menuBean = BeanManager.getManagerBean(Menu.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(menuBean.getFieldName(ICMSAlias.MENU_TYPE), type);
+		List<ITransferObject> list = (List<ITransferObject>)menuBean.getList(criteria);
+		for (int i = 0; i < list.size(); i++) {
+			Menu menu = (Menu)list.get(i);
+			int id = menu.getId();
+			String name = menu.getAlias();
+			SelectItem item = new SelectItem(id, name);
+			menus.add(item);
+		}
+		return menus;
+	}
+
 	public List<SelectItem> getSidebarList() throws ManagerBeanException {
 		List<SelectItem> menus = new LinkedList<SelectItem>();
 		IManagerBean sidebarBean = BeanManager.getManagerBean(Sidebar.class);
@@ -247,22 +275,6 @@ public class CollectionsController {
 			itemList.add(item);
 		}
 		return itemList;
-	}
-
-	public List<SelectItem> getMenuSideList() throws ManagerBeanException {
-		List<SelectItem> menus = new LinkedList<SelectItem>();
-		IManagerBean menuBean = BeanManager.getManagerBean(Menu.class);
-		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(menuBean.getFieldName(ICMSAlias.MENU_TYPE), MenuType.SIDEBAR);
-		List<ITransferObject> list = (List<ITransferObject>)menuBean.getList(criteria);
-		for (int i = 0; i < list.size(); i++) {
-			Menu menu = (Menu)list.get(i);
-			int id = menu.getId();
-			String name = menu.getAlias();
-			SelectItem item = new SelectItem(id, name);
-			menus.add(item);
-		}
-		return menus;
 	}
 
 	public List<SelectItem> getSectionList() throws ManagerBeanException {
