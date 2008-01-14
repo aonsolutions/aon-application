@@ -77,6 +77,10 @@ public class AonAjaxInputHandler extends AonComponentHandler implements IRichFac
 	public void setAjaxNeeded(boolean ajaxNeeded) {
 		this.ajaxNeeded = ajaxNeeded;
 	}
+	
+	public TagAttribute getRendered() {
+		return getAttribute("rendered");
+	}
 
 	private String getAjaxEvent() {
 		ComponentInfo info = ComponentManager.getInstance().getComponentInfo(this);
