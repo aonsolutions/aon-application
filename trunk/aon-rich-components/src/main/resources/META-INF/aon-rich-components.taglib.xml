@@ -34,7 +34,7 @@
 		<tag-name>outputLabel</tag-name>
 		<component>
 			<component-type>com.code.aon.faces.OutputLabel</component-type>
-			<handler-class>com.code.aon.faces.component.AonComponentHandler</handler-class>
+			<handler-class>com.code.aon.faces.component.richfaces.outputLabel.OutputLabelHandler</handler-class>
 		</component>
 	</tag>
 
@@ -254,7 +254,7 @@
 		<tag-name>selectInputDate</tag-name>
 		<component>
 			<component-type>com.code.aon.faces.SelectInputDate</component-type>
-			<handler-class>com.code.aon.faces.component.AonComponentHandler</handler-class>
+			<handler-class>com.code.aon.faces.component.richfaces.RegionableInputHandler</handler-class>
 		</component>
 	</tag>
     <tag>

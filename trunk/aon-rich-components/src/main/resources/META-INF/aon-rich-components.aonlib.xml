@@ -21,6 +21,7 @@
     	<attribute name="renderAsPopup" alias="popup" value="true" type="1" />
     	<attribute name="inputClass" value="aon-selectInputDate"/>
     	<attribute name="todayControlMode" value="hidden"/>
+    	<attribute name="partialSubmit" value="ondateselected" ignore="true" />
 	</component>
 	
 	<component localName="div">

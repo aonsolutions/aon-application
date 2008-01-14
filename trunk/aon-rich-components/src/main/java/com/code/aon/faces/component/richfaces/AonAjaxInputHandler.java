@@ -3,10 +3,12 @@ package com.code.aon.faces.component.richfaces;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import javax.el.ELException;
 import javax.faces.FacesException;
 import javax.faces.component.UIComponent;
+import javax.faces.component.UIViewRoot;
 
 import org.ajax4jsf.taglib.html.facelets.AjaxSupportHandler;
 
@@ -15,6 +17,7 @@ import com.code.aon.faces.component.AttributeInfo;
 import com.code.aon.faces.component.ComponentInfo;
 import com.code.aon.faces.component.ComponentManager;
 import com.code.aon.faces.component.myfaces.UIComponentTagUtils;
+import com.code.aon.faces.component.richfaces.outputLabel.OutputLabelHandler;
 import com.code.aon.faces.component.util.BasicComponentConfig;
 import com.code.aon.faces.component.util.HTML;
 import com.sun.facelets.FaceletContext;
@@ -22,6 +25,7 @@ import com.sun.facelets.tag.MetaRuleset;
 import com.sun.facelets.tag.TagAttribute;
 import com.sun.facelets.tag.TagHandler;
 import com.sun.facelets.tag.jsf.ComponentConfig;
+import com.sun.facelets.tag.jsf.ComponentSupport;
 
 public class AonAjaxInputHandler extends AonComponentHandler implements IRichFacesTags, HTML {
 
@@ -60,12 +64,32 @@ public class AonAjaxInputHandler extends AonComponentHandler implements IRichFac
 	protected void setAttributes( FaceletContext ctx, Object instance ) {
 		super.setAttributes(ctx, instance);
 		UIComponent component = (UIComponent) instance;
+		updateDisabledStyleClass(ctx, component);
+		updateLabel(ctx, component);
+	}
+	
+	protected String getInputStyleClass() {
+		return STYLE_CLASS_ATTR;
+	}
+	
+	private void updateDisabledStyleClass(FaceletContext ctx, UIComponent c) {
 		TagAttribute disabledClass = getAttribute(DISABLED_STYLE_CLASS);
 		if ( disabledClass != null ) {
 			TagAttribute disabled = getAttribute(DISABLED_ATTR);
 			if ( (disabled != null) && disabled.getBoolean(ctx) ) {
 				String value = disabledClass.getValue(ctx);
-				UIComponentTagUtils.setStringProperty(ctx.getFacesContext(), component, STYLE_CLASS_ATTR, value);
+				UIComponentTagUtils.setStringProperty(ctx.getFacesContext(), c, getInputStyleClass(), value);
+			}
+		}
+	}
+	
+	private void updateLabel(FaceletContext ctx, UIComponent c) {
+		UIViewRoot root = ComponentSupport.getViewRoot(ctx, c);		
+		Map map = (Map) root.getAttributes().get(OutputLabelHandler.LABELS_MAP);
+		if (map != null) {
+			Object value = map.get(getId(ctx));
+			if ( value != null ) {
+				UIComponentTagUtils.setStringProperty(ctx.getFacesContext(), c, LABEL_ATTR, value.toString());				
 			}
 		}
 	}

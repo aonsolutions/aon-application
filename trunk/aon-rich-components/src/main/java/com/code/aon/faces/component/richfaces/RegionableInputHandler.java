@@ -7,6 +7,7 @@ import java.util.List;
 import javax.faces.component.UIComponent;
 
 import com.code.aon.faces.component.richfaces.lookup.inputText.LookupInputTextHandler;
+import com.code.aon.faces.component.richfaces.selectInputDate.SelectInputDateHandler;
 import com.code.aon.faces.component.util.BasicComponentConfig;
 import com.sun.facelets.FaceletContext;
 import com.sun.facelets.tag.TagAttribute;
@@ -26,6 +27,8 @@ public class RegionableInputHandler extends TagHandler implements IRichFacesTags
 	private static final String REGION_COMPONENT_TYPE = "org.ajax4jsf.AjaxRegion";
 	
 	private static final String LOOKUP_INPUT_TEXT_COMPONENT_TYPE = "com.code.aon.faces.HtmlLookupInputText";
+	
+	private static final String SELECT_INPUT_DATE_COMPONENT_TYPE = "com.code.aon.faces.SelectInputDate";
 
 	private ComponentConfig config;
 	
@@ -45,8 +48,11 @@ public class RegionableInputHandler extends TagHandler implements IRichFacesTags
 	}
 	
 	private AonAjaxInputHandler newInputHandler() {
-		if ( LOOKUP_INPUT_TEXT_COMPONENT_TYPE.equals(config.getComponentType()) ) {
+		String componentType = config.getComponentType();
+		if ( LOOKUP_INPUT_TEXT_COMPONENT_TYPE.equals(componentType) ) {
 			return new LookupInputTextHandler(config);
+		} else if ( SELECT_INPUT_DATE_COMPONENT_TYPE.equals(componentType) ) {
+			return new SelectInputDateHandler(config);
 		}
 		return new AonAjaxInputHandler(config);
 	}
