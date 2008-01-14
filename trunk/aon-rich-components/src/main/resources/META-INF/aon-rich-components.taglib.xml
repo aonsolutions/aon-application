@@ -98,7 +98,7 @@
 		<tag-name>inputText</tag-name>
 		<component>
 			<component-type>com.code.aon.faces.InputText</component-type>
-			<handler-class>com.code.aon.faces.component.AonComponentHandler</handler-class>
+			<handler-class>com.code.aon.faces.component.richfaces.RegionableInputHandler</handler-class>
 		</component>
 	</tag>
 	<tag>
