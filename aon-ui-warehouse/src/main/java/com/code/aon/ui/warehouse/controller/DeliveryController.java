@@ -11,6 +11,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.faces.event.ActionEvent;
+import javax.faces.event.PhaseId;
 import javax.faces.event.ValueChangeEvent;
 import javax.faces.model.SelectItem;
 
@@ -26,6 +27,7 @@ import com.code.aon.product.strategy.IPriceStrategy;
 import com.code.aon.product.strategy.PriceStrategyFactory;
 import com.code.aon.product.strategy.TaxBreakDown;
 import com.code.aon.ql.Criteria;
+import com.code.aon.ql.Projection;
 import com.code.aon.ql.util.ExpressionException;
 import com.code.aon.tasCommercial.TasOffer;
 import com.code.aon.tasCommercial.dao.ITasCommercialAlias;
@@ -651,4 +653,29 @@ public class DeliveryController extends BasicController {
         manager.setReportKey("delivery");
         manager.setOutputFormat(OutputFormat.PDF);
     }
+	
+	public void onSeriesChanged(ValueChangeEvent event) throws ManagerBeanException{
+		if (event.getPhaseId() == PhaseId.ANY_PHASE) {
+			event.setPhaseId(PhaseId.INVOKE_APPLICATION );
+			event.queue();
+		}
+		if (event.getPhaseId() == PhaseId.INVOKE_APPLICATION) {
+			int number = obtainMaxNumber((String)event.getNewValue());
+			if(this.getTo() != null){
+				((Delivery)this.getTo()).setNumber(number);	
+			}
+		}
+	}
+
+	private int obtainMaxNumber(String seriesId) throws ManagerBeanException {
+		IManagerBean deliveryBean = BeanManager.getManagerBean(Delivery.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(deliveryBean.getFieldName(IWarehouseAlias.DELIVERY_SERIES), seriesId);
+		Projection projection = Projection.max(deliveryBean.getFieldName(IWarehouseAlias.DELIVERY_NUMBER));
+		Object value = deliveryBean.getUniqueResult(projection, criteria);
+		if(value != null){
+			return ((Integer)value).intValue() + 1;
+		}
+		return 1;
+	}
 }
