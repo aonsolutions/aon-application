@@ -15,7 +15,7 @@
 	<description>AON GTA</description>
 	<name>AON GTA</name>
 	<properties>
-		<dbVersion>1.2.7</dbVersion>
+		<dbVersion>1.3.0</dbVersion>
 	</properties>
 	<build>
 		<finalName>aon-gta</finalName>
