@@ -83,7 +83,7 @@
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.tas.commercial</artifactId>
-			<version>2.0.1</version>
+			<version>2.0.2</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
@@ -124,4 +124,3 @@
 		</dependency>
 	</dependencies>
 </project>
-
