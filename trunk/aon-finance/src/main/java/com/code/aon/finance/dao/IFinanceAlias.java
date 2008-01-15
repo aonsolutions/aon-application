@@ -351,6 +351,12 @@ public interface IFinanceAlias {
 	*/
 	String  INVOICE_WITHHOLDING = INVOICE_ENTRY.getAliasNames()[13];
 
+	/** 
+	* Alias value: Invoice_comments
+	* Hibernate value: Invoice.comments
+	*/
+	String  INVOICE_COMMENTS = INVOICE_ENTRY.getAliasNames()[14];
+
 
 
 	/** 
