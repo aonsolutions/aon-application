@@ -130,6 +130,16 @@ public class LookupButtonHandler extends AonAjaxComponentHandler implements ILoo
 			MethodExpression me = vcl.getMethodExpression(ctx, null, VALUE_LISTENER_ARGS);
 			button.setValueChangeListener( new LegacyMethodBinding(me) );
 		}
+		TagAttribute windowTitle = getAttribute(WINDOW_TITLE);
+		if ( windowTitle != null ) {
+			String value = windowTitle.getValue(ctx);
+			UIComponentTagUtils.setStringProperty(ctx.getFacesContext(), button, WINDOW_TITLE, value );
+		}
+		TagAttribute selectReRender = getAttribute(SELECT_RE_RENDER);
+		if ( selectReRender != null ) {
+			String value = selectReRender.getValue(ctx);
+			UIComponentTagUtils.setStringProperty(ctx.getFacesContext(), button, SELECT_RE_RENDER, value );
+		}
 		setActionListener(ctx, button);
 		String id = getModalPanelId(ctx, lookup) + "ReRender";
 		String value = FaceletUtil.updateList(ctx, getAttribute(RERENDER), id);

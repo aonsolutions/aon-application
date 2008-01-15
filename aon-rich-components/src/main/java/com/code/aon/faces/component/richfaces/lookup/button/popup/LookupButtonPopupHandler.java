@@ -26,21 +26,15 @@ import com.sun.facelets.tag.jsf.ComponentSupport;
  */
 public class LookupButtonPopupHandler extends TagHandler implements ILookupTags, IRichFacesTags {
 
-	private static final String COMPONENT_TYPE = "com.code.aon.faces.LookupButtonPopup";
+	private static final String LOOKUP_MODAL_PANEL_MAP = "com.code.aon.faces.LookupButtonPopup.map";
 	
 	private static final String LOOKUP_ID = "lookupId";
 	
-   	private static final String WINDOW_TITLE = "windowTitle";
-   	
-   	private static final String LOOKUP_RE_RENDER = "lookupReRender";
-
 	private static final String TEMPLATE_PATH = "com/code/aon/faces/component/richfaces/lookup/";
 
 	private static final String TEMPLATE = TEMPLATE_PATH + "panelPopup.xhtml";
 
 	private TagAttribute lookup;
-	
-   	private TagAttribute windowTitle;	
 
 	/**
 	 * The Constructor.
@@ -51,16 +45,15 @@ public class LookupButtonPopupHandler extends TagHandler implements ILookupTags,
 	public LookupButtonPopupHandler(TagConfig config) {
 		super(config);
 		lookup = getRequiredAttribute(LOOKUP);
-		windowTitle = getRequiredAttribute(WINDOW_TITLE);
 	}
 
 	private boolean isInsertTemplate(FaceletContext ctx, UIComponent parent) {
 		boolean insert = true;
 		UIViewRoot root = ComponentSupport.getViewRoot(ctx, parent);
-		Map map = (Map) root.getAttributes().get(COMPONENT_TYPE);
+		Map map = (Map) root.getAttributes().get(LOOKUP_MODAL_PANEL_MAP);
 		if (map == null) {
 			map = new HashMap();
-			root.getAttributes().put(COMPONENT_TYPE, map);
+			root.getAttributes().put(LOOKUP_MODAL_PANEL_MAP, map);
 		} else {
 			String value = (String) map.get(lookup);
 			insert = (value == null) || (value.equals(this.tagId));
@@ -70,19 +63,14 @@ public class LookupButtonPopupHandler extends TagHandler implements ILookupTags,
 		}
 		return insert;
 	}
-
+	
 	private void insertTemplate(FaceletContext ctx, UIComponent component) {
 		VariableMapper newMapper = new VariableMapperWrapper(ctx.getVariableMapper());
 		newMapper.setVariable(LOOKUP, lookup.getValueExpression(ctx, Object.class));
-		String idString = LookupButtonHandler.getModalPanelId(ctx, lookup);
+		String panelId = LookupButtonHandler.getModalPanelId(ctx, lookup);
 		ValueExpression id = ctx.getExpressionFactory().createValueExpression(
-				ctx, idString, String.class);
+				ctx, panelId, String.class);
 		newMapper.setVariable(LOOKUP_ID, id);
-		newMapper.setVariable(WINDOW_TITLE, windowTitle.getValueExpression(ctx, Object.class));
-		TagAttribute reRender = getAttribute(RERENDER);
-		if ( reRender != null ) {
-			newMapper.setVariable(LOOKUP_RE_RENDER, reRender.getValueExpression(ctx, Object.class));
-		}
 		FaceletUtil.insertTemplate(ctx, tag, component, FaceletUtil.getTemplate(TEMPLATE), newMapper);
 	}
 	

@@ -15,11 +15,11 @@
 	<aon:div rendered="#{lookup.showSearchButtons}" >
 		<aon:panelGrid columns="2" dir="true"  styleClass="aon-title-toolbar"
 			cellpadding="0" cellspacing="0" columnClasses="aon-content-title,aon-content-toolbar">
-	
-			<aon:div styleClass="aon-content-title-internal">
-				<aon:outputText value="#{windowTitle}"/>
-			</aon:div>		
 
+			<aon:div styleClass="aon-content-title-internal">
+				<aon:outputText value="#{lookup.component.windowTitle}"/>
+			</aon:div>		
+	
 			<aon:div styleClass="aon-content-toolbar-internal">
 				<aon:div styleClass="aon-content-toolbar-item-group">
 					<aon:commandButton value="#{bundle.aon_search}"
@@ -42,8 +42,6 @@
 		</aon:panelGrid>
 	</aon:div>
 	
-
-		
 	<!-- end toolbar navigation -->
 	<aon:div styleClass="aon-scroll-area aon-lookup-area">
 		<aon:div styleClass="aon-scroll-area-internal">		
@@ -53,7 +51,7 @@
 
 				<aon:rowSelector
 					actionListener="#{lookup.onListSelect}"
-					reRender="#{lookupReRender}"
+					reRender="#{lookup.component.selectReRender}"
 					oncomplete="Richfaces.hideModalPanel('#{lookupId}')"
 				/>
 				
