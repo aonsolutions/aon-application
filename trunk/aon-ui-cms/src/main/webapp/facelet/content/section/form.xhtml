@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml"
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:f="http://java.sun.com/jsf/core"
-	xmlns:aon="http://www.code.es/aon-components"
+	xmlns:aon="http://www.code.es/aon-ice-components"
 	xmlns:c="http://java.sun.com/jstl/core">
 <body>
 
@@ -41,7 +41,7 @@
 						<aon:confirmButton id="remove"
 							value="#{bundle.aon_remove}" rendered="#{!section.new}" immediate="true"
 							confirmTitle="Confirmation Dialog" confirmMessage="#{bundle.aon_remove_confirm}"
-							confirmActionListener="#{section.onRemoveI18n}" confirmAction="section_form"
+							confirmActionListener="#{section.onRemove}" confirmAction="section_form"
 							styleClass="aon-content-toolbar-item aon-icon-delete"
 							onmouseout="this.className='aon-content-toolbar-item aon-icon-delete'"
 							onmouseover="this.className='aon-content-toolbar-item aon-icon-delete aon-content-toolbar-item-hover'"

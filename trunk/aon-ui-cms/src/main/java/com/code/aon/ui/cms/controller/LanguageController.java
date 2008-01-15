@@ -18,6 +18,7 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionException;
 import com.code.aon.ui.form.BasicController;
+import com.code.aon.ui.menu.jsf.MenuEvent;
 
 public class LanguageController extends BasicController {
 
