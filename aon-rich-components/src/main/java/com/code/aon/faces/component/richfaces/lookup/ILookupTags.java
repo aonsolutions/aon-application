@@ -8,4 +8,6 @@ public interface ILookupTags {
 	
 	String LOOKUP = "lookup";
 	
+	String WINDOW_TITLE = "windowTitle";
+	
 }
