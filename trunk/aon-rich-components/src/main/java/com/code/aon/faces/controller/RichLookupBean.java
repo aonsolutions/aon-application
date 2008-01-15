@@ -58,7 +58,7 @@ public class RichLookupBean {
 	/** The value binding of foreign Pojo. */
 	private ValueBinding sourcePojoBinding;
 
-	private ILookupComponent lookupComponent;
+	private ILookupComponent component;
 	
 	/** The map of join value bindings. */
 	// private Map<String,ValueBinding> joinBindingsMap;
@@ -540,8 +540,8 @@ public class RichLookupBean {
 
 	private void setBindings(UIComponent component) {
 		if (component instanceof ILookupComponent) {
-			this.lookupComponent = (ILookupComponent) component;
-			this.sourcePojoBinding = lookupComponent.getProperty();
+			this.component = (ILookupComponent) component;
+			this.sourcePojoBinding = this.component.getProperty();
 			if (this.sourcePojoBinding == null) {
 				this.sourcePojoBinding = getSourcePojoBinding(component);
 			}
@@ -685,7 +685,11 @@ public class RichLookupBean {
 	}
 
 	public MethodBinding getButtonValueChangeListener() {
-		return this.lookupComponent.getValueChangeListener();
+		return this.component.getValueChangeListener();
+	}
+
+	public ILookupComponent getComponent() {
+		return component;
 	}
 	
 }

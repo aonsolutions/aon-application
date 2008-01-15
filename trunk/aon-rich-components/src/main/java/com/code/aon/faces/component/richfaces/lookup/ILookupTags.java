@@ -10,4 +10,6 @@ public interface ILookupTags {
 	
 	String WINDOW_TITLE = "windowTitle";
 	
+	String SELECT_RE_RENDER = "selectReRender";
+	
 }
