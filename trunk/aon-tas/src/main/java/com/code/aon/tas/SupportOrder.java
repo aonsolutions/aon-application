@@ -94,6 +94,8 @@ public class SupportOrder implements ITransferObject, ILookupObject, IHeaderObje
 	 * A counter of the Tas Item
 	 */
 	private double counterti;
+	
+	private String levelti;
 
 	private WorkPlace workPlace;
 
@@ -342,7 +344,25 @@ public class SupportOrder implements ITransferObject, ILookupObject, IHeaderObje
 		this.counterti = counterti;
 	}
 	
-    @ManyToOne
+	/**
+	 * Returns the level
+	 * 
+	 * @return the level
+	 */
+    public String getLevelti() {
+		return levelti;
+	}
+
+	/**
+	 * Assigns the level
+	 * 
+	 * @param counter the level to set
+	 */
+	public void setLevelti(String levelti) {
+		this.levelti = levelti;
+	}
+
+	@ManyToOne
     @JoinColumn(name="workplace", nullable = false)
 	public WorkPlace getWorkPlace() {
 		return workPlace;
