@@ -13,6 +13,7 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ql.Criteria;
+import com.code.aon.tas.Appraiser;
 import com.code.aon.tas.Make;
 import com.code.aon.tas.Model;
 import com.code.aon.tas.SupportOrder;
@@ -142,4 +143,16 @@ public class TASCollectionsController {
 		return supportOrders;
 	}
 
+    @SuppressWarnings("unchecked")
+    public List<SelectItem> getAppraisers() throws ManagerBeanException{
+    	List<SelectItem> appraisers = new LinkedList<SelectItem>();
+    	IManagerBean appraiserBean = BeanManager.getManagerBean(Appraiser.class);
+    	Iterator iter = appraiserBean.getList(null).iterator();
+    	while(iter.hasNext()){
+    		Appraiser appraiser = (Appraiser)iter.next();
+    		SelectItem item = new SelectItem(appraiser.getId(), (appraiser.getRegistry().getSurname()!=null?appraiser.getRegistry().getSurname():"") + (appraiser.getRegistry().getName()!=null?appraiser.getRegistry().getName():""));
+    		appraisers.add(item);
+    	}
+    	return appraisers;
+    }
 }
