@@ -33,7 +33,7 @@ import com.code.aon.ui.form.event.IControllerListener;
  * LookupBean is the class used to implement a Lookup creating an SQL sentence
  * which will be executed to retrive the required data.
  */
-public class ICELookupBean {
+public class RichLookupBean {
 
 	private static final String LIST_ID = "list";
 
@@ -41,7 +41,7 @@ public class ICELookupBean {
 
 	private static final String SEARCH_ID = "search";
 
-	private static final Logger LOGGER = Logger.getLogger(ICELookupBean.class.getName());
+	private static final Logger LOGGER = Logger.getLogger(RichLookupBean.class.getName());
 
 	/** The foreign controller. */
 	private BasicController controller;
@@ -58,8 +58,7 @@ public class ICELookupBean {
 	/** The value binding of foreign Pojo. */
 	private ValueBinding sourcePojoBinding;
 
-	/** The method binding for the ValueCangeListener. */
-	private MethodBinding buttonValueChangeListener;
+	private ILookupComponent lookupComponent;
 	
 	/** The map of join value bindings. */
 	// private Map<String,ValueBinding> joinBindingsMap;
@@ -75,7 +74,7 @@ public class ICELookupBean {
 	/**
 	 * The Constructor.
 	 */
-	public ICELookupBean() {
+	public RichLookupBean() {
 		this.controller = new BasicController();
 	}
 
@@ -444,7 +443,7 @@ public class ICELookupBean {
 	}
 	
 	private void fireValueChangeListener(UIComponent component) {
-		if ( this.buttonValueChangeListener != null ) {
+		if ( getButtonValueChangeListener() != null ) {
 			ValueChangeEvent event = null;
 			FacesContext ctx = FacesContext.getCurrentInstance();
 			if ( getController().isNew() ) {
@@ -459,7 +458,7 @@ public class ICELookupBean {
 				Object oldValue = getCurrentSourcePojo();
 				event = new ValueChangeEvent(component, oldValue, newValue );
 			}
-			this.buttonValueChangeListener.invoke(ctx, new Object[]{event});
+			getButtonValueChangeListener().invoke(ctx, new Object[]{event});
 		}
 	}
 
@@ -541,12 +540,11 @@ public class ICELookupBean {
 
 	private void setBindings(UIComponent component) {
 		if (component instanceof ILookupComponent) {
-			ILookupComponent lookupComponent = (ILookupComponent) component;
+			this.lookupComponent = (ILookupComponent) component;
 			this.sourcePojoBinding = lookupComponent.getProperty();
 			if (this.sourcePojoBinding == null) {
 				this.sourcePojoBinding = getSourcePojoBinding(component);
 			}
-			this.buttonValueChangeListener = lookupComponent.getValueChangeListener();
 		}
 	}
 
@@ -682,30 +680,12 @@ public class ICELookupBean {
 		return showSearchButtons;
 	}
 
-	/**
-	 * Gets the expression value. Workaround needed because ICEFaces stores the
-	 * value of the input texts in the panelPopup. Check if it¡s needed in
-	 * future versions of ICEFaces.
-	 * 
-	 * @return the expression value
-	 */
-	public String getExpressionValue() {
-		return "";
-	}
-
-	/**
-	 * Sets the expression value. Workaround needed because ICEFaces stores the
-	 * value of the input texts in the panelPopup. Check if it¡s needed in
-	 * future versions of ICEFaces.
-	 * 
-	 * @param expressionValue
-	 *            the expression value
-	 */
-	public void setExpressionValue(String expressionValue) {
-	}
-
 	private void clearModel() {
 		getController().setModel(null);
 	}
 
+	public MethodBinding getButtonValueChangeListener() {
+		return this.lookupComponent.getValueChangeListener();
+	}
+	
 }
