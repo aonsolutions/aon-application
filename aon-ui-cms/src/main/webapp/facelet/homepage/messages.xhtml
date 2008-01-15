@@ -4,14 +4,14 @@
 	xmlns:ice="http://www.icesoft.com/icefaces/component"
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:h="http://java.sun.com/jsf/html"
-	xmlns:aon="http://www.code.es/aon-components">
+	xmlns:aon="http://www.code.es/aon-ice-components">
 
 	<aon:form rendered="#{errorMessages.visible}">
 		<aon:panelGroup styleClass="aon-popup-panel aon-confirm-box">
 		
 			<ice:panelPopup 
 				visible="true"
-				styleClass="aon-popup-" style="width:300px;">
+				styleClass="aon-popup-">
 
 				<f:facet name="header">
 					<aon:panelGrid width="100%" cellpadding="0" cellspacing="0"
@@ -24,12 +24,9 @@
 				</f:facet>
 
 				<f:facet name="body">
-
-	<aon:div id="aon-errors" forceId="#{true}">
-		<aon:messages />
-	</aon:div>
-
-
+					<aon:div id="aon-errors">
+						<aon:messages />
+					</aon:div>
 				</f:facet>
 
 			</ice:panelPopup>
