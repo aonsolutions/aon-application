@@ -144,12 +144,14 @@
 							styleClass="aon-form-input-text-label"
 							value="#{warehouseBundle.aon_series_number}" />
 						<t:div>
-							<t:inputText id="Delivery_series" value="#{delivery.to.series}"
-								disabled="#{!delivery.new}" styleClass="aon-form-input-text"
-								forceId="#{true}" size="3" maxlength="3"
-								onblur="toUpperCase(this);">
-								<f:validateLength maximum="3" />
-							</t:inputText>
+							<t:selectOneMenu id="Delivery_series"
+								value="#{delivery.to.series}"
+								disabled="#{!delivery.new}"
+								styleClass="aon-form-selectOneMenu-field"
+								onchange="submit();" valueChangeListener="#{delivery.onSeriesChanged}">
+								<f:selectItem itemValue="" itemDisabled="true" itemLabel="-" />
+								<f:selectItems value="#{configCollections.series}" />
+							</t:selectOneMenu>
 							<t:inputText id="Delivery_number" value="#{delivery.to.number}"
 								disabled="#{!delivery.new}" styleClass="aon-form-input-text"
 								forceId="#{true}" required="true" size="7" />
@@ -284,7 +286,7 @@
 						<t:div>
 							<t:inputText id="Customer_Lookup_id" size="5" forceId="#{true}"
 								disabled="#{!delivery.editable or (!delivery.new and delivery.supportOrderId != null)}"
-								styleClass="aon-form-input-text" required="true"
+								styleClass="aon-form-input-text"
 								onchange="return findBeanLookupExt(event,'#{facesContext.externalContext.requestContextPath}','customerLookup','Customer_Lookup_id','Customer_id|Customer_Lookup_id,Customer_full_name|Customer_full_name');"
 								value="#{delivery.to.customer.registry.id}"
 								valueChangeListener="#{delivery.customerData}" />
@@ -595,6 +597,98 @@
 
 						</t:div>
 					</t:div>
+					
+					<t:div styleClass="aon-form-group" rendered="#{!delivery.new and deliveryDetailLabour.model.rowCount > 0}">
+						<t:div styleClass="aon-form-group-title">
+							<t:outputLabel for="deliveryDetailLabourData" rendered="#{!delivery.new and deliveryDetailLabour.model.rowCount > 0}"
+								value="#{warehouseBundle.aon_delivery_detail_labour}" />
+						</t:div>
+						<t:div styleClass="aon-form-group-body">
+							<t:dataTable id="deliveryDetailLabourDataList" var="to"
+								styleClass="aon-edit-table" headerClass="aon-edit-table-header"
+								footerClass="aon-edit-table-footer"
+								value="#{deliveryDetailLabour.model}"
+								rowOnMouseOver="selectRow( this )"
+								rowOnMouseOut="unselectRow( this )" rowOnClick="sendRow( this )"
+								rendered="#{!delivery.new and deliveryDetailLabour.model.rowCount > 0}"
+								rowIndexVar="rowIndex" rows="20"
+								rowClasses="aon-edit-table-row-odd,aon-edit-table-row-even"
+								columnClasses="aon-edit-table-body aon-edit-table-body-icon,
+									aon-edit-table-body aon-edit-table-body-string aon-edit-table-mainColumn,
+									aon-edit-table-body aon-edit-table-body-number,
+									aon-edit-table-body aon-edit-table-body-buttons">
+
+								<t:column>
+									<f:facet name="header">
+										<f:verbatim>&#160;</f:verbatim>
+									</f:facet>
+									<t:outputText value="#{deliveryDetailLabour.relatedDeliveryDetailRowIndex}" />
+									<t:commandLink styleClass="aon-table-row-selected"
+										disabled="#{!delivery.editable}"
+										rendered="#{to!=deliveryDetailLabour.to}"
+										actionListener="#{deliveryDetailLabour.onSelect}" />
+								</t:column>
+
+								<t:column>
+									<f:facet name="header">
+										<t:outputText value="#{tasBundle.supportOrder_employee}" />
+									</f:facet>
+									<t:div rendered="#{to!=deliveryDetailLabour.to}">
+										<h:outputText value="#{to.employee.registry.surname}, " rendered="#{to.employee.registry.surname != null and to.employee.registry.surname != ''}"/>								
+										<h:outputText value="#{to.employee.registry.name}" />
+									</t:div>
+									
+									<t:selectOneMenu id="SupportOrder_employee_id"
+										rendered="#{to==deliveryDetailLabour.to}"
+										styleClass="aon-form-selectOneMenu-field" forceId="#{true}"
+										value="#{deliveryDetailLabour.to.employee.id}" required="#{true}"
+										valueChangeListener="#{deliveryDetailLabour.onEmployeeChanged}">
+										<f:selectItem itemDisabled="true" itemLabel="-" itemValue="" />
+										<f:selectItems value="#{employeeCollections.employees}" />
+									</t:selectOneMenu>
+								</t:column>
+
+								<t:column>
+									<f:facet name="header">
+										<t:outputText value="#{warehouseBundle.aon_quantity}" />
+									</f:facet>
+									<t:outputText value="#{to.quantity}" rendered="#{to!=deliveryDetailLabour.to}">
+										<f:convertNumber pattern="#,##0.00" />
+									</t:outputText>
+									<t:inputText id="DeliveryDetail_labour_quantity-Edit" forceId="#{true}"
+										rendered="#{to==deliveryDetailLabour.to}" size="7"
+										styleClass="aon-form-input-text"
+										value="#{deliveryDetailLabour.to.quantity}" required="#{true}" />
+								</t:column>
+
+								<t:column>
+									<f:facet name="header">
+										<f:verbatim>&#160;</f:verbatim>
+									</f:facet>
+									<t:div rendered="#{to==deliveryDetailLabour.to}">
+										<t:commandButton title="#{bundle.aon_save}"
+											actionListener="#{deliveryDetailLabour.onAccept}"
+											styleClass="aon-edit-table-icon-button aon-edit-table-icon-button-save"
+											value="" accesskey="#{bundle.aon_key_save_line}" />
+										<t:commandButton title="#{bundle.aon_cancel}"
+											actionListener="#{deliveryDetailLabour.onCancel}"
+											immediate="#{true}"
+											onclick="return (confirm('#{bundle.aon_cancel_confirm}'));"
+											styleClass="aon-edit-table-icon-button aon-edit-table-icon-button-cancel"
+											value="" accesskey="#{bundle.aon_key_cancel_line}" />
+										<t:commandButton title="#{bundle.aon_remove}"
+											actionListener="#{deliveryDetailLabour.onRemove}"
+											immediate="#{true}"
+											onclick="return (confirm('#{bundle.aon_remove_confirm}'));"
+											styleClass="aon-edit-table-icon-button aon-edit-table-icon-button-delete"
+											value="" accesskey="#{bundle.aon_key_remove_line}" />
+									</t:div>
+									<f:verbatim rendered="#{to!=deliveryDetailLabour.to}">&#160;</f:verbatim>
+								</t:column>
+								
+							</t:dataTable>					
+						</t:div>
+					</t:div>		
 
 					<t:div id="popup" forceId="#{true}" styleClass="aon-popup-window"
 						style="position: absolute;left: 290px;_left:110px; top: 230px;display:none;">
