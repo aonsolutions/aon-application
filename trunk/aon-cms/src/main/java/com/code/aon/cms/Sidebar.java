@@ -20,6 +20,8 @@ public class Sidebar implements ITransferObject {
 
 	private String alias;
 
+	private boolean default_;
+
 	private Set<SidebarOption> options;
 
 	@Id
@@ -49,6 +51,15 @@ public class Sidebar implements ITransferObject {
 
 	public void setOptions( Set<SidebarOption> options ) {
 		this.options = options;
+	}
+
+	@Column(name = "default_", nullable = false)
+	public boolean isDefault_() {
+		return default_;
+	}
+
+	public void setDefault_(boolean default_) {
+		this.default_ = default_;
 	}
 
 }

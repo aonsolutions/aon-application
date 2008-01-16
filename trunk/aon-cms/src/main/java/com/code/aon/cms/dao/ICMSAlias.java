@@ -508,34 +508,40 @@ public interface ICMSAlias {
 	String  HEADER_CSS = HEADER_ENTRY.getAliasNames()[1];
 
 	/** 
+	* Alias value: Header_default_
+	* Hibernate value: Header.default_
+	*/
+	String  HEADER_DEFAULT_ = HEADER_ENTRY.getAliasNames()[2];
+
+	/** 
 	* Alias value: Header_id
 	* Hibernate value: Header.id
 	*/
-	String  HEADER_ID = HEADER_ENTRY.getAliasNames()[2];
+	String  HEADER_ID = HEADER_ENTRY.getAliasNames()[3];
 
 	/** 
 	* Alias value: Header_javascript
 	* Hibernate value: Header.javascript
 	*/
-	String  HEADER_JAVASCRIPT = HEADER_ENTRY.getAliasNames()[3];
+	String  HEADER_JAVASCRIPT = HEADER_ENTRY.getAliasNames()[4];
 
 	/** 
 	* Alias value: Header_language_menu
 	* Hibernate value: Header.language_menu
 	*/
-	String  HEADER_LANGUAGE_MENU = HEADER_ENTRY.getAliasNames()[4];
+	String  HEADER_LANGUAGE_MENU = HEADER_ENTRY.getAliasNames()[5];
 
 	/** 
 	* Alias value: Header_language_menu_type
 	* Hibernate value: Header.language_menu_type
 	*/
-	String  HEADER_LANGUAGE_MENU_TYPE = HEADER_ENTRY.getAliasNames()[5];
+	String  HEADER_LANGUAGE_MENU_TYPE = HEADER_ENTRY.getAliasNames()[6];
 
 	/** 
 	* Alias value: Header_menu_id
 	* Hibernate value: Header.menu.id
 	*/
-	String  HEADER_MENU_ID = HEADER_ENTRY.getAliasNames()[6];
+	String  HEADER_MENU_ID = HEADER_ENTRY.getAliasNames()[7];
 
 
 
@@ -594,16 +600,22 @@ public interface ICMSAlias {
 	String  FOOTER_ALIAS = FOOTER_ENTRY.getAliasNames()[0];
 
 	/** 
+	* Alias value: Footer_default_
+	* Hibernate value: Footer.default_
+	*/
+	String  FOOTER_DEFAULT_ = FOOTER_ENTRY.getAliasNames()[1];
+
+	/** 
 	* Alias value: Footer_id
 	* Hibernate value: Footer.id
 	*/
-	String  FOOTER_ID = FOOTER_ENTRY.getAliasNames()[1];
+	String  FOOTER_ID = FOOTER_ENTRY.getAliasNames()[2];
 
 	/** 
 	* Alias value: Footer_menu_id
 	* Hibernate value: Footer.menu.id
 	*/
-	String  FOOTER_MENU_ID = FOOTER_ENTRY.getAliasNames()[2];
+	String  FOOTER_MENU_ID = FOOTER_ENTRY.getAliasNames()[3];
 
 
 
@@ -1888,10 +1900,16 @@ public interface ICMSAlias {
 	String  SIDEBAR_ALIAS = SIDEBAR_ENTRY.getAliasNames()[0];
 
 	/** 
+	* Alias value: Sidebar_default_
+	* Hibernate value: Sidebar.default_
+	*/
+	String  SIDEBAR_DEFAULT_ = SIDEBAR_ENTRY.getAliasNames()[1];
+
+	/** 
 	* Alias value: Sidebar_id
 	* Hibernate value: Sidebar.id
 	*/
-	String  SIDEBAR_ID = SIDEBAR_ENTRY.getAliasNames()[1];
+	String  SIDEBAR_ID = SIDEBAR_ENTRY.getAliasNames()[2];
 
 
 
@@ -1999,58 +2017,70 @@ public interface ICMSAlias {
 	String  SECTION_ALIAS = SECTION_ENTRY.getAliasNames()[0];
 
 	/** 
+	* Alias value: Section_default_
+	* Hibernate value: Section.default_
+	*/
+	String  SECTION_DEFAULT_ = SECTION_ENTRY.getAliasNames()[1];
+
+	/** 
 	* Alias value: Section_footer_id
 	* Hibernate value: Section.footer.id
 	*/
-	String  SECTION_FOOTER_ID = SECTION_ENTRY.getAliasNames()[1];
+	String  SECTION_FOOTER_ID = SECTION_ENTRY.getAliasNames()[2];
 
 	/** 
 	* Alias value: Section_header_id
 	* Hibernate value: Section.header.id
 	*/
-	String  SECTION_HEADER_ID = SECTION_ENTRY.getAliasNames()[2];
+	String  SECTION_HEADER_ID = SECTION_ENTRY.getAliasNames()[3];
 
 	/** 
 	* Alias value: Section_id
 	* Hibernate value: Section.id
 	*/
-	String  SECTION_ID = SECTION_ENTRY.getAliasNames()[3];
+	String  SECTION_ID = SECTION_ENTRY.getAliasNames()[4];
 
 	/** 
 	* Alias value: Section_menu_id
 	* Hibernate value: Section.menu.id
 	*/
-	String  SECTION_MENU_ID = SECTION_ENTRY.getAliasNames()[4];
+	String  SECTION_MENU_ID = SECTION_ENTRY.getAliasNames()[5];
 
 	/** 
 	* Alias value: Section_show_footer
 	* Hibernate value: Section.show_footer
 	*/
-	String  SECTION_SHOW_FOOTER = SECTION_ENTRY.getAliasNames()[5];
+	String  SECTION_SHOW_FOOTER = SECTION_ENTRY.getAliasNames()[6];
 
 	/** 
 	* Alias value: Section_show_header
 	* Hibernate value: Section.show_header
 	*/
-	String  SECTION_SHOW_HEADER = SECTION_ENTRY.getAliasNames()[6];
+	String  SECTION_SHOW_HEADER = SECTION_ENTRY.getAliasNames()[7];
 
 	/** 
 	* Alias value: Section_show_menu
 	* Hibernate value: Section.show_menu
 	*/
-	String  SECTION_SHOW_MENU = SECTION_ENTRY.getAliasNames()[7];
+	String  SECTION_SHOW_MENU = SECTION_ENTRY.getAliasNames()[8];
 
 	/** 
-	* Alias value: Section_show_sidebar
-	* Hibernate value: Section.show_sidebar
+	* Alias value: Section_show_sidebar_left
+	* Hibernate value: Section.show_sidebar_left
 	*/
-	String  SECTION_SHOW_SIDEBAR = SECTION_ENTRY.getAliasNames()[8];
+	String  SECTION_SHOW_SIDEBAR_LEFT = SECTION_ENTRY.getAliasNames()[9];
+
+	/** 
+	* Alias value: Section_show_sidebar_right
+	* Hibernate value: Section.show_sidebar_right
+	*/
+	String  SECTION_SHOW_SIDEBAR_RIGHT = SECTION_ENTRY.getAliasNames()[10];
 
 	/** 
 	* Alias value: Section_sidebar_id
 	* Hibernate value: Section.sidebar.id
 	*/
-	String  SECTION_SIDEBAR_ID = SECTION_ENTRY.getAliasNames()[9];
+	String  SECTION_SIDEBAR_ID = SECTION_ENTRY.getAliasNames()[11];
 
 
 
