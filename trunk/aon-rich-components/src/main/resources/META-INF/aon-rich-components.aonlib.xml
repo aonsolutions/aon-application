@@ -2,13 +2,21 @@
 <components namespace="http://www.code.es/aon-rich-components">
 
 	<component localName="lookupInputText">
-    	<attribute name="styleClass" value="aon-form-input-text" />
+    	<attribute name="styleClass" value="aon-lookupInputText" />
 	</component>
-
+	
+	<component localName="lookupButton">
+    	<attribute name="styleClass" value="aon-lookupButton" />
+	</component>
+	
 	<component localName="lookupButton">
     	<attribute name="immediate" value="true" type="1" />
 	</component>
-
+	
+	<component localName="lookupButtonPopup">
+    	<attribute name="styleClass" value="aon-lookupButtonPopup" />
+	</component>
+	
 	<component localName="confirmButton">
     	<attribute name="confirmAction" ignore="true" />			
     	<attribute name="confirmActionListener" ignore="true" />
@@ -20,8 +28,12 @@
     	<attribute name="popupDateFormat" alias="datePattern" />			
     	<attribute name="renderAsPopup" alias="popup" value="true" type="1" />
     	<attribute name="inputClass" value="aon-selectInputDate"/>
-    	<attribute name="todayControlMode" value="hidden"/>
-    	<attribute name="partialSubmit" value="ondateselected" ignore="true" />
+    	<attribute name="todayControlMode" value="hidden"/>    	
+    	<attribute name="partialSubmit" value="ondateselected" ignore="true" />    	
+    	<attribute name="styleClass" value="aon-selectInputDate" />   
+    	<attribute name="buttonClass" value="aon-selectInputDate-buttonClass" />
+    	<attribute name="dayStyleClass" value="aon-selectInputDate-dayStyleClass" />
+    	<attribute name="inputClass" value="aon-selectInputDate-inputClass" />    	 	
 	</component>
 	
 	<component localName="div">
@@ -29,7 +41,10 @@
 	</component>
 
 	<component localName="panelGrid">
-    	<attribute name="styleClass" value="aon-panelGrid" />			
+    	<attribute name="styleClass" value="aon-panelGrid" />
+    	<attribute name="cellpadding" value="0" />	
+    	<attribute name="cellspacing" value="0" />		
+    	<attribute name="columnClasses" value="aon-panelGrid-odd,aon-panelGrid-even" />    		
 	</component>
 
 	<component localName="graphicImage">
@@ -63,11 +78,25 @@
 	<component localName="commandLink">
     	<attribute name="styleClass" value="aon-commandLink" />			
 	</component>
-
-	<component localName="panelTabSet">
-    	<attribute name="switchType" value="ajax" />			
+	
+	<component localName="confirmButton">
+    	<attribute name="styleClass" value="aon-confirmButton" />			
 	</component>
 
+	<component localName="panelTabSet">
+    	<attribute name="switchType" value="ajax" />
+    	<attribute name="styleClass" value="aon-panelTabSet" />		
+    	<attribute name="contentClass" value="aon-panelTabSet-contentClass" /> 
+    	<attribute name="disabledTabClass" value="aon-panelTabSet-disabledTabClass" /> 
+    	<attribute name="headerClass" value="aon-panelTabSet-headerClass" />
+    	<attribute name="inactiveTabClass" value="aon-panelTabSet-inactiveTabClass" />
+    	<attribute name="tabClass" value="aon-panelTabSet-tabClass" />		
+	</component>
+
+	<component localName="panelTab">
+		<attribute name="styleClass" value="aon-panelTab" />
+	</component>
+	
 	<component localName="inputText">
     	<attribute name="styleClass" value="aon-inputText" />			
 	</component>
@@ -134,5 +163,25 @@
     	<attribute name="styleClass" value="aon-border" />			
 	</component>
 
+	<component localName="menuBar">
+    	<attribute name="styleClass" value="aon-menuBar" />			
+	</component>
 	
+	<component localName="menuBar">
+		<attribute name="styleClass" value="aon-menuBar" /> 
+	</component> 
+	
+	<component localName="dropDownMenu">  
+		<attribute name="styleClass" value="aon-dropDownMenu" /> 			
+    	<attribute name="itemClass" value="aon-dropDownMenu-item" />
+    	<attribute name="selectItemClass" value="aon-dropDownMenu-selectItem" />
+    	<attribute name="disabledItemClass" value="aon-dropDownMenu-disabledItem" />
+    	<attribute name="iconClass" value="aon-iconClass" />    		
+	</component>
+	
+	<component localName="menuItem">
+		<attribute name="styleClass" value="aon-menuItem-styleClass" /> 
+		<attribute name="iconClass" value="aon-menuItem-iconClass" />
+		<attribute name="selectClass" value="aon-menuItem-selectClass" /> 				       
+	</component>
 </components>
