@@ -113,8 +113,10 @@
 									value="#{section.to.sidebar.id}">
 									<f:selectItems value="#{collections.sidebarList}" />
 								</aon:selectOneMenu> 
-								<aon:selectBooleanCheckbox id="section_sidebar_selected" 
-									value="#{section.to.show_sidebar}" />
+								<aon:selectBooleanCheckbox id="section_sidebar_left_selected" 
+									value="#{section.to.show_sidebar_left}" />
+								<aon:selectBooleanCheckbox id="section_sidebar_right_selected" 
+									value="#{section.to.show_sidebar_right}" />
 							</aon:div>
 
 							<aon:outputLabel for="section_menu"

@@ -42,6 +42,7 @@ public class CommonGenerator extends Generator {
 	public static void chargeContext(VelocityUtil vu, Section section) {
 		
 		// $default_menu from default sidebar menu in database
+		vu.put("is_menu", section.isShow_menu());
 		if (section.isShow_menu()){
 			vu.addMessage(" - Menu por defecto", VelocityUtil.INFO);
 			Menu m = section.getMenu();
@@ -50,6 +51,7 @@ public class CommonGenerator extends Generator {
 		}
 
 		// $default_header from default header in database
+		vu.put("is_header", section.isShow_header());
 		if (section.isShow_header()){
 			vu.addMessage(" - Cabecera por defecto", VelocityUtil.INFO);
 			Header h = section.getHeader();
@@ -58,16 +60,24 @@ public class CommonGenerator extends Generator {
 		}
 		
 		// $default_sidebar from default header in database
-		if (section.isShow_sidebar()){
+		vu.put("is_sidebar_left", section.isShow_sidebar_left());
+		vu.put("is_sidebar_right", section.isShow_sidebar_right());
+		if (section.isShow_sidebar_left() ||
+				section.isShow_sidebar_right()){
 			vu.addMessage(" - Sidebar por defecto", VelocityUtil.INFO);
 			Sidebar sb = section.getSidebar();
-			vu.put("default_sidebar_left", getSidebarHandler(sb, SidebarSide.LEFT));
-			vu.addMessage(" - Sidebar left " + sb.getAlias() + " cargada.", VelocityUtil.INFO);
-			vu.put("default_sidebar_right", getSidebarHandler(sb, SidebarSide.RIGHT));
-			vu.addMessage(" - Sidebar right " + sb.getAlias() + " cargada.", VelocityUtil.INFO);
+			if (section.isShow_sidebar_left()){
+				vu.put("default_sidebar_left", getSidebarHandler(sb, SidebarSide.LEFT));
+				vu.addMessage(" - Sidebar left " + sb.getAlias() + " cargada.", VelocityUtil.INFO);
+			}
+			if (section.isShow_sidebar_right()){
+				vu.put("default_sidebar_right", getSidebarHandler(sb, SidebarSide.RIGHT));
+				vu.addMessage(" - Sidebar right " + sb.getAlias() + " cargada.", VelocityUtil.INFO);
+			}
 		}
 		
 		// $default_footer from default footer in database
+		vu.put("is_footer", section.isShow_footer());
 		if (section.isShow_footer()){
 			vu.addMessage(" - Pie de página por defecto", VelocityUtil.INFO);
 			Footer f = section.getFooter();
