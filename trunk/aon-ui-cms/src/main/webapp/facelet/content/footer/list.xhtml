@@ -85,7 +85,11 @@
 								</f:facet>
 								<aon:selectBooleanCheckbox id="Row_checked" forceId="#{true}"
 										value="#{footer.rowChecked}" partialSubmit="true" 
+										rendered="#{!to.default_}"
 										valueChangeListener="#{footer.onChecked}"/>
+								<aon:graphicImage id="selected_blocked" 
+									rendered="#{to.default_}"
+									url="/images/cms/blocked.gif" />
 							</aon:column>
 					
 							<aon:column>
@@ -95,6 +99,19 @@
 								<aon:outputText value="#{to.alias}"/>
 							</aon:column>
 
+							<aon:column>
+								<f:facet name="header">
+									<aon:outputText value="#{appBundle.menu_defaultMenu}" />
+								</f:facet>
+								<aon:selectBooleanCheckbox forceId="#{true}"
+										value="#{to.default_}" partialSubmit="true"
+										rendered="#{!to.default_}"
+										valueChangeListener="#{footer.defaultChanged}"/>
+								<aon:graphicImage  
+									rendered="#{to.default_}"
+									url="/images/cms/selected.gif" />
+							</aon:column>
+							
 						</aon:dataTable>
 						
 						<ui:include src="/facelet/shared/dataScroller.xhtml">

@@ -11,6 +11,7 @@ import javax.faces.event.ValueChangeEvent;
 import javax.faces.model.DataModel;
 import javax.faces.model.SelectItem;
 
+import com.code.aon.cms.Section;
 import com.code.aon.cms.Sidebar;
 import com.code.aon.cms.SidebarOption;
 import com.code.aon.cms.dao.ICMSAlias;
@@ -54,6 +55,44 @@ public class SidebarController extends GridController {
 		soc.setCurrentSidebar(sidebar);
 		soc.setCriteria(criteria);
 		soc.onSearch(event);
+	}
+
+	public void onAccept(ActionEvent event) {
+		try {
+			Sidebar sidebar = (Sidebar)getTo();
+			IManagerBean bean = BeanManager.getManagerBean(Sidebar.class);
+			Criteria criteria = new Criteria();
+			criteria.addEqualExpression(bean.getFieldName(ICMSAlias.SIDEBAR_DEFAULT_), true);
+			List<ITransferObject> list = (List<ITransferObject>)bean.getList(criteria);
+			if (list.size() == 0) {
+				sidebar.setDefault_(true);
+			}
+		} catch (ManagerBeanException e) {
+			e.printStackTrace();
+		}
+		super.onAccept(event);
+	}
+
+	public void defaultChanged(ValueChangeEvent event) throws ManagerBeanException, ExpressionException {
+		boolean selected = ((Boolean)event.getNewValue()).booleanValue();
+		Sidebar sidebar = (Sidebar) model.getRowData();
+		if (selected) {
+			sidebar.setDefault_(true);
+			updateDefault(sidebar);
+		}
+		cancelOnSelect = true;
+	}
+	
+	@SuppressWarnings("unchecked")
+	private void updateDefault(Sidebar defaultSidebar) throws ManagerBeanException, ExpressionException {
+		IManagerBean bean = BeanManager.getManagerBean(Sidebar.class);
+		List<ITransferObject> list = (List<ITransferObject>)model.getWrappedData();
+		for (int i = 0; i < list.size(); i++) {
+			Sidebar sidebar = (Sidebar)list.get(i);
+			if (defaultSidebar != sidebar)
+				sidebar.setDefault_(false);
+			bean.update(sidebar);
+		}
 	}
 
 }

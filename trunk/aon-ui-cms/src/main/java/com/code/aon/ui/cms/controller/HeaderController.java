@@ -1,22 +1,20 @@
 package com.code.aon.ui.cms.controller;
 
-import java.util.LinkedList;
 import java.util.List;
-import java.util.Locale;
 
 import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
 import javax.faces.event.ValueChangeEvent;
-import javax.faces.model.SelectItem;
 
 import com.code.aon.cms.Header;
 import com.code.aon.cms.HeaderDetail;
 import com.code.aon.cms.dao.ICMSAlias;
-import com.code.aon.cms.enumeration.ArticleType;
-import com.code.aon.cms.enumeration.LanguageMenuType;
+import com.code.aon.common.BeanManager;
+import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ql.Criteria;
+import com.code.aon.ql.util.ExpressionException;
 import com.code.aon.ui.cms.util.ControllerUtil;
 import com.icesoft.faces.component.ext.RowSelectorEvent;
 
@@ -73,6 +71,44 @@ public class HeaderController extends BasicI18nController {
 			return hd.getContent();
 		}
 		return "";
+	}
+
+	public void onAccept(ActionEvent event) {
+		try {
+			Header header = (Header)getTo();
+			IManagerBean bean = BeanManager.getManagerBean(Header.class);
+			Criteria criteria = new Criteria();
+			criteria.addEqualExpression(bean.getFieldName(ICMSAlias.HEADER_DEFAULT_), true);
+			List<ITransferObject> list = (List<ITransferObject>)bean.getList(criteria);
+			if (list.size() == 0) {
+				header.setDefault_(true);
+			}
+		} catch (ManagerBeanException e) {
+			e.printStackTrace();
+		}
+		super.onAccept(event);
+	}
+
+	public void defaultChanged(ValueChangeEvent event) throws ManagerBeanException, ExpressionException {
+		boolean selected = ((Boolean)event.getNewValue()).booleanValue();
+		Header header = (Header) model.getRowData();
+		if (selected) {
+			header.setDefault_(true);
+			updateDefault(header);
+		}
+		cancelOnSelect = true;
+	}
+	
+	@SuppressWarnings("unchecked")
+	private void updateDefault(Header defaultHeader) throws ManagerBeanException, ExpressionException {
+		IManagerBean bean = BeanManager.getManagerBean(Header.class);
+		List<ITransferObject> list = (List<ITransferObject>)model.getWrappedData();
+		for (int i = 0; i < list.size(); i++) {
+			Header header = (Header)list.get(i);
+			if (defaultHeader != header)
+				header.setDefault_(false);
+			bean.update(header);
+		}
 	}
 
 }

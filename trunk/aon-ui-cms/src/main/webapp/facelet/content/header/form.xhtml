@@ -39,7 +39,7 @@
 							onmouseover="this.className='aon-content-toolbar-item aon-icon-cancel aon-content-toolbar-item-hover'"
 							accesskey="#{bundle.aon_key_cancel}"/>
 						<aon:confirmButton id="remove"
-							value="#{bundle.aon_remove}" rendered="#{!header.new}" immediate="true"
+							value="#{bundle.aon_remove}" rendered="#{!header.new and !header.to.default_}" immediate="true"
 							confirmTitle="Confirmation Dialog" confirmMessage="#{bundle.aon_remove_confirm}"
 							confirmActionListener="#{headers.onRemoveI18n}" confirmAction="header_form"
 							styleClass="aon-content-toolbar-item aon-icon-delete"
