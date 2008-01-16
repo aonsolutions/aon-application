@@ -79,8 +79,12 @@
 								</aon:div>	
 							</f:facet>
 							<aon:selectBooleanCheckbox id="Row_checked" forceId="#{true}"
-									value="#{sidebar.rowChecked}" partialSubmit="true" 
-									valueChangeListener="#{sidebar.onChecked}"/>
+								value="#{sidebar.rowChecked}" partialSubmit="true" 
+								rendered="#{!to.default_}"
+								valueChangeListener="#{sidebar.onChecked}"/>
+							<aon:graphicImage id="selected_blocked" 
+								rendered="#{to.default_}"
+								url="/images/cms/blocked.gif" />
 						</aon:column>
 
 						<aon:column>
@@ -95,6 +99,19 @@
 								<aon:outputText for="Sidebar_alias" value="#{appBundle.sidebar_alias}" />
 							</f:facet>
 							<aon:outputText id="Sidebar_alias" value="#{to.alias}"/>
+						</aon:column>
+
+						<aon:column>
+							<f:facet name="header">
+								<aon:outputText value="#{appBundle.menu_defaultMenu}" />
+							</f:facet>
+							<aon:selectBooleanCheckbox forceId="#{true}"
+									value="#{to.default_}" partialSubmit="true"
+									rendered="#{!to.default_}"
+									valueChangeListener="#{sidebar.defaultChanged}"/>
+							<aon:graphicImage  
+								rendered="#{to.default_}"
+								url="/images/cms/selected.gif" />
 						</aon:column>
 
 						<aon:column>
