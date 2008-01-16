@@ -22,16 +22,8 @@
 		</t:div> 
 		
 		<t:div styleClass="aon-sidebar-menu" rendered="#{!treeMenu.hidden}">		
-			<t:div styleClass="aon-sidebar-title" >
+			<t:div styleClass="aon-sidebar-title" style="padding:1px 16px 1px 5px;">
 				<h:outputText value="#{treeMenu.title}"/>
-			<!-- 
-				style="padding:1px 16px 1px 5px;"
-				<t:selectOneMenu id="Application_menus" value="#{menuController.selectedMenu}" 
-					valueChangeListener="#{menuController.onMenuChange}" onchange="submit();"
-					style="width=85%;">
-					<f:selectItems value="#{menuController.menus}" />
-				</t:selectOneMenu>
-			 -->	
 			</t:div>
 				<t:tree2 
 					value="#{treeMenu.treeModel}"
@@ -54,7 +46,7 @@
 						<t:div styleClass="#{(sbnode.identifier==treeMenu.menuModel.selectedNodeId) ? 'aon-sidebar-menu-selected': ''}" >			
 							<t:div styleClass="aon-sidebar-menu-branch">
 								<h:commandLink immediate="true" action="#{treeMenu.nodeAction}"
-									actionListener="#{treeMenu.menuIconPressed}">
+									actionListener="#{treeMenu.menuIconPressed}" id="menuToggle">
 									
 									<t:div
 										styleClass="aon-sidebar-menu-branch-icon aon-sidebar-menu-branch-iconMinus"
@@ -70,7 +62,7 @@
 								<h:commandLink styleClass="aon-sidebar-menu-branch-link"
 									immediate="true"
 									action="#{treeMenu.nodeAction}"
-									actionListener="#{treeMenu.menuPressed}">
+									actionListener="#{treeMenu.menuPressed}" id="menu">
 									<h:outputText value="#{sbnode.description}" />
 								</h:commandLink>
 							</t:div>						
@@ -85,13 +77,13 @@
 									immediate="true"
 									action="#{treeMenu.nodeAction}"
 									actionListener="#{treeMenu.optionPressed}"
-									rendered="#{!sbnode.menuItem.external}">
+									rendered="#{!sbnode.menuItem.external}" id="option">
 									<h:outputText value="#{sbnode.description}" />
 								</h:commandLink>
 								<h:outputLink styleClass="aon-sidebar-menu-leaf-link"
 									target="#{sbnode.menuItem.target}"
 									value="#{sbnode.optionValue}"
-									rendered="#{sbnode.menuItem.external}">
+									rendered="#{sbnode.menuItem.external}" id="optionExternal">
 									<h:outputText value="#{sbnode.description}" />
 								</h:outputLink>
 	 						</t:div>
