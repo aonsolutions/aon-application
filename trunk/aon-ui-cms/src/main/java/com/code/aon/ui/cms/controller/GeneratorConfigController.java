@@ -8,11 +8,14 @@ import com.code.aon.cms.AlbumConfig;
 import com.code.aon.cms.FaqConfig;
 import com.code.aon.cms.LinkConfig;
 import com.code.aon.cms.Section;
+import com.code.aon.cms.dao.ICMSAlias;
 import com.code.aon.cms.util.ISectionContainer;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.ql.Criteria;
+import com.code.aon.ui.cms.util.ControllerUtil;
 
 /**
  * @author igayarre
@@ -31,6 +34,16 @@ public class GeneratorConfigController {
 		this.sectionId = sectionId;
 	}
 
+	public static Section currentSection(Class pojoClass) throws ManagerBeanException{
+		ISectionContainer object = (ISectionContainer) currentConfig(pojoClass);
+		if (object!=null)
+			return object.getSection();
+		IManagerBean bean = BeanManager.getManagerBean(Section.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(bean.getFieldName(ICMSAlias.SECTION_DEFAULT_), true);
+		return (Section)bean.getList(criteria).iterator().next();
+	}
+	
 	public static ITransferObject currentConfig(Class pojoClass) throws ManagerBeanException{
 		IManagerBean bean = BeanManager.getManagerBean(pojoClass);
 		List<ITransferObject> list = bean.getList(null);

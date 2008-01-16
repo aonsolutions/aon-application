@@ -42,7 +42,7 @@ public class FaqGenerator extends Generator {
 			}
 			vu.put("faq_categories", fchList);
 			vu.addMessage(" Generando listado categoria Faq.", VelocityUtil.INFO);
-			CommonGenerator.chargeContext(vu, ((FaqConfig)GeneratorConfigController.currentConfig(FaqConfig.class)).getSection());
+			CommonGenerator.chargeContext(vu, GeneratorConfigController.currentSection(FaqConfig.class));
 			generate(vu, Templates.FAQ, FAQ_CATEGORY_LIST_PAGE);
 			vu.remove("faq_categories");
 		} catch (ManagerBeanException e) {
