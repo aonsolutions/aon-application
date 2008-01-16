@@ -210,9 +210,14 @@ public class MenuOptionUtil {
 				List<ITransferObject> ld = (List<ITransferObject>)modularBean.getList(criteria_detail);
 				if (ld.size() > 0) {
 					ModularPage mp = (ModularPage)ld.get(0);
-					String link = Templates.MODULAR.getHtmlName();
-					link = link.replaceAll("%NAME%", mp.getAlias());
-					return link;
+					if (mp.isHomepage()){
+						String link = Templates.HOME.getHtmlName();
+						return link;
+					}else{
+						String link = Templates.MODULAR.getHtmlName();
+						link = link.replaceAll("%NAME%", mp.getAlias());
+						return link;
+					}
 				}
 			} catch (ManagerBeanException e) {
 				e.printStackTrace();
