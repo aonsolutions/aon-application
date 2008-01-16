@@ -55,6 +55,7 @@ public class ModularPageController extends GridController {
 		if (selected) {
 			disableHomepage();
 			modularPage.setHomepage(true);
+			modularPage.setActive(true);
 			IManagerBean bean = BeanManager.getManagerBean(ModularPage.class);
 			bean.update(modularPage);
 		}
