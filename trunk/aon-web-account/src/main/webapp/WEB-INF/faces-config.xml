@@ -129,12 +129,28 @@
                     <value>com.code.aon.ui.account.i18n.messages</value>
 				</map-entry>
 				<map-entry>
-					<key>purchaseBundle</key>
-                    <value>com.code.aon.ui.purchase.i18n.messages</value>
+					<key>configBundle</key>
+                    <value>com.code.aon.ui.config.i18n.messages</value>
 				</map-entry>
 				<map-entry>
 					<key>customerBundle</key>
                     <value>com.code.aon.ui.customer.i18n.messages</value>
+				</map-entry>
+				<map-entry>
+					<key>financeBundle</key>
+                    <value>com.code.aon.ui.finance.i18n.messages</value>
+				</map-entry>
+				<map-entry>
+					<key>productBundle</key>
+                    <value>com.code.aon.ui.product.i18n.messages</value>
+				</map-entry>
+				<map-entry>
+					<key>registryBundle</key>
+                    <value>com.code.aon.ui.registry.i18n.messages</value>
+				</map-entry>
+				<map-entry>
+					<key>securityBundle</key>
+                    <value>com.code.aon.bridge.i18n.messages</value>
 				</map-entry>
 			</map-entries>
 		</managed-property>
@@ -229,7 +245,6 @@
     </managed-bean> 	
 
 	<!-- ************** EXTERNAL COLLECTIONS (RELOCATE) ****************** -->
-
 	<managed-bean>
 		<managed-bean-name>financeCollections</managed-bean-name>
 		<managed-bean-class>
@@ -237,11 +252,45 @@
 		</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
-
+	<managed-bean>
+		<managed-bean-name>companyCollections</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.company.controller.CompanyCollectionsController
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
+	<managed-bean>
+		<managed-bean-name>configCollections</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.config.controller.ConfigCollectionsController
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
+	<managed-bean>
+		<managed-bean-name>customerCollections</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.customer.controller.CustomerCollectionsController
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
+	<managed-bean>
+		<managed-bean-name>purchaseCollections</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.purchase.controller.PurchaseCollectionsController
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
 	<managed-bean>
 		<managed-bean-name>productCollections</managed-bean-name>
 		<managed-bean-class>
 			com.code.aon.ui.product.controller.ProductCollectionsController
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
+	<managed-bean>
+		<managed-bean-name>registryCollections</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.registry.controller.RegistryCollectionsController
 		</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
@@ -361,44 +410,6 @@
 		</managed-property>
 	</managed-bean>
 	
-	<!-- ************* BANK ***************** 
-	<managed-bean>
-		<managed-bean-name>bankLookup</managed-bean-name>
-		<managed-bean-class>
-			com.code.aon.ui.form.LookupController
-		</managed-bean-class>
-		<managed-bean-scope>session</managed-bean-scope>
-		<managed-property>
-			<property-name>queryOnStartUP</property-name>
-			<value>true</value>
-		</managed-property>
-		<managed-property>
-			<property-name>foreignPojo</property-name>
-			<value>com.code.aon.finance.Bank</value>
-		</managed-property>
-		<managed-property>
-			<property-name>aliasPrefix</property-name>
-			<value>Bank_Lookup</value>
-		</managed-property>
-		<managed-property>
-			<property-name>foreignJoinProperties</property-name>
-			<list-entries>
-				<value>id</value>
-			</list-entries>
-		</managed-property>
-		<managed-property>
-			<property-name>foreignDisplayProperties</property-name>
-			<list-entries>
-				<value>name</value>
-			</list-entries>
-		</managed-property>
-		<managed-property>
-			<description>Needed for Search Select Window</description>
-			<property-name>searchPagePath</property-name>
-			<value>/facelet/sw/bankSearch.faces</value>
-		</managed-property>
-	</managed-bean>
-	-->
 	<!--  **** COMPANY **** -->
 	<managed-bean>
 		<managed-bean-name>company</managed-bean-name>
@@ -414,10 +425,480 @@
 			<property-name>pojo</property-name>
 			<value>com.code.aon.company.Company</value>
 		</managed-property>
+		<managed-property>
+			<property-name>listenerClasses</property-name>
+			<list-entries>
+				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+				<value>#{companyControllerListener}</value>
+				<value>#{companyLogoControllerListener}</value>
+				<value>#{companyRBankChildListener}</value>
+				<value>#{companyAddressListener}</value>
+			</list-entries>
+		</managed-property>
 	</managed-bean>
 	
+	<managed-bean>
+		<managed-bean-name>companyLogoControllerListener</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.company.event.CompanyLogoControllerListener
+		</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+	</managed-bean>
+
+	<managed-bean>
+		<managed-bean-name>companyControllerListener</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.company.event.CompanyControllerListener
+		</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+	</managed-bean>
 	
-		<!-- ************* EXTERNAL NAVIGATION RULES (RELOCATE) ***************** -->
+	<managed-bean>
+		<managed-bean-name>companyAddress</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.form.BasicController
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.registry.RegistryAddress</value>
+		</managed-property>
+		<managed-property>
+			<property-name>listenerClasses</property-name>
+			<list-entries>
+				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+				<value>#{companyRegistryChildListener}</value>
+				<value>#{companyAddressListener}</value>
+			</list-entries>
+		</managed-property>
+	</managed-bean>
+	
+	<managed-bean>
+		<managed-bean-name>companyRegistryChildListener</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.form.listener.ChildControllerListener
+		</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+		<managed-property>
+			<property-name>masterBean</property-name>
+			<value>company</value>
+		</managed-property>
+		<managed-property>
+			<property-name>masterPropertyName</property-name>
+			<value>registry</value>
+		</managed-property>
+	</managed-bean>
+	
+	<managed-bean>
+		<managed-bean-name>companyAddressListener</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.company.event.CompanyAddressListener</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+	</managed-bean>
+	
+	<!-- **** COMPANY RBANK **** -->
+	<managed-bean>
+		<managed-bean-name>companyRbank</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.finance.controller.RegistryBankController
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.finance.RegistryBank</value>
+		</managed-property>
+		<managed-property>
+			<property-name>cascadeDelete</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>masterControllerName</property-name>
+			<value>company</value>
+		</managed-property>
+		<managed-property>
+			<property-name>propertyMap</property-name>
+			<map-entries>
+				<map-entry>
+					<key>id</key>
+					<value>registry.id</value>
+				</map-entry>
+			</map-entries>
+		</managed-property>
+		<managed-property>
+			<property-name>listenerClasses</property-name>
+			<list-entries>
+				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+				<value>#{rBankValidatorListener}</value>
+				<value>#{rBankControllerListener}</value>
+			</list-entries>
+		</managed-property>
+	</managed-bean>
+
+	<managed-bean>
+		<managed-bean-name>companyRBankChildListener</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.form.listener.LinesControllerListener
+		</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+		<managed-property>
+			<property-name>childBean</property-name>
+			<value>companyRbank</value>
+		</managed-property>
+		<managed-property>
+			<property-name>aliasMap</property-name>
+			<map-entries>
+				<map-entry>
+					<key>RegistryBank_registry_id</key>
+                    <value>id</value>
+				</map-entry>
+			</map-entries>
+		</managed-property>
+	</managed-bean>
+
+	<!--  **** CUSTOMER **** -->
+	<managed-bean>
+		<managed-bean-name>customer</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.customer.controller.CustomerController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.customer.Customer</value>
+		</managed-property>
+		<managed-property>
+			<property-name>listenerClasses</property-name>
+			<list-entries>
+				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+				<value>#{customerControllerListener}</value>
+				<value>#{customerAddressListener}</value>
+				<value>#{customerMediaListener}</value>
+				<value>#{customerRBankChildListener}</value>
+				<value>#{customerObservationListener}</value>
+			</list-entries>
+		</managed-property>
+	</managed-bean>
+
+	<managed-bean>
+		<managed-bean-name>customerControllerListener</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.customer.event.CustomerControllerListener</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+	</managed-bean>
+
+	<managed-bean>
+		<managed-bean-name>customerObservationListener</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.customer.event.CustomerObservationListener</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+	</managed-bean>
+
+	<managed-bean>
+		<managed-bean-name>customerChildListener</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.form.listener.ChildControllerListener
+		</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+		<managed-property>
+			<property-name>masterBean</property-name>
+			<value>customer.registry</value>
+		</managed-property>
+		<managed-property>
+			<property-name>masterPropertyName</property-name>
+			<value>registry</value>
+		</managed-property>
+	</managed-bean>
+
+    <!-- ****** Customer Observation ******** -->
+	<managed-bean>
+		<managed-bean-name>customerObservation</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.registry.controller.RegistryObservationController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
+
+	<!--  **** ADDRESS **** -->
+	<managed-bean>
+		<managed-bean-name>customerAddress</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.customer.controller.CustomerAddressController
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.registry.RegistryAddress</value>
+		</managed-property>
+		<managed-property>
+			<property-name>listenerClasses</property-name>
+			<list-entries>
+				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+				<value>#{customerChildListener}</value>
+			</list-entries>
+		</managed-property>
+	</managed-bean>
+	
+	<managed-bean>
+		<managed-bean-name>customerAddressListener</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.form.listener.MasterControllerListener
+		</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+		<managed-property>
+			<property-name>childBean</property-name>
+			<value>customerAddress</value>
+		</managed-property>
+		<managed-property>
+			<property-name>aliasMap</property-name>
+			<map-entries>
+				<map-entry>
+					<key>RegistryAddress_registry_id</key>
+                    <value>id</value>
+				</map-entry>
+			</map-entries>
+		</managed-property>
+	</managed-bean>
+
+	<!--  **** MEDIA **** -->
+	<managed-bean>
+		<managed-bean-name>customerMedia</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.customer.controller.CustomerMediaController
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.registry.RegistryMedia</value>
+		</managed-property>
+		<managed-property>
+			<property-name>listenerClasses</property-name>
+			<list-entries>
+				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+				<value>#{customerChildListener}</value>
+			</list-entries>
+		</managed-property>
+	</managed-bean>
+
+	<managed-bean>
+		<managed-bean-name>customerMediaListener</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.form.listener.MasterControllerListener
+		</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+		<managed-property>
+			<property-name>childBean</property-name>
+			<value>customerMedia</value>
+		</managed-property>
+		<managed-property>
+			<property-name>aliasMap</property-name>
+			<map-entries>
+				<map-entry>
+					<key>RegistryMedia_registry_id</key>
+                    <value>id</value>
+				</map-entry>
+			</map-entries>
+		</managed-property>
+	</managed-bean>
+	
+	<!-- **** CUSTOMER RBANK **** -->
+	<managed-bean>
+		<managed-bean-name>customerRbank</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.finance.controller.RegistryBankController
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.finance.RegistryBank</value>
+		</managed-property>
+		<managed-property>
+			<property-name>cascadeDelete</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>masterControllerName</property-name>
+			<value>customer</value>
+		</managed-property>
+		<managed-property>
+			<property-name>propertyMap</property-name>
+			<map-entries>
+				<map-entry>
+					<key>id</key>
+					<value>registry.id</value>
+				</map-entry>
+			</map-entries>
+		</managed-property>
+		<managed-property>
+			<property-name>listenerClasses</property-name>
+			<list-entries>
+				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+				<value>#{rBankValidatorListener}</value>
+				<value>#{rBankControllerListener}</value>
+			</list-entries>
+		</managed-property>
+	</managed-bean>
+	
+	<managed-bean>
+		<managed-bean-name>customerRBankChildListener</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.form.listener.LinesControllerListener
+		</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+		<managed-property>
+			<property-name>childBean</property-name>
+			<value>customerRbank</value>
+		</managed-property>
+		<managed-property>
+			<property-name>aliasMap</property-name>
+			<map-entries>
+				<map-entry>
+					<key>RegistryBank_registry_id</key>
+                    <value>id</value>
+				</map-entry>
+			</map-entries>
+		</managed-property>
+	</managed-bean>
+	
+	<managed-bean>
+		<managed-bean-name>rBankValidatorListener</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.finance.event.RegistryBankValidationListener</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+	</managed-bean>
+	
+	<managed-bean>
+		<managed-bean-name>rBankControllerListener</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.finance.event.RegistryBankControllerListener</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+	</managed-bean>
+	
+	<!--  **** TAX ****	-->
+	<managed-bean>
+		<managed-bean-name>tax</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.product.controller.TaxController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.product.Tax</value>
+		</managed-property>
+		<managed-property>
+			<property-name>listenerClasses</property-name>
+			<list-entries>
+				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+				<value>#{taxDetailListener}</value>
+			</list-entries>
+		</managed-property>
+	</managed-bean>
+	
+	<managed-bean>
+		<managed-bean-name>taxDetailListener</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.form.listener.LinesControllerListener
+		</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+		<managed-property>
+			<property-name>childBean</property-name>
+			<value>taxDetail</value>
+		</managed-property>
+		<managed-property>
+			<property-name>aliasMap</property-name>
+			<map-entries>
+				<map-entry>
+					<key>TaxDetail_tax_id</key>
+                    <value>id</value>
+				</map-entry>
+			</map-entries>
+		</managed-property>
+	</managed-bean>
+	
+	<managed-bean>
+		<managed-bean-name>taxDetail</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.form.LinesController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.product.TaxDetail</value>
+		</managed-property>
+		<managed-property>
+			<property-name>masterControllerName</property-name>
+			<value>tax</value>
+		</managed-property>
+		<managed-property>
+			<property-name>propertyMap</property-name>
+			<map-entries>
+				<map-entry>
+					<key>id</key>
+					<value>tax.id</value>
+				</map-entry>
+			</map-entries>
+		</managed-property>
+		<managed-property>
+			<property-name>cascadeDelete</property-name>
+			<value>true</value>
+		</managed-property>
+	</managed-bean>
+	
+	<!-- ************* SERIES ***************** -->
+	<managed-bean>
+		<managed-bean-name>series</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.config.controller.SeriesController
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.config.Series</value>
+		</managed-property>
+	</managed-bean>
+	
+    <!-- ************ USER ************** -->
+	<managed-bean>
+		<managed-bean-name>user</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.config.controller.UserController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.config.User</value>
+		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>user</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pageLimit</property-name>
+			<value>20</value>
+		</managed-property>
+	</managed-bean>	
+	
+	<!-- ************* EXTERNAL NAVIGATION RULES (RELOCATE) ***************** -->
+	<!-- =================== Customer ========================== -->
+	  <navigation-rule>
+	    <navigation-case>
+	      <from-outcome>customer_form</from-outcome>
+	      <to-view-id>/facelet/customer/form.faces</to-view-id>
+	    </navigation-case>
+	    <navigation-case>
+	      <from-outcome>customer_list</from-outcome>
+	      <to-view-id>/facelet/customer/list.faces</to-view-id>
+	    </navigation-case>
+	    <navigation-case>
+	      <from-outcome>customer_search</from-outcome>
+	      <to-view-id>/facelet/customer/search.faces</to-view-id>
+	    </navigation-case>
+	  </navigation-rule>
+	
 	<navigation-rule>
 		<navigation-case>
 			<from-outcome>customer_sw</from-outcome>
@@ -461,5 +942,29 @@
 			<to-view-id>/facelet/sw/bankSearch.faces</to-view-id>
 		</navigation-case>
 	</navigation-rule>
+	
+  <!-- ************* MENU ***************** -->	
+  <navigation-rule>
+	<navigation-case>
+		<from-outcome>customer</from-outcome>
+		<to-view-id>/facelet/customer/form.faces</to-view-id>
+	</navigation-case>
+    <navigation-case>
+      <from-outcome>company</from-outcome>
+      <to-view-id>/facelet/registry/company/company.faces</to-view-id>
+    </navigation-case>
+    <navigation-case>
+      <from-outcome>company_init</from-outcome>
+      <to-view-id>/facelet/registry/company/init.faces</to-view-id>
+    </navigation-case>
+    <navigation-case>
+      <from-outcome>tax</from-outcome>
+      <to-view-id>/facelet/product/auxiliary/tax/grid.faces</to-view-id>
+    </navigation-case>
+    <navigation-case>
+      <from-outcome>series</from-outcome>
+      <to-view-id>/facelet/config/series/grid.faces</to-view-id>
+    </navigation-case>
+  </navigation-rule>
+	
 </faces-config>
-

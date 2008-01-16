@@ -5,7 +5,7 @@
 <f:view>
 	<head>
 		<title>
-			<ui:define name="title">#{accountBundle.aon_application_title}</ui:define>
+			<ui:define name="title">#{appBundle.aon_application_title}</ui:define>
 		</title>
 		<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
 		<meta http-equiv="Expires" content="0" />
@@ -15,7 +15,7 @@
 	
 	<frameset rows="69,*,23" scrolling="no" frameborder="0" framespacing="0"> 
 		<frame id="header" src="${facesContext.externalContext.requestContextPath}/facelet/homepage/header.faces" scrolling="no" noresize="yes" frameborder="0" />
-		<frame id="content" src="${facesContext.externalContext.requestContextPath}/facelet/homepage/firstContent.faces" scrolling="no" noresize="yes" frameborder="0" />
+		<frame id="content" src="${company.companyNavigation}" scrolling="no" noresize="yes" frameborder="0" />
 		<frame id="footer" src="${facesContext.externalContext.requestContextPath}/facelet/homepage/footer.faces" scrolling="no" noresize="yes" frameborder="0" />
 	</frameset>
 
