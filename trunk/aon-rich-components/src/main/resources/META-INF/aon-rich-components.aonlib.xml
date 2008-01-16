@@ -27,13 +27,10 @@
 	<component localName="selectInputDate">
     	<attribute name="popupDateFormat" alias="datePattern" />			
     	<attribute name="renderAsPopup" alias="popup" value="true" type="1" />
-    	<attribute name="inputClass" value="aon-selectInputDate"/>
     	<attribute name="todayControlMode" value="hidden"/>    	
-    	<attribute name="partialSubmit" value="ondateselected" ignore="true" />    	
-    	<attribute name="styleClass" value="aon-selectInputDate" />   
-    	<attribute name="buttonClass" value="aon-selectInputDate-buttonClass" />
-    	<attribute name="dayStyleClass" value="aon-selectInputDate-dayStyleClass" />
-    	<attribute name="inputClass" value="aon-selectInputDate-inputClass" />    	 	
+    	<attribute name="partialSubmit" value="ondateselected" ignore="true" />
+    	<attribute name="inputClass" value="aon-selectInputDate-inputClass" />
+    	<attribute name="buttonClass" value="aon-selectInputDate-buttonClass" />    	
 	</component>
 	
 	<component localName="div">

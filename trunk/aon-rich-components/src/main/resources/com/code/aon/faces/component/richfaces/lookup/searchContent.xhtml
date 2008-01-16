@@ -9,51 +9,35 @@
 <ui:composition>
 
 	<!-- start toolbar navigation -->
-	<aon:div styleClass="aon-content-toolbar">
-		<aon:div styleClass="aon-content-toolbar-internal">
-			<aon:div styleClass="aon-content-toolbar-item-group">
-
+	<aon:div styleClass="aon-finding-title-toolbar">
+		<aon:panelGrid columns="2" dir="true" columnClasses="aon-finding-title,aon-finding-toolbar">	
+				
+			<aon:div styleClass="aon-finding-title-internal">
+				<aon:outputText value="#{bundle.aon_search}" />
+			</aon:div>
+	
+			<aon:div styleClass="aon-finding-toolbar-item-group">
 				<aon:commandButton id="search" value="#{bundle.aon_search}"
 					accesskey="#{bundle.aon_key_search}"
 					actionListener="#{lookup.onFilterSearch}" reRender="lookupContent"
-					styleClass="aon-content-toolbar-item"
-					onmouseout="this.className='aon-content-toolbar-item'"
-					onmouseover="this.className='aon-content-toolbar-item aon-content-toolbar-item-hover'"/>
+					styleClass="aon-finding-toolbar-item aon-icon-accept"/>
 				<aon:commandButton id="cancel" value="#{bundle.aon_cancel}"
 					accesskey="#{bundle.aon_key_cancel}" 				
 					actionListener="#{lookup.onCloseWindow}"
-					styleClass="aon-content-toolbar-item aon-content-toolbar-item-cancel"
-					onmouseover="this.className='aon-content-toolbar-item aon-content-toolbar-item-hover aon-content-toolbar-item-cancel'"
-					onmouseout="this.className='aon-content-toolbar-item aon-content-toolbar-item-cancel'">
+					styleClass="aon-finding-toolbar-item aon-icon-cancel">
 					<rich:componentControl for="#{lookupId}" event="onclick"
 						disableDefault="true" operation="hide"/>
 				</aon:commandButton>
 				<aon:commandButton id="clear" type="reset"
-					value="#{bundle.aon_clear}" styleClass="aon-content-toolbar-item"
-					onmouseout="this.className='aon-content-toolbar-item'"
-					onmouseover="this.className='aon-content-toolbar-item aon-content-toolbar-item-hover'"/>
+					value="#{bundle.aon_clear}" 
+					styleClass="aon-finding-toolbar-item aon-icon-new"/>
 			</aon:div>
-		</aon:div>
+	
 	</aon:div>
+	
 	<!-- end toolbar navigation -->
 
-	<aon:div styleClass="aon-content-subtitle">
-		<aon:div styleClass="aon-content-subtitle-internal">
-			<aon:outputText value="#{bundle.aon_search}" />
-		</aon:div>
-	</aon:div>
-
-	
-	<aon:div styleClass="aon-popup-scroll-Body">
-		<aon:div styleClass="aon-scroll-area-internal">
-			<aon:panelGrid columns="2" styleClass="aon-form-table"
-				columnClasses="aon-form-table-column-odd,aon-form-table-column-even">
-
-				<ui:include src="#{lookup.searchPagePath}"/>
-
-			</aon:panelGrid>
-		</aon:div>
-	</aon:div>
+	<ui:include src="#{lookup.searchPagePath}"/>
 
 </ui:composition>
 
