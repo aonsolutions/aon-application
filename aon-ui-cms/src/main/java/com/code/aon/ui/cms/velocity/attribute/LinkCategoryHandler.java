@@ -8,6 +8,7 @@ import com.code.aon.cms.LinkCategory;
 import com.code.aon.cms.LinkCategoryDetail;
 import com.code.aon.cms.LinkDetail;
 import com.code.aon.cms.dao.ICMSAlias;
+import com.code.aon.cms.enumeration.Templates;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
@@ -18,16 +19,25 @@ import com.code.aon.ui.cms.util.ControllerUtil;
 public class LinkCategoryHandler {
 
 	private String label;
-	
+
+	private String url;
+
 	private ArrayList<LinkHandler> list;
 	
 	public LinkCategoryHandler (LinkCategoryDetail lcd) {
 		label = lcd.getLabel();
+		String link = Templates.LINK.getHtmlName();
+		link = link.replaceAll("%NAME%", lcd.getLinkCategory().getAlias());
+		url = link;
 		list = getlinkList(lcd.getLinkCategory());
 	}
 
 	public String getLabel() {
 		return label;
+	}
+
+	public String getUrl() {
+		return url;
 	}
 
 	public ArrayList<LinkHandler> getList() {

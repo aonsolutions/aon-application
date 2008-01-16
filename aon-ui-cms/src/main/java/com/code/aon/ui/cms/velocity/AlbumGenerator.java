@@ -117,7 +117,7 @@ public class AlbumGenerator extends Generator {
 			}
 			vu.put("album_category_list", achlist);
 			vu.addMessage(" Generando categorias de album.", VelocityUtil.INFO);
-			CommonGenerator.chargeContext(vu, ((AlbumConfig)GeneratorConfigController.currentConfig(AlbumConfig.class)).getSection());
+			CommonGenerator.chargeContext(vu, GeneratorConfigController.currentSection(AlbumConfig.class));
 			generate(vu, Templates.ALBUM_IMAGES, ALBUM_LIST_PAGE);
 			vu.remove("album_category_list");
 		} catch (ManagerBeanException e) {

@@ -8,6 +8,7 @@ import com.code.aon.cms.FaqCategory;
 import com.code.aon.cms.FaqCategoryDetail;
 import com.code.aon.cms.FaqDetail;
 import com.code.aon.cms.dao.ICMSAlias;
+import com.code.aon.cms.enumeration.Templates;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
@@ -18,16 +19,25 @@ import com.code.aon.ui.cms.util.ControllerUtil;
 public class FaqCategoryHandler {
 
 	private String label;
-	
+
+	private String url;
+
 	private ArrayList<FaqHandler> list;
 	
 	public FaqCategoryHandler (FaqCategoryDetail fcd) {
 		label = fcd.getLabel();
+		String faq = Templates.FAQ.getHtmlName();
+		faq = faq.replaceAll("%NAME%", fcd.getFaqCategory().getAlias());
+		url = faq;
 		list = getFaqList(fcd.getFaqCategory());
 	}
 
 	public String getLabel() {
 		return label;
+	}
+
+	public String getUrl() {
+		return url;
 	}
 
 	public ArrayList<FaqHandler> getList() {
