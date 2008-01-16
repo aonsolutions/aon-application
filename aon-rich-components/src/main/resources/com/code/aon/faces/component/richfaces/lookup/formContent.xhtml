@@ -7,50 +7,35 @@
 
 <ui:composition>
 
-	<!-- start toolbar navigation -->
-	<aon:div styleClass="aon-content-toolbar">
-		<aon:div styleClass="aon-content-toolbar-internal">
-			<aon:div styleClass="aon-content-toolbar-item-group">
+	<aon:div styleClass="aon-finding-title-toolbar">
+		<aon:panelGrid columns="2" dir="true" 
+				columnClasses="aon-finding-title,aon-finding-toolbar">					
+	
+			<aon:div styleClass="aon-finding-title-internal">
+				<aon:outputText
+					value="#{lookup.new?(bundle.aon_reset):(bundle.aon_editing)}" />
+			</aon:div>
+	
 
+			<aon:div styleClass="aon-finding-toolbar-item-group">
 				<aon:commandButton id="saveLookup" value="#{bundle.aon_save}"
 					actionListener="#{lookup.accept}"
-					styleClass="aon-content-toolbar-item aon-content-toolbar-item-save"
-					onmouseover="this.className='aon-content-toolbar-item aon-content-toolbar-item-hover aon-content-toolbar-item-save'"
-					onmouseout="this.className='aon-content-toolbar-item aon-content-toolbar-item-save'"
+					styleClass="aon-finding-toolbar-item aon-content-toolbar-item-save"
 					accesskey="#{bundle.aon_key_save}" />
 				<aon:commandButton id="cancelLookup" value="#{bundle.aon_cancel}"
 					actionListener="#{lookup.onCloseWindow}" rendered="#{lookup.new}" partialSubmit="true"
-					styleClass="aon-content-toolbar-item aon-content-toolbar-item-cancel"
-					onmouseover="this.className='aon-content-toolbar-item aon-content-toolbar-item-hover aon-content-toolbar-item-cancel'"
-					onmouseout="this.className='aon-content-toolbar-item aon-content-toolbar-item-cancel'"
+					styleClass="aon-finding-toolbar-item aon-content-toolbar-item-cancel"
 					accesskey="#{bundle.aon_key_cancel}" />
 				<aon:commandButton id="closeLookup" value="#{bundle.aon_close}"
 					rendered="#{!lookup.new}" partialSubmit="true"
 					actionListener="#{lookup.onFormSelect}"
-					styleClass="aon-content-toolbar-item aon-content-toolbar-item-close"
-					onmouseover="this.className='aon-content-toolbar-item aon-content-toolbar-item-hover aon-content-toolbar-item-close'"
-					onmouseout="this.className='aon-content-toolbar-item aon-content-toolbar-item-close'"
-					accesskey="#{bundle.aon_key_close}"/>
-					
+					styleClass="aon-finding-toolbar-item aon-content-toolbar-item-close"
+					accesskey="#{bundle.aon_key_close}"/>					
 			</aon:div>
-		</aon:div>
-	</aon:div>
-	<!-- end toolbar navigation -->
+	  </aon:panelGrid>
+	</aon:div>	
 
-	<aon:div styleClass="aon-content-subtitle">
-		<aon:div styleClass="aon-content-subtitle-internal">
-			<aon:outputText
-				value="#{lookup.new?(bundle.aon_reset):(bundle.aon_editing)}" />
-		</aon:div>
-	</aon:div>
-
-	<aon:div styleClass="aon-popup-scroll-Body">
-		<aon:div styleClass="aon-popup-scroll-Body-internal">
-			<aon:div style="width:100%;">
-				<ui:include src="#{lookup.newPagePath}" />
-			</aon:div>
-		</aon:div>
-	</aon:div>
+	<ui:include src="#{lookup.newPagePath}" />			
 	
 </ui:composition>
 
