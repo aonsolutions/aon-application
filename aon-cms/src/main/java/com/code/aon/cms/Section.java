@@ -29,11 +29,15 @@ public class Section implements ITransferObject {
 	
 	private boolean show_footer = true;
 	
-	private boolean show_sidebar = true;
+	private boolean show_sidebar_left = true;
+	
+	private boolean show_sidebar_right = true;
 	
 	private Menu menu;
 	
 	private boolean show_menu = true;
+
+	private boolean default_;
 	
 	@Id
 	@GeneratedValue
@@ -103,13 +107,22 @@ public class Section implements ITransferObject {
 		this.show_footer = show_footer;
 	}
 
-	@Column(name = "show_sidebar")
-	public boolean isShow_sidebar() {
-		return show_sidebar;
+	@Column(name = "show_sidebar_left")
+	public boolean isShow_sidebar_left() {
+		return show_sidebar_left;
 	}
 
-	public void setShow_sidebar(boolean show_sidebar) {
-		this.show_sidebar = show_sidebar;
+	public void setShow_sidebar_left(boolean show_sidebar_left) {
+		this.show_sidebar_left = show_sidebar_left;
+	}
+
+	@Column(name = "show_sidebar_right")
+	public boolean isShow_sidebar_right() {
+		return show_sidebar_right;
+	}
+
+	public void setShow_sidebar_right(boolean show_sidebar_right) {
+		this.show_sidebar_right = show_sidebar_right;
 	}
 
 	@ManyToOne(fetch = FetchType.EAGER)
@@ -129,6 +142,15 @@ public class Section implements ITransferObject {
 
 	public void setShow_menu(boolean show_menu) {
 		this.show_menu = show_menu;
+	}
+
+	@Column(name = "default_", nullable = false)
+	public boolean isDefault_() {
+		return default_;
+	}
+
+	public void setDefault_(boolean default_) {
+		this.default_ = default_;
 	}
 
 }

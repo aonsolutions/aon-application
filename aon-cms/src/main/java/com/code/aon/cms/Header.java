@@ -34,6 +34,8 @@ public class Header implements ITransferObject {
 	
 	private String javascript;
 
+	private boolean default_;
+
 	private Set<HeaderDetail> details;
 
 	@Id
@@ -110,5 +112,15 @@ public class Header implements ITransferObject {
 	public void setDetails( Set<HeaderDetail> details ) {
 		this.details = details;
 	}
+
+	@Column(name = "default_", nullable = false)
+	public boolean isDefault_() {
+		return default_;
+	}
+
+	public void setDefault_(boolean default_) {
+		this.default_ = default_;
+	}
+
 
 }

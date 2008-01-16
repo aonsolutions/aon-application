@@ -24,7 +24,9 @@ public class Footer implements ITransferObject {
 	private String alias;
 
 	private Menu menu;
-	
+
+	private boolean default_;
+
 	private Set<FooterDetail> details;
 
 	@Id
@@ -65,5 +67,15 @@ public class Footer implements ITransferObject {
 	public void setDetails( Set<FooterDetail> details ) {
 		this.details = details;
 	}
+
+	@Column(name = "default_", nullable = false)
+	public boolean isDefault_() {
+		return default_;
+	}
+
+	public void setDefault_(boolean default_) {
+		this.default_ = default_;
+	}
+
 
 }
