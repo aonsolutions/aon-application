@@ -1,5 +1,6 @@
 package com.code.aon.ui.cms.util;
 
+import com.code.aon.ui.cms.IGalleryController;
 import com.code.aon.ui.cms.controller.GalleryController;
 import com.icesoft.faces.component.tree.IceUserObject;
 
@@ -17,9 +18,9 @@ public class FolderNodeUserObject extends IceUserObject {
     
     private String relativePath;
 
-    private GalleryController gallery;
+    private IGalleryController gallery;
 
-    public FolderNodeUserObject(DefaultMutableTreeNode wrapper, GalleryController gallery) {
+    public FolderNodeUserObject(DefaultMutableTreeNode wrapper, IGalleryController gallery) {
         super(wrapper);
         this.gallery = gallery;
         setLeafIcon("/images/cms/tree/folderopen.gif");

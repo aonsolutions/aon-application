@@ -1072,7 +1072,14 @@
 	<!-- ************** GALLERY ************** -->
 	<managed-bean>
 		<managed-bean-name>gallery</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.cms.controller.GalleryController</managed-bean-class>
+		<managed-bean-class>com.code.aon.ui.cms.controller.ImageGalleryController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
+
+	<!-- ************** DOCUMENTS ************** -->
+	<managed-bean>
+		<managed-bean-name>document</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.cms.controller.DocumentGalleryController</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
 

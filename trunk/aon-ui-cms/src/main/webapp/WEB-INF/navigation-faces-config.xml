@@ -398,6 +398,14 @@
     </navigation-case>
   </navigation-rule>
 
+  <!-- ===================================================== DOCUMENT -->
+  <navigation-rule>
+    <navigation-case>
+      <from-outcome>document_list</from-outcome>
+      <to-view-id>/facelet/content/documents/list.iface</to-view-id>
+    </navigation-case>
+  </navigation-rule>
+
   <!-- ===================================================== GALLERY -->
   <navigation-rule>
     <navigation-case>
