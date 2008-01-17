@@ -12,12 +12,12 @@ import javax.swing.tree.DefaultTreeModel;
 
 import com.code.aon.cms.Image;
 import com.code.aon.common.ManagerBeanException;
-import com.code.aon.ui.cms.util.ControllerUtil;
+import com.code.aon.ui.cms.IGalleryController;
 import com.code.aon.ui.cms.util.FolderNodeUserObject;
 import com.code.aon.ui.form.BasicController;
 import com.icesoft.faces.component.inputfile.InputFile;
 
-public class GalleryController extends BasicController {
+public abstract class GalleryController extends BasicController implements IGalleryController{
 
 	private String currentPath;
 
@@ -29,8 +29,11 @@ public class GalleryController extends BasicController {
 	
 	public GalleryController() {
 		super();
+	}
+		
+	public void onInit(ActionEvent event){
 		if (currentPath == null) {
-			this.currentPath = ControllerUtil.getImagesPath();
+			this.currentPath = revoverFilesPath();
 			if (this.currentPath != null) {
 				File currentDir = new File(this.currentPath);
 				if (!currentDir.exists()) currentDir.mkdirs();
@@ -45,7 +48,7 @@ public class GalleryController extends BasicController {
 	    DefaultMutableTreeNode rootTreeNode = new DefaultMutableTreeNode();
 	    FolderNodeUserObject rootObject = new FolderNodeUserObject(rootTreeNode, this);
 	    this.selected = rootObject;
-	    rootObject.setText("Images");
+	    rootObject.setText("FILES");
 	    rootObject.setPath(path);
 	    rootObject.setRelativePath(getRelativePath(basePath, path));
 	    rootObject.setExpanded(true);
@@ -89,8 +92,7 @@ public class GalleryController extends BasicController {
 	private void chargeImageList(String path) {
 		ArrayList<Image> list = new ArrayList<Image>();  
 		File dir = new File(path);
-		ImageFileFilter filter = new ImageFileFilter();
-		File files[] = dir.listFiles(filter);
+		File files[] = dir.listFiles(getFilenameFilter());
 		for (int i=0; i < files.length; i++) {
 			File temp = files[i];
 			if (!temp.isDirectory()) {
@@ -152,21 +154,6 @@ public class GalleryController extends BasicController {
 		if (inputFile.getStatus() == InputFile.UNKNOWN_SIZE) {
 			inputFile.getFileInfo().getException().printStackTrace();
 		}
-	}
-
-	private class ImageFileFilter implements FilenameFilter {
-
-		protected String extensions = ".jpg|.jpeg|.gif|.png";
-
-		public boolean accept(File f, String s) {
-			boolean found = false;
-			if (s.lastIndexOf(".") >= 0) {
-				String ext = s.substring(s.lastIndexOf("."));
-				ext = ext.toLowerCase();
-				found = (extensions.indexOf(ext) >= 0);
-			}
-	        return found;
-	    }
 	}
 
 }

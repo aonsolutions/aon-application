@@ -83,6 +83,15 @@ public class ControllerUtil implements Constants {
 		return path;
 	}
 	
+	public static String getDocumentsPath() {
+		String path = null;
+		path = DOMAINS_PATH + "/" + getCurrentConfig().getDomain() + 
+									"/" + WEBSITE_PATH + 
+									"/" + getCurrentConfig().getPreviewUrl() +
+									"/" + DOCUMENTS_PATH;
+		return path;
+	}
+	
 	public static String getPreviewPath() {
 		String path = null;
 		path = DOMAINS_PATH + "/" + getCurrentConfig().getDomain() + 
