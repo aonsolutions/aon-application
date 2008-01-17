@@ -127,7 +127,7 @@ public class AonAjaxInputHandler extends AonComponentHandler implements IRichFac
 				String event = getAjaxEvent();
 				if ( partialSubmit != null ) {
 					String value = partialSubmit.getValue(ctx);
-					if ( "true".equals(value) ) {
+					if (! "true".equals(value) ) {
 						event = value;
 					}
 				}
