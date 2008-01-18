@@ -10,6 +10,7 @@ import javax.faces.model.SelectItem;
 import com.code.aon.cms.Album;
 import com.code.aon.cms.AlbumCategory;
 import com.code.aon.cms.Article;
+import com.code.aon.cms.ArticleCategory;
 import com.code.aon.cms.Banner;
 import com.code.aon.cms.Brand;
 import com.code.aon.cms.DirectAccess;
@@ -394,5 +395,39 @@ public class CollectionsController {
 		}
 		return select_list;
 	}
+
+	public List<SelectItem> getArticleCategoryList() throws ManagerBeanException {
+		List<SelectItem> select_list = new LinkedList<SelectItem>();
+		IManagerBean bean = BeanManager.getManagerBean(ArticleCategory.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(bean.getFieldName(ICMSAlias.ARTICLE_CATEGORY_ACTIVE), true);
+		List<ITransferObject> list = (List<ITransferObject>)bean.getList(criteria);
+		for (int i = 0; i < list.size(); i++) {
+			ArticleCategory ac = (ArticleCategory)list.get(i);
+			int id = ac.getId();
+			String name = ac.getAlias();
+			SelectItem item = new SelectItem(id, name);
+			select_list.add(item);
+		}
+		return select_list;
+	}
+	
+	public List<SelectItem> getArticleByTypeList(ArticleType type) throws ManagerBeanException {
+		List<SelectItem> itemList = new LinkedList<SelectItem>();
+		IManagerBean bean = BeanManager.getManagerBean(Article.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(bean.getFieldName(ICMSAlias.ARTICLE_ARTICLE_TYPE), type);
+		criteria.addEqualExpression(bean.getFieldName(ICMSAlias.ARTICLE_ACTIVE), true);
+		List<ITransferObject> list = (List<ITransferObject>)bean.getList(criteria);
+		for (int i = 0; i < list.size(); i++) {
+			Article article = (Article)list.get(i);
+			int id = article.getId();
+			String name = article.getAlias();
+			SelectItem item = new SelectItem(id, name);
+			itemList.add(item);
+		}
+		return itemList;
+	}
+
 
 }

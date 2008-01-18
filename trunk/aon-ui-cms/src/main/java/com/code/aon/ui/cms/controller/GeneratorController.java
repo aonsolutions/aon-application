@@ -7,6 +7,7 @@ import com.code.aon.ui.cms.Constants;
 import com.code.aon.ui.cms.util.ControllerUtil;
 import com.code.aon.ui.cms.util.VelocityUtil;
 import com.code.aon.ui.cms.velocity.AlbumGenerator;
+import com.code.aon.ui.cms.velocity.ArticleGenerator;
 import com.code.aon.ui.cms.velocity.CommonGenerator;
 import com.code.aon.ui.cms.velocity.DirectAccessGenerator;
 import com.code.aon.ui.cms.velocity.FaqGenerator;
@@ -69,6 +70,11 @@ public class GeneratorController extends BasicController implements Constants {
 		vu.addMessage("", VelocityUtil.INFO);
 		vu.addMessage("Creando album imagenes... ", VelocityUtil.INFO);
 		AlbumGenerator.generate(vu);
+		
+		//Generar articulo
+		vu.addMessage("", VelocityUtil.INFO);
+		vu.addMessage("Creando articulos... ", VelocityUtil.INFO);
+		ArticleGenerator.generate(vu);
 	}
 
 
