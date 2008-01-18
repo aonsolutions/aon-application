@@ -1,6 +1,7 @@
 package com.code.aon.ui.cms.velocity.attribute;
 
 import com.code.aon.cms.ModularPageOptionDetail;
+import com.code.aon.cms.enumeration.ArticleType;
 import com.code.aon.cms.enumeration.ModularPageOptionType;
 import com.code.aon.ui.cms.velocity.ArticleGenerator;
 import com.code.aon.ui.cms.velocity.BannerGenerator;
@@ -17,6 +18,18 @@ public class ModularPageOptionHandler {
 		template = mpod.getModular_page_option().getType().getTemplateName();
 		if (mpod.getModular_page_option().getType().equals(ModularPageOptionType.ARTICLE)) {
 			content = ArticleGenerator.getArticleHandler(mpod.getModular_page_option().getIdent());
+		}
+		else if (mpod.getModular_page_option().getType().equals(ModularPageOptionType.ARTICLE_NEWS)) {
+			content = ArticleGenerator.getArticleCategoryHandler(mpod.getModular_page_option().getIdent(),ArticleType.NEWS);
+		}
+		else if (mpod.getModular_page_option().getType().equals(ModularPageOptionType.ARTICLE_EVENTS)) {
+			content = ArticleGenerator.getArticleCategoryHandler(mpod.getModular_page_option().getIdent(),ArticleType.EVENTS);
+		}
+		else if (mpod.getModular_page_option().getType().equals(ModularPageOptionType.ARTICLE_SERVICES)) {
+			content = ArticleGenerator.getArticleCategoryHandler(mpod.getModular_page_option().getIdent(),ArticleType.SERVICES);
+		}
+		else if (mpod.getModular_page_option().getType().equals(ModularPageOptionType.ARTICLE_OTHER)) {
+			content = ArticleGenerator.getArticleCategoryHandler(mpod.getModular_page_option().getIdent(),ArticleType.OTHER);
 		}
 		else if (mpod.getModular_page_option().getType().equals(ModularPageOptionType.BANNER)) {
 			content = BannerGenerator.getBannerHandler(mpod.getModular_page_option().getIdent());
