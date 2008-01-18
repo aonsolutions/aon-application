@@ -275,4 +275,8 @@ function windowLoaded(){
 	aonResizeBody();
 	aonFocus();
 	focusTableRow();
+	try {
+// Función que permite la ejecución de código JavaScript dentro de la ventana padre.
+		loadInnerWindow();
+	} catch(e) {}
 }
