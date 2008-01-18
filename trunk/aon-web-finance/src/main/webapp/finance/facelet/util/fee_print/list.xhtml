@@ -9,18 +9,18 @@
 <ui:composition template="/facelet/templates/aon.ui.form.xhtml">
 	<ui:define name="content">
 	
-		<h:form id="financeList">
+		<h:form id="feePrintList">
 			<t:div styleClass="aon-content-toolbar" forceId="#{true}"
 				id="aon-content-toolbar">
 				<t:div styleClass="aon-content-toolbar-internal">
 					<t:div styleClass="aon-content-toolbar-item-group">
 						<t:commandButton value="#{bundle.aon_search}"
-							actionListener="#{finance.onEditSearch}" action="finance_search"
+							actionListener="#{feePrint.onEditSearch}" action="fee_print_search"
 							styleClass="aon-content-toolbar-item aon-content-toolbar-item-search"
 							onmouseover="this.className='aon-content-toolbar-item aon-content-toolbar-item-hover aon-content-toolbar-item-search'"
 							onmouseout="this.className='aon-content-toolbar-item aon-content-toolbar-item-search'" 
 							accesskey="#{bundle.aon_key_search}"/>
-						<t:commandButton id="financeList" value="#{bundle.aon_listing}"
+						<t:commandButton id="feePrintList" value="#{bundle.aon_listing}"
 							forceId="#{true}"
 							onclick="reportWindow(this, 'placeList', '${facesContext.externalContext.requestContextPath}/facelet/report/preferences.faces');return false;"
 							styleClass="aon-content-toolbar-item aon-content-toolbar-item-print"
@@ -34,72 +34,81 @@
 			<t:div forceId="#{true}" id="aon-scroll-area">
 				<t:div styleClass="aon-scroll-area-internal">
 					<t:div styleClass="aon-table-hack">
-						<t:dataTable id="financeDataList" cellpadding="0" cellspacing="0"
-							var="to" value="#{finance.model}" rows="20"
-							rendered="#{finance.model.rowCount > 0}"
+						<t:dataTable id="feePrintDataList" cellpadding="0" cellspacing="0"
+							var="to" value="#{feePrint.model}" rows="20"
+							rendered="#{feePrint.model.rowCount > 0}"
 							styleClass="aon-table" headerClass="aon-table-header"
 							rowClasses="aon-table-row-odd,aon-table-row-even"
-							columnClasses="aon-table-body aon-table-body-string,aon-table-body aon-table-body-string,aon-table-body aon-table-body-string,aon-table-body aon-table-body-string,aon-table-body aon-table-body-number"
+							columnClasses="aon-table-body aon-table-body-string,
+										   aon-table-body aon-table-body-string,
+										   aon-table-body aon-table-body-number,
+										   aon-table-body aon-table-body-number,
+										   aon-table-body aon-table-body-number,
+										   aon-table-body aon-table-body-string"
 							rowOnMouseOver="selectRow( this )"
 							rowOnMouseOut="unselectRow( this )" rowOnClick="sendRow( this )">
 
 							<h:column>
 								<f:facet name="header">
-									<h:outputText value="#{financeBundle.aon_id}" />
+									<h:outputText value="#{financeBundle.aon_customer}" />
 								</f:facet>
-								<h:outputText value="#{to.invoice.series} / #{to.invoice.number}" />
-								<t:commandLink immediate="#{true}"
-									styleClass="aon-table-row-selected" action="finance_form"
-									actionListener="#{finance.onSelect}" />
+								<h:outputText value="#{to.customer.registry.surname}, " rendered="#{to.customer.registry.surname != null and to.customer.registry.surname != ''}"/>								
+								<h:outputText value="#{to.customer.registry.name}" />
+							</h:column>
+
+							<h:column>
+								<f:facet name="header">
+									<h:outputText value="#{financeBundle.finance_fee_item}" />
+								</f:facet>
+								<h:outputText value="#{to.description}" />
 							</h:column>
 
 							<h:column>
 								<f:facet name="header">
 									<h:panelGroup>
-										<h:outputText value="#{finance.payment?(financeBundle.aon_creditor):(financeBundle.aon_debtor)}" />
+										<h:outputText value="#{financeBundle.aon_quantity}" />
 									</h:panelGroup>
 								</f:facet>
-								<h:outputText value="#{to.registry.surname}, " rendered="#{to.registry.surname != null and to.registry.surname != ''}"/>								
-								<h:outputText value="#{to.registry.name}" />
-							</h:column>
-
-							<h:column>
-								<f:facet name="header">
-									<h:panelGroup>
-										<h:outputText value="#{financeBundle.aon_date}" />
-									</h:panelGroup>
-								</f:facet>
-								<h:outputText value="#{to.dueDate}">
-									<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
-										timeZone="#{timeZoneController.timeZoneId}" />
+								<h:outputText value="#{to.quantity}"> 
+									<f:convertNumber pattern="#,##0.00" />
 								</h:outputText>
 							</h:column>
 
 							<h:column>
 								<f:facet name="header">
 									<h:panelGroup>
-										<h:outputText value="#{financeBundle.aon_status}" />
+										<h:outputText value="#{financeBundle.aon_price}" />
 									</h:panelGroup>
 								</f:facet>
-								<h:outputText value="#{to.financeStatus}" />
+								<h:outputText value="#{to.price}"> 
+									<f:convertNumber pattern="#,##0.00" />
+								</h:outputText>
+							</h:column>
+
+							<h:column>
+								<f:facet name="header">
+									<h:panelGroup>
+										<h:outputText value="#{financeBundle.aon_discount}" />
+									</h:panelGroup>
+								</f:facet>
+								<h:outputText value="#{to.discountExpression.discountExpr}" />
 							</h:column>
 							
 							<h:column>
 								<f:facet name="header">
 									<h:panelGroup>
-										<h:outputText value="#{financeBundle.aon_amount}" />
+										<h:outputText value="#{financeBundle.finance_fee_billing_date}" />
 									</h:panelGroup>
 								</f:facet>
-								<h:outputText value="#{to.totalAmount}" >
-									<f:convertNumber pattern="#,##0.00" />
-								</h:outputText>
+								<h:outputText value="#{to.billingDateMonth}" />
+								<h:outputText value=" / #{to.billingDateYear}" />
 							</h:column>
 						</t:dataTable>
 					</t:div>
 
 					<ui:include src="/facelet/shared/dataScroller.xhtml">
-						<ui:param name="dataTable" value="financeDataList" />
-						<ui:param name="model" value="#{finance.model}" />
+						<ui:param name="dataTable" value="feePrintDataList" />
+						<ui:param name="model" value="#{feePrint.model}" />
 						<ui:param name="showNote" value="#{true}" />
 					</ui:include>
 

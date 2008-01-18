@@ -26,7 +26,7 @@
 							styleClass="aon-content-toolbar-item aon-content-toolbar-item-save"
 							onmouseover="this.className='aon-content-toolbar-item aon-content-toolbar-item-hover aon-content-toolbar-item-save'"
 							onmouseout="this.className='aon-content-toolbar-item aon-content-toolbar-item-save'"
-							accesskey="#{bundle.aon_key_save}" />
+							accesskey="#{bundle.aon_key_save}" disabled="#{!finance.pending}"/>
 						<h:commandButton id="cancel" value="#{bundle.aon_cancel}"
 							actionListener="#{finance.onCancel}" action="finance_list"
 							immediate="#{true}"
@@ -42,6 +42,12 @@
 							onmouseout="this.className='aon-content-toolbar-item aon-content-toolbar-item-search'"
 							actionListener="#{finance.onEditSearch}" action="finance_search"
 							accesskey="#{bundle.aon_key_search}" />
+						<h:commandButton id="fraction" value="#{financeBundle.aon_finance_to_fraction}"
+							immediate="#{true}" disabled="#{!finance.pending}"
+							styleClass="aon-content-toolbar-item aon-content-toolbar-item-search"
+							onmouseover="this.className='aon-content-toolbar-item aon-content-toolbar-item-hover aon-content-toolbar-item-search'"
+							onmouseout="this.className='aon-content-toolbar-item aon-content-toolbar-item-search'"
+							actionListener="#{financeFraction.onFractionFinance}" action="finance_fraction"/>
 					</t:div>
 				</t:div>
 			</t:div>
@@ -75,7 +81,7 @@
 						<h:panelGrid columns="2" cellpadding="0" cellspacing="0"> 
 							<t:inputText id="Finance_invoice_series"
 								value="#{finance.to.invoice.series}"
-								disabled="#{true}" size="3"
+								disabled="#{true}" size="6" maxlength="5"
 								styleClass="aon-form-input-text-disabled" forceId="#{true}" />
 							<t:inputText id="Finance_invoice_number"
 								value="#{finance.to.invoice.number}"
@@ -91,14 +97,14 @@
 							size="9" disabled="true"
 							value="#{finance.to.invoice.issueDate}" >
 							<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
-										timeZone="#{timeZoneController.timeZoneId}" />
+								timeZone="#{timeZoneController.timeZoneId}" />
 						</t:inputText>
 						
 						<h:outputLabel for="Finance_dueDate"
 							styleClass="aon-form-input-text-label"
 							value="#{financeBundle.aon_finance_date}" />
 						<t:inputCalendar size="8" id="Finance_dueDate"
-							value="#{finance.to.dueDate}"
+							value="#{finance.to.dueDate}" disabled="#{!finance.pending}"
 							monthYearRowClass="yearMonthHeader" weekRowClass="weekHeader"
 							currentDayCellClass="currentDayCell" renderAsPopup="true"
 							popupButtonStyleClass="aon-form-calendar-button"
@@ -112,7 +118,7 @@
 						<t:div >
 							<t:selectOneMenu id="RegistryBank_Lookup_id"
 								value="#{finance.registryBankId}" forceId="#{true}"
-								styleClass="aon-form-selectOneMenu-field"
+								styleClass="aon-form-selectOneMenu-field" disabled="#{!finance.pending}"
 								onchange="return findBeanLookupExt(event,'#{facesContext.externalContext.requestContextPath}','rBankLookup','RegistryBank_Lookup_id','RegistryBank_id|RegistryBank_Lookup_id,RegistryBank_bankAccount|RegistryBank_Lookup_bankAccount');">
 								<f:selectItem itemDisabled="true" itemLabel ="-" itemValue="" />
 								<f:selectItems value="#{finance.registryBanks}" />
@@ -124,6 +130,7 @@
 							value="#{financeBundle.aon_bank_account}" />
 						<t:inputText id="RegistryBank_Lookup_bankAccount"
 							forceId="#{true}" value="#{finance.to.bankAccount}"
+							disabled="#{!finance.pending}"
 							styleClass="aon-form-input-text" size="35" maxlength="23">
 							<f:validateLength minimum="20" maximum="23"/>
 						</t:inputText>
@@ -132,6 +139,7 @@
 							styleClass="aon-form-input-text-label"
 							value="#{financeBundle.aon_pay_method}" />
 						<h:selectOneMenu id="Finance_payMethod_id"
+							disabled="#{!finance.pending}"
 							styleClass="aon-form-selectOneMenu-field"
 							forceId="#{true}" value="#{finance.to.payMethod.id}">
 							<f:selectItems value="#{financeCollections.payMethods}" />
@@ -142,6 +150,24 @@
 							value="#{financeBundle.aon_amount}" />
 						<t:inputText id="Finance_amount"
 							value="#{finance.to.amount}" size="15" disabled="true"
+							styleClass="aon-form-input-text-disabled" forceId="#{true}" >
+							<f:convertNumber pattern="#,##0.00" />
+						</t:inputText>	
+
+						<h:outputLabel for="Finance_expenses"
+							styleClass="aon-form-input-text-label"
+							value="#{financeBundle.finance_expenses}" />
+						<t:inputText id="Finance_expenses"
+							value="#{finance.to.expenses}" size="15" disabled="#{!finance.pending}"
+							styleClass="aon-form-input-text" forceId="#{true}" >
+							<f:convertNumber pattern="#,##0.00" />
+						</t:inputText>
+						
+						<h:outputLabel for="Finance_total"
+							styleClass="aon-form-input-text-label"
+							value="#{financeBundle.finance_total}" />
+						<t:inputText id="Finance_total"
+							value="#{finance.to.totalAmount}" size="15" disabled="true"
 							styleClass="aon-form-input-text-disabled" forceId="#{true}" >
 							<f:convertNumber pattern="#,##0.00" />
 						</t:inputText>	
@@ -178,175 +204,59 @@
 						<t:div styleClass="aon-form-group-body">
 							<t:dataTable id="financeTrackingDataList"
 								value="#{financeTracking.model}" var="to"
-								rowOnMouseOver="selectRow( this )"
-								rowOnMouseOut="unselectRow( this )" rowOnClick="sendRow( this )"
 								styleClass="aon-edit-table" headerClass="aon-edit-table-header"
-								footerClass="aon-edit-table-footer" rows="20"
+								footerClass="aon-edit-table-footer"
 								rowIndexVar="rowIndex"
 								rowClasses="aon-edit-table-row-odd,aon-edit-table-row-even"
-								columnClasses="aon-edit-table-body aon-edit-table-body-icon,
-												aon-edit-table-body aon-edit-table-body-string,
+								columnClasses="aon-edit-table-body aon-edit-table-body-string,
 												aon-edit-table-body aon-edit-table-body-string,
 												aon-edit-table-body aon-edit-table-body-string,
 												aon-edit-table-body aon-edit-table-body-number,
-												aon-edit-table-body aon-edit-table-body-buttons">
-						
-								<h:column>
-									<f:facet name="header">
-										<f:verbatim>&#160;</f:verbatim>
-									</f:facet>
-									<f:verbatim>&#160;</f:verbatim>
-									<t:commandLink immediate="#{true}"
-										rendered="#{to!=financeTracking.to}"
-										styleClass="aon-table-row-selected"
-										actionListener="#{financeTracking.onSelect}">
-									</t:commandLink>
-									<f:facet name="footer">
-										<t:div>
-											<t:commandButton id="reset"
-												styleClass="aon-edit-table-icon-button aon-edit-table-icon-button-new"
-												value="" immediate="#{true}"
-												rendered="#{!financeTracking.new}"
-												actionListener="#{financeTracking.onReset}"
-												accesskey="#{bundle.aon_key_new_line}">
-											</t:commandButton>
-										</t:div>
-									</f:facet>
-								</h:column>
+												aon-edit-table-body-icon">
 						
 								<t:column>
 									<f:facet name="header">
 										<t:outputText value="#{financeBundle.aon_date}" />
 									</f:facet>
-									<t:outputText value="#{to.trackingDate}"
-										rendered="#{to!=financeTracking.to}" >
+									<t:outputText value="#{to.trackingDate}">
 										<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
 											timeZone="#{timeZoneController.timeZoneId}" />
 									</t:outputText>	
-									<t:inputCalendar size="8" rendered="#{to==financeTracking.to}"
-										value="#{financeTracking.to.trackingDate}"
-										monthYearRowClass="yearMonthHeader" weekRowClass="weekHeader"
-										currentDayCellClass="currentDayCell" renderAsPopup="true"
-										popupButtonStyleClass="aon-form-calendar-button"
-										styleClass="aon-form-input-text"
-										popupTodayString="#{bundle.aon_popup_today}"
-										popupWeekString="#{bundle.aon_popup_week}" />	
-									<f:facet name="footer">
-										<t:div>
-											<t:inputCalendar size="8" rendered="#{financeTracking.new}"
-												value="#{financeTracking.to.trackingDate}"
-												monthYearRowClass="yearMonthHeader" weekRowClass="weekHeader"
-												currentDayCellClass="currentDayCell" renderAsPopup="true"
-												popupButtonStyleClass="aon-form-calendar-button"
-												styleClass="aon-form-input-text"
-												popupTodayString="#{bundle.aon_popup_today}"
-												popupWeekString="#{bundle.aon_popup_week}" />
-										</t:div>
-									</f:facet>
 								</t:column>
 						
 								<t:column>
 									<f:facet name="header">
-										<t:outputText value="#{financeBundle.aon_type}" />
+										<t:outputText value="#{financeBundle.aon_tracking_action}" />
 									</f:facet>
-									<t:outputText value="#{to.type}"
-										rendered="#{to!=financeTracking.to}" />
-									<h:selectOneMenu styleClass="aon-form-selectOneMenu-field" 
-										rendered="#{to==financeTracking.to}"
-										value="#{financeTracking.to.type}">
-										<f:selectItems value="#{financeCollections.financeTrackingTypes}" />
-									</h:selectOneMenu>	
-									<f:facet name="footer">
-										<t:div>
-											<h:selectOneMenu styleClass="aon-form-selectOneMenu-field" 
-												rendered="#{financeTracking.new}"
-												value="#{financeTracking.to.type}">
-												<f:selectItems value="#{financeCollections.financeTrackingTypes}" />
-											</h:selectOneMenu>
-										</t:div>
-									</f:facet>
+									<t:outputText value="#{to.type}" />
 								</t:column>
 						
 								<t:column>
 									<f:facet name="header">
 										<t:outputText value="#{financeBundle.aon_tracking_description}" />
 									</f:facet>
-									<t:outputText value="#{to.description}"
-										rendered="#{to!=financeTracking.to}" />
-									<t:inputText value="#{financeTracking.to.description}"
-										styleClass="aon-form-input-text"
-										rendered="#{to==financeTracking.to}" size="40" />
-									<f:facet name="footer">
-										<t:div>
-											<t:inputText value="#{financeTracking.to.description}"
-												styleClass="aon-form-input-text"
-												rendered="#{financeTracking.new}" size="40" />
-										</t:div>
-									</f:facet>
+									<t:outputText value="#{to.description}" />
 								</t:column>
-								
+						
 								<t:column width="100">
 									<f:facet name="header">
 										<t:outputText value="#{financeBundle.aon_amount}" />
 									</f:facet>
-									<t:outputText value="#{to.amount}"
-										rendered="#{to!=financeTracking.to}" >
+									<t:outputText value="#{to.amount}">
 										<f:convertNumber pattern="#,##0.00" />
 									</t:outputText>	
-									<t:inputText value="#{financeTracking.to.amount}"
-										styleClass="aon-form-input-text"
-										rendered="#{to==financeTracking.to}" size="15" />
-									<f:facet name="footer">
-										<t:div>
-											<t:inputText value="#{financeTracking.to.amount}"
-												styleClass="aon-form-input-text"
-												rendered="#{financeTracking.new}" size="15" />
-										</t:div>
-									</f:facet>
 								</t:column>
-						
-								<h:column>
+								
+								<t:column>
 									<f:facet name="header">
 										<f:verbatim>&#160;</f:verbatim>
 									</f:facet>
-									<t:div>
-										<f:verbatim rendered="#{to!=financeTracking.to}">&#160;</f:verbatim>
-						
-										<t:commandButton title="#{bundle.aon_save}"
-											actionListener="#{financeTracking.onAccept}"
-											rendered="#{to==financeTracking.to}" value=""
-											styleClass="aon-edit-table-icon-button aon-edit-table-icon-button-save"
-											accesskey="#{bundle.aon_key_save_line}" />
-										<t:commandButton title="#{bundle.aon_cancel}"
-											actionListener="#{financeTracking.onCancel}" immediate="#{true}"
-											onclick="return (confirm('#{bundle.aon_cancel_confirm}'));"
-											styleClass="aon-edit-table-icon-button aon-edit-table-icon-button-cancel"
-											value="" rendered="#{to==financeTracking.to}"
-											accesskey="#{bundle.aon_key_cancel_line}" />
-										<t:commandButton title="#{bundle.aon_remove}"
-											actionListener="#{financeTracking.onRemove}"
-											onclick="return (confirm('#{bundle.aon_remove_confirm}'));"
-											rendered="#{to==financeTracking.to}"
-											styleClass="aon-edit-table-icon-button aon-edit-table-icon-button-delete"
-											value="" accesskey="#{bundle.aon_key_remove_line}" />
-									</t:div>
-									<f:facet name="footer">
-										<t:div>
-											<f:verbatim rendered="#{!financeTracking.new}">&#160;</f:verbatim>
-											<t:commandButton title="#{bundle.aon_save}"
-												actionListener="#{financeTracking.onAccept}"
-												rendered="#{financeTracking.new}" value=""
-												styleClass="aon-edit-table-icon-button aon-edit-table-icon-button-save"
-												accesskey="#{bundle.aon_key_save_line}" />
-											<t:commandButton title="#{bundle.aon_cancel}"
-												actionListener="#{financeTracking.onCancel}" immediate="#{true}"
-												onclick="return (confirm('#{bundle.aon_cancel_confirm}'));"
-												rendered="#{financeTracking.new}"
-												styleClass="aon-edit-table-icon-button aon-edit-table-icon-button-cancel"
-												value="" accesskey="#{bundle.aon_key_cancel_line}" />
-										</t:div>
-									</f:facet>
-								</h:column>
+									<t:commandButton title="#{financeBundle.aon_finance_tracking_undo}"
+										actionListener="#{financeTracking.undoTracking}"
+										immediate="#{true}" onclick="confirm('#{bundle.aon_remove_confirm}');"
+										styleClass="aon-edit-table-icon-button aon-edit-table-icon-button-delete" value=""
+										rendered="#{financeTracking.unrecordable}" />
+								</t:column>
 							</t:dataTable>
 						</t:div>
 					</t:div>
