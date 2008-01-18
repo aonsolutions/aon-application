@@ -62,7 +62,7 @@
 							<t:outputLabel for="Customer_Lookup_id"
 								rendered="#{!financeReturn.payment}"
 								styleClass="aon-form-input-text-label"
-								value="#{customerBundle.customer_customer}" />
+								value="#{financeBundle.aon_customer}" />
 							<t:inputText id="Customer_full_name" forceId="#{true}"
 								rendered="#{!financeReturn.payment}"
 								styleClass="aon-form-input-text-disabled" disabled="true"
@@ -83,14 +83,33 @@
 							<h:panelGrid columns="2">
 								<t:inputText id="Finance_invoice_series"
 									value="#{financeReturn.to.invoice.series}"
-									styleClass="aon-form-input-text-disabled" forceId="#{true}" size="3"
-									maxlength="3" disabled="true" />
+									styleClass="aon-form-input-text-disabled" forceId="#{true}" size="5"
+									maxlength="5" disabled="true" />
 								<t:inputText id="Finance_invoice_number"
 									value="#{financeReturn.to.invoice.number}"
 									styleClass="aon-form-input-text-disabled" forceId="#{true}"
 									size="7" disabled="true"/>
 							</h:panelGrid>
 							
+							<h:outputLabel for="Finance_date"
+								styleClass="aon-form-input-text-label"
+								value="#{financeBundle.aon_finance_date}" />
+							<t:inputCalendar size="8" id="Finance_date"
+								value="#{financeReturn.returnDate}"
+								monthYearRowClass="yearMonthHeader" weekRowClass="weekHeader"
+								currentDayCellClass="currentDayCell" renderAsPopup="true"
+								popupButtonStyleClass="aon-form-calendar-button"
+								styleClass="aon-form-input-text"
+								popupTodayString="#{bundle.aon_popup_today}"
+								popupWeekString="#{bundle.aon_popup_week}" />
+
+							<t:outputLabel for="Finance_amount"
+								value="#{financeBundle.finance_amount}"
+								styleClass="aon-form-lookup-label" />
+							<t:inputText id="Finance_amount" size="5" forceId="#{true}"
+								styleClass="aon-form-input-text" disabled="true"
+								value="#{financeReturn.to.amount}"/>
+
 							<t:outputLabel for="Finance_expenses"
 								value="#{financeBundle.finance_expenses}"
 								styleClass="aon-form-lookup-label" />

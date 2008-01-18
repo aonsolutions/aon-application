@@ -62,7 +62,7 @@
 							<t:outputLabel for="Customer_Lookup_id"
 								rendered="#{!financePayment.payment}"
 								styleClass="aon-form-input-text-label"
-								value="#{customerBundle.customer_customer}" />
+								value="#{financeBundle.aon_customer}" />
 							<t:inputText id="Customer_full_name" forceId="#{true}"
 								rendered="#{!financePayment.payment}"
 								styleClass="aon-form-input-text-disabled" disabled="true"
@@ -83,29 +83,75 @@
 							<h:panelGrid columns="2">
 								<t:inputText id="Finance_invoice_series"
 									value="#{financePayment.to.invoice.series}"
-									styleClass="aon-form-input-text-disabled" forceId="#{true}" size="3"
-									maxlength="3" disabled="true" />
+									disabled="#{true}" size="6" maxlength="5"
+									styleClass="aon-form-input-text-disabled" forceId="#{true}" />
 								<t:inputText id="Finance_invoice_number"
 									value="#{financePayment.to.invoice.number}"
 									styleClass="aon-form-input-text-disabled" forceId="#{true}"
 									size="7" disabled="true"/>
 							</h:panelGrid>
+							
+							<h:outputLabel for="Finance_date"
+								styleClass="aon-form-input-text-label"
+								value="#{financeBundle.aon_finance_date}" />
+							<t:inputCalendar size="8" id="Finance_date"
+								value="#{financePayment.paymentDate}"
+								monthYearRowClass="yearMonthHeader" weekRowClass="weekHeader"
+								currentDayCellClass="currentDayCell" renderAsPopup="true"
+								popupButtonStyleClass="aon-form-calendar-button"
+								styleClass="aon-form-input-text"
+								popupTodayString="#{bundle.aon_popup_today}"
+								popupWeekString="#{bundle.aon_popup_week}" />
 
-							<t:outputLabel for="Finance_totalAmount"
+							<t:outputLabel for="Finance_amount"
 								value="#{financeBundle.finance_amount}"
 								styleClass="aon-form-lookup-label" />
-							<t:outputText id="Finance_totalAmount" size="5" forceId="#{true}"
+							<t:inputText id="Finance_amount" size="5" forceId="#{true}"
 								styleClass="aon-form-input-text-disabled"
-								value="#{financePayment.to.totalAmount}" disabled="true" >
+								value="#{financePayment.to.amount}" disabled="true">
 									<f:convertNumber pattern="#,##0.00" />
-							</t:outputText>
+							</t:inputText>
 
-							<t:outputLabel for="Finance_payment"
-								value="#{financeBundle.finance_paid}"
+							<t:outputLabel for="Finance_expenses"
+								value="#{financeBundle.finance_expenses}"
 								styleClass="aon-form-lookup-label" />
 							<t:inputText id="Finance_expenses" size="5" forceId="#{true}"
+								styleClass="aon-form-input-text-disabled"
+								value="#{financePayment.to.expenses}" disabled="true">
+									<f:convertNumber pattern="#,##0.00" />
+							</t:inputText>
+
+							<t:outputLabel for="Finance_totalAmount"
+								value="#{financeBundle.finance_total}"
+								styleClass="aon-form-lookup-label" />
+							<t:inputText id="Finance_totalAmount" size="5" forceId="#{true}"
+								styleClass="aon-form-input-text-disabled"
+								value="#{financePayment.to.totalAmount}" disabled="true">
+									<f:convertNumber pattern="#,##0.00" />
+							</t:inputText>
+
+							<t:outputLabel for="Finance_payed_amount"
+								value="#{financeBundle.finance_paid}"
+								styleClass="aon-form-lookup-label" />
+							<t:inputText id="Finance_payed_amount" size="5" forceId="#{true}"
 								styleClass="aon-form-input"
-								value="#{financePayment.payedAmount}" />			
+								value="#{financePayment.payedAmount}" />
+								
+							<h:outputLabel for="RegistryBank_Lookup_id"
+								styleClass="aon-form-input-text-label" value="#{financeBundle.aon_bank}" />
+							<t:selectOneMenu id="RegistryBank_Lookup_id"
+								styleClass="aon-form-selectOneMenu-field" forceId="#{true}"
+								onchange="return findBeanLookupExt(event,'#{facesContext.externalContext.requestContextPath}','rBankLookup','RegistryBank_Lookup_id','RegistryBank_id|RegistryBank_Lookup_id,RegistryBank_bankAccount|RegistryBank_Lookup_bankAccount');"
+								value="#{financePayment.registryBank.id}" >
+								<f:selectItem itemDisabled="true" itemValue="" itemLabel="-" />
+								<f:selectItems value="#{financeCollections.companyBanks}" />
+							</t:selectOneMenu>
+
+							<h:outputLabel for="RegistryBank_Lookup_bankAccount"
+								styleClass="aon-form-input-text-label" value="#{financeBundle.aon_bank_account}" />
+							<t:inputText id="RegistryBank_Lookup_bankAccount" value="#{financePayment.registryBank.bankAccount}"
+								styleClass="aon-form-input-text-disabled" forceId="#{true}"
+								disabledOnClientSide="true" size="35" />
 
 					</h:panelGrid>
 					<!-- end of flow layout -->

@@ -24,6 +24,14 @@
 						onmouseover="this.className='aon-content-toolbar-item aon-content-toolbar-item-hover aon-content-toolbar-item-accept'"
 						onmouseout="this.className='aon-content-toolbar-item aon-content-toolbar-item-accept'" 
 						accesskey="#{bundle.aon_key_search}"/>
+					<h:commandButton id="cancel" value="#{bundle.aon_cancel}"
+						actionListener="#{fbatch.onCancel}" action="fbatch_list"
+						immediate="#{true}"
+						onclick="return (confirm('#{bundle.aon_cancel_confirm}'))"
+						styleClass="aon-content-toolbar-item aon-content-toolbar-item-cancel"
+						onmouseover="this.className='aon-content-toolbar-item aon-content-toolbar-item-hover aon-content-toolbar-item-cancel'"
+						onmouseout="this.className='aon-content-toolbar-item aon-content-toolbar-item-cancel'"
+						accesskey="#{bundle.aon_key_cancel}" />
 					<t:commandButton id="reset" value="#{bundle.aon_reset}"
 						styleClass="aon-content-toolbar-item aon-content-toolbar-item-new"
 						onmouseover="this.className='aon-content-toolbar-item aon-content-toolbar-item-hover aon-content-toolbar-item-new'"
@@ -54,7 +62,7 @@
 						
 							<h:outputLabel for="FinanceBatch_payment"
 								styleClass="aon-form-input-text-label"
-								value="#{financeBundle.aon_payment} / #{financeBundle.aon_charge}" />
+								value="#{financeBundle.aon_fbatch_type}" />
 							<t:selectOneRadio id="FinanceBatch_payment" value="#{fbatch.payment}" valueChangeListener="#{fbatch.addExpression}">
 								<f:selectItem itemLabel="#{financeBundle.aon_payment}" itemValue="#{true}" />
 								<f:selectItem itemLabel="#{financeBundle.aon_charge}" itemValue="#{false}" />
@@ -115,7 +123,7 @@
  							
 							<h:outputLabel for="FinanceBatch_financeBatchType"
 								styleClass="aon-form-input-text-label"
-								value="#{financeBundle.aon_type}" />
+								value="#{financeBundle.aon_disk_type}" />
 							<h:selectOneMenu id="FinanceBatch_financeBatchType"
 								styleClass="aon-form-selectOneMenu-field"
 								converter="fBatchTypeConverter" forceId="#{true}"
