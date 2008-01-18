@@ -84,12 +84,16 @@
 						rendered="#{to!=controllerAlias.to}" />
 					<t:inputText value="#{controllerAlias.to.numberOfPayments}"
 						styleClass="aon-form-input-text"
-						rendered="#{to==controllerAlias.to}" required="#{true}" size="5" />
+						rendered="#{to==controllerAlias.to}" required="#{true}" size="5" >
+						<f:validateLongRange minimum="1" />
+					</t:inputText>	
 					<f:facet name="footer">
 						<t:div>
 							<t:inputText value="#{controllerAlias.to.numberOfPayments}"
 								styleClass="aon-form-input-text"
-								rendered="#{controllerAlias.new}" required="#{true}" size="5" />
+								rendered="#{controllerAlias.new}" required="#{true}" size="5" >
+								<f:validateLongRange minimum="1" />								
+							</t:inputText>
 						</t:div>
 					</f:facet>
 				</t:column>
@@ -138,12 +142,12 @@
 						rendered="#{to!=controllerAlias.to}" />
 					<t:inputText value="#{controllerAlias.to.paymentDays}"
 						styleClass="aon-form-input-text"
-						rendered="#{to==controllerAlias.to}" required="#{true}" size="5" />
+						rendered="#{to==controllerAlias.to}" size="5" />
 					<f:facet name="footer">
 						<t:div>
 							<t:inputText value="#{controllerAlias.to.paymentDays}"
 								styleClass="aon-form-input-text"
-								rendered="#{controllerAlias.new}" required="#{true}" size="5" />
+								rendered="#{controllerAlias.new}" size="5" />
 						</t:div>
 					</f:facet>
 				</t:column>

@@ -8,24 +8,28 @@
 
 <ui:composition>
 
-	<t:dataTable id="#{dataTable}" value="#{controllerAlias.model}"
-		var="to" rowOnMouseOver="selectRow( this )"
+	<t:dataTable id="#{dataTable}"
+		value="#{controllerAlias.model}" var="to"
+		rowOnMouseOver="selectRow( this )"
 		rowOnMouseOut="unselectRow( this )" rowOnClick="sendRow( this )"
 		styleClass="aon-edit-table" headerClass="aon-edit-table-header"
-		footerClass="aon-edit-table-footer" rows="20" rowIndexVar="rowIndex"
+		footerClass="aon-edit-table-footer" rows="20"
+		rowIndexVar="rowIndex"
 		rowClasses="aon-edit-table-row-odd,aon-edit-table-row-even"
 		columnClasses="aon-edit-table-body aon-edit-table-body-icon,
-			aon-edit-table-body aon-edit-table-body-string,
-			aon-edit-table-body aon-edit-table-body-string,
-			aon-edit-table-body aon-edit-table-body-string,
-			aon-edit-table-body aon-edit-table-body-buttons">
-
+						aon-edit-table-body aon-edit-table-body-string,
+						aon-edit-table-body aon-edit-table-body-string,
+						aon-edit-table-body aon-edit-table-body-string,
+						aon-edit-table-body aon-edit-table-body-string,
+						aon-edit-table-body aon-edit-table-body-buttons">
+						
 		<h:column>
 			<f:facet name="header">
 				<f:verbatim>&#160;</f:verbatim>
 			</f:facet>
 			<f:verbatim>&#160;</f:verbatim>
-			<t:commandLink immediate="#{true}" rendered="#{to!=controllerAlias.to}"
+			<t:commandLink immediate="#{true}"
+				rendered="#{to!=controllerAlias.to}"
 				styleClass="aon-table-row-selected"
 				actionListener="#{controllerAlias.onSelect}">
 			</t:commandLink>
@@ -33,68 +37,101 @@
 				<t:div>
 					<t:commandButton id="reset"
 						styleClass="aon-edit-table-icon-button aon-edit-table-icon-button-new"
-						value="" immediate="#{true}" rendered="#{!controllerAlias.new}"
+						value="" immediate="#{true}"
+						rendered="#{!controllerAlias.new and controllerAlias.model.rowCount == 0}"
 						actionListener="#{controllerAlias.onReset}"
 						accesskey="#{bundle.aon_key_new_line}">
 					</t:commandButton>
 				</t:div>
 			</f:facet>
 		</h:column>
-
-		<h:column>
+		
+		<t:column width="300">
 			<f:facet name="header">
-				<h:outputText value="#{registryBundle.aon_media}" />
+				<t:outputText value="#{registryBundle.aon_address}" />
 			</f:facet>
-			<t:outputText value="#{to.mediaType}"
+			<t:outputText value="#{to.address} #{to.address2} #{to.address3}"
 				rendered="#{to!=controllerAlias.to}" />
-			<h:selectOneMenu value="#{controllerAlias.to.mediaType}"
-				styleClass="aon-form-selectOneMenu-field"
-				rendered="#{to==controllerAlias.to}">
-				<f:selectItems value="#{registryCollections.mediaTypes}" />
-			</h:selectOneMenu>
+			<t:inputText value="#{controllerAlias.to.address}"
+				styleClass="aon-form-input-text"
+				rendered="#{to==controllerAlias.to}" required="#{true}" size="40" />
+			<t:inputText value="#{controllerAlias.to.address2}"
+				styleClass="aon-form-input-text"
+				rendered="#{to==controllerAlias.to}" size="40" />
+			<t:inputText value="#{controllerAlias.to.address3}"
+				styleClass="aon-form-input-text"
+				rendered="#{to==controllerAlias.to}" size="40" />
 			<f:facet name="footer">
 				<t:div>
-					<h:selectOneMenu value="#{controllerAlias.to.mediaType}"
-						styleClass="aon-form-selectOneMenu-field"
-						rendered="#{controllerAlias.new}">
-						<f:selectItems value="#{registryCollections.mediaTypes}" />
-					</h:selectOneMenu>
-				</t:div>
-			</f:facet>
-		</h:column>
-
-		<t:column width="200">
-			<f:facet name="header">
-				<t:outputText value="#{registryBundle.aon_value}" />
-			</f:facet>
-			<t:outputText value="#{to.value}" rendered="#{to!=controllerAlias.to}" />
-			<t:inputText value="#{to.value}" styleClass="aon-form-input-text"
-				rendered="#{to==controllerAlias.to}" required="#{true}" size="40"
-				onblur="toLowerCase(this);" />
-			<f:facet name="footer">
-				<t:div>
-					<h:outputLabel for="Media" value="#{registryBundle.aon_value}"
-						rendered="#{false}" />
-					<t:inputText id="Media" value="#{controllerAlias.to.value}"
-						styleClass="aon-form-input-text" rendered="#{controllerAlias.new}"
-						required="#{true}" size="40" onblur="toLowerCase(this);" />
+					<t:inputText value="#{controllerAlias.to.address}"
+						styleClass="aon-form-input-text"
+						rendered="#{controllerAlias.new}" required="#{true}" size="40" />
+					<t:inputText value="#{controllerAlias.to.address2}"
+						styleClass="aon-form-input-text"
+						rendered="#{controllerAlias.new}" size="40" />
+					<t:inputText value="#{controllerAlias.to.address3}"
+						styleClass="aon-form-input-text"
+						rendered="#{controllerAlias.new}" size="40" />
 				</t:div>
 			</f:facet>
 		</t:column>
 
-		<t:column width="330">
+		<t:column width="50">
 			<f:facet name="header">
-				<t:outputText value="#{registryBundle.aon_comment}" />
+				<t:outputText value="#{registryBundle.aon_zip}" />
 			</f:facet>
-			<t:outputText value="#{to.comment}"
+			<t:outputText value="#{to.zip}"
 				rendered="#{to!=controllerAlias.to}" />
-			<t:inputText value="#{to.comment}" styleClass="aon-form-input-text"
-				rendered="#{to==controllerAlias.to}" size="40" />
+			<t:inputText value="#{controllerAlias.to.zip}"
+				styleClass="aon-form-input-text"
+				rendered="#{to==controllerAlias.to}" required="#{true}" size="8" />
 			<f:facet name="footer">
 				<t:div>
-					<t:inputText value="#{controllerAlias.to.comment}"
-						styleClass="aon-form-input-text" rendered="#{controllerAlias.new}"
-						size="40" />
+					<t:inputText value="#{controllerAlias.to.zip}"
+						styleClass="aon-form-input-text"
+						rendered="#{controllerAlias.new}" required="#{true}" size="8" />
+				</t:div>
+			</f:facet>
+		</t:column>
+
+		<t:column width="150">
+			<f:facet name="header">
+				<t:outputText value="#{registryBundle.aon_city}" />
+			</f:facet>
+			<t:outputText value="#{to.city}"
+				rendered="#{to!=controllerAlias.to}" />
+			<t:inputText value="#{controllerAlias.to.city}"
+				styleClass="aon-form-input-text"
+				rendered="#{to==controllerAlias.to}" required="#{true}" size="20" />
+			<f:facet name="footer">
+				<t:div>
+					<t:inputText value="#{controllerAlias.to.city}"
+						styleClass="aon-form-input-text"
+						rendered="#{controllerAlias.new}" required="#{true}" size="20" />
+				</t:div>
+			</f:facet>
+		</t:column>
+
+		<t:column width="130">
+			<f:facet name="header">
+				<t:outputText value="#{registryBundle.aon_geozone}" />
+			</f:facet>
+			<t:outputText value="#{to.geozone.name}"
+				rendered="#{to!=controllerAlias.to}" />
+			<h:selectOneMenu value="#{controllerAlias.to.geozone.id}"
+				styleClass="aon-form-selectOneMenu-field"
+				rendered="#{to==controllerAlias.to}"
+				valueChangeListener="#{controllerAlias.onChangeGeoZone}">
+				<f:selectItems value="#{registryCollections.geoZones}" />
+			</h:selectOneMenu>
+			<f:facet name="footer">
+				<t:div>
+					<h:selectOneMenu value="#{controllerAlias.to.geozone.id}"
+						styleClass="aon-form-selectOneMenu-field"
+						rendered="#{controllerAlias.new}"
+						valueChangeListener="#{controllerAlias.onChangeGeoZone}">
+						<f:selectItems value="#{registryCollections.geoZones}" />
+					</h:selectOneMenu>
 				</t:div>
 			</f:facet>
 		</t:column>
@@ -142,7 +179,7 @@
 			</f:facet>
 		</h:column>
 	</t:dataTable>
-
+	
 	<ui:include src="/facelet/shared/dataScroller.xhtml">
 		<ui:param name="dataTable" value="#{dataTable}" />
 		<ui:param name="model" value="#{controllerAlias.model}" />
