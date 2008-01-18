@@ -23,6 +23,26 @@ public enum ModularPageOptionType implements IResourceable {
 	ARTICLE,
 
 	/**
+	 * News
+	 */
+	ARTICLE_NEWS,
+
+	/**
+	 * Services
+	 */
+	ARTICLE_SERVICES,
+
+	/**
+	 * Events
+	 */
+	ARTICLE_EVENTS,
+
+	/**
+	 * Other
+	 */
+	ARTICLE_OTHER,
+
+	/**
 	 * Direct Access
 	 */
 	DIRECT_ACCESS;

@@ -1,6 +1,7 @@
 package com.code.aon.ui.cms.velocity;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import com.code.aon.cms.Article;
@@ -105,6 +106,41 @@ public class ArticleGenerator extends Generator {
 				ArticleHandler ah = new ArticleHandler(ad);
 				return ah;
 			}
+		} catch (ManagerBeanException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+
+	public static Object getArticleCategoryHandler(Integer ident, ArticleType type) {
+		try {
+			IManagerBean bean = BeanManager.getManagerBean(Article.class);
+			Criteria criteria = new Criteria();
+			criteria.addEqualExpression(bean.getFieldName(ICMSAlias.ARTICLE_ARTICLE_CATEGORY_ID), ident);
+			criteria.addEqualExpression(bean.getFieldName(ICMSAlias.ARTICLE_ARTICLE_TYPE), type);
+			criteria.addEqualExpression(bean.getFieldName(ICMSAlias.ARTICLE_ACTIVE), true);
+			List<ITransferObject> l = (List<ITransferObject>)bean.getList(criteria);
+			Iterator<ITransferObject> iter = l.iterator();
+			ArrayList<ArticleHandler> ahlist = new ArrayList<ArticleHandler>();
+			while (iter.hasNext()){
+				Article ac = (Article)iter.next();
+				bean = BeanManager.getManagerBean(ArticleDetail.class);
+				criteria = new Criteria();
+				criteria.addEqualExpression(bean.getFieldName(ICMSAlias.ARTICLE_DETAIL_LANGUAGE_ID), ControllerUtil.getCurrentLanguage().getId());
+				criteria.addEqualExpression(bean.getFieldName(ICMSAlias.ARTICLE_DETAIL_ARTICLE_ID), ac.getId());
+				List<ITransferObject> ld = (List<ITransferObject>)bean.getList(criteria);
+				ArticleDetail ad = (ArticleDetail)ld.get(0);
+				ArticleHandler ah = new ArticleHandler(ad);
+				ahlist.add(ah);
+			}
+			bean = BeanManager.getManagerBean(ArticleCategoryDetail.class);
+			criteria = new Criteria();
+			criteria.addEqualExpression(bean.getFieldName(ICMSAlias.ARTICLE_CATEGORY_DETAIL_LANGUAGE_ID), ControllerUtil.getCurrentLanguage().getId());
+			criteria.addEqualExpression(bean.getFieldName(ICMSAlias.ARTICLE_CATEGORY_DETAIL_ARTICLE_CATEGORY_ID), ident);
+			List<ITransferObject> lcd = (List<ITransferObject>)bean.getList(criteria);
+			ArticleCategoryDetail acd = (ArticleCategoryDetail) lcd.get(0);
+			ArticleCategoryHandler ach = new ArticleCategoryHandler(acd,ahlist);
+			return ach;
 		} catch (ManagerBeanException e) {
 			e.printStackTrace();
 		}
