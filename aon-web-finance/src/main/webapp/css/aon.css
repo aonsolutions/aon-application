@@ -146,6 +146,21 @@ body#aon-body{
 	}
 		
 /* HEADER MENU */
+.aon-header-information{
+	padding:15px 10px 0 10px;
+	}
+.aon-header-information-description{
+	font-weight:bold;
+	color:#BFBFBF;
+	font-size:0.9em;
+	}
+.aon-header-information-item{
+	color:#CBD4D9;
+	text-decoration:none;
+	text-align:right;
+	font-size:0.9em;
+	}
+
 /* Groups all recursive menu items (init, about, …)*/
 .aon-header-menu{	
 	display:inline;
@@ -1059,7 +1074,7 @@ The buttons images are set image in the commandbutton declaration. You can not c
 .aon-form-input-text-disabled{
 	font:1em verdana,arial,sans-serif;
 	margin-right:2px;
-	background-color:#D4D0C8;
+	background-color:#f2f2f2;
 	color: #666;
    	}
 
