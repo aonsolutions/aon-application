@@ -5,93 +5,99 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
 	xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee 
 						http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd">
-<!-- 
-    <context-param>
-        <param-name>javax.faces.CONFIG_FILES</param-name>
-        <param-value>
-           /WEB-INF/conf/faces/faces-config.xml
-          ,/WEB-INF/conf/faces/faces-bean-config.xml
-          ,/WEB-INF/conf/faces/faces-menu-config.xml          
-          ,/WEB-INF/conf/faces/faces-navigation-config.xml
-          ,/WEB-INF/conf/faces/faces-renderkit-config.xml
-          ,/WEB-INF/conf/faces/faces-converter-config.xml
-          ,/WEB-INF/conf/faces/finance/faces-bean-config.xml
-          ,/WEB-INF/conf/faces/finance/faces-converter-config.xml
-          ,/WEB-INF/conf/faces/finance/faces-navigation-config.xml
-          ,/WEB-INF/conf/faces/fbatch/faces-bean-config.xml
-          ,/WEB-INF/conf/faces/fbatch/faces-converter-config.xml
-          ,/WEB-INF/conf/faces/fbatch/faces-navigation-config.xml
-          ,/WEB-INF/conf/faces/auxiliary/faces-bean-config.xml
-          ,/WEB-INF/conf/faces/auxiliary/faces-navigation-config.xml
-          ,/WEB-INF/conf/faces/registry/faces-bean-config.xml
-          ,/WEB-INF/conf/faces/registry/faces-navigation-config.xml
-        </param-value>
-    </context-param>
- -->    
-<!-- 
-    <context-param>
-        <param-name>javax.faces.STATE_SAVING_METHOD</param-name>
-        <param-value>client</param-value>
-    </context-param>
- -->
-	<context-param>
-		<param-name>org.jboss.jbossfaces.WAR_BUNDLES_JSF_IMPL</param-name>
-		<param-value>true</param-value>
-	</context-param>
 
     <context-param>
+		<description>State saving method: "client" or "server" (= default) See JSF Specification 2.5.2</description>
+        <param-name>javax.faces.STATE_SAVING_METHOD</param-name>
+        <param-value>server</param-value>
+    </context-param>
+
+    <context-param>
+		<description>
+			If true, rendered HTML code will be formatted, so that it is "human readable". i.e. additional line
+			separators and whitespace will be written, that do not influence the HTML code. Default: "true"
+		</description>
         <param-name>org.apache.myfaces.PRETTY_HTML</param-name>
         <param-value>true</param-value>
     </context-param>
 
     <context-param>
+		<description>
+			If true, a javascript function will be rendered that is able to restore the former vertical scroll on every
+			request. Convenient feature if you have pages with long lists and you do not want the browser page to always
+			jump to the top if you trigger a link or button action that stays on the same page. Default: "false"
+		</description>
         <param-name>org.apache.myfaces.AUTO_SCROLL</param-name>
         <param-value>false</param-value>
     </context-param>
 
     <context-param>
+		<description>
+			This parameter tells MyFaces if javascript code should be allowed in the rendered HTML output. If javascript
+			is allowed, command_link anchors will have javascript code that submits the corresponding form. If
+			javascript is not allowed, the state saving info and nested parameters will be added as url parameters.
+			Default: "true"
+		</description>
         <param-name>org.apache.myfaces.ALLOW_JAVASCRIPT</param-name>
         <param-value>true</param-value>
     </context-param>
     
     <context-param>
+		<description>
+			This parameter tells MyFaces if javascript code should be allowed in the rendered HTML output. If javascript
+			is allowed, command_link anchors will have javascript code that submits the corresponding form. If
+			javascript is not allowed, the state saving info and nested parameters will be added as url parameters.
+			Default: "false"
+
+			Setting this param to true should be combined with STATE_SAVING_METHOD "server" for best results.
+
+			This is an EXPERIMENTAL feature. You also have to enable the detector_filter/filter mapping below to get
+			JavaScript detection working.
+		</description>
         <param-name>org.apache.myfaces.DETECT_JAVASCRIPT</param-name>
         <param-value>false</param-value>
     </context-param>
-
-	<!-- Use Documents Saved as *.xhtml -->
-	<context-param>
-		<param-name>javax.faces.DEFAULT_SUFFIX</param-name>
-		<param-value>.xhtml</param-value>
-	</context-param>
-
-	<!-- Setting this to true will cause the FaceletViewHandler to print out
-		debug information in an easy to use screen when an error occurs during
-		the rendering process.
-	<context-param>
-		<param-name>facelets.DEVELOPMENT</param-name>
-		<param-value>true</param-value>
-	</context-param>
-	 -->
-
-	<!-- A semicolon (;) delimitted list of paths to Facelet tag libraries,
-		relative to your application's root. These libraries will be loaded when
-		the first request hits the FaceletViewHandler for page compilation. -->
-	<context-param>
-		<param-name>facelets.LIBRARIES</param-name>
-		<param-value>/WEB-INF/tomahawk.taglib.xml</param-value>
-	</context-param>
 
 	<context-param>
 		<param-name>facelets.SKIP_COMMENTS</param-name>
 		<param-value>true</param-value>
 	</context-param>
-
-    <context-param>
+	
+	<context-param>
         <param-name>com.code.aon.report.config.file</param-name>
         <param-value>/WEB-INF/conf/report-config.xml</param-value>
     </context-param>
 
+	<context-param>
+		<description>Use Documents Saved as *.xhtml</description>
+		<param-name>javax.faces.DEFAULT_SUFFIX</param-name>
+		<param-value>.xhtml</param-value>
+	</context-param>
+
+	<context-param>
+		<description>
+			Setting this to true will cause the FaceletViewHandler to print out debug information in an easy to use
+			screen when an error occurs during the rendering process.
+		</description>
+		<param-name>facelets.DEVELOPMENT</param-name>
+		<param-value>true</param-value>
+	</context-param>
+
+	<context-param>
+		<description>
+			A semicolon (;) delimitted list of paths to Facelet tag libraries, relative to your application's root.
+			These libraries will be loaded when the first request hits the FaceletViewHandler for page compilation.
+		</description>
+		<param-name>facelets.LIBRARIES</param-name>
+		<param-value>/WEB-INF/tomahawk.taglib.xml;/WEB-INF/sandbox.taglib.xml</param-value>
+	</context-param>
+	
+	<!-- CONTEXT-PARAM para JBOSS4.2.1GA --> 	
+	<context-param> 
+		<param-name>org.jboss.jbossfaces.WAR_BUNDLES_JSF_IMPL</param-name> 
+		<param-value>true</param-value> 
+	</context-param>
+<!-- 
 	<error-page>
 		<exception-type>java.lang.Throwable</exception-type>
 		<location>/facelet/error/JavaError.jsp</location>
@@ -106,7 +112,7 @@
 		<error-code>403</error-code>
 		<location>/facelet/error/HttpError.jsp?errorCode=403</location>
 	</error-page>
-
+ -->
    <!-- Extensions Filter -->
 	<filter>
 		<filter-name>MyFacesExtensionsFilter</filter-name>
@@ -115,6 +121,12 @@
 	        <param-name>maxFileSize</param-name>
 	        <param-value>20m</param-value>
 	    </init-param>
+	</filter>
+
+   <!-- Sessions Filter -->
+	<filter>
+	   <filter-name>SessionFilter</filter-name>
+	   <filter-class>com.code.aon.bridge.session.SessionFilter</filter-class>
 	</filter>
 
     <!-- Filter Mappings -->
@@ -129,7 +141,38 @@
 	<!-- extension mapping for serving page-independent resources (javascript, stylesheets, images, etc.)  -->
 	<filter-mapping>
 	    <filter-name>MyFacesExtensionsFilter</filter-name>
-	    <url-pattern>/faces/*</url-pattern>
+		<url-pattern>/faces/myFacesExtensionResource/*</url-pattern>
+	</filter-mapping>
+	<!-- extension mapping for adding <script/>, <link/>, and other resource tags to JSF-pages  -->
+	<filter-mapping>
+		<filter-name>MyFacesExtensionsFilter</filter-name>
+		<url-pattern>*.jsf</url-pattern>
+	</filter-mapping>
+	<filter-mapping>
+		<filter-name>MyFacesExtensionsFilter</filter-name>
+		<url-pattern>*.jsp</url-pattern>
+	</filter-mapping>
+
+	<!-- BackDoorAuthentication Filter -->
+	<filter>
+		<filter-name>BackDoorAuthenticationFilter</filter-name>
+		<filter-class>com.code.aon.bridge.session.BackDoorAuthenticationFilter</filter-class>
+	</filter>
+	
+	<!-- Enables and Registers session for concurrent sessions -->
+	<filter-mapping>
+		<filter-name>BackDoorAuthenticationFilter</filter-name>
+		<url-pattern>/auth/*</url-pattern>
+	</filter-mapping>
+
+	<!-- Enables and Registers session for concurrent sessions -->
+	<filter-mapping>
+	   <filter-name>SessionFilter</filter-name>
+		<url-pattern>/facelet/homepage/firstContent.faces</url-pattern>
+	</filter-mapping>
+	<filter-mapping>
+	   <filter-name>SessionFilter</filter-name>
+		<url-pattern>/login/content.jaas</url-pattern>
 	</filter-mapping>
 
   	<!-- Listener, that does all the startup work (configuration, init). -->
@@ -138,22 +181,11 @@
 			org.apache.myfaces.webapp.StartupServletContextListener
 		</listener-class>
 	</listener>
-	
-	<!-- Bean Loader Listener -->
-    <listener>
-       <listener-class>
-           com.code.aon.ui.common.listener.BeanRegisterContextListener
-       </listener-class>
-    </listener>
-<!-- 
+
+  	<!-- Listener, that enables Concurrent Sessions per User. -->
 	<listener>
-		<listener-class>com.code.aon.ui.gtm.servlet.InitHibernate</listener-class>
+		<listener-class>com.code.aon.bridge.session.ConcurrentSessionListener</listener-class>
 	</listener>
- -->        
-    <context-param>
-       <param-name>config-file</param-name>
-       <param-value>/WEB-INF/conf/bean_config.xml</param-value>
-    </context-param> 
 
     <!-- Faces Servlet -->
     <servlet>
@@ -162,19 +194,24 @@
         <load-on-startup>1</load-on-startup>
     </servlet>
 
-    <!-- Lookup Servlet -->
-	<servlet>
-		<servlet-name>LookupServlet</servlet-name>
-		<servlet-class>com.code.aon.ui.common.lookup.LookupServlet</servlet-class>
+    <!-- AutoDeploy Servlet 
+    <servlet>
+		<servlet-name>autodeploy</servlet-name>
+		<servlet-class>com.code.aon.bridge.servlet.DeployServlet</servlet-class>
+		<init-param>
+			<param-name>name</param-name>
+			<param-value>aon-academy.war</param-value>
+		</init-param>
+		<load-on-startup>2</load-on-startup>
 	</servlet>
-		
-	
-	<!-- Lookup Bean Servlet -->
+ -->
+ 
+    <!-- Lookup Bean Servlet -->
 	<servlet>
 		<servlet-name>LookupBeanServlet</servlet-name>
 		<servlet-class>com.code.aon.ui.form.lookup.LookupBeanServlet</servlet-class>
 	</servlet>
-
+	
 	<!-- Attachment Servlet -->
 	<servlet>
 		<servlet-name>CompanyLogo</servlet-name>
@@ -184,6 +221,18 @@
 			<param-value>com.code.aon.registry.RegistryAttachment</param-value>
 		</init-param>
 	</servlet>
+
+	<!-- Bean Loader Listener -->
+    <listener>
+       <listener-class>
+           com.code.aon.ui.common.listener.BeanRegisterContextListener
+       </listener-class>
+    </listener>
+    
+    <context-param>
+       <param-name>config-file</param-name>
+       <param-value>/WEB-INF/conf/bean_config.xml</param-value>
+    </context-param> 
 
   	<!-- extension mapping -->
     <servlet-mapping>
@@ -204,11 +253,6 @@
     </servlet-mapping>
 
 	<servlet-mapping>
-		<servlet-name>LookupServlet</servlet-name>
-		<url-pattern>*.lookup</url-pattern>
-	</servlet-mapping>
-	
-	<servlet-mapping>
 		<servlet-name>LookupBeanServlet</servlet-name>
 		<url-pattern>*.lookupBean</url-pattern>
 	</servlet-mapping>
@@ -217,41 +261,37 @@
 		<servlet-name>CompanyLogo</servlet-name>
 		<url-pattern>*.logo</url-pattern>
 	</servlet-mapping>
-	
-	<!-- 
-	<servlet>
-		<servlet-name>hyperviewIcon</servlet-name>
-		<servlet-class>com.code.aon.ui.hyperview.servlet.HyperViewIconServlet</servlet-class>
-		<init-param>
-			<param-name>image-path</param-name>
-			<param-value>/images/hyperview/</param-value>
-		</init-param>
-	</servlet>
-	<servlet-mapping>
-		<servlet-name>hyperviewIcon</servlet-name>
-		<url-pattern>*.hyperviewIcon</url-pattern>
-	</servlet-mapping>
- -->
+
     <welcome-file-list>
         <welcome-file>index.jsp</welcome-file>
     </welcome-file-list>
-
-	<!-- SECURITY
+    
+    <!-- Security Constraint -->
 	<security-constraint>
 		<web-resource-collection>
 			<web-resource-name>facelet</web-resource-name>
 			<url-pattern>/facelet/*</url-pattern>
 		</web-resource-collection>
+		<!-- 
+		<web-resource-collection>
+			<web-resource-name>account</web-resource-name>
+			<url-pattern>/account/*</url-pattern>
+		</web-resource-collection>
+		 -->
+		<web-resource-collection>
+			<web-resource-name>finance</web-resource-name>
+			<url-pattern>/finance/*</url-pattern>
+		</web-resource-collection>
 		<web-resource-collection>
 			<web-resource-name>jsp</web-resource-name>
-			<url-pattern>*.jsp</url-pattern>
+			<url-pattern>/index.jsp</url-pattern>
 		</web-resource-collection>
 		<web-resource-collection>
 			<web-resource-name>actions</web-resource-name>
 			<url-pattern>*.faces</url-pattern>
 		</web-resource-collection>
 		<auth-constraint>
-			<role-name>Administration</role-name>
+			<role-name>Manager</role-name>
 		</auth-constraint>
 	</security-constraint>
 
@@ -259,12 +299,17 @@
 		<auth-method>FORM</auth-method>
 		<form-login-config>
 			<form-login-page>/login/login.jaas</form-login-page>
-			<form-error-page>/login/login.jaas?error='true'</form-error-page>
+			<form-error-page>/login/LoginError.jsp?aon_login_error_code=666</form-error-page>
 		</form-login-config>
 	</login-config>
 
 	<security-role>
-		<role-name>Administration</role-name>
+		<role-name>Manager</role-name>
 	</security-role>
-  -->
+
+	<resource-env-ref>
+	  <resource-env-ref-name>jdbc/AonFinance</resource-env-ref-name>
+	  <resource-env-ref-type>javax.sql.DataSource</resource-env-ref-type>
+	</resource-env-ref>
+
 </web-app>
