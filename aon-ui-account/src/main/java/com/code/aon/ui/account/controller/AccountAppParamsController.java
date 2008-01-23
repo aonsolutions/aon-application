@@ -48,7 +48,7 @@ public class AccountAppParamsController{
 		loadParameters(null);
 	}
 	
-	@SuppressWarnings("unused")
+	@SuppressWarnings({"unchecked", "unused"})
 	public void loadParameters(MenuEvent event) throws ManagerBeanException{
 		parameters = new TreeMap<String, ApplicationParameter>();
 		IManagerBean managerBean = BeanManager.getManagerBean(ApplicationParameter.class);

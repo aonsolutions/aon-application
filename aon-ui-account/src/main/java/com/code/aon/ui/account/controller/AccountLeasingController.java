@@ -24,6 +24,7 @@ import com.code.aon.finance.Bank;
 import com.code.aon.finance.RegistryBank;
 import com.code.aon.finance.dao.IFinanceAlias;
 import com.code.aon.ql.Criteria;
+import com.code.aon.ui.account.utils.AccountPeriodValidator;
 import com.code.aon.ui.menu.jsf.MenuEvent;
 import com.code.aon.ui.util.AonUtil;
 
@@ -89,6 +90,7 @@ public class AccountLeasingController {
 	
 	@SuppressWarnings("unused")
 	public void accept(ActionEvent event) throws ManagerBeanException {
+		AccountPeriodValidator.validateAccountPeriod(getLeasing().getLeasingDate());
 		AccountEntry entry = new AccountEntry();
 		if(!this.isNew){
 			deleteAccountEntryDetails(getAccountEntry());
@@ -190,6 +192,7 @@ public class AccountLeasingController {
 		}
 	}
 	
+	@SuppressWarnings("unchecked")
 	private void deleteAccountEntryDetails(AccountEntry accountEntry) {
 		try {
 			IManagerBean accountEntryDetailBean = BeanManager.getManagerBean(AccountEntryDetail.class);
@@ -213,6 +216,7 @@ public class AccountLeasingController {
 		}
 	}
 	
+	@SuppressWarnings("unchecked")
 	private void deleteLeasingAccount(Leasing leasing) throws ManagerBeanException {
 		IManagerBean leasingAccountBean = BeanManager.getManagerBean(LeasingAccount.class);
 		Criteria criteria = new Criteria();
@@ -229,6 +233,7 @@ public class AccountLeasingController {
 		leasingBean.remove(leasing);
 	}
 	
+	@SuppressWarnings("unchecked")
 	public void onRBankChange(ValueChangeEvent event) throws ManagerBeanException {
 		if(event.getNewValue() != null){
 			IManagerBean rBankBean = BeanManager.getManagerBean(RegistryBank.class);

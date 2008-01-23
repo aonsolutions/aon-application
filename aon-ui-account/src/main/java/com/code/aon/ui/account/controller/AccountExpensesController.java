@@ -142,6 +142,7 @@ public class AccountExpensesController {
 		}
 	}
 
+	@SuppressWarnings("unchecked")
 	private void deleteAccountEntryDetails(AccountEntry accountEntry) {
 		try {
 			IManagerBean accountEntryDetailBean = BeanManager.getManagerBean(AccountEntryDetail.class);
@@ -179,6 +180,7 @@ public class AccountExpensesController {
 		return entry;
 	}
 	
+	@SuppressWarnings("unchecked")
 	public void onRBankChange(ValueChangeEvent event) throws ManagerBeanException {
 		if(event.getNewValue() != null){
 			IManagerBean rBankBean = BeanManager.getManagerBean(RegistryBank.class);

@@ -168,6 +168,7 @@ public class AccountSalaryController {
 		
 	}
 	
+	@SuppressWarnings("unchecked")
 	private void deleteAccountEntryDetails(AccountEntry accountEntry) {
 		try {
 			IManagerBean accountEntryDetailBean = BeanManager.getManagerBean(AccountEntryDetail.class);
@@ -191,6 +192,7 @@ public class AccountSalaryController {
 		}
 	}
 	
+	@SuppressWarnings("unchecked")
 	public void onRBankChange(ValueChangeEvent event) throws ManagerBeanException {
 		if(event.getNewValue() != null){
 			IManagerBean rBankBean = BeanManager.getManagerBean(RegistryBank.class);

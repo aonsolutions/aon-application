@@ -180,6 +180,7 @@ private static final Logger LOGGER = Logger.getLogger(AccountExpensesController.
 		
 	}
 	
+	@SuppressWarnings("unchecked")
 	private double obtainSalaryDiference(Account account, AccountEntry entry, double amount) throws ManagerBeanException {
 		Calendar calendar = new GregorianCalendar();
 		calendar.setTime(entry.getEntryDate());
@@ -199,6 +200,7 @@ private static final Logger LOGGER = Logger.getLogger(AccountExpensesController.
 		return 0;
 	}
 
+	@SuppressWarnings("unchecked")
 	private void deleteAccountEntryDetails(AccountEntry accountEntry) {
 		try {
 			IManagerBean accountEntryDetailBean = BeanManager.getManagerBean(AccountEntryDetail.class);
@@ -222,6 +224,7 @@ private static final Logger LOGGER = Logger.getLogger(AccountExpensesController.
 		}
 	}
 	
+	@SuppressWarnings("unchecked")
 	public void onRBankChange(ValueChangeEvent event) throws ManagerBeanException {
 		if(event.getNewValue() != null){
 			IManagerBean rBankBean = BeanManager.getManagerBean(RegistryBank.class);
