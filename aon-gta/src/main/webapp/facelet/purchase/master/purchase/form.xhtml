@@ -261,32 +261,41 @@
 											onclick="selectWindow(this, 'placeList', '#{itemAdd.encodedPagePath}','Item_id-Edit[#{rowIndex}],Item_product_code-Edit[#{rowIndex}],Item_full_name-Edit[#{rowIndex}],Item_purchase_price-Edit[#{rowIndex}]');return false;"
 											value="" immediate="true" styleClass="aon-form-new-button" />
 										<t:inputText id="Item_full_name-Edit"
-											size="40" forceId="#{true}" required="#{true}"
+											size="40" forceId="#{true}"
 											styleClass="aon-form-input-text"
 											value="#{incomeDetail.to.description}" />
 									</h:panelGroup>
 
 									<f:facet name="footer">
 										<t:div>
+											<t:commandButton id="popupButton-New"
+												styleClass="aon-navigation-link"
+												rendered="#{incomeDetail.new}"
+												actionListener="#{purchaseSales.openPopup}" immediate="true"
+												value="#{salesBundle.aon_sales}"/>
+										
 											<h:panelGroup rendered="#{incomeDetail.new}">
 												<t:inputHidden id="Item_id-New" forceId="#{true}"
 													value="#{incomeDetail.to.item.id}"
 													valueChangeListener="#{incomeDetail.itemData}" />
 												<t:inputText size="10" id="Item_product_code-New"
 													required="true" forceId="#{true}"
+													disabled="#{purchaseSales.deliveryRelated}"
 													styleClass="aon-form-input-text"
 													value="#{incomeDetail.to.item.product.code}"
 													onchange="return findItemLookup(event,'#{facesContext.externalContext.request.contextPath}','com.code.aon.product.Item','Item_id-New,Item_product_code-New,Item_full_name-New,Item_purchase_price-New');" />
 												<h:commandButton id="findInvoice_item_new"
+													rendered="#{!purchaseSales.deliveryRelated}"
 													onclick="selectWindow(this, 'placeList', '#{itemSearch.encodedPagePath}','Item_id-New,Item_product_code-New,Item_full_name-New,Item_purchase_price-New');return false;"
 													value="" immediate="true"
 													styleClass="aon_button aon-form-lookup-button" />
 												<h:commandButton id="addInvoice_item_new"
+													rendered="#{!purchaseSales.deliveryRelated}"
 													onclick="selectWindow(this, 'placeList', '#{itemAdd.encodedPagePath}','Item_id-New,Item_product_code-New,Item_full_name-New,Item_purchase_price-New');return false;"
 													value="" immediate="true"
 													styleClass="aon_button aon-form-new-button" />
 												<t:inputText id="Item_full_name-New"
-													size="40" forceId="#{true}" required="#{true}"
+													size="40" forceId="#{true}"
 													styleClass="aon-form-input-text"
 													value="#{incomeDetail.to.description}" />
 											</h:panelGroup>
@@ -446,6 +455,9 @@
 
 						</t:div>
 					</t:div>
+					<t:div rendered="#{purchaseSales.popupVisible}">
+						<ui:include src="/facelet/purchase/master/purchase/popup/popup.xhtml"/>
+					</t:div>
 				</t:div>
 			</t:div>	
 		</h:form>
@@ -473,12 +485,6 @@
 				temp = redondea( price.value * quantity.value , 2 );
 				amount.innerText = "" + redondea( temp - ( temp * discount.value / 100 ), 2 );
 			}
-			function isUnsignedInteger(number) {
-				var Template = /^\d+$/ 
-				res = (Template.test(number)) ? true : false
-				return res;
-			}			
-			/*window.onload=focusTableRow;*/
 		</script>
 		<h:form id="placeList" target="list" />
 	</ui:define>
