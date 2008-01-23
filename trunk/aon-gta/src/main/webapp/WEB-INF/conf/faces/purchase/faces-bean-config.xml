@@ -493,12 +493,18 @@
 			<property-name>listenerClasses</property-name>
 			<list-entries>
 				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
-				<value>#{incomeSalesPurchaseListener}</value>
+				<value>#{incomeControllerPurchaseSalesListener}</value>
 				<value>#{incomeControllerListener}</value>
 				<value>#{incomeDetailListener}</value>
 				<value>#{incomeLinesListener}</value>
 			</list-entries>
 		</managed-property>
+	</managed-bean>
+
+	<managed-bean>
+		<managed-bean-name>incomeControllerPurchaseSalesListener</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.salesPurchase.event.IncomeControllerPurchaseSalesListener</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
 	</managed-bean>
 
 	<managed-bean>
@@ -557,11 +563,18 @@
 				<value-class>
 					com.code.aon.ui.form.event.IControllerListener
 				</value-class>
-				<value>#{incomeDetailSalesPurchaseListener}</value>				
+				<value>#{incomeDetailControllerPurchaseSalesListener}</value>
 				<value>#{incomeDetailControllerListener}</value>
 			</list-entries>
 		</managed-property>
 	</managed-bean>
+	
+	<managed-bean>
+		<managed-bean-name>incomeDetailControllerPurchaseSalesListener</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.salesPurchase.event.IncomeDetailControllerPurchaseSalesListener</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+	</managed-bean>
+	
 	
 	<!-- **** PURCHASE **** -->
 	
@@ -633,12 +646,6 @@
 		<managed-bean-scope>none</managed-bean-scope>
 	</managed-bean>
 	<managed-bean>
-		<managed-bean-name>incomeDetailSalesPurchaseListener</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.salesPurchase.event.IncomeDetailSalesPurchaseListener</managed-bean-class>
-		<managed-bean-scope>none</managed-bean-scope>
-	</managed-bean>
-
-	<managed-bean>
 		<managed-bean-name>incomeControllerListener</managed-bean-name>
 		<managed-bean-class>com.code.aon.ui.warehouse.event.IncomeControllerListener</managed-bean-class>
 		<managed-bean-scope>none</managed-bean-scope>
@@ -648,10 +655,5 @@
 		<managed-bean-class>com.code.aon.ui.warehouse.event.IncomeDetailListener</managed-bean-class>
 		<managed-bean-scope>none</managed-bean-scope>
 	</managed-bean>	
-	<managed-bean>
-		<managed-bean-name>incomeSalesPurchaseListener</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.salesPurchase.event.IncomeSalesPurchaseListener</managed-bean-class>
-		<managed-bean-scope>none</managed-bean-scope>
-	</managed-bean>
 	
 </faces-config>

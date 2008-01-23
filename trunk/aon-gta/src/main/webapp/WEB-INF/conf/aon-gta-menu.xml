@@ -13,7 +13,6 @@
 		<option id="delivery" key="aon_sales_delivery" descriptionKey="aon_sales_delivery_desc" 
 			ref="delivery">
 			<actionListener action="#{incomeDetail.onCancel}"/>
-			<actionListener action="#{salesPurchase.onReset}"/>
 			<actionListener action="#{deliveryDetail.onCancel}"/>
 			<actionListener action="#{delivery.onReset}"/>
 		</option>
