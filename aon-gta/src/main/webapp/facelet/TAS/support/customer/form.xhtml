@@ -52,7 +52,7 @@
 							styleClass="aon-content-toolbar-item aon-content-toolbar-item-save"
 							onmouseover="this.className='aon-content-toolbar-item aon-content-toolbar-item-hover aon-content-toolbar-item-save'"
 							onmouseout="this.className='aon-content-toolbar-item aon-content-toolbar-item-save'"
-							disabled="#{supportOrderTargetAddress.to!=null || supportOrderTargetMedia.to!=null || SupportOrder.finished}"
+							disabled="#{supportOrderTargetAddress.to!=null || supportOrderTargetMedia.to!=null || !SupportOrder.pending}"
 							accesskey="#{bundle.aon_key_save}" />
 					</t:div>
 				</t:div>
@@ -70,7 +70,7 @@
 							value="#{registryBundle.aon_nif}" />
 						<t:inputText id="Target_document"
 							styleClass="aon-form-input-text" forceId="#{true}"
-							disabled="#{SupportOrder.finished}"
+							disabled="#{!SupportOrder.pending}"
 							value="#{supportOrderTarget.to.registry.document}" size="16" onblur="toUpperCase(this);">
 							<f:validateLength minimum="1" maximum="16" />
 						</t:inputText>
@@ -79,7 +79,7 @@
 							styleClass="aon-form-input-text-label"
 							value="#{registryBundle.aon_name}" />
 						<t:inputText id="Target_name"
-							disabled="#{SupportOrder.finished}"
+							disabled="#{!SupportOrder.pending}"
 							styleClass="aon-form-input-text" forceId="#{true}"
 							value="#{supportOrderTarget.to.registry.name}" size="64">
 							<f:validateLength minimum="1" maximum="64" />
@@ -89,7 +89,7 @@
 							styleClass="aon-form-input-text-label"
 							value="#{registryBundle.aon_surname}" />
 						<t:inputText id="Target_surname"
-							disabled="#{SupportOrder.finished}"
+							disabled="#{!SupportOrder.pending}"
 							styleClass="aon-form-input-text" forceId="#{true}"
 							value="#{supportOrderTarget.to.registry.surname}" size="64">
 							<f:validateLength minimum="1" maximum="64" />
@@ -99,7 +99,7 @@
 							styleClass="aon-form-input-text-label"
 							value="#{registryBundle.aon_alias}" />
 						<t:inputText id="Target_alias"
-							disabled="#{SupportOrder.finished}"
+							disabled="#{!SupportOrder.pending}"
 							styleClass="aon-form-input-text" forceId="#{true}"
 							value="#{supportOrderTarget.to.registry.alias}" size="32" onblur="toUpperCase(this);">
 							<f:validateLength minimum="1" maximum="32" />

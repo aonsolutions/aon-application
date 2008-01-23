@@ -49,7 +49,7 @@
 						<t:commandButton id="save" value="#{bundle.aon_save}"
 							forceId="#{true}" actionListener="#{supportOrderInsurance.accept}"
 							onclick="return (confirm('#{bundle.aon_save_confirm}'))"
-							disabled="#{SupportOrder.finished}"
+							disabled="#{!SupportOrder.pending}"
 							styleClass="aon-content-toolbar-item aon-content-toolbar-item-save"
 							onmouseover="this.className='aon-content-toolbar-item aon-content-toolbar-item-hover aon-content-toolbar-item-save'"
 							onmouseout="this.className='aon-content-toolbar-item aon-content-toolbar-item-save'"
@@ -71,12 +71,12 @@
 						<h:panelGroup>
 							<t:inputText id="Customer_Lookup_id" size="5" forceId="#{true}"
 								styleClass="aon-form-input-text"
-								disabled="#{SupportOrder.finished}"
+								disabled="#{!SupportOrder.pending}"
 								onchange="return findBeanLookupAndSubmitExt(this.form, event,'#{facesContext.externalContext.requestContextPath}','customerLookup','Customer_Lookup_id','Customer_id|Customer_Lookup_id,Customer_full_name|Customer_full_name');"
 								value="#{supportOrderInsurance.to.insurance.id}"
 								valueChangeListener="#{supportOrderInsurance.customerData}" />
 							<h:commandButton id="find_Customer_Lookup_id"
-								disabled="#{SupportOrder.finished}"
+								disabled="#{!SupportOrder.pending}"
 								onclick="lookupSearchWindow(this, 'placeList', '#{customerLookup.encodedSearchPagePath}','Customer_id|Customer_Lookup_id,Customer_full_name|Customer_full_name');return false;"	
 								value="" immediate="true" styleClass="aon-form-lookup-button"/>
 							<t:inputText id="Customer_full_name" forceId="#{true}"
@@ -89,7 +89,7 @@
 							value="#{tasBundle.supportOrder_insurance_appraiser}" />
 						<t:selectOneMenu id="SupportOrderInsurance_appraiser_id"
 							value="#{supportOrderInsurance.to.appraiser.id}"
-							disabled="#{SupportOrder.finished}"
+							disabled="#{!SupportOrder.pending}"
 							styleClass="aon-form-selectOneMenu-field">
 							<f:selectItem itemValue="" itemDisabled="true" itemLabel="-" />
 							<f:selectItems value="#{TASCollections.appraisers}" />
@@ -99,7 +99,7 @@
 							styleClass="aon-form-input-text-label"
 							value="#{tasBundle.supportOrder_insurance_claim_number}" />
 						<t:inputText id="SupportOrderInsurance_claimNumber"
-							disabled="#{SupportOrder.finished}"
+							disabled="#{!SupportOrder.pending}"
 							styleClass="aon-form-input-text" forceId="#{true}"
 							value="#{supportOrderInsurance.to.claimNumber}" size="32" maxlength="32"/>
 
@@ -107,7 +107,7 @@
 							styleClass="aon-form-input-text-label"
 							value="#{tasBundle.supportOrder_insurance_policy_type}" />
 						<t:inputText id="SupportOrderInsurance_policiType"
-							disabled="#{SupportOrder.finished}"
+							disabled="#{!SupportOrder.pending}"
 							styleClass="aon-form-input-text" forceId="#{true}"
 							value="#{supportOrderInsurance.to.policiType}" size="32" maxlength="32"/>
 
@@ -115,7 +115,7 @@
 							styleClass="aon-form-input-text-label"
 							value="#{tasBundle.supportOrder_insurance_franchise}" />
 						<t:inputText id="SupportOrderInsurance_franchise"
-							disabled="#{SupportOrder.finished}"
+							disabled="#{!SupportOrder.pending}"
 							styleClass="aon-form-input-text" forceId="#{true}"
 							value="#{supportOrderInsurance.to.franchise}" size="32" maxlength="32"/>
 
