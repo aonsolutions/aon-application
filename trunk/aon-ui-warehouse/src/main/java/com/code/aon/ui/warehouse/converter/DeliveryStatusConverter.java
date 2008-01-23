@@ -18,7 +18,8 @@ public class DeliveryStatusConverter extends EnumLocaleConverter {
     /* (non-Javadoc)
      * @see com.code.aon.ui.converter.EnumLocaleConverter#getEnumClass(javax.faces.context.FacesContext, javax.faces.component.UIComponent)
      */
-    protected Class getEnumClass( FacesContext ctx, UIComponent c ) {
+	@SuppressWarnings("unchecked")
+	protected Class getEnumClass( FacesContext ctx, UIComponent c ) {
     	return DeliveryStatus.class;
     }
 	

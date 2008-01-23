@@ -179,21 +179,20 @@ public class InventoryController extends BasicController {
 	 * 
 	 * @throws Exception
 	 */
+	@SuppressWarnings("unchecked")
 	private void closeInventary() throws Exception{
 		HibernateUtil.setCloseSession(false);
 		HibernateUtil.setBeginTransaction(false);
 		try{
 			HibernateUtil.beginTransaction();
 			
-//			IManagerBean itemBean = BeanManager.getManagerBean(Item.class);
 			IManagerBean warehouseBean = BeanManager.getManagerBean(Warehouse.class);
 			IManagerBean stockBean = BeanManager.getManagerBean(Stock.class);
 			IManagerBean inventoryBean = BeanManager.getManagerBean(Inventory.class);
 			IManagerBean inventoryDetailBean = BeanManager.getManagerBean(InventoryDetail.class);
 
 			if (initStock){
-				List initStockList = stockBean.getList(null);
-				Iterator initStockListIter = initStockList.iterator();
+				Iterator initStockListIter = stockBean.getList(null).iterator();
 				while (initStockListIter.hasNext()){
 					Stock initStock = (Stock) initStockListIter.next();
 					initStock.setQuantity(new Double(0));
@@ -274,6 +273,7 @@ public class InventoryController extends BasicController {
 	 * @return list of inventories with today as date
 	 * @throws ManagerBeanException
 	 */
+	@SuppressWarnings("unchecked")
 	private List getTodayList() throws ManagerBeanException{
 		IManagerBean inventoryBean = BeanManager.getManagerBean(Inventory.class);
 		Criteria criteria = new Criteria();
@@ -288,6 +288,7 @@ public class InventoryController extends BasicController {
 	 * @return true if exists a inventory with today as date
 	 * @throws ManagerBeanException
 	 */
+	@SuppressWarnings("unchecked")
 	public boolean isInventaryDone() throws ManagerBeanException{
 		List list = getTodayList();
 		if (list.size()>0){
@@ -303,7 +304,7 @@ public class InventoryController extends BasicController {
 	 * @param event the menu event
 	 * @throws ManagerBeanException
 	 */
-	@SuppressWarnings("unused")
+	@SuppressWarnings({"unused","unchecked"})
 	public void onSearchToday(MenuEvent event) throws ManagerBeanException{
 		IManagerBean inventoryBean = BeanManager.getManagerBean(Inventory.class);
 		List list = getTodayList();

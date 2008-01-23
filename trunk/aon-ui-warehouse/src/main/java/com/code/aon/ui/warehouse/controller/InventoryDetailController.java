@@ -158,6 +158,7 @@ public class InventoryDetailController extends BasicController implements IColle
 	 * 
 	 * @return the list of inventory detail
 	 */
+	@SuppressWarnings("unchecked")
 	private List getDetailList(){
 		InventoryController inventoryController = (InventoryController)AonUtil.getController(INVENTORY_CONTROLLER_NAME);
 		Integer inventoryId = ((Inventory)inventoryController.getTo()).getId();
@@ -196,6 +197,7 @@ public class InventoryDetailController extends BasicController implements IColle
 	/**
 	 * Load category list.
 	 */
+	@SuppressWarnings("unchecked")
 	private void loadCategoryList(){
 		try {
 			IManagerBean pCategoryBean = BeanManager.getManagerBean(ProductCategory.class);
@@ -221,6 +223,7 @@ public class InventoryDetailController extends BasicController implements IColle
 	 * @return the collection
 	 */
 	@Override
+	@SuppressWarnings("unchecked")
 	public Collection getCollection() {
 		return getDetailList();
 	}
