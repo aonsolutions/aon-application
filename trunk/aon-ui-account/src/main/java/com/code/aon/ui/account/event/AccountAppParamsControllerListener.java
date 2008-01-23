@@ -34,6 +34,7 @@ public class AccountAppParamsControllerListener extends ControllerAdapter {
 	}
 	
 	@Override
+	@SuppressWarnings("unchecked")
 	public void beforeBeanRemoved(ControllerEvent event) throws ControllerListenerException {
 		Account account = (Account)event.getController().getTo();
 		Iterator iter;
@@ -51,6 +52,7 @@ public class AccountAppParamsControllerListener extends ControllerAdapter {
 		}
 	}
 	
+	@SuppressWarnings("unchecked")
 	private void updateAppParams(Account account) throws ManagerBeanException {
 		IManagerBean appParamBean = BeanManager.getManagerBean(ApplicationParameter.class);
 		Iterator iter = appParamBean.getList(null).iterator();

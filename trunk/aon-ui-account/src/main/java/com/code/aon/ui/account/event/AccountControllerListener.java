@@ -39,6 +39,7 @@ public class AccountControllerListener extends ControllerAdapter {
 	}
 	
 	@Override
+	@SuppressWarnings("unchecked")
 	public void beforeBeanAdded(ControllerEvent event) throws ControllerListenerException {
 		try {
 			Account toAccount = (Account)event.getController().getTo();
@@ -72,6 +73,7 @@ public class AccountControllerListener extends ControllerAdapter {
 		}
 	}
 
+	@SuppressWarnings("unchecked")
 	private void checkAccountEntryDetails(List accountList) throws ManagerBeanException, ExpressionException, ControllerListenerException {
 		IManagerBean accountEntryDetailBean = BeanManager.getManagerBean(AccountEntryDetail.class);
 		Iterator iter = accountList.iterator();
