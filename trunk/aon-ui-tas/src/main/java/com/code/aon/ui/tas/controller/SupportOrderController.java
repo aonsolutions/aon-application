@@ -249,6 +249,16 @@ public class SupportOrderController   extends BasicController {
 	}
 	
 	/**
+	 * Returns if support order is pending
+	 * 
+	 * @return is pending
+	 */
+	public boolean isPending(){
+		SupportOrder so = (SupportOrder)this.getTo();
+		return SupportOrderStatus.PENDING == so.getStatus();
+	}
+	
+	/**
 	 * adds equal condition to criteria if needed
 	 * 
 	 * @param event
