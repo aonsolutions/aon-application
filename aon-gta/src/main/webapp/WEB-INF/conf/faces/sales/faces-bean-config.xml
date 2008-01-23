@@ -477,8 +477,7 @@
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
 	
-	<!-- **** PURCHASE **** -->
-	
+	<!-- **** DELIVERY **** -->
 	<managed-bean>
 		<managed-bean-name>delivery</managed-bean-name>
 		<managed-bean-class>
@@ -502,13 +501,19 @@
 				<value>#{deliveryHeaderControllerListener}</value>
 				<value>#{deliveryVetoListener}</value>
 				<value>#{deliveryDetailListener}</value>
-				<value>#{deliverySalesPurchaseListener}</value>
 				<value>#{deliveryTargetListener}</value>
 				<value>#{deliveryTasListener}</value>
+				<value>#{deliveryControllerSalesPurchaseListener}</value>
 				<value>#{deliveryControllerLabourListener}</value>
 				<value>#{deliveryControllerListener}</value>
 			</list-entries>
 		</managed-property>
+	</managed-bean>
+
+	<managed-bean>
+		<managed-bean-name>deliveryControllerSalesPurchaseListener</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.salesPurchase.event.DeliveryControllerSalesPurchaseListener</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
 	</managed-bean>
 
 	<managed-bean>
@@ -549,13 +554,19 @@
 					com.code.aon.ui.form.event.IControllerListener
 				</value-class>
 				<value>#{deliveryDetailControllerListener}</value>
-				<value>#{salesPurchaseListener}</value>
+				<value>#{deliveryDetailControllerSalesPurchaseListener}</value>
 				<value>#{compositionDeliveryDetailListener}</value>
 				<value>#{deliveryDetailControllerLabourListener}</value>
 			</list-entries>
 		</managed-property>
 	</managed-bean>
 	
+	<managed-bean>
+		<managed-bean-name>deliveryDetailControllerSalesPurchaseListener</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.salesPurchase.event.DeliveryDetailControllerSalesPurchaseListener</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+	</managed-bean>
+
 	<managed-bean>
 		<managed-bean-name>deliveryDetailControllerLabourListener</managed-bean-name>
 		<managed-bean-class>com.code.aon.ui.warehouse.event.DeliveryDetailControllerLabourListener</managed-bean-class>
@@ -634,12 +645,6 @@
 	</managed-bean>
 	
 	<managed-bean>
-		<managed-bean-name>deliverySalesPurchaseListener</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.salesPurchase.event.DeliverySalesPurchaseListener</managed-bean-class>
-		<managed-bean-scope>none</managed-bean-scope>
-	</managed-bean>
-
-	<managed-bean>
 		<managed-bean-name>deliveryTargetListener</managed-bean-name>
 		<managed-bean-class>com.code.aon.ui.warehouse.event.DeliveryTargetListener</managed-bean-class>
 		<managed-bean-scope>none</managed-bean-scope>
@@ -678,12 +683,6 @@
 	</managed-bean>
 	
 	<managed-bean>
-		<managed-bean-name>salesPurchaseListener</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.salesPurchase.event.SalesPurchaseListener</managed-bean-class>
-		<managed-bean-scope>none</managed-bean-scope>
-	</managed-bean>
-	
-	<managed-bean>
 		<managed-bean-name>compositionDeliveryDetailListener</managed-bean-name>
 		<managed-bean-class>com.code.aon.ui.composition.event.CompositionDeliveryDetailListener</managed-bean-class>
 		<managed-bean-scope>none</managed-bean-scope>
@@ -697,7 +696,7 @@
 
 	<managed-bean>
 		<managed-bean-name>salesInvoicingHeaderControllerListener</managed-bean-name>
-		<managed-bean-class>com.code.aon.gta.event.HeaderControllerListener</managed-bean-class>
+		<managed-bean-class>com.code.aon.ui.finance.event.HeaderControllerListener</managed-bean-class>
 		<managed-bean-scope>none</managed-bean-scope>
 		<managed-property>
 			<property-name>table</property-name>
@@ -707,7 +706,7 @@
 	
 	<managed-bean>
 		<managed-bean-name>deliveryHeaderControllerListener</managed-bean-name>
-		<managed-bean-class>com.code.aon.gta.event.HeaderControllerListener</managed-bean-class>
+		<managed-bean-class>com.code.aon.ui.finance.event.HeaderControllerListener</managed-bean-class>
 		<managed-bean-scope>none</managed-bean-scope>
 		<managed-property>
 			<property-name>table</property-name>
