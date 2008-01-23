@@ -11,6 +11,8 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.customer.Customer;
 import com.code.aon.customer.dao.ICustomerAlias;
 import com.code.aon.ql.Criteria;
+import com.code.aon.registry.Registry;
+import com.code.aon.tas.Appraiser;
 import com.code.aon.tas.SupportOrder;
 import com.code.aon.tas.SupportOrderInsurance;
 import com.code.aon.tas.dao.ITASAlias;
@@ -29,7 +31,13 @@ public class SupportOrderInsuranceController extends BasicController {
 		criteria.addEqualExpression(this.getFieldName(ITASAlias.SUPPORT_ORDER_INSURANCE_SUPPORT_ORDER_ID), supportOrder.getId());
 		Iterator iter = this.getManagerBean().getList(criteria, 0, 1).iterator();
 		if(iter.hasNext()){
-			this.setTo((SupportOrderInsurance)iter.next());
+			SupportOrderInsurance supportOrderInsurance = (SupportOrderInsurance)iter.next();
+			if(supportOrderInsurance.getAppraiser() == null){
+				Appraiser appraiser = new Appraiser();
+				appraiser.setRegistry(new Registry());
+				supportOrderInsurance.setAppraiser(appraiser);
+			}
+			this.setTo(supportOrderInsurance);
 		}else{
 			this.onReset(null);
 			((SupportOrderInsurance)this.getTo()).setSupportOrder(supportOrder);;
