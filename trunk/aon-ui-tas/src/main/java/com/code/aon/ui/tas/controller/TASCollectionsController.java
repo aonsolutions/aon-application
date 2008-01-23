@@ -13,6 +13,8 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ql.Criteria;
+import com.code.aon.ql.ast.Expression;
+import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.tas.Appraiser;
 import com.code.aon.tas.Make;
 import com.code.aon.tas.Model;
@@ -134,6 +136,29 @@ public class TASCollectionsController {
 		Criteria criteria = new Criteria();
 		IManagerBean supportOrderBean = BeanManager.getManagerBean(SupportOrder.class);
 		criteria.addEqualExpression(supportOrderBean.getFieldName(ITASAlias.SUPPORT_ORDER_STATUS), SupportOrderStatus.PENDING);
+		Iterator iter = supportOrderBean.getList(criteria).iterator();
+		while(iter.hasNext()){
+			SupportOrder supportOrder = (SupportOrder)iter.next();
+			SelectItem item = new SelectItem(supportOrder.getId(), (supportOrder.getSeries()==null?"":supportOrder.getSeries()+"/")+supportOrder.getNumber()+ ": " +supportOrder.getTasItem().getPublicCode() + " / " + supportOrder.getTasItem().getModel().getMake().getName()+ " " + supportOrder.getTasItem().getModel().getName());
+			supportOrders.add(item);
+		}
+		return supportOrders;
+	}
+
+	/**
+	 * Recovers all support order with SupportOrderStatus.PENDING OR SupportOrderStatus.ACTIVE 
+	 * 
+	 * @return pending or active support orders
+	 * @throws ManagerBeanException
+	 */
+    @SuppressWarnings("unchecked")
+	public List<SelectItem> getPendingOrActiveSupportOrders() throws ManagerBeanException {
+		LinkedList<SelectItem> supportOrders = new LinkedList<SelectItem>();
+		Criteria criteria = new Criteria();
+		IManagerBean supportOrderBean = BeanManager.getManagerBean(SupportOrder.class);
+		Expression pendingExp = ExpressionUtilities.getEqualExpression(supportOrderBean.getFieldName(ITASAlias.SUPPORT_ORDER_STATUS), SupportOrderStatus.PENDING);
+		Expression activeExp = ExpressionUtilities.getEqualExpression(supportOrderBean.getFieldName(ITASAlias.SUPPORT_ORDER_STATUS), SupportOrderStatus.ACTIVE);
+		criteria.addExpression(ExpressionUtilities.getOrExpression(pendingExp, activeExp));
 		Iterator iter = supportOrderBean.getList(criteria).iterator();
 		while(iter.hasNext()){
 			SupportOrder supportOrder = (SupportOrder)iter.next();
