@@ -632,11 +632,8 @@ public class DeliveryController extends BasicController {
             while(iter.hasNext()){
                 TasOffer tasOffer = (TasOffer)iter.next();
                 Offer offer = tasOffer.getOffer();
-                if (offer != null) {
-                    SelectItem item = new SelectItem(offer.getId(), (offer.getSeries()==null?"":offer.getSeries()+"/")+offer.getNumber()+ " - " +formatter.format(offer.getIssueDate()));
-                    offers.add(item);
-                    offerId = offer.getId();
-                }
+                SelectItem item = new SelectItem(offer.getId(), (offer.getSeries()==null?"":offer.getSeries()+"/")+offer.getNumber()+ " - " +formatter.format(offer.getIssueDate()));
+                offers.add(item);
             }
         }
         return offers;

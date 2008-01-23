@@ -129,6 +129,7 @@ public class DeliveryDetailController extends LinesController {
 	 * @param event contains the ident of the Item
 	 * @throws ManagerBeanException
 	 */
+	@SuppressWarnings("unchecked")
 	public void itemData(ValueChangeEvent event) throws ManagerBeanException{
 		if(event.getNewValue() != null){
 			IManagerBean itemBean = BeanManager.getManagerBean(Item.class);

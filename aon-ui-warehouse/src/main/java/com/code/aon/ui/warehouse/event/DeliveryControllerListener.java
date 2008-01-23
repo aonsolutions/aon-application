@@ -113,6 +113,7 @@ public class DeliveryControllerListener extends LinesControllerListener {
 	 * 
 	 * @see com.code.aon.ui.form.event.ControllerAdapter#afterBeanUpdated(com.code.aon.ui.form.event.ControllerEvent)
 	 */
+	@SuppressWarnings("unchecked")
 	public void afterBeanUpdated(ControllerEvent event) throws ControllerListenerException {
 		try {
 			IManagerBean deliveryDetailBean = BeanManager.getManagerBean(DeliveryDetail.class);
@@ -147,6 +148,7 @@ public class DeliveryControllerListener extends LinesControllerListener {
 	 * @param id ident of the registry
 	 * @return the first address
 	 */
+	@SuppressWarnings("unchecked")
 	private RegistryAddress obtainRegistryAddress(Integer id) {
 		try {
 			IManagerBean registryAddressBean = BeanManager.getManagerBean(RegistryAddress.class);
@@ -168,6 +170,7 @@ public class DeliveryControllerListener extends LinesControllerListener {
 	 * @param delivery the Delivery
 	 * @return the Ident of the Warehouse
 	 */
+	@SuppressWarnings("unchecked")
 	private Integer obtainWarehouseId(Delivery delivery) {
 		try {
 			IManagerBean deliveryDetailBean = BeanManager.getManagerBean(DeliveryDetail.class);
@@ -189,6 +192,7 @@ public class DeliveryControllerListener extends LinesControllerListener {
 	 * @param delivery the Delivery
 	 * @return the Ident of the Warehouse
 	 */
+	@SuppressWarnings("unchecked")
 	private Integer obtainPosId(Delivery delivery) {
 		try {
 			IManagerBean deliveryDetailBean = BeanManager.getManagerBean(DeliveryDetail.class);
@@ -210,6 +214,7 @@ public class DeliveryControllerListener extends LinesControllerListener {
 	 * @param delivery the Delivery
 	 * @return the Ident of the Warehouse
 	 */
+	@SuppressWarnings("unchecked")
 	private PointOfSale obtainPos(Integer posId) {
 		try {
 			IManagerBean posBean = BeanManager.getManagerBean(PointOfSale.class);

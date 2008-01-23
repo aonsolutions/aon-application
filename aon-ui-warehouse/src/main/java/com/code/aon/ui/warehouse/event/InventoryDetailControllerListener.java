@@ -1,7 +1,6 @@
 package com.code.aon.ui.warehouse.event;
 
 import java.util.Iterator;
-import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -47,6 +46,7 @@ public class InventoryDetailControllerListener extends ControllerAdapter {
 	 * @see com.code.aon.ui.form.event.ControllerAdapter#afterBeanUpdated(com.code.aon.ui.form.event.ControllerEvent)
 	 */
 	@Override
+	@SuppressWarnings("unchecked")
 	public void afterBeanUpdated(ControllerEvent event) throws ControllerListenerException {
 		InventoryDetail inventoryDetail = (InventoryDetail)event.getController().getTo();
 		try {
@@ -55,8 +55,7 @@ public class InventoryDetailControllerListener extends ControllerAdapter {
 			IManagerBean stockBean = BeanManager.getManagerBean(Stock.class);
 			Criteria criteria = new Criteria();
 			criteria.addEqualExpression(stockBean.getFieldName(IWarehouseAlias.STOCK_ITEM_ID) ,inventoryDetail.getItem().getId());
-			List stockList = stockBean.getList(criteria);
-			Iterator stockListIter = stockList.iterator();
+			Iterator stockListIter = stockBean.getList(criteria).iterator();
 			if (stockListIter.hasNext()){
 				Stock stock = (Stock) stockListIter.next();
 				stock.setQuantity(q);
