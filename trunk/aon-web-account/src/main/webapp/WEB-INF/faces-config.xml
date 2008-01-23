@@ -113,8 +113,8 @@
 		<managed-property>
 			<property-name>userStyleSheets</property-name>
 			<list-entries>
-				<value>/css/hyperview.css</value>
-				<value>/css/aon-customized.css</value>
+				<value>/css/aon-solutions.css</value>
+				<value>/css/layout.css</value>
 			</list-entries>
 		</managed-property>
 		<managed-property>
