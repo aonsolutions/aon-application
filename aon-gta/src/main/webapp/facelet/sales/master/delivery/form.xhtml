@@ -210,18 +210,14 @@
 								<f:selectItem itemDisabled="true" itemLabel="#{commercialBundle.aon_select_support_order}" itemValue="" />
 								<f:selectItems value="#{TASCollections.pendingSupportOrders}" />
 							</t:selectOneMenu>
-							<h:panelGrid columns="1"
-								rendered="#{!delivery.new and delivery.supportOrderId != null}">
-								<t:outputText value="#{tasDeliveryImport.supportOrderData}" />
-							</h:panelGrid>
-							<h:panelGrid columns="1"
-								rendered="#{!delivery.new and delivery.supportOrderId == null}">
-								<t:outputText value="#{warehouseBundle.tas_delivery_no_support_order}" />
-							</h:panelGrid>
+							<t:outputText value="#{tasDeliveryImport.supportOrderData}" 
+								rendered="#{!delivery.new and delivery.supportOrderId != null}"/>
+							<t:outputText value="#{warehouseBundle.tas_delivery_no_support_order}" 
+								rendered="#{!delivery.new and delivery.supportOrderId == null}"/>
 							<t:commandButton id="importSupportOrder"
 								value="#{warehouseBundle.aon_import}" forceId="#{true}"
 								styleClass="aon-navigation-link"
-								rendered="#{delivery.new and delivery.supportOrderId != null}"
+								rendered="#{(delivery.new and delivery.supportOrderId != null) or (delivery.supportOrderId != null and delivery.offerId == null)}"
 								onclick="disableRequiredFields();"
 								actionListener="#{tasDeliveryImport.importDelivery}" />
 						</t:div>
@@ -244,7 +240,7 @@
 							<t:selectOneMenu id="Offer_id" forceId="#{true}"
 								styleClass="aon-form-selectOneMenu-field"
 								value="#{delivery.offerId}"
-								rendered="#{delivery.new}">
+								rendered="#{delivery.supportOrderId != null and delivery.offerId == null}">
 								<f:selectItem itemDisabled="true" itemLabel="#{commercialBundle.aon_select_offer}" itemValue="" />
 								<f:selectItems value="#{delivery.relatedTASOffers}" />
 							</t:selectOneMenu>
@@ -253,7 +249,7 @@
 								<t:outputText value="#{tasDeliveryImport.offerData}" />
 							</h:panelGrid>
 							<h:panelGrid columns="1"
-								rendered="#{!delivery.new and delivery.offerId == null}">
+								rendered="#{!delivery.new and delivery.supportOrderId == null and delivery.offerId == null}">
 								<t:outputText value="#{warehouseBundle.tas_delivery_no_offer}" />
 							</h:panelGrid>
 							<t:div>
@@ -379,27 +375,18 @@
 										rendered="#{to!=deliveryDetail.to}" />
 
 									<h:panelGroup rendered="#{to==deliveryDetail.to}">
-										<t:commandButton id="popupButton"
-											styleClass="aon-navigation-link"
-											rendered="#{to==deliveryDetail.to}"
-											value="#{purchaseBundle.aon_purchase}"
-											onclick="showPopup();return false;" />
-
 										<t:inputHidden id="Item_id-Edit" forceId="#{true}"
 											value="#{deliveryDetail.to.item.id}"
 											valueChangeListener="#{deliveryDetail.itemData}" />
 										<t:inputText size="10" id="Item_product_code-Edit"
 											required="true" forceId="#{true}"
-											disabled="#{salesPurchase.to.purchaseDetail.id != null}"
 											styleClass="aon-form-input-text"
 											value="#{deliveryDetail.to.item.product.code}"
 											onchange="return findItemLookup(event,'#{facesContext.externalContext.request.contextPath}','com.code.aon.product.Item','Item_id-Edit[#{rowIndex}],Item_product_code-Edit[#{rowIndex}],Item_full_name-Edit[#{rowIndex}],Item_price-Edit[#{rowIndex}]');" />
 										<h:commandButton id="findInvoice_item"
-											rendered="#{!salesPurchase.withPurchase}"
 											onclick="selectWindow(this, 'placeList', '#{itemSearch.encodedPagePath}','Item_id-Edit[#{rowIndex}],Item_product_code-Edit[#{rowIndex}],Item_full_name-Edit[#{rowIndex}],Item_price-Edit[#{rowIndex}]');return false;"
 											value="" immediate="true" styleClass="aon-form-lookup-button" />
 										<h:commandButton id="addInvoice_item"
-											rendered="#{!salesPurchase.withPurchase}"
 											onclick="selectWindow(this, 'placeList', '#{itemAdd.encodedPagePath}','Item_id-Edit[#{rowIndex}],Item_product_code-Edit[#{rowIndex}],Item_full_name-Edit[#{rowIndex}],Item_price-Edit[#{rowIndex}]');return false;"
 											value="" immediate="true" styleClass="aon-form-new-button" />
 										<t:inputText id="Item_full_name-Edit" size="30"
@@ -420,18 +407,18 @@
 													value="#{deliveryDetail.to.item.id}"
 													valueChangeListener="#{deliveryDetail.itemData}" />
 												<t:inputText size="10" id="Item_product_code-New"
+													disabled="#{salesPurchase.incomeRelated}"
 													required="true" forceId="#{true}"
-													disabledOnClientSide="#{salesPurchase.withPurchase}"
 													styleClass="aon-form-input-text"
 													value="#{deliveryDetail.to.item.product.code}"
 													onchange="return findItemLookup(event,'#{facesContext.externalContext.request.contextPath}','com.code.aon.product.Item','Item_id-New,Item_product_code-New,Item_full_name-New,Item_price-New');" />
 												<h:commandButton id="findInvoice_item_new"
-													rendered="#{!salesPurchase.withPurchase}"
+													rendered="#{!salesPurchase.incomeRelated}"
 													onclick="selectWindow(this, 'placeList', '#{itemSearch.encodedPagePath}','Item_id-New,Item_product_code-New,Item_full_name-New,Item_price-New');return false;"
 													value="" immediate="true"
 													styleClass="aon_button aon-form-lookup-button" />
 												<h:commandButton id="addInvoice_item_new"
-													rendered="#{!salesPurchase.withPurchase}"
+													rendered="#{!salesPurchase.incomeRelated}"
 													onclick="selectWindow(this, 'placeList', '#{itemAdd.encodedPagePath}','Item_id-New,Item_product_code-New,Item_full_name-New,Item_price-New');return false;"
 													value="" immediate="true"
 													styleClass="aon_button aon-form-new-button" />
@@ -689,193 +676,9 @@
 							</t:dataTable>					
 						</t:div>
 					</t:div>		
-
-					<t:div id="popup" forceId="#{true}" styleClass="aon-popup-window"
-						style="position: absolute;left: 290px;_left:110px; top: 230px;display:none;">
-						<t:div styleClass="aon-popup-window-title">
-							<t:commandButton id="popupClose" value=" " immediate="true"
-								styleClass="aon-popup-window-close"
-								onclick="hidePopup(); return false;"
-								accesskey="#{bundle.aon_key_close}" />
-
-							<t:outputLabel value="#{purchaseBundle.aon_purchase}" />
-
-						</t:div>
-						<t:div styleClass="aon-popup-window-body">
-							<t:div styleClass="aon-content-toolbar" id="aon-content-toolbar"
-								forceId="#{true}">
-								<t:div styleClass="aon-content-toolbar-internal">
-									<t:commandButton id="popupUpdate" value="#{bundle.aon_accept}"
-										actionListener="#{salesPurchase.onSave}"
-										onclick="return validate('false');"
-										styleClass="aon-content-toolbar-item aon-content-toolbar-item-save"
-										onmouseover="this.className='aon-content-toolbar-item aon-content-toolbar-item-hover aon-content-toolbar-item-save'"
-										onmouseout="this.className='aon-content-toolbar-item aon-content-toolbar-item-save'"
-										accesskey="#{bundle.aon_key_accept}" />
-									<t:commandButton id="popupDelete" value="#{bundle.aon_remove}"
-										actionListener="#{salesPurchase.onRemove}"
-										rendered="#{salesPurchase.to.purchaseDetail.id != null}"
-										styleClass="aon-content-toolbar-item aon-content-toolbar-item-remove"
-										onmouseover="this.className='aon-content-toolbar-item aon-content-toolbar-item-hover aon-content-toolbar-item-remove'"
-										onmouseout="this.className='aon-content-toolbar-item aon-content-toolbar-item-remove'" />
-
-								</t:div>
-							</t:div>
-							<t:div styleClass="aon-popup-window-scroll-area">
-								<h:panelGrid columns="2" styleClass="aon-form-table"
-									columnClasses="aon-form-table-column-odd,aon-form-table-column-even">
-									<t:outputLabel for="Income_series"
-										styleClass="aon-form-input-text-label"
-										value="#{purchaseBundle.aon_inc_num}" />
-									<t:div>
-										<t:inputText id="Income_series"
-											styleClass="aon-form-input-text" forceId="#{true}" size="3"
-											maxlength="3" onblur="toUpperCase(this);"
-											value="#{salesPurchase.to.purchaseDetail.purchase.series}">
-											<f:validateLength maximum="3" />
-										</t:inputText>
-										<t:inputText id="Income_number"
-											styleClass="aon-form-input-text" forceId="#{true}"
-											value="#{salesPurchase.to.purchaseDetail.purchase.number}" />
-										<t:outputText id="Number_required" forceId="#{true}"
-											value="#{purchaseBundle.aon_income_number_required}"
-											style="display:none;color:#cc3333" />
-									</t:div>
-
-									<t:outputLabel for="Supplier_Lookup_id"
-										styleClass="aon-form-input-text-label"
-										value="#{purchaseBundle.aon_supplier}" />
-									<t:div>
-										<t:inputText id="Supplier_Lookup_id" size="5" forceId="#{true}"
-											styleClass="aon-form-input-text"
-											onchange="return findBeanLookupExt(event,'#{facesContext.externalContext.requestContextPath}','supplierLookup','Supplier_Lookup_id','Supplier_id|Supplier_Lookup_id,Supplier_full_name|Supplier_full_name,Supplier_document|Supplier_Lookup_document');"
-											value="#{salesPurchase.to.purchaseDetail.purchase.supplier.id}" />
-										<h:commandButton id="find_Supplier_Lookup_id"
-											styleClass="aon-form-lookup-button" value="" immediate="true"
-											onclick="lookupSearchWindow(this, 'placeList', '#{supplierLookup.encodedSearchPagePath}','Supplier_id|Supplier_Lookup_id,Supplier_full_name|Supplier_full_name,Supplier_document|Supplier_Lookup_document');return false;" />	
-										<h:commandButton id="new_Supplier_Lookup_id"
-											styleClass="aon-form-new-button" value="" immediate="true"
-											onclick="lookupNewWindow(this, 'placeList', '#{supplierLookup.encodedNewPagePath}','Supplier_id|Supplier_Lookup_id,Supplier_full_name|Supplier_full_name,Supplier_document|Supplier_Lookup_document');return false;" />	
-										<t:inputText id="Supplier_full_name" forceId="#{true}"
-											styleClass="aon-form-input-text-disabled"
-											size="40" disabled="true"
-											value="#{salesPurchase.to.purchaseDetail.purchase.supplier.name} #{salesPurchase.to.purchaseDetail.purchase.supplier.surname==null?' ':(salesPurchase.to.purchaseDetail.purchase.supplier.surname)}" />
-										<t:outputText id="Supplier_required" forceId="#{true}"
-											value="#{purchaseBundle.aon_income_supplier_required}"
-											style="display:none;color:#cc3333" />
-									</t:div>
-
-									<t:outputLabel for="Income_issueTime"
-										styleClass="aon-form-input-text-label"
-										value="#{purchaseBundle.aon_date}" />
-									<t:div styleClass="aon-form-nowrap">
-										<t:inputText styleClass="aon-form-input-text"
-											id="Income_issueTime" forceId="#{true}" size="10"
-											maxlength="12"
-											value="#{salesPurchase.to.purchaseDetail.purchase.issueDate}">
-											<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
-												timeZone="#{timeZoneController.timeZoneId}" />
-										</t:inputText>
-										<t:commandButton styleClass="aon-form-calendar-button"
-											id="Income_issueTime_button" forceId="#{true}" value=""
-											immediate="true" />
-										<t:outputText id="Date_required" forceId="#{true}"
-											value="#{purchaseBundle.aon_income_date_required}"
-											styleClass="aon-form-input-text-disabled" />
-										<script type="text/javascript">
-										  Calendar.setup( {
-											inputField  : "Income_issueTime", button : "Income_issueTime_button",
-											ifFormat    : "%d/%m/%Y" } );
-										</script>
-									</t:div>
-
-									<t:outputLabel for="IncomeDetail_warehouse_id"
-										styleClass="aon-form-selectOneMenu-label"
-										value="#{warehouseBundle.aon_warehouse}" />
-									<t:selectOneMenu id="IncomeDetail_warehouse_id"
-										styleClass="aon-form-selectOneMenu-field" forceId="#{true}"
-										value="#{salesPurchase.purchaseWarehouseId}">
-										<f:selectItems value="#{warehouseCollections.warehouses}" />
-									</t:selectOneMenu>
-
-									<t:outputLabel for="Item_id-Popup"
-										styleClass="aon-form-input-text-label"
-										value="#{productBundle.item_item}" />
-									<t:div styleClass="aon-form-nowrap">
-										<t:inputHidden id="Item_id-Popup" forceId="#{true}"
-											value="#{salesPurchase.to.purchaseDetail.item.id}" />
-										<t:inputHidden id="Item_product_id-Popup" forceId="#{true}"
-											value="#{salesPurchase.to.purchaseDetail.item.product.id}" />
-										<t:inputText size="10" id="Item_product_code-Popup"
-											forceId="#{true}"
-											value="#{salesPurchase.to.purchaseDetail.item.product.code}"
-											styleClass="aon-form-input-text" onblur="toUpperCase(this);"
-											onchange="return findItemCreationLookup(event,'#{facesContext.externalContext.request.contextPath}','com.code.aon.product.Item','Item_id-Popup,Item_product_code-Popup,Item_full_name-Popup,Item_price-Popup,Item_purchase_price-Popup,Item_product_category_id-Popup,Item_product_id-Popup');" />
-										<h:commandButton id="findPopup_Item"
-											onclick="selectWindow(this, 'placeList', '#{itemSearch.encodedPagePath}', 'Item_id-Popup,Item_product_code-Popup,Item_full_name-Popup,Item_price-Popup,Item_purchase_price-Popup,Item_product_category_id-Popup,Item_product_id-Popup'); return false;"
-											action="showPlace" value="" immediate="true"
-											styleClass="aon-form-lookup-button" />
-										<h:commandButton id="addPopup_Item"
-											onclick="selectWindow(this, 'placeList', '#{itemAdd.encodedPagePath}', 'Item_id-Popup,Item_product_code-Popup,Item_full_name-Popup,Item_price-Popup,Item_purchase_price-Popup,Item_product_category_id-Popup,Item_product_id-Popup'); return false;"
-											action="showPlace" value="" immediate="true"
-											styleClass="aon-form-new-button" />
-										<t:inputText id="Item_full_name-Popup" size="36"
-											forceId="#{true}" styleClass="aon-form-input-text"
-											value="#{salesPurchase.to.purchaseDetail.description}" />
-										<t:outputText id="Product_code_required" forceId="#{true}"
-											value="#{productBundle.aon_product_code_required}"
-											style="display:none;color:#cc3333" />
-										<t:outputText id="Product_name_required" forceId="#{true}"
-											value="#{productBundle.aon_product_name_required}"
-											style="display:none;color:#cc3333" />
-									</t:div>
-
-									<t:outputLabel for="Item_product_category_id-Popup"
-										styleClass="aon-form-input-text-label"
-										value="#{productBundle.item_category}" />
-									<h:panelGrid columns="3">
-										<t:selectOneMenu id="Item_product_category_id-Popup"
-											forceId="#{true}" styleClass="aon-form-selectOneMenu-field"
-											value="#{salesPurchase.to.purchaseDetail.item.product.category.id}">
-											<f:selectItems value="#{productCollections.categories}" />
-										</t:selectOneMenu>
-										<t:outputText id="Item_product_category_required"
-											forceId="#{true}"
-											value="#{productBundle.aon_category_required}"
-											style="display:none;color:#cc3333" />
-									</h:panelGrid>
-
-									<t:outputLabel for="Item_price-Popup"
-										styleClass="aon-form-input-text-label"
-										value="#{productBundle.item_price}" />
-									<t:inputText id="Item_price-Popup"
-										styleClass="aon-form-input-text" required="true"
-										forceId="#{true}" size="20" maxlength="20"
-										value="#{salesPurchase.to.purchaseDetail.item.price}" />
-
-									<t:outputLabel for="Item_purchase_price-Popup"
-										styleClass="aon-form-input-text-label"
-										value="#{productBundle.item_initialPrice}" />
-									<t:inputText id="Item_purchase_price-Popup"
-										styleClass="aon-form-input-text" required="true"
-										forceId="#{true}" size="20" maxlength="20"
-										value="#{salesPurchase.to.purchaseDetail.item.purchasePrice}" />
-
-									<t:outputLabel for="Item_quantity-Popup"
-										styleClass="aon-form-input-text-label"
-										value="#{warehouseBundle.aon_quantity}" />
-									<t:inputText id="Item_quantity-Popup"
-										styleClass="aon-form-input-text" required="true"
-										forceId="#{true}" size="20" maxlength="20"
-										value="#{salesPurchase.to.purchaseDetail.quantity}" />
-								</h:panelGrid>
-							</t:div>
-						</t:div>
-					</t:div>
+					<ui:include src="/facelet/sales/master/delivery/popup/popup.xhtml"/>
 				</t:div>
 			</t:div>
-			<t:inputHidden id="withPurchase"
-				value="#{salesPurchase.withPurchase}" forceId="#{true}" />
 				
 			<s:modalDialog
 		       dialogId="viewDialog"
@@ -914,11 +717,6 @@
 				temp = redondea( price.value * quantity.value , 2 );
 				amount.innerText = "" + redondea( temp - ( temp * discount.value / 100 ), 2 );
 			}
-			function isUnsignedInteger(number) {
-				var Template = /^\d+$/ 
-				res = (Template.test(number)) ? true : false
-				return res;
-			}
 			function showPopup(){
 				document.getElementById( "popup" ).style.display='block';
 				document.getElementById( "Number_required" ).style.display = 'none';
@@ -931,88 +729,6 @@
 					document.getElementById( "IncomeDetail_warehouse_id" ).disabled = true;
 				}
 				document.getElementById( "Income_series" ).focus();
-			}
-			function hidePopup(){
-				document.getElementById( "IncomeDetail_warehouse_id" ).disabled = false;
-				document.getElementById( "popup" ).style.display='none';
-				document.getElementById( "Number_required" ).style.display = 'none';
-				document.getElementById( "Supplier_required" ).style.display = 'none';
-				document.getElementById( "Date_required" ).style.display = 'none';
-				document.getElementById( "Product_code_required" ).style.display = 'none';
-				document.getElementById( "Item_product_category_required" ).style.display = 'none';
-				document.getElementById( "Product_name_required" ).style.display = 'none';
-			}
-			function validate(isNew){ 
-				if(document.getElementById( "Income_number" ).value == ""){
-					document.getElementById( "Number_required" ).style.display = 'block';
-					document.getElementById( "Supplier_required" ).style.display = 'none';
-					document.getElementById( "Date_required" ).style.display = 'none';
-					document.getElementById( "Product_code_required" ).style.display = 'none';
-					document.getElementById( "Product_name_required" ).style.display = 'none';
-					document.getElementById( "Item_product_category_required" ).style.display = 'none';
-					document.getElementById( "Income_number" ).focus();
-					return false;
-				}
-				if(document.getElementById( "Supplier_Lookup_id" ).value == ""){
-					document.getElementById( "Supplier_required" ).style.display = 'block';
-					document.getElementById( "Number_required" ).style.display = 'none';
-					document.getElementById( "Date_required" ).style.display = 'none';
-					document.getElementById( "Product_code_required" ).style.display = 'none';
-					document.getElementById( "Product_name_required" ).style.display = 'none';
-					document.getElementById( "Item_product_category_required" ).style.display = 'none';					
-					document.getElementById( "Supplier_Lookup_id" ).focus();
-					return false;
-				}
-				if(document.getElementById( "Income_issueTime" ).value == ""){
-					document.getElementById( "Date_required" ).style.display = 'block';
-					document.getElementById( "Number_required" ).style.display = 'none';
-					document.getElementById( "Supplier_required" ).style.display = 'none';
-					document.getElementById( "Product_code_required" ).style.display = 'none';
-					document.getElementById( "Product_name_required" ).style.display = 'none';
-					document.getElementById( "Item_product_category_required" ).style.display = 'none';
-					document.getElementById( "Income_issueTime" ).focus();
-					return false;
-				}
-				if(document.getElementById( "Item_product_code-Popup" ).value == ""){
-					document.getElementById( "Product_code_required" ).style.display = 'block';
-					document.getElementById( "Date_required" ).style.display = 'none';
-					document.getElementById( "Number_required" ).style.display = 'none';
-					document.getElementById( "Supplier_required" ).style.display = 'none';
-					document.getElementById( "Product_name_required" ).style.display = 'none';
-					document.getElementById( "Item_product_category_required" ).style.display = 'none';
-					document.getElementById( "Item_product_code-Popup" ).focus();
-					return false;
-				}
-				if(document.getElementById( "Item_full_name-Popup" ).value == ""){
-					document.getElementById( "Product_name_required" ).style.display = 'block';
-					document.getElementById( "Date_required" ).style.display = 'none';
-					document.getElementById( "Number_required" ).style.display = 'none';
-					document.getElementById( "Supplier_required" ).style.display = 'none';
-					document.getElementById( "Product_code_required" ).style.display = 'none';
-					document.getElementById( "Item_product_category_required" ).style.display = 'none';
-					document.getElementById( "Item_full_name-Popup" ).focus();
-					return false;
-				}
-				if(document.getElementById( "Item_product_category_id-Popup" ).value == ""){
-					document.getElementById( "Item_product_category_required" ).style.display = 'block';
-					document.getElementById( "Product_name_required" ).style.display = 'none';
-					document.getElementById( "Date_required" ).style.display = 'none';
-					document.getElementById( "Number_required" ).style.display = 'none';
-					document.getElementById( "Supplier_required" ).style.display = 'none';
-					document.getElementById( "Product_code_required" ).style.display = 'none';
-					document.getElementById( "Item_product_category_id-Popup" ).focus();
-					return false;
-				}
-				document.getElementById( "Product_code_required" ).style.display = 'none';
-				document.getElementById( "Product_name_required" ).style.display = 'none';
-				document.getElementById( "Number_required" ).style.display = 'none';
-				document.getElementById( "Supplier_required" ).style.display = 'none';
-				document.getElementById( "Date_required" ).style.display = 'none';
-				document.getElementById( "Item_product_category_required" ).style.display = 'none';
-				if(isNew){
-					document.getElementById( "Item_product_code-New" ).disabled = true;
-				}
-				return true;
 			}
 			function disableRequiredFields(){
 				document.getElementById( "Product_code_required" ).disabled = true;
