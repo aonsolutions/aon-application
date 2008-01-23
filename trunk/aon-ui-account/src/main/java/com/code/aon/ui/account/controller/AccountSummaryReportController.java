@@ -26,9 +26,13 @@ public class AccountSummaryReportController extends BasicController {
     private String period;
     private Date fromDate;
 	private Date toDate;
+	
+	@SuppressWarnings("unchecked")
 	private Collection grossMarginSummaryCollection;
+	@SuppressWarnings("unchecked")
 	private Collection totalExpensesSummaryCollection;
-    private double grossMargin;
+    
+	private double grossMargin;
     private double totalExpenses;
 	
     public String getPeriod() {
@@ -55,18 +59,22 @@ public class AccountSummaryReportController extends BasicController {
 		this.toDate = toDate;
 	}
 
-    public Collection getGrossMarginSummaryCollection() {
+	@SuppressWarnings("unchecked")
+	public Collection getGrossMarginSummaryCollection() {
         return grossMarginSummaryCollection;
     }
 
+	@SuppressWarnings("unchecked")
     public void setGrossMarginSummaryCollection(Collection grossMarginSummaryCollection) {
         this.grossMarginSummaryCollection = grossMarginSummaryCollection;
     }
 
+    @SuppressWarnings("unchecked")
     public Collection getTotalExpensesSummaryCollection() {
         return totalExpensesSummaryCollection;
     }
 
+    @SuppressWarnings("unchecked")
     public void setTotalExpensesSummaryCollection(Collection totalExpensesSummaryCollection) {
         this.totalExpensesSummaryCollection = totalExpensesSummaryCollection;
     }
@@ -104,6 +112,7 @@ public class AccountSummaryReportController extends BasicController {
         this.calculateTotalExpensesSummaryCollection();
     }
 
+    @SuppressWarnings("unchecked")
     private void calculateGrossMarginSummaryCollection() {
         DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
 
@@ -138,6 +147,7 @@ public class AccountSummaryReportController extends BasicController {
         this.setGrossMargin(totalCredit - totalDebit);
     }
 
+    @SuppressWarnings("unchecked")
     private void calculateTotalExpensesSummaryCollection() {
         DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
 
@@ -223,6 +233,7 @@ public class AccountSummaryReportController extends BasicController {
 
 }
 
+@SuppressWarnings("unchecked")
 class ProfitAndLossComparator implements Comparator {
 
     public int compare(Object obj1, Object obj2) {

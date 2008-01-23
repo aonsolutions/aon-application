@@ -154,6 +154,7 @@ public class AccountEntryController extends BasicController {
 		return "";
 	}
 	
+	@SuppressWarnings("unchecked")
 	private void loadAccountInvoiceController(AccountEntry entry) {
 		try {
 			AccountInvoiceController accountInvoiceController = (AccountInvoiceController)AonUtil.getRegisteredBean(ACCOUNT_INVOICE_CONTROLLER_NAME);
@@ -305,6 +306,7 @@ public class AccountEntryController extends BasicController {
 		}
 	}
 	
+	@SuppressWarnings("unchecked")
 	private void loadAccountLeasingFeeController(AccountEntry entry) {
 		try {
 			AccountLeasingFeeController accountLeasingFeeController = (AccountLeasingFeeController)AonUtil.getRegisteredBean(ACCOUNT_LEASING_FEE_CONTROLLER_NAME);
@@ -341,7 +343,7 @@ public class AccountEntryController extends BasicController {
 		}
 	}
 
-
+	@SuppressWarnings("unchecked")
 	private List obtainFinances(Invoice invoice) {
 		List<Finance> finances = new LinkedList<Finance>();
 		try {
@@ -358,6 +360,7 @@ public class AccountEntryController extends BasicController {
 		return finances;
 	}
 	
+	@SuppressWarnings("unchecked")
 	private List obtainDetails(Invoice invoice) {
 		List<AccountInvoiceDetail> details = new LinkedList<AccountInvoiceDetail>();
 		try {
@@ -388,6 +391,7 @@ public class AccountEntryController extends BasicController {
 		return details;
 	}
 
+	@SuppressWarnings("unchecked")
 	private AccountEntryDetail obtainEntryDetailFromAccountPattern(AccountEntry entry, String accountPattern) {
 		try {
 			IManagerBean accountEntryDetailBean = BeanManager.getManagerBean(AccountEntryDetail.class);
@@ -406,6 +410,7 @@ public class AccountEntryController extends BasicController {
 		return null;
 	}
 	
+	@SuppressWarnings("unchecked")
 	private RegistryBank obtainRBank(String account) {
 		try {
 			IManagerBean rBankAccountBean = BeanManager.getManagerBean(RegistryBankAccount.class);
@@ -423,6 +428,7 @@ public class AccountEntryController extends BasicController {
 		return null;
 	}
 	
+	@SuppressWarnings("unchecked")
 	private Loan obtainLoan(AccountEntry entry) throws ManagerBeanException {
 		AccountEntryDetail detail = obtainEntryDetailFromAccountPattern(entry, "52000*");
 		IManagerBean loanAccountBean = BeanManager.getManagerBean(LoanAccount.class);
@@ -435,6 +441,7 @@ public class AccountEntryController extends BasicController {
 		return null;
 	}
 	
+	@SuppressWarnings("unchecked")
 	private Leasing obtainLeasing(AccountEntry entry) throws ManagerBeanException {
 		AccountEntryDetail detail = obtainEntryDetailFromAccountPattern(entry, "52000*");
 		IManagerBean loanAccountBean = BeanManager.getManagerBean(LeasingAccount.class);
@@ -481,6 +488,7 @@ public class AccountEntryController extends BasicController {
         return (this.getTo() != null && ((AccountEntry)this.getTo()).getType() == AccountEntryType.MANUAL);
     }
 
+    @SuppressWarnings("unchecked")
     public double getTotalDebit() {
         double debit = 0;
         try {
@@ -499,6 +507,7 @@ public class AccountEntryController extends BasicController {
         return debit;
     }
 
+    @SuppressWarnings("unchecked")
     public double getTotalCredit() {
         double credit = 0;
         try {
