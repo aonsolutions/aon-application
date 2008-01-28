@@ -390,7 +390,7 @@
 		<managed-property>
 			<description>Needed for Search Select Window</description>
 			<property-name>searchPagePath</property-name>
-			<value>/account/facelet/sw/accountSearch.faces</value>
+			<value>/_account/facelet/sw/accountSearch.faces</value>
 		</managed-property>
 	</managed-bean>
 	
@@ -428,7 +428,7 @@
 		<managed-property>
 			<description>Needed for Search Select Window</description>
 			<property-name>searchPagePath</property-name>
-			<value>/account/facelet/sw/loanSearch.faces</value>
+			<value>/_account/facelet/sw/loanSearch.faces</value>
 		</managed-property>
 	</managed-bean>
 	
@@ -468,7 +468,7 @@
 		<managed-property>
 			<description>Needed for Search Select Window</description>
 			<property-name>searchPagePath</property-name>
-			<value>/account/facelet/sw/leasingSearch.faces</value>
+			<value>/_account/facelet/sw/leasingSearch.faces</value>
 		</managed-property>
 	</managed-bean>
 	
@@ -595,15 +595,15 @@
   <navigation-rule>
     <navigation-case>
       <from-outcome>account_form</from-outcome>
-      <to-view-id>/account/facelet/account/account/form.faces</to-view-id>
+      <to-view-id>/_account/facelet/account/account/form.faces</to-view-id>
     </navigation-case>
     <navigation-case>
       <from-outcome>account_list</from-outcome>
-      <to-view-id>/account/facelet/account/account/list.faces</to-view-id>
+      <to-view-id>/_account/facelet/account/account/list.faces</to-view-id>
     </navigation-case>
     <navigation-case>
       <from-outcome>account_search</from-outcome>
-      <to-view-id>/account/facelet/account/account/search.faces</to-view-id>
+      <to-view-id>/_account/facelet/account/account/search.faces</to-view-id>
     </navigation-case>
   </navigation-rule>
   
@@ -611,15 +611,15 @@
   <navigation-rule>
     <navigation-case>
       <from-outcome>accountInvoice_form</from-outcome>
-      <to-view-id>/account/facelet/account/account_entry/invoice/form.faces</to-view-id>
+      <to-view-id>/_account/facelet/account/account_entry/invoice/form.faces</to-view-id>
     </navigation-case>
     <navigation-case>
       <from-outcome>accountInvoice_list</from-outcome>
-      <to-view-id>/account/facelet/account/account_entry/invoice/list.faces</to-view-id>
+      <to-view-id>/_account/facelet/account/account_entry/invoice/list.faces</to-view-id>
     </navigation-case>
     <navigation-case>
       <from-outcome>accountInvoice_search</from-outcome>
-      <to-view-id>/account/facelet/account/account_entry/invoice/search.faces</to-view-id>
+      <to-view-id>/_account/facelet/account/account_entry/invoice/search.faces</to-view-id>
     </navigation-case>
   </navigation-rule>
   
@@ -627,15 +627,15 @@
   <navigation-rule>
     <navigation-case>
       <from-outcome>account_entry_form</from-outcome>
-      <to-view-id>/account/facelet/account/account_entry/form.faces</to-view-id>
+      <to-view-id>/_account/facelet/account/account_entry/form.faces</to-view-id>
     </navigation-case>
     <navigation-case>
       <from-outcome>account_entry_list</from-outcome>
-      <to-view-id>/account/facelet/account/account_entry/list.faces</to-view-id>
+      <to-view-id>/_account/facelet/account/account_entry/list.faces</to-view-id>
     </navigation-case>
     <navigation-case>
       <from-outcome>account_entry_search</from-outcome>
-      <to-view-id>/account/facelet/account/account_entry/search.faces</to-view-id>
+      <to-view-id>/_account/facelet/account/account_entry/search.faces</to-view-id>
     </navigation-case>
   </navigation-rule>
   
@@ -643,11 +643,11 @@
   <navigation-rule>
     <navigation-case>
       <from-outcome>daybook_list</from-outcome>
-      <to-view-id>/account/facelet/account/account_entry/daybook/list.faces</to-view-id>
+      <to-view-id>/_account/facelet/account/account_entry/daybook/list.faces</to-view-id>
     </navigation-case>
     <navigation-case>
       <from-outcome>daybook_search</from-outcome>
-      <to-view-id>/account/facelet/account/account_entry/daybook/search.faces</to-view-id>
+      <to-view-id>/_account/facelet/account/account_entry/daybook/search.faces</to-view-id>
     </navigation-case>
   </navigation-rule>
   
@@ -655,11 +655,11 @@
   <navigation-rule>
     <navigation-case>
       <from-outcome>abstract_list</from-outcome>
-      <to-view-id>/account/facelet/account/account_entry/abstract/list.faces</to-view-id>
+      <to-view-id>/_account/facelet/account/account_entry/abstract/list.faces</to-view-id>
     </navigation-case>
     <navigation-case>
       <from-outcome>abstract_search</from-outcome>
-      <to-view-id>/account/facelet/account/account_entry/abstract/search.faces</to-view-id>
+      <to-view-id>/_account/facelet/account/account_entry/abstract/search.faces</to-view-id>
     </navigation-case>
   </navigation-rule>
   
@@ -667,11 +667,11 @@
   <navigation-rule>
     <navigation-case>
       <from-outcome>profit_and_loss_list</from-outcome>
-	  <to-view-id>/account/facelet/account/account_entry/profitAndLoss/list.faces</to-view-id>
+	  <to-view-id>/_account/facelet/account/account_entry/profitAndLoss/list.faces</to-view-id>
     </navigation-case>
     <navigation-case>
       <from-outcome>profit_and_loss_search</from-outcome>
-	  <to-view-id>/account/facelet/account/account_entry/profitAndLoss/search.faces</to-view-id>
+	  <to-view-id>/_account/facelet/account/account_entry/profitAndLoss/search.faces</to-view-id>
     </navigation-case>
   </navigation-rule>
   
@@ -679,15 +679,15 @@
   <navigation-rule>
     <navigation-case>
       <from-outcome>accSupplier_form</from-outcome>
-      <to-view-id>/account/facelet/supplier/form.faces</to-view-id>
+      <to-view-id>/_account/facelet/supplier/form.faces</to-view-id>
     </navigation-case>
     <navigation-case>
       <from-outcome>accSupplier_list</from-outcome>
-      <to-view-id>/account/facelet/supplier/list.faces</to-view-id>
+      <to-view-id>/_account/facelet/supplier/list.faces</to-view-id>
     </navigation-case>
     <navigation-case>
       <from-outcome>accSupplier_search</from-outcome>
-      <to-view-id>/account/facelet/supplier/search.faces</to-view-id>
+      <to-view-id>/_account/facelet/supplier/search.faces</to-view-id>
     </navigation-case>
   </navigation-rule>
 
@@ -695,15 +695,15 @@
   <navigation-rule>
     <navigation-case>
       <from-outcome>accCreditor_form</from-outcome>
-      <to-view-id>/account/facelet/creditor/form.faces</to-view-id>
+      <to-view-id>/_account/facelet/creditor/form.faces</to-view-id>
     </navigation-case>
     <navigation-case>
       <from-outcome>accCreditor_list</from-outcome>
-      <to-view-id>/account/facelet/creditor/list.faces</to-view-id>
+      <to-view-id>/_account/facelet/creditor/list.faces</to-view-id>
     </navigation-case>
     <navigation-case>
       <from-outcome>accCreditor_search</from-outcome>
-      <to-view-id>/account/facelet/creditor/search.faces</to-view-id>
+      <to-view-id>/_account/facelet/creditor/search.faces</to-view-id>
     </navigation-case>
   </navigation-rule>
   
@@ -719,103 +719,103 @@
     </navigation-case>
 	<navigation-case>
 		<from-outcome>accPeriod</from-outcome>
-		<to-view-id>/account/facelet/account/accPeriod/grid.faces</to-view-id>
+		<to-view-id>/_account/facelet/account/accPeriod/grid.faces</to-view-id>
 	</navigation-case>
 	<navigation-case>
 		<from-outcome>account</from-outcome>
-		<to-view-id>/account/facelet/account/account/list.faces</to-view-id>
+		<to-view-id>/_account/facelet/account/account/list.faces</to-view-id>
 	</navigation-case>
 	<navigation-case>
 		<from-outcome>autConcept</from-outcome>
-		<to-view-id>/account/facelet/account/autConcept/grid.faces</to-view-id>
+		<to-view-id>/_account/facelet/account/autConcept/grid.faces</to-view-id>
 	</navigation-case>
 	<navigation-case>
 		<from-outcome>accountEntry</from-outcome>
-		<to-view-id>/account/facelet/account/account_entry/search.faces</to-view-id>
+		<to-view-id>/_account/facelet/account/account_entry/search.faces</to-view-id>
 	</navigation-case>
 	<navigation-case>
 		<from-outcome>accountInvoiceEntry</from-outcome>
-		<to-view-id>/account/facelet/account/account_entry/invoice/form.faces</to-view-id>
+		<to-view-id>/_account/facelet/account/account_entry/invoice/form.faces</to-view-id>
 	</navigation-case>
 	<navigation-case>
 		<from-outcome>accountExpenseEntry</from-outcome>
-		<to-view-id>/account/facelet/account/account_entry/expense/form.faces</to-view-id>
+		<to-view-id>/_account/facelet/account/account_entry/expense/form.faces</to-view-id>
 	</navigation-case>
 	<navigation-case>
 		<from-outcome>accountSalaryEntry</from-outcome>
-		<to-view-id>/account/facelet/account/account_entry/salary/form.faces</to-view-id>
+		<to-view-id>/_account/facelet/account/account_entry/salary/form.faces</to-view-id>
 	</navigation-case>
 	<navigation-case>
 		<from-outcome>accountSocialInsuranceEntry</from-outcome>
-		<to-view-id>/account/facelet/account/account_entry/social_insurance/form.faces</to-view-id>
+		<to-view-id>/_account/facelet/account/account_entry/social_insurance/form.faces</to-view-id>
 	</navigation-case>
 	<navigation-case>
 		<from-outcome>accountLoanEntry</from-outcome>
-		<to-view-id>/account/facelet/account/account_entry/loan/open/form.faces</to-view-id>
+		<to-view-id>/_account/facelet/account/account_entry/loan/open/form.faces</to-view-id>
 	</navigation-case>
 	<navigation-case>
 		<from-outcome>accountLoanFeeEntry</from-outcome>
-		<to-view-id>/account/facelet/account/account_entry/loan/fee/form.faces</to-view-id>
+		<to-view-id>/_account/facelet/account/account_entry/loan/fee/form.faces</to-view-id>
 	</navigation-case>
 	<navigation-case>
 		<from-outcome>accountLeasingEntry</from-outcome>
-		<to-view-id>/account/facelet/account/account_entry/leasing/open/form.faces</to-view-id>
+		<to-view-id>/_account/facelet/account/account_entry/leasing/open/form.faces</to-view-id>
 	</navigation-case>
 	<navigation-case>
 		<from-outcome>accountLeasingFeeEntry</from-outcome>
-		<to-view-id>/account/facelet/account/account_entry/leasing/fee/form.faces</to-view-id>
+		<to-view-id>/_account/facelet/account/account_entry/leasing/fee/form.faces</to-view-id>
 	</navigation-case>
 	<navigation-case>
 		<from-outcome>accountEntryDaybook</from-outcome>
-		<to-view-id>/account/facelet/account/account_entry/daybook/search.faces</to-view-id>
+		<to-view-id>/_account/facelet/account/account_entry/daybook/search.faces</to-view-id>
 	</navigation-case>	
 	<navigation-case>
 		<from-outcome>accountEntryAbstract</from-outcome>
-		<to-view-id>/account/facelet/account/account_entry/abstract/search.faces</to-view-id>
+		<to-view-id>/_account/facelet/account/account_entry/abstract/search.faces</to-view-id>
 	</navigation-case>	
 	<navigation-case>
 		<from-outcome>accountEntryProfitAndLoss</from-outcome>
-		<to-view-id>/account/facelet/account/account_entry/profitAndLoss/search.faces</to-view-id>
+		<to-view-id>/_account/facelet/account/account_entry/profitAndLoss/search.faces</to-view-id>
 	</navigation-case>	
 	<navigation-case>
 		<from-outcome>defaultParams</from-outcome>
-		<to-view-id>/account/facelet/acc_appParams/form.faces</to-view-id>
+		<to-view-id>/_account/facelet/acc_appParams/form.faces</to-view-id>
 	</navigation-case>	
 	<navigation-case>
 		<from-outcome>accSupplier</from-outcome>
-		<to-view-id>/account/facelet/supplier/search.faces</to-view-id>
+		<to-view-id>/_account/facelet/supplier/search.faces</to-view-id>
 	</navigation-case>	
 	<navigation-case>
 		<from-outcome>accCreditor</from-outcome>
-		<to-view-id>/account/facelet/creditor/search.faces</to-view-id>
+		<to-view-id>/_account/facelet/creditor/search.faces</to-view-id>
 	</navigation-case>	
 	
   <!-- =================== Application Select Windows Navigation Rules ================= -->	
 	<navigation-case>
 		<from-outcome>account_sw</from-outcome>
-		<to-view-id>/account/facelet/sw/account.faces</to-view-id>
+		<to-view-id>/_account/facelet/sw/account.faces</to-view-id>
 	</navigation-case>
 	<navigation-case>
 		<from-outcome>account_sw_search</from-outcome>
-		<to-view-id>/account/facelet/sw/accountSearch.faces</to-view-id>
+		<to-view-id>/_account/facelet/sw/accountSearch.faces</to-view-id>
 	</navigation-case>
 	
 	<navigation-case>
 		<from-outcome>loan_sw</from-outcome>
-		<to-view-id>/account/facelet/sw/loan.faces</to-view-id>
+		<to-view-id>/_account/facelet/sw/loan.faces</to-view-id>
 	</navigation-case>
 	<navigation-case>
 		<from-outcome>loan_sw_search</from-outcome>
-		<to-view-id>/account/facelet/sw/loanSearch.faces</to-view-id>
+		<to-view-id>/_account/facelet/sw/loanSearch.faces</to-view-id>
 	</navigation-case>
 	
 	<navigation-case>
 		<from-outcome>leasing_sw</from-outcome>
-		<to-view-id>/account/facelet/sw/leasing.faces</to-view-id>
+		<to-view-id>/_account/facelet/sw/leasing.faces</to-view-id>
 	</navigation-case>
 	<navigation-case>
 		<from-outcome>leasing_sw_search</from-outcome>
-		<to-view-id>/account/facelet/sw/leasingSearch.faces</to-view-id>
+		<to-view-id>/_account/facelet/sw/leasingSearch.faces</to-view-id>
 	</navigation-case>
   </navigation-rule>
 </faces-config>
