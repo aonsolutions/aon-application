@@ -61,7 +61,7 @@ public class CompositionOfferDetailListener extends ControllerAdapter {
 					((OfferDetail)event.getController().getTo()).setDiscountExpression(new DiscountExpression("0.0"));
 					((OfferDetail)event.getController().getTo()).setQuantity(offerDetail.getQuantity() * compositionDetail.getQuantity());
 					if(composition.isPriceInDetails()){
-						((OfferDetail)event.getController().getTo()).setPrice(offerDetail.getQuantity() * compositionDetail.getPrice());
+						((OfferDetail)event.getController().getTo()).setPrice(compositionDetail.getPrice());
 					}else{
 						((OfferDetail)event.getController().getTo()).setPrice(0.0);
 					}
