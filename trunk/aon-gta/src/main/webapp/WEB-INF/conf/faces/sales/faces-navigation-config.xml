@@ -61,6 +61,18 @@
       <to-view-id>/facelet/sales/master/delivery/search.faces</to-view-id>
     </navigation-case>
   </navigation-rule>
+
+  <!-- =================== Productivity ========================== -->
+  <navigation-rule>
+    <navigation-case>
+      <from-outcome>productivity_list</from-outcome>
+      <to-view-id>/facelet/sales/master/delivery/labour/list.faces</to-view-id>
+    </navigation-case>
+    <navigation-case>
+      <from-outcome>productivity_search</from-outcome>
+      <to-view-id>/facelet/sales/master/delivery/labour/search.faces</to-view-id>
+    </navigation-case>
+  </navigation-rule>
   
   <!-- ********************************* -->
   <!-- ************ MENU *************** -->
@@ -91,6 +103,9 @@
       <from-outcome>series</from-outcome>
       <to-view-id>/facelet/config/series/grid.faces</to-view-id>
     </navigation-case>
+	<navigation-case>
+	  <from-outcome>productivity</from-outcome>
+	  <to-view-id>/facelet/sales/master/delivery/labour/search.faces</to-view-id>
+	</navigation-case>
   </navigation-rule>
-
 </faces-config>
