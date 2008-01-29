@@ -127,6 +127,7 @@ public class BannerCategoryController extends BasicI18nController {
 		bc.setCurrentBannerCategory(bannerCategory);
 		bc.setCriteria(criteria);
 		bc.onSearch(event);
+		bc.onInit(event);
 	}
 
 	public void reorderObjects() throws ManagerBeanException {

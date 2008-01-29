@@ -10,6 +10,7 @@ import com.code.aon.cms.Album;
 import com.code.aon.cms.AlbumCategory;
 import com.code.aon.cms.AlbumDetail;
 import com.code.aon.cms.AlbumImage;
+import com.code.aon.cms.Image;
 import com.code.aon.cms.dao.ICMSAlias;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
@@ -26,6 +27,10 @@ public class AlbumController extends BasicI18nController {
 	private boolean cancelOnSelect = false;
 
 	private AlbumCategory currentAlbumCategory;
+	
+	public void onInit(ActionEvent event){
+		((GalleryController)AonUtil.getRegisteredBean("gallery")).onInit(event);
+	}
 	
 	public AlbumCategory getCurrentAlbumCategory() {
 		return currentAlbumCategory;
@@ -159,4 +164,26 @@ public class AlbumController extends BasicI18nController {
 			}
 		}
 	}
+	
+	private boolean imageSelectionVisible;
+	
+	public void onShowImages(ActionEvent event) {
+		imageSelectionVisible = true; 
+	}
+	
+	public void onCloseImages(ActionEvent event) {
+		imageSelectionVisible = false; 
+	}
+	
+	public boolean isImageSelectionVisible(){
+		return imageSelectionVisible;
+	}
+	
+	public void onSelectImage(ActionEvent event) throws ManagerBeanException {
+		GalleryController controller = (GalleryController)AonUtil.getRegisteredBean("gallery");
+		String image = ((Image)controller.getModel().getRowData()).getRelativePath();
+		Album current = (Album)getTo();
+		current.setImage(image);
+	}
+
 }

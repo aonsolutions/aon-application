@@ -134,6 +134,7 @@ public class AlbumCategoryController extends BasicI18nController {
 		ac.setCurrentAlbumCategory(albumCategory);
 		ac.setCriteria(criteria);
 		ac.onSearch(event);
+		ac.onInit(event);
 	}
 
 	public void reorderObjects() throws ManagerBeanException {
