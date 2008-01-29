@@ -90,6 +90,7 @@ public class DirectAccessGroupController extends BasicI18nController {
 		dac.setCurrentGroup(directAccessGroup);
 		dac.setCriteria(criteria);
 		dac.onSearch(event);
+		dac.onInit(event);
 	}
 
 }
