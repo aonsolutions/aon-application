@@ -3,6 +3,8 @@
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:aon="http://www.code.es/aon-ice-components"
+	xmlns:ice="http://www.icesoft.com/icefaces/component"
+	xmlns:h="http://java.sun.com/jsf/html">
 	xmlns:c="http://java.sun.com/jstl/core">
 <body>
 
@@ -41,7 +43,7 @@
 						<aon:confirmButton id="remove"
 							value="#{bundle.aon_remove}" rendered="#{!album.new}" immediate="true"
 							confirmTitle="Confirmation Dialog" confirmMessage="#{bundle.aon_remove_confirm}"
-							confirmActionListener="#{album.onRemoveI18n}" confirmAction="album_form"
+							confirmActionListener="#{album.onRemoveI18n}" confirmAction="album_list"
 							styleClass="aon-content-toolbar-item aon-icon-delete"
 							onmouseout="this.className='aon-content-toolbar-item aon-icon-delete'"
 							onmouseover="this.className='aon-content-toolbar-item aon-icon-delete aon-content-toolbar-item-hover'"
@@ -93,11 +95,76 @@
 							<aon:outputLabel for="Album_image"
 								styleClass="aon-form-input-text-label"
 								value="#{appBundle.album_image}" />
-							<aon:inputText id="Album_image"
-								styleClass="aon-form-input-text aon-form-input-text-number"
-								required="true" size="200" maxlength="255"
-								value="#{album.to.image}" />
-
+							<aon:div>
+								<ice:graphicImage
+									id="Album_image" 
+									url="#{album.to.image}.thumbnail" 
+									alt="#{album.to.image}"/>
+								<aon:commandButton
+									title="OPEN"
+									value="OPEN"
+									rendered="#{!album.imageSelectionVisible}"
+									immediate="true"
+									actionListener="#{album.onShowImages}"
+									styleClass="aon-icon-attach aon-content-toolbar-item">
+								</aon:commandButton>
+								<aon:commandButton
+									title="CLOSE"
+									value="CLOSE"
+									rendered="#{album.imageSelectionVisible}"
+									immediate="true"
+									actionListener="#{album.onCloseImages}"
+									styleClass="aon-icon-attach aon-content-toolbar-item">
+								</aon:commandButton>
+								<aon:div visible="#{album.imageSelectionVisible}"
+									forceId="#{true}">
+									<aon:div styleClass="aon-scroll-area-internal">
+										<aon:panelGrid columns="2" style="width:100%;">
+										    <ice:tree id="tree" style="height:250px"
+										              value="#{gallery.tree}"
+										              var="item"
+										              hideRootNode="false"
+										              hideNavigation="false">
+										        <ice:treeNode>
+										            <f:facet name="icon">
+										                <aon:panelGroup style="display: inline">
+										                     <aon:graphicImage value="#{item.userObject.icon}"/>
+										                </aon:panelGroup>
+										            </f:facet>
+										            <f:facet name="content">
+										                <aon:panelGroup style="display: inline">
+										                    <ice:commandLink rendered="#{!item.userObject.selected}"
+										                            actionListener="#{item.userObject.onSelectFolder}"
+										                            value="#{item.userObject.text}"/>
+										                    <ice:outputText value="#{item.userObject.text}" 
+										                    		rendered="#{item.userObject.selected}"
+										                    		style="color:white;background:darkblue"/>
+										                </aon:panelGroup>
+										            </f:facet>
+										        </ice:treeNode>
+										    </ice:tree>
+										    <aon:panelGroup>
+												<ice:panelSeries id="panelSeries" value="#{gallery.model}" var="item" style="width:100%;height:450px;overflow:auto;background:#FFF;padding:1px;">
+													<aon:div id="imagePanel" styleClass="item_explorer">
+														<aon:div styleClass="thumnails_item_explorer">
+															<aon:panelGrid style="width:100px;height:100px" cellpadding="0px" cellspacing="0px" columnClasses="thumbnail_image">
+													            <ice:graphicImage url="#{item.thumb}" alt="#{item.name}"/>
+															</aon:panelGrid>
+														</aon:div>
+														<aon:div styleClass="text_item_explorer">
+										                    <ice:commandLink
+										                    	immediate="#{true}"
+									                            actionListener="#{album.onSelectImage}"
+									                            value="#{item.relativePath}"/>
+														</aon:div>
+													</aon:div>
+												</ice:panelSeries>
+											</aon:panelGroup>
+										</aon:panelGrid>
+									</aon:div>
+								</aon:div>								
+							</aon:div>
+							
 							<aon:outputLabel for="Album_itemsPerPage"
 								styleClass="aon-form-input-text-label"
 								value="#{appBundle.album_items_per_page}" />

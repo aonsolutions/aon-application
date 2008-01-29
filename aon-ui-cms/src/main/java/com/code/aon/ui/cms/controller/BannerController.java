@@ -12,6 +12,7 @@ import javax.faces.model.SelectItem;
 import com.code.aon.cms.Banner;
 import com.code.aon.cms.BannerCategory;
 import com.code.aon.cms.BannerDetail;
+import com.code.aon.cms.Image;
 import com.code.aon.cms.dao.ICMSAlias;
 import com.code.aon.cms.enumeration.BannerType;
 import com.code.aon.common.ITransferObject;
@@ -19,6 +20,8 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionException;
 import com.code.aon.ui.cms.util.ControllerUtil;
+import com.code.aon.ui.cms.util.FolderNodeUserObject;
+import com.code.aon.ui.util.AonUtil;
 import com.icesoft.faces.component.ext.RowSelectorEvent;
 
 public class BannerController extends BasicI18nController {
@@ -26,6 +29,10 @@ public class BannerController extends BasicI18nController {
 	private boolean cancelOnSelect = false;
 
 	private BannerCategory currentBannerCategory;
+	
+	public void onInit(ActionEvent event){
+		((GalleryController)AonUtil.getRegisteredBean("gallery")).onInit(event);
+	}
 	
 	public BannerCategory getCurrentBannerCategory() {
 		return currentBannerCategory;
@@ -158,4 +165,26 @@ public class BannerController extends BasicI18nController {
 		}
 		return bannerTypes;
 	}
+	
+	private boolean imageSelectionVisible;
+	
+	public void onShowImages(ActionEvent event) {
+		imageSelectionVisible = true; 
+	}
+	
+	public void onCloseImages(ActionEvent event) {
+		imageSelectionVisible = false; 
+	}
+	
+	public boolean isImageSelectionVisible(){
+		return imageSelectionVisible;
+	}
+	
+	public void onSelectImage(ActionEvent event) throws ManagerBeanException {
+		GalleryController controller = (GalleryController)AonUtil.getRegisteredBean("gallery");
+		String image = ((Image)controller.getModel().getRowData()).getRelativePath();
+		BannerDetail current = (BannerDetail)getToI18n();
+		current.setImage(image);
+	}
+
 }
