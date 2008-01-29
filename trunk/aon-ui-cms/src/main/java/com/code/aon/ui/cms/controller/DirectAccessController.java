@@ -7,9 +7,11 @@ import javax.faces.event.ActionEvent;
 import javax.faces.event.ValueChangeEvent;
 import javax.faces.model.SelectItem;
 
+import com.code.aon.cms.Album;
 import com.code.aon.cms.DirectAccessGroup;
 import com.code.aon.cms.DirectAccess;
 import com.code.aon.cms.DirectAccessDetail;
+import com.code.aon.cms.Image;
 import com.code.aon.cms.dao.ICMSAlias;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
@@ -17,6 +19,7 @@ import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionException;
 import com.code.aon.ui.cms.util.ControllerUtil;
 import com.code.aon.ui.cms.util.MenuOptionUtil;
+import com.code.aon.ui.util.AonUtil;
 import com.icesoft.faces.component.ext.RowSelectorEvent;
 
 
@@ -26,7 +29,10 @@ public class DirectAccessController extends BasicI18nController {
 
 	private DirectAccessGroup currentGroup;
 	
-
+	public void onInit(ActionEvent event){
+		((GalleryController)AonUtil.getRegisteredBean("gallery")).onInit(event);
+	}
+	
 	public DirectAccessGroup getCurrentGroup() {
 		return currentGroup;
 	}
@@ -196,6 +202,27 @@ public class DirectAccessController extends BasicI18nController {
 		} catch (ExpressionException e) {
 		}
 		return position;
+	}
+
+	private boolean imageSelectionVisible;
+	
+	public void onShowImages(ActionEvent event) {
+		imageSelectionVisible = true; 
+	}
+	
+	public void onCloseImages(ActionEvent event) {
+		imageSelectionVisible = false; 
+	}
+	
+	public boolean isImageSelectionVisible(){
+		return imageSelectionVisible;
+	}
+	
+	public void onSelectImage(ActionEvent event) throws ManagerBeanException {
+		GalleryController controller = (GalleryController)AonUtil.getRegisteredBean("gallery");
+		String image = ((Image)controller.getModel().getRowData()).getRelativePath();
+		DirectAccess current = (DirectAccess)getTo();
+		current.setImage(image);
 	}
 
 }
