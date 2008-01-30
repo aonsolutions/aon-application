@@ -21,6 +21,13 @@
     </navigation-case>
   </navigation-rule>
 
+  <!-- ===================================================== CONFIG -->
+  <navigation-rule>
+    <navigation-case>
+      <from-outcome>config_form</from-outcome>
+      <to-view-id>/facelet/configuration/config/form.iface</to-view-id>
+    </navigation-case>
+  </navigation-rule>
 
   <!-- ================================================= GENERIC PAGE -->
   <navigation-rule>

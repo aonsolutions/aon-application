@@ -17,6 +17,9 @@
 						<aon:menuItem id="language" value="#{menuBundle.cms_language}" 
 							actionListener="#{language.onReset}" action="language_list"
 							styleClass="aon-main-menu-leaf"/>
+						<aon:menuItem id="config" value="#{menuBundle.cms_config}" 
+							actionListener="#{config.onInit}" action="config_form"
+							styleClass="aon-main-menu-leaf"/>
 					</aon:menuItem>
 					<aon:menuItem id="content" value="#{menuBundle.cms_content}">
 						<aon:menuItem id="menu" value="#{menuBundle.cms_menu}"
