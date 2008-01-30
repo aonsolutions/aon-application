@@ -3,6 +3,7 @@ package com.code.aon.ui.cms.controller;
 import java.util.List;
 
 import javax.faces.context.FacesContext;
+import javax.faces.event.ActionEvent;
 import javax.servlet.http.HttpSession;
 
 import com.code.aon.cms.Config;
@@ -15,9 +16,8 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.cms.Constants;
 import com.code.aon.ui.cms.util.ControllerUtil;
-import com.code.aon.ui.form.BasicController;
 
-public class ConfigController extends BasicController {
+public class ConfigController extends BasicI18nController{
 
 	private Config currentConfig;
 	
@@ -29,6 +29,10 @@ public class ConfigController extends BasicController {
 		}
 	}
 
+	public void onInit(ActionEvent arg0) {
+		initializeModel();
+	}
+	
 	private void init() throws ManagerBeanException {
 		System.out.println(">>>>>> ----------------------------------------");
 		System.out.println(">>>>>> CARGANDO CONFIGURACION...");
