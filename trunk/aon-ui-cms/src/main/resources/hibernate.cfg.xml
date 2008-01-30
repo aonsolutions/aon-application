@@ -67,6 +67,7 @@
 		<mapping class="com.code.aon.cms.SidebarOptionDetail"/>
 		<mapping class="com.code.aon.cms.Section"/>
 		<mapping class="com.code.aon.cms.ModularPage"/>
+		<mapping class="com.code.aon.cms.ModularPageDetail"/>
 		<mapping class="com.code.aon.cms.ModularPageOption"/>
 		<mapping class="com.code.aon.cms.ModularPageOptionDetail"/>
 		<mapping class="com.code.aon.cms.DirectAccessGroup"/>

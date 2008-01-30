@@ -32,16 +32,14 @@ public abstract class GalleryController extends BasicController implements IGall
 	}
 		
 	public void onInit(ActionEvent event){
-		if (currentPath == null) {
-			this.currentPath = revoverFilesPath();
-			if (this.currentPath != null) {
-				File currentDir = new File(this.currentPath);
-				if (!currentDir.exists()) currentDir.mkdirs();
-				currentPath = currentDir.getAbsolutePath();
-				basePath = currentDir.getAbsolutePath();
-			}
-			chargeTree(currentPath);
+		this.currentPath = revoverFilesPath();
+		if (this.currentPath != null) {
+			File currentDir = new File(this.currentPath);
+			if (!currentDir.exists()) currentDir.mkdirs();
+			currentPath = currentDir.getAbsolutePath();
+			basePath = currentDir.getAbsolutePath();
 		}
+		chargeTree(currentPath);
 	}
 
 	private void chargeTree(String path) {

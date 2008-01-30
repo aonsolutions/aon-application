@@ -75,18 +75,16 @@
 											<aon:outputLabel for="Config_css"
 												styleClass="aon-form-input-text-label"
 												value="#{appBundle.config_css}" />
-											<aon:inputText id="Config_css"
-												styleClass="aon-form-input-text"
-												required="true" size="75" maxlength="75"
-												value="#{config.toI18n.css}" />
+											<aon:inputTextarea id="Config_css"
+												cols="60" rows="20" 
+												value="#{config.toI18n.css}"/>
 
 											<aon:outputLabel for="Config_javascript"
 												styleClass="aon-form-input-text-label"
 												value="#{appBundle.config_javascript}" />
-											<aon:inputText id="Config_javascript"
-												styleClass="aon-form-input-text"
-												required="true" size="75" maxlength="75"
-												value="#{config.toI18n.javascript}" />
+											<aon:inputTextarea id="Config_javascript"
+												cols="60" rows="20" 
+												value="#{config.toI18n.javascript}"/>
 
 											<aon:outputLabel for="ConfigDetail_keywords"
 												styleClass="aon-form-input-text-label"

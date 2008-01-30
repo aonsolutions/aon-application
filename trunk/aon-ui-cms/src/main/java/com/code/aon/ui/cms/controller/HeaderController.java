@@ -8,6 +8,7 @@ import javax.faces.event.ValueChangeEvent;
 
 import com.code.aon.cms.Header;
 import com.code.aon.cms.HeaderDetail;
+import com.code.aon.cms.Image;
 import com.code.aon.cms.dao.ICMSAlias;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
@@ -16,12 +17,17 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionException;
 import com.code.aon.ui.cms.util.ControllerUtil;
+import com.code.aon.ui.util.AonUtil;
 import com.icesoft.faces.component.ext.RowSelectorEvent;
 
 
 public class HeaderController extends BasicI18nController {
 
 	private boolean cancelOnSelect = false;
+
+	public void onInit(ActionEvent event){
+		((GalleryController)AonUtil.getRegisteredBean("gallery")).onInit(event);
+	}
 
 	@SuppressWarnings("unused")
 	public void onSelect(RowSelectorEvent event) throws ManagerBeanException {
@@ -109,6 +115,27 @@ public class HeaderController extends BasicI18nController {
 				header.setDefault_(false);
 			bean.update(header);
 		}
+	}
+
+	private boolean imageSelectionVisible;
+	
+	public void onShowImages(ActionEvent event) {
+		imageSelectionVisible = true; 
+	}
+	
+	public void onCloseImages(ActionEvent event) {
+		imageSelectionVisible = false; 
+	}
+	
+	public boolean isImageSelectionVisible(){
+		return imageSelectionVisible;
+	}
+	
+	public void onSelectImage(ActionEvent event) throws ManagerBeanException {
+		GalleryController controller = (GalleryController)AonUtil.getRegisteredBean("gallery");
+		String image = ((Image)controller.getModel().getRowData()).getRelativePath();
+		HeaderDetail current = (HeaderDetail)getToI18n();
+		current.setImage(image);
 	}
 
 }
