@@ -60,6 +60,8 @@ import com.code.aon.cms.DirectAccessDetail;
 import com.code.aon.cms.FaqConfig;
 import com.code.aon.cms.LinkConfig;
 import com.code.aon.cms.AlbumConfig;
+import com.code.aon.cms.ArticleConfig;
+import com.code.aon.cms.ModularPageDetail;
 
 /** 
 * Interface for holding entity properties constants.
@@ -2427,6 +2429,56 @@ public interface ICMSAlias {
 	* Hibernate value: AlbumConfig.section.id
 	*/
 	String  ALBUM_CONFIG_SECTION_ID = ALBUM_CONFIG_ENTRY.getAliasNames()[1];
+
+
+
+	/** 
+	* DAOConstantsEntry for ArticleConfig entity.
+	*/ 
+	DAOConstantsEntry ARTICLE_CONFIG_ENTRY = DAOConstants.getDAOConstant(ArticleConfig.class);
+
+	/** 
+	* Alias value: ArticleConfig_id
+	* Hibernate value: ArticleConfig.id
+	*/
+	String  ARTICLE_CONFIG_ID = ARTICLE_CONFIG_ENTRY.getAliasNames()[0];
+
+	/** 
+	* Alias value: ArticleConfig_section_id
+	* Hibernate value: ArticleConfig.section.id
+	*/
+	String  ARTICLE_CONFIG_SECTION_ID = ARTICLE_CONFIG_ENTRY.getAliasNames()[1];
+
+
+
+	/** 
+	* DAOConstantsEntry for ModularPageDetail entity.
+	*/ 
+	DAOConstantsEntry MODULAR_PAGE_DETAIL_ENTRY = DAOConstants.getDAOConstant(ModularPageDetail.class);
+
+	/** 
+	* Alias value: ModularPageDetail_id
+	* Hibernate value: ModularPageDetail.id
+	*/
+	String  MODULAR_PAGE_DETAIL_ID = MODULAR_PAGE_DETAIL_ENTRY.getAliasNames()[0];
+
+	/** 
+	* Alias value: ModularPageDetail_label
+	* Hibernate value: ModularPageDetail.label
+	*/
+	String  MODULAR_PAGE_DETAIL_LABEL = MODULAR_PAGE_DETAIL_ENTRY.getAliasNames()[1];
+
+	/** 
+	* Alias value: ModularPageDetail_language_id
+	* Hibernate value: ModularPageDetail.language.id
+	*/
+	String  MODULAR_PAGE_DETAIL_LANGUAGE_ID = MODULAR_PAGE_DETAIL_ENTRY.getAliasNames()[2];
+
+	/** 
+	* Alias value: ModularPageDetail_modular_page_id
+	* Hibernate value: ModularPageDetail.modular_page.id
+	*/
+	String  MODULAR_PAGE_DETAIL_MODULAR_PAGE_ID = MODULAR_PAGE_DETAIL_ENTRY.getAliasNames()[3];
 
 
 }
