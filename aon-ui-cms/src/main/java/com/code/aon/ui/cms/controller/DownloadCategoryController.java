@@ -9,6 +9,7 @@ import javax.faces.event.ValueChangeEvent;
 import com.code.aon.cms.Download;
 import com.code.aon.cms.DownloadCategory;
 import com.code.aon.cms.DownloadCategoryDetail;
+import com.code.aon.cms.Image;
 import com.code.aon.cms.dao.ICMSAlias;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
@@ -24,6 +25,10 @@ public class DownloadCategoryController extends BasicI18nController {
 
 	private boolean cancelOnSelect = false;
 
+	public void onInit(ActionEvent event){
+		((GalleryController)AonUtil.getRegisteredBean("gallery")).onInit(event);
+	}
+	
 	@SuppressWarnings("unused")
 	public void onSelect(RowSelectorEvent event) throws ManagerBeanException {
 		if (!cancelOnSelect) {
@@ -142,5 +147,26 @@ public class DownloadCategoryController extends BasicI18nController {
 				getManagerBean().update(d);
 			}
 		}
+	}
+	
+	private boolean imageSelectionVisible;
+	
+	public void onShowImages(ActionEvent event) {
+		imageSelectionVisible = true; 
+	}
+	
+	public void onCloseImages(ActionEvent event) {
+		imageSelectionVisible = false; 
+	}
+	
+	public boolean isImageSelectionVisible(){
+		return imageSelectionVisible;
+	}
+	
+	public void onSelectImage(ActionEvent event) throws ManagerBeanException {
+		GalleryController controller = (GalleryController)AonUtil.getRegisteredBean("gallery");
+		String image = ((Image)controller.getModel().getRowData()).getRelativePath();
+		DownloadCategory current = (DownloadCategory)getTo();
+		current.setImage(image);
 	}
 }
