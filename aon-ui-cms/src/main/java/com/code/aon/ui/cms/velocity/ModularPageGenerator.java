@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.code.aon.cms.ModularPage;
+import com.code.aon.cms.ModularPageDetail;
 import com.code.aon.cms.ModularPageOption;
 import com.code.aon.cms.ModularPageOptionDetail;
 import com.code.aon.cms.dao.ICMSAlias;
@@ -15,6 +16,7 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.cms.util.ControllerUtil;
 import com.code.aon.ui.cms.util.VelocityUtil;
+import com.code.aon.ui.cms.velocity.attribute.ModularPageHandler;
 import com.code.aon.ui.cms.velocity.attribute.ModularPageOptionHandler;
 
 public class ModularPageGenerator extends Generator {
@@ -48,6 +50,15 @@ public class ModularPageGenerator extends Generator {
 						}
 					}
 				}
+				IManagerBean mdBean = BeanManager.getManagerBean(ModularPageDetail.class);
+				Criteria criteria_mp_detail = new Criteria();
+				criteria_mp_detail.addEqualExpression(mdBean.getFieldName(ICMSAlias.MODULAR_PAGE_DETAIL_MODULAR_PAGE_ID),mp.getId());
+				criteria_mp_detail.addEqualExpression(mdBean.getFieldName(ICMSAlias.MODULAR_PAGE_DETAIL_LANGUAGE_ID),ControllerUtil.getCurrentLanguage().getId());
+				List<ITransferObject> lmpd = (List<ITransferObject>) mdBean.getList(criteria_mp_detail);
+				if (lmpd.size()>0) {
+					ModularPageHandler mph = new ModularPageHandler((ModularPageDetail)lmpd.get(0));
+					vu.put("module", mph);
+				}
 				vu.put("modules", moduleList);
 
 				// Cargar datos comunes a todas las paginas
@@ -61,6 +72,7 @@ public class ModularPageGenerator extends Generator {
 				}else{
 					generate(vu, Templates.MODULAR, mp.getAlias());
 				}
+				vu.remove("module");
 				vu.remove("modules");
 			}
 		} catch (ManagerBeanException e) {

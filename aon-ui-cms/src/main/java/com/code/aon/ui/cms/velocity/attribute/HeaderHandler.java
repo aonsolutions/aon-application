@@ -75,5 +75,9 @@ public class HeaderHandler {
 		return content;
 	}
 
+	public LanguageMenuType getLanguageType() {
+		return languageType;
+	}
+
 
 }

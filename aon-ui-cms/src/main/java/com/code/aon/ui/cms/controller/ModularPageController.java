@@ -19,7 +19,7 @@ import com.code.aon.ui.form.GridController;
 import com.code.aon.ui.util.AonUtil;
 import com.icesoft.faces.component.ext.RowSelectorEvent;
 
-public class ModularPageController extends GridController {
+public class ModularPageController extends BasicI18nController {
 
 	private boolean cancelOnSelect = false;
 	
@@ -28,6 +28,7 @@ public class ModularPageController extends GridController {
 		if (!cancelOnSelect) {
 			super.onSelect(new ActionEvent(event.getComponent()));
 			FacesContext.getCurrentInstance().getApplication().getNavigationHandler().handleNavigation(FacesContext.getCurrentInstance(), null, "modular_page_form");
+			loadCurrentLanguage();
 		}
 		cancelOnSelect = false;
 	}
