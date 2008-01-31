@@ -50,7 +50,11 @@ public class LabourReportController implements ICollectionProvider{
 	public void onEditSearch(MenuEvent event){
 		this.criteria = new Criteria();
 	}
-	
+
+	public void onEditSearch(ActionEvent event){
+		this.criteria = new Criteria();
+	}
+
 	public void addEmployeeExpression(ValueChangeEvent event) throws ManagerBeanException{
 		if(event.getNewValue()!=null){
 			IManagerBean deliveryDetailLabourBean = BeanManager.getManagerBean(DeliveryDetailLabour.class);
