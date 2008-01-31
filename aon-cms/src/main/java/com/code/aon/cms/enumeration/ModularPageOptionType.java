@@ -18,6 +18,11 @@ public enum ModularPageOptionType implements IResourceable {
 	BANNER,
 
 	/**
+	 * BannerGroup
+	 */
+	BANNER_GROUP,
+
+	/**
 	 * Article
 	 */
 	ARTICLE,

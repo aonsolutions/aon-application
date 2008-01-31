@@ -12,6 +12,7 @@ import com.code.aon.cms.AlbumCategory;
 import com.code.aon.cms.Article;
 import com.code.aon.cms.ArticleCategory;
 import com.code.aon.cms.Banner;
+import com.code.aon.cms.BannerCategory;
 import com.code.aon.cms.Brand;
 import com.code.aon.cms.DirectAccess;
 import com.code.aon.cms.DirectAccessGroup;
@@ -40,6 +41,7 @@ import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionException;
+import com.code.aon.ui.cms.velocity.BannerGenerator;
 
 public class CollectionsController {
 
@@ -319,6 +321,22 @@ public class CollectionsController {
 		return itemList;
 	}
 
+	public List<SelectItem> getBannerGroupList() throws ManagerBeanException {
+		List<SelectItem> select_list = new LinkedList<SelectItem>();
+		IManagerBean bean = BeanManager.getManagerBean(BannerCategory.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(bean.getFieldName(ICMSAlias.BANNER_CATEGORY_ACTIVE), true);
+		List<ITransferObject> list = (List<ITransferObject>)bean.getList(criteria);
+		for (int i = 0; i < list.size(); i++) {
+			BannerCategory ac = (BannerCategory)list.get(i);
+			int id = ac.getId();
+			String name = ac.getAlias();
+			SelectItem item = new SelectItem(id, name);
+			select_list.add(item);
+		}
+		return select_list;
+	}
+	
 	public List<SelectItem> getBannerList() throws ManagerBeanException {
 		List<SelectItem> itemList = new LinkedList<SelectItem>();
 		IManagerBean bean = BeanManager.getManagerBean(Banner.class);

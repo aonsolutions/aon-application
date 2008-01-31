@@ -32,6 +32,9 @@ public class ModularPageOptionHandler {
 		else if (mpod.getModular_page_option().getType().equals(ModularPageOptionType.ARTICLE_OTHER)) {
 			content = ArticleGenerator.getArticleCategoryHandler(mpod.getModular_page_option().getIdent(),ArticleType.OTHER);
 		}
+		else if (mpod.getModular_page_option().getType().equals(ModularPageOptionType.BANNER_GROUP)) {
+			content = BannerGenerator.getBannerCategoryHandler(mpod.getModular_page_option().getIdent());
+		}
 		else if (mpod.getModular_page_option().getType().equals(ModularPageOptionType.BANNER)) {
 			content = BannerGenerator.getBannerHandler(mpod.getModular_page_option().getIdent());
 		}

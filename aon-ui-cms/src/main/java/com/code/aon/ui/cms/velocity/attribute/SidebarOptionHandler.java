@@ -20,6 +20,9 @@ public class SidebarOptionHandler {
 		if (sidebarOptionDetail.getSidebar_option().getType().equals(SidebarType.ARTICLE)) {
 			content = ArticleGenerator.getArticleHandler(sidebarOptionDetail.getSidebar_option().getIdent());
 		}
+		else if (sidebarOptionDetail.getSidebar_option().getType().equals(SidebarType.BANNER_GROUP)) {
+			content = BannerGenerator.getBannerCategoryHandler(sidebarOptionDetail.getSidebar_option().getIdent());
+		}
 		else if (sidebarOptionDetail.getSidebar_option().getType().equals(SidebarType.BANNER)) {
 			content = BannerGenerator.getBannerHandler(sidebarOptionDetail.getSidebar_option().getIdent());
 		}
