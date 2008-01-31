@@ -175,7 +175,7 @@ public class TASCollectionsController {
     	Iterator iter = appraiserBean.getList(null).iterator();
     	while(iter.hasNext()){
     		Appraiser appraiser = (Appraiser)iter.next();
-    		SelectItem item = new SelectItem(appraiser.getId(), (appraiser.getRegistry().getSurname()!=null?appraiser.getRegistry().getSurname():"") + (appraiser.getRegistry().getName()!=null?appraiser.getRegistry().getName():""));
+    		SelectItem item = new SelectItem(appraiser.getId(), (appraiser.getRegistry().getSurname()!=null?appraiser.getRegistry().getSurname() + " ":"") + (appraiser.getRegistry().getName()!=null?appraiser.getRegistry().getName():""));
     		appraisers.add(item);
     	}
     	return appraisers;
