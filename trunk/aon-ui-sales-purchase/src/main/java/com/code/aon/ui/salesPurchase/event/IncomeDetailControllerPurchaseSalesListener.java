@@ -44,18 +44,20 @@ public class IncomeDetailControllerPurchaseSalesListener extends ControllerAdapt
 		try {
 			PurchaseSalesController purchaseSalesController = (PurchaseSalesController)AonUtil.getController(PURCHASE_SALES_CONTROLLER_NAME);
 			DeliveryController deliveryController = (DeliveryController)AonUtil.getController(DELIVERY_CONTROLLER_NAME);
-			/* La orden de reparación elegida no tiene albarán asociado*/
-			if(purchaseSalesController.isDeliveryRelated() && purchaseSalesController.getDelivery().getId() == null){
-				deliveryController.onReset((ActionEvent)null);
-				importDelivery(purchaseSalesController.getDelivery(), purchaseSalesController.getSupportOrderId());
-				purchaseSalesController.setDelivery((Delivery)deliveryController.getTo());
-			}else{ /* La orden de reparación elegida tiene albarán asociado*/
-				deliveryControllerForUpdate(purchaseSalesController.getDelivery(), purchaseSalesController.getDeliveryDetail().getWarehouse().getId());
+			if(purchaseSalesController.isDeliveryRelated()){
+				/* La orden de reparación elegida no tiene albarán asociado*/
+				if(purchaseSalesController.getDelivery().getId() == null){
+					deliveryController.onReset((ActionEvent)null);
+					importDelivery(purchaseSalesController.getDelivery(), purchaseSalesController.getSupportOrderId());
+					purchaseSalesController.setDelivery((Delivery)deliveryController.getTo());
+				}else{ /* La orden de reparación elegida tiene albarán asociado*/
+					deliveryControllerForUpdate(purchaseSalesController.getDelivery(), purchaseSalesController.getDeliveryDetail().getWarehouse().getId());
+				}
+				DeliveryDetail deliveryDetail = purchaseSalesController.getDeliveryDetail();
+				deliveryDetail.setDelivery(purchaseSalesController.getDelivery());
+				deliveryController.setWarehouseId(deliveryDetail.getWarehouse().getId());
+				insertDeliveryDetail(deliveryDetail);
 			}
-			DeliveryDetail deliveryDetail = purchaseSalesController.getDeliveryDetail();
-			deliveryDetail.setDelivery(purchaseSalesController.getDelivery());
-			deliveryController.setWarehouseId(deliveryDetail.getWarehouse().getId());
-			insertDeliveryDetail(deliveryDetail);
 		} catch (ManagerBeanException e) {
 			throw new ControllerListenerException(e);
 		}
