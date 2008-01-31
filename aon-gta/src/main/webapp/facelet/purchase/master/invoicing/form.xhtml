@@ -105,7 +105,7 @@
 							disabled="#{invoicingDetail.to != null || purchaseFinance.to != null}" />
 						<t:commandButton id="finances" value="#{financeBundle.finance_generate}"
 							actionListener="#{invoicing.generateFinances}"
-							rendered="#{invoicing.model.rowCount > 0}"
+							rendered="#{!invoicing.new and invoicingDetail.model.rowCount > 0}"							
 							styleClass="aon-content-toolbar-item aon-content-toolbar-item-new"
 							onmouseover="this.className='aon-content-toolbar-item aon-content-toolbar-item-hover aon-content-toolbar-item-new'"
 							onmouseout="this.className='aon-content-toolbar-item aon-content-toolbar-item-new'"
