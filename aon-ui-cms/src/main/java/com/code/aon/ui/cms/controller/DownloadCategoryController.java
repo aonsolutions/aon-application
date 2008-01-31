@@ -132,6 +132,7 @@ public class DownloadCategoryController extends BasicI18nController {
 		dc.setCurrentDownloadCategory(downloadCategory);
 		dc.setCriteria(criteria);
 		dc.onSearch(event);
+		dc.onInit(event);
 	}
 
 	public void reorderObjects() throws ManagerBeanException {

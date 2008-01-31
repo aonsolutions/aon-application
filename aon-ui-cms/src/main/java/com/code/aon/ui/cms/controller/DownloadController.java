@@ -8,14 +8,15 @@ import javax.faces.event.ValueChangeEvent;
 
 import com.code.aon.cms.Download;
 import com.code.aon.cms.DownloadCategory;
-import com.code.aon.cms.DownloadCategoryDetail;
 import com.code.aon.cms.DownloadDetail;
+import com.code.aon.cms.Image;
 import com.code.aon.cms.dao.ICMSAlias;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionException;
 import com.code.aon.ui.cms.util.ControllerUtil;
+import com.code.aon.ui.util.AonUtil;
 import com.icesoft.faces.component.ext.RowSelectorEvent;
 
 public class DownloadController extends BasicI18nController {
@@ -23,6 +24,10 @@ public class DownloadController extends BasicI18nController {
 	private boolean cancelOnSelect = false;
 
 	private DownloadCategory currentDownloadCategory;
+	
+	public void onInit(ActionEvent event){
+		((GalleryController)AonUtil.getRegisteredBean("document")).onInit(event);
+	}
 	
 	public DownloadCategory getCurrentDownloadCategory() {
 		return currentDownloadCategory;
@@ -142,5 +147,27 @@ public class DownloadController extends BasicI18nController {
 				getManagerBean().update(d);
 			}
 		}
+	}
+	
+	
+	private boolean imageSelectionVisible;
+	
+	public void onShowImages(ActionEvent event) {
+		imageSelectionVisible = true; 
+	}
+	
+	public void onCloseImages(ActionEvent event) {
+		imageSelectionVisible = false; 
+	}
+	
+	public boolean isImageSelectionVisible(){
+		return imageSelectionVisible;
+	}
+	
+	public void onSelectImage(ActionEvent event) throws ManagerBeanException {
+		GalleryController controller = (GalleryController)AonUtil.getRegisteredBean("document");
+		String image = ((Image)controller.getModel().getRowData()).getRelativePath();
+		DownloadDetail current = (DownloadDetail)getToI18n();
+		current.setFile(image);
 	}
 }

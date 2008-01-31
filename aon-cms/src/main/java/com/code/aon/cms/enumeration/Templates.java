@@ -65,7 +65,12 @@ public enum Templates implements IResourceable {
 	/**
 	 * ALBUM_IMAGES
 	 */
-	ALBUM_IMAGES;
+	ALBUM_IMAGES,
+	
+	/**
+	 * DOWNLOADS
+	 */
+	DOWNLOADS;
 	
 	/**
 	 * Ruta base del fichero de mensajes.
