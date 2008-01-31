@@ -82,14 +82,45 @@ public class DirectAccessGenerator extends Generator {
 	
 	public static Object getDirectAccessHandler(Integer ident) {
 		try {
-			IManagerBean bean = BeanManager.getManagerBean(DirectAccessGroupDetail.class);
+			IManagerBean bean = BeanManager.getManagerBean(DirectAccess.class);
 			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(bean.getFieldName(ICMSAlias.DIRECT_ACCESS_GROUP_DETAIL_ID), ident);
+			criteria.addEqualExpression(bean.getFieldName(ICMSAlias.DIRECT_ACCESS_ID), ident);
 			List<ITransferObject> l = (List<ITransferObject>)bean.getList(criteria);
-			if  (l.size()>0) {
-				DirectAccessGroupDetail groupDetail = (DirectAccessGroupDetail)l.get(0);
-				DirectAccessGroupHandler h = new DirectAccessGroupHandler(groupDetail);
-				return h;
+			
+			DirectAccess a = (DirectAccess)l.get(0);
+			if (a.isActive()) {
+				IManagerBean beanDetail = BeanManager.getManagerBean(DirectAccessDetail.class);
+				criteria = new Criteria();
+				criteria.addEqualExpression(beanDetail.getFieldName(ICMSAlias.DIRECT_ACCESS_DETAIL_LANGUAGE_ID), ControllerUtil.getCurrentLanguage().getId());
+				criteria.addEqualExpression(beanDetail.getFieldName(ICMSAlias.DIRECT_ACCESS_DETAIL_DIRECT_ACCESS_ID), ident);
+				List<ITransferObject> ld = (List<ITransferObject>)beanDetail.getList(criteria);
+				DirectAccessDetail ad = (DirectAccessDetail)ld.get(0);
+				DirectAccessHandler ah = new DirectAccessHandler(ad);
+				return ah;
+			}
+		} catch (ManagerBeanException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+
+	public static Object getDirectAccessGroupHandler(Integer ident) {
+		try {
+			IManagerBean bean = BeanManager.getManagerBean(DirectAccessGroup.class);
+			Criteria criteria = new Criteria();
+			criteria.addEqualExpression(bean.getFieldName(ICMSAlias.DIRECT_ACCESS_GROUP_ID), ident);
+			List<ITransferObject> l = (List<ITransferObject>)bean.getList(criteria);
+			
+			DirectAccessGroup a = (DirectAccessGroup)l.get(0);
+			if (a.isActive()) {
+				IManagerBean beanDetail = BeanManager.getManagerBean(DirectAccessGroupDetail.class);
+				criteria = new Criteria();
+				criteria.addEqualExpression(beanDetail.getFieldName(ICMSAlias.DIRECT_ACCESS_GROUP_DETAIL_LANGUAGE_ID), ControllerUtil.getCurrentLanguage().getId());
+				criteria.addEqualExpression(beanDetail.getFieldName(ICMSAlias.DIRECT_ACCESS_GROUP_DETAIL_DIRECT_ACCESS_GROUP_ID), ident);
+				List<ITransferObject> ld = (List<ITransferObject>)beanDetail.getList(criteria);
+				DirectAccessGroupDetail ad = (DirectAccessGroupDetail)ld.get(0);
+				DirectAccessGroupHandler ah = new DirectAccessGroupHandler(ad);
+				return ah;
 			}
 		} catch (ManagerBeanException e) {
 			e.printStackTrace();

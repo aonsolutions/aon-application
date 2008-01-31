@@ -36,7 +36,7 @@ public class SidebarOptionHandler {
 			content = MenuGenerator.getMenuHandler(sidebarOptionDetail.getSidebar_option().getIdent());
 		}
 		else if (sidebarOptionDetail.getSidebar_option().getType().equals(SidebarType.DIRECT_ACCESS)) {
-			content = DirectAccessGenerator.getDirectAccessHandler(sidebarOptionDetail.getSidebar_option().getIdent());
+			content = DirectAccessGenerator.getDirectAccessGroupHandler(sidebarOptionDetail.getSidebar_option().getIdent());
 		}
 	}
 

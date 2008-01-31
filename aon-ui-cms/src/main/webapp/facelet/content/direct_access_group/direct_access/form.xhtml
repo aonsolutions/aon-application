@@ -91,7 +91,7 @@
 								value="#{appBundle.direct_access_description}" />
 							<aon:inputText id="DirectAccessDetail_description"
 								styleClass="aon-form-input-text aon-form-input-text-number"
-								required="true" size="255" maxlength="100"
+								size="255" maxlength="100"
 								value="#{direct_access.toI18n.description}" />
 
 							<aon:outputLabel for="DirectAccess_image"
@@ -116,6 +116,13 @@
 									rendered="#{direct_access.imageSelectionVisible}"
 									immediate="true"
 									actionListener="#{direct_access.onCloseImages}"
+									styleClass="aon-icon-attach aon-content-toolbar-item">
+								</aon:commandButton>
+								<aon:commandButton
+									title="NONE"
+									value="NONE"
+									immediate="true"
+									actionListener="#{direct_access.onNoneImage}"
 									styleClass="aon-icon-attach aon-content-toolbar-item">
 								</aon:commandButton>
 								<aon:div visible="#{direct_access.imageSelectionVisible}"

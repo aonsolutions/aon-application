@@ -367,7 +367,7 @@ public class CollectionsController {
 		return modular;
 	}
 
-	public List<SelectItem> getDirectAccessList() throws ManagerBeanException {
+	public List<SelectItem> getDirectAccessGroupList() throws ManagerBeanException {
 		List<SelectItem> accesses = new LinkedList<SelectItem>();
 		IManagerBean bean = BeanManager.getManagerBean(DirectAccessGroup.class);
 		Criteria criteria = new Criteria();
@@ -375,6 +375,22 @@ public class CollectionsController {
 		List<ITransferObject> list = (List<ITransferObject>)bean.getList(criteria);
 		for (int i = 0; i < list.size(); i++) {
 			DirectAccessGroup da = (DirectAccessGroup)list.get(i);
+			int id = da.getId();
+			String name = da.getAlias();
+			SelectItem item = new SelectItem(id, name);
+			accesses.add(item);
+		}
+		return accesses;
+	}
+	
+	public List<SelectItem> getDirectAccessList() throws ManagerBeanException {
+		List<SelectItem> accesses = new LinkedList<SelectItem>();
+		IManagerBean bean = BeanManager.getManagerBean(DirectAccess.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(bean.getFieldName(ICMSAlias.DIRECT_ACCESS_ACTIVE), true);
+		List<ITransferObject> list = (List<ITransferObject>)bean.getList(criteria);
+		for (int i = 0; i < list.size(); i++) {
+			DirectAccess da = (DirectAccess)list.get(i);
 			int id = da.getId();
 			String name = da.getAlias();
 			SelectItem item = new SelectItem(id, name);
