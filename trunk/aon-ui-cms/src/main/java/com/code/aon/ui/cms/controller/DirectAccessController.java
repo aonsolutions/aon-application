@@ -214,6 +214,11 @@ public class DirectAccessController extends BasicI18nController {
 		imageSelectionVisible = false; 
 	}
 	
+	public void onNoneImage(ActionEvent event) {
+		DirectAccess current = (DirectAccess)getTo();
+		current.setImage(null);
+	}
+	
 	public boolean isImageSelectionVisible(){
 		return imageSelectionVisible;
 	}

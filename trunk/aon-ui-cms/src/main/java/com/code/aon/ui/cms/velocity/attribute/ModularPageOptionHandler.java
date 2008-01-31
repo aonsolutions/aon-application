@@ -41,11 +41,14 @@ public class ModularPageOptionHandler {
 		else if (mpod.getModular_page_option().getType().equals(ModularPageOptionType.GENERIC)) {
 			content = GenericGenerator.getGenericHandler(mpod.getModular_page_option().getIdent());
 		}
-		else if (mpod.getModular_page_option().getType().equals(ModularPageOptionType.DIRECT_ACCESS)) {
-			content = DirectAccessGenerator.getDirectAccessHandler(mpod.getModular_page_option().getIdent());
+		else if (mpod.getModular_page_option().getType().equals(ModularPageOptionType.DIRECT_ACCESS_GROUP)) {
+			content = DirectAccessGenerator.getDirectAccessGroupHandler(mpod.getModular_page_option().getIdent());
 		}
 		else if (mpod.getModular_page_option().getType().equals(ModularPageOptionType.DOWNLOADS)) {
 			content = DownloadsGenerator.getDownloadsHandler(mpod.getModular_page_option().getIdent());
+		}
+		else if (mpod.getModular_page_option().getType().equals(ModularPageOptionType.DIRECT_ACCESS)) {
+			content = DirectAccessGenerator.getDirectAccessHandler(mpod.getModular_page_option().getIdent());
 		}
 	}
 

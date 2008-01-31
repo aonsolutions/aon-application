@@ -108,7 +108,7 @@ public class MenuOptionUtil {
 		List<SelectItem> idents = new LinkedList<SelectItem>();
 		if (type.equals(PageType.GENERIC)) idents = ((CollectionsController)AonUtil.getRegisteredBean("collections")).getGenericPageList();
 		else if (type.equals(PageType.MODULAR)) idents = ((CollectionsController)AonUtil.getRegisteredBean("collections")).getModularPageList();
-		else if (type.equals(PageType.DIRECT_ACCESS)) idents = ((CollectionsController)AonUtil.getRegisteredBean("collections")).getDirectAccessList();
+		else if (type.equals(PageType.DIRECT_ACCESS)) idents = ((CollectionsController)AonUtil.getRegisteredBean("collections")).getDirectAccessGroupList();
 		else if (type.equals(PageType.MENU)) idents = ((CollectionsController)AonUtil.getRegisteredBean("collections")).getMenuList();
 		else if (type.equals(PageType.FAQ)){
 			if (ContentLevel.CATEGORY.equals(level)){

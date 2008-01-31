@@ -76,7 +76,7 @@ public class DirectAccessDetail implements ITransferObject {
 		this.url = url;
 	}
 
-	@Column(name = "description", nullable = false)
+	@Column(name = "description")
 	public String getDescription() {
 		return description;
 	}
