@@ -37,6 +37,10 @@ public class Section implements ITransferObject {
 	
 	private boolean show_menu = true;
 
+	private Menu menu_alt;
+	
+	private boolean show_menu_alt = true;
+
 	private boolean default_;
 	
 	@Id
@@ -142,6 +146,25 @@ public class Section implements ITransferObject {
 
 	public void setShow_menu(boolean show_menu) {
 		this.show_menu = show_menu;
+	}
+
+	@ManyToOne(fetch = FetchType.EAGER)
+	@JoinColumn(name = "menu_alt")
+	public Menu getMenu_alt() {
+		return menu_alt;
+	}
+
+	public void setMenu_alt(Menu menu_alt) {
+		this.menu_alt = menu_alt;
+	}
+
+	@Column(name = "show_menu_alt")
+	public boolean isShow_menu_alt() {
+		return show_menu_alt;
+	}
+
+	public void setShow_menu_alt(boolean show_menu_alt) {
+		this.show_menu_alt = show_menu_alt;
 	}
 
 	@Column(name = "default_", nullable = false)
