@@ -50,6 +50,14 @@ public class CommonGenerator extends Generator {
 			vu.addMessage(" - Menu " + m.getAlias() + " cargado.", VelocityUtil.INFO);
 		}
 
+		vu.put("is_menu_alt", section.isShow_menu_alt());
+		if (section.isShow_menu()){
+			vu.addMessage(" - Menu alternativo", VelocityUtil.INFO);
+			Menu m = section.getMenu_alt();
+			vu.put("default_menu_alt", MenuGenerator.getMenuOptionList(m));
+			vu.addMessage(" - Menu alt " + m.getAlias() + " cargado.", VelocityUtil.INFO);
+		}
+
 		// $default_header from default header in database
 		vu.put("is_header", section.isShow_header());
 		if (section.isShow_header()){

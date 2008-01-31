@@ -70,7 +70,12 @@ public enum Templates implements IResourceable {
 	/**
 	 * DOWNLOADS
 	 */
-	DOWNLOADS;
+	DOWNLOADS,
+	
+	/**
+	 * BANNERS
+	 */
+	BANNERS;
 	
 	/**
 	 * Ruta base del fichero de mensajes.

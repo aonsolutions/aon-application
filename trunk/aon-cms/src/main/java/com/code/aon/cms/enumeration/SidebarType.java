@@ -18,6 +18,11 @@ public enum SidebarType implements IResourceable {
 	BANNER,
 
 	/**
+	 * BannerGroup
+	 */
+	BANNER_GROUP,
+
+	/**
 	 * Menu Page
 	 */
 	MENU,

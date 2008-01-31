@@ -132,6 +132,19 @@
 									value="#{section.to.show_menu}" />
 							</aon:div>
 
+							<aon:outputLabel for="section_menu_alt"
+								styleClass="aon-form-input-text-label"
+								value="#{appBundle.section_menu_alt}"/>
+							<aon:div>
+								<aon:selectOneMenu id="section_menu_alt"  
+									styleClass="aon-form-selectOneMenu-field"
+									value="#{section.to.menu_alt.id}">
+									<f:selectItems value="#{collections.menuTopList}" />
+								</aon:selectOneMenu> 
+								<aon:selectBooleanCheckbox id="section_menu_alt_selected" 
+									value="#{section.to.show_menu_alt}" />
+							</aon:div>
+							
 						</aon:panelGrid>
 						
 					</aon:panelGrid>
