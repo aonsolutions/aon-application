@@ -45,7 +45,12 @@ public enum ModularPageOptionType implements IResourceable {
 	/**
 	 * Direct Access
 	 */
-	DIRECT_ACCESS;
+	DIRECT_ACCESS,
+	
+	/**
+	 * Direct Access
+	 */
+	DOWNLOADS;
 	
 	/**
 	 * Ruta base del fichero de mensajes.
