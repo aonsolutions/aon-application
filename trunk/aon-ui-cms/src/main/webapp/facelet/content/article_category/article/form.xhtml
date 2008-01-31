@@ -111,14 +111,32 @@
 								value="#{appBundle.article_subtitle}" />
 							<aon:inputText id="ArticleDetail_subtitle"
 								styleClass="aon-form-input-text aon-form-input-text-number"
-								required="true" size="80" maxlength="255"
+								size="80" maxlength="255"
 								value="#{article.toI18n.subtitle}" />
 
+							<aon:outputLabel for="Article_richTextEnabled"
+								styleClass="aon-form-input-text-label"
+								value="#{appBundle.generic_page_richtext_enabled}" />
+							<aon:selectBooleanCheckbox id="Article_richTextEnabled"
+								partialSubmit="true" 
+								value="#{article.richTextEnabled}" />
+				
 							<aon:outputLabel for="ArticleDetail_content" style="width:100px"
 								styleClass="aon-form-input-text-label"
+								rendered="#{article.richTextEnabled}" 
 								value="#{appBundle.article_content}" />
 							<aon:inputRichText id="ArticleDetail_content" 
+								rendered="#{article.richTextEnabled}" 
 								toolbarSet="Default" 
+								value="#{article.toI18n.content}"/>
+
+							<aon:outputLabel for="Article_content_TA"
+								styleClass="aon-form-input-text-label"
+								value="#{appBundle.article_content}" 
+								rendered="#{!article.richTextEnabled}"/>
+							<aon:inputTextarea id="Article_content_TA"
+								rendered="#{!article.richTextEnabled}" 
+								cols="80" rows="20" 
 								value="#{article.toI18n.content}"/>
 								
 						</aon:panelGrid>

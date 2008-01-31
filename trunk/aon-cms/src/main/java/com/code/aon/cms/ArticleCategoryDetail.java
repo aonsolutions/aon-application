@@ -54,7 +54,7 @@ public class ArticleCategoryDetail implements ITransferObject {
 		this.language = language;
 	}
 
-	@Column(name = "label", nullable = false, length = 64)
+	@Column(name = "label", length = 64)
 	public String getLabel() {
 		return label;
 	}

@@ -84,7 +84,7 @@ public class Download implements ITransferObject {
 		this.downloadCategory = downloadCategory;
 	}
 
-	@Column(name="publish_date", nullable=false)
+	@Column(name="publish_date")
 	public Date getPublishDate() {
 		return publishDate;
 	}
