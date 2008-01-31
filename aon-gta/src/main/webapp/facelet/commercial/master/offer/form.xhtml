@@ -128,14 +128,14 @@
 							styleClass="aon-form-input-text-label"
 							value="#{commercialBundle.aon_support_order}" />
 						<t:selectOneMenu id="SupportOrder_id" forceId="#{true}" disabled="#{!offer.editable}"
-							rendered="#{offer.supportOrderId == null}"
+							rendered="#{offer.new}"
 							styleClass="aon-form-selectOneMenu-field"
 							value="#{offer.supportOrderId}"
 							onchange="return validateAndLookup(this);">
 							<f:selectItem itemDisabled="true" itemLabel="#{commercialBundle.aon_select_support_order}" itemValue=""/>
 							<f:selectItems value="#{TASCollections.pendingSupportOrders}" />
 						</t:selectOneMenu>
-						<h:panelGrid columns="1" rendered="#{offer.supportOrderId != null}">
+						<h:panelGrid columns="1" rendered="#{!offer.new}">
 							<t:outputText id="Id" value="#{tasOffer.supportOrderData}"/>
 						</h:panelGrid>
 						
@@ -177,6 +177,7 @@
 							<t:inputText id="SupportOrder_target_id" size="5" forceId="#{true}"
 								styleClass="aon-form-input-text"
 								disabledOnClientSide="true"
+								valueChangeListener="#{offer.targetChanged}"
 								value="#{offer.to.target.id}" />
 							<t:inputText id="SupportOrder_target_name" forceId="#{true}"
 								styleClass="aon-form-input-text-disabled"
