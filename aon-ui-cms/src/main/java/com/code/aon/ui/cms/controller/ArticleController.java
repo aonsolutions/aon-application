@@ -29,6 +29,16 @@ public class ArticleController extends BasicI18nController {
 
 	private ArticleCategory currentArticleCategory;
 	
+	private boolean richTextEnabled = true;
+
+	public boolean isRichTextEnabled() {
+		return richTextEnabled;
+	}
+
+	public void setRichTextEnabled(boolean richTextEnabled) {
+		this.richTextEnabled = richTextEnabled;
+	}
+
 	public ArticleCategory getCurrentArticleCategory() {
 		return currentArticleCategory;
 	}

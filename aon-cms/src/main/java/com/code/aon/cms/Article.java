@@ -97,7 +97,7 @@ public class Article implements ITransferObject {
 		this.articleCategory = articleCategory;
 	}
 
-	@Column(name = "publish_date", nullable = false)
+	@Column(name = "publish_date")
 	public Date getPublishDate() {
 		return publishDate;
 	}
@@ -106,7 +106,7 @@ public class Article implements ITransferObject {
 		this.publishDate = publishDate;
 	}
 
-	@Column(name = "expire_date", nullable = false)
+	@Column(name = "expire_date")
 	public Date getExpireDate() {
 		return expireDate;
 	}
