@@ -139,19 +139,6 @@
 									image="/images/cms/down.gif" style="margin-left: 4px;" />
 							</aon:column>
 
-							<aon:column>
-								<f:facet name="header">
-									<aon:outputText for="articles" value="#{appBundle.article_category_articles}" />
-								</f:facet>
-									<aon:commandLink title="#{appBundle.article_category_articles}" 
-										action="articleRelated_list"
-										actionListener="#{article.onSelectRelatedArticles}">
-										<aon:graphicImage id="CategoryArticles_articles" 
-											alt="#{appBundle.article_category_articles}"
-											url="/images/cms/content.gif" />
-									</aon:commandLink>
-							</aon:column>
-
 						</aon:dataTable>
 						
 						<ui:include src="/facelet/shared/dataScroller.xhtml">

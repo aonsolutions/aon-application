@@ -19,7 +19,6 @@ public class ArticleRelatedController extends GridController {
 	public void onSelect(RowSelectorEvent event) throws ManagerBeanException {
 		if (!cancelOnSelect) {
 			super.onSelect(new ActionEvent(event.getComponent()));
-			FacesContext.getCurrentInstance().getApplication().getNavigationHandler().handleNavigation(FacesContext.getCurrentInstance(), null, "article_related_list");
 		}
 		cancelOnSelect = false;
 	}

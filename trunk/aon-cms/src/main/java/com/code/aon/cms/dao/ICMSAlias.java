@@ -63,6 +63,8 @@ import com.code.aon.cms.AlbumConfig;
 import com.code.aon.cms.ArticleConfig;
 import com.code.aon.cms.ModularPageDetail;
 import com.code.aon.cms.ArticleRelated;
+import com.code.aon.cms.ArticleDocument;
+import com.code.aon.cms.ArticleDocumentDetail;
 
 /** 
 * Interface for holding entity properties constants.
@@ -1214,40 +1216,46 @@ public interface ICMSAlias {
 	DAOConstantsEntry ARTICLE_DETAIL_ENTRY = DAOConstants.getDAOConstant(ArticleDetail.class);
 
 	/** 
+	* Alias value: ArticleDetail_alt
+	* Hibernate value: ArticleDetail.alt
+	*/
+	String  ARTICLE_DETAIL_ALT = ARTICLE_DETAIL_ENTRY.getAliasNames()[0];
+
+	/** 
 	* Alias value: ArticleDetail_article_id
 	* Hibernate value: ArticleDetail.article.id
 	*/
-	String  ARTICLE_DETAIL_ARTICLE_ID = ARTICLE_DETAIL_ENTRY.getAliasNames()[0];
+	String  ARTICLE_DETAIL_ARTICLE_ID = ARTICLE_DETAIL_ENTRY.getAliasNames()[1];
 
 	/** 
 	* Alias value: ArticleDetail_content
 	* Hibernate value: ArticleDetail.content
 	*/
-	String  ARTICLE_DETAIL_CONTENT = ARTICLE_DETAIL_ENTRY.getAliasNames()[1];
+	String  ARTICLE_DETAIL_CONTENT = ARTICLE_DETAIL_ENTRY.getAliasNames()[2];
 
 	/** 
 	* Alias value: ArticleDetail_id
 	* Hibernate value: ArticleDetail.id
 	*/
-	String  ARTICLE_DETAIL_ID = ARTICLE_DETAIL_ENTRY.getAliasNames()[2];
+	String  ARTICLE_DETAIL_ID = ARTICLE_DETAIL_ENTRY.getAliasNames()[3];
 
 	/** 
 	* Alias value: ArticleDetail_language_id
 	* Hibernate value: ArticleDetail.language.id
 	*/
-	String  ARTICLE_DETAIL_LANGUAGE_ID = ARTICLE_DETAIL_ENTRY.getAliasNames()[3];
+	String  ARTICLE_DETAIL_LANGUAGE_ID = ARTICLE_DETAIL_ENTRY.getAliasNames()[4];
 
 	/** 
 	* Alias value: ArticleDetail_subtitle
 	* Hibernate value: ArticleDetail.subtitle
 	*/
-	String  ARTICLE_DETAIL_SUBTITLE = ARTICLE_DETAIL_ENTRY.getAliasNames()[4];
+	String  ARTICLE_DETAIL_SUBTITLE = ARTICLE_DETAIL_ENTRY.getAliasNames()[5];
 
 	/** 
 	* Alias value: ArticleDetail_title
 	* Hibernate value: ArticleDetail.title
 	*/
-	String  ARTICLE_DETAIL_TITLE = ARTICLE_DETAIL_ENTRY.getAliasNames()[5];
+	String  ARTICLE_DETAIL_TITLE = ARTICLE_DETAIL_ENTRY.getAliasNames()[6];
 
 
 
@@ -2529,6 +2537,74 @@ public interface ICMSAlias {
 	* Hibernate value: ArticleRelated.id
 	*/
 	String  ARTICLE_RELATED_ID = ARTICLE_RELATED_ENTRY.getAliasNames()[2];
+
+
+
+	/** 
+	* DAOConstantsEntry for ArticleDocument entity.
+	*/ 
+	DAOConstantsEntry ARTICLE_DOCUMENT_ENTRY = DAOConstants.getDAOConstant(ArticleDocument.class);
+
+	/** 
+	* Alias value: ArticleDocument_alias
+	* Hibernate value: ArticleDocument.alias
+	*/
+	String  ARTICLE_DOCUMENT_ALIAS = ARTICLE_DOCUMENT_ENTRY.getAliasNames()[0];
+
+	/** 
+	* Alias value: ArticleDocument_article_id
+	* Hibernate value: ArticleDocument.article.id
+	*/
+	String  ARTICLE_DOCUMENT_ARTICLE_ID = ARTICLE_DOCUMENT_ENTRY.getAliasNames()[1];
+
+	/** 
+	* Alias value: ArticleDocument_id
+	* Hibernate value: ArticleDocument.id
+	*/
+	String  ARTICLE_DOCUMENT_ID = ARTICLE_DOCUMENT_ENTRY.getAliasNames()[2];
+
+
+
+	/** 
+	* DAOConstantsEntry for ArticleDocumentDetail entity.
+	*/ 
+	DAOConstantsEntry ARTICLE_DOCUMENT_DETAIL_ENTRY = DAOConstants.getDAOConstant(ArticleDocumentDetail.class);
+
+	/** 
+	* Alias value: ArticleDocumentDetail_articleDocument_id
+	* Hibernate value: ArticleDocumentDetail.articleDocument.id
+	*/
+	String  ARTICLE_DOCUMENT_DETAIL_ARTICLE_DOCUMENT_ID = ARTICLE_DOCUMENT_DETAIL_ENTRY.getAliasNames()[0];
+
+	/** 
+	* Alias value: ArticleDocumentDetail_description
+	* Hibernate value: ArticleDocumentDetail.description
+	*/
+	String  ARTICLE_DOCUMENT_DETAIL_DESCRIPTION = ARTICLE_DOCUMENT_DETAIL_ENTRY.getAliasNames()[1];
+
+	/** 
+	* Alias value: ArticleDocumentDetail_file
+	* Hibernate value: ArticleDocumentDetail.file
+	*/
+	String  ARTICLE_DOCUMENT_DETAIL_FILE = ARTICLE_DOCUMENT_DETAIL_ENTRY.getAliasNames()[2];
+
+	/** 
+	* Alias value: ArticleDocumentDetail_id
+	* Hibernate value: ArticleDocumentDetail.id
+	*/
+	String  ARTICLE_DOCUMENT_DETAIL_ID = ARTICLE_DOCUMENT_DETAIL_ENTRY.getAliasNames()[3];
+
+	/** 
+	* Alias value: ArticleDocumentDetail_language_id
+	* Hibernate value: ArticleDocumentDetail.language.id
+	*/
+	String  ARTICLE_DOCUMENT_DETAIL_LANGUAGE_ID = ARTICLE_DOCUMENT_DETAIL_ENTRY.getAliasNames()[4];
+
+	/** 
+	* Alias value: ArticleDocumentDetail_title
+	* Hibernate value: ArticleDocumentDetail.title
+	*/
+	String  ARTICLE_DOCUMENT_DETAIL_TITLE = ARTICLE_DOCUMENT_DETAIL_ENTRY.getAliasNames()[5];
 
 
 }
