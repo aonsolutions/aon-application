@@ -27,6 +27,8 @@ public class ArticleDetail implements ITransferObject {
 
 	private String content;
 	
+	private String alt;
+	
 	@Id
 	@GeneratedValue
 	@Column(name = "id", nullable = false)
@@ -83,5 +85,14 @@ public class ArticleDetail implements ITransferObject {
 
 	public void setContent(String content) {
 		this.content = content;
+	}
+
+	@Column(length=64)
+	public String getAlt() {
+		return alt;
+	}
+
+	public void setAlt(String alt) {
+		this.alt = alt;
 	}
 }

@@ -47,6 +47,7 @@ public class ArticleControllerListener extends ControllerAdapter {
 		ArticleController c = (ArticleController)event.getController();
 		try {
 			c.onSelectRelatedArticles(null);
+			c.onSelectArticleDocuments(null);
 		} catch (ManagerBeanException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -62,6 +63,7 @@ public class ArticleControllerListener extends ControllerAdapter {
 		ArticleController c = (ArticleController)event.getController();
 		try {
 			c.onSelectRelatedArticles(null);
+			c.onSelectArticleDocuments(null);
 		} catch (ManagerBeanException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

@@ -421,12 +421,4 @@
     </navigation-case>
   </navigation-rule>
 
-  <!-- ================================================= ARTICLE -->
-  <navigation-rule>
-    <navigation-case>
-      <from-outcome>articleRelated_list</from-outcome>
-      <to-view-id>/facelet/content/article_category/article/related/list.iface</to-view-id>
-    </navigation-case>
-  </navigation-rule>
-
 </faces-config>

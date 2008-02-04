@@ -79,6 +79,8 @@
 		<mapping class="com.code.aon.cms.AlbumConfig"/>
 		<mapping class="com.code.aon.cms.ArticleConfig"/>
 		<mapping class="com.code.aon.cms.ArticleRelated"/>
+		<mapping class="com.code.aon.cms.ArticleDocument"/>
+		<mapping class="com.code.aon.cms.ArticleDocumentDetail"/>
 
 	</session-factory>
 

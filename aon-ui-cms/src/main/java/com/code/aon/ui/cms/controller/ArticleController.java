@@ -13,6 +13,7 @@ import com.code.aon.cms.AlbumImage;
 import com.code.aon.cms.Article;
 import com.code.aon.cms.ArticleCategory;
 import com.code.aon.cms.ArticleDetail;
+import com.code.aon.cms.ArticleDocument;
 import com.code.aon.cms.ArticleRelated;
 import com.code.aon.cms.Image;
 import com.code.aon.cms.dao.ICMSAlias;
@@ -217,4 +218,16 @@ public class ArticleController extends BasicI18nController {
 		c.onSearch(event);
 	}
 
+	public void onSelectArticleDocuments(ActionEvent event) throws ManagerBeanException, ExpressionException {
+		cancelOnSelect = true;
+		ArticleDocumentController c = (ArticleDocumentController)AonUtil.getController("articleDocument");
+		IManagerBean moBean = BeanManager.getManagerBean(ArticleDocument.class);
+		Article article = (Article) this.getTo();
+		Criteria criteria = new Criteria();
+		criteria.addExpression(moBean.getFieldName(ICMSAlias.ARTICLE_DOCUMENT_ARTICLE_ID), "" + article.getId());
+		c.setCurrentArticle(article);
+		c.setCriteria(criteria);
+		c.onSearch(event);
+	}
+	
 }
