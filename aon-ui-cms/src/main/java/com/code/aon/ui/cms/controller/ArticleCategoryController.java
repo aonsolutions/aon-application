@@ -128,6 +128,7 @@ public class ArticleCategoryController extends BasicI18nController {
 		fc.setCurrentArticleCategory(articleCategory);
 		fc.setCriteria(criteria);
 		fc.onSearch(event);
+		fc.onInit(event);
 	}
 
 	public void reorderObjects() throws ManagerBeanException {

@@ -72,6 +72,7 @@ public class DirectAccessGenerator extends Generator {
 						CommonGenerator.chargeContext(vu, group.getSection());
 						generate(vu, Templates.DIRECT_ACCESS, group.getAlias());
 						vu.remove("direct_access_list");
+						vu.remove("direct_access_group");
 					}
 				}
 			}

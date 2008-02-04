@@ -9,17 +9,23 @@ import javax.faces.event.ActionEvent;
 import javax.faces.event.ValueChangeEvent;
 import javax.faces.model.SelectItem;
 
+import com.code.aon.cms.AlbumImage;
 import com.code.aon.cms.Article;
 import com.code.aon.cms.ArticleCategory;
 import com.code.aon.cms.ArticleDetail;
+import com.code.aon.cms.ArticleRelated;
+import com.code.aon.cms.Image;
 import com.code.aon.cms.dao.ICMSAlias;
 import com.code.aon.cms.enumeration.ArticleType;
 import com.code.aon.cms.enumeration.MenuType;
+import com.code.aon.common.BeanManager;
+import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionException;
 import com.code.aon.ui.cms.util.ControllerUtil;
+import com.code.aon.ui.util.AonUtil;
 import com.icesoft.faces.component.ext.RowSelectorEvent;
 
 
@@ -30,6 +36,10 @@ public class ArticleController extends BasicI18nController {
 	private ArticleCategory currentArticleCategory;
 	
 	private boolean richTextEnabled = true;
+
+	public void onInit(ActionEvent event){
+		((GalleryController)AonUtil.getRegisteredBean("gallery")).onInit(event);
+	}
 
 	public boolean isRichTextEnabled() {
 		return richTextEnabled;
@@ -172,5 +182,40 @@ public class ArticleController extends BasicI18nController {
 			}
 		}
 	}
+
+	private boolean imageSelectionVisible;
+	
+	public void onShowImages(ActionEvent event) {
+		imageSelectionVisible = true; 
+	}
+	
+	public void onCloseImages(ActionEvent event) {
+		imageSelectionVisible = false; 
+	}
+	
+	public boolean isImageSelectionVisible(){
+		return imageSelectionVisible;
+	}
+	
+	public void onSelectImage(ActionEvent event) throws ManagerBeanException {
+		GalleryController controller = (GalleryController)AonUtil.getRegisteredBean("gallery");
+		String image = ((Image)controller.getModel().getRowData()).getRelativePath();
+		Article current = (Article)getTo();
+		current.setImage(image);
+		current.setThumbnail(image+".thumbnail");
+	}
+
+	public void onSelectRelatedArticles(ActionEvent event) throws ManagerBeanException, ExpressionException {
+		cancelOnSelect = true;
+		ArticleRelatedController c = (ArticleRelatedController)AonUtil.getController("articleRelated");
+		IManagerBean moBean = BeanManager.getManagerBean(ArticleRelated.class);
+		Article article = (Article) this.getSelectedTO();
+		Criteria criteria = new Criteria();
+		criteria.addExpression(moBean.getFieldName(ICMSAlias.ARTICLE_RELATED_ARTICLE_PARENT_ID), "" + article.getId());
+		c.setCurrentArticle(article);
+		c.setCriteria(criteria);
+		c.onSearch(event);
+	}
+
 
 }

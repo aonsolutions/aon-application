@@ -33,6 +33,10 @@ public class Article implements ITransferObject {
 	
 	private Date expireDate;
 	
+	private String image;
+	
+	private String thumbnail;
+
 	private ArticleCategory articleCategory;
 
 	private ArticleType articleType;
@@ -123,5 +127,24 @@ public class Article implements ITransferObject {
 	public void setArticleType(ArticleType articleType) {
 		this.articleType = articleType;
 	}
-	
+
+	@Column(length=255)
+	public String getImage() {
+		return image;
+	}
+
+	public void setImage(String image) {
+		this.image = image;
+	}
+
+	@Column(length=255)
+	public String getThumbnail() {
+		return thumbnail;
+	}
+
+	public void setThumbnail(String thumbnail) {
+		this.thumbnail = thumbnail;
+	}
+
+
 }
