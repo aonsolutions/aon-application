@@ -310,7 +310,9 @@ public class CollectionsController {
 	public List<SelectItem> getArticleList() throws ManagerBeanException {
 		List<SelectItem> itemList = new LinkedList<SelectItem>();
 		IManagerBean bean = BeanManager.getManagerBean(Article.class);
-		List<ITransferObject> list = (List<ITransferObject>)bean.getList(null);
+		Criteria criteria = new Criteria();
+		criteria.addOrder(bean.getFieldName(ICMSAlias.ARTICLE_PUBLISH_DATE));
+		List<ITransferObject> list = (List<ITransferObject>)bean.getList(criteria);
 		for (int i = 0; i < list.size(); i++) {
 			Article article = (Article)list.get(i);
 			int id = article.getId();

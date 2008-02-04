@@ -1,0 +1,122 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:aon="http://www.code.es/aon-ice-components">
+<body>
+
+<ui:composition template="/facelet/templates/aon.ui.main.xhtml">
+	<ui:define name="content">
+
+		<aon:form id="articleRelatedList">
+			
+			<aon:panelGrid columns="2" dir="true" styleClass="aon-title-toolbar"
+			cellpadding="0" cellspacing="0" columnClasses="aon-content-title,aon-content-toolbar">
+			
+				<aon:div styleClass="aon-content-title-internal">
+					<aon:outputText value="#{appBundle.article}" />					
+				</aon:div>
+						
+			</aon:panelGrid> 
+			
+			<!--  aon-region-body -->
+			<aon:div styleClass="aon-scroll-area">
+				<aon:div styleClass="aon-scroll-area-internal">	
+				
+					<aon:div styleClass="aon-content-subTitle">
+						<aon:div styleClass="aon-content-subTitle-internal">
+							<aon:outputText value="#{appBundle.article}" />
+						</aon:div>
+					</aon:div>
+					
+					<aon:editDataTable id="articleRelatedData" var="to" rows="0"
+						rendered="#{articleRelated.model.rowCount > 0 or articleRelated.new}"
+						value="#{articleRelated.model}" styleClass="aon-editTable"
+						columnClasses="aon-editTable-icon, aon-editTable-cell,aon-editTable-buttons">
+
+						<aon:column>
+							<aon:rowSelector multiple="false"
+								mouseOverClass="aon-table-row-hover"
+								toggleOnClick="#{articleRelated.to == null}"
+								selectedClass="aon-table-row-selected"
+								selectionListener="#{articleRelated.onSelect}" />
+							<f:facet name="header">
+								<aon:outputText value="&#160;" />
+							</f:facet>
+							<aon:outputText value="&#160;" />
+							<f:facet name="footer">
+								<aon:div>
+									<aon:commandButton alt="[#{bundle.aon_reset}]"
+										styleClass="aon-editTable-button aon-icon-reset"
+										actionListener="#{articleRelated.onReset}" value=""
+										rendered="#{!articleRelated.new}">
+									</aon:commandButton>
+								</aon:div>
+							</f:facet>
+						</aon:column>
+
+						<aon:column>
+							<f:facet name="header">
+								<aon:outputText value="XXXXXXXXX" />
+							</f:facet>
+							<aon:outputText value="#{to.articleRelated.publishDate}, #{to.articleRelated.alias}" rendered="#{to!=articleRelated.to}" />
+							<aon:selectOneMenu styleClass="aon-form-selectOneMenu-field"
+								rendered="#{to==articleRelated.to}" 
+								value="#{articleRelated.to.articleRelated.id}">
+								<f:selectItems value="#{collections.articleList}" />
+							</aon:selectOneMenu>
+							<f:facet name="footer">
+								<aon:selectOneMenu styleClass="aon-form-selectOneMenu-field"
+									rendered="#{articleRelated.new}" 
+									value="#{articleRelated.to.articleRelated.id}">
+									<f:selectItems value="#{collections.articleList}" />
+								</aon:selectOneMenu>
+							</f:facet>
+						</aon:column>
+
+						<aon:column>
+							<f:facet name="header">
+								<aon:outputText value="&#160;" />
+							</f:facet>
+							<aon:div rendered="#{to==articleRelated.to}" styleClass="aon-nowrap">
+								<aon:panelGrid cellpadding="0" cellspacing="0" border="0" columns="7">
+									<aon:confirmButton alt="[#{bundle.aon_accept}]"
+										styleClass="aon-editTable-button aon-icon-accept"
+										confirmTitle="Confirmation Dialog" confirmMessage="#{bundle.aon_save_confirm}"
+										confirmActionListener="#{articleRelated.onAccept}"/>
+									<aon:confirmButton alt="[#{bundle.aon_cancel}]"
+										styleClass="aon-editTable-button aon-icon-cancel"
+										confirmTitle="Confirmation Dialog" confirmMessage="#{bundle.aon_cancel_confirm}"
+										confirmActionListener="#{articleRelated.onCancel}" immediate="true"/>
+									<aon:confirmButton alt="[#{bundle.aon_remove}]"
+										styleClass="aon-editTable-button aon-icon-delete"
+										confirmTitle="Confirmation Dialog" confirmMessage="#{bundle.aon_remove_confirm}"
+										confirmActionListener="#{articleRelated.onRemove}" immediate="true"/>
+								</aon:panelGrid>
+							</aon:div>
+							<f:facet name="footer">
+								<aon:div styleClass="aon-nowrap" rendered="#{articleRelated.new}">
+									<aon:confirmButton alt="[#{bundle.aon_accept}]"
+										styleClass="aon-editTable-button aon-icon-accept"
+										confirmTitle="Confirmation Dialog" confirmMessage="#{bundle.aon_save_confirm}"
+										confirmActionListener="#{articleRelated.onAccept}"/>
+									<aon:confirmButton alt="[#{bundle.aon_cancel}]"
+										styleClass="aon-editTable-button aon-icon-cancel"
+										confirmTitle="Confirmation Dialog" confirmMessage="#{bundle.aon_cancel_confirm}"
+										confirmActionListener="#{articleRelated.onCancel}" immediate="true"/>
+								</aon:div>
+							</f:facet>
+						</aon:column>
+					</aon:editDataTable>
+					
+				</aon:div>
+			</aon:div>
+		</aon:form>
+		<aon:form id="placeList" target="list" />
+	</ui:define>
+
+</ui:composition>
+
+</body>
+</html>

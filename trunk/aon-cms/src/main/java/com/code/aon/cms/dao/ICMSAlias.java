@@ -62,6 +62,7 @@ import com.code.aon.cms.LinkConfig;
 import com.code.aon.cms.AlbumConfig;
 import com.code.aon.cms.ArticleConfig;
 import com.code.aon.cms.ModularPageDetail;
+import com.code.aon.cms.ArticleRelated;
 
 /** 
 * Interface for holding entity properties constants.
@@ -1182,16 +1183,28 @@ public interface ICMSAlias {
 	String  ARTICLE_ID = ARTICLE_ENTRY.getAliasNames()[5];
 
 	/** 
+	* Alias value: Article_image
+	* Hibernate value: Article.image
+	*/
+	String  ARTICLE_IMAGE = ARTICLE_ENTRY.getAliasNames()[6];
+
+	/** 
 	* Alias value: Article_position
 	* Hibernate value: Article.position
 	*/
-	String  ARTICLE_POSITION = ARTICLE_ENTRY.getAliasNames()[6];
+	String  ARTICLE_POSITION = ARTICLE_ENTRY.getAliasNames()[7];
 
 	/** 
 	* Alias value: Article_publishDate
 	* Hibernate value: Article.publishDate
 	*/
-	String  ARTICLE_PUBLISH_DATE = ARTICLE_ENTRY.getAliasNames()[7];
+	String  ARTICLE_PUBLISH_DATE = ARTICLE_ENTRY.getAliasNames()[8];
+
+	/** 
+	* Alias value: Article_thumbnail
+	* Hibernate value: Article.thumbnail
+	*/
+	String  ARTICLE_THUMBNAIL = ARTICLE_ENTRY.getAliasNames()[9];
 
 
 
@@ -2491,6 +2504,31 @@ public interface ICMSAlias {
 	* Hibernate value: ModularPageDetail.modular_page.id
 	*/
 	String  MODULAR_PAGE_DETAIL_MODULAR_PAGE_ID = MODULAR_PAGE_DETAIL_ENTRY.getAliasNames()[3];
+
+
+
+	/** 
+	* DAOConstantsEntry for ArticleRelated entity.
+	*/ 
+	DAOConstantsEntry ARTICLE_RELATED_ENTRY = DAOConstants.getDAOConstant(ArticleRelated.class);
+
+	/** 
+	* Alias value: ArticleRelated_articleParent_id
+	* Hibernate value: ArticleRelated.articleParent.id
+	*/
+	String  ARTICLE_RELATED_ARTICLE_PARENT_ID = ARTICLE_RELATED_ENTRY.getAliasNames()[0];
+
+	/** 
+	* Alias value: ArticleRelated_articleRelated_id
+	* Hibernate value: ArticleRelated.articleRelated.id
+	*/
+	String  ARTICLE_RELATED_ARTICLE_RELATED_ID = ARTICLE_RELATED_ENTRY.getAliasNames()[1];
+
+	/** 
+	* Alias value: ArticleRelated_id
+	* Hibernate value: ArticleRelated.id
+	*/
+	String  ARTICLE_RELATED_ID = ARTICLE_RELATED_ENTRY.getAliasNames()[2];
 
 
 }

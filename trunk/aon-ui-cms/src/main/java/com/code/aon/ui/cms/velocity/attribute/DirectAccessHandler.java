@@ -14,12 +14,15 @@ public class DirectAccessHandler {
 	private String image;
 	
 	private String url;
+	
+	private boolean external;
 
 	public DirectAccessHandler (DirectAccessDetail detail) {
 		label = detail.getLabel();
 		description = detail.getDescription();
 		image = detail.getDirectAccess().getImage();
 		url = getDirectAccessLink(detail);
+		external = isExternalLink(detail);
 	}
 	
 	private String getDirectAccessLink(DirectAccessDetail detail) {
@@ -28,6 +31,13 @@ public class DirectAccessHandler {
 		ContentLevel level = detail.getDirectAccess().getLevel();
 		String url = detail.getUrl();
 		return MenuOptionUtil.getMenuOptionLink(ident, pageType, level, url);
+	}
+
+	private boolean isExternalLink(DirectAccessDetail detail){
+		if (detail.getDirectAccess().getType() == PageType.EXTERNAL) {
+			return true;
+		}
+		return false;
 	}
 	
 	public String getLabel() {
@@ -44,6 +54,10 @@ public class DirectAccessHandler {
 
 	public String getImage() {
 		return image;
+	}
+
+	public boolean isExternal() {
+		return external;
 	}
 
 }

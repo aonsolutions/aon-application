@@ -4,6 +4,8 @@
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:aon="http://www.code.es/aon-ice-components"
 	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:ice="http://www.icesoft.com/icefaces/component"
+	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:fck="http://www.fck-faces.org/fck-faces">
 <body>
 
@@ -90,13 +92,25 @@
 									
 							<aon:outputLabel for="ArticleDetail_publishDate"
 								value="#{appBundle.article_publishDate}" />
-							<aon:selectInputDate id="ArticleDetail_publishDate"
-								value="#{article.to.publishDate}" /> 								
-
+							<aon:selectInputDate id="ArticleDetail_publishDate" 
+								 required="true" style="z-index:2001;margin:0;vertical-align:middle;"
+								 imageDir="#{aonConfiguration.stylePath}/images/selectInputDate/"
+								 value="#{article.to.publishDate}" renderAsPopup="true"
+								 popupDateFormat="#{bundle.aon_date_pattern}">
+								 <f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+										timeZone="#{timeZoneController.timeZoneId}" />
+							</aon:selectInputDate>	
+							
 							<aon:outputLabel for="ArticleDetail_expireDate"
 								value="#{appBundle.article_expireDate}" />
-							<aon:selectInputDate id="ArticleDetail_expireDate"
-								value="#{article.to.expireDate}" /> 								
+							<aon:selectInputDate id="ArticleDetail_expireDate" 
+								 required="true" style="z-index:2001;margin:0;vertical-align:middle;"
+								 imageDir="#{aonConfiguration.stylePath}/images/selectInputDate/"
+								 value="#{article.to.expireDate}" renderAsPopup="true"
+								 popupDateFormat="#{bundle.aon_date_pattern}">
+								 <f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+										timeZone="#{timeZoneController.timeZoneId}" />
+							</aon:selectInputDate>	
 
 							<aon:outputLabel for="ArticleDetail_title"
 								styleClass="aon-form-input-text-label"
@@ -138,6 +152,80 @@
 								rendered="#{!article.richTextEnabled}" 
 								cols="80" rows="20" 
 								value="#{article.toI18n.content}"/>
+
+							<aon:outputLabel for="Article_image"
+								styleClass="aon-form-input-text-label"
+								value="#{appBundle.albumImage_image}" />
+							<aon:div>
+								<ice:graphicImage
+									id="Article_image" 
+									url="#{article.to.image}.thumbnail" 
+									alt="#{article.to.image}"/>
+								<aon:commandButton
+									title="OPEN"
+									value="OPEN"
+									rendered="#{!article.imageSelectionVisible}"
+									immediate="true"
+									actionListener="#{article.onShowImages}"
+									styleClass="aon-icon-attach aon-content-toolbar-item">
+								</aon:commandButton>
+								<aon:commandButton
+									title="CLOSE"
+									value="CLOSE"
+									rendered="#{article.imageSelectionVisible}"
+									immediate="true"
+									actionListener="#{article.onCloseImages}"
+									styleClass="aon-icon-attach aon-content-toolbar-item">
+								</aon:commandButton>
+								<aon:div visible="#{article.imageSelectionVisible}"
+									forceId="#{true}">
+									<aon:div styleClass="aon-scroll-area-internal">
+										<aon:panelGrid columns="2" style="width:100%;">
+										    <ice:tree id="tree" style="height:250px"
+										              value="#{gallery.tree}"
+										              var="item"
+										              hideRootNode="false"
+										              hideNavigation="false">
+										        <ice:treeNode>
+										            <f:facet name="icon">
+										                <aon:panelGroup style="display: inline">
+										                     <aon:graphicImage value="#{item.userObject.icon}"/>
+										                </aon:panelGroup>
+										            </f:facet>
+										            <f:facet name="content">
+										                <aon:panelGroup style="display: inline">
+										                    <ice:commandLink rendered="#{!item.userObject.selected}"
+										                            actionListener="#{item.userObject.onSelectFolder}"
+										                            value="#{item.userObject.text}"/>
+										                    <ice:outputText value="#{item.userObject.text}" 
+										                    		rendered="#{item.userObject.selected}"
+										                    		style="color:white;background:darkblue"/>
+										                </aon:panelGroup>
+										            </f:facet>
+										        </ice:treeNode>
+										    </ice:tree>
+										    <aon:panelGroup>
+												<ice:panelSeries id="panelSeries" value="#{gallery.model}" var="item" style="width:100%;height:450px;overflow:auto;background:#FFF;padding:1px;">
+													<aon:div id="imagePanel" styleClass="item_explorer">
+														<aon:div styleClass="thumnails_item_explorer">
+															<aon:panelGrid style="width:100px;height:100px" cellpadding="0px" cellspacing="0px" columnClasses="thumbnail_image">
+													            <ice:graphicImage url="#{item.thumb}" alt="#{item.name}"/>
+															</aon:panelGrid>
+														</aon:div>
+														<aon:div styleClass="text_item_explorer">
+										                    <ice:commandLink
+										                    	immediate="#{true}"
+									                            actionListener="#{article.onSelectImage}"
+									                            value="#{item.relativePath}"/>
+														</aon:div>
+													</aon:div>
+												</ice:panelSeries>
+											</aon:panelGroup>
+										</aon:panelGrid>
+									</aon:div>
+								</aon:div>								
+							</aon:div>
+
 								
 						</aon:panelGrid>
 					</aon:panelGrid>
