@@ -58,7 +58,7 @@ public class ArticleController extends BasicI18nController {
 	}
 
 	@SuppressWarnings("unused")
-	public void onSelect(RowSelectorEvent event) throws ManagerBeanException {
+	public void onSelect(RowSelectorEvent event) throws ManagerBeanException, ExpressionException {
 		if (!cancelOnSelect) {
 			super.onSelect(new ActionEvent(event.getComponent()));
 			FacesContext.getCurrentInstance().getApplication().getNavigationHandler().handleNavigation(FacesContext.getCurrentInstance(), null, "article_form");
@@ -209,13 +209,12 @@ public class ArticleController extends BasicI18nController {
 		cancelOnSelect = true;
 		ArticleRelatedController c = (ArticleRelatedController)AonUtil.getController("articleRelated");
 		IManagerBean moBean = BeanManager.getManagerBean(ArticleRelated.class);
-		Article article = (Article) this.getSelectedTO();
+		Article article = (Article) this.getTo();
 		Criteria criteria = new Criteria();
 		criteria.addExpression(moBean.getFieldName(ICMSAlias.ARTICLE_RELATED_ARTICLE_PARENT_ID), "" + article.getId());
 		c.setCurrentArticle(article);
 		c.setCriteria(criteria);
 		c.onSearch(event);
 	}
-
 
 }

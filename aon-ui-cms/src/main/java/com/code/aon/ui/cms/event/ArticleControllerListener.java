@@ -41,4 +41,33 @@ public class ArticleControllerListener extends ControllerAdapter {
 		return position;
 	}
 
+	@Override
+	public void afterBeanCreated(ControllerEvent event)
+			throws ControllerListenerException {
+		ArticleController c = (ArticleController)event.getController();
+		try {
+			c.onSelectRelatedArticles(null);
+		} catch (ManagerBeanException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (ExpressionException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	@Override
+	public void afterBeanSelected(ControllerEvent event)
+			throws ControllerListenerException {
+		ArticleController c = (ArticleController)event.getController();
+		try {
+			c.onSelectRelatedArticles(null);
+		} catch (ManagerBeanException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (ExpressionException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
 }
