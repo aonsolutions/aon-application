@@ -65,7 +65,7 @@ public class AlbumGenerator extends Generator {
 			ArrayList<AlbumCategoryHandler> achlist = new ArrayList<AlbumCategoryHandler>(); 
 			for (int j=0; j < albumCategoryList.size(); j++) {
 				AlbumCategory albumCategory = (AlbumCategory)albumCategoryList.get(j);
-				CommonGenerator.chargeContext(vu, albumCategory.getSection());
+				CommonGenerator.getCommonGenerator().chargeContext(vu, albumCategory.getSection());
 				IManagerBean albumCategoryDetailBean = BeanManager.getManagerBean(AlbumCategoryDetail.class);
 				Criteria albumCategoryDetailCriteria = new Criteria();
 				albumCategoryDetailCriteria.addEqualExpression(albumCategoryDetailBean.getFieldName(ICMSAlias.ALBUM_CATEGORY_DETAIL_ALBUM_CATEGORY_ID), albumCategory.getId());
@@ -92,10 +92,21 @@ public class AlbumGenerator extends Generator {
 							ahlist.add(ahandler);
 							ArrayList<AlbumImageHandler> accessList = getAlbumImageList(albumDetail);
 							if (accessList != null && accessList.size() > 0) {
+								for (int k=0;k<accessList.size();k++){
+									vu.put("album_image", accessList.get(k));
+									if (k>0)
+										vu.put("album_image_previous", accessList.get(k-1).getUrl());
+									if (k+1<accessList.size())
+										vu.put("album_image_next", accessList.get(k+1).getUrl());
+									vu.addMessage(" Generando imagen.", VelocityUtil.INFO);
+									generate(vu, Templates.ALBUM_IMAGES, "ALBUM_IMAGE_"+accessList.get(k).getId());
+									vu.remove("album_image");
+									vu.remove("album_image_previous");
+									vu.remove("album_image_next");
+								}
 								vu.put("album", ahandler);
 								vu.put("album_image_list", accessList);
 								vu.addMessage(" Generando album de imagenes " + album.getAlias() + ".", VelocityUtil.INFO);
-								CommonGenerator.chargeContext(vu, albumCategory.getSection());
 								generate(vu, Templates.ALBUM_IMAGES, album.getAlias());
 								vu.remove("album");
 								vu.remove("album_image_list");
@@ -107,7 +118,6 @@ public class AlbumGenerator extends Generator {
 					vu.put("album_category", achandler);
 					vu.put("album_list", ahlist);
 					vu.addMessage(" Generando list de album.", VelocityUtil.INFO);
-					CommonGenerator.chargeContext(vu, albumCategory.getSection());
 					generate(vu, Templates.ALBUM_IMAGES, albumCategory.getAlias());
 					vu.remove("album_category");
 					vu.remove("album_list");
@@ -117,7 +127,7 @@ public class AlbumGenerator extends Generator {
 			}
 			vu.put("album_category_list", achlist);
 			vu.addMessage(" Generando categorias de album.", VelocityUtil.INFO);
-			CommonGenerator.chargeContext(vu, GeneratorConfigController.currentSection(AlbumConfig.class));
+			CommonGenerator.getCommonGenerator().chargeContext(vu, GeneratorConfigController.currentSection(AlbumConfig.class));
 			generate(vu, Templates.ALBUM_IMAGES, ALBUM_LIST_PAGE);
 			vu.remove("album_category_list");
 		} catch (ManagerBeanException e) {

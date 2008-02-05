@@ -69,7 +69,7 @@ public class DownloadsGenerator extends Generator {
 						vu.put("download_group", detail);
 						vu.put("download_list", accessList);
 						vu.addMessage(" Generando accesos directos " + group.getAlias() + ".", VelocityUtil.INFO);
-						CommonGenerator.chargeContext(vu, group.getSection());
+						CommonGenerator.getCommonGenerator().chargeContext(vu, group.getSection());
 						generate(vu, Templates.DOWNLOADS, group.getAlias());
 						vu.remove("download_group");
 						vu.remove("download_list");

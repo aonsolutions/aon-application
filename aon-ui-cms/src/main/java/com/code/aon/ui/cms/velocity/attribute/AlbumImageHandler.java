@@ -1,9 +1,12 @@
 package com.code.aon.ui.cms.velocity.attribute;
 
 import com.code.aon.cms.AlbumImageDetail;
+import com.code.aon.cms.enumeration.Templates;
 
 public class AlbumImageHandler {
 
+	private String id;
+	
 	private String title;
 	
 	private String description;
@@ -13,13 +16,18 @@ public class AlbumImageHandler {
 	private String thumbnail;
 	
 	private String alt;
+	
+	private String url;
 
 	public AlbumImageHandler (AlbumImageDetail detail) {
-		title = detail.getTitle();
-		description = detail.getDescription();
-		image = detail.getAlbumImage().getImage();
-		thumbnail = detail.getAlbumImage().getThumbnail();
-		alt = detail.getAlt();
+		this.id = ""+detail.getAlbumImage().getId();
+		this.title = detail.getTitle();
+		this.description = detail.getDescription();
+		this.image = detail.getAlbumImage().getImage();
+		this.thumbnail = detail.getAlbumImage().getThumbnail();
+		this.alt = detail.getAlt();
+		this.url = Templates.ALBUM_IMAGES.getHtmlName();
+		this.url = this.url.replaceAll("%NAME%", "ALBUM_IMAGE_"+this.id);
 	}
 	
 	public String getDescription() {
@@ -40,6 +48,14 @@ public class AlbumImageHandler {
 
 	public String getAlt() {
 		return alt;
+	}
+
+	public String getUrl() {
+		return url;
+	}
+
+	public String getId() {
+		return id;
 	}
 
 	
