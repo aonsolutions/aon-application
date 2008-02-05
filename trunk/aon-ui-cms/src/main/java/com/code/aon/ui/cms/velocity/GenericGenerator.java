@@ -35,7 +35,7 @@ public class GenericGenerator extends Generator {
 					if (gph.getKeywords() != null && !gph.getKeywords().equals("")) vu.put("keywords", gph.getKeywords());
 					else vu.remove("keywords");
 					vu.addMessage(" Generando Página Genérica '" + gpd.getGeneric_page().getAlias() + "'.", VelocityUtil.INFO);
-					CommonGenerator.chargeContext(vu, gpd.getGeneric_page().getSection());
+					CommonGenerator.getCommonGenerator().chargeContext(vu, gpd.getGeneric_page().getSection());
 					generate(vu, Templates.GENERIC, gpd.getGeneric_page().getAlias());
 					vu.remove("generic");
 				}

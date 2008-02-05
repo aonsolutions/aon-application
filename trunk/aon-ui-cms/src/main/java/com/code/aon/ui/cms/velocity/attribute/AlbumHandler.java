@@ -3,9 +3,12 @@ package com.code.aon.ui.cms.velocity.attribute;
 import java.util.Date;
 
 import com.code.aon.cms.AlbumDetail;
+import com.code.aon.cms.enumeration.Templates;
 
 public class AlbumHandler {
 
+	private String alias;
+	
 	private String title;
 	
 	private String description;
@@ -15,13 +18,18 @@ public class AlbumHandler {
 	private Date date;
 	
 	private String alt;
+	
+	private String url;
 
 	public AlbumHandler (AlbumDetail detail) {
-		title = detail.getTitle();
-		description = detail.getDescription();
-		image = detail.getAlbum().getImage();
-		date = detail.getAlbum().getPublishDate();
-		alt = detail.getAlt();
+		this.alias = detail.getAlbum().getAlias();
+		this.title = detail.getTitle();
+		this.description = detail.getDescription();
+		this.image = detail.getAlbum().getImage();
+		this.date = detail.getAlbum().getPublishDate();
+		this.alt = detail.getAlt();
+		this.url = Templates.ALBUM_IMAGES.getHtmlName();
+		this.url = this.url.replaceAll("%NAME%", this.alias);
 	}
 	
 	public String getDescription() {
@@ -44,5 +52,13 @@ public class AlbumHandler {
 		return alt;
 	}
 
+	public String getUrl() {
+		return url;
+	}
+
+	public String getAlias() {
+		return alias;
+	}
+	
 	
 }

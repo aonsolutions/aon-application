@@ -35,14 +35,14 @@ public class FaqGenerator extends Generator {
 					fchList.add(fch);
 					vu.put("faq_category", fch);
 					vu.addMessage(" Generando categoria Faq '" + fcd.getFaqCategory().getAlias() + "'.", VelocityUtil.INFO);
-					CommonGenerator.chargeContext(vu, fcd.getFaqCategory().getSection());
+					CommonGenerator.getCommonGenerator().chargeContext(vu, fcd.getFaqCategory().getSection());
 					generate(vu, Templates.FAQ, fcd.getFaqCategory().getAlias());
 					vu.remove("faq_category");
 				}
 			}
 			vu.put("faq_categories", fchList);
 			vu.addMessage(" Generando listado categoria Faq.", VelocityUtil.INFO);
-			CommonGenerator.chargeContext(vu, GeneratorConfigController.currentSection(FaqConfig.class));
+			CommonGenerator.getCommonGenerator().chargeContext(vu, GeneratorConfigController.currentSection(FaqConfig.class));
 			generate(vu, Templates.FAQ, FAQ_CATEGORY_LIST_PAGE);
 			vu.remove("faq_categories");
 		} catch (ManagerBeanException e) {

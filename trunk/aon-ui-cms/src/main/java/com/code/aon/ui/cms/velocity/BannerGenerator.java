@@ -69,7 +69,7 @@ public class BannerGenerator extends Generator {
 						vu.put("banner_category", detail);
 						vu.put("banner_list", accessList);
 						vu.addMessage(" Generando banners " + group.getAlias() + ".", VelocityUtil.INFO);
-						CommonGenerator.chargeContext(vu, group.getSection());
+						CommonGenerator.getCommonGenerator().chargeContext(vu, group.getSection());
 						generate(vu, Templates.BANNERS, group.getAlias());
 						vu.remove("banner_category");
 						vu.remove("banner_list");

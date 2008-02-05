@@ -39,94 +39,114 @@ import com.code.aon.ui.cms.velocity.attribute.SidebarOptionHandler;
 
 public class CommonGenerator extends Generator {
 
-	public static void chargeContext(VelocityUtil vu, Section section) {
-		
-		// $default_menu from default sidebar menu in database
-		vu.put("is_menu", section.isShow_menu());
-		if (section.isShow_menu()){
-			vu.addMessage(" - Menu por defecto", VelocityUtil.INFO);
-			Menu m = section.getMenu();
-			vu.put("default_menu", MenuGenerator.getMenuOptionList(m));
-			vu.addMessage(" - Menu " + m.getAlias() + " cargado.", VelocityUtil.INFO);
-		}
+	private Section previousSection = null;
+	
+    static private CommonGenerator singleton = null;
 
-		vu.put("is_menu_alt", section.isShow_menu_alt());
-		if (section.isShow_menu()){
-			vu.addMessage(" - Menu alternativo", VelocityUtil.INFO);
-			Menu m = section.getMenu_alt();
-			vu.put("default_menu_alt", MenuGenerator.getMenuOptionList(m));
-			vu.addMessage(" - Menu alt " + m.getAlias() + " cargado.", VelocityUtil.INFO);
-		}
+    private CommonGenerator() { }
 
-		// $default_header from default header in database
-		vu.put("is_header", section.isShow_header());
-		if (section.isShow_header()){
-			vu.addMessage(" - Cabecera por defecto", VelocityUtil.INFO);
-			Header h = section.getHeader();
-			vu.put("default_header", getHeaderHandler(h));
-			vu.addMessage(" - Cabecera " + h.getAlias() + " cargada.", VelocityUtil.INFO);
-		}
+    static public CommonGenerator getCommonGenerator() {
+
+        if (singleton == null) {
+            singleton = new CommonGenerator();
+        }
+        return singleton;
+    }
+	
+	public void chargeContext(VelocityUtil vu, Section section) {
 		
-		// $default_sidebar from default header in database
-		vu.put("is_sidebar_left", section.isShow_sidebar_left());
-		vu.put("is_sidebar_right", section.isShow_sidebar_right());
-		if (section.isShow_sidebar_left() ||
-				section.isShow_sidebar_right()){
-			vu.addMessage(" - Sidebar por defecto", VelocityUtil.INFO);
-			Sidebar sb = section.getSidebar();
-			if (section.isShow_sidebar_left()){
-				vu.put("default_sidebar_left", getSidebarHandler(sb, SidebarSide.LEFT));
-				vu.addMessage(" - Sidebar left " + sb.getAlias() + " cargada.", VelocityUtil.INFO);
+		if (previousSection==null ||
+				section.getId().intValue()!=previousSection.getId().intValue()){
+			
+			previousSection = section; 
+			
+			// $default_menu from default sidebar menu in database
+			vu.put("is_menu", section.isShow_menu());
+			if (section.isShow_menu()){
+				vu.addMessage(" - Menu por defecto", VelocityUtil.INFO);
+				Menu m = section.getMenu();
+				vu.put("default_menu", MenuGenerator.getMenuOptionList(m));
+				vu.addMessage(" - Menu " + m.getAlias() + " cargado.", VelocityUtil.INFO);
 			}
-			if (section.isShow_sidebar_right()){
-				vu.put("default_sidebar_right", getSidebarHandler(sb, SidebarSide.RIGHT));
-				vu.addMessage(" - Sidebar right " + sb.getAlias() + " cargada.", VelocityUtil.INFO);
+
+			vu.put("is_menu_alt", section.isShow_menu_alt());
+			if (section.isShow_menu()){
+				vu.addMessage(" - Menu alternativo", VelocityUtil.INFO);
+				Menu m = section.getMenu_alt();
+				vu.put("default_menu_alt", MenuGenerator.getMenuOptionList(m));
+				vu.addMessage(" - Menu alt " + m.getAlias() + " cargado.", VelocityUtil.INFO);
 			}
-		}
-		
-		// $default_footer from default footer in database
-		vu.put("is_footer", section.isShow_footer());
-		if (section.isShow_footer()){
-			vu.addMessage(" - Pie de página por defecto", VelocityUtil.INFO);
-			Footer f = section.getFooter();
-			vu.put("default_footer", getFooterHandler(f));
-			vu.addMessage(" - Pie de página " + f.getAlias() + " cargado.", VelocityUtil.INFO);
-		}
-		
-		// $default_css from config
-		vu.addMessage(" - CSS de página por defecto", VelocityUtil.INFO);
-		String css = "";
-		if (ControllerUtil.getCurrentConfigDetail() != null) css = ControllerUtil.getCurrentConfigDetail().getCss();
-		vu.put("default_css", css);
-		
-		// $default_javascript from config
-		vu.addMessage(" - JavaScript de página por defecto", VelocityUtil.INFO);
-		String javascript = "";
-		if (ControllerUtil.getCurrentConfigDetail() != null) javascript = ControllerUtil.getCurrentConfigDetail().getJavascript();
-		vu.put("default_javascript", javascript);
 
-		// $default_description from config
-		vu.addMessage(" - Descripcion de página por defecto", VelocityUtil.INFO);
-		String description = "";
-		if (ControllerUtil.getCurrentConfigDetail() != null) description = ControllerUtil.getCurrentConfigDetail().getDescription();
-		vu.put("default_description", description);
-		
-		// $default_keywords from config
-		vu.addMessage(" - KeyWords de página por defecto", VelocityUtil.INFO);
-		String keywords = "";
-		if (ControllerUtil.getCurrentConfigDetail() != null) keywords = ControllerUtil.getCurrentConfigDetail().getKeywords();
-		vu.put("default_keywords", keywords);
+			// $default_header from default header in database
+			vu.put("is_header", section.isShow_header());
+			if (section.isShow_header()){
+				vu.addMessage(" - Cabecera por defecto", VelocityUtil.INFO);
+				Header h = section.getHeader();
+				vu.put("default_header", getHeaderHandler(h));
+				vu.addMessage(" - Cabecera " + h.getAlias() + " cargada.", VelocityUtil.INFO);
+			}
+			
+			// $default_sidebar from default header in database
+			vu.put("is_sidebar_left", section.isShow_sidebar_left());
+			vu.put("is_sidebar_right", section.isShow_sidebar_right());
+			if (section.isShow_sidebar_left() ||
+					section.isShow_sidebar_right()){
+				vu.addMessage(" - Sidebar por defecto", VelocityUtil.INFO);
+				Sidebar sb = section.getSidebar();
+				if (section.isShow_sidebar_left()){
+					vu.put("default_sidebar_left", getSidebarHandler(sb, SidebarSide.LEFT));
+					vu.addMessage(" - Sidebar left " + sb.getAlias() + " cargada.", VelocityUtil.INFO);
+				}
+				if (section.isShow_sidebar_right()){
+					vu.put("default_sidebar_right", getSidebarHandler(sb, SidebarSide.RIGHT));
+					vu.addMessage(" - Sidebar right " + sb.getAlias() + " cargada.", VelocityUtil.INFO);
+				}
+			}
+			
+			// $default_footer from default footer in database
+			vu.put("is_footer", section.isShow_footer());
+			if (section.isShow_footer()){
+				vu.addMessage(" - Pie de página por defecto", VelocityUtil.INFO);
+				Footer f = section.getFooter();
+				vu.put("default_footer", getFooterHandler(f));
+				vu.addMessage(" - Pie de página " + f.getAlias() + " cargado.", VelocityUtil.INFO);
+			}
+			
+			// $default_css from config
+			vu.addMessage(" - CSS de página por defecto", VelocityUtil.INFO);
+			String css = "";
+			if (ControllerUtil.getCurrentConfigDetail() != null) css = ControllerUtil.getCurrentConfigDetail().getCss();
+			vu.put("default_css", css);
+			
+			// $default_javascript from config
+			vu.addMessage(" - JavaScript de página por defecto", VelocityUtil.INFO);
+			String javascript = "";
+			if (ControllerUtil.getCurrentConfigDetail() != null) javascript = ControllerUtil.getCurrentConfigDetail().getJavascript();
+			vu.put("default_javascript", javascript);
 
-		// $bundle from config
-		vu.addMessage(" - Bundle de página", VelocityUtil.INFO);
-		try {
-			ResourceBundle bundle = ResourceBundle.getBundle(Constants.MESSAGES_FILE, ControllerUtil.getCurrentLanguage().getLanguage().getLocale(), new TemplateBundleClassLoader());
-	        vu.put("language", ControllerUtil.getCurrentLanguage().getLanguage().getLocale().getLanguage());
-			vu.put("bundle", bundle);
-		}
-		catch (MissingResourceException mre) {
-			mre.printStackTrace();
-			vu.addMessage(" - No se ha encontrado fichero de mensajes para el idioma actual.", VelocityUtil.WARN);
+			// $default_description from config
+			vu.addMessage(" - Descripcion de página por defecto", VelocityUtil.INFO);
+			String description = "";
+			if (ControllerUtil.getCurrentConfigDetail() != null) description = ControllerUtil.getCurrentConfigDetail().getDescription();
+			vu.put("default_description", description);
+			
+			// $default_keywords from config
+			vu.addMessage(" - KeyWords de página por defecto", VelocityUtil.INFO);
+			String keywords = "";
+			if (ControllerUtil.getCurrentConfigDetail() != null) keywords = ControllerUtil.getCurrentConfigDetail().getKeywords();
+			vu.put("default_keywords", keywords);
+
+			// $bundle from config
+			vu.addMessage(" - Bundle de página", VelocityUtil.INFO);
+			try {
+				ResourceBundle bundle = ResourceBundle.getBundle(Constants.MESSAGES_FILE, ControllerUtil.getCurrentLanguage().getLanguage().getLocale(), new TemplateBundleClassLoader());
+		        vu.put("language", ControllerUtil.getCurrentLanguage().getLanguage().getLocale().getLanguage());
+				vu.put("bundle", bundle);
+			}
+			catch (MissingResourceException mre) {
+				mre.printStackTrace();
+				vu.addMessage(" - No se ha encontrado fichero de mensajes para el idioma actual.", VelocityUtil.WARN);
+			}
 		}
 	}
 

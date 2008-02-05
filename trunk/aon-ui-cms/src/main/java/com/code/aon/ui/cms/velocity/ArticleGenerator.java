@@ -38,7 +38,7 @@ public class ArticleGenerator extends Generator {
 			ArrayList<ArticleCategoryHandler> achlist = new ArrayList<ArticleCategoryHandler>(); 
 			for (int j=0; j < articleCategoryList.size(); j++) {
 				ArticleCategory articleCategory = (ArticleCategory)articleCategoryList.get(j);
-				CommonGenerator.chargeContext(vu, articleCategory.getSection());
+				CommonGenerator.getCommonGenerator().chargeContext(vu, articleCategory.getSection());
 				IManagerBean articleCategoryDetailBean = BeanManager.getManagerBean(ArticleCategoryDetail.class);
 				Criteria articleCategoryDetailCriteria = new Criteria();
 				articleCategoryDetailCriteria.addEqualExpression(articleCategoryDetailBean.getFieldName(ICMSAlias.ARTICLE_CATEGORY_DETAIL_ARTICLE_CATEGORY_ID), articleCategory.getId());
@@ -70,7 +70,7 @@ public class ArticleGenerator extends Generator {
 									ahlist.add(ahandler);
 									vu.put("article", ahandler);
 									vu.addMessage(" Generando article " + article.getAlias() + ".", VelocityUtil.INFO);
-									CommonGenerator.chargeContext(vu, articleCategory.getSection());
+									CommonGenerator.getCommonGenerator().chargeContext(vu, articleCategory.getSection());
 									generate(vu, Templates.ARTICLE, article.getAlias());
 									vu.remove("article");
 								}
@@ -79,7 +79,7 @@ public class ArticleGenerator extends Generator {
 							vu.put("article_category", achandler);
 							vu.put("article_list", ahlist);
 							vu.addMessage(" Generando list de article.", VelocityUtil.INFO);
-							CommonGenerator.chargeContext(vu, articleCategory.getSection());
+							CommonGenerator.getCommonGenerator().chargeContext(vu, articleCategory.getSection());
 							generate(vu, Templates.ARTICLE, values[art_type].getName()+"_"+articleCategory.getAlias());
 							vu.remove("article_category");
 							vu.remove("article_list");

@@ -64,7 +64,7 @@ public class ModularPageGenerator extends Generator {
 				// Cargar datos comunes a todas las paginas
 				vu.addMessage("", VelocityUtil.INFO);
 				vu.addMessage("Cargando configuraciones comunes en el contexto  '"+ ControllerUtil.getCurrentConfig().getTemplate() + "' ...",VelocityUtil.INFO);
-				CommonGenerator.chargeContext(vu, mp.getSection());
+				CommonGenerator.getCommonGenerator().chargeContext(vu, mp.getSection());
 
 				vu.addMessage(" Generando Página Modular '" + mp.getAlias()+ "'.", VelocityUtil.INFO);
 				if (mp.isHomepage()){
