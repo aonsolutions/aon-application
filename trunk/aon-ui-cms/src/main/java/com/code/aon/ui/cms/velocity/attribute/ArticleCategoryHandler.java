@@ -3,7 +3,6 @@ package com.code.aon.ui.cms.velocity.attribute;
 import java.util.ArrayList;
 
 import com.code.aon.cms.ArticleCategoryDetail;
-import com.code.aon.cms.enumeration.Templates;
 
 public class ArticleCategoryHandler {
 

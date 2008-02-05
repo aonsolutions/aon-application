@@ -9,6 +9,9 @@ import com.code.aon.cms.ArticleCategory;
 import com.code.aon.cms.ArticleCategoryDetail;
 import com.code.aon.cms.ArticleConfig;
 import com.code.aon.cms.ArticleDetail;
+import com.code.aon.cms.ArticleDocument;
+import com.code.aon.cms.ArticleDocumentDetail;
+import com.code.aon.cms.ArticleRelated;
 import com.code.aon.cms.dao.ICMSAlias;
 import com.code.aon.cms.enumeration.ArticleType;
 import com.code.aon.cms.enumeration.Templates;
@@ -21,6 +24,7 @@ import com.code.aon.ui.cms.controller.GeneratorConfigController;
 import com.code.aon.ui.cms.util.ControllerUtil;
 import com.code.aon.ui.cms.util.VelocityUtil;
 import com.code.aon.ui.cms.velocity.attribute.ArticleCategoryHandler;
+import com.code.aon.ui.cms.velocity.attribute.ArticleDocumentHandler;
 import com.code.aon.ui.cms.velocity.attribute.ArticleHandler;
 
 public class ArticleGenerator extends Generator {
@@ -54,6 +58,7 @@ public class ArticleGenerator extends Generator {
 						if (!articleList.isEmpty()){
 							for (int i=0; i < articleList.size(); i++) {
 								Article article = (Article)articleList.get(i);
+
 								IManagerBean articleDetailBean = BeanManager.getManagerBean(ArticleDetail.class);
 								Criteria articleDetailCriteria = new Criteria();
 								articleDetailCriteria.addEqualExpression(articleDetailBean.getFieldName(ICMSAlias.ARTICLE_DETAIL_ARTICLE_ID), article.getId());
