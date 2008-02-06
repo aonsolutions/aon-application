@@ -146,24 +146,42 @@ public class AlbumImageController extends BasicI18nController {
 	}
 	
 	private boolean imageSelectionVisible;
+	private int type_;
 	
 	public void onShowImages(ActionEvent event) {
-		imageSelectionVisible = true; 
+		imageSelectionVisible = true;
+		type_ = 0;
 	}
 	
 	public void onCloseImages(ActionEvent event) {
 		imageSelectionVisible = false; 
 	}
 	
-	public boolean isImageSelectionVisible(){
-		return imageSelectionVisible;
+	public void onShowThumbnail(ActionEvent event) {
+		imageSelectionVisible = true; 
+		type_ = 1;
 	}
 	
+	public void onCloseThumbnail(ActionEvent event) {
+		imageSelectionVisible = false; 
+	}
+	
+	public boolean isImageSelectionVisible(){
+		return imageSelectionVisible && type_== 0;
+	}
+
+	public boolean isThumbnailSelectionVisible(){
+		return imageSelectionVisible && type_== 1;
+	}
+
 	public void onSelectImage(ActionEvent event) throws ManagerBeanException {
 		GalleryController controller = (GalleryController)AonUtil.getRegisteredBean("gallery");
 		String image = ((Image)controller.getModel().getRowData()).getRelativePath();
 		AlbumImage current = (AlbumImage)getTo();
-		current.setImage(image);
-		current.setThumbnail(image+".thumbnail");
+		if (type_ ==0){
+			current.setImage(image);
+		}else{
+			current.setThumbnail(image);
+		}
 	}
 }

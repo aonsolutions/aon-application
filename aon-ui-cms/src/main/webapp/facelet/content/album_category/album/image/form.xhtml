@@ -96,7 +96,32 @@
 									actionListener="#{albumImage.onCloseImages}"
 									styleClass="aon-icon-attach aon-content-toolbar-item">
 								</aon:commandButton>
-								<aon:div visible="#{albumImage.imageSelectionVisible}"
+								
+								<aon:outputLabel for="AlbumImage_thumbnail"
+									styleClass="aon-form-input-text-label"
+									value="#{appBundle.albumImage_thumbnail}" />
+								<ice:graphicImage
+									id="AlbumImage_thumbnail" 
+									url="#{albumImage.to.thumbnail}.thumbnail" 
+									alt="#{albumImage.to.thumbnail}"/>
+								<aon:commandButton
+									title="OPEN"
+									value="OPEN"
+									rendered="#{!albumImage.thumbnailSelectionVisible}"
+									immediate="true"
+									actionListener="#{albumImage.onShowThumbnail}"
+									styleClass="aon-icon-attach aon-content-toolbar-item">
+								</aon:commandButton>
+								<aon:commandButton
+									title="CLOSE"
+									value="CLOSE"
+									rendered="#{albumImage.thumbnailSelectionVisible}"
+									immediate="true"
+									actionListener="#{albumImage.onCloseThumbnail}"
+									styleClass="aon-icon-attach aon-content-toolbar-item">
+								</aon:commandButton>
+								
+								<aon:div visible="#{albumImage.imageSelectionVisible || albumImage.thumbnailSelectionVisible}"
 									forceId="#{true}">
 									<aon:div styleClass="aon-scroll-area-internal">
 										<aon:panelGrid columns="2" style="width:100%;">
