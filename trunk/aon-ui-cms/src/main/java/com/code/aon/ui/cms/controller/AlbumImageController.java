@@ -184,4 +184,10 @@ public class AlbumImageController extends BasicI18nController {
 			current.setThumbnail(image);
 		}
 	}
+	
+	
+	public String getCurrentPath() {
+		return ControllerUtil.getImagesPath()+"/"+currentAlbum.getAlbumCategory().getAlias()+"/"+currentAlbum.getAlias();
+	}
+	
 }
