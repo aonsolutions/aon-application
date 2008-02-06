@@ -1097,7 +1097,7 @@ ConfigControllerListener
 	<managed-bean>
 		<managed-bean-name>generator</managed-bean-name>
 		<managed-bean-class>com.code.aon.ui.cms.controller.GeneratorController</managed-bean-class>
-		<managed-bean-scope>session</managed-bean-scope>
+		<managed-bean-scope>request</managed-bean-scope>
 		<managed-property>
 			<property-name>pojo</property-name>
 			<value>com.code.aon.cms.Config</value>
