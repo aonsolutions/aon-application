@@ -69,6 +69,18 @@
 				<aon:div styleClass="aon-scroll-area-internal">
 
 					<aon:panelGrid columns="2">
+                        <ice:inputFile uploadDirectory="#{albumImage.currentPath}"
+                        		uniqueFolder="false"
+                        		uploadDirectoryAbsolute="true"
+                                actionListener="#{gallery.action}"/>
+						<aon:commandButton id="refresh" value="#{bundle.aon_reset}"
+							actionListener="#{gallery.onInit}" 
+							styleClass="aon-content-toolbar-item aon-icon-reset"
+							onmouseout="this.className='aon-content-toolbar-item aon-icon-reset'"
+							onmouseover="this.className='aon-content-toolbar-item aon-icon-reset aon-content-toolbar-item-hover'" />
+					</aon:panelGrid>
+
+					<aon:panelGrid columns="2">
 						<aon:panelGrid columns="2" dir="true" styleClass="aon-form-table"
 							columnClasses="aon-form-table-column-odd,aon-form-table-column-even">
 

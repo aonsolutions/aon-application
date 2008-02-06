@@ -81,6 +81,7 @@ public class AlbumGenerator extends Generator {
 					ArrayList<AlbumHandler> ahlist = new ArrayList<AlbumHandler>(); 
 					
 					if (albumList.size()>0){
+						AlbumCategoryHandler achandler = new AlbumCategoryHandler(albumCategoryDetail,ahlist);
 						for (int i=0; i < albumList.size(); i++) {
 							Album album = (Album)albumList.get(i);
 							IManagerBean albumDetailBean = BeanManager.getManagerBean(AlbumDetail.class);
@@ -95,6 +96,7 @@ public class AlbumGenerator extends Generator {
 									AlbumHandler ahandler = new AlbumHandler(albumDetail);
 									ahlist.add(ahandler);
 									for (int k=0;k<accessList.size();k++){
+										vu.put("back_url", ahandler.getUrl() );
 										vu.put("album_image", accessList.get(k));
 										if (k>0)
 											vu.put("album_image_previous", accessList.get(k-1).getUrl());
@@ -102,25 +104,28 @@ public class AlbumGenerator extends Generator {
 											vu.put("album_image_next", accessList.get(k+1).getUrl());
 										vu.addMessage(" Generando imagen.", VelocityUtil.INFO);
 										generate(vu, Templates.ALBUM_IMAGES, "ALBUM_IMAGE_"+accessList.get(k).getId());
+										vu.remove("back_url");
 										vu.remove("album_image");
 										vu.remove("album_image_previous");
 										vu.remove("album_image_next");
 									}
+									vu.put("back_url", achandler.getUrl() );
 									vu.put("album", ahandler);
 									vu.put("album_image_list", accessList);
 									vu.addMessage(" Generando album de imagenes " + album.getAlias() + ".", VelocityUtil.INFO);
 									generate(vu, Templates.ALBUM_IMAGES, album.getAlias());
+									vu.remove("back_url");
 									vu.remove("album");
 									vu.remove("album_image_list");
 								}
 							}
 						}
-						AlbumCategoryHandler achandler = new AlbumCategoryHandler(albumCategoryDetail,ahlist);
-						
+						vu.put("back_url", Templates.ALBUM_IMAGES.getHtmlName().replaceAll("%NAME%", ALBUM_LIST_PAGE));
 						vu.put("album_category", achandler);
 						vu.put("album_list", ahlist);
 						vu.addMessage(" Generando list de album.", VelocityUtil.INFO);
 						generate(vu, Templates.ALBUM_IMAGES, albumCategory.getAlias());
+						vu.remove("back_url");
 						vu.remove("album_category");
 						vu.remove("album_list");
 
