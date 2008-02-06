@@ -36,46 +36,121 @@ public class GeneratorController extends BasicController implements Constants {
 		vu.addMessage("Creando página de seleccion de idioma... ", VelocityUtil.INFO);
 		CommonGenerator.generateLanguagePage(vu);
 
-		//Generar index.html del idioma seleccionado
-		vu.addMessage("", VelocityUtil.INFO);
-		vu.addMessage("Creando páginas modulare (homepage...)... ", VelocityUtil.INFO);
-		ModularPageGenerator.generate(vu);
+		if (isModularPageToGenerate){
+			//Generar index.html del idioma seleccionado
+			vu.addMessage("", VelocityUtil.INFO);
+			vu.addMessage("Creando páginas modulare (homepage...)... ", VelocityUtil.INFO);
+			ModularPageGenerator.generate(vu);
+		}
 
-		//Generar menus
-		vu.addMessage("", VelocityUtil.INFO);
-		vu.addMessage("Creando páginas de menú... ", VelocityUtil.INFO);
-		MenuGenerator.generate(vu);
+		if (isMenuToGenerate){
+			//Generar menus
+			vu.addMessage("", VelocityUtil.INFO);
+			vu.addMessage("Creando páginas de menú... ", VelocityUtil.INFO);
+			MenuGenerator.generate(vu);
+		}
 
-		//Generar generic
-		vu.addMessage("", VelocityUtil.INFO);
-		vu.addMessage("Creando páginas genéricas... ", VelocityUtil.INFO);
-		GenericGenerator.generate(vu);
+		if (isGenericToGenerate){
+			//Generar generic
+			vu.addMessage("", VelocityUtil.INFO);
+			vu.addMessage("Creando páginas genéricas... ", VelocityUtil.INFO);
+			GenericGenerator.generate(vu);
+		}
 		
-		//Generar faq
-		vu.addMessage("", VelocityUtil.INFO);
-		vu.addMessage("Creando faq... ", VelocityUtil.INFO);
-		FaqGenerator.generate(vu);
+		if (isFaqToGenerate){
+			//Generar faq
+			vu.addMessage("", VelocityUtil.INFO);
+			vu.addMessage("Creando faq... ", VelocityUtil.INFO);
+			FaqGenerator.generate(vu);
+		}
 		
-		//Generar link
-		vu.addMessage("", VelocityUtil.INFO);
-		vu.addMessage("Creando link... ", VelocityUtil.INFO);
-		LinkGenerator.generate(vu);
+		if (isLinkToGenerate){
+			//Generar link
+			vu.addMessage("", VelocityUtil.INFO);
+			vu.addMessage("Creando link... ", VelocityUtil.INFO);
+			LinkGenerator.generate(vu);
+		}
 		
-		//Generar direct access
-		vu.addMessage("", VelocityUtil.INFO);
-		vu.addMessage("Creando acceso directo... ", VelocityUtil.INFO);
-		DirectAccessGenerator.generate(vu);
+		if (isDirectAccessToGenerate){
+			//Generar direct access
+			vu.addMessage("", VelocityUtil.INFO);
+			vu.addMessage("Creando acceso directo... ", VelocityUtil.INFO);
+			DirectAccessGenerator.generate(vu);
+		}
 		
-		//Generar image album
-		vu.addMessage("", VelocityUtil.INFO);
-		vu.addMessage("Creando album imagenes... ", VelocityUtil.INFO);
-		AlbumGenerator.generate(vu);
+		if (isAlbumToGenerate){
+			//Generar image album
+			vu.addMessage("", VelocityUtil.INFO);
+			vu.addMessage("Creando album imagenes... ", VelocityUtil.INFO);
+			AlbumGenerator.generate(vu);
+		}
 		
-		//Generar articulo
-		vu.addMessage("", VelocityUtil.INFO);
-		vu.addMessage("Creando articulos... ", VelocityUtil.INFO);
-		ArticleGenerator.generate(vu);
+		if (isArticleToGenerate){
+			//Generar articulo
+			vu.addMessage("", VelocityUtil.INFO);
+			vu.addMessage("Creando articulos... ", VelocityUtil.INFO);
+			ArticleGenerator.generate(vu);
+		}
 	}
 
+	private boolean isModularPageToGenerate = true;
+	private boolean isMenuToGenerate = true;
+	private boolean isGenericToGenerate = true;
+	private boolean isFaqToGenerate = true;
+	private boolean isLinkToGenerate = true;
+	private boolean isDirectAccessToGenerate = true;
+	private boolean isAlbumToGenerate = true;
+	private boolean isArticleToGenerate = true;
 
+	public boolean isModularPageToGenerate() {
+		return isModularPageToGenerate;
+	}
+	public void setModularPageToGenerate(boolean isModularPageToGenerate) {
+		this.isModularPageToGenerate = isModularPageToGenerate;
+	}
+	public boolean isMenuToGenerate() {
+		return isMenuToGenerate;
+	}
+	public void setMenuToGenerate(boolean isMenuToGenerate) {
+		this.isMenuToGenerate = isMenuToGenerate;
+	}
+	public boolean isGenericToGenerate() {
+		return isGenericToGenerate;
+	}
+	public void setGenericToGenerate(boolean isGenericToGenerate) {
+		this.isGenericToGenerate = isGenericToGenerate;
+	}
+	public boolean isFaqToGenerate() {
+		return isFaqToGenerate;
+	}
+	public void setFaqToGenerate(boolean isFaqToGenerate) {
+		this.isFaqToGenerate = isFaqToGenerate;
+	}
+	public boolean isLinkToGenerate() {
+		return isLinkToGenerate;
+	}
+	public void setLinkToGenerate(boolean isLinkToGenerate) {
+		this.isLinkToGenerate = isLinkToGenerate;
+	}
+	public boolean isDirectAccessToGenerate() {
+		return isDirectAccessToGenerate;
+	}
+	public void setDirectAccessToGenerate(boolean isDirectAccessToGenerate) {
+		this.isDirectAccessToGenerate = isDirectAccessToGenerate;
+	}
+	public boolean isAlbumToGenerate() {
+		return isAlbumToGenerate;
+	}
+	public void setAlbumToGenerate(boolean isAlbumToGenerate) {
+		this.isAlbumToGenerate = isAlbumToGenerate;
+	}
+	public boolean isArticleToGenerate() {
+		return isArticleToGenerate;
+	}
+	public void setArticleToGenerate(boolean isArticleToGenerate) {
+		this.isArticleToGenerate = isArticleToGenerate;
+	}
+
+	
+	
 }

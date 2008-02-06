@@ -413,11 +413,15 @@
     </navigation-case>
   </navigation-rule>
 
-  <!-- ===================================================== GALLERY -->
+  <!-- ===================================================== GENERATOR -->
   <navigation-rule>
     <navigation-case>
       <from-outcome>generator_form</from-outcome>
       <to-view-id>/facelet/generation/generator/form.iface</to-view-id>
+    </navigation-case>
+    <navigation-case>
+      <from-outcome>generator_log</from-outcome>
+      <to-view-id>/facelet/generation/generator/log.iface</to-view-id>
     </navigation-case>
   </navigation-rule>
 
