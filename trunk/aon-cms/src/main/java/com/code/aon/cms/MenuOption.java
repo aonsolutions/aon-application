@@ -27,7 +27,7 @@ public class MenuOption implements ITransferObject {
 
 	private Menu menu;
 
-	private boolean separator = true;
+	private boolean separator = false;
 
 	private PageType type;
 	

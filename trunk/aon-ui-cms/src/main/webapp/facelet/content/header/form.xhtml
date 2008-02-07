@@ -89,35 +89,23 @@
 								<f:selectItems value="#{collections.menuTopList}" />
 							</aon:selectOneMenu> 
 
-							<aon:outputLabel for="header_menutype"
-								styleClass="aon-form-input-text-label"
-								value="#{appBundle.header_menutype}" />
-							<aon:selectOneMenu id="header_menutype" 
-								styleClass="aon-form-selectOneMenu-field"
-								value="#{headers.to.language_menu_type}">
-								<f:selectItems value="#{collections.languageTypes}" />
-							</aon:selectOneMenu> 
 							
 							<aon:outputLabel for="header_language_menu"
 								styleClass="aon-form-input-text-label"
 								value="#{appBundle.header_hasmenu}" />
-							<aon:selectBooleanCheckbox id="header_language_menu" 
-								value="#{headers.to.language_menu}" />
+							<aon:div>
+								<aon:selectBooleanCheckbox id="header_language_menu" 
+									value="#{headers.to.language_menu}" />
+								<aon:outputLabel for="header_menutype"
+									styleClass="aon-form-input-text-label"
+									value="#{appBundle.header_menutype}" />
+								<aon:selectOneMenu id="header_menutype" 
+									styleClass="aon-form-selectOneMenu-field"
+									value="#{headers.to.language_menu_type}">
+									<f:selectItems value="#{collections.languageTypes}" />
+								</aon:selectOneMenu> 
+							</aon:div>
 									
-							<aon:outputLabel for="header_css" style="width:100px"
-								styleClass="aon-form-input-text-label"
-								value="#{appBundle.header_css}" />
-							<aon:inputTextarea id="headerDetail_css"
-								cols="60" rows="20" 
-								value="#{headers.to.css}"/>
-
-							<aon:outputLabel for="header_javascript" style="width:100px"
-								styleClass="aon-form-input-text-label"
-								value="#{appBundle.header_javascript}" />
-							<aon:inputTextarea id="headerDetail_javascript"
-								cols="60" rows="20" 
-								value="#{headers.to.javascript}"/>
-
 							<aon:outputLabel for="headerDetail_sitename"
 								styleClass="aon-form-input-text-label"
 								value="#{appBundle.header_sitename}" />
@@ -125,6 +113,13 @@
 								styleClass="aon-form-input-text aon-form-input-text-number"
 								size="90" maxlength="255"
 								value="#{headers.toI18n.sitename}" />
+							
+							<aon:outputLabel for="headerDetail_content"
+								styleClass="aon-form-input-text-label"
+								value="#{appBundle.header_content}" />
+							<aon:inputRichText id="headerDetail_content" 
+								toolbarSet="Default" 
+								value="#{headers.toI18n.content}" />
 								
 							<aon:outputLabel for="headerDetail_image"
 								styleClass="aon-form-input-text-label"
@@ -146,6 +141,13 @@
 									rendered="#{headers.imageSelectionVisible}"
 									immediate="true"
 									actionListener="#{headers.onCloseImages}"
+									styleClass="aon-icon-attach aon-content-toolbar-item">
+								</aon:commandButton>
+								<aon:commandButton
+									title="DEL"
+									value="DEL"
+									immediate="true"
+									actionListener="#{headers.onDelImage}"
 									styleClass="aon-icon-attach aon-content-toolbar-item">
 								</aon:commandButton>
 								<aon:div visible="#{headers.imageSelectionVisible}"
@@ -197,13 +199,20 @@
 								</aon:div>								
 							</aon:div>								
 							
-							<aon:outputLabel for="headerDetail_content"
+							<aon:outputLabel for="header_css" style="width:100px"
 								styleClass="aon-form-input-text-label"
-								value="#{appBundle.header_content}" />
-							<aon:inputRichText id="headerDetail_content" 
-								toolbarSet="Default" 
-								value="#{headers.toI18n.content}" />
-								
+								value="#{appBundle.header_css}" />
+							<aon:inputTextarea id="headerDetail_css"
+								cols="60" rows="20" 
+								value="#{headers.to.css}"/>
+
+							<aon:outputLabel for="header_javascript" style="width:100px"
+								styleClass="aon-form-input-text-label"
+								value="#{appBundle.header_javascript}" />
+							<aon:inputTextarea id="headerDetail_javascript"
+								cols="60" rows="20" 
+								value="#{headers.to.javascript}"/>
+
 						</aon:panelGrid>
 					</aon:panelGrid>
 				</aon:div>
