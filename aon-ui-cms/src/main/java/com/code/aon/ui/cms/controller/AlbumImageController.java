@@ -166,6 +166,11 @@ public class AlbumImageController extends BasicI18nController {
 		imageSelectionVisible = false; 
 	}
 	
+	public void onDelThumbnail(ActionEvent event) {
+		AlbumImage current = (AlbumImage)getTo();
+		current.setThumbnail(null);
+	}
+	
 	public boolean isImageSelectionVisible(){
 		return imageSelectionVisible && type_== 0;
 	}
@@ -185,9 +190,5 @@ public class AlbumImageController extends BasicI18nController {
 		}
 	}
 	
-	
-	public String getCurrentPath() {
-		return ControllerUtil.getImagesPath()+"/"+currentAlbum.getAlbumCategory().getAlias()+"/"+currentAlbum.getAlias();
-	}
 	
 }

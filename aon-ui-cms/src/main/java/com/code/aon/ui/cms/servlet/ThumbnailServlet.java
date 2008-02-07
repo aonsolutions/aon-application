@@ -20,6 +20,7 @@ import javax.swing.ImageIcon;
 import com.code.aon.cms.Config;
 import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.ui.cms.Constants;
+import com.code.aon.ui.cms.util.ImageUtil;
 import com.sun.jimi.core.Jimi;
 import com.sun.jimi.core.JimiException;
 import com.sun.jimi.core.raster.JimiRasterImage;
@@ -55,7 +56,7 @@ public class ThumbnailServlet extends HttpServlet implements Constants{
         	res.setHeader("Cache-Control", "no-store");
             res.setCharacterEncoding("ISO-8859-1"); //$NON-NLS-1$
 			if(f.exists()){
-                resize(file, res.getOutputStream(), maxDim);
+                ImageUtil.resize(file, res.getOutputStream(), maxDim);
             }
             else {
         		InputStream is = ThumbnailServlet.class.getResourceAsStream(BLANK_IMAGE);
@@ -84,31 +85,7 @@ public class ThumbnailServlet extends HttpServlet implements Constants{
         }
     }
 	
-	public void resize(String filename, OutputStream os, int maxDim) {
-		System.out.println(">>>>>>>>>>>>>>>> filename = " + filename);
-		try {
-			Image inImage = new ImageIcon(filename).getImage();
-			double scale = (double) maxDim / (double) inImage.getHeight(null);
-			if (inImage.getWidth(null) > inImage.getHeight(null)) {
-				scale = (double) maxDim / (double) inImage.getWidth(null);
-			}
-			if (scale > 1) scale = 1;
-	
-			int scaledW = (int) (scale * inImage.getWidth(null));
-			int scaledH = (int) (scale * inImage.getHeight(null));
-				
-			Image img = inImage.getScaledInstance(scaledW , scaledH, Image.SCALE_SMOOTH);
-			JimiRasterImage raster = Jimi.createRasterImage(img.getSource());
-			Jimi.putImage(MimeType.MIME_JPEG.getName(), raster, os);
-			os.flush();
-		}
-	    catch (JimiException e) {
-	    	LOGGER.log(Level.SEVERE, "Error resizing image " + filename, e);
-	    }
-	    catch (IOException e) {
-	    	LOGGER.log(Level.SEVERE, "Error resizing image " + filename, e);
-	    }
-	}
+
 	
 	public static String getImagesPath(HttpSession session) {
 		Config config = (Config)session.getAttribute(SESSION_CONFIG);

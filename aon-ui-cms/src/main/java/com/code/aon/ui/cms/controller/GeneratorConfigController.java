@@ -34,14 +34,18 @@ public class GeneratorConfigController {
 		this.sectionId = sectionId;
 	}
 
-	public static Section currentSection(Class pojoClass) throws ManagerBeanException{
-		ISectionContainer object = (ISectionContainer) currentConfig(pojoClass);
-		if (object!=null)
-			return object.getSection();
+	public static Section defaultSection() throws ManagerBeanException{
 		IManagerBean bean = BeanManager.getManagerBean(Section.class);
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(bean.getFieldName(ICMSAlias.SECTION_DEFAULT_), true);
 		return (Section)bean.getList(criteria).iterator().next();
+	}
+
+	public static Section currentSection(Class pojoClass) throws ManagerBeanException{
+		ISectionContainer object = (ISectionContainer) currentConfig(pojoClass);
+		if (object!=null)
+			return object.getSection();
+		return defaultSection();
 	}
 	
 	public static ITransferObject currentConfig(Class pojoClass) throws ManagerBeanException{

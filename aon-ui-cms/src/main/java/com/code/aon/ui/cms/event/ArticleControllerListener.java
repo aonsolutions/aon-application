@@ -1,7 +1,9 @@
 package com.code.aon.ui.cms.event;
 
+import java.io.File;
 import java.util.List;
 
+import com.code.aon.cms.AlbumImage;
 import com.code.aon.cms.Article;
 import com.code.aon.cms.dao.ICMSAlias;
 import com.code.aon.common.ITransferObject;
@@ -9,6 +11,8 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionException;
 import com.code.aon.ui.cms.controller.ArticleController;
+import com.code.aon.ui.cms.util.ControllerUtil;
+import com.code.aon.ui.cms.util.ImageUtil;
 import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
@@ -21,6 +25,14 @@ public class ArticleControllerListener extends ControllerAdapter {
 		Article f = (Article)event.getController().getTo();
 		f.setArticleCategory(fc.getCurrentArticleCategory());
 		f.setPosition(getLastPosition(fc));
+		generateThumbnail(f);
+	}
+
+	@Override
+	public void beforeBeanUpdated(ControllerEvent event)
+			throws ControllerListenerException {
+		Article f = (Article)event.getController().getTo();
+		generateThumbnail(f);
 	}
 	
 	private int getLastPosition(ArticleController fc) {
@@ -72,4 +84,19 @@ public class ArticleControllerListener extends ControllerAdapter {
 			e.printStackTrace();
 		}
 	}
+	
+	private void generateThumbnail(Article a){
+		if (a.getThumbnail()==null ||
+				a.getThumbnail().trim().isEmpty()){
+			String thumb = ImageUtil.resize(ControllerUtil.getImagesPath()+a.getImage(),ImageUtil.DEF_MAX_SIZE);
+			thumb = thumb.substring(ControllerUtil.getImagesPath().length(), thumb.length());
+			try{
+				thumb = thumb.replaceAll(File.separator, "/");
+			}catch(Exception e){
+				thumb = thumb.replaceAll(File.separator+File.separator, "/");
+			}
+			a.setThumbnail(thumb);
+		}
+	}
+	
 }

@@ -185,7 +185,39 @@
 											actionListener="#{article.onCloseImages}"
 											styleClass="aon-icon-attach aon-content-toolbar-item">
 										</aon:commandButton>
-										<aon:div visible="#{article.imageSelectionVisible}"
+										
+										<aon:outputLabel for="Article_thumbnail"
+											styleClass="aon-form-input-text-label"
+											value="#{appBundle.article_thumbnail}" />
+										<ice:graphicImage
+											id="Article_thumbnail" 
+											url="#{article.to.thumbnail}.thumbnail" 
+											alt="#{article.to.thumbnail}"/>
+										<aon:commandButton
+											title="OPEN"
+											value="OPEN"
+											rendered="#{!article.thumbnailSelectionVisible}"
+											immediate="true"
+											actionListener="#{article.onShowThumbnail}"
+											styleClass="aon-icon-attach aon-content-toolbar-item">
+										</aon:commandButton>
+										<aon:commandButton
+											title="CLOSE"
+											value="CLOSE"
+											rendered="#{article.thumbnailSelectionVisible}"
+											immediate="true"
+											actionListener="#{article.onCloseThumbnail}"
+											styleClass="aon-icon-attach aon-content-toolbar-item">
+										</aon:commandButton>
+										<aon:commandButton
+											title="DEL"
+											value="DEL"
+											immediate="true"
+											actionListener="#{article.onDelThumbnail}"
+											styleClass="aon-icon-attach aon-content-toolbar-item">
+										</aon:commandButton>
+								
+										<aon:div visible="#{article.imageSelectionVisible || article.thumbnailSelectionVisible}"
 											forceId="#{true}">
 											<aon:div styleClass="aon-scroll-area-internal">
 												<aon:panelGrid columns="2" style="width:100%;">

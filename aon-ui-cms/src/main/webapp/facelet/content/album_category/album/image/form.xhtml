@@ -132,6 +132,13 @@
 									actionListener="#{albumImage.onCloseThumbnail}"
 									styleClass="aon-icon-attach aon-content-toolbar-item">
 								</aon:commandButton>
+								<aon:commandButton
+									title="DEL"
+									value="DEL"
+									immediate="true"
+									actionListener="#{albumImage.onDelThumbnail}"
+									styleClass="aon-icon-attach aon-content-toolbar-item">
+								</aon:commandButton>
 								
 								<aon:div visible="#{albumImage.imageSelectionVisible || albumImage.thumbnailSelectionVisible}"
 									forceId="#{true}">
@@ -151,6 +158,7 @@
 										            <f:facet name="content">
 										                <aon:panelGroup style="display: inline">
 										                    <ice:commandLink rendered="#{!item.userObject.selected}"
+																	immediate="#{true}"
 										                            actionListener="#{item.userObject.onSelectFolder}"
 										                            value="#{item.userObject.text}"/>
 										                    <ice:outputText value="#{item.userObject.text}" 
