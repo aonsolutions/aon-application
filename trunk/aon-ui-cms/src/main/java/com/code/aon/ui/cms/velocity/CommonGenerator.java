@@ -52,7 +52,11 @@ public class CommonGenerator extends Generator {
         }
         return singleton;
     }
-	
+
+    static public void init() {
+    	singleton = null;    	
+    }
+
 	public void chargeContext(VelocityUtil vu, Section section) {
 		
 		if (previousSection==null ||

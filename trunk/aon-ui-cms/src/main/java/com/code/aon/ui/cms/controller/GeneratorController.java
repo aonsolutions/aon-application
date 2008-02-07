@@ -23,6 +23,8 @@ public class GeneratorController extends BasicController implements Constants {
 	
 	public void onGenerate(ActionEvent event) throws ManagerBeanException {
 
+		CommonGenerator.init();
+		
 		vu.addMessage("Iniciando proceso de generación", VelocityUtil.INFO);
 		vu.addMessage("", VelocityUtil.INFO);
 		//Indicamos el directorio del template

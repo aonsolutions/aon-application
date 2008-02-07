@@ -1,15 +1,11 @@
 package com.code.aon.ui.cms.controller;
 
-import java.util.LinkedList;
 import java.util.List;
-import java.util.Locale;
 
 import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
 import javax.faces.event.ValueChangeEvent;
-import javax.faces.model.SelectItem;
 
-import com.code.aon.cms.AlbumImage;
 import com.code.aon.cms.Article;
 import com.code.aon.cms.ArticleCategory;
 import com.code.aon.cms.ArticleDetail;
@@ -17,8 +13,6 @@ import com.code.aon.cms.ArticleDocument;
 import com.code.aon.cms.ArticleRelated;
 import com.code.aon.cms.Image;
 import com.code.aon.cms.dao.ICMSAlias;
-import com.code.aon.cms.enumeration.ArticleType;
-import com.code.aon.cms.enumeration.MenuType;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
@@ -185,25 +179,48 @@ public class ArticleController extends BasicI18nController {
 	}
 
 	private boolean imageSelectionVisible;
+	private int type_;
 	
 	public void onShowImages(ActionEvent event) {
-		imageSelectionVisible = true; 
+		imageSelectionVisible = true;
+		type_ = 0;
 	}
 	
 	public void onCloseImages(ActionEvent event) {
 		imageSelectionVisible = false; 
 	}
 	
-	public boolean isImageSelectionVisible(){
-		return imageSelectionVisible;
+	public void onShowThumbnail(ActionEvent event) {
+		imageSelectionVisible = true; 
+		type_ = 1;
 	}
 	
+	public void onCloseThumbnail(ActionEvent event) {
+		imageSelectionVisible = false; 
+	}
+	
+	public void onDelThumbnail(ActionEvent event) {
+		Article current = (Article)getTo();
+		current.setThumbnail(null);
+	}
+	
+	public boolean isImageSelectionVisible(){
+		return imageSelectionVisible && type_== 0;
+	}
+
+	public boolean isThumbnailSelectionVisible(){
+		return imageSelectionVisible && type_== 1;
+	}
+
 	public void onSelectImage(ActionEvent event) throws ManagerBeanException {
 		GalleryController controller = (GalleryController)AonUtil.getRegisteredBean("gallery");
 		String image = ((Image)controller.getModel().getRowData()).getRelativePath();
 		Article current = (Article)getTo();
-		current.setImage(image);
-		current.setThumbnail(image+".thumbnail");
+		if (type_ ==0){
+			current.setImage(image);
+		}else{
+			current.setThumbnail(image);
+		}
 	}
 
 	public void onSelectRelatedArticles(ActionEvent event) throws ManagerBeanException, ExpressionException {
