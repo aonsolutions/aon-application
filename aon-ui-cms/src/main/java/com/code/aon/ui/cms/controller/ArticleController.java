@@ -199,6 +199,11 @@ public class ArticleController extends BasicI18nController {
 		imageSelectionVisible = false; 
 	}
 	
+	public void onDelImage(ActionEvent event) {
+		Article current = (Article)getTo();
+		current.setImage(null);
+	}
+	
 	public void onDelThumbnail(ActionEvent event) {
 		Article current = (Article)getTo();
 		current.setThumbnail(null);

@@ -131,6 +131,11 @@ public class HeaderController extends BasicI18nController {
 		return imageSelectionVisible;
 	}
 	
+	public void onDelImage(ActionEvent event) {
+		HeaderDetail current = (HeaderDetail)getToI18n();
+		current.setImage(null);
+	}
+	
 	public void onSelectImage(ActionEvent event) throws ManagerBeanException {
 		GalleryController controller = (GalleryController)AonUtil.getRegisteredBean("gallery");
 		String image = ((Image)controller.getModel().getRowData()).getRelativePath();
