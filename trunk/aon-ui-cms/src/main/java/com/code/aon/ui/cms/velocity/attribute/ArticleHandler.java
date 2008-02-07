@@ -25,7 +25,13 @@ public class ArticleHandler {
 	private String content;
 	
 	private String url;
-	
+
+	private String image;
+
+	private String thumbnail;
+
+	private String alt;
+
 	private Article article;
 
 	private ArrayList<ArticleHandler> relateds;
@@ -39,6 +45,9 @@ public class ArticleHandler {
 		this.url = Templates.ARTICLE.getHtmlName();
 		this.url = this.url.replaceAll("%NAME%", ad.getArticle().getAlias());
 		this.article = ad.getArticle();
+		this.image = this.article.getImage(); 
+		this.thumbnail = this.article.getThumbnail(); 
+		this.alt = ad.getAlt(); 
 	}
 
 	public String getTitle() {
@@ -55,6 +64,18 @@ public class ArticleHandler {
 
 	public String getUrl() {
 		return url;
+	}
+	
+	public String getImage() {
+		return image;
+	}
+
+	public String getThumbnail() {
+		return thumbnail;
+	}
+
+	public String getAlt() {
+		return alt;
 	}
 
 	public ArrayList<ArticleHandler> getRelateds() {
