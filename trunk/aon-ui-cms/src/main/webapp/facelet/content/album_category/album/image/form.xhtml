@@ -73,11 +73,6 @@
                         		uniqueFolder="false"
                         		uploadDirectoryAbsolute="true"
                                 actionListener="#{gallery.action}"/>
-						<aon:commandButton id="refresh" value="REFRESH"
-							actionListener="#{gallery.onInit}" 
-							styleClass="aon-content-toolbar-item aon-icon-reset"
-							onmouseout="this.className='aon-content-toolbar-item aon-icon-reset'"
-							onmouseover="this.className='aon-content-toolbar-item aon-icon-reset aon-content-toolbar-item-hover'" />
 					</aon:panelGrid>
 
 					<aon:panelGrid columns="2">
@@ -88,6 +83,11 @@
 								styleClass="aon-form-input-text-label"
 								value="#{appBundle.albumImage_image}" />
 							<aon:div>
+								<aon:commandButton id="refresh" value="REFRESH"
+									actionListener="#{gallery.onInit}" 
+									styleClass="aon-content-toolbar-item aon-icon-accept"
+									onmouseout="this.className='aon-content-toolbar-item aon-icon-accept'"
+									onmouseover="this.className='aon-content-toolbar-item aon-icon-accept aon-content-toolbar-item-hover'"/>
 								<ice:graphicImage
 									id="AlbumImage_image" 
 									url="#{albumImage.to.image}.thumbnail" 

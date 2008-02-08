@@ -165,6 +165,11 @@
 										styleClass="aon-form-input-text-label"
 										value="#{appBundle.albumImage_image}" />
 									<aon:div>
+										<aon:commandButton id="refresh" value="REFRESH"
+											actionListener="#{gallery.onInit}" 
+											styleClass="aon-content-toolbar-item aon-icon-accept"
+											onmouseout="this.className='aon-content-toolbar-item aon-icon-accept'"
+											onmouseover="this.className='aon-content-toolbar-item aon-icon-accept aon-content-toolbar-item-hover'"/>
 										<ice:graphicImage
 											id="Article_image" 
 											url="#{article.to.image}.thumbnail" 
