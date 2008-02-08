@@ -19,10 +19,12 @@ import com.code.aon.ui.form.BasicController;
 
 public class GeneratorController extends BasicController implements Constants {
 
-	private VelocityUtil vu = new VelocityUtil();
+	private VelocityUtil vu;
 	
 	public void onGenerate(ActionEvent event) throws ManagerBeanException {
 
+		vu = new VelocityUtil();
+		
 		CommonGenerator.init();
 		
 		vu.addMessage("Iniciando proceso de generación", VelocityUtil.INFO);
@@ -93,6 +95,11 @@ public class GeneratorController extends BasicController implements Constants {
 			vu.addMessage("Creando articulos... ", VelocityUtil.INFO);
 			ArticleGenerator.generate(vu);
 		}
+		
+		CommonGenerator.init();
+
+		vu = null;
+
 	}
 
 	private boolean isModularPageToGenerate = true;
