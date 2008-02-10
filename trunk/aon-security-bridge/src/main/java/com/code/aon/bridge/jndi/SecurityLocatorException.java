@@ -1,12 +1,8 @@
-/*
- * Created on 11-oct-2006
- *
- */
 package com.code.aon.bridge.jndi;
 
 /**
- * Esta clase aglutina aquellos errores producidos en la utilización de
- * <code>ServiceLocator</code>.
+ * The class <code>ServiceLocatorException</code> indicates conditions that a reasonable 
+ * application might want to catch.
  * 
  * @author Consulting & Development. Iñaki Ayerbe - 11-oct-2006
  * @since 1.0
@@ -14,41 +10,54 @@ package com.code.aon.bridge.jndi;
  */
 public class SecurityLocatorException extends Exception {
 
-    /**
-     * Construye una nueva excepción con <code>null</code> como detalle de su mensaje.
+	private static final long serialVersionUID = -4590373233362053938L;
+
+	/**
+     * Constructs a new exception with <code>null</code> as its detail message.
      */
     public SecurityLocatorException() {
         super();
     }
 
     /**
-     * Construye una nueva excepcion con el mensaje especificado.
+     * Constructs a new exception with the specified detail message. 
      *
-     * @param   message   El detalle del mensaje.
+     * @param   message   the detail message. The detail message is saved for 
+     *          later retrieval by the {@link #getMessage()} method.
      */
     public SecurityLocatorException(String message) {
         super(message);
     }
 
     /**
-     * Construye una nueva excepción con la causa especificada y como mensaje 
-     * <tt>(cause==null ? null : cause.toString())</tt> (que 
-     * normalmente contiene la clase y el detalle de <tt>cause</tt>).
-     * 
-     * @param cause La causa del problema. 
-     */
-    public SecurityLocatorException(Throwable cause) {
-        super(cause);
-    }
-
-    /**
-     * Construye una nueva excepción con el mensaje y la causa especificados.
-     * 
-     * @param  message El detalle del mensaje.
-     * @param cause Causa de la excepcion.
+     * Constructs a new exception with the specified detail message and
+     * cause.  <p>Note that the detail message associated with
+     * <code>cause</code> is <i>not</i> automatically incorporated in
+     * this exception's detail message.
+     *
+     * @param  message the detail message (which is saved for later retrieval
+     *         by the {@link #getMessage()} method).
+     * @param  cause the cause (which is saved for later retrieval by the
+     *         {@link #getCause()} method).  (A <tt>null</tt> value is
+     *         permitted, and indicates that the cause is nonexistent or
+     *         unknown.)
      */
     public SecurityLocatorException(String message, Throwable cause) {
         super(message, cause);
+    }
+
+    /**
+     * Constructs a new exception with the specified cause and a detail
+     * message of <tt>(cause==null ? null : cause.toString())</tt> (which
+     * typically contains the class and detail message of <tt>cause</tt>).
+     * 
+     * @param  cause the cause (which is saved for later retrieval by the
+     *         {@link #getCause()} method).  (A <tt>null</tt> value is
+     *         permitted, and indicates that the cause is nonexistent or
+     *         unknown.)
+     */
+    public SecurityLocatorException(Throwable cause) {
+        super(cause);
     }
 
 }

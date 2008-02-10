@@ -24,6 +24,7 @@ public interface IOperation {
 
     					GET_DOMAIN_NAMES_IMPORT		= "getDomainNames2Import",
     					GET_DOMAIN 					= "getDomain",
+    					LOAD_DOMAIN					= "loadDomain",
 						ADD_DOMAIN 					= "addDomain",
     					REMOVE_DOMAIN 				= "removeDomain",
 						UPDATE_DOMAIN 				= "updateDomain",
@@ -37,6 +38,7 @@ public interface IOperation {
 						UPDATE_PROFILE 				= "updateProfile",
 						
 						GET_USER 					= "getUser",
+    					LOAD_USERS					= "loadUsers",
 						ADD_USER					= "addUser",
    						REMOVE_USER 				= "removeUser",
     					UPDATE_USER					= "updateUser";

@@ -3,7 +3,6 @@ package com.code.aon.bridge.plugin;
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.Iterator;
-import java.util.logging.Logger;
 
 import com.code.aon.bridge.jmx.mbean.IConsoleAdmin;
 import com.code.aon.bridge.jmx.mbean.IOperation;
@@ -21,8 +20,8 @@ import com.code.aon.jaas.deployment.DeploymentException;
 
 public class DomainManager implements Serializable {
 
-	/** DomainManager Logger instance. */
-	static final Logger LOGGER = Logger.getLogger( DomainManager.class.getName() );
+	private static final long serialVersionUID = -4290619091644477668L;
+
 	/** Default context name. */
 	public static final String SECURITY_CONTEXT_NAME = "/aon-security"; 
 
