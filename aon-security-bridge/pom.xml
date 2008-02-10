@@ -8,14 +8,14 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.code.aon</groupId>
 	<artifactId>aon.security.bridge</artifactId>
-	<version>1.2.9</version>
+	<version>1.2.11</version>
 	<name>AON SECURITY BRIDGE</name>
 	<description>AON SECURITY BRIDGE</description>
 	<dependencies>
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.security</artifactId>
-			<version>1.2.9</version>
+			<version>1.2.11</version>
 			<scope>provided</scope>
 		</dependency>
 
@@ -24,7 +24,7 @@
 			<artifactId>commons-logging</artifactId>
 			<version>1.1</version>
 			<scope>provided</scope>
-		</dependency>
+		</dependency> 
 
 		<dependency>
 			<groupId>jboss</groupId>

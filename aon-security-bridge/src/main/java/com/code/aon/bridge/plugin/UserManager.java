@@ -48,7 +48,7 @@ public class UserManager implements Serializable {
 	public static final String USER_DESCRIPTION = "Usuario Generado"; 
 	public static final String SECURITY_CONTEXT_NAME = "/aon-security"; 
 	/** UserManager Logger instance. */
-	static final Logger LOGGER = Logger.getLogger( UserManager.class.getName() );
+	private static final Logger LOGGER = Logger.getLogger( UserManager.class.getName() );
 
 	transient ResourceBundle bundle;
     transient IConsoleAdmin console;
