@@ -155,6 +155,23 @@ public interface IOperation {
 	void addDomain(String appId, IDomain domain, Boolean flag) throws StorageException ;
 
 	/**
+	 * Loads domain in each deployed applications.
+	 * 
+	 * @param domain
+	 * @throws StorageException
+	 */
+	void loadDomain(IDomain domain) throws StorageException;
+
+	/**
+	 * Loads a set of users with their relations inside the selected domain..
+	 * 
+	 * @param domain
+	 * @return array of loding errors.
+	 * @throws StorageException
+	 */
+	List<StorageException> loadUsers(IDomain domain) throws StorageException;
+
+	/**
 	 * Update the the <code>IDomain</code>, and serialize it.
 	 * 
 	 * @param appId

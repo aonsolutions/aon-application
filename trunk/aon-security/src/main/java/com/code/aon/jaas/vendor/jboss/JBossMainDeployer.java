@@ -28,7 +28,6 @@ import com.code.aon.jaas.deployment.IDeployer;
 import com.code.aon.jaas.deployment.ast.AstException;
 import com.code.aon.jaas.deployment.core.MainDeployer;
 import com.code.aon.jaas.deployment.event.IDeployerListener;
-import com.code.aon.jaas.deployment.util.FileUtis;
 import com.code.aon.jaas.storage.ApplicationsStorage;
 import com.code.aon.jaas.storage.StorageManager;
 import com.code.aon.jaas.vendor.VendorFactoryManager;
@@ -83,7 +82,8 @@ public class JBossMainDeployer extends ServiceMBeanSupport implements
 	 * 
 	 * @jmx:managed-operation
 	 */
-	public void deploy(URL url) throws DeploymentException {
+	public DeploymentInfo deploy(URL url) throws DeploymentException {
+		LOGGER.info( "deploy: " + url.getPath() );
 		File file = new File( url.getPath() );
 		if ( !file.canRead() ) {
 			try {
@@ -91,12 +91,13 @@ public class JBossMainDeployer extends ServiceMBeanSupport implements
 				URL serverHomeURL = (URL) getServer().getAttribute( oname, "ServerHomeURL" );
 				url = new File( serverHomeURL.getPath() + "farm/" + file.getName() ).toURL();
 			} catch (Exception e) {
-				LOGGER.fatal( e.getMessage() );
+				LOGGER.fatal( "Error searching file: " + e.getMessage() );
 				throw new DeploymentException( e.getMessage(), e );
 			}
 		}
-		support.deploy( url );
-		addLoginModule( support.getApp().getSecurityDomain() );
+		DeploymentInfo di = support.deploy( url );
+		addLoginModule( di.securityDomain );
+		return di;
 	}
 
 	/**
@@ -104,9 +105,10 @@ public class JBossMainDeployer extends ServiceMBeanSupport implements
 	 * 
 	 * @jmx:managed-operation
 	 */
-	public void undeploy(URL url) throws DeploymentException {
-		support.undeploy( url );
-		removeLoginModule( support.getApp().getSecurityDomain() );
+	public DeploymentInfo undeploy(URL url) throws DeploymentException {
+		DeploymentInfo di = support.undeploy( url );
+		removeLoginModule( di.securityDomain );
+		return di;
 	}
 
 	/**
@@ -114,18 +116,18 @@ public class JBossMainDeployer extends ServiceMBeanSupport implements
 	 * 
 	 * @jmx:managed-operation
 	 */
-	public boolean isDeployed(URL url) {
+	public boolean isDeployed(URL url) throws DeploymentException {
 		return support.isDeployed( url );
 	}
 
-	/**
-	 * Returns application deployment information.
-	 * 
-	 * @jmx:managed-operation
-	 */
-	public DeploymentInfo getDeployment(URL url) {
-		return support.getDeployment( url );
-	}
+//	/**
+//	 * Returns application deployment information.
+//	 * 
+//	 * @jmx:managed-operation
+//	 */
+//	public DeploymentInfo getDeployment(URL url) {
+//		return support.getDeployment( url );
+//	}
 
 	/**
      * Returns the default domain used for naming the MBean.

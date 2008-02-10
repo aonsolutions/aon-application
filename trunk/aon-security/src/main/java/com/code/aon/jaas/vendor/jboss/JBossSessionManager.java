@@ -151,21 +151,24 @@ public class JBossSessionManager extends ServiceMBeanSupport
 			ObjectName objectName = new ObjectName( STANDARD_HOST );
 			StandardHost standardHost = 
 				(StandardHost) server.getAttribute( objectName, MANAGED_RESOURCE );
-			Session[] sessions = 
-				( (Context) standardHost.findChild( context ) ).getManager().findSessions();
-			for (int i=0; i<sessions.length; i++) {
-				if ( sessions[i].getPrincipal() != null ) {
-					AuthPrincipal principal = 
-						new AuthPrincipal( sessions[i].getPrincipal().getName() );
-					list.add( 
-						new SessionInfo( sessions[i].getId(), 
-										sessions[i].getCreationTime(), 
-										sessions[i].getLastAccessedTime(), 
-										sessions[i].getMaxInactiveInterval(), 
-										principal  ) 
-						);
+			Context ctx = (Context) standardHost.findChild( context );
+			if ( ctx != null ) {
+				Session[] sessions = 
+					ctx.getManager().findSessions();
+				for (int i=0; i<sessions.length; i++) {
+					if ( sessions[i].getPrincipal() != null ) {
+						AuthPrincipal principal = 
+							new AuthPrincipal( sessions[i].getPrincipal().getName() );
+						list.add( 
+							new SessionInfo( sessions[i].getId(), 
+											sessions[i].getCreationTime(), 
+											sessions[i].getLastAccessedTime(), 
+											sessions[i].getMaxInactiveInterval(), 
+											principal  ) 
+							);
+					}
+					LOGGER.debug( "Active Sessions:" + sessions[i].getId() );
 				}
-				LOGGER.debug( "Active Sessions:" + sessions[i].getId() );
 			}
 		} catch (Exception e) {
             throw new DeploymentException(e.getMessage(), e);

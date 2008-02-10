@@ -27,7 +27,7 @@ import com.code.aon.jaas.deployment.DeploymentException;
 import com.code.aon.jaas.deployment.ast.AstException;
 import com.code.aon.jaas.deployment.event.DeployerEvent;
 import com.code.aon.jaas.deployment.event.IDeployerListener;
-import com.code.aon.jaas.deployment.util.FileUtis;
+import com.code.aon.jaas.deployment.util.FileUtils;
 
 /**
  * Applications storage manager. This class saves <b>deployed.xml</b> file.
@@ -110,30 +110,33 @@ public class ApplicationsStorage implements INode, IStorage, IDeployerListener {
 	public IApplication getApplication4Ctx(String ctx) {
 		Iterator<IApplication> iter = this.applications.values().iterator();
 		while (iter.hasNext()) {
-			IApplication element = iter.next();
-			if ( element.getContext().equals(ctx) )
-				return element;
+			IApplication app = iter.next();
+			if ( app.getContext() != null && app.getContext().equals(ctx) )
+				return app;
 		}
 		return null;
 	}
 
 	/**
-	 * Replaces a domain in all deployed applications.
+	 * Replaces the domain in all deployed applications that had one, excluding application 
+	 * identifier that has been updated previously.
 	 *  
-	 * @param app
+	 * @param appId
 	 * @param domain
 	 * @throws IOException 
 	 * @throws AstException
 	 * 
 	 * TODO. Asociar a cada aplicacion solamente la parte del objeto IDomain que le interesa 
 	 */
-	public void replaceDomainsInApplication(IApplication app, IDomain domain) 
-				throws IOException, AstException {
-		File resource = new File( getStorageDir().getCanonicalPath() + File.separator + domain.getId() + "." + XML );
-		DomainStorage es = 
-			(DomainStorage) AstLoader.getInstance().parse( 1, resource.toURL().openStream() );
-		( (Application)app ).replaceDomain( domain.getId(), es.getDomain() );
-		LOGGER.debug( "Domain [" + domain.getId() + "] Loaded and Replaced inside [" + app.getId() + "] Application." );
+	public void replaceDomainInApplications(String appId, IDomain domain) throws IOException, AstException {
+		Iterator<IApplication> it = this.applications.values().iterator();
+		while (it.hasNext()) {
+			Application app = (Application) it.next();
+			if ( !app.getId().equals( appId ) && app.getDomain( domain.getId() ) != null ) {
+				app.replaceDomain( domain.getId(), domain );
+				LOGGER.debug( "Domain [" + domain.getId() + "] Loaded and Replaced inside [" + app.getId() + "] Application." );
+			}
+		}
 	}
 
 	/* (non-Javadoc)
@@ -160,8 +163,7 @@ public class ApplicationsStorage implements INode, IStorage, IDeployerListener {
 	@Override
 	public boolean isDirty() {
 		try {
-			LOGGER.fatal( "isDirty " + FileUtis.getDirtyFile( getStorageDir().getCanonicalPath() ) + " " + FileUtis.getDirtyFile( getStorageDir().getCanonicalPath() ).exists() ) ;
-			return !FileUtis.getDirtyFile( getStorageDir().getCanonicalPath() ).exists();
+			return !FileUtils.getUptodateFile( getStorageDir().getCanonicalPath() ).exists();
 		} catch (IOException e) {
 			LOGGER.fatal( e.getMessage() );
 			return true;
@@ -205,7 +207,7 @@ public class ApplicationsStorage implements INode, IStorage, IDeployerListener {
     		app.setHashEncoding( options.get( IConstants.ENCODING ).getValue() );
 //	Check if deployed application already exist inside "deployed.xml" file.
     	if ( this.applications.containsKey( app.getId() ) ) {
-			LOGGER.debug( "applicationDeployed despliegue de una applicacion existente:" + app.getId() + " " + app.hashCode() );
+			LOGGER.debug( "Deploying an existing application:" + app.getId() + " " + app.hashCode() );
         	Application storageApp = (Application) this.applications.get( app.getId() );
 	    	storageApp.actualize(app);
 	    	Iterator<IDomain> iter = storageApp.domains().iterator();
@@ -227,7 +229,7 @@ public class ApplicationsStorage implements INode, IStorage, IDeployerListener {
 			}
     	} else {
 //	Check if deployed application has defined a domain, in other case creates a default one.
-			LOGGER.debug( "applicationDeployed despliegue de nueva applicacion:" + app.getId() + " " + app.hashCode() );
+			LOGGER.debug( "Deploying a new Application:" + app.getId() + " " + app.hashCode() );
 			if ( app.domains().size() == 0 ) {
 				( (Application)app ).addDomain( Domain.getInstance(app.getId()) );
 			}
@@ -235,7 +237,7 @@ public class ApplicationsStorage implements INode, IStorage, IDeployerListener {
 			Iterator<IDomain> iter = app.domains().iterator();
 			while (iter.hasNext()) {
 				IDomain domain = iter.next();
-				LOGGER.debug( "applicationDeployed dominios a desplegar:" + domain.getId() + " " + domain.hashCode() );
+				LOGGER.debug( "Deploying domain:" + domain.getId() + " " + domain.hashCode() );
 				try {
 					File resource = 
 						new File( getStorageDir().getCanonicalPath() + File.separator + domain.getId() + "." + XML);
@@ -244,7 +246,7 @@ public class ApplicationsStorage implements INode, IStorage, IDeployerListener {
 					if ( resource.exists() ) {
 						es = (DomainStorage) AstLoader.getInstance().parse( 1, resource.toURL().openStream() );
 						Domain existingDomain = (Domain) es.getDomain();
-						LOGGER.debug( "applicationDeployed dominio ya desplegado:" + existingDomain.getId() + " " + existingDomain.hashCode() );
+						LOGGER.debug( "Deployed Domain:" + existingDomain.getId() + " " + existingDomain.hashCode() );
 						existingDomain.add( domain.getDomainApplication( app.getId() ) );
 						Iterator<IUser> iterator = domain.standaloneUsers().values().iterator();
 						while (iterator.hasNext()) {
@@ -258,7 +260,7 @@ public class ApplicationsStorage implements INode, IStorage, IDeployerListener {
 					} else {
 						resource.createNewFile();
 					}
-					LOGGER.debug( "applicationDeployed dominio nuevo:" + domain.getId() + " " + domain.hashCode() );
+					LOGGER.debug( "New Domain:" + domain.getId() + " " + domain.hashCode() );
 					es.setDomain(domain);
 					es.initialize( StorageManager.getInstance( resource.toURL(), DomainRenderer.getInstance() ) );
 //					es.initialize( new StorageManager( resource.toURL(), DomainRenderer.getInstance() ) );
@@ -297,9 +299,8 @@ public class ApplicationsStorage implements INode, IStorage, IDeployerListener {
 				DomainStorage es = (DomainStorage) AstLoader.getInstance().parse( 1, resource.toURL().openStream() );
 				es.getDomain().remove(appName);
 				es.initialize( StorageManager.getInstance( resource.toURL(), DomainRenderer.getInstance() ) );
-//				es.initialize( new StorageManager( resource.toURL(), DomainRenderer.getInstance() ) );
 				es.write();
-				replaceDomainsInApplication( app, es.getDomain() );
+				replaceDomainInApplications( app.getId(), es.getDomain() );
 			} catch (IOException e) {
 				throw new DeploymentException(e.getMessage(), e);
 			} catch (AstException e) {

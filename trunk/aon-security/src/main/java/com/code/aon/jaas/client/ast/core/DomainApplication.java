@@ -19,7 +19,6 @@ import com.code.aon.jaas.client.ast.IRelation;
  * @since 1.0
  *  
  */
-
 public class DomainApplication implements IDomainApplication {
 
 	/**
@@ -37,7 +36,7 @@ public class DomainApplication implements IDomainApplication {
 	/** Application identifier. */
 	private String id;
 
-    /** Application DataSource metadata. */
+    /** Application DataSource meta data. */
 	private IDataSourceMetaData metadata;
 
     /** Domain Profiles with its Roles. */
@@ -56,7 +55,7 @@ public class DomainApplication implements IDomainApplication {
 	}
 
     /**
-     * Assign DataSource metadata.
+     * Assign the data source meta data.
      * 
      * @param metadata
      */

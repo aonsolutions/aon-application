@@ -8,6 +8,11 @@ import java.io.InputStream;
 import java.net.JarURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
+
+import com.code.aon.jaas.deployment.DeploymentInfo;
+import com.code.aon.jaas.storage.IStorage;
 
 /**
  * // TODO [iayerbe] Documéntame!
@@ -81,4 +86,49 @@ public class JarUtils {
         // Return the file url to the extracted jar
         return archiveFile.toURL();
     }
+
+    /**
+     * Extracts xml configuration files into a temporal pre-defined directory.
+     * 
+     * @param app
+     * @param destDir
+     * @throws IOException 
+     */
+	public static final void extractWEBINFFiles(URL app, File destDir) throws IOException {
+		ZipInputStream zis = null;
+		try {
+			zis = new ZipInputStream( app.openStream() );
+			ZipEntry entry = zis.getNextEntry();
+			while (entry != null) {
+				if ( entry.getName().equals( DeploymentInfo.WEB_INF ) ){
+					String fileName = destDir.getAbsolutePath() + File.separator + entry.getName();
+					new File( fileName ).mkdirs();
+				}
+				if ( entry.getName().indexOf( "." + IStorage.XML ) > -1 ) {
+					String fileName = destDir.getAbsolutePath() + File.separator + entry.getName();
+			        FileOutputStream fos;
+			        BufferedOutputStream bos = null;
+					try {
+						fos = new FileOutputStream( fileName );
+						bos = new BufferedOutputStream(fos);
+				        byte[] bytes = new byte[4096];
+						int read = zis.read(bytes, 0, 4096);
+						while (read > 0) {
+							bos.write(bytes, 0, read);
+							read = zis.read(bytes, 0, 4096);
+						}
+					} catch (IOException e) {
+						// Ignore
+					} finally {
+						if ( bos != null )
+							bos.close();
+					}
+				}
+				entry = zis.getNextEntry();
+			}
+		} finally {
+			if ( zis != null )
+				zis.close();
+		}
+	}
 }

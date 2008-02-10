@@ -30,6 +30,7 @@ import com.code.aon.jaas.deployment.IDeployer;
 
 import com.code.aon.jaas.deployment.event.DeployerEvent;
 import com.code.aon.jaas.deployment.event.IDeployerListener;
+import com.code.aon.jaas.deployment.util.FileUtils;
 
 import com.code.aon.jaas.vendor.VendorFactoryManager;
 
@@ -90,15 +91,6 @@ public class MainDeployer implements IDeployer {
     }
 
     @Override
-    public boolean isDeployed(URL url) {
-        DeploymentInfo di = getDeployment(url);
-        if (di == null) {
-            return false;
-        }
-        return di.state == DeploymentState.STARTED;
-    }
-
-    @Override
     public String getDeployerInfo(String info) {
         return deployerInfo;
     }
@@ -129,16 +121,6 @@ public class MainDeployer implements IDeployer {
     }
 
     /**
-     * Returns a <code>DeploymentInfo</code> of given application <code>URL</code>. 
-     * 
-     * @param url
-     * @return DeploymentInfo
-     */
-    public DeploymentInfo getDeployment(URL url) {
-        return deploymentMap.get(url);
-    }
-
-    /**
      * Assign the configuration resource.
      * 
      * @param configResource
@@ -147,36 +129,70 @@ public class MainDeployer implements IDeployer {
         this.configResource = configResource;
     }
 
-    /**
-     * Returns deploying application.
-     * 
-     * @return IApplication
-     */
-    public IApplication getApp() {
-        return this.app;
-    }
+    @Override
+	public boolean isDeployed(URL url) throws DeploymentException {
+    	URL tmpURL = null;
+		try {
+			tmpURL = getDeploymentURL( url );
+		} catch (IOException e) {
+			throw new DeploymentException( "Unable to find URL:" + url.getFile() + ". " + e.getMessage() );
+		}
+		if ( tmpURL != null ) {
+			DeploymentInfo di = getDeployment( tmpURL );
+			return (di == null)? false: di.state == DeploymentState.STARTED;
+		}
+		return false;
+	}
 
     @Override
-    public void deploy(URL url) throws DeploymentException {
-        DeploymentInfo sdi = getDeployment(url);
+    public DeploymentInfo deploy(URL url) throws DeploymentException {
+		try {
+			String configPath = 
+				new File( getConfigResource( null ).getPath() ).getParentFile().getParentFile().getCanonicalPath();
+	    	// Move application configuration files to /COMMON-RESOURCES/TMP/ folder.
+			url = FileUtils.allocateDeployment( url, configPath );
+		} catch (IOException e) {
+            throw new DeploymentException( "Deployment Failed: " + e.getMessage() + ", URL:" + url.getFile() );
+		}
+		DeploymentInfo sdi = getDeployment( url );
         // if it does not exist create a new deployment
         if (sdi == null) {
-            sdi = new DeploymentInfo(url);
+            sdi = new DeploymentInfo( url );
             deploy(sdi);
         }
         if (sdi.state != DeploymentState.STARTED) {
             throw new DeploymentException( "Incomplete state:" + sdi.state + ", deployment URL:" + sdi.url.getFile() );
         }
-        fireApplicationDeployed(new DeployerEvent(app));
+        fireApplicationDeployed( new DeployerEvent(app) );
+        app = null;
+        return sdi;
     }
 
     @Override
-    public void undeploy(URL url) throws DeploymentException {
-        DeploymentInfo sdi = getDeployment(url);
-        if (sdi != null) {
-            undeploy(sdi);
-            fireApplicationUndeployed( new DeployerEvent(sdi.shortName) );
-        }
+	public DeploymentInfo undeploy(URL url) throws DeploymentException {
+		DeploymentInfo sdi = null;    	
+		try {
+			URL tmpURL = getDeploymentURL( url );
+			sdi = getDeployment( tmpURL );
+			if (sdi != null) {
+				undeploy(sdi);
+				FileUtils.forceDelete( new File( tmpURL.getFile() ) );
+			}
+		} catch (IOException e) {
+			throw new DeploymentException( "Deployment Failed: " + e.getMessage() + ", URL:" + url.getFile() );
+		}
+		fireApplicationUndeployed( new DeployerEvent(sdi.shortName) );
+		return sdi;
+	}
+
+    /**
+     * Returns a <code>DeploymentInfo</code> of given application <code>URL</code>. 
+     * 
+     * @param url
+     * @return DeploymentInfo
+     */
+    protected DeploymentInfo getDeployment(URL url) {
+        return deploymentMap.get(url);
     }
 
     /**
@@ -185,20 +201,20 @@ public class MainDeployer implements IDeployer {
      * @param deployment
      * @throws DeploymentException
      */
-    protected void deploy(DeploymentInfo deployment) throws DeploymentException {
+	protected void deploy(DeploymentInfo deployment) throws DeploymentException {
 //	If we are already deployed return
-        if (isDeployed(deployment.url)) {
-            LOGGER.debug( "Package: " + deployment.url + " is already deployed" );
-            return;
+		if (isDeployed(deployment.url)) {
+			LOGGER.debug( "Package: " + deployment.url + " is already deployed" );
+			return;
         }
-        LOGGER.debug( "Starting deployment of package: " + deployment.url );
+		LOGGER.debug( "Starting deployment of package: " + deployment.url );
 		if (init(deployment)) {
-		    start(deployment);
-		    LOGGER.debug("Deployed package: " + deployment.url);
+			start(deployment);
+			LOGGER.debug("Deployed package: " + deployment.url);
 		} else {
-		    LOGGER.debug( "Deployment of package: " + deployment.url + " is waiting for an appropriate deployer." );
+			LOGGER.debug( "Deployment of package: " + deployment.url + " is waiting for an appropriate deployer." );
 		}
-    }
+	}
 
     /**
      * Undeploys the application.
@@ -301,6 +317,24 @@ public class MainDeployer implements IDeployer {
     }
 
     /**
+     * Gets where the application URL has been deployed.
+     * 
+     * @param url
+     * @return
+     * @throws IOException
+     */
+    private URL getDeploymentURL(URL url) throws IOException {
+		String configPath = 
+			new File( getConfigResource( null ).getPath() ).getParentFile().getParentFile().getCanonicalPath();
+    	// Move application configuration files to /COMMON-RESOURCES/TMP/ folder.
+		int index = url.getPath().lastIndexOf( "/" );
+		String appName = url.getPath().substring( index, url.getPath().length() );
+		File destDir = 
+			new File( configPath + File.separator + DeploymentInfo.TMP + appName );
+		return destDir.toURL();
+    }
+
+    /**
      * Makes a local copy of the deployment <code>URL</code>.
      * 
      * @param sdi
@@ -323,6 +357,7 @@ public class MainDeployer implements IDeployer {
             if (deployment.deployer != null) {
                 deployment.state = DeploymentState.START_DEPLOYER;
                 deployment.deployer.start(deployment);
+                deployment.securityDomain = app.getSecurityDomain();
                 deployment.state = DeploymentState.STARTED;
                 deployment.status = DeploymentInfo.DEPLOYED;
             } else {
@@ -334,7 +369,7 @@ public class MainDeployer implements IDeployer {
             	// Ignore exception
             	LOGGER.warn( t.getMessage() );
                 deployment.state = DeploymentState.STARTED;
-                deployment.status = DeploymentInfo.DEPLOYED;
+                deployment.status = DeploymentInfo.INCONSISTENT;
             	return;
             }
             deployment.state = DeploymentState.FAILED;

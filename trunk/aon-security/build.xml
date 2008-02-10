@@ -3,7 +3,7 @@
 
 	<property name="mgr" value="aon-security-mgr" />
 	<property name="client" value="aon.security" />
-	<property name="version" value="1.2.9" />
+	<property name="version" value="1.2.11" />
 	<property name="jar.valve.name" value="valve-${version}" />
 
     <property name="src.dir" value="src/main/java" />
@@ -165,6 +165,7 @@
 			<classpath refid="tomcat.5.javac.classpath"/>
 			<exclude name="com/code/aon/jaas/vendor/jboss/**"/>
 			<exclude name="com/code/aon/jaas/valves/SecurityValve.*"/>
+  	      	<exclude name="com/code/aon/jaas/auth/Utilities.*" />
 		</javac>
 	</target>
 
@@ -183,6 +184,7 @@
 			<classpath refid="tomcat.6.javac.classpath"/>
 	        <exclude name="com/code/aon/jaas/vendor/jboss/**"/>
   	      	<exclude name="com/code/aon/jaas/valves/SecurityValve.*"/>
+  	      	<exclude name="com/code/aon/jaas/auth/Utilities.*" />
 	    </javac>
 	</target>
 
@@ -200,10 +202,35 @@
 			<src path="${src.dir}"/>
 			<classpath refid="jboss.javac.classpath"/>
 	        <exclude name="com/code/aon/jaas/vendor/tomcat/**"/>
+  	      	<exclude name="com/code/aon/jaas/auth/Utilities.*" />
 	    </javac>
 	</target>
 
-  <!-- Compile mbeans with XDoclet -->
+	<!-- COMPILE FOR Utilities-->
+	<target name="compile-utilities" description="Compile for Utilities" depends="copy" >
+		<javac destdir="${build.dir}"
+				optimize="${javac.optimize}"
+				debug="${javac.debug}"
+				depend="${javac.depend}"
+				verbose="${javac.verbose}"
+				deprecation="${javac.deprecation}"
+				includeAntRuntime="${javac.include.ant.runtime}"
+				includeJavaRuntime="${javac.include.java.runtime}"
+				failonerror="${javac.fail.onerror}"
+				target="1.5">
+			<src path="${src.dir}"/>
+			<classpath refid="javac.classpath"/>
+			<classpath>
+				<pathelement location="${jboss.home}/client/jbossall-client.jar"/>
+			</classpath>
+			<exclude name="com/code/aon/jaas/auth/session/**"/>
+			<exclude name="com/code/aon/jaas/auth/spi/**"/>
+			<exclude name="com/code/aon/jaas/valves/**"/>
+	        <exclude name="com/code/aon/jaas/vendor/**"/>
+		</javac>
+	</target>
+
+	<!-- Compile mbeans with XDoclet -->
 	<target name="compile-mbean-sources">
     	<taskdef name="jmxdoclet" 
     		classname="xdoclet.modules.jmx.JMXDocletTask" 
@@ -215,6 +242,21 @@
 	      </fileset>
 	      <mbeaninterface mergedir="${templates.dir}"/>
 	    </jmxdoclet>
+	</target>
+
+	<target name="utilities.jar" depends="compile-utilities">
+		<jar jarfile="${mgr.dist.dir}/utilities.jar">
+			<manifest>
+				<attribute name="Main-Class" value="com.code.aon.jaas.auth.Utilities"/>
+			</manifest>
+			<fileset dir="${build.dir}">
+				<include name="com/code/aon/jaas/auth/Utilities.class"/>
+				<include name="com/code/aon/jaas/client/ast/**"/>
+				<include name="com/code/aon/jaas/auth/util/**"/>
+				<include name="com/code/aon/jaas/deployment/ast/AstException.class"/>
+				<include name="com/code/aon/jaas/storage/**"/>
+			</fileset>
+		</jar>
 	</target>
 
 	<!-- ===================================================================== -->
@@ -252,7 +294,8 @@
 		<jar jarfile="${tomcat.home}/server/lib/${mgr}-${version}.jar">
   	      <fileset dir="${build.dir}">
   	        <include name="com/code/aon/**"/>
-  	        <exclude name="com/code/aon/jaas/auth/spi/InteriorLoginModule.*"/>
+  	      	<exclude name="com/code/aon/jaas/auth/Utilities.*" />
+			<exclude name="com/code/aon/jaas/auth/spi/InteriorLoginModule.*"/>
   	      	<exclude name="com/code/aon/jaas/auth/test/**"/>
   	      	<exclude name="com/code/aon/jaas/valves/SecurityValve.*"/>
   	      	<exclude name="com/code/aon/jaas/vendor/jboss/**"/>
@@ -269,6 +312,7 @@
 		<jar jarfile="${tomcat.6.home}/lib/${mgr}-${version}.jar">
   	      <fileset dir="${build.dir}">
   	        <include name="com/code/aon/**"/>
+  	      	<exclude name="com/code/aon/jaas/auth/Utilities.*" />
   	        <exclude name="com/code/aon/jaas/auth/spi/InteriorLoginModule.*"/>
   	      	<exclude name="com/code/aon/jaas/auth/test/**"/>
   	      	<exclude name="com/code/aon/jaas/valves/SecurityValve.*"/>
@@ -300,9 +344,10 @@
 	    <jar jarfile="${mgr.dist.dir}/${mgr}-${version}.jar">
 	      <fileset dir="${build.dir}">
 	        <include name="com/code/aon/**"/>
-  	      	<exclude name="com/code/aon/jaas/auth/test/**"/>
-  	      	<exclude name="com/code/aon/jaas/valves/SecurityValve.*"/>
-  	      	<exclude name="com/code/aon/jaas/vendor/tomcat/**"/>
+  	      	<exclude name="com/code/aon/jaas/auth/test/**" />
+  	      	<exclude name="com/code/aon/jaas/auth/Utilities.*" />
+  	      	<exclude name="com/code/aon/jaas/valves/SecurityValve.*" />
+  	      	<exclude name="com/code/aon/jaas/vendor/tomcat/**" />
 	      </fileset>
 	    </jar>
     	<jar jarfile="${jboss.server.home}/deploy/${mgr}-${version}.sar">

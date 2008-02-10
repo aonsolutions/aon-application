@@ -43,7 +43,7 @@ public interface TomcatMainDeployerMBean extends com.code.aon.jaas.vendor.tomcat
     * (non-Javadoc)
     * @see com.code.aon.jaas.deployment.IDeployer#deploy(java.net.URL)
     */
-  void deploy(java.net.URL url) throws com.code.aon.jaas.deployment.DeploymentException;
+  com.code.aon.jaas.deployment.DeploymentInfo deploy(java.net.URL url) throws com.code.aon.jaas.deployment.DeploymentException;
 
    /**
     * (non-Javadoc)
@@ -54,7 +54,7 @@ public interface TomcatMainDeployerMBean extends com.code.aon.jaas.vendor.tomcat
     * (non-Javadoc)
     * @see com.code.aon.jaas.deployment.IDeployer#undeploy(java.net.URL)
     */
-  void undeploy(java.net.URL url) throws com.code.aon.jaas.deployment.DeploymentException;
+  com.code.aon.jaas.deployment.DeploymentInfo undeploy(java.net.URL url) throws com.code.aon.jaas.deployment.DeploymentException;
 
    /**
     * (non-Javadoc)
@@ -65,7 +65,7 @@ public interface TomcatMainDeployerMBean extends com.code.aon.jaas.vendor.tomcat
     * (non-Javadoc)
     * @see com.code.aon.jaas.deployment.IDeployer#isDeployed(java.net.URL)
     */
-  boolean isDeployed(java.net.URL url) ;
+  boolean isDeployed(java.net.URL url) throws com.code.aon.jaas.deployment.DeploymentException;
 
    /**
     * Return Catalina home.

@@ -25,22 +25,17 @@ public interface JBossMainDeployerMBean extends org.jboss.system.ServiceMBean {
    /**
     * Deploy application.
     */
-  void deploy(java.net.URL url) throws com.code.aon.jaas.deployment.DeploymentException;
+  com.code.aon.jaas.deployment.DeploymentInfo deploy(java.net.URL url) throws com.code.aon.jaas.deployment.DeploymentException;
 
    /**
     * Undeploy application.
     */
-  void undeploy(java.net.URL url) throws com.code.aon.jaas.deployment.DeploymentException;
+  com.code.aon.jaas.deployment.DeploymentInfo undeploy(java.net.URL url) throws com.code.aon.jaas.deployment.DeploymentException;
 
    /**
     * Check if the application is already deployed.
     */
-  boolean isDeployed(java.net.URL url) ;
-
-   /**
-    * Returns application deployment information.
-    */
-  com.code.aon.jaas.deployment.DeploymentInfo getDeployment(java.net.URL url) ;
+  boolean isDeployed(java.net.URL url) throws com.code.aon.jaas.deployment.DeploymentException;
 
    /**
     * Returns the default domain used for naming the MBean.

@@ -29,7 +29,7 @@ import com.code.aon.jaas.client.ast.core.AstLoader;
 import com.code.aon.jaas.client.xml.ApplicationsRenderer;
 
 import com.code.aon.jaas.deployment.event.IDeployerListener;
-import com.code.aon.jaas.deployment.util.FileUtis;
+import com.code.aon.jaas.deployment.util.FileUtils;
 
 import com.code.aon.jaas.storage.ApplicationsStorage;
 import com.code.aon.jaas.storage.IOperation;
@@ -169,6 +169,18 @@ public class JBossSecurity extends ServiceMBeanSupport
 		this.storage.addDomain( appId, domain, flag );
 	}
 
+	/**(non-Javadoc)
+	 * @see com.code.aon.jaas.storage.IOperation#loadDomain(com.code.aon.jaas.client.ast.IDomain)
+     * 
+	 * @jmx:managed-operation
+	 */
+	public void loadDomain(IDomain domain) throws StorageException {
+		if ( LOGGER.isDebugEnabled() )
+			LOGGER.debug("Loading domain " + domain.getId() );
+
+		this.storage.loadDomain( domain );
+	}
+
 	/** (non-Javadoc)
 	 * @see com.code.aon.jaas.storage.IOperation#getDomain(java.lang.String, java.lang.String)
      * 
@@ -180,6 +192,18 @@ public class JBossSecurity extends ServiceMBeanSupport
 			LOGGER.debug("Retrieving IDomain for: CONTEXT[" + appContext + "]" );
 
 		return this.storage.getDomain(appContext, domainId);
+	}
+
+	/**(non-Javadoc)
+	 * @see com.code.aon.jaas.storage.IOperation#loadUsers(com.code.aon.jaas.client.ast.IDomain)
+     * 
+	 * @jmx:managed-operation
+	 */
+	public List loadUsers(IDomain domain) throws StorageException {
+		if ( LOGGER.isDebugEnabled() )
+			LOGGER.debug("Loading users and relations " + domain.getId() );
+
+		return this.storage.loadUsers( domain );
 	}
 
 	/** (non-Javadoc)
@@ -388,12 +412,12 @@ public class JBossSecurity extends ServiceMBeanSupport
 		while (iter.hasNext()) {
 			IApplication app = (IApplication) iter.next();
 			ObjectName name = new ObjectName("jboss.system:type=ServerConfig");
-			URL appURL = (URL)getServer().getAttribute(name, "ServerHomeURL");
-			appURL = new URL("file:" + appURL.getPath() + "deploy/" + app.getId());
+			String home = ( (URL) getServer().getAttribute(name, "ServerHomeURL") ).getPath();
+			URL appURL = new URL( "file:" + home + "deploy/" + app.getId() );
 			server.invoke(oname, "deploy", new Object[] { appURL }, new String[] { URL.class.getName() });
 		}
 		String dirtyFile = this.storage.as.getStorageDir().getCanonicalPath();
-		FileUtis.getDirtyFile( dirtyFile ).createNewFile();
+		FileUtils.getUptodateFile( dirtyFile ).createNewFile();
 	}
 
     /* (non-Javadoc)
@@ -408,10 +432,12 @@ public class JBossSecurity extends ServiceMBeanSupport
 		while (iter.hasNext()) {
 			IApplication app = (IApplication) iter.next();
 			ObjectName name = new ObjectName("jboss.system:type=ServerConfig");
-			URL appURL = (URL)getServer().getAttribute(name, "ServerHomeURL");
-			appURL = new URL("file:" + appURL.getPath() + "deploy/" + app.getId());
+			String home = ( (URL) getServer().getAttribute(name, "ServerHomeURL") ).getPath();
+			URL appURL = new URL( "file:" + home + "deploy/" + app.getId() );
 			server.invoke(oname, "undeploy", new Object[] { appURL }, new String[] { URL.class.getName() });
 		}
+		this.storage.as = null;
+		this.storage = new StorageSupport();
 	}
 
 	/**

@@ -7,7 +7,7 @@ import java.net.URL;
 import com.code.aon.jaas.client.ast.IDomain;
 import com.code.aon.jaas.client.ast.INode;
 import com.code.aon.jaas.client.ast.INodeVisitor;
-import com.code.aon.jaas.deployment.util.FileUtis;
+import com.code.aon.jaas.deployment.util.FileUtils;
 
 /**
  * Domain storage manager. This class saves each domain <b>xml</b> file.
@@ -78,7 +78,7 @@ public class DomainStorage implements INode, IStorage {
 	@Override
 	public boolean isDirty() {
 		try {
-			return !FileUtis.getDirtyFile( getStorageDir().getCanonicalPath() ).exists();
+			return !FileUtils.getUptodateFile( getStorageDir().getCanonicalPath() ).exists();
 		} catch (IOException e) {
 			return false;
 		}

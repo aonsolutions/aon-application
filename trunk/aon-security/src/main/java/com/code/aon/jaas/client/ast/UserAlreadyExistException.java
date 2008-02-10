@@ -16,6 +16,8 @@ import com.code.aon.jaas.storage.StorageException;
  */
 public class UserAlreadyExistException extends StorageException {
 
+	private static final long serialVersionUID = -2500857113080545689L;
+
 	/**
      * Construct a <tt>CRUDException</tt> with the specified detail message.
      * 
@@ -23,6 +25,16 @@ public class UserAlreadyExistException extends StorageException {
      */
     public UserAlreadyExistException(String message) {
         super( message );
+    }
+
+	/**
+     * Construct a <tt>CRUDException</tt> with the specified detail message, with an argument.
+     * 
+     * @param message
+     * @param arg
+     */
+    public UserAlreadyExistException(String msg, Object arg) {
+        super(msg, arg);
     }
 
 }

@@ -21,9 +21,6 @@ import com.code.aon.jaas.vendor.deployment.ast.IVendorDescriptor;
  */
 public class WARDeployer extends SubDeployer {
 
-    /** Deployment descriptor files directory. */
-	public static final String WEB_INF = "WEB-INF/";
-
     /** WEB.XML deployment descriptor name. */
 	public static final String WEB_XML = "web.xml";
 
@@ -35,11 +32,11 @@ public class WARDeployer extends SubDeployer {
 
 	@Override
 	public void init(DeploymentInfo di) throws DeploymentException {
-		this.web = di.localCl.findResource(WEB_INF + WEB_XML);
+		this.web = di.localCl.findResource( DeploymentInfo.WEB_INF + WEB_XML );
 		String vendorWFile = VendorFactoryManager.create(di.appServerName).getVendorWEBFile();
 		if (vendorWFile != null)
-			this.vendorWEB = di.localCl.findResource(WEB_INF + vendorWFile);
-		this.deployed = di.localCl.findResource(WEB_INF + DEPLOYED_FILE);
+			this.vendorWEB = di.localCl.findResource( DeploymentInfo.WEB_INF + vendorWFile );
+		this.deployed = di.localCl.findResource( DeploymentInfo.WEB_INF + DEPLOYED_FILE );
 	}
 
 	@Override

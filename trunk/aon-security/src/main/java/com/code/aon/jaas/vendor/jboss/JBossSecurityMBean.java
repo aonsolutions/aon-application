@@ -67,9 +67,21 @@ public interface JBossSecurityMBean extends org.jboss.system.ServiceMBean {
 
    /**
     * (non-Javadoc)
+    * @see com.code.aon.jaas.storage.IOperation#loadDomain(com.code.aon.jaas.client.ast.IDomain)
+    */
+  void loadDomain(com.code.aon.jaas.client.ast.IDomain domain) throws com.code.aon.jaas.storage.StorageException;
+
+   /**
+    * (non-Javadoc)
     * @see com.code.aon.jaas.storage.IOperation#getDomain(java.lang.String, java.lang.String)
     */
   com.code.aon.jaas.client.ast.IDomain getDomain(java.lang.String appContext,java.lang.String domainId) ;
+
+   /**
+    * (non-Javadoc)
+    * @see com.code.aon.jaas.storage.IOperation#loadUsers(com.code.aon.jaas.client.ast.IDomain)
+    */
+  java.util.List loadUsers(com.code.aon.jaas.client.ast.IDomain domain) throws com.code.aon.jaas.storage.StorageException;
 
    /**
     * (non-Javadoc)

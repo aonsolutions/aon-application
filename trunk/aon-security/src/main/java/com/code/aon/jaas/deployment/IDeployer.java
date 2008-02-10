@@ -35,12 +35,21 @@ public interface IDeployer {
 	void removeDeployerListener(IDeployerListener l);
 
 	/**
+	 * Tell you if a packaged identified by a URL is deployed.
+	 * 
+	 * @param url
+	 * @return
+	 * @throws DeploymentException
+	 */
+	boolean isDeployed(URL url) throws DeploymentException;
+
+	/**
 	 * Deploy a package identified by a URL
 	 * 
 	 * @param url
 	 * @throws DeploymentException
 	 */
-	void deploy(URL url) throws DeploymentException;
+	DeploymentInfo deploy(URL url) throws DeploymentException;
 
 	/**
 	 * Undeploy a package identified by a URL
@@ -48,15 +57,7 @@ public interface IDeployer {
 	 * @param url
 	 * @throws DeploymentException
 	 */
-	void undeploy(URL url) throws DeploymentException;
-
-	/**
-	 * Tell you if a packaged identified by a URL is deployed.
-	 * 
-	 * @param url
-	 * @return
-	 */
-	boolean isDeployed(URL url);
+	DeploymentInfo undeploy(URL url) throws DeploymentException;
 
 	/**
 	 * Returns the application server or servlets container name/version, 

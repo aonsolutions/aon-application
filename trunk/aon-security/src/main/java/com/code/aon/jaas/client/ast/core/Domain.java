@@ -7,6 +7,7 @@ import java.util.Iterator;
 import java.util.Map;
 
 import com.code.aon.jaas.client.ast.IAccessPolicy;
+import com.code.aon.jaas.client.ast.IDataSourceMetaData;
 import com.code.aon.jaas.client.ast.IDomain;
 import com.code.aon.jaas.client.ast.IDomainApplication;
 import com.code.aon.jaas.client.ast.INodeVisitor;
@@ -24,16 +25,19 @@ public class Domain implements IDomain {
 
 	private static final long serialVersionUID = 7839221957928230669L;
 
-	/** Indica el identificador de la aplicación. */
+	/** Domain identifier. */
 	private String id;
 
-	/** Indica la política de acceso seguida por la aplicación. */
+	/** Domain access policy. */
 	private IAccessPolicy accessPolicy;
 
-	/** Aplicaciones en las que está registrado el dominio. */
+    /** Domain DataSource meta data. */
+	private IDataSourceMetaData metadata;
+
+	/** Applications that domain belongs to. */
 	private Map<String, IDomainApplication> applications = new HashMap<String, IDomainApplication>();
 
-    /** Usuarios disponibles para la entidad. */
+    /** Domain stand-alone users. */
 	private Map<String, IUser> standalone = new HashMap<String, IUser>();
 
     /**
@@ -85,6 +89,21 @@ public class Domain implements IDomain {
 	}
 
 	/* (non-Javadoc)
+	 * @see com.code.aon.jaas.client.ast.IDomain#setDataSourceMetaData(com.code.aon.jaas.client.ast.IDataSourceMetaData)
+	 */
+	@Override
+	public void setDataSourceMetaData(IDataSourceMetaData dsmt) {
+		this.metadata = dsmt;
+	}
+
+	/* (non-Javadoc)
+	 * @see com.code.aon.jaas.client.ast.IDomain#getDataSourceMetaData()
+	 */
+	public IDataSourceMetaData getDataSourceMetaData() {
+		return metadata;
+	}
+
+	/* (non-Javadoc)
 	 * @see com.code.aon.jaas.client.ast.IDomain#applications()
 	 */
 	public Collection<IDomainApplication> applications() {
@@ -124,7 +143,7 @@ public class Domain implements IDomain {
 	 */
 	public void add(IUser user) throws UserAlreadyExistException {
         if ( this.standalone.containsKey(user.getId()) )
-        	throw new UserAlreadyExistException( "User identifier " + user.getId() + " already exist." );
+        	throw new UserAlreadyExistException( "aon_security_user_exist", user.getId() );
 
         this.standalone.put( user.getId(), user );
 	}
@@ -137,7 +156,7 @@ public class Domain implements IDomain {
 			return this.standalone.put( user.getId(), user );
 		}
         if ( this.standalone.containsKey(user.getId()) )
-        	throw new UserAlreadyExistException( "User identifier " + user.getId() + " already exist." );
+        	throw new UserAlreadyExistException( "aon_security_user_exist", user.getId() );
 
 		Iterator<IDomainApplication> iter = this.applications.values().iterator();
 		while (iter.hasNext()) {

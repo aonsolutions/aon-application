@@ -12,7 +12,7 @@ import java.util.Map;
 import com.code.aon.jaas.client.ast.INode;
 
 import com.code.aon.jaas.client.xml.Renderer;
-import com.code.aon.jaas.deployment.util.FileUtis;
+import com.code.aon.jaas.deployment.util.FileUtils;
 
 /**
  * Serializes applications and domains xml files deployed inside.
@@ -144,8 +144,8 @@ public class StorageManager {
 					e.printStackTrace();
 				}
 				try {
-					deleteAllDirtyFiles();
-					createDirtyFile();
+					deleteAllUptodateFiles();
+					createUptodateFile();
 				} catch (IOException e) {
 					// Ignore
 				}
@@ -159,24 +159,33 @@ public class StorageManager {
 	 * COMMON-RESOURCE directory, the application has changed. 
 	 * @throws IOException 
 	 */
-	protected void createDirtyFile() throws IOException {
-		String dirtyFile = new File( this.url.getFile() ).getParentFile().getCanonicalPath();
-		FileUtis.getDirtyFile( dirtyFile ).createNewFile();
+	protected void createUptodateFile() throws IOException {
+		String uptodateFile = new File( this.url.getFile() ).getParentFile().getCanonicalPath();
+		FileUtils.getUptodateFile( uptodateFile ).createNewFile();
 	}
 
-	private void deleteAllDirtyFiles() {
+	/**
+	 * Deletes all files using <b>updated<b> extension.
+	 */
+	private void deleteAllUptodateFiles() {
 		File[] dirtyFiles = 
-			new File ( this.url.getFile() ).getParentFile().listFiles( new DirtyFileFilter() );
+			new File ( this.url.getFile() ).getParentFile().listFiles( new UptodateFileFilter() );
 		for (int i = 0; i < dirtyFiles.length; i++) {
 			dirtyFiles[i].delete();
 		}
 	}
 
-	class DirtyFileFilter implements FileFilter {
+	/**
+	 * Defines the up to date file filter.
+	 * 
+	 * @author Consulting & Development. Iñaki Ayerbe - 14-jan-2008
+	 * @since 1.0
+	 */
+	class UptodateFileFilter implements FileFilter {
 
 		@Override
 		public boolean accept(File pathname) {
-			return pathname.getName().indexOf( "dirty" ) > -1 ;
+			return pathname.getName().indexOf( FileUtils.UP_TO_DATE ) > -1 ;
 		}
 
 	}

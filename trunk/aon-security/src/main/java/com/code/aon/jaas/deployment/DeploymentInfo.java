@@ -1,16 +1,9 @@
 package com.code.aon.jaas.deployment;
 
 import java.io.File;
-import java.io.FileFilter;
-import java.io.IOException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.Date;
-
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
-import com.code.aon.jaas.deployment.util.FileUtis;
 
 /**
  * This class manages deployment process properties.
@@ -24,13 +17,17 @@ public class DeploymentInfo {
 	/** Tells If application only exits in the configuration resource file. */
 	public static final int WAR_DEPLOYMENT_FILE_NOT_FOUND = 0;
 
-	/** Tells deployment status is Deployed. */
-	public static final String DEPLOYED = "Deployed";
+	/** Application deployment temporal File. */
+	public static final String TMP = "TMP";
+    /** Web Deployment descriptor files directory. */
+	public static final String WEB_INF = "WEB-INF/";
+
     /** Tells deployment status is Starting. */
 	public static final String STARTING = "Starting";
-
-    /** DeploymentInfo proper Logger. */
-    private static final Log LOGGER = LogFactory.getLog( DeploymentInfo.class.getName() );
+	/** Tells deployment status is Deployed. */
+	public static final String DEPLOYED = "Deployed";
+	/** Tells deployment status is Inconsistent. */
+	public static final String INCONSISTENT = "Inconsistent";
 
     /** The initial construction timestamp. */
 	public Date date = new Date();
@@ -65,6 +62,9 @@ public class DeploymentInfo {
     /** The application server name which this deployment is. */
 	public String appServerName;
 
+	/** The Application security domain. */
+	public String securityDomain;
+
     /**
      * local Cl is a CL that is used for metadata
      * loading, if ejb-jar.xml is left in the parent CL through old deployments,
@@ -83,32 +83,33 @@ public class DeploymentInfo {
     public DeploymentInfo(final URL url) throws DeploymentException {
         //	The key url the deployment comes from
     	this.url = url;
-        try {
-        	this.url.openStream().close();
-        } catch (IOException e) {
-            File file = new File( this.url.getPath() );
-            if ( file.isDirectory() ) {
-            	File srcDir = new File( url.getPath() + File.separator + "WEB-INF" );
-            	File destDir = 
-            		new File( System.getProperty( "java.io.tmpdir" ) + File.separator + 
-                				file.getName() + File.separator + "WEB-INF" + File.separator );
-            	destDir.mkdirs();
-                try {
-                	FileFilter filter = new InfoFileFilter();
-                	File[] files = srcDir.listFiles( filter );
-                	for (int i = 0; i < files.length; i++) {
-                    	File destFile = new File( destDir, files[i].getName() );
-    					FileUtis.copyFile( files[i], destFile, true );
-					}
-					this.url = destDir.getParentFile().toURL();
-		        	this.url.openStream().close();
-				} catch (IOException e1) {
-					LOGGER.fatal( "Unable to copy: " + srcDir + " in: " + destDir + ". " + e1.getMessage() );
-				}
-            } else {
-            	LOGGER.fatal( "Unable to load: " + url + ". " + e.getMessage() );
-            }
-        }
+//        try {
+//        	this.url.openStream().close();
+//        } catch (IOException e) {
+//        	LOGGER.warn( e.getMessage() );
+//            File file = new File( this.url.getPath() );
+//            if ( file.isDirectory() ) {
+//            	File srcDir = new File( url.getPath() + File.separator + WEB_INF );
+//            	File destDir = 
+//            		new File( System.getProperty( "java.io.tmpdir" ) + File.separator + 
+//                				file.getName() + File.separator + WEB_INF );
+//            	destDir.mkdirs();
+//                try {
+//                	FileFilter filter = new InfoFileFilter();
+//                	File[] files = srcDir.listFiles( filter );
+//                	for (int i = 0; i < files.length; i++) {
+//                    	File destFile = new File( destDir, files[i].getName() );
+//    					FileUtis.copyFile( files[i], destFile, true );
+//					}
+//					this.url = destDir.getParentFile().toURL();
+//		        	this.url.openStream().close();
+//				} catch (IOException e1) {
+//					LOGGER.fatal( "Unable to copy: " + srcDir + " in: " + destDir + ". " + e1.getMessage() );
+//				}
+//            } else {
+//            	LOGGER.fatal( "Unable to load: " + url + ". " + e.getMessage() );
+//            }
+//        }
         shortName = getShortName( this.url.getFile() );
         isFile = new File( this.url.getFile() ).isFile();
     }
@@ -178,16 +179,16 @@ public class DeploymentInfo {
 		return name;
 	}
 
-	/**
-	 * This class filters <b>web</b> application servers deployment descriptors.
-	 * 
-	 * @author Consulting & Development. Iñaki Ayerbe - 25/10/2007
-	 */
-	class InfoFileFilter implements FileFilter {
-
-		public boolean accept(File pathname) {
-			return pathname.getName().indexOf( "web" ) > -1;
-		}
-		
-	}
+//	/**
+//	 * This class filters <b>web</b> application servers deployment descriptors.
+//	 * 
+//	 * @author Consulting & Development. Iñaki Ayerbe - 25/10/2007
+//	 */
+//	class InfoFileFilter implements FileFilter {
+//
+//		public boolean accept(File pathname) {
+//			return pathname.getName().indexOf( "web" ) > -1;
+//		}
+//		
+//	}
 }
