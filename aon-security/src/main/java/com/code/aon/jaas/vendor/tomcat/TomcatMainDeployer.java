@@ -19,6 +19,7 @@ import org.apache.commons.logging.LogFactory;
 
 import com.code.aon.jaas.auth.IConstants;
 import com.code.aon.jaas.deployment.DeploymentException;
+import com.code.aon.jaas.deployment.DeploymentInfo;
 import com.code.aon.jaas.deployment.IDeployer;
 
 import com.code.aon.jaas.deployment.core.MainDeployer;
@@ -98,11 +99,11 @@ public class TomcatMainDeployer extends SecurityMBeanSupport
  	 * @jmx:managed-operation
      */
 	public void deploy(String url, String deploy) throws DeploymentException {
-		LOGGER.debug("TomcatMainDeployer deploying: String[" + url +"]");
+		LOGGER.debug( "TomcatMainDeployer deploying: String[" + url +"]" );
 		try {
-			deploy( new File( getCatalinaBase() + url ).toURL() );
-		} catch (Exception e1) {
-			throw new DeploymentException(e1.getMessage(), e1);
+			deploy( new URL( "file:" + getCatalinaBase() + url ) );
+		} catch (MalformedURLException e) {
+			throw new DeploymentException( e.getMessage(), e );
 		}
 	}
 
@@ -111,20 +112,19 @@ public class TomcatMainDeployer extends SecurityMBeanSupport
      * 
  	 * @jmx:managed-operation
      */
-	public void deploy(URL url) throws DeploymentException {
-		LOGGER.debug("TomcatMainDeployer deploying: URL[" + url + "]");
-		support.deploy(url);
+	public DeploymentInfo deploy(URL url) throws DeploymentException {
+		LOGGER.debug( "TomcatMainDeployer deploying: URL[" + url + "]" );
+		return support.deploy( url );
 	}
 
     /** (non-Javadoc)
  	 * @jmx:managed-operation
      */
 	public void undeploy(String name) throws DeploymentException {
-		String url = getCatalinaBase() + name;
 		try {
-			support.undeploy( new File( url ).toURL() );
+			support.undeploy( new URL( "file:" + getCatalinaBase() + name ) );
 		} catch (MalformedURLException e) {
-			throw new DeploymentException(e.getMessage(), e);
+			throw new DeploymentException( e.getMessage(), e );
 		}
 	}
 
@@ -133,19 +133,18 @@ public class TomcatMainDeployer extends SecurityMBeanSupport
      * 
  	 * @jmx:managed-operation
      */
-	public void undeploy(URL url) throws DeploymentException {
-		support.undeploy(url);
+	public DeploymentInfo undeploy(URL url) throws DeploymentException {
+		return support.undeploy( url );
 	}
 
     /** (non-Javadoc)
  	 * @jmx:managed-operation
      */
 	public void isDeployed(String name) throws DeploymentException {
-		String url = getCatalinaBase() + name;
 		try {
-			support.undeploy( new File( url ).toURL() );
+			support.undeploy( new URL( "file:" + getCatalinaBase() + name ) );
 		} catch (MalformedURLException e) {
-			throw new DeploymentException(e.getMessage(), e);
+			throw new DeploymentException( e.getMessage(), e );
 		}
 	}
 
@@ -154,8 +153,8 @@ public class TomcatMainDeployer extends SecurityMBeanSupport
      * 
  	 * @jmx:managed-operation
      */
-	public boolean isDeployed(URL url) {
-		return support.isDeployed(url);
+	public boolean isDeployed(URL url) throws DeploymentException {
+		return support.isDeployed( url );
 	}
 
     /**
@@ -169,7 +168,7 @@ public class TomcatMainDeployer extends SecurityMBeanSupport
      *             <code>getCatalinaHome()</code>, without parameters.
      */
 	public String getCatalinaHome(String home) throws DeploymentException {
-		return System.getProperty("catalina.home");
+		return System.getProperty( "catalina.home" );
 	}
     
     /** (non-Javadoc)

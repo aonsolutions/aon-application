@@ -19,6 +19,17 @@
 			<set-next-rule methodname="setAccessPolicy"/>
 		</pattern>
 
+		<pattern value="datasource-metadata">
+			<object-create-rule classname="com.code.aon.jaas.client.ast.core.DataSourceMetaData" />
+
+			<call-method-rule pattern="connection-url" methodname="setConnectionURL" paramcount="0" />
+			<call-method-rule pattern="driver-class" methodname="setDriverClass" paramcount="0" />
+			<call-method-rule pattern="username" methodname="setUsername" paramcount="0" />
+			<call-method-rule pattern="password" methodname="setPassword" paramcount="0" />
+
+			<set-next-rule methodname="setDataSourceMetaData"/>
+		</pattern>
+
 		<pattern value="application">
 			<object-create-rule classname="com.code.aon.jaas.client.ast.core.DomainApplication" />
 			<call-method-rule pattern="id" methodname="setId" paramcount="0" />

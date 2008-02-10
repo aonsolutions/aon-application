@@ -150,7 +150,7 @@ public final class StandardSecurity extends SecurityMBeanSupport
 	}
 
 	/**
-     * Problems with Tomcat forces me to implement this wrapper around addUser base method.
+     * Problems with Tomcat forces me to implement this wrapper around addDomain base method.
      * 
 	 * @jmx:managed-operation
 	 */
@@ -168,6 +168,25 @@ public final class StandardSecurity extends SecurityMBeanSupport
 		this.storage.addDomain( appId, domain, flag );
 	}
 
+	/**
+     * Problems with Tomcat forces me to implement this wrapper around loadDomain base method.
+	 * 
+	 * @jmx:managed-operation
+	 */
+	public void loadDomain(String domain) throws StorageException {
+		LOGGER.debug("Loading domain " + domain );
+	}
+
+	/**(non-Javadoc)
+	 * @see com.code.aon.jaas.storage.IOperation#loadDomain(com.code.aon.jaas.client.ast.IDomain)
+	 * 
+	 * @jmx:managed-operation
+	 */
+	public void loadDomain(IDomain domain) throws StorageException {
+		LOGGER.debug("Loading domain " + domain.getId() );
+		this.storage.loadDomain( domain );
+	}
+
 	/** (non-Javadoc)
 	 * @see com.code.aon.jaas.storage.IOperation#getDomain(java.lang.String, java.lang.String)
      * 
@@ -176,6 +195,28 @@ public final class StandardSecurity extends SecurityMBeanSupport
 	public IDomain getDomain(String appContext, String domainId) {
 		LOGGER.debug("Retrieving IDomain for: CONTEXT[" + appContext + "]" );
 		return this.storage.getDomain(appContext, domainId);
+	}
+
+	/**
+     * Problems with Tomcat forces me to implement this wrapper around loadUsers base method.
+	 * 
+	 * @jmx:managed-operation
+	 */
+	public List loadUsers(String domain) throws StorageException {
+		LOGGER.debug("Loading users " + domain );
+		return null;
+	}
+
+	/**(non-Javadoc)
+	 * @see com.code.aon.jaas.storage.IOperation#loadUsers(com.code.aon.jaas.client.ast.IDomain)
+     * 
+	 * @jmx:managed-operation
+	 */
+	public List loadUsers(IDomain domain) throws StorageException {
+		if ( LOGGER.isDebugEnabled() )
+			LOGGER.debug("Loading users and relations " + domain.getId() );
+
+		return this.storage.loadUsers( domain );
 	}
 
 	/**
@@ -193,7 +234,7 @@ public final class StandardSecurity extends SecurityMBeanSupport
 	 * @jmx:managed-operation
 	 */
 	public void addUser(String appId, String domainId, IUser user, String oldUserId) throws StorageException {
-		LOGGER.debug("Adding IUser " + user.getId() + " for: DOMAIN[" + domainId + "], APPLICATION[" + appId + "]" );
+		LOGGER.info("Adding IUser " + user.getId() + " for: DOMAIN[" + domainId + "], APPLICATION[" + appId + "]" );
 		this.storage.addUser( appId, domainId, user, oldUserId );
 	}
 
@@ -395,8 +436,7 @@ public final class StandardSecurity extends SecurityMBeanSupport
      * 
 	 * @jmx:managed-operation
 	 */
-	public void updateDomain(String appId, IDomain domain) 
-			throws StorageException {
+	public void updateDomain(String appId, IDomain domain) throws StorageException {
 		LOGGER.debug("Updating domain to: APPLICATION[" + appId + "]" );
 		this.storage.updateDomain( appId, domain );
 	}
@@ -460,7 +500,7 @@ public final class StandardSecurity extends SecurityMBeanSupport
 	 */
 	public IUser updateUser(String appId, String domainId, IUser user, String oldUserId) 
 			throws StorageException {
-		LOGGER.debug("Updating IUser " + user.getId() + " for: DOMAIN[" + domainId + "], APPLICATION[" + appId + "]" );
+		LOGGER.info("Updating IUser " + user.getId() + " for: DOMAIN[" + domainId + "], APPLICATION[" + appId + "]" );
 		return this.storage.updateUser( appId, domainId, user, oldUserId );
 	}
 

@@ -25,13 +25,27 @@ public interface IDomain extends INode {
 	IAccessPolicy getAccessPolicy();
 
 	/**
-	 * Set domain access policy.
+	 * Set the access policy.
 	 * 
 	 * @param access
 	 */
 	void setAccessPolicy(IAccessPolicy access);
 
     /**
+     * Return the data source meta data for all domain deployed applications.
+     * 
+     * @return IDataSourceMetaData
+     */
+	IDataSourceMetaData getDataSourceMetaData();
+
+    /**
+     * Set the data source meta data.
+     * 
+     * @param dsmt
+     */
+	void setDataSourceMetaData(IDataSourceMetaData dsmt);
+
+	/**
      * Return doamin applications.
      * 
      * @return Collection

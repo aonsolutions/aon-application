@@ -145,4 +145,14 @@ public abstract class Renderer implements INodeVisitor {
         return (LT + END + name + GT);
     }
 
+    /**
+     * Convert <b>null</b> value to empty <code>String</code>
+     * 
+     * @param value
+     * @return
+     */
+	String null2Empty(String value) {
+		return ( value == null )? "": value;
+	}
+
 }

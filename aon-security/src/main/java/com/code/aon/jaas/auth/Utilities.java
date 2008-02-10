@@ -3,17 +3,60 @@
  */
 package com.code.aon.jaas.auth;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
+
+import javax.management.InstanceNotFoundException;
+import javax.management.MBeanException;
+import javax.management.MalformedObjectNameException;
+import javax.management.ObjectName;
+import javax.management.ReflectionException;
+import javax.naming.Context;
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
+
+import org.jboss.jmx.adaptor.rmi.RMIAdaptor;
+
 import com.code.aon.jaas.auth.util.Util;
+import com.code.aon.jaas.client.ast.IDomain;
+import com.code.aon.jaas.client.ast.core.AstLoader;
+import com.code.aon.jaas.deployment.ast.AstException;
+import com.code.aon.jaas.storage.DomainStorage;
 
 /**
  * @author Consulting & Development. Iñaki Ayerbe - 22/12/2006
  *
  */
-public class Password {
+@SuppressWarnings("unchecked")
+public class Utilities {
 
-	public static void main(String[] args) {
+	Properties properties = new Properties();
+	Map<String, Class[]> parameters;
+	
+	Utilities() {
+		properties.put( Context.INITIAL_CONTEXT_FACTORY, "org.jnp.interfaces.NamingContextFactory" );
+		properties.put( Context.URL_PKG_PREFIXES, "org.jboss.naming:org.jnp.interfaces" );
+		properties.put( Context.PROVIDER_URL, "jnp://127.0.0.1:1099/" );
+		
+		parameters = new HashMap<String, Class[]>();
+		parameters.put( "showPassword", new Class[] {Object.class, Object.class} );
+		parameters.put( "loadDomain", new Class[] {String.class} );
+		parameters.put( "loadUsers", new Class[] {String.class} );
+	}
+
+	public void showPassword(Object name, Object passwd) {
 		String hashAlgorithm = "SHA-256";
 		String hashEncoding = "base64";
+		String password = 
+			Util.createPasswordHash( hashAlgorithm, hashEncoding, "", (String) name, (String) passwd);
+		System.out.println( name + ", Clave:" + password );
 //		passwd = Util.createPasswordHash( "SHA-256", "base64", "", "nare", "nare123");
 //		passwd = Util.createPasswordHash( "SHA-256", "base64", "", "admin", "md115278");
 //		passwd = Util.createPasswordHash( "SHA-256", "base64", "", "invitado", "demo");
@@ -112,6 +155,56 @@ public class Password {
 ////	MARIGORTA
 //		System.out.println( "Andoni, Clave:"+
 //				Util.createPasswordHash( hashAlgorithm, hashEncoding, "", "andoni", "a01006691") );
+	}
+
+	public void loadDomain(String fileName) 
+				throws NamingException, IOException, AstException, MalformedObjectNameException, NullPointerException, InstanceNotFoundException, MBeanException, ReflectionException {
+		InitialContext ic = new InitialContext(properties);
+    	RMIAdaptor server = (RMIAdaptor) ic.lookup("jmx/invoker/RMIAdaptor");
+
+    	FileInputStream fis = new FileInputStream( new File( fileName ) );
+		DomainStorage es = (DomainStorage) AstLoader.getInstance().parse( 1, fis );
+		ObjectName oname = new ObjectName( "jboss.admin:service=AonSecurity" );
+		Object[] params = { es.getDomain() };
+		String[] sig = {IDomain.class.getName()};
+		server.invoke( oname, "loadDomain", params, sig );
+	}
+
+	public void loadUsers(String fileName)
+				throws NamingException, IOException, AstException, MalformedObjectNameException, NullPointerException, InstanceNotFoundException, MBeanException, ReflectionException {
+		InitialContext ic = new InitialContext(properties);
+    	RMIAdaptor server = (RMIAdaptor) ic.lookup("jmx/invoker/RMIAdaptor");
+    	
+    	FileInputStream fis = new FileInputStream( new File( fileName ) );
+		DomainStorage es = (DomainStorage) AstLoader.getInstance().parse( 1, fis );
+		ObjectName oname = new ObjectName( "jboss.admin:service=AonSecurity");
+		Object[] params = { es.getDomain() };
+		String[] sig = {IDomain.class.getName()};
+		server.invoke( oname, "loadUsers", params, sig );
+	}
+
+	public static void main(String[] args) {
+		String methodName = null;
+		List<Object> arguments = new ArrayList<Object>();
+		for(int i=0; i < args.length; i++) {
+			if ( args[i].equals( "-method" ) ) {
+				methodName = args[ i + 1 ];
+				for(int j=i+2; j < args.length; j++) {
+					arguments.add( args[j] );
+				}
+		        break;
+			}
+		}
+		if ( methodName != null ) {
+			try {
+				Utilities utilities = new Utilities();
+				Class parameters[] = utilities.parameters.get( methodName );
+				Method method = utilities.getClass().getMethod( methodName, parameters );
+				method.invoke( utilities, arguments.toArray() );
+			} catch (Exception e) {
+				e.printStackTrace(); 
+			}
+		}
 	}
 
 }

@@ -23,6 +23,7 @@ import com.code.aon.jaas.client.ast.IDomain;
 import com.code.aon.jaas.client.ast.IDomainApplication;
 import com.code.aon.jaas.client.ast.IRelation;
 import com.code.aon.jaas.client.ast.IUser;
+import com.code.aon.jaas.client.ast.UserAlreadyExistException;
 import com.code.aon.jaas.client.ast.core.Application;
 import com.code.aon.jaas.client.ast.core.AstLoader;
 import com.code.aon.jaas.client.ast.core.Domain;
@@ -30,6 +31,7 @@ import com.code.aon.jaas.client.ast.core.DomainApplication;
 import com.code.aon.jaas.client.xml.DomainRenderer;
 import com.code.aon.jaas.deployment.IDeployer;
 import com.code.aon.jaas.deployment.ast.AstException;
+import com.code.aon.jaas.deployment.util.FileUtils;
 
 /**
  * This class implements all security operations, that should be invoked by the application 
@@ -101,7 +103,11 @@ public class StorageSupport implements IOperation {
 		AuthPrincipal p = (AuthPrincipal) principal;
 		IApplication app = this.as.getApplication4Ctx( p.getContext() );
 		IDomain domain = (IDomain) app.getDomain( p.getDomain() );
-		return domain.getDomainApplication( app.getId() ).getDataSourceMetaData().getProperties();
+		IDataSourceMetaData dsmt = 
+			domain.getDomainApplication( app.getId() ).getDataSourceMetaData();
+		if ( dsmt == null )
+			dsmt = domain.getDataSourceMetaData();
+		return dsmt.getProperties();
 	}
 
 	@Override
@@ -121,7 +127,7 @@ public class StorageSupport implements IOperation {
 		String[] files = this.as.getStorageDir().list();
 		for (int i = 0; i < files.length; i++) {
 			String name = files[i];
-			if ( !domainNames2Exclude.contains( name ) ) {
+			if ( !domainNames2Exclude.contains( name ) && name.indexOf( "." + FileUtils.UP_TO_DATE ) == -1 ) {
 				int index = name.lastIndexOf( "." + IStorage.XML );
 				domainNames.add( name.substring( 0, index ) );
 			}
@@ -153,16 +159,25 @@ public class StorageSupport implements IOperation {
 			Boolean privileged, String contextExtraInfo, 
 			IAccessPolicy accessPolicy, IDataSourceMetaData metadata) throws StorageException {
 		try {
+			boolean updated = false;
 			IDomain domain = parseDomainStorage( domainId ).getDomain();
 			if ( domain.getAccessPolicy() == null ) {
 				domain.setAccessPolicy( accessPolicy );
+				updated = true;
 			}
 			if ( metadata != null && !metadata.getConnectionURL().equals( "" ) ) {
 				( (DomainApplication)domain.getDomainApplication(appId) ).setDataSourceMetaData( metadata );
+				updated = true;
 			}
 //			TODO. Asociar a cada aplicacion solamente la parte del objeto IDomain que le interesa
-			this.as.replaceDomainsInApplication( this.as.getApplication( appId ), domain );
-			write(domain);
+//			Application app = (Application) this.as.getApplication( appId );
+//			File resource = new File( this.as.getStorageDir().getCanonicalPath() + File.separator + domain.getId() + "." + IStorage.XML );
+//			DomainStorage es = 
+//				(DomainStorage) AstLoader.getInstance().parse( 1, resource.toURL().openStream() );
+//			app.replaceDomain( domain.getId(), es.getDomain() );
+//			LOGGER.debug( "Domain [" + domain.getId() + "] Loaded and Replaced inside [" + appId + "] Application." );
+			if ( updated )
+				write( domain );
 		} catch (IOException e) {
 			throw new StorageException( e.getMessage(), e.getCause() );
 		} catch (AstException e) {
@@ -197,18 +212,23 @@ public class StorageSupport implements IOperation {
 			write(null); // Actualiza el fichero de aplicaciones desplegadas.
 			try {
 				DomainStorage es = parseDomainStorage( domain.getId() );
-				if ( es.getDomain().applications().size() > 1 ) {
-					es.getDomain().remove( appId );
-					write( es.getDomain() );
+				IDomain storagedDomain = es.getDomain();
+				if ( storagedDomain.applications().size() > 1 ) {
+					storagedDomain.remove( appId );
+					this.as.replaceDomainInApplications( "", storagedDomain );
+					write( storagedDomain );
 				} else {
-					es.erase(); // Elimina fisicamente el fichero de la entidad.
+					getStorage( domain ).erase(); // Elimina fisicamente el fichero de la entidad.
 				}
 			} catch (IOException e) {
-				throw new StorageException( e.getMessage(), e.getCause() );
+				String msg = "Unable to replace domain: " + domain.getId() + " in each application. ";
+				throw new StorageException( msg + e.getMessage(), e.getCause() );
 			} catch (InterruptedException e) {
-				throw new StorageException( e.getMessage(), e.getCause() );
+				String msg = "Unable to remove domain: " + domain.getId() + " from " + appId + " application. ";
+				throw new StorageException( msg + e.getMessage(), e.getCause() );
 			} catch (AstException e) {
-				throw new StorageException( e.getMessage(), e.getCause() );
+				String msg = "Unable to remove domain: " + domain.getId() + " from " + appId + " application. ";
+				throw new StorageException( msg + e.getMessage(), e.getCause() );
 			}
 		}
         return domain;
@@ -217,10 +237,22 @@ public class StorageSupport implements IOperation {
 	@Override
 	public IRelation removeRelation(String appId, String domainId, IRelation relation) 
 			throws StorageException {
-		IDomain domain = this.as.getApplication(appId).getDomain(domainId);
-		domain.getDomainApplication(appId).removeUser(relation);
-		write(domain); // Actualiza el fichero para la entidad.
-        return relation;
+		try {
+			IDomain storagedDomain = parseDomainStorage( domainId ).getDomain();
+			storagedDomain.getDomainApplication( appId ).removeUser( relation );
+			this.as.replaceDomainInApplications( "", storagedDomain );
+			write( storagedDomain ); // Actualiza el fichero para la entidad.
+	        return relation;
+		} catch (IOException e) {
+			String msg = "Unable to replace domain: " + domainId + " in each application. ";
+			throw new StorageException( msg + e.getMessage(), e.getCause() );
+		} catch (AstException e) {
+			String msg = "Unable to replace domain: " + domainId + " in each application. ";
+			throw new StorageException( msg + e.getMessage(), e.getCause() );
+		} catch (InterruptedException e) {
+			String msg = "Unable to replace domain: " + domainId + " in each application. ";
+			throw new StorageException( msg + e.getMessage(), e.getCause() );
+		}
 	}
 
 	/* (non-Javadoc)
@@ -228,10 +260,26 @@ public class StorageSupport implements IOperation {
 	 */
 	public IRelation removeProfile(String appId, String domainId, IRelation relation) 
 			throws StorageException {
-		IDomain domain = this.as.getApplication(appId).getDomain(domainId);
-		domain.getDomainApplication(appId).removeProfile(relation);
-		write(domain); // Actualiza el fichero para la entidad.
-        return relation;
+		try {
+			IDomain storagedDomain = parseDomainStorage( domainId ).getDomain();
+			storagedDomain.getDomainApplication( appId ).removeProfile( relation );
+			this.as.replaceDomainInApplications( "", storagedDomain );
+			write( storagedDomain ); // Actualiza el fichero para la entidad.
+	        return relation;
+		} catch (IOException e) {
+			String msg = "Unable to replace domain: " + domainId + " in each application. ";
+			throw new StorageException( msg + e.getMessage(), e.getCause() );
+		} catch (AstException e) {
+			String msg = "Unable to replace domain: " + domainId + " in each application. ";
+			throw new StorageException( msg + e.getMessage(), e.getCause() );
+		} catch (InterruptedException e) {
+			String msg = "Unable to replace domain: " + domainId + " in each application. ";
+			throw new StorageException( msg + e.getMessage(), e.getCause() );
+		}
+//		IDomain domain = this.as.getApplication(appId).getDomain(domainId);
+//		domain.getDomainApplication(appId).removeProfile(relation);
+//		write(domain); // Actualiza el fichero para la entidad.
+//        return relation;
 	}
 
 	/* (non-Javadoc)
@@ -244,8 +292,7 @@ public class StorageSupport implements IOperation {
 		Iterator<IApplication> iter = this.as.applications().values().iterator();
 		while ( iter.hasNext() ) {
 			IApplication app = iter.next();
-			IDomain domain = app.getDomain( domainId );
-			domain.setAccessPolicy(accessPolicy);
+			app.getDomain( domainId ).setAccessPolicy(accessPolicy);
 		}
 		IDomain domain = this.as.getApplication( appId ).getDomain( domainId );
 //		domain.setAccessPolicy(accessPolicy);
@@ -255,10 +302,28 @@ public class StorageSupport implements IOperation {
 	@Override
 	public void updateDSMD(String appId, String domainId, IDataSourceMetaData metadata) 
 				throws StorageException {
-		IApplication application = this.as.getApplication(appId);
-		IDomain domain = application.getDomain(domainId);
-		( (DomainApplication)domain.getDomainApplication(appId) ).setDataSourceMetaData(metadata);
-		write(domain);
+		try {
+			IDomain storagedDomain = parseDomainStorage( domainId ).getDomain();
+			if ( appId != null ) {
+				DomainApplication da = 
+					(DomainApplication) storagedDomain.getDomainApplication( appId );
+				da.setDataSourceMetaData( metadata );
+				this.as.replaceDomainInApplications( appId, storagedDomain );
+			} else {
+				storagedDomain.setDataSourceMetaData( metadata );
+				this.as.replaceDomainInApplications( "", storagedDomain );
+			}
+			write( storagedDomain ); // Actualiza el fichero para la entidad.
+		} catch (IOException e) {
+			String msg = "Unable to replace domain: " + domainId + " in each application. ";
+			throw new StorageException( msg + e.getMessage(), e.getCause() );
+		} catch (AstException e) {
+			String msg = "Unable to replace domain: " + domainId + " in each application. ";
+			throw new StorageException( msg + e.getMessage(), e.getCause() );
+		} catch (InterruptedException e) {
+			String msg = "Unable to replace domain: " + domainId + " in each application. ";
+			throw new StorageException( msg + e.getMessage(), e.getCause() );
+		}
 	}
 
 	@Override
@@ -272,14 +337,39 @@ public class StorageSupport implements IOperation {
 				}
 			} catch (IOException e) {
 			}
-			( (Application)this.as.getApplication(appId) ).replaceDomain( storagedDomain.getId(), storagedDomain );
+			( (Application) this.as.getApplication( appId ) ).addDomain( storagedDomain );
+			this.as.replaceDomainInApplications( appId, storagedDomain );
 			write( storagedDomain );
-			write(null); // Actualiza el fichero aplicaciones desplegadas.
+			write(null);
 		} catch (InterruptedException e) {
 			String msg = "Unable to update domain: " + domain.getId() + " inside " + appId + " application";
 			LOGGER.fatal( msg, e );
 		} catch (AstException e) {
 			String msg = "Unable to update domain: " + domain.getId() + " inside " + appId + " application";
+			LOGGER.fatal( msg, e );
+		} catch (IOException e) {
+			String msg = "Unable to replace domain: " + domain.getId() + " in each application." + e.getMessage();
+			LOGGER.fatal( msg, e );
+		}
+	}
+
+	@Override
+	public void loadDomain(IDomain domain) throws StorageException {
+		try {
+			Iterator<IDomainApplication> it = domain.applications().iterator();
+			while (it.hasNext()) {
+				IDomainApplication dApp = it.next();
+				Application app = (Application) this.as.getApplication( dApp.getId() );
+				app.replaceDomain( domain.getId(), domain );
+			}
+			this.as.replaceDomainInApplications( "", domain );
+			write( domain );
+			write(null);
+		} catch (AstException e) {
+			String msg = "Unable to update domain: " + domain.getId() + " inside each application";
+			LOGGER.fatal( msg, e );
+		} catch (IOException e) {
+			String msg = "Unable to replace domain: " + domain.getId() + " in each application." + e.getMessage();
 			LOGGER.fatal( msg, e );
 		}
 	}
@@ -297,19 +387,89 @@ public class StorageSupport implements IOperation {
 	@Override
 	public IRelation updateRelation(String appId, String domainId, IRelation relation) 
 			throws StorageException {
-		IDomain domain = this.as.getApplication(appId).getDomain(domainId);
-		IRelation _relation = domain.getDomainApplication(appId).updateUser(relation);
-		write(domain); // Actualiza el fichero para la entidad.
-        return _relation;
+		try {
+			IDomain storagedDomain = parseDomainStorage( domainId ).getDomain();
+			IRelation _relation = storagedDomain.getDomainApplication( appId ).updateUser( relation );
+			this.as.replaceDomainInApplications( appId, storagedDomain );
+			write( storagedDomain ); // Actualiza el fichero para la entidad.
+	        return _relation;
+		} catch (IOException e) {
+			String msg = "Unable to replace domain: " + domainId + " in each application. ";
+			throw new StorageException( msg + e.getMessage(), e.getCause() );
+		} catch (AstException e) {
+			String msg = "Unable to replace domain: " + domainId + " in each application. ";
+			throw new StorageException( msg + e.getMessage(), e.getCause() );
+		} catch (InterruptedException e) {
+			String msg = "Unable to replace domain: " + domainId + " in each application. ";
+			throw new StorageException( msg + e.getMessage(), e.getCause() );
+		}
 	}
 
 	@Override
 	public IRelation updateProfile(String appId, String domainId, IRelation relation) 
 			throws StorageException {
-		IDomain domain = this.as.getApplication(appId).getDomain(domainId);
-		IRelation _relation = domain.getDomainApplication(appId).updateProfile(relation);
-		write(domain); // Actualiza el fichero para la entidad.
-        return _relation;
+		try {
+			IDomain storagedDomain = parseDomainStorage( domainId ).getDomain();
+			IRelation _relation = storagedDomain.getDomainApplication( appId ).updateProfile( relation );
+			this.as.replaceDomainInApplications( appId, storagedDomain );
+			write( storagedDomain ); // Actualiza el fichero para la entidad.
+	        return _relation;
+		} catch (IOException e) {
+			String msg = "Unable to replace domain: " + domainId + " in each application. ";
+			throw new StorageException( msg + e.getMessage(), e.getCause() );
+		} catch (AstException e) {
+			String msg = "Unable to replace domain: " + domainId + " in each application. ";
+			throw new StorageException( msg + e.getMessage(), e.getCause() );
+		} catch (InterruptedException e) {
+			String msg = "Unable to replace domain: " + domainId + " in each application. ";
+			throw new StorageException( msg + e.getMessage(), e.getCause() );
+		}
+	}
+
+	/* (non-Javadoc)
+	 * @see com.code.aon.jaas.storage.IOperation#loadUsers(com.code.aon.jaas.client.ast.IDomain)
+	 */
+	@Override
+	public List<StorageException> loadUsers(IDomain domain) throws StorageException {
+		List<StorageException> errors = new ArrayList<StorageException>();
+		try {
+			IDomain storagedDomain = parseDomainStorage( domain.getId() ).getDomain();
+			Iterator<IUser> users = domain.standaloneUsers().values().iterator();
+			while (users.hasNext()) {
+				IUser user = users.next();
+				try {
+					storagedDomain.add( user );
+				} catch (UserAlreadyExistException e) {
+					errors.add( e );
+				}
+			}
+			Iterator<IDomainApplication> apps = domain.applications().iterator();
+			while (apps.hasNext()) {
+				IDomainApplication app = apps.next();
+				Iterator<IRelation> relations = app.users().iterator();
+				while (relations.hasNext()) {
+					IRelation user = relations.next();
+					DomainApplication da = 
+						(DomainApplication) storagedDomain.getDomainApplication( app.getId() );
+					if ( da.getUser( user.getId() ) == null )
+						da.addUser( user );
+					else
+						errors.add( new StorageException( "aon_security_relation_exist", user.getId() ) );
+				}
+			}
+			this.as.replaceDomainInApplications( "", storagedDomain );
+			write( storagedDomain );
+			write(null);
+		} catch (AstException e) {
+			String msg = "Unable to update domain: " + domain.getId() + " inside each application";
+			LOGGER.fatal( msg, e );
+		} catch (IOException e) {
+			String msg = "Unable to replace domain: " + domain.getId() + " in each application." + e.getMessage();
+			LOGGER.fatal( msg, e );
+		} catch (InterruptedException e) {
+			LOGGER.fatal( "Unable to load storaged domain: " + domain.getId(), e );
+		}
+		return errors;
 	}
 
 	/*(non-Javadoc)
@@ -322,11 +482,11 @@ public class StorageSupport implements IOperation {
 		while ( iter.hasNext() ) {
 			IApplication app = iter.next();
 			IDomain domain = app.getDomain( domainId );
-			if ( domain != null )
+			if ( domain != null ) {
 				domain.add( user );
+			}
 		}
 		IDomain domain = this.as.getApplication( appId ).getDomain( domainId );
-//		domain.add( user );
 		write( domain ); // Actualiza el fichero para la entidad.
 	}
 
@@ -345,7 +505,6 @@ public class StorageSupport implements IOperation {
 				domain.update( user, oldUserId );
 		}
 		IDomain domain = this.as.getApplication( appId ).getDomain( domainId );
-//		domain.update( user, oldUserId );
 		write( domain ); // Actualiza el fichero para la entidad.
 		return user;
 	}
@@ -364,7 +523,6 @@ public class StorageSupport implements IOperation {
 				domain.remove( user );
 		}
 		IDomain domain = this.as.getApplication( appId ).getDomain( domainId );
-//		domain.remove( user );
 		write( domain ); // Actualiza el fichero para la entidad.
 		return user;
 	}
@@ -401,7 +559,6 @@ public class StorageSupport implements IOperation {
 			URL config = 
 				new File( this.as.getStorageDir().getCanonicalPath() + File.separator + domain.getId() + "." + IStorage.XML ).toURL();
 			es.initialize( StorageManager.getInstance( config, DomainRenderer.getInstance() ) );
-//			es.initialize( new StorageManager( config, DomainRenderer.getInstance() ) );
 			return es;
 		}
 		return null;

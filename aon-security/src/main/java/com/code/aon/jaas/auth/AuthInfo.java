@@ -179,7 +179,7 @@ public class AuthInfo {
         private Map<String, Map<String, IRelation>> profiles = new LinkedHashMap<String, Map<String, IRelation>>();
     	/** Users and Profiles bound to domain application. */
         private Map<String, Map<String, IRelation>> users = new LinkedHashMap<String, Map<String, IRelation>>();
-        /** Standalone users for the domain. */
+        /** Stand-Alone users for the domain. */
         private Map<String, IUser> standalone = new LinkedHashMap<String, IUser>();
 
         /**

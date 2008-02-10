@@ -65,7 +65,7 @@ public interface StandardSecurityMBean extends com.code.aon.jaas.vendor.tomcat.S
   java.util.List getDomainNames2Import(java.lang.String appId) ;
 
    /**
-    * Problems with Tomcat forces me to implement this wrapper around addUser base method.
+    * Problems with Tomcat forces me to implement this wrapper around addDomain base method.
     */
   void addDomain(java.lang.String appId,java.lang.String domain,java.lang.String flag) throws com.code.aon.jaas.storage.StorageException;
 
@@ -76,10 +76,32 @@ public interface StandardSecurityMBean extends com.code.aon.jaas.vendor.tomcat.S
   void addDomain(java.lang.String appId,com.code.aon.jaas.client.ast.IDomain domain,java.lang.Boolean flag) throws com.code.aon.jaas.storage.StorageException;
 
    /**
+    * Problems with Tomcat forces me to implement this wrapper around loadDomain base method.
+    */
+  void loadDomain(java.lang.String domain) throws com.code.aon.jaas.storage.StorageException;
+
+   /**
+    * (non-Javadoc)
+    * @see com.code.aon.jaas.storage.IOperation#loadDomain(com.code.aon.jaas.client.ast.IDomain)
+    */
+  void loadDomain(com.code.aon.jaas.client.ast.IDomain domain) throws com.code.aon.jaas.storage.StorageException;
+
+   /**
     * (non-Javadoc)
     * @see com.code.aon.jaas.storage.IOperation#getDomain(java.lang.String, java.lang.String)
     */
   com.code.aon.jaas.client.ast.IDomain getDomain(java.lang.String appContext,java.lang.String domainId) ;
+
+   /**
+    * Problems with Tomcat forces me to implement this wrapper around loadUsers base method.
+    */
+  java.util.List loadUsers(java.lang.String domain) throws com.code.aon.jaas.storage.StorageException;
+
+   /**
+    * (non-Javadoc)
+    * @see com.code.aon.jaas.storage.IOperation#loadUsers(com.code.aon.jaas.client.ast.IDomain)
+    */
+  java.util.List loadUsers(com.code.aon.jaas.client.ast.IDomain domain) throws com.code.aon.jaas.storage.StorageException;
 
    /**
     * Problems with Tomcat forces me to implement this wrapper around addUser base method.

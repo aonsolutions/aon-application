@@ -143,10 +143,10 @@ public class DomainRenderer extends Renderer {
 	 * @see com.code.aon.jaas.client.ast.INodeVisitor#visitDataSourceMetaData(com.code.aon.jaas.client.ast.IDataSourceMetaData)
 	 */
 	public void visitDataSourceMetaData(IDataSourceMetaData metadata) {
-		println( startElement(CONNECTION_URL) + metadata.getConnectionURL() + endElement(CONNECTION_URL), deep );
-		println( startElement(DRIVER_CLASS) + metadata.getDriverClass() + endElement(DRIVER_CLASS), deep );
-		println( startElement(USER+NAME) + metadata.getUsername() + endElement(USER+NAME), deep );
-		println( startElement(PASSWORD) + metadata.getPassword() + endElement(PASSWORD), deep );
+		println( startElement(CONNECTION_URL) + null2Empty( metadata.getConnectionURL() ) + endElement(CONNECTION_URL), deep );
+		println( startElement(DRIVER_CLASS) + null2Empty( metadata.getDriverClass() ) + endElement(DRIVER_CLASS), deep );
+		println( startElement(USER+NAME) + null2Empty( metadata.getUsername() ) + endElement(USER+NAME), deep );
+		println( startElement(PASSWORD) + null2Empty( metadata.getPassword() ) + endElement(PASSWORD), deep );
 	}
 
 	/* (non-Javadoc)
@@ -156,6 +156,15 @@ public class DomainRenderer extends Renderer {
         println(startElement(DOMAIN), deep++);
 		println( startElement(ID) + domain.getId() + endElement(ID), deep );
 		domain.getAccessPolicy().accept(this);
+		IDataSourceMetaData dsmd = domain.getDataSourceMetaData();
+		if ( dsmd != null ) {
+			println( startElement(DATASOURCE_METADATA), deep++ );
+			dsmd.accept(this);
+			println( endElement(DATASOURCE_METADATA), --deep );
+		} else {
+			println( startElement(DATASOURCE_METADATA), deep++ );
+			println( endElement(DATASOURCE_METADATA), --deep );
+		}
 		Iterator<IDomainApplication> applications = domain.applications().iterator();
 		while (applications.hasNext()) {
 			applications.next().accept(this);
@@ -175,10 +184,15 @@ public class DomainRenderer extends Renderer {
 	public void visitDomainApplication(IDomainApplication application) {
 		println( startElement(APPLICATION), deep++ );
 		println(startElement(ID) + application.getId() + endElement(ID), deep);
-		println( startElement(DATASOURCE_METADATA), deep++ );
-		if ( application.getDataSourceMetaData() != null )
-			application.getDataSourceMetaData().accept(this);
-		println( endElement(DATASOURCE_METADATA), --deep );
+		IDataSourceMetaData dsmd = application.getDataSourceMetaData();
+		if ( dsmd != null ) {
+			println( startElement(DATASOURCE_METADATA), deep++ );
+			dsmd.accept(this);
+			println( endElement(DATASOURCE_METADATA), --deep );
+		} else {
+			println( startElement(DATASOURCE_METADATA), deep++ );
+			println( endElement(DATASOURCE_METADATA), --deep );
+		}
 		println(startElement(PROFILES), deep++);
 		Iterator<IRelation> profiles = application.profiles().iterator();
 		while (profiles.hasNext()) {
