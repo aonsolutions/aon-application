@@ -21,63 +21,40 @@ import com.code.aon.ui.cms.velocity.attribute.DirectAccessHandler;
 
 public class DirectAccessGenerator extends Generator {
 	
-	public static ArrayList<DirectAccessHandler> getDirectAccessList(DirectAccessGroupDetail groupDetail) {
-		ArrayList<DirectAccessHandler> list = new ArrayList<DirectAccessHandler>();
-
-		try {
-			IManagerBean bean = BeanManager.getManagerBean(DirectAccess.class);
-			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(bean.getFieldName(ICMSAlias.DIRECT_ACCESS_DIRECT_ACCESS_GROUP_ID), groupDetail.getDirectAccessGroup().getId());
-			criteria.addEqualExpression(bean.getFieldName(ICMSAlias.DIRECT_ACCESS_ACTIVE), true);
-			criteria.addOrder(bean.getFieldName(ICMSAlias.DIRECT_ACCESS_POSITION));
-			List<ITransferObject> l = (List<ITransferObject>)bean.getList(criteria);
-			for (int i = 0; i < l.size(); i++) {
-				DirectAccess da = (DirectAccess)l.get(i);
-				IManagerBean detailBean = BeanManager.getManagerBean(DirectAccessDetail.class);
-				Criteria criteria_detail = new Criteria();
-				criteria_detail.addEqualExpression(detailBean.getFieldName(ICMSAlias.DIRECT_ACCESS_DETAIL_DIRECT_ACCESS_ID), da.getId());
-				criteria_detail.addEqualExpression(detailBean.getFieldName(ICMSAlias.DIRECT_ACCESS_DETAIL_LANGUAGE_ID), ControllerUtil.getCurrentLanguage().getId());
-				List<ITransferObject> ld = (List<ITransferObject>)detailBean.getList(criteria_detail);
-				if (ld.size() > 0) {
-					DirectAccessDetail detail = (DirectAccessDetail)ld.get(0);
-					DirectAccessHandler handler = new DirectAccessHandler(detail);
-					if (handler.getUrl() != null) list.add(handler);
-				}
-			}
-		} catch (ManagerBeanException e) {
-			e.printStackTrace();
-		}
-		
-		return list;
-	}
-	
 	public static void generate(VelocityUtil vu) {
+		List<ITransferObject> directAccessGroupList;
+		List<ITransferObject> directAccessGroupDetailList;
+		ArrayList<DirectAccessHandler> directAccessHandlerList;
 		try {
 			IManagerBean bean = BeanManager.getManagerBean(DirectAccessGroup.class);
-			List<ITransferObject> l = (List<ITransferObject>)bean.getList(null);
-			for (int i=0; i < l.size(); i++) {
-				DirectAccessGroup group = (DirectAccessGroup)l.get(i);
-				IManagerBean detailBean = BeanManager.getManagerBean(DirectAccessGroupDetail.class);
-				Criteria detailCriteria = new Criteria();
+			IManagerBean detailBean = BeanManager.getManagerBean(DirectAccessGroupDetail.class);
+			directAccessGroupList = (List<ITransferObject>)bean.getList(null);
+			DirectAccessGroup group;
+			DirectAccessGroupDetail detail;
+			Criteria detailCriteria;
+			DirectAccessGroupHandler dagh;
+			for (int i=0; i < directAccessGroupList.size(); i++) {
+				group = (DirectAccessGroup)directAccessGroupList.get(i);
+				detailCriteria = new Criteria();
 				detailCriteria.addEqualExpression(detailBean.getFieldName(ICMSAlias.DIRECT_ACCESS_GROUP_DETAIL_DIRECT_ACCESS_GROUP_ID), group.getId());
 				detailCriteria.addEqualExpression(detailBean.getFieldName(ICMSAlias.DIRECT_ACCESS_GROUP_DETAIL_LANGUAGE_ID), ControllerUtil.getCurrentLanguage().getId());
-				List<ITransferObject> detailList = (List<ITransferObject>)detailBean.getList(detailCriteria);
-				if (detailList.size() > 0) {
-					DirectAccessGroupDetail detail = (DirectAccessGroupDetail)detailList.get(0);
-					ArrayList<DirectAccessHandler> accessList = getDirectAccessList(detail);
-					if (accessList != null && accessList.size() > 0) {
-						vu.put("direct_access_group", detail);
-						vu.put("direct_access_list", accessList);
-						vu.addMessage(" Generando accesos directos " + group.getAlias() + ".", VelocityUtil.INFO);
-						CommonGenerator.getCommonGenerator().chargeContext(vu, group.getSection());
-						generate(vu, Templates.DIRECT_ACCESS, group.getAlias());
-						vu.remove("direct_access_list");
-						vu.remove("direct_access_group");
-					}
+				directAccessGroupDetailList = (List<ITransferObject>)detailBean.getList(detailCriteria);
+				if (directAccessGroupDetailList.size() > 0) {
+					detail = (DirectAccessGroupDetail)directAccessGroupDetailList.get(0);
+					dagh = new DirectAccessGroupHandler(detail);
+					vu.put("direct_access_group", dagh);
+					vu.addMessage(" Generando accesos directos " + group.getAlias() + ".", VelocityUtil.INFO);
+					CommonGenerator.getCommonGenerator().chargeContext(vu, group.getSection());
+					generate(vu, Templates.DIRECT_ACCESS, group.getAlias());
+					vu.remove("direct_access_group");
 				}
 			}
 		} catch (ManagerBeanException e) {
 			e.printStackTrace();
+		} finally {
+			directAccessGroupList = null;
+			directAccessGroupDetailList = null;
+			directAccessHandlerList = null;
 		}
 	}
 	

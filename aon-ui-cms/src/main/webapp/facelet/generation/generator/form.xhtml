@@ -39,6 +39,14 @@
 						<aon:panelGrid columns="2" dir="true" styleClass="aon-form-table"
 							columnClasses="aon-form-table-column-odd,aon-form-table-column-even">
 
+							<aon:outputLabel for="isLanguajePageToGenerate"
+								styleClass="aon-form-input-text-label"
+								value="#{appBundle.isLanguajePageToGenerate}" />
+							<aon:div>
+								<aon:selectBooleanCheckbox id="isLanguajePageToGenerate" 
+									value="#{generator.languajePageToGenerate}" />
+							</aon:div>
+							
 							<aon:outputLabel for="isModularPageToGenerate"
 								styleClass="aon-form-input-text-label"
 								value="#{appBundle.isModularPageToGenerate}" />

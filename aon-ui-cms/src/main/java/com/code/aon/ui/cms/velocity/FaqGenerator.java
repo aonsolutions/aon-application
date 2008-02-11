@@ -21,15 +21,18 @@ import com.code.aon.ui.cms.velocity.attribute.FaqCategoryHandler;
 public class FaqGenerator extends Generator {
 
 	public static void generate(VelocityUtil vu) {
+		ArrayList<FaqCategoryHandler> fchList;
+		List<ITransferObject> faqCategoryDetailList;
 		try {
-			ArrayList<FaqCategoryHandler> fchList = new ArrayList<FaqCategoryHandler>(); 
+			fchList = new ArrayList<FaqCategoryHandler>(); 
 			
 			IManagerBean bean = BeanManager.getManagerBean(FaqCategoryDetail.class);
 			Criteria criteria = new Criteria();
 			criteria.addEqualExpression(bean.getFieldName(ICMSAlias.FAQ_CATEGORY_DETAIL_LANGUAGE_ID), ControllerUtil.getCurrentLanguage().getId());
-			List<ITransferObject> l = (List<ITransferObject>)bean.getList(criteria);
-			for (int i=0; i < l.size(); i++) {
-				FaqCategoryDetail fcd = (FaqCategoryDetail)l.get(i);
+			faqCategoryDetailList = (List<ITransferObject>)bean.getList(criteria);
+			FaqCategoryDetail fcd;
+			for (int i=0; i < faqCategoryDetailList.size(); i++) {
+				fcd = (FaqCategoryDetail)faqCategoryDetailList.get(i);
 				if (fcd.getFaqCategory().isActive()) {
 					FaqCategoryHandler fch = new FaqCategoryHandler(fcd);
 					fchList.add(fch);
@@ -47,6 +50,9 @@ public class FaqGenerator extends Generator {
 			vu.remove("faq_categories");
 		} catch (ManagerBeanException e) {
 			e.printStackTrace();
+		} finally {
+			fchList = null;
+			faqCategoryDetailList = null;
 		}
 	}
 	

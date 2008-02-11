@@ -22,44 +22,58 @@ import com.code.aon.ui.cms.velocity.attribute.ModularPageOptionHandler;
 public class ModularPageGenerator extends Generator {
 
 	public static void generate(VelocityUtil vu) {
+		List<ITransferObject> modularPageList;
+		List<ITransferObject> modularPageOptionList;
+		ArrayList<ModularPageOptionHandler> modularPageOptionHandlerList;
+		List<ITransferObject> modularPageOptionDetailList;
+		List<ITransferObject> modularPageDetailList;
 		try {
 			IManagerBean bean = BeanManager.getManagerBean(ModularPage.class);
-			List<ITransferObject> l = (List<ITransferObject>) bean.getList(null);
-			for (int i = 0; i < l.size(); i++) {
-				ModularPage mp = (ModularPage) l.get(i);
-				ArrayList<ModularPageOptionHandler> list = new ArrayList<ModularPageOptionHandler>();
-				IManagerBean moBean = BeanManager.getManagerBean(ModularPageOption.class);
-				Criteria criteria_moBean = new Criteria();
+			IManagerBean moBean = BeanManager.getManagerBean(ModularPageOption.class);
+			IManagerBean modBean = BeanManager.getManagerBean(ModularPageOptionDetail.class);
+			IManagerBean mdBean = BeanManager.getManagerBean(ModularPageDetail.class);
+			
+			modularPageList = (List<ITransferObject>) bean.getList(null);
+			ModularPage mp;
+			ModularPageOption mpo;
+			ModularPageOptionDetail mpod;
+			Criteria criteria_moBean;
+			Criteria criteria_modBean;
+			Criteria criteria_mdBean;
+			for (int i = 0; i < modularPageList.size(); i++) {
+				mp = (ModularPage) modularPageList.get(i);
+				criteria_moBean = new Criteria();
 				criteria_moBean.addEqualExpression(moBean.getFieldName(ICMSAlias.MODULAR_PAGE_OPTION_MODULAR_PAGE_ID),mp.getId());
 				criteria_moBean.addEqualExpression(moBean.getFieldName(ICMSAlias.MODULAR_PAGE_OPTION_ACTIVE),true);
 				criteria_moBean.addOrder(moBean.getFieldName(ICMSAlias.MODULAR_PAGE_OPTION_POSITION));
-				List<ITransferObject> l2 = (List<ITransferObject>) moBean.getList(criteria_moBean);
-				ArrayList<ModularPageOptionHandler> moduleList = new ArrayList<ModularPageOptionHandler>();
-				for (int j = 0; j < l2.size(); j++) {
-					ModularPageOption mo = (ModularPageOption) l2.get(j);
-					IManagerBean modBean = BeanManager.getManagerBean(ModularPageOptionDetail.class);
-					Criteria criteria_detail = new Criteria();
-					criteria_detail.addEqualExpression(modBean.getFieldName(ICMSAlias.MODULAR_PAGE_OPTION_DETAIL_MODULAR_PAGE_OPTION_ID),mo.getId());
-					criteria_detail.addEqualExpression(modBean.getFieldName(ICMSAlias.MODULAR_PAGE_OPTION_DETAIL_LANGUAGE_ID),ControllerUtil.getCurrentLanguage().getId());
-					List<ITransferObject> ld = (List<ITransferObject>) modBean.getList(criteria_detail);
-					if (ld.size()>0) {
-						ModularPageOptionDetail mpod = (ModularPageOptionDetail) ld.get(0);
+				modularPageOptionList = (List<ITransferObject>) moBean.getList(criteria_moBean);
+				modularPageOptionHandlerList = new ArrayList<ModularPageOptionHandler>();
+				for (int j = 0; j < modularPageOptionList.size(); j++) {
+					mpo = (ModularPageOption) modularPageOptionList.get(j);
+					criteria_modBean = new Criteria();
+					criteria_modBean.addEqualExpression(modBean.getFieldName(ICMSAlias.MODULAR_PAGE_OPTION_DETAIL_MODULAR_PAGE_OPTION_ID),mpo.getId());
+					criteria_modBean.addEqualExpression(modBean.getFieldName(ICMSAlias.MODULAR_PAGE_OPTION_DETAIL_LANGUAGE_ID),ControllerUtil.getCurrentLanguage().getId());
+					modularPageOptionDetailList = (List<ITransferObject>) modBean.getList(criteria_modBean);
+					if (modularPageOptionDetailList.size()>0) {
+						mpod = (ModularPageOptionDetail) modularPageOptionDetailList.get(0);
 						if (mpod.getModular_page_option().isActive()) {
 							ModularPageOptionHandler mph = new ModularPageOptionHandler(mpod);
-							moduleList.add(mph);
+							modularPageOptionHandlerList.add(mph);
 						}
 					}
+					modularPageOptionDetailList = null;
 				}
-				IManagerBean mdBean = BeanManager.getManagerBean(ModularPageDetail.class);
-				Criteria criteria_mp_detail = new Criteria();
-				criteria_mp_detail.addEqualExpression(mdBean.getFieldName(ICMSAlias.MODULAR_PAGE_DETAIL_MODULAR_PAGE_ID),mp.getId());
-				criteria_mp_detail.addEqualExpression(mdBean.getFieldName(ICMSAlias.MODULAR_PAGE_DETAIL_LANGUAGE_ID),ControllerUtil.getCurrentLanguage().getId());
-				List<ITransferObject> lmpd = (List<ITransferObject>) mdBean.getList(criteria_mp_detail);
-				if (lmpd.size()>0) {
-					ModularPageHandler mph = new ModularPageHandler((ModularPageDetail)lmpd.get(0));
+				modularPageOptionList = null;
+				criteria_mdBean = new Criteria();
+				criteria_mdBean.addEqualExpression(mdBean.getFieldName(ICMSAlias.MODULAR_PAGE_DETAIL_MODULAR_PAGE_ID),mp.getId());
+				criteria_mdBean.addEqualExpression(mdBean.getFieldName(ICMSAlias.MODULAR_PAGE_DETAIL_LANGUAGE_ID),ControllerUtil.getCurrentLanguage().getId());
+				modularPageDetailList = (List<ITransferObject>) mdBean.getList(criteria_mdBean);
+				if (modularPageDetailList.size()>0) {
+					ModularPageHandler mph = new ModularPageHandler((ModularPageDetail)modularPageDetailList.get(0));
 					vu.put("module", mph);
 				}
-				vu.put("modules", moduleList);
+				modularPageDetailList = null;
+				vu.put("modules", modularPageOptionHandlerList);
 
 				// Cargar datos comunes a todas las paginas
 				vu.addMessage("", VelocityUtil.INFO);
@@ -74,9 +88,16 @@ public class ModularPageGenerator extends Generator {
 				}
 				vu.remove("module");
 				vu.remove("modules");
+				modularPageOptionHandlerList = null;
 			}
 		} catch (ManagerBeanException e) {
 			e.printStackTrace();
+		} finally {
+			modularPageList = null;
+			modularPageOptionList = null;
+			modularPageOptionHandlerList = null;
+			modularPageOptionDetailList = null;
+			modularPageDetailList = null;
 		}
 	}
 

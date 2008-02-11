@@ -25,7 +25,7 @@ public class GeneratorController extends BasicController implements Constants {
 
 		vu = new VelocityUtil();
 		
-		CommonGenerator.init();
+		CommonGenerator.getCommonGenerator().init();
 		
 		vu.addMessage("Iniciando proceso de generación", VelocityUtil.INFO);
 		vu.addMessage("", VelocityUtil.INFO);
@@ -34,26 +34,28 @@ public class GeneratorController extends BasicController implements Constants {
 		vu.addMessage("Buscando plantilla seleccionada '" + ControllerUtil.getCurrentConfig().getTemplate() + "' ...", VelocityUtil.INFO);
 		vu.setTemplate_path(template_path);
 		vu.initialize();
-
-		//Generar index.php de seleccion automatica de idioma
-		vu.addMessage("", VelocityUtil.INFO);
-		vu.addMessage("Creando página de seleccion de idioma... ", VelocityUtil.INFO);
-		CommonGenerator.generateLanguagePage(vu);
-
+		
+		if (isLanguajePageToGenerate){
+			//Generar index.php de seleccion automatica de idioma
+			vu.addMessage("", VelocityUtil.INFO);
+			vu.addMessage("Creando página de seleccion de idioma... ", VelocityUtil.INFO);
+			CommonGenerator.getCommonGenerator().generateLanguagePage(vu);
+		}
+		
 		if (isModularPageToGenerate){
 			//Generar index.html del idioma seleccionado
 			vu.addMessage("", VelocityUtil.INFO);
 			vu.addMessage("Creando páginas modulare (homepage...)... ", VelocityUtil.INFO);
 			ModularPageGenerator.generate(vu);
 		}
-
+		
 		if (isMenuToGenerate){
 			//Generar menus
 			vu.addMessage("", VelocityUtil.INFO);
 			vu.addMessage("Creando páginas de menú... ", VelocityUtil.INFO);
 			MenuGenerator.generate(vu);
 		}
-
+		
 		if (isGenericToGenerate){
 			//Generar generic
 			vu.addMessage("", VelocityUtil.INFO);
@@ -96,12 +98,11 @@ public class GeneratorController extends BasicController implements Constants {
 			ArticleGenerator.generate(vu);
 		}
 		
-		CommonGenerator.init();
-
-		vu = null;
+		CommonGenerator.getCommonGenerator().removeContext(vu);
 
 	}
 
+	private boolean isLanguajePageToGenerate = true;
 	private boolean isModularPageToGenerate = true;
 	private boolean isMenuToGenerate = true;
 	private boolean isGenericToGenerate = true;
@@ -111,6 +112,12 @@ public class GeneratorController extends BasicController implements Constants {
 	private boolean isAlbumToGenerate = true;
 	private boolean isArticleToGenerate = true;
 
+	public boolean isLanguajePageToGenerate() {
+		return isLanguajePageToGenerate;
+	}
+	public void setLanguajePageToGenerate(boolean isLanguajePageToGenerate) {
+		this.isLanguajePageToGenerate = isLanguajePageToGenerate;
+	}
 	public boolean isModularPageToGenerate() {
 		return isModularPageToGenerate;
 	}
@@ -160,6 +167,13 @@ public class GeneratorController extends BasicController implements Constants {
 		this.isArticleToGenerate = isArticleToGenerate;
 	}
 
-	
+	private static String checkMem(String data) {
+		long freeMemory = Runtime.getRuntime().freeMemory();
+		long totalMemory = Runtime.getRuntime().totalMemory();
+		long maxMemory = Runtime.getRuntime().maxMemory();
+		long memoryUsed = totalMemory-freeMemory;
+		data += "-------------> "+(memoryUsed/(1024*1024))+" of "+(maxMemory/(1024*1024))+" MB used";
+		return data;
+	}	
 	
 }

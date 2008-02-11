@@ -46,28 +46,35 @@ public class LinkCategoryHandler {
 
 	private ArrayList<LinkHandler> getlinkList(LinkCategory lc) {
 		ArrayList<LinkHandler> list = new ArrayList<LinkHandler>();
+		List<ITransferObject> linkList;
+		List<ITransferObject> linkDetailList;
 		try {
 			IManagerBean bean = BeanManager.getManagerBean(Link.class);
+			IManagerBean detailBean = BeanManager.getManagerBean(LinkDetail.class);
 			Criteria criteria = new Criteria();
 			criteria.addEqualExpression(bean.getFieldName(ICMSAlias.LINK_LINK_CATEGORY_ID), lc.getId());
 			criteria.addEqualExpression(bean.getFieldName(ICMSAlias.LINK_ACTIVE), true);
 			criteria.addOrder(bean.getFieldName(ICMSAlias.LINK_POSITION));
-			List<ITransferObject> linkList = (List<ITransferObject>)bean.getList(criteria);
+			linkList = (List<ITransferObject>)bean.getList(criteria);
+			Link l;
+			Criteria detailCriteria;
 			for (int i = 0; i < linkList.size(); i++) {
-				Link l = (Link)linkList.get(i);
-				IManagerBean detailBean = BeanManager.getManagerBean(LinkDetail.class);
-				Criteria detailCriteria = new Criteria();
+				l = (Link)linkList.get(i);
+				detailCriteria = new Criteria();
 				detailCriteria.addEqualExpression(detailBean.getFieldName(ICMSAlias.LINK_DETAIL_LINK_ID), l.getId());
 				detailCriteria.addEqualExpression(detailBean.getFieldName(ICMSAlias.LINK_DETAIL_LANGUAGE_ID), ControllerUtil.getCurrentLanguage().getId());
-				List<ITransferObject> ld = (List<ITransferObject>)detailBean.getList(detailCriteria);
-				if (ld.size() > 0) {
-					LinkDetail fd = (LinkDetail)ld.get(0);
+				linkDetailList = (List<ITransferObject>)detailBean.getList(detailCriteria);
+				if (linkDetailList.size() > 0) {
+					LinkDetail fd = (LinkDetail)linkDetailList.get(0);
 					LinkHandler fh = new LinkHandler(fd);
 					list.add(fh);
 				}
 			}
 		} catch (ManagerBeanException e) {
 			e.printStackTrace();
+		} finally {
+			linkList = null;
+			linkDetailList = null;
 		}
 		return list;
 	}
