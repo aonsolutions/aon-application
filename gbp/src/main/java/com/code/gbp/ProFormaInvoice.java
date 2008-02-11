@@ -73,7 +73,7 @@ public class ProFormaInvoice implements ITransferObject {
 	}
 
 	@ManyToOne
-	@JoinColumn( name="office", nullable=false )
+	@JoinColumn( name="office")
 	public Office getOffice() {
 		return office;
 	}
