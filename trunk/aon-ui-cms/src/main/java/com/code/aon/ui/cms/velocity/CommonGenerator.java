@@ -29,6 +29,7 @@ import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.cms.Constants;
+import com.code.aon.ui.cms.controller.GeneratorConfigController;
 import com.code.aon.ui.cms.util.ControllerUtil;
 import com.code.aon.ui.cms.util.VelocityUtil;
 import com.code.aon.ui.cms.velocity.attribute.FooterHandler;
@@ -56,7 +57,10 @@ public class CommonGenerator extends Generator {
     	this.previousSection = null;
     }
 
-	public void chargeContext(VelocityUtil vu, Section section) {
+	public void chargeContext(VelocityUtil vu, Section section) throws ManagerBeanException {
+		if (section == null){
+			section = GeneratorConfigController.defaultSection();
+		}
 		
 		if (previousSection==null ||
 				section.getId().intValue()!=previousSection.getId().intValue()){

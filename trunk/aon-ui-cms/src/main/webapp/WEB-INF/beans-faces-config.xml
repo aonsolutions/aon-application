@@ -51,7 +51,6 @@
 		<managed-bean-scope>none</managed-bean-scope>
 	</managed-bean>
 
-ConfigControllerListener
 	<!-- *****************
 		TIMEZONE CONTROLLER
 		*******************  	 -->
@@ -106,6 +105,19 @@ ConfigControllerListener
 			<property-name>queryOnStartUP</property-name>
 			<value>true</value>
 		</managed-property>
+		<managed-property>
+			<property-name>listenerClasses</property-name>
+			<list-entries>
+				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+				<value>#{genericPageControllerListener}</value>
+			</list-entries>
+		</managed-property>
+	</managed-bean>
+
+	<managed-bean>
+		<managed-bean-name>genericPageControllerListener</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.cms.event.GenericPageControllerListener</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
 	</managed-bean>
 
 	<!-- ************** MENU ************** -->
@@ -964,6 +976,19 @@ ConfigControllerListener
 			<property-name>queryOnStartUP</property-name>
 			<value>true</value>
 		</managed-property>
+		<managed-property>
+			<property-name>listenerClasses</property-name>
+			<list-entries>
+				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+				<value>#{modularPageControllerListener}</value>
+			</list-entries>
+		</managed-property>
+	</managed-bean>
+
+	<managed-bean>
+		<managed-bean-name>modularPageControllerListener</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.cms.event.ModularPageControllerListener</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
 	</managed-bean>
 
 	<!-- ************** MODULAR PAGE OPTION ************** -->
