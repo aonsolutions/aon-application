@@ -81,6 +81,8 @@ public class MenuOptionUtil {
 					type.equals(PageType.ARTICLE_EVENTS) ||
 					type.equals(PageType.ARTICLE_SERVICES) ||
 					type.equals(PageType.ARTICLE_OTHER) ){
+				if (ContentLevel.TOP.equals(level))
+					return true;
 				if (ContentLevel.SECTION.equals(level))
 					return true;
 				if (ContentLevel.CATEGORY.equals(level))
@@ -161,34 +163,43 @@ public class MenuOptionUtil {
 				idents = ((CollectionsController)AonUtil.getRegisteredBean("collections")).getArticleByTypeList(ArticleType.NEWS);
 			}
 		}else if (type.equals(PageType.ARTICLE_EVENTS)){
+			if (ContentLevel.TOP.equals(level)){
+				idents.add(new SelectItem(null,"NO VALID"));
+			}
 			if (ContentLevel.SECTION.equals(level)){
-				idents = ((CollectionsController)AonUtil.getRegisteredBean("collections")).getArticleCategoryList();
+				idents.add(new SelectItem(null,"NO VALID"));
 			}
 			if (ContentLevel.CATEGORY.equals(level)){
+				idents = ((CollectionsController)AonUtil.getRegisteredBean("collections")).getArticleCategoryList();
+			}
+			if (ContentLevel.ELEMENT.equals(level)){
 				idents = ((CollectionsController)AonUtil.getRegisteredBean("collections")).getArticleByTypeList(ArticleType.EVENTS);
 			}
-			if (ContentLevel.ELEMENT.equals(level)){
+		}else if (type.equals(PageType.ARTICLE_SERVICES)){
+			if (ContentLevel.TOP.equals(level)){
 				idents.add(new SelectItem(null,"NO VALID"));
 			}
-		}else if (type.equals(PageType.ARTICLE_SERVICES)){
 			if (ContentLevel.SECTION.equals(level)){
-				idents = ((CollectionsController)AonUtil.getRegisteredBean("collections")).getArticleCategoryList();
+				idents.add(new SelectItem(null,"NO VALID"));
 			}
 			if (ContentLevel.CATEGORY.equals(level)){
+				idents = ((CollectionsController)AonUtil.getRegisteredBean("collections")).getArticleCategoryList();
+			}
+			if (ContentLevel.ELEMENT.equals(level)){
 				idents = ((CollectionsController)AonUtil.getRegisteredBean("collections")).getArticleByTypeList(ArticleType.SERVICES);
 			}
-			if (ContentLevel.ELEMENT.equals(level)){
+		}else if (type.equals(PageType.ARTICLE_OTHER)){
+			if (ContentLevel.TOP.equals(level)){
 				idents.add(new SelectItem(null,"NO VALID"));
 			}
-		}else if (type.equals(PageType.ARTICLE_OTHER)){
 			if (ContentLevel.SECTION.equals(level)){
-				idents = ((CollectionsController)AonUtil.getRegisteredBean("collections")).getArticleCategoryList();
+				idents.add(new SelectItem(null,"NO VALID"));
 			}
 			if (ContentLevel.CATEGORY.equals(level)){
-				idents = ((CollectionsController)AonUtil.getRegisteredBean("collections")).getArticleByTypeList(ArticleType.OTHER);
+				idents = ((CollectionsController)AonUtil.getRegisteredBean("collections")).getArticleCategoryList();
 			}
 			if (ContentLevel.ELEMENT.equals(level)){
-				idents.add(new SelectItem(null,"NO VALID"));
+				idents = ((CollectionsController)AonUtil.getRegisteredBean("collections")).getArticleByTypeList(ArticleType.OTHER);
 			}
 		}
 		return idents;
