@@ -263,13 +263,18 @@ public class DesktopController extends BasicController {
 
     @SuppressWarnings("unchecked")
     public String getCompanyName() throws ManagerBeanException {
-        IManagerBean companyBean = BeanManager.getManagerBean(Company.class);
-        List companyList = companyBean.getList(null);
-        if (companyList.size() > 0) {
-            Company company = (Company)companyList.get(0);
-            return company.getName();
+        try {
+	    	IManagerBean companyBean = BeanManager.getManagerBean(Company.class);
+	        List companyList = companyBean.getList(null);
+	        if (companyList.size() > 0) {
+	            Company company = (Company)companyList.get(0);
+	            return company.getName();
+	        }
+	        return null;
         }
-        return null;
+        catch (Exception e) {
+        	return null;
+        }
     }
 
 	public boolean isLogoAttached() throws ManagerBeanException {
