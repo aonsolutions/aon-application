@@ -40,11 +40,13 @@
 							styleClass="aon-dropDownMenu-item-root"
 							iconClass="aon-menuItem-no-iconClass"
 							value="#{menuBundle.gbp_offer}"
+							actionListener="#{offer.onInitialModel}"
 							action="offer_list" />
 						<aon:menuItem id="pro_forma" 
 							styleClass="aon-dropDownMenu-item-root"
 							iconClass="aon-menuItem-no-iconClass"
 							value="#{menuBundle.gbp_pro_forma}"
+							actionListener="#{proForma.onInitialModel}"
 							action="pro_forma_list" />
 					</aon:menuBar>
 				</aon:form>
