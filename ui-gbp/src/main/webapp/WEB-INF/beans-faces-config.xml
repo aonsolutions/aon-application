@@ -619,7 +619,7 @@
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
 			<property-name>queryOnStartUP</property-name>
-			<value>true</value>
+			<value>false</value>
 		</managed-property>
 		<managed-property>
 			<property-name>pojo</property-name>
@@ -791,11 +791,11 @@
 	<!-- ************ PRO FORMA INVOICE ************** -->
 	<managed-bean>
 		<managed-bean-name>proForma</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.form.BasicController</managed-bean-class>
+		<managed-bean-class>com.code.ui.gbp.controller.ProFormaInvoiceController</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
 			<property-name>queryOnStartUP</property-name>
-			<value>true</value>
+			<value>false</value>
 		</managed-property>
 		<managed-property>
 			<property-name>pojo</property-name>

@@ -3,7 +3,6 @@
 	<name>ui-gbp</name>
 	<comment></comment>
 	<projects>
-		<project>gbp</project>
 		<project>aon-rich-components</project>
 	</projects>
 	<buildSpec>
