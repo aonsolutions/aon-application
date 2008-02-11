@@ -6,10 +6,8 @@ import java.util.List;
 
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
-import javax.servlet.http.HttpServletResponse;
 
 import com.code.aon.bridge.plugin.UserManager;
-import com.code.aon.bridge.plugin.UserUtils;
 import com.code.aon.jaas.auth.AuthPrincipal;
 import com.code.aon.jaas.client.ast.core.Application;
 import com.code.aon.jaas.deployment.DeploymentException;
