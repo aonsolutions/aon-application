@@ -56,6 +56,15 @@
 						size="16" maxlenght="16"
 						valueChangeListener="#{proForma.addExpression}" />
 
+					<aon:outputLabel for="ProFormaInvoice_status"
+						value="#{appBundle.gbp_proforma_invoice_status}" />
+					<aon:selectOneMenu id="ProFormaInvoice_status"
+						converter="proFormaStatusConverter"
+						valueChangeListener="#{proForma.addStatusExpression}">
+						<f:selectItem value="#{nullSelectItem.value}" />
+						<f:selectItems value="#{GBPCollections.proformaInvoiceStatus}" />
+					</aon:selectOneMenu>
+
 				</aon:panelGrid>
 			</aon:div>
 		</aon:form>
