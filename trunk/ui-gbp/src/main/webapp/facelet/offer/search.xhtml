@@ -50,6 +50,15 @@
 						size="16" maxlenght="16"
 						valueChangeListener="#{offer.addExpression}" />
 
+					<aon:outputLabel for="Offer_status"
+						value="#{appBundle.gbp_offer_status}" />
+					<aon:selectOneMenu id="Offer_status"
+						converter="offerStatusConverter"
+						valueChangeListener="#{offer.addStatusExpression}">
+						<f:selectItem value="#{nullSelectItem.value}" />
+						<f:selectItems value="#{GBPCollections.offerStatus}" />
+					</aon:selectOneMenu>
+
 				</aon:panelGrid>
 			</aon:div>
 		</aon:form>
