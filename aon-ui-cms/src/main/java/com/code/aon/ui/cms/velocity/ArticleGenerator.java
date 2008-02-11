@@ -30,42 +30,56 @@ import com.code.aon.ui.cms.velocity.attribute.ArticleHandler;
 public class ArticleGenerator extends Generator {
 	
 	public static void generate(VelocityUtil vu) {
+		List<ITransferObject> articleCategoryList;
+		List<ITransferObject> articleCategoryDetailList;
+		List<ITransferObject> articleList;
+		List<ITransferObject> articleDetailList;
 		try {
 			IManagerBean articleCategoryBean = BeanManager.getManagerBean(ArticleCategory.class);
+			IManagerBean articleCategoryDetailBean = BeanManager.getManagerBean(ArticleCategoryDetail.class);
+			IManagerBean articleBean = BeanManager.getManagerBean(Article.class);
+			IManagerBean articleDetailBean = BeanManager.getManagerBean(ArticleDetail.class);
+			
+			ArticleType[] values = ArticleType.values();
+			
 			Criteria articleCategoryCriteria = new Criteria();
+			Criteria articleCategoryDetailCriteria;
+			Criteria articleCriteria;
+			Criteria articleDetailCriteria;
+			
+			ArticleCategory articleCategory;
+			ArticleCategoryDetail articleCategoryDetail;
+			Article article;
+			ArticleDetail articleDetail;
+			
 			articleCategoryCriteria.addEqualExpression(articleCategoryBean.getFieldName(ICMSAlias.ARTICLE_CATEGORY_ACTIVE), true);
-			List<ITransferObject> articleCategoryList = (List<ITransferObject>)articleCategoryBean.getList(articleCategoryCriteria);
+			articleCategoryList = (List<ITransferObject>)articleCategoryBean.getList(articleCategoryCriteria);
 			ArrayList<ArticleCategoryHandler> achlist = new ArrayList<ArticleCategoryHandler>(); 
 			for (int j=0; j < articleCategoryList.size(); j++) {
-				ArticleCategory articleCategory = (ArticleCategory)articleCategoryList.get(j);
+				articleCategory = (ArticleCategory)articleCategoryList.get(j);
 				CommonGenerator.getCommonGenerator().chargeContext(vu, articleCategory.getSection());
-				IManagerBean articleCategoryDetailBean = BeanManager.getManagerBean(ArticleCategoryDetail.class);
-				Criteria articleCategoryDetailCriteria = new Criteria();
+				articleCategoryDetailCriteria = new Criteria();
 				articleCategoryDetailCriteria.addEqualExpression(articleCategoryDetailBean.getFieldName(ICMSAlias.ARTICLE_CATEGORY_DETAIL_ARTICLE_CATEGORY_ID), articleCategory.getId());
 				articleCategoryDetailCriteria.addEqualExpression(articleCategoryDetailBean.getFieldName(ICMSAlias.ARTICLE_CATEGORY_DETAIL_LANGUAGE_ID), ControllerUtil.getCurrentLanguage().getId());
-				List<ITransferObject> articleCategoryDetailList = (List<ITransferObject>)articleCategoryDetailBean.getList(articleCategoryDetailCriteria);
+				articleCategoryDetailList = (List<ITransferObject>)articleCategoryDetailBean.getList(articleCategoryDetailCriteria);
 				if (articleCategoryDetailList.size() > 0) {
-					ArticleCategoryDetail articleCategoryDetail = (ArticleCategoryDetail)articleCategoryDetailList.get(0);
-					IManagerBean articleBean = BeanManager.getManagerBean(Article.class);
-					ArticleType[] values = ArticleType.values();
+					articleCategoryDetail = (ArticleCategoryDetail)articleCategoryDetailList.get(0);
 					for (int art_type = 0; art_type < values.length; art_type++){
-						Criteria articleCriteria = new Criteria();
+						articleCriteria = new Criteria();
 						articleCriteria.addEqualExpression(articleBean.getFieldName(ICMSAlias.ARTICLE_ARTICLE_CATEGORY_ID), articleCategory.getId());
 						articleCriteria.addEqualExpression(articleBean.getFieldName(ICMSAlias.ARTICLE_ACTIVE), true);
 						articleCriteria.addEqualExpression(articleBean.getFieldName(ICMSAlias.ARTICLE_ARTICLE_TYPE), values[art_type]);
-						List<ITransferObject> articleList = (List<ITransferObject>)articleBean.getList(articleCriteria);
+						articleList = (List<ITransferObject>)articleBean.getList(articleCriteria);
 						ArrayList<ArticleHandler> ahlist = new ArrayList<ArticleHandler>();
 						if (!articleList.isEmpty()){
 							for (int i=0; i < articleList.size(); i++) {
-								Article article = (Article)articleList.get(i);
-
-								IManagerBean articleDetailBean = BeanManager.getManagerBean(ArticleDetail.class);
-								Criteria articleDetailCriteria = new Criteria();
+								article = (Article)articleList.get(i);
+								articleDetailCriteria = new Criteria();
 								articleDetailCriteria.addEqualExpression(articleDetailBean.getFieldName(ICMSAlias.ARTICLE_DETAIL_ARTICLE_ID), article.getId());
 								articleDetailCriteria.addEqualExpression(articleDetailBean.getFieldName(ICMSAlias.ARTICLE_DETAIL_LANGUAGE_ID), ControllerUtil.getCurrentLanguage().getId());
-								List<ITransferObject> articleDetailList = (List<ITransferObject>)articleDetailBean.getList(articleDetailCriteria);
+								articleDetailList = (List<ITransferObject>)articleDetailBean.getList(articleDetailCriteria);
 								if (articleDetailList.size() > 0) {
-									ArticleDetail articleDetail = (ArticleDetail)articleDetailList.get(0);
+									articleDetail = (ArticleDetail)articleDetailList.get(0);
 									ArticleHandler ahandler = new ArticleHandler(articleDetail);
 									ahlist.add(ahandler);
 									vu.put("article", ahandler);
@@ -85,11 +99,17 @@ public class ArticleGenerator extends Generator {
 							vu.remove("article_list");
 							achlist.add(achandler);
 						}
+						ahlist = null;
 					}
 				}
 			}
 		} catch (ManagerBeanException e) {
 			e.printStackTrace();
+		} finally {
+			articleCategoryList = null;
+			articleCategoryDetailList = null;
+			articleList = null;
+			articleDetailList = null;
 		}
 	}
 	
@@ -118,22 +138,27 @@ public class ArticleGenerator extends Generator {
 	}
 
 	public static Object getArticleCategoryHandler(Integer ident, ArticleType type) {
+		List<ITransferObject> l;
+		List<ITransferObject> ld;
+		List<ITransferObject> lcd;
+		Iterator<ITransferObject> iter;
 		try {
 			IManagerBean bean = BeanManager.getManagerBean(Article.class);
 			Criteria criteria = new Criteria();
 			criteria.addEqualExpression(bean.getFieldName(ICMSAlias.ARTICLE_ARTICLE_CATEGORY_ID), ident);
 			criteria.addEqualExpression(bean.getFieldName(ICMSAlias.ARTICLE_ARTICLE_TYPE), type);
 			criteria.addEqualExpression(bean.getFieldName(ICMSAlias.ARTICLE_ACTIVE), true);
-			List<ITransferObject> l = (List<ITransferObject>)bean.getList(criteria);
-			Iterator<ITransferObject> iter = l.iterator();
+			l = (List<ITransferObject>)bean.getList(criteria);
+			iter = l.iterator();
 			ArrayList<ArticleHandler> ahlist = new ArrayList<ArticleHandler>();
+			Article ac;
 			while (iter.hasNext()){
-				Article ac = (Article)iter.next();
+				ac = (Article)iter.next();
 				bean = BeanManager.getManagerBean(ArticleDetail.class);
 				criteria = new Criteria();
 				criteria.addEqualExpression(bean.getFieldName(ICMSAlias.ARTICLE_DETAIL_LANGUAGE_ID), ControllerUtil.getCurrentLanguage().getId());
 				criteria.addEqualExpression(bean.getFieldName(ICMSAlias.ARTICLE_DETAIL_ARTICLE_ID), ac.getId());
-				List<ITransferObject> ld = (List<ITransferObject>)bean.getList(criteria);
+				ld = (List<ITransferObject>)bean.getList(criteria);
 				ArticleDetail ad = (ArticleDetail)ld.get(0);
 				ArticleHandler ah = new ArticleHandler(ad);
 				ahlist.add(ah);
@@ -142,12 +167,17 @@ public class ArticleGenerator extends Generator {
 			criteria = new Criteria();
 			criteria.addEqualExpression(bean.getFieldName(ICMSAlias.ARTICLE_CATEGORY_DETAIL_LANGUAGE_ID), ControllerUtil.getCurrentLanguage().getId());
 			criteria.addEqualExpression(bean.getFieldName(ICMSAlias.ARTICLE_CATEGORY_DETAIL_ARTICLE_CATEGORY_ID), ident);
-			List<ITransferObject> lcd = (List<ITransferObject>)bean.getList(criteria);
+			lcd = (List<ITransferObject>)bean.getList(criteria);
 			ArticleCategoryDetail acd = (ArticleCategoryDetail) lcd.get(0);
 			ArticleCategoryHandler ach = new ArticleCategoryHandler(acd,ahlist);
 			return ach;
 		} catch (ManagerBeanException e) {
 			e.printStackTrace();
+		} finally {
+			l = null;
+			ld = null;
+			lcd = null;
+			iter = null;
 		}
 		return null;
 	}
