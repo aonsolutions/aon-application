@@ -30,6 +30,12 @@
 		<converter-class>com.code.ui.gbp.converter.CampaignStatusConverter</converter-class>
 	</converter>
 
+	<converter>
+		<description>Conversor para los OfferStatus</description>
+		<converter-id>offerStatusConverter</converter-id>
+		<converter-class>com.code.ui.gbp.converter.OfferStatusConverter</converter-class>
+	</converter>
+
 	<lifecycle>
 		<phase-listener>
 			com.code.aon.faces.component.sandbox.ValueChangePhaseListener
