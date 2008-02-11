@@ -88,6 +88,18 @@ text-decoration:none;
 
 .aon-noborder{border:0;}
 
+.aon-width-auto{
+	width:auto;
+	}
+.aon-width-20{
+	width:20px;
+}
+.aon-width-40{
+	width:40px;
+	}
+.aon-width-100{
+	width:100px;
+}	
 
 /**********************/
 /******* HOME ********/
@@ -224,6 +236,9 @@ text-decoration:none;
  .aon-icon-file-download{
 	background:transparent url(images/aon-icon/aon-icon-file-download.png) scroll left center no-repeat;	
  }
+ .aon-icon-transfer{
+	background:transparent url(images/aon-icon/aon-icon-transfer.png) scroll left center no-repeat;
+  }
 
 /* otros */
 .aon-icon-agenda{

@@ -11,6 +11,8 @@
 			/WEB-INF/beans-faces-config.xml
 			,/WEB-INF/lookup-beans-faces-config.xml
 			,/WEB-INF/navigation-faces-config.xml
+			,/WEB-INF/front-beans-faces-config.xml
+			,/WEB-INF/front-navigation-faces-config.xml
 		</param-value>
 	</context-param>
 
@@ -164,6 +166,10 @@
 	</servlet-mapping>
 	<servlet-mapping>
 		<servlet-name>Faces Servlet</servlet-name>
+		<url-pattern>*.sjsf</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>Faces Servlet</servlet-name>
 		<url-pattern>*.jspx</url-pattern>
 	</servlet-mapping>
 
@@ -198,6 +204,7 @@
 	<!-- Welcome File List -->
 	<welcome-file-list>
 		<welcome-file>index.html</welcome-file>
+		<welcome-file>supplier_index.html</welcome-file>
 	</welcome-file-list>
 
 	<!-- Security Constraint -->
