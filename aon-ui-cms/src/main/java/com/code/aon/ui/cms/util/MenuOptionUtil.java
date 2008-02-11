@@ -54,7 +54,11 @@ public class MenuOptionUtil {
 			if (type.equals(PageType.MENU)) return true;
 			if (type.equals(PageType.GENERIC)) return true;
 			if (type.equals(PageType.LINK)){
+				if (ContentLevel.SECTION.equals(level))
+					return true;
 				if (ContentLevel.CATEGORY.equals(level))
+					return true;
+				if (ContentLevel.ELEMENT.equals(level))
 					return true;
 			}
 			if (type.equals(PageType.FAQ)){
@@ -115,8 +119,14 @@ public class MenuOptionUtil {
 				idents = ((CollectionsController)AonUtil.getRegisteredBean("collections")).getFaqCategoryList();
 			}
 		}else if (type.equals(PageType.LINK)){
+			if (ContentLevel.SECTION.equals(level)){
+				idents = ((CollectionsController)AonUtil.getRegisteredBean("collections")).getSectionList();
+			}
 			if (ContentLevel.CATEGORY.equals(level)){
 				idents = ((CollectionsController)AonUtil.getRegisteredBean("collections")).getLinkCategoryList();
+			}
+			if (ContentLevel.ELEMENT.equals(level)){
+				idents.add(new SelectItem(null,"NO VALID"));
 			}
 		}else if (type.equals(PageType.ALBUM_IMAGES)){
 			if (ContentLevel.SECTION.equals(level)){
@@ -201,9 +211,13 @@ public class MenuOptionUtil {
 		}
 		if (pageType == PageType.LINK) {
 			try {
-				if (level.equals(ContentLevel.SECTION)){
+				if (level.equals(ContentLevel.TOP)){
 					String linkCategory = Templates.LINK.getHtmlName();
 					linkCategory = linkCategory.replaceAll("%NAME%", LinkGenerator.LINK_CATEGORY_LIST_PAGE);
+					return linkCategory;
+				}else if (level.equals(ContentLevel.SECTION)){
+					String linkCategory = Templates.LINK.getHtmlName();
+					linkCategory = linkCategory.replaceAll("%NAME%", LinkGenerator.LINK_CATEGORY_BY_SECTION_PAGE + ident);
 					return linkCategory;
 				}else if (level.equals(ContentLevel.CATEGORY)){
 					IManagerBean bean = BeanManager.getManagerBean(LinkCategory.class);
