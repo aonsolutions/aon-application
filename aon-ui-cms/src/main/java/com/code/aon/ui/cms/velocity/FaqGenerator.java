@@ -1,10 +1,13 @@
 package com.code.aon.ui.cms.velocity;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 
 import com.code.aon.cms.FaqCategoryDetail;
 import com.code.aon.cms.FaqConfig;
+import com.code.aon.cms.Section;
 import com.code.aon.cms.dao.ICMSAlias;
 import com.code.aon.cms.enumeration.Templates;
 import com.code.aon.common.BeanManager;
@@ -12,7 +15,6 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ql.Criteria;
-import com.code.aon.ui.cms.controller.FaqCategoryController;
 import com.code.aon.ui.cms.controller.GeneratorConfigController;
 import com.code.aon.ui.cms.util.ControllerUtil;
 import com.code.aon.ui.cms.util.VelocityUtil;
@@ -23,6 +25,7 @@ public class FaqGenerator extends Generator {
 	public static void generate(VelocityUtil vu) {
 		ArrayList<FaqCategoryHandler> fchList;
 		List<ITransferObject> faqCategoryDetailList;
+		HashMap categoryMap = new HashMap<Section, List>();
 		try {
 			fchList = new ArrayList<FaqCategoryHandler>(); 
 			
@@ -31,6 +34,7 @@ public class FaqGenerator extends Generator {
 			criteria.addEqualExpression(bean.getFieldName(ICMSAlias.FAQ_CATEGORY_DETAIL_LANGUAGE_ID), ControllerUtil.getCurrentLanguage().getId());
 			faqCategoryDetailList = (List<ITransferObject>)bean.getList(criteria);
 			FaqCategoryDetail fcd;
+			List l;
 			for (int i=0; i < faqCategoryDetailList.size(); i++) {
 				fcd = (FaqCategoryDetail)faqCategoryDetailList.get(i);
 				if (fcd.getFaqCategory().isActive()) {
@@ -41,8 +45,28 @@ public class FaqGenerator extends Generator {
 					CommonGenerator.getCommonGenerator().chargeContext(vu, fcd.getFaqCategory().getSection());
 					generate(vu, Templates.FAQ, fcd.getFaqCategory().getAlias());
 					vu.remove("faq_category");
+					
+					l = (List) categoryMap.get(fcd.getFaqCategory().getSection());
+					if (l == null)
+						l = new ArrayList<FaqCategoryHandler>();
+					l.add(fch);
+					categoryMap.put(fcd.getFaqCategory().getSection(),l);
 				}
 			}
+			Iterator<Section> iter = categoryMap.keySet().iterator();
+			Section key;
+			ArrayList<FaqCategoryHandler> faqCategoryHandlerSet;
+			while (iter.hasNext()){
+				key = iter.next();
+				faqCategoryHandlerSet = (ArrayList<FaqCategoryHandler>)categoryMap.get(key);
+				vu.put("faq_categories", faqCategoryHandlerSet);
+				vu.addMessage(" Generando listado categoria seccion Faq.", VelocityUtil.INFO);
+				CommonGenerator.getCommonGenerator().chargeContext(vu, key);
+				generate(vu, Templates.FAQ, FAQ_CATEGORY_BY_SECTION_PAGE + key.getId());
+				vu.remove("faq_categories");
+			}
+			iter = null;
+			
 			vu.put("faq_categories", fchList);
 			vu.addMessage(" Generando listado categoria Faq.", VelocityUtil.INFO);
 			CommonGenerator.getCommonGenerator().chargeContext(vu, GeneratorConfigController.currentSection(FaqConfig.class));
@@ -53,9 +77,12 @@ public class FaqGenerator extends Generator {
 		} finally {
 			fchList = null;
 			faqCategoryDetailList = null;
+			categoryMap = null;
 		}
 	}
 	
 	public static String FAQ_CATEGORY_LIST_PAGE = "category";
+
+	public static String FAQ_CATEGORY_BY_SECTION_PAGE = "category_section_";
 
 }

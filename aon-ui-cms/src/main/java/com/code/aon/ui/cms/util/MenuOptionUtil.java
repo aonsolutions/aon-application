@@ -62,7 +62,11 @@ public class MenuOptionUtil {
 					return true;
 			}
 			if (type.equals(PageType.FAQ)){
+				if (ContentLevel.SECTION.equals(level))
+					return true;
 				if (ContentLevel.CATEGORY.equals(level))
+					return true;
+				if (ContentLevel.ELEMENT.equals(level))
 					return true;
 			}
 			if (type.equals(PageType.MODULAR)) return true;
@@ -80,6 +84,8 @@ public class MenuOptionUtil {
 				if (ContentLevel.SECTION.equals(level))
 					return true;
 				if (ContentLevel.CATEGORY.equals(level))
+					return true;
+				if (ContentLevel.ELEMENT.equals(level))
 					return true;
 			}
 		}
@@ -115,8 +121,14 @@ public class MenuOptionUtil {
 		else if (type.equals(PageType.DIRECT_ACCESS)) idents = ((CollectionsController)AonUtil.getRegisteredBean("collections")).getDirectAccessGroupList();
 		else if (type.equals(PageType.MENU)) idents = ((CollectionsController)AonUtil.getRegisteredBean("collections")).getMenuList();
 		else if (type.equals(PageType.FAQ)){
+			if (ContentLevel.SECTION.equals(level)){
+				idents = ((CollectionsController)AonUtil.getRegisteredBean("collections")).getSectionList();
+			}
 			if (ContentLevel.CATEGORY.equals(level)){
 				idents = ((CollectionsController)AonUtil.getRegisteredBean("collections")).getFaqCategoryList();
+			}
+			if (ContentLevel.ELEMENT.equals(level)){
+				idents.add(new SelectItem(null,"NO VALID"));
 			}
 		}else if (type.equals(PageType.LINK)){
 			if (ContentLevel.SECTION.equals(level)){
@@ -136,10 +148,16 @@ public class MenuOptionUtil {
 				idents = ((CollectionsController)AonUtil.getRegisteredBean("collections")).getAlbumList();
 			}
 		}else if (type.equals(PageType.ARTICLE_NEWS)){
+			if (ContentLevel.TOP.equals(level)){
+				idents.add(new SelectItem(null,"NO VALID"));
+			}
 			if (ContentLevel.SECTION.equals(level)){
-				idents = ((CollectionsController)AonUtil.getRegisteredBean("collections")).getArticleCategoryList();
+				idents.add(new SelectItem(null,"NO VALID"));
 			}
 			if (ContentLevel.CATEGORY.equals(level)){
+				idents = ((CollectionsController)AonUtil.getRegisteredBean("collections")).getArticleCategoryList();
+			}
+			if (ContentLevel.ELEMENT.equals(level)){
 				idents = ((CollectionsController)AonUtil.getRegisteredBean("collections")).getArticleByTypeList(ArticleType.NEWS);
 			}
 		}else if (type.equals(PageType.ARTICLE_EVENTS)){
@@ -149,6 +167,9 @@ public class MenuOptionUtil {
 			if (ContentLevel.CATEGORY.equals(level)){
 				idents = ((CollectionsController)AonUtil.getRegisteredBean("collections")).getArticleByTypeList(ArticleType.EVENTS);
 			}
+			if (ContentLevel.ELEMENT.equals(level)){
+				idents.add(new SelectItem(null,"NO VALID"));
+			}
 		}else if (type.equals(PageType.ARTICLE_SERVICES)){
 			if (ContentLevel.SECTION.equals(level)){
 				idents = ((CollectionsController)AonUtil.getRegisteredBean("collections")).getArticleCategoryList();
@@ -156,12 +177,18 @@ public class MenuOptionUtil {
 			if (ContentLevel.CATEGORY.equals(level)){
 				idents = ((CollectionsController)AonUtil.getRegisteredBean("collections")).getArticleByTypeList(ArticleType.SERVICES);
 			}
+			if (ContentLevel.ELEMENT.equals(level)){
+				idents.add(new SelectItem(null,"NO VALID"));
+			}
 		}else if (type.equals(PageType.ARTICLE_OTHER)){
 			if (ContentLevel.SECTION.equals(level)){
 				idents = ((CollectionsController)AonUtil.getRegisteredBean("collections")).getArticleCategoryList();
 			}
 			if (ContentLevel.CATEGORY.equals(level)){
 				idents = ((CollectionsController)AonUtil.getRegisteredBean("collections")).getArticleByTypeList(ArticleType.OTHER);
+			}
+			if (ContentLevel.ELEMENT.equals(level)){
+				idents.add(new SelectItem(null,"NO VALID"));
 			}
 		}
 		return idents;
@@ -239,9 +266,13 @@ public class MenuOptionUtil {
 		}
 		if (pageType == PageType.FAQ) {
 			try {
-				if (level.equals(ContentLevel.SECTION)){
+				if (level.equals(ContentLevel.TOP)){
 					String faqCategory = Templates.FAQ.getHtmlName();
 					faqCategory = faqCategory.replaceAll("%NAME%", FaqGenerator.FAQ_CATEGORY_LIST_PAGE);
+					return faqCategory;
+				}else if (level.equals(ContentLevel.SECTION)){
+					String faqCategory = Templates.FAQ.getHtmlName();
+					faqCategory = faqCategory.replaceAll("%NAME%", FaqGenerator.FAQ_CATEGORY_BY_SECTION_PAGE + ident);
 					return faqCategory;
 				}else if (level.equals(ContentLevel.CATEGORY)){
 					IManagerBean bean = BeanManager.getManagerBean(FaqCategory.class);
@@ -324,7 +355,7 @@ public class MenuOptionUtil {
 				pageType == PageType.ARTICLE_SERVICES ||
 				pageType == PageType.ARTICLE_OTHER ) {
 			try {
-				if (level.equals(ContentLevel.SECTION)){
+				if (level.equals(ContentLevel.CATEGORY)){
 					IManagerBean bean = BeanManager.getManagerBean(ArticleCategory.class);
 					Criteria criteria = new Criteria();
 					criteria.addEqualExpression(bean.getFieldName(ICMSAlias.ARTICLE_CATEGORY_ID), ident);
@@ -343,7 +374,7 @@ public class MenuOptionUtil {
 							article = article.replaceAll("%NAME%", ArticleType.OTHER.getName()+"_"+ac.getAlias());
 						return article;
 					}
-				}else if (level.equals(ContentLevel.CATEGORY)){
+				}else if (level.equals(ContentLevel.ELEMENT)){
 					IManagerBean bean = BeanManager.getManagerBean(Article.class);
 					Criteria criteria = new Criteria();
 					criteria.addEqualExpression(bean.getFieldName(ICMSAlias.ARTICLE_ID), ident);
