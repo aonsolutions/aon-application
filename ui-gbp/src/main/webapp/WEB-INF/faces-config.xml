@@ -36,6 +36,12 @@
 		<converter-class>com.code.ui.gbp.converter.OfferStatusConverter</converter-class>
 	</converter>
 
+	<converter>
+		<description>Conversor para los ProFormaStatus</description>
+		<converter-id>proFormaStatusConverter</converter-id>
+		<converter-class>com.code.ui.gbp.converter.ProFormaStatusConverter</converter-class>
+	</converter>
+
 	<lifecycle>
 		<phase-listener>
 			com.code.aon.faces.component.sandbox.ValueChangePhaseListener
