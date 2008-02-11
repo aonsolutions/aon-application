@@ -20,10 +20,10 @@
 	application. It may be given here for standalone wars.
 	-->
 	<context-root>/gbp</context-root>
-	
+ 
 	<resource-env-ref>
 	  <resource-env-ref-name>jdbc/GBP</resource-env-ref-name>
-	  <jndi-name>java:/GBP</jndi-name>
+	  <jndi-name>java:/GBPDS</jndi-name>
 	</resource-env-ref>
 
 </jboss-web>
