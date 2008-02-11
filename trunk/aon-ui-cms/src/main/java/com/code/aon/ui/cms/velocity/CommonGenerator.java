@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
+import com.code.aon.cms.ConfigDetail;
 import com.code.aon.cms.Footer;
 import com.code.aon.cms.FooterDetail;
 import com.code.aon.cms.Header;
@@ -20,8 +21,6 @@ import com.code.aon.cms.Sidebar;
 import com.code.aon.cms.SidebarOption;
 import com.code.aon.cms.SidebarOptionDetail;
 import com.code.aon.cms.dao.ICMSAlias;
-import com.code.aon.cms.enumeration.ContentLevel;
-import com.code.aon.cms.enumeration.MenuType;
 import com.code.aon.cms.enumeration.SidebarSide;
 import com.code.aon.cms.enumeration.Templates;
 import com.code.aon.common.BeanManager;
@@ -40,7 +39,7 @@ import com.code.aon.ui.cms.velocity.attribute.SidebarOptionHandler;
 public class CommonGenerator extends Generator {
 
 	private Section previousSection = null;
-	
+
     static private CommonGenerator singleton = null;
 
     private CommonGenerator() { }
@@ -53,8 +52,8 @@ public class CommonGenerator extends Generator {
         return singleton;
     }
 
-    static public void init() {
-    	singleton = null;    	
+    public void init() {
+    	this.previousSection = null;
     }
 
 	public void chargeContext(VelocityUtil vu, Section section) {
@@ -63,6 +62,8 @@ public class CommonGenerator extends Generator {
 				section.getId().intValue()!=previousSection.getId().intValue()){
 			
 			previousSection = section; 
+			
+			ConfigDetail configDetail = ControllerUtil.getCurrentConfigDetail();
 			
 			// $default_menu from default sidebar menu in database
 			vu.put("is_menu", section.isShow_menu());
@@ -119,25 +120,25 @@ public class CommonGenerator extends Generator {
 			// $default_css from config
 			vu.addMessage(" - CSS de página por defecto", VelocityUtil.INFO);
 			String css = "";
-			if (ControllerUtil.getCurrentConfigDetail() != null) css = ControllerUtil.getCurrentConfigDetail().getCss();
+			if (configDetail != null) css = configDetail.getCss();
 			vu.put("default_css", css);
 			
 			// $default_javascript from config
 			vu.addMessage(" - JavaScript de página por defecto", VelocityUtil.INFO);
 			String javascript = "";
-			if (ControllerUtil.getCurrentConfigDetail() != null) javascript = ControllerUtil.getCurrentConfigDetail().getJavascript();
+			if (configDetail != null) javascript = configDetail.getJavascript();
 			vu.put("default_javascript", javascript);
 
 			// $default_description from config
 			vu.addMessage(" - Descripcion de página por defecto", VelocityUtil.INFO);
 			String description = "";
-			if (ControllerUtil.getCurrentConfigDetail() != null) description = ControllerUtil.getCurrentConfigDetail().getDescription();
+			if (configDetail != null) description = configDetail.getDescription();
 			vu.put("default_description", description);
 			
 			// $default_keywords from config
 			vu.addMessage(" - KeyWords de página por defecto", VelocityUtil.INFO);
 			String keywords = "";
-			if (ControllerUtil.getCurrentConfigDetail() != null) keywords = ControllerUtil.getCurrentConfigDetail().getKeywords();
+			if (configDetail != null) keywords = configDetail.getKeywords();
 			vu.put("default_keywords", keywords);
 
 			// $bundle from config
@@ -154,7 +155,31 @@ public class CommonGenerator extends Generator {
 		}
 	}
 
-	private static HeaderHandler getHeaderHandler(Header h) {
+	public void removeContext(VelocityUtil vu){
+		vu.remove("is_menu");
+		vu.remove("default_menu");
+		vu.remove("is_menu_alt");
+		vu.remove("default_menu_alt");
+		vu.remove("is_header");
+		vu.remove("default_header");
+		vu.remove("is_sidebar_left");
+		vu.remove("is_sidebar_right");
+		vu.remove("default_sidebar_left");
+		vu.remove("default_sidebar_right");
+		vu.remove("is_footer");
+		vu.remove("default_footer");
+		vu.remove("default_css");
+		vu.remove("default_javascript");
+		vu.remove("default_description");
+		vu.remove("default_keywords");
+        vu.remove("language");
+		vu.remove("bundle");
+        vu.remove("every_languages");
+        vu.remove("default_language");
+		vu = null;
+	}
+	
+	private HeaderHandler getHeaderHandler(Header h) {
 		try {
 			IManagerBean bean = BeanManager.getManagerBean(HeaderDetail.class);
 			Criteria criteria = new Criteria();
@@ -172,7 +197,7 @@ public class CommonGenerator extends Generator {
 		return null;
 	}
 
-	private static ArrayList<SidebarOptionHandler> getSidebarHandler(Sidebar s, SidebarSide sidebarSide) {
+	private ArrayList<SidebarOptionHandler> getSidebarHandler(Sidebar s, SidebarSide sidebarSide) {
 		ArrayList<SidebarOptionHandler> list = new ArrayList<SidebarOptionHandler>();
 		try {
 			IManagerBean bean = BeanManager.getManagerBean(SidebarOption.class);
@@ -204,7 +229,7 @@ public class CommonGenerator extends Generator {
 		return list;
 	}
 
-	private static FooterHandler getFooterHandler(Footer f) {
+	private FooterHandler getFooterHandler(Footer f) {
 		try {
 			IManagerBean bean = BeanManager.getManagerBean(FooterDetail.class);
 			Criteria criteria = new Criteria();
@@ -222,7 +247,7 @@ public class CommonGenerator extends Generator {
 		return null;
 	}
 	
-	public static void generateLanguagePage(VelocityUtil vu) {
+	public void generateLanguagePage(VelocityUtil vu) {
         vu.put("every_languages", getActiveLanguages());
         vu.put("default_language", getDefaultLanguage());
 
@@ -250,7 +275,7 @@ public class CommonGenerator extends Generator {
 		return null;
 	}
 
-	private static ArrayList<LanguageHandler> getActiveLanguages() {
+	private ArrayList<LanguageHandler> getActiveLanguages() {
 		ArrayList<LanguageHandler> list = new ArrayList<LanguageHandler>();
 		try {
 			IManagerBean bean = BeanManager.getManagerBean(Language.class);
@@ -268,7 +293,7 @@ public class CommonGenerator extends Generator {
 		return list;
 	}
 
-	private static class TemplateBundleClassLoader extends ClassLoader {
+	private class TemplateBundleClassLoader extends ClassLoader {
 
 		@Override
 		protected URL findResource(String name) {

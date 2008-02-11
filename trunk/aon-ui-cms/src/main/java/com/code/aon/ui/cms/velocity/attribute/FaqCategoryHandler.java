@@ -46,28 +46,34 @@ public class FaqCategoryHandler {
 
 	private ArrayList<FaqHandler> getFaqList(FaqCategory fc) {
 		ArrayList<FaqHandler> list = new ArrayList<FaqHandler>();
+		List<ITransferObject> ld;
 		try {
 			IManagerBean bean = BeanManager.getManagerBean(Faq.class);
+			IManagerBean detailBean = BeanManager.getManagerBean(FaqDetail.class);
 			Criteria criteria = new Criteria();
 			criteria.addEqualExpression(bean.getFieldName(ICMSAlias.FAQ_FAQ_CATEGORY_ID), fc.getId());
 			criteria.addEqualExpression(bean.getFieldName(ICMSAlias.FAQ_ACTIVE), true);
 			criteria.addOrder(bean.getFieldName(ICMSAlias.FAQ_POSITION));
 			List<ITransferObject> l = (List<ITransferObject>)bean.getList(criteria);
+			Criteria detailCriteria;
+			Faq f;
+			FaqDetail fd;
 			for (int i = 0; i < l.size(); i++) {
-				Faq f = (Faq)l.get(i);
-				IManagerBean detailBean = BeanManager.getManagerBean(FaqDetail.class);
-				Criteria detailCriteria = new Criteria();
+				f = (Faq)l.get(i);
+				detailCriteria = new Criteria();
 				detailCriteria.addEqualExpression(detailBean.getFieldName(ICMSAlias.FAQ_DETAIL_FAQ_ID), f.getId());
 				detailCriteria.addEqualExpression(detailBean.getFieldName(ICMSAlias.FAQ_DETAIL_LANGUAGE_ID), ControllerUtil.getCurrentLanguage().getId());
-				List<ITransferObject> ld = (List<ITransferObject>)detailBean.getList(detailCriteria);
+				ld = (List<ITransferObject>)detailBean.getList(detailCriteria);
 				if (ld.size() > 0) {
-					FaqDetail fd = (FaqDetail)ld.get(0);
+					fd = (FaqDetail)ld.get(0);
 					FaqHandler fh = new FaqHandler(fd);
 					list.add(fh);
 				}
 			}
 		} catch (ManagerBeanException e) {
 			e.printStackTrace();
+		} finally {
+			ld = null;
 		}
 		return list;
 	}

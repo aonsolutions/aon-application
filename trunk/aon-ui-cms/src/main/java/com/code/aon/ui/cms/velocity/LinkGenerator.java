@@ -22,15 +22,17 @@ import com.code.aon.ui.cms.velocity.attribute.LinkCategoryHandler;
 public class LinkGenerator extends Generator {
 
 	public static void generate(VelocityUtil vu) {
+		ArrayList<LinkCategoryHandler> lchList;
+		List<ITransferObject> linkCategoryDetailList;
 		try {
-			ArrayList<LinkCategoryHandler> lchList = new ArrayList<LinkCategoryHandler>(); 
-			
+			lchList = new ArrayList<LinkCategoryHandler>(); 
 			IManagerBean bean = BeanManager.getManagerBean(LinkCategoryDetail.class);
 			Criteria criteria = new Criteria();
 			criteria.addEqualExpression(bean.getFieldName(ICMSAlias.LINK_CATEGORY_DETAIL_LANGUAGE_ID), ControllerUtil.getCurrentLanguage().getId());
-			List<ITransferObject> l = (List<ITransferObject>)bean.getList(criteria);
-			for (int i=0; i < l.size(); i++) {
-				LinkCategoryDetail lcd = (LinkCategoryDetail)l.get(i);
+			linkCategoryDetailList = (List<ITransferObject>)bean.getList(criteria);
+			LinkCategoryDetail lcd;
+			for (int i=0; i < linkCategoryDetailList.size(); i++) {
+				lcd = (LinkCategoryDetail)linkCategoryDetailList.get(i);
 				if (lcd.getLinkCategory().isActive()) {
 					LinkCategoryHandler lch = new LinkCategoryHandler(lcd);
 					lchList.add(lch);
@@ -46,6 +48,9 @@ public class LinkGenerator extends Generator {
 			vu.remove("link_categories");
 		} catch (ManagerBeanException e) {
 			e.printStackTrace();
+		} finally {
+			linkCategoryDetailList = null;
+			lchList = null;
 		}
 	}
 	

@@ -18,13 +18,15 @@ import com.code.aon.ui.cms.velocity.attribute.GenericPageHandler;
 public class GenericGenerator extends Generator {
 
 	public static void generate(VelocityUtil vu) {
+		List<ITransferObject> genericPageDetailList;
 		try {
 			IManagerBean bean = BeanManager.getManagerBean(GenericPageDetail.class);
 			Criteria criteria = new Criteria();
 			criteria.addEqualExpression(bean.getFieldName(ICMSAlias.GENERIC_PAGE_DETAIL_LANGUAGE_ID), ControllerUtil.getCurrentLanguage().getId());
-			List<ITransferObject> l = (List<ITransferObject>)bean.getList(criteria);
-			for (int i=0; i < l.size(); i++) {
-				GenericPageDetail gpd = (GenericPageDetail)l.get(i);
+			genericPageDetailList = (List<ITransferObject>)bean.getList(criteria);
+			GenericPageDetail gpd;
+			for (int i=0; i < genericPageDetailList.size(); i++) {
+				gpd = (GenericPageDetail)genericPageDetailList.get(i);
 				if (gpd.getGeneric_page().isActive()) {
 					GenericPageHandler gph = new GenericPageHandler(gpd);
 					vu.put("generic", gph);
@@ -38,33 +40,42 @@ public class GenericGenerator extends Generator {
 					CommonGenerator.getCommonGenerator().chargeContext(vu, gpd.getGeneric_page().getSection());
 					generate(vu, Templates.GENERIC, gpd.getGeneric_page().getAlias());
 					vu.remove("generic");
+					vu.remove("description");
+					vu.remove("keywords");
 				}
 			}
 		} catch (ManagerBeanException e) {
 			e.printStackTrace();
+		} finally {
+			genericPageDetailList = null;
 		}
 	}
 
 	public static Object getGenericHandler(Integer ident) {
+		List<ITransferObject> genericPageList;
+		List<ITransferObject> genericPageDetailList;
 		try {
 			IManagerBean bean = BeanManager.getManagerBean(GenericPage.class);
 			Criteria criteria = new Criteria();
 			criteria.addEqualExpression(bean.getFieldName(ICMSAlias.GENERIC_PAGE_ID), ident);
-			List<ITransferObject> l = (List<ITransferObject>)bean.getList(criteria);
+			genericPageList = (List<ITransferObject>)bean.getList(criteria);
 			
-			GenericPage gp = (GenericPage)l.get(0);
+			GenericPage gp = (GenericPage)genericPageList.get(0);
 			if (gp.isActive()) {
 				IManagerBean beanDetail = BeanManager.getManagerBean(GenericPageDetail.class);
 				criteria = new Criteria();
 				criteria.addEqualExpression(beanDetail.getFieldName(ICMSAlias.GENERIC_PAGE_DETAIL_LANGUAGE_ID), ControllerUtil.getCurrentLanguage().getId());
 				criteria.addEqualExpression(beanDetail.getFieldName(ICMSAlias.GENERIC_PAGE_DETAIL_GENERIC_PAGE_ID), ident);
-				List<ITransferObject> ld = (List<ITransferObject>)beanDetail.getList(criteria);
-				GenericPageDetail gpd = (GenericPageDetail)ld.get(0);
+				genericPageDetailList = (List<ITransferObject>)beanDetail.getList(criteria);
+				GenericPageDetail gpd = (GenericPageDetail)genericPageDetailList.get(0);
 				GenericPageHandler gph = new GenericPageHandler(gpd);
 				return gph;
 			}
 		} catch (ManagerBeanException e) {
 			e.printStackTrace();
+		} finally {
+			genericPageList = null;
+			genericPageDetailList = null;
 		}
 		return null;
 	}

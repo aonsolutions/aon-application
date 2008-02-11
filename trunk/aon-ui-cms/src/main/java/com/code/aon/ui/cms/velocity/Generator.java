@@ -22,6 +22,7 @@ public class Generator {
 	    if (template != null && content != null) {
 	        vu.put("content", content);
 	        vu.generate(template, page);
+	        vu.remove("content");
 	    }
 	    else {
 	    	vu.addMessage("No se ha encontrado plantilla " + type.getTemplateName(), VelocityUtil.ERROR);
