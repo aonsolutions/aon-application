@@ -26,7 +26,6 @@
 					</aon:div>
 
 					<aon:div styleClass="aon-finding-toolbar-item-group">
-					<!-- 
 						<aon:confirmButton id="save" value="#{bundle.aon_save}"
 							rendered="#{proForma.to!=null or proForma.new}"
 							reRender="gridToolbar"
@@ -35,7 +34,6 @@
 							confirmMessage="#{bundle.aon_save_confirm}"
 							confirmActionListener="#{proForma.accept}"
 							accesskey="#{bundle.aon_key_save}" />
-					 -->		
 						<aon:confirmButton id="cancel" value="#{bundle.aon_cancel}"
 							rendered="#{proForma.to!=null or proForma.new}"
 							styleClass="aon-finding-toolbar-item aon-icon-cancel"
@@ -58,7 +56,7 @@
 
 					<aon:outputLabel for="ProFormaInvoice_campaign_code"
 						value="#{appBundle.gbp_proforma_invoice_campaign_code}" />
-					<aon:inputText id="Offer_campaign_code" size="16"
+					<aon:inputText id="ProFormaInvoice_campaign_code" size="16"
 						disabled="true" styleClass="aon-inputText-disabled"
 						maxlength="16" value="#{proForma.to.campaign.code}" />
 
@@ -79,10 +77,17 @@
 							timeZone="#{timeZoneController.timeZoneId}" />
 					</aon:inputText>	
 
+					<aon:outputLabel for="ProFormaInvoice_amount"
+						value="#{appBundle.gbp_proforma_invoice_amount}" />
+					<aon:inputText id="ProFormaInvoice_amount" 
+						size="16" maxlength="16"
+						disabled="true" styleClass="aon-inputText-disabled"
+						value="#{proForma.to.amount}" />
+
 					<aon:outputLabel for="ProFormaInvoice_office_id"
 						value="#{appBundle.gbp_proforma_invoice_office}" />
 					<aon:selectOneMenu id="ProFormaInvoice_office_id"
-						value="#{proForma.to.office.id}" disabled="true">
+						value="#{proForma.to.office.id}">
 						<f:selectItem value="#{nullSelectItem.value}" />
 						<f:selectItems value="#{GBPCollections.offices}" />
 					</aon:selectOneMenu>
@@ -90,7 +95,7 @@
 					<aon:outputLabel for="ProFormaInvoice_costType"
 						value="#{appBundle.gbp_proforma_invoice_cost_type}" />
 					<aon:selectOneMenu id="ProFormaInvoice_costType"
-						value="#{proForma.to.costType}" disabled="true">
+						value="#{proForma.to.costType}">
 						<f:selectItem value="#{nullSelectItem.value}" />
 						<f:selectItems value="#{GBPCollections.costTypes}" />
 					</aon:selectOneMenu>
@@ -98,14 +103,7 @@
 					<aon:outputLabel for="ProFormaInvoice_centralized"
 						value="#{appBundle.gbp_proforma_invoice_centralized}" />
 					<aon:selectBooleanCheckbox id="ProFormaInvoice_centralized"
-						value="#{proForma.to.centralized}" disabled="true"/>
-
-					<aon:outputLabel for="ProFormaInvoice_amount"
-						value="#{appBundle.gbp_proforma_invoice_amount}" />
-					<aon:inputText id="ProFormaInvoice_amount" 
-						size="16" maxlength="16"
-						disabled="true" styleClass="aon-inputText-disabled"
-						value="#{proForma.to.amount}" />
+						value="#{proForma.to.centralized}"/>
 
 					<aon:outputLabel for="ProFormaInvoice_status"
 						value="#{appBundle.gbp_proforma_invoice_status}" />
