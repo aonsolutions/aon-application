@@ -211,7 +211,8 @@ public class CollectionsController {
 	public List<SelectItem> getSidebarTypes() throws ManagerBeanException, ExpressionException {
 		List<SelectItem> types = new LinkedList<SelectItem>();
 		Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
-		SelectItem item;
+		SelectItem item = new SelectItem("", "");
+		types.add(item);
 		for (SidebarType sidebarType : SidebarType.values()) {
 			String name = sidebarType.getName(locale);
 			item = new SelectItem(sidebarType, name);
@@ -302,7 +303,8 @@ public class CollectionsController {
 	public List<SelectItem> getModularPageOptionTypes() throws ManagerBeanException, ExpressionException {
 		List<SelectItem> types = new LinkedList<SelectItem>();
 		Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
-		SelectItem item;
+		SelectItem item = new SelectItem("", "");
+		types.add(item);
 		for (ModularPageOptionType pageType : ModularPageOptionType.values()) {
 			String name = pageType.getName(locale);
 			item = new SelectItem(pageType, name);
