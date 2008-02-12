@@ -35,7 +35,9 @@
 				<aon:outputLabel for="password"
 					value="#{securityBundle.aon_login_passwd}:"
 					styleClass="aon-login-label" />
-				<aon:inputText id="password" required="true" size="16"
+				<aon:inputSecret id="password" 
+					required="true" size="16"
+					styleClass="aon-inputText"
 					maxlength="16" value="#{login.password}" />
 	
 				<aon:outputLabel for="login_btn" value="" />
@@ -47,6 +49,9 @@
 		</aon:div>
 	</aon:panelGrid>
 	</aon:form>
+	<script>
+		document.getElementsByTagName("input")[0].focus();
+	</script>
 
 </ui:composition>
 
