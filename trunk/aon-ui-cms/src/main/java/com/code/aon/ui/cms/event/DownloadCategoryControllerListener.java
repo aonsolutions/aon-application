@@ -32,6 +32,13 @@ public class DownloadCategoryControllerListener extends ControllerAdapter {
 		DownloadCategory downloadCategory = (DownloadCategory)event.getController().getTo();
 		downloadCategory.setActive(true);
 		downloadCategory.setPosition(getLastPosition(event));
+		assignSection(event);
+	}
+
+	@Override
+	public void beforeBeanUpdated(ControllerEvent event)
+			throws ControllerListenerException {
+		assignSection(event);
 	}
 	
 	private int getLastPosition(ControllerEvent event) {
@@ -48,5 +55,12 @@ public class DownloadCategoryControllerListener extends ControllerAdapter {
 		}catch (ManagerBeanException e) {
 		}
 		return position;
+	}
+	
+	private void assignSection(ControllerEvent event){
+		DownloadCategory to = (DownloadCategory)event.getController().getTo();
+		if (to.getSection().getId()==-1){
+			to.setSection(null);
+		}
 	}
 }

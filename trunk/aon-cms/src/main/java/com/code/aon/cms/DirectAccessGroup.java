@@ -60,7 +60,7 @@ public class DirectAccessGroup implements ITransferObject {
 	}
 
 	@ManyToOne(fetch = FetchType.EAGER)
-	@JoinColumn(name = "section", nullable = false)
+	@JoinColumn(name = "section")
 	public Section getSection() {
 		return section;
 	}

@@ -2,6 +2,7 @@ package com.code.aon.ui.cms.event;
 
 import java.util.List;
 
+import com.code.aon.cms.DownloadCategory;
 import com.code.aon.cms.FaqCategory;
 import com.code.aon.cms.dao.ICMSAlias;
 import com.code.aon.common.BeanManager;
@@ -34,6 +35,13 @@ public class FaqCategoryControllerListener extends ControllerAdapter {
 		FaqCategory faqCategory = (FaqCategory)controller.getTo();
 		faqCategory.setActive(true);
 		faqCategory.setPosition(getLastPosition(event));
+		assignSection(event);
+	}
+
+	@Override
+	public void beforeBeanUpdated(ControllerEvent event)
+			throws ControllerListenerException {
+		assignSection(event);
 	}
 	
 	private int getLastPosition(ControllerEvent event) {
@@ -50,6 +58,13 @@ public class FaqCategoryControllerListener extends ControllerAdapter {
 		}catch (ManagerBeanException e) {
 		}
 		return position;
+	}
+
+	private void assignSection(ControllerEvent event){
+		FaqCategory to = (FaqCategory)event.getController().getTo();
+		if (to.getSection().getId()==-1){
+			to.setSection(null);
+		}
 	}
 
 }

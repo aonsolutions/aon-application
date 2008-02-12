@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.code.aon.cms.Article;
 import com.code.aon.cms.ArticleCategory;
+import com.code.aon.cms.ModularPage;
 import com.code.aon.cms.dao.ICMSAlias;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
@@ -33,6 +34,12 @@ public class ArticleCategoryControllerListener extends ControllerAdapter {
 		ArticleCategory articleCategory = (ArticleCategory)event.getController().getTo();
 		articleCategory.setActive(true);
 		articleCategory.setPosition(getLastPosition(event));
+		assignSection(event);
+	}
+
+	@Override
+	public void beforeBeanUpdated(ControllerEvent event) throws ControllerListenerException {
+		assignSection(event);
 	}
 	
 	private int getLastPosition(ControllerEvent event) {
@@ -49,6 +56,13 @@ public class ArticleCategoryControllerListener extends ControllerAdapter {
 		}catch (ManagerBeanException e) {
 		}
 		return position;
+	}
+
+	private void assignSection(ControllerEvent event){
+		ArticleCategory to = (ArticleCategory)event.getController().getTo();
+		if (to.getSection().getId()==-1){
+			to.setSection(null);
+		}
 	}
 
 }
