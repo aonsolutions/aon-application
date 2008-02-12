@@ -175,9 +175,9 @@
 							<aon:outputLabel for="DownloadDetail_description"
 								styleClass="aon-form-input-text-label"
 								value="#{appBundle.download_description}" />
-							<aon:inputTextarea id="DownloadDetail_description" style="width:300px;height:60px"
-								styleClass="aon-form-input-text aon-form-input-text-number" partialSubmit="false"
-								value="#{download.toI18n.description}" />
+							<aon:inputRichText id="DownloadDetail_description"
+								toolbarSet="Default" 
+								value="#{download.toI18n.description}"/>
 
 						</aon:panelGrid>
 					</aon:panelGrid>
