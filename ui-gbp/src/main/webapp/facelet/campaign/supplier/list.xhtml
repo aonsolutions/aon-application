@@ -47,15 +47,15 @@
 			</f:facet>
 			<aon:outputText value="#{to.supplier.name}" rendered="#{to!=campaignSupplier.to}" />
 			<aon:div layout="none">
-				<aon:div rendered="#{to==campaignSupplier.to}">
+				<aon:div styleClass="aon-lookup" rendered="#{to==campaignSupplier.to}">
 					<aon:lookupInputText id="Supplier_id-Edit"
 						lookup="#{supplierLookup}"
 						value="#{campaignSupplier.to.supplier.id}" size="5"
-						reRender="Supplier_name-Edit">
+						reRender="campaignSupplierDataTable">
 					</aon:lookupInputText>
 					<aon:lookupButton id="Supplier_Lookup-Edit"
 						windowTitle="#{appBundle.gbp_campaign_supplier}"
-						selectReRender="Supplier_id-Edit, Supplier_name-Edit"
+						selectReRender="campaignSupplierDataTable"
 						lookup="#{supplierLookup}" actionType="search"
 						property="#{campaignSupplier.to.supplier}">
 					</aon:lookupButton>
@@ -90,7 +90,7 @@
 			</f:facet>
 			<f:verbatim rendered="#{to!=campaignSupplier.to}">&#160;</f:verbatim>
 			<aon:div rendered="#{to==campaignSupplier.to}">
-				<aon:commandButton id="lineAccept" title="[#{bundle.aon_accept}]"
+				<h:commandButton id="lineAccept" title="[#{bundle.aon_accept}]"
 					styleClass="aon-editDataTable-button aon-icon-accept"
 					reRender="campaignSupplierDataTable"
 					actionListener="#{campaignSupplier.onAccept}" />
@@ -106,7 +106,7 @@
 			<f:facet name="footer">
 				<aon:div rendered="#{campaignSupplier.new}">
 					<f:verbatim rendered="#{!campaignSupplier.new}">&#160;</f:verbatim>
-					<aon:commandButton id="newAccept" title="[#{bundle.aon_accept}]"
+					<h:commandButton id="newAccept" title="[#{bundle.aon_accept}]"
 						styleClass="aon-editDataTable-button aon-icon-accept"
 						reRender="campaignSupplierDataTable"
 						actionListener="#{campaignSupplier.onAccept}" />
