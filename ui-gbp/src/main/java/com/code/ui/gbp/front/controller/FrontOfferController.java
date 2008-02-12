@@ -55,6 +55,7 @@ public class FrontOfferController extends BasicController {
 		invoice.setStatus(ProFormaInvoiceStatus.PENDING);
 		invoice.setSupplier(offer.getSupplier());
 		proFormaController.accept(event);
+		proFormaController.setModel(null);
 	}
 	
 	@SuppressWarnings("unchecked")
