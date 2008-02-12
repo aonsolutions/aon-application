@@ -1,9 +1,6 @@
 package com.code.ui.gbp.event;
 
-import com.code.aon.common.BeanManager;
-import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
-import com.code.aon.ui.form.IController;
 import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
@@ -13,6 +10,7 @@ import com.code.gbp.Offer;
 import com.code.gbp.dao.IGBPAlias;
 import com.code.gbp.enumeration.IncidenceSource;
 import com.code.gbp.enumeration.OfferStatus;
+import com.code.ui.gbp.controller.OfferController;
 
 public class OfferIncidenceControllerListener extends ControllerAdapter {
 
@@ -33,9 +31,9 @@ public class OfferIncidenceControllerListener extends ControllerAdapter {
 		try {
 			Incidence incidence = (Incidence)event.getController().getTo();
 			incidence.setSource(IncidenceSource.OFFER);
-			IController offerController = AonUtil.getController(OFFER_CONTROLLER_NAME);
+			OfferController offerController = (OfferController)AonUtil.getController(OFFER_CONTROLLER_NAME);
 			Offer offer = (Offer)offerController.getTo(); 
-			updateOfferStatus(offer, OfferStatus.INCIDENCES);
+			updateOfferStatus(offerController, OfferStatus.INCIDENCES);
 			incidence.setCampaign(offer.getCampaign());
 			incidence.setSupplier(offer.getSupplier());
 		} catch (ManagerBeanException e) {
@@ -47,18 +45,16 @@ public class OfferIncidenceControllerListener extends ControllerAdapter {
 	public void beforeBeanRemoved(ControllerEvent event) throws ControllerListenerException {
 		try {
 			if(event.getController().getModel().getRowCount() == 1){
-				IController offerController = AonUtil.getController(OFFER_CONTROLLER_NAME);
-				Offer offer = (Offer)offerController.getTo(); 
-				updateOfferStatus(offer, OfferStatus.PENDING);
+				OfferController offerController = (OfferController)AonUtil.getController(OFFER_CONTROLLER_NAME);
+				updateOfferStatus(offerController, OfferStatus.PENDING);
 			}
 		} catch (ManagerBeanException e) {
 			throw new ControllerListenerException(e);
 		}
 	}
 
-	private void updateOfferStatus(Offer offer, OfferStatus status) throws ManagerBeanException {
-		IManagerBean offerBean = BeanManager.getManagerBean(Offer.class);
-		offer.setStatus(status);
-		offerBean.update(offer);
+	private void updateOfferStatus(OfferController offerController, OfferStatus status) throws ManagerBeanException {
+		((Offer)offerController.getTo()).setStatus(status);
+		offerController.accept(null);
 	}
 }
