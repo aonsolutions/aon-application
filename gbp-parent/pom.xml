@@ -6,7 +6,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.code.gbp</groupId>
 	<artifactId>gbp.parent</artifactId>
-	<version>1.0.0</version>
+	<version>1.0.1</version>
 	<packaging>pom</packaging>
 	<description>POM padre de los proyectos GBP</description>
 	<name>GBP PARENT</name>
@@ -84,7 +84,7 @@
 						<configuration>
 							<outDir>/target/graph</outDir>
 							<outFile>
-								${pom.artifactId}-${pom.version}-aon.png
+								${pom.artifactId}-${pom.version}-gbp.png
 							</outFile>
 							<groupFilter>com.code.gbp</groupFilter>
 						</configuration>
