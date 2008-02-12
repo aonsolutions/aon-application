@@ -14,6 +14,7 @@ import com.code.aon.cms.ArticleDocumentDetail;
 import com.code.aon.cms.ArticleRelated;
 import com.code.aon.cms.dao.ICMSAlias;
 import com.code.aon.cms.enumeration.ArticleType;
+import com.code.aon.cms.enumeration.MenuType;
 import com.code.aon.cms.enumeration.Templates;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
@@ -41,6 +42,7 @@ public class ArticleGenerator extends Generator {
 			IManagerBean articleDetailBean = BeanManager.getManagerBean(ArticleDetail.class);
 			
 			ArticleType[] values = ArticleType.values();
+			Templates templates;
 			
 			Criteria articleCategoryCriteria = new Criteria();
 			Criteria articleCategoryDetailCriteria;
@@ -65,6 +67,7 @@ public class ArticleGenerator extends Generator {
 				if (articleCategoryDetailList.size() > 0) {
 					articleCategoryDetail = (ArticleCategoryDetail)articleCategoryDetailList.get(0);
 					for (int art_type = 0; art_type < values.length; art_type++){
+						templates = ArticleGenerator.getTemplate(art_type);
 						articleCriteria = new Criteria();
 						articleCriteria.addEqualExpression(articleBean.getFieldName(ICMSAlias.ARTICLE_ARTICLE_CATEGORY_ID), articleCategory.getId());
 						articleCriteria.addEqualExpression(articleBean.getFieldName(ICMSAlias.ARTICLE_ACTIVE), true);
@@ -85,7 +88,7 @@ public class ArticleGenerator extends Generator {
 									vu.put("article", ahandler);
 									vu.addMessage(" Generando article " + article.getAlias() + ".", VelocityUtil.INFO);
 									CommonGenerator.getCommonGenerator().chargeContext(vu, articleCategory.getSection());
-									generate(vu, Templates.ARTICLE, article.getAlias());
+									generate(vu, templates, article.getAlias());
 									vu.remove("article");
 								}
 							}
@@ -94,7 +97,7 @@ public class ArticleGenerator extends Generator {
 							vu.put("article_list", ahlist);
 							vu.addMessage(" Generando list de article.", VelocityUtil.INFO);
 							CommonGenerator.getCommonGenerator().chargeContext(vu, articleCategory.getSection());
-							generate(vu, Templates.ARTICLE, values[art_type].getName()+"_"+articleCategory.getAlias());
+							generate(vu, templates, values[art_type].getName()+"_"+articleCategory.getAlias());
 							vu.remove("article_category");
 							vu.remove("article_list");
 							achlist.add(achandler);
@@ -113,6 +116,21 @@ public class ArticleGenerator extends Generator {
 		}
 	}
 	
+	public static Templates getTemplate(int art_type) {
+		switch (art_type) {
+		case 0:
+			return Templates.ARTICLE_NEWS;
+		case 1:
+			return Templates.ARTICLE_SERVICES;
+		case 2:
+			return Templates.ARTICLE_EVENTS;
+		case 3:
+			return Templates.ARTICLE_OTHER;
+		default:
+			return Templates.ARTICLE_OTHER;
+		}
+	}
+
 	public static Object getArticleHandler(Integer ident) {
 		try {
 			IManagerBean bean = BeanManager.getManagerBean(Article.class);

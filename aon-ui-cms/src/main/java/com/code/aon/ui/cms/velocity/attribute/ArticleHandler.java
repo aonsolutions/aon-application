@@ -15,6 +15,7 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.cms.util.ControllerUtil;
+import com.code.aon.ui.cms.velocity.ArticleGenerator;
 
 public class ArticleHandler {
 
@@ -42,12 +43,12 @@ public class ArticleHandler {
 		this.title = ad.getTitle();
 		this.subtitle = ad.getSubtitle();
 		this.content = ad.getContent();
-		this.url = Templates.ARTICLE.getHtmlName();
-		this.url = this.url.replaceAll("%NAME%", ad.getArticle().getAlias());
 		this.article = ad.getArticle();
 		this.image = this.article.getImage(); 
 		this.thumbnail = this.article.getThumbnail(); 
 		this.alt = ad.getAlt(); 
+		this.url = ArticleGenerator.getTemplate(this.article.getArticleType().ordinal()).getHtmlName();
+		this.url = this.url.replaceAll("%NAME%", ad.getArticle().getAlias());
 	}
 
 	public String getTitle() {

@@ -51,14 +51,29 @@ public enum Templates implements IResourceable {
 	 * MODULAR
 	 */
 	MODULAR,
-
+	
 	/**
-	 * ARTICLE
+	 * ARTICLE_NEWS
 	 */
-	ARTICLE,
+	ARTICLE_NEWS,
 
 	/**
-	 * ARTICLE
+	 * ARTICLE_SERVICES
+	 */
+	ARTICLE_SERVICES,
+
+	/**
+	 * ARTICLE_EVENTS
+	 */
+	ARTICLE_EVENTS,
+
+	/**
+	 * ARTICLE_OTHER
+	 */
+	ARTICLE_OTHER,
+
+	/**
+	 * DIRECT_ACCESS
 	 */
 	DIRECT_ACCESS,
 	
