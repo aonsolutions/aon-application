@@ -19,6 +19,35 @@
 	</properties>
 	<build>
 		<finalName>aon-consultant</finalName>
+
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-war-plugin</artifactId>
+				<version>2.0.2</version>
+				<configuration>
+		           <webappDirectory>/target/aon-web-consultant</webappDirectory>    
+					<webResources>
+						<resource>
+							<!-- this is relative to the pom.xml directory -->
+							<directory>../aon-web-account/src/main/webapp/_account</directory>
+							<targetPath>_account</targetPath>
+						</resource>
+						<resource>
+							<!-- this is relative to the pom.xml directory -->
+							<directory>../aon-web-finance/src/main/webapp/_finance</directory>
+							<targetPath>_finance</targetPath>
+						</resource>
+					</webResources>
+					<archive>
+						<manifestEntries>
+							<Implementation-Version>${project.version}</Implementation-Version>
+							<dbVersion>${project.dbVersion}</dbVersion>
+						</manifestEntries>
+					</archive>
+				</configuration>
+			</plugin>
+		</plugins>
 	</build>
 	<dependencies>
 		<dependency>
