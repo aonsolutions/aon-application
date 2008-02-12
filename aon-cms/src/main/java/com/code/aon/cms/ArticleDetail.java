@@ -28,7 +28,9 @@ public class ArticleDetail implements ITransferObject {
 	private String content;
 	
 	private String alt;
-	
+
+	private String alt_thumbnail;
+
 	@Id
 	@GeneratedValue
 	@Column(name = "id", nullable = false)
@@ -95,4 +97,14 @@ public class ArticleDetail implements ITransferObject {
 	public void setAlt(String alt) {
 		this.alt = alt;
 	}
+	
+	@Column(length=64)
+	public String getAlt_thumbnail() {
+		return alt_thumbnail;
+	}
+
+	public void setAlt_thumbnail(String alt_thumbnail) {
+		this.alt_thumbnail = alt_thumbnail;
+	}
+	
 }
