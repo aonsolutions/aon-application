@@ -105,6 +105,14 @@
 								required="true" size="150" maxlength="175"
 								value="#{banner.toI18n.url}" />
 
+							<aon:outputLabel for="BannerDetail_description"
+								styleClass="aon-form-input-text-label"
+								value="#{appBundle.banner_description}" />
+							<aon:inputText id="BannerDetail_description"
+								styleClass="aon-form-input-text aon-form-input-text-number"
+								required="true" size="150" maxlength="175"
+								value="#{banner.toI18n.description}" />
+
 							<aon:outputLabel for="BannerDetail_image"
 								styleClass="aon-form-input-text-label"
 								value="#{appBundle.banner_image}" />
@@ -174,15 +182,6 @@
 								</aon:div>								
 							</aon:div>
 
-							<aon:outputLabel for="BannerDetail_description"
-								styleClass="aon-form-input-text-label"
-								value="#{appBundle.banner_description}" />
-							<aon:inputText id="BannerDetail_description"
-								styleClass="aon-form-input-text aon-form-input-text-number"
-								required="true" size="150" maxlength="175"
-								value="#{banner.toI18n.description}" />
-
-							
 						</aon:panelGrid>
 					</aon:panelGrid>
 				</aon:div>
