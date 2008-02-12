@@ -1222,40 +1222,46 @@ public interface ICMSAlias {
 	String  ARTICLE_DETAIL_ALT = ARTICLE_DETAIL_ENTRY.getAliasNames()[0];
 
 	/** 
+	* Alias value: ArticleDetail_alt_thumbnail
+	* Hibernate value: ArticleDetail.alt_thumbnail
+	*/
+	String  ARTICLE_DETAIL_ALT_THUMBNAIL = ARTICLE_DETAIL_ENTRY.getAliasNames()[1];
+
+	/** 
 	* Alias value: ArticleDetail_article_id
 	* Hibernate value: ArticleDetail.article.id
 	*/
-	String  ARTICLE_DETAIL_ARTICLE_ID = ARTICLE_DETAIL_ENTRY.getAliasNames()[1];
+	String  ARTICLE_DETAIL_ARTICLE_ID = ARTICLE_DETAIL_ENTRY.getAliasNames()[2];
 
 	/** 
 	* Alias value: ArticleDetail_content
 	* Hibernate value: ArticleDetail.content
 	*/
-	String  ARTICLE_DETAIL_CONTENT = ARTICLE_DETAIL_ENTRY.getAliasNames()[2];
+	String  ARTICLE_DETAIL_CONTENT = ARTICLE_DETAIL_ENTRY.getAliasNames()[3];
 
 	/** 
 	* Alias value: ArticleDetail_id
 	* Hibernate value: ArticleDetail.id
 	*/
-	String  ARTICLE_DETAIL_ID = ARTICLE_DETAIL_ENTRY.getAliasNames()[3];
+	String  ARTICLE_DETAIL_ID = ARTICLE_DETAIL_ENTRY.getAliasNames()[4];
 
 	/** 
 	* Alias value: ArticleDetail_language_id
 	* Hibernate value: ArticleDetail.language.id
 	*/
-	String  ARTICLE_DETAIL_LANGUAGE_ID = ARTICLE_DETAIL_ENTRY.getAliasNames()[4];
+	String  ARTICLE_DETAIL_LANGUAGE_ID = ARTICLE_DETAIL_ENTRY.getAliasNames()[5];
 
 	/** 
 	* Alias value: ArticleDetail_subtitle
 	* Hibernate value: ArticleDetail.subtitle
 	*/
-	String  ARTICLE_DETAIL_SUBTITLE = ARTICLE_DETAIL_ENTRY.getAliasNames()[5];
+	String  ARTICLE_DETAIL_SUBTITLE = ARTICLE_DETAIL_ENTRY.getAliasNames()[6];
 
 	/** 
 	* Alias value: ArticleDetail_title
 	* Hibernate value: ArticleDetail.title
 	*/
-	String  ARTICLE_DETAIL_TITLE = ARTICLE_DETAIL_ENTRY.getAliasNames()[6];
+	String  ARTICLE_DETAIL_TITLE = ARTICLE_DETAIL_ENTRY.getAliasNames()[7];
 
 
 
@@ -1886,28 +1892,34 @@ public interface ICMSAlias {
 	String  ALBUM_IMAGE_DETAIL_ALT = ALBUM_IMAGE_DETAIL_ENTRY.getAliasNames()[1];
 
 	/** 
+	* Alias value: AlbumImageDetail_alt_thumbnail
+	* Hibernate value: AlbumImageDetail.alt_thumbnail
+	*/
+	String  ALBUM_IMAGE_DETAIL_ALT_THUMBNAIL = ALBUM_IMAGE_DETAIL_ENTRY.getAliasNames()[2];
+
+	/** 
 	* Alias value: AlbumImageDetail_description
 	* Hibernate value: AlbumImageDetail.description
 	*/
-	String  ALBUM_IMAGE_DETAIL_DESCRIPTION = ALBUM_IMAGE_DETAIL_ENTRY.getAliasNames()[2];
+	String  ALBUM_IMAGE_DETAIL_DESCRIPTION = ALBUM_IMAGE_DETAIL_ENTRY.getAliasNames()[3];
 
 	/** 
 	* Alias value: AlbumImageDetail_id
 	* Hibernate value: AlbumImageDetail.id
 	*/
-	String  ALBUM_IMAGE_DETAIL_ID = ALBUM_IMAGE_DETAIL_ENTRY.getAliasNames()[3];
+	String  ALBUM_IMAGE_DETAIL_ID = ALBUM_IMAGE_DETAIL_ENTRY.getAliasNames()[4];
 
 	/** 
 	* Alias value: AlbumImageDetail_language_id
 	* Hibernate value: AlbumImageDetail.language.id
 	*/
-	String  ALBUM_IMAGE_DETAIL_LANGUAGE_ID = ALBUM_IMAGE_DETAIL_ENTRY.getAliasNames()[4];
+	String  ALBUM_IMAGE_DETAIL_LANGUAGE_ID = ALBUM_IMAGE_DETAIL_ENTRY.getAliasNames()[5];
 
 	/** 
 	* Alias value: AlbumImageDetail_title
 	* Hibernate value: AlbumImageDetail.title
 	*/
-	String  ALBUM_IMAGE_DETAIL_TITLE = ALBUM_IMAGE_DETAIL_ENTRY.getAliasNames()[5];
+	String  ALBUM_IMAGE_DETAIL_TITLE = ALBUM_IMAGE_DETAIL_ENTRY.getAliasNames()[6];
 
 
 
