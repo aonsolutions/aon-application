@@ -113,8 +113,14 @@
 									value="#{section.to.sidebar.id}">
 									<f:selectItems value="#{collections.sidebarList}" />
 								</aon:selectOneMenu> 
+								<aon:outputLabel for="section_sidebar_left_selected"
+									styleClass="aon-form-input-text-label"
+									value="#{appBundle.section_sidebar_left_enabled}" />
 								<aon:selectBooleanCheckbox id="section_sidebar_left_selected" 
 									value="#{section.to.show_sidebar_left}" />
+								<aon:outputLabel for="section_sidebar_right_selected"
+									styleClass="aon-form-input-text-label"
+									value="#{appBundle.section_sidebar_right_enabled}" />
 								<aon:selectBooleanCheckbox id="section_sidebar_right_selected" 
 									value="#{section.to.show_sidebar_right}" />
 							</aon:div>
