@@ -26,21 +26,17 @@
 					</aon:div>
 
 					<aon:div styleClass="aon-finding-toolbar-item-group">
-						<aon:confirmButton id="save" value="#{bundle.aon_save}"
+						<aon:commandButton id="save" value="#{bundle.aon_save}"
 							rendered="#{proForma.to!=null or proForma.new}"
 							reRender="gridToolbar"
 							styleClass="aon-finding-toolbar-item aon-icon-accept"
-							confirmTitle="Confirmation Dialog"
-							confirmMessage="#{bundle.aon_save_confirm}"
-							confirmActionListener="#{proForma.accept}"
+							actionListener="#{proForma.accept}"
 							accesskey="#{bundle.aon_key_save}" />
-						<aon:confirmButton id="cancel" value="#{bundle.aon_cancel}"
+						<aon:commandButton id="cancel" value="#{bundle.aon_cancel}"
 							rendered="#{proForma.to!=null or proForma.new}"
 							styleClass="aon-finding-toolbar-item aon-icon-cancel"
-							immediate="#{true}" confirmTitle="Confirmation Dialog"
-							confirmMessage="#{bundle.aon_cancel_confirm}"
-							confirmActionListener="#{proForma.onCancel}"
-							confirmAction="pro_forma_list"
+							immediate="#{true}" action="pro_forma_list"
+							actionListener="#{proForma.onCancel}"
 							accesskey="#{bundle.aon_key_cancel}" />
 						<aon:commandButton id="search" value="#{bundle.aon_search}"
 							immediate="true" action="pro_forma_search"
@@ -59,6 +55,12 @@
 					<aon:inputText id="ProFormaInvoice_campaign_code" size="16"
 						disabled="true" styleClass="aon-inputText-disabled"
 						maxlength="16" value="#{proForma.to.campaign.code}" />
+
+					<aon:outputLabel for="ProFormaInvoice_supplier"
+						value="#{appBundle.gbp_proforma_invoice_supplier}" />
+					<aon:inputText id="ProFormaInvoice_supplier" size="64"
+						disabled="true" styleClass="aon-inputText-disabled"
+						maxlength="64" value="#{proForma.to.supplier.name}" />
 
 					<aon:outputLabel for="ProFormaInvoice_number"
 						value="#{appBundle.gbp_proforma_invoice_number}" />
