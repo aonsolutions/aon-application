@@ -26,21 +26,17 @@
 					</aon:div>
 
 					<aon:div styleClass="aon-finding-toolbar-item-group">
-						<aon:confirmButton id="save" value="#{bundle.aon_save}"
+						<aon:commandButton id="save" value="#{bundle.aon_save}"
 							rendered="#{campaign.to!=null or campaign.new}"
 							reRender="gridToolbar"
 							styleClass="aon-finding-toolbar-item aon-icon-accept"
-							confirmTitle="Confirmation Dialog"
-							confirmMessage="#{bundle.aon_save_confirm}"
-							confirmActionListener="#{campaign.accept}"
+							actionListener="#{campaign.accept}"
 							accesskey="#{bundle.aon_key_save}" />
-						<aon:confirmButton id="cancel" value="#{bundle.aon_cancel}"
+						<aon:commandButton id="cancel" value="#{bundle.aon_cancel}"
 							rendered="#{campaign.to!=null or campaign.new}"
 							styleClass="aon-finding-toolbar-item aon-icon-cancel"
-							immediate="#{true}" confirmTitle="Confirmation Dialog"
-							confirmMessage="#{bundle.aon_cancel_confirm}"
-							confirmActionListener="#{campaign.onCancel}"
-							confirmAction="campaign_list"
+							action="campaign_list" immediate="#{true}"
+							actionListener="#{campaign.onCancel}"
 							accesskey="#{bundle.aon_key_cancel}" />
 						<aon:confirmButton id="remove" value="#{bundle.aon_remove}"
 							rendered="#{!campaign.new}"
