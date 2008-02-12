@@ -75,6 +75,9 @@ public class MenuController extends GridController {
 		case 2:
 			currentType = MenuType.FOOT.ordinal();
 			break;
+		case 3:
+			currentType = MenuType.INNER.ordinal();
+			break;
 		default:
 			break;
 		}
@@ -121,15 +124,26 @@ public class MenuController extends GridController {
 		}
 	}
 
+	private MenuType getCurrentType() {
+		if (currentType == MenuType.SIDEBAR.ordinal()) return MenuType.SIDEBAR;
+		else if (currentType == MenuType.TOP.ordinal()) return MenuType.TOP;
+		else if (currentType == MenuType.FOOT.ordinal()) return MenuType.FOOT;
+		else if (currentType == MenuType.INNER.ordinal()) return MenuType.INNER;
+		return MenuType.SIDEBAR;
+	}
+	
 	public int getCurrentTab() {
-		if (currentType == MenuType.TOP.ordinal()) return 1;
+		if (currentType == MenuType.SIDEBAR.ordinal()) return 0;
+		else if (currentType == MenuType.TOP.ordinal()) return 1;
 		else if (currentType == MenuType.FOOT.ordinal()) return 2;
+		else if (currentType == MenuType.INNER.ordinal()) return 3;
 		return 0;
 	}
 
 	public void onAccept(ActionEvent event) {
 		try {
 			Menu menu  = (Menu)getTo();
+			menu.setType(getCurrentType());
 			IManagerBean menuBean = BeanManager.getManagerBean(Menu.class);
 			Criteria criteria = new Criteria();
 			criteria.addExpression(menuBean.getFieldName(ICMSAlias.MENU_TYPE), "" + menu.getType().ordinal());

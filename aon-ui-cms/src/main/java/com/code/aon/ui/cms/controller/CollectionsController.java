@@ -174,6 +174,10 @@ public class CollectionsController {
 		return getMenuList(MenuType.FOOT);
 	}
 
+	public List<SelectItem> getMenuInnerList() throws ManagerBeanException {
+		return getMenuList(MenuType.INNER);
+	}
+
 	public List<SelectItem> getMenuList(MenuType type) throws ManagerBeanException {
 		List<SelectItem> menus = new LinkedList<SelectItem>();
 		IManagerBean menuBean = BeanManager.getManagerBean(Menu.class);
