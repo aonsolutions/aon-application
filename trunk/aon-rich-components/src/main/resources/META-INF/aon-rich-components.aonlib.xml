@@ -6,10 +6,6 @@
 	</component>
 	
 	<component localName="lookupButton">
-    	<attribute name="styleClass" value="aon-lookupButton" />
-	</component>
-	
-	<component localName="lookupButton">
     	<attribute name="immediate" value="true" type="1" />
 	</component>
 	
