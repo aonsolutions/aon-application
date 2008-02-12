@@ -281,10 +281,17 @@
 										value="#{appBundle.article_alt}" />
 									<aon:inputText id="ArticleDetail_alt"
 										styleClass="aon-form-input-text aon-form-input-text-number"
-										size="80" maxlength="255"
+										size="64" maxlength="64"
 										value="#{article.toI18n.alt}" />
 		
-										
+									<aon:outputLabel for="ArticleDetail_alt_thumbnail"
+										styleClass="aon-form-input-text-label"
+										value="#{appBundle.article_alt_thumbnail}" />
+									<aon:inputText id="ArticleDetail_alt_thumbnail"
+										styleClass="aon-form-input-text aon-form-input-text-number"
+										size="64" maxlength="64"
+										value="#{article.toI18n.alt_thumbnail}" />
+		
 								</aon:panelGrid>
 							</aon:panelGrid>
 							
