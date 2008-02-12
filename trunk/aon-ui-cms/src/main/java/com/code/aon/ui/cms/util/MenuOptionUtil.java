@@ -328,7 +328,7 @@ public class MenuOptionUtil {
 		if (pageType == PageType.ALBUM_IMAGES) {
 			try {
 				if (level.equals(ContentLevel.TOP)){
-					String category = Templates.ARTICLE.getHtmlName();
+					String category = Templates.ALBUM_IMAGES.getHtmlName();
 					category = category.replaceAll("%NAME%", AlbumGenerator.ALBUM_LIST_PAGE);
 					return category;
 				}else if (level.equals(ContentLevel.SECTION)){
@@ -374,15 +374,20 @@ public class MenuOptionUtil {
 					List<ITransferObject> l = (List<ITransferObject>)bean.getList(criteria);
 					if (l.size() > 0) {
 						ArticleCategory ac = (ArticleCategory)l.get(0);
-						String article = Templates.ARTICLE.getHtmlName();
-						if (pageType == PageType.ARTICLE_NEWS)
+						String article;
+						if (pageType == PageType.ARTICLE_NEWS){
+							article = Templates.ARTICLE_NEWS.getHtmlName();
 							article = article.replaceAll("%NAME%", ArticleType.NEWS.getName()+"_"+ac.getAlias());
-						if (pageType == PageType.ARTICLE_EVENTS)
+						}else if (pageType == PageType.ARTICLE_EVENTS){
+							article = Templates.ARTICLE_EVENTS.getHtmlName();
 							article = article.replaceAll("%NAME%", ArticleType.EVENTS.getName()+"_"+ac.getAlias());
-						if (pageType == PageType.ARTICLE_SERVICES)
+						}else if (pageType == PageType.ARTICLE_SERVICES){
+							article = Templates.ARTICLE_SERVICES.getHtmlName();
 							article = article.replaceAll("%NAME%", ArticleType.SERVICES.getName()+"_"+ac.getAlias());
-						if (pageType == PageType.ARTICLE_OTHER)
+						}else{
+							article = Templates.ARTICLE_OTHER.getHtmlName();
 							article = article.replaceAll("%NAME%", ArticleType.OTHER.getName()+"_"+ac.getAlias());
+						}
 						return article;
 					}
 				}else if (level.equals(ContentLevel.ELEMENT)){
@@ -393,7 +398,15 @@ public class MenuOptionUtil {
 					List<ITransferObject> l = (List<ITransferObject>)bean.getList(criteria);
 					if (l.size() > 0) {
 						Article a = (Article)l.get(0);
-						String article = Templates.ARTICLE.getHtmlName();
+						String article;
+						if (pageType == PageType.ARTICLE_NEWS)
+							article = Templates.ARTICLE_NEWS.getHtmlName();
+						else if (pageType == PageType.ARTICLE_EVENTS)
+							article = Templates.ARTICLE_EVENTS.getHtmlName();
+						else if (pageType == PageType.ARTICLE_SERVICES)
+							article = Templates.ARTICLE_SERVICES.getHtmlName();
+						else 
+							article = Templates.ARTICLE_OTHER.getHtmlName();
 						article = article.replaceAll("%NAME%", a.getAlias());
 						return article;
 					}
