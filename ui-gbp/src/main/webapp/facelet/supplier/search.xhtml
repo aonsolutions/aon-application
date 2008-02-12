@@ -25,12 +25,10 @@
 					</aon:div>
 
 					<aon:div styleClass="aon-finding-toolbar-item-group">
-						<aon:confirmButton id="cancel" value="#{bundle.aon_cancel}"
+						<aon:commandButton id="cancel" value="#{bundle.aon_cancel}"
 							styleClass="aon-finding-toolbar-item aon-icon-cancel"
-							confirmTitle="Confirmation Dialog"
-							confirmMessage="#{bundle.aon_cancel_confirm}"
-							confirmActionListener="#{supplier.onCancel}"
-							confirmAction="supplier_list"
+							action="supplier_list"
+							actionListener="#{supplier.onCancel}"
 							accesskey="#{bundle.aon_key_cancel}" />
 						<aon:commandButton id="search" value="#{bundle.aon_search}"
 							action="supplier_list"

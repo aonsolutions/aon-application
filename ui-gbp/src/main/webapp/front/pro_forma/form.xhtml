@@ -26,21 +26,17 @@
 					</aon:div>
 
 					<aon:div styleClass="aon-finding-toolbar-item-group">
-						<aon:confirmButton id="save" value="#{bundle.aon_save}"
+						<aon:commandButton id="save" value="#{bundle.aon_save}"
 							rendered="#{frontProForma.to!=null or frontProForma.new}"
 							reRender="gridToolbar,frontProFormaGrid" 
 							styleClass="aon-finding-toolbar-item aon-icon-accept"
-							confirmTitle="Confirmation Dialog"
-							confirmMessage="#{bundle.aon_save_confirm}"
-							confirmActionListener="#{frontProForma.accept}"
+							actionListener="#{frontProForma.accept}"
 							accesskey="#{bundle.aon_key_save}" />
-						<aon:confirmButton id="cancel" value="#{bundle.aon_cancel}"
+						<aon:commandButton id="cancel" value="#{bundle.aon_cancel}"
 							rendered="#{frontProForma.to!=null or frontProForma.new}"
 							styleClass="aon-finding-toolbar-item aon-icon-cancel"
-							immediate="#{true}" confirmTitle="Confirmation Dialog"
-							confirmMessage="#{bundle.aon_cancel_confirm}"
-							confirmActionListener="#{frontProForma.onCancel}"
-							confirmAction="front_pro_forma_list"
+							immediate="#{true}" action="front_pro_forma_list"
+							actionListener="#{frontProForma.onCancel}"
 							accesskey="#{bundle.aon_key_cancel}" />
 						<aon:confirmButton id="discard" value="#{appBundle.gbp_discard}"
 							rendered="#{!frontProForma.new and !frontProForma.discarded}"
