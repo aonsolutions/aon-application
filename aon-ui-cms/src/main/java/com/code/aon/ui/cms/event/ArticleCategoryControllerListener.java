@@ -2,8 +2,11 @@ package com.code.aon.ui.cms.event;
 
 import java.util.List;
 
+import com.code.aon.cms.Article;
 import com.code.aon.cms.ArticleCategory;
 import com.code.aon.cms.dao.ICMSAlias;
+import com.code.aon.common.BeanManager;
+import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ql.Criteria;
@@ -13,6 +16,18 @@ import com.code.aon.ui.form.event.ControllerListenerException;
 
 public class ArticleCategoryControllerListener extends ControllerAdapter {
 
+	@Override
+	public void beforeModelInitialized(ControllerEvent event)
+			throws ControllerListenerException {
+		try{
+			Criteria criteria = event.getController().getCriteria();
+			IManagerBean bean = BeanManager.getManagerBean(ArticleCategory.class);
+			criteria.addOrder(bean.getFieldName(ICMSAlias.ARTICLE_CATEGORY_POSITION));
+			event.getController().setCriteria(criteria);
+		}catch (Exception e) {
+		}
+	}
+	
 	@Override
 	public void beforeBeanAdded(ControllerEvent event) throws ControllerListenerException {
 		ArticleCategory articleCategory = (ArticleCategory)event.getController().getTo();
