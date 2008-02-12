@@ -23,7 +23,7 @@ import com.sun.facelets.tag.jsf.ComponentConfig;
  */
 public class LookupButtonHandler extends AonAjaxComponentHandler implements ILookupTags, IRichFacesTags {
 
-   	private static final String LIST_STYLE_CLASS = "aon-form-lookup-button";
+   	private static final String LIST_STYLE_CLASS = "aon-lookupButton";
 
    	private static final String NEW_STYLE_CLASS = "aon-form-new-button";
 
