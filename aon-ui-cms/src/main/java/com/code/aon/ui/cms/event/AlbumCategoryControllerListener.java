@@ -32,6 +32,12 @@ public class AlbumCategoryControllerListener extends ControllerAdapter {
 		AlbumCategory albumCategory = (AlbumCategory)event.getController().getTo();
 		albumCategory.setActive(true);
 		albumCategory.setPosition(getLastPosition(event));
+		assignSection(event);
+	}
+	
+	@Override
+	public void beforeBeanUpdated(ControllerEvent event) throws ControllerListenerException {
+		assignSection(event);
 	}
 	
 	private int getLastPosition(ControllerEvent event) {
@@ -48,5 +54,12 @@ public class AlbumCategoryControllerListener extends ControllerAdapter {
 		}catch (ManagerBeanException e) {
 		}
 		return position;
+	}
+	
+	private void assignSection(ControllerEvent event){
+		AlbumCategory to = (AlbumCategory)event.getController().getTo();
+		if (to.getSection().getId()==-1){
+			to.setSection(null);
+		}
 	}
 }

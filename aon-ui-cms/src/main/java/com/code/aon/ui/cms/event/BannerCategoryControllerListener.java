@@ -33,6 +33,13 @@ public class BannerCategoryControllerListener extends ControllerAdapter {
 		BannerCategory bannerCategory = (BannerCategory)event.getController().getTo();
 		bannerCategory.setActive(true);
 		bannerCategory.setPosition(getLastPosition(event));
+		assignSection(event);
+	}
+	
+	@Override
+	public void beforeBeanUpdated(ControllerEvent event)
+			throws ControllerListenerException {
+		assignSection(event);
 	}
 	
 	private int getLastPosition(ControllerEvent event) {
@@ -49,6 +56,13 @@ public class BannerCategoryControllerListener extends ControllerAdapter {
 		}catch (ManagerBeanException e) {
 		}
 		return position;
+	}
+
+	private void assignSection(ControllerEvent event){
+		BannerCategory to = (BannerCategory)event.getController().getTo();
+		if (to.getSection().getId()==-1){
+			to.setSection(null);
+		}
 	}
 
 }

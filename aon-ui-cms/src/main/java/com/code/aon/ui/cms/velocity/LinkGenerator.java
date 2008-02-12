@@ -39,6 +39,7 @@ public class LinkGenerator extends Generator {
 			linkCategoryDetailList = (List<ITransferObject>)bean.getList(criteria);
 			LinkCategoryDetail lcd;
 			List l;
+			Section currentSection;
 			for (int i=0; i < linkCategoryDetailList.size(); i++) {
 				lcd = (LinkCategoryDetail)linkCategoryDetailList.get(i);
 				if (lcd.getLinkCategory().isActive()) {
@@ -50,11 +51,16 @@ public class LinkGenerator extends Generator {
 					generate(vu, Templates.LINK, lcd.getLinkCategory().getAlias());
 					vu.remove("link_category");
 					
-					l = (List) categoryMap.get(lcd.getLinkCategory().getSection());
+					if (lcd.getLinkCategory().getSection()==null){
+						currentSection = GeneratorConfigController.defaultSection();
+					}else{
+						currentSection = lcd.getLinkCategory().getSection();
+					}
+					l = (List) categoryMap.get(currentSection);
 					if (l == null)
 						l = new ArrayList<LinkCategoryHandler>();
 					l.add(lch);
-					categoryMap.put(lcd.getLinkCategory().getSection(),l);
+					categoryMap.put(currentSection,l);
 				}
 			}
 			Iterator<Section> iter = categoryMap.keySet().iterator();

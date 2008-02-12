@@ -35,6 +35,7 @@ public class FaqGenerator extends Generator {
 			faqCategoryDetailList = (List<ITransferObject>)bean.getList(criteria);
 			FaqCategoryDetail fcd;
 			List l;
+			Section currentSection;
 			for (int i=0; i < faqCategoryDetailList.size(); i++) {
 				fcd = (FaqCategoryDetail)faqCategoryDetailList.get(i);
 				if (fcd.getFaqCategory().isActive()) {
@@ -46,11 +47,17 @@ public class FaqGenerator extends Generator {
 					generate(vu, Templates.FAQ, fcd.getFaqCategory().getAlias());
 					vu.remove("faq_category");
 					
-					l = (List) categoryMap.get(fcd.getFaqCategory().getSection());
+					
+					if (fcd.getFaqCategory().getSection()==null){
+						currentSection = GeneratorConfigController.defaultSection();
+					}else{
+						currentSection = fcd.getFaqCategory().getSection();
+					}
+					l = (List) categoryMap.get(currentSection);
 					if (l == null)
 						l = new ArrayList<FaqCategoryHandler>();
 					l.add(fch);
-					categoryMap.put(fcd.getFaqCategory().getSection(),l);
+					categoryMap.put(currentSection,l);
 				}
 			}
 			Iterator<Section> iter = categoryMap.keySet().iterator();

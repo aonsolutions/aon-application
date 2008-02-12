@@ -2,6 +2,7 @@ package com.code.aon.ui.cms.event;
 
 import java.util.List;
 
+import com.code.aon.cms.FaqCategory;
 import com.code.aon.cms.LinkCategory;
 import com.code.aon.cms.dao.ICMSAlias;
 import com.code.aon.common.BeanManager;
@@ -32,6 +33,13 @@ public class LinkCategoryControllerListener extends ControllerAdapter {
 		LinkCategory linkCategory = (LinkCategory)event.getController().getTo();
 		linkCategory.setActive(true);
 		linkCategory.setPosition(getLastPosition(event));
+		assignSection(event);
+	}
+	
+	@Override
+	public void beforeBeanUpdated(ControllerEvent event)
+			throws ControllerListenerException {
+		assignSection(event);
 	}
 	
 	private int getLastPosition(ControllerEvent event) {
@@ -48,6 +56,13 @@ public class LinkCategoryControllerListener extends ControllerAdapter {
 		}catch (ManagerBeanException e) {
 		}
 		return position;
+	}
+
+	private void assignSection(ControllerEvent event){
+		LinkCategory to = (LinkCategory)event.getController().getTo();
+		if (to.getSection().getId()==-1){
+			to.setSection(null);
+		}
 	}
 
 }

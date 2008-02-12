@@ -11,6 +11,20 @@ public class DirectAccessGroupControllerListener extends ControllerAdapter {
 	public void beforeBeanAdded(ControllerEvent event) throws ControllerListenerException {
 		DirectAccessGroup directAccessGroup = (DirectAccessGroup)event.getController().getTo();
 		directAccessGroup.setActive(true);
+		assignSection(event);
+	}
+
+	@Override
+	public void beforeBeanUpdated(ControllerEvent event)
+			throws ControllerListenerException {
+		assignSection(event);
+	}
+	
+	private void assignSection(ControllerEvent event){
+		DirectAccessGroup to = (DirectAccessGroup)event.getController().getTo();
+		if (to.getSection().getId()==-1){
+			to.setSection(null);
+		}
 	}
 
 }
