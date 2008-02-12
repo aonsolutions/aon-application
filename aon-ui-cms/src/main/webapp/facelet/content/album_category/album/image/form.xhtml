@@ -79,6 +79,29 @@
 						<aon:panelGrid columns="2" dir="true" styleClass="aon-form-table"
 							columnClasses="aon-form-table-column-odd,aon-form-table-column-even">
 
+							<aon:outputLabel for="AlbumImageDetail_title"
+								styleClass="aon-form-input-text-label"
+								value="#{appBundle.albumImage_title}" />
+							<aon:inputText id="AlbumImageDetail_title"
+								styleClass="aon-form-input-text aon-form-input-text-number"
+								required="true" size="128" maxlength="128"
+								value="#{albumImage.toI18n.title}" />
+							
+							<aon:outputLabel for="AlbumImageDetail_description"
+								styleClass="aon-form-input-text-label"
+								value="#{appBundle.albumImage_description}" />
+							<aon:inputTextarea id="AlbumImageDetail_description" style="width:300px;height:60px"
+								styleClass="aon-form-input-text aon-form-input-text-number" partialSubmit="false"
+								value="#{albumImage.toI18n.description}" />
+
+							<aon:outputLabel for="AlbumImageDetail_alt"
+								styleClass="aon-form-input-text-label"
+								value="#{appBundle.albumImage_alt}" />
+							<aon:inputText id="AlbumImageDetail_alt"
+								styleClass="aon-form-input-text aon-form-input-text-number"
+								required="true" size="64" maxlength="64"
+								value="#{albumImage.toI18n.alt}" />
+
 							<aon:outputLabel for="AlbumImage_image"
 								styleClass="aon-form-input-text-label"
 								value="#{appBundle.albumImage_image}" />
@@ -187,30 +210,7 @@
 									</aon:div>
 								</aon:div>								
 							</aon:div>
-
-							<aon:outputLabel for="AlbumImageDetail_title"
-								styleClass="aon-form-input-text-label"
-								value="#{appBundle.albumImage_title}" />
-							<aon:inputText id="AlbumImageDetail_title"
-								styleClass="aon-form-input-text aon-form-input-text-number"
-								required="true" size="128" maxlength="128"
-								value="#{albumImage.toI18n.title}" />
-							
-							<aon:outputLabel for="AlbumImageDetail_description"
-								styleClass="aon-form-input-text-label"
-								value="#{appBundle.albumImage_description}" />
-							<aon:inputTextarea id="AlbumImageDetail_description" style="width:300px;height:60px"
-								styleClass="aon-form-input-text aon-form-input-text-number" partialSubmit="false"
-								value="#{albumImage.toI18n.description}" />
-
-							<aon:outputLabel for="AlbumImageDetail_alt"
-								styleClass="aon-form-input-text-label"
-								value="#{appBundle.albumImage_alt}" />
-							<aon:inputText id="AlbumImageDetail_alt"
-								styleClass="aon-form-input-text aon-form-input-text-number"
-								required="true" size="64" maxlength="64"
-								value="#{albumImage.toI18n.alt}" />
-							
+														
 						</aon:panelGrid>
 					</aon:panelGrid>
 				</aon:div>

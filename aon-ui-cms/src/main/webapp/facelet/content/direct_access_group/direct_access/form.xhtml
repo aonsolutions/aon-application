@@ -93,6 +93,43 @@
 								styleClass="aon-form-input-text aon-form-input-text-number"
 								size="255" maxlength="100"
 								value="#{direct_access.toI18n.description}" />
+								
+							<aon:outputLabel for="DirectAccess_type"
+								styleClass="aon-form-input-text-label"
+								value="#{appBundle.direct_access_type}" />
+							<aon:selectOneMenu id="DirectAccess_type" 
+								styleClass="aon-form-selectOneMenu-field"
+								value="#{direct_access.to.type}" partialSubmit="true">
+								<f:selectItems value="#{collections.pageTypes}" />
+							</aon:selectOneMenu> 
+
+							<aon:outputLabel for="DirectAccess_level"
+								styleClass="aon-form-input-text-label"
+								value="#{appBundle.direct_access_level}" rendered="#{direct_access.visibleLevel}"/>
+							<aon:selectOneMenu id="DirectAccess_level" rendered="#{direct_access.visibleLevel}" 
+								styleClass="aon-form-selectOneMenu-field"
+								value="#{direct_access.to.level}" partialSubmit="true">
+								<f:selectItems value="#{direct_access.levels}" />
+							</aon:selectOneMenu> 
+
+							<aon:outputLabel for="DirectAccess_ident"
+								styleClass="aon-form-input-text-label"
+								value="#{appBundle.direct_access_ident}" rendered="#{direct_access.visibleIdent}"/>
+							<aon:selectOneMenu id="DirectAccess_ident" rendered="#{direct_access.visibleIdent}" 
+								styleClass="aon-form-selectOneMenu-field"
+								value="#{direct_access.to.ident}"
+								 partialSubmit="true">
+								<f:selectItems value="#{direct_access.idents}" />
+							</aon:selectOneMenu> 
+
+							<aon:outputLabel for="DirectAccessDetail_url"
+								styleClass="aon-form-input-text-label"
+								value="#{appBundle.direct_access_url}" rendered="#{direct_access.visibleUrl}"/>
+							<aon:inputText id="DirectAccessDetail_url" rendered="#{direct_access.visibleUrl}"
+								styleClass="aon-form-input-text aon-form-input-text-number"
+								required="true" size="100" maxlength="255"
+								value="#{direct_access.toI18n.url}" />
+
 
 							<aon:outputLabel for="DirectAccess_image"
 								styleClass="aon-form-input-text-label"
@@ -171,42 +208,6 @@
 									</aon:div>
 								</aon:div>								
 							</aon:div>
-
-							<aon:outputLabel for="DirectAccess_type"
-								styleClass="aon-form-input-text-label"
-								value="#{appBundle.direct_access_type}" />
-							<aon:selectOneMenu id="DirectAccess_type" 
-								styleClass="aon-form-selectOneMenu-field"
-								value="#{direct_access.to.type}" partialSubmit="true">
-								<f:selectItems value="#{collections.pageTypes}" />
-							</aon:selectOneMenu> 
-
-							<aon:outputLabel for="DirectAccess_level"
-								styleClass="aon-form-input-text-label"
-								value="#{appBundle.direct_access_level}" rendered="#{direct_access.visibleLevel}"/>
-							<aon:selectOneMenu id="DirectAccess_level" rendered="#{direct_access.visibleLevel}" 
-								styleClass="aon-form-selectOneMenu-field"
-								value="#{direct_access.to.level}" partialSubmit="true">
-								<f:selectItems value="#{direct_access.levels}" />
-							</aon:selectOneMenu> 
-
-							<aon:outputLabel for="DirectAccess_ident"
-								styleClass="aon-form-input-text-label"
-								value="#{appBundle.direct_access_ident}" rendered="#{direct_access.visibleIdent}"/>
-							<aon:selectOneMenu id="DirectAccess_ident" rendered="#{direct_access.visibleIdent}" 
-								styleClass="aon-form-selectOneMenu-field"
-								value="#{direct_access.to.ident}"
-								 partialSubmit="true">
-								<f:selectItems value="#{direct_access.idents}" />
-							</aon:selectOneMenu> 
-
-							<aon:outputLabel for="DirectAccessDetail_url"
-								styleClass="aon-form-input-text-label"
-								value="#{appBundle.direct_access_url}" rendered="#{direct_access.visibleUrl}"/>
-							<aon:inputText id="DirectAccessDetail_url" rendered="#{direct_access.visibleUrl}"
-								styleClass="aon-form-input-text aon-form-input-text-number"
-								required="true" size="100" maxlength="255"
-								value="#{direct_access.toI18n.url}" />
 
 						</aon:panelGrid>
 					</aon:panelGrid>
