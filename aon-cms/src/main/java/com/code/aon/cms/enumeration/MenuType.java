@@ -20,7 +20,12 @@ public enum MenuType implements IResourceable {
 	/**
 	 * Sidebar Menu
 	 */
-	SIDEBAR;
+	SIDEBAR,
+
+	/**
+	 * Inner Menu
+	 */
+	INNER;
 
 	/**
 	 * Ruta base del fichero de mensajes.
