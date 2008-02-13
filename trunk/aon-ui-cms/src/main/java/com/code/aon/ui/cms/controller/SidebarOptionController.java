@@ -178,6 +178,11 @@ public class SidebarOptionController extends BasicI18nController {
 		else if (mo.getType().equals(SidebarType.BANNER_GROUP)) idents = ((CollectionsController)AonUtil.getRegisteredBean("collections")).getBannerGroupList();
 		else if (mo.getType().equals(SidebarType.ARTICLE)) idents = ((CollectionsController)AonUtil.getRegisteredBean("collections")).getArticleList();
 		else if (mo.getType().equals(SidebarType.DIRECT_ACCESS)) idents = ((CollectionsController)AonUtil.getRegisteredBean("collections")).getDirectAccessGroupList();
+		else if (mo.getType().equals(SidebarType.ARTICLE_EVENTS_CATEGORY)) idents = ((CollectionsController)AonUtil.getRegisteredBean("collections")).getArticleCategoryList();
+		else if (mo.getType().equals(SidebarType.ARTICLE_NEWS_CATEGORY)) idents = ((CollectionsController)AonUtil.getRegisteredBean("collections")).getArticleCategoryList();
+		else if (mo.getType().equals(SidebarType.ARTICLE_OTHER_CATEGORY)) idents = ((CollectionsController)AonUtil.getRegisteredBean("collections")).getArticleCategoryList();
+		else if (mo.getType().equals(SidebarType.ARTICLE_SERVICES_CATEGORY)) idents = ((CollectionsController)AonUtil.getRegisteredBean("collections")).getArticleCategoryList();
+		else if (mo.getType().equals(SidebarType.DOWNLOAD_CATEGORY)) idents = ((CollectionsController)AonUtil.getRegisteredBean("collections")).getDownloadCategoryList();
 		return idents;
 	}
 

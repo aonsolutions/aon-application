@@ -40,7 +40,32 @@ public enum SidebarType implements IResourceable {
 	/**
 	 * DirectAccessGroup
 	 */
-	DIRECT_ACCESS;
+	DIRECT_ACCESS,
+
+	/**
+	 * Article news Category
+	 */
+	ARTICLE_NEWS_CATEGORY,
+
+	/**
+	 * Article services Category
+	 */
+	ARTICLE_SERVICES_CATEGORY,
+
+	/**
+	 * Article events Category
+	 */
+	ARTICLE_EVENTS_CATEGORY,
+
+	/**
+	 * Article other Category
+	 */
+	ARTICLE_OTHER_CATEGORY,
+
+	/**
+	 * Download Category
+	 */
+	DOWNLOAD_CATEGORY;
 
 	/**
 	 * Ruta base del fichero de mensajes.
