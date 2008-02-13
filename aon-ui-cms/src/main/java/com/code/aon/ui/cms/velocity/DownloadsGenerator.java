@@ -85,7 +85,8 @@ public class DownloadsGenerator extends Generator {
 		try {
 			IManagerBean bean = BeanManager.getManagerBean(DownloadCategoryDetail.class);
 			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(bean.getFieldName(ICMSAlias.DOWNLOAD_CATEGORY_DETAIL_ID), ident);
+			criteria.addEqualExpression(bean.getFieldName(ICMSAlias.DOWNLOAD_CATEGORY_DETAIL_DOWNLOAD_CATEGORY_ID), ident);
+			criteria.addEqualExpression(bean.getFieldName(ICMSAlias.DOWNLOAD_CATEGORY_DETAIL_LANGUAGE_ID), ControllerUtil.getCurrentLanguage().getId());
 			List<ITransferObject> l = (List<ITransferObject>)bean.getList(criteria);
 			if  (l.size()>0) {
 				DownloadCategoryDetail groupDetail = (DownloadCategoryDetail)l.get(0);
@@ -97,5 +98,4 @@ public class DownloadsGenerator extends Generator {
 		}
 		return null;
 	}
-
 }
