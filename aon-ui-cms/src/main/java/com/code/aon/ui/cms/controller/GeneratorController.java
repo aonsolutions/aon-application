@@ -10,6 +10,7 @@ import com.code.aon.ui.cms.velocity.AlbumGenerator;
 import com.code.aon.ui.cms.velocity.ArticleGenerator;
 import com.code.aon.ui.cms.velocity.CommonGenerator;
 import com.code.aon.ui.cms.velocity.DirectAccessGenerator;
+import com.code.aon.ui.cms.velocity.DownloadsGenerator;
 import com.code.aon.ui.cms.velocity.FaqGenerator;
 import com.code.aon.ui.cms.velocity.GenericGenerator;
 import com.code.aon.ui.cms.velocity.LinkGenerator;
@@ -98,6 +99,13 @@ public class GeneratorController extends BasicController implements Constants {
 			ArticleGenerator.generate(vu);
 		}
 		
+		if (isDownloadsToGenerate){
+			//Generar articulo
+			vu.addMessage("", VelocityUtil.INFO);
+			vu.addMessage("Creando downloads... ", VelocityUtil.INFO);
+			DownloadsGenerator.generate(vu);
+		}
+		
 		CommonGenerator.getCommonGenerator().removeContext(vu);
 
 	}
@@ -111,6 +119,7 @@ public class GeneratorController extends BasicController implements Constants {
 	private boolean isDirectAccessToGenerate = true;
 	private boolean isAlbumToGenerate = true;
 	private boolean isArticleToGenerate = true;
+	private boolean isDownloadsToGenerate = true;
 
 	public boolean isLanguajePageToGenerate() {
 		return isLanguajePageToGenerate;
@@ -166,7 +175,12 @@ public class GeneratorController extends BasicController implements Constants {
 	public void setArticleToGenerate(boolean isArticleToGenerate) {
 		this.isArticleToGenerate = isArticleToGenerate;
 	}
-
+	public boolean isDownloadsToGenerate() {
+		return isDownloadsToGenerate;
+	}
+	public void setDownloadsToGenerate(boolean isDownloadsToGenerate) {
+		this.isDownloadsToGenerate = isDownloadsToGenerate;
+	}
 	private static String checkMem(String data) {
 		long freeMemory = Runtime.getRuntime().freeMemory();
 		long totalMemory = Runtime.getRuntime().totalMemory();

@@ -65,8 +65,12 @@ public enum PageType implements IResourceable {
 	/**
 	 * ARTICLE_OTHER
 	 */
-	ARTICLE_OTHER;
-
+	ARTICLE_OTHER,
+	
+	/**
+	 * DOWNLOAD_CATEGORY
+	 */
+	DOWNLOAD;
 	
 	/**
 	 * Ruta base del fichero de mensajes.

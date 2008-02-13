@@ -11,6 +11,9 @@ import com.code.aon.cms.Album;
 import com.code.aon.cms.AlbumCategory;
 import com.code.aon.cms.Article;
 import com.code.aon.cms.ArticleCategory;
+import com.code.aon.cms.Download;
+import com.code.aon.cms.DownloadCategory;
+import com.code.aon.cms.DownloadDetail;
 import com.code.aon.cms.FaqCategory;
 import com.code.aon.cms.GenericPageDetail;
 import com.code.aon.cms.LinkCategory;
@@ -26,9 +29,11 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ql.Criteria;
+import com.code.aon.ui.cms.Constants;
 import com.code.aon.ui.cms.controller.CollectionsController;
 import com.code.aon.ui.cms.velocity.AlbumGenerator;
 import com.code.aon.ui.cms.velocity.ArticleGenerator;
+import com.code.aon.ui.cms.velocity.DownloadsGenerator;
 import com.code.aon.ui.cms.velocity.FaqGenerator;
 import com.code.aon.ui.cms.velocity.LinkGenerator;
 import com.code.aon.ui.util.AonUtil;
@@ -45,6 +50,7 @@ public class MenuOptionUtil {
 			if (type.equals(PageType.ARTICLE_EVENTS)) return true;
 			if (type.equals(PageType.ARTICLE_SERVICES)) return true;
 			if (type.equals(PageType.ARTICLE_OTHER)) return true;
+			if (type.equals(PageType.DOWNLOAD)) return true;
 		}
 		return false;
 	}
@@ -90,11 +96,28 @@ public class MenuOptionUtil {
 				if (ContentLevel.ELEMENT.equals(level))
 					return true;
 			}
+			if (type.equals(PageType.DOWNLOAD)){
+				if (ContentLevel.SECTION.equals(level))
+					return true;
+				if (ContentLevel.CATEGORY.equals(level))
+					return true;
+				if (ContentLevel.ELEMENT.equals(level))
+					return true;
+			}
 		}
 		return false;
 	}
 
-	public static boolean isVisibleUrl(PageType type) {
+	public static boolean isNewWindow(PageType type, ContentLevel level) {
+		if (type != null) {
+			if (type.equals(PageType.EXTERNAL)) return true;
+			if (type.equals(PageType.DOWNLOAD) &&
+					level.equals(ContentLevel.ELEMENT)) return true;
+		}
+		return false;
+	}
+	
+	public static boolean isVisibleUrl(PageType type, ContentLevel level) {
 		if (type != null) {
 			if (type.equals(PageType.EXTERNAL)) return true;
 		}
@@ -200,6 +223,19 @@ public class MenuOptionUtil {
 			}
 			if (ContentLevel.ELEMENT.equals(level)){
 				idents = ((CollectionsController)AonUtil.getRegisteredBean("collections")).getArticleByTypeList(ArticleType.OTHER);
+			}
+		}else if (type.equals(PageType.DOWNLOAD)){
+			if (ContentLevel.TOP.equals(level)){
+				idents.add(new SelectItem(null,"NO VALID"));
+			}
+			if (ContentLevel.SECTION.equals(level)){
+				idents.add(new SelectItem(null,"NO VALID"));
+			}
+			if (ContentLevel.CATEGORY.equals(level)){
+				idents = ((CollectionsController)AonUtil.getRegisteredBean("collections")).getDownloadCategoryList();
+			}
+			if (ContentLevel.ELEMENT.equals(level)){
+				idents = ((CollectionsController)AonUtil.getRegisteredBean("collections")).getDownloadList();
 			}
 		}
 		return idents;
@@ -409,6 +445,40 @@ public class MenuOptionUtil {
 							article = Templates.ARTICLE_OTHER.getHtmlName();
 						article = article.replaceAll("%NAME%", a.getAlias());
 						return article;
+					}
+				}
+			} catch (ManagerBeanException e) {
+				e.printStackTrace();
+			}
+			return null;
+		}
+		if (pageType == PageType.DOWNLOAD) {
+			try {
+				if (level.equals(ContentLevel.TOP)){
+					String downloadCategory = Templates.DOWNLOADS.getHtmlName();
+					downloadCategory = downloadCategory.replaceAll("%NAME%", DownloadsGenerator.DOWNLOAD_CATEGORY_LIST_PAGE);
+					return downloadCategory;
+				}else if (level.equals(ContentLevel.CATEGORY)){
+					IManagerBean bean = BeanManager.getManagerBean(DownloadCategory.class);
+					Criteria criteria = new Criteria();
+					criteria.addEqualExpression(bean.getFieldName(ICMSAlias.DOWNLOAD_CATEGORY_ID), ident);
+					criteria.addEqualExpression(bean.getFieldName(ICMSAlias.DOWNLOAD_CATEGORY_ACTIVE), true);
+					List<ITransferObject> l = (List<ITransferObject>)bean.getList(criteria);
+					if (l.size() > 0) {
+						DownloadCategory dc = (DownloadCategory)l.get(0);
+						String link = Templates.DOWNLOADS.getHtmlName();
+						link = link.replaceAll("%NAME%", dc.getAlias());
+						return link;
+					}
+				}else if (level.equals(ContentLevel.ELEMENT)){
+					IManagerBean bean = BeanManager.getManagerBean(DownloadDetail.class);
+					Criteria criteria = new Criteria();
+					criteria.addEqualExpression(bean.getFieldName(ICMSAlias.DOWNLOAD_DETAIL_DOWNLOAD_ID), ident);
+					List<ITransferObject> l = (List<ITransferObject>)bean.getList(criteria);
+					if (l.size() > 0) {
+						DownloadDetail d = (DownloadDetail)l.get(0);
+						String link = ControllerUtil.getDocumentsPath() + d.getFile();
+						return link;
 					}
 				}
 			} catch (ManagerBeanException e) {

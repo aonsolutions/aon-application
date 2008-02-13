@@ -7,6 +7,7 @@ import com.code.aon.cms.Download;
 import com.code.aon.cms.DownloadCategory;
 import com.code.aon.cms.DownloadCategoryDetail;
 import com.code.aon.cms.DownloadDetail;
+import com.code.aon.cms.LinkConfig;
 import com.code.aon.cms.dao.ICMSAlias;
 import com.code.aon.cms.enumeration.Templates;
 import com.code.aon.common.BeanManager;
@@ -14,6 +15,7 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ql.Criteria;
+import com.code.aon.ui.cms.controller.GeneratorConfigController;
 import com.code.aon.ui.cms.util.ControllerUtil;
 import com.code.aon.ui.cms.util.VelocityUtil;
 import com.code.aon.ui.cms.velocity.attribute.DownloadCategoryHandler;
@@ -55,6 +57,7 @@ public class DownloadsGenerator extends Generator {
 		try {
 			IManagerBean bean = BeanManager.getManagerBean(DownloadCategory.class);
 			List<ITransferObject> l = (List<ITransferObject>)bean.getList(null);
+			ArrayList<DownloadCategoryHandler> downloadCategoryHandlerList = new ArrayList<DownloadCategoryHandler>(); 
 			for (int i=0; i < l.size(); i++) {
 				DownloadCategory group = (DownloadCategory)l.get(i);
 				IManagerBean detailBean = BeanManager.getManagerBean(DownloadCategoryDetail.class);
@@ -64,18 +67,20 @@ public class DownloadsGenerator extends Generator {
 				List<ITransferObject> detailList = (List<ITransferObject>)detailBean.getList(detailCriteria);
 				if (detailList.size() > 0) {
 					DownloadCategoryDetail detail = (DownloadCategoryDetail)detailList.get(0);
-					ArrayList<DownloadHandler> accessList = getDownloadsList(detail);
-					if (accessList != null && accessList.size() > 0) {
-						vu.put("download_group", detail);
-						vu.put("download_list", accessList);
-						vu.addMessage(" Generando accesos directos " + group.getAlias() + ".", VelocityUtil.INFO);
-						CommonGenerator.getCommonGenerator().chargeContext(vu, group.getSection());
-						generate(vu, Templates.DOWNLOADS, group.getAlias());
-						vu.remove("download_group");
-						vu.remove("download_list");
-					}
+					DownloadCategoryHandler downloadCategoryHandler = new DownloadCategoryHandler(detail);
+					downloadCategoryHandlerList.add(downloadCategoryHandler);
+					vu.put("download_group", downloadCategoryHandler);
+					vu.addMessage(" Generando descargas " + group.getAlias() + ".", VelocityUtil.INFO);
+					CommonGenerator.getCommonGenerator().chargeContext(vu, group.getSection());
+					generate(vu, Templates.DOWNLOADS, group.getAlias());
+					vu.remove("download_group");
 				}
 			}
+			vu.put("download_categories", downloadCategoryHandlerList);
+			vu.addMessage(" Generando listado categoria descargas.", VelocityUtil.INFO);
+			CommonGenerator.getCommonGenerator().chargeContext(vu, null);
+			generate(vu, Templates.DOWNLOADS, DOWNLOAD_CATEGORY_LIST_PAGE);
+			vu.remove("download_categories");
 		} catch (ManagerBeanException e) {
 			e.printStackTrace();
 		}
@@ -98,4 +103,6 @@ public class DownloadsGenerator extends Generator {
 		}
 		return null;
 	}
+	
+	public static String DOWNLOAD_CATEGORY_LIST_PAGE = "categories";
 }
