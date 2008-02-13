@@ -16,7 +16,9 @@ import com.code.aon.cms.BannerCategory;
 import com.code.aon.cms.Brand;
 import com.code.aon.cms.DirectAccess;
 import com.code.aon.cms.DirectAccessGroup;
+import com.code.aon.cms.Download;
 import com.code.aon.cms.DownloadCategory;
+import com.code.aon.cms.DownloadDetail;
 import com.code.aon.cms.FaqCategory;
 import com.code.aon.cms.Footer;
 import com.code.aon.cms.GenericPage;
@@ -486,6 +488,23 @@ public class CollectionsController {
 			accesses.add(item);
 		}
 		return accesses;
+	}
+
+	public List<SelectItem> getDownloadList() throws ManagerBeanException {
+		List<SelectItem> objects = new LinkedList<SelectItem>();
+		IManagerBean bean = BeanManager.getManagerBean(Download.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(bean.getFieldName(ICMSAlias.DOWNLOAD_ACTIVE), true);
+		criteria.addOrder(bean.getFieldName(ICMSAlias.DOWNLOAD_ALIAS));
+		List<ITransferObject> list = (List<ITransferObject>)bean.getList(criteria);
+		for (int i = 0; i < list.size(); i++) {
+			Download d = (Download)list.get(i);
+			int id = d.getId();
+			String name = d.getAlias();
+			SelectItem item = new SelectItem(id, name);
+			objects.add(item);
+		}
+		return objects;
 	}
 
 }

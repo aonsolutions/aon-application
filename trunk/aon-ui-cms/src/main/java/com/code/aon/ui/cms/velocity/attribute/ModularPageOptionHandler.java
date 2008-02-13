@@ -3,6 +3,7 @@ package com.code.aon.ui.cms.velocity.attribute;
 import com.code.aon.cms.ModularPageOptionDetail;
 import com.code.aon.cms.enumeration.ArticleType;
 import com.code.aon.cms.enumeration.ModularPageOptionType;
+import com.code.aon.ui.cms.util.MenuOptionUtil;
 import com.code.aon.ui.cms.velocity.ArticleGenerator;
 import com.code.aon.ui.cms.velocity.BannerGenerator;
 import com.code.aon.ui.cms.velocity.DirectAccessGenerator;
@@ -63,5 +64,5 @@ public class ModularPageOptionHandler {
 	public Object getContent() {
 		return content;
 	}
-	
+
 }

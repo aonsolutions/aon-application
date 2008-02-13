@@ -117,7 +117,7 @@ public class DirectAccessController extends BasicI18nController {
 	public boolean isVisibleUrl() {
 		DirectAccess mo = (DirectAccess)getTo();
 		if (mo != null) {
-			return MenuOptionUtil.isVisibleUrl(mo.getType());
+			return MenuOptionUtil.isVisibleUrl(mo.getType(),mo.getLevel());
 		}
 		return false;
 	}
