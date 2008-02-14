@@ -75,7 +75,7 @@
 							onclick="viewDialog.show();"
 							action="fbatch_form" actionListener="#{fbatch.onCreateDisk}" />	
 						<h:commandButton id="record" value="#{financeBundle.aon_record}"
-							rendered="#{fbatch.done or !fbatch.diskMode}"
+							rendered="#{!fbatch.recorded and (fbatch.done or !fbatch.diskMode)}"
 							styleClass="aon-content-toolbar-item aon-content-toolbar-item-search"
 							onmouseover="this.className='aon-content-toolbar-item aon-content-toolbar-item-hover aon-content-toolbar-item-search'"
 							onmouseout="this.className='aon-content-toolbar-item aon-content-toolbar-item-search'"
