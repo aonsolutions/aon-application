@@ -21,27 +21,28 @@ import com.code.aon.registry.Registry;
 
 public class FinanceGenerator {
 	
-	public void generateFinances(Invoice invoice, double totalPrice) throws ManagerBeanException{
-		RegistryPayMethod rPayMethod = obtainRPayMethod(invoice.getRegistry());
-		RegistryBank rBank = obtainRBank(invoice.getRegistry());
+	public void generateFinances(Invoice invoice, Registry registry, double totalPrice) throws ManagerBeanException{
+		RegistryPayMethod rPayMethod = obtainRPayMethod(registry);
+		RegistryBank rBank = obtainRBank(registry);
 		Date date = invoice.getIssueDate();
 		if(rPayMethod == null || rPayMethod.getNumberOfPayments() == 1){
 			date = (rPayMethod == null?new Date():calculatePaymentDate(rPayMethod.getDaysToFirstPayment(),rPayMethod.getPaymentDaysArray(),date));
-			insertFinance(invoice,date,(rPayMethod==null?null:rPayMethod.getPayment()),totalPrice,rBank);
+			insertFinance(invoice,registry,date,(rPayMethod==null?null:rPayMethod.getPayment()),totalPrice,rBank);
 		}else{
 			double paymentPrice = round((totalPrice/rPayMethod.getNumberOfPayments()),2);
 			date = calculatePaymentDate(rPayMethod.getDaysToFirstPayment(),rPayMethod.getPaymentDaysArray(),date);
-			insertFinance(invoice,date,rPayMethod.getPayment(),paymentPrice,rBank);
+			insertFinance(invoice,registry,date,rPayMethod.getPayment(),paymentPrice,rBank);
 			for(int i = 2;i <= rPayMethod.getNumberOfPayments() - 1;i++){
 				date = calculatePaymentDate(rPayMethod.getDaysBetweenPayments(), rPayMethod.getPaymentDaysArray(), date);
-				insertFinance(invoice,date,rPayMethod.getPayment(),paymentPrice,rBank);
+				insertFinance(invoice,registry,date,rPayMethod.getPayment(),paymentPrice,rBank);
 				}
 			paymentPrice = totalPrice - (paymentPrice * (rPayMethod.getNumberOfPayments() - 1));
 			date = calculatePaymentDate(rPayMethod.getDaysBetweenPayments(), rPayMethod.getPaymentDaysArray(), date);
-			insertFinance(invoice,date,rPayMethod.getPayment(),paymentPrice,rBank);
+			insertFinance(invoice,registry,date,rPayMethod.getPayment(),paymentPrice,rBank);
 		}
 	}
 
+	@SuppressWarnings("unchecked")
 	private RegistryPayMethod obtainRPayMethod(Registry registry) throws ManagerBeanException {
 		IManagerBean rPayMethodBean = BeanManager.getManagerBean(RegistryPayMethod.class);
 		Criteria criteria = new Criteria();
@@ -53,6 +54,7 @@ public class FinanceGenerator {
 		return null;
 	}
 
+	@SuppressWarnings("unchecked")
 	private RegistryBank obtainRBank(Registry registry) throws ManagerBeanException {
 		IManagerBean rBankBean = BeanManager.getManagerBean(RegistryBank.class);
 		Criteria criteria = new Criteria();
@@ -64,7 +66,7 @@ public class FinanceGenerator {
 		return null;
 	}
 	
-	private void insertFinance(Invoice invoice, Date date, PayMethod payMethod, double totalPrice, RegistryBank rBank) throws ManagerBeanException {
+	private void insertFinance(Invoice invoice, Registry registry, Date date, PayMethod payMethod, double totalPrice, RegistryBank rBank) throws ManagerBeanException {
 		Finance finance = new Finance();
 		finance.setAmount(totalPrice);
 		finance.setBank((rBank==null?null:rBank.getBank()));
@@ -79,7 +81,7 @@ public class FinanceGenerator {
 			finance.setPayment(true);
 		}
 		finance.setPayMethod(payMethod);
-		finance.setRegistry(invoice.getRegistry());
+		finance.setRegistry(registry);
 		finance.setSecurityLevel(invoice.getSecurityLevel());
 		try {
 			IManagerBean financeBean = BeanManager.getManagerBean(Finance.class);
