@@ -373,7 +373,7 @@ public class FeeInvoicingController extends BasicController {
 					Finance finance = (Finance)iter.next();
 					financeBean.remove(finance);
 				}
-				getFinanceGenerator().generateFinances(invoice, getPriceStrategy().getTotalPrice(invoice, invoice));
+				getFinanceGenerator().generateFinances(invoice,invoice.getRegistry(), getPriceStrategy().getTotalPrice(invoice, invoice));
 				feeFinanceController.onSearch(null);
 			}
 		} catch (ManagerBeanException e) {
