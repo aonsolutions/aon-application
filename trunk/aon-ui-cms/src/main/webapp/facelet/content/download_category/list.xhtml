@@ -65,11 +65,9 @@
 						<f:selectItems value="#{collections.sectionList}" />
 					</aon:selectOneMenu>
 					
-					<aon:confirmButton id="save"
+					<aon:commandButton id="save"
 						value="#{bundle.aon_save}" 
-						confirmTitle="Confirmation Dialog" 
-						confirmMessage="#{bundle.aon_save_confirm}"
-						confirmActionListener="#{generator_config.onSaveDownloadConfig}"
+						actionListener="#{generator_config.onSaveDownloadConfig}"
 						styleClass="aon-content-toolbar-item aon-icon-accept"
 						onmouseout="this.className='aon-content-toolbar-item aon-icon-accept'"
 						onmouseover="this.className='aon-content-toolbar-item aon-icon-accept aon-content-toolbar-item-hover'"
