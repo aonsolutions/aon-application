@@ -77,10 +77,12 @@
 		<mapping class="com.code.aon.sales.SalesType"/>
 		
 		<!-- AON-PURCHASE Mapping files -->	
-		<mapping class="com.code.aon.purchase.Supplier"/>
-		<mapping class="com.code.aon.purchase.SupplierSegment"/>
 		<mapping class="com.code.aon.purchase.Purchase"/>
 		<mapping class="com.code.aon.purchase.PurchaseDetail"/>
+
+		<!-- AON-SUPPLIER Mapping files -->	
+		<mapping class="com.code.aon.supplier.Supplier"/>
+		<mapping class="com.code.aon.supplier.SupplierSegment"/>
 		
 		<!-- AON-GEOZONE Mapping files -->		
 		<mapping class="com.code.aon.geozone.GeoZone"/>			
