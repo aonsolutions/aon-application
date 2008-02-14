@@ -28,11 +28,11 @@ import com.code.aon.customer.dao.ICustomerAlias;
 import com.code.aon.finance.Creditor;
 import com.code.aon.finance.RegistryBank;
 import com.code.aon.finance.dao.IFinanceAlias;
-import com.code.aon.purchase.Supplier;
-import com.code.aon.purchase.dao.IPurchaseAlias;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionException;
 import com.code.aon.registry.Registry;
+import com.code.aon.supplier.Supplier;
+import com.code.aon.supplier.dao.ISupplierAlias;
 
 public class AccountUtil {
 	
@@ -298,7 +298,7 @@ public class AccountUtil {
 		try {
 			IManagerBean supplierBean = BeanManager.getManagerBean(Supplier.class);
 			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(supplierBean.getFieldName(IPurchaseAlias.SUPPLIER_ID), id);
+			criteria.addEqualExpression(supplierBean.getFieldName(ISupplierAlias.SUPPLIER_ID), id);
 			Iterator iter = supplierBean.getList(criteria).iterator();
 			if(iter.hasNext()){
 				return (Supplier)iter.next();
