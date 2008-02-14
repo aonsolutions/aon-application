@@ -168,6 +168,7 @@ public class ArticleController extends GridI18nController {
 		} catch (ExpressionException e) {
 			throw new ManagerBeanException(e);
 		}
+		criteria.addEqualExpression(getManagerBean().getFieldName(ICMSAlias.ARTICLE_ARTICLE_TYPE), currentType);
 		criteria.addOrder(getManagerBean().getFieldName(ICMSAlias.ARTICLE_POSITION));
 		List<ITransferObject> list = getManagerBean().getList(criteria);
 		for (int i = 0; i < list.size(); i++) {
@@ -272,7 +273,9 @@ public class ArticleController extends GridI18nController {
 
 	private void changeArticleList() throws ManagerBeanException, ExpressionException {
 		Criteria criteria = new Criteria();
+		criteria.addExpression(getManagerBean().getFieldName(ICMSAlias.ARTICLE_ARTICLE_CATEGORY_ID), "" + getCurrentArticleCategory().getId());
 		criteria.addEqualExpression(getManagerBean().getFieldName(ICMSAlias.ARTICLE_ARTICLE_TYPE), currentType);
+		criteria.addOrder(getManagerBean().getFieldName(ICMSAlias.ARTICLE_POSITION));
 		setCriteria(criteria);
 		initializeModel();
 		clearCheckList();
