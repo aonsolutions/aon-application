@@ -89,15 +89,6 @@
 										required="true" size="32" maxlength="32"
 										value="#{article.to.alias}" />
 		
-									<aon:outputLabel for="Article_type_"
-										styleClass="aon-form-input-text-label"
-										value="#{appBundle.article_type_}" />
-									<aon:selectOneMenu id="Article_type_" 
-										styleClass="aon-form-selectOneMenu-field"
-										value="#{article.to.articleType}">
-										<f:selectItems value="#{collections.articleTypes}" />
-									</aon:selectOneMenu> 
-											
 									<aon:outputLabel for="ArticleDetail_publishDate"
 										value="#{appBundle.article_publishDate}" />
 									<aon:selectInputDate id="ArticleDetail_publishDate" 

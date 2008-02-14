@@ -3,6 +3,7 @@ package com.code.aon.ui.cms.controller;
 import java.util.List;
 
 import javax.faces.context.FacesContext;
+import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 import javax.faces.event.ValueChangeEvent;
 
@@ -13,6 +14,7 @@ import com.code.aon.cms.ArticleDocument;
 import com.code.aon.cms.ArticleRelated;
 import com.code.aon.cms.Image;
 import com.code.aon.cms.dao.ICMSAlias;
+import com.code.aon.cms.enumeration.ArticleType;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
@@ -22,9 +24,10 @@ import com.code.aon.ql.util.ExpressionException;
 import com.code.aon.ui.cms.util.ControllerUtil;
 import com.code.aon.ui.util.AonUtil;
 import com.icesoft.faces.component.ext.RowSelectorEvent;
+import com.icesoft.faces.component.paneltabset.TabChangeEvent;
 
 
-public class ArticleController extends BasicI18nController {
+public class ArticleController extends GridI18nController {
 
 	private boolean cancelOnSelect = false;
 
@@ -252,4 +255,48 @@ public class ArticleController extends BasicI18nController {
 		c.onSearch(event);
 	}
 	
+	// TAB
+	private ArticleType currentType = ArticleType.SERVICES;
+
+	public ArticleType getCurrentType() {
+		return currentType;
+	}
+
+	public int getCurrentTab() {
+		if (currentType == ArticleType.SERVICES) return 0;
+		else if (currentType == ArticleType.EVENTS) return 1;
+		else if (currentType == ArticleType.NEWS) return 2;
+		else if (currentType == ArticleType.OTHER) return 3;
+		return 0;
+	}
+
+	private void changeArticleList() throws ManagerBeanException, ExpressionException {
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(getManagerBean().getFieldName(ICMSAlias.ARTICLE_ARTICLE_TYPE), currentType);
+		setCriteria(criteria);
+		initializeModel();
+		clearCheckList();
+	}
+
+	public void processTabChange(TabChangeEvent event) throws AbortProcessingException, ManagerBeanException, ExpressionException {
+		switch (event.getNewTabIndex()) {
+		case 0:
+			currentType = ArticleType.SERVICES;
+			break;
+		case 1:
+			currentType = ArticleType.EVENTS;
+			break;
+		case 2:
+			currentType = ArticleType.NEWS;
+			break;
+		case 3:
+			currentType = ArticleType.OTHER;
+			break;
+		default:
+			break;
+		}
+		changeArticleList();
+	}
+
+
 }
