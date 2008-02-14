@@ -45,7 +45,7 @@ public class FinanceReturnController extends BasicController {
 	
 	private String series;
 	
-	private Integer number;
+	private String number;
 	
 	private Date returnDate;
 	
@@ -87,11 +87,11 @@ public class FinanceReturnController extends BasicController {
 		this.series = series;
 	}
 
-	public Integer getNumber() {
+	public String getNumber() {
 		return number;
 	}
 
-	public void setNumber(Integer number) {
+	public void setNumber(String number) {
 		this.number = number;
 	}
 
@@ -144,7 +144,7 @@ public class FinanceReturnController extends BasicController {
 			registryId = null;
 			registryName = "";
 			series = "";
-			number = null;
+			number = "";
 			returnDate =  new Date();
 			fromDate = null;
 			toDate = null;
