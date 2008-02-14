@@ -43,7 +43,7 @@ public class FinancePaymentController extends BasicController {
 	
 	private String series;
 	
-	private Integer number;
+	private String number;
 	
 	private double payedAmount;
 	
@@ -89,11 +89,11 @@ public class FinancePaymentController extends BasicController {
 		this.series = series;
 	}
 
-	public Integer getNumber() {
+	public String getNumber() {
 		return number;
 	}
 
-	public void setNumber(Integer number) {
+	public void setNumber(String number) {
 		this.number = number;
 	}
 
@@ -162,7 +162,7 @@ public class FinancePaymentController extends BasicController {
 			registryId = null;
 			registryName = "";
 			series = "";
-			number = null;
+			number = "";
 			payedAmount = 0.0; 
 			paymentDate = new Date();
 			fromDate = null;
