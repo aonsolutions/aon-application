@@ -29,6 +29,8 @@ public class ArticleCategory implements ITransferObject {
 	
 	private Section section;
 	
+	private boolean sectionOnlyElement = false;
+	
 	private Set<ArticleCategoryDetail> details;
 
 	private Set<Article> articles;
@@ -97,6 +99,15 @@ public class ArticleCategory implements ITransferObject {
 
 	public void setSection(Section section) {
 		this.section = section;
+	}
+
+	@Column(name = "sectionOnlyElement", nullable = false)
+	public boolean isSectionOnlyElement() {
+		return sectionOnlyElement;
+	}
+
+	public void setSectionOnlyElement(boolean sectionOnlyElement) {
+		this.sectionOnlyElement = sectionOnlyElement;
 	}
 
 }

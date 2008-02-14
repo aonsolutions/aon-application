@@ -97,6 +97,12 @@
 								<f:selectItems value="#{collections.sectionList}" />
 							</aon:selectOneMenu>
 							
+							<aon:outputLabel for="sectionOnlyElement"
+								styleClass="aon-form-input-text-label"
+								value="#{appBundle.article_category_isSectionOnlyElement}" />
+							<aon:selectBooleanCheckbox id="sectionOnlyElement" 
+								value="#{article_category.to.sectionOnlyElement}" />
+							
 						</aon:panelGrid>
 					</aon:panelGrid>
 				</aon:div>
