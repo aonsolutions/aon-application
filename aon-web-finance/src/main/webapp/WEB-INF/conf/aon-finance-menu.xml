@@ -4,8 +4,13 @@
 		key="customer" descriptionKey="customer_desc">
 		<actionListener action="#{customer.onReset}" />
 	</option>
+	<option contextRelative="false" external="false"  ref="supplier"
+		key="supplier" descriptionKey="supplier_desc">
+		<actionListener action="#{supplier.onReset}" />
+	</option>
 	<menu id="aon_administrative_management" ref="content" key="aon_invoice_management" descriptionKey="aon_invoice_management_desc" role="GestionCuotas">
 		<option id="aon_invoice_management" key="aon_invoice_management" descriptionKey="aon_invoice_management_desc" ref="invoiceManagement"/>
+		<option id="aon_purchase_invoice_management" key="aon_purchase_invoice_management" descriptionKey="aon_invoice_management_desc" ref="purchaseInvoiceManagement"/>
 		<option key="aon_invoice_print" descriptionKey="aon_invoice_print_desc" ref="invoicePrint">
 			<actionListener action="#{invoicePrint.onEditSearch}"/>
 		</option>
