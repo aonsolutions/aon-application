@@ -124,6 +124,7 @@ public class ArticleCategoryController extends BasicI18nController {
 		ArticleCategory articleCategory = (ArticleCategory) this.getSelectedTO();
 		Criteria criteria = new Criteria();
 		criteria.addExpression(moBean.getFieldName(ICMSAlias.ARTICLE_ARTICLE_CATEGORY_ID), "" + articleCategory.getId());
+		criteria.addExpression(moBean.getFieldName(ICMSAlias.ARTICLE_ARTICLE_TYPE), "" + fc.getCurrentType());
 		criteria.addOrder(moBean.getFieldName(ICMSAlias.ARTICLE_POSITION));
 		fc.setCurrentArticleCategory(articleCategory);
 		fc.setCriteria(criteria);
