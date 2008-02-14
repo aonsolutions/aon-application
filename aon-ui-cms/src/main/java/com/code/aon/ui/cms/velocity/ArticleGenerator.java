@@ -62,10 +62,6 @@ public class ArticleGenerator extends Generator {
 			ArrayList<ArticleCategoryHandler> achlist = new ArrayList<ArticleCategoryHandler>(); 
 			for (int j=0; j < articleCategoryList.size(); j++) {
 				articleCategory = (ArticleCategory)articleCategoryList.get(j);
-				if (articleCategory.getSection()!=null)
-					CommonGenerator.getCommonGenerator().chargeContext(vu, articleCategory.getSection());
-				else
-					CommonGenerator.getCommonGenerator().chargeContext(vu, configSection);
 				articleCategoryDetailCriteria = new Criteria();
 				articleCategoryDetailCriteria.addEqualExpression(articleCategoryDetailBean.getFieldName(ICMSAlias.ARTICLE_CATEGORY_DETAIL_ARTICLE_CATEGORY_ID), articleCategory.getId());
 				articleCategoryDetailCriteria.addEqualExpression(articleCategoryDetailBean.getFieldName(ICMSAlias.ARTICLE_CATEGORY_DETAIL_LANGUAGE_ID), ControllerUtil.getCurrentLanguage().getId());
@@ -81,6 +77,10 @@ public class ArticleGenerator extends Generator {
 						articleList = (List<ITransferObject>)articleBean.getList(articleCriteria);
 						ArrayList<ArticleHandler> ahlist = new ArrayList<ArticleHandler>();
 						if (!articleList.isEmpty()){
+							if (articleCategory.getSection()!=null)
+								CommonGenerator.getCommonGenerator().chargeContext(vu, articleCategory.getSection());
+							else
+								CommonGenerator.getCommonGenerator().chargeContext(vu, configSection);
 							for (int i=0; i < articleList.size(); i++) {
 								article = (Article)articleList.get(i);
 								articleDetailCriteria = new Criteria();
@@ -97,6 +97,11 @@ public class ArticleGenerator extends Generator {
 									vu.remove("article");
 								}
 							}
+							if (articleCategory.getSection()!=null
+									&& !articleCategory.isSectionOnlyElement())
+								CommonGenerator.getCommonGenerator().chargeContext(vu, articleCategory.getSection());
+							else
+								CommonGenerator.getCommonGenerator().chargeContext(vu, configSection);
 							ArticleCategoryHandler achandler = new ArticleCategoryHandler(articleCategoryDetail,ahlist);
 							vu.put("article_category", achandler);
 							vu.put("article_list", ahlist);
