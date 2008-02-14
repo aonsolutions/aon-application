@@ -84,7 +84,7 @@ public class CommonGenerator extends Generator {
 			}
 
 			vu.put("is_menu_alt", section.isShow_menu_alt());
-			if (section.isShow_menu()){
+			if (section.isShow_menu_alt()){
 				vu.addMessage(" - Menu alternativo", VelocityUtil.INFO);
 				Menu m = section.getMenuAltToShow();
 				if (m==null){
@@ -116,7 +116,7 @@ public class CommonGenerator extends Generator {
 			if (section.isShow_sidebar_left() ||
 					section.isShow_sidebar_right()){
 				vu.addMessage(" - Sidebar por defecto", VelocityUtil.INFO);
-				Sidebar sb = section.getSidebar();
+				Sidebar sb = section.getSidebarToShow();
 				if (section.isShow_sidebar_left()){
 					if (sb==null){
 						vu.put("is_sidebar_left", false);
@@ -141,7 +141,7 @@ public class CommonGenerator extends Generator {
 			vu.put("is_footer", section.isShow_footer());
 			if (section.isShow_footer()){
 				vu.addMessage(" - Pie de página por defecto", VelocityUtil.INFO);
-				Footer f = section.getFooter();
+				Footer f = section.getFooterToShow();
 				if (f==null){
 					vu.put("is_footer", false);
 					vu.addMessage(" - Pie de página NULL no cargado.", VelocityUtil.INFO);
