@@ -31,6 +31,7 @@ public class PurchaseFinanceController extends LinesController {
 		this.registryBankId = registryBankId;
 	}
 	
+	@SuppressWarnings("unchecked")
 	public List getCompanyBanks(){
 		List<SelectItem> rBanks = new LinkedList<SelectItem>();
 		Company company = obtainCompany();
@@ -53,6 +54,7 @@ public class PurchaseFinanceController extends LinesController {
 		return rBanks;
 	}
 
+	@SuppressWarnings("unchecked")
 	private Company obtainCompany() {
 		try {
 			IManagerBean companyBean = BeanManager.getManagerBean(Company.class);
