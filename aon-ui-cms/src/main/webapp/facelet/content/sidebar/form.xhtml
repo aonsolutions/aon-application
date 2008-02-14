@@ -23,18 +23,16 @@
 				<!-- start toolbar navigation -->
 				<aon:div styleClass="aon-content-toolbar-internal">
 					<aon:div styleClass="aon-content-toolbar-item-group">
-						<aon:confirmButton id="save"
+						<aon:commandButton id="save"
 							value="#{bundle.aon_save}" rendered="#{sidebar.to!=null or sidebar.new}"
-							confirmTitle="Confirmation Dialog" confirmMessage="#{bundle.aon_save_confirm}"
-							confirmActionListener="#{sidebar.onAccept}" confirmAction="sidebar_list"
+							actionListener="#{sidebar.onAccept}" action="sidebar_list"
 							styleClass="aon-content-toolbar-item aon-icon-accept"
 							onmouseout="this.className='aon-content-toolbar-item aon-icon-accept'"
 							onmouseover="this.className='aon-content-toolbar-item aon-icon-accept aon-content-toolbar-item-hover'"
 							accesskey="#{bundle.aon_key_save}"/>
-						<aon:confirmButton id="cancel"
+						<aon:commandButton id="cancel"
 							value="#{bundle.aon_cancel}" rendered="#{sidebar.to!=null or sidebar.new}" immediate="#{true}"
-							confirmTitle="Confirmation Dialog" confirmMessage="#{bundle.aon_cancel_confirm}"
-							confirmActionListener="#{sidebar.onCancel}" confirmAction="sidebar_list"
+							actionListener="#{sidebar.onCancel}" action="sidebar_list"
 							styleClass="aon-content-toolbar-item aon-icon-cancel"
 							onmouseout="this.className='aon-content-toolbar-item aon-icon-cancel'"
 							onmouseover="this.className='aon-content-toolbar-item aon-icon-cancel aon-content-toolbar-item-hover'"
