@@ -23,10 +23,9 @@
 				</aon:div>		
 				<aon:div styleClass="aon-content-toolbar-internal">
 					<aon:div styleClass="aon-content-toolbar-item-group">
-						<aon:confirmButton 
+						<aon:commandButton 
 							value="#{bundle.aon_cancel}" rendered="#{article.to!=null or article.new}" immediate="#{true}"
-							confirmTitle="Confirmation Dialog" confirmMessage="#{bundle.aon_cancel_confirm}"
-							confirmActionListener="#{article.onCancel}" confirmAction="article_list"
+							actionListener="#{article.onCancel}" action="article_list"
 							styleClass="aon-content-toolbar-item aon-icon-cancel"
 							onmouseout="this.className='aon-content-toolbar-item aon-icon-cancel'"
 							onmouseover="this.className='aon-content-toolbar-item aon-icon-cancel aon-content-toolbar-item-hover'"
@@ -49,19 +48,16 @@
 						<ice:panelTab id="content" label="#{appBundle.aon_content}">
 
 							<aon:div styleClass="aon-section-toolbar">		
-								<aon:confirmButton 
+								<aon:commandButton 
 									value="#{bundle.aon_save}" rendered="#{article.to!=null or article.new}"
-									confirmTitle="Confirmation Dialog" confirmMessage="#{bundle.aon_save_confirm}"
-									confirmActionListener="#{article.onAccept}"
-									confirmAction="article_form"
+									actionListener="#{article.onAccept}"
 									styleClass="aon-content-toolbar-item aon-icon-accept"
 									onmouseout="this.className='aon-content-toolbar-item aon-icon-accept'"
 									onmouseover="this.className='aon-content-toolbar-item aon-icon-accept aon-content-toolbar-item-hover'"
 									accesskey="#{bundle.aon_key_save}"/>
-								<aon:confirmButton 
+								<aon:commandButton 
 									value="#{bundle.aon_cancel}" rendered="#{article.to!=null or article.new}" immediate="#{true}"
-									confirmTitle="Confirmation Dialog" confirmMessage="#{bundle.aon_cancel_confirm}"
-									confirmActionListener="#{article.onCancel}" confirmAction="article_list"
+									actionListener="#{article.onCancel}" action="article_list"
 									styleClass="aon-content-toolbar-item aon-icon-cancel"
 									onmouseout="this.className='aon-content-toolbar-item aon-icon-cancel'"
 									onmouseover="this.className='aon-content-toolbar-item aon-icon-cancel aon-content-toolbar-item-hover'"
