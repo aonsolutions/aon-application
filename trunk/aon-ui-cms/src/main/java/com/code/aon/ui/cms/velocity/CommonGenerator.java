@@ -73,26 +73,41 @@ public class CommonGenerator extends Generator {
 			vu.put("is_menu", section.isShow_menu());
 			if (section.isShow_menu()){
 				vu.addMessage(" - Menu por defecto", VelocityUtil.INFO);
-				Menu m = section.getMenu();
-				vu.put("default_menu", MenuGenerator.getMenuOptionList(m));
-				vu.addMessage(" - Menu " + m.getAlias() + " cargado.", VelocityUtil.INFO);
+				Menu m = section.getMenuToShow();
+				if (m==null){
+					vu.put("is_menu", false);
+					vu.addMessage(" - Menu NULL no cargado.", VelocityUtil.INFO);
+				}else{
+					vu.put("default_menu", MenuGenerator.getMenuOptionList(m));
+					vu.addMessage(" - Menu " + m.getAlias() + " cargado.", VelocityUtil.INFO);
+				}
 			}
 
 			vu.put("is_menu_alt", section.isShow_menu_alt());
 			if (section.isShow_menu()){
 				vu.addMessage(" - Menu alternativo", VelocityUtil.INFO);
-				Menu m = section.getMenu_alt();
-				vu.put("default_menu_alt", MenuGenerator.getMenuOptionList(m));
-				vu.addMessage(" - Menu alt " + m.getAlias() + " cargado.", VelocityUtil.INFO);
+				Menu m = section.getMenuAltToShow();
+				if (m==null){
+					vu.put("is_menu_alt", false);
+					vu.addMessage(" - Menu alt NULL no cargado.", VelocityUtil.INFO);
+				}else{
+					vu.put("default_menu_alt", MenuGenerator.getMenuOptionList(m));
+					vu.addMessage(" - Menu alt " + m.getAlias() + " cargado.", VelocityUtil.INFO);
+				}
 			}
 
 			// $default_header from default header in database
 			vu.put("is_header", section.isShow_header());
 			if (section.isShow_header()){
 				vu.addMessage(" - Cabecera por defecto", VelocityUtil.INFO);
-				Header h = section.getHeader();
-				vu.put("default_header", getHeaderHandler(h));
-				vu.addMessage(" - Cabecera " + h.getAlias() + " cargada.", VelocityUtil.INFO);
+				Header h = section.getHeaderToShow();
+				if (h==null){
+					vu.put("is_header", false);
+					vu.addMessage(" - Cabecera NULL no cargado.", VelocityUtil.INFO);
+				}else{
+					vu.put("default_header", getHeaderHandler(h));
+					vu.addMessage(" - Cabecera " + h.getAlias() + " cargada.", VelocityUtil.INFO);
+				}
 			}
 			
 			// $default_sidebar from default header in database
@@ -103,12 +118,22 @@ public class CommonGenerator extends Generator {
 				vu.addMessage(" - Sidebar por defecto", VelocityUtil.INFO);
 				Sidebar sb = section.getSidebar();
 				if (section.isShow_sidebar_left()){
-					vu.put("default_sidebar_left", getSidebarHandler(sb, SidebarSide.LEFT));
-					vu.addMessage(" - Sidebar left " + sb.getAlias() + " cargada.", VelocityUtil.INFO);
+					if (sb==null){
+						vu.put("is_sidebar_left", false);
+						vu.addMessage(" - Sidebar left NULL no cargado.", VelocityUtil.INFO);
+					}else{
+						vu.put("default_sidebar_left", getSidebarHandler(sb, SidebarSide.LEFT));
+						vu.addMessage(" - Sidebar left " + sb.getAlias() + " cargada.", VelocityUtil.INFO);
+					}
 				}
 				if (section.isShow_sidebar_right()){
-					vu.put("default_sidebar_right", getSidebarHandler(sb, SidebarSide.RIGHT));
-					vu.addMessage(" - Sidebar right " + sb.getAlias() + " cargada.", VelocityUtil.INFO);
+					if (sb==null){
+						vu.put("is_sidebar_right", false);
+						vu.addMessage(" - Sidebar right NULL no cargado.", VelocityUtil.INFO);
+					}else{
+						vu.put("default_sidebar_right", getSidebarHandler(sb, SidebarSide.RIGHT));
+						vu.addMessage(" - Sidebar right " + sb.getAlias() + " cargada.", VelocityUtil.INFO);
+					}
 				}
 			}
 			
@@ -117,8 +142,13 @@ public class CommonGenerator extends Generator {
 			if (section.isShow_footer()){
 				vu.addMessage(" - Pie de página por defecto", VelocityUtil.INFO);
 				Footer f = section.getFooter();
-				vu.put("default_footer", getFooterHandler(f));
-				vu.addMessage(" - Pie de página " + f.getAlias() + " cargado.", VelocityUtil.INFO);
+				if (f==null){
+					vu.put("is_footer", false);
+					vu.addMessage(" - Pie de página NULL no cargado.", VelocityUtil.INFO);
+				}else{
+					vu.put("default_footer", getFooterHandler(f));
+					vu.addMessage(" - Pie de página " + f.getAlias() + " cargado.", VelocityUtil.INFO);
+				}
 			}
 			
 			// $default_css from config

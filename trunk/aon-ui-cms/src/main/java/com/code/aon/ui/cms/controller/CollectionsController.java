@@ -44,6 +44,7 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionException;
 import com.code.aon.ui.cms.velocity.BannerGenerator;
+import com.code.aon.ui.util.AonUtil;
 
 public class CollectionsController {
 
@@ -507,4 +508,31 @@ public class CollectionsController {
 		return objects;
 	}
 
+	public List<SelectItem> getAvailableParentSectionList() throws ManagerBeanException {
+		SectionController sectionController = (SectionController)AonUtil.getRegisteredBean("section");
+		Section current = (Section)sectionController.getTo();
+		
+		List<SelectItem> itemList = new LinkedList<SelectItem>();
+		IManagerBean bean = BeanManager.getManagerBean(Section.class);
+		List<ITransferObject> list = (List<ITransferObject>)bean.getList(null);
+		Section section;
+		for (int i = 0; i < list.size(); i++) {
+			section = (Section)list.get(i);
+			if (checkParent(current,section)){
+				int id = section.getId();
+				String name = section.getAlias();
+				SelectItem item = new SelectItem(id, name);
+				itemList.add(item);
+			}
+		}
+		return itemList;
+	}
+
+	private boolean checkParent(Section current,Section parent){
+		if (parent.getId().equals(current.getId()))
+			return false;
+		if (parent.getParent_()!=null)
+			return checkParent(current,parent.getParent_());
+		return true;
+	}
 }

@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import com.code.aon.cms.AlbumConfig;
 import com.code.aon.cms.Article;
 import com.code.aon.cms.ArticleCategory;
 import com.code.aon.cms.ArticleCategoryDetail;
@@ -12,6 +13,7 @@ import com.code.aon.cms.ArticleDetail;
 import com.code.aon.cms.ArticleDocument;
 import com.code.aon.cms.ArticleDocumentDetail;
 import com.code.aon.cms.ArticleRelated;
+import com.code.aon.cms.Section;
 import com.code.aon.cms.dao.ICMSAlias;
 import com.code.aon.cms.enumeration.ArticleType;
 import com.code.aon.cms.enumeration.MenuType;
@@ -36,6 +38,7 @@ public class ArticleGenerator extends Generator {
 		List<ITransferObject> articleList;
 		List<ITransferObject> articleDetailList;
 		try {
+			Section configSection = GeneratorConfigController.currentSection(ArticleConfig.class);
 			IManagerBean articleCategoryBean = BeanManager.getManagerBean(ArticleCategory.class);
 			IManagerBean articleCategoryDetailBean = BeanManager.getManagerBean(ArticleCategoryDetail.class);
 			IManagerBean articleBean = BeanManager.getManagerBean(Article.class);
@@ -59,7 +62,10 @@ public class ArticleGenerator extends Generator {
 			ArrayList<ArticleCategoryHandler> achlist = new ArrayList<ArticleCategoryHandler>(); 
 			for (int j=0; j < articleCategoryList.size(); j++) {
 				articleCategory = (ArticleCategory)articleCategoryList.get(j);
-				CommonGenerator.getCommonGenerator().chargeContext(vu, articleCategory.getSection());
+				if (articleCategory.getSection()!=null)
+					CommonGenerator.getCommonGenerator().chargeContext(vu, articleCategory.getSection());
+				else
+					CommonGenerator.getCommonGenerator().chargeContext(vu, configSection);
 				articleCategoryDetailCriteria = new Criteria();
 				articleCategoryDetailCriteria.addEqualExpression(articleCategoryDetailBean.getFieldName(ICMSAlias.ARTICLE_CATEGORY_DETAIL_ARTICLE_CATEGORY_ID), articleCategory.getId());
 				articleCategoryDetailCriteria.addEqualExpression(articleCategoryDetailBean.getFieldName(ICMSAlias.ARTICLE_CATEGORY_DETAIL_LANGUAGE_ID), ControllerUtil.getCurrentLanguage().getId());
@@ -87,7 +93,6 @@ public class ArticleGenerator extends Generator {
 									ahlist.add(ahandler);
 									vu.put("article", ahandler);
 									vu.addMessage(" Generando article " + article.getAlias() + ".", VelocityUtil.INFO);
-									CommonGenerator.getCommonGenerator().chargeContext(vu, articleCategory.getSection());
 									generate(vu, templates, article.getAlias());
 									vu.remove("article");
 								}
@@ -96,7 +101,6 @@ public class ArticleGenerator extends Generator {
 							vu.put("article_category", achandler);
 							vu.put("article_list", ahlist);
 							vu.addMessage(" Generando list de article.", VelocityUtil.INFO);
-							CommonGenerator.getCommonGenerator().chargeContext(vu, articleCategory.getSection());
 							generate(vu, templates, values[art_type].getName()+"_"+articleCategory.getAlias());
 							vu.remove("article_category");
 							vu.remove("article_list");

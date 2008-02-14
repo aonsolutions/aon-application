@@ -11,6 +11,7 @@ import com.code.aon.cms.AlbumConfig;
 import com.code.aon.cms.AlbumDetail;
 import com.code.aon.cms.AlbumImage;
 import com.code.aon.cms.AlbumImageDetail;
+import com.code.aon.cms.Section;
 import com.code.aon.cms.dao.ICMSAlias;
 import com.code.aon.cms.enumeration.Templates;
 import com.code.aon.common.BeanManager;
@@ -69,6 +70,7 @@ public class AlbumGenerator extends Generator {
 		List<ITransferObject> albumList;
 		List<ITransferObject> albumDetailList;
 		try {
+			Section configSection = GeneratorConfigController.currentSection(AlbumConfig.class);
 			IManagerBean albumCategoryBean = BeanManager.getManagerBean(AlbumCategory.class);
 			IManagerBean albumCategoryDetailBean = BeanManager.getManagerBean(AlbumCategoryDetail.class);
 			IManagerBean albumBean = BeanManager.getManagerBean(Album.class);
@@ -86,7 +88,10 @@ public class AlbumGenerator extends Generator {
 			AlbumDetail albumDetail;
 			for (int j=0; j < albumCategoryList.size(); j++) {
 				albumCategory = (AlbumCategory)albumCategoryList.get(j);
-				CommonGenerator.getCommonGenerator().chargeContext(vu, albumCategory.getSection());
+				if (albumCategory.getSection()!=null)
+					CommonGenerator.getCommonGenerator().chargeContext(vu, albumCategory.getSection());
+				else
+					CommonGenerator.getCommonGenerator().chargeContext(vu, configSection);
 				albumCategoryDetailCriteria = new Criteria();
 				albumCategoryDetailCriteria.addEqualExpression(albumCategoryDetailBean.getFieldName(ICMSAlias.ALBUM_CATEGORY_DETAIL_ALBUM_CATEGORY_ID), albumCategory.getId());
 				albumCategoryDetailCriteria.addEqualExpression(albumCategoryDetailBean.getFieldName(ICMSAlias.ALBUM_CATEGORY_DETAIL_LANGUAGE_ID), ControllerUtil.getCurrentLanguage().getId());
@@ -181,7 +186,7 @@ public class AlbumGenerator extends Generator {
 			}
 			vu.put("album_category_list", achlist);
 			vu.addMessage(" Generando categorias de album.", VelocityUtil.INFO);
-			CommonGenerator.getCommonGenerator().chargeContext(vu, GeneratorConfigController.currentSection(AlbumConfig.class));
+			CommonGenerator.getCommonGenerator().chargeContext(vu, configSection);
 			generate(vu, Templates.ALBUM_IMAGES, ALBUM_LIST_PAGE);
 			vu.remove("album_category_list");
 		} catch (ManagerBeanException e) {

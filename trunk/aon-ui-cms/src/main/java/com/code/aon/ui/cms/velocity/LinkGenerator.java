@@ -5,9 +5,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
-import com.code.aon.cms.FaqConfig;
-import com.code.aon.cms.GenericPage;
-import com.code.aon.cms.GenericPageDetail;
 import com.code.aon.cms.LinkCategory;
 import com.code.aon.cms.LinkCategoryDetail;
 import com.code.aon.cms.LinkConfig;
@@ -22,7 +19,6 @@ import com.code.aon.ql.Criteria;
 import com.code.aon.ui.cms.controller.GeneratorConfigController;
 import com.code.aon.ui.cms.util.ControllerUtil;
 import com.code.aon.ui.cms.util.VelocityUtil;
-import com.code.aon.ui.cms.velocity.attribute.GenericPageHandler;
 import com.code.aon.ui.cms.velocity.attribute.LinkCategoryHandler;
 
 public class LinkGenerator extends Generator {
@@ -40,6 +36,7 @@ public class LinkGenerator extends Generator {
 			LinkCategoryDetail lcd;
 			List l;
 			Section currentSection;
+			Section configSection = GeneratorConfigController.currentSection(LinkConfig.class);;
 			for (int i=0; i < linkCategoryDetailList.size(); i++) {
 				lcd = (LinkCategoryDetail)linkCategoryDetailList.get(i);
 				if (lcd.getLinkCategory().isActive()) {
@@ -47,15 +44,20 @@ public class LinkGenerator extends Generator {
 					lchList.add(lch);
 					vu.put("link_category", lch);
 					vu.addMessage(" Generando categoria Link '" + lcd.getLinkCategory().getAlias() + "'.", VelocityUtil.INFO);
-					CommonGenerator.getCommonGenerator().chargeContext(vu, lcd.getLinkCategory().getSection());
+
+					if (lcd.getLinkCategory().getSection()!=null){
+						currentSection = lcd.getLinkCategory().getSection();
+					}else{
+						if (configSection!=null)
+							currentSection = configSection;
+						else
+							currentSection = GeneratorConfigController.defaultSection();
+					}
+					CommonGenerator.getCommonGenerator().chargeContext(vu, currentSection);
+
 					generate(vu, Templates.LINK, lcd.getLinkCategory().getAlias());
 					vu.remove("link_category");
 					
-					if (lcd.getLinkCategory().getSection()==null){
-						currentSection = GeneratorConfigController.defaultSection();
-					}else{
-						currentSection = lcd.getLinkCategory().getSection();
-					}
 					l = (List) categoryMap.get(currentSection);
 					if (l == null)
 						l = new ArrayList<LinkCategoryHandler>();
@@ -78,7 +80,7 @@ public class LinkGenerator extends Generator {
 			iter = null;
 			vu.put("link_categories", lchList);
 			vu.addMessage(" Generando listado categoria Link.", VelocityUtil.INFO);
-			CommonGenerator.getCommonGenerator().chargeContext(vu, GeneratorConfigController.currentSection(LinkConfig.class));
+			CommonGenerator.getCommonGenerator().chargeContext(vu, configSection);
 			generate(vu, Templates.LINK, LINK_CATEGORY_LIST_PAGE);
 			vu.remove("link_categories");
 		} catch (ManagerBeanException e) {

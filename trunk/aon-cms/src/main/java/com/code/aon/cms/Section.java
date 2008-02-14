@@ -8,6 +8,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import com.code.aon.common.ITransferObject;
 
@@ -25,6 +26,10 @@ public class Section implements ITransferObject {
 	
 	private Sidebar sidebar;
 	
+	private Menu menu;
+	
+	private Menu menu_alt;
+	
 	private boolean show_header = true;
 	
 	private boolean show_footer = true;
@@ -33,15 +38,13 @@ public class Section implements ITransferObject {
 	
 	private boolean show_sidebar_right = true;
 	
-	private Menu menu;
-	
 	private boolean show_menu = true;
 
-	private Menu menu_alt;
-	
 	private boolean show_menu_alt = true;
 
 	private boolean default_;
+	
+	private Section parent_;
 	
 	@Id
 	@GeneratedValue
@@ -64,7 +67,7 @@ public class Section implements ITransferObject {
 	}
 
 	@ManyToOne(fetch = FetchType.EAGER)
-	@JoinColumn(name = "header", nullable = false)
+	@JoinColumn(name = "header")
 	public Header getHeader() {
 		return header;
 	}
@@ -74,7 +77,7 @@ public class Section implements ITransferObject {
 	}
 
 	@ManyToOne(fetch = FetchType.EAGER)
-	@JoinColumn(name = "footer", nullable = false)
+	@JoinColumn(name = "footer")
 	public Footer getFooter() {
 		return footer;
 	}
@@ -84,7 +87,7 @@ public class Section implements ITransferObject {
 	}
 
 	@ManyToOne(fetch = FetchType.EAGER)
-	@JoinColumn(name = "sidebar", nullable = false)
+	@JoinColumn(name = "sidebar")
 	public Sidebar getSidebar() {
 		return sidebar;
 	}
@@ -130,7 +133,7 @@ public class Section implements ITransferObject {
 	}
 
 	@ManyToOne(fetch = FetchType.EAGER)
-	@JoinColumn(name = "menu", nullable = false)
+	@JoinColumn(name = "menu")
 	public Menu getMenu() {
 		return menu;
 	}
@@ -176,4 +179,54 @@ public class Section implements ITransferObject {
 		this.default_ = default_;
 	}
 
+	@ManyToOne(fetch = FetchType.EAGER)
+	@JoinColumn(name = "parent_")
+	public Section getParent_() {
+		return parent_;
+	}
+
+	public void setParent_(Section parent_) {
+		this.parent_ = parent_;
+	}
+
+	@Transient
+	public Header getHeaderToShow(){
+		if (this.parent_ == null)
+			return this.header;
+		else
+			return parent_.getHeaderToShow();
+	}
+	
+	@Transient
+	public Footer getFooterToShow(){
+		if (this.parent_ == null)
+			return this.footer;
+		else
+			return parent_.getFooterToShow();
+	}
+	
+	@Transient
+	public Sidebar getSidebarToShow(){
+		if (this.parent_ == null)
+			return this.sidebar;
+		else
+			return parent_.getSidebarToShow();
+	}
+	
+	@Transient
+	public Menu getMenuToShow(){
+		if (this.parent_ == null)
+			return this.menu;
+		else
+			return parent_.getMenuToShow();
+	}
+	
+	@Transient
+	public Menu getMenuAltToShow(){
+		if (this.parent_ == null)
+			return this.menu_alt;
+		else
+			return parent_.getMenuAltToShow();
+	}
+	
 }
