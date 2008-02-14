@@ -117,7 +117,6 @@
 							<h:panelGrid columns="2" cellpadding="0" cellspacing="0">
 								<t:selectOneMenu id="Invoice_series"
 									value="#{feeInvoicing.to.series}"
-									required="#{true}"
 									disabled="#{!feeInvoicing.new or feeInvoicing.recorded}"
 									styleClass="aon-form-selectOneMenu-field"
 									onchange="submit();" valueChangeListener="#{feeInvoicing.onSeriesChanged}">

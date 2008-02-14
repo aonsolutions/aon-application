@@ -54,7 +54,6 @@
 						<h:panelGrid columns="2">
 							<t:selectOneMenu id="Invoice_series"
 								value="#{feeInvoicing.invoicingParams.series}"
-								required="#{true}"
 								styleClass="aon-form-selectOneMenu-field"
 								onchange="submit();" valueChangeListener="#{feeInvoicing.onSeriesChanged}">
 								<f:selectItems value="#{configCollections.series}" />
