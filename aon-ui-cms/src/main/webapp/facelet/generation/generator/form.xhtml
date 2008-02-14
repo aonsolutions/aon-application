@@ -16,16 +16,27 @@
 			<aon:div styleClass="aon-content-toolbar" forceId="#{true}" id="aon-content-toolbar">
 				<aon:div styleClass="aon-content-toolbar-internal">
 					<aon:div styleClass="aon-content-toolbar-item-group">
-						<aon:confirmButton id="generate"
+						<aon:commandButton id="generate"
 							value="#{appBundle.aon_generate}" 
-							confirmTitle="Confirmation Dialog" confirmMessage="#{appBundle.aon_generate_confirm}"
-							confirmActionListener="#{generator.onGenerate}" 
-							confirmAction="generator_log"
+							actionListener="#{generator.onGenerate}" 
+							action="generator_log"
 							styleClass="aon-content-toolbar-item aon-icon-accept"
 							onmouseout="this.className='aon-content-toolbar-item aon-icon-accept'"
 							onmouseover="this.className='aon-content-toolbar-item aon-icon-accept aon-content-toolbar-item-hover'"/>
 						<aon:commandButton id="exit" value="#{bundle.aon_close}"
 							action="home" styleClass="aon-content-toolbar-item aon-icon-cancel"
+							onmouseout="this.className='aon-content-toolbar-item aon-icon-cancel'"
+							onmouseover="this.className='aon-content-toolbar-item aon-icon-cancel aon-content-toolbar-item-hover'"
+							accesskey="#{bundle.aon_key_close}"/>
+						<aon:commandButton id="all" value="#{bundle.aon_check_all}"
+							styleClass="aon-content-toolbar-item aon-icon-cancel"
+							actionListener="#{generator.onSelectAll}" 
+							onmouseout="this.className='aon-content-toolbar-item aon-icon-cancel'"
+							onmouseover="this.className='aon-content-toolbar-item aon-icon-cancel aon-content-toolbar-item-hover'"
+							accesskey="#{bundle.aon_key_close}"/>
+						<aon:commandButton id="none" value="#{bundle.aon_uncheck_all}"
+							styleClass="aon-content-toolbar-item aon-icon-cancel"
+							actionListener="#{generator.onDeselectAll}" 
 							onmouseout="this.className='aon-content-toolbar-item aon-icon-cancel'"
 							onmouseover="this.className='aon-content-toolbar-item aon-icon-cancel aon-content-toolbar-item-hover'"
 							accesskey="#{bundle.aon_key_close}"/>

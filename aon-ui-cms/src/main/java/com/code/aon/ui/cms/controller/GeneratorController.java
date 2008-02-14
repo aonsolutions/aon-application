@@ -181,6 +181,31 @@ public class GeneratorController extends BasicController implements Constants {
 	public void setDownloadsToGenerate(boolean isDownloadsToGenerate) {
 		this.isDownloadsToGenerate = isDownloadsToGenerate;
 	}
+	public void onSelectAll(ActionEvent event) {
+		isLanguajePageToGenerate = true;
+		isModularPageToGenerate = true;
+		isMenuToGenerate = true;
+		isGenericToGenerate = true;
+		isFaqToGenerate = true;
+		isLinkToGenerate = true;
+		isDirectAccessToGenerate = true;
+		isAlbumToGenerate = true;
+		isArticleToGenerate = true;
+		isDownloadsToGenerate = true;
+	}
+	public void onDeselectAll(ActionEvent event) {
+		isLanguajePageToGenerate = false;
+		isModularPageToGenerate = false;
+		isMenuToGenerate = false;
+		isGenericToGenerate = false;
+		isFaqToGenerate = false;
+		isLinkToGenerate = false;
+		isDirectAccessToGenerate = false;
+		isAlbumToGenerate = false;
+		isArticleToGenerate = false;
+		isDownloadsToGenerate = false;
+	}
+	
 	private static String checkMem(String data) {
 		long freeMemory = Runtime.getRuntime().freeMemory();
 		long totalMemory = Runtime.getRuntime().totalMemory();
