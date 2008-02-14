@@ -116,8 +116,8 @@ public class CommonGenerator extends Generator {
 			if (section.isShow_sidebar_left() ||
 					section.isShow_sidebar_right()){
 				vu.addMessage(" - Sidebar por defecto", VelocityUtil.INFO);
-				Sidebar sb = section.getSidebarToShow();
 				if (section.isShow_sidebar_left()){
+					Sidebar sb = section.getSidebarToLeftShow();
 					if (sb==null){
 						vu.put("is_sidebar_left", false);
 						vu.addMessage(" - Sidebar left NULL no cargado.", VelocityUtil.INFO);
@@ -127,6 +127,7 @@ public class CommonGenerator extends Generator {
 					}
 				}
 				if (section.isShow_sidebar_right()){
+					Sidebar sb = section.getSidebarToRightShow();
 					if (sb==null){
 						vu.put("is_sidebar_right", false);
 						vu.addMessage(" - Sidebar right NULL no cargado.", VelocityUtil.INFO);
