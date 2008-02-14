@@ -277,7 +277,8 @@ public class ArticleController extends GridI18nController {
 		criteria.addEqualExpression(getManagerBean().getFieldName(ICMSAlias.ARTICLE_ARTICLE_TYPE), currentType);
 		criteria.addOrder(getManagerBean().getFieldName(ICMSAlias.ARTICLE_POSITION));
 		setCriteria(criteria);
-		initializeModel();
+		onSearch(null);
+		onInit(null);
 		clearCheckList();
 	}
 
