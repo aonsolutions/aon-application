@@ -159,12 +159,24 @@
 							<aon:outputLabel for="Section_parent_"
 								styleClass="aon-form-input-text-label"
 								value="#{appBundle.section_parent}"/>
-							<aon:selectOneMenu id="Section_parent_"  
-								styleClass="aon-form-selectOneMenu-field"
-								value="#{section.to.parent_.id}">
-								<f:selectItem itemLabel="-" itemValue="-1" />
-								<f:selectItems value="#{collections.availableParentSectionList}" />
-							</aon:selectOneMenu>
+							<aon:div>
+								<aon:selectOneMenu id="Section_parent_"  
+									styleClass="aon-form-selectOneMenu-field"
+									value="#{section.to.parent_.id}">
+									<f:selectItem itemLabel="-" itemValue="-1" />
+									<f:selectItems value="#{collections.availableParentSectionList}" />
+								</aon:selectOneMenu>
+								<aon:outputLabel for="parent_sidebar_left"
+									styleClass="aon-form-input-text-label"
+									value="#{appBundle.section_parent_sidebar_left}" />
+								<aon:selectBooleanCheckbox id="parent_sidebar_left" 
+									value="#{section.to.parent_sidebar_left}" />
+								<aon:outputLabel for="parent_sidebar_right"
+									styleClass="aon-form-input-text-label"
+									value="#{appBundle.section_parent_sidebar_right}" />
+								<aon:selectBooleanCheckbox id="parent_sidebar_right" 
+									value="#{section.to.parent_sidebar_right}" />
+							</aon:div>
 					
 						</aon:panelGrid>
 						

@@ -2095,46 +2095,58 @@ public interface ICMSAlias {
 	String  SECTION_PARENT__ID = SECTION_ENTRY.getAliasNames()[7];
 
 	/** 
+	* Alias value: Section_parent_sidebar_left
+	* Hibernate value: Section.parent_sidebar_left
+	*/
+	String  SECTION_PARENT_SIDEBAR_LEFT = SECTION_ENTRY.getAliasNames()[8];
+
+	/** 
+	* Alias value: Section_parent_sidebar_right
+	* Hibernate value: Section.parent_sidebar_right
+	*/
+	String  SECTION_PARENT_SIDEBAR_RIGHT = SECTION_ENTRY.getAliasNames()[9];
+
+	/** 
 	* Alias value: Section_show_footer
 	* Hibernate value: Section.show_footer
 	*/
-	String  SECTION_SHOW_FOOTER = SECTION_ENTRY.getAliasNames()[8];
+	String  SECTION_SHOW_FOOTER = SECTION_ENTRY.getAliasNames()[10];
 
 	/** 
 	* Alias value: Section_show_header
 	* Hibernate value: Section.show_header
 	*/
-	String  SECTION_SHOW_HEADER = SECTION_ENTRY.getAliasNames()[9];
+	String  SECTION_SHOW_HEADER = SECTION_ENTRY.getAliasNames()[11];
 
 	/** 
 	* Alias value: Section_show_menu
 	* Hibernate value: Section.show_menu
 	*/
-	String  SECTION_SHOW_MENU = SECTION_ENTRY.getAliasNames()[10];
+	String  SECTION_SHOW_MENU = SECTION_ENTRY.getAliasNames()[12];
 
 	/** 
 	* Alias value: Section_show_menu_alt
 	* Hibernate value: Section.show_menu_alt
 	*/
-	String  SECTION_SHOW_MENU_ALT = SECTION_ENTRY.getAliasNames()[11];
+	String  SECTION_SHOW_MENU_ALT = SECTION_ENTRY.getAliasNames()[13];
 
 	/** 
 	* Alias value: Section_show_sidebar_left
 	* Hibernate value: Section.show_sidebar_left
 	*/
-	String  SECTION_SHOW_SIDEBAR_LEFT = SECTION_ENTRY.getAliasNames()[12];
+	String  SECTION_SHOW_SIDEBAR_LEFT = SECTION_ENTRY.getAliasNames()[14];
 
 	/** 
 	* Alias value: Section_show_sidebar_right
 	* Hibernate value: Section.show_sidebar_right
 	*/
-	String  SECTION_SHOW_SIDEBAR_RIGHT = SECTION_ENTRY.getAliasNames()[13];
+	String  SECTION_SHOW_SIDEBAR_RIGHT = SECTION_ENTRY.getAliasNames()[15];
 
 	/** 
 	* Alias value: Section_sidebar_id
 	* Hibernate value: Section.sidebar.id
 	*/
-	String  SECTION_SIDEBAR_ID = SECTION_ENTRY.getAliasNames()[14];
+	String  SECTION_SIDEBAR_ID = SECTION_ENTRY.getAliasNames()[16];
 
 
 

@@ -45,7 +45,11 @@ public class Section implements ITransferObject {
 	private boolean default_;
 	
 	private Section parent_;
+
+	private boolean parent_sidebar_left = false;
 	
+	private boolean parent_sidebar_right = false;
+
 	@Id
 	@GeneratedValue
 	@Column(name = "id", nullable = false)
@@ -189,44 +193,91 @@ public class Section implements ITransferObject {
 		this.parent_ = parent_;
 	}
 
+	
+	@Column(name = "parent_sidebar_left")
+	public boolean isParent_sidebar_left() {
+		return parent_sidebar_left;
+	}
+
+	public void setParent_sidebar_left(boolean parent_sidebar_left) {
+		this.parent_sidebar_left = parent_sidebar_left;
+	}
+
+	@Column(name = "parent_sidebar_right")
+	public boolean isParent_sidebar_right() {
+		return parent_sidebar_right;
+	}
+
+	public void setParent_sidebar_right(boolean parent_sidebar_right) {
+		this.parent_sidebar_right = parent_sidebar_right;
+	}
+
 	@Transient
 	public Header getHeaderToShow(){
-		if (this.parent_ == null)
+		if (this.header != null){
 			return this.header;
-		else
+		}else{
+			if (this.parent_ == null)
+				return null;
 			return parent_.getHeaderToShow();
+		}
 	}
 	
 	@Transient
 	public Footer getFooterToShow(){
-		if (this.parent_ == null)
+		if (this.footer != null){
 			return this.footer;
-		else
+		}else{
+			if (this.parent_ == null)
+				return null;
 			return parent_.getFooterToShow();
+		}
 	}
 	
 	@Transient
-	public Sidebar getSidebarToShow(){
-		if (this.parent_ == null)
+	public Sidebar getSidebarToLeftShow(){
+		if (this.sidebar != null
+				&& !isParent_sidebar_left()){
 			return this.sidebar;
-		else
-			return parent_.getSidebarToShow();
+		}else{
+			if (this.parent_ == null)
+				return null;
+			return parent_.getSidebarToLeftShow();
+		}
+	}
+	
+	@Transient
+	public Sidebar getSidebarToRightShow(){
+		if (this.sidebar != null
+				&& !isParent_sidebar_right()){
+			return this.sidebar;
+		}else{
+			if (this.parent_ == null)
+				return null;
+			return parent_.getSidebarToRightShow();
+		}
 	}
 	
 	@Transient
 	public Menu getMenuToShow(){
-		if (this.parent_ == null)
+		if (this.menu != null){
 			return this.menu;
-		else
+		}else{
+			if (this.parent_ == null)
+				return null;
 			return parent_.getMenuToShow();
+		}
 	}
 	
 	@Transient
 	public Menu getMenuAltToShow(){
-		if (this.parent_ == null)
+		if (this.menu_alt != null){
 			return this.menu_alt;
-		else
+		}else{
+			if (this.parent_ == null)
+				return null;
 			return parent_.getMenuAltToShow();
+		}
 	}
 	
 }
