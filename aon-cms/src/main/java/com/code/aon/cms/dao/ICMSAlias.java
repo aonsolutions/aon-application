@@ -65,6 +65,7 @@ import com.code.aon.cms.ModularPageDetail;
 import com.code.aon.cms.ArticleRelated;
 import com.code.aon.cms.ArticleDocument;
 import com.code.aon.cms.ArticleDocumentDetail;
+import com.code.aon.cms.DownloadConfig;
 
 /** 
 * Interface for holding entity properties constants.
@@ -2088,46 +2089,52 @@ public interface ICMSAlias {
 	String  SECTION_MENU_ID = SECTION_ENTRY.getAliasNames()[6];
 
 	/** 
+	* Alias value: Section_parent__id
+	* Hibernate value: Section.parent_.id
+	*/
+	String  SECTION_PARENT__ID = SECTION_ENTRY.getAliasNames()[7];
+
+	/** 
 	* Alias value: Section_show_footer
 	* Hibernate value: Section.show_footer
 	*/
-	String  SECTION_SHOW_FOOTER = SECTION_ENTRY.getAliasNames()[7];
+	String  SECTION_SHOW_FOOTER = SECTION_ENTRY.getAliasNames()[8];
 
 	/** 
 	* Alias value: Section_show_header
 	* Hibernate value: Section.show_header
 	*/
-	String  SECTION_SHOW_HEADER = SECTION_ENTRY.getAliasNames()[8];
+	String  SECTION_SHOW_HEADER = SECTION_ENTRY.getAliasNames()[9];
 
 	/** 
 	* Alias value: Section_show_menu
 	* Hibernate value: Section.show_menu
 	*/
-	String  SECTION_SHOW_MENU = SECTION_ENTRY.getAliasNames()[9];
+	String  SECTION_SHOW_MENU = SECTION_ENTRY.getAliasNames()[10];
 
 	/** 
 	* Alias value: Section_show_menu_alt
 	* Hibernate value: Section.show_menu_alt
 	*/
-	String  SECTION_SHOW_MENU_ALT = SECTION_ENTRY.getAliasNames()[10];
+	String  SECTION_SHOW_MENU_ALT = SECTION_ENTRY.getAliasNames()[11];
 
 	/** 
 	* Alias value: Section_show_sidebar_left
 	* Hibernate value: Section.show_sidebar_left
 	*/
-	String  SECTION_SHOW_SIDEBAR_LEFT = SECTION_ENTRY.getAliasNames()[11];
+	String  SECTION_SHOW_SIDEBAR_LEFT = SECTION_ENTRY.getAliasNames()[12];
 
 	/** 
 	* Alias value: Section_show_sidebar_right
 	* Hibernate value: Section.show_sidebar_right
 	*/
-	String  SECTION_SHOW_SIDEBAR_RIGHT = SECTION_ENTRY.getAliasNames()[12];
+	String  SECTION_SHOW_SIDEBAR_RIGHT = SECTION_ENTRY.getAliasNames()[13];
 
 	/** 
 	* Alias value: Section_sidebar_id
 	* Hibernate value: Section.sidebar.id
 	*/
-	String  SECTION_SIDEBAR_ID = SECTION_ENTRY.getAliasNames()[13];
+	String  SECTION_SIDEBAR_ID = SECTION_ENTRY.getAliasNames()[14];
 
 
 
@@ -2617,6 +2624,25 @@ public interface ICMSAlias {
 	* Hibernate value: ArticleDocumentDetail.title
 	*/
 	String  ARTICLE_DOCUMENT_DETAIL_TITLE = ARTICLE_DOCUMENT_DETAIL_ENTRY.getAliasNames()[5];
+
+
+
+	/** 
+	* DAOConstantsEntry for DownloadConfig entity.
+	*/ 
+	DAOConstantsEntry DOWNLOAD_CONFIG_ENTRY = DAOConstants.getDAOConstant(DownloadConfig.class);
+
+	/** 
+	* Alias value: DownloadConfig_id
+	* Hibernate value: DownloadConfig.id
+	*/
+	String  DOWNLOAD_CONFIG_ID = DOWNLOAD_CONFIG_ENTRY.getAliasNames()[0];
+
+	/** 
+	* Alias value: DownloadConfig_section_id
+	* Hibernate value: DownloadConfig.section.id
+	*/
+	String  DOWNLOAD_CONFIG_SECTION_ID = DOWNLOAD_CONFIG_ENTRY.getAliasNames()[1];
 
 
 }

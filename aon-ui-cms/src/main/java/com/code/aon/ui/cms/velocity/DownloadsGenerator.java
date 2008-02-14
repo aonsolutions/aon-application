@@ -6,8 +6,10 @@ import java.util.List;
 import com.code.aon.cms.Download;
 import com.code.aon.cms.DownloadCategory;
 import com.code.aon.cms.DownloadCategoryDetail;
+import com.code.aon.cms.DownloadConfig;
 import com.code.aon.cms.DownloadDetail;
 import com.code.aon.cms.LinkConfig;
+import com.code.aon.cms.Section;
 import com.code.aon.cms.dao.ICMSAlias;
 import com.code.aon.cms.enumeration.Templates;
 import com.code.aon.common.BeanManager;
@@ -55,6 +57,7 @@ public class DownloadsGenerator extends Generator {
 	
 	public static void generate(VelocityUtil vu) {
 		try {
+			Section configSection = GeneratorConfigController.currentSection(DownloadConfig.class);
 			IManagerBean bean = BeanManager.getManagerBean(DownloadCategory.class);
 			List<ITransferObject> l = (List<ITransferObject>)bean.getList(null);
 			ArrayList<DownloadCategoryHandler> downloadCategoryHandlerList = new ArrayList<DownloadCategoryHandler>(); 
@@ -71,14 +74,17 @@ public class DownloadsGenerator extends Generator {
 					downloadCategoryHandlerList.add(downloadCategoryHandler);
 					vu.put("download_group", downloadCategoryHandler);
 					vu.addMessage(" Generando descargas " + group.getAlias() + ".", VelocityUtil.INFO);
-					CommonGenerator.getCommonGenerator().chargeContext(vu, group.getSection());
+					if (group.getSection()!=null)
+						CommonGenerator.getCommonGenerator().chargeContext(vu, group.getSection());
+					else
+						CommonGenerator.getCommonGenerator().chargeContext(vu, configSection);
 					generate(vu, Templates.DOWNLOADS, group.getAlias());
 					vu.remove("download_group");
 				}
 			}
 			vu.put("download_categories", downloadCategoryHandlerList);
 			vu.addMessage(" Generando listado categoria descargas.", VelocityUtil.INFO);
-			CommonGenerator.getCommonGenerator().chargeContext(vu, null);
+			CommonGenerator.getCommonGenerator().chargeContext(vu, configSection);
 			generate(vu, Templates.DOWNLOADS, DOWNLOAD_CATEGORY_LIST_PAGE);
 			vu.remove("download_categories");
 		} catch (ManagerBeanException e) {
