@@ -158,7 +158,7 @@ public class AlbumGenerator extends Generator {
 											vu.addMessage(" Generando album de imagenes " + album.getAlias() + ".", VelocityUtil.INFO);
 											generate(vu, Templates.ALBUM_IMAGES, album.getAlias()+(page==1?"":"_"+page));
 											vu.remove("back_url");
-											vu.remove("album_revious");
+											vu.remove("album_previous");
 											vu.remove("album_next");
 											vu.remove("album");
 											vu.remove("album_image_list");
