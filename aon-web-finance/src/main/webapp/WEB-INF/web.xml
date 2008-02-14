@@ -280,7 +280,7 @@
 		 -->
 		<web-resource-collection>
 			<web-resource-name>finance</web-resource-name>
-			<url-pattern>/finance/*</url-pattern>
+			<url-pattern>/_finance/*</url-pattern>
 		</web-resource-collection>
 		<web-resource-collection>
 			<web-resource-name>jsp</web-resource-name>
