@@ -1,15 +1,12 @@
 package com.code.aon.ui.cms.controller;
 
-import java.util.LinkedList;
 import java.util.List;
-import java.util.Locale;
 
 import javax.faces.context.FacesContext;
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 import javax.faces.event.ValueChangeEvent;
 import javax.faces.model.DataModel;
-import javax.faces.model.SelectItem;
 
 import com.code.aon.cms.Menu;
 import com.code.aon.cms.MenuOption;

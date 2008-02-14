@@ -3,6 +3,7 @@
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:ice="http://www.icesoft.com/icefaces/component"
 	xmlns:aon="http://www.code.es/aon-ice-components">
 <body>
 
@@ -54,7 +55,20 @@
 							<aon:outputText value="#{appBundle.article}" />
 						</aon:div>
 					</aon:div>
-					
+
+					<ice:panelTabSet id="articleTabSet" 
+						selectedIndex="#{article.currentTab}" 
+                     	tabChangeListener="#{article.processTabChange}">
+						<ice:panelTab id="services" label="SERVICES">
+	                    </ice:panelTab>
+						<ice:panelTab id="events" label="EVENTS">
+	                    </ice:panelTab>
+						<ice:panelTab id="news" label="NEWS">
+	                    </ice:panelTab>
+						<ice:panelTab id="others" label="OTHER">
+	                    </ice:panelTab>
+					</ice:panelTabSet>
+
 					<aon:dataTable id="articleDataList" styleClass="aon-dataTable"
 					 	columnWidths="120,200,*,50,60" 
 						value="#{article.model}" var="to" rows="0"

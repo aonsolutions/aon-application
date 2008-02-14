@@ -3,7 +3,6 @@ package com.code.aon.ui.cms.event;
 import java.io.File;
 import java.util.List;
 
-import com.code.aon.cms.AlbumImage;
 import com.code.aon.cms.Article;
 import com.code.aon.cms.dao.ICMSAlias;
 import com.code.aon.common.ITransferObject;
@@ -25,6 +24,7 @@ public class ArticleControllerListener extends ControllerAdapter {
 		Article f = (Article)event.getController().getTo();
 		f.setArticleCategory(fc.getCurrentArticleCategory());
 		f.setPosition(getLastPosition(fc));
+		f.setArticleType(fc.getCurrentType());
 		generateThumbnail(f);
 	}
 
