@@ -1296,10 +1296,16 @@ public interface ICMSAlias {
 	String  ARTICLE_CATEGORY_POSITION = ARTICLE_CATEGORY_ENTRY.getAliasNames()[3];
 
 	/** 
+	* Alias value: ArticleCategory_sectionOnlyElement
+	* Hibernate value: ArticleCategory.sectionOnlyElement
+	*/
+	String  ARTICLE_CATEGORY_SECTION_ONLY_ELEMENT = ARTICLE_CATEGORY_ENTRY.getAliasNames()[4];
+
+	/** 
 	* Alias value: ArticleCategory_section_id
 	* Hibernate value: ArticleCategory.section.id
 	*/
-	String  ARTICLE_CATEGORY_SECTION_ID = ARTICLE_CATEGORY_ENTRY.getAliasNames()[4];
+	String  ARTICLE_CATEGORY_SECTION_ID = ARTICLE_CATEGORY_ENTRY.getAliasNames()[5];
 
 
 
@@ -1622,16 +1628,22 @@ public interface ICMSAlias {
 	String  DOWNLOAD_CATEGORY_IMAGE = DOWNLOAD_CATEGORY_ENTRY.getAliasNames()[3];
 
 	/** 
+	* Alias value: DownloadCategory_itemsPerPage
+	* Hibernate value: DownloadCategory.itemsPerPage
+	*/
+	String  DOWNLOAD_CATEGORY_ITEMS_PER_PAGE = DOWNLOAD_CATEGORY_ENTRY.getAliasNames()[4];
+
+	/** 
 	* Alias value: DownloadCategory_position
 	* Hibernate value: DownloadCategory.position
 	*/
-	String  DOWNLOAD_CATEGORY_POSITION = DOWNLOAD_CATEGORY_ENTRY.getAliasNames()[4];
+	String  DOWNLOAD_CATEGORY_POSITION = DOWNLOAD_CATEGORY_ENTRY.getAliasNames()[5];
 
 	/** 
 	* Alias value: DownloadCategory_section_id
 	* Hibernate value: DownloadCategory.section.id
 	*/
-	String  DOWNLOAD_CATEGORY_SECTION_ID = DOWNLOAD_CATEGORY_ENTRY.getAliasNames()[5];
+	String  DOWNLOAD_CATEGORY_SECTION_ID = DOWNLOAD_CATEGORY_ENTRY.getAliasNames()[6];
 
 
 

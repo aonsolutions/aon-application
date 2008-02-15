@@ -1,6 +1,7 @@
 package com.code.aon.ui.cms.velocity;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import com.code.aon.cms.Download;
@@ -19,6 +20,7 @@ import com.code.aon.ql.Criteria;
 import com.code.aon.ui.cms.controller.GeneratorConfigController;
 import com.code.aon.ui.cms.util.ControllerUtil;
 import com.code.aon.ui.cms.util.VelocityUtil;
+import com.code.aon.ui.cms.velocity.attribute.AlbumImageHandler;
 import com.code.aon.ui.cms.velocity.attribute.DownloadCategoryHandler;
 import com.code.aon.ui.cms.velocity.attribute.DownloadHandler;
 
@@ -71,6 +73,43 @@ public class DownloadsGenerator extends Generator {
 					DownloadCategoryDetail detail = (DownloadCategoryDetail)detailList.get(0);
 					DownloadCategoryHandler downloadCategoryHandler = new DownloadCategoryHandler(detail);
 					downloadCategoryHandlerList.add(downloadCategoryHandler);
+					if (group.getSection()!=null)
+						CommonGenerator.getCommonGenerator().chargeContext(vu, group.getSection());
+					else
+						CommonGenerator.getCommonGenerator().chargeContext(vu, configSection);
+					
+					int page = 0;
+					Iterator<DownloadHandler> iter = downloadCategoryHandler.getList().iterator();
+					List<DownloadHandler> partialLst = new ArrayList<DownloadHandler>(); 
+					while (iter.hasNext()){
+						partialLst.add(iter.next());
+						if (partialLst.size() == group.getItemsPerPage()
+								|| !iter.hasNext()){
+							page++;
+							vu.put("download_category", downloadCategoryHandler.getLabel());
+							vu.put("back_url", Templates.DOWNLOADS.getHtmlName().replaceAll("%NAME%", DOWNLOAD_CATEGORY_LIST_PAGE));
+							if (page==2){
+								vu.put("group_previous", downloadCategoryHandler.getUrl());
+							}else if (page>2){
+								vu.put("group_previous", Templates.DOWNLOADS.getHtmlName().replaceAll("%NAME%", downloadCategoryHandler.getAlias()+"_"+(page-1)));
+							}
+							if (iter.hasNext()){
+								vu.put("group_next", Templates.DOWNLOADS.getHtmlName().replaceAll("%NAME%", downloadCategoryHandler.getAlias()+"_"+(page+1)));
+							}
+							vu.put("download_group", partialLst);
+							vu.addMessage(" Generando album de imagenes " + downloadCategoryHandler.getAlias() + ".", VelocityUtil.INFO);
+							generate(vu, Templates.DOWNLOADS, downloadCategoryHandler.getAlias()+(page==1?"":"_"+page));
+							vu.remove("back_url");
+							vu.remove("group_previous");
+							vu.remove("group_next");
+							vu.remove("download_category");
+							vu.remove("download_group");
+							partialLst = new ArrayList<DownloadHandler>();
+						}
+					}
+					partialLst = null;
+					iter = null;
+					/*
 					vu.put("download_group", downloadCategoryHandler);
 					vu.addMessage(" Generando descargas " + group.getAlias() + ".", VelocityUtil.INFO);
 					if (group.getSection()!=null)
@@ -79,6 +118,7 @@ public class DownloadsGenerator extends Generator {
 						CommonGenerator.getCommonGenerator().chargeContext(vu, configSection);
 					generate(vu, Templates.DOWNLOADS, group.getAlias());
 					vu.remove("download_group");
+					*/
 				}
 			}
 			vu.put("download_categories", downloadCategoryHandlerList);

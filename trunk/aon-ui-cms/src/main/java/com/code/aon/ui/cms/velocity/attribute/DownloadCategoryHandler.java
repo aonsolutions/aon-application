@@ -8,6 +8,8 @@ import com.code.aon.ui.cms.velocity.DownloadsGenerator;
 
 public class DownloadCategoryHandler {
 
+	private String alias;
+
 	private String label;
 	
 	private String url;
@@ -15,6 +17,7 @@ public class DownloadCategoryHandler {
 	private ArrayList<DownloadHandler> list;
 	
 	public DownloadCategoryHandler (DownloadCategoryDetail group) {
+		alias = group.getDownloadCategory().getAlias();
 		label = group.getLabel();
 		String link = Templates.DOWNLOADS.getHtmlName();
 		link = link.replaceAll("%NAME%", group.getDownloadCategory().getAlias());
@@ -22,6 +25,9 @@ public class DownloadCategoryHandler {
 		list = DownloadsGenerator.getDownloadsList(group);
 	}
 
+	public String getAlias() {
+		return alias;
+	}
 
 	public String getLabel() {
 		return label;
