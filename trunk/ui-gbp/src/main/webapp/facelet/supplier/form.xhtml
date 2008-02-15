@@ -3,7 +3,7 @@
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:aon="http://www.code.es/aon-rich-components"
-	xmlns:c="http://java.sun.com/jstl/core">
+	xmlns:h="http://java.sun.com/jsf/html">
 <body>
 
 <ui:composition template="/facelet/templates/aon.ui.content.xhtml">
@@ -25,7 +25,7 @@
 					</aon:div>
 
 					<aon:div styleClass="aon-finding-toolbar-item-group">
-						<aon:commandButton id="save" value="#{bundle.aon_save}"
+						<h:commandButton id="save" value="#{bundle.aon_save}"
 							rendered="#{supplier.to!=null or supplier.new}"
 							reRender="gridToolbar,supplierTab"
 							styleClass="aon-finding-toolbar-item aon-icon-accept"
@@ -101,8 +101,16 @@
 					
 					<aon:outputLabel for="Supplier_bankAccount"
 						value="#{appBundle.gbp_supplier_bank_account}" />
-					<aon:inputText id="Supplier_bankAccount" size="25" maxlength="20"
-						value="#{supplier.to.bankAccount}" />
+					<aon:panelGrid columns="4">
+						<aon:inputText id="Supplier_account_entity" size="4" maxlength="4"
+							value="#{supplier.entity}" />
+						<aon:inputText id="Supplier_account_office" size="4" maxlength="4"
+							value="#{supplier.office}" />
+						<aon:inputText id="Supplier_account_control" size="2" maxlength="2"
+							value="#{supplier.control}" />
+						<aon:inputText id="Supplier_account_account" size="10" maxlength="10"
+							value="#{supplier.account}" />
+					</aon:panelGrid>		
 
 					<aon:outputLabel for="Supplier_passWord"
 						value="#{appBundle.gbp_supplier_password}" />
