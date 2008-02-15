@@ -61,8 +61,14 @@
 						value="#{section.new?(bundle.aon_reset):(bundle.aon_editing)}" />
 				</aon:div>
 			</aon:div>
+			
 			<aon:div id="aon-scroll-area" forceId="#{true}">
 				<aon:div styleClass="aon-scroll-area-internal">
+				
+					<aon:div styleClass="aon-content-subtitle-internal">
+						<aon:outputText
+							value="CONTENIDO" />
+					</aon:div>
 
 					<aon:panelGrid columns="2">
 						<aon:panelGrid columns="2" dir="true" styleClass="aon-form-table"
@@ -86,8 +92,6 @@
 									<f:selectItem itemLabel="-" itemValue="-1" />
 									<f:selectItems value="#{collections.headerList}" />
 								</aon:selectOneMenu> 
-								<aon:selectBooleanCheckbox id="section_header_selected" 
-									value="#{section.to.show_header}" />
 							</aon:div>
 
 							<aon:outputLabel for="section_footer"
@@ -100,8 +104,6 @@
 									<f:selectItem itemLabel="-" itemValue="-1" />
 									<f:selectItems value="#{collections.footerList}" />
 								</aon:selectOneMenu> 
-								<aon:selectBooleanCheckbox id="section_footer_selected" 
-									value="#{section.to.show_footer}" />
 							</aon:div>
 
 							<aon:outputLabel for="section_sidebar"
@@ -114,16 +116,6 @@
 									<f:selectItem itemLabel="-" itemValue="-1" />
 									<f:selectItems value="#{collections.sidebarList}" />
 								</aon:selectOneMenu> 
-								<aon:outputLabel for="section_sidebar_left_selected"
-									styleClass="aon-form-input-text-label"
-									value="#{appBundle.section_sidebar_left_enabled}" />
-								<aon:selectBooleanCheckbox id="section_sidebar_left_selected" 
-									value="#{section.to.show_sidebar_left}" />
-								<aon:outputLabel for="section_sidebar_right_selected"
-									styleClass="aon-form-input-text-label"
-									value="#{appBundle.section_sidebar_right_enabled}" />
-								<aon:selectBooleanCheckbox id="section_sidebar_right_selected" 
-									value="#{section.to.show_sidebar_right}" />
 							</aon:div>
 
 							<aon:outputLabel for="section_menu"
@@ -136,8 +128,6 @@
 									<f:selectItem itemLabel="-" itemValue="-1" />
 									<f:selectItems value="#{collections.menuSideList}" />
 								</aon:selectOneMenu> 
-								<aon:selectBooleanCheckbox id="section_menu_selected" 
-									value="#{section.to.show_menu}" />
 							</aon:div>
 
 							<aon:outputLabel for="section_menu_alt"
@@ -150,8 +140,6 @@
 									<f:selectItem itemLabel="-" itemValue="-1" />
 									<f:selectItems value="#{collections.menuInnerList}" />
 								</aon:selectOneMenu> 
-								<aon:selectBooleanCheckbox id="section_menu_alt_selected" 
-									value="#{section.to.show_menu_alt}" />
 							</aon:div>
 							
 							<aon:outputLabel for="Section_parent_"
@@ -175,7 +163,68 @@
 								<aon:selectBooleanCheckbox id="parent_sidebar_right" 
 									value="#{section.to.parent_sidebar_right}" />
 							</aon:div>
-					
+
+						</aon:panelGrid>
+						
+					</aon:panelGrid>
+
+					<aon:div styleClass="aon-content-subtitle-internal">
+						<aon:outputText
+							value="CONDICIONES DE VISUALIZADO" />
+					</aon:div>
+
+					<aon:panelGrid columns="2">
+						<aon:panelGrid columns="2" dir="true" styleClass="aon-form-table"
+							columnClasses="aon-form-table-column-odd,aon-form-table-column-even">
+
+							<aon:outputLabel for="section_header_selected"
+								styleClass="aon-form-input-text-label"
+								value="Visualizar Cabecera" />
+							<aon:div>
+								<aon:selectBooleanCheckbox id="section_header_selected" 
+									value="#{section.to.show_header}" />
+							</aon:div>
+
+							<aon:outputLabel for="section_footer_selected"
+								styleClass="aon-form-input-text-label"
+								value="Visualizar Pie" />
+							<aon:div>
+								<aon:selectBooleanCheckbox id="section_footer_selected" 
+									value="#{section.to.show_footer}" />
+							</aon:div>
+
+							<aon:outputLabel for="section_sidebar_left_selected"
+								styleClass="aon-form-input-text-label"
+								value="Visualizar Laterales" />
+							<aon:div>
+								<aon:outputLabel for="section_sidebar_left_selected"
+									styleClass="aon-form-input-text-label"
+									value="#{appBundle.section_sidebar_left_enabled}" />
+								<aon:selectBooleanCheckbox id="section_sidebar_left_selected" 
+									value="#{section.to.show_sidebar_left}" />
+								<aon:outputLabel for="section_sidebar_right_selected"
+									styleClass="aon-form-input-text-label"
+									value="#{appBundle.section_sidebar_right_enabled}" />
+								<aon:selectBooleanCheckbox id="section_sidebar_right_selected" 
+									value="#{section.to.show_sidebar_right}" />
+							</aon:div>
+
+							<aon:outputLabel for="section_menu_selected"
+								styleClass="aon-form-input-text-label"
+								value="Visualizar Menu Principal"/>
+							<aon:div>
+								<aon:selectBooleanCheckbox id="section_menu_selected" 
+									value="#{section.to.show_menu}" />
+							</aon:div>
+
+							<aon:outputLabel for="section_menu_alt_selected"
+								styleClass="aon-form-input-text-label"
+								value="Visualizar Rastro de Amigas"/>
+							<aon:div>
+								<aon:selectBooleanCheckbox id="section_menu_alt_selected" 
+									value="#{section.to.show_menu_alt}" />
+							</aon:div>
+							
 						</aon:panelGrid>
 						
 					</aon:panelGrid>
