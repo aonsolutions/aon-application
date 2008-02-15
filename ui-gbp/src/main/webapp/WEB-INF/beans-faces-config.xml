@@ -129,7 +129,7 @@
 	<!-- ************ SUPPLIER ************** -->
 	<managed-bean>
 		<managed-bean-name>supplier</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.form.BasicController</managed-bean-class>
+		<managed-bean-class>com.code.ui.gbp.controller.SupplierController</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
 			<property-name>queryOnStartUP</property-name>
@@ -152,6 +152,7 @@
 			<list-entries>
 				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
 				<value>#{supplierControllerListener}</value>
+				<value>#{bankAccountValidationListener}</value>
 				<value>#{supplierContactListener}</value>
 				<value>#{supplierAddInfoListener}</value>
 				<value>#{supplierCampaignListener}</value>
@@ -165,6 +166,14 @@
 		<managed-bean-name>supplierControllerListener</managed-bean-name>
 		<managed-bean-class>
 			com.code.ui.gbp.event.SupplierControllerListener
+		</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+	</managed-bean>
+
+	<managed-bean>
+		<managed-bean-name>bankAccountValidationListener</managed-bean-name>
+		<managed-bean-class>
+			com.code.ui.gbp.event.BankAccountValidationListener
 		</managed-bean-class>
 		<managed-bean-scope>none</managed-bean-scope>
 	</managed-bean>
