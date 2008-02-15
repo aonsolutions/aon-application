@@ -120,7 +120,6 @@
 									disabled="#{!feeInvoicing.new or feeInvoicing.recorded}"
 									styleClass="aon-form-selectOneMenu-field"
 									onchange="submit();" valueChangeListener="#{feeInvoicing.onSeriesChanged}">
-									<f:selectItem itemValue="" itemDisabled="true" itemLabel="-" />
 									<f:selectItems value="#{configCollections.series}" />
 								</t:selectOneMenu>
 								<t:inputText id="Invoice_number"
