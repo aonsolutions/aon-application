@@ -60,6 +60,32 @@
 						size="16" maxlenght="16"
 						valueChangeListener="#{frontProForma.addExpression}" />
 
+					<aon:outputLabel for="ProFormaInvoice_invoiceDate"
+						value="#{appBundle.gbp_proforma_invoice_invoice_date}" />
+					<aon:div>
+						<aon:outputLabel for="ProFormaInvoice_invoiceDate_from"
+							value="#{appBundle.gbp_from}" />
+						<aon:selectInputDate id="ProFormaInvoice_invoiceDate_from"
+							valueChangeListener="#{frontProForma.addFromDateExpression}"
+							datePattern="#{bundle.aon_date_pattern}"
+							enableManualInput="true" inputSize="15" />
+						<aon:outputLabel for="ProFormaInvoice_invoiceDate_to"
+							value="#{appBundle.gbp_to}" />
+						<aon:selectInputDate id="ProFormaInvoice_invoiceDate_to"
+							valueChangeListener="#{frontProForma.addToDateExpression}"
+							datePattern="#{bundle.aon_date_pattern}"
+							enableManualInput="true" inputSize="15" />
+					</aon:div>
+					
+					<aon:outputLabel for="ProFormaInvoice_status"
+						value="#{appBundle.gbp_proforma_invoice_status}" />
+					<aon:selectOneMenu id="ProFormaInvoice_status"
+						converter="proFormaStatusConverter"
+						valueChangeListener="#{frontProForma.addStatusExpression}">
+						<f:selectItem value="#{nullSelectItem.value}" />
+						<f:selectItems value="#{GBPCollections.proformaInvoiceStatus}" />
+					</aon:selectOneMenu>
+
 				</aon:panelGrid>
 			</aon:div>
 		</aon:form>

@@ -10,6 +10,8 @@ import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ql.Criteria;
+import com.code.aon.ql.ast.Expression;
+import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.util.AonUtil;
 import com.code.gbp.Campaign;
@@ -39,7 +41,14 @@ public class FrontOfferController extends BasicController {
 		((Offer)this.getTo()).setStatus(OfferStatus.DISCARDED);
 		this.onAccept(event);
 	}
-	
+
+	public void onInitialModel(ActionEvent event) throws ManagerBeanException{
+		clearCriteria();
+		Expression notDiscardedExp = ExpressionUtilities.getNotEqualExpression(getFieldName(IGBPAlias.OFFER_STATUS), OfferStatus.DISCARDED);
+		getCriteria().addExpression(notDiscardedExp);
+		this.onSearch(event);
+	}
+
 	public void onTransfer(ActionEvent event){
 		Offer offer = (Offer)this.getTo();
 		FrontProFormaInvoiceController proFormaController = (FrontProFormaInvoiceController)AonUtil.getController(FRONT_PRO_FORMA_CONTROLLER_NAME);
@@ -68,6 +77,24 @@ public class FrontOfferController extends BasicController {
 			if(iter.hasNext()){
 				((Offer)getTo()).setCampaign((Campaign)iter.next());
 			}
+		}
+	}
+	
+	public void addStatusExpression(ValueChangeEvent event) throws ManagerBeanException{
+		if(event.getNewValue() != null){
+			getCriteria().addEqualExpression(getFieldName(IGBPAlias.OFFER_STATUS), event.getNewValue());
+		}
+	}
+	
+	public void addFromDateExpression(ValueChangeEvent event) throws ManagerBeanException{
+		if(event.getNewValue() != null){
+			getCriteria().addGreaterThanOrEqualExpression(getFieldName(IGBPAlias.OFFER_OFFER_DATE), event.getNewValue());
+		}
+	}
+
+	public void addToDateExpression(ValueChangeEvent event) throws ManagerBeanException{
+		if(event.getNewValue() != null){
+			getCriteria().addLessThanOrEqualExpression(getFieldName(IGBPAlias.OFFER_OFFER_DATE), event.getNewValue());
 		}
 	}
 }
