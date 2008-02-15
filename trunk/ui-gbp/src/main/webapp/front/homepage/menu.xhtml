@@ -13,11 +13,14 @@
 						<aon:menuItem id="front_offer"
 							styleClass="aon-dropDownMenu-item-root"
 							iconClass="aon-menuItem-no-iconClass"
-							value="#{menuBundle.gbp_front_offer}" action="front_offer_list" />
+							value="#{menuBundle.gbp_front_offer}" 
+							actionListener="#{frontOffer.onInitialModel}"
+							action="front_offer_list" />
 						<aon:menuItem id="front_pro_forma"
 							styleClass="aon-dropDownMenu-item-root"
 							iconClass="aon-menuItem-no-iconClass"
 							value="#{menuBundle.gbp_front_pro_forma}"
+							actionListener="#{frontProForma.onInitialModel}"
 							action="front_pro_forma_list" />
 					</aon:menuBar>
 				</aon:form>
