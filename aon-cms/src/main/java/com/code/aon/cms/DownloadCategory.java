@@ -31,6 +31,8 @@ public class DownloadCategory implements ITransferObject {
 	
 	private Section section;
 	
+	private int itemsPerPage;
+	
 	private Set<DownloadCategoryDetail> details;
 
 	@Id
@@ -97,6 +99,15 @@ public class DownloadCategory implements ITransferObject {
 
 	public void setSection(Section section) {
 		this.section = section;
+	}
+
+	@Column(name="items_per_page")
+	public int getItemsPerPage() {
+		return itemsPerPage;
+	}
+
+	public void setItemsPerPage(int itemsPerPage) {
+		this.itemsPerPage = itemsPerPage;
 	}
 
 }
