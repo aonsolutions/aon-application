@@ -102,7 +102,7 @@
                         1g - 1 GB
             </description>
             <param-name>uploadMaxFileSize</param-name>
-            <param-value>100m</param-value>
+            <param-value>4m</param-value>
         </init-param>
         <init-param>
             <description>Set the threshold size - files
