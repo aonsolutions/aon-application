@@ -15,11 +15,13 @@
 		<aon:outputText value="#{to.document}"/>
 	</aon:column>
 
-	<aon:column>
+	<aon:column styleClass="aon-width-auto aon-text-left">
 		<f:facet name="header">
 			<aon:outputText value="#{appBundle.gbp_supplier_name}" />
 		</f:facet>
-		<aon:outputText value="#{to.name}"/>
+		<aon:div styleClass="aon-nowrap">
+			<aon:outputText value="#{to.name}"/>
+		</aon:div>
 	</aon:column>
 
 </ui:composition>
