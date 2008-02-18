@@ -87,8 +87,7 @@
 				<aon:outputText value="&#160;"/>
 			</f:facet>
 			<aon:div>
-				<f:verbatim rendered="#{to!=controllerAlias.to}">&#160;</f:verbatim>
-
+				<aon:outputText rendered="#{to!=controllerAlias.to}" value="&#160;"/>
 				<aon:commandButton title="#{bundle.aon_save}"
 					actionListener="#{controllerAlias.onAccept}"
 					rendered="#{to==controllerAlias.to}" value=""
@@ -107,7 +106,7 @@
 			</aon:div>
 			<f:facet name="footer">
 				<aon:div>
-					<f:verbatim rendered="#{!controllerAlias.new}">&#160;</f:verbatim>
+					<aon:outputText rendered="#{!controllerAlias.new}" value="&#160;"/>
 					<aon:commandButton title="#{bundle.aon_save}"
 						actionListener="#{controllerAlias.onAccept}"
 						rendered="#{controllerAlias.new}" value=""
