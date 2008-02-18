@@ -3,72 +3,66 @@
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:c="http://java.sun.com/jstl/core"
-	xmlns:aon="http://www.code.es/aon-ice-components">
+	xmlns:aon="http://www.code.es/aon-rich-components">
 <body>
 
-<ui:composition template="/facelet/templates/aon.ui.main.xhtml">
+<ui:composition template="/facelet/templates/aon.ui.content.xhtml">
 	<ui:define name="content">
 
 		<aon:form id="dossierTypeList">
 
-		<aon:panelGrid columns="2" dir="true" styleClass="aon-title-toolbar"
-		cellpadding="0" cellspacing="0" columnClasses="aon-content-title,aon-content-toolbar">
-			<aon:div styleClass="aon-content-title-internal">
-				<aon:outputText value="#{menuBundle.aon_auxiliary}"/>
-				<aon:outputText value="#{menuBundle.aon_dossier_type}"/>	  						
-			</aon:div>		
+			<aon:div styleClass="aon-finding-title-toolbar">
+				<aon:panelGrid columns="3" dir="true"
+					columnClasses="aon-finding-title,aon-finding-subtitle,aon-finding-toolbar">
 
-			<!-- start toolbar navigation -->
-			<aon:div styleClass="aon-content-toolbar-internal">
-				<aon:div styleClass="aon-content-toolbar-item-group">
-					<aon:commandButton id="reset" value="#{bundle.aon_reset}"
-						action="dossier_type_form" actionListener="#{dossierType.onReset}"
-						styleClass="aon-content-toolbar-item aon-icon-reset"
-						onmouseout="this.className='aon-content-toolbar-item aon-icon-reset'"
-						onmouseover="this.className='aon-content-toolbar-item aon-icon-reset aon-content-toolbar-item-hover'"
-						accesskey="#{bundle.aon_key_new}"/>
-					<aon:commandButton id="search" value="#{bundle.aon_search}"
-						action="dossier_type_search" actionListener="#{dossierType.onEditSearch}"
-						styleClass="aon-content-toolbar-item aon-icon-search"
-						onmouseout="this.className='aon-content-toolbar-item aon-icon-search'"
-						onmouseover="this.className='aon-content-toolbar-item aon-icon-search aon-content-toolbar-item-hover'"
-						accesskey="#{bundle.aon_key_search}"/>
-				</aon:div>
+					<aon:div styleClass="aon-finding-title-internal">
+						<aon:outputText value="#{menuBundle.aon_dossier_type}" />
+					</aon:div>
+
+					<aon:div styleClass="aon-finding-subtitle-internal">
+						<aon:outputText value="#{bundle.aon_listing}" />
+					</aon:div>
+
+					<!-- start toolbar navigation -->
+					<aon:div styleClass="aon-finding-toolbar-item-group">
+						<aon:commandButton id="reset" value="#{bundle.aon_reset}"
+							action="dossier_type_form"
+							actionListener="#{dossierType.onReset}"
+							styleClass="aon-finding-toolbar-item aon-icon-reset"
+							accesskey="#{bundle.aon_key_new}" />
+						<aon:commandButton id="search" value="#{bundle.aon_search}"
+							action="dossier_type_search"
+							actionListener="#{dossierType.onEditSearch}"
+							styleClass="aon-finding-toolbar-item aon-icon-search"
+							accesskey="#{bundle.aon_key_search}" />
+					</aon:div>
+
+					<!-- end toolbar navigation -->
+				</aon:panelGrid>
 			</aon:div>
-			<!-- end toolbar navigation -->
-		</aon:panelGrid>
-		
-		<!--  aon-region-body -->
-		<aon:div styleClass="aon-scroll-area">
-				<aon:div styleClass="aon-scroll-area-internal">
-					
-					<aon:div styleClass="aon-content-subTitle">
-						<aon:div styleClass="aon-content-subTitle-internal">
-								<aon:outputText
-						value="#{nombre.new?(bundle.aon_reset):(bundle.aon_editing)}" />
-						</aon:div>
-					</aon:div>		
-					
-					<aon:dataTable id="dossierTypeDataList" 
-						value="#{dossierType.model}" var="to" rows="20"
-						styleClass="aon-dataTable">
-					
-							<aon:column>
-								<aon:rowSelector action="dossier_type_form" actionListener="#{dossierType.onSelect}" />
-								<f:facet name="header">
-									<aon:outputText value="#{projectBundle.aon_description}" />
-								</f:facet>
-								<aon:outputText value="#{to.description}"/>
-							</aon:column>
 
-						</aon:dataTable>
-						
-						<ui:include src="/facelet/shared/dataScroller.xhtml">
-							<ui:param name="dataTable" value="dossierTypeDataList" />
-							<ui:param name="model" value="#{dossierType.model}" />
-							<ui:param name="showNote" value="#{false}" />
-						</ui:include>					
-					
+			<!--  aon-region-body -->
+			<aon:div styleClass="aon-scroll-area">
+				<aon:div styleClass="aon-scroll-area-internal">
+
+					<aon:dataTable id="dossierTypeDataList"
+						value="#{dossierType.model}" var="to" rows="20">
+
+						<aon:rowSelector action="dossier_type_form"
+							actionListener="#{dossierType.onSelect}" reRender="content" />
+
+						<aon:column>
+							<f:facet name="header">
+								<aon:outputText value="#{projectBundle.aon_description}" />
+							</f:facet>
+							<aon:outputText value="#{to.description}" />
+						</aon:column>
+
+					</aon:dataTable>
+
+					<aon:dataScroller dataTable="dossierTypeDataList"
+						model="#{dossierType.model}" />
+
 				</aon:div>
 			</aon:div>
 		</aon:form>

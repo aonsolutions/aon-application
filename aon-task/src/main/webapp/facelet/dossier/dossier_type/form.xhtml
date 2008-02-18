@@ -2,11 +2,11 @@
 <html xmlns="http://www.w3.org/1999/xhtml"
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:f="http://java.sun.com/jsf/core"
-	xmlns:aon="http://www.code.es/aon-ice-components"
+	xmlns:aon="http://www.code.es/aon-rich-components"
 	xmlns:c="http://java.sun.com/jstl/core">
 <body>
 
-<ui:composition template="/facelet/templates/aon.ui.main.xhtml">
+<ui:composition template="/facelet/templates/aon.ui.content.xhtml">
 
 	<ui:define name="content">
 
@@ -30,7 +30,7 @@
 							onmouseout="this.className='aon-content-toolbar-item aon-icon-accept'"
 							onmouseover="this.className='aon-content-toolbar-item aon-icon-accept aon-content-toolbar-item-hover'"
 							accesskey="#{bundle.aon_key_save}"/>
-						<aon:confirmButton id="cancel"
+						<aon:confirmButton id="cancel" reRender="activityTypeDataList"
 							value="#{bundle.aon_cancel}" rendered="#{dossierType.to!=null or dossierType.new}"
 							styleClass="aon-content-toolbar-item aon-icon-cancel" immediate="#{true}"
 							confirmTitle="Confirmation Dialog" confirmMessage="#{bundle.aon_cancel_confirm}"
@@ -55,7 +55,7 @@
 							accesskey="#{bundle.aon_key_search}"/>
 						<aon:commandButton id="reset" value="#{bundle.aon_reset}"
 							actionListener="#{dossierType.onReset}" rendered="#{!dossierType.new}"
-							styleClass="aon-content-toolbar-item aon-icon-reset"
+							styleClass="aon-content-toolbar-item aon-icon-reset" action="dossier_type_form"
 							onmouseout="this.className='aon-content-toolbar-item aon-icon-reset'"
 							onmouseover="this.className='aon-content-toolbar-item aon-icon-reset aon-content-toolbar-item-hover'"
 							accesskey="#{bundle.aon_key_new}" />
@@ -90,7 +90,7 @@
 
 					<aon:div styleClass="aon-form-group" rendered="#{!dossierType.new}">
 						<aon:div styleClass="aon-form-group-title">
-							<aon:outputLabel for="dossierTypeDataList" value="#{projectBundle.activity_activity_types}" />
+							<aon:outputLabel for="activityTypeDataList" value="#{projectBundle.activity_activity_types}" />
 						</aon:div>
 
 						<aon:div styleClass="aon-form-group-body">
@@ -101,10 +101,11 @@
 									aon-editTable-cell,
 									aon-editTable-buttons">
   									
+								<aon:rowSelector
+									toggleOnClick="#{activityType.to == null}"
+									actionListener="#{activityType.onSelect}" />
+
 								<aon:column>
-									<aon:rowSelector multiple="false"
-										toggleOnClick="#{activityType.to == null}"
-										actionListener="#{activityType.onSelect}" />
 									<f:facet name="header">
 										<aon:outputText value="&#160;" />
 									</f:facet>

@@ -11,9 +11,6 @@
 		<locale-config>
 			<default-locale>es</default-locale>
 		</locale-config>
-		<view-handler>
-			com.icesoft.faces.facelets.D2DFaceletViewHandler
-		</view-handler>
 	</application>
 
 	<!--  *************** COLLECTIONS ***************** -->
@@ -58,17 +55,6 @@
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
 
-	<!--  *************** 
-		ERROR MESSAGES
-		***************** -->
-	<managed-bean>
-		<managed-bean-name>errorMessages</managed-bean-name>
-		<managed-bean-class>
-			com.code.aon.ui.task.controller.ErrorMessageController
-		</managed-bean-class>
-		<managed-bean-scope>session</managed-bean-scope>
-	</managed-bean>
-
 
 	<!--  *************** 
 		AON CONFIGURATION
@@ -93,7 +79,7 @@
 		</managed-property>
 		<managed-property>
 			<property-name>style</property-name>
-			<value>iceCss</value>
+			<value>richCss</value>
 		</managed-property>
 		<managed-property>
 			<property-name>userStyleSheets</property-name>

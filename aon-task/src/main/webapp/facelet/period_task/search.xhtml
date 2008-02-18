@@ -2,10 +2,10 @@
 <html xmlns="http://www.w3.org/1999/xhtml"
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:f="http://java.sun.com/jsf/core"
-	xmlns:aon="http://www.code.es/aon-ice-components">
+	xmlns:aon="http://www.code.es/aon-rich-components">
 <body>
 
-<ui:composition template="/facelet/templates/aon.ui.main.xhtml">
+<ui:composition template="/facelet/templates/aon.ui.content.xhtml">
 	<ui:define name="content">
 
 		<aon:form id="periodTaskForm">
@@ -14,7 +14,6 @@
 			cellpadding="0" cellspacing="0" columnClasses="aon-content-title,aon-content-toolbar">
 					
 				<aon:div styleClass="aon-content-title-internal">
-					<aon:outputText value="#{menuBundle.aon_master}" />
 					<aon:outputText value="#{menuBundle.aon_period_task}" />					
 				</aon:div>		
 				
@@ -69,9 +68,7 @@
 						<aon:panelGrid columns="4" styleClass="aon-nowrap">
 							<aon:outputLabel for="PeriodicalTask_nextDate-From"
 								value="#{projectBundle.aon_date_from}" />	
-							<aon:selectInputDate id="PeriodicalTask_nextDate-From" styleClass="aon-calendar-"
-								 style="z-index:2001;margin:0;vertical-align:middle;"
-								 imageDir="#{aonConfiguration.stylePath}/images/selectInputDate/"
+							<aon:selectInputDate id="PeriodicalTask_nextDate-From"
 								 valueChangeListener="#{periodTask.addNextDateFromExpression}" 
 								 popupDateFormat="#{bundle.aon_date_pattern}"
 								 renderAsPopup="true">
@@ -79,9 +76,7 @@
 							
 							<aon:outputLabel for="PeriodicalTask_nextDate-To"
 								value="#{projectBundle.aon_date_to}" />	
-							<aon:selectInputDate id="PeriodicalTask_nextDate-To" styleClass="aon-calendar-"
-								 style="z-index:2001;margin:0;vertical-align:middle;"
-								 imageDir="#{aonConfiguration.stylePath}/images/selectInputDate/"
+							<aon:selectInputDate id="PeriodicalTask_nextDate-To"
 								 valueChangeListener="#{periodTask.addNextDateToExpression}" 
 								 popupDateFormat="#{bundle.aon_date_pattern}"
 								 renderAsPopup="true">

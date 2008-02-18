@@ -3,10 +3,10 @@
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:c="http://java.sun.com/jstl/core"
-	xmlns:aon="http://www.code.es/aon-ice-components">
+	xmlns:aon="http://www.code.es/aon-rich-components">
 <body>
 
-<ui:composition template="/facelet/templates/aon.ui.main.xhtml">
+<ui:composition template="/facelet/templates/aon.ui.content.xhtml">
 	<ui:define name="content">
 
 		<aon:form id="taskList">
@@ -62,13 +62,14 @@
 						value="#{task.model}" var="to" rows="20"
 						rendered="#{task.model.rowCount > 0}"
 						styleClass="aon-dataTable">
+
+							<aon:rowSelector
+								actionListener="#{task.onSelect}" />
   
 							<aon:column>
 								<f:facet name="header">
 									<aon:outputText value="&#160;"/>
 								</f:facet>
-								<aon:rowSelector
-									actionListener="#{task.onSelect}" />
 								<aon:selectBooleanCheckbox id="Row_checked"
 									value="#{task.rowChecked}" partialSubmit="true"
 									valueChangeListener="#{task.rowSelected}"
@@ -158,11 +159,8 @@
 
 						</aon:dataTable>
 						
-						<ui:include src="/facelet/shared/dataScroller.xhtml">
-							<ui:param name="dataTable" value="taskDataList" />
-							<ui:param name="model" value="#{task.model}" />
-							<ui:param name="showNote" value="#{true}" />
-						</ui:include>					
+						<aon:dataScroller dataTable="taskDataList"
+							model="#{task.model}" showNote="true" />
 					
 				</aon:div>
 			</aon:div>

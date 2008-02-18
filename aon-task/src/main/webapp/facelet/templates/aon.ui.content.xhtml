@@ -4,14 +4,12 @@
 	xmlns:c="http://java.sun.com/jstl/core">
 <body>
 
-<ui:composition template="/facelet/templates/mainLayout.xhtml">
+<ui:composition>
 
-	<ui:define name="title">#{appBundle.aon_application_title}</ui:define>
-  
-	<ui:define name="mainHeader">
-		<ui:include src="/facelet/homepage/header.xhtml" />	
-	</ui:define>
-  
+	<ui:include src="/facelet/homepage/menu.xhtml" />
+	<ui:include src="/facelet/homepage/messages.xhtml" />
+	<ui:insert name="content" />
+	  
 </ui:composition>
 
 </body>
