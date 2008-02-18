@@ -1,0 +1,145 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:aon="http://www.code.es/aon-ice-components"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:ice="http://www.icesoft.com/icefaces/component">
+<body>
+
+<ui:composition template="/facelet/templates/aon.ui.main.xhtml">
+
+	<ui:define name="content">
+
+		<aon:form id="generatorForm" partialSubmit="true">
+
+			<aon:div styleClass="aon-content-toolbar" forceId="#{true}" id="aon-content-toolbar">
+				<aon:div styleClass="aon-content-toolbar-internal">
+					<aon:div styleClass="aon-content-toolbar-item-group">
+						<aon:commandButton id="generate"
+							value="#{appBundle.aon_generate}" 
+							actionListener="#{generator.onGenerate}" 
+							action="generator_log"
+							styleClass="aon-content-toolbar-item aon-icon-accept"
+							onmouseout="this.className='aon-content-toolbar-item aon-icon-accept'"
+							onmouseover="this.className='aon-content-toolbar-item aon-icon-accept aon-content-toolbar-item-hover'"/>
+						<aon:commandButton id="exit" value="#{bundle.aon_close}"
+							action="home" styleClass="aon-content-toolbar-item aon-icon-cancel"
+							onmouseout="this.className='aon-content-toolbar-item aon-icon-cancel'"
+							onmouseover="this.className='aon-content-toolbar-item aon-icon-cancel aon-content-toolbar-item-hover'"
+							accesskey="#{bundle.aon_key_close}"/>
+						<aon:commandButton id="all" value="#{bundle.aon_check_all}"
+							styleClass="aon-content-toolbar-item aon-icon-cancel"
+							actionListener="#{generator.onSelectAll}" 
+							onmouseout="this.className='aon-content-toolbar-item aon-icon-cancel'"
+							onmouseover="this.className='aon-content-toolbar-item aon-icon-cancel aon-content-toolbar-item-hover'"
+							accesskey="#{bundle.aon_key_close}"/>
+						<aon:commandButton id="none" value="#{bundle.aon_uncheck_all}"
+							styleClass="aon-content-toolbar-item aon-icon-cancel"
+							actionListener="#{generator.onDeselectAll}" 
+							onmouseout="this.className='aon-content-toolbar-item aon-icon-cancel'"
+							onmouseover="this.className='aon-content-toolbar-item aon-icon-cancel aon-content-toolbar-item-hover'"
+							accesskey="#{bundle.aon_key_close}"/>
+					</aon:div>
+				</aon:div>
+			</aon:div>
+
+			<aon:div id="aon-scroll-area" forceId="#{true}">
+				<aon:div styleClass="aon-scroll-area-internal">
+					<aon:panelGrid columns="2">
+						<aon:panelGrid columns="2" dir="true" styleClass="aon-form-table"
+							columnClasses="aon-form-table-column-odd,aon-form-table-column-even">
+
+							<aon:outputLabel for="isLanguajePageToGenerate"
+								styleClass="aon-form-input-text-label"
+								value="#{appBundle.isLanguajePageToGenerate}" />
+							<aon:div>
+								<aon:selectBooleanCheckbox id="isLanguajePageToGenerate" 
+									value="#{generator.languajePageToGenerate}" />
+							</aon:div>
+							
+							<aon:outputLabel for="isModularPageToGenerate"
+								styleClass="aon-form-input-text-label"
+								value="#{appBundle.isModularPageToGenerate}" />
+							<aon:div>
+								<aon:selectBooleanCheckbox id="isModularPageToGenerate" 
+									value="#{generator.modularPageToGenerate}" />
+							</aon:div>
+							
+							<aon:outputLabel for="isMenuToGenerate"
+								styleClass="aon-form-input-text-label"
+								value="#{appBundle.isMenuToGenerate}" />
+							<aon:div>
+								<aon:selectBooleanCheckbox id="isMenuToGenerate" 
+									value="#{generator.menuToGenerate}" />
+							</aon:div>
+							
+							<aon:outputLabel for="isGenericToGenerate"
+								styleClass="aon-form-input-text-label"
+								value="#{appBundle.isGenericToGenerate}" />
+							<aon:div>
+								<aon:selectBooleanCheckbox id="isGenericToGenerate" 
+									value="#{generator.genericToGenerate}" />
+							</aon:div>
+							
+							<aon:outputLabel for="isFaqToGenerate"
+								styleClass="aon-form-input-text-label"
+								value="#{appBundle.isFaqToGenerate}" />
+							<aon:div>
+								<aon:selectBooleanCheckbox id="isFaqToGenerate" 
+									value="#{generator.faqToGenerate}" />
+							</aon:div>
+							
+							<aon:outputLabel for="isLinkToGenerate"
+								styleClass="aon-form-input-text-label"
+								value="#{appBundle.isLinkToGenerate}" />
+							<aon:div>
+								<aon:selectBooleanCheckbox id="isLinkToGenerate" 
+									value="#{generator.linkToGenerate}" />
+							</aon:div>
+							
+							<aon:outputLabel for="isDirectAccessToGenerate"
+								styleClass="aon-form-input-text-label"
+								value="#{appBundle.isDirectAccessToGenerate}" />
+							<aon:div>
+								<aon:selectBooleanCheckbox id="isDirectAccessToGenerate" 
+									value="#{generator.directAccessToGenerate}" />
+							</aon:div>
+							
+							<aon:outputLabel for="isAlbumToGenerate"
+								styleClass="aon-form-input-text-label"
+								value="#{appBundle.isAlbumToGenerate}" />
+							<aon:div>
+								<aon:selectBooleanCheckbox id="isAlbumToGenerate" 
+									value="#{generator.albumToGenerate}" />
+							</aon:div>
+							
+							<aon:outputLabel for="isArticleToGenerate"
+								styleClass="aon-form-input-text-label"
+								value="#{appBundle.isArticleToGenerate}" />
+							<aon:div>
+								<aon:selectBooleanCheckbox id="isArticleToGenerate" 
+									value="#{generator.articleToGenerate}" />
+							</aon:div>
+							
+							<aon:outputLabel for="isDownloadsToGenerate"
+								styleClass="aon-form-input-text-label"
+								value="#{appBundle.isDownloadsToGenerate}" />
+							<aon:div>
+								<aon:selectBooleanCheckbox id="isDownloadsToGenerate" 
+									value="#{generator.downloadsToGenerate}" />
+							</aon:div>
+							
+						</aon:panelGrid>
+					</aon:panelGrid>
+				</aon:div>
+			</aon:div>
+
+		</aon:form>
+		<aon:form id="placeList" target="list" />
+
+	</ui:define>
+</ui:composition>
+
+</body>
+</html>
