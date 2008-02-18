@@ -10,13 +10,11 @@
 
 		
 	<!-- start toolbar navigation -->
-	<aon:div styleClass="aon-section-toolbar">
-			<aon:commandButton id="resetInListDossier" value="#{bundle.aon_reset}"
-				actionListener="#{dossier.onReset}" reRender="customerTab"
-				styleClass="aon-icon-commandButton aon-icon-reset"
-				onmouseout="this.className='aon-icon-commandButton aon-icon-reset'"
-				onmouseover="this.className='aon-icon-commandButton aon-icon-reset aon-content-toolbar-item-hover'"
-				accesskey="#{bundle.aon_key_new}" />
+	<aon:div styleClass="aon-toolbar">
+		<aon:commandButton id="resetInListDossier" value="#{bundle.aon_reset}"
+			actionListener="#{dossier.onReset}" reRender="customerTab"
+			styleClass="aon-icon-commandButton aon-icon-reset"
+			accesskey="#{bundle.aon_key_new}" />
 	</aon:div>
 
 	<!--  aon-region-body -->
