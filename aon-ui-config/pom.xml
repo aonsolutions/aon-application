@@ -10,7 +10,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.code.aon</groupId>
 	<artifactId>aon.ui.config</artifactId>
-	<version>2.0.3</version>
+	<version>2.0.4</version>
 	<description>AON UI CONFIG</description>
 	<dependencies>
 		<dependency>
@@ -40,13 +40,13 @@
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.security.bridge</artifactId>
-			<version>1.2.7</version>
+			<version>1.2.9</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.security</artifactId>
-			<version>1.2.7</version>
+			<version>1.2.9</version>
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
