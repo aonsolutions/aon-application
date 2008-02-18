@@ -1,0 +1,106 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:aon="http://www.code.es/aon-ice-components"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:fck="http://www.fck-faces.org/fck-faces">
+<body>
+
+<ui:composition template="/facelet/templates/aon.ui.main.xhtml">
+
+	<ui:define name="content">
+
+		<aon:form id="faqForm" partialSubmit="false">
+
+			<aon:panelGrid columns="2" dir="true" styleClass="aon-title-toolbar"
+			cellpadding="0" cellspacing="0" columnClasses="aon-content-title,aon-content-toolbar">
+			
+				<aon:div styleClass="aon-content-title-internal">
+					<aon:outputText value="#{appBundle.faq}" />					
+				</aon:div>		
+			
+				<!-- start toolbar navigation -->
+				<aon:div styleClass="aon-content-toolbar-internal">
+					<aon:div styleClass="aon-content-toolbar-item-group">
+						<aon:commandButton id="save"
+							value="#{bundle.aon_save}" rendered="#{faq.to!=null or faq.new}"
+							actionListener="#{faq.onAccept}"
+							styleClass="aon-content-toolbar-item aon-icon-accept"
+							onmouseout="this.className='aon-content-toolbar-item aon-icon-accept'"
+							onmouseover="this.className='aon-content-toolbar-item aon-icon-accept aon-content-toolbar-item-hover'"
+							accesskey="#{bundle.aon_key_save}"/>
+						<aon:commandButton id="cancel"
+							value="#{bundle.aon_cancel}" rendered="#{faq.to!=null or faq.new}" immediate="#{true}"
+							actionListener="#{faq.onCancel}" action="faq_list"
+							styleClass="aon-content-toolbar-item aon-icon-cancel"
+							onmouseout="this.className='aon-content-toolbar-item aon-icon-cancel'"
+							onmouseover="this.className='aon-content-toolbar-item aon-icon-cancel aon-content-toolbar-item-hover'"
+							accesskey="#{bundle.aon_key_cancel}"/>
+						<aon:confirmButton id="remove"
+							value="#{bundle.aon_remove}" rendered="#{!faq.new}" immediate="true"
+							confirmTitle="Confirmation Dialog" confirmMessage="#{bundle.aon_remove_confirm}"
+							confirmActionListener="#{faq.onRemoveI18n}" confirmAction="faq_form"
+							styleClass="aon-content-toolbar-item aon-icon-delete"
+							onmouseout="this.className='aon-content-toolbar-item aon-icon-delete'"
+							onmouseover="this.className='aon-content-toolbar-item aon-icon-delete aon-content-toolbar-item-hover'"
+							accesskey="#{bundle.aon_key_remove}"/>
+						<aon:commandButton id="reset" value="#{bundle.aon_reset}"
+							actionListener="#{faq.onReset}" rendered="#{!faq.new}"
+							styleClass="aon-content-toolbar-item aon-icon-reset"
+							onmouseout="this.className='aon-content-toolbar-item aon-icon-reset'"
+							onmouseover="this.className='aon-content-toolbar-item aon-icon-reset aon-content-toolbar-item-hover'"
+							accesskey="#{bundle.aon_key_new}" />
+					</aon:div>
+				</aon:div>
+			</aon:panelGrid>
+
+			<aon:div styleClass="aon-content-subtitle" id="aon-content-subtitle"
+				forceId="#{true}">
+				<aon:div styleClass="aon-content-subtitle-internal">
+					<aon:outputText
+						value="#{faq.new?(bundle.aon_reset):(bundle.aon_editing)}" />
+				</aon:div>
+			</aon:div>
+			<aon:div id="aon-scroll-area" forceId="#{true}">
+				<aon:div styleClass="aon-scroll-area-internal">
+
+					<aon:panelGrid columns="2">
+						<aon:panelGrid columns="2" dir="true" styleClass="aon-form-table"
+							columnClasses="aon-form-table-column-odd,aon-form-table-column-even">
+
+							<aon:outputLabel for="Faq_alias" style="width:100px"
+								styleClass="aon-form-input-text-label"
+								value="#{appBundle.faq_alias}" />
+							<aon:inputText id="Faq_alias"
+								styleClass="aon-form-input-text aon-form-input-text-number"
+								required="true" size="32" maxlength="32"
+								value="#{faq.to.alias}" />
+
+							<aon:outputLabel for="FaqDetail_question"
+								styleClass="aon-form-input-text-label"
+								value="#{appBundle.faq_question}" />
+							<aon:inputText id="FaqDetail_question"
+								styleClass="aon-form-input-text aon-form-input-text-number"
+								required="true" size="50" maxlength="64"
+								value="#{faq.toI18n.question}" />
+
+							<aon:outputLabel for="FaqDetail_answer" style="width:100px"
+								styleClass="aon-form-input-text-label"
+								value="#{appBundle.faq_answer}" />
+							<aon:inputRichText id="FaqDetail_answer" 
+								toolbarSet="Default" 
+								value="#{faq.toI18n.answer}"/>
+								
+						</aon:panelGrid>
+					</aon:panelGrid>
+				</aon:div>
+			</aon:div>
+		</aon:form>
+		<aon:form id="placeList" target="list" />
+
+	</ui:define>
+</ui:composition>
+
+</body>
+</html>

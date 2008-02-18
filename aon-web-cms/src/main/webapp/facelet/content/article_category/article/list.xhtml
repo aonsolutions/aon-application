@@ -1,0 +1,173 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:ice="http://www.icesoft.com/icefaces/component"
+	xmlns:aon="http://www.code.es/aon-ice-components">
+<body>
+
+<ui:composition template="/facelet/templates/aon.ui.main.xhtml">
+	<ui:define name="content">
+
+		<aon:form id="articleList">
+			
+			<aon:panelGrid columns="2" dir="true" styleClass="aon-title-toolbar"
+			cellpadding="0" cellspacing="0" columnClasses="aon-content-title,aon-content-toolbar">
+			
+				<aon:div styleClass="aon-content-title-internal">
+					<aon:outputText value="#{appBundle.article}" />					
+				</aon:div>		
+			
+				<!-- start toolbar navigation -->
+				<aon:div styleClass="aon-content-toolbar-internal">
+					<aon:div styleClass="aon-content-toolbar-item-group">
+						<aon:commandButton id="reset" value="#{bundle.aon_reset}"
+							action="article_form" actionListener="#{article.onReset}"
+							styleClass="aon-content-toolbar-item aon-icon-reset"
+							onmouseout="this.className='aon-content-toolbar-item aon-icon-reset'"
+							onmouseover="this.className='aon-content-toolbar-item aon-icon-reset aon-content-toolbar-item-hover'"
+							accesskey="#{bundle.aon_key_new}"/>
+						<aon:confirmButton id="remove"
+							value="#{bundle.aon_remove}" rendered="#{!article.checklistEmpty}" inmediate="true"
+							confirmTitle="Confirmation Dialog" confirmMessage="#{bundle.aon_remove_confirm}"
+							confirmActionListener="#{article.onRemoveSelected}" confirmAction="article_list"
+							styleClass="aon-content-toolbar-item aon-icon-delete"
+							onmouseout="this.className='aon-content-toolbar-item aon-icon-delete'"
+							onmouseover="this.className='aon-content-toolbar-item aon-icon-delete aon-content-toolbar-item-hover'"
+							accesskey="#{bundle.aon_key_remove}"/>
+						<aon:commandButton id="exit" value="#{bundle.aon_close}"
+							action="article_category_list" styleClass="aon-content-toolbar-item aon-icon-cancel"
+							onmouseout="this.className='aon-content-toolbar-item aon-icon-cancel'"
+							onmouseover="this.className='aon-content-toolbar-item aon-icon-cancel aon-content-toolbar-item-hover'"
+							accesskey="#{bundle.aon_key_close}"/>
+					</aon:div>
+				</aon:div>
+			<!-- end toolbar navigation -->
+			</aon:panelGrid> 
+			
+			<!--  aon-region-body -->
+			<aon:div styleClass="aon-scroll-area">
+				<aon:div styleClass="aon-scroll-area-internal">	
+				
+					<aon:div styleClass="aon-content-subTitle">
+						<aon:div styleClass="aon-content-subTitle-internal">
+							<aon:outputText value="#{appBundle.article}" />
+						</aon:div>
+					</aon:div>
+
+					<ice:panelTabSet id="articleTabSet" 
+						selectedIndex="#{article.currentTab}" 
+                     	tabChangeListener="#{article.processTabChange}">
+						<ice:panelTab id="services" label="SERVICES">
+	                    </ice:panelTab>
+						<ice:panelTab id="events" label="EVENTS">
+	                    </ice:panelTab>
+						<ice:panelTab id="news" label="NEWS">
+	                    </ice:panelTab>
+						<ice:panelTab id="others" label="OTHER">
+	                    </ice:panelTab>
+					</ice:panelTabSet>
+
+					<aon:dataTable id="articleDataList" styleClass="aon-dataTable"
+					 	columnWidths="120,200,*,50,60" 
+						value="#{article.model}" var="to" rows="0"
+						rowClasses="aon-dataTable-odd, aon-dataTable-even"
+						columnClasses="aon-table-body aon-table-body-icon,
+							aon-table-body aon-table-body-string,
+							aon-table-body aon-table-body-icon,
+							aon-table-body aon-table-body-string,
+							aon-table-body aon-table-body-icon,
+							aon-table-body aon-table-body-string">
+
+							<aon:column>
+								<aon:rowSelector selectionListener="#{article.onSelect}" toggleOnClick="true"/>
+								<f:facet name="header">
+									<aon:div>
+										<aon:outputText value="#{bundle.aon_check}" />
+										<aon:div>
+											<aon:commandLink id="all" value="#{bundle.aon_check_all}" 
+											styleClass="aon-table-header-link-secundary"
+											onclick="selectAll();return false;" />
+											<aon:commandLink id="none" value="#{bundle.aon_uncheck_all}"
+											styleClass="aon-table-header-link-secundary"
+											onclick="unSelectAll();return false;" />
+											<aon:commandLink id="inverse" value="#{bundle.aon_inverse_all}"
+											styleClass="aon-table-header-link-secundary"
+											onclick="inverseAll();return false;" />
+										</aon:div>										
+									</aon:div>	
+								</f:facet>
+								<aon:selectBooleanCheckbox id="Row_checked" forceId="#{true}"
+										value="#{article.rowChecked}" partialSubmit="true" 
+										valueChangeListener="#{article.onChecked}"/>
+							</aon:column>
+					
+							<aon:column>
+								<f:facet name="header">
+									<aon:outputText value="#{appBundle.article_alias}" />
+								</f:facet>
+								<aon:outputText value="#{to.alias}"/>
+							</aon:column>
+
+							<aon:column>
+								<f:facet name="header">
+									<aon:outputText value="#{appBundle.article_title}" />
+								</f:facet>
+								<aon:outputText value="#{article.i18nTitle}"
+									style="padding-left:20px"/>
+							</aon:column>
+
+							<aon:column>
+								<f:facet name="header">
+									<aon:outputText value="#{appBundle.article_active}" />
+								</f:facet>
+								<aon:commandLink title="#{appBundle.article_activate}" action="article_list"
+									actionListener="#{article.onActivate}" 
+									rendered="#{!to.active}">
+									<aon:graphicImage id="ArticleCategory_active" alt="#{appBundle.article_activate}"
+										url="/images/cms/inactive.png" />
+								</aon:commandLink>
+								<aon:commandLink title="#{appBundle.article_deactivate}" action="article_list"
+									actionListener="#{article.onDeactivate}" 
+									rendered="#{to.active}">
+									<aon:graphicImage id="ArticleCategory_deactive" alt="#{appBundle.article_deactivate}"
+										url="/images/cms/active.png" />
+								</aon:commandLink>
+							</aon:column>
+
+							<aon:column>
+								<f:facet name="header">
+									<aon:outputText for="ArticleCategory_position" 
+										value="#{appBundle.article_position}" />
+								</f:facet>
+								<aon:graphicImage rendered="#{to.position == 0}"
+									url="/images/cms/spacer16.gif" style="margin-left: 8px;"/>
+								<aon:commandButton id="moveUp" 
+									actionListener="#{article.onMoveUp}" 
+									rendered="#{to.position != 0}"
+									image="/images/cms/up.gif" style="margin-left: 4px;"/>
+								<aon:commandButton id="moveDown" 
+									actionListener="#{article.onMoveDown}"
+									rendered="#{to.position &lt; (article.model.rowCount - 1)}"
+									image="/images/cms/down.gif" style="margin-left: 4px;" />
+							</aon:column>
+
+						</aon:dataTable>
+						
+						<ui:include src="/facelet/shared/dataScroller.xhtml">
+							<ui:param name="dataTable" value="articleDataList" />
+							<ui:param name="model" value="#{article.model}" />
+							<ui:param name="showNote" value="#{false}" />
+						</ui:include>
+					
+				</aon:div>
+			</aon:div>
+		</aon:form>
+		<aon:form id="placeList" target="list" />
+	</ui:define>
+
+</ui:composition>
+
+</body>
+</html>
