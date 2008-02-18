@@ -3,10 +3,10 @@
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:c="http://java.sun.com/jstl/core"
-	xmlns:aon="http://www.code.es/aon-ice-components">
+	xmlns:aon="http://www.code.es/aon-rich-components">
 <body>
 
-<ui:composition template="/facelet/templates/aon.ui.main.xhtml">
+<ui:composition template="/facelet/templates/aon.ui.content.xhtml">
 	<ui:define name="content">
 
 		<aon:form id="periodTaskList">
@@ -14,7 +14,6 @@
 		<aon:panelGrid columns="2" dir="true" styleClass="aon-title-toolbar"
 		cellpadding="0" cellspacing="0" columnClasses="aon-content-title,aon-content-toolbar">
 			<aon:div styleClass="aon-content-title-internal">
-				<aon:outputText value="#{menuBundle.aon_master}"/>
 				<aon:outputText value="#{menuBundle.aon_period_task}"/>	  						
 			</aon:div>		
 
@@ -46,12 +45,13 @@
 						value="#{periodTask.model}" var="to" rows="20"
 						rendered="#{periodTask.model.rowCount > 0}"
 						styleClass="aon-dataTable">
+
+							<aon:rowSelector action="period_task_form" actionListener="#{periodTask.onSelect}" />
   
 							<aon:column>
 								<f:facet name="header">
 									<aon:outputText value="&#160;"/>
 								</f:facet>
-								<aon:rowSelector action="period_task_form" actionListener="#{periodTask.onSelect}" />
 								<aon:outputText value="&#160;"/>
 							</aon:column>
   													
@@ -92,11 +92,8 @@
 
 						</aon:dataTable>
 						
-						<ui:include src="/facelet/shared/dataScroller.xhtml">
-							<ui:param name="dataTable" value="periodTaskDataList" />
-							<ui:param name="model" value="#{periodTask.model}" />
-							<ui:param name="showNote" value="#{true}" />
-						</ui:include>					
+						<aon:dataScroller dataTable="periodTaskDataList"
+							model="#{periodTask.model}" showNote="true" />
 					
 				</aon:div>
 			</aon:div>

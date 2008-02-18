@@ -2,37 +2,32 @@
 <html xmlns="http://www.w3.org/1999/xhtml"
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:f="http://java.sun.com/jsf/core"
-	xmlns:aon="http://www.code.es/aon-ice-components">
+	xmlns:aon="http://www.code.es/aon-rich-components">
 <body>
 
 <ui:composition>
 
 	<aon:editDataTable id="#{dataTable}" value="#{controllerAlias.model}"
 		var="to" rows="20" 
-		styleClass="aon-editTable"
-		columnClasses="aon-editTable-icon,
-			aon-editTable-cell,
-			aon-editTable-cell,
-			aon-editTable-cell,
-			aon-editTable-buttons">
+		columnClasses="aon-editDataTable-iconColumn,aon-editDataTable-textColumn,aon-editDataTable-textColumn,aon-editDataTable-textColumn,aon-editDataTable-buttonsColumn"
+		>
+
+		<aon:rowSelector
+			toggleOnClick="#{controllerAlias.to == null}"
+			actionListener="#{controllerAlias.onSelect}" />
 
 		<aon:column>
-			<aon:rowSelector multiple="false"
-				toggleOnClick="#{controllerAlias.to == null}"
-				actionListener="#{controllerAlias.onSelect}" />
 			<f:facet name="header">
 				<aon:outputText value="&#160;"/>
 			</f:facet>
 			<aon:outputText value="&#160;"/>
-			<f:facet name="footer">
-				<aon:div>
-					<aon:commandButton id="reset"
-						styleClass="aon-editTable-button aon-icon-reset"
-						value="" rendered="#{!controllerAlias.new}"
-						actionListener="#{controllerAlias.onReset}"
-						accesskey="#{bundle.aon_key_new_line}">
-					</aon:commandButton>
-				</aon:div>
+			<f:facet name="footer">				
+				<aon:commandButton id="reset"
+					value="" rendered="#{!controllerAlias.new}"
+					actionListener="#{controllerAlias.onReset}"
+					styleClass="aon-editDataTable-button aon-icon-new"
+					accesskey="#{bundle.aon_key_new_line}">
+				</aon:commandButton>				
 			</f:facet>
 		</aon:column>
 
@@ -47,16 +42,14 @@
 				<f:selectItems value="#{registryCollections.mediaTypes}" />
 			</aon:selectOneMenu>
 			<f:facet name="footer">
-				<aon:div>
-					<aon:selectOneMenu value="#{controllerAlias.to.mediaType}"
-						rendered="#{controllerAlias.new}">
-						<f:selectItems value="#{registryCollections.mediaTypes}" />
-					</aon:selectOneMenu>
-				</aon:div>
+				<aon:selectOneMenu value="#{controllerAlias.to.mediaType}"
+					rendered="#{controllerAlias.new}">
+					<f:selectItems value="#{registryCollections.mediaTypes}" />
+				</aon:selectOneMenu>
 			</f:facet>
 		</aon:column>
 
-		<aon:column width="200">
+		<aon:column>
 			<f:facet name="header">
 				<aon:outputText value="#{registryBundle.aon_value}" />
 			</f:facet>
@@ -68,26 +61,24 @@
 					<aon:outputLabel for="Media" value="#{registryBundle.aon_value}"
 						rendered="#{false}" />
 					<aon:inputText id="Media" value="#{controllerAlias.to.value}"
-						styleClass="aon-form-input-text" rendered="#{controllerAlias.new}"
+						rendered="#{controllerAlias.new}"
 						required="#{true}" size="40" />
 				</aon:div>
 			</f:facet>
 		</aon:column>
 
-		<aon:column width="330">
+		<aon:column>
 			<f:facet name="header">
 				<aon:outputText value="#{registryBundle.aon_comment}" />
 			</f:facet>
 			<aon:outputText value="#{to.comment}"
 				rendered="#{to!=controllerAlias.to}" />
-			<aon:inputText value="#{controllerAlias.to.comment}" styleClass="aon-form-input-text"
+			<aon:inputText value="#{controllerAlias.to.comment}" 
 				rendered="#{to==controllerAlias.to}" size="40" />
-			<f:facet name="footer">
-				<aon:div>
-					<aon:inputText value="#{controllerAlias.to.comment}"
-						styleClass="aon-form-input-text " rendered="#{controllerAlias.new}"
-						size="40" />
-				</aon:div>
+			<f:facet name="footer">	
+				<aon:inputText value="#{controllerAlias.to.comment}"
+					rendered="#{controllerAlias.new}"
+					size="40" />				
 			</f:facet>
 		</aon:column>
 
@@ -101,17 +92,17 @@
 				<aon:commandButton title="#{bundle.aon_save}"
 					actionListener="#{controllerAlias.onAccept}"
 					rendered="#{to==controllerAlias.to}" value=""
-					styleClass="aon-editTable-button aon-icon-accept"
+					styleClass="aon-editDataTable-button aon-icon-accept"
 					accesskey="#{bundle.aon_key_save_line}" />
 				<aon:commandButton title="#{bundle.aon_cancel}"
 					actionListener="#{controllerAlias.onCancel}" immediate="#{true}"
-					styleClass="aon-editTable-button aon-icon-cancel"
+					styleClass="aon-editDataTable-button aon-icon-cancel"
 					value="" rendered="#{to==controllerAlias.to}"
 					accesskey="#{bundle.aon_key_cancel_line}" />
 				<aon:commandButton title="#{bundle.aon_remove}"
 					actionListener="#{controllerAlias.onRemove}"
 					rendered="#{to==controllerAlias.to}"
-					styleClass="aon-editTable-button aon-icon-delete"
+					styleClass="aon-editDataTable-button aon-icon-delete"
 					value="" accesskey="#{bundle.aon_key_remove_line}" />
 			</aon:div>
 			<f:facet name="footer">
@@ -120,24 +111,20 @@
 					<aon:commandButton title="#{bundle.aon_save}"
 						actionListener="#{controllerAlias.onAccept}"
 						rendered="#{controllerAlias.new}" value=""
-						styleClass="aon-editTable-button aon-icon-accept"
+						styleClass="aon-editDataTable-button aon-icon-accept"
 						accesskey="#{bundle.aon_key_save_line}" />
 					<aon:commandButton title="#{bundle.aon_cancel}"
 						actionListener="#{controllerAlias.onCancel}" immediate="#{true}"
-						onclick="return (confirm('#{bundle.aon_cancel_confirm}'));"
 						rendered="#{controllerAlias.new}"
-						styleClass="aon-editTable-button aon-icon-cancel"
+						styleClass="aon-editDataTable-button aon-icon-cancel"
 						value="" accesskey="#{bundle.aon_key_cancel_line}" />
 				</aon:div>
 			</f:facet>
 		</aon:column>
 	</aon:editDataTable>
 
-	<ui:include src="/facelet/shared/dataScroller.xhtml">
-		<ui:param name="dataTable" value="#{dataTable}" />
-		<ui:param name="model" value="#{controllerAlias.model}" />
-		<ui:param name="showNote" value="#{false}" />
-	</ui:include>
+	<aon:dataScroller dataTable="#{dataTable}"
+		model="#{controllerAlias.model}" />
 
 </ui:composition>
 </body>

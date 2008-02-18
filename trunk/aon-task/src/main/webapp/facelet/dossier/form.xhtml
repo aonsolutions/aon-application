@@ -2,13 +2,13 @@
 <html xmlns="http://www.w3.org/1999/xhtml"
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:f="http://java.sun.com/jsf/core"
-	xmlns:aon="http://www.code.es/aon-ice-components"
+	xmlns:aon="http://www.code.es/aon-rich-components"
 	xmlns:c="http://java.sun.com/jstl/core">
 <body>
 
 <ui:composition>
 			<aon:div styleClass="aon-section-toolbar">
-				<aon:confirmButton id="saveDossier" value="#{bundle.aon_save}"
+				<aon:confirmButton id="saveDossier" value="#{bundle.aon_save}" reRender="customerTab"
 					rendered="#{dossier.to!=null or dossier.new}"
 					styleClass="aon-content-toolbar-item aon-icon-accept"
 					confirmTitle="Confirmation Dialog"
@@ -17,7 +17,7 @@
 					onmouseout="this.className='aon-content-toolbar-item aon-icon-accept'"
 					onmouseover="this.className='aon-content-toolbar-item aon-content-toolbar-item-hover aon-icon-accept'"
 					accesskey="#{bundle.aon_key_save}" />
-				<aon:confirmButton id="cancelDossier" value="#{bundle.aon_cancel}"
+				<aon:confirmButton id="cancelDossier" value="#{bundle.aon_cancel}" reRender="customerTab"
 					rendered="#{dossier.to!=null or dossier.new}"
 					styleClass="aon-content-toolbar-item aon-icon-cancel"
 					immediate="#{true}" confirmTitle="Confirmation Dialog"
@@ -26,7 +26,7 @@
 					onmouseout="this.className='aon-content-toolbar-item aon-icon-cancel'"
 					onmouseover="this.className='aon-content-toolbar-item aon-content-toolbar-item-hover aon-icon-cancel'"
 					accesskey="#{bundle.aon_key_cancel}" />
-				<aon:confirmButton id="removeDossier" value="#{bundle.aon_remove}"
+				<aon:confirmButton id="removeDossier" value="#{bundle.aon_remove}" reRender="customerTab"
 					rendered="#{!dossier.new}"
 					styleClass="aon-content-toolbar-item aon-icon-delete"
 					immediate="true" confirmTitle="Confirmation Dialog"
@@ -35,7 +35,7 @@
 					onmouseout="this.className='aon-content-toolbar-item aon-icon-delete'"
 					onmouseover="this.className='aon-content-toolbar-item aon-content-toolbar-item-hover aon-icon-delete'"
 					accesskey="#{bundle.aon_key_remove}" />
-				<aon:commandButton id="resetDossier" value="#{bundle.aon_reset}"
+				<aon:commandButton id="resetDossier" value="#{bundle.aon_reset}" reRender="customerTab"
 					actionListener="#{dossier.onReset}" rendered="#{!dossier.new}"
 					styleClass="aon-content-toolbar-item aon-icon-reset"
 					onmouseout="this.className='aon-content-toolbar-item aon-icon-reset'"
@@ -89,10 +89,11 @@
 									aon-editTable-cell,
 									aon-editTable-buttons">
 
+						<aon:rowSelector
+							toggleOnClick="#{activity.to == null}"
+							actionListener="#{activity.onSelect}" />
+
 						<aon:column>
-							<aon:rowSelector multiple="false"
-								toggleOnClick="#{activity.to == null}"
-								actionListener="#{activity.onSelect}" />
 							<f:facet name="header">
 								<aon:outputText value="&#160;" />
 							</f:facet>
@@ -183,8 +184,6 @@
 							</f:facet>
 						</aon:column>
 					</aon:editDataTable>
-				
-			
 
 		</aon:div>
 	</aon:div>
