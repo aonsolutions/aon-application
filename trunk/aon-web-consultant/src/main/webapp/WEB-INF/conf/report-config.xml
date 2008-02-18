@@ -273,6 +273,45 @@
 	</report>	
 	
 	<!--  **********************************************************
+						Product Auxiliary Entities  
+		  ********************************************************** -->
+	<report id="productCategory" description="Categories report">
+		<template path="/com/code/aon/ui/product/report/category.jasper" />
+		<bean key="com.code.aon.product.ProductCategory" />
+		<criteria provider="#{productCategory}" />
+		<params>
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.product.i18n.messages" />
+			<param id="logoImageFile" value="#{company.getAttachAsInputStream}" />
+			<param id="company" value="#{company.obtainCompany}" />
+		</params>
+	</report>
+	
+	<report id="tax" description="Taxs report">
+		<template path="/com/code/aon/ui/product/report/tax.jasper" />
+		<bean key="com.code.aon.product.Tax" />
+		<criteria provider="#{tax}" />
+		<params>
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.product.i18n.messages" />
+			<param id="logoImageFile" value="#{company.getAttachAsInputStream}" />
+			<param id="company" value="#{company.obtainCompany}" />
+		</params>
+	</report>
+	
+	<!--  **********************************************************
+						Product Master Entities  
+		  ********************************************************** -->
+	<report id="item" description="Items report">
+		<template path="/com/code/aon/ui/product/report/item.jasper" />
+		<bean key="com.code.aon.product.Item" />
+		<criteria provider="#{item}" />
+		<params>
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.product.i18n.messages" />
+			<param id="logoImageFile" value="#{company.getAttachAsInputStream}" />
+			<param id="company" value="#{company.obtainCompany}" />
+		</params>
+	</report>
+	
+	<!--  **********************************************************
 						      ACCOUNT  
 		  ********************************************************** -->
 		  
