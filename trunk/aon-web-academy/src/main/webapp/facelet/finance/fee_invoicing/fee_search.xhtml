@@ -51,23 +51,18 @@
 						<h:outputLabel for="Invoice_series"
 							styleClass="aon-form-input-text-label"
 							value="#{financeBundle.aon_series_number}" />
-						<h:panelGrid columns="3">
-							<t:selectOneMenu id="Series_Lookup_id"
-								styleClass="aon-form-selectOneMenu-field" forceId="#{true}"
-								onchange="return findBeanLookupAndSubmitExt(this.form, event,'#{facesContext.externalContext.requestContextPath}','seriesLookup','Series_Lookup_id','Series_id|Series_Lookup_id,Series_description|Series_Lookup_description');"
+						<h:panelGrid columns="2">
+							<t:selectOneMenu id="Invoice_series"
 								value="#{feeInvoicing.invoicingParams.series}"
-								valueChangeListener="#{feeInvoicing.onSeriesChanged}">
-								<f:selectItem itemValue="" itemDisabled="true" itemLabel="-" />
+								styleClass="aon-form-selectOneMenu-field"
+								onchange="submit();" valueChangeListener="#{feeInvoicing.onSeriesChanged}">
+								<f:selectItem itemValue="" itemLabel=" " />
 								<f:selectItems value="#{configCollections.series}" />
 							</t:selectOneMenu>
 							<t:inputText id="Invoice_number" required="true"
 								value="#{feeInvoicing.invoicingParams.number}"
 								styleClass="aon-form-input-text" forceId="#{true}"
 								size="7" />
-							<t:inputText id="Series_Lookup_description"
-								styleClass="aon-form-input-text-disabled" forceId="#{true}"
-								disabledOnClientSide="true" size="50">
-							</t:inputText>
 						</h:panelGrid>
 						
  						<t:outputLabel for="Customer_Lookup_id" value="#{appBundle.aon_alumn}" 
