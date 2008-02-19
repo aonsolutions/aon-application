@@ -433,7 +433,8 @@
 			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.finance.i18n.messages" />
 			<param id="company" value="#{company.obtainCompany}" />
 			<param id="logoImageFile" value="#{company.getAttachAsInputStream}" />
-			<param id="total" value="#{fbatch.getToTotal}" />
+			<param id="total" value="#{fbatch.getToTotalAmount}" />
+			<param id="totalRegs" value="#{fbatch.getToTotalDetails}" />
 		</params>
 		
 		<nested-report report="fBatchDetail"/>
