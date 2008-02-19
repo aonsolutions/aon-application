@@ -5,7 +5,7 @@
 	<parent>
 		<groupId>com.code.aon</groupId>
 		<artifactId>aon.web.parent</artifactId>
-		<version>1.0.3</version>
+		<version>1.0.4</version>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.code.aon</groupId>
@@ -16,41 +16,70 @@
 	<name>APLICACION WEB DE ACADEMIAS</name>
 	<build>
 		<finalName>aon-academy</finalName>
+
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-war-plugin</artifactId>
+				<version>2.0.2</version>
+				<configuration>
+		           <webappDirectory>/target/aon-web-academy</webappDirectory>    
+					<webResources>
+						<resource>
+							<!-- this is relative to the pom.xml directory -->
+							<directory>../aon-web-account/src/main/webapp/_account</directory>
+							<targetPath>_account</targetPath>
+						</resource>
+						<resource>
+							<!-- this is relative to the pom.xml directory -->
+							<directory>../aon-web-finance/src/main/webapp/_finance</directory>
+							<targetPath>_finance</targetPath>
+						</resource>
+					</webResources>
+					<archive>
+						<manifestEntries>
+							<Implementation-Version>${project.version}</Implementation-Version>
+							<dbVersion>${project.dbVersion}</dbVersion>
+						</manifestEntries>
+					</archive>
+				</configuration>
+			</plugin>
+		</plugins>
 	</build>
 	<dependencies>
 	
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.academy</artifactId>
-			<version>2.0.3</version>
+			<version>2.0.4</version>
 			<scope>compile</scope>
 		</dependency>
 
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.purchase</artifactId>
-			<version>2.0.1</version>
+			<version>2.0.2</version>
 			<scope>compile</scope>
 		</dependency>
 
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.account</artifactId>
-			<version>2.0.1</version>
+			<version>2.1.0</version>
 			<scope>compile</scope>
 		</dependency>
 
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.employee</artifactId>
-			<version>2.0.0</version>
+			<version>2.0.1</version>
 			<scope>compile</scope>
 		</dependency>
 
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.finance</artifactId>
-			<version>2.0.4</version>
+			<version>2.1.0</version>
 			<scope>compile</scope>
 		</dependency>
 		
