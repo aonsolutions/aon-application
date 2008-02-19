@@ -30,6 +30,7 @@ import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.SecurityLevel;
+import com.code.aon.company.Company;
 import com.code.aon.company.WorkPlace;
 import com.code.aon.finance.Bank;
 import com.code.aon.finance.Finance;
@@ -37,11 +38,13 @@ import com.code.aon.finance.Invoice;
 import com.code.aon.finance.InvoiceDetail;
 import com.code.aon.finance.InvoiceTax;
 import com.code.aon.finance.PayMethod;
+import com.code.aon.finance.RegistryBank;
 import com.code.aon.finance.dao.IFinanceAlias;
 import com.code.aon.finance.enumeration.FinanceStatus;
 import com.code.aon.finance.enumeration.InvoiceSource;
 import com.code.aon.finance.enumeration.InvoiceStatus;
 import com.code.aon.finance.enumeration.InvoiceType;
+import com.code.aon.finance.invoicing.FinanceGenerator;
 import com.code.aon.product.Tax;
 import com.code.aon.product.dao.IProductAlias;
 import com.code.aon.product.enumeration.TaxType;
@@ -61,6 +64,8 @@ public class AccountInvoiceController {
 	
 	private AccountEntryInvoiceWriter writer;
 	
+	private FinanceGenerator financeGenerator;
+	
 	private AccountEntryInvoice accountEntryInvoice;
 	
 	private boolean isNew;
@@ -79,12 +84,21 @@ public class AccountInvoiceController {
 	
 	private Finance currentFinance;
 	
+	private Integer registryBankId;
+	
 
 	public AccountEntryInvoiceWriter getWriter() {
 		if(writer == null){
 			writer = new AccountEntryInvoiceWriter();
 		}
 		return writer;
+	}
+	
+	public FinanceGenerator getFinanceGenerator() {
+		if(financeGenerator == null){
+			financeGenerator = new FinanceGenerator();
+		}
+		return financeGenerator;
 	}
 
 	public AccountEntryInvoice getAccountEntryInvoice() {
@@ -165,6 +179,14 @@ public class AccountInvoiceController {
 		this.currentFinance = currentFinance;
 	}
 	
+	public Integer getRegistryBankId() {
+		return registryBankId;
+	}
+
+	public void setRegistryBankId(Integer registryBankId) {
+		this.registryBankId = registryBankId;
+	}
+
 	@SuppressWarnings("unused")
 	public void onReset(MenuEvent event){
 		reset();
@@ -260,17 +282,58 @@ public class AccountInvoiceController {
 	}
 	
 	@SuppressWarnings("unused")
-	public void onSelectFinance(ActionEvent event){
+	public void onSelectFinance(ActionEvent event) throws ManagerBeanException{
 		this.currentFinance = (Finance)finances.getRowData();
+		if(!header.getType().equals(InvoiceType.SALES)){
+			this.setRegistryBankId(obtainRegistryBankId(obtainCompany().getId(), currentFinance.getBank().getId()));
+		}
+	}
+	
+	@SuppressWarnings("unchecked")
+	private Integer obtainRegistryBankId(Integer registryId, Integer bankId) {
+		try {
+			IManagerBean rBankBean = BeanManager.getManagerBean(RegistryBank.class);
+			Criteria criteria = new Criteria();
+			criteria.addEqualExpression(rBankBean.getFieldName(IFinanceAlias.REGISTRY_BANK_REGISTRY_ID), registryId);
+			criteria.addEqualExpression(rBankBean.getFieldName(IFinanceAlias.REGISTRY_BANK_BANK_ID), bankId);
+			Iterator iter = rBankBean.getList(criteria).iterator();
+			if(iter.hasNext()){
+				RegistryBank rBank = (RegistryBank)iter.next();
+				return rBank.getId();
+			}
+		} catch (ManagerBeanException e) {
+			LOGGER.log(Level.SEVERE, "Error obtaining registryBankId for current Finance" , e);
+		}
+		return null;
 	}
 	
 	@SuppressWarnings({"unchecked", "unused"})
 	public void onAddFinance(ActionEvent event){
+		if(!header.getType().equals(InvoiceType.SALES)){
+			RegistryBank rBank = obtainRBank(this.registryBankId);
+			currentFinance.setBank((rBank == null?null:rBank.getBank()));
+		}
 		((LinkedList)this.finances.getWrappedData()).add(this.currentFinance);
 		this.currentFinance = initializeFinance();
 		this.setNewFinance(false);
 	}
 	
+	@SuppressWarnings("unchecked")
+	private RegistryBank obtainRBank(Integer rBankId){
+		try {
+			IManagerBean rBankBean = BeanManager.getManagerBean(RegistryBank.class);
+			Criteria criteria = new Criteria();
+			criteria.addEqualExpression(rBankBean.getFieldName(IFinanceAlias.REGISTRY_BANK_ID), rBankId);
+			Iterator iter = rBankBean.getList(criteria, 0, 1).iterator();
+			if(iter.hasNext()){
+				return (RegistryBank)iter.next();
+			}
+		} catch (ManagerBeanException e) {
+			LOGGER.log(Level.SEVERE, e.getMessage(), e);
+		}
+		return null;
+	}
+
 	@SuppressWarnings({"unchecked", "unused"})
 	public void onRemoveFinance(ActionEvent event){
 		((LinkedList)this.finances.getWrappedData()).remove(this.currentFinance);
@@ -298,9 +361,27 @@ public class AccountInvoiceController {
 		finance.setInvoice(new Invoice());
 		finance.setPayMethod(new PayMethod());
 		finance.setRegistry(new Registry());
+		finance.setAmount(obtainInitialAmount());
 		return finance;
 	}
 	
+	@SuppressWarnings("unchecked")
+	private double obtainInitialAmount() {
+		Iterator iter = ((LinkedList)this.details.getWrappedData()).iterator();
+		int detailSum = 0; 
+		while(iter.hasNext()){
+			AccountInvoiceDetail detail = (AccountInvoiceDetail)iter.next();
+			detailSum += detail.getTotal();
+		}
+		Iterator financeIter  = ((LinkedList)this.finances.getWrappedData()).iterator();
+		int financeSum = 0;
+		while(financeIter.hasNext()){
+			Finance finance = (Finance)financeIter.next();
+			financeSum += finance.getAmount();
+		}
+		return detailSum - financeSum;
+	}
+
 	@SuppressWarnings("unchecked")
 	public void onTaxChange(ValueChangeEvent event) throws ManagerBeanException{
 		if(event.getNewValue() != null){
@@ -343,6 +424,10 @@ public class AccountInvoiceController {
 				this.header.setRegistry((Registry)iter.next());
 			}
 		}
+	}
+	
+	public void onTypeChanged(ValueChangeEvent event){
+		initializeHeader();
 	}
 	
 	@SuppressWarnings("unused")
@@ -458,25 +543,30 @@ public class AccountInvoiceController {
 	private Invoice insertInvoice() {
 		try {
 			IManagerBean invoiceBean = BeanManager.getManagerBean(Invoice.class);
-			Invoice invoice = new Invoice();
-			invoice.setIssueDate(getHeader().getDate());
-			if(getHeader().getType().equals(InvoiceType.SALES)){
-				invoice.setNumber(calculateNextNumber(getHeader().getSeries()));
-			}else{
-				invoice.setNumber(getHeader().getNumber());
-			}
-			invoice.setRegistry(getHeader().getRegistry());
-			invoice.setRegistryDocument(getHeader().getDocument());
-			invoice.setRegistryName(getHeader().getName());
-			invoice.setSeries(getHeader().getSeries());
-			invoice.setStatus(InvoiceStatus.SCORED);
-			invoice.setType(getHeader().getType());
-			invoice.setSecurityLevel(getHeader().getSecurityLevel());
+			Invoice invoice = createInvoice();
 			return (Invoice)invoiceBean.insert(invoice);
 		} catch (ManagerBeanException e) {
 			LOGGER.log(Level.SEVERE, "Error inserting invoice", e);
 		}
 		return null;
+	}
+	
+	private Invoice createInvoice() throws ManagerBeanException{
+		Invoice invoice = new Invoice();
+		invoice.setIssueDate(getHeader().getDate());
+		if(getHeader().getType().equals(InvoiceType.SALES)){
+			invoice.setNumber(calculateNextNumber(getHeader().getSeries()));
+		}else{
+			invoice.setNumber(getHeader().getNumber());
+		}
+		invoice.setRegistry(getHeader().getRegistry());
+		invoice.setRegistryDocument(getHeader().getDocument());
+		invoice.setRegistryName(getHeader().getName());
+		invoice.setSeries(getHeader().getSeries());
+		invoice.setStatus(InvoiceStatus.SCORED);
+		invoice.setType(getHeader().getType());
+		invoice.setSecurityLevel(getHeader().getSecurityLevel());
+		return invoice;
 	}
 	
 	private int calculateNextNumber(String series) throws ManagerBeanException {
@@ -564,10 +654,33 @@ public class AccountInvoiceController {
 		} catch (ManagerBeanException e) {
 			LOGGER.log(Level.SEVERE, "Error inserting finances for invoice with id= " + invoice.getId(), e);
 		}
-		
+	}
+
+	public void generateFinances(ActionEvent event) throws ManagerBeanException {
+		List<Finance> financeList = new LinkedList<Finance>();
+		Invoice invoice = createInvoice();
+		Registry registry = null;
+		if(invoice.getType().equals(InvoiceType.SALES)){
+			registry = invoice.getRegistry();
+		}else {
+			registry = obtainCompany();
+		}
+		if(registry != null && registry.getId() != null){
+			financeList = getFinanceGenerator().generateFinances(invoice, registry, this.getInvoiceTotal(), false);
+		}
+		this.finances = new ListDataModel(financeList);		
 	}
 	
-	
+	@SuppressWarnings("unchecked")
+	private Company obtainCompany() throws ManagerBeanException {
+		IManagerBean companyBean = BeanManager.getManagerBean(Company.class);
+		Iterator iter = companyBean.getList(null, 0, 1).iterator();
+		if(iter.hasNext()){
+			return (Company)iter.next();
+		}
+		return null;
+	}
+
 	private void deleteInvoice(Invoice invoice) {
 		deleteFinances(invoice);
 		deleteInvoiceDetails(invoice);

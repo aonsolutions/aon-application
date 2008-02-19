@@ -46,6 +46,12 @@
 							onmouseout="this.className='aon-content-toolbar-item'"
 							onmouseover="this.className='aon-content-toolbar-item aon-content-toolbar-item-hover'">
 						</h:commandButton>
+						<h:commandButton id="finances" value="#{accountBundle.aon_generate_finances}"
+							actionListener="#{accountInvoice.generateFinances}"
+							styleClass="aon-content-toolbar-item" rendered="#{accountInvoice.new}"
+							onmouseout="this.className='aon-content-toolbar-item'"
+							onmouseover="this.className='aon-content-toolbar-item aon-content-toolbar-item-hover'">
+						</h:commandButton>
 					</t:div>
 				</t:div>
 			</t:div>
@@ -64,7 +70,7 @@
 						<h:selectOneMenu id="Account_invoiceType"
 							styleClass="aon-form-selectOneMenu-field"
 							value="#{accountInvoice.header.type}"
-							onchange="submit();">
+							onchange="submit();" valueChangeListener="#{accountInvoice.onTypeChanged}">
 							<f:selectItems value="#{accountInvoice.invoiceTypes}" />
 						</h:selectOneMenu>
 						
@@ -98,12 +104,12 @@
 						<t:div rendered="#{accountInvoice.purchase}">
 							<t:inputText id="Supplier_Lookup_id" size="5" forceId="#{true}"
 								styleClass="aon-form-input-text"
-								onchange="return findBeanLookupExt(event,'#{facesContext.externalContext.requestContextPath}','supplierLookup','Supplier_Lookup_id','Supplier_id|Supplier_Lookup_id,Supplier_full_name|Supplier_full_name');"
+								onchange="return findBeanLookupExt(event,'#{facesContext.externalContext.requestContextPath}','supplierLookup','Supplier_Lookup_id','Supplier_id|Supplier_Lookup_id,Supplier_registry_document|Supplier_Lookup_document,Supplier_full_name|Supplier_full_name');"
 								value="#{accountInvoice.header.registry.id}" 
 								valueChangeListener="#{accountInvoice.onRegistryChange}"/>
 							<h:commandButton id="find_Supplier_Lookup_id"
 								styleClass="aon-form-lookup-button" value="" immediate="true"
-								onclick="lookupSearchWindow(this, 'placeList', '#{supplierLookup.encodedSearchPagePath}','Supplier_id|Supplier_Lookup_id,Supplier_full_name|Supplier_full_name');return false;" />	
+								onclick="lookupSearchWindow(this, 'placeList', '#{supplierLookup.encodedSearchPagePath}','Supplier_id|Supplier_Lookup_id,Supplier_registry_document|Supplier_Lookup_document,Supplier_full_name|Supplier_full_name');return false;" />	
 							<t:inputText id="Supplier_full_name" forceId="#{true}"
 								styleClass="aon-form-input-text" size="40" 
 								value="#{accountInvoice.header.name}"/>
@@ -164,11 +170,18 @@
 								styleClass="aon-form-input-text-label"
 								value="#{accountBundle.aon_series_number}" />
 						<h:panelGrid columns="2" cellpadding="0" cellspacing="0"> 
-							<h:selectOneMenu id="Invoice_series"
+							<h:selectOneMenu id="Account_invoice_series"
+								rendered="#{accountInvoice.sales}"
 								value="#{accountInvoice.header.series}"
 								styleClass="aon-form-selectOneMenu-field">
 								<f:selectItems value="#{configCollections.series}" />
 							</h:selectOneMenu>
+							<t:inputText id="Account_invoice_series-input"
+								rendered="#{!accountInvoice.sales}"
+								value="#{accountInvoice.header.series}" size="5" maxlength="5"
+								styleClass="aon-form-input-text" forceId="#{true}">
+								<f:validateLength maximum="7" />
+							</t:inputText>	
 							<t:inputText id="Account_invoice_number"
 								value="#{accountInvoice.header.number}" size="7" maxlength="7"
 								styleClass="aon-form-input-text" forceId="#{true}">
@@ -426,6 +439,13 @@
 									
 							</t:dataTable>	
 						</t:div>
+
+						<ui:include src="/facelet/shared/dataScroller.xhtml">
+							<ui:param name="dataTable" value="TaxesData" />
+							<ui:param name="model" value="#{accountInvoice.details}" />
+							<ui:param name="showNote" value="#{false}" />
+						</ui:include>
+						
 					</t:div>
 
 					<t:div styleClass="aon-form-group">
@@ -530,7 +550,7 @@
 										<t:outputText value="#{accountBundle.aon_bank}" />
 									</f:facet>
 									<t:outputText value="#{financeTo.bank.name}" rendered="#{financeTo!=accountInvoice.currentFinance}" />
-									<t:div rendered="#{financeTo==accountInvoice.currentFinance}">
+									<t:div rendered="#{financeTo==accountInvoice.currentFinance and accountInvoice.sales}">
 										<t:inputHidden id="Bank_Lookup_id-Edit" size="5" forceId="#{true}"
 											styleClass="aon-form-input-text"
 											value="#{accountInvoice.currentFinance.bank.id}" />
@@ -545,22 +565,48 @@
 											styleClass="aon-form-input-text-disabled" disabledOnClientSide="true"
 											size="30" value="#{accountInvoice.currentFinance.bank.name}"/>
 									</t:div>
+									<t:div rendered="#{financeTo==accountInvoice.currentFinance and !accountInvoice.sales}">
+										<t:inputHidden id="RegistryBank_Lookup_bank_id-Edit" size="5" forceId="#{true}"
+											styleClass="aon-form-input-text"
+											value="#{accountInvoice.currentFinance.bank.id}" />
+										<t:selectOneMenu id="RegistryBank_Lookup_id-Edit"
+											value="#{accountInvoice.registryBankId}"
+											forceId="#{true}" styleClass="aon-form-selectOneMenu-field"
+											onchange="return findBeanLookupExt(event,'#{facesContext.externalContext.requestContextPath}','rBankLookup','RegistryBank_Lookup_id-Edit[#{rowIndex}]','RegistryBank_id|RegistryBank_Lookup_id-Edit[#{rowIndex}],RegistryBank_bank_id|RegistryBank_Lookup_bank_id-Edit[#{rowIndex}],RegistryBank_bankAccount|RegistryBank_Lookup_bankAccount-Edit[#{rowIndex}]');">
+											<f:selectItem itemDisabled="true" itemLabel ="-" itemValue="" />
+											<f:selectItems value="#{financeCollections.companyBanks}" />
+										</t:selectOneMenu>
+									</t:div>
 									<f:facet name="footer">
 										<t:div rendered="#{accountInvoice.newFinance}">
-											<t:inputHidden id="Bank_Lookup_id-New" size="5" forceId="#{true}"
-												styleClass="aon-form-input-text"
-												value="#{accountInvoice.currentFinance.bank.id}" />
-											<t:inputText id="Bank_Lookup_code-New" size="5" forceId="#{true}"
-												styleClass="aon-form-input-text"
-												onchange="return findBeanLookupExt(event,'#{facesContext.externalContext.requestContextPath}','bankLookup','Bank_Lookup_code-New','Bank_id|Bank_Lookup_id-New,Bank_code|Bank_Lookup_code-New,Bank_name|Bank_Lookup_name-New');"
-												value="#{accountInvoice.currentFinance.bank.code}" />
-											<h:commandButton id="find_Bank_Lookup_id-New"
-												styleClass="aon-form-lookup-button" value="" immediate="true"
-												onclick="lookupSearchWindow(this, 'placeList', '#{bankLookup.encodedSearchPagePath}','Bank_id|Bank_Lookup_id-New,Bank_code|Bank_Lookup_code-New,Bank_name|Bank_Lookup_name-New');return false;" />
-											<t:inputText id="Bank_Lookup_name-New" forceId="#{true}"
-												styleClass="aon-form-input-text-disabled" disabledOnClientSide="true"
-												size="30" value="#{accountInvoice.currentFinance.bank.name}"/>
-										</t:div>
+											<t:div rendered="#{accountInvoice.sales}">
+												<t:inputHidden id="Bank_Lookup_id-New" size="5" forceId="#{true}"
+													styleClass="aon-form-input-text"
+													value="#{accountInvoice.currentFinance.bank.id}" />
+												<t:inputText id="Bank_Lookup_code-New" size="5" forceId="#{true}"
+													styleClass="aon-form-input-text"
+													onchange="return findBeanLookupExt(event,'#{facesContext.externalContext.requestContextPath}','bankLookup','Bank_Lookup_code-New','Bank_id|Bank_Lookup_id-New,Bank_code|Bank_Lookup_code-New,Bank_name|Bank_Lookup_name-New');"
+													value="#{accountInvoice.currentFinance.bank.code}" />
+												<h:commandButton id="find_Bank_Lookup_id-New"
+													styleClass="aon-form-lookup-button" value="" immediate="true"
+													onclick="lookupSearchWindow(this, 'placeList', '#{bankLookup.encodedSearchPagePath}','Bank_id|Bank_Lookup_id-New,Bank_code|Bank_Lookup_code-New,Bank_name|Bank_Lookup_name-New');return false;" />
+												<t:inputText id="Bank_Lookup_name-New" forceId="#{true}"
+													styleClass="aon-form-input-text-disabled" disabledOnClientSide="true"
+													size="30" value="#{accountInvoice.currentFinance.bank.name}"/>
+											</t:div>	
+											<t:div rendered="#{!accountInvoice.sales}">
+												<t:inputHidden id="RegistryBank_Lookup_bank_id-New" size="5" forceId="#{true}"
+													styleClass="aon-form-input-text"
+													value="#{accountInvoice.currentFinance.bank.id}" />
+												<t:selectOneMenu id="RegistryBank_Lookup_id-New"
+													value="#{accountInvoice.registryBankId}"
+													forceId="#{true}" styleClass="aon-form-selectOneMenu-field"
+													onchange="return findBeanLookupExt(event,'#{facesContext.externalContext.requestContextPath}','rBankLookup','RegistryBank_Lookup_id-New','RegistryBank_id|RegistryBank_Lookup_id-New,RegistryBank_bank_id|RegistryBank_Lookup_bank_id-New,RegistryBank_bankAccount|RegistryBank_Lookup_bankAccount-New');">
+													<f:selectItem itemDisabled="true" itemLabel ="-" itemValue="" />
+													<f:selectItems value="#{financeCollections.companyBanks}" />
+												</t:selectOneMenu>
+											</t:div>
+										</t:div>	
 									</f:facet>
 								</t:column>
 
@@ -568,17 +614,17 @@
 									<f:facet name="header">
 										<t:outputText value="#{accountBundle.aon_bank_account}" />
 									</f:facet>
-									<t:outputText id="Account_Finance_Bank_Account"
+									<t:outputText id="RegistryBank_Lookup_bankAccount"
 										rendered="#{financeTo!=accountInvoice.currentFinance}" 
 										value="#{financeTo.bankAccount}" forceId="#{true}">
 									</t:outputText>
-									<t:inputText id="Account_Finance_Bank_Account-Edit"
+									<t:inputText id="RegistryBank_Lookup_bankAccount-Edit"
 										rendered="#{financeTo==accountInvoice.currentFinance}" forceId="#{true}"
 										value="#{accountInvoice.currentFinance.bankAccount}" required="#{true}" />
 									<f:facet name="footer">
 										<t:div style="text-align:right;">
-											<t:inputText id="Account_Finance_Bank_Account-New"
-												rendered="#{accountInvoice.newFinance}"
+											<t:inputText id="RegistryBank_Lookup_bankAccount-New"
+												rendered="#{accountInvoice.newFinance}" forceId="#{true}"
 												value="#{accountInvoice.currentFinance.bankAccount}">
 											</t:inputText>
 										</t:div>
@@ -650,6 +696,13 @@
 									
 							</t:dataTable>	
 						</t:div>
+
+						<ui:include src="/facelet/shared/dataScroller.xhtml">
+							<ui:param name="dataTable" value="FinancesData" />
+							<ui:param name="model" value="#{accountInvoice.finances}" />
+							<ui:param name="showNote" value="#{false}" />
+						</ui:include>
+
 					</t:div>
 
 				</t:div>
