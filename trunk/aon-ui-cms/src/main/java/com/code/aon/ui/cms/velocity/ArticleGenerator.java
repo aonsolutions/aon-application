@@ -77,7 +77,14 @@ public class ArticleGenerator extends Generator {
 						articleList = (List<ITransferObject>)articleBean.getList(articleCriteria);
 						ArrayList<ArticleHandler> ahlist = new ArrayList<ArticleHandler>();
 						if (!articleList.isEmpty()){
-							CommonGenerator.getCommonGenerator().chargeContext(vu, articleCategory.getElementSection());
+							if (articleCategory.getElementSection()!=null){
+								CommonGenerator.getCommonGenerator().chargeContext(vu, articleCategory.getElementSection());
+							}else{
+								if (articleCategory.getSection()!=null)
+									CommonGenerator.getCommonGenerator().chargeContext(vu, articleCategory.getSection());
+								else
+									CommonGenerator.getCommonGenerator().chargeContext(vu, configSection);
+							}
 							for (int i=0; i < articleList.size(); i++) {
 								article = (Article)articleList.get(i);
 								articleDetailCriteria = new Criteria();
@@ -94,7 +101,10 @@ public class ArticleGenerator extends Generator {
 									vu.remove("article");
 								}
 							}
-							CommonGenerator.getCommonGenerator().chargeContext(vu, articleCategory.getSection());
+							if (articleCategory.getSection()!=null)
+								CommonGenerator.getCommonGenerator().chargeContext(vu, articleCategory.getSection());
+							else
+								CommonGenerator.getCommonGenerator().chargeContext(vu, configSection);
 							ArticleCategoryHandler achandler = new ArticleCategoryHandler(articleCategoryDetail,ahlist);
 							vu.put("article_category", achandler);
 							vu.put("article_list", ahlist);
