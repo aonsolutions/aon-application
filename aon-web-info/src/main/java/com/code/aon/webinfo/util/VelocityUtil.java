@@ -11,6 +11,7 @@ import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.Velocity;
 import org.apache.velocity.app.VelocityEngine;
 
+import com.code.aon.ui.util.AonUtil;
 import com.code.aon.webinfo.velocity.VelocityConstants;
 
 public class VelocityUtil extends VelocityEngine implements VelocityConstants {
@@ -30,8 +31,7 @@ public class VelocityUtil extends VelocityEngine implements VelocityConstants {
 	public void setTemplate_path(String template_path) {
 		this.template_path = template_path;
 		File f = new File(template_path + "/index.vm");
-		if (f.exists()) addMessage("Plantilla encontrada", VelocityUtil.INFO);
-		else addMessage("No se han encontrado plantillas en '" + template_path + "'", ERROR);
+		if (!f.exists()) addMessage("No se han encontrado plantillas en '" + template_path + "'", ERROR);
 	}
 
 	public void setTemporal_path(String temporal_path) {
@@ -69,15 +69,14 @@ public class VelocityUtil extends VelocityEngine implements VelocityConstants {
     }
 
 	public void addMessage(String msg, int type) {
-		System.out.println(msg);
-/*		if (type == INFO) 
+		if (type == INFO) 
 			AonUtil.addInfoMessage(msg);
 		else if (type == ERROR)
 			AonUtil.addErrorMessage(msg);
 		else if (type == WARN)
 			AonUtil.addWarningMessage(msg);
 		else
-			AonUtil.addFatalMessage(msg);*/
+			AonUtil.addFatalMessage(msg);
 	}
 
 	public void put(String key, Object value) {
@@ -103,7 +102,7 @@ public class VelocityUtil extends VelocityEngine implements VelocityConstants {
         try {
 			if (!fi.exists()) {
 				error = true;
-				addMessage("Fichero de plantilla 'index.vm' no encontrado.", ERROR);
+				//addMessage("Fichero de plantilla 'index.vm' no encontrado.", ERROR);
 			}
 			else {
                 fr = new FileReader(fi);
@@ -117,7 +116,7 @@ public class VelocityUtil extends VelocityEngine implements VelocityConstants {
 
                     this.evaluate(context, writer, "¡AON-CMS!", reader);
 					writer.flush();
-					addMessage("Página " + page + " generada con exito", INFO);
+					//addMessage("Página " + page + " generada con exito", INFO);
 				}
 				catch(Exception e) {
 				    error = true;

@@ -7,53 +7,43 @@
 <body>
 
 <ui:composition>
-
-	<aon:div id="aon-header" styleClass="aon-desktop-header">
-	<aon:div styleClass="aon-connection-status"><aon:outputConnectionStatus styleClass="aon-connection-control"/></aon:div>
-		<aon:panelGrid columns="2" cellpadding="0" cellspacing="0" width="100%"
-			dir="true">
-			<aon:panelGroup>
-				<aon:div styleClass="aon-logo">
-					<h:graphicImage
-						url="#{aonConfiguration.applicationLogoContextRelativePath}"
-						alt="#{appBundle.aon_application_title}" />
+	<aon:div id="aon-header">	
+		<aon:panelGrid cellpadding="0" cellspacing="0" border="0" columns="3" style="width:100%"
+			columnClasses="aon-header-name,aon-header-slogan,aon-header-info">
+			<aon:div>
+				<aon:outputConnectionStatus	styleClass="aon-outputConnectionStatus"		
+					startStyleClass="aon-outputConnectionStatus-start"
+					stopStyleClass="aon-outputConnectionStatus-stop"/>
+				<h:graphicImage styleClass="aon-logo"
+				url="#{aonConfiguration.applicationLogoContextRelativePath}"
+				alt="#{appBundle.aon_application_title}" />			
+				<aon:outputText value="#{appBundle.aon_application_title}" styleClass="aon-applicationName"/>
+			</aon:div>
+	
+			<aon:div>
+				<aon:div rendered="#{aonConfiguration.properties.middleHeader == null}">
+					<aon:outputText value="&#160;"/>
 				</aon:div>
-				<aon:div styleClass="aon-applicationName">
-					<aon:outputText value="#{appBundle.aon_application_title}" />
+				<aon:div rendered="#{aonConfiguration.properties.middleHeader != null}">
+					<aon:outputText escape="false" value="#{aonConfiguration.properties.middleHeader}" />
 				</aon:div>
-			</aon:panelGroup>
-
-			<aon:panelGroup>
-				<aon:panelGrid columns="2" cellpadding="0" cellspacing="0" width="100%"
-					>
-
-					<aon:panelGroup 
-						rendered="#{aonConfiguration.properties.middleHeader == null}">
-						<aon:div styleClass="aon-header-userAdOnLeft">
-							<aon:outputText value="&#160;"/>
-						</aon:div>
-					</aon:panelGroup>
-
-					<aon:panelGroup
-						rendered="#{aonConfiguration.properties.middleHeader != null}">
-						<aon:div styleClass="aon-header-userAdOnLeft">
-							<aon:outputText escape="false"
-								value="#{aonConfiguration.properties.middleHeader}" />
-						</aon:div>
-					</aon:panelGroup>
-					
-					<aon:div style="text-align:right;">
-						<aon:div styleClass="aon-desktop-header-tab" style="height:30px;">								
-							<aon:outputText value="&#160;" />
-						</aon:div>
-					</aon:div>
-					
-				</aon:panelGrid>
-			</aon:panelGroup>
+			</aon:div>
+			<aon:div style="display:inline;white-space:nowrap;">
+				<aon:outputText value="#{company.companyName}" />
+				<aon:outputText value=" / " />
+				<aon:outputText value="#{company.loggedUserName}" />
+			</aon:div>
 		</aon:panelGrid>
-
+		<aon:div styleClass="aon-header-additionalInfo">		
+			<aon:div styleClass="aon-float-left"><aon:outputText value="#{company.currentDate}" /></aon:div>
+			<aon:div styleClass="aon-float-right">
+				<h:outputLink style="text-align:right;padding-right:1em;font-size:0.9em;font-weight:bold;" 
+					onclick="parent.window.close();" target="_top">
+					<aon:outputText value="#{appBundle.aon_application_close}" style="color:#fff;"/>
+				</h:outputLink>
+			</aon:div>
+		</aon:div>
 	</aon:div>
-
 </ui:composition>
 
 </body>

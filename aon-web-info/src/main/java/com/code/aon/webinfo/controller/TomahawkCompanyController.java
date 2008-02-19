@@ -6,7 +6,11 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Iterator;
+import java.util.List;
 
 import javax.faces.application.Application;
 import javax.faces.context.FacesContext;
@@ -21,6 +25,7 @@ import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.company.Company;
+import com.code.aon.config.User;
 import com.code.aon.geozone.GeoZone;
 import com.code.aon.geozone.dao.IGeoZoneAlias;
 import com.code.aon.ql.Criteria;
@@ -31,6 +36,7 @@ import com.code.aon.registry.RegistryMedia;
 import com.code.aon.registry.dao.IRegistryAlias;
 import com.code.aon.registry.enumeration.AddressType;
 import com.code.aon.registry.enumeration.RegistryAttachmentType;
+import com.code.aon.ui.config.util.UserUtils;
 import com.code.aon.ui.form.IController;
 import com.code.aon.ui.util.AonUtil;
 
@@ -542,5 +548,33 @@ public class TomahawkCompanyController extends TomahawkFileController {
 	public String getMasterFieldName(){
 		return IRegistryAlias.REGISTRY_ADDRESS_REGISTRY_ID;
 	}
+
+    @SuppressWarnings("unchecked")
+    public String getCompanyName() throws ManagerBeanException {
+        try {
+	    	IManagerBean companyBean = BeanManager.getManagerBean(Company.class);
+	        List companyList = companyBean.getList(null);
+	        if (companyList.size() > 0) {
+	            Company company = (Company)companyList.get(0);
+	            return company.getName();
+	        }
+	        return null;
+        }
+        catch (Exception e) {
+        	return null;
+        }
+    }
+
+    public String getLoggedUserName() {
+        User user = UserUtils.getLoggedUser();
+        return user.getName();
+    }
+
+    
+    public String getCurrentDate() {
+        DateFormat formatter = new SimpleDateFormat("EEEE, dd MMMM yyyy");
+
+        return formatter.format(new Date()).toUpperCase();
+    }
 
 }

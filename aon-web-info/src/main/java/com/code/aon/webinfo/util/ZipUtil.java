@@ -11,6 +11,8 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
 
+import com.code.aon.ui.util.AonUtil;
+
 
 public class ZipUtil {
 	
@@ -35,7 +37,7 @@ public class ZipUtil {
 				ZipEntry entry;
 				while ((entry = zis.getNextEntry()) != null) {
 					if (!entry.isDirectory()) {
-						addMessage(" - Extracting " + entry.getName() + ".", GEN_INFO);
+						//addMessage(" - Extracting " + entry.getName() + ".", GEN_INFO);
 						int count;
 						byte data[] = new byte[BUFFER];
 						File newfile = new File(df.getAbsolutePath() + "/" +  entry.getName());
@@ -51,16 +53,14 @@ public class ZipUtil {
 					}
 				}
 				zis.close();
-				addMessage(" ", GEN_INFO);
-				addMessage("<STRONG> Plantilla '" + szf.getName() + "' instalada con exito. </STRONG>", GEN_INFO);
+				//addMessage(" ", GEN_INFO);
+				//addMessage("<STRONG> Plantilla '" + szf.getName() + "' instalada con exito. </STRONG>", GEN_INFO);
 				if (file_content != null) {
-					if (found) addMessage("<STRONG> Archivo '" + file_content + "' encontrado.</STRONG>", GEN_INFO);
-					else addMessage("<STRONG> Archivo '" + file_content + "' no encontrado.</STRONG>", GEN_ERROR);
+					if (!found) addMessage("<STRONG> Archivo '" + file_content + "' no encontrado.</STRONG>", GEN_ERROR);
 				}
 				return true;
 			} catch (Exception e) {
 				e.printStackTrace();
-				addMessage(" ", GEN_ERROR);
 				addMessage("<STRONG> Error al leer el fichero zip.</STRONG>", GEN_ERROR);
 				return false;
 			}
@@ -95,8 +95,8 @@ public class ZipUtil {
 		}
 		if (error)
 			addMessage("Se produjo un error al intentar generar el fichero '" + name + ".zip'", GEN_ERROR);
-		else
-			addMessage("El fichero '" + name + ".zip' se ha generado con exito.", GEN_INFO);
+		//else
+			//addMessage("El fichero '" + name + ".zip' se ha generado con exito.", GEN_INFO);
 	}
 
 	public void zipDir(String dir2zip, ZipOutputStream zos, String breadCrum, String original_name) throws IOException, FileNotFoundException {
@@ -136,7 +136,7 @@ public class ZipUtil {
 	}
 
 	private static void addMessage(String msg, int type) {
-/*		if (type == GEN_INFO) {
+		if (type == GEN_INFO) {
 			AonUtil.addInfoMessage(msg);
 		} else if (type == GEN_ERROR) {
 			AonUtil.addErrorMessage(msg);
@@ -144,7 +144,7 @@ public class ZipUtil {
 			AonUtil.addWarningMessage(msg);
 		} else {
 			AonUtil.addFatalMessage(msg);
-		}*/
+		}
 	}
 
 
