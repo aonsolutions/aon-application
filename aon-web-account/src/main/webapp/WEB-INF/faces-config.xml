@@ -276,7 +276,7 @@
 	<managed-bean>
 		<managed-bean-name>purchaseCollections</managed-bean-name>
 		<managed-bean-class>
-			com.code.aon.ui.purchase.controller.PurchaseCollectionsController
+			com.code.aon.ui.supplier.controller.SupplierCollectionsController
 		</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
@@ -331,44 +331,6 @@
 			<description>Needed for Search Select Window</description>
 			<property-name>searchPagePath</property-name>
 			<value>/facelet/sw/customerSearch.faces</value>
-		</managed-property>
-	</managed-bean>
-	
-	<!-- ************* SUPPLIER ***************** -->
-	<managed-bean>
-		<managed-bean-name>supplierLookup</managed-bean-name>
-		<managed-bean-class>
-			com.code.aon.ui.purchase.controller.SupplierLookupController
-		</managed-bean-class>
-		<managed-bean-scope>session</managed-bean-scope>
-		<managed-property>
-			<property-name>queryOnStartUP</property-name>
-			<value>true</value>
-		</managed-property>
-		<managed-property>
-			<property-name>foreignPojo</property-name>
-			<value>com.code.aon.purchase.Supplier</value>
-		</managed-property>
-		<managed-property>
-			<property-name>aliasPrefix</property-name>
-			<value>Supplier_Lookup</value>
-		</managed-property>
-		<managed-property>
-			<property-name>foreignJoinProperties</property-name>
-			<list-entries>
-				<value>id</value>
-			</list-entries>
-		</managed-property>
-		<managed-property>
-			<property-name>foreignDisplayProperties</property-name>
-			<list-entries>
-				<value>document</value>
-			</list-entries>
-		</managed-property>
-		<managed-property>
-			<description>Needed for Search Select Window</description>
-			<property-name>searchPagePath</property-name>
-			<value>/facelet/sw/supplierSearch.faces</value>
 		</managed-property>
 	</managed-bean>
 	
