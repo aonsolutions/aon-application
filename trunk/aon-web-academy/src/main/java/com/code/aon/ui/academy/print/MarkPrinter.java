@@ -77,6 +77,11 @@ public class MarkPrinter implements ICollectionProvider{
 	}
 
 	@SuppressWarnings("unchecked")
+	public Collection getCollection(boolean forceRefresh) throws ManagerBeanException {
+		return getCollection();
+	}
+	
+	@SuppressWarnings("unchecked")
 	private List<ReportMarkTo> obtainMarks(CourseAlumn courseAlumn){
 		try {
 			IManagerBean markBean = BeanManager.getManagerBean(Mark.class);
