@@ -24,6 +24,9 @@ import org.hibernate.cfg.Configuration;
 import org.hibernate.mapping.ForeignKey;
 import org.hibernate.mapping.PersistentClass;
 
+import com.code.aon.cse.Departamento;
+import com.code.aon.cse.Pais;
+
 public class HibernateDataManager {
 	
 	private static final int DEFAULT_MAX_IMPORT = 1000;
@@ -386,15 +389,14 @@ public class HibernateDataManager {
 		hdm.setImportProperties( new File( directory, "hsqldb.temp.properties") );
 		/*
 		List<Class> entries = new ArrayList<Class>();
-		entries.add(Pais.class);
+		entries.add(Departamento.class);
 		hdm.setEntities(entries);		
 		hdm.setIgnoreDependencies(true);
 		hdm.setInsert( true );
 		hdm.setMaxImport( 50 );
 		hdm.setOnTheFly( true );
 		*/
-		hdm.setMaxExport( 500 );
-		hdm.setExportData( true );
+		hdm.setImportData( true );
 		try {
 			hdm.execute();
 		} catch (Throwable e) {
