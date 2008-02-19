@@ -187,6 +187,30 @@
 		<dispatcher>ERROR</dispatcher>
 	</filter-mapping>
 	
+	<!-- Thumbnail Servlet -->
+	<servlet>
+		<servlet-name>thumbnailServlet</servlet-name>
+		<servlet-class>
+			com.code.aon.ui.cms.servlet.ThumbnailServlet
+		</servlet-class>
+		<load-on-startup>1</load-on-startup>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>thumbnailServlet</servlet-name>
+		<url-pattern>*.thumbnail</url-pattern>
+	</servlet-mapping>
+
+	<!-- FCK Faces Servlet -->
+	<servlet>
+		<servlet-name>InputRichText Servlet</servlet-name>
+		<servlet-class>com.code.aon.faces.component.richfaces.inputRichText.InputRichTextServlet</servlet-class>
+		<load-on-startup>1</load-on-startup>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>InputRichText Servlet</servlet-name>
+		<url-pattern>/fckfaces/*</url-pattern>
+	</servlet-mapping> 
+
 	<!-- Deploy Servlet 
 	<servlet>
 		<servlet-name>autodeploy</servlet-name>
