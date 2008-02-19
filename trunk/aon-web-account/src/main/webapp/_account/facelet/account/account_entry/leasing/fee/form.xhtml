@@ -65,6 +65,7 @@
 							<h:selectOneMenu id="Account_invoice_series"
 								value="#{accountLeasingFee.header.series}"
 								styleClass="aon-form-selectOneMenu-field">
+								<f:selectItem itemValue="" itemLabel=" " />
 								<f:selectItems value="#{configCollections.series}" />
 							</h:selectOneMenu>
 							<t:inputText id="Account_invoice_number"

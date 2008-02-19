@@ -174,13 +174,14 @@
 								rendered="#{accountInvoice.sales}"
 								value="#{accountInvoice.header.series}"
 								styleClass="aon-form-selectOneMenu-field">
+								<f:selectItem itemValue="" itemLabel=" " />
 								<f:selectItems value="#{configCollections.series}" />
 							</h:selectOneMenu>
 							<t:inputText id="Account_invoice_series-input"
 								rendered="#{!accountInvoice.sales}"
-								value="#{accountInvoice.header.series}" size="5" maxlength="5"
+								value="#{accountInvoice.header.series}" size="4" maxlength="5"
 								styleClass="aon-form-input-text" forceId="#{true}">
-								<f:validateLength maximum="7" />
+								<f:validateLength maximum="5" />
 							</t:inputText>	
 							<t:inputText id="Account_invoice_number"
 								value="#{accountInvoice.header.number}" size="7" maxlength="7"
