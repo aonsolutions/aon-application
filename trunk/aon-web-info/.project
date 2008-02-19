@@ -3,6 +3,7 @@
 	<name>aon-web-info</name>
 	<comment></comment>
 	<projects>
+		<project>aon-security-bridge</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>
