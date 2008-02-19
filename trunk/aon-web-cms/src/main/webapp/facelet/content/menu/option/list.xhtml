@@ -2,94 +2,89 @@
 <html xmlns="http://www.w3.org/1999/xhtml"
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:aon="http://www.code.es/aon-rich-components"
 	xmlns:c="http://java.sun.com/jstl/core"
-	xmlns:aon="http://www.code.es/aon-ice-components">
+	xmlns:a4j="http://richfaces.org/a4j">
 <body>
 
-<ui:composition template="/facelet/templates/aon.ui.main.xhtml">
+<ui:composition template="/facelet/templates/aon.ui.content.xhtml">
 	<ui:define name="content">
 
 		<aon:form id="menuOptionList">
-			
-			<aon:panelGrid columns="2" dir="true" styleClass="aon-title-toolbar"
-			cellpadding="0" cellspacing="0" columnClasses="aon-content-title,aon-content-toolbar">
-			
-				<aon:div styleClass="aon-content-title-internal">
-					<aon:outputText value="#{appBundle.menu_option}" />					
-				</aon:div>		
-			
-				<!-- start toolbar navigation -->
-				<aon:div styleClass="aon-content-toolbar-internal">
-					<aon:div styleClass="aon-content-toolbar-item-group">
+			<aon:div styleClass="aon-finding-title-toolbar">
+				<aon:panelGrid id="buttonsGrid" columns="3" dir="true" 
+					columnClasses="aon-finding-title,aon-finding-subtitle,aon-finding-toolbar">				
+				
+					<aon:div styleClass="aon-finding-title-internal">
+						<aon:outputText value="#{appBundle.menu_option}"/>	  						
+					</aon:div>					
+					
+					<aon:div styleClass="aon-finding-subtitle-internal">
+						<aon:outputText
+							value="#{appBundle.aon_listing} #{menu_option.currentMenu.alias}" />
+					</aon:div>					
+						
+					<!-- start toolbar navigation -->
+					<aon:div styleClass="aon-finding-toolbar-item-group">
 						<aon:commandButton id="reset" value="#{bundle.aon_reset}"
 							action="menu_option_form" actionListener="#{menu_option.onReset}"
-							styleClass="aon-content-toolbar-item aon-icon-reset"
-							onmouseout="this.className='aon-content-toolbar-item aon-icon-reset'"
-							onmouseover="this.className='aon-content-toolbar-item aon-icon-reset aon-content-toolbar-item-hover'"
+							styleClass="aon-finding-toolbar-item aon-icon-reset"
 							accesskey="#{bundle.aon_key_new}"/>
 						<aon:confirmButton id="remove"
-							value="#{bundle.aon_remove}" rendered="#{!menu_option.checklistEmpty}" inmediate="true"
-							confirmTitle="Confirmation Dialog" confirmMessage="#{bundle.aon_remove_confirm}"
-							confirmActionListener="#{menu_option.onRemoveSelected}" confirmAction="menu_option_list"
-							styleClass="aon-content-toolbar-item aon-icon-delete"
-							onmouseout="this.className='aon-content-toolbar-item aon-icon-delete'"
-							onmouseover="this.className='aon-content-toolbar-item aon-icon-delete aon-content-toolbar-item-hover'"
+							value="#{bundle.aon_remove}" 
+							rendered="#{!menu_option.checklistEmpty}" 
+							inmediate="true"
+							confirmTitle="Confirmation Dialog" 
+							confirmMessage="#{bundle.aon_remove_confirm}"
+							confirmActionListener="#{menu_option.onRemoveSelected}" 
+							confirmAction="menu_option_list"
+							styleClass="aon-finding-toolbar-item aon-icon-delete"
 							accesskey="#{bundle.aon_key_remove}"/>
 						<aon:commandButton id="exit" value="#{bundle.aon_close}"
-							action="menu_list" styleClass="aon-content-toolbar-item aon-icon-cancel"
-							onmouseout="this.className='aon-content-toolbar-item aon-icon-cancel'"
-							onmouseover="this.className='aon-content-toolbar-item aon-icon-cancel aon-content-toolbar-item-hover'"
+							action="menu_grid" 
+							styleClass="aon-finding-toolbar-item aon-icon-cancel"
 							accesskey="#{bundle.aon_key_close}"/>
-					</aon:div>
-				</aon:div>
-			<!-- end toolbar navigation -->
-			</aon:panelGrid> 
+				    </aon:div>
+					
+					<!-- end toolbar navigation -->
+				</aon:panelGrid>
+			</aon:div>
 			
 			<!--  aon-region-body -->
 			<aon:div styleClass="aon-scroll-area">
-				<aon:div styleClass="aon-scroll-area-internal">	
-				
-					<aon:div styleClass="aon-content-subTitle">
-						<aon:div styleClass="aon-content-subTitle-internal">
-							<aon:outputText value="Listado registros" />
-						</aon:div>
-					</aon:div>
-					
-					<aon:dataTable id="menuOptionDataList" styleClass="aon-dataTable"
-					 	columnWidths="120,200,50,*,50,60" 
-						value="#{menu_option.model}" var="to" rows="0"
-						rowClasses="aon-dataTable-odd, aon-dataTable-even"
-						columnClasses="aon-table-body aon-table-body-icon,
-							aon-table-body aon-table-body-string,
-							aon-table-body aon-table-body-icon,
-							aon-table-body aon-table-body-string,
-							aon-table-body aon-table-body-icon,
-							aon-table-body aon-table-body-string">
-
+					<aon:dataTable id="dataTable" value="#{menu_option.model}" var="to"
+						rows="20" styleClass="dr-table rich-table aon-editDataTable"
+						headerClass="dr-table-subheader rich-table-subheader aon-editDataTable-header"
+						footerClass="dr-table-subfooter rich-table-subfooter aon-editDataTable-footer"
+						rowClasses="aon-editDataTable-row-odd,dr-table-firstrow rich-table-firstrow aon-editDataTable-row-even"
+						cellpadding="0" cellspacing="0"
+						columnClasses="dr-table-cell rich-table-cell aon-editDataTable-iconColumn,
+								dr-table-cell rich-table-cell aon-editDataTable-textColumn,
+								dr-table-cell rich-table-cell aon-editDataTable-iconColumn,
+								dr-table-cell rich-table-cell aon-editDataTable-textColumn,
+								dr-table-cell rich-table-cell aon-editDataTable-iconColumn,
+								dr-table-cell rich-table-cell aon-editDataTable-textColumn">
+								
 							<aon:column>
-								<aon:rowSelector selectionListener="#{menu_option.onSelect}" toggleOnClick="true"/>
 								<f:facet name="header">
 									<aon:div>
 										<aon:outputText value="#{bundle.aon_check}" />
-										<aon:div>
-											<aon:commandLink id="all" value="#{bundle.aon_check_all}" 
-											styleClass="aon-table-header-link-secundary"
-											onclick="selectAll();return false;" />
-											<aon:commandLink id="none" value="#{bundle.aon_uncheck_all}"
-											styleClass="aon-table-header-link-secundary"
-											onclick="unSelectAll();return false;" />
-											<aon:commandLink id="inverse" value="#{bundle.aon_inverse_all}"
-											styleClass="aon-table-header-link-secundary"
-											onclick="inverseAll();return false;" />
-										</aon:div>										
 									</aon:div>	
 								</f:facet>
-								<aon:selectBooleanCheckbox id="Row_checked" forceId="#{true}"
-										value="#{menu_option.rowChecked}" partialSubmit="true" 
-										valueChangeListener="#{menu_option.onChecked}"/>
+								<aon:selectBooleanCheckbox id="Row_checked"
+										value="#{menu_option.rowChecked}">
+										<a4j:support 
+											event="onclick"  
+											reRender="dataTable,buttonsGrid" />
+								</aon:selectBooleanCheckbox>
 							</aon:column>
 					
 							<aon:column>
+								<a4j:support 
+									action="menu_option_form"
+									actionListener="#{menu_option.onSelect}"
+									event="onclick" />
 								<f:facet name="header">
 									<aon:outputText value="#{appBundle.menu_option_alias}" />
 								</f:facet>
@@ -115,6 +110,10 @@
 							</aon:column>
 
 							<aon:column>
+								<a4j:support 
+									action="menu_option_form"
+									actionListener="#{menu_option.onSelect}"
+									event="onclick" />
 								<f:facet name="header">
 									<aon:outputText value="#{appBundle.menu_option_label}" />
 								</f:facet>
@@ -150,10 +149,12 @@
 								<aon:graphicImage rendered="#{to.position == 0}"
 									url="/images/cms/spacer16.gif" style="margin-left: 8px;"/>
 								<aon:commandButton id="moveUp" 
+									reRender="dataTable"
 									actionListener="#{menu_option.onMoveUp}" 
 									rendered="#{to.position != 0}"
 									image="/images/cms/up.gif" style="margin-left: 4px;"/>
-								<aon:commandButton id="moveDown" 
+								<aon:commandButton id="moveDown"
+									reRender="dataTable" 
 									actionListener="#{menu_option.onMoveDown}"
 									rendered="#{to.position &lt; (menu_option.model.rowCount - 1)}"
 									image="/images/cms/down.gif" style="margin-left: 4px;" />
@@ -161,16 +162,11 @@
 
 						</aon:dataTable>
 						
-						<ui:include src="/facelet/shared/dataScroller.xhtml">
-							<ui:param name="dataTable" value="menuOptionDataList" />
-							<ui:param name="model" value="#{menu_option.model}" />
-							<ui:param name="showNote" value="#{false}" />
-						</ui:include>
+						<aon:dataScroller dataTable="dataTable"
+							model="#{menu_option.model}" showNote="true" />					
 					
 				</aon:div>
-			</aon:div>
 		</aon:form>
-		<aon:form id="placeList" target="list" />
 	</ui:define>
 
 </ui:composition>

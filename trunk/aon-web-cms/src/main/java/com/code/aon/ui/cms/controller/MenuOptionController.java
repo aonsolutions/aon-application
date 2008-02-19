@@ -1,39 +1,24 @@
 package com.code.aon.ui.cms.controller;
 
-import java.util.LinkedList;
 import java.util.List;
-import java.util.Locale;
 
 import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
-import javax.faces.event.ValueChangeEvent;
 import javax.faces.model.SelectItem;
 
-import com.code.aon.cms.Faq;
-import com.code.aon.cms.FaqCategory;
-import com.code.aon.cms.GenericPage;
-import com.code.aon.cms.Link;
-import com.code.aon.cms.LinkCategory;
 import com.code.aon.cms.Menu;
 import com.code.aon.cms.MenuOption;
 import com.code.aon.cms.MenuOptionDetail;
 import com.code.aon.cms.dao.ICMSAlias;
-import com.code.aon.cms.enumeration.ContentLevel;
-import com.code.aon.cms.enumeration.PageType;
-import com.code.aon.common.BeanManager;
-import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionException;
 import com.code.aon.ui.cms.util.ControllerUtil;
 import com.code.aon.ui.cms.util.MenuOptionUtil;
-import com.code.aon.ui.util.AonUtil;
 
 
 public class MenuOptionController extends BasicI18nController {
-
-	private boolean cancelOnSelect = false;
 
 	private Menu currentMenu;
 	
@@ -47,21 +32,16 @@ public class MenuOptionController extends BasicI18nController {
 
 	@SuppressWarnings("unused")
 	public void onSelect(ActionEvent event){
-		if (!cancelOnSelect) {
-			super.onSelect(new ActionEvent(event.getComponent()));
-			FacesContext.getCurrentInstance().getApplication().getNavigationHandler().handleNavigation(FacesContext.getCurrentInstance(), null, "menu_option_form");
-			loadCurrentLanguage();
-		}
-		cancelOnSelect = false;
+		super.onSelect(new ActionEvent(event.getComponent()));
+		FacesContext.getCurrentInstance().getApplication().getNavigationHandler().handleNavigation(FacesContext.getCurrentInstance(), null, "menu_option_form");
+		loadCurrentLanguage();
 	}
 
 	public void onActivate(ActionEvent event) throws ManagerBeanException {
-		cancelOnSelect = true; 
 		activate(true);
 	}
 
 	public void onDeactivate(ActionEvent event) throws ManagerBeanException {
-		cancelOnSelect = true; 
 		activate(false);
 	}
 	
@@ -71,17 +51,11 @@ public class MenuOptionController extends BasicI18nController {
 		getManagerBean().update(mo);
 	}
 	
-	public void onChecked(ValueChangeEvent event) throws ManagerBeanException {
-		cancelOnSelect = true; 
-	}
-
 	public void onSetSeparator(ActionEvent event) throws ManagerBeanException {
-		cancelOnSelect = true;
 		setSeparator(true);
 	}
 	
 	public void onUnsetSeparator(ActionEvent event) throws ManagerBeanException {
-		cancelOnSelect = true; 
 		setSeparator(false);
 	}
 	
@@ -182,12 +156,10 @@ public class MenuOptionController extends BasicI18nController {
 	}
 	
     public void onMoveUp(ActionEvent event) throws ManagerBeanException, ExpressionException {
-		cancelOnSelect = true; 
     	move((MenuOption) this.model.getRowData(), -1);
     }
 
     public void onMoveDown(ActionEvent event) throws ManagerBeanException, ExpressionException {
-		cancelOnSelect = true; 
     	move((MenuOption) this.model.getRowData(), 1);    	
     }
 
