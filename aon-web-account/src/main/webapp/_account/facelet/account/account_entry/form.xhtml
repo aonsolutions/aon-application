@@ -440,6 +440,13 @@
 								</t:column>
 							</t:dataTable>
 						</t:div>
+						
+						<ui:include src="/facelet/shared/dataScroller.xhtml">
+							<ui:param name="dataTable" value="accountEntryDetailData" />
+							<ui:param name="model" value="#{accountEntryDetail.model}" />
+							<ui:param name="showNote" value="#{false}" />
+						</ui:include>
+						
 					</t:div>
 				</t:div>
 			</t:div>
