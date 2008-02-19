@@ -104,11 +104,11 @@ public class ArticleCategory implements ITransferObject {
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "elementSection")
 	public Section getElementSection() {
-		return section;
+		return elementSection;
 	}
 
-	public void setElementSection(Section section) {
-		this.section = section;
+	public void setElementSection(Section elementSection) {
+		this.elementSection = elementSection;
 	}
 
 }
