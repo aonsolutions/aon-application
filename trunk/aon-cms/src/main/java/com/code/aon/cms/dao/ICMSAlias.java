@@ -1284,22 +1284,22 @@ public interface ICMSAlias {
 	String  ARTICLE_CATEGORY_ALIAS = ARTICLE_CATEGORY_ENTRY.getAliasNames()[1];
 
 	/** 
+	* Alias value: ArticleCategory_elementSection_id
+	* Hibernate value: ArticleCategory.elementSection.id
+	*/
+	String  ARTICLE_CATEGORY_ELEMENT_SECTION_ID = ARTICLE_CATEGORY_ENTRY.getAliasNames()[2];
+
+	/** 
 	* Alias value: ArticleCategory_id
 	* Hibernate value: ArticleCategory.id
 	*/
-	String  ARTICLE_CATEGORY_ID = ARTICLE_CATEGORY_ENTRY.getAliasNames()[2];
+	String  ARTICLE_CATEGORY_ID = ARTICLE_CATEGORY_ENTRY.getAliasNames()[3];
 
 	/** 
 	* Alias value: ArticleCategory_position
 	* Hibernate value: ArticleCategory.position
 	*/
-	String  ARTICLE_CATEGORY_POSITION = ARTICLE_CATEGORY_ENTRY.getAliasNames()[3];
-
-	/** 
-	* Alias value: ArticleCategory_sectionOnlyElement
-	* Hibernate value: ArticleCategory.sectionOnlyElement
-	*/
-	String  ARTICLE_CATEGORY_SECTION_ONLY_ELEMENT = ARTICLE_CATEGORY_ENTRY.getAliasNames()[4];
+	String  ARTICLE_CATEGORY_POSITION = ARTICLE_CATEGORY_ENTRY.getAliasNames()[4];
 
 	/** 
 	* Alias value: ArticleCategory_section_id
