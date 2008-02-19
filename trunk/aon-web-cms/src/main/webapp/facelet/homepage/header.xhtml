@@ -3,6 +3,7 @@
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a4j="http://richfaces.org/a4j"
 	xmlns:aon="http://www.code.es/aon-rich-components">
 <body>
 
@@ -26,8 +27,10 @@
 					<aon:outputText escape="false" value="#{aonConfiguration.properties.middleHeader}" />
 				</aon:div>
 			</aon:div>
-			<aon:div>														
-				<aon:outputText value="" />
+			<aon:div>
+				<aon:outputText value="#{appBundle.aon_application_title}" />
+				<aon:outputText value=" - " />
+				<aon:outputText value="#{config.currentConfig.domain}" />
 			</aon:div>		
 		</aon:panelGrid>
 		<aon:div styleClass="aon-header-additionalInfo">
@@ -43,6 +46,29 @@
 							target="_top" >
 							<aon:outputText value="#{securityBundle.aon_login_user_logout}" />
 					</aon:commandLink>
+					<aon:div >
+						<aon:form>
+							<aon:panelGrid id="aon_languake_panelGrid">
+								<a4j:repeat id="languageSelection" 
+									value="#{i18n.languageList}" 
+									var="column">
+									<aon:commandButton id="changeLanguage" 
+										actionListener="#{i18n.onChangeLanguage}" 
+										rendered="#{i18n.currentLanguage.id != column.id}"
+										image="/images/flags/#{column.language.locale.language}_off.gif"
+										>
+										<a4j:support 
+											event="onclick"  
+											reRender="aon_languake_panelGrid" />
+									</aon:commandButton> 
+									<aon:graphicImage id="changeLanguage_on" 
+										rendered="#{i18n.currentLanguage.id == column.id}"
+										url="/images/flags/#{column.language.locale.language}_on.gif">
+									</aon:graphicImage> 
+								</a4j:repeat>
+							</aon:panelGrid>
+						</aon:form>
+					</aon:div>
 				</aon:div>	
 			</aon:div>
 		</aon:div>

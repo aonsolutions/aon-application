@@ -4,11 +4,9 @@ import java.util.List;
 
 import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
-import javax.faces.event.ValueChangeEvent;
 
 import com.code.aon.cms.Header;
 import com.code.aon.cms.HeaderDetail;
-import com.code.aon.cms.Image;
 import com.code.aon.cms.dao.ICMSAlias;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
@@ -17,31 +15,17 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionException;
 import com.code.aon.ui.cms.util.ControllerUtil;
-import com.code.aon.ui.util.AonUtil;
 
 
 public class HeaderController extends BasicI18nController {
 
-	private boolean cancelOnSelect = false;
-
-	public void onInit(ActionEvent event){
-		((GalleryController)AonUtil.getRegisteredBean("gallery")).onInit(event);
-	}
-
 	@SuppressWarnings("unused")
 	public void onSelect(ActionEvent event) {
-		if (!cancelOnSelect) {
-			super.onSelect(new ActionEvent(event.getComponent()));
-			FacesContext.getCurrentInstance().getApplication().getNavigationHandler().handleNavigation(FacesContext.getCurrentInstance(), null, "header_form");
-			loadCurrentLanguage();
-		}
-		cancelOnSelect = false;
+		super.onSelect(new ActionEvent(event.getComponent()));
+		FacesContext.getCurrentInstance().getApplication().getNavigationHandler().handleNavigation(FacesContext.getCurrentInstance(), null, "header_form");
+		loadCurrentLanguage();
 	}
 	
-	public void onChecked(ValueChangeEvent event) throws ManagerBeanException {
-		cancelOnSelect = true; 
-	}
-
 	private HeaderDetail getHeaderDetail() throws ManagerBeanException{
 		Header h = (Header)this.model.getRowData();
 		Criteria criteria = new Criteria();
@@ -94,14 +78,10 @@ public class HeaderController extends BasicI18nController {
 		super.onAccept(event);
 	}
 
-	public void defaultChanged(ValueChangeEvent event) throws ManagerBeanException, ExpressionException {
-		boolean selected = ((Boolean)event.getNewValue()).booleanValue();
+	public void defaultChanged(ActionEvent event) throws ManagerBeanException, ExpressionException {
 		Header header = (Header) model.getRowData();
-		if (selected) {
-			header.setDefault_(true);
-			updateDefault(header);
-		}
-		cancelOnSelect = true;
+		header.setDefault_(true);
+		updateDefault(header);
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -116,30 +96,9 @@ public class HeaderController extends BasicI18nController {
 		}
 	}
 
-	private boolean imageSelectionVisible;
-	
-	public void onShowImages(ActionEvent event) {
-		imageSelectionVisible = true; 
-	}
-	
-	public void onCloseImages(ActionEvent event) {
-		imageSelectionVisible = false; 
-	}
-	
-	public boolean isImageSelectionVisible(){
-		return imageSelectionVisible;
-	}
-	
 	public void onDelImage(ActionEvent event) {
 		HeaderDetail current = (HeaderDetail)getToI18n();
 		current.setImage(null);
 	}
 	
-	public void onSelectImage(ActionEvent event) throws ManagerBeanException {
-		GalleryController controller = (GalleryController)AonUtil.getRegisteredBean("gallery");
-		String image = ((Image)controller.getModel().getRowData()).getRelativePath();
-		HeaderDetail current = (HeaderDetail)getToI18n();
-		current.setImage(image);
-	}
-
 }
