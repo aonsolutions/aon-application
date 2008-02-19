@@ -29,7 +29,7 @@ public class ArticleCategory implements ITransferObject {
 	
 	private Section section;
 	
-	private boolean sectionOnlyElement = false;
+	private Section elementSection;
 	
 	private Set<ArticleCategoryDetail> details;
 
@@ -101,13 +101,14 @@ public class ArticleCategory implements ITransferObject {
 		this.section = section;
 	}
 
-	@Column(name = "sectionOnlyElement", nullable = false)
-	public boolean isSectionOnlyElement() {
-		return sectionOnlyElement;
+	@ManyToOne(fetch = FetchType.EAGER)
+	@JoinColumn(name = "elementSection")
+	public Section getElementSection() {
+		return section;
 	}
 
-	public void setSectionOnlyElement(boolean sectionOnlyElement) {
-		this.sectionOnlyElement = sectionOnlyElement;
+	public void setElementSection(Section section) {
+		this.section = section;
 	}
 
 }
