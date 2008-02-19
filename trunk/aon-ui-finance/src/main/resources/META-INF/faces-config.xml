@@ -104,6 +104,7 @@
 			<property-name>foreignDisplayProperties</property-name>
 			<list-entries>
 				<value>bankAccount</value>
+				<value>bank.id</value>
 				<value>sufix</value>
 			</list-entries>
 		</managed-property>
