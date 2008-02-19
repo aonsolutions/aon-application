@@ -154,7 +154,8 @@
 							<f:facet name="header">
 								<aon:outputText value="#{appBundle.menu_alias}" />
 							</f:facet>
-							<aon:outputText value="#{to.alias}" rendered="#{to!=menu.to}" />
+							<aon:outputText value="#{to.alias}" rendered="#{to!=menu.to}" 
+								styleClass="aon-editDataTable-button"/>
 							<aon:inputText value="#{to.alias}"
 								rendered="#{to==menu.to}" size="40" maxlength="64" />
 							<f:facet name="footer">
