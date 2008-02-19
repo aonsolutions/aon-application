@@ -148,9 +148,9 @@
 							<h:panelGrid columns="2" cellpadding="0" cellspacing="0">
 								<t:inputText id="Invoice_series" value="#{invoicing.to.series}"
 									disabled="#{!invoicing.new and !invoicing.editable}" styleClass="aon-form-input-text"
-									forceId="#{true}" size="3" maxlength="3"
+									forceId="#{true}" size="4" maxlength="5"
 									onblur="toUpperCase(this);">
-									<f:validateLength maximum="3" />
+									<f:validateLength maximum="5" />
 								</t:inputText>
 								<t:inputText id="Invoice_number" value="#{invoicing.to.number}"
 									disabled="#{!invoicing.new and !invoicing.editable}" styleClass="aon-form-input-text"

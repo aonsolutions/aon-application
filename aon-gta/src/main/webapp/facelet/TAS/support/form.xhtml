@@ -146,18 +146,22 @@
 										styleClass="aon-form-input-text-label"
 										value="#{tasBundle.aon_series_number}" />
 									<t:div>
-										<t:selectOneMenu id="SupportOrder_series"
+										<t:selectOneMenu id="SupportOrder_series-New"
 											value="#{SupportOrder.to.series}"
-											disabled="#{!SupportOrder.pending and !SupportOrder.new}"
+											rendered="#{SupportOrder.new}"
 											styleClass="aon-form-selectOneMenu-field"
 											onchange="disableRequiredFields();submit();" valueChangeListener="#{SupportOrder.onSeriesChanged}">
-											<f:selectItem itemValue="" itemDisabled="true" itemLabel="-" />
+											<f:selectItem itemValue="" itemLabel=" " />
 											<f:selectItems value="#{configCollections.series}" />
 										</t:selectOneMenu>
-										<h:inputText id="SupportOrder_number"
-											value="#{SupportOrder.to.number}" disabled="#{!SupportOrder.pending and !SupportOrder.new}"
-											styleClass="aon-form-input-text" forceId="#{true}"
-											required="true" size="7" tabIndex="2"/>
+										<h:inputText id="SupportOrder_series-Edit" forceId="#{true}"
+											value="#{SupportOrder.to.series}" 
+											rendered="#{!SupportOrder.new}" disabled="#{true}"
+											styleClass="aon-form-input-text" size="4" />
+										<h:inputText id="SupportOrder_number" forceId="#{true}"
+											value="#{SupportOrder.to.number}" 
+											disabled="#{!SupportOrder.new}"
+											styleClass="aon-form-input-text" required="true" size="7" tabIndex="2" />
 									</t:div>							
 		
 									<h:outputLabel for="SupportOrder_counterti"
