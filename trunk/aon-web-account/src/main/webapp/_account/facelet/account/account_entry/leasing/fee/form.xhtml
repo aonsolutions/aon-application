@@ -138,15 +138,7 @@
 							value="#{accountLeasingFee.header.taxableBase}" 
 							disabledOnClientSide="#{true}" size="7"
 							styleClass="aon-form-input-text-disabled" forceId="#{true}" />
-<!-- 
-						<h:outputLabel for="Account_invoiceTotal"
-							styleClass="aon-form-input-text-label"
-							value="#{accountBundle.aon_leasing_invoiceTotal}" />
-						<t:inputText id="Account_invoiceTotal"
-							value="#{accountLeasingFee.invoiceTotal}" 
-							disabled="#{true}" size="7"
-							styleClass="aon-form-input-text-disabled" forceId="#{true}" />
- -->
+
 						<h:outputLabel for="RegistryBank_Lookup_id"
 							styleClass="aon-form-input-text-label"
 							value="#{accountBundle.aon_bank}" />
@@ -347,6 +339,13 @@
 									
 							</t:dataTable>	
 						</t:div>
+
+						<ui:include src="/facelet/shared/dataScroller.xhtml">
+							<ui:param name="dataTable" value="TaxesData" />
+							<ui:param name="model" value="#{accountLeasingFee.details}" />
+							<ui:param name="showNote" value="#{false}" />
+						</ui:include>
+						
 					</t:div>
 					
 				</t:div>
