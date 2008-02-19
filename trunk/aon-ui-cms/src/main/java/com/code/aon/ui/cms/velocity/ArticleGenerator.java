@@ -179,9 +179,11 @@ public class ArticleGenerator extends Generator {
 				criteria.addEqualExpression(bean.getFieldName(ICMSAlias.ARTICLE_DETAIL_LANGUAGE_ID), ControllerUtil.getCurrentLanguage().getId());
 				criteria.addEqualExpression(bean.getFieldName(ICMSAlias.ARTICLE_DETAIL_ARTICLE_ID), ac.getId());
 				ld = (List<ITransferObject>)bean.getList(criteria);
-				ArticleDetail ad = (ArticleDetail)ld.get(0);
-				ArticleHandler ah = new ArticleHandler(ad);
-				ahlist.add(ah);
+				if (!ld.isEmpty()){
+					ArticleDetail ad = (ArticleDetail)ld.get(0);
+					ArticleHandler ah = new ArticleHandler(ad);
+					ahlist.add(ah);
+				}
 			}
 			bean = BeanManager.getManagerBean(ArticleCategoryDetail.class);
 			criteria = new Criteria();
