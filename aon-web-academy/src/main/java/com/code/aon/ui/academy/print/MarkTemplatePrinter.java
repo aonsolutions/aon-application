@@ -29,6 +29,7 @@ public class MarkTemplatePrinter implements ICollectionProvider{
 	
 	private static final String COURSE_CONTROLLER_NAME = "course";
 
+	@SuppressWarnings("unchecked")
 	public Collection getCollection() {
 		List<ReportTemplateMark> reportTemplateMarkList = new LinkedList<ReportTemplateMark>();
 		try{
@@ -47,7 +48,12 @@ public class MarkTemplatePrinter implements ICollectionProvider{
 		return reportTemplateMarkList;
 	}
 
+	@SuppressWarnings("unchecked")
+	public Collection getCollection(boolean forceRefresh) throws ManagerBeanException {
+		return getCollection();
+	}
 	
+	@SuppressWarnings("unchecked")
 	private void obtainDetails(ReportTemplateMark reportTemplateMark, Course course){
 		List<CourseAlumn> courseAlumns = obtainAlumns(course);
 		Iterator<CourseAlumn> courseAlumnsIter = courseAlumns.iterator(); 
@@ -61,6 +67,7 @@ public class MarkTemplatePrinter implements ICollectionProvider{
 		}
 	}
 	
+	@SuppressWarnings("unchecked")
 	private List<CourseAlumn> obtainAlumns(Course course){
 		try {
 			IManagerBean bean = BeanManager.getManagerBean(CourseAlumn.class);
@@ -79,6 +86,7 @@ public class MarkTemplatePrinter implements ICollectionProvider{
 		return null;
 	}
 
+	@SuppressWarnings("unchecked")
 	private List<CourseAcademicSkill> obtainSkills(Course course){
 		try {
 			IManagerBean bean = BeanManager.getManagerBean(CourseAcademicSkill.class);

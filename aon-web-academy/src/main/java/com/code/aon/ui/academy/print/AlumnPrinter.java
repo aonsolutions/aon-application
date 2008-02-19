@@ -55,6 +55,10 @@ public class AlumnPrinter implements ICollectionProvider{
 		return reportAlumnList;
 	}
 
+	public Collection getCollection(boolean forceRefresh) throws ManagerBeanException {
+		return getCollection();
+	}
+	
 	protected String obtainPhone(Registry registry) {
 		try {
 			IManagerBean registryMediaBean = BeanManager.getManagerBean(RegistryMedia.class);

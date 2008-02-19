@@ -61,6 +61,11 @@ public class CourseDetailListPrinter implements ICollectionProvider {
 	}
 
 	@SuppressWarnings("unchecked")
+	public Collection getCollection(boolean forceRefresh) throws ManagerBeanException {
+		return getCollection();
+	}
+	
+	@SuppressWarnings("unchecked")
 	private String obtainPreviousCourse(CourseAlumn courseAlumn) {
 		try {
 			IManagerBean courseAlumnBean = BeanManager.getManagerBean(CourseAlumn.class);
