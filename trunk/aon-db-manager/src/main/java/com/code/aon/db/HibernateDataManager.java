@@ -146,7 +146,8 @@ public class HibernateDataManager {
 	public List<Class> getEntities() {
 		if ( includeEntities == null ) {
 			includeEntities = new ArrayList<Class>();
-			Iterator i = getImportConfiguration().getClassMappings();
+			Configuration cfg = ( isExportData() ? getExportConfiguration() : getImportConfiguration() );
+			Iterator i = cfg.getClassMappings();
 			while ( i.hasNext() ) {
 				PersistentClass pc = (PersistentClass) i.next();
 				includeEntities.add( pc.getMappedClass() );
@@ -327,8 +328,41 @@ public class HibernateDataManager {
     	return entityIterable;
     }
     */
+
+    private void checkFile( File file, String attribute ) throws EntityProcessException {
+   		if ( file == null ) {
+   			throw new EntityProcessException( attribute + " attribute must be set" );
+   		}
+   		if (! file.exists() ) {
+   			throw new EntityProcessException( attribute + " doesn't exist: " + file );
+   		}
+    }
+    
+    private void validateAttributes() throws EntityProcessException {
+    	if ( isExportData() || isImportData() ) {
+    		checkFile( getOutputDirectory(), "outputDirectory" );
+    	}
+    	checkFile( getConfigurationFile(), "configurationFile" );
+    	if ( isExportData() || isOnTheFly() ) {
+        	checkFile( getExportProperties(), "exportProperties" );    		
+        	try {
+        		getExportFactory();
+        	} catch ( Throwable th ) {
+        		throw new EntityProcessException( "Error connecting to export DB", th );
+        	}
+    	}
+    	if ( isImportData() || isOnTheFly() ) {
+        	checkFile( getImportProperties(), "importProperties" );    		
+        	try {
+        		getImportFactory();
+        	} catch ( Throwable th ) {
+        		throw new EntityProcessException( "Error connecting to import DB", th );
+        	}
+    	}
+    }
     
     public void execute() throws EntityProcessException {
+    	validateAttributes();
     	if ( isOnTheFly() ) {
     		importer = new OnTheFlyReplicator( this, getEntityIterable(), isInsert() );
         	importData();    		
@@ -345,10 +379,11 @@ public class HibernateDataManager {
     
 	public static void main ( String[] args ) {
 		HibernateDataManager hdm = new HibernateDataManager();
-		hdm.setOutputDirectory( new File("/tmp/hsqldb") );
-		hdm.setConfigurationFile( new File( "ant/hibernate.cfg.xml") );
-		hdm.setExportProperties( new File( "ant/hsqldb.properties") );		
-		hdm.setImportProperties( new File( "ant/hsqldb.temp.properties") );
+		hdm.setOutputDirectory( new File("/tmp/db-manager") );
+		File directory = new File( "/AON-PROJECT/aon-cse-util/ant" );
+		hdm.setConfigurationFile( new File( directory, "hibernate.cfg.xml") );
+		hdm.setExportProperties( new File( directory, "hsqldb.properties") );		
+		hdm.setImportProperties( new File( directory, "hsqldb.temp.properties") );
 		/*
 		List<Class> entries = new ArrayList<Class>();
 		entries.add(Pais.class);
@@ -358,10 +393,8 @@ public class HibernateDataManager {
 		hdm.setMaxImport( 50 );
 		hdm.setOnTheFly( true );
 		*/
-		hdm.setIgnoreDependencies(true);
-		hdm.setMaxExport( 500 * 1000 );
-		hdm.setMaxImport( 1000 );
-		hdm.setOnTheFly( true );
+		hdm.setMaxExport( 500 );
+		hdm.setExportData( true );
 		try {
 			hdm.execute();
 		} catch (Throwable e) {
