@@ -7,7 +7,6 @@ import javax.faces.event.ActionEvent;
 import javax.faces.event.ValueChangeEvent;
 
 import com.code.aon.cms.Footer;
-import com.code.aon.cms.Section;
 import com.code.aon.cms.dao.ICMSAlias;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
@@ -17,24 +16,15 @@ import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionException;
 
 
-public class FooterController extends BasicI18nController {
-
-	private boolean cancelOnSelect = false;
+public class FooterController extends GridI18nController {
 
 	@SuppressWarnings("unused")
 	public void onSelect(ActionEvent event) {
-		if (!cancelOnSelect) {
-			super.onSelect(new ActionEvent(event.getComponent()));
-			FacesContext.getCurrentInstance().getApplication().getNavigationHandler().handleNavigation(FacesContext.getCurrentInstance(), null, "footer_form");
-			loadCurrentLanguage();
-		}
-		cancelOnSelect = false;
+		super.onSelect(new ActionEvent(event.getComponent()));
+		FacesContext.getCurrentInstance().getApplication().getNavigationHandler().handleNavigation(FacesContext.getCurrentInstance(), null, "footer_form");
+		loadCurrentLanguage();
 	}
 	
-	public void onChecked(ValueChangeEvent event) throws ManagerBeanException {
-		cancelOnSelect = true; 
-	}
-
 	public void onAccept(ActionEvent event) {
 		try {
 			Footer footer = (Footer)getTo();
@@ -58,7 +48,6 @@ public class FooterController extends BasicI18nController {
 			footer.setDefault_(true);
 			updateDefault(footer);
 		}
-		cancelOnSelect = true;
 	}
 	
 	@SuppressWarnings("unchecked")
