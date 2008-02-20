@@ -20,23 +20,13 @@ import com.code.aon.ui.util.AonUtil;
 
 public class SidebarController extends GridController {
 
-	private boolean cancelOnSelect = false;
-	
 	@SuppressWarnings("unused")
 	public void onSelect(ActionEvent event) {
-		if (!cancelOnSelect) {
-			super.onSelect(new ActionEvent(event.getComponent()));
-			FacesContext.getCurrentInstance().getApplication().getNavigationHandler().handleNavigation(FacesContext.getCurrentInstance(), null, "sidebar_form");
-		}
-		cancelOnSelect = false;
-	}
-
-	public void onChecked(ValueChangeEvent event) throws ManagerBeanException {
-		cancelOnSelect = true;
+		super.onSelect(new ActionEvent(event.getComponent()));
+		FacesContext.getCurrentInstance().getApplication().getNavigationHandler().handleNavigation(FacesContext.getCurrentInstance(), null, "sidebar_form");
 	}
 
 	public void onSelectOptions(ActionEvent event) throws ManagerBeanException, ExpressionException {
-		cancelOnSelect = true;
 		SidebarOptionController soc = (SidebarOptionController)AonUtil.getController("sidebar_option");
 		IManagerBean soBean = BeanManager.getManagerBean(SidebarOption.class);
 		Sidebar sidebar = (Sidebar) this.getSelectedTO();
@@ -64,14 +54,10 @@ public class SidebarController extends GridController {
 		super.onAccept(event);
 	}
 
-	public void defaultChanged(ValueChangeEvent event) throws ManagerBeanException, ExpressionException {
-		boolean selected = ((Boolean)event.getNewValue()).booleanValue();
+	public void defaultChanged(ActionEvent event) throws ManagerBeanException, ExpressionException {
 		Sidebar sidebar = (Sidebar) model.getRowData();
-		if (selected) {
-			sidebar.setDefault_(true);
-			updateDefault(sidebar);
-		}
-		cancelOnSelect = true;
+		sidebar.setDefault_(true);
+		updateDefault(sidebar);
 	}
 	
 	@SuppressWarnings("unchecked")
