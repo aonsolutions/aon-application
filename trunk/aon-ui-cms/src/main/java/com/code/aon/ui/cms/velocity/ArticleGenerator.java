@@ -77,6 +77,9 @@ public class ArticleGenerator extends Generator {
 						articleList = (List<ITransferObject>)articleBean.getList(articleCriteria);
 						ArrayList<ArticleHandler> ahlist = new ArrayList<ArticleHandler>();
 						if (!articleList.isEmpty()){
+							String back_url = templates.getHtmlName();
+							back_url = back_url.replaceAll("%NAME%", values[art_type].getName()+"_"+articleCategory.getAlias());
+							
 							if (articleCategory.getElementSection()!=null){
 								CommonGenerator.getCommonGenerator().chargeContext(vu, articleCategory.getElementSection());
 							}else{
@@ -95,10 +98,12 @@ public class ArticleGenerator extends Generator {
 									articleDetail = (ArticleDetail)articleDetailList.get(0);
 									ArticleHandler ahandler = new ArticleHandler(articleDetail);
 									ahlist.add(ahandler);
+									vu.put("back_url", back_url);
 									vu.put("article", ahandler);
 									vu.addMessage(" Generando article " + article.getAlias() + ".", VelocityUtil.INFO);
 									generate(vu, templates, article.getAlias());
 									vu.remove("article");
+									vu.remove("back_url");
 								}
 							}
 							if (articleCategory.getSection()!=null)
