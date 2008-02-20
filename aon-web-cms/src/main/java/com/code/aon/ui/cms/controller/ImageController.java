@@ -23,7 +23,6 @@ import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionException;
 import com.code.aon.ui.form.GridController;
 import com.code.aon.ui.util.AonUtil;
-import com.icesoft.faces.component.paneltabset.TabChangeEvent;
 
 public class ImageController extends GridController {
 
@@ -62,7 +61,7 @@ public class ImageController extends GridController {
 		initializeModel();
 		clearCheckList();
 	}
-
+/*
 	public void processTabChange(TabChangeEvent event) throws AbortProcessingException, ManagerBeanException, ExpressionException {
 		switch (event.getNewTabIndex()) {
 		case 0:
@@ -79,7 +78,7 @@ public class ImageController extends GridController {
 		}
 		changeMenuList();
 	}
-
+*/
 	public void defaultMenuChanged(ValueChangeEvent event) throws ManagerBeanException, ExpressionException {
 		boolean selected = ((Boolean)event.getNewValue()).booleanValue();
 		Menu menu = (Menu) model.getRowData();

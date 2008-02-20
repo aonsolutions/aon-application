@@ -77,10 +77,17 @@ public class ArticleGenerator extends Generator {
 						articleList = (List<ITransferObject>)articleBean.getList(articleCriteria);
 						ArrayList<ArticleHandler> ahlist = new ArrayList<ArticleHandler>();
 						if (!articleList.isEmpty()){
-							if (articleCategory.getSection()!=null)
-								CommonGenerator.getCommonGenerator().chargeContext(vu, articleCategory.getSection());
-							else
-								CommonGenerator.getCommonGenerator().chargeContext(vu, configSection);
+							String back_url = templates.getHtmlName();
+							back_url = back_url.replaceAll("%NAME%", values[art_type].getName()+"_"+articleCategory.getAlias());
+							
+							if (articleCategory.getElementSection()!=null){
+								CommonGenerator.getCommonGenerator().chargeContext(vu, articleCategory.getElementSection());
+							}else{
+								if (articleCategory.getSection()!=null)
+									CommonGenerator.getCommonGenerator().chargeContext(vu, articleCategory.getSection());
+								else
+									CommonGenerator.getCommonGenerator().chargeContext(vu, configSection);
+							}
 							for (int i=0; i < articleList.size(); i++) {
 								article = (Article)articleList.get(i);
 								articleDetailCriteria = new Criteria();
@@ -91,14 +98,15 @@ public class ArticleGenerator extends Generator {
 									articleDetail = (ArticleDetail)articleDetailList.get(0);
 									ArticleHandler ahandler = new ArticleHandler(articleDetail);
 									ahlist.add(ahandler);
+									vu.put("back_url", back_url);
 									vu.put("article", ahandler);
 									vu.addMessage(" Generando article " + article.getAlias() + ".", VelocityUtil.INFO);
 									generate(vu, templates, article.getAlias());
 									vu.remove("article");
+									vu.remove("back_url");
 								}
 							}
-							if (articleCategory.getSection()!=null
-									&& !articleCategory.isSectionOnlyElement())
+							if (articleCategory.getSection()!=null)
 								CommonGenerator.getCommonGenerator().chargeContext(vu, articleCategory.getSection());
 							else
 								CommonGenerator.getCommonGenerator().chargeContext(vu, configSection);
@@ -186,9 +194,11 @@ public class ArticleGenerator extends Generator {
 				criteria.addEqualExpression(bean.getFieldName(ICMSAlias.ARTICLE_DETAIL_LANGUAGE_ID), ControllerUtil.getCurrentLanguage().getId());
 				criteria.addEqualExpression(bean.getFieldName(ICMSAlias.ARTICLE_DETAIL_ARTICLE_ID), ac.getId());
 				ld = (List<ITransferObject>)bean.getList(criteria);
-				ArticleDetail ad = (ArticleDetail)ld.get(0);
-				ArticleHandler ah = new ArticleHandler(ad);
-				ahlist.add(ah);
+				if (!ld.isEmpty()){
+					ArticleDetail ad = (ArticleDetail)ld.get(0);
+					ArticleHandler ah = new ArticleHandler(ad);
+					ahlist.add(ah);
+				}
 			}
 			bean = BeanManager.getManagerBean(ArticleCategoryDetail.class);
 			criteria = new Criteria();

@@ -13,19 +13,14 @@ import javax.swing.tree.DefaultTreeModel;
 import com.code.aon.cms.Image;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ui.cms.IGalleryController;
-import com.code.aon.ui.cms.util.FolderNodeUserObject;
+import com.code.aon.ui.cms.tree.FileSystemNode;
 import com.code.aon.ui.form.BasicController;
-import com.icesoft.faces.component.inputfile.InputFile;
 
 public abstract class GalleryController extends BasicController implements IGalleryController{
 
 	private String currentPath;
 
 	private String basePath;
-	
-	private FolderNodeUserObject selected;
-	
-	private DefaultTreeModel tree;
 	
 	public GalleryController() {
 		super();
@@ -39,22 +34,6 @@ public abstract class GalleryController extends BasicController implements IGall
 			currentPath = currentDir.getAbsolutePath();
 			basePath = currentDir.getAbsolutePath();
 		}
-		chargeTree(currentPath);
-	}
-
-	private void chargeTree(String path) {
-	    DefaultMutableTreeNode rootTreeNode = new DefaultMutableTreeNode();
-	    FolderNodeUserObject rootObject = new FolderNodeUserObject(rootTreeNode, this);
-	    this.selected = rootObject;
-	    rootObject.setText("FILES");
-	    rootObject.setPath(path);
-	    rootObject.setRelativePath(getRelativePath(basePath, path));
-	    rootObject.setExpanded(true);
-	    rootTreeNode.setUserObject(rootObject);
-
-	    tree = new DefaultTreeModel(rootTreeNode);
-
-	    if (!setDirectoriesTree(path, rootTreeNode)) rootObject.setLeaf(true);
 	}
 
 	private String getRelativePath(String base, String path) {
@@ -65,31 +44,11 @@ public abstract class GalleryController extends BasicController implements IGall
 		return "";
 	}
 
-	private boolean setDirectoriesTree(String path, DefaultMutableTreeNode node) {
-		boolean more = false;
-		File dir = new File(path);
-		File files[] = dir.listFiles();
-	    for (int i = 0; i < files.length; i++) {
-	    	File temp = files[i];
-	    	if (temp.isDirectory()) {
-	    		more = true;
-	    		String newpath = temp.getAbsolutePath();
-		        DefaultMutableTreeNode branchNode = new DefaultMutableTreeNode();
-		        FolderNodeUserObject branchObject = new FolderNodeUserObject(branchNode, this);
-		        branchObject.setText(temp.getName());
-		        branchObject.setPath(newpath);
-		        branchObject.setRelativePath(getRelativePath(basePath, newpath));
-		        branchNode.setUserObject(branchObject);
-		        node.add(branchNode);
-		        if (!setDirectoriesTree(newpath, branchNode)) branchObject.setLeaf(true);
-	    	}
-	    }
-	    return more;
-	}
-
-	private void chargeImageList(String path) {
-		ArrayList<Image> list = new ArrayList<Image>();  
-		File dir = new File(path);
+	public void chargeImageList() {
+		ArrayList<Image> list = new ArrayList<Image>();
+		if (this.currentPath==null)
+			this.onInit(null);
+		File dir = new File(this.currentPath);
 		File files[] = dir.listFiles(getFilenameFilter());
 		for (int i=0; i < files.length; i++) {
 			File temp = files[i];
@@ -108,27 +67,18 @@ public abstract class GalleryController extends BasicController implements IGall
 		return currentPath;
 	}
 
-	public DefaultTreeModel getTree() {
-		return tree;
+	public void setCurrentPath(String currentPath) {
+		this.currentPath = currentPath;
 	}
 
 	public DataModel getModel() throws ManagerBeanException {
 		if (model == null) {
-			chargeImageList(currentPath);
+			chargeImageList();
 		}
 		return model;
 	}
 
-	public FolderNodeUserObject getSelected() {
-		return selected;
-	}
-
-	public void setSelected(FolderNodeUserObject selected) {
-		this.selected = selected;
-		this.currentPath = selected.getPath();
-		chargeImageList(this.currentPath);
-	}
-
+/*
 	public void action(ActionEvent event){
 		InputFile inputFile = (InputFile)event.getSource();
 		//file has been saved
@@ -153,5 +103,5 @@ public abstract class GalleryController extends BasicController implements IGall
 			inputFile.getFileInfo().getException().printStackTrace();
 		}
 	}
-
+*/
 }

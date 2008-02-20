@@ -6,7 +6,8 @@
 	xmlns:aon="http://www.code.es/aon-rich-components"
 	xmlns:t="http://myfaces.apache.org/tomahawk"
 	xmlns:c="http://java.sun.com/jstl/core"
-	xmlns:a4j="http://richfaces.org/a4j">
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich">
 <body>
 
 <ui:composition template="/facelet/templates/aon.ui.content.xhtml">
@@ -137,13 +138,40 @@
 						<aon:panelTab id="image"
 							label="#{appBundle.header_image}">
 							<aon:panelGrid columns="2" dir="true">
-								<aon:outputLabel for="Header_preview" 
+								<aon:outputLabel 
 									value="#{appBundle.header_image}" />
-								<aon:panelGroup styleClass="aon-text-center">
+								<aon:panelGroup id="thumbnail_preview">
 									<aon:graphicImage 
 										url="#{headers.toI18n.image}.thumbnail" 
 										alt="#{headers.toI18n.image}"/>
 								</aon:panelGroup>
+								
+    <rich:tree style="width:300px" switchType="ajax" stateAdvisor="#{treeStateAdvisor}">
+        <rich:recursiveTreeNodesAdaptor roots="#{fileSystemBean.imageRoots}" 
+        	var="item" 
+        	nodes="#{item.nodes}">
+			<rich:treeNode>
+				<h:commandLink action="#{item.onSelectFolder}" value="#{item}" />
+			</rich:treeNode>
+        </rich:recursiveTreeNodesAdaptor>
+    </rich:tree>
+	<aon:panelGroup>
+		<rich:dataList var="item" value="#{gallery.model}" >	
+			<aon:panelGrid columns="2" cellpadding="5px" cellspacing="0px">
+	                 <aon:commandLink
+	                 	immediate="#{true}"
+	                    actionListener="#{headers.onSelectImage}">
+	            		<aon:graphicImage url="#{item.thumb}" alt="#{item.name}"/>
+	        		</aon:commandLink>
+	                <aon:commandLink
+	                	immediate="#{true}"
+	                	reRender="thumbnail_preview"
+	                    actionListener="#{headers.onSelectImage}"
+	                    value="#{item.name}"/>
+			</aon:panelGrid>
+		</rich:dataList>
+	</aon:panelGroup>
+    
 							</aon:panelGrid>
 						</aon:panelTab>
 						
