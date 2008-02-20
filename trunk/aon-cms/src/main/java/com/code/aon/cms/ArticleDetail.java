@@ -27,6 +27,8 @@ public class ArticleDetail implements ITransferObject {
 
 	private String content;
 	
+	private String image_info;
+
 	private String alt;
 
 	private String alt_thumbnail;
@@ -106,5 +108,15 @@ public class ArticleDetail implements ITransferObject {
 	public void setAlt_thumbnail(String alt_thumbnail) {
 		this.alt_thumbnail = alt_thumbnail;
 	}
+
+	@Column(length=255)
+	public String getImage_info() {
+		return image_info;
+	}
+
+	public void setImage_info(String image_info) {
+		this.image_info = image_info;
+	}
+	
 	
 }

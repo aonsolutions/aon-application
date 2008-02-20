@@ -25,6 +25,8 @@ public class HeaderDetail implements ITransferObject {
 
 	private String image;
 
+	private String alt;
+	
 	private String content;
 
 	@Id
@@ -85,4 +87,14 @@ public class HeaderDetail implements ITransferObject {
 		this.content = content;
 	}
 
+	@Column(length=64)
+	public String getAlt() {
+		return alt;
+	}
+
+	public void setAlt(String alt) {
+		this.alt = alt;
+	}
+
+	
 }
