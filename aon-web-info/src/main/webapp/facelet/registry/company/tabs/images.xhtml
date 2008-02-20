@@ -14,7 +14,6 @@
 			styleClass="aon-noborder"
 			columnClasses="aon-midle-width  aon-vertical-align-top,aon-midle-width" id="imagesPanel">	
 			<aon:div>
-			
 				<aon:editDataTable id="companyImages" value="#{companyImages.model}"
 					var="to" rows="20" style="width:300px"
 					columnClasses="aon-editDataTable-iconColumn,
@@ -91,11 +90,10 @@
 							value="#{companyImages.inputFile}"
 							rendered="#{companyImages.fileData == null}"
 							accept="image/*" size="45"
-							storage="file"
-							required="true"/>
+							storage="file" required="true"/>
 
 						<aon:panelGroup styleClass="aon-text-center" rendered="#{companyImages.fileData != null}">
-							<aon:mediaOutput id="RegistryAttachment_preview"
+							<aon:mediaOutput id="RegistryAttachment_preview" 
 								element="img" cacheable="false"
 								createContent="#{companyImages.paint}" 
 								mimeType="#{companyImages.mimeType}" />

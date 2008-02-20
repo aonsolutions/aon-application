@@ -73,23 +73,20 @@
 						actionListener="#{company.fileUploaded}"/>
 				</aon:div>		
 				
-				<aon:panelGrid columns="2"
-					style="margin-left:10px;margin-right:10px;">
+				<aon:panelGrid columns="2" style="margin-left:10px;margin-right:10px;">
 						
-					<aon:outputLabel for="Company_logo"
-						value="#{registryBundle.aon_registry_attach_file}" />
-					<t:inputFileUpload id="Company_logo"
-						value="#{company.inputFile}"
-						rendered="#{company.fileData == null}"
-						accept="image/*"
-						storage="file"
-						size="45"/>
-					<aon:panelGroup styleClass="aon-text-center" rendered="#{company.fileData != null}">
-						<aon:mediaOutput id="Logo_preview"
-							element="img" cacheable="false"
-							createContent="#{company.paint}" 
-							mimeType="#{company.mimeType}"/>
-					</aon:panelGroup>
+					<aon:outputLabel value="#{registryBundle.aon_registry_attach_file}" />
+					<aon:div>
+						<t:inputFileUpload id="Company_logo"
+							value="#{company.inputFile}" rendered="#{company.fileData == null}"
+							accept="image/*" storage="file" size="45"/>
+						<aon:panelGroup styleClass="aon-text-center" rendered="#{company.fileData != null}">
+							<aon:mediaOutput id="Logo_preview"
+								element="img" cacheable="false"
+								createContent="#{company.paint}" 
+								mimeType="#{company.mimeType}"/>
+						</aon:panelGroup>
+					</aon:div>
 				</aon:panelGrid>				
 			</aon:div>
 		</aon:div>

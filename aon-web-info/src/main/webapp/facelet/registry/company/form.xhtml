@@ -3,6 +3,7 @@
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:c="http://java.sun.com/jstl/core">
 <body>
 
@@ -22,9 +23,11 @@
 						value="#{appBundle.aon_web_info_generate}"
 						styleClass="aon-finding-toolbar-item aon-icon-accept"
 						actionListener="#{generator.onGenerate}"/>
-					<aon:commandButton id="web" value="#{appBundle.aon_web_info_view}"
+					<h:outputLink id="web" value="#{generator.webPage}" target="_new"
 						styleClass="aon-finding-toolbar-item aon-icon-accept"
-						action="#{generator.getWebPage}" rendered="#{generator.generate}"/>
+						rendered="#{generator.generate}">
+						<aon:outputText value="#{appBundle.aon_web_info_view}"/>
+					</h:outputLink>
 				</aon:div>
 			</aon:panelGrid>
 		</aon:div>
