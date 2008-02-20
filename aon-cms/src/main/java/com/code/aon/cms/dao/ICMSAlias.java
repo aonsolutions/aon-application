@@ -557,40 +557,46 @@ public interface ICMSAlias {
 	DAOConstantsEntry HEADER_DETAIL_ENTRY = DAOConstants.getDAOConstant(HeaderDetail.class);
 
 	/** 
+	* Alias value: HeaderDetail_alt
+	* Hibernate value: HeaderDetail.alt
+	*/
+	String  HEADER_DETAIL_ALT = HEADER_DETAIL_ENTRY.getAliasNames()[0];
+
+	/** 
 	* Alias value: HeaderDetail_content
 	* Hibernate value: HeaderDetail.content
 	*/
-	String  HEADER_DETAIL_CONTENT = HEADER_DETAIL_ENTRY.getAliasNames()[0];
+	String  HEADER_DETAIL_CONTENT = HEADER_DETAIL_ENTRY.getAliasNames()[1];
 
 	/** 
 	* Alias value: HeaderDetail_header_id
 	* Hibernate value: HeaderDetail.header.id
 	*/
-	String  HEADER_DETAIL_HEADER_ID = HEADER_DETAIL_ENTRY.getAliasNames()[1];
+	String  HEADER_DETAIL_HEADER_ID = HEADER_DETAIL_ENTRY.getAliasNames()[2];
 
 	/** 
 	* Alias value: HeaderDetail_id
 	* Hibernate value: HeaderDetail.id
 	*/
-	String  HEADER_DETAIL_ID = HEADER_DETAIL_ENTRY.getAliasNames()[2];
+	String  HEADER_DETAIL_ID = HEADER_DETAIL_ENTRY.getAliasNames()[3];
 
 	/** 
 	* Alias value: HeaderDetail_image
 	* Hibernate value: HeaderDetail.image
 	*/
-	String  HEADER_DETAIL_IMAGE = HEADER_DETAIL_ENTRY.getAliasNames()[3];
+	String  HEADER_DETAIL_IMAGE = HEADER_DETAIL_ENTRY.getAliasNames()[4];
 
 	/** 
 	* Alias value: HeaderDetail_language_id
 	* Hibernate value: HeaderDetail.language.id
 	*/
-	String  HEADER_DETAIL_LANGUAGE_ID = HEADER_DETAIL_ENTRY.getAliasNames()[4];
+	String  HEADER_DETAIL_LANGUAGE_ID = HEADER_DETAIL_ENTRY.getAliasNames()[5];
 
 	/** 
 	* Alias value: HeaderDetail_sitename
 	* Hibernate value: HeaderDetail.sitename
 	*/
-	String  HEADER_DETAIL_SITENAME = HEADER_DETAIL_ENTRY.getAliasNames()[5];
+	String  HEADER_DETAIL_SITENAME = HEADER_DETAIL_ENTRY.getAliasNames()[6];
 
 
 
@@ -1247,22 +1253,28 @@ public interface ICMSAlias {
 	String  ARTICLE_DETAIL_ID = ARTICLE_DETAIL_ENTRY.getAliasNames()[4];
 
 	/** 
+	* Alias value: ArticleDetail_image_info
+	* Hibernate value: ArticleDetail.image_info
+	*/
+	String  ARTICLE_DETAIL_IMAGE_INFO = ARTICLE_DETAIL_ENTRY.getAliasNames()[5];
+
+	/** 
 	* Alias value: ArticleDetail_language_id
 	* Hibernate value: ArticleDetail.language.id
 	*/
-	String  ARTICLE_DETAIL_LANGUAGE_ID = ARTICLE_DETAIL_ENTRY.getAliasNames()[5];
+	String  ARTICLE_DETAIL_LANGUAGE_ID = ARTICLE_DETAIL_ENTRY.getAliasNames()[6];
 
 	/** 
 	* Alias value: ArticleDetail_subtitle
 	* Hibernate value: ArticleDetail.subtitle
 	*/
-	String  ARTICLE_DETAIL_SUBTITLE = ARTICLE_DETAIL_ENTRY.getAliasNames()[6];
+	String  ARTICLE_DETAIL_SUBTITLE = ARTICLE_DETAIL_ENTRY.getAliasNames()[7];
 
 	/** 
 	* Alias value: ArticleDetail_title
 	* Hibernate value: ArticleDetail.title
 	*/
-	String  ARTICLE_DETAIL_TITLE = ARTICLE_DETAIL_ENTRY.getAliasNames()[7];
+	String  ARTICLE_DETAIL_TITLE = ARTICLE_DETAIL_ENTRY.getAliasNames()[8];
 
 
 
