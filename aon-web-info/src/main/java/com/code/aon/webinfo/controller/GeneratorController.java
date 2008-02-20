@@ -195,23 +195,23 @@ public class GeneratorController extends BasicController implements VelocityCons
 	
 			//Descomprimir resources en el directorio temporal
 			ZipUtil.uncompressZipFile(vu.getTemplate_path() + "/resources.zip", vu.getTemporal_path(), null);
+			try {
+				//Subir por FTP
+				if (dominio != null) {
+					FTPUtil.uploadFTP(temporal_path, "/" + dominio + "/WEBSITES/www." + dominio + "", dominio);
+					webPage = "http://www." + dominio + "/";
+				}
+				generate = true;
+				AonUtil.addInfoMessage("OK: La web ha sido generada." );
+			}
+			catch (Exception e) {
+				AonUtil.addErrorMessage("ERROR: Se ha producido un error durante la publicacion de la pagina.");
+			}
 		}
 		catch (Exception e) {
 			AonUtil.addErrorMessage("ERROR: Se ha producido un error durante la generacion de los contenidos.");
 		}
-		try {
-			//Subir por FTP
-			if (dominio != null) {
-				FTPUtil.uploadFTP(temporal_path, "/" + dominio + "/WEBSITES/www." + dominio + "", dominio);
-				webPage = "http://www." + dominio + "/";
-			}
-		}
-		catch (Exception e) {
-			AonUtil.addErrorMessage("ERROR: Se ha producido un error durante la publicacion de la pagina.");
-		}
-		
 		HibernateUtil.setCloseSession(true);
-		generate = true;
 	}
 
 	public boolean isGenerate() {
