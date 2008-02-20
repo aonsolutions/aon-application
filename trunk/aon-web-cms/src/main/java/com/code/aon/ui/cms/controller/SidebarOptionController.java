@@ -5,7 +5,6 @@ import java.util.List;
 
 import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
-import javax.faces.event.ValueChangeEvent;
 import javax.faces.model.SelectItem;
 
 import com.code.aon.cms.Sidebar;
@@ -23,8 +22,6 @@ import com.code.aon.ui.util.AonUtil;
 
 public class SidebarOptionController extends BasicI18nController {
 
-	private boolean cancelOnSelect = false;
-
 	private Sidebar currentSidebar;
 	
 	public Sidebar getCurrentSidebar() {
@@ -37,21 +34,16 @@ public class SidebarOptionController extends BasicI18nController {
 
 	@SuppressWarnings("unused")
 	public void onSelect(ActionEvent event) {
-		if (!cancelOnSelect) {
-			super.onSelect(new ActionEvent(event.getComponent()));
-			FacesContext.getCurrentInstance().getApplication().getNavigationHandler().handleNavigation(FacesContext.getCurrentInstance(), null, "sidebar_option_form");
-			loadCurrentLanguage();
-		}
-		cancelOnSelect = false;
+		super.onSelect(new ActionEvent(event.getComponent()));
+		FacesContext.getCurrentInstance().getApplication().getNavigationHandler().handleNavigation(FacesContext.getCurrentInstance(), null, "sidebar_option_form");
+		loadCurrentLanguage();
 	}
 
 	public void onActivate(ActionEvent event) throws ManagerBeanException {
-		cancelOnSelect = true; 
 		activate(true);
 	}
 
 	public void onDeactivate(ActionEvent event) throws ManagerBeanException {
-		cancelOnSelect = true; 
 		activate(false);
 	}
 	
@@ -61,10 +53,6 @@ public class SidebarOptionController extends BasicI18nController {
 		getManagerBean().update(so);
 	}
 	
-	public void onChecked(ValueChangeEvent event) throws ManagerBeanException {
-		cancelOnSelect = true; 
-	}
-
 	public String getI18nLabel() throws ManagerBeanException {
 		String label = "";
 		SidebarOptionDetail sod = getCurrentDetail();
@@ -116,12 +104,10 @@ public class SidebarOptionController extends BasicI18nController {
 	}
 	
     public void onMoveUp(ActionEvent event) throws ManagerBeanException, ExpressionException {
-		cancelOnSelect = true; 
     	move((SidebarOption) this.model.getRowData(), -1);
     }
 
     public void onMoveDown(ActionEvent event) throws ManagerBeanException, ExpressionException {
-		cancelOnSelect = true; 
     	move((SidebarOption) this.model.getRowData(), 1);    	
     }
 
