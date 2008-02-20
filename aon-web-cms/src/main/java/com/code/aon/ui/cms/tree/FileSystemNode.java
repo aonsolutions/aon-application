@@ -11,9 +11,9 @@ public class FileSystemNode {
     private static FileSystemNode[] CHILDREN_ABSENT = new FileSystemNode[0];
     private FileSystemNode[] children;
     private String shortPath;
-    private FileSystemBean parent_;
+    private FileSystemBean bean_;
 
-    public FileSystemNode(String path, FileSystemBean parent_) {
+    public FileSystemNode(String path, FileSystemBean bean_) {
         this.path = path.replace('\\', '/');
         int idx = this.path.lastIndexOf('/');
         if (idx != -1) {
@@ -21,7 +21,7 @@ public class FileSystemNode {
         } else {
             shortPath = this.path;
         }
-        this.parent_ = parent_;
+        this.bean_ = bean_;
     }
 
     public synchronized FileSystemNode[] getNodes() {
@@ -37,7 +37,7 @@ public class FileSystemNode {
                     if (nodePath.endsWith("/")) {
                         nodePath = nodePath.substring(0, nodePath.length() - 1);
                     }
-                    children[i] = new FileSystemNode(nodePath, this.parent_);
+                    children[i] = new FileSystemNode(nodePath, this.bean_);
                 }
             } else {
                 children = CHILDREN_ABSENT;
@@ -55,7 +55,7 @@ public class FileSystemNode {
 	}
 
 	public void onSelectFolder(){
-    	parent_.setSelected(this);
+		bean_.setSelected(this);
     }
 
 }

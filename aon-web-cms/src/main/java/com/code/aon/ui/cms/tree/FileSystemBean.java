@@ -6,10 +6,9 @@ import com.code.aon.ui.util.AonUtil;
 
 public class FileSystemBean {
 
-    private FileSystemNode[] srcRoots = null;
-
     public synchronized FileSystemNode[] getImageRoots() {
-    	srcRoots = new FileSystemNode(ControllerUtil.getImagesPath(),this).getNodes();
+    	FileSystemNode[] srcRoots = new FileSystemNode[1];
+    	srcRoots[0] = new FileSystemNode(ControllerUtil.getImagesPath(),this);
         return srcRoots;
     }
 
