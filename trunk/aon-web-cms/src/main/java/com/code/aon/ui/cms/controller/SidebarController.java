@@ -1,21 +1,14 @@
 package com.code.aon.ui.cms.controller;
 
-import java.util.LinkedList;
 import java.util.List;
-import java.util.Locale;
 
 import javax.faces.context.FacesContext;
-import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 import javax.faces.event.ValueChangeEvent;
-import javax.faces.model.DataModel;
-import javax.faces.model.SelectItem;
 
-import com.code.aon.cms.Section;
 import com.code.aon.cms.Sidebar;
 import com.code.aon.cms.SidebarOption;
 import com.code.aon.cms.dao.ICMSAlias;
-import com.code.aon.cms.enumeration.MenuType;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
@@ -24,7 +17,6 @@ import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionException;
 import com.code.aon.ui.form.GridController;
 import com.code.aon.ui.util.AonUtil;
-import com.icesoft.faces.component.paneltabset.TabChangeEvent;
 
 public class SidebarController extends GridController {
 

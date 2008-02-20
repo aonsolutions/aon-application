@@ -20,7 +20,6 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionException;
 import com.code.aon.ui.cms.util.ControllerUtil;
-import com.code.aon.ui.cms.util.FolderNodeUserObject;
 import com.code.aon.ui.util.AonUtil;
 
 public class BannerController extends BasicI18nController {
@@ -28,10 +27,6 @@ public class BannerController extends BasicI18nController {
 	private boolean cancelOnSelect = false;
 
 	private BannerCategory currentBannerCategory;
-	
-	public void onInit(ActionEvent event){
-		((GalleryController)AonUtil.getRegisteredBean("gallery")).onInit(event);
-	}
 	
 	public BannerCategory getCurrentBannerCategory() {
 		return currentBannerCategory;
@@ -179,11 +174,4 @@ public class BannerController extends BasicI18nController {
 		return imageSelectionVisible;
 	}
 	
-	public void onSelectImage(ActionEvent event) throws ManagerBeanException {
-		GalleryController controller = (GalleryController)AonUtil.getRegisteredBean("gallery");
-		String image = ((Image)controller.getModel().getRowData()).getRelativePath();
-		BannerDetail current = (BannerDetail)getToI18n();
-		current.setImage(image);
-	}
-
 }

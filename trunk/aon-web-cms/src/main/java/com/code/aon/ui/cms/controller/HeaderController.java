@@ -7,6 +7,7 @@ import javax.faces.event.ActionEvent;
 
 import com.code.aon.cms.Header;
 import com.code.aon.cms.HeaderDetail;
+import com.code.aon.cms.Image;
 import com.code.aon.cms.dao.ICMSAlias;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
@@ -15,6 +16,7 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionException;
 import com.code.aon.ui.cms.util.ControllerUtil;
+import com.code.aon.ui.util.AonUtil;
 
 
 public class HeaderController extends BasicI18nController {
@@ -99,6 +101,13 @@ public class HeaderController extends BasicI18nController {
 	public void onDelImage(ActionEvent event) {
 		HeaderDetail current = (HeaderDetail)getToI18n();
 		current.setImage(null);
+	}
+	
+	public void onSelectImage(ActionEvent event) throws ManagerBeanException {
+		GalleryController controller = (GalleryController)AonUtil.getRegisteredBean("gallery");
+		String image = ((Image)controller.getModel().getRowData()).getRelativePath();
+		HeaderDetail current = (HeaderDetail)getToI18n();
+		current.setImage(image);
 	}
 	
 }

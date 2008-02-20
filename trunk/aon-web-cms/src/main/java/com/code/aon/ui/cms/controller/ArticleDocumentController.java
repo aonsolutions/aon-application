@@ -13,7 +13,6 @@ import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.cms.util.ControllerUtil;
-import com.icesoft.faces.component.inputfile.InputFile;
 
 public class ArticleDocumentController extends GridI18nController {
 
@@ -55,8 +54,10 @@ public class ArticleDocumentController extends GridI18nController {
 	}
 	
 	public void onUpload(ActionEvent event){
+		/*
 		InputFile inputFile = (InputFile)event.getSource();
 		((ArticleDocumentDetail)this.getToI18n()).setFile(inputFile.getFile().getName());
+		*/
 	}
 	
 	private String currentPath;
