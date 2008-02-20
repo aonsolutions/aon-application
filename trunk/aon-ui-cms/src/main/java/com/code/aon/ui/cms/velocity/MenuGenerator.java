@@ -40,7 +40,8 @@ public class MenuGenerator extends Generator {
 				if (ld.size() > 0) {
 					MenuOptionDetail mod = (MenuOptionDetail)ld.get(0);
 					MenuOptionHandler moh = new MenuOptionHandler(mod);
-					if (moh.getUrl() != null) list.add(moh);
+					//if (moh.getUrl() != null) list.add(moh);
+					list.add(moh);
 				}
 			}
 		} catch (ManagerBeanException e) {
