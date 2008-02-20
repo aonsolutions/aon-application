@@ -86,7 +86,7 @@ public class Album implements ITransferObject {
 		this.albumCategory = albumCategory;
 	}
 
-	@Column(name="publish_date", nullable=false)
+	@Column(name="publish_date")
 	public Date getPublishDate() {
 		return publishDate;
 	}
