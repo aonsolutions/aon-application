@@ -24,7 +24,6 @@ public class NoticeControllerListener extends ControllerAdapter {
 	public void beforeBeanAdded(ControllerEvent event) throws ControllerListenerException {
 		Notice notice = (Notice)event.getController().getTo();
 		notice.setSender(UserUtils.getLoggedUser());
-		notice.setDate(new Date());
 	}
 	
 	@Override
@@ -59,6 +58,12 @@ public class NoticeControllerListener extends ControllerAdapter {
 		} catch (ManagerBeanException e) {
 			throw new ControllerListenerException("Error before model initialized", e);
 		}
+	}
+
+	public void afterBeanCreated(ControllerEvent event) throws ControllerListenerException {
+		NoticeController noticeController = (NoticeController)event.getController();
+		Notice notice = (Notice)noticeController.getTo();
+		notice.setDate(new Date());
 	}
 
 	private void insertRelatedAlarm(Notice notice) throws ControllerListenerException{
