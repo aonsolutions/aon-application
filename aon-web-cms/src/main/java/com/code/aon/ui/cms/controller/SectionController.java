@@ -6,9 +6,7 @@ import java.util.List;
 import javax.faces.context.FacesContext;
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
-import javax.faces.event.ValueChangeEvent;
 
-import com.code.aon.cms.Menu;
 import com.code.aon.cms.Section;
 import com.code.aon.cms.dao.ICMSAlias;
 import com.code.aon.common.BeanManager;
@@ -24,19 +22,10 @@ public class SectionController extends BasicController{
 	/** A list that contains the selected objects of the model. */
 	private ArrayList<ITransferObject> checkList= new ArrayList<ITransferObject>();
 
-	private boolean cancelOnSelect = false;
-
 	@SuppressWarnings("unused")
 	public void onSelect(ActionEvent event) {
-		if (!cancelOnSelect) {
-			super.onSelect(new ActionEvent(event.getComponent()));
-			FacesContext.getCurrentInstance().getApplication().getNavigationHandler().handleNavigation(FacesContext.getCurrentInstance(), null, "section_form");
-		}
-		cancelOnSelect = false;
-	}
-	
-	public void onChecked(ValueChangeEvent event) throws ManagerBeanException {
-		cancelOnSelect = true; 
+		super.onSelect(new ActionEvent(event.getComponent()));
+		FacesContext.getCurrentInstance().getApplication().getNavigationHandler().handleNavigation(FacesContext.getCurrentInstance(), null, "section_form");
 	}
 	
 	/**
@@ -120,14 +109,10 @@ public class SectionController extends BasicController{
 		super.onAccept(event);
 	}
 
-	public void defaultChanged(ValueChangeEvent event) throws ManagerBeanException, ExpressionException {
-		boolean selected = ((Boolean)event.getNewValue()).booleanValue();
+	public void defaultChanged(ActionEvent event) throws ManagerBeanException, ExpressionException {
 		Section section = (Section) model.getRowData();
-		if (selected) {
-			section.setDefault_(true);
-			updateDefault(section);
-		}
-		cancelOnSelect = true;
+		section.setDefault_(true);
+		updateDefault(section);
 	}
 	
 	@SuppressWarnings("unchecked")
