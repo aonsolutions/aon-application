@@ -33,7 +33,7 @@
 							styleClass="aon-finding-toolbar-item aon-icon-reset"
 							accesskey="#{bundle.aon_key_new}"/>
 						<aon:confirmButton id="remove"
-							value="#{bundle.aon_remove}" rendered="#{!sidebar.checklistEmpty}" 
+							value="#{bundle.aon_remove}" rendered="#{!sidebar_option.checklistEmpty}" 
 							inmediate="true"
 							styleClass="aon-finding-toolbar-item aon-icon-delete"
 							confirmTitle="Confirmation Dialog" confirmMessage="#{bundle.aon_remove_confirm}"
@@ -110,7 +110,8 @@
 						</f:facet>
 						<aon:outputText value="#{to.alias}" rendered="#{to!=sidebar_option.to}" 
 							styleClass="aon-editDataTable-button"/>
-						<aon:panelGrid columns="2" rendered="#{to==sidebar_option.to}" 
+						<aon:panelGrid id="editData" 
+							columns="2" rendered="#{to==sidebar_option.to}" 
 							style="width:90%">
 							<aon:outputText value="#{appBundle.sidebar_option_alias}" />
 							<aon:inputText value="#{to.alias}" 
@@ -122,32 +123,66 @@
 
 							<aon:outputText value="#{appBundle.sidebar_option_type}" />
 							<aon:selectOneMenu  
-								reRender="dataTable"
 								value="#{sidebar_option.to.type}" 
 								required="true">
 								<f:selectItems value="#{collections.sidebarTypes}" />
+								<a4j:support 
+									event="onchange"  
+									reRender="editData" />
 							</aon:selectOneMenu> 
 
-							<aon:outputText value="#{appBundle.sidebar_option_ident}" 	
-								rendered="#{sidebar_option.visibleIdent}"/>
-							<aon:selectOneMenu  
-								rendered="#{sidebar_option.visibleIdent}" 
-								value="#{sidebar_option.to.ident}">
-								<f:selectItems value="#{sidebar_option.idents}" />
-							</aon:selectOneMenu> 
+							<aon:outputText value="#{appBundle.sidebar_option_ident}" 
+									rendered="#{sidebar_option.visibleIdent}" 
+									/>
+							<aon:div id="selectOneMenu_edit">
+								<aon:selectOneMenu  
+									rendered="#{sidebar_option.visibleIdent}" 
+									value="#{sidebar_option.to.ident}">
+									<f:selectItems value="#{sidebar_option.idents}" />
+								</aon:selectOneMenu>
+							</aon:div> 
 
-							<aon:outputText value="#{appBundle.sidebar_option_side}" 	
-								rendered="#{sidebar_option.visibleIdent}"/>
+							<aon:outputText value="#{appBundle.sidebar_option_side}" />
 							<aon:selectOneMenu  
 								value="#{sidebar_option.to.side}" >
 								<f:selectItems value="#{collections.sidebarSides}" />
 							</aon:selectOneMenu> 
 						</aon:panelGrid>
 						<f:facet name="footer">
-							<aon:div>
-								<aon:inputText value="#{sidebar_option.to.alias}"
-									rendered="#{sidebar_option.new}" size="40" maxlength="64" />
-							</aon:div>
+							<aon:panelGrid id="newData" 
+								columns="2" rendered="#{sidebar_option.new}" 
+								style="width:90%">
+								<aon:outputText value="#{appBundle.sidebar_option_alias}" />
+								<aon:inputText value="#{sidebar_option.to.alias}" 
+									size="40" maxlength="64" />
+									
+								<aon:outputText value="#{appBundle.sidebar_option_label}" />
+								<aon:inputText value="#{sidebar_option.toI18n.label}" 
+									size="50" maxlength="64" />
+	
+								<aon:outputText value="#{appBundle.sidebar_option_type}" />
+								<aon:selectOneMenu 
+									value="#{sidebar_option.to.type}">
+									<f:selectItems value="#{collections.sidebarTypes}" />
+									<a4j:support ajaxSingle="true" 
+										event="onchange"  
+										reRender="newData" />
+								</aon:selectOneMenu> 
+	
+								<aon:outputText value="#{appBundle.sidebar_option_ident}" 	
+									rendered="#{sidebar_option.visibleIdent}" />
+								<aon:selectOneMenu 
+									rendered="#{sidebar_option.visibleIdent}" 
+									value="#{sidebar_option.to.ident}">
+									<f:selectItems value="#{sidebar_option.idents}" />
+								</aon:selectOneMenu>
+	
+								<aon:outputText value="#{appBundle.sidebar_option_side}" />
+								<aon:selectOneMenu  
+									value="#{sidebar_option.to.side}" >
+									<f:selectItems value="#{collections.sidebarSides}" />
+								</aon:selectOneMenu> 
+							</aon:panelGrid>
 						</f:facet>
 					</aon:column>
 					
