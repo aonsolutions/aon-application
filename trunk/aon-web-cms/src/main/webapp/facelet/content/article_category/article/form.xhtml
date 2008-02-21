@@ -263,6 +263,14 @@
 										</aon:div>								
 									</aon:div>
 
+									<aon:outputLabel for="ArticleDetail_image_info"
+										styleClass="aon-form-input-text-label"
+										value="#{appBundle.article_image_info}" />
+									<aon:inputText id="ArticleDetail_image_info"
+										styleClass="aon-form-input-text aon-form-input-text-number"
+										size="90" maxlength="255"
+										value="#{article.toI18n.image_info}" />
+		
 									<aon:outputLabel for="ArticleDetail_alt"
 										styleClass="aon-form-input-text-label"
 										value="#{appBundle.article_alt}" />
