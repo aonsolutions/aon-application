@@ -128,8 +128,24 @@
 						</aon:panelGrid>
 						<f:facet name="footer">
 							<aon:div>
-								<aon:inputText value="#{footer.to.alias}"
-									rendered="#{footer.new}" size="40" maxlength="64" />
+								<aon:panelGrid columns="2" 
+									rendered="#{footer.new}" style="width:90%">
+									<aon:outputText value="#{appBundle.menu_alias}" />
+									<aon:inputText value="#{footer.to.alias}" 
+										size="40" maxlength="64" />
+									
+									<aon:outputLabel 
+										value="#{appBundle.footer_menu}"/>
+									<aon:selectOneMenu   
+										value="#{footer.to.menu.id}">
+										<f:selectItems value="#{collections.menuFootList}" />
+									</aon:selectOneMenu> 
+										
+									<aon:outputLabel 
+										value="#{appBundle.footer_content}" />
+									<aon:inputRichText style="width:90%" 
+										value="#{footer.toI18n.content}" />
+								</aon:panelGrid>
 							</aon:div>
 						</f:facet>
 					</aon:column>

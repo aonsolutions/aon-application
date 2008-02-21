@@ -82,7 +82,7 @@
 					<aon:outputLabel for="MenuOption_type"
 						value="#{appBundle.menu_option_type}" />
 					<aon:selectOneMenu id="MenuOption_type" 
-						value="#{menu_option.to.type}" partialSubmit="true">
+						value="#{menu_option.to.type}" >
 						<f:selectItems value="#{collections.pageTypes}">
 						</f:selectItems>
 							<a4j:support 
@@ -111,7 +111,7 @@
 					<aon:outputLabel for="MenuOptionDetail_url"
 						value="#{appBundle.menu_option_url}" rendered="#{menu_option.visibleUrl}"/>
 					<aon:inputText id="MenuOptionDetail_url" rendered="#{menu_option.visibleUrl}"
-						required="true" size="100" maxlength="255"
+						size="100" maxlength="255"
 						value="#{menu_option.toI18n.url}" />
 
 				</aon:panelGrid>
