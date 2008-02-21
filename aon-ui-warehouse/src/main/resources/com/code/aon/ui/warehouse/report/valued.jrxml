@@ -34,12 +34,12 @@
 	<field name="cost" class="java.lang.Double"/>
 
 	<variable name="total" class="java.lang.Double" resetType="Column" calculation="Nothing">
-		<variableExpression><![CDATA[new Double($F{realQuantity}.doubleValue() * $F{cost}.doubleValue())]]></variableExpression>
+		<variableExpression><![CDATA[new Double(((double)Math.round((100 * $F{realQuantity}.doubleValue() * $F{cost}.doubleValue()))/100))]]></variableExpression>
 	</variable>
 	<variable name="category_total" class="java.lang.Double" resetType="Group" resetGroup="category" calculation="Sum">
 		<variableExpression><![CDATA[$V{total}]]></variableExpression>
 	</variable>
-	<variable name="reportTotal" class="java.lang.Double" resetType="Report" calculation="Sum">
+	<variable name="reportTotal" class="java.lang.Double" resetType="Group" incrementType="Group" incrementGroup="category" resetGroup="reportGroup" calculation="Sum">
 		<variableExpression><![CDATA[$V{category_total}]]></variableExpression>
 	</variable>
 
