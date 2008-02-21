@@ -138,6 +138,12 @@
 						<aon:panelTab id="image"
 							label="#{appBundle.header_image}">
 							<aon:panelGrid columns="2" dir="true">
+								<aon:outputLabel for="alt"
+									value="#{appBundle.header_alt}" />
+								<aon:inputText id="alt"
+									size="64" maxlength="64"
+									value="#{headers.toI18n.alt}" />
+								
 								<aon:outputLabel 
 									value="#{appBundle.header_image}" />
 								<aon:panelGroup id="thumbnail_preview">
@@ -146,32 +152,32 @@
 										alt="#{headers.toI18n.image}"/>
 								</aon:panelGroup>
 								
-    <rich:tree style="width:300px" switchType="ajax" stateAdvisor="#{treeStateAdvisor}">
-        <rich:recursiveTreeNodesAdaptor roots="#{fileSystemBean.imageRoots}" 
-        	var="item" 
-        	nodes="#{item.nodes}">
-			<rich:treeNode>
-				<h:commandLink action="#{item.onSelectFolder}" value="#{item}" />
-			</rich:treeNode>
-        </rich:recursiveTreeNodesAdaptor>
-    </rich:tree>
-	<aon:panelGroup>
-		<aon:outputLabel value="#{gallery.currentRelativePath}" />
-		<rich:dataList var="item" value="#{gallery.model}" >	
-			<aon:panelGrid columns="2" cellpadding="5px" cellspacing="0px">
-	                 <aon:commandLink
-	                 	immediate="#{true}"
-	                    actionListener="#{headers.onSelectImage}">
-	            		<aon:graphicImage url="#{item.thumb}" alt="#{item.name}"/>
-	        		</aon:commandLink>
-	                <aon:commandLink
-	                	immediate="#{true}"
-	                	reRender="thumbnail_preview"
-	                    actionListener="#{headers.onSelectImage}"
-	                    value="#{item.name}"/>
-			</aon:panelGrid>
-		</rich:dataList>
-	</aon:panelGroup>
+							    <rich:tree style="width:300px" switchType="ajax" stateAdvisor="#{treeStateAdvisor}">
+							        <rich:recursiveTreeNodesAdaptor roots="#{fileSystemBean.imageRoots}" 
+							        	var="item" 
+							        	nodes="#{item.nodes}">
+										<rich:treeNode>
+											<h:commandLink action="#{item.onSelectFolder}" value="#{item}" />
+										</rich:treeNode>
+							        </rich:recursiveTreeNodesAdaptor>
+							    </rich:tree>
+								<aon:panelGroup>
+									<aon:outputLabel value="#{gallery.currentRelativePath}" />
+									<rich:dataList var="item" value="#{gallery.model}" >	
+										<aon:panelGrid columns="2" cellpadding="5px" cellspacing="0px">
+								                 <aon:commandLink
+								                 	immediate="#{true}"
+								                    actionListener="#{headers.onSelectImage}">
+								            		<aon:graphicImage url="#{item.thumb}" alt="#{item.name}"/>
+								        		</aon:commandLink>
+								                <aon:commandLink
+								                	immediate="#{true}"
+								                	reRender="thumbnail_preview"
+								                    actionListener="#{headers.onSelectImage}"
+								                    value="#{item.name}"/>
+										</aon:panelGrid>
+									</rich:dataList>
+								</aon:panelGroup>
     
 							</aon:panelGrid>
 						</aon:panelTab>
