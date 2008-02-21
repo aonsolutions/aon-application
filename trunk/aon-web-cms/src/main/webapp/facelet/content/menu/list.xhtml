@@ -28,7 +28,7 @@
 				<!-- start toolbar navigation -->
 				<aon:div styleClass="aon-finding-toolbar-item-group">					
 					<aon:commandButton id="reset" value="#{bundle.aon_reset}"
-						action="menu_grid"
+						action="menu_form"
 						actionListener="#{menu.onReset}"
 						styleClass="aon-finding-toolbar-item aon-icon-reset"
 						accesskey="#{bundle.aon_key_new}"/>
@@ -38,7 +38,7 @@
 						styleClass="aon-finding-toolbar-item aon-icon-delete"
 						confirmTitle="Confirmation Dialog" confirmMessage="#{bundle.aon_remove_confirm}"
 						confirmActionListener="#{menu.onRemoveSelected}"
-						confirmAction="menu_grid"
+						confirmAction="menu_list"
 						accesskey="#{bundle.aon_key_remove}"/>
 			    </aon:div>
 				
@@ -98,33 +98,8 @@
 						rowClasses="aon-editDataTable-row-odd,dr-table-firstrow rich-table-firstrow aon-editDataTable-row-even"
 						cellpadding="0" cellspacing="0"
 						columnClasses="dr-table-cell rich-table-cell aon-editDataTable-iconColumn,
-								dr-table-cell rich-table-cell aon-editDataTable-iconColumn,
 								dr-table-cell rich-table-cell aon-editDataTable-textColumn,
-								dr-table-cell rich-table-cell aon-editDataTable-iconColumn,
-								dr-table-cell rich-table-cell aon-editDataTable-buttonsColumn">
-				
-						<aon:column>
-							<f:facet name="header">
-								<aon:outputText value="&#160;" />
-							</f:facet>
-							<aon:outputText value="&#160;" rendered="#{to==menu.to}" />
-							<aon:commandButton rendered="#{to!=menu.to}"
-								styleClass="aon-editDataTable-button aon-icon-rowSelector"
-								actionListener="#{menu.onSelect}" value="" immediate="true"
-								reRender="dataTable">
-							</aon:commandButton>
-							<f:facet name="footer">
-								<aon:div>
-									<aon:commandButton id="reset"
-										title="[#{bundle.aon_reset}]"
-										styleClass="aon-editDataTable-button aon-icon-reset" value=""
-										immediate="true" reRender="dataTable"
-										rendered="#{!menu.new}" actionListener="#{menu.onReset}"
-										accesskey="#{bundle.aon_key_new_line}">
-									</aon:commandButton>
-								</aon:div>
-							</f:facet>
-						</aon:column>
+								dr-table-cell rich-table-cell aon-editDataTable-iconColumn">
 				
 						<aon:column>
 							<f:facet name="header">
@@ -141,34 +116,24 @@
 							</aon:selectBooleanCheckbox>
 							<aon:graphicImage id="Menu_selected_blocked" rendered="#{to.defaultMenu}"
 								url="/images/cms/blocked.gif" alt="#{appBundle.menu_blocked}"/>
-							<f:facet name="footer">
-								<aon:outputText value="&#160;" />
-							</f:facet>
 						</aon:column>
 						
 						<aon:column>
 							<a4j:support 
-								action="menu_option_list"
+								action="menu_form"
 								actionListener="#{menu.onSelectOptions}"
 								event="onclick" />
 							<f:facet name="header">
 								<aon:outputText value="#{appBundle.menu_alias}" />
 							</f:facet>
-							<aon:outputText value="#{to.alias}" rendered="#{to!=menu.to}" 
+							<aon:outputText value="#{to.alias}"  
 								styleClass="aon-editDataTable-button"/>
-							<aon:inputText value="#{to.alias}"
-								rendered="#{to==menu.to}" size="40" maxlength="64" />
-							<f:facet name="footer">
-								<aon:div>
-									<aon:inputText value="#{menu.to.alias}"
-										rendered="#{menu.new}" size="40" maxlength="64" />
-								</aon:div>
-							</f:facet>
 						</aon:column>
 						
 						<aon:column>
 							<f:facet name="header">
-								<aon:outputText for="Menu_defaultMenu" value="#{appBundle.menu_defaultMenu}" />
+								<aon:outputText for="Menu_defaultMenu" 
+									value="#{appBundle.menu_defaultMenu}" />
 							</f:facet>
 							<aon:selectBooleanCheckbox id="Menu_defaultMenu" 
 									value="#{to.defaultMenu}" 
@@ -180,53 +145,16 @@
 							</aon:selectBooleanCheckbox>
 							<aon:graphicImage id="Menu_default_blocked" rendered="#{to.defaultMenu}"
 								url="/images/cms/selected.gif" alt="#{appBundle.menu_blocked}"/>
-							<f:facet name="footer">
-								<aon:outputText value="&#160;" />
-							</f:facet>
 						</aon:column>
 
-						<aon:column>
-							<f:facet name="header">
-								<aon:outputText value="&#160;" />
-							</f:facet>
-							<f:verbatim rendered="#{to!=menu.to}">&#160;</f:verbatim>
-							<aon:div rendered="#{to==menu.to}">
-								<aon:commandButton id="lineAccept" title="[#{bundle.aon_accept}]"
-									styleClass="aon-editDataTable-button aon-icon-accept"
-									reRender="dataTable,parentGrid"
-									actionListener="#{menu.onAccept}" />
-								<aon:commandButton id="lineCancel" title="[#{bundle.aon_cancel}]"
-									styleClass="aon-editDataTable-button aon-icon-cancel"
-									reRender="dataTable" immediate="true"
-									actionListener="#{menu.onCancel}" />
-								<aon:commandButton id="lineRemove" title="[#{bundle.aon_remove}]"
-									styleClass="aon-editDataTable-button aon-icon-delete"
-									reRender="dataTable,parentGrid" immediate="true"
-									actionListener="#{menu.onRemove}" />
-							</aon:div>
-							<f:facet name="footer">
-								<aon:div rendered="#{menu.new}">
-									<f:verbatim rendered="#{!menu.new}">&#160;</f:verbatim>
-									<aon:commandButton id="newAccept" title="[#{bundle.aon_accept}]"
-										styleClass="aon-editDataTable-button aon-icon-accept"
-										reRender="dataTable,parentGrid"
-										actionListener="#{menu.onAccept}" />
-									<aon:commandButton id="newCancel" title="[#{bundle.aon_cancel}]"
-										styleClass="aon-editDataTable-button aon-icon-cancel"
-										reRender="dataTable,parentGrid" immediate="true"
-										actionListener="#{menu.onCancel}" />
-								</aon:div>
-							</f:facet>
-						</aon:column>
 					</aon:dataTable>
 				
 					<aon:dataScroller dataTable="dataTable" model="#{menu.model}" />
 
 
 			</aon:div>
-			
 		</aon:form>
-		<aon:form id="placeList" target="list" />
+		
 	</ui:define>
 
 </ui:composition>

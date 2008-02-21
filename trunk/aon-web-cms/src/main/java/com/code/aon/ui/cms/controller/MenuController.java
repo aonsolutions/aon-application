@@ -154,7 +154,9 @@ public class MenuController extends GridController {
 		}
 	}
 
+	
 	public void onSelectOptions(ActionEvent event) throws ManagerBeanException, ExpressionException {
+		onSelect(event);
 		MenuOptionController moc = (MenuOptionController)AonUtil.getController("menu_option");
 		IManagerBean moBean = BeanManager.getManagerBean(MenuOption.class);
 		Menu menu = (Menu) this.getSelectedTO();
