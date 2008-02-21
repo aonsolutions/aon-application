@@ -111,9 +111,8 @@
 						</f:facet>
 						<aon:outputText value="#{to.alias}" rendered="#{to!=modular_page_option.to}" 
 							styleClass="aon-editDataTable-button"/>
-						<aon:panelGrid id="editData" 
-							columns="2" rendered="#{to==modular_page_option.to}" 
-							style="width:90%">
+						<aon:panelGrid id="editData" styleClass="none" columnClasses="aon-text-right,none"
+							columns="2" rendered="#{to==modular_page_option.to}">
 							
 							<aon:outputLabel 
 								value="#{appBundle.modular_page_option_alias}" />
@@ -222,21 +221,20 @@
 							<aon:outputText 
 								value="#{appBundle.modular_page_option_position}" />
 						</f:facet>
-						<aon:panelGrid  
-							columns="2" rendered="#{to!=modular_page_option.to}">
+						<aon:div  styleClass="aon-nowrap" rendered="#{to!=modular_page_option.to}">
 							<aon:graphicImage rendered="#{to.position == 0}"
 								url="/images/cms/spacer16.gif" style="margin-left: 8px;"/>
 							<aon:commandButton id="moveUp" 
 								reRender="dataTable" 
 								actionListener="#{modular_page_option.onMoveUp}" 
 								rendered="#{to.position != 0}"
-								image="/images/cms/up.gif" style="margin-left: 4px;"/>
+								image="/images/cms/up.gif" styleClass="aon-icon-commandButton"/>
 							<aon:commandButton id="moveDown"
 								reRender="dataTable"  
 								actionListener="#{modular_page_option.onMoveDown}"
 								rendered="#{to.position &lt; (modular_page_option.model.rowCount - 1)}"
-								image="/images/cms/down.gif" style="margin-left: 4px;" />
-						</aon:panelGrid>
+								image="/images/cms/down.gif" styleClass="aon-icon-commandButton" />
+						</aon:div>
 						<f:facet name="footer">
 							<aon:outputText value="&#160;" />
 						</f:facet>

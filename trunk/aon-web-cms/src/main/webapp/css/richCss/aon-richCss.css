@@ -930,7 +930,6 @@ text-decoration:none;
 	}
 .aon-editDataTable-header{
 	padding: 5px 1em;
-	border:#808080 1px solid;
 	font-weight:bold;
  	font-size:0.9em;
  	text-transform:uppercase;
@@ -940,7 +939,6 @@ text-decoration:none;
 .aon-editDataTable-footer{
 	padding: 2px 0.5em;
 	background-color:#d7d7d6;
-	border:#808080 1px solid;
 	vertical-align: top;
 	}
 .aon-editDataTable-row-odd{
