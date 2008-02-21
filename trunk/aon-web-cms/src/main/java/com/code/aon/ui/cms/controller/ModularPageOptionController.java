@@ -23,8 +23,6 @@ import com.code.aon.ui.util.AonUtil;
 
 public class ModularPageOptionController extends BasicI18nController {
 
-	private boolean cancelOnSelect = false;
-
 	private ModularPage currentModularPage;
 	
 	public ModularPage getCurrentModularPage() {
@@ -37,21 +35,16 @@ public class ModularPageOptionController extends BasicI18nController {
 
 	@SuppressWarnings("unused")
 	public void onSelect(ActionEvent event) {
-		if (!cancelOnSelect) {
-			super.onSelect(new ActionEvent(event.getComponent()));
-			FacesContext.getCurrentInstance().getApplication().getNavigationHandler().handleNavigation(FacesContext.getCurrentInstance(), null, "modular_page_option_form");
-			loadCurrentLanguage();
-		}
-		cancelOnSelect = false;
+		super.onSelect(new ActionEvent(event.getComponent()));
+		FacesContext.getCurrentInstance().getApplication().getNavigationHandler().handleNavigation(FacesContext.getCurrentInstance(), null, "modular_page_option_form");
+		loadCurrentLanguage();
 	}
 
 	public void onActivate(ActionEvent event) throws ManagerBeanException {
-		cancelOnSelect = true; 
 		activate(true);
 	}
 
 	public void onDeactivate(ActionEvent event) throws ManagerBeanException {
-		cancelOnSelect = true; 
 		activate(false);
 	}
 	
@@ -61,10 +54,6 @@ public class ModularPageOptionController extends BasicI18nController {
 		getManagerBean().update(mp);
 	}
 	
-	public void onChecked(ValueChangeEvent event) throws ManagerBeanException {
-		cancelOnSelect = true; 
-	}
-
 	public String getI18nLabel() throws ManagerBeanException {
 		String label = "";
 		ModularPageOptionDetail mpd = getCurrentDetail();
@@ -116,12 +105,10 @@ public class ModularPageOptionController extends BasicI18nController {
 	}
 	
     public void onMoveUp(ActionEvent event) throws ManagerBeanException, ExpressionException {
-		cancelOnSelect = true; 
     	move((ModularPageOption) this.model.getRowData(), -1);
     }
 
     public void onMoveDown(ActionEvent event) throws ManagerBeanException, ExpressionException {
-		cancelOnSelect = true; 
     	move((ModularPageOption) this.model.getRowData(), 1);    	
     }
 

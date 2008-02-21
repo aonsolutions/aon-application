@@ -2,9 +2,7 @@ package com.code.aon.ui.cms.controller;
 
 import java.util.List;
 
-import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
-import javax.faces.event.ValueChangeEvent;
 
 import com.code.aon.cms.ModularPage;
 import com.code.aon.cms.ModularPageOption;
@@ -15,29 +13,17 @@ import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionException;
-import com.code.aon.ui.form.GridController;
 import com.code.aon.ui.util.AonUtil;
 
-public class ModularPageController extends BasicI18nController {
+public class ModularPageController extends GridI18nController {
 
-	private boolean cancelOnSelect = false;
-	
 	@SuppressWarnings("unused")
 	public void onSelect(ActionEvent event) {
-		if (!cancelOnSelect) {
-			super.onSelect(new ActionEvent(event.getComponent()));
-			FacesContext.getCurrentInstance().getApplication().getNavigationHandler().handleNavigation(FacesContext.getCurrentInstance(), null, "modular_page_form");
-			loadCurrentLanguage();
-		}
-		cancelOnSelect = false;
-	}
-
-	public void onChecked(ValueChangeEvent event) throws ManagerBeanException {
-		cancelOnSelect = true;
+		super.onSelect(new ActionEvent(event.getComponent()));
+		loadCurrentLanguage();
 	}
 
 	public void onSelectOptions(ActionEvent event) throws ManagerBeanException, ExpressionException {
-		cancelOnSelect = true;
 		ModularPageOptionController mpc = (ModularPageOptionController)AonUtil.getController("modular_page_option");
 		IManagerBean mpBean = BeanManager.getManagerBean(ModularPageOption.class);
 		ModularPage modularPage = (ModularPage) this.getSelectedTO();
@@ -49,17 +35,13 @@ public class ModularPageController extends BasicI18nController {
 		mpc.onSearch(event);
 	}
 
-	public void defaultHomepageChanged(ValueChangeEvent event) throws ManagerBeanException, ExpressionException {
-		boolean selected = ((Boolean)event.getNewValue()).booleanValue();
+	public void defaultHomepageChanged(ActionEvent event) throws ManagerBeanException, ExpressionException {
 		ModularPage modularPage = (ModularPage) model.getRowData();
-		if (selected) {
-			disableHomepage();
-			modularPage.setHomepage(true);
-			modularPage.setActive(true);
-			IManagerBean bean = BeanManager.getManagerBean(ModularPage.class);
-			bean.update(modularPage);
-		}
-		cancelOnSelect = true;
+		disableHomepage();
+		modularPage.setHomepage(true);
+		modularPage.setActive(true);
+		IManagerBean bean = BeanManager.getManagerBean(ModularPage.class);
+		bean.update(modularPage);
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -74,12 +56,10 @@ public class ModularPageController extends BasicI18nController {
 	}
 
 	public void onActivate(ActionEvent event) throws ManagerBeanException {
-		cancelOnSelect = true; 
 		activate(true);
 	}
 
 	public void onDeactivate(ActionEvent event) throws ManagerBeanException {
-		cancelOnSelect = true; 
 		activate(false);
 	}
 	
