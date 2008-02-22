@@ -27,6 +27,10 @@ public class FrontProFormaInvoiceController extends BasicController {
 		return ((ProFormaInvoice)this.getTo()).getStatus().equals(ProFormaInvoiceStatus.DISCARDED);
 	}
 
+	public boolean isAccepted() {
+		return ((ProFormaInvoice)this.getTo()).getStatus().equals(ProFormaInvoiceStatus.ACCEPTED);
+	}
+
 	public void onDiscard(ActionEvent event){
 		((ProFormaInvoice)this.getTo()).setStatus(ProFormaInvoiceStatus.DISCARDED);
 		this.onAccept(event);
