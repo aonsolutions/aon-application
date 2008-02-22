@@ -890,6 +890,19 @@
 			<property-name>queryOnStartUP</property-name>
 			<value>true</value>
 		</managed-property>
+		<managed-property>
+			<property-name>listenerClasses</property-name>
+			<list-entries>
+				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+				<value>#{footerControllerListener}</value>
+			</list-entries>
+		</managed-property>
+	</managed-bean>
+
+	<managed-bean>
+		<managed-bean-name>footerControllerListener</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.cms.event.FooterControllerListener</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
 	</managed-bean>
 	
 	<!-- ************** SIDEBAR ************** -->
