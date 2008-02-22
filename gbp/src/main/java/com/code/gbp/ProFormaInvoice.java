@@ -30,7 +30,7 @@ public class ProFormaInvoice implements ITransferObject {
 	
 	private CostType costType;
 	
-	private boolean centralized;
+	private AccountContact accountContact;
 	
 	private Date invoiceDate;
 	
@@ -39,6 +39,12 @@ public class ProFormaInvoice implements ITransferObject {
 	private double amount;
 	
 	private ProFormaInvoiceStatus status;
+	
+	private Date paymentDate;
+	
+	private int paymentTerm;
+	
+	private Offer offer;
 
 	
 	@Id
@@ -91,12 +97,14 @@ public class ProFormaInvoice implements ITransferObject {
 		this.costType = costType;
 	}
 
-	public boolean isCentralized() {
-		return centralized;
+	@ManyToOne
+	@JoinColumn( name="account_contact" )
+	public AccountContact getAccountContact() {
+		return accountContact;
 	}
 
-	public void setCentralized(boolean centralized) {
-		this.centralized = centralized;
+	public void setAccountContact(AccountContact accountContact) {
+		this.accountContact = accountContact;
 	}
 
 	@Temporal(value=TemporalType.DATE)
@@ -133,5 +141,34 @@ public class ProFormaInvoice implements ITransferObject {
 
 	public void setStatus(ProFormaInvoiceStatus status) {
 		this.status = status;
+	}
+
+	@Temporal(value=TemporalType.DATE)
+	@Column(name="payment_date")
+	public Date getPaymentDate() {
+		return paymentDate;
+	}
+
+	public void setPaymentDate(Date paymentDate) {
+		this.paymentDate = paymentDate;
+	}
+
+	@Column(name="payment_term")
+	public int getPaymentTerm() {
+		return paymentTerm;
+	}
+
+	public void setPaymentTerm(int paymentTerm) {
+		this.paymentTerm = paymentTerm;
+	}
+
+	@ManyToOne
+	@JoinColumn( name="offer", nullable=false )
+	public Offer getOffer() {
+		return offer;
+	}
+
+	public void setOffer(Offer offer) {
+		this.offer = offer;
 	}
 }
