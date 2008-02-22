@@ -11,8 +11,10 @@ import javax.faces.model.SelectItem;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
+import com.code.gbp.AccountContact;
 import com.code.gbp.GeoZone;
 import com.code.gbp.IncidenceType;
+import com.code.gbp.InternalCustomer;
 import com.code.gbp.Office;
 import com.code.gbp.enumeration.AddInfoType;
 import com.code.gbp.enumeration.CampaignStatus;
@@ -20,6 +22,7 @@ import com.code.gbp.enumeration.ContactType;
 import com.code.gbp.enumeration.CostType;
 import com.code.gbp.enumeration.DocumentType;
 import com.code.gbp.enumeration.OfferStatus;
+import com.code.gbp.enumeration.OfferType;
 import com.code.gbp.enumeration.ProFormaInvoiceStatus;
 
 public class GBPCollectionsController {
@@ -86,7 +89,17 @@ public class GBPCollectionsController {
 		}
 		return offerStatusList;
 	}
-	
+
+	public List<SelectItem> getOfferTypes(){
+		List<SelectItem> offerTypeList = new LinkedList<SelectItem>();
+		Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
+		for(OfferType type:OfferType.values()){
+			SelectItem item = new SelectItem(type, type.getName(locale));
+			offerTypeList.add(item);
+		}
+		return offerTypeList;
+	}
+
 	@SuppressWarnings("unchecked")
 	public List<SelectItem> getOffices() throws ManagerBeanException{
 		List<SelectItem> offices = new LinkedList<SelectItem>();
@@ -94,7 +107,7 @@ public class GBPCollectionsController {
 		Iterator iter = officeBean.getList(null).iterator();
 		while(iter.hasNext()){
 			Office office = (Office)iter.next();
-			SelectItem item = new SelectItem(office.getId(), office.getName());
+			SelectItem item = new SelectItem(office.getId(), office.getCode() + " / " +office.getName());
 			offices.add(item);
 		}
 		return offices;
@@ -131,5 +144,31 @@ public class GBPCollectionsController {
 			documentTypes.add(item);
 		}
 		return documentTypes;
+	}
+	
+	@SuppressWarnings("unchecked")
+	public List<SelectItem> getInternalCustomers() throws ManagerBeanException{
+		List<SelectItem> customers = new LinkedList<SelectItem>();
+		IManagerBean internalCustomerBean = BeanManager.getManagerBean(InternalCustomer.class);
+		Iterator iter = internalCustomerBean.getList(null).iterator();
+		while(iter.hasNext()){
+			InternalCustomer internalCustomer = (InternalCustomer)iter.next();
+			SelectItem item = new SelectItem(internalCustomer.getId(), internalCustomer.getDescription());
+			customers.add(item);
+		}
+		return customers;
+	}
+	
+	@SuppressWarnings("unchecked")
+	public List<SelectItem> getAccountContacts() throws ManagerBeanException {
+		List<SelectItem> contacts = new LinkedList<SelectItem>();
+		IManagerBean accountContactBean = BeanManager.getManagerBean(AccountContact.class);
+		Iterator iter = accountContactBean.getList(null).iterator();
+		while(iter.hasNext()){
+			AccountContact contact = (AccountContact)iter.next();
+			SelectItem item = new SelectItem(contact.getId(), contact.getDescription());
+			contacts.add(item);
+		}
+		return contacts;
 	}
 }
