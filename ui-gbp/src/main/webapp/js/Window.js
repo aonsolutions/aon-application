@@ -77,15 +77,22 @@ function update(to) {
 
 function reportWindow(element, form, action, id) {
 	reportKey=element.id;
-	hform=document.forms[form];
-	var url = action + "?reportKey=" +reportKey;
-	if ( id ) {
-		url += "&id=" + id; 
+	for(var i = 0; i < document.forms.length; i++) {
+		if(document.forms[i].name.indexOf('placeList') > 0){
+			hform = document.forms[i];
+			break;	
+		}
 	}
-	hform.action = url;
-    var win3 = centerWindow(600, 250);
-	winId = window.open(hform.action, hform.target);
-	hform.submit();// Forces actionListener to be executed.
+	if(hform != null){
+		var url = action + "?reportKey=" +reportKey;
+		if ( id ) {
+			url += "&id=" + id; 
+		}
+		hform.action = url;
+	    var win3 = centerWindow(600, 250);
+		winId = window.open(hform.action, hform.target);
+		hform.submit();// Forces actionListener to be executed.
+	}	
 }
 
 function birtReportWindow(element, form, action, id) {
