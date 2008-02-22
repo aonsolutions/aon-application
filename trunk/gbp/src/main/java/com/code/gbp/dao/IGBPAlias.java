@@ -2,11 +2,13 @@ package com.code.gbp.dao;
 
 import com.code.aon.common.dao.DAOConstants;
 import com.code.aon.common.dao.DAOConstantsEntry;
+import com.code.gbp.AccountContact;
 import com.code.gbp.Campaign;
 import com.code.gbp.CampaignSupplier;
 import com.code.gbp.GeoZone;
 import com.code.gbp.Incidence;
 import com.code.gbp.IncidenceType;
+import com.code.gbp.InternalCustomer;
 import com.code.gbp.OfferSignature;
 import com.code.gbp.Offer;
 import com.code.gbp.Office;
@@ -16,6 +18,7 @@ import com.code.gbp.Requirement;
 import com.code.gbp.Supplier;
 import com.code.gbp.SupplierAddInfo;
 import com.code.gbp.SupplierContact;
+import com.code.gbp.SupplierContactPerson;
 import com.code.gbp.SupplierEconomicData;
 import com.code.gbp.SupplierObservation;
 
@@ -23,6 +26,37 @@ import com.code.gbp.SupplierObservation;
 * Interface for holding entity properties constants.
 */ 
 public interface IGBPAlias {
+
+
+
+	/** 
+	* DAOConstantsEntry for AccountContact entity.
+	*/ 
+	DAOConstantsEntry ACCOUNT_CONTACT_ENTRY = DAOConstants.getDAOConstant(AccountContact.class);
+
+	/** 
+	* Alias value: AccountContact_address
+	* Hibernate value: AccountContact.address
+	*/
+	String  ACCOUNT_CONTACT_ADDRESS = ACCOUNT_CONTACT_ENTRY.getAliasNames()[0];
+
+	/** 
+	* Alias value: AccountContact_contactPerson
+	* Hibernate value: AccountContact.contactPerson
+	*/
+	String  ACCOUNT_CONTACT_CONTACT_PERSON = ACCOUNT_CONTACT_ENTRY.getAliasNames()[1];
+
+	/** 
+	* Alias value: AccountContact_description
+	* Hibernate value: AccountContact.description
+	*/
+	String  ACCOUNT_CONTACT_DESCRIPTION = ACCOUNT_CONTACT_ENTRY.getAliasNames()[2];
+
+	/** 
+	* Alias value: AccountContact_id
+	* Hibernate value: AccountContact.id
+	*/
+	String  ACCOUNT_CONTACT_ID = ACCOUNT_CONTACT_ENTRY.getAliasNames()[3];
 
 
 
@@ -56,28 +90,34 @@ public interface IGBPAlias {
 	String  CAMPAIGN_ID = CAMPAIGN_ENTRY.getAliasNames()[3];
 
 	/** 
+	* Alias value: Campaign_internalCustomer_id
+	* Hibernate value: Campaign.internalCustomer.id
+	*/
+	String  CAMPAIGN_INTERNAL_CUSTOMER_ID = CAMPAIGN_ENTRY.getAliasNames()[4];
+
+	/** 
 	* Alias value: Campaign_name
 	* Hibernate value: Campaign.name
 	*/
-	String  CAMPAIGN_NAME = CAMPAIGN_ENTRY.getAliasNames()[4];
+	String  CAMPAIGN_NAME = CAMPAIGN_ENTRY.getAliasNames()[5];
 
 	/** 
 	* Alias value: Campaign_offerDueDate
 	* Hibernate value: Campaign.offerDueDate
 	*/
-	String  CAMPAIGN_OFFER_DUE_DATE = CAMPAIGN_ENTRY.getAliasNames()[5];
+	String  CAMPAIGN_OFFER_DUE_DATE = CAMPAIGN_ENTRY.getAliasNames()[6];
 
 	/** 
 	* Alias value: Campaign_startDate
 	* Hibernate value: Campaign.startDate
 	*/
-	String  CAMPAIGN_START_DATE = CAMPAIGN_ENTRY.getAliasNames()[6];
+	String  CAMPAIGN_START_DATE = CAMPAIGN_ENTRY.getAliasNames()[7];
 
 	/** 
 	* Alias value: Campaign_status
 	* Hibernate value: Campaign.status
 	*/
-	String  CAMPAIGN_STATUS = CAMPAIGN_ENTRY.getAliasNames()[7];
+	String  CAMPAIGN_STATUS = CAMPAIGN_ENTRY.getAliasNames()[8];
 
 
 
@@ -230,6 +270,25 @@ public interface IGBPAlias {
 
 
 	/** 
+	* DAOConstantsEntry for InternalCustomer entity.
+	*/ 
+	DAOConstantsEntry INTERNAL_CUSTOMER_ENTRY = DAOConstants.getDAOConstant(InternalCustomer.class);
+
+	/** 
+	* Alias value: InternalCustomer_description
+	* Hibernate value: InternalCustomer.description
+	*/
+	String  INTERNAL_CUSTOMER_DESCRIPTION = INTERNAL_CUSTOMER_ENTRY.getAliasNames()[0];
+
+	/** 
+	* Alias value: InternalCustomer_id
+	* Hibernate value: InternalCustomer.id
+	*/
+	String  INTERNAL_CUSTOMER_ID = INTERNAL_CUSTOMER_ENTRY.getAliasNames()[1];
+
+
+
+	/** 
 	* DAOConstantsEntry for OfferSignature entity.
 	*/ 
 	DAOConstantsEntry OFFER_SIGNATURE_ENTRY = DAOConstants.getDAOConstant(OfferSignature.class);
@@ -278,28 +337,28 @@ public interface IGBPAlias {
 	DAOConstantsEntry OFFER_ENTRY = DAOConstants.getDAOConstant(Offer.class);
 
 	/** 
+	* Alias value: Offer_accountContact_id
+	* Hibernate value: Offer.accountContact.id
+	*/
+	String  OFFER_ACCOUNT_CONTACT_ID = OFFER_ENTRY.getAliasNames()[0];
+
+	/** 
 	* Alias value: Offer_additionalConditions
 	* Hibernate value: Offer.additionalConditions
 	*/
-	String  OFFER_ADDITIONAL_CONDITIONS = OFFER_ENTRY.getAliasNames()[0];
+	String  OFFER_ADDITIONAL_CONDITIONS = OFFER_ENTRY.getAliasNames()[1];
 
 	/** 
 	* Alias value: Offer_campaign_id
 	* Hibernate value: Offer.campaign.id
 	*/
-	String  OFFER_CAMPAIGN_ID = OFFER_ENTRY.getAliasNames()[1];
+	String  OFFER_CAMPAIGN_ID = OFFER_ENTRY.getAliasNames()[2];
 
 	/** 
 	* Alias value: Offer_campaign_code
 	* Hibernate value: Offer.campaign.code
 	*/
-	String  OFFER_CAMPAIGN_CODE = OFFER_ENTRY.getAliasNames()[2];
-
-	/** 
-	* Alias value: Offer_centralized
-	* Hibernate value: Offer.centralized
-	*/
-	String  OFFER_CENTRALIZED = OFFER_ENTRY.getAliasNames()[3];
+	String  OFFER_CAMPAIGN_CODE = OFFER_ENTRY.getAliasNames()[3];
 
 	/** 
 	* Alias value: Offer_costType
@@ -320,52 +379,70 @@ public interface IGBPAlias {
 	String  OFFER_DELIVERY_DATE = OFFER_ENTRY.getAliasNames()[6];
 
 	/** 
+	* Alias value: Offer_giftCode
+	* Hibernate value: Offer.giftCode
+	*/
+	String  OFFER_GIFT_CODE = OFFER_ENTRY.getAliasNames()[7];
+
+	/** 
 	* Alias value: Offer_id
 	* Hibernate value: Offer.id
 	*/
-	String  OFFER_ID = OFFER_ENTRY.getAliasNames()[7];
+	String  OFFER_ID = OFFER_ENTRY.getAliasNames()[8];
 
 	/** 
 	* Alias value: Offer_offerDate
 	* Hibernate value: Offer.offerDate
 	*/
-	String  OFFER_OFFER_DATE = OFFER_ENTRY.getAliasNames()[8];
+	String  OFFER_OFFER_DATE = OFFER_ENTRY.getAliasNames()[9];
 
 	/** 
 	* Alias value: Offer_office_id
 	* Hibernate value: Offer.office.id
 	*/
-	String  OFFER_OFFICE_ID = OFFER_ENTRY.getAliasNames()[9];
+	String  OFFER_OFFICE_ID = OFFER_ENTRY.getAliasNames()[10];
+
+	/** 
+	* Alias value: Offer_paymentTerm
+	* Hibernate value: Offer.paymentTerm
+	*/
+	String  OFFER_PAYMENT_TERM = OFFER_ENTRY.getAliasNames()[11];
 
 	/** 
 	* Alias value: Offer_price
 	* Hibernate value: Offer.price
 	*/
-	String  OFFER_PRICE = OFFER_ENTRY.getAliasNames()[10];
+	String  OFFER_PRICE = OFFER_ENTRY.getAliasNames()[12];
 
 	/** 
 	* Alias value: Offer_quality
 	* Hibernate value: Offer.quality
 	*/
-	String  OFFER_QUALITY = OFFER_ENTRY.getAliasNames()[11];
+	String  OFFER_QUALITY = OFFER_ENTRY.getAliasNames()[13];
 
 	/** 
 	* Alias value: Offer_status
 	* Hibernate value: Offer.status
 	*/
-	String  OFFER_STATUS = OFFER_ENTRY.getAliasNames()[12];
+	String  OFFER_STATUS = OFFER_ENTRY.getAliasNames()[14];
 
 	/** 
 	* Alias value: Offer_stockProvision
 	* Hibernate value: Offer.stockProvision
 	*/
-	String  OFFER_STOCK_PROVISION = OFFER_ENTRY.getAliasNames()[13];
+	String  OFFER_STOCK_PROVISION = OFFER_ENTRY.getAliasNames()[15];
 
 	/** 
 	* Alias value: Offer_supplier_id
 	* Hibernate value: Offer.supplier.id
 	*/
-	String  OFFER_SUPPLIER_ID = OFFER_ENTRY.getAliasNames()[14];
+	String  OFFER_SUPPLIER_ID = OFFER_ENTRY.getAliasNames()[16];
+
+	/** 
+	* Alias value: Offer_type
+	* Hibernate value: Offer.type
+	*/
+	String  OFFER_TYPE = OFFER_ENTRY.getAliasNames()[17];
 
 
 
@@ -400,28 +477,28 @@ public interface IGBPAlias {
 	DAOConstantsEntry PRO_FORMA_INVOICE_ENTRY = DAOConstants.getDAOConstant(ProFormaInvoice.class);
 
 	/** 
+	* Alias value: ProFormaInvoice_accountContact_id
+	* Hibernate value: ProFormaInvoice.accountContact.id
+	*/
+	String  PRO_FORMA_INVOICE_ACCOUNT_CONTACT_ID = PRO_FORMA_INVOICE_ENTRY.getAliasNames()[0];
+
+	/** 
 	* Alias value: ProFormaInvoice_amount
 	* Hibernate value: ProFormaInvoice.amount
 	*/
-	String  PRO_FORMA_INVOICE_AMOUNT = PRO_FORMA_INVOICE_ENTRY.getAliasNames()[0];
+	String  PRO_FORMA_INVOICE_AMOUNT = PRO_FORMA_INVOICE_ENTRY.getAliasNames()[1];
 
 	/** 
 	* Alias value: ProFormaInvoice_campaign_id
 	* Hibernate value: ProFormaInvoice.campaign.id
 	*/
-	String  PRO_FORMA_INVOICE_CAMPAIGN_ID = PRO_FORMA_INVOICE_ENTRY.getAliasNames()[1];
+	String  PRO_FORMA_INVOICE_CAMPAIGN_ID = PRO_FORMA_INVOICE_ENTRY.getAliasNames()[2];
 
 	/** 
 	* Alias value: ProFormaInvoice_campaign_code
 	* Hibernate value: ProFormaInvoice.campaign.code
 	*/
-	String  PRO_FORMA_INVOICE_CAMPAIGN_CODE = PRO_FORMA_INVOICE_ENTRY.getAliasNames()[2];
-
-	/** 
-	* Alias value: ProFormaInvoice_centralized
-	* Hibernate value: ProFormaInvoice.centralized
-	*/
-	String  PRO_FORMA_INVOICE_CENTRALIZED = PRO_FORMA_INVOICE_ENTRY.getAliasNames()[3];
+	String  PRO_FORMA_INVOICE_CAMPAIGN_CODE = PRO_FORMA_INVOICE_ENTRY.getAliasNames()[3];
 
 	/** 
 	* Alias value: ProFormaInvoice_costType
@@ -448,22 +525,40 @@ public interface IGBPAlias {
 	String  PRO_FORMA_INVOICE_NUMBER = PRO_FORMA_INVOICE_ENTRY.getAliasNames()[7];
 
 	/** 
+	* Alias value: ProFormaInvoice_offer_id
+	* Hibernate value: ProFormaInvoice.offer_id
+	*/
+	String  PRO_FORMA_INVOICE_OFFER_ID = PRO_FORMA_INVOICE_ENTRY.getAliasNames()[8];
+
+	/** 
 	* Alias value: ProFormaInvoice_office_id
 	* Hibernate value: ProFormaInvoice.office.id
 	*/
-	String  PRO_FORMA_INVOICE_OFFICE_ID = PRO_FORMA_INVOICE_ENTRY.getAliasNames()[8];
+	String  PRO_FORMA_INVOICE_OFFICE_ID = PRO_FORMA_INVOICE_ENTRY.getAliasNames()[9];
+
+	/** 
+	* Alias value: ProFormaInvoice_paymentDate
+	* Hibernate value: ProFormaInvoice.paymentDate
+	*/
+	String  PRO_FORMA_INVOICE_PAYMENT_DATE = PRO_FORMA_INVOICE_ENTRY.getAliasNames()[10];
+
+	/** 
+	* Alias value: ProFormaInvoice_paymentTerm
+	* Hibernate value: ProFormaInvoice.paymentTerm
+	*/
+	String  PRO_FORMA_INVOICE_PAYMENT_TERM = PRO_FORMA_INVOICE_ENTRY.getAliasNames()[11];
 
 	/** 
 	* Alias value: ProFormaInvoice_status
 	* Hibernate value: ProFormaInvoice.status
 	*/
-	String  PRO_FORMA_INVOICE_STATUS = PRO_FORMA_INVOICE_ENTRY.getAliasNames()[9];
+	String  PRO_FORMA_INVOICE_STATUS = PRO_FORMA_INVOICE_ENTRY.getAliasNames()[12];
 
 	/** 
 	* Alias value: ProFormaInvoice_supplier_id
 	* Hibernate value: ProFormaInvoice.supplier.id
 	*/
-	String  PRO_FORMA_INVOICE_SUPPLIER_ID = PRO_FORMA_INVOICE_ENTRY.getAliasNames()[10];
+	String  PRO_FORMA_INVOICE_SUPPLIER_ID = PRO_FORMA_INVOICE_ENTRY.getAliasNames()[13];
 
 
 
@@ -691,6 +786,61 @@ public interface IGBPAlias {
 	* Hibernate value: SupplierContact.value
 	*/
 	String  SUPPLIER_CONTACT_VALUE = SUPPLIER_CONTACT_ENTRY.getAliasNames()[4];
+
+
+
+	/** 
+	* DAOConstantsEntry for SupplierContactPerson entity.
+	*/ 
+	DAOConstantsEntry SUPPLIER_CONTACT_PERSON_ENTRY = DAOConstants.getDAOConstant(SupplierContactPerson.class);
+
+	/** 
+	* Alias value: SupplierContactPerson_cellular
+	* Hibernate value: SupplierContactPerson.cellular
+	*/
+	String  SUPPLIER_CONTACT_PERSON_CELLULAR = SUPPLIER_CONTACT_PERSON_ENTRY.getAliasNames()[0];
+
+	/** 
+	* Alias value: SupplierContactPerson_fax
+	* Hibernate value: SupplierContactPerson.fax
+	*/
+	String  SUPPLIER_CONTACT_PERSON_FAX = SUPPLIER_CONTACT_PERSON_ENTRY.getAliasNames()[1];
+
+	/** 
+	* Alias value: SupplierContactPerson_fixedPhone
+	* Hibernate value: SupplierContactPerson.fixedPhone
+	*/
+	String  SUPPLIER_CONTACT_PERSON_FIXED_PHONE = SUPPLIER_CONTACT_PERSON_ENTRY.getAliasNames()[2];
+
+	/** 
+	* Alias value: SupplierContactPerson_id
+	* Hibernate value: SupplierContactPerson.id
+	*/
+	String  SUPPLIER_CONTACT_PERSON_ID = SUPPLIER_CONTACT_PERSON_ENTRY.getAliasNames()[3];
+
+	/** 
+	* Alias value: SupplierContactPerson_mail
+	* Hibernate value: SupplierContactPerson.mail
+	*/
+	String  SUPPLIER_CONTACT_PERSON_MAIL = SUPPLIER_CONTACT_PERSON_ENTRY.getAliasNames()[4];
+
+	/** 
+	* Alias value: SupplierContactPerson_name
+	* Hibernate value: SupplierContactPerson.name
+	*/
+	String  SUPPLIER_CONTACT_PERSON_NAME = SUPPLIER_CONTACT_PERSON_ENTRY.getAliasNames()[5];
+
+	/** 
+	* Alias value: SupplierContactPerson_position
+	* Hibernate value: SupplierContactPerson.position
+	*/
+	String  SUPPLIER_CONTACT_PERSON_POSITION = SUPPLIER_CONTACT_PERSON_ENTRY.getAliasNames()[6];
+
+	/** 
+	* Alias value: SupplierContactPerson_supplier_id
+	* Hibernate value: SupplierContactPerson.supplier.id
+	*/
+	String  SUPPLIER_CONTACT_PERSON_SUPPLIER_ID = SUPPLIER_CONTACT_PERSON_ENTRY.getAliasNames()[7];
 
 
 
