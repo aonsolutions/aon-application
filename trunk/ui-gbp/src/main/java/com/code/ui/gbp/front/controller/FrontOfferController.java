@@ -54,15 +54,17 @@ public class FrontOfferController extends BasicController {
 		FrontProFormaInvoiceController proFormaController = (FrontProFormaInvoiceController)AonUtil.getController(FRONT_PRO_FORMA_CONTROLLER_NAME);
 		proFormaController.onReset(event);
 		ProFormaInvoice invoice = (ProFormaInvoice)proFormaController.getTo();
+		invoice.setAccountContact(offer.getAccountContact());
 		invoice.setAmount(offer.getPrice());
 		invoice.setCampaign(offer.getCampaign());
-		invoice.setCentralized(offer.isCentralized());
 		invoice.setCostType(offer.getCostType());
 		invoice.setInvoiceDate(new Date());
 		invoice.setNumber("");
 		invoice.setOffice(offer.getOffice());
+		invoice.setPaymentTerm(offer.getPaymentTerm());
 		invoice.setStatus(ProFormaInvoiceStatus.PENDING);
 		invoice.setSupplier(offer.getSupplier());
+		invoice.setOffer(offer);
 		proFormaController.accept(event);
 		proFormaController.setModel(null);
 	}
