@@ -4,50 +4,28 @@ import java.util.List;
 
 import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
-import javax.faces.event.ValueChangeEvent;
 
 import com.code.aon.cms.Footer;
-import com.code.aon.cms.dao.ICMSAlias;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
-import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionException;
 
 
-public class FooterController extends GridI18nController {
+public class FooterController extends BasicI18nController {
 
 	@SuppressWarnings("unused")
 	public void onSelect(ActionEvent event) {
 		super.onSelect(new ActionEvent(event.getComponent()));
-		FacesContext.getCurrentInstance().getApplication().getNavigationHandler().handleNavigation(FacesContext.getCurrentInstance(), null, "footer_form");
+		FacesContext.getCurrentInstance().getApplication().getNavigationHandler().handleNavigation(FacesContext.getCurrentInstance(), null, "header_form");
 		loadCurrentLanguage();
 	}
-	
-	public void onAccept(ActionEvent event) {
-		try {
-			Footer footer = (Footer)getTo();
-			IManagerBean bean = BeanManager.getManagerBean(Footer.class);
-			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(bean.getFieldName(ICMSAlias.FOOTER_DEFAULT_), true);
-			List<ITransferObject> list = (List<ITransferObject>)bean.getList(criteria);
-			if (list.size() == 0) {
-				footer.setDefault_(true);
-			}
-		} catch (ManagerBeanException e) {
-			e.printStackTrace();
-		}
-		super.onAccept(event);
-	}
 
-	public void defaultChanged(ValueChangeEvent event) throws ManagerBeanException, ExpressionException {
-		boolean selected = ((Boolean)event.getNewValue()).booleanValue();
+	public void defaultChanged(ActionEvent event) throws ManagerBeanException, ExpressionException {
 		Footer footer = (Footer) model.getRowData();
-		if (selected) {
-			footer.setDefault_(true);
-			updateDefault(footer);
-		}
+		footer.setDefault_(true);
+		updateDefault(footer);
 	}
 	
 	@SuppressWarnings("unchecked")
