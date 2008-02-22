@@ -1,15 +1,11 @@
 package com.code.ui.gbp.front.event;
 
-import java.util.Date;
-
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
-import com.code.gbp.ProFormaInvoice;
 import com.code.gbp.Supplier;
 import com.code.gbp.dao.IGBPAlias;
-import com.code.gbp.enumeration.ProFormaInvoiceStatus;
 import com.code.ui.gbp.front.util.FrontUtil;
 
 public class FrontProFormaInvoiceControllerListener extends ControllerAdapter {
@@ -24,12 +20,5 @@ public class FrontProFormaInvoiceControllerListener extends ControllerAdapter {
 		} catch (ManagerBeanException e) {
 			throw new ControllerListenerException(e);
 		}
-	}
-	
-	@Override
-	public void beforeBeanAdded(ControllerEvent event) throws ControllerListenerException {
-		((ProFormaInvoice)event.getController().getTo()).setSupplier(FrontUtil.getCurrentSupplier());
-		((ProFormaInvoice)event.getController().getTo()).setInvoiceDate(new Date());
-		((ProFormaInvoice)event.getController().getTo()).setStatus(ProFormaInvoiceStatus.PENDING);
-	}
+	}	
 }
