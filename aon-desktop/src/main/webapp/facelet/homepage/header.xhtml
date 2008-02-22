@@ -8,8 +8,8 @@
 <body>
 
 <ui:composition>
-
 	<aon:div id="aon-header" styleClass="aon-desktop-header">
+		<aon:div styleClass="aon-connection-status"><aon:outputConnectionStatus styleClass="aon-connection-control"/></aon:div>
 		<aon:panelGrid columns="2" cellpadding="0" cellspacing="0" width="100%" dir="true">
 			<aon:panelGroup>
 				<aon:div styleClass="aon-logo">
@@ -35,13 +35,24 @@
 						</aon:div>
 					</aon:panelGroup>
 					<aon:div style="text-align:right;">
+						<aon:form>
 						<aon:div styleClass="aon-desktop-header-tab">
 							<aon:panelGrid columns="4" cellpadding="5" cellspacing="0">
-								<aon:div style="white-space:nowrap;"><aon:outputText value="#{desktop.companyName}" /></aon:div>
-								<aon:div style="white-space:nowrap;"><aon:outputText value="/" /></aon:div>
-								<aon:div style="white-space:nowrap;"><aon:outputText value="#{desktop.loggedUserName}" /></aon:div>
+								<aon:div style="white-space:nowrap;padding:1px 0.5em"><aon:outputText value="#{desktop.companyName}" /></aon:div>
+								<aon:div style="white-space:nowrap;padding:1px 0em"><aon:outputText value="/" /></aon:div>
+								<aon:div style="white-space:nowrap;border-left:#CCC 1px solid;border-top:#CCC 1px solid;border-right:#808080 1px solid;border-bottom:#808080 1px solid;padding:1px 0.5em">
+									<aon:div style="display:inline;white-space:nowrap;">
+										<aon:commandLink actionListener="#{currentUser.onLoadCurrentUser}" action="user_changepassword_form">
+											<h:graphicImage url="/css/iceCss/images/aon-icon/aon-icon-user.png" style="border:0px;height:11px"/>
+										</aon:commandLink>
+										<aon:commandLink actionListener="#{currentUser.onLoadCurrentUser}" action="user_changepassword_form">
+											<aon:outputText value="#{desktop.loggedUserName}" />
+										</aon:commandLink>
+									</aon:div>
+								</aon:div>
 							</aon:panelGrid>
 						</aon:div>
+						</aon:form>
 					</aon:div>
 				</aon:panelGrid>
 			</aon:panelGroup>
@@ -61,7 +72,6 @@
 			</aon:panelGrid>
 		</aon:div>
 	</aon:div>
-
 </ui:composition>
 
 </body>

@@ -88,13 +88,20 @@
 							columnClasses="aon-formTable-column-odd,aon-formTable-column-even">
 
 							<aon:outputLabel for="Notice_date"
-								rendered="#{!notice.new}" 
 								value="#{groupwareBundle.aon_date}" />
-							<aon:outputText id="Notice_date" value="#{notice.to.date}"
-								rendered="#{!notice.new}" styleClass="aon-text-disabled">
+
+							<ice:selectInputDate id="Notice_date" 
+								renderAsPopup="true" value="#{notice.to.date}"
+								popupDateFormat="#{appBundle.aon_date_pattern}">
 								<f:convertDateTime pattern="#{bundle.aon_timestamp_pattern}"
 									timeZone="#{timeZoneController.timeZoneId}" />
-							</aon:outputText>
+							</ice:selectInputDate>
+
+							<!-- aon:outputText id="Notice_date" value="#{notice.to.date}"
+								styleClass="aon-text-disabled">
+								<f:convertDateTime pattern="#{bundle.aon_timestamp_pattern}"
+									timeZone="#{timeZoneController.timeZoneId}" />
+							</aon:outputText> -->
 
 							<aon:outputLabel for="Notice_workGroup_id"
 								value="#{groupwareBundle.notice_work_group}" />

@@ -37,7 +37,7 @@ public class AonUserController extends UserController {
 			e.printStackTrace();
 		}
 	}
-
+	/*
 	public boolean isFirstTime() {
 		try {
 			if (getTo() == null) loadUser();
@@ -48,8 +48,9 @@ public class AonUserController extends UserController {
 			e.printStackTrace();
 		}
 		return true;
-	}
+	}*/
 
+	/*
 	@SuppressWarnings("unchecked")
 	public boolean isSigned() {
 		try {
@@ -78,8 +79,9 @@ public class AonUserController extends UserController {
 			e.printStackTrace();
 		}
 		return true;
-	}
-
+	}*/
+	
+	/*
 	public boolean isMaster() {
 		try {
 			if (getTo() == null) loadUser();
@@ -90,7 +92,7 @@ public class AonUserController extends UserController {
 			e.printStackTrace();
 		}
 		return true;
-	}
+	}*/
 
 	@SuppressWarnings("unchecked")
 	private void loadUser() throws ManagerBeanException {
@@ -108,7 +110,6 @@ public class AonUserController extends UserController {
 		criteria.addEqualExpression(userBean.getFieldName(IConfigAlias.USER_LOGIN), user.getShortName());
 		List list = userBean.getList(criteria);
 		User u = (User)list.get(0);
-		UserManager um;
 		getUserManager().findUser(user.getShortName());
 		setUserTO(u);
 	}
@@ -130,6 +131,7 @@ public class AonUserController extends UserController {
 		}
 	}
 
+	/*
 	public void sign(ActionEvent event) {
 		if (!accepted) {
 			AonUtil.addInfoMessage("Debe aceptar el contrato.");
@@ -145,8 +147,9 @@ public class AonUserController extends UserController {
 				u.setStatus(status);
 			}
 		}
-	}
+	}*/
 
+	/*
 	@SuppressWarnings("unchecked")
 	private void acceptAllMasterUser() throws ManagerBeanException {
 		IManagerBean userBean = BeanManager.getManagerBean(User.class);
@@ -161,6 +164,6 @@ public class AonUserController extends UserController {
 				userBean.update(u);
 			}
 		}
-	}
+	}*/
 
 }

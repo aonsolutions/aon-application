@@ -48,8 +48,7 @@ import com.icesoft.faces.component.ext.RowSelectorEvent;
 
 public class DesktopController extends BasicController {
 	
-
-    private String NOTE_CONTROLLER_NAME = "note";
+	private String NOTE_CONTROLLER_NAME = "note";
     private String ALARM_CONTROLLER_NAME = "alarm";
     private String NOTICE_CONTROLLER_NAME = "notice";
 
@@ -57,6 +56,21 @@ public class DesktopController extends BasicController {
     private ListDataModel todayAlarmModel;
     private ListDataModel recentAlarmModel;
     private ListDataModel ancientAlarmModel;
+
+    private AonServer mail_server;
+    
+    public DesktopController() {
+		super();
+		//Connect to mail server.
+		try {
+			WebMailController webmail = (WebMailController)AonUtil.getRegisteredBean(AonConstants.BEAN_WEBMAIL);
+			webmail.initDesktop(UserUtils.getLoggedUser());
+			mail_server = webmail.getServer();
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+		}
+    }
 
     @SuppressWarnings("unchecked")
     public List<DesktopNoticeSummary> getNoticeSummaryModel() {
@@ -249,16 +263,24 @@ public class DesktopController extends BasicController {
 
     public List<AonFolder> getMailSummaryModel() {
     	List<AonFolder> result = new ArrayList<AonFolder>();
-        User user = UserUtils.getLoggedUser();
-		WebMailController webmail = (WebMailController)AonUtil.getRegisteredBean(AonConstants.BEAN_WEBMAIL);
-		webmail.initDesktop(user);
-		AonServer server = webmail.getServer();
-		if (server!=null){
-			AonFolder folder = server.getAonFolder(AonFolder.INBOX_FOLDER_NAME);
+		if (mail_server!=null){
+			AonFolder folder = mail_server.getAonFolder(AonFolder.INBOX_FOLDER_NAME);
 			result.add(folder);
 			return result;
 		}
 		return null;
+    }
+
+    public boolean isMailActive() {
+    	try {
+	    	if (mail_server != null){
+				AonFolder folder = mail_server.getAonFolder(AonFolder.INBOX_FOLDER_NAME);
+				if (folder != null) return true;
+			}
+    	} catch (Exception e) {
+    		e.printStackTrace();
+    	}
+		return false;
     }
 
     @SuppressWarnings("unchecked")
@@ -290,14 +312,19 @@ public class DesktopController extends BasicController {
 	 */
 	@SuppressWarnings("unchecked")
 	private RegistryAttachment obtainCompanyLogo() throws ManagerBeanException {
-		IManagerBean registryAttachBean = BeanManager.getManagerBean(RegistryAttachment.class);
-		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(registryAttachBean.getFieldName(IRegistryAlias.REGISTRY_ATTACHMENT_REGISTRY_ATTACHMENT_TYPE), RegistryAttachmentType.LOGO);
-		Iterator iter = registryAttachBean.getList(criteria).iterator();
-		if(iter.hasNext()){
-			return (RegistryAttachment)iter.next();
-		}
-		return null;
+		try {
+			IManagerBean registryAttachBean = BeanManager.getManagerBean(RegistryAttachment.class);
+			Criteria criteria = new Criteria();
+			criteria.addEqualExpression(registryAttachBean.getFieldName(IRegistryAlias.REGISTRY_ATTACHMENT_REGISTRY_ATTACHMENT_TYPE), RegistryAttachmentType.LOGO);
+			Iterator iter = registryAttachBean.getList(criteria).iterator();
+			if(iter.hasNext()){
+				return (RegistryAttachment)iter.next();
+			}
+			return null;
+	    }
+	    catch (Exception e) {
+	    	return null;
+	    }
 	}
 
     public String getLoggedUserName() {

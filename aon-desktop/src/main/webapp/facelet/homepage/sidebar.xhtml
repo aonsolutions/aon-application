@@ -9,13 +9,14 @@
 
 <ui:composition>
 	<aon:form>
-		<aon:div styleClass="aon-sidebarIcons-bottom">
+		<aon:div styleClass="aon-sidebarIcons-bottom" > <!-- rendered="#{!currentUser.firstTime}" -->
 
 		<aon:commandLink styleClass="aon-icon-big aon-icon-big-home" action="home">
 			<aon:outputText value="#{appBundle.aon_home}"/>
 		</aon:commandLink>
 
-		<ice:outputLink styleClass="aon-icon-big aon-icon-big-correo" value="/aon-desktop/aon-webmail.auth" target="_blank">
+		<ice:outputLink styleClass="aon-icon-big aon-icon-big-correo" value="/aon-desktop/aon-webmail.auth" 
+			target="_blank" rendered="#{desktop.mailActive}">
 			<aon:outputText value="#{appBundle.aon_webmail}"/>
 		</ice:outputLink>
 

@@ -76,8 +76,15 @@
 							<f:facet name="header">
 								<aon:outputText value="#{groupwareBundle.favorite_url}" />
 							</f:facet>
+							<aon:outputText value="#{to.url}"/>
+						</aon:column>
+
+						<aon:column style="text-align:center">
+							<f:facet name="header">
+								<aon:outputText value="&#160;" />
+							</f:facet>
 							<aon:commandLink actionListener="#{favorite.onSelectUrl}" onclick="window.open('#{to.url}');">
-								<aon:outputText value="#{to.url}"/>
+								<aon:graphicImage url="/css/iceCss/images/aon-icon/aon-icon-file-entrance.png" style="border:0px;margin:2px;" alt="Abrir URL"/>
 							</aon:commandLink>
 						</aon:column>
 

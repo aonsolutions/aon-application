@@ -7,56 +7,48 @@
 <body>
 
 <ui:composition template="/facelet/templates/aon.ui.main.xhtml">
-	
+
 	<ui:define name="head">
 	</ui:define>
 
 	<ui:define name="content">
-		
-		<aon:form id="userForm">
+
+		<aon:form id="profileForm">
 
 			<aon:panelGrid columns="2" dir="true" styleClass="aon-title-toolbar"
 				cellpadding="0" cellspacing="0"
 				columnClasses="aon-content-title,aon-content-toolbar">
 
 				<aon:div styleClass="aon-content-title-internal">
-					<aon:outputText value="#{appBundle.aon_users}" />
+					<aon:outputText value="#{appBundle.aon_profile}" />
 				</aon:div>
 
 				<aon:div styleClass="aon-content-toolbar-internal">
 					<aon:div styleClass="aon-content-toolbar-item-group">
 						<aon:commandButton id="save" value="#{bundle.aon_save}"
-							actionListener="#{user.accept}"
-							action="user"
+							actionListener="#{domain.acceptProfile}"
+							action="profile_list"
 							styleClass="aon-content-toolbar-item aon-icon-accept"
 							onmouseout="this.className='aon-content-toolbar-item aon-icon-accept'"
 							onmouseover="this.className='aon-content-toolbar-item aon-icon-accept aon-content-toolbar-item-hover'"
 							accesskey="#{bundle.aon_key_save}" />
 						<aon:commandButton id="cancel" value="#{bundle.aon_cancel}"
-							actionListener="#{user.cancel}"
+							actionListener="#{domain.cancel}"
 							immediate="true" 
-							action="user_list"
+							action="profile_list"
 							styleClass="aon-content-toolbar-item aon-icon-cancel"
 							onmouseout="this.className='aon-content-toolbar-item aon-icon-cancel'"
 							onmouseover="this.className='aon-content-toolbar-item aon-icon-cancel aon-content-toolbar-item-hover'"
 							accesskey="#{bundle.aon_key_cancel}" />
-						<aon:commandButton id="search" value="#{bundle.aon_search}"
-							immediate="true" action="user_search"
-							actionListener="#{user.onEditSearch}"
-							styleClass="aon-content-toolbar-item aon-icon-search"
-							onmouseout="this.className='aon-content-toolbar-item aon-icon-search'"
-							onmouseover="this.className='aon-content-toolbar-item aon-icon-search aon-content-toolbar-item-hover'"
-							accesskey="#{bundle.aon_key_search}" />
-						<aon:commandButton id="groups" value="#{appBundle.aon_workgroups}"
-							action="work_group" actionListener="#{workGroup.onSearch}"
-							styleClass="aon-content-toolbar-item aon-icon-group"
-							onmouseout="this.className='aon-content-toolbar-item aon-icon-group'"
-							onmouseover="this.className='aon-content-toolbar-item aon-icon-group aon-content-toolbar-item-hover'"/>
-						<aon:commandButton id="scopes" value="#{appBundle.aon_scopes}"
-							action="scope" actionListener="#{scope.onSearch}"
-							styleClass="aon-content-toolbar-item aon-icon-ambito"
-							onmouseout="this.className='aon-content-toolbar-item aon-icon-ambito'"
-							onmouseover="this.className='aon-content-toolbar-item aon-icon-ambito aon-content-toolbar-item-hover'"/>
+						<aon:confirmButton id="remove" value="#{bundle.aon_remove}"
+							rendered="#{!domain.newProfile}"
+							styleClass="aon-content-toolbar-item aon-icon-delete"
+							immediate="true" confirmTitle="Confirmation Dialog"
+							confirmMessage="#{bundle.aon_remove_confirm}"
+							confirmActionListener="#{domain.removeProfile}"
+							confirmAction="profile_list"
+							onmouseout="this.className='aon-content-toolbar-item aon-icon-delete'"
+							onmouseover="this.className='aon-content-toolbar-item aon-icon-delete aon-content-toolbar-item-hover'"/>
 					</aon:div>
 				</aon:div>
 			</aon:panelGrid>
@@ -76,33 +68,24 @@
 							cellpadding="0" cellspacing="0"
 							columnClasses="aon-formTable-column-odd,aon-formTable-column-even">
 
-							<aon:outputLabel for="User_name"
-								value="#{configBundle.user_name}" />
-							<aon:inputText id="User_name"
-								styleClass="aon-inputText" required="true" size="80"
-								maxlength="64" value="#{user.to.name}" />
-
-							<aon:outputLabel for="User_login"
-								value="#{configBundle.user_login}" />
-							<aon:inputText id="User_login" disabled="true"
-								styleClass="aon-inputText" required="true" size="20"
-								maxlength="16" value="#{user.to.login}" />
-
-							<!--aon:outputLabel for="userData"
-								value="#{securityBundle.aon_security_profiles}"
+							<aon:outputLabel for="profileId"
+								value="#{appBundle.aon_profile}"
 								styleClass="aon-form-input-text-label" />
-							<aon:selectManyCheckbox id="userData"
-								value="#{user.userManager.relations}" layout="pageDirection"
+							<aon:inputText id="profileId" disabled="#{!domain.newProfile}"
+								styleClass="aon-inputText" required="true" size="20"
+								maxlength="16" value="#{domain.domainManager.relation.id}" />
+
+							<aon:outputLabel for="profileData"
+								value="#{securityBundle.aon_security_roles}"
+								styleClass="aon-form-input-text-label" />
+							<aon:selectManyCheckbox id="profileData"
+								value="#{domain.domainManager.relations}" layout="pageDirection"
 								layoutWidth="5" styleClass="selectManyCheckbox">
-								<f:selectItems value="#{user.userManager.profiles}" />
-							</aon:selectManyCheckbox -->
+								<f:selectItems value="#{domain.domainManager.availableRoles}" />
+							</aon:selectManyCheckbox>
 
 						</aon:panelGrid>
 					</aon:panelGrid>
-					
-					<ui:include src="/facelet/user/userWorkGroup/grid.xhtml" />
-							
-					<ui:include src="/facelet/user/userScope/grid.xhtml" />
 
 				</aon:div>
 			</aon:div>
