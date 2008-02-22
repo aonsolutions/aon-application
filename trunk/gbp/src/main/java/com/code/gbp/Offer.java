@@ -15,6 +15,7 @@ import javax.persistence.TemporalType;
 import com.code.aon.common.ITransferObject;
 import com.code.gbp.enumeration.CostType;
 import com.code.gbp.enumeration.OfferStatus;
+import com.code.gbp.enumeration.OfferType;
 
 @Entity
 @Table(name="offer")
@@ -43,10 +44,16 @@ public class Offer implements ITransferObject {
 	private Office office;
 	
 	private CostType costType;
-	
-	private boolean centralized;
 
+	private AccountContact accountContact;
+	
 	private OfferStatus status;
+	
+	private String giftCode;
+	
+	private int paymentTerm;
+	
+	private OfferType type;
 	
 	@Id
 	@GeneratedValue
@@ -161,12 +168,14 @@ public class Offer implements ITransferObject {
 		this.costType = costType;
 	}
 
-	public boolean isCentralized() {
-		return centralized;
+	@ManyToOne
+	@JoinColumn( name="account_contact" )
+	public AccountContact getAccountContact() {
+		return accountContact;
 	}
 
-	public void setCentralized(boolean centralized) {
-		this.centralized = centralized;
+	public void setAccountContact(AccountContact accountContact) {
+		this.accountContact = accountContact;
 	}
 
 	public OfferStatus getStatus() {
@@ -175,5 +184,31 @@ public class Offer implements ITransferObject {
 
 	public void setStatus(OfferStatus status) {
 		this.status = status;
+	}
+
+	@Column(name="gift_code", length=10)
+	public String getGiftCode() {
+		return giftCode;
+	}
+
+	public void setGiftCode(String giftCode) {
+		this.giftCode = giftCode;
+	}
+
+	@Column(name="payment_term")
+	public int getPaymentTerm() {
+		return paymentTerm;
+	}
+
+	public void setPaymentTerm(int paymentTerm) {
+		this.paymentTerm = paymentTerm;
+	}
+
+	public OfferType getType() {
+		return type;
+	}
+
+	public void setType(OfferType type) {
+		this.type = type;
 	}
 }
