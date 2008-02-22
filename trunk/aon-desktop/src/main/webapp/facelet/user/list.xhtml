@@ -36,11 +36,16 @@
 						styleClass="aon-content-toolbar-item aon-icon-ambito"
 						onmouseout="this.className='aon-content-toolbar-item aon-icon-ambito'"
 						onmouseover="this.className='aon-content-toolbar-item aon-icon-ambito aon-content-toolbar-item-hover'"/>
+					<aon:commandButton id="profiles" value="#{appBundle.aon_profiles}"
+						action="application_list" actionListener="#{domain.onLoadCurrentDomain}"
+						styleClass="aon-content-toolbar-item aon-icon-category"
+						onmouseout="this.className='aon-content-toolbar-item aon-icon-category'"
+						onmouseover="this.className='aon-content-toolbar-item aon-icon-category aon-content-toolbar-item-hover'"/>
 				</aon:div>
 			</aon:div>
 			<!-- end toolbar navigation -->
 		</aon:panelGrid>
-		
+
 		<!--  aon-region-body -->
 		<aon:div styleClass="aon-scroll-area">
 				<aon:div styleClass="aon-scroll-area-internal">					
@@ -49,9 +54,9 @@
 					</aon:div>
 					
 					<aon:dataTable id="userDataList" 
-						value="#{user.model}" var="to" rows="20"
+						value="#{user.model}" var="to" rows="30"
 						styleClass="aon-dataTable">
-					
+
 							<aon:column>
 								<aon:rowSelector selectionListener="#{user.onSelect}" />
 								<f:facet name="header">
@@ -68,16 +73,16 @@
 							</aon:column>
 
 						</aon:dataTable>
-						
+
 						<ui:include src="/facelet/shared/dataScroller.xhtml">
 							<ui:param name="dataTable" value="userDataList" />
 							<ui:param name="model" value="#{user.model}" />
 							<ui:param name="showNote" value="#{true}" />
 						</ui:include>					
-					
+
 				</aon:div>
 			</aon:div>
-			
+
 		</aon:form>
 	</ui:define>
 

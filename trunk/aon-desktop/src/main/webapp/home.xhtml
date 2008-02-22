@@ -9,12 +9,24 @@
 <ui:composition template="/facelet/templates/aon.ui.main.xhtml">
 
 	<ui:define name="content">
-		<aon:div>
+		<aon:div> <!-- rendered="#{!currentUser.firstTime}" -->
 			<aon:div>
 				<ui:include src="/facelet/homepage/aon-toolbar.xhtml" />
 			</aon:div>
 			<ui:include src="/facelet/homepage/aon-desktop.xhtml" />
 		</aon:div>
+		
+		<!-- aon:div rendered="#{currentUser.firstTime and currentUser.signed}">
+			<ui:include src="/facelet/user/newchangepassword.xhtml" />
+		</aon:div>
+
+		<aon:div rendered="#{currentUser.firstTime and !currentUser.signed and currentUser.master}">
+			<ui:include src="/facelet/user/contract.xhtml" />
+		</aon:div>
+
+		<aon:div rendered="#{currentUser.firstTime and !currentUser.signed and !currentUser.master}">
+			<ui:include src="/facelet/user/nosign.xhtml" />
+		</aon:div-->
 	</ui:define>
   
 </ui:composition>

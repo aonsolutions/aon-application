@@ -3,7 +3,6 @@
 	<name>aon-desktop</name>
 	<comment></comment>
 	<projects>
-		<project>aon-ui-config</project>
 		<project>aon-ui-webmail</project>
 	</projects>
 	<buildSpec>

@@ -18,7 +18,7 @@
 					columnClasses="aon-portlets-column1,aon-portlets-column2,aon-portlets-column3">
 
 					<aon:div>
-						<aon:div styleClass="aon-portlet">
+						<aon:div styleClass="aon-portlet" rendered="#{desktop.mailActive}">
 							<aon:div styleClass="aon-portlet-title">
 								<ice:outputLink value="/aon-desktop/aon-webmail.auth" target="_blank">
 									<aon:outputText value="#{appBundle.aon_desktop_mails}" styleClass="aon-portlet-title-text aon-icon aon-icon-webmail"/>
@@ -43,6 +43,15 @@
 							</aon:div>
 						</aon:div>
 
+						<aon:div styleClass="aon-portlet" rendered="#{!desktop.mailActive}">
+							<aon:div styleClass="aon-portlet-title">
+								<aon:outputText value="#{appBundle.aon_desktop_mails}" styleClass="aon-portlet-title-text aon-icon aon-icon-webmail"/>
+							</aon:div>
+							<aon:div styleClass="aon-portlet-body">
+								<aon:outputText value="#{appBundle.aon_desktop_mail_error}"/>
+							</aon:div>
+						</aon:div>
+						
 						<aon:div styleClass="aon-portlet">
 							<aon:div styleClass="aon-portlet-title">
 								<ice:commandLink actionListener="#{notice.onSearch}" action="notice">
