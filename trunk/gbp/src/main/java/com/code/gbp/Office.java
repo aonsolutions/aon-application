@@ -14,7 +14,7 @@ public class Office implements ITransferObject {
 
 	private Integer id;
 	
-	private String code;
+	private Integer code;
 	
 	private String name;
 
@@ -29,12 +29,12 @@ public class Office implements ITransferObject {
 		this.id = id;
 	}
 
-	@Column(nullable=false, length=6)
-	public String getCode() {
+	@Column(nullable=false)
+	public Integer getCode() {
 		return code;
 	}
 
-	public void setCode(String code) {
+	public void setCode(Integer code) {
 		this.code = code;
 	}
 
