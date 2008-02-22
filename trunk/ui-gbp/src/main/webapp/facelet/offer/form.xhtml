@@ -50,6 +50,13 @@
 			<aon:div styleClass="aon-scroll-area">
 				<aon:panelGrid id="offerGrid" columns="2" dir="true">
 
+					<aon:outputLabel for="Offer_type"
+						value="#{appBundle.gbp_offer_campaign_code}" />
+					<aon:selectOneMenu id="Offer_type"
+						disabled="true" value="#{frontOffer.to.type}">
+						<f:selectItems value="#{GBPCollections.offerTypes}" />
+					</aon:selectOneMenu>
+
 					<aon:outputLabel for="Offer_campaign_code"
 						value="#{appBundle.gbp_offer_campaign_code}" />
 					<aon:inputText id="Offer_campaign_code" size="16"
@@ -130,10 +137,26 @@
 						<f:selectItems value="#{GBPCollections.costTypes}" />
 					</aon:selectOneMenu>
 					
-					<aon:outputLabel for="Offer_centralized"
-						value="#{appBundle.gbp_offer_centralized}" />
-					<aon:selectBooleanCheckbox id="Offer_centralized"
-						value="#{offer.to.centralized}"/>
+					<aon:outputLabel for="Offer_accountContact_id"
+						value="#{appBundle.gbp_offer_account_contact}" />
+					<aon:selectOneMenu id="Offer_accountContact_id"
+						value="#{offer.to.accountContact.id}">
+						<f:selectItems value="#{GBPCollections.accountContacts}" />
+					</aon:selectOneMenu>
+
+					<aon:outputLabel for="Offer_giftCode"
+						value="#{appBundle.gbp_offer_gift_code}" />
+					<aon:inputText id="Offer_giftCode" 
+						size="10" maxlength="10"
+						value="#{offer.to.giftCode}" />
+
+					<aon:outputLabel for="Offer_paymentTerm"
+						value="#{appBundle.gbp_offer_payment_term}" />
+					<aon:inputText id="Offer_paymentTerm" 
+						size="3" maxlength="3"
+						value="#{offer.to.paymentTerm}" >
+						<f:validateLongRange />
+					</aon:inputText>	
 
 					<aon:outputLabel for="Offer_status"
 						value="#{appBundle.gbp_offer_status}" />
