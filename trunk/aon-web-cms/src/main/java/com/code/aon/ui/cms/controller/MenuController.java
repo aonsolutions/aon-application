@@ -81,8 +81,6 @@ public class MenuController extends GridController {
 		}
 	}
 	
-	
-	
 	public void defaultMenuChanged(ActionEvent event) throws ManagerBeanException, ExpressionException {
 		Menu menu = (Menu) model.getRowData();
 		updateDefaultMenu(menu);
@@ -126,40 +124,10 @@ public class MenuController extends GridController {
 		return MenuType.SIDEBAR;
 	}
 	
-	public void onAccept(ActionEvent event) {
-		try {
-			Menu menu  = (Menu)getTo();
-			menu.setType(getCurrentType());
-			IManagerBean menuBean = BeanManager.getManagerBean(Menu.class);
-			Criteria criteria = new Criteria();
-			criteria.addExpression(menuBean.getFieldName(ICMSAlias.MENU_TYPE), "" + menu.getType().ordinal());
-			criteria.addEqualExpression(menuBean.getFieldName(ICMSAlias.MENU_DEFAULT_MENU), true);
-			List<ITransferObject> list = (List<ITransferObject>)menuBean.getList(criteria);
-			if (list.size() == 0) {
-				menu.setDefaultMenu(true);
-			}
-		} catch (ManagerBeanException e) {
-			e.printStackTrace();
-		} catch (ExpressionException e) {
-			e.printStackTrace();
-		}
-		super.accept(event);
-		super.onReset(event);
-		try {
-			changeMenuList();
-		} catch (ManagerBeanException e) {
-			e.printStackTrace();
-		} catch (ExpressionException e) {
-			e.printStackTrace();
-		}
-	}
-
-	
 	public void onSelectOptions(ActionEvent event) throws ManagerBeanException, ExpressionException {
-		onSelect(event);
 		MenuOptionController moc = (MenuOptionController)AonUtil.getController("menu_option");
 		IManagerBean moBean = BeanManager.getManagerBean(MenuOption.class);
-		Menu menu = (Menu) this.getSelectedTO();
+		Menu menu = (Menu) this.getTo();
 		Criteria criteria = new Criteria();
 		criteria.addExpression(moBean.getFieldName(ICMSAlias.MENU_OPTION_MENU_ID), "" + menu.getId());
 		criteria.addOrder(moBean.getFieldName(ICMSAlias.MENU_OPTION_POSITION));
