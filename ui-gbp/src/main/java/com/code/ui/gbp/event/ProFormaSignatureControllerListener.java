@@ -1,5 +1,8 @@
 package com.code.ui.gbp.event;
 
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.Iterator;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -48,11 +51,19 @@ public class ProFormaSignatureControllerListener extends ControllerAdapter {
 		if(requirement != null){
 			if(enoughSignatures(requirement, proFormaInvoice)){
 				proFormaInvoice.setStatus(ProFormaInvoiceStatus.ACCEPTED);
+				proFormaInvoice.setPaymentDate(obtainPaymentDate(proFormaInvoice));
 				proFormaController.accept(null);
 			}
 		}else{
 			AonUtil.addErrorMessage("Unable to obtain the requeriment to apply");
 		}
+	}
+
+	private Date obtainPaymentDate(ProFormaInvoice proFormaInvoice) {
+		Calendar calendar = new GregorianCalendar();
+		calendar.setTime(new Date());
+		calendar.add(Calendar.DATE, proFormaInvoice.getPaymentTerm());
+		return calendar.getTime();
 	}
 
 	@SuppressWarnings("unchecked")
