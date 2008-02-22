@@ -9,10 +9,12 @@ import java.util.List;
 
 import javax.faces.event.ActionEvent;
 
+import com.code.aon.common.BasicManagerBean;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.bean.BeanConfigManager;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.company.Company;
 import com.code.aon.company.WebInfo;
@@ -45,6 +47,7 @@ public class GeneratorController extends BasicController implements VelocityCons
 		String template_path = TEMPLATE_PATH;
 		String temporal_path = TEMPORAL_PATH + "/" + System.currentTimeMillis() + "";
 		try {
+			HibernateUtil.setCloseSession(false);
 			vu = new VelocityUtil();
 			//vu.addMessage("Iniciando proceso de generación", VelocityUtil.INFO);
 			//vu.addMessage("", VelocityUtil.INFO);
@@ -62,8 +65,8 @@ public class GeneratorController extends BasicController implements VelocityCons
 			f.mkdirs();
 			vu.setTemporal_path(temporal_path);
 	
-			HibernateUtil.setCloseSession(false);
 			Company company = new Company();
+			//IManagerBean companyBean  = (IManagerBean)BeanConfigManager.getBean( Company.class );
 			IManagerBean companyBean = BeanManager.getManagerBean(Company.class);
 			List<ITransferObject> companyList = (List<ITransferObject>)companyBean.getList(null);
 			if (companyList.size() > 0) {
@@ -73,6 +76,7 @@ public class GeneratorController extends BasicController implements VelocityCons
 				vu.put("company", company);
 				vu.initialize();
 	
+				//IManagerBean attachBean = (IManagerBean)BeanConfigManager.getBean( RegistryAttachment.class );
 				IManagerBean attachBean = BeanManager.getManagerBean(RegistryAttachment.class);
 				Criteria attachCriteria = new Criteria();
 				attachCriteria.addEqualExpression(attachBean.getFieldName(IRegistryAlias.REGISTRY_ATTACHMENT_REGISTRY_ID), company.getId());
@@ -93,6 +97,7 @@ public class GeneratorController extends BasicController implements VelocityCons
 		 *			$images - Imagenes de la empresa (opcional)
 		 * 		}
 		 */		
+				//IManagerBean webinfoBean = (IManagerBean)BeanConfigManager.getBean( WebInfo.class );
 				IManagerBean webinfoBean = BeanManager.getManagerBean(WebInfo.class);
 				Criteria webinfoCriteria = new Criteria();
 				webinfoCriteria.addEqualExpression(webinfoBean.getFieldName(ICompanyAlias.WEB_INFO_COMPANY_ID), company.getId());
@@ -110,7 +115,8 @@ public class GeneratorController extends BasicController implements VelocityCons
 					if (title != null && !title.equals("")) vu.put("extra_title", title);
 					if (content != null) vu.put("extra_content", content);
 				}
-	
+				webinfoBean = null;
+
 				ArrayList<String> images = new ArrayList<String>();
 				attachCriteria = new Criteria();
 				attachCriteria.addEqualExpression(attachBean.getFieldName(IRegistryAlias.REGISTRY_ATTACHMENT_REGISTRY_ID), company.getId());
@@ -151,6 +157,8 @@ public class GeneratorController extends BasicController implements VelocityCons
 						vu.put("phone", m.getValue());
 					}
 				}
+				companyBean = null;
+				attachBean = null;
 	
 		/*
 		 * 		$content = address.vm {
@@ -210,8 +218,12 @@ public class GeneratorController extends BasicController implements VelocityCons
 		}
 		catch (Exception e) {
 			AonUtil.addErrorMessage("ERROR: Se ha producido un error durante la generacion de los contenidos.");
+		} 
+		finally {
+			HibernateUtil.setCloseSession(true);
+			HibernateUtil.closeSession();
 		}
-		HibernateUtil.setCloseSession(true);
+		
 	}
 
 	public boolean isGenerate() {
