@@ -4,6 +4,7 @@
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:t="http://myfaces.apache.org/tomahawk"            
 	xmlns:c="http://java.sun.com/jstl/core">
 <body>
 
@@ -43,6 +44,11 @@
 							actionListener="#{proForma.onEditSearch}"
 							styleClass="aon-finding-toolbar-item aon-icon-search"
 							accesskey="#{bundle.aon_key_search}" />
+						<t:commandButton id="proforma" value="#{appBundle.gbp_print}"
+							immediate="true" action="front_proof_search" forceId="true"
+							onclick="reportWindow(this, 'placeList', '${facesContext.externalContext.requestContextPath}/facelet/report/preferences.jsf');return false;"
+							styleClass="aon-finding-toolbar-item aon-icon-printer"
+							accesskey="#{bundle.aon_key_print}" />
 					</aon:div>
 				</aon:panelGrid>
 			</aon:div>
@@ -86,6 +92,27 @@
 						disabled="true" styleClass="aon-inputText-disabled"
 						value="#{proForma.to.amount}" />
 
+					<aon:outputLabel for="ProFormaInvoice_offer_quality"
+						value="#{appBundle.gbp_proforma_invoice_quality}" />
+					<aon:inputTextarea id="ProFormaInvoice_offer_quality"
+						disabled="true" styleClass="aon-inputText-disabled"
+						value="#{proForma.to.offer.quality}"
+						cols="80" rows="5" />
+
+					<aon:outputLabel for="ProFormaInvoice_offer_defectiveGoods"
+						value="#{appBundle.gbp_proforma_invoice_defective_goods}" />
+					<aon:inputTextarea id="ProFormaInvoice_offer_defectiveGoods"
+						disabled="true" styleClass="aon-inputText-disabled"
+						value="#{proForma.to.offer.defectiveGoods}"
+						cols="80" rows="5" />
+
+					<aon:outputLabel for="ProFormaInvoice_offer_additionalConditions"
+						value="#{appBundle.gbp_proforma_invoice_additional_conditions}" />
+					<aon:inputTextarea id="ProFormaInvoice_offer_additionalConditions"
+						disabled="true" styleClass="aon-inputText-disabled"
+						value="#{proForma.to.offer.additionalConditions}"
+						cols="80" rows="5" />
+
 					<aon:outputLabel for="ProFormaInvoice_office_id"
 						value="#{appBundle.gbp_proforma_invoice_office}" />
 					<aon:selectOneMenu id="ProFormaInvoice_office_id"
@@ -102,10 +129,20 @@
 						<f:selectItems value="#{GBPCollections.costTypes}" />
 					</aon:selectOneMenu>
 
-					<aon:outputLabel for="ProFormaInvoice_centralized"
-						value="#{appBundle.gbp_proforma_invoice_centralized}" />
-					<aon:selectBooleanCheckbox id="ProFormaInvoice_centralized"
-						value="#{proForma.to.centralized}"/>
+					<aon:outputLabel for="ProFormaInvoice_accountContact_id"
+						value="#{appBundle.gbp_proforma_invoice_account_contact}" />
+					<aon:selectOneMenu id="ProFormaInvoice_accountContact_id"
+						value="#{proForma.to.accountContact.id}">
+						<f:selectItems value="#{GBPCollections.accountContacts}" />
+					</aon:selectOneMenu>
+
+					<aon:outputLabel for="ProFormaInvoice_paymentTerm"
+						value="#{appBundle.gbp_proforma_invoice_payment_term}" />
+					<aon:inputText id="ProFormaInvoice_paymentTerm" 
+						size="3" maxlength="3"
+						value="#{proForma.to.paymentTerm}" >
+						<f:validateLongRange />
+					</aon:inputText>	
 
 					<aon:outputLabel for="ProFormaInvoice_status"
 						value="#{appBundle.gbp_proforma_invoice_status}" />
@@ -113,6 +150,16 @@
 						value="#{proForma.to.status}" disabled="true">
 						<f:selectItems value="#{GBPCollections.proformaInvoiceStatus}" />
 					</aon:selectOneMenu>
+
+					<aon:outputLabel for="ProFormaInvoice_paymentDate"
+						value="#{appBundle.gbp_proforma_invoice_payment_date}" />
+					<aon:inputText id="ProFormaInvoice_paymentDate" 
+						size="16" maxlength="16"
+						disabled="true" styleClass="aon-inputText-disabled"
+						value="#{proForma.to.paymentDate}" >
+						<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+							timeZone="#{timeZoneController.timeZoneId}" />
+					</aon:inputText>	
 
 				</aon:panelGrid>
 
@@ -136,6 +183,7 @@
 
 			</aon:div>
 		</aon:form>
+		<h:form id="placeList" target="list" />
 	</ui:define>
 </ui:composition>
 
