@@ -312,16 +312,12 @@
   <!-- ===================================================== MODULAR PAGE -->
   <navigation-rule>
     <navigation-case>
-      <from-outcome>modular_page_grid</from-outcome>
-      <to-view-id>/facelet/content/modular_page/grid.xhtml</to-view-id>
+      <from-outcome>modular_page_list</from-outcome>
+      <to-view-id>/facelet/content/modular_page/list.xhtml</to-view-id>
     </navigation-case>
-  </navigation-rule>
-
-  <!-- ================================================= MODULAR PAGE OPTION -->
-  <navigation-rule>
     <navigation-case>
-      <from-outcome>modular_page_option_grid</from-outcome>
-      <to-view-id>/facelet/content/modular_page/option/grid.xhtml</to-view-id>
+      <from-outcome>modular_page_form</from-outcome>
+      <to-view-id>/facelet/content/modular_page/form.xhtml</to-view-id>
     </navigation-case>
   </navigation-rule>
 

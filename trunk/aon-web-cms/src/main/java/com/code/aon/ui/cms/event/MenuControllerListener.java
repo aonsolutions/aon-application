@@ -21,10 +21,15 @@ public class MenuControllerListener extends ControllerAdapter {
 	public void beforeModelInitialized(ControllerEvent event)
 			throws ControllerListenerException {
 		try {
-			Criteria criteria = event.getController().getCriteria();
+			MenuController controller = (MenuController)event.getController();
+			Criteria criteria = controller.getCriteria();
 			IManagerBean bean = BeanManager.getManagerBean(Menu.class);
+			criteria.addExpression(bean.getFieldName(ICMSAlias.MENU_TYPE), "" + controller.getCurrentType());
+			criteria.addOrder(bean.getFieldName(ICMSAlias.MENU_DEFAULT_MENU),false);
 			criteria.addOrder(bean.getFieldName(ICMSAlias.MENU_ALIAS));
 		} catch (ManagerBeanException e) {
+			throw new ControllerListenerException(e);
+		} catch (ExpressionException e) {
 			throw new ControllerListenerException(e);
 		}
 	}

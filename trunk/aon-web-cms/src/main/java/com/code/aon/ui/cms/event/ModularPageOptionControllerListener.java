@@ -16,4 +16,9 @@ public class ModularPageOptionControllerListener extends ControllerAdapter {
 		so.setPosition(soc.getLastPosition());
 	}
 
+	@Override
+	public void afterBeanSelected(ControllerEvent event)
+			throws ControllerListenerException {
+		((ModularPageOptionController)event.getController()).loadCurrentLanguage();
+	}
 }

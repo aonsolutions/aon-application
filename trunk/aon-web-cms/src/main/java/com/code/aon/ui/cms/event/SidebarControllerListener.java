@@ -23,6 +23,7 @@ public class SidebarControllerListener extends ControllerAdapter {
 		try {
 			Criteria criteria = event.getController().getCriteria();
 			IManagerBean bean = BeanManager.getManagerBean(Sidebar.class);
+			criteria.addOrder(bean.getFieldName(ICMSAlias.SIDEBAR_DEFAULT_),false);
 			criteria.addOrder(bean.getFieldName(ICMSAlias.SIDEBAR_ALIAS));
 		} catch (ManagerBeanException e) {
 			throw new ControllerListenerException(e);
