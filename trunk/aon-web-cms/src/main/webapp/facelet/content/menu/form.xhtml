@@ -171,12 +171,12 @@
 									reRender="dataTable"
 									actionListener="#{menu_option.onMoveUp}" 
 									rendered="#{to.position != 0}"
-									image="/images/cms/up.gif" style="margin-left: 4px;"/>
+									image="/images/cms/up.gif" styleClass="aon-icon-commandButton" />
 								<aon:commandButton id="moveDown"
 									reRender="dataTable" 
 									actionListener="#{menu_option.onMoveDown}"
 									rendered="#{to.position &lt; (menu_option.model.rowCount - 1)}"
-									image="/images/cms/down.gif" style="margin-left: 4px;" />
+									image="/images/cms/down.gif" styleClass="aon-icon-commandButton" />
 							</aon:column>
 
 						</aon:dataTable>
