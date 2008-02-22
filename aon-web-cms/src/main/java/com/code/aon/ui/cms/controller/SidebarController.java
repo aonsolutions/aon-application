@@ -4,7 +4,6 @@ import java.util.List;
 
 import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
-import javax.faces.event.ValueChangeEvent;
 
 import com.code.aon.cms.Sidebar;
 import com.code.aon.cms.SidebarOption;
@@ -36,22 +35,6 @@ public class SidebarController extends GridController {
 		soc.setCurrentSidebar(sidebar);
 		soc.setCriteria(criteria);
 		soc.onSearch(event);
-	}
-
-	public void onAccept(ActionEvent event) {
-		try {
-			Sidebar sidebar = (Sidebar)getTo();
-			IManagerBean bean = BeanManager.getManagerBean(Sidebar.class);
-			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(bean.getFieldName(ICMSAlias.SIDEBAR_DEFAULT_), true);
-			List<ITransferObject> list = (List<ITransferObject>)bean.getList(criteria);
-			if (list.size() == 0) {
-				sidebar.setDefault_(true);
-			}
-		} catch (ManagerBeanException e) {
-			e.printStackTrace();
-		}
-		super.onAccept(event);
 	}
 
 	public void defaultChanged(ActionEvent event) throws ManagerBeanException, ExpressionException {

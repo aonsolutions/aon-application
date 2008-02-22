@@ -20,7 +20,7 @@ import com.code.aon.ui.cms.util.ControllerUtil;
 import com.code.aon.ui.util.AonUtil;
 
 
-public class SidebarOptionController extends GridI18nController {
+public class SidebarOptionController extends BasicI18nController {
 
 	private Sidebar currentSidebar;
 	
