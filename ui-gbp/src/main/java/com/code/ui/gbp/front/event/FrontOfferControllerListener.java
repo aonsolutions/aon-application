@@ -10,6 +10,7 @@ import com.code.gbp.Offer;
 import com.code.gbp.Supplier;
 import com.code.gbp.dao.IGBPAlias;
 import com.code.gbp.enumeration.OfferStatus;
+import com.code.ui.gbp.constants.GBPConstants;
 import com.code.ui.gbp.front.util.FrontUtil;
 
 public class FrontOfferControllerListener extends ControllerAdapter {
@@ -31,5 +32,6 @@ public class FrontOfferControllerListener extends ControllerAdapter {
 		((Offer)event.getController().getTo()).setSupplier(FrontUtil.getCurrentSupplier());
 		((Offer)event.getController().getTo()).setOfferDate(new Date());
 		((Offer)event.getController().getTo()).setStatus(OfferStatus.PENDING);
+		((Offer)event.getController().getTo()).setPaymentTerm(GBPConstants.GBP_DEFAULT_PAYMENT_TERM);
 	}
 }
