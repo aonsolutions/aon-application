@@ -20,10 +20,7 @@ public enum ContactType implements IResourceable {
     EMAIL,
 
     /** The WEB. */
-    WEB,
-    
-    /** CONTACT_PERSON */
-    CONTACT_PERSON;
+    WEB;
 
     /** Message file base path. */
     private static final String BASE_NAME = "com.code.gbp.i18n.messages";
