@@ -1,8 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry kind="src" path="src/main/java"/>
-	<classpathentry kind="src" path="src/main/resources"/>
+	<classpathentry excluding="**" kind="src" output="src/main/resources" path="src/main/resources"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="con" path="org.maven.ide.eclipse.MAVEN2_CLASSPATH_CONTAINER"/>
+	<classpathentry kind="lib" path="C:/Documents and Settings/atellitu/.m2/repository/org/hibernate/hibernate/3.2.5.ga/hibernate-3.2.5.ga.jar" sourcepath="C:/JAVA/hibernate-3.2.5/src"/>
+	<classpathentry kind="lib" path="C:/Documents and Settings/atellitu/.m2/repository/org/hibernate/hibernate-annotations/3.3.0.ga/hibernate-annotations-3.3.0.ga.jar"/>
+	<classpathentry kind="lib" path="C:/Documents and Settings/atellitu/.m2/repository/org/hibernate/hibernate-commons-annotations/3.3.0.ga/hibernate-commons-annotations-3.3.0.ga.jar"/>
+	<classpathentry kind="lib" path="C:/Documents and Settings/atellitu/.m2/repository/dom4j/dom4j/1.6.1/dom4j-1.6.1.jar"/>
+	<classpathentry kind="lib" path="C:/Documents and Settings/atellitu/.m2/repository/javax/persistence/persistence-api/1.0/persistence-api-1.0.jar"/>
+	<classpathentry kind="lib" path="C:/Documents and Settings/atellitu/.m2/repository/commons-collections/commons-collections/3.2/commons-collections-3.2.jar"/>
+	<classpathentry kind="lib" path="C:/Documents and Settings/atellitu/.m2/repository/cglib/cglib/2.1_3/cglib-2.1_3.jar"/>
+	<classpathentry kind="lib" path="C:/Documents and Settings/atellitu/.m2/repository/asm/asm/1.5.3/asm-1.5.3.jar"/>
+	<classpathentry kind="lib" path="C:/Documents and Settings/atellitu/.m2/repository/asm/asm-attrs/1.5.3/asm-attrs-1.5.3.jar"/>
+	<classpathentry kind="lib" path="C:/Documents and Settings/atellitu/.m2/repository/javax/transaction/jta/1.0.1B/jta-1.0.1B.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
