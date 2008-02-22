@@ -28,21 +28,27 @@
 							event="onclick">
 							<aon:menuItem id="menu" value="#{menuBundle.cms_menu}"
 								action="menu_list"
+								actionListener="#{menu.onSearch}"
 								styleClass="aon-main-menu-leaf"/>
 							<aon:menuItem id="header" value="#{menuBundle.cms_header}"
 								action="header_list"
+								actionListener="#{headers.onSearch}"
 								styleClass="aon-main-menu-leaf"/>
 							<aon:menuItem id="footer" value="#{menuBundle.cms_footer}"
 								action="footer_list"
+								actionListener="#{footer.onSearch}"
 								styleClass="aon-main-menu-leaf"/>
 							<aon:menuItem id="sidebar" value="#{menuBundle.cms_sidebar}"
 								action="sidebar_list"
+								actionListener="#{sidebar.onSearch}"
 								styleClass="aon-main-menu-leaf"/>
 							<aon:menuItem id="section" value="#{menuBundle.cms_section}"
 								action="section_list"
+								actionListener="#{section.onSearch}"
 								styleClass="aon-main-menu-leaf"/>							
 							<aon:menuItem id="modular_page" value="#{menuBundle.cms_modular_page}"
-								action="modular_page_grid"
+								action="modular_page_list"
+								actionListener="#{modular_page.onSearch}"
 								styleClass="aon-main-menu-leaf"/>
 							<aon:menuItem id="image_gallery" value="#{menuBundle.cms_image_gallery}"
 								action="gallery_list"

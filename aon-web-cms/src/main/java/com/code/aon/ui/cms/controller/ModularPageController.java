@@ -17,16 +17,10 @@ import com.code.aon.ui.util.AonUtil;
 
 public class ModularPageController extends GridI18nController {
 
-	@SuppressWarnings("unused")
-	public void onSelect(ActionEvent event) {
-		super.onSelect(new ActionEvent(event.getComponent()));
-		loadCurrentLanguage();
-	}
-
 	public void onSelectOptions(ActionEvent event) throws ManagerBeanException, ExpressionException {
 		ModularPageOptionController mpc = (ModularPageOptionController)AonUtil.getController("modular_page_option");
 		IManagerBean mpBean = BeanManager.getManagerBean(ModularPageOption.class);
-		ModularPage modularPage = (ModularPage) this.getSelectedTO();
+		ModularPage modularPage = (ModularPage) this.getTo();
 		Criteria criteria = new Criteria();
 		criteria.addExpression(mpBean.getFieldName(ICMSAlias.MODULAR_PAGE_OPTION_MODULAR_PAGE_ID), "" + modularPage.getId());
 		criteria.addOrder(mpBean.getFieldName(ICMSAlias.MODULAR_PAGE_OPTION_POSITION));

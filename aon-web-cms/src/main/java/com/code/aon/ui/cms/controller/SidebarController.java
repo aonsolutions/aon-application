@@ -28,7 +28,7 @@ public class SidebarController extends GridController {
 	public void onSelectOptions(ActionEvent event) throws ManagerBeanException, ExpressionException {
 		SidebarOptionController soc = (SidebarOptionController)AonUtil.getController("sidebar_option");
 		IManagerBean soBean = BeanManager.getManagerBean(SidebarOption.class);
-		Sidebar sidebar = (Sidebar) this.getSelectedTO();
+		Sidebar sidebar = (Sidebar) this.getTo();
 		Criteria criteria = new Criteria();
 		criteria.addExpression(soBean.getFieldName(ICMSAlias.SIDEBAR_OPTION_SIDEBAR_ID), "" + sidebar.getId());
 		criteria.addOrder(soBean.getFieldName(ICMSAlias.SIDEBAR_OPTION_POSITION));

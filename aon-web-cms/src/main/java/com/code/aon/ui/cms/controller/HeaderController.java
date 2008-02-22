@@ -64,22 +64,6 @@ public class HeaderController extends BasicI18nController {
 		return "";
 	}
 
-	public void onAccept(ActionEvent event) {
-		try {
-			Header header = (Header)getTo();
-			IManagerBean bean = BeanManager.getManagerBean(Header.class);
-			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(bean.getFieldName(ICMSAlias.HEADER_DEFAULT_), true);
-			List<ITransferObject> list = (List<ITransferObject>)bean.getList(criteria);
-			if (list.size() == 0) {
-				header.setDefault_(true);
-			}
-		} catch (ManagerBeanException e) {
-			e.printStackTrace();
-		}
-		super.onAccept(event);
-	}
-
 	public void defaultChanged(ActionEvent event) throws ManagerBeanException, ExpressionException {
 		Header header = (Header) model.getRowData();
 		header.setDefault_(true);

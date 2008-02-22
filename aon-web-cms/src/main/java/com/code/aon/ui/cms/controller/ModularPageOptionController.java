@@ -3,9 +3,7 @@ package com.code.aon.ui.cms.controller;
 import java.util.LinkedList;
 import java.util.List;
 
-import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
-import javax.faces.event.ValueChangeEvent;
 import javax.faces.model.SelectItem;
 
 import com.code.aon.cms.ModularPage;
@@ -31,13 +29,6 @@ public class ModularPageOptionController extends BasicI18nController {
 
 	public void setCurrentModularPage(ModularPage currentModularPage) {
 		this.currentModularPage = currentModularPage;
-	}
-
-	@SuppressWarnings("unused")
-	public void onSelect(ActionEvent event) {
-		super.onSelect(new ActionEvent(event.getComponent()));
-		FacesContext.getCurrentInstance().getApplication().getNavigationHandler().handleNavigation(FacesContext.getCurrentInstance(), null, "modular_page_option_form");
-		loadCurrentLanguage();
 	}
 
 	public void onActivate(ActionEvent event) throws ManagerBeanException {
