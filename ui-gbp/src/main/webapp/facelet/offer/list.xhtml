@@ -37,7 +37,12 @@
 		<!--  aon-region-body -->
 		<aon:div styleClass="aon-scroll-area">					
 			<aon:dataTable id="offerDataList" 
-				value="#{offer.model}" var="to" rows="20">
+				value="#{offer.model}" var="to" rows="20"
+				columnClasses="aon-width-auto aon-text-left,
+							   aon-width-auto aon-text-left,
+							   aon-width-auto aon-text-left,
+							   aon-width-auto aon-text-left">
+							   
 					<aon:rowSelector action="offer_form" actionListener="#{offer.onSelect}" />
 					
 					<aon:column>

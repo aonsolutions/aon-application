@@ -37,7 +37,13 @@
 		<!--  aon-region-body -->
 		<aon:div styleClass="aon-scroll-area">					
 			<aon:dataTable id="proFormaDataList" 
-				value="#{proForma.model}" var="to" rows="20">
+				value="#{proForma.model}" var="to" rows="20"
+				columnClasses="aon-width-auto aon-text-left,
+							   aon-width-auto aon-text-left,
+							   aon-width-auto aon-text-left,
+							   aon-width-auto aon-text-left,
+							   aon-width-auto aon-text-left">
+							   
 					<aon:rowSelector action="pro_forma_form" actionListener="#{proForma.onSelect}" />
 					
 					<aon:column>
