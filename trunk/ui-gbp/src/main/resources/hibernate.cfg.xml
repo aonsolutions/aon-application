@@ -20,12 +20,13 @@
 		<property name="connection.password">serubd2000</property>		
  -->
 		<!-- Mapping files -->
-		<!-- Mapping files -->
+		<mapping class="com.code.gbp.AccountContact"/>
 		<mapping class="com.code.gbp.Campaign"/>
 		<mapping class="com.code.gbp.CampaignSupplier"/>
 		<mapping class="com.code.gbp.GeoZone"/>
 		<mapping class="com.code.gbp.Incidence"/>
 		<mapping class="com.code.gbp.IncidenceType"/>
+		<mapping class="com.code.gbp.InternalCustomer"/>
 		<mapping class="com.code.gbp.OfferSignature"/>
 		<mapping class="com.code.gbp.Offer"/>
 		<mapping class="com.code.gbp.Office"/>
@@ -35,6 +36,7 @@
 		<mapping class="com.code.gbp.Supplier"/>
 		<mapping class="com.code.gbp.SupplierAddInfo"/>
 		<mapping class="com.code.gbp.SupplierContact"/>
+		<mapping class="com.code.gbp.SupplierContactPerson"/>
 		<mapping class="com.code.gbp.SupplierEconomicData"/>
 		<mapping class="com.code.gbp.SupplierObservation"/>
 	</session-factory>
