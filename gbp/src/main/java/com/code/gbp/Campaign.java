@@ -6,6 +6,8 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -32,6 +34,8 @@ public class Campaign implements ITransferObject {
 	private Double budget;
 	
 	private Date offerDueDate;
+	
+	private InternalCustomer internalCustomer;
 
 	@Id
 	@GeneratedValue
@@ -106,5 +110,15 @@ public class Campaign implements ITransferObject {
 
 	public void setOfferDueDate(Date offerDueDate) {
 		this.offerDueDate = offerDueDate;
+	}
+
+	@ManyToOne
+	@JoinColumn( name="internal_customer", nullable=false )
+	public InternalCustomer getInternalCustomer() {
+		return internalCustomer;
+	}
+
+	public void setInternalCustomer(InternalCustomer internalCustomer) {
+		this.internalCustomer = internalCustomer;
 	}
 }
