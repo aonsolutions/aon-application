@@ -28,6 +28,22 @@
 		</navigation-case>
 	</navigation-rule>	
 
+    <!-- =================== Internal Customer ================= -->	
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>internal_customer_list</from-outcome>
+			<to-view-id>/facelet/internal_customer/list.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>	
+
+    <!-- =================== Account Contact ================= -->	
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>account_contact_list</from-outcome>
+			<to-view-id>/facelet/account_contact/list.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>	
+
     <!-- =================== Supplier ================= -->	
 	<navigation-rule>
 		<navigation-case>
