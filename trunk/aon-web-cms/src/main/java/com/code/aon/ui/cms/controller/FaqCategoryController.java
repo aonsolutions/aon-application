@@ -4,13 +4,11 @@ import java.util.List;
 
 import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
-import javax.faces.event.ValueChangeEvent;
 
 import com.code.aon.cms.Faq;
 import com.code.aon.cms.FaqCategory;
 import com.code.aon.cms.FaqCategoryDetail;
 import com.code.aon.cms.FaqConfig;
-import com.code.aon.cms.Section;
 import com.code.aon.cms.dao.ICMSAlias;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
@@ -24,8 +22,6 @@ import com.code.aon.ui.util.AonUtil;
 
 public class FaqCategoryController extends BasicI18nController {
 
-	private boolean cancelOnSelect = false;
-
 	@Override
 	public void onReset(ActionEvent event) {
 		((GeneratorConfigController)AonUtil.getRegisteredBean("generator_config")).initSection(FaqConfig.class);
@@ -34,21 +30,16 @@ public class FaqCategoryController extends BasicI18nController {
 	
 	@SuppressWarnings("unused")
 	public void onSelect(ActionEvent event) {
-		if (!cancelOnSelect) {
-			super.onSelect(new ActionEvent(event.getComponent()));
-			FacesContext.getCurrentInstance().getApplication().getNavigationHandler().handleNavigation(FacesContext.getCurrentInstance(), null, "faq_category_form");
-			loadCurrentLanguage();
-		}
-		cancelOnSelect = false;
+		super.onSelect(new ActionEvent(event.getComponent()));
+		FacesContext.getCurrentInstance().getApplication().getNavigationHandler().handleNavigation(FacesContext.getCurrentInstance(), null, "faq_category_form");
+		loadCurrentLanguage();
 	}
 
 	public void onActivate(ActionEvent event) throws ManagerBeanException {
-		cancelOnSelect = true; 
 		activate(true);
 	}
 
 	public void onDeactivate(ActionEvent event) throws ManagerBeanException {
-		cancelOnSelect = true; 
 		activate(false);
 	}
 	
@@ -58,10 +49,6 @@ public class FaqCategoryController extends BasicI18nController {
 		getManagerBean().update(faqCategory);
 	}
 	
-	public void onChecked(ValueChangeEvent event) throws ManagerBeanException {
-		cancelOnSelect = true; 
-	}
-
 	public String getI18nLabel() throws ManagerBeanException {
 		String label = "";
 		FaqCategoryDetail faqCategoryDetail = getCurrentDetail();
@@ -115,17 +102,14 @@ public class FaqCategoryController extends BasicI18nController {
 	}
 	
     public void onMoveUp(ActionEvent event) throws ManagerBeanException, ExpressionException {
-		cancelOnSelect = true; 
     	move((FaqCategory) this.model.getRowData(), -1);
     }
 
     public void onMoveDown(ActionEvent event) throws ManagerBeanException, ExpressionException {
-		cancelOnSelect = true; 
     	move((FaqCategory) this.model.getRowData(), 1);    	
     }
     
 	public void onSelectFaqs(ActionEvent event) throws ManagerBeanException, ExpressionException {
-		cancelOnSelect = true;
 		FaqController fc = (FaqController)AonUtil.getController("faq");
 		IManagerBean moBean = BeanManager.getManagerBean(Faq.class);
 		FaqCategory faqCategory = (FaqCategory) this.getSelectedTO();
