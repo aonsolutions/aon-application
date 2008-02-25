@@ -4,7 +4,6 @@ import java.util.List;
 
 import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
-import javax.faces.event.ValueChangeEvent;
 
 import com.code.aon.cms.Faq;
 import com.code.aon.cms.FaqCategory;
@@ -19,8 +18,6 @@ import com.code.aon.ui.cms.util.ControllerUtil;
 
 public class FaqController extends BasicI18nController {
 
-	private boolean cancelOnSelect = false;
-
 	private FaqCategory currentFaqCategory;
 	
 	public FaqCategory getCurrentFaqCategory() {
@@ -33,21 +30,16 @@ public class FaqController extends BasicI18nController {
 
 	@SuppressWarnings("unused")
 	public void onSelect(ActionEvent event) {
-		if (!cancelOnSelect) {
-			super.onSelect(new ActionEvent(event.getComponent()));
-			FacesContext.getCurrentInstance().getApplication().getNavigationHandler().handleNavigation(FacesContext.getCurrentInstance(), null, "faq_form");
-			loadCurrentLanguage();
-		}
-		cancelOnSelect = false;
+		super.onSelect(new ActionEvent(event.getComponent()));
+		FacesContext.getCurrentInstance().getApplication().getNavigationHandler().handleNavigation(FacesContext.getCurrentInstance(), null, "faq_form");
+		loadCurrentLanguage();
 	}
 
 	public void onActivate(ActionEvent event) throws ManagerBeanException {
-		cancelOnSelect = true; 
 		activate(true);
 	}
 
 	public void onDeactivate(ActionEvent event) throws ManagerBeanException {
-		cancelOnSelect = true; 
 		activate(false);
 	}
 	
@@ -57,10 +49,6 @@ public class FaqController extends BasicI18nController {
 		getManagerBean().update(f);
 	}
 	
-	public void onChecked(ValueChangeEvent event) throws ManagerBeanException {
-		cancelOnSelect = true; 
-	}
-
 	public String getI18nAnswer() throws ManagerBeanException {
 		String label = "";
 		FaqDetail fd = getCurrentDetail();
@@ -86,10 +74,6 @@ public class FaqController extends BasicI18nController {
 			fd = (FaqDetail)list.get(0);
 		}
 		return fd;
-	}
-
-	public void onAccept(ActionEvent event) {
-		super.accept(event);
 	}
 
 	@SuppressWarnings("unchecked")
@@ -121,12 +105,10 @@ public class FaqController extends BasicI18nController {
 	}
 	
     public void onMoveUp(ActionEvent event) throws ManagerBeanException, ExpressionException {
-		cancelOnSelect = true; 
     	move((Faq) this.model.getRowData(), -1);
     }
 
     public void onMoveDown(ActionEvent event) throws ManagerBeanException, ExpressionException {
-		cancelOnSelect = true; 
     	move((Faq) this.model.getRowData(), 1);    	
     }
 
