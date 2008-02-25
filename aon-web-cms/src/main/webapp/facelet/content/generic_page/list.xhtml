@@ -2,92 +2,87 @@
 <html xmlns="http://www.w3.org/1999/xhtml"
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:aon="http://www.code.es/aon-rich-components"
 	xmlns:c="http://java.sun.com/jstl/core"
-	xmlns:aon="http://www.code.es/aon-ice-components">
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j">
 <body>
 
-<ui:composition template="/facelet/templates/aon.ui.main.xhtml">
+<ui:composition template="/facelet/templates/aon.ui.content.xhtml">
 	<ui:define name="content">
 
-		<aon:form id="genericPageList">
-			
-			<aon:panelGrid columns="2" dir="true" styleClass="aon-title-toolbar" 
-				cellpadding="0" cellspacing="0" columnClasses="aon-content-title,aon-content-toolbar">
-			
-				<aon:div styleClass="aon-content-title-internal">
-					<aon:outputText value="#{appBundle.generic_page}" />					
-				</aon:div>		
-			
-				<!-- start toolbar navigation -->
-				<aon:div styleClass="aon-content-toolbar-internal" >
-						<aon:commandButton id="reset" value="#{bundle.aon_reset}" 
-							action="generic_page_form" actionListener="#{generic_page.onReset}"
-							styleClass="aon-content-toolbar-item aon-icon-reset"
-							onmouseout="this.className='aon-content-toolbar-item aon-icon-reset'"
-							onmouseover="this.className='aon-content-toolbar-item aon-icon-reset aon-content-toolbar-item-hover'"
+		<aon:form id="list_form">
+			<aon:div styleClass="aon-finding-title-toolbar">
+				<aon:panelGrid id="buttonsGrid" columns="3" dir="true" 
+					columnClasses="aon-finding-title,aon-finding-subtitle,aon-finding-toolbar">				
+				
+					<aon:div styleClass="aon-finding-title-internal">
+						<aon:outputText value="#{appBundle.generic_page}"/>	  						
+					</aon:div>					
+					
+					<aon:div styleClass="aon-finding-subtitle-internal">
+						<aon:outputText
+							value="#{appBundle.aon_listing}" />
+					</aon:div>					
+						
+					<!-- start toolbar navigation -->
+					<aon:div styleClass="aon-finding-toolbar-item-group">
+						<aon:commandButton id="reset" value="#{bundle.aon_reset}"
+							action="generic_page"
+							actionListener="#{generic_page.onReset}"
+							styleClass="aon-finding-toolbar-item aon-icon-reset"
 							accesskey="#{bundle.aon_key_new}"/>
-						<aon:confirmButton id="remove" 
-							value="#{bundle.aon_remove}" rendered="#{!generic_page.checklistEmpty}" inmediate="true"
-							confirmTitle="Confirmation Dialog" confirmMessage="#{bundle.aon_remove_confirm}"
-							confirmActionListener="#{generic_page.onRemoveSelected}" confirmAction="generic_page_list"
-							styleClass="aon-content-toolbar-item aon-icon-delete"
-							onmouseout="this.className='aon-content-toolbar-item aon-icon-delete'"
-							onmouseover="this.className='aon-content-toolbar-item aon-icon-delete aon-content-toolbar-item-hover'"
+						<aon:confirmButton id="remove"
+							value="#{bundle.aon_remove}" 
+							rendered="#{!generic_page.checklistEmpty}" 
+							inmediate="true"
+							confirmTitle="Confirmation Dialog" 
+							confirmMessage="#{bundle.aon_remove_confirm}"
+							confirmActionListener="#{generic_page.onRemoveSelected}" 
+							confirmAction="generic_page"
+							styleClass="aon-finding-toolbar-item aon-icon-delete"
 							accesskey="#{bundle.aon_key_remove}"/>
-						<aon:commandButton id="search" value="#{bundle.aon_search}" 
-							action="generic_page_search" actionListener="#{generic_page.onEditSearch}"
-							styleClass="aon-content-toolbar-item aon-icon-search"
-							onmouseout="this.className='aon-content-toolbar-item aon-icon-search'"
-							onmouseover="this.className='aon-content-toolbar-item aon-icon-search aon-content-toolbar-item-hover'"
-							accesskey="#{bundle.aon_key_search}"/>
-				</aon:div>
-			<!-- end toolbar navigation -->
-			</aon:panelGrid> 
+				    </aon:div>
+					
+					<!-- end toolbar navigation -->
+				</aon:panelGrid>
+			</aon:div>
 			
 			<!--  aon-region-body -->
 			<aon:div styleClass="aon-scroll-area">
-				<aon:div styleClass="aon-scroll-area-internal">	
-				
-					<aon:div styleClass="aon-content-subTitle">
-						<aon:div styleClass="aon-content-subTitle-internal">
-							<aon:outputText value="Listado registros" />
-						</aon:div>
-					</aon:div>
-					
-					<aon:dataTable id="genericPageDataList" styleClass="aon-dataTable"
-					 	columnWidths="120,200,*,50,150" 
-						value="#{generic_page.model}" var="to" rows="20"
-						rowClasses="aon-dataTable-odd, aon-dataTable-even"
-						columnClasses="aon-table-body aon-table-body-icon,
-							aon-table-body aon-table-body-string,
-							aon-table-body aon-table-body-string,
-							aon-table-body aon-table-body-icon,
-							aon-table-body aon-table-body-icon">
-
+					<aon:dataTable id="dataTable" value="#{generic_page.model}" var="to"
+						styleClass="dr-table rich-table aon-editDataTable"
+						rows="#{generic_page.pageLimit}" 
+						headerClass="dr-table-subheader rich-table-subheader aon-editDataTable-header"
+						footerClass="dr-table-subfooter rich-table-subfooter aon-editDataTable-footer"
+						rowClasses="aon-editDataTable-row-odd,dr-table-firstrow rich-table-firstrow aon-editDataTable-row-even"
+						cellpadding="0" cellspacing="0"
+						columnClasses="dr-table-cell rich-table-cell aon-editDataTable-iconColumn,
+								dr-table-cell rich-table-cell aon-editDataTable-textColumn,
+								dr-table-cell rich-table-cell aon-editDataTable-textColumn,
+								dr-table-cell rich-table-cell aon-editDataTable-iconColumn,
+								dr-table-cell rich-table-cell aon-editDataTable-textColumn">
+								
 							<aon:column>
-								<aon:rowSelector selectionListener="#{generic_page.onSelect}" toggleOnClick="true"/>
 								<f:facet name="header">
 									<aon:div>
 										<aon:outputText value="#{bundle.aon_check}" />
-										<aon:div>
-											<aon:commandLink id="all" value="#{bundle.aon_check_all}" 
-											styleClass="aon-table-header-link-secundary"
-											onclick="selectAll();return false;" />
-											<aon:commandLink id="none" value="#{bundle.aon_uncheck_all}"
-											styleClass="aon-table-header-link-secundary"
-											onclick="unSelectAll();return false;" />
-											<aon:commandLink id="inverse" value="#{bundle.aon_inverse_all}"
-											styleClass="aon-table-header-link-secundary"
-											onclick="inverseAll();return false;" />
-										</aon:div>										
 									</aon:div>	
 								</f:facet>
-								<aon:selectBooleanCheckbox id="Row_checked" forceId="#{true}"
-										value="#{generic_page.rowChecked}" partialSubmit="true" 
-										valueChangeListener="#{generic_page.onChecked}"/>
+								<aon:selectBooleanCheckbox id="Row_checked"
+										value="#{generic_page.rowChecked}">
+										<a4j:support 
+											event="onclick"  
+											reRender="dataTable,buttonsGrid" />
+								</aon:selectBooleanCheckbox>
 							</aon:column>
 					
 							<aon:column>
+								<a4j:support 
+									action="generic_page_form"
+									actionListener="#{generic_page.onSelect}"
+									event="onclick" />
 								<f:facet name="header">
 									<aon:outputText value="#{appBundle.generic_page_alias}" />
 								</f:facet>
@@ -95,6 +90,10 @@
 							</aon:column>
 
 							<aon:column>
+								<a4j:support 
+									action="generic_page_form"
+									actionListener="#{generic_page.onSelect}"
+									event="onclick" />
 								<f:facet name="header">
 									<aon:outputText value="#{appBundle.generic_page_title}" />
 								</f:facet>
@@ -105,13 +104,15 @@
 								<f:facet name="header">
 									<aon:outputText value="#{appBundle.generic_page_active}" />
 								</f:facet>
-								<aon:commandLink title="#{appBundle.generic_page_activate}" action="generic_page_list"
+								<aon:commandLink title="#{appBundle.generic_page_activate}" 
+									action="generic_page_list"
 									actionListener="#{generic_page.onActivate}" 
 									rendered="#{!to.active}">
 									<aon:graphicImage id="GenericPage_active" alt="#{appBundle.generic_page_activate}"
 										url="/images/cms/inactive.png" />
 								</aon:commandLink>
-								<aon:commandLink title="#{appBundle.generic_page_deactivate}" action="generic_page_list"
+								<aon:commandLink title="#{appBundle.generic_page_deactivate}" 
+									action="generic_page_list"
 									actionListener="#{generic_page.onDeactivate}" 
 									rendered="#{to.active}">
 									<aon:graphicImage id="GenericPage_deactive" alt="#{appBundle.generic_page_deactivate}"
@@ -127,19 +128,14 @@
 									<f:convertDateTime pattern="#{bundle.aon_timestamp_pattern}"/>
 								</aon:outputText>
 							</aon:column>
-
+							
 						</aon:dataTable>
 						
-						<ui:include src="/facelet/shared/dataScroller.xhtml">
-							<ui:param name="dataTable" value="genericPageDataList" />
-							<ui:param name="model" value="#{generic_page.model}" />
-							<ui:param name="showNote" value="#{false}" />
-						</ui:include>
+						<rich:datascroller align="left"  for="dataTable" maxPages="20" />
 					
 				</aon:div>
-			</aon:div>
 		</aon:form>
-		<aon:form id="placeList" target="list" />
+		
 	</ui:define>
 
 </ui:composition>
