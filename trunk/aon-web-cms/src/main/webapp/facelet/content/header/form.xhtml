@@ -53,7 +53,8 @@
 							accesskey="#{bundle.aon_key_remove}"/>
 						<aon:commandButton id="reset" value="#{bundle.aon_reset}"
 							action="header_form"
-							actionListener="#{headers.onReset}" rendered="#{!menu_option.new}"
+							actionListener="#{headers.onReset}" 
+							rendered="#{!headers.new}"
 							styleClass="aon-finding-toolbar-item aon-icon-reset"
 							accesskey="#{bundle.aon_key_new}" />
 						<aon:commandButton id="first" 

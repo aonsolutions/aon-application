@@ -6,7 +6,6 @@ import java.util.Locale;
 
 import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
-import javax.faces.event.ValueChangeEvent;
 import javax.faces.model.SelectItem;
 
 import com.code.aon.cms.GenericPage;
@@ -25,8 +24,6 @@ import com.code.aon.ui.cms.util.ControllerUtil;
 
 public class GenericPageController extends BasicI18nController {
 
-	private boolean cancelOnSelect = false;
-
 	private boolean richTextEnabled = true;
 
 	public boolean isRichTextEnabled() {
@@ -39,21 +36,16 @@ public class GenericPageController extends BasicI18nController {
 
 	@SuppressWarnings("unused")
 	public void onSelect(ActionEvent event) {
-		if (!cancelOnSelect) {
-			super.onSelect(new ActionEvent(event.getComponent()));
-			FacesContext.getCurrentInstance().getApplication().getNavigationHandler().handleNavigation(FacesContext.getCurrentInstance(), null, "generic_page_form");
-			loadCurrentLanguage();
-		}
-		cancelOnSelect = false;
+		super.onSelect(new ActionEvent(event.getComponent()));
+		FacesContext.getCurrentInstance().getApplication().getNavigationHandler().handleNavigation(FacesContext.getCurrentInstance(), null, "generic_page_form");
+		loadCurrentLanguage();
 	}
 	
 	public void onActivate(ActionEvent event) throws ManagerBeanException {
-		cancelOnSelect = true; 
 		activate(true);
 	}
 
 	public void onDeactivate(ActionEvent event) throws ManagerBeanException {
-		cancelOnSelect = true; 
 		activate(false);
 	}
 	
@@ -63,10 +55,6 @@ public class GenericPageController extends BasicI18nController {
 		getManagerBean().update(gp);
 	}
 	
-	public void onChecked(ValueChangeEvent event) throws ManagerBeanException {
-		cancelOnSelect = true; 
-	}
-
 	public String getI18nTitle() throws ManagerBeanException {
 		String title = "";
 		GenericPage gp = (GenericPage)this.model.getRowData();
