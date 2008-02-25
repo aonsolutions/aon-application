@@ -35,6 +35,7 @@ public class ItemVetoListener extends ControllerAdapter {
      * @throws ControllerListenerException the controller listener exception
      */
     @Override
+    @SuppressWarnings("unchecked")
     public void afterBeanCreated(ControllerEvent event) throws ControllerListenerException {
         double vatPercent = 0;
         double surchargePercent = 0;
@@ -93,6 +94,22 @@ public class ItemVetoListener extends ControllerAdapter {
 			} catch (ManagerBeanException e) {
                 throw new ControllerListenerException(e.getMessage(), e);
 			}
+		}
+	}
+	
+	@Override
+	public void afterBeanRemoved(ControllerEvent event) throws ControllerListenerException {
+		try {
+			Item item = (Item)event.getController().getTo();
+			IManagerBean itemBean = BeanManager.getManagerBean(Item.class);
+			Criteria criteria = new Criteria();
+			criteria.addEqualExpression(itemBean.getFieldName(IProductAlias.ITEM_PRODUCT_ID), item.getProduct().getId());
+			if(itemBean.getCount(criteria) == 0){
+				IManagerBean productBean = BeanManager.getManagerBean(Product.class);
+				productBean.remove(item.getProduct());
+			}
+		} catch (ManagerBeanException e) {
+			throw new ControllerListenerException(e.getMessage(), e);
 		}
 	}
 
