@@ -5,6 +5,7 @@
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:aon="http://www.code.es/aon-rich-components"
 	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:rich="http://richfaces.org/rich"
 	xmlns:a4j="http://richfaces.org/a4j">
 <body>
 
@@ -50,6 +51,7 @@
 		<aon:div styleClass="aon-scroll-area">
 					
 					<aon:dataTable id="dataTable" value="#{sidebar.model}" var="to"
+						rows="#{sidebar.pageLimit}" 
 						styleClass="dr-table rich-table aon-editDataTable"
 						headerClass="dr-table-subheader rich-table-subheader aon-editDataTable-header"
 						footerClass="dr-table-subfooter rich-table-subfooter aon-editDataTable-footer"
@@ -107,7 +109,7 @@
 
 					</aon:dataTable>
 				
-					<aon:dataScroller dataTable="dataTable" model="#{sidebar.model}" />
+					<rich:datascroller align="left"  for="dataTable" maxPages="20" />
 
 
 			</aon:div>
