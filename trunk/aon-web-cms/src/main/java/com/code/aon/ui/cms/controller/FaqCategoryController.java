@@ -112,7 +112,7 @@ public class FaqCategoryController extends BasicI18nController {
 	public void onSelectFaqs(ActionEvent event) throws ManagerBeanException, ExpressionException {
 		FaqController fc = (FaqController)AonUtil.getController("faq");
 		IManagerBean moBean = BeanManager.getManagerBean(Faq.class);
-		FaqCategory faqCategory = (FaqCategory) this.getSelectedTO();
+		FaqCategory faqCategory = (FaqCategory) this.getTo();
 		Criteria criteria = new Criteria();
 		criteria.addExpression(moBean.getFieldName(ICMSAlias.FAQ_FAQ_CATEGORY_ID), "" + faqCategory.getId());
 		criteria.addOrder(moBean.getFieldName(ICMSAlias.FAQ_POSITION));
