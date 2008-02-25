@@ -351,7 +351,7 @@
 	<managed-bean>
 		<managed-bean-name>companyRbank</managed-bean-name>
 		<managed-bean-class>
-			com.code.aon.ui.form.LinesController
+			com.code.aon.ui.finance.controller.RegistryBankController
 		</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
@@ -374,6 +374,14 @@
 					<value>registry.id</value>
 				</map-entry>
 			</map-entries>
+		</managed-property>
+		<managed-property>
+			<property-name>listenerClasses</property-name>
+			<list-entries>
+				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+				<value>#{rBankValidatorListener}</value>
+				<value>#{rBankControllerListener}</value>
+			</list-entries>
 		</managed-property>
 	</managed-bean>
 	
