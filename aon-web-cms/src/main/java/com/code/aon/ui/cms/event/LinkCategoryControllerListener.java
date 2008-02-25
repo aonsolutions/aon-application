@@ -2,7 +2,6 @@ package com.code.aon.ui.cms.event;
 
 import java.util.List;
 
-import com.code.aon.cms.FaqCategory;
 import com.code.aon.cms.LinkCategory;
 import com.code.aon.cms.dao.ICMSAlias;
 import com.code.aon.common.BeanManager;
@@ -10,6 +9,8 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ql.Criteria;
+import com.code.aon.ql.util.ExpressionException;
+import com.code.aon.ui.cms.controller.LinkCategoryController;
 import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
@@ -65,4 +66,27 @@ public class LinkCategoryControllerListener extends ControllerAdapter {
 		}
 	}
 
+	@Override
+	public void afterBeanAdded(ControllerEvent event)
+			throws ControllerListenerException {
+		try{
+			((LinkCategoryController) event.getController()).onSelectLinks(null);
+		} catch (ManagerBeanException e) {
+			throw new ControllerListenerException(e);
+		} catch (ExpressionException e) {
+			throw new ControllerListenerException(e);
+		}
+	}
+	
+	@Override
+	public void afterBeanSelected(ControllerEvent event)
+			throws ControllerListenerException {
+		try{
+			((LinkCategoryController) event.getController()).onSelectLinks(null);
+		} catch (ManagerBeanException e) {
+			throw new ControllerListenerException(e);
+		} catch (ExpressionException e) {
+			throw new ControllerListenerException(e);
+		}
+	}
 }

@@ -4,7 +4,6 @@ import java.util.List;
 
 import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
-import javax.faces.event.ValueChangeEvent;
 
 import com.code.aon.cms.Link;
 import com.code.aon.cms.LinkCategory;
@@ -19,8 +18,6 @@ import com.code.aon.ui.cms.util.ControllerUtil;
 
 public class LinkController extends BasicI18nController {
 
-	private boolean cancelOnSelect = false;
-
 	private LinkCategory currentLinkCategory;
 	
 	public LinkCategory getCurrentLinkCategory() {
@@ -33,21 +30,16 @@ public class LinkController extends BasicI18nController {
 
 	@SuppressWarnings("unused")
 	public void onSelect(ActionEvent event) {
-		if (!cancelOnSelect) {
-			super.onSelect(new ActionEvent(event.getComponent()));
-			FacesContext.getCurrentInstance().getApplication().getNavigationHandler().handleNavigation(FacesContext.getCurrentInstance(), null, "link_form");
-			loadCurrentLanguage();
-		}
-		cancelOnSelect = false;
+		super.onSelect(new ActionEvent(event.getComponent()));
+		FacesContext.getCurrentInstance().getApplication().getNavigationHandler().handleNavigation(FacesContext.getCurrentInstance(), null, "link_form");
+		loadCurrentLanguage();
 	}
 
 	public void onActivate(ActionEvent event) throws ManagerBeanException {
-		cancelOnSelect = true; 
 		activate(true);
 	}
 
 	public void onDeactivate(ActionEvent event) throws ManagerBeanException {
-		cancelOnSelect = true; 
 		activate(false);
 	}
 	
@@ -57,10 +49,6 @@ public class LinkController extends BasicI18nController {
 		getManagerBean().update(l);
 	}
 	
-	public void onChecked(ValueChangeEvent event) throws ManagerBeanException {
-		cancelOnSelect = true; 
-	}
-
 	public String getI18nLabel() throws ManagerBeanException {
 		String label = "";
 		LinkDetail ld = getCurrentDetail();
@@ -114,12 +102,10 @@ public class LinkController extends BasicI18nController {
 	}
 	
     public void onMoveUp(ActionEvent event) throws ManagerBeanException, ExpressionException {
-		cancelOnSelect = true; 
     	move((Link) this.model.getRowData(), -1);
     }
 
     public void onMoveDown(ActionEvent event) throws ManagerBeanException, ExpressionException {
-		cancelOnSelect = true; 
     	move((Link) this.model.getRowData(), 1);    	
     }
 

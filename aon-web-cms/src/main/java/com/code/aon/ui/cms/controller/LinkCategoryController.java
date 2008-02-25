@@ -1,12 +1,9 @@
 package com.code.aon.ui.cms.controller;
 
-import java.util.LinkedList;
 import java.util.List;
 
 import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
-import javax.faces.event.ValueChangeEvent;
-import javax.faces.model.SelectItem;
 
 import com.code.aon.cms.Link;
 import com.code.aon.cms.LinkCategory;
@@ -25,8 +22,6 @@ import com.code.aon.ui.util.AonUtil;
 
 public class LinkCategoryController extends BasicI18nController {
 
-	private boolean cancelOnSelect = false;
-
 	@Override
 	public void onReset(ActionEvent event) {
 		((GeneratorConfigController)AonUtil.getRegisteredBean("generator_config")).initSection(LinkConfig.class);
@@ -35,21 +30,16 @@ public class LinkCategoryController extends BasicI18nController {
 
 	@SuppressWarnings("unused")
 	public void onSelect(ActionEvent event)  {
-		if (!cancelOnSelect) {
-			super.onSelect(new ActionEvent(event.getComponent()));
-			FacesContext.getCurrentInstance().getApplication().getNavigationHandler().handleNavigation(FacesContext.getCurrentInstance(), null, "link_category_form");
-			loadCurrentLanguage();
-		}
-		cancelOnSelect = false;
+		super.onSelect(new ActionEvent(event.getComponent()));
+		FacesContext.getCurrentInstance().getApplication().getNavigationHandler().handleNavigation(FacesContext.getCurrentInstance(), null, "link_category_form");
+		loadCurrentLanguage();
 	}
 
 	public void onActivate(ActionEvent event) throws ManagerBeanException {
-		cancelOnSelect = true; 
 		activate(true);
 	}
 
 	public void onDeactivate(ActionEvent event) throws ManagerBeanException {
-		cancelOnSelect = true; 
 		activate(false);
 	}
 	
@@ -59,10 +49,6 @@ public class LinkCategoryController extends BasicI18nController {
 		getManagerBean().update(linkCategory);
 	}
 	
-	public void onChecked(ValueChangeEvent event) throws ManagerBeanException {
-		cancelOnSelect = true; 
-	}
-
 	public String getI18nLabel() throws ManagerBeanException {
 		String label = "";
 		LinkCategoryDetail linkCategoryDetail = getCurrentDetail();
@@ -116,20 +102,17 @@ public class LinkCategoryController extends BasicI18nController {
 	}
 	
     public void onMoveUp(ActionEvent event) throws ManagerBeanException, ExpressionException {
-		cancelOnSelect = true; 
     	move((LinkCategory) this.model.getRowData(), -1);
     }
 
     public void onMoveDown(ActionEvent event) throws ManagerBeanException, ExpressionException {
-		cancelOnSelect = true; 
     	move((LinkCategory) this.model.getRowData(), 1);    	
     }
     
 	public void onSelectLinks(ActionEvent event) throws ManagerBeanException, ExpressionException {
-		cancelOnSelect = true;
 		LinkController lc = (LinkController)AonUtil.getController("link");
 		IManagerBean moBean = BeanManager.getManagerBean(Link.class);
-		LinkCategory linkCategory = (LinkCategory) this.getSelectedTO();
+		LinkCategory linkCategory = (LinkCategory) this.getTo();
 		Criteria criteria = new Criteria();
 		criteria.addExpression(moBean.getFieldName(ICMSAlias.LINK_LINK_CATEGORY_ID), "" + linkCategory.getId());
 		criteria.addOrder(moBean.getFieldName(ICMSAlias.LINK_POSITION));
