@@ -52,6 +52,26 @@
 							actionListener="#{section.onReset}" rendered="#{!section.new}"
 							styleClass="aon-finding-toolbar-item aon-icon-reset"
 							accesskey="#{bundle.aon_key_new}" />
+						<aon:commandButton id="first" 
+							action="section_form"
+							rendered="#{!section.new and !section.inFirst}"
+							styleClass="aon-icon-commandButton aon-dataScroller-button-first"
+							actionListener="#{section.onSelectFirst}"/>
+						<aon:commandButton id="previous" 
+							action="section_form"
+							rendered="#{!section.new and !section.inFirst}"
+							styleClass="aon-icon-commandButton aon-dataScroller-button-previous"
+							actionListener="#{section.onSelectPrevious}"/>
+						<aon:commandButton id="next" 
+							action="section_form"
+							rendered="#{!section.new and !section.inLast}"
+							styleClass="aon-icon-commandButton aon-dataScroller-button-next"
+							actionListener="#{section.onSelectNext}"/>
+						<aon:commandButton id="last" 
+							action="section_form"
+							rendered="#{!section.new and !section.inLast}"
+							styleClass="aon-icon-commandButton aon-dataScroller-button-last"
+							actionListener="#{section.onSelectLast}"/>
 				    </aon:div>
 					
 					<!-- end toolbar navigation -->

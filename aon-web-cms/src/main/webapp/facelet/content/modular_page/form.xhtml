@@ -53,6 +53,26 @@
 							immediate="#{true}"
 							styleClass="aon-finding-toolbar-item aon-icon-cancel"
 							accesskey="#{bundle.aon_key_close}"/>
+						<aon:commandButton id="first" 
+							action="modular_page_form"
+							rendered="#{!modular_page.new and !modular_page.inFirst}"
+							styleClass="aon-icon-commandButton aon-dataScroller-button-first"
+							actionListener="#{modular_page.onSelectFirst}"/>
+						<aon:commandButton id="previous" 
+							action="modular_page_form"
+							rendered="#{!modular_page.new and !modular_page.inFirst}"
+							styleClass="aon-icon-commandButton aon-dataScroller-button-previous"
+							actionListener="#{modular_page.onSelectPrevious}"/>
+						<aon:commandButton id="next" 
+							action="modular_page_form"
+							rendered="#{!modular_page.new and !modular_page.inLast}"
+							styleClass="aon-icon-commandButton aon-dataScroller-button-next"
+							actionListener="#{modular_page.onSelectNext}"/>
+						<aon:commandButton id="last" 
+							action="modular_page_form"
+							rendered="#{!modular_page.new and !modular_page.inLast}"
+							styleClass="aon-icon-commandButton aon-dataScroller-button-last"
+							actionListener="#{modular_page.onSelectLast}"/>
 				    </aon:div>
 					
 					<!-- end toolbar navigation -->
@@ -123,7 +143,7 @@
 						</aon:div>
 						
 						<aon:dataTable id="dataTable" value="#{modular_page_option.model}" var="to"
-							rows="20" styleClass="dr-table rich-table aon-editDataTable"
+							styleClass="dr-table rich-table aon-editDataTable"
 							headerClass="dr-table-subheader rich-table-subheader aon-editDataTable-header"
 							footerClass="dr-table-subfooter rich-table-subfooter aon-editDataTable-footer"
 							rowClasses="aon-editDataTable-row-odd,dr-table-firstrow rich-table-firstrow aon-editDataTable-row-even"

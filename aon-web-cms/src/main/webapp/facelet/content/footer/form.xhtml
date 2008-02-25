@@ -56,6 +56,26 @@
 							actionListener="#{footer.onReset}" rendered="#{!menu_option.new}"
 							styleClass="aon-finding-toolbar-item aon-icon-reset"
 							accesskey="#{bundle.aon_key_new}" />
+						<aon:commandButton id="first" 
+							action="footer_form"
+							rendered="#{!footer.new and !footer.inFirst}"
+							styleClass="aon-icon-commandButton aon-dataScroller-button-first"
+							actionListener="#{footer.onSelectFirst}"/>
+						<aon:commandButton id="previous" 
+							action="footer_form"
+							rendered="#{!footer.new and !footer.inFirst}"
+							styleClass="aon-icon-commandButton aon-dataScroller-button-previous"
+							actionListener="#{footer.onSelectPrevious}"/>
+						<aon:commandButton id="next" 
+							action="footer_form"
+							rendered="#{!footer.new and !footer.inLast}"
+							styleClass="aon-icon-commandButton aon-dataScroller-button-next"
+							actionListener="#{footer.onSelectNext}"/>
+						<aon:commandButton id="last" 
+							action="footer_form"
+							rendered="#{!footer.new and !footer.inLast}"
+							styleClass="aon-icon-commandButton aon-dataScroller-button-last"
+							actionListener="#{footer.onSelectLast}"/>
 				    </aon:div>
 					
 					<!-- end toolbar navigation -->

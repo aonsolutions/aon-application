@@ -50,7 +50,7 @@
 		<aon:div styleClass="aon-scroll-area">
 					
 					<aon:dataTable id="dataTable" value="#{modular_page.model}" var="to"
-						rows="20" styleClass="dr-table rich-table aon-editDataTable"
+						styleClass="dr-table rich-table aon-editDataTable"
 						headerClass="dr-table-subheader rich-table-subheader aon-editDataTable-header"
 						footerClass="dr-table-subfooter rich-table-subfooter aon-editDataTable-footer"
 						rowClasses="aon-editDataTable-row-odd,dr-table-firstrow rich-table-firstrow aon-editDataTable-row-even"
@@ -136,7 +136,8 @@
 						</aon:column>
 					</aon:dataTable>
 				
-					<aon:dataScroller dataTable="dataTable" model="#{modular_page.model}" />
+					<aon:dataScroller dataTable="dataTable" 
+						model="#{modular_page.model}" />
 
 
 			</aon:div>
