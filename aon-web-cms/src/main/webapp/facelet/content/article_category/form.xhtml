@@ -198,24 +198,24 @@
 											<aon:commandButton id="save_list_form"
 												value="#{bundle.aon_save}" 
 												rendered="#{article.to!=null or article.new}"
-												action="article_category_form"
+												reRender="detail_panel"
 												actionListener="#{article.onAccept}"
 												styleClass="aon-finding-toolbar-item aon-icon-accept"
 												accesskey="#{bundle.aon_key_save}"/>
 											<aon:commandButton id="cancel_list_form"
 												value="#{bundle.aon_cancel}" 
 												rendered="#{article.to!=null or article.new}" immediate="#{true}"
+												reRender="detail_panel"
 												actionListener="#{article.onCancel}" 
-												action="article_category_form"
 												styleClass="aon-finding-toolbar-item aon-icon-cancel"
 												accesskey="#{bundle.aon_key_cancel}"/>
 											<aon:confirmButton id="remove_list_form"
 												value="#{bundle.aon_remove}" rendered="#{!article.new}" 
 												immediate="true"
+												reRender="detail_panel"
 												confirmTitle="Confirmation Dialog" 
 												confirmMessage="#{bundle.aon_remove_confirm}"
 												confirmActionListener="#{article.onRemoveI18n}" 
-												confirmAction="article_category_form"
 												styleClass="aon-finding-toolbar-item aon-icon-delete"
 												accesskey="#{bundle.aon_key_remove}"/>
 									    </aon:div>
@@ -546,10 +546,7 @@
 											<aon:outputText value="#{appBundle.document_related_name}" />
 										</f:facet>
 										<aon:div rendered="#{to!=articleDocument.to}" >
-											<aon:panelGrid columns="2">
-												<aon:outputText style="font-weight: bold" value="#{articleDocument.currentRowDetail.title}" />
-												<aon:outputText value="#{to.alias}" />
-											</aon:panelGrid>
+											<aon:outputText value="#{to.alias}" />
 										</aon:div>
 										<aon:div rendered="#{to==articleDocument.to}">
 											<aon:div>
@@ -557,7 +554,6 @@
 												<aon:inputText  
 													id="#{appBundle.document_related_alias}"
 													styleClass="aon-form-input-text aon-form-input-text-number"
-													required="true" 
 													size="80" maxlength="255"
 													value="#{articleDocument.to.alias}" />
 											</aon:div>
@@ -566,21 +562,24 @@
 												<aon:inputText 
 													id="#{appBundle.document_related_title}"
 													styleClass="aon-form-input-text aon-form-input-text-number"
-													required="true" 
 													size="80" maxlength="255"
 													value="#{articleDocument.toI18n.title}" />
 											</aon:div>
-											<aon:div>
+											<aon:div rendered="#{articleDocument.toI18n.file!=null or articleDocument.inputFile!=null}">
 												<aon:outputText 
 													size="90" maxlength="255"
 													value="#{articleDocument.toI18n.file}" />
-													<t:inputFileUpload id="ArticleDocument_inputFile_edit"
-														value="#{articleDocument.inputFile}"
-														accept="*/*" size="45"
-														storage="file"
-														required="true"/>
+											</aon:div>
+											<aon:div rendered="#{articleDocument.toI18n.file==null and articleDocument.inputFile==null}">
+												<t:inputFileUpload id="ArticleDocument_inputFile_edit"
+													value="#{articleDocument.inputFile}"
+													accept="*/*" size="45"
+													storage="file"
+													required="true" />
 												<h:commandButton value="#{bundle.aon_fileupload_insert}"
 													styleClass="aon-icon-attach aon-finding-toolbar-item"
+													reRender="articleDocumentData"
+													rendered="#{articleDocument.inputFile == null}"
 													actionListener="#{articleDocument.fileUploaded}"/>
 											</aon:div>
 											<aon:div>
@@ -598,7 +597,6 @@
 													<aon:inputText 
 														id="#{appBundle.document_related_alias}_"
 														styleClass="aon-form-input-text aon-form-input-text-number"
-														required="true" 
 														size="80" maxlength="255"
 														value="#{articleDocument.to.alias}" />
 												</aon:div>
@@ -607,20 +605,22 @@
 													<aon:inputText 
 														id="#{appBundle.document_related_title}_"
 														styleClass="aon-form-input-text aon-form-input-text-number"
-														required="true" 
 														size="80" maxlength="255"
 														value="#{articleDocument.toI18n.title}" />
 												</aon:div>
-												<aon:div>
+												<aon:div rendered="#{articleDocument.inputFile!=null}">
 													<aon:outputText 
 														size="90" maxlength="255"
 														value="#{articleDocument.toI18n.file}" />
+												</aon:div>
+												<aon:div rendered="#{articleDocument.inputFile==null}">
 													<t:inputFileUpload id="ArticleDocument_inputFile"
 														value="#{articleDocument.inputFile}"
 														accept="*/*" size="45"
 														storage="file"
 														required="true"/>
 													<h:commandButton value="#{bundle.aon_fileupload_insert}"
+														reRender="articleDocumentData"
 														styleClass="aon-icon-attach aon-finding-toolbar-item"
 														actionListener="#{articleDocument.fileUploaded}"/>
 												</aon:div>
@@ -660,6 +660,7 @@
 												<aon:commandButton title="[#{bundle.aon_accept}]"
 													styleClass="aon-editDataTable-button aon-icon-accept"
 													reRender="articleDocumentData"
+													rendered="#{articleDocument.inputFile != null}"
 													actionListener="#{articleDocument.onAccept}" />
 												<aon:commandButton title="[#{bundle.aon_cancel}]"
 													styleClass="aon-editDataTable-button aon-icon-cancel"
