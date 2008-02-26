@@ -48,7 +48,6 @@ public class ArticleController extends GridI18nController {
 	@SuppressWarnings("unused")
 	public void onSelect(ActionEvent event){
 		super.onSelect(new ActionEvent(event.getComponent()));
-		FacesContext.getCurrentInstance().getApplication().getNavigationHandler().handleNavigation(FacesContext.getCurrentInstance(), null, "article_form");
 		loadCurrentLanguage();
 	}
 

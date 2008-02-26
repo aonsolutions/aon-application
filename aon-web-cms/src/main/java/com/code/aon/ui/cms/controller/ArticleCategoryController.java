@@ -102,7 +102,7 @@ public class ArticleCategoryController extends BasicI18nController {
 	public void onSelectArticles(ActionEvent event) throws ManagerBeanException, ExpressionException {
 		ArticleController fc = (ArticleController)AonUtil.getController("article");
 		IManagerBean moBean = BeanManager.getManagerBean(Article.class);
-		ArticleCategory articleCategory = (ArticleCategory) this.getSelectedTO();
+		ArticleCategory articleCategory = (ArticleCategory) this.getTo();
 		Criteria criteria = new Criteria();
 		criteria.addExpression(moBean.getFieldName(ICMSAlias.ARTICLE_ARTICLE_CATEGORY_ID), "" + articleCategory.getId());
 		criteria.addExpression(moBean.getFieldName(ICMSAlias.ARTICLE_ARTICLE_TYPE), "" + fc.getCurrentType());

@@ -6,12 +6,13 @@
 	xmlns:aon="http://www.code.es/aon-rich-components"
 	xmlns:c="http://java.sun.com/jstl/core"
 	xmlns:rich="http://richfaces.org/rich"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
 	xmlns:a4j="http://richfaces.org/a4j">	
 <body>
 
 <ui:composition template="/facelet/templates/aon.ui.content.xhtml">
 	<ui:define name="content">
-		<aon:form id="main_form">
+		<aon:form id="main_form" enctype="multipart/form-data">
 			<aon:div styleClass="aon-finding-title-toolbar">
 				<aon:panelGrid id="buttonsGrid" columns="3" dir="true" 
 					columnClasses="aon-finding-title,aon-finding-subtitle,aon-finding-toolbar">				
@@ -32,10 +33,16 @@
 							actionListener="#{article_category.onReset}"
 							styleClass="aon-finding-toolbar-item aon-icon-reset"
 							accesskey="#{bundle.aon_key_new}"/>
-						<aon:commandButton id="save"
+						<aon:commandButton id="save_new"
 							value="#{bundle.aon_save}" 
-							rendered="#{article_category.to!=null or article_category.new}"
+							rendered="#{article_category.new}"
 							action="article_category_form"
+							actionListener="#{article_category.accept}"
+							styleClass="aon-finding-toolbar-item aon-icon-accept"
+							accesskey="#{bundle.aon_key_save}"/>
+						<aon:commandButton id="save_edit"
+							value="#{bundle.aon_save}" 
+							rendered="#{article_category.to!=null and !article_category.new}"
 							actionListener="#{article_category.accept}"
 							styleClass="aon-finding-toolbar-item aon-icon-accept"
 							accesskey="#{bundle.aon_key_save}"/>
@@ -118,7 +125,7 @@
 			</aon:div>
 		
 			<rich:panel id="detail_panel" rendered="#{!article_category.new}">
-				<f:facet name="header">#{appBundle.link}</f:facet>
+				<f:facet name="header">#{appBundle.article}</f:facet>
 				
 				<aon:panelGrid columns="2" styleClass="none" columnClasses="aon-vertical-align-top,aon-vertical-align-top">
 				
@@ -438,11 +445,11 @@
 											<aon:outputText value="&#160;" />
 										</f:facet>
 										<aon:outputText value="&#160;" rendered="#{to==articleRelated.to}" />
-										<aon:commandButton rendered="#{to!=articleRelated.to}"
-											styleClass="aon-editDataTable-button aon-icon-rowSelector"
-											actionListener="#{articleRelated.onSelect}" value="" immediate="true"
-											reRender="articleRelatedData">
-										</aon:commandButton>
+										<aon:commandButton id="lineRemove" title="[#{bundle.aon_remove}]"
+											rendered="#{to!=articleRelated.to}"
+											styleClass="aon-editDataTable-button aon-icon-delete"
+											reRender="articleRelatedData" immediate="true"
+											actionListener="#{articleRelated.onRemoveCurrent}" />
 										<f:facet name="footer">
 											<aon:div>
 												<aon:commandButton id="reset"
@@ -461,12 +468,8 @@
 										<f:facet name="header">
 											<aon:outputText value="#{appBundle.article_related_name}" />
 										</f:facet>
-										<aon:outputText value="#{to.articleRelated.publishDate}, #{to.articleRelated.alias}" rendered="#{to!=articleRelated.to}" />
-										<aon:selectOneMenu styleClass="aon-form-selectOneMenu-field"
-											rendered="#{to==articleRelated.to}" 
-											value="#{articleRelated.to.articleRelated.id}">
-											<f:selectItems value="#{collections.articleList}" />
-										</aon:selectOneMenu>
+										<aon:outputText value="#{to.articleRelated.alias}" 
+											rendered="#{to!=articleRelated.to}" />
 										<f:facet name="footer">
 											<aon:selectOneMenu styleClass="aon-form-selectOneMenu-field"
 												rendered="#{articleRelated.new}" 
@@ -481,20 +484,6 @@
 											<aon:outputText value="&#160;" />
 										</f:facet>
 										<f:verbatim rendered="#{to!=articleRelated.to}">&#160;</f:verbatim>
-										<aon:div rendered="#{to==articleRelated.to}">
-											<aon:commandButton id="lineAccept" title="[#{bundle.aon_accept}]"
-												styleClass="aon-editDataTable-button aon-icon-accept"
-												reRender="articleRelatedData"
-												actionListener="#{articleRelated.onAccept}" />
-											<aon:commandButton id="lineCancel" title="[#{bundle.aon_cancel}]"
-												styleClass="aon-editDataTable-button aon-icon-cancel"
-												reRender="articleRelatedData" immediate="true"
-												actionListener="#{articleRelated.onCancel}" />
-											<aon:commandButton id="lineRemove" title="[#{bundle.aon_remove}]"
-												styleClass="aon-editDataTable-button aon-icon-delete"
-												reRender="articleRelatedData" immediate="true"
-												actionListener="#{articleRelated.onRemove}" />
-										</aon:div>
 										<f:facet name="footer">
 											<aon:div rendered="#{articleRelated.new}">
 												<f:verbatim rendered="#{!articleRelated.new}">&#160;</f:verbatim>
@@ -559,7 +548,7 @@
 										<aon:div rendered="#{to!=articleDocument.to}" >
 											<aon:panelGrid columns="2">
 												<aon:outputText style="font-weight: bold" value="#{articleDocument.currentRowDetail.title}" />
-												<aon:outputText value="#{articleDocument.currentRowDetail.file}" />
+												<aon:outputText value="#{to.alias}" />
 											</aon:panelGrid>
 										</aon:div>
 										<aon:div rendered="#{to==articleDocument.to}">
@@ -581,17 +570,19 @@
 													size="80" maxlength="255"
 													value="#{articleDocument.toI18n.title}" />
 											</aon:div>
-											<!-- 
 											<aon:div>
 												<aon:outputText 
 													size="90" maxlength="255"
 													value="#{articleDocument.toI18n.file}" />
-						                        <ice:inputFile uploadDirectory="#{articleDocument.currentPath}"
-						                        		uniqueFolder="false"
-						                        		uploadDirectoryAbsolute="true"
-						                                actionListener="#{articleDocument.onUpload}"/>
+													<t:inputFileUpload id="ArticleDocument_inputFile_edit"
+														value="#{articleDocument.inputFile}"
+														accept="*/*" size="45"
+														storage="file"
+														required="true"/>
+												<h:commandButton value="#{bundle.aon_fileupload_insert}"
+													styleClass="aon-icon-attach aon-finding-toolbar-item"
+													actionListener="#{articleDocument.fileUploaded}"/>
 											</aon:div>
-											 -->
 											<aon:div>
 												<aon:outputText value="#{appBundle.document_related_description}" />
 												<aon:inputTextarea
@@ -620,17 +611,19 @@
 														size="80" maxlength="255"
 														value="#{articleDocument.toI18n.title}" />
 												</aon:div>
-												<!-- 
 												<aon:div>
 													<aon:outputText 
 														size="90" maxlength="255"
 														value="#{articleDocument.toI18n.file}" />
-							                        <ice:inputFile uploadDirectory="#{document.currentPath}"
-							                        		uniqueFolder="false"
-							                        		uploadDirectoryAbsolute="true"
-							                                actionListener="#{articleDocument.onUpload}"/>
+													<t:inputFileUpload id="ArticleDocument_inputFile"
+														value="#{articleDocument.inputFile}"
+														accept="*/*" size="45"
+														storage="file"
+														required="true"/>
+													<h:commandButton value="#{bundle.aon_fileupload_insert}"
+														styleClass="aon-icon-attach aon-finding-toolbar-item"
+														actionListener="#{articleDocument.fileUploaded}"/>
 												</aon:div>
-												 -->
 												<aon:div>
 													<aon:outputText value="#{appBundle.document_related_description}" />
 													<aon:inputTextarea
