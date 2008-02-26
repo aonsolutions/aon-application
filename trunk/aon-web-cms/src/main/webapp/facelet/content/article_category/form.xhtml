@@ -2,113 +2,694 @@
 <html xmlns="http://www.w3.org/1999/xhtml"
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:f="http://java.sun.com/jsf/core"
-	xmlns:aon="http://www.code.es/aon-ice-components"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:aon="http://www.code.es/aon-rich-components"
 	xmlns:c="http://java.sun.com/jstl/core"
-	xmlns:fck="http://www.fck-faces.org/fck-faces">
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j">	
 <body>
 
-<ui:composition template="/facelet/templates/aon.ui.main.xhtml">
-
+<ui:composition template="/facelet/templates/aon.ui.content.xhtml">
 	<ui:define name="content">
-
-		<aon:form id="articleCategoryForm" partialSubmit="false">
-
-			<aon:panelGrid columns="2" dir="true" styleClass="aon-title-toolbar"
-			cellpadding="0" cellspacing="0" columnClasses="aon-content-title,aon-content-toolbar">
-			
-				<aon:div styleClass="aon-content-title-internal">
-					<aon:outputText value="#{appBundle.article_category}" />					
-				</aon:div>		
-			
-				<!-- start toolbar navigation -->
-				<aon:div styleClass="aon-content-toolbar-internal">
-					<aon:div styleClass="aon-content-toolbar-item-group">
-						<aon:commandButton id="save"
-							value="#{bundle.aon_save}" rendered="#{article_category.to!=null or article_category.new}"
-							actionListener="#{article_category.onAccept}"
-							styleClass="aon-content-toolbar-item aon-icon-accept"
-							onmouseout="this.className='aon-content-toolbar-item aon-icon-accept'"
-							onmouseover="this.className='aon-content-toolbar-item aon-icon-accept aon-content-toolbar-item-hover'"
-							accesskey="#{bundle.aon_key_save}"/>
-						<aon:commandButton id="cancel"
-							value="#{bundle.aon_cancel}" rendered="#{article_category.to!=null or article_category.new}" immediate="#{true}"
-							actionListener="#{article_category.onCancel}" action="article_category_list"
-							styleClass="aon-content-toolbar-item aon-icon-cancel"
-							onmouseout="this.className='aon-content-toolbar-item aon-icon-cancel'"
-							onmouseover="this.className='aon-content-toolbar-item aon-icon-cancel aon-content-toolbar-item-hover'"
-							accesskey="#{bundle.aon_key_cancel}"/>
-						<aon:confirmButton id="remove"
-							value="#{bundle.aon_remove}" rendered="#{!article_category.new}" immediate="true"
-							confirmTitle="Confirmation Dialog" confirmMessage="#{bundle.aon_remove_confirm}"
-							confirmActionListener="#{article_category.onRemoveI18n}" confirmAction="article_category_form"
-							styleClass="aon-content-toolbar-item aon-icon-delete"
-							onmouseout="this.className='aon-content-toolbar-item aon-icon-delete'"
-							onmouseover="this.className='aon-content-toolbar-item aon-icon-delete aon-content-toolbar-item-hover'"
-							accesskey="#{bundle.aon_key_remove}"/>
+		<aon:form id="main_form">
+			<aon:div styleClass="aon-finding-title-toolbar">
+				<aon:panelGrid id="buttonsGrid" columns="3" dir="true" 
+					columnClasses="aon-finding-title,aon-finding-subtitle,aon-finding-toolbar">				
+				
+					<aon:div styleClass="aon-finding-title-internal">
+						<aon:outputText value="#{appBundle.article_category}"/>	  						
+					</aon:div>					
+					
+					<aon:div styleClass="aon-finding-subtitle-internal">
+							<aon:outputText
+								value="#{article_category.new?(bundle.aon_reset):(bundle.aon_editing)}" />
+					</aon:div>					
+						
+					<!-- start toolbar navigation -->
+					<aon:div styleClass="aon-finding-toolbar-item-group">					
 						<aon:commandButton id="reset" value="#{bundle.aon_reset}"
-							actionListener="#{article_category.onReset}" rendered="#{!article_category.new}"
-							styleClass="aon-content-toolbar-item aon-icon-reset"
-							onmouseout="this.className='aon-content-toolbar-item aon-icon-reset'"
-							onmouseover="this.className='aon-content-toolbar-item aon-icon-reset aon-content-toolbar-item-hover'"
-							accesskey="#{bundle.aon_key_new}" />
-					</aon:div>
-				</aon:div>
-			</aon:panelGrid>
-
-			<aon:div styleClass="aon-content-subtitle" id="aon-content-subtitle"
-				forceId="#{true}">
-				<aon:div styleClass="aon-content-subtitle-internal">
-					<aon:outputText
-						value="#{article_category.new?(bundle.aon_reset):(bundle.aon_editing)}" />
-				</aon:div>
+							action="article_category_form"
+							actionListener="#{article_category.onReset}"
+							styleClass="aon-finding-toolbar-item aon-icon-reset"
+							accesskey="#{bundle.aon_key_new}"/>
+						<aon:commandButton id="save"
+							value="#{bundle.aon_save}" 
+							rendered="#{article_category.to!=null or article_category.new}"
+							action="article_category_form"
+							actionListener="#{article_category.accept}"
+							styleClass="aon-finding-toolbar-item aon-icon-accept"
+							accesskey="#{bundle.aon_key_save}"/>
+						<aon:confirmButton id="remove"
+							value="#{bundle.aon_remove}" rendered="#{!article_category.new}" 
+							immediate="#{true}"
+							styleClass="aon-finding-toolbar-item aon-icon-delete"
+							confirmTitle="Confirmation Dialog" 
+							confirmMessage="#{bundle.aon_remove_confirm}"
+							confirmActionListener="#{article_category.onRemove}"
+							confirmAction="article_category_list"
+							accesskey="#{bundle.aon_key_remove}"/>
+						<aon:commandButton id="exit" value="#{bundle.aon_close}"
+							action="article_category_list" 
+							immediate="#{true}"
+							styleClass="aon-finding-toolbar-item aon-icon-cancel"
+							accesskey="#{bundle.aon_key_close}"/>
+						<aon:commandButton id="first" 
+							action="article_category_form"
+							rendered="#{!article_category.new and !article_category.inFirst}"
+							styleClass="aon-icon-commandButton aon-dataScroller-button-first"
+							actionListener="#{article_category.onSelectFirst}"/>
+						<aon:commandButton id="previous" 
+							action="article_category_form"
+							rendered="#{!article_category.new and !article_category.inFirst}"
+							styleClass="aon-icon-commandButton aon-dataScroller-button-previous"
+							actionListener="#{article_category.onSelectPrevious}"/>
+						<aon:commandButton id="next" 
+							action="article_category_form"
+							rendered="#{!article_category.new and !article_category.inLast}"
+							styleClass="aon-icon-commandButton aon-dataScroller-button-next"
+							actionListener="#{article_category.onSelectNext}"/>
+						<aon:commandButton id="last" 
+							action="article_category_form"
+							rendered="#{!article_category.new and !article_category.inLast}"
+							styleClass="aon-icon-commandButton aon-dataScroller-button-last"
+							actionListener="#{article_category.onSelectLast}"/>
+				    </aon:div>
+					
+					<!-- end toolbar navigation -->
+				</aon:panelGrid>
 			</aon:div>
-			<aon:div id="aon-scroll-area" forceId="#{true}">
-				<aon:div styleClass="aon-scroll-area-internal">
+			
+			<aon:div styleClass="aon-scroll-area">
+				<aon:panelGrid id="main_panel" columns="2" dir="true">
+	
+					<aon:outputLabel for="ArticleCategory_alias" style="width:100px"
+						value="#{appBundle.article_category_alias}" />
+					<aon:inputText id="ArticleCategory_alias"
+						styleClass="aon-form-input-text aon-form-input-text-number"
+						required="true" size="32" maxlength="32"
+						value="#{article_category.to.alias}" />
 
-					<aon:panelGrid columns="2">
-						<aon:panelGrid columns="2" dir="true" styleClass="aon-form-table"
-							columnClasses="aon-form-table-column-odd,aon-form-table-column-even">
+					<aon:outputLabel for="ArticleCategoryDetail_label"
+						value="#{appBundle.article_category_label}" />
+					<aon:inputText id="ArticleCategoryDetail_label"
+						styleClass="aon-form-input-text aon-form-input-text-number"
+						size="50" maxlength="64"
+						value="#{article_category.toI18n.label}" />
 
-							<aon:outputLabel for="ArticleCategory_alias" style="width:100px"
-								styleClass="aon-form-input-text-label"
-								value="#{appBundle.article_category_alias}" />
-							<aon:inputText id="ArticleCategory_alias"
-								styleClass="aon-form-input-text aon-form-input-text-number"
-								required="true" size="32" maxlength="32"
-								value="#{article_category.to.alias}" />
-
-							<aon:outputLabel for="ArticleCategoryDetail_label"
-								styleClass="aon-form-input-text-label"
-								value="#{appBundle.article_category_label}" />
-							<aon:inputText id="ArticleCategoryDetail_label"
-								styleClass="aon-form-input-text aon-form-input-text-number"
-								size="50" maxlength="64"
-								value="#{article_category.toI18n.label}" />
-
-							<aon:outputLabel for="ArticleCategory_section"
-								styleClass="aon-form-input-text-label"
-								value="#{appBundle.section}"/>
-							<aon:selectOneMenu id="ArticleCategory_section"  
-								styleClass="aon-form-selectOneMenu-field"
-								value="#{article_category.to.section.id}">
-								<f:selectItem itemLabel="-" itemValue="-1" />
-								<f:selectItems value="#{collections.sectionList}" />
-							</aon:selectOneMenu>
+					<aon:outputLabel for="ArticleCategory_section"
+						value="#{appBundle.section}"/>
+					<aon:selectOneMenu id="ArticleCategory_section"  
+						styleClass="aon-form-selectOneMenu-field"
+						value="#{article_category.to.section.id}">
+						<f:selectItem itemLabel="-" itemValue="-1" />
+						<f:selectItems value="#{collections.sectionList}" />
+					</aon:selectOneMenu>
+					
+					<aon:outputLabel for="ArticleCategory_elementSection"
+						value="#{appBundle.section} (Only Elements)"/>
+					<aon:selectOneMenu id="ArticleCategory_elementSection"  
+						styleClass="aon-form-selectOneMenu-field"
+						value="#{article_category.to.elementSection.id}">
+						<f:selectItem itemLabel="-" itemValue="-1" />
+						<f:selectItems value="#{collections.sectionList}" />
+					</aon:selectOneMenu>
 							
-							<aon:outputLabel for="sectionOnlyElement"
-								styleClass="aon-form-input-text-label"
-								value="#{appBundle.article_category_isSectionOnlyElement}" />
-							<aon:selectBooleanCheckbox id="sectionOnlyElement" 
-								value="#{article_category.to.sectionOnlyElement}" />
-							
-						</aon:panelGrid>
-					</aon:panelGrid>
-				</aon:div>
+				</aon:panelGrid>
 			</aon:div>
+		
+			<rich:panel id="detail_panel" rendered="#{!article_category.new}">
+				<f:facet name="header">#{appBundle.link}</f:facet>
+				
+				<aon:panelGrid columns="2" styleClass="none" columnClasses="aon-vertical-align-top,aon-vertical-align-top">
+				
+					<rich:panel id="detail_list_panel">
+						<f:facet name="header">#{appBundle.aon_listing}</f:facet>
+				
+						<aon:div styleClass="aon-finding-title-toolbar">
+							<aon:panelGrid id="buttonsGrid_list" columns="1" dir="true" 
+								columnClasses="aon-finding-toolbar">				
+							
+								<!-- start toolbar navigation -->
+								<aon:div styleClass="aon-finding-toolbar-item-group">
+									<aon:commandButton id="reset_list" value="#{bundle.aon_reset}"
+										action="article_category_form" 
+										actionListener="#{article.onReset}"
+										styleClass="aon-finding-toolbar-item aon-icon-reset"
+										accesskey="#{bundle.aon_key_new}"/>
+									<aon:confirmButton id="remove_list"
+										value="#{bundle.aon_remove}" 
+										rendered="#{!article.checklistEmpty and article.to==null}" 
+										inmediate="true"
+										confirmTitle="Confirmation Dialog" 
+										confirmMessage="#{bundle.aon_remove_confirm}"
+										confirmActionListener="#{article.onRemoveSelected}" 
+										confirmAction="article_category_form"
+										styleClass="aon-finding-toolbar-item aon-icon-delete"
+										accesskey="#{bundle.aon_key_remove}"/>
+							    </aon:div>
+								
+								<!-- end toolbar navigation -->
+							</aon:panelGrid>
+						</aon:div>
+
+						<aon:panelTabSet id="tabPanelTypes"  
+							valueChangeListener="#{article.processTabChange}"> 
+							<aon:panelTab id="#{article.tabID0}" label="#{article.tabID0}">
+								<ui:include src="/facelet/content/article_category/tab.xhtml">
+									<ui:param name="dataTable" value="tab0" />
+								</ui:include>
+		                    </aon:panelTab>
+							<aon:panelTab id="#{article.tabID1}" label="#{article.tabID1}">
+								<ui:include src="/facelet/content/article_category/tab.xhtml">
+									<ui:param name="dataTable" value="tab1" />
+								</ui:include>
+		                    </aon:panelTab>
+							<aon:panelTab id="#{article.tabID2}" label="#{article.tabID2}">
+								<ui:include src="/facelet/content/article_category/tab.xhtml">
+									<ui:param name="dataTable" value="tab2" />
+								</ui:include>
+		                    </aon:panelTab>
+							<aon:panelTab id="#{article.tabID3}" label="#{article.tabID3}">
+								<ui:include src="/facelet/content/article_category/tab.xhtml">
+									<ui:param name="dataTable" value="tab3" />
+								</ui:include>
+		                    </aon:panelTab>
+						</aon:panelTabSet>
+					</rich:panel>
+
+					<rich:panel id="detail_edit_panel" rendered="#{article.new or article.to != null}">
+        				<f:facet name="header">#{article.new?(bundle.aon_reset):(bundle.aon_editing)}</f:facet>
+
+
+						<aon:panelTabSet id="tabPanelTypesForm" > 
+							<aon:panelTab id="content" label="#{appBundle.aon_content}">
+							
+								<aon:div styleClass="aon-finding-title-toolbar">
+									<aon:panelGrid id="buttonsGrid_list_form" columns="1" dir="true" 
+										columnClasses="aon-finding-toolbar">				
+										<aon:div styleClass="aon-finding-toolbar-item-group">
+											<aon:commandButton id="save_list_form"
+												value="#{bundle.aon_save}" 
+												rendered="#{article.to!=null or article.new}"
+												action="article_category_form"
+												actionListener="#{article.onAccept}"
+												styleClass="aon-finding-toolbar-item aon-icon-accept"
+												accesskey="#{bundle.aon_key_save}"/>
+											<aon:commandButton id="cancel_list_form"
+												value="#{bundle.aon_cancel}" 
+												rendered="#{article.to!=null or article.new}" immediate="#{true}"
+												actionListener="#{article.onCancel}" 
+												action="article_category_form"
+												styleClass="aon-finding-toolbar-item aon-icon-cancel"
+												accesskey="#{bundle.aon_key_cancel}"/>
+											<aon:confirmButton id="remove_list_form"
+												value="#{bundle.aon_remove}" rendered="#{!article.new}" 
+												immediate="true"
+												confirmTitle="Confirmation Dialog" 
+												confirmMessage="#{bundle.aon_remove_confirm}"
+												confirmActionListener="#{article.onRemoveI18n}" 
+												confirmAction="article_category_form"
+												styleClass="aon-finding-toolbar-item aon-icon-delete"
+												accesskey="#{bundle.aon_key_remove}"/>
+									    </aon:div>
+										
+									</aon:panelGrid>
+								</aon:div>
+					
+								<aon:div styleClass="aon-scroll-area">
+									<aon:panelGrid id="detailOptionGrid" columns="2" dir="true">
+		
+										<aon:outputLabel for="Article_alias" style="width:100px"
+											value="#{appBundle.article_alias}" />
+										<aon:inputText id="Article_alias"
+											styleClass="aon-form-input-text aon-form-input-text-number"
+											required="true" size="32" maxlength="32"
+											value="#{article.to.alias}" />
+			
+										<aon:outputLabel for="ArticleDetail_publishDate"
+											value="#{appBundle.article_publishDate}" />
+										<aon:selectInputDate id="ArticleDetail_publishDate" 
+											 style="z-index:2001;margin:0;vertical-align:middle;"
+											 imageDir="#{aonConfiguration.stylePath}/images/selectInputDate/"
+											 value="#{article.to.publishDate}" renderAsPopup="true"
+											 popupDateFormat="#{bundle.aon_date_pattern}">
+											 <f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+													timeZone="#{timeZoneController.timeZoneId}" />
+										</aon:selectInputDate>	
+										
+										<aon:outputLabel for="ArticleDetail_expireDate"
+											value="#{appBundle.article_expireDate}" />
+										<aon:selectInputDate id="ArticleDetail_expireDate" 
+											 style="z-index:2001;margin:0;vertical-align:middle;"
+											 imageDir="#{aonConfiguration.stylePath}/images/selectInputDate/"
+											 value="#{article.to.expireDate}" renderAsPopup="true"
+											 popupDateFormat="#{bundle.aon_date_pattern}">
+											 <f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+													timeZone="#{timeZoneController.timeZoneId}" />
+										</aon:selectInputDate>	
+			
+										<aon:outputLabel for="ArticleDetail_title"
+											styleClass="aon-form-input-text-label"
+											value="#{appBundle.article_title}" />
+										<aon:inputText id="ArticleDetail_title"
+											styleClass="aon-form-input-text aon-form-input-text-number"
+											required="true" size="80" maxlength="255"
+											value="#{article.toI18n.title}" />
+			
+										<aon:outputLabel for="ArticleDetail_subtitle"
+											styleClass="aon-form-input-text-label"
+											value="#{appBundle.article_subtitle}" />
+										<aon:inputText id="ArticleDetail_subtitle"
+											styleClass="aon-form-input-text aon-form-input-text-number"
+											size="80" maxlength="255"
+											value="#{article.toI18n.subtitle}" />
+			
+										<aon:outputLabel for="Article_richTextEnabled"
+											value="#{appBundle.generic_page_richtext_enabled}" />
+										<aon:selectBooleanCheckbox id="Article_richTextEnabled"
+											value="#{article.richTextEnabled}">
+											<a4j:support 
+												event="onclick"  
+												reRender="detailOptionGrid" />
+										</aon:selectBooleanCheckbox>
+							
+										<aon:outputLabel for="ArticleDetail_content" style="width:100px"
+											rendered="#{article.richTextEnabled}" 
+											value="#{appBundle.article_content}" />
+										<aon:div style="width:500px" rendered="#{article.richTextEnabled}">
+											<aon:inputRichText style="width:100%" 
+												id="ArticleDetail_content" 
+												value="#{article.toI18n.content}" />
+										</aon:div>
+			
+										<aon:outputLabel for="Article_content_TA"
+											value="#{appBundle.article_content}" 
+											rendered="#{!article.richTextEnabled}"/>
+										<aon:inputTextarea id="Article_content_TA"
+											rendered="#{!article.richTextEnabled}" 
+											cols="80" rows="20" 
+											value="#{article.toI18n.content}"/>
+
+
+										<aon:outputLabel 
+											value="#{appBundle.albumImage_image}" />
+										<aon:panelGroup id="thumbnail_preview">
+											<aon:graphicImage 
+												url="#{article.to.image}.thumbnail" 
+												alt="#{article.to.image}"/>
+												
+
+		<a href="javascript:Richfaces.showModalPanel('mp',{width:650, top:200})">show this panel</a>
+        <rich:modalPanel  id="mp" minHeight="200" minWidth="450" 
+            height="350" width="650" zindex="2000">
+            <f:facet name="header">
+                <h:outputText value="Modal Panel Title" />
+            </f:facet>
+            <f:facet name="controls">
+                <h:graphicImage value="/images/icefaces/popupclose.gif" style="cursor:pointer" onclick="Richfaces.hideModalPanel('mp')" />
+            </f:facet>
+			<aon:panelGrid id="treeGrid" columns="2" dir="true">
+				    <rich:tree style="width:300px"
+				    	switchType="server" 
+				    	stateAdvisor="#{treeStateAdvisor}">
+				        <rich:recursiveTreeNodesAdaptor roots="#{fileSystemBean.imageRoots}" 
+				        	var="item" 
+				        	nodes="#{item.nodes}">
+							<rich:treeNode>
+				                <aon:commandLink
+				                	action="#{item.onSelectFolder}" 
+				                	value="#{item}"
+				                	immediate="#{true}"
+				                	reRender="treeGrid" />
+							</rich:treeNode>
+				        </rich:recursiveTreeNodesAdaptor>
+				    </rich:tree>
+					<aon:panelGroup>
+						<aon:outputLabel value="#{gallery.currentRelativePath}" />
+						<rich:dataList var="item" value="#{gallery.model}" >	
+							<aon:panelGrid columns="2" cellpadding="5px" cellspacing="0px">
+					                <aon:commandLink
+					                	immediate="#{true}"
+					                	reRender="thumbnail_preview"
+					                    actionListener="#{article.onSelectImage}"
+					                    value="#{item.name}">
+					            		<aon:graphicImage url="#{item.thumb}" alt="#{item.name}"/>
+					        		</aon:commandLink>
+							</aon:panelGrid>
+						</rich:dataList>
+					</aon:panelGroup>
+				</aon:panelGrid>		
+        </rich:modalPanel>												
+        
+											<aon:outputLabel 
+												value="#{appBundle.article_thumbnail}" />
+											<aon:graphicImage
+												url="#{article.to.thumbnail}.thumbnail" 
+												alt="#{article.to.thumbnail}"/>
+
+		<a href="javascript:Richfaces.showModalPanel('mp_thumbnail',{width:650, top:200})">show this panel</a>
+        <rich:modalPanel  id="mp_thumbnail" minHeight="200" minWidth="450" 
+            height="350" width="650" zindex="2000">
+            <f:facet name="header">
+                <h:outputText value="Modal Panel Title" />
+            </f:facet>
+            <f:facet name="controls">
+                <h:graphicImage value="/images/icefaces/popupclose.gif" style="cursor:pointer" onclick="Richfaces.hideModalPanel('mp_thumbnail')" />
+            </f:facet>
+			<aon:panelGrid id="treeGrid_thumbnail" columns="2" dir="true">
+				    <rich:tree style="width:300px"
+				    	switchType="server" 
+				    	stateAdvisor="#{treeStateAdvisor}">
+				        <rich:recursiveTreeNodesAdaptor roots="#{fileSystemBean.imageRoots}" 
+				        	var="item" 
+				        	nodes="#{item.nodes}">
+							<rich:treeNode>
+				                <aon:commandLink
+				                	action="#{item.onSelectFolder}" 
+				                	value="#{item}"
+				                	immediate="#{true}"
+				                	reRender="treeGrid_thumbnail" />
+							</rich:treeNode>
+				        </rich:recursiveTreeNodesAdaptor>
+				    </rich:tree>
+					<aon:panelGroup>
+						<aon:outputLabel value="#{gallery.currentRelativePath}" />
+						<rich:dataList var="item" value="#{gallery.model}" >	
+							<aon:panelGrid columns="2" cellpadding="5px" cellspacing="0px">
+					                <aon:commandLink
+					                	immediate="#{true}"
+					                	reRender="thumbnail_preview"
+					                    actionListener="#{article.onSelectThumbnail}"
+					                    value="#{item.name}">
+					            		<aon:graphicImage url="#{item.thumb}" alt="#{item.name}"/>
+					            	</aon:commandLink>
+							</aon:panelGrid>
+						</rich:dataList>
+					</aon:panelGroup>
+				</aon:panelGrid>		
+        </rich:modalPanel>												
+											
+										</aon:panelGroup>
+											
+										<aon:outputLabel for="ArticleDetail_image_info"
+											value="#{appBundle.article_image_info}" />
+										<aon:inputText id="ArticleDetail_image_info"
+											styleClass="aon-form-input-text aon-form-input-text-number"
+											size="90" maxlength="255"
+											value="#{article.toI18n.image_info}" />
+			
+										<aon:outputLabel for="ArticleDetail_alt"
+											value="#{appBundle.article_alt}" />
+										<aon:inputText id="ArticleDetail_alt"
+											styleClass="aon-form-input-text aon-form-input-text-number"
+											size="64" maxlength="64"
+											value="#{article.toI18n.alt}" />
+			
+										<aon:outputLabel for="ArticleDetail_alt_thumbnail"
+											value="#{appBundle.article_alt_thumbnail}" />
+										<aon:inputText id="ArticleDetail_alt_thumbnail"
+											styleClass="aon-form-input-text aon-form-input-text-number"
+											size="64" maxlength="64"
+											value="#{article.toI18n.alt_thumbnail}" />
+															
+									</aon:panelGrid>
+								</aon:div>
+
+		                    </aon:panelTab>
+
+							<aon:panelTab id="meta_tags" label="#{appBundle.article_related_list}">
+
+								<h:dataTable id="articleRelatedData" 
+									value="#{articleRelated.model}" var="to"
+									rows="#{articleRelated.pageLimit}" styleClass="dr-table rich-table aon-editDataTable"
+									headerClass="dr-table-subheader rich-table-subheader aon-editDataTable-header"
+									footerClass="dr-table-subfooter rich-table-subfooter aon-editDataTable-footer"
+									rowClasses="aon-editDataTable-row-odd,dr-table-firstrow rich-table-firstrow aon-editDataTable-row-even"
+									cellpadding="0" cellspacing="0"
+									columnClasses="dr-table-cell rich-table-cell aon-editDataTable-iconColumn,
+												   dr-table-cell rich-table-cell aon-editDataTable-textColumn,
+												   dr-table-cell rich-table-cell aon-editDataTable-textColumn,
+												   dr-table-cell rich-table-cell aon-editDataTable-textColumn,
+												   dr-table-cell rich-table-cell aon-editDataTable-textColumn,
+												   dr-table-cell rich-table-cell aon-editDataTable-buttonsColumn">
+							
+									<aon:column>
+										<f:facet name="header">
+											<aon:outputText value="&#160;" />
+										</f:facet>
+										<aon:outputText value="&#160;" rendered="#{to==articleRelated.to}" />
+										<aon:commandButton rendered="#{to!=articleRelated.to}"
+											styleClass="aon-editDataTable-button aon-icon-rowSelector"
+											actionListener="#{articleRelated.onSelect}" value="" immediate="true"
+											reRender="articleRelatedData">
+										</aon:commandButton>
+										<f:facet name="footer">
+											<aon:div>
+												<aon:commandButton id="reset"
+													title="[#{bundle.aon_reset}]"
+													styleClass="aon-editDataTable-button aon-icon-reset" value=""
+													immediate="true" reRender="articleRelatedData"
+													rendered="#{!articleRelated.new}" 
+													actionListener="#{articleRelated.onReset}"
+													accesskey="#{bundle.aon_key_new_line}">
+												</aon:commandButton>
+											</aon:div>
+										</f:facet>
+									</aon:column>
+							
+									<aon:column>
+										<f:facet name="header">
+											<aon:outputText value="#{appBundle.article_related_name}" />
+										</f:facet>
+										<aon:outputText value="#{to.articleRelated.publishDate}, #{to.articleRelated.alias}" rendered="#{to!=articleRelated.to}" />
+										<aon:selectOneMenu styleClass="aon-form-selectOneMenu-field"
+											rendered="#{to==articleRelated.to}" 
+											value="#{articleRelated.to.articleRelated.id}">
+											<f:selectItems value="#{collections.articleList}" />
+										</aon:selectOneMenu>
+										<f:facet name="footer">
+											<aon:selectOneMenu styleClass="aon-form-selectOneMenu-field"
+												rendered="#{articleRelated.new}" 
+												value="#{articleRelated.to.articleRelated.id}">
+												<f:selectItems value="#{collections.articleList}" />
+											</aon:selectOneMenu>
+										</f:facet>
+									</aon:column>
+							
+									<aon:column>
+										<f:facet name="header">
+											<aon:outputText value="&#160;" />
+										</f:facet>
+										<f:verbatim rendered="#{to!=articleRelated.to}">&#160;</f:verbatim>
+										<aon:div rendered="#{to==articleRelated.to}">
+											<aon:commandButton id="lineAccept" title="[#{bundle.aon_accept}]"
+												styleClass="aon-editDataTable-button aon-icon-accept"
+												reRender="articleRelatedData"
+												actionListener="#{articleRelated.onAccept}" />
+											<aon:commandButton id="lineCancel" title="[#{bundle.aon_cancel}]"
+												styleClass="aon-editDataTable-button aon-icon-cancel"
+												reRender="articleRelatedData" immediate="true"
+												actionListener="#{articleRelated.onCancel}" />
+											<aon:commandButton id="lineRemove" title="[#{bundle.aon_remove}]"
+												styleClass="aon-editDataTable-button aon-icon-delete"
+												reRender="articleRelatedData" immediate="true"
+												actionListener="#{articleRelated.onRemove}" />
+										</aon:div>
+										<f:facet name="footer">
+											<aon:div rendered="#{articleRelated.new}">
+												<f:verbatim rendered="#{!articleRelated.new}">&#160;</f:verbatim>
+												<aon:commandButton id="newAccept" title="[#{bundle.aon_accept}]"
+													styleClass="aon-editDataTable-button aon-icon-accept"
+													reRender="articleRelatedData"
+													actionListener="#{articleRelated.onAccept}" />
+												<aon:commandButton id="newCancel" title="[#{bundle.aon_cancel}]"
+													styleClass="aon-editDataTable-button aon-icon-cancel"
+													reRender="articleRelatedData" immediate="true"
+													actionListener="#{articleRelated.onCancel}" />
+											</aon:div>
+										</f:facet>
+									</aon:column>
+								</h:dataTable>
+		                    </aon:panelTab>
+
+							<aon:panelTab id="files" label="#{appBundle.document_related_list}">
+							
+								<h:dataTable id="articleDocumentData" 
+									value="#{articleDocument.model}" var="to"
+									rows="#{articleDocument.pageLimit}" styleClass="dr-table rich-table aon-editDataTable"
+									headerClass="dr-table-subheader rich-table-subheader aon-editDataTable-header"
+									footerClass="dr-table-subfooter rich-table-subfooter aon-editDataTable-footer"
+									rowClasses="aon-editDataTable-row-odd,dr-table-firstrow rich-table-firstrow aon-editDataTable-row-even"
+									cellpadding="0" cellspacing="0"
+									columnClasses="dr-table-cell rich-table-cell aon-editDataTable-iconColumn,
+												   dr-table-cell rich-table-cell aon-editDataTable-textColumn,
+												   dr-table-cell rich-table-cell aon-editDataTable-textColumn,
+												   dr-table-cell rich-table-cell aon-editDataTable-textColumn,
+												   dr-table-cell rich-table-cell aon-editDataTable-textColumn,
+												   dr-table-cell rich-table-cell aon-editDataTable-buttonsColumn">
+							
+									<aon:column>
+										<f:facet name="header">
+											<aon:outputText value="&#160;" />
+										</f:facet>
+										<aon:outputText value="&#160;" rendered="#{to==articleDocument.to}" />
+										<aon:commandButton rendered="#{to!=articleDocument.to}"
+											styleClass="aon-editDataTable-button aon-icon-rowSelector"
+											actionListener="#{articleDocument.onSelect}" value="" immediate="true"
+											reRender="articleDocumentData">
+										</aon:commandButton>
+										<f:facet name="footer">
+											<aon:div>
+												<aon:commandButton id="reset"
+													title="[#{bundle.aon_reset}]"
+													styleClass="aon-editDataTable-button aon-icon-reset" value=""
+													immediate="true" reRender="articleDocumentData"
+													rendered="#{!articleDocument.new}" 
+													actionListener="#{articleDocument.onReset}"
+													accesskey="#{bundle.aon_key_new_line}">
+												</aon:commandButton>
+											</aon:div>
+										</f:facet>
+									</aon:column>
+							
+									<aon:column>
+										<f:facet name="header">
+											<aon:outputText value="#{appBundle.document_related_name}" />
+										</f:facet>
+										<aon:div rendered="#{to!=articleDocument.to}" >
+											<aon:panelGrid columns="2">
+												<aon:outputText style="font-weight: bold" value="#{articleDocument.currentRowDetail.title}" />
+												<aon:outputText value="#{articleDocument.currentRowDetail.file}" />
+											</aon:panelGrid>
+										</aon:div>
+										<aon:div rendered="#{to==articleDocument.to}">
+											<aon:div>
+												<aon:outputText value="#{appBundle.document_related_alias}" />
+												<aon:inputText  
+													id="#{appBundle.document_related_alias}"
+													styleClass="aon-form-input-text aon-form-input-text-number"
+													required="true" 
+													size="80" maxlength="255"
+													value="#{articleDocument.to.alias}" />
+											</aon:div>
+											<aon:div>
+												<aon:outputText value="#{appBundle.document_related_title}" />
+												<aon:inputText 
+													id="#{appBundle.document_related_title}"
+													styleClass="aon-form-input-text aon-form-input-text-number"
+													required="true" 
+													size="80" maxlength="255"
+													value="#{articleDocument.toI18n.title}" />
+											</aon:div>
+											<!-- 
+											<aon:div>
+												<aon:outputText 
+													size="90" maxlength="255"
+													value="#{articleDocument.toI18n.file}" />
+						                        <ice:inputFile uploadDirectory="#{articleDocument.currentPath}"
+						                        		uniqueFolder="false"
+						                        		uploadDirectoryAbsolute="true"
+						                                actionListener="#{articleDocument.onUpload}"/>
+											</aon:div>
+											 -->
+											<aon:div>
+												<aon:outputText value="#{appBundle.document_related_description}" />
+												<aon:inputTextarea
+													id="#{appBundle.document_related_description}"
+													cols="80" rows="20" 
+													value="#{articleDocument.toI18n.description}"/>
+											</aon:div>
+										</aon:div>
+										<f:facet name="footer">
+											<aon:div rendered="#{articleDocument.new}">
+												<aon:div>
+													<aon:outputText value="#{appBundle.document_related_alias}" />
+													<aon:inputText 
+														id="#{appBundle.document_related_alias}_"
+														styleClass="aon-form-input-text aon-form-input-text-number"
+														required="true" 
+														size="80" maxlength="255"
+														value="#{articleDocument.to.alias}" />
+												</aon:div>
+												<aon:div>
+													<aon:outputText value="#{appBundle.document_related_title}" />
+													<aon:inputText 
+														id="#{appBundle.document_related_title}_"
+														styleClass="aon-form-input-text aon-form-input-text-number"
+														required="true" 
+														size="80" maxlength="255"
+														value="#{articleDocument.toI18n.title}" />
+												</aon:div>
+												<!-- 
+												<aon:div>
+													<aon:outputText 
+														size="90" maxlength="255"
+														value="#{articleDocument.toI18n.file}" />
+							                        <ice:inputFile uploadDirectory="#{document.currentPath}"
+							                        		uniqueFolder="false"
+							                        		uploadDirectoryAbsolute="true"
+							                                actionListener="#{articleDocument.onUpload}"/>
+												</aon:div>
+												 -->
+												<aon:div>
+													<aon:outputText value="#{appBundle.document_related_description}" />
+													<aon:inputTextarea
+														id="#{appBundle.document_related_description}_"
+														cols="80" rows="20" 
+														value="#{articleDocument.toI18n.description}"/>
+												</aon:div>
+											</aon:div>
+										</f:facet>
+									</aon:column>
+									
+									<aon:column>
+										<f:facet name="header">
+											<aon:outputText value="&#160;" />
+										</f:facet>
+										<f:verbatim rendered="#{to!=articleDocument.to}">&#160;</f:verbatim>
+										<aon:div rendered="#{to==articleDocument.to}">
+											<aon:commandButton title="[#{bundle.aon_accept}]"
+												styleClass="aon-editDataTable-button aon-icon-accept"
+												reRender="articleDocumentData"
+												actionListener="#{articleDocument.onAccept}" />
+											<aon:commandButton title="[#{bundle.aon_cancel}]"
+												styleClass="aon-editDataTable-button aon-icon-cancel"
+												reRender="articleDocumentData" immediate="true"
+												actionListener="#{articleDocument.onCancel}" />
+											<aon:commandButton title="[#{bundle.aon_remove}]"
+												styleClass="aon-editDataTable-button aon-icon-delete"
+												reRender="articleDocumentData" immediate="true"
+												actionListener="#{articleDocument.onRemove}" />
+										</aon:div>
+										<f:facet name="footer">
+											<aon:div rendered="#{articleDocument.new}">
+												<f:verbatim rendered="#{!articleDocument.new}">&#160;</f:verbatim>
+												<aon:commandButton title="[#{bundle.aon_accept}]"
+													styleClass="aon-editDataTable-button aon-icon-accept"
+													reRender="articleDocumentData"
+													actionListener="#{articleDocument.onAccept}" />
+												<aon:commandButton title="[#{bundle.aon_cancel}]"
+													styleClass="aon-editDataTable-button aon-icon-cancel"
+													reRender="articleDocumentData" immediate="true"
+													actionListener="#{articleDocument.onCancel}" />
+											</aon:div>
+										</f:facet>
+									</aon:column>
+								</h:dataTable>
+
+		                    </aon:panelTab>
+
+						</aon:panelTabSet>
+
+
+							
+					</rich:panel>
+
+				</aon:panelGrid>
+			</rich:panel>
 		</aon:form>
-		<aon:form id="placeList" target="list" />
-
 	</ui:define>
+
 </ui:composition>
 
 </body>
