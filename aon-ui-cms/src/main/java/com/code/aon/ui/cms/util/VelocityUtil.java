@@ -6,6 +6,8 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.Iterator;
 
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.Velocity;
@@ -52,6 +54,14 @@ public class VelocityUtil extends VelocityEngine implements Constants {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+    
+    public void finalize() {
+    	Iterator iter = Arrays.asList(this.getContext().getKeys()).iterator();
+    	while (iter.hasNext()){
+    		this.remove(""+iter.next());
+    	}
+    	this.finalize();
     }
 
 	public void addMessage(String msg, int type) {

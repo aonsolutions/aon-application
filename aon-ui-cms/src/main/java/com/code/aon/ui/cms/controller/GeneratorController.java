@@ -106,7 +106,9 @@ public class GeneratorController extends BasicController implements Constants {
 			DownloadsGenerator.generate(vu);
 		}
 		
-		CommonGenerator.getCommonGenerator().removeContext(vu);
+		//CommonGenerator.getCommonGenerator().removeContext(vu);
+		
+		vu.finalize();
 
 	}
 
