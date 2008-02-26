@@ -1,8 +1,16 @@
 package com.code.aon.ui.cms.controller;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.List;
 
+import javax.faces.application.FacesMessage;
+import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
+import javax.faces.validator.LengthValidator;
+
+import org.apache.myfaces.custom.fileupload.UploadedFile;
 
 import com.code.aon.cms.Article;
 import com.code.aon.cms.ArticleDocument;
@@ -12,6 +20,7 @@ import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.cms.util.ControllerUtil;
+import com.code.aon.ui.util.AonUtil;
 
 public class ArticleDocumentController extends GridI18nController {
 
@@ -19,7 +28,7 @@ public class ArticleDocumentController extends GridI18nController {
 
 	@SuppressWarnings("unused")
 	public void onSelect(ActionEvent event){
-		super.onSelect(new ActionEvent(event.getComponent()));
+		super.onSelect(event);
 		loadCurrentLanguage();
 	}
 
@@ -43,16 +52,38 @@ public class ArticleDocumentController extends GridI18nController {
 		return null;
 	}
 	
-	public void onUpload(ActionEvent event){
-		/*
-		InputFile inputFile = (InputFile)event.getSource();
-		((ArticleDocumentDetail)this.getToI18n()).setFile(inputFile.getFile().getName());
-		*/
+	private UploadedFile inputFile;
+	private long maximumSize = -1;;
+	private String currentPath = ControllerUtil.getDocumentsPath();
+
+	public UploadedFile getInputFile() {
+		return inputFile;
+	}
+
+	public void setInputFile(UploadedFile inputFile) {
+		this.inputFile = inputFile;
 	}
 	
-	private String currentPath;
-
-	public String getCurrentPath() {
-		return ControllerUtil.getDocumentsPath()+"/article_documents";
+	public void fileUploaded( ActionEvent event ) throws IOException {
+		if ( this.inputFile!= null ) {
+			long size = this.inputFile.getSize();
+			String upload_name = inputFile.getName();
+			upload_name = upload_name.substring(upload_name.lastIndexOf(File.separator));
+			String fileName = File.separator+"article_documents"+File.separator+upload_name;
+			File file = new File( currentPath+File.separator+fileName);
+			if ( (maximumSize != -1) && (size > maximumSize) ) {
+				FacesContext ctx = FacesContext.getCurrentInstance();
+				FacesMessage message = AonUtil.getMessage( ctx,
+						LengthValidator.MAXIMUM_MESSAGE_ID, new Object[]{maximumSize, fileName} );
+				ctx.addMessage(AonUtil.AON_ERROR, message);
+			} else {
+				byte[] data = this.inputFile.getBytes();
+		        FileOutputStream outputStream = new FileOutputStream(file);
+		        outputStream.write(data);
+		        outputStream.close();			
+		        ((ArticleDocumentDetail)this.getToI18n()).setFile(fileName);
+			}
+		}
 	}
+
 }

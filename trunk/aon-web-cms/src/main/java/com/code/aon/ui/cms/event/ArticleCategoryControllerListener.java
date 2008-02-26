@@ -63,6 +63,9 @@ public class ArticleCategoryControllerListener extends ControllerAdapter {
 		if (to.getSection().getId()==-1){
 			to.setSection(null);
 		}
+		if (to.getElementSection().getId()==-1){
+			to.setElementSection(null);
+		}
 	}
 
 	@Override
