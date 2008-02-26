@@ -3,7 +3,6 @@ package com.code.aon.ui.cms.controller;
 import java.util.List;
 
 import javax.faces.context.FacesContext;
-import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 import javax.faces.event.ValueChangeEvent;
 
@@ -23,20 +22,12 @@ import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionException;
 import com.code.aon.ui.cms.util.ControllerUtil;
 import com.code.aon.ui.util.AonUtil;
-import com.icesoft.faces.component.paneltabset.TabChangeEvent;
-
 
 public class ArticleController extends GridI18nController {
-
-	private boolean cancelOnSelect = false;
 
 	private ArticleCategory currentArticleCategory;
 	
 	private boolean richTextEnabled = true;
-
-	public void onInit(ActionEvent event){
-		((GalleryController)AonUtil.getRegisteredBean("gallery")).onInit(event);
-	}
 
 	public boolean isRichTextEnabled() {
 		return richTextEnabled;
@@ -56,21 +47,16 @@ public class ArticleController extends GridI18nController {
 
 	@SuppressWarnings("unused")
 	public void onSelect(ActionEvent event){
-		if (!cancelOnSelect) {
-			super.onSelect(new ActionEvent(event.getComponent()));
-			FacesContext.getCurrentInstance().getApplication().getNavigationHandler().handleNavigation(FacesContext.getCurrentInstance(), null, "article_form");
-			loadCurrentLanguage();
-		}
-		cancelOnSelect = false;
+		super.onSelect(new ActionEvent(event.getComponent()));
+		FacesContext.getCurrentInstance().getApplication().getNavigationHandler().handleNavigation(FacesContext.getCurrentInstance(), null, "article_form");
+		loadCurrentLanguage();
 	}
 
 	public void onActivate(ActionEvent event) throws ManagerBeanException {
-		cancelOnSelect = true; 
 		activate(true);
 	}
 
 	public void onDeactivate(ActionEvent event) throws ManagerBeanException {
-		cancelOnSelect = true; 
 		activate(false);
 	}
 	
@@ -80,10 +66,6 @@ public class ArticleController extends GridI18nController {
 		getManagerBean().update(f);
 	}
 	
-	public void onChecked(ValueChangeEvent event) throws ManagerBeanException {
-		cancelOnSelect = true; 
-	}
-
 	public String getI18nTitle() throws ManagerBeanException {
 		String label = "";
 		ArticleDetail fd = getCurrentDetail();
@@ -151,12 +133,10 @@ public class ArticleController extends GridI18nController {
 	}
 	
     public void onMoveUp(ActionEvent event) throws ManagerBeanException, ExpressionException {
-		cancelOnSelect = true; 
     	move((Article) this.model.getRowData(), -1);
     }
 
     public void onMoveDown(ActionEvent event) throws ManagerBeanException, ExpressionException {
-		cancelOnSelect = true; 
     	move((Article) this.model.getRowData(), 1);    	
     }
 
@@ -181,27 +161,6 @@ public class ArticleController extends GridI18nController {
 		}
 	}
 
-	private boolean imageSelectionVisible;
-	private int type_;
-	
-	public void onShowImages(ActionEvent event) {
-		imageSelectionVisible = true;
-		type_ = 0;
-	}
-	
-	public void onCloseImages(ActionEvent event) {
-		imageSelectionVisible = false; 
-	}
-	
-	public void onShowThumbnail(ActionEvent event) {
-		imageSelectionVisible = true; 
-		type_ = 1;
-	}
-	
-	public void onCloseThumbnail(ActionEvent event) {
-		imageSelectionVisible = false; 
-	}
-	
 	public void onDelImage(ActionEvent event) {
 		Article current = (Article)getTo();
 		current.setImage(null);
@@ -212,27 +171,21 @@ public class ArticleController extends GridI18nController {
 		current.setThumbnail(null);
 	}
 	
-	public boolean isImageSelectionVisible(){
-		return imageSelectionVisible && type_== 0;
-	}
-
-	public boolean isThumbnailSelectionVisible(){
-		return imageSelectionVisible && type_== 1;
-	}
-
 	public void onSelectImage(ActionEvent event) throws ManagerBeanException {
 		GalleryController controller = (GalleryController)AonUtil.getRegisteredBean("gallery");
 		String image = ((Image)controller.getModel().getRowData()).getRelativePath();
 		Article current = (Article)getTo();
-		if (type_ ==0){
-			current.setImage(image);
-		}else{
-			current.setThumbnail(image);
-		}
+		current.setImage(image);
+	}
+
+	public void onSelectThumbnail(ActionEvent event) throws ManagerBeanException {
+		GalleryController controller = (GalleryController)AonUtil.getRegisteredBean("gallery");
+		String image = ((Image)controller.getModel().getRowData()).getRelativePath();
+		Article current = (Article)getTo();
+		current.setThumbnail(image);
 	}
 
 	public void onSelectRelatedArticles(ActionEvent event) throws ManagerBeanException, ExpressionException {
-		cancelOnSelect = true;
 		ArticleRelatedController c = (ArticleRelatedController)AonUtil.getController("articleRelated");
 		IManagerBean moBean = BeanManager.getManagerBean(ArticleRelated.class);
 		Article article = (Article) this.getTo();
@@ -244,7 +197,6 @@ public class ArticleController extends GridI18nController {
 	}
 
 	public void onSelectArticleDocuments(ActionEvent event) throws ManagerBeanException, ExpressionException {
-		cancelOnSelect = true;
 		ArticleDocumentController c = (ArticleDocumentController)AonUtil.getController("articleDocument");
 		IManagerBean moBean = BeanManager.getManagerBean(ArticleDocument.class);
 		Article article = (Article) this.getTo();
@@ -261,15 +213,28 @@ public class ArticleController extends GridI18nController {
 	public ArticleType getCurrentType() {
 		return currentType;
 	}
-
-	public int getCurrentTab() {
-		if (currentType == ArticleType.SERVICES) return 0;
-		else if (currentType == ArticleType.EVENTS) return 1;
-		else if (currentType == ArticleType.NEWS) return 2;
-		else if (currentType == ArticleType.OTHER) return 3;
-		return 0;
+	
+	public String getTabID0(){
+		return ArticleType.SERVICES.getName();
 	}
 
+	public String getTabID1(){
+		return ArticleType.EVENTS.getName();
+	}
+
+	public String getTabID2(){
+		return ArticleType.NEWS.getName();
+	}
+
+	public String getTabID3(){
+		return ArticleType.OTHER.getName();
+	}
+
+	public void iniTab() throws ManagerBeanException, ExpressionException{
+		currentType = ArticleType.SERVICES;
+		changeArticleList();
+	}
+	
 	private void changeArticleList() throws ManagerBeanException, ExpressionException {
 		Criteria criteria = new Criteria();
 		criteria.addExpression(getManagerBean().getFieldName(ICMSAlias.ARTICLE_ARTICLE_CATEGORY_ID), "" + getCurrentArticleCategory().getId());
@@ -277,29 +242,20 @@ public class ArticleController extends GridI18nController {
 		criteria.addOrder(getManagerBean().getFieldName(ICMSAlias.ARTICLE_POSITION));
 		setCriteria(criteria);
 		onSearch(null);
-		onInit(null);
 		clearCheckList();
 	}
-
-	public void processTabChange(TabChangeEvent event) throws AbortProcessingException, ManagerBeanException, ExpressionException {
-		switch (event.getNewTabIndex()) {
-		case 0:
+	
+	public void processTabChange(ValueChangeEvent event) throws ManagerBeanException, ExpressionException {
+		if ((""+event.getNewValue()).equals(ArticleType.SERVICES.getName())){
 			currentType = ArticleType.SERVICES;
-			break;
-		case 1:
+		}else if((""+event.getNewValue()).equals(ArticleType.EVENTS.getName())){
 			currentType = ArticleType.EVENTS;
-			break;
-		case 2:
+		}else if((""+event.getNewValue()).equals(ArticleType.NEWS.getName())){
 			currentType = ArticleType.NEWS;
-			break;
-		case 3:
+		}else{
 			currentType = ArticleType.OTHER;
-			break;
-		default:
-			break;
-		}
+		} 
 		changeArticleList();
 	}
-
 
 }

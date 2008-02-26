@@ -3,7 +3,6 @@ package com.code.aon.ui.cms.controller;
 import java.util.List;
 
 import javax.faces.event.ActionEvent;
-import javax.faces.event.ValueChangeEvent;
 
 import com.code.aon.cms.Article;
 import com.code.aon.cms.ArticleDocument;
@@ -18,19 +17,10 @@ public class ArticleDocumentController extends GridI18nController {
 
 	private Article currentArticle;
 
-	private boolean cancelOnSelect = false;
-
 	@SuppressWarnings("unused")
 	public void onSelect(ActionEvent event){
-		if (!cancelOnSelect) {
-			super.onSelect(new ActionEvent(event.getComponent()));
-			loadCurrentLanguage();
-		}
-		cancelOnSelect = false;
-	}
-
-	public void onChecked(ValueChangeEvent event) throws ManagerBeanException {
-		cancelOnSelect = true;
+		super.onSelect(new ActionEvent(event.getComponent()));
+		loadCurrentLanguage();
 	}
 
 	public Article getCurrentArticle() {

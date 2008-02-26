@@ -22,25 +22,18 @@ import com.code.aon.ui.util.AonUtil;
 
 public class ArticleCategoryController extends BasicI18nController {
 
-	private boolean cancelOnSelect = false;
-
 	@SuppressWarnings("unused")
 	public void onSelect(ActionEvent event){
-		if (!cancelOnSelect) {
-			super.onSelect(new ActionEvent(event.getComponent()));
-			FacesContext.getCurrentInstance().getApplication().getNavigationHandler().handleNavigation(FacesContext.getCurrentInstance(), null, "article_category_form");
-			loadCurrentLanguage();
-		}
-		cancelOnSelect = false;
+		super.onSelect(new ActionEvent(event.getComponent()));
+		FacesContext.getCurrentInstance().getApplication().getNavigationHandler().handleNavigation(FacesContext.getCurrentInstance(), null, "article_category_form");
+		loadCurrentLanguage();
 	}
 
 	public void onActivate(ActionEvent event) throws ManagerBeanException {
-		cancelOnSelect = true; 
 		activate(true);
 	}
 
 	public void onDeactivate(ActionEvent event) throws ManagerBeanException {
-		cancelOnSelect = true; 
 		activate(false);
 	}
 	
@@ -50,10 +43,6 @@ public class ArticleCategoryController extends BasicI18nController {
 		getManagerBean().update(articleCategory);
 	}
 	
-	public void onChecked(ValueChangeEvent event) throws ManagerBeanException {
-		cancelOnSelect = true; 
-	}
-
 	public String getI18nLabel() throws ManagerBeanException {
 		String label = "";
 		ArticleCategoryDetail articleCategoryDetail = getCurrentDetail();
@@ -72,10 +61,6 @@ public class ArticleCategoryController extends BasicI18nController {
 			articleCategoryDetail = (ArticleCategoryDetail)list.get(0);
 		}
 		return articleCategoryDetail;
-	}
-
-	public void onAccept(ActionEvent event) {
-		super.accept(event);
 	}
 
 	@SuppressWarnings("unchecked")
@@ -107,17 +92,14 @@ public class ArticleCategoryController extends BasicI18nController {
 	}
 	
     public void onMoveUp(ActionEvent event) throws ManagerBeanException, ExpressionException {
-		cancelOnSelect = true; 
     	move((ArticleCategory) this.model.getRowData(), -1);
     }
 
     public void onMoveDown(ActionEvent event) throws ManagerBeanException, ExpressionException {
-		cancelOnSelect = true; 
     	move((ArticleCategory) this.model.getRowData(), 1);    	
     }
     
 	public void onSelectArticles(ActionEvent event) throws ManagerBeanException, ExpressionException {
-		cancelOnSelect = true;
 		ArticleController fc = (ArticleController)AonUtil.getController("article");
 		IManagerBean moBean = BeanManager.getManagerBean(Article.class);
 		ArticleCategory articleCategory = (ArticleCategory) this.getSelectedTO();
@@ -128,7 +110,7 @@ public class ArticleCategoryController extends BasicI18nController {
 		fc.setCurrentArticleCategory(articleCategory);
 		fc.setCriteria(criteria);
 		fc.onSearch(event);
-		fc.onInit(event);
+		fc.iniTab();
 	}
 
 	public void reorderObjects() throws ManagerBeanException {
