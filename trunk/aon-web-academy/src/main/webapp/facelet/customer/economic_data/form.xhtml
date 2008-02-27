@@ -48,13 +48,13 @@
 									actionListener="#{rnote.onSearch}" action="rnote"
 									styleClass="aon-content-menu-item" />
 							</t:panelGroup>
-							<t:panelGroup>
+							<t:panelGroup rendered="#{customer.naturalType}">
 								<t:commandLink id="customer_relationship" forceId="#{true}"
 									value="#{appBundle.aon_rRelationship}" visibleOnUserRole="AlumnosRelaciones"
 									actionListener="#{rRelationship.onSearch}"
 									action="rrelationship" styleClass="aon-content-menu-item" />
 							</t:panelGroup>
-							<t:panelGroup>
+							<t:panelGroup rendered="#{customer.naturalType}">
 								<t:commandLink id="customer_absence" forceId="#{true}" value="#{appBundle.absence_absences}"
 									action="absence" styleClass="aon-content-menu-item" visibleOnUserRole="AlumnosAusencias"/>
 							</t:panelGroup>	
@@ -67,11 +67,11 @@
 						serverSideTabSwitch="true">
 
 						<t:panelTab id="customer_fee" label="#{appBundle.aon_customer_fees}">
-							<t:div rendered="#{!customerFee.new and customerFee.to == null}" >
-								<ui:include src="/facelet/customer/customer_fee/list.xhtml" />
-							</t:div>
 							<t:div rendered="#{customerFee.new or customerFee.to != null}" >
 								<ui:include src="/facelet/customer/customer_fee/form.xhtml" />
+							</t:div>
+							<t:div rendered="#{!customerFee.new and customerFee.to == null}" >
+								<ui:include src="/facelet/customer/customer_fee/list.xhtml" />
 							</t:div>
 						</t:panelTab>
 

@@ -34,18 +34,25 @@
 					<t:outputLabel for="Customer_document"
 						styleClass="aon-form-input-text-label"
 						value="#{customerBundle.customer_document}" />
-					<t:inputText id="Customer_document"
-						styleClass="aon-form-input-text" forceId="#{true}"
-						onblur="toUpperCase(this);"
-						value="#{customerAlias.to.registry.document}" size="16"
-						maxlength="16"/>
+					<h:panelGrid columns="3">	
+						<t:inputText id="Customer_document"
+							styleClass="aon-form-input-text" forceId="#{true}"
+							onblur="toUpperCase(this);"
+							value="#{customerAlias.to.registry.document}" size="16"
+							maxlength="16"/>
+						<t:selectOneRadio id="Customer_registry_type" 
+							value="#{customerAlias.to.registry.type}" 
+							onclick="submit();" disabled="#{!customerAlias.new}">
+							<f:selectItems value="#{registryCollections.registryTypes}" />
+						</t:selectOneRadio>	
+					</h:panelGrid>
 
 					<t:outputLabel for="Customer_name"
 						styleClass="aon-form-input-text-label"
 						value="#{customerBundle.customer_name}" />
 					<t:inputText id="Customer_name" styleClass="aon-form-input-text"
 						forceId="#{true}" value="#{customerAlias.to.registry.name}"
-						size="64" required="#{true}">
+						size="64">
 						<f:validateLength minimum="1" maximum="64" />
 					</t:inputText>
 
@@ -93,9 +100,11 @@
 
 					<h:outputLabel for="Customer_Person_BirthDate"
 						styleClass="aon-form-input-text-label"
-						value="#{registryBundle.aon_birth_date}" />
+						value="#{registryBundle.aon_birth_date}" 
+						rendered="#{customerAlias.naturalType}"/>
 					<t:inputCalendar id="Customer_Person_BirthDate" size="8"
-						required="true" value="#{customerAlias.person.birthDate}"
+						rendered="#{customerAlias.naturalType}"
+						value="#{customerAlias.person.birthDate}"
 						monthYearRowClass="yearMonthHeader" weekRowClass="weekHeader"
 						currentDayCellClass="currentDayCell" renderAsPopup="true"
 						styleClass="aon-form-input-text"
@@ -104,18 +113,22 @@
 						popupWeekString="#{bundle.aon_popup_week}" />
 
 					<h:outputLabel for="Customer_Person_Gender"
+						rendered="#{customerAlias.naturalType}"
 						styleClass="aon-form-input-text-label"
 						value="#{registryBundle.aon_gender}" />
 					<h:selectOneMenu id="Customer_Person_Gender"
+						rendered="#{customerAlias.naturalType}"
 						styleClass="aon-form-selectOneMenu-field"
 						value="#{customerAlias.person.gender}">
 						<f:selectItems value="#{registryCollections.genders}" />
 					</h:selectOneMenu>
 
 					<h:outputLabel for="Customer_Person_MaritalStatus"
+						rendered="#{customerAlias.naturalType}"
 						styleClass="aon-form-input-text-label"
 						value="#{registryBundle.aon_marital_status}" />
 					<h:selectOneMenu id="Customer_Person_MaritalStatus"
+						rendered="#{customerAlias.naturalType}"
 						styleClass="aon-form-selectOneMenu-field"
 						value="#{customerAlias.person.maritalStatus}">
 						<f:selectItems value="#{registryCollections.maritalStatuses}" />
@@ -140,11 +153,11 @@
 					
 				</h:panelGrid>
 
-
-			<ui:include src="/facelet/customer/academic_data/grid.xhtml" />
-
-			<ui:include src="/facelet/customer/loan/grid.xhtml" />
-
+			<t:div rendered="#{customerAlias.naturalType}">
+				<ui:include src="/facelet/customer/academic_data/grid.xhtml" />
+	
+				<ui:include src="/facelet/customer/loan/grid.xhtml" />
+			</t:div>
 		</t:div>
 	</t:div>
 

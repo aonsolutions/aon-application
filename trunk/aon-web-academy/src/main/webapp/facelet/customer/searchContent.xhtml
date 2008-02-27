@@ -87,6 +87,17 @@
 					<f:selectItem itemDisabled="true" itemLabel="-" itemValue="" />
 					<f:selectItems value="#{configCollections.scopes}" />
 				</h:selectOneMenu>
+
+				<t:outputLabel for="Customer_registry_type"
+					value="#{registryBundle.aon_type}"
+					styleClass="aon-form-input-text-label aon-form-table-column-odd-label" />
+				<h:selectOneMenu id="Customer_registry_type"
+					styleClass="aon-form-selectOneMenu-field"
+					converter="aonRegistryTypeConverter" forceId="#{true}"
+					valueChangeListener="#{customerAlias.addDirectExpression}">
+					<f:selectItem itemDisabled="true" itemLabel="-" itemValue="" />
+					<f:selectItems value="#{registryCollections.registryTypes}" />
+				</h:selectOneMenu>
 				
 			</h:panelGrid>
 		</t:div>

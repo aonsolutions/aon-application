@@ -49,13 +49,13 @@
 									value="#{appBundle.aon_monitoring}" forceId="#{true}"
 									styleClass="aon-content-menu-item-active" />
 							</t:panelGroup>
-							<t:panelGroup>
+							<t:panelGroup rendered="#{customer.naturalType}">
 								<t:commandLink id="customer_relationship" forceId="#{true}"
 									value="#{appBundle.aon_rRelationship}"
 									actionListener="#{rRelationship.onSearch}"
 									action="rrelationship" styleClass="aon-content-menu-item" />
 							</t:panelGroup>
-							<t:panelGroup>
+							<t:panelGroup rendered="#{customer.naturalType}">
 								<t:commandLink id="customer_absence" forceId="#{true}" value="#{appBundle.absence_absences}"
 									action="absence" styleClass="aon-content-menu-item" />						
 							</t:panelGroup>	
