@@ -3,8 +3,6 @@ package com.code.aon.ui.cms.tree;
 import java.io.File;
 import java.io.FileFilter;
 
-import javax.faces.event.ActionEvent;
-
 public class FileSystemNode {
 
     private String path;

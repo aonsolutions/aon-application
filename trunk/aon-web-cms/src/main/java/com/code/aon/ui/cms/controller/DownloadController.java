@@ -4,7 +4,6 @@ import java.util.List;
 
 import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
-import javax.faces.event.ValueChangeEvent;
 
 import com.code.aon.cms.Download;
 import com.code.aon.cms.DownloadCategory;
@@ -20,13 +19,7 @@ import com.code.aon.ui.util.AonUtil;
 
 public class DownloadController extends BasicI18nController {
 
-	private boolean cancelOnSelect = false;
-
 	private DownloadCategory currentDownloadCategory;
-	
-	public void onInit(ActionEvent event){
-		((GalleryController)AonUtil.getRegisteredBean("document")).onInit(event);
-	}
 	
 	public DownloadCategory getCurrentDownloadCategory() {
 		return currentDownloadCategory;
@@ -38,21 +31,15 @@ public class DownloadController extends BasicI18nController {
 
 	@SuppressWarnings("unused")
 	public void onSelect(ActionEvent event) {
-		if (!cancelOnSelect) {
-			super.onSelect(new ActionEvent(event.getComponent()));
-			FacesContext.getCurrentInstance().getApplication().getNavigationHandler().handleNavigation(FacesContext.getCurrentInstance(), null, "download_form");
-			loadCurrentLanguage();
-		}
-		cancelOnSelect = false;
+		super.onSelect(new ActionEvent(event.getComponent()));
+		loadCurrentLanguage();
 	}
 
 	public void onActivate(ActionEvent event) throws ManagerBeanException {
-		cancelOnSelect = true; 
 		activate(true);
 	}
 
 	public void onDeactivate(ActionEvent event) throws ManagerBeanException {
-		cancelOnSelect = true; 
 		activate(false);
 	}
 	
@@ -62,10 +49,6 @@ public class DownloadController extends BasicI18nController {
 		getManagerBean().update(d);
 	}
 	
-	public void onChecked(ValueChangeEvent event) throws ManagerBeanException {
-		cancelOnSelect = true; 
-	}
-
 	public String getI18nTitle() throws ManagerBeanException {
 		String title = "";
 		DownloadDetail downloadDetail = getCurrentDetail();
@@ -84,10 +67,6 @@ public class DownloadController extends BasicI18nController {
 			downloadDetail = (DownloadDetail)list.get(0);
 		}
 		return downloadDetail;
-	}
-
-	public void onAccept(ActionEvent event) {
-		super.accept(event);
 	}
 
 	@SuppressWarnings("unchecked")
@@ -119,12 +98,10 @@ public class DownloadController extends BasicI18nController {
 	}
 	
     public void onMoveUp(ActionEvent event) throws ManagerBeanException, ExpressionException {
-		cancelOnSelect = true; 
     	move((Download) this.model.getRowData(), -1);
     }
 
     public void onMoveDown(ActionEvent event) throws ManagerBeanException, ExpressionException {
-		cancelOnSelect = true; 
     	move((Download) this.model.getRowData(), 1);    	
     }
 
@@ -146,21 +123,6 @@ public class DownloadController extends BasicI18nController {
 				getManagerBean().update(d);
 			}
 		}
-	}
-	
-	
-	private boolean imageSelectionVisible;
-	
-	public void onShowImages(ActionEvent event) {
-		imageSelectionVisible = true; 
-	}
-	
-	public void onCloseImages(ActionEvent event) {
-		imageSelectionVisible = false; 
-	}
-	
-	public boolean isImageSelectionVisible(){
-		return imageSelectionVisible;
 	}
 	
 	public void onSelectImage(ActionEvent event) throws ManagerBeanException {
