@@ -326,7 +326,7 @@
 		</managed-property>
 		<managed-property>
 			<property-name>pojo</property-name>
-			<value>com.code.aon.purchase.Supplier</value>
+			<value>com.code.aon.supplier.Supplier</value>
 		</managed-property>
 		<managed-property>
 			<property-name>beanName</property-name>
