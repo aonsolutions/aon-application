@@ -32,6 +32,12 @@
 	</converter>
 
 	<converter>
+		<description>Conversor para los RegistryTypes</description>
+		<converter-id>aonRegistryTypeConverter</converter-id>
+		<converter-class>com.code.aon.ui.registry.converter.RegistryTypeConverter</converter-class>
+	</converter>
+
+	<converter>
 		<description>Conversor para los ProductStatus</description>
 		<converter-id>aonProductStatusConverter</converter-id>
 		<converter-class>com.code.aon.ui.product.converter.ProductStatusConverter</converter-class>
@@ -166,7 +172,7 @@
 				</map-entry>
 				<map-entry>
 					<key>supplierBundle</key>
-                    <value>com.code.aon.ui.purchase.i18n.messages</value>
+                    <value>com.code.aon.ui.supplier.i18n.messages</value>
 				</map-entry>
 				<map-entry>
 					<key>employeeBundle</key>
@@ -236,9 +242,9 @@
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
 	<managed-bean>
-		<managed-bean-name>purchaseCollections</managed-bean-name>
+		<managed-bean-name>supplierCollections</managed-bean-name>
 		<managed-bean-class>
-			com.code.aon.ui.purchase.controller.PurchaseCollectionsController
+			com.code.aon.ui.supplier.controller.SupplierCollectionsController
 		</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
@@ -748,7 +754,6 @@
 			<list-entries>
 				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
 				<value>#{customerScopeListener}</value>
-				<value>#{customerPersonControllerListener}</value>
 				<value>#{customerControllerListener}</value>
 				<value>#{customerControllerPersonListener}</value>
 				<value>#{customerAddressListener}</value>
@@ -828,12 +833,6 @@
 		<managed-bean-scope>none</managed-bean-scope>
 	</managed-bean>
 
-	<managed-bean>
-		<managed-bean-name>customerPersonControllerListener</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.customer.event.CustomerPersonControllerListener</managed-bean-class>
-		<managed-bean-scope>none</managed-bean-scope>
-	</managed-bean>
-	
 	<managed-bean>
 		<managed-bean-name>customerControllerPersonListener</managed-bean-name>
 		<managed-bean-class>com.code.aon.ui.customer.event.CustomerControllerPersonListener</managed-bean-class>
@@ -1549,7 +1548,7 @@
 	<managed-bean>
 		<managed-bean-name>rnote</managed-bean-name>
 		<managed-bean-class>
-			com.code.aon.ui.form.BasicController
+			com.code.aon.ui.customer.controller.CustomerNoteController
 		</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
@@ -1705,7 +1704,7 @@
 	
 	<managed-bean>
 		<managed-bean-name>feeInvoicingHeaderControllerListener</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.academy.event.HeaderControllerListener</managed-bean-class>
+		<managed-bean-class>com.code.aon.ui.finance.event.HeaderControllerListener</managed-bean-class>
 		<managed-bean-scope>none</managed-bean-scope>
 		<managed-property>
 			<property-name>table</property-name>
