@@ -251,11 +251,16 @@
 		</params>
 		
 		<nested-report report="feeInvoicingDetail"/>
+		<nested-report report="feeInvoicingFinances"/>
 		<nested-report report="taxBreakDown"/>
 	</report>
 	
 	<report id="feeInvoicingDetail" description="feeInvoicing Details">
 		<template path="/com/code/aon/ui/finance/report/feeInvoicingDetail.jasper"/>
+	</report>
+
+	<report id="feeInvoicingFinances" description="feeInvoicing Finances">
+		<template path="/com/code/aon/ui/finance/report/feeInvoicingFinances.jasper"/>
 	</report>
 	
 	<!--  *********  InvoicePrint  ********* -->
