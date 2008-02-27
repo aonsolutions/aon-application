@@ -164,7 +164,7 @@
 								<f:selectItems value="#{financeCollections.invoiceStatuses}" />
 							</h:selectOneMenu>
 						</h:panelGrid>
-
+						
 						<h:panelGrid columns="2" cellpadding="0" cellspacing="0"
 							styleClass="aon-form-table"
 							columnClasses="aon-form-table-column-odd,aon-form-table-column-even">
@@ -211,6 +211,19 @@
 						</h:panelGrid>
 					</h:panelGrid>
 
+					<h:panelGrid columns="2" cellpadding="0" cellspacing="0"
+						styleClass="aon-form-table"
+						columnClasses="aon-form-table-column-odd,aon-form-table-column-even">
+		
+						<h:outputLabel for="Invoice_comments"
+							styleClass="aon-form-input-text-label"
+							value="#{financeBundle.aon_invoice_comments}" />
+						<t:inputTextarea id="Invoice_comments" forceId="#{true}"
+							styleClass="aon-form-input-text" cols="51" rows="5"
+							disabled="#{feeInvoicing.recorded}"
+							value="#{feeInvoicing.to.comments}" />
+					</h:panelGrid>
+
 					<t:div styleClass="aon-form-group"
 						rendered="#{!feeInvoicing.new}">
 						<t:div styleClass="aon-form-group-title">
@@ -250,7 +263,7 @@
 										<t:div>
 											<t:commandButton value=""
 												styleClass="aon-edit-table-icon-button aon-edit-table-icon-button-new"
-												title="#{purchaseBundle.aon_newLine}"
+												title="#{bundle.aon_reset}"
 												actionListener="#{feeInvoicingDetail.onReset}"
 												rendered="#{!feeInvoicingDetail.new and !feeInvoicing.recorded}"
 												accesskey="#{bundle.aon_key_new_line}" />
