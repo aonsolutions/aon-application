@@ -69,18 +69,6 @@
     </navigation-case>
   </navigation-rule>
   
-  <!-- ================================================= LINK -->
-  <navigation-rule>
-    <navigation-case>
-      <from-outcome>link_list</from-outcome>
-      <to-view-id>/facelet/content/link_category/link/list.xhtml</to-view-id>
-    </navigation-case>
-    <navigation-case>
-      <from-outcome>link_form</from-outcome>
-      <to-view-id>/facelet/content/link_category/link/form.xhtml</to-view-id>
-    </navigation-case>
-  </navigation-rule>
-  
   <!-- ================================================= FAQ CATEGORY -->
   <navigation-rule>
     <navigation-case>
@@ -90,18 +78,6 @@
     <navigation-case>
       <from-outcome>faq_category_form</from-outcome>
       <to-view-id>/facelet/content/faq_category/form.xhtml</to-view-id>
-    </navigation-case>
-  </navigation-rule>
-  
-  <!-- ================================================= FAQ -->
-  <navigation-rule>
-    <navigation-case>
-      <from-outcome>faq_list</from-outcome>
-      <to-view-id>/facelet/content/faq_category/faq/list.xhtml</to-view-id>
-    </navigation-case>
-    <navigation-case>
-      <from-outcome>faq_form</from-outcome>
-      <to-view-id>/facelet/content/faq_category/faq/form.xhtml</to-view-id>
     </navigation-case>
   </navigation-rule>
   
@@ -189,18 +165,6 @@
     </navigation-case>
   </navigation-rule>
   
-  <!-- ================================================= ARTICLE -->
-  <navigation-rule>
-    <navigation-case>
-      <from-outcome>article_list</from-outcome>
-      <to-view-id>/facelet/content/article_category/article/list.xhtml</to-view-id>
-    </navigation-case>
-    <navigation-case>
-      <from-outcome>article_form</from-outcome>
-      <to-view-id>/facelet/content/article_category/article/form.xhtml</to-view-id>
-    </navigation-case>
-  </navigation-rule>
-
   <!-- ================================================= BANNER CATEGORY -->
   <navigation-rule>
     <navigation-case>
@@ -213,18 +177,6 @@
     </navigation-case>
   </navigation-rule>
   
-  <!-- ================================================= BANNER -->
-  <navigation-rule>
-    <navigation-case>
-      <from-outcome>banner_list</from-outcome>
-      <to-view-id>/facelet/content/banner_category/banner/list.xhtml</to-view-id>
-    </navigation-case>
-    <navigation-case>
-      <from-outcome>banner_form</from-outcome>
-      <to-view-id>/facelet/content/banner_category/banner/form.xhtml</to-view-id>
-    </navigation-case>
-  </navigation-rule>
-
   <!-- ================================================= DOWNLOAD CATEGORY -->
   <navigation-rule>
     <navigation-case>
@@ -234,18 +186,6 @@
     <navigation-case>
       <from-outcome>download_category_form</from-outcome>
       <to-view-id>/facelet/content/download_category/form.xhtml</to-view-id>
-    </navigation-case>
-  </navigation-rule>
-  
-  <!-- ================================================= DOWNLOAD -->
-  <navigation-rule>
-    <navigation-case>
-      <from-outcome>download_list</from-outcome>
-      <to-view-id>/facelet/content/download_category/download/list.xhtml</to-view-id>
-    </navigation-case>
-    <navigation-case>
-      <from-outcome>download_form</from-outcome>
-      <to-view-id>/facelet/content/download_category/download/form.xhtml</to-view-id>
     </navigation-case>
   </navigation-rule>
   
