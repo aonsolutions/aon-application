@@ -116,6 +116,22 @@
 								forceId="#{true}" disabled="true" />
 						</h:panelGroup>
 
+						<h:outputLabel for="AccountEntry_type"
+							value="#{accountBundle.aon_type}"
+							styleClass="aon-form-input-text-label aon-form-table-column-odd-label" />
+						<t:inputText id="AccountEntry_type" styleClass="aon-form-input-text-disabled"
+							value="#{accountEntry.to.type}" size="20"
+							forceId="#{true}" disabled="true" />
+
+						<h:outputLabel for="AccountEntry_securityLevel"
+							value="#{accountBundle.aon_account_security_level}"
+							styleClass="aon-form-input-text-label aon-form-table-column-odd-label" />
+						<h:selectOneMenu id="AccountEntry_securityLevel"
+							styleClass="aon-form-selectOneMenu-field"
+							forceId="#{true}" value="#{accountEntry.to.securityLevel}">
+							<f:selectItems value="#{accountCollections.securityLevels}" />
+						</h:selectOneMenu>
+
 						<h:outputLabel for="AccountEntry_entryDate"
 							value="#{accountBundle.aon_date}"
 							styleClass="aon-form-input-text-label aon-form-table-column-odd-label" />
@@ -134,22 +150,6 @@
 								forceId="#{true}" disabled="true" />
 						</h:panelGroup>
 
-						<h:outputLabel for="AccountEntry_securityLevel"
-							value="#{accountBundle.aon_account_security_level}"
-							styleClass="aon-form-input-text-label aon-form-table-column-odd-label" />
-						<h:selectOneMenu id="AccountEntry_securityLevel"
-							styleClass="aon-form-selectOneMenu-field"
-							forceId="#{true}" value="#{accountEntry.to.securityLevel}">
-							<f:selectItems value="#{accountCollections.securityLevels}" />
-						</h:selectOneMenu>
-
-						<h:outputLabel for="AccountEntry_type"
-							value="#{accountBundle.aon_type}"
-							styleClass="aon-form-input-text-label aon-form-table-column-odd-label" />
-						<t:inputText id="AccountEntry_type" styleClass="aon-form-input-text-disabled"
-							value="#{accountEntry.to.type}" size="20"
-							forceId="#{true}" disabled="true" />
-						
 					</h:panelGrid>
 					<!-- end of grid layout -->
 					<!-- end of bag panel -->
