@@ -46,4 +46,28 @@ public class AlbumControllerListener extends ControllerAdapter {
 		}
 		return position;
 	}
+	
+	@Override
+	public void afterBeanAdded(ControllerEvent event)
+			throws ControllerListenerException {
+		try{
+			((AlbumController) event.getController()).onSelectAlbumImages(null);
+		} catch (ManagerBeanException e) {
+			throw new ControllerListenerException(e);
+		} catch (ExpressionException e) {
+			throw new ControllerListenerException(e);
+		}
+	}
+	
+	@Override
+	public void afterBeanSelected(ControllerEvent event)
+			throws ControllerListenerException {
+		try{
+			((AlbumController) event.getController()).onSelectAlbumImages(null);
+		} catch (ManagerBeanException e) {
+			throw new ControllerListenerException(e);
+		} catch (ExpressionException e) {
+			throw new ControllerListenerException(e);
+		}
+	}
 }
