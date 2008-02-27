@@ -122,7 +122,7 @@ public class FBatchController extends BasicController implements ICollectionProv
     }
 
     public boolean isDiskMode() {
-        return !FinanceBatchType.NONE.equals(((FinanceBatch)this.getTo()).getFinanceBatchType());
+        return !FinanceBatchType.NONE.equals(((FinanceBatch)this.getTo()).getFinanceBatchType()) && getToTotalDetails().intValue() > 0;
     }
 
     @SuppressWarnings("unchecked")
