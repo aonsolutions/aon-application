@@ -30,35 +30,35 @@
 					styleClass="aon-form-input-text" forceId="#{true}"
 					required="#{true}" size="15" disabled="#{true}" />
 
-				<t:outputLabel for="Supplier_document"
+				<t:outputLabel for="Supplier_registry_document"
 					styleClass="aon-form-input-text-label"
 					value="#{registryBundle.aon_cif}" />
-				<t:inputText id="Supplier_document" styleClass="aon-form-input-text"
-					forceId="#{true}" value="#{supplierAlias.to.document}" size="16"
+				<t:inputText id="Supplier_registry_document" styleClass="aon-form-input-text"
+					forceId="#{true}" value="#{supplierAlias.to.registry.document}" size="16"
 					onblur="toUpperCase(this);">
 					<f:validateLength minimum="1" maximum="16" />
 				</t:inputText>
 
-				<t:outputLabel for="Supplier_name"
+				<t:outputLabel for="Supplier_registry_name"
 					styleClass="aon-form-input-text-label"
 					value="#{registryBundle.aon_name}" />
-				<t:inputText id="Supplier_name" value="#{supplierAlias.to.name}"
+				<t:inputText id="Supplier_registry_name" value="#{supplierAlias.to.registry.name}"
 					styleClass="aon-form-input-text" forceId="#{true}" size="64">
 					<f:validateLength minimum="1" maximum="64" />
 				</t:inputText>
 
-				<t:outputLabel for="Supplier_surname"
+				<t:outputLabel for="Supplier_registry_surname"
 					styleClass="aon-form-input-text-label"
 					value="#{registryBundle.aon_surname}" />
-				<t:inputText id="Supplier_surname" styleClass="aon-form-input-text"
-					forceId="#{true}" value="#{supplierAlias.to.surname}" size="64">
+				<t:inputText id="Supplier_registry_surname" styleClass="aon-form-input-text"
+					forceId="#{true}" value="#{supplierAlias.to.registry.surname}" size="64">
 					<f:validateLength minimum="1" maximum="64" />
 				</t:inputText>
 
-				<t:outputLabel for="Supplier_alias"
+				<t:outputLabel for="Supplier_registry_alias"
 					styleClass="aon-form-input-text-label"
 					value="#{registryBundle.aon_alias}" />
-				<t:inputText id="Supplier_alias" value="#{supplierAlias.to.alias}"
+				<t:inputText id="Supplier_registry_alias" value="#{supplierAlias.to.registry.alias}"
 					styleClass="aon-form-input-text" forceId="#{true}" size="32"
 					onblur="toUpperCase(this);">
 					<f:validateLength minimum="1" maximum="32" />
