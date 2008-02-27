@@ -118,9 +118,9 @@
 		<mapping class="com.code.aon.customer.Customer"/>
 		<mapping class="com.code.aon.customer.CustomerSegment"/>
 
-		<!-- AON-PURCHASE Mapping files -->	
-		<mapping class="com.code.aon.purchase.Supplier"/>
-		<mapping class="com.code.aon.purchase.SupplierSegment"/>
+		<!-- AON-SUPPLIER Mapping files -->	
+		<mapping class="com.code.aon.supplier.Supplier"/>
+		<mapping class="com.code.aon.supplier.SupplierSegment"/>
 			
 		<!-- AON-COMPANY Mapping files -->	
 		<mapping class="com.code.aon.company.Company"/>
