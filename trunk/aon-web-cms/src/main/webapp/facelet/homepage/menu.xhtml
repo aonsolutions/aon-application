@@ -83,11 +83,14 @@
 								action="download_category_list"
 								styleClass="aon-main-menu-leaf"/>
 							<aon:menuItem id="album_category" value="#{menuBundle.cms_album_category}"
-								actionListener="#{album_category.onReset}" action="album_category_list"
+								actionListener="#{album_category.onSearch}" 
+								action="album_category_list"
 								styleClass="aon-main-menu-leaf"/>
 							<aon:menuItem id="direct_access_group_page" value="#{menuBundle.cms_direct_access_group}"
-								actionListener="#{direct_access_group.onReset}" action="direct_access_group_list"
+								actionListener="#{direct_access_group.onSearch}" 
+								action="direct_access_group_list"
 								styleClass="aon-main-menu-leaf"/>
+							<!-- 
 							<aon:menuItem id="brand" value="#{menuBundle.cms_brand}"
 								actionListener="#{brand.onReset}" action="brand_list"
 								styleClass="aon-main-menu-leaf"/>
@@ -97,6 +100,7 @@
 							<aon:menuItem id="product" value="#{menuBundle.cms_product}"
 								actionListener="#{product.onReset}" action="product_list"
 								styleClass="aon-main-menu-leaf"/>
+							 -->
 						</aon:dropDownMenu>
 						<aon:dropDownMenu id="production"
 							value="#{menuBundle.cms_production}" submitMode="ajax"
