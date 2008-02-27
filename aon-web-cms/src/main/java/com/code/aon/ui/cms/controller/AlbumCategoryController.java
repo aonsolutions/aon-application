@@ -2,9 +2,7 @@ package com.code.aon.ui.cms.controller;
 
 import java.util.List;
 
-import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
-import javax.faces.event.ValueChangeEvent;
 
 import com.code.aon.cms.Album;
 import com.code.aon.cms.AlbumCategory;
@@ -22,8 +20,6 @@ import com.code.aon.ui.util.AonUtil;
 
 public class AlbumCategoryController extends BasicI18nController {
 
-	private boolean cancelOnSelect = false;
-
 	@Override
 	public void onReset(ActionEvent event) {
 		((GeneratorConfigController)AonUtil.getRegisteredBean("generator_config")).initSection(AlbumConfig.class);
@@ -32,21 +28,15 @@ public class AlbumCategoryController extends BasicI18nController {
 
 	@SuppressWarnings("unused")
 	public void onSelect(ActionEvent event) {
-		if (!cancelOnSelect) {
-			super.onSelect(new ActionEvent(event.getComponent()));
-			FacesContext.getCurrentInstance().getApplication().getNavigationHandler().handleNavigation(FacesContext.getCurrentInstance(), null, "album_category_form");
-			loadCurrentLanguage();
-		}
-		cancelOnSelect = false;
+		super.onSelect(new ActionEvent(event.getComponent()));
+		loadCurrentLanguage();
 	}
 
 	public void onActivate(ActionEvent event) throws ManagerBeanException {
-		cancelOnSelect = true; 
 		activate(true);
 	}
 
 	public void onDeactivate(ActionEvent event) throws ManagerBeanException {
-		cancelOnSelect = true; 
 		activate(false);
 	}
 	
@@ -56,10 +46,6 @@ public class AlbumCategoryController extends BasicI18nController {
 		getManagerBean().update(albumCategory);
 	}
 	
-	public void onChecked(ValueChangeEvent event) throws ManagerBeanException {
-		cancelOnSelect = true; 
-	}
-
 	public String getI18nLabel() throws ManagerBeanException {
 		String label = "";
 		AlbumCategoryDetail albumCategoryDetail = getCurrentDetail();
@@ -113,27 +99,23 @@ public class AlbumCategoryController extends BasicI18nController {
 	}
 	
     public void onMoveUp(ActionEvent event) throws ManagerBeanException, ExpressionException {
-		cancelOnSelect = true; 
     	move((AlbumCategory) this.model.getRowData(), -1);
     }
 
     public void onMoveDown(ActionEvent event) throws ManagerBeanException, ExpressionException {
-		cancelOnSelect = true; 
     	move((AlbumCategory) this.model.getRowData(), 1);    	
     }
     
 	public void onSelectAlbums(ActionEvent event) throws ManagerBeanException, ExpressionException {
-		cancelOnSelect = true;
 		AlbumController ac = (AlbumController)AonUtil.getController("album");
 		IManagerBean albumBean = BeanManager.getManagerBean(Album.class);
-		AlbumCategory albumCategory = (AlbumCategory) this.getSelectedTO();
+		AlbumCategory albumCategory = (AlbumCategory) this.getTo();
 		Criteria criteria = new Criteria();
 		criteria.addExpression(albumBean.getFieldName(ICMSAlias.ALBUM_ALBUM_CATEGORY_ID), "" + albumCategory.getId());
 		criteria.addOrder(albumBean.getFieldName(ICMSAlias.ALBUM_POSITION));
 		ac.setCurrentAlbumCategory(albumCategory);
 		ac.setCriteria(criteria);
 		ac.onSearch(event);
-		ac.onInit(event);
 	}
 
 	public void reorderObjects() throws ManagerBeanException {

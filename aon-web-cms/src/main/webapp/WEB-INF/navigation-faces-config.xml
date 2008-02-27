@@ -199,32 +199,12 @@
       <from-outcome>album_category_form</from-outcome>
       <to-view-id>/facelet/content/album_category/form.xhtml</to-view-id>
     </navigation-case>
-  </navigation-rule>
-  
-  <!-- ================================================= ALBUM -->
-  <navigation-rule>
-    <navigation-case>
-      <from-outcome>album_list</from-outcome>
-      <to-view-id>/facelet/content/album_category/album/list.xhtml</to-view-id>
-    </navigation-case>
     <navigation-case>
       <from-outcome>album_form</from-outcome>
-      <to-view-id>/facelet/content/album_category/album/form.xhtml</to-view-id>
+      <to-view-id>/facelet/content/album_category/album_form.xhtml</to-view-id>
     </navigation-case>
   </navigation-rule>
-
-  <!-- ================================================= ALBUM IMAGE -->
-  <navigation-rule>
-    <navigation-case>
-      <from-outcome>albumImage_list</from-outcome>
-      <to-view-id>/facelet/content/album_category/album/image/list.xhtml</to-view-id>
-    </navigation-case>
-    <navigation-case>
-      <from-outcome>albumImage_form</from-outcome>
-      <to-view-id>/facelet/content/album_category/album/image/form.xhtml</to-view-id>
-    </navigation-case>
-  </navigation-rule>
-
+  
   <!-- ========================================================= SIDEBAR -->
   <navigation-rule>
     <navigation-case>

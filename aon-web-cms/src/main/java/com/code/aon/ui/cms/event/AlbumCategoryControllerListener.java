@@ -9,6 +9,8 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ql.Criteria;
+import com.code.aon.ql.util.ExpressionException;
+import com.code.aon.ui.cms.controller.AlbumCategoryController;
 import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
@@ -60,6 +62,30 @@ public class AlbumCategoryControllerListener extends ControllerAdapter {
 		AlbumCategory to = (AlbumCategory)event.getController().getTo();
 		if (to.getSection().getId()==-1){
 			to.setSection(null);
+		}
+	}
+	
+	@Override
+	public void afterBeanAdded(ControllerEvent event)
+			throws ControllerListenerException {
+		try{
+			((AlbumCategoryController) event.getController()).onSelectAlbums(null);
+		} catch (ManagerBeanException e) {
+			throw new ControllerListenerException(e);
+		} catch (ExpressionException e) {
+			throw new ControllerListenerException(e);
+		}
+	}
+	
+	@Override
+	public void afterBeanSelected(ControllerEvent event)
+			throws ControllerListenerException {
+		try{
+			((AlbumCategoryController) event.getController()).onSelectAlbums(null);
+		} catch (ManagerBeanException e) {
+			throw new ControllerListenerException(e);
+		} catch (ExpressionException e) {
+			throw new ControllerListenerException(e);
 		}
 	}
 }

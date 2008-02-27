@@ -3,9 +3,6 @@ package com.code.aon.ui.cms.event;
 import java.io.File;
 import java.util.List;
 
-import javax.faces.context.FacesContext;
-import javax.servlet.http.HttpServletResponse;
-
 import com.code.aon.cms.AlbumImage;
 import com.code.aon.cms.dao.ICMSAlias;
 import com.code.aon.common.ITransferObject;

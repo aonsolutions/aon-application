@@ -2,9 +2,7 @@ package com.code.aon.ui.cms.controller;
 
 import java.util.List;
 
-import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
-import javax.faces.event.ValueChangeEvent;
 
 import com.code.aon.cms.Album;
 import com.code.aon.cms.AlbumCategory;
@@ -23,13 +21,7 @@ import com.code.aon.ui.util.AonUtil;
 
 public class AlbumController extends BasicI18nController {
 
-	private boolean cancelOnSelect = false;
-
 	private AlbumCategory currentAlbumCategory;
-	
-	public void onInit(ActionEvent event){
-		((GalleryController)AonUtil.getRegisteredBean("gallery")).onInit(event);
-	}
 	
 	public AlbumCategory getCurrentAlbumCategory() {
 		return currentAlbumCategory;
@@ -41,21 +33,15 @@ public class AlbumController extends BasicI18nController {
 
 	@SuppressWarnings("unused")
 	public void onSelect(ActionEvent event){
-		if (!cancelOnSelect) {
-			super.onSelect(new ActionEvent(event.getComponent()));
-			FacesContext.getCurrentInstance().getApplication().getNavigationHandler().handleNavigation(FacesContext.getCurrentInstance(), null, "album_form");
-			loadCurrentLanguage();
-		}
-		cancelOnSelect = false;
+		super.onSelect(event);
+		loadCurrentLanguage();
 	}
 
 	public void onActivate(ActionEvent event) throws ManagerBeanException {
-		cancelOnSelect = true; 
 		activate(true);
 	}
 
 	public void onDeactivate(ActionEvent event) throws ManagerBeanException {
-		cancelOnSelect = true; 
 		activate(false);
 	}
 	
@@ -65,10 +51,6 @@ public class AlbumController extends BasicI18nController {
 		getManagerBean().update(a);
 	}
 	
-	public void onChecked(ValueChangeEvent event) throws ManagerBeanException {
-		cancelOnSelect = true; 
-	}
-
 	public String getI18nTitle() throws ManagerBeanException {
 		String title = "";
 		AlbumDetail ad = getCurrentDetail();
@@ -87,10 +69,6 @@ public class AlbumController extends BasicI18nController {
 			ad = (AlbumDetail)list.get(0);
 		}
 		return ad;
-	}
-
-	public void onAccept(ActionEvent event) {
-		super.accept(event);
 	}
 
 	@SuppressWarnings("unchecked")
@@ -122,20 +100,17 @@ public class AlbumController extends BasicI18nController {
 	}
 	
     public void onMoveUp(ActionEvent event) throws ManagerBeanException, ExpressionException {
-		cancelOnSelect = true; 
     	move((Album) this.model.getRowData(), -1);
     }
 
     public void onMoveDown(ActionEvent event) throws ManagerBeanException, ExpressionException {
-		cancelOnSelect = true; 
     	move((Album) this.model.getRowData(), 1);    	
     }
 
 	public void onSelectAlbumImages(ActionEvent event) throws ManagerBeanException, ExpressionException {
-		cancelOnSelect = true;
 		AlbumImageController aic = (AlbumImageController)AonUtil.getController("albumImage");
 		IManagerBean albumImageBean = BeanManager.getManagerBean(AlbumImage.class);
-		Album album = (Album) this.getSelectedTO();
+		Album album = (Album) this.getTo();
 		Criteria criteria = new Criteria();
 		criteria.addExpression(albumImageBean.getFieldName(ICMSAlias.ALBUM_IMAGE_ALBUM_ID), "" + album.getId());
 		criteria.addOrder(albumImageBean.getFieldName(ICMSAlias.ALBUM_IMAGE_POSITION));
@@ -162,20 +137,6 @@ public class AlbumController extends BasicI18nController {
 				getManagerBean().update(a);
 			}
 		}
-	}
-	
-	private boolean imageSelectionVisible;
-	
-	public void onShowImages(ActionEvent event) {
-		imageSelectionVisible = true; 
-	}
-	
-	public void onCloseImages(ActionEvent event) {
-		imageSelectionVisible = false; 
-	}
-	
-	public boolean isImageSelectionVisible(){
-		return imageSelectionVisible;
 	}
 	
 	public void onSelectImage(ActionEvent event) throws ManagerBeanException {
