@@ -54,7 +54,8 @@ public class AlumnPrinter implements ICollectionProvider{
 		}
 		return reportAlumnList;
 	}
-
+	
+	@SuppressWarnings("unchecked")
 	public Collection getCollection(boolean forceRefresh) throws ManagerBeanException {
 		return getCollection();
 	}
@@ -121,5 +122,4 @@ public class AlumnPrinter implements ICollectionProvider{
 		}
 		return null;
 	}
-
 }

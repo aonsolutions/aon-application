@@ -60,5 +60,4 @@ public class CourseEvaluationPrinter implements ICollectionProvider{
 		}
 		return null;
 	}
-	
 }

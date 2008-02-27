@@ -74,6 +74,8 @@ public class MarkTemplatePrinter implements ICollectionProvider{
 			Criteria criteria = new Criteria();
 			criteria.addEqualExpression(bean.getFieldName(IAcademyAlias.COURSE_ALUMN_COURSE_ID), course.getId());
 			criteria.addEqualExpression(bean.getFieldName(IAcademyAlias.COURSE_ALUMN_STATUS), CourseAlumnStatus.ACTIVE);
+			criteria.addOrder(bean.getFieldName(IAcademyAlias.COURSE_ALUMN_CUSTOMER_REGISTRY_SURNAME));
+			criteria.addOrder(bean.getFieldName(IAcademyAlias.COURSE_ALUMN_CUSTOMER_REGISTRY_NAME));
 			List<CourseAlumn> lst = new ArrayList<CourseAlumn>();
 			Iterator iter = bean.getList(criteria).iterator();
 			while (iter.hasNext()){
@@ -103,5 +105,4 @@ public class MarkTemplatePrinter implements ICollectionProvider{
 		}
 		return null;
 	}
-
 }
