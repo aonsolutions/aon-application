@@ -57,11 +57,16 @@ public class VelocityUtil extends VelocityEngine implements Constants {
     }
     
     public void finalize() {
-    	Iterator iter = Arrays.asList(this.getContext().getKeys()).iterator();
-    	while (iter.hasNext()){
-    		this.remove(""+iter.next());
-    	}
-    	this.finalize();
+    	/*
+    	try{
+        	Iterator iter = Arrays.asList(this.getContext().getKeys()).iterator();
+        	while (iter.hasNext()){
+        		this.remove(""+iter.next());
+        	}
+        	this.finalize();
+    	}catch (RuntimeException e) {
+		}
+		*/
     }
 
 	public void addMessage(String msg, int type) {

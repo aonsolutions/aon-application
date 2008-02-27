@@ -4,19 +4,14 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import com.code.aon.cms.AlbumConfig;
 import com.code.aon.cms.Article;
 import com.code.aon.cms.ArticleCategory;
 import com.code.aon.cms.ArticleCategoryDetail;
 import com.code.aon.cms.ArticleConfig;
 import com.code.aon.cms.ArticleDetail;
-import com.code.aon.cms.ArticleDocument;
-import com.code.aon.cms.ArticleDocumentDetail;
-import com.code.aon.cms.ArticleRelated;
 import com.code.aon.cms.Section;
 import com.code.aon.cms.dao.ICMSAlias;
 import com.code.aon.cms.enumeration.ArticleType;
-import com.code.aon.cms.enumeration.MenuType;
 import com.code.aon.cms.enumeration.Templates;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
@@ -27,12 +22,11 @@ import com.code.aon.ui.cms.controller.GeneratorConfigController;
 import com.code.aon.ui.cms.util.ControllerUtil;
 import com.code.aon.ui.cms.util.VelocityUtil;
 import com.code.aon.ui.cms.velocity.attribute.ArticleCategoryHandler;
-import com.code.aon.ui.cms.velocity.attribute.ArticleDocumentHandler;
 import com.code.aon.ui.cms.velocity.attribute.ArticleHandler;
 
 public class ArticleGenerator extends Generator {
 	
-	public static void generate(VelocityUtil vu) {
+	public static void generate() {
 		List<ITransferObject> articleCategoryList;
 		List<ITransferObject> articleCategoryDetailList;
 		List<ITransferObject> articleList;
@@ -61,6 +55,17 @@ public class ArticleGenerator extends Generator {
 			articleCategoryList = (List<ITransferObject>)articleCategoryBean.getList(articleCategoryCriteria);
 			ArrayList<ArticleCategoryHandler> achlist = new ArrayList<ArticleCategoryHandler>(); 
 			for (int j=0; j < articleCategoryList.size(); j++) {
+				
+				VelocityUtil vu = new VelocityUtil();
+				CommonGenerator.getCommonGenerator().init(vu);
+				vu.addMessage("Iniciando proceso de generación", VelocityUtil.INFO);
+				vu.addMessage("", VelocityUtil.INFO);
+				vu.addMessage("Buscando plantilla seleccionada '" + ControllerUtil.getCurrentConfig().getTemplate() + "' ...", VelocityUtil.INFO);
+				vu.setTemplate_path(ControllerUtil.getCurrentVmTemplatePath());
+				vu.initialize();
+				vu.addMessage("", VelocityUtil.INFO);
+				vu.addMessage("Creando articulos... ", VelocityUtil.INFO);
+
 				articleCategory = (ArticleCategory)articleCategoryList.get(j);
 				articleCategoryDetailCriteria = new Criteria();
 				articleCategoryDetailCriteria.addEqualExpression(articleCategoryDetailBean.getFieldName(ICMSAlias.ARTICLE_CATEGORY_DETAIL_ARTICLE_CATEGORY_ID), articleCategory.getId());
@@ -122,6 +127,8 @@ public class ArticleGenerator extends Generator {
 						ahlist = null;
 					}
 				}
+				vu.finalize();
+				vu = null;		
 			}
 		} catch (ManagerBeanException e) {
 			e.printStackTrace();

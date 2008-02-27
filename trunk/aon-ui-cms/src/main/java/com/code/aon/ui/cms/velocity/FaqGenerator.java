@@ -22,7 +22,17 @@ import com.code.aon.ui.cms.velocity.attribute.FaqCategoryHandler;
 
 public class FaqGenerator extends Generator {
 
-	public static void generate(VelocityUtil vu) {
+	public static void generate() {
+		VelocityUtil vu = new VelocityUtil();
+		CommonGenerator.getCommonGenerator().init(vu);
+		vu.addMessage("Iniciando proceso de generación", VelocityUtil.INFO);
+		vu.addMessage("", VelocityUtil.INFO);
+		vu.addMessage("Buscando plantilla seleccionada '" + ControllerUtil.getCurrentConfig().getTemplate() + "' ...", VelocityUtil.INFO);
+		vu.setTemplate_path(ControllerUtil.getCurrentVmTemplatePath());
+		vu.initialize();
+		vu.addMessage("", VelocityUtil.INFO);
+		vu.addMessage("Creando faq... ", VelocityUtil.INFO);
+		
 		ArrayList<FaqCategoryHandler> fchList;
 		List<ITransferObject> faqCategoryDetailList;
 		HashMap categoryMap = new HashMap<Section, List>();
@@ -90,6 +100,8 @@ public class FaqGenerator extends Generator {
 			faqCategoryDetailList = null;
 			categoryMap = null;
 		}
+		vu.finalize();
+		vu = null;
 	}
 	
 	public static String FAQ_CATEGORY_LIST_PAGE = "category";

@@ -17,7 +17,17 @@ import com.code.aon.ui.cms.velocity.attribute.GenericPageHandler;
 
 public class GenericGenerator extends Generator {
 
-	public static void generate(VelocityUtil vu) {
+	public static void generate() {
+		VelocityUtil vu = new VelocityUtil();
+		CommonGenerator.getCommonGenerator().init(vu);
+		vu.addMessage("Iniciando proceso de generación", VelocityUtil.INFO);
+		vu.addMessage("", VelocityUtil.INFO);
+		vu.addMessage("Buscando plantilla seleccionada '" + ControllerUtil.getCurrentConfig().getTemplate() + "' ...", VelocityUtil.INFO);
+		vu.setTemplate_path(ControllerUtil.getCurrentVmTemplatePath());
+		vu.initialize();
+		vu.addMessage("", VelocityUtil.INFO);
+		vu.addMessage("Creando páginas genéricas... ", VelocityUtil.INFO);
+		
 		List<ITransferObject> genericPageDetailList;
 		try {
 			IManagerBean bean = BeanManager.getManagerBean(GenericPageDetail.class);
@@ -49,6 +59,8 @@ public class GenericGenerator extends Generator {
 		} finally {
 			genericPageDetailList = null;
 		}
+		vu.finalize();
+		vu = null;
 	}
 
 	public static Object getGenericHandler(Integer ident) {
