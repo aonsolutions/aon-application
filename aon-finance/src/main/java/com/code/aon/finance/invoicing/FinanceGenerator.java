@@ -29,7 +29,7 @@ public class FinanceGenerator {
 		RegistryBank rBank = obtainRBank(registry);
 		Date date = invoice.getIssueDate();
 		if(rPayMethod == null || rPayMethod.getNumberOfPayments() == 1){
-			date = (rPayMethod == null?new Date():calculatePaymentDate(rPayMethod.getDaysToFirstPayment(),rPayMethod.getPaymentDaysArray(),date));
+			date = (rPayMethod == null?date:calculatePaymentDate(rPayMethod.getDaysToFirstPayment(),rPayMethod.getPaymentDaysArray(),date));
 			financeList.add(createFinance(invoice,registry,date,(rPayMethod==null?null:rPayMethod.getPayment()),totalPrice,rBank));
 		}else{
 			double paymentPrice = round((totalPrice/rPayMethod.getNumberOfPayments()),2);
