@@ -64,7 +64,17 @@ public class AlbumGenerator extends Generator {
 		return list;
 	}
 	
-	public static void generate(VelocityUtil vu) {
+	public static void generate() {
+		VelocityUtil vu = new VelocityUtil();
+		CommonGenerator.getCommonGenerator().init(vu);
+		vu.addMessage("Iniciando proceso de generación", VelocityUtil.INFO);
+		vu.addMessage("", VelocityUtil.INFO);
+		vu.addMessage("Buscando plantilla seleccionada '" + ControllerUtil.getCurrentConfig().getTemplate() + "' ...", VelocityUtil.INFO);
+		vu.setTemplate_path(ControllerUtil.getCurrentVmTemplatePath());
+		vu.initialize();
+		vu.addMessage("", VelocityUtil.INFO);
+		vu.addMessage("Creando album imagenes... ", VelocityUtil.INFO);
+		
 		List<ITransferObject> albumCategoryList;
 		List<ITransferObject> albumCategoryDetailList;
 		List<ITransferObject> albumList;
@@ -197,6 +207,8 @@ public class AlbumGenerator extends Generator {
 			albumList = null;
 			albumDetailList = null;
 		}
+		vu.finalize();
+		vu = null;
 	}
 
 	public static String ALBUM_LIST_PAGE = "album_categories";

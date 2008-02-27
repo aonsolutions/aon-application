@@ -21,7 +21,17 @@ import com.code.aon.ui.cms.velocity.attribute.ModularPageOptionHandler;
 
 public class ModularPageGenerator extends Generator {
 
-	public static void generate(VelocityUtil vu) {
+	public static void generate() {
+		VelocityUtil vu = new VelocityUtil();
+		CommonGenerator.getCommonGenerator().init(vu);
+		vu.addMessage("Iniciando proceso de generación", VelocityUtil.INFO);
+		vu.addMessage("", VelocityUtil.INFO);
+		vu.addMessage("Buscando plantilla seleccionada '" + ControllerUtil.getCurrentConfig().getTemplate() + "' ...", VelocityUtil.INFO);
+		vu.setTemplate_path(ControllerUtil.getCurrentVmTemplatePath());
+		vu.initialize();
+		vu.addMessage("", VelocityUtil.INFO);
+		vu.addMessage("Creando páginas modulare (homepage...)... ", VelocityUtil.INFO);
+		
 		List<ITransferObject> modularPageList;
 		List<ITransferObject> modularPageOptionList;
 		ArrayList<ModularPageOptionHandler> modularPageOptionHandlerList;
@@ -99,6 +109,8 @@ public class ModularPageGenerator extends Generator {
 			modularPageOptionDetailList = null;
 			modularPageDetailList = null;
 		}
+		vu.finalize();
+		vu = null;
 	}
-
+	
 }

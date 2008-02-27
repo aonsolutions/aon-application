@@ -20,7 +20,6 @@ import com.code.aon.ql.Criteria;
 import com.code.aon.ui.cms.controller.GeneratorConfigController;
 import com.code.aon.ui.cms.util.ControllerUtil;
 import com.code.aon.ui.cms.util.VelocityUtil;
-import com.code.aon.ui.cms.velocity.attribute.AlbumImageHandler;
 import com.code.aon.ui.cms.velocity.attribute.DownloadCategoryHandler;
 import com.code.aon.ui.cms.velocity.attribute.DownloadHandler;
 
@@ -56,7 +55,17 @@ public class DownloadsGenerator extends Generator {
 		return list;
 	}
 	
-	public static void generate(VelocityUtil vu) {
+	public static void generate() {
+		VelocityUtil vu = new VelocityUtil();
+		CommonGenerator.getCommonGenerator().init(vu);
+		vu.addMessage("Iniciando proceso de generación", VelocityUtil.INFO);
+		vu.addMessage("", VelocityUtil.INFO);
+		vu.addMessage("Buscando plantilla seleccionada '" + ControllerUtil.getCurrentConfig().getTemplate() + "' ...", VelocityUtil.INFO);
+		vu.setTemplate_path(ControllerUtil.getCurrentVmTemplatePath());
+		vu.initialize();
+		vu.addMessage("", VelocityUtil.INFO);
+		vu.addMessage("Creando downloads... ", VelocityUtil.INFO);
+		
 		try {
 			Section configSection = GeneratorConfigController.currentSection(DownloadConfig.class);
 			IManagerBean bean = BeanManager.getManagerBean(DownloadCategory.class);
@@ -129,6 +138,8 @@ public class DownloadsGenerator extends Generator {
 		} catch (ManagerBeanException e) {
 			e.printStackTrace();
 		}
+		vu.finalize();
+		vu = null;
 	}
 	
 	public static Object getDownloadsHandler(Integer ident) {
