@@ -19,8 +19,8 @@
 							onmouseout="this.className='aon-content-toolbar-item aon-content-toolbar-item-save'"
 							accesskey="#{bundle.aon_key_save}" />
 						<t:commandButton id="cancel" value="#{bundle.aon_cancel}"
-							forceId="#{true}" immediate="#{true}"
-							actionListener="#{customerFee.onCancel}"
+							forceId="#{true}" immediate="#{customerFee.new?(true):(false)}"
+							actionListener="#{customerFee.onCancel}" action="economic_data"
 							onclick="return (confirm('#{bundle.aon_cancel_confirm}'))"
 							styleClass="aon-content-toolbar-item aon-content-toolbar-item-cancel"
 							onmouseover="this.className='aon-content-toolbar-item aon-content-toolbar-item-hover aon-content-toolbar-item-cancel'"
@@ -28,6 +28,7 @@
 							accesskey="#{bundle.aon_key_cancel}" />
 						<t:commandButton id="remove" value="#{bundle.aon_remove}"
 							forceId="#{true}" immediate="true"
+							rendered="#{!customerFee.new}"
 							actionListener="#{customerFee.onRemove}"
 							onclick="return (confirm('#{bundle.aon_remove_confirm}'))"
 							styleClass="aon-content-toolbar-item aon-content-toolbar-item-delete"
@@ -53,7 +54,7 @@
 
 						<t:outputLabel for="Item_Lookup_product_code"
 							styleClass="aon-form-input-text-label"
-							value="#{appBundle.fee_item}" />
+							value="#{customerBundle.fee_item}" />
 						<t:div>
 							<t:inputText id="Item_Lookup_product_code" size="5" forceId="#{true}"
 								styleClass="aon-form-input-text"
@@ -71,7 +72,7 @@
 		
 						<t:outputLabel for="CustomerFee_quantity"
 							styleClass="aon-form-input-text-label"
-							value="#{appBundle.fee_quantity}" />
+							value="#{customerBundle.fee_quantity}" />
 						<t:inputText id="CustomerFee_quantity" 
 							styleClass="aon-form-input-text"
 							value="#{customerFee.to.quantity}" 
@@ -81,7 +82,7 @@
 
 						<t:outputLabel for="Item_Lookup_price"
 							styleClass="aon-form-input-text-label"
-							value="#{salesBundle.aon_customer_fee_price}" />
+							value="#{customerBundle.aon_customer_fee_price}" />
 						<t:inputText id="Item_Lookup_price" 
 							styleClass="aon-form-input-text"
 							value="#{customerFee.to.price}" 
@@ -91,14 +92,14 @@
 
 						<t:outputLabel for="CustomerFee_discountExpression"
 							styleClass="aon-form-input-text-label"
-							value="#{appBundle.fee_discount_expr}" />
+							value="#{customerBundle.fee_discount_expr}" />
 						<h:inputText id="CustomerFee_discountExpression" 
 							styleClass="aon-form-input-text" size="10"
 							value="#{customerFee.to.discountExpression.discountExpr}" />
 
 						<t:outputLabel for="CustomerFee_initialDate"
 							styleClass="aon-form-input-text-label"
-							value="#{appBundle.aon_initial_date_abrv}" />
+							value="#{customerBundle.aon_initial_date_abrv}" />
 						<t:inputCalendar id="CustomerFee_initialDate"
 							size="8" required="true"
 							value="#{customerFee.to.initialDate}"
@@ -110,10 +111,9 @@
 
 						<t:outputLabel for="CustomerFee_finalDate"
 							styleClass="aon-form-input-text-label"
-							value="#{appBundle.aon_final_date_abrv}" />
+							value="#{customerBundle.aon_final_date_abrv}" />
 						<t:inputCalendar id="CustomerFee_finalDate"
-							size="8" required="true"
-							value="#{customerFee.to.finalDate}"
+							size="8" value="#{customerFee.to.finalDate}"
 							monthYearRowClass="yearMonthHeader" weekRowClass="weekHeader"
 							currentDayCellClass="currentDayCell" renderAsPopup="true"
 							styleClass="aon-form-input-text" popupButtonStyleClass="aon-form-calendar-button"
@@ -122,15 +122,15 @@
 							
 						<t:outputLabel for="CustomerFee_billingDate"
 							styleClass="aon-form-input-text-label"
-							value="#{appBundle.aon_billing_date_abrv}" />
+							value="#{customerBundle.aon_billing_date_abrv}" />
 						<t:div>
 							<h:selectOneMenu id="CustomerFee_billingDate" 
 								value="#{customerFee.to.billingDateMonth}"
 								styleClass="aon-form-selectOneMenu-field">
-								<f:selectItems value="#{academyCollections.months}" />
+								<f:selectItems value="#{salesCollections.months}" />
 							</h:selectOneMenu>
 							<h:outputLabel for="BillingDate_Year"
-								value="#{appBundle.aon_year}:" />
+								value="#{customerBundle.aon_year}:" />
 							<h:inputText id="BillingDate_Year" required="true"
 								styleClass="aon-form-input-text" size="5"
 								value="#{customerFee.to.billingDateYear}" />
@@ -138,7 +138,7 @@
 						
 						<t:outputLabel for="CustomerFee_period"
 							styleClass="aon-form-input-text-label"
-							value="#{appBundle.fee_period}" />
+							value="#{customerBundle.fee_period}" />
 						<h:selectOneMenu id="CustomerFee_period" 
 							value="#{customerFee.to.period}"
 							styleClass="aon-form-selectOneMenu-field">
@@ -147,7 +147,7 @@
 
 						<t:outputLabel for="CustomerFee_workPlace_id"
 							styleClass="aon-form-input-text-label"
-							value="#{salesBundle.aon_customer_fee_workplace_abrv}" />
+							value="#{customerBundle.aon_customer_fee_workplace_abrv}" />
 						<h:selectOneMenu id="CustomerFee_workPlace_id"
 							value="#{customerFee.to.workPlace.id}"
 							styleClass="aon-form-selectOneMenu-field">
@@ -158,7 +158,6 @@
 
 				</t:div>
 			</t:div>
-
 </ui:composition>
 
 </body>
