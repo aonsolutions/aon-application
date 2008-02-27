@@ -103,6 +103,7 @@ public class CommonGenerator extends Generator {
 					vu.addMessage(" - Menu NULL no cargado.", VelocityUtil.INFO);
 				}else{
 					if (previousSection==null ||
+							previousSection.getMenuToShow() == null ||
 							!previousSection.getMenuToShow().getId().equals(m.getId())){
 						vu.put("default_menu", MenuGenerator.getMenuOptionList(m));
 						vu.addMessage(" - Menu " + m.getAlias() + " cargado.", VelocityUtil.INFO);
@@ -119,6 +120,7 @@ public class CommonGenerator extends Generator {
 					vu.addMessage(" - Menu alt NULL no cargado.", VelocityUtil.INFO);
 				}else{
 					if (previousSection==null ||
+							previousSection.getMenuAltToShow() == null ||
 							!previousSection.getMenuAltToShow().getId().equals(m.getId())){
 						vu.put("default_menu_alt", MenuGenerator.getMenuOptionList(m));
 						vu.addMessage(" - Menu alt " + m.getAlias() + " cargado.", VelocityUtil.INFO);
@@ -136,6 +138,7 @@ public class CommonGenerator extends Generator {
 					vu.addMessage(" - Cabecera NULL no cargado.", VelocityUtil.INFO);
 				}else{
 					if (previousSection==null ||
+							previousSection.getHeaderToShow() == null ||
 							!previousSection.getHeaderToShow().getId().equals(h.getId())){
 						vu.put("default_header", getHeaderHandler(h));
 						vu.addMessage(" - Cabecera " + h.getAlias() + " cargada.", VelocityUtil.INFO);
@@ -156,6 +159,7 @@ public class CommonGenerator extends Generator {
 						vu.addMessage(" - Sidebar left NULL no cargado.", VelocityUtil.INFO);
 					}else{
 						if (previousSection==null ||
+								previousSection.getSidebarToLeftShow() == null ||
 								!previousSection.getSidebarToLeftShow().getId().equals(sb.getId())){
 							vu.put("default_sidebar_left", getSidebarHandler(sb, SidebarSide.LEFT));
 							vu.addMessage(" - Sidebar left " + sb.getAlias() + " cargada.", VelocityUtil.INFO);
@@ -169,6 +173,7 @@ public class CommonGenerator extends Generator {
 						vu.addMessage(" - Sidebar right NULL no cargado.", VelocityUtil.INFO);
 					}else{
 						if (previousSection==null ||
+								previousSection.getSidebarToRightShow() == null ||
 								!previousSection.getSidebarToRightShow().getId().equals(sb.getId())){
 							vu.put("default_sidebar_right", getSidebarHandler(sb, SidebarSide.RIGHT));
 							vu.addMessage(" - Sidebar right " + sb.getAlias() + " cargada.", VelocityUtil.INFO);
@@ -187,6 +192,7 @@ public class CommonGenerator extends Generator {
 					vu.addMessage(" - Pie de página NULL no cargado.", VelocityUtil.INFO);
 				}else{
 					if (previousSection==null ||
+							previousSection.getFooterToShow() == null ||
 							!previousSection.getFooterToShow().getId().equals(f.getId())){
 						vu.put("default_footer", getFooterHandler(f));
 						vu.addMessage(" - Pie de página " + f.getAlias() + " cargado.", VelocityUtil.INFO);
