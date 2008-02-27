@@ -6,8 +6,6 @@ import java.util.Iterator;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import javax.faces.context.FacesContext;
-import javax.faces.el.ValueBinding;
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 import javax.faces.event.ValueChangeEvent;
@@ -35,6 +33,8 @@ public class CustomerFeeToGroupController extends BasicController {
 	private static final Logger LOGGER = Logger.getLogger(AcademicSkillToGroupController.class.getName());
 	
 	private static final String COURSE_CONTROLLER_NAME = "course";
+
+	private static final String MENU_MANAGER_NAME = "menuManager";
 
 	private ArrayList<Course> checks = new ArrayList<Course>();
 	
@@ -94,6 +94,7 @@ public class CustomerFeeToGroupController extends BasicController {
 	}
 	
 	public void onEditSearch(MenuEvent event){
+		clearCheckedCourses();
 		this.onEditSearch((ActionEvent)event);
 	}
 
@@ -119,7 +120,6 @@ public class CustomerFeeToGroupController extends BasicController {
 				courseController.onSearch(null);
 				updateBreadCrumb();
 			}
-
 		} catch (ManagerBeanException e) {
 			AonUtil.addErrorMessage("Unable to add fee to selected courses");
 			LOGGER.log(Level.SEVERE, "Unable to add fee to selected courses", e);
@@ -161,9 +161,7 @@ public class CustomerFeeToGroupController extends BasicController {
 	}
 
 	private void updateBreadCrumb() {
-		FacesContext ctx = FacesContext.getCurrentInstance();
-        ValueBinding vb = ctx.getApplication().createValueBinding("#{menuManager}");
-        MenuManager menuManager = (MenuManager)vb.getValue(ctx);
+		MenuManager menuManager = (MenuManager)AonUtil.getRegisteredBean(MENU_MANAGER_NAME);
         menuManager.setCurrentMenu("AON_APP");
         menuManager.getCurrentMenuModel().setSelectedNode("root.aon_course");	
     }
