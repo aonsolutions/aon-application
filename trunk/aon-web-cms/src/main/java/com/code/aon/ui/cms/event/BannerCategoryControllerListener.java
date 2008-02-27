@@ -9,6 +9,9 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ql.Criteria;
+import com.code.aon.ql.util.ExpressionException;
+import com.code.aon.ui.cms.controller.ArticleCategoryController;
+import com.code.aon.ui.cms.controller.BannerCategoryController;
 import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
@@ -62,6 +65,30 @@ public class BannerCategoryControllerListener extends ControllerAdapter {
 		BannerCategory to = (BannerCategory)event.getController().getTo();
 		if (to.getSection().getId()==-1){
 			to.setSection(null);
+		}
+	}
+
+	@Override
+	public void afterBeanAdded(ControllerEvent event)
+			throws ControllerListenerException {
+		try{
+			((BannerCategoryController) event.getController()).onSelectBanners(null);
+		} catch (ManagerBeanException e) {
+			throw new ControllerListenerException(e);
+		} catch (ExpressionException e) {
+			throw new ControllerListenerException(e);
+		}
+	}
+	
+	@Override
+	public void afterBeanSelected(ControllerEvent event)
+			throws ControllerListenerException {
+		try{
+			((BannerCategoryController) event.getController()).onSelectBanners(null);
+		} catch (ManagerBeanException e) {
+			throw new ControllerListenerException(e);
+		} catch (ExpressionException e) {
+			throw new ControllerListenerException(e);
 		}
 	}
 

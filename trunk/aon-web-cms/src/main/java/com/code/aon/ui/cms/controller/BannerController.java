@@ -9,6 +9,7 @@ import javax.faces.event.ActionEvent;
 import javax.faces.event.ValueChangeEvent;
 import javax.faces.model.SelectItem;
 
+import com.code.aon.cms.Article;
 import com.code.aon.cms.Banner;
 import com.code.aon.cms.BannerCategory;
 import com.code.aon.cms.BannerDetail;
@@ -24,8 +25,6 @@ import com.code.aon.ui.util.AonUtil;
 
 public class BannerController extends BasicI18nController {
 
-	private boolean cancelOnSelect = false;
-
 	private BannerCategory currentBannerCategory;
 	
 	public BannerCategory getCurrentBannerCategory() {
@@ -38,21 +37,15 @@ public class BannerController extends BasicI18nController {
 
 	@SuppressWarnings("unused")
 	public void onSelect(ActionEvent event) {
-		if (!cancelOnSelect) {
-			super.onSelect(new ActionEvent(event.getComponent()));
-			FacesContext.getCurrentInstance().getApplication().getNavigationHandler().handleNavigation(FacesContext.getCurrentInstance(), null, "banner_form");
-			loadCurrentLanguage();
-		}
-		cancelOnSelect = false;
+		super.onSelect(new ActionEvent(event.getComponent()));
+		loadCurrentLanguage();
 	}
 
 	public void onActivate(ActionEvent event) throws ManagerBeanException {
-		cancelOnSelect = true; 
 		activate(true);
 	}
 
 	public void onDeactivate(ActionEvent event) throws ManagerBeanException {
-		cancelOnSelect = true; 
 		activate(false);
 	}
 	
@@ -62,10 +55,6 @@ public class BannerController extends BasicI18nController {
 		getManagerBean().update(b);
 	}
 	
-	public void onChecked(ValueChangeEvent event) throws ManagerBeanException {
-		cancelOnSelect = true; 
-	}
-
 	public String getI18nLabel() throws ManagerBeanException {
 		String label = "";
 		BannerDetail bd = getCurrentDetail();
@@ -119,12 +108,10 @@ public class BannerController extends BasicI18nController {
 	}
 	
     public void onMoveUp(ActionEvent event) throws ManagerBeanException, ExpressionException {
-		cancelOnSelect = true; 
     	move((Banner) this.model.getRowData(), -1);
     }
 
     public void onMoveDown(ActionEvent event) throws ManagerBeanException, ExpressionException {
-		cancelOnSelect = true; 
     	move((Banner) this.model.getRowData(), 1);    	
     }
 
@@ -160,18 +147,11 @@ public class BannerController extends BasicI18nController {
 		return bannerTypes;
 	}
 	
-	private boolean imageSelectionVisible;
-	
-	public void onShowImages(ActionEvent event) {
-		imageSelectionVisible = true; 
+	public void onSelectImage(ActionEvent event) throws ManagerBeanException {
+		GalleryController controller = (GalleryController)AonUtil.getRegisteredBean("gallery");
+		String image = ((Image)controller.getModel().getRowData()).getRelativePath();
+		BannerDetail current = (BannerDetail)getToI18n();
+		current.setImage(image);
 	}
-	
-	public void onCloseImages(ActionEvent event) {
-		imageSelectionVisible = false; 
-	}
-	
-	public boolean isImageSelectionVisible(){
-		return imageSelectionVisible;
-	}
-	
+
 }

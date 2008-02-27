@@ -4,7 +4,6 @@ import java.util.List;
 
 import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
-import javax.faces.event.ValueChangeEvent;
 
 import com.code.aon.cms.Banner;
 import com.code.aon.cms.BannerCategory;
@@ -21,25 +20,17 @@ import com.code.aon.ui.util.AonUtil;
 
 public class BannerCategoryController extends BasicI18nController {
 
-	private boolean cancelOnSelect = false;
-
 	@SuppressWarnings("unused")
 	public void onSelect(ActionEvent event) {
-		if (!cancelOnSelect) {
-			super.onSelect(new ActionEvent(event.getComponent()));
-			FacesContext.getCurrentInstance().getApplication().getNavigationHandler().handleNavigation(FacesContext.getCurrentInstance(), null, "banner_category_form");
-			loadCurrentLanguage();
-		}
-		cancelOnSelect = false;
+		super.onSelect(new ActionEvent(event.getComponent()));
+		loadCurrentLanguage();
 	}
 
 	public void onActivate(ActionEvent event) throws ManagerBeanException {
-		cancelOnSelect = true; 
 		activate(true);
 	}
 
 	public void onDeactivate(ActionEvent event) throws ManagerBeanException {
-		cancelOnSelect = true; 
 		activate(false);
 	}
 	
@@ -47,10 +38,6 @@ public class BannerCategoryController extends BasicI18nController {
 		BannerCategory bannerCategory = (BannerCategory)this.model.getRowData();
 		bannerCategory.setActive(active);
 		getManagerBean().update(bannerCategory);
-	}
-	
-	public void onChecked(ValueChangeEvent event) throws ManagerBeanException {
-		cancelOnSelect = true; 
 	}
 
 	public String getI18nLabel() throws ManagerBeanException {
@@ -106,20 +93,17 @@ public class BannerCategoryController extends BasicI18nController {
 	}
 	
     public void onMoveUp(ActionEvent event) throws ManagerBeanException, ExpressionException {
-		cancelOnSelect = true; 
     	move((BannerCategory) this.model.getRowData(), -1);
     }
 
     public void onMoveDown(ActionEvent event) throws ManagerBeanException, ExpressionException {
-		cancelOnSelect = true; 
     	move((BannerCategory) this.model.getRowData(), 1);    	
     }
     
 	public void onSelectBanners(ActionEvent event) throws ManagerBeanException, ExpressionException {
-		cancelOnSelect = true;
 		BannerController bc = (BannerController)AonUtil.getController("banner");
 		IManagerBean bannerBean = BeanManager.getManagerBean(Banner.class);
-		BannerCategory bannerCategory = (BannerCategory) this.getSelectedTO();
+		BannerCategory bannerCategory = (BannerCategory) this.getTo();
 		Criteria criteria = new Criteria();
 		criteria.addExpression(bannerBean.getFieldName(ICMSAlias.BANNER_BANNER_CATEGORY_ID), "" + bannerCategory.getId());
 		criteria.addOrder(bannerBean.getFieldName(ICMSAlias.BANNER_POSITION));
