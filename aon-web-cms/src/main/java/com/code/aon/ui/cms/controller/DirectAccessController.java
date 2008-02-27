@@ -24,13 +24,7 @@ import com.code.aon.ui.util.AonUtil;
 
 public class DirectAccessController extends BasicI18nController {
 
-	private boolean cancelOnSelect = false;
-
 	private DirectAccessGroup currentGroup;
-	
-	public void onInit(ActionEvent event){
-		((GalleryController)AonUtil.getRegisteredBean("gallery")).onInit(event);
-	}
 	
 	public DirectAccessGroup getCurrentGroup() {
 		return currentGroup;
@@ -42,21 +36,15 @@ public class DirectAccessController extends BasicI18nController {
 
 	@SuppressWarnings("unused")
 	public void onSelect(ActionEvent event) {
-		if (!cancelOnSelect) {
-			super.onSelect(new ActionEvent(event.getComponent()));
-			FacesContext.getCurrentInstance().getApplication().getNavigationHandler().handleNavigation(FacesContext.getCurrentInstance(), null, "direct_access_form");
-			loadCurrentLanguage();
-		}
-		cancelOnSelect = false;
+		super.onSelect(new ActionEvent(event.getComponent()));
+		loadCurrentLanguage();
 	}
 
 	public void onActivate(ActionEvent event) throws ManagerBeanException {
-		cancelOnSelect = true; 
 		activate(true);
 	}
 
 	public void onDeactivate(ActionEvent event) throws ManagerBeanException {
-		cancelOnSelect = true; 
 		activate(false);
 	}
 	
@@ -66,10 +54,6 @@ public class DirectAccessController extends BasicI18nController {
 		getManagerBean().update(da);
 	}
 	
-	public void onChecked(ValueChangeEvent event) throws ManagerBeanException {
-		cancelOnSelect = true; 
-	}
-
 	public String getI18nLabel() throws ManagerBeanException {
 		String label = "";
 		DirectAccessDetail dad = getCurrentDetail();
@@ -160,12 +144,10 @@ public class DirectAccessController extends BasicI18nController {
 	}
 	
     public void onMoveUp(ActionEvent event) throws ManagerBeanException, ExpressionException {
-		cancelOnSelect = true; 
     	move((DirectAccess) this.model.getRowData(), -1);
     }
 
     public void onMoveDown(ActionEvent event) throws ManagerBeanException, ExpressionException {
-		cancelOnSelect = true; 
     	move((DirectAccess) this.model.getRowData(), 1);    	
     }
 
@@ -203,23 +185,9 @@ public class DirectAccessController extends BasicI18nController {
 		return position;
 	}
 
-	private boolean imageSelectionVisible;
-	
-	public void onShowImages(ActionEvent event) {
-		imageSelectionVisible = true; 
-	}
-	
-	public void onCloseImages(ActionEvent event) {
-		imageSelectionVisible = false; 
-	}
-	
 	public void onNoneImage(ActionEvent event) {
 		DirectAccess current = (DirectAccess)getTo();
 		current.setImage(null);
-	}
-	
-	public boolean isImageSelectionVisible(){
-		return imageSelectionVisible;
 	}
 	
 	public void onSelectImage(ActionEvent event) throws ManagerBeanException {

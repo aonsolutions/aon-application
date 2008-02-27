@@ -2,9 +2,7 @@ package com.code.aon.ui.cms.controller;
 
 import java.util.List;
 
-import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
-import javax.faces.event.ValueChangeEvent;
 
 import com.code.aon.cms.DirectAccess;
 import com.code.aon.cms.DirectAccessGroup;
@@ -22,25 +20,17 @@ import com.code.aon.ui.util.AonUtil;
 
 public class DirectAccessGroupController extends BasicI18nController {
 
-	private boolean cancelOnSelect = false;
-
 	@SuppressWarnings("unused")
 	public void onSelect(ActionEvent event) {
-		if (!cancelOnSelect) {
-			super.onSelect(new ActionEvent(event.getComponent()));
-			FacesContext.getCurrentInstance().getApplication().getNavigationHandler().handleNavigation(FacesContext.getCurrentInstance(), null, "direct_access_group_form");
-			loadCurrentLanguage();
-		}
-		cancelOnSelect = false;
+		super.onSelect(new ActionEvent(event.getComponent()));
+		loadCurrentLanguage();
 	}
 
 	public void onActivate(ActionEvent event) throws ManagerBeanException {
-		cancelOnSelect = true; 
 		activate(true);
 	}
 
 	public void onDeactivate(ActionEvent event) throws ManagerBeanException {
-		cancelOnSelect = true; 
 		activate(false);
 	}
 	
@@ -50,10 +40,6 @@ public class DirectAccessGroupController extends BasicI18nController {
 		getManagerBean().update(directAccessGroup);
 	}
 	
-	public void onChecked(ValueChangeEvent event) throws ManagerBeanException {
-		cancelOnSelect = true; 
-	}
-
 	public String getI18nLabel() throws ManagerBeanException {
 		String label = "";
 		DirectAccessGroupDetail directAccessGroupDetail = getCurrentDetail();
@@ -78,18 +64,16 @@ public class DirectAccessGroupController extends BasicI18nController {
 		super.accept(event);
 	}
 
-	public void onSelectLinks(ActionEvent event) throws ManagerBeanException, ExpressionException {
-		cancelOnSelect = true;
+	public void onSelectDirectAccesses(ActionEvent event) throws ManagerBeanException, ExpressionException {
 		DirectAccessController dac = (DirectAccessController)AonUtil.getController("direct_access");
 		IManagerBean moBean = BeanManager.getManagerBean(DirectAccess.class);
-		DirectAccessGroup directAccessGroup = (DirectAccessGroup) this.getSelectedTO();
+		DirectAccessGroup directAccessGroup = (DirectAccessGroup) this.getTo();
 		Criteria criteria = new Criteria();
 		criteria.addExpression(moBean.getFieldName(ICMSAlias.DIRECT_ACCESS_DIRECT_ACCESS_GROUP_ID), "" + directAccessGroup.getId());
 		criteria.addOrder(moBean.getFieldName(ICMSAlias.DIRECT_ACCESS_POSITION));
 		dac.setCurrentGroup(directAccessGroup);
 		dac.setCriteria(criteria);
 		dac.onSearch(event);
-		dac.onInit(event);
 	}
 
 }
