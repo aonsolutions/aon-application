@@ -40,6 +40,7 @@ public class MenuGenerator extends Generator {
 				if (ld.size() > 0) {
 					MenuOptionDetail mod = (MenuOptionDetail)ld.get(0);
 					MenuOptionHandler moh = new MenuOptionHandler(mod);
+					//if (moh.getUrl() != null) list.add(moh);
 					list.add(moh);
 				}
 			}
@@ -66,7 +67,16 @@ public class MenuGenerator extends Generator {
 		return null; 
 	}
 
-	public static void generate(VelocityUtil vu) {
+	public static void generate() {
+		VelocityUtil vu = new VelocityUtil();
+		CommonGenerator.getCommonGenerator().init(vu);
+		vu.addMessage("Iniciando proceso de generación", VelocityUtil.INFO);
+		vu.addMessage("", VelocityUtil.INFO);
+		vu.addMessage("Buscando plantilla seleccionada '" + ControllerUtil.getCurrentConfig().getTemplate() + "' ...", VelocityUtil.INFO);
+		vu.setTemplate_path(ControllerUtil.getCurrentVmTemplatePath());
+		vu.initialize();
+		vu.addMessage("", VelocityUtil.INFO);
+		vu.addMessage("Creando páginas de menú... ", VelocityUtil.INFO);
 		try {
 			IManagerBean bean = BeanManager.getManagerBean(Menu.class);
 			List<ITransferObject> l = (List<ITransferObject>)bean.getList(null);
@@ -83,6 +93,8 @@ public class MenuGenerator extends Generator {
 		} catch (ManagerBeanException e) {
 			e.printStackTrace();
 		}
+		vu.finalize();
+		vu = null;
 	}
 	
 	public static Object getMenuHandler(Integer ident) {

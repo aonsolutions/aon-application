@@ -23,7 +23,17 @@ import com.code.aon.ui.cms.velocity.attribute.LinkCategoryHandler;
 
 public class LinkGenerator extends Generator {
 
-	public static void generate(VelocityUtil vu) {
+	public static void generate() {
+		VelocityUtil vu = new VelocityUtil();
+		CommonGenerator.getCommonGenerator().init(vu);
+		vu.addMessage("Iniciando proceso de generación", VelocityUtil.INFO);
+		vu.addMessage("", VelocityUtil.INFO);
+		vu.addMessage("Buscando plantilla seleccionada '" + ControllerUtil.getCurrentConfig().getTemplate() + "' ...", VelocityUtil.INFO);
+		vu.setTemplate_path(ControllerUtil.getCurrentVmTemplatePath());
+		vu.initialize();
+		vu.addMessage("", VelocityUtil.INFO);
+		vu.addMessage("Creando link... ", VelocityUtil.INFO);
+
 		ArrayList<LinkCategoryHandler> lchList;
 		List<ITransferObject> linkCategoryDetailList;
 		HashMap categoryMap = new HashMap<Section, List>();
@@ -90,6 +100,8 @@ public class LinkGenerator extends Generator {
 			lchList = null;
 			categoryMap = null;
 		}
+		vu.finalize();
+		vu = null;
 	}
 	
 	public static Object getLinkCategoryHandler(Integer ident) {
