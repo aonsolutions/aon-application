@@ -199,7 +199,7 @@
         <load-on-startup>1</load-on-startup>
     </servlet>
 
-    <!-- AutoDeploy Servlet -->
+    <!-- AutoDeploy Servlet 
     <servlet>
 		<servlet-name>autodeploy</servlet-name>
 		<servlet-class>com.code.aon.bridge.servlet.DeployServlet</servlet-class>
@@ -209,6 +209,7 @@
 		</init-param>
 		<load-on-startup>2</load-on-startup>
 	</servlet>
+ -->
  
     <!-- Lookup Bean Servlet -->
 	<servlet>
