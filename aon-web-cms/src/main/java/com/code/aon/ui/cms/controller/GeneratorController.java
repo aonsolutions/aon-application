@@ -19,7 +19,7 @@ import com.code.aon.ui.form.BasicController;
 public class GeneratorController extends BasicController implements Constants {
 
 	public void onGenerate(ActionEvent event) throws ManagerBeanException {
-
+		
 		if (isLanguajePageToGenerate){
 			//Generar index.php de seleccion automatica de idioma
 			CommonGenerator.getCommonGenerator().generateLanguagePage();

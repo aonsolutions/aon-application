@@ -6,8 +6,6 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.Iterator;
 
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.Velocity;
@@ -15,6 +13,7 @@ import org.apache.velocity.app.VelocityEngine;
 
 import com.code.aon.cms.enumeration.Templates;
 import com.code.aon.ui.cms.Constants;
+import com.code.aon.ui.cms.controller.GeneratorController;
 import com.code.aon.ui.util.AonUtil;
 
 public class VelocityUtil extends VelocityEngine implements Constants {

@@ -2,53 +2,49 @@
 <html xmlns="http://www.w3.org/1999/xhtml"
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
 	xmlns:c="http://java.sun.com/jstl/core"
 	xmlns:a4j="http://richfaces.org/a4j"
-    xmlns:rich="http://richfaces.org/rich">
+	xmlns:rich="http://richfaces.org/rich">
 <body>
 
 <ui:composition template="/facelet/templates/aon.ui.content.xhtml">
 
 	<ui:define name="content">
-
-		<aon:form id="generatorForm">
-
-			<aon:div styleClass="aon-content-toolbar" forceId="#{true}" id="aon-content-toolbar">
-				<aon:div styleClass="aon-content-toolbar-internal">
-					<aon:div styleClass="aon-content-toolbar-item-group">
+		<aon:form id="headerForm">
+		
+			<aon:div styleClass="aon-finding-title-toolbar">
+				<aon:panelGrid id="buttonsGrid" columns="3" dir="true" 
+					columnClasses="aon-finding-toolbar">				
+				
+					<!-- start toolbar navigation -->
+					<aon:div styleClass="aon-finding-toolbar-item-group">
 						<aon:commandButton id="generate"
 							value="#{appBundle.aon_generate}" 
 							actionListener="#{generator.onGenerate}" 
-							styleClass="aon-content-toolbar-item aon-icon-accept"
-							onmouseout="this.className='aon-content-toolbar-item aon-icon-accept'"
-							onmouseover="this.className='aon-content-toolbar-item aon-icon-accept aon-content-toolbar-item-hover'"/>
-						<aon:commandButton id="exit" value="#{bundle.aon_close}"
-							action="home" styleClass="aon-content-toolbar-item aon-icon-cancel"
-							onmouseout="this.className='aon-content-toolbar-item aon-icon-cancel'"
-							onmouseover="this.className='aon-content-toolbar-item aon-icon-cancel aon-content-toolbar-item-hover'"
-							accesskey="#{bundle.aon_key_close}"/>
-						<aon:commandButton id="all" value="#{bundle.aon_check_all}"
-							styleClass="aon-content-toolbar-item aon-icon-cancel"
-							actionListener="#{generator.onSelectAll}" 
-							onmouseout="this.className='aon-content-toolbar-item aon-icon-cancel'"
-							onmouseover="this.className='aon-content-toolbar-item aon-icon-cancel aon-content-toolbar-item-hover'"
-							accesskey="#{bundle.aon_key_close}"/>
-						<aon:commandButton id="none" value="#{bundle.aon_uncheck_all}"
-							styleClass="aon-content-toolbar-item aon-icon-cancel"
-							actionListener="#{generator.onDeselectAll}" 
-							onmouseout="this.className='aon-content-toolbar-item aon-icon-cancel'"
-							onmouseover="this.className='aon-content-toolbar-item aon-icon-cancel aon-content-toolbar-item-hover'"
-							accesskey="#{bundle.aon_key_close}"/>
-					</aon:div>
-				</aon:div>
+							styleClass="aon-finding-toolbar-item aon-icon-accept" />
+						<aon:commandButton id="all"
+							action="generator_form" 
+							value="#{bundle.aon_check_all}"
+							styleClass="aon-finding-toolbar-item aon-icon-cancel"
+							actionListener="#{generator.onSelectAll}"/>
+						<aon:commandButton id="none"
+							action="generator_form" 
+							value="#{bundle.aon_uncheck_all}"
+							styleClass="aon-finding-toolbar-item aon-icon-cancel"
+							actionListener="#{generator.onDeselectAll}" />
+				    </aon:div>
+					
+					<!-- end toolbar navigation -->
+				</aon:panelGrid>
 			</aon:div>
 
-			<aon:div id="aon-scroll-area" forceId="#{true}">
-				<aon:div styleClass="aon-scroll-area-internal">
-					<aon:panelGrid columns="2">
-						<aon:panelGrid columns="2" dir="true" styleClass="aon-form-table"
-							columnClasses="aon-form-table-column-odd,aon-form-table-column-even">
+			<aon:div styleClass="aon-scroll-area">
+				<aon:div style="width:99%;">
+	
+						<aon:panelGrid columns="2" dir="true" >
 
 							<aon:outputLabel for="isLanguajePageToGenerate"
 								styleClass="aon-form-input-text-label"
@@ -131,12 +127,8 @@
 							</aon:div>
 							
 						</aon:panelGrid>
-					</aon:panelGrid>
 				</aon:div>
 			</aon:div>
-			
-			<a4j:log popup="false" level="ALL" style="width: 800px; height: 300px;"></a4j:log>
-
 		</aon:form>
 
 	</ui:define>
