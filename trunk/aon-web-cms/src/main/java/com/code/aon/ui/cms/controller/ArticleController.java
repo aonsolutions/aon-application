@@ -2,7 +2,6 @@ package com.code.aon.ui.cms.controller;
 
 import java.util.List;
 
-import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
 import javax.faces.event.ValueChangeEvent;
 
@@ -27,7 +26,7 @@ public class ArticleController extends GridI18nController {
 
 	private ArticleCategory currentArticleCategory;
 	
-	private boolean richTextEnabled = true;
+	private boolean richTextEnabled = false;
 
 	public boolean isRichTextEnabled() {
 		return richTextEnabled;

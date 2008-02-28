@@ -111,10 +111,11 @@
 			
 					<aon:outputLabel for="Album_itemsPerPage"
 						value="#{appBundle.album_items_per_page}" />
-					<aon:inputText id="Album_itemsPerPage"
-						styleClass="aon-form-input-text aon-form-input-text-number"
-						required="true" size="5" maxlength="5"
-						value="#{album.to.itemsPerPage}" />
+					<rich:inputNumberSlider id="Album_itemsPerPage" 
+						value="#{album.to.itemsPerPage}" 
+						width="500" 
+						minValue="1" 
+						maxValue="50" />
 						
 					<aon:outputLabel for="AlbumDetail_title"
 						value="#{appBundle.album_title}" />
