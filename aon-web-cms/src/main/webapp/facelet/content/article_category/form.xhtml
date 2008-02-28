@@ -92,21 +92,18 @@
 					<aon:outputLabel for="ArticleCategory_alias" style="width:100px"
 						value="#{appBundle.article_category_alias}" />
 					<aon:inputText id="ArticleCategory_alias"
-						styleClass="aon-form-input-text aon-form-input-text-number"
 						required="true" size="32" maxlength="32"
 						value="#{article_category.to.alias}" />
 
 					<aon:outputLabel for="ArticleCategoryDetail_label"
 						value="#{appBundle.article_category_label}" />
 					<aon:inputText id="ArticleCategoryDetail_label"
-						styleClass="aon-form-input-text aon-form-input-text-number"
 						size="50" maxlength="64"
 						value="#{article_category.toI18n.label}" />
 
 					<aon:outputLabel for="ArticleCategory_section"
 						value="#{appBundle.section}"/>
 					<aon:selectOneMenu id="ArticleCategory_section"  
-						styleClass="aon-form-selectOneMenu-field"
 						value="#{article_category.to.section.id}">
 						<f:selectItem itemLabel="-" itemValue="-1" />
 						<f:selectItems value="#{collections.sectionList}" />
@@ -115,7 +112,6 @@
 					<aon:outputLabel for="ArticleCategory_elementSection"
 						value="#{appBundle.section} (Only Elements)"/>
 					<aon:selectOneMenu id="ArticleCategory_elementSection"  
-						styleClass="aon-form-selectOneMenu-field"
 						value="#{article_category.to.elementSection.id}">
 						<f:selectItem itemLabel="-" itemValue="-1" />
 						<f:selectItems value="#{collections.sectionList}" />
@@ -139,10 +135,10 @@
 								<!-- start toolbar navigation -->
 								<aon:div styleClass="aon-finding-toolbar-item-group">
 									<aon:commandButton id="reset_list" value="#{bundle.aon_reset}"
-										action="article_category_form" 
 										actionListener="#{article.onReset}"
 										styleClass="aon-finding-toolbar-item aon-icon-reset"
-										accesskey="#{bundle.aon_key_new}"/>
+										accesskey="#{bundle.aon_key_new}"
+										reRender="detail_panel,tab0,tab1,tab2,tab3" />
 									<aon:confirmButton id="remove_list"
 										value="#{bundle.aon_remove}" 
 										rendered="#{!article.checklistEmpty and article.to==null}" 
@@ -150,9 +146,9 @@
 										confirmTitle="Confirmation Dialog" 
 										confirmMessage="#{bundle.aon_remove_confirm}"
 										confirmActionListener="#{article.onRemoveSelected}" 
-										confirmAction="article_category_form"
 										styleClass="aon-finding-toolbar-item aon-icon-delete"
-										accesskey="#{bundle.aon_key_remove}"/>
+										accesskey="#{bundle.aon_key_remove}"
+										reRender="detail_panel,tab0,tab1,tab2,tab3"  />
 							    </aon:div>
 								
 								<!-- end toolbar navigation -->
@@ -198,24 +194,23 @@
 											<aon:commandButton id="save_list_form"
 												value="#{bundle.aon_save}" 
 												rendered="#{article.to!=null or article.new}"
-												reRender="detail_panel"
+												reRender="detail_panel,tab0,tab1,tab2,tab3"
 												actionListener="#{article.onAccept}"
 												styleClass="aon-finding-toolbar-item aon-icon-accept"
 												accesskey="#{bundle.aon_key_save}"/>
 											<aon:commandButton id="cancel_list_form"
 												value="#{bundle.aon_cancel}" 
 												rendered="#{article.to!=null or article.new}" immediate="#{true}"
-												reRender="detail_panel"
+												reRender="detail_panel,tab0,tab1,tab2,tab3"
 												actionListener="#{article.onCancel}" 
 												styleClass="aon-finding-toolbar-item aon-icon-cancel"
 												accesskey="#{bundle.aon_key_cancel}"/>
 											<aon:confirmButton id="remove_list_form"
 												value="#{bundle.aon_remove}" rendered="#{!article.new}" 
-												immediate="true"
-												reRender="detail_panel"
+												reRender="detail_panel,tab0,tab1,tab2,tab3"
 												confirmTitle="Confirmation Dialog" 
 												confirmMessage="#{bundle.aon_remove_confirm}"
-												confirmActionListener="#{article.onRemoveI18n}" 
+												confirmActionListener="#{article.onRemove}" 
 												styleClass="aon-finding-toolbar-item aon-icon-delete"
 												accesskey="#{bundle.aon_key_remove}"/>
 									    </aon:div>
@@ -229,7 +224,6 @@
 										<aon:outputLabel for="Article_alias" style="width:100px"
 											value="#{appBundle.article_alias}" />
 										<aon:inputText id="Article_alias"
-											styleClass="aon-form-input-text aon-form-input-text-number"
 											required="true" size="32" maxlength="32"
 											value="#{article.to.alias}" />
 			
@@ -256,18 +250,14 @@
 										</aon:selectInputDate>	
 			
 										<aon:outputLabel for="ArticleDetail_title"
-											styleClass="aon-form-input-text-label"
 											value="#{appBundle.article_title}" />
 										<aon:inputText id="ArticleDetail_title"
-											styleClass="aon-form-input-text aon-form-input-text-number"
 											required="true" size="80" maxlength="255"
 											value="#{article.toI18n.title}" />
 			
 										<aon:outputLabel for="ArticleDetail_subtitle"
-											styleClass="aon-form-input-text-label"
 											value="#{appBundle.article_subtitle}" />
 										<aon:inputText id="ArticleDetail_subtitle"
-											styleClass="aon-form-input-text aon-form-input-text-number"
 											size="80" maxlength="255"
 											value="#{article.toI18n.subtitle}" />
 			
@@ -402,21 +392,18 @@
 										<aon:outputLabel for="ArticleDetail_image_info"
 											value="#{appBundle.article_image_info}" />
 										<aon:inputText id="ArticleDetail_image_info"
-											styleClass="aon-form-input-text aon-form-input-text-number"
 											size="90" maxlength="255"
 											value="#{article.toI18n.image_info}" />
 			
 										<aon:outputLabel for="ArticleDetail_alt"
 											value="#{appBundle.article_alt}" />
 										<aon:inputText id="ArticleDetail_alt"
-											styleClass="aon-form-input-text aon-form-input-text-number"
 											size="64" maxlength="64"
 											value="#{article.toI18n.alt}" />
 			
 										<aon:outputLabel for="ArticleDetail_alt_thumbnail"
 											value="#{appBundle.article_alt_thumbnail}" />
 										<aon:inputText id="ArticleDetail_alt_thumbnail"
-											styleClass="aon-form-input-text aon-form-input-text-number"
 											size="64" maxlength="64"
 											value="#{article.toI18n.alt_thumbnail}" />
 															
@@ -554,7 +541,6 @@
 												<aon:outputText value="#{appBundle.document_related_alias}" />
 												<aon:inputText  
 													id="#{appBundle.document_related_alias}"
-													styleClass="aon-form-input-text aon-form-input-text-number"
 													size="80" maxlength="255"
 													value="#{articleDocument.to.alias}" />
 											</aon:div>
@@ -562,7 +548,6 @@
 												<aon:outputText value="#{appBundle.document_related_title}" />
 												<aon:inputText 
 													id="#{appBundle.document_related_title}"
-													styleClass="aon-form-input-text aon-form-input-text-number"
 													size="80" maxlength="255"
 													value="#{articleDocument.toI18n.title}" />
 											</aon:div>
@@ -597,7 +582,6 @@
 													<aon:outputText value="#{appBundle.document_related_alias}" />
 													<aon:inputText 
 														id="#{appBundle.document_related_alias}_"
-														styleClass="aon-form-input-text aon-form-input-text-number"
 														size="80" maxlength="255"
 														value="#{articleDocument.to.alias}" />
 												</aon:div>
@@ -605,7 +589,6 @@
 													<aon:outputText value="#{appBundle.document_related_title}" />
 													<aon:inputText 
 														id="#{appBundle.document_related_title}_"
-														styleClass="aon-form-input-text aon-form-input-text-number"
 														size="80" maxlength="255"
 														value="#{articleDocument.toI18n.title}" />
 												</aon:div>
