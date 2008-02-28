@@ -92,21 +92,18 @@
 					<aon:outputLabel for="DownloadCategory_alias" style="width:100px"
 						value="#{appBundle.download_category_alias}" />
 					<aon:inputText id="DownloadCategory_alias"
-						styleClass="aon-form-input-text aon-form-input-text-number"
 						required="true" size="32" maxlength="32"
 						value="#{download_category.to.alias}" />
 
 					<aon:outputLabel for="DownloadCategoryDetail_label"
 						value="#{appBundle.download_category_label}" />
 					<aon:inputText id="DownloadCategoryDetail_label"
-						styleClass="aon-form-input-text aon-form-input-text-number"
 						required="true" size="50" maxlength="64"
 						value="#{download_category.toI18n.label}" />
 
 					<aon:outputLabel for="DownloadCategoryDetail_itemsPerPage"
 						value="#{appBundle.album_items_per_page}" />
 					<aon:inputText id="DownloadCategoryDetail_itemsPerPage"
-						styleClass="aon-form-input-text aon-form-input-text-number"
 						required="true" size="5" maxlength="5"
 						value="#{download_category.to.itemsPerPage}" />
 						
@@ -163,7 +160,6 @@
 					<aon:outputLabel for="DownloadCategory_section"
 						value="#{appBundle.section}"/>
 					<aon:selectOneMenu id="DownloadCategory_section"  
-						styleClass="aon-form-selectOneMenu-field"
 						value="#{download_category.to.section.id}">
 						<f:selectItem itemLabel="-" itemValue="-1" />
 						<f:selectItems value="#{collections.sectionList}" />
@@ -239,9 +235,10 @@
 									event="onclick"
 									reRender="detail_list,detail_panel" />
 								<f:facet name="header">
-									<aon:outputText value="#{appBundle.download_alias}"/>
+									<aon:outputText value="#{appBundle.download_alias}" />
 								</f:facet>
-								<aon:outputText value="#{to.alias}" />
+								<aon:outputText value="#{to.alias}" 
+									styleClass="aon-editDataTable-button"/>
 							</aon:column>
 				
 							<aon:column>
@@ -313,7 +310,7 @@
 												reRender="detail_panel"
 												confirmTitle="Confirmation Dialog" 
 												confirmMessage="#{bundle.aon_remove_confirm}"
-												confirmActionListener="#{download.onRemoveI18n}" 
+												confirmActionListener="#{download.onRemove}" 
 												styleClass="aon-finding-toolbar-item aon-icon-delete"
 												accesskey="#{bundle.aon_key_remove}"/>
 									    </aon:div>
@@ -328,7 +325,6 @@
 										<aon:outputLabel for="Download_alias" style="width:100px"
 											value="#{appBundle.download_alias}" />
 										<aon:inputText id="Download_alias"
-											styleClass="aon-form-input-text aon-form-input-text-number"
 											required="true" size="32" maxlength="32"
 											value="#{download.to.alias}" />
 			
@@ -344,10 +340,11 @@
 										</aon:selectInputDate>	
 			
 										<aon:outputLabel 
-											value="#{appBundle.download_image}" />
+											value="#{appBundle.download_file}" />
 										<aon:panelGroup id="thumbnail_preview_detail">
-											<aon:outputText id="DownloadDetail_file"
-												size="90" maxlength="255"
+											<aon:outputText value="#{download.toI18n.file}" />
+											<aon:inputText id="#{appBundle.download_file}"
+												required="true" size="50" 
 												value="#{download.toI18n.file}" />
 												
 											<a href="javascript:Richfaces.showModalPanel('mp_detail',{width:650, top:200})">select</a>
@@ -379,11 +376,11 @@
 															<aon:outputLabel value="#{document.currentRelativePath}" />
 															<rich:dataList var="item" value="#{document.model}" >	
 																<aon:panelGrid columns="2" cellpadding="5px" cellspacing="0px">
-														                <aon:commandLink
-														                	immediate="#{true}"
-														                	reRender="thumbnail_preview_detail"
-														                    actionListener="#{download.onSelectImage}"
-														                    value="#{item.name}" />
+													                <aon:commandButton
+													                	immediate="#{true}"
+													                	reRender="thumbnail_preview_detail"
+													                    actionListener="#{download.onSelectImage}"
+													                    value="#{item.name}" />
 																</aon:panelGrid>
 															</rich:dataList>
 														</aon:panelGroup>
@@ -394,7 +391,6 @@
 										<aon:outputLabel for="DownloadDetail_title"
 											value="#{appBundle.download_title}" />
 										<aon:inputText id="DownloadDetail_title"
-											styleClass="aon-form-input-text aon-form-input-text-number"
 											required="true" size="60" maxlength="128"
 											value="#{download.toI18n.title}" />
 			
