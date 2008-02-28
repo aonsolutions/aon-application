@@ -92,21 +92,18 @@
 					<aon:outputLabel for="BannerCategory_alias" style="width:100px"
 						value="#{appBundle.article_category_alias}" />
 					<aon:inputText id="BannerCategory_alias"
-						styleClass="aon-form-input-text aon-form-input-text-number"
 						required="true" size="32" maxlength="32"
 						value="#{banner_category.to.alias}" />
 
 					<aon:outputLabel for="BannerCategoryDetail_label"
 						value="#{appBundle.article_category_label}" />
 					<aon:inputText id="BannerCategoryDetail_label"
-						styleClass="aon-form-input-text aon-form-input-text-number"
 						size="50" maxlength="64"
 						value="#{banner_category.toI18n.label}" />
 
 					<aon:outputLabel for="BannerCategory_section"
 						value="#{appBundle.section}"/>
 					<aon:selectOneMenu id="BannerCategory_section"  
-						styleClass="aon-form-selectOneMenu-field"
 						value="#{banner_category.to.section.id}">
 						<f:selectItem itemLabel="-" itemValue="-1" />
 						<f:selectItems value="#{collections.sectionList}" />
@@ -184,7 +181,8 @@
 								<f:facet name="header">
 									<aon:outputText value="#{appBundle.banner_alias}"/>
 								</f:facet>
-								<aon:outputText value="#{to.alias}" />
+								<aon:outputText value="#{to.alias}" 
+									styleClass="aon-editDataTable-button" />
 							</aon:column>
 				
 							<aon:column>
@@ -256,7 +254,7 @@
 												reRender="detail_panel"
 												confirmTitle="Confirmation Dialog" 
 												confirmMessage="#{bundle.aon_remove_confirm}"
-												confirmActionListener="#{banner.onRemoveI18n}" 
+												confirmActionListener="#{banner.onRemove}" 
 												styleClass="aon-finding-toolbar-item aon-icon-delete"
 												accesskey="#{bundle.aon_key_remove}"/>
 									    </aon:div>
@@ -270,39 +268,31 @@
 										<aon:outputLabel for="Banner_alias" style="width:100px"
 											value="#{appBundle.banner_alias}" />
 										<aon:inputText id="Banner_alias"
-											styleClass="aon-form-input-text aon-form-input-text-number"
 											required="true" size="32" maxlength="32"
 											value="#{banner.to.alias}" />
 						
 										<aon:outputLabel for="Banner_type" style="width:100px"
 											value="#{appBundle.banner_type}" />
 										<aon:selectOneMenu id="Banner_type" 
-											styleClass="aon-form-selectOneMenu-field"
 											value="#{banner.to.type}">
 											<f:selectItems value="#{banner.bannerTypes}" />
 										</aon:selectOneMenu> 
 			
 										<aon:outputLabel for="BannerDetail_label"
-											styleClass="aon-form-input-text-label"
 											value="#{appBundle.banner_label}" />
 										<aon:inputText id="BannerDetail_label"
-											styleClass="aon-form-input-text aon-form-input-text-number"
 											required="true" size="80" maxlength="255"
 											value="#{banner.toI18n.label}" />
 			
 										<aon:outputLabel for="BannerDetail_url"
-											styleClass="aon-form-input-text-label"
 											value="#{appBundle.banner_url}" />
 										<aon:inputText id="BannerDetail_url"
-											styleClass="aon-form-input-text aon-form-input-text-number"
 											size="80" maxlength="255"
 											value="#{banner.toI18n.url}" />
 			
 										<aon:outputLabel for="BannerDetail_description"
-											styleClass="aon-form-input-text-label"
 											value="#{appBundle.banner_description}" />
 										<aon:inputText id="BannerDetail_description"
-											styleClass="aon-form-input-text aon-form-input-text-number"
 											size="80" maxlength="255"
 											value="#{banner.toI18n.description}" />
 			
