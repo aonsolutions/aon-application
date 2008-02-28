@@ -85,21 +85,18 @@
 					<aon:outputLabel for="FaqCategory_alias" style="width:100px"
 						value="#{appBundle.faq_category_alias}" />
 					<aon:inputText id="FaqCategory_alias"
-						styleClass="aon-form-input-text aon-form-input-text-number"
 						required="true" size="32" maxlength="32"
 						value="#{faq_category.to.alias}" />
 
 					<aon:outputLabel for="FaqCategoryDetail_label"
 						value="#{appBundle.faq_category_label}" />
 					<aon:inputText id="FaqCategoryDetail_label"
-						styleClass="aon-form-input-text aon-form-input-text-number"
 						required="true" size="50" maxlength="64"
 						value="#{faq_category.toI18n.label}" />
 
 					<aon:outputLabel for="FaqCategory_section"
 						value="#{appBundle.section}"/>
 					<aon:selectOneMenu id="FaqCategory_section"  
-						styleClass="aon-form-selectOneMenu-field"
 						value="#{faq_category.to.section.id}">
 						<f:selectItem itemLabel="-" itemValue="-1" />
 						<f:selectItems value="#{collections.sectionList}" />
@@ -177,7 +174,8 @@
 								<f:facet name="header">
 									<aon:outputText value="#{appBundle.faq_alias}"/>
 								</f:facet>
-								<aon:outputText value="#{to.alias}" />
+								<aon:outputText value="#{to.alias}" 
+									styleClass="aon-editDataTable-button"/>
 							</aon:column>
 
 							<aon:column>
@@ -251,7 +249,7 @@
 										immediate="true"
 										confirmTitle="Confirmation Dialog" 
 										confirmMessage="#{bundle.aon_remove_confirm}"
-										confirmActionListener="#{faq.onRemoveI18n}" 
+										confirmActionListener="#{faq.onRemove}" 
 										confirmAction="faq_category_form"
 										styleClass="aon-finding-toolbar-item aon-icon-delete"
 										accesskey="#{bundle.aon_key_remove}"/>
@@ -267,20 +265,18 @@
 								<aon:outputLabel for="Faq_alias" style="width:100px"
 									value="#{appBundle.faq_alias}" />
 								<aon:inputText id="Faq_alias"
-									styleClass="aon-form-input-text aon-form-input-text-number"
 									required="true" size="32" maxlength="32"
 									value="#{faq.to.alias}" />
 	
 								<aon:outputLabel for="FaqDetail_question"
 									value="#{appBundle.faq_question}" />
 								<aon:inputText id="FaqDetail_question"
-									styleClass="aon-form-input-text aon-form-input-text-number"
 									required="true" size="50" maxlength="64"
 									value="#{faq.toI18n.question}" />
 	
 								<aon:outputLabel for="FaqDetail_answer" style="width:100px"
 									value="#{appBundle.faq_answer}" />
-								<aon:div style="width:500px">
+								<aon:div style="width:600px">
 									<aon:inputRichText style="width:100%" 
 										id="FaqDetail_answer" 
 										value="#{faq.toI18n.answer}" />
