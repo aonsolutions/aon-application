@@ -24,7 +24,7 @@ import com.code.aon.ui.cms.util.ControllerUtil;
 
 public class GenericPageController extends BasicI18nController {
 
-	private boolean richTextEnabled = true;
+	private boolean richTextEnabled = false;
 
 	public boolean isRichTextEnabled() {
 		return richTextEnabled;
