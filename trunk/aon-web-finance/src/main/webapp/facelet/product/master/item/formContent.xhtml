@@ -91,6 +91,7 @@
 						id="Tax_retention_Lookup_id" forceId="#{true}"
 						onchange="return findBeanLookupExt(event,'#{facesContext.externalContext.requestContextPath}','taxRetentionLookup','Tax_retention_Lookup_id','Tax_id|Tax_retention_Lookup_id,Tax_percentage|Tax_retention_Lookup_percentage');"
 						onblur="calculate(this);" value="#{itemAlias.to.product.retention.id}">
+						<f:selectItem itemValue="" itemLabel="-" itemDisabled="true" />
 						<f:selectItems value="#{productCollections.retentionTaxes}" />
 					</t:selectOneMenu>
 					<t:inputText id="Tax_retention_Lookup_percentage"
