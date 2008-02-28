@@ -297,16 +297,24 @@
 												alt="#{article.to.image}"/>
 												
 
-		<a href="javascript:Richfaces.showModalPanel('mp',{width:650, top:200})">show this panel</a>
+<style>
+.body3 {
+	width:300px;
+    height:300px;
+    overflow:auto;
+}
+</style>
+		<a href="javascript:Richfaces.showModalPanel('mp',{width:680, top:200})">show this panel</a>
         <rich:modalPanel  id="mp" minHeight="200" minWidth="450" 
-            height="350" width="650" zindex="2000">
+            height="360" width="675" zindex="2000">
             <f:facet name="header">
                 <h:outputText value="Modal Panel Title" />
             </f:facet>
             <f:facet name="controls">
                 <h:graphicImage value="/images/icefaces/popupclose.gif" style="cursor:pointer" onclick="Richfaces.hideModalPanel('mp')" />
             </f:facet>
-			<aon:panelGrid id="treeGrid" columns="2" dir="true">
+			<h:panelGrid id="treeGrid" columns="2">
+	            <rich:panel bodyClass="body3">
 				    <rich:tree style="width:300px"
 				    	switchType="server" 
 				    	stateAdvisor="#{treeStateAdvisor}">
@@ -322,6 +330,8 @@
 							</rich:treeNode>
 				        </rich:recursiveTreeNodesAdaptor>
 				    </rich:tree>
+				</rich:panel>
+	            <rich:panel bodyClass="body3">
 					<aon:panelGroup>
 						<aon:outputLabel value="#{gallery.currentRelativePath}" />
 						<rich:dataList var="item" value="#{gallery.model}" >	
@@ -336,7 +346,8 @@
 							</aon:panelGrid>
 						</rich:dataList>
 					</aon:panelGroup>
-				</aon:panelGrid>		
+				</rich:panel>
+			</h:panelGrid>		
         </rich:modalPanel>												
         
 											<aon:outputLabel 
@@ -345,16 +356,17 @@
 												url="#{article.to.thumbnail}.thumbnail" 
 												alt="#{article.to.thumbnail}"/>
 
-		<a href="javascript:Richfaces.showModalPanel('mp_thumbnail',{width:650, top:200})">show this panel</a>
+		<a href="javascript:Richfaces.showModalPanel('mp_thumbnail',{width:680, top:200})">show this panel</a>
         <rich:modalPanel  id="mp_thumbnail" minHeight="200" minWidth="450" 
-            height="350" width="650" zindex="2000">
+            height="360" width="675" zindex="2000">
             <f:facet name="header">
                 <h:outputText value="Modal Panel Title" />
             </f:facet>
             <f:facet name="controls">
                 <h:graphicImage value="/images/icefaces/popupclose.gif" style="cursor:pointer" onclick="Richfaces.hideModalPanel('mp_thumbnail')" />
             </f:facet>
-			<aon:panelGrid id="treeGrid_thumbnail" columns="2" dir="true">
+			<h:panelGrid id="treeGrid_thumbnail" columns="2">
+	            <rich:panel bodyClass="body3">
 				    <rich:tree style="width:300px"
 				    	switchType="server" 
 				    	stateAdvisor="#{treeStateAdvisor}">
@@ -370,6 +382,8 @@
 							</rich:treeNode>
 				        </rich:recursiveTreeNodesAdaptor>
 				    </rich:tree>
+				</rich:panel>
+	            <rich:panel bodyClass="body3">
 					<aon:panelGroup>
 						<aon:outputLabel value="#{gallery.currentRelativePath}" />
 						<rich:dataList var="item" value="#{gallery.model}" >	
@@ -384,7 +398,8 @@
 							</aon:panelGrid>
 						</rich:dataList>
 					</aon:panelGroup>
-				</aon:panelGrid>		
+				</rich:panel>
+			</h:panelGrid>		
         </rich:modalPanel>												
 											
 										</aon:panelGroup>
