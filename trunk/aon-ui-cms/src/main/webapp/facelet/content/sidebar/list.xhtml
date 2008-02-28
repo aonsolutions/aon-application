@@ -52,7 +52,7 @@
 					</aon:div>
 
 					<aon:dataTable id="sidebarDataList" columnWidths="120,30,*,100" 
-						value="#{sidebar.model}" var="to" rows="20"
+						value="#{sidebar.model}" var="to" rows="0"
 						styleClass="aon-dataTable"
 						rowClasses="aon-dataTable-odd, aon-dataTable-even"
 						columnClasses="aon-table-body aon-table-body-icon,
@@ -127,6 +127,12 @@
 
 					</aon:dataTable>
 
+						<ui:include src="/facelet/shared/dataScroller.xhtml">
+							<ui:param name="dataTable" value="sidebarDataList" />
+							<ui:param name="model" value="#{sidebar.model}" />
+							<ui:param name="showNote" value="#{false}" />
+						</ui:include>
+						
 				</aon:div>
 			</aon:div>
 		</aon:form>
