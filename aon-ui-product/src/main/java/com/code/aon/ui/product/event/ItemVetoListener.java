@@ -39,7 +39,6 @@ public class ItemVetoListener extends ControllerAdapter {
     public void afterBeanCreated(ControllerEvent event) throws ControllerListenerException {
         double vatPercent = 0;
         double surchargePercent = 0;
-        double retentionPercent = 0;
         Criteria criteria;
         ProductCollectionsController collections = (ProductCollectionsController)AonUtil.getRegisteredBean(PRODUCT_COLLECTIONS_CONTROLLER);
         try {
@@ -53,21 +52,11 @@ public class ItemVetoListener extends ControllerAdapter {
                 vatPercent = ((Tax)bean.getList(criteria).get(0)).getPercentage();
                 surchargePercent = ((Tax)bean.getList(criteria).get(0)).getSurcharge();
             }
-            
-            List retentions = collections.getRetentionTaxes();
-            if(retentions.size() > 0){
-            	int retentionId = ((Integer)((SelectItem)retentions.get(0)).getValue()).intValue();
-            	criteria = new Criteria();
-                criteria.addEqualExpression(bean.getFieldName(IProductAlias.TAX_ID), new Integer(retentionId));
-                retentionPercent = ((Tax)bean.getList(criteria).get(0)).getPercentage();
-            }
-
         } catch (ManagerBeanException e) {
             throw new ControllerListenerException(e.getMessage(), e);
         }
         ((Item)event.getController().getTo()).getProduct().getVat().setPercentage(vatPercent);
         ((Item)event.getController().getTo()).getProduct().getVat().setSurcharge(surchargePercent);
-        ((Item)event.getController().getTo()).getProduct().getRetention().setPercentage(retentionPercent);
 
         ((Item)event.getController().getTo()).setStatus(ProductStatus.ACTIVE);
         ((Item)event.getController().getTo()).getProduct().setInventoriable(true);
