@@ -78,9 +78,9 @@ public class MenuOptionUtil {
 			if (type.equals(PageType.MODULAR)) return true;
 			if (type.equals(PageType.DIRECT_ACCESS)) return true;
 			if (type.equals(PageType.ALBUM_IMAGES)){
-				if (ContentLevel.SECTION.equals(level))
-					return true;
 				if (ContentLevel.CATEGORY.equals(level))
+					return true;
+				if (ContentLevel.ELEMENT.equals(level))
 					return true;
 			}
 			if (type.equals(PageType.ARTICLE_NEWS) ||
@@ -166,10 +166,10 @@ public class MenuOptionUtil {
 				idents.add(new SelectItem(null,"NO VALID"));
 			}
 		}else if (type.equals(PageType.ALBUM_IMAGES)){
-			if (ContentLevel.SECTION.equals(level)){
+			if (ContentLevel.CATEGORY.equals(level)){
 				idents = ((CollectionsController)AonUtil.getRegisteredBean("collections")).getAlbumCategoryList();
 			}
-			if (ContentLevel.CATEGORY.equals(level)){
+			if (ContentLevel.ELEMENT.equals(level)){
 				idents = ((CollectionsController)AonUtil.getRegisteredBean("collections")).getAlbumList();
 			}
 		}else if (type.equals(PageType.ARTICLE_NEWS)){
@@ -367,7 +367,7 @@ public class MenuOptionUtil {
 					String category = Templates.ALBUM_IMAGES.getHtmlName();
 					category = category.replaceAll("%NAME%", AlbumGenerator.ALBUM_LIST_PAGE);
 					return category;
-				}else if (level.equals(ContentLevel.SECTION)){
+				}else if (level.equals(ContentLevel.CATEGORY)){
 					IManagerBean bean = BeanManager.getManagerBean(AlbumCategory.class);
 					Criteria criteria = new Criteria();
 					criteria.addEqualExpression(bean.getFieldName(ICMSAlias.ALBUM_CATEGORY_ID), ident);
@@ -379,7 +379,7 @@ public class MenuOptionUtil {
 						album = album.replaceAll("%NAME%", ac.getAlias());
 						return album;
 					}
-				}else if (level.equals(ContentLevel.CATEGORY)){
+				}else if (level.equals(ContentLevel.ELEMENT)){
 					IManagerBean bean = BeanManager.getManagerBean(Album.class);
 					Criteria criteria = new Criteria();
 					criteria.addEqualExpression(bean.getFieldName(ICMSAlias.ALBUM_ID), ident);
