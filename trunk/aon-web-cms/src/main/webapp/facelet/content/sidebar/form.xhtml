@@ -246,24 +246,24 @@
 						<aon:div styleClass="aon-scroll-area">
 							<aon:panelGrid id="sidebarOptionGrid" columns="2" dir="true">
 
-								<aon:outputText for="#{appBundle.sidebar_option_alias}" 
+								<aon:outputText for="Alias" 
 									value="#{appBundle.sidebar_option_alias}" />
-								<aon:inputText id="#{appBundle.sidebar_option_alias}"
+								<aon:inputText id="Alias"
 									value="#{sidebar_option.to.alias}" 
 									required="true"
 									size="40" maxlength="64" />
 									
-								<aon:outputText for="#{appBundle.sidebar_option_label}" 
+								<aon:outputText for="Label" 
 									value="#{appBundle.sidebar_option_label}" />
-								<aon:inputText id="#{appBundle.sidebar_option_label}"
+								<aon:inputText id="Label"
 									value="#{sidebar_option.toI18n.label}" 
 									required="true"
 									size="50" maxlength="64" />
 	
-								<aon:outputText for="#{appBundle.sidebar_option_type}" 
+								<aon:outputText for="Type" 
 									value="#{appBundle.sidebar_option_type}" />
 								<aon:selectOneMenu  
-									id="#{appBundle.sidebar_option_type}"
+									id="Type"
 									value="#{sidebar_option.to.type}" 
 									required="true">
 									<f:selectItems value="#{collections.sidebarTypes}" />
@@ -272,20 +272,20 @@
 										reRender="sidebarOptionGrid" />
 								</aon:selectOneMenu> 
 	
-								<aon:outputText for="#{appBundle.sidebar_option_ident}"
+								<aon:outputText for="Ident"
 										value="#{appBundle.sidebar_option_ident}" 
 										rendered="#{sidebar_option.visibleIdent}" />
 								<aon:div id="selectOneMenu_edit"
 									rendered="#{sidebar_option.visibleIdent}">
-									<aon:selectOneMenu id="#{appBundle.sidebar_option_ident}"
+									<aon:selectOneMenu id="Ident"
 										value="#{sidebar_option.to.ident}">
 										<f:selectItems value="#{sidebar_option.idents}" />
 									</aon:selectOneMenu>
 								</aon:div> 
 	
-								<aon:outputText for="#{appBundle.sidebar_option_side}"
+								<aon:outputText for="Side"
 									value="#{appBundle.sidebar_option_side}" />
-								<aon:selectOneMenu id="#{appBundle.sidebar_option_side}"
+								<aon:selectOneMenu id="Side"
 									value="#{sidebar_option.to.side}" >
 									<f:selectItems value="#{collections.sidebarSides}" />
 								</aon:selectOneMenu> 

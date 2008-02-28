@@ -3,6 +3,7 @@ package com.code.aon.ui.cms.event;
 import java.util.List;
 
 import com.code.aon.cms.Download;
+import com.code.aon.cms.DownloadDetail;
 import com.code.aon.cms.dao.ICMSAlias;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
@@ -12,6 +13,7 @@ import com.code.aon.ui.cms.controller.DownloadController;
 import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
+import com.code.aon.ui.util.AonUtil;
 
 public class DownloadControllerListener extends ControllerAdapter {
 	
@@ -24,11 +26,28 @@ public class DownloadControllerListener extends ControllerAdapter {
 	@Override
 	public void beforeBeanAdded(ControllerEvent event) throws ControllerListenerException {
 		DownloadController dc = (DownloadController)event.getController();
-		Download d = (Download)event.getController().getTo();
+		DownloadDetail dd = (DownloadDetail)dc.getToI18n();
+		if (dd.getFile()==null ||
+				dd.getFile().trim().equals("")){
+			AonUtil.addErrorMessage("Asigna el archivo.");
+			throw new ControllerListenerException("Asigna el archivo.");
+		}
+		Download d = (Download)event.getController().getTo();		
 		d.setDownloadCategory(dc.getCurrentDownloadCategory());
 		d.setPosition(getLastPosition(dc));
 	}
-	
+
+	@Override
+	public void beforeBeanUpdated(ControllerEvent event) throws ControllerListenerException {
+		DownloadController dc = (DownloadController)event.getController();
+		DownloadDetail dd = (DownloadDetail)dc.getToI18n();
+		if (dd.getFile()==null ||
+				dd.getFile().trim().equals("")){
+			AonUtil.addErrorMessage("Asigna el archivo.");
+			throw new ControllerListenerException("Asigna el archivo.");
+		}
+	}
+
 	private int getLastPosition(DownloadController bc) {
 		int position = 0;
 		try{

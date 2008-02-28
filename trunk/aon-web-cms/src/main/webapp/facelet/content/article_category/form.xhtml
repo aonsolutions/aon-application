@@ -540,14 +540,14 @@
 											<aon:div>
 												<aon:outputText value="#{appBundle.document_related_alias}" />
 												<aon:inputText  
-													id="#{appBundle.document_related_alias}"
+													id="Alias"
 													size="80" maxlength="255"
 													value="#{articleDocument.to.alias}" />
 											</aon:div>
 											<aon:div>
 												<aon:outputText value="#{appBundle.document_related_title}" />
 												<aon:inputText 
-													id="#{appBundle.document_related_title}"
+													id="Title"
 													size="80" maxlength="255"
 													value="#{articleDocument.toI18n.title}" />
 											</aon:div>
@@ -569,9 +569,10 @@
 													actionListener="#{articleDocument.fileUploaded}"/>
 											</aon:div>
 											<aon:div>
-												<aon:outputText value="#{appBundle.document_related_description}" />
+												<aon:outputText value="#{appBundle.document_related_description}" 
+													for="Description" />
 												<aon:inputTextarea
-													id="#{appBundle.document_related_description}"
+													id="Description"
 													cols="80" rows="20" 
 													value="#{articleDocument.toI18n.description}"/>
 											</aon:div>
@@ -579,16 +580,18 @@
 										<f:facet name="footer">
 											<aon:div rendered="#{articleDocument.new}">
 												<aon:div>
-													<aon:outputText value="#{appBundle.document_related_alias}" />
+													<aon:outputText value="#{appBundle.document_related_alias}" 
+														for="Alias_" />
 													<aon:inputText 
-														id="#{appBundle.document_related_alias}_"
+														id="Alias_"
 														size="80" maxlength="255"
 														value="#{articleDocument.to.alias}" />
 												</aon:div>
 												<aon:div>
-													<aon:outputText value="#{appBundle.document_related_title}" />
+													<aon:outputText value="#{appBundle.document_related_title}" 
+														for ="Title_"/>
 													<aon:inputText 
-														id="#{appBundle.document_related_title}_"
+														id="Title_"
 														size="80" maxlength="255"
 														value="#{articleDocument.toI18n.title}" />
 												</aon:div>
@@ -609,9 +612,10 @@
 														actionListener="#{articleDocument.fileUploaded}"/>
 												</aon:div>
 												<aon:div>
-													<aon:outputText value="#{appBundle.document_related_description}" />
+													<aon:outputText value="#{appBundle.document_related_description}" 
+														for="Description_" />
 													<aon:inputTextarea
-														id="#{appBundle.document_related_description}_"
+														id="Description_"
 														cols="80" rows="20" 
 														value="#{articleDocument.toI18n.description}"/>
 												</aon:div>
