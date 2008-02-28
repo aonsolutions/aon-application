@@ -4,6 +4,8 @@
 	<comment></comment>
 	<projects>
 		<project>aon-cms</project>
+		<project>aon-ui-form</project>
+		<project>aon-rich-components</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>

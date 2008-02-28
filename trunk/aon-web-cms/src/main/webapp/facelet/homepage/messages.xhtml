@@ -5,10 +5,17 @@
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:aon="http://www.code.es/aon-rich-components">
 
+<style>
+.body3 {
+	width:285px;
+    height:160px;
+    overflow:auto;
+}
+</style>
 	<aon:div ajaxRendered="true" layout="none" styleClass="aon-popupWindow">
 		<aon:form rendered="#{facesContext.maximumSeverity != null}">
 			<aon:panelGroup styleClass="aon-popup-panel aon-confirm-box">
-				<rich:modalPanel minWidth="300" top="190px" left="350"
+				<rich:modalPanel minWidth="325" minHeight="220" top="190px" left="350"
 					id="messagesModalPanel" showWhenRendered="true">
 					<f:facet name="header">
 						<aon:div styleClass="aon-popupWindow-title">
@@ -21,9 +28,11 @@
 							onclick="Richfaces.hideModalPanel('messagesModalPanel');">
 						</aon:commandButton>
 					</f:facet>
-					<aon:div id="aon-errors" styleClass="aon-popupWindow-content">
-						<aon:messages />
-					</aon:div>
+		            <rich:panel bodyClass="body3">
+						<aon:div id="aon-errors" styleClass="aon-popupWindow-content">
+							<aon:messages />
+						</aon:div>
+					</rich:panel>
 				</rich:modalPanel>
 			</aon:panelGroup>
 		</aon:form>
