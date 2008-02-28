@@ -203,11 +203,11 @@ public class JRReport {
 					map.put(JRParameter.REPORT_RESOURCE_BUNDLE, bundle);
 				}
 
-				Connection c = HibernateUtil.getSQLConnection();
-				map.put(JRParameter.REPORT_CONNECTION, c);
-					
 				JRDataSource ds = null;
 				if(config.getCollectionProvider() == null){
+					Connection c = HibernateUtil.getSQLConnection();
+					map.put(JRParameter.REPORT_CONNECTION, c);
+
 					JRDataSourceProvider jrdsp  = null;
 					if (hasCache) {
 						jrdsp = getJRPagedDataSourceProvider(criteria, config.getFetchMode().getPageCount());
