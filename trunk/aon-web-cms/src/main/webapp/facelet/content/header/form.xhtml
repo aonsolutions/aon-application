@@ -33,6 +33,7 @@
 						<aon:commandButton id="save"
 							value="#{bundle.aon_save}" 
 							rendered="#{headers.to!=null or header.new}"
+							action="header_form"
 							actionListener="#{headers.onAccept}"
 							styleClass="aon-finding-toolbar-item aon-icon-accept"
 							accesskey="#{bundle.aon_key_save}"/>
@@ -186,16 +187,13 @@
 									<aon:outputLabel value="#{gallery.currentRelativePath}" />
 									<rich:dataList var="item" value="#{gallery.model}" >	
 										<aon:panelGrid columns="2" cellpadding="5px" cellspacing="0px">
-								                 <aon:commandLink
-								                 	immediate="#{true}"
-								                    actionListener="#{headers.onSelectImage}">
-								            		<aon:graphicImage url="#{item.thumb}" alt="#{item.name}"/>
-								        		</aon:commandLink>
 								                <aon:commandLink
 								                	immediate="#{true}"
 								                	reRender="thumbnail_preview"
 								                    actionListener="#{headers.onSelectImage}"
-								                    value="#{item.name}"/>
+								                    value="#{item.name}">
+								            		<aon:graphicImage url="#{item.thumb}" alt="#{item.name}"/>
+								        		</aon:commandLink>
 										</aon:panelGrid>
 									</rich:dataList>
 								</aon:panelGroup>
