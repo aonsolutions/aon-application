@@ -92,21 +92,18 @@
 					<aon:outputLabel for="DirectAccessGroup_alias" style="width:100px"
 						value="#{appBundle.direct_access_group_alias}" />
 					<aon:inputText id="DirectAccessGroup_alias"
-						styleClass="aon-form-input-text aon-form-input-text-number"
 						required="true" size="32" maxlength="32"
 						value="#{direct_access_group.to.alias}" />
 
 					<aon:outputLabel for="DirectAccessGroupDetail_label"
 						value="#{appBundle.direct_access_group_label}" />
 					<aon:inputText id="DirectAccessGroupDetail_label"
-						styleClass="aon-form-input-text aon-form-input-text-number"
 						required="true" size="50" maxlength="64"
 						value="#{direct_access_group.toI18n.label}" />
 
 					<aon:outputLabel for="DirectAccessGroup_section"
 						value="#{appBundle.section}"/>
 					<aon:selectOneMenu id="DirectAccessGroup_section"  
-						styleClass="aon-form-selectOneMenu-field"
 						value="#{direct_access_group.to.section.id}">
 						<f:selectItem itemLabel="-" itemValue="-1" />
 						<f:selectItems value="#{collections.sectionList}" />
@@ -184,7 +181,8 @@
 								<f:facet name="header">
 									<aon:outputText value="#{appBundle.direct_access_alias}"/>
 								</f:facet>
-								<aon:outputText value="#{to.alias}" />
+								<aon:outputText value="#{to.alias}" 
+									styleClass="aon-editDataTable-button"/>
 							</aon:column>
 				
 							<aon:column>
@@ -256,7 +254,7 @@
 												reRender="detail_panel"
 												confirmTitle="Confirmation Dialog" 
 												confirmMessage="#{bundle.aon_remove_confirm}"
-												confirmActionListener="#{direct_access.onRemoveI18n}" 
+												confirmActionListener="#{direct_access.onRemove}" 
 												styleClass="aon-finding-toolbar-item aon-icon-delete"
 												accesskey="#{bundle.aon_key_remove}"/>
 									    </aon:div>
@@ -270,21 +268,18 @@
 										<aon:outputLabel for="DirectAccess_alias" style="width:100px"
 											value="#{appBundle.direct_access_alias}" />
 										<aon:inputText id="DirectAccess_alias"
-											styleClass="aon-form-input-text aon-form-input-text-number"
 											required="true" size="32" maxlength="32"
 											value="#{direct_access.to.alias}" />
 			
 										<aon:outputLabel for="DirectAccessDetail_label"
 											value="#{appBundle.direct_access_label}" />
 										<aon:inputText id="DirectAccessDetail_label"
-											styleClass="aon-form-input-text aon-form-input-text-number"
 											required="true" size="50" maxlength="64"
 											value="#{direct_access.toI18n.label}" />
 			
 										<aon:outputLabel for="DirectAccessDetail_description"
 											value="#{appBundle.direct_access_description}" />
 										<aon:inputText id="DirectAccessDetail_description"
-											styleClass="aon-form-input-text aon-form-input-text-number"
 											size="255" maxlength="100"
 											value="#{direct_access.toI18n.description}" />
 
@@ -319,7 +314,6 @@
 											rendered="#{direct_access.visibleIdent}"/>
 										<aon:selectOneMenu id="DirectAccess_ident" 
 											rendered="#{direct_access.visibleIdent}" 
-											styleClass="aon-form-selectOneMenu-field"
 											value="#{direct_access.to.ident}"
 											 partialSubmit="true">
 											<f:selectItems value="#{direct_access.idents}" />
@@ -330,7 +324,6 @@
 											rendered="#{direct_access.visibleUrl}"/>
 										<aon:inputText id="DirectAccessDetail_url" 
 											rendered="#{direct_access.visibleUrl}"
-											styleClass="aon-form-input-text aon-form-input-text-number"
 											required="true" size="100" maxlength="255"
 											value="#{direct_access.toI18n.url}" />
 
