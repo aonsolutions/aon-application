@@ -29,7 +29,6 @@ public class DownloadControllerListener extends ControllerAdapter {
 		DownloadDetail dd = (DownloadDetail)dc.getToI18n();
 		if (dd.getFile()==null ||
 				dd.getFile().trim().equals("")){
-			AonUtil.addErrorMessage("Asigna el archivo.");
 			throw new ControllerListenerException("Asigna el archivo.");
 		}
 		Download d = (Download)event.getController().getTo();		
@@ -43,7 +42,6 @@ public class DownloadControllerListener extends ControllerAdapter {
 		DownloadDetail dd = (DownloadDetail)dc.getToI18n();
 		if (dd.getFile()==null ||
 				dd.getFile().trim().equals("")){
-			AonUtil.addErrorMessage("Asigna el archivo.");
 			throw new ControllerListenerException("Asigna el archivo.");
 		}
 	}
