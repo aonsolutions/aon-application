@@ -176,7 +176,8 @@
 								<f:facet name="header">
 									<aon:outputText value="#{appBundle.modular_page_option_alias}"/>
 								</f:facet>
-								<aon:outputText value="#{to.alias}" />
+								<aon:outputText value="#{to.alias}" 
+									styleClass="aon-editDataTable-button"/>
 							</aon:column>
 
 							<aon:column>
@@ -248,7 +249,7 @@
 										immediate="true"
 										confirmTitle="Confirmation Dialog" 
 										confirmMessage="#{bundle.aon_remove_confirm}"
-										confirmActionListener="#{modular_page_option.onRemoveI18n}" 
+										confirmActionListener="#{modular_page_option.onRemove}" 
 										confirmAction="modular_page_form"
 										styleClass="aon-finding-toolbar-item aon-icon-delete"
 										accesskey="#{bundle.aon_key_remove}"/>
