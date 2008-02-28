@@ -94,7 +94,6 @@
 					<aon:outputLabel for="Album_alias" style="width:100px"
 						value="#{appBundle.album_alias}" />
 					<aon:inputText id="Album_alias"
-						styleClass="aon-form-input-text aon-form-input-text-number"
 						required="true" size="32" maxlength="32"
 						value="#{album.to.alias}" />
 
@@ -120,7 +119,6 @@
 					<aon:outputLabel for="AlbumDetail_title"
 						value="#{appBundle.album_title}" />
 					<aon:inputText id="AlbumDetail_title"
-						styleClass="aon-form-input-text aon-form-input-text-number"
 						required="true" size="80" maxlength="128"
 						value="#{album.toI18n.title}" />
 					
@@ -128,13 +126,11 @@
 						value="#{appBundle.album_description}" />
 					<aon:inputTextarea id="AlbumDetail_description" 
 						style="width:300px;height:60px"
-						styleClass="aon-form-input-text aon-form-input-text-number" 
 						value="#{album.toI18n.description}" />
 
 					<aon:outputLabel for="AlbumDetail_alt"
 						value="#{appBundle.album_alt}" />
 					<aon:inputText id="AlbumDetail_alt"
-						styleClass="aon-form-input-text aon-form-input-text-number"
 						size="64" maxlength="64"
 						value="#{album.toI18n.alt}" />
 
@@ -259,7 +255,8 @@
 								<f:facet name="header">
 									<aon:outputText value="#{appBundle.albumImage_thumbnail}" />
 								</f:facet>
-								<aon:graphicImage url="#{to.thumbnail}.thumbnail" />
+								<aon:graphicImage url="#{to.thumbnail}.thumbnail" 
+									styleClass="aon-editDataTable-button"/>
 							</aon:column>
 				
 							<aon:column>
@@ -333,7 +330,7 @@
 												reRender="detail_panel"
 												confirmTitle="Confirmation Dialog" 
 												confirmMessage="#{bundle.aon_remove_confirm}"
-												confirmActionListener="#{albumImage.onRemoveI18n}" 
+												confirmActionListener="#{albumImage.onRemove}" 
 												styleClass="aon-finding-toolbar-item aon-icon-delete"
 												accesskey="#{bundle.aon_key_remove}"/>
 									    </aon:div>
@@ -347,7 +344,6 @@
 										<aon:outputLabel for="AlbumImageDetail_title"
 											value="#{appBundle.albumImage_title}" />
 										<aon:inputText id="AlbumImageDetail_title"
-											styleClass="aon-form-input-text aon-form-input-text-number"
 											required="true" size="128" maxlength="128"
 											value="#{albumImage.toI18n.title}" />
 										
@@ -355,20 +351,17 @@
 											value="#{appBundle.albumImage_description}" />
 										<aon:inputTextarea id="AlbumImageDetail_description" 
 											style="width:300px;height:60px"
-											styleClass="aon-form-input-text aon-form-input-text-number"
 											value="#{albumImage.toI18n.description}" />
 			
 										<aon:outputLabel for="AlbumImageDetail_alt"
 											value="#{appBundle.albumImage_alt}" />
 										<aon:inputText id="AlbumImageDetail_alt"
-											styleClass="aon-form-input-text aon-form-input-text-number"
 											size="64" maxlength="64"
 											value="#{albumImage.toI18n.alt}" />
 			
 										<aon:outputLabel for="AlbumImageDetail_alt_thumbnail"
 											value="#{appBundle.albumImage_alt_thumbnail}" />
 										<aon:inputText id="AlbumImageDetail_alt_thumbnail"
-											styleClass="aon-form-input-text aon-form-input-text-number"
 											size="64" maxlength="64"
 											value="#{albumImage.toI18n.alt_thumbnail}" />
 

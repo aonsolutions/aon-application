@@ -93,21 +93,18 @@
 					<aon:outputLabel for="AlbumCategory_alias" style="width:100px"
 						value="#{appBundle.album_category_alias}" />
 					<aon:inputText id="AlbumCategory_alias"
-						styleClass="aon-form-input-text aon-form-input-text-number"
 						required="true" size="32" maxlength="32"
 						value="#{album_category.to.alias}" />
 
 					<aon:outputLabel for="AlbumCategory_label"
 						value="#{appBundle.album_category_label}" />
 					<aon:inputText id="AlbumCategory_label"
-						styleClass="aon-form-input-text aon-form-input-text-number"
 						required="true" size="50" maxlength="64"
 						value="#{album_category.toI18n.label}" />
 
 					<aon:outputLabel for="AlbumCategory_section"
 						value="#{appBundle.section}"/>
 					<aon:selectOneMenu id="AlbumCategory_section"  
-						styleClass="aon-form-selectOneMenu-field"
 						value="#{album_category.to.section.id}">
 						<f:selectItem itemLabel="-" itemValue="-1" />
 						<f:selectItems value="#{collections.sectionList}" />
@@ -184,7 +181,8 @@
 								<f:facet name="header">
 									<aon:outputText value="#{appBundle.album_alias}"/>
 								</f:facet>
-								<aon:outputText value="#{to.alias}" />
+								<aon:outputText value="#{to.alias}" 
+										styleClass="aon-editDataTable-button"/>
 							</aon:column>
 				
 							<aon:column>
@@ -193,9 +191,10 @@
 									actionListener="#{album.onSelect}"
 									event="onclick" />
 								<f:facet name="header">
-									<aon:outputText value="#{appBundle.album_title}" />
+									<aon:outputText value="#{appBundle.album_title}"/>
 								</f:facet>
-								<aon:outputText value="#{album.i18nTitle}" />
+								<aon:outputText value="#{album.i18nTitle}"  
+										styleClass="aon-editDataTable-button"/>
 							</aon:column>
 
 							<aon:column>
