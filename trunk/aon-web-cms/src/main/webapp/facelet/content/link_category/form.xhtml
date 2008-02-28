@@ -85,21 +85,18 @@
 					<aon:outputLabel for="LinkCategory_alias" style="width:100px"
 						value="#{appBundle.link_category_alias}" />
 					<aon:inputText id="LinkCategory_alias"
-						styleClass="aon-form-input-text aon-form-input-text-number"
 						required="true" size="32" maxlength="32"
 						value="#{link_category.to.alias}" />
 
 					<aon:outputLabel for="LinkCategoryDetail_label"
 						value="#{appBundle.link_category_label}" />
 					<aon:inputText id="LinkCategoryDetail_label"
-						styleClass="aon-form-input-text aon-form-input-text-number"
 						required="true" size="50" maxlength="64"
 						value="#{link_category.toI18n.label}" />
 
 					<aon:outputLabel for="LinkCategory_section"
 						value="#{appBundle.section}"/>
 					<aon:selectOneMenu id="LinkCategory_section"  
-						styleClass="aon-form-selectOneMenu-field"
 						value="#{link_category.to.section.id}">
 						<f:selectItem itemLabel="-" itemValue="-1" />
 						<f:selectItems value="#{collections.sectionList}" />
@@ -177,7 +174,8 @@
 								<f:facet name="header">
 									<aon:outputText value="#{appBundle.link_alias}"/>
 								</f:facet>
-								<aon:outputText value="#{to.alias}" />
+								<aon:outputText value="#{to.alias}" 
+									styleClass="aon-editDataTable-button"/>
 							</aon:column>
 
 							<aon:column>
@@ -251,7 +249,7 @@
 										immediate="true"
 										confirmTitle="Confirmation Dialog" 
 										confirmMessage="#{bundle.aon_remove_confirm}"
-										confirmActionListener="#{link.onRemoveI18n}" 
+										confirmActionListener="#{link.onRemove}" 
 										confirmAction="link_category_form"
 										styleClass="aon-finding-toolbar-item aon-icon-delete"
 										accesskey="#{bundle.aon_key_remove}"/>
@@ -267,21 +265,18 @@
 								<aon:outputLabel for="Link_alias" style="width:100px"
 									value="#{appBundle.link_alias}" />
 								<aon:inputText id="Link_alias"
-									styleClass="aon-form-input-text aon-form-input-text-number"
 									required="true" size="32" maxlength="32"
 									value="#{link.to.alias}" />
 	
 								<aon:outputLabel for="LinkDetail_label"
 									value="#{appBundle.link_label}" />
 								<aon:inputText id="LinkDetail_label"
-									styleClass="aon-form-input-text aon-form-input-text-number"
 									required="true" size="50" maxlength="64"
 									value="#{link.toI18n.label}" />
 	
 								<aon:outputLabel for="Link_url" style="width:100px"
 									value="#{appBundle.link_url}" />
 								<aon:inputText id="Link_url"
-									styleClass="aon-form-input-text aon-form-input-text-number"
 									required="true" size="80" maxlength="255"
 									value="#{link.to.url}" />
 													
