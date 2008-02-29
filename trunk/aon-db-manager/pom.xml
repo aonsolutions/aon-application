@@ -25,22 +25,6 @@
 			<version>1.1</version>
 		</dependency>
 		<dependency>
-			<groupId>com.code.aon</groupId>
-			<artifactId>aon.cse</artifactId>
-			<version>1.0.9</version>
-			<scope>provided</scope>			
-			<exclusions>
-				<exclusion>
-					<groupId>org.hibernate</groupId>
-					<artifactId>hibernate</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>org.hibernate</groupId>
-					<artifactId>hibernate-annotations</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>
-		<dependency>
 			<groupId>hsqldb</groupId>
 			<artifactId>hsqldb</artifactId>
 			<version>1.8.0.7</version>
@@ -50,7 +34,6 @@
 			<artifactId>postgresql</artifactId>
 			<version>8.2-504.jdbc4</version>
 		</dependency>
-		<!-- 
 		<dependency>
 			<groupId>org.hibernate</groupId>
 			<artifactId>hibernate</artifactId>
@@ -73,6 +56,10 @@
 				</exclusion>
 			</exclusions>
 		</dependency>
-		 -->
+		<dependency>
+			<groupId>org.apache.ant</groupId>
+			<artifactId>ant</artifactId>
+			<version>1.7.0</version>
+		</dependency>
 	</dependencies>
 </project>
