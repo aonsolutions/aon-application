@@ -2,83 +2,119 @@
 <html xmlns="http://www.w3.org/1999/xhtml"
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:f="http://java.sun.com/jsf/core"
-	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:rich="http://richfaces.org/rich"
 	xmlns:t="http://myfaces.apache.org/tomahawk"
-	xmlns:a4j="http://richfaces.org/a4j"
-	xmlns:rich="http://richfaces.org/rich">
+	xmlns:a4j="http://richfaces.org/a4j">	
 <body>
+
 
 <ui:composition template="/facelet/templates/aon.ui.content.xhtml">
 
 	<ui:define name="content">
 
-		<aon:form id="galleryForm" partialSubmit="true">
-
-			<aon:div styleClass="aon-content-toolbar" forceId="#{true}" id="aon-content-toolbar">
-				<aon:div styleClass="aon-content-toolbar-internal">
-					<aon:div styleClass="aon-content-toolbar-item-group">
-						<aon:commandButton id="exit" value="#{bundle.aon_close}"
-							action="home" styleClass="aon-content-toolbar-item aon-icon-cancel"
-							onmouseout="this.className='aon-content-toolbar-item aon-icon-cancel'"
-							onmouseover="this.className='aon-content-toolbar-item aon-icon-cancel aon-content-toolbar-item-hover'"
-							accesskey="#{bundle.aon_key_close}"/>
-					</aon:div>
-				</aon:div>
+		<aon:form id="main_form" enctype="multipart/form-data">
+			<aon:div styleClass="aon-finding-title-toolbar">
+				<aon:panelGrid id="buttonsGrid" columns="1" dir="true" 
+					columnClasses="aon-finding-title,aon-finding-subtitle,aon-finding-toolbar">				
+				
+					<aon:div styleClass="aon-finding-title-internal">
+						<aon:outputText value="#{appBundle.gallery}"/>	  						
+					</aon:div>					
+					
+					<!-- end toolbar navigation -->
+				</aon:panelGrid>
 			</aon:div>
-
-			<aon:div id="aon-scroll-area" forceId="#{true}">
-				<aon:div styleClass="aon-scroll-area-internal">
-					<aon:panelGrid columns="2" style="width:100%;">
-					    <ice:tree id="tree" style="height:500px"
-					              value="#{gallery.tree}"
-					              var="item"
-					              hideRootNode="false"
-					              hideNavigation="false">
-					        <ice:treeNode>
-					            <f:facet name="icon">
-					                <aon:panelGroup style="display: inline">
-					                     <aon:graphicImage value="#{item.userObject.icon}"/>
-					                </aon:panelGroup>
-					            </f:facet>
-					            <f:facet name="content">
-					                <aon:panelGroup style="display: inline">
-					                    <ice:commandLink rendered="#{!item.userObject.selected}"
-					                            actionListener="#{item.userObject.onSelectFolder}"
-					                            value="#{item.userObject.text}"/>
-					                    <ice:outputText value="#{item.userObject.text}" 
-					                    		rendered="#{item.userObject.selected}"
-					                    		style="color:white;background:darkblue"/>
-					                </aon:panelGroup>
-					            </f:facet>
-					        </ice:treeNode>
-					    </ice:tree>
-					    <aon:panelGroup>
-							<aon:panelGrid columns="2" dir="true" styleClass="aon-form-table" style="width:100%"
-								columnClasses="aon-form-table-column-odd,aon-form-table-column-even">
-								<aon:outputLabel for="image_file"
-									styleClass="aon-form-input-text-label"
-									value="#{appBundle.image_file}" />
-			                    <aon:panelGroup id="image_file">
-			                        <ice:inputFile uploadDirectory="#{gallery.currentPath}"
-			                        		uniqueFolder="false"
-			                        		uploadDirectoryAbsolute="true"
-			                                actionListener="#{gallery.action}"/>
-			                    </aon:panelGroup>
-				                <aon:messages/>
-							</aon:panelGrid>
-							<ice:panelSeries id="panelSeries" value="#{gallery.model}" var="item" >
-								<aon:panelGrid style="width:100px;height:100px" cellpadding="0px" cellspacing="0px">
-						            <ice:graphicImage url="#{item.thumb}" alt="#{item.name}"/>
-								</aon:panelGrid>
-					            <aon:outputText id="name" value="#{item.name}"/>
-							</ice:panelSeries>
-						</aon:panelGroup>
-					</aon:panelGrid>
-				</aon:div>
+			
+			<aon:div styleClass="aon-scroll-area">
+<style>
+.bodyGalleryImages {
+	width:250px;
+    height:500px;
+    overflow:auto;
+}
+.bodyImages {
+	width:400px;
+    height:500px;
+    overflow:auto;
+}
+</style>
+							<h:panelGrid id="treeGrid" columns="2">
+							
+								<t:inputFileUpload id="image_file"
+									value="#{gallery.inputFile}"
+									accept="image/*" size="45"
+									storage="file"/>
+								<h:commandButton value="#{bundle.aon_fileupload_insert}"
+									action="gallery_list"
+									styleClass="aon-icon-attach aon-finding-toolbar-item"
+									actionListener="#{gallery.fileUploaded}"/>
+							
+					            <rich:panel bodyClass="bodyGalleryImages">
+								    <rich:tree
+								    	switchType="server" 
+								    	stateAdvisor="#{treeStateAdvisor}">
+								        <rich:recursiveTreeNodesAdaptor roots="#{fileSystemBean.imageRoots}" 
+								        	var="item" 
+								        	nodes="#{item.nodes}">
+											<rich:treeNode>
+								                <aon:commandLink
+								                	action="#{item.onSelectFolder}" 
+								                	value="#{item}"
+								                	immediate="#{true}"
+								                	reRender="treeGrid" />
+											</rich:treeNode>
+								        </rich:recursiveTreeNodesAdaptor>
+								    </rich:tree>
+								</rich:panel>
+					            <rich:panel bodyClass="bodyImages">
+									<aon:panelGroup>
+										<aon:div styleClass="aon-finding-title-toolbar">
+											<aon:panelGrid columns="1" dir="true" 
+												columnClasses="aon-finding-toolbar">				
+											
+												<aon:div styleClass="aon-finding-toolbar-item-group">
+													<aon:outputText value="#{gallery.currentRelativePath}"/>	  						
+													<h:commandButton value="#{bundle.aon_remove}"
+														rendered="#{gallery.emptyDir}"
+														action="gallery_list"
+														actionListener="#{gallery.deleteFolder}"/>
+												</aon:div>					
+												
+											</aon:panelGrid>
+											<aon:panelGrid columns="1" dir="true" 
+												columnClasses="aon-finding-toolbar">				
+											
+												<aon:div styleClass="aon-finding-toolbar-item-group">
+													<aon:inputText 
+														size="25" maxlength="30"
+														value="#{gallery.folderName}" />
+													<h:commandButton value="crear carpeta"
+														action="gallery_list"
+														actionListener="#{gallery.createFolder}"/>
+												</aon:div>					
+												
+											</aon:panelGrid>
+										</aon:div>
+										<rich:dataList var="item" value="#{gallery.model}">	
+											<aon:panelGrid columns="3" cellpadding="5px" cellspacing="0px">
+							            		<aon:graphicImage url="#{item.thumb}" alt="#{item.name}"/>
+												<aon:outputText value="#{item.name}"/>	  						
+								                <aon:commandLink
+								                	action="gallery_list"
+								                    actionListener="#{gallery.onDeleteFile}"
+								                    value="Borrar">
+								        		</aon:commandLink>
+											</aon:panelGrid>
+										</rich:dataList>
+									</aon:panelGroup>
+								</rich:panel>
+							</h:panelGrid>		
 			</aon:div>
+					
 		</aon:form>
-		<aon:form id="placeList" target="list" />
 
 	</ui:define>
 </ui:composition>

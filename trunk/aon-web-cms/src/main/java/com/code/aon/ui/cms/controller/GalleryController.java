@@ -1,15 +1,24 @@
 package com.code.aon.ui.cms.controller;
 
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 
+import javax.faces.application.FacesMessage;
+import javax.faces.context.FacesContext;
+import javax.faces.event.ActionEvent;
 import javax.faces.model.DataModel;
 import javax.faces.model.ListDataModel;
+import javax.faces.validator.LengthValidator;
+
+import org.apache.myfaces.custom.fileupload.UploadedFile;
 
 import com.code.aon.cms.Image;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ui.cms.IGalleryController;
 import com.code.aon.ui.form.BasicController;
+import com.code.aon.ui.util.AonUtil;
 
 public abstract class GalleryController extends BasicController implements IGalleryController{
 
@@ -62,30 +71,78 @@ public abstract class GalleryController extends BasicController implements IGall
 		return model;
 	}
 
-/*
-	public void action(ActionEvent event){
-		InputFile inputFile = (InputFile)event.getSource();
-		//file has been saved
-		if (inputFile.getStatus() == InputFile.SAVED) {
-			//Recargamos la imagenes
-			chargeImageList(this.currentPath);
-		}
+	public void onDeleteFile(ActionEvent event) throws ManagerBeanException {
+		String image = ((Image)getModel().getRowData()).getPath();
+		File file = new File(image);
+		file.delete();
+		chargeImageList();
+	}
 
-		//invalid file, happens when clicking on upload without
-		//selecting a file, or a file with no contents.
-		if (inputFile.getStatus() == InputFile.INVALID) {
-			inputFile.getFileInfo().getException().printStackTrace();
-		}
+	private UploadedFile inputFile;
+	private long maximumSize = -1;;
 
-		//file size exceeded the limit
-		if (inputFile.getStatus() == InputFile.SIZE_LIMIT_EXCEEDED) {
-			inputFile.getFileInfo().getException().printStackTrace();
-		}
+	public UploadedFile getInputFile() {
+		return inputFile;
+	}
 
-		//indicate that the request size is not specified.
-		if (inputFile.getStatus() == InputFile.UNKNOWN_SIZE) {
-			inputFile.getFileInfo().getException().printStackTrace();
+	public void setInputFile(UploadedFile inputFile) {
+		this.inputFile = inputFile;
+	}
+	
+	public void fileUploaded( ActionEvent event ) throws IOException {
+		if ( this.inputFile!= null ) {
+			long size = this.inputFile.getSize();
+			String upload_name = inputFile.getName();
+			upload_name = upload_name.substring(upload_name.lastIndexOf(File.separator));
+			String fileName = File.separator+upload_name;
+			File file = new File( currentPath+File.separator+fileName);
+			if ( (maximumSize != -1) && (size > maximumSize) ) {
+				FacesContext ctx = FacesContext.getCurrentInstance();
+				FacesMessage message = AonUtil.getMessage( ctx,
+						LengthValidator.MAXIMUM_MESSAGE_ID, new Object[]{maximumSize, fileName} );
+				ctx.addMessage(AonUtil.AON_ERROR, message);
+			} else {
+				byte[] data = this.inputFile.getBytes();
+		        FileOutputStream outputStream = new FileOutputStream(file);
+		        outputStream.write(data);
+		        outputStream.close();			
+				chargeImageList();
+			}
 		}
 	}
-*/
+
+	private String folderName;
+	
+	public String getFolderName() {
+		return folderName;
+	}
+
+	public void setFolderName(String folderName) {
+		this.folderName = folderName;
+	}
+
+	public void createFolder( ActionEvent event ) throws IOException {
+		if (folderName!=null){
+			String folder = File.separator+getFolderName();
+			File file = new File( currentPath+File.separator+folder);
+			if (!file.exists()){
+				file.mkdir();
+			}
+			folderName = null;
+		}
+	}
+
+	public void deleteFolder( ActionEvent event ) throws IOException {
+		File file = new File( currentPath );
+		file.delete();
+		currentPath = revoverFilesPath();
+		chargeImageList();
+	}
+
+	public boolean isEmptyDir(){
+		File file = new File( currentPath );
+		if (file.listFiles().length==0)
+			return true;
+		return false;
+	}
 }
