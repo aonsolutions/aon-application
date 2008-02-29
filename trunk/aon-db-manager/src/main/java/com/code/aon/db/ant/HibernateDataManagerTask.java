@@ -51,8 +51,8 @@ public class HibernateDataManagerTask extends Task {
 		this.hdm.setOnTheFly(onTheFly);
 	}
 
-	public void setOutputDirectory(File outputDirectory) {
-		this.hdm.setOutputDirectory(outputDirectory);		
+	public void setDirectory(File directory) {
+		this.hdm.setDirectory(directory);		
 	}
 	
 	public void setIgnoreDependencies(boolean ignoreDependencies) {
@@ -98,7 +98,7 @@ public class HibernateDataManagerTask extends Task {
     		throw new BuildException( "One of exportData, importData or onTheFly attributes must be set" );
     	}
     	if ( hdm.isExportData() || hdm.isImportData() ) {
-    		checkFile( hdm.getOutputDirectory(), "outputDirectory" );
+    		checkFile( hdm.getDirectory(), "directory" );
     	}
     	checkFile( hdm.getConfigurationFile(), "configurationFile" );
     	if ( hdm.isExportData() || hdm.isOnTheFly() ) {
