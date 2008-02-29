@@ -60,7 +60,7 @@ public class HibernateDataManager {
 	
 	private List<Class> includeEntities;
 	
-	private List<Class> exlcudeEntities;
+	private List<Class> excludeEntities;
 	
 	private AnnotationConfiguration importConfiguration;
 	
@@ -153,16 +153,20 @@ public class HibernateDataManager {
 				includeEntities.add( pc.getMappedClass() );
 			}
 		}
-		if ( this.exlcudeEntities != null ) {
-			this.includeEntities.removeAll( this.exlcudeEntities );			
+		if ( this.excludeEntities != null ) {
+			this.includeEntities.removeAll( this.excludeEntities );			
 		}
 		return includeEntities;
 	}
 
-	public void setEntities(List<Class> entities) {
+	public void setIncludeEntities(List<Class> entities) {
 		this.includeEntities = entities;
 	}
-	
+
+	public void setExcludeEntities(List<Class> excludeEntities) {
+		this.excludeEntities = excludeEntities;
+	}
+
 	public int getMaxImport() {
 		return maxImport;
 	}

@@ -1,6 +1,8 @@
 package com.code.aon.db.ant;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.tools.ant.AntClassLoader;
 import org.apache.tools.ant.BuildException;
@@ -15,8 +17,14 @@ public class HibernateDataManagerTask extends Task {
 	
 	private Path classPath;
 	
+	private List<Entity> includeEntities;
+	
+	private List<Entity> excludeEntities;
+	
 	public HibernateDataManagerTask() {
 		this.hdm = new HibernateDataManager();
+		this.includeEntities = new ArrayList<Entity>();
+		this.excludeEntities = new ArrayList<Entity>();
 	}
 
 	public void setConfigurationFile(File configurationFile) {
@@ -85,7 +93,7 @@ public class HibernateDataManagerTask extends Task {
    		}
     }
     
-    private void validateParameters() throws BuildException {
+    private void validateParameters( AntClassLoader loader ) throws BuildException {
     	if (! (hdm.isExportData() || hdm.isImportData() || hdm.isOnTheFly()) ) {
     		throw new BuildException( "One of exportData, importData or onTheFly attributes must be set" );
     	}
@@ -109,8 +117,44 @@ public class HibernateDataManagerTask extends Task {
         		throw new BuildException( "Error connecting to import DB", th );
         	}
     	}
+    	if (! includeEntities.isEmpty() ) {
+    		List<Class> entities = new ArrayList<Class>();
+    		for( Entity entity : includeEntities ) {
+    			try {
+					Class _class = loader.loadClass(entity.getEntity());
+					entities.add( _class );
+				} catch (ClassNotFoundException e) {
+					throw new BuildException( "Class not found " + entity.getEntity(), e );
+				}
+    		}
+    		this.hdm.setIncludeEntities(entities);
+    	}
+    	if (! excludeEntities.isEmpty() ) {
+    		List<Class> entities = new ArrayList<Class>();
+    		for( Entity entity : excludeEntities ) {
+    			try {
+					Class _class = loader.loadClass(entity.getEntity());
+					entities.add( _class );
+				} catch (ClassNotFoundException e) {
+					throw new BuildException( "Class not found " + entity.getEntity(), e );
+				}
+    		}
+    		this.hdm.setExcludeEntities(entities);
+    	}
     }
+    
+    public Entity createIncludeEntity() {
+    	Entity entity = new Entity();
+        includeEntities.add(entity);
+        return entity;
+    }    
 
+    public Entity createExcludeEntity() {
+    	Entity entity = new Entity();
+        excludeEntities.add(entity);
+        return entity;
+    }    
+    
 	@Override
 	public void execute() throws BuildException {
 		AntClassLoader loader = null;
@@ -119,7 +163,7 @@ public class HibernateDataManagerTask extends Task {
 	        ClassLoader classLoader = getClass().getClassLoader();
 	        loader.setParent(classLoader);
 	        loader.setThreadContextLoader();
-			validateParameters();
+			validateParameters(loader);
 	        hdm.execute();
 		} catch (Throwable e) {
 			throw new BuildException( e.getMessage(), e );
