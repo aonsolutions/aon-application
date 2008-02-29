@@ -57,6 +57,15 @@
 						<f:validateLength minimum="1" maximum="64" />
 					</t:inputText>
 
+					<t:outputLabel for="Supplier_registry_alias"
+						styleClass="aon-form-input-text-label"
+						value="#{supplierBundle.supplier_alias}" />
+					<t:inputText id="Supplier_registry_alias" styleClass="aon-form-input-text"
+						forceId="#{true}" value="#{supplierAlias.to.registry.alias}"
+						size="64">
+						<f:validateLength minimum="1" maximum="64" />
+					</t:inputText>
+
 					<h:outputLabel for="Supplier_scope_id"
 						styleClass="aon-form-input-text-label"
 						value="#{supplierBundle.supplier_scope}" />
