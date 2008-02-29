@@ -3,6 +3,7 @@ package com.code.aon.ui.finance.csb;
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
@@ -42,14 +43,19 @@ public class CSB19Writer {
 
 	@SuppressWarnings("unchecked")
 	public CSBOutput createCSB19(Company company, FinanceBatch fbatch) throws ManagerBeanException {
+		FBatchDetailController fBatchDetailController = (FBatchDetailController)AonUtil.getController(FINANCE_BATCH_DETAIL_CONTROLLER_NAME);
+		return createCSB19(company, fbatch, (List)fBatchDetailController.getModel().getWrappedData());
+	}
+	
+	@SuppressWarnings("unchecked")
+	public CSBOutput createCSB19(Company company, FinanceBatch fbatch, Collection fbatchDetailCollection) throws ManagerBeanException {
 		Lot lot = new Lot();
-		try {
-		if(fbatch.getFinanceBatchType().equals(FinanceBatchType.CSB_19_D)){
+		if(fbatch.getFinanceBatchType().equals(FinanceBatchType.CSB_19)) {
+			lot.setType(Lot.RESUMED);
+		} else {
 			lot.setType(Lot.EXTENDED);
 		}
-		if(fbatch.getFinanceBatchType().equals(FinanceBatchType.CSB_19)){
-			lot.setType(Lot.RESUMED);
-		}
+
 		RegistryBank companyRBank = fbatch.getRegistryBank();
 		Presenter presenter = new Presenter();
 		presenter.setCode(company.getDocument());
@@ -58,9 +64,8 @@ public class CSB19Writer {
 		presenter.setName(company.getName());
 		presenter.setEntity(companyRBank.getBankAccount().substring(0,4));
 		presenter.setOffice(companyRBank.getBankAccount().substring(4,8));
-		
 		lot.setPresenter(presenter);
-		
+
 		Orderer orderer = new Orderer();
 		Account companyAccount = new Account();
 		companyAccount.parse(companyRBank.getBankAccount());
@@ -71,26 +76,24 @@ public class CSB19Writer {
 		orderer.setProcedure(new Integer(1));
 		orderer.setStartDate(fbatch.getIssueDate());
 		orderer.setSufix(companyRBank.getSufix());
-		FBatchDetailController fBatchDetailController = (FBatchDetailController)AonUtil.getController(FINANCE_BATCH_DETAIL_CONTROLLER_NAME);
-		Iterator iter = ((List)fBatchDetailController.getModel().getWrappedData()).iterator();
+
+		Iterator iter = fbatchDetailCollection.iterator();
 		while(iter.hasNext()){
 			FinanceBatchDetail fBatchDetail = (FinanceBatchDetail)iter.next();
 			Individual individual  = createIndividual(fBatchDetail, lot.getType());
 			orderer.addIndividual(individual);
 		}
-		
 		lot.addOrderer(orderer);
-		
-		File file = File.createTempFile("CSB19_", ".txt");
-		FileFiller csb19 = new CSB19(lot, file.getAbsolutePath());
-		CSBOutput output = new CSBOutput();
-		output.setFile(file);
-		output.setErrors(csb19.create());
-		return output;
-		} catch (ManagerBeanException e) {
-			throw new ManagerBeanException("Error creating CSB", e);
+
+		try {
+			File file = File.createTempFile("CSB19_", ".txt");
+			FileFiller csb19 = new CSB19(lot, file.getAbsolutePath());
+			CSBOutput output = new CSBOutput();
+			output.setFile(file);
+			output.setErrors(csb19.create());
+			return output;
 		} catch (IOException e) {
-			throw new ManagerBeanException("Error creating CSB", e);
+			throw new ManagerBeanException(e);
 		}
 	}
 	
