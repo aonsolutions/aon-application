@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Collection;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -82,6 +83,8 @@ public class FBatchController extends BasicController implements ICollectionProv
 	/** Determines if the fbatch is a payment or a charge. */
 	private Boolean payment;
 
+	private Date recordDate;
+
 	public CSBOutput getCsbOutput() {
 		return csbOutput;
 	}
@@ -108,6 +111,14 @@ public class FBatchController extends BasicController implements ICollectionProv
 		this.payment = payment;
 	}
 
+	public Date getRecordDate() {
+		return recordDate;
+	}
+
+	public void setRecordDate(Date recordDate) {
+		this.recordDate = recordDate;
+	}
+
 	@Override
 	public void onEditSearch(ActionEvent event) {
 		setPayment(null);
@@ -127,7 +138,11 @@ public class FBatchController extends BasicController implements ICollectionProv
     }
 
     public boolean isDiskMode() {
-        return !FinanceBatchType.NONE.equals(((FinanceBatch)this.getTo()).getFinanceBatchType()) && getToTotalDetails().intValue() > 0;
+        return !FinanceBatchType.NONE.equals(((FinanceBatch)this.getTo()).getFinanceBatchType());
+    }
+
+    public boolean isFilled() {
+        return getToTotalDetails().intValue() > 0;
     }
 
     @SuppressWarnings("unchecked")
@@ -459,7 +474,7 @@ public class FBatchController extends BasicController implements ICollectionProv
         }
 
         FinanceRecordingTo recordingTo = new FinanceRecordingTo();
-        recordingTo.setDate(fbatch.getIssueDate());
+        recordingTo.setDate((getRecordDate()!=null)?getRecordDate():fbatch.getIssueDate());
         recordingTo.setType(fbatch.isPayment() ? AccountEntryType.PAYMENT : AccountEntryType.COLLECTION);
         recordingTo.setRegistryBank(fbatch.getRegistryBank());
         recordingTo.setFinanceList(financeList);
