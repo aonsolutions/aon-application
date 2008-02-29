@@ -260,9 +260,9 @@
 				</textField>
 				<subreport  isUsingCache="true">
 					<reportElement
-						x="67"
+						x="72"
 						y="17"
-						width="233"
+						width="228"
 						height="14"
 						key="subreport-2"
 						positionType="Float"/>
