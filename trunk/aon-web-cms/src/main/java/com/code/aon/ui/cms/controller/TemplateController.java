@@ -3,18 +3,23 @@ package com.code.aon.ui.cms.controller;
 import java.io.File;
 import java.io.FileFilter;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.EventObject;
 import java.util.HashMap;
 
+import javax.faces.application.FacesMessage;
+import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
 import javax.faces.event.ValueChangeEvent;
 import javax.faces.model.ListDataModel;
+import javax.faces.validator.LengthValidator;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 
+import org.apache.myfaces.custom.fileupload.UploadedFile;
 import org.xml.sax.SAXException;
 
 import com.code.aon.cms.Config;
@@ -28,9 +33,7 @@ import com.code.aon.ui.cms.util.FileUtil;
 import com.code.aon.ui.cms.util.XMLHandler;
 import com.code.aon.ui.cms.util.ZipUtil;
 import com.code.aon.ui.form.GridController;
-import com.icesoft.faces.component.inputfile.InputFile;
-import com.icesoft.faces.webapp.xmlhttp.PersistentFacesState;
-import com.icesoft.faces.webapp.xmlhttp.RenderingException;
+import com.code.aon.ui.util.AonUtil;
 
 public class TemplateController extends GridController implements Constants {
 
@@ -38,7 +41,6 @@ public class TemplateController extends GridController implements Constants {
 	
 	protected SAXParser saxParser;
 
-    private PersistentFacesState state;
     private int percent = -1;
 
 	/** A list that contains the selected objects of the model. */
@@ -115,13 +117,10 @@ public class TemplateController extends GridController implements Constants {
 		return to.getId().equals(ControllerUtil.getCurrentConfig().getTemplate());
 	}
 
-	public void defaultTemplateChanged(ValueChangeEvent event) throws ManagerBeanException, ExpressionException {
-		boolean selected = ((Boolean)event.getNewValue()).booleanValue();
+	public void defaultTemplateChanged(ActionEvent event) throws ManagerBeanException, ExpressionException {
 		TemplateObject to = (TemplateObject) templates.getRowData();
-		if (selected) {
-			updateDefaultTemplate(to);
-			loadTemplates();
-		}
+		updateDefaultTemplate(to);
+		loadTemplates();
 	}
 	private void updateDefaultTemplate(TemplateObject to) throws ManagerBeanException {
 		Config c = ControllerUtil.getCurrentConfig();
@@ -131,7 +130,6 @@ public class TemplateController extends GridController implements Constants {
 
 	public void onNewTemplate(ActionEvent event) throws ManagerBeanException {
 		percent = -1;
-		state = PersistentFacesState.getInstance();
 	}
 
 	/**
@@ -192,60 +190,17 @@ public class TemplateController extends GridController implements Constants {
 		checkList= new ArrayList<TemplateObject>();
 	}
 	
-	public String getUploadDirectory() throws ManagerBeanException {
+	public String getUploadDirectory() {
 		String temporal_path = ControllerUtil.getTemporalPath();
 		File dir = new File(temporal_path);
 		if (!dir.exists()) dir.mkdirs();
 		return temporal_path;
 	}
 	
-	/**
-	 * This is the progressListener implementation
-	 */
-	public void progress (EventObject event) {
-		InputFile file = (InputFile)event.getSource();
-		percent = file.getFileInfo().getPercent();
-		try {
-			if (state != null) {
-				state.render();
-			}
-		} 
-		catch (RenderingException e) {
-			e.printStackTrace();
-		}
-	}
-
 	public int getPercent() {
 		return percent;
 	}
 	
-	public void action(ActionEvent event){
-		InputFile inputFile = (InputFile)event.getSource();
-		//file has been saved
-		if (inputFile.getStatus() == InputFile.SAVED) {
-			if (inputFile.getFileInfo().getContentType().indexOf("-zip-") >= 0) {
-				ZipUtil.uncompressZipFile(inputFile.getFileInfo().getPhysicalPath(), ControllerUtil.getTemplatePath(), TEMPLATE_DETAILS_FILE);
-				FileUtil.delete(inputFile.getFileInfo().getPhysicalPath());
-			}
-		}
-
-		//invalid file, happens when clicking on upload without
-		//selecting a file, or a file with no contents.
-		if (inputFile.getStatus() == InputFile.INVALID) {
-			inputFile.getFileInfo().getException().printStackTrace();
-		}
-
-		//file size exceeded the limit
-		if (inputFile.getStatus() == InputFile.SIZE_LIMIT_EXCEEDED) {
-			inputFile.getFileInfo().getException().printStackTrace();
-		}
-
-		//indicate that the request size is not specified.
-		if (inputFile.getStatus() == InputFile.UNKNOWN_SIZE) {
-			inputFile.getFileInfo().getException().printStackTrace();
-		}
-	}
-
 	private void initSAX() {
 		SAXParserFactory saxParserFactory = SAXParserFactory.newInstance();
 		saxParserFactory.setNamespaceAware(true);
@@ -264,4 +219,39 @@ public class TemplateController extends GridController implements Constants {
 	    }
 	}
 
+	private UploadedFile inputFile;
+	private long maximumSize = -1;;
+
+	public UploadedFile getInputFile() {
+		return inputFile;
+	}
+
+	public void setInputFile(UploadedFile inputFile) {
+		this.inputFile = inputFile;
+	}
+	
+	public void fileUploaded( ActionEvent event ) throws IOException {
+		if ( this.inputFile!= null ) {
+			long size = this.inputFile.getSize();
+			String upload_name = inputFile.getName();
+			upload_name = upload_name.substring(upload_name.lastIndexOf(File.separator));
+			File file = new File( getUploadDirectory()+File.separator+upload_name);
+			if ( (maximumSize != -1) && (size > maximumSize) ) {
+				FacesContext ctx = FacesContext.getCurrentInstance();
+				FacesMessage message = AonUtil.getMessage( ctx,
+						LengthValidator.MAXIMUM_MESSAGE_ID, new Object[]{maximumSize, upload_name} );
+				ctx.addMessage(AonUtil.AON_ERROR, message);
+			} else {
+				byte[] data = this.inputFile.getBytes();
+		        FileOutputStream outputStream = new FileOutputStream(file);
+		        outputStream.write(data);
+		        outputStream.close();
+		        
+				if (inputFile.getContentType().indexOf("-zip-") >= 0) {
+					ZipUtil.uncompressZipFile(file.getAbsolutePath(), ControllerUtil.getTemplatePath(), TEMPLATE_DETAILS_FILE);
+					FileUtil.delete(file.getAbsolutePath());
+				}
+			}
+		}
+	}
 }

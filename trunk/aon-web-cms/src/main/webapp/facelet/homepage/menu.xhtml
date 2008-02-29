@@ -50,14 +50,6 @@
 								action="modular_page_list"
 								actionListener="#{modular_page.onSearch}"
 								styleClass="aon-main-menu-leaf"/>
-							<aon:menuItem id="image_gallery" value="#{menuBundle.cms_image_gallery}"
-								action="gallery_list"
-								actionListener="#{gallery.onInit}"
-								styleClass="aon-main-menu-leaf"/>
-							<aon:menuItem id="document_gallery" value="#{menuBundle.cms_document_gallery}"
-								action="document_list"
-								actionListener="#{document.onInit}"
-								styleClass="aon-main-menu-leaf"/>
 							<aon:menuItem id="generic_page" value="#{menuBundle.cms_generic_page}"
 								actionListener="#{generic_page.onSearch}" 
 								action="generic_page_list"
@@ -89,6 +81,14 @@
 							<aon:menuItem id="direct_access_group_page" value="#{menuBundle.cms_direct_access_group}"
 								actionListener="#{direct_access_group.onSearch}" 
 								action="direct_access_group_list"
+								styleClass="aon-main-menu-leaf"/>
+							<aon:menuItem id="image_gallery" 
+								value="#{menuBundle.cms_image_gallery}"
+								action="gallery_list"
+								styleClass="aon-main-menu-leaf"/>
+							<aon:menuItem id="document_gallery" 
+								value="#{menuBundle.cms_document_gallery}"
+								action="document_list"
 								styleClass="aon-main-menu-leaf"/>
 							<!-- 
 							<aon:menuItem id="brand" value="#{menuBundle.cms_brand}"
