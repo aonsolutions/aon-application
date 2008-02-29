@@ -4,6 +4,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -17,6 +18,9 @@ import javax.faces.event.ActionEvent;
 import javax.faces.event.ValueChangeEvent;
 import javax.servlet.http.HttpServletResponse;
 
+import org.hibernate.Query;
+import org.hibernate.Session;
+
 import com.code.aon.account.AccountEntry;
 import com.code.aon.account.AccountEntryDetail;
 import com.code.aon.account.bridge.AccountEntryFinanceBatch;
@@ -29,6 +33,7 @@ import com.code.aon.common.BeanManager;
 import com.code.aon.common.ICollectionProvider;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.common.enumeration.MimeType;
 import com.code.aon.company.Company;
 import com.code.aon.finance.Finance;
@@ -350,22 +355,23 @@ public class FBatchController extends BasicController implements ICollectionProv
 		return false;
 	}
 
-    @SuppressWarnings("unused")
+	@SuppressWarnings({"unused","unchecked"})
 	public void onCreateDisk(ActionEvent event) throws ManagerBeanException {
-		FinanceBatch fbatch = (FinanceBatch)this.getTo();
+    	FinanceBatch fbatch = (FinanceBatch)this.getTo();
 
         Company company = obtainCompany();
+        Collection fbatchDetailCollection = obtainDetailsCollection(fbatch);
         if (fbatch.getFinanceBatchType().equals(FinanceBatchType.CSB_19_D) || fbatch.getFinanceBatchType().equals(FinanceBatchType.CSB_19)) {
 			CSB19Writer csb19Writer = new CSB19Writer();
-			csbOutput = csb19Writer.createCSB19(company, fbatch);
+			csbOutput = csb19Writer.createCSB19(company, fbatch, fbatchDetailCollection);
 		}
 		else if (fbatch.getFinanceBatchType().equals(FinanceBatchType.CSB_32)) {
 			CSB32Writer csb32Writer = new CSB32Writer();
-			csbOutput = csb32Writer.createCSB32(company, fbatch);
+			csbOutput = csb32Writer.createCSB32(company, fbatch, fbatchDetailCollection);
 		}
 		else if (fbatch.getFinanceBatchType().equals(FinanceBatchType.CSB_58)) {
 			CSB58Writer csb58Writer = new CSB58Writer();
-			csbOutput = csb58Writer.createCSB58(company, fbatch);
+			csbOutput = csb58Writer.createCSB58(company, fbatch, fbatchDetailCollection);
 		}
 
         if (csbOutput != null) {
@@ -389,6 +395,17 @@ public class FBatchController extends BasicController implements ICollectionProv
         }
         return null;
     }
+
+	@SuppressWarnings("unchecked")
+	private Collection obtainDetailsCollection(FinanceBatch fbatch) {
+		String select = "select fbatchDetail " +
+    					"from FinanceBatchDetail as fbatchDetail " +
+    					"where fbatchDetail.financeBatch.id = " + fbatch.getId() + " " +
+    					"order by substring(fbatchDetail.finance.bankAccount, 1, 8), fbatchDetail.finance.invoice.registry.id";
+    	Session session = HibernateUtil.getSession();
+    	Query query = session.createQuery(select);
+    	return query.list(); 
+	}
 
 	@SuppressWarnings({"unused"})
 	public boolean isDiskOk() throws ManagerBeanException {
