@@ -68,14 +68,14 @@
 							onmouseout="this.className='aon-content-toolbar-item aon-content-toolbar-item-print'"
 							accesskey="#{bundle.aon_key_print}" />
 						<h:commandButton id="csb" value="#{financeBundle.aon_create_disk}"
-							rendered="#{!fbatch.new and !fbatch.recorded and fbatch.diskMode and fbatch.to.registryBank.id != null}"
+							rendered="#{!fbatch.new and !fbatch.recorded and fbatch.diskMode and fbatch.filled and fbatch.to.registryBank.id != null}"
 							styleClass="aon-content-toolbar-item aon-content-toolbar-item-search"
 							onmouseover="this.className='aon-content-toolbar-item aon-content-toolbar-item-hover aon-content-toolbar-item-search'"
 							onmouseout="this.className='aon-content-toolbar-item aon-content-toolbar-item-search'"
 							onclick="viewDialog.show();"
 							action="fbatch_form" actionListener="#{fbatch.onCreateDisk}" />	
 						<h:commandButton id="record" value="#{financeBundle.aon_record}"
-							rendered="#{!fbatch.recorded and (fbatch.done or !fbatch.diskMode)}"
+							rendered="#{!fbatch.new and !fbatch.recorded and (fbatch.done or !fbatch.diskMode)}"
 							styleClass="aon-content-toolbar-item aon-content-toolbar-item-search"
 							onmouseover="this.className='aon-content-toolbar-item aon-content-toolbar-item-hover aon-content-toolbar-item-search'"
 							onmouseout="this.className='aon-content-toolbar-item aon-content-toolbar-item-search'"
@@ -88,6 +88,17 @@
 							onmouseout="this.className='aon-content-toolbar-item aon-content-toolbar-item-search'"
 							onclick="viewDialog.show();"
 							action="fbatch_form" actionListener="#{fbatch.onUnrecord}" />
+						<h:outputLabel for="FinanceBatch_recordDate"
+							styleClass="aon-form-input-text-label" value="#{financeBundle.aon_record_date}" 
+							rendered="#{!fbatch.new and !fbatch.recorded and (fbatch.done or !fbatch.diskMode)}" />
+						<t:inputCalendar size="8" id="FinanceBatch_recordDate" value="#{fbatch.recordDate}"
+							rendered="#{!fbatch.new and !fbatch.recorded and (fbatch.done or !fbatch.diskMode)}"
+							monthYearRowClass="yearMonthHeader" weekRowClass="weekHeader"
+							currentDayCellClass="currentDayCell" renderAsPopup="true"
+							popupButtonStyleClass="aon-form-calendar-button"
+							styleClass="aon-form-input-text"
+							popupTodayString="#{bundle.aon_popup_today}"
+							popupWeekString="#{bundle.aon_popup_week}" />
 					</t:div>
 				</t:div>
 			</t:div>
@@ -226,12 +237,12 @@
 									value="#{financeBundle.aon_select_none}"
 									actionListener="#{fBatchDetail.checkNone}"/>
 								<t:commandButton title="#{financeBundle.aon_remove_batch}"
-									styleClass="aon-form-button"
+									styleClass="aon-form-button-delete"
 									value="#{financeBundle.aon_remove_batch}"
 									onclick="viewDialog.show();"
 									actionListener="#{fbatch.onRemoveSelected}" />
 								<t:commandButton title="#{fbatch.diskOk?(financeBundle.aon_download_disk):(financeBundle.aon_download_error)}"
-									styleClass="aon-form-button" rendered="#{fbatch.csbOutput!=null}"
+									styleClass="aon-form-button-download" rendered="#{fbatch.csbOutput!=null}"
 									value="#{fbatch.diskOk?(financeBundle.aon_download_disk):(financeBundle.aon_download_error)}"
 									actionListener="#{fbatch.downloadDisk}" />
 							</t:div>
