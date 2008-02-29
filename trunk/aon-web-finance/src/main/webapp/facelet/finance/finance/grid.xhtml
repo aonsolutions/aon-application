@@ -27,6 +27,7 @@
 					aon-edit-table-body aon-edit-table-body-string,
 					aon-edit-table-body aon-edit-table-body-string,
 					aon-edit-table-body aon-edit-table-body-string,
+					aon-edit-table-body aon-edit-table-body-string,
 					aon-edit-table-body aon-edit-table-body-number,
 					aon-edit-table-body aon-edit-table-body-buttons">
 
@@ -36,7 +37,7 @@
 					</f:facet>
 					<t:commandLink immediate="#{true}"
 						styleClass="aon-table-row-selected"
-						rendered="#{to.id!=controllerAlias.to.id}"
+						rendered="#{to.id!=controllerAlias.to.id and controllerAlias.modelToEditable}"
 						actionListener="#{controllerAlias.onSelect}" />
 					<f:verbatim>&#160;</f:verbatim>
 					<f:facet name="footer">
@@ -156,6 +157,13 @@
 					</f:facet>
 				</t:column>
 				
+				<t:column>
+					<f:facet name="header">
+						<h:outputText value="#{financeBundle.finance_status}" />
+					</f:facet>
+					<h:outputText value="#{to.financeStatus}"/>
+				</t:column>
+				
 				<t:column width="70">
 					<f:facet name="header">
 						<h:outputText value="#{financeBundle.aon_amount}" />
@@ -198,7 +206,7 @@
 						onclick="return (confirm('#{bundle.aon_remove_confirm}'));"
 						styleClass="aon-edit-table-icon-button aon-edit-table-icon-button-delete"
 						value="" accesskey="#{bundle.aon_key_remove_line}"
-						rendered="#{to.id==controllerAlias.to.id}" />
+						rendered="#{to.id==controllerAlias.to.id and controllerAlias.modelToPending}" />
 					<f:verbatim rendered="#{to.id!=controllerAlias.to.id}">&#160;</f:verbatim>
 					<f:facet name="footer">
 						<t:div>
