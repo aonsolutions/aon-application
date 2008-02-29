@@ -44,6 +44,7 @@ public class OnTheFlyReplicator implements IEntityManager {
         int imported = 0;
         initTransaction();
         for( Object element : entityIterable ) {
+        	entityIterable.getSession().evict(element);
         	if ( insert ) {
         		session.save( entityName, element );        		
         	} else {
