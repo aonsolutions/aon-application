@@ -68,7 +68,7 @@
 							accesskey="#{bundle.aon_key_search}" />
 						<t:commandButton id="finances" value="#{financeBundle.finance_generate}"
 							actionListener="#{feeInvoicing.generateFinances}"
-							rendered="#{feeInvoicingDetail.model.rowCount > 0}"
+							rendered="#{feeInvoicingDetail.model.rowCount > 0 and feeFinance.allPending}"
 							styleClass="aon-content-toolbar-item aon-content-toolbar-item-new"
 							onmouseover="this.className='aon-content-toolbar-item aon-content-toolbar-item-hover aon-content-toolbar-item-new'"
 							onmouseout="this.className='aon-content-toolbar-item aon-content-toolbar-item-new'" />
