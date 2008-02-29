@@ -13,100 +13,92 @@
 
 		<aon:form id="configForm">
 
-			<aon:panelGrid columns="2" dir="true" styleClass="aon-title-toolbar" 
-				cellpadding="0" cellspacing="0" columnClasses="aon-content-title,aon-content-toolbar">
-			
-				<aon:div styleClass="aon-content-title-internal">
-					<aon:outputText value="#{appBundle.config}" />					
-				</aon:div>		
-			
-				<!-- start toolbar navigation -->
-				<aon:div styleClass="aon-content-toolbar-internal">
-					<aon:confirmButton id="save"
-						value="#{bundle.aon_save}" 
-						confirmTitle="Confirmation Dialog" confirmMessage="#{bundle.aon_save_confirm}"
-						confirmActionListener="#{config.onAccept}"
-						styleClass="aon-content-toolbar-item aon-icon-accept"
-						onmouseout="this.className='aon-content-toolbar-item aon-icon-accept'"
-						onmouseover="this.className='aon-content-toolbar-item aon-icon-accept aon-content-toolbar-item-hover'"
-						accesskey="#{bundle.aon_key_save}"/>
-				</aon:div>
-			</aon:panelGrid>
-			
-			<aon:div styleClass="aon-scroll-area">
-				<aon:div styleClass="aon-scroll-area-internal">	
-
-					<aon:div styleClass="aon-content-subtitle" id="aon-content-subtitle"
-						>
-						<aon:div styleClass="aon-content-subtitle-internal">
+			<aon:div styleClass="aon-finding-title-toolbar">
+				<aon:panelGrid id="buttonsGrid" columns="3" dir="true" 
+					columnClasses="aon-finding-title,aon-finding-subtitle,aon-finding-toolbar">				
+				
+					<aon:div styleClass="aon-finding-title-internal">
+						<aon:outputText value="#{appBundle.config}"/>	  						
+					</aon:div>					
+					
+					<aon:div styleClass="aon-finding-subtitle-internal">
 							<aon:outputText
 								value="#{config.new?(bundle.aon_reset):(bundle.aon_editing)}" />
-						</aon:div>
-					</aon:div>
-					<aon:div id="aon-scroll-area" >
-						<aon:div styleClass="aon-scroll-area-internal">
-							<aon:div id="menuTabSet">
-								<aon:panelTabSet>
-									<aon:panelTab id="content" label="#{appBundle.aon_content}">
-										<aon:panelGrid columns="2">
-											<aon:panelGrid columns="2" dir="true" styleClass="aon-form-table" style="width:100%"
-												columnClasses="aon-form-table-column-odd,aon-form-table-column-even">
-	
-												<aon:outputLabel for="Config_sitename"
-													styleClass="aon-form-input-text-label"
-													value="#{appBundle.config_sitename}" />
-												<aon:inputText id="Config_sitename"
-													styleClass="aon-form-input-text"
-													required="true" size="75" maxlength="75"
-													value="#{config.toI18n.sitename}" />
-	
-												<aon:outputLabel for="ConfigDetail_offline_message"
-													styleClass="aon-form-input-text-label"
-													value="#{appBundle.config_offline_message}" />
-												<aon:inputRichText id="ConfigDetail_offline_message"
-													toolbarSet="Default" 
-													value="#{config.toI18n.offline_message}"/>
+					</aon:div>					
+						
+					<!-- start toolbar navigation -->
+					<aon:div styleClass="aon-finding-toolbar-item-group">					
+						<aon:commandButton id="save"
+							value="#{bundle.aon_save}" 
+							actionListener="#{config.onAccept}"
+							styleClass="aon-finding-toolbar-item aon-icon-accept" />
+				    </aon:div>
 					
-												<aon:outputLabel for="Config_css"
-													styleClass="aon-form-input-text-label"
-													value="#{appBundle.config_css}" />
-												<aon:inputTextarea id="Config_css"
-													cols="60" rows="20" 
-													value="#{config.toI18n.css}"/>
-	
-												<aon:outputLabel for="Config_javascript"
-													styleClass="aon-form-input-text-label"
-													value="#{appBundle.config_javascript}" />
-												<aon:inputTextarea id="Config_javascript"
-													cols="60" rows="20" 
-													value="#{config.toI18n.javascript}"/>
-	
-												<aon:outputLabel for="ConfigDetail_keywords"
-													styleClass="aon-form-input-text-label"
-													value="#{appBundle.config_keywords}" />
-												<aon:inputTextarea id="ConfigDetail_keywords"
-													cols="60" rows="20" 
-													value="#{config.toI18n.keywords}"/>
-	
-												<aon:outputLabel for="ConfigDetail_description"
-													styleClass="aon-form-input-text-label"
-													value="#{appBundle.config_description}" />
-												<aon:inputTextarea id="ConfigDetail_description"
-													cols="60" rows="20" 
-													value="#{config.toI18n.description}"/>
-					
-											</aon:panelGrid>
-										</aon:panelGrid>
-				                    </aon:panelTab>
-								</aon:panelTabSet>
-							</aon:div>
-		
-						</aon:div>
-					</aon:div>
-				</aon:div>
+					<!-- end toolbar navigation -->
+				</aon:panelGrid>
 			</aon:div>
+			
+			<aon:div styleClass="aon-scroll-area">
+
+					<aon:panelTabSet id="configTabSet">
+						<aon:panelTab id="general" label="#{appBundle.aon_content}">
+							<aon:panelGrid columns="2" dir="true">
+								<aon:outputLabel for="Config_sitename"
+									value="#{appBundle.config_sitename}" />
+								<aon:inputText id="Config_sitename"
+									required="true" size="75" maxlength="75"
+									value="#{config.toI18n.sitename}" />
+	
+								<aon:outputLabel for="ConfigDetail_description"
+									value="#{appBundle.config_description}" />
+								<aon:inputTextarea id="ConfigDetail_description"
+									cols="60" rows="20" 
+									value="#{config.toI18n.description}"/>	
+							</aon:panelGrid>
+						</aon:panelTab>
+						<aon:panelTab id="css" label="#{appBundle.config_css}">
+							<aon:panelGrid columns="2" dir="true">
+								<aon:outputLabel for="Config_css"
+									value="#{appBundle.config_css}" />
+								<aon:inputTextarea id="Config_css"
+									cols="60" rows="20" 
+									value="#{config.toI18n.css}"/>
+							</aon:panelGrid>
+						</aon:panelTab>
+						<aon:panelTab id="js" label="#{appBundle.config_javascript}">
+							<aon:panelGrid columns="2" dir="true">
+								<aon:outputLabel for="Config_javascript"
+									value="#{appBundle.config_javascript}" />
+								<aon:inputTextarea id="Config_javascript"
+									cols="60" rows="20" 
+									value="#{config.toI18n.javascript}"/>
+							</aon:panelGrid>
+						</aon:panelTab>
+						<aon:panelTab id="words" label="#{appBundle.config_keywords}">
+							<aon:panelGrid columns="2" dir="true">
+								<aon:outputLabel for="ConfigDetail_keywords"
+									value="#{appBundle.config_keywords}" />
+								<aon:inputTextarea id="ConfigDetail_keywords"
+									cols="60" rows="20" 
+									value="#{config.toI18n.keywords}"/>
+							</aon:panelGrid>
+						</aon:panelTab>
+						<aon:panelTab id="offline" label="#{appBundle.config_offline_message}">
+							<aon:panelGrid columns="2" dir="true">
+								<aon:outputLabel for="ConfigDetail_offline_message"
+									value="#{appBundle.config_offline_message}" />
+								<aon:div style="width:600px">
+									<aon:inputRichText id="ConfigDetail_offline_message"
+										toolbarSet="Default" 
+										value="#{config.toI18n.offline_message}"/>
+								</aon:div>
+							</aon:panelGrid>
+						</aon:panelTab>
+					</aon:panelTabSet>
+
+			</aon:div>
+			
 		</aon:form>
-		<aon:form id="placeList" target="list" />
 
 	</ui:define>
 </ui:composition>
