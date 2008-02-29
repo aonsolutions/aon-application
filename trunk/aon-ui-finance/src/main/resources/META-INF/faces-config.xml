@@ -745,7 +745,7 @@
 		</managed-property>
 	</managed-bean>
 	
-		<!-- ************* INVOICINGGROUPDETAIL ***************** -->
+	<!-- ************* INVOICINGGROUPDETAIL ***************** -->
 	<managed-bean>
 		<managed-bean-name>invoicingGroupDetail</managed-bean-name>
 		<managed-bean-class>com.code.aon.ui.finance.controller.InvoicingGroupDetailController</managed-bean-class>
@@ -828,6 +828,27 @@
 			<value>com.code.aon.sales.CustomerFee</value>
 		</managed-property>
 	</managed-bean>
+
+	<!-- ************* INVOICE RECORDING ***************** -->
+	<managed-bean>
+		<managed-bean-name>invoiceRecording</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.finance.controller.InvoiceRecordingController
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>false</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pageLimit</property-name>
+			<value>20</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.finance.Invoice</value>
+		</managed-property>
+	</managed-bean>
 	
 	<!-- **************** CONVERTERS  *************** -->
 	<converter>
@@ -891,6 +912,10 @@
     <navigation-case>
       <from-outcome>invoicingGroup</from-outcome>
       <to-view-id>/_finance/facelet/invoicing_group/list.faces</to-view-id>
+    </navigation-case>
+    <navigation-case>
+      <from-outcome>invoiceRecording</from-outcome>
+      <to-view-id>/_finance/facelet/invoice_recording/search.faces</to-view-id>
     </navigation-case>
     <navigation-case>
       <from-outcome>invoicePrint</from-outcome>
