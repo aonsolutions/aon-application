@@ -34,7 +34,7 @@ public class HibernateDataManager {
 	
 	private static Log LOGGER = LogFactory.getLog(HibernateDataManager.class.getName());
 	
-	private File outputDirectory;
+	private File directory;
 	
 	private File configurationFile;
 	
@@ -78,12 +78,12 @@ public class HibernateDataManager {
 		setExportFlush( DEFAULT_EXPORT_FLUSH );
 	}
 
-	public File getOutputDirectory() {
-		return outputDirectory;
+	public File getDirectory() {
+		return directory;
 	}
 
-	public void setOutputDirectory(File outputDirectory) {
-		this.outputDirectory = outputDirectory;
+	public void setDirectory(File directory) {
+		this.directory = directory;
 	}
 	
 	public File getConfigurationFile() {
@@ -140,7 +140,7 @@ public class HibernateDataManager {
 	
 	public File getFile( Class entity ) {
 		String name = entity.getName().replace('.', '_') + ".xml";
-		return new File( getOutputDirectory(), name );
+		return new File( getDirectory(), name );
 	}
 	
 	public List<Class> getEntities() {
