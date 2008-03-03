@@ -10,7 +10,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.code.aon</groupId>
 	<artifactId>aon.ui.employee</artifactId>
-	<version>2.0.2</version>
+	<version>2.0.3</version>
 	<description>AON UI EMPLOYEE</description>
 	<dependencies>
 		<dependency>
@@ -70,7 +70,7 @@
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.company</artifactId>
-			<version>2.0.2</version>
+			<version>2.0.3</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
