@@ -68,7 +68,7 @@
 							accesskey="#{bundle.aon_key_search}" />
 						<t:commandButton id="finances" value="#{financeBundle.finance_generate}"
 							actionListener="#{feeInvoicing.generateFinances}"
-							rendered="#{feeInvoicingDetail.model.rowCount > 0}"
+							rendered="#{feeInvoicingDetail.model.rowCount > 0 and feeFinance.allPending}"
 							styleClass="aon-content-toolbar-item aon-content-toolbar-item-new"
 							onmouseover="this.className='aon-content-toolbar-item aon-content-toolbar-item-hover aon-content-toolbar-item-new'"
 							onmouseout="this.className='aon-content-toolbar-item aon-content-toolbar-item-new'" />
@@ -510,7 +510,12 @@
 						</t:div>
 					</t:div>
 					
-					<ui:include src="/facelet/finance/finance/grid.xhtml" />
+					<t:div rendered="#{feeInvoicingDetail.model.rowCount > 0 or feeFinance.model.rowCount>0}" >
+						<ui:include src="/facelet/finance/finance/grid.xhtml" >
+							<ui:param name="controllerAlias" value="#{feeFinance}" />
+							<ui:param name="dataTable" value="feeFinanceData" />
+						</ui:include>
+					</t:div>
 					
 				</t:div>
 			</t:div>
