@@ -531,7 +531,7 @@
 	<managed-bean>
 		<managed-bean-name>taxRetentionLookup</managed-bean-name>
 		<managed-bean-class>
-			com.code.aon.ui.form.LookupController
+			com.code.aon.ui.product.controller.RetentionLookupController
 		</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
@@ -1404,8 +1404,8 @@
 			<property-name>listenerClasses</property-name>
 			<list-entries>
 				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
-				<value>#{itemControllerListener}</value>
 				<value>#{itemRetentionListener}</value>
+				<value>#{itemControllerListener}</value>
 			</list-entries>
 		</managed-property>
 	</managed-bean>
