@@ -66,6 +66,10 @@ import com.code.aon.cms.ArticleRelated;
 import com.code.aon.cms.ArticleDocument;
 import com.code.aon.cms.ArticleDocumentDetail;
 import com.code.aon.cms.DownloadConfig;
+import com.code.aon.cms.Company;
+import com.code.aon.cms.Activity;
+import com.code.aon.cms.ActivityDetail;
+import com.code.aon.cms.CompanyActivity;
 
 /** 
 * Interface for holding entity properties constants.
@@ -2679,6 +2683,154 @@ public interface ICMSAlias {
 	* Hibernate value: DownloadConfig.section.id
 	*/
 	String  DOWNLOAD_CONFIG_SECTION_ID = DOWNLOAD_CONFIG_ENTRY.getAliasNames()[1];
+
+
+
+	/** 
+	* DAOConstantsEntry for Company entity.
+	*/ 
+	DAOConstantsEntry COMPANY_ENTRY = DAOConstants.getDAOConstant(Company.class);
+
+	/** 
+	* Alias value: Company_address
+	* Hibernate value: Company.address
+	*/
+	String  COMPANY_ADDRESS = COMPANY_ENTRY.getAliasNames()[0];
+
+	/** 
+	* Alias value: Company_email
+	* Hibernate value: Company.email
+	*/
+	String  COMPANY_EMAIL = COMPANY_ENTRY.getAliasNames()[1];
+
+	/** 
+	* Alias value: Company_fax
+	* Hibernate value: Company.fax
+	*/
+	String  COMPANY_FAX = COMPANY_ENTRY.getAliasNames()[2];
+
+	/** 
+	* Alias value: Company_id
+	* Hibernate value: Company.id
+	*/
+	String  COMPANY_ID = COMPANY_ENTRY.getAliasNames()[3];
+
+	/** 
+	* Alias value: Company_locality
+	* Hibernate value: Company.locality
+	*/
+	String  COMPANY_LOCALITY = COMPANY_ENTRY.getAliasNames()[4];
+
+	/** 
+	* Alias value: Company_logo
+	* Hibernate value: Company.logo
+	*/
+	String  COMPANY_LOGO = COMPANY_ENTRY.getAliasNames()[5];
+
+	/** 
+	* Alias value: Company_name
+	* Hibernate value: Company.name
+	*/
+	String  COMPANY_NAME = COMPANY_ENTRY.getAliasNames()[6];
+
+	/** 
+	* Alias value: Company_postal_code
+	* Hibernate value: Company.postal_code
+	*/
+	String  COMPANY_POSTAL_CODE = COMPANY_ENTRY.getAliasNames()[7];
+
+	/** 
+	* Alias value: Company_province
+	* Hibernate value: Company.province
+	*/
+	String  COMPANY_PROVINCE = COMPANY_ENTRY.getAliasNames()[8];
+
+	/** 
+	* Alias value: Company_telephone
+	* Hibernate value: Company.telephone
+	*/
+	String  COMPANY_TELEPHONE = COMPANY_ENTRY.getAliasNames()[9];
+
+	/** 
+	* Alias value: Company_web
+	* Hibernate value: Company.web
+	*/
+	String  COMPANY_WEB = COMPANY_ENTRY.getAliasNames()[10];
+
+
+
+	/** 
+	* DAOConstantsEntry for Activity entity.
+	*/ 
+	DAOConstantsEntry ACTIVITY_ENTRY = DAOConstants.getDAOConstant(Activity.class);
+
+	/** 
+	* Alias value: Activity_alias
+	* Hibernate value: Activity.alias
+	*/
+	String  ACTIVITY_ALIAS = ACTIVITY_ENTRY.getAliasNames()[0];
+
+	/** 
+	* Alias value: Activity_id
+	* Hibernate value: Activity.id
+	*/
+	String  ACTIVITY_ID = ACTIVITY_ENTRY.getAliasNames()[1];
+
+
+
+	/** 
+	* DAOConstantsEntry for ActivityDetail entity.
+	*/ 
+	DAOConstantsEntry ACTIVITY_DETAIL_ENTRY = DAOConstants.getDAOConstant(ActivityDetail.class);
+
+	/** 
+	* Alias value: ActivityDetail_activity_id
+	* Hibernate value: ActivityDetail.activity.id
+	*/
+	String  ACTIVITY_DETAIL_ACTIVITY_ID = ACTIVITY_DETAIL_ENTRY.getAliasNames()[0];
+
+	/** 
+	* Alias value: ActivityDetail_description
+	* Hibernate value: ActivityDetail.description
+	*/
+	String  ACTIVITY_DETAIL_DESCRIPTION = ACTIVITY_DETAIL_ENTRY.getAliasNames()[1];
+
+	/** 
+	* Alias value: ActivityDetail_id
+	* Hibernate value: ActivityDetail.id
+	*/
+	String  ACTIVITY_DETAIL_ID = ACTIVITY_DETAIL_ENTRY.getAliasNames()[2];
+
+	/** 
+	* Alias value: ActivityDetail_language_id
+	* Hibernate value: ActivityDetail.language.id
+	*/
+	String  ACTIVITY_DETAIL_LANGUAGE_ID = ACTIVITY_DETAIL_ENTRY.getAliasNames()[3];
+
+
+
+	/** 
+	* DAOConstantsEntry for CompanyActivity entity.
+	*/ 
+	DAOConstantsEntry COMPANY_ACTIVITY_ENTRY = DAOConstants.getDAOConstant(CompanyActivity.class);
+
+	/** 
+	* Alias value: CompanyActivity_activity_id
+	* Hibernate value: CompanyActivity.activity.id
+	*/
+	String  COMPANY_ACTIVITY_ACTIVITY_ID = COMPANY_ACTIVITY_ENTRY.getAliasNames()[0];
+
+	/** 
+	* Alias value: CompanyActivity_company_id
+	* Hibernate value: CompanyActivity.company.id
+	*/
+	String  COMPANY_ACTIVITY_COMPANY_ID = COMPANY_ACTIVITY_ENTRY.getAliasNames()[1];
+
+	/** 
+	* Alias value: CompanyActivity_id
+	* Hibernate value: CompanyActivity.id
+	*/
+	String  COMPANY_ACTIVITY_ID = COMPANY_ACTIVITY_ENTRY.getAliasNames()[2];
 
 
 }

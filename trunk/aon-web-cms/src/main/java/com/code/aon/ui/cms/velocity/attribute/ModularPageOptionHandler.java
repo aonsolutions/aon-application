@@ -3,7 +3,7 @@ package com.code.aon.ui.cms.velocity.attribute;
 import com.code.aon.cms.ModularPageOptionDetail;
 import com.code.aon.cms.enumeration.ArticleType;
 import com.code.aon.cms.enumeration.ModularPageOptionType;
-import com.code.aon.ui.cms.util.MenuOptionUtil;
+import com.code.aon.ui.cms.velocity.ActivityGenerator;
 import com.code.aon.ui.cms.velocity.ArticleGenerator;
 import com.code.aon.ui.cms.velocity.BannerGenerator;
 import com.code.aon.ui.cms.velocity.DirectAccessGenerator;
@@ -54,6 +54,9 @@ public class ModularPageOptionHandler {
 		}
 		else if (mpod.getModular_page_option().getType().equals(ModularPageOptionType.LINK_CATEGORY)) {
 			content = LinkGenerator.getLinkCategoryHandler(mpod.getModular_page_option().getIdent());
+		}
+		else if (mpod.getModular_page_option().getType().equals(ModularPageOptionType.ACTIVITY)) {
+			content = ActivityGenerator.getActivityHandler(mpod.getModular_page_option().getIdent());
 		}
 	}
 
