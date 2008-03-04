@@ -23,10 +23,7 @@ public class GeneratorController extends BasicController implements Constants {
 		GeneratorStatusController status = (GeneratorStatusController)AonUtil.getRegisteredBean("generator_status");
 		status.onInit(event);
 		
-		if (isLanguajePageToGenerate){
-			//Generar index.php de seleccion automatica de idioma
-			CommonGenerator.getCommonGenerator().generateLanguagePage();
-		}
+		CommonGenerator.getCommonGenerator().generateLanguagePage();
 		
 		if (isModularPageToGenerate){
 			//Generar index.html del idioma seleccionado
@@ -74,7 +71,6 @@ public class GeneratorController extends BasicController implements Constants {
 		status.addMessage("¡¡¡¡¡ YOUR WEB IS DONE !!!!! ;-DDDD");
 	}
 
-	private boolean isLanguajePageToGenerate = true;
 	private boolean isModularPageToGenerate = true;
 	private boolean isMenuToGenerate = true;
 	private boolean isGenericToGenerate = true;
@@ -85,12 +81,6 @@ public class GeneratorController extends BasicController implements Constants {
 	private boolean isArticleToGenerate = true;
 	private boolean isDownloadsToGenerate = true;
 
-	public boolean isLanguajePageToGenerate() {
-		return isLanguajePageToGenerate;
-	}
-	public void setLanguajePageToGenerate(boolean isLanguajePageToGenerate) {
-		this.isLanguajePageToGenerate = isLanguajePageToGenerate;
-	}
 	public boolean isModularPageToGenerate() {
 		return isModularPageToGenerate;
 	}
@@ -146,7 +136,6 @@ public class GeneratorController extends BasicController implements Constants {
 		this.isDownloadsToGenerate = isDownloadsToGenerate;
 	}
 	public void onSelectAll(ActionEvent event) {
-		isLanguajePageToGenerate = true;
 		isModularPageToGenerate = true;
 		isMenuToGenerate = true;
 		isGenericToGenerate = true;
@@ -158,7 +147,6 @@ public class GeneratorController extends BasicController implements Constants {
 		isDownloadsToGenerate = true;
 	}
 	public void onDeselectAll(ActionEvent event) {
-		isLanguajePageToGenerate = false;
 		isModularPageToGenerate = false;
 		isMenuToGenerate = false;
 		isGenericToGenerate = false;
@@ -169,14 +157,5 @@ public class GeneratorController extends BasicController implements Constants {
 		isArticleToGenerate = false;
 		isDownloadsToGenerate = false;
 	}
-	
-	private static String checkMem(String data) {
-		long freeMemory = Runtime.getRuntime().freeMemory();
-		long totalMemory = Runtime.getRuntime().totalMemory();
-		long maxMemory = Runtime.getRuntime().maxMemory();
-		long memoryUsed = totalMemory-freeMemory;
-		data += "-------------> "+(memoryUsed/(1024*1024))+" of "+(maxMemory/(1024*1024))+" MB used";
-		return data;
-	}	
 	
 }
