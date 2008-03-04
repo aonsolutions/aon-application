@@ -130,18 +130,22 @@
 				</aon:div>
 			</aon:div>
 		</aon:form>
-    <a4j:region>
-        <h:form>
-            <a4j:poll id="poll" interval="5000" enabled="#{true}" reRender="poll,grid"/>
-        </h:form>
-    </a4j:region>
-	<h:form>
-        <h:panelGrid columns="2" width="80%" id="grid">
-	        <rich:dataList var="msg" value="#{generator_status.status}" rows="0">
-				<h:outputText value="#{msg}"/>
-			</rich:dataList>
-        </h:panelGrid>  
-    </h:form>    
+	    <a4j:region>
+	        <h:form>
+	            <a4j:poll id="poll" interval="2000" enabled="#{true}" reRender="poll,grid"/>
+	        </h:form>
+	    </a4j:region>
+		<h:form>
+			<rich:panel bodyClass="inpanelBody" id="grid">
+	        	<f:facet name="header">
+	                    Console Log
+	            </f:facet>
+		        <rich:dataList id="dataList" var="msg" value="#{generator_status.status}" rows="20">
+					<h:outputText value="#{msg}"/>
+				</rich:dataList>
+				<rich:datascroller align="left"  for="dataList" maxPages="20" />
+			</rich:panel>
+	    </h:form>    
 	</ui:define>
 </ui:composition>
 
