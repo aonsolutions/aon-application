@@ -14,6 +14,7 @@ import org.apache.velocity.app.VelocityEngine;
 import com.code.aon.cms.enumeration.Templates;
 import com.code.aon.ui.cms.Constants;
 import com.code.aon.ui.cms.controller.GeneratorController;
+import com.code.aon.ui.cms.controller.GeneratorStatusController;
 import com.code.aon.ui.util.AonUtil;
 
 public class VelocityUtil extends VelocityEngine implements Constants {
@@ -69,14 +70,19 @@ public class VelocityUtil extends VelocityEngine implements Constants {
     }
 
 	public void addMessage(String msg, int type) {
+		GeneratorStatusController status = (GeneratorStatusController)AonUtil.getRegisteredBean("generator_status");
 		if (type == INFO)
-			AonUtil.addInfoMessage(" INFO: " + msg);
+			//AonUtil.addInfoMessage(" INFO: " + msg);
+			status.addMessage(" INFO: " + msg);
 		else if (type == ERROR)
-			AonUtil.addErrorMessage(" ERROR: " + msg);
+			//AonUtil.addErrorMessage(" ERROR: " + msg);
+			status.addMessage(" ERROR: " + msg);
 		else if (type == WARN)
-			AonUtil.addWarningMessage(" WARNING: " + msg);
+			//AonUtil.addWarningMessage(" WARNING: " + msg);
+			status.addMessage(" WARNINIG: " + msg);
 		else
-			AonUtil.addFatalMessage(msg);
+			//AonUtil.addFatalMessage(msg);
+			status.addMessage(msg);
 	}
 
 	public void put(String key, Object value) {

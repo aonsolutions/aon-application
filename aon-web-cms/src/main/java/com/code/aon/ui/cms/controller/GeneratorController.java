@@ -15,10 +15,13 @@ import com.code.aon.ui.cms.velocity.LinkGenerator;
 import com.code.aon.ui.cms.velocity.MenuGenerator;
 import com.code.aon.ui.cms.velocity.ModularPageGenerator;
 import com.code.aon.ui.form.BasicController;
+import com.code.aon.ui.util.AonUtil;
 
 public class GeneratorController extends BasicController implements Constants {
 
 	public void onGenerate(ActionEvent event) throws ManagerBeanException {
+		GeneratorStatusController status = (GeneratorStatusController)AonUtil.getRegisteredBean("generator_status");
+		status.onInit(event);
 		
 		if (isLanguajePageToGenerate){
 			//Generar index.php de seleccion automatica de idioma
