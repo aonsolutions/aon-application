@@ -368,18 +368,18 @@ public class AccountInvoiceController {
 	@SuppressWarnings("unchecked")
 	private double obtainInitialAmount() {
 		Iterator iter = ((LinkedList)this.details.getWrappedData()).iterator();
-		int detailSum = 0; 
+		double detailSum = 0; 
 		while(iter.hasNext()){
 			AccountInvoiceDetail detail = (AccountInvoiceDetail)iter.next();
 			detailSum += detail.getTotal();
 		}
 		Iterator financeIter  = ((LinkedList)this.finances.getWrappedData()).iterator();
-		int financeSum = 0;
+		double financeSum = 0;
 		while(financeIter.hasNext()){
 			Finance finance = (Finance)financeIter.next();
 			financeSum += finance.getAmount();
 		}
-		return detailSum - financeSum;
+		return round(detailSum - financeSum, 2);
 	}
 
 	@SuppressWarnings("unchecked")
@@ -788,4 +788,9 @@ public class AccountInvoiceController {
 		types.add(item);
 		return types;
 	}
+
+    private double round(double value, int precision) {
+        double decimal = Math.pow(10, precision);
+        return Math.round(decimal*value) / decimal;
+    }
 }
