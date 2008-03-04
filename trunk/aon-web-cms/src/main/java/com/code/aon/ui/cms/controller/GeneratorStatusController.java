@@ -20,7 +20,7 @@ public class GeneratorStatusController  {
 	}
 	
 	public void addMessage(String msg) {
-		status.add(GregorianCalendar.getInstance().getTime()+": "+msg);
+		status.add(0,GregorianCalendar.getInstance().getTime()+": "+msg);
 	}	
 	
 	private static String checkMem(String data) {
