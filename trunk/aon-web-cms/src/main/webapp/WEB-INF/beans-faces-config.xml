@@ -1269,6 +1269,13 @@
 		</managed-property>
 	</managed-bean>
 
+	<!-- ************** GENERATOR STATUS ************** -->
+	<managed-bean>
+		<managed-bean-name>generator_status</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.cms.controller.GeneratorStatusController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
+	
 	<!-- ************** PREVIEW ************** -->
 	<managed-bean>
 		<managed-bean-name>preview</managed-bean-name>

@@ -130,7 +130,18 @@
 				</aon:div>
 			</aon:div>
 		</aon:form>
-
+    <a4j:region>
+        <h:form>
+            <a4j:poll id="poll" interval="500" enabled="#{true}" reRender="poll,grid"/>
+        </h:form>
+    </a4j:region>
+	<h:form>
+        <h:panelGrid columns="2" width="80%" id="grid">
+	        <rich:dataList var="msg" value="#{generator_status.status}" rows="0">
+				<h:outputText value="#{msg}"/>
+			</rich:dataList>
+        </h:panelGrid>  
+    </h:form>    
 	</ui:define>
 </ui:composition>
 
