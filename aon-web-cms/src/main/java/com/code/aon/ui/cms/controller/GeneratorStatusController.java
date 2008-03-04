@@ -10,17 +10,28 @@ import javax.faces.event.ActionEvent;
 public class GeneratorStatusController  {
 
 	private List<String> status;
-	
+
+	private List<String> errors;
+
 	public void onInit(ActionEvent event){
 		status = new ArrayList<String>();
+		errors = new ArrayList<String>();
 	}
 	
 	public List<String> getStatus() {
 		return status;
 	}
 	
+	public List<String> getErrors() {
+		return errors;
+	}
+	
 	public void addMessage(String msg) {
 		status.add(0,GregorianCalendar.getInstance().getTime()+": "+msg);
+	}	
+	
+	public void addErrorMessage(String msg) {
+		errors.add(0,GregorianCalendar.getInstance().getTime()+": "+msg);
 	}	
 	
 	private static String checkMem(String data) {
