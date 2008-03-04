@@ -90,6 +90,16 @@
 								value="#{menuBundle.cms_document_gallery}"
 								action="document_list"
 								styleClass="aon-main-menu-leaf"/>
+							<aon:menuItem id="activity" 
+								value="#{menuBundle.cms_activity}"
+								actionListener="#{activity.onSearch}" 
+								action="activity_list"
+								styleClass="aon-main-menu-leaf"/>
+							<aon:menuItem id="company" 
+								value="#{menuBundle.cms_company}"
+								actionListener="#{company.onSearch}" 
+								action="company_list"
+								styleClass="aon-main-menu-leaf"/>
 							<!-- 
 							<aon:menuItem id="brand" value="#{menuBundle.cms_brand}"
 								actionListener="#{brand.onReset}" action="brand_list"
@@ -111,9 +121,11 @@
 							<aon:menuItem id="generator" value="#{menuBundle.cms_generate_pages}"
 								action="generator_form"
 								styleClass="aon-main-menu-leaf"/>
+							<!-- 
 							<aon:menuItem id="preview" value="#{menuBundle.cms_preview}"
 								actionListener="#{preview.onReset}" action="preview_form"
 								styleClass="aon-main-menu-leaf"/>
+							 -->
 						</aon:dropDownMenu>
 					</aon:menuBar>
 				</aon:form>

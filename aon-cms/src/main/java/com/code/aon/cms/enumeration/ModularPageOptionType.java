@@ -65,8 +65,13 @@ public enum ModularPageOptionType implements IResourceable {
 	/**
 	 * Link Category
 	 */
-	LINK_CATEGORY;
-	
+	LINK_CATEGORY,
+
+	/**
+	 * Link Category
+	 */
+	ACTIVITY;
+
 	/**
 	 * Ruta base del fichero de mensajes.
 	 */

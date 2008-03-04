@@ -78,6 +78,10 @@
 		<mapping class="com.code.aon.cms.ArticleDocument"/>
 		<mapping class="com.code.aon.cms.ArticleDocumentDetail"/>
 		<mapping class="com.code.aon.cms.DownloadConfig"/>
+		<mapping class="com.code.aon.cms.Company"/>
+		<mapping class="com.code.aon.cms.Activity"/>
+		<mapping class="com.code.aon.cms.ActivityDetail"/>
+		<mapping class="com.code.aon.cms.CompanyActivity"/>
 
 	</session-factory>
 

@@ -7,6 +7,7 @@ import java.util.Locale;
 import javax.faces.context.FacesContext;
 import javax.faces.model.SelectItem;
 
+import com.code.aon.cms.Activity;
 import com.code.aon.cms.Album;
 import com.code.aon.cms.AlbumCategory;
 import com.code.aon.cms.Article;
@@ -18,7 +19,6 @@ import com.code.aon.cms.DirectAccess;
 import com.code.aon.cms.DirectAccessGroup;
 import com.code.aon.cms.Download;
 import com.code.aon.cms.DownloadCategory;
-import com.code.aon.cms.DownloadDetail;
 import com.code.aon.cms.FaqCategory;
 import com.code.aon.cms.Footer;
 import com.code.aon.cms.GenericPage;
@@ -43,7 +43,6 @@ import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionException;
-import com.code.aon.ui.cms.velocity.BannerGenerator;
 import com.code.aon.ui.util.AonUtil;
 
 public class CollectionsController {
@@ -563,4 +562,21 @@ public class CollectionsController {
 			return checkParent(current,parent.getParent_());
 		return true;
 	}
+	
+	public List<SelectItem> getActivityList() throws ManagerBeanException {
+		List<SelectItem> activityList = new LinkedList<SelectItem>();
+		IManagerBean activityBean = BeanManager.getManagerBean(Activity.class);
+		Criteria criteria = new Criteria();
+		criteria.addOrder(activityBean.getFieldName(ICMSAlias.ACTIVITY_ALIAS));
+		List<ITransferObject> list = (List<ITransferObject>)activityBean.getList(criteria);
+		for (int i = 0; i < list.size(); i++) {
+			Activity a = (Activity)list.get(i);
+			int id = a.getId();
+			String name = a.getAlias();
+			SelectItem item = new SelectItem(id, name);
+			activityList.add(item);
+		}
+		return activityList;
+	}
+
 }
