@@ -71,6 +71,7 @@ public class GeneratorController extends BasicController implements Constants {
 			DownloadsGenerator.generate();
 		}
 
+		status.addMessage("¡¡¡¡¡ YOUR WEB IS DONE !!!!! ;-DDDD");
 	}
 
 	private boolean isLanguajePageToGenerate = true;
