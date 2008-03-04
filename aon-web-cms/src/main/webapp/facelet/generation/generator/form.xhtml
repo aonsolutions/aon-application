@@ -13,7 +13,7 @@
 <ui:composition template="/facelet/templates/aon.ui.content.xhtml">
 
 	<ui:define name="content">
-		<aon:form id="headerForm">
+		<aon:form id="generatorForm">
 		
 			<aon:div styleClass="aon-finding-title-toolbar">
 				<aon:panelGrid id="buttonsGrid" columns="3" dir="true" 
@@ -23,6 +23,7 @@
 					<aon:div styleClass="aon-finding-toolbar-item-group">
 						<aon:commandButton id="generate"
 							value="#{appBundle.aon_generate}" 
+							reRender="generatorForm"
 							actionListener="#{generator.onGenerate}" 
 							styleClass="aon-finding-toolbar-item aon-icon-accept" />
 						<aon:commandButton id="all"
