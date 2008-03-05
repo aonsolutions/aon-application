@@ -23,8 +23,8 @@
 								actionListener="#{config.onInit}" action="config_form"
 								styleClass="aon-main-menu-leaf"/>
 						</aon:dropDownMenu>
-						<aon:dropDownMenu id="content"
-							value="#{menuBundle.cms_content}" submitMode="ajax"
+						<aon:dropDownMenu id="structure"
+							value="#{menuBundle.cms_structure}" submitMode="ajax"
 							event="onclick">
 							<aon:menuItem id="menu" value="#{menuBundle.cms_menu}"
 								action="menu_list"
@@ -46,6 +46,22 @@
 								action="section_list"
 								actionListener="#{section.onSearch}"
 								styleClass="aon-main-menu-leaf"/>							
+						</aon:dropDownMenu>
+						<aon:dropDownMenu id="galleries"
+							value="#{menuBundle.cms_galleries}" submitMode="ajax"
+							event="onclick">
+							<aon:menuItem id="image_gallery" 
+								value="#{menuBundle.cms_image_gallery}"
+								action="gallery_list"
+								styleClass="aon-main-menu-leaf"/>
+							<aon:menuItem id="document_gallery" 
+								value="#{menuBundle.cms_document_gallery}"
+								action="document_list"
+								styleClass="aon-main-menu-leaf"/>
+						</aon:dropDownMenu>
+						<aon:dropDownMenu id="content"
+							value="#{menuBundle.cms_content}" submitMode="ajax"
+							event="onclick">
 							<aon:menuItem id="modular_page" value="#{menuBundle.cms_modular_page}"
 								action="modular_page_list"
 								actionListener="#{modular_page.onSearch}"
@@ -82,14 +98,6 @@
 								actionListener="#{direct_access_group.onSearch}" 
 								action="direct_access_group_list"
 								styleClass="aon-main-menu-leaf"/>
-							<aon:menuItem id="image_gallery" 
-								value="#{menuBundle.cms_image_gallery}"
-								action="gallery_list"
-								styleClass="aon-main-menu-leaf"/>
-							<aon:menuItem id="document_gallery" 
-								value="#{menuBundle.cms_document_gallery}"
-								action="document_list"
-								styleClass="aon-main-menu-leaf"/>
 							<aon:menuItem id="activity" 
 								value="#{menuBundle.cms_activity}"
 								actionListener="#{activity.onSearch}" 
@@ -122,11 +130,6 @@
 								action="generator_form"
 								actionListener="#{generator_status.onInit}"
 								styleClass="aon-main-menu-leaf"/>
-							<!-- 
-							<aon:menuItem id="preview" value="#{menuBundle.cms_preview}"
-								actionListener="#{preview.onReset}" action="preview_form"
-								styleClass="aon-main-menu-leaf"/>
-							 -->
 						</aon:dropDownMenu>
 					</aon:menuBar>
 				</aon:form>
