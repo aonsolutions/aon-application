@@ -143,10 +143,21 @@
 
 					<aon:outputLabel for="Company_logo" style="width:100px"
 						value="#{appBundle.company_logo}" />
-					<aon:inputText id="Company_logo"
-						size="90" maxlength="255"
-						value="#{company.to.logo}" />
-
+					<aon:panelGroup id="thumbnail_preview">
+						<aon:graphicImage 
+							url="#{company.to.logo}.thumbnail" 
+							alt="#{company.to.logo}"/>
+						<ui:include src="/facelet/content/utils/image_modal.xhtml">
+							<ui:param name="modalPanelName" value="mp" />
+							<ui:param name="roots" value="#{fileSystemBean.imageRoots}" />
+							<ui:param name="galleryBean" value="#{gallery}" />
+							<ui:param name="listenerBean" value="#{company}" />
+							<ui:param name="reRender" value="thumbnail_preview" />
+							<ui:param name="image" value="#{true}" />
+							<ui:param name="thumbnail" value="#{false}" />
+						</ui:include>
+		        	</aon:panelGroup>
+		        	
 				</aon:panelGrid>
 
 				<rich:panel id="detail_list_panel" rendered="#{!company.new}">
