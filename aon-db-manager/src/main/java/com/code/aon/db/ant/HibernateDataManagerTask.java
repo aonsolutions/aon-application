@@ -1,6 +1,7 @@
 package com.code.aon.db.ant;
 
 import java.io.File;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -118,7 +119,7 @@ public class HibernateDataManagerTask extends Task {
         	}
     	}
     	if (! includeEntities.isEmpty() ) {
-    		List<Class> entities = new ArrayList<Class>();
+    		List<Class<? extends Serializable>> entities = new ArrayList<Class<? extends Serializable>>();
     		for( Entity entity : includeEntities ) {
     			try {
 					Class _class = loader.loadClass(entity.getEntity());
@@ -130,7 +131,7 @@ public class HibernateDataManagerTask extends Task {
     		this.hdm.setIncludeEntities(entities);
     	}
     	if (! excludeEntities.isEmpty() ) {
-    		List<Class> entities = new ArrayList<Class>();
+    		List<Class<? extends Serializable>> entities = new ArrayList<Class<? extends Serializable>>();
     		for( Entity entity : excludeEntities ) {
     			try {
 					Class _class = loader.loadClass(entity.getEntity());

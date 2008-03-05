@@ -5,6 +5,7 @@ import java.io.FileInputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -16,6 +17,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
+import org.dom4j.Element;
 import org.dom4j.io.SAXReader;
 import org.hibernate.HibernateException;
 import org.hibernate.SessionFactory;
@@ -58,9 +60,9 @@ public class HibernateDataManager {
 	
 	private boolean insert;
 	
-	private List<Class> includeEntities;
+	private List<Class<? extends Serializable>> includeEntities;
 	
-	private List<Class> excludeEntities;
+	private List<Class<? extends Serializable>> excludeEntities;
 	
 	private AnnotationConfiguration importConfiguration;
 	
@@ -143,9 +145,9 @@ public class HibernateDataManager {
 		return new File( getDirectory(), name );
 	}
 	
-	public List<Class> getEntities() {
+	public List<Class<? extends Serializable>> getEntities() {
 		if ( includeEntities == null ) {
-			includeEntities = new ArrayList<Class>();
+			includeEntities = new ArrayList<Class<? extends Serializable>>();
 			Configuration cfg = ( isExportData() ? getExportConfiguration() : getImportConfiguration() );
 			Iterator i = cfg.getClassMappings();
 			while ( i.hasNext() ) {
@@ -159,11 +161,11 @@ public class HibernateDataManager {
 		return includeEntities;
 	}
 
-	public void setIncludeEntities(List<Class> entities) {
+	public void setIncludeEntities(List<Class<? extends Serializable>> entities) {
 		this.includeEntities = entities;
 	}
 
-	public void setExcludeEntities(List<Class> excludeEntities) {
+	public void setExcludeEntities(List<Class<? extends Serializable>> excludeEntities) {
 		this.excludeEntities = excludeEntities;
 	}
 
@@ -269,7 +271,7 @@ public class HibernateDataManager {
     }
     
     public void exportData() throws EntityProcessException {
-    	DBToXMLExporter exporter = new DBToXMLExporter( this, getEntityIterable() );
+    	DBToXMLExporter exporter = new DBToXMLExporter( this, getElementEntityIterable() );
     	for( Class entity : getEntities() ) {
     		exporter.proccess(entity);
     	}
@@ -315,13 +317,21 @@ public class HibernateDataManager {
     	}
     }
     
-    private ResultIterable<Object> getEntityIterable() {
-    	ResultIterable<Object> entityIterable = new ResultIterable<Object>();
+    private QueryIterable<Object> getEntityIterable() {
+    	QueryIterable<Object> entityIterable = new QueryIterable<Object>();
 		entityIterable.setMaxResults( getMaxExport() );
 		entityIterable.setSessionFactory( getExportFactory() );
     	return entityIterable;
     }
 
+    private QueryIterable<Element> getElementEntityIterable() {
+    	QueryIterable<Element> entityIterable = new QueryIterable<Element>();
+		entityIterable.setMaxResults( getMaxExport() );
+		entityIterable.setSessionFactory( getExportFactory() );
+		entityIterable.setAsElement(true);
+    	return entityIterable;
+    }
+    
     public void execute() throws EntityProcessException {
     	if ( isOnTheFly() ) {
     		importer = new OnTheFlyReplicator( this, getEntityIterable(), isInsert() );

@@ -12,7 +12,7 @@ public class OnTheFlyReplicator implements IEntityManager {
 	
 	private HibernateDataManager hdm;
 	
-	private IEntityIterable<Object> entityIterable;
+	private QueryIterable<Object> entityIterable;
 	
 	private Session session;
 	
@@ -20,7 +20,7 @@ public class OnTheFlyReplicator implements IEntityManager {
 	
 	private boolean insert;
 	
-	public OnTheFlyReplicator( HibernateDataManager hdm, IEntityIterable<Object> entityIterable, boolean insert ) {
+	public OnTheFlyReplicator( HibernateDataManager hdm, QueryIterable<Object> entityIterable, boolean insert ) {
 		this.hdm = hdm;
 		this.entityIterable = entityIterable;
 		this.insert = insert;

@@ -3,20 +3,23 @@ package com.code.aon.db;
 import java.util.Iterator;
 
 import org.apache.commons.lang.NotImplementedException;
-import org.hibernate.Session;
 
-public abstract class AbstractEntityGenerator<E> extends AbstractEntityIterable<E> {
+public abstract class AbstractEntityGenerator<E> implements IEntityGenerator<E> {
 
-	protected abstract Object nextObject();
-
+	private int maxResults;
+	
 	public Iterator<E> iterator() {
 		Iterator<E> it = new ResultIterator();
 		return it;
 	}
+
+	public int getMaxResults() {
+		return maxResults;
+	}
 	
 	@Override
-	public Session getSession() {
-		return null;
+	public void setMaxResults(int maxResults) {
+		this.maxResults = maxResults;
 	}
 
 	private class ResultIterator implements Iterator<E> {
@@ -28,7 +31,7 @@ public abstract class AbstractEntityGenerator<E> extends AbstractEntityIterable<
 		}
 
 		public E next() {
-			E element = (E) nextObject();
+			E element = nextObject();
 			index++;
 			return element;
 		}

@@ -7,30 +7,97 @@ import org.apache.commons.lang.NotImplementedException;
 import org.hibernate.Criteria;
 import org.hibernate.EntityMode;
 import org.hibernate.Session;
+import org.hibernate.SessionFactory;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Projections;
 import org.hibernate.metadata.ClassMetadata;
 
-public class ResultIterable<E> extends AbstractEntityIterable<E> {
+public class QueryIterable<E> implements Iterable<E> {
 
+	private int maxResults;
+	
+	private Class<?> entity;
+	
+	private boolean asElement;
+	
+	private SessionFactory sessionFactory;
+	
 	private Session session;
 	
+	private Session dom4jSession;
+	
 	private Criteria criteria;
+	
+	public QueryIterable() {
+		this.maxResults = HibernateDataManager.DEFAULT_MAX_EXPORT;
+	}
+	
+	private Class<?> getEntity() {
+		return entity;
+	}
+
+	public void setEntity(Class<?> entity) {
+		this.entity = entity;
+	}
+
+	private int getMaxResults() {
+		return maxResults;
+	}
+	
+	public void setMaxResults(int maxResults) {
+		this.maxResults = maxResults;
+	}
+
+	public void setAsElement(boolean asElement) {
+		this.asElement = asElement;
+	}
+	
+	private boolean isAsElement() {
+		return asElement;
+	}
 	
 	public Iterator<E> iterator() {
 		Iterator<E> it = new ResultIterator();
 		return it;
 	}
 	
-	public Session getSession() {
-		if ( session == null ) {
-			session = getSessionFactory().openSession();
+	public SessionFactory getSessionFactory() {
+		if ( sessionFactory != null ) {
+			return sessionFactory;
 		}
-		return session;
+		return session.getSessionFactory();
+	}
+
+	public void setSessionFactory(SessionFactory sessionFactory) {
+		this.sessionFactory = sessionFactory;
+	}
+
+	public Session getSession() {
+		if ( this.session == null ) {
+			this.session = getSessionFactory().openSession();
+		}
+		return this.session;
+	}
+	
+	public void setSession(Session session) {
+		this.session = session;
+	}
+	
+	private void clearSession() {
+		if ( dom4jSession != null ) {
+			dom4jSession.clear();
+		}
+		this.session.clear();
 	}
 
 	private void closeSession() {
-		this.session.close();
+		if ( dom4jSession != null ) {
+			dom4jSession.close();
+			dom4jSession = null;
+		}
+		if ( this.sessionFactory != null ) {
+			this.session = null;
+		}
 		this.session = null;
 		this.criteria = null;
 	}
@@ -44,7 +111,7 @@ public class ResultIterable<E> extends AbstractEntityIterable<E> {
 	private Criteria createCriteria() {
 		Criteria criteria = null;
 		if ( isAsElement() ) {
-			Session dom4jSession = getSession().getSession(EntityMode.DOM4J);
+			dom4jSession = getSession().getSession(EntityMode.DOM4J);
 			criteria = dom4jSession.createCriteria( getEntity() );
 		} else {
 			criteria = getSession().createCriteria( getEntity() );
@@ -61,13 +128,13 @@ public class ResultIterable<E> extends AbstractEntityIterable<E> {
 	
 	public int getCount() {
 		int result = 0;
-		this.criteria.setProjection(Projections.rowCount());
-		Object value = this.criteria.uniqueResult();
+		getCriteria().setProjection(Projections.rowCount());
+		Object value = getCriteria().uniqueResult();
 		if ( value != null ) {
 			result = ((Integer) value).intValue();
 		}
-		this.criteria.setProjection(null);
-		this.criteria.setResultTransformer(Criteria.ROOT_ENTITY);
+		getCriteria().setProjection(null);
+		getCriteria().setResultTransformer(Criteria.ROOT_ENTITY);
 		return result;
 	}
 	
@@ -83,6 +150,7 @@ public class ResultIterable<E> extends AbstractEntityIterable<E> {
 			updateResults();
 		}
 		
+		@SuppressWarnings("unchecked")
 		private void updateResults() {
 			updateCriteria();
 			results = getCriteria().list();
@@ -103,7 +171,7 @@ public class ResultIterable<E> extends AbstractEntityIterable<E> {
 						next = false;
 					} else {
 						offset += results.size();
-						closeSession();
+						clearSession();
 						updateResults();
 						next = (index != -1);
 					}
