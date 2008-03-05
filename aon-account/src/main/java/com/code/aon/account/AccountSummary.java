@@ -12,6 +12,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import com.code.aon.common.ITransferObject;
+import com.code.aon.common.enumeration.SecurityLevel;
 
 /**
  * TransferObject that represents an AccountEntryDetail.
@@ -28,6 +29,9 @@ public class AccountSummary implements ITransferObject {
 	
     /** The account. */
     private Account account;
+
+    /** The security level. */
+    private SecurityLevel securityLevel;
 
     /** The entry date. */
     private Date entryDate;
@@ -99,6 +103,25 @@ public class AccountSummary implements ITransferObject {
 	 */
 	public void setAccount(Account account) {
 		this.account = account;
+	}
+
+	/**
+	 * Gets the security level.
+	 * 
+	 * @return the security level
+	 */
+	@Column(name="security_level")
+	public SecurityLevel getSecurityLevel() {
+		return securityLevel;
+	}
+
+	/**
+	 * Sets the security level.
+	 * 
+	 * @param securityLevel the security level
+	 */
+	public void setSecurityLevel(SecurityLevel securityLevel) {
+		this.securityLevel = securityLevel;
 	}
 
     /**
