@@ -315,8 +315,8 @@ public class HibernateDataManager {
     	}
     }
     
-    private IEntityIterable<Object> getEntityIterable() {
-    	IEntityIterable<Object> entityIterable = new ResultIterable<Object>();
+    private ResultIterable<Object> getEntityIterable() {
+    	ResultIterable<Object> entityIterable = new ResultIterable<Object>();
 		entityIterable.setMaxResults( getMaxExport() );
 		entityIterable.setSessionFactory( getExportFactory() );
     	return entityIterable;

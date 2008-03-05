@@ -14,9 +14,9 @@ public class DBToXMLExporter implements IEntityManager {
 
 	private HibernateDataManager hdm;
 	
-	private IEntityIterable entityIterable;	
+	private ResultIterable entityIterable;	
 	
-	public DBToXMLExporter(HibernateDataManager hdm, IEntityIterable entityIterable ) {
+	public DBToXMLExporter(HibernateDataManager hdm, ResultIterable entityIterable ) {
 		this.hdm = hdm;
 		this.entityIterable = entityIterable;
 		this.entityIterable.setMaxResults( hdm.getMaxExport() );
@@ -42,6 +42,7 @@ public class DBToXMLExporter implements IEntityManager {
 		       
 			this.entityIterable.setEntity( entity );	        
 			this.entityIterable.setAsElement( true );
+			this.entityIterable.orderById();
 	        int counter = 0;
 	        for( Object element : entityIterable ) {
 	        	writer.write( element );

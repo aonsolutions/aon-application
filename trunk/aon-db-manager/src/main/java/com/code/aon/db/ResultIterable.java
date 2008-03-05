@@ -8,6 +8,7 @@ import org.hibernate.Criteria;
 import org.hibernate.EntityMode;
 import org.hibernate.Session;
 import org.hibernate.criterion.Order;
+import org.hibernate.criterion.Projections;
 import org.hibernate.metadata.ClassMetadata;
 
 public class ResultIterable<E> extends AbstractEntityIterable<E> {
@@ -34,7 +35,7 @@ public class ResultIterable<E> extends AbstractEntityIterable<E> {
 		this.criteria = null;
 	}
 
-	private void addOrder( Criteria criteria ) {
+	public void orderById() {
 		ClassMetadata cmd = getSessionFactory().getClassMetadata( getEntity() );
 		String id = cmd.getIdentifierPropertyName();
 		criteria.addOrder( Order.asc(id) );
@@ -48,7 +49,6 @@ public class ResultIterable<E> extends AbstractEntityIterable<E> {
 		} else {
 			criteria = getSession().createCriteria( getEntity() );
 		}
-		addOrder( criteria );
 		return criteria;
 	}
 	
@@ -57,6 +57,18 @@ public class ResultIterable<E> extends AbstractEntityIterable<E> {
 			criteria = createCriteria();
 		}
 		return criteria;
+	}
+	
+	public int getCount() {
+		int result = 0;
+		this.criteria.setProjection(Projections.rowCount());
+		Object value = this.criteria.uniqueResult();
+		if ( value != null ) {
+			result = ((Integer) value).intValue();
+		}
+		this.criteria.setProjection(null);
+		this.criteria.setResultTransformer(Criteria.ROOT_ENTITY);
+		return result;
 	}
 	
 	private class ResultIterator implements Iterator<E> {
