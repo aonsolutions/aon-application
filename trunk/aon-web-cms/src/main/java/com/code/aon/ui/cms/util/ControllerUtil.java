@@ -74,6 +74,28 @@ public class ControllerUtil implements Constants {
 		return path;
 	}	
 
+	public static String getCssTemplatePath() {
+		String path = null;
+		path = DOMAINS_PATH + "/" + getCurrentConfig().getDomain() + 
+									"/" + RESOURCE_PATH + 
+									"/" + APLICATION_NAME + 
+									"/" + TEMPLATE_PATH + 
+									"/" + getCurrentConfig().getTemplate() + 
+									"/" + CSS_PATH; 
+		return path;
+	}	
+
+	public static String getJsTemplatePath() {
+		String path = null;
+		path = DOMAINS_PATH + "/" + getCurrentConfig().getDomain() + 
+									"/" + RESOURCE_PATH + 
+									"/" + APLICATION_NAME + 
+									"/" + TEMPLATE_PATH + 
+									"/" + getCurrentConfig().getTemplate() + 
+									"/" + JS_PATH; 
+		return path;
+	}	
+
 	public static String getImagesPath() {
 		String path = null;
 		path = DOMAINS_PATH + "/" + getCurrentConfig().getDomain() + 
@@ -98,6 +120,20 @@ public class ControllerUtil implements Constants {
 									"/" + WEBSITE_PATH + 
 									"/" + getCurrentConfig().getPreviewUrl();
 		return path;
+	}
+
+	public static String getPreviewURL() {
+		String url = null;
+		url = "http://" + getCurrentConfig().getPreview_host() + 
+						"." + getCurrentConfig().getDomain(); 
+		return url;
+	}
+
+	public static String getWebURL() {
+		String url = null;
+		url = "http://" + getCurrentConfig().getHost() + 
+						"." + getCurrentConfig().getDomain(); 
+		return url;
 	}
 
 	public static String getLanguagePreviewPath() {
