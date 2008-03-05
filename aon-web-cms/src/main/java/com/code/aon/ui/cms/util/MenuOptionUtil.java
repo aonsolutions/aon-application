@@ -11,6 +11,7 @@ import com.code.aon.cms.Album;
 import com.code.aon.cms.AlbumCategory;
 import com.code.aon.cms.Article;
 import com.code.aon.cms.ArticleCategory;
+import com.code.aon.cms.DirectAccessDetail;
 import com.code.aon.cms.Download;
 import com.code.aon.cms.DownloadCategory;
 import com.code.aon.cms.DownloadDetail;
@@ -258,6 +259,24 @@ public class MenuOptionUtil {
 					GenericPageDetail gpd = (GenericPageDetail)ld.get(0);
 					String link = Templates.GENERIC.getHtmlName();
 					link = link.replaceAll("%NAME%", gpd.getGeneric_page().getAlias());
+					return link;
+				}
+			} catch (ManagerBeanException e) {
+				e.printStackTrace();
+			}
+			return null;
+		}
+		if (pageType == PageType.DIRECT_ACCESS) {
+			try {
+				IManagerBean directAccessBean = BeanManager.getManagerBean(DirectAccessDetail.class);
+				Criteria criteria_detail = new Criteria();
+				criteria_detail.addEqualExpression(directAccessBean.getFieldName(ICMSAlias.DIRECT_ACCESS_DETAIL_DIRECT_ACCESS_ID), ident);
+				criteria_detail.addEqualExpression(directAccessBean.getFieldName(ICMSAlias.DIRECT_ACCESS_DETAIL_LANGUAGE_ID), ControllerUtil.getCurrentLanguage().getId());
+				List<ITransferObject> ld = (List<ITransferObject>)directAccessBean.getList(criteria_detail);
+				if (ld.size() > 0) {
+					DirectAccessDetail obj = (DirectAccessDetail)ld.get(0);
+					String link = Templates.DIRECT_ACCESS.getHtmlName();
+					link = link.replaceAll("%NAME%", obj.getDirectAccess().getAlias());
 					return link;
 				}
 			} catch (ManagerBeanException e) {
