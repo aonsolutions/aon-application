@@ -1,6 +1,5 @@
 package com.code.aon.ui.cms.controller;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.GregorianCalendar;
 import java.util.List;
@@ -8,66 +7,97 @@ import java.util.List;
 import javax.faces.event.ActionEvent;
 
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.ui.cms.util.ControllerUtil;
 import com.code.aon.ui.cms.util.FTPUtil;
 
 
 public class GeneratorStatusController  {
 
 	private boolean generated = false;
-	
+
+	private boolean generatedOk = false;
+
 	private boolean activePoll = false;
-	
+
+	private boolean published = false;
+
 	private List<String> status;
 
 	private List<String> errors;
 
 	public void onInit(ActionEvent event){
-		generated = false;
-		activePoll = true;
-		status = new ArrayList<String>();
-		errors = new ArrayList<String>();
+		this.generated = false;
+		this.generatedOk = false;
+		this.published = false;
+		this.activePoll = true;
+		this.status = new ArrayList<String>();
+		this.errors = new ArrayList<String>();
 	}
 	
 	public List<String> getStatus() {
-		return status;
+		return this.status;
 	}
 	
 	public List<String> getErrors() {
-		return errors;
+		return this.errors;
 	}
 	
 	public void addMessage(String msg) {
-		status.add(0,GregorianCalendar.getInstance().getTime()+": "+msg);
+		this.status.add(0,GregorianCalendar.getInstance().getTime()+": "+msg);
 	}	
 	
 	public void addErrorMessage(String msg) {
-		errors.add(0,GregorianCalendar.getInstance().getTime()+": "+msg);
+		this.errors.add(0,GregorianCalendar.getInstance().getTime()+": "+msg);
 	}	
 
 	public boolean isActivePoll() {
-		return activePoll;
+		return this.activePoll;
 	}
 
 	public boolean isCorrect() {
-		return errors.size()==0;
+		return this.generatedOk;
 	}
 
 	public boolean isGenerated() {
-		return generated;
+		return this.generated;
+	}
+
+	public boolean isPublished() {
+		return this.published;
 	}
 
 	public void finalized() {
 		this.generated = true;
+		if (this.errors.size()==0)
+			this.generatedOk = true;
 		this.activePoll = false;
 	}
 
-	public void onPublish(ActionEvent event) throws ManagerBeanException {
-		try {
-			FTPUtil.uploadFTP();
-		}
-		catch (IOException e) {}
+	public void onActivePoll(ActionEvent event){
+		this.activePoll = true;
 	}
 
+	public void onPublish(ActionEvent event) throws ManagerBeanException {
+		this.activePoll = true;
+		this.status = new ArrayList<String>();
+		this.errors = new ArrayList<String>();
+		try {
+			if (FTPUtil.uploadFTP())
+				this.published = true;
+		}catch (Exception e) {
+		}finally{
+			this.activePoll = false;
+		}
+	}
+
+	public String getPreviewURL() {
+		return ControllerUtil.getPreviewURL();
+	}
+
+	public String getWebURL() {
+		return ControllerUtil.getWebURL();
+	}
+	
 	private static String checkMem(String data) {
 		long freeMemory = Runtime.getRuntime().freeMemory();
 		long totalMemory = Runtime.getRuntime().totalMemory();
