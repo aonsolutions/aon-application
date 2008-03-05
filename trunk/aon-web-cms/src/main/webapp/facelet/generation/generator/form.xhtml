@@ -149,7 +149,7 @@
 		</aon:form>
 	    <a4j:region>
 	        <h:form>
-	            <a4j:poll id="poll" interval="2000" enabled="#{true}" reRender="poll,grid,grid_errors"/>
+	            <a4j:poll id="poll" interval="2000" enabled="#{generator_status.activePoll}" reRender="poll,grid,grid_errors"/>
 	        </h:form>
 	    </a4j:region>
 		<h:form>
