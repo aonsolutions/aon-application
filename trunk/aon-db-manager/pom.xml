@@ -37,7 +37,8 @@
 		<dependency>
 			<groupId>org.hibernate</groupId>
 			<artifactId>hibernate</artifactId>
-			<version>3.2.5.ga</version>
+			<version>3.2.4.sp1</version>
+			<scope>compile</scope>
 			<exclusions>
 				<exclusion>
 					<groupId>commons-logging</groupId>
@@ -49,6 +50,7 @@
 			<groupId>org.hibernate</groupId>
 			<artifactId>hibernate-annotations</artifactId>
 			<version>3.3.0.ga</version>
+			<scope>compile</scope>
 			<exclusions>
 				<exclusion>
 					<groupId>org.hibernate</groupId>

@@ -14,6 +14,8 @@ public class ResultIterable<E> extends AbstractEntityIterable<E> {
 
 	private Session session;
 	
+	private Criteria criteria;
+	
 	public Iterator<E> iterator() {
 		Iterator<E> it = new ResultIterator();
 		return it;
@@ -27,8 +29,34 @@ public class ResultIterable<E> extends AbstractEntityIterable<E> {
 	}
 
 	private void closeSession() {
-		session.close();
-		session = null;
+		this.session.close();
+		this.session = null;
+		this.criteria = null;
+	}
+
+	private void addOrder( Criteria criteria ) {
+		ClassMetadata cmd = getSessionFactory().getClassMetadata( getEntity() );
+		String id = cmd.getIdentifierPropertyName();
+		criteria.addOrder( Order.asc(id) );
+	}
+	
+	private Criteria createCriteria() {
+		Criteria criteria = null;
+		if ( isAsElement() ) {
+			Session dom4jSession = getSession().getSession(EntityMode.DOM4J);
+			criteria = dom4jSession.createCriteria( getEntity() );
+		} else {
+			criteria = getSession().createCriteria( getEntity() );
+		}
+		addOrder( criteria );
+		return criteria;
+	}
+	
+	public Criteria getCriteria() {
+		if ( criteria == null ) {
+			criteria = createCriteria();
+		}
+		return criteria;
 	}
 	
 	private class ResultIterator implements Iterator<E> {
@@ -44,28 +72,14 @@ public class ResultIterable<E> extends AbstractEntityIterable<E> {
 		}
 		
 		private void updateResults() {
-			results = createCriteria().list();
+			updateCriteria();
+			results = getCriteria().list();
 			index = ( results.size() == 0 ) ? -1 : 0;
 		}
 		
-		private void addOrder( Criteria criteria ) {
-			ClassMetadata cmd = getSessionFactory().getClassMetadata( getEntity() );
-			String id = cmd.getIdentifierPropertyName();
-			criteria.addOrder( Order.asc(id) );
-		}
-		
-		private Criteria createCriteria() {
-			Criteria criteria = null;
-			if ( isAsElement() ) {
-				Session dom4jSession = getSession().getSession(EntityMode.DOM4J);
-				criteria = dom4jSession.createCriteria( getEntity() );
-			} else {
-				criteria = getSession().createCriteria( getEntity() );
-			}
-			criteria.setFirstResult( offset );
-			criteria.setMaxResults( getMaxResults() );
-			addOrder( criteria );
-			return criteria;
+		private void updateCriteria() {
+			getCriteria().setMaxResults( getMaxResults() );			
+			getCriteria().setFirstResult( offset );
 		}
 		
 		public boolean hasNext() {
@@ -76,8 +90,8 @@ public class ResultIterable<E> extends AbstractEntityIterable<E> {
 					if ( this.index < getMaxResults() ) {
 						next = false;
 					} else {
-						closeSession();
 						offset += results.size();
+						closeSession();
 						updateResults();
 						next = (index != -1);
 					}
