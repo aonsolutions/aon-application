@@ -12,7 +12,7 @@ public class TreeCmsStateAdvisor implements TreeStateAdvisor {
 		if (!PostbackPhaseListener.isPostback()) {
 			Object key = tree.getRowKey();
 			TreeRowKey treeRowKey = (TreeRowKey) key;
-			if (treeRowKey == null || treeRowKey.depth() <= 2) {
+			if (treeRowKey == null) {
 				return Boolean.TRUE;
 			}
 		}
