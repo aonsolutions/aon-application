@@ -1,5 +1,6 @@
 package com.code.aon.ui.cms.controller;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.GregorianCalendar;
 import java.util.List;
@@ -61,7 +62,10 @@ public class GeneratorStatusController  {
 	}
 
 	public void onPublish(ActionEvent event) throws ManagerBeanException {
-		FTPUtil.uploadFTP();
+		try {
+			FTPUtil.uploadFTP();
+		}
+		catch (IOException e) {}
 	}
 
 	private static String checkMem(String data) {
