@@ -256,6 +256,12 @@ public interface IAccountAlias {
 	*/
 	String  ACCOUNT_SUMMARY_ID = ACCOUNT_SUMMARY_ENTRY.getAliasNames()[6];
 
+	/** 
+	* Alias value: AccountSummary_securityLevel
+	* Hibernate value: AccountSummary.securityLevel
+	*/
+	String  ACCOUNT_SUMMARY_SECURITY_LEVEL = ACCOUNT_SUMMARY_ENTRY.getAliasNames()[7];
+
 
 
 	/** 
@@ -395,5 +401,6 @@ public interface IAccountAlias {
 	* Hibernate value: Leasing.term
 	*/
 	String  LEASING_TERM = LEASING_ENTRY.getAliasNames()[11];
+
 
 }
