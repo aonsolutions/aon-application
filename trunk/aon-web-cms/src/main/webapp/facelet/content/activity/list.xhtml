@@ -4,8 +4,9 @@
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:c="http://java.sun.com/jstl/core"
 	xmlns:rich="http://richfaces.org/rich"
-	xmlns:c="http://java.sun.com/jstl/core">
+	xmlns:a4j="http://richfaces.org/a4j">
 <body>
 
 <ui:composition template="/facelet/templates/aon.ui.content.xhtml">
@@ -49,18 +50,18 @@
 							actionListener="#{activity.onCancel}"
 							accesskey="#{bundle.aon_key_cancel}" />
 						<aon:confirmButton id="remove" value="#{bundle.aon_remove}"
-							rendered="#{activity.to!=null and !activity.new}"
+							rendered="#{!activity.checklistEmpty}"
 							reRender="dataTable, gridToolbar"
 							styleClass="aon-finding-toolbar-item aon-icon-delete"
 							immediate="true" confirmTitle="Confirmation Dialog"
 							confirmMessage="#{bundle.aon_remove_confirm}"
-							confirmActionListener="#{activity.onRemove}"
+							confirmActionListener="#{activity.onRemoveSelected}"
 							accesskey="#{bundle.aon_key_remove}" />
 					</aon:div>
 				</aon:panelGrid>
 			</aon:div>
 
-			<aon:div styleClass="aon-scroll-area">
+			<aon:div id="parent_" styleClass="aon-scroll-area">
 				<h:dataTable id="dataTable"
 					value="#{activity.model}" var="to" rows="20"
 					styleClass="dr-table rich-table aon-editDataTable"
@@ -75,14 +76,17 @@
 
 					<aon:column>
 						<f:facet name="header">
-							<aon:outputText value="&#160;" />
+							<aon:div>
+								<aon:outputText value="#{bundle.aon_check}" />
+							</aon:div>	
 						</f:facet>
 						<aon:outputText value="&#160;" rendered="#{to==activity.to}" />
-						<h:commandButton rendered="#{to!=activity.to}"
-							styleClass="aon-editDataTable-button aon-icon-rowSelector"
-							actionListener="#{activity.onSelect}" value="" immediate="true"
-							reRender="dataTable,gridToolbar">
-						</h:commandButton>
+						<aon:selectBooleanCheckbox id="Row_checked"
+								value="#{activity.rowChecked}">
+								<a4j:support 
+									event="onclick"  
+									reRender="dataTable,gridToolbar" />
+						</aon:selectBooleanCheckbox>
 						<f:facet name="footer">
 							<aon:div>
 								<h:commandButton id="reset"
@@ -103,15 +107,21 @@
 							<aon:outputText value="#{appBundle.activity_alias}" />
 						</f:facet>
 						<aon:outputText value="#{to.alias}"
-							rendered="#{to!=activity.to}" />
+							rendered="#{to!=activity.to}" 
+							styleClass="aon-editDataTable-button">
+							<a4j:support 
+								action="activity_list"
+								actionListener="#{activity.onSelect}"
+								event="onclick" />
+						</aon:outputText>	
 						<aon:inputText value="#{to.alias}"
 							rendered="#{to==activity.to}"
-							required="#{true}" size="6" maxlength="6" />
+							required="#{true}" size="30" maxlength="6" />
 						<f:facet name="footer">
 							<aon:div>
 								<aon:inputText value="#{activity.to.alias}"
 									rendered="#{activity.new}"
-									required="#{true}" size="6" maxlength="6" />
+									required="#{true}" size="30" maxlength="6" />
 							</aon:div>
 						</f:facet>
 					</aon:column>
@@ -121,15 +131,21 @@
 							<aon:outputText value="#{appBundle.activity_description}" />
 						</f:facet>
 						<aon:outputText value="#{activity.i18nDescription}"
-							rendered="#{to!=activity.to}" />
+							rendered="#{to!=activity.to}" 
+							styleClass="aon-editDataTable-button">
+							<a4j:support 
+								action="activity_list"
+								actionListener="#{activity.onSelect}"
+								event="onclick" />
+						</aon:outputText>	
 						<aon:inputText value="#{activity.toI18n.description}"
 							rendered="#{to==activity.to}"
-							required="#{true}" size="64" maxlength="64" />
+							required="#{true}" size="70" maxlength="64" />
 						<f:facet name="footer">
 							<aon:div>
 								<aon:inputText value="#{activity.toI18n.description}"
 									rendered="#{activity.new}"
-									required="#{true}" size="64" maxlength="64" />
+									required="#{true}" size="70" maxlength="64" />
 							</aon:div>
 						</f:facet>
 					</aon:column>
