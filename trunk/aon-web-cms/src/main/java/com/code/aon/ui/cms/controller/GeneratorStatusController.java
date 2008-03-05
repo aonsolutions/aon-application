@@ -6,14 +6,20 @@ import java.util.List;
 
 import javax.faces.event.ActionEvent;
 
+import com.code.aon.common.ManagerBeanException;
+import com.code.aon.ui.cms.util.FTPUtil;
+
 
 public class GeneratorStatusController  {
 
+	private boolean generated = false;
+	
 	private List<String> status;
 
 	private List<String> errors;
 
 	public void onInit(ActionEvent event){
+		generated = false;
 		status = new ArrayList<String>();
 		errors = new ArrayList<String>();
 	}
@@ -33,7 +39,24 @@ public class GeneratorStatusController  {
 	public void addErrorMessage(String msg) {
 		errors.add(0,GregorianCalendar.getInstance().getTime()+": "+msg);
 	}	
-	
+
+	public boolean isCorrect() {
+		return errors.size()==0;
+	}
+
+	public boolean isGenerated() {
+		return generated;
+	}
+
+	public void finalized() {
+		this.generated = true;
+	}
+
+	public void onPublish(ActionEvent event) throws ManagerBeanException {
+		System.out.println(">>>>>>>>>>>>>> PUBLISHING...");
+		FTPUtil.uploadFTP();
+	}
+
 	private static String checkMem(String data) {
 		long freeMemory = Runtime.getRuntime().freeMemory();
 		long totalMemory = Runtime.getRuntime().totalMemory();
