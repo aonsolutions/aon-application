@@ -97,7 +97,14 @@
 								actionListener="#{article_category.onSelect}"
 								event="onclick" />
 							<f:facet name="header">
-								<aon:outputText value="#{appBundle.article_category_alias}" />
+								<aon:div>
+									<h:commandButton id="alias_order" value=""
+										styleClass="aon-finding-toolbar-item aon-icon-search"
+										action="article_category_list"
+										actionListener="#{article_category.onAliasOrdered}">
+										<aon:outputText value="#{appBundle.article_category_alias}" />
+									</h:commandButton>
+								</aon:div>
 							</f:facet>
 							<aon:outputText value="#{to.alias}" styleClass="aon-editDataTable-button"/>
 						</aon:column>
@@ -136,18 +143,26 @@
 
 						<aon:column>
 							<f:facet name="header">
-								<aon:outputText for="ArticleCategory_position" 
-									value="#{appBundle.article_category_position}" />
+								<aon:div>
+									<h:commandButton id="position_order" value=""
+										action="article_category_list"
+										styleClass="aon-finding-toolbar-item aon-icon-search"
+										actionListener="#{article_category.onPosition}">
+										<aon:outputText value="#{appBundle.article_category_position}" />
+									</h:commandButton>
+								</aon:div>
 							</f:facet>
+							<aon:outputText value="&nbsp;" 
+								rendered="#{!article_category.positionOrdered}"/>
 							<h:commandButton id="moveUp" 
 								reRender="dataTable"
 								actionListener="#{article_category.onMoveUp}" 
-								rendered="#{to.position != 0}"
+								rendered="#{to.position != 0 and article_category.positionOrdered}"
 								image="/images/cms/up.gif" styleClass="aon-icon-commandButton" />
 							<h:commandButton id="moveDown"
 								reRender="dataTable" 
 								actionListener="#{article_category.onMoveDown}"
-								rendered="#{to.position &lt; (article_category.model.rowCount - 1)}"
+								rendered="#{to.position &lt; (article_category.model.rowCount - 1) and article_category.positionOrdered}"
 								image="/images/cms/down.gif" styleClass="aon-icon-commandButton" />
 						</aon:column>
 

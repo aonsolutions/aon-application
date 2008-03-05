@@ -128,4 +128,31 @@ public class ArticleCategoryController extends BasicI18nController {
 		}
 	}
 
+	// ORDER ALIAS
+	private boolean positionOrdered = true;
+	
+	public boolean isPositionOrdered() {
+		return positionOrdered;
+	}
+
+	public void onAliasOrdered(ActionEvent event) throws ManagerBeanException, ExpressionException {
+		Criteria criteria = new Criteria();
+		IManagerBean bean = BeanManager.getManagerBean(ArticleCategory.class);
+		criteria.addOrder(bean.getFieldName(ICMSAlias.ARTICLE_CATEGORY_ACTIVE));
+		criteria.addOrder(bean.getFieldName(ICMSAlias.ARTICLE_CATEGORY_ALIAS));
+		this.setCriteria(criteria);
+		this.onSearch(event);
+		positionOrdered = false;
+	}
+	
+	public void onPosition(ActionEvent event) throws ManagerBeanException, ExpressionException {
+		Criteria criteria = new Criteria();
+		IManagerBean bean = BeanManager.getManagerBean(ArticleCategory.class);
+		criteria.addOrder(bean.getFieldName(ICMSAlias.ARTICLE_CATEGORY_POSITION));
+		this.setCriteria(criteria);
+		this.onSearch(event);
+		positionOrdered = true;
+	}
+	// END ORDER ALIAS
+	
 }
