@@ -9,6 +9,7 @@ import org.apache.commons.net.ftp.FTPFile;
 
 import com.code.aon.cms.Config;
 import com.code.aon.common.AonException;
+import com.code.aon.ui.cms.controller.GeneratorStatusController;
 import com.code.aon.ui.util.AonUtil;
 
 public class FTPUtil {
@@ -17,7 +18,10 @@ public class FTPUtil {
 
 	@SuppressWarnings({ "finally", "finally" })
 	public static boolean uploadFTP() throws IOException {
-		boolean error = false;
+		GeneratorStatusController status = (GeneratorStatusController)AonUtil.getRegisteredBean("generator_status");
+		status.addMessage("FTP>>>>>>>>>>>>>>>>>>>>>> Connecting....");
+		
+		boolean error = true;
 		config = ControllerUtil.getCurrentConfig();
 		String server = config.getFtp_server();
 		String user = config.getFtp_user();
@@ -29,44 +33,44 @@ public class FTPUtil {
 		try {
 			ftp.connect(server);
 			if (ftp.getReplyCode() >= 500) {
-				AonUtil.addErrorMessage(ftp.getReplyString());
+				status.addErrorMessage(ftp.getReplyString());
 				throw new AonException();
 			}
-			else System.out.println("FTP>>>>>>>>>>>>>>>>>>>>>> " + ftp.getReplyString());
+			else status.addMessage("FTP>>>>>>>>>>>>>>>>>>>>>> " + ftp.getReplyString());
 			ftp.login(user, password);
 			if (ftp.getReplyCode() >= 500) {
-				AonUtil.addErrorMessage(ftp.getReplyString());
+				status.addErrorMessage(ftp.getReplyString());
 				throw new AonException();
 			}
-			else System.out.println("FTP>>>>>>>>>>>>>>>>>>>>>> " + ftp.getReplyString());
+			else status.addMessage("FTP>>>>>>>>>>>>>>>>>>>>>> " + ftp.getReplyString());
 
-			System.out.println("FTP>>>>>>>>>>>>>>>>>>>>>> Connected to server");
+			status.addMessage("FTP>>>>>>>>>>>>>>>>>>>>>> Connected to server");
 			ftp.changeWorkingDirectory(destinationFolder);
-			System.out.println("FTP>>>>>>>>>>>>>>>>>>>>>> " + ftp.getReplyString());
-			System.out.println("FTP>>>>>>>>>>>>>>>>>>>>>> " + ftp.getSystemName());
-			System.out.println("FTP>>>>>>>>>>>>>>>>>>>>>> " + ftp.printWorkingDirectory());
+			status.addMessage("FTP>>>>>>>>>>>>>>>>>>>>>> " + ftp.getReplyString());
+			status.addMessage("FTP>>>>>>>>>>>>>>>>>>>>>> " + ftp.getSystemName());
+			status.addMessage("FTP>>>>>>>>>>>>>>>>>>>>>> " + ftp.printWorkingDirectory());
 			ftp.setFileType(FTPClient.BINARY_FILE_TYPE);
 			if (ftp.isConnected()) {
 				FTPFile files[] = ftp.listFiles();
 				if (files.length > 0) {
 					if (!files[0].hasPermission(FTPFile.USER_ACCESS, FTPFile.WRITE_PERMISSION) ) {
-						System.out.println("FTP ERROR>>>>>>>>>>>>>>>>>>>>>> Error de escritura en el servidor.");
+						status.addMessage("FTP ERROR>>>>>>>>>>>>>>>>>>>>>> Error de escritura en el servidor.");
 					}
 				}
 				ftpDir(sourceFolder, ftp, destinationFolder);
 			}
 			else {
-				System.out.println("FTP ERROR>>>>>>>>>>>>>>>>>>>>>> No hubo conexion con el servidor.");
-				error = true;
+				status.addMessage("FTP ERROR>>>>>>>>>>>>>>>>>>>>>> No hubo conexion con el servidor.");
+				error = false;
 			}
 		} catch (Exception e) {
-			AonUtil.addErrorMessage("FTP Error. Se produjo un error durante la conexion al FTP, si el error persite consulte con su administrador.");
-			error = true;
+			status.addErrorMessage("FTP Error. Se produjo un error durante la conexion al FTP, si el error persite consulte con su administrador.");
+			error = false;
 		} finally {
 			ftp.logout();
-			System.out.println("FTP>>>>>>>>>>>>>>>>>>>>>> Logout.");
+			status.addMessage("FTP>>>>>>>>>>>>>>>>>>>>>> Logout.");
 			ftp.disconnect();
-			System.out.println("FTP>>>>>>>>>>>>>>>>>>>>>> Diconnected.");
+			status.addMessage("FTP>>>>>>>>>>>>>>>>>>>>>> Diconnected.");
 			return error;
 		}
 		
@@ -75,13 +79,14 @@ public class FTPUtil {
 	public static String invalidFolder[] = {"ckfinder", "_thumbs"};
 	
 	public static void ftpDir(String dir2ftp, FTPClient fc, String breadCrum) {
+		GeneratorStatusController status = (GeneratorStatusController)AonUtil.getRegisteredBean("generator_status");
 		try {
 			File ftpDir = new File(dir2ftp);
 			String[] dirList = ftpDir.list();
 			for (int i = 0; i < dirList.length; i++) {
 				File f = new File(ftpDir, dirList[i]);
 				if (!f.getName().equals(config.getDomain() + ".zip")) {
-					System.out.println("FTP>>>>>>>>>>>>>>>>>>>>>> Name: " + breadCrum + "/" + f.getName());
+					status.addMessage("FTP>>>>>>>>>>>>>>>>>>>>>> Name: " + breadCrum + "/" + f.getName());
 					if (f.isDirectory()) {
 						if (isValidFolder(f.getName())) { 
 							fc.makeDirectory(breadCrum + "/" + f.getName());
