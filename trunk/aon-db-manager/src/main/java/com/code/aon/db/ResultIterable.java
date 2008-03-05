@@ -38,7 +38,7 @@ public class ResultIterable<E> extends AbstractEntityIterable<E> {
 	public void orderById() {
 		ClassMetadata cmd = getSessionFactory().getClassMetadata( getEntity() );
 		String id = cmd.getIdentifierPropertyName();
-		criteria.addOrder( Order.asc(id) );
+		getCriteria().addOrder( Order.asc(id) );
 	}
 	
 	private Criteria createCriteria() {
