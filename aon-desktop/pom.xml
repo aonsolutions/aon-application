@@ -40,6 +40,14 @@
 					<groupId>com.code.aon</groupId>
 					<artifactId>aon.ui.planner</artifactId>
 				</exclusion>
+				<exclusion>
+					<groupId>com.code.aon</groupId>
+					<artifactId>aon.planner</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>com.code.aon</groupId>
+					<artifactId>aon.calendar</artifactId>
+				</exclusion>
 			</exclusions>
 		</dependency>
 		<dependency>
