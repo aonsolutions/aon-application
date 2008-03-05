@@ -16,6 +16,7 @@ import org.hibernate.Query;
 import org.hibernate.Session;
 
 import com.code.aon.common.dao.hibernate.HibernateUtil;
+import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.ui.account.report.resources.ProfitAndLossMonthly;
 import com.code.aon.ui.account.report.resources.ProfitAndLossMonthlySummary;
 import com.code.aon.ui.account.report.resources.ProfitAndLossSummary;
@@ -26,6 +27,7 @@ public class AccountSummaryReportController extends BasicController {
     private String period;
     private Date fromDate;
 	private Date toDate;
+	private SecurityLevel securityLevel;
 	
 	@SuppressWarnings("unchecked")
 	private Collection grossMarginSummaryCollection;
@@ -57,6 +59,14 @@ public class AccountSummaryReportController extends BasicController {
 
 	public void setToDate(Date toDate) {
 		this.toDate = toDate;
+	}
+
+	public SecurityLevel getSecurityLevel() {
+		return securityLevel;
+	}
+
+	public void setSecurityLevel(SecurityLevel securityLevel) {
+		this.securityLevel = securityLevel;
 	}
 
 	@SuppressWarnings("unchecked")
@@ -123,6 +133,7 @@ public class AccountSummaryReportController extends BasicController {
                         "where account.id = substring(summary.account.id,1,3) " +
                         "and (summary.account.id like '60%' or summary.account.id like '7%') " +
                         "and summary.accountPeriod = '" + getPeriod() + "' ";
+        select += (getSecurityLevel() != null) ? "and summary.securityLevel = " + getSecurityLevel().ordinal() + " " : "";
         select += (getFromDate() != null) ? "and summary.entryDate >= '" + formatter.format(getFromDate()) + "' " : "";
         select += (getToDate() != null) ? "and summary.entryDate <= '" + formatter.format(getToDate()) + "' " : "";
         select += "group by substring(summary.account.id,1,3) ";
@@ -158,6 +169,7 @@ public class AccountSummaryReportController extends BasicController {
                         "where account.id = substring(summary.account.id,1,3) " +
                         "and (summary.account.id >= '610' and summary.account.id < '7') " +
                         "and summary.accountPeriod = '" + getPeriod() + "' ";
+        select += (getSecurityLevel() != null) ? "and summary.securityLevel = " + getSecurityLevel().ordinal() + " " : "";
         select += (getFromDate() != null) ? "and summary.entryDate >= '" + formatter.format(getFromDate()) + "' " : "";
         select += (getToDate() != null) ? "and summary.entryDate <= '" + formatter.format(getToDate()) + "' " : "";
         select += "group by substring(summary.account.id,1,3) ";
@@ -201,6 +213,7 @@ public class AccountSummaryReportController extends BasicController {
                         "where account.id = substring(summary.account.id,1,3) " +
                         "and (summary.account.id like '6%' or summary.account.id like '7%') " +
                         "and summary.accountPeriod = '" + getPeriod() + "' ";
+        select += (getSecurityLevel() != null) ? "and summary.securityLevel = " + getSecurityLevel().ordinal() + " " : "";
         select += (getFromDate() != null) ? "and summary.entryDate >= '" + formatter.format(getFromDate()) + "' " : "";
         select += (getToDate() != null) ? "and summary.entryDate <= '" + formatter.format(getToDate()) + "' " : "";
         select += "group by substring(summary.account.id,1,3), summary.entryMonth ";

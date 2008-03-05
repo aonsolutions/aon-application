@@ -83,6 +83,16 @@
 								popupTodayString="#{bundle.aon_popup_today}"
 								popupWeekString="#{bundle.aon_popup_week}" />
 						</h:panelGrid>
+
+						<t:outputLabel for="AccountEntryDetail_accountEntry_securityLevel"
+							styleClass="aon-form-selectOneMenu-label"
+							value="#{accountBundle.aon_account_security_level}" />
+						<h:selectOneMenu id="AccountEntryDetail_accountEntry_securityLevel"
+							styleClass="aon-form-selectOneMenu-field"
+							value="#{accountSummaryReport.securityLevel}">
+							<f:selectItem itemValue="" itemLabel=" " />
+							<f:selectItems value="#{accountCollections.securityLevels}" />
+						</h:selectOneMenu>
 					</h:panelGrid>
 				</t:div>
 			</t:div>
