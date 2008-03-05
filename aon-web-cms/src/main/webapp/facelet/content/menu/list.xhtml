@@ -28,7 +28,7 @@
 					
 				<!-- start toolbar navigation -->
 				<aon:div styleClass="aon-finding-toolbar-item-group">					
-					<aon:commandButton id="reset" value="#{bundle.aon_reset}"
+					<h:commandButton id="reset" value="#{bundle.aon_reset}"
 						action="menu_form"
 						actionListener="#{menu.onReset}"
 						styleClass="aon-finding-toolbar-item aon-icon-reset"
@@ -62,22 +62,22 @@
 					
 				<!-- start toolbar navigation -->
 				<aon:div styleClass="aon-finding-toolbar-item-group">					
-					<aon:commandButton id="tab_0" 
+					<h:commandButton id="tab_0" 
 						value="#{appBundle.menu_sidebar}"
 						styleClass="aon-finding-toolbar-item"
 						reRender="dataTable,parentGrid"
 						actionListener="#{menu.onTab0}" />
-					<aon:commandButton id="tab_1" 
+					<h:commandButton id="tab_1" 
 						value="#{appBundle.menu_top}"
 						styleClass="aon-finding-toolbar-item"
 						reRender="dataTable,parentGrid"
 						actionListener="#{menu.onTab1}" />
-					<aon:commandButton id="tab_2" 
+					<h:commandButton id="tab_2" 
 						value="#{appBundle.menu_foot}"
 						styleClass="aon-finding-toolbar-item"
 						reRender="dataTable,parentGrid"
 						actionListener="#{menu.onTab2}" />
-					<aon:commandButton id="tab_3" 
+					<h:commandButton id="tab_3" 
 						value="#{appBundle.menu_inner}"
 						styleClass="aon-finding-toolbar-item"
 						reRender="dataTable,parentGrid"

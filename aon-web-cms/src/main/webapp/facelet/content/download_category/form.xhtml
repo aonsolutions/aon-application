@@ -28,19 +28,19 @@
 						
 					<!-- start toolbar navigation -->
 					<aon:div styleClass="aon-finding-toolbar-item-group">					
-						<aon:commandButton id="reset" value="#{bundle.aon_reset}"
+						<h:commandButton id="reset" value="#{bundle.aon_reset}"
 							action="download_category_form"
 							actionListener="#{download_category.onReset}"
 							styleClass="aon-finding-toolbar-item aon-icon-reset"
 							accesskey="#{bundle.aon_key_new}"/>
-						<aon:commandButton id="save_new"
+						<h:commandButton id="save_new"
 							value="#{bundle.aon_save}" 
 							rendered="#{download_category.new}"
 							action="download_category_form"
 							actionListener="#{download_category.accept}"
 							styleClass="aon-finding-toolbar-item aon-icon-accept"
 							accesskey="#{bundle.aon_key_save}"/>
-						<aon:commandButton id="save_edit"
+						<h:commandButton id="save_edit"
 							value="#{bundle.aon_save}" 
 							rendered="#{download_category.to!=null and !download_category.new}"
 							actionListener="#{download_category.accept}"
@@ -55,30 +55,30 @@
 							confirmActionListener="#{download_category.onRemove}"
 							confirmAction="download_category_list"
 							accesskey="#{bundle.aon_key_remove}"/>
-						<aon:commandButton id="exit" value="#{bundle.aon_close}"
+						<h:commandButton id="exit" value="#{bundle.aon_close}"
 							action="download_category_list" 
 							immediate="#{true}"
 							styleClass="aon-finding-toolbar-item aon-icon-cancel"
 							accesskey="#{bundle.aon_key_close}"/>
-						<aon:commandButton id="first" 
+						<h:commandButton id="first" 
 							immediate="#{true}"
 							action="download_category_form"
 							rendered="#{!download_category.new and !download_category.inFirst}"
 							styleClass="aon-icon-commandButton aon-dataScroller-button-first"
 							actionListener="#{download_category.onSelectFirst}"/>
-						<aon:commandButton id="previous" 
+						<h:commandButton id="previous" 
 							immediate="#{true}"
 							action="download_category_form"
 							rendered="#{!download_category.new and !download_category.inFirst}"
 							styleClass="aon-icon-commandButton aon-dataScroller-button-previous"
 							actionListener="#{download_category.onSelectPrevious}"/>
-						<aon:commandButton id="next" 
+						<h:commandButton id="next" 
 							immediate="#{true}"
 							action="download_category_form"
 							rendered="#{!download_category.new and !download_category.inLast}"
 							styleClass="aon-icon-commandButton aon-dataScroller-button-next"
 							actionListener="#{download_category.onSelectNext}"/>
-						<aon:commandButton id="last" 
+						<h:commandButton id="last" 
 							immediate="#{true}"
 							action="download_category_form"
 							rendered="#{!download_category.new and !download_category.inLast}"
@@ -153,7 +153,7 @@
 							
 								<!-- start toolbar navigation -->
 								<aon:div styleClass="aon-finding-toolbar-item-group">
-									<aon:commandButton id="reset_list" value="#{bundle.aon_reset}"
+									<h:commandButton id="reset_list" value="#{bundle.aon_reset}"
 										action="download_category_form" 
 										actionListener="#{download.onReset}"
 										styleClass="aon-finding-toolbar-item aon-icon-reset"
@@ -239,12 +239,12 @@
 								</f:facet>
 								<aon:graphicImage rendered="#{to.position == 0}"
 									url="/images/cms/spacer16.gif" style="margin-left: 8px;"/>
-								<aon:commandButton  
+								<h:commandButton  
 									reRender="detail_list"
 									actionListener="#{download.onMoveUp}" 
 									rendered="#{to.position != 0 and download.to==null}"
 									image="/images/cms/up.gif" styleClass="aon-icon-commandButton" />
-								<aon:commandButton 
+								<h:commandButton 
 									reRender="detail_list" 
 									actionListener="#{download.onMoveDown}"
 									rendered="#{to.position &lt; (download.model.rowCount - 1)  and download.to==null}"
@@ -268,7 +268,7 @@
 												actionListener="#{download.onAccept}"
 												styleClass="aon-finding-toolbar-item aon-icon-accept"
 												accesskey="#{bundle.aon_key_save}"/>
-											<aon:commandButton id="cancel_list_form"
+											<h:commandButton id="cancel_list_form"
 												value="#{bundle.aon_cancel}" 
 												rendered="#{download.to!=null or download.new}" immediate="#{true}"
 												reRender="detail_panel"
@@ -347,7 +347,7 @@
 															<aon:outputLabel value="#{document.currentRelativePath}" />
 															<rich:dataList var="item" value="#{document.model}" >	
 																<aon:panelGrid columns="2" cellpadding="5px" cellspacing="0px">
-													                <aon:commandButton
+													                <h:commandButton
 													                	immediate="#{true}"
 													                	reRender="thumbnail_preview_detail"
 													                    actionListener="#{download.onSelectImage}"

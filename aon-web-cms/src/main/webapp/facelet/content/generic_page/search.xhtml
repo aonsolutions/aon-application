@@ -20,21 +20,21 @@
 				<aon:div styleClass="aon-content-toolbar-internal">
 					<aon:div styleClass="aon-content-toolbar-item-group">
 
-						<aon:commandButton id="search"
+						<h:commandButton id="search"
 							value="#{bundle.aon_search}"
 							action="generic_page_list" actionListener="#{generic_page.onSearch}"
 							styleClass="aon-content-toolbar-item aon-icon-accept"
 							onmouseout="this.className='aon-content-toolbar-item aon-icon-accept'"
 							onmouseover="this.className='aon-content-toolbar-item aon-icon-accept aon-content-toolbar-item-hover'"
 							accesskey="#{bundle.aon_key_search}"/>
-						<aon:commandButton id="reset"
+						<h:commandButton id="reset"
 							value="#{bundle.aon_reset}"
 							action="generic_page_form" actionListener="#{generic_page.onReset}"
 							styleClass="aon-content-toolbar-item aon-icon-reset"
 							onmouseout="this.className='aon-content-toolbar-item aon-icon-reset'"
 							onmouseover="this.className='aon-content-toolbar-item aon-icon-reset aon-content-toolbar-item-hover'"
 							accesskey="#{bundle.aon_key_new}"/>
-						<aon:commandButton id="cancel"
+						<h:commandButton id="cancel"
 							value="#{bundle.aon_cancel}"
 							action="generic_page_list" actionListener="#{generic_page.onCancel}"
 							styleClass="aon-content-toolbar-item aon-icon-cancel"

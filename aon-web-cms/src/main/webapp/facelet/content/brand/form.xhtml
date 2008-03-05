@@ -22,14 +22,14 @@
 				<!-- start toolbar navigation -->
 				<aon:div styleClass="aon-content-toolbar-internal">
 					<aon:div styleClass="aon-content-toolbar-item-group">
-						<aon:commandButton id="save"
+						<h:commandButton id="save"
 							value="#{bundle.aon_save}" rendered="#{brand.to!=null or brand.new}"
 							actionListener="#{brand.onAccept}"
 							styleClass="aon-content-toolbar-item aon-icon-accept"
 							onmouseout="this.className='aon-content-toolbar-item aon-icon-accept'"
 							onmouseover="this.className='aon-content-toolbar-item aon-icon-accept aon-content-toolbar-item-hover'"
 							accesskey="#{bundle.aon_key_save}"/>
-						<aon:commandButton id="cancel"
+						<h:commandButton id="cancel"
 							value="#{bundle.aon_cancel}" rendered="#{brand.to!=null or brand.new}" immediate="#{true}"
 							actionListener="#{brand.onCancel}" action="brand_list"
 							styleClass="aon-content-toolbar-item aon-icon-cancel"
@@ -44,7 +44,7 @@
 							onmouseout="this.className='aon-content-toolbar-item aon-icon-delete'"
 							onmouseover="this.className='aon-content-toolbar-item aon-icon-delete aon-content-toolbar-item-hover'"
 							accesskey="#{bundle.aon_key_remove}"/>
-						<aon:commandButton id="reset" value="#{bundle.aon_reset}"
+						<h:commandButton id="reset" value="#{bundle.aon_reset}"
 							actionListener="#{brand.onReset}" rendered="#{!brand.new}"
 							styleClass="aon-content-toolbar-item aon-icon-reset"
 							onmouseout="this.className='aon-content-toolbar-item aon-icon-reset'"
