@@ -36,11 +36,19 @@
 							value="#{bundle.aon_uncheck_all}"
 							styleClass="aon-finding-toolbar-item aon-icon-cancel"
 							actionListener="#{generator.onDeselectAll}" />
-						<aon:commandButton id="publish"
-							value="#{appBundle.aon_generate}" 
-							reRender="generatorForm"
-							rendered="#{generator.generated}"
-							actionListener="#{generator.onPublish}" 
+						<aon:confirmButton id="publish_no_ok"
+							rendered="#{generator_status.generated and !generator_status.correct}"
+							value="#{appBundle.aon_publish}" 
+							immediate="#{true}"
+							styleClass="aon-finding-toolbar-item aon-icon-accept"
+							confirmTitle="#{appBundle.aon_publish_modal_title}" 
+							confirmMessage="#{appBundle.aon_publish_modal_msg}"
+							confirmActionListener="#{generator_status.onPublish}"
+							accesskey="#{bundle.aon_key_remove}"/>
+						<aon:commandButton id="publish_ok"
+							value="#{appBundle.aon_publish}" 
+							rendered="#{generator_status.generated and generator_status.correct}"
+							actionListener="#{generator_status.onPublish}" 
 							styleClass="aon-finding-toolbar-item aon-icon-accept" />
 				    </aon:div>
 					
