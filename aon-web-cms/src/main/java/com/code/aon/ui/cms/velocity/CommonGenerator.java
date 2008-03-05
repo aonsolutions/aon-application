@@ -60,25 +60,21 @@ public class CommonGenerator extends Generator {
 		ConfigDetail configDetail = ControllerUtil.getCurrentConfigDetail();
 		
 		// $default_css from config
-		vu.addMessage(" - CSS de página por defecto", VelocityUtil.INFO);
 		String css = "";
 		if (configDetail != null) css = configDetail.getCss();
 		vu.put("default_css", css);
 		
 		// $default_javascript from config
-		vu.addMessage(" - JavaScript de página por defecto", VelocityUtil.INFO);
 		String javascript = "";
 		if (configDetail != null) javascript = configDetail.getJavascript();
 		vu.put("default_javascript", javascript);
 
 		// $default_description from config
-		vu.addMessage(" - Descripcion de página por defecto", VelocityUtil.INFO);
 		String description = "";
 		if (configDetail != null) description = configDetail.getDescription();
 		vu.put("default_description", description);
 		
 		// $default_keywords from config
-		vu.addMessage(" - KeyWords de página por defecto", VelocityUtil.INFO);
 		String keywords = "";
 		if (configDetail != null) keywords = configDetail.getKeywords();
 		vu.put("default_keywords", keywords);
@@ -89,6 +85,8 @@ public class CommonGenerator extends Generator {
 			section = GeneratorConfigController.defaultSection();
 		}
 		
+		vu.addMessage("Cargando sección... ["+section.getAlias()+"]", VelocityUtil.INFO);
+		
 		if (previousSection==null ||
 				section.getId().intValue()!=previousSection.getId().intValue()){
 			
@@ -96,34 +94,28 @@ public class CommonGenerator extends Generator {
 			// $default_menu from default sidebar menu in database
 			vu.put("is_menu", section.isShow_menu());
 			if (section.isShow_menu()){
-				vu.addMessage(" - Menu por defecto", VelocityUtil.INFO);
 				Menu m = section.getMenuToShow();
 				if (m==null){
 					vu.put("is_menu", false);
-					vu.addMessage(" - Menu NULL no cargado.", VelocityUtil.INFO);
 				}else{
 					if (previousSection==null ||
 							previousSection.getMenuToShow() == null ||
 							!previousSection.getMenuToShow().getId().equals(m.getId())){
 						vu.put("default_menu", MenuGenerator.getMenuOptionList(m));
-						vu.addMessage(" - Menu " + m.getAlias() + " cargado.", VelocityUtil.INFO);
 					}
 				}
 			}
 
 			vu.put("is_menu_alt", section.isShow_menu_alt());
 			if (section.isShow_menu_alt()){
-				vu.addMessage(" - Menu alternativo", VelocityUtil.INFO);
 				Menu m = section.getMenuAltToShow();
 				if (m==null){
 					vu.put("is_menu_alt", false);
-					vu.addMessage(" - Menu alt NULL no cargado.", VelocityUtil.INFO);
 				}else{
 					if (previousSection==null ||
 							previousSection.getMenuAltToShow() == null ||
 							!previousSection.getMenuAltToShow().getId().equals(m.getId())){
 						vu.put("default_menu_alt", MenuGenerator.getMenuOptionList(m));
-						vu.addMessage(" - Menu alt " + m.getAlias() + " cargado.", VelocityUtil.INFO);
 					}
 				}
 			}
@@ -131,17 +123,14 @@ public class CommonGenerator extends Generator {
 			// $default_header from default header in database
 			vu.put("is_header", section.isShow_header());
 			if (section.isShow_header()){
-				vu.addMessage(" - Cabecera por defecto", VelocityUtil.INFO);
 				Header h = section.getHeaderToShow();
 				if (h==null){
 					vu.put("is_header", false);
-					vu.addMessage(" - Cabecera NULL no cargado.", VelocityUtil.INFO);
 				}else{
 					if (previousSection==null ||
 							previousSection.getHeaderToShow() == null ||
 							!previousSection.getHeaderToShow().getId().equals(h.getId())){
 						vu.put("default_header", getHeaderHandler(h));
-						vu.addMessage(" - Cabecera " + h.getAlias() + " cargada.", VelocityUtil.INFO);
 					}
 				}
 			}
@@ -151,18 +140,15 @@ public class CommonGenerator extends Generator {
 			vu.put("is_sidebar_right", section.isShow_sidebar_right());
 			if (section.isShow_sidebar_left() ||
 					section.isShow_sidebar_right()){
-				vu.addMessage(" - Sidebar por defecto", VelocityUtil.INFO);
 				if (section.isShow_sidebar_left()){
 					Sidebar sb = section.getSidebarToLeftShow();
 					if (sb==null){
 						vu.put("is_sidebar_left", false);
-						vu.addMessage(" - Sidebar left NULL no cargado.", VelocityUtil.INFO);
 					}else{
 						if (previousSection==null ||
 								previousSection.getSidebarToLeftShow() == null ||
 								!previousSection.getSidebarToLeftShow().getId().equals(sb.getId())){
 							vu.put("default_sidebar_left", getSidebarHandler(sb, SidebarSide.LEFT));
-							vu.addMessage(" - Sidebar left " + sb.getAlias() + " cargada.", VelocityUtil.INFO);
 						}
 					}
 				}
@@ -170,13 +156,11 @@ public class CommonGenerator extends Generator {
 					Sidebar sb = section.getSidebarToRightShow();
 					if (sb==null){
 						vu.put("is_sidebar_right", false);
-						vu.addMessage(" - Sidebar right NULL no cargado.", VelocityUtil.INFO);
 					}else{
 						if (previousSection==null ||
 								previousSection.getSidebarToRightShow() == null ||
 								!previousSection.getSidebarToRightShow().getId().equals(sb.getId())){
 							vu.put("default_sidebar_right", getSidebarHandler(sb, SidebarSide.RIGHT));
-							vu.addMessage(" - Sidebar right " + sb.getAlias() + " cargada.", VelocityUtil.INFO);
 						}
 					}
 				}
@@ -185,17 +169,14 @@ public class CommonGenerator extends Generator {
 			// $default_footer from default footer in database
 			vu.put("is_footer", section.isShow_footer());
 			if (section.isShow_footer()){
-				vu.addMessage(" - Pie de página por defecto", VelocityUtil.INFO);
 				Footer f = section.getFooterToShow();
 				if (f==null){
 					vu.put("is_footer", false);
-					vu.addMessage(" - Pie de página NULL no cargado.", VelocityUtil.INFO);
 				}else{
 					if (previousSection==null ||
 							previousSection.getFooterToShow() == null ||
 							!previousSection.getFooterToShow().getId().equals(f.getId())){
 						vu.put("default_footer", getFooterHandler(f));
-						vu.addMessage(" - Pie de página " + f.getAlias() + " cargado.", VelocityUtil.INFO);
 					}
 				}
 			}
@@ -204,14 +185,12 @@ public class CommonGenerator extends Generator {
 			
 
 			// $bundle from config
-			vu.addMessage(" - Bundle de página", VelocityUtil.INFO);
 			try {
 				ResourceBundle bundle = ResourceBundle.getBundle(Constants.MESSAGES_FILE, ControllerUtil.getCurrentLanguage().getLanguage().getLocale(), new TemplateBundleClassLoader());
 		        vu.put("language", ControllerUtil.getCurrentLanguage().getLanguage().getLocale().getLanguage());
 				vu.put("bundle", bundle);
 			}
 			catch (MissingResourceException mre) {
-				mre.printStackTrace();
 				vu.addMessage(" - No se ha encontrado fichero de mensajes para el idioma actual.", VelocityUtil.WARN);
 			}
 		}
@@ -312,13 +291,8 @@ public class CommonGenerator extends Generator {
 	public void generateLanguagePage() {
 		VelocityUtil vu = new VelocityUtil();
 		CommonGenerator.getCommonGenerator().init(vu);
-		vu.addMessage("Iniciando proceso de generación", VelocityUtil.INFO);
-		vu.addMessage("", VelocityUtil.INFO);
-		vu.addMessage("Buscando plantilla seleccionada '" + ControllerUtil.getCurrentConfig().getTemplate() + "' ...", VelocityUtil.INFO);
 		vu.setTemplate_path(ControllerUtil.getCurrentVmTemplatePath());
 		vu.initialize();
-		vu.addMessage("", VelocityUtil.INFO);
-		vu.addMessage("Creando página de seleccion de idioma... ", VelocityUtil.INFO);
         vu.put("every_languages", getActiveLanguages());
         vu.put("default_language", getDefaultLanguage());
 

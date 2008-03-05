@@ -25,13 +25,8 @@ public class FaqGenerator extends Generator {
 	public static void generate() {
 		VelocityUtil vu = new VelocityUtil();
 		CommonGenerator.getCommonGenerator().init(vu);
-		vu.addMessage("Iniciando proceso de generación", VelocityUtil.INFO);
-		vu.addMessage("", VelocityUtil.INFO);
-		vu.addMessage("Buscando plantilla seleccionada '" + ControllerUtil.getCurrentConfig().getTemplate() + "' ...", VelocityUtil.INFO);
 		vu.setTemplate_path(ControllerUtil.getCurrentVmTemplatePath());
 		vu.initialize();
-		vu.addMessage("", VelocityUtil.INFO);
-		vu.addMessage("Creando faq... ", VelocityUtil.INFO);
 		
 		ArrayList<FaqCategoryHandler> fchList;
 		List<ITransferObject> faqCategoryDetailList;

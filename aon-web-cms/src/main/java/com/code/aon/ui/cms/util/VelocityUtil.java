@@ -32,8 +32,8 @@ public class VelocityUtil extends VelocityEngine implements Constants {
 	public void setTemplate_path(String template_path) {
 		this.template_path = template_path;
 		File f = new File(template_path + "/" + Templates.INDEX.getTemplateName());
-		if (f.exists()) addMessage("Plantilla encontrada", VelocityUtil.INFO);
-		else addMessage("No se han encontrado plantillas en '" + template_path + "'", ERROR);
+		if (!f.exists()) 
+			addMessage("No se han encontrado plantillas en '" + template_path + "'", ERROR);
 	}
 	
 	public VelocityContext getContext() {
@@ -106,6 +106,13 @@ public class VelocityUtil extends VelocityEngine implements Constants {
         BufferedWriter writer = null;
         FileWriter fw = null;
 
+        String pageShortName;
+        try{
+        	pageShortName = page.substring(page.lastIndexOf('/'));
+        }catch (Exception e) {
+        	pageShortName = page;
+		}
+        
         try {
 			if (!fi.exists()) {
 				error = true;
@@ -123,20 +130,20 @@ public class VelocityUtil extends VelocityEngine implements Constants {
 
                     this.evaluate(context, writer, "¡AON-CMS!", reader);
 					writer.flush();
-					addMessage("Página " + page + " generada con exito", INFO);
+					addMessage("Página " + pageShortName + " generada con exito", INFO);
 				}
 				catch(Exception e) {
 				    error = true;
-					addMessage("Error al evaluar el contexto en el fichero '" + page + "' <BR/>" + e.getMessage(), ERROR);
+					addMessage("Error al evaluar el contexto en el fichero '" + pageShortName + "' <BR/>" + e.getMessage(), ERROR);
 				}
 			}
 			else {
-				addMessage("No se pudo generar el fichero '" + page + "'", ERROR);
+				addMessage("No se pudo generar el fichero '" + pageShortName + "'", ERROR);
 			}
 		}
 		catch(Exception e) {
 		    error = true;
-			addMessage("Error al generar el fichero '" + page + "' </BR> " + e.getMessage() + "", ERROR);
+			addMessage("Error al generar el fichero '" + pageShortName + "' </BR> " + e.getMessage() + "", ERROR);
 			e.printStackTrace();
 		}
         finally {

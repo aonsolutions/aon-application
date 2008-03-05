@@ -24,13 +24,8 @@ public class ModularPageGenerator extends Generator {
 	public static void generate() {
 		VelocityUtil vu = new VelocityUtil();
 		CommonGenerator.getCommonGenerator().init(vu);
-		vu.addMessage("Iniciando proceso de generación", VelocityUtil.INFO);
-		vu.addMessage("", VelocityUtil.INFO);
-		vu.addMessage("Buscando plantilla seleccionada '" + ControllerUtil.getCurrentConfig().getTemplate() + "' ...", VelocityUtil.INFO);
 		vu.setTemplate_path(ControllerUtil.getCurrentVmTemplatePath());
 		vu.initialize();
-		vu.addMessage("", VelocityUtil.INFO);
-		vu.addMessage("Creando páginas modulare (homepage...)... ", VelocityUtil.INFO);
 		
 		List<ITransferObject> modularPageList;
 		List<ITransferObject> modularPageOptionList;
@@ -86,8 +81,6 @@ public class ModularPageGenerator extends Generator {
 				vu.put("modules", modularPageOptionHandlerList);
 
 				// Cargar datos comunes a todas las paginas
-				vu.addMessage("", VelocityUtil.INFO);
-				vu.addMessage("Cargando configuraciones comunes en el contexto  '"+ ControllerUtil.getCurrentConfig().getTemplate() + "' ...",VelocityUtil.INFO);
 				CommonGenerator.getCommonGenerator().chargeContext(vu, mp.getSection());
 
 				vu.addMessage(" Generando Página Modular '" + mp.getAlias()+ "'.", VelocityUtil.INFO);
