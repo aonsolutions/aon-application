@@ -16,6 +16,7 @@ public class ArticleDocumentControllerListener extends ControllerAdapter {
 		ArticleDocumentController c = (ArticleDocumentController)event.getController();
 		ArticleDocument ar = (ArticleDocument)c.getTo();
 		ar.setArticle(c.getCurrentArticle());
+		c.setInputFile(null);
 	}
 
 	@Override
