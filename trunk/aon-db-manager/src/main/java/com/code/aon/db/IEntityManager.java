@@ -1,7 +1,7 @@
 package com.code.aon.db;
 
-public interface IEntityManager {
+public interface IEntityManager<E> {
 
-	void proccess( Class entity ) throws EntityProcessException; 
+	void proccess( Class<E> entity ) throws EntityProcessException; 
 	
 }

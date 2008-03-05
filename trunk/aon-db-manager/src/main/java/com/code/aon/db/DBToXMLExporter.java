@@ -10,17 +10,15 @@ import org.dom4j.io.OutputFormat;
 import org.dom4j.io.XMLWriter;
 import org.dom4j.tree.DefaultElement;
 
-public class DBToXMLExporter implements IEntityManager {
+public class DBToXMLExporter implements IEntityManager<Element> {
 
 	private HibernateDataManager hdm;
 	
-	private ResultIterable entityIterable;	
+	private QueryIterable<Element> entityIterable;	
 	
-	public DBToXMLExporter(HibernateDataManager hdm, ResultIterable entityIterable ) {
+	public DBToXMLExporter(HibernateDataManager hdm, QueryIterable<Element> entityIterable ) {
 		this.hdm = hdm;
 		this.entityIterable = entityIterable;
-		this.entityIterable.setMaxResults( hdm.getMaxExport() );
-		this.entityIterable.setSessionFactory( hdm.getExportFactory() );
 	}
 
     private XMLWriter createWriter( File file ) throws IOException {
@@ -32,7 +30,7 @@ public class DBToXMLExporter implements IEntityManager {
         return writer;
     }
     
-	public void proccess(Class entity) throws EntityProcessException {
+	public void proccess(Class<Element> entity) throws EntityProcessException {
 		try {
 	        XMLWriter writer = createWriter( hdm.getFile(entity) );
 	
@@ -41,7 +39,6 @@ public class DBToXMLExporter implements IEntityManager {
 	        writer.writeOpen( root );
 		       
 			this.entityIterable.setEntity( entity );	        
-			this.entityIterable.setAsElement( true );
 			this.entityIterable.orderById();
 	        int counter = 0;
 	        for( Object element : entityIterable ) {
