@@ -16,19 +16,20 @@ import com.code.aon.ql.Criteria;
  * @author Consulting & Development
  *
  */
-public class AccountSummaryBeanVetoListener extends ManagerBeanVetoListenerAdapter {
+public class AccountEntryDetailSummaryBeanVetoListener extends ManagerBeanVetoListenerAdapter {
 
     @Override
+    @SuppressWarnings("unchecked")
     public void vetoableBeanUpdated(ManagerBeanEvent evt) throws ManagerBeanVetoListenerException {
-        AccountEntryDetail entryDetail = (AccountEntryDetail)evt.getTo();
+        AccountEntryDetail accountEntryDetail = (AccountEntryDetail)evt.getTo();
         try {
-            IManagerBean entryDetailBean = BeanManager.getManagerBean(AccountEntryDetail.class);
+            IManagerBean accountEntryDetailBean = BeanManager.getManagerBean(AccountEntryDetail.class);
             Criteria criteria = new Criteria();
-            criteria.addEqualExpression(entryDetailBean.getFieldName(IAccountAlias.ACCOUNT_ENTRY_DETAIL_ID), entryDetail.getId());
-            Iterator iterator = entryDetailBean.getList(criteria).iterator();
+            criteria.addEqualExpression(accountEntryDetailBean.getFieldName(IAccountAlias.ACCOUNT_ENTRY_DETAIL_ID), accountEntryDetail.getId());
+            Iterator iterator = accountEntryDetailBean.getList(criteria).iterator();
             if (iterator.hasNext()) {
-                entryDetail = (AccountEntryDetail)iterator.next();
-                AccountSummaryManager.modifyAccountSummary(entryDetail, -1);
+            	accountEntryDetail = (AccountEntryDetail)iterator.next();
+                AccountSummaryManager.modifyAccountSummary(accountEntryDetail, -1);
             }
         } catch (ManagerBeanException e) {
             throw new ManagerBeanVetoListenerException(e);
