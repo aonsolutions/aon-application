@@ -7,6 +7,7 @@ import org.apache.commons.net.ftp.FTPClient;
 import org.apache.commons.net.ftp.FTPFile;
 
 import com.code.aon.cms.Config;
+import com.code.aon.ui.util.AonUtil;
 
 public class FTPUtil {
 
@@ -42,7 +43,7 @@ public class FTPUtil {
 			ftp.disconnect();
 			//addMessage("La publicacion por FTP de la pagina web a finalizado.", GEN_INFO);
 		} catch (Exception e) {
-			e.printStackTrace();
+			AonUtil.addErrorMessage(e.getMessage());
 			//addMessage("FTP Error. Se produjo un error durante la conexion al FTP, si el error persite consulte con su administrador.", GEN_ERROR);
 		}
 	}
@@ -68,7 +69,7 @@ public class FTPUtil {
 				}
 			}
 		} catch (Exception e) {
-			e.printStackTrace();
+			AonUtil.addErrorMessage(e.getMessage());
 			//addMessage("FTP Error. Se produjo un error al intentar subir el fichero " + file, GEN_ERROR);
 		}
 	}

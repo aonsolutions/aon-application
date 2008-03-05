@@ -14,12 +14,15 @@ public class GeneratorStatusController  {
 
 	private boolean generated = false;
 	
+	private boolean activePoll = false;
+	
 	private List<String> status;
 
 	private List<String> errors;
 
 	public void onInit(ActionEvent event){
 		generated = false;
+		activePoll = true;
 		status = new ArrayList<String>();
 		errors = new ArrayList<String>();
 	}
@@ -40,6 +43,10 @@ public class GeneratorStatusController  {
 		errors.add(0,GregorianCalendar.getInstance().getTime()+": "+msg);
 	}	
 
+	public boolean isActivePoll() {
+		return activePoll;
+	}
+
 	public boolean isCorrect() {
 		return errors.size()==0;
 	}
@@ -50,10 +57,10 @@ public class GeneratorStatusController  {
 
 	public void finalized() {
 		this.generated = true;
+		this.activePoll = false;
 	}
 
 	public void onPublish(ActionEvent event) throws ManagerBeanException {
-		System.out.println(">>>>>>>>>>>>>> PUBLISHING...");
 		FTPUtil.uploadFTP();
 	}
 

@@ -5,7 +5,6 @@ import javax.faces.event.ActionEvent;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ui.cms.Constants;
 import com.code.aon.ui.cms.util.ControllerUtil;
-import com.code.aon.ui.cms.util.FTPUtil;
 import com.code.aon.ui.cms.util.FileUtil;
 import com.code.aon.ui.cms.velocity.AlbumGenerator;
 import com.code.aon.ui.cms.velocity.ArticleGenerator;
