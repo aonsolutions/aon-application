@@ -4,6 +4,9 @@ import javax.faces.event.ActionEvent;
 
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ui.cms.Constants;
+import com.code.aon.ui.cms.util.ControllerUtil;
+import com.code.aon.ui.cms.util.FTPUtil;
+import com.code.aon.ui.cms.util.FileUtil;
 import com.code.aon.ui.cms.velocity.AlbumGenerator;
 import com.code.aon.ui.cms.velocity.ArticleGenerator;
 import com.code.aon.ui.cms.velocity.CommonGenerator;
@@ -19,10 +22,17 @@ import com.code.aon.ui.util.AonUtil;
 
 public class GeneratorController extends BasicController implements Constants {
 
+	private boolean generated = false;
+	
 	public void onGenerate(ActionEvent event) throws ManagerBeanException {
 		GeneratorStatusController status = (GeneratorStatusController)AonUtil.getRegisteredBean("generator_status");
 		status.onInit(event);
 		
+		//Copy css and js files from current template
+		System.out.println(">>>>>>>>>>>>>>>>>>>>>>>> Copiando Estilos...");
+		FileUtil.copyDir(ControllerUtil.getCssTemplatePath(), ControllerUtil.getPreviewPath());
+		FileUtil.copyDir(ControllerUtil.getJsTemplatePath(), ControllerUtil.getPreviewPath());
+
 		CommonGenerator.getCommonGenerator().generateLanguagePage();
 		
 		if (isModularPageToGenerate){
@@ -69,6 +79,20 @@ public class GeneratorController extends BasicController implements Constants {
 		}
 
 		status.addMessage("¡¡¡¡¡ YOUR WEB IS DONE !!!!! ;-DDDD");
+		generated = true;
+	}
+	
+	public boolean isGenerated() {
+		return generated;
+	}
+
+	public void setGenerated(boolean generated) {
+		this.generated = generated;
+	}
+
+	public void onPublish(ActionEvent event) throws ManagerBeanException {
+		System.out.println(">>>>>>>>>>>>>> PUBLISHING...");
+		FTPUtil.uploadFTP();
 	}
 
 	private boolean isModularPageToGenerate = true;

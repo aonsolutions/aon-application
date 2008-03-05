@@ -36,6 +36,12 @@
 							value="#{bundle.aon_uncheck_all}"
 							styleClass="aon-finding-toolbar-item aon-icon-cancel"
 							actionListener="#{generator.onDeselectAll}" />
+						<aon:commandButton id="publish"
+							value="#{appBundle.aon_generate}" 
+							reRender="generatorForm"
+							rendered="#{generator.generated}"
+							actionListener="#{generator.onPublish}" 
+							styleClass="aon-finding-toolbar-item aon-icon-accept" />
 				    </aon:div>
 					
 					<!-- end toolbar navigation -->
