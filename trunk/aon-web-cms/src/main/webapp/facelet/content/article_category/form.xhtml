@@ -470,91 +470,92 @@
 											<aon:outputText value="#{appBundle.document_related_name}" />
 										</f:facet>
 										<aon:div rendered="#{to!=articleDocument.to}" >
-											<aon:outputText value="#{to.alias}" />
+											<aon:outputText value="#{to.alias}" />	
 										</aon:div>
 										<aon:div rendered="#{to==articleDocument.to}">
-											<aon:div>
+											<aon:panelGrid columns="2" dir="true">
 												<aon:outputText value="#{appBundle.document_related_alias}" />
 												<aon:inputText  
 													id="Alias"
-													size="80" maxlength="255"
+													size="60" maxlength="255"
 													value="#{articleDocument.to.alias}" />
-											</aon:div>
-											<aon:div>
+													
 												<aon:outputText value="#{appBundle.document_related_title}" />
 												<aon:inputText 
 													id="Title"
-													size="80" maxlength="255"
+													size="60" maxlength="255"
 													value="#{articleDocument.toI18n.title}" />
-											</aon:div>
-											<aon:div rendered="#{articleDocument.toI18n.file!=null or articleDocument.inputFile!=null}">
-												<aon:outputText 
-													size="90" maxlength="255"
-													value="#{articleDocument.toI18n.file}" />
-											</aon:div>
-											<aon:div rendered="#{articleDocument.toI18n.file==null and articleDocument.inputFile==null}">
-												<t:inputFileUpload id="ArticleDocument_inputFile_edit"
-													value="#{articleDocument.inputFile}"
-													accept="*/*" size="45"
-													storage="file"
-													required="true" />
-												<h:commandButton value="#{bundle.aon_fileupload_insert}"
-													styleClass="aon-icon-attach aon-finding-toolbar-item"
-													reRender="articleDocumentData"
-													rendered="#{articleDocument.inputFile == null}"
-													actionListener="#{articleDocument.fileUploaded}"/>
-											</aon:div>
-											<aon:div>
+													
+												<aon:outputText value="#{appBundle.document_related}" />
+												<aon:div rendered="#{articleDocument.toI18n.file!=null or articleDocument.inputFile!=null}">
+													<aon:outputText 
+														size="60" maxlength="255"
+														value="#{articleDocument.toI18n.file}" />
+												</aon:div>
+												<aon:div rendered="#{articleDocument.toI18n.file==null and articleDocument.inputFile==null}">
+													<t:inputFileUpload id="ArticleDocument_inputFile_edit"
+														value="#{articleDocument.inputFile}"
+														accept="*/*" size="45"
+														storage="file"
+														required="true" />
+													<h:commandButton value="#{bundle.aon_fileupload_insert}"
+														styleClass="aon-icon-attach aon-finding-toolbar-item"
+														reRender="articleDocumentData"
+														rendered="#{articleDocument.inputFile == null}"
+														actionListener="#{articleDocument.fileUploaded}"/>
+												</aon:div>
+												
 												<aon:outputText value="#{appBundle.document_related_description}" 
 													for="Description" />
 												<aon:inputTextarea
 													id="Description"
-													cols="80" rows="20" 
+													cols="60" rows="20" 
 													value="#{articleDocument.toI18n.description}"/>
-											</aon:div>
+											</aon:panelGrid>
 										</aon:div>
 										<f:facet name="footer">
 											<aon:div rendered="#{articleDocument.new}">
-												<aon:div>
+												<aon:panelGrid columns="2" dir="true">
 													<aon:outputText value="#{appBundle.document_related_alias}" 
 														for="Alias_" />
 													<aon:inputText 
 														id="Alias_"
 														size="80" maxlength="255"
 														value="#{articleDocument.to.alias}" />
-												</aon:div>
-												<aon:div>
+														
 													<aon:outputText value="#{appBundle.document_related_title}" 
 														for ="Title_"/>
 													<aon:inputText 
 														id="Title_"
 														size="80" maxlength="255"
 														value="#{articleDocument.toI18n.title}" />
-												</aon:div>
-												<aon:div rendered="#{articleDocument.inputFile!=null}">
-													<aon:outputText 
-														size="90" maxlength="255"
-														value="#{articleDocument.toI18n.file}" />
-												</aon:div>
-												<aon:div rendered="#{articleDocument.inputFile==null}">
-													<t:inputFileUpload id="ArticleDocument_inputFile"
-														value="#{articleDocument.inputFile}"
-														accept="*/*" size="45"
-														storage="file"
-														required="true"/>
-													<h:commandButton value="#{bundle.aon_fileupload_insert}"
-														reRender="articleDocumentData"
-														styleClass="aon-icon-attach aon-finding-toolbar-item"
-														actionListener="#{articleDocument.fileUploaded}"/>
-												</aon:div>
-												<aon:div>
+														
+													<aon:outputText value="#{appBundle.document_related}" 
+														for="Description" />
+													<aon:div rendered="#{articleDocument.inputFile!=null}">
+														<aon:outputText 
+															size="90" maxlength="255"
+															value="#{articleDocument.toI18n.file}" />
+													</aon:div>
+													<aon:div rendered="#{articleDocument.inputFile==null}">
+														<t:inputFileUpload id="ArticleDocument_inputFile"
+															value="#{articleDocument.inputFile}"
+															accept="*/*" size="45"
+															storage="file"
+															required="true"/>
+														<h:commandButton value="#{bundle.aon_fileupload_insert}"
+															reRender="articleDocumentData"
+															styleClass="aon-icon-attach aon-finding-toolbar-item"
+															actionListener="#{articleDocument.fileUploaded}"/>
+													</aon:div>
+													
 													<aon:outputText value="#{appBundle.document_related_description}" 
 														for="Description_" />
 													<aon:inputTextarea
 														id="Description_"
 														cols="80" rows="20" 
 														value="#{articleDocument.toI18n.description}"/>
-												</aon:div>
+												</aon:panelGrid>
 											</aon:div>
 										</f:facet>
 									</aon:column>
