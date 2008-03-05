@@ -54,7 +54,7 @@ public class LinkDetail implements ITransferObject {
 		this.language = language;
 	}
 
-	@Column(name = "label", nullable = false, length = 64)
+	@Column(name = "label", nullable = false, length = 128)
 	public String getLabel() {
 		return label;
 	}
