@@ -117,59 +117,15 @@
 						<aon:graphicImage 
 							url="#{download_category.to.image}.thumbnail" 
 							alt="#{download_category.to.image}"/>
-							
-<style>
-.body3 {
-	width:300px;
-    height:300px;
-    overflow:auto;
-}
-</style>
-						<a href="javascript:Richfaces.showModalPanel('mp',{width:650, top:200})">select</a>
-				        <rich:modalPanel  id="mp" minHeight="200" minWidth="450" 
-				            height="360" width="675" zindex="2000">
-				            <f:facet name="header">
-				                <h:outputText value="Modal Panel Title" />
-				            </f:facet>
-				            <f:facet name="controls">
-				                <h:graphicImage value="/images/icefaces/popupclose.gif" style="cursor:pointer" onclick="Richfaces.hideModalPanel('mp')" />
-				            </f:facet>
-							<h:panelGrid id="treeGrid" columns="2">
-					            <rich:panel bodyClass="body3">
-								    <rich:tree style="width:300px"
-								    	switchType="server" 
-								    	stateAdvisor="#{treeStateAdvisor}">
-								        <rich:recursiveTreeNodesAdaptor roots="#{fileSystemBean.imageRoots}" 
-								        	var="item" 
-								        	nodes="#{item.nodes}">
-											<rich:treeNode>
-								                <aon:commandLink
-								                	action="#{item.onSelectFolder}" 
-								                	value="#{item}"
-								                	immediate="#{true}"
-								                	reRender="treeGrid" />
-											</rich:treeNode>
-								        </rich:recursiveTreeNodesAdaptor>
-								    </rich:tree>
-								</rich:panel>
-					            <rich:panel bodyClass="body3">
-									<aon:panelGroup>
-										<aon:outputLabel value="#{gallery.currentRelativePath}" />
-										<rich:dataList var="item" value="#{gallery.model}" >	
-											<aon:panelGrid columns="2" cellpadding="5px" cellspacing="0px">
-									                <aon:commandLink
-									                	immediate="#{true}"
-									                	reRender="thumbnail_preview"
-									                    actionListener="#{download_category.onSelectImage}"
-									                    value="#{item.name}">
-									            		<aon:graphicImage url="#{item.thumb}" alt="#{item.name}"/>
-									        		</aon:commandLink>
-											</aon:panelGrid>
-										</rich:dataList>
-									</aon:panelGroup>
-								</rich:panel>
-							</h:panelGrid>		
-				        </rich:modalPanel>													
+						<ui:include src="/facelet/content/utils/image_modal.xhtml">
+							<ui:param name="modalPanelName" value="mp" />
+							<ui:param name="roots" value="#{fileSystemBean.imageRoots}" />
+							<ui:param name="galleryBean" value="#{gallery}" />
+							<ui:param name="listenerBean" value="#{download_category}" />
+							<ui:param name="reRender" value="thumbnail_preview" />
+							<ui:param name="image" value="#{true}" />
+							<ui:param name="thumbnail" value="#{false}" />
+						</ui:include>
 		        	</aon:panelGroup>
 
 					<aon:outputLabel for="DownloadCategory_section"
