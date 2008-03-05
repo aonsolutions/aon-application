@@ -12,6 +12,7 @@ import com.code.aon.account.dao.IAccountAlias;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.ql.Criteria;
 
 /**
@@ -20,15 +21,12 @@ import com.code.aon.ql.Criteria;
  */
 public class AccountSummaryManager {
 
-    /**
-     * @param entryDetail
-     * @param factor
-     * @throws ManagerBeanException
-     */
-    public static void modifyAccountSummary(AccountEntryDetail entryDetail, int factor) throws ManagerBeanException {
+	@SuppressWarnings("unchecked")
+	public static void modifyAccountSummary(AccountEntryDetail entryDetail, int factor) throws ManagerBeanException {
         AccountSummary accountSummary;
         String period = entryDetail.getAccountEntry().getAccountPeriod();
         Account account = entryDetail.getAccount();
+        SecurityLevel securityLevel = entryDetail.getAccountEntry().getSecurityLevel();
         Date entryDate = entryDetail.getAccountEntry().getEntryDate();
         double debit = entryDetail.getDebit() * factor;
         double credit = entryDetail.getCredit() * factor;
@@ -37,6 +35,7 @@ public class AccountSummaryManager {
         Criteria criteria = new Criteria();
         criteria.addEqualExpression(summaryBean.getFieldName(IAccountAlias.ACCOUNT_SUMMARY_ACCOUNT_PERIOD), period);
         criteria.addEqualExpression(summaryBean.getFieldName(IAccountAlias.ACCOUNT_SUMMARY_ACCOUNT_ID), account.getId());
+        criteria.addEqualExpression(summaryBean.getFieldName(IAccountAlias.ACCOUNT_SUMMARY_SECURITY_LEVEL), securityLevel);
         criteria.addEqualExpression(summaryBean.getFieldName(IAccountAlias.ACCOUNT_SUMMARY_ENTRY_DATE), entryDate);
         Iterator iterator = summaryBean.getList(criteria).iterator();
         if (iterator.hasNext()) {
@@ -48,17 +47,27 @@ public class AccountSummaryManager {
             accountSummary = new AccountSummary();
             accountSummary.setAccountPeriod(period);
             accountSummary.setAccount(account);
+            accountSummary.setSecurityLevel(securityLevel);
             accountSummary.setEntryDate(entryDate);
             accountSummary.setEntryMonth(calendar.get(Calendar.MONTH) + 1);
         }
-        accountSummary.setDebit(accountSummary.getDebit() + debit);
-        accountSummary.setCredit(accountSummary.getCredit() + credit);
+        accountSummary.setDebit(round(accountSummary.getDebit() + debit, 2));
+        accountSummary.setCredit(round(accountSummary.getCredit() + credit, 2));
 
         if (accountSummary.getId() == null) {
             summaryBean.insert(accountSummary);
         } else {
-            summaryBean.update(accountSummary);
+        	if (accountSummary.getDebit() > 0 || accountSummary.getCredit() > 0) {
+            	summaryBean.update(accountSummary);
+        	} else {
+            	summaryBean.remove(accountSummary);
+        	}
         }
+    }
+
+    private static double round(double value, int precision) {
+        double decimal = Math.pow(10, precision);
+        return Math.round(decimal*value) / decimal;
     }
 
 }
