@@ -28,19 +28,19 @@
 						
 					<!-- start toolbar navigation -->
 					<aon:div styleClass="aon-finding-toolbar-item-group">					
-						<aon:commandButton id="reset" value="#{bundle.aon_reset}"
+						<h:commandButton id="reset" value="#{bundle.aon_reset}"
 							action="banner_category_form"
 							actionListener="#{banner_category.onReset}"
 							styleClass="aon-finding-toolbar-item aon-icon-reset"
 							accesskey="#{bundle.aon_key_new}"/>
-						<aon:commandButton id="save_new"
+						<h:commandButton id="save_new"
 							value="#{bundle.aon_save}" 
 							rendered="#{banner_category.new}"
 							action="banner_category_form"
 							actionListener="#{banner_category.accept}"
 							styleClass="aon-finding-toolbar-item aon-icon-accept"
 							accesskey="#{bundle.aon_key_save}"/>
-						<aon:commandButton id="save_edit"
+						<h:commandButton id="save_edit"
 							value="#{bundle.aon_save}" 
 							rendered="#{banner_category.to!=null and !banner_category.new}"
 							actionListener="#{banner_category.accept}"
@@ -55,30 +55,30 @@
 							confirmActionListener="#{banner_category.onRemove}"
 							confirmAction="banner_category_list"
 							accesskey="#{bundle.aon_key_remove}"/>
-						<aon:commandButton id="exit" value="#{bundle.aon_close}"
+						<h:commandButton id="exit" value="#{bundle.aon_close}"
 							action="banner_category_list" 
 							immediate="#{true}"
 							styleClass="aon-finding-toolbar-item aon-icon-cancel"
 							accesskey="#{bundle.aon_key_close}"/>
-						<aon:commandButton id="first" 
+						<h:commandButton id="first" 
 							immediate="#{true}"
 							action="banner_category_form"
 							rendered="#{!banner_category.new and !banner_category.inFirst}"
 							styleClass="aon-icon-commandButton aon-dataScroller-button-first"
 							actionListener="#{banner_category.onSelectFirst}"/>
-						<aon:commandButton id="previous" 
+						<h:commandButton id="previous" 
 							immediate="#{true}"
 							action="banner_category_form"
 							rendered="#{!banner_category.new and !banner_category.inFirst}"
 							styleClass="aon-icon-commandButton aon-dataScroller-button-previous"
 							actionListener="#{banner_category.onSelectPrevious}"/>
-						<aon:commandButton id="next" 
+						<h:commandButton id="next" 
 							immediate="#{true}"
 							action="banner_category_form"
 							rendered="#{!banner_category.new and !banner_category.inLast}"
 							styleClass="aon-icon-commandButton aon-dataScroller-button-next"
 							actionListener="#{banner_category.onSelectNext}"/>
-						<aon:commandButton id="last" 
+						<h:commandButton id="last" 
 							immediate="#{true}"
 							action="banner_category_form"
 							rendered="#{!banner_category.new and !banner_category.inLast}"
@@ -130,7 +130,7 @@
 							
 								<!-- start toolbar navigation -->
 								<aon:div styleClass="aon-finding-toolbar-item-group">
-									<aon:commandButton id="reset_list" value="#{bundle.aon_reset}"
+									<h:commandButton id="reset_list" value="#{bundle.aon_reset}"
 										action="banner_category_form" 
 										actionListener="#{banner.onReset}"
 										styleClass="aon-finding-toolbar-item aon-icon-reset"
@@ -216,12 +216,12 @@
 								</f:facet>
 								<aon:graphicImage rendered="#{to.position == 0}"
 									url="/images/cms/spacer16.gif" style="margin-left: 8px;"/>
-								<aon:commandButton  
+								<h:commandButton  
 									reRender="detail_list"
 									actionListener="#{banner.onMoveUp}" 
 									rendered="#{to.position != 0 and banner.to==null}"
 									image="/images/cms/up.gif" styleClass="aon-icon-commandButton" />
-								<aon:commandButton 
+								<h:commandButton 
 									reRender="detail_list" 
 									actionListener="#{banner.onMoveDown}"
 									rendered="#{to.position &lt; (banner.model.rowCount - 1)  and banner.to==null}"
@@ -238,14 +238,14 @@
 									<aon:panelGrid id="buttonsGrid_list_form" columns="1" dir="true" 
 										columnClasses="aon-finding-toolbar">				
 										<aon:div styleClass="aon-finding-toolbar-item-group">
-											<aon:commandButton id="save_list_form"
+											<h:commandButton id="save_list_form"
 												value="#{bundle.aon_save}" 
 												rendered="#{banner.to!=null or banner.new}"
 												reRender="detail_panel"
 												actionListener="#{banner.onAccept}"
 												styleClass="aon-finding-toolbar-item aon-icon-accept"
 												accesskey="#{bundle.aon_key_save}"/>
-											<aon:commandButton id="cancel_list_form"
+											<h:commandButton id="cancel_list_form"
 												value="#{bundle.aon_cancel}" 
 												rendered="#{banner.to!=null or banner.new}" immediate="#{true}"
 												reRender="detail_panel"

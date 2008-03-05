@@ -30,13 +30,13 @@
 						
 					<!-- start toolbar navigation -->
 					<aon:div styleClass="aon-finding-toolbar-item-group">
-						<aon:commandButton id="save"
+						<h:commandButton id="save"
 							value="#{bundle.aon_save}" 
 							rendered="#{generic_page.to!=null or header.new}"
 							actionListener="#{generic_page.onAccept}"
 							styleClass="aon-finding-toolbar-item aon-icon-accept"
 							accesskey="#{bundle.aon_key_save}"/>
-						<aon:commandButton id="cancel"
+						<h:commandButton id="cancel"
 							value="#{bundle.aon_cancel}" 
 							rendered="#{generic_page.to!=null or header.new}" immediate="#{true}"
 							actionListener="#{generic_page.onCancel}" 
@@ -52,31 +52,31 @@
 							confirmAction="generic_page_list"
 							styleClass="aon-finding-toolbar-item aon-icon-delete"
 							accesskey="#{bundle.aon_key_remove}"/>
-						<aon:commandButton id="reset" value="#{bundle.aon_reset}"
+						<h:commandButton id="reset" value="#{bundle.aon_reset}"
 							action="generic_page_form"
 							actionListener="#{generic_page.onReset}" 
 							rendered="#{!generic_page.new}"
 							styleClass="aon-finding-toolbar-item aon-icon-reset"
 							accesskey="#{bundle.aon_key_new}" />
-						<aon:commandButton id="first" 
+						<h:commandButton id="first" 
 							immediate="#{true}"
 							action="generic_page_form"
 							rendered="#{!generic_page.new and !generic_page.inFirst}"
 							styleClass="aon-icon-commandButton aon-dataScroller-button-first"
 							actionListener="#{generic_page.onSelectFirst}"/>
-						<aon:commandButton id="previous" 
+						<h:commandButton id="previous" 
 							immediate="#{true}"
 							action="generic_page_form"
 							rendered="#{!generic_page.new and !generic_page.inFirst}"
 							styleClass="aon-icon-commandButton aon-dataScroller-button-previous"
 							actionListener="#{generic_page.onSelectPrevious}"/>
-						<aon:commandButton id="next" 
+						<h:commandButton id="next" 
 							immediate="#{true}"
 							action="generic_page_form"
 							rendered="#{!generic_page.new and !generic_page.inLast}"
 							styleClass="aon-icon-commandButton aon-dataScroller-button-next"
 							actionListener="#{generic_page.onSelectNext}"/>
-						<aon:commandButton id="last" 
+						<h:commandButton id="last" 
 							immediate="#{true}"
 							action="generic_page_form"
 							rendered="#{!generic_page.new and !generic_page.inLast}"

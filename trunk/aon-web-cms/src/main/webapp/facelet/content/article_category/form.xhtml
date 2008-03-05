@@ -28,19 +28,19 @@
 						
 					<!-- start toolbar navigation -->
 					<aon:div styleClass="aon-finding-toolbar-item-group">					
-						<aon:commandButton id="reset" value="#{bundle.aon_reset}"
+						<h:commandButton id="reset" value="#{bundle.aon_reset}"
 							action="article_category_form"
 							actionListener="#{article_category.onReset}"
 							styleClass="aon-finding-toolbar-item aon-icon-reset"
 							accesskey="#{bundle.aon_key_new}"/>
-						<aon:commandButton id="save_new"
+						<h:commandButton id="save_new"
 							value="#{bundle.aon_save}" 
 							rendered="#{article_category.new}"
 							action="article_category_form"
 							actionListener="#{article_category.accept}"
 							styleClass="aon-finding-toolbar-item aon-icon-accept"
 							accesskey="#{bundle.aon_key_save}"/>
-						<aon:commandButton id="save_edit"
+						<h:commandButton id="save_edit"
 							value="#{bundle.aon_save}" 
 							rendered="#{article_category.to!=null and !article_category.new}"
 							actionListener="#{article_category.accept}"
@@ -55,30 +55,30 @@
 							confirmActionListener="#{article_category.onRemove}"
 							confirmAction="article_category_list"
 							accesskey="#{bundle.aon_key_remove}"/>
-						<aon:commandButton id="exit" value="#{bundle.aon_close}"
+						<h:commandButton id="exit" value="#{bundle.aon_close}"
 							action="article_category_list" 
 							immediate="#{true}"
 							styleClass="aon-finding-toolbar-item aon-icon-cancel"
 							accesskey="#{bundle.aon_key_close}"/>
-						<aon:commandButton id="first" 
+						<h:commandButton id="first" 
 							immediate="#{true}"
 							action="article_category_form"
 							rendered="#{!article_category.new and !article_category.inFirst}"
 							styleClass="aon-icon-commandButton aon-dataScroller-button-first"
 							actionListener="#{article_category.onSelectFirst}"/>
-						<aon:commandButton id="previous" 
+						<h:commandButton id="previous" 
 							immediate="#{true}"
 							action="article_category_form"
 							rendered="#{!article_category.new and !article_category.inFirst}"
 							styleClass="aon-icon-commandButton aon-dataScroller-button-previous"
 							actionListener="#{article_category.onSelectPrevious}"/>
-						<aon:commandButton id="next" 
+						<h:commandButton id="next" 
 							immediate="#{true}"
 							action="article_category_form"
 							rendered="#{!article_category.new and !article_category.inLast}"
 							styleClass="aon-icon-commandButton aon-dataScroller-button-next"
 							actionListener="#{article_category.onSelectNext}"/>
-						<aon:commandButton id="last" 
+						<h:commandButton id="last" 
 							immediate="#{true}"
 							action="article_category_form"
 							rendered="#{!article_category.new and !article_category.inLast}"
@@ -138,7 +138,7 @@
 							
 								<!-- start toolbar navigation -->
 								<aon:div styleClass="aon-finding-toolbar-item-group">
-									<aon:commandButton id="reset_list" value="#{bundle.aon_reset}"
+									<h:commandButton id="reset_list" value="#{bundle.aon_reset}"
 										actionListener="#{article.onReset}"
 										styleClass="aon-finding-toolbar-item aon-icon-reset"
 										accesskey="#{bundle.aon_key_new}"
@@ -195,14 +195,14 @@
 									<aon:panelGrid id="buttonsGrid_list_form" columns="1" dir="true" 
 										columnClasses="aon-finding-toolbar">				
 										<aon:div styleClass="aon-finding-toolbar-item-group">
-											<aon:commandButton id="save_list_form"
+											<h:commandButton id="save_list_form"
 												value="#{bundle.aon_save}" 
 												rendered="#{article.to!=null or article.new}"
 												reRender="detail_panel,tab0,tab1,tab2,tab3"
 												actionListener="#{article.onAccept}"
 												styleClass="aon-finding-toolbar-item aon-icon-accept"
 												accesskey="#{bundle.aon_key_save}"/>
-											<aon:commandButton id="cancel_list_form"
+											<h:commandButton id="cancel_list_form"
 												value="#{bundle.aon_cancel}" 
 												rendered="#{article.to!=null or article.new}" immediate="#{true}"
 												reRender="detail_panel,tab0,tab1,tab2,tab3"
@@ -369,21 +369,21 @@
 											<aon:outputText value="&#160;" />
 										</f:facet>
 										<aon:outputText value="&#160;" rendered="#{to==articleRelated.to}" />
-										<aon:commandButton id="lineRemove" title="[#{bundle.aon_remove}]"
+										<h:commandButton id="lineRemove" title="[#{bundle.aon_remove}]"
 											rendered="#{to!=articleRelated.to}"
 											styleClass="aon-editDataTable-button aon-icon-delete"
 											reRender="articleRelatedData" immediate="true"
 											actionListener="#{articleRelated.onRemoveCurrent}" />
 										<f:facet name="footer">
 											<aon:div>
-												<aon:commandButton id="reset"
+												<h:commandButton id="reset"
 													title="[#{bundle.aon_reset}]"
 													styleClass="aon-editDataTable-button aon-icon-reset" value=""
 													immediate="true" reRender="articleRelatedData"
 													rendered="#{!articleRelated.new}" 
 													actionListener="#{articleRelated.onReset}"
 													accesskey="#{bundle.aon_key_new_line}">
-												</aon:commandButton>
+												</h:commandButton>
 											</aon:div>
 										</f:facet>
 									</aon:column>
@@ -411,11 +411,11 @@
 										<f:facet name="footer">
 											<aon:div rendered="#{articleRelated.new}">
 												<f:verbatim rendered="#{!articleRelated.new}">&#160;</f:verbatim>
-												<aon:commandButton id="newAccept" title="[#{bundle.aon_accept}]"
+												<h:commandButton id="newAccept" title="[#{bundle.aon_accept}]"
 													styleClass="aon-editDataTable-button aon-icon-accept"
 													reRender="articleRelatedData"
 													actionListener="#{articleRelated.onAccept}" />
-												<aon:commandButton id="newCancel" title="[#{bundle.aon_cancel}]"
+												<h:commandButton id="newCancel" title="[#{bundle.aon_cancel}]"
 													styleClass="aon-editDataTable-button aon-icon-cancel"
 													reRender="articleRelatedData" immediate="true"
 													actionListener="#{articleRelated.onCancel}" />
@@ -446,21 +446,16 @@
 											<aon:outputText value="&#160;" />
 										</f:facet>
 										<aon:outputText value="&#160;" rendered="#{to==articleDocument.to}" />
-										<aon:commandButton rendered="#{to!=articleDocument.to}"
-											styleClass="aon-editDataTable-button aon-icon-rowSelector"
-											actionListener="#{articleDocument.onSelect}" value="" immediate="true"
-											reRender="articleDocumentData">
-										</aon:commandButton>
 										<f:facet name="footer">
 											<aon:div>
-												<aon:commandButton id="reset"
+												<h:commandButton id="reset"
 													title="[#{bundle.aon_reset}]"
 													styleClass="aon-editDataTable-button aon-icon-reset" value=""
 													immediate="true" reRender="articleDocumentData"
 													rendered="#{!articleDocument.new}" 
 													actionListener="#{articleDocument.onReset}"
 													accesskey="#{bundle.aon_key_new_line}">
-												</aon:commandButton>
+												</h:commandButton>
 											</aon:div>
 										</f:facet>
 									</aon:column>
@@ -470,7 +465,12 @@
 											<aon:outputText value="#{appBundle.document_related_name}" />
 										</f:facet>
 										<aon:div rendered="#{to!=articleDocument.to}" >
-											<aon:outputText value="#{to.alias}" />	
+											<aon:outputText value="#{to.alias}" >
+												<a4j:support 
+													reRender="articleDocumentData"
+													actionListener="#{articleDocument.onSelect}"
+													event="onclick" />
+											</aon:outputText>					
 										</aon:div>
 										<aon:div rendered="#{to==articleDocument.to}">
 											<aon:panelGrid columns="2" dir="true">
@@ -566,15 +566,15 @@
 										</f:facet>
 										<f:verbatim rendered="#{to!=articleDocument.to}">&#160;</f:verbatim>
 										<aon:div rendered="#{to==articleDocument.to}">
-											<aon:commandButton title="[#{bundle.aon_accept}]"
+											<h:commandButton title="[#{bundle.aon_accept}]"
 												styleClass="aon-editDataTable-button aon-icon-accept"
 												reRender="articleDocumentData"
 												actionListener="#{articleDocument.onAccept}" />
-											<aon:commandButton title="[#{bundle.aon_cancel}]"
+											<h:commandButton title="[#{bundle.aon_cancel}]"
 												styleClass="aon-editDataTable-button aon-icon-cancel"
 												reRender="articleDocumentData" immediate="true"
 												actionListener="#{articleDocument.onCancel}" />
-											<aon:commandButton title="[#{bundle.aon_remove}]"
+											<h:commandButton title="[#{bundle.aon_remove}]"
 												styleClass="aon-editDataTable-button aon-icon-delete"
 												reRender="articleDocumentData" immediate="true"
 												actionListener="#{articleDocument.onRemove}" />
@@ -582,12 +582,12 @@
 										<f:facet name="footer">
 											<aon:div rendered="#{articleDocument.new}">
 												<f:verbatim rendered="#{!articleDocument.new}">&#160;</f:verbatim>
-												<aon:commandButton title="[#{bundle.aon_accept}]"
+												<h:commandButton title="[#{bundle.aon_accept}]"
 													styleClass="aon-editDataTable-button aon-icon-accept"
 													reRender="articleDocumentData"
 													rendered="#{articleDocument.inputFile != null}"
 													actionListener="#{articleDocument.onAccept}" />
-												<aon:commandButton title="[#{bundle.aon_cancel}]"
+												<h:commandButton title="[#{bundle.aon_cancel}]"
 													styleClass="aon-editDataTable-button aon-icon-cancel"
 													reRender="articleDocumentData" immediate="true"
 													actionListener="#{articleDocument.onCancel}" />

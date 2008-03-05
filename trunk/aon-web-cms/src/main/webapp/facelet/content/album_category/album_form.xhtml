@@ -27,19 +27,19 @@
 						
 					<!-- start toolbar navigation -->
 					<aon:div styleClass="aon-finding-toolbar-item-group">					
-						<aon:commandButton id="reset" value="#{bundle.aon_reset}"
+						<h:commandButton id="reset" value="#{bundle.aon_reset}"
 							action="album_form"
 							actionListener="#{album.onReset}"
 							styleClass="aon-finding-toolbar-item aon-icon-reset"
 							accesskey="#{bundle.aon_key_new}"/>
-						<aon:commandButton id="save_new"
+						<h:commandButton id="save_new"
 							value="#{bundle.aon_save}" 
 							rendered="#{album.new}"
 							action="album_form"
 							actionListener="#{album.accept}"
 							styleClass="aon-finding-toolbar-item aon-icon-accept"
 							accesskey="#{bundle.aon_key_save}"/>
-						<aon:commandButton id="save_edit"
+						<h:commandButton id="save_edit"
 							value="#{bundle.aon_save}" 
 							rendered="#{album.to!=null and !album.new}"
 							action="album_form"
@@ -55,31 +55,31 @@
 							confirmActionListener="#{album.onRemove}"
 							confirmAction="album_category_form"
 							accesskey="#{bundle.aon_key_remove}"/>
-						<aon:commandButton id="exit" value="#{bundle.aon_close}"
+						<h:commandButton id="exit" value="#{bundle.aon_close}"
 							action="album_category_form" 
 							actionListener="#{album_category.onSelectAlbums}"
 							immediate="#{true}"
 							styleClass="aon-finding-toolbar-item aon-icon-cancel"
 							accesskey="#{bundle.aon_key_close}"/>
-						<aon:commandButton id="first" 
+						<h:commandButton id="first" 
 							immediate="#{true}"
 							action="album_form"
 							rendered="#{!album.new and !album.inFirst}"
 							styleClass="aon-icon-commandButton aon-dataScroller-button-first"
 							actionListener="#{album.onSelectFirst}"/>
-						<aon:commandButton id="previous" 
+						<h:commandButton id="previous" 
 							immediate="#{true}"
 							action="album_form"
 							rendered="#{!album.new and !album.inFirst}"
 							styleClass="aon-icon-commandButton aon-dataScroller-button-previous"
 							actionListener="#{album.onSelectPrevious}"/>
-						<aon:commandButton id="next" 
+						<h:commandButton id="next" 
 							immediate="#{true}"
 							action="album_form"
 							rendered="#{!album.new and !album.inLast}"
 							styleClass="aon-icon-commandButton aon-dataScroller-button-next"
 							actionListener="#{album.onSelectNext}"/>
-						<aon:commandButton id="last" 
+						<h:commandButton id="last" 
 							immediate="#{true}"
 							action="album_form"
 							rendered="#{!album.new and !album.inLast}"
@@ -170,7 +170,7 @@
 							
 								<!-- start toolbar navigation -->
 								<aon:div styleClass="aon-finding-toolbar-item-group">
-									<aon:commandButton id="reset_list" value="#{bundle.aon_reset}"
+									<h:commandButton id="reset_list" value="#{bundle.aon_reset}"
 										action="album_form" 
 										actionListener="#{albumImage.onReset}"
 										styleClass="aon-finding-toolbar-item aon-icon-reset"
@@ -256,12 +256,12 @@
 								</f:facet>
 								<aon:graphicImage rendered="#{to.position == 0}"
 									url="/images/cms/spacer16.gif" style="margin-left: 8px;"/>
-								<aon:commandButton  
+								<h:commandButton  
 									reRender="detail_list"
 									actionListener="#{albumImage.onMoveUp}" 
 									rendered="#{to.position != 0 and albumImage.to==null}"
 									image="/images/cms/up.gif" styleClass="aon-icon-commandButton" />
-								<aon:commandButton 
+								<h:commandButton 
 									reRender="detail_list" 
 									actionListener="#{albumImage.onMoveDown}"
 									rendered="#{to.position &lt; (albumImage.model.rowCount - 1)  and albumImage.to==null}"
@@ -278,14 +278,14 @@
 									<aon:panelGrid id="buttonsGrid_list_form" columns="1" dir="true" 
 										columnClasses="aon-finding-toolbar">				
 										<aon:div styleClass="aon-finding-toolbar-item-group">
-											<aon:commandButton id="save_list_form"
+											<h:commandButton id="save_list_form"
 												value="#{bundle.aon_save}" 
 												rendered="#{albumImage.to!=null or albumImage.new}"
 												reRender="detail_panel"
 												actionListener="#{albumImage.onAccept}"
 												styleClass="aon-finding-toolbar-item aon-icon-accept"
 												accesskey="#{bundle.aon_key_save}"/>
-											<aon:commandButton id="cancel_list_form"
+											<h:commandButton id="cancel_list_form"
 												value="#{bundle.aon_cancel}" 
 												rendered="#{albumImage.to!=null or albumImage.new}" 
 												immediate="#{true}"

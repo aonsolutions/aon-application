@@ -73,12 +73,12 @@
 				</f:facet>
 				<aon:graphicImage rendered="#{to.position == 0}"
 					url="/images/cms/spacer16.gif" style="margin-left: 8px;"/>
-				<aon:commandButton  
+				<h:commandButton  
 					reRender="#{dataTable}"
 					actionListener="#{article.onMoveUp}" 
 					rendered="#{to.position != 0 and article.to==null}"
 					image="/images/cms/up.gif" styleClass="aon-icon-commandButton" />
-				<aon:commandButton 
+				<h:commandButton 
 					reRender="#{dataTable}" 
 					actionListener="#{article.onMoveDown}"
 					rendered="#{to.position &lt; (article.model.rowCount - 1)  and article.to==null}"

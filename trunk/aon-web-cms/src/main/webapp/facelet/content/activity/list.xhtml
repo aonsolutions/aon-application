@@ -29,19 +29,19 @@
 
 					<aon:div styleClass="aon-finding-toolbar-item-group">
 
-						<aon:commandButton id="reset" value="#{bundle.aon_reset}"
+						<h:commandButton id="reset" value="#{bundle.aon_reset}"
 							actionListener="#{activity.onReset}"
 							rendered="#{!activity.new}"
 							reRender="dataTable,gridToolbar"
 							styleClass="aon-finding-toolbar-item aon-icon-reset"
 							accesskey="#{bundle.aon_key_new}" />
-						<aon:commandButton id="save" value="#{bundle.aon_save}"
+						<h:commandButton id="save" value="#{bundle.aon_save}"
 							rendered="#{activity.to!=null}"
 							reRender="dataTable, gridToolbar"
 							styleClass="aon-finding-toolbar-item aon-icon-accept"
 							actionListener="#{activity.onAccept}"
 							accesskey="#{bundle.aon_key_save}" />
-						<aon:commandButton id="cancel" value="#{bundle.aon_cancel}"
+						<h:commandButton id="cancel" value="#{bundle.aon_cancel}"
 							rendered="#{activity.to!=null}"
 							reRender="dataTable, gridToolbar"
 							styleClass="aon-finding-toolbar-item aon-icon-cancel"
@@ -78,14 +78,14 @@
 							<aon:outputText value="&#160;" />
 						</f:facet>
 						<aon:outputText value="&#160;" rendered="#{to==activity.to}" />
-						<aon:commandButton rendered="#{to!=activity.to}"
+						<h:commandButton rendered="#{to!=activity.to}"
 							styleClass="aon-editDataTable-button aon-icon-rowSelector"
 							actionListener="#{activity.onSelect}" value="" immediate="true"
 							reRender="dataTable,gridToolbar">
-						</aon:commandButton>
+						</h:commandButton>
 						<f:facet name="footer">
 							<aon:div>
-								<aon:commandButton id="reset"
+								<h:commandButton id="reset"
 									title="[#{bundle.aon_reset}]"
 									styleClass="aon-editDataTable-button aon-icon-reset"
 									value="" immediate="true"
@@ -93,7 +93,7 @@
 									rendered="#{!activity.new}"
 									actionListener="#{activity.onReset}"
 									accesskey="#{bundle.aon_key_new_line}">
-								</aon:commandButton>
+								</h:commandButton>
 							</aon:div>
 						</f:facet>
 					</aon:column>
@@ -140,17 +140,17 @@
 						</f:facet>
 						<f:verbatim rendered="#{to!=activity.to}">&#160;</f:verbatim>
 						<aon:div rendered="#{to==activity.to}">
-							<aon:commandButton id="lineAccept"
+							<h:commandButton id="lineAccept"
 								title="[#{bundle.aon_accept}]"
 								styleClass="aon-editDataTable-button aon-icon-accept"
 								reRender="dataTable,gridToolbar"
 								actionListener="#{activity.onAccept}" />
-							<aon:commandButton id="lineCancel"
+							<h:commandButton id="lineCancel"
 								title="[#{bundle.aon_cancel}]"
 								styleClass="aon-editDataTable-button aon-icon-cancel"
 								reRender="dataTable,gridToolbar" immediate="true"
 								actionListener="#{activity.onCancel}" />
-							<aon:commandButton id="lineRemove"
+							<h:commandButton id="lineRemove"
 								title="[#{bundle.aon_remove}]"
 								styleClass="aon-editDataTable-button aon-icon-delete"
 								reRender="dataTable,gridToolbar" immediate="true"
@@ -159,12 +159,12 @@
 						<f:facet name="footer">
 							<aon:div rendered="#{activity.new}">
 								<f:verbatim rendered="#{!activity.new}">&#160;</f:verbatim>
-								<aon:commandButton id="newAccept"
+								<h:commandButton id="newAccept"
 									title="[#{bundle.aon_accept}]"
 									styleClass="aon-editDataTable-button aon-icon-accept"
 									reRender="dataTable,gridToolbar"
 									actionListener="#{activity.onAccept}" />
-								<aon:commandButton id="newCancel"
+								<h:commandButton id="newCancel"
 									title="[#{bundle.aon_cancel}]"
 									styleClass="aon-editDataTable-button aon-icon-cancel"
 									reRender="dataTable,gridToolbar" immediate="true"
