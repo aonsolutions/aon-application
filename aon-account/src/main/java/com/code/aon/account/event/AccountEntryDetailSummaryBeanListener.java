@@ -9,7 +9,7 @@ import com.code.aon.common.event.ManagerBeanListenerAdapter;
  * @author Consulting & Development
  *
  */
-public class AccountSummaryBeanListener extends ManagerBeanListenerAdapter {
+public class AccountEntryDetailSummaryBeanListener extends ManagerBeanListenerAdapter {
 
     @Override
     public void beanInserted(ManagerBeanEvent evt) throws ManagerBeanException {
