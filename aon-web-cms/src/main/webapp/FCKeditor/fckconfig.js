@@ -94,10 +94,10 @@ FCKConfig.ToolbarLocation = 'In' ;
 FCKConfig.ToolbarSets["Default"] = [
 	['Bold','Italic','Underline','StrikeThrough','-','Subscript','Superscript'],
 	['OrderedList','UnorderedList','-','Outdent','Indent'],
-	['JustifyLeft','JustifyCenter','JustifyRight','JustifyFull'],
-	['Undo','Redo','-','Cut','Copy','Paste','PasteText','PasteWord','SpellCheck'],
+	['JustifyLeft','JustifyCenter','JustifyRight','JustifyFull','-','Table'],
+	['Undo','Redo','-','Cut','Copy','Paste','PasteText','PasteWord'],
 	'/', 
-	['Link','Unlink','Anchor'],
+	['Link','Unlink','Anchor','-','Image'],
 	['FontName','FontSize'],
 	['TextColor','BGColor'],
 	['Source','Preview']
@@ -187,14 +187,14 @@ var _QuickUploadLanguage	= 'jsp' ;	// asp | aspx | cfm | lasso | php
 var _FileBrowserExtension = _FileBrowserLanguage == 'perl' ? 'cgi' : _FileBrowserLanguage ;
 
 FCKConfig.LinkBrowser = true ;
-FCKConfig.LinkBrowserURL = FCKConfig.BasePath + "filemanager/browser/default/browser.html?Connector=connectors/jsp/connector";
-//FCKConfig.LinkBrowserURL = '/ckfinder/ckfinder.html' ;
+//FCKConfig.LinkBrowserURL = FCKConfig.BasePath + "filemanager/browser/default/browser.html?Connector=connectors/jsp/connector";
+FCKConfig.LinkBrowserURL = '/ckfinder/ckfinder.html' ;
 FCKConfig.LinkBrowserWindowWidth	= FCKConfig.ScreenWidth * 0.7 ;		// 70%
 FCKConfig.LinkBrowserWindowHeight	= FCKConfig.ScreenHeight * 0.7 ;	// 70%
 
 FCKConfig.ImageBrowser = true ;
-FCKConfig.ImageBrowserURL = FCKConfig.BasePath + "filemanager/browser/default/browser.html?Type=Image&Connector=connectors/jsp/connector" ;
-//FCKConfig.ImageBrowserURL = '/ckfinder/ckfinder.html?type=Images' ;
+//FCKConfig.ImageBrowserURL = FCKConfig.BasePath + "filemanager/browser/default/browser.html?Type=Image&Connector=connectors/jsp/connector" ;
+FCKConfig.ImageBrowserURL = '/ckfinder/ckfinder.html?type=Imagenes' ;
 FCKConfig.ImageBrowserWindowWidth  = FCKConfig.ScreenWidth * 0.7 ;	// 70% ;
 FCKConfig.ImageBrowserWindowHeight = FCKConfig.ScreenHeight * 0.7 ;	// 70% ;
 
