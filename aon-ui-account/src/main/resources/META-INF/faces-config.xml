@@ -216,6 +216,10 @@
 					<value>accountEntry.accountPeriod</value>
 				</map-entry>
 				<map-entry>
+					<key>securityLevel</key>
+					<value>accountEntry.securityLevel</value>
+				</map-entry>
+				<map-entry>
 					<key>entryDate</key>
 					<value>accountEntry.entryDate</value>
 				</map-entry>
