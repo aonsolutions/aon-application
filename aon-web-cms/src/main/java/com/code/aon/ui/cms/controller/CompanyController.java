@@ -1,7 +1,6 @@
 package com.code.aon.ui.cms.controller;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -12,6 +11,7 @@ import javax.faces.model.ListDataModel;
 import com.code.aon.cms.Activity;
 import com.code.aon.cms.Company;
 import com.code.aon.cms.CompanyActivity;
+import com.code.aon.cms.Image;
 import com.code.aon.cms.dao.ICMSAlias;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
@@ -106,5 +106,12 @@ public class CompanyController extends GridController {
 			AonUtil.addErrorMessage(e.getMessage());
 		}
 	}
-	
+
+	public void onSelectImage(ActionEvent event) throws ManagerBeanException {
+		GalleryController controller = (GalleryController)AonUtil.getRegisteredBean("gallery");
+		String image = ((Image)controller.getModel().getRowData()).getRelativePath();
+		Company current = (Company)getTo();
+		current.setLogo(image);
+	}
+
 }
