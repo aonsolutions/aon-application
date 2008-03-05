@@ -1,10 +1,6 @@
 package com.code.aon.ui.account.event;
 
 import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
-
-import javax.faces.model.DataModel;
 
 import com.code.aon.account.Account;
 import com.code.aon.account.AccountEntryDetail;
@@ -13,7 +9,6 @@ import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ql.Criteria;
-import com.code.aon.ql.util.ExpressionException;
 import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
@@ -21,70 +16,49 @@ import com.code.aon.ui.form.event.ControllerListenerException;
 public class AccountControllerListener extends ControllerAdapter {
 
 	@Override
-	public void afterBeanAdded(ControllerEvent event) throws ControllerListenerException {
-		try {
-			DataModel model = event.getController().getModel();
-			model.setRowIndex((model.getRowCount() > 0?1:-1));
-			while (model.isRowAvailable()) {
-				if (model.getRowData().equals(event.getController().getTo())) {
-					break;
-				}
-				model.setRowIndex(model.getRowIndex() + 1);
-
-			}
-			event.getController().onSelect(null);
-		} catch (ManagerBeanException e) {
-			throw new ControllerListenerException(e);
-		}
-	}
-	
-	@Override
 	@SuppressWarnings("unchecked")
 	public void beforeBeanAdded(ControllerEvent event) throws ControllerListenerException {
-		try {
-			Account toAccount = (Account)event.getController().getTo();
-			toAccount.setEntryEnabled(true);
-			String accountId = toAccount.getId().substring(0,toAccount.getId().length() - 1);
-			int length = accountId.length();
-			IManagerBean accountBean = BeanManager.getManagerBean(Account.class);
-			Criteria criteria = null;
-			List accountList = new LinkedList();
-			for(int i=1; i<=length; i++){
-				if(criteria == null){
-					criteria = new Criteria();
+		Account to = (Account)event.getController().getTo();
+		int parentLevel = 0;
+		switch (to.getId().length()) {
+		case 12: parentLevel = 5;
+			break;
+		case 5: parentLevel = 3;
+			break;
+		case 3: parentLevel = 2;
+			break;
+		case 2: parentLevel = 1;
+			break;
+		}
+
+		if (parentLevel > 0) {
+			try {
+				IManagerBean accountBean = BeanManager.getManagerBean(Account.class);
+				Criteria criteria = new Criteria();
+				criteria.addEqualExpression(accountBean.getFieldName(IAccountAlias.ACCOUNT_ID), to.getId().substring(0, parentLevel));
+
+				Iterator iterator = accountBean.getList(criteria).iterator();
+				if (iterator.hasNext()) {
+					Account account = (Account)iterator.next();
+					if (account.isEntryEnabled() && hasAccountEntryDetails(account)) {
+						throw new ControllerListenerException("Imposible crear cuenta. La cuenta correspondiente de nivel inferior tiene apuntes contables.");
+					}
+				} else {
+					throw new ControllerListenerException("Imposible crear cuenta. No existe cuenta correspondiente de nivel inferior.");
 				}
-				criteria.addOrExpression(accountBean.getFieldName(IAccountAlias.ACCOUNT_ID), accountId);
-				accountId = accountId.substring(0,accountId.length() - 1);
+			} catch (ManagerBeanException e) {
+				throw new ControllerListenerException(e);
 			}
-			accountList = (criteria == null?new LinkedList():accountBean.getList(criteria));
-			if(accountList.size() > 0){
-				checkAccountEntryDetails(accountList);
-			}
-			Iterator iter = accountList.iterator();
-			while(iter.hasNext()){
-				Account account = (Account)iter.next();
-				account.setEntryEnabled(false);
-				accountBean.update(account);
-			}
-		} catch (ManagerBeanException e) {
-			throw new ControllerListenerException(e);
-		} catch (ExpressionException e) {
-			throw new ControllerListenerException(e);
 		}
 	}
 
 	@SuppressWarnings("unchecked")
-	private void checkAccountEntryDetails(List accountList) throws ManagerBeanException, ExpressionException, ControllerListenerException {
+	private boolean hasAccountEntryDetails(Account account) throws ManagerBeanException {
 		IManagerBean accountEntryDetailBean = BeanManager.getManagerBean(AccountEntryDetail.class);
-		Iterator iter = accountList.iterator();
 		Criteria criteria = new Criteria();
-		while(iter.hasNext()){
-			Account account = (Account)iter.next();
-			criteria.addOrExpression(accountEntryDetailBean.getFieldName(IAccountAlias.ACCOUNT_ENTRY_DETAIL_ACCOUNT_ID), account.getId());
-			criteria.addOrExpression(accountEntryDetailBean.getFieldName(IAccountAlias.ACCOUNT_ENTRY_DETAIL_BALANCING_ACCOUNT_ID), account.getId());
-		}
-		if(criteria != null && accountEntryDetailBean.getCount(criteria) > 0){
-			throw new ControllerListenerException("Unable to create account");
-		}
+		criteria.addEqualExpression(accountEntryDetailBean.getFieldName(IAccountAlias.ACCOUNT_ENTRY_DETAIL_ACCOUNT_ID), account.getId());
+
+		return (accountEntryDetailBean.getList(criteria).size() > 0);
 	}
+
 }
