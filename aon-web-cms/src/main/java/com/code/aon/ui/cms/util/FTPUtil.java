@@ -8,12 +8,11 @@ import org.apache.commons.net.ftp.FTPFile;
 
 import com.code.aon.cms.Config;
 
-
 public class FTPUtil {
 
-	private Config config;
+	private static Config config;
 
-	public void uploadFTP() {
+	public static void uploadFTP() {
 		config = ControllerUtil.getCurrentConfig();
 		String server = config.getFtp_server();
 		String user = config.getFtp_user();
@@ -48,7 +47,7 @@ public class FTPUtil {
 		}
 	}
 
-	public void ftpDir(String dir2ftp, FTPClient fc, String breadCrum) {
+	public static void ftpDir(String dir2ftp, FTPClient fc, String breadCrum) {
 		try {
 			File ftpDir = new File(dir2ftp);
 			String[] dirList = ftpDir.list();
