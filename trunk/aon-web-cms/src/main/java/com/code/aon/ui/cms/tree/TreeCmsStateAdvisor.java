@@ -10,11 +10,7 @@ public class TreeCmsStateAdvisor implements TreeStateAdvisor {
 
 	public Boolean adviseNodeOpened(UITree tree) {
 		if (!PostbackPhaseListener.isPostback()) {
-			Object key = tree.getRowKey();
-			TreeRowKey treeRowKey = (TreeRowKey) key;
-			if (treeRowKey == null) {
-				return Boolean.TRUE;
-			}
+			return Boolean.TRUE;
 		}
 		return null;
 	}
