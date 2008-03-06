@@ -57,33 +57,10 @@
 							accesskey="#{bundle.aon_key_remove}"/>
 						<h:commandButton id="exit" value="#{bundle.aon_close}"
 							action="direct_access_group_list" 
+							actionListener="#{direct_access_group.onSearch}"
 							immediate="#{true}"
 							styleClass="aon-finding-toolbar-item aon-icon-cancel"
 							accesskey="#{bundle.aon_key_close}"/>
-						<h:commandButton id="first" 
-							immediate="#{true}"
-							action="direct_access_group_form"
-							rendered="#{!direct_access_group.new and !direct_access_group.inFirst}"
-							styleClass="aon-icon-commandButton aon-dataScroller-button-first"
-							actionListener="#{direct_access_group.onSelectFirst}"/>
-						<h:commandButton id="previous" 
-							immediate="#{true}"
-							action="direct_access_group_form"
-							rendered="#{!direct_access_group.new and !direct_access_group.inFirst}"
-							styleClass="aon-icon-commandButton aon-dataScroller-button-previous"
-							actionListener="#{direct_access_group.onSelectPrevious}"/>
-						<h:commandButton id="next" 
-							immediate="#{true}"
-							action="direct_access_group_form"
-							rendered="#{!direct_access_group.new and !direct_access_group.inLast}"
-							styleClass="aon-icon-commandButton aon-dataScroller-button-next"
-							actionListener="#{direct_access_group.onSelectNext}"/>
-						<h:commandButton id="last" 
-							immediate="#{true}"
-							action="direct_access_group_form"
-							rendered="#{!direct_access_group.new and !direct_access_group.inLast}"
-							styleClass="aon-icon-commandButton aon-dataScroller-button-last"
-							actionListener="#{direct_access_group.onSelectLast}"/>
 				    </aon:div>
 					
 					<!-- end toolbar navigation -->

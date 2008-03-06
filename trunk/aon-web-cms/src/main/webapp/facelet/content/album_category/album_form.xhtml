@@ -61,30 +61,6 @@
 							immediate="#{true}"
 							styleClass="aon-finding-toolbar-item aon-icon-cancel"
 							accesskey="#{bundle.aon_key_close}"/>
-						<h:commandButton id="first" 
-							immediate="#{true}"
-							action="album_form"
-							rendered="#{!album.new and !album.inFirst}"
-							styleClass="aon-icon-commandButton aon-dataScroller-button-first"
-							actionListener="#{album.onSelectFirst}"/>
-						<h:commandButton id="previous" 
-							immediate="#{true}"
-							action="album_form"
-							rendered="#{!album.new and !album.inFirst}"
-							styleClass="aon-icon-commandButton aon-dataScroller-button-previous"
-							actionListener="#{album.onSelectPrevious}"/>
-						<h:commandButton id="next" 
-							immediate="#{true}"
-							action="album_form"
-							rendered="#{!album.new and !album.inLast}"
-							styleClass="aon-icon-commandButton aon-dataScroller-button-next"
-							actionListener="#{album.onSelectNext}"/>
-						<h:commandButton id="last" 
-							immediate="#{true}"
-							action="album_form"
-							rendered="#{!album.new and !album.inLast}"
-							styleClass="aon-icon-commandButton aon-dataScroller-button-last"
-							actionListener="#{album.onSelectLast}"/>
 				    </aon:div>
 					
 					<!-- end toolbar navigation -->

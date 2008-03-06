@@ -50,33 +50,10 @@
 							accesskey="#{bundle.aon_key_remove}"/>
 						<h:commandButton id="exit" value="#{bundle.aon_close}"
 							action="modular_page_list" 
+							actionListener="#{modular_page.onSearch}"
 							immediate="#{true}"
 							styleClass="aon-finding-toolbar-item aon-icon-cancel"
 							accesskey="#{bundle.aon_key_close}"/>
-						<h:commandButton id="first" 
-							immediate="#{true}"
-							action="modular_page_form"
-							rendered="#{!modular_page.new and !modular_page.inFirst}"
-							styleClass="aon-icon-commandButton aon-dataScroller-button-first"
-							actionListener="#{modular_page.onSelectFirst}"/>
-						<h:commandButton id="previous" 
-							immediate="#{true}"
-							action="modular_page_form"
-							rendered="#{!modular_page.new and !modular_page.inFirst}"
-							styleClass="aon-icon-commandButton aon-dataScroller-button-previous"
-							actionListener="#{modular_page.onSelectPrevious}"/>
-						<h:commandButton id="next" 
-							immediate="#{true}"
-							action="modular_page_form"
-							rendered="#{!modular_page.new and !modular_page.inLast}"
-							styleClass="aon-icon-commandButton aon-dataScroller-button-next"
-							actionListener="#{modular_page.onSelectNext}"/>
-						<h:commandButton id="last" 
-							immediate="#{true}"
-							action="modular_page_form"
-							rendered="#{!modular_page.new and !modular_page.inLast}"
-							styleClass="aon-icon-commandButton aon-dataScroller-button-last"
-							actionListener="#{modular_page.onSelectLast}"/>
 				    </aon:div>
 					
 					<!-- end toolbar navigation -->

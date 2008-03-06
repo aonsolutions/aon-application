@@ -50,33 +50,10 @@
 							accesskey="#{bundle.aon_key_remove}"/>
 						<h:commandButton id="exit" value="#{bundle.aon_close}"
 							action="company_list" 
+							actionListener="#{company.onSearch}"
 							immediate="#{true}"
 							styleClass="aon-finding-toolbar-item aon-icon-cancel"
 							accesskey="#{bundle.aon_key_close}"/>
-						<h:commandButton id="first" 
-							immediate="#{true}"
-							action="company_form"
-							rendered="#{!company.new and !company.inFirst}"
-							styleClass="aon-icon-commandButton aon-dataScroller-button-first"
-							actionListener="#{company.onSelectFirst}"/>
-						<h:commandButton id="previous" 
-							immediate="#{true}"
-							action="company_form"
-							rendered="#{!company.new and !company.inFirst}"
-							styleClass="aon-icon-commandButton aon-dataScroller-button-previous"
-							actionListener="#{company.onSelectPrevious}"/>
-						<h:commandButton id="next" 
-							immediate="#{true}"
-							action="company_form"
-							rendered="#{!company.new and !company.inLast}"
-							styleClass="aon-icon-commandButton aon-dataScroller-button-next"
-							actionListener="#{company.onSelectNext}"/>
-						<h:commandButton id="last" 
-							immediate="#{true}"
-							action="company_form"
-							rendered="#{!company.new and !company.inLast}"
-							styleClass="aon-icon-commandButton aon-dataScroller-button-last"
-							actionListener="#{company.onSelectLast}"/>
 				    </aon:div>
 					
 					<!-- end toolbar navigation -->

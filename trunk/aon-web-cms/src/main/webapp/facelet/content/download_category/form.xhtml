@@ -57,33 +57,10 @@
 							accesskey="#{bundle.aon_key_remove}"/>
 						<h:commandButton id="exit" value="#{bundle.aon_close}"
 							action="download_category_list" 
+							actionListener="#{download_category.onSearch}"
 							immediate="#{true}"
 							styleClass="aon-finding-toolbar-item aon-icon-cancel"
 							accesskey="#{bundle.aon_key_close}"/>
-						<h:commandButton id="first" 
-							immediate="#{true}"
-							action="download_category_form"
-							rendered="#{!download_category.new and !download_category.inFirst}"
-							styleClass="aon-icon-commandButton aon-dataScroller-button-first"
-							actionListener="#{download_category.onSelectFirst}"/>
-						<h:commandButton id="previous" 
-							immediate="#{true}"
-							action="download_category_form"
-							rendered="#{!download_category.new and !download_category.inFirst}"
-							styleClass="aon-icon-commandButton aon-dataScroller-button-previous"
-							actionListener="#{download_category.onSelectPrevious}"/>
-						<h:commandButton id="next" 
-							immediate="#{true}"
-							action="download_category_form"
-							rendered="#{!download_category.new and !download_category.inLast}"
-							styleClass="aon-icon-commandButton aon-dataScroller-button-next"
-							actionListener="#{download_category.onSelectNext}"/>
-						<h:commandButton id="last" 
-							immediate="#{true}"
-							action="download_category_form"
-							rendered="#{!download_category.new and !download_category.inLast}"
-							styleClass="aon-icon-commandButton aon-dataScroller-button-last"
-							actionListener="#{download_category.onSelectLast}"/>
 				    </aon:div>
 					
 					<!-- end toolbar navigation -->

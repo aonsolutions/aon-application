@@ -31,52 +31,29 @@
 						
 					<!-- start toolbar navigation -->
 					<aon:div styleClass="aon-finding-toolbar-item-group">
+						<h:commandButton id="reset" value="#{bundle.aon_reset}"
+							action="section_form"
+							actionListener="#{section.onReset}" rendered="#{!section.new}"
+							styleClass="aon-finding-toolbar-item aon-icon-reset"
+							accesskey="#{bundle.aon_key_new}" />
 						<h:commandButton id="save"
 							action="section_form"
 							value="#{bundle.aon_save}" rendered="#{section.to!=null or section.new}"
 							actionListener="#{section.accept}"
 							styleClass="aon-finding-toolbar-item aon-icon-accept"
 							accesskey="#{bundle.aon_key_save}"/>
-						<h:commandButton id="cancel"
-							value="#{bundle.aon_cancel}" rendered="#{section.to!=null or section.new}" immediate="#{true}"
-							actionListener="#{section.onCancel}" action="section_list"
-							styleClass="aon-finding-toolbar-item aon-icon-cancel"
-							accesskey="#{bundle.aon_key_cancel}"/>
 						<aon:confirmButton id="remove"
 							value="#{bundle.aon_remove}" rendered="#{!section.new and !section.to.default_}" immediate="true"
 							confirmTitle="Confirmation Dialog" confirmMessage="#{bundle.aon_remove_confirm}"
 							confirmActionListener="#{section.onRemove}" confirmAction="section_list"
 							styleClass="aon-finding-toolbar-item aon-icon-delete"
 							accesskey="#{bundle.aon_key_remove}"/>
-						<h:commandButton id="reset" value="#{bundle.aon_reset}"
-							action="section_form"
-							actionListener="#{section.onReset}" rendered="#{!section.new}"
-							styleClass="aon-finding-toolbar-item aon-icon-reset"
-							accesskey="#{bundle.aon_key_new}" />
-						<h:commandButton id="first" 
+						<h:commandButton id="exit" value="#{bundle.aon_close}"
+							action="section_list" 
+							actionListener="#{section.onSearch}"
 							immediate="#{true}"
-							action="section_form"
-							rendered="#{!section.new and !section.inFirst}"
-							styleClass="aon-icon-commandButton aon-dataScroller-button-first"
-							actionListener="#{section.onSelectFirst}"/>
-						<h:commandButton id="previous" 
-							immediate="#{true}"
-							action="section_form"
-							rendered="#{!section.new and !section.inFirst}"
-							styleClass="aon-icon-commandButton aon-dataScroller-button-previous"
-							actionListener="#{section.onSelectPrevious}"/>
-						<h:commandButton id="next" 
-							immediate="#{true}"
-							action="section_form"
-							rendered="#{!section.new and !section.inLast}"
-							styleClass="aon-icon-commandButton aon-dataScroller-button-next"
-							actionListener="#{section.onSelectNext}"/>
-						<h:commandButton id="last" 
-							immediate="#{true}"
-							action="section_form"
-							rendered="#{!section.new and !section.inLast}"
-							styleClass="aon-icon-commandButton aon-dataScroller-button-last"
-							actionListener="#{section.onSelectLast}"/>
+							styleClass="aon-finding-toolbar-item aon-icon-cancel"
+							accesskey="#{bundle.aon_key_close}"/>
 				    </aon:div>
 					
 					<!-- end toolbar navigation -->
