@@ -91,12 +91,8 @@ public class QueryIterable<E> implements Iterable<E> {
 	}
 
 	private void closeSession() {
-		if ( dom4jSession != null ) {
-			dom4jSession.close();
-			dom4jSession = null;
-		}
 		if ( this.sessionFactory != null ) {
-			this.session = null;
+			this.session.close();
 		}
 		this.session = null;
 		this.criteria = null;
