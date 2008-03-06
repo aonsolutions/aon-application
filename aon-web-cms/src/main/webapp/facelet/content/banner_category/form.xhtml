@@ -57,33 +57,10 @@
 							accesskey="#{bundle.aon_key_remove}"/>
 						<h:commandButton id="exit" value="#{bundle.aon_close}"
 							action="banner_category_list" 
+							actionListener="#{banner_category.onSearch}"
 							immediate="#{true}"
 							styleClass="aon-finding-toolbar-item aon-icon-cancel"
 							accesskey="#{bundle.aon_key_close}"/>
-						<h:commandButton id="first" 
-							immediate="#{true}"
-							action="banner_category_form"
-							rendered="#{!banner_category.new and !banner_category.inFirst}"
-							styleClass="aon-icon-commandButton aon-dataScroller-button-first"
-							actionListener="#{banner_category.onSelectFirst}"/>
-						<h:commandButton id="previous" 
-							immediate="#{true}"
-							action="banner_category_form"
-							rendered="#{!banner_category.new and !banner_category.inFirst}"
-							styleClass="aon-icon-commandButton aon-dataScroller-button-previous"
-							actionListener="#{banner_category.onSelectPrevious}"/>
-						<h:commandButton id="next" 
-							immediate="#{true}"
-							action="banner_category_form"
-							rendered="#{!banner_category.new and !banner_category.inLast}"
-							styleClass="aon-icon-commandButton aon-dataScroller-button-next"
-							actionListener="#{banner_category.onSelectNext}"/>
-						<h:commandButton id="last" 
-							immediate="#{true}"
-							action="banner_category_form"
-							rendered="#{!banner_category.new and !banner_category.inLast}"
-							styleClass="aon-icon-commandButton aon-dataScroller-button-last"
-							actionListener="#{banner_category.onSelectLast}"/>
 				    </aon:div>
 					
 					<!-- end toolbar navigation -->
