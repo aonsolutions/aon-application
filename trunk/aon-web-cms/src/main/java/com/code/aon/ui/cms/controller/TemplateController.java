@@ -253,5 +253,10 @@ public class TemplateController extends GridController implements Constants {
 				}
 			}
 		}
+		try {
+			this.onInit(event);
+		} catch (ManagerBeanException e) {
+			AonUtil.addErrorMessage("Error loading templates: "+e.getMessage());
+		}
 	}
 }
