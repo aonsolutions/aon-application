@@ -92,6 +92,7 @@
 							<t:inputText id="Leasing_Lookup_id" forceId="#{true}"
 								value="#{accountLeasingFee.header.leasing.id}"
 								styleClass="aon-form-input-text" size="5"
+								valueChangeListener="#{accountLeasingFee.onLeasingChange}"
 								onchange="return findBeanLookupExt(event,'#{facesContext.externalContext.requestContextPath}','leasingLookup','Leasing_Lookup_id','Leasing_id|Leasing_Lookup_id,Leasing_description|Leasing_Lookup_description,Leasing_supplierName|Leasing_Lookup_supplierName,Leasing_supplierDocument|Leasing_Lookup_supplierDocument');"/>
 							<h:commandButton id="find_Leasing_Lookup_id"
 								styleClass="aon-form-lookup-button" value="" immediate="true"
@@ -140,6 +141,13 @@
 							disabledOnClientSide="#{true}" size="7"
 							styleClass="aon-form-input-text-disabled" forceId="#{true}" />
 
+						<h:outputLabel for="Account_expenses"
+							styleClass="aon-form-input-text-label"
+							value="#{accountBundle.aon_leasing_expenses}" />
+						<t:inputText id="Account_expenses"
+							value="#{accountLeasingFee.header.expenses}" size="7"
+							styleClass="aon-form-input-text" forceId="#{true}" />
+
 						<h:outputLabel for="RegistryBank_Lookup_id"
 							styleClass="aon-form-input-text-label"
 							value="#{accountBundle.aon_bank}" />
@@ -171,183 +179,6 @@
 					</h:panelGrid>
 					<!-- end of grid layout -->
 					<!-- end of bag panel -->
-					
-					<t:div styleClass="aon-form-group">
-						<t:div styleClass="aon-form-group-title">
-							<t:outputLabel for="TaxesData"
-								value="#{accountBundle.aon_details}" />
-						</t:div>
-
-						<t:div styleClass="aon-form-group-body">
-							<t:dataTable id="TaxesData" var="to" value="#{accountLeasingFee.details}"
-								styleClass="aon-edit-table" headerClass="aon-edit-table-header"
-								footerClass="aon-edit-table-footer" rows="20"
-								rowOnMouseOver="selectRow( this )"
-								rowOnMouseOut="unselectRow( this )" 
-								rowOnClick="sendRow( this )"
-								rowClasses="aon-edit-table-row-odd,aon-edit-table-row-even"
-								columnClasses="aon-edit-table-body-icon,
-									aon-edit-table-body aon-edit-table-body-number,
-									aon-edit-table-body aon-edit-table-body-string,
-									aon-edit-table-body aon-edit-table-body-string
-									aon-edit-table-body aon-edit-table-body-number,
-									aon-edit-table-body aon-edit-table-body-number,
-									aon-edit-table-body aon-edit-table-body-number,									
-									aon-edit-table-body aon-edit-table-body-buttons"
-								cellpadding="0" cellspacing="0">
-								
-								<h:column>
-									<f:facet name="header">
-										<f:verbatim>&#160;</f:verbatim>
-									</f:facet>
-									<t:commandLink immediate="#{true}"
-										styleClass="aon-table-row-selected"
-										rendered="#{to!=accountLeasingFee.currentDetail}"
-										actionListener="#{accountLeasingFee.onSelectDetail}" />
-									<f:facet name="footer">
-										<t:div>
-											<t:commandButton value=""
-												styleClass="aon-edit-table-icon-button aon-edit-table-icon-button-new"
-												title="#{accountBundle.aon_newLine}"
-												actionListener="#{accountLeasingFee.onNewDetail}"
-												rendered="#{!accountLeasingFee.newDetail}"
-												accesskey="#{bundle.aon_key_new_line}" />
-										</t:div>
-									</f:facet>
-								</h:column>
-								
-								<h:column>
-									<f:facet name="header">
-										<t:outputText value="#{accountBundle.aon_taxable_base}" />
-									</f:facet>
-									<t:outputText id="Account_Taxable_Base"
-										rendered="#{to!=accountLeasingFee.currentDetail}" 
-										value="#{to.taxableBase}" forceId="#{true}">
-										<f:convertNumber pattern="#,##0.00" />
-									</t:outputText>
-									<t:inputText id="Item_price_new-New"
-										rendered="#{to==accountLeasingFee.currentDetail}" forceId="#{true}"
-										value="#{accountLeasingFee.currentDetail.taxableBase}" required="#{true}" />
-									<f:facet name="footer">
-										<t:div style="text-align:right;">
-											<t:inputText id="Item_details_total"
-												rendered="#{accountLeasingFee.newDetail}"
-												value="#{accountLeasingFee.currentDetail.taxableBase}">
-											</t:inputText>
-										</t:div>
-									</f:facet>
-								</h:column>
-								
-								<h:column>
-									<f:facet name="header">
-										<h:outputText value="#{accountBundle.aon_vat}" />
-									</f:facet>
-									<h:outputText value="#{to.vat.name}" rendered="#{to!=accountLeasingFee.currentDetail}" />
-									<h:selectOneMenu id="Account_Vat-Edit"
-										styleClass="aon-form-selectOneMenu-field" 
-										rendered="#{to==accountLeasingFee.currentDetail}" 
-										value="#{accountLeasingFee.currentDetail.vat.id}"
-										valueChangeListener="#{accountLeasingFee.onTaxChange}">
-										<f:selectItem itemDisabled="true" itemLabel="-" itemValue="" />
-										<f:selectItems value="#{productCollections.vatTaxes}" />
-									</h:selectOneMenu>
-									<f:verbatim>&#160;</f:verbatim>
-									<f:facet name="footer">
-										<h:selectOneMenu id="Account_Vat-New"
-											styleClass="aon-form-selectOneMenu-field" 
-											rendered="#{accountLeasingFee.newDetail}" 
-											value="#{accountLeasingFee.currentDetail.vat.id}"
-											valueChangeListener="#{accountLeasingFee.onTaxChange}">
-											<f:selectItem itemDisabled="true" itemLabel="-" itemValue="" />
-											<f:selectItems value="#{productCollections.vatTaxes}" />
-										</h:selectOneMenu>
-									</f:facet>
-								</h:column>
-								
-								<h:column>
-									<f:facet name="header">
-										<t:outputText value="#{accountBundle.aon_vat_quota}" />
-									</f:facet>
-									<t:outputText
-										rendered="#{!accountLeasingFee.newDetail}" 
-										value="#{to.vatQuota}" forceId="#{true}">
-										<f:convertNumber pattern="#,##0.00" />
-									</t:outputText>
-								</h:column>
-								
-								<h:column>
-									<f:facet name="header">
-										<t:outputText value="#{accountBundle.aon_surcharge}" />
-									</f:facet>
-									<t:outputText
-										rendered="#{!accountLeasingFee.newDetail}" 
-										value="#{to.surcharge}" forceId="#{true}">
-										<f:convertNumber pattern="#,##0.00" />
-									</t:outputText>
-								</h:column>
-								
-								<h:column>
-									<f:facet name="header">
-										<t:outputText value="#{accountBundle.aon_total}" />
-									</f:facet>
-									<t:outputText
-										rendered="#{!accountLeasingFee.newDetail}" 
-										value="#{to.total}" forceId="#{true}">
-										<f:convertNumber pattern="#,##0.00" />
-									</t:outputText>
-								</h:column>
-								
-								<h:column>
-									<f:facet name="header">
-										<f:verbatim>&#160;</f:verbatim>
-									</f:facet>
-									<t:div rendered="#{to==accountLeasingFee.currentDetail}">
-										<t:commandButton title="#{bundle.aon_save}"
-											actionListener="#{accountLeasingFee.onUpdateDetail}"
-											styleClass="aon-edit-table-icon-button aon-edit-table-icon-button-save"
-											value="" accesskey="#{bundle.aon_key_save_line}" />
-										<t:commandButton title="#{bundle.aon_cancel}"
-											actionListener="#{accountLeasingFee.onCancelDetail}"
-											immediate="#{true}"
-											onclick="return (confirm('#{bundle.aon_cancel_confirm}'));"
-											styleClass="aon-edit-table-icon-button aon-edit-table-icon-button-cancel"
-											value="" accesskey="#{bundle.aon_key_cancel_line}" />
-										<t:commandButton title="#{bundle.aon_remove}"
-											actionListener="#{accountLeasingFee.onRemoveDetail}"
-											immediate="#{true}"
-											onclick="return (confirm('#{bundle.aon_remove_confirm}'));"
-											styleClass="aon-edit-table-icon-button aon-edit-table-icon-button-delete"
-											value="" accesskey="#{bundle.aon_key_remove_line}" />
-									</t:div>
-									<f:facet name="footer">
-										<t:div>
-											<t:div rendered="#{accountLeasingFee.newDetail}">
-												<t:commandButton title="#{bundle.aon_save}"
-													actionListener="#{accountLeasingFee.onAddDetail}"
-													onclick="return (confirm('#{bundle.aon_accept_confirm}'));"
-													styleClass="aon-edit-table-icon-button aon-edit-table-icon-button-save"
-													value="" accesskey="#{bundle.aon_key_save_line}" />
-												<t:commandButton title="#{bundle.aon_cancel}"
-													actionListener="#{accountLeasingFee.onCancelDetail}"
-													immediate="#{true}"
-													onclick="return (confirm('#{bundle.aon_cancel_confirm}'));"
-													styleClass="aon-edit-table-icon-button aon-edit-table-icon-button-cancel"
-													value="" accesskey="#{bundle.aon_key_cancel_line}" />
-											</t:div>
-										</t:div>
-									</f:facet>
-								</h:column>
-									
-							</t:dataTable>	
-						</t:div>
-
-						<ui:include src="/facelet/shared/dataScroller.xhtml">
-							<ui:param name="dataTable" value="TaxesData" />
-							<ui:param name="model" value="#{accountLeasingFee.details}" />
-							<ui:param name="showNote" value="#{false}" />
-						</ui:include>
-						
-					</t:div>
 					
 				</t:div>
 			</t:div>
