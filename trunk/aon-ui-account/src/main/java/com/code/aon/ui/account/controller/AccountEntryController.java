@@ -19,6 +19,7 @@ import com.code.aon.account.AccountLeasingFeeHeader;
 import com.code.aon.account.AccountLoanFeeHeader;
 import com.code.aon.account.AccountSalaryHeader;
 import com.code.aon.account.AccountSocialInsuranceHeader;
+import com.code.aon.account.DefaultAccounts;
 import com.code.aon.account.Leasing;
 import com.code.aon.account.Loan;
 import com.code.aon.account.Period;
@@ -27,6 +28,8 @@ import com.code.aon.account.bridge.LeasingAccount;
 import com.code.aon.account.bridge.LoanAccount;
 import com.code.aon.account.bridge.RegistryBankAccount;
 import com.code.aon.account.bridge.dao.IAccountBridgeAlias;
+import com.code.aon.account.bridge.util.AccountConstants;
+import com.code.aon.account.bridge.util.AccountUtil;
 import com.code.aon.account.dao.IAccountAlias;
 import com.code.aon.account.enumeration.AccountEntryType;
 import com.code.aon.common.BeanManager;
@@ -302,7 +305,7 @@ public class AccountEntryController extends BasicController {
 			Leasing leasing = obtainLeasing(entry);
 			leasingController.setLeasing(leasing);
 		} catch (ManagerBeanException e) {
-			LOGGER.log(Level.SEVERE, "Error loading AccountLeasingFeeController", e);
+			LOGGER.log(Level.SEVERE, "Error loading AccountLeasingController", e);
 		}
 	}
 	
@@ -320,14 +323,15 @@ public class AccountEntryController extends BasicController {
 				AccountEntryInvoice accountEntryInvoice = (AccountEntryInvoice)iter.next();
 				accountLeasingFeeController.setAccountEntryInvoice(accountEntryInvoice);
 				AccountLeasingFeeHeader header = new AccountLeasingFeeHeader();
-				AccountEntryDetail detail = obtainEntryDetailFromAccountPattern(entry, "572*");
+				AccountEntryDetail detail = obtainEntryDetailFromAccountPattern(entry, AccountConstants.BANK_ACCOUNT_PREFIX + "*");
 				header.setRegistryBank(obtainRBank(detail.getAccount().getId()));
-				detail = obtainEntryDetailFromAccountPattern(entry, "52000*");
-				double taxableBase = detail.getDebit();
-				header.setTaxableBase(taxableBase);
-				detail = obtainEntryDetailFromAccountPattern(entry, "272");
-				header.setInterest(detail.getCredit());
-				header.setAmortization(taxableBase - detail.getCredit());
+				detail = obtainEntryDetailFromAccountPattern(entry, AccountUtil.obtainDefaultAccount(DefaultAccounts.DEBT_INTEREST_ACCOUNT).getId() + "");
+				header.setInterest(detail.getDebit());
+				detail = obtainEntryDetailFromAccountPattern(entry, AccountConstants.LEASING_ACCOUNT_PREFIX + "*");
+				header.setAmortization(detail.getDebit());
+				header.setTaxableBase(header.getAmortization() + header.getInterest());
+				detail = obtainEntryDetailFromAccountPattern(entry, AccountUtil.obtainDefaultAccount(DefaultAccounts.FINANCIAL_EXPENSES_ACCOUNT).getId() + "");
+				header.setExpenses(detail.getDebit());
 				header.setLeasing(obtainLeasing(entry));
 				header.setLeasingFeeDate(accountEntryInvoice.getInvoice().getIssueDate());
 				header.setNumber(accountEntryInvoice.getInvoice().getNumber());
@@ -336,7 +340,6 @@ public class AccountEntryController extends BasicController {
 				
 				
 				accountLeasingFeeController.setHeader(header);
-				accountLeasingFeeController.setDetails(new ListDataModel(obtainDetails(accountEntryInvoice.getInvoice())));
 			}
 		} catch (ManagerBeanException e) {
 			LOGGER.log(Level.SEVERE, "Error loading AccountInvoiceController", e);
@@ -430,7 +433,7 @@ public class AccountEntryController extends BasicController {
 	
 	@SuppressWarnings("unchecked")
 	private Loan obtainLoan(AccountEntry entry) throws ManagerBeanException {
-		AccountEntryDetail detail = obtainEntryDetailFromAccountPattern(entry, "52000*");
+		AccountEntryDetail detail = obtainEntryDetailFromAccountPattern(entry, AccountConstants.LOAN_ACCOUNT_PREFIX + "*");
 		IManagerBean loanAccountBean = BeanManager.getManagerBean(LoanAccount.class);
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(loanAccountBean.getFieldName(IAccountBridgeAlias.LOAN_ACCOUNT_ACCOUNT_ID), detail.getAccount().getId());
@@ -443,7 +446,7 @@ public class AccountEntryController extends BasicController {
 	
 	@SuppressWarnings("unchecked")
 	private Leasing obtainLeasing(AccountEntry entry) throws ManagerBeanException {
-		AccountEntryDetail detail = obtainEntryDetailFromAccountPattern(entry, "52000*");
+		AccountEntryDetail detail = obtainEntryDetailFromAccountPattern(entry, AccountConstants.LEASING_ACCOUNT_PREFIX + "*");
 		IManagerBean loanAccountBean = BeanManager.getManagerBean(LeasingAccount.class);
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(loanAccountBean.getFieldName(IAccountBridgeAlias.LEASING_ACCOUNT_ACCOUNT_ID), detail.getAccount().getId());
