@@ -234,7 +234,9 @@ public class TemplateController extends GridController implements Constants {
 		if ( this.inputFile!= null ) {
 			long size = this.inputFile.getSize();
 			String upload_name = inputFile.getName();
-			upload_name = upload_name.substring(upload_name.lastIndexOf(File.separator));
+			String separator = "/";
+			if (upload_name.lastIndexOf(separator) < 0) separator = "\\";
+	        upload_name = upload_name.substring(upload_name.lastIndexOf(separator));
 			File file = new File( getUploadDirectory()+File.separator+upload_name);
 			if ( (maximumSize != -1) && (size > maximumSize) ) {
 				FacesContext ctx = FacesContext.getCurrentInstance();
@@ -246,8 +248,7 @@ public class TemplateController extends GridController implements Constants {
 		        FileOutputStream outputStream = new FileOutputStream(file);
 		        outputStream.write(data);
 		        outputStream.close();
-		        
-				if (inputFile.getContentType().indexOf("-zip-") >= 0) {
+				if (inputFile.getContentType().indexOf("zip") >= 0) {
 					ZipUtil.uncompressZipFile(file.getAbsolutePath(), ControllerUtil.getTemplatePath(), TEMPLATE_DETAILS_FILE);
 					FileUtil.delete(file.getAbsolutePath());
 				}
