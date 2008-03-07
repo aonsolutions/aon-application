@@ -11,8 +11,6 @@
 			/WEB-INF/beans-faces-config.xml
 			,/WEB-INF/lookup-beans-faces-config.xml
 			,/WEB-INF/navigation-faces-config.xml
-			,/WEB-INF/front-beans-faces-config.xml
-			,/WEB-INF/front-navigation-faces-config.xml
 		</param-value>
 	</context-param>
 
