@@ -139,23 +139,32 @@
 							<f:validateDoubleRange  />
 						</t:inputText>
 
-						<h:outputLabel for="Account_interest"
+						<h:outputLabel for="Fixed_asset_account"
 							styleClass="aon-form-input-text-label"
-							value="#{accountBundle.aon_leasing_interest}" />
-						<t:inputText id="Account_interest"
-							value="#{accountLeasing.leasing.interest}" size="15"
-							styleClass="aon-form-input-text" forceId="#{true}" >
-							<f:validateDoubleRange  />
-						</t:inputText>
+							value="#{accountBundle.aon_leasing_fixed_asset_account}" />
+						<t:selectOneMenu id="Fixed_asset_account"
+							styleClass="aon-form-selectOneMenu-field" required="true"
+							value="#{accountLeasing.leasing.fixedAssetAccount.id}" forceId="#{true}">
+							<f:selectItems value="#{accountCollections.fixedAssestsAccounts}" />
+						</t:selectOneMenu>
 
-						<h:outputLabel for="Account_expenses"
-							styleClass="aon-form-input-text-label"
-							value="#{accountBundle.aon_leasing_expenses}" />
-						<t:inputText id="Account_expenses"
-							value="#{accountLeasing.leasing.expenses}" size="15"
-							styleClass="aon-form-input-text" forceId="#{true}" >
-							<f:validateDoubleRange  />
-						</t:inputText>
+						<h:outputLabel for="Leasing_vat"
+							value="#{accountBundle.aon_leasing_vat}"
+							styleClass="aon-form-input-text-label aon-form-table-column-odd-label" />
+						<h:selectOneMenu id="Leasing_vat"
+							styleClass="aon-form-selectOneMenu-field"
+							forceId="#{true}" value="#{accountLeasing.leasing.vat.id}">
+							<f:selectItems value="#{productCollections.vatTaxes}" />
+						</h:selectOneMenu>
+						
+						<h:outputLabel for="Leasing_securityLevel"
+							value="#{accountBundle.aon_account_security_level}"
+							styleClass="aon-form-input-text-label aon-form-table-column-odd-label" />
+						<h:selectOneMenu id="Leasing_securityLevel"
+							styleClass="aon-form-selectOneMenu-field"
+							forceId="#{true}" value="#{accountLeasing.leasing.securityLevel}">
+							<f:selectItems value="#{accountCollections.securityLevels}" />
+						</h:selectOneMenu>
 							
 					</h:panelGrid>
 					<!-- end of grid layout -->
