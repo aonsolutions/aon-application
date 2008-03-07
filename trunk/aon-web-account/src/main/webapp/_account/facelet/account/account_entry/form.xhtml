@@ -147,7 +147,10 @@
 							<t:inputText id="AccountEntry_entryDate_disabled" styleClass="aon-form-input-text-disabled"
 								value="#{accountEntry.to.entryDate}" size="12"
 								rendered="#{!accountEntry.manual}"
-								forceId="#{true}" disabled="true" />
+								forceId="#{true}" disabled="true">
+								<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+									timeZone="#{timeZoneController.timeZoneId}" />
+							</t:inputText>
 						</h:panelGroup>
 
 					</h:panelGrid>
