@@ -536,6 +536,19 @@
 		</managed-property>
 	</managed-bean>
 
+	<!-- ********** ACCOUNT SUMMARY REGENERATOR CONTROLLER ********* -->
+	<managed-bean>
+		<managed-bean-name>accountSummaryRegenerator</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.account.controller.AccountSummaryRegeneratorController
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>false</value>
+		</managed-property>
+	</managed-bean>
+	
 	<!--  *************** ACCOUNT APP PARAMS ***************** -->
 	<managed-bean>
 		<managed-bean-name>accAppParams</managed-bean-name>
@@ -792,6 +805,10 @@
 	<navigation-case>
 		<from-outcome>accCreditor</from-outcome>
 		<to-view-id>/_account/facelet/creditor/search.faces</to-view-id>
+	</navigation-case>	
+	<navigation-case>
+		<from-outcome>regenerateAccountSummary</from-outcome>
+		<to-view-id>/_account/facelet/util/summary/search.faces</to-view-id>
 	</navigation-case>	
 	
   <!-- =================== Application Select Windows Navigation Rules ================= -->	
