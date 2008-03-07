@@ -19,7 +19,8 @@ public class FTPUtil {
 	@SuppressWarnings({ "finally", "finally" })
 	public static boolean uploadFTP() throws IOException {
 		GeneratorStatusController status = (GeneratorStatusController)AonUtil.getRegisteredBean("generator_status");
-		status.addMessage("FTP>>>>>>>>>>>>>>>>>>>>>> Connecting....");
+		status.addMessage("Publicando via FTP");
+		status.addMessage("Connecting....");
 		
 		boolean error = true;
 		config = ControllerUtil.getCurrentConfig();
@@ -36,31 +37,31 @@ public class FTPUtil {
 				status.addErrorMessage(ftp.getReplyString());
 				throw new AonException();
 			}
-			else status.addMessage("FTP>>>>>>>>>>>>>>>>>>>>>> " + ftp.getReplyString());
+			else status.addMessage(ftp.getReplyString());
+			status.addMessage("Validando....");
 			ftp.login(user, password);
 			if (ftp.getReplyCode() >= 500) {
 				status.addErrorMessage(ftp.getReplyString());
 				throw new AonException();
 			}
-			else status.addMessage("FTP>>>>>>>>>>>>>>>>>>>>>> " + ftp.getReplyString());
+			else status.addMessage(ftp.getReplyString());
 
-			status.addMessage("FTP>>>>>>>>>>>>>>>>>>>>>> Connected to server");
+			status.addMessage("Conectado.");
 			ftp.changeWorkingDirectory(destinationFolder);
-			status.addMessage("FTP>>>>>>>>>>>>>>>>>>>>>> " + ftp.getReplyString());
-			status.addMessage("FTP>>>>>>>>>>>>>>>>>>>>>> " + ftp.getSystemName());
-			status.addMessage("FTP>>>>>>>>>>>>>>>>>>>>>> " + ftp.printWorkingDirectory());
+			status.addMessage(ftp.getReplyString());
+			status.addMessage(ftp.getSystemName());
 			ftp.setFileType(FTPClient.BINARY_FILE_TYPE);
 			if (ftp.isConnected()) {
 				FTPFile files[] = ftp.listFiles();
 				if (files.length > 0) {
 					if (!files[0].hasPermission(FTPFile.USER_ACCESS, FTPFile.WRITE_PERMISSION) ) {
-						status.addMessage("FTP ERROR>>>>>>>>>>>>>>>>>>>>>> Error de escritura en el servidor.");
+						status.addMessage("Error de escritura en el servidor.");
 					}
 				}
 				ftpDir(sourceFolder, ftp, destinationFolder);
 			}
 			else {
-				status.addMessage("FTP ERROR>>>>>>>>>>>>>>>>>>>>>> No hubo conexion con el servidor.");
+				status.addMessage("No hubo conexion con el servidor.");
 				error = false;
 			}
 		} catch (Exception e) {
@@ -68,9 +69,9 @@ public class FTPUtil {
 			error = false;
 		} finally {
 			ftp.logout();
-			status.addMessage("FTP>>>>>>>>>>>>>>>>>>>>>> Logout.");
+			status.addMessage("Logout.");
 			ftp.disconnect();
-			status.addMessage("FTP>>>>>>>>>>>>>>>>>>>>>> Diconnected.");
+			status.addMessage("Desconectado.");
 			return error;
 		}
 		
@@ -86,7 +87,7 @@ public class FTPUtil {
 			for (int i = 0; i < dirList.length; i++) {
 				File f = new File(ftpDir, dirList[i]);
 				if (!f.getName().equals(config.getDomain() + ".zip")) {
-					status.addMessage("FTP>>>>>>>>>>>>>>>>>>>>>> Name: " + breadCrum + "/" + f.getName());
+					status.addMessage("Subiendo archivo: /" + f.getName());
 					if (f.isDirectory()) {
 						if (isValidFolder(f.getName())) { 
 							fc.makeDirectory(breadCrum + "/" + f.getName());
