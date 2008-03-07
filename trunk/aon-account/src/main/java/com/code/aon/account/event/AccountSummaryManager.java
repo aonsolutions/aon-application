@@ -1,17 +1,21 @@
 package com.code.aon.account.event;
 
-import java.util.Calendar;
 import java.util.Date;
-import java.util.GregorianCalendar;
 import java.util.Iterator;
+import java.util.List;
+
+import org.hibernate.Query;
+import org.hibernate.Session;
 
 import com.code.aon.account.Account;
 import com.code.aon.account.AccountEntryDetail;
 import com.code.aon.account.AccountSummary;
+import com.code.aon.account.Period;
 import com.code.aon.account.dao.IAccountAlias;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.ql.Criteria;
 
@@ -21,51 +25,88 @@ import com.code.aon.ql.Criteria;
  */
 public class AccountSummaryManager {
 
-	@SuppressWarnings("unchecked")
-	public static void modifyAccountSummary(AccountEntryDetail entryDetail, int factor) throws ManagerBeanException {
-        AccountSummary accountSummary;
-        String period = entryDetail.getAccountEntry().getAccountPeriod();
-        Account account = entryDetail.getAccount();
-        SecurityLevel securityLevel = entryDetail.getAccountEntry().getSecurityLevel();
-        Date entryDate = entryDetail.getAccountEntry().getEntryDate();
-        double debit = entryDetail.getDebit() * factor;
-        double credit = entryDetail.getCredit() * factor;
+	public static void addAccountSummary(AccountSummary accountSummary) throws ManagerBeanException {
+		IManagerBean accountSummaryBean = BeanManager.getManagerBean(AccountSummary.class);
+		accountSummaryBean.insert(accountSummary);
+	}
 
-        IManagerBean summaryBean = BeanManager.getManagerBean(AccountSummary.class);
+	@SuppressWarnings("unchecked")
+	public static void modifyAccountSummary(AccountEntryDetail accountEntryDetail, int factor) throws ManagerBeanException {
+        AccountSummary accountSummary;
+        String period = accountEntryDetail.getAccountEntry().getAccountPeriod();
+        Account account = accountEntryDetail.getAccount();
+        SecurityLevel securityLevel = accountEntryDetail.getAccountEntry().getSecurityLevel();
+        Date entryDate = accountEntryDetail.getAccountEntry().getEntryDate();
+        double debit = accountEntryDetail.getDebit() * factor;
+        double credit = accountEntryDetail.getCredit() * factor;
+
+        IManagerBean accountSummaryBean = BeanManager.getManagerBean(AccountSummary.class);
         Criteria criteria = new Criteria();
-        criteria.addEqualExpression(summaryBean.getFieldName(IAccountAlias.ACCOUNT_SUMMARY_ACCOUNT_PERIOD), period);
-        criteria.addEqualExpression(summaryBean.getFieldName(IAccountAlias.ACCOUNT_SUMMARY_ACCOUNT_ID), account.getId());
-        criteria.addEqualExpression(summaryBean.getFieldName(IAccountAlias.ACCOUNT_SUMMARY_SECURITY_LEVEL), securityLevel);
-        criteria.addEqualExpression(summaryBean.getFieldName(IAccountAlias.ACCOUNT_SUMMARY_ENTRY_DATE), entryDate);
-        Iterator iterator = summaryBean.getList(criteria).iterator();
+        criteria.addEqualExpression(accountSummaryBean.getFieldName(IAccountAlias.ACCOUNT_SUMMARY_ACCOUNT_PERIOD), period);
+        criteria.addEqualExpression(accountSummaryBean.getFieldName(IAccountAlias.ACCOUNT_SUMMARY_ACCOUNT_ID), account.getId());
+        criteria.addEqualExpression(accountSummaryBean.getFieldName(IAccountAlias.ACCOUNT_SUMMARY_SECURITY_LEVEL), securityLevel);
+        criteria.addEqualExpression(accountSummaryBean.getFieldName(IAccountAlias.ACCOUNT_SUMMARY_ENTRY_DATE), entryDate);
+        Iterator iterator = accountSummaryBean.getList(criteria).iterator();
         if (iterator.hasNext()) {
             accountSummary = (AccountSummary)iterator.next();
         } else {
-            GregorianCalendar calendar = new GregorianCalendar();
-            calendar.setTime(entryDate);
-
             accountSummary = new AccountSummary();
             accountSummary.setAccountPeriod(period);
             accountSummary.setAccount(account);
             accountSummary.setSecurityLevel(securityLevel);
             accountSummary.setEntryDate(entryDate);
-            accountSummary.setEntryMonth(calendar.get(Calendar.MONTH) + 1);
         }
         accountSummary.setDebit(round(accountSummary.getDebit() + debit, 2));
         accountSummary.setCredit(round(accountSummary.getCredit() + credit, 2));
 
         if (accountSummary.getId() == null) {
-            summaryBean.insert(accountSummary);
+        	accountSummaryBean.insert(accountSummary);
         } else {
         	if (accountSummary.getDebit() > 0 || accountSummary.getCredit() > 0) {
-            	summaryBean.update(accountSummary);
+        		accountSummaryBean.update(accountSummary);
         	} else {
-            	summaryBean.remove(accountSummary);
+        		accountSummaryBean.remove(accountSummary);
         	}
         }
     }
 
-    private static double round(double value, int precision) {
+	public static void deleteAccountSummary(Period accountPeriod) {
+		String delete = "delete from AccountSummary as summary";
+		delete += (accountPeriod != null)?" where summary.accountPeriod = '" + accountPeriod.getId() + "'":"";
+        Session session = HibernateUtil.getSession();
+        Query query = session.createQuery(delete);
+        query.executeUpdate();
+	}
+
+	@SuppressWarnings("unchecked")
+	public static void regenerateAccountSummary(Period accountPeriod) throws ManagerBeanException {
+		deleteAccountSummary(accountPeriod);
+
+		String select = "select entryDetail.account, entry.securityLevel, entry.entryDate, month(entry.entryDate), " +
+						"sum(entryDetail.debit), sum(entryDetail.credit) " +
+						"from AccountEntry as entry, AccountEntryDetail as entryDetail " +
+						"where entry.id = entryDetail.accountEntry.id " +
+						"and entry.accountPeriod = '" + accountPeriod.getId() + "' " + 
+						"group by entryDetail.account, entry.securityLevel, entry.entryDate, month(entry.entryDate)";
+        Session session = HibernateUtil.getSession();
+        Query query = session.createQuery(select);
+        List list = query.list();
+        Iterator iterator = list.iterator();
+        while (iterator.hasNext()) {
+        	Object[] obj = (Object[])iterator.next();
+
+        	AccountSummary accountSummary = new AccountSummary();
+        	accountSummary.setAccountPeriod(accountPeriod.getId());
+        	accountSummary.setAccount((Account)obj[0]);
+        	accountSummary.setSecurityLevel((SecurityLevel)obj[1]);
+        	accountSummary.setEntryDate((Date)obj[2]);
+        	accountSummary.setDebit((Double)obj[4]);
+        	accountSummary.setCredit((Double)obj[5]);
+        	addAccountSummary(accountSummary);
+        }
+	}
+
+	private static double round(double value, int precision) {
         double decimal = Math.pow(10, precision);
         return Math.round(decimal*value) / decimal;
     }
