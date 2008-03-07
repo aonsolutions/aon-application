@@ -24,7 +24,7 @@ public class AccountAliasWriter {
 	 * @throws IOException
 	 */
 	public static void main(String[] args) throws IOException {
-		File file = new File("/PROYECTOS/aon-account/src/com/code/aon/account/dao/IAccountAlias.java");
+		File file = new File("/AON-PROJECT/aon-account/src/main/java/com/code/aon/account/dao/IAccountAlias.java");
 //		File file = new File("c:/IAccountAlias.java");
 		String[] classes = new String[8]; 
 		classes[0] = Account.class.getName();
