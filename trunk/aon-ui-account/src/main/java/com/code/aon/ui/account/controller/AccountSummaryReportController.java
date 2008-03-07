@@ -207,7 +207,7 @@ public class AccountSummaryReportController extends BasicController {
         DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
 
         String select = "select new com.code.aon.ui.account.report.resources.ProfitAndLossMonthly(" +
-                        "substring(summary.account.id,1,3), account.description, summary.entryMonth, " +
+                        "substring(summary.account.id,1,3), account.description, month(summary.entryDate), " +
                         "sum(summary.debit), sum(summary.credit)) " +
                         "from AccountSummary as summary, Account as account " +
                         "where account.id = substring(summary.account.id,1,3) " +
@@ -216,8 +216,8 @@ public class AccountSummaryReportController extends BasicController {
         select += (getSecurityLevel() != null) ? "and summary.securityLevel = " + getSecurityLevel().ordinal() + " " : "";
         select += (getFromDate() != null) ? "and summary.entryDate >= '" + formatter.format(getFromDate()) + "' " : "";
         select += (getToDate() != null) ? "and summary.entryDate <= '" + formatter.format(getToDate()) + "' " : "";
-        select += "group by substring(summary.account.id,1,3), summary.entryMonth ";
-        select += "order by substring(summary.account.id,1,3), summary.entryMonth ";
+        select += "group by substring(summary.account.id,1,3), month(summary.entryDate) ";
+        select += "order by substring(summary.account.id,1,3), month(summary.entryDate) ";
 
         Session session = HibernateUtil.getSession();
         Query query = session.createQuery(select);

@@ -36,9 +36,6 @@ public class AccountSummary implements ITransferObject {
     /** The entry date. */
     private Date entryDate;
 
-    /** The entry month. */
-    private int entryMonth;
-
     /** The debit. */
 	private double debit;
 	
@@ -141,25 +138,6 @@ public class AccountSummary implements ITransferObject {
      */
     public void setEntryDate(Date entryDate) {
         this.entryDate = entryDate;
-    }
-
-    /**
-     * Gets the entry month.
-     * 
-     * @return the entry month
-     */
-    @Column(name="entry_month")
-    public int getEntryMonth() {
-        return entryMonth;
-    }
-
-    /**
-     * Sets the entry month.
-     * 
-     * @param entryMonth the entry month
-     */
-    public void setEntryMonth(int entryMonth) {
-        this.entryMonth = entryMonth;
     }
 
     /**
