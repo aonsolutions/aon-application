@@ -32,6 +32,8 @@ public class AccountLeasingFeeHeader implements ITransferObject {
 	/** The taxable base. */
 	private double taxableBase;
 	
+	private double expenses;
+	
 	/** The registry bank. */
 	private RegistryBank registryBank;
 
@@ -165,6 +167,14 @@ public class AccountLeasingFeeHeader implements ITransferObject {
 		this.taxableBase = taxableBase;
 	}
 
+	public double getExpenses() {
+		return expenses;
+	}
+
+	public void setExpenses(double expenses) {
+		this.expenses = expenses;
+	}
+
 	/**
 	 * Gets the registry bank.
 	 * 
@@ -200,4 +210,17 @@ public class AccountLeasingFeeHeader implements ITransferObject {
 	public void setSecurityLevel(SecurityLevel securityLevel) {
 		this.securityLevel = securityLevel;
 	}
+
+	public double getTotal() {
+		 return getVatQuota() + getTaxableBase() + getExpenses();
+	}
+
+	public double getVatQuota() {
+		return round((getTaxableBase() * getLeasing().getVat().getPercentage()) / 100, 2);
+	}
+	
+    private double round(double value, int precision) {
+        double decimal = Math.pow(10, precision);
+        return Math.round(decimal*value) / decimal;
+    }
 }

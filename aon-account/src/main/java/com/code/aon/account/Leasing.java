@@ -11,7 +11,9 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import com.code.aon.common.ITransferObject;
+import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.finance.RegistryBank;
+import com.code.aon.product.Tax;
 
 /**
  * The Class Leasing.
@@ -47,15 +49,14 @@ public class Leasing implements ITransferObject {
 	/** The amount. */
 	private double amount;
 	
-	/** The interest. */
-	private double interest;
-	
-	/** The expenses. */
-	private double expenses;
-	
 	/** The registry bank. */
 	private RegistryBank registryBank;
+	
+	private Account fixedAssetAccount;
+	
+	private Tax vat;
 
+	private SecurityLevel securityLevel;
 
 	/**
 	 * Gets the id.
@@ -230,42 +231,6 @@ public class Leasing implements ITransferObject {
 	}
 
 	/**
-	 * Gets the interest.
-	 * 
-	 * @return the interest
-	 */
-	public double getInterest() {
-		return interest;
-	}
-
-	/**
-	 * Sets the interest.
-	 * 
-	 * @param interest the interest
-	 */
-	public void setInterest(double interest) {
-		this.interest = interest;
-	}
-
-	/**
-	 * Gets the expenses.
-	 * 
-	 * @return the expenses
-	 */
-	public double getExpenses() {
-		return expenses;
-	}
-
-	/**
-	 * Sets the expenses.
-	 * 
-	 * @param expenses the expenses
-	 */
-	public void setExpenses(double expenses) {
-		this.expenses = expenses;
-	}
-
-	/**
 	 * Gets the registry bank.
 	 * 
 	 * @return the registry bank
@@ -283,5 +248,34 @@ public class Leasing implements ITransferObject {
 	 */
 	public void setRegistryBank(RegistryBank registryBank) {
 		this.registryBank = registryBank;
+	}
+	
+	@ManyToOne
+	@JoinColumn(name="fixed_asset_account", nullable=false)
+	public Account getFixedAssetAccount() {
+		return fixedAssetAccount;
+	}
+
+	public void setFixedAssetAccount(Account fixedAssetAccount) {
+		this.fixedAssetAccount = fixedAssetAccount;
+	}
+	
+	@ManyToOne
+    @JoinColumn(name="vat", nullable=false)
+	public Tax getVat() {
+		return vat;
+	}
+
+	public void setVat(Tax vat) {
+		this.vat = vat;
+	}
+
+	@Column(name="security_level")
+	public SecurityLevel getSecurityLevel() {
+		return securityLevel;
+	}
+
+	public void setSecurityLevel(SecurityLevel securityLevel) {
+		this.securityLevel = securityLevel;
 	}
 }
