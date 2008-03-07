@@ -245,22 +245,16 @@ public interface IAccountAlias {
 	String  ACCOUNT_SUMMARY_ENTRY_DATE = ACCOUNT_SUMMARY_ENTRY.getAliasNames()[4];
 
 	/** 
-	* Alias value: AccountSummary_entryMonth
-	* Hibernate value: AccountSummary.entryMonth
-	*/
-	String  ACCOUNT_SUMMARY_ENTRY_MONTH = ACCOUNT_SUMMARY_ENTRY.getAliasNames()[5];
-
-	/** 
 	* Alias value: AccountSummary_id
 	* Hibernate value: AccountSummary.id
 	*/
-	String  ACCOUNT_SUMMARY_ID = ACCOUNT_SUMMARY_ENTRY.getAliasNames()[6];
+	String  ACCOUNT_SUMMARY_ID = ACCOUNT_SUMMARY_ENTRY.getAliasNames()[5];
 
 	/** 
 	* Alias value: AccountSummary_securityLevel
 	* Hibernate value: AccountSummary.securityLevel
 	*/
-	String  ACCOUNT_SUMMARY_SECURITY_LEVEL = ACCOUNT_SUMMARY_ENTRY.getAliasNames()[7];
+	String  ACCOUNT_SUMMARY_SECURITY_LEVEL = ACCOUNT_SUMMARY_ENTRY.getAliasNames()[6];
 
 
 
