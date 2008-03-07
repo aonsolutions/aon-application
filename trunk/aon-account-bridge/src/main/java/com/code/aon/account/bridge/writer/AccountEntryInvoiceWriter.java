@@ -64,11 +64,11 @@ public class AccountEntryInvoiceWriter {
 		entryDetail.setAccount(account);
 		entryDetail.setAccountEntry(entry);
 		if(entry.getType().equals(AccountEntryType.SALES_INVOICE)){
-			entryDetail.setBalancingAccount(AccountUtil.obtainAccount("700"));
+			entryDetail.setBalancingAccount(AccountUtil.obtainDefaultAccount(DefaultAccounts.SALES_ACCOUNT));
 			entryDetail.setDebit(invoiceTotal);
 		}
 		if(entry.getType().equals(AccountEntryType.PURCHASE_INVOICE)){
-			entryDetail.setBalancingAccount(AccountUtil.obtainAccount("600"));
+			entryDetail.setBalancingAccount(AccountUtil.obtainDefaultAccount(DefaultAccounts.PURCHASE_ACCOUNT));
 			entryDetail.setCredit(invoiceTotal);
 		}
 		if(entry.getType().equals(AccountEntryType.EXPENSE_INVOICE)){
