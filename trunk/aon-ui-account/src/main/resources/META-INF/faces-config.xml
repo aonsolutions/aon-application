@@ -13,6 +13,14 @@
 		</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
+
+	<managed-bean>
+		<managed-bean-name>nullItem</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.account.controller.NullSelectItemController
+		</managed-bean-class>
+		<managed-bean-scope>application</managed-bean-scope>
+	</managed-bean>
 	
 	<!-- **************** ACCOUNTING PERIOD ************************** -->
 	<managed-bean>
@@ -62,6 +70,7 @@
 				</value-class>
 				<value>#{accountControllerLevelListener}</value>
 				<value>#{accountControllerListener}</value>
+				<value>#{accountControllerCascadeListener}</value>
 				<value>#{accountAppParamsControllerListener}</value>
 			</list-entries>
 		</managed-property>
@@ -84,6 +93,14 @@
 	</managed-bean>
 
 	<managed-bean>
+		<managed-bean-name>accountControllerCascadeListener</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.account.event.AccountControllerCascadeListener
+		</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+	</managed-bean>
+
+	<managed-bean>
 		<managed-bean-name>accountAppParamsControllerListener</managed-bean-name>
 		<managed-bean-class>
 			com.code.aon.ui.account.event.AccountAppParamsControllerListener
@@ -91,7 +108,7 @@
 		<managed-bean-scope>none</managed-bean-scope>
 	</managed-bean>
 	
-	<!-- **************** AUTHOMATIC CONCEPTS ************************** -->
+	<!-- **************** AUTOMATIC CONCEPTS ************************** -->
 	<managed-bean>
 		<managed-bean-name>autConcept</managed-bean-name>
 		<managed-bean-class>
@@ -190,7 +207,7 @@
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
 			<property-name>queryOnStartUP</property-name>
-			<value>false</value>
+			<value>true</value>
 		</managed-property>
 		<managed-property>
 			<property-name>pojo</property-name>
@@ -232,6 +249,7 @@
 					com.code.aon.ui.form.event.IControllerListener
 				</value-class>
 				<value>#{accountEntryDetailControllerValidatorListener}</value>
+				<value>#{accountEntryDetailControllerListener}</value>
 			</list-entries>
 		</managed-property>
 	</managed-bean>
@@ -240,6 +258,14 @@
 		<managed-bean-name>accountEntryDetailControllerValidatorListener</managed-bean-name>
 		<managed-bean-class>
 			com.code.aon.ui.account.event.AccountEntryDetailControllerValidatorListener
+		</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+	</managed-bean>
+
+	<managed-bean>
+		<managed-bean-name>accountEntryDetailControllerListener</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.account.event.AccountEntryDetailControllerListener
 		</managed-bean-class>
 		<managed-bean-scope>none</managed-bean-scope>
 	</managed-bean>
@@ -476,6 +502,40 @@
 		</managed-property>
 	</managed-bean>
 	
+		<!-- ************* AUTOMATIC CONCEPT LOOKUP ***************** -->
+	<managed-bean>
+		<managed-bean-name>autConceptLookup</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.form.LookupController
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>foreignPojo</property-name>
+			<value>com.code.aon.account.AutoConcept</value>
+		</managed-property>
+		<managed-property>
+			<property-name>aliasPrefix</property-name>
+			<value>AutoConcept</value>
+		</managed-property>
+		<managed-property>
+			<property-name>foreignJoinProperties</property-name>
+			<list-entries>
+				<value>id</value>
+			</list-entries>
+		</managed-property>
+		<managed-property>
+			<property-name>foreignDisplayProperties</property-name>
+			<list-entries>
+				<value>description</value>
+			</list-entries>
+		</managed-property>
+	</managed-bean>
+	
+	
 	<!-- ********** ACCOUNT ENTRY REPORT CONTROLLER ********* -->
 	<managed-bean>
 		<managed-bean-name>accountEntryReport</managed-bean-name>
@@ -584,6 +644,10 @@
 					<value>47501</value>
 				</map-entry>
 				<map-entry>
+					<key>ACC_DEFAULT_CASH_ACC</key>
+					<value>570</value>
+				</map-entry>
+				<map-entry>
 					<key>ACC_DEFAULT_SALARY_ACC</key>
 					<value>640</value>
 				</map-entry>
@@ -594,6 +658,18 @@
 				<map-entry>
 					<key>ACC_DEFAULT_SOCIAL_INSURANCE_ACC</key>
 					<value>476</value>
+				</map-entry>
+				<map-entry>
+					<key>ACC_DEFAULT_COMPANY_SOC_INS_ACC</key>
+					<value>642</value>
+				</map-entry>
+				<map-entry>
+					<key>ACC_DEFAULT_DEBT_INTEREST_ACC</key>
+					<value>662</value>
+				</map-entry>
+				<map-entry>
+					<key>ACC_DEFAULT_FINAN_EXPENSES_ACC</key>
+					<value>669</value>
 				</map-entry>
 			</map-entries>
 		</managed-property>
