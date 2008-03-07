@@ -75,6 +75,8 @@
 			key="account_default_params_desc" descriptionKey="account_default_params_desc">
 			<actionListener action="#{accAppParams.loadParameters}" />
 		</option>	
+		<option contextRelative="false" external="false"  ref="regenerateAccountSummary"
+			key="account_regenerate_summary" descriptionKey="account_regenerate_summary_desc"/>
 	</menu>
 	<menu ref="content" key="aon_configuration" descriptionKey="aon_configuration_desc">
 		<option contextRelative="false" external="false" ref="company"
