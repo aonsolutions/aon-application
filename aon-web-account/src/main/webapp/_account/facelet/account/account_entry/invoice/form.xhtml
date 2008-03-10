@@ -27,6 +27,7 @@
 							accesskey="#{bundle.aon_key_save}"
 							actionListener="#{accountInvoice.accept}" action="account_entry_form"
 							styleClass="aon-content-toolbar-item"
+							disabled="#{accountInvoice.details.rowCount == 0}"
 							onclick="return (confirm('#{bundle.aon_save_confirm}'))"
 							onmouseout="this.className='aon-content-toolbar-item'"
 							onmouseover="this.className='aon-content-toolbar-item aon-content-toolbar-item-hover'">
@@ -48,7 +49,7 @@
 						</h:commandButton>
 						<h:commandButton id="finances" value="#{accountBundle.aon_generate_finances}"
 							actionListener="#{accountInvoice.generateFinances}"
-							styleClass="aon-content-toolbar-item" rendered="#{accountInvoice.new}"
+							styleClass="aon-content-toolbar-item" rendered="#{accountInvoice.details.rowCount > 0}"
 							onmouseout="this.className='aon-content-toolbar-item'"
 							onmouseover="this.className='aon-content-toolbar-item aon-content-toolbar-item-hover'">
 						</h:commandButton>
@@ -69,6 +70,7 @@
 							styleClass="aon-form-input-text-label aon-form-table-column-odd-label" />
 						<h:selectOneMenu id="Account_invoiceType"
 							styleClass="aon-form-selectOneMenu-field"
+							disabled="#{accountInvoice.details.rowCount > 0}"
 							value="#{accountInvoice.header.type}"
 							onchange="submit();" valueChangeListener="#{accountInvoice.onTypeChanged}">
 							<f:selectItems value="#{accountInvoice.invoiceTypes}" />
@@ -80,14 +82,17 @@
 						<t:div rendered="#{accountInvoice.sales}">
 							<t:inputText id="Customer_Lookup_id" size="5" forceId="#{true}"
 								styleClass="aon-form-input-text"
+								disabled="#{accountInvoice.details.rowCount > 0}"
 								onchange="return findBeanLookupExt(event,'#{facesContext.externalContext.requestContextPath}','customerLookup','Customer_Lookup_id','Customer_id|Customer_Lookup_id,Customer_full_name|Customer_full_name');"
 								value="#{accountInvoice.header.registry.id}"
 								valueChangeListener="#{accountInvoice.onRegistryChange}"/>
 							<h:commandButton id="find_Customer_Lookup_id"
+								rendered="#{accountInvoice.details.rowCount == 0}"
 								styleClass="aon-form-lookup-button" value="" immediate="true"
 								onclick="lookupSearchWindow(this, 'placeList', '#{customerLookup.encodedSearchPagePath}','Customer_id|Customer_Lookup_id,Customer_full_name|Customer_full_name');return false;" />	
 							<t:inputText id="Customer_full_name" forceId="#{true}"
 								styleClass="aon-form-input-text" size="40" 
+								disabled="#{accountInvoice.details.rowCount > 0}"
 								value="#{accountInvoice.header.name}"/>
 						</t:div>
 						<t:outputLabel for="Customer_Lookup_registry_document"
@@ -95,6 +100,7 @@
 							value="#{accountBundle.aon_document}" rendered="#{accountInvoice.sales}"/>
 						<t:inputText id="Customer_Lookup_registry_document" styleClass="aon-form-input-text"
 							value="#{accountInvoice.header.document}" size="20"
+							disabled="#{accountInvoice.details.rowCount > 0}"
 							forceId="#{true}" rendered="#{accountInvoice.sales}">
 						</t:inputText>
 						
@@ -104,14 +110,17 @@
 						<t:div rendered="#{accountInvoice.purchase}">
 							<t:inputText id="Supplier_Lookup_id" size="5" forceId="#{true}"
 								styleClass="aon-form-input-text"
+								disabled="#{accountInvoice.details.rowCount > 0}"
 								onchange="return findBeanLookupExt(event,'#{facesContext.externalContext.requestContextPath}','supplierLookup','Supplier_Lookup_id','Supplier_id|Supplier_Lookup_id,Supplier_registry_document|Supplier_Lookup_document,Supplier_full_name|Supplier_full_name');"
 								value="#{accountInvoice.header.registry.id}" 
 								valueChangeListener="#{accountInvoice.onRegistryChange}"/>
 							<h:commandButton id="find_Supplier_Lookup_id"
+								rendered="#{accountInvoice.details.rowCount == 0}"
 								styleClass="aon-form-lookup-button" value="" immediate="true"
 								onclick="lookupSearchWindow(this, 'placeList', '#{supplierLookup.encodedSearchPagePath}','Supplier_id|Supplier_Lookup_id,Supplier_registry_document|Supplier_Lookup_document,Supplier_full_name|Supplier_full_name');return false;" />	
 							<t:inputText id="Supplier_full_name" forceId="#{true}"
 								styleClass="aon-form-input-text" size="40" 
+								disabled="#{accountInvoice.details.rowCount > 0}"
 								value="#{accountInvoice.header.name}"/>
 						</t:div>
 						<t:outputLabel for="Supplier_Lookup_document"
@@ -119,6 +128,7 @@
 							value="#{accountBundle.aon_document}" rendered="#{accountInvoice.purchase}"/>
 						<t:inputText id="Supplier_Lookup_document" styleClass="aon-form-input-text"
 							value="#{accountInvoice.header.document}" size="20"
+							disabled="#{accountInvoice.details.rowCount > 0}"
 							forceId="#{true}" rendered="#{accountInvoice.purchase}">
 						</t:inputText>
 						
@@ -128,10 +138,12 @@
 						<t:div rendered="#{accountInvoice.expense}">
 							<t:inputText id="Creditor_Lookup_id" size="5" forceId="#{true}"
 								styleClass="aon-form-input-text"
+								disabled="#{accountInvoice.details.rowCount > 0}"
 								onchange="return findBeanLookupExt(event,'#{facesContext.externalContext.requestContextPath}','creditorLookup','Creditor_Lookup_id','Creditor_id|Creditor_Lookup_id,Creditor_full_name|Creditor_full_name');"
 								value="#{accountInvoice.header.registry.id}" 
 								valueChangeListener="#{accountInvoice.onRegistryChange}"/>
 							<h:commandButton id="find_Creditor_Lookup_id"
+								rendered="#{accountInvoice.details.rowCount == 0}"
 								styleClass="aon-form-lookup-button" value="" immediate="true"
 								onclick="lookupSearchWindow(this, 'placeList', '#{creditorLookup.encodedSearchPagePath}','Creditor_id|Creditor_Lookup_id,Creditor_full_name|Creditor_full_name');return false;" />	
 							<t:inputText id="Creditor_full_name" forceId="#{true}"
@@ -142,6 +154,7 @@
 							styleClass="aon-form-input-text-label"
 							value="#{accountBundle.aon_document}" rendered="#{accountInvoice.expense}"/>
 						<t:inputText id="Creditor_Lookup_registry_document" styleClass="aon-form-input-text"
+							disabled="#{accountInvoice.details.rowCount > 0}"
 							value="#{accountInvoice.header.document}" size="20"
 							forceId="#{true}" rendered="#{accountInvoice.expense}">
 						</t:inputText>
@@ -150,6 +163,7 @@
 							value="#{accountBundle.aon_accPeriod_period}"
 							styleClass="aon-form-input-text-label aon-form-table-column-odd-label" />
 						<h:selectOneMenu id="Account_Period"
+							disabled="#{accountInvoice.details.rowCount > 0}"
 							styleClass="aon-form-selectOneMenu-field"
 							value="#{accountInvoice.header.period.id}">
 							<f:selectItems value="#{accountCollections.accountPeriods}" />
@@ -157,8 +171,9 @@
 
 						<t:outputLabel for="Account_date"
 							styleClass="aon-form-input-text-label"
-							value="#{accountBundle.aon_date}" />						
+							value="#{accountBundle.aon_date}" />				
 						<t:inputCalendar id="Account_date"
+							disabled="#{accountInvoice.details.rowCount > 0}"
 							value="#{accountInvoice.header.date}" size="8" required="true" 
 							monthYearRowClass="yearMonthHeader" weekRowClass="weekHeader"
 							currentDayCellClass="currentDayCell" renderAsPopup="true"
@@ -172,6 +187,7 @@
 						<h:panelGrid columns="2" cellpadding="0" cellspacing="0"> 
 							<h:selectOneMenu id="Account_invoice_series"
 								rendered="#{accountInvoice.sales}"
+								disabled="#{accountInvoice.details.rowCount > 0}"
 								value="#{accountInvoice.header.series}"
 								styleClass="aon-form-selectOneMenu-field">
 								<f:selectItem itemValue="" itemLabel=" " />
@@ -179,11 +195,13 @@
 							</h:selectOneMenu>
 							<t:inputText id="Account_invoice_series-input"
 								rendered="#{!accountInvoice.sales}"
+								disabled="#{accountInvoice.details.rowCount > 0}"
 								value="#{accountInvoice.header.series}" size="4" maxlength="5"
 								styleClass="aon-form-input-text" forceId="#{true}">
 								<f:validateLength maximum="5" />
 							</t:inputText>	
 							<t:inputText id="Account_invoice_number"
+								disabled="#{accountInvoice.details.rowCount > 0}"
 								value="#{accountInvoice.header.number}" size="7" maxlength="7"
 								styleClass="aon-form-input-text" forceId="#{true}">
 								<f:validateLength maximum="7" />
@@ -196,6 +214,7 @@
 						<h:selectOneMenu id="Account_account-Sales"
 							styleClass="aon-form-selectOneMenu-field"
 							value="#{accountInvoice.header.account.id}"
+							disabled="#{accountInvoice.details.rowCount > 0}"
 							rendered="#{accountInvoice.sales}">
 							<f:selectItems value="#{accountCollections.salesAccounts}" />
 						</h:selectOneMenu>
@@ -206,6 +225,7 @@
 						<h:selectOneMenu id="Account_account-Purchase"
 							styleClass="aon-form-selectOneMenu-field"
 							value="#{accountInvoice.header.account.id}"
+							disabled="#{accountInvoice.details.rowCount > 0}"
 							rendered="#{accountInvoice.purchase}">
 							<f:selectItems value="#{accountCollections.purchaseAccounts}" />
 						</h:selectOneMenu>
@@ -216,6 +236,7 @@
 						<h:selectOneMenu id="Account_account-Expenses"
 							styleClass="aon-form-selectOneMenu-field"
 							value="#{accountInvoice.header.account.id}"
+							disabled="#{accountInvoice.details.rowCount > 0}"
 							rendered="#{accountInvoice.expense}">
 							<f:selectItems value="#{accountCollections.expensesAccounts}" />
 						</h:selectOneMenu>
@@ -225,6 +246,7 @@
 							styleClass="aon-form-input-text-label aon-form-table-column-odd-label" />
 						<h:selectOneMenu id="AccountEntry_securityLevel"
 							styleClass="aon-form-selectOneMenu-field"
+							disabled="#{accountInvoice.details.rowCount > 0}"
 							forceId="#{true}" value="#{accountInvoice.header.securityLevel}">
 							<f:selectItems value="#{accountCollections.securityLevels}" />
 						</h:selectOneMenu>
