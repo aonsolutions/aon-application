@@ -278,17 +278,27 @@
 									</f:facet>
 									<t:outputText value="#{to.concept}"
 										rendered="#{to!=accountEntryDetail.to}" />
-									<h:inputText value="#{accountEntryDetail.to.concept}"
+									<t:inputText id="AccountEntryDetail_concept-Edit" 
+										value="#{accountEntryDetail.to.concept}"
 										styleClass="aon-form-input-text"
 										rendered="#{to==accountEntryDetail.to}" required="#{true}"
-										size="20" />
+										size="20" forceId="#{true}"/>
+									<h:commandButton id="find_AccountEntryDetail_concept-Edit"
+										rendered="#{to==accountEntryDetail.to}"
+										styleClass="aon-form-lookup-button" value="" immediate="true"
+										onclick="lookupListWindow(this, 'placeList', '#{facesContext.externalContext.requestContextPath}/_account/facelet/sw/autConcept.faces','AutoConcept_description|AccountEntryDetail_concept-Edit[#{rowIndex}]');return false;" />										
 									<f:facet name="footer">
 										<t:div>
 											<f:verbatim rendered="#{!accountEntryDetail.new}">&#160;</f:verbatim>
-											<h:inputText value="#{accountEntryDetail.to.concept}"
+											<t:inputText id="AccountEntryDetail_concept-New"
+												value="#{accountEntryDetail.to.concept}"
 												styleClass="aon-form-input-text"
 												rendered="#{accountEntryDetail.new}" required="#{true}"
-												size="20" />
+												size="20" forceId="#{true}"/>
+											<h:commandButton id="find_AccountEntryDetail_concept-New"
+												rendered="#{accountEntryDetail.new}"
+												styleClass="aon-form-lookup-button" value="" immediate="true"
+												onclick="lookupListWindow(this, 'placeList', '#{facesContext.externalContext.requestContextPath}/_account/facelet/sw/autConcept.faces','AutoConcept_description|AccountEntryDetail_concept-New');return false;" />										
 										</t:div>
 									</f:facet>
 								</h:column>
@@ -367,7 +377,7 @@
 										</t:inputText>
 										<h:commandButton id="find_Account_Lookup_id-Balancing-Edit"
 											styleClass="aon-form-lookup-button" value="" immediate="true"
-											onclick="lookupSearchWindow(this, 'placeList', '#{accountLookup.encodedSearchPagePath}',Account_id|Account_Lookup_id-Balancing-Edit[#{rowIndex}],Account_entryEnabled|Account_Lookup_entryEnabled-Balancing-Edit[#{rowIndex}]');return false;" />	
+											onclick="lookupSearchWindow(this, 'placeList', '#{accountLookup.encodedSearchPagePath}','Account_id|Account_Lookup_id-Balancing-Edit[#{rowIndex}],Account_entryEnabled|Account_Lookup_entryEnabled-Balancing-Edit[#{rowIndex}]');return false;" />	
 										<t:inputHidden id="Account_Lookup_entryEnabled-Balancing-Edit"
 											value="#{accountEntryDetail.to.balancingAccount.entryEnabled}"
 											styleClass="aon-form-input-text" forceId="#{true}"
