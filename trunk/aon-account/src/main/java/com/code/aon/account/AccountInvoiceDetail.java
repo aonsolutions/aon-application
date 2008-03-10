@@ -18,6 +18,8 @@ public class AccountInvoiceDetail implements ITransferObject {
 	/** The taxable base. */
 	private double taxableBase;
 	
+	private double surcharge;
+	
 	/**
 	 * The empty constructor.
 	 * 
@@ -118,11 +120,22 @@ public class AccountInvoiceDetail implements ITransferObject {
 	 * @return the surcharge
 	 */
 	public double getSurcharge() {
-		double surcharge = 0.0;
-		if(this.getVat() != null){
-			surcharge = round(this.getTaxableBase() * this.getVat().getSurcharge() / 100, 2);
-		}
 		return surcharge;
+	}
+
+	public void setSurcharge(double surcharge) {
+		this.surcharge = surcharge;
+	}
+	
+	public void calculateSurcharge(boolean surcharge){
+		if(surcharge){
+			setSurcharge(0.0);
+			if(this.getVat() != null){
+				setSurcharge(round(this.getTaxableBase() * this.getVat().getSurcharge() / 100, 2));
+			}
+		}else{
+			setSurcharge(0.0);
+		}
 	}
 
 	/**
