@@ -12,6 +12,7 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.form.BasicController;
+import com.code.aon.ui.util.AonUtil;
 
 public class AccountSummaryRegeneratorController extends BasicController {
 	
@@ -31,15 +32,21 @@ public class AccountSummaryRegeneratorController extends BasicController {
     }
 
 	@SuppressWarnings({"unused", "unchecked"})
-    public void regenerateAccountSummary(ActionEvent event) throws ManagerBeanException {
-    	IManagerBean periodBean = BeanManager.getManagerBean(Period.class);
-    	Criteria criteria = new Criteria();
-    	criteria.addEqualExpression(periodBean.getFieldName(IAccountAlias.PERIOD_ID), period);
-    	Iterator iterator = periodBean.getList(criteria).iterator();
-    	if (iterator.hasNext()) {
-    		Period accountPeriod = (Period)iterator.next();
-    		AccountSummaryManager.regenerateAccountSummary(accountPeriod);
-    	}
+    public void regenerateAccountSummary(ActionEvent event) {
+		try {
+			IManagerBean periodBean = BeanManager.getManagerBean(Period.class);
+			Criteria criteria = new Criteria();
+			criteria.addEqualExpression(periodBean.getFieldName(IAccountAlias.PERIOD_ID), period);
+			Iterator iterator = periodBean.getList(criteria).iterator();
+			if (iterator.hasNext()) {
+				Period accountPeriod = (Period)iterator.next();
+				AccountSummaryManager.regenerateAccountSummary(accountPeriod);
+			}
+
+			AonUtil.addInfoMessage("Los Acumulados de Cuentas se han regenerado correctamente.");
+		} catch (ManagerBeanException e) {
+			AonUtil.addErrorMessage("No se han podido regenerar los Acumulados de Cuentas. Causa: " + e.getMessage());
+		}
     }
 
 }
