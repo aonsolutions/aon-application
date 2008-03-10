@@ -32,6 +32,8 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.company.Company;
 import com.code.aon.company.WorkPlace;
+import com.code.aon.customer.Customer;
+import com.code.aon.customer.dao.ICustomerAlias;
 import com.code.aon.finance.Bank;
 import com.code.aon.finance.Finance;
 import com.code.aon.finance.Invoice;
@@ -250,7 +252,8 @@ public class AccountInvoiceController {
 	}
 	
 	@SuppressWarnings({"unchecked", "unused"})
-	public void onAddDetail(ActionEvent event){
+	public void onAddDetail(ActionEvent event) throws ManagerBeanException{
+		applySurcharge();
 		((LinkedList)this.details.getWrappedData()).add(this.currentDetail);
 		this.currentDetail = new AccountInvoiceDetail();
 		this.setNewDetail(false);
@@ -268,7 +271,8 @@ public class AccountInvoiceController {
 	}
 	
 	@SuppressWarnings({"unused", "unchecked"})
-	public void onUpdateDetail(ActionEvent event){
+	public void onUpdateDetail(ActionEvent event) throws ManagerBeanException{
+		applySurcharge();
 		int i = ((LinkedList)this.details.getWrappedData()).indexOf(this.currentDetail);
 		((LinkedList)this.details.getWrappedData()).remove(i);
 		((LinkedList)this.details.getWrappedData()).add(i, this.currentDetail);
@@ -286,6 +290,16 @@ public class AccountInvoiceController {
 		this.currentFinance = (Finance)finances.getRowData();
 		if(!header.getType().equals(InvoiceType.SALES)){
 			this.setRegistryBankId(obtainRegistryBankId(obtainCompany().getId(), currentFinance.getBank().getId()));
+		}
+	}
+	
+	private void applySurcharge() throws ManagerBeanException {
+		if(isSales()){
+			currentDetail.calculateSurcharge((obtainCustomer(getHeader().getRegistry().getId()).isSurcharge()));
+		}else if(isPurchase()){
+			currentDetail.calculateSurcharge(obtainCompany().isSurcharge());
+		}else{
+			currentDetail.calculateSurcharge(false);
 		}
 	}
 	
@@ -677,6 +691,18 @@ public class AccountInvoiceController {
 		Iterator iter = companyBean.getList(null, 0, 1).iterator();
 		if(iter.hasNext()){
 			return (Company)iter.next();
+		}
+		return null;
+	}
+	
+	@SuppressWarnings("unchecked")
+	private Customer obtainCustomer(Integer id) throws ManagerBeanException {
+		IManagerBean customerBean = BeanManager.getManagerBean(Customer.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(customerBean.getFieldName(ICustomerAlias.CUSTOMER_ID), id);
+		Iterator iter = customerBean.getList(criteria, 0, 1).iterator();
+		if(iter.hasNext()){
+			return (Customer)iter.next();
 		}
 		return null;
 	}
