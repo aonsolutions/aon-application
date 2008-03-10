@@ -105,8 +105,18 @@
 								popupWeekString="#{bundle.aon_popup_week}" />	
 						</h:panelGrid>
 
-					</h:panelGrid>
+						<h:outputLabel for="AccountEntry_securityLevel"
+							styleClass="aon-form-input-text-label aon-form-table-column-odd-label"
+							value="#{accountBundle.aon_account_security_level}" />
+						<t:selectOneMenu id="AccountEntry_securityLevel"
+							styleClass="aon-form-selectOneMenu-field"
+							converter="enumConverter"
+							forceId="#{true}" valueChangeListener="#{accountEntry.addDirectExpression}">
+							<f:selectItem value="#{nullItem.value}" />
+							<f:selectItems value="#{accountCollections.securityLevels}" />
+						</t:selectOneMenu>
 
+					</h:panelGrid>
 
 				</t:div>
 			</t:div>
