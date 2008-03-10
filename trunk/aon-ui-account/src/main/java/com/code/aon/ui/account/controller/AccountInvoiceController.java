@@ -130,6 +130,25 @@ public class AccountInvoiceController {
 	public boolean isNewFinance() {
 		return isNewFinance;
 	}
+	
+	@SuppressWarnings("unchecked")
+	public boolean isAccountSource() throws ManagerBeanException{
+		if(isNew || getAccountEntryInvoice() == null){
+			return true;
+		}else{
+			IManagerBean invoiceDetailBean = BeanManager.getManagerBean(InvoiceDetail.class);
+			Criteria criteria = new Criteria();
+			criteria.addEqualExpression(invoiceDetailBean.getFieldName(IFinanceAlias.INVOICE_DETAIL_INVOICE_ID), getAccountEntryInvoice().getInvoice().getId());
+			Iterator iter = invoiceDetailBean.getList(criteria).iterator();
+			while(iter.hasNext()){
+				InvoiceDetail detail = (InvoiceDetail)iter.next();
+				if(!detail.getSource().equals(InvoiceSource.ACCOUNT)){
+					return false;
+				}
+			}
+		}
+		return true;
+	}
 
 	public void setNewFinance(boolean isNewFinance) {
 		this.isNewFinance = isNewFinance;
