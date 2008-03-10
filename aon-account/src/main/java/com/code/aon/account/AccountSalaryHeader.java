@@ -3,6 +3,7 @@ package com.code.aon.account;
 import java.util.Date;
 
 import com.code.aon.common.ITransferObject;
+import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.finance.RegistryBank;
 
 /**
@@ -30,6 +31,8 @@ public class AccountSalaryHeader implements ITransferObject {
 	
 	/** The r bank. */
 	private RegistryBank rBank;
+	
+	private SecurityLevel securityLevel;
 
 	/**
 	 * Gets the date.
@@ -164,5 +167,13 @@ public class AccountSalaryHeader implements ITransferObject {
 	 */
 	public double getNetSalary(){
 		return grossSalary - (retention + socialInsurance);
+	}
+
+	public SecurityLevel getSecurityLevel() {
+		return securityLevel;
+	}
+
+	public void setSecurityLevel(SecurityLevel securityLevel) {
+		this.securityLevel = securityLevel;
 	}
 }

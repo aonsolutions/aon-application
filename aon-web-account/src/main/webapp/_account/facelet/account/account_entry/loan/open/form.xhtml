@@ -124,7 +124,7 @@
 							styleClass="aon-form-input-text" forceId="#{true}" >
 							<f:validateDoubleRange  />
 						</t:inputText>
-
+						
 						<h:outputLabel for="Account_expenses"
 							styleClass="aon-form-input-text-label"
 							value="#{accountBundle.aon_loan_expenses}" />
@@ -133,6 +133,15 @@
 							styleClass="aon-form-input-text" forceId="#{true}" >
 							<f:validateDoubleRange  />
 						</t:inputText>
+
+						<h:outputLabel for="Leasing_securityLevel"
+							value="#{accountBundle.aon_account_security_level}"
+							styleClass="aon-form-input-text-label aon-form-table-column-odd-label" />
+						<h:selectOneMenu id="Leasing_securityLevel"
+							styleClass="aon-form-selectOneMenu-field"
+							forceId="#{true}" value="#{accountLoan.loan.securityLevel}">
+							<f:selectItems value="#{accountCollections.securityLevels}" />
+						</h:selectOneMenu>
 							
 					</h:panelGrid>
 					<!-- end of grid layout -->

@@ -104,6 +104,7 @@ private static final Logger LOGGER = Logger.getLogger(AccountExpensesController.
 		entry.setAccountPeriod(getHeader().getPeriod().getId());
 		entry.setJournal(null);
 		entry.setType(AccountEntryType.SOCIAL_INSURANCE);
+		entry.setSecurityLevel(getHeader().getSecurityLevel());
 		entry = insertorUpdateAccountEntry(entry);
 		insertEntryDetails(entry);
 		setAccountEntry(entry);

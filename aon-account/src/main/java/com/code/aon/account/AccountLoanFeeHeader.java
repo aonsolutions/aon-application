@@ -3,6 +3,7 @@ package com.code.aon.account;
 import java.util.Date;
 
 import com.code.aon.common.ITransferObject;
+import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.finance.RegistryBank;
 
 /**
@@ -27,6 +28,8 @@ public class AccountLoanFeeHeader implements ITransferObject {
 	
 	/** The registry bank. */
 	private RegistryBank registryBank;
+	
+	private SecurityLevel securityLevel;
 
 
 	/**
@@ -145,4 +148,13 @@ public class AccountLoanFeeHeader implements ITransferObject {
 	public double getFee(){
 		return getAmortization() + getInterest();
 	}
+
+	public SecurityLevel getSecurityLevel() {
+		return securityLevel;
+	}
+
+	public void setSecurityLevel(SecurityLevel securityLevel) {
+		this.securityLevel = securityLevel;
+	}
+	
 }
