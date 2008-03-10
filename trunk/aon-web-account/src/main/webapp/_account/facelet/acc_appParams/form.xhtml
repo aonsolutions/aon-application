@@ -61,6 +61,15 @@
 							<f:selectItems value="#{accountCollections.purchaseAccounts}" />
 						</h:selectOneMenu>
 
+						<h:outputLabel for="ACC_default_cash_account"
+							value="#{accountBundle.default_cash_account}"
+							styleClass="aon-form-input-text-label aon-form-table-column-odd-label" />
+						<h:selectOneMenu id="ACC_default_cash_account"
+							styleClass="aon-form-selectOneMenu-field"
+							value="#{accAppParams.parameters['ACC_DEFAULT_CASH_ACC'].value}">
+							<f:selectItems value="#{accountCollections.cashAccounts}" />
+						</h:selectOneMenu>
+
 						<h:outputLabel for="ACC_default_charged_vat_account"
 							value="#{accountBundle.default_charged_vat_account}"
 							styleClass="aon-form-input-text-label aon-form-table-column-odd-label" />
@@ -122,6 +131,15 @@
 							styleClass="aon-form-selectOneMenu-field"
 							value="#{accAppParams.parameters['ACC_DEFAULT_SOCIAL_INSURANCE_ACC'].value}">
 							<f:selectItems value="#{accountCollections.socialInsuranceAccounts}" />
+						</h:selectOneMenu>
+
+						<h:outputLabel for="ACC_default_enterprise_social_insurance_account"
+							value="#{accountBundle.default_enterprise_social_insurance_account}"
+							styleClass="aon-form-input-text-label aon-form-table-column-odd-label" />
+						<h:selectOneMenu id="ACC_default_enterprise_social_insurance_account"
+							styleClass="aon-form-selectOneMenu-field"
+							value="#{accAppParams.parameters['ACC_DEFAULT_COMPANY_SOC_INS_ACC'].value}">
+							<f:selectItems value="#{accountCollections.enterpriseSocialInsuranceAccounts}" />
 						</h:selectOneMenu>
 
 					</h:panelGrid>
