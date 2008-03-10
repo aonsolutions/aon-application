@@ -135,6 +135,15 @@
 							value="#{accountLoanFee.header.registryBank.bankAccount}"
 							disabled="true" size="35" />
 
+						<h:outputLabel for="AccountEntry_securityLevel"
+							value="#{accountBundle.aon_account_security_level}"
+							styleClass="aon-form-input-text-label aon-form-table-column-odd-label" />
+						<h:selectOneMenu id="AccountEntry_securityLevel"
+							styleClass="aon-form-selectOneMenu-field"
+							forceId="#{true}" value="#{accountLoanFee.header.securityLevel}">
+							<f:selectItems value="#{accountCollections.securityLevels}" />
+						</h:selectOneMenu>
+
 					</h:panelGrid>
 					<!-- end of grid layout -->
 					<!-- end of bag panel -->
