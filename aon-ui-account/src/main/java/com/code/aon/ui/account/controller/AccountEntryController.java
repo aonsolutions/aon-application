@@ -194,6 +194,7 @@ public class AccountEntryController extends BasicController {
 				header.setSeries(accountEntryInvoice.getInvoice().getSeries());
 				header.setPeriod(new Period());
 				header.getPeriod().setId(entry.getAccountPeriod());
+				header.setSecurityLevel(entry.getSecurityLevel());
 				header.setRegistry(accountEntryInvoice.getInvoice().getRegistry());
 				accountInvoiceController.setHeader(header);
 				accountInvoiceController.setFinances(new ListDataModel(obtainFinances(accountEntryInvoice.getInvoice())));
@@ -219,6 +220,7 @@ public class AccountEntryController extends BasicController {
 		header.setDescription(accountEntryDetail.getConcept());
 		header.setAmount(accountEntryDetail.getDebit());
 		header.setRBank(obtainRBank(accountEntryDetail.getBalancingAccount().getId()));
+		header.setSecurityLevel(entry.getSecurityLevel());
 		accountExpensesController.setHeader(header);
 	}
 	
@@ -232,6 +234,7 @@ public class AccountEntryController extends BasicController {
 		period.setId(entry.getAccountPeriod());
 		header.setPeriod(period);
 		header.setDate(entry.getEntryDate());
+		header.setSecurityLevel(entry.getSecurityLevel());
 		AccountEntryDetail accountEntryDetail = obtainEntryDetailFromAccountPattern(entry, "6*");
 		header.setGrossSalary(accountEntryDetail.getDebit());
 		header.setDescription(accountEntryDetail.getConcept());
@@ -254,10 +257,11 @@ public class AccountEntryController extends BasicController {
 		period.setId(entry.getAccountPeriod());
 		header.setPeriod(period);
 		header.setDate(entry.getEntryDate());
-		AccountEntryDetail accountEntryDetail = obtainEntryDetailFromAccountPattern(entry, "572*");
+		AccountEntryDetail accountEntryDetail = obtainEntryDetailFromAccountPattern(entry, AccountConstants.BANK_ACCOUNT_PREFIX + "*");
 		header.setAmount(accountEntryDetail.getCredit());
 		header.setRegistryBank(obtainRBank(accountEntryDetail.getAccount().getId()));
 		header.setDescription(accountEntryDetail.getConcept());
+		header.setSecurityLevel(entry.getSecurityLevel());
 		socialInsController.setHeader(header);
 	}
 
@@ -282,13 +286,13 @@ public class AccountEntryController extends BasicController {
 			loanFeeController.setAccountEntry(entry);
 			AccountLoanFeeHeader header = new AccountLoanFeeHeader();
 			Loan loan = obtainLoan(entry);
-			AccountEntryDetail accountEntryDetail = obtainEntryDetailFromAccountPattern(entry, "52000*");
+			AccountEntryDetail accountEntryDetail = obtainEntryDetailFromAccountPattern(entry, AccountConstants.LOAN_ACCOUNT_PREFIX + "*");
 			header.setAmortization(accountEntryDetail.getDebit());
 			header.setDescription(accountEntryDetail.getConcept());
 			header.setFeeDate(entry.getEntryDate());
 			header.setLoan(loan);
 			header.setRegistryBank(obtainRBank(accountEntryDetail.getBalancingAccount().getId()));
-			accountEntryDetail = obtainEntryDetailFromAccountPattern(entry, "663");
+			accountEntryDetail = obtainEntryDetailFromAccountPattern(entry, AccountUtil.obtainDefaultAccount(DefaultAccounts.DEBT_INTEREST_ACCOUNT).getId() + "*");
 			header.setInterest(accountEntryDetail.getDebit());
 			loanFeeController.setHeader(header);
 		} catch (ManagerBeanException e) {
@@ -337,7 +341,6 @@ public class AccountEntryController extends BasicController {
 				header.setNumber(accountEntryInvoice.getInvoice().getNumber());
 				header.setSecurityLevel(accountEntryInvoice.getInvoice().getSecurityLevel());
 				header.setSeries(accountEntryInvoice.getInvoice().getSeries());
-				
 				
 				accountLeasingFeeController.setHeader(header);
 			}
