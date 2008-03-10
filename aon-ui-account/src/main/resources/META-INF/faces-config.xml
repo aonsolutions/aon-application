@@ -493,6 +493,7 @@
 				<value>description</value>
 				<value>supplierName</value>
 				<value>supplierDocument</value>
+				<value>vat.percentage</value>
 			</list-entries>
 		</managed-property>
 		<managed-property>
