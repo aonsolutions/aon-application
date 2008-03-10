@@ -93,10 +93,10 @@
 								value="#{accountLeasingFee.header.leasing.id}"
 								styleClass="aon-form-input-text" size="5"
 								valueChangeListener="#{accountLeasingFee.onLeasingChange}"
-								onchange="return findBeanLookupExt(event,'#{facesContext.externalContext.requestContextPath}','leasingLookup','Leasing_Lookup_id','Leasing_id|Leasing_Lookup_id,Leasing_description|Leasing_Lookup_description,Leasing_supplierName|Leasing_Lookup_supplierName,Leasing_supplierDocument|Leasing_Lookup_supplierDocument');"/>
+								onchange="return findBeanLookupExt(event,'#{facesContext.externalContext.requestContextPath}','leasingLookup','Leasing_Lookup_id','Leasing_id|Leasing_Lookup_id,Leasing_description|Leasing_Lookup_description,Leasing_supplierName|Leasing_Lookup_supplierName,Leasing_supplierDocument|Leasing_Lookup_supplierDocument,Leasing_vat_percentage|Leasing_Lookup_vat_percentage');"/>
 							<h:commandButton id="find_Leasing_Lookup_id"
 								styleClass="aon-form-lookup-button" value="" immediate="true"
-								onclick="lookupSearchWindow(this, 'placeList', '#{leasingLookup.encodedSearchPagePath}','Leasing_id|Leasing_Lookup_id,Leasing_description|Leasing_Lookup_description,Leasing_supplierName|Leasing_Lookup_supplierName,Leasing_supplierDocument|Leasing_Lookup_supplierDocument');return false;" />	
+								onclick="lookupSearchWindow(this, 'placeList', '#{leasingLookup.encodedSearchPagePath}','Leasing_id|Leasing_Lookup_id,Leasing_description|Leasing_Lookup_description,Leasing_supplierName|Leasing_Lookup_supplierName,Leasing_supplierDocument|Leasing_Lookup_supplierDocument,Leasing_vat_percentage|Leasing_Lookup_vat_percentage');return false;" />	
 							<t:inputText id="Leasing_Lookup_description"
 								disabledOnClientSide="true" forceId="#{true}"
 								value="#{accountLeasingFee.header.leasing.description}"
@@ -141,12 +141,27 @@
 							disabledOnClientSide="#{true}" size="7"
 							styleClass="aon-form-input-text-disabled" forceId="#{true}" />
 
+						<h:outputLabel for="Leasing_Lookup_vat_percentage"
+							styleClass="aon-form-input-text-label"
+							value="#{accountBundle.aon_leasing_vat}" />
+						<t:inputText id="Leasing_Lookup_vat_percentage"
+							disabled="true" forceId="#{true}"
+							styleClass="aon-form-input-text-disabled" size="7" />
+
 						<h:outputLabel for="Account_expenses"
 							styleClass="aon-form-input-text-label"
 							value="#{accountBundle.aon_leasing_expenses}" />
 						<t:inputText id="Account_expenses"
+							onchange="calculateFee();"
 							value="#{accountLeasingFee.header.expenses}" size="7"
 							styleClass="aon-form-input-text" forceId="#{true}" />
+
+						<h:outputLabel for="Account_total"
+							styleClass="aon-form-input-text-label"
+							value="#{accountBundle.aon_leasing_invoiceTotal}" />
+						<t:inputText id="Account_total"
+							disabled="#{true}" size="7"
+							styleClass="aon-form-input-text-disabled" forceId="#{true}" />
 
 						<h:outputLabel for="RegistryBank_Lookup_id"
 							styleClass="aon-form-input-text-label"
@@ -187,10 +202,17 @@
 			function calculateFee() {
 				amortization = document.getElementById("Account_amortization").value;
 				interest = document.getElementById("Account_interest").value;
-				taxableBase = document.getElementById("Account_taxableBase").value;
+				expenses = document.getElementById("Account_expenses").value;
+				vat = document.getElementById("Leasing_Lookup_vat_percentage").value;
+
 				taxableBase = eval(amortization + "+" + interest);
 				document.getElementById("Account_taxableBase").value = taxableBase;
 				document.getElementById("Account_taxableBase").onchange();
+
+		    	value = Math.pow(10,2);
+		        total = Math.round(parseFloat(taxableBase*(1+(vat/100)))*value)/value;
+				total = eval(total + "+" + expenses);
+				document.getElementById("Account_total").value = total;
 			}
 			calculateFee();
 		</script>
