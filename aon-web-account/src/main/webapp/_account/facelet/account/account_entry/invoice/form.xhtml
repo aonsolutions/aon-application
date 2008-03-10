@@ -27,7 +27,7 @@
 							accesskey="#{bundle.aon_key_save}"
 							actionListener="#{accountInvoice.accept}" action="account_entry_form"
 							styleClass="aon-content-toolbar-item"
-							disabled="#{accountInvoice.details.rowCount == 0}"
+							disabled="#{accountInvoice.details.rowCount == 0 or !accountInvoice.accountSource}"
 							onclick="return (confirm('#{bundle.aon_save_confirm}'))"
 							onmouseout="this.className='aon-content-toolbar-item'"
 							onmouseover="this.className='aon-content-toolbar-item aon-content-toolbar-item-hover'">
@@ -44,11 +44,13 @@
 							actionListener="#{accountInvoice.onRemove}" rendered="#{!accountInvoice.new}"
 							styleClass="aon-content-toolbar-item" immediate="true"
 							onclick="return (confirm('#{bundle.aon_remove_confirm}'))"
+							disabled="#{!accountInvoice.accountSource}"
 							onmouseout="this.className='aon-content-toolbar-item'"
 							onmouseover="this.className='aon-content-toolbar-item aon-content-toolbar-item-hover'">
 						</h:commandButton>
 						<h:commandButton id="finances" value="#{accountBundle.aon_generate_finances}"
 							actionListener="#{accountInvoice.generateFinances}"
+							disabled="#{!accountInvoice.accountSource}"
 							styleClass="aon-content-toolbar-item" rendered="#{accountInvoice.details.rowCount > 0}"
 							onmouseout="this.className='aon-content-toolbar-item'"
 							onmouseover="this.className='aon-content-toolbar-item aon-content-toolbar-item-hover'">
@@ -288,6 +290,7 @@
 									<t:commandLink immediate="#{true}"
 										styleClass="aon-table-row-selected"
 										rendered="#{to!=accountInvoice.currentDetail}"
+										disabled="#{!accountInvoice.accountSource}"
 										actionListener="#{accountInvoice.onSelectDetail}" />
 									<f:facet name="footer">
 										<t:div>
@@ -296,6 +299,7 @@
 												title="#{accountBundle.aon_newLine}"
 												actionListener="#{accountInvoice.onNewDetail}"
 												rendered="#{!accountInvoice.newDetail}"
+												disabled="#{!accountInvoice.accountSource}"
 												accesskey="#{bundle.aon_key_new_line}" />
 										</t:div>
 									</f:facet>
@@ -501,12 +505,14 @@
 									<t:commandLink immediate="#{true}"
 										styleClass="aon-table-row-selected"
 										rendered="#{financeTo!=accountInvoice.currentFinance}"
+										disabled="#{!accountInvoice.accountSource}"
 										actionListener="#{accountInvoice.onSelectFinance}" />
 									<f:facet name="footer">
 										<t:div>
 											<t:commandButton value=""
 												styleClass="aon-edit-table-icon-button aon-edit-table-icon-button-new"
 												title="#{accountBundle.aon_newLine}"
+												disabled="#{!accountInvoice.accountSource}"
 												actionListener="#{accountInvoice.onNewFinance}"
 												rendered="#{!accountInvoice.newFinance}"
 												accesskey="#{bundle.aon_key_new_line}" />
