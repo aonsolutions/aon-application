@@ -19,7 +19,7 @@
 	<managed-bean>
 		<managed-bean-name>alarm</managed-bean-name>
 		<managed-bean-class>
-			com.code.aon.ice.groupware.ICEAlarmController
+			com.code.aon.ui.groupware.controller.AlarmController
 		</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
@@ -37,7 +37,7 @@
 	<managed-bean>
 		<managed-bean-name>note</managed-bean-name>
 		<managed-bean-class>
-			com.code.aon.ice.groupware.ICENoteController
+			com.code.aon.ui.groupware.controller.NoteController
 		</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
@@ -69,7 +69,7 @@
 	<managed-bean>
 		<managed-bean-name>notice</managed-bean-name>
 		<managed-bean-class>
-			com.code.aon.ice.groupware.ICENoticeController
+			com.code.aon.ui.groupware.controller.NoticeController
 		</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
@@ -101,7 +101,7 @@
 	<managed-bean>
 		<managed-bean-name>contact</managed-bean-name>
 		<managed-bean-class>
-			com.code.aon.ice.groupware.ICEContactController
+			com.code.aon.ui.groupware.controller.ContactController
 		</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
@@ -134,7 +134,7 @@
 	<managed-bean>
 		<managed-bean-name>favorite</managed-bean-name>
 		<managed-bean-class>
-			com.code.aon.ice.groupware.ICEFavoriteController
+			com.code.aon.ui.groupware.controller.FavoriteController
 		</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
@@ -166,7 +166,7 @@
 	<managed-bean>
 		<managed-bean-name>favoriteCategory</managed-bean-name>
 		<managed-bean-class>
-			com.code.aon.ice.controller.ICEController
+			com.code.aon.ui.form.BasicController
 		</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
