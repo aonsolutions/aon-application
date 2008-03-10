@@ -49,7 +49,7 @@
 						<h:commandButton id="search" value="#{bundle.aon_search}"
 							accesskey="#{bundle.aon_key_search}" action="account_search"
 							actionListener="#{account.onEditSearch}"
-							styleClass="aon-content-toolbar-item"
+							styleClass="aon-content-toolbar-item" immediate="true"
 							onmouseout="this.className='aon-content-toolbar-item'"
 							onmouseover="this.className='aon-content-toolbar-item aon-content-toolbar-item-hover'">
 						</h:commandButton>
@@ -83,7 +83,7 @@
 							styleClass="aon-form-input-text-label aon-form-table-column-odd-label" />
 						<t:inputText id="Account_id" styleClass="aon-form-input-text"
 							value="#{account.to.id}" required="#{true}" size="16"
-							forceId="#{true}">
+							forceId="#{true}" disabled="#{!account.new}">
 							<f:validateLength maximum="12" />
 						</t:inputText>
 						
