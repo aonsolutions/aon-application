@@ -5,6 +5,7 @@ import java.util.List;
 
 import com.code.aon.account.enumeration.AccountEntryType;
 import com.code.aon.common.ITransferObject;
+import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.finance.Finance;
 import com.code.aon.finance.RegistryBank;
 
@@ -15,6 +16,8 @@ public class FinanceRecordingTo implements ITransferObject {
 	private Date date;
 	
 	private AccountEntryType type;
+	
+	private SecurityLevel securityLevel;
 	
 	private List<Finance> financeList;
 
@@ -48,5 +51,13 @@ public class FinanceRecordingTo implements ITransferObject {
 
 	public void setType(AccountEntryType type) {
 		this.type = type;
+	}
+
+	public SecurityLevel getSecurityLevel() {
+		return securityLevel;
+	}
+
+	public void setSecurityLevel(SecurityLevel securityLevel) {
+		this.securityLevel = securityLevel;
 	}
 }

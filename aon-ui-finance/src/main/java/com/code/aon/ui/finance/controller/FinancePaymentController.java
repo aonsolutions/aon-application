@@ -19,6 +19,7 @@ import com.code.aon.account.enumeration.AccountEntryType;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.finance.Finance;
 import com.code.aon.finance.FinanceTracking;
 import com.code.aon.finance.RegistryBank;
@@ -229,6 +230,7 @@ public class FinancePaymentController extends BasicController {
 			recordingTo.setFinanceList(list);
 			recordingTo.setDate(getPaymentDate());
 			recordingTo.setType((finance.isPayment()?AccountEntryType.PAYMENT:AccountEntryType.COLLECTION));
+			recordingTo.setSecurityLevel(finance.getSecurityLevel()==null?SecurityLevel.OFFICIAL:finance.getSecurityLevel());
 			AccountEntry entry = getWriter().recordFinances(recordingTo);
 			return entry;
 		} catch (ManagerBeanException e) {
