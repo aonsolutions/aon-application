@@ -15,12 +15,17 @@ public enum ModularType implements IResourceable {
 	/**
 	 * 
 	 */
-	TYPE_1,
+	_2_COLUMNS,
 
 	/**
 	 * 
 	 */
-	TYPE_2;
+	HEADER_2_COLUMNS,
+
+	/**
+	 * 
+	 */
+	_2_COLUMNS_FOOT;
 
 	/**
 	 * Ruta base del fichero de mensajes.
