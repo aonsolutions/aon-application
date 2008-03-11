@@ -65,8 +65,13 @@ public enum SidebarType implements IResourceable {
 	/**
 	 * Download Category
 	 */
-	DOWNLOAD_CATEGORY;
+	DOWNLOAD_CATEGORY,
 
+	/**
+	 * Album Category
+	 */
+	ALBUM_CATEGORY;
+	
 	/**
 	 * Ruta base del fichero de mensajes.
 	 */

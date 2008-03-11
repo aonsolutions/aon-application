@@ -160,6 +160,7 @@ public class ModularPageOptionController extends BasicI18nController {
 		else if (mo.getType().equals(ModularPageOptionType.DIRECT_ACCESS)) idents = ((CollectionsController)AonUtil.getRegisteredBean("collections")).getDirectAccessList();
 		else if (mo.getType().equals(ModularPageOptionType.LINK_CATEGORY)) idents = ((CollectionsController)AonUtil.getRegisteredBean("collections")).getLinkCategoryList();
 		else if (mo.getType().equals(ModularPageOptionType.ACTIVITY)) idents = ((CollectionsController)AonUtil.getRegisteredBean("collections")).getActivityList();
+		else if (mo.getType().equals(ModularPageOptionType.ALBUM_CATEGORY)) idents = ((CollectionsController)AonUtil.getRegisteredBean("collections")).getAlbumCategoryList();
 		return idents;
 	}
 

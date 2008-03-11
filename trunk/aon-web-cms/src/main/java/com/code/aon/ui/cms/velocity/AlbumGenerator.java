@@ -85,6 +85,7 @@ public class AlbumGenerator extends Generator {
 			Criteria albumDetailCriteria;
 			Criteria albumCategoryCriteria = new Criteria();
 			albumCategoryCriteria.addEqualExpression(albumCategoryBean.getFieldName(ICMSAlias.ALBUM_CATEGORY_ACTIVE), true);
+			albumCategoryCriteria.addOrder(albumCategoryBean.getFieldName(ICMSAlias.ALBUM_CATEGORY_POSITION));
 			albumCategoryList = (List<ITransferObject>)albumCategoryBean.getList(albumCategoryCriteria);
 			ArrayList<AlbumCategoryHandler> achlist = new ArrayList<AlbumCategoryHandler>();
 			AlbumCategory albumCategory;
@@ -106,6 +107,7 @@ public class AlbumGenerator extends Generator {
 					albumCriteria = new Criteria();
 					albumCriteria.addEqualExpression(albumBean.getFieldName(ICMSAlias.ALBUM_ALBUM_CATEGORY_ID), albumCategory.getId());
 					albumCriteria.addEqualExpression(albumBean.getFieldName(ICMSAlias.ALBUM_ACTIVE), true);
+					albumCriteria.addOrder(albumBean.getFieldName(ICMSAlias.ALBUM_POSITION));
 					albumList = (List<ITransferObject>)albumBean.getList(albumCriteria);
 					ArrayList<AlbumHandler> ahlist = new ArrayList<AlbumHandler>(); 
 					
@@ -204,6 +206,53 @@ public class AlbumGenerator extends Generator {
 		}
 		vu.finalize();
 		vu = null;
+	}
+
+	public static Object getAlbumCategoryHandler(Integer ident) {
+		List<ITransferObject> l;
+		List<ITransferObject> ld;
+		List<ITransferObject> lcd;
+		Iterator<ITransferObject> iter;
+		try {
+			IManagerBean bean = BeanManager.getManagerBean(Album.class);
+			Criteria criteria = new Criteria();
+			criteria.addEqualExpression(bean.getFieldName(ICMSAlias.ALBUM_ALBUM_CATEGORY_ID), ident);
+			criteria.addEqualExpression(bean.getFieldName(ICMSAlias.ALBUM_ACTIVE), true);
+			criteria.addOrder(bean.getFieldName(ICMSAlias.ALBUM_POSITION));
+			l = (List<ITransferObject>)bean.getList(criteria);
+			iter = l.iterator();
+			ArrayList<AlbumHandler> ahlist = new ArrayList<AlbumHandler>();
+			Album album;
+			while (iter.hasNext()){
+				album = (Album)iter.next();
+				bean = BeanManager.getManagerBean(AlbumDetail.class);
+				criteria = new Criteria();
+				criteria.addEqualExpression(bean.getFieldName(ICMSAlias.ALBUM_DETAIL_LANGUAGE_ID), ControllerUtil.getCurrentLanguage().getId());
+				criteria.addEqualExpression(bean.getFieldName(ICMSAlias.ALBUM_DETAIL_ALBUM_ID), album.getId());
+				ld = (List<ITransferObject>)bean.getList(criteria);
+				if (!ld.isEmpty()){
+					AlbumDetail ad = (AlbumDetail)ld.get(0);
+					AlbumHandler ah = new AlbumHandler(ad);
+					ahlist.add(ah);
+				}
+			}
+			bean = BeanManager.getManagerBean(AlbumCategoryDetail.class);
+			criteria = new Criteria();
+			criteria.addEqualExpression(bean.getFieldName(ICMSAlias.ALBUM_CATEGORY_DETAIL_LANGUAGE_ID), ControllerUtil.getCurrentLanguage().getId());
+			criteria.addEqualExpression(bean.getFieldName(ICMSAlias.ALBUM_CATEGORY_DETAIL_ALBUM_CATEGORY_ID), ident);
+			lcd = (List<ITransferObject>)bean.getList(criteria);
+			AlbumCategoryDetail acd = (AlbumCategoryDetail) lcd.get(0);
+			AlbumCategoryHandler ach = new AlbumCategoryHandler(acd,ahlist);
+			return ach;
+		} catch (ManagerBeanException e) {
+			e.printStackTrace();
+		} finally {
+			l = null;
+			ld = null;
+			lcd = null;
+			iter = null;
+		}
+		return null;
 	}
 
 	public static String ALBUM_LIST_PAGE = "album_categories";
