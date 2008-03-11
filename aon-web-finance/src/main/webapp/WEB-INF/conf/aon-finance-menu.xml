@@ -23,13 +23,22 @@
 			</option>
 		</menu>
 		<menu ref="content" key="aon_auxiliar" descriptionKey="aon_auxiliar_desc" >
+			<option key="aon_invoicing_group" descriptionKey="aon_invoicing_group_desc" ref="invoicingGroup" role="GruposFacturacion"/>
 			<option key="aon_bank" descriptionKey="aon_bank_desc" ref="bank" />
 			<option key="aon_pay_method" descriptionKey="aon_pay_method_desc" ref="pay_method" />
 			<option key="aon_item" descriptionKey="aon_item_desc" ref="item" >
 				<actionListener action="#{item.onReset}"/>
 			</option>
 			<option key="aon_product_category" descriptionKey="aon_product_category_desc" ref="productCategory" />
-		</menu>	
+		</menu>
+		<menu ref="content" key="aon_finance_utilities" descriptionKey="aon_finance_utilities_desc" role="UtilidadesTesoreria">
+			<option key="aon_fee_print" descriptionKey="aon_fee_print" ref="util_fee_print" role="ListadoCuotas">
+				<actionListener action="#{feePrint.onEditSearch}"/>				
+			</option>
+			<option key="aon_invoice_recording" descriptionKey="aon_invoice_recording" ref="invoiceRecording">
+				<actionListener action="#{invoiceRecording.onInitialize}"/>				
+			</option>
+		</menu>		
 	</menu>	
 	<menu ref="content" key="finance" descriptionKey="finance_desc" role="Tesoreria">
 		<option key="aon_finance" descriptionKey="aon_finance_desc" ref="finance" role="Vencimientos">
@@ -42,15 +51,8 @@
 			<actionListener action="#{financePayment.onEditSearch}"/>
 		</option>
 		<option key="aon_fbatch" descriptionKey="aon_fbatch_desc" ref="fbatch" role="Remesas"/>
-		<option key="aon_invoicing_group" descriptionKey="aon_invoicing_group_desc" ref="invoicingGroup" role="GruposFacturacion"/>
 		<menu ref="content" key="aon_finance_utilities" descriptionKey="aon_finance_utilities_desc" role="UtilidadesTesoreria">
 			<option key="aon_cheking" descriptionKey="aon_cheking_desc" ref="util_checking" role="ChecksTesoreria"/>
-			<option key="aon_fee_print" descriptionKey="aon_fee_print" ref="util_fee_print" role="ListadoCuotas">
-				<actionListener action="#{feePrint.onEditSearch}"/>				
-			</option>
-			<option key="aon_invoice_recording" descriptionKey="aon_invoice_recording" ref="invoiceRecording">
-				<actionListener action="#{invoiceRecording.onInitialize}"/>				
-			</option>
 		</menu>
 	</menu>	
 	<menu ref="content" key="aon_configuration" descriptionKey="aon_configuration_desc">
