@@ -84,6 +84,14 @@
 						<f:selectItems value="#{collections.sectionList}" />
 					</aon:selectOneMenu>
 					
+					<aon:outputLabel for="modular_page_type"
+						value="#{appBundle.modular_page_type}"/>
+					<aon:selectOneMenu id="modular_page_type"
+						styleClass="aon-form-selectOneMenu-field"
+						value="#{modular_page.to.modularType}">
+						<f:selectItems value="#{collections.modularTypes}" />
+					</aon:selectOneMenu>
+					
 				</aon:panelGrid>
 			</aon:div>
 		

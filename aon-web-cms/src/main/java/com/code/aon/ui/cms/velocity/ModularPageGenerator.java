@@ -87,7 +87,13 @@ public class ModularPageGenerator extends Generator {
 				if (mp.isHomepage()){
 					generate(vu, Templates.HOME, mp.getAlias());
 				}else{
-					generate(vu, Templates.MODULAR, mp.getAlias());
+					if (mp.getModularType()==null){
+						generate(vu, Templates.MODULAR, mp.getAlias());
+					}else{
+						String template_name = Templates.MODULAR_TYPES.getTemplateName();
+						template_name = template_name.replaceAll("%TYPE%", ""+mp.getModularType().ordinal()); 
+						generate(vu, Templates.MODULAR, template_name, mp.getAlias());
+					}
 				}
 				vu.remove("module");
 				vu.remove("modules");

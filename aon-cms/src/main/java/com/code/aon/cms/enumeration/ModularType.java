@@ -10,7 +10,17 @@ public enum ModularType implements IResourceable {
 	/**
 	 * 
 	 */
-	DEFAULT;
+	DEFAULT,
+
+	/**
+	 * 
+	 */
+	TYPE_1,
+
+	/**
+	 * 
+	 */
+	TYPE_2;
 
 	/**
 	 * Ruta base del fichero de mensajes.

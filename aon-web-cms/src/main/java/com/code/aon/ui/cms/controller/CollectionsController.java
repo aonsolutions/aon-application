@@ -34,6 +34,7 @@ import com.code.aon.cms.enumeration.ContentLevel;
 import com.code.aon.cms.enumeration.LanguageMenuType;
 import com.code.aon.cms.enumeration.MenuType;
 import com.code.aon.cms.enumeration.ModularPageOptionType;
+import com.code.aon.cms.enumeration.ModularType;
 import com.code.aon.cms.enumeration.PageType;
 import com.code.aon.cms.enumeration.SidebarSide;
 import com.code.aon.cms.enumeration.SidebarType;
@@ -315,6 +316,19 @@ public class CollectionsController {
 			itemList.add(item);
 		}
 		return itemList;
+	}
+
+	public List<SelectItem> getModularTypes() throws ManagerBeanException, ExpressionException {
+		List<SelectItem> types = new LinkedList<SelectItem>();
+		Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
+		SelectItem item = new SelectItem("", "");
+		types.add(item);
+		for (ModularType modularType : ModularType.values()) {
+			String name = modularType.getName(locale);
+			item = new SelectItem(modularType, name);
+			types.add(item);
+		}
+		return types;
 	}
 
 	public List<SelectItem> getModularPageOptionTypes() throws ManagerBeanException, ExpressionException {
