@@ -90,7 +90,12 @@ public enum Templates implements IResourceable {
 	/**
 	 * BANNERS
 	 */
-	BANNERS;
+	BANNERS,
+	
+	/**
+	 * MODULAR_TYPES
+	 */
+	MODULAR_TYPES;
 	
 	/**
 	 * Ruta base del fichero de mensajes.

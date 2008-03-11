@@ -13,9 +13,14 @@ public class Generator {
 	}
 
 	public static void generate(VelocityUtil vu, Templates type, String name) {
+		String contentTemplate = getContentTemplate(type);
+		Generator.generate(vu, type, contentTemplate, name);
+	}
+
+	public static void generate(VelocityUtil vu, Templates type, String contentTemplate, String name) {
 		String template = getIndexTemplate();
 		if (type == Templates.LANGUAGE) template = getLanguageTemplate();
-		String content = getContentTemplate(type);
+		String content = contentTemplate;
 		String page = getPage(type);
 		page = page.replaceAll("%NAME%", name);
 		
