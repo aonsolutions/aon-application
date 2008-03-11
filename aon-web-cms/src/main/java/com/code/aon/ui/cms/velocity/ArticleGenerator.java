@@ -187,6 +187,7 @@ public class ArticleGenerator extends Generator {
 			criteria.addEqualExpression(bean.getFieldName(ICMSAlias.ARTICLE_ARTICLE_CATEGORY_ID), ident);
 			criteria.addEqualExpression(bean.getFieldName(ICMSAlias.ARTICLE_ARTICLE_TYPE), type);
 			criteria.addEqualExpression(bean.getFieldName(ICMSAlias.ARTICLE_ACTIVE), true);
+			criteria.addOrder(bean.getFieldName(ICMSAlias.ARTICLE_POSITION));
 			l = (List<ITransferObject>)bean.getList(criteria);
 			iter = l.iterator();
 			ArrayList<ArticleHandler> ahlist = new ArrayList<ArticleHandler>();
