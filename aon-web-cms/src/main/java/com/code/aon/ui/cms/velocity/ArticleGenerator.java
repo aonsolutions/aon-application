@@ -52,6 +52,7 @@ public class ArticleGenerator extends Generator {
 			ArticleDetail articleDetail;
 			
 			articleCategoryCriteria.addEqualExpression(articleCategoryBean.getFieldName(ICMSAlias.ARTICLE_CATEGORY_ACTIVE), true);
+			articleCategoryCriteria.addOrder(articleCategoryBean.getFieldName(ICMSAlias.ARTICLE_CATEGORY_POSITION));
 			articleCategoryList = (List<ITransferObject>)articleCategoryBean.getList(articleCategoryCriteria);
 			ArrayList<ArticleCategoryHandler> achlist = new ArrayList<ArticleCategoryHandler>(); 
 			for (int j=0; j < articleCategoryList.size(); j++) {
@@ -74,6 +75,7 @@ public class ArticleGenerator extends Generator {
 						articleCriteria.addEqualExpression(articleBean.getFieldName(ICMSAlias.ARTICLE_ARTICLE_CATEGORY_ID), articleCategory.getId());
 						articleCriteria.addEqualExpression(articleBean.getFieldName(ICMSAlias.ARTICLE_ACTIVE), true);
 						articleCriteria.addEqualExpression(articleBean.getFieldName(ICMSAlias.ARTICLE_ARTICLE_TYPE), values[art_type]);
+						articleCriteria.addOrder(articleBean.getFieldName(ICMSAlias.ARTICLE_POSITION));
 						articleList = (List<ITransferObject>)articleBean.getList(articleCriteria);
 						ArrayList<ArticleHandler> ahlist = new ArrayList<ArticleHandler>();
 						if (!articleList.isEmpty()){
