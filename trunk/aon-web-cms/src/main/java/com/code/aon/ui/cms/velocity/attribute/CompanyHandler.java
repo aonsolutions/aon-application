@@ -42,39 +42,39 @@ public class CompanyHandler {
 	}
 
 	public String getTelephone() {
-		return telephone;
+		return telephone==null?"":telephone;
 	}
 
 	public String getFax() {
-		return fax;
+		return fax==null?"":fax;
 	}
 
 	public String getEmail() {
-		return email;
+		return email==null?"":email;
 	}
 
 	public String getAddress() {
-		return address;
+		return address==null?"":address;
 	}
 
 	public String getLocality() {
-		return locality;
+		return locality==null?"":locality;
 	}
 
 	public String getProvince() {
-		return province;
+		return province==null?"":province;
 	}
 
-	public Integer getPostal_code() {
-		return postal_code;
+	public String getPostal_code() {
+		return postal_code==null?"":postal_code.toString();
 	}
 
 	public String getWeb() {
-		return web;
+		return web==null?"":web;
 	}
 
 	public String getLogo() {
-		return logo;
+		return logo==null?"":logo;
 	}
 
 	
