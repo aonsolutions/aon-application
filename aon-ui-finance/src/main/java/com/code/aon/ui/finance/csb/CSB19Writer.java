@@ -137,14 +137,14 @@ public class CSB19Writer {
 			String date = formatter.format(finance.getInvoice().getDate());
 			String document = finance.getInvoice().getRegistryDocument();
 
-			concept = "FRA: " + series + "/" + number + " " + date + " NIF: " + document;
+			concept = "FRA:" + series + "/" + number + " " + date + " NIF:" + document;
 		}
 		return (concept.length() > 40)?concept.substring(0, 39):concept;
 	}
 
 	@SuppressWarnings("unchecked")
 	private void addExtendedData(Individual individual, Invoice invoice) throws ManagerBeanException {
-		NumberFormat formatter = new DecimalFormat("###,###,##0.0");
+		NumberFormat formatter = new DecimalFormat("###,###,##0.00");
 
 		individual.addConcept("         CANT.   PRECIO   %DTO     TOTAL");
 		IManagerBean invoiceDetailBean = BeanManager.getManagerBean(InvoiceDetail.class);
