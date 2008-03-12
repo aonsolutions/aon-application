@@ -139,6 +139,11 @@ public class AlbumController extends BasicI18nController {
 		}
 	}
 	
+	public void onDelImage(ActionEvent event) {
+		Album current = (Album)getTo();
+		current.setImage(null);
+	}
+	
 	public void onSelectImage(ActionEvent event) throws ManagerBeanException {
 		GalleryController controller = (GalleryController)AonUtil.getRegisteredBean("gallery");
 		String image = ((Image)controller.getModel().getRowData()).getRelativePath();

@@ -147,6 +147,11 @@ public class BannerController extends BasicI18nController {
 		return bannerTypes;
 	}
 	
+	public void onDelImage(ActionEvent event) {
+		BannerDetail current = (BannerDetail)getToI18n();
+		current.setImage(null);
+	}
+
 	public void onSelectImage(ActionEvent event) throws ManagerBeanException {
 		GalleryController controller = (GalleryController)AonUtil.getRegisteredBean("gallery");
 		String image = ((Image)controller.getModel().getRowData()).getRelativePath();

@@ -125,6 +125,11 @@ public class DownloadCategoryController extends BasicI18nController {
 		}
 	}
 	
+	public void onDelImage(ActionEvent event) {
+		DownloadCategory current = (DownloadCategory)getTo();
+		current.setImage(null);
+	}
+
 	public void onSelectImage(ActionEvent event) throws ManagerBeanException {
 		GalleryController controller = (GalleryController)AonUtil.getRegisteredBean("gallery");
 		String image = ((Image)controller.getModel().getRowData()).getRelativePath();

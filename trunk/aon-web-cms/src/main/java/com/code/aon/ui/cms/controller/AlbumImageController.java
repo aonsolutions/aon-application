@@ -124,6 +124,11 @@ public class AlbumImageController extends BasicI18nController {
 		}
 	}
 	
+	public void onDelImage(ActionEvent event) {
+		AlbumImage current = (AlbumImage)getTo();
+		current.setImage(null);
+	}
+	
 	public void onDelThumbnail(ActionEvent event) {
 		AlbumImage current = (AlbumImage)getTo();
 		current.setThumbnail(null);

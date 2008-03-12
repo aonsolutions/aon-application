@@ -107,6 +107,11 @@ public class CompanyController extends GridController {
 		}
 	}
 
+	public void onDelImage(ActionEvent event) {
+		Company current = (Company)getTo();
+		current.setLogo(null);
+	}
+
 	public void onSelectImage(ActionEvent event) throws ManagerBeanException {
 		GalleryController controller = (GalleryController)AonUtil.getRegisteredBean("gallery");
 		String image = ((Image)controller.getModel().getRowData()).getRelativePath();
