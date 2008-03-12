@@ -185,7 +185,7 @@ public class DirectAccessController extends BasicI18nController {
 		return position;
 	}
 
-	public void onNoneImage(ActionEvent event) {
+	public void onDelImage(ActionEvent event) {
 		DirectAccess current = (DirectAccess)getTo();
 		current.setImage(null);
 	}
