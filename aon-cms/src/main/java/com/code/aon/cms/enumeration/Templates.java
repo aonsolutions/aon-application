@@ -78,6 +78,16 @@ public enum Templates implements IResourceable {
 	DIRECT_ACCESS,
 	
 	/**
+	 * ALBUM_CATEGORY
+	 */
+	ALBUM_CATEGORY,
+	
+	/**
+	 * ALBUM
+	 */
+	ALBUM,
+	
+	/**
 	 * ALBUM_IMAGES
 	 */
 	ALBUM_IMAGES,

@@ -19,7 +19,7 @@ public class AlbumCategoryHandler {
 		this.alias = detail.getAlbumCategory().getAlias();
 		this.label = detail.getLabel();
 		this.list = list;
-		this.url = Templates.ALBUM_IMAGES.getHtmlName();
+		this.url = Templates.ALBUM_CATEGORY.getHtmlName();
 		this.url = this.url.replaceAll("%NAME%", this.alias);
 	}
 

@@ -28,7 +28,7 @@ public class AlbumHandler {
 		this.image = detail.getAlbum().getImage();
 		this.date = detail.getAlbum().getPublishDate();
 		this.alt = detail.getAlt();
-		this.url = Templates.ALBUM_IMAGES.getHtmlName();
+		this.url = Templates.ALBUM.getHtmlName();
 		this.url = this.url.replaceAll("%NAME%", this.alias);
 	}
 	

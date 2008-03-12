@@ -129,7 +129,7 @@ public class AlbumGenerator extends Generator {
 										if (Math.abs(k / album.getItemsPerPage())==0){
 											vu.put("back_url", ahandler.getUrl());
 										}else if (Math.abs(k / album.getItemsPerPage())>0){
-											vu.put("back_url", Templates.ALBUM_IMAGES.getHtmlName().replaceAll("%NAME%", ahandler.getAlias()+"_"+(Math.abs(k / album.getItemsPerPage())+1)));
+											vu.put("back_url", Templates.ALBUM.getHtmlName().replaceAll("%NAME%", ahandler.getAlias()+"_"+(Math.abs(k / album.getItemsPerPage())+1)));
 										}
 										vu.put("album_image", accessList.get(k));
 										if (k>0)
@@ -156,14 +156,14 @@ public class AlbumGenerator extends Generator {
 											if (page==2){
 												vu.put("album_previous", ahandler.getUrl());
 											}else if (page>2){
-												vu.put("album_previous", Templates.ALBUM_IMAGES.getHtmlName().replaceAll("%NAME%", ahandler.getAlias()+"_"+(page-1)));
+												vu.put("album_previous", Templates.ALBUM.getHtmlName().replaceAll("%NAME%", ahandler.getAlias()+"_"+(page-1)));
 											}
 											if (iter.hasNext()){
-												vu.put("album_next", Templates.ALBUM_IMAGES.getHtmlName().replaceAll("%NAME%", ahandler.getAlias()+"_"+(page+1)));
+												vu.put("album_next", Templates.ALBUM.getHtmlName().replaceAll("%NAME%", ahandler.getAlias()+"_"+(page+1)));
 											}
 											vu.put("album_image_list", partialLst);
 											vu.addMessage(" Generando album de imagenes " + album.getAlias() + ".", VelocityUtil.INFO);
-											generate(vu, Templates.ALBUM_IMAGES, album.getAlias()+(page==1?"":"_"+page));
+											generate(vu, Templates.ALBUM, album.getAlias()+(page==1?"":"_"+page));
 											vu.remove("back_url");
 											vu.remove("album_previous");
 											vu.remove("album_next");
@@ -177,11 +177,11 @@ public class AlbumGenerator extends Generator {
 								}
 							}
 						}
-						vu.put("back_url", Templates.ALBUM_IMAGES.getHtmlName().replaceAll("%NAME%", ALBUM_LIST_PAGE));
+						vu.put("back_url", Templates.ALBUM_CATEGORY.getHtmlName().replaceAll("%NAME%", ALBUM_LIST_PAGE));
 						vu.put("album_category", achandler);
 						vu.put("album_list", ahlist);
 						vu.addMessage(" Generando list de album.", VelocityUtil.INFO);
-						generate(vu, Templates.ALBUM_IMAGES, albumCategory.getAlias());
+						generate(vu, Templates.ALBUM_CATEGORY, albumCategory.getAlias());
 						vu.remove("back_url");
 						vu.remove("album_category");
 						vu.remove("album_list");
@@ -194,7 +194,7 @@ public class AlbumGenerator extends Generator {
 			vu.put("album_category_list", achlist);
 			vu.addMessage(" Generando categorias de album.", VelocityUtil.INFO);
 			CommonGenerator.getCommonGenerator().chargeContext(vu, configSection);
-			generate(vu, Templates.ALBUM_IMAGES, ALBUM_LIST_PAGE);
+			generate(vu, Templates.ALBUM_CATEGORY, ALBUM_LIST_PAGE);
 			vu.remove("album_category_list");
 		} catch (ManagerBeanException e) {
 			e.printStackTrace();
