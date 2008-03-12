@@ -2,6 +2,7 @@ package com.code.aon.ui.academy.controller;
 
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -17,7 +18,9 @@ import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ql.Criteria;
+import com.code.aon.ql.ast.Expression;
 import com.code.aon.ql.util.ExpressionException;
+import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.menu.jsf.MenuEvent;
 import com.code.aon.ui.menu.jsf.MenuManager;
@@ -89,30 +92,37 @@ public class AcademicSkillToGroupController extends BasicController {
 	}
 	
 	public void onEditSearch(MenuEvent event){
-		clearCheckedCourses();
 		this.onEditSearch((ActionEvent)event);
+	}
+
+	@Override
+	public void onEditSearch(ActionEvent event) {
+		clearCheckedCourses();
+		super.onEditSearch(event);
 	}
 	
 	@SuppressWarnings("unchecked")
 	public void onAssign(ActionEvent event){
 		try {
 			if(skillId != null && checks.size() > 0){
-				IManagerBean courseAcademicSkillBean = BeanManager.getManagerBean(CourseAcademicSkill.class);
-				CourseController courseController = (CourseController)AonUtil.getController(COURSE_CONTROLLER_NAME);
-				Criteria criteria = new Criteria();
-				AcademicSkill skill = obtainAcademicSkill();
-				Iterator iter = checks.iterator();
-				while(iter.hasNext()){
-					Course course = (Course)iter.next();
-					criteria.addOrExpression(courseController.getFieldName(IAcademyAlias.COURSE_ID), course.getId().toString());
-					CourseAcademicSkill courseAcademicSkill = new CourseAcademicSkill();
-					courseAcademicSkill.setAcademicSkill(skill);
-					courseAcademicSkill.setCourse(course);
-					courseAcademicSkillBean.insert(courseAcademicSkill);
+				if(validateCourseAcademicSkills()){
+					IManagerBean courseAcademicSkillBean = BeanManager.getManagerBean(CourseAcademicSkill.class);
+					CourseController courseController = (CourseController)AonUtil.getController(COURSE_CONTROLLER_NAME);
+					Criteria criteria = new Criteria();
+					AcademicSkill skill = obtainAcademicSkill();
+					Iterator iter = checks.iterator();
+					while(iter.hasNext()){
+						Course course = (Course)iter.next();
+						criteria.addOrExpression(courseController.getFieldName(IAcademyAlias.COURSE_ID), course.getId().toString());
+						CourseAcademicSkill courseAcademicSkill = new CourseAcademicSkill();
+						courseAcademicSkill.setAcademicSkill(skill);
+						courseAcademicSkill.setCourse(course);
+						courseAcademicSkillBean.insert(courseAcademicSkill);
+					}
+					courseController.setCriteria(criteria);
+					courseController.onSearch(null);
+					updateBreadCrumb();
 				}
-				courseController.setCriteria(criteria);
-				courseController.onSearch(null);
-				updateBreadCrumb();
 			}
 
 		} catch (ManagerBeanException e) {
@@ -124,6 +134,41 @@ public class AcademicSkillToGroupController extends BasicController {
 			LOGGER.log(Level.SEVERE, "Unable to assign the academic skill to selected courses", e);
 			throw new AbortProcessingException(e);
 		}
+	}
+
+	@SuppressWarnings("unchecked")
+	private boolean validateCourseAcademicSkills() {
+		boolean valid = true;
+		try {
+			IManagerBean courseAcademicSkillBean = BeanManager.getManagerBean(CourseAcademicSkill.class);
+			Criteria criteria = new Criteria();
+			criteria.addEqualExpression(courseAcademicSkillBean.getFieldName(IAcademyAlias.COURSE_ACADEMIC_SKILL_ACADEMIC_SKILL_ID), getSkillId());
+			Expression selectedCoursesExp = null;
+			Iterator checkedIter = checks.iterator();
+			while(checkedIter.hasNext()){
+				Course course = (Course)checkedIter.next();
+				selectedCoursesExp = ExpressionUtilities.getOrExpression(selectedCoursesExp, ExpressionUtilities.getEqualExpression(courseAcademicSkillBean.getFieldName(IAcademyAlias.COURSE_ACADEMIC_SKILL_COURSE_ID), course.getId()));
+			}
+			criteria.addExpression(selectedCoursesExp);
+			List courseAcademicSkills = courseAcademicSkillBean.getList(criteria);
+			valid = courseAcademicSkills.size() == 0;
+			Iterator iter = courseAcademicSkills.iterator();
+			String message = "Selected Academic Skill is already included in next courses:";
+			while(iter.hasNext()){
+				CourseAcademicSkill courseAcademicSkill = (CourseAcademicSkill)iter.next();
+				message += " " + courseAcademicSkill.getCourse().getCode();
+			}
+			if(!valid){
+				AonUtil.addErrorMessage(message);
+				LOGGER.log(Level.SEVERE, message);
+				throw new AbortProcessingException(message);
+			}
+		} catch (ManagerBeanException e) {
+			AonUtil.addErrorMessage(e.getMessage());
+			LOGGER.log(Level.SEVERE, e.getMessage(), e);
+			throw new AbortProcessingException(e);
+		}
+		return valid;
 	}
 
 	private void updateBreadCrumb() {
