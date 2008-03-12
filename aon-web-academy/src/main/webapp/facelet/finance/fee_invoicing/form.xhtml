@@ -523,7 +523,12 @@
 						</t:div>
 					</t:div>
 					
-					<ui:include src="/facelet/finance/finance/grid.xhtml" />
+					<t:div rendered="#{feeInvoicingDetail.model.rowCount > 0 or feeFinance.model.rowCount>0}" >
+						<ui:include src="/facelet/finance/finance/grid.xhtml" >
+							<ui:param name="controllerAlias" value="#{feeFinance}" />
+							<ui:param name="dataTable" value="feeFinanceData" />
+						</ui:include>
+					</t:div>
 					
 				</t:div>
 			</t:div>
