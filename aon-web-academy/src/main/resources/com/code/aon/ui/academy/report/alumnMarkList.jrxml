@@ -58,7 +58,6 @@
 	<parameter name="company" isForPrompting="false" class="com.code.aon.company.Company"/>
 	<parameter name="nestedReports" isForPrompting="false" class="java.util.Map"/>
 	<parameter name="encode" isForPrompting="false" class="java.lang.Boolean"/>
-	<parameter name="evaluation" isForPrompting="false" class="java.lang.Integer"/>
 	<parameter name="qualifications" isForPrompting="false" class="java.util.ArrayList"/>
 
 	<field name="courseAlumn" class="com.code.aon.academy.CourseAlumn"/>
@@ -66,6 +65,7 @@
 	<field name="absences" class="java.util.ArrayList"/>
 	<field name="observations" class="java.util.ArrayList"/>
 	<field name="courseSchedule" class="java.lang.String"/>
+	<field name="evaluation" class="java.lang.Integer"/>
 
 		<background>
 			<band height="0"  isSplitAllowed="true" >
@@ -147,7 +147,7 @@
 					<textElement verticalAlignment="Middle">
 						<font pdfFontName="Helvetica-Bold" size="10" isBold="true"/>
 					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$P{evaluation}.toString()]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.Integer"><![CDATA[$F{evaluation}]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
