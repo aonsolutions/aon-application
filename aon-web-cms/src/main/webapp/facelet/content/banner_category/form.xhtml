@@ -283,7 +283,12 @@
 											<aon:graphicImage 
 												url="#{banner.toI18n.image}.thumbnail" 
 												alt="#{banner.toI18n.image}"/>
-
+							                <aon:commandLink
+							                	immediate="#{true}"
+							                	reRender="thumbnail_preview"
+							                    actionListener="#{banner.onDelImage}">
+												<aon:graphicImage url="/images/cms/inactive.png" />
+							        		</aon:commandLink>
 											<ui:include src="/facelet/content/utils/image_modal.xhtml">
 												<ui:param name="modalPanelName" value="mp2" />
 												<ui:param name="roots" value="#{fileSystemBean.imageRoots}" />

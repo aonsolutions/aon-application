@@ -276,6 +276,12 @@
 											<aon:graphicImage 
 												url="#{article.to.image}.thumbnail" 
 												alt="#{article.to.image}"/>
+							                <aon:commandLink
+							                	immediate="#{true}"
+							                	reRender="thumbnail_preview"
+							                    actionListener="#{article.onDelImage}">
+												<aon:graphicImage url="/images/cms/inactive.png" />
+							        		</aon:commandLink>
 											<ui:include src="/facelet/content/utils/image_modal.xhtml">
 												<ui:param name="modalPanelName" value="mp" />
 												<ui:param name="roots" value="#{fileSystemBean.imageRoots}" />
@@ -291,6 +297,12 @@
 											<aon:graphicImage
 												url="#{article.to.thumbnail}.thumbnail" 
 												alt="#{article.to.thumbnail}"/>
+							                <aon:commandLink
+							                	immediate="#{true}"
+							                	reRender="thumbnail_preview"
+							                    actionListener="#{article.onDelThumbnail}">
+												<aon:graphicImage url="/images/cms/inactive.png" />
+							        		</aon:commandLink>
 											<ui:include src="/facelet/content/utils/image_modal.xhtml">
 												<ui:param name="modalPanelName" value="mp_thumbnail" />
 												<ui:param name="roots" value="#{fileSystemBean.imageRoots}" />
