@@ -20,7 +20,7 @@
 							accesskey="#{bundle.aon_key_save}" />
 						<t:commandButton id="cancel" value="#{bundle.aon_cancel}"
 							forceId="#{true}" immediate="#{true}"
-							actionListener="#{customerFee.onCancel}"
+							actionListener="#{customerFee.onCancel}" action="economic_data"
 							onclick="return (confirm('#{bundle.aon_cancel_confirm}'))"
 							styleClass="aon-content-toolbar-item aon-content-toolbar-item-cancel"
 							onmouseover="this.className='aon-content-toolbar-item aon-content-toolbar-item-hover aon-content-toolbar-item-cancel'"
