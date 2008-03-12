@@ -94,10 +94,15 @@ public class CustomerFeeToGroupController extends BasicController {
 	}
 	
 	public void onEditSearch(MenuEvent event){
-		clearCheckedCourses();
 		this.onEditSearch((ActionEvent)event);
 	}
 
+	@Override
+	public void onEditSearch(ActionEvent event) {
+		clearCheckedCourses();
+		super.onEditSearch(event);
+	}
+	
 	@Override
 	public void onSearch(ActionEvent event) {
 		initializeFee();
@@ -107,7 +112,12 @@ public class CustomerFeeToGroupController extends BasicController {
 	@SuppressWarnings("unchecked")
 	public void onAssign(ActionEvent event){
 		try {
-			if(checks.size() > 0){
+			if(fee.getQuantity() <= 0){
+				String message = "Quantity must be > 0";
+				AonUtil.addErrorMessage(message);
+				LOGGER.log(Level.SEVERE, message);
+				throw new AbortProcessingException(message);
+			}else if(checks.size() > 0){
 				CourseController courseController = (CourseController)AonUtil.getController(COURSE_CONTROLLER_NAME);
 				Criteria criteria = new Criteria();
 				Iterator iter = checks.iterator();
@@ -121,12 +131,14 @@ public class CustomerFeeToGroupController extends BasicController {
 				updateBreadCrumb();
 			}
 		} catch (ManagerBeanException e) {
-			AonUtil.addErrorMessage("Unable to add fee to selected courses");
-			LOGGER.log(Level.SEVERE, "Unable to add fee to selected courses", e);
+			String message = "Unable to add fee to selected courses";
+			AonUtil.addErrorMessage(message);
+			LOGGER.log(Level.SEVERE, message, e);
 			throw new AbortProcessingException(e);
 		} catch (ExpressionException e) {
-			AonUtil.addErrorMessage("Unable to add fee to selected courses");
-			LOGGER.log(Level.SEVERE, "Unable to add fee to selected courses", e);
+			String message = "Unable to add fee to selected courses";
+			AonUtil.addErrorMessage(message);
+			LOGGER.log(Level.SEVERE, message, e);
 			throw new AbortProcessingException(e);
 		}
 	}
@@ -155,7 +167,6 @@ public class CustomerFeeToGroupController extends BasicController {
 		fee.setDiscountExpression(new DiscountExpression("0.0"));
 		fee.setWorkPlace(null);
 		fee.setInitialDate(new Date());
-		fee.setFinalDate(new Date());
 		fee.setBillingDate(new Date());
 		fee.setSecurityLevel(SecurityLevel.OFFICIAL);
 	}
