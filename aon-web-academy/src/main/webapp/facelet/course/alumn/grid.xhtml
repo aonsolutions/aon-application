@@ -161,23 +161,9 @@
 								<f:facet name="header">
 									<h:outputText value="#{appBundle.course_alumn}" />
 								</f:facet>
-								<t:div rendered="#{to!=courseAlumn.to}">
+								<t:div rendered="#{!courseAlumn.new}">
 									<h:outputText value="#{to.customer.registry.surname}, " rendered="#{to.customer.registry.surname != null and to.customer.registry.surname != ''}"/>								
 									<h:outputText value="#{to.customer.registry.name}" />
-								</t:div>
-								<t:div rendered="#{to==courseAlumn.to}">
-									<t:inputText id="Customer_Lookup_id-Edit" forceId="#{true}"
-										styleClass="aon-form-input-text" size="5" 
-										onchange="return findBeanLookupExt(event,'#{facesContext.externalContext.requestContextPath}','customerLookup','Customer_Lookup_id-Edit[#{rowIndex}]','Customer_id|Customer_Lookup_id-Edit[#{rowIndex}],Customer_full_name|Customer_full_name-Edit[#{rowIndex}]');"
-										valueChangeListener="#{courseAlumn.onAlumnChanged}"
-										value="#{courseAlumn.to.customer.id}" />
-									<h:commandButton id="find_Customer_Lookup_id-Edit"
-										styleClass="aon-form-lookup-button" value="" immediate="true"
-										onclick="lookupSearchWindow(this, 'placeList', '#{customerLookup.encodedSearchPagePath}','Customer_id|Customer_Lookup_id-Edit[#{rowIndex}],Customer_full_name|Customer_full_name-Edit[#{rowIndex}]');return false;" />
-									<t:inputText id="Customer_full_name-Edit" 
-										disabled="true" forceId="#{true}"
-										value="#{courseAlumn.to.customer.registry.name} #{courseAlumn.to.customer.registry.surname}"
-										styleClass="aon-form-input-text-disabled" size="40" />
 								</t:div>
 								<f:facet name="footer">
 									<t:div rendered="#{courseAlumn.new}">
