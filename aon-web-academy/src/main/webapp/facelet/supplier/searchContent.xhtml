@@ -20,31 +20,31 @@
 			<h:panelGrid columns="2" styleClass="aon-form-table"
 				columnClasses="aon-form-table-column-odd,aon-form-table-column-even">
 
-				<t:outputLabel for="Supplier_document"
+				<t:outputLabel for="Supplier_registry_document"
 					value="#{registryBundle.aon_nif}"
 					styleClass="aon-form-input-text-label aon-form-table-column-odd-label" />
-				<t:inputText id="Supplier_document" size="20"
+				<t:inputText id="Supplier_registry_document" size="20"
 					valueChangeListener="#{supplierAlias.addExpression}"
 					styleClass="aon-form-input-text" onblur="toUpperCase(this);"/>
 
-				<t:outputLabel for="Supplier_name"
+				<t:outputLabel for="Supplier_registry_name"
 					value="#{registryBundle.aon_name}"
 					styleClass="aon-form-input-text-label aon-form-table-column-odd-label" />
-				<t:inputText id="Supplier_name" size="40"
+				<t:inputText id="Supplier_registry_name" size="40"
 					valueChangeListener="#{supplierAlias.addExpression}"
 					styleClass="aon-form-input-text" />
 
-				<t:outputLabel for="Supplier_surname"
+				<t:outputLabel for="Supplier_registry_surname"
 					value="#{registryBundle.aon_surname}"
 					styleClass="aon-form-input-text-label aon-form-table-column-odd-label" />
-				<t:inputText id="Supplier_surname" size="40"
+				<t:inputText id="Supplier_registry_surname" size="40"
 					valueChangeListener="#{supplierAlias.addExpression}"
 					styleClass="aon-form-input-text" />
 
-				<t:outputLabel for="Supplier_alias"
+				<t:outputLabel for="Supplier_registry_alias"
 					value="#{registryBundle.aon_alias}"
 					styleClass="aon-form-input-text-label aon-form-table-column-odd-label" />
-				<t:inputText id="Supplier_alias" size="40"
+				<t:inputText id="Supplier_registry_alias" size="40"
 					valueChangeListener="#{supplierAlias.addExpression}"
 					styleClass="aon-form-input-text"  onblur="toUpperCase(this);"/>
 
