@@ -384,7 +384,7 @@ public class MenuOptionUtil {
 		if (pageType == PageType.ALBUM_IMAGES) {
 			try {
 				if (level.equals(ContentLevel.TOP)){
-					String category = Templates.ALBUM_IMAGES.getHtmlName();
+					String category = Templates.ALBUM_CATEGORY.getHtmlName();
 					category = category.replaceAll("%NAME%", AlbumGenerator.ALBUM_LIST_PAGE);
 					return category;
 				}else if (level.equals(ContentLevel.SECTION)){
@@ -395,7 +395,7 @@ public class MenuOptionUtil {
 					List<ITransferObject> l = (List<ITransferObject>)bean.getList(criteria);
 					if (l.size() > 0) {
 						AlbumCategory ac = (AlbumCategory)l.get(0);
-						String album = Templates.ALBUM_IMAGES.getHtmlName();
+						String album = Templates.ALBUM_CATEGORY.getHtmlName();
 						album = album.replaceAll("%NAME%", ac.getAlias());
 						return album;
 					}
@@ -407,7 +407,7 @@ public class MenuOptionUtil {
 					List<ITransferObject> l = (List<ITransferObject>)bean.getList(criteria);
 					if (l.size() > 0) {
 						Album a = (Album)l.get(0);
-						String album = Templates.ALBUM_IMAGES.getHtmlName();
+						String album = Templates.ALBUM.getHtmlName();
 						album = album.replaceAll("%NAME%", a.getAlias());
 						return album;
 					}
