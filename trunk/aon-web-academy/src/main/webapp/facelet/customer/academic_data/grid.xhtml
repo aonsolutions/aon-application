@@ -52,28 +52,7 @@
 						<t:outputText value="#{appBundle.course_course}" />
 					</f:facet>
 					<t:outputText value="#{to.course.code}  #{to.course.description}"
-						rendered="#{to!=alumnCourse.to}" />
-					<t:div rendered="#{to==alumnCourse.to}">
-						<t:selectOneMenu id="Course_Lookup_academicYear-Edit" forceId="#{true}"
-							value="#{alumnCourse.to.course.academicYear.id}"
-							onchange="return findBeanLookupExt(event,'#{facesContext.externalContext.requestContextPath}','courseLookup','Course_Lookup_academicYear-Edit[#{rowIndex}],Course_Lookup_code-Edit[#{rowIndex}]','Course_id|Course_Lookup_id-Edit[#{rowIndex}],Course_description|Course_Lookup_description-Edit[#{rowIndex}],Course_academicYear_id|Course_Lookup_academicYear-Edit[#{rowIndex}],Course_code|Course_Lookup_code-Edit[#{rowIndex}]');"							
-							styleClass="aon-form-selectOneMenu-field">
-							<f:selectItems value="#{academyCollections.academicYears}" />
-						</t:selectOneMenu>
-						<t:inputText id="Course_Lookup_code-Edit" size="5" forceId="#{true}"
-							styleClass="aon-form-input-text"
-							onchange="return findBeanLookupExt(event,'#{facesContext.externalContext.requestContextPath}','courseLookup','Course_Lookup_academicYear-Edit[#{rowIndex}],Course_Lookup_code-Edit[#{rowIndex}]','Course_id|Course_Lookup_id-Edit[#{rowIndex}],Course_description|Course_Lookup_description-Edit[#{rowIndex}],Course_academicYear_id|Course_Lookup_academicYear-Edit[#{rowIndex}],Course_code|Course_Lookup_code-Edit[#{rowIndex}]');"
-							value="#{alumnCourse.to.course.code}" />
-						<h:commandButton id="find_Course_Lookup_id-Edit"
-							styleClass="aon-form-lookup-button" value="" immediate="true"
-							onclick="lookupSearchWindow(this, 'placeList', '#{courseLookup.encodedSearchPagePath}','Course_id|Course_Lookup_id-Edit[#{rowIndex}],Course_description|Course_Lookup_description-Edit[#{rowIndex}],Course_academicYear_id|Course_Lookup_academicYear-Edit[#{rowIndex}],Course_code|Course_Lookup_code-Edit[#{rowIndex}]');return false;" />
-						<t:inputHidden id="Course_Lookup_id-Edit" forceId="#{true}"
-							value="#{alumnCourse.to.course.id}" required="true" />
-						<t:inputText id="Course_Lookup_description-Edit" forceId="#{true}"
-							styleClass="aon-form-input-text-disabled"
-							value="#{alumnCourse.to.course.description}"
-							disabled="true" size="30" />
-					</t:div>
+						rendered="#{!alumnCourse.new}" />
 					<f:facet name="footer">
 						<t:div rendered="#{alumnCourse.new}">
 							<t:selectOneMenu id="Course_Lookup_academicYear-New" forceId="#{true}"
@@ -103,12 +82,6 @@
 					<f:facet name="header">
 						<f:verbatim>&#160;</f:verbatim>
 					</f:facet>
-					<t:commandButton title="#{bundle.aon_accept}"
-						actionListener="#{alumnCourse.onAccept}"
-						onclick="return (confirm('#{bundle.aon_accept_confirm}'));"
-						styleClass="aon-edit-table-icon-button aon-edit-table-icon-button-save"
-						value="" rendered="#{to.id==alumnCourse.to.id}"
-						accesskey="#{bundle.aon_key_save_line}" />
 					<t:commandButton title="#{bundle.aon_cancel}"
 						actionListener="#{alumnCourse.onCancel}" immediate="#{true}"
 						onclick="return (confirm('#{bundle.aon_cancel_confirm}'));"
