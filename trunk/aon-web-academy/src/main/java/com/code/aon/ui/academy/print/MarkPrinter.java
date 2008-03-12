@@ -28,6 +28,8 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ql.Criteria;
+import com.code.aon.ql.ast.Expression;
+import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.ui.academy.controller.CourseController;
 import com.code.aon.ui.util.AonUtil;
 
@@ -67,7 +69,8 @@ public class MarkPrinter implements ICollectionProvider{
 				ReportMark reportMark = new ReportMark();
 				reportMark.setCourseAlumn(courseAlumn);
 				reportMark.setMarks(obtainMarks(courseAlumn));
-				reportMark.setAbsences(obtainAbsences(courseAlumn));
+				reportMark.setEvaluation(obtainMaxEvaluation(reportMark.getMarks()));
+				reportMark.setAbsences(obtainAbsences(courseAlumn, reportMark.getEvaluation()));
 				reportMark.setObservations(obtainObservations(courseAlumn));
 				reportMark.setCourseSchedule(obtainCourseSchedule(courseAlumn));
 				reportMarkList.add(reportMark);
@@ -76,6 +79,19 @@ public class MarkPrinter implements ICollectionProvider{
 			LOGGER.log(Level.SEVERE, "Error obtaining marks", e);
 		}
 		return reportMarkList;
+	}
+
+	@SuppressWarnings("unchecked")
+	private Integer obtainMaxEvaluation(List<ReportMarkTo> marks) {
+		int maxEval = 0; 
+		Iterator iter = marks.iterator();
+		while(iter.hasNext()){
+			ReportMarkTo markTo = (ReportMarkTo) iter.next();
+			if(markTo.getMark().getEvaluation() > maxEval){
+				maxEval = markTo.getMark().getEvaluation();
+			}
+		}
+		return new Integer(maxEval);
 	}
 
 	@SuppressWarnings("unchecked")
@@ -143,15 +159,27 @@ public class MarkPrinter implements ICollectionProvider{
 	}
 
 	@SuppressWarnings("unchecked")
-	private List<Absence> obtainAbsences(CourseAlumn courseAlumn){
+	private List<Absence> obtainAbsences(CourseAlumn courseAlumn, Integer evaluation){
 		try {
 			IManagerBean absenceBean = BeanManager.getManagerBean(Absence.class);
-			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(absenceBean.getFieldName(IAcademyAlias.ABSENCE_COURSE_ALUMN_ID), courseAlumn.getId());
+			Expression courseAlumnExp = ExpressionUtilities.getEqualExpression(absenceBean.getFieldName(IAcademyAlias.ABSENCE_COURSE_ALUMN_ID), courseAlumn.getId());
 			List<Absence> absencesLst = new ArrayList<Absence>();
-			Iterator iter = absenceBean.getList(criteria).iterator();
-			while (iter.hasNext()){
-				absencesLst.add((Absence)iter.next());
+			for(int i = 1; i <=  evaluation.intValue(); i++){
+				Criteria criteria = new Criteria();
+				Expression evalExp = ExpressionUtilities.getEqualExpression(absenceBean.getFieldName(IAcademyAlias.ABSENCE_EVALUATION), new Integer(i));
+				criteria.addExpression(ExpressionUtilities.getAndExpression(courseAlumnExp, evalExp));
+				Iterator iter = absenceBean.getList(criteria).iterator();
+				if(iter.hasNext()){
+					while (iter.hasNext()){
+						absencesLst.add((Absence)iter.next());
+					}
+				}else{
+					Absence emptyAbsence = new Absence();
+					emptyAbsence.setComments("");
+					emptyAbsence.setCourseAlumn(courseAlumn);
+					emptyAbsence.setEvaluation(i);
+					absencesLst.add(emptyAbsence);
+				}
 			}
 			return absencesLst;
 		} catch (ManagerBeanException e) {
