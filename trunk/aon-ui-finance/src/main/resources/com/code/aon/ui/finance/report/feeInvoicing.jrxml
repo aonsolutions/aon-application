@@ -390,7 +390,7 @@
 						</reportElement>
 					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
 					<textElement>
-						<font fontName="Arial Narrow" pdfFontName="Helvetica-Bold" size="9" isBold="true" isUnderline="true"/>
+						<font fontName="Arial Narrow" pdfFontName="Helvetica-Bold" size="10" isBold="true" isUnderline="false"/>
 					</textElement>
 				<textFieldExpression   class="java.lang.String"><![CDATA[$R{aon_finances}]]></textFieldExpression>
 				</textField>
