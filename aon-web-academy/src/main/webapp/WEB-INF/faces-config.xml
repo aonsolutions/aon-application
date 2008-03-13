@@ -533,11 +533,20 @@
 				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
 				<value>#{companyControllerListener}</value>
 				<value>#{companyLogoControllerListener}</value>
+				<value>#{companyAppParamControllerListener}</value>
 				<value>#{companyRBankChildListener}</value>
 				<value>#{companyRPayMethodChildListener}</value>
 				<value>#{companyAddressListener}</value>
 			</list-entries>
 		</managed-property>
+	</managed-bean>
+
+	<managed-bean>
+		<managed-bean-name>companyControllerListener</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.company.event.CompanyControllerListener
+		</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
 	</managed-bean>
 	
 	<managed-bean>
@@ -549,13 +558,13 @@
 	</managed-bean>
 
 	<managed-bean>
-		<managed-bean-name>companyControllerListener</managed-bean-name>
+		<managed-bean-name>companyAppParamControllerListener</managed-bean-name>
 		<managed-bean-class>
-			com.code.aon.ui.company.event.CompanyControllerListener
+			com.code.aon.ui.company.event.CompanyAppParamControllerListener
 		</managed-bean-class>
 		<managed-bean-scope>none</managed-bean-scope>
 	</managed-bean>
-	
+
 	<managed-bean>
 		<managed-bean-name>companyAddress</managed-bean-name>
 		<managed-bean-class>
