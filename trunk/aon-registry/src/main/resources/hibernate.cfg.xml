@@ -14,10 +14,6 @@
 		<property name="connection.password">serubd2000</property>		
 
 		<!-- Mapping files -->
-		<mapping class="com.code.aon.company.Company"/>
-		<mapping class="com.code.aon.company.Calendar"/>
-		<mapping class="com.code.aon.company.WebInfo"/>
-		
 		<mapping class="com.code.aon.person.Person"/>		
 		
 		<mapping class="com.code.aon.registry.Registry"/>
@@ -28,6 +24,8 @@
 		<mapping class="com.code.aon.registry.Relationship"/>
 		<mapping class="com.code.aon.registry.RegistryRelationship"/>
 		<mapping class="com.code.aon.registry.RegistryNote"/>
+		<mapping class="com.code.aon.registry.RegistryDirStaff"/>
+		<mapping class="com.code.aon.registry.RecordData"/>
 		
 		<mapping class="com.code.aon.geozone.GeoZone"/>
 	</session-factory>
