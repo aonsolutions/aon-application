@@ -74,6 +74,15 @@
 							<t:graphicImage id="preview" height="161" width="161"
 								rendered="#{company.imageAttached}" 
 								url="company.logo"/>	
+
+							<t:outputLabel 
+								for="Company_print_header" 
+								styleClass="aon-form-input-text-label"
+								value="#{registryBundle.aon_company_print_header}" />
+							<h:selectBooleanCheckbox 
+								styleClass="aon-form-input-text"
+								id="Company_print_header" 
+								value="#{company.printHeader}" />		
 								
 						</h:panelGrid>
 						<h:panelGrid columns="2" cellpadding="0" cellspacing="0"
@@ -165,6 +174,24 @@
 								value="#{company.web.value}" onblur="toLowerCase(this);" 
 								valueChangeListener="#{company.webChanged}" size="45"/>
 								
+							<t:outputLabel 
+								for="Company_surcharge" 
+								styleClass="aon-form-input-text-label"
+								value="#{registryBundle.aon_company_surcharge}" />
+							<h:selectBooleanCheckbox 
+								styleClass="aon-form-input-text"
+								id="Company_surcharge" 
+								value="#{company.to.surcharge}" />		
+
+							<t:outputLabel 
+								for="Company_print_record_data" 
+								styleClass="aon-form-input-text-label"
+								value="#{registryBundle.aon_company_print_record_data}" />
+							<h:selectBooleanCheckbox 
+								styleClass="aon-form-input-text"
+								id="Company_print_record_data" 
+								value="#{company.printRecordData}" />		
+								
 						</h:panelGrid>	
 					</h:panelGrid>
 					
@@ -173,7 +200,7 @@
 							<t:panelTabbedPane styleClass="aon-tabpanel" style="width:100%;"
 								activeTabStyleClass="aon-tabpanel-active" 
 								inactiveTabStyleClass="aon-tabpanel-inactive" 
-							   	serverSideTabSwitch="true">
+							   	serverSideTabSwitch="true" id="companyTab">
 							   	
 								<t:panelTab id="address" label="#{registryBundle.aon_addresses}" >
 									<ui:include src="/facelet/registry/company/tabs/addresses.xhtml" >
@@ -187,12 +214,6 @@
 										<ui:param name="controllerAlias" value="#{companyRbank}" />
 										<ui:param name="dataTable" value="companyRbankDataList" />										
 									</ui:include>
-									<!-- 
-									<ui:include src="/facelet/shared/tabs/payMethods.xhtml" >
-										<ui:param name="controllerAlias" value="#{companyRpayMethod}" />
-										<ui:param name="dataTable" value="companyRpayDataList" />										
-									</ui:include>
-									 -->
 								</t:panelTab>
 							</t:panelTabbedPane>
 						</t:div>
