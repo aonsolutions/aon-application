@@ -330,11 +330,13 @@
 															<aon:outputLabel value="#{document.currentRelativePath}" />
 															<rich:dataList var="item" value="#{document.model}" >	
 																<aon:panelGrid columns="2" cellpadding="5px" cellspacing="0px">
-													                <h:commandButton
+													                <aon:commandLink
 													                	immediate="#{true}"
 													                	reRender="thumbnail_preview_detail"
 													                    actionListener="#{download.onSelectImage}"
-													                    value="#{item.name}" />
+													                    value="#{item.name}">
+													                    AAAAAAAA
+													                </aon:commandLink>
 																</aon:panelGrid>
 															</rich:dataList>
 														</aon:panelGroup>
