@@ -41,7 +41,7 @@ public class GenericGenerator extends Generator {
 					else vu.remove("description");
 					if (gph.getKeywords() != null && !gph.getKeywords().equals("")) vu.put("keywords", gph.getKeywords());
 					else vu.remove("keywords");
-					vu.addMessage(" Generando Página Genérica '" + gpd.getGeneric_page().getAlias() + "'.", VelocityUtil.INFO);
+					VelocityUtil.addMessage(" Generando Página Genérica '" + gpd.getGeneric_page().getAlias() + "'.", VelocityUtil.INFO);
 					CommonGenerator.getCommonGenerator().chargeContext(vu, gpd.getGeneric_page().getSection());
 					generate(vu, Templates.GENERIC, gpd.getGeneric_page().getAlias());
 					vu.remove("generic");
@@ -66,7 +66,10 @@ public class GenericGenerator extends Generator {
 			Criteria criteria = new Criteria();
 			criteria.addEqualExpression(bean.getFieldName(ICMSAlias.GENERIC_PAGE_ID), ident);
 			genericPageList = (List<ITransferObject>)bean.getList(criteria);
-			
+			if (genericPageList.isEmpty()){
+				VelocityUtil.addMessage("PAGINA GENERICA "+ident+" REFERENCIADA NO EXISTE !!!", VelocityUtil.WARN);
+				return null;
+			}
 			GenericPage gp = (GenericPage)genericPageList.get(0);
 			if (gp.isActive()) {
 				IManagerBean beanDetail = BeanManager.getManagerBean(GenericPageDetail.class);

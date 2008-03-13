@@ -48,7 +48,7 @@ public class FaqGenerator extends Generator {
 					FaqCategoryHandler fch = new FaqCategoryHandler(fcd);
 					fchList.add(fch);
 					vu.put("faq_category", fch);
-					vu.addMessage(" Generando categoria Faq '" + fcd.getFaqCategory().getAlias() + "'.", VelocityUtil.INFO);
+					VelocityUtil.addMessage(" Generando categoria Faq '" + fcd.getFaqCategory().getAlias() + "'.", VelocityUtil.INFO);
 					
 					if (fcd.getFaqCategory().getSection()!=null){
 						currentSection = fcd.getFaqCategory().getSection();
@@ -76,7 +76,7 @@ public class FaqGenerator extends Generator {
 				key = iter.next();
 				faqCategoryHandlerSet = (ArrayList<FaqCategoryHandler>)categoryMap.get(key);
 				vu.put("faq_categories", faqCategoryHandlerSet);
-				vu.addMessage(" Generando listado categoria seccion Faq.", VelocityUtil.INFO);
+				VelocityUtil.addMessage(" Generando listado categoria seccion Faq.", VelocityUtil.INFO);
 				CommonGenerator.getCommonGenerator().chargeContext(vu, key);
 				generate(vu, Templates.FAQ, FAQ_CATEGORY_BY_SECTION_PAGE + key.getId());
 				vu.remove("faq_categories");
@@ -84,7 +84,7 @@ public class FaqGenerator extends Generator {
 			iter = null;
 			
 			vu.put("faq_categories", fchList);
-			vu.addMessage(" Generando listado categoria Faq.", VelocityUtil.INFO);
+			VelocityUtil.addMessage(" Generando listado categoria Faq.", VelocityUtil.INFO);
 			CommonGenerator.getCommonGenerator().chargeContext(vu, configSection);
 			generate(vu, Templates.FAQ, FAQ_CATEGORY_LIST_PAGE);
 			vu.remove("faq_categories");
