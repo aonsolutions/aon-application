@@ -618,6 +618,7 @@
 				<value>#{companyRBankChildListener}</value>
 				<value>#{companyRPayMethodChildListener}</value>
 				<value>#{companyAddressListener}</value>
+				<value>#{companyRecordDataChildListener}</value>
 			</list-entries>
 		</managed-property>
 	</managed-bean>
@@ -841,9 +842,11 @@
 				<value>#{customerMediaListener}</value>
 				<value>#{customerRBankChildListener}</value>
 				<value>#{customerRPayMethodChildListener}</value>
+				<value>#{customerRDirStaffChildListener}</value>
 				<value>#{customerControllerNoteListener}</value>
 				<value>#{customerControllerRelationshipListener}</value>
 				<value>#{customerObservationListener}</value>
+				<value>#{customerRecordDataChildListener}</value>
 			</list-entries>
 		</managed-property>
 	</managed-bean>
@@ -1042,6 +1045,76 @@
 		</managed-property>
 	</managed-bean>
 
+	<!-- ************* CUSTOMER DIR STAFF ***************** -->
+	<managed-bean>
+		<managed-bean-name>customerRDirStaff</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.registry.controller.RegistryDirStaffController
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.registry.RegistryDirStaff</value>
+		</managed-property>
+		<managed-property>
+			<property-name>cascadeDelete</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>masterControllerName</property-name>
+			<value>customer</value>
+		</managed-property>
+		<managed-property>
+			<property-name>propertyMap</property-name>
+			<map-entries>
+				<map-entry>
+					<key>id</key>
+					<value>registry.id</value>
+				</map-entry>
+			</map-entries>
+		</managed-property>
+		<managed-property>
+			<property-name>listenerClasses</property-name>
+			<list-entries>
+				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+				<value>#{registryDirStaffControllerListener}</value>
+			</list-entries>
+		</managed-property>
+	</managed-bean>
+	
+	<managed-bean>
+		<managed-bean-name>registryDirStaffControllerListener</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.registry.controller.event.RegistryDirStaffControllerListener
+		</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+	</managed-bean>
+	
+	<managed-bean>
+		<managed-bean-name>customerRDirStaffChildListener</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.form.listener.LinesControllerListener
+		</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+		<managed-property>
+			<property-name>childBean</property-name>
+			<value>customerRDirStaff</value>
+		</managed-property>
+		<managed-property>
+			<property-name>aliasMap</property-name>
+			<map-entries>
+				<map-entry>
+					<key>RegistryDirStaff_registry_id</key>
+                    <value>id</value>
+				</map-entry>
+			</map-entries>
+		</managed-property>
+	</managed-bean>
+
 	<!-- **** CUSTOMER RPAYMETHOD **** -->
 	<managed-bean>
 		<managed-bean-name>customerRpayMethod</managed-bean-name>
@@ -1108,6 +1181,153 @@
 		<managed-bean-scope>none</managed-bean-scope>
 	</managed-bean>
 	
+	<!-- ************* RECORD DATA ***************** -->
+	<managed-bean>
+		<managed-bean-name>customerRecordData</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.registry.controller.RecordDataController
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.registry.RecordData</value>
+		</managed-property>
+		<managed-property>
+			<property-name>cascadeDelete</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>masterControllerName</property-name>
+			<value>customer</value>
+		</managed-property>
+		<managed-property>
+			<property-name>listNavigation</property-name>
+			<value>customer_record_data_list</value>
+		</managed-property>
+		<managed-property>
+			<property-name>formNavigation</property-name>
+			<value>customer_record_data_form</value>
+		</managed-property>
+		<managed-property>
+			<property-name>propertyMap</property-name>
+			<map-entries>
+				<map-entry>
+					<key>id</key>
+					<value>registry.id</value>
+				</map-entry>
+			</map-entries>
+		</managed-property>
+		<managed-property>
+			<property-name>listenerClasses</property-name>
+			<list-entries>
+				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+				<value>#{recordDataAttachControllerListener}</value>
+			</list-entries>
+		</managed-property>
+	</managed-bean>
+
+	<managed-bean>
+		<managed-bean-name>recordDataAttachControllerListener</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.registry.controller.event.RecordDataAttachControllerListener
+		</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+	</managed-bean>
+	
+	<managed-bean>
+		<managed-bean-name>customerRecordDataChildListener</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.form.listener.LinesControllerListener
+		</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+		<managed-property>
+			<property-name>childBean</property-name>
+			<value>customerRecordData</value>
+		</managed-property>
+		<managed-property>
+			<property-name>aliasMap</property-name>
+			<map-entries>
+				<map-entry>
+					<key>RecordData_registry_id</key>
+                    <value>id</value>
+				</map-entry>
+			</map-entries>
+		</managed-property>
+	</managed-bean>
+
+	<managed-bean>
+		<managed-bean-name>companyRecordData</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.registry.controller.RecordDataController
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.registry.RecordData</value>
+		</managed-property>
+		<managed-property>
+			<property-name>cascadeDelete</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>masterControllerName</property-name>
+			<value>company</value>
+		</managed-property>
+		<managed-property>
+			<property-name>listNavigation</property-name>
+			<value>company_record_data_list</value>
+		</managed-property>
+		<managed-property>
+			<property-name>formNavigation</property-name>
+			<value>company_record_data_form</value>
+		</managed-property>
+		<managed-property>
+			<property-name>propertyMap</property-name>
+			<map-entries>
+				<map-entry>
+					<key>id</key>
+					<value>registry.id</value>
+				</map-entry>
+			</map-entries>
+		</managed-property>
+		<managed-property>
+			<property-name>listenerClasses</property-name>
+			<list-entries>
+				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+				<value>#{recordDataAttachControllerListener}</value>
+			</list-entries>
+		</managed-property>
+	</managed-bean>
+
+	<managed-bean>
+		<managed-bean-name>companyRecordDataChildListener</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.form.listener.LinesControllerListener
+		</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+		<managed-property>
+			<property-name>childBean</property-name>
+			<value>companyRecordData</value>
+		</managed-property>
+		<managed-property>
+			<property-name>aliasMap</property-name>
+			<map-entries>
+				<map-entry>
+					<key>RecordData_registry_id</key>
+                    <value>id</value>
+				</map-entry>
+			</map-entries>
+		</managed-property>
+	</managed-bean>
+
 	<!-- ************ USER ************** -->
 	<managed-bean>
 		<managed-bean-name>user</managed-bean-name>
@@ -1802,16 +2022,19 @@
 		</managed-property>
 	</managed-bean>
 	
-	<!-- ************* PARA LA DEMO (BORRAR) ***************** -->
-	<managed-bean>
-		<managed-bean-name>mail</managed-bean-name>
-		<managed-bean-class>
-			com.code.aon.ui.consultant.controller.MailController
-		</managed-bean-class>
-		<managed-bean-scope>session</managed-bean-scope>
-	</managed-bean>
-	
 	<!-- ************* EXTERNAL NAVIGATION RULES (RELOCATE) ***************** -->
+
+	<!-- =================== Company ========================== -->	
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>company_record_data_list</from-outcome>
+			<to-view-id>/facelet/registry/company/record_data/list.faces</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>company_record_data_form</from-outcome>
+			<to-view-id>/facelet/registry/company/record_data/form.faces</to-view-id>
+		</navigation-case>
+	</navigation-rule>
 	<!-- =================== Customer ========================== -->	
 	<navigation-rule>
 	    <navigation-case>
@@ -1833,6 +2056,18 @@
 		<navigation-case>
 			<from-outcome>rrelationship</from-outcome>
 			<to-view-id>/facelet/customer/rrelationship/grid.faces</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>customer_rdir_staff</from-outcome>
+			<to-view-id>/facelet/customer/rdir_staff/form.faces</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>customer_record_data_list</from-outcome>
+			<to-view-id>/facelet/customer/record_data/list.faces</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>customer_record_data_form</from-outcome>
+			<to-view-id>/facelet/customer/record_data/form.faces</to-view-id>
 		</navigation-case>
 		<navigation-case>
 			<from-outcome>customer_sw</from-outcome>
