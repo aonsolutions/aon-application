@@ -171,13 +171,13 @@ public class MenuOptionUtil {
 			}
 		}else if (type.equals(PageType.ALBUM_IMAGES)){
 			if (ContentLevel.SECTION.equals(level)){
-				idents = ((CollectionsController)AonUtil.getRegisteredBean("collections")).getAlbumCategoryList();
+				idents.add(new SelectItem(null,"NO VALID"));
 			}
 			if (ContentLevel.CATEGORY.equals(level)){
-				idents = ((CollectionsController)AonUtil.getRegisteredBean("collections")).getAlbumList();
+				idents = ((CollectionsController)AonUtil.getRegisteredBean("collections")).getAlbumCategoryList();
 			}
 			if (ContentLevel.ELEMENT.equals(level)){
-				idents.add(new SelectItem(null,"NO VALID"));
+				idents = ((CollectionsController)AonUtil.getRegisteredBean("collections")).getAlbumList();
 			}
 		}else if (type.equals(PageType.ARTICLE_NEWS)){
 			if (ContentLevel.TOP.equals(level)){
@@ -392,7 +392,7 @@ public class MenuOptionUtil {
 					String category = Templates.ALBUM_CATEGORY.getHtmlName();
 					category = category.replaceAll("%NAME%", AlbumGenerator.ALBUM_LIST_PAGE);
 					return category;
-				}else if (level.equals(ContentLevel.SECTION)){
+				}else if (level.equals(ContentLevel.CATEGORY)){
 					IManagerBean bean = BeanManager.getManagerBean(AlbumCategory.class);
 					Criteria criteria = new Criteria();
 					criteria.addEqualExpression(bean.getFieldName(ICMSAlias.ALBUM_CATEGORY_ID), ident);
@@ -404,7 +404,7 @@ public class MenuOptionUtil {
 						album = album.replaceAll("%NAME%", ac.getAlias());
 						return album;
 					}
-				}else if (level.equals(ContentLevel.CATEGORY)){
+				}else if (level.equals(ContentLevel.ELEMENT)){
 					IManagerBean bean = BeanManager.getManagerBean(Album.class);
 					Criteria criteria = new Criteria();
 					criteria.addEqualExpression(bean.getFieldName(ICMSAlias.ALBUM_ID), ident);
