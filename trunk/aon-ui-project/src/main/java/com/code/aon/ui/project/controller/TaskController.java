@@ -101,6 +101,7 @@ public class TaskController extends BasicController implements ITaskController {
 
     public void resetChecks() {
         checks = new ArrayList<Task>();
+        this.disableOnSelect = false;
     }
 
     public boolean getRowChecked() {
