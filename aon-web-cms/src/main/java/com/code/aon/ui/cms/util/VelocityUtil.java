@@ -69,7 +69,7 @@ public class VelocityUtil extends VelocityEngine implements Constants {
 		*/
     }
 
-	public void addMessage(String msg, int type) {
+	public static void addMessage(String msg, int type) {
 		GeneratorStatusController status = (GeneratorStatusController)AonUtil.getRegisteredBean("generator_status");
 		if (type == INFO){
 			//AonUtil.addInfoMessage(" INFO: " + msg);
@@ -80,7 +80,8 @@ public class VelocityUtil extends VelocityEngine implements Constants {
 			status.addErrorMessage(" ERROR: " + msg);
 		}else if (type == WARN){
 			//AonUtil.addWarningMessage(" WARNING: " + msg);
-			status.addMessage(" WARNINIG: " + msg);
+			status.addMessage(" ******* WARNINIG: " + msg + "***********");
+			status.addErrorMessage(" WARNINIG: " + msg);
 		}else{
 			//AonUtil.addFatalMessage(msg);
 			status.addMessage(msg);

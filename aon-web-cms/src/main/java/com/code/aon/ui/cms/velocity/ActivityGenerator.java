@@ -3,6 +3,7 @@ package com.code.aon.ui.cms.velocity;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.code.aon.cms.Activity;
 import com.code.aon.cms.ActivityDetail;
 import com.code.aon.cms.CompanyActivity;
 import com.code.aon.cms.dao.ICMSAlias;
@@ -12,6 +13,7 @@ import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.cms.util.ControllerUtil;
+import com.code.aon.ui.cms.util.VelocityUtil;
 import com.code.aon.ui.cms.velocity.attribute.ActivityHandler;
 import com.code.aon.ui.cms.velocity.attribute.CompanyHandler;
 
@@ -21,8 +23,16 @@ public class ActivityGenerator extends Generator {
 		List<ITransferObject> ld;
 		List<ITransferObject> l_company;
 		try {
-			IManagerBean beanDetail = BeanManager.getManagerBean(ActivityDetail.class);
+			IManagerBean bean = BeanManager.getManagerBean(Activity.class);
 			Criteria criteria = new Criteria();
+			criteria.addEqualExpression(bean.getFieldName(ICMSAlias.ACTIVITY_ID), ident);
+			if (bean.getList(criteria).isEmpty()){
+				VelocityUtil.addMessage("ACTIVIDAD "+ident+" REFERENCIADA NO EXISTE !!!", VelocityUtil.WARN);
+				return null;
+			}
+			
+			IManagerBean beanDetail = BeanManager.getManagerBean(ActivityDetail.class);
+			criteria = new Criteria();
 			criteria.addEqualExpression(beanDetail.getFieldName(ICMSAlias.ACTIVITY_DETAIL_LANGUAGE_ID), ControllerUtil.getCurrentLanguage().getId());
 			criteria.addEqualExpression(beanDetail.getFieldName(ICMSAlias.ACTIVITY_DETAIL_ACTIVITY_ID), ident);
 			ld = (List<ITransferObject>)beanDetail.getList(criteria);

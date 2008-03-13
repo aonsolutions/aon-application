@@ -85,7 +85,7 @@ public class CommonGenerator extends Generator {
 			section = GeneratorConfigController.defaultSection();
 		}
 		
-		vu.addMessage("Cargando sección... ["+section.getAlias()+"]", VelocityUtil.INFO);
+		VelocityUtil.addMessage("Cargando sección... ["+section.getAlias()+"]", VelocityUtil.INFO);
 		
 		if (previousSection==null ||
 				section.getId().intValue()!=previousSection.getId().intValue()){
@@ -191,7 +191,7 @@ public class CommonGenerator extends Generator {
 				vu.put("bundle", bundle);
 			}
 			catch (MissingResourceException mre) {
-				vu.addMessage(" - No se ha encontrado fichero de mensajes para el idioma actual.", VelocityUtil.WARN);
+				VelocityUtil.addMessage(" - No se ha encontrado fichero de mensajes para el idioma actual.", VelocityUtil.WARN);
 			}
 		}
 	}

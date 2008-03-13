@@ -80,7 +80,7 @@ public class MenuGenerator extends Generator {
 				ArrayList<MenuOptionHandler> menu_list = getMenuOptionList(menu);
 				if (menu_list != null && menu_list.size() > 0) {  
 					vu.put("menu_list", menu_list);
-					vu.addMessage(" Generando Menu " + menu.getAlias() + ".", VelocityUtil.INFO);
+					VelocityUtil.addMessage(" Generando Menu " + menu.getAlias() + ".", VelocityUtil.INFO);
 					generate(vu, Templates.MENU, menu.getAlias());
 					vu.remove("menu_list");
 				}
@@ -102,6 +102,9 @@ public class MenuGenerator extends Generator {
 				Menu menu = (Menu)l.get(0);
 				MenuHandler mh = new MenuHandler(menu);
 				return mh;
+			}else{
+				VelocityUtil.addMessage("MENU "+ident+" REFERENCIADO NO EXISTE !!!", VelocityUtil.WARN);
+				return null;
 			}
 		} catch (ManagerBeanException e) {
 			e.printStackTrace();

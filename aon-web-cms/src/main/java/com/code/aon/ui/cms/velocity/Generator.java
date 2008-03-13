@@ -30,7 +30,7 @@ public class Generator {
 	        vu.remove("content");
 	    }
 	    else {
-	    	vu.addMessage("No se ha encontrado plantilla " + type.getTemplateName(), VelocityUtil.ERROR);
+	    	VelocityUtil.addMessage("No se ha encontrado plantilla " + type.getTemplateName(), VelocityUtil.ERROR);
 	    }
 	}
 

@@ -48,7 +48,7 @@ public class LinkGenerator extends Generator {
 					LinkCategoryHandler lch = new LinkCategoryHandler(lcd);
 					lchList.add(lch);
 					vu.put("link_category", lch);
-					vu.addMessage(" Generando categoria Link '" + lcd.getLinkCategory().getAlias() + "'.", VelocityUtil.INFO);
+					VelocityUtil.addMessage(" Generando categoria Link '" + lcd.getLinkCategory().getAlias() + "'.", VelocityUtil.INFO);
 
 					if (lcd.getLinkCategory().getSection()!=null){
 						currentSection = lcd.getLinkCategory().getSection();
@@ -77,14 +77,14 @@ public class LinkGenerator extends Generator {
 				key = iter.next();
 				linkCategoryHandlerSet = (ArrayList<LinkCategoryHandler>)categoryMap.get(key);
 				vu.put("link_categories", linkCategoryHandlerSet);
-				vu.addMessage(" Generando listado categoria seccion Link.", VelocityUtil.INFO);
+				VelocityUtil.addMessage(" Generando listado categoria seccion Link.", VelocityUtil.INFO);
 				CommonGenerator.getCommonGenerator().chargeContext(vu, key);
 				generate(vu, Templates.LINK, LINK_CATEGORY_BY_SECTION_PAGE + key.getId());
 				vu.remove("link_categories");
 			}
 			iter = null;
 			vu.put("link_categories", lchList);
-			vu.addMessage(" Generando listado categoria Link.", VelocityUtil.INFO);
+			VelocityUtil.addMessage(" Generando listado categoria Link.", VelocityUtil.INFO);
 			CommonGenerator.getCommonGenerator().chargeContext(vu, configSection);
 			generate(vu, Templates.LINK, LINK_CATEGORY_LIST_PAGE);
 			vu.remove("link_categories");
@@ -105,7 +105,10 @@ public class LinkGenerator extends Generator {
 			Criteria criteria = new Criteria();
 			criteria.addEqualExpression(bean.getFieldName(ICMSAlias.LINK_CATEGORY_ID), ident);
 			List<ITransferObject> l = (List<ITransferObject>)bean.getList(criteria);
-			
+			if (l.isEmpty()){
+				VelocityUtil.addMessage("CATEGORIA DE LINKS "+ident+" REFERENCIADA NO EXISTE !!!", VelocityUtil.WARN);
+				return null;
+			}
 			LinkCategory link = (LinkCategory)l.get(0);
 			if (link.isActive()) {
 				IManagerBean beanDetail = BeanManager.getManagerBean(LinkCategoryDetail.class);

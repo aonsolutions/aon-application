@@ -101,7 +101,7 @@ public class DownloadsGenerator extends Generator {
 								vu.put("group_next", Templates.DOWNLOADS.getHtmlName().replaceAll("%NAME%", downloadCategoryHandler.getAlias()+"_"+(page+1)));
 							}
 							vu.put("download_group", partialLst);
-							vu.addMessage(" Generando album de imagenes " + downloadCategoryHandler.getAlias() + ".", VelocityUtil.INFO);
+							VelocityUtil.addMessage(" Generando album de imagenes " + downloadCategoryHandler.getAlias() + ".", VelocityUtil.INFO);
 							generate(vu, Templates.DOWNLOADS, downloadCategoryHandler.getAlias()+(page==1?"":"_"+page));
 							vu.remove("back_url");
 							vu.remove("group_previous");
@@ -115,7 +115,7 @@ public class DownloadsGenerator extends Generator {
 					iter = null;
 					/*
 					vu.put("download_group", downloadCategoryHandler);
-					vu.addMessage(" Generando descargas " + group.getAlias() + ".", VelocityUtil.INFO);
+					VelocityUtil.addMessage(" Generando descargas " + group.getAlias() + ".", VelocityUtil.INFO);
 					if (group.getSection()!=null)
 						CommonGenerator.getCommonGenerator().chargeContext(vu, group.getSection());
 					else
@@ -126,7 +126,7 @@ public class DownloadsGenerator extends Generator {
 				}
 			}
 			vu.put("download_categories", downloadCategoryHandlerList);
-			vu.addMessage(" Generando listado categoria descargas.", VelocityUtil.INFO);
+			VelocityUtil.addMessage(" Generando listado categoria descargas.", VelocityUtil.INFO);
 			CommonGenerator.getCommonGenerator().chargeContext(vu, configSection);
 			generate(vu, Templates.DOWNLOADS, DOWNLOAD_CATEGORY_LIST_PAGE);
 			vu.remove("download_categories");
@@ -138,12 +138,21 @@ public class DownloadsGenerator extends Generator {
 	}
 	
 	public static Object getDownloadsHandler(Integer ident) {
+		List<ITransferObject> l;
 		try {
-			IManagerBean bean = BeanManager.getManagerBean(DownloadCategoryDetail.class);
+			IManagerBean bean = BeanManager.getManagerBean(DownloadCategory.class);
 			Criteria criteria = new Criteria();
+			criteria.addEqualExpression(bean.getFieldName(ICMSAlias.DOWNLOAD_CATEGORY_ID), ident);
+			l = (List<ITransferObject>)bean.getList(criteria);
+			if (l.isEmpty()){
+				VelocityUtil.addMessage("CATEGORIA DE DESCARGAS "+ident+" REFERENCIADA NO EXISTE !!!", VelocityUtil.WARN);
+				return null;
+			}
+			bean = BeanManager.getManagerBean(DownloadCategoryDetail.class);
+			criteria = new Criteria();
 			criteria.addEqualExpression(bean.getFieldName(ICMSAlias.DOWNLOAD_CATEGORY_DETAIL_DOWNLOAD_CATEGORY_ID), ident);
 			criteria.addEqualExpression(bean.getFieldName(ICMSAlias.DOWNLOAD_CATEGORY_DETAIL_LANGUAGE_ID), ControllerUtil.getCurrentLanguage().getId());
-			List<ITransferObject> l = (List<ITransferObject>)bean.getList(criteria);
+			l = (List<ITransferObject>)bean.getList(criteria);
 			if  (l.size()>0) {
 				DownloadCategoryDetail groupDetail = (DownloadCategoryDetail)l.get(0);
 				DownloadCategoryHandler h = new DownloadCategoryHandler(groupDetail);
@@ -151,6 +160,8 @@ public class DownloadsGenerator extends Generator {
 			}
 		} catch (ManagerBeanException e) {
 			e.printStackTrace();
+		}finally{
+			l = null;
 		}
 		return null;
 	}

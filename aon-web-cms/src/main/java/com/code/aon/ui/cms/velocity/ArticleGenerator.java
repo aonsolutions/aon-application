@@ -102,7 +102,7 @@ public class ArticleGenerator extends Generator {
 									ahlist.add(ahandler);
 									vu.put("back_url", back_url);
 									vu.put("article", ahandler);
-									vu.addMessage(" Generando article " + article.getAlias() + ".", VelocityUtil.INFO);
+									VelocityUtil.addMessage(" Generando article " + article.getAlias() + ".", VelocityUtil.INFO);
 									generate(vu, templates, article.getAlias());
 									vu.remove("article");
 									vu.remove("back_url");
@@ -115,7 +115,7 @@ public class ArticleGenerator extends Generator {
 							ArticleCategoryHandler achandler = new ArticleCategoryHandler(articleCategoryDetail,ahlist);
 							vu.put("article_category", achandler);
 							vu.put("article_list", ahlist);
-							vu.addMessage(" Generando list de article.", VelocityUtil.INFO);
+							VelocityUtil.addMessage(" Generando list de article.", VelocityUtil.INFO);
 							generate(vu, templates, values[art_type].getName()+"_"+articleCategory.getAlias());
 							vu.remove("article_category");
 							vu.remove("article_list");
@@ -158,8 +158,11 @@ public class ArticleGenerator extends Generator {
 			Criteria criteria = new Criteria();
 			criteria.addEqualExpression(bean.getFieldName(ICMSAlias.ARTICLE_ID), ident);
 			List<ITransferObject> l = (List<ITransferObject>)bean.getList(criteria);
-			if (l.isEmpty())
+			if (l.isEmpty()){
+				VelocityUtil.addMessage("ARTICULO "+ident+" REFERENCIADO NO EXISTE !!!", VelocityUtil.WARN);
 				return null;
+			}
+			
 			Article a = (Article)l.get(0);
 			if (a.isActive()) {
 				IManagerBean beanDetail = BeanManager.getManagerBean(ArticleDetail.class);
@@ -183,8 +186,16 @@ public class ArticleGenerator extends Generator {
 		List<ITransferObject> lcd;
 		Iterator<ITransferObject> iter;
 		try {
-			IManagerBean bean = BeanManager.getManagerBean(Article.class);
+			IManagerBean bean = BeanManager.getManagerBean(ArticleCategory.class);
 			Criteria criteria = new Criteria();
+			criteria.addEqualExpression(bean.getFieldName(ICMSAlias.ARTICLE_CATEGORY_ID), ident);
+			if (bean.getList(criteria).isEmpty()){
+				VelocityUtil.addMessage("CATEGORIA DE ARTICULO "+ident+" REFERENCIADA NO EXISTE !!!", VelocityUtil.WARN);
+				return null;
+			}
+			
+			bean = BeanManager.getManagerBean(Article.class);
+			criteria = new Criteria();
 			criteria.addEqualExpression(bean.getFieldName(ICMSAlias.ARTICLE_ARTICLE_CATEGORY_ID), ident);
 			criteria.addEqualExpression(bean.getFieldName(ICMSAlias.ARTICLE_ARTICLE_TYPE), type);
 			criteria.addEqualExpression(bean.getFieldName(ICMSAlias.ARTICLE_ACTIVE), true);

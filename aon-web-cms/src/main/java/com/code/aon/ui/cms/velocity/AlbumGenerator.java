@@ -136,7 +136,7 @@ public class AlbumGenerator extends Generator {
 											vu.put("album_image_previous", accessList.get(k-1).getUrl());
 										if (k+1<accessList.size())
 											vu.put("album_image_next", accessList.get(k+1).getUrl());
-										vu.addMessage(" Generando imagen.", VelocityUtil.INFO);
+										VelocityUtil.addMessage(" Generando imagen.", VelocityUtil.INFO);
 										generate(vu, Templates.ALBUM_IMAGES, "ALBUM_IMAGE_"+accessList.get(k).getId());
 										vu.remove("back_url");
 										vu.remove("album_image");
@@ -162,7 +162,7 @@ public class AlbumGenerator extends Generator {
 												vu.put("album_next", Templates.ALBUM.getHtmlName().replaceAll("%NAME%", ahandler.getAlias()+"_"+(page+1)));
 											}
 											vu.put("album_image_list", partialLst);
-											vu.addMessage(" Generando album de imagenes " + album.getAlias() + ".", VelocityUtil.INFO);
+											VelocityUtil.addMessage(" Generando album de imagenes " + album.getAlias() + ".", VelocityUtil.INFO);
 											generate(vu, Templates.ALBUM, album.getAlias()+(page==1?"":"_"+page));
 											vu.remove("back_url");
 											vu.remove("album_previous");
@@ -180,7 +180,7 @@ public class AlbumGenerator extends Generator {
 						vu.put("back_url", Templates.ALBUM_CATEGORY.getHtmlName().replaceAll("%NAME%", ALBUM_LIST_PAGE));
 						vu.put("album_category", achandler);
 						vu.put("album_list", ahlist);
-						vu.addMessage(" Generando list de album.", VelocityUtil.INFO);
+						VelocityUtil.addMessage(" Generando list de album.", VelocityUtil.INFO);
 						generate(vu, Templates.ALBUM_CATEGORY, albumCategory.getAlias());
 						vu.remove("back_url");
 						vu.remove("album_category");
@@ -192,7 +192,7 @@ public class AlbumGenerator extends Generator {
 				}
 			}
 			vu.put("album_category_list", achlist);
-			vu.addMessage(" Generando categorias de album.", VelocityUtil.INFO);
+			VelocityUtil.addMessage(" Generando categorias de album.", VelocityUtil.INFO);
 			CommonGenerator.getCommonGenerator().chargeContext(vu, configSection);
 			generate(vu, Templates.ALBUM_CATEGORY, ALBUM_LIST_PAGE);
 			vu.remove("album_category_list");
@@ -214,8 +214,16 @@ public class AlbumGenerator extends Generator {
 		List<ITransferObject> lcd;
 		Iterator<ITransferObject> iter;
 		try {
-			IManagerBean bean = BeanManager.getManagerBean(Album.class);
+			IManagerBean bean = BeanManager.getManagerBean(AlbumCategory.class);
 			Criteria criteria = new Criteria();
+			criteria.addEqualExpression(bean.getFieldName(ICMSAlias.ALBUM_CATEGORY_ID), ident);
+			if (bean.getList(criteria).isEmpty()){
+				VelocityUtil.addMessage("CATEGORIA DE ALBUM "+ident+" REFERENCIADA NO EXISTE !!!", VelocityUtil.WARN);
+				return null;
+			}
+			
+			bean = BeanManager.getManagerBean(Album.class);
+			criteria = new Criteria();
 			criteria.addEqualExpression(bean.getFieldName(ICMSAlias.ALBUM_ALBUM_CATEGORY_ID), ident);
 			criteria.addEqualExpression(bean.getFieldName(ICMSAlias.ALBUM_ACTIVE), true);
 			criteria.addOrder(bean.getFieldName(ICMSAlias.ALBUM_POSITION));

@@ -48,7 +48,7 @@ public class DirectAccessGenerator extends Generator {
 					detail = (DirectAccessGroupDetail)directAccessGroupDetailList.get(0);
 					dagh = new DirectAccessGroupHandler(detail);
 					vu.put("direct_access_group", dagh);
-					vu.addMessage(" Generando accesos directos " + group.getAlias() + ".", VelocityUtil.INFO);
+					VelocityUtil.addMessage(" Generando accesos directos " + group.getAlias() + ".", VelocityUtil.INFO);
 					CommonGenerator.getCommonGenerator().chargeContext(vu, group.getSection());
 					generate(vu, Templates.DIRECT_ACCESS, group.getAlias());
 					vu.remove("direct_access_group");
@@ -71,7 +71,10 @@ public class DirectAccessGenerator extends Generator {
 			Criteria criteria = new Criteria();
 			criteria.addEqualExpression(bean.getFieldName(ICMSAlias.DIRECT_ACCESS_ID), ident);
 			List<ITransferObject> l = (List<ITransferObject>)bean.getList(criteria);
-			
+			if (l.isEmpty()){
+				VelocityUtil.addMessage("ACCESO DIRECTO "+ident+" REFERENCIADO NO EXISTE !!!", VelocityUtil.WARN);
+				return null;
+			}
 			DirectAccess a = (DirectAccess)l.get(0);
 			if (a.isActive()) {
 				IManagerBean beanDetail = BeanManager.getManagerBean(DirectAccessDetail.class);
@@ -95,7 +98,10 @@ public class DirectAccessGenerator extends Generator {
 			Criteria criteria = new Criteria();
 			criteria.addEqualExpression(bean.getFieldName(ICMSAlias.DIRECT_ACCESS_GROUP_ID), ident);
 			List<ITransferObject> l = (List<ITransferObject>)bean.getList(criteria);
-			
+			if (l.isEmpty()){
+				VelocityUtil.addMessage("GRUPO DE ACCESO DIRECTO "+ident+" REFERENCIADO NO EXISTE !!!", VelocityUtil.WARN);
+				return null;
+			}
 			DirectAccessGroup a = (DirectAccessGroup)l.get(0);
 			if (a.isActive()) {
 				IManagerBean beanDetail = BeanManager.getManagerBean(DirectAccessGroupDetail.class);

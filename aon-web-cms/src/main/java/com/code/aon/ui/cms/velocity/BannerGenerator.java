@@ -68,7 +68,7 @@ public class BannerGenerator extends Generator {
 					if (accessList != null && accessList.size() > 0) {
 						vu.put("banner_category", detail);
 						vu.put("banner_list", accessList);
-						vu.addMessage(" Generando banners " + group.getAlias() + ".", VelocityUtil.INFO);
+						VelocityUtil.addMessage(" Generando banners " + group.getAlias() + ".", VelocityUtil.INFO);
 						CommonGenerator.getCommonGenerator().chargeContext(vu, group.getSection());
 						generate(vu, Templates.BANNERS, group.getAlias());
 						vu.remove("banner_category");
@@ -86,7 +86,10 @@ public class BannerGenerator extends Generator {
 			Criteria criteria = new Criteria();
 			criteria.addEqualExpression(bean.getFieldName(ICMSAlias.BANNER_ID), ident);
 			List<ITransferObject> l = (List<ITransferObject>)bean.getList(criteria);
-			
+			if (l.isEmpty()){
+				VelocityUtil.addMessage("BANNER "+ident+" REFERENCIADO NO EXISTE !!!", VelocityUtil.WARN);
+				return null;
+			}
 			Banner a = (Banner)l.get(0);
 			if (a.isActive()) {
 				IManagerBean beanDetail = BeanManager.getManagerBean(BannerDetail.class);
@@ -110,7 +113,10 @@ public class BannerGenerator extends Generator {
 			Criteria criteria = new Criteria();
 			criteria.addEqualExpression(bean.getFieldName(ICMSAlias.BANNER_CATEGORY_ID), ident);
 			List<ITransferObject> l = (List<ITransferObject>)bean.getList(criteria);
-			
+			if (l.isEmpty()){
+				VelocityUtil.addMessage("CATEGORIA DE BANNER "+ident+" REFERENCIADO NO EXISTE !!!", VelocityUtil.WARN);
+				return null;
+			}
 			BannerCategory a = (BannerCategory)l.get(0);
 			if (a.isActive()) {
 				IManagerBean beanDetail = BeanManager.getManagerBean(BannerCategoryDetail.class);
