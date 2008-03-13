@@ -84,6 +84,8 @@ public class MenuOptionUtil {
 					return true;
 				if (ContentLevel.CATEGORY.equals(level))
 					return true;
+				if (ContentLevel.ELEMENT.equals(level))
+					return true;
 			}
 			if (type.equals(PageType.ARTICLE_NEWS) ||
 					type.equals(PageType.ARTICLE_EVENTS) ||
@@ -173,6 +175,9 @@ public class MenuOptionUtil {
 			}
 			if (ContentLevel.CATEGORY.equals(level)){
 				idents = ((CollectionsController)AonUtil.getRegisteredBean("collections")).getAlbumList();
+			}
+			if (ContentLevel.ELEMENT.equals(level)){
+				idents.add(new SelectItem(null,"NO VALID"));
 			}
 		}else if (type.equals(PageType.ARTICLE_NEWS)){
 			if (ContentLevel.TOP.equals(level)){
