@@ -110,7 +110,7 @@
 		</group>
 		<background>
 			<band height="802"  isSplitAllowed="true" >
-				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						x="-15"
 						y="306"
@@ -123,7 +123,7 @@
 					<textElement rotation="Left">
 						<font size="7"/>
 					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$P{company}.getName() + "CIF:" + $P{company}.getDocument() + ". " + ($P{recordData}.getVolume()!=null?"Tomo " + $P{recordData}.getVolume() + ", ":"") + ($P{recordData}.getSection()!=null?"Sección " + $P{recordData}.getSection() + ", ":"") + ($P{recordData}.getPage()!=null?"Folio " + $P{recordData}.getPage() + ", ":"") + ($P{recordData}.getSheet()!=null?"Hoja " + $P{recordData}.getSheet() + ", ":"") + "con fecha " + new SimpleDateFormat("dd/MM/yyyy").format($P{recordData}.getRecordDate())]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$P{company}.getName() + " CIF:" + $P{company}.getDocument() + ". " + ($P{recordData}.getVolume()!=null?"Tomo " + $P{recordData}.getVolume() + ", ":"") + ($P{recordData}.getSection()!=null?"Sección " + $P{recordData}.getSection() + ", ":"") + ($P{recordData}.getPage()!=null?"Folio " + $P{recordData}.getPage() + ", ":"") + ($P{recordData}.getSheet()!=null?"Hoja " + $P{recordData}.getSheet() + ", ":"") + "con fecha " + new SimpleDateFormat("dd/MM/yyyy").format($P{recordData}.getRecordDate())]]></textFieldExpression>
 				</textField>
 			</band>
 		</background>
