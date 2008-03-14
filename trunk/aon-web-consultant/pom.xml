@@ -11,7 +11,7 @@
 	<groupId>com.code.aon</groupId>
 	<artifactId>aon.web.consultant</artifactId>
 	<packaging>war</packaging>
-	<version>2.1.1</version>
+	<version>2.1.2</version>
 	<description>AON WEB CONSULTANT</description>
 	<name>AON WEB CONSULTANT</name>
 	<properties>
@@ -65,7 +65,7 @@
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.account</artifactId>
-			<version>2.1.6</version>
+			<version>2.1.7</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
