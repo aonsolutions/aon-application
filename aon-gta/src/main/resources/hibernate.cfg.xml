@@ -104,6 +104,9 @@
 		<mapping class="com.code.aon.registry.RegistryRelationship"/>
 		<mapping class="com.code.aon.registry.Relationship"/>
 		<mapping class="com.code.aon.registry.Category"/>
+		<mapping class="com.code.aon.registry.RegistryDirStaff"/>
+		<mapping class="com.code.aon.registry.RecordData"/>
+		<mapping class="com.code.aon.registry.Category"/>
 		<mapping class="com.code.aon.config.User"/>
 		
 		<!-- AON-COMPANY Mapping files -->	
