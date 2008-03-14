@@ -33,12 +33,12 @@
 						<h:commandButton id="reset" value="#{bundle.aon_reset}"
 							action="footer_form"
 							actionListener="#{footer.onReset}" 
-							rendered="#{!menu_option.new}"
+							rendered="#{!footer.new}"
 							styleClass="aon-finding-toolbar-item aon-icon-reset"
 							accesskey="#{bundle.aon_key_new}" />
 						<h:commandButton id="save"
 							value="#{bundle.aon_save}" 
-							rendered="#{footer.to!=null or header.new}"
+							rendered="#{footer.to!=null or footer.new}"
 							actionListener="#{footer.onAccept}"
 							styleClass="aon-finding-toolbar-item aon-icon-accept"
 							accesskey="#{bundle.aon_key_save}"/>

@@ -120,6 +120,18 @@
 								styleClass="aon-main-menu-leaf"/>
 							 -->
 						</aon:dropDownMenu>
+						<aon:dropDownMenu id="bulletins"
+							value="#{menuBundle.cms_bulletins}" submitMode="ajax"
+							event="onclick">
+							<aon:menuItem id="bulletin" 
+								value="#{menuBundle.cms_bulletin}"
+								action="bulletin_list"
+								styleClass="aon-main-menu-leaf"/>
+							<aon:menuItem id="bulletin_emails" 
+								value="#{menuBundle.cms_bulletin_emails}"
+								action="bulletin_email_list"
+								styleClass="aon-main-menu-leaf"/>
+						</aon:dropDownMenu>
 						<aon:dropDownMenu id="production"
 							value="#{menuBundle.cms_production}" submitMode="ajax"
 							event="onclick">

@@ -6,7 +6,7 @@
 
 	<session-factory>
 
-		<property name="connection.url">jdbc:mysql://192.168.2.4:3306/cms?autoReconnect=true</property>		
+		<property name="connection.url">jdbc:mysql://192.168.2.4:3306/cms_void?autoReconnect=true</property>		
 		<property name="connection.username">dbuser</property>		
 		<property name="show_sql">true</property>		
 		<property name="dialect">org.hibernate.dialect.MySQLInnoDBDialect</property>
@@ -82,6 +82,10 @@
 		<mapping class="com.code.aon.cms.Activity"/>
 		<mapping class="com.code.aon.cms.ActivityDetail"/>
 		<mapping class="com.code.aon.cms.CompanyActivity"/>
+		<mapping class="com.code.aon.cms.Bulletin"/>
+		<mapping class="com.code.aon.cms.BulletinDetail"/>
+		<mapping class="com.code.aon.cms.BulletinArticle"/>
+		<mapping class="com.code.aon.cms.BulletinEmail"/>
 
 	</session-factory>
 

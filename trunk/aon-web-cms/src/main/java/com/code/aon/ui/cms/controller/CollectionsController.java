@@ -23,6 +23,7 @@ import com.code.aon.cms.FaqCategory;
 import com.code.aon.cms.Footer;
 import com.code.aon.cms.GenericPage;
 import com.code.aon.cms.Header;
+import com.code.aon.cms.Language;
 import com.code.aon.cms.LinkCategory;
 import com.code.aon.cms.Menu;
 import com.code.aon.cms.ModularPage;
@@ -52,13 +53,30 @@ public class CollectionsController {
 	public List<SelectItem> getLanguageTypes() throws ManagerBeanException {
 		List<SelectItem> types = new LinkedList<SelectItem>();
 		Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
-		SelectItem item;;
+		SelectItem item;
 		for (LanguageMenuType type : LanguageMenuType.values()) {
 			String name = type.getName(locale);
 			item = new SelectItem(type, name);
 			types.add(item);
 		}
 		return types;
+	}
+	
+	public List<SelectItem> getLanguages() throws ManagerBeanException {
+		List<SelectItem> languajes = new LinkedList<SelectItem>();
+		IManagerBean bean = BeanManager.getManagerBean(Language.class);
+		Criteria criteria = new Criteria();
+		criteria.addOrder(bean.getFieldName(ICMSAlias.LANGUAGE_POSITION));
+		List<ITransferObject> list = (List<ITransferObject>)bean.getList(criteria);
+		SelectItem item;
+		for (int i = 0; i < list.size(); i++) {
+			Language object = (Language)list.get(i);
+			int id = object.getId();
+			String name = object.getDescription();
+			item = new SelectItem(id, name);
+			languajes.add(item);
+		}
+		return languajes;
 	}
 	
 	public List<SelectItem> getArticleTypes() throws ManagerBeanException {
@@ -593,4 +611,5 @@ public class CollectionsController {
 		return activityList;
 	}
 
+	
 }

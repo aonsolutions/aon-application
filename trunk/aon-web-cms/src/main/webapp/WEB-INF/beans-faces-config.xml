@@ -1457,4 +1457,112 @@
 		<managed-bean-scope>none</managed-bean-scope>
 	</managed-bean>
 
+	<!-- ************** BULLETIN ************** -->
+	<managed-bean>
+		<managed-bean-name>bulletin</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.cms.controller.BulletinController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.cms.Bulletin</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojoI18n</property-name>
+			<value>com.code.aon.cms.BulletinDetail</value>
+		</managed-property>
+		<managed-property>
+			<property-name>joinAlias</property-name>
+			<value>BulletinDetail_bulletin_id</value>
+		</managed-property>
+		<managed-property>
+			<property-name>languageAlias</property-name>
+			<value>BulletinDetail_language_id</value>
+		</managed-property>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pageLimit</property-name>
+			<value>20</value>
+		</managed-property>
+		<managed-property>
+			<property-name>listenerClasses</property-name>
+			<list-entries>
+				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+				<value>#{bulletinControllerListener}</value>
+			</list-entries>
+		</managed-property>
+	</managed-bean>
+
+	<managed-bean>
+		<managed-bean-name>bulletinControllerListener</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.cms.event.BulletinControllerListener</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+	</managed-bean>
+	
+	<!-- ************** BULLETIN EMAIL ************** -->
+	<managed-bean>
+		<managed-bean-name>bulletin_email</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.form.GridController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.cms.BulletinEmail</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pageLimit</property-name>
+			<value>20</value>
+		</managed-property>
+		<managed-property>
+			<property-name>listenerClasses</property-name>
+			<list-entries>
+				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+				<value>#{bulletinEmailControllerListener}</value>
+			</list-entries>
+		</managed-property>
+	</managed-bean>
+
+	<managed-bean>
+		<managed-bean-name>bulletinEmailControllerListener</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.cms.event.BulletinEmailControllerListener</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+	</managed-bean>
+
+	<!-- ************** BULLETIN ARTICLE ************** -->
+	<managed-bean>
+		<managed-bean-name>bulletin_article</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.cms.controller.BulletinArticleController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.cms.BulletinArticle</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pageLimit</property-name>
+			<value>20</value>
+		</managed-property>
+		<managed-property>
+			<property-name>listenerClasses</property-name>
+			<list-entries>
+				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+				<value>#{bulletinArticleControllerListener}</value>
+			</list-entries>
+		</managed-property>
+	</managed-bean>
+
+	<managed-bean>
+		<managed-bean-name>bulletinArticleControllerListener</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.cms.event.BulletinArticleControllerListener</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+	</managed-bean>
+
 </faces-config>
