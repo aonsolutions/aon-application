@@ -190,8 +190,8 @@ public class FinancePaymentController extends BasicController {
 			finance.setBank(null);
 		}
 		if(finance.getTotalAmount() != getPayedAmount()){
-			createNewFinance(finance, (finance.getAmount() - payedAmount) + finance.getExpenses());
-			finance.setAmount(payedAmount - finance.getExpenses());
+			createNewFinance(finance, round(finance.getAmount() - payedAmount + finance.getExpenses(), 2));
+			finance.setAmount(round(payedAmount - finance.getExpenses(), 2));
 			FinanceTrackingWriter.addFinanceTracking(finance, FinanceTrackingType.FRACTIONED, bundle.getString("aon_finance_tracking_fractioned"));
 		}
 		finance.setFinanceStatus(FinanceStatus.PAID);
@@ -245,4 +245,9 @@ public class FinancePaymentController extends BasicController {
 		accEntryTracking.setFinanceTracking(tracking);
 		accountEntryFinanceTrackingBean.insert(accEntryTracking);
 	}
+
+	private double round(double value, int precision) {
+        double decimal = Math.pow(10, precision);
+        return Math.round(decimal*value) / decimal;
+    }
 }
