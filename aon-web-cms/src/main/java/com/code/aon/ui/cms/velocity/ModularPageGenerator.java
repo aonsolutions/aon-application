@@ -85,7 +85,13 @@ public class ModularPageGenerator extends Generator {
 
 				VelocityUtil.addMessage(" Generando Página Modular '" + mp.getAlias()+ "'.", VelocityUtil.INFO);
 				if (mp.isHomepage()){
-					generate(vu, Templates.HOME, mp.getAlias());
+					if (mp.getModularType()==null){
+						generate(vu, Templates.HOME, mp.getAlias());
+					}else{
+						String template_name = Templates.MODULAR_TYPES.getTemplateName();
+						template_name = template_name.replaceAll("%TYPE%", ""+mp.getModularType().ordinal()); 
+						generate(vu, Templates.HOME, template_name, mp.getAlias());
+					}
 				}else{
 					if (mp.getModularType()==null){
 						generate(vu, Templates.MODULAR, mp.getAlias());
