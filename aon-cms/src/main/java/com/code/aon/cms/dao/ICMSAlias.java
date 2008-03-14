@@ -70,6 +70,10 @@ import com.code.aon.cms.Company;
 import com.code.aon.cms.Activity;
 import com.code.aon.cms.ActivityDetail;
 import com.code.aon.cms.CompanyActivity;
+import com.code.aon.cms.Bulletin;
+import com.code.aon.cms.BulletinDetail;
+import com.code.aon.cms.BulletinArticle;
+import com.code.aon.cms.BulletinEmail;
 
 /** 
 * Interface for holding entity properties constants.
@@ -2831,6 +2835,130 @@ public interface ICMSAlias {
 	* Hibernate value: CompanyActivity.id
 	*/
 	String  COMPANY_ACTIVITY_ID = COMPANY_ACTIVITY_ENTRY.getAliasNames()[2];
+
+
+
+	/** 
+	* DAOConstantsEntry for Bulletin entity.
+	*/ 
+	DAOConstantsEntry BULLETIN_ENTRY = DAOConstants.getDAOConstant(Bulletin.class);
+
+	/** 
+	* Alias value: Bulletin_alias
+	* Hibernate value: Bulletin.alias
+	*/
+	String  BULLETIN_ALIAS = BULLETIN_ENTRY.getAliasNames()[0];
+
+	/** 
+	* Alias value: Bulletin_id
+	* Hibernate value: Bulletin.id
+	*/
+	String  BULLETIN_ID = BULLETIN_ENTRY.getAliasNames()[1];
+
+	/** 
+	* Alias value: Bulletin_publish_date
+	* Hibernate value: Bulletin.publish_date
+	*/
+	String  BULLETIN_PUBLISH_DATE = BULLETIN_ENTRY.getAliasNames()[2];
+
+	/** 
+	* Alias value: Bulletin_template
+	* Hibernate value: Bulletin.template
+	*/
+	String  BULLETIN_TEMPLATE = BULLETIN_ENTRY.getAliasNames()[3];
+
+
+
+	/** 
+	* DAOConstantsEntry for BulletinDetail entity.
+	*/ 
+	DAOConstantsEntry BULLETIN_DETAIL_ENTRY = DAOConstants.getDAOConstant(BulletinDetail.class);
+
+	/** 
+	* Alias value: BulletinDetail_bulletin_id
+	* Hibernate value: BulletinDetail.bulletin.id
+	*/
+	String  BULLETIN_DETAIL_BULLETIN_ID = BULLETIN_DETAIL_ENTRY.getAliasNames()[0];
+
+	/** 
+	* Alias value: BulletinDetail_content
+	* Hibernate value: BulletinDetail.content
+	*/
+	String  BULLETIN_DETAIL_CONTENT = BULLETIN_DETAIL_ENTRY.getAliasNames()[1];
+
+	/** 
+	* Alias value: BulletinDetail_id
+	* Hibernate value: BulletinDetail.id
+	*/
+	String  BULLETIN_DETAIL_ID = BULLETIN_DETAIL_ENTRY.getAliasNames()[2];
+
+	/** 
+	* Alias value: BulletinDetail_language_id
+	* Hibernate value: BulletinDetail.language.id
+	*/
+	String  BULLETIN_DETAIL_LANGUAGE_ID = BULLETIN_DETAIL_ENTRY.getAliasNames()[3];
+
+	/** 
+	* Alias value: BulletinDetail_title
+	* Hibernate value: BulletinDetail.title
+	*/
+	String  BULLETIN_DETAIL_TITLE = BULLETIN_DETAIL_ENTRY.getAliasNames()[4];
+
+
+
+	/** 
+	* DAOConstantsEntry for BulletinArticle entity.
+	*/ 
+	DAOConstantsEntry BULLETIN_ARTICLE_ENTRY = DAOConstants.getDAOConstant(BulletinArticle.class);
+
+	/** 
+	* Alias value: BulletinArticle_article_id
+	* Hibernate value: BulletinArticle.article.id
+	*/
+	String  BULLETIN_ARTICLE_ARTICLE_ID = BULLETIN_ARTICLE_ENTRY.getAliasNames()[0];
+
+	/** 
+	* Alias value: BulletinArticle_bulletin_id
+	* Hibernate value: BulletinArticle.bulletin.id
+	*/
+	String  BULLETIN_ARTICLE_BULLETIN_ID = BULLETIN_ARTICLE_ENTRY.getAliasNames()[1];
+
+	/** 
+	* Alias value: BulletinArticle_id
+	* Hibernate value: BulletinArticle.id
+	*/
+	String  BULLETIN_ARTICLE_ID = BULLETIN_ARTICLE_ENTRY.getAliasNames()[2];
+
+	/** 
+	* Alias value: BulletinArticle_position
+	* Hibernate value: BulletinArticle.position
+	*/
+	String  BULLETIN_ARTICLE_POSITION = BULLETIN_ARTICLE_ENTRY.getAliasNames()[3];
+
+
+
+	/** 
+	* DAOConstantsEntry for BulletinEmail entity.
+	*/ 
+	DAOConstantsEntry BULLETIN_EMAIL_ENTRY = DAOConstants.getDAOConstant(BulletinEmail.class);
+
+	/** 
+	* Alias value: BulletinEmail_email
+	* Hibernate value: BulletinEmail.email
+	*/
+	String  BULLETIN_EMAIL_EMAIL = BULLETIN_EMAIL_ENTRY.getAliasNames()[0];
+
+	/** 
+	* Alias value: BulletinEmail_id
+	* Hibernate value: BulletinEmail.id
+	*/
+	String  BULLETIN_EMAIL_ID = BULLETIN_EMAIL_ENTRY.getAliasNames()[1];
+
+	/** 
+	* Alias value: BulletinEmail_language_id
+	* Hibernate value: BulletinEmail.language.id
+	*/
+	String  BULLETIN_EMAIL_LANGUAGE_ID = BULLETIN_EMAIL_ENTRY.getAliasNames()[2];
 
 
 }

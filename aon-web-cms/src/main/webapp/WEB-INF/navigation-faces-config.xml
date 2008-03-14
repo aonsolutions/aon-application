@@ -317,5 +317,24 @@
     </navigation-case>
   </navigation-rule>
 
+  <!-- ===================================================== BULLETIN -->
+  <navigation-rule>
+    <navigation-case>
+      <from-outcome>bulletin_list</from-outcome>
+      <to-view-id>/facelet/content/bulletin/list.xhtml</to-view-id>
+    </navigation-case>
+    <navigation-case>
+      <from-outcome>bulletin_form</from-outcome>
+      <to-view-id>/facelet/content/bulletin/form.xhtml</to-view-id>
+    </navigation-case>
+  </navigation-rule>
+
+  <!-- =============================================== BULLETIN EMAIL -->
+  <navigation-rule>
+    <navigation-case>
+      <from-outcome>bulletin_email_list</from-outcome>
+      <to-view-id>/facelet/content/bulletin/emails/list.xhtml</to-view-id>
+    </navigation-case>
+  </navigation-rule>
 
 </faces-config>
