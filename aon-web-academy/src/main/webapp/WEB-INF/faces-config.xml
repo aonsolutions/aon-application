@@ -12,6 +12,12 @@
 		</locale-config>
 		<view-handler>com.sun.facelets.FaceletViewHandler</view-handler>  
 	</application>
+ 
+	<converter>
+		<description>Conversor para los Enum</description>
+		<converter-id>enumConverter</converter-id>
+		<converter-class>com.code.aon.ui.converter.EnumLocaleConverter</converter-class>
+	</converter>
 
 	<converter>
 		<description>Conversor para los Enum</description>
