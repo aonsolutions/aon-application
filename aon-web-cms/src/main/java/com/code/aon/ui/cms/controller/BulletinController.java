@@ -1,15 +1,34 @@
 package com.code.aon.ui.cms.controller;
 
-import javax.faces.event.ActionEvent;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.IOException;
+import java.io.StringWriter;
+import java.util.ArrayList;
+import java.util.List;
 
+import javax.faces.event.ActionEvent;
+import javax.mail.Address;
+import javax.mail.internet.InternetAddress;
+
+import com.code.aon.cms.ArticleDetail;
 import com.code.aon.cms.Bulletin;
 import com.code.aon.cms.BulletinArticle;
+import com.code.aon.cms.BulletinDetail;
+import com.code.aon.cms.BulletinEmail;
 import com.code.aon.cms.dao.ICMSAlias;
+import com.code.aon.cms.enumeration.Templates;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
+import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionException;
+import com.code.aon.ui.cms.email.Emailer;
+import com.code.aon.ui.cms.util.ControllerUtil;
+import com.code.aon.ui.cms.util.VelocityUtil;
+import com.code.aon.ui.cms.velocity.CommonGenerator;
+import com.code.aon.ui.cms.velocity.attribute.ArticleHandler;
 import com.code.aon.ui.util.AonUtil;
 
 
@@ -33,5 +52,111 @@ public class BulletinController extends BasicI18nController {
 		c.onSearch(event);
 	}
 
+	public void onGenerate(ActionEvent event){
+		GeneratorStatusController status = (GeneratorStatusController)AonUtil.getRegisteredBean("generator_status");
+		status.onInit(event);
+		
+		BufferedWriter buff = null;
+		List<ITransferObject> list;
+		List<ITransferObject> listBulletinArticle;
+		List<ITransferObject> listBulletinEmail;
+		List<ITransferObject> article_list;
+		List<ArticleHandler> article_content = new ArrayList<ArticleHandler>();
+		Address[] emails = null;
+		try{
+			Bulletin bulletin = null; 
+			BulletinDetail bulletinDetail = null;
+			ArticleDetail articleDetail = null;
+			Criteria criteria = null;
+			IManagerBean bean;
+				
+			bulletin = (Bulletin)getTo(); 
+			bulletinDetail = null;
+			criteria = new Criteria();
+			criteria.addEqualExpression(getManagerBeanI18n().getFieldName(ICMSAlias.BULLETIN_DETAIL_BULLETIN_ID), bulletin.getId());
+			list = (List<ITransferObject>)getManagerBeanI18n().getList(criteria);
+			for (ITransferObject toDetail: list) {
+				bulletinDetail = (BulletinDetail)toDetail;
+				
+				bean = BeanManager.getManagerBean(BulletinArticle.class); 
+				criteria = new Criteria();
+				criteria.addEqualExpression(bean.getFieldName(ICMSAlias.BULLETIN_ARTICLE_BULLETIN_ID), bulletin.getId());
+				listBulletinArticle = (List<ITransferObject>)bean.getList(criteria);
+				for (ITransferObject bulletinArticle: listBulletinArticle) {
+					
+					bean = BeanManager.getManagerBean(ArticleDetail.class); 
+					criteria = new Criteria();
+					criteria.addEqualExpression(bean.getFieldName(ICMSAlias.ARTICLE_DETAIL_ARTICLE_ID), ((BulletinArticle)bulletinArticle).getId());
+					criteria.addEqualExpression(bean.getFieldName(ICMSAlias.ARTICLE_DETAIL_LANGUAGE_ID), bulletinDetail.getLanguage().getId());
+					article_list = (List<ITransferObject>)bean.getList(criteria);
+					if (!article_list.isEmpty()){
+						articleDetail = (ArticleDetail) article_list.get(0);
+						ArticleHandler ah = new ArticleHandler(articleDetail);
+						article_content.add(ah);
+					}
+					
+				}
 
+				bean = BeanManager.getManagerBean(BulletinEmail.class); 
+				criteria = new Criteria();
+				criteria.addEqualExpression(bean.getFieldName(ICMSAlias.BULLETIN_EMAIL_LANGUAGE_ID), bulletinDetail.getLanguage().getId());
+				listBulletinEmail = (List<ITransferObject>)bean.getList(criteria);
+				emails = new Address[listBulletinEmail.size()];
+				int i = 0;
+				for (ITransferObject bulletinEmail: listBulletinEmail) {
+					String email = ((BulletinEmail)bulletinEmail).getEmail();
+					emails[i]=new InternetAddress(email);
+					++i;
+				}
+
+				VelocityUtil vu = new VelocityUtil();
+				CommonGenerator.getCommonGenerator().init(vu);
+				vu.setTemplate_path(ControllerUtil.getCurrentVmTemplatePath());
+				vu.initialize();
+				
+				String template = ControllerUtil.getCurrentVmTemplatePath() 
+					+ "/" 
+					+ Templates.BULLETIN.getTemplateName();
+			    File f = new File(template);
+			    if (!f.exists()){
+			    	VelocityUtil.addMessage("No se ha encontrado plantilla " 
+			    			+ Templates.BULLETIN.getTemplateName(), VelocityUtil.ERROR);
+			    }else{
+			    	StringWriter writer = new StringWriter();
+			    	buff = new BufferedWriter(writer);
+			        vu.put("title", bulletinDetail.getTitle());
+			        vu.put("content", bulletinDetail.getContent());
+			        vu.put("articles", article_content);
+					vu.generate(template, buff, "Bulletin");
+			        vu.remove("articles");
+			        vu.remove("content");
+			        vu.remove("title");
+			        
+					Emailer emailer = new Emailer();
+					emailer.sendEmail(emails,
+							bulletinDetail.getTitle(),
+							writer.toString());
+			    }
+			}
+		} catch (Exception e) {
+			addMessage(e.getMessage());
+		}finally {
+			article_content = null;
+			list = null;
+			article_list = null;
+			listBulletinArticle = null;
+			listBulletinEmail = null;
+	        try {
+	            if (buff != null) {
+	            	buff.close();
+	            }
+	        } catch (IOException e) {
+	            e.printStackTrace();
+	        }
+	    }
+
+	}
+	
+	// END SENDER
+	
 }

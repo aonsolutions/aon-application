@@ -126,10 +126,17 @@
 							<aon:menuItem id="bulletin" 
 								value="#{menuBundle.cms_bulletin}"
 								action="bulletin_list"
+								actionListener="#{bulletin.onSearch}" 
 								styleClass="aon-main-menu-leaf"/>
 							<aon:menuItem id="bulletin_emails" 
 								value="#{menuBundle.cms_bulletin_emails}"
 								action="bulletin_email_list"
+								actionListener="#{bulletin_email.onSearch}" 
+								styleClass="aon-main-menu-leaf"/>
+							<aon:menuItem id="bulletin_send" 
+								value="#{menuBundle.cms_bulletin_send}"
+								action="bulletin_send_list"
+								actionListener="#{bulletin.onSearch}" 
 								styleClass="aon-main-menu-leaf"/>
 						</aon:dropDownMenu>
 						<aon:dropDownMenu id="production"

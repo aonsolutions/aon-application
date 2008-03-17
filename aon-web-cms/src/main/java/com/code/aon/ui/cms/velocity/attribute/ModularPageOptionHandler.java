@@ -18,8 +18,11 @@ public class ModularPageOptionHandler {
 	
 	private Object content;
 
+	private String type;
+	
 	public ModularPageOptionHandler(ModularPageOptionDetail mpod) {
 		template = mpod.getModular_page_option().getType().getTemplateName();
+		type = mpod.getModular_page_option().getType().getName();
 		if (mpod.getModular_page_option().getType().equals(ModularPageOptionType.ARTICLE)) {
 			content = ArticleGenerator.getArticleHandler(mpod.getModular_page_option().getIdent());
 		}
@@ -70,6 +73,10 @@ public class ModularPageOptionHandler {
 
 	public Object getContent() {
 		return content;
+	}
+
+	public String getType() {
+		return type;
 	}
 
 }

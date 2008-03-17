@@ -56,7 +56,6 @@ public class Bulletin implements ITransferObject {
 		this.publish_date = publish_date;
 	}
 
-	@Column(nullable=false)
 	public String getTemplate() {
 		return template;
 	}
