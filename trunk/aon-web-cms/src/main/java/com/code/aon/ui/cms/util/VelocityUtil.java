@@ -97,6 +97,96 @@ public class VelocityUtil extends VelocityEngine implements Constants {
 	}
 
     public boolean generate(String template, String page) {
+        String pageShortName;
+        try{
+        	pageShortName = page.substring(page.lastIndexOf('/'));
+        }catch (Exception e) {
+        	pageShortName = page;
+		}
+        
+		boolean error = false;
+        FileWriter fw = null;
+        BufferedWriter writer = null;
+    	try{
+	        File fo = new File(page);
+	        fw = new FileWriter(fo);
+	        writer = new BufferedWriter(fw);
+	        
+	        error = generate(template, writer, pageShortName);
+		}
+		catch(Exception e) {
+		    error = true;
+			addMessage("Error al generar el fichero '" + pageShortName + "' </BR> " + e.getMessage() + "", ERROR);
+			e.printStackTrace();
+		}
+	    finally {
+	        try {
+	            if (writer != null) {
+	                writer.flush();
+	                writer.close();
+	                fw.close();
+	            }
+	        } catch (IOException e) {
+	            e.printStackTrace();
+	        }
+	    }
+	    return error;
+    }
+	
+    public boolean generate(String template, BufferedWriter writer, String pageShortName) {
+		boolean error = false;
+
+        File fi = new File(template);
+        BufferedReader reader = null;
+        FileReader fr = null;
+
+        try {
+			if (!fi.exists()) {
+				error = true;
+				addMessage("Fichero de plantilla '" + template + "' no encontrado.", ERROR);
+			}
+			else {
+                fr = new FileReader(fi);
+				reader = new BufferedReader(fr);
+			}
+
+			if (!error) {
+				try {
+
+                    this.evaluate(context, writer, "¡AON-CMS!", reader);
+					writer.flush();
+					addMessage("Página " + pageShortName + " generada con exito", INFO);
+				}
+				catch(Exception e) {
+				    error = true;
+					addMessage("Error al evaluar el contexto en el fichero '" + pageShortName + "' <BR/>" + e.getMessage(), ERROR);
+				}
+			}
+			else {
+				addMessage("No se pudo generar el fichero '" + pageShortName + "'", ERROR);
+			}
+		}
+		catch(Exception e) {
+		    error = true;
+			addMessage("Error al generar el fichero '" + pageShortName + "' </BR> " + e.getMessage() + "", ERROR);
+			e.printStackTrace();
+		}
+        finally {
+            try {
+                if (reader != null) {
+                    reader.close();
+                    fr.close();
+                }
+                fi = null;
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
+		return error;
+    }
+/*    
+    public boolean generate(String template, String page) {
 		boolean error = false;
 
         File fi = new File(template);
@@ -167,5 +257,5 @@ public class VelocityUtil extends VelocityEngine implements Constants {
 
 		return error;
 	}
-
+*/
 }
