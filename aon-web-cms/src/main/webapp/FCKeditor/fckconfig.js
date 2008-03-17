@@ -91,6 +91,10 @@ FCKConfig.TemplateReplaceCheckbox = true ;
 
 FCKConfig.ToolbarLocation = 'In' ;
 
+FCKConfig.ToolbarSets["Basic"] = [
+	['Bold','Italic','-','OrderedList','UnorderedList','-','Link','Unlink','-','About']
+] ;
+
 FCKConfig.ToolbarSets["Default"] = [
 	['Bold','Italic','Underline','StrikeThrough','-','Subscript','Superscript'],
 	['OrderedList','UnorderedList','-','Outdent','Indent'],
@@ -100,11 +104,23 @@ FCKConfig.ToolbarSets["Default"] = [
 	['Link','Unlink','Anchor','-','Image'],
 	['FontName','FontSize'],
 	['TextColor','BGColor'],
-	['Source','Preview']
+	['Source','Preview'],
+	['FitWindow']
 ] ;
 
-FCKConfig.ToolbarSets["Basic"] = [
-	['Bold','Italic','-','OrderedList','UnorderedList','-','Link','Unlink','-','About']
+FCKConfig.ToolbarSets["Advanced"] = [
+	['Bold','Italic','Underline','StrikeThrough','-','Subscript','Superscript'],
+	['OrderedList','UnorderedList','-','Outdent','Indent'],
+	['JustifyLeft','JustifyCenter','JustifyRight','JustifyFull','-','Table'],
+	['Undo','Redo','-','Cut','Copy','Paste','PasteText','PasteWord'],
+	'/', 
+	['Link','Unlink','Anchor','-','Image'],
+	['FontName','FontSize'],
+	['TextColor','BGColor'],
+	['Source','Preview'],
+	'/',
+	['Form','Checkbox','Radio','TextField','Textarea','Select','Button','ImageButton','HiddenField'],
+	['FitWindow']
 ] ;
 
 FCKConfig.EnterMode = 'p' ;			// p | div | br
