@@ -9,6 +9,7 @@ import java.util.List;
 
 import javax.faces.event.ActionEvent;
 import javax.mail.Address;
+import javax.mail.AuthenticationFailedException;
 import javax.mail.internet.InternetAddress;
 
 import com.code.aon.cms.ArticleDetail;
@@ -55,6 +56,8 @@ public class BulletinController extends BasicI18nController {
 	public void onGenerate(ActionEvent event){
 		GeneratorStatusController status = (GeneratorStatusController)AonUtil.getRegisteredBean("generator_status");
 		status.onInit(event);
+		
+		VelocityUtil vu = new VelocityUtil();
 		
 		BufferedWriter buff = null;
 		List<ITransferObject> list;
@@ -109,7 +112,6 @@ public class BulletinController extends BasicI18nController {
 					++i;
 				}
 
-				VelocityUtil vu = new VelocityUtil();
 				CommonGenerator.getCommonGenerator().init(vu);
 				vu.setTemplate_path(ControllerUtil.getCurrentVmTemplatePath());
 				vu.initialize();
@@ -132,14 +134,21 @@ public class BulletinController extends BasicI18nController {
 			        vu.remove("content");
 			        vu.remove("title");
 			        
+			        VelocityUtil.addMessage("Enviando mails...",VelocityUtil.INFO);
+
 					Emailer emailer = new Emailer();
 					emailer.sendEmail(emails,
 							bulletinDetail.getTitle(),
 							writer.toString());
+					
+					VelocityUtil.addMessage("Mails enviados",VelocityUtil.INFO);
+
 			    }
 			}
+		} catch (AuthenticationFailedException e) {
+			VelocityUtil.addMessage("Error de autentificacion.",VelocityUtil.ERROR);
 		} catch (Exception e) {
-			addMessage(e.getMessage());
+			VelocityUtil.addMessage(e.getMessage(),VelocityUtil.ERROR);
 		}finally {
 			article_content = null;
 			list = null;
