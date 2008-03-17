@@ -57,7 +57,7 @@
 
 					<t:outputLabel for="Supplier_Lookup_id"
 						styleClass="aon-form-input-text-label"
-						value="#{purchaseBundle.aon_supplier}" />
+						value="#{supplierBundle.aon_supplier}" />
 					<t:div>
 						<t:inputText id="Supplier_Lookup_id" size="5" forceId="#{true}"
 							styleClass="aon-form-input-text"
@@ -72,7 +72,7 @@
 						<t:inputText id="Supplier_full_name" forceId="#{true}"
 							styleClass="aon-form-input-text-disabled"
 							size="40" disabled="true"
-							value="#{salesPurchase.income.supplier.name} #{salesPurchase.income.supplier.surname==null?' ':(salesPurchase.income.supplier.surname)}" />
+							value="#{salesPurchase.income.supplier.registry.name} #{salesPurchase.income.supplier.registry.surname==null?' ':(salesPurchase.income.supplier.registry.surname)}" />
 						<t:outputText id="Supplier_required" forceId="#{true}"
 							value="#{purchaseBundle.aon_income_supplier_required}"
 							style="display:none;color:#cc3333" />
