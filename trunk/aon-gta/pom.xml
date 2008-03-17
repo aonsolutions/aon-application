@@ -89,6 +89,12 @@
 		</dependency>
 		<dependency>
 			<groupId>com.code.aon</groupId>
+			<artifactId>aon.ui.supplier</artifactId>
+			<version>2.0.1</version>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.tas.commercial</artifactId>
 			<version>2.0.3</version>
 			<scope>compile</scope>
