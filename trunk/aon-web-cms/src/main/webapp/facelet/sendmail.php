@@ -51,8 +51,8 @@ function messageHTML($php_from, $php_namefrom, $php_to, $php_nameto, $php_subjec
 	$php_headers      .= 'Sender-IP: '.$php__SERVER["REMOTE_ADDR"].$php_eol;
 	$php_headers      .= 'MIME-Version: 1.0'.$php_eol;
 	$php_bndp          = md5(time()).rand(1000,9999);
-	$php_headers      .= "Content-Type: multipart/alternative; $php_eol       boundary=\"".$php_bndp."\"".$php_eol.$php_eol;
-	$php_headers      .= 'X-Mailser: CMS Mailer 1.0'.$php_eol;
+	$php_headers      .= "Content-Type: multipart/alternative; $php_eol       boundary=\"".$php_bndp."\"".$php_eol;
+	$php_headers      .= 'X-Mailser: CMS Mailer 1.0'.$php_eol.$php_eol;
 	
 	$php_msg           = "This is a multi-part message in MIME format.".$php_eol;
 	$php_msg          .= "--".$php_bndp.$php_eol;
@@ -196,7 +196,7 @@ else {
 	$php_log = authMail($php_from, "Visitante", $php_to, "Amurrio", $php_subject, $php_message);
 	$php_ok  = "Gracias por utilizar nuestro servicio. <br><br>";
 	$php_ok .= "El mensaje enviado es: <br>";
-	$php_ok .= $php_message;
+	$php_ok .= "<div style='padding:10px;width:300px;height:150px;overflow:auto;'>$php_message</div>";
 	echo $php_ok;
 }
 
