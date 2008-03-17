@@ -25,58 +25,58 @@
 
 				<h:outputLabel for="Supplier_id"
 					styleClass="aon-form-input-text-label"
-					value="#{purchaseBundle.supplier_code}" />
+					value="#{supplierBundle.supplier_code}" />
 				<h:inputText id="Supplier_id" value="#{supplierAlias.to.id}"
 					styleClass="aon-form-input-text" forceId="#{true}"
 					required="#{true}" size="15" disabled="#{true}" />
 
-				<t:outputLabel for="Supplier_document"
+				<t:outputLabel for="Supplier_registry_document"
 					styleClass="aon-form-input-text-label"
-					value="#{purchaseBundle.supplier_document}" />
-				<t:inputText id="Supplier_document" styleClass="aon-form-input-text"
-					forceId="#{true}" value="#{supplierAlias.to.document}" size="16"
+					value="#{supplierBundle.supplier_document}" />
+				<t:inputText id="Supplier_registry_document" styleClass="aon-form-input-text"
+					forceId="#{true}" value="#{supplierAlias.to.registry.document}" size="16"
 					onblur="toUpperCase(this);">
 					<f:validateLength minimum="1" maximum="16" />
 				</t:inputText>
 
-				<t:outputLabel for="Supplier_name"
+				<t:outputLabel for="Supplier_registry_name"
 					styleClass="aon-form-input-text-label"
-					value="#{purchaseBundle.supplier_name}" />
-				<t:inputText id="Supplier_name" value="#{supplierAlias.to.name}"
+					value="#{supplierBundle.supplier_name}" />
+				<t:inputText id="Supplier_registry_name" value="#{supplierAlias.to.registry.name}"
 					styleClass="aon-form-input-text" forceId="#{true}" size="64">
 					<f:validateLength minimum="1" maximum="64" />
 				</t:inputText>
 
-				<t:outputLabel for="Supplier_surname"
+				<t:outputLabel for="Supplier_registry_surname"
 					styleClass="aon-form-input-text-label"
-					value="#{purchaseBundle.supplier_surname}" />
-				<t:inputText id="Supplier_surname" styleClass="aon-form-input-text"
-					forceId="#{true}" value="#{supplierAlias.to.surname}" size="64">
+					value="#{supplierBundle.supplier_surname}" />
+				<t:inputText id="Supplier_registry_surname" styleClass="aon-form-input-text"
+					forceId="#{true}" value="#{supplierAlias.to.registry.surname}" size="64">
 					<f:validateLength minimum="1" maximum="64" />
 				</t:inputText>
 
-				<t:outputLabel for="Supplier_alias"
+				<t:outputLabel for="Supplier_registry_alias"
 					styleClass="aon-form-input-text-label"
-					value="#{purchaseBundle.supplier_alias}" />
-				<t:inputText id="Supplier_alias" value="#{supplierAlias.to.alias}"
+					value="#{supplierBundle.supplier_alias}" />
+				<t:inputText id="Supplier_registry_alias" value="#{supplierAlias.to.registry.alias}"
 					styleClass="aon-form-input-text" forceId="#{true}" size="32"
 					onblur="toUpperCase(this);">
 					<f:validateLength minimum="1" maximum="32" />
 				</t:inputText>
 
-				<h:outputLabel for="Purchase_supplierSegment_id"
+				<h:outputLabel for="SupplierSegment_id"
 					styleClass="aon-form-input-text-label"
-					value="#{purchaseBundle.aon_supplier_segment}" />
-				<h:selectOneMenu id="Purchase_supplierSegment_id"
+					value="#{supplierBundle.aon_supplier_segment}" />
+				<h:selectOneMenu id="SupplierSegment_id"
 					styleClass="aon-form-selectOneMenu-field"
 					value="#{supplierAlias.to.supplierSegment.id}">
 					<f:selectItem itemLabel="-" itemValue="" itemDisabled="true"/>
-					<f:selectItems value="#{purchaseCollections.supplierSegments}" />
+					<f:selectItems value="#{supplierCollections.supplierSegments}" />
 				</h:selectOneMenu>
 				
 				<h:outputLabel for="Supplier_scope_id"
 					styleClass="aon-form-input-text-label"
-					value="#{purchaseBundle.supplier_scope}" />
+					value="#{supplierBundle.supplier_scope}" />
 				<h:selectOneMenu id="Supplier_scope_id"
 					styleClass="aon-form-selectOneMenu-field"
 					value="#{supplierAlias.to.scope.id}">
@@ -85,11 +85,11 @@
 
 				<h:outputLabel for="Supplier_status"
 					styleClass="aon-form-input-text-label"
-					value="#{purchaseBundle.supplier_status}" />
+					value="#{supplierBundle.supplier_status}" />
 				<h:selectOneMenu id="Supplier_status"
 					styleClass="aon-form-selectOneMenu-field"
 					value="#{supplierAlias.to.status}">
-					<f:selectItems value="#{purchaseCollections.supplierStatuses}" />
+					<f:selectItems value="#{supplierCollections.supplierStatuses}" />
 				</h:selectOneMenu>
 			</h:panelGrid>
 
