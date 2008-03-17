@@ -48,6 +48,27 @@
 					valueChangeListener="#{supplierAlias.addExpression}"
 					styleClass="aon-form-input-text"  onblur="toUpperCase(this);"/>
 
+				<t:outputLabel for="Supplier_supplierSegment_id"
+					value="#{supplierBundle.aon_supplier_segment}"
+					styleClass="aon-form-input-text-label aon-form-table-column-odd-label" />
+				<h:selectOneMenu id="Supplier_supplierSegment_id"
+					styleClass="aon-form-selectOneMenu-field"
+					converter="IntegerEmptyConverter" forceId="#{true}"
+					valueChangeListener="#{supplierAlias.addExpression}">
+					<f:selectItem itemDisabled="true" itemLabel="-" itemValue="" />
+					<f:selectItems value="#{supplierCollections.supplierSegments}" />
+				</h:selectOneMenu>
+
+				<t:outputLabel for="Supplier_status"
+					value="#{registryBundle.aon_status}"
+					styleClass="aon-form-input-text-label aon-form-table-column-odd-label" />
+				<h:selectOneMenu id="Supplier_status"
+					styleClass="aon-form-selectOneMenu-field"
+					converter="aonSupplierStatusConverter" forceId="#{true}"
+					valueChangeListener="#{supplierAlias.addExpression}">
+					<f:selectItem itemDisabled="true" itemLabel="-" itemValue="" />
+					<f:selectItems value="#{supplierCollections.supplierStatuses}" />
+				</h:selectOneMenu>
 			</h:panelGrid>
 		</t:div>
 	</t:div>
