@@ -256,7 +256,7 @@
 					<textElement textAlignment="Right" verticalAlignment="Middle">
 						<font pdfFontName="Helvetica-Bold" size="10" isBold="true"/>
 					</textElement>
-				<textFieldExpression   class="java.lang.Double"><![CDATA[new Double($V{invoiceTotal}.doubleValue() + $V{taxTotal}.doubleValue())]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.Double"><![CDATA[new Double($V{invoiceTotal}.doubleValue() + ($V{taxTotal}!=null?$V{taxTotal}.doubleValue():0))]]></textFieldExpression>
 				</textField>
 				<subreport  isUsingCache="true">
 					<reportElement
@@ -269,7 +269,7 @@
 					<parametersMapExpression><![CDATA[$P{REPORT_PARAMETERS_MAP}]]></parametersMapExpression>
 					<dataSourceExpression><![CDATA[new com.code.aon.ui.report.jr.JRBeanCollectionDataSource($P{PriceStrategy}.getTaxBreakDowns($V{currentPreInvoice}, $V{currentPreInvoice}))]]></dataSourceExpression>
 					<returnValue subreportVariable="taxTotal" toVariable="taxTotal"/>
-					<returnValue subreportVariable="taxTotal" toVariable="taxTotalAmount" calculation="Sum"/>
+					<returnValue subreportVariable="taxTotal" toVariable="taxTotalAmount" calculation="Sum" incrementerFactoryClass="com.code.aon.ui.finance.util.print.InvoiceTaxIncrementorFactory"/>
 					<subreportExpression  class="net.sf.jasperreports.engine.JasperReport"><![CDATA[$P{nestedReports}.get("taxBreakDown")]]></subreportExpression>
 				</subreport>
 				<subreport  isUsingCache="true">
