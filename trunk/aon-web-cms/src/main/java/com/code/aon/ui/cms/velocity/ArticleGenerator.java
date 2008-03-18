@@ -68,7 +68,7 @@ public class ArticleGenerator extends Generator {
 				articleCategoryDetailCriteria.addEqualExpression(articleCategoryDetailBean.getFieldName(ICMSAlias.ARTICLE_CATEGORY_DETAIL_LANGUAGE_ID), ControllerUtil.getCurrentLanguage().getId());
 				articleCategoryDetailList = (List<ITransferObject>)articleCategoryDetailBean.getList(articleCategoryDetailCriteria);
 				if (articleCategoryDetailList.isEmpty()) {
-					VelocityUtil.addMessage(" Categoria " + articleCategory.getAlias() + " no internacionalizada.", VelocityUtil.WARN);
+					VelocityUtil.addMessage(" Categoria de articulos " + articleCategory.getAlias() + " no internacionalizada.", VelocityUtil.WARN);
 				}else{
 					articleCategoryDetail = (ArticleCategoryDetail)articleCategoryDetailList.get(0);
 					boolean emptyCategory = false;
