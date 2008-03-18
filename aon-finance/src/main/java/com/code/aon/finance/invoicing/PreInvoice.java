@@ -28,6 +28,7 @@ public class PreInvoice extends Invoice {
 		this.setStatus(invoice.getStatus());
 		this.setSurcharge(invoice.isSurcharge());
 		this.setTaxFree(invoice.isTaxFree());
+		this.setWithholding(invoice.isWithholding());
 		this.setType(invoice.getType());
 		this.details = new LinkedList<PreInvoiceDetail>();
 	}
