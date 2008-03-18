@@ -30,6 +30,8 @@ public class MenuGenerator extends Generator {
 			criteria.addEqualExpression(moBean.getFieldName(ICMSAlias.MENU_OPTION_ACTIVE), true);
 			criteria.addOrder(moBean.getFieldName(ICMSAlias.MENU_OPTION_POSITION));
 			List<ITransferObject> l = (List<ITransferObject>)moBean.getList(criteria);
+			if (l.isEmpty())
+				VelocityUtil.addMessage("El menu "+menu.getAlias()+" no tiene opciones", VelocityUtil.WARN);
 			for (int i = 0; i < l.size(); i++) {
 				MenuOption mo = (MenuOption)l.get(i);
 				IManagerBean modBean = BeanManager.getManagerBean(MenuOptionDetail.class);
@@ -37,15 +39,16 @@ public class MenuGenerator extends Generator {
 				criteria_detail.addEqualExpression(modBean.getFieldName(ICMSAlias.MENU_OPTION_DETAIL_MENU_OPTION_ID), mo.getId());
 				criteria_detail.addEqualExpression(modBean.getFieldName(ICMSAlias.MENU_OPTION_DETAIL_LANGUAGE_ID), ControllerUtil.getCurrentLanguage().getId());
 				List<ITransferObject> ld = (List<ITransferObject>)modBean.getList(criteria_detail);
-				if (ld.size() > 0) {
+				if (ld.isEmpty()) {
+					VelocityUtil.addMessage("La opcion de menu "+mo.getAlias()+" no esta internacionalizada", VelocityUtil.WARN);
+				}else{
 					MenuOptionDetail mod = (MenuOptionDetail)ld.get(0);
 					MenuOptionHandler moh = new MenuOptionHandler(mod);
-					//if (moh.getUrl() != null) list.add(moh);
 					list.add(moh);
 				}
 			}
 		} catch (ManagerBeanException e) {
-			e.printStackTrace();
+			VelocityUtil.addMessage(e.getMessage(), VelocityUtil.ERROR);
 		}
 		
 		return list;
@@ -57,12 +60,14 @@ public class MenuGenerator extends Generator {
 			Criteria criteria = new Criteria();
 			criteria.addEqualExpression(menuBean.getFieldName(ICMSAlias.MENU_ID), menu);
 			List<ITransferObject> l = (List<ITransferObject>)menuBean.getList(criteria);
-			if (l.size() > 0) {
+			if (l.isEmpty()) {
+				VelocityUtil.addMessage("EL MENU "+menu+" REFERENCIADO NO EXISTE !!!", VelocityUtil.WARN);
+			}else{
 				Menu m = (Menu)l.get(0);
 				return getMenuOptionList(m);
 			}
 		} catch (ManagerBeanException e) {
-			e.printStackTrace();
+			VelocityUtil.addMessage(e.getMessage(), VelocityUtil.ERROR);
 		}
 		return null; 
 	}
@@ -86,7 +91,7 @@ public class MenuGenerator extends Generator {
 				}
 			}
 		} catch (ManagerBeanException e) {
-			e.printStackTrace();
+			VelocityUtil.addMessage(e.getMessage(), VelocityUtil.ERROR);
 		}
 		vu.finalize();
 		vu = null;
@@ -98,16 +103,15 @@ public class MenuGenerator extends Generator {
 			Criteria criteria = new Criteria();
 			criteria.addEqualExpression(bean.getFieldName(ICMSAlias.MENU_ID), ident);
 			List<ITransferObject> l = (List<ITransferObject>)bean.getList(criteria);
-			if  (l.size()>0) {
+			if (l.isEmpty()) {
+				VelocityUtil.addMessage("EL MENU "+ident+" REFERENCIADO NO EXISTE !!!", VelocityUtil.WARN);
+			}else{
 				Menu menu = (Menu)l.get(0);
 				MenuHandler mh = new MenuHandler(menu);
 				return mh;
-			}else{
-				VelocityUtil.addMessage("MENU "+ident+" REFERENCIADO NO EXISTE !!!", VelocityUtil.WARN);
-				return null;
 			}
 		} catch (ManagerBeanException e) {
-			e.printStackTrace();
+			VelocityUtil.addMessage(e.getMessage(), VelocityUtil.ERROR);
 		}
 		return null;
 	}

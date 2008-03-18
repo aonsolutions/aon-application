@@ -80,7 +80,7 @@ public class VelocityUtil extends VelocityEngine implements Constants {
 			status.addErrorMessage(" ******* ERROR: " + msg + "***********");
 		}else if (type == WARN){
 			//AonUtil.addWarningMessage(" WARNING: " + msg);
-			status.addMessage(" ******* WARNINIG: " + msg + "***********");
+			status.addMessage(" ******* WARNING: " + msg + "***********");
 		}else{
 			//AonUtil.addFatalMessage(msg);
 			status.addMessage(msg);
