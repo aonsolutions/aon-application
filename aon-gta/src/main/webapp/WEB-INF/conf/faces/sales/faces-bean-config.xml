@@ -38,7 +38,6 @@
 			<list-entries>
 				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
 				<value>#{customerControllerListener}</value>
-				<value>#{customerTargetListener}</value>
 				<value>#{customerAddressListener}</value>
 				<value>#{customerMediaListener}</value>
 				<value>#{customerRBankChildListener}</value>
@@ -672,12 +671,6 @@
 	<managed-bean>
 		<managed-bean-name>customerControllerListener</managed-bean-name>
 		<managed-bean-class>com.code.aon.ui.customer.event.CustomerControllerListener</managed-bean-class>
-		<managed-bean-scope>none</managed-bean-scope>
-	</managed-bean>
-	
-	<managed-bean>
-		<managed-bean-name>customerTargetListener</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.tasDelivery.event.CustomerTargetListener</managed-bean-class>
 		<managed-bean-scope>none</managed-bean-scope>
 	</managed-bean>
 	
