@@ -264,6 +264,22 @@
 		</managed-property>
 	</managed-bean>
 
+	<managed-bean>
+		<managed-bean-name>targetSearch</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.commercial.controller.TargetLookupController
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.commercial.Target</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pagePath</property-name>
+			<value>/facelet/sw/targetSearch.faces</value>
+		</managed-property>
+	</managed-bean>
+
 	<!-- ************* LISTENERS ************** -->
 	<managed-bean>
 		<managed-bean-name>offerControllerListener</managed-bean-name>
