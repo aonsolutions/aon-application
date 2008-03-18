@@ -48,6 +48,8 @@ import com.code.aon.ql.util.ExpressionException;
 import com.code.aon.registry.Registry;
 import com.code.aon.registry.RegistryAddress;
 import com.code.aon.registry.dao.IRegistryAlias;
+import com.code.aon.tas.SupportOrderInsurance;
+import com.code.aon.tas.dao.ITASAlias;
 import com.code.aon.tasDelivery.TasDelivery;
 import com.code.aon.tasDelivery.dao.ITasDeliveryAlias;
 import com.code.aon.ui.form.BasicController;
@@ -725,6 +727,22 @@ public class SalesInvoicingController extends BasicController {
 		return null;
 	}
 
+	@SuppressWarnings("unchecked")
+	public SupportOrderInsurance obtainSupportOrderInsurance() throws ManagerBeanException{
+		TasDelivery tasDelivery = obtainTasDelivery();
+		if(tasDelivery != null && tasDelivery.getSupportOrder() != null){
+			IManagerBean supportOrderInsuranceBean = BeanManager.getManagerBean(SupportOrderInsurance.class);
+			Criteria criteria = new Criteria();
+			criteria.addEqualExpression(supportOrderInsuranceBean.getFieldName(ITASAlias.SUPPORT_ORDER_INSURANCE_SUPPORT_ORDER_ID), tasDelivery.getSupportOrder().getId());
+			Iterator iter = supportOrderInsuranceBean.getList(criteria,0,1).iterator();
+			if(iter.hasNext()){
+				return (SupportOrderInsurance)iter.next();
+			}
+		}
+		return null;
+	}
+	
+	
 	/**
 	 * Returns addresses list.
 	 * 
