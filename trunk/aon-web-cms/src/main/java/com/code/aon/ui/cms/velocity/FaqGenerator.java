@@ -5,8 +5,11 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
+import com.code.aon.cms.Faq;
+import com.code.aon.cms.FaqCategory;
 import com.code.aon.cms.FaqCategoryDetail;
 import com.code.aon.cms.FaqConfig;
+import com.code.aon.cms.FaqDetail;
 import com.code.aon.cms.Section;
 import com.code.aon.cms.dao.ICMSAlias;
 import com.code.aon.cms.enumeration.Templates;
@@ -19,9 +22,48 @@ import com.code.aon.ui.cms.controller.GeneratorConfigController;
 import com.code.aon.ui.cms.util.ControllerUtil;
 import com.code.aon.ui.cms.util.VelocityUtil;
 import com.code.aon.ui.cms.velocity.attribute.FaqCategoryHandler;
+import com.code.aon.ui.cms.velocity.attribute.FaqHandler;
 
 public class FaqGenerator extends Generator {
 
+	private static ArrayList<FaqHandler> getFaqList(FaqCategory fc) {
+		ArrayList<FaqHandler> list = new ArrayList<FaqHandler>();
+		List<ITransferObject> ld;
+		try {
+			IManagerBean bean = BeanManager.getManagerBean(Faq.class);
+			IManagerBean detailBean = BeanManager.getManagerBean(FaqDetail.class);
+			Criteria criteria = new Criteria();
+			criteria.addEqualExpression(bean.getFieldName(ICMSAlias.FAQ_FAQ_CATEGORY_ID), fc.getId());
+			criteria.addEqualExpression(bean.getFieldName(ICMSAlias.FAQ_ACTIVE), true);
+			criteria.addOrder(bean.getFieldName(ICMSAlias.FAQ_POSITION));
+			List<ITransferObject> l = (List<ITransferObject>)bean.getList(criteria);
+			if (l.isEmpty())
+				VelocityUtil.addMessage("La categoria de FAQ " + fc.getAlias() + " no tiene FAQs.", VelocityUtil.WARN);
+			Criteria detailCriteria;
+			Faq f;
+			FaqDetail fd;
+			for (int i = 0; i < l.size(); i++) {
+				f = (Faq)l.get(i);
+				detailCriteria = new Criteria();
+				detailCriteria.addEqualExpression(detailBean.getFieldName(ICMSAlias.FAQ_DETAIL_FAQ_ID), f.getId());
+				detailCriteria.addEqualExpression(detailBean.getFieldName(ICMSAlias.FAQ_DETAIL_LANGUAGE_ID), ControllerUtil.getCurrentLanguage().getId());
+				ld = (List<ITransferObject>)detailBean.getList(detailCriteria);
+				if (ld.isEmpty()) {
+					VelocityUtil.addMessage("La FAQ " + f.getAlias() + " no esta internacionalizada.", VelocityUtil.WARN);
+				}else{
+					fd = (FaqDetail)ld.get(0);
+					FaqHandler fh = new FaqHandler(fd);
+					list.add(fh);
+				}
+			}
+		} catch (ManagerBeanException e) {
+			VelocityUtil.addMessage(e.getMessage(), VelocityUtil.ERROR);
+		} finally {
+			ld = null;
+		}
+		return list;
+	}
+	
 	public static void generate() {
 		VelocityUtil vu = new VelocityUtil();
 		CommonGenerator.getCommonGenerator().init(vu);
@@ -29,44 +71,59 @@ public class FaqGenerator extends Generator {
 		vu.initialize();
 		
 		ArrayList<FaqCategoryHandler> fchList;
+		List<ITransferObject> faqCategoryList;
 		List<ITransferObject> faqCategoryDetailList;
 		HashMap categoryMap = new HashMap<Section, List>();
 		try {
 			fchList = new ArrayList<FaqCategoryHandler>(); 
 			
-			IManagerBean bean = BeanManager.getManagerBean(FaqCategoryDetail.class);
+			IManagerBean bean = BeanManager.getManagerBean(FaqCategory.class);
 			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(bean.getFieldName(ICMSAlias.FAQ_CATEGORY_DETAIL_LANGUAGE_ID), ControllerUtil.getCurrentLanguage().getId());
-			faqCategoryDetailList = (List<ITransferObject>)bean.getList(criteria);
+			criteria.addEqualExpression(bean.getFieldName(ICMSAlias.FAQ_CATEGORY_ACTIVE), true);
+			criteria.addOrder(bean.getFieldName(ICMSAlias.FAQ_CATEGORY_POSITION));
+			faqCategoryList = (List<ITransferObject>)bean.getList(criteria);
+
+			FaqCategory fc;
 			FaqCategoryDetail fcd;
 			List l;
 			Section currentSection;
 			Section configSection = GeneratorConfigController.currentSection(FaqConfig.class);;
-			for (int i=0; i < faqCategoryDetailList.size(); i++) {
-				fcd = (FaqCategoryDetail)faqCategoryDetailList.get(i);
-				if (fcd.getFaqCategory().isActive()) {
-					FaqCategoryHandler fch = new FaqCategoryHandler(fcd);
-					fchList.add(fch);
-					vu.put("faq_category", fch);
-					VelocityUtil.addMessage(" Generando categoria Faq '" + fcd.getFaqCategory().getAlias() + "'.", VelocityUtil.INFO);
-					
-					if (fcd.getFaqCategory().getSection()!=null){
-						currentSection = fcd.getFaqCategory().getSection();
-					}else{
-						if (configSection!=null)
-							currentSection = configSection;
-						else
-							currentSection = GeneratorConfigController.defaultSection();
+			for (int i=0; i < faqCategoryList.size(); i++) {
+				fc = (FaqCategory)faqCategoryList.get(i);
+				
+				bean = BeanManager.getManagerBean(FaqCategoryDetail.class);
+				criteria = new Criteria();
+				criteria.addEqualExpression(bean.getFieldName(ICMSAlias.FAQ_CATEGORY_DETAIL_FAQ_CATEGORY_ID), fc.getId());
+				criteria.addEqualExpression(bean.getFieldName(ICMSAlias.FAQ_CATEGORY_DETAIL_LANGUAGE_ID), ControllerUtil.getCurrentLanguage().getId());
+				faqCategoryDetailList = (List<ITransferObject>)bean.getList(criteria);
+				if(faqCategoryDetailList.isEmpty()){
+					VelocityUtil.addMessage("La categoria de FAQ " + fc.getAlias() + " no esta internacionalizada.", VelocityUtil.WARN);
+				}else{
+					fcd = (FaqCategoryDetail)faqCategoryDetailList.get(0);
+					if (fc.isActive()) {
+						FaqCategoryHandler fch = new FaqCategoryHandler(fcd,getFaqList(fc));
+						fchList.add(fch);
+						vu.put("faq_category", fch);
+						VelocityUtil.addMessage(" Generando categoria Faq '" + fcd.getFaqCategory().getAlias() + "'.", VelocityUtil.INFO);
+						
+						if (fcd.getFaqCategory().getSection()!=null){
+							currentSection = fcd.getFaqCategory().getSection();
+						}else{
+							if (configSection!=null)
+								currentSection = configSection;
+							else
+								currentSection = GeneratorConfigController.defaultSection();
+						}
+						CommonGenerator.getCommonGenerator().chargeContext(vu, currentSection);
+						generate(vu, Templates.FAQ, fcd.getFaqCategory().getAlias());
+						vu.remove("faq_category");
+						
+						l = (List) categoryMap.get(currentSection);
+						if (l == null)
+							l = new ArrayList<FaqCategoryHandler>();
+						l.add(fch);
+						categoryMap.put(currentSection,l);
 					}
-					CommonGenerator.getCommonGenerator().chargeContext(vu, currentSection);
-					generate(vu, Templates.FAQ, fcd.getFaqCategory().getAlias());
-					vu.remove("faq_category");
-					
-					l = (List) categoryMap.get(currentSection);
-					if (l == null)
-						l = new ArrayList<FaqCategoryHandler>();
-					l.add(fch);
-					categoryMap.put(currentSection,l);
 				}
 			}
 			Iterator<Section> iter = categoryMap.keySet().iterator();
@@ -89,9 +146,10 @@ public class FaqGenerator extends Generator {
 			generate(vu, Templates.FAQ, FAQ_CATEGORY_LIST_PAGE);
 			vu.remove("faq_categories");
 		} catch (ManagerBeanException e) {
-			e.printStackTrace();
+			VelocityUtil.addMessage(e.getMessage(), VelocityUtil.ERROR);
 		} finally {
 			fchList = null;
+			faqCategoryList = null;
 			faqCategoryDetailList = null;
 			categoryMap = null;
 		}

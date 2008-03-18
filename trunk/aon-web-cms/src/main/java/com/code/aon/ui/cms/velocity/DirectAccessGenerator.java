@@ -44,9 +44,11 @@ public class DirectAccessGenerator extends Generator {
 				detailCriteria.addEqualExpression(detailBean.getFieldName(ICMSAlias.DIRECT_ACCESS_GROUP_DETAIL_DIRECT_ACCESS_GROUP_ID), group.getId());
 				detailCriteria.addEqualExpression(detailBean.getFieldName(ICMSAlias.DIRECT_ACCESS_GROUP_DETAIL_LANGUAGE_ID), ControllerUtil.getCurrentLanguage().getId());
 				directAccessGroupDetailList = (List<ITransferObject>)detailBean.getList(detailCriteria);
-				if (directAccessGroupDetailList.size() > 0) {
+				if (directAccessGroupDetailList.isEmpty()){
+					VelocityUtil.addMessage("La categoria de accesos directos " + group.getAlias() + " no esta internacionalizada.", VelocityUtil.WARN);
+				}else{
 					detail = (DirectAccessGroupDetail)directAccessGroupDetailList.get(0);
-					dagh = new DirectAccessGroupHandler(detail);
+					dagh = new DirectAccessGroupHandler(detail,getDirectAccessList(group));
 					vu.put("direct_access_group", dagh);
 					VelocityUtil.addMessage(" Generando accesos directos " + group.getAlias() + ".", VelocityUtil.INFO);
 					CommonGenerator.getCommonGenerator().chargeContext(vu, group.getSection());
@@ -55,7 +57,7 @@ public class DirectAccessGenerator extends Generator {
 				}
 			}
 		} catch (ManagerBeanException e) {
-			e.printStackTrace();
+			VelocityUtil.addMessage(e.getMessage(), VelocityUtil.ERROR);;
 		} finally {
 			directAccessGroupList = null;
 			directAccessGroupDetailList = null;
@@ -63,6 +65,47 @@ public class DirectAccessGenerator extends Generator {
 		}
 		vu.finalize();
 		vu = null;
+	}
+	
+	private static ArrayList<DirectAccessHandler> getDirectAccessList(DirectAccessGroup group) {
+		ArrayList<DirectAccessHandler> list = new ArrayList<DirectAccessHandler>();
+		List<ITransferObject> directAccessList;
+		List<ITransferObject> directAccessDetailList;
+		try {
+			IManagerBean bean = BeanManager.getManagerBean(DirectAccess.class);
+			IManagerBean detailBean = BeanManager.getManagerBean(DirectAccessDetail.class);
+			Criteria criteria = new Criteria();
+			criteria.addEqualExpression(bean.getFieldName(ICMSAlias.DIRECT_ACCESS_DIRECT_ACCESS_GROUP_ID), group.getId());
+			criteria.addEqualExpression(bean.getFieldName(ICMSAlias.DIRECT_ACCESS_ACTIVE), true);
+			criteria.addOrder(bean.getFieldName(ICMSAlias.DIRECT_ACCESS_POSITION));
+			directAccessList = (List<ITransferObject>)bean.getList(criteria);
+			if (directAccessList.isEmpty())
+				VelocityUtil.addMessage("La categoria de accesos directos " + group.getAlias() + " no tiene accesos directos.", VelocityUtil.WARN);
+			DirectAccess da;
+			DirectAccessDetail detail;
+			Criteria criteria_detail;
+			for (int i = 0; i < directAccessList.size(); i++) {
+				da = (DirectAccess)directAccessList.get(i);
+				criteria_detail = new Criteria();
+				criteria_detail.addEqualExpression(detailBean.getFieldName(ICMSAlias.DIRECT_ACCESS_DETAIL_DIRECT_ACCESS_ID), da.getId());
+				criteria_detail.addEqualExpression(detailBean.getFieldName(ICMSAlias.DIRECT_ACCESS_DETAIL_LANGUAGE_ID), ControllerUtil.getCurrentLanguage().getId());
+				directAccessDetailList = (List<ITransferObject>)detailBean.getList(criteria_detail);
+				if (directAccessDetailList.isEmpty()) {
+					VelocityUtil.addMessage("El acceso directo " + da.getAlias() + " no esta internacionalizado.", VelocityUtil.WARN);
+				}else{
+					detail = (DirectAccessDetail)directAccessDetailList.get(0);
+					DirectAccessHandler handler = new DirectAccessHandler(detail);
+					if (handler.getUrl() != null) list.add(handler);
+				}
+			}
+		} catch (ManagerBeanException e) {
+			VelocityUtil.addMessage(e.getMessage(), VelocityUtil.ERROR);;
+		} finally {
+			directAccessList = null;
+			directAccessDetailList = null;
+		}
+		
+		return list;
 	}
 	
 	public static Object getDirectAccessHandler(Integer ident) {
@@ -82,12 +125,16 @@ public class DirectAccessGenerator extends Generator {
 				criteria.addEqualExpression(beanDetail.getFieldName(ICMSAlias.DIRECT_ACCESS_DETAIL_LANGUAGE_ID), ControllerUtil.getCurrentLanguage().getId());
 				criteria.addEqualExpression(beanDetail.getFieldName(ICMSAlias.DIRECT_ACCESS_DETAIL_DIRECT_ACCESS_ID), ident);
 				List<ITransferObject> ld = (List<ITransferObject>)beanDetail.getList(criteria);
-				DirectAccessDetail ad = (DirectAccessDetail)ld.get(0);
-				DirectAccessHandler ah = new DirectAccessHandler(ad);
-				return ah;
+				if (ld.isEmpty()){
+					VelocityUtil.addMessage("El acceso directo " + a.getAlias() + " no esta internacionalizado.", VelocityUtil.WARN);
+				}else{
+					DirectAccessDetail ad = (DirectAccessDetail)ld.get(0);
+					DirectAccessHandler ah = new DirectAccessHandler(ad);
+					return ah;
+				}
 			}
 		} catch (ManagerBeanException e) {
-			e.printStackTrace();
+			VelocityUtil.addMessage(e.getMessage(), VelocityUtil.ERROR);;
 		}
 		return null;
 	}
@@ -109,12 +156,16 @@ public class DirectAccessGenerator extends Generator {
 				criteria.addEqualExpression(beanDetail.getFieldName(ICMSAlias.DIRECT_ACCESS_GROUP_DETAIL_LANGUAGE_ID), ControllerUtil.getCurrentLanguage().getId());
 				criteria.addEqualExpression(beanDetail.getFieldName(ICMSAlias.DIRECT_ACCESS_GROUP_DETAIL_DIRECT_ACCESS_GROUP_ID), ident);
 				List<ITransferObject> ld = (List<ITransferObject>)beanDetail.getList(criteria);
-				DirectAccessGroupDetail ad = (DirectAccessGroupDetail)ld.get(0);
-				DirectAccessGroupHandler ah = new DirectAccessGroupHandler(ad);
-				return ah;
+				if (ld.isEmpty()){
+					VelocityUtil.addMessage("El grupo de accesos directos " + a.getAlias() + " no esta internacionalizado.", VelocityUtil.WARN);
+				}else{
+					DirectAccessGroupDetail ad = (DirectAccessGroupDetail)ld.get(0);
+					DirectAccessGroupHandler ah = new DirectAccessGroupHandler(ad,getDirectAccessList(a));
+					return ah;
+				}
 			}
 		} catch (ManagerBeanException e) {
-			e.printStackTrace();
+			VelocityUtil.addMessage(e.getMessage(), VelocityUtil.ERROR);;
 		}
 		return null;
 	}

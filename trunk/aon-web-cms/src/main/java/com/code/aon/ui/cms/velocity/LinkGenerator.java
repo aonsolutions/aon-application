@@ -89,7 +89,7 @@ public class LinkGenerator extends Generator {
 			generate(vu, Templates.LINK, LINK_CATEGORY_LIST_PAGE);
 			vu.remove("link_categories");
 		} catch (ManagerBeanException e) {
-			e.printStackTrace();
+			VelocityUtil.addMessage(e.getMessage(), VelocityUtil.ERROR);
 		} finally {
 			linkCategoryDetailList = null;
 			lchList = null;
@@ -121,7 +121,7 @@ public class LinkGenerator extends Generator {
 				return lch;
 			}
 		} catch (ManagerBeanException e) {
-			e.printStackTrace();
+			VelocityUtil.addMessage(e.getMessage(), VelocityUtil.ERROR);
 		}
 		return null;
 	}

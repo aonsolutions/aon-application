@@ -20,29 +20,36 @@ import com.code.aon.ui.cms.velocity.attribute.CompanyHandler;
 public class ActivityGenerator extends Generator {
 
 	public static Object getActivityHandler(Integer ident) {
+		List<ITransferObject> l;
 		List<ITransferObject> ld;
 		List<ITransferObject> l_company;
 		try {
 			IManagerBean bean = BeanManager.getManagerBean(Activity.class);
 			Criteria criteria = new Criteria();
 			criteria.addEqualExpression(bean.getFieldName(ICMSAlias.ACTIVITY_ID), ident);
-			if (bean.getList(criteria).isEmpty()){
+			l = bean.getList(criteria);
+			if (l.isEmpty()){
 				VelocityUtil.addMessage("ACTIVIDAD "+ident+" REFERENCIADA NO EXISTE !!!", VelocityUtil.WARN);
 				return null;
 			}
+			Activity a = (Activity) l.get(0);
 			
 			IManagerBean beanDetail = BeanManager.getManagerBean(ActivityDetail.class);
 			criteria = new Criteria();
 			criteria.addEqualExpression(beanDetail.getFieldName(ICMSAlias.ACTIVITY_DETAIL_LANGUAGE_ID), ControllerUtil.getCurrentLanguage().getId());
 			criteria.addEqualExpression(beanDetail.getFieldName(ICMSAlias.ACTIVITY_DETAIL_ACTIVITY_ID), ident);
 			ld = (List<ITransferObject>)beanDetail.getList(criteria);
-			if (!ld.isEmpty()){
+			if (ld.isEmpty()){
+				VelocityUtil.addMessage("La actividad "+a.getAlias()+" no esta internacionalizada", VelocityUtil.WARN);
+			}else{
 				ActivityDetail lcd = (ActivityDetail)ld.get(0);
 				List<CompanyHandler> lstCompanies = new ArrayList<CompanyHandler>();
 				IManagerBean beanCompanyActivity = BeanManager.getManagerBean(CompanyActivity.class);
 				criteria = new Criteria();
 				criteria.addEqualExpression(beanCompanyActivity.getFieldName(ICMSAlias.COMPANY_ACTIVITY_ACTIVITY_ID), ident);
 				l_company = (List<ITransferObject>)beanCompanyActivity.getList(criteria);
+				if (l_company.isEmpty())
+					VelocityUtil.addMessage("La actividad "+a.getAlias()+" no tiene empresas.", VelocityUtil.WARN);
 				for (ITransferObject company : l_company){
 					lstCompanies.add(new CompanyHandler(((CompanyActivity)company).getCompany()));
 				}
@@ -50,8 +57,11 @@ public class ActivityGenerator extends Generator {
 				return lch;
 			}
 		} catch (ManagerBeanException e) {
-			e.printStackTrace();
+			VelocityUtil.addMessage(e.getMessage(), VelocityUtil.ERROR);;
 		}
+		l = null;
+		ld = null;
+		l_company = null;
 		return null;
 	}
 

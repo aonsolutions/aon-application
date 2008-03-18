@@ -4,7 +4,6 @@ import java.util.ArrayList;
 
 import com.code.aon.cms.DownloadCategoryDetail;
 import com.code.aon.cms.enumeration.Templates;
-import com.code.aon.ui.cms.velocity.DownloadsGenerator;
 
 public class DownloadCategoryHandler {
 
@@ -16,13 +15,13 @@ public class DownloadCategoryHandler {
 	
 	private ArrayList<DownloadHandler> list;
 	
-	public DownloadCategoryHandler (DownloadCategoryDetail group) {
-		alias = group.getDownloadCategory().getAlias();
-		label = group.getLabel();
+	public DownloadCategoryHandler (DownloadCategoryDetail group, ArrayList<DownloadHandler> list) {
+		this.alias = group.getDownloadCategory().getAlias();
+		this.label = group.getLabel();
 		String link = Templates.DOWNLOADS.getHtmlName();
 		link = link.replaceAll("%NAME%", group.getDownloadCategory().getAlias());
-		url = link;
-		list = DownloadsGenerator.getDownloadsList(group);
+		this.url = link;
+		this.list = list;
 	}
 
 	public String getAlias() {
