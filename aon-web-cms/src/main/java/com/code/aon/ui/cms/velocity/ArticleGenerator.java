@@ -68,7 +68,7 @@ public class ArticleGenerator extends Generator {
 				articleCategoryDetailCriteria.addEqualExpression(articleCategoryDetailBean.getFieldName(ICMSAlias.ARTICLE_CATEGORY_DETAIL_LANGUAGE_ID), ControllerUtil.getCurrentLanguage().getId());
 				articleCategoryDetailList = (List<ITransferObject>)articleCategoryDetailBean.getList(articleCategoryDetailCriteria);
 				if (articleCategoryDetailList.isEmpty()) {
-					VelocityUtil.addMessage(" Categoria " + articleCategory.getAlias() + " no internacionalizada.", VelocityUtil.ERROR);
+					VelocityUtil.addMessage(" Categoria " + articleCategory.getAlias() + " no internacionalizada.", VelocityUtil.WARN);
 				}else{
 					articleCategoryDetail = (ArticleCategoryDetail)articleCategoryDetailList.get(0);
 					for (int art_type = 0; art_type < values.length; art_type++){
@@ -101,7 +101,7 @@ public class ArticleGenerator extends Generator {
 								articleDetailCriteria.addEqualExpression(articleDetailBean.getFieldName(ICMSAlias.ARTICLE_DETAIL_LANGUAGE_ID), ControllerUtil.getCurrentLanguage().getId());
 								articleDetailList = (List<ITransferObject>)articleDetailBean.getList(articleDetailCriteria);
 								if (articleDetailList.isEmpty()) {
-									VelocityUtil.addMessage(" Articulo " + article.getAlias() + " de la categoria " + articleCategory.getAlias() + " no internacionalizado.", VelocityUtil.ERROR);
+									VelocityUtil.addMessage(" Articulo " + article.getAlias() + " de la categoria " + articleCategory.getAlias() + " no internacionalizado.", VelocityUtil.WARN);
 								}else{
 									articleDetail = (ArticleDetail)articleDetailList.get(0);
 									ArticleHandler ahandler = new ArticleHandler(articleDetail);
@@ -134,7 +134,7 @@ public class ArticleGenerator extends Generator {
 				vu = null;		
 			}
 		} catch (ManagerBeanException e) {
-			e.printStackTrace();
+			VelocityUtil.addMessage(e.getMessage(), VelocityUtil.ERROR);;
 		} finally {
 			articleCategoryList = null;
 			articleCategoryDetailList = null;
@@ -177,7 +177,7 @@ public class ArticleGenerator extends Generator {
 				criteria.addEqualExpression(beanDetail.getFieldName(ICMSAlias.ARTICLE_DETAIL_ARTICLE_ID), ident);
 				List<ITransferObject> ld = (List<ITransferObject>)beanDetail.getList(criteria);
 				if (ld.isEmpty()){
-					VelocityUtil.addMessage(" Articulo " + a.getAlias() + " no internacionalizada.", VelocityUtil.ERROR);
+					VelocityUtil.addMessage(" Articulo " + a.getAlias() + " no internacionalizada.", VelocityUtil.WARN);
 				}else{
 					ArticleDetail ad = (ArticleDetail)ld.get(0);
 					ArticleHandler ah = new ArticleHandler(ad);
@@ -185,7 +185,7 @@ public class ArticleGenerator extends Generator {
 				}
 			}
 		} catch (ManagerBeanException e) {
-			e.printStackTrace();
+			VelocityUtil.addMessage(e.getMessage(), VelocityUtil.ERROR);;
 		}
 		return null;
 	}
@@ -214,7 +214,7 @@ public class ArticleGenerator extends Generator {
 			criteria.addEqualExpression(bean.getFieldName(ICMSAlias.ARTICLE_CATEGORY_DETAIL_ARTICLE_CATEGORY_ID), ident);
 			lcd = (List<ITransferObject>)bean.getList(criteria);
 			if (lcd.isEmpty()){
-				VelocityUtil.addMessage(" Categoria de Articulo " + ac.getAlias() + " no internacionalizada.", VelocityUtil.ERROR);
+				VelocityUtil.addMessage(" Categoria de Articulo " + ac.getAlias() + " no internacionalizada.", VelocityUtil.WARN);
 				return null;
 			}
 			ArticleCategoryDetail acd = (ArticleCategoryDetail) lcd.get(0);
@@ -237,7 +237,7 @@ public class ArticleGenerator extends Generator {
 				criteria.addEqualExpression(bean.getFieldName(ICMSAlias.ARTICLE_DETAIL_ARTICLE_ID), a.getId());
 				ld = (List<ITransferObject>)bean.getList(criteria);
 				if (ld.isEmpty()){
-					VelocityUtil.addMessage(" Articulo " + a.getAlias() + " de categoria " + ac.getAlias() + " no internacionalizada.", VelocityUtil.ERROR);
+					VelocityUtil.addMessage(" Articulo " + a.getAlias() + " de categoria " + ac.getAlias() + " no internacionalizada.", VelocityUtil.WARN);
 				}else{
 					ArticleDetail ad = (ArticleDetail)ld.get(0);
 					ArticleHandler ah = new ArticleHandler(ad);
@@ -247,7 +247,7 @@ public class ArticleGenerator extends Generator {
 			ArticleCategoryHandler ach = new ArticleCategoryHandler(acd,ahlist);
 			return ach;
 		} catch (ManagerBeanException e) {
-			e.printStackTrace();
+			VelocityUtil.addMessage(e.getMessage(), VelocityUtil.ERROR);;
 		} finally {
 			l = null;
 			ld = null;

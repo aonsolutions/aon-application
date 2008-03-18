@@ -23,16 +23,29 @@ public class GenericGenerator extends Generator {
 		vu.setTemplate_path(ControllerUtil.getCurrentVmTemplatePath());
 		vu.initialize();
 		
+		List<ITransferObject> genericPageList;
 		List<ITransferObject> genericPageDetailList;
 		try {
-			IManagerBean bean = BeanManager.getManagerBean(GenericPageDetail.class);
+			IManagerBean bean = BeanManager.getManagerBean(GenericPage.class);
 			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(bean.getFieldName(ICMSAlias.GENERIC_PAGE_DETAIL_LANGUAGE_ID), ControllerUtil.getCurrentLanguage().getId());
-			genericPageDetailList = (List<ITransferObject>)bean.getList(criteria);
+			criteria.addEqualExpression(bean.getFieldName(ICMSAlias.GENERIC_PAGE_ACTIVE), true);
+			genericPageList = (List<ITransferObject>)bean.getList(criteria);
+			
+			GenericPage gp;
 			GenericPageDetail gpd;
-			for (int i=0; i < genericPageDetailList.size(); i++) {
-				gpd = (GenericPageDetail)genericPageDetailList.get(i);
-				if (gpd.getGeneric_page().isActive()) {
+			for (int i=0; i < genericPageList.size(); i++) {
+				gp = (GenericPage)genericPageList.get(i);
+
+				bean = BeanManager.getManagerBean(GenericPageDetail.class);
+				criteria = new Criteria();
+				criteria.addEqualExpression(bean.getFieldName(ICMSAlias.GENERIC_PAGE_DETAIL_GENERIC_PAGE_ID), gp.getId());
+				criteria.addEqualExpression(bean.getFieldName(ICMSAlias.GENERIC_PAGE_DETAIL_LANGUAGE_ID), ControllerUtil.getCurrentLanguage().getId());
+				genericPageDetailList = (List<ITransferObject>)bean.getList(criteria);
+				if (genericPageDetailList.isEmpty()){
+					VelocityUtil.addMessage("La pagina generica " + gp.getAlias() + " no esta internacionalizada.", VelocityUtil.WARN);
+				}else{
+					gpd = (GenericPageDetail)genericPageDetailList.get(0);
+
 					GenericPageHandler gph = new GenericPageHandler(gpd);
 					vu.put("generic", gph);
 					if (gph.getMenu() != null) vu.put("menu", gph.getMenu());
@@ -50,8 +63,9 @@ public class GenericGenerator extends Generator {
 				}
 			}
 		} catch (ManagerBeanException e) {
-			e.printStackTrace();
+			VelocityUtil.addMessage(e.getMessage(), VelocityUtil.ERROR);
 		} finally {
+			genericPageList = null;
 			genericPageDetailList = null;
 		}
 		vu.finalize();
@@ -77,12 +91,16 @@ public class GenericGenerator extends Generator {
 				criteria.addEqualExpression(beanDetail.getFieldName(ICMSAlias.GENERIC_PAGE_DETAIL_LANGUAGE_ID), ControllerUtil.getCurrentLanguage().getId());
 				criteria.addEqualExpression(beanDetail.getFieldName(ICMSAlias.GENERIC_PAGE_DETAIL_GENERIC_PAGE_ID), ident);
 				genericPageDetailList = (List<ITransferObject>)beanDetail.getList(criteria);
-				GenericPageDetail gpd = (GenericPageDetail)genericPageDetailList.get(0);
-				GenericPageHandler gph = new GenericPageHandler(gpd);
-				return gph;
+				if (genericPageDetailList.isEmpty()){
+					VelocityUtil.addMessage("La pagina generica " + gp.getAlias() + " no esta internacionalizada.", VelocityUtil.WARN);
+				}else{
+					GenericPageDetail gpd = (GenericPageDetail)genericPageDetailList.get(0);
+					GenericPageHandler gph = new GenericPageHandler(gpd);
+					return gph;
+				}
 			}
 		} catch (ManagerBeanException e) {
-			e.printStackTrace();
+			VelocityUtil.addMessage(e.getMessage(), VelocityUtil.ERROR);
 		} finally {
 			genericPageList = null;
 			genericPageDetailList = null;
