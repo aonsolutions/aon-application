@@ -190,6 +190,8 @@ public class CustomerFeeInvoicingEngine implements IInvoicingEngine {
 		invoice.setType(InvoiceType.SALES);
 		invoice.setStatus(InvoiceStatus.PENDING);
 		invoice.setSecurityLevel(params.getSecurityLevel());
+		invoice.setSurcharge(obtainRelatedCustomer(group.getParent()).isSurcharge());
+		invoice.setTaxFree(obtainRelatedCustomer(group.getParent()).isTaxFree());
 		invoice.setWithholding(obtainRelatedCustomer(group.getParent()).isWithholding());
 		return invoice;
 	}
@@ -266,6 +268,8 @@ public class CustomerFeeInvoicingEngine implements IInvoicingEngine {
 		invoice.setType(InvoiceType.SALES);
 		invoice.setStatus(InvoiceStatus.PENDING);
 		invoice.setSecurityLevel(params.getSecurityLevel());
+		invoice.setSurcharge(customerFee.getCustomer().isSurcharge());
+		invoice.setTaxFree(customerFee.getCustomer().isTaxFree());
 		invoice.setWithholding(customerFee.getCustomer().isWithholding());
 		return invoice;
 	}
