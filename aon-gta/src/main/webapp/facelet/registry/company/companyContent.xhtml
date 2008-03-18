@@ -74,6 +74,15 @@
 							<t:graphicImage id="preview" height="161" width="161"
 								rendered="#{company.imageAttached}" 
 								url="company.logo"/>	
+						
+							<t:outputLabel 
+								for="Company_print_header" 
+								styleClass="aon-form-input-text-label"
+								value="#{registryBundle.aon_company_print_header}" />
+							<h:selectBooleanCheckbox 
+								styleClass="aon-form-input-text"
+								id="Company_print_header" 
+								value="#{company.printHeader}" />		
 								
 						</h:panelGrid>
 						<h:panelGrid columns="2" cellpadding="0" cellspacing="0"
@@ -173,6 +182,15 @@
 								styleClass="aon-form-input-text"
 								id="Company_surcharge" 
 								value="#{company.to.surcharge}" />		
+							
+							<t:outputLabel 
+								for="Company_print_record_data" 
+								styleClass="aon-form-input-text-label"
+								value="#{registryBundle.aon_company_print_record_data}" />
+							<h:selectBooleanCheckbox 
+								styleClass="aon-form-input-text"
+								id="Company_print_record_data" 
+								value="#{company.printRecordData}" />		
 							
 						</h:panelGrid>	
 					</h:panelGrid>
