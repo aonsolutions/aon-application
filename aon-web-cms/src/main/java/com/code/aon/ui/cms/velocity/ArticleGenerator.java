@@ -71,6 +71,7 @@ public class ArticleGenerator extends Generator {
 					VelocityUtil.addMessage(" Categoria " + articleCategory.getAlias() + " no internacionalizada.", VelocityUtil.WARN);
 				}else{
 					articleCategoryDetail = (ArticleCategoryDetail)articleCategoryDetailList.get(0);
+					boolean emptyCategory = false;
 					for (int art_type = 0; art_type < values.length; art_type++){
 						templates = ArticleGenerator.getTemplate(art_type);
 						articleCriteria = new Criteria();
@@ -81,7 +82,7 @@ public class ArticleGenerator extends Generator {
 						articleList = (List<ITransferObject>)articleBean.getList(articleCriteria);
 						ArrayList<ArticleHandler> ahlist = new ArrayList<ArticleHandler>();
 						if (articleList.isEmpty()){
-							VelocityUtil.addMessage(" Categoria " + articleCategory.getAlias() + " no tiene " + values[art_type].getName() + ".", VelocityUtil.WARN);
+							emptyCategory = true;
 						}else{
 							String back_url = templates.getHtmlName();
 							back_url = back_url.replaceAll("%NAME%", values[art_type].getName()+"_"+articleCategory.getAlias());
@@ -128,6 +129,9 @@ public class ArticleGenerator extends Generator {
 							achlist.add(achandler);
 						}
 						ahlist = null;
+					}
+					if (emptyCategory){
+						VelocityUtil.addMessage("La categoria de articulos " + articleCategory.getAlias() + " no tiene articulos.", VelocityUtil.WARN);
 					}
 				}
 				vu.finalize();
