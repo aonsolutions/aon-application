@@ -53,7 +53,7 @@ public class ModularPageGenerator extends Generator {
 				criteria_mdBean.addEqualExpression(mdBean.getFieldName(ICMSAlias.MODULAR_PAGE_DETAIL_MODULAR_PAGE_ID),mp.getId());
 				criteria_mdBean.addEqualExpression(mdBean.getFieldName(ICMSAlias.MODULAR_PAGE_DETAIL_LANGUAGE_ID),ControllerUtil.getCurrentLanguage().getId());
 				modularPageDetailList = (List<ITransferObject>) mdBean.getList(criteria_mdBean);
-				if (modularPageDetailList.size()>0) {
+				if (modularPageDetailList.isEmpty()) {
 					VelocityUtil.addMessage("La pagina modular " + mp.getAlias() + " no esta internacionalizada.", VelocityUtil.WARN);
 				}else{
 					ModularPageDetail mpd = (ModularPageDetail)modularPageDetailList.get(0);
