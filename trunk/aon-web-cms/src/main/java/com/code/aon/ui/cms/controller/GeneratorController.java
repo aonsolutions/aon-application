@@ -30,7 +30,9 @@ public class GeneratorController extends BasicController implements Constants {
 		FileUtil.copyDir(ControllerUtil.getJsTemplatePath(), ControllerUtil.getPreviewPath());
 
 		CommonGenerator.getCommonGenerator().generateLanguagePage();
-		
+
+		CommonGenerator.getCommonGenerator().generateEmailSendPage();
+
 		if (isModularPageToGenerate){
 			//Generar index.html del idioma seleccionado
 			ModularPageGenerator.generate();

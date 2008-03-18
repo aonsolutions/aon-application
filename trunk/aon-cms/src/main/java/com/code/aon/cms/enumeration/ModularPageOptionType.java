@@ -75,7 +75,12 @@ public enum ModularPageOptionType implements IResourceable {
 	/**
 	 * Album Category
 	 */
-	ALBUM_CATEGORY;
+	ALBUM_CATEGORY,
+
+	/**
+	 * Bulletin suscription
+	 */
+	BULLETIN_SUSCRIBE;
 
 	/**
 	 * Ruta base del fichero de mensajes.

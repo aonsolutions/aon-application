@@ -7,6 +7,7 @@ import com.code.aon.ui.cms.velocity.ActivityGenerator;
 import com.code.aon.ui.cms.velocity.AlbumGenerator;
 import com.code.aon.ui.cms.velocity.ArticleGenerator;
 import com.code.aon.ui.cms.velocity.BannerGenerator;
+import com.code.aon.ui.cms.velocity.BulletinSuscribeGenerator;
 import com.code.aon.ui.cms.velocity.DirectAccessGenerator;
 import com.code.aon.ui.cms.velocity.DownloadsGenerator;
 import com.code.aon.ui.cms.velocity.GenericGenerator;
@@ -64,6 +65,9 @@ public class ModularPageOptionHandler {
 		}
 		else if (mpod.getModular_page_option().getType().equals(ModularPageOptionType.ALBUM_CATEGORY)) {
 			content = AlbumGenerator.getAlbumCategoryHandler(mpod.getModular_page_option().getIdent());
+		}
+		else if (mpod.getModular_page_option().getType().equals(ModularPageOptionType.BULLETIN_SUSCRIBE)) {
+			content = BulletinSuscribeGenerator.getBulletinSuscribeHandler();
 		}
 	}
 
