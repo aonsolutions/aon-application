@@ -360,6 +360,9 @@
 												value="#{SupportOrder.target.registry.document}"
 												disabledOnClientSide="#{!SupportOrder.pending and !SupportOrder.new}" onblur="toUpperCase(this);"
 												onchange="return findTargetLookup(event, '#{facesContext.externalContext.request.contextPath}', 'com.code.aon.commercial.Target');"/>
+											<h:commandButton id="findTarget"
+												onclick="selectWindow(this, 'placeList', '#{targetSearch.encodedPagePath}','Target_registry_id,Target_registry_document,Target_registry_name,Target_registry_surname,Target_registry_alias');return false;"
+												value="" immediate="true" styleClass="aon-form-lookup-button" />
 										</t:div>
 
 										<h:outputLabel for="Target_registry_name"
