@@ -110,8 +110,13 @@ public enum Templates implements IResourceable {
 	/**
 	 * BULLETIN
 	 */
-	BULLETIN;
+	BULLETIN,
 	
+	/**
+	 * SENDMAIL
+	 */
+	SENDMAIL;
+
 	/**
 	 * Ruta base del fichero de mensajes.
 	 */

@@ -9,6 +9,9 @@ import java.util.List;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
+import javax.mail.Session;
+import javax.mail.Transport;
+
 import com.code.aon.cms.ConfigDetail;
 import com.code.aon.cms.Footer;
 import com.code.aon.cms.FooterDetail;
@@ -78,6 +81,10 @@ public class CommonGenerator extends Generator {
 		String keywords = "";
 		if (configDetail != null) keywords = configDetail.getKeywords();
 		vu.put("default_keywords", keywords);
+		
+        vu.put("every_languages", getActiveLanguages());
+        vu.put("default_language", getDefaultLanguage());
+
     }
 
 	public void chargeContext(VelocityUtil vu, Section section) throws ManagerBeanException {
@@ -302,6 +309,34 @@ public class CommonGenerator extends Generator {
 		if (!f.exists()) f.mkdirs();
 		generate(vu, Templates.LANGUAGE);
 		
+		vu.finalize();
+		vu = null;
+	}
+
+	public void generateEmailSendPage() {
+		VelocityUtil vu = new VelocityUtil();
+		CommonGenerator.getCommonGenerator().init(vu);
+		vu.setTemplate_path(ControllerUtil.getCurrentVmTemplatePath());
+		vu.initialize();
+		File f = new File(ControllerUtil.getPreviewPath());
+		if (!f.exists()) f.mkdirs();
+		f = new File(ControllerUtil.getLanguagePreviewPath());
+		if (!f.exists()) f.mkdirs();
+		try {
+			CommonGenerator.getCommonGenerator().chargeContext(vu, null);
+		} catch (ManagerBeanException e) {
+		}
+		vu.put("smtpServer", ControllerUtil.getCurrentConfig().getSmtp_server());
+		vu.put("username", ControllerUtil.getCurrentConfig().getSmtp_user());
+		vu.put("password", ControllerUtil.getCurrentConfig().getSmtp_password());
+		vu.put("from", ControllerUtil.getCurrentConfig().getFrom_email());
+		vu.put("name_from", ControllerUtil.getCurrentConfig().getFrom_name());
+		generate(vu, Templates.SENDMAIL);
+		vu.remove("smtpServer");
+		vu.remove("username");
+		vu.remove("password");
+		vu.remove("from");
+		vu.remove("name_from");
 		vu.finalize();
 		vu = null;
 	}

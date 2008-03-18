@@ -139,7 +139,9 @@ public class ModularPageOptionController extends BasicI18nController {
 
 	public boolean isVisibleIdent() {
 		ModularPageOption to = (ModularPageOption)getTo();
-		if (to != null && to.getType() != null) {
+		if (to != null && 
+				to.getType() != null && 
+				!to.getType().equals(ModularPageOptionType.BULLETIN_SUSCRIBE)) {
 			return true;
 		}
 		return false;
