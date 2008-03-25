@@ -50,8 +50,8 @@
 	<variable name="invoiceTotalAmount" class="java.lang.Double" resetType="None" incrementType="Report" calculation="Sum">
 		<variableExpression><![CDATA[$V{invoiceTotalAmount}]]></variableExpression>
 	</variable>
-	<variable name="taxTotalAmount" class="java.lang.Double" resetType="None" incrementType="Report" calculation="Sum">
-		<variableExpression><![CDATA[$V{taxTotal}]]></variableExpression>
+	<variable name="taxTotalAmount" class="java.lang.Double" resetType="None" incrementType="Report" calculation="Nothing">
+		<variableExpression><![CDATA[$V{taxTotal}!=null?new Double($V{taxTotalAmount}.doubleValue()+$V{taxTotal}.doubleValue()):$V{taxTotalAmount}!=null?$V{taxTotalAmount}:new Double(0)]]></variableExpression>
 	</variable>
 
 		<group  name="invoiceGroup" >
@@ -269,7 +269,7 @@
 					<parametersMapExpression><![CDATA[$P{REPORT_PARAMETERS_MAP}]]></parametersMapExpression>
 					<dataSourceExpression><![CDATA[new com.code.aon.ui.report.jr.JRBeanCollectionDataSource($P{PriceStrategy}.getTaxBreakDowns($V{currentPreInvoice}, $V{currentPreInvoice}))]]></dataSourceExpression>
 					<returnValue subreportVariable="taxTotal" toVariable="taxTotal"/>
-					<returnValue subreportVariable="taxTotal" toVariable="taxTotalAmount" calculation="Sum" incrementerFactoryClass="com.code.aon.ui.finance.util.print.InvoiceTaxIncrementorFactory"/>
+					<returnValue subreportVariable="taxTotal" toVariable="taxTotalAmount" calculation="Sum"/>
 					<subreportExpression  class="net.sf.jasperreports.engine.JasperReport"><![CDATA[$P{nestedReports}.get("taxBreakDown")]]></subreportExpression>
 				</subreport>
 				<subreport  isUsingCache="true">
