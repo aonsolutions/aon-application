@@ -57,8 +57,12 @@ public class ArticleDocumentController extends GridI18nController {
 			long size = this.inputFile.getSize();
 			String upload_name = inputFile.getName();
 			upload_name = upload_name.substring(upload_name.lastIndexOf(File.separator));
-			String fileName = File.separator+"article_documents"+File.separator+upload_name;
-			File file = new File( currentPath+File.separator+fileName);
+			String fileName = File.separator+"article_documents";
+			if (upload_name.startsWith(File.separator))
+				fileName += upload_name;
+			else
+				fileName += File.separator + upload_name;
+			File file = new File( currentPath+fileName);
 			if ( (maximumSize != -1) && (size > maximumSize) ) {
 				FacesContext ctx = FacesContext.getCurrentInstance();
 				FacesMessage message = AonUtil.getMessage( ctx,
