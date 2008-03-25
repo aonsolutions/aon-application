@@ -101,7 +101,7 @@
 				</aon:panelGrid>
 			</aon:div>
 		
-			<rich:panel id="detail_panel" rendered="#{!article_category.new}">
+			<rich:panel id="detail_panel" rendered="#{!article_category.new and article_category.toI18n.id != null}">
 				<f:facet name="header">#{appBundle.article}</f:facet>
 				
 				<aon:panelGrid columns="2" styleClass="none" columnClasses="aon-vertical-align-top,aon-vertical-align-top">
@@ -116,6 +116,7 @@
 								<!-- start toolbar navigation -->
 								<aon:div styleClass="aon-finding-toolbar-item-group">
 									<h:commandButton id="reset_list" value="#{bundle.aon_reset}"
+										immediate="#{true}"
 										actionListener="#{article.onReset}"
 										styleClass="aon-finding-toolbar-item aon-icon-reset"
 										accesskey="#{bundle.aon_key_new}"
@@ -123,7 +124,7 @@
 									<aon:confirmButton id="remove_list"
 										value="#{bundle.aon_remove}" 
 										rendered="#{!article.checklistEmpty and article.to==null}" 
-										inmediate="true"
+										immediate="#{true}"
 										confirmTitle="Confirmation Dialog" 
 										confirmMessage="#{bundle.aon_remove_confirm}"
 										confirmActionListener="#{article.onRemoveSelected}" 

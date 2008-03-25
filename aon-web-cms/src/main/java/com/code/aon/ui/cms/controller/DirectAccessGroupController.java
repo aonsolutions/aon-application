@@ -1,7 +1,5 @@
 package com.code.aon.ui.cms.controller;
 
-import java.util.List;
-
 import javax.faces.event.ActionEvent;
 
 import com.code.aon.cms.DirectAccess;
@@ -10,11 +8,9 @@ import com.code.aon.cms.DirectAccessGroupDetail;
 import com.code.aon.cms.dao.ICMSAlias;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
-import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionException;
-import com.code.aon.ui.cms.util.ControllerUtil;
 import com.code.aon.ui.util.AonUtil;
 
 
@@ -41,23 +37,10 @@ public class DirectAccessGroupController extends BasicI18nController {
 	}
 	
 	public String getI18nLabel() throws ManagerBeanException {
-		String label = "";
-		DirectAccessGroupDetail directAccessGroupDetail = getCurrentDetail();
+		String label = "- NO VALUE -";
+		DirectAccessGroupDetail directAccessGroupDetail = (DirectAccessGroupDetail)getModelRowdataI18n();
 		if (directAccessGroupDetail != null) label = directAccessGroupDetail.getLabel();
 		return label;
-	}
-
-	private DirectAccessGroupDetail getCurrentDetail() throws ManagerBeanException {
-		DirectAccessGroupDetail directAccessGroupDetail = null;
-		DirectAccessGroup directAccessGroup = (DirectAccessGroup)this.model.getRowData();
-		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(getManagerBeanI18n().getFieldName(ICMSAlias.DIRECT_ACCESS_GROUP_DETAIL_DIRECT_ACCESS_GROUP_ID), directAccessGroup.getId());
-		criteria.addEqualExpression(getManagerBeanI18n().getFieldName(ICMSAlias.DIRECT_ACCESS_GROUP_DETAIL_LANGUAGE_ID), ControllerUtil.getCurrentLanguage().getId());
-		List<ITransferObject> list = (List<ITransferObject>)getManagerBeanI18n().getList(criteria);
-		if (list.size() > 0) {
-			directAccessGroupDetail = (DirectAccessGroupDetail)list.get(0);
-		}
-		return directAccessGroupDetail;
 	}
 
 	public void onAccept(ActionEvent event) {

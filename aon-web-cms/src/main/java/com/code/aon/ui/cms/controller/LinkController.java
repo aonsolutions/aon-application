@@ -2,7 +2,6 @@ package com.code.aon.ui.cms.controller;
 
 import java.util.List;
 
-import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
 
 import com.code.aon.cms.Link;
@@ -13,7 +12,6 @@ import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionException;
-import com.code.aon.ui.cms.util.ControllerUtil;
 
 
 public class LinkController extends BasicI18nController {
@@ -31,7 +29,6 @@ public class LinkController extends BasicI18nController {
 	@SuppressWarnings("unused")
 	public void onSelect(ActionEvent event) {
 		super.onSelect(new ActionEvent(event.getComponent()));
-		FacesContext.getCurrentInstance().getApplication().getNavigationHandler().handleNavigation(FacesContext.getCurrentInstance(), null, "link_form");
 		loadCurrentLanguage();
 	}
 
@@ -50,23 +47,10 @@ public class LinkController extends BasicI18nController {
 	}
 	
 	public String getI18nLabel() throws ManagerBeanException {
-		String label = "";
-		LinkDetail ld = getCurrentDetail();
+		String label = "- NO VALUE -";
+		LinkDetail ld = (LinkDetail)getModelRowdataI18n();
 		if (ld != null) label = ld.getLabel();
 		return label;
-	}
-
-	private LinkDetail getCurrentDetail() throws ManagerBeanException {
-		LinkDetail ld = null;
-		Link l = (Link)this.model.getRowData();
-		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(getManagerBeanI18n().getFieldName(ICMSAlias.LINK_DETAIL_LINK_ID), l.getId());
-		criteria.addEqualExpression(getManagerBeanI18n().getFieldName(ICMSAlias.LINK_DETAIL_LANGUAGE_ID), ControllerUtil.getCurrentLanguage().getId());
-		List<ITransferObject> list = (List<ITransferObject>)getManagerBeanI18n().getList(criteria);
-		if (list.size() > 0) {
-			ld = (LinkDetail)list.get(0);
-		}
-		return ld;
 	}
 
 	public void onAccept(ActionEvent event) {

@@ -2,7 +2,6 @@ package com.code.aon.ui.cms.controller;
 
 import java.util.List;
 
-import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
 
 import com.code.aon.cms.Link;
@@ -16,7 +15,6 @@ import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionException;
-import com.code.aon.ui.cms.util.ControllerUtil;
 import com.code.aon.ui.util.AonUtil;
 
 
@@ -31,7 +29,6 @@ public class LinkCategoryController extends BasicI18nController {
 	@SuppressWarnings("unused")
 	public void onSelect(ActionEvent event)  {
 		super.onSelect(new ActionEvent(event.getComponent()));
-		FacesContext.getCurrentInstance().getApplication().getNavigationHandler().handleNavigation(FacesContext.getCurrentInstance(), null, "link_category_form");
 		loadCurrentLanguage();
 	}
 
@@ -50,23 +47,10 @@ public class LinkCategoryController extends BasicI18nController {
 	}
 	
 	public String getI18nLabel() throws ManagerBeanException {
-		String label = "";
-		LinkCategoryDetail linkCategoryDetail = getCurrentDetail();
+		String label = "- NO VALUE -";
+		LinkCategoryDetail linkCategoryDetail = (LinkCategoryDetail)getModelRowdataI18n();
 		if (linkCategoryDetail != null) label = linkCategoryDetail.getLabel();
 		return label;
-	}
-
-	private LinkCategoryDetail getCurrentDetail() throws ManagerBeanException {
-		LinkCategoryDetail linkCategoryDetail = null;
-		LinkCategory linkCategory = (LinkCategory)this.model.getRowData();
-		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(getManagerBeanI18n().getFieldName(ICMSAlias.LINK_CATEGORY_DETAIL_LINK_CATEGORY_ID), linkCategory.getId());
-		criteria.addEqualExpression(getManagerBeanI18n().getFieldName(ICMSAlias.LINK_CATEGORY_DETAIL_LANGUAGE_ID), ControllerUtil.getCurrentLanguage().getId());
-		List<ITransferObject> list = (List<ITransferObject>)getManagerBeanI18n().getList(criteria);
-		if (list.size() > 0) {
-			linkCategoryDetail = (LinkCategoryDetail)list.get(0);
-		}
-		return linkCategoryDetail;
 	}
 
 	public void onAccept(ActionEvent event) {

@@ -3,7 +3,6 @@ package com.code.aon.ui.cms.controller;
 import java.util.LinkedList;
 import java.util.List;
 
-import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
 import javax.faces.model.SelectItem;
 
@@ -16,7 +15,6 @@ import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionException;
-import com.code.aon.ui.cms.util.ControllerUtil;
 import com.code.aon.ui.util.AonUtil;
 
 
@@ -35,7 +33,6 @@ public class SidebarOptionController extends BasicI18nController {
 	@SuppressWarnings("unused")
 	public void onSelect(ActionEvent event) {
 		super.onSelect(new ActionEvent(event.getComponent()));
-		FacesContext.getCurrentInstance().getApplication().getNavigationHandler().handleNavigation(FacesContext.getCurrentInstance(), null, "sidebar_option_form");
 		loadCurrentLanguage();
 	}
 
@@ -54,26 +51,11 @@ public class SidebarOptionController extends BasicI18nController {
 	}
 	
 	public String getI18nLabel() throws ManagerBeanException {
-		String label = "";
-		SidebarOptionDetail sod = getCurrentDetail();
+		String label = "- NO VALUE -";
+		SidebarOptionDetail sod = (SidebarOptionDetail)getModelRowdataI18n();
 		if (sod != null) label = sod.getLabel();
 		return label;
 	}
-
-	private SidebarOptionDetail getCurrentDetail() throws ManagerBeanException {
-		SidebarOptionDetail sod = null;
-		SidebarOption so = (SidebarOption)this.model.getRowData();
-		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(getManagerBeanI18n().getFieldName(ICMSAlias.SIDEBAR_OPTION_DETAIL_SIDEBAR_OPTION_ID), so.getId());
-		criteria.addEqualExpression(getManagerBeanI18n().getFieldName(ICMSAlias.SIDEBAR_OPTION_DETAIL_LANGUAGE_ID), ControllerUtil.getCurrentLanguage().getId());
-		List<ITransferObject> list = (List<ITransferObject>)getManagerBeanI18n().getList(criteria);
-		if (list.size() > 0) {
-			sod = (SidebarOptionDetail)list.get(0);
-		}
-		return sod;
-	}
-
-
 
 	@SuppressWarnings("unchecked")
 	private void move( SidebarOption so, int movement ) throws ManagerBeanException, ExpressionException {

@@ -2,12 +2,9 @@ package com.code.aon.ui.cms.controller;
 
 import java.util.List;
 
-import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
-import javax.faces.event.ValueChangeEvent;
 import javax.faces.model.SelectItem;
 
-import com.code.aon.cms.Album;
 import com.code.aon.cms.DirectAccessGroup;
 import com.code.aon.cms.DirectAccess;
 import com.code.aon.cms.DirectAccessDetail;
@@ -17,7 +14,6 @@ import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionException;
-import com.code.aon.ui.cms.util.ControllerUtil;
 import com.code.aon.ui.cms.util.MenuOptionUtil;
 import com.code.aon.ui.util.AonUtil;
 
@@ -55,30 +51,17 @@ public class DirectAccessController extends BasicI18nController {
 	}
 	
 	public String getI18nLabel() throws ManagerBeanException {
-		String label = "";
-		DirectAccessDetail dad = getCurrentDetail();
+		String label = "- NO VALUE -";
+		DirectAccessDetail dad = (DirectAccessDetail)getModelRowdataI18n();
 		if (dad != null) label = dad.getLabel();
 		return label;
 	}
 
 	public String getI18nUrl() throws ManagerBeanException {
-		String url = "";
-		DirectAccessDetail dad = getCurrentDetail();
+		String url = "- NO VALUE -";
+		DirectAccessDetail dad = (DirectAccessDetail)getModelRowdataI18n();
 		if (dad != null) url = dad.getUrl();
 		return url;
-	}
-
-	private DirectAccessDetail getCurrentDetail() throws ManagerBeanException {
-		DirectAccessDetail dad = null;
-		DirectAccess da = (DirectAccess)this.model.getRowData();
-		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(getManagerBeanI18n().getFieldName(ICMSAlias.DIRECT_ACCESS_DETAIL_DIRECT_ACCESS_ID), da.getId());
-		criteria.addEqualExpression(getManagerBeanI18n().getFieldName(ICMSAlias.DIRECT_ACCESS_DETAIL_LANGUAGE_ID), ControllerUtil.getCurrentLanguage().getId());
-		List<ITransferObject> list = (List<ITransferObject>)getManagerBeanI18n().getList(criteria);
-		if (list.size() > 0) {
-			dad = (DirectAccessDetail)list.get(0);
-		}
-		return dad;
 	}
 
 	public boolean isVisibleLevel() {

@@ -2,7 +2,6 @@ package com.code.aon.ui.cms.controller;
 
 import java.util.List;
 
-import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
 
 import com.code.aon.cms.Download;
@@ -14,7 +13,6 @@ import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionException;
-import com.code.aon.ui.cms.util.ControllerUtil;
 import com.code.aon.ui.util.AonUtil;
 
 public class DownloadController extends BasicI18nController {
@@ -50,23 +48,10 @@ public class DownloadController extends BasicI18nController {
 	}
 	
 	public String getI18nTitle() throws ManagerBeanException {
-		String title = "";
-		DownloadDetail downloadDetail = getCurrentDetail();
+		String title = "- NO VALUE -";
+		DownloadDetail downloadDetail = (DownloadDetail)getModelRowdataI18n();
 		if (downloadDetail != null) title = downloadDetail.getTitle();
 		return title;
-	}
-
-	private DownloadDetail getCurrentDetail() throws ManagerBeanException {
-		DownloadDetail downloadDetail = null;
-		Download download = (Download)this.model.getRowData();
-		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(getManagerBeanI18n().getFieldName(ICMSAlias.DOWNLOAD_DETAIL_DOWNLOAD_ID), download.getId());
-		criteria.addEqualExpression(getManagerBeanI18n().getFieldName(ICMSAlias.DOWNLOAD_DETAIL_LANGUAGE_ID), ControllerUtil.getCurrentLanguage().getId());
-		List<ITransferObject> list = (List<ITransferObject>)getManagerBeanI18n().getList(criteria);
-		if (list.size() > 0) {
-			downloadDetail = (DownloadDetail)list.get(0);
-		}
-		return downloadDetail;
 	}
 
 	@SuppressWarnings("unchecked")

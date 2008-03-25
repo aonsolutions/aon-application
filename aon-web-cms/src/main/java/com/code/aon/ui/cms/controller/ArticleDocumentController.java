@@ -40,18 +40,6 @@ public class ArticleDocumentController extends GridI18nController {
 		this.currentArticle = currentArticle;
 	}
 
-	public ArticleDocumentDetail getCurrentRowDetail() throws ManagerBeanException{
-		ArticleDocument ad = (ArticleDocument)this.model.getRowData();
-		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(getManagerBeanI18n().getFieldName(ICMSAlias.ARTICLE_DOCUMENT_DETAIL_ARTICLE_DOCUMENT_ID), ad.getId());
-		criteria.addEqualExpression(getManagerBeanI18n().getFieldName(ICMSAlias.ARTICLE_DOCUMENT_DETAIL_LANGUAGE_ID), ControllerUtil.getCurrentLanguage().getId());
-		List<ITransferObject> list = (List<ITransferObject>)getManagerBeanI18n().getList(criteria);
-		if (list.size() > 0) {
-			return (ArticleDocumentDetail)list.get(0);
-		}
-		return null;
-	}
-	
 	private UploadedFile inputFile;
 	private long maximumSize = -1;;
 	private String currentPath = ControllerUtil.getDocumentsPath();

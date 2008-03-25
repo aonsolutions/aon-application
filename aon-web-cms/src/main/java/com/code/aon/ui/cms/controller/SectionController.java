@@ -3,7 +3,6 @@ package com.code.aon.ui.cms.controller;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.faces.context.FacesContext;
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 
@@ -22,12 +21,6 @@ public class SectionController extends BasicController{
 	/** A list that contains the selected objects of the model. */
 	private ArrayList<ITransferObject> checkList= new ArrayList<ITransferObject>();
 
-	@SuppressWarnings("unused")
-	public void onSelect(ActionEvent event) {
-		super.onSelect(new ActionEvent(event.getComponent()));
-		FacesContext.getCurrentInstance().getApplication().getNavigationHandler().handleNavigation(FacesContext.getCurrentInstance(), null, "section_form");
-	}
-	
 	/**
 	 * Gets the if the selected row is checked.
 	 * 

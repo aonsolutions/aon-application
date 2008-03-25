@@ -16,7 +16,6 @@ import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionException;
-import com.code.aon.ui.cms.util.ControllerUtil;
 import com.code.aon.ui.util.AonUtil;
 
 public class DownloadCategoryController extends BasicI18nController {
@@ -24,7 +23,6 @@ public class DownloadCategoryController extends BasicI18nController {
 	@SuppressWarnings("unused")
 	public void onSelect(ActionEvent event) {
 		super.onSelect(new ActionEvent(event.getComponent()));
-		FacesContext.getCurrentInstance().getApplication().getNavigationHandler().handleNavigation(FacesContext.getCurrentInstance(), null, "download_category_form");
 		loadCurrentLanguage();
 	}
 
@@ -43,23 +41,10 @@ public class DownloadCategoryController extends BasicI18nController {
 	}
 	
 	public String getI18nLabel() throws ManagerBeanException {
-		String label = "";
-		DownloadCategoryDetail downloadCategoryDetail = getCurrentDetail();
+		String label = "- NO VALUE -";
+		DownloadCategoryDetail downloadCategoryDetail = (DownloadCategoryDetail)getModelRowdataI18n();
 		if (downloadCategoryDetail != null) label = downloadCategoryDetail.getLabel();
 		return label;
-	}
-
-	private DownloadCategoryDetail getCurrentDetail() throws ManagerBeanException {
-		DownloadCategoryDetail downloadCategoryDetail = null;
-		DownloadCategory downloadCategory = (DownloadCategory)this.model.getRowData();
-		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(getManagerBeanI18n().getFieldName(ICMSAlias.DOWNLOAD_CATEGORY_DETAIL_DOWNLOAD_CATEGORY_ID), downloadCategory.getId());
-		criteria.addEqualExpression(getManagerBeanI18n().getFieldName(ICMSAlias.DOWNLOAD_CATEGORY_DETAIL_LANGUAGE_ID), ControllerUtil.getCurrentLanguage().getId());
-		List<ITransferObject> list = (List<ITransferObject>)getManagerBeanI18n().getList(criteria);
-		if (list.size() > 0) {
-			downloadCategoryDetail = (DownloadCategoryDetail)list.get(0);
-		}
-		return downloadCategoryDetail;
 	}
 
 	@SuppressWarnings("unchecked")

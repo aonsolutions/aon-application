@@ -16,7 +16,6 @@ import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionException;
-import com.code.aon.ui.cms.util.ControllerUtil;
 import com.code.aon.ui.util.AonUtil;
 
 public class AlbumController extends BasicI18nController {
@@ -52,23 +51,10 @@ public class AlbumController extends BasicI18nController {
 	}
 	
 	public String getI18nTitle() throws ManagerBeanException {
-		String title = "";
-		AlbumDetail ad = getCurrentDetail();
+		String title = "- NO VALUE -";
+		AlbumDetail ad = (AlbumDetail)getModelRowdataI18n();
 		if (ad != null) title = ad.getTitle();
 		return title;
-	}
-
-	private AlbumDetail getCurrentDetail() throws ManagerBeanException {
-		AlbumDetail ad = null;
-		Album a = (Album)this.model.getRowData();
-		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(getManagerBeanI18n().getFieldName(ICMSAlias.ALBUM_DETAIL_ALBUM_ID), a.getId());
-		criteria.addEqualExpression(getManagerBeanI18n().getFieldName(ICMSAlias.ALBUM_DETAIL_LANGUAGE_ID), ControllerUtil.getCurrentLanguage().getId());
-		List<ITransferObject> list = (List<ITransferObject>)getManagerBeanI18n().getList(criteria);
-		if (list.size() > 0) {
-			ad = (AlbumDetail)list.get(0);
-		}
-		return ad;
 	}
 
 	@SuppressWarnings("unchecked")

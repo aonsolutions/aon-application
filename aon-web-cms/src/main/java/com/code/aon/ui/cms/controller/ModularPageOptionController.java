@@ -15,7 +15,6 @@ import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionException;
-import com.code.aon.ui.cms.util.ControllerUtil;
 import com.code.aon.ui.util.AonUtil;
 
 
@@ -46,26 +45,11 @@ public class ModularPageOptionController extends BasicI18nController {
 	}
 	
 	public String getI18nLabel() throws ManagerBeanException {
-		String label = "";
-		ModularPageOptionDetail mpd = getCurrentDetail();
+		String label = "- NO VALUE -";
+		ModularPageOptionDetail mpd = (ModularPageOptionDetail)getModelRowdataI18n();
 		if (mpd != null) label = mpd.getLabel();
 		return label;
 	}
-
-	private ModularPageOptionDetail getCurrentDetail() throws ManagerBeanException {
-		ModularPageOptionDetail mpd = null;
-		ModularPageOption mp = (ModularPageOption)this.model.getRowData();
-		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(getManagerBeanI18n().getFieldName(ICMSAlias.MODULAR_PAGE_OPTION_DETAIL_MODULAR_PAGE_OPTION_ID), mp.getId());
-		criteria.addEqualExpression(getManagerBeanI18n().getFieldName(ICMSAlias.MODULAR_PAGE_OPTION_DETAIL_LANGUAGE_ID), ControllerUtil.getCurrentLanguage().getId());
-		List<ITransferObject> list = (List<ITransferObject>)getManagerBeanI18n().getList(criteria);
-		if (list.size() > 0) {
-			mpd = (ModularPageOptionDetail)list.get(0);
-		}
-		return mpd;
-	}
-
-
 
 	@SuppressWarnings("unchecked")
 	private void move( ModularPageOption so, int movement ) throws ManagerBeanException, ExpressionException {
