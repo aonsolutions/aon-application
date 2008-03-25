@@ -20,7 +20,7 @@ public class BannerCategoryController extends BasicI18nController {
 
 	@SuppressWarnings("unused")
 	public void onSelect(ActionEvent event) {
-		super.onSelect(new ActionEvent(event.getComponent()));
+		super.onSelect(event);
 		loadCurrentLanguage();
 	}
 

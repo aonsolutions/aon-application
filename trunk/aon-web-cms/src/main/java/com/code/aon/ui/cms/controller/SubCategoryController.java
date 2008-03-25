@@ -23,7 +23,7 @@ public class SubCategoryController extends BasicI18nController {
 	@SuppressWarnings("unused")
 	public void onSelect(ActionEvent event) {
 		if (!cancelOnSelect) {
-			super.onSelect(new ActionEvent(event.getComponent()));
+			super.onSelect(event);
 			FacesContext.getCurrentInstance().getApplication().getNavigationHandler().handleNavigation(FacesContext.getCurrentInstance(), null, "subcategory_form");
 			loadCurrentLanguage();
 		}
