@@ -93,7 +93,7 @@
 				</aon:panelGrid>
 			</aon:div>
 		
-			<rich:panel id="detail_panel" rendered="#{!direct_access_group.new}">
+			<rich:panel id="detail_panel" rendered="#{!direct_access_group.new and direct_access_group.toI18n.id != null}">
 				<f:facet name="header">#{appBundle.direct_access}</f:facet>
 				
 				<aon:panelGrid columns="2" styleClass="none" columnClasses="aon-vertical-align-top,aon-vertical-align-top">
@@ -108,14 +108,15 @@
 								<!-- start toolbar navigation -->
 								<aon:div styleClass="aon-finding-toolbar-item-group">
 									<h:commandButton id="reset_list" value="#{bundle.aon_reset}"
-										action="direct_access_group_form" 
+										immediate="#{true}"
+										reRender="detail_panel"
 										actionListener="#{direct_access.onReset}"
 										styleClass="aon-finding-toolbar-item aon-icon-reset"
 										accesskey="#{bundle.aon_key_new}"/>
 									<aon:confirmButton id="remove_list"
 										value="#{bundle.aon_remove}" 
 										rendered="#{!direct_access.checklistEmpty and direct_access.to==null}" 
-										inmediate="true"
+										immediate="#{true}"
 										confirmTitle="Confirmation Dialog" 
 										confirmMessage="#{bundle.aon_remove_confirm}"
 										confirmActionListener="#{direct_access.onRemoveSelected}" 
@@ -137,6 +138,7 @@
 							cellpadding="0" cellspacing="0"
 							columnClasses="dr-table-cell rich-table-cell aon-editDataTable-iconColumn,
 									dr-table-cell rich-table-cell aon-editDataTable-textColumn,
+									dr-table-cell rich-table-cell aon-editDataTable-textColumn,
 									dr-table-cell rich-table-cell aon-editDataTable-iconColumn,
 									dr-table-cell rich-table-cell aon-editDataTable-textColumn">
 									
@@ -156,9 +158,10 @@
 					
 							<aon:column>
 								<a4j:support 
+									immediate="#{true}"
+									reRender="detail_panel"
 									actionListener="#{direct_access.onSelect}"
-									event="onclick"
-									reRender="detail_list,detail_panel" />
+									event="onclick" />
 								<f:facet name="header">
 									<aon:outputText value="#{appBundle.direct_access_alias}"/>
 								</f:facet>
@@ -166,6 +169,19 @@
 									styleClass="aon-editDataTable-button"/>
 							</aon:column>
 				
+							<aon:column>
+								<a4j:support 
+									immediate="#{true}"
+									reRender="detail_panel"
+									actionListener="#{direct_access.onSelect}"
+									event="onclick" />
+								<f:facet name="header">
+									<aon:outputText value="#{appBundle.direct_access_label}"/>
+								</f:facet>
+								<aon:outputText value="#{direct_access.i18nLabel}" 
+									styleClass="aon-editDataTable-button"/>
+							</aon:column>
+							
 							<aon:column>
 								<f:facet name="header">
 									<aon:outputText value="#{appBundle.direct_access_active}" />
