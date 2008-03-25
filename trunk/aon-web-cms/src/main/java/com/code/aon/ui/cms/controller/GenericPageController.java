@@ -19,7 +19,6 @@ import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionException;
-import com.code.aon.ui.cms.util.ControllerUtil;
 
 
 public class GenericPageController extends BasicI18nController {
@@ -37,7 +36,6 @@ public class GenericPageController extends BasicI18nController {
 	@SuppressWarnings("unused")
 	public void onSelect(ActionEvent event) {
 		super.onSelect(new ActionEvent(event.getComponent()));
-		FacesContext.getCurrentInstance().getApplication().getNavigationHandler().handleNavigation(FacesContext.getCurrentInstance(), null, "generic_page_form");
 		loadCurrentLanguage();
 	}
 	
@@ -56,16 +54,9 @@ public class GenericPageController extends BasicI18nController {
 	}
 	
 	public String getI18nTitle() throws ManagerBeanException {
-		String title = "";
-		GenericPage gp = (GenericPage)this.model.getRowData();
-		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(getManagerBeanI18n().getFieldName(ICMSAlias.GENERIC_PAGE_DETAIL_GENERIC_PAGE_ID), gp.getId());
-		criteria.addEqualExpression(getManagerBeanI18n().getFieldName(ICMSAlias.GENERIC_PAGE_DETAIL_LANGUAGE_ID), ControllerUtil.getCurrentLanguage().getId());
-		List<ITransferObject> list = (List<ITransferObject>)getManagerBeanI18n().getList(criteria);
-		if (list.size() > 0) {
-			GenericPageDetail gpd = (GenericPageDetail)list.get(0);
-			title = gpd.getTitle();
-		}
+		String title = "- NO VALUE -";
+		GenericPageDetail gpd = (GenericPageDetail)getModelRowdataI18n();
+		if (gpd != null) title = gpd.getTitle();
 		return title;
 	}
 	

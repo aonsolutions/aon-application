@@ -2,7 +2,6 @@ package com.code.aon.ui.cms.controller;
 
 import java.util.List;
 
-import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
 import javax.faces.model.SelectItem;
 
@@ -14,7 +13,6 @@ import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionException;
-import com.code.aon.ui.cms.util.ControllerUtil;
 import com.code.aon.ui.cms.util.MenuOptionUtil;
 
 
@@ -33,7 +31,6 @@ public class MenuOptionController extends BasicI18nController {
 	@SuppressWarnings("unused")
 	public void onSelect(ActionEvent event){
 		super.onSelect(new ActionEvent(event.getComponent()));
-		FacesContext.getCurrentInstance().getApplication().getNavigationHandler().handleNavigation(FacesContext.getCurrentInstance(), null, "menu_option_form");
 		loadCurrentLanguage();
 	}
 
@@ -67,30 +64,17 @@ public class MenuOptionController extends BasicI18nController {
 
 
 	public String getI18nLabel() throws ManagerBeanException {
-		String label = "";
-		MenuOptionDetail mod = getCurrentDetail();
+		String label = "- NO VALUE -";
+		MenuOptionDetail mod = (MenuOptionDetail)getModelRowdataI18n();
 		if (mod != null) label = mod.getLabel();
 		return label;
 	}
 
 	public String getI18nUrl() throws ManagerBeanException {
-		String url = "";
-		MenuOptionDetail mod = getCurrentDetail();
+		String url = "- NO VALUE -";
+		MenuOptionDetail mod = (MenuOptionDetail)getModelRowdataI18n();
 		if (mod != null) url = mod.getUrl();
 		return url;
-	}
-
-	private MenuOptionDetail getCurrentDetail() throws ManagerBeanException {
-		MenuOptionDetail mod = null;
-		MenuOption mo = (MenuOption)this.model.getRowData();
-		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(getManagerBeanI18n().getFieldName(ICMSAlias.MENU_OPTION_DETAIL_MENU_OPTION_ID), mo.getId());
-		criteria.addEqualExpression(getManagerBeanI18n().getFieldName(ICMSAlias.MENU_OPTION_DETAIL_LANGUAGE_ID), ControllerUtil.getCurrentLanguage().getId());
-		List<ITransferObject> list = (List<ITransferObject>)getManagerBeanI18n().getList(criteria);
-		if (list.size() > 0) {
-			mod = (MenuOptionDetail)list.get(0);
-		}
-		return mod;
 	}
 
 	public boolean isVisibleLevel() {

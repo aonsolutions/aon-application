@@ -13,7 +13,6 @@ import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionException;
-import com.code.aon.ui.cms.util.ControllerUtil;
 import com.code.aon.ui.util.AonUtil;
 
 public class AlbumImageController extends BasicI18nController {
@@ -49,23 +48,10 @@ public class AlbumImageController extends BasicI18nController {
 	}
 	
 	public String getI18nTitle() throws ManagerBeanException {
-		String title = "";
-		AlbumImageDetail aid = getCurrentDetail();
+		String title = "- NO VALUE -";
+		AlbumImageDetail aid = (AlbumImageDetail)getModelRowdataI18n();
 		if (aid != null) title = aid.getTitle();
 		return title;
-	}
-
-	private AlbumImageDetail getCurrentDetail() throws ManagerBeanException {
-		AlbumImageDetail aid = null;
-		AlbumImage ai = (AlbumImage)this.model.getRowData();
-		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(getManagerBeanI18n().getFieldName(ICMSAlias.ALBUM_IMAGE_DETAIL_ALBUM_IMAGE_ID), ai.getId());
-		criteria.addEqualExpression(getManagerBeanI18n().getFieldName(ICMSAlias.ALBUM_IMAGE_DETAIL_LANGUAGE_ID), ControllerUtil.getCurrentLanguage().getId());
-		List<ITransferObject> list = (List<ITransferObject>)getManagerBeanI18n().getList(criteria);
-		if (list.size() > 0) {
-			aid = (AlbumImageDetail)list.get(0);
-		}
-		return aid;
 	}
 
 	@SuppressWarnings("unchecked")

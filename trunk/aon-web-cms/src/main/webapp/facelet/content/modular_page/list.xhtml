@@ -59,6 +59,7 @@
 						cellpadding="0" cellspacing="0"
 						columnClasses="dr-table-cell rich-table-cell aon-editDataTable-iconColumn,
 								dr-table-cell rich-table-cell aon-editDataTable-textColumn,
+								dr-table-cell rich-table-cell aon-editDataTable-textColumn,
 								dr-table-cell rich-table-cell aon-editDataTable-iconColumn,
 								dr-table-cell rich-table-cell aon-editDataTable-iconColumn">
 				
@@ -88,6 +89,18 @@
 								<aon:outputText value="#{appBundle.modular_page_alias}" />
 							</f:facet>
 							<aon:outputText value="#{to.alias}"  
+								styleClass="aon-editDataTable-button"/>
+						</aon:column>
+						
+						<aon:column>
+							<a4j:support 
+								action="modular_page_form"
+								actionListener="#{modular_page.onSelect}"
+								event="onclick" />
+							<f:facet name="header">
+								<aon:outputText value="#{appBundle.modular_page_label}" />
+							</f:facet>
+							<aon:outputText value="#{modular_page.i18nLabel}"  
 								styleClass="aon-editDataTable-button"/>
 						</aon:column>
 						

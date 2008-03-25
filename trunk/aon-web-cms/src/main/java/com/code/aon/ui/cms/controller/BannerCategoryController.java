@@ -2,7 +2,6 @@ package com.code.aon.ui.cms.controller;
 
 import java.util.List;
 
-import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
 
 import com.code.aon.cms.Banner;
@@ -15,7 +14,6 @@ import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionException;
-import com.code.aon.ui.cms.util.ControllerUtil;
 import com.code.aon.ui.util.AonUtil;
 
 public class BannerCategoryController extends BasicI18nController {
@@ -41,23 +39,10 @@ public class BannerCategoryController extends BasicI18nController {
 	}
 
 	public String getI18nLabel() throws ManagerBeanException {
-		String label = "";
-		BannerCategoryDetail bannerCategoryDetail = getCurrentDetail();
+		String label = "- NO VALUE -";
+		BannerCategoryDetail bannerCategoryDetail = (BannerCategoryDetail)getModelRowdataI18n();
 		if (bannerCategoryDetail != null) label = bannerCategoryDetail.getLabel();
 		return label;
-	}
-
-	private BannerCategoryDetail getCurrentDetail() throws ManagerBeanException {
-		BannerCategoryDetail bannerCategoryDetail = null;
-		BannerCategory bannerCategory = (BannerCategory)this.model.getRowData();
-		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(getManagerBeanI18n().getFieldName(ICMSAlias.BANNER_CATEGORY_DETAIL_BANNER_CATEGORY_ID), bannerCategory.getId());
-		criteria.addEqualExpression(getManagerBeanI18n().getFieldName(ICMSAlias.BANNER_CATEGORY_DETAIL_LANGUAGE_ID), ControllerUtil.getCurrentLanguage().getId());
-		List<ITransferObject> list = (List<ITransferObject>)getManagerBeanI18n().getList(criteria);
-		if (list.size() > 0) {
-			bannerCategoryDetail = (BannerCategoryDetail)list.get(0);
-		}
-		return bannerCategoryDetail;
 	}
 
 	public void onAccept(ActionEvent event) {

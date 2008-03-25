@@ -2,7 +2,6 @@ package com.code.aon.ui.cms.controller;
 
 import java.util.List;
 
-import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
 
 import com.code.aon.cms.Sidebar;
@@ -18,12 +17,6 @@ import com.code.aon.ui.form.GridController;
 import com.code.aon.ui.util.AonUtil;
 
 public class SidebarController extends GridController {
-
-	@SuppressWarnings("unused")
-	public void onSelect(ActionEvent event) {
-		super.onSelect(new ActionEvent(event.getComponent()));
-		FacesContext.getCurrentInstance().getApplication().getNavigationHandler().handleNavigation(FacesContext.getCurrentInstance(), null, "sidebar_form");
-	}
 
 	public void onSelectOptions(ActionEvent event) throws ManagerBeanException, ExpressionException {
 		SidebarOptionController soc = (SidebarOptionController)AonUtil.getController("sidebar_option");

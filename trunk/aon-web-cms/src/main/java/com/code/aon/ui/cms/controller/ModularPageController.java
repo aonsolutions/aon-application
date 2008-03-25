@@ -5,6 +5,7 @@ import java.util.List;
 import javax.faces.event.ActionEvent;
 
 import com.code.aon.cms.ModularPage;
+import com.code.aon.cms.ModularPageDetail;
 import com.code.aon.cms.ModularPageOption;
 import com.code.aon.cms.dao.ICMSAlias;
 import com.code.aon.common.BeanManager;
@@ -62,4 +63,13 @@ public class ModularPageController extends GridI18nController {
 		mp.setActive(active);
 		getManagerBean().update(mp);
 	}
+	
+	public String getI18nLabel() throws ManagerBeanException {
+		String label = "- NO VALUE -";
+		ModularPageDetail mpd = (ModularPageDetail)getModelRowdataI18n();
+		if (mpd != null) label = mpd.getLabel();
+		return label;
+	}
+
+
 }

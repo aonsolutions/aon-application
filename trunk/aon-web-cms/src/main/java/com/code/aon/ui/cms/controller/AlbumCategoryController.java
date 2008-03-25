@@ -15,7 +15,6 @@ import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionException;
-import com.code.aon.ui.cms.util.ControllerUtil;
 import com.code.aon.ui.util.AonUtil;
 
 public class AlbumCategoryController extends BasicI18nController {
@@ -47,23 +46,10 @@ public class AlbumCategoryController extends BasicI18nController {
 	}
 	
 	public String getI18nLabel() throws ManagerBeanException {
-		String label = "";
-		AlbumCategoryDetail albumCategoryDetail = getCurrentDetail();
+		String label = "- NO VALUE -";
+		AlbumCategoryDetail albumCategoryDetail = (AlbumCategoryDetail)getModelRowdataI18n();
 		if (albumCategoryDetail != null) label = albumCategoryDetail.getLabel();
 		return label;
-	}
-
-	private AlbumCategoryDetail getCurrentDetail() throws ManagerBeanException {
-		AlbumCategoryDetail albumCategoryDetail = null;
-		AlbumCategory albumCategory = (AlbumCategory)this.model.getRowData();
-		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(getManagerBeanI18n().getFieldName(ICMSAlias.ALBUM_CATEGORY_DETAIL_ALBUM_CATEGORY_ID), albumCategory.getId());
-		criteria.addEqualExpression(getManagerBeanI18n().getFieldName(ICMSAlias.ALBUM_CATEGORY_DETAIL_LANGUAGE_ID), ControllerUtil.getCurrentLanguage().getId());
-		List<ITransferObject> list = (List<ITransferObject>)getManagerBeanI18n().getList(criteria);
-		if (list.size() > 0) {
-			albumCategoryDetail = (AlbumCategoryDetail)list.get(0);
-		}
-		return albumCategoryDetail;
 	}
 
 	public void onAccept(ActionEvent event) {

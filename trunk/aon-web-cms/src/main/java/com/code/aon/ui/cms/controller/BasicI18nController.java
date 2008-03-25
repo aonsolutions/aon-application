@@ -400,4 +400,23 @@ public class BasicI18nController extends BasicController implements I18NControll
 		
 	}
 
+	
+	public ITransferObject getModelRowdataI18n() {
+		try {
+			if (this.model.getRowData() != null) {
+				IManagerBean beanI18n = getManagerBeanI18n();
+				Criteria criteria = new Criteria();
+				criteria.addEqualExpression(beanI18n.getFieldName(language_alias), ControllerUtil.getCurrentLanguage().getId());
+				criteria.addEqualExpression(beanI18n.getFieldName(join_alias), getManagerBean().getId((ITransferObject)this.model.getRowData()));
+				List<ITransferObject> list = beanI18n.getList(criteria);
+				if (!list.isEmpty()) {
+					return list.get(0);
+				}
+			}
+		} catch (Exception e) {
+		}
+		return null;
+	}
+
+
 }

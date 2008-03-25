@@ -86,7 +86,7 @@
 				</aon:panelGrid>
 			</aon:div>
 		
-			<rich:panel id="detail_panel" rendered="#{!link_category.new}">
+			<rich:panel id="detail_panel" rendered="#{!link_category.new and link_category.toI18n.id != null}">
 				<f:facet name="header">#{appBundle.link}</f:facet>
 				
 				<aon:panelGrid columns="2" styleClass="none" columnClasses="aon-vertical-align-top,aon-vertical-align-top">
@@ -101,14 +101,15 @@
 								<!-- start toolbar navigation -->
 								<aon:div styleClass="aon-finding-toolbar-item-group">
 									<h:commandButton id="reset_list" value="#{bundle.aon_reset}"
-										action="link_category_form" 
+										immediate="#{true}"
+										reRender="detail_panel"
 										actionListener="#{link.onReset}"
 										styleClass="aon-finding-toolbar-item aon-icon-reset"
 										accesskey="#{bundle.aon_key_new}"/>
 									<aon:confirmButton id="remove_list"
 										value="#{bundle.aon_remove}" 
 										rendered="#{!link.checklistEmpty and link.to==null}" 
-										inmediate="true"
+										immediate="#{true}"
 										confirmTitle="Confirmation Dialog" 
 										confirmMessage="#{bundle.aon_remove_confirm}"
 										confirmActionListener="#{link.onRemoveSelected}" 
@@ -130,6 +131,7 @@
 							cellpadding="0" cellspacing="0"
 							columnClasses="dr-table-cell rich-table-cell aon-editDataTable-iconColumn,
 									dr-table-cell rich-table-cell aon-editDataTable-textColumn,
+									dr-table-cell rich-table-cell aon-editDataTable-textColumn,
 									dr-table-cell rich-table-cell aon-editDataTable-iconColumn,
 									dr-table-cell rich-table-cell aon-editDataTable-textColumn">
 									
@@ -149,13 +151,27 @@
 					
 							<aon:column>
 								<a4j:support 
-									action="link_category_form"
+									immediate="#{true}"
+									reRender="detail_panel"
 									actionListener="#{link.onSelect}"
 									event="onclick" />
 								<f:facet name="header">
 									<aon:outputText value="#{appBundle.link_alias}"/>
 								</f:facet>
 								<aon:outputText value="#{to.alias}" 
+									styleClass="aon-editDataTable-button"/>
+							</aon:column>
+
+							<aon:column>
+								<a4j:support 
+									immediate="#{true}"
+									reRender="detail_panel"
+									actionListener="#{link.onSelect}"
+									event="onclick" />
+								<f:facet name="header">
+									<aon:outputText value="#{appBundle.link_label}"/>
+								</f:facet>
+								<aon:outputText value="#{link.i18nLabel}" 
 									styleClass="aon-editDataTable-button"/>
 							</aon:column>
 

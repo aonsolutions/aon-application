@@ -25,7 +25,6 @@ public class ArticleCategoryController extends BasicI18nController {
 	@SuppressWarnings("unused")
 	public void onSelect(ActionEvent event){
 		super.onSelect(new ActionEvent(event.getComponent()));
-		FacesContext.getCurrentInstance().getApplication().getNavigationHandler().handleNavigation(FacesContext.getCurrentInstance(), null, "article_category_form");
 		loadCurrentLanguage();
 	}
 
@@ -44,23 +43,10 @@ public class ArticleCategoryController extends BasicI18nController {
 	}
 	
 	public String getI18nLabel() throws ManagerBeanException {
-		String label = "";
-		ArticleCategoryDetail articleCategoryDetail = getCurrentDetail();
+		String label = "- NO VALUE -";
+		ArticleCategoryDetail articleCategoryDetail = (ArticleCategoryDetail)getModelRowdataI18n();
 		if (articleCategoryDetail != null) label = articleCategoryDetail.getLabel();
 		return label;
-	}
-
-	private ArticleCategoryDetail getCurrentDetail() throws ManagerBeanException {
-		ArticleCategoryDetail articleCategoryDetail = null;
-		ArticleCategory articleCategory = (ArticleCategory)this.model.getRowData();
-		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(getManagerBeanI18n().getFieldName(ICMSAlias.ARTICLE_CATEGORY_DETAIL_ARTICLE_CATEGORY_ID), articleCategory.getId());
-		criteria.addEqualExpression(getManagerBeanI18n().getFieldName(ICMSAlias.ARTICLE_CATEGORY_DETAIL_LANGUAGE_ID), ControllerUtil.getCurrentLanguage().getId());
-		List<ITransferObject> list = (List<ITransferObject>)getManagerBeanI18n().getList(criteria);
-		if (list.size() > 0) {
-			articleCategoryDetail = (ArticleCategoryDetail)list.get(0);
-		}
-		return articleCategoryDetail;
 	}
 
 	@SuppressWarnings("unchecked")

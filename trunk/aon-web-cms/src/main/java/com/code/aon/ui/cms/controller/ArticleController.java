@@ -19,7 +19,6 @@ import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionException;
-import com.code.aon.ui.cms.util.ControllerUtil;
 import com.code.aon.ui.util.AonUtil;
 
 public class ArticleController extends GridI18nController {
@@ -65,37 +64,24 @@ public class ArticleController extends GridI18nController {
 	}
 	
 	public String getI18nTitle() throws ManagerBeanException {
-		String label = "";
-		ArticleDetail fd = getCurrentDetail();
+		String label = "- NO VALUE -";
+		ArticleDetail fd = (ArticleDetail)getModelRowdataI18n();
 		if (fd != null) label = fd.getTitle();
 		return label;
 	}
 
 	public String getI18nSubtitle() throws ManagerBeanException {
-		String label = "";
-		ArticleDetail fd = getCurrentDetail();
+		String label = "- NO VALUE -";
+		ArticleDetail fd = (ArticleDetail)getModelRowdataI18n();
 		if (fd != null) label = fd.getSubtitle();
 		return label;
 	}
 
 	public String getI18nContent() throws ManagerBeanException {
-		String label = "";
-		ArticleDetail fd = getCurrentDetail();
+		String label = "- NO VALUE -";
+		ArticleDetail fd = (ArticleDetail)getModelRowdataI18n();
 		if (fd != null) label = fd.getContent();
 		return label;
-	}
-
-	private ArticleDetail getCurrentDetail() throws ManagerBeanException {
-		ArticleDetail fd = null;
-		Article f = (Article)this.model.getRowData();
-		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(getManagerBeanI18n().getFieldName(ICMSAlias.ARTICLE_DETAIL_ARTICLE_ID), f.getId());
-		criteria.addEqualExpression(getManagerBeanI18n().getFieldName(ICMSAlias.ARTICLE_DETAIL_LANGUAGE_ID), ControllerUtil.getCurrentLanguage().getId());
-		List<ITransferObject> list = (List<ITransferObject>)getManagerBeanI18n().getList(criteria);
-		if (list.size() > 0) {
-			fd = (ArticleDetail)list.get(0);
-		}
-		return fd;
 	}
 
 	public void onAccept(ActionEvent event) {

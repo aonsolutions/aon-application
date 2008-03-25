@@ -2,7 +2,6 @@ package com.code.aon.ui.cms.controller;
 
 import java.util.List;
 
-import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
 
 import com.code.aon.cms.Faq;
@@ -13,7 +12,6 @@ import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionException;
-import com.code.aon.ui.cms.util.ControllerUtil;
 
 
 public class FaqController extends BasicI18nController {
@@ -31,7 +29,6 @@ public class FaqController extends BasicI18nController {
 	@SuppressWarnings("unused")
 	public void onSelect(ActionEvent event) {
 		super.onSelect(new ActionEvent(event.getComponent()));
-		FacesContext.getCurrentInstance().getApplication().getNavigationHandler().handleNavigation(FacesContext.getCurrentInstance(), null, "faq_form");
 		loadCurrentLanguage();
 	}
 
@@ -50,30 +47,17 @@ public class FaqController extends BasicI18nController {
 	}
 	
 	public String getI18nAnswer() throws ManagerBeanException {
-		String label = "";
-		FaqDetail fd = getCurrentDetail();
+		String label = "- NO VALUE -";
+		FaqDetail fd = (FaqDetail)getModelRowdataI18n();
 		if (fd != null) label = fd.getAnswer();
 		return label;
 	}
 
 	public String getI18nQuestion() throws ManagerBeanException {
-		String label = "";
-		FaqDetail fd = getCurrentDetail();
+		String label = "- NO VALUE -";
+		FaqDetail fd = (FaqDetail)getModelRowdataI18n();
 		if (fd != null) label = fd.getQuestion();
 		return label;
-	}
-
-	private FaqDetail getCurrentDetail() throws ManagerBeanException {
-		FaqDetail fd = null;
-		Faq f = (Faq)this.model.getRowData();
-		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(getManagerBeanI18n().getFieldName(ICMSAlias.FAQ_DETAIL_FAQ_ID), f.getId());
-		criteria.addEqualExpression(getManagerBeanI18n().getFieldName(ICMSAlias.FAQ_DETAIL_LANGUAGE_ID), ControllerUtil.getCurrentLanguage().getId());
-		List<ITransferObject> list = (List<ITransferObject>)getManagerBeanI18n().getList(criteria);
-		if (list.size() > 0) {
-			fd = (FaqDetail)list.get(0);
-		}
-		return fd;
 	}
 
 	@SuppressWarnings("unchecked")
