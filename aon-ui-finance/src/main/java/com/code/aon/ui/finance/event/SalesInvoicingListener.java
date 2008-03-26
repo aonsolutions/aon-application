@@ -184,13 +184,16 @@ public class SalesInvoicingListener extends ControllerAdapter {
 			Iterator iter = customerBean.getList(criteria).iterator();
 			boolean surcharge = false;
 			boolean taxFree = false;
+			boolean withholding = false;
 			if(iter.hasNext()){
 				Customer customer = (Customer)iter.next();
 				surcharge = customer.isSurcharge();
 				taxFree = customer.isTaxFree();
+				withholding = customer.isWithholding();
 			}
-			invoice.setTaxFree(taxFree);
 			invoice.setSurcharge(surcharge);
+			invoice.setTaxFree(taxFree);
+			invoice.setWithholding(withholding);
 		} catch (ManagerBeanException e) {
 			LOGGER.log(Level.SEVERE, "error obtaining customer", e);
 		}
