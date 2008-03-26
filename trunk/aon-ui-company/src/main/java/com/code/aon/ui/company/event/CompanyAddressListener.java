@@ -25,6 +25,18 @@ public class CompanyAddressListener extends ControllerAdapter {
 	/** The LOGGER. */
 	private static final Logger LOGGER = Logger.getLogger(CompanyAddressListener.class.getName());
 	
+	/* (non-Javadoc)
+	 * @see com.code.aon.ui.form.event.ControllerAdapter#afterBeanCreated(com.code.aon.ui.form.event.ControllerEvent)
+	 */
+	@Override
+	public void afterBeanCreated(ControllerEvent event) throws ControllerListenerException {
+		RegistryAddress address = null;
+		if ( address == null && event.getController().getTo() instanceof RegistryAddress ) {
+			address = (RegistryAddress)event.getController().getTo();
+			address.setAddressType( (address.getAddressType() == null)? AddressType.DELEGATION: address.getAddressType() ); 
+		}
+	}
+
 	/**
 	 * Adds a workPlace related with the current RegistryAddress
 	 * 
@@ -48,6 +60,7 @@ public class CompanyAddressListener extends ControllerAdapter {
 				WorkPlace workPlace = new WorkPlace();
 				workPlace.setDescription( address.getAddress() + (address.getAddress2() != null?" " + address.getAddress2():"" ) +  (address.getAddress3() != null?" " + address.getAddress3():"" ));
 				workPlace.setAddress( address );
+				workPlace.setActive( true );
 				workPlaceBean.insert(workPlace);
 			} catch (ManagerBeanException e) {
 				LOGGER.log(Level.SEVERE, "Error adding workPlace for rAddres with id= " + address.getId(), e);
@@ -77,10 +90,11 @@ public class CompanyAddressListener extends ControllerAdapter {
 			try {
 				IManagerBean workPlaceBean = BeanManager.getManagerBean(WorkPlace.class);
 				if(workPlace != null){
-					workPlaceBean.remove(workPlace);
+					workPlace.setActive( false );
+					workPlaceBean.insertOrUpdate( workPlace );
 				}
 			} catch (ManagerBeanException e) {
-//				TODO i18n
+				//	TODO i18n
 				String message = "No se puede borrar esta dirección: " + address.getId() 
 								+ " ya que está asociada al Centro de Trabajo: " + workPlace.getDescription()
 								+ ", desvincule 1º la relación de Empleados que trabajan en él.";

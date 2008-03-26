@@ -17,8 +17,6 @@ import javax.faces.event.ValueChangeEvent;
 
 import org.apache.myfaces.custom.fileupload.UploadedFile;
 
-import com.code.aon.calendar.AonCalendar;
-import com.code.aon.calendar.CalendarException;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
@@ -28,7 +26,6 @@ import com.code.aon.config.ApplicationParameter;
 import com.code.aon.config.dao.IConfigAlias;
 import com.code.aon.geozone.GeoZone;
 import com.code.aon.geozone.dao.IGeoZoneAlias;
-import com.code.aon.planner.model.CalendarScheduleModel;
 import com.code.aon.ql.Criteria;
 import com.code.aon.registry.RecordData;
 import com.code.aon.registry.Registry;
@@ -40,8 +37,6 @@ import com.code.aon.registry.enumeration.AddressType;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.form.IController;
 import com.code.aon.ui.menu.jsf.MenuEvent;
-import com.code.aon.ui.planner.ControllerUtil;
-import com.code.aon.ui.planner.PlannerController;
 import com.code.aon.ui.util.AonUtil;
 
 /**
@@ -91,9 +86,6 @@ public class CompanyController extends BasicController {
 	/** Determines if the web has been changed and it hasn't been saved yet. */
 	private boolean webDirty;
 
-	/** The calendar. */
-	private AonCalendar calendar;
-	
 	private boolean printHeader;
 	
 	private boolean printRecordData;
@@ -290,15 +282,6 @@ public class CompanyController extends BasicController {
 	public void setMainAddress(RegistryAddress mainAddress) {
 		this.mainAddress = mainAddress;
 	}
-
-	/**
-	 * Gets the calendar.
-	 * 
-	 * @return the calendar
-	 */
-    public AonCalendar getAonCalendar() {
-    	return this.calendar;
-    }
 
 	/**
 	 * Checks if an image is attached.
@@ -662,48 +645,6 @@ public class CompanyController extends BasicController {
     			((RegistryAddress)AonUtil.getController(COMPANY_ADDRESS_CONTROLLER_NAME).getTo()).setGeozone((GeoZone)iter.next());
     		}
     	}
-    }
-
-	/**
- 	 * This method gets called when a company schedule is requested. Initializes Planner
- 	 * and WorkingTime Controllers with the company calendar.
- 	 * 
-	 * @param event
-	 * @throws CalendarException
-	 * @throws ManagerBeanException
-	 */
-	@SuppressWarnings("unused")
-	public void onSchedule(ActionEvent event) throws CalendarException, ManagerBeanException {
-		if ( super.model == null ) {
-			onLoad();
-		}
-		PlannerController planner = ControllerUtil.getPlannerController();
-		CalendarScheduleModel csm = getCalendarScheduleModel();
-		planner.initialize( csm, COMPANY_NAME, false );
-	}
-
-	/**
-     * Return Company schedule model.
-     * 
-     * @return the calendar schedule model
-     * 
-     * @throws CalendarException the calendar exception
-     * @throws ManagerBeanException the manager bean exception
-     */
-	public CalendarScheduleModel getCalendarScheduleModel() 
-				throws CalendarException, ManagerBeanException {
-		if ( getTo() == null ) {
-			super.getModel().setRowIndex(0);
-			onSelect(null);
-		}
-		if ( this.calendar == null ) {
-			Company company = (Company) getTo(); 
-			this.calendar = 
-				ControllerUtil.getCalendarManagerBean().getCalendar( company.getCalendar() );
-			company.setCalendar( this.calendar.getPrimaryKey() );
-			update();
-		}
-        return new CalendarScheduleModel(this.calendar);
     }
 
 	/**
