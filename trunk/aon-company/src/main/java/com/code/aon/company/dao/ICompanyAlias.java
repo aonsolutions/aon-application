@@ -242,28 +242,34 @@ public interface ICompanyAlias {
 	DAOConstantsEntry WORK_PLACE_ENTRY = DAOConstants.getDAOConstant(WorkPlace.class);
 
 	/** 
+	* Alias value: WorkPlace_active
+	* Hibernate value: WorkPlace.active
+	*/
+	String  WORK_PLACE_ACTIVE = WORK_PLACE_ENTRY.getAliasNames()[0];
+
+	/** 
 	* Alias value: WorkPlace_address_id
 	* Hibernate value: WorkPlace.address.id
 	*/
-	String  WORK_PLACE_ADDRESS_ID = WORK_PLACE_ENTRY.getAliasNames()[0];
+	String  WORK_PLACE_ADDRESS_ID = WORK_PLACE_ENTRY.getAliasNames()[1];
 
 	/** 
 	* Alias value: WorkPlace_calendar
 	* Hibernate value: WorkPlace.calendar
 	*/
-	String  WORK_PLACE_CALENDAR = WORK_PLACE_ENTRY.getAliasNames()[1];
+	String  WORK_PLACE_CALENDAR = WORK_PLACE_ENTRY.getAliasNames()[2];
 
 	/** 
 	* Alias value: WorkPlace_description
 	* Hibernate value: WorkPlace.description
 	*/
-	String  WORK_PLACE_DESCRIPTION = WORK_PLACE_ENTRY.getAliasNames()[2];
+	String  WORK_PLACE_DESCRIPTION = WORK_PLACE_ENTRY.getAliasNames()[3];
 
 	/** 
 	* Alias value: WorkPlace_id
 	* Hibernate value: WorkPlace.id
 	*/
-	String  WORK_PLACE_ID = WORK_PLACE_ENTRY.getAliasNames()[3];
+	String  WORK_PLACE_ID = WORK_PLACE_ENTRY.getAliasNames()[4];
 
 
 
@@ -273,28 +279,34 @@ public interface ICompanyAlias {
 	DAOConstantsEntry WORK_ACTIVITY_ENTRY = DAOConstants.getDAOConstant(WorkActivity.class);
 
 	/** 
+	* Alias value: WorkActivity_active
+	* Hibernate value: WorkActivity.active
+	*/
+	String  WORK_ACTIVITY_ACTIVE = WORK_ACTIVITY_ENTRY.getAliasNames()[0];
+
+	/** 
 	* Alias value: WorkActivity_calendar
 	* Hibernate value: WorkActivity.calendar
 	*/
-	String  WORK_ACTIVITY_CALENDAR = WORK_ACTIVITY_ENTRY.getAliasNames()[0];
+	String  WORK_ACTIVITY_CALENDAR = WORK_ACTIVITY_ENTRY.getAliasNames()[1];
 
 	/** 
 	* Alias value: WorkActivity_description
 	* Hibernate value: WorkActivity.description
 	*/
-	String  WORK_ACTIVITY_DESCRIPTION = WORK_ACTIVITY_ENTRY.getAliasNames()[1];
+	String  WORK_ACTIVITY_DESCRIPTION = WORK_ACTIVITY_ENTRY.getAliasNames()[2];
 
 	/** 
 	* Alias value: WorkActivity_id
 	* Hibernate value: WorkActivity.id
 	*/
-	String  WORK_ACTIVITY_ID = WORK_ACTIVITY_ENTRY.getAliasNames()[2];
+	String  WORK_ACTIVITY_ID = WORK_ACTIVITY_ENTRY.getAliasNames()[3];
 
 	/** 
 	* Alias value: WorkActivity_workPlace_id
 	* Hibernate value: WorkActivity.workPlace.id
 	*/
-	String  WORK_ACTIVITY_WORK_PLACE_ID = WORK_ACTIVITY_ENTRY.getAliasNames()[3];
+	String  WORK_ACTIVITY_WORK_PLACE_ID = WORK_ACTIVITY_ENTRY.getAliasNames()[4];
 
 
 }
