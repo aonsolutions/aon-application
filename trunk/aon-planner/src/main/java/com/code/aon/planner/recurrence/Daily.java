@@ -3,7 +3,7 @@
  */
 package com.code.aon.planner.recurrence;
 
-import com.code.aon.planner.util.PlannerUtil;
+import com.code.aon.planner.IRecurrence;
 
 import net.fortuna.ical4j.model.Recur;
 
@@ -60,7 +60,7 @@ public class Daily implements IRecurrence {
 	 * @see com.code.aon.planner.recurrence.IRecurrence#toRRULEString()
 	 */
 	public String toRRULEString() {
-		String[] params = {Recur.DAILY, PlannerUtil.EMPTY_STRING + this.interval};
+		String[] params = {Recur.DAILY, EMPTY_STRING + this.interval};
 		return RRULE.format(params);
 	}
 	

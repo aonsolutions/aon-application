@@ -2,7 +2,7 @@
  * Created on 10-nov-2005
  *
  */
-package com.code.aon.planner.model;
+package com.code.aon.ui.planner.core;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -28,7 +28,7 @@ import com.code.aon.calendar.CalendarUtil;
 import com.code.aon.calendar.enumeration.EventCategory;
 
 import com.code.aon.planner.core.EventCategoryFilter;
-import com.code.aon.planner.util.PlannerUtil;
+import com.code.aon.ui.planner.util.PlannerUtil;
 
 public class CalendarScheduleModel extends AbstractScheduleModel {
 
@@ -118,41 +118,6 @@ public class CalendarScheduleModel extends AbstractScheduleModel {
         this.interval = interval;
     }
 
-	/* (non-Javadoc)
-	 * @see org.apache.myfaces.custom.schedule.model.AbstractScheduleModel#loadEntries(java.util.Date, java.util.Date)
-	 */
-	@SuppressWarnings("unchecked")
-	protected Collection loadEntries(Date startDate, Date endDate) {
-//	TODO Permitir un filtro de EventCategory con los eventos que cada aplicación requiera.
-		ComponentList list = new ComponentList();
-		for( EventCategory _enum : EventCategory.values() ) {
-			if ( filter.accept( _enum.ordinal() ) ) {
-				ComponentList events = getCalendar().getVEvents( _enum ); 
-				list.addAll(events.subList(0, events.size()));
-			}
-    	}
-		DateTime start = CalendarUtil.getICalDateTime(startDate, true);
-		DateTime end = CalendarUtil.getICalDateTime(endDate, true);
-		return getConsumedTime(list, start, end);
-    }
-
-    /* (non-Javadoc)
-	 * @see org.apache.myfaces.custom.schedule.model.AbstractScheduleModel#loadDayAttributes(org.apache.myfaces.custom.schedule.model.Day)
-	 */
-    protected void loadDayAttributes(Day day) {
-        if (day == null)
-            return;
-
-        Component c = PlannerUtil.isSpecialDay( getCalendar().getEventsInDay(day.getDate()) ); 
-        if ( c != null ) {
-            day.setSpecialDayName( c.getProperties().getProperty(Property.SUMMARY).getValue() );
-            day.setWorkingDay(false);
-        } else {
-            day.setSpecialDayName(null);
-            day.setWorkingDay(true);
-        }
-    }
-
 	/**
      * Creates a list of periods representing the time consumed by the specified
      * list of components.
@@ -198,4 +163,34 @@ public class CalendarScheduleModel extends AbstractScheduleModel {
         
     }
 
+//	******* AbstractScheduleModel class methods *********************************************** 
+	@SuppressWarnings("unchecked")
+	protected Collection loadEntries(Date startDate, Date endDate) {
+//	TODO Permitir un filtro de EventCategory con los eventos que cada aplicación requiera.
+		ComponentList list = new ComponentList();
+		for( EventCategory _enum : EventCategory.values() ) {
+			if ( filter.accept( _enum.ordinal() ) ) {
+				ComponentList events = getCalendar().getVEvents( _enum ); 
+				list.addAll(events.subList(0, events.size()));
+			}
+    	}
+		DateTime start = CalendarUtil.getICalDateTime(startDate, true);
+		DateTime end = CalendarUtil.getICalDateTime(endDate, true);
+		return getConsumedTime(list, start, end);
+    }
+
+    protected void loadDayAttributes(Day day) {
+        if (day == null)
+            return;
+
+        Component c = PlannerUtil.isSpecialDay( getCalendar().getEventsInDay(day.getDate()) ); 
+        if ( c != null ) {
+            day.setSpecialDayName( c.getProperties().getProperty(Property.SUMMARY).getValue() );
+            day.setWorkingDay(false);
+        } else {
+            day.setSpecialDayName(null);
+            day.setWorkingDay(true);
+        }
+    }
+//	******* AbstractScheduleModel class methods *********************************************** 
 }

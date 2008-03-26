@@ -1,9 +1,11 @@
-package com.code.aon.planner.recurrence;
+package com.code.aon.planner;
 
 import java.io.Serializable;
 import java.text.MessageFormat;
 
 public interface IRecurrence extends Serializable {
+
+	static final String EMPTY_STRING = "";
 
 	/** Indica el tipo de repetición, cada x días, semanas, meses, años. */
 	String EACH = "0";

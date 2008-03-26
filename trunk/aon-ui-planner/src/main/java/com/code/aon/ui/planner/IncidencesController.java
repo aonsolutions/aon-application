@@ -42,11 +42,9 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.company.resources.Resource;
 import com.code.aon.planner.IEvent;
-import com.code.aon.planner.core.Event;
 import com.code.aon.planner.core.IncidenceType;
 import com.code.aon.planner.core.dao.IPlannerAlias;
 import com.code.aon.planner.enumeration.EventStatus;
-import com.code.aon.planner.util.PlannerUtil;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.form.event.ControllerEvent;
@@ -54,6 +52,8 @@ import com.code.aon.ui.form.event.ControllerListenerException;
 import com.code.aon.ui.menu.jsf.MenuEvent;
 import com.code.aon.ui.planner.CalendarManagerBean;
 import com.code.aon.ui.planner.ControllerUtil;
+import com.code.aon.ui.planner.core.Event;
+import com.code.aon.ui.planner.util.PlannerUtil;
 
 /**
  * @author Consulting & Development. Iñaki Ayerbe - 03/01/2007

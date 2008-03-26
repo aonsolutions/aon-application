@@ -2,14 +2,16 @@
  * Created on 10-nov-2005
  *
  */
-package com.code.aon.planner.core;
+package com.code.aon.ui.planner.core;
 
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Properties;
 import java.util.Set;
+import java.util.StringTokenizer;
 
 import net.fortuna.ical4j.model.Component;
 import net.fortuna.ical4j.model.Dur;
@@ -31,7 +33,7 @@ import com.code.aon.calendar.enumeration.EventCategory;
 import com.code.aon.planner.IEvent;
 import com.code.aon.planner.INodeVisitor;
 import com.code.aon.planner.enumeration.EventStatus;
-import com.code.aon.planner.util.PlannerUtil;
+import com.code.aon.ui.planner.util.PlannerUtil;
 
 public class Event implements Cloneable, IEvent, ScheduleEntry {
 
@@ -210,26 +212,26 @@ public class Event implements Cloneable, IEvent, ScheduleEntry {
 	public String getFrecuency() {
     	if ( this.recurrences.size() > 0 ) {
     		Recur r = (Recur) this.recurrences.iterator().next();
-            StringBuffer b = new StringBuffer( r.getFrequency() );
+            StringBuffer b = new StringBuffer( parse( r.getFrequency() ) );
             if (!r.getMonthList().isEmpty()) {
-                b.append( ";BYMONTH=" );
-                b.append( r.getMonthList() );
+                b.append( ";" + parse( "BYMONTH" ) + "=" );
+                b.append( parse( r.getMonthList().toString() ) );
             }
             if (!r.getWeekNoList().isEmpty()) {
-                b.append(";BYWEEKNO=");
-                b.append(r.getWeekNoList());
+                b.append(";" + parse( "BYWEEKNO" ) + "=");
+                b.append( parse( r.getWeekNoList().toString() ) );
             }
             if (!r.getYearDayList().isEmpty()) {
-                b.append(";BYYEARDAY=");
-                b.append( r.getYearDayList() );
+                b.append(";" + parse( "BYYEARDAY" ) + "=");
+                b.append( parse( r.getYearDayList().toString() ) );
             }
             if (!r.getMonthDayList().isEmpty()) {
-                b.append(";BYMONTHDAY=");
-                b.append( r.getMonthDayList() );
+                b.append(";" + parse( "BYMONTHDAY" ) + "=");
+                b.append( parse( r.getMonthDayList().toString() ) );
             }
             if (!r.getDayList().isEmpty()) {
-                b.append(";BYDAY=");
-                b.append( r.getDayList() );
+                b.append(";" + parse( "BYDAY" ) + "=");
+                b.append( parse( r.getDayList().toString() ) );
             }
     		return b.toString();
     	}
@@ -329,7 +331,7 @@ public class Event implements Cloneable, IEvent, ScheduleEntry {
 	/* (non-Javadoc)
      * @see com.code.aon.planner.IEvent#getRecurrences()
      */
-    public Set getRecurrences() {
+    public Set<Recur> getRecurrences() {
         return Collections.unmodifiableSet(this.recurrences);
     }
 
@@ -435,9 +437,9 @@ public class Event implements Cloneable, IEvent, ScheduleEntry {
 	        this.component.getProperties().add( new Status(status.name()) );
 	        this.component.getProperties().add( new Categories( getCategory().name() ) );
 //	TODO Alarma(VAlarm)
-	        Iterator iter = getRecurrences().iterator();
+	        Iterator<Recur> iter = getRecurrences().iterator();
 	        while ( iter.hasNext() ) {
-	            Recur recur = (Recur)iter.next();
+	            Recur recur = iter.next();
 	            this.component.getProperties().add( new RRule(recur) );
 	        }
 			this.isDirty = false;
@@ -473,4 +475,53 @@ public class Event implements Cloneable, IEvent, ScheduleEntry {
 		return cClone;
 	}
 
+	Properties props ;
+	private String parse(String s) {
+		props = new Properties();
+		if ( props.size() == 0 ) {
+			props.put( "FREQ", "Fecuencia" );
+			props.put( "UNTIL", "Hasta" );
+			props.put( "COUNT", "Total" );
+			props.put( "INTERVAL", "Intervalo" );
+			props.put( "BYSECOND", "Segundos" );
+			props.put( "BYMINUTE", "Minutos" );
+			props.put( "BYHOUR", "Horas" );
+			props.put( "BYDAY", "Días" );
+			props.put( "BYMONTHDAY", "DíasxMes" );
+			props.put( "BYYEARDAY", "DíasxAño" );
+			props.put( "BYWEEKNO", "Semana" );
+			props.put( "BYMONTH", "Mes" );
+			props.put( "BYSETPOS", "BYSETPOS" );
+			props.put( "WKST", "WKST" );
+			props.put( "SECONDLY", "xSegundo" );
+			props.put( "MINUTELY", "xMinuto" );
+			props.put( "HOURLY", "xHora" );
+			props.put( "DAILY", "Diario" );
+			props.put( "WEEKLY", "Semanal" );
+			props.put( "MONTHLY", "Mensual" );
+			props.put( "YEARLY", "Anual" );
+		    props.put( "SU", "DO" );
+			props.put( "MO", "LU" );
+			props.put( "TU", "MA" );
+			props.put( "WE", "MI" );
+			props.put( "TH", "JU" );
+			props.put( "FR", "VI" );
+			props.put( "SA", "SA" );
+		}
+		if ( s.indexOf( "," ) > -1 ) {
+			StringTokenizer st = new StringTokenizer( s, "," );
+	        StringBuffer b = new StringBuffer();
+	        while ( st.hasMoreElements() ) {
+	        	String token = (String)  st.nextElement();
+	        	String element = props.getProperty( token );
+	            b.append( ( element ==null )? token: element );
+	            if ( st.hasMoreElements() ) {
+	                b.append(',');
+	            }
+			}
+	        return b.toString();
+		}
+		String p = props.getProperty( s );
+		return ( p == null )? s: p;
+	}
 }

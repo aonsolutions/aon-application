@@ -5,10 +5,10 @@ package com.code.aon.planner.recurrence;
 
 import java.util.Iterator;
 
-import com.code.aon.planner.util.PlannerUtil;
-
 import net.fortuna.ical4j.model.Recur;
 import net.fortuna.ical4j.model.WeekDay;
+
+import com.code.aon.planner.IRecurrence;
 
 /**
  * 
@@ -58,7 +58,7 @@ public class Weekly implements IRecurrence {
 	 * @see com.code.aon.planner.recurrence.IRecurrence#toRRULEString()
 	 */
 	public String toRRULEString() {
-		String[] params = {Recur.WEEKLY, PlannerUtil.EMPTY_STRING + this.interval, getByDay()};
+		String[] params = {Recur.WEEKLY, EMPTY_STRING + this.interval, getByDay()};
 		return RRULE.format(params);
 	}
 

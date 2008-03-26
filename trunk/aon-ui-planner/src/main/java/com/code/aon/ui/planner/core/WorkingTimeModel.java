@@ -1,4 +1,4 @@
-package com.code.aon.planner.model;
+package com.code.aon.ui.planner.core;
 
 import java.util.ArrayList;
 import java.util.Calendar;

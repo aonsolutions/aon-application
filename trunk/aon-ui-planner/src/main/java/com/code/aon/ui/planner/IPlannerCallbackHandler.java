@@ -3,6 +3,8 @@ package com.code.aon.ui.planner;
 import java.util.Date;
 import java.util.List;
 
+import javax.faces.model.SelectItem;
+
 import com.code.aon.calendar.enumeration.EventCategory;
 import com.code.aon.planner.EventException;
 import com.code.aon.planner.IEvent;
@@ -31,7 +33,7 @@ public interface IPlannerCallbackHandler {
     /**
      * @return a category list
      */
-	List getCategories();
+	List<SelectItem> getCategories();
 
 	/**
 	 * Refresh schedule for showing the event.
