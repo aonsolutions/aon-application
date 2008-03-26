@@ -10,6 +10,7 @@ import java.util.Set;
 import net.fortuna.ical4j.model.Component;
 import net.fortuna.ical4j.model.Dur;
 import net.fortuna.ical4j.model.Period;
+import net.fortuna.ical4j.model.Recur;
 
 import com.code.aon.calendar.enumeration.EventCategory;
 import com.code.aon.planner.enumeration.EventStatus;
@@ -114,7 +115,7 @@ public interface IEvent {
      * 
      * @return
      */
-    Set getRecurrences();
+    Set<Recur> getRecurrences();
 
 	/**
 	 * Devuelve la duración del evento en Días/Horas/Minutos/Segundos.

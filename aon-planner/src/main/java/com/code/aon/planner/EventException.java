@@ -10,6 +10,8 @@ package com.code.aon.planner;
  */
 public class EventException extends Exception {
 
+	private static final long serialVersionUID = 8019424220873080448L;
+
 	private Object[] parameters;
 
     /**

@@ -31,13 +31,13 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.planner.EventException;
 import com.code.aon.planner.IEvent;
 import com.code.aon.planner.IPlannerListener;
-import com.code.aon.planner.core.Event;
 import com.code.aon.planner.enumeration.EventStatus;
-import com.code.aon.planner.model.CalendarScheduleModel;
-import com.code.aon.planner.util.PlannerUtil;
 import com.code.aon.ui.planner.EventManager;
 import com.code.aon.ui.planner.IPlannerCallbackHandler;
 import com.code.aon.ui.planner.PlannerController;
+import com.code.aon.ui.planner.core.CalendarScheduleModel;
+import com.code.aon.ui.planner.core.Event;
+import com.code.aon.ui.planner.util.PlannerUtil;
 
 public class WorkingTimeController implements IPlannerCallbackHandler, IPlannerListener {
 

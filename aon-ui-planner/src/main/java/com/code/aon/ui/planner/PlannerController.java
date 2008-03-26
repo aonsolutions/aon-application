@@ -50,8 +50,8 @@ import com.code.aon.common.ManagerBeanException;
 
 import com.code.aon.planner.EventException;
 import com.code.aon.planner.IEvent;
-import com.code.aon.planner.model.CalendarScheduleModel;
-import com.code.aon.planner.util.PlannerUtil;
+import com.code.aon.ui.planner.core.CalendarScheduleModel;
+import com.code.aon.ui.planner.util.PlannerUtil;
 import com.code.aon.ui.util.AonUtil;
 
 /**
@@ -380,8 +380,8 @@ public class PlannerController implements IPlannerCallbackHandler {
      */
     public void initialize(CalendarScheduleModel csm, String outcome, boolean spreadable) 
     			throws ManagerBeanException {
-		csm.setMode( ScheduleModel.WORKWEEK );
-		setMode( ScheduleModel.WORKWEEK );
+		csm.setMode( ScheduleModel.WEEK );
+		setMode( ScheduleModel.WEEK );
        	setDate( new Date() );
        	setScheduleModel(csm);
 		setCategories( Utils.getCategoryTypes( PlannerUtil.getCategories() ) );
@@ -721,21 +721,4 @@ public class PlannerController implements IPlannerCallbackHandler {
     	return ControllerUtil.getPlannerBundle().getString( "aon_planner_new_event" ) + sb;
     }
 
-    /* Testing available Locale */
-    public static void main(String[] args) {
-    	
-    	java.util.Locale list[] = java.text.DateFormat.getAvailableLocales();
-    	for (java.util.Locale aLocale : list) {
-    	    System.out.println(aLocale.toString());
-    	}
-    	
-    	  java.sql.Date jsqlDate = new java.sql.Date( System.currentTimeMillis() );
-    	  java.text.DateFormat dfLocal = 
-    		  java.text.DateFormat.getDateInstance( java.text.DateFormat.FULL );
-    	  java.text.DateFormat dfGermany = 
-    		  java.text.DateFormat.getDateInstance( java.text.DateFormat.FULL, java.util.Locale.GERMANY );
-    	  java.text.DateFormat dfIndonesia = 
-    		  java.text.DateFormat.getDateInstance( java.text.DateFormat.FULL, new java.util.Locale("th") );
-    	  System.out.println( dfLocal.format( jsqlDate ) + "#" + dfGermany.format( jsqlDate ) + "#" + dfIndonesia.format( jsqlDate ));
-	}
 }

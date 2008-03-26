@@ -24,7 +24,6 @@ import javax.faces.model.SelectItem;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.myfaces.custom.date.HtmlInputDate;
 import org.apache.myfaces.custom.tabbedpane.HtmlPanelTabbedPane;
-import org.apache.myfaces.shared_tomahawk.util.MessageUtils;
 
 import net.fortuna.ical4j.model.Recur;
 
@@ -33,10 +32,11 @@ import com.code.aon.calendar.enumeration.EventCategory;
 import com.code.aon.planner.EventException;
 import com.code.aon.planner.IPlannerListener;
 import com.code.aon.planner.IEvent;
-import com.code.aon.planner.core.Event;
+import com.code.aon.planner.IRecurrence;
 import com.code.aon.planner.enumeration.EventStatus;
-import com.code.aon.planner.recurrence.IRecurrence;
-import com.code.aon.planner.util.PlannerUtil;
+import com.code.aon.ui.planner.core.Event;
+import com.code.aon.ui.planner.util.PlannerUtil;
+import com.code.aon.ui.util.AonUtil;
 
 /**
  * Event Manager.
@@ -98,8 +98,7 @@ public class EventManager {
 		boolean hasEvents = 
 			this.cb.hasEvents( this.event.getStartTime(), this.event.getEndTime(), null, this.event.getId() );
 		if (hasEvents) {
-			String message = ControllerUtil.getPlannerBundle().getString("aon_hasevents_indate_error");
-	        MessageUtils.addMessage(FacesMessage.SEVERITY_WARN, message, new Date[] {this.event.getStartTime(), this.event.getEndTime()});
+			addMessage( FacesMessage.SEVERITY_WARN, "aon_hasevents_indate_error", new Date[] {this.event.getStartTime(), this.event.getEndTime()} );
 		}
 		setEnabled( this.event.getId() != null && !hasEvents );
 	}
@@ -260,8 +259,8 @@ public class EventManager {
 		this.event = event;
 		( (Event) this.event ).setSpreadable( this.cb.isSpreadable() );
 //	TODO Por el momento solamente se trabaja con 1 RRULE.
-		if (event.getRecurrences().size() > 0) {
-			this.recurrence = new Recurrence( (Recur)event.getRecurrences().iterator().next() );
+		if ( event.getRecurrences().size() > 0 ) {
+			this.recurrence = new Recurrence( event.getRecurrences().iterator().next() );
 			this.setRecur(true);
 		} else {
 	    	this.recur = false;
@@ -276,7 +275,7 @@ public class EventManager {
      * 
      * @return
      */
-    public List getEventStatus() {
+    public List<SelectItem> getEventStatus() {
 		Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
         LinkedList<SelectItem> types = new LinkedList<SelectItem>();
 		for (EventStatus language : EventStatus.values()) {
@@ -292,7 +291,7 @@ public class EventManager {
      * 
      * @return
      */
-    public List getCategories() {
+    public List<SelectItem> getCategories() {
     	if (this.cb == null) {
 	        Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
 	        LinkedList<SelectItem> types = new LinkedList<SelectItem>();
@@ -339,6 +338,7 @@ public class EventManager {
 		this.startDate = this.startTime = (Date) event.getNewValue();
 		if ( this.event.isAllDay() ) {
 			PlannerUtil.setAllDayTimeEvent( (Event) this.event, this.startDate );
+			this.startDate = this.startTime = this.event.getStartTime();
 		}
 		HtmlInputDate start = 
 			(HtmlInputDate) event.getComponent().findComponent("Event_startTime_recur");
@@ -455,19 +455,18 @@ public class EventManager {
 		        		isNew = false;
 		        		fireEventAdded(this.event);
 		        	} else {
-		        		String msg = ControllerUtil.getPlannerBundle().getString("aon_hasevents_indate_error");
-		                MessageUtils.addMessage(FacesMessage.SEVERITY_INFO, msg, new Date[] {this.event.getStartTime(), this.event.getEndTime()});
+		                addMessage( FacesMessage.SEVERITY_INFO, "aon_hasevents_indate_error", new Date[] {this.event.getStartTime(), this.event.getEndTime()} );
 		        	}
 				} else {
 					this.cb.update(this.event);
 				    fireEventUpdated(this.event);
 				}
 			} catch (EventException e) {
-				String message = ControllerUtil.getPlannerBundle().getString( e.getMessage() );
+				String messageId = e.getMessage();
 				Object[] obj = e.getParameters();
-				if ( message == null )
-					message = ControllerUtil.getPlannerBundle().getString("aon_accept_event_exception");
-				MessageUtils.addMessage(FacesMessage.SEVERITY_WARN, message, obj);
+				if ( ControllerUtil.getPlannerBundle().getString( e.getMessage() ) == null )
+					messageId = "aon_accept_event_exception";
+				addMessage(FacesMessage.SEVERITY_WARN, messageId, obj);
 			}
 			onCancel(evt);
         } else {
@@ -486,8 +485,7 @@ public class EventManager {
 	           	this.cb.remove(this.event);
 	            fireEventRemoved(this.event);
         	} else {
-        		String msg = ControllerUtil.getPlannerBundle().getString("aon_hasevents_indate_error");
-                MessageUtils.addMessage(FacesMessage.SEVERITY_INFO, msg, new Date[] {this.event.getStartTime(), this.event.getEndTime()});
+                addMessage( FacesMessage.SEVERITY_INFO, "aon_hasevents_indate_error", new Date[] {this.event.getStartTime(), this.event.getEndTime()} );
         	}
         } else {
             LOGGER.severe( "Planner Callback Handler is not defined." );            
@@ -513,10 +511,9 @@ public class EventManager {
      * @param event El evento de esta acción.
      */
     protected void fireEventAdded(IEvent event) {
-        Iterator iter = getListeners().iterator();
+        Iterator<IPlannerListener> iter = getListeners().iterator();
         while (iter.hasNext()) {
-            IPlannerListener l = (IPlannerListener) iter.next();
-            l.eventAdded(event);
+            iter.next().eventAdded(event);
         }
     }
 
@@ -527,10 +524,9 @@ public class EventManager {
      * @param event El evento de esta acción.
      */
     protected void fireEventUpdated(IEvent event) {
-        Iterator iter = getListeners().iterator();
+        Iterator<IPlannerListener> iter = getListeners().iterator();
         while (iter.hasNext()) {
-            IPlannerListener l = (IPlannerListener) iter.next();
-            l.eventUpdated(event);
+            iter.next().eventUpdated(event);;
         }
     }
 
@@ -541,10 +537,9 @@ public class EventManager {
      * @param event El evento de esta acción.
      */
     protected void fireEventRemoved(IEvent event) {
-        Iterator iter = getListeners().iterator();
+        Iterator<IPlannerListener> iter = getListeners().iterator();
         while (iter.hasNext()) {
-            IPlannerListener l = (IPlannerListener) iter.next();
-            l.eventRemoved(event);
+            iter.next().eventRemoved(event);
         }
     }
 
@@ -574,7 +569,22 @@ public class EventManager {
 			startCalendarTime.set( Calendar.MONDAY, startCalendarDate.get(Calendar.MONTH) );
 			startCalendarTime.set( Calendar.DATE, startCalendarDate.get(Calendar.DATE) );
 			this.event.getStartTime().setTime( startCalendarTime.getTimeInMillis() );
+		} else if ( this.event.isAllDay() ) {
+			this.event.getStartTime().setTime( this.startDate.getTime() );
 		}
+	}
+
+	/**
+	 * @param severity
+	 * @param messageId
+	 * @param params
+	 */
+	private void addMessage(FacesMessage.Severity severity, String messageId, Object[] params) {
+		FacesContext ctx = FacesContext.getCurrentInstance();
+		String summary = ControllerUtil.getPlannerBundle().getString( messageId );
+		FacesMessage msg = AonUtil.getMessage( ctx, summary, params );
+		msg.setSeverity( severity );
+		ctx.addMessage( AonUtil.AON_ERROR, msg );
 	}
 
 }

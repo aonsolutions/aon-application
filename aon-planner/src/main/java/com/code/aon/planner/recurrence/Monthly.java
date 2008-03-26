@@ -3,10 +3,10 @@
  */
 package com.code.aon.planner.recurrence;
 
-import com.code.aon.planner.enumeration.DayMonthLocation;
-import com.code.aon.planner.util.PlannerUtil;
-
 import net.fortuna.ical4j.model.Recur;
+
+import com.code.aon.planner.IRecurrence;
+import com.code.aon.planner.enumeration.DayMonthLocation;
 
 /**
  * 
@@ -97,7 +97,7 @@ public class Monthly implements IRecurrence {
 	 */
 	public String toRRULEString() {
 		if (id.equals(EACH)) {
-			String[] params = {Recur.MONTHLY, ";INTERVAL=" + this.interval, PlannerUtil.EMPTY_STRING};
+			String[] params = {Recur.MONTHLY, ";INTERVAL=" + this.interval, EMPTY_STRING};
 			return RRULE.format(params);
 		} else {
 			int index = (this.dayMonthLocation == DayMonthLocation.getList().size() - 1)? -1: this.dayMonthLocation + 1;

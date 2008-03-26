@@ -2,7 +2,7 @@
  * Created on 14-nov-2005
  *
  */
-package com.code.aon.planner.util;
+package com.code.aon.ui.planner.util;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -35,8 +35,8 @@ import com.code.aon.calendar.CalendarUtil;
 import com.code.aon.calendar.enumeration.EventCategory;
 
 import com.code.aon.planner.IEvent;
-import com.code.aon.planner.core.Event;
 import com.code.aon.planner.enumeration.EventStatus;
+import com.code.aon.ui.planner.core.Event;
 
 /**
  * This class gives planner utilities.
@@ -57,7 +57,8 @@ public class PlannerUtil {
      * @param components
      * @return
      */
-    public static final Component isSpecialDay(ComponentList components) {
+    @SuppressWarnings("unchecked")
+	public static final Component isSpecialDay(ComponentList components) {
         if (components.size() > 0) {
         	Iterator i = components.iterator();
         	while ( i.hasNext() ) {
@@ -72,7 +73,8 @@ public class PlannerUtil {
     }
 
 	public static final List<IEvent> getEvents( AonCalendar calendar
-				, RE subject, java.util.Date date, EventCategory ec ) {
+				, String subjectMsg , java.util.Date date, EventCategory ec ) {
+		RE subject = new RE( (subjectMsg == PlannerUtil.EMPTY_STRING)? PlannerUtil.EMPTY_STRING: subjectMsg );
     	List<IEvent> result = new ArrayList<IEvent>();
     	ComponentList components = calendar.getCalendar().getComponents();
     	if ( date != null ) {
@@ -164,6 +166,7 @@ public class PlannerUtil {
      * @param date
      * @return
      */
+    @SuppressWarnings("unchecked")
     public static final double calcWorkingHours(AonCalendar aonCalendar, Date date) {
     	double _length = 0;
 		ComponentList cl = aonCalendar.getVEvents( date, EventCategory.WORK );
@@ -186,6 +189,7 @@ public class PlannerUtil {
      * @param list
      * @param endDate
      */
+    @SuppressWarnings("unchecked")
     public static final double calcYearlyHours(ComponentList list, Date endDate) {
     	float hours = 0, minutes = 0;
     	Calendar c = Calendar.getInstance();
@@ -217,6 +221,7 @@ public class PlannerUtil {
      * @param event
      * @return
      */
+    @SuppressWarnings("unchecked")
     public static final boolean validate(AonCalendar aonCalendar, IEvent event) {
 		ComponentList newlist = new ComponentList();
 		VEvent vevent = (VEvent) event.getComponent();
@@ -238,10 +243,17 @@ public class PlannerUtil {
 //	Validate event against WORK category list events.
 		DateTime start = (DateTime) vevent.getStartDate().getDate();
 		DateTime end = (DateTime) vevent.getEndDate().getDate();
-        RRule rrule = (RRule)vevent.getProperties().getProperty(Property.RRULE);
-        if (rrule != null) { 
-			end = CalendarUtil.getICalDate( rrule.getRecur().getUntil(), end );
-        }
+		RRule rrule = (RRule)vevent.getProperties().getProperty(Property.RRULE);
+		if (rrule != null) {
+			if ( rrule.getRecur().getUntil() != null ) {
+				end = CalendarUtil.getICalDate( rrule.getRecur().getUntil(), end );
+			} else {
+				Calendar rruleCalendar = Calendar.getInstance();
+				rruleCalendar.setTime( event.getEndTime() );
+				rruleCalendar.set( rruleCalendar.get( Calendar.YEAR ), 11, 31);
+				end = CalendarUtil.getICalDateTime( rruleCalendar.getTime(), false );
+			}
+		}
 		VFreeBusy request = new VFreeBusy( start, end );
 		VFreeBusy busyTime = new VFreeBusy( request, newlist );
 		FreeBusy fg = (FreeBusy) busyTime.getProperties().getProperty( Property.FREEBUSY );
@@ -273,6 +285,7 @@ public class PlannerUtil {
 	 * @param calendar
 	 * @return
 	 */
+    @SuppressWarnings("unchecked")
 	public static final DateList findExDates(AonCalendar calendar) {
 		DateList dl = new DateList();
 		EventCategory[] ec = new EventCategory[ EventCategory.values().length ];
@@ -331,6 +344,7 @@ public class PlannerUtil {
      * @param aonCalendar 
      * @param event
      */
+    @SuppressWarnings("unchecked")
     public static final void addExDate(AonCalendar aonCalendar, IEvent event) {
 	    if ( event.getRecurrences().size() == 0 ) {
 			ComponentList components = aonCalendar.getVEvents(EventCategory.WORK); 
@@ -349,6 +363,7 @@ public class PlannerUtil {
      * @param aonCalendar 
      * @param event
      */
+    @SuppressWarnings("unchecked")
     public static final void removeExDate(AonCalendar aonCalendar, IEvent event) {
 	    if ( event.getRecurrences().size() == 0 ) {
 		    ComponentList components = aonCalendar.getVEvents(EventCategory.WORK); 
@@ -370,6 +385,7 @@ public class PlannerUtil {
      * @param oldVEvent
      * @param event
      */
+    @SuppressWarnings("unchecked")
     public static final void updateExDate(AonCalendar aonCalendar, VEvent oldVEvent, IEvent event) {
 	    Date start = CalendarUtil.getDate( oldVEvent.getStartDate().getDate() );
 	    Date end = start;
