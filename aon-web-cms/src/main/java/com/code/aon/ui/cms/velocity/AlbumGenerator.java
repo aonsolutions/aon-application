@@ -51,7 +51,7 @@ public class AlbumGenerator extends Generator {
 				criteria_detail.addEqualExpression(albumImageDetailBean.getFieldName(ICMSAlias.ALBUM_IMAGE_DETAIL_ALBUM_IMAGE_ID), albumImage.getId());
 				criteria_detail.addEqualExpression(albumImageDetailBean.getFieldName(ICMSAlias.ALBUM_IMAGE_DETAIL_LANGUAGE_ID), ControllerUtil.getCurrentLanguage().getId());
 				albumImageDetailList = (List<ITransferObject>)albumImageDetailBean.getList(criteria_detail);
-				if (albumImageDetailList.size() > 0) {
+				if (albumImageDetailList.isEmpty()) {
 					VelocityUtil.addMessage("La imagen "+albumImage.getImage()+" no esta internacionalizada.", VelocityUtil.WARN);
 				}else{
 					albumImageDetail = (AlbumImageDetail)albumImageDetailList.get(0);
