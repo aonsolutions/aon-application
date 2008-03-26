@@ -71,7 +71,7 @@ public class ArticleGenerator extends Generator {
 					VelocityUtil.addMessage(" Categoria de articulos " + articleCategory.getAlias() + " no internacionalizada.", VelocityUtil.WARN);
 				}else{
 					articleCategoryDetail = (ArticleCategoryDetail)articleCategoryDetailList.get(0);
-					boolean emptyCategory = false;
+					boolean emptyCategory = true;
 					for (int art_type = 0; art_type < values.length; art_type++){
 						templates = ArticleGenerator.getTemplate(art_type);
 						articleCriteria = new Criteria();
@@ -81,9 +81,8 @@ public class ArticleGenerator extends Generator {
 						articleCriteria.addOrder(articleBean.getFieldName(ICMSAlias.ARTICLE_POSITION));
 						articleList = (List<ITransferObject>)articleBean.getList(articleCriteria);
 						ArrayList<ArticleHandler> ahlist = new ArrayList<ArticleHandler>();
-						if (articleList.isEmpty()){
-							emptyCategory = true;
-						}else{
+						if (!articleList.isEmpty()){
+							emptyCategory = false;
 							String back_url = templates.getHtmlName();
 							back_url = back_url.replaceAll("%NAME%", values[art_type].getName()+"_"+articleCategory.getAlias());
 							
