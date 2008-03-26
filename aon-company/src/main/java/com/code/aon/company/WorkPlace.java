@@ -42,6 +42,9 @@ public class WorkPlace implements ITransferObject, IEntity {
     /** Indicates the working place calendar identifier. */
     private Integer calendar;
 
+    /** Indicates if the working place is currently active. */
+	private boolean active;
+
 	/** The activities. */
 	private Set<WorkActivity> activities = new HashSet<WorkActivity>();
 
@@ -128,6 +131,22 @@ public class WorkPlace implements ITransferObject, IEntity {
 	 */
 	public void setCalendar(Integer calendar) {
 		this.calendar = calendar;
+	}
+
+    /**
+     * Returns if the employee is currently in the company.
+     * 
+	 * @return the active
+	 */
+	public boolean isActive() {
+		return active;
+	}
+
+	/**
+	 * @param active the active to set
+	 */
+	public void setActive(boolean active) {
+		this.active = active;
 	}
 
 	/**
