@@ -116,7 +116,7 @@
 								<!-- start toolbar navigation -->
 								<aon:div styleClass="aon-finding-toolbar-item-group">
 									<h:commandButton id="reset_list" value="#{bundle.aon_reset}"
-										immediate="#{true}"
+										rendered="#{!article.new}"
 										actionListener="#{article.onReset}"
 										styleClass="aon-finding-toolbar-item aon-icon-reset"
 										accesskey="#{bundle.aon_key_new}"

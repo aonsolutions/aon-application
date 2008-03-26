@@ -109,8 +109,8 @@
 							
 								<!-- start toolbar navigation -->
 								<aon:div styleClass="aon-finding-toolbar-item-group">
-									<h:commandButton id="reset_list" 
-										immediate="#{true}"
+									<h:commandButton id="reset_list"
+										rendered="#{!modular_page_option.new}"
 										reRender="detail_panel"
 										value="#{bundle.aon_reset}"
 										actionListener="#{modular_page_option.onReset}"

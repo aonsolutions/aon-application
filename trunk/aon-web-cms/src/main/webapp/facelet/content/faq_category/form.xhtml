@@ -101,7 +101,7 @@
 								<!-- start toolbar navigation -->
 								<aon:div styleClass="aon-finding-toolbar-item-group">
 									<h:commandButton id="reset_list" value="#{bundle.aon_reset}"
-										immediate="#{true}"
+										rendered="#{!faq.new}"
 										reRender="detail_panel"
 										actionListener="#{faq.onReset}"
 										styleClass="aon-finding-toolbar-item aon-icon-reset"
