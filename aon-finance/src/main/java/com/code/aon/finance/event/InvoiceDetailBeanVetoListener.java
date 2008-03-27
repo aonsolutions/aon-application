@@ -25,6 +25,25 @@ public class InvoiceDetailBeanVetoListener extends ManagerBeanVetoListenerAdapte
 	private static final Logger LOGGER = Logger.getLogger(InvoiceDetailBeanVetoListener.class.getName());
 
 	/**
+	 * Bean removed. Removes the related InvoiceTax before updating the InvoiceDetail
+	 * 
+	 * @param evt the evt
+	 * 
+	 * @throws ManagerBeanVetoListenerException the manager bean veto listener exception
+	 */
+	@Override
+	public void vetoableBeanUpdated(ManagerBeanEvent evt) throws ManagerBeanVetoListenerException {
+		InvoiceDetail invoiceDetail = (InvoiceDetail)evt.getTo();
+		if(!invoiceDetail.getSource().equals(InvoiceSource.ACCOUNT)){
+			try {
+				removeInvoiceTax(invoiceDetail);
+			} catch (ManagerBeanException e) {
+				LOGGER.log(Level.SEVERE, "Error removing invoiceTax for invoiceDetail with id= " + invoiceDetail.getId(), e);
+			}
+		}
+	}
+
+	/**
 	 * Bean removed. Removes the related InvoiceTax before removing the InvoiceDetail
 	 * 
 	 * @param evt the evt
@@ -36,16 +55,21 @@ public class InvoiceDetailBeanVetoListener extends ManagerBeanVetoListenerAdapte
 		InvoiceDetail invoiceDetail = (InvoiceDetail)evt.getTo();
 		if(!invoiceDetail.getSource().equals(InvoiceSource.ACCOUNT)){
 			try {
-				IManagerBean invoiceTaxBean = BeanManager.getManagerBean(InvoiceTax.class);
-				Criteria criteria = new Criteria();
-				criteria.addEqualExpression(invoiceTaxBean.getFieldName(IFinanceAlias.INVOICE_TAX_INVOICE_DETAIL_ID),invoiceDetail.getId());
-				Iterator iter = invoiceTaxBean.getList(criteria).iterator();
-				while(iter.hasNext()){
-					invoiceTaxBean.remove((InvoiceTax)iter.next());
-				}
+				removeInvoiceTax(invoiceDetail);
 			} catch (ManagerBeanException e) {
 				LOGGER.log(Level.SEVERE, "Error removing invoiceTax for invoiceDetail with id= " + invoiceDetail.getId(), e);
 			}
+		}
+	}
+
+	@SuppressWarnings("unchecked")
+	private void removeInvoiceTax(InvoiceDetail invoiceDetail) throws ManagerBeanException {
+		IManagerBean invoiceTaxBean = BeanManager.getManagerBean(InvoiceTax.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(invoiceTaxBean.getFieldName(IFinanceAlias.INVOICE_TAX_INVOICE_DETAIL_ID),invoiceDetail.getId());
+		Iterator iter = invoiceTaxBean.getList(criteria).iterator();
+		while(iter.hasNext()){
+			invoiceTaxBean.remove((InvoiceTax)iter.next());
 		}
 	}
 }

@@ -12,7 +12,6 @@ import com.code.aon.common.event.ManagerBeanEvent;
 import com.code.aon.common.event.ManagerBeanListenerAdapter;
 import com.code.aon.finance.InvoiceDetail;
 import com.code.aon.finance.InvoiceTax;
-import com.code.aon.finance.dao.IFinanceAlias;
 import com.code.aon.product.Tax;
 import com.code.aon.product.TaxDetail;
 import com.code.aon.product.dao.IProductAlias;
@@ -37,18 +36,18 @@ public class InvoiceDetailBeanListener extends ManagerBeanListenerAdapter {
 	public void beanInserted(ManagerBeanEvent evt) throws ManagerBeanException {
 		InvoiceDetail invoiceDetail = (InvoiceDetail)evt.getTo();
 		if(invoiceDetail.getItem() != null){
-			InvoiceTax invoiceDetailVat = getInvoiceTax(invoiceDetail, invoiceDetail.getItem().getProduct().getVat(), false);
+			InvoiceTax invoiceDetailVat = getInvoiceTax(invoiceDetail, invoiceDetail.getItem().getProduct().getVat());
 			IManagerBean invoiceTaxBean = BeanManager.getManagerBean(InvoiceTax.class);
 			invoiceTaxBean.insert(invoiceDetailVat);
 			if(invoiceDetail.getInvoice().isWithholding() && invoiceDetail.getItem().getProduct().getRetention() != null){
-				InvoiceTax invoiceDetailRetention = getInvoiceTax(invoiceDetail, invoiceDetail.getItem().getProduct().getRetention(), false);
+				InvoiceTax invoiceDetailRetention = getInvoiceTax(invoiceDetail, invoiceDetail.getItem().getProduct().getRetention());
 				invoiceTaxBean.insert(invoiceDetailRetention);
 			}
 		}
 	}
 	
 	/**
-	 * Bean updated. Updates the related InvoiceTax when an InvoiceDetail is updated.
+	 * Bean updated. Inserts the related InvoiceTax when an InvoiceDetail is updated.
 	 * 
 	 * @param evt the evt
 	 * 
@@ -58,12 +57,12 @@ public class InvoiceDetailBeanListener extends ManagerBeanListenerAdapter {
 	public void beanUpdated(ManagerBeanEvent evt) throws ManagerBeanException {
 		InvoiceDetail invoiceDetail = (InvoiceDetail)evt.getTo();
 		if(invoiceDetail.getItem() != null){
-			InvoiceTax invoiceDetailVat = getInvoiceTax(invoiceDetail, invoiceDetail.getItem().getProduct().getVat(), true);
+			InvoiceTax invoiceDetailVat = getInvoiceTax(invoiceDetail, invoiceDetail.getItem().getProduct().getVat());
 			IManagerBean invoiceTaxBean = BeanManager.getManagerBean(InvoiceTax.class);
-			invoiceTaxBean.update(invoiceDetailVat);
+			invoiceTaxBean.insert(invoiceDetailVat);
 			if(invoiceDetail.getInvoice().isWithholding() && invoiceDetail.getItem().getProduct().getRetention() != null){
-				InvoiceTax invoiceDetailRetention = getInvoiceTax(invoiceDetail, invoiceDetail.getItem().getProduct().getRetention(), true);
-				invoiceTaxBean.update(invoiceDetailRetention);
+				InvoiceTax invoiceDetailRetention = getInvoiceTax(invoiceDetail, invoiceDetail.getItem().getProduct().getRetention());
+				invoiceTaxBean.insert(invoiceDetailRetention);
 			}
 		}
 	}
@@ -76,17 +75,12 @@ public class InvoiceDetailBeanListener extends ManagerBeanListenerAdapter {
 	 * 
 	 * @return the invoice tax
 	 */
-	private InvoiceTax getInvoiceTax(InvoiceDetail invoiceDetail, Tax tax, boolean dataBase) {
+	private InvoiceTax getInvoiceTax(InvoiceDetail invoiceDetail, Tax tax) {
 		Date date = invoiceDetail.getInvoice().getIssueDate();
-		if(date.before(invoiceDetail.getItem().getProduct().getVat().getStartDate())){
+		if(date.before(tax.getStartDate())){
 			tax = obtainTax(tax.getId(),date);
 		}
-		InvoiceTax invoiceTax = null;
-		if(dataBase){
-			invoiceTax = obtainInvoiceTax(invoiceDetail);
-		}else{
-			invoiceTax = new InvoiceTax();
-		}
+		InvoiceTax invoiceTax = new InvoiceTax();
 		invoiceTax.setInvoiceDetail(invoiceDetail);
 		invoiceTax.setTaxType(tax.getType());
 		double surcharge = 0.0;
@@ -100,29 +94,6 @@ public class InvoiceDetailBeanListener extends ManagerBeanListenerAdapter {
 		invoiceTax.setPercentage(percentage);
 		invoiceTax.setSurcharge(surcharge);
 		return invoiceTax;
-	}
-
-	/**
-	 * Gets the invoiceTax related with the parameter invoiceDetail
-	 * 
-	 * @param invoiceDetail the invoice detail
-	 * 
-	 * @return the invoice tax
-	 */
-	@SuppressWarnings("unchecked")
-	private InvoiceTax obtainInvoiceTax(InvoiceDetail invoiceDetail) {
-		try {
-			IManagerBean invoiceTaxBean = BeanManager.getManagerBean(InvoiceTax.class);
-			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(invoiceTaxBean.getFieldName(IFinanceAlias.INVOICE_TAX_INVOICE_DETAIL_ID), invoiceDetail.getId());
-			Iterator iter = invoiceTaxBean.getList(criteria).iterator();
-			if(iter.hasNext()){
-				return (InvoiceTax)iter.next();
-			}
-		} catch (ManagerBeanException e) {
-			LOGGER.log(Level.SEVERE, "error obtaining invoiceTax for invoiceDetail with id= " + invoiceDetail.getId(), e);
-		}
-		return new InvoiceTax();
 	}
 
 	/**
