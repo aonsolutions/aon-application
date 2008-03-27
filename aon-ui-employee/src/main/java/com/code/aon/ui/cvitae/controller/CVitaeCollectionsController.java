@@ -7,13 +7,13 @@ import java.util.Locale;
 import javax.faces.context.FacesContext;
 import javax.faces.model.SelectItem;
 
+import com.code.aon.cvitae.enumeration.Degree;
 import com.code.aon.cvitae.enumeration.DriverLicense;
 import com.code.aon.cvitae.enumeration.Europe;
 import com.code.aon.cvitae.enumeration.EvaluationLevel;
+import com.code.aon.cvitae.enumeration.KnowledgeExperience;
 import com.code.aon.cvitae.enumeration.KnowledgeLastUse;
 import com.code.aon.cvitae.enumeration.KnowledgeLevel;
-import com.code.aon.cvitae.enumeration.KnowledgeExperience;
-import com.code.aon.cvitae.enumeration.Degree;
 import com.code.aon.cvitae.enumeration.LanguageEnum;
 import com.code.aon.cvitae.enumeration.LanguageLevel;
 import com.code.aon.cvitae.enumeration.LatinAmerica;

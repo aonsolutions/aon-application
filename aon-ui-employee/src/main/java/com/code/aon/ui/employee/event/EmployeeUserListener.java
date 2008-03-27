@@ -3,18 +3,16 @@
  */
 package com.code.aon.ui.employee.event;
 
-import com.code.aon.common.ManagerBeanException;
 import com.code.aon.company.resources.Employee;
 import com.code.aon.config.User;
-import com.code.aon.config.dao.IConfigAlias;
 import com.code.aon.ui.config.controller.UserController;
-import com.code.aon.ui.employee.controller.EmployeeController;
 import com.code.aon.ui.employee.util.Constants;
 import com.code.aon.ui.employee.util.Utils;
 import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
 import com.code.aon.ui.util.AonUtil;
+import com.code.aon.ui.employee.controller.EmployeeController;
 
 public class EmployeeUserListener extends ControllerAdapter {
 

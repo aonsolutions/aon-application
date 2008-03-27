@@ -120,9 +120,14 @@ public class Expenditures implements ICollectionProvider {
 		}
 	}
 
-    /* (non-Javadoc)
-	 * @see com.code.aon.common.ICollectionProvider#getCollection()
-	 */
+	@SuppressWarnings("unchecked")
+	@Override
+	public Collection getCollection(boolean forceRefresh) throws ManagerBeanException {
+		return this.getCollection();
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
 	public Collection getCollection() {
 		String str = (this.workPlace.getId() != -1)? "resource.workPlace.id = :workplace AND ": Constants.EMPTY_STRING;
 		String select = "FROM Expenditures expenditures, Resource resource" +
@@ -163,8 +168,4 @@ public class Expenditures implements ICollectionProvider {
 		return oldValue == null || newValue.intValue() != oldValue.intValue();
 	}
 
-	@Override
-	public Collection getCollection(boolean forceRefresh) throws ManagerBeanException {
-		return this.getCollection();
-	}
 }
