@@ -1,0 +1,53 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j">	
+<body>
+
+<ui:composition>
+
+<style>
+.bodyPanel_ {
+	width:300px;
+    height:500px;
+    overflow:auto;
+}
+</style>
+
+        <rich:modalPanel  id="msgMoveModalPanel"  
+            height="520" width="310" zindex="2000">
+            <f:facet name="header">
+                <h:outputText value="#{appBundle.aon_webmail_folder_create_new}" />
+            </f:facet>
+            <f:facet name="controls">
+                <h:graphicImage value="/images/icefaces/popupclose.gif" style="cursor:pointer" onclick="Richfaces.hideModalPanel('msgMoveModalPanel')" />
+            </f:facet>
+			<aon:panelGrid id="msgMoveModalPanel_panelGrid" width="100%" cellpadding="0" cellspacing="0" columns="1">
+				<rich:panel bodyClass="bodyPanel_">
+					<rich:tree style="width:300px" 
+							nodeSelectListener="#{tree.moveMessageToFolder}"
+							id="foldersTree_modal" 
+			                ajaxSubmitSelection="true"  
+			                switchType="server"
+			                value="#{tree.treeNode}" 
+			                var="item">
+						<rich:treeNode>
+							<aon:commandLink 
+								onclick="Richfaces.hideModalPanel('msgMoveModalPanel')"
+			                	value="#{item.name}"
+			                	action="#{message.getDeleteReturnAction}"
+								rendered="#{!item.root}" />
+						</rich:treeNode>
+					</rich:tree>
+				</rich:panel>	
+			</aon:panelGrid>            
+        </rich:modalPanel>													
+
+</ui:composition>
+
+</body>
+</html>

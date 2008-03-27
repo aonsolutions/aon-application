@@ -15,10 +15,8 @@ import java.util.logging.Logger;
 
 import javax.activation.DataHandler;
 import javax.activation.FileDataSource;
-import javax.faces.context.FacesContext;
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
-import javax.faces.model.SelectItem;
 import javax.mail.BodyPart;
 import javax.mail.Folder;
 import javax.mail.Header;
@@ -38,14 +36,12 @@ import com.code.aon.groupware.dao.IGroupWareAlias;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionException;
 import com.code.aon.ui.form.BasicController;
-import com.code.aon.ui.form.IController;
 import com.code.aon.ui.util.AonUtil;
 import com.code.aon.ui.webmail.bean.AonAttachment;
 import com.code.aon.ui.webmail.bean.AonConstants;
 import com.code.aon.ui.webmail.bean.AonFile;
 import com.code.aon.ui.webmail.bean.AonFolder;
 import com.code.aon.ui.webmail.bean.AonMessage;
-import com.code.aon.ui.webmail.bean.AonMessageTracer;
 import com.code.aon.ui.webmail.bean.AonMessageUtils;
 import com.code.aon.ui.webmail.converter.MaxLenghtStringConverter;
 import com.code.aon.ui.webmail.exception.WebmailException;
@@ -737,20 +733,6 @@ public class MessageController implements IAonFileListener,IFileUploadedListener
 	// DESTINY FOLDER SELECTION POPUP
 	//********************************************************************************************
     
-    private boolean showFoldersPanelPopup;
-    
-	public boolean isShowFoldersPanelPopup() {
-		return showFoldersPanelPopup;
-	}
-
-	public void closeFoldersPanelPopup(ActionEvent event){
-		this.showFoldersPanelPopup = false;
-	}
-
-	public void openFoldersPanelPopup(ActionEvent event){
-		this.showFoldersPanelPopup = true;
-	}
-
     public void moveSelectedMessageAndMove(AonFolder dest){
     	AonMessage nextMessage = null; 
     	if(isNextMessage()){
@@ -767,7 +749,6 @@ public class MessageController implements IAonFileListener,IFileUploadedListener
 			throw new AbortProcessingException(e);
 		}
     	setMessage(nextMessage);
-    	closeFoldersPanelPopup(null);
 	}
 
 	//********************************************************************************************
