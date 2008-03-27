@@ -18,6 +18,16 @@
 			</datasource-metadata>
 			<profiles>
 				<relation>
+					<id>Configurador</id>
+					<list>
+						<id>Configuracion</id>
+						<id>Empresa</id>
+						<id>GestionUsuarios</id>
+						<id>Usuarios</id>
+						<id>GruposTrabajo</id>
+					</list>
+				</relation>	
+				<relation>
 					<id>Administrador</id>
 					<list>
 						<id>GestionClientes</id>
@@ -29,12 +39,7 @@
 						<id>Informes</id>
 						<id>GestionCampanas</id>
 						<id>Procesos</id>
-						<id>Configuracion</id>
 						<id>Centros</id>
-						<id>Empresa</id>
-						<id>GestionUsuarios</id>
-						<id>Usuarios</id>
-						<id>GruposTrabajo</id>
 						<id>Impuestos</id>
 						<id>CambioContrasena</id>
 						<id>UtilidadesConfiguracion</id>
@@ -98,19 +103,19 @@
 			</profiles>
 			<users>
 				<relation>
-					<id>invitado</id>
+					<id>admin</id>
 					<list>
-						<id>Administrador</id>
+						<id>Configurador</id>
 					</list>
 				</relation>
 			</users>
 		</application>
 		<standalone>
 			<user>
-				<id>invitado</id>
-				<name>Invitado</name>
-				<description>Acceso Administrador</description>
-				<password>KpdRbDVLaISM29j1SiJqClWyHtE44getbFy7nACqWuo=</password>
+				<id>admin</id>
+				<name>Configurador</name>
+				<description>Acceso Configurador</description>
+				<password>4LvXuvELMCV5FM6iAsejWx1tw4qBCfmxYxV/DBVQVU4=</password>
 			</user>
 		</standalone>
 	</domain>
