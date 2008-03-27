@@ -85,22 +85,22 @@
 							<t:inputText id="Customer_Lookup_id" size="5" forceId="#{true}"
 								styleClass="aon-form-input-text"
 								disabled="#{accountInvoice.details.rowCount > 0}"
-								onchange="return findBeanLookupExt(event,'#{facesContext.externalContext.requestContextPath}','customerLookup','Customer_Lookup_id','Customer_id|Customer_Lookup_id,Customer_full_name|Customer_full_name');"
+								onchange="return findBeanLookupExt(event,'#{facesContext.externalContext.requestContextPath}','customerLookup','Customer_Lookup_id','Customer_id|Customer_Lookup_id,Customer_registry_document|Customer_document,Customer_full_name|Customer_full_name');"
 								value="#{accountInvoice.header.registry.id}"
 								valueChangeListener="#{accountInvoice.onRegistryChange}"/>
 							<h:commandButton id="find_Customer_Lookup_id"
 								rendered="#{accountInvoice.details.rowCount == 0}"
 								styleClass="aon-form-lookup-button" value="" immediate="true"
-								onclick="lookupSearchWindow(this, 'placeList', '#{customerLookup.encodedSearchPagePath}','Customer_id|Customer_Lookup_id,Customer_full_name|Customer_full_name');return false;" />	
+								onclick="lookupSearchWindow(this, 'placeList', '#{customerLookup.encodedSearchPagePath}','Customer_id|Customer_Lookup_id,Customer_registry_document|Customer_document,Customer_full_name|Customer_full_name');return false;" />	
 							<t:inputText id="Customer_full_name" forceId="#{true}"
 								styleClass="aon-form-input-text" size="40" 
 								disabled="#{accountInvoice.details.rowCount > 0}"
 								value="#{accountInvoice.header.name}"/>
 						</t:div>
-						<t:outputLabel for="Customer_Lookup_registry_document"
+						<t:outputLabel for="Customer_document"
 							styleClass="aon-form-input-text-label"
 							value="#{accountBundle.aon_document}" rendered="#{accountInvoice.sales}"/>
-						<t:inputText id="Customer_Lookup_registry_document" styleClass="aon-form-input-text"
+						<t:inputText id="Customer_document" styleClass="aon-form-input-text"
 							value="#{accountInvoice.header.document}" size="20"
 							disabled="#{accountInvoice.details.rowCount > 0}"
 							forceId="#{true}" rendered="#{accountInvoice.sales}">
@@ -113,22 +113,22 @@
 							<t:inputText id="Supplier_Lookup_id" size="5" forceId="#{true}"
 								styleClass="aon-form-input-text"
 								disabled="#{accountInvoice.details.rowCount > 0}"
-								onchange="return findBeanLookupExt(event,'#{facesContext.externalContext.requestContextPath}','supplierLookup','Supplier_Lookup_id','Supplier_id|Supplier_Lookup_id,Supplier_registry_document|Supplier_Lookup_document,Supplier_full_name|Supplier_full_name');"
+								onchange="return findBeanLookupExt(event,'#{facesContext.externalContext.requestContextPath}','supplierLookup','Supplier_Lookup_id','Supplier_id|Supplier_Lookup_id,Supplier_registry_document|Supplier_document,Supplier_full_name|Supplier_full_name');"
 								value="#{accountInvoice.header.registry.id}" 
 								valueChangeListener="#{accountInvoice.onRegistryChange}"/>
 							<h:commandButton id="find_Supplier_Lookup_id"
 								rendered="#{accountInvoice.details.rowCount == 0}"
 								styleClass="aon-form-lookup-button" value="" immediate="true"
-								onclick="lookupSearchWindow(this, 'placeList', '#{supplierLookup.encodedSearchPagePath}','Supplier_id|Supplier_Lookup_id,Supplier_registry_document|Supplier_Lookup_document,Supplier_full_name|Supplier_full_name');return false;" />	
+								onclick="lookupSearchWindow(this, 'placeList', '#{supplierLookup.encodedSearchPagePath}','Supplier_id|Supplier_Lookup_id,Supplier_registry_document|Supplier_document,Supplier_full_name|Supplier_full_name');return false;" />	
 							<t:inputText id="Supplier_full_name" forceId="#{true}"
 								styleClass="aon-form-input-text" size="40" 
 								disabled="#{accountInvoice.details.rowCount > 0}"
 								value="#{accountInvoice.header.name}"/>
 						</t:div>
-						<t:outputLabel for="Supplier_Lookup_document"
+						<t:outputLabel for="Supplier_document"
 							styleClass="aon-form-input-text-label"
 							value="#{accountBundle.aon_document}" rendered="#{accountInvoice.purchase}"/>
-						<t:inputText id="Supplier_Lookup_document" styleClass="aon-form-input-text"
+						<t:inputText id="Supplier_document" styleClass="aon-form-input-text"
 							value="#{accountInvoice.header.document}" size="20"
 							disabled="#{accountInvoice.details.rowCount > 0}"
 							forceId="#{true}" rendered="#{accountInvoice.purchase}">
@@ -141,21 +141,21 @@
 							<t:inputText id="Creditor_Lookup_id" size="5" forceId="#{true}"
 								styleClass="aon-form-input-text"
 								disabled="#{accountInvoice.details.rowCount > 0}"
-								onchange="return findBeanLookupExt(event,'#{facesContext.externalContext.requestContextPath}','creditorLookup','Creditor_Lookup_id','Creditor_id|Creditor_Lookup_id,Creditor_full_name|Creditor_full_name');"
+								onchange="return findBeanLookupExt(event,'#{facesContext.externalContext.requestContextPath}','creditorLookup','Creditor_Lookup_id','Creditor_Lookup_id|Creditor_Lookup_id,Creditor_Lookup_registry_document|Creditor_document,Creditor_full_name|Creditor_full_name');"
 								value="#{accountInvoice.header.registry.id}" 
 								valueChangeListener="#{accountInvoice.onRegistryChange}"/>
 							<h:commandButton id="find_Creditor_Lookup_id"
 								rendered="#{accountInvoice.details.rowCount == 0}"
 								styleClass="aon-form-lookup-button" value="" immediate="true"
-								onclick="lookupSearchWindow(this, 'placeList', '#{creditorLookup.encodedSearchPagePath}','Creditor_id|Creditor_Lookup_id,Creditor_full_name|Creditor_full_name');return false;" />	
+								onclick="lookupSearchWindow(this, 'placeList', '#{creditorLookup.encodedSearchPagePath}','Creditor_Lookup_id|Creditor_Lookup_id,Creditor_Lookup_registry_document|Creditor_document,Creditor_full_name|Creditor_full_name');return false;" />	
 							<t:inputText id="Creditor_full_name" forceId="#{true}"
 								styleClass="aon-form-input-text" size="40" 
 								value="#{accountInvoice.header.name}"/>
 						</t:div>
-						<t:outputLabel for="Creditor_Lookup_registry_document"
+						<t:outputLabel for="Creditor_document"
 							styleClass="aon-form-input-text-label"
 							value="#{accountBundle.aon_document}" rendered="#{accountInvoice.expense}"/>
-						<t:inputText id="Creditor_Lookup_registry_document" styleClass="aon-form-input-text"
+						<t:inputText id="Creditor_document" styleClass="aon-form-input-text"
 							disabled="#{accountInvoice.details.rowCount > 0}"
 							value="#{accountInvoice.header.document}" size="20"
 							forceId="#{true}" rendered="#{accountInvoice.expense}">
