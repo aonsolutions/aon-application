@@ -1,6 +1,8 @@
 package com.code.aon.ui.sales.event;
 
 import java.util.Iterator;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
@@ -28,6 +30,8 @@ import com.code.aon.ui.util.AonUtil;
 
 public class FeeInvoicingControllerListener extends ControllerAdapter {
 	
+	private static final Logger LOGGER = Logger.getLogger(FeeInvoicingControllerListener.class.getName());
+
 	private static final String FEE_INVOINCING_DETAIL_CONTROLLER_NAME = "feeInvoicingDetail";
 
 	@Override
@@ -44,6 +48,37 @@ public class FeeInvoicingControllerListener extends ControllerAdapter {
 		Invoice invoice = (Invoice)event.getController().getTo();
 		invoice.setType(InvoiceType.SALES);
 		invoice.setStatus(InvoiceStatus.PENDING);
+		fillTaxInfo(invoice);
+	}
+
+	@Override
+	public void beforeBeanUpdated(ControllerEvent event) throws ControllerListenerException {
+		Invoice invoice = (Invoice)event.getController().getTo();
+		fillTaxInfo(invoice);
+	}
+
+	@SuppressWarnings("unchecked")
+	private void fillTaxInfo(Invoice invoice) {
+		try {
+			IManagerBean customerBean = BeanManager.getManagerBean(Customer.class);
+			Criteria criteria = new Criteria();
+			criteria.addEqualExpression(customerBean.getFieldName(ICustomerAlias.CUSTOMER_ID), invoice.getRegistry().getId());
+			Iterator iter = customerBean.getList(criteria).iterator();
+			boolean surcharge = false;
+			boolean taxFree = false;
+			boolean withholding = false;
+			if(iter.hasNext()){
+				Customer customer = (Customer)iter.next();
+				surcharge = customer.isSurcharge();
+				taxFree = customer.isTaxFree();
+				withholding = customer.isWithholding();
+			}
+			invoice.setSurcharge(surcharge);
+			invoice.setTaxFree(taxFree);
+			invoice.setWithholding(withholding);
+		} catch (ManagerBeanException e) {
+			LOGGER.log(Level.SEVERE, "error obtaining customer", e);
+		}
 	}
 
 	@Override
