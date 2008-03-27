@@ -7,12 +7,9 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import javax.faces.application.FacesMessage;
 import javax.faces.event.ActionEvent;
 import javax.faces.model.DataModel;
 import javax.faces.model.ListDataModel;
-
-import org.apache.myfaces.shared_impl.util.MessageUtils;
 
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
@@ -25,6 +22,7 @@ import com.code.aon.employee.dao.IEmployeeAlias;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.form.GridController;
 import com.code.aon.ui.menu.jsf.MenuEvent;
+import com.code.aon.ui.util.AonUtil;
 
 /**
  * @author Consulting & Development. Iñaki Ayerbe - 28/08/2007
@@ -95,6 +93,7 @@ public class ExpendituresController extends GridController {
 	 * 
 	 * @param event
 	 */
+	@SuppressWarnings("unchecked")
 	public void onSearchResources(ActionEvent event) {
 		List<Resource> l = new ArrayList<Resource>();
 		this.resources = new ListDataModel( l );
@@ -115,7 +114,7 @@ public class ExpendituresController extends GridController {
 		        }
 			}  
         } catch (ManagerBeanException e) {
-			MessageUtils.addMessage(FacesMessage.SEVERITY_ERROR, e.getMessage(), null);
+        	AonUtil.addFatalMessage( e.getMessage() );
         } finally {
 			HibernateUtil.setCloseSession(true);
 			HibernateUtil.closeSession();
@@ -134,7 +133,7 @@ public class ExpendituresController extends GridController {
 	    	super.getCriteria().addEqualExpression( getManagerBean().getFieldName( IEmployeeAlias.EXPENDITURES_RESOURCE), this.resource.getId() );
 	    	super.onSearch( event );
 		} catch (ManagerBeanException e) {
-			MessageUtils.addMessage(FacesMessage.SEVERITY_ERROR, e.getMessage(), null);
+        	AonUtil.addFatalMessage( e.getMessage() );
 		}
     }
 

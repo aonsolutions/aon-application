@@ -61,38 +61,42 @@ public class CalendarTreeVisitor implements IEntityVisitor, IEmployeeConstants {
 
 	@SuppressWarnings("unchecked")
 	public void visitWorkPlace(WorkPlace workPlace) {
-        ITreeNode node = 
-        	getBranchTreeNode( workPlace, BRANCH_TYPE, workPlace.getDescription(), WORKPLACE_ICON, WORKPLACE_ICON , "" );
-        ITreeNode oldParent = this.currentParent;
-        this.currentParent = node;
-        stack.push(new Counter());
-		Iterator iter = workPlace.getActivities().iterator();
-        while (iter.hasNext()) {
-        	((WorkActivity) iter.next()).accept(this);
-        }
-		iter = workPlace.getEmployees().iterator();
-        while (iter.hasNext()) {
-        	((Employee) iter.next()).accept(this);
-        }
-        stack.pop();
-        this.currentParent = oldParent;
-        this.currentParent.getChildren().add(node);
+		if ( workPlace.isActive() ) {
+	        ITreeNode node = 
+	        	getBranchTreeNode( workPlace, BRANCH_TYPE, workPlace.getDescription(), WORKPLACE_ICON, WORKPLACE_ICON , "" );
+	        ITreeNode oldParent = this.currentParent;
+	        this.currentParent = node;
+	        stack.push(new Counter());
+			Iterator iter = workPlace.getActivities().iterator();
+	        while (iter.hasNext()) {
+	        	((WorkActivity) iter.next()).accept(this);
+	        }
+			iter = workPlace.getEmployees().iterator();
+	        while (iter.hasNext()) {
+	        	((Employee) iter.next()).accept(this);
+	        }
+	        stack.pop();
+	        this.currentParent = oldParent;
+	        this.currentParent.getChildren().add(node);
+		}
 	}
 
 	@SuppressWarnings("unchecked")
 	public void visitWorkActivity(WorkActivity activity) {
-        ITreeNode node = 
-        	getBranchTreeNode( activity, BRANCH_TYPE, activity.getDescription(), WORKACTIVITY_ICON, WORKACTIVITY_ICON , "" );
-        ITreeNode oldParent = this.currentParent;
-        this.currentParent = node;
-        stack.push(new Counter());
-		Iterator iter = activity.getEmployees().iterator();
-        while (iter.hasNext()) {
-        	((Employee) iter.next()).accept(this);
-        }
-        stack.pop();
-        this.currentParent = oldParent;
-        this.currentParent.getChildren().add(node);   
+		if ( activity.isActive() ) {
+	        ITreeNode node = 
+	        	getBranchTreeNode( activity, BRANCH_TYPE, activity.getDescription(), WORKACTIVITY_ICON, WORKACTIVITY_ICON , "" );
+	        ITreeNode oldParent = this.currentParent;
+	        this.currentParent = node;
+	        stack.push(new Counter());
+			Iterator iter = activity.getEmployees().iterator();
+	        while (iter.hasNext()) {
+	        	((Employee) iter.next()).accept(this);
+	        }
+	        stack.pop();
+	        this.currentParent = oldParent;
+	        this.currentParent.getChildren().add(node);
+		}
 	}
 
 	@SuppressWarnings("unchecked")

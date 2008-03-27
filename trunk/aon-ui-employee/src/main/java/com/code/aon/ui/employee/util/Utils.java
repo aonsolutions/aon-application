@@ -4,10 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 
-import javax.faces.application.FacesMessage;
 import javax.faces.model.SelectItem;
-
-import org.apache.myfaces.shared_tomahawk.util.MessageUtils;
 
 import com.code.aon.ui.util.AonUtil;
 
@@ -40,6 +37,6 @@ public class Utils {
 			ResourceBundle bundle = ResourceBundle.getBundle( baseName );
 			message = bundle.getString( message );
 		}
-	    MessageUtils.addMessage( FacesMessage.SEVERITY_FATAL, message, null );
+		AonUtil.addFatalMessage( message );
 	}
 }

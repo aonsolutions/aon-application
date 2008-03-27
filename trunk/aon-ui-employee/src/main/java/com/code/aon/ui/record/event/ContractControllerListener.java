@@ -1,9 +1,14 @@
 package com.code.aon.ui.record.event;
 
+import java.util.Date;
+
+import javax.faces.event.AbortProcessingException;
+
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.company.resources.Employee;
 import com.code.aon.record.Contract;
+import com.code.aon.ui.employee.util.Utils;
 import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
@@ -15,6 +20,21 @@ public class ContractControllerListener extends ControllerAdapter {
 	public void beforeBeanAdded(ControllerEvent event) throws ControllerListenerException {
 		ContractController contractController = (ContractController)event.getController();
 		((Contract)contractController.getTo()).setEmployee(contractController.getEmployee());
+	}
+
+	/* (non-Javadoc)
+	 * @see com.code.aon.ui.form.event.ControllerAdapter#beforeBeanRemoved(com.code.aon.ui.form.event.ControllerEvent)
+	 */
+	@Override
+	public void beforeBeanRemoved(ControllerEvent event) throws ControllerListenerException {
+		ContractController contractController = (ContractController)event.getController();
+		try {
+			if ( contractController.getModel().getRowCount() == 1 ) {
+				Utils.addMessage( "aon_employee_first_contract_exception", true );
+				throw new AbortProcessingException( "aon_employee_first_contract_exception" );
+			}
+		} catch (ManagerBeanException e) {
+		}
 	}
 
 	/* (non-Javadoc)
@@ -33,10 +53,13 @@ public class ContractControllerListener extends ControllerAdapter {
 	@Override
 	public void afterBeanUpdated(ControllerEvent event) throws ControllerListenerException {
 		ContractController contractController = (ContractController)event.getController();
-		if ( ( (Contract) contractController.getTo() ).getEndingDate() != null) {
+		Date endingDate = ( (Contract) contractController.getTo() ).getEndingDate();
+		if ( endingDate != null && endingDate.before( new Date() ) ) {
 			contractController.getEmployee().setActive( false );
-			save( contractController.getEmployee() );
+		} else {
+			contractController.getEmployee().setActive( true );
 		}
+		save( contractController.getEmployee() );
 	}
 
 	/**

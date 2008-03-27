@@ -6,12 +6,12 @@ package com.code.aon.ui.employee.event;
 import com.code.aon.company.resources.Employee;
 import com.code.aon.registry.RegistryNote;
 import com.code.aon.registry.enumeration.NoteType;
-import com.code.aon.ui.employee.controller.EmployeeController;
 import com.code.aon.ui.form.IController;
 import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
 import com.code.aon.ui.util.AonUtil;
+import com.code.aon.ui.employee.controller.EmployeeController;
 
 /**
  * @author Consulting & Development. Iñaki Ayerbe - 24/08/2007

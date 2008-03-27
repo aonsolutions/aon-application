@@ -9,11 +9,11 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.company.resources.Employee;
 import com.code.aon.record.Position;
-import com.code.aon.ui.employee.controller.EmployeeController;
 import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
 import com.code.aon.ui.util.AonUtil;
+import com.code.aon.ui.employee.controller.EmployeeController;
 
 /**
  * @author Consulting & Development. Iñaki Ayerbe - 06/09/2007

@@ -14,7 +14,6 @@ import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.common.tree.CalendarTreeVisitor;
 import com.code.aon.common.tree.ITreeNode;
 import com.code.aon.common.tree.TreeModelException;
-import com.code.aon.common.tree.jsf.AbstractTreeModel;
 import com.code.aon.company.WorkPlace;
 
 /**

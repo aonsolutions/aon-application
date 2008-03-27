@@ -7,9 +7,9 @@ import org.apache.myfaces.custom.tabbedpane.TabChangeEvent;
 import org.apache.myfaces.custom.tabbedpane.TabChangeListener;
 
 import com.code.aon.common.ManagerBeanException;
-import com.code.aon.ui.employee.controller.EmployeeController;
 import com.code.aon.ui.menu.jsf.MenuEvent;
 import com.code.aon.ui.util.AonUtil;
+import com.code.aon.ui.employee.controller.EmployeeController;
 
 public class RecordController implements TabChangeListener {
 	

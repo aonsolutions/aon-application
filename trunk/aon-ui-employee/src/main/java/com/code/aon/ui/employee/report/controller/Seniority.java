@@ -101,9 +101,14 @@ public class Seniority implements ICollectionProvider {
 		this.seniorityType = (Integer) event.getNewValue();
 	}
 
-	/* (non-Javadoc)
-	 * @see com.code.aon.common.ICollectionProvider#getCollection()
-	 */
+	@SuppressWarnings("unchecked")
+	@Override
+	public Collection getCollection(boolean forceRefresh) throws ManagerBeanException {
+		return this.getCollection();
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
 	public Collection getCollection() {
 		this.collection = new ArrayList<SeniorityBean>();
 		try {
@@ -123,28 +128,30 @@ public class Seniority implements ICollectionProvider {
 					fillContractEndingDate( l, sb );
 					Integer seniorityPeriod = getSeniorityPeriod( date, contractFirstDate );
 					sb.setSeniority( seniorityPeriod );
-					switch (seniorityType) {
-						case 0:
-							if ( seniorityPeriod.intValue() % 3 == 0 ) {
-								sb.setSeniorityType( bundle.getString( "record_seniority_3" )  );
-								this.collection.add( sb );
-							}
-							break;
-						case 1:
-							if ( seniorityPeriod.intValue() % 5 == 0 ) {
-								sb.setSeniorityType( bundle.getString( "record_seniority_5" )  );
-								this.collection.add( sb );
-							}
-							break;
-						default:
-							if ( seniorityPeriod.intValue() % 3 == 0 )
-								sb.setSeniorityType( bundle.getString( "record_seniority_3" )  );
-							else if ( seniorityPeriod.intValue() % 5 == 0 )
-								sb.setSeniorityType( bundle.getString( "record_seniority_5" )  );
-							if ( seniorityPeriod.intValue() % 3 == 0 || seniorityPeriod.intValue() % 5 == 0 ) {
-								this.collection.add( sb );
-							}
-							break;
+					if ( seniorityPeriod > 0 ) {
+						switch (seniorityType) {
+							case 0:
+								if ( seniorityPeriod.intValue() % 3 == 0 ) {
+									sb.setSeniorityType( bundle.getString( "record_seniority_3" )  );
+									this.collection.add( sb );
+								}
+								break;
+							case 1:
+								if ( seniorityPeriod.intValue() % 5 == 0 ) {
+									sb.setSeniorityType( bundle.getString( "record_seniority_5" )  );
+									this.collection.add( sb );
+								}
+								break;
+							default:
+								if ( seniorityPeriod.intValue() % 3 == 0 )
+									sb.setSeniorityType( bundle.getString( "record_seniority_3" )  );
+								else if ( seniorityPeriod.intValue() % 5 == 0 )
+									sb.setSeniorityType( bundle.getString( "record_seniority_5" )  );
+								if ( seniorityPeriod.intValue() % 3 == 0 || seniorityPeriod.intValue() % 5 == 0 ) {
+									this.collection.add( sb );
+								}
+								break;
+						}
 					}
 				}
 			}
@@ -173,6 +180,7 @@ public class Seniority implements ICollectionProvider {
 	 * @param l
 	 * @param sb
 	 */
+	@SuppressWarnings("unchecked")
 	private void fillContractEndingDate(List l, SeniorityBean sb) {
 		Contract contract = (Contract) l.get( l.size() - 1  );
 		sb.setEndingDate( contract.getEndingDate() );
@@ -185,6 +193,7 @@ public class Seniority implements ICollectionProvider {
 	 * @param sb
 	 * @return
 	 */
+	@SuppressWarnings("unchecked")
 	private Date fillContractFirstDate(List l, SeniorityBean sb) {
 		Contract contract = (Contract) l.get( 0 );
 		sb.setStartingDate( contract.getStartingDate() );
@@ -198,6 +207,7 @@ public class Seniority implements ICollectionProvider {
 	 * @return
 	 * @throws ManagerBeanException
 	 */
+	@SuppressWarnings("unchecked")
 	private List getEmployeeContracts(Integer id) throws ManagerBeanException {
 		IManagerBean bean = BeanManager.getManagerBean( Contract.class );
 		Criteria criteria = new Criteria();
@@ -208,8 +218,4 @@ public class Seniority implements ICollectionProvider {
 		return bean.getList( criteria );
 	}
 
-	@Override
-	public Collection getCollection(boolean forceRefresh) throws ManagerBeanException {
-		return this.getCollection();
-	}
 }

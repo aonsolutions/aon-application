@@ -21,9 +21,9 @@ import com.code.aon.record.Work;
 import com.code.aon.record.dao.IRecordAlias;
 import com.code.aon.registry.Registry;
 import com.code.aon.ui.company.controller.CompanyUtil;
-import com.code.aon.ui.employee.controller.EmployeeController;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.util.AonUtil;
+import com.code.aon.ui.employee.controller.EmployeeController;
 
 public class PositionController extends BasicController {
 	

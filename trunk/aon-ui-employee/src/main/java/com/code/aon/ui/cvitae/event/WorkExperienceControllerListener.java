@@ -1,9 +1,9 @@
 package com.code.aon.ui.cvitae.event;
 
-import com.code.aon.cvitae.WorkExperience;
 import com.code.aon.cvitae.Curriculum;
-import com.code.aon.ui.cvitae.controller.WorkExperienceController;
+import com.code.aon.cvitae.WorkExperience;
 import com.code.aon.ui.cvitae.controller.CurriculumController;
+import com.code.aon.ui.cvitae.controller.WorkExperienceController;
 import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
