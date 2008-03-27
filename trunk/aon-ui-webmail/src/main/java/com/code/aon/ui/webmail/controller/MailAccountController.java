@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.Locale;
 
 import javax.faces.context.FacesContext;
-import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 import javax.faces.model.SelectItem;
 import javax.mail.MessagingException;
@@ -13,10 +12,9 @@ import javax.mail.MessagingException;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.util.AonUtil;
 import com.code.aon.ui.webmail.bean.AonConstants;
-import com.code.aon.ui.webmail.exception.WebmailException;
+import com.code.aon.ui.webmail.tree.FoldersTreeBean;
 import com.code.aon.webmail.MailAccount;
 import com.code.aon.webmail.enumeration.MailAccountStatus;
-import com.icesoft.faces.component.ext.RowSelectorEvent;
 
 public class MailAccountController extends BasicController {
 
@@ -41,7 +39,7 @@ public class MailAccountController extends BasicController {
 	}
 	
 	@SuppressWarnings("unused")
-	public void onSelect(RowSelectorEvent event){
+	public void onSelect(ActionEvent event){
 		super.onSelect(new ActionEvent(event.getComponent()));
 		FacesContext.getCurrentInstance().getApplication().getNavigationHandler().handleNavigation(FacesContext.getCurrentInstance(), null, AonConstants.NAVIGATION_MAILACCOUNT_FORM);
 	}
@@ -69,17 +67,12 @@ public class MailAccountController extends BasicController {
 			error = e.getMessage();
 			webmail.init((MailAccount)previous);
 		}
-    	TreeController treeController = (TreeController)AonUtil.getRegisteredBean(AonConstants.BEAN_TREE);
-    	try {
-			treeController.loadTree();
-		} catch (WebmailException e) {
-    		AonUtil.addErrorMessage(e.getMessage());
-    		throw new AbortProcessingException(e);
-		}
+    	FoldersTreeBean treeBean = (FoldersTreeBean)AonUtil.getRegisteredBean(AonConstants.BEAN_TREE);
+    	treeBean.loadTree();
 		SignatureController signatureController = (SignatureController)AonUtil.getRegisteredBean(AonConstants.BEAN_SIGNATURE);
 		signatureController.initializeModel();
 		signatureController.onSearch(null);
-    	ICEController emailController = (ICEController)AonUtil.getRegisteredBean(AonConstants.BEAN_EMAIL);
+    	BasicController emailController = (BasicController)AonUtil.getRegisteredBean(AonConstants.BEAN_EMAIL);
     	emailController.initializeModel();
     	emailController.onSearch(null);
 		if (error==null){

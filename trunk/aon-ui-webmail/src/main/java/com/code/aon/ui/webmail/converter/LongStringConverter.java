@@ -22,13 +22,14 @@ public class LongStringConverter implements Converter {
 
     public String getAsString(FacesContext context, UIComponent component,
                               Object value) throws ConverterException {
-    	if (value == null)
-    			return "";
-	    if(((String)value).length() > 120)
-        return breakLines((String)value, true);
-        else
-        return ((String)value);
-
+    	try{
+		    if(((String)value).length() > 120)
+	        return breakLines((String)value, true);
+	        else
+	        return ((String)value);
+    	}catch (Exception e) {
+    		return "";
+		}
     }
 
 

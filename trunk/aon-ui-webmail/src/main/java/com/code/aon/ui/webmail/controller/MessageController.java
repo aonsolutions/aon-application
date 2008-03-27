@@ -184,7 +184,7 @@ public class MessageController implements IAonFileListener,IFileUploadedListener
 	       		try {
 	       			AonFile af = new AonFile();
 	       			InputStream is = m.getInputStream();
-	       			File f = new File(attach.getFileName()); 
+	       			File f = new File("/tmp/"+attach.getFileName()); 
 	       			FileOutputStream fos = new FileOutputStream(f);
 	    			byte buff [] = new byte [ 256 ];
 	    			int read = is.read ( buff );

@@ -25,6 +25,7 @@ import javax.mail.internet.MimeMultipart;
 import javax.mail.search.SearchTerm;
 
 import com.code.aon.ui.util.AonUtil;
+import com.code.aon.ui.webmail.controller.FolderController;
 import com.code.aon.ui.webmail.controller.MessageController;
 import com.code.aon.ui.webmail.exception.WebmailException;
 
@@ -675,6 +676,7 @@ public class AonMessage {
     public void changeSelectedMessage(ActionEvent event) {
        	MessageController messageController = (MessageController) AonUtil.getRegisteredBean(AonConstants.BEAN_MESSAGE);
        	messageController.setMessage(this);
+       	
     }
 
     public boolean isReaded() throws WebmailException{

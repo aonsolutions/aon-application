@@ -10,13 +10,15 @@ import javax.faces.event.ActionEvent;
 import javax.mail.Folder;
 import javax.mail.MessagingException;
 
+import org.richfaces.component.html.HtmlDatascroller;
+
 import com.code.aon.ui.util.AonUtil;
 import com.code.aon.ui.webmail.bean.AonConstants;
 import com.code.aon.ui.webmail.bean.AonFolder;
 import com.code.aon.ui.webmail.bean.AonMessage;
 import com.code.aon.ui.webmail.exception.WebmailException;
 import com.code.aon.ui.webmail.listener.ITreeListener;
-import com.icesoft.faces.component.datapaginator.DataPaginator;
+import com.code.aon.ui.webmail.tree.FoldersTreeBean;
 
 public class FolderController implements ITreeListener{
 
@@ -24,8 +26,6 @@ public class FolderController implements ITreeListener{
 	
 	private AonFolder folder;
 	
-	private DataPaginator paginator;
-
 	private int pageObjectNumber = 20;
 	
 	/**
@@ -50,9 +50,6 @@ public class FolderController implements ITreeListener{
 	}
 
 	private void initFolderSelection(){
-    	if (paginator!=null)
-    		paginator.gotoFirstPage();
-		paginator = null;
 		try {
 			folder.refresh();
 		} catch (WebmailException e) {
@@ -67,8 +64,9 @@ public class FolderController implements ITreeListener{
 		return pageObjectNumber;
 	}
 
-	public void nodeSelected(TreeObject selectedNodeObject){
-		setFolder(selectedNodeObject.getFolder());
+	public void nodeSelected(AonFolder selected){
+		setFolder(selected);
+		htmlDatascroller = null;
     	MessageController messageController = (MessageController)AonUtil.getRegisteredBean(AonConstants.BEAN_MESSAGE);
     	messageController.setReturnAction(AonConstants.NAVIGATION_FOLDER);
 	}
@@ -128,9 +126,8 @@ public class FolderController implements ITreeListener{
 	    	AonFolder dest = webMailController.getServer().getAonFolder(AonFolder.TRASH_FOLDER_NAME);
 	    	folder.moveMessages(messagesLst, dest);
 		}
-		if (paginator!=null &&
-				currentPageObjects().size()==0)
-			paginator.gotoPreviousPage();
+		//if (currentPageObjects().size()==0)
+			//paginator.gotoPreviousPage();
     }
     
 	// *************************************************************************
@@ -149,7 +146,7 @@ public class FolderController implements ITreeListener{
     		iter.next().setSelected(false);
     	}
     }
-    
+
     public void selectAllPageMessages(ActionEvent event){
     	Iterator<AonMessage> iter = currentPageObjects().iterator();
     	while (iter.hasNext()){
@@ -167,8 +164,8 @@ public class FolderController implements ITreeListener{
     private List<AonMessage> currentPageObjects() {
     	List<AonMessage> messages = new ArrayList<AonMessage>();
     	int currentPage = 1;
-    	if (paginator!=null)
-    		currentPage = paginator.getPageIndex();
+    	if (htmlDatascroller!=null)
+    		currentPage = htmlDatascroller.getPageIndex();
     	currentPage--;
     	Object[] allMessages = folder.getMessageList().toArray();
     	for (int i = currentPage*pageObjectNumber;i < (currentPage*pageObjectNumber+pageObjectNumber); i++){
@@ -177,26 +174,16 @@ public class FolderController implements ITreeListener{
     	}
     	return messages;
     }
+
+    private HtmlDatascroller htmlDatascroller = null;
     
+	public void dataScrollActionListener(ActionEvent event) {
+    	htmlDatascroller = (HtmlDatascroller) event.getComponent();
+    }
+
     //*************************************************************
     // NEW FOLDER POPUP
     //*************************************************************
-    
-    private boolean showNewFolderPanelPopup;
-    
-	/**
-	 * @return the showNewFolderPanelPopup
-	 */
-	public boolean isShowNewFolderPanelPopup() {
-		return showNewFolderPanelPopup;
-	}
-
-	/**
-	 * @param showNewFolderPanelPopup the showNewFolderPanelPopup to set
-	 */
-	public void setShowNewFolderPanelPopup(boolean showNewFolderPanelPopup) {
-		this.showNewFolderPanelPopup = showNewFolderPanelPopup;
-	}
     
     private String newFolderName;
     
@@ -214,34 +201,14 @@ public class FolderController implements ITreeListener{
 		this.newFolderName = newFolderName;
 	}
 
-	public void closeNewFolderPanelPopup(ActionEvent event){
-		this.showNewFolderPanelPopup = false;
-	}
-
 	public void openNewFolderPanelPopup(ActionEvent event){
 		this.newFolderName = "";
-		this.showNewFolderPanelPopup = true;
 	}
 
     //*************************************************************
     // RENAME FOLDER POPUP
     //*************************************************************
     
-    private boolean showRenameFolderPanelPopup;
-    
-	/**
-	 * @return the showRenameFolderPanelPopup
-	 */
-	public boolean isShowRenameFolderPanelPopup() {
-		return showRenameFolderPanelPopup;
-	}
-
-	/**
-	 * @param showRenameFolderPanelPopup the showRenameFolderPanelPopup to set
-	 */
-	public void setShowRenameFolderPanelPopup(boolean showRenameFolderPanelPopup) {
-		this.showRenameFolderPanelPopup = showRenameFolderPanelPopup;
-	}
     
     private String renameFolderName;
     
@@ -259,13 +226,8 @@ public class FolderController implements ITreeListener{
 		this.renameFolderName = renameFolderName;
 	}
 
-	public void closeRenameFolderPanelPopup(ActionEvent event){
-		this.showRenameFolderPanelPopup = false;
-	}
-
 	public void openRenameFolderPanelPopup(ActionEvent event){
 		this.renameFolderName = "";
-		this.showRenameFolderPanelPopup = true;
 	}
 
     //*************************************************************
@@ -279,12 +241,8 @@ public class FolderController implements ITreeListener{
 			Folder newFolder = webMailController.getServer().getRoot().getFolder(renameFolderName);
 			this.folder.getFolder().renameTo(newFolder);
 			this.folder = webMailController.getServer().getAonFolder(renameFolderName);
-	    	TreeController treeController = (TreeController)AonUtil.getRegisteredBean(AonConstants.BEAN_TREE);
-	    	treeController.loadTree();
-			closeRenameFolderPanelPopup(null);
-		} catch (WebmailException e) {
-			AonUtil.addErrorMessage(e.getMessage());
-			throw new AbortProcessingException(e);
+	    	FoldersTreeBean treeBean = (FoldersTreeBean)AonUtil.getRegisteredBean(AonConstants.BEAN_TREE);
+	    	treeBean.loadTree();
 		} catch (MessagingException e) {
 			AonUtil.addErrorMessage(e.getMessage());
 			throw new AbortProcessingException(e);
@@ -297,16 +255,10 @@ public class FolderController implements ITreeListener{
     //*************************************************************
 
 	public void createFolder(ActionEvent event) {
-		try{
-	    	WebMailController webMailController = (WebMailController)AonUtil.getRegisteredBean(AonConstants.BEAN_WEBMAIL);
-	       	webMailController.getServer().createAonFolder(null, newFolderName, Folder.HOLDS_MESSAGES);
-	    	TreeController treeController = (TreeController)AonUtil.getRegisteredBean(AonConstants.BEAN_TREE);
-	    	treeController.loadTree();
-	    	closeNewFolderPanelPopup(null);
-		} catch (WebmailException e) {
-			AonUtil.addErrorMessage(e.getMessage());
-			throw new AbortProcessingException(e);
-		}
+    	WebMailController webMailController = (WebMailController)AonUtil.getRegisteredBean(AonConstants.BEAN_WEBMAIL);
+       	webMailController.getServer().createAonFolder(null, newFolderName, Folder.HOLDS_MESSAGES);
+    	FoldersTreeBean treeBean = (FoldersTreeBean)AonUtil.getRegisteredBean(AonConstants.BEAN_TREE);
+    	treeBean.loadTree();
     }
 
     //*************************************************************
@@ -317,8 +269,8 @@ public class FolderController implements ITreeListener{
 			if (this.folder.getMessageCount()==0){
 				this.folder.deleteFolder(true);
 				this.folder = null;
-		    	TreeController treeController = (TreeController)AonUtil.getRegisteredBean(AonConstants.BEAN_TREE);
-		    	treeController.loadTree();
+		    	FoldersTreeBean treeBean = (FoldersTreeBean)AonUtil.getRegisteredBean(AonConstants.BEAN_TREE);
+		    	treeBean.loadTree();
 			}
 		} catch (WebmailException e) {
 			AonUtil.addErrorMessage(e.getMessage());
@@ -333,13 +285,6 @@ public class FolderController implements ITreeListener{
 		return (folder!=null);
 	}
 
-    //*************************************************************
-    // PAGINATOR
-    //*************************************************************
-	public void paginatorAction(ActionEvent event){
-		paginator = (DataPaginator)event.getSource();
-	}
-	
     //*************************************************************
     // SENDER OR DESTINY COLUMN
     //*************************************************************
