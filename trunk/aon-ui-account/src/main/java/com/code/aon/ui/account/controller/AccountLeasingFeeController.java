@@ -2,20 +2,15 @@ package com.code.aon.ui.account.controller;
 
 import java.util.Date;
 import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.faces.event.ActionEvent;
 import javax.faces.event.ValueChangeEvent;
-import javax.faces.model.DataModel;
-import javax.faces.model.ListDataModel;
 
 import com.code.aon.account.Account;
 import com.code.aon.account.AccountEntry;
 import com.code.aon.account.AccountEntryDetail;
-import com.code.aon.account.AccountInvoiceDetail;
 import com.code.aon.account.AccountLeasingFeeHeader;
 import com.code.aon.account.DefaultAccounts;
 import com.code.aon.account.Leasing;
@@ -39,12 +34,9 @@ import com.code.aon.finance.dao.IFinanceAlias;
 import com.code.aon.finance.enumeration.InvoiceSource;
 import com.code.aon.finance.enumeration.InvoiceStatus;
 import com.code.aon.finance.enumeration.InvoiceType;
-import com.code.aon.product.Tax;
-import com.code.aon.product.dao.IProductAlias;
 import com.code.aon.product.enumeration.TaxType;
 import com.code.aon.product.util.DiscountExpression;
 import com.code.aon.ql.Criteria;
-import com.code.aon.ql.Projection;
 import com.code.aon.ui.account.utils.AccountPeriodValidator;
 import com.code.aon.ui.menu.jsf.MenuEvent;
 import com.code.aon.ui.util.AonUtil;
@@ -255,12 +247,12 @@ public class AccountLeasingFeeController {
 			IManagerBean invoiceBean = BeanManager.getManagerBean(Invoice.class);
 			Invoice invoice = new Invoice();
 			invoice.setIssueDate(getHeader().getLeasingFeeDate());
-			invoice.setNumber(calculateNextNumber(getHeader().getSeries()));
+			invoice.setSeries(getHeader().getSeries());
+			invoice.setNumber(getHeader().getNumber());
 			// A INVOICE SE LE METE COMPANY EN REGISTRY
 			invoice.setRegistry(obtainCompany());
 			invoice.setRegistryDocument(getHeader().getLeasing().getSupplierDocument());
 			invoice.setRegistryName(getHeader().getLeasing().getSupplierName());
-			invoice.setSeries(getHeader().getSeries());
 			invoice.setStatus(InvoiceStatus.SCORED);
 			invoice.setType(InvoiceType.LEASING);
 			invoice.setSecurityLevel(getHeader().getSecurityLevel());
@@ -271,18 +263,6 @@ public class AccountLeasingFeeController {
 		return null;
 	}
 	
-	private int calculateNextNumber(String series) throws ManagerBeanException {
-		IManagerBean invoiceBean = BeanManager.getManagerBean(Invoice.class);
-		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(invoiceBean.getFieldName(IFinanceAlias.INVOICE_SERIES), series);
-		Projection projection = Projection.max(invoiceBean.getFieldName(IFinanceAlias.INVOICE_NUMBER));
-		Object value = invoiceBean.getUniqueResult(projection, criteria);
-		if(value != null){
-			return ((Integer)value).intValue() + 1;
-		}
-		return 1;
-	}
-
 	@SuppressWarnings("unchecked")
 	private WorkPlace obtainWorkPlace() throws ManagerBeanException {
 		IManagerBean workPlaceBean = BeanManager.getManagerBean(WorkPlace.class);
