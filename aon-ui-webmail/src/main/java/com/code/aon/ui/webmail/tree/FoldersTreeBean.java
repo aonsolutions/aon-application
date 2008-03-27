@@ -1,0 +1,102 @@
+package com.code.aon.ui.webmail.tree;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.faces.FacesException;
+import javax.faces.component.UIComponent;
+import javax.faces.component.UIData;
+import javax.faces.context.FacesContext;
+
+import org.richfaces.component.UITree;
+import org.richfaces.event.NodeSelectedEvent;
+import org.richfaces.model.TreeNode;
+import org.richfaces.model.TreeNodeImpl;
+
+import com.code.aon.ui.util.AonUtil;
+import com.code.aon.ui.webmail.bean.AonConstants;
+import com.code.aon.ui.webmail.bean.AonFolder;
+import com.code.aon.ui.webmail.controller.WebMailController;
+import com.code.aon.ui.webmail.exception.WebmailException;
+import com.code.aon.ui.webmail.listener.ITreeListener;
+
+public class FoldersTreeBean {
+
+	private TreeNode rootNode = null;
+
+	private AonFolder current;
+	
+    private List<ITreeListener> listeners = new ArrayList<ITreeListener>();
+
+	private void addNodes(TreeNode node) {
+		AonFolder folder = (AonFolder) node.getData();
+		ArrayList<AonFolder> lst;
+		try {
+			lst = folder.getFolderList();
+	        for (int i = 0; i < lst.size(); i++) {
+	        	AonFolder aonFolder = lst.get(i);
+				TreeNodeImpl nodeImpl = new TreeNodeImpl();
+				nodeImpl.setData(aonFolder);
+				node.addChild(new Integer(i+1), nodeImpl);
+	        }
+		} catch (WebmailException e) {
+			throw new FacesException(e.getMessage(), e);
+		}
+	}
+
+	public void loadTree() {
+    	WebMailController webMailController = (WebMailController)AonUtil.getRegisteredBean(AonConstants.BEAN_WEBMAIL);
+		AonFolder folder = new AonFolder(webMailController.getServer().getRoot());
+		rootNode = new TreeNodeImpl();
+		rootNode.setData(folder);
+		addNodes(rootNode);
+	}
+
+	public TreeNode getTreeNode() {
+		if (rootNode == null) {
+			loadTree();
+		}
+		return rootNode;
+	}
+
+	public void processSelection(NodeSelectedEvent event) {
+		UITree tree = (UITree) event.getComponent();
+		current = (AonFolder) tree.getRowData();
+		nodeSelected(current);
+		// ÑAPA
+		String id = "homepage:folderView:webmailForm:messageDataTable";
+		UIComponent comp = FacesContext.getCurrentInstance().getViewRoot().findComponent( id );
+		if(comp == null)
+			throw new IllegalArgumentException("Can not find component with id = '"+id+"'");
+		if(!(comp instanceof UIData))
+			throw new IllegalArgumentException("Id does not refer to a UIData instance");
+		UIData uidata = (UIData)comp;
+		uidata.setFirst(0);
+		// FIN ÑAPA
+	}
+
+	public AonFolder getCurrent() {
+		return current;
+	}
+
+    private void nodeSelected(AonFolder node){
+    	for (ITreeListener l: listeners) {
+    		l.nodeSelected(node);
+    	}
+    }
+
+	/**
+	 * @return the listeners
+	 */
+	public List<ITreeListener> getListeners() {
+		return listeners;
+	}
+
+	/**
+	 * @param listeners the listeners to set
+	 */
+	public void setListeners(List<ITreeListener> listeners) {
+		this.listeners = listeners;
+	}
+
+}

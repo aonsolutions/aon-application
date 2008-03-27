@@ -12,7 +12,6 @@ import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 
 import com.code.aon.ui.webmail.exception.WebmailException;
-import com.icesoft.faces.context.effects.JavascriptContext;
 
 public class AonAttachment{
 	
@@ -99,7 +98,7 @@ public class AonAttachment{
 			bos.flush();
 			bos.close();
 			bis.close();
-			JavascriptContext.addJavascriptCall(FacesContext.getCurrentInstance(), "window.open('report.iface', 'myWindow');"); 
+			//JavascriptContext.addJavascriptCall(FacesContext.getCurrentInstance(), "window.open('report.iface', 'myWindow');"); 
 			faces.responseComplete();
 		} catch (IOException e) {
 			throw new WebmailException(e);

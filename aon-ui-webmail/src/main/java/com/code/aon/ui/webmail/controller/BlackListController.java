@@ -35,7 +35,6 @@ import com.code.aon.ui.webmail.exception.WebmailException;
 import com.code.aon.webmail.MailAccount;
 import com.code.aon.webmail.enumeration.SpamReportType;
 import com.code.aon.webmail.enumeration.SpamScoreType;
-import com.icesoft.faces.component.ext.RowSelectorEvent;
 
 public class BlackListController {
 
@@ -297,9 +296,6 @@ public class BlackListController {
 		}
 	}
 	
-    public void rowSelection(RowSelectorEvent e) {
-    }
-
 	private void addEmail(String email, int _type){
 		if (!email.equals("")){
 			if (_type==LIST_WHITE_TYPE){

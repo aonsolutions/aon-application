@@ -21,8 +21,10 @@ import com.code.aon.config.User;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.util.AonUtil;
 import com.code.aon.ui.webmail.bean.AonConstants;
+import com.code.aon.ui.webmail.bean.AonFolder;
 import com.code.aon.ui.webmail.bean.AonServer;
 import com.code.aon.ui.webmail.exception.WebmailException;
+import com.code.aon.ui.webmail.tree.FoldersTreeBean;
 import com.code.aon.webmail.MailAccount;
 import com.code.aon.webmail.Signature;
 import com.code.aon.webmail.dao.IWebMailAlias;
@@ -77,13 +79,10 @@ public class WebMailController {
 		server = new AonServer(mailAccount);
 		server.createBasicFolders();
 		createDefaultSignature(mailAccount);
-    	TreeController treeController = (TreeController)AonUtil.getRegisteredBean(AonConstants.BEAN_TREE);
-		try {
-			treeController.loadTree();
-	    	treeController.initTree();
-		} catch (WebmailException e) {
-    		AonUtil.addErrorMessage(e.getMessage());
-		}
+    	FoldersTreeBean treeBean = (FoldersTreeBean)AonUtil.getRegisteredBean(AonConstants.BEAN_TREE);
+    	treeBean.loadTree();
+    	FolderController folderBean = (FolderController)AonUtil.getRegisteredBean(AonConstants.BEAN_FOLDER);
+    	folderBean.nodeSelected(getServer().getAonFolder(AonFolder.INBOX_FOLDER_NAME));
 	}
 
     private MailAccount getAccount(User mailUser) throws ManagerBeanException {
