@@ -16,6 +16,8 @@ import org.richfaces.model.TreeNodeImpl;
 import com.code.aon.ui.util.AonUtil;
 import com.code.aon.ui.webmail.bean.AonConstants;
 import com.code.aon.ui.webmail.bean.AonFolder;
+import com.code.aon.ui.webmail.controller.FolderController;
+import com.code.aon.ui.webmail.controller.MessageController;
 import com.code.aon.ui.webmail.controller.WebMailController;
 import com.code.aon.ui.webmail.exception.WebmailException;
 import com.code.aon.ui.webmail.listener.ITreeListener;
@@ -25,28 +27,30 @@ public class FoldersTreeBean {
 	private TreeNode rootNode = null;
 
 	private AonFolder current;
-	
-    private List<ITreeListener> listeners = new ArrayList<ITreeListener>();
+
+	private List<ITreeListener> listeners = new ArrayList<ITreeListener>();
 
 	private void addNodes(TreeNode node) {
 		AonFolder folder = (AonFolder) node.getData();
 		ArrayList<AonFolder> lst;
 		try {
 			lst = folder.getFolderList();
-	        for (int i = 0; i < lst.size(); i++) {
-	        	AonFolder aonFolder = lst.get(i);
+			for (int i = 0; i < lst.size(); i++) {
+				AonFolder aonFolder = lst.get(i);
 				TreeNodeImpl nodeImpl = new TreeNodeImpl();
 				nodeImpl.setData(aonFolder);
-				node.addChild(new Integer(i+1), nodeImpl);
-	        }
+				node.addChild(new Integer(i + 1), nodeImpl);
+			}
 		} catch (WebmailException e) {
 			throw new FacesException(e.getMessage(), e);
 		}
 	}
 
 	public void loadTree() {
-    	WebMailController webMailController = (WebMailController)AonUtil.getRegisteredBean(AonConstants.BEAN_WEBMAIL);
-		AonFolder folder = new AonFolder(webMailController.getServer().getRoot());
+		WebMailController webMailController = (WebMailController) AonUtil
+				.getRegisteredBean(AonConstants.BEAN_WEBMAIL);
+		AonFolder folder = new AonFolder(webMailController.getServer()
+				.getRoot());
 		rootNode = new TreeNodeImpl();
 		rootNode.setData(folder);
 		addNodes(rootNode);
@@ -65,12 +69,15 @@ public class FoldersTreeBean {
 		nodeSelected(current);
 		// ÑAPA
 		String id = "homepage:folderView:webmailForm:messageDataTable";
-		UIComponent comp = FacesContext.getCurrentInstance().getViewRoot().findComponent( id );
-		if(comp == null)
-			throw new IllegalArgumentException("Can not find component with id = '"+id+"'");
-		if(!(comp instanceof UIData))
-			throw new IllegalArgumentException("Id does not refer to a UIData instance");
-		UIData uidata = (UIData)comp;
+		UIComponent comp = FacesContext.getCurrentInstance().getViewRoot()
+				.findComponent(id);
+		if (comp == null)
+			throw new IllegalArgumentException(
+					"Can not find component with id = '" + id + "'");
+		if (!(comp instanceof UIData))
+			throw new IllegalArgumentException(
+					"Id does not refer to a UIData instance");
+		UIData uidata = (UIData) comp;
 		uidata.setFirst(0);
 		// FIN ÑAPA
 	}
@@ -79,11 +86,11 @@ public class FoldersTreeBean {
 		return current;
 	}
 
-    private void nodeSelected(AonFolder node){
-    	for (ITreeListener l: listeners) {
-    		l.nodeSelected(node);
-    	}
-    }
+	private void nodeSelected(AonFolder node) {
+		for (ITreeListener l : listeners) {
+			l.nodeSelected(node);
+		}
+	}
 
 	/**
 	 * @return the listeners
@@ -93,10 +100,25 @@ public class FoldersTreeBean {
 	}
 
 	/**
-	 * @param listeners the listeners to set
+	 * @param listeners
+	 *            the listeners to set
 	 */
 	public void setListeners(List<ITreeListener> listeners) {
 		this.listeners = listeners;
+	}
+
+	public void moveMessagesToFolder(NodeSelectedEvent event) {
+		UITree tree = (UITree) event.getComponent();
+		AonFolder destinyFolder = (AonFolder) tree.getRowData();
+   		FolderController folders = (FolderController)AonUtil.getRegisteredBean(AonConstants.BEAN_FOLDER);
+   		folders.moveSelectedMessages(destinyFolder);
+	}
+
+	public void moveMessageToFolder(NodeSelectedEvent event) {
+		UITree tree = (UITree) event.getComponent();
+		AonFolder destinyFolder = (AonFolder) tree.getRowData();
+   		MessageController message = (MessageController)AonUtil.getRegisteredBean(AonConstants.BEAN_MESSAGE);
+   		message.moveSelectedMessageAndMove(destinyFolder);
 	}
 
 }
