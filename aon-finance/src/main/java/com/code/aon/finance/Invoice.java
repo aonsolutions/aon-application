@@ -32,6 +32,7 @@ import com.code.aon.finance.enumeration.InvoiceType;
 import com.code.aon.product.strategy.ICalculableContainer;
 import com.code.aon.product.util.DiscountExpression;
 import com.code.aon.ql.Criteria;
+import com.code.aon.registry.IAddress;
 import com.code.aon.registry.ITaxInfo;
 import com.code.aon.registry.Registry;
 import com.code.aon.registry.RegistryAddress;
@@ -105,6 +106,9 @@ public class Invoice implements ITransferObject, IHeaderObject, ICalculableConta
 
 	/** The detail of this invoice. */
 	private Set<Finance> finances = new HashSet<Finance>();
+
+	/** The detail of this invoice. */
+	private Set<InvoiceAddress> invoiceAddresses = new HashSet<InvoiceAddress>();
 
     /**
      * Gets the id.
@@ -411,6 +415,15 @@ public class Invoice implements ITransferObject, IHeaderObject, ICalculableConta
 		this.finances = finances;
 	}
 
+	@OneToMany(mappedBy = "invoice", cascade={CascadeType.REMOVE})
+	public Set<InvoiceAddress> getInvoiceAddresses() {
+		return invoiceAddresses;
+	}
+
+	public void setInvoiceAddresses(Set<InvoiceAddress> invoiceAddresses) {
+		this.invoiceAddresses = invoiceAddresses;
+	}
+
 	/**
 	 * Gets the date. Necessary to implement <code>ICalculableContainer</code>
 	 * 
@@ -419,6 +432,11 @@ public class Invoice implements ITransferObject, IHeaderObject, ICalculableConta
 	@Transient
 	public Date getDate() {
 		return this.issueDate;
+	}
+	
+	@Transient
+	public IAddress getAddress(){
+		return(getInvoiceAddresses().iterator().hasNext()?getInvoiceAddresses().iterator().next():getRegistryAddress());
 	}
 	
 	/**
@@ -474,4 +492,15 @@ public class Invoice implements ITransferObject, IHeaderObject, ICalculableConta
 	public DiscountExpression getDiscountExpression() {
 		return new DiscountExpression("0.0");
 	}
+	
+    @Override
+    public boolean equals(Object obj) {
+    	if(id == null){
+    		return super.equals(obj);
+    	}
+        if (obj instanceof Invoice) {
+            return (this.id.equals(((Invoice)obj).getId()));
+        }
+        return false;
+    }
 }
