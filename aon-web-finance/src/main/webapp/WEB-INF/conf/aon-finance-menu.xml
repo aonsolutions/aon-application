@@ -38,6 +38,9 @@
 			<option key="aon_invoice_recording" descriptionKey="aon_invoice_recording" ref="invoiceRecording">
 				<actionListener action="#{invoiceRecording.onInitialize}"/>				
 			</option>
+			<option key="aon_invoice_removing" descriptionKey="aon_invoice_removing" ref="invoiceRemoving">
+				<actionListener action="#{invoiceRemover.onEditSearch}"/>				
+			</option>
 		</menu>		
 	</menu>	
 	<menu ref="content" key="finance" descriptionKey="finance_desc" role="Tesoreria">
