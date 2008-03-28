@@ -46,6 +46,7 @@
 	<field name="lines" class="java.util.Set"/>
 	<field name="finances" class="java.util.Set"/>
 	<field name="comments" class="java.lang.String"/>
+	<field name="address" class="com.code.aon.registry.IAddress"/>
 
 	<variable name="invoiceTotal" class="java.lang.Double" resetType="Group" resetGroup="invoiceGroup" calculation="Nothing">
 	</variable>
@@ -368,7 +369,7 @@
 					<textElement verticalAlignment="Middle">
 						<font size="10"/>
 					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[($F{registry}.getDefaultAddress().getAddress()==null?"":$F{registry}.getDefaultAddress().getAddress() + " ") + ($F{registry}.getDefaultAddress().getAddress2()==null?"":$F{registry}.getDefaultAddress().getAddress2() + " ") + ($F{registry}.getDefaultAddress().getAddress3()==null?"":$F{registry}.getDefaultAddress().getAddress3())]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.String"><![CDATA[($F{address}.getAddress()==null?"":$F{address}.getAddress() + " ") + ($F{address}.getAddress2()==null?"":$F{address}.getAddress2() + " ")]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
@@ -381,7 +382,7 @@
 					<textElement verticalAlignment="Middle">
 						<font size="10"/>
 					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[($F{registry}.getDefaultAddress().getZip()==null?"":$F{registry}.getDefaultAddress().getZip() + " ") + ($F{registry}.getDefaultAddress().getCity()==null?"":$F{registry}.getDefaultAddress().getCity() + " ")]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.String"><![CDATA[($F{address}.getZip()==null?"":$F{address}.getZip() + " ") + ($F{address}.getCity()==null?"":$F{address}.getCity())]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
@@ -394,7 +395,7 @@
 					<textElement verticalAlignment="Middle">
 						<font size="10"/>
 					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$F{registry}.getDefaultAddress().getGeozone().getName()]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{address}.getGeozone().getName()]]></textFieldExpression>
 				</textField>
 				<subreport  isUsingCache="true">
 					<reportElement
