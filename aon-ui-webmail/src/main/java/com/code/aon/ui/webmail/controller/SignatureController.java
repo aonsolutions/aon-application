@@ -9,10 +9,10 @@ import javax.faces.event.ActionEvent;
 import javax.faces.model.SelectItem;
 
 import com.code.aon.common.ManagerBeanException;
-import com.code.aon.ui.form.BasicController;
+import com.code.aon.ui.form.GridController;
 import com.code.aon.webmail.enumeration.SignatureType;
 
-public class SignatureController extends BasicController {
+public class SignatureController extends GridController {
 
 	@SuppressWarnings("unused")
 	public void onSelect(ActionEvent event){

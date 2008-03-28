@@ -492,44 +492,26 @@ public class MessageController implements IAonFileListener,IFileUploadedListener
 		return selectedDestinyContainer;
 	}
 	
-    private boolean showEmailsPanelPopup;
-    
-	public boolean isShowEmailsPanelPopup() {
-		return showEmailsPanelPopup;
-	}
-
-	public void setShowEmailsPanelPopup(boolean showNewFolderPanelPopup) {
-		this.showEmailsPanelPopup = showNewFolderPanelPopup;
-	}
-    
-	public void closeEmailsPanelPopup(ActionEvent event){
-		this.showEmailsPanelPopup = false;
-	}
-
 	public void openEmailsToPanelPopup(ActionEvent event){
 		MultiSelectionEmailBean bean = (MultiSelectionEmailBean)AonUtil.getRegisteredBean(AonConstants.BEAN_MULTISELECTIONEMAIL);
 		bean.init();
-		this.showEmailsPanelPopup = true;
 		this.selectedDestinyContainer = CONTAINER_TO;
 	}
 
 	public void openEmailsCcPanelPopup(ActionEvent event){
 		MultiSelectionEmailBean bean = (MultiSelectionEmailBean)AonUtil.getRegisteredBean(AonConstants.BEAN_MULTISELECTIONEMAIL);
 		bean.init();
-		this.showEmailsPanelPopup = true;
 		this.selectedDestinyContainer = CONTAINER_CC;
 	}
 
 	public void openEmailsBccPanelPopup(ActionEvent event){
 		MultiSelectionEmailBean bean = (MultiSelectionEmailBean)AonUtil.getRegisteredBean(AonConstants.BEAN_MULTISELECTIONEMAIL);
 		bean.init();
-		this.showEmailsPanelPopup = true;
 		this.selectedDestinyContainer = CONTAINER_BCC;
 	}
 
 
 	public void acceptAllEmailItems(ActionEvent event){
-		closeEmailsPanelPopup(null);
 		MultiSelectionEmailBean bean = (MultiSelectionEmailBean)AonUtil.getRegisteredBean(AonConstants.BEAN_MULTISELECTIONEMAIL);
 		List<Contact> lst = bean.getSelectedRows();
 		email = "";
@@ -553,10 +535,6 @@ public class MessageController implements IAonFileListener,IFileUploadedListener
 	private static final String CONTAINER_CC = "Cc";
 	private static final String CONTAINER_BCC = "Bcc";
 	
-	//********************************************************************************************
-	// EMAIL AUTOCOMPLETE
-	//********************************************************************************************
-
 	private String email = null;
 	
 	/**
@@ -571,18 +549,6 @@ public class MessageController implements IAonFileListener,IFileUploadedListener
 	 */
 	public void setEmail(String email) {
 		this.email = email;
-	}
-
-	public void acceptToEmailItem(ActionEvent event){
-		recipientsTo = acceptEmailItem(recipientsTo);
-	}
-
-	public void acceptCcEmailItem(ActionEvent event){
-		recipientsCc = acceptEmailItem(recipientsCc);
-	}
-
-	public void acceptBccEmailItem(ActionEvent event){
-		recipientsBcc = acceptEmailItem(recipientsBcc);
 	}
 
 	private String acceptEmailItem(String recipient){
@@ -821,16 +787,6 @@ public class MessageController implements IAonFileListener,IFileUploadedListener
 	// TO ADDED TO CONTACTS
 	//********************************************************************************************
 
-    private boolean showAddContactPanelPopup;
-    
-	public boolean isShowAddContactPanelPopup() {
-		return showAddContactPanelPopup;
-	}
-
-	public void closeAddContactPanelPopup(ActionEvent event){
-		this.showAddContactPanelPopup = false;
-	}
-
 	private String contactName;
 	
 	public String getContactName() {
@@ -844,6 +800,12 @@ public class MessageController implements IAonFileListener,IFileUploadedListener
 	public void addToContacts(ActionEvent event) throws WebmailException, ManagerBeanException{
 		String email = message.getSenderEmail();
 		contactName = message.getSenderShort();
+		if (email.equals(contactName)){
+			contactName = "";
+		}
+		/*
+		String email = message.getSenderEmail();
+		contactName = message.getSenderShort();
 		IManagerBean contactsBean = BeanManager.getManagerBean(Contact.class);
 		Criteria criteria = new Criteria();
     	WebMailController webMailController = (WebMailController)AonUtil.getRegisteredBean(AonConstants.BEAN_WEBMAIL);
@@ -854,31 +816,34 @@ public class MessageController implements IAonFileListener,IFileUploadedListener
 		if (list.size()==0){
 			if (email.equals(contactName)){
 				contactName = "";
-				showAddContactPanelPopup = true;
 			}else{
 				saveToContacts(event);
 			}
 		}
+		*/
     }
 
 	public void saveToContacts(ActionEvent event) throws WebmailException, ManagerBeanException{
-		String email = message.getSenderEmail();
-		
+		IManagerBean contactsBean = BeanManager.getManagerBean(Contact.class);
+		Criteria criteria = new Criteria();
     	WebMailController webMailController = (WebMailController)AonUtil.getRegisteredBean(AonConstants.BEAN_WEBMAIL);
        	MailAccount account = webMailController.getServer().getAccount();
-       	
-		Contact contact = new Contact();
-		contact.setUser(account.getUser());
-		contact.setEmail(email);
-		contact.setName(contactName);
+		criteria.addEqualExpression(contactsBean.getFieldName(IGroupWareAlias.CONTACT_USER_ID), account.getUser().getId());
+		criteria.addEqualExpression(contactsBean.getFieldName(IGroupWareAlias.CONTACT_EMAIL), email);
+		List list = contactsBean.getList(criteria);
+		if (list.size()==0){
+			String email = message.getSenderEmail();
+			
+			Contact contact = new Contact();
+			contact.setUser(account.getUser());
+			contact.setEmail(email);
+			contact.setName(contactName);
 
-		IManagerBean contactsBean = BeanManager.getManagerBean(Contact.class);
-		contactsBean.insert(contact);
-		
-		BasicController contactController = (BasicController)AonUtil.getRegisteredBean(AonConstants.BEAN_EMAIL);
-		contactController.onSearch(null);
-		
-		showAddContactPanelPopup = false;
+			contactsBean.insert(contact);
+			
+			BasicController contactController = (BasicController)AonUtil.getRegisteredBean(AonConstants.BEAN_EMAIL);
+			contactController.onSearch(null);
+		}
     }
 
 }
