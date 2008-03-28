@@ -39,7 +39,7 @@
 					<t:commandButton id="reset"
 						styleClass="aon-edit-table-icon-button aon-edit-table-icon-button-new"
 						value="" immediate="#{true}"
-						rendered="#{!controllerAlias.new and controllerAlias.model.rowCount == 0}"
+						rendered="#{!controllerAlias.new}"
 						actionListener="#{controllerAlias.onReset}"
 						accesskey="#{bundle.aon_key_new_line}">
 					</t:commandButton>
