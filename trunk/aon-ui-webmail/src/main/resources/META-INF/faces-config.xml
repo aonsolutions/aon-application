@@ -107,7 +107,7 @@
 	<managed-bean>
 		<managed-bean-name>email</managed-bean-name>
 		<managed-bean-class>
-			com.code.aon.ui.form.BasicController
+			com.code.aon.ui.form.GridController
 		</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
@@ -172,28 +172,6 @@
 		</managed-bean-class>
 		<managed-bean-scope>none</managed-bean-scope>
 	</managed-bean>
-
-	<!-- ************ AUTOCOMPLETE ************** -->
-<!-- 
-	<managed-bean>
-		<managed-bean-name>autoCompleteEmailDictionary</managed-bean-name>
-		<managed-bean-class>
-				com.code.aon.ui.webmail.controller.AutoCompleteEmailDictionary
-			</managed-bean-class>
-		<managed-bean-scope>session</managed-bean-scope>
-	</managed-bean>
-	<managed-bean>
-		<managed-bean-name>autoCompleteEmailBean</managed-bean-name>
-			<managed-bean-class>
-				com.code.aon.ui.webmail.controller.AutoCompleteEmailBean
-			</managed-bean-class>
-		<managed-bean-scope>request</managed-bean-scope>
-		<managed-property>
-		  <property-name>dictionary</property-name>
-		  <value>#{autoCompleteEmailDictionary.dictionary}</value>
-		</managed-property>
-	</managed-bean>
- -->
 
 	<!-- ************ AUTOCOMPLETE ************** -->
 

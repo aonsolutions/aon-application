@@ -2,89 +2,109 @@
 <html xmlns="http://www.w3.org/1999/xhtml"
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:f="http://java.sun.com/jsf/core"
-	xmlns:ice="http://www.icesoft.com/icefaces/component"
-	xmlns:aon="http://www.code.es/aon-ice-components"
-	xmlns:c="http://java.sun.com/jstl/core">
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j">
 <body>
 
-<ui:composition template="/facelet/templates/aon.ui.main.xhtml">
+<ui:composition template="/facelet/templates/aon.ui.content.xhtml">
 	<ui:define name="content">
 
-		<aon:form id="signatureList">
-
-			<aon:div >
-				<aon:div >
-
-					<ui:include src="/webmail/facelet/webmailButtons.xhtml" />	
-
-					<aon:panelGrid columns="2" cellpadding="0" cellspacing="0"
-					columnClasses="aon-menu-sidebar,aon-content-area" style="width:100%;">
+		<aon:form id="list">
+		<aon:div styleClass="aon-finding-title-toolbar">
+			<aon:panelGrid id="buttonsGrid" columns="3" dir="true" 
+				columnClasses="aon-finding-title,aon-finding-subtitle,aon-finding-toolbar">				
+			
+				<aon:div styleClass="aon-finding-title-internal">
+					<aon:outputText value="#{appBundle.aon_webmail_signature}" />
+				</aon:div>					
+				
+				<aon:div styleClass="aon-finding-subtitle-internal">
+					<aon:outputText value="#{appBundle.aon_listing}" />
+				</aon:div>					
 					
-						<ui:include src="/webmail/facelet/webmailTree.xhtml" />	
-
-				        <aon:panelGroup>
-							<aon:div styleClass="aon-section-title">
-								<aon:outputText value="#{appBundle.aon_webmail_signature}" />
-							</aon:div>
-							
-							<aon:div styleClass="aon-section-toolbar">
-								<aon:commandButton id="reset" value="#{bundle.aon_reset}"
-									action="signature_form" actionListener="#{signature.onReset}"
-									styleClass="aon-content-toolbar-item aon-icon-newSignature"
-
-									accesskey="#{bundle.aon_key_new}"/>
-							</aon:div>
-
-
-			<!-- end toolbar navigation -->
-
-			<!--  aon-region-body -->
-		<aon:div>
-			<aon:div>
-
+				<!-- start toolbar navigation -->
+				<aon:div styleClass="aon-finding-toolbar-item-group">					
+					<h:commandButton id="reset" value="#{bundle.aon_reset}"
+						action="signature_form"
+						actionListener="#{signature.onReset}"
+						styleClass="aon-finding-toolbar-item aon-icon-reset"
+						accesskey="#{bundle.aon_key_new}"/>
+					<aon:confirmButton id="remove"
+						value="#{bundle.aon_remove}" rendered="#{!signature.checklistEmpty}" 
+						inmediate="true"
+						styleClass="aon-finding-toolbar-item aon-icon-delete"
+						confirmTitle="Confirmation Dialog" confirmMessage="#{bundle.aon_remove_confirm}"
+						confirmActionListener="#{signature.onRemoveSelected}"
+						confirmAction="signature_list"
+						accesskey="#{bundle.aon_key_remove}"/>
+			    </aon:div>
+				
+				<!-- end toolbar navigation -->
+			</aon:panelGrid>
+		</aon:div>
+		
+		<!--  aon-region-body -->
+		<aon:div styleClass="aon-scroll-area">
 					
-					<aon:dataTable id="signatureDataList" 
-						value="#{signature.model}" var="to" rows="20"
-						styleClass="aon-dataTable">
-					
-							<aon:column>
-								<aon:rowSelector selectionListener="#{signature.onSelect}" />
-								<f:facet name="header">
-									<aon:outputText value="#{appBundle.aon_webmail_signature_name}" />
-								</f:facet>
-								<aon:outputText value="#{to.name}"/>
-							</aon:column>
-
-							<aon:column>
-								<f:facet name="header">
-									<aon:outputText value="#{appBundle.aon_webmail_signature_active}" />
-								</f:facet>
-								<aon:outputText value="#{to.active} " />
-							</aon:column>
-
-						</aon:dataTable>
+					<aon:dataTable id="dataTable" value="#{signature.model}" var="to"
+						rows="#{signature.pageLimit}" 
+						styleClass="dr-table rich-table aon-editDataTable"
+						headerClass="dr-table-subheader rich-table-subheader aon-editDataTable-header"
+						footerClass="dr-table-subfooter rich-table-subfooter aon-editDataTable-footer"
+						rowClasses="aon-editDataTable-row-odd,dr-table-firstrow rich-table-firstrow aon-editDataTable-row-even"
+						cellpadding="0" cellspacing="0"
+						columnClasses="dr-table-cell rich-table-cell aon-editDataTable-iconColumn,
+								dr-table-cell rich-table-cell aon-editDataTable-textColumn,
+								dr-table-cell rich-table-cell aon-editDataTable-iconColumn">
+				
+						<aon:column>
+							<f:facet name="header">
+								<aon:div>
+									<aon:outputText value="#{bundle.aon_check}" />
+								</aon:div>	
+							</f:facet>
+							<aon:selectBooleanCheckbox id="Row_checked"
+									value="#{signature.rowChecked}">
+									<a4j:support 
+										event="onclick"  
+										reRender="dataTable,parentGrid,buttonsGrid" />
+							</aon:selectBooleanCheckbox>
+						</aon:column>
 						
-						<ui:include src="/facelet/shared/dataScroller.xhtml">
-							<ui:param name="dataTable" value="signatureDataList" />
-							<ui:param name="model" value="#{signature.model}" />
-							<ui:param name="showNote" value="#{false}" />
-						</ui:include>
+						<aon:column>
+							<a4j:support 
+								action="signature_form"
+								actionListener="#{signature.onSelect}"
+								event="onclick" />
+							<f:facet name="header">
+								<aon:outputText value="#{appBundle.aon_webmail_signature_name}" />
+							</f:facet>
+							<aon:outputText value="#{to.name}"  
+								styleClass="aon-editDataTable-button"/>
+						</aon:column>
 						
-					
-				</aon:div>
-			</aon:div>
-							
-				        </aon:panelGroup>
+						<aon:column>
+							<f:facet name="header">
+								<aon:outputText value="#{appBundle.aon_webmail_signature_active}" />
+							</f:facet>
+							<aon:outputText value="#{to.active} " />
+						</aon:column>
+						
+					</aon:dataTable>
+				
+					<rich:datascroller align="left"  for="dataTable" maxPages="20" />
 
-					</aon:panelGrid>
-				</aon:div>
+
 			</aon:div>
 		</aon:form>
-		<aon:form id="placeList" target="list" />
-
+		
 	</ui:define>
 
 </ui:composition>
 
 </body>
 </html>
+

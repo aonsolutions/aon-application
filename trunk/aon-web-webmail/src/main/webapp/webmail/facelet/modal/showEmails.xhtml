@@ -1,0 +1,90 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j">	
+<body>
+
+<ui:composition>
+
+<style>
+.bodyPanel_ {
+	width:580px;
+    height:350px;
+    overflow:auto;
+}
+</style>
+
+        <rich:modalPanel  id="showEmailsModalPanel"  
+            height="380" width="600" zindex="2000">
+            <f:facet name="header">
+				<aon:div>
+					<aon:outputText 
+						rendered="#{message.selectedDestinyContainer=='To'}"
+						value="#{appBundle.aon_webmail_to}"/>
+					<aon:outputText 
+						rendered="#{message.selectedDestinyContainer=='Cc'}"
+						value="#{appBundle.aon_webmail_cc}"/>
+					<aon:outputText 
+						rendered="#{message.selectedDestinyContainer=='Bcc'}"
+						value="#{appBundle.aon_webmail_bcc}"/>
+					<aon:outputText value="-"/>
+					<aon:outputText value="#{appBundle.aon_webmail_message_selectEmail}"/>
+				</aon:div>
+            </f:facet>
+            <f:facet name="controls">
+                <h:graphicImage value="/images/icefaces/popupclose.gif" style="cursor:pointer" onclick="Richfaces.hideModalPanel('showEmailsModalPanel')" />
+            </f:facet>
+			<rich:panel bodyClass="bodyPanel_">
+				<aon:panelGrid id="popupEmailBody2" width="100%" cellpadding="0" cellspacing="0" columns="2">
+
+					<aon:div styleClass="aon-section-toolbar">
+						<aon:div style="padding-top:5px;padding-left:1em;">
+							<aon:commandButton id="selectEmail" 
+								onclick="Richfaces.hideModalPanel('showEmailsModalPanel')"
+								actionListener="#{message.acceptAllEmailItems}" 
+								value="#{appBundle.aon_webmail_accept}" 
+								styleClass="aon-icon-commandButton aon-icon-accept"/>
+						</aon:div>
+					</aon:div>
+					
+					<aon:dataTable
+						id="emailData"
+						styleClass="aon-editTable"
+						var="to"
+						value="#{multiSelectionEmailBean.emails}"
+						columnClasses="aon-editTable-icon, aon-editTable-cell, aon-editTable-cell">
+						<aon:column id="selectionCol">
+							<f:facet name="header">
+								<aon:outputText value="&#160;" />
+							</f:facet>
+							<aon:selectBooleanCheckbox 
+								styleClass="aon-float-left"
+								value="#{to.selected}">
+							</aon:selectBooleanCheckbox>
+						</aon:column>
+						<aon:column>
+							<f:facet name="header">
+								<aon:outputText value="#{appBundle.aon_webmail_email_alias}" />
+							</f:facet>
+							<aon:outputText value="#{to.email.name}" />
+						</aon:column>
+						<aon:column>
+							<f:facet name="header">
+								<aon:outputText value="#{appBundle.aon_webmail_email_email}" />
+							</f:facet>
+							<aon:outputText value="#{to.email.email}" />
+						</aon:column>
+					</aon:dataTable>
+				
+				</aon:panelGrid>
+			</rich:panel>
+        </rich:modalPanel>													
+
+</ui:composition>
+
+</body>
+</html>

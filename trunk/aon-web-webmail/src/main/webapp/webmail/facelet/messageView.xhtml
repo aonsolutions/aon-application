@@ -14,11 +14,8 @@
 	<ui:define name="content">
 
 		<aon:form id="webmailForm" styleClass="aon-form" >
-
-			<aon:panelGrid columns="1" cellpadding="0" cellspacing="0" width="100%" 
-				columnClasses="aon-vertical-align-top,aon-vertical-align-top">
-								
-				<aon:panelGrid id="messageGrid" columns="1" cellpadding="0" cellspacing="0" width="100%">
+		
+			<aon:panelGrid id="messageGrid" columns="1" cellpadding="0" cellspacing="0" width="100%">
 
 				<aon:panelGroup>
 					<aon:div styleClass="aon-section-title">
@@ -98,7 +95,7 @@
 								title="#{appBundle.aon_webmail_movemail}"
 								value="#{appBundle.aon_webmail_movemail}"
 								styleClass="aon-finding-toolbar-item aon-icon-mail-move"
-								onclick="javascript:Richfaces.showModalPanel('msgMoveModalPanel',{width:310, top:100})">
+								onclick="javascript:Richfaces.showModalPanel('msgMoveModalPanel',{width:440, top:100})">
 						</aon:commandButton>									
 
 						<ui:include src="/webmail/facelet/modal/moveMessage.xhtml" />
@@ -151,6 +148,7 @@
 									id="addToContacts"
 									title="#{appBundle.aon_webmail_email_add}"
 									actionListener="#{message.addToContacts}"
+									onclick="javascript:Richfaces.showModalPanel('addContactModalPanel',{width:600, top:100})"
 									styleClass="aon-icon-commandButton aon-icon-agenda aon-italic aon-bold">
 								</aon:commandButton>
 								<aon:commandButton id="add_white_list"
@@ -165,6 +163,9 @@
 									title="#{appBundle.aon_webmail_add_black_list}" 
 									styleClass="aon-icon-commandButton aon-icon-black-list aon-italic aon-bold"
 									actionListener="#{blacklist.onAddBlackMessageFrom}" />
+									
+								<ui:include src="/webmail/facelet/modal/addContact.xhtml" />
+								
 							</aon:div>
 							
 							<!-- To -->
@@ -285,90 +286,6 @@
 					</aon:div>
 				</aon:panelGroup>
 			</aon:panelGrid>
-		</aon:panelGrid>
-<!-- 
-			<ice:panelPopup styleClass="aon-popup-"
-				style="z-index:999; top: 200px; left: 300px; width: 400px; position:absolute; background: #FFFFFF;"
-				modal="true"
-				rendered="true"
-				visible="#{message.showFoldersPanelPopup}">
-			
-				<f:facet name="header">
-					<aon:panelGrid id="popupFoldersHeader" width="100%" cellpadding="0" cellspacing="0" columns="2" 
-						columnClasses="popupIcon,aon-text-right popupButton">
-						<aon:outputText value="#{appBundle.aon_webmail_folder}"/>
-						<aon:commandButton id="popupFoldersClose" type="button" image="/images/icefaces/popupclose.gif"
-							actionListener="#{message.closeFoldersPanelPopup}" style="cursor: pointer;"/>
-					</aon:panelGrid>
-				</f:facet>
-			
-				<f:facet name="body">
-					<aon:div style="height:250px;overflow:auto;">
-					<aon:panelGrid id="popupFoldersBody" width="100%" cellpadding="0" cellspacing="0" columns="2">
-
-							<aon:panelGrid columns="1" >
-								<ice:tree id="tree2"
-										  value="#{tree.model}"
-										  var="item"
-										  hideRootNode="true"
-										  hideNavigation="false"
-										  styleClass="aon-tree">
-									<ice:treeNode>
-						                <f:facet name="content">
-						                    <ice:panelGroup style="display: inline"
-												hoverclass="droptargethover"
-												styleClass="aon-tree-item">
-											
-												<ice:graphicImage 
-						                            value="#{item.userObject.branchExpandedIcon}"/>
-												<aon:commandButton
-													action="#{message.getDeleteReturnAction}"
-													actionListener="#{item.userObject.moveMessageToFolder}"
-													value="#{item.userObject.text}" 
-													styleClass="aon-tree-item-commandButton" 
-													>
-												</aon:commandButton>
-											</ice:panelGroup>
-										</f:facet>
-									</ice:treeNode>
-								</ice:tree>
-							</aon:panelGrid>
-					
-					</aon:panelGrid>
-					</aon:div>
-				</f:facet>
-			</ice:panelPopup>			
-			
-			<ice:panelPopup styleClass="aon-popup-"
-				modal="true"
-				rendered="true"
-				style="z-index:999; top: 200px; left: 400px; width: 300px; position:absolute; background: #FFFFFF;"
-				visible="#{message.showAddContactPanelPopup}">
-			
-				<f:facet name="header">
-					<h:panelGrid id="popupAddContactHeader" width="100%" cellpadding="0" cellspacing="0" columns="2" 
-					columnClasses="popupIcon,aon-text-right popupButton">
-						<aon:outputText value="#{appBundle.aon_webmail_email_alias}"/>
-						<aon:commandButton id="popupCloseAddContact" type="button" image="/images/icefaces/popupclose.gif"
-							actionListener="#{message.closeAddContactPanelPopup}" style="cursor: pointer;"/>
-					</h:panelGrid>
-				</f:facet>
-			
-				<f:facet name="body">
-					<h:panelGrid id="popupAddContactBody" width="100%" cellpadding="0" cellspacing="0" columns="3"
-						columnClasses="popupIcon,aon-text-right popupButton">
-						<aon:outputText value="#{appBundle.aon_webmail_email_alias}" />
-						<aon:inputText id="Contact_name"
-							styleClass="aon-form-input-text"
-							size="70" maxlength="64"
-							value="#{message.contactName}" />
-						<aon:commandButton id="closeModalAddContact" 
-							styleClass="aon-icon-commandButton aon-icon-accept"
-							actionListener="#{message.saveToContacts}" value="Ok"/>
-					</h:panelGrid>
-				</f:facet>
-			</ice:panelPopup>			
-		 -->			
 		
 		</aon:form>
 
