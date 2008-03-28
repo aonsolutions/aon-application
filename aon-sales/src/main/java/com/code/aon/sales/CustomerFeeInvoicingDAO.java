@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.GregorianCalendar;
+import java.util.Iterator;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -19,6 +20,9 @@ import com.code.aon.finance.invoicing.FinanceGenerator;
 import com.code.aon.finance.invoicing.IInvoicingDAO;
 import com.code.aon.finance.invoicing.InvoicePriceStrategy;
 import com.code.aon.product.strategy.IPriceStrategy;
+import com.code.aon.ql.Criteria;
+import com.code.aon.registry.RegistryAddress;
+import com.code.aon.registry.dao.IRegistryAlias;
 import com.code.aon.sales.enumeration.BillingPeriod;
 
 public class CustomerFeeInvoicingDAO implements IInvoicingDAO {
@@ -39,6 +43,7 @@ public class CustomerFeeInvoicingDAO implements IInvoicingDAO {
 		try {
 			IManagerBean invoiceBean = BeanManager.getManagerBean(Invoice.class);
 			invoice = (Invoice)invoiceBean.insert(invoice);
+			invoice.setRegistryAddress(obtainAddress(invoice.getRegistry().getId()));
 			invoicingCollection.add(invoice);
 			return invoice;
 		} catch (ManagerBeanException e) {
@@ -94,7 +99,24 @@ public class CustomerFeeInvoicingDAO implements IInvoicingDAO {
 			getFinanceGenerator().generateFinances(invoice, invoice.getRegistry(), amount, true);
 		}
 	}
-	
+
+	@SuppressWarnings("unchecked")
+	private RegistryAddress obtainAddress(Integer id) {
+		try {
+			IManagerBean rAddressBean = BeanManager.getManagerBean(RegistryAddress.class);
+			Criteria criteria = new Criteria();
+			criteria.addEqualExpression(rAddressBean.getFieldName(IRegistryAlias.REGISTRY_ADDRESS_REGISTRY_ID), id);
+			criteria.addOrder(rAddressBean.getFieldName(IRegistryAlias.REGISTRY_ADDRESS_ADDRESS_TYPE), true);
+			Iterator iter = rAddressBean.getList(criteria, 0, 1).iterator();
+			if(iter.hasNext()){
+				return (RegistryAddress)iter.next();
+			}
+		} catch (ManagerBeanException e) {
+			LOGGER.log(Level.SEVERE, "Error obtaining address for registry with id= " + id, e);
+		}
+		return null;
+	}
+
 	@SuppressWarnings("unchecked")
 	public Collection getCollection() {
 		return invoicingCollection;
