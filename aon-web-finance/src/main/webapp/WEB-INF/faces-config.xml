@@ -779,7 +779,7 @@
 			</map-entries>
 		</managed-property>
 	</managed-bean>
-	
+
 	<managed-bean>
 		<managed-bean-name>feeFinanceListener</managed-bean-name>
 		<managed-bean-class>
@@ -878,6 +878,40 @@
 			com.code.aon.ui.sales.event.FeeInvoicingDetailControllerListener
 		</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
+
+	<!-- ************ FEEINVOICING ADDRESS ************* -->
+	<managed-bean>
+		<managed-bean-name>feeInvoicingAddress</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.finance.controller.InvoicingAddressController
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>false</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.finance.InvoiceAddress</value>
+		</managed-property>
+		<managed-property>
+			<property-name>masterControllerName</property-name>
+			<value>feeInvoicing</value>
+		</managed-property>
+		<managed-property>
+			<property-name>cascadeDelete</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>propertyMap</property-name>
+			<map-entries>
+				<map-entry>
+					<key>id</key>
+					<value>invoice.id</value>
+				</map-entry>
+			</map-entries>
+		</managed-property>
 	</managed-bean>
 	
 	<!-- ************ FEEPREINVOICING ************* -->
@@ -1722,6 +1756,10 @@
     <navigation-case>
       <from-outcome>fee_invoicing_fee_search</from-outcome>
       <to-view-id>/facelet/finance/fee_invoicing/fee_search.faces</to-view-id>
+    </navigation-case>
+    <navigation-case>
+      <from-outcome>fee_invoice_address_data</from-outcome>
+      <to-view-id>/facelet/finance/fee_invoicing/address/form.faces</to-view-id>
     </navigation-case>
    </navigation-rule> 
 
