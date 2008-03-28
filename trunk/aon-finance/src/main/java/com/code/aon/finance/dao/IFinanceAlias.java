@@ -7,6 +7,7 @@ import com.code.aon.finance.Finance;
 import com.code.aon.finance.FinanceBatch;
 import com.code.aon.finance.FinanceBatchDetail;
 import com.code.aon.finance.Invoice;
+import com.code.aon.finance.InvoiceAddress;
 import com.code.aon.finance.InvoiceDetail;
 import com.code.aon.finance.InvoiceTax;
 import com.code.aon.finance.PayMethod;
@@ -360,6 +361,55 @@ public interface IFinanceAlias {
 
 
 	/** 
+	* DAOConstantsEntry for InvoiceAddress entity.
+	*/ 
+	DAOConstantsEntry INVOICE_ADDRESS_ENTRY = DAOConstants.getDAOConstant(InvoiceAddress.class);
+
+	/** 
+	* Alias value: InvoiceAddress_address
+	* Hibernate value: InvoiceAddress.address
+	*/
+	String  INVOICE_ADDRESS_ADDRESS = INVOICE_ADDRESS_ENTRY.getAliasNames()[0];
+
+	/** 
+	* Alias value: InvoiceAddress_address2
+	* Hibernate value: InvoiceAddress.address2
+	*/
+	String  INVOICE_ADDRESS_ADDRESS2 = INVOICE_ADDRESS_ENTRY.getAliasNames()[1];
+
+	/** 
+	* Alias value: InvoiceAddress_city
+	* Hibernate value: InvoiceAddress.city
+	*/
+	String  INVOICE_ADDRESS_CITY = INVOICE_ADDRESS_ENTRY.getAliasNames()[2];
+
+	/** 
+	* Alias value: InvoiceAddress_geozone_id
+	* Hibernate value: InvoiceAddress.geozone.id
+	*/
+	String  INVOICE_ADDRESS_GEOZONE_ID = INVOICE_ADDRESS_ENTRY.getAliasNames()[3];
+
+	/** 
+	* Alias value: InvoiceAddress_id
+	* Hibernate value: InvoiceAddress.id
+	*/
+	String  INVOICE_ADDRESS_ID = INVOICE_ADDRESS_ENTRY.getAliasNames()[4];
+
+	/** 
+	* Alias value: InvoiceAddress_invoice_id
+	* Hibernate value: InvoiceAddress.invoice.id
+	*/
+	String  INVOICE_ADDRESS_INVOICE_ID = INVOICE_ADDRESS_ENTRY.getAliasNames()[5];
+
+	/** 
+	* Alias value: InvoiceAddress_zip
+	* Hibernate value: InvoiceAddress.zip
+	*/
+	String  INVOICE_ADDRESS_ZIP = INVOICE_ADDRESS_ENTRY.getAliasNames()[6];
+
+
+
+	/** 
 	* DAOConstantsEntry for InvoiceDetail entity.
 	*/ 
 	DAOConstantsEntry INVOICE_DETAIL_ENTRY = DAOConstants.getDAOConstant(InvoiceDetail.class);
@@ -699,6 +749,12 @@ public interface IFinanceAlias {
 	* Hibernate value: FinanceTracking.type
 	*/
 	String  FINANCE_TRACKING_TYPE = FINANCE_TRACKING_ENTRY.getAliasNames()[5];
+
+	/** 
+	* Alias value: FinanceTracking_finance_invoice_id
+	* Hibernate value: FinanceTracking.finance.invoice.id
+	*/
+	String  FINANCE_TRACKING_FINANCE_INVOICE_ID = FINANCE_TRACKING_ENTRY.getAliasNames()[6];
 
 
 
