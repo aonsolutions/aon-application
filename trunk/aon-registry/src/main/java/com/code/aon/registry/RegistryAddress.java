@@ -21,7 +21,7 @@ import com.code.aon.registry.enumeration.StreetType;
  */
 @Entity
 @Table(name="raddress")
-public class RegistryAddress implements ITransferObject {
+public class RegistryAddress implements ITransferObject, IAddress {
 
     /** The id. */
     private Integer id;
