@@ -185,7 +185,7 @@ public class Dumper {
                         String outputValue = value.toString();
                         outputValue = outputValue.replaceAll("\\n","\\\\n");
                         outputValue = outputValue.replaceAll("\\r","\\\\r");
-                        outputValue = outputValue.replaceAll("'","\\'");
+                        outputValue = outputValue.replaceAll("'","\\\\'");
                         if ("int".equals(map.get(i)) ||
                         		"tinyint".equals(map.get(i)) ||
                         		"double".equals(map.get(i)) ||
