@@ -24,4 +24,9 @@
 		<alias names="id,registry_id,status,registry_name,registry_surname,registry_alias,registry_document,withholding,scope_id"/>
 		<hibernate names="id,registry.id,status,registry.name,registry.surname,registry.alias,registry.document,withholding,scope.id"/>
 	</bean>
+	
+	<bean class="com.code.aon.finance.FinanceTracking" sqlName="finance_tracking">
+		<alias names="amount,description,finance_id,id,trackingDate,type,finance_invoice_id" />
+		<hibernate names="amount,description,finance.id,id,trackingDate,type,finance.invoice.id" />
+	</bean>
 </dao>
