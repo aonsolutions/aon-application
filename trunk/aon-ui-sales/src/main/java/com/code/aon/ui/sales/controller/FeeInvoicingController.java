@@ -221,7 +221,7 @@ public class FeeInvoicingController extends BasicController {
 	}
 	
 	@SuppressWarnings("unchecked")
-	private void loadAddresses(Integer id) throws ManagerBeanException {
+	public void loadAddresses(Integer id) throws ManagerBeanException {
 		List<SelectItem> addresses = new LinkedList<SelectItem>();
 		IManagerBean rAddressBean = BeanManager.getManagerBean(RegistryAddress.class);
 		Criteria criteria = new Criteria();

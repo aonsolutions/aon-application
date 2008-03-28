@@ -120,10 +120,12 @@ public class FeeInvoicingControllerListener extends ControllerAdapter {
 	@Override
 	public void afterBeanSelected(ControllerEvent event) throws ControllerListenerException {
 		try {
-			Invoice invoice = (Invoice)this.getController().getTo();
-			((FeeInvoicingController)this.getController()).setSeriesDescripition(obtainSeriesDescription(invoice.getSeries()));
+			FeeInvoicingController feeInvoicingController = (FeeInvoicingController)this.getController(); 
+			Invoice invoice = (Invoice)feeInvoicingController.getTo();
+			feeInvoicingController.loadAddresses(invoice.getRegistry().getId());
+			feeInvoicingController.setSeriesDescripition(obtainSeriesDescription(invoice.getSeries()));
 		} catch (ManagerBeanException e) {
-			throw new ControllerListenerException("Error obtaining series description");
+			throw new ControllerListenerException(e.getMessage());
 		}
 	}
 
