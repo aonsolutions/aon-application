@@ -777,6 +777,40 @@
 		</managed-property>
 	</managed-bean>
 
+	<!-- ************* INVOICE REMOVER ***************** -->
+	<managed-bean>
+		<managed-bean-name>invoiceRemover</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.finance.controller.InvoiceRemover
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>false</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.finance.Invoice</value>
+		</managed-property>
+		<managed-property>
+			<property-name>listenerClasses</property-name>
+			<list-entries>
+				<value-class>
+					com.code.aon.ui.form.event.IControllerListener
+				</value-class>
+				<value>#{invoiceRemoverControllerListener}</value>
+			</list-entries>
+		</managed-property>
+	</managed-bean>
+	
+	<managed-bean>
+		<managed-bean-name>invoiceRemoverControllerListener</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.finance.event.InvoiceRemoverControllerListener
+		</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+	</managed-bean>
+
 	<!-- ************ INVOICE PRINT ************* -->
 	<managed-bean>
 		<managed-bean-name>invoicePrint</managed-bean-name>
@@ -922,6 +956,10 @@
       <to-view-id>/facelet/finance/invoice_print/search.faces</to-view-id>
     </navigation-case>
     <navigation-case>
+      <from-outcome>invoiceRemoving</from-outcome>
+      <to-view-id>/_finance/facelet/invoice_removing/search.faces</to-view-id>
+    </navigation-case>
+    <navigation-case>
       <from-outcome>util_checking</from-outcome>
       <to-view-id>/_finance/facelet/util/checking/checking.faces</to-view-id>
     </navigation-case>
@@ -1030,6 +1068,18 @@
       <to-view-id>/_finance/facelet/invoicing_group/search.faces</to-view-id>
     </navigation-case>
   </navigation-rule>
+
+  <!-- =================== Invoice Remover ========================== -->
+  <navigation-rule>
+    <navigation-case>
+      <from-outcome>invoice_remover_list</from-outcome>
+      <to-view-id>/_finance/facelet/invoice_removing/list.faces</to-view-id>
+    </navigation-case>
+    <navigation-case>
+      <from-outcome>invoice_remover_search</from-outcome>
+      <to-view-id>/_finance/facelet/invoice_removing/search.faces</to-view-id>
+    </navigation-case>
+   </navigation-rule> 
   
   <!-- =================== Invoice Print ========================== -->
   <navigation-rule>
