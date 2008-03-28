@@ -15,6 +15,21 @@
 	<ui:define name="content">
 
 		<h:form id="feeInvoicingForm">
+
+			<t:div styleClass="aon-content-menu" rendered="#{!feeInvoicing.new}" id="aon-content-menu" forceId="#{true}">
+				<t:panelGrid columns="2" cellpadding="0" cellspacing="0" border="0">
+					<t:panelGroup>						
+						<t:commandLink id="invoice_data" value="#{financeBundle.invoice_data}"
+							forceId="#{true}" styleClass="aon-content-menu-item-active"	/>					
+					</t:panelGroup>	
+					<t:panelGroup>						
+						<t:commandLink id="invoice_address_data" forceId="#{true}" value="#{financeBundle.invoice_address_data}"
+							actionListener="#{feeInvoicingAddress.onAddress}" action="fee_invoice_address_data" 
+							styleClass="aon-content-menu-item"/>						
+					</t:panelGroup>	
+				</t:panelGrid>
+			</t:div>
+
 			<t:div styleClass="aon-content-toolbar" id="aon-content-toolbar"
 				forceId="#{true}">
 				<t:div styleClass="aon-content-toolbar-internal">
@@ -174,17 +189,22 @@
 							<t:div>
 								<t:inputText id="Customer_Lookup_id" forceId="#{true}"
 									styleClass="aon-form-input-text" size="5" 
-									onchange="return findBeanLookupAndSubmitExt(this.form, event,'#{facesContext.externalContext.requestContextPath}','customerLookup','Customer_Lookup_id','Customer_id|Customer_Lookup_id,Customer_full_name|Customer_full_name');"
+									onchange="return findBeanLookupAndSubmitExt(this.form, event,'#{facesContext.externalContext.requestContextPath}','customerLookup','Customer_Lookup_id','Customer_id|Customer_Lookup_id,Customer_registry_document|Customer_Lookup_registry_document,Customer_full_name|Customer_full_name');"
 									value="#{feeInvoicing.to.registry.id}"
 									disabled="#{feeInvoicing.recorded}"
 									valueChangeListener="#{feeInvoicing.customerData}" />
 								<h:commandButton id="find_Customer_Lookup_id"
 									styleClass="aon-form-lookup-button" value="" immediate="true"
 									disabled="#{feeInvoicing.recorded}"
-									onclick="lookupSearchWindow(this, 'placeList', '#{customerLookup.encodedSearchPagePath}','Customer_id|Customer_Lookup_id,Customer_full_name|Customer_full_name');return false;" />	
+									onclick="lookupSearchWindow(this, 'placeList', '#{customerLookup.encodedSearchPagePath}','Customer_id|Customer_Lookup_id,Customer_registry_document|Customer_Lookup_registry_document,Customer_full_name|Customer_full_name');return false;" />	
 								<t:inputText id="Customer_full_name" forceId="#{true}"
-									disabled="true" value="#{feeInvoicing.to.registryName}"
-									styleClass="aon-form-input-text-disabled" size="40" />
+									value="#{feeInvoicing.to.registryName}"
+									disabled="#{feeInvoicing.recorded}"
+									styleClass="aon-form-input-text" size="40" />
+								<t:inputText id="Customer_Lookup_registry_document" forceId="#{true}"
+									value="#{feeInvoicing.to.registryDocument}"
+									disabled="#{feeInvoicing.recorded}"
+									styleClass="aon-form-input-text" size="10" />
 							</t:div>
 
 							<h:outputLabel for="Invoice_registryAddress_id"
