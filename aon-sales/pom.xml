@@ -10,7 +10,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.code.aon</groupId>
 	<artifactId>aon.sales</artifactId>
-	<version>2.0.7</version>
+	<version>2.1.0</version>
 	<description>AON SALES</description>
 	<name>AON-SALES</name>
 	<dependencies>
@@ -40,13 +40,13 @@
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.registry</artifactId>
-			<version>2.0.2</version>
+			<version>2.0.3</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.finance</artifactId>
-			<version>2.0.12</version>
+			<version>2.1.0</version>
 			<scope>compile</scope>
 		</dependency>
 	</dependencies>
