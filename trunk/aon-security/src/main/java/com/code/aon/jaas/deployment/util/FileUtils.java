@@ -362,17 +362,13 @@ public class FileUtils {
 				File srcDir = new File( url.getPath() + File.separator + DeploymentInfo.WEB_INF );
 				File filesDestDir = new File( destDir.getCanonicalPath() + File.separator + DeploymentInfo.WEB_INF );
 				filesDestDir.mkdirs();
-LOGGER.info( "allocateDeployment isDirectory 0:" + filesDestDir );
 				File[] files = srcDir.listFiles();
             	for (int i = 0; i < files.length; i++) {
                 	File destFile = new File( filesDestDir, files[i].getName() );
-LOGGER.info( "allocateDeployment isDirectory 1:" + destFile );
-                	if ( destFile.isDirectory() ) 
-                		destFile.mkdir();
-                	else
-					FileUtils.copyFile( files[i], destFile, true );
+                	if ( files[i].isFile() ) { 
+                		FileUtils.copyFile( files[i], destFile, true );
+                	}
 				}
-LOGGER.info( "allocateDeployment isDirectory 3:" );
 			} else {
 				JarUtils.extractWEBINFFiles( url, destDir );
 			}
