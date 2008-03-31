@@ -106,6 +106,14 @@
 	<!-- ************** CALENDAR MANAGEMENT ****************** -->
 	<navigation-rule>
 		<navigation-case>
+	      	<from-outcome>calendars_updatable_workplace</from-outcome>
+		    <to-view-id>/facelet/calendars/updatable_workplace_node.faces</to-view-id>
+		</navigation-case>
+		<navigation-case>
+	      	<from-outcome>calendars_updatable_workactivity</from-outcome>
+		    <to-view-id>/facelet/calendars/updatable_workactivity_node.faces</to-view-id>
+		</navigation-case>
+		<navigation-case>
 	      	<from-outcome>calendars_calendar</from-outcome>
 		    <to-view-id>/facelet/calendars/schedule/calendar.faces</to-view-id>
 		</navigation-case>

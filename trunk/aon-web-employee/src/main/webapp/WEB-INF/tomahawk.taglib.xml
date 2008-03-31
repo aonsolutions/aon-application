@@ -446,7 +446,7 @@
         <tag-name>schedule</tag-name>
         <component>
 		    <component-type>org.apache.myfaces.Schedule</component-type>
-			<handler-class>com.code.aon.ui.facelet.ScheduleComponentHandler</handler-class> 
+			<handler-class>com.code.aon.web.facelet.ScheduleComponentHandler</handler-class> 
         </component>
     </tag>
 </facelet-taglib>

@@ -121,7 +121,7 @@
 								<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
 									timeZone="#{timeZoneController.timeZoneId}" />
 							</t:outputText>
-							<t:inputCalendar size="8" id="Expenditures_date-Edit"
+							<t:inputCalendar size="8" id="Expenditures_date-Edit" required="#{true}"
 									value="#{expenditures.to.date}"
 									monthYearRowClass="yearMonthHeader" weekRowClass="weekHeader"
 									currentDayCellClass="currentDayCell"
@@ -131,7 +131,7 @@
 									popupTodayString="#{bundle.aon_popup_today}"
 									popupWeekString="#{bundle.aon_popup_week}" />	
 							<f:facet name="footer">
-								<t:inputCalendar size="8" id="Expenditures_date-New"
+								<t:inputCalendar size="8" id="Fecha" required="#{true}"
 									value="#{expenditures.to.date}"
 									monthYearRowClass="yearMonthHeader" weekRowClass="weekHeader"
 									currentDayCellClass="currentDayCell"
@@ -149,12 +149,14 @@
 							</f:facet>
 							<t:outputText value="#{to.amount}" rendered="#{to!=expenditures.to}" />
 							<t:inputText styleClass="aon-form-input-text"
-								rendered="#{to==expenditures.to}" id="Expenditures_amount-Edit"
+								rendered="#{to==expenditures.to}" 
+								id="Expenditures_amount-Edit" required="#{true}"
 								forceId="#{true}" value="#{expenditures.to.amount}" size="32"
 								maxlength="32" />
 							<f:facet name="footer">
 								<t:inputText styleClass="aon-form-input-text"
-									rendered="#{expenditures.new}" id="Expenditures_amount-New"
+									rendered="#{expenditures.new}" 
+									id="Importe" required="#{true}"
 									forceId="#{true}" value="#{expenditures.to.amount}" size="32"
 									maxlength="32" />
 							</f:facet>

@@ -9,7 +9,7 @@
 	<managed-bean>
 		<managed-bean-name>company</managed-bean-name>
 		<managed-bean-class>
-			com.code.aon.ui.company.controller.CompanyController
+			com.code.aon.web.employee.controller.CompanyController
 		</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
