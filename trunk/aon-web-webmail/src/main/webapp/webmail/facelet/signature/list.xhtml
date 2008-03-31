@@ -27,6 +27,13 @@
 					
 				<!-- start toolbar navigation -->
 				<aon:div styleClass="aon-finding-toolbar-item-group">					
+					<aon:commandButton
+						id="back"
+						title="#{appBundle.aon_webmail_back}"
+						value="#{appBundle.aon_webmail_back}"
+						action="folder"
+						styleClass="aon-finding-toolbar-item aon-icon-cancel">
+					</aon:commandButton>									
 					<h:commandButton id="reset" value="#{bundle.aon_reset}"
 						action="signature_form"
 						actionListener="#{signature.onReset}"

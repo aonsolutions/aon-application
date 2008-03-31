@@ -341,12 +341,6 @@ public class BlackListController {
     // NEW POPUP
     //*************************************************************
     
-    private boolean showNewBlackPanelPopup;
-    
-	public boolean isShowNewPanelPopup() {
-		return showNewBlackPanelPopup;
-	}
-
     private String newEmail;
     
 	public String getNewEmail() {
@@ -359,28 +353,18 @@ public class BlackListController {
 
 	private int list_type;
 	
-	public void closeNewPanelPopup(ActionEvent event){
-		this.showNewBlackPanelPopup = false;
-	}
-	
-	public void openNewPanelPopup(ActionEvent event){
-		this.newEmail = "";
-		this.showNewBlackPanelPopup = true;
-	}
-
 	public void openNewBlackPanelPopup(ActionEvent event){
+		this.newEmail = "";
 		list_type = LIST_BLACK_TYPE;
-		openNewPanelPopup(event);
 	}
 
 	public void openNewWhitePanelPopup(ActionEvent event){
+		this.newEmail = "";
 		list_type = LIST_WHITE_TYPE;
-		openNewPanelPopup(event);
 	}
 
 	public void createNew(ActionEvent event){
 		addEmail(newEmail, list_type);
-		closeNewPanelPopup(event);
 	}
 
 	public boolean isBlackList(){
