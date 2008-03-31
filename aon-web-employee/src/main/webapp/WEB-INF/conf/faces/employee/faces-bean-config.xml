@@ -9,7 +9,7 @@
 	<managed-bean>
 		<managed-bean-name>employee</managed-bean-name>
 		<managed-bean-class>
-			com.code.aon.ui.employee.controller.EmployeeController
+			com.code.aon.web.employee.controller.EmployeeController
 		</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
@@ -200,7 +200,7 @@
 	<managed-bean>
 		<managed-bean-name>workplace</managed-bean-name>
 		<managed-bean-class>
-			com.code.aon.ui.company.controller.WorkPlaceController
+			com.code.aon.web.employee.controller.WorkPlaceController
 		</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
@@ -217,7 +217,7 @@
 	<managed-bean>
 		<managed-bean-name>workactivity</managed-bean-name>
 		<managed-bean-class>
-			com.code.aon.ui.company.controller.WorkActivityController
+			com.code.aon.web.employee.controller.WorkActivityController
 		</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
@@ -676,13 +676,13 @@
 	<!-- ************** CALENDAR MANAGEMENT ****************** -->
 	<managed-bean>
 		<managed-bean-name>calendars</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.employee.controller.CalendarsController</managed-bean-class>
+		<managed-bean-class>com.code.aon.web.employee.controller.CalendarsController</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
 
     <managed-bean>
         <managed-bean-name>eventFinder</managed-bean-name>
-        <managed-bean-class>com.code.aon.ui.employee.controller.EventFinderController</managed-bean-class>
+        <managed-bean-class>com.code.aon.web.employee.controller.EventFinderController</managed-bean-class>
         <managed-bean-scope>session</managed-bean-scope>
     </managed-bean>
 
@@ -706,14 +706,14 @@
 
 	<managed-bean>
 		<managed-bean-name>hourssummary</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.employee.report.controller.WorkingHoursSummary</managed-bean-class>
+		<managed-bean-class>com.code.aon.web.employee.report.controller.WorkingHoursSummary</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
 
 	<!-- ************ REPORTS ************ -->
 	<managed-bean>
 		<managed-bean-name>incidencesReport</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.employee.report.controller.Incidences</managed-bean-class>
+		<managed-bean-class>com.code.aon.web.employee.report.controller.Incidences</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
 	<managed-bean>
@@ -723,7 +723,7 @@
 	</managed-bean>
 	<managed-bean>
 		<managed-bean-name>resourcesReport</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.employee.report.controller.Resources</managed-bean-class>
+		<managed-bean-class>com.code.aon.web.employee.report.controller.Resources</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
 	<managed-bean>

@@ -222,6 +222,18 @@ a:hover{
 	color:#fff;
 	padding:3px 0 2px 1em;
 	}
+
+.aon-content-subtitle-calendar-actions{	
+	font-weight:bold;	
+	margin:0 5px;	
+	background:transparent url(images/content/aon-calendar-actions-subtitle-left.gif) left bottom no-repeat;
+	}
+.aon-content-subtitle-internal-calendar-actions{
+	background:transparent url(images/content/aon-calendar-actions-subtitle-right.gif) right bottom no-repeat;
+	color:#fff;
+	padding:3px 0 2px 1em;
+	}
+
 .aon-breadcrumb{
 	padding:5px 1em 5px 2em;
 	background:transparent url(images/content/blue-breadcrumb.gif) 10px 10px no-repeat;

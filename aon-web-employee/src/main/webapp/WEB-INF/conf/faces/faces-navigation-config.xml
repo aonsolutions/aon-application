@@ -18,7 +18,7 @@
     </navigation-case>
 	<navigation-case>
       	<from-outcome>employee</from-outcome>
-	    <to-view-id>/facelet/employee/search.faces</to-view-id>
+	    <to-view-id>/facelet/employee/list.faces</to-view-id>
 	</navigation-case>
 	<navigation-case>
       	<from-outcome>employee_expenditures</from-outcome>

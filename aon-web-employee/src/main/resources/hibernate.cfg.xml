@@ -30,6 +30,8 @@
 		<mapping class="com.code.aon.registry.RegistryRelationship"/>
 		<mapping class="com.code.aon.registry.RegistryNote"/>
 		<mapping class="com.code.aon.registry.Category"/>
+		<mapping class="com.code.aon.registry.RegistryDirStaff"/>
+		<mapping class="com.code.aon.registry.RecordData"/>
 
 		<!-- AON-CONFIG Mapping files -->	
 		<mapping class="com.code.aon.config.ApplicationParameter"/>

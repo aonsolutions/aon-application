@@ -78,7 +78,7 @@
 
 	<managed-bean>
 		<managed-bean-name>resourceLoaderListener</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.employee.event.PlannerResourceLoaderListener</managed-bean-class>
+		<managed-bean-class>com.code.aon.web.employee.event.PlannerResourceLoaderListener</managed-bean-class>
 		<managed-bean-scope>none</managed-bean-scope>
 	</managed-bean>
 

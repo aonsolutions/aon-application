@@ -17,7 +17,7 @@
 	</menu>
 	<menu ref="content" key="aon_employee_management" >
 		<option ref="employee" key="aon_employee" >
-			<actionListener action="#{employee.onReset}"/>
+			<actionListener action="#{employee.onSearch}"/>
 		</option>
 		<option ref="employee_expenditures" key="aon_employee_expenditures" descriptionKey="aon_employee_expenditures" >
 			<actionListener action="#{expenditures.onReset}" />
