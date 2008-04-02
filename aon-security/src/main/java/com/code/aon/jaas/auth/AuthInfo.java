@@ -25,7 +25,7 @@ import com.code.aon.jaas.client.ast.IUser;
  * @since 1.0
  *
  */
-public class AuthInfo {
+public class AuthInfo implements IAuthInfo {
 
 	/** Security domain custom Domains. */
 	Map<String, AuthDomain> domains = new LinkedHashMap<String, AuthDomain>();
@@ -41,27 +41,17 @@ public class AuthInfo {
 		init(apps.iterator());
 	}
 
-	/**
-	 * Return true if user exist in the domain.
-	 * 
-	 * @param domainName
-     * @param context
-	 * @param name
-	 * @return
+	/* (non-Javadoc)
+	 * @see com.code.aon.jaas.auth.IAuthInfo#hasUser(java.lang.String, java.lang.String, java.lang.String)
 	 */
 	public boolean hasUser(String domainName, String context, String name)
 			throws AuthenticationLoginException {
 		return getUserRelation(domainName, context, name) != null;
 	}
 
-	/**
-     * Return Profile relations with its Roles.
-     * 
-     * @param domainName
-     * @param context
-     * @param name
-     * @return IRelation
-     */
+	/* (non-Javadoc)
+	 * @see com.code.aon.jaas.auth.IAuthInfo#getProfileRelation(java.lang.String, java.lang.String, java.lang.String)
+	 */
     public IRelation getProfileRelation(String domainName, String context, String name) 
     		throws AuthenticationLoginException {
     	String appId = (String) appId4Contexts.get(context);
@@ -71,14 +61,9 @@ public class AuthInfo {
     	return this.domains.get(domainName).getProfileRelation(appId, name);
     }
 
-    /**
-     * Return User relation with its Profiles.
-     * 
-	 * @param domainName
-	 * @param context
-     * @param name
-     * @return IRelation
-     */
+    /* (non-Javadoc)
+	 * @see com.code.aon.jaas.auth.IAuthInfo#getUserRelation(java.lang.String, java.lang.String, java.lang.String)
+	 */
     public IRelation getUserRelation(String domainName, String context, String name)
     		throws AuthenticationLoginException {
     	String appId = (String) appId4Contexts.get(context);
@@ -88,13 +73,9 @@ public class AuthInfo {
         return this.domains.get(domainName).getUserRelation(appId, name);
     }
 
-    /**
-     * Return user Password.
-     * 
-     * @param domainName
-     * @param name
-     * @return
-     */
+    /* (non-Javadoc)
+	 * @see com.code.aon.jaas.auth.IAuthInfo#getUserPassword(java.lang.String, java.lang.String)
+	 */
     public String getUserPassword(String domainName, String name) 
     		throws AuthenticationLoginException {
     	if ( !this.domains.containsKey( domainName ) )
@@ -104,12 +85,9 @@ public class AuthInfo {
         return user.getPasswd();
     }
 
-    /**
-     * Return domain access policy.
-     * 
-     * @param domainName
-     * @return
-     */
+    /* (non-Javadoc)
+	 * @see com.code.aon.jaas.auth.IAuthInfo#getAccessPolicy(java.lang.String)
+	 */
     public IAccessPolicy getAccessPolicy(String domainName)
     		throws AuthenticationLoginException {
     	if ( !this.domains.containsKey( domainName ) )

@@ -28,6 +28,7 @@ import javax.security.auth.login.LoginException;
 import com.code.aon.jaas.auth.AuthGroup;
 import com.code.aon.jaas.auth.AuthInfo;
 import com.code.aon.jaas.auth.AuthPrincipal;
+import com.code.aon.jaas.auth.IAuthInfo;
 import com.code.aon.jaas.auth.IConstants;
 
 import com.code.aon.jaas.auth.session.AuthenticationLoginException;
@@ -73,7 +74,7 @@ public abstract class XMLLoginModule extends AbstractLoginModule {
 	protected String sessionManagerObjectName = null;
 
 	/** Tells users data like passwords and roles, that this instance used to authenticate a user. */
-	protected AuthInfo authInfo;
+	protected IAuthInfo authInfo;
 
 	/** 
      * Override the superclass method to look for the following options after 

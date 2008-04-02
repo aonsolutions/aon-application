@@ -11,12 +11,22 @@
 	<name>AON SECURITY</name>
 	<dependencies>
 		<dependency>
+			<groupId>com.code.aon</groupId>
+			<artifactId>aon.ldap</artifactId>
+			<version>0.5</version>
+		</dependency>
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>4.1</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
 			<groupId>commons-digester</groupId>
 			<artifactId>commons-digester</artifactId>
 			<version>1.7</version>
 			<scope>compile</scope>
 		</dependency>
-
 		<dependency>
 			<groupId>com.oracle</groupId>
 			<artifactId>ojdbc14</artifactId>
