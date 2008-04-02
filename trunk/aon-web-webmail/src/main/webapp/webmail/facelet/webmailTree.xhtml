@@ -79,8 +79,11 @@
 					value="WebMail"
 					rendered="#{item.root}" />
 				<aon:outputText 
+	               	value="#{item.name} (#{item.folder.unreadMessageCount})"
+					rendered="#{!item.root and item.folder.unreadMessageCount>0}" />
+				<aon:outputText 
 	               	value="#{item.name}"
-					rendered="#{!item.root}" />
+					rendered="#{!item.root and item.folder.unreadMessageCount==0}" />
 			</rich:treeNode>
 		</rich:tree>	
 				
