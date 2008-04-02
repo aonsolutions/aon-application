@@ -4,12 +4,13 @@ import java.util.HashMap;
 
 public class Entry extends HashMap<String,Object> { 
 
-    // Keys and Values will be in the hashtable, but
-    // we will store the DN separately.
-    private String dn; 
+	private static final long serialVersionUID = -3592232487775900337L;
+	
+	private DistinguishedName dn; 
 
-    public Entry() {
+    public Entry( String dn ) {
         super();
+        this.dn = new DistinguishedName( dn );
     }
 
     public Entry(Entry entry) { 
@@ -17,12 +18,13 @@ public class Entry extends HashMap<String,Object> {
         setDN(entry.getDN());   
     }
 
-    public void setDN(String dn) { 
-        this.dn = dn;
-    }
+	public DistinguishedName getDN() {
+		return dn;
+	}
 
-    public String getDN() {
-        return dn;
-    }
+	public void setDN(DistinguishedName dn) {
+		this.dn = dn;
+	}
+
 }
 
