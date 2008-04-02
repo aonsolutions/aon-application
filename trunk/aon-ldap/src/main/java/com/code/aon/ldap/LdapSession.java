@@ -28,6 +28,8 @@ public class LdapSession {
 	private static final String BOOLEAN_SYNTAX = "1.3.6.1.4.1.1466.115.121.1.7";
 
 	private static final String INTEGER_SYNTAX = "1.3.6.1.4.1.1466.115.121.1.27";
+	
+	private static final String DISTINGUISHED_NAME_SYNTAX = "1.3.6.1.4.1.1466.115.121.1.12";
 
 	private static final Log LOGGER = LogFactory.getLog(LdapSession.class
 			.getName());
@@ -80,6 +82,8 @@ public class LdapSession {
 			String oid = (String) attributes.get("NUMERICOID").get();
 			if ( oid.equals(INTEGER_SYNTAX) ) {
 				result = Integer.valueOf(value.toString());
+			} else if ( oid.equals(DISTINGUISHED_NAME_SYNTAX) ) {
+				result = new DistinguishedName(value.toString());
 			} else if ( oid.equals(BOOLEAN_SYNTAX) ) {
 				result = "TRUE".equals(value) ? Boolean.TRUE : Boolean.FALSE;
 			}

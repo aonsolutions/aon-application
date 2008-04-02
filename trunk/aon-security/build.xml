@@ -28,6 +28,10 @@
 	<property name="commons.digester.home" value="/JAVA/commons-digester-1.7" />
 	<property name="commons.beanutils.home" value="/JAVA/commons-beanutils-1.7.0" />
 	<property name="commons.logging.home" value="/JAVA/commons-logging-1.1" />
+	<property name="commons.lang.home" value="/JAVA/commons-lang-2.2" />
+
+	<!-- AON -->
+	<property name="aon.ldap.home" value="${user.home}/.m2/repository/com/code/aon/aon.ldap/0.5" />
 
 	<!-- The classpath required to build classes. -->
     <path id="javac.classpath">
@@ -66,6 +70,12 @@
 		<path refid="jboss.tomcat.container.classpath"/>
     </path>
 
+    <!-- The classpath required to build classes. -->
+    <path id="jboss.ldap.javac.classpath">
+		<path refid="jboss.javac.classpath"/>
+        <pathelement path="${aon.ldap.home}/aon.ldap-0.5.jar"/>		
+    </path>
+
     <!-- Tomcat 5.5.x Container -->
     <path id="tomcat.5.container.classpath">
 		<pathelement path="${tomcat.home}/common/lib/jsp-api.jar"/>
@@ -100,7 +110,7 @@
     <!-- XDoclet -->
     <path id="xdoclet.task.classpath">
       <path refid="javac.classpath"/>
-      <fileset dir="/java/workspace/1.4/xdoclet-1.2.3">
+      <fileset dir="/java.old/xdoclet-1.2.3">
         <include name="**/*.jar"/>
       </fileset>
     </path>
@@ -119,7 +129,8 @@
 	<!-- ===================================================================== -->
     <!-- PREPARE                                                               -->
     <!-- ===================================================================== -->
-	<target name="prepare" depends="clean"> 
+	<target name="prepare" depends="clean">
+		<mkdir dir="${build.dir}" />
 	    <mkdir dir="${mgr.dist.dir}" />
 	    <mkdir dir="${client.dist.dir}" />
 	</target>
@@ -203,6 +214,23 @@
 			<classpath refid="jboss.javac.classpath"/>
 	        <exclude name="com/code/aon/jaas/vendor/tomcat/**"/>
   	      	<exclude name="com/code/aon/jaas/auth/Utilities.*" />
+	    </javac>
+	</target>
+
+	<!-- COMPILE FOR JBoss (LDAP) -->
+	<target name="compile-jboss-ldap" description="Compile for JBoss (LDAP)">
+	    <javac destdir="${build.dir}"
+	           optimize="${javac.optimize}"
+	           debug="true"
+			   depend="${javac.depend}"
+			   verbose="${javac.verbose}"
+			   deprecation="${javac.deprecation}"
+			   includeAntRuntime="${javac.include.ant.runtime}"
+			   includeJavaRuntime="${javac.include.java.runtime}"
+			   failonerror="${javac.fail.onerror}">
+			<src path="${src.dir}"/>
+			<classpath refid="jboss.ldap.javac.classpath"/>
+	        <include name="com/code/aon/jaas/vendor/jboss/LdapLoginModule.java"/>
 	    </javac>
 	</target>
 
@@ -364,6 +392,34 @@
 			</fileset>
 			<fileset dir="${resources.dir}">
 				<include name="**/*service.xml"/>
+			</fileset>
+	    </jar>
+	</target>
+
+	<!-- ===================================================================== -->
+	<!-- DEPLOY ON JBOSS 4.x (LDAP)											   -->
+	<!-- ===================================================================== -->
+	<target name="jboss-4.x.ldap.sar" description="Builds all jar files." 
+			depends="prepare, compile-jboss-ldap">
+	    <!-- Build aon-security-mgr.jar -->
+	    <jar jarfile="${mgr.dist.dir}/${mgr}-${version}.jar">
+	      <fileset dir="${build.dir}">
+	        <include name="com/code/aon/**"/>
+  	      	<exclude name="com/code/aon/jaas/auth/test/**" />
+  	      	<exclude name="com/code/aon/jaas/auth/Utilities.*" />
+  	      	<exclude name="com/code/aon/jaas/valves/SecurityValve.*" />
+  	      	<exclude name="com/code/aon/jaas/vendor/tomcat/**" />
+	      </fileset>
+	    </jar>
+    	<jar jarfile="${jboss.server.home}/deploy/${mgr}-${version}.sar">
+    		<fileset dir="${commons.lang.home}">
+				<include name="commons-lang-2.2.jar"/>
+			</fileset>
+    		<fileset dir="${aon.ldap.home}">
+				<include name="aon.ldap-0.5.jar"/>
+			</fileset>
+			<fileset dir="${mgr.dist.dir}">
+				<include name="${mgr}-${version}.jar"/>
 			</fileset>
 	    </jar>
 	</target>
