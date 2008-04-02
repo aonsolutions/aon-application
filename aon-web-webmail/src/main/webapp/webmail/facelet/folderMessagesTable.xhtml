@@ -25,7 +25,22 @@
 				<aon:outputText value="#{folder.folder.name}"/>
          	</aon:div>
 		
-			<aon:div styleClass="aon-section-toolbar">									
+			<aon:div styleClass="aon-section-toolbar">
+												
+				<aon:commandButton
+						id="selectButton"
+						actionListener="#{folder.selectAllPageMessages}"
+						reRender="messageGrid"
+						styleClass="aon-icon-commandButton-disabled aon-icon-checkAll">
+				</aon:commandButton>
+				
+				<aon:commandButton
+						id="deselectButton"
+						actionListener="#{folder.deselectAllPageMessages}"
+						reRender="messageGrid"
+						styleClass="aon-icon-commandButton-disabled aon-icon-checkNone">
+				</aon:commandButton>
+				
 				<aon:commandButton
 					id="refreshFolder"
 					action="folder"
@@ -103,21 +118,6 @@
 				<aon:outputText value="#{appBundle.aon_webmail_nomessages}"/>
 			</aon:panelGroup>
 			
-			<aon:panelGrid columns="2" style="none" cellpadding="0" cellspacing="0" width="100%">
-				<aon:commandButton
-						id="selectButton"
-						actionListener="#{folder.selectAllPageMessages}"
-						reRender="messageGrid"
-						styleClass="aon-icon-commandButton-disabled aon-icon-checkAll">
-				</aon:commandButton>
-				<aon:commandButton
-						id="deselectButton"
-						actionListener="#{folder.deselectAllPageMessages}"
-						reRender="messageGrid"
-						styleClass="aon-icon-commandButton-disabled aon-icon-checkNone">
-				</aon:commandButton>
-			</aon:panelGrid>
-		
 			<aon:dataTable id="messageDataTable" 
 				value="#{folder.folder.messageList}" 
 				var="to"

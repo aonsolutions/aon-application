@@ -130,6 +130,11 @@ public class SearchController {
 		}
 	}
 
+	public void onExit(ActionEvent event) {
+		MessageController messageController = (MessageController)AonUtil.getRegisteredBean(AonConstants.BEAN_MESSAGE);
+		messageController.setReturnAction(AonConstants.NAVIGATION_FOLDER);
+	}
+	
 	public boolean isResultFound(){
 		return !this.sortableList.getMessageList().isEmpty();
 	}

@@ -84,7 +84,6 @@
 					<aon:outputLabel for="blacklist_score"
 						value="#{appBundle.aon_webmail_blacklist_score}" />
 					<aon:selectOneRadio id="blacklist_score" 
-						partialSubmit="false"
 						value="#{blacklist.spamScoreType}">
 						<f:selectItems value="#{blacklist.scoreTypes}" />
 					</aon:selectOneRadio>
@@ -92,7 +91,6 @@
 					<aon:outputLabel for="blacklist_report"
 						value="#{appBundle.aon_webmail_blacklist_report}" />
 					<aon:selectOneRadio id="blacklist_report" 
-						partialSubmit="false"
 						value="#{blacklist.spamReportType}">
 						<f:selectItems value="#{blacklist.reportTypes}" />
 					</aon:selectOneRadio>
@@ -100,7 +98,6 @@
 					<aon:outputLabel for="blacklist_rewrite"
 						value="#{appBundle.aon_webmail_blacklist_rewrite}" />
 					<aon:inputText id="blacklist_rewrite"
-						styleClass="aon-form-input-text"
 						size="45" maxlength="40"
 						value="#{blacklist.rewrite_1}" />
 						
