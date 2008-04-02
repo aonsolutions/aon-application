@@ -11,51 +11,60 @@
 
 <ui:composition>
 
-	<aon:div styleClass="aon-finding-title-toolbar">
-		<aon:panelGrid id="buttonsGrid" columns="1" dir="true">				
-			<aon:div styleClass="aon-finding-toolbar-item-group">
+	<aon:div>
+		<aon:div styleClass="aon-finding-title-toolbar">
+			<aon:panelGrid id="buttonsGrid" columns="2" dir="true" 
+				columnClasses="aon-finding-title,aon-finding-toolbar">				
+			
+				<aon:div styleClass="aon-finding-title-internal">
+					<aon:outputText value="FOLDERS"/>	  						
+				</aon:div>					
+				
+				<!-- start toolbar navigation -->
+				<aon:div styleClass="aon-finding-toolbar-item-group">
 								
-				<aon:commandButton
-					id="newFolder"
-					title="#{appBundle.aon_webmail_newfolder}"
-					styleClass="aon-icon-commandButton aon-icon-newFolder"
-					actionListener="#{folder.openNewFolderPanelPopup}"
-					onclick="javascript:Richfaces.showModalPanel('newFolderModalPanel',{width:300, top:100})">
-				</aon:commandButton>
-			
-				<aon:commandButton
-					id="deleteFolder_n"
-					rendered="#{folder.folder.deleteable}"
-					title="#{appBundle.aon_webmail_delfolder}"
-					actionListener="#{folder.deleteFolder}"
-					reRender="foldersTree,buttonsGrid,messageGrid"
-					styleClass="aon-icon-commandButton aon-icon-deleteFolder">
-				</aon:commandButton>
+					<aon:commandButton
+						id="newFolder"
+						title="#{appBundle.aon_webmail_newfolder}"
+						styleClass="aon-icon-commandButton aon-icon-newFolder"
+						actionListener="#{folder.openNewFolderPanelPopup}"
+						onclick="javascript:Richfaces.showModalPanel('newFolderModalPanel',{width:300, top:100})">
+					</aon:commandButton>
 				
-				<aon:commandButton
-					id="deleteFolder_d"
-					rendered="#{!folder.folder.deleteable}"
-					title="#{appBundle.aon_webmail_delfolder}"
-					styleClass="aon-icon-commandButton-disabled aon-icon-deleteFolder-disabled">
-				</aon:commandButton>
-			
-				<aon:commandButton
-					id="renameFolder_n"
-					rendered="#{folder.folder.renameable}"
-					title="#{appBundle.aon_webmail_renamefolder}"
-					actionListener="#{folder.openRenameFolderPanelPopup}"
-					onclick="javascript:Richfaces.showModalPanel('renameFolderModalPanel',{width:300, top:100})"
-					styleClass="aon-icon-commandButton aon-icon-renameFolder">
-				</aon:commandButton>
+					<aon:commandButton
+						id="deleteFolder_n"
+						rendered="#{folder.folder.deleteable}"
+						title="#{appBundle.aon_webmail_delfolder}"
+						actionListener="#{folder.deleteFolder}"
+						reRender="foldersTree,buttonsGrid,messageGrid"
+						styleClass="aon-icon-commandButton aon-icon-deleteFolder">
+					</aon:commandButton>
+					
+					<aon:commandButton
+						id="deleteFolder_d"
+						rendered="#{!folder.folder.deleteable}"
+						title="#{appBundle.aon_webmail_delfolder}"
+						styleClass="aon-icon-commandButton-disabled aon-icon-deleteFolder-disabled">
+					</aon:commandButton>
 				
-				<aon:commandButton
-					id="renameFolder_d"
-					rendered="#{!folder.folder.renameable}"
-					title="#{appBundle.aon_webmail_renamefolder}"					
-					styleClass="aon-icon-commandButton-disabled aon-icon-renameFolder-disabled">
-				</aon:commandButton>
-			</aon:div>
-		</aon:panelGrid>
+					<aon:commandButton
+						id="renameFolder_n"
+						rendered="#{folder.folder.renameable}"
+						title="#{appBundle.aon_webmail_renamefolder}"
+						actionListener="#{folder.openRenameFolderPanelPopup}"
+						onclick="javascript:Richfaces.showModalPanel('renameFolderModalPanel',{width:300, top:100})"
+						styleClass="aon-icon-commandButton aon-icon-renameFolder">
+					</aon:commandButton>
+					
+					<aon:commandButton
+						id="renameFolder_d"
+						rendered="#{!folder.folder.renameable}"
+						title="#{appBundle.aon_webmail_renamefolder}"					
+						styleClass="aon-icon-commandButton-disabled aon-icon-renameFolder-disabled">
+					</aon:commandButton>
+				</aon:div>
+			</aon:panelGrid>
+		</aon:div>
 
 		<ui:include src="/webmail/facelet/modal/createFolder.xhtml" />
 	    
@@ -63,19 +72,20 @@
 	    
 		<rich:tree style="width:300px" nodeSelectListener="#{tree.processSelection}"
 				id="foldersTree" 
-                reRender="buttonsGrid,messageGrid" ajaxSubmitSelection="true"  switchType="ajax"
-                value="#{tree.treeNode}" var="item">
+	               reRender="buttonsGrid,messageGrid" ajaxSubmitSelection="true"  switchType="ajax"
+	               value="#{tree.treeNode}" var="item">
 			<rich:treeNode>
 				<aon:outputText 
 					value="WebMail"
 					rendered="#{item.root}" />
 				<aon:outputText 
-                	value="#{item.name}"
+	               	value="#{item.name}"
 					rendered="#{!item.root}" />
 			</rich:treeNode>
 		</rich:tree>	
-	</aon:div>
 				
+	</aon:div>
+	
 </ui:composition>
 
 </body>

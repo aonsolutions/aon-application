@@ -17,7 +17,11 @@ public class MultiSelectionEmailBean {
 
 	private List<SelectionEmail> emails; 
 
-    public void init() {
+	public MultiSelectionEmailBean(){
+		this.reload();
+	}
+	
+    public void reload() {
         emails = new ArrayList<SelectionEmail>();
     	try{
 			WebMailController wmc = (WebMailController)AonUtil.getRegisteredBean(AonConstants.BEAN_WEBMAIL);

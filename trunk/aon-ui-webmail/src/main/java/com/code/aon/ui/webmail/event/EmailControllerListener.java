@@ -9,6 +9,7 @@ import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
 import com.code.aon.ui.util.AonUtil;
 import com.code.aon.ui.webmail.bean.AonConstants;
+import com.code.aon.ui.webmail.controller.MultiSelectionEmailBean;
 import com.code.aon.ui.webmail.controller.WebMailController;
 import com.code.aon.groupware.Contact;
 import com.code.aon.webmail.MailAccount;
@@ -41,4 +42,24 @@ public class EmailControllerListener extends ControllerAdapter {
 		email.setUser(account.getUser());
 	}
 
+	@Override
+	public void afterBeanAdded(ControllerEvent event)
+			throws ControllerListenerException {
+		MultiSelectionEmailBean multiSelectionEmailBean = (MultiSelectionEmailBean)AonUtil.getRegisteredBean(AonConstants.BEAN_MULTISELECTIONEMAIL);
+		multiSelectionEmailBean.reload();
+	}
+	
+	@Override
+	public void afterBeanUpdated(ControllerEvent event)
+			throws ControllerListenerException {
+		MultiSelectionEmailBean multiSelectionEmailBean = (MultiSelectionEmailBean)AonUtil.getRegisteredBean(AonConstants.BEAN_MULTISELECTIONEMAIL);
+		multiSelectionEmailBean.reload();
+	}
+	
+	@Override
+	public void afterBeanRemoved(ControllerEvent event)
+			throws ControllerListenerException {
+		MultiSelectionEmailBean multiSelectionEmailBean = (MultiSelectionEmailBean)AonUtil.getRegisteredBean(AonConstants.BEAN_MULTISELECTIONEMAIL);
+		multiSelectionEmailBean.reload();
+	}
 }

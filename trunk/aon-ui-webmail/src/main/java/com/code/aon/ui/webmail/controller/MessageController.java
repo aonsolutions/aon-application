@@ -15,8 +15,11 @@ import java.util.logging.Logger;
 
 import javax.activation.DataHandler;
 import javax.activation.FileDataSource;
+import javax.faces.application.FacesMessage;
+import javax.faces.context.FacesContext;
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
+import javax.faces.validator.LengthValidator;
 import javax.mail.BodyPart;
 import javax.mail.Folder;
 import javax.mail.Header;
@@ -27,6 +30,8 @@ import javax.mail.Flags.Flag;
 import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMultipart;
 import javax.servlet.http.HttpServletResponse;
+
+import org.apache.myfaces.custom.fileupload.UploadedFile;
 
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
@@ -46,14 +51,13 @@ import com.code.aon.ui.webmail.bean.AonMessageUtils;
 import com.code.aon.ui.webmail.converter.MaxLenghtStringConverter;
 import com.code.aon.ui.webmail.exception.WebmailException;
 import com.code.aon.ui.webmail.listener.IAonFileListener;
-import com.code.aon.ui.webmail.listener.IFileUploadedListener;
 import com.code.aon.webmail.MailAccount;
 import com.code.aon.webmail.Signature;
 import com.code.aon.webmail.dao.IWebMailAlias;
 import com.code.aon.webmail.enumeration.SignatureType;
 import com.sun.mail.util.LineOutputStream;
 
-public class MessageController implements IAonFileListener,IFileUploadedListener{
+public class MessageController implements IAonFileListener{
 
 	private static final Logger LOGGER = Logger.getLogger(MessageController.class.getName());
 	
@@ -251,6 +255,9 @@ public class MessageController implements IAonFileListener,IFileUploadedListener
 		newMsgFileList.remove(aonFile);
 	}
 
+	//***************************************************************
+	//*********** ATTACH ********************************************
+	//***************************************************************
 	public void fileUploaded(File file) {
     	AonFile f = new AonFile();
     	f.setFile(file);
@@ -258,6 +265,52 @@ public class MessageController implements IAonFileListener,IFileUploadedListener
     	newMsgFileList.add(f);
 	}
     
+	private UploadedFile inputFile;
+	
+	private long maximumSize = -1;
+
+	public UploadedFile getInputFile() {
+		return inputFile;
+	}
+
+	public void setInputFile(UploadedFile inputFile) {
+		this.inputFile = inputFile;
+	}
+	
+	public void fileUploaded( ActionEvent event ) throws IOException {
+		if ( this.inputFile!= null ) {
+			long size = this.inputFile.getSize();
+			String upload_name = inputFile.getName();
+			upload_name = upload_name.replace('\\', '/');
+			if (upload_name.lastIndexOf('/')>=0)
+				upload_name = upload_name.substring(upload_name.lastIndexOf('/'));
+			String preffix = upload_name;
+			String suffix = "";
+			if (upload_name.lastIndexOf('.')>=0){
+				preffix = upload_name.substring(0,upload_name.lastIndexOf('.'));
+				suffix = upload_name.substring(upload_name.lastIndexOf('.'));
+			}
+			File file = File.createTempFile(preffix, suffix);
+			if ( (maximumSize != -1) && (size > maximumSize) ) {
+				FacesContext ctx = FacesContext.getCurrentInstance();
+				FacesMessage message = AonUtil.getMessage( ctx,
+						LengthValidator.MAXIMUM_MESSAGE_ID, new Object[]{maximumSize, upload_name} );
+				ctx.addMessage(AonUtil.AON_ERROR, message);
+			} else {
+				byte[] data = this.inputFile.getBytes();
+		        FileOutputStream outputStream = new FileOutputStream(file);
+		        outputStream.write(data);
+		        outputStream.close();			
+		        fileUploaded(file);
+			}
+		}
+	}
+
+	//***************************************************************
+	//*********** END ATTACH ****************************************
+	//***************************************************************
+	
+	
     public void send(ActionEvent event) {
     	try{
 	    	WebMailController webMailController = (WebMailController)AonUtil.getRegisteredBean(AonConstants.BEAN_WEBMAIL);
@@ -493,20 +546,14 @@ public class MessageController implements IAonFileListener,IFileUploadedListener
 	}
 	
 	public void openEmailsToPanelPopup(ActionEvent event){
-		MultiSelectionEmailBean bean = (MultiSelectionEmailBean)AonUtil.getRegisteredBean(AonConstants.BEAN_MULTISELECTIONEMAIL);
-		bean.init();
 		this.selectedDestinyContainer = CONTAINER_TO;
 	}
 
 	public void openEmailsCcPanelPopup(ActionEvent event){
-		MultiSelectionEmailBean bean = (MultiSelectionEmailBean)AonUtil.getRegisteredBean(AonConstants.BEAN_MULTISELECTIONEMAIL);
-		bean.init();
 		this.selectedDestinyContainer = CONTAINER_CC;
 	}
 
 	public void openEmailsBccPanelPopup(ActionEvent event){
-		MultiSelectionEmailBean bean = (MultiSelectionEmailBean)AonUtil.getRegisteredBean(AonConstants.BEAN_MULTISELECTIONEMAIL);
-		bean.init();
 		this.selectedDestinyContainer = CONTAINER_BCC;
 	}
 
@@ -843,6 +890,9 @@ public class MessageController implements IAonFileListener,IFileUploadedListener
 			
 			BasicController contactController = (BasicController)AonUtil.getRegisteredBean(AonConstants.BEAN_EMAIL);
 			contactController.onSearch(null);
+			
+			MultiSelectionEmailBean multiSelectionEmailBean = (MultiSelectionEmailBean)AonUtil.getRegisteredBean(AonConstants.BEAN_MULTISELECTIONEMAIL);
+			multiSelectionEmailBean.reload();
 		}
     }
 
