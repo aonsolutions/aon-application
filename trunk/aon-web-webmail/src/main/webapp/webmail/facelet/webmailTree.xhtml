@@ -12,16 +12,9 @@
 <ui:composition>
 
 	<aon:div>
-		<aon:div styleClass="aon-finding-title-toolbar">
-			<aon:panelGrid id="buttonsGrid" columns="2" dir="true" 
-				columnClasses="aon-finding-title,aon-finding-toolbar">				
 			
-				<aon:div styleClass="aon-finding-title-internal">
-					<aon:outputText value="FOLDERS"/>	  						
-				</aon:div>					
-				
-				<!-- start toolbar navigation -->
-				<aon:div styleClass="aon-finding-toolbar-item-group">
+		<aon:div styleClass="aon-toolbar"  id="buttonsGrid">
+	
 								
 					<aon:commandButton
 						id="newFolder"
@@ -62,8 +55,7 @@
 						title="#{appBundle.aon_webmail_renamefolder}"					
 						styleClass="aon-icon-commandButton-disabled aon-icon-renameFolder-disabled">
 					</aon:commandButton>
-				</aon:div>
-			</aon:panelGrid>
+			
 		</aon:div>
 
 		<ui:include src="/webmail/facelet/modal/createFolder.xhtml" />

@@ -46,8 +46,9 @@ line-height:1.25;
  padding:0;
  }
 
-a{
+a, a:hover, a:visited{
 text-decoration:none;
+color:#000;
 	} 
 
 /**********************/
@@ -96,6 +97,9 @@ text-decoration:none;
 }
 .aon-width-40{
 	width:40px;
+	}
+.aon-width-80{
+	width:80px;
 	}
 .aon-width-100{
 	width:100px;
@@ -848,9 +852,9 @@ text-decoration:none;
 }
 
 
-/*************************/
-/******  PANELGRID  ******/
-/*************************/
+/*****************************************/
+/******  PANELGRID  MANTENIMIENTOS  ******/
+/*****************************************/
 .aon-panelGrid{
 	border-left:#c4c4c4 1px solid;
 	border-top:#c4c4c4 1px solid;
@@ -872,6 +876,30 @@ text-decoration:none;
 	padding:2 5px 2 2;
 	padding:1px 0.5em 1px 0.5em;
 }
+
+/*************************/
+/******  PANELGRID  ******/
+/*************************/
+.aon-panelGrid-formatting{
+	border:0 !important;
+	width:100%;
+		}
+.aon-panelGrid-formatting td{
+	vertical-align:top;
+	background-color:#fff !important;
+	}
+.aon-panelGrid-formatting-odd{
+	border:0 !important;
+	font-weight:normal !important;
+	background-color:#fff !important;
+	white-space: wrap;
+	vertical-align:top;
+}
+.aon-panelGrid-formatting-even{
+	border:0 !important;
+	vertical-align:top;
+	background-color:#fff !important;
+	}
 	
 /*************************/
 /******  DATATABLE  ******/
@@ -1081,6 +1109,8 @@ text-decoration:none;
 .aon-header-additionalInfo a, .aon-header-additionalInfo a:visited, .aon-header-additionalInfo a:hover{
 	color:#fff;
 	cursor:pointer;
+	padding:0 0.5em;
+	border-right:#fff 1px solid;
 	}
 /********************************/
 /*****   MENU DESPLEGABLE  ******/

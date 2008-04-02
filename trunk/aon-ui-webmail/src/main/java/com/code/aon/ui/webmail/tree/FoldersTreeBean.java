@@ -67,19 +67,7 @@ public class FoldersTreeBean {
 		UITree tree = (UITree) event.getComponent();
 		current = (AonFolder) tree.getRowData();
 		nodeSelected(current);
-		// ÑAPA
-		String id = "homepage:folderView:webmailForm:messageDataTable";
-		UIComponent comp = FacesContext.getCurrentInstance().getViewRoot()
-				.findComponent(id);
-		if (comp == null)
-			throw new IllegalArgumentException(
-					"Can not find component with id = '" + id + "'");
-		if (!(comp instanceof UIData))
-			throw new IllegalArgumentException(
-					"Id does not refer to a UIData instance");
-		UIData uidata = (UIData) comp;
-		uidata.setFirst(0);
-		// FIN ÑAPA
+		FolderController.assignPageNumber(0);
 	}
 
 	public AonFolder getCurrent() {
