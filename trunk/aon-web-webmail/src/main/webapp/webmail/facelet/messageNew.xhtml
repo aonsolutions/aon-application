@@ -106,7 +106,7 @@
 									accept="*/*" size="45"
 									storage="file"/>
 								<h:commandButton value="#{bundle.aon_fileupload_insert}"
-									action="messageNew"
+									reRender="attachDataTable"
 									styleClass="aon-icon-attach aon-finding-toolbar-item"
 									actionListener="#{message.fileUploaded}"/>
 						</aon:panelGrid>
@@ -126,7 +126,7 @@
 							columnClasses="dr-table-cell rich-table-cell aon-editDataTable-textColumn">
 								<aon:column>
 									<aon:commandLink
-										action="messageNew"
+										reRender="attachDataTable"
 										value="#{attachment.file.name}"
 										styleClass="aon-icon-commandButton aon-icon-delete"
 										actionListener="#{attachment.fileDeleted}">
