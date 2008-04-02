@@ -19,6 +19,7 @@ import com.code.aon.ui.util.AonUtil;
 import com.code.aon.ui.webmail.bean.AonConstants;
 import com.code.aon.ui.webmail.bean.AonFolder;
 import com.code.aon.ui.webmail.bean.AonMessage;
+import com.code.aon.ui.webmail.bean.AonMessageSortableList;
 import com.code.aon.ui.webmail.exception.WebmailException;
 import com.code.aon.ui.webmail.listener.ITreeListener;
 import com.code.aon.ui.webmail.tree.FoldersTreeBean;
@@ -129,10 +130,32 @@ public class FolderController implements ITreeListener{
 	    	AonFolder dest = webMailController.getServer().getAonFolder(AonFolder.TRASH_FOLDER_NAME);
 	    	folder.moveMessages(messagesLst, dest);
 		}
-		//if (currentPageObjects().size()==0)
-			//paginator.gotoPreviousPage();
+		/*
+		if (currentPageObjects().size()==0){
+			try{
+				int page = Math.abs(folder.getMessageCount()/pageObjectNumber);
+				FolderController.assignPageNumber(page);
+			}catch (Exception e) {
+			}
+		}
+		*/
     }
-    
+
+    public static void assignPageNumber(int number){
+    	// ÑAPA
+    	String id = "homepage:folderView:webmailForm:messageDataTable";
+    	UIComponent comp = FacesContext.getCurrentInstance().getViewRoot()
+    			.findComponent(id);
+    	if (comp == null)
+    		throw new IllegalArgumentException(
+    				"Can not find component with id = '" + id + "'");
+    	if (!(comp instanceof UIData))
+    		throw new IllegalArgumentException(
+    				"Id does not refer to a UIData instance");
+    	UIData uidata = (UIData) comp;
+    	uidata.setFirst(number);
+    }
+
 	// *************************************************************************
 	// SELECT / UNSELECT ALL 
 	// *************************************************************************
@@ -307,12 +330,65 @@ public class FolderController implements ITreeListener{
 			if ( messages.size()>0 ) {
 					folder.moveMessages(messages, dest);
 			}
-			folder.refresh();
+			/*
+			if (currentPageObjects().size()==0){
+				try{
+					int page = Math.abs(folder.getMessageCount()/pageObjectNumber);
+					FolderController.assignPageNumber(page);
+				}catch (Exception e) {
+				}
+			}
+			*/
+			//folder.refresh();
 		} catch (MessagingException e) {
-			e.printStackTrace();
-		} catch (WebmailException e) {
 			e.printStackTrace();
 		}
     }
+
+    // *******************************************************
+    // ORDER BY
+    // *******************************************************
+    
+	public void orderBy(String column) throws WebmailException {
+		folder.setSort(column);
+		folder.setAscending(!folder.isAscending());
+		folder.refresh();
+	}
+
+	public void orderByTo(ActionEvent event) {
+		try{
+			orderBy(AonMessageSortableList.TO_COLUMN);
+		} catch (WebmailException e) {
+			AonUtil.addErrorMessage(e.getMessage());
+			throw new AbortProcessingException(e);
+		}
+	}
+
+	public void orderByFrom(ActionEvent event) {
+		try{
+			orderBy(AonMessageSortableList.FROM_COLUMN);
+		} catch (WebmailException e) {
+			AonUtil.addErrorMessage(e.getMessage());
+			throw new AbortProcessingException(e);
+		}
+	}
+
+	public void orderBySubject(ActionEvent event) {
+		try{
+			orderBy(AonMessageSortableList.SUBJECT_COLUMN);
+		} catch (WebmailException e) {
+			AonUtil.addErrorMessage(e.getMessage());
+			throw new AbortProcessingException(e);
+		}
+	}
+
+	public void orderByDate(ActionEvent event) {
+		try{
+			orderBy(AonMessageSortableList.DATE_COLUMN);
+		} catch (WebmailException e) {
+			AonUtil.addErrorMessage(e.getMessage());
+			throw new AbortProcessingException(e);
+		}
+	}
 
 }
