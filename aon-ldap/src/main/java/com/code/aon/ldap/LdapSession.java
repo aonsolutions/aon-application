@@ -23,26 +23,20 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-public class LDAPSession {
+public class LdapSession {
 
 	private static final String BOOLEAN_SYNTAX = "1.3.6.1.4.1.1466.115.121.1.7";
 
 	private static final String INTEGER_SYNTAX = "1.3.6.1.4.1.1466.115.121.1.27";
 
-	private static final Log LOGGER = LogFactory.getLog(LDAPSession.class
+	private static final Log LOGGER = LogFactory.getLog(LdapSession.class
 			.getName());
 
 	private DirContext dc;
-	
-	private String baseDN;
-	
-	private Scope scope;
 
 	public void open(String host, int port, String user, String password,
 			boolean ssl) throws NamingException {
 		Properties properties = new Properties();
-		properties.put(DirContext.INITIAL_CONTEXT_FACTORY,
-				"com.sun.jndi.ldap.LdapCtxFactory");
 		String url = "ldap://" + host;
 		if (port > 0) {
 			url += ":" + port;
@@ -55,12 +49,16 @@ public class LDAPSession {
 		if (ssl) {
 			properties.put(Context.SECURITY_PROTOCOL, "ssl");
 		}
-		this.dc = new InitialDirContext(properties);
+		open( properties );
 	}
-
+	
 	public void open(String host, String user, String password)
 			throws NamingException {
 		this.open(host, -1, user, password, false);
+	}
+	
+	public void open( Properties properties ) throws NamingException {
+		this.dc = new InitialDirContext(properties);
 	}
 
 	public void close() {
@@ -73,22 +71,6 @@ public class LDAPSession {
 
 	public DirContext getDc() {
 		return dc;
-	}
-	
-	public String getBaseDN() {
-		return baseDN;
-	}
-
-	public void setBaseDN(String baseDN) {
-		this.baseDN = baseDN;
-	}
-	
-	public Scope getScope() {
-		return scope;
-	}
-
-	public void setScope(Scope scope) {
-		this.scope = scope;
 	}
 	
 	private Object convertValue( Object value, DirContext syntax ) throws NamingException {
@@ -105,7 +87,7 @@ public class LDAPSession {
 		return result;
 	}
 	
-	private List<Object> getValues( Attribute attribute ) throws NamingException {
+	private Object getValues( Attribute attribute ) throws NamingException {
 		NamingEnumeration<?> values = attribute.getAll();
 		DirContext syntax = null;
 		try {
@@ -118,12 +100,16 @@ public class LDAPSession {
 			Object value = values.nextElement();
 			list.add( convertValue(value, syntax));
 		}
-		return list;
+		Object result = list;
+		if ( list.isEmpty() ) {
+			result = null;
+		} else if ( list.size() == 1 ) {
+			result = list.get(0);
+		}
+		return result;
 	}
 
-	public List<Entry> search(String base, String filter, String ... attributes) {
-		List<Entry> results = new ArrayList<Entry>();
-
+	private SearchControls getSearchControls( Scope scope, String[] attributes ) {
 		SearchControls sc = new SearchControls();
 		sc.setSearchScope(scope.getScope());
 
@@ -133,27 +119,22 @@ public class LDAPSession {
 		if (! ArrayUtils.isEmpty(attributes) ) {
 			sc.setReturningAttributes(attributes);
 		}
-
-		String searchBase = null;
-		if (! StringUtils.isEmpty(this.baseDN) ) {
-			searchBase = this.baseDN;
-		}
-		if (! StringUtils.isEmpty(base) ) {
-			searchBase = base + ((searchBase != null) ? "," : "") + searchBase;
-		}
-		
+		return sc;
+	}
+	
+	public List<Entry> search(String base, String filter, Scope scope, String ... attributes) {
+		List<Entry> results = new ArrayList<Entry>();
 		try {
-			NamingEnumeration<SearchResult> ne = dc.search(searchBase, filter, sc);
+			SearchControls sc = getSearchControls( scope, attributes );
+			NamingEnumeration<SearchResult> ne = dc.search(base, filter, sc);
 			while (ne.hasMore()) {
 				SearchResult sr = ne.next();
 
 				String name = sr.getName();
-				Entry entry = new Entry();
-				if (! StringUtils.isEmpty(searchBase) ) {
-					entry.setDN(name + "," + searchBase);
-				} else {
-					entry.setDN(name);
+				if (! StringUtils.isEmpty(base) ) {
+					name += ',' + base;
 				}
+				Entry entry = new Entry(name);
 
 				Attributes at = sr.getAttributes();
 				NamingEnumeration<? extends Attribute> ane = at.getAll();
@@ -167,7 +148,7 @@ public class LDAPSession {
 		} catch (InvalidSearchFilterException isfe) {
 			LOGGER.error("Search Filter Invalid: " + filter);
 		} catch (NameNotFoundException nnfe) {
-			LOGGER.error("Object Not Found: " + searchBase);
+			LOGGER.error("Object Not Found: " + base);
 		} catch (NoPermissionException npe) {
 			LOGGER.error("Search Failed: Permission Denied");
 		} catch (CommunicationException ce) {
@@ -179,4 +160,37 @@ public class LDAPSession {
 		return results;
 	}
 		
+	public List<Entry> search(String base, String filter, String ... attributes) {
+		return this.search(base, filter, Scope.ONELEVEL_SCOPE, attributes);
+	}
+
+	public int getCount(String base, String filter, Scope scope, String ... attributes) {
+		int count = -1;
+		try {
+			SearchControls sc = getSearchControls( scope, attributes );
+			NamingEnumeration<SearchResult> ne = dc.search(base, filter, sc);
+			count = 0;
+			while (ne.hasMore()) {
+				ne.next();
+				count++;
+			}
+		} catch (InvalidSearchFilterException isfe) {
+			LOGGER.error("Search Filter Invalid: " + filter);
+		} catch (NameNotFoundException nnfe) {
+			LOGGER.error("Object Not Found: " + base);
+		} catch (NoPermissionException npe) {
+			LOGGER.error("Search Failed: Permission Denied");
+		} catch (CommunicationException ce) {
+			LOGGER.error("Error Communicating with Server");
+		} catch (NamingException nex) {
+			LOGGER.error("Error: " + nex.getMessage());
+		}
+
+		return count;
+	}
+		
+	public int getCount(String base, String filter, String ... attributes) {
+		return this.getCount(base, filter, Scope.ONELEVEL_SCOPE, attributes);
+	}
+
 }
