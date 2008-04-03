@@ -4,9 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.faces.FacesException;
-import javax.faces.component.UIComponent;
-import javax.faces.component.UIData;
-import javax.faces.context.FacesContext;
 
 import org.richfaces.component.UITree;
 import org.richfaces.event.NodeSelectedEvent;

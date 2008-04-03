@@ -64,9 +64,62 @@
 	    
 		<rich:tree nodeSelectListener="#{tree.processSelection}"
 				id="foldersTree" 
-	               reRender="buttonsGrid,messageGrid" ajaxSubmitSelection="true"  switchType="ajax"
-	               value="#{tree.treeNode}" var="item">
-			<rich:treeNode>
+				reRender="buttonsGrid,messageGrid" ajaxSubmitSelection="true"  switchType="ajax"
+				value="#{tree.treeNode}" var="item"
+				nodeFace="#{item.folderTypeName}">
+			<rich:treeNode type="INBOX" 
+				iconLeaf="/css/images/folderTree/aon-icon-tree-inbox.png" 
+				icon="/css/images/folderTree/aon-icon-tree-inbox.png">
+				<aon:outputText 
+	               	value="#{item.name} (#{item.folder.unreadMessageCount})"
+					rendered="#{!item.root and item.folder.unreadMessageCount>0}" />
+				<aon:outputText 
+	               	value="#{item.name}"
+					rendered="#{!item.root and item.folder.unreadMessageCount==0}" />
+			</rich:treeNode>
+			<rich:treeNode type="Enviados" 
+				iconLeaf="/css/images/folderTree/aon-icon-tree-sent.png" 
+				icon="/css/images/folderTree/aon-icon-tree-sent.png">
+				<aon:outputText 
+	               	value="#{item.name} (#{item.folder.unreadMessageCount})"
+					rendered="#{!item.root and item.folder.unreadMessageCount>0}" />
+				<aon:outputText 
+	               	value="#{item.name}"
+					rendered="#{!item.root and item.folder.unreadMessageCount==0}" />
+			</rich:treeNode>
+			<rich:treeNode type="spam" 
+				iconLeaf="/css/images/folderTree/aon-icon-tree-spam.png" 
+				icon="/css/images/folderTree/aon-icon-tree-spam.png">
+				<aon:outputText 
+	               	value="#{item.name} (#{item.folder.unreadMessageCount})"
+					rendered="#{!item.root and item.folder.unreadMessageCount>0}" />
+				<aon:outputText 
+	               	value="#{item.name}"
+					rendered="#{!item.root and item.folder.unreadMessageCount==0}" />
+			</rich:treeNode>
+			<rich:treeNode type="Papelera" 
+				iconLeaf="/css/images/folderTree/aon-icon-tree-trash.png" 
+				icon="/css/images/folderTree/aon-icon-tree-trash.png">
+				<aon:outputText 
+	               	value="#{item.name} (#{item.folder.unreadMessageCount})"
+					rendered="#{!item.root and item.folder.unreadMessageCount>0}" />
+				<aon:outputText 
+	               	value="#{item.name}"
+					rendered="#{!item.root and item.folder.unreadMessageCount==0}" />
+			</rich:treeNode>
+			<rich:treeNode type="Borrador" 
+				iconLeaf="/css/images/folderTree/aon-icon-tree-draft.png" 
+				icon="/css/images/folderTree/aon-icon-tree-draft.png">
+				<aon:outputText 
+	               	value="#{item.name} (#{item.folder.unreadMessageCount})"
+					rendered="#{!item.root and item.folder.unreadMessageCount>0}" />
+				<aon:outputText 
+	               	value="#{item.name}"
+					rendered="#{!item.root and item.folder.unreadMessageCount==0}" />
+			</rich:treeNode>
+			<rich:treeNode type="other" 
+				iconLeaf="/css/images/folderTree/aon-icon-tree-folder.png" 
+				icon="/css/images/folderTree/aon-icon-tree-folder.png">
 				<aon:outputText 
 					value="WebMail"
 					rendered="#{item.root}" />
@@ -78,7 +131,6 @@
 					rendered="#{!item.root and item.folder.unreadMessageCount==0}" />
 			</rich:treeNode>
 		</rich:tree>	
-				
 	</aon:div>
 	
 </ui:composition>

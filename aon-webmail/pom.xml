@@ -16,6 +16,12 @@
 	<description>AON WEBMAIL</description>
 	<dependencies>
 		<dependency>
+		   <groupId>com.code.aon</groupId>
+		   <artifactId>aon.common</artifactId>
+		   <version>1.9.16</version>
+		   <scope>compile</scope>
+		</dependency>
+		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.config</artifactId>
 			<version>2.0.0</version>
