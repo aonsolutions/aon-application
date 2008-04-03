@@ -35,8 +35,10 @@ public class AuthInfoLdap implements IAuthInfo, ILdapConstants {
 	@Override
 	public IAccessPolicy getAccessPolicy(String domainName)
 			throws AuthenticationLoginException {
-		// TODO Auto-generated method stub
-		return null;
+    	if ( ! ldap.hasDomain( domainName ) ) {
+    		throw new AuthenticationLoginException( "aon_login_err_2", domainName );
+    	}
+		return ldap.getAccessPolicy(domainName);
 	}
 
 	@Override

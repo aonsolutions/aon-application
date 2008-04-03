@@ -16,8 +16,10 @@ public class DistinguishedName {
 		}
 	}
 
-	public DistinguishedName(DistinguishedName dn, String ... levels) {
-		this.levels = (String[]) ArrayUtils.addAll( dn.levels, levels );
+	public DistinguishedName( String part, DistinguishedName dn ) {
+		this.levels = new String[dn.getDepth()+1];
+		this.levels[0] = part;
+		System.arraycopy(dn.levels, 0, this.levels, 1, dn.getDepth());
 	}
 	
 	public String getLevel( int index ) {

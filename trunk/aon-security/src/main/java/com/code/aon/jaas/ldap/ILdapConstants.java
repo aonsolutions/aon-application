@@ -26,6 +26,8 @@ public interface ILdapConstants {
 	
 	String DOMAIN_APPLICATION_PROFILE_OBJECT_CLASS = "aonDomainApplicationProfile";
 	
+	String ACCESS_POLICY_OBJECT_CLASS = "aonAccessPolicy";
+	
 	String USER_OBJECT_CLASS = "aonUser";
 	
 	String PROFILE_OBJECT_CLASS = "aonProfile";
