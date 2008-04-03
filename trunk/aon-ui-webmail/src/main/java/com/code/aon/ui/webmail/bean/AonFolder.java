@@ -223,6 +223,21 @@ public class AonFolder extends AonMessageSortableList {
     }
     
     //**************************************************************
+    // TYPE
+    //**************************************************************
+
+    public String getFolderTypeName(){
+		if (TRASH_FOLDER_NAME.equals(folder.getName()) ||
+			INBOX_FOLDER_NAME.equals(folder.getName()) ||
+			SENT_FOLDER_NAME.equals(folder.getName()) ||
+			SPAM_FOLDER_NAME.equals(folder.getName()) ||
+			DRAFT_FOLDER_NAME.equals(folder.getName()) ){
+			return folder.getName();
+		}
+    	return "other";
+    }
+    
+    //**************************************************************
     // SELECTED ROWS
     //**************************************************************
 
