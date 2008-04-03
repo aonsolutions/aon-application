@@ -426,7 +426,7 @@
 		<mkdir dir="${ldap.dir}" />
 		<copy file="${resources.dir}/META-INF/jboss-service.xml.ldap"
 			tofile="${ldap.dir}/META-INF/jboss-service.xml"/>
-    	<jar jarfile="${jboss.server.home}/deploy/${mgr}-${version}.sar">
+    	<jar jarfile="${jboss.server.home}/deploy/${mgr}-ldap-${version}.sar">
 			<fileset dir="${commons.beanutils.home}">
 				<include name="commons-beanutils.jar"/>
 			</fileset>
