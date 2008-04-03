@@ -20,18 +20,6 @@ public class AuthInfoLdap implements IAuthInfo, ILdapConstants {
 		this.ldap = new SecurityLdap(ldapProperties);
 	}
 	
-	private String getApplication( String context ) {
-		String application = context;
-		if ( application.startsWith("/") ) {
-			application = application.substring(1);
-		}
-		int pos = application.lastIndexOf(".");
-		if ( pos != -1 ) {
-			application = application.substring(0, pos);
-		}
-		return application;
-	}
-	
 	@Override
 	public IAccessPolicy getAccessPolicy(String domainName)
 			throws AuthenticationLoginException {
@@ -45,7 +33,7 @@ public class AuthInfoLdap implements IAuthInfo, ILdapConstants {
 	public IRelation getProfileRelation(String domainName, String context,
 			String name) throws AuthenticationLoginException {
 		Relation relation = null;
-		String application = getApplication(context);
+		String application = ldap.getApplication(context);
 		Entry profile = ldap.getProfile(domainName, application, name);
 		if ( profile != null ) {
 			relation = new Relation(name);
@@ -77,7 +65,7 @@ public class AuthInfoLdap implements IAuthInfo, ILdapConstants {
 	public IRelation getUserRelation(String domainName, String context,
 			String name) throws AuthenticationLoginException {
 		Relation relation = null;
-		String application = getApplication(context);
+		String application = ldap.getApplication(context);
 		Entry user = ldap.getDomainApplicationUser(domainName, application, name);
 		if ( user != null ) {
 			relation = new Relation(name);
@@ -101,7 +89,7 @@ public class AuthInfoLdap implements IAuthInfo, ILdapConstants {
     	if ( ! ldap.hasDomain( domainName ) ) {
     		throw new AuthenticationLoginException( "aon_login_err_2", domainName );
     	}
-    	String application = getApplication(context);
+    	String application = ldap.getApplication(context);
 		return ldap.hasUser(domainName, application, name);
 	}
 	
