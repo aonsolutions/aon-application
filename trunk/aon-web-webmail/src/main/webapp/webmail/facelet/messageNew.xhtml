@@ -81,40 +81,35 @@
 							
 							<ui:include src="/webmail/facelet/modal/showEmails.xhtml" />
 							
-						</aon:panelGrid>
-							
-					</aon:div>
-					
-					<aon:div>
-						<aon:panelGrid columns="2" cellpadding="3" cellspacing="0">
-							
-								<aon:div>
-									<aon:outputLabel for="NewMail_Subject" styleClass="aon-text-bold"
-									value="#{appBundle.aon_webmail_subject}: " />
-								</aon:div>										
-								<aon:inputText id="NewMail_Subject"
-									size="130"
-									value="#{message.subject}"/>			
+							<aon:div>
+								<aon:outputLabel for="NewMail_Subject" styleClass="aon-text-bold"
+								value="#{appBundle.aon_webmail_subject}: " />
+							</aon:div>										
+							<aon:inputText id="NewMail_Subject"
+								size="130"
+								value="#{message.subject}"/>			
 							
 						</aon:panelGrid>
 					</aon:div>
 					
 					<aon:div>
-						<aon:panelGrid columns="2" cellpadding="3" cellspacing="0">
-								<t:inputFileUpload id="attach_file"
-									value="#{message.inputFile}"
-									accept="*/*" size="45"
-									storage="file"/>
-								<h:commandButton value="#{bundle.aon_fileupload_insert}"
-									reRender="attachDataTable"
-									styleClass="aon-icon-attach aon-finding-toolbar-item"
-									actionListener="#{message.fileUploaded}"/>
+						<aon:panelGrid columns="2" cellpadding="0" cellspacing="0" >
+
+							<t:inputFileUpload id="attach_file"
+								value="#{message.inputFile}"
+								accept="*/*" size="45"
+								storage="file"/>
+							<h:commandButton value="#{bundle.aon_fileupload_insert}"
+								reRender="attachDataTable"
+								styleClass="aon-icon-attach aon-finding-toolbar-item"
+								actionListener="#{message.fileUploaded}"/>
+								
 						</aon:panelGrid>
 					</aon:div>
 							
 					
 					<!-- Message Attach -->
-					<aon:div styleClass="aon-form-group">
+					<aon:div styleClass="aon-form-group" style="width:98%">
 						<aon:dataTable id="attachDataTable" 
 							value="#{message.files}" 
 							var="attachment"
@@ -136,68 +131,18 @@
 					</aon:div>	
 
 					<!-- Message Body -->
-					<aon:panelGroup scrollWidth="100%">
-							<aon:inputRichText value="#{message.content}" />
-					</aon:panelGroup>
+					<aon:div style="width:98%">
+						<aon:panelGroup scrollWidth="90%">
+								<aon:inputRichText value="#{message.content}" />
+						</aon:panelGroup>
+					</aon:div>
 
 				</aon:panelGroup>
 				
 			</aon:panelGrid>
 
 		</aon:form>
-		<!-- 
-		<aon:form id="attachUpload" target="list" enctype="multipart/form-data">
-			<ice:panelPopup styleClass="aon-popup-"
-				modal="true"
-				rendered="true"
-				visible="#{inputFile.showAddAttachPanelPopup}"
-				style="z-index:999; top: 200px; left: 200px; width: 300px; position:absolute; background: #FFFFFF;">>
-			
-				<f:facet name="header">
-					<h:panelGrid id="popupAttach" width="100%" cellpadding="0" cellspacing="0" columns="2" 
-					columnClasses="popupIcon,aon-text-right popupButton">
-						<aon:outputText value="#{appBundle.aon_webmail_addattach}"/>
-						<aon:commandButton id="popupAttachClose" type="button" 
-							image="/images/icefaces/popupclose.gif"
-							actionListener="#{inputFile.closeAddAttachPanelPopup}"
-							style="cursor: pointer;"/>
-					</h:panelGrid>
-				</f:facet>
-			
-				<f:facet name="body">
-					<aon:div>
-					<aon:div style="border:#ccc 1px solid;padding:0 10px 10px 10px;width:90%;">
-						<h:panelGrid id="popupAttachBody" width="100%" cellpadding="0" cellspacing="0" columns="1">
-							<aon:div styleClass="aon-form-group-title">	
-								<aon:outputText value="#{appBundle.aon_webmail_attach_file}" />	
-							</aon:div>
-							<aon:panelGrid cellpadding="0" cellspacing="0" border="0" columns="1">	
-								<ice:inputFile 
-									uniqueFolder="true"
-									uploadDirectoryAbsolute="true"
-									uploadDirectory="/tmp" 
-									progressListener="#{inputFile.progress}"
-									actionListener="#{inputFile.action}"
-									style="margin:0;padding:0;width:420px;overflow:hidden;"/>
-							</aon:panelGrid>
-						</h:panelGrid>
-					</aon:div>
-					<aon:div style="background-color:#f2f2f2;text-align:right;padding:5px 10px; margin-top:5px;">
-						<aon:outputText value="#{appBundle.aon_webmail_endattach}" />	
-						<aon:commandButton  type="button" 
-							image="/images/icefaces/finalizar.png"
-							id="popupAttachClose2" 
-							actionListener="#{inputFile.closeAddAttachPanelPopup}"
-							style="cursor: pointer;border:0;">
-						</aon:commandButton>
-					</aon:div>
-						</aon:div>
-				</f:facet>
-			</ice:panelPopup>
-
-		</aon:form>
-		 -->
-
+		
 	</ui:define>
 </ui:composition>
 

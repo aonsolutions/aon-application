@@ -195,6 +195,7 @@ public class MessageController implements IAonFileListener{
 	    			fos.flush();
 	    			fos.close();
 	    			af.setFile(f);
+	    	    	af.addAonFileListener(this);
 	       			newMsgFileList.add(af);
 				} catch (IOException e) {
 					AonUtil.addErrorMessage(e.getMessage());
