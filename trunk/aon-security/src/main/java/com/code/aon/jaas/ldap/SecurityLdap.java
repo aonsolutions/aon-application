@@ -4,7 +4,6 @@ import java.util.Properties;
 
 import javax.naming.NamingException;
 
-import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -196,7 +195,8 @@ public class SecurityLdap implements ILdapConstants {
 	private IDataSourceMetaData getDataSourceMetaData( Entry entry ) {
 		DataSourceMetaData dataSource = new DataSourceMetaData();
 		dataSource.setUsername( entry.getAsString("uid") );
-		dataSource.setPassword( entry.getAsString("userPassword") );
+		byte[] password = entry.getAsByteArray("userPassword");
+		dataSource.setPassword( new String(password) );
 		dataSource.setConnectionURL( entry.getAsString("labeledURI") );
 		dataSource.setDriverClass( entry.getAsString("driverClassName") );
 		return dataSource;
@@ -206,7 +206,7 @@ public class SecurityLdap implements ILdapConstants {
 		Entry domainApplication = getDomainApplication(domainName, application);
 		if ( domainApplication != null ) {
 			String dn = domainApplication.getAsString(DATA_SOURCE_ATTRIBUTE);
-			if (! StringUtils.isEmpty(dn) ) {
+			if ( dn != null ) {
 				LdapSession session = getLdapSession();
 				String objectClass = getObjectClass(DB_CONNECTION_OBJECT_CLASS);
 				Entry entry = session.get( dn, objectClass );
