@@ -16,6 +16,8 @@ public interface ILdapConstants {
 	
 	String PROFILES_DN = "ou=profiles";
 	
+	String BDS_DN = "ou=bds";
+	
 	String APPLICATION_OBJECT_CLASS = "aonApplication";
 
 	String DOMAIN_OBJECT_CLASS = "aonDomain";
@@ -28,6 +30,8 @@ public interface ILdapConstants {
 	
 	String ACCESS_POLICY_OBJECT_CLASS = "aonAccessPolicy";
 	
+	String DB_CONNECTION_OBJECT_CLASS = "aonDBConnection";
+	
 	String USER_OBJECT_CLASS = "aonUser";
 	
 	String PROFILE_OBJECT_CLASS = "aonProfile";
@@ -35,5 +39,7 @@ public interface ILdapConstants {
 	String USER_PASSWORD_ATTRIBUTE = "userPassword";
 	
 	String MEMBER_ATTRIBUTE = "member";
+	
+	String DATA_SOURCE_ATTRIBUTE = "dataSource";
 	
 }
