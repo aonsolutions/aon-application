@@ -42,7 +42,7 @@
 					immediate="#{true}"
 					actionListener="#{article.onSelect}"
 					event="onclick"
-					reRender="#{dataTable},detail_panel" />
+					action="article_category_form" />
 				<f:facet name="header">
 					<aon:outputText value="#{appBundle.article_alias}"/>
 				</f:facet>
@@ -52,7 +52,7 @@
 			<aon:column>
 				<a4j:support 
 					immediate="#{true}"
-					reRender="#{dataTable},detail_panel"
+					action="article_category_form"
 					actionListener="#{article.onSelect}"
 					event="onclick" />
 				<f:facet name="header">
