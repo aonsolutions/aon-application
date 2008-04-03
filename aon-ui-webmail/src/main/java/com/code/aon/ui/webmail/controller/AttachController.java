@@ -46,7 +46,7 @@ public class AttachController {
 	public List<SelectItem> getAttachmentsDrop() throws ManagerBeanException, ExpressionException, WebmailException {
 		List<SelectItem> types = new LinkedList<SelectItem>();
 		for (AonAttachment aonAttachment : getAttachments()) {
-			String name = aonAttachment.getFileName()+" &lt;"+aonAttachment.getFileSize()+"&gt;";
+			String name = aonAttachment.getFileName()+" ("+aonAttachment.getFileSize()+")";
 			types.add(new SelectItem(aonAttachment.getPosition()-1, name));
 		}
 		return types;

@@ -279,10 +279,12 @@
 							
 						</aon:panelGrid>
 						<!-- Message Body -->
-						<aon:panelGroup styleClass="aon-box" >
-							<iframe src="#{webmail.context}/webmail/contentIframe.jsp?id=#{webmail.millis}" width="99%" height="430" frameborder="0">
-							</iframe>
-						</aon:panelGroup>
+						<aon:div style="width:98%">
+							<aon:panelGroup styleClass="aon-box" >
+								<iframe src="#{webmail.context}/webmail/contentIframe.jsp?id=#{webmail.millis}" width="99%" height="430" frameborder="0">
+								</iframe>
+							</aon:panelGroup>
+						</aon:div>
 					</aon:div>
 				</aon:panelGroup>
 			</aon:panelGrid>

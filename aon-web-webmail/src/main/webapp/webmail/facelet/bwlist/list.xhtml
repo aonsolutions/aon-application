@@ -34,21 +34,17 @@
 							action="folder"
 							styleClass="aon-finding-toolbar-item aon-icon-cancel">
 						</aon:commandButton>									
-						<aon:confirmButton id="save"
+						<aon:commandButton id="save"
 							value="#{appBundle.aon_webmail_black_white_list_save}" 
 							styleClass="aon-finding-toolbar-item aon-icon-accept"
-							confirmTitle="Confirmation Dialog" 
-							confirmMessage="#{appBundle.aon_webmail_black_white_list_save}"
-							confirmActionListener="#{blacklist.onSave}"
-							confirmAction="blacklist"
+							actionListener="#{blacklist.onSave}"
+							reRender="mainData,listData"
 							accesskey="#{appBundle.aon_webmail_black_white_list_save}"/>
-						<aon:confirmButton id="load"
+						<aon:commandButton id="load"
 							value="#{appBundle.aon_webmail_black_white_list_reload}" 
 							styleClass="aon-finding-toolbar-item aon-icon-cancel"
-							confirmTitle="Confirmation Dialog" 
-							confirmMessage="#{appBundle.aon_webmail_black_white_list_reload}"
-							confirmActionListener="#{blacklist.onLoad}"
-							confirmAction="blacklist"
+							actionListener="#{blacklist.onLoad}"
+							reRender="mainData,listData"
 							accesskey="#{appBundle.aon_webmail_black_white_list_reload}"/>
 						<aon:commandButton
 							id="addWhiteList"
@@ -56,7 +52,6 @@
 							styleClass="aon-finding-toolbar-item aon-icon-white-list"
 							title="#{appBundle.aon_webmail_add_white_list}"
 							onclick="javascript:Richfaces.showModalPanel('addBlackWhiteListModalPanel',{width:350, top:100})"
-							action="blacklist"
 							actionListener="#{blacklist.openNewWhitePanelPopup}">
 						</aon:commandButton>
 						
@@ -66,7 +61,6 @@
 							styleClass="aon-finding-toolbar-item aon-icon-black-list"
 							title="#{appBundle.aon_webmail_add_black_list}"
 							onclick="javascript:Richfaces.showModalPanel('addBlackWhiteListModalPanel',{width:350, top:100})"
-							action="blacklist"
 							actionListener="#{blacklist.openNewBlackPanelPopup}" >
 						</aon:commandButton>
 						
@@ -77,7 +71,7 @@
 			</aon:div>
 					
 			<aon:panelGroup>
-				<aon:panelGrid columns="2" dir="true" style="margin:1em;"
+				<aon:panelGrid id="mainData" columns="2" dir="true" style="margin:1em;"
 					cellpadding="0" cellspacing="0">
 
 					<aon:outputLabel for="blacklist_score"
@@ -104,7 +98,7 @@
 			</aon:panelGroup>
 						
 					
-			<aon:panelGrid columns="2" cellpadding="0" cellspacing="10" styleClass="aon-panelGrid-formatting">
+			<aon:panelGrid id="listData" columns="2" cellpadding="0" cellspacing="10" styleClass="aon-panelGrid-formatting">
 				<aon:div styleClass="aon-group">
 					<aon:div styleClass="aon-group-title">
 						<aon:outputText value="#{appBundle.aon_webmail_blacklist_white}"/>
