@@ -122,9 +122,10 @@
     <!-- ===================================================================== -->
 
 	<target name="clean">
-	    <delete dir="${build.dir}" />
-	    <delete dir="${mgr.dist.dir}" />
-	    <delete dir="${client.dist.dir}" />
+	    <delete dir="${build.dir}" quiet="true" />
+	    <delete dir="${mgr.dist.dir}" quiet="true" />
+	    <delete dir="${client.dist.dir}" quiet="true" />
+		<delete dir="${ldap.dir}" quiet="true" />
 	</target>
 
 	<!-- ===================================================================== -->
@@ -147,6 +148,12 @@
 	    </copy>
 	</target>
 
+	<!-- Copy everything. -->
+	<target name="copy.ldap" description="Copy all aditional files." depends="prepare">
+		<copy file="${resources.dir}/com/code/aon/jaas/client/ast/core/applications_digester.xml"
+			tofile="${build.dir}/com/code/aon/jaas/client/ast/core/applications_digester.xml"/>
+	</target>
+	
     <!-- COMPILE-VALVE -->
 	<target name="compile-valve" depends="prepare" >
 
@@ -219,7 +226,7 @@
 	</target>
 
 	<!-- COMPILE FOR JBoss (LDAP) -->
-	<target name="compile-jboss-ldap" description="Compile for JBoss (LDAP)" depends="prepare">
+	<target name="compile-jboss-ldap" description="Compile for JBoss (LDAP)" depends="copy.ldap">
 	    <javac destdir="${build.dir}"
 	           optimize="${javac.optimize}"
 	           debug="true"
@@ -231,9 +238,11 @@
 			   failonerror="${javac.fail.onerror}">
 			<src path="${src.dir}"/>
 			<classpath refid="jboss.ldap.javac.classpath"/>
+	    	<include name="com/code/aon/jaas/client/ast/core/**"/>
 	        <include name="com/code/aon/jaas/vendor/jboss/LdapLoginModule.java"/>
 	    	<include name="com/code/aon/jaas/vendor/jboss/JBossSessionManager.java"/>
 	    	<include name="com/code/aon/jaas/vendor/jboss/JBossMainDeployer.java"/>
+	    	<include name="com/code/aon/jaas/vendor/jboss/JBossLdap.java"/>
 	    </javac>
 	</target>
 
@@ -418,6 +427,12 @@
 		<copy file="${resources.dir}/META-INF/jboss-service.xml.ldap"
 			tofile="${ldap.dir}/META-INF/jboss-service.xml"/>
     	<jar jarfile="${jboss.server.home}/deploy/${mgr}-${version}.sar">
+			<fileset dir="${commons.beanutils.home}">
+				<include name="commons-beanutils.jar"/>
+			</fileset>
+       		<fileset dir="${commons.digester.home}">
+   				<include name="commons-digester-1.7.jar"/>
+   			</fileset>
     		<fileset dir="${commons.lang.home}">
 				<include name="commons-lang-2.2.jar"/>
 			</fileset>
