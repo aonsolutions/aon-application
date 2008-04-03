@@ -232,6 +232,8 @@
 			<src path="${src.dir}"/>
 			<classpath refid="jboss.ldap.javac.classpath"/>
 	        <include name="com/code/aon/jaas/vendor/jboss/LdapLoginModule.java"/>
+	    	<include name="com/code/aon/jaas/vendor/jboss/JBossSessionManager.java"/>
+	    	<include name="com/code/aon/jaas/vendor/jboss/JBossMainDeployer.java"/>
 	    </javac>
 	</target>
 
