@@ -28,8 +28,6 @@ public class JBossLdap extends ServiceMBeanSupport implements JBossLdapMBean {
 
 	private Map<String, IOption> options;
 	
-	private Properties ldapProperties;
-	
 	private SecurityLdap ldap;
 
 	protected void startService() throws Exception {
@@ -39,13 +37,13 @@ public class JBossLdap extends ServiceMBeanSupport implements JBossLdapMBean {
 			(URL) server.invoke(oname, "getConfigResource", new Object[] { null }, new String[] { String.class.getName() });
 		ApplicationsStorage as = (ApplicationsStorage) AstLoader.getInstance().parse( 0, config.openStream() );
 		this.options = as.options();
-		this.ldapProperties = new Properties();
+		Properties ldapProperties = new Properties();
 		for( IOption option : options.values() ) {
 			if ( option.getName().startsWith("java.naming") ) {
 				ldapProperties.put( option.getName(), option.getValue() );
 			}
 		}
-		ldap = new SecurityLdap( this.ldapProperties );
+		this.ldap = new SecurityLdap( ldapProperties );
 	}
 	
 	protected void stopService() throws Exception {
@@ -56,8 +54,8 @@ public class JBossLdap extends ServiceMBeanSupport implements JBossLdapMBean {
 		return options;
 	}
 
-	public Properties getLdapProperties() {
-		return ldapProperties;
+	public SecurityLdap getSecurityLdap() {
+		return ldap;
 	}
 	
 	public Properties getDSMDProperties(Principal principal) {

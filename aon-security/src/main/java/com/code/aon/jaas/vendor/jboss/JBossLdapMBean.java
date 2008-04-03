@@ -8,6 +8,7 @@ import java.util.Map;
 import java.util.Properties;
 
 import com.code.aon.jaas.client.ast.IOption;
+import com.code.aon.jaas.ldap.SecurityLdap;
 
 /**
  * MBean interface.
@@ -19,7 +20,7 @@ public interface JBossLdapMBean extends org.jboss.system.ServiceMBean {
 
 	Map<String, IOption> getOptions();
 	
-	Properties getLdapProperties();
+	SecurityLdap getSecurityLdap();
 	
 	Properties getDSMDProperties(Principal principal);
 	

@@ -1,7 +1,6 @@
 package com.code.aon.jaas.auth;
 
 import java.util.List;
-import java.util.Properties;
 
 import com.code.aon.jaas.auth.session.AuthenticationLoginException;
 import com.code.aon.jaas.client.ast.IAccessPolicy;
@@ -16,8 +15,8 @@ public class AuthInfoLdap implements IAuthInfo, ILdapConstants {
 
 	private SecurityLdap ldap;
 	
-	public AuthInfoLdap(Properties ldapProperties) {
-		this.ldap = new SecurityLdap(ldapProperties);
+	public AuthInfoLdap(SecurityLdap ldap) {
+		this.ldap = ldap;
 	}
 	
 	@Override

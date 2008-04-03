@@ -126,6 +126,31 @@ public class LdapSession {
 		return sc;
 	}
 	
+	private String getBase( String base ) throws NamingException {
+		String name = dc.getNameInNamespace();
+		if ( base.endsWith(name) ) {
+			return base.substring(0, base.length()-name.length()-1 );
+		}
+		return base;
+	}
+	
+	private Entry getEntry( String base, SearchResult sr ) throws NamingException {
+		String name = sr.getName();
+		if (! StringUtils.isEmpty(base) ) {
+			name += ',' + base;
+		}
+		Entry entry = new Entry(name);
+
+		Attributes at = sr.getAttributes();
+		NamingEnumeration<? extends Attribute> ane = at.getAll();
+		while (ane.hasMore()) {
+			Attribute attribute = ane.next();
+			String attrType = attribute.getID();
+			entry.put(attrType, getValues(attribute));
+		}
+		return entry;
+	}
+	
 	public List<Entry> search(String base, String filter, Scope scope, String ... attributes) {
 		List<Entry> results = new ArrayList<Entry>();
 		try {
@@ -133,21 +158,7 @@ public class LdapSession {
 			NamingEnumeration<SearchResult> ne = dc.search(base, filter, sc);
 			while (ne.hasMore()) {
 				SearchResult sr = ne.next();
-
-				String name = sr.getName();
-				if (! StringUtils.isEmpty(base) ) {
-					name += ',' + base;
-				}
-				Entry entry = new Entry(name);
-
-				Attributes at = sr.getAttributes();
-				NamingEnumeration<? extends Attribute> ane = at.getAll();
-				while (ane.hasMore()) {
-					Attribute attribute = ane.next();
-					String attrType = attribute.getID();
-					entry.put(attrType, getValues(attribute));
-				}
-				results.add(entry);
+				results.add( getEntry(base, sr) );
 			}
 		} catch (InvalidSearchFilterException isfe) {
 			LOGGER.error("Search Filter Invalid: " + filter);
@@ -163,7 +174,35 @@ public class LdapSession {
 
 		return results;
 	}
-		
+
+	private Entry get(String base, String filter, Scope scope, String ... attributes) {
+		Entry entry = null;
+		try {
+			SearchControls sc = getSearchControls( scope, attributes );
+			NamingEnumeration<SearchResult> ne = dc.search(getBase(base), filter, sc);
+			while (ne.hasMore()) {
+				SearchResult sr = ne.next();
+				if ( entry == null ) {
+					entry = getEntry(base, sr);					
+				} else {
+					return null;
+				}
+			}
+		} catch (NamingException e) {
+			LOGGER.error("Error: " + e.getMessage(), e);
+		}
+
+		return entry;
+	}
+
+	public Entry get(String base, String filter, String ... attributes) {
+		return this.get(base, filter, Scope.OBJECT_SCOPE, attributes);
+	}
+	
+	public Entry searchOne(String base, String filter, String ... attributes) {
+		return this.get(base, filter, Scope.ONELEVEL_SCOPE, attributes);
+	}
+	
 	public List<Entry> search(String base, String filter, String ... attributes) {
 		return this.search(base, filter, Scope.ONELEVEL_SCOPE, attributes);
 	}
