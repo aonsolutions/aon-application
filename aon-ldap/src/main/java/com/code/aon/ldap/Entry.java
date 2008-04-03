@@ -26,5 +26,21 @@ public class Entry extends HashMap<String,Object> {
 		this.dn = dn;
 	}
 
+	public String getAsString( String key ) {
+		return (String) get(key);
+	}
+
+	public Integer getAsInteger( String key ) {
+		return (Integer) get(key);
+	}
+
+	public byte[] getAsByteArray( String key ) {
+		return (byte[]) get(key);
+	}
+
+	public Boolean getAsBoolean( String key ) {
+		return (Boolean) get(key);
+	}
+	
 }
 

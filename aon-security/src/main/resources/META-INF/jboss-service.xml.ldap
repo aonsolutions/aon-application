@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<server>
+
+  <mbean code="com.code.aon.jaas.vendor.jboss.JBossSessionManager"
+		name="jboss.admin:service=AonSessionManager">         
+		<attribute name="ConfigResource">file:/home/COMMON-RESOURCES/aon.workspace/ldap.properties</attribute>
+		<depends>jboss.jmx:alias=jmx/rmi/RMIAdaptor</depends>
+  </mbean>
+
+</server>

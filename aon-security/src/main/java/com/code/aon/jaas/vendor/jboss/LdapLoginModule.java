@@ -45,8 +45,4 @@ public class LdapLoginModule extends JBossLoginModule {
         this.authInfo = new AuthInfoLdap( this.ldapProperties );
 	}
 
-	@Override
-	protected void validateLoggedUsers() throws LoginException {
-	}
-	
 }

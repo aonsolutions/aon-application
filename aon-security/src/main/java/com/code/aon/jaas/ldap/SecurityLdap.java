@@ -8,6 +8,8 @@ import javax.naming.NamingException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import com.code.aon.jaas.client.ast.IAccessPolicy;
+import com.code.aon.jaas.client.ast.core.AccessPolicy;
 import com.code.aon.ldap.DistinguishedName;
 import com.code.aon.ldap.Entry;
 import com.code.aon.ldap.LdapSession;
@@ -52,17 +54,25 @@ public class SecurityLdap implements ILdapConstants {
 	private String getAndExpression( String expression1, String expression2 ) {
 		return "(&" + expression1 + expression2 + ")";
 	}
+
+	private DistinguishedName getDomainDN( String domainName ) {
+		return new DistinguishedName( getCN(domainName), DOMAINS_DN );
+	}
+	
+	private DistinguishedName getDomainApplicationDN( String domainName, String application ) {
+		return new DistinguishedName( getCN(application), APPLICATIONS_DN, getCN(domainName), DOMAINS_DN );
+	}
 	
 	private DistinguishedName getDomainApplicationUserDN( String domainName, String application ) {
-		return new DistinguishedName( USERS_DN, getCN(application), APPLICATIONS_DN, getCN(domainName), DOMAINS_DN );
+		return new DistinguishedName( USERS_DN, getDomainApplicationDN(domainName, application) );
 	}
 
 	private DistinguishedName getUserDN( String domainName ) {
-		return new DistinguishedName( USERS_DN, getCN(domainName), DOMAINS_DN );
+		return new DistinguishedName( USERS_DN, getDomainDN(domainName) );
 	}
 
 	private DistinguishedName getDomainApplicationProfileDN( String domainName, String application ) {
-		return new DistinguishedName( PROFILES_DN, getCN(application), APPLICATIONS_DN, getCN(domainName), DOMAINS_DN );
+		return new DistinguishedName( PROFILES_DN, getDomainApplicationDN(domainName, application) );
 	}
 
 	private DistinguishedName getProfileDN( String application ) {
@@ -134,6 +144,25 @@ public class SecurityLdap implements ILdapConstants {
 			profile = getDomainApplicationProfile(domainName, application, profileName);
 		}
 		return profile;
+	}
+
+	private IAccessPolicy getAccessPolicy( Entry entry ) {
+		AccessPolicy accessPolicy = new AccessPolicy();
+		accessPolicy.setId(entry.getAsString("cn"));
+		accessPolicy.setExceptionThrowableIfMaximumExceeded(entry.getAsBoolean("exceptionThrowableIfMaximumExceeded"));
+		accessPolicy.setMaxAllowedUsers(entry.getAsInteger("maxAllowedUsers"));
+		accessPolicy.setMaxDefinedUsers(entry.getAsInteger("maxDefinedUsers"));
+		accessPolicy.setMaxSessions4User(entry.getAsInteger("maxSessions4User"));
+		return accessPolicy;
+	}
+	
+	public IAccessPolicy getAccessPolicy( String domainName ) {
+		LdapSession session = getLdapSession();
+		String objectClass = getObjectClass(ACCESS_POLICY_OBJECT_CLASS);
+		DistinguishedName dn = getDomainDN(domainName);
+		List<Entry> entries = session.search( dn.toString(), objectClass );
+		session.close();
+		return ( (entries != null) && (entries.size() == 1)) ? getAccessPolicy(entries.get(0)) : null;
 	}
 	
 }

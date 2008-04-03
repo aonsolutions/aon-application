@@ -9,6 +9,7 @@
     <property name="src.dir" value="src/main/java" />
 	<property name="resources.dir" value="src/main/resources" />
 	<property name="build.dir" value="${java.io.tmpdir}/classes/security" />
+	<property name="ldap.dir" value="${java.io.tmpdir}/ldap" />
 	<property name="mgr.dist.dir" value="dist" />
 	<property name="client.dist.dir" value="/JAVA/aon-security-${version}" />
 	<property name="templates.dir" value="templates" />
@@ -218,7 +219,7 @@
 	</target>
 
 	<!-- COMPILE FOR JBoss (LDAP) -->
-	<target name="compile-jboss-ldap" description="Compile for JBoss (LDAP)">
+	<target name="compile-jboss-ldap" description="Compile for JBoss (LDAP)" depends="prepare">
 	    <javac destdir="${build.dir}"
 	           optimize="${javac.optimize}"
 	           debug="true"
@@ -400,7 +401,7 @@
 	<!-- DEPLOY ON JBOSS 4.x (LDAP)											   -->
 	<!-- ===================================================================== -->
 	<target name="jboss-4.x.ldap.sar" description="Builds all jar files." 
-			depends="prepare, compile-jboss-ldap">
+			depends="compile-jboss-ldap">
 	    <!-- Build aon-security-mgr.jar -->
 	    <jar jarfile="${mgr.dist.dir}/${mgr}-${version}.jar">
 	      <fileset dir="${build.dir}">
@@ -411,6 +412,9 @@
   	      	<exclude name="com/code/aon/jaas/vendor/tomcat/**" />
 	      </fileset>
 	    </jar>
+		<mkdir dir="${ldap.dir}" />
+		<copy file="${resources.dir}/META-INF/jboss-service.xml.ldap"
+			tofile="${ldap.dir}/META-INF/jboss-service.xml"/>
     	<jar jarfile="${jboss.server.home}/deploy/${mgr}-${version}.sar">
     		<fileset dir="${commons.lang.home}">
 				<include name="commons-lang-2.2.jar"/>
@@ -420,6 +424,9 @@
 			</fileset>
 			<fileset dir="${mgr.dist.dir}">
 				<include name="${mgr}-${version}.jar"/>
+			</fileset>
+			<fileset dir="${ldap.dir}">
+				<include name="**/*.xml"/>
 			</fileset>
 	    </jar>
 	</target>
