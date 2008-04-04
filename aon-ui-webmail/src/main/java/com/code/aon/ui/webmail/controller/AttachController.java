@@ -1,8 +1,5 @@
 package com.code.aon.ui.webmail.controller;
 
-import java.io.BufferedInputStream;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.LinkedList;
@@ -12,7 +9,6 @@ import java.util.zip.ZipOutputStream;
 
 import javax.faces.model.SelectItem;
 import javax.mail.MessagingException;
-import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 
 import com.code.aon.common.ManagerBeanException;
