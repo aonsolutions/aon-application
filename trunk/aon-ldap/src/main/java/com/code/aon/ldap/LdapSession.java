@@ -106,22 +106,6 @@ public class LdapSession {
 		return result;
 	}
 
-	private Object getValues(Attribute attribute) throws NamingException {
-		NamingEnumeration<?> values = attribute.getAll();
-		DirContext syntax = null;
-		try {
-			syntax = attribute.getAttributeSyntaxDefinition();
-		} catch (NamingException e) {
-			LOGGER.debug(e.getMessage(), e);
-		}
-		List<Object> list = new ArrayList<Object>();
-		while (values.hasMore()) {
-			Object value = values.nextElement();
-			list.add(convertValue(value, syntax));
-		}
-		return (list.isEmpty()) ? null : list;
-	}
-
 	private SearchControls getSearchControls(Scope scope, String[] attributes) {
 		SearchControls sc = new SearchControls();
 		sc.setSearchScope(scope.getScope());
@@ -142,6 +126,22 @@ public class LdapSession {
 		}
 		return base;
 	}
+	
+	private void addAttribute( Entry entry, Attribute attribute ) throws NamingException {
+		String name = attribute.getID();
+		NamingEnumeration<?> values = attribute.getAll();
+		DirContext syntax = null;
+		try {
+			syntax = attribute.getAttributeSyntaxDefinition();
+		} catch (NamingException e) {
+			LOGGER.debug(e.getMessage(), e);
+		}
+		List<Object> list = new ArrayList<Object>();
+		while (values.hasMore()) {
+			Object value = values.nextElement();
+			entry.put(name, convertValue(value, syntax));
+		}
+	}
 
 	private Entry getEntry(String base, SearchResult sr) throws NamingException {
 		String name = sr.getName();
@@ -154,8 +154,7 @@ public class LdapSession {
 		NamingEnumeration<? extends Attribute> ane = at.getAll();
 		while (ane.hasMore()) {
 			Attribute attribute = ane.next();
-			String attrType = attribute.getID();
-			entry.put(attrType, getValues(attribute));
+			addAttribute( entry, attribute );
 		}
 		return entry;
 	}
