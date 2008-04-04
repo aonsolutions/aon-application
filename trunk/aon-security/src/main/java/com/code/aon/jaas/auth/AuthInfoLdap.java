@@ -2,6 +2,8 @@ package com.code.aon.jaas.auth;
 
 import java.util.List;
 
+import org.apache.commons.lang.ArrayUtils;
+
 import com.code.aon.jaas.auth.session.AuthenticationLoginException;
 import com.code.aon.jaas.client.ast.IAccessPolicy;
 import com.code.aon.jaas.client.ast.IRelation;
@@ -55,7 +57,8 @@ public class AuthInfoLdap implements IAuthInfo, ILdapConstants {
 		Entry user = ldap.getUser(domainName, name);
 		if ( user != null ) {
 			byte[] password = (byte[]) user.get(USER_PASSWORD_ATTRIBUTE);
-			return new String( password );
+			int offset = ArrayUtils.indexOf( password, (byte) '}' ) + 1;
+			return new String( password, offset, password.length-offset );
 		}
 		return null;
 	}

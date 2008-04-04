@@ -75,6 +75,7 @@
     <path id="jboss.ldap.javac.classpath">
 		<path refid="jboss.javac.classpath"/>
         <pathelement path="${aon.ldap.home}/aon.ldap-0.5.jar"/>		
+    	<pathelement path="${commons.lang.home}/commons-lang-2.2.jar"/>
     </path>
 
     <!-- Tomcat 5.5.x Container -->
