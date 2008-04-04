@@ -1,21 +1,22 @@
 package com.code.aon.ldap;
 
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
-public class Entry extends HashMap<String,Object> { 
+public class Entry implements ILdapConstants { 
 
 	private static final long serialVersionUID = -3592232487775900337L;
 	
-	private DistinguishedName dn; 
+	private DistinguishedName dn;
+	
+	private Map<String,List<Object>> values;
 
     public Entry( String dn ) {
-        super();
         this.dn = new DistinguishedName( dn );
-    }
-
-    public Entry(Entry entry) { 
-        super( entry );
-        setDN(entry.getDN());   
+        this.values = new HashMap<String, List<Object>>();
     }
 
 	public DistinguishedName getDN() {
@@ -26,20 +27,48 @@ public class Entry extends HashMap<String,Object> {
 		this.dn = dn;
 	}
 
+	public Set<Map.Entry<String,List<Object>>> entrySet() {
+		return this.values.entrySet();
+	}
+	
+	public List<Object> get( String key ) {
+		return this.values.get(key);
+	}
+	
+	public void addObjectClass( String objectClass, String ... objectClassList ) {
+		put( OBJECT_CLASS, objectClass );
+		for( String name : objectClassList ) {
+			put( OBJECT_CLASS, name );
+		}
+	}
+	
+	public void put( String key, Object value ) {
+		List<Object> list = get(key);
+		if ( list == null ) {
+			list = new LinkedList<Object>();
+			this.values.put(key, list);
+		}
+		list.add( value );
+	}
+	
+	private Object getFirst( String key ) {
+		return get(key).get(0);
+	}
+	
 	public String getAsString( String key ) {
-		return (String) get(key);
+		return (String) getFirst(key);
 	}
 
 	public Integer getAsInteger( String key ) {
-		return (Integer) get(key);
+		return (Integer) getFirst(key);
 	}
 
 	public byte[] getAsByteArray( String key ) {
-		return (byte[]) get(key);
+		return (byte[]) getFirst(key);
 	}
 
 	public Boolean getAsBoolean( String key ) {
-		return (Boolean) get(key);
+		return (Boolean) getFirst(key);
 	}
 	
 }
