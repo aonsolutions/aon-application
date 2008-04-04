@@ -250,8 +250,11 @@
 									id="attach"
 									style="font-size: 0.9em;boder: #000 1px solid;"
 									styleClass="aon-inputText"
-									partialSubmit="true"
 									value="#{attach.attachPos}">
+									<a4j:support id="attachAjaxSupport" 
+										event="onchange" 
+										action="message"
+										 /> 
 									<f:selectItems value="#{attach.attachmentsDrop}" />
 								</aon:selectOneMenu> 
 								

@@ -243,7 +243,10 @@ color:#000;
  .aon-icon-transfer{
 	background:transparent url(images/aon-icon/aon-icon-transfer.png) scroll left center no-repeat;
   }
-
+ .aon-icon-zip{
+	background:transparent url(images/aon-icon/aon-icon-zip.png) scroll left center no-repeat;
+  }
+  
 /* otros */
 .aon-icon-agenda{
 	background:transparent url(images/aon-icon/aon-icon-agenda.png) scroll left center no-repeat;
