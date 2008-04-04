@@ -62,6 +62,8 @@
 	    
 		<ui:include src="/webmail/facelet/modal/renameFolder.xhtml" />
 	    
+	    <h:outputText value="#{tree.account}" />
+	    
 		<rich:tree nodeSelectListener="#{tree.processSelection}"
 				id="foldersTree" 
 				reRender="buttonsGrid,messageGrid" ajaxSubmitSelection="true"  switchType="ajax"

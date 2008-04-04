@@ -21,6 +21,8 @@ import com.code.aon.ui.webmail.listener.ITreeListener;
 
 public class FoldersTreeBean {
 
+	private String account = null;
+	
 	private TreeNode rootNode = null;
 
 	private AonFolder current;
@@ -46,6 +48,7 @@ public class FoldersTreeBean {
 	public void loadTree() {
 		WebMailController webMailController = (WebMailController) AonUtil
 				.getRegisteredBean(AonConstants.BEAN_WEBMAIL);
+		account = webMailController.getServer().getAccount().getEmail();
 		AonFolder folder = new AonFolder(webMailController.getServer()
 				.getRoot());
 		rootNode = new TreeNodeImpl();
@@ -106,4 +109,8 @@ public class FoldersTreeBean {
    		message.moveSelectedMessageAndMove(destinyFolder);
 	}
 
+	public String getAccount() {
+		return account;
+	}
+	
 }

@@ -44,37 +44,6 @@ public class AonServer {
     /** Creates a new instance of Server */
     public AonServer(MailAccount account){
         this.account = account;
-        try {
-            Properties mailProperties = System.getProperties();
-            if (account.isIncomingSsl()) {
-                mailProperties.setProperty("mail.imap.socketFactory.class",
-                        "javax.net.ssl.SSLSocketFactory");
-                mailProperties.setProperty("mail.imap.socketFactory.fallback",
-                        "false");
-                mailProperties.setProperty("mail.imap.port",
-                        String.valueOf(account.getIncomingPort()));
-                mailProperties.setProperty("mail.imap.socketFactory.port",
-                        String.valueOf(account.getIncomingPort()));
-            }else {
-                mailProperties.remove("mail.imap.socketFactory.class");
-                mailProperties.remove("mail.imap.socketFactory.fallback");
-                mailProperties.remove("mail.imap.port");
-                mailProperties.remove("mail.imap.socketFactory.port");
-            }
-            URLName urlName = new URLName(account.getProtocol() + "://" +
-            		account.getMailUsername() + "@" + account.getHost());
-            PasswordAuthentication pwdAuth =
-                    new PasswordAuthentication(account.getMailUsername(),
-                    		account.getPassword());
-
-            session = Session.getInstance(mailProperties);
-            session.setPasswordAuthentication(urlName, pwdAuth);
-            store = session.getStore(urlName);
-        }catch (NoSuchProviderException e) {
-        	LOGGER.log(Level.ALL,"Connection Error - No such provider for " + account.toString(),e);
-        }catch (Throwable e) {
-        	LOGGER.log(Level.ALL,"Connection Error - Misc. Exception " + account.toString(),e);
-        }
     }
     
     /**
@@ -116,21 +85,11 @@ public class AonServer {
                 mailProperties.remove("mail.imap.socketFactory.port");
             }
 
-            // connection url
-            URLName urlName = new URLName(account.getProtocol() + "://" +
-            		account.getMailUsername() + "@" + account.getHost());
-
-            // password authenticator
-            PasswordAuthentication pwdAuth =
-                    new PasswordAuthentication(account.getMailUsername(),
-                    		account.getPassword());
-
-            session = Session.getInstance(mailProperties);
-            session.setPasswordAuthentication(urlName, pwdAuth);
-
-            // finally try to connect
-            store = session.getStore(urlName);
+            URLName url = new URLName(IMAP, account.getHost(), -1, "INBOX", account.getMailUsername(),account.getPassword());
+            session = Session.getInstance(mailProperties, null);
+            store = session.getStore(url);
             store.connect();
+
             return true;
         }catch (NoSuchProviderException e) {
         	LOGGER.log(Level.ALL,"Connection Error - No such provider for " + account.toString(),e);
