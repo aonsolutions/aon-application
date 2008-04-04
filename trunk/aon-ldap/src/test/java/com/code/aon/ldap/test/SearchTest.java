@@ -15,6 +15,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import com.code.aon.ldap.Entry;
+import com.code.aon.ldap.ILdapConstants;
 import com.code.aon.ldap.LdapException;
 import com.code.aon.ldap.LdapSession;
 
@@ -73,7 +74,30 @@ public class SearchTest {
 			entry.addObjectClass("top", "aonDomain");
 			entry.put( "host", "127.0.0.1" );
 			session.add(entry);
-			session.delete(entry.getDN());
+			String newDN = "cn=borrable.es,ou=domains";
+			session.rename(entry.getDN().toString(), newDN );			
+			session.delete( newDN );
+		} catch (LdapException e) {
+			Assert.fail( e.getMessage() );
+		}
+    }
+
+	@Test
+    public void testAttributes() {
+		try {
+			Entry entry = new Entry("uid=deletable,ou=users,cn=localhost,ou=domains");
+			entry.addObjectClass("top", "person", "aonUser", "posixAccount");
+			entry.put( ILdapConstants.COMMON_NAME, "Deletable" );
+			entry.put( ILdapConstants.SURNAME, "Deletable" );
+			entry.put( "homeDirectory", "/home/deletable" );
+			entry.put( "gidNumber", 100 );
+			entry.put( "uidNumber", 100 );
+			entry.put( "description", "Mierda descripcion" );
+			session.add(entry);
+			session.addAttribute(entry.getDN(), "description", "aimar" );
+			session.replaceAttribute(entry.getDN(), "description", "tellitu" );
+			session.removeAttributes(entry.getDN(), "description" );
+			session.delete( entry.getDN() );
 		} catch (LdapException e) {
 			Assert.fail( e.getMessage() );
 		}
