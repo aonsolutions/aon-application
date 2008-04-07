@@ -9,7 +9,6 @@ import com.code.aon.cms.ArticleDocument;
 import com.code.aon.cms.ArticleDocumentDetail;
 import com.code.aon.cms.ArticleRelated;
 import com.code.aon.cms.dao.ICMSAlias;
-import com.code.aon.cms.enumeration.Templates;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;

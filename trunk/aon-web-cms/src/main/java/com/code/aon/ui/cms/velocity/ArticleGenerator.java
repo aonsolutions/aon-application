@@ -125,7 +125,7 @@ public class ArticleGenerator extends Generator {
 								CommonGenerator.getCommonGenerator().chargeContext(vu, articleCategory.getSection());
 							else
 								CommonGenerator.getCommonGenerator().chargeContext(vu, configSection);
-							ArticleCategoryHandler achandler = new ArticleCategoryHandler(articleCategoryDetail,ahlist);
+							ArticleCategoryHandler achandler = new ArticleCategoryHandler(articleCategoryDetail,values[art_type],ahlist);
 							vu.put("article_category", achandler);
 							vu.put("article_list", ahlist);
 							VelocityUtil.addMessage(" Generando list de article.", VelocityUtil.INFO);
@@ -254,7 +254,7 @@ public class ArticleGenerator extends Generator {
 					ahlist.add(ah);
 				}
 			}
-			ArticleCategoryHandler ach = new ArticleCategoryHandler(acd,ahlist);
+			ArticleCategoryHandler ach = new ArticleCategoryHandler(acd,type,ahlist);
 			return ach;
 		} catch (ManagerBeanException e) {
 			VelocityUtil.addMessage(e.getMessage(), VelocityUtil.ERROR);;
