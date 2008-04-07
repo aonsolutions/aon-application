@@ -198,6 +198,10 @@ public class ArticleController extends GridI18nController {
 		return currentType;
 	}
 	
+	public boolean isEventType() {
+		return (currentType == ArticleType.EVENTS)?true:false;
+	}
+	
 	public String getTabID0(){
 		return ArticleType.SERVICES.getName();
 	}

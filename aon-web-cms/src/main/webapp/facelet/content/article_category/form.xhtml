@@ -245,9 +245,10 @@
 											value="#{article.toI18n.subtitle}" />
 
 										<aon:outputLabel for="ArticleDetail_initDate"
-											value="#{appBundle.article_initDate}" />
+											value="#{appBundle.article_initDate}" 
+											rendered="#{article.eventType}" />
 										<aon:selectInputDate id="ArticleDetail_initDate"
-											required="true"  
+											rendered="#{article.eventType}"
 											 style="z-index:2001;margin:0;vertical-align:middle;"
 											 imageDir="#{aonConfiguration.stylePath}/images/selectInputDate/"
 											 value="#{article.to.initDate}" renderAsPopup="true"
@@ -257,8 +258,10 @@
 										</aon:selectInputDate>	
 										
 										<aon:outputLabel for="ArticleDetail_endDate"
-											value="#{appBundle.article_endDate}" />
-										<aon:selectInputDate id="ArticleDetail_endDate" 
+											value="#{appBundle.article_endDate}"
+											rendered="#{article.eventType}" />
+										<aon:selectInputDate id="ArticleDetail_endDate"
+											rendered="#{article.eventType}" 
 											 style="z-index:2001;margin:0;vertical-align:middle;"
 											 imageDir="#{aonConfiguration.stylePath}/images/selectInputDate/"
 											 value="#{article.to.endDate}" renderAsPopup="true"
