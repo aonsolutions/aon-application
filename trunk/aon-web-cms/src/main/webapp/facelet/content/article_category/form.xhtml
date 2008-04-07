@@ -211,7 +211,8 @@
 			
 										<aon:outputLabel for="ArticleDetail_publishDate"
 											value="#{appBundle.article_publishDate}" />
-										<aon:selectInputDate id="ArticleDetail_publishDate" 
+										<aon:selectInputDate id="ArticleDetail_publishDate"
+											required="true"  
 											 style="z-index:2001;margin:0;vertical-align:middle;"
 											 imageDir="#{aonConfiguration.stylePath}/images/selectInputDate/"
 											 value="#{article.to.publishDate}" renderAsPopup="true"
