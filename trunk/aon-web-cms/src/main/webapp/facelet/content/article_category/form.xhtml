@@ -243,6 +243,29 @@
 										<aon:inputText id="ArticleDetail_subtitle"
 											size="80" maxlength="255"
 											value="#{article.toI18n.subtitle}" />
+
+										<aon:outputLabel for="ArticleDetail_initDate"
+											value="#{appBundle.article_initDate}" />
+										<aon:selectInputDate id="ArticleDetail_initDate"
+											required="true"  
+											 style="z-index:2001;margin:0;vertical-align:middle;"
+											 imageDir="#{aonConfiguration.stylePath}/images/selectInputDate/"
+											 value="#{article.to.initDate}" renderAsPopup="true"
+											 popupDateFormat="#{bundle.aon_date_pattern}">
+											 <f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+													timeZone="#{timeZoneController.timeZoneId}" />
+										</aon:selectInputDate>	
+										
+										<aon:outputLabel for="ArticleDetail_endDate"
+											value="#{appBundle.article_endDate}" />
+										<aon:selectInputDate id="ArticleDetail_endDate" 
+											 style="z-index:2001;margin:0;vertical-align:middle;"
+											 imageDir="#{aonConfiguration.stylePath}/images/selectInputDate/"
+											 value="#{article.to.endDate}" renderAsPopup="true"
+											 popupDateFormat="#{bundle.aon_date_pattern}">
+											 <f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+													timeZone="#{timeZoneController.timeZoneId}" />
+										</aon:selectInputDate>	
 			
 										<aon:outputLabel for="Article_richTextEnabled"
 											value="#{appBundle.generic_page_richtext_enabled}" />

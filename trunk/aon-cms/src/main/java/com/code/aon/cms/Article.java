@@ -32,7 +32,11 @@ public class Article implements ITransferObject {
 	private Date publishDate = new Date();
 	
 	private Date expireDate;
-	
+
+	private Date initDate;
+
+	private Date endDate;
+
 	private String image;
 	
 	private String thumbnail;
@@ -144,6 +148,24 @@ public class Article implements ITransferObject {
 
 	public void setThumbnail(String thumbnail) {
 		this.thumbnail = thumbnail;
+	}
+
+	@Column(name = "init_date")
+	public Date getInitDate() {
+		return initDate;
+	}
+
+	public void setInitDate(Date initDate) {
+		this.initDate = initDate;
+	}
+
+	@Column(name = "end_date")
+	public Date getEndDate() {
+		return endDate;
+	}
+
+	public void setEndDate(Date endDate) {
+		this.endDate = endDate;
 	}
 
 
