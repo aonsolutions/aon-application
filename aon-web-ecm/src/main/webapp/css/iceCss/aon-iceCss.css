@@ -136,6 +136,16 @@ text-decoration:none;
 	color:#efefe4;
 	}
 	
+#aon-content .aon-applicationName {
+	font-weight:bold;
+	padding-top:10px;
+	padding-left:5px;
+	font-size:1.4em;
+	float:left;
+	z-Index:500px;
+	color:#efefe4 !important;
+}
+
 #aon-content #aon-header .aon-header-menu{
 	text-align:right;
 	padding:5px 1em;

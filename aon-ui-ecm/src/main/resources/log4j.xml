@@ -26,6 +26,19 @@
 		<appender-ref ref="sync-log-debug" />
 	</appender>
 
+   <appender name="SMTP" class="org.apache.log4j.net.SMTPAppender">
+     <errorHandler class="org.jboss.logging.util.OnlyOnceErrorHandler"/>
+     <param name="Threshold" value="ERROR"/>
+     <param name="To" value="ecastellano@co-de.com"/>
+     <param name="From" value="iayerbe@co-de.com"/>
+     <param name="Subject" value="JBoss Sever Errors"/>
+     <param name="SMTPHost" value="192.168.2.190"/>
+     <param name="BufferSize" value="10"/>
+     <layout class="org.apache.log4j.PatternLayout">
+       <param name="ConversionPattern" value="[%d{ABSOLUTE},%c{1}] %m%n"/>
+     </layout>
+   </appender>
+
 	<!-- ================ -->
 	<!-- Limit categories -->
 	<!-- ================ -->
@@ -50,6 +63,7 @@
 		<priority value="ALL" />
 		<appender-ref ref="console" />
 		<appender-ref ref="log-debug" />
+		<!--  appender-ref ref="SMTP" / -->
 	</root>
 
 </log4j:configuration>

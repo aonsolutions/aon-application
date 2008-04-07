@@ -220,7 +220,7 @@ public class DocumentsList implements Widget {
 			session.setAttribute( selected.getName(), selected );
 //			String js = "window.open(\"" + URL_TO_PDF+ "\", 'popup_window');"; Con URL directamente.
 //			String js = "document.forms[0].action='http://localhost:8180/aon-cr/download?selected="+ selected.getName() +"';document.forms[0].submit();";
-			String js = "popup_window = window.open('download?selected="+ selected.getName() +"','popup_window','location=0,status=1,scrollbars=0,width=200,height=50');";
+			String js = "popup_window = window.open('file.download?selected="+ selected.getName() +"','popup_window','location=0,status=1,scrollbars=0,width=200,height=50');";
 			JavascriptContext.addJavascriptCall( FacesContext.getCurrentInstance(), js ); 
 		} catch (RepositoryException e) {
 			e.printStackTrace();
