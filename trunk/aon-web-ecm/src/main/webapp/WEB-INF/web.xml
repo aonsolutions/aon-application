@@ -141,15 +141,16 @@
 		<url-pattern>*.jsp</url-pattern>
 	</filter-mapping>
 
-    <!-- BackDoorAuthentication Bean Servlet -->
-	<servlet>
-		<servlet-name>BackDoorAuthentication</servlet-name>
-		<servlet-class>com.code.aon.bridge.servlet.BackDoorAuthentication</servlet-class>
-	</servlet>
-    <servlet-mapping>
-        <servlet-name>BackDoorAuthentication</servlet-name>
-        <url-pattern>*.auth</url-pattern>
-    </servlet-mapping>
+	<!-- BackDoorAuthentication Filter -->
+	<filter>
+		<filter-name>BackDoorAuthenticationFilter</filter-name>
+		<filter-class>com.code.aon.bridge.session.BackDoorAuthenticationFilter</filter-class>
+	</filter>
+	<!-- Enables and Registers session for concurrent sessions -->
+	<filter-mapping>
+		<filter-name>BackDoorAuthenticationFilter</filter-name>
+		<url-pattern>/auth/*</url-pattern>
+	</filter-mapping>
 
 	<servlet>
 		<servlet-name>Persistent Faces Servlet</servlet-name>
@@ -207,7 +208,7 @@
     </servlet>
 	<servlet-mapping>
          <servlet-name>downloadServlet</servlet-name>
-         <url-pattern>/download</url-pattern>
+         <url-pattern>*.download</url-pattern>
     </servlet-mapping>   
 
     <!-- file upload Servlet -->

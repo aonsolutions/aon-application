@@ -5,6 +5,7 @@
 	<projects>
 		<project>aon-ui-ecm</project>
 		<project>aon-security-bridge</project>
+		<project>aon-ui-form</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>
