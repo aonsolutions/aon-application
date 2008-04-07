@@ -124,7 +124,7 @@
 		<managed-bean-scope>request</managed-bean-scope>
 	</managed-bean>
 
-	<!-- ***************** FAILED LOGIN ******************** 
+	<!-- ***************** FAILED LOGIN ******************** --> 
 	<managed-bean>
 		<managed-bean-name>failedLogin</managed-bean-name>
 		<managed-bean-class>
@@ -132,7 +132,6 @@
 		</managed-bean-class>
 		<managed-bean-scope>request</managed-bean-scope>
 	</managed-bean>
-	-->
 	
 	<!-- ************** REQUEST HANDLER ****************** -->
 	<managed-bean>
