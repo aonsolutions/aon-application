@@ -1188,40 +1188,52 @@ public interface ICMSAlias {
 	String  ARTICLE_ARTICLE_TYPE = ARTICLE_ENTRY.getAliasNames()[3];
 
 	/** 
+	* Alias value: Article_endDate
+	* Hibernate value: Article.endDate
+	*/
+	String  ARTICLE_END_DATE = ARTICLE_ENTRY.getAliasNames()[4];
+
+	/** 
 	* Alias value: Article_expireDate
 	* Hibernate value: Article.expireDate
 	*/
-	String  ARTICLE_EXPIRE_DATE = ARTICLE_ENTRY.getAliasNames()[4];
+	String  ARTICLE_EXPIRE_DATE = ARTICLE_ENTRY.getAliasNames()[5];
 
 	/** 
 	* Alias value: Article_id
 	* Hibernate value: Article.id
 	*/
-	String  ARTICLE_ID = ARTICLE_ENTRY.getAliasNames()[5];
+	String  ARTICLE_ID = ARTICLE_ENTRY.getAliasNames()[6];
 
 	/** 
 	* Alias value: Article_image
 	* Hibernate value: Article.image
 	*/
-	String  ARTICLE_IMAGE = ARTICLE_ENTRY.getAliasNames()[6];
+	String  ARTICLE_IMAGE = ARTICLE_ENTRY.getAliasNames()[7];
+
+	/** 
+	* Alias value: Article_initDate
+	* Hibernate value: Article.initDate
+	*/
+	String  ARTICLE_INIT_DATE = ARTICLE_ENTRY.getAliasNames()[8];
 
 	/** 
 	* Alias value: Article_position
 	* Hibernate value: Article.position
 	*/
-	String  ARTICLE_POSITION = ARTICLE_ENTRY.getAliasNames()[7];
+	String  ARTICLE_POSITION = ARTICLE_ENTRY.getAliasNames()[9];
 
 	/** 
 	* Alias value: Article_publishDate
 	* Hibernate value: Article.publishDate
 	*/
-	String  ARTICLE_PUBLISH_DATE = ARTICLE_ENTRY.getAliasNames()[8];
+	String  ARTICLE_PUBLISH_DATE = ARTICLE_ENTRY.getAliasNames()[10];
 
 	/** 
 	* Alias value: Article_thumbnail
 	* Hibernate value: Article.thumbnail
 	*/
-	String  ARTICLE_THUMBNAIL = ARTICLE_ENTRY.getAliasNames()[9];
+	String  ARTICLE_THUMBNAIL = ARTICLE_ENTRY.getAliasNames()[11];
 
 
 
