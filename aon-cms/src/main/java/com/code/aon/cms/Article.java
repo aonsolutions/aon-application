@@ -29,7 +29,7 @@ public class Article implements ITransferObject {
 
 	private Integer position;
 	
-	private Date publishDate;
+	private Date publishDate = new Date();
 	
 	private Date expireDate;
 	
@@ -101,7 +101,7 @@ public class Article implements ITransferObject {
 		this.articleCategory = articleCategory;
 	}
 
-	@Column(name = "publish_date")
+	@Column(name = "publish_date", nullable = false)
 	public Date getPublishDate() {
 		return publishDate;
 	}
