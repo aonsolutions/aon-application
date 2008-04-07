@@ -1,6 +1,8 @@
 package com.code.aon.ui.cms.velocity.attribute;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import com.code.aon.cms.Article;
@@ -37,6 +39,10 @@ public class ArticleHandler {
 	private String alt_thumbnail;
 	
 	private Article article;
+	
+	private String publishDate;
+
+	private String expireDate;
 
 	private ArrayList<ArticleHandler> relateds;
 
@@ -51,7 +57,15 @@ public class ArticleHandler {
 		this.alt_thumbnail = ad.getAlt_thumbnail(); 
 		this.image_info = ad.getImage_info();
 		this.image = this.article.getImage(); 
-		this.thumbnail = this.article.getThumbnail(); 
+		this.thumbnail = this.article.getThumbnail();
+		
+		SimpleDateFormat formatter = new SimpleDateFormat ("dd/MM/yyyy");
+		this.publishDate = "";
+		if (this.article.getPublishDate()!=null)
+			this.publishDate = formatter.format(this.article.getPublishDate());
+		this.expireDate = "";
+		if (this.article.getExpireDate()!=null)
+			this.expireDate = formatter.format(this.article.getExpireDate());
 		this.url = ArticleGenerator.getTemplate(this.article.getArticleType().ordinal()).getHtmlName();
 		this.url = this.url.replaceAll("%NAME%", ad.getArticle().getAlias());
 	}
@@ -90,6 +104,14 @@ public class ArticleHandler {
 
 	public String getAlt_thumbnail() {
 		return alt_thumbnail;
+	}
+
+	public String getPublishDate() {
+		return publishDate;
+	}
+
+	public String getExpireDate() {
+		return expireDate;
 	}
 
 	public ArrayList<ArticleHandler> getRelateds() {
