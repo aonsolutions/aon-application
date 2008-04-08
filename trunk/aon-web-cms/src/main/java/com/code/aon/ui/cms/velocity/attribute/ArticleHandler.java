@@ -44,6 +44,10 @@ public class ArticleHandler {
 
 	private String expireDate;
 
+	private String initDate;
+
+	private String endDate;
+
 	private ArrayList<ArticleHandler> relateds;
 
 	private ArrayList<ArticleDocumentHandler> documents;
@@ -66,6 +70,13 @@ public class ArticleHandler {
 		this.expireDate = "";
 		if (this.article.getExpireDate()!=null)
 			this.expireDate = formatter.format(this.article.getExpireDate());
+		this.initDate = "";
+		if (this.article.getInitDate()!=null)
+			this.initDate = formatter.format(this.article.getInitDate());
+		this.endDate = "";
+		if (this.article.getEndDate()!=null)
+			this.endDate = formatter.format(this.article.getEndDate());
+		
 		this.url = ArticleGenerator.getTemplate(this.article.getArticleType().ordinal()).getHtmlName();
 		this.url = this.url.replaceAll("%NAME%", ad.getArticle().getAlias());
 	}
@@ -112,6 +123,14 @@ public class ArticleHandler {
 
 	public String getExpireDate() {
 		return expireDate;
+	}
+
+	public String getInitDate() {
+		return initDate;
+	}
+
+	public String getEndDate() {
+		return endDate;
 	}
 
 	public ArrayList<ArticleHandler> getRelateds() {
