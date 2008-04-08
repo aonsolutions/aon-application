@@ -234,6 +234,10 @@ public class ArticleGenerator extends Generator {
 			criteria.addEqualExpression(bean.getFieldName(ICMSAlias.ARTICLE_ARTICLE_CATEGORY_ID), ident);
 			criteria.addEqualExpression(bean.getFieldName(ICMSAlias.ARTICLE_ARTICLE_TYPE), type);
 			criteria.addEqualExpression(bean.getFieldName(ICMSAlias.ARTICLE_ACTIVE), true);
+			Expression nullableExpr = ExpressionUtilities.getNullExpression(bean.getFieldName(ICMSAlias.ARTICLE_EXPIRE_DATE));
+            Expression greaterExpr = ExpressionUtilities.getGreaterThanOrEqualExpression(bean.getFieldName(ICMSAlias.ARTICLE_EXPIRE_DATE), new Date());
+            criteria.addExpression(ExpressionUtilities.getOrExpression(nullableExpr, greaterExpr));
+			criteria.addLessThanOrEqualExpression(bean.getFieldName(ICMSAlias.ARTICLE_PUBLISH_DATE), new Date());
 			criteria.addOrder(bean.getFieldName(ICMSAlias.ARTICLE_POSITION));
 			l = (List<ITransferObject>)bean.getList(criteria);
 			iter = l.iterator();
