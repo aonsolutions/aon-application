@@ -365,7 +365,8 @@
 
 		                    </aon:panelTab>
 
-							<aon:panelTab id="meta_tags" label="#{appBundle.article_related_list}">
+							<aon:panelTab id="meta_tags" label="#{appBundle.article_related_list}"
+								rendered="#{!article.new}">
 
 								<h:dataTable id="articleRelatedData" 
 									value="#{articleRelated.model}" var="to"
@@ -442,7 +443,8 @@
 								</h:dataTable>
 		                    </aon:panelTab>
 
-							<aon:panelTab id="files" label="#{appBundle.document_related_list}">
+							<aon:panelTab id="files" label="#{appBundle.document_related_list}"
+								rendered="#{!article.new}">
 							
 								<h:dataTable id="articleDocumentData" 
 									value="#{articleDocument.model}" var="to"
