@@ -93,7 +93,7 @@
 
 			<aon:div styleClass="aon-scroll-area">
 				<aon:div style="width:99%;">
-					<aon:panelGrid columns="4" dir="true" >
+					<aon:panelGrid columns="3" dir="true" >
 						<aon:panelGrid columns="2" dir="true" >
 
 							<aon:outputLabel for="isModularPageToGenerate"
@@ -104,20 +104,20 @@
 									value="#{generator.modularPageToGenerate}" />
 							</aon:div>
 							
-							<aon:outputLabel for="isMenuToGenerate"
-								styleClass="aon-form-input-text-label"
-								value="#{appBundle.isMenuToGenerate}" />
-							<aon:div>
-								<aon:selectBooleanCheckbox id="isMenuToGenerate" 
-									value="#{generator.menuToGenerate}" />
-							</aon:div>
-							
 							<aon:outputLabel for="isGenericToGenerate"
 								styleClass="aon-form-input-text-label"
 								value="#{appBundle.isGenericToGenerate}" />
 							<aon:div>
 								<aon:selectBooleanCheckbox id="isGenericToGenerate" 
 									value="#{generator.genericToGenerate}" />
+							</aon:div>
+							
+							<aon:outputLabel for="isArticleToGenerate"
+								styleClass="aon-form-input-text-label"
+								value="#{appBundle.isArticleToGenerate}" />
+							<aon:div>
+								<aon:selectBooleanCheckbox id="isArticleToGenerate" 
+									value="#{generator.articleToGenerate}" />
 							</aon:div>
 							
 						</aon:panelGrid>
@@ -158,14 +158,6 @@
 							<aon:div>
 								<aon:selectBooleanCheckbox id="isAlbumToGenerate" 
 									value="#{generator.albumToGenerate}" />
-							</aon:div>
-							
-							<aon:outputLabel for="isArticleToGenerate"
-								styleClass="aon-form-input-text-label"
-								value="#{appBundle.isArticleToGenerate}" />
-							<aon:div>
-								<aon:selectBooleanCheckbox id="isArticleToGenerate" 
-									value="#{generator.articleToGenerate}" />
 							</aon:div>
 							
 							<aon:outputLabel for="isDownloadsToGenerate"
