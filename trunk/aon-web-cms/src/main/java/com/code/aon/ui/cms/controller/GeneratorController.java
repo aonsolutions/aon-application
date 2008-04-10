@@ -7,6 +7,7 @@ import com.code.aon.ui.cms.Constants;
 import com.code.aon.ui.cms.util.ControllerUtil;
 import com.code.aon.ui.cms.util.FileUtil;
 import com.code.aon.ui.cms.velocity.AlbumGenerator;
+import com.code.aon.ui.cms.velocity.ArticleCalendarGenerator;
 import com.code.aon.ui.cms.velocity.ArticleGenerator;
 import com.code.aon.ui.cms.velocity.CommonGenerator;
 import com.code.aon.ui.cms.velocity.DirectAccessGenerator;
@@ -68,7 +69,8 @@ public class GeneratorController extends BasicController implements Constants {
 		}
 
 		if (isArticleToGenerate){
-			ArticleGenerator.generate();
+			//ArticleGenerator.generate();
+			ArticleCalendarGenerator.generate();
 		}
 
 		if (isDownloadsToGenerate){
