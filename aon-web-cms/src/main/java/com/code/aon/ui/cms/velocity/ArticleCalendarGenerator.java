@@ -1,0 +1,142 @@
+package com.code.aon.ui.cms.velocity;
+
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+
+import com.code.aon.cms.Article;
+import com.code.aon.cms.ArticleConfig;
+import com.code.aon.cms.ArticleDetail;
+import com.code.aon.cms.Section;
+import com.code.aon.cms.dao.ICMSAlias;
+import com.code.aon.cms.enumeration.ArticleType;
+import com.code.aon.cms.enumeration.Templates;
+import com.code.aon.common.BeanManager;
+import com.code.aon.common.IManagerBean;
+import com.code.aon.common.ITransferObject;
+import com.code.aon.common.ManagerBeanException;
+import com.code.aon.ql.Criteria;
+import com.code.aon.ql.ast.Expression;
+import com.code.aon.ql.util.ExpressionUtilities;
+import com.code.aon.ui.cms.controller.GeneratorConfigController;
+import com.code.aon.ui.cms.util.ControllerUtil;
+import com.code.aon.ui.cms.util.VelocityUtil;
+import com.code.aon.ui.cms.velocity.attribute.ArticleHandler;
+import com.code.aon.ui.cms.velocity.utils.MonthContent;
+
+public class ArticleCalendarGenerator extends Generator {
+	
+	public static void generate() {
+		List<ITransferObject> articleList;
+		List<ITransferObject> articleDetailList;
+		Map<String, MonthContent> months;
+		Iterator<MonthContent> monthIter;
+		ArrayList<ArticleDetail> dayArticleDetailList;
+		try {
+			IManagerBean articleBean = BeanManager.getManagerBean(Article.class);
+			IManagerBean articleDetailBean = BeanManager.getManagerBean(ArticleDetail.class);
+
+			Criteria articleDetailCriteria;
+			
+			Article article;
+			ArticleDetail articleDetail;
+			
+			Criteria articleCriteria = new Criteria();
+			articleCriteria.addEqualExpression(articleBean.getFieldName(ICMSAlias.ARTICLE_ACTIVE), true);
+			articleCriteria.addEqualExpression(articleBean.getFieldName(ICMSAlias.ARTICLE_ARTICLE_TYPE), ArticleType.EVENTS);
+			Expression nullableExpr = ExpressionUtilities.getNullExpression(articleBean.getFieldName(ICMSAlias.ARTICLE_EXPIRE_DATE));
+            Expression greaterExpr = ExpressionUtilities.getGreaterThanOrEqualExpression(articleBean.getFieldName(ICMSAlias.ARTICLE_EXPIRE_DATE), new Date());
+            articleCriteria.addExpression(ExpressionUtilities.getOrExpression(nullableExpr, greaterExpr));
+			articleCriteria.addLessThanOrEqualExpression(articleBean.getFieldName(ICMSAlias.ARTICLE_PUBLISH_DATE), new Date());
+			articleCriteria.addNotNullExpression(articleBean.getFieldName(ICMSAlias.ARTICLE_INIT_DATE));
+			articleCriteria.addOrder(articleBean.getFieldName(ICMSAlias.ARTICLE_INIT_DATE));
+			articleList = (List<ITransferObject>)articleBean.getList(articleCriteria);
+			months = new HashMap<String, MonthContent>();
+			for (int i=0; i < articleList.size(); i++) {
+				article = (Article)articleList.get(i);
+				articleDetailCriteria = new Criteria();
+				articleDetailCriteria.addEqualExpression(articleDetailBean.getFieldName(ICMSAlias.ARTICLE_DETAIL_ARTICLE_ID), article.getId());
+				articleDetailCriteria.addEqualExpression(articleDetailBean.getFieldName(ICMSAlias.ARTICLE_DETAIL_LANGUAGE_ID), ControllerUtil.getCurrentLanguage().getId());
+				articleDetailList = (List<ITransferObject>)articleDetailBean.getList(articleDetailCriteria);
+				if (articleDetailList.isEmpty()) {
+					VelocityUtil.addMessage(" Articulo " + article.getAlias() + " de la categoria " + article.getArticleCategory().getAlias() + " no internacionalizado.", VelocityUtil.WARN);
+				}else{
+					articleDetail = (ArticleDetail)articleDetailList.get(0);
+					Date initDate = article.getInitDate();
+					MonthContent monthContent = months.get(MonthContent.parseDateCode(initDate));
+					if (monthContent==null){
+						monthContent = MonthContent.instantiate(initDate);
+						months.put(monthContent.getCode(), monthContent);
+					}
+					monthContent.assign(initDate,articleDetail);
+					Date endDate = article.getEndDate();
+					if (endDate != null){
+						GregorianCalendar initCalendar = new GregorianCalendar();
+						initCalendar.setTime(initDate);
+						GregorianCalendar endCalendar = new GregorianCalendar();
+						endCalendar.setTime(endDate);
+						while (initCalendar.compareTo(endCalendar)<0){
+							initCalendar.add(Calendar.DATE, 1);
+							monthContent.assign(initCalendar.getTime(),articleDetail);
+						}
+					}
+				}
+			}
+			
+			Section configSection = GeneratorConfigController.currentSection(ArticleConfig.class);
+			
+			VelocityUtil vu = new VelocityUtil();
+			CommonGenerator.getCommonGenerator().init(vu);
+			vu.setTemplate_path(ControllerUtil.getCurrentVmTemplatePath());
+			vu.initialize();
+
+			CommonGenerator.getCommonGenerator().chargeContext(vu, configSection);
+
+			monthIter = months.values().iterator();
+			while (monthIter.hasNext()){
+				MonthContent monthContent = monthIter.next();
+				Object[] array = monthContent.getValues();
+				for (int i = 0;i < array.length; i++){
+					dayArticleDetailList = (ArrayList<ArticleDetail>)array[i];
+					ArrayList<ArticleHandler> ahlist = new ArrayList<ArticleHandler>();
+					if (dayArticleDetailList!=null){
+						for (int j=0; j < dayArticleDetailList.size(); j++) {
+							articleDetail = dayArticleDetailList.get(j);
+							ArticleHandler ahandler = new ArticleHandler(articleDetail);
+							ahlist.add(ahandler);
+						}
+						vu.put("article_list", ahlist);
+						vu.put("article_diary", monthContent.getCalendar());
+						GregorianCalendar calendar = new GregorianCalendar();
+						calendar.set(Calendar.YEAR, monthContent.getYear());
+						calendar.set(Calendar.MONTH, monthContent.getMonth());
+						calendar.set(Calendar.DATE, i+1);
+						String name = calendar.get(Calendar.YEAR)+"_"+calendar.get(Calendar.MONTH)+"_"+calendar.get(Calendar.DATE);
+						VelocityUtil.addMessage(" Generando diario "+name+".", VelocityUtil.INFO);
+						generate(vu, Templates.DIARY, name);
+						vu.remove("article_list");
+						vu.remove("article_diary");
+					}
+					ahlist = null;
+				}
+			}
+		
+			vu.finalize();
+			vu = null;		
+		} catch (ManagerBeanException e) {
+			VelocityUtil.addMessage(e.getMessage(), VelocityUtil.ERROR);;
+		} finally {
+			articleList = null;
+			articleDetailList = null;
+			monthIter = null;
+			months = null;
+			dayArticleDetailList = null;
+		}
+	}
+	
+}

@@ -115,7 +115,12 @@ public enum Templates implements IResourceable {
 	/**
 	 * SENDMAIL
 	 */
-	SENDMAIL;
+	SENDMAIL,
+
+	/**
+	 * DIARY
+	 */
+	DIARY;
 
 	/**
 	 * Ruta base del fichero de mensajes.

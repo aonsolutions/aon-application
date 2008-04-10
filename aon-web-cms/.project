@@ -3,9 +3,9 @@
 	<name>aon-web-cms</name>
 	<comment></comment>
 	<projects>
-		<project>aon-cms</project>
-		<project>aon-ui-form</project>
 		<project>aon-rich-components</project>
+		<project>aon-ui-form</project>
+		<project>aon-cms</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>
