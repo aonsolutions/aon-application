@@ -70,8 +70,13 @@ public enum PageType implements IResourceable {
 	/**
 	 * DOWNLOAD_CATEGORY
 	 */
-	DOWNLOAD;
-	
+	DOWNLOAD,
+
+	/**
+	 * DIARY
+	 */
+	DIARY;
+
 	/**
 	 * Ruta base del fichero de mensajes.
 	 */

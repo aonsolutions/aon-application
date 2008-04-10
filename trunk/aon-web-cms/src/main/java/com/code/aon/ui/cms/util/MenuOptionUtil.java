@@ -34,6 +34,7 @@ import com.code.aon.ql.Criteria;
 import com.code.aon.ui.cms.Constants;
 import com.code.aon.ui.cms.controller.CollectionsController;
 import com.code.aon.ui.cms.velocity.AlbumGenerator;
+import com.code.aon.ui.cms.velocity.ArticleCalendarGenerator;
 import com.code.aon.ui.cms.velocity.ArticleGenerator;
 import com.code.aon.ui.cms.velocity.DownloadsGenerator;
 import com.code.aon.ui.cms.velocity.FaqGenerator;
@@ -505,6 +506,11 @@ public class MenuOptionUtil {
 						String link = ControllerUtil.getDocumentsPath() + d.getFile();
 						return link;
 					}
+				}
+				if (pageType == PageType.DIARY) {
+					String link = Templates.DIARY.getHtmlName();
+					link = link.replaceAll("%NAME%", ArticleCalendarGenerator.DIARY_INDEX_PAGE);
+					return link;
 				}
 			} catch (ManagerBeanException e) {
 				e.printStackTrace();

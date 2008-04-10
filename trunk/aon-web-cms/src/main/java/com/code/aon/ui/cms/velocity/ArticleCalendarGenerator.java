@@ -34,11 +34,16 @@ public class ArticleCalendarGenerator extends Generator {
 		List<ITransferObject> articleList;
 		List<ITransferObject> articleDetailList;
 		Map<String, MonthContent> months;
+		List<MonthContent> monthsList;
 		Object[] monthArray;
 		ArrayList<ArticleDetail> dayArticleDetailList;
+		ArrayList<ArticleHandler> index_ahlist = new ArrayList<ArticleHandler>();
 		try {
 			IManagerBean articleBean = BeanManager.getManagerBean(Article.class);
 			IManagerBean articleDetailBean = BeanManager.getManagerBean(ArticleDetail.class);
+
+			GregorianCalendar currentDate = new GregorianCalendar();
+			GregorianCalendar diaryIndexDate = null;
 
 			Criteria articleDetailCriteria;
 			
@@ -56,6 +61,7 @@ public class ArticleCalendarGenerator extends Generator {
 			articleCriteria.addOrder(articleBean.getFieldName(ICMSAlias.ARTICLE_INIT_DATE));
 			articleList = (List<ITransferObject>)articleBean.getList(articleCriteria);
 			months = new HashMap<String, MonthContent>();
+			monthsList = new ArrayList<MonthContent>();
 			for (int i=0; i < articleList.size(); i++) {
 				article = (Article)articleList.get(i);
 				articleDetailCriteria = new Criteria();
@@ -67,10 +73,22 @@ public class ArticleCalendarGenerator extends Generator {
 				}else{
 					articleDetail = (ArticleDetail)articleDetailList.get(0);
 					Date initDate = article.getInitDate();
+					
+					if (currentDate.getTime().compareTo(initDate)>=0
+							&& index_ahlist.size()<6){
+						ArticleHandler ahandler = new ArticleHandler(articleDetail);
+						index_ahlist.add(ahandler);
+						if (diaryIndexDate == null){
+							diaryIndexDate = new GregorianCalendar();
+							diaryIndexDate.setTime(initDate);
+						}
+					}
+					
 					MonthContent monthContent = months.get(MonthContent.parseDateCode(initDate));
 					if (monthContent==null){
 						monthContent = MonthContent.instantiate(initDate);
 						months.put(monthContent.getCode(), monthContent);
+						monthsList.add(monthContent);
 					}
 					monthContent.assign(initDate,articleDetail);
 					Date endDate = article.getEndDate();
@@ -96,9 +114,23 @@ public class ArticleCalendarGenerator extends Generator {
 
 			CommonGenerator.getCommonGenerator().chargeContext(vu, configSection);
 
-			monthArray = months.values().toArray();
-			for (int pos=0; pos < monthArray.length; ++pos){
-				MonthContent monthContent = (MonthContent)monthArray[pos];
+			MonthContent currentMonthContent = null;
+			MonthContent nextMonthContent = null;
+			
+			for (int pos=0; pos < monthsList.size(); ++pos){
+				MonthContent monthContent = monthsList.get(pos);
+				
+				if (currentMonthContent == null){
+					if (monthContent.getYear() >= diaryIndexDate.get(Calendar.YEAR)){
+						if (monthContent.getMonth() >= diaryIndexDate.get(Calendar.MONTH)){
+							currentMonthContent = monthContent;
+							if ((pos+1) < monthsList.size()){
+								nextMonthContent = monthsList.get(pos+1);
+							}
+						}
+					}
+				}
+				
 				Object[] array = monthContent.getValues();
 				for (int i = 0;i < array.length; i++){
 					dayArticleDetailList = (ArrayList<ArticleDetail>)array[i];
@@ -110,11 +142,16 @@ public class ArticleCalendarGenerator extends Generator {
 							ahlist.add(ahandler);
 						}
 						vu.put("article_list", ahlist);
-						if (pos>0)
-							vu.put("previous_article_diary", ((MonthContent)monthArray[pos-1]).getCalendar());
+						if (pos>0){
+							vu.put("previous_article_diary", (monthsList.get(pos-1)).getCalendar());
+							vu.put("previous_article_diary_name", (monthsList.get(pos-1)).getMonth()+"/"+(monthsList.get(pos-1)).getYear());
+						}
 						vu.put("article_diary", monthContent.getCalendar());
-						if ((pos+1) < monthArray.length)
-							vu.put("next_article_diary", ((MonthContent)monthArray[pos+1]).getCalendar());
+						vu.put("article_diary_name", monthContent.getMonth()+"/"+monthContent.getYear());
+						if ((pos+1) < monthsList.size()){
+							vu.put("next_article_diary", (monthsList.get(pos+1)).getCalendar());
+							vu.put("next_article_diary_name", (monthsList.get(pos+1)).getMonth()+"/"+(monthsList.get(pos+1)).getYear());
+						}
 						GregorianCalendar calendar = new GregorianCalendar();
 						calendar.set(Calendar.YEAR, monthContent.getYear());
 						calendar.set(Calendar.MONTH, monthContent.getMonth());
@@ -126,11 +163,34 @@ public class ArticleCalendarGenerator extends Generator {
 						vu.remove("article_diary");
 						vu.remove("previous_article_diary");
 						vu.remove("next_article_diary");
+						vu.remove("article_diary_name");
+						vu.remove("previous_article_diary_name");
+						vu.remove("next_article_diary_name");
 					}
 					ahlist = null;
 				}
 			}
-		
+
+			
+			vu.put("article_list", index_ahlist);
+			vu.put("previous_article_diary_name", "");
+			if (currentMonthContent != null){
+				vu.put("article_diary", currentMonthContent.getCalendar());
+				vu.put("article_diary_name", currentMonthContent.getMonth()+"/"+currentMonthContent.getYear());
+			}
+			if (nextMonthContent != null){
+				vu.put("next_article_diary", nextMonthContent.getCalendar());
+				vu.put("next_article_diary_name", nextMonthContent.getMonth()+"/"+nextMonthContent.getYear());
+			}
+			VelocityUtil.addMessage(" Generando diario indice.", VelocityUtil.INFO);
+			generate(vu, Templates.DIARY, DIARY_INDEX_PAGE);
+			vu.remove("article_list");
+			vu.remove("article_diary");
+			vu.remove("next_article_diary");
+			vu.remove("article_diary_name");
+			vu.remove("previous_article_diary_name");
+			vu.remove("next_article_diary_name");
+			
 			vu.finalize();
 			vu = null;		
 		} catch (ManagerBeanException e) {
@@ -144,4 +204,6 @@ public class ArticleCalendarGenerator extends Generator {
 		}
 	}
 	
+	public static String DIARY_INDEX_PAGE = "diary_index";
+
 }
