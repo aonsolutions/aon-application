@@ -5,7 +5,6 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -35,7 +34,7 @@ public class ArticleCalendarGenerator extends Generator {
 		List<ITransferObject> articleList;
 		List<ITransferObject> articleDetailList;
 		Map<String, MonthContent> months;
-		Iterator<MonthContent> monthIter;
+		Object[] monthArray;
 		ArrayList<ArticleDetail> dayArticleDetailList;
 		try {
 			IManagerBean articleBean = BeanManager.getManagerBean(Article.class);
@@ -97,9 +96,9 @@ public class ArticleCalendarGenerator extends Generator {
 
 			CommonGenerator.getCommonGenerator().chargeContext(vu, configSection);
 
-			monthIter = months.values().iterator();
-			while (monthIter.hasNext()){
-				MonthContent monthContent = monthIter.next();
+			monthArray = months.values().toArray();
+			for (int pos=0; pos < monthArray.length; ++pos){
+				MonthContent monthContent = (MonthContent)monthArray[pos];
 				Object[] array = monthContent.getValues();
 				for (int i = 0;i < array.length; i++){
 					dayArticleDetailList = (ArrayList<ArticleDetail>)array[i];
@@ -111,7 +110,11 @@ public class ArticleCalendarGenerator extends Generator {
 							ahlist.add(ahandler);
 						}
 						vu.put("article_list", ahlist);
+						if (pos>0)
+							vu.put("previous_article_diary", ((MonthContent)monthArray[pos-1]).getCalendar());
 						vu.put("article_diary", monthContent.getCalendar());
+						if ((pos+1) < monthArray.length)
+							vu.put("next_article_diary", ((MonthContent)monthArray[pos+1]).getCalendar());
 						GregorianCalendar calendar = new GregorianCalendar();
 						calendar.set(Calendar.YEAR, monthContent.getYear());
 						calendar.set(Calendar.MONTH, monthContent.getMonth());
@@ -121,6 +124,8 @@ public class ArticleCalendarGenerator extends Generator {
 						generate(vu, Templates.DIARY, name);
 						vu.remove("article_list");
 						vu.remove("article_diary");
+						vu.remove("previous_article_diary");
+						vu.remove("next_article_diary");
 					}
 					ahlist = null;
 				}
@@ -133,7 +138,7 @@ public class ArticleCalendarGenerator extends Generator {
 		} finally {
 			articleList = null;
 			articleDetailList = null;
-			monthIter = null;
+			monthArray = null;
 			months = null;
 			dayArticleDetailList = null;
 		}

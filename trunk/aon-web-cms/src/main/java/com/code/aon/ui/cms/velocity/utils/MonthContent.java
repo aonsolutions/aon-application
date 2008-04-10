@@ -18,6 +18,8 @@ public class MonthContent {
 	private String code;
 	
 	private Object[] values;
+	
+	DiaryHandler[][] diary;
 
 	public MonthContent(int month, int year){
 		this.month = month;
@@ -101,37 +103,39 @@ public class MonthContent {
 	}
 	
 	public DiaryHandler[][] getCalendar(){
-		DiaryHandler[][] diary = new DiaryHandler[6][7];
-		for (int i = 0;i < 6; i++){
-			for (int j = 0;j < 7; j++){
-				diary[i][j] = new DiaryHandler(0,null);
+		if (diary == null){
+			diary = new DiaryHandler[6][7];
+			for (int i = 0;i < 6; i++){
+				for (int j = 0;j < 7; j++){
+					diary[i][j] = new DiaryHandler(0,null);
+				}
 			}
-		}
-		Calendar cal = Calendar.getInstance();
-		cal.set(year,month,1);
-		int dayOfWeek = cal.get(Calendar.DAY_OF_WEEK);
-		if (dayOfWeek==1)
-			dayOfWeek = 8;
-		--dayOfWeek;
-		for (int i = 0;i < dayOfWeek; i++){
-			diary[0][i] = new DiaryHandler(0,null);
-		}
-		Object[] array = this.values;
-		int week = 1;
-		for (int i = 0;i < array.length; i++){
-			if (dayOfWeek==8){
-				dayOfWeek = 1;
-				++week;
+			Calendar cal = Calendar.getInstance();
+			cal.set(year,month,1);
+			int dayOfWeek = cal.get(Calendar.DAY_OF_WEEK);
+			if (dayOfWeek==1)
+				dayOfWeek = 8;
+			--dayOfWeek;
+			for (int i = 0;i < dayOfWeek; i++){
+				diary[0][i] = new DiaryHandler(0,null);
 			}
-			if (array[i]!=null){
-				String url = Templates.DIARY.getHtmlName();
-				String name = year+"_"+month+"_"+(i+1);
-				url = url.replaceAll("%NAME%", name);
-				diary[week-1][dayOfWeek-1] = new DiaryHandler(i+1,url);
-			}else{
-				diary[week-1][dayOfWeek-1] = new DiaryHandler(i+1,null);
+			Object[] array = this.values;
+			int week = 1;
+			for (int i = 0;i < array.length; i++){
+				if (dayOfWeek==8){
+					dayOfWeek = 1;
+					++week;
+				}
+				if (array[i]!=null){
+					String url = Templates.DIARY.getHtmlName();
+					String name = year+"_"+month+"_"+(i+1);
+					url = url.replaceAll("%NAME%", name);
+					diary[week-1][dayOfWeek-1] = new DiaryHandler(i+1,url);
+				}else{
+					diary[week-1][dayOfWeek-1] = new DiaryHandler(i+1,null);
+				}
+				++dayOfWeek;
 			}
-			++dayOfWeek;
 		}
 		return diary;
 	}
