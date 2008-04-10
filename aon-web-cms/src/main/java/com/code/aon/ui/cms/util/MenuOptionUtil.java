@@ -507,15 +507,15 @@ public class MenuOptionUtil {
 						return link;
 					}
 				}
-				if (pageType == PageType.DIARY) {
-					String link = Templates.DIARY.getHtmlName();
-					link = link.replaceAll("%NAME%", ArticleCalendarGenerator.DIARY_INDEX_PAGE);
-					return link;
-				}
 			} catch (ManagerBeanException e) {
 				e.printStackTrace();
 			}
 			return null;
+		}
+		if (pageType == PageType.DIARY) {
+			String link = Templates.DIARY.getHtmlName();
+			link = link.replaceAll("%NAME%", ArticleCalendarGenerator.DIARY_INDEX_PAGE);
+			return link;
 		}
 		return null;
 	}
