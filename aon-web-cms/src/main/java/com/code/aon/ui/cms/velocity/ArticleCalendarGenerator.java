@@ -144,13 +144,16 @@ public class ArticleCalendarGenerator extends Generator {
 						vu.put("article_list", ahlist);
 						if (pos>0){
 							vu.put("previous_article_diary", (monthsList.get(pos-1)).getCalendar());
-							vu.put("previous_article_diary_name", (monthsList.get(pos-1)).getMonth()+"/"+(monthsList.get(pos-1)).getYear());
+							vu.put("previous_article_diary_month", (monthsList.get(pos-1)).getMonth());
+							vu.put("previous_article_diary_year", (monthsList.get(pos-1)).getYear());
 						}
 						vu.put("article_diary", monthContent.getCalendar());
-						vu.put("article_diary_name", monthContent.getMonth()+"/"+monthContent.getYear());
+						vu.put("article_diary_month", monthContent.getMonth());
+						vu.put("article_diary_year", monthContent.getYear());
 						if ((pos+1) < monthsList.size()){
 							vu.put("next_article_diary", (monthsList.get(pos+1)).getCalendar());
-							vu.put("next_article_diary_name", (monthsList.get(pos+1)).getMonth()+"/"+(monthsList.get(pos+1)).getYear());
+							vu.put("next_article_diary_year", (monthsList.get(pos+1)).getYear());
+							vu.put("next_article_diary_month", (monthsList.get(pos+1)).getMonth());
 						}
 						GregorianCalendar calendar = new GregorianCalendar();
 						calendar.set(Calendar.YEAR, monthContent.getYear());
@@ -163,9 +166,12 @@ public class ArticleCalendarGenerator extends Generator {
 						vu.remove("article_diary");
 						vu.remove("previous_article_diary");
 						vu.remove("next_article_diary");
-						vu.remove("article_diary_name");
-						vu.remove("previous_article_diary_name");
-						vu.remove("next_article_diary_name");
+						vu.remove("article_diary_month");
+						vu.remove("article_diary_year");
+						vu.remove("previous_article_diary_month");
+						vu.remove("previous_article_diary_year");
+						vu.remove("next_article_diary_month");
+						vu.remove("next_article_diary_year");
 					}
 					ahlist = null;
 				}
@@ -173,24 +179,29 @@ public class ArticleCalendarGenerator extends Generator {
 
 			
 			vu.put("article_list", index_ahlist);
-			vu.put("previous_article_diary_name", "");
+			vu.put("previous_article_diary_year", "");
+			vu.put("previous_article_diary_month", "");
 			if (currentMonthContent != null){
 				vu.put("article_diary", currentMonthContent.getCalendar());
-				vu.put("article_diary_name", currentMonthContent.getMonth()+"/"+currentMonthContent.getYear());
+				vu.put("article_diary_year", currentMonthContent.getYear());
+				vu.put("article_diary_month", currentMonthContent.getMonth());
 			}
 			if (nextMonthContent != null){
 				vu.put("next_article_diary", nextMonthContent.getCalendar());
-				vu.put("next_article_diary_name", nextMonthContent.getMonth()+"/"+nextMonthContent.getYear());
+				vu.put("next_article_diary_year", nextMonthContent.getYear());
+				vu.put("next_article_diary_month", nextMonthContent.getMonth());
 			}
 			VelocityUtil.addMessage(" Generando diario indice.", VelocityUtil.INFO);
 			generate(vu, Templates.DIARY, DIARY_INDEX_PAGE);
 			vu.remove("article_list");
 			vu.remove("article_diary");
 			vu.remove("next_article_diary");
-			vu.remove("article_diary_name");
-			vu.remove("previous_article_diary_name");
-			vu.remove("next_article_diary_name");
-			
+			vu.remove("article_diary_year");
+			vu.remove("article_diary_month");
+			vu.remove("previous_article_diary_year");
+			vu.remove("previous_article_diary_month");
+			vu.remove("next_article_diary_year");
+			vu.remove("next_article_diary_month");
 			vu.finalize();
 			vu = null;		
 		} catch (ManagerBeanException e) {
