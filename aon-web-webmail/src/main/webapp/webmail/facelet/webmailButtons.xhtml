@@ -11,17 +11,7 @@
 
 <ui:composition>
 
-	<aon:div styleClass="aon-finding-title-toolbar">
-		<aon:panelGrid id="treeButtonsGrid" columns="2" dir="true" 
-			columnClasses="aon-finding-title,aon-finding-toolbar">				
-		
-			<aon:div styleClass="aon-finding-title-internal">
-				<aon:outputText value="WEBMAIL"/>	  						
-			</aon:div>					
-			
-			<!-- start toolbar navigation -->
-			<aon:div styleClass="aon-finding-toolbar-item-group">
-								
+			<aon:div id="treeButtonsGrid" styleClass="aon-toolbar">
 
 				<aon:commandButton
 						id="refreshAccounts"
@@ -32,7 +22,7 @@
 						styleClass="aon-finding-toolbar-item aon-icon-refresh"
 						>
 				</aon:commandButton>
-			
+
 				<aon:commandButton
 					id="newMailMessage"
 					title="#{appBundle.aon_webmail_newmail}"
@@ -82,8 +72,6 @@
 					
 			</aon:div>
 
-		</aon:panelGrid>
-	</aon:div>		
 	
 </ui:composition>
 
