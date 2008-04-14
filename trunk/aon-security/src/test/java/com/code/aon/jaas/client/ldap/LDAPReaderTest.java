@@ -4,18 +4,22 @@ import java.util.List;
 import java.util.Properties;
 
 import javax.naming.Context;
-import javax.naming.NamingException;
 
 import junit.framework.JUnit4TestAdapter;
 
+import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 
-import com.code.aon.jaas.client.ast.IApplication;
+import com.code.aon.jaas.auth.session.AuthenticationLoginException;
+import com.code.aon.jaas.auth.util.Util;
+import com.code.aon.jaas.client.ast.IAccessPolicy;
+import com.code.aon.jaas.client.ast.IDataSourceMetaData;
+import com.code.aon.jaas.ldap.AuthInfo;
 import com.code.aon.jaas.ldap.SecurityLdap;
 import com.code.aon.ldap.Entry;
 
@@ -49,11 +53,38 @@ public class LDAPReaderTest {
 		Assert.assertTrue( ldap.hasDomain( "localhost") );
 		Assert.assertTrue( ldap.hasUser("aon.code.es", "aon-task", "atellitu") );
 		Assert.assertFalse( ldap.hasUser("aon.code.es", "aon-nothing", "atellitu") );
+		
 		Entry user = ldap.getUser("localhost", "atellitu");
+		Assert.assertNotNull( user );
 		LOGGER.info( "User: " + user );
+		
 		Entry domainApplicationUser = ldap.getDomainApplicationUser("localhost", "aon-task", "atellitu");
+		Assert.assertNotNull( domainApplicationUser );
 		LOGGER.info( "Domain Application User: " + domainApplicationUser );
+		
+		IAccessPolicy ap = ldap.getAccessPolicy("aon.code.es");
+		Assert.assertNotNull( ap );
+		LOGGER.info( "Access Policy: " + ap );
+		
+		IDataSourceMetaData dataSource = ldap.getDataSourceMetaData("aon.code.es", "aon-task");
+		Assert.assertNotNull( dataSource );
+		LOGGER.info( "Data Source: " + dataSource );
+		
+		List<String> applications = ldap.getUserApplications("localhost", "atellitu");
+		Assert.assertNotNull( applications );
+		LOGGER.info( "Applications: " + applications );
     }
+
+	@Test
+    public void testPassword() throws AuthenticationLoginException {
+		Entry user = ldap.getUser("localhost", "atellitu");
+		Assert.assertNotNull( user );
+		byte[] password = user.getAsByteArray("userPassword");
+		LOGGER.info( "User password String: " + new String(password) );
+		AuthInfo authInfo = new AuthInfo(ldap);
+		String pass = authInfo.getUserPassword("localhost", "atellitu");
+		LOGGER.info( "User password String: " + pass );
+	}
 	
 	public static junit.framework.Test suite() {
 		return new JUnit4TestAdapter(LDAPReaderTest.class);

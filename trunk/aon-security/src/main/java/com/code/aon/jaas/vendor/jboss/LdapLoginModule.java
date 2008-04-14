@@ -10,9 +10,9 @@ import javax.security.auth.callback.CallbackHandler;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import com.code.aon.jaas.auth.AuthInfoLdap;
 import com.code.aon.jaas.auth.IConstants;
 import com.code.aon.jaas.client.ast.IOption;
+import com.code.aon.jaas.ldap.AuthInfo;
 import com.code.aon.jaas.ldap.SecurityLdap;
 
 public class LdapLoginModule extends JBossLoginModule {
@@ -65,7 +65,7 @@ public class LdapLoginModule extends JBossLoginModule {
 		try {
 			ldap = (SecurityLdap) getMBeanServer().invoke( new ObjectName(this.objectName), "getSecurityLdap",
 						new Object[] {},new String[] {} );
-	        this.authInfo = new AuthInfoLdap( ldap );			
+	        this.authInfo = new AuthInfo( ldap );			
 		} catch (Exception e) {
 			LOGGER.error( "Error getting SecurityLdap. " + e.getMessage(), e );
 		}
