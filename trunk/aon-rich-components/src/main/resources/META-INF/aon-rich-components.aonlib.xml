@@ -1,6 +1,11 @@
 <?xml version="1.0"?>
 <components namespace="http://www.code.es/aon-rich-components">
 
+	<component localName="panelCollapsible">
+    	<attribute name="switchType" value="ajax" />
+    	<attribute name="expanded" alias="opened" />
+	</component>
+
 	<component localName="lookupInputText">
     	<attribute name="styleClass" value="aon-lookupInputText" />
 	</component>

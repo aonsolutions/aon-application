@@ -74,6 +74,13 @@
 		</component>
 	</tag>
 	<tag>
+		<tag-name>outputLink</tag-name>
+		<component>
+			<component-type>com.code.aon.faces.OutputLink</component-type>
+			<handler-class>com.code.aon.faces.component.AonComponentHandler</handler-class>
+		</component>
+	</tag>
+	<tag>
 		<tag-name>panelTab</tag-name>
 		<component>
 			<component-type>com.code.aon.faces.PanelTab</component-type>
@@ -314,6 +321,13 @@
 		<component>
 			<component-type>com.code.aon.faces.MenuSeparator</component-type>
 			<handler-class>com.code.aon.faces.component.AonComponentHandler</handler-class>
+		</component>
+	</tag>
+	<tag>
+		<tag-name>panelCollapsible</tag-name>
+		<component>
+			<component-type>com.code.aon.faces.PanelCollapsible</component-type>
+			<handler-class>com.code.aon.faces.component.richfaces.panelCollapsible.PanelCollapsibleHandler</handler-class>
 		</component>
 	</tag>
 </facelet-taglib>
