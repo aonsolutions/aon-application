@@ -5,16 +5,24 @@ package com.code.aon.jaas.vendor.jboss;
 
 import java.net.URL;
 import java.security.Principal;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
 import javax.management.ObjectName;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.jboss.system.ServiceMBeanSupport;
 
 import com.code.aon.jaas.auth.AuthPrincipal;
+import com.code.aon.jaas.client.ast.IApplication;
 import com.code.aon.jaas.client.ast.IDataSourceMetaData;
+import com.code.aon.jaas.client.ast.IDomain;
 import com.code.aon.jaas.client.ast.IOption;
+import com.code.aon.jaas.client.ast.core.Application;
 import com.code.aon.jaas.client.ast.core.AstLoader;
 import com.code.aon.jaas.ldap.SecurityLdap;
 import com.code.aon.jaas.storage.ApplicationsStorage;
@@ -26,6 +34,9 @@ import com.code.aon.jaas.storage.ApplicationsStorage;
  */
 public class JBossLdap extends ServiceMBeanSupport implements JBossLdapMBean {
 
+	/** JBossSecurity Logger instance. */
+	private static final Log LOGGER = LogFactory.getLog( JBossLdap.class.getName() );
+	
 	private Map<String, IOption> options;
 	
 	private SecurityLdap ldap;
@@ -61,12 +72,37 @@ public class JBossLdap extends ServiceMBeanSupport implements JBossLdapMBean {
 	public Properties getDSMDProperties(Principal principal) {
 		AuthPrincipal p = (AuthPrincipal) principal;
 		String domainName = p.getDomain();
-		String application = ldap.getApplication( p.getContext() );
+		String application = ldap.getApplicationId( p.getContext() );
 		IDataSourceMetaData dataSource = ldap.getDataSourceMetaData(domainName, application);
 		if ( dataSource != null ) {
 			return dataSource.getProperties();
 		}
 		return null;
+	}
+
+	public IApplication getApplication4Ctx(String ctx) {
+		if ( LOGGER.isDebugEnabled() ) {
+			LOGGER.debug("Retrieving application for: CONTEXT[" + ctx + "]");
+		}
+		return this.ldap.getApplication4Ctx(ctx);
+	}
+	
+	public IDomain getDomain(String appContext, String domainId) {
+		if ( LOGGER.isDebugEnabled() ) {
+			LOGGER.debug("Retrieving IDomain for: CONTEXT[" + appContext + "]" );
+		}
+		return this.ldap.getDomain(domainId);
+	}
+
+	public List getUserApplications(String domainId, String userId) {
+		if ( LOGGER.isDebugEnabled() ) {
+			LOGGER.debug("Retrieving user applications for: DOMAIN[" + domainId + "], USER [" + userId + "]" );
+		}
+		List<IApplication> applications = new ArrayList<IApplication>();
+		for( String name : this.ldap.getUserApplications(domainId, userId) ) {
+			applications.add( this.ldap.getApplication(name) );
+		}
+		return applications;
 	}
 	
 }
