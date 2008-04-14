@@ -127,23 +127,9 @@ public class ArticleCalendarGenerator extends Generator {
 
 			CommonGenerator.getCommonGenerator().chargeContext(vu, configSection);
 
-			MonthContent currentMonthContent = null;
-			MonthContent nextMonthContent = null;
-			
 			for (int pos=0; pos < monthsList.size(); ++pos){
 				MonthContent monthContent = monthsList.get(pos);
 				
-				
-				if (currentMonthContent == null){
-					if (monthContent.getYear() >= diaryIndexDate.get(Calendar.YEAR)){
-						if (monthContent.getMonth() >= diaryIndexDate.get(Calendar.MONTH)){
-							currentMonthContent = monthContent;
-							if ((pos+1) < monthsList.size()){
-								nextMonthContent = monthsList.get(pos+1);
-							}
-						}
-					}
-				}
 				
 				Object[] array = monthContent.getValues();
 				for (int i = 0;i < array.length; i++){
@@ -193,22 +179,22 @@ public class ArticleCalendarGenerator extends Generator {
 
 			
 			vu.put("article_list", index_ahlist);
-			vu.put("previous_article_diary_year", "");
-			vu.put("previous_article_diary_month", "");
-			if (currentMonthContent != null){
-				vu.put("article_diary", currentMonthContent.getCalendar());
-				vu.put("article_diary_year", currentMonthContent.getYear());
-				vu.put("article_diary_month", currentMonthContent.getMonth());
-			}
-			if (nextMonthContent != null){
-				vu.put("next_article_diary", nextMonthContent.getCalendar());
-				vu.put("next_article_diary_year", nextMonthContent.getYear());
-				vu.put("next_article_diary_month", nextMonthContent.getMonth());
-			}
+
+			vu.put("previous_article_diary", (monthsList.get(0)).getCalendar());
+			vu.put("previous_article_diary_year", (monthsList.get(0)).getYear());
+			vu.put("previous_article_diary_month", (monthsList.get(0)).getMonth());
+			vu.put("article_diary", (monthsList.get(1)).getCalendar());
+			vu.put("article_diary_year", (monthsList.get(1)).getYear());
+			vu.put("article_diary_month", (monthsList.get(1)).getMonth());
+			vu.put("next_article_diary", (monthsList.get(2)).getCalendar());
+			vu.put("next_article_diary_year", (monthsList.get(2)).getYear());
+			vu.put("next_article_diary_month", (monthsList.get(2)).getMonth());
+
 			VelocityUtil.addMessage(" Generando diario indice.", VelocityUtil.INFO);
 			generate(vu, Templates.DIARY, DIARY_INDEX_PAGE);
 			vu.remove("article_list");
 			vu.remove("article_diary");
+			vu.remove("previous_article_diary");
 			vu.remove("next_article_diary");
 			vu.remove("article_diary_year");
 			vu.remove("article_diary_month");
