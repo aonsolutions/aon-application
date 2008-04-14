@@ -56,12 +56,23 @@ public class ArticleCalendarGenerator extends Generator {
 			Expression nullableExpr = ExpressionUtilities.getNullExpression(articleBean.getFieldName(ICMSAlias.ARTICLE_EXPIRE_DATE));
             Expression greaterExpr = ExpressionUtilities.getGreaterThanOrEqualExpression(articleBean.getFieldName(ICMSAlias.ARTICLE_EXPIRE_DATE), new Date());
             articleCriteria.addExpression(ExpressionUtilities.getOrExpression(nullableExpr, greaterExpr));
-			articleCriteria.addLessThanOrEqualExpression(articleBean.getFieldName(ICMSAlias.ARTICLE_PUBLISH_DATE), new Date());
-			articleCriteria.addNotNullExpression(articleBean.getFieldName(ICMSAlias.ARTICLE_INIT_DATE));
-			articleCriteria.addOrder(articleBean.getFieldName(ICMSAlias.ARTICLE_INIT_DATE));
+            articleCriteria.addLessThanOrEqualExpression(articleBean.getFieldName(ICMSAlias.ARTICLE_PUBLISH_DATE), new Date());
+            articleCriteria.addNotNullExpression(articleBean.getFieldName(ICMSAlias.ARTICLE_INIT_DATE));
+            GregorianCalendar firstDay = new GregorianCalendar();
+            firstDay.set(Calendar.DATE, 1);
+            firstDay.add(Calendar.MONTH, -1);
+            GregorianCalendar lastDay = new GregorianCalendar();
+            lastDay.add(Calendar.MONTH, 2);
+            lastDay.set(Calendar.DATE, MonthContent.diasDelMes(lastDay.get(Calendar.MONTH), lastDay.get(Calendar.YEAR)));
+            articleCriteria.addGreaterThanOrEqualExpression(articleBean.getFieldName(ICMSAlias.ARTICLE_INIT_DATE),firstDay.getTime());
+            articleCriteria.addLessThanOrEqualExpression(articleBean.getFieldName(ICMSAlias.ARTICLE_INIT_DATE),lastDay.getTime());
+            articleCriteria.addOrder(articleBean.getFieldName(ICMSAlias.ARTICLE_INIT_DATE));
 			articleList = (List<ITransferObject>)articleBean.getList(articleCriteria);
 			months = new HashMap<String, MonthContent>();
 			monthsList = new ArrayList<MonthContent>();
+			
+			init(firstDay.getTime(),months,monthsList);
+			
 			for (int i=0; i < articleList.size(); i++) {
 				article = (Article)articleList.get(i);
 				articleDetailCriteria = new Criteria();
@@ -90,6 +101,8 @@ public class ArticleCalendarGenerator extends Generator {
 						months.put(monthContent.getCode(), monthContent);
 						monthsList.add(monthContent);
 					}
+
+					
 					monthContent.assign(initDate,articleDetail);
 					Date endDate = article.getEndDate();
 					if (endDate != null){
@@ -119,6 +132,7 @@ public class ArticleCalendarGenerator extends Generator {
 			
 			for (int pos=0; pos < monthsList.size(); ++pos){
 				MonthContent monthContent = monthsList.get(pos);
+				
 				
 				if (currentMonthContent == null){
 					if (monthContent.getYear() >= diaryIndexDate.get(Calendar.YEAR)){
@@ -213,6 +227,26 @@ public class ArticleCalendarGenerator extends Generator {
 			months = null;
 			dayArticleDetailList = null;
 		}
+	}
+	
+	private static void init(Date initDate, 
+			Map<String, MonthContent> months,
+			List<MonthContent> monthsList){
+		MonthContent monthContent = MonthContent.instantiate(initDate);
+		
+        GregorianCalendar nextDay = new GregorianCalendar();
+        nextDay.setTime(initDate);
+        nextDay.add(Calendar.MONTH, 1);
+        
+		monthContent = MonthContent.instantiate(nextDay.getTime());
+		months.put(monthContent.getCode(), monthContent);
+		monthsList.add(monthContent);
+
+        nextDay.add(Calendar.MONTH, 1);
+
+		monthContent = MonthContent.instantiate(nextDay.getTime());
+		months.put(monthContent.getCode(), monthContent);
+		monthsList.add(monthContent);
 	}
 	
 	public static String DIARY_INDEX_PAGE = "diary_index";
