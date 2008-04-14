@@ -159,10 +159,12 @@ public class ArticleCalendarGenerator extends Generator {
 						calendar.set(Calendar.YEAR, monthContent.getYear());
 						calendar.set(Calendar.MONTH, monthContent.getMonth());
 						calendar.set(Calendar.DATE, i+1);
+						vu.put("current_date", calendar.get(Calendar.DATE)+"/"+calendar.get(Calendar.MONTH)+"/"+calendar.get(Calendar.YEAR));
 						String name = calendar.get(Calendar.YEAR)+"_"+calendar.get(Calendar.MONTH)+"_"+calendar.get(Calendar.DATE);
 						VelocityUtil.addMessage(" Generando diario "+name+".", VelocityUtil.INFO);
 						generate(vu, Templates.DIARY, name);
 						vu.remove("article_list");
+						vu.remove("current_date");
 						vu.remove("article_diary");
 						vu.remove("previous_article_diary");
 						vu.remove("next_article_diary");
@@ -179,7 +181,6 @@ public class ArticleCalendarGenerator extends Generator {
 
 			
 			vu.put("article_list", index_ahlist);
-			vu.put("index", true);
 
 			vu.put("previous_article_diary", (monthsList.get(0)).getCalendar());
 			vu.put("previous_article_diary_year", (monthsList.get(0)).getYear());
@@ -194,7 +195,6 @@ public class ArticleCalendarGenerator extends Generator {
 			VelocityUtil.addMessage(" Generando diario indice.", VelocityUtil.INFO);
 			generate(vu, Templates.DIARY, DIARY_INDEX_PAGE);
 			vu.remove("article_list");
-			vu.remove("index");
 			vu.remove("article_diary");
 			vu.remove("previous_article_diary");
 			vu.remove("next_article_diary");
