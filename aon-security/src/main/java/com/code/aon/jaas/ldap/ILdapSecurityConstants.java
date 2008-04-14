@@ -1,12 +1,6 @@
 package com.code.aon.jaas.ldap;
 
-public interface ILdapConstants {
-
-	String OBJECT_CLASS = "objectClass";
-	
-	String COMMON_NAME = "cn";
-	
-	String USER_ID = "uid";
+public interface ILdapSecurityConstants {
 
 	String DOMAINS_DN = "ou=domains";
 	
@@ -36,9 +30,7 @@ public interface ILdapConstants {
 	
 	String PROFILE_OBJECT_CLASS = "aonProfile";
 	
-	String USER_PASSWORD_ATTRIBUTE = "userPassword";
-	
-	String MEMBER_ATTRIBUTE = "member";
+	String DESCRIPTION_ATTRIBUTE = "description";
 	
 	String DATA_SOURCE_ATTRIBUTE = "dataSource";
 	
