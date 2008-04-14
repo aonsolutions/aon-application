@@ -138,7 +138,7 @@
 								<aon:div styleClass="aon-finding-toolbar-item-group">
 									<h:commandButton id="reset_list" value="#{bundle.aon_reset}"
 										rendered="#{!download.new}"
-										reRender="detail_panel"
+										action="download_category_form"
 										actionListener="#{download.onReset}"
 										styleClass="aon-finding-toolbar-item aon-icon-reset"
 										accesskey="#{bundle.aon_key_new}"/>
@@ -190,7 +190,7 @@
 									actionListener="#{download.onSelect}"
 									event="onclick"
 									immediate="#{true}"
-									reRender="detail_panel" />
+									action="download_category_form" />
 								<f:facet name="header">
 									<aon:outputText value="#{appBundle.download_alias}" />
 								</f:facet>
@@ -201,8 +201,8 @@
 							<aon:column>
 								<a4j:support 
 									immediate="#{true}"
-									reRender="detail_panel"
 									actionListener="#{download.onSelect}"
+									action="download_category_form"
 									event="onclick" />
 								<f:facet name="header">
 									<aon:outputText value="#{appBundle.download_title}"/>
@@ -217,14 +217,14 @@
 								</f:facet>
 								<aon:commandLink title="#{appBundle.download_activate}" 
 									actionListener="#{download.onActivate}"
-									reRender="detail_list" 
+									action="download_category_form"
 									rendered="#{!to.active}">
 									<aon:graphicImage alt="#{appBundle.download_activate}"
 										url="/images/cms/inactive.png" />
 								</aon:commandLink>
 								<aon:commandLink title="#{appBundle.download_deactivate}" 
 									actionListener="#{download.onDeactivate}" 
-									reRender="detail_list" 
+									action="download_category_form"
 									rendered="#{to.active}">
 									<aon:graphicImage alt="#{appBundle.download_deactivate}"
 										url="/images/cms/active.png" />
@@ -239,12 +239,12 @@
 								<aon:graphicImage rendered="#{to.position == 0}"
 									url="/images/cms/spacer16.gif" style="margin-left: 8px;"/>
 								<h:commandButton  
-									reRender="detail_list"
+									action="download_category_form"
 									actionListener="#{download.onMoveUp}" 
 									rendered="#{to.position != 0 and download.to==null}"
 									image="/images/cms/up.gif" styleClass="aon-icon-commandButton" />
 								<h:commandButton 
-									reRender="detail_list" 
+									action="download_category_form"
 									actionListener="#{download.onMoveDown}"
 									rendered="#{to.position &lt; (download.model.rowCount - 1)  and download.to==null}"
 									image="/images/cms/down.gif" styleClass="aon-icon-commandButton" />
@@ -263,21 +263,21 @@
 											<h:commandButton id="save_list_form"
 												value="#{bundle.aon_save}" 
 												rendered="#{download.to!=null or download.new}"
-												reRender="detail_panel"
+												action="download_category_form"
 												actionListener="#{download.onAccept}"
 												styleClass="aon-finding-toolbar-item aon-icon-accept"
 												accesskey="#{bundle.aon_key_save}"/>
 											<h:commandButton id="cancel_list_form"
 												value="#{bundle.aon_cancel}" 
 												rendered="#{download.to!=null or download.new}" immediate="#{true}"
-												reRender="detail_panel"
+												action="download_category_form"
 												actionListener="#{download.onCancel}" 
 												styleClass="aon-finding-toolbar-item aon-icon-cancel"
 												accesskey="#{bundle.aon_key_cancel}"/>
 											<aon:confirmButton id="remove_list_form"
 												value="#{bundle.aon_remove}" rendered="#{!download.new}" 
 												immediate="true"
-												reRender="detail_panel"
+												confirmAction="download_category_form"
 												confirmTitle="Confirmation Dialog" 
 												confirmMessage="#{bundle.aon_remove_confirm}"
 												confirmActionListener="#{download.onRemove}" 
