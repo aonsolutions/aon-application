@@ -52,9 +52,9 @@
 			<aon:column>
 				<a4j:support 
 					immediate="#{true}"
-					reRender="detail_panel"
 					actionListener="#{article.onSelect}"
-					event="onclick" />
+					event="onclick"
+					action="article_category_form" />
 				<f:facet name="header">
 					<aon:outputText value="#{appBundle.article_title}"/>
 				</f:facet>
@@ -68,7 +68,7 @@
 				</f:facet>
 				<aon:commandLink title="#{appBundle.article_activate}" 
 					actionListener="#{article.onActivate}"
-					reRender="detail_panel"
+					reRender="#{dataTable}"
 					rendered="#{!to.active}">
 					<aon:graphicImage alt="#{appBundle.article_activate}"
 						url="/images/cms/inactive.png" />
