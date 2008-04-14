@@ -179,6 +179,7 @@ public class ArticleCalendarGenerator extends Generator {
 
 			
 			vu.put("article_list", index_ahlist);
+			vu.put("index", true);
 
 			vu.put("previous_article_diary", (monthsList.get(0)).getCalendar());
 			vu.put("previous_article_diary_year", (monthsList.get(0)).getYear());
@@ -193,6 +194,7 @@ public class ArticleCalendarGenerator extends Generator {
 			VelocityUtil.addMessage(" Generando diario indice.", VelocityUtil.INFO);
 			generate(vu, Templates.DIARY, DIARY_INDEX_PAGE);
 			vu.remove("article_list");
+			vu.remove("index");
 			vu.remove("article_diary");
 			vu.remove("previous_article_diary");
 			vu.remove("next_article_diary");
