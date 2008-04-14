@@ -109,7 +109,7 @@
 								<aon:div styleClass="aon-finding-toolbar-item-group">
 									<h:commandButton id="reset_list" value="#{bundle.aon_reset}"
 										rendered="#{!direct_access.new}"
-										reRender="detail_panel"
+										action="direct_access_group_form"
 										actionListener="#{direct_access.onReset}"
 										styleClass="aon-finding-toolbar-item aon-icon-reset"
 										accesskey="#{bundle.aon_key_new}"/>
@@ -159,7 +159,7 @@
 							<aon:column>
 								<a4j:support 
 									immediate="#{true}"
-									reRender="detail_panel"
+									action="direct_access_group_form"
 									actionListener="#{direct_access.onSelect}"
 									event="onclick" />
 								<f:facet name="header">
@@ -172,7 +172,7 @@
 							<aon:column>
 								<a4j:support 
 									immediate="#{true}"
-									reRender="detail_panel"
+									action="direct_access_group_form"
 									actionListener="#{direct_access.onSelect}"
 									event="onclick" />
 								<f:facet name="header">
@@ -188,14 +188,14 @@
 								</f:facet>
 								<aon:commandLink title="#{appBundle.direct_access_activate}" 
 									actionListener="#{direct_access.onActivate}"
-									reRender="detail_list" 
+									action="direct_access_group_form"
 									rendered="#{!to.active}">
 									<aon:graphicImage alt="#{appBundle.direct_access_activate}"
 										url="/images/cms/inactive.png" />
 								</aon:commandLink>
 								<aon:commandLink title="#{appBundle.direct_access_deactivate}" 
 									actionListener="#{direct_access.onDeactivate}" 
-									reRender="detail_list" 
+									action="direct_access_group_form"
 									rendered="#{to.active}">
 									<aon:graphicImage alt="#{appBundle.direct_access_deactivate}"
 										url="/images/cms/active.png" />
@@ -210,12 +210,12 @@
 								<aon:graphicImage rendered="#{to.position == 0}"
 									url="/images/cms/spacer16.gif" style="margin-left: 8px;"/>
 								<h:commandButton  
-									reRender="detail_list"
+									action="direct_access_group_form"
 									actionListener="#{direct_access.onMoveUp}" 
 									rendered="#{to.position != 0 and direct_access.to==null}"
 									image="/images/cms/up.gif" styleClass="aon-icon-commandButton" />
 								<h:commandButton 
-									reRender="detail_list" 
+									action="direct_access_group_form"
 									actionListener="#{direct_access.onMoveDown}"
 									rendered="#{to.position &lt; (direct_access.model.rowCount - 1)  and direct_access.to==null}"
 									image="/images/cms/down.gif" styleClass="aon-icon-commandButton" />
@@ -234,21 +234,21 @@
 											<h:commandButton id="save_list_form"
 												value="#{bundle.aon_save}" 
 												rendered="#{direct_access.to!=null or direct_access.new}"
-												reRender="detail_panel"
+												action="direct_access_group_form"
 												actionListener="#{direct_access.onAccept}"
 												styleClass="aon-finding-toolbar-item aon-icon-accept"
 												accesskey="#{bundle.aon_key_save}"/>
 											<h:commandButton id="cancel_list_form"
 												value="#{bundle.aon_cancel}" 
 												rendered="#{direct_access.to!=null or direct_access.new}" immediate="#{true}"
-												reRender="detail_panel"
+												action="direct_access_group_form"
 												actionListener="#{direct_access.onCancel}" 
 												styleClass="aon-finding-toolbar-item aon-icon-cancel"
 												accesskey="#{bundle.aon_key_cancel}"/>
 											<aon:confirmButton id="remove_list_form"
 												value="#{bundle.aon_remove}" rendered="#{!direct_access.new}" 
 												immediate="true"
-												reRender="detail_panel"
+												conformAction="direct_access_group_form"
 												confirmTitle="Confirmation Dialog" 
 												confirmMessage="#{bundle.aon_remove_confirm}"
 												confirmActionListener="#{direct_access.onRemove}" 
