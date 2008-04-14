@@ -44,6 +44,10 @@
         <component-class>org.ajax4jsf.component.html.HtmlAjaxCommandLink</component-class>
     </component>
     <component>
+        <component-type>com.code.aon.faces.OutputLink</component-type>
+        <component-class>javax.faces.component.html.HtmlOutputLink</component-class>
+    </component>
+    <component>
         <component-type>com.code.aon.faces.PanelTab</component-type>
         <component-class>org.richfaces.component.html.HtmlTab</component-class>
     </component>
@@ -171,6 +175,10 @@
     <component>
         <component-type>com.code.aon.faces.MenuSeparator</component-type>
         <component-class>org.richfaces.component.html.HtmlMenuSeparator</component-class>
+    </component>
+    <component>
+        <component-type>com.code.aon.faces.PanelCollapsible</component-type>
+        <component-class>org.richfaces.component.html.HtmlSimpleTogglePanel</component-class>
     </component>
     <render-kit>
         <renderer>
