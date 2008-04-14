@@ -136,6 +136,7 @@ public class ModularPageOptionController extends BasicI18nController {
 		List<SelectItem> idents = new LinkedList<SelectItem>();
 		if (mo.getType().equals(ModularPageOptionType.GENERIC)) idents = ((CollectionsController)AonUtil.getRegisteredBean("collections")).getGenericPageList();
 		else if (mo.getType().equals(ModularPageOptionType.BANNER)) idents = ((CollectionsController)AonUtil.getRegisteredBean("collections")).getBannerList();
+		else if (mo.getType().equals(ModularPageOptionType.BANNER_GROUP)) idents = ((CollectionsController)AonUtil.getRegisteredBean("collections")).getBannerGroupList();
 		else if (mo.getType().equals(ModularPageOptionType.ARTICLE)) idents = ((CollectionsController)AonUtil.getRegisteredBean("collections")).getArticleList();
 		else if (mo.getType().equals(ModularPageOptionType.ARTICLE_NEWS)) idents = ((CollectionsController)AonUtil.getRegisteredBean("collections")).getArticleCategoryList();
 		else if (mo.getType().equals(ModularPageOptionType.ARTICLE_EVENTS)) idents = ((CollectionsController)AonUtil.getRegisteredBean("collections")).getArticleCategoryList();
