@@ -35,6 +35,7 @@
 	<field name="number" class="java.lang.String"/>
 	<field name="amount" class="java.lang.Double"/>
 	<field name="paymentDate" class="java.util.Date"/>
+	<field name="concept" class="java.lang.String"/>
 
 		<background>
 			<band height="0"  isSplitAllowed="true" >
@@ -336,7 +337,7 @@
 				<staticText>
 					<reportElement
 						x="0"
-						y="119"
+						y="128"
 						width="535"
 						height="14"
 						key="staticText-5"/>
@@ -528,6 +529,32 @@
 						<font pdfFontName="Helvetica" size="9" isBold="false"/>
 					</textElement>
 				<textFieldExpression   class="java.lang.Integer"><![CDATA[$F{office}.getCode()]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="92"
+						y="110"
+						width="48"
+						height="13"
+						key="textField-24"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" rightPadding="1" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Right">
+						<font pdfFontName="Helvetica" size="9" isBold="false" isUnderline="false"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$R{gbp_proforma_invoice_concept} + ": "]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="140"
+						y="110"
+						width="377"
+						height="13"
+						key="textField-25"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" leftPadding="1" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Left">
+						<font pdfFontName="Helvetica-Bold" size="9" isBold="true"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{concept}]]></textFieldExpression>
 				</textField>
 			</band>
 		</detail>

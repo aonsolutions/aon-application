@@ -46,6 +46,7 @@ public class ProFormaInvoice implements ITransferObject {
 	
 	private Offer offer;
 
+	private String concept;
 	
 	@Id
 	@GeneratedValue
@@ -171,4 +172,14 @@ public class ProFormaInvoice implements ITransferObject {
 	public void setOffer(Offer offer) {
 		this.offer = offer;
 	}
+
+	@Column(name="concept")
+	public String getConcept() {
+		return concept;
+	}
+
+	public void setConcept(String concept) {
+		this.concept = concept;
+	}
+	
 }
