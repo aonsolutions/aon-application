@@ -3,9 +3,7 @@ package com.code.aon.bridge.jmx.mbean.core;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
-
 import java.security.Principal;
-
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -23,9 +21,9 @@ import org.jboss.mx.util.MBeanServerLocator;
 import com.code.aon.bridge.jmx.mbean.IConsoleAdmin;
 import com.code.aon.bridge.jmx.mbean.IMBeanInfo;
 import com.code.aon.bridge.jmx.mbean.IOperation;
-import com.code.aon.bridge.jmx.mbean.SecurityMBeanException;
 import com.code.aon.bridge.jmx.mbean.MBeanFilter;
 import com.code.aon.bridge.jmx.mbean.Messages;
+import com.code.aon.bridge.jmx.mbean.SecurityMBeanException;
 import com.code.aon.jaas.deployment.DeploymentException;
 
 /**
@@ -46,6 +44,8 @@ public class JBossConsoleAdmin implements IConsoleAdmin {
 	static final String AON_MAIN_DEPLOYER = "jboss.admin:service=AonMainDeployer";
 	/** Field AON_SECURITY (value is ""jboss.admin:service=AonSecurity"") */
 	static final String AON_SECURITY = "jboss.admin:service=AonSecurity";
+	/** Field AON_LDAP (value is ""jboss.admin:service=AonLdap"") */
+	static final String AON_LDAP = "jboss.admin:service=AonLdap";
 	/** Field AON_SESSION_MANAGER (value is ""jboss.admin:service=AonSessionManager"") */
 	static final String AON_SESSION_MANAGER = "jboss.admin:service=AonSessionManager";
 
@@ -64,6 +64,8 @@ public class JBossConsoleAdmin implements IConsoleAdmin {
 
 	/** Field mbeans */
 	private Map<String, IMBeanInfo> mbeans;
+	
+	private String aonSecurityName;
 
 	/**
 	 * Constructor for JBossConsoleAdmin
@@ -72,6 +74,7 @@ public class JBossConsoleAdmin implements IConsoleAdmin {
 	 */
 	public JBossConsoleAdmin() throws DeploymentException {
 		load();
+		initAonSecurityName();
 	}
 
 	@Override
@@ -81,7 +84,7 @@ public class JBossConsoleAdmin implements IConsoleAdmin {
 
 	@Override
 	public String getAonSecurityName() {
-		return AON_SECURITY;
+		return this.aonSecurityName;
 	}
 
 	@Override
@@ -206,6 +209,17 @@ public class JBossConsoleAdmin implements IConsoleAdmin {
 					//	TODO [iayerbe] Mirar si se debe propagar esta excepción.
 				}
 			}
+		}
+	}
+	
+	public void initAonSecurityName() {
+		this.aonSecurityName = AON_SECURITY;
+		try {
+			ObjectName name = new ObjectName(AON_LDAP);
+			if ( getMBeanServer().isRegistered(name) ) {
+				this.aonSecurityName = AON_LDAP;
+			}
+		} catch (Exception e) {
 		}
 	}
 
