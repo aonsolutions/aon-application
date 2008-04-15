@@ -22,6 +22,7 @@ import com.code.gbp.SupplierContactPerson;
 import com.code.gbp.SupplierEconomicData;
 import com.code.gbp.SupplierObservation;
 import com.code.gbp.SupplierType;
+import com.code.gbp.BankPercent;
 
 /** 
 * Interface for holding entity properties constants.
@@ -941,6 +942,55 @@ public interface IGBPAlias {
 	* Hibernate value: SupplierType.id
 	*/
 	String  SUPPLIER_TYPE_ID = SUPPLIER_TYPE_ENTRY.getAliasNames()[1];
+
+
+
+	/** 
+	* DAOConstantsEntry for BankPercent entity.
+	*/ 
+	DAOConstantsEntry BANK_PERCENT_ENTRY = DAOConstants.getDAOConstant(BankPercent.class);
+
+	/** 
+	* Alias value: BankPercent_address
+	* Hibernate value: BankPercent.address
+	*/
+	String  BANK_PERCENT_ADDRESS = BANK_PERCENT_ENTRY.getAliasNames()[0];
+
+	/** 
+	* Alias value: BankPercent_distributionPercent
+	* Hibernate value: BankPercent.distributionPercent
+	*/
+	String  BANK_PERCENT_DISTRIBUTION_PERCENT = BANK_PERCENT_ENTRY.getAliasNames()[1];
+
+	/** 
+	* Alias value: BankPercent_document
+	* Hibernate value: BankPercent.document
+	*/
+	String  BANK_PERCENT_DOCUMENT = BANK_PERCENT_ENTRY.getAliasNames()[2];
+
+	/** 
+	* Alias value: BankPercent_id
+	* Hibernate value: BankPercent.id
+	*/
+	String  BANK_PERCENT_ID = BANK_PERCENT_ENTRY.getAliasNames()[3];
+
+	/** 
+	* Alias value: BankPercent_name
+	* Hibernate value: BankPercent.name
+	*/
+	String  BANK_PERCENT_NAME = BANK_PERCENT_ENTRY.getAliasNames()[4];
+
+	/** 
+	* Alias value: BankPercent_registralData
+	* Hibernate value: BankPercent.registralData
+	*/
+	String  BANK_PERCENT_REGISTRAL_DATA = BANK_PERCENT_ENTRY.getAliasNames()[5];
+
+	/** 
+	* Alias value: BankPercent_web
+	* Hibernate value: BankPercent.web
+	*/
+	String  BANK_PERCENT_WEB = BANK_PERCENT_ENTRY.getAliasNames()[6];
 
 
 }
