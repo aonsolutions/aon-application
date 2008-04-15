@@ -40,6 +40,7 @@
 		<mapping class="com.code.gbp.SupplierEconomicData"/>
 		<mapping class="com.code.gbp.SupplierObservation"/>
 		<mapping class="com.code.gbp.SupplierType"/>
+		<mapping class="com.code.gbp.BankPercent"/>
 	</session-factory>
 
 </hibernate-configuration>
