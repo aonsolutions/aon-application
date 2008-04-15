@@ -78,14 +78,18 @@ public class DataPaginatorRenderer extends DatascrollerTemplate {
 	public void encodeBegin(FacesContext facescontext, UIComponent component)
 			throws IOException {
 		super.encodeBegin(facescontext, component);
-		setVariables(facescontext, (HtmlDataPaginator) component);
+		if ( component.isRendered() ) {
+			setVariables(facescontext, (HtmlDataPaginator) component);
+		}
 	}
 
 	@Override
 	public void encodeEnd(FacesContext facescontext, UIComponent component)
 			throws IOException {
 		super.encodeEnd(facescontext, component);
-		removeVariables(facescontext, (HtmlDataPaginator) component);		
+		if ( component.isRendered() ) {		
+			removeVariables(facescontext, (HtmlDataPaginator) component);
+		}
 	}
 
 }
