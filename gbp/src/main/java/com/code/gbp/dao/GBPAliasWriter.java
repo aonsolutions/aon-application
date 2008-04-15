@@ -23,6 +23,7 @@ import com.code.gbp.SupplierContact;
 import com.code.gbp.SupplierContactPerson;
 import com.code.gbp.SupplierEconomicData;
 import com.code.gbp.SupplierObservation;
+import com.code.gbp.SupplierType;
 
 public class GBPAliasWriter {
 	/**
@@ -31,7 +32,7 @@ public class GBPAliasWriter {
 	 */
 	public static void main(String[] args) throws IOException {
 		File file = new File("/AON-PROJECT/gbp/src/main/java/com/code/gbp/dao/IGBPAlias.java");
-		String[] classes = new String[19];
+		String[] classes = new String[20];
 		classes[0] = AccountContact.class.getName();
 		classes[1] = Campaign.class.getName();
 		classes[2] = CampaignSupplier.class.getName();
@@ -51,6 +52,7 @@ public class GBPAliasWriter {
 		classes[16] = SupplierContactPerson.class.getName();
 		classes[17] = SupplierEconomicData.class.getName();
 		classes[18] = SupplierObservation.class.getName();
+		classes[19] = SupplierType.class.getName();
 		AliasWriter writer = new AliasWriter("com.code.gbp.dao");
 		writer.write(classes, file);
 		System.out.println(file.getAbsolutePath());

@@ -21,6 +21,7 @@ import com.code.gbp.SupplierContact;
 import com.code.gbp.SupplierContactPerson;
 import com.code.gbp.SupplierEconomicData;
 import com.code.gbp.SupplierObservation;
+import com.code.gbp.SupplierType;
 
 /** 
 * Interface for holding entity properties constants.
@@ -921,6 +922,25 @@ public interface IGBPAlias {
 	* Hibernate value: SupplierObservation.supplier.id
 	*/
 	String  SUPPLIER_OBSERVATION_SUPPLIER_ID = SUPPLIER_OBSERVATION_ENTRY.getAliasNames()[3];
+
+
+
+	/** 
+	* DAOConstantsEntry for SupplierType entity.
+	*/ 
+	DAOConstantsEntry SUPPLIER_TYPE_ENTRY = DAOConstants.getDAOConstant(SupplierType.class);
+
+	/** 
+	* Alias value: SupplierType_description
+	* Hibernate value: SupplierType.description
+	*/
+	String  SUPPLIER_TYPE_DESCRIPTION = SUPPLIER_TYPE_ENTRY.getAliasNames()[0];
+
+	/** 
+	* Alias value: SupplierType_id
+	* Hibernate value: SupplierType.id
+	*/
+	String  SUPPLIER_TYPE_ID = SUPPLIER_TYPE_ENTRY.getAliasNames()[1];
 
 
 }
