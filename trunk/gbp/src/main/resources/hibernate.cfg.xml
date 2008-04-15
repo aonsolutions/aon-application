@@ -33,6 +33,7 @@
 		<mapping class="com.code.gbp.SupplierContactPerson"/>
 		<mapping class="com.code.gbp.SupplierEconomicData"/>
 		<mapping class="com.code.gbp.SupplierObservation"/>
+		<mapping class="com.code.gbp.SupplierType"/>
 	</session-factory>
 
 </hibernate-configuration>
