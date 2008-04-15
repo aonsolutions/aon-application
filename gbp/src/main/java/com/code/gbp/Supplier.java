@@ -19,6 +19,8 @@ public class Supplier implements ITransferObject {
 	
 	private String name;
 	
+	private SupplierType supplierType;
+	
 	private String document;
 	
 	private int employeeNumber;
@@ -128,4 +130,15 @@ public class Supplier implements ITransferObject {
 	public void setPassWord(String passWord) {
 		this.passWord = passWord;
 	}
+	
+	@ManyToOne
+	@JoinColumn( name="supplier_type")
+	public SupplierType getSupplierType() {
+		return supplierType;
+	}
+
+	public void setSupplierType(SupplierType supplierType) {
+		this.supplierType = supplierType;
+	}
+
 }

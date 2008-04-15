@@ -72,6 +72,13 @@
 					<aon:inputText id="Supplier_name" required="true" size="64"
 						maxlength="64" value="#{supplier.to.name}" />
 
+					<aon:outputLabel for="Supplier_supplierType_id"
+						value="#{appBundle.gbp_supplier_supplierType}" />
+					<aon:selectOneMenu id="Supplier_supplierType_id"
+						value="#{supplier.to.supplierType.id}">
+						<f:selectItems value="#{GBPCollections.supplierTypes}" />
+					</aon:selectOneMenu>
+
 					<aon:outputLabel for="Supplier_employeeNumber"
 						value="#{appBundle.gbp_supplier_employee_number}" />
 					<aon:inputText id="Supplier_employeeNumber" size="6" maxlength="6"
