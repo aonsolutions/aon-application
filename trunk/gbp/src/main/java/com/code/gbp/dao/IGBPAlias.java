@@ -716,10 +716,16 @@ public interface IGBPAlias {
 	String  SUPPLIER_PASS_WORD = SUPPLIER_ENTRY.getAliasNames()[8];
 
 	/** 
+	* Alias value: Supplier_supplierType_id
+	* Hibernate value: Supplier.supplierType.id
+	*/
+	String  SUPPLIER_SUPPLIER_TYPE_ID = SUPPLIER_ENTRY.getAliasNames()[9];
+
+	/** 
 	* Alias value: Supplier_zip
 	* Hibernate value: Supplier.zip
 	*/
-	String  SUPPLIER_ZIP = SUPPLIER_ENTRY.getAliasNames()[9];
+	String  SUPPLIER_ZIP = SUPPLIER_ENTRY.getAliasNames()[10];
 
 
 

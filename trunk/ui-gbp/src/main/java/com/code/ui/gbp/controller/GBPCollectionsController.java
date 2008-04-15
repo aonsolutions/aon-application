@@ -16,6 +16,7 @@ import com.code.gbp.GeoZone;
 import com.code.gbp.IncidenceType;
 import com.code.gbp.InternalCustomer;
 import com.code.gbp.Office;
+import com.code.gbp.SupplierType;
 import com.code.gbp.enumeration.AddInfoType;
 import com.code.gbp.enumeration.CampaignStatus;
 import com.code.gbp.enumeration.ContactType;
@@ -171,4 +172,19 @@ public class GBPCollectionsController {
 		}
 		return contacts;
 	}
+	
+	@SuppressWarnings("unchecked")
+	public List<SelectItem> getSupplierTypes() throws ManagerBeanException{
+		List<SelectItem> supplierTypes = new LinkedList<SelectItem>();
+		IManagerBean supplierTypeBean = BeanManager.getManagerBean(SupplierType.class);
+		Iterator iter = supplierTypeBean.getList(null).iterator();
+		while(iter.hasNext()){
+			SupplierType supplierType = (SupplierType)iter.next();
+			SelectItem item = new SelectItem(supplierType.getId(), supplierType.getDescription());
+			supplierTypes.add(item);
+		}
+		return supplierTypes;
+	}
+
+	
 }
