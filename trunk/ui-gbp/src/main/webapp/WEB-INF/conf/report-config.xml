@@ -69,4 +69,14 @@
 		</params>
 	</report>
 	
+	<!--  ********* PROFORMAINVOICES LIST  ********* -->
+	<report id="proFormaInvoices" description="ProFormaInvoices report">
+		<template path="/com/code/ui/gbp/report/proFormaInvoices.jasper" />
+		<bean key="com.code.gbp.ProFormaInvoice" />
+		<criteria provider="#{proForma}" />
+		<params>
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.ui.gbp.i18n.messages" />
+		</params>
+	</report>
+	
 </report-config>
