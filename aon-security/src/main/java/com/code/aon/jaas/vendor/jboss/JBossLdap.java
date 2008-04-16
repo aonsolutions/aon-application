@@ -105,4 +105,16 @@ public class JBossLdap extends ServiceMBeanSupport implements JBossLdapMBean {
 		return applications;
 	}
 	
+    /**(non-Javadoc)
+     * @see com.code.aon.jaas.storage.IOperation#getApplication(java.lang.String)
+     * 
+	 * @jmx:managed-operation
+     */
+    public IApplication getApplication(String name) {
+		if ( LOGGER.isDebugEnabled() ) {
+			LOGGER.debug("Retrieving application for: NAME[" + name + "]" );
+		}
+		return this.ldap.getApplication(name);   
+	}
+
 }

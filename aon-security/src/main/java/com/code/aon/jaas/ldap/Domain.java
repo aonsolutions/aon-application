@@ -3,8 +3,6 @@ package com.code.aon.jaas.ldap;
 import java.util.Collection;
 import java.util.Map;
 
-import org.apache.commons.lang.ArrayUtils;
-
 import com.code.aon.jaas.client.ast.IAccessPolicy;
 import com.code.aon.jaas.client.ast.IDataSourceMetaData;
 import com.code.aon.jaas.client.ast.IDomain;
@@ -16,6 +14,8 @@ import com.code.aon.ldap.Entry;
 
 public class Domain implements IDomain {
 	
+	private static final long serialVersionUID = -8630396330009341954L;
+
 	/** Domain identifier. */
 	private String id;
 
@@ -41,7 +41,7 @@ public class Domain implements IDomain {
 
 	@Override
 	public Collection<IDomainApplication> applications() {
-		throw new UnsupportedOperationException("Not supported!");
+		return this.ldap.getDomainApplications(this.id);
 	}
 
 	@Override
