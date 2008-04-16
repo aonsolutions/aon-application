@@ -142,19 +142,26 @@ public class ArticleCalendarGenerator extends Generator {
 							ahlist.add(ahandler);
 						}
 						vu.put("article_list", ahlist);
-						if (pos>0){
-							vu.put("previous_article_diary", (monthsList.get(pos-1)).getCalendar());
-							vu.put("previous_article_diary_month", (monthsList.get(pos-1)).getMonth());
-							vu.put("previous_article_diary_year", (monthsList.get(pos-1)).getYear());
+						
+						try{
+							vu.put("previous_article_diary", (monthsList.get(0)).getCalendar());
+							vu.put("previous_article_diary_year", (monthsList.get(0)).getYear());
+							vu.put("previous_article_diary_month", (monthsList.get(0)).getMonth());
+						}catch (Exception e) {
 						}
-						vu.put("article_diary", monthContent.getCalendar());
-						vu.put("article_diary_month", monthContent.getMonth());
-						vu.put("article_diary_year", monthContent.getYear());
-						if ((pos+1) < monthsList.size()){
-							vu.put("next_article_diary", (monthsList.get(pos+1)).getCalendar());
-							vu.put("next_article_diary_year", (monthsList.get(pos+1)).getYear());
-							vu.put("next_article_diary_month", (monthsList.get(pos+1)).getMonth());
+						try{
+							vu.put("article_diary", (monthsList.get(1)).getCalendar());
+							vu.put("article_diary_year", (monthsList.get(1)).getYear());
+							vu.put("article_diary_month", (monthsList.get(1)).getMonth());
+						}catch (Exception e) {
 						}
+						try{
+							vu.put("next_article_diary", (monthsList.get(2)).getCalendar());
+							vu.put("next_article_diary_year", (monthsList.get(2)).getYear());
+							vu.put("next_article_diary_month", (monthsList.get(2)).getMonth());
+						}catch (Exception e) {
+						}
+						
 						GregorianCalendar calendar = new GregorianCalendar();
 						calendar.set(Calendar.YEAR, monthContent.getYear());
 						calendar.set(Calendar.MONTH, monthContent.getMonth());
