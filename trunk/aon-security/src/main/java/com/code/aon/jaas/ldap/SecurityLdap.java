@@ -1,6 +1,7 @@
 package com.code.aon.jaas.ldap;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Properties;
 
@@ -419,5 +420,25 @@ public class SecurityLdap implements ILdapConstants, ILdapSecurityConstants {
 		}
 		return applications;
 	}	
+
+	public Collection<IDomainApplication> getDomainApplications( String domainName ) {
+		LdapSession session = null;
+		List<IDomainApplication> applications = new ArrayList<IDomainApplication>();
+		try {
+			session = getLdapSession();
+			String objectClass = getObjectClass(DOMAIN_APPLICATION_OBJECT_CLASS);
+			DistinguishedName dn = getDomainApplicationsDN(domainName);
+			List<Entry> list = session.search(dn.toString(), objectClass );
+			for( Entry entry : list ) {
+				IDomainApplication application = getDomainApplication(entry, domainName);
+				applications.add(application);
+			}
+		} catch ( LdapException e ) {
+			LOGGER.error( e.getMessage(), e );
+		} finally {
+			closeSession(session);
+		}
+		return applications;
+	}
 	
 }

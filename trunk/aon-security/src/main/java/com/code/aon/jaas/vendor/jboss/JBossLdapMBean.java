@@ -33,4 +33,6 @@ public interface JBossLdapMBean extends org.jboss.system.ServiceMBean {
 	
 	List getUserApplications(String domainId, String userId);
 	
+	IApplication getApplication(String name);
+	
 }

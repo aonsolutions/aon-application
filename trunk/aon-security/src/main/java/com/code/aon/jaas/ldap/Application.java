@@ -10,6 +10,8 @@ import com.code.aon.jaas.deployment.event.SubDeployerEvent;
 
 public class Application implements IApplication {
 
+	private static final long serialVersionUID = -7774786273060605086L;
+
 	/** Domain identifier. */
 	private String id;
 
@@ -59,7 +61,7 @@ public class Application implements IApplication {
 
 	@Override
 	public IDomain getDomain(String name) {
-		throw new UnsupportedOperationException("Not supported!");
+		return this.ldap.getDomain(name);
 	}
 
 	@Override
