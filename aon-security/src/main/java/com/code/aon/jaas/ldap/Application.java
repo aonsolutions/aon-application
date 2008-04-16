@@ -1,17 +1,30 @@
 package com.code.aon.jaas.ldap;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import com.code.aon.jaas.client.ast.IApplication;
 import com.code.aon.jaas.client.ast.IDomain;
 import com.code.aon.jaas.client.ast.INodeVisitor;
+import com.code.aon.jaas.client.ast.IRelation;
 import com.code.aon.jaas.client.ast.IRole;
 import com.code.aon.jaas.deployment.event.SubDeployerEvent;
+import com.code.aon.ldap.DistinguishedName;
+import com.code.aon.ldap.Entry;
+import com.code.aon.ldap.LdapException;
+import com.code.aon.ldap.LdapSession;
 
-public class Application implements IApplication {
+public class Application implements IApplication, ILdapSecurityConstants {
 
 	private static final long serialVersionUID = -7774786273060605086L;
 
+	/** Obtiene un logger apropiado. */
+	private static final Log LOGGER = LogFactory.getLog( Application.class.getName() );
+	
 	/** Domain identifier. */
 	private String id;
 
@@ -96,7 +109,7 @@ public class Application implements IApplication {
 
 	@Override
 	public Collection<IRole> roles() {
-		throw new UnsupportedOperationException("Not supported!");
+		return getApplicationRoles(this.id);
 	}
 
 	@Override
@@ -134,4 +147,24 @@ public class Application implements IApplication {
 		throw new UnsupportedOperationException("Not supported!");
 	}
 
+	public Collection<IRole> getApplicationRoles( String application ) {
+		LdapSession session = null;
+		List<IRole> roles = new ArrayList<IRole>();
+		try {
+			session = this.ldap.getLdapSession();
+			String objectClass = this.ldap.getObjectClass(ROLE_OBJECT_CLASS);
+			DistinguishedName dn = this.ldap.getRolesDN(application);
+			List<Entry> list = session.search(dn.toString(), objectClass );
+			for( Entry entry : list ) {
+				IRole role = this.ldap.getRole(entry);
+				roles.add(role);
+			}
+		} catch ( LdapException e ) {
+			LOGGER.error( e.getMessage(), e );
+		} finally {
+			this.ldap.closeSession(session);
+		}
+		return roles;
+	}
+	
 }

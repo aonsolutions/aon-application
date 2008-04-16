@@ -1,7 +1,6 @@
 package com.code.aon.jaas.ldap;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.Properties;
 
@@ -14,10 +13,12 @@ import com.code.aon.jaas.client.ast.IDataSourceMetaData;
 import com.code.aon.jaas.client.ast.IDomain;
 import com.code.aon.jaas.client.ast.IDomainApplication;
 import com.code.aon.jaas.client.ast.IRelation;
+import com.code.aon.jaas.client.ast.IRole;
 import com.code.aon.jaas.client.ast.IUser;
 import com.code.aon.jaas.client.ast.core.AccessPolicy;
 import com.code.aon.jaas.client.ast.core.DataSourceMetaData;
 import com.code.aon.jaas.client.ast.core.Relation;
+import com.code.aon.jaas.client.ast.core.Role;
 import com.code.aon.jaas.client.ast.core.User;
 import com.code.aon.ldap.DistinguishedName;
 import com.code.aon.ldap.Entry;
@@ -37,13 +38,13 @@ public class SecurityLdap implements ILdapConstants, ILdapSecurityConstants {
 		this.properties = properties;
 	}
 	
-	private LdapSession getLdapSession() throws LdapException {
+	public LdapSession getLdapSession() throws LdapException {
 		LdapSession session = new LdapSession();
 		session.open(this.properties);
 		return session;
 	}
 	
-	private void closeSession( LdapSession session ) {
+	public void closeSession( LdapSession session ) {
 		try {
 			if ( session != null ) {
 				session.close();
@@ -53,7 +54,7 @@ public class SecurityLdap implements ILdapConstants, ILdapSecurityConstants {
 		}
 	}
 	
-	private String getObjectClass( String objectClass ) {
+	public String getObjectClass( String objectClass ) {
 		return "(" + OBJECT_CLASS + "=" + objectClass +  ")";
 	}
 
@@ -77,7 +78,7 @@ public class SecurityLdap implements ILdapConstants, ILdapSecurityConstants {
 		return new DistinguishedName( getCN(domainName), DOMAINS_DN );
 	}
 
-	private DistinguishedName getDomainApplicationsDN( String domainName ) {
+	public DistinguishedName getDomainApplicationsDN( String domainName ) {
 		return new DistinguishedName( APPLICATIONS_DN, getDomainDN(domainName) );
 	}
 	
@@ -85,7 +86,7 @@ public class SecurityLdap implements ILdapConstants, ILdapSecurityConstants {
 		return new DistinguishedName( getCN(application), getDomainApplicationsDN(domainName) );
 	}
 	
-	private DistinguishedName getDomainApplicationUsersDN( String domainName, String application ) {
+	public DistinguishedName getDomainApplicationUsersDN( String domainName, String application ) {
 		return new DistinguishedName( USERS_DN, getDomainApplicationDN(domainName, application) );
 	}
 
@@ -93,7 +94,7 @@ public class SecurityLdap implements ILdapConstants, ILdapSecurityConstants {
 		return new DistinguishedName( USERS_DN, getDomainDN(domainName) );
 	}
 
-	private DistinguishedName getDomainApplicationProfilesDN( String domainName, String application ) {
+	public DistinguishedName getDomainApplicationProfilesDN( String domainName, String application ) {
 		return new DistinguishedName( PROFILES_DN, getDomainApplicationDN(domainName, application) );
 	}
 
@@ -101,8 +102,12 @@ public class SecurityLdap implements ILdapConstants, ILdapSecurityConstants {
 		return new DistinguishedName( getCN(application), APPLICATIONS_DN );
 	}
 	
-	private DistinguishedName getProfilesDN( String application ) {
+	public DistinguishedName getProfilesDN( String application ) {
 		return new DistinguishedName( PROFILES_DN, getApplicationDN(application) );
+	}
+
+	public DistinguishedName getRolesDN( String application ) {
+		return new DistinguishedName( ROLES_DN, getApplicationDN(application) );
 	}
 	
 	public String getApplicationId( String context ) {
@@ -248,7 +253,23 @@ public class SecurityLdap implements ILdapConstants, ILdapSecurityConstants {
 		domain.setId(entry.getAsString(COMMON_NAME));
 		return domain;
 	}
+	
+	public IRelation getRelation( Entry entry ) {
+		Relation relation = new Relation();
+		relation.setId(entry.getAsString(COMMON_NAME));
+		for( Object member : entry.get(MEMBER) ) {
+			DistinguishedName dn = new DistinguishedName( (String) member );
+			relation.addRelation( dn.getLevelValue(0) );
+		}
+		return relation;
+	}
 
+	public IRole getRole( Entry entry ) {
+		Role role = new Role();
+		role.setId(entry.getAsString(COMMON_NAME));
+		return role;
+	}
+	
 	public IUser getUser( Entry entry ) {
 		User user = new User();
 		user.setId(entry.getAsString(USER_ID));
@@ -421,24 +442,4 @@ public class SecurityLdap implements ILdapConstants, ILdapSecurityConstants {
 		return applications;
 	}	
 
-	public Collection<IDomainApplication> getDomainApplications( String domainName ) {
-		LdapSession session = null;
-		List<IDomainApplication> applications = new ArrayList<IDomainApplication>();
-		try {
-			session = getLdapSession();
-			String objectClass = getObjectClass(DOMAIN_APPLICATION_OBJECT_CLASS);
-			DistinguishedName dn = getDomainApplicationsDN(domainName);
-			List<Entry> list = session.search(dn.toString(), objectClass );
-			for( Entry entry : list ) {
-				IDomainApplication application = getDomainApplication(entry, domainName);
-				applications.add(application);
-			}
-		} catch ( LdapException e ) {
-			LOGGER.error( e.getMessage(), e );
-		} finally {
-			closeSession(session);
-		}
-		return applications;
-	}
-	
 }

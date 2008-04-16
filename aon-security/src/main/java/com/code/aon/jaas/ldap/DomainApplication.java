@@ -1,19 +1,26 @@
 package com.code.aon.jaas.ldap;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import com.code.aon.jaas.auth.session.AuthenticationLoginException;
 import com.code.aon.jaas.client.ast.IDataSourceMetaData;
 import com.code.aon.jaas.client.ast.IDomainApplication;
 import com.code.aon.jaas.client.ast.INodeVisitor;
 import com.code.aon.jaas.client.ast.IRelation;
+import com.code.aon.ldap.DistinguishedName;
+import com.code.aon.ldap.Entry;
+import com.code.aon.ldap.LdapException;
+import com.code.aon.ldap.LdapSession;
 
-public class DomainApplication implements IDomainApplication {
+public class DomainApplication implements IDomainApplication, ILdapSecurityConstants {
 
-    /** Obtiene un logger apropiado. */
+	private static final long serialVersionUID = 2524989244667666833L;
+
+	/** Obtiene un logger apropiado. */
 	private static final Log LOGGER = LogFactory.getLog( DomainApplication.class.getName() );
 	
 	/** Domain identifier. */
@@ -65,7 +72,10 @@ public class DomainApplication implements IDomainApplication {
 
 	@Override
 	public Collection<IRelation> profiles() {
-		throw new UnsupportedOperationException("Not supported!");
+		List<IRelation> list = new ArrayList<IRelation>();
+		list.addAll( getApplicationProfiles(this.id) );
+		list.addAll( getDomainApplicationProfiles(this.domain,this.id) );
+		return list;
 	}
 
 	@Override
@@ -90,7 +100,7 @@ public class DomainApplication implements IDomainApplication {
 
 	@Override
 	public Collection<IRelation> users() {
-		throw new UnsupportedOperationException("Not supported!");
+		return getDomainApplicationUsers( this.domain, this.id );
 	}
 
 	@Override
@@ -102,5 +112,65 @@ public class DomainApplication implements IDomainApplication {
 	public String getId() {
 		return this.id;
 	}
+	
+	public Collection<IRelation> getApplicationProfiles( String application ) {
+		LdapSession session = null;
+		List<IRelation> profiles = new ArrayList<IRelation>();
+		try {
+			session = this.ldap.getLdapSession();
+			String objectClass = this.ldap.getObjectClass(PROFILE_OBJECT_CLASS);
+			DistinguishedName dn = this.ldap.getProfilesDN(application);
+			List<Entry> list = session.search(dn.toString(), objectClass );
+			for( Entry entry : list ) {
+				IRelation profile = this.ldap.getRelation(entry);
+				profiles.add(profile);
+			}
+		} catch ( LdapException e ) {
+			LOGGER.error( e.getMessage(), e );
+		} finally {
+			this.ldap.closeSession(session);
+		}
+		return profiles;
+	}	
 
+	public Collection<IRelation> getDomainApplicationProfiles( String domainId, String application ) {
+		LdapSession session = null;
+		List<IRelation> profiles = new ArrayList<IRelation>();
+		try {
+			session = this.ldap.getLdapSession();
+			String objectClass = this.ldap.getObjectClass(DOMAIN_APPLICATION_PROFILE_OBJECT_CLASS);
+			DistinguishedName dn = this.ldap.getDomainApplicationProfilesDN(domainId, application);
+			List<Entry> list = session.search(dn.toString(), objectClass );
+			for( Entry entry : list ) {
+				IRelation profile = this.ldap.getRelation(entry);
+				profiles.add(profile);
+			}
+		} catch ( LdapException e ) {
+			LOGGER.error( e.getMessage(), e );
+		} finally {
+			this.ldap.closeSession(session);
+		}
+		return profiles;
+	}
+	
+	public Collection<IRelation> getDomainApplicationUsers( String domainName, String application ) {
+		LdapSession session = null;
+		List<IRelation> users = new ArrayList<IRelation>();
+		try {
+			session = this.ldap.getLdapSession();
+			String objectClass = this.ldap.getObjectClass(DOMAIN_APPLICATION_USER_OBJECT_CLASS);
+			DistinguishedName dn = this.ldap.getDomainApplicationUsersDN(domainName, application);
+			List<Entry> list = session.search(dn.toString(), objectClass );
+			for( Entry entry : list ) {
+				IRelation user = this.ldap.getRelation(entry);
+				users.add(user);
+			}
+		} catch ( LdapException e ) {
+			LOGGER.error( e.getMessage(), e );
+		} finally {
+			this.ldap.closeSession(session);
+		}
+		return users;
+	}
+	
 }
