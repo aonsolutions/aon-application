@@ -10,6 +10,8 @@ public interface ILdapSecurityConstants {
 	
 	String PROFILES_DN = "ou=profiles";
 	
+	String ROLES_DN = "ou=roles";
+	
 	String BDS_DN = "ou=bds";
 	
 	String APPLICATION_OBJECT_CLASS = "aonApplication";
@@ -29,6 +31,8 @@ public interface ILdapSecurityConstants {
 	String USER_OBJECT_CLASS = "aonUser";
 	
 	String PROFILE_OBJECT_CLASS = "aonProfile";
+	
+	String ROLE_OBJECT_CLASS = "aonRole";
 	
 	String DESCRIPTION_ATTRIBUTE = "description";
 	

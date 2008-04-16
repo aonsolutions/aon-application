@@ -1,7 +1,12 @@
 package com.code.aon.jaas.ldap;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
+
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import com.code.aon.jaas.client.ast.IAccessPolicy;
 import com.code.aon.jaas.client.ast.IDataSourceMetaData;
@@ -10,10 +15,16 @@ import com.code.aon.jaas.client.ast.IDomainApplication;
 import com.code.aon.jaas.client.ast.INodeVisitor;
 import com.code.aon.jaas.client.ast.IUser;
 import com.code.aon.jaas.client.ast.UserAlreadyExistException;
+import com.code.aon.ldap.DistinguishedName;
 import com.code.aon.ldap.Entry;
+import com.code.aon.ldap.LdapException;
+import com.code.aon.ldap.LdapSession;
 
-public class Domain implements IDomain {
+public class Domain implements IDomain, ILdapSecurityConstants {
 	
+    /** Obtiene un logger apropiado. */
+	private static final Log LOGGER = LogFactory.getLog( Domain.class.getName() );
+
 	private static final long serialVersionUID = -8630396330009341954L;
 
 	/** Domain identifier. */
@@ -41,7 +52,7 @@ public class Domain implements IDomain {
 
 	@Override
 	public Collection<IDomainApplication> applications() {
-		return this.ldap.getDomainApplications(this.id);
+		return getDomainApplications(this.id);
 	}
 
 	@Override
@@ -113,4 +124,24 @@ public class Domain implements IDomain {
 		return this.id;
 	}
 
+	private Collection<IDomainApplication> getDomainApplications( String domainName ) {
+		LdapSession session = null;
+		List<IDomainApplication> applications = new ArrayList<IDomainApplication>();
+		try {
+			session = this.ldap.getLdapSession();
+			String objectClass = this.ldap.getObjectClass(DOMAIN_APPLICATION_OBJECT_CLASS);
+			DistinguishedName dn = this.ldap.getDomainApplicationsDN(domainName);
+			List<Entry> list = session.search(dn.toString(), objectClass );
+			for( Entry entry : list ) {
+				IDomainApplication application = this.ldap.getDomainApplication(entry, domainName);
+				applications.add(application);
+			}
+		} catch ( LdapException e ) {
+			LOGGER.error( e.getMessage(), e );
+		} finally {
+			this.ldap.closeSession(session);
+		}
+		return applications;
+	}
+	
 }
