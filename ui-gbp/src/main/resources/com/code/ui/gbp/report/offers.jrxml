@@ -2,7 +2,7 @@
 <!-- Created with iReport - A designer for JasperReports -->
 <!DOCTYPE jasperReport PUBLIC "//JasperReports//DTD Report Design//EN" "http://jasperreports.sourceforge.net/dtds/jasperreport.dtd">
 <jasperReport
-		 name="campaigns"
+		 name="offers"
 		 columnCount="1"
 		 printOrder="Vertical"
 		 orientation="Portrait"
@@ -25,11 +25,11 @@
 
 	<parameter name="printHeaders" isForPrompting="false" class="java.lang.Boolean"/>
 
-	<field name="name" class="java.lang.String"/>
-	<field name="status" class="com.code.gbp.enumeration.CampaignStatus"/>
-	<field name="startDate" class="java.util.Date"/>
-	<field name="endDate" class="java.util.Date"/>
-	<field name="code" class="java.lang.Integer"/>
+	<field name="supplier" class="com.code.gbp.Supplier"/>
+	<field name="status" class="com.code.gbp.enumeration.OfferStatus"/>
+	<field name="offerDate" class="java.util.Date"/>
+	<field name="price" class="java.lang.Double"/>
+	<field name="campaign" class="com.code.gbp.Campaign"/>
 
 		<background>
 			<band height="0"  isSplitAllowed="true" >
@@ -85,7 +85,7 @@
 					<textElement textAlignment="Center" verticalAlignment="Middle">
 						<font pdfFontName="Helvetica-Bold" size="9" isBold="true"/>
 					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$R{gbp_campaign_name}]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$R{gbp_offer_supplier}]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
@@ -101,7 +101,7 @@
 					<textElement textAlignment="Center" verticalAlignment="Middle">
 						<font pdfFontName="Helvetica-Bold" size="9" isBold="true"/>
 					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$R{gbp_campaign_end_date}]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$R{gbp_offer_price}]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
@@ -117,7 +117,7 @@
 					<textElement textAlignment="Center" verticalAlignment="Middle">
 						<font pdfFontName="Helvetica-Bold" size="9" isBold="true"/>
 					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$R{gbp_campaign_start_date}]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$R{gbp_offer_offer_date}]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
@@ -133,7 +133,7 @@
 					<textElement textAlignment="Center" verticalAlignment="Middle">
 						<font pdfFontName="Helvetica-Bold" size="9" isBold="true"/>
 					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$R{gbp_campaign_status}]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$R{gbp_offer_status}]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
@@ -149,7 +149,7 @@
 					<textElement textAlignment="Center" verticalAlignment="Middle">
 						<font pdfFontName="Helvetica-Bold" size="9" isBold="true"/>
 					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$R{gbp_campaign_code}]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$R{gbp_offer_campaign_code}]]></textFieldExpression>
 				</textField>
 			</band>
 		</columnHeader>
@@ -166,7 +166,7 @@
 					<textElement verticalAlignment="Middle">
 						<font size="8"/>
 					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$F{name}]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.String"><![CDATA[""+$F{supplier}.getName()]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
@@ -193,9 +193,9 @@
 					<textElement textAlignment="Left" verticalAlignment="Middle">
 						<font size="8"/>
 					</textElement>
-				<textFieldExpression   class="java.util.Date"><![CDATA[$F{startDate}]]></textFieldExpression>
+				<textFieldExpression   class="java.util.Date"><![CDATA[$F{offerDate}]]></textFieldExpression>
 				</textField>
-				<textField isStretchWithOverflow="false" pattern="dd/MM/yyyy" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+				<textField isStretchWithOverflow="false" pattern="#,##0.00" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						x="455"
 						y="0"
@@ -206,7 +206,7 @@
 					<textElement textAlignment="Left" verticalAlignment="Middle">
 						<font size="8"/>
 					</textElement>
-				<textFieldExpression   class="java.util.Date"><![CDATA[$F{endDate}]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.Double"><![CDATA[$F{price}]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
@@ -219,7 +219,7 @@
 					<textElement verticalAlignment="Middle">
 						<font size="8"/>
 					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[""+$F{code}]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.String"><![CDATA[""+$F{campaign}.getCode()]]></textFieldExpression>
 				</textField>
 			</band>
 		</detail>
