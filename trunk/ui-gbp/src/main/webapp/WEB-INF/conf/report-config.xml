@@ -59,4 +59,14 @@
 		</params>
 	</report>
 	
+	<!--  *********  OFFER LIST  ********* -->
+	<report id="offers" description="Offers report">
+		<template path="/com/code/ui/gbp/report/offers.jasper" />
+		<bean key="com.code.gbp.Offer" />
+		<criteria provider="#{offer}" />
+		<params>
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.ui.gbp.i18n.messages" />
+		</params>
+	</report>
+	
 </report-config>
