@@ -230,6 +230,8 @@ public class ArticleCalendarGenerator extends Generator {
 			Map<String, MonthContent> months,
 			List<MonthContent> monthsList){
 		MonthContent monthContent = MonthContent.instantiate(initDate);
+		months.put(monthContent.getCode(), monthContent);
+		monthsList.add(monthContent);
 		
         GregorianCalendar nextDay = new GregorianCalendar();
         nextDay.setTime(initDate);
