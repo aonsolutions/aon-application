@@ -3,6 +3,7 @@
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:t="http://myfaces.apache.org/tomahawk"            
 	xmlns:aon="http://www.code.es/aon-rich-components">
 <body>
 
@@ -33,6 +34,11 @@
 						action="supplier_search" actionListener="#{supplier.onEditSearch}"
 						styleClass="aon-finding-toolbar-item aon-icon-search"
 						accesskey="#{bundle.aon_key_search}"/>
+					<t:commandButton id="suppliers" value="#{appBundle.gbp_print}"
+						immediate="true" forceId="true" action="supplier_list"
+						onclick="reportWindow(this, 'placeList', '${facesContext.externalContext.requestContextPath}/facelet/report/preferences.jsf');return false;"
+						styleClass="aon-finding-toolbar-item aon-icon-printer"
+						accesskey="#{bundle.aon_key_print}" />
 			    </aon:div>
 				
 				<!-- end toolbar navigation -->
@@ -79,6 +85,7 @@
 				
 			</aon:div>
 		</aon:form>
+		<aon:form id="placeList" target="list" />
 	</ui:define>
 
 </ui:composition>

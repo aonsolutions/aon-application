@@ -39,4 +39,24 @@
 		<template path="/com/code/ui/gbp/report/proofSignatures.jasper"/>
 	</report>
 	
+	<!--  *********  SUPPLIER LIST  ********* -->
+	<report id="suppliers" description="Suppliers report">
+		<template path="/com/code/ui/gbp/report/suppliers.jasper" />
+		<bean key="com.code.gbp.Supplier" />
+		<criteria provider="#{supplier}" />
+		<params>
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.ui.gbp.i18n.messages" />
+		</params>
+	</report>
+	
+	<!--  *********  CAMPAIGN LIST  ********* -->
+	<report id="campaigns" description="Campaigns report">
+		<template path="/com/code/ui/gbp/report/campaigns.jasper" />
+		<bean key="com.code.gbp.Campaign" />
+		<criteria provider="#{campaign}" />
+		<params>
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.ui.gbp.i18n.messages" />
+		</params>
+	</report>
+	
 </report-config>
