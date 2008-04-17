@@ -33,7 +33,8 @@ public class HeaderHandler {
 		language = header.getHeader().isLanguage_menu();
 		languageType = header.getHeader().getLanguage_menu_type();
 		menu = MenuGenerator.getMenuOptionList(header.getHeader().getMenu());
-		bannerCategory = (BannerCategoryHandler)BannerGenerator.getBannerCategoryHandler(header.getHeader().getBannerCategory().getId());
+		if (header.getHeader().getBannerCategory()!=null)
+			bannerCategory = (BannerCategoryHandler)BannerGenerator.getBannerCategoryHandler(header.getHeader().getBannerCategory().getId());
 		sitename = header.getSitename();
 		image = header.getImage();
 		content = header.getContent();
