@@ -78,7 +78,7 @@
 							styleClass="aon-form-input-text-label"/>
 						<t:inputText id="InvoiceAddress_address2" styleClass="aon-form-input-text"
 							forceId="#{true}" value="#{feeInvoicingAddress.to.address2}"
-							size="45" maxlength="45" required="#{true}">
+							size="45" maxlength="45">
 						</t:inputText>
 
 						<t:outputLabel for="InvoiceAddress_zip"
@@ -104,7 +104,7 @@
 							value="#{feeInvoicingAddress.to.geozone.id}"
 							styleClass="aon-form-selectOneMenu-field">
 							<f:selectItem itemValue="" itemLabel=" " />
-							<f:selectItems value="#{registryCollections.geoZones}" />
+							<f:selectItems value="#{geozoneCollections.geoTrees}" />
 						</t:selectOneMenu>
 						
 					</h:panelGrid>
