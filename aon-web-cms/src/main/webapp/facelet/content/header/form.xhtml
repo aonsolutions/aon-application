@@ -84,6 +84,12 @@
 									<f:selectItems value="#{collections.menuTopList}" />
 								</aon:selectOneMenu> 
 			
+								<aon:outputLabel for="header_banners"
+									value="#{appBundle.header_banners}"/>
+								<aon:selectOneMenu id="header_banners"  
+									value="#{headers.to.bannerCategory.id}">
+									<f:selectItems value="#{collections.bannerGroupList}" />
+								</aon:selectOneMenu> 
 								
 								<aon:outputLabel for="header_language_menu"
 									value="#{appBundle.header_hasmenu}" />

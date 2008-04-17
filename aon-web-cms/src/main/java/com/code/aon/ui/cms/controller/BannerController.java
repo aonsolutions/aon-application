@@ -1,19 +1,14 @@
 package com.code.aon.ui.cms.controller;
 
-import java.util.LinkedList;
 import java.util.List;
-import java.util.Locale;
 
-import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
-import javax.faces.model.SelectItem;
 
 import com.code.aon.cms.Banner;
 import com.code.aon.cms.BannerCategory;
 import com.code.aon.cms.BannerDetail;
 import com.code.aon.cms.Image;
 import com.code.aon.cms.dao.ICMSAlias;
-import com.code.aon.cms.enumeration.BannerType;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ql.Criteria;
@@ -117,18 +112,6 @@ public class BannerController extends BasicI18nController {
 				getManagerBean().update(b);
 			}
 		}
-	}
-	
-	public List<SelectItem> getBannerTypes() throws ManagerBeanException {
-		List<SelectItem> bannerTypes = new LinkedList<SelectItem>();
-		Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
-		SelectItem item = new SelectItem();
-		for (BannerType bannerType : BannerType.values()) {
-			String name = bannerType.getName(locale);
-			item = new SelectItem(bannerType, name);
-			bannerTypes.add(item);
-		}
-		return bannerTypes;
 	}
 	
 	public void onDelImage(ActionEvent event) {

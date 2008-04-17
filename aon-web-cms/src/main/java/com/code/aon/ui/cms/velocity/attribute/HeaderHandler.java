@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import com.code.aon.cms.HeaderDetail;
 import com.code.aon.cms.enumeration.LanguageMenuType;
+import com.code.aon.ui.cms.velocity.BannerGenerator;
 import com.code.aon.ui.cms.velocity.MenuGenerator;
 
 public class HeaderHandler {
@@ -18,6 +19,8 @@ public class HeaderHandler {
 	
 	private ArrayList<MenuOptionHandler> menu;
 
+	private BannerCategoryHandler bannerCategory;
+
 	private String sitename;
 	
 	private String image;
@@ -30,6 +33,7 @@ public class HeaderHandler {
 		language = header.getHeader().isLanguage_menu();
 		languageType = header.getHeader().getLanguage_menu_type();
 		menu = MenuGenerator.getMenuOptionList(header.getHeader().getMenu());
+		bannerCategory = (BannerCategoryHandler)BannerGenerator.getBannerCategoryHandler(header.getHeader().getBannerCategory().getId());
 		sitename = header.getSitename();
 		image = header.getImage();
 		content = header.getContent();
@@ -79,5 +83,8 @@ public class HeaderHandler {
 		return languageType;
 	}
 
+	public BannerCategoryHandler getBannerCategory() {
+		return bannerCategory;
+	}
 
 }

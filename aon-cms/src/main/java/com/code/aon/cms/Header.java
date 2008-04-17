@@ -26,6 +26,8 @@ public class Header implements ITransferObject {
 
 	private Menu menu;
 	
+	private BannerCategory bannerCategory;
+	
 	private boolean language_menu = true;
 	
 	private LanguageMenuType language_menu_type;
@@ -66,6 +68,16 @@ public class Header implements ITransferObject {
 
 	public void setMenu(Menu menu) {
 		this.menu = menu;
+	}
+
+	@ManyToOne(fetch = FetchType.EAGER)
+	@JoinColumn(name = "banner_category", nullable = true)
+	public BannerCategory getBannerCategory() {
+		return bannerCategory;
+	}
+
+	public void setBannerCategory(BannerCategory bannerCategory) {
+		this.bannerCategory = bannerCategory;
 	}
 
 	@Column(name = "language_menu", nullable = false)
