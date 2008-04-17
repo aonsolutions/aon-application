@@ -30,6 +30,8 @@ import com.code.aon.jaas.ldap.DomainApplication;
 import com.code.aon.jaas.ldap.SecurityLdap;
 import com.code.aon.jaas.storage.ApplicationsStorage;
 import com.code.aon.jaas.storage.StorageException;
+import com.code.aon.ldap.DistinguishedName;
+import com.code.aon.ldap.Entry;
 
 /**
  * @author Consulting & Development. Aimar Tellitu - 03/04/2008
@@ -120,8 +122,14 @@ public class JBossLdap extends ServiceMBeanSupport implements JBossLdapMBean {
 		if ( LOGGER.isDebugEnabled() ) {
 			LOGGER.debug("Removing profile relation from: DOMAIN[" + domainId + "], APPLICATION[" + appId + "]" );
 		}
-		IDomainApplication domainApplication = DomainApplication.get(this.ldap, domainId, appId);
-		domainApplication.removeProfile(relation);
+		Entry profile = this.ldap.getApplicationProfile( domainId, appId, relation.getId() );
+		if ( profile != null ) {
+			DistinguishedName dn = SecurityLdap.getApplicationProfileDN(appId, relation.getId());
+			this.ldap.delete(dn);
+		} else {
+			IDomainApplication domainApplication = DomainApplication.get(this.ldap, domainId, appId);
+			domainApplication.removeProfile(relation);
+		}
 		return relation;
 	}
 
@@ -129,9 +137,14 @@ public class JBossLdap extends ServiceMBeanSupport implements JBossLdapMBean {
 		if ( LOGGER.isDebugEnabled() ) {
 			LOGGER.debug("Updating profile relation for: DOMAIN[" + domainId + "], APPLICATION[" + appId + "]" );
 		}
-		Application application = Application.get(this.ldap, appId);
-		IDomainApplication domainApplication = DomainApplication.get(this.ldap, domainId, appId);
-		return domainApplication.updateProfile(relation);
+		Entry profile = this.ldap.getApplicationProfile( domainId, appId, relation.getId() );
+		if ( profile != null ) {
+			ldap.updateProfile( profile.getDN(), relation );
+		} else {
+			IDomainApplication domainApplication = DomainApplication.get(this.ldap, domainId, appId);
+			domainApplication.updateProfile(relation);
+		}
+		return relation;
 	}
 	
 	public IUser updateUser(String appId, String domainId, IUser user, String oldUserId) throws StorageException {
