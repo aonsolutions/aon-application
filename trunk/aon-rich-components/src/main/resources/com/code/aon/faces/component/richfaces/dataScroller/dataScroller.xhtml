@@ -33,7 +33,7 @@
 		
 		<aon:dataPaginator for="#{dataTable}" fastStep="5" paginator="true"
 			paginatorMaxPages="5"
-			rendered="#{model.rowCount>20}"
+			rendered="#{(pageSize != 0) and (model.rowCount > pageSize)}"
 			styleClass="aon-dataScroller-buttons"
 			>
 
