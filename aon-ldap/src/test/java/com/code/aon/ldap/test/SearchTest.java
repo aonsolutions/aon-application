@@ -68,6 +68,16 @@ public class SearchTest {
     }
 
 	@Test
+    public void testExists() {
+		try {
+			boolean value = session.exists("cn=Manager,ou=profiles,cn=aon-desktop,ou=applications,cn=localhost,ou=domains","(objectclass=aonProfile)");
+			Assert.assertFalse( value );
+		} catch (LdapException e) {
+			Assert.fail( e.getMessage() );
+		}
+    }
+	
+	@Test
     public void testCycle() {
 		try {
 			Entry entry = new Entry("cn=deletable.es,ou=domains");
