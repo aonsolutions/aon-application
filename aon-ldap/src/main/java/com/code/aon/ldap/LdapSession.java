@@ -1,6 +1,7 @@
 package com.code.aon.ldap;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -44,6 +45,8 @@ public class LdapSession implements ILdapConstants {
 			.getName());
 
 	private DirContext dc;
+	
+	private String baseDN;
 
 	public void open(String host, int port, String user, String password,
 			boolean ssl) throws LdapException {
@@ -71,6 +74,7 @@ public class LdapSession implements ILdapConstants {
 	public void open(Properties properties) throws LdapException {
 		try {
 			this.dc = new InitialDirContext(properties);
+			this.baseDN = StringUtils.trimToNull( dc.getNameInNamespace() );
 		} catch (NamingException e) {
 			throw new LdapException("Error opening LDAP connection", e);
 		}
@@ -120,10 +124,20 @@ public class LdapSession implements ILdapConstants {
 		return sc;
 	}
 
+	public String getBaseDN() {
+		return this.baseDN;
+	}
+	
+	public DistinguishedName getFullDN( DistinguishedName dn ) {
+		if ( this.baseDN != null ) {
+			return new DistinguishedName( dn, this.baseDN );
+		}
+		return dn;
+	}
+	
 	private String resolveBase(String base) throws NamingException {
-		String name = dc.getNameInNamespace();
-		if (base.endsWith(name)) {
-			return base.substring(0, base.length() - name.length() - 1);
+		if (base.endsWith(this.baseDN)) {
+			return base.substring(0, base.length() - this.baseDN.length() - 1);
 		}
 		return base;
 	}
@@ -345,12 +359,12 @@ public class LdapSession implements ILdapConstants {
 	public void addAttribute(DistinguishedName dn, String name, Object value, Object ... values ) throws LdapException {
 		this.addAttribute(dn.toString(), name, value, values);
 	}
-	
-	public void replaceAttribute(String dn, String name, Object value, Object ... values ) throws LdapException {
+
+	public void replaceAttributeValues(String dn, String name, List<Object> values ) throws LdapException {
 		try {
 			ModificationItem[] items = new ModificationItem[1];
 
-			Attribute attribute = new BasicAttribute(name, value );
+			Attribute attribute = new BasicAttribute(name);
 			for( Object _value : values ) {
 				attribute.add(_value);
 			}
@@ -361,7 +375,15 @@ public class LdapSession implements ILdapConstants {
 		}
 	}
 
-	public void replaceAttribute(DistinguishedName dn, String name, Object value, Object ... values ) throws LdapException {
-		this.replaceAttribute(dn.toString(), name, value, values);
+	public void replaceAttributeValues(DistinguishedName dn, String name, List<Object> values ) throws LdapException {
+		this.replaceAttributeValues(dn.toString(), name, values);
+	}
+	
+	public void replaceAttribute(String dn, String name, Object value) throws LdapException {
+		this.replaceAttributeValues(dn, name, Arrays.asList(new Object[]{value}));
+	}
+
+	public void replaceAttribute(DistinguishedName dn, String name, Object value ) throws LdapException {
+		this.replaceAttribute(dn.toString(), name, value);
 	}
 }
