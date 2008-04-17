@@ -173,7 +173,7 @@ public class DomainApplication implements IDomainApplication, ILdapConstants, IL
 		try {
 			session = this.ldap.getLdapSession();
 			String objectClass = this.ldap.getObjectClass(PROFILE_OBJECT_CLASS);
-			DistinguishedName dn = this.ldap.getProfilesDN(application);
+			DistinguishedName dn = this.ldap.getApplicationProfilesDN(application);
 			List<Entry> list = session.search(dn.toString(), objectClass );
 			for( Entry entry : list ) {
 				IRelation profile = this.ldap.getRelation(entry);
@@ -231,17 +231,12 @@ public class DomainApplication implements IDomainApplication, ILdapConstants, IL
 		LdapSession session = null;
 		try {
 			session = this.ldap.getLdapSession();
-			String objectClass = this.ldap.getObjectClass(DOMAIN_APPLICATION_PROFILE_OBJECT_CLASS);
-			DistinguishedName dn = this.ldap.getDomainApplicationProfileDN(domainId, appId, relation.getId());
+			String objectClass = SecurityLdap.getObjectClass(DOMAIN_APPLICATION_PROFILE_OBJECT_CLASS);
+			DistinguishedName dn = SecurityLdap.getDomainApplicationProfileDN(domainId, appId, relation.getId());
 			if ( session.exists(dn.toString(), objectClass) ) {
-				List<Object> members = new LinkedList<Object>();
-				for( String role : relation.relations() ) {
-					DistinguishedName member = session.getFullDN( this.ldap.getRoleDN(appId, role) );
-					members.add( member.toString() );
-				}
-				session.replaceAttributeValues(dn, MEMBER, members);
+				ldap.updateProfile(dn, relation);
 			} else {
-				Entry entry = this.ldap.getDomainApplicationProfile( session, relation, dn);
+				Entry entry = ldap.getDomainApplicationProfile( session, relation, dn);
 				session.add(entry);
 			}
 		} catch ( LdapException e ) {
@@ -253,16 +248,8 @@ public class DomainApplication implements IDomainApplication, ILdapConstants, IL
 	}
 
 	public void removeProfile(String appId, String domainId, IRelation relation) {
-		LdapSession session = null;
-		try {
-			session = this.ldap.getLdapSession();
-			DistinguishedName dn = this.ldap.getDomainApplicationProfileDN(domainId, appId, relation.getId());
-			session.delete(dn);
-		} catch ( LdapException e ) {
-			LOGGER.error( e.getMessage(), e );
-		} finally {
-			this.ldap.closeSession(session);
-		}
+		DistinguishedName dn = SecurityLdap.getDomainApplicationProfileDN(domainId, appId, relation.getId());
+		this.ldap.delete(dn);
 	}
 	
 }
