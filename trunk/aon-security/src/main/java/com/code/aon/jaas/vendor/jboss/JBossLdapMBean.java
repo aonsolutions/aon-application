@@ -11,7 +11,10 @@ import java.util.Properties;
 import com.code.aon.jaas.client.ast.IApplication;
 import com.code.aon.jaas.client.ast.IDomain;
 import com.code.aon.jaas.client.ast.IOption;
+import com.code.aon.jaas.client.ast.IRelation;
+import com.code.aon.jaas.client.ast.IUser;
 import com.code.aon.jaas.ldap.SecurityLdap;
+import com.code.aon.jaas.storage.StorageException;
 
 /**
  * MBean interface.
@@ -34,5 +37,11 @@ public interface JBossLdapMBean extends org.jboss.system.ServiceMBean {
 	List getUserApplications(String domainId, String userId);
 	
 	IApplication getApplication(String name);
+
+	IRelation removeProfile(String appId, String domainId, IRelation relation) throws StorageException;
+
+	IRelation updateProfile(String appId, String domainId, IRelation relation) throws StorageException;
+	
+	IUser updateUser(String appId, String domainId, IUser user, String oldUserId) throws StorageException;
 	
 }

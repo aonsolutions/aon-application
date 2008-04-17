@@ -10,15 +10,15 @@ import org.apache.commons.logging.LogFactory;
 import com.code.aon.jaas.client.ast.IApplication;
 import com.code.aon.jaas.client.ast.IDomain;
 import com.code.aon.jaas.client.ast.INodeVisitor;
-import com.code.aon.jaas.client.ast.IRelation;
 import com.code.aon.jaas.client.ast.IRole;
 import com.code.aon.jaas.deployment.event.SubDeployerEvent;
 import com.code.aon.ldap.DistinguishedName;
 import com.code.aon.ldap.Entry;
+import com.code.aon.ldap.ILdapConstants;
 import com.code.aon.ldap.LdapException;
 import com.code.aon.ldap.LdapSession;
 
-public class Application implements IApplication, ILdapSecurityConstants {
+public class Application implements IApplication, ILdapConstants, ILdapSecurityConstants {
 
 	private static final long serialVersionUID = -7774786273060605086L;
 
@@ -74,7 +74,7 @@ public class Application implements IApplication, ILdapSecurityConstants {
 
 	@Override
 	public IDomain getDomain(String name) {
-		return this.ldap.getDomain(name);
+		return Domain.get(this.ldap, name);
 	}
 
 	@Override
@@ -147,12 +147,40 @@ public class Application implements IApplication, ILdapSecurityConstants {
 		throw new UnsupportedOperationException("Not supported!");
 	}
 
+	public static DistinguishedName getDN( String application ) {
+		return new DistinguishedName( SecurityLdap.getCN(application), APPLICATIONS_DN );
+	}
+	
+	private static Application getObject( SecurityLdap ldap, Entry entry ) {
+		Application application = new Application(ldap);
+		application.setId(entry.getAsString(COMMON_NAME));
+		application.setDescription(entry.getAsString(DESCRIPTION_ATTRIBUTE));
+		return application;
+	}
+	
+	public static Application get( SecurityLdap ldap, String applicationId ) {
+		LdapSession session = null;
+		Application application = null;
+		try {
+			session = ldap.getLdapSession();
+			String objectClass = SecurityLdap.getObjectClass(APPLICATION_OBJECT_CLASS);
+			DistinguishedName dn = getDN(applicationId);
+			Entry entry = session.get( dn.toString(), objectClass );
+			application = getObject(ldap, entry);
+		} catch ( LdapException e ) {
+			LOGGER.error( e.getMessage(), e );
+		} finally {
+			ldap.closeSession(session);
+		}
+		return application;
+	}
+	
 	public Collection<IRole> getApplicationRoles( String application ) {
 		LdapSession session = null;
 		List<IRole> roles = new ArrayList<IRole>();
 		try {
 			session = this.ldap.getLdapSession();
-			String objectClass = this.ldap.getObjectClass(ROLE_OBJECT_CLASS);
+			String objectClass = SecurityLdap.getObjectClass(ROLE_OBJECT_CLASS);
 			DistinguishedName dn = this.ldap.getRolesDN(application);
 			List<Entry> list = session.search(dn.toString(), objectClass );
 			for( Entry entry : list ) {

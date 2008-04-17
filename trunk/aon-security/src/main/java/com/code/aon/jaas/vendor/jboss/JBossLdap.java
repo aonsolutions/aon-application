@@ -6,7 +6,6 @@ package com.code.aon.jaas.vendor.jboss;
 import java.net.URL;
 import java.security.Principal;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -19,13 +18,18 @@ import org.jboss.system.ServiceMBeanSupport;
 
 import com.code.aon.jaas.auth.AuthPrincipal;
 import com.code.aon.jaas.client.ast.IApplication;
-import com.code.aon.jaas.client.ast.IDataSourceMetaData;
 import com.code.aon.jaas.client.ast.IDomain;
+import com.code.aon.jaas.client.ast.IDomainApplication;
 import com.code.aon.jaas.client.ast.IOption;
-import com.code.aon.jaas.client.ast.core.Application;
+import com.code.aon.jaas.client.ast.IRelation;
+import com.code.aon.jaas.client.ast.IUser;
 import com.code.aon.jaas.client.ast.core.AstLoader;
+import com.code.aon.jaas.ldap.Application;
+import com.code.aon.jaas.ldap.Domain;
+import com.code.aon.jaas.ldap.DomainApplication;
 import com.code.aon.jaas.ldap.SecurityLdap;
 import com.code.aon.jaas.storage.ApplicationsStorage;
+import com.code.aon.jaas.storage.StorageException;
 
 /**
  * @author Consulting & Development. Aimar Tellitu - 03/04/2008
@@ -73,9 +77,9 @@ public class JBossLdap extends ServiceMBeanSupport implements JBossLdapMBean {
 		AuthPrincipal p = (AuthPrincipal) principal;
 		String domainName = p.getDomain();
 		String application = ldap.getApplicationId( p.getContext() );
-		IDataSourceMetaData dataSource = ldap.getDataSourceMetaData(domainName, application);
-		if ( dataSource != null ) {
-			return dataSource.getProperties();
+		IDomainApplication domainApplication = DomainApplication.get(this.ldap, domainName, application);
+		if ( domainApplication != null ) {
+			return domainApplication.getDataSourceMetaData().getProperties();
 		}
 		return null;
 	}
@@ -91,7 +95,7 @@ public class JBossLdap extends ServiceMBeanSupport implements JBossLdapMBean {
 		if ( LOGGER.isDebugEnabled() ) {
 			LOGGER.debug("Retrieving IDomain for: CONTEXT[" + appContext + "]" );
 		}
-		return this.ldap.getDomain(domainId);
+		return Domain.get(this.ldap, domainId);
 	}
 
 	public List getUserApplications(String domainId, String userId) {
@@ -100,21 +104,41 @@ public class JBossLdap extends ServiceMBeanSupport implements JBossLdapMBean {
 		}
 		List<IApplication> applications = new ArrayList<IApplication>();
 		for( String name : this.ldap.getUserApplications(domainId, userId) ) {
-			applications.add( this.ldap.getApplication(name) );
+			applications.add( Application.get(this.ldap, name) );
 		}
 		return applications;
 	}
 	
-    /**(non-Javadoc)
-     * @see com.code.aon.jaas.storage.IOperation#getApplication(java.lang.String)
-     * 
-	 * @jmx:managed-operation
-     */
     public IApplication getApplication(String name) {
 		if ( LOGGER.isDebugEnabled() ) {
 			LOGGER.debug("Retrieving application for: NAME[" + name + "]" );
 		}
-		return this.ldap.getApplication(name);   
+		return Application.get(this.ldap, name);   
 	}
 
+	public IRelation removeProfile(String appId, String domainId, IRelation relation) throws StorageException {
+		if ( LOGGER.isDebugEnabled() ) {
+			LOGGER.debug("Removing profile relation from: DOMAIN[" + domainId + "], APPLICATION[" + appId + "]" );
+		}
+		IDomainApplication domainApplication = DomainApplication.get(this.ldap, domainId, appId);
+		domainApplication.removeProfile(relation);
+		return relation;
+	}
+
+	public IRelation updateProfile(String appId, String domainId, IRelation relation) throws StorageException {
+		if ( LOGGER.isDebugEnabled() ) {
+			LOGGER.debug("Updating profile relation for: DOMAIN[" + domainId + "], APPLICATION[" + appId + "]" );
+		}
+		Application application = Application.get(this.ldap, appId);
+		IDomainApplication domainApplication = DomainApplication.get(this.ldap, domainId, appId);
+		return domainApplication.updateProfile(relation);
+	}
+	
+	public IUser updateUser(String appId, String domainId, IUser user, String oldUserId) throws StorageException {
+		if ( LOGGER.isDebugEnabled() ) {
+			LOGGER.debug("Updating IUser " + user.getId() + " for: DOMAIN[" + domainId + "], APPLICATION[" + appId + "]" );
+		}
+		return user;
+	}
+	
 }
