@@ -216,6 +216,20 @@ public class SecurityLdap implements ILdapConstants, ILdapSecurityConstants {
 		}
 	}
 
+	public boolean exists( DistinguishedName dn, String objectClass ) {
+		LdapSession session = null;
+		boolean exists = false;
+		try {
+			session = getLdapSession();
+			exists = session.exists( dn.toString(), getObjectClass(objectClass) );
+		} catch ( LdapException e ) {
+			LOGGER.error( e.getMessage(), e );
+		} finally {
+			closeSession(session);
+		}
+		return exists;
+	}
+	
 	public Entry getApplicationProfile( String domainName, String application, String profileName ) {
 		LdapSession session = null;
 		Entry entry = null;
@@ -249,8 +263,11 @@ public class SecurityLdap implements ILdapConstants, ILdapSecurityConstants {
 	}
 
 	public Entry getProfile( String domainName, String application, String profileName ) {
-		Entry profile = getApplicationProfile(domainName, application, profileName);
-		if ( profile == null ) {
+		Entry profile = null;
+		DistinguishedName dn = getApplicationProfileDN(application, profileName);
+		if ( exists(dn, PROFILE_OBJECT_CLASS) ) {
+			profile = getApplicationProfile(domainName, application, profileName);
+		} else {
 			profile = getDomainApplicationProfile(domainName, application, profileName);
 		}
 		return profile;

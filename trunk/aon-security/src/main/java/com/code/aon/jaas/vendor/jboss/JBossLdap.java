@@ -27,18 +27,18 @@ import com.code.aon.jaas.client.ast.core.AstLoader;
 import com.code.aon.jaas.ldap.Application;
 import com.code.aon.jaas.ldap.Domain;
 import com.code.aon.jaas.ldap.DomainApplication;
+import com.code.aon.jaas.ldap.ILdapSecurityConstants;
 import com.code.aon.jaas.ldap.SecurityLdap;
 import com.code.aon.jaas.storage.ApplicationsStorage;
 import com.code.aon.jaas.storage.StorageException;
 import com.code.aon.ldap.DistinguishedName;
-import com.code.aon.ldap.Entry;
 
 /**
  * @author Consulting & Development. Aimar Tellitu - 03/04/2008
  *  
  * @jmx:mbean name="jboss.admin:service=AonLdap" extends="org.jboss.system.ServiceMBean"
  */
-public class JBossLdap extends ServiceMBeanSupport implements JBossLdapMBean {
+public class JBossLdap extends ServiceMBeanSupport implements JBossLdapMBean, ILdapSecurityConstants {
 
 	/** JBossSecurity Logger instance. */
 	private static final Log LOGGER = LogFactory.getLog( JBossLdap.class.getName() );
@@ -122,9 +122,8 @@ public class JBossLdap extends ServiceMBeanSupport implements JBossLdapMBean {
 		if ( LOGGER.isDebugEnabled() ) {
 			LOGGER.debug("Removing profile relation from: DOMAIN[" + domainId + "], APPLICATION[" + appId + "]" );
 		}
-		Entry profile = this.ldap.getApplicationProfile( domainId, appId, relation.getId() );
-		if ( profile != null ) {
-			DistinguishedName dn = SecurityLdap.getApplicationProfileDN(appId, relation.getId());
+		DistinguishedName dn = SecurityLdap.getApplicationProfileDN(appId, relation.getId());
+		if ( this.ldap.exists(dn, PROFILE_OBJECT_CLASS) ) {
 			this.ldap.delete(dn);
 		} else {
 			IDomainApplication domainApplication = DomainApplication.get(this.ldap, domainId, appId);
@@ -137,9 +136,9 @@ public class JBossLdap extends ServiceMBeanSupport implements JBossLdapMBean {
 		if ( LOGGER.isDebugEnabled() ) {
 			LOGGER.debug("Updating profile relation for: DOMAIN[" + domainId + "], APPLICATION[" + appId + "]" );
 		}
-		Entry profile = this.ldap.getApplicationProfile( domainId, appId, relation.getId() );
-		if ( profile != null ) {
-			ldap.updateProfile( profile.getDN(), relation );
+		DistinguishedName dn = SecurityLdap.getApplicationProfileDN(appId, relation.getId());
+		if ( this.ldap.exists(dn, PROFILE_OBJECT_CLASS) ) {
+			ldap.updateProfile( dn, relation );
 		} else {
 			IDomainApplication domainApplication = DomainApplication.get(this.ldap, domainId, appId);
 			domainApplication.updateProfile(relation);
