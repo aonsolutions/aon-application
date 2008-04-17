@@ -7,6 +7,7 @@ import java.util.Properties;
 
 import javax.naming.Context;
 import javax.naming.NameAlreadyBoundException;
+import javax.naming.NameNotFoundException;
 import javax.naming.NamingEnumeration;
 import javax.naming.NamingException;
 import javax.naming.directory.Attribute;
@@ -27,7 +28,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-public class LdapSession {
+public class LdapSession implements ILdapConstants {
 
 	private static final String TRUE_VALUE = "TRUE";
 
@@ -180,6 +181,21 @@ public class LdapSession {
 		return results;
 	}
 
+	public boolean exists(String base, String filter) throws LdapException {
+		try {
+			SearchControls sc = getSearchControls(Scope.OBJECT_SCOPE, new String[]{OBJECT_CLASS});
+			NamingEnumeration<SearchResult> ne = dc.search(resolveBase(base), filter, sc);
+			while (ne.hasMore()) {
+				return true;
+			}
+		} catch (NameNotFoundException nnfe) {
+			LOGGER.debug( "Name not found: " + base, nnfe );
+		} catch (NamingException ne) {
+			throw new LdapException("Error in get. " + ne.getMessage(), ne);
+		}
+		return false;
+	}
+	
 	private Entry get(String base, String filter, Scope scope,
 			String... attributes) throws LdapException {
 		Entry entry = null;
