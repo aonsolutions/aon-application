@@ -516,46 +516,52 @@ public interface ICMSAlias {
 	String  HEADER_ALIAS = HEADER_ENTRY.getAliasNames()[0];
 
 	/** 
+	* Alias value: Header_bannerCategory_id
+	* Hibernate value: Header.bannerCategory.id
+	*/
+	String  HEADER_BANNER_CATEGORY_ID = HEADER_ENTRY.getAliasNames()[1];
+
+	/** 
 	* Alias value: Header_css
 	* Hibernate value: Header.css
 	*/
-	String  HEADER_CSS = HEADER_ENTRY.getAliasNames()[1];
+	String  HEADER_CSS = HEADER_ENTRY.getAliasNames()[2];
 
 	/** 
 	* Alias value: Header_default_
 	* Hibernate value: Header.default_
 	*/
-	String  HEADER_DEFAULT_ = HEADER_ENTRY.getAliasNames()[2];
+	String  HEADER_DEFAULT_ = HEADER_ENTRY.getAliasNames()[3];
 
 	/** 
 	* Alias value: Header_id
 	* Hibernate value: Header.id
 	*/
-	String  HEADER_ID = HEADER_ENTRY.getAliasNames()[3];
+	String  HEADER_ID = HEADER_ENTRY.getAliasNames()[4];
 
 	/** 
 	* Alias value: Header_javascript
 	* Hibernate value: Header.javascript
 	*/
-	String  HEADER_JAVASCRIPT = HEADER_ENTRY.getAliasNames()[4];
+	String  HEADER_JAVASCRIPT = HEADER_ENTRY.getAliasNames()[5];
 
 	/** 
 	* Alias value: Header_language_menu
 	* Hibernate value: Header.language_menu
 	*/
-	String  HEADER_LANGUAGE_MENU = HEADER_ENTRY.getAliasNames()[5];
+	String  HEADER_LANGUAGE_MENU = HEADER_ENTRY.getAliasNames()[6];
 
 	/** 
 	* Alias value: Header_language_menu_type
 	* Hibernate value: Header.language_menu_type
 	*/
-	String  HEADER_LANGUAGE_MENU_TYPE = HEADER_ENTRY.getAliasNames()[6];
+	String  HEADER_LANGUAGE_MENU_TYPE = HEADER_ENTRY.getAliasNames()[7];
 
 	/** 
 	* Alias value: Header_menu_id
 	* Hibernate value: Header.menu.id
 	*/
-	String  HEADER_MENU_ID = HEADER_ENTRY.getAliasNames()[7];
+	String  HEADER_MENU_ID = HEADER_ENTRY.getAliasNames()[8];
 
 
 
@@ -1406,12 +1412,6 @@ public interface ICMSAlias {
 	* Hibernate value: Banner.position
 	*/
 	String  BANNER_POSITION = BANNER_ENTRY.getAliasNames()[4];
-
-	/** 
-	* Alias value: Banner_type
-	* Hibernate value: Banner.type
-	*/
-	String  BANNER_TYPE = BANNER_ENTRY.getAliasNames()[5];
 
 
 

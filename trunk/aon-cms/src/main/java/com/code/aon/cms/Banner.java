@@ -13,7 +13,6 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
-import com.code.aon.cms.enumeration.BannerType;
 import com.code.aon.common.ITransferObject;
 
 @Entity
@@ -29,8 +28,6 @@ public class Banner implements ITransferObject {
 	private int position;
 	
 	private BannerCategory bannerCategory;
-	
-	private BannerType type;
 	
 	private Set<BannerDetail> details;
 
@@ -79,14 +76,6 @@ public class Banner implements ITransferObject {
 
 	public void setBannerCategory(BannerCategory bannerCategory) {
 		this.bannerCategory = bannerCategory;
-	}
-
-	public BannerType getType() {
-		return type;
-	}
-
-	public void setType(BannerType type) {
-		this.type = type;
 	}
 
 	@OneToMany(mappedBy = "banner", cascade={CascadeType.REMOVE})
