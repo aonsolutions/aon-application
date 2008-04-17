@@ -122,9 +122,9 @@
 			<t:div id="aon-scroll-area" forceId="#{true}">
 				<t:div styleClass="aon-scroll-area-internal">
 					<h:panelGrid columns="2">
-						<h:panelGrid columns="2" cellpadding="0" cellspacing="0"
+						<h:panelGrid columns="4" cellpadding="0" cellspacing="0"
 							styleClass="aon-form-table"
-							columnClasses="aon-form-table-column-odd,aon-form-table-column-even">
+							columnClasses="aon-form-table-column-odd,aon-form-table-column-even,aon-form-table-column-odd,aon-form-table-column-even">
 
 							<h:outputLabel for="Invoice_series"
 								styleClass="aon-form-input-text-label"
@@ -147,43 +147,6 @@
 									styleClass="aon-form-input-text" required="true" size="7" />
 							</h:panelGrid>
 
-							<h:outputLabel for="Invoice_issueDate"
-								value="#{financeBundle.aon_date}"
-								styleClass="aon-form-input-text-label " />
-							<t:inputCalendar id="Invoice_issueDate" size="12"
-								required="#{true}" forceId="#{true}"
-								value="#{feeInvoicing.to.issueDate}" disabled="#{feeInvoicing.recorded}"
-								monthYearRowClass="yearMonthHeader" weekRowClass="weekHeader"
-								currentDayCellClass="currentDayCell" renderAsPopup="true"
-								styleClass="aon-form-input-text" popupButtonStyleClass="aon-form-calendar-button"
-								popupTodayString="#{bundle.aon_popup_today}"
-								popupWeekString="#{bundle.aon_popup_week}" />
-							
-
-							<t:outputLabel for="Invoice_securityLevel"
-								styleClass="aon-form-selectOneMenu-label"
-								value="#{financeBundle.aon_security_level}" />
-							<h:selectOneMenu id="Invoice_securityLevel"
-								styleClass="aon-form-selectOneMenu-field"
-								disabled="#{feeInvoicing.recorded}"
-								value="#{feeInvoicing.to.securityLevel}">
-								<f:selectItems value="#{financeCollections.securityLevels}" />
-							</h:selectOneMenu>
-
-							<t:outputLabel for="Invoice_status"
-								styleClass="aon-form-selectOneMenu-label"
-								value="#{financeBundle.aon_status}" />
-							<h:selectOneMenu id="Invoice_status" disabled="true"
-								styleClass="aon-form-selectOneMenu-field"
-								value="#{feeInvoicing.to.status}">
-								<f:selectItems value="#{financeCollections.invoiceStatuses}" />
-							</h:selectOneMenu>
-						</h:panelGrid>
-
-						<h:panelGrid columns="2" cellpadding="0" cellspacing="0"
-							styleClass="aon-form-table"
-							columnClasses="aon-form-table-column-odd,aon-form-table-column-even">
-
 							<t:outputLabel for="Customer_Lookup_id" value="#{customerBundle.customer_customer}" 
 								styleClass="aon-form-input-text-label" />
 							<t:div>
@@ -201,11 +164,37 @@
 									value="#{feeInvoicing.to.registryName}"
 									disabled="#{feeInvoicing.recorded}"
 									styleClass="aon-form-input-text" size="40" />
-								<t:inputText id="Customer_Lookup_registry_document" forceId="#{true}"
-									value="#{feeInvoicing.to.registryDocument}"
-									disabled="#{feeInvoicing.recorded}"
-									styleClass="aon-form-input-text" size="10" />
 							</t:div>
+
+							<h:outputLabel for="Invoice_issueDate"
+								value="#{financeBundle.aon_date}"
+								styleClass="aon-form-input-text-label " />
+							<t:inputCalendar id="Invoice_issueDate" size="10"
+								required="#{true}" forceId="#{true}"
+								value="#{feeInvoicing.to.issueDate}" disabled="#{feeInvoicing.recorded}"
+								monthYearRowClass="yearMonthHeader" weekRowClass="weekHeader"
+								currentDayCellClass="currentDayCell" renderAsPopup="true"
+								styleClass="aon-form-input-text" popupButtonStyleClass="aon-form-calendar-button"
+								popupTodayString="#{bundle.aon_popup_today}"
+								popupWeekString="#{bundle.aon_popup_week}" />
+
+							<h:outputLabel for="Customer_Lookup_registry_document"
+								styleClass="aon-form-input-text-label"
+								value="#{registryBundle.aon_nif}" />
+							<t:inputText id="Customer_Lookup_registry_document" forceId="#{true}"
+								value="#{feeInvoicing.to.registryDocument}"
+								disabled="#{feeInvoicing.recorded}"
+								styleClass="aon-form-input-text" size="10" />
+
+							<t:outputLabel for="Invoice_securityLevel"
+								styleClass="aon-form-selectOneMenu-label"
+								value="#{financeBundle.aon_security_level}" />
+							<h:selectOneMenu id="Invoice_securityLevel"
+								styleClass="aon-form-selectOneMenu-field"
+								disabled="#{feeInvoicing.recorded}"
+								value="#{feeInvoicing.to.securityLevel}">
+								<f:selectItems value="#{financeCollections.securityLevels}" />
+							</h:selectOneMenu>
 
 							<h:outputLabel for="Invoice_registryAddress_id"
 								styleClass="aon-form-input-text-label"
@@ -220,13 +209,24 @@
 								</h:selectOneMenu>	
 							</t:div>
 
+							<t:outputLabel for="Invoice_status"
+								styleClass="aon-form-selectOneMenu-label"
+								value="#{financeBundle.aon_status}" />
+							<h:selectOneMenu id="Invoice_status" disabled="true"
+								styleClass="aon-form-selectOneMenu-field"
+								value="#{feeInvoicing.to.status}">
+								<f:selectItems value="#{financeCollections.invoiceStatuses}" />
+							</h:selectOneMenu>
+
 							<t:outputLabel for="Invoice_total"
 								styleClass="aon-form-selectOneMenu-label"
 								value="#{financeBundle.aon_total}" />
-							<t:outputText id="Invoice_total" forceId="#{true}" size="15"
-								value="#{feeInvoicing.toInvoiceTotalPrice}">
+							<t:inputText id="Invoice_total"
+								styleClass="aon-form-input-text-disabled"
+								disabled="true" size="10"
+								value="#{feeInvoicing.toInvoiceTotalPrice}" forceId="#{true}" >
 								<f:convertNumber pattern="#,##0.00" />
-							</t:outputText>
+							</t:inputText>	
 
 						</h:panelGrid>
 					</h:panelGrid>
