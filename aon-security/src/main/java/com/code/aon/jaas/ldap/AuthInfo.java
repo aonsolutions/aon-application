@@ -24,29 +24,21 @@ public class AuthInfo implements IAuthInfo, ILdapConstants, ILdapSecurityConstan
 	@Override
 	public IAccessPolicy getAccessPolicy(String domainName)
 			throws AuthenticationLoginException {
-    	if ( ! ldap.hasDomain( domainName ) ) {
+		Domain domain = Domain.get(ldap, domainName);
+    	if ( domain == null ) {
     		throw new AuthenticationLoginException( "aon_login_err_2", domainName );
     	}
-		return ldap.getAccessPolicy(domainName);
+		return domain.getAccessPolicy();
 	}
 
 	@Override
 	public IRelation getProfileRelation(String domainName, String context,
 			String name) throws AuthenticationLoginException {
-		Relation relation = null;
+		IRelation relation = null;
 		String application = ldap.getApplicationId(context);
 		Entry profile = ldap.getProfile(domainName, application, name);
 		if ( profile != null ) {
-			relation = new Relation(name);
-			Object value = profile.get( MEMBER );
-			if ( value instanceof String ) {
-				relation.addRelation( ((DistinguishedName) value).getLevelValue(0) );
-			} else {
-				for( String role : (List<String>) value ) {
-					DistinguishedName dn = new DistinguishedName( role );
-					relation.addRelation( dn.getLevelValue(0) );
-				}
-			}
+			relation = ldap.getProfile(profile);
 		}
 		return relation;
 	}

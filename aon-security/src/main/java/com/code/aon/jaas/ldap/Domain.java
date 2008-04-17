@@ -15,12 +15,14 @@ import com.code.aon.jaas.client.ast.IDomainApplication;
 import com.code.aon.jaas.client.ast.INodeVisitor;
 import com.code.aon.jaas.client.ast.IUser;
 import com.code.aon.jaas.client.ast.UserAlreadyExistException;
+import com.code.aon.jaas.client.ast.core.AccessPolicy;
 import com.code.aon.ldap.DistinguishedName;
 import com.code.aon.ldap.Entry;
+import com.code.aon.ldap.ILdapConstants;
 import com.code.aon.ldap.LdapException;
 import com.code.aon.ldap.LdapSession;
 
-public class Domain implements IDomain, ILdapSecurityConstants {
+public class Domain implements IDomain, ILdapConstants, ILdapSecurityConstants {
 	
     /** Obtiene un logger apropiado. */
 	private static final Log LOGGER = LogFactory.getLog( Domain.class.getName() );
@@ -57,7 +59,7 @@ public class Domain implements IDomain, ILdapSecurityConstants {
 
 	@Override
 	public IAccessPolicy getAccessPolicy() {
-		throw new UnsupportedOperationException("Not supported!");
+		return getAccessPolicy(this.id);
 	}
 
 	@Override
@@ -67,11 +69,7 @@ public class Domain implements IDomain, ILdapSecurityConstants {
 
 	@Override
 	public IDomainApplication getDomainApplication(String name) {
-		Entry domainApplication = ldap.getDomainApplication(this.id, name);
-		if ( domainApplication != null ) {
-			return ldap.getDomainApplication(domainApplication, this.id);
-		}
-		return null;
+		return DomainApplication.get(this.ldap, this.id, name);
 	}
 
 	@Override
@@ -123,17 +121,73 @@ public class Domain implements IDomain, ILdapSecurityConstants {
 	public String getId() {
 		return this.id;
 	}
+	
+	public static DistinguishedName getDN( String domainName ) {
+		return new DistinguishedName( SecurityLdap.getCN(domainName), DOMAINS_DN );
+	}
+	
+	private static Domain getObject( SecurityLdap ldap, Entry entry ) {
+		Domain domain = new Domain(ldap);
+		domain.setId(entry.getAsString(COMMON_NAME));
+		return domain;
+	}
+
+	public static Domain get( SecurityLdap ldap, String domainId ) {
+		LdapSession session = null;
+		Domain domain = null;
+		try {
+			session = ldap.getLdapSession();
+			String objectClass = SecurityLdap.getObjectClass(DOMAIN_OBJECT_CLASS);
+			DistinguishedName dn = getDN(domainId);
+			Entry entry = session.get( dn.toString(), objectClass );
+			domain = getObject(ldap, entry);
+		} catch ( LdapException e ) {
+			LOGGER.error( e.getMessage(), e );
+		} finally {
+			ldap.closeSession(session);
+		}
+		return domain;
+	}
+	
+	private IAccessPolicy getAccessPolicy( Entry entry ) {
+		AccessPolicy accessPolicy = new AccessPolicy();
+		accessPolicy.setId(entry.getAsString(COMMON_NAME));
+		accessPolicy.setExceptionThrowableIfMaximumExceeded(entry.getAsBoolean("exceptionThrowableIfMaximumExceeded"));
+		accessPolicy.setMaxAllowedUsers(entry.getAsInteger("maxAllowedUsers"));
+		accessPolicy.setMaxDefinedUsers(entry.getAsInteger("maxDefinedUsers"));
+		accessPolicy.setMaxSessions4User(entry.getAsInteger("maxSessions4User"));
+		return accessPolicy;
+	}
+
+	private IAccessPolicy getAccessPolicy( String domainName ) {
+		LdapSession session = null;
+		IAccessPolicy accessPolicy = null;
+		try {
+			session = ldap.getLdapSession();
+			String objectClass = SecurityLdap.getObjectClass(ACCESS_POLICY_OBJECT_CLASS);
+			DistinguishedName dn = getDN(domainName);
+			Entry entry = session.searchOne( dn.toString(), objectClass );
+			if ( entry != null ) {
+				accessPolicy = getAccessPolicy( entry );
+			}
+		} catch ( LdapException e ) {
+			LOGGER.error( e.getMessage(), e );
+		} finally {
+			ldap.closeSession(session);
+		}
+		return accessPolicy;
+	}
 
 	private Collection<IDomainApplication> getDomainApplications( String domainName ) {
 		LdapSession session = null;
 		List<IDomainApplication> applications = new ArrayList<IDomainApplication>();
 		try {
 			session = this.ldap.getLdapSession();
-			String objectClass = this.ldap.getObjectClass(DOMAIN_APPLICATION_OBJECT_CLASS);
-			DistinguishedName dn = this.ldap.getDomainApplicationsDN(domainName);
+			String objectClass = SecurityLdap.getObjectClass(DOMAIN_APPLICATION_OBJECT_CLASS);
+			DistinguishedName dn = DomainApplication.getParentDN(domainName);
 			List<Entry> list = session.search(dn.toString(), objectClass );
 			for( Entry entry : list ) {
-				IDomainApplication application = this.ldap.getDomainApplication(entry, domainName);
+				IDomainApplication application = DomainApplication.getObject(this.ldap, entry, domainName);
 				applications.add(application);
 			}
 		} catch ( LdapException e ) {

@@ -7,18 +7,13 @@ import javax.naming.Context;
 
 import junit.framework.JUnit4TestAdapter;
 
-import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
-import org.junit.Test;
 
 import com.code.aon.jaas.auth.session.AuthenticationLoginException;
-import com.code.aon.jaas.auth.util.Util;
-import com.code.aon.jaas.client.ast.IAccessPolicy;
-import com.code.aon.jaas.client.ast.IDataSourceMetaData;
 import com.code.aon.jaas.ldap.AuthInfo;
 import com.code.aon.jaas.ldap.SecurityLdap;
 import com.code.aon.ldap.Entry;
@@ -47,7 +42,7 @@ public class LDAPReaderTest {
 		ldap = new SecurityLdap( properties );			
 	}
 	
-	@Test
+	@Ignore
     public void testGetApplications() {
 		Assert.assertTrue( ldap.hasDomain( "aon.code.es") );
 		Assert.assertTrue( ldap.hasDomain( "localhost") );
@@ -62,20 +57,12 @@ public class LDAPReaderTest {
 		Assert.assertNotNull( domainApplicationUser );
 		LOGGER.info( "Domain Application User: " + domainApplicationUser );
 		
-		IAccessPolicy ap = ldap.getAccessPolicy("aon.code.es");
-		Assert.assertNotNull( ap );
-		LOGGER.info( "Access Policy: " + ap );
-		
-		IDataSourceMetaData dataSource = ldap.getDataSourceMetaData("aon.code.es", "aon-task");
-		Assert.assertNotNull( dataSource );
-		LOGGER.info( "Data Source: " + dataSource );
-		
 		List<String> applications = ldap.getUserApplications("localhost", "atellitu");
 		Assert.assertNotNull( applications );
 		LOGGER.info( "Applications: " + applications );
     }
 
-	@Test
+	@Ignore
     public void testPassword() throws AuthenticationLoginException {
 		Entry user = ldap.getUser("localhost", "atellitu");
 		Assert.assertNotNull( user );
