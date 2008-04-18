@@ -153,7 +153,7 @@ public class Application implements IApplication, ILdapConstants, ILdapSecurityC
 	
 	private static Application getObject( SecurityLdap ldap, Entry entry ) {
 		Application application = new Application(ldap);
-		application.setId(entry.getAsString(COMMON_NAME));
+		application.setId(entry.getAsString(COMMON_NAME_ATTRIBUTE));
 		application.setDescription(entry.getAsString(DESCRIPTION_ATTRIBUTE));
 		return application;
 	}
