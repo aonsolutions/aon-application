@@ -11,6 +11,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import javax.faces.context.FacesContext;
+import javax.faces.event.ActionEvent;
 import javax.faces.model.ListDataModel;
 import javax.servlet.http.HttpSession;
 
@@ -44,7 +45,6 @@ import com.code.aon.ui.webmail.bean.AonConstants;
 import com.code.aon.ui.webmail.bean.AonFolder;
 import com.code.aon.ui.webmail.bean.AonServer;
 import com.code.aon.ui.webmail.controller.WebMailController;
-import com.icesoft.faces.component.ext.RowSelectorEvent;
 
 public class DesktopController extends BasicController {
 	
@@ -192,7 +192,7 @@ public class DesktopController extends BasicController {
     }
 
     @SuppressWarnings("unused")
-    public void onSelectNote(RowSelectorEvent event) throws ManagerBeanException{
+    public void onSelectNote(ActionEvent event) throws ManagerBeanException{
         NoteController noteController = (NoteController)AonUtil.getController(NOTE_CONTROLLER_NAME);
         Note note = (Note)recentNoteModel.getRowData();
         Criteria criteria = new Criteria();
@@ -202,24 +202,23 @@ public class DesktopController extends BasicController {
             noteController.onSearch(null);
             noteController.getModel().setRowIndex(0);
             noteController.onSelect(null);
-			FacesContext.getCurrentInstance().getApplication().getNavigationHandler().handleNavigation(FacesContext.getCurrentInstance(), null, "note_form");
         } catch (ManagerBeanException e) {
             throw new ManagerBeanException("Error obtaining note with id=" + note.getId(), e);
         }
     }
 
     @SuppressWarnings("unused")
-    public void onSelectTodayAlarm(RowSelectorEvent event) throws ManagerBeanException{
+    public void onSelectTodayAlarm(ActionEvent event) throws ManagerBeanException{
         onSelectAlarm(todayAlarmModel);
     }
 
     @SuppressWarnings("unused")
-    public void onSelectRecentAlarm(RowSelectorEvent event) throws ManagerBeanException{
+    public void onSelectRecentAlarm(ActionEvent event) throws ManagerBeanException{
         onSelectAlarm(recentAlarmModel);
     }
 
     @SuppressWarnings("unused")
-    public void onSelectAncientAlarm(RowSelectorEvent event) throws ManagerBeanException{
+    public void onSelectAncientAlarm(ActionEvent event) throws ManagerBeanException{
         onSelectAlarm(ancientAlarmModel);
     }
 
@@ -233,7 +232,6 @@ public class DesktopController extends BasicController {
             alarmController.onSearch(null);
             alarmController.getModel().setRowIndex(0);
             alarmController.onSelect(null);
-			FacesContext.getCurrentInstance().getApplication().getNavigationHandler().handleNavigation(FacesContext.getCurrentInstance(), null, "alarm_form");
         } catch (ManagerBeanException e) {
             throw new ManagerBeanException("Error obtaining alarm with id=" + alarm.getId(), e);
         }

@@ -3,10 +3,11 @@
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:c="http://java.sun.com/jstl/core"
-	xmlns:aon="http://www.code.es/aon-components">
+	xmlns:aon="http://www.code.es/aon-rich-components">
 <body>
 
-<ui:composition template="/facelet/templates/aon.ui.main.xhtml">
+<ui:composition template="/facelet/templates/aon.ui.content.xhtml">
+
 	<ui:define name="content">
 
 		<aon:form id="alarmList">
@@ -29,8 +30,8 @@
 						rendered="#{alarm.model.rowCount > 0}"
 						styleClass="aon-dataTable">
 
+						<aon:rowSelector selectionListener="#{alarm.onSelect}"/>
 						<aon:column>
-							<aon:rowSelector selectionListener="#{alarm.onSelect}"/>
 							<f:facet name="header">
 								<aon:outputText value="#{groupwareBundle.aon_date}" />
 							</f:facet>

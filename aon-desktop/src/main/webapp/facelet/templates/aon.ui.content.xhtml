@@ -1,0 +1,20 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:aon="http://www.code.es/aon-rich-components">
+<body>
+
+<ui:composition>
+
+	<ui:include src="/facelet/homepage/messages.xhtml" />
+	<aon:panelGrid columns="2" cellpadding="0" cellspacing="0" width="100%" 
+		columnClasses="aon-sidebarIcons,aon-vertical-align-top" >
+		<ui:insert name="sidebar" />
+		<ui:insert name="content" />
+	</aon:panelGrid>			
+
+</ui:composition>
+
+</body>
+</html>

@@ -3,51 +3,33 @@
 	xmlns:f="http://java.sun.com/jsf/core" 
 	xmlns:c="http://java.sun.com/jstl/core"			
 	xmlns:ui="http://java.sun.com/jsf/facelets"
-	xmlns:aon="http://www.code.es/aon-components">
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:aon="http://www.code.es/aon-rich-components">
 <f:view>
-<c:forEach items="#{aonConfiguration.applicationBundleList}" var="appBundle">
-	<f:loadBundle basename="#{appBundle.value}" var="#{appBundle.key}" />
+<c:forEach items="#{aonConfiguration.applicationBundleList}" var="aBundle">
+	<f:loadBundle basename="#{aBundle.value}" var="#{aBundle.key}" />
 </c:forEach>
 <head>
 	<title><ui:insert name="title">Title</ui:insert></title>
-	<meta http-equiv="Content-Type" content="text/html;charset=UTF-8" />
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 	<meta http-equiv="Expires" content="0" />
 	<meta http-equiv="Pragma" content="no-cache" />
 	<meta http-equiv="Cache-Control" content="no-store" />
-	<link rel="stylesheet" type="text/css"
-		href='#{facesContext.externalContext.requestContextPath}/xmlhttp/css/xp/xp.css' />
 
 	<c:forEach items="#{aonConfiguration.styleSheets}" var="styleSheet">
-		<link href="#{facesContext.externalContext.requestContextPath}#{styleSheet}" rel="stylesheet" type="text/css"></link>
+		<a4j:loadStyle src="#{styleSheet}"/>
 	</c:forEach>
 	
-	
-	<script type='text/javascript'
-		src="#{facesContext.externalContext.requestContextPath}/js/Utils.js">
-		// nothing
-	</script>
-	<script type='text/javascript'
-		src="#{facesContext.externalContext.requestContextPath}/js/Window.js">
-		// nothing
-	</script>
-	<script type='text/javascript'
-		src="#{facesContext.externalContext.requestContextPath}/js/Form.js">
-		// nothing
-	</script>
-	<link rel="shortcut icon" type="image/x-icon" href="#{facesContext.externalContext.requestContextPath}/css/iceCss/images/aon-content/aon-application-logo.png" />
+	<a4j:loadScript src="/js/Utils.js"/>	
+	<a4j:loadScript src="/js/Window.js"/>
+	<a4j:loadScript src="/js/Form.js"/>
+	<link rel="shortcut icon" type="image/x-icon" href="#{facesContext.externalContext.requestContextPath}/css/richCss/images/aon-content/aon-application-logo.png" />
 	<ui:insert name="head" />
 </head>
-<body onresize="aonResizeBody();">
+<body class="aon-body" onresize="aonResizeBody();">
 	<aon:div id="aon-content">
 		<ui:insert name="mainHeader" />
-		<ui:include src="/facelet/homepage/messages.xhtml" />
-			
-		<aon:panelGrid columns="2" cellpadding="0" cellspacing="0" width="100%" 
-		columnClasses="aon-sidebarIcons,aon-text-left " >
-			<ui:insert name="sidebar" />
-			<ui:insert name="content" />
-		</aon:panelGrid>
-
+		<ui:insert name="mainContent" />
 	</aon:div>	
 </body>
 </f:view>
