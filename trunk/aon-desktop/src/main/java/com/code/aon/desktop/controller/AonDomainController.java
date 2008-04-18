@@ -8,6 +8,7 @@ import java.util.List;
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
+import javax.faces.event.ValueChangeEvent;
 import javax.faces.model.ListDataModel;
 
 import com.code.aon.bridge.plugin.DomainManager;
@@ -18,8 +19,6 @@ import com.code.aon.jaas.client.ast.IRelation;
 import com.code.aon.jaas.client.ast.core.Relation;
 import com.code.aon.jaas.deployment.DeploymentException;
 import com.code.aon.ui.form.BasicController;
-import com.icesoft.faces.component.ext.RowSelectorEvent;
-import com.icesoft.faces.component.paneltabset.TabChangeEvent;
 
 public class AonDomainController extends BasicController {
 
@@ -31,7 +30,7 @@ public class AonDomainController extends BasicController {
     private IDomainApplication da;
     private Relation profile;
     private Relation user;
-    private int currentTab = 0;
+    private String currentTab;
     
     private boolean newProfile = false;
     
@@ -43,29 +42,26 @@ public class AonDomainController extends BasicController {
 		this.newProfile = newProfile;
 	}
 
-	public void onSelectApplication(RowSelectorEvent event) throws ManagerBeanException {
+	public void onSelectApplication(ActionEvent event) throws ManagerBeanException {
         try {
             da = (IDomainApplication)this.applications.getRowData();
 			getDomainManager().findApplicationById(da.getId());
 			loadProfiles();
 			loadUsers();
-	        FacesContext.getCurrentInstance().getApplication().getNavigationHandler().handleNavigation(FacesContext.getCurrentInstance(), null, "profile_list");
 		} catch (DeploymentException e) {
 			e.printStackTrace();
 		}
 	}
 
-	public void onSelectProfile(RowSelectorEvent event) throws ManagerBeanException {
+	public void onSelectProfile(ActionEvent event) throws ManagerBeanException {
         this.profile = (Relation)this.profiles.getRowData();
 		getDomainManager().setRelation(this.profile);
 		newProfile = false;
-        FacesContext.getCurrentInstance().getApplication().getNavigationHandler().handleNavigation(FacesContext.getCurrentInstance(), null, "profile_form");
 	}
 
-	public void onSelectUser(RowSelectorEvent event) throws ManagerBeanException {
+	public void onSelectUser(ActionEvent event) throws ManagerBeanException {
         this.user = (Relation)this.users.getRowData();
 		getDomainManager().setRelation(this.user);
-        FacesContext.getCurrentInstance().getApplication().getNavigationHandler().handleNavigation(FacesContext.getCurrentInstance(), null, "user_profile_form");
 	}
 
     /* (non-Javadoc)
@@ -164,7 +160,7 @@ public class AonDomainController extends BasicController {
 
 	public void acceptUser(ActionEvent event) {
 		try {
-			getDomainManager().saveUser();
+			getDomainManager().updateUserProfiles();
 		} catch (DeploymentException e) {
 			e.printStackTrace();
 		}
@@ -218,16 +214,12 @@ public class AonDomainController extends BasicController {
 		this.user = user;
 	}
 
-	public int getCurrentTab() {
+	public String getCurrentTab() {
 		return currentTab;
 	}
 
-	public void setCurrentTab(int currentTab) {
+	public void setCurrentTab(String currentTab) {
 		this.currentTab = currentTab;
-	}
-
-	public void processTabChange(TabChangeEvent event) {
-		currentTab = event.getNewTabIndex();
 	}
 
 }

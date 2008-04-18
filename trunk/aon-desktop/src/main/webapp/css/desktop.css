@@ -1,0 +1,27 @@
+/******   DESKTOP  ***********/
+#aon-content .aon-desktop-header{
+	background:#304055 url(aon-desktop/aon-desktop-header.png) scroll left top repeat-x !important;
+	border-bottom:#717e88 1px solid;
+
+ }
+#aon-content .aon-desktop-header-tab{
+	background:#304055 url(aon-desktop/aon-desktop-header-tab.png) scroll left top no-repeat;
+	padding:2px 10px 2px 40px;
+	text-align:right;
+	float:right;
+ }
+
+/********  AON SECONDARY MENU  ****************/
+.aon-secondary-menu{
+	background:#d7d7d7 url(richCss/images/aon-content/aon-secondary-menu.png) scroll left top repeat-x;
+	padding:0px 0em;
+	border-bottom:#a1a6b1 1px solid;
+	}
+.aon-secondary-menu-application{
+	background:transparent url(richCss/images/aon-content/aon-application-logo.png) scroll 8px center no-repeat;
+	padding:0px 1em 0px 28px;
+	font-size:0.9em;
+	font-weight:bold;
+	border-right:#a1a6b1 1px solid;
+	line-height:2em;
+	}

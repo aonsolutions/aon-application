@@ -9,7 +9,7 @@
 	<navigation-rule>
 		<navigation-case>
 			<from-outcome>home</from-outcome>
-			<to-view-id>/home.iface</to-view-id>
+			<to-view-id>/homepage.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>
 
@@ -17,7 +17,7 @@
 	<navigation-rule>
 		<navigation-case>
 			<from-outcome>index</from-outcome>
-			<to-view-id>/index.iface</to-view-id>
+			<to-view-id>/index.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>
 
@@ -25,61 +25,51 @@
 	<navigation-rule>
 		<navigation-case>
 			<from-outcome>user_list</from-outcome>
-			<to-view-id>/facelet/user/list.faces</to-view-id>
+			<to-view-id>/facelet/user/list.xhtml</to-view-id>
 		</navigation-case>
 		<navigation-case>
 			<from-outcome>user_form</from-outcome>
-			<to-view-id>/facelet/user/form.faces</to-view-id>
+			<to-view-id>/facelet/user/form.xhtml</to-view-id>
 		</navigation-case>
 		<navigation-case>
 			<from-outcome>user_search</from-outcome>
-			<to-view-id>/facelet/user/search.faces</to-view-id>
+			<to-view-id>/facelet/user/search.xhtml</to-view-id>
 		</navigation-case>
 		<navigation-case>
 			<from-outcome>user_changepassword_form</from-outcome>
-			<to-view-id>/facelet/user/changepassword.faces</to-view-id>
+			<to-view-id>/facelet/user/changepassword.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>
 	
 	<!-- =================== Application Menu Navigation Rules ================= -->
 	<navigation-rule>
 		<navigation-case>
-			<from-outcome>firstContent</from-outcome>
-			<to-view-id>
-				/facelet/homepage/firstContent.iface
-			</to-view-id>
-		</navigation-case>
-		<navigation-case>
-			<from-outcome>content</from-outcome>
-			<to-view-id>/facelet/homepage/content.iface</to-view-id>
-		</navigation-case>
-		<navigation-case>
 			<from-outcome>user</from-outcome>
-			<to-view-id>/facelet/user/list.iface</to-view-id>
+			<to-view-id>/facelet/user/list.xhtml</to-view-id>
 		</navigation-case>
 		<navigation-case>
 			<from-outcome>work_group</from-outcome>
-			<to-view-id>/facelet/workGroup/grid.iface</to-view-id>
+			<to-view-id>/facelet/workGroup/grid.xhtml</to-view-id>
 		</navigation-case>
 		<navigation-case>
 			<from-outcome>scope</from-outcome>
-			<to-view-id>/facelet/scope/grid.iface</to-view-id>
+			<to-view-id>/facelet/scope/grid.xhtml</to-view-id>
 		</navigation-case>
 		<navigation-case>
 			<from-outcome>application_list</from-outcome>
-			<to-view-id>/facelet/profile/application/list.iface</to-view-id>
+			<to-view-id>/facelet/profile/application/list.xhtml</to-view-id>
 		</navigation-case>
 		<navigation-case>
 			<from-outcome>profile_list</from-outcome>
-			<to-view-id>/facelet/profile/list.iface</to-view-id>
+			<to-view-id>/facelet/profile/list.xhtml</to-view-id>
 		</navigation-case>
 		<navigation-case>
 			<from-outcome>profile_form</from-outcome>
-			<to-view-id>/facelet/profile/form.iface</to-view-id>
+			<to-view-id>/facelet/profile/form.xhtml</to-view-id>
 		</navigation-case>
 		<navigation-case>
 			<from-outcome>user_profile_form</from-outcome>
-			<to-view-id>/facelet/profile/user/form.iface</to-view-id>
+			<to-view-id>/facelet/profile/user/form.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>
 
@@ -87,48 +77,96 @@
   <navigation-rule>
     <navigation-case>
         <from-outcome>note</from-outcome>
-        <to-view-id>/groupware/facelet/note/list.faces</to-view-id>
+        <to-view-id>/groupware/facelet/note/list.xhtml</to-view-id>
     </navigation-case>
     <navigation-case>
         <from-outcome>notice</from-outcome>
-        <to-view-id>/groupware/facelet/notice/list.faces</to-view-id>
+        <to-view-id>/groupware/facelet/notice/list.xhtml</to-view-id>
     </navigation-case>
  	<navigation-case>
         <from-outcome>alarm</from-outcome>
-        <to-view-id>/groupware/facelet/alarm/list.faces</to-view-id>
+        <to-view-id>/groupware/facelet/alarm/list.xhtml</to-view-id>
     </navigation-case>
     <navigation-case>
         <from-outcome>contact</from-outcome>
-        <to-view-id>/groupware/facelet/contact/list.faces</to-view-id>
+        <to-view-id>/groupware/facelet/contact/list.xhtml</to-view-id>
     </navigation-case>
     <navigation-case>
         <from-outcome>favorite</from-outcome>
-        <to-view-id>/groupware/facelet/favorite/list.faces</to-view-id>
-    </navigation-case>
-    <navigation-case>
-        <from-outcome>note_form</from-outcome>
-        <to-view-id>/groupware/facelet/note/form.faces</to-view-id>
-    </navigation-case>
-    <navigation-case>
-        <from-outcome>notice_form</from-outcome>
-        <to-view-id>/groupware/facelet/notice/form.faces</to-view-id>
+        <to-view-id>/groupware/facelet/favorite/list.xhtml</to-view-id>
     </navigation-case>
  	<navigation-case>
         <from-outcome>alarm_form</from-outcome>
-        <to-view-id>/groupware/facelet/alarm/form.faces</to-view-id>
-    </navigation-case>
-    <navigation-case>
-        <from-outcome>contact_form</from-outcome>
-        <to-view-id>/groupware/facelet/contact/form.faces</to-view-id>
-    </navigation-case>
-    <navigation-case>
-        <from-outcome>favorite_form</from-outcome>
-        <to-view-id>/groupware/facelet/favorite/form.faces</to-view-id>
+        <to-view-id>/groupware/facelet/alarm/form.xhtml</to-view-id>
     </navigation-case>
     <navigation-case>
         <from-outcome>favorite_category</from-outcome>
-        <to-view-id>/groupware/facelet/favorite/category/grid.faces</to-view-id>
+        <to-view-id>/groupware/facelet/favorite/category/grid.xhtml</to-view-id>
     </navigation-case>
   </navigation-rule>
+  
+	<!-- =================== Favorite ================= -->	
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>favorite_form</from-outcome>
+			<to-view-id>/groupware/facelet/favorite/form.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>favorite_list</from-outcome>
+			<to-view-id>/groupware/facelet/favorite/list.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+	        <from-outcome>favorite_search</from-outcome>
+	        <to-view-id>/groupware/facelet/favorite/search.xhtml</to-view-id>
+	    </navigation-case>
+	</navigation-rule>  
 
+	<!-- =================== Note ================= -->	
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>note_form</from-outcome>
+			<to-view-id>/groupware/facelet/note/form.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>note_list</from-outcome>
+			<to-view-id>/groupware/facelet/note/list.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+	        <from-outcome>note_search</from-outcome>
+	        <to-view-id>/groupware/facelet/note/search.xhtml</to-view-id>
+	    </navigation-case>
+	</navigation-rule>
+
+	<!-- =================== Notice ================= -->	
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>notice_form</from-outcome>
+			<to-view-id>/groupware/facelet/notice/form.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>notice_list</from-outcome>
+			<to-view-id>/groupware/facelet/notice/list.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>notice_search</from-outcome>
+			<to-view-id>/groupware/facelet/notice/search.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>
+
+	<!-- =================== Contact ================= -->	
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>contact_form</from-outcome>
+			<to-view-id>/groupware/facelet/contact/form.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>contact_list</from-outcome>
+			<to-view-id>/groupware/facelet/contact/list.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+	        <from-outcome>contact_search</from-outcome>
+	        <to-view-id>/groupware/facelet/contact/search.xhtml</to-view-id>
+	    </navigation-case>
+	</navigation-rule>
+	
 </faces-config>

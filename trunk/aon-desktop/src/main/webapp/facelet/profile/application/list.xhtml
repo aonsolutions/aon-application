@@ -3,56 +3,55 @@
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:c="http://java.sun.com/jstl/core"
-	xmlns:aon="http://www.code.es/aon-components">
+	xmlns:aon="http://www.code.es/aon-rich-components">
 <body>
 
-<ui:composition template="/facelet/templates/aon.ui.main.xhtml">
+<ui:composition template="/facelet/templates/aon.ui.content.xhtml">
+
 	<ui:define name="content">
 
 		<aon:form id="applicationList">
 
-		<aon:panelGrid columns="2" dir="true" styleClass="aon-title-toolbar"
-		cellpadding="0" cellspacing="0" columnClasses="aon-content-title,aon-content-toolbar">
-			<aon:div styleClass="aon-content-title-internal">
-				<aon:outputText value="#{appBundle.aon_profiles}" />
-			</aon:div>		
+			<aon:div styleClass="aon-finding-title-toolbar">
+				<aon:panelGrid columns="3" dir="true"
+					columnClasses="aon-finding-title,aon-finding-subtitle,aon-finding-toolbar">
 
-			<!-- start toolbar navigation -->
-			<aon:div styleClass="aon-content-toolbar-internal">
-				<aon:div styleClass="aon-content-toolbar-item-group">
-						<aon:commandButton id="cancel"
-							action="user_list"
-							value="#{bundle.aon_cancel}" 
-							styleClass="aon-content-toolbar-item aon-icon-cancel" immediate="#{true}"
-							onmouseout="this.className='aon-content-toolbar-item aon-icon-cancel'"
-							onmouseover="this.className='aon-content-toolbar-item aon-icon-cancel aon-content-toolbar-item-hover'"/>
-				</aon:div>
-			</aon:div>
-			<!-- end toolbar navigation -->
-		</aon:panelGrid>
-
-		<!--  aon-region-body -->
-		<aon:div styleClass="aon-scroll-area">
-				<aon:div styleClass="aon-scroll-area-internal">					
-					<aon:div styleClass="aon-content-subTitle">
-						<aon:outputText value="#{appBundle.aon_applications}" />		
+					<aon:div styleClass="aon-finding-title-internal">
+						<aon:outputText value="#{appBundle.aon_profiles}" />
 					</aon:div>
-					
-					<aon:dataTable id="applicationDataList" 
-						value="#{domain.applications}" var="to" rows="30"
-						styleClass="aon-dataTable">
 
-							<aon:column>
-								<aon:rowSelector selectionListener="#{domain.onSelectApplication}" />
-								<f:facet name="header">
-									<aon:outputText value="#{appBundle.aon_application}" />
-								</f:facet>
-								<aon:outputText value="#{to.id}"/>
-							</aon:column>
+					<aon:div styleClass="aon-finding-subtitle-internal">
+						<aon:outputText value="#{appBundle.aon_applications}" />
+					</aon:div>
 
-						</aon:dataTable>
+					<!-- start toolbar navigation -->
+					<aon:div styleClass="aon-finding-toolbar-item-group">
+						<aon:commandButton id="cancel" value="#{bundle.aon_cancel}"
+							action="user_list" immediate="true"
+							styleClass="aon-finding-toolbar-item aon-icon-cancel"
+							accesskey="#{bundle.aon_key_cancel}" />
+					</aon:div>
 
-				</aon:div>
+					<!-- end toolbar navigation -->
+				</aon:panelGrid>
+			</aon:div>
+
+			<!--  aon-region-body -->
+			<aon:div styleClass="aon-scroll-area">
+				<aon:dataTable id="applicationDataList" value="#{domain.applications}"
+					var="to" rows="20" columnClasses="aon-editDataTable-textColumn">
+
+					<aon:rowSelector action="profile_list" actionListener="#{domain.onSelectApplication}" />
+
+					<aon:column>
+						<f:facet name="header">
+							<aon:outputText value="#{appBundle.aon_application}" />
+						</f:facet>
+						<aon:outputText value="#{to.id}"/>
+					</aon:column>
+
+				</aon:dataTable>
+
 			</aon:div>
 
 		</aon:form>

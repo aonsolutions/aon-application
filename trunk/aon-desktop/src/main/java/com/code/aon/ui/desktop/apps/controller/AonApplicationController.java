@@ -9,7 +9,7 @@ import javax.faces.context.FacesContext;
 
 import com.code.aon.bridge.plugin.UserManager;
 import com.code.aon.jaas.auth.AuthPrincipal;
-import com.code.aon.jaas.client.ast.core.Application;
+import com.code.aon.jaas.client.ast.IApplication;
 import com.code.aon.jaas.deployment.DeploymentException;
 import com.code.aon.ui.form.BasicController;
 
@@ -64,7 +64,7 @@ public class AonApplicationController extends BasicController {
 		try {
 			List list = um.getUserApplications();
             for (int i = 0; i < list.size(); i++) {
-				Application app = (Application)list.get(i);
+				IApplication app = (IApplication)list.get(i);
                 if (app != null && noContext.indexOf(app.getContext()) < 0) {
                 	String context = app.getContext();
                 	context = context.replaceAll(".war", "");

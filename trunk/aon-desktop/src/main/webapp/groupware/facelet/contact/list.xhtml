@@ -3,111 +3,93 @@
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:c="http://java.sun.com/jstl/core"
-	xmlns:aon="http://www.code.es/aon-components">
+	xmlns:aon="http://www.code.es/aon-rich-components">
 <body>
 
-<ui:composition template="/facelet/templates/aon.ui.main.xhtml">
+<ui:composition template="/facelet/templates/aon.ui.content.xhtml">
+
 	<ui:define name="content">
 
 		<aon:form id="contactList">
 
-			<aon:panelGrid columns="2" dir="true" styleClass="aon-title-toolbar"
-				cellpadding="0" cellspacing="0"
-				columnClasses="aon-content-title,aon-content-toolbar">
-				<aon:div styleClass="aon-content-title-internal">
-					<aon:outputText value="#{groupwareBundle.aon_contact}" />
-				</aon:div>
+			<aon:div styleClass="aon-finding-title-toolbar">
+				<aon:panelGrid columns="3" dir="true"
+					columnClasses="aon-finding-title,aon-finding-subtitle,aon-finding-toolbar">
 
-				<!-- start toolbar navigation -->
-				<aon:div styleClass="aon-content-toolbar-internal">
-					<aon:div styleClass="aon-content-toolbar-item-group">
+					<aon:div styleClass="aon-finding-title-internal">
+						<aon:outputText value="#{groupwareBundle.aon_contact}" />
+					</aon:div>
+
+					<aon:div styleClass="aon-finding-subtitle-internal">
+						<aon:outputText value="#{bundle.aon_listing}" />
+					</aon:div>
+
+					<!-- start toolbar navigation -->
+					<aon:div styleClass="aon-finding-toolbar-item-group">
 						<aon:commandButton id="reset" value="#{bundle.aon_reset}"
-							action="contact_form"
-							actionListener="#{contact.onReset}"
-							styleClass="aon-content-toolbar-item aon-icon-reset"
-							onmouseout="this.className='aon-content-toolbar-item aon-icon-reset'"
-							onmouseover="this.className='aon-content-toolbar-item aon-icon-reset aon-content-toolbar-item-hover'"
+							action="contact_form" actionListener="#{contact.onReset}"
+							styleClass="aon-finding-toolbar-item aon-icon-reset"
 							accesskey="#{bundle.aon_key_new}" />
 						<aon:commandButton id="search" value="#{bundle.aon_search}"
-							action="contact_search"
-							actionListener="#{contact.onEditSearch}"
-							styleClass="aon-content-toolbar-item aon-icon-search"
-							onmouseout="this.className='aon-content-toolbar-item aon-icon-search'"
-							onmouseover="this.className='aon-content-toolbar-item aon-icon-search aon-content-toolbar-item-hover'"
+							action="contact_search" actionListener="#{contact.onEditSearch}"
+							styleClass="aon-finding-toolbar-item aon-icon-search"
 							accesskey="#{bundle.aon_key_search}" />
-						<!-- 	
-						<aon:commandButton id="contact" value="#{bundle.aon_listing}"
-							actionListener="#{contact.onOpenWindow}"
-							styleClass="aon-content-toolbar-item aon-content-toolbar-item-print"
-							onmouseover="this.className='aon-content-toolbar-item aon-content-toolbar-item-hover aon-content-toolbar-item-print'"
-							onmouseout="this.className='aon-content-toolbar-item aon-content-toolbar-item-print'"
-							accesskey="#{bundle.aon_key_print}" />	
-						 -->	
 					</aon:div>
-				</aon:div>
-				<!-- end toolbar navigation -->
-			</aon:panelGrid>
+
+					<!-- end toolbar navigation -->
+				</aon:panelGrid>
+			</aon:div>
 
 			<!--  aon-region-body -->
 			<aon:div styleClass="aon-scroll-area">
-				<aon:div styleClass="aon-scroll-area-internal">
+				<aon:dataTable id="contactDataList" value="#{contact.model}"
+					var="to" rows="20" rendered="#{contact.model.rowCount > 0}">
 
-					<aon:dataTable id="contactDataList"
-						value="#{contact.model}" var="to" rows="20"
-						rendered="#{contact.model.rowCount > 0}"
-						styleClass="aon-dataTable">
+					<aon:rowSelector action="contact_form" actionListener="#{contact.onSelect}" />
 
-						<aon:column>
-							<aon:rowSelector selectionListener="#{contact.onSelect}"/>
-							<f:facet name="header">
-								<aon:outputText value="#{groupwareBundle.contact_name}" />
-							</f:facet>
-							<aon:outputText value="#{to.name}"/>
-						</aon:column>
+					<aon:column>
+						<f:facet name="header">
+							<aon:outputText value="#{groupwareBundle.contact_name}" />
+						</f:facet>
+						<aon:outputText value="#{to.name}"/>
+					</aon:column>
 
-						<aon:column>
-							<f:facet name="header">
-								<aon:outputText value="#{groupwareBundle.contact_organization}" />
-							</f:facet>
-							<aon:outputText value="#{to.organization}"/>
-						</aon:column>
+					<aon:column>
+						<f:facet name="header">
+							<aon:outputText value="#{groupwareBundle.contact_organization}" />
+						</f:facet>
+						<aon:outputText value="#{to.organization}"/>
+					</aon:column>
 
-						<aon:column>
-							<f:facet name="header">
-								<aon:outputText value="#{groupwareBundle.contact_phone}" />
-							</f:facet>
-							<aon:outputText value="#{to.phone}"/>
-						</aon:column>
+					<aon:column>
+						<f:facet name="header">
+							<aon:outputText value="#{groupwareBundle.contact_phone}" />
+						</f:facet>
+						<aon:outputText value="#{to.phone}"/>
+					</aon:column>
 
-						<aon:column>
-							<f:facet name="header">
-								<aon:outputText value="#{groupwareBundle.contact_cellular_phone}" />
-							</f:facet>
-							<aon:outputText value="#{to.cellularPhone}"/>
-						</aon:column>
+					<aon:column>
+						<f:facet name="header">
+							<aon:outputText value="#{groupwareBundle.contact_cellular_phone}" />
+						</f:facet>
+						<aon:outputText value="#{to.cellularPhone}"/>
+					</aon:column>
 
-						<aon:column>
-							<f:facet name="header">
-								<aon:outputText value="#{groupwareBundle.contact_email}" />
-							</f:facet>
-							<aon:outputText value="#{to.email}"/>
-						</aon:column>
+					<aon:column>
+						<f:facet name="header">
+							<aon:outputText value="#{groupwareBundle.contact_email}" />
+						</f:facet>
+						<aon:outputText value="#{to.email}"/>
+					</aon:column>
 
-					</aon:dataTable>
+				</aon:dataTable>
 
-					<ui:include src="/facelet/shared/dataScroller.xhtml">
-						<ui:param name="dataTable" value="contactDataList" />
-						<ui:param name="model" value="#{contact.model}" />
-						<ui:param name="showNote" value="#{true}" />
-					</ui:include>
+				<aon:dataScroller dataTable="contactDataList" model="#{contact.model}" showNote="true" />
 
-				</aon:div>
 			</aon:div>
 
 		</aon:form>
-<!-- 		
-		<ui:include src="/facelet/report/preferences.xhtml"/>
- -->	
+
 	</ui:define>
 
 </ui:composition>
