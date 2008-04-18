@@ -28,6 +28,8 @@ public class Domain implements IDomain, ILdapConstants, ILdapSecurityConstants {
 	private static final Log LOGGER = LogFactory.getLog( Domain.class.getName() );
 
 	private static final long serialVersionUID = -8630396330009341954L;
+	
+	public static final String OBJECT_CLASS = "aonDomain";
 
 	/** Domain identifier. */
 	private String id;
@@ -128,7 +130,7 @@ public class Domain implements IDomain, ILdapConstants, ILdapSecurityConstants {
 	
 	private static Domain getObject( SecurityLdap ldap, Entry entry ) {
 		Domain domain = new Domain(ldap);
-		domain.setId(entry.getAsString(COMMON_NAME));
+		domain.setId(entry.getAsString(COMMON_NAME_ATTRIBUTE));
 		return domain;
 	}
 
@@ -137,7 +139,7 @@ public class Domain implements IDomain, ILdapConstants, ILdapSecurityConstants {
 		Domain domain = null;
 		try {
 			session = ldap.getLdapSession();
-			String objectClass = SecurityLdap.getObjectClass(DOMAIN_OBJECT_CLASS);
+			String objectClass = SecurityLdap.getObjectClass(OBJECT_CLASS);
 			DistinguishedName dn = getDN(domainId);
 			Entry entry = session.get( dn.toString(), objectClass );
 			domain = getObject(ldap, entry);
@@ -151,7 +153,7 @@ public class Domain implements IDomain, ILdapConstants, ILdapSecurityConstants {
 	
 	private IAccessPolicy getAccessPolicy( Entry entry ) {
 		AccessPolicy accessPolicy = new AccessPolicy();
-		accessPolicy.setId(entry.getAsString(COMMON_NAME));
+		accessPolicy.setId(entry.getAsString(COMMON_NAME_ATTRIBUTE));
 		accessPolicy.setExceptionThrowableIfMaximumExceeded(entry.getAsBoolean("exceptionThrowableIfMaximumExceeded"));
 		accessPolicy.setMaxAllowedUsers(entry.getAsInteger("maxAllowedUsers"));
 		accessPolicy.setMaxDefinedUsers(entry.getAsInteger("maxDefinedUsers"));

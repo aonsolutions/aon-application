@@ -32,13 +32,14 @@ import com.code.aon.jaas.ldap.SecurityLdap;
 import com.code.aon.jaas.storage.ApplicationsStorage;
 import com.code.aon.jaas.storage.StorageException;
 import com.code.aon.ldap.DistinguishedName;
+import com.code.aon.ldap.ILdapConstants;
 
 /**
  * @author Consulting & Development. Aimar Tellitu - 03/04/2008
  *  
  * @jmx:mbean name="jboss.admin:service=AonLdap" extends="org.jboss.system.ServiceMBean"
  */
-public class JBossLdap extends ServiceMBeanSupport implements JBossLdapMBean, ILdapSecurityConstants {
+public class JBossLdap extends ServiceMBeanSupport implements JBossLdapMBean, ILdapConstants, ILdapSecurityConstants {
 
 	/** JBossSecurity Logger instance. */
 	private static final Log LOGGER = LogFactory.getLog( JBossLdap.class.getName() );
@@ -138,7 +139,7 @@ public class JBossLdap extends ServiceMBeanSupport implements JBossLdapMBean, IL
 		}
 		DistinguishedName dn = SecurityLdap.getApplicationProfileDN(appId, relation.getId());
 		if ( this.ldap.exists(dn, PROFILE_OBJECT_CLASS) ) {
-			ldap.updateProfile( dn, relation );
+			ldap.updateRelation( dn, relation );
 		} else {
 			IDomainApplication domainApplication = DomainApplication.get(this.ldap, domainId, appId);
 			domainApplication.updateProfile(relation);
@@ -146,11 +147,26 @@ public class JBossLdap extends ServiceMBeanSupport implements JBossLdapMBean, IL
 		return relation;
 	}
 	
-	public IUser updateUser(String appId, String domainId, IUser user, String oldUserId) throws StorageException {
+	public IRelation updateRelation(String appId, String domainId, IRelation relation) throws StorageException {
 		if ( LOGGER.isDebugEnabled() ) {
-			LOGGER.debug("Updating IUser " + user.getId() + " for: DOMAIN[" + domainId + "], APPLICATION[" + appId + "]" );
+			LOGGER.debug("Updating user relation for: DOMAIN[" + domainId + "], APPLICATION[" + appId + "]" );
 		}
-		return user;
+		DistinguishedName dn = SecurityLdap.getDomainApplicationUserDN(domainId, appId, relation.getId());
+		if ( this.ldap.exists(dn, DOMAIN_APPLICATION_USER_OBJECT_CLASS) ) {
+			this.ldap.updateRelation(dn, relation);
+		}
+		return relation;
+	}
+	
+	public IRelation removeRelation(String appId, String domainId, IRelation relation) throws StorageException {
+		if ( LOGGER.isDebugEnabled() ) {
+			LOGGER.debug("Removing user relation from: DOMAIN[" + domainId + "], APPLICATION[" + appId + "]" );
+		}
+		DistinguishedName dn = SecurityLdap.getDomainApplicationUserDN(domainId, appId, relation.getId());
+		if ( this.ldap.exists(dn, DOMAIN_APPLICATION_USER_OBJECT_CLASS) ) {
+			this.ldap.deleteAttribute(dn, MEMBER_ATTRIBUTE);
+		}
+		return relation;
 	}
 	
 }

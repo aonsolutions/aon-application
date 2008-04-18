@@ -12,6 +12,7 @@ import org.apache.commons.logging.LogFactory;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
+import org.junit.Test;
 
 import com.code.aon.jaas.auth.session.AuthenticationLoginException;
 import com.code.aon.jaas.ldap.AuthInfo;
@@ -42,11 +43,11 @@ public class LDAPReaderTest {
 		ldap = new SecurityLdap( properties );			
 	}
 	
-	@Ignore
+	@Test
     public void testGetApplications() {
 		Assert.assertTrue( ldap.hasDomain( "aon.code.es") );
 		Assert.assertTrue( ldap.hasDomain( "localhost") );
-		Assert.assertTrue( ldap.hasUser("aon.code.es", "aon-task", "atellitu") );
+		Assert.assertTrue( ldap.hasUser("localhost", "aon-task", "atellitu") );
 		Assert.assertFalse( ldap.hasUser("aon.code.es", "aon-nothing", "atellitu") );
 		
 		Entry user = ldap.getUser("localhost", "atellitu");

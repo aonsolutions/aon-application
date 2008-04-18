@@ -233,7 +233,7 @@ public class DomainApplication implements IDomainApplication, ILdapConstants, IL
 			String objectClass = SecurityLdap.getObjectClass(DOMAIN_APPLICATION_PROFILE_OBJECT_CLASS);
 			DistinguishedName dn = SecurityLdap.getDomainApplicationProfileDN(domainId, appId, relation.getId());
 			if ( session.exists(dn.toString(), objectClass) ) {
-				ldap.updateProfile(dn, relation);
+				ldap.updateRelation(dn, relation);
 			} else {
 				Entry entry = ldap.getDomainApplicationProfile( session, relation, dn);
 				session.add(entry);

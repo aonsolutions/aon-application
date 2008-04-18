@@ -16,8 +16,6 @@ public interface ILdapSecurityConstants {
 	
 	String APPLICATION_OBJECT_CLASS = "aonApplication";
 
-	String DOMAIN_OBJECT_CLASS = "aonDomain";
-	
 	String DOMAIN_APPLICATION_OBJECT_CLASS = "aonDomainApplication";
 
 	String DOMAIN_APPLICATION_USER_OBJECT_CLASS = "aonDomainApplicationUser";
