@@ -6,7 +6,6 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
-import java.util.logging.Logger;
 
 import javax.faces.model.SelectItem;
 
@@ -177,6 +176,32 @@ public class DomainManager implements Serializable {
 		this.console.invoke( oname, IOperation.UPDATE_USER, params, sig );
 	}
 
+	/**
+	 * Update user profiles, in the application domain.
+	 * 
+	 * @param relation
+	 * @throws DeploymentException 
+	 */
+	public void updateUserProfiles() throws DeploymentException {
+		updateUserProfiles(this.relation);
+	}
+
+	/**
+	 * Update user profiles, in the application domain.
+	 * 
+	 * @param relation
+	 * @throws DeploymentException 
+	 */
+	private void updateUserProfiles(IRelation relation) throws DeploymentException {
+		Object[] params = { this.application.getId(), domain.getId(), relation };
+		String[] sig = {String.class.getName(), String.class.getName(), IRelation.class.getName()};
+		boolean hasRelations = this.relation.relations().size() > 0;
+		String operation = (hasRelations)? IOperation.UPDATE_RELATION: IOperation.REMOVE_RELATION;
+		String oname = console.getAonSecurityName();
+		this.console.invoke( oname, operation, params, sig );
+		
+	}
+	
 	/**
 	 * Find <code>IUser</code> and its relations and assigns them, new user will be created 
 	 * if no one is found.
