@@ -9,6 +9,8 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ql.Criteria;
+import com.code.aon.ql.util.ExpressionException;
+import com.code.aon.ui.cms.controller.FooterController;
 import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
@@ -45,4 +47,30 @@ public class FooterControllerListener extends ControllerAdapter {
 		}
 	}
 	
+	@Override
+	public void afterBeanCreated(ControllerEvent event)
+			throws ControllerListenerException {
+		FooterController c = (FooterController)event.getController();
+		try {
+			c.onSelectBannerCategories(null);
+		} catch (ManagerBeanException e) {
+			e.printStackTrace();
+		} catch (ExpressionException e) {
+			e.printStackTrace();
+		}
+	}
+
+	@Override
+	public void afterBeanSelected(ControllerEvent event)
+			throws ControllerListenerException {
+		FooterController c = (FooterController)event.getController();
+		try {
+			c.onSelectBannerCategories(null);
+		} catch (ManagerBeanException e) {
+			e.printStackTrace();
+		} catch (ExpressionException e) {
+			e.printStackTrace();
+		}
+	}
+
 }

@@ -74,6 +74,7 @@ import com.code.aon.cms.Bulletin;
 import com.code.aon.cms.BulletinDetail;
 import com.code.aon.cms.BulletinArticle;
 import com.code.aon.cms.BulletinEmail;
+import com.code.aon.cms.FooterBannerCategory;
 
 /** 
 * Interface for holding entity properties constants.
@@ -2971,6 +2972,31 @@ public interface ICMSAlias {
 	* Hibernate value: BulletinEmail.language.id
 	*/
 	String  BULLETIN_EMAIL_LANGUAGE_ID = BULLETIN_EMAIL_ENTRY.getAliasNames()[2];
+
+
+
+	/** 
+	* DAOConstantsEntry for FooterBannerCategory entity.
+	*/ 
+	DAOConstantsEntry FOOTER_BANNER_CATEGORY_ENTRY = DAOConstants.getDAOConstant(FooterBannerCategory.class);
+
+	/** 
+	* Alias value: FooterBannerCategory_bannerCategory_id
+	* Hibernate value: FooterBannerCategory.bannerCategory.id
+	*/
+	String  FOOTER_BANNER_CATEGORY_BANNER_CATEGORY_ID = FOOTER_BANNER_CATEGORY_ENTRY.getAliasNames()[0];
+
+	/** 
+	* Alias value: FooterBannerCategory_footer_id
+	* Hibernate value: FooterBannerCategory.footer.id
+	*/
+	String  FOOTER_BANNER_CATEGORY_FOOTER_ID = FOOTER_BANNER_CATEGORY_ENTRY.getAliasNames()[1];
+
+	/** 
+	* Alias value: FooterBannerCategory_id
+	* Hibernate value: FooterBannerCategory.id
+	*/
+	String  FOOTER_BANNER_CATEGORY_ID = FOOTER_BANNER_CATEGORY_ENTRY.getAliasNames()[2];
 
 
 }

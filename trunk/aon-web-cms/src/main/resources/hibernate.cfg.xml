@@ -104,6 +104,7 @@
 		<mapping class="com.code.aon.cms.BulletinDetail"/>
 		<mapping class="com.code.aon.cms.BulletinArticle"/>
 		<mapping class="com.code.aon.cms.BulletinEmail"/>
+		<mapping class="com.code.aon.cms.FooterBannerCategory"/>
 
 	</session-factory>
 
