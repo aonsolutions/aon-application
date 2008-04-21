@@ -37,7 +37,7 @@
 							styleClass="aon-finding-toolbar-item aon-icon-cancel"
 							immediate="#{true}" confirmTitle="Confirmation Dialog"
 							confirmMessage="#{bundle.aon_cancel_confirm}"
-							confirmActionListener="#{notice.cancel}"
+							confirmActionListener="#{notice.onCancel}"
 							confirmAction="notice_list"
 							accesskey="#{bundle.aon_key_cancel}" />
 						<aon:confirmButton id="remove" value="#{bundle.aon_remove}"
@@ -55,7 +55,7 @@
 							accesskey="#{bundle.aon_key_search}" />
 						<aon:commandButton id="back" value="#{bundle.aon_back}"
 							rendered="#{!notice.new}" immediate="true"
-							action="notice_list" actionListener="#{notice.cancel}"
+							action="notice_list" actionListener="#{notice.onCancel}"
 							styleClass="aon-finding-toolbar-item aon-icon-cancel"
 							accesskey="#{bundle.aon_key_cancel}" />
 					</aon:div>
