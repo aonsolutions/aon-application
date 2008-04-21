@@ -43,14 +43,14 @@
 							style="white-space:nowrap;border-left:#CCC 1px solid;border-top:#CCC 1px solid;border-right:#808080 1px solid;border-bottom:#808080 1px solid;padding:1px 0.5em">
 							<aon:div style="display:inline;white-space:nowrap;">
 								<aon:form>
-									<aon:commandLink
+									<h:commandLink
 										actionListener="#{currentUser.onLoadCurrentUser}"
 										action="user_changepassword_form">
 										<h:graphicImage
 											url="/css/richCss/images/aon-icon/aon-icon-user.png"
 											style="border:0px;height:11px" />
 										<aon:outputText value="#{desktop.loggedUserName}" />
-									</aon:commandLink>
+									</h:commandLink>
 								</aon:form>									
 							</aon:div>
 						</aon:div>
