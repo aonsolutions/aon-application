@@ -63,12 +63,10 @@
 						rendered="#{to==userWorkGroup.to}" value=""
 						styleClass="aon-editDataTable-button aon-icon-accept"
 						accesskey="#{bundle.aon_key_save_line}" />
-					<aon:confirmButton id="cancelEdit-userWorkGroup" title="[#{bundle.aon_cancel}]"
+					<aon:commandButton id="cancelEdit-userWorkGroup" title="[#{bundle.aon_cancel}]"
 						styleClass="aon-editDataTable-button aon-icon-cancel"
 						rendered="#{to==userWorkGroup.to}"
-						confirmTitle="Confirmation Dialog" 
-						confirmMessage="#{bundle.aon_cancel_confirm}"
-						confirmActionListener="#{userWorkGroup.onCancel}" immediate="true"
+						actionListener="#{userWorkGroup.onCancel}" immediate="true"
 						accesskey="#{bundle.aon_key_cancel_line}" />
 					<aon:confirmButton id="cancelRemove-userWorkGroup" title="[#{bundle.aon_remove}]"
 						styleClass="aon-editDataTable-button aon-icon-delete"

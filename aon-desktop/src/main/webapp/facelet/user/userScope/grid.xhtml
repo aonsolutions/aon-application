@@ -65,12 +65,10 @@
 						rendered="#{to==userScope.to}" value=""
 						styleClass="aon-editDataTable-button aon-icon-accept"
 						accesskey="#{bundle.aon_key_save_line}" />
-					<aon:confirmButton id="cancelEdit-userScope" title="[#{bundle.aon_cancel}]"
+					<aon:commandButton id="cancelEdit-userScope" title="[#{bundle.aon_cancel}]"
 						styleClass="aon-editDataTable-button aon-icon-cancel"
 						rendered="#{to==userScope.to}"
-						confirmTitle="Confirmation Dialog" 
-						confirmMessage="#{bundle.aon_cancel_confirm}"
-						confirmActionListener="#{userScope.onCancel}" immediate="true"
+						actionListener="#{userScope.onCancel}" immediate="true"
 						accesskey="#{bundle.aon_key_cancel_line}" />
 					<aon:confirmButton id="cancelRemove-userScope" title="[#{bundle.aon_remove}]"
 						styleClass="aon-editDataTable-button aon-icon-delete"

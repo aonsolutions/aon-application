@@ -38,11 +38,16 @@
 								rendered="#{workGroup.to!=null or workGroup.new}"
 								styleClass="aon-finding-toolbar-item aon-icon-accept"
 								accesskey="#{bundle.aon_key_new}" />
-							<aon:confirmButton id="cancel"
-								value="#{bundle.aon_cancel}" rendered="#{workGroup.to!=null or workGroup.new}"
+							<aon:confirmButton id="cancelNew"
+								value="#{bundle.aon_cancel}" rendered="#{workGroup.new}"
 								styleClass="aon-finding-toolbar-item aon-icon-cancel" immediate="true"
 								confirmTitle="Confirmation Dialog" confirmMessage="#{bundle.aon_cancel_confirm}"
 								confirmActionListener="#{workGroup.onCancel}"
+								accesskey="#{bundle.aon_key_cancel}"/>
+							<aon:commandButton id="cancelEdit"
+								value="#{bundle.aon_cancel}" rendered="#{workGroup.to!=null and (!workGroup.new)}"
+								styleClass="aon-finding-toolbar-item aon-icon-cancel" immediate="true"
+								actionListener="#{workGroup.onCancel}"
 								accesskey="#{bundle.aon_key_cancel}"/>
 							<aon:confirmButton id="remove"
 								value="#{bundle.aon_remove}" rendered="#{workGroup.to!=null and !workGroup.new}"
@@ -51,7 +56,7 @@
 								confirmActionListener="#{workGroup.onRemove}"
 								accesskey="#{bundle.aon_key_remove}"/>
 							<aon:commandButton id="users"
-								value="#{bundle.aon_cancel}" rendered="#{workGroup.to==null and !workGroup.new}"
+								value="#{bundle.aon_back}" rendered="#{workGroup.to==null}"
 								action="user" actionListener="#{user.onSearch}"
 								styleClass="aon-finding-toolbar-item aon-icon-cancel"/>
 						</aon:div>
@@ -109,7 +114,7 @@
 								<f:selectItems value="#{configCollections.workGroupStatuses}" />
 							</aon:selectOneMenu>
 							<f:facet name="footer">
-								<aon:selectOneMenu rendered="#{workGroup.new}" value="#{workGroup.to.status}">
+								<aon:selectOneMenu id="workGroupStatuses" rendered="#{workGroup.new}" value="#{workGroup.to.status}">
 									<f:selectItems value="#{configCollections.workGroupStatuses}" />
 								</aon:selectOneMenu>
 							</f:facet>
@@ -126,12 +131,10 @@
 									rendered="#{to==workGroup.to}"
 									styleClass="aon-editDataTable-button aon-icon-accept"
 									accesskey="#{bundle.aon_key_save_line}" />
-								<aon:confirmButton title="[#{bundle.aon_cancel}]"
+								<aon:commandButton title="[#{bundle.aon_cancel}]"
 									styleClass="aon-editDataTable-button aon-icon-cancel"
 									rendered="#{to==workGroup.to}"
-									confirmTitle="Confirmation Dialog" 
-									confirmMessage="#{bundle.aon_cancel_confirm}"
-									confirmActionListener="#{workGroup.onCancel}" immediate="true"
+									actionListener="#{workGroup.onCancel}" immediate="true"
 									accesskey="#{bundle.aon_key_cancel_line}" />
 								<aon:confirmButton title="[#{bundle.aon_remove}]"
 									styleClass="aon-editDataTable-button aon-icon-delete"
