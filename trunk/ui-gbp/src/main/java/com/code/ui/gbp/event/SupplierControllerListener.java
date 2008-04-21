@@ -14,10 +14,17 @@ public class SupplierControllerListener extends ControllerAdapter {
 	public void afterBeanSelected(ControllerEvent event) throws ControllerListenerException {
 		SupplierController supplierController = (SupplierController)event.getController();
 		String bankAccount = ((Supplier)supplierController.getTo()).getBankAccount();
-		supplierController.setEntity(bankAccount.substring(0, 4));
-		supplierController.setOffice(bankAccount.substring(4, 8));
-		supplierController.setControl(bankAccount.substring(8, 10));
-		supplierController.setAccount(bankAccount.substring(10, 20));
+		try{
+			supplierController.setEntity(bankAccount.substring(0, 4));
+			supplierController.setOffice(bankAccount.substring(4, 8));
+			supplierController.setControl(bankAccount.substring(8, 10));
+			supplierController.setAccount(bankAccount.substring(10, 20));
+		}catch (Exception e) {
+			supplierController.setEntity("");
+			supplierController.setOffice("");
+			supplierController.setControl("");
+			supplierController.setAccount("");
+		}
 	}
 
 	@Override

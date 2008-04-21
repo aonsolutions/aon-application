@@ -49,6 +49,45 @@
 		</params>
 	</report>
 	
+	<!--  *********  SUPPLIER TO  ********* -->
+	<report id="supplier_to" description="Supplier report">
+		<template path="/com/code/ui/gbp/report/supplier_to.jasper" />
+		<collection provider="#{supplierToReport}"/>
+		<params>
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.ui.gbp.i18n.messages" />
+		</params>
+		<nested-report report="supplier_addinfos"/>
+		<nested-report report="supplier_contacts"/>
+		<nested-report report="supplier_campaigns"/>
+		<nested-report report="supplier_economicDatas"/>
+		<nested-report report="supplier_observations"/>
+		<nested-report report="supplier_contactPersons"/>
+	</report>
+	
+	<report id="supplier_addinfos" description="supplier_addinfos">
+		<template path="/com/code/ui/gbp/report/supplier_addinfos.jasper"/>
+	</report>
+	
+	<report id="supplier_contacts" description="supplier_contacts">
+		<template path="/com/code/ui/gbp/report/supplier_contacts.jasper"/>
+	</report>
+	
+	<report id="supplier_campaigns" description="supplier_contacts">
+		<template path="/com/code/ui/gbp/report/supplier_campaigns.jasper"/>
+	</report>
+	
+	<report id="supplier_economicDatas" description="supplier_contacts">
+		<template path="/com/code/ui/gbp/report/supplier_economicDatas.jasper"/>
+	</report>
+	
+	<report id="supplier_observations" description="supplier_observations">
+		<template path="/com/code/ui/gbp/report/supplier_observations.jasper"/>
+	</report>
+	
+	<report id="supplier_contactPersons" description="supplier_contactPersons">
+		<template path="/com/code/ui/gbp/report/supplier_contactPersons.jasper"/>
+	</report>
+	
 	<!--  *********  CAMPAIGN LIST  ********* -->
 	<report id="campaigns" description="Campaigns report">
 		<template path="/com/code/ui/gbp/report/campaigns.jasper" />

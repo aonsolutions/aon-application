@@ -1,5 +1,9 @@
 package com.code.ui.gbp.controller;
 
+import java.util.Collection;
+import java.util.LinkedList;
+import java.util.List;
+
 import com.code.aon.ui.form.BasicController;
 
 public class SupplierController extends BasicController {
@@ -43,4 +47,13 @@ public class SupplierController extends BasicController {
 	public void setAccount(String account) {
 		this.account = account;
 	}
+	
+	@Override
+	@SuppressWarnings("unchecked")
+	public Collection getCollection() {
+		List list = new LinkedList();
+		list.add(getTo());
+		return list;
+	}
+
 }
