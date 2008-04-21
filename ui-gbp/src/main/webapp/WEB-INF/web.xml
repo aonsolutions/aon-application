@@ -9,6 +9,7 @@
 		<param-name>javax.faces.CONFIG_FILES</param-name>
 		<param-value>
 			/WEB-INF/beans-faces-config.xml
+			,/WEB-INF/report-beans-faces-config.xml
 			,/WEB-INF/lookup-beans-faces-config.xml
 			,/WEB-INF/navigation-faces-config.xml
 			,/WEB-INF/front-beans-faces-config.xml
