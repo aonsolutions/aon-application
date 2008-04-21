@@ -26,25 +26,20 @@
 					</aon:div>
 
 					<aon:div styleClass="aon-finding-toolbar-item-group">
-						<aon:confirmButton id="save" value="#{bundle.aon_save}"
+						<aon:commandButton id="save" value="#{bundle.aon_save}"
 							styleClass="aon-finding-toolbar-item aon-icon-accept"
-							confirmTitle="Confirmation Dialog"
-							confirmMessage="#{bundle.aon_save_confirm}"
-							confirmActionListener="#{user.accept}"
-							confirmAction="user"
+							actionListener="#{user.accept}"	action="user_form"
 							accesskey="#{bundle.aon_key_save}" />
-						<aon:confirmButton id="cancel" value="#{bundle.aon_cancel}"
-							styleClass="aon-finding-toolbar-item aon-icon-cancel"
-							immediate="true" confirmTitle="Confirmation Dialog"
-							confirmMessage="#{bundle.aon_cancel_confirm}"
-							confirmActionListener="#{user.cancel}"
-							confirmAction="user_list"
-							accesskey="#{bundle.aon_key_cancel}" />
 						<aon:commandButton id="search" value="#{bundle.aon_search}"
 							immediate="true" action="user_search"
 							actionListener="#{user.onEditSearch}"
 							styleClass="aon-finding-toolbar-item aon-icon-search"
 							accesskey="#{bundle.aon_key_search}" />
+						<aon:commandButton id="back" value="#{bundle.aon_back}"
+							styleClass="aon-finding-toolbar-item aon-icon-cancel"
+							immediate="true"
+							actionListener="#{user.onCancel}" action="user"
+							accesskey="#{bundle.aon_key_cancel}" />
 						<aon:commandButton id="groups" value="#{appBundle.aon_workgroups}"
 							action="work_group" actionListener="#{workGroup.onSearch}"
 							styleClass="aon-finding-toolbar-item aon-icon-group" />
