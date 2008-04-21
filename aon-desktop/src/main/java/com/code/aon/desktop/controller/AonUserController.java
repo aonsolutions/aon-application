@@ -1,7 +1,10 @@
 package com.code.aon.desktop.controller;
 
 import java.security.Principal;
+import java.util.Date;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
@@ -16,9 +19,12 @@ import com.code.aon.jaas.auth.AuthPrincipal;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.config.controller.UserController;
 import com.code.aon.ui.util.AonUtil;
+import com.code.aon.ui.webmail.controller.FolderController;
 
 public class AonUserController extends UserController {
 
+	private static final Logger LOGGER = Logger.getLogger(AonUserController.class.getName());
+	
 	private boolean accepted = false;
 	
 	public boolean isAccepted() {
@@ -123,8 +129,12 @@ public class AonUserController extends UserController {
 			u.setStatus(status + 2);
 			try {
 				super.accept(event);
-				AonUtil.addInfoMessage("Su contraseña se ha actualizado con exito.");
+				FacesContext ctx = FacesContext.getCurrentInstance();
+				if ( ctx.getMaximumSeverity() == null ) {
+					AonUtil.addInfoMessage("Su contraseña se ha actualizado con exito.");
+				}
 			} catch (Exception e) {
+				LOGGER.log(Level.SEVERE, "Error cambiando la contraseña.", e );
 				u.setStatus(status);
 			}
 		}
