@@ -29,14 +29,7 @@
 						<aon:commandButton id="save" value="#{bundle.aon_save}"
 							styleClass="aon-finding-toolbar-item aon-icon-accept"
 							actionListener="#{domain.acceptProfile}"
-							action="profile_list"
 							accesskey="#{bundle.aon_key_save}" />
-						<aon:commandButton id="cancel" value="#{bundle.aon_cancel}"
-							styleClass="aon-finding-toolbar-item aon-icon-cancel"
-							immediate="true"
-							actionListener="#{domain.cancel}"
-							action="profile_list"
-							accesskey="#{bundle.aon_key_cancel}" />
 						<aon:confirmButton id="remove" value="#{bundle.aon_remove}"
 							rendered="#{!domain.newProfile}"
 							styleClass="aon-finding-toolbar-item aon-icon-delete"
@@ -44,6 +37,12 @@
 							confirmMessage="#{bundle.aon_remove_confirm}"
 							confirmActionListener="#{domain.removeProfile}"
 							confirmAction="profile_list"/>
+						<aon:commandButton id="back" value="#{bundle.aon_back}"
+							styleClass="aon-finding-toolbar-item aon-icon-cancel"
+							immediate="true"
+							actionListener="#{domain.cancel}"
+							action="profile_list"
+							accesskey="#{bundle.aon_key_cancel}" />
 					</aon:div>
 				</aon:panelGrid>
 			</aon:div>
