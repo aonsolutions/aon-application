@@ -26,20 +26,18 @@
 					</aon:div>
 
 					<aon:div styleClass="aon-finding-toolbar-item-group">
-						<aon:confirmButton id="save" value="#{bundle.aon_save}"
+						<aon:commandButton id="save" value="#{bundle.aon_save}"
 							rendered="#{contact.to!=null or contact.new}"
 							styleClass="aon-finding-toolbar-item aon-icon-accept"
-							confirmTitle="Confirmation Dialog"
-							confirmMessage="#{bundle.aon_save_confirm}"
-							confirmActionListener="#{contact.accept}"
-							confirmAction="contact_list"
+							actionListener="#{contact.accept}"
+							action="contact_form"
 							accesskey="#{bundle.aon_key_save}" />
 						<aon:confirmButton id="cancel" value="#{bundle.aon_cancel}"
-							rendered="#{contact.to!=null or contact.new}"
+							rendered="#{contact.new}"
 							styleClass="aon-finding-toolbar-item aon-icon-cancel"
 							immediate="#{true}" confirmTitle="Confirmation Dialog"
 							confirmMessage="#{bundle.aon_cancel_confirm}"
-							confirmActionListener="#{contact.cancel}"
+							confirmActionListener="#{contact.onCancel}"
 							confirmAction="contact_list"
 							accesskey="#{bundle.aon_key_cancel}" />
 						<aon:confirmButton id="remove" value="#{bundle.aon_remove}"
@@ -50,6 +48,17 @@
 							confirmAction="contact_list"
 							styleClass="aon-finding-toolbar-item aon-icon-delete"
 							accesskey="#{bundle.aon_key_remove}" />
+						<aon:commandButton id="search" value="#{bundle.aon_search}"
+							rendered="#{!contact.new}" immediate="true"
+							action="contact_search" actionListener="#{contact.onEditSearch}"
+							styleClass="aon-finding-toolbar-item aon-icon-search"
+							accesskey="#{bundle.aon_key_search}" />							
+						<aon:commandButton id="back" value="#{bundle.aon_back}"
+							rendered="#{!contact.new}" immediate="true"
+							styleClass="aon-finding-toolbar-item aon-icon-cancel"
+							actionListener="#{contact.onCancel}"
+							action="contact_list"
+							accesskey="#{bundle.aon_key_cancel}" />
 					</aon:div>
 				</aon:panelGrid>
 			</aon:div>

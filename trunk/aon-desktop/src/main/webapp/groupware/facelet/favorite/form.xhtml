@@ -26,26 +26,39 @@
 					</aon:div>
 
 					<aon:div styleClass="aon-finding-toolbar-item-group">
-						<aon:confirmButton id="save" value="#{bundle.aon_save}"
+						<aon:commandButton id="save" value="#{bundle.aon_save}"
 							rendered="#{favorite.to!=null or favorite.new}"
 							styleClass="aon-finding-toolbar-item aon-icon-accept"
-							confirmTitle="Confirmation Dialog"
-							confirmMessage="#{bundle.aon_save_confirm}"
-							confirmActionListener="#{favorite.accept}"
-							confirmAction="favorite_list"
+							actionListener="#{favorite.accept}"
+							action="favorite_form"
 							accesskey="#{bundle.aon_key_save}" />
 						<aon:confirmButton id="cancel" value="#{bundle.aon_cancel}"
-							rendered="#{favorite.to!=null or favorite.new}"
+							rendered="#{favorite.new}"
 							styleClass="aon-finding-toolbar-item aon-icon-cancel"
 							immediate="#{true}" confirmTitle="Confirmation Dialog"
 							confirmMessage="#{bundle.aon_cancel_confirm}"
-							confirmActionListener="#{favorite.cancel}"
+							confirmActionListener="#{favorite.onCancel}"
 							confirmAction="favorite_list"
 							accesskey="#{bundle.aon_key_cancel}" />
-						<aon:commandButton id="reset" value="#{bundle.aon_reset}"
-							action="favorite_form" actionListener="#{favorite.onReset}" rendered="#{!favorite.new}"
-							styleClass="aon-finding-toolbar-item aon-icon-reset"
-							accesskey="#{bundle.aon_key_new}" />
+						<aon:confirmButton id="remove" value="#{bundle.aon_remove}"
+							rendered="#{!contact.new}" immediate="true"
+							styleClass="aon-finding-toolbar-item aon-icon-delete"
+							confirmTitle="Confirmation Dialog"
+							confirmMessage="#{bundle.aon_remove_confirm}"
+							confirmActionListener="#{favorite.onRemove}"
+							confirmAction="favorite_list"
+							accesskey="#{bundle.aon_key_remove}" />
+						<aon:commandButton id="search" value="#{bundle.aon_search}"
+							rendered="#{!contact.new}" immediate="true"
+							action="favorite_search" actionListener="#{favorite.onEditSearch}"
+							styleClass="aon-finding-toolbar-item aon-icon-search"
+							accesskey="#{bundle.aon_key_search}" />
+						<aon:commandButton id="back" value="#{bundle.aon_back}"
+							rendered="#{!contact.new}" immediate="true"
+							styleClass="aon-finding-toolbar-item aon-icon-cancel"
+							actionListener="#{favorite.onCancel}"
+							action="favorite_list"
+							accesskey="#{bundle.aon_key_cancel}" />
 					</aon:div>
 				</aon:panelGrid>
 			</aon:div>

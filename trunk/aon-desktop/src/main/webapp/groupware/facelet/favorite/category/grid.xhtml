@@ -38,11 +38,16 @@
 								rendered="#{favoriteCategory.to!=null or favoriteCategory.new}"
 								styleClass="aon-finding-toolbar-item aon-icon-accept"
 								accesskey="#{bundle.aon_key_new}" />
-							<aon:confirmButton id="cancel"
-								value="#{bundle.aon_cancel}" rendered="#{favoriteCategory.to!=null or favoriteCategory.new}"
+							<aon:confirmButton id="cancelNew"
+								value="#{bundle.aon_cancel}" rendered="#{favoriteCategory.new}"
 								styleClass="aon-finding-toolbar-item aon-icon-cancel" immediate="#{true}"
 								confirmTitle="Confirmation Dialog" confirmMessage="#{bundle.aon_cancel_confirm}"
 								confirmActionListener="#{favoriteCategory.onCancel}"
+								accesskey="#{bundle.aon_key_cancel}"/>
+							<aon:commandButton id="cancelEdit"
+								value="#{bundle.aon_cancel}" rendered="#{favoriteCategory.to!=null and (!favoriteCategory.new)}"
+								styleClass="aon-finding-toolbar-item aon-icon-cancel" immediate="#{true}"
+								actionListener="#{favoriteCategory.onCancel}"
 								accesskey="#{bundle.aon_key_cancel}"/>
 							<aon:confirmButton id="remove"
 								value="#{bundle.aon_remove}" rendered="#{favoriteCategory.to!=null and !favoriteCategory.new}"
@@ -51,6 +56,7 @@
 								confirmActionListener="#{favoriteCategory.onRemove}"
 								accesskey="#{bundle.aon_key_remove}"/>
 							<aon:commandButton id="favorite_list" value="#{bundle.aon_back}"
+								rendered="#{favoriteCategory.to==null}"
 								immediate="true" action="favorite"
 								styleClass="aon-finding-toolbar-item aon-icon-cancel"/>
 						</aon:div>
@@ -80,7 +86,6 @@
 										actionListener="#{favoriteCategory.onReset}" value=""
 										rendered="#{!favoriteCategory.new}"
 										accesskey="#{bundle.aon_key_new_line}" />
-									</aon:commandButton>
 								</aon:div>
 							</f:facet>
 						</aon:column>
@@ -111,12 +116,10 @@
 									rendered="#{to==favoriteCategory.to}"
 									styleClass="aon-editDataTable-button aon-icon-accept"
 									accesskey="#{bundle.aon_key_save_line}" />
-								<aon:confirmButton title="[#{bundle.aon_cancel}]"
+								<aon:commandButton title="[#{bundle.aon_cancel}]"
 									styleClass="aon-editDataTable-button aon-icon-cancel"
 									rendered="#{to==favoriteCategory.to}"
-									confirmTitle="Confirmation Dialog" 
-									confirmMessage="#{bundle.aon_cancel_confirm}"
-									confirmActionListener="#{favoriteCategory.onCancel}" immediate="true"
+									actionListener="#{favoriteCategory.onCancel}" immediate="true"
 									accesskey="#{bundle.aon_key_cancel_line}" />
 								<aon:confirmButton title="[#{bundle.aon_remove}]"
 									styleClass="aon-editDataTable-button aon-icon-delete"

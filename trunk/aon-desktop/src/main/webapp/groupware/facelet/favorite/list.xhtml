@@ -26,6 +26,10 @@
 
 					<!-- start toolbar navigation -->
 					<aon:div styleClass="aon-finding-toolbar-item-group">
+						<aon:commandButton id="search" value="#{bundle.aon_search}"
+							action="favorite_search" actionListener="#{favorite.onEditSearch}"
+							styleClass="aon-finding-toolbar-item aon-icon-search"
+							accesskey="#{bundle.aon_key_search}" />
 						<aon:commandButton id="reset" value="#{bundle.aon_reset}"
 							action="favorite_form" actionListener="#{favorite.onReset}"
 							styleClass="aon-finding-toolbar-item aon-icon-reset"
@@ -33,10 +37,6 @@
 						<aon:commandButton id="favorite_category" value="#{groupwareBundle.aon_favorite_category}"
 							immediate="true" action="favorite_category"
 							styleClass="aon-finding-toolbar-item aon-icon-category"/>
-						<aon:commandButton id="search" value="#{bundle.aon_search}"
-							action="favorite_search" actionListener="#{favorite.onEditSearch}"
-							styleClass="aon-finding-toolbar-item aon-icon-search"
-							accesskey="#{bundle.aon_key_search}" />
 					</aon:div>
 
 					<!-- end toolbar navigation -->
