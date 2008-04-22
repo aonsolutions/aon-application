@@ -13,7 +13,8 @@
 
 	<aon:div>
 			
-		<aon:div styleClass="aon-toolbar"  id="buttonsGrid">
+		<aon:div styleClass="aon-toolbar"  id="buttonsGrid" 
+			rendered="#{tree.treeLoaded}">
 	
 								
 					<aon:commandButton
@@ -58,10 +59,6 @@
 			
 		</aon:div>
 
-		<ui:include src="/webmail/facelet/modal/createFolder.xhtml" />
-	    
-		<ui:include src="/webmail/facelet/modal/renameFolder.xhtml" />
-	    
 	    <h:outputText value="#{tree.account}" />
 	    
 		<rich:tree nodeSelectListener="#{tree.processSelection}"
@@ -133,6 +130,11 @@
 					rendered="#{!item.root and item.folder.unreadMessageCount==0}" />
 			</rich:treeNode>
 		</rich:tree>	
+		
+		<ui:include src="/webmail/facelet/modal/createFolder.xhtml" />
+	    
+		<ui:include src="/webmail/facelet/modal/renameFolder.xhtml" />
+	    
 	</aon:div>
 	
 </ui:composition>
