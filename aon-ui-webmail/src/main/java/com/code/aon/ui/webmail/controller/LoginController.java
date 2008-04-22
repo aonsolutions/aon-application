@@ -68,12 +68,20 @@ public class LoginController {
 			System.out.println("LoginController -> login");
 			AuthPrincipal user = null;
     		Principal principal = FacesContext.getCurrentInstance().getExternalContext().getUserPrincipal();
+    		try {
+    			System.out.println(">>>>>>>>>>>>>>>>>> principal.getName " + principal.getName());
+    		} catch (Exception e) {
+    			e.printStackTrace();
+    		}
     		if ( principal instanceof AuthPrincipal ) {
     			user = (AuthPrincipal) principal;
     		} else {
     			user = new AuthPrincipal( principal.getName() );
     		}
-			System.out.println("LoginController -> login -> getUserPrincipal");
+
+    		System.out.println(">>>>>>>>>>>>>>>>>> user.getShortName " + user.getShortName());
+
+    		System.out.println("LoginController -> login -> getUserPrincipal");
     		IManagerBean beanUser = BeanManager.getManagerBean(User.class);
     		Criteria criteriaUser = new Criteria();
     		criteriaUser.addExpression(beanUser.getFieldName(IConfigAlias.USER_LOGIN), user.getShortName());
@@ -81,8 +89,10 @@ public class LoginController {
 			System.out.println("LoginController -> login -> getList");
     		if (iterUser.hasNext()){
     			mailUser = (User)iterUser.next();
+        		System.out.println(">>>>>>>>>>>>>>>>>> RETONNO " + mailUser.getLogin());
     		}else{
     			mailUser = null;
+        		System.out.println(">>>>>>>>>>>>>>>>>> RETONNO NULL ");
     		}
     	}catch (ManagerBeanException e) {
 			System.out.println("LoginController -> login exception -> " + e.getMessage());
