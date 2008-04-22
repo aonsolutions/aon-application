@@ -41,7 +41,7 @@
 							confirmAction="favorite_list"
 							accesskey="#{bundle.aon_key_cancel}" />
 						<aon:confirmButton id="remove" value="#{bundle.aon_remove}"
-							rendered="#{!contact.new}" immediate="true"
+							rendered="#{!favorite.new}" immediate="true"
 							styleClass="aon-finding-toolbar-item aon-icon-delete"
 							confirmTitle="Confirmation Dialog"
 							confirmMessage="#{bundle.aon_remove_confirm}"
@@ -49,12 +49,12 @@
 							confirmAction="favorite_list"
 							accesskey="#{bundle.aon_key_remove}" />
 						<aon:commandButton id="search" value="#{bundle.aon_search}"
-							rendered="#{!contact.new}" immediate="true"
+							rendered="#{!favorite.new}" immediate="true"
 							action="favorite_search" actionListener="#{favorite.onEditSearch}"
 							styleClass="aon-finding-toolbar-item aon-icon-search"
 							accesskey="#{bundle.aon_key_search}" />
 						<aon:commandButton id="back" value="#{bundle.aon_back}"
-							rendered="#{!contact.new}" immediate="true"
+							rendered="#{!favorite.new}" immediate="true"
 							styleClass="aon-finding-toolbar-item aon-icon-cancel"
 							actionListener="#{favorite.onCancel}"
 							action="favorite_list"
