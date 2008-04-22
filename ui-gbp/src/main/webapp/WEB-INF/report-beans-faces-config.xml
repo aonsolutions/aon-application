@@ -23,4 +23,10 @@
 		<managed-bean-scope>none</managed-bean-scope>
 	</managed-bean>
 
+	<managed-bean>
+		<managed-bean-name>proFormaToReport</managed-bean-name>
+		<managed-bean-class>com.code.ui.gbp.report.ProFormaToReport</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+	</managed-bean>
+
 </faces-config>

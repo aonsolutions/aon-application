@@ -150,5 +150,16 @@
 			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.ui.gbp.i18n.messages" />
 		</params>
 	</report>
+
+	<!--  *********  PROFORMAINVOICES TO  ********* -->
+	<report id="proForma_to" description="proForma report">
+		<template path="/com/code/ui/gbp/report/proForma_to.jasper" />
+		<collection provider="#{proFormaToReport}"/>
+		<params>
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.ui.gbp.i18n.messages" />
+		</params>
+		<nested-report report="offer_incidences"/>
+		<nested-report report="offer_signatures"/>
+	</report>
 	
 </report-config>
