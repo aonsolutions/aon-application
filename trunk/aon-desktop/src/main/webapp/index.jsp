@@ -34,11 +34,11 @@
 			<td style="text-align:center;vertical-align:middle;">	
 			<div style="padding:50px 0">
 				<div style="font-size:20px;font-family:tahoma,arial,sans;margin-bottom:15px;">
-					<img src="conectando/aon-solutions.gif" /> 
+					<img src="images/conectando/aon-solutions.gif" /> 
 					<span style="color:#427ab3;"> / Desktop </span>	
 				</div>	
 				<div style="font-size:14px;font-weight:bold;">Conectando...</div>	
-				<div><img src="conectando/puntos.gif" /></div>
+				<div><img src="images/conectando/puntos.gif" /></div>
 					<div style="margin:20px 0;padding:5px;background-color:#fff;border:#f2f2f2 1px solid;font-weight:normal;font-size:11px;">
 
 
