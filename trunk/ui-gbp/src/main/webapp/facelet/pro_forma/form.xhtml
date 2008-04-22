@@ -49,6 +49,11 @@
 							onclick="reportWindow(this, 'placeList', '${facesContext.externalContext.requestContextPath}/facelet/report/preferences.jsf');return false;"
 							styleClass="aon-finding-toolbar-item aon-icon-printer"
 							accesskey="#{bundle.aon_key_print}" />
+						<t:commandButton id="proForma_to" value="#{appBundle.gbp_print}"
+							immediate="true" forceId="true" 
+							onclick="reportWindow(this, 'placeList', '${facesContext.externalContext.requestContextPath}/facelet/report/preferences.jsf');return false;"
+							styleClass="aon-finding-toolbar-item aon-icon-printer"
+							accesskey="#{bundle.aon_key_print}" />
 					</aon:div>
 				</aon:panelGrid>
 			</aon:div>
