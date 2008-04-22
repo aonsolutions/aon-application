@@ -137,8 +137,13 @@ public enum MimeType implements IResourceable {
     /**
      * ZIP file MIME Type.
      */
-    MIME_ZIP ("application/zip", "zip");
+    MIME_ZIP ("application/zip", "zip"),
 
+    /**
+     * CSS file MIME Type.
+     */
+    MIME_CSS ("text/css", "css");
+    
     /**
      * IE for JPEG file MIME Type.
      */
