@@ -23,6 +23,8 @@ public class LoginController {
 	private boolean logged;
 
 	private String page;
+	
+	private String error = null;
 
 	public LoginController(){
 		System.out.println("LoginController -> instantiate");
@@ -43,20 +45,21 @@ public class LoginController {
 		try{
 			login();
 			System.out.println("LoginController -> startWebmail -> logged");
+	    	if (mailUser != null){
+				System.out.println("LoginController -> startWebmail -> initWebmail");
+	    		WebMailController webmail = (WebMailController)AonUtil.getRegisteredBean(AonConstants.BEAN_WEBMAIL);
+	    		webmail.initDefault(mailUser);
+	    		if (webmail.getServer()!=null){
+	    			logged = true;
+	    			return LOGIN_SUCCESS;
+	    		}
+	    	}
 		}catch (Exception e) {
 			System.out.println("LoginController -> startWebmail -> " + e.getMessage());
 			e.printStackTrace();
+			error = e.getMessage();
 	    	return LOGIN_ERROR;
 		}
-    	if (mailUser != null){
-			System.out.println("LoginController -> startWebmail -> initWebmail");
-    		WebMailController webmail = (WebMailController)AonUtil.getRegisteredBean(AonConstants.BEAN_WEBMAIL);
-    		webmail.initDefault(mailUser);
-    		if (webmail.getServer()!=null){
-    			logged = true;
-    			return LOGIN_SUCCESS;
-    		}
-    	}
     	return LOGIN_ERROR;
     }
 	
@@ -94,6 +97,10 @@ public class LoginController {
     	return logged;
     }
     
+	public String getError() {
+		return error;
+	}
+
 	/**
 	 * @return the page
 	 */

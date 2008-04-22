@@ -58,7 +58,10 @@ public class FoldersTreeBean {
 
 	public TreeNode getTreeNode() {
 		if (rootNode == null) {
-			loadTree();
+			try{
+				loadTree();
+			}catch (Exception e) {
+			}
 		}
 		return rootNode;
 	}
@@ -113,4 +116,7 @@ public class FoldersTreeBean {
 		return account;
 	}
 	
+	public boolean isTreeLoaded(){
+		return rootNode==null?false:true;
+	}
 }

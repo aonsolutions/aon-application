@@ -11,13 +11,19 @@
 
 <ui:composition>
 
-	<aon:div id="noFolderSelected" rendered="#{!folder.folderSelected}">
+	<aon:div rendered="#{!login.logged}">
+		<aon:div styleClass="aon-content-home">
+			<aon:outputText value="#{login.error}" />
+		</aon:div>		
+	</aon:div>
+
+	<aon:div id="noFolderSelected" rendered="#{!folder.folderSelected and login.logged}">
 		<aon:div styleClass="aon-content-home">
 			<aon:outputText value="NO FOLDER SELECTED" />
 		</aon:div>		
 	</aon:div>
 
-	<aon:div id="folderSelected" rendered="#{folder.folderSelected}" >
+	<aon:div id="folderSelected" rendered="#{folder.folderSelected and login.logged}" >
 
 		<aon:div id="messageGrid">
 
@@ -49,14 +55,14 @@
 					confirmTitle="#{appBundle.aon_webmail_advice}" 
 					confirmMessage="#{bundle.aon_remove_confirm}"
 					accesskey="#{bundle.aon_key_remove}"
-					reRender="buttonsGrid,messageGrid"
+					reRender="buttonsGrid,messageGrid,foldersTree"
 					confirmActionListener="#{folder.deleteCheckedMessages}"
 					value="#{appBundle.aon_webmail_deletemail}"
 					styleClass="aon-icon-mailDelete aon-finding-toolbar-item" />
 				<aon:commandButton
 					rendered="#{!folder.folder.deleteableAllMessages}"
 					title="#{appBundle.aon_webmail_deletemail}"
-					reRender="buttonsGrid,messageGrid"
+					reRender="buttonsGrid,messageGrid,foldersTree"
 					actionListener="#{folder.deleteCheckedMessages}"
 					value="#{appBundle.aon_webmail_deletemail}"
 					styleClass="aon-icon-mailDelete aon-finding-toolbar-item" >
