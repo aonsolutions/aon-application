@@ -39,7 +39,7 @@ public class FinanceGenerator {
 				date = calculatePaymentDate(rPayMethod.getDaysBetweenPayments(), rPayMethod.getPaymentDaysArray(), date);
 				financeList.add(createFinance(invoice,registry,date,rPayMethod.getPayment(),paymentPrice,rBank));
 				}
-			paymentPrice = totalPrice - (paymentPrice * (rPayMethod.getNumberOfPayments() - 1));
+			paymentPrice = round(totalPrice - (paymentPrice * (rPayMethod.getNumberOfPayments() - 1)), 2);
 			date = calculatePaymentDate(rPayMethod.getDaysBetweenPayments(), rPayMethod.getPaymentDaysArray(), date);
 			financeList.add(createFinance(invoice,registry,date,rPayMethod.getPayment(),paymentPrice,rBank));
 		}
