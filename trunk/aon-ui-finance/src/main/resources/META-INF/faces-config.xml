@@ -828,20 +828,29 @@
 		</managed-property>
 	</managed-bean>
 
-	<!-- ************ FEE CHECKING PRINTER ************* -->
-	<managed-bean>
-		<managed-bean-name>feeCheckingPrinter</managed-bean-name>
-		<managed-bean-class>
-			com.code.aon.ui.finance.util.print.FeeCheckingPrinter
-		</managed-bean-class>
-		<managed-bean-scope>session</managed-bean-scope>
-	</managed-bean>
-
 	<!-- ************ FINANCE CHECKING PRINTER ************* -->
 	<managed-bean>
 		<managed-bean-name>financeCheckingPrinter</managed-bean-name>
 		<managed-bean-class>
 			com.code.aon.ui.finance.util.print.FinanceCheckingPrinter
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
+
+	<!-- ************ FINANCE PRINTER ************* -->
+	<managed-bean>
+		<managed-bean-name>financePrint</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.finance.util.print.FinancePrinter
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
+
+	<!-- ************ FEE CHECKING PRINTER ************* -->
+	<managed-bean>
+		<managed-bean-name>feeCheckingPrinter</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.finance.util.print.FeeCheckingPrinter
 		</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
