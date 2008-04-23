@@ -34,6 +34,7 @@ import com.code.aon.customer.dao.ICustomerAlias;
 import com.code.aon.finance.Finance;
 import com.code.aon.finance.FinanceTracking;
 import com.code.aon.finance.Invoice;
+import com.code.aon.finance.InvoiceAddress;
 import com.code.aon.finance.dao.IFinanceAlias;
 import com.code.aon.finance.enumeration.InvoiceStatus;
 import com.code.aon.finance.enumeration.InvoiceType;
@@ -64,6 +65,7 @@ import com.code.aon.ui.util.AonUtil;
 
 public class FeeInvoicingController extends BasicController {
 	
+	private static final String FEE_INVOICING_ADDRESS_CONTROLLER_NAME = "feeInvoicingAddress";
 	private static final String FEE_INVOICING_DETAIL_CONTROLLER_NAME = "feeInvoicingDetail";
 	private static final String FEE_FINANCE_CONTROLLER_NAME = "feeFinance";
 	private static final String MENU_MANAGER_NAME = "menuManager";
@@ -223,18 +225,45 @@ public class FeeInvoicingController extends BasicController {
 	@SuppressWarnings("unchecked")
 	public void loadAddresses(Integer id) throws ManagerBeanException {
 		List<SelectItem> addresses = new LinkedList<SelectItem>();
-		IManagerBean rAddressBean = BeanManager.getManagerBean(RegistryAddress.class);
-		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(rAddressBean.getFieldName(IRegistryAlias.REGISTRY_ADDRESS_REGISTRY_ID), id);
-		Iterator iter = rAddressBean.getList(criteria).iterator();
-		while(iter.hasNext()){
-			RegistryAddress address = (RegistryAddress)iter.next();
-			SelectItem item = new SelectItem(address.getId(), address.getAddress() + " " + address.getAddress2() + " " + address.getAddress3());
-			addresses.add(item);
+		if (id != null) {
+			IManagerBean rAddressBean = BeanManager.getManagerBean(RegistryAddress.class);
+			Criteria criteria = new Criteria();
+			criteria.addEqualExpression(rAddressBean.getFieldName(IRegistryAlias.REGISTRY_ADDRESS_REGISTRY_ID), id);
+			Iterator iter = rAddressBean.getList(criteria).iterator();
+			while(iter.hasNext()){
+				RegistryAddress address = (RegistryAddress)iter.next();
+				String addressLabel = address.getAddress() + " " + address.getAddress2() + " " + address.getAddress3();
+				addressLabel = ((addressLabel.length()>30)?addressLabel.substring(0,27)+"...":addressLabel) + " - " + address.getCity();
+				addressLabel = ((addressLabel.length()>48)?addressLabel.substring(0,45)+"...":addressLabel);
+				SelectItem item = new SelectItem(address.getId(), addressLabel);
+				addresses.add(item);
+			}
 		}
 		this.addresses = addresses;
 	}
-	
+
+	public String getAddress() throws ManagerBeanException {
+		RegistryAddress rAddress = ((Invoice)this.getTo()).getRegistryAddress();
+		String address = (rAddress!=null)?rAddress.getAddress()+" "+rAddress.getAddress2()+" "+rAddress.getAddress3():"";
+		BasicController addressController = (BasicController)AonUtil.getController(FEE_INVOICING_ADDRESS_CONTROLLER_NAME);
+		if (addressController.getTo() != null && ((InvoiceAddress)addressController.getTo()).getId() != null) {
+			InvoiceAddress invoiceAddress = (InvoiceAddress)addressController.getTo();
+			address = invoiceAddress.getAddress() + " " + invoiceAddress.getAddress2();
+		}
+		return address;
+	}
+
+	public String getCity() throws ManagerBeanException {
+		RegistryAddress rAddress = ((Invoice)this.getTo()).getRegistryAddress();
+		String city = (rAddress!=null)?rAddress.getCity():"";
+		BasicController addressController = (BasicController)AonUtil.getController(FEE_INVOICING_ADDRESS_CONTROLLER_NAME);
+		if (addressController.getTo() != null && ((InvoiceAddress)addressController.getTo()).getId() != null) {
+			InvoiceAddress invoiceAddress = (InvoiceAddress)addressController.getTo();
+			city = invoiceAddress.getCity();
+		}
+		return city;
+	}
+
 	@SuppressWarnings("unchecked")
 	public void customerData(ValueChangeEvent event) throws ManagerBeanException, ExpressionException{
 		if(event.getNewValue() != null && !event.getNewValue().equals("")){
@@ -370,7 +399,7 @@ public class FeeInvoicingController extends BasicController {
 					Finance finance = (Finance)iter.next();
 					financeBean.remove(finance);
 				}
-				getFinanceGenerator().generateFinances(invoice,invoice.getRegistry(), getPriceStrategy().getTotalPrice(invoice, invoice));
+				getFinanceGenerator().generateFinances(invoice, invoice.getRegistry(), getPriceStrategy().getTotalPrice(invoice, invoice));
 				feeFinanceController.onSearch(null);
 			}
 		} catch (ManagerBeanException e) {
