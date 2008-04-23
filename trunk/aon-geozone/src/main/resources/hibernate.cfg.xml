@@ -14,8 +14,8 @@
 		<property name="connection.password">serubd2000</property>		
 
 		<!-- Mapping files -->
+		<mapping class="com.code.aon.geozone.GeoTree"/>
 		<mapping class="com.code.aon.geozone.GeoZone"/>
-		<mapping class="com.code.aon.geozone.Country"/>
 	</session-factory>
 
 </hibernate-configuration>
