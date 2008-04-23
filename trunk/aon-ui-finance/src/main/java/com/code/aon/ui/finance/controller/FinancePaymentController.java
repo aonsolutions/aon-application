@@ -1,6 +1,7 @@
 package com.code.aon.ui.finance.controller;
 
 import java.util.Date;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.ResourceBundle;
@@ -27,6 +28,7 @@ import com.code.aon.finance.dao.IFinanceAlias;
 import com.code.aon.finance.enumeration.FinanceStatus;
 import com.code.aon.finance.enumeration.FinanceTrackingType;
 import com.code.aon.finance.invoicing.FinanceTrackingWriter;
+import com.code.aon.ql.Criteria;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.form.PageDataModel;
 import com.code.aon.ui.menu.jsf.MenuEvent;
@@ -226,7 +228,7 @@ public class FinancePaymentController extends BasicController {
 			FinanceRecordingTo recordingTo = new FinanceRecordingTo();
 			List<Finance> list = new LinkedList<Finance>();
 			list.add(finance);
-			recordingTo.setRegistryBank((getRegistryBank().getId()== null?null:getRegistryBank()));
+			recordingTo.setRegistryBank((getRegistryBank().getId()== null?null:obtainRegistryBank(getRegistryBank().getId())));
 			recordingTo.setFinanceList(list);
 			recordingTo.setDate(getPaymentDate());
 			recordingTo.setType((finance.isPayment()?AccountEntryType.PAYMENT:AccountEntryType.COLLECTION));
@@ -238,6 +240,19 @@ public class FinancePaymentController extends BasicController {
 		}
 	}
 	
+	@SuppressWarnings("unchecked")
+	private RegistryBank obtainRegistryBank(Integer id) throws ManagerBeanException {
+		IManagerBean rBankBean = BeanManager.getManagerBean(RegistryBank.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(rBankBean.getFieldName(IFinanceAlias.REGISTRY_BANK_ID), id);
+		Iterator iter = rBankBean.getList(criteria).iterator();
+		if(iter.hasNext()){
+			RegistryBank rBank = (RegistryBank)iter.next();
+			return rBank;
+		}
+		return null;
+	}
+
 	private void insertAccountEntryFinanceTracking(AccountEntry entry, FinanceTracking tracking) throws ManagerBeanException {
 		IManagerBean accountEntryFinanceTrackingBean = BeanManager.getManagerBean(AccountEntryFinanceTracking.class);
 		AccountEntryFinanceTracking accEntryTracking = new AccountEntryFinanceTracking();
