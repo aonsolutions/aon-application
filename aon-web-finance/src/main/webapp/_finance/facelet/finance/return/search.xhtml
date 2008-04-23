@@ -27,10 +27,10 @@
 							actionListener="#{financeReturn.onSearch}"
 							accesskey="#{bundle.aon_key_search}" />
 						<h:commandButton id="clear" value="#{bundle.aon_clear}"
-							type="reset"
 							styleClass="aon-content-toolbar-item aon-content-toolbar-item-reset"
 							onmouseover="this.className='aon-content-toolbar-item aon-content-toolbar-item-hover aon-content-toolbar-item-reset'"
-							onmouseout="this.className='aon-content-toolbar-item aon-content-toolbar-item-reset'" />
+							onmouseout="this.className='aon-content-toolbar-item aon-content-toolbar-item-reset'"
+							actionListener="#{financeReturn.onEditSearch}" />
 					</t:div>
 				</t:div>
 			</t:div>
@@ -112,7 +112,7 @@
 								<h:outputLabel for="Finance_dueDate-From"
 									styleClass="aon-form-input-text-label"
 									value="#{financeBundle.finance_date_from}" />
-								<t:inputCalendar size="8" id="Finance_dueDate-From"
+								<t:inputCalendar size="10" id="Finance_dueDate-From"
 									value="#{financeReturn.fromDate}"
 									monthYearRowClass="yearMonthHeader" weekRowClass="weekHeader"
 									currentDayCellClass="currentDayCell" renderAsPopup="true"
@@ -124,7 +124,7 @@
 								<h:outputLabel for="Finance_dueDate-To"
 									styleClass="aon-form-input-text-label"
 									value="#{financeBundle.finance_date_to}" />
-								<t:inputCalendar size="8" id="Finance_dueDate-To"
+								<t:inputCalendar size="10" id="Finance_dueDate-To"
 									value="#{financeReturn.toDate}"
 									monthYearRowClass="yearMonthHeader" weekRowClass="weekHeader"
 									currentDayCellClass="currentDayCell" renderAsPopup="true"
