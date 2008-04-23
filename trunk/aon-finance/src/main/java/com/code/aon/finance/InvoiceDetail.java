@@ -322,6 +322,7 @@ public class InvoiceDetail implements ITransferObject, ICalculable {
 			IManagerBean invoiceTaxBean = BeanManager.getManagerBean(InvoiceTax.class);
 			Criteria criteria = new Criteria();
 			criteria.addEqualExpression(invoiceTaxBean.getFieldName(IFinanceAlias.INVOICE_TAX_INVOICE_DETAIL_ID), getId());
+			criteria.addOrder(invoiceTaxBean.getFieldName(IFinanceAlias.INVOICE_TAX_TAX_TYPE));
 			Iterator iter = invoiceTaxBean.getList(criteria).iterator();
 			while(iter.hasNext()){
 				InvoiceTax invoiceTax = (InvoiceTax)iter.next();
