@@ -17,10 +17,7 @@ public enum InvoiceStatus implements IResourceable {
     PENDING,
 
     /** SCORED. */
-    SCORED,
-    
-    /** PAID. */
-    PAID;
+    SCORED;
     
 	/** Message file base path. */
     private static final String BASE_NAME = "com.code.aon.finance.i18n.messages";
