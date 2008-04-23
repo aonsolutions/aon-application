@@ -24,6 +24,7 @@ import com.code.gbp.SupplierObservation;
 import com.code.gbp.SupplierType;
 import com.code.gbp.Bank;
 import com.code.gbp.BankPercent;
+import com.code.gbp.ProFormaBank;
 
 /** 
 * Interface for holding entity properties constants.
@@ -1017,6 +1018,37 @@ public interface IGBPAlias {
 	* Hibernate value: BankPercent.id
 	*/
 	String  BANK_PERCENT_ID = BANK_PERCENT_ENTRY.getAliasNames()[2];
+
+
+
+	/** 
+	* DAOConstantsEntry for ProFormaBank entity.
+	*/ 
+	DAOConstantsEntry PRO_FORMA_BANK_ENTRY = DAOConstants.getDAOConstant(ProFormaBank.class);
+
+	/** 
+	* Alias value: ProFormaBank_bank_id
+	* Hibernate value: ProFormaBank.bank.id
+	*/
+	String  PRO_FORMA_BANK_BANK_ID = PRO_FORMA_BANK_ENTRY.getAliasNames()[0];
+
+	/** 
+	* Alias value: ProFormaBank_id
+	* Hibernate value: ProFormaBank.id
+	*/
+	String  PRO_FORMA_BANK_ID = PRO_FORMA_BANK_ENTRY.getAliasNames()[1];
+
+	/** 
+	* Alias value: ProFormaBank_percent
+	* Hibernate value: ProFormaBank.percent
+	*/
+	String  PRO_FORMA_BANK_PERCENT = PRO_FORMA_BANK_ENTRY.getAliasNames()[2];
+
+	/** 
+	* Alias value: ProFormaBank_proFormaInvoice_id
+	* Hibernate value: ProFormaBank.proFormaInvoice.id
+	*/
+	String  PRO_FORMA_BANK_PRO_FORMA_INVOICE_ID = PRO_FORMA_BANK_ENTRY.getAliasNames()[3];
 
 
 }
