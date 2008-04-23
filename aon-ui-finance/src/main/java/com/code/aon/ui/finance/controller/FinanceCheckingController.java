@@ -8,15 +8,11 @@ import java.util.logging.Logger;
 import javax.faces.event.ActionEvent;
 import javax.faces.event.ValueChangeEvent;
 
-import com.code.aon.common.BeanManager;
-import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.finance.Finance;
-import com.code.aon.finance.Invoice;
 import com.code.aon.finance.dao.IFinanceAlias;
 import com.code.aon.finance.enumeration.FinanceStatus;
-import com.code.aon.finance.enumeration.InvoiceStatus;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionException;
 import com.code.aon.ui.form.GridController;
@@ -149,6 +145,7 @@ public class FinanceCheckingController extends GridController {
 	 * 
 	 * @param checkList list of Finance
 	 */
+	@SuppressWarnings("unchecked")
 	private void markAsPaid(ArrayList<ITransferObject> checkList) {
 		Iterator iter = checkList.iterator();
 		while(iter.hasNext()){
@@ -156,7 +153,6 @@ public class FinanceCheckingController extends GridController {
 			finance.setFinanceStatus(FinanceStatus.PAID);
 			try {
 				getManagerBean().update(finance);
-				updateInvoice(finance.getInvoice(), InvoiceStatus.PAID);
 			} catch (ManagerBeanException e) {
 				
 			}
@@ -168,6 +164,7 @@ public class FinanceCheckingController extends GridController {
 	 * 
 	 * @param checkList list of Finance
 	 */
+	@SuppressWarnings("unchecked")
 	private void markAsPending(ArrayList<ITransferObject> checkList) {
 		Iterator iter = checkList.iterator();
 		while(iter.hasNext()){
@@ -175,37 +172,12 @@ public class FinanceCheckingController extends GridController {
 			finance.setFinanceStatus(FinanceStatus.PENDING);
 			try {
 				getManagerBean().update(finance);
-				updateInvoice(finance.getInvoice(), InvoiceStatus.PENDING);
 			} catch (ManagerBeanException e) {
 				
 			}
 		}
 	}
 	
-	/**
-	 * Updates the Invoice with the InvoiceStatus if available
-	 * 
-	 * @param invoice the Invoice
-	 * @param status the InvoiceStatus
-	 * @throws ManagerBeanException
-	 */
-	private void updateInvoice(Invoice invoice, InvoiceStatus status) throws ManagerBeanException {
-		if(status.equals(InvoiceStatus.PAID)){
-			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(getManagerBean().getFieldName(IFinanceAlias.FINANCE_INVOICE_ID), invoice.getId());
-			criteria.addEqualExpression(getManagerBean().getFieldName(IFinanceAlias.FINANCE_FINANCE_STATUS), FinanceStatus.PENDING);
-			if(getManagerBean().getCount(criteria)==0){
-				IManagerBean invoiceBean = BeanManager.getManagerBean(Invoice.class);
-				invoice.setStatus(InvoiceStatus.PAID);
-				invoiceBean.update(invoice);
-			}
-		}else{
-			IManagerBean invoiceBean = BeanManager.getManagerBean(Invoice.class);
-			invoice.setStatus(InvoiceStatus.PENDING);
-			invoiceBean.update(invoice);
-		}
-	}
-
 	/**
 	 * Adds to criteria the payment
 	 * 
