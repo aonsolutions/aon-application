@@ -19,8 +19,10 @@ import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.dao.CriteriaUtilities;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.ast.Expression;
+import com.code.aon.ql.util.ExpressionException;
 import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.ui.cms.controller.GeneratorConfigController;
 import com.code.aon.ui.cms.util.ControllerUtil;
@@ -67,6 +69,7 @@ public class ArticleCalendarGenerator extends Generator {
             articleCriteria.addGreaterThanOrEqualExpression(articleBean.getFieldName(ICMSAlias.ARTICLE_INIT_DATE),firstDay.getTime());
             articleCriteria.addLessThanOrEqualExpression(articleBean.getFieldName(ICMSAlias.ARTICLE_INIT_DATE),lastDay.getTime());
             articleCriteria.addOrder(articleBean.getFieldName(ICMSAlias.ARTICLE_INIT_DATE));
+            articleCriteria.getExpression().toString();
 			articleList = (List<ITransferObject>)articleBean.getList(articleCriteria);
 			months = new HashMap<String, MonthContent>();
 			monthsList = new ArrayList<MonthContent>();
@@ -85,7 +88,7 @@ public class ArticleCalendarGenerator extends Generator {
 					articleDetail = (ArticleDetail)articleDetailList.get(0);
 					Date initDate = article.getInitDate();
 					
-					if (currentDate.getTime().compareTo(initDate)>=0
+					if (currentDate.getTime().compareTo(initDate)<=0
 							&& index_ahlist.size()<6){
 						ArticleHandler ahandler = new ArticleHandler(articleDetail);
 						index_ahlist.add(ahandler);
@@ -256,5 +259,5 @@ public class ArticleCalendarGenerator extends Generator {
 	}
 	
 	public static String DIARY_INDEX_PAGE = "diary_index";
-
+	
 }

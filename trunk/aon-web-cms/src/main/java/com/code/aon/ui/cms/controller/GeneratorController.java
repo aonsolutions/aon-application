@@ -69,8 +69,8 @@ public class GeneratorController extends BasicController implements Constants {
 		}
 
 		if (isArticleToGenerate){
-			ArticleGenerator.generate();
 			ArticleCalendarGenerator.generate();
+			ArticleGenerator.generate();
 		}
 
 		if (isDownloadsToGenerate){
