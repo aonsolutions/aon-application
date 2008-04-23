@@ -10,6 +10,7 @@ import javax.faces.event.ActionEvent;
 
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.Month;
+import com.code.aon.customer.enumeration.CustomerStatus;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.ast.Expression;
 import com.code.aon.ql.util.ExpressionUtilities;
@@ -26,6 +27,8 @@ public class FeePrinter extends BasicController {
 	private Month billingDateMonth;
 	
 	private int billingDateYear;
+
+	private CustomerStatus customerStatus;
 
 	public Integer getItemId() {
 		return itemId;
@@ -50,13 +53,22 @@ public class FeePrinter extends BasicController {
 	public void setBillingDateYear(int billingDateYear) {
 		this.billingDateYear = billingDateYear;
 	}
-	
+
+	public CustomerStatus getCustomerStatus() {
+		return customerStatus;
+	}
+
+	public void setCustomerStatus(CustomerStatus customerStatus) {
+		this.customerStatus = customerStatus;
+	}
+
 	private void initializeParams(){
 		setItemId(null);
 		Calendar calendar = new GregorianCalendar();
 		calendar.setTime(new Date());
 		setBillingDateMonth(Month.getMonthByValue(calendar.get(Calendar.MONTH)));
 		setBillingDateYear(calendar.get(Calendar.YEAR));
+		setCustomerStatus(null);
 	}
 	
 	public void onEditSearch(MenuEvent event){
@@ -82,27 +94,40 @@ public class FeePrinter extends BasicController {
 				criteria.addEqualExpression(getFieldName(ISalesAlias.CUSTOMER_FEE_ITEM_ID), getItemId());
 			}
 			if(getBillingDateMonth() != null){
-				criteria.addExpression(obtainFromToExpression(getBillingDateMonth(), getBillingDateYear())); 
+				criteria.addBetweenExpression(getFieldName(ISalesAlias.CUSTOMER_FEE_BILLING_DATE), obtainFromDate(), obtainToDate());
+				criteria.addLessThanOrEqualExpression(getFieldName(ISalesAlias.CUSTOMER_FEE_INITIAL_DATE), obtainToDate());
+				Expression finalExp1 = ExpressionUtilities.getGreaterThanOrEqualExpression(getFieldName(ISalesAlias.CUSTOMER_FEE_FINAL_DATE), obtainFromDate());
+				Expression finalExp2 = ExpressionUtilities.getNullExpression(getFieldName(ISalesAlias.CUSTOMER_FEE_FINAL_DATE));
+				criteria.addExpression(ExpressionUtilities.getOrExpression(finalExp1, finalExp2));
 			}
+			if(getCustomerStatus() != null){
+				criteria.addEqualExpression(getFieldName(ISalesAlias.CUSTOMER_FEE_CUSTOMER_STATUS), getCustomerStatus());
+			}
+			criteria.addOrder(getFieldName(ISalesAlias.CUSTOMER_FEE_CUSTOMER_REGISTRY_SURNAME));
+			criteria.addOrder(getFieldName(ISalesAlias.CUSTOMER_FEE_CUSTOMER_REGISTRY_NAME));
 			this.setCriteria(criteria);
 		} catch (ManagerBeanException e) {
 			LOGGER.log(Level.SEVERE, "Error creating search criteria", e);
 		}
 	}
 
-	private Expression obtainFromToExpression(Month month, int year) throws ManagerBeanException {
+	private Date obtainFromDate() {
 		Calendar calendar = new GregorianCalendar();
-		calendar.set(year, month.getValue(), 1);
+		calendar.set(getBillingDateYear(), getBillingDateMonth().getValue(), 1);
 		calendar.set(Calendar.HOUR_OF_DAY, 0);
 		calendar.set(Calendar.MINUTE, 0);
 		calendar.set(Calendar.SECOND, 0);
-		Date from = calendar.getTime();
+		return calendar.getTime();
+	}
+
+	private Date obtainToDate() {
+		Calendar calendar = new GregorianCalendar();
+		calendar.setTime(obtainFromDate());
 		calendar.add(Calendar.MONTH, 1);
 		calendar.add(Calendar.DATE, -1);
 		calendar.set(Calendar.HOUR_OF_DAY, 23);
 		calendar.set(Calendar.MINUTE, 59);
 		calendar.set(Calendar.SECOND, 59);
-		Date to = calendar.getTime();
-		return ExpressionUtilities.getBetweenExpression(getFieldName(ISalesAlias.CUSTOMER_FEE_BILLING_DATE), from, to);
+		return calendar.getTime();
 	}
 }
