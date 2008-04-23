@@ -8,15 +8,15 @@
 
 <ui:composition>
 	<aon:div id="aon-header">
-		<aon:panelGrid cellpadding="0" cellspacing="0" border="0" columns="3"
-			style="width:100%"
+		<aon:panelGrid columns="3" width="100%" 
 			columnClasses="aon-header-name,aon-header-slogan,aon-header-info">
 			<aon:div>
 				<aon:outputConnectionStatus styleClass="aon-outputConnectionStatus"
 					startStyleClass="aon-outputConnectionStatus-start"
 					stopStyleClass="aon-outputConnectionStatus-stop" />
+					
 				<aon:outputText value="#{appBundle.aon_application_title}"
-					styleClass="aon-applicationName" style="margin-left:0.5em;" />
+					styleClass="aon-applicationName"  />
 			</aon:div>
 
 			<aon:div>
@@ -30,31 +30,19 @@
 						value="#{aonConfiguration.properties.middleHeader}" />
 				</aon:div>
 			</aon:div>
-			<aon:div style="white-space:nowrap;">
-				<aon:div>
-					<aon:panelGrid columns="3" cellpadding="5" cellspacing="0">
-						<aon:div style="white-space:nowrap;padding:1px 0.5em">
-							<aon:outputText value="#{desktop.companyName}" />
-						</aon:div>
-						<aon:div style="white-space:nowrap;padding:1px 0em">
-							<aon:outputText value="/" />
-						</aon:div>
-						<aon:div
-							style="white-space:nowrap;border-left:#CCC 1px solid;border-top:#CCC 1px solid;border-right:#808080 1px solid;border-bottom:#808080 1px solid;padding:1px 0.5em">
-							<aon:div style="display:inline;white-space:nowrap;">
-								<aon:form>
-									<h:commandLink
-										actionListener="#{currentUser.onLoadCurrentUser}"
-										action="user_changepassword_form">
-										<h:graphicImage
-											url="/aonResource/images/aon-icon/aon-icon-user.png"
-											style="border:0px;height:11px" />
-										<aon:outputText value="#{desktop.loggedUserName}" />
-									</h:commandLink>
-								</aon:form>									
-							</aon:div>
-						</aon:div>
-					</aon:panelGrid>
+			<aon:div styleClass="aon-nowrap">
+				<aon:div>					
+					<aon:div styleClass="aon-nowrap">
+						<aon:outputText value="#{desktop.companyName}" />						
+						<aon:outputText value="/" styleClass="padding-left"/>						
+						<aon:form>
+							<h:commandLink
+								actionListener="#{currentUser.onLoadCurrentUser}"
+								action="user_changepassword_form">								
+								<aon:outputText value="#{desktop.loggedUserName}" styleClass="aon-bold padding-left"/>
+							</h:commandLink>
+						</aon:form>							
+					</aon:div>					
 				</aon:div>
 			</aon:div>
 		</aon:panelGrid>
