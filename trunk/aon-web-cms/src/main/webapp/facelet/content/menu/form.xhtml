@@ -262,7 +262,7 @@
 								<aon:outputLabel for="MenuOption_level"
 									value="#{appBundle.menu_option_level}" rendered="#{menu_option.visibleLevel}"/>
 								<aon:selectOneMenu id="MenuOption_level" rendered="#{menu_option.visibleLevel}" 
-									value="#{menu_option.to.level}">
+									value="#{menu_option.to.level}" required="true">
 									<f:selectItems value="#{menu_option.levels}">
 									</f:selectItems>
 										<a4j:support 
