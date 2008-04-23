@@ -10,12 +10,9 @@ import javax.faces.model.SelectItem;
 
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
-import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.config.User;
 import com.code.aon.config.dao.IConfigAlias;
-import com.code.aon.geozone.GeoZone;
-import com.code.aon.geozone.dao.IGeoZoneAlias;
 import com.code.aon.person.enumeration.Gender;
 import com.code.aon.person.enumeration.MaritalStatus;
 import com.code.aon.ql.Criteria;
@@ -34,10 +31,7 @@ import com.code.aon.registry.enumeration.StreetType;
  */
 public class RegistryCollectionsController {
 
-	/** The geoZones list. */
-	private List<SelectItem> geoZones;
-	
-    /**
+	/**
      * Gets the address types.
      * 
      * @return the address types
@@ -67,29 +61,6 @@ public class RegistryCollectionsController {
             types.add( item );
         }
         return types;
-    }
-
-    /**
-     * Gets the geoZones.
-     * 
-     * @return the geoZones
-     * 
-     * @throws ManagerBeanException the manager bean exception
-     */
-    public List<SelectItem> getGeoZones() throws ManagerBeanException {
-        if (geoZones == null) {
-            geoZones = new LinkedList<SelectItem>();
-            IManagerBean geozoneBean = BeanManager.getManagerBean(GeoZone.class);
-            Criteria criteria = new Criteria();
-            criteria.addOrder(geozoneBean.getFieldName(IGeoZoneAlias.GEO_ZONE_NAME));
-            Iterator<ITransferObject> iter = geozoneBean.getList(criteria).iterator();
-            while (iter.hasNext()){
-                GeoZone geozone = (GeoZone) iter.next();
-                SelectItem item = new SelectItem(geozone.getId(), geozone.getName());
-                geoZones.add( item );
-            }
-        }
-        return geoZones;
     }
 
     /**
@@ -197,7 +168,7 @@ public class RegistryCollectionsController {
 	@SuppressWarnings("unchecked")
 	public List<SelectItem> getUsers() throws ManagerBeanException {
 		List<SelectItem> users = new LinkedList<SelectItem>();
-		IManagerBean userBean = BeanManager.getManagerBean(com.code.aon.config.User.class);
+		IManagerBean userBean = BeanManager.getManagerBean(User.class);
 		Criteria criteria = new Criteria();
 		criteria.addOrder(userBean.getFieldName(IConfigAlias.USER_NAME));
 		Iterator iter = userBean.getList(criteria).iterator();
