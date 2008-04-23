@@ -55,14 +55,14 @@
 					confirmTitle="#{appBundle.aon_webmail_advice}" 
 					confirmMessage="#{bundle.aon_remove_confirm}"
 					accesskey="#{bundle.aon_key_remove}"
-					reRender="buttonsGrid,messageGrid,foldersTree"
+					action="folder"
 					confirmActionListener="#{folder.deleteCheckedMessages}"
 					value="#{appBundle.aon_webmail_deletemail}"
 					styleClass="aon-icon-mailDelete aon-finding-toolbar-item" />
 				<aon:commandButton
 					rendered="#{!folder.folder.deleteableAllMessages}"
 					title="#{appBundle.aon_webmail_deletemail}"
-					reRender="buttonsGrid,messageGrid,foldersTree"
+					action="folder"
 					actionListener="#{folder.deleteCheckedMessages}"
 					value="#{appBundle.aon_webmail_deletemail}"
 					styleClass="aon-icon-mailDelete aon-finding-toolbar-item" >

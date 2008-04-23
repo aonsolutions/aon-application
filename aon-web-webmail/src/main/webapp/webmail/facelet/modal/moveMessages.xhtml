@@ -39,7 +39,7 @@
 						<aon:commandLink 
 							onclick="Richfaces.hideModalPanel('msgMoveModalPanel')"
 		                	value="#{item.name}"
-		                	reRender="buttonsGrid,messageGrid,messageDataTable"
+							action="folder"
 							rendered="#{!item.root}" />
 					</rich:treeNode>
 				</rich:tree>
