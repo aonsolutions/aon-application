@@ -12,6 +12,7 @@ import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
 import com.code.gbp.AccountContact;
+import com.code.gbp.Bank;
 import com.code.gbp.GeoZone;
 import com.code.gbp.IncidenceType;
 import com.code.gbp.InternalCustomer;
@@ -161,19 +162,6 @@ public class GBPCollectionsController {
 	}
 	
 	@SuppressWarnings("unchecked")
-	public List<SelectItem> getAccountContacts() throws ManagerBeanException {
-		List<SelectItem> contacts = new LinkedList<SelectItem>();
-		IManagerBean accountContactBean = BeanManager.getManagerBean(AccountContact.class);
-		Iterator iter = accountContactBean.getList(null).iterator();
-		while(iter.hasNext()){
-			AccountContact contact = (AccountContact)iter.next();
-			SelectItem item = new SelectItem(contact.getId(), contact.getDescription());
-			contacts.add(item);
-		}
-		return contacts;
-	}
-	
-	@SuppressWarnings("unchecked")
 	public List<SelectItem> getSupplierTypes() throws ManagerBeanException{
 		List<SelectItem> supplierTypes = new LinkedList<SelectItem>();
 		IManagerBean supplierTypeBean = BeanManager.getManagerBean(SupplierType.class);
@@ -186,5 +174,17 @@ public class GBPCollectionsController {
 		return supplierTypes;
 	}
 
+	@SuppressWarnings("unchecked")
+	public List<SelectItem> getBanks() throws ManagerBeanException {
+		List<SelectItem> banks = new LinkedList<SelectItem>();
+		IManagerBean bankBean = BeanManager.getManagerBean(Bank.class);
+		Iterator iter = bankBean.getList(null).iterator();
+		while(iter.hasNext()){
+			Bank bank = (Bank)iter.next();
+			SelectItem item = new SelectItem(bank.getId(), bank.getName());
+			banks.add(item);
+		}
+		return banks;
+	}
 	
 }

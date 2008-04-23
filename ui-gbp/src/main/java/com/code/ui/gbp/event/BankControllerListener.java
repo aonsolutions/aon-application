@@ -6,12 +6,12 @@ import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
 import com.code.gbp.dao.IGBPAlias;
 
-public class BankPercentControllerListener extends ControllerAdapter {
+public class BankControllerListener extends ControllerAdapter {
 
 	@Override
 	public void beforeModelInitialized(ControllerEvent event) throws ControllerListenerException {
 		try {
-			event.getController().getCriteria().addOrder(event.getController().getFieldName(IGBPAlias.BANK_PERCENT_NAME));
+			event.getController().getCriteria().addOrder(event.getController().getFieldName(IGBPAlias.BANK_NAME));
 		} catch (ManagerBeanException e) {
 			throw new ControllerListenerException(e);
 		}

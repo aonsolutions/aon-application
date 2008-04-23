@@ -9,13 +9,13 @@
 <ui:composition template="/facelet/templates/aon.ui.content.xhtml">
 	<ui:define name="content">
 
-		<aon:form id="bankPercentList">
+		<aon:form id="bankList">
 		<aon:div styleClass="aon-finding-title-toolbar">
 			<aon:panelGrid columns="3" dir="true" 
 			columnClasses="aon-finding-title,aon-finding-subtitle,aon-finding-toolbar">				
 			
 				<aon:div styleClass="aon-finding-title-internal">
-					<aon:outputText value="#{menuBundle.gbp_bank_percent}"/>	  						
+					<aon:outputText value="#{menuBundle.gbp_bank}"/>	  						
 				</aon:div>					
 				
 				<aon:div styleClass="aon-finding-subtitle-internal">
@@ -26,7 +26,7 @@
 				<!-- start toolbar navigation -->
 				<aon:div styleClass="aon-finding-toolbar-item-group">					
 					<aon:commandButton id="reset" value="#{bundle.aon_reset}"
-						action="bank_percent_form" actionListener="#{bankPercent.onReset}"
+						action="bank_form" actionListener="#{bank.onReset}"
 						styleClass="aon-finding-toolbar-item aon-icon-reset"
 						accesskey="#{bundle.aon_key_new}"/>
 			    </aon:div>
@@ -36,33 +36,31 @@
 		</aon:div>
 		<!--  aon-region-body -->
 		<aon:div styleClass="aon-scroll-area">					
-			<aon:dataTable id="bankPercentDataList" 
-				value="#{bankPercent.model}" var="to" rows="20"
+			<aon:dataTable id="bankDataList" 
+				value="#{bank.model}" var="to" rows="20"
 				columnClasses="aon-width-auto aon-text-left,
 							   aon-width-auto aon-text-left">
 							   
-					<aon:rowSelector action="bank_percent_form" actionListener="#{bankPercent.onSelect}" />
+					<aon:rowSelector action="bank_form" actionListener="#{bank.onSelect}" />
 					
 					<aon:column>
 						<f:facet name="header">
-							<aon:outputText value="#{appBundle.gbp_bank_percent_bank}" />
+							<aon:outputText value="#{appBundle.gbp_bank_name}" />
 						</f:facet>
-						<aon:outputText value="#{to.bank.name}"/>
+						<aon:outputText value="#{to.name}"/>
 					</aon:column>
 
 					<aon:column>
 						<f:facet name="header">
-							<aon:outputText value="#{appBundle.gbp_bank_percent_distributionPercent}" />
+							<aon:outputText value="#{appBundle.gbp_bank_document}" />
 						</f:facet>
-						<aon:outputText value="#{to.distributionPercent}">
-							<f:convertNumber pattern="#,##0.00" />			
-						</aon:outputText>
+						<aon:outputText value="#{to.document}"/>
 					</aon:column>
 
 				</aon:dataTable>
 						
-				<aon:dataScroller dataTable="bankPercentDataList"
-					model="#{bankPercent.model}" showNote="true" />					
+				<aon:dataScroller dataTable="bankDataList"
+					model="#{bank.model}" showNote="true" />					
 				
 			</aon:div>
 		</aon:form>
