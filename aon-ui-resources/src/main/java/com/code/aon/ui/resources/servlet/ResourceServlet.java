@@ -9,12 +9,13 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import net.sf.jmimemagic.Magic;
+import net.sf.jmimemagic.MagicMatch;
+
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.StringUtils;
 
 import com.code.aon.common.enumeration.MimeType;
-import com.code.aon.common.mime.Magic;
-import com.code.aon.common.mime.MagicMatch;
 
 /**
  * Servlet class invoked whenever a field form needs a Resource.
