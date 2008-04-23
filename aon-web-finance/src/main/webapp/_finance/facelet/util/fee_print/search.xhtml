@@ -71,13 +71,23 @@
 								</h:selectOneMenu>
 								<t:div>
 									<h:outputLabel for="BillingDate_Year-Edit"
-										value="#{appBundle.aon_year}:" />
+										value="#{appBundle.aon_year}" />
 									<h:inputText id="BillingDate_Year-Edit" required="true"
 										styleClass="aon-form-input-text" size="5"
 										value="#{feePrint.billingDateYear}" />
 								</t:div>
 							</h:panelGrid>
 							
+							<h:outputLabel for="Customer_status"
+								styleClass="aon-form-input-text-label"
+								value="#{financeBundle.finance_checking_customer_status}" />
+							<h:selectOneMenu id="Customer_status"
+								styleClass="aon-form-selectOneMenu-field"
+								value="#{feePrint.customerStatus}">
+								<f:selectItem itemValue="" itemLabel="-" itemDisabled="true" /> 
+								<f:selectItems value="#{customerCollections.customerStatuses}" />
+							</h:selectOneMenu>
+
 					</h:panelGrid>
 				</t:div>
 			</t:div>
