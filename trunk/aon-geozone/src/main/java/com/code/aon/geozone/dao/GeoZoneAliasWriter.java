@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 
 import com.code.aon.common.dao.AliasWriter;
+import com.code.aon.geozone.GeoTree;
 import com.code.aon.geozone.GeoZone;
 
 /**
@@ -17,10 +18,10 @@ public class GeoZoneAliasWriter {
 	 * @throws IOException
 	 */
 	public static void main(String[] args) throws IOException {
-//		File file = new File("/PROYECTOS/aon-account/src/com/code/aon/geozone/dao/IGeoZoneAlias.java");
-		File file = new File("c:/IGeoZoneAlias.java");
-		String[] classes = new String[1]; 
-		classes[0] = GeoZone.class.getName();
+		File file = new File("/AON-PROJECT/aon-geozone/src/main/java/com/code/aon/geozone/dao/IGeoZoneAlias.java");
+		String[] classes = new String[2]; 
+		classes[0] = GeoTree.class.getName();
+		classes[1] = GeoZone.class.getName();
 		AliasWriter writer = new AliasWriter("com.code.aon.geozone.dao");
 		writer.write(classes, file);
 		System.out.println( file.getAbsolutePath() );
