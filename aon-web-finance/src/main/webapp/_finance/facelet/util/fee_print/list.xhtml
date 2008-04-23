@@ -41,12 +41,11 @@
 							rowClasses="aon-table-row-odd,aon-table-row-even"
 							columnClasses="aon-table-body aon-table-body-string,
 										   aon-table-body aon-table-body-string,
+										   aon-table-body aon-table-body-string,
 										   aon-table-body aon-table-body-number,
 										   aon-table-body aon-table-body-number,
 										   aon-table-body aon-table-body-number,
-										   aon-table-body aon-table-body-string"
-							rowOnMouseOver="selectRow( this )"
-							rowOnMouseOut="unselectRow( this )" rowOnClick="sendRow( this )">
+										   aon-table-body aon-table-body-string">
 
 							<h:column>
 								<f:facet name="header">
@@ -54,6 +53,13 @@
 								</f:facet>
 								<h:outputText value="#{to.customer.registry.surname}, " rendered="#{to.customer.registry.surname != null and to.customer.registry.surname != ''}"/>								
 								<h:outputText value="#{to.customer.registry.name}" />
+							</h:column>
+
+							<h:column>
+								<f:facet name="header">
+									<h:outputText value="#{financeBundle.aon_status}" />
+								</f:facet>
+								<h:outputText value="#{to.customer.status}" />
 							</h:column>
 
 							<h:column>
