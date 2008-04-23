@@ -36,8 +36,13 @@ public class FeeInvoicingControllerListener extends ControllerAdapter {
 
 	@Override
 	public void beforeModelInitialized(ControllerEvent event) throws ControllerListenerException {
+		Criteria criteria;
 		try {
-			event.getController().getCriteria().addEqualExpression(event.getController().getFieldName(IFinanceAlias.INVOICE_TYPE), InvoiceType.SALES);
+			criteria = event.getController().getCriteria();
+			criteria.addEqualExpression(event.getController().getFieldName(IFinanceAlias.INVOICE_TYPE), InvoiceType.SALES);
+			criteria.addOrder(event.getController().getFieldName(IFinanceAlias.INVOICE_ISSUE_DATE));
+			criteria.addOrder(event.getController().getFieldName(IFinanceAlias.INVOICE_SERIES));
+			criteria.addOrder(event.getController().getFieldName(IFinanceAlias.INVOICE_NUMBER));
 		} catch (ManagerBeanException e) {
 			throw new ControllerListenerException(e);
 		}
@@ -101,6 +106,13 @@ public class FeeInvoicingControllerListener extends ControllerAdapter {
 	@Override
 	public void afterBeanCreated(ControllerEvent event) throws ControllerListenerException {
 		((FeeInvoicingController)event.getController()).setSeriesDescripition("");
+		try {
+			FeeInvoicingController feeInvoicingController = (FeeInvoicingController)this.getController(); 
+			feeInvoicingController.loadAddresses(null);
+		} catch (ManagerBeanException e) {
+			throw new ControllerListenerException(e.getMessage());
+		}
+
 		FeeInvoicingDetailController detailController = (FeeInvoicingDetailController)AonUtil.getController(FEE_INVOINCING_DETAIL_CONTROLLER_NAME);
 		detailController.setWorkPlace(null);
 	}
