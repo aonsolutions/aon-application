@@ -94,7 +94,7 @@
 							<h:outputLabel for="Finance_date"
 								styleClass="aon-form-input-text-label"
 								value="#{financeBundle.aon_finance_date}" />
-							<t:inputCalendar size="8" id="Finance_date"
+							<t:inputCalendar size="10" id="Finance_date"
 								value="#{financePayment.paymentDate}"
 								monthYearRowClass="yearMonthHeader" weekRowClass="weekHeader"
 								currentDayCellClass="currentDayCell" renderAsPopup="true"
@@ -106,37 +106,39 @@
 							<t:outputLabel for="Finance_amount"
 								value="#{financeBundle.finance_amount}"
 								styleClass="aon-form-lookup-label" />
-							<t:inputText id="Finance_amount" size="5" forceId="#{true}"
+							<t:inputText id="Finance_amount" size="10" forceId="#{true}"
 								styleClass="aon-form-input-text-disabled"
 								value="#{financePayment.to.amount}" disabled="true">
-									<f:convertNumber pattern="#,##0.00" />
+								<f:convertNumber pattern="#,##0.00" />
 							</t:inputText>
 
 							<t:outputLabel for="Finance_expenses"
 								value="#{financeBundle.finance_expenses}"
 								styleClass="aon-form-lookup-label" />
-							<t:inputText id="Finance_expenses" size="5" forceId="#{true}"
+							<t:inputText id="Finance_expenses" size="10" forceId="#{true}"
 								styleClass="aon-form-input-text-disabled"
 								value="#{financePayment.to.expenses}" disabled="true">
-									<f:convertNumber pattern="#,##0.00" />
+								<f:convertNumber pattern="#,##0.00" />
 							</t:inputText>
 
 							<t:outputLabel for="Finance_totalAmount"
 								value="#{financeBundle.finance_total}"
 								styleClass="aon-form-lookup-label" />
-							<t:inputText id="Finance_totalAmount" size="5" forceId="#{true}"
+							<t:inputText id="Finance_totalAmount" size="10" forceId="#{true}"
 								styleClass="aon-form-input-text-disabled"
 								value="#{financePayment.to.totalAmount}" disabled="true">
-									<f:convertNumber pattern="#,##0.00" />
+								<f:convertNumber pattern="#,##0.00" />
 							</t:inputText>
 
 							<t:outputLabel for="Finance_payed_amount"
 								value="#{financeBundle.finance_paid}"
 								styleClass="aon-form-lookup-label" />
-							<t:inputText id="Finance_payed_amount" size="5" forceId="#{true}"
+							<t:inputText id="Finance_payed_amount" size="10" forceId="#{true}"
 								styleClass="aon-form-input"
-								value="#{financePayment.payedAmount}" />
-								
+								value="#{financePayment.payedAmount}">
+								<f:validateDoubleRange />
+							</t:inputText>
+
 							<h:outputLabel for="RegistryBank_Lookup_id"
 								styleClass="aon-form-input-text-label" value="#{financeBundle.aon_bank}" />
 							<t:selectOneMenu id="RegistryBank_Lookup_id"
@@ -151,7 +153,7 @@
 								styleClass="aon-form-input-text-label" value="#{financeBundle.aon_bank_account}" />
 							<t:inputText id="RegistryBank_Lookup_bankAccount" value="#{financePayment.registryBank.bankAccount}"
 								styleClass="aon-form-input-text-disabled" forceId="#{true}"
-								disabledOnClientSide="true" size="35" />
+								disabledOnClientSide="true" size="40" />
 
 					</h:panelGrid>
 					<!-- end of flow layout -->

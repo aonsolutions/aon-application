@@ -90,11 +90,11 @@
 									styleClass="aon-form-input-text-disabled" forceId="#{true}"
 									size="7" disabled="true"/>
 							</h:panelGrid>
-							
+
 							<h:outputLabel for="Finance_date"
 								styleClass="aon-form-input-text-label"
 								value="#{financeBundle.aon_finance_date}" />
-							<t:inputCalendar size="8" id="Finance_date"
+							<t:inputCalendar size="10" id="Finance_date"
 								value="#{financeReturn.returnDate}"
 								monthYearRowClass="yearMonthHeader" weekRowClass="weekHeader"
 								currentDayCellClass="currentDayCell" renderAsPopup="true"
@@ -106,16 +106,20 @@
 							<t:outputLabel for="Finance_amount"
 								value="#{financeBundle.finance_amount}"
 								styleClass="aon-form-lookup-label" />
-							<t:inputText id="Finance_amount" size="5" forceId="#{true}"
+							<t:inputText id="Finance_amount" size="10" forceId="#{true}"
 								styleClass="aon-form-input-text" disabled="true"
-								value="#{financeReturn.to.amount}"/>
+								value="#{financeReturn.to.amount}">
+								<f:convertNumber pattern="#,##0.00" />
+							</t:inputText>
 
 							<t:outputLabel for="Finance_expenses"
 								value="#{financeBundle.finance_expenses}"
 								styleClass="aon-form-lookup-label" />
-							<t:inputText id="Finance_expenses" size="5" forceId="#{true}"
+							<t:inputText id="Finance_expenses" size="10" forceId="#{true}"
 								styleClass="aon-form-input-text"
-								value="#{financeReturn.to.expenses}"/>
+								value="#{financeReturn.to.expenses}">
+								<f:validateDoubleRange />
+							</t:inputText>
 						
 					</h:panelGrid>
 					<!-- end of flow layout -->
