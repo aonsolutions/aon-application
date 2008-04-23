@@ -162,6 +162,19 @@ public class GBPCollectionsController {
 	}
 	
 	@SuppressWarnings("unchecked")
+	public List<SelectItem> getAccountContacts() throws ManagerBeanException {
+		List<SelectItem> contacts = new LinkedList<SelectItem>();
+		IManagerBean accountContactBean = BeanManager.getManagerBean(AccountContact.class);
+		Iterator iter = accountContactBean.getList(null).iterator();
+		while(iter.hasNext()){
+			AccountContact contact = (AccountContact)iter.next();
+			SelectItem item = new SelectItem(contact.getId(), contact.getDescription());
+			contacts.add(item);
+		}
+		return contacts;
+	}
+	
+	@SuppressWarnings("unchecked")
 	public List<SelectItem> getSupplierTypes() throws ManagerBeanException{
 		List<SelectItem> supplierTypes = new LinkedList<SelectItem>();
 		IManagerBean supplierTypeBean = BeanManager.getManagerBean(SupplierType.class);
