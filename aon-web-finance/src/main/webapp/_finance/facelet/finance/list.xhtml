@@ -39,13 +39,13 @@
 							rendered="#{finance.model.rowCount > 0}"
 							styleClass="aon-table" headerClass="aon-table-header"
 							rowClasses="aon-table-row-odd,aon-table-row-even"
-							columnClasses="aon-table-body aon-table-body-string,aon-table-body aon-table-body-string,aon-table-body aon-table-body-string,aon-table-body aon-table-body-string,aon-table-body aon-table-body-number"
+							columnClasses="aon-table-body aon-table-body-string,aon-table-body aon-table-body-string,aon-table-body aon-table-body-string,aon-table-body aon-table-body-string,aon-table-body aon-table-body-string,aon-table-body aon-table-body-number"
 							rowOnMouseOver="selectRow( this )"
 							rowOnMouseOut="unselectRow( this )" rowOnClick="sendRow( this )">
 
 							<h:column>
 								<f:facet name="header">
-									<h:outputText value="#{financeBundle.aon_id}" />
+									<h:outputText value="#{financeBundle.aon_invoice}" />
 								</f:facet>
 								<h:outputText value="#{to.invoice.series} / #{to.invoice.number}" />
 								<t:commandLink immediate="#{true}"
@@ -82,6 +82,15 @@
 									</h:panelGroup>
 								</f:facet>
 								<h:outputText value="#{to.financeStatus}" />
+							</h:column>
+							
+							<h:column>
+								<f:facet name="header">
+									<h:panelGroup>
+										<h:outputText value="#{financeBundle.aon_pay_method}" />
+									</h:panelGroup>
+								</f:facet>
+								<h:outputText value="#{to.payMethod.name}" />
 							</h:column>
 							
 							<h:column>
