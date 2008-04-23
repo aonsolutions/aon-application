@@ -16,6 +16,7 @@ import com.code.gbp.InternalCustomer;
 import com.code.gbp.Offer;
 import com.code.gbp.OfferSignature;
 import com.code.gbp.Office;
+import com.code.gbp.ProFormaBank;
 import com.code.gbp.ProFormaInvoice;
 import com.code.gbp.ProFormaSignature;
 import com.code.gbp.Requirement;
@@ -34,7 +35,7 @@ public class GBPAliasWriter {
 	 */
 	public static void main(String[] args) throws IOException {
 		File file = new File("/AON-PROJECT/gbp/src/main/java/com/code/gbp/dao/IGBPAlias.java");
-		String[] classes = new String[22];
+		String[] classes = new String[23];
 		classes[0] = AccountContact.class.getName();
 		classes[1] = Campaign.class.getName();
 		classes[2] = CampaignSupplier.class.getName();
@@ -57,6 +58,7 @@ public class GBPAliasWriter {
 		classes[19] = SupplierType.class.getName();
 		classes[20] = Bank.class.getName();
 		classes[21] = BankPercent.class.getName();
+		classes[22] = ProFormaBank.class.getName();
 		AliasWriter writer = new AliasWriter("com.code.gbp.dao");
 		writer.write(classes, file);
 		System.out.println(file.getAbsolutePath());
