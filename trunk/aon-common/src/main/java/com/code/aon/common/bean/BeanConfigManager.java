@@ -95,13 +95,11 @@ public class BeanConfigManager {
 		try {
 			IDAO dao = null;
 			if ( config.getDaoFactory() != null ) {
-				Class factory = Class.forName(config.getDaoFactory());
-				Class[] args = null;
-				Object[] params = null;
-				Method inst = factory.getMethod("getInstance", args);
-				Object manager = inst.invoke(null, params);
-				Method method = factory.getMethod(config.getDaoMethod(), args);
-				dao = (IDAO) method.invoke(manager, params);
+				Class<?> factory = Class.forName(config.getDaoFactory());
+				Method inst = factory.getMethod("getInstance");
+				Object manager = inst.invoke(null);
+				Method method = factory.getMethod(config.getDaoMethod(), BeanConfig.class );
+				dao = (IDAO) method.invoke(manager, config);
 			} else {
 				dao = getPojoDAO( config.getPojoClass() );
 			}
