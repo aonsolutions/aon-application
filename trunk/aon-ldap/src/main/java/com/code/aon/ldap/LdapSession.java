@@ -197,7 +197,7 @@ public class LdapSession implements ILdapConstants {
 
 	public boolean exists(String base, String filter) throws LdapException {
 		try {
-			SearchControls sc = getSearchControls(Scope.OBJECT_SCOPE, new String[]{OBJECT_CLASS});
+			SearchControls sc = getSearchControls(Scope.OBJECT_SCOPE, new String[]{OBJECT_CLASS_ATTRIBUTE});
 			NamingEnumeration<SearchResult> ne = dc.search(resolveBase(base), filter, sc);
 			while (ne.hasMore()) {
 				return true;
