@@ -22,6 +22,7 @@ import com.code.gbp.SupplierContactPerson;
 import com.code.gbp.SupplierEconomicData;
 import com.code.gbp.SupplierObservation;
 import com.code.gbp.SupplierType;
+import com.code.gbp.Bank;
 import com.code.gbp.BankPercent;
 
 /** 
@@ -952,15 +953,58 @@ public interface IGBPAlias {
 
 
 	/** 
+	* DAOConstantsEntry for Bank entity.
+	*/ 
+	DAOConstantsEntry BANK_ENTRY = DAOConstants.getDAOConstant(Bank.class);
+
+	/** 
+	* Alias value: Bank_address
+	* Hibernate value: Bank.address
+	*/
+	String  BANK_ADDRESS = BANK_ENTRY.getAliasNames()[0];
+
+	/** 
+	* Alias value: Bank_document
+	* Hibernate value: Bank.document
+	*/
+	String  BANK_DOCUMENT = BANK_ENTRY.getAliasNames()[1];
+
+	/** 
+	* Alias value: Bank_id
+	* Hibernate value: Bank.id
+	*/
+	String  BANK_ID = BANK_ENTRY.getAliasNames()[2];
+
+	/** 
+	* Alias value: Bank_name
+	* Hibernate value: Bank.name
+	*/
+	String  BANK_NAME = BANK_ENTRY.getAliasNames()[3];
+
+	/** 
+	* Alias value: Bank_registralData
+	* Hibernate value: Bank.registralData
+	*/
+	String  BANK_REGISTRAL_DATA = BANK_ENTRY.getAliasNames()[4];
+
+	/** 
+	* Alias value: Bank_web
+	* Hibernate value: Bank.web
+	*/
+	String  BANK_WEB = BANK_ENTRY.getAliasNames()[5];
+
+
+
+	/** 
 	* DAOConstantsEntry for BankPercent entity.
 	*/ 
 	DAOConstantsEntry BANK_PERCENT_ENTRY = DAOConstants.getDAOConstant(BankPercent.class);
 
 	/** 
-	* Alias value: BankPercent_address
-	* Hibernate value: BankPercent.address
+	* Alias value: BankPercent_bank_id
+	* Hibernate value: BankPercent.bank.id
 	*/
-	String  BANK_PERCENT_ADDRESS = BANK_PERCENT_ENTRY.getAliasNames()[0];
+	String  BANK_PERCENT_BANK_ID = BANK_PERCENT_ENTRY.getAliasNames()[0];
 
 	/** 
 	* Alias value: BankPercent_distributionPercent
@@ -969,34 +1013,10 @@ public interface IGBPAlias {
 	String  BANK_PERCENT_DISTRIBUTION_PERCENT = BANK_PERCENT_ENTRY.getAliasNames()[1];
 
 	/** 
-	* Alias value: BankPercent_document
-	* Hibernate value: BankPercent.document
-	*/
-	String  BANK_PERCENT_DOCUMENT = BANK_PERCENT_ENTRY.getAliasNames()[2];
-
-	/** 
 	* Alias value: BankPercent_id
 	* Hibernate value: BankPercent.id
 	*/
-	String  BANK_PERCENT_ID = BANK_PERCENT_ENTRY.getAliasNames()[3];
-
-	/** 
-	* Alias value: BankPercent_name
-	* Hibernate value: BankPercent.name
-	*/
-	String  BANK_PERCENT_NAME = BANK_PERCENT_ENTRY.getAliasNames()[4];
-
-	/** 
-	* Alias value: BankPercent_registralData
-	* Hibernate value: BankPercent.registralData
-	*/
-	String  BANK_PERCENT_REGISTRAL_DATA = BANK_PERCENT_ENTRY.getAliasNames()[5];
-
-	/** 
-	* Alias value: BankPercent_web
-	* Hibernate value: BankPercent.web
-	*/
-	String  BANK_PERCENT_WEB = BANK_PERCENT_ENTRY.getAliasNames()[6];
+	String  BANK_PERCENT_ID = BANK_PERCENT_ENTRY.getAliasNames()[2];
 
 
 }

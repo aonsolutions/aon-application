@@ -4,6 +4,8 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import com.code.aon.common.ITransferObject;
@@ -14,15 +16,7 @@ public class BankPercent implements ITransferObject {
 	
 	private Integer id;
 
-	private String name;
-	
-	private String document;
-	
-	private String address;
-	
-	private String registralData;
-	
-	private String web;
+	private Bank bank;
 	
 	private double distributionPercent;
 	
@@ -37,51 +31,16 @@ public class BankPercent implements ITransferObject {
 		this.id = id;
 	}
 
-	@Column(nullable=false, length=9)
-	public String getDocument() {
-		return document;
+	@ManyToOne
+	@JoinColumn( name="bank", nullable=false )
+	public Bank getBank() {
+		return bank;
 	}
 
-	public void setDocument(String document) {
-		this.document = document;
+	public void setBank(Bank bank) {
+		this.bank = bank;
 	}
 	
-	@Column(nullable=false, length=64)
-	public String getName() {
-		return name;
-	}
-
-	public void setName(String name) {
-		this.name = name;
-	}
-
-	@Column(length=128)
-	public String getAddress() {
-		return address;
-	}
-
-	public void setAddress(String address) {
-		this.address = address;
-	}
-
-	@Column(name="registral_data")
-	public String getRegistralData() {
-		return registralData;
-	}
-
-	public void setRegistralData(String registralData) {
-		this.registralData = registralData;
-	}
-
-	@Column(length=128)
-	public String getWeb() {
-		return web;
-	}
-
-	public void setWeb(String web) {
-		this.web = web;
-	}
-
 	@Column(name="distribution_percent")
 	public double getDistributionPercent() {
 		return distributionPercent;
