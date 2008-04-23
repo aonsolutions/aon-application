@@ -13,12 +13,12 @@
 
 /********  AON SECONDARY MENU  ****************/
 .aon-secondary-menu{
-	background:#d7d7d7 url(/aonResource/images/aon-content/aon-secondary-menu.png) scroll left top repeat-x;
+	background:#d7d7d7 url(../aonResource/images/aon-content/aon-secondary-menu.png) scroll left top repeat-x;
 	padding:0px 0em;
 	border-bottom:#a1a6b1 1px solid;
 	}
 .aon-secondary-menu-application{
-	background:transparent url(/aonResource/images/aon-content/aon-application-logo.png) scroll 8px center no-repeat;
+	background:transparent url(../aonResource/images/aon-content/aon-application-logo.png) scroll 8px center no-repeat;
 	padding:0px 1em 0px 28px;
 	font-size:0.9em;
 	font-weight:bold;
