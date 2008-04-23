@@ -162,17 +162,6 @@ xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j
     <filter-name>BackDoorAuthenticationFilter</filter-name>
     <url-pattern>/auth/*</url-pattern>
   </filter-mapping>
-  <!-- Lookup Bean Servlet -->
-  <servlet>
-    <servlet-name>LookupBeanServlet</servlet-name>
-    <servlet-class>
-    com.code.aon.ui.form.lookup.LookupBeanServlet</servlet-class>
-  </servlet>
-  <!-- extension mapping -->
-  <servlet-mapping>
-    <servlet-name>LookupBeanServlet</servlet-name>
-    <url-pattern>*.lookupBean</url-pattern>
-  </servlet-mapping>
   <session-config>
     <session-timeout>240</session-timeout>
   </session-config>
@@ -185,6 +174,15 @@ xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j
   <servlet-mapping>
     <servlet-name>BackDoorAuthentication</servlet-name>
     <url-pattern>*.auth</url-pattern>
+  </servlet-mapping>
+  <!-- Resource Servlet -->
+  <servlet>
+    <servlet-name>ResourceServlet</servlet-name>
+    <servlet-class>com.code.aon.ui.resources.servlet.ResourceServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>ResourceServlet</servlet-name>
+    <url-pattern>/aonResource/*</url-pattern>
   </servlet-mapping>
   <!-- Welcome File List -->
   <welcome-file-list>
