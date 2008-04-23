@@ -70,8 +70,8 @@ public class SearchTest {
 	@Test
     public void testExists() {
 		try {
-			boolean value = session.exists("cn=Manager,ou=profiles,cn=aon-desktop,ou=applications,cn=localhost,ou=domains","(objectclass=aonProfile)");
-			Assert.assertFalse( value );
+			boolean value = session.exists("cn=aon-desktop,ou=applications","(objectclass=aonApplication)");
+			Assert.assertTrue( value );
 		} catch (LdapException e) {
 			Assert.fail( e.getMessage() );
 		}
@@ -97,8 +97,8 @@ public class SearchTest {
 		try {
 			Entry entry = new Entry("uid=deletable,ou=users,cn=localhost,ou=domains");
 			entry.addObjectClass("top", "person", "aonUser", "posixAccount");
-			entry.put( ILdapConstants.COMMON_NAME, "Deletable" );
-			entry.put( ILdapConstants.SURNAME, "Deletable" );
+			entry.put( ILdapConstants.COMMON_NAME_ATTRIBUTE, "Deletable" );
+			entry.put( ILdapConstants.SURNAME_ATTRIBUTE, "Deletable" );
 			entry.put( "homeDirectory", "/home/deletable" );
 			entry.put( "gidNumber", 100 );
 			entry.put( "uidNumber", 100 );

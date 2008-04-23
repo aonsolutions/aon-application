@@ -2,16 +2,16 @@ package com.code.aon.ldap;
 
 public interface ILdapConstants {
 
-	String OBJECT_CLASS = "objectClass";
+	String OBJECT_CLASS_ATTRIBUTE = "objectClass";
 	
-	String COMMON_NAME = "cn";
+	String COMMON_NAME_ATTRIBUTE = "cn";
 	
-	String SURNAME = "sn";
+	String SURNAME_ATTRIBUTE = "sn";
 	
-	String USER_ID = "uid";
+	String USER_ID_ATTRIBUTE = "uid";
 
-	String USER_PASSWORD = "userPassword";
+	String USER_PASSWORD_ATTRIBUTE = "userPassword";
 	
-	String MEMBER= "member";
+	String MEMBER_ATTRIBUTE = "member";
 	
 }

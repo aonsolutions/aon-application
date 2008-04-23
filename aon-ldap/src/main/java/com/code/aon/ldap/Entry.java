@@ -40,9 +40,9 @@ public class Entry implements ILdapConstants {
 	}
 	
 	public void addObjectClass( String objectClass, String ... objectClassList ) {
-		put( OBJECT_CLASS, objectClass );
+		put( OBJECT_CLASS_ATTRIBUTE, objectClass );
 		for( String name : objectClassList ) {
-			put( OBJECT_CLASS, name );
+			put( OBJECT_CLASS_ATTRIBUTE, name );
 		}
 	}
 	
