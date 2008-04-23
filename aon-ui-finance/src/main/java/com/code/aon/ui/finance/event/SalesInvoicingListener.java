@@ -161,11 +161,13 @@ public class SalesInvoicingListener extends ControllerAdapter {
 	 */
 	@Override
 	public void beforeModelInitialized(ControllerEvent event) throws ControllerListenerException {
-		SalesInvoicingController salesInvoicingController = (SalesInvoicingController)event.getController();
 		Criteria criteria;
 		try {
-			criteria = salesInvoicingController.getCriteria();
-			criteria.addEqualExpression(salesInvoicingController.getManagerBean().getFieldName(IFinanceAlias.INVOICE_TYPE), InvoiceType.SALES);
+			criteria = event.getController().getCriteria();
+			criteria.addEqualExpression(event.getController().getFieldName(IFinanceAlias.INVOICE_TYPE), InvoiceType.SALES);
+			criteria.addOrder(event.getController().getFieldName(IFinanceAlias.INVOICE_ISSUE_DATE));
+			criteria.addOrder(event.getController().getFieldName(IFinanceAlias.INVOICE_SERIES));
+			criteria.addOrder(event.getController().getFieldName(IFinanceAlias.INVOICE_NUMBER));
 		} catch (ManagerBeanException e) {
 			throw new ControllerListenerException(e.getMessage(), e.getCause());
 		}
