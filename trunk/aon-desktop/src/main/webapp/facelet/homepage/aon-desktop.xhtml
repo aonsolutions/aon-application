@@ -10,10 +10,9 @@
 
 	<aon:form id="mainForm">
 
-		<aon:div styleClass="aon-scroll-area" >
-			<aon:div styleClass="aon-scroll-area-internal">
+		<aon:div styleClass="aon-scroll-area">		
 
-				<aon:panelGrid columns="3" cellpadding="5" cellspacing="0" border="0" style="width:100%"
+				<aon:panelGrid columns="3" styleClass="aon-panelGrid-formatting"
 					columnClasses="aon-portlets-column1,aon-portlets-column2,aon-portlets-column3">
 
 					<aon:div>
@@ -27,7 +26,7 @@
 								<aon:dataTable id="mailSummaryList"
 									cellpadding="0" cellspacing="0"
 									value="#{desktop.mailSummaryModel}" var="to"
-									style="width:155px" columnClasses="aon-text-left,aon-text-right"
+									style="width:165px;" columnClasses="aon-text-left,aon-text-right"
 									styleClass="aon-table-portlet">
 
 									<aon:column>
@@ -52,20 +51,20 @@
 						</aon:div>
 						
 						<aon:div styleClass="aon-portlet">
-							<aon:div styleClass="aon-portlet-title">
-								<aon:commandLink actionListener="#{notice.onSearch}" action="notice">
-									<aon:outputText value="#{appBundle.aon_desktop_notices}" styleClass="aon-portlet-title-text aon-icon aon-icon-alarms"/>
-								</aon:commandLink>
+							<aon:div styleClass="aon-portlet-title">								
 								<aon:div styleClass="aon-portlet-title-buttons">
 									<aon:commandLink actionListener="#{notice.onReset}" action="notice_form">
  										<aon:outputText value="&#160;" styleClass="aon-icon-portlet aon-icon-new"/>
 									</aon:commandLink>
 								</aon:div>
+								<aon:commandLink actionListener="#{notice.onSearch}" action="notice">
+									<aon:outputText value="#{appBundle.aon_desktop_notices}" styleClass="aon-portlet-title-text aon-icon aon-icon-alarms"/>
+								</aon:commandLink>
 							</aon:div>
 							<aon:div styleClass="aon-portlet-body">
-								<aon:dataTable id="noticeSummaryList" columns="3"
+								<aon:dataTable id="noticeSummaryList" columns="3" align="center"
 									value="#{desktop.noticeSummaryModel}" var="to"
-									style="width:155px" columnClasses="aon-text-left,aon-text-left,aon-text-right"
+									style="width:165px;" columnClasses="aon-text-left,aon-text-left,aon-text-right"
 									styleClass="aon-table-portlet" cellpadding="0" cellspacing="0">
 
 									<aon:column>
@@ -87,19 +86,19 @@
 
 						<aon:div styleClass="aon-portlet">
 							<aon:div styleClass="aon-portlet-title">
-								<aon:commandLink actionListener="#{note.onSearch}" action="note">
-									<aon:outputText value="#{appBundle.aon_desktop_notes}" styleClass="aon-portlet-title-text aon-icon aon-icon-notes"/>
-								</aon:commandLink>	
 								<aon:div styleClass="aon-portlet-title-buttons">
 									<aon:commandLink actionListener="#{note.onReset}" action="note_form">
  										<aon:outputText value="&#160;"  styleClass="aon-icon-portlet aon-icon-new"/>
 									</aon:commandLink>
 								</aon:div>
+								<aon:commandLink actionListener="#{note.onSearch}" action="note">
+									<aon:outputText value="#{appBundle.aon_desktop_notes}" styleClass="aon-portlet-title-text aon-icon aon-icon-notes"/>
+								</aon:commandLink>	
 							</aon:div>
 							<aon:div styleClass="aon-portlet-body aon-box-outstanding2">
-								<aon:dataTable id="recentNoteList" style="width:85%"
+								<aon:dataTable id="recentNoteList" style="width:85%"  align="center"
 									value="#{desktop.recentNoteModel}" var="to" rows="5"
-									styleClass="aon-table-portlet">
+									 styleClass="aon-table-portlet">
 
 									<aon:rowSelector action="note_form" actionListener="#{desktop.onSelectNote}"/>
 									
@@ -123,8 +122,8 @@
 								<aon:panelCollapsible expanded="true" label="#{appBundle.aon_desktop_today}">
 									<aon:dataTable id="todayAlarmList" columns="3" border="0" 
 										value="#{desktop.todayAlarmModel}" var="to" 
-										styleClass="aon-table-portlet" columnClasses="aon-datatable-icon aon-text-nowrap,aon-datatable-date aon-text-nowrap,aon-text-left aon-full-width"
-										columnWidths="35px,65px," scrollable="yes" style="width:auto">
+										styleClass="aon-table-portlet" columnClasses="aon-width-20 aon-text-nowrap,aon-width-80 aon-text-nowrap, aon-width-auto"
+										scrollable="yes" style="width:95%">
 
 										<aon:rowSelector action="alarm_form" actionListener="#{desktop.onSelectTodayAlarm}"/>								
 										<aon:column>
@@ -153,8 +152,8 @@
 								<aon:panelCollapsible expanded="true" label="#{appBundle.aon_desktop_recent}">
 									<aon:dataTable id="recentAlarmList" columns="3" border="0"
 										value="#{desktop.recentAlarmModel}" var="to" 
-										styleClass="aon-table-portlet" columnClasses="aon-datatable-icon aon-text-nowrap,aon-datatable-date aon-text-nowrap,aon-text-left aon-full-width"
-										columnWidths="35px,65px," scrollable="yes" style="width:auto">
+										styleClass="aon-table-portlet" columnClasses="aon-width-20 aon-text-nowrap,aon-width-100 aon-text-nowrap, aon-width-auto"
+										 scrollable="yes" style="width:95%">
 										
 										<aon:rowSelector action="alarm_form" actionListener="#{desktop.onSelectRecentAlarm}"/>
 										<aon:column>
@@ -183,8 +182,8 @@
 								<aon:panelCollapsible expanded="true" label="#{appBundle.aon_desktop_ancient}">
 									<aon:dataTable id="ancientAlarmList" columns="3" border="0"
 										value="#{desktop.ancientAlarmModel}" var="to" 
-										styleClass="aon-table-portlet" columnClasses="aon-datatable-icon aon-text-nowrap,aon-datatable-date aon-text-nowrap,aon-text-left aon-full-width"
-										columnWidths="35px,65px," scrollable="yes" style="width:auto">
+										styleClass="aon-table-portlet" columnClasses="aon-width-20 aon-text-nowrap,aon-width-100 aon-text-nowrap, aon-width-auto"
+										 scrollable="yes" style="width:95%">
 
 										<aon:rowSelector action="alarm_form" actionListener="#{desktop.onSelectAncientAlarm}"/>
 										<aon:column>
@@ -230,7 +229,6 @@
 
 				</aon:panelGrid>
 
-			</aon:div>
 		</aon:div>
 
 	</aon:form>
