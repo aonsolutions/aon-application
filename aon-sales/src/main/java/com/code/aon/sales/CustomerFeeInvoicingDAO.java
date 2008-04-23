@@ -42,8 +42,8 @@ public class CustomerFeeInvoicingDAO implements IInvoicingDAO {
 	public Invoice insertInvoice(Invoice invoice) {
 		try {
 			IManagerBean invoiceBean = BeanManager.getManagerBean(Invoice.class);
-			invoice = (Invoice)invoiceBean.insert(invoice);
 			invoice.setRegistryAddress(obtainAddress(invoice.getRegistry().getId()));
+			invoice = (Invoice)invoiceBean.insert(invoice);
 			invoicingCollection.add(invoice);
 			return invoice;
 		} catch (ManagerBeanException e) {
