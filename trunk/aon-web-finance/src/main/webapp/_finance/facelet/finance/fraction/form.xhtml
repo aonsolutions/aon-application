@@ -79,7 +79,7 @@
 							value="#{financeBundle.aon_invoice_date}" />
 						<t:inputText id="Finance_dueDate" forceId="#{true}"
 							styleClass="aon-form-input-text-disabled" 
-							size="9" disabled="true"
+							size="10" disabled="true"
 							value="#{financeFraction.targetFinance.dueDate}" >
 							<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
 										timeZone="#{timeZoneController.timeZoneId}" />
@@ -89,7 +89,7 @@
 							styleClass="aon-form-input-text-label"
 							value="#{financeBundle.aon_amount}" />
 						<t:inputText id="Finance_amount"
-							value="#{finance.to.amount}" size="15" disabled="true"
+							value="#{finance.to.amount}" size="10" disabled="true"
 							styleClass="aon-form-input-text-disabled" forceId="#{true}" >
 							<f:convertNumber pattern="#,##0.00" />
 						</t:inputText>	
@@ -98,7 +98,7 @@
 							styleClass="aon-form-input-text-label"
 							value="#{financeBundle.finance_expenses}" />
 						<t:inputText id="Finance_expenses"
-							value="#{finance.to.expenses}" size="15" disabled="true"
+							value="#{finance.to.expenses}" size="10" disabled="true"
 							styleClass="aon-form-input-text-disabled" forceId="#{true}" >
 							<f:convertNumber pattern="#,##0.00" />
 						</t:inputText>	
@@ -107,7 +107,7 @@
 							styleClass="aon-form-input-text-label"
 							value="#{financeBundle.aon_total}" />
 						<t:inputText id="Finance_totalAmount"
-							value="#{finance.to.totalAmount}" size="15" disabled="true"
+							value="#{finance.to.totalAmount}" size="10" disabled="true"
 							styleClass="aon-form-input-text-disabled" forceId="#{true}" >
 							<f:convertNumber pattern="#,##0.00" />
 						</t:inputText>	

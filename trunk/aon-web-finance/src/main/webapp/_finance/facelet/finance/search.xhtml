@@ -108,7 +108,7 @@
 								<h:outputLabel for="Finance_invoice_issueDate-From"
 									styleClass="aon-form-input-text-label"
 									value="#{financeBundle.finance_date_from}" />
-								<t:inputCalendar size="8" id="Finance_invoice_issueDate-From"
+								<t:inputCalendar size="10" id="Finance_invoice_issueDate-From"
 									valueChangeListener="#{finance.addInvoiceIssueDate1Expression}"
 									monthYearRowClass="yearMonthHeader" weekRowClass="weekHeader"
 									currentDayCellClass="currentDayCell" renderAsPopup="true"
@@ -120,7 +120,7 @@
 								<h:outputLabel for="Finance_invoice_issueDate-To"
 									styleClass="aon-form-input-text-label"
 									value="#{financeBundle.finance_date_to}" />
-								<t:inputCalendar size="8" id="Finance_invoice_issueDate-To"
+								<t:inputCalendar size="10" id="Finance_invoice_issueDate-To"
 									valueChangeListener="#{finance.addInvoiceIssueDate2Expression}"
 									monthYearRowClass="yearMonthHeader" weekRowClass="weekHeader"
 									currentDayCellClass="currentDayCell" renderAsPopup="true"
@@ -136,7 +136,7 @@
 								<h:outputLabel for="Finance_dueDate-From"
 									styleClass="aon-form-input-text-label"
 									value="#{financeBundle.finance_date_from}" />
-								<t:inputCalendar size="8" id="Finance_dueDate-From"
+								<t:inputCalendar size="10" id="Finance_dueDate-From"
 									valueChangeListener="#{finance.addFinanceDueDate1Expression}"
 									monthYearRowClass="yearMonthHeader" weekRowClass="weekHeader"
 									currentDayCellClass="currentDayCell" renderAsPopup="true"
@@ -148,7 +148,7 @@
 								<h:outputLabel for="Finance_dueDate-To"
 									styleClass="aon-form-input-text-label"
 									value="#{financeBundle.finance_date_to}" />
-								<t:inputCalendar size="8" id="Finance_dueDate-To"
+								<t:inputCalendar size="10" id="Finance_dueDate-To"
 									valueChangeListener="#{finance.addFinanceDueDate2Expression}"
 									monthYearRowClass="yearMonthHeader" weekRowClass="weekHeader"
 									currentDayCellClass="currentDayCell" renderAsPopup="true"
@@ -157,14 +157,6 @@
 									popupTodayString="#{bundle.aon_popup_today}"
 									popupWeekString="#{bundle.aon_popup_week}" />	
 							</h:panelGrid>
-							
-							<h:outputLabel for="Finance_amount"
-								styleClass="aon-form-input-text-label"
-								value="#{financeBundle.aon_amount}" />
-							<t:inputText id="Finance_amount"
-								valueChangeListener="#{finance.addExpression}"
-								styleClass="aon-form-input-text" forceId="#{true}"
-								size="15" />
 							
 							<h:outputLabel for="Bank_Lookup_id"
 								styleClass="aon-form-input-text-label"
@@ -183,6 +175,14 @@
 									styleClass="aon-form-input-text-disabled" disabled="true"
 									size="40" />
 							</t:div>
+							
+							<h:outputLabel for="Finance_amount"
+								styleClass="aon-form-input-text-label"
+								value="#{financeBundle.aon_amount}" />
+							<t:inputText id="Finance_amount"
+								valueChangeListener="#{finance.addExpression}"
+								styleClass="aon-form-input-text" forceId="#{true}"
+								size="10" />
 							
 							<h:outputLabel for="Finance_payMethod_id"
 								styleClass="aon-form-input-text-label"
