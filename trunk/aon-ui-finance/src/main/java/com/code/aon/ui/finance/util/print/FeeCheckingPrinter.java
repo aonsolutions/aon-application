@@ -13,9 +13,12 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.finance.enumeration.PayMethodType;
 import com.code.aon.finance.print.CheckingTo;
+import com.code.aon.ui.util.AonUtil;
 
 public class FeeCheckingPrinter implements ICollectionProvider {
 	
+	private static final String FINANCE_PRINTER_CONTROLLER = "financePrint";
+
 	@Override
 	@SuppressWarnings("unchecked")
 	public Collection getCollection() {
@@ -28,15 +31,21 @@ public class FeeCheckingPrinter implements ICollectionProvider {
 		return list;
 	}
 
+	@Override
+	@SuppressWarnings("unchecked")
+	public Collection getCollection(boolean forceRefresh) throws ManagerBeanException {
+		return getCollection();
+	}
+
 	@SuppressWarnings("unchecked")
 	private List<ITransferObject> obtainNoPaymethodList() {
 		String select = "SELECT customer " +
 						"FROM Customer customer " +
-						"WHERE customer.id NOT IN( " +
+						"WHERE customer.id NOT IN(" +
 							"SELECT rPayMethod.registry.id " +
-							"FROM RegistryPayMethod rPayMethod ) " +
-						"ORDER BY customer.registry.surname, " +
-								 "customer.registry.name";
+							"FROM RegistryPayMethod rPayMethod) " +
+						obtainPrintCondition() +
+						"ORDER BY customer.registry.surname, customer.registry.name";
 		Session session = HibernateUtil.getSession();
 		Query query = session.createQuery(select);
 		return query.list();
@@ -48,11 +57,11 @@ public class FeeCheckingPrinter implements ICollectionProvider {
 						"FROM Customer customer, RegistryPayMethod rPayMethod " +
 						"WHERE customer.id = rPayMethod.registry.id " +
 						"AND rPayMethod.payment.type = " + PayMethodType.NEGOTIABLE_DOCUMENT.ordinal() + " " + 
-						"AND customer.id NOT IN( " +
+						"AND customer.id NOT IN(" +
 							"SELECT rBank.registry.id " +
-							"FROM RegistryBank rBank ) " +
-						"ORDER BY customer.registry.surname, " +
-							 "customer.registry.name";
+							"FROM RegistryBank rBank) " +
+						obtainPrintCondition() +
+						"ORDER BY customer.registry.surname, customer.registry.name";
 		Session session = HibernateUtil.getSession();
 		Query query = session.createQuery(select);
 		return query.list();
@@ -65,16 +74,19 @@ public class FeeCheckingPrinter implements ICollectionProvider {
 						"WHERE customer.id = rBank.registry.id " +
 						"AND customer.id = rPayMethod.registry.id " +
 						"AND rPayMethod.payment.type <> " + PayMethodType.NEGOTIABLE_DOCUMENT.ordinal() + " " +
-						"ORDER BY customer.registry.surname, " +
-								 "customer.registry.name";
+						obtainPrintCondition() +
+						"ORDER BY customer.registry.surname, customer.registry.name";
 		Session session = HibernateUtil.getSession();
 		Query query = session.createQuery(select);
 		return query.list();
 	}
-	
-	@Override
-	@SuppressWarnings("unchecked")
-	public Collection getCollection(boolean forceRefresh) throws ManagerBeanException {
-		return getCollection();
+
+	private String obtainPrintCondition() { 
+		FinancePrinter printer = (FinancePrinter)AonUtil.getController(FINANCE_PRINTER_CONTROLLER);
+		String condition = "";
+		if (printer.getCustomerStatus() != null) {
+			condition += "AND customer.status = " + printer.getCustomerStatus().ordinal() + " ";
+		}
+		return condition;
 	}
 }
