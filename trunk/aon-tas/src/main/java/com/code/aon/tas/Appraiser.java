@@ -13,11 +13,12 @@ import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 
 import com.code.aon.common.ITransferObject;
+import com.code.aon.registry.IRegistry;
 import com.code.aon.registry.Registry;
 
 @Entity
 @Table(name="appraiser")
-public class Appraiser implements ITransferObject {
+public class Appraiser implements ITransferObject, IRegistry {
 
 	/** The id. */
 	private Integer id;
