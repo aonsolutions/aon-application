@@ -7,6 +7,7 @@ import java.util.List;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import com.code.aon.jaas.auth.util.Util;
 import com.code.aon.jaas.client.ast.IApplication;
 import com.code.aon.jaas.client.ast.IDomain;
 import com.code.aon.jaas.client.ast.INodeVisitor;
@@ -34,6 +35,19 @@ public class Application implements IApplication, ILdapConstants, ILdapSecurityC
     /** Application context. */
     private String context;
 	
+    /** 
+     * Hash algorithm used to password generation. Default null.
+     * SHA-1 (Secure Hash Algorithm 1) is slower than MD5, but the message digest is larger, 
+     * which makes it more resistant to brute force attacks. Therefore, it is recommended 
+     * that Secure Hash Algorithm is preferred to MD5 for all of your digest needs. Note, 
+     * SHA-1 now has even higher strength brothers, SHA-256, SHA-384, and SHA-512 for 256, 
+     * 384 and 512-bit digests respectively.
+     */
+	private String hashAlgorithm;
+
+    /** Hash encoding format. Default BASE64. */
+	private String hashEncoding = Util.BASE64_ENCODING;
+    
 	private SecurityLdap ldap;
 	
 	public Application(SecurityLdap ldap) {
@@ -61,6 +75,14 @@ public class Application implements IApplication, ILdapConstants, ILdapSecurityC
 	public void setContext(String context) {
 		this.context = context;
 	}
+	
+	public void setHashAlgorithm(String hashAlgorithm) {
+		this.hashAlgorithm = hashAlgorithm;
+	}
+
+	public void setHashEncoding(String hashEncoding) {
+		this.hashEncoding = hashEncoding;
+	}
 
 	@Override
 	public String getContext() {
@@ -79,12 +101,12 @@ public class Application implements IApplication, ILdapConstants, ILdapSecurityC
 
 	@Override
 	public String getHashAlgorithm() {
-		throw new UnsupportedOperationException("Not supported!");
+		return this.hashAlgorithm;
 	}
 
 	@Override
 	public String getHashEncoding() {
-		throw new UnsupportedOperationException("Not supported!");
+		return this.hashEncoding;
 	}
 
 	@Override

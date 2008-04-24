@@ -17,6 +17,7 @@ import org.apache.commons.logging.LogFactory;
 import org.jboss.system.ServiceMBeanSupport;
 
 import com.code.aon.jaas.auth.AuthPrincipal;
+import com.code.aon.jaas.auth.IConstants;
 import com.code.aon.jaas.client.ast.IApplication;
 import com.code.aon.jaas.client.ast.IDomain;
 import com.code.aon.jaas.client.ast.IDomainApplication;
@@ -47,6 +48,8 @@ public class JBossLdap extends ServiceMBeanSupport implements JBossLdapMBean, IL
 	private Map<String, IOption> options;
 	
 	private SecurityLdap ldap;
+	
+	private Properties ldapProperties;
 
 	protected void startService() throws Exception {
 		super.startService();
@@ -55,7 +58,7 @@ public class JBossLdap extends ServiceMBeanSupport implements JBossLdapMBean, IL
 			(URL) server.invoke(oname, "getConfigResource", new Object[] { null }, new String[] { String.class.getName() });
 		ApplicationsStorage as = (ApplicationsStorage) AstLoader.getInstance().parse( 0, config.openStream() );
 		this.options = as.options();
-		Properties ldapProperties = new Properties();
+		ldapProperties = new Properties();
 		for( IOption option : options.values() ) {
 			if ( option.getName().startsWith("java.naming") ) {
 				ldapProperties.put( option.getName(), option.getValue() );
@@ -67,6 +70,15 @@ public class JBossLdap extends ServiceMBeanSupport implements JBossLdapMBean, IL
 	protected void stopService() throws Exception {
 		super.stopService();
 	}
+	
+	private void updateApplication( Application application ) {
+    	if ( options.get( IConstants.ALGORITHM ) != null ){
+    		application.setHashAlgorithm( options.get( IConstants.ALGORITHM ).getValue() );
+    	}
+    	if ( options.get( IConstants.ENCODING ) != null ) {
+    		application.setHashEncoding( options.get( IConstants.ENCODING ).getValue() );
+    	}
+	}
 
 	public Map<String, IOption> getOptions() {
 		return options;
@@ -74,6 +86,10 @@ public class JBossLdap extends ServiceMBeanSupport implements JBossLdapMBean, IL
 
 	public SecurityLdap getSecurityLdap() {
 		return ldap;
+	}
+
+	public Properties getLdapProperties() {
+		return this.ldapProperties;
 	}
 	
 	public Properties getDSMDProperties(Principal principal) {
@@ -91,7 +107,9 @@ public class JBossLdap extends ServiceMBeanSupport implements JBossLdapMBean, IL
 		if ( LOGGER.isDebugEnabled() ) {
 			LOGGER.debug("Retrieving application for: CONTEXT[" + ctx + "]");
 		}
-		return this.ldap.getApplication4Ctx(ctx);
+		Application application = this.ldap.getApplication4Ctx(ctx);
+		updateApplication(application);
+		return application;
 	}
 	
 	public IDomain getDomain(String appContext, String domainId) {
@@ -116,7 +134,9 @@ public class JBossLdap extends ServiceMBeanSupport implements JBossLdapMBean, IL
 		if ( LOGGER.isDebugEnabled() ) {
 			LOGGER.debug("Retrieving application for: NAME[" + name + "]" );
 		}
-		return Application.get(this.ldap, name);   
+		Application application = Application.get(this.ldap, name);
+		updateApplication(application);
+		return application;
 	}
 
 	public IRelation removeProfile(String appId, String domainId, IRelation relation) throws StorageException {
@@ -167,6 +187,18 @@ public class JBossLdap extends ServiceMBeanSupport implements JBossLdapMBean, IL
 			this.ldap.deleteAttribute(dn, MEMBER_ATTRIBUTE);
 		}
 		return relation;
+	}
+
+	public IUser updateUser(String appId, String domainId, IUser user, String oldUserId) throws StorageException {
+		if ( LOGGER.isDebugEnabled() ) {
+			LOGGER.debug("Updating IUser " + user.getId() + " for: DOMAIN[" + domainId + "], APPLICATION[" + appId + "]" );
+		}
+		String algorithm = null;
+		if ( options.get( IConstants.ALGORITHM ) != null ){
+    		algorithm = options.get( IConstants.ALGORITHM ).getValue();
+    	}
+		this.ldap.updateUser( algorithm, domainId, user, oldUserId );
+		return user;
 	}
 	
 }

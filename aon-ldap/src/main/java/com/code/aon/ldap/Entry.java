@@ -38,11 +38,14 @@ public class Entry implements ILdapConstants {
 	public boolean containsKey( String key) {
 		return this.values.containsKey(key);
 	}
-	
-	public void addObjectClass( String objectClass, String ... objectClassList ) {
+
+	public void addObjectClass( String objectClass ) {
 		put( OBJECT_CLASS_ATTRIBUTE, objectClass );
-		for( String name : objectClassList ) {
-			put( OBJECT_CLASS_ATTRIBUTE, name );
+	}
+	
+	public void addObjectClasses( String[] objectClasses ) {
+		for( String objectClass : objectClasses ) {
+			addObjectClass( objectClass );
 		}
 	}
 	

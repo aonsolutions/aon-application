@@ -56,8 +56,8 @@ public class Application implements IApplication {
      */
 	protected String hashAlgorithm = null;
 
-    /** Hash encoding format. Default BASE64. */
-	protected String hashEncoding = Util.BASE64_ENCODING;
+    /** Hash encoding format. */
+	protected String hashEncoding;
 
     /** Application roles with its access and execution permissions. */
     private Map<String, IRole> roles = new LinkedHashMap<String, IRole>();

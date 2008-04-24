@@ -92,6 +92,22 @@ public class LdapSession implements ILdapConstants {
 		return dc;
 	}
 
+	public static String getObjectClass( String objectClass ) {
+		return "(" + OBJECT_CLASS_ATTRIBUTE + "=" + objectClass +  ")";
+	}
+
+	public static String getCommonName( String cn ) {
+		return "(" + getCN(cn) +  ")";
+	}
+
+	public static String getUserId( String uid ) {
+		return USER_ID_ATTRIBUTE + "=" + uid;
+	}
+	
+	public static String getCN( String cn ) {
+		return COMMON_NAME_ATTRIBUTE + "=" + cn;
+	}
+	
 	private Object convertValue(Object value, DirContext syntax)
 			throws NamingException {
 		Object result = value;

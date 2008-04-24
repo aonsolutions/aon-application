@@ -30,6 +30,8 @@ public interface JBossLdapMBean extends org.jboss.system.ServiceMBean {
 	
 	Properties getDSMDProperties(Principal principal);
 	
+	Properties getLdapProperties();
+	
 	IApplication getApplication4Ctx(String ctx);	
 	
 	IDomain getDomain(String appContext, String domainId);
@@ -45,5 +47,7 @@ public interface JBossLdapMBean extends org.jboss.system.ServiceMBean {
 	IRelation updateRelation(String appId, String domainId, IRelation relation) throws StorageException;
 	
 	IRelation removeRelation(String appId, String domainId, IRelation relation) throws StorageException;
+	
+	IUser updateUser(String appId, String domainId, IUser user, String oldUserId) throws StorageException;
 	
 }

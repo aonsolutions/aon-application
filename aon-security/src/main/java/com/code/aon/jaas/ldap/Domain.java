@@ -125,7 +125,7 @@ public class Domain implements IDomain, ILdapConstants, ILdapSecurityConstants {
 	}
 	
 	public static DistinguishedName getDN( String domainName ) {
-		return new DistinguishedName( SecurityLdap.getCN(domainName), DOMAINS_DN );
+		return new DistinguishedName( LdapSession.getCN(domainName), DOMAINS_DN );
 	}
 	
 	private static Domain getObject( SecurityLdap ldap, Entry entry ) {
@@ -139,7 +139,7 @@ public class Domain implements IDomain, ILdapConstants, ILdapSecurityConstants {
 		Domain domain = null;
 		try {
 			session = ldap.getLdapSession();
-			String objectClass = SecurityLdap.getObjectClass(OBJECT_CLASS);
+			String objectClass = LdapSession.getObjectClass(OBJECT_CLASS);
 			DistinguishedName dn = getDN(domainId);
 			Entry entry = session.get( dn.toString(), objectClass );
 			domain = getObject(ldap, entry);
@@ -166,7 +166,7 @@ public class Domain implements IDomain, ILdapConstants, ILdapSecurityConstants {
 		IAccessPolicy accessPolicy = null;
 		try {
 			session = ldap.getLdapSession();
-			String objectClass = SecurityLdap.getObjectClass(ACCESS_POLICY_OBJECT_CLASS);
+			String objectClass = LdapSession.getObjectClass(ACCESS_POLICY_OBJECT_CLASS);
 			DistinguishedName dn = getDN(domainName);
 			Entry entry = session.searchOne( dn.toString(), objectClass );
 			if ( entry != null ) {
@@ -185,7 +185,7 @@ public class Domain implements IDomain, ILdapConstants, ILdapSecurityConstants {
 		List<IDomainApplication> applications = new ArrayList<IDomainApplication>();
 		try {
 			session = this.ldap.getLdapSession();
-			String objectClass = SecurityLdap.getObjectClass(DOMAIN_APPLICATION_OBJECT_CLASS);
+			String objectClass = LdapSession.getObjectClass(DOMAIN_APPLICATION_OBJECT_CLASS);
 			DistinguishedName dn = DomainApplication.getParentDN(domainName);
 			List<Entry> list = session.search(dn.toString(), objectClass );
 			for( Entry entry : list ) {

@@ -48,9 +48,7 @@ public class AuthInfo implements IAuthInfo, ILdapConstants, ILdapSecurityConstan
 			throws AuthenticationLoginException {
 		Entry user = ldap.getUser(domainName, name);
 		if ( user != null ) {
-			byte[] password = user.getAsByteArray(USER_PASSWORD_ATTRIBUTE);
-			int offset = ArrayUtils.indexOf( password, (byte) '}' ) + 1;
-			return new String( password, offset, password.length-offset );
+			return ldap.getUser(user).getPasswd();
 		}
 		return null;
 	}
