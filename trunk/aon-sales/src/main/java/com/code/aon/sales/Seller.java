@@ -12,6 +12,7 @@ import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 
 import com.code.aon.common.ITransferObject;
+import com.code.aon.registry.IRegistry;
 import com.code.aon.registry.Registry;
 
 // TODO: Auto-generated Javadoc
@@ -23,7 +24,7 @@ import com.code.aon.registry.Registry;
  */
 @Entity
 @Table(name="seller")
-public class Seller implements ITransferObject {
+public class Seller implements ITransferObject, IRegistry {
 
 	/** The id. */
 	private Integer id;
