@@ -18,6 +18,7 @@ import com.code.aon.common.ITransferObject;
 import com.code.aon.config.IScopable;
 import com.code.aon.config.Scope;
 import com.code.aon.finance.enumeration.CreditorStatus;
+import com.code.aon.registry.IRegistry;
 import com.code.aon.registry.Registry;
 
 /**
@@ -25,7 +26,7 @@ import com.code.aon.registry.Registry;
  */
 @Entity
 @Table(name="creditor")
-public class Creditor implements ITransferObject, IScopable {
+public class Creditor implements ITransferObject, IScopable, IRegistry {
 	
 	/** The id. */
 	private Integer id;
