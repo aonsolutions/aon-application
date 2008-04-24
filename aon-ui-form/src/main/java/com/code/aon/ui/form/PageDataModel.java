@@ -1,5 +1,9 @@
 package com.code.aon.ui.form;
 
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
 import java.util.Collections;
 import java.util.List;
 import java.util.logging.Logger;
@@ -18,7 +22,9 @@ import com.code.aon.common.ManagerBeanException;
  * @since 1.0
  *
  */
-public class PageDataModel extends DataModel {
+public class PageDataModel extends DataModel implements Serializable {
+
+	private static final long serialVersionUID = 8811317880674890755L;
 
 	/** Obtains a suitable Logger. */
 	private static final Logger LOGGER = Logger
@@ -49,6 +55,9 @@ public class PageDataModel extends DataModel {
 	    */
 	private PageDataModel(IDataModelDataProvider dataProvider, List<ITransferObject> list, int size, int limit ) {
     	this.dataProvider = dataProvider;
+    	if (limit == -1 ) {
+    		limit = Integer.MAX_VALUE;
+    	}
     	this.limit = limit;
     	this.page = new Page(list, 0);
     	setWrappedData(list);
@@ -247,5 +256,16 @@ public class PageDataModel extends DataModel {
 			LOGGER.fine("Error happened while Page loading[" + e.getMessage() + "] Empty Page will be return.");
 			return Page.EMPTY_PAGE;
 		}
+	}
+
+	   
+	private void writeObject(ObjectOutputStream oos) throws IOException {
+		oos.writeObject( getWrappedData() );
+		oos.writeInt( getRowIndex() );
+	}
+
+	private void readObject(ObjectInputStream ois) throws IOException, ClassNotFoundException{
+		this.setWrappedData( ois.readObject() );
+		this.setRowIndex( ois.readInt() );
 	}
 }
