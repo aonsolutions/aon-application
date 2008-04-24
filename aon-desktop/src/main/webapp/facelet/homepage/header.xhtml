@@ -34,14 +34,14 @@
 				<aon:div>					
 					<aon:div styleClass="aon-nowrap">
 						<aon:outputText value="#{desktop.companyName}" />						
-						<aon:outputText value="/" styleClass="padding-left"/>						
+						<aon:outputText value="/" styleClass="padding-left"/>																				
 						<aon:form>
 							<h:commandLink
-								actionListener="#{currentUser.onLoadCurrentUser}"
+								actionListener="#{currentUser.onLoadCurrentUser}" styleClass="aon-icon aon-icon-user-change-password"
 								action="user_changepassword_form">								
-								<aon:outputText value="#{desktop.loggedUserName}" styleClass="aon-bold padding-left"/>
+								<aon:outputText value="#{desktop.loggedUserName}" styleClass="aon-bold"/>											
 							</h:commandLink>
-						</aon:form>							
+						</aon:form>		
 					</aon:div>					
 				</aon:div>
 			</aon:div>
