@@ -5,10 +5,10 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Properties;
 
+import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import com.code.aon.jaas.client.ast.IApplication;
 import com.code.aon.jaas.client.ast.IDataSourceMetaData;
 import com.code.aon.jaas.client.ast.IRelation;
 import com.code.aon.jaas.client.ast.IRole;
@@ -51,22 +51,6 @@ public class SecurityLdap implements ILdapConstants, ILdapSecurityConstants {
 		}
 	}
 	
-	public static String getObjectClass( String objectClass ) {
-		return "(" + OBJECT_CLASS_ATTRIBUTE + "=" + objectClass +  ")";
-	}
-
-	public static String getCommonName( String cn ) {
-		return "(" + getCN(cn) +  ")";
-	}
-
-	public static String getUserId( String uid ) {
-		return USER_ID_ATTRIBUTE + "=" + uid;
-	}
-	
-	public static String getCN( String cn ) {
-		return COMMON_NAME_ATTRIBUTE + "=" + cn;
-	}
-	
 	private static String getAndExpression( String expression1, String expression2 ) {
 		return "(&" + expression1 + expression2 + ")";
 	}
@@ -76,7 +60,7 @@ public class SecurityLdap implements ILdapConstants, ILdapSecurityConstants {
 	}
 
 	public static DistinguishedName getDomainApplicationUserDN( String domainName, String application, String user ) {
-		return new DistinguishedName( getCN(user), getDomainApplicationUsersDN(domainName, application) );
+		return new DistinguishedName( LdapSession.getCN(user), getDomainApplicationUsersDN(domainName, application) );
 	}
 	
 	private static DistinguishedName getUsersDN( String domainName ) {
@@ -84,7 +68,7 @@ public class SecurityLdap implements ILdapConstants, ILdapSecurityConstants {
 	}
 
 	private static DistinguishedName getUserDN( String domainName, String user ) {
-		return new DistinguishedName( getUserId(user), getUsersDN(domainName) );
+		return new DistinguishedName( LdapSession.getUserId(user), getUsersDN(domainName) );
 	}
 	
 	public static DistinguishedName getDomainApplicationProfilesDN( String domainName, String application ) {
@@ -92,7 +76,7 @@ public class SecurityLdap implements ILdapConstants, ILdapSecurityConstants {
 	}
 
 	public static DistinguishedName getDomainApplicationProfileDN( String domainName, String application, String profile ) {
-		return new DistinguishedName( getCN(profile), getDomainApplicationProfilesDN(domainName, application) );
+		return new DistinguishedName( LdapSession.getCN(profile), getDomainApplicationProfilesDN(domainName, application) );
 	}
 	
 	public static DistinguishedName getApplicationProfilesDN( String application ) {
@@ -100,7 +84,7 @@ public class SecurityLdap implements ILdapConstants, ILdapSecurityConstants {
 	}
 
 	public static DistinguishedName getApplicationProfileDN( String application, String profile ) {
-		return new DistinguishedName( getCN(profile), getApplicationProfilesDN(application) );
+		return new DistinguishedName( LdapSession.getCN(profile), getApplicationProfilesDN(application) );
 	}
 	
 	public static DistinguishedName getRolesDN( String application ) {
@@ -108,7 +92,7 @@ public class SecurityLdap implements ILdapConstants, ILdapSecurityConstants {
 	}
 
 	public static DistinguishedName getRoleDN( String application, String role ) {
-		return new DistinguishedName( getCN(role), getRolesDN(application) );
+		return new DistinguishedName( LdapSession.getCN(role), getRolesDN(application) );
 	}
 	
 	public IRelation getProfile( Entry entry ) {
@@ -166,7 +150,7 @@ public class SecurityLdap implements ILdapConstants, ILdapSecurityConstants {
 		Entry entry = null;
 		try {
 			session = getLdapSession();
-			String objectClass = getObjectClass(USER_OBJECT_CLASS);
+			String objectClass = LdapSession.getObjectClass(USER_OBJECT_CLASS);
 			DistinguishedName dn = getUserDN(domainName, user);
 			entry = session.get( dn.toString(), objectClass );
 		} catch ( LdapException e ) {
@@ -182,7 +166,7 @@ public class SecurityLdap implements ILdapConstants, ILdapSecurityConstants {
 		Entry entry = null;
 		try {
 			session = getLdapSession();
-			String objectClass = getObjectClass(DOMAIN_APPLICATION_USER_OBJECT_CLASS);
+			String objectClass = LdapSession.getObjectClass(DOMAIN_APPLICATION_USER_OBJECT_CLASS);
 			DistinguishedName dn = getDomainApplicationUserDN(domainName, application, user);
 			entry = session.get( dn.toString(), objectClass );
 		} catch ( LdapException e ) {
@@ -228,7 +212,7 @@ public class SecurityLdap implements ILdapConstants, ILdapSecurityConstants {
 		boolean exists = false;
 		try {
 			session = getLdapSession();
-			exists = session.exists( dn.toString(), getObjectClass(objectClass) );
+			exists = session.exists( dn.toString(), LdapSession.getObjectClass(objectClass) );
 		} catch ( LdapException e ) {
 			LOGGER.error( e.getMessage(), e );
 		} finally {
@@ -242,7 +226,7 @@ public class SecurityLdap implements ILdapConstants, ILdapSecurityConstants {
 		Entry entry = null;
 		try {
 			session = getLdapSession();
-			String objectClass = getObjectClass(PROFILE_OBJECT_CLASS);
+			String objectClass = LdapSession.getObjectClass(PROFILE_OBJECT_CLASS);
 			DistinguishedName dn = getApplicationProfileDN(application, profileName);
 			entry = session.get( dn.toString(), objectClass );
 		} catch ( LdapException e ) {
@@ -258,7 +242,7 @@ public class SecurityLdap implements ILdapConstants, ILdapSecurityConstants {
 		Entry entry = null;
 		try {
 			session = getLdapSession();
-			String objectClass = getObjectClass(DOMAIN_APPLICATION_PROFILE_OBJECT_CLASS);
+			String objectClass = LdapSession.getObjectClass(DOMAIN_APPLICATION_PROFILE_OBJECT_CLASS);
 			DistinguishedName dn = getDomainApplicationProfileDN(domainName, application, profileName);
 			entry = session.get( dn.toString(), objectClass );
 		} catch ( LdapException e ) {
@@ -293,7 +277,8 @@ public class SecurityLdap implements ILdapConstants, ILdapSecurityConstants {
 	public Entry getDomainApplicationProfile( LdapSession session, IRelation relation, DistinguishedName dn ) {
 		Entry entry = new Entry(dn.toString());
 		String appId = dn.getLevelValue(2);
-		entry.addObjectClass("top", "groupOfNames", "aonProfile", "aonDomainApplicationProfile");
+		String[] objectClasses = new String[] {"top", "groupOfNames", "aonProfile", "aonDomainApplicationProfile"};
+		entry.addObjectClasses( objectClasses );
 		for( String role : relation.relations() ) {
 			DistinguishedName member = session.getFullDN( getRoleDN(appId, role) );
 			entry.put( MEMBER_ATTRIBUTE, member.toString() );
@@ -307,12 +292,13 @@ public class SecurityLdap implements ILdapConstants, ILdapSecurityConstants {
 		return role;
 	}
 	
-	public IUser getUser( Entry entry ) {
+	public User getUser( Entry entry ) {
 		User user = new User();
 		user.setId(entry.getAsString(USER_ID_ATTRIBUTE));
 		user.setName(entry.getAsString(COMMON_NAME_ATTRIBUTE));
 		byte[] password = entry.getAsByteArray(USER_PASSWORD_ATTRIBUTE);		
-		user.setPasswd(new String(password));
+		int offset = ArrayUtils.indexOf( password, (byte) '}' ) + 1;
+		user.setPasswd( new String(password, offset, password.length-offset) );
 		if ( entry.containsKey(DESCRIPTION_ATTRIBUTE) ) {
 			user.setDescription(entry.getAsString(DESCRIPTION_ATTRIBUTE));			
 		}
@@ -329,11 +315,11 @@ public class SecurityLdap implements ILdapConstants, ILdapSecurityConstants {
 		return dataSource;
 	}
 	
-	public IApplication getApplication4Ctx( String context ) {
+	public Application getApplication4Ctx( String context ) {
 		String applicationId = getApplicationId(context);
-		IApplication application = Application.get(this, applicationId);
+		Application application = Application.get(this, applicationId);
 		if ( application != null ) {
-			((Application) application).setContext(context);
+			application.setContext(context);
 		}
 		return application;
 	}
@@ -362,8 +348,8 @@ public class SecurityLdap implements ILdapConstants, ILdapSecurityConstants {
 		List<String> applications = new ArrayList<String>();
 		try {
 			session = getLdapSession();
-			String objectClass = getObjectClass(DOMAIN_APPLICATION_USER_OBJECT_CLASS);
-			String cn = getCommonName(userId);
+			String objectClass = LdapSession.getObjectClass(DOMAIN_APPLICATION_USER_OBJECT_CLASS);
+			String cn = LdapSession.getCommonName(userId);
 			DistinguishedName dn = DomainApplication.getParentDN(domainId);
 			List<Entry> list = session.search( dn.toString(), getAndExpression(objectClass, cn), Scope.SUBTREE_SCOPE, COMMON_NAME_ATTRIBUTE);
 			for( Entry entry : list ) {
@@ -378,4 +364,26 @@ public class SecurityLdap implements ILdapConstants, ILdapSecurityConstants {
 		return applications;
 	}	
 
+	public void updateUser( String algorithm, String domainId, IUser user, String oldUserId ) {
+		LdapSession session = null;		
+		try {
+			session = getLdapSession();
+			DistinguishedName dn = getUserDN(domainId, user.getId());
+			session.replaceAttribute(dn, DESCRIPTION_ATTRIBUTE, user.getDescription());
+			String password = user.getPasswd();
+			if ( algorithm != null ) {
+				password = "{" + algorithm + "}" + password;
+			}
+			session.replaceAttribute(dn, USER_PASSWORD_ATTRIBUTE, password);
+			if ( (oldUserId != null) && (! user.getId().equals(oldUserId)) ) {
+				DistinguishedName newDN = getUserDN(domainId, user.getId());
+				session.rename(dn.toString(), newDN.toString());
+			}
+		} catch ( LdapException e ) {
+			LOGGER.error( e.getMessage(), e );
+		} finally {
+			closeSession(session);
+		}
+	}
+	
 }

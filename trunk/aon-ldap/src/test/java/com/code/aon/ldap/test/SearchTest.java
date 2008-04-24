@@ -81,7 +81,7 @@ public class SearchTest {
     public void testCycle() {
 		try {
 			Entry entry = new Entry("cn=deletable.es,ou=domains");
-			entry.addObjectClass("top", "aonDomain");
+			entry.addObjectClasses( new String[]{"top", "aonDomain"} );
 			entry.put( "host", "127.0.0.1" );
 			session.add(entry);
 			String newDN = "cn=borrable.es,ou=domains";
@@ -96,7 +96,7 @@ public class SearchTest {
     public void testAttributes() {
 		try {
 			Entry entry = new Entry("uid=deletable,ou=users,cn=localhost,ou=domains");
-			entry.addObjectClass("top", "person", "aonUser", "posixAccount");
+			entry.addObjectClasses(new String[]{"top", "person", "aonUser", "posixAccount"});
 			entry.put( ILdapConstants.COMMON_NAME_ATTRIBUTE, "Deletable" );
 			entry.put( ILdapConstants.SURNAME_ATTRIBUTE, "Deletable" );
 			entry.put( "homeDirectory", "/home/deletable" );

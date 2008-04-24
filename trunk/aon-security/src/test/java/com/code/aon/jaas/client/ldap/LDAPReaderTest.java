@@ -1,5 +1,7 @@
 package com.code.aon.jaas.client.ldap;
 
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.List;
 import java.util.Properties;
 
@@ -15,6 +17,9 @@ import org.junit.Ignore;
 import org.junit.Test;
 
 import com.code.aon.jaas.auth.session.AuthenticationLoginException;
+import com.code.aon.jaas.auth.util.Util;
+import com.code.aon.jaas.client.ast.IUser;
+import com.code.aon.jaas.client.ast.core.User;
 import com.code.aon.jaas.ldap.AuthInfo;
 import com.code.aon.jaas.ldap.SecurityLdap;
 import com.code.aon.ldap.Entry;
@@ -63,15 +68,16 @@ public class LDAPReaderTest {
 		LOGGER.info( "Applications: " + applications );
     }
 
-	@Ignore
-    public void testPassword() throws AuthenticationLoginException {
-		Entry user = ldap.getUser("localhost", "atellitu");
-		Assert.assertNotNull( user );
-		byte[] password = user.getAsByteArray("userPassword");
-		LOGGER.info( "User password String: " + new String(password) );
-		AuthInfo authInfo = new AuthInfo(ldap);
-		String pass = authInfo.getUserPassword("localhost", "atellitu");
-		LOGGER.info( "User password String: " + pass );
+	@Test
+    public void changePassword() throws AuthenticationLoginException, NoSuchAlgorithmException {
+		Entry entry = ldap.getUser("localhost", "atellitu");
+		Assert.assertNotNull( entry );
+		User user = ldap.getUser(entry);
+		String newPassword = "at111276";
+        byte[] hash = MessageDigest.getInstance("SHA").digest(newPassword.getBytes());
+        String passwordHash = Util.encodeBase64(hash);		
+        user.setPasswd( passwordHash );
+		ldap.updateUser( "SHA", "localhost", user, null);
 	}
 	
 	public static junit.framework.Test suite() {

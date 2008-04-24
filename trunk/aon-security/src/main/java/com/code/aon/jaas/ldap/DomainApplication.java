@@ -119,7 +119,7 @@ public class DomainApplication implements IDomainApplication, ILdapConstants, IL
 	}
 	
 	public static DistinguishedName getDN( String domainName, String application ) {
-		return new DistinguishedName( SecurityLdap.getCN(application), getParentDN(domainName) );
+		return new DistinguishedName( LdapSession.getCN(application), getParentDN(domainName) );
 	}
 		
 	public static DomainApplication getObject( SecurityLdap ldap, Entry entry, String domain ) {
@@ -134,7 +134,7 @@ public class DomainApplication implements IDomainApplication, ILdapConstants, IL
 		IDomainApplication domainApplication = null;
 		try {
 			session = ldap.getLdapSession();
-			String objectClass = SecurityLdap.getObjectClass(DOMAIN_APPLICATION_OBJECT_CLASS);
+			String objectClass = LdapSession.getObjectClass(DOMAIN_APPLICATION_OBJECT_CLASS);
 			DistinguishedName dn = getDN(domainName, application);
 			Entry entry = session.get( dn.toString(), objectClass );
 			if ( entry != null ) {
@@ -153,7 +153,7 @@ public class DomainApplication implements IDomainApplication, ILdapConstants, IL
 		IDataSourceMetaData dsmd = null;
 		try {
 			session = this.ldap.getLdapSession();
-			String objectClass = this.ldap.getObjectClass(DB_CONNECTION_OBJECT_CLASS);
+			String objectClass = LdapSession.getObjectClass(DB_CONNECTION_OBJECT_CLASS);
 			Entry entry = session.get( dn, objectClass );
 			if ( entry != null ) {
 				dsmd = this.ldap.getDataSourceMetaData(entry);
@@ -171,8 +171,8 @@ public class DomainApplication implements IDomainApplication, ILdapConstants, IL
 		List<IRelation> profiles = new ArrayList<IRelation>();
 		try {
 			session = this.ldap.getLdapSession();
-			String objectClass = this.ldap.getObjectClass(PROFILE_OBJECT_CLASS);
-			DistinguishedName dn = this.ldap.getApplicationProfilesDN(application);
+			String objectClass = LdapSession.getObjectClass(PROFILE_OBJECT_CLASS);
+			DistinguishedName dn = SecurityLdap.getApplicationProfilesDN(application);
 			List<Entry> list = session.search(dn.toString(), objectClass );
 			for( Entry entry : list ) {
 				IRelation profile = this.ldap.getRelation(entry);
@@ -191,8 +191,8 @@ public class DomainApplication implements IDomainApplication, ILdapConstants, IL
 		List<IRelation> profiles = new ArrayList<IRelation>();
 		try {
 			session = this.ldap.getLdapSession();
-			String objectClass = this.ldap.getObjectClass(DOMAIN_APPLICATION_PROFILE_OBJECT_CLASS);
-			DistinguishedName dn = this.ldap.getDomainApplicationProfilesDN(domainId, application);
+			String objectClass = LdapSession.getObjectClass(DOMAIN_APPLICATION_PROFILE_OBJECT_CLASS);
+			DistinguishedName dn = SecurityLdap.getDomainApplicationProfilesDN(domainId, application);
 			List<Entry> list = session.search(dn.toString(), objectClass );
 			for( Entry entry : list ) {
 				IRelation profile = this.ldap.getRelation(entry);
@@ -211,8 +211,8 @@ public class DomainApplication implements IDomainApplication, ILdapConstants, IL
 		List<IRelation> users = new ArrayList<IRelation>();
 		try {
 			session = this.ldap.getLdapSession();
-			String objectClass = this.ldap.getObjectClass(DOMAIN_APPLICATION_USER_OBJECT_CLASS);
-			DistinguishedName dn = this.ldap.getDomainApplicationUsersDN(domainName, application);
+			String objectClass = LdapSession.getObjectClass(DOMAIN_APPLICATION_USER_OBJECT_CLASS);
+			DistinguishedName dn = SecurityLdap.getDomainApplicationUsersDN(domainName, application);
 			List<Entry> list = session.search(dn.toString(), objectClass );
 			for( Entry entry : list ) {
 				IRelation user = this.ldap.getRelation(entry);
@@ -230,7 +230,7 @@ public class DomainApplication implements IDomainApplication, ILdapConstants, IL
 		LdapSession session = null;
 		try {
 			session = this.ldap.getLdapSession();
-			String objectClass = SecurityLdap.getObjectClass(DOMAIN_APPLICATION_PROFILE_OBJECT_CLASS);
+			String objectClass = LdapSession.getObjectClass(DOMAIN_APPLICATION_PROFILE_OBJECT_CLASS);
 			DistinguishedName dn = SecurityLdap.getDomainApplicationProfileDN(domainId, appId, relation.getId());
 			if ( session.exists(dn.toString(), objectClass) ) {
 				ldap.updateRelation(dn, relation);
