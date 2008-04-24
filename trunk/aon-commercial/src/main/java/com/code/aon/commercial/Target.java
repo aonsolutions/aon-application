@@ -19,6 +19,7 @@ import org.hibernate.annotations.Parameter;
 import com.code.aon.commercial.dao.ICommercialAlias;
 import com.code.aon.common.ILookupObject;
 import com.code.aon.common.ITransferObject;
+import com.code.aon.registry.IRegistry;
 import com.code.aon.registry.ITaxInfo;
 import com.code.aon.registry.Registry;
 
@@ -30,7 +31,7 @@ import com.code.aon.registry.Registry;
  */
 @Entity
 @Table(name="target")
-public class Target implements ITransferObject, ILookupObject, ITaxInfo{
+public class Target implements ITransferObject, ILookupObject, ITaxInfo, IRegistry{
 	
 	/** The id. */
 	private Integer id;
