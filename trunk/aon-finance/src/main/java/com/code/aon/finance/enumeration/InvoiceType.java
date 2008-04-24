@@ -20,6 +20,7 @@ public enum InvoiceType implements IResourceable {
 	/** EXPENSES. */
 	EXPENSES,
 	
+	/** LEASING. */
 	LEASING;
 
 	/** Message file base path. */
