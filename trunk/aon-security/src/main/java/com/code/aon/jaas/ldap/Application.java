@@ -170,7 +170,7 @@ public class Application implements IApplication, ILdapConstants, ILdapSecurityC
 	}
 
 	public static DistinguishedName getDN( String application ) {
-		return new DistinguishedName( SecurityLdap.getCN(application), APPLICATIONS_DN );
+		return new DistinguishedName( LdapSession.getCN(application), APPLICATIONS_DN );
 	}
 	
 	private static Application getObject( SecurityLdap ldap, Entry entry ) {
@@ -185,7 +185,7 @@ public class Application implements IApplication, ILdapConstants, ILdapSecurityC
 		Application application = null;
 		try {
 			session = ldap.getLdapSession();
-			String objectClass = SecurityLdap.getObjectClass(APPLICATION_OBJECT_CLASS);
+			String objectClass = LdapSession.getObjectClass(APPLICATION_OBJECT_CLASS);
 			DistinguishedName dn = getDN(applicationId);
 			Entry entry = session.get( dn.toString(), objectClass );
 			application = getObject(ldap, entry);
@@ -202,7 +202,7 @@ public class Application implements IApplication, ILdapConstants, ILdapSecurityC
 		List<IRole> roles = new ArrayList<IRole>();
 		try {
 			session = this.ldap.getLdapSession();
-			String objectClass = SecurityLdap.getObjectClass(ROLE_OBJECT_CLASS);
+			String objectClass = LdapSession.getObjectClass(ROLE_OBJECT_CLASS);
 			DistinguishedName dn = this.ldap.getRolesDN(application);
 			List<Entry> list = session.search(dn.toString(), objectClass );
 			for( Entry entry : list ) {

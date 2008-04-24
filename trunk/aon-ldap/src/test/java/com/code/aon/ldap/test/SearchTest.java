@@ -60,7 +60,7 @@ public class SearchTest {
 	@Test
     public void testSearch() {
 		try {
-			List<Entry> list = session.search("cn=aon.code.es,ou=domains","(objectclass=aonAccessPolicy)");
+			List<Entry> list = session.search("cn=code.es,ou=domains","(objectclass=aonAccessPolicy)");
 			Assert.assertFalse( list.isEmpty() );
 		} catch (LdapException e) {
 			Assert.fail( e.getMessage() );
