@@ -3,15 +3,15 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<parent>
-		<artifactId>aon.ui.parent</artifactId>
+		<artifactId>aon.parent</artifactId>
 		<groupId>com.code.aon</groupId>
-		<version>1.0.2</version>
+		<version>1.0.1</version>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.code.aon</groupId>
 	<artifactId>aon.ui.webmail</artifactId>
 	<name>AON UI WEBMAIL</name>
-	<version>3.0.1</version>
+	<version>3.0.2</version>
 	<description>AON UI WEBMAIL</description>
 	<dependencies>
 		<dependency>
@@ -112,5 +112,17 @@
 				</exclusion>
 			</exclusions>
 		</dependency>	
+		<dependency>
+			<groupId>javax.servlet</groupId>
+			<artifactId>servlet-api</artifactId>
+			<version>2.4</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>javax.faces</groupId>
+			<artifactId>jsf-api</artifactId>
+			<version>1.2_02</version>
+			<scope>provided</scope>
+		</dependency>
 	</dependencies>
 </project>
