@@ -6,6 +6,10 @@
 		<project>aon-ui-webmail</project>
 		<project>aon-security-bridge</project>
 		<project>aon-ui-resources</project>
+		<project>aon-rich-components</project>
+		<project>aon-common</project>
+		<project>aon-groupware</project>
+		<project>aon-common-ldap</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>
