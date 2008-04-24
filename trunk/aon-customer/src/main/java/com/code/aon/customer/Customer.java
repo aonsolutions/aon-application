@@ -25,6 +25,7 @@ import com.code.aon.config.Scope;
 import com.code.aon.customer.dao.ICustomerAlias;
 import com.code.aon.customer.enumeration.CustomerStatus;
 import com.code.aon.product.Tariff;
+import com.code.aon.registry.IRegistry;
 import com.code.aon.registry.ITaxInfo;
 import com.code.aon.registry.Registry;
 
@@ -36,7 +37,7 @@ import com.code.aon.registry.Registry;
  */
 @Entity
 @Table(name="customer")
-public class Customer implements ITransferObject, ILookupObject, ITaxInfo, IScopable{
+public class Customer implements ITransferObject, ILookupObject, ITaxInfo, IScopable, IRegistry{
 	
 	/** The Constant SUPPLIER_FULL_NAME used to retrieve the complete name of the supplier using the lookup. */
 	private static final String CUSTOMER_FULL_NAME = "Customer_full_name";
