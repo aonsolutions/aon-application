@@ -23,6 +23,7 @@ import com.code.aon.common.ILookupObject;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.config.IScopable;
 import com.code.aon.config.Scope;
+import com.code.aon.registry.IRegistry;
 import com.code.aon.registry.Registry;
 import com.code.aon.supplier.dao.ISupplierAlias;
 import com.code.aon.supplier.enumeration.SupplierStatus;
@@ -34,7 +35,7 @@ import com.code.aon.supplier.enumeration.SupplierStatus;
 @Entity
 @Table(name="supplier")
 @PrimaryKeyJoinColumn(name="registry")
-public class Supplier implements ITransferObject, ILookupObject, IScopable{
+public class Supplier implements ITransferObject, ILookupObject, IScopable, IRegistry{
 	
 	/** The Constant SUPPLIER_FULL_NAME used to retrieve the complete name of the supplier using the lookup. */
 	private static final String SUPPLIER_FULL_NAME = "Supplier_full_name";
