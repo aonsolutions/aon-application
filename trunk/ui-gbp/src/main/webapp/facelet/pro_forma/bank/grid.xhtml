@@ -8,6 +8,15 @@
 
 <ui:composition>
 
+	<aon:div id="proFormaBankDefault">
+		<aon:div styleClass="aon-toolbar">
+			<h:commandButton id="default_percents" value="#{appBundle.gbp_assign_default_percents}"
+				styleClass="aon-finding-toolbar-item aon-icon-signature"
+				reRender="proFormaSignatureDataTable"
+				actionListener="#{proFormaBank.onDefault}"/>
+		</aon:div>
+	</aon:div>	
+
 	<h:dataTable id="proFormaBankDataTable" value="#{proFormaBank.model}" var="to"
 		rows="20" styleClass="dr-table rich-table aon-editDataTable"
 		headerClass="dr-table-subheader rich-table-subheader aon-editDataTable-header"
@@ -82,7 +91,7 @@
 			</f:facet>
 			<f:verbatim rendered="#{to!=proFormaBank.to}">&#160;</f:verbatim>
 			<aon:div rendered="#{to==proFormaBank.to}">
-				<aon:commandButton id="lineAccept" title="[#{bundle.aon_accept}]"
+				<h:commandButton id="lineAccept" title="[#{bundle.aon_accept}]"
 					styleClass="aon-editDataTable-button aon-icon-accept"
 					reRender="proFormaBankDataTable"
 					actionListener="#{proFormaBank.onAccept}" />
@@ -98,7 +107,7 @@
 			<f:facet name="footer">
 				<aon:div rendered="#{proFormaBank.new}">
 					<f:verbatim rendered="#{!proFormaBank.new}">&#160;</f:verbatim>
-					<aon:commandButton id="newAccept" title="[#{bundle.aon_accept}]"
+					<h:commandButton id="newAccept" title="[#{bundle.aon_accept}]"
 						styleClass="aon-editDataTable-button aon-icon-accept"
 						reRender="proFormaBankDataTable"
 						actionListener="#{proFormaBank.onAccept}" />

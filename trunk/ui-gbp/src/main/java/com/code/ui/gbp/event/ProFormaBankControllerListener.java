@@ -7,6 +7,7 @@ import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
 import com.code.gbp.dao.IGBPAlias;
+import com.code.ui.gbp.controller.ProFormaBankController;
 
 public class ProFormaBankControllerListener extends ControllerAdapter {
 	
@@ -19,6 +20,24 @@ public class ProFormaBankControllerListener extends ControllerAdapter {
 		} catch (ManagerBeanException e) {
 			throw new ControllerListenerException(e);
 		}
+	}
+
+	@Override
+	public void beforeBeanAdded(ControllerEvent event)
+			throws ControllerListenerException {
+		double sum = ((ProFormaBankController)event.getController()).getSumOfPercents();
+        if (sum>100){
+        	throw new ControllerListenerException("Percent sumatory can not be more than 100.");
+        }
+	}
+	
+	@Override
+	public void beforeBeanUpdated(ControllerEvent event)
+			throws ControllerListenerException {
+		double sum = ((ProFormaBankController)event.getController()).getSumOfPercents();
+        if (sum>100){
+        	throw new ControllerListenerException("Percent sumatory can not be more than 100.");
+        }
 	}
 
 }
