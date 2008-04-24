@@ -13,6 +13,8 @@ public class ProFormaReport implements ITransferObject {
 
 	private List<ITransferObject> signatures;
 
+	private List<ITransferObject> banks;
+
 	public ProFormaInvoice getProFormaInvoice() {
 		return proFormaInvoice;
 	}
@@ -37,5 +39,12 @@ public class ProFormaReport implements ITransferObject {
 		this.signatures = signatures;
 	}
 
-	
+	public List<ITransferObject> getBanks() {
+		return banks;
+	}
+
+	public void setBanks(List<ITransferObject> banks) {
+		this.banks = banks;
+	}
+
 }

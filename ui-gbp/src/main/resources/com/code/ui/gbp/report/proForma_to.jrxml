@@ -30,6 +30,7 @@
 	<field name="proFormaInvoice" class="com.code.gbp.ProFormaInvoice"/>
 	<field name="incidences" class="java.util.ArrayList"/>
 	<field name="signatures" class="java.util.ArrayList"/>
+	<field name="banks" class="java.util.ArrayList"/>
 
 		<background>
 			<band height="0"  isSplitAllowed="true" >
@@ -577,6 +578,36 @@
 					</textElement>
 				<textFieldExpression   class="java.lang.String"><![CDATA[""+$F{proFormaInvoice}.getAmount()]]></textFieldExpression>
 				</textField>
+				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						mode="Opaque"
+						x="0"
+						y="349"
+						width="535"
+						height="14"
+						forecolor="#FFFFFF"
+						backcolor="#000000"
+						key="textField-71"
+						positionType="Float"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" leftPadding="5" rightBorder="None" rightBorderColor="#000000" rightPadding="5" bottomBorder="None" bottomBorderColor="#999999"/>
+					<textElement verticalAlignment="Middle">
+						<font size="8"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$R{gbp_pro_forma_banks}]]></textFieldExpression>
+				</textField>
+				<subreport  isUsingCache="true">
+					<reportElement
+						mode="Transparent"
+						x="0"
+						y="363"
+						width="535"
+						height="14"
+						key="subreport-5"
+						positionType="Float"/>
+					<parametersMapExpression><![CDATA[$P{REPORT_PARAMETERS_MAP}]]></parametersMapExpression>
+					<dataSourceExpression><![CDATA[new com.code.aon.report.jr.JRBeanCollectionDataSource($F{banks})]]></dataSourceExpression>
+					<subreportExpression  class="net.sf.jasperreports.engine.JasperReport"><![CDATA[$P{nestedReports}.get("proForma_banks")]]></subreportExpression>
+				</subreport>
 			</band>
 		</detail>
 		<columnFooter>

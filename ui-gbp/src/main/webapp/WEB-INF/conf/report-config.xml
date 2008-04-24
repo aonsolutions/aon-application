@@ -160,6 +160,11 @@
 		</params>
 		<nested-report report="offer_incidences"/>
 		<nested-report report="offer_signatures"/>
+		<nested-report report="proForma_banks"/>
+	</report>
+
+	<report id="proForma_banks" description="proForma_banks">
+		<template path="/com/code/ui/gbp/report/proForma_banks.jasper"/>
 	</report>
 	
 </report-config>
