@@ -82,10 +82,7 @@ public class LdapDAOFactory {
 	 * @return the dAO
 	 */
 	public LdapDAO getDAO( BeanConfig config ) {
-		String domain = "localhost";
-		String baseDN = "ou=users,cn=" + domain + ",ou=domains";
 		LdapDAO dao = new LdapDAO(this.ldapProperties, config.getPojoClass());
-		dao.setBaseDN(baseDN);
 		return dao;
 	}
 

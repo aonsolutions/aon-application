@@ -94,6 +94,7 @@ public class LdapDAO implements IDAO  {
 				if ( method.isAnnotationPresent(DNModifier.class) ) {
 					DNModifier dnModifier = pd.getReadMethod().getAnnotation(DNModifier.class);
 					dnModifiers.add( dnModifier.order(), dnModifier );
+					this.fieldMap.put( preffix+pd.getName()+"_id", pd.getName() );
 				} else if ( method.isAnnotationPresent(RDN.class) ) {
 					Attribute attribute = method.getAnnotation(Attribute.class);
 					this.rdn = getPropertyInfo(attribute, pd.getName());
@@ -253,6 +254,7 @@ public class LdapDAO implements IDAO  {
 
 	public List<ITransferObject> getList(Criteria criteria, int offset,
 			int count) throws DAOException {
+		LOGGER.info( "Criteria: " + criteria + " offfset:" + offset + " count:" + count );
 		// TODO Auto-generated method stub
 		throw new UnsupportedOperationException("Not supported!");
 	}
