@@ -15,6 +15,7 @@ import com.code.aon.ql.Criteria;
 import com.code.aon.ui.form.IController;
 import com.code.aon.ui.util.AonUtil;
 import com.code.gbp.Incidence;
+import com.code.gbp.ProFormaBank;
 import com.code.gbp.ProFormaInvoice;
 import com.code.gbp.ProFormaSignature;
 import com.code.gbp.dao.IGBPAlias;
@@ -37,6 +38,7 @@ public class ProFormaToReport implements ICollectionProvider{
 			list.add(proFormaReport);
 			proFormaReport.setSignatures(obtainList(ProFormaSignature.class, IGBPAlias.PRO_FORMA_SIGNATURE_PRO_FORMA_INVOICE_ID, proForma.getId()));
 			proFormaReport.setIncidences(obtainIncidenceList(proForma.getId()));
+			proFormaReport.setBanks(obtainList(ProFormaBank.class, IGBPAlias.PRO_FORMA_BANK_PRO_FORMA_INVOICE_ID, proForma.getId()));
 		}catch (Exception e) {
 			LOGGER.log(Level.SEVERE, "Error obtaining supplier report", e);
 		}
