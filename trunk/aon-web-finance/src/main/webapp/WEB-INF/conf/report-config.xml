@@ -52,15 +52,15 @@
 		</params>
 		
 		<nested-report report="preInvoicingDetail"/>
-		<nested-report report="taxBreakDown"/>
+		<nested-report report="preInvoicingTaxBreakDown"/>
 	</report>	  
 	
 	<report id="preInvoicingDetail" description="preInvoicing Details">
 		<template path="/com/code/aon/ui/finance/report/preInvoicingDetail.jasper"/>
 	</report>
 	
-	<report id="taxBreakDown" description="taxBreakDown">
-		<template path="/com/code/aon/ui/finance/report/taxBreakDown.jasper"/>
+	<report id="preInvoicingTaxBreakDown" description="preInvoicing TaxBreakDown">
+		<template path="/com/code/aon/ui/finance/report/preInvoicingTaxBreakDown.jasper"/>
 	</report>
 
 	<!--  *********  FeeInvoice  ********* -->
@@ -73,9 +73,12 @@
 			<param id="company" value="#{company.obtainCompany}" />
 			<param id="PriceStrategy" value="#{feeInvoicing.getPriceStrategy}" />
 			<param id="logoImageFile" value="#{company.getAttachAsInputStream}" />
+			<param id="recordData" value="#{company.getCompanyRecordData}" />
 			<param id="phone" value="#{company.obtainPhone}" />
 			<param id="fax" value="#{company.obtainFax}" />
 			<param id="address" value="#{company.obtainAddress}" />
+			<param id="printHeader" value="#{company.isPrintHeader}" />
+			<param id="printRecordData" value="#{company.isPrintRecordData}" />
 		</params>
 		
 		<nested-report report="feeInvoicingDetail"/>
@@ -85,6 +88,10 @@
 	
 	<report id="feeInvoicingDetail" description="feeInvoicing Details">
 		<template path="/com/code/aon/ui/finance/report/feeInvoicingDetail.jasper"/>
+	</report>
+
+	<report id="taxBreakDown" description="taxBreakDown">
+		<template path="/com/code/aon/ui/finance/report/taxBreakDown.jasper"/>
 	</report>
 
 	<report id="feeInvoicingFinances" description="feeInvoicing Finances">
@@ -101,9 +108,12 @@
 			<param id="company" value="#{company.obtainCompany}" />
 			<param id="PriceStrategy" value="#{feeInvoicing.getPriceStrategy}" />
 			<param id="logoImageFile" value="#{company.getAttachAsInputStream}" />
+			<param id="recordData" value="#{company.getCompanyRecordData}" />
 			<param id="phone" value="#{company.obtainPhone}" />
 			<param id="fax" value="#{company.obtainFax}" />
 			<param id="address" value="#{company.obtainAddress}" />
+			<param id="printHeader" value="#{company.isPrintHeader}" />
+			<param id="printRecordData" value="#{company.isPrintRecordData}" />
 		</params>
 		
 		<nested-report report="feeInvoicingDetail"/>
