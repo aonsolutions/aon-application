@@ -536,6 +536,7 @@
 			<property-name>listenerClasses</property-name>
 			<list-entries>
 				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+				<value>#{invoiceRegistryVetoListener}</value>
 				<value>#{customerScopeListener}</value>
 				<value>#{customerControllerListener}</value>
 				<value>#{customerAddressListener}</value>
@@ -1324,6 +1325,7 @@
 			<property-name>listenerClasses</property-name>
 			<list-entries>
 				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+				<value>#{invoiceRegistryVetoListener}</value>
 				<value>#{supplierScopeListener}</value>
 				<value>#{supplierAddressListener}</value>
 				<value>#{supplierMediaListener}</value>
