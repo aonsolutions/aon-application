@@ -58,24 +58,24 @@ public class Entry implements ILdapConstants {
 		list.add( value );
 	}
 	
-	private Object getFirst( String key ) {
+	public Object getAsObject( String key ) {
 		return get(key).get(0);
 	}
 	
 	public String getAsString( String key ) {
-		return (String) getFirst(key);
+		return (String) getAsObject(key);
 	}
 
 	public Integer getAsInteger( String key ) {
-		return (Integer) getFirst(key);
+		return (Integer) getAsObject(key);
 	}
 
 	public byte[] getAsByteArray( String key ) {
-		return (byte[]) getFirst(key);
+		return (byte[]) getAsObject(key);
 	}
 
 	public Boolean getAsBoolean( String key ) {
-		return (Boolean) getFirst(key);
+		return (Boolean) getAsObject(key);
 	}
 	
 }
