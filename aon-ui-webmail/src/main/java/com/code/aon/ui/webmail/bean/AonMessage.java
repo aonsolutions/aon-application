@@ -720,6 +720,7 @@ public class AonMessage {
 		String addr = null;
 		if (a instanceof InternetAddress
 				&& ((pers = ((InternetAddress)a).getPersonal()) != null)) {
+			pers = pers.replaceAll(",", "");
 			addr = pers;
 		} else {
 			addr = a.toString();
@@ -732,6 +733,7 @@ public class AonMessage {
 		String addr = null;
 		if (a instanceof InternetAddress
 				&& ((pers = ((InternetAddress)a).getPersonal()) != null)) {
+			pers = pers.replaceAll(",", "");
 			addr = pers + " " + "&lt;"+((InternetAddress)a).getAddress()+"&gt;";
 		} else {
 			addr = a.toString();
