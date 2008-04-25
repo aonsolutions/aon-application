@@ -203,7 +203,7 @@ public class LdapDAO implements IDAO  {
 			dn.insert(0, modifiedValue + "," );
 		}
 		try {
-			Object value = PropertyUtils.getProperty(to, rdn.getAccesPath());
+			Object value = getValue(to, rdn);
 			if ( value != null ) {
 				dn.insert( 0, rdn.getLdapName() + "=" + value + "," );
 			}
@@ -218,8 +218,9 @@ public class LdapDAO implements IDAO  {
 		int count = 0;
 		try {
 			session = getLdapSession();
-			String objectClass = LdapSession.getObjectClass(mainObjectClass);
-			count = session.getCount( this.baseDN, objectClass, Scope.SUBTREE_SCOPE );
+			String dn = getDN(criteria);
+			String filter = getFilter(criteria);
+			count = session.getCount(dn.toString(), filter, Scope.SUBTREE_SCOPE );
 		} catch ( LdapException e ) {
 			throw new DAOException( "Error getting count of " + mainObjectClass, e );
 		} finally {
@@ -232,10 +233,18 @@ public class LdapDAO implements IDAO  {
 		return this.pojoClass;
 	}
 
+	private Object getValue( ITransferObject to, PropertyInfo info ) throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
+		Object value = PropertyUtils.getProperty(to, info.getAccesPath());
+		if ( value instanceof String ) {
+			value = StringUtils.trimToNull( (String) value );
+		}
+		return value;
+	}
+	
 	private void setProperties( ITransferObject to, Entry entry ) throws DAOException {
 		for( PropertyInfo info : this.mappings ) {
 			try {
-				Object value = PropertyUtils.getProperty(to, info.getAccesPath());
+				Object value = getValue(to, info);
 				if ( value != null ) {
 					entry.put( info.getLdapName(), value );						
 				}
