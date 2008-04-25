@@ -22,6 +22,12 @@ public @interface Attribute {
     String name() default "";
 
     /**
+     * (Optional) The access path of the value. Defaults to 
+     * the property or field name.
+     */
+    String accessPath() default "";
+    
+    /**
      * (Optional) Whether the database column is nullable.
      */
     boolean nullable() default true;

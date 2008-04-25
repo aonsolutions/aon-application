@@ -79,9 +79,15 @@ public class LdapDAO implements IDAO  {
 		resolveMetaInfo();
 	}
 	
-	private PropertyInfo getPropertyInfo( Attribute attribute, String name ) {
-		String ldapName = StringUtils.defaultString(attribute.name(), name);
-		PropertyInfo info = new PropertyInfo( name, ldapName, attribute.length(), attribute.nullable() );
+	private PropertyInfo getPropertyInfo( Attribute attribute, PropertyDescriptor pd ) {
+		String accessPath = StringUtils.defaultIfEmpty(attribute.accessPath(), pd.getName());
+		String ldapName = StringUtils.defaultIfEmpty(attribute.name(), pd.getName());
+		PropertyInfo info = new PropertyInfo( accessPath, ldapName );
+		info.setPropertyClass( pd.getPropertyType() );
+		info.setLength( attribute.length() );
+		info.setNullable( attribute.nullable() );
+		String preffix = ClassUtils.getShortClassName(this.pojoClass) + "_";
+		info.setAlias( preffix + accessPath.replace('.', '_') );
 		return info;
 	}
 	
@@ -89,24 +95,26 @@ public class LdapDAO implements IDAO  {
 		this.fieldMap = new HashMap<String, String>();
 		this.mappings = new ArrayList<PropertyInfo>();
 		this.dnModifiers = new ArrayList<DNModifier>();
-		String preffix = ClassUtils.getShortClassName(this.pojoClass) + "_";
 		PropertyDescriptor[] pds = PropertyUtils.getPropertyDescriptors(this.pojoClass);
 		for (PropertyDescriptor pd : pds) {
 			Method method = pd.getReadMethod();
 			if ( method != null ) {
 				if ( method.isAnnotationPresent(DNModifier.class) ) {
+					Attribute attribute = method.getAnnotation(Attribute.class);
+					PropertyInfo info = getPropertyInfo(attribute, pd);
+					this.mappings.add(info);
 					DNModifier dnModifier = pd.getReadMethod().getAnnotation(DNModifier.class);
 					dnModifiers.add( dnModifier.order(), dnModifier );
-					this.fieldMap.put( preffix+pd.getName()+"_id", pd.getName() );
+					this.fieldMap.put( info.getAlias(), info.getLdapName() );
 				} else if ( method.isAnnotationPresent(RDN.class) ) {
 					Attribute attribute = method.getAnnotation(Attribute.class);
-					this.rdn = getPropertyInfo(attribute, pd.getName());
-					this.fieldMap.put( preffix+rdn.getName(), rdn.getLdapName() );
+					this.rdn = getPropertyInfo(attribute, pd);
+					this.fieldMap.put( rdn.getAlias(), rdn.getLdapName() );
 				} else if ( method.isAnnotationPresent(Attribute.class) ) {
 					Attribute attribute = method.getAnnotation(Attribute.class);
-					PropertyInfo info = getPropertyInfo(attribute, pd.getName());
+					PropertyInfo info = getPropertyInfo(attribute, pd);
 					this.mappings.add(info);
-					this.fieldMap.put( preffix+info.getName(), info.getLdapName() );
+					this.fieldMap.put( info.getAlias(), info.getLdapName() );
 				}
 			}
 		}		
@@ -166,7 +174,7 @@ public class LdapDAO implements IDAO  {
 			dn.insert(0, modifiedValue + "," );
 		}
 		try {
-			Object value = PropertyUtils.getProperty(to, rdn.getName());
+			Object value = PropertyUtils.getProperty(to, rdn.getAccesPath());
 			if ( value != null ) {
 				dn.insert( 0, rdn.getLdapName() + "=" + value + "," );
 			}
@@ -198,7 +206,7 @@ public class LdapDAO implements IDAO  {
 	private void setProperties( ITransferObject to, Entry entry ) throws DAOException {
 		for( PropertyInfo info : this.mappings ) {
 			try {
-				Object value = PropertyUtils.getProperty(to, info.getName());
+				Object value = PropertyUtils.getProperty(to, info.getAccesPath());
 				if ( value != null ) {
 					entry.put( info.getLdapName(), value );						
 				}
@@ -292,7 +300,11 @@ public class LdapDAO implements IDAO  {
 					if ( entry.containsKey(info.getLdapName()) ) {
 						Object value = entry.getAsObject( info.getLdapName() );
 						if ( value != null ) {
-							BeanUtils.setProperty(to, info.getName(), value);						
+							if ( info.isTransferObject() ) {
+								Object innerTo = info.getPropertyClass().newInstance();
+								BeanUtils.setProperty(to, info.getToAccessPath(), innerTo);
+							}
+							BeanUtils.setProperty(to, info.getAccesPath(), value);						
 						}
 					}
 				} catch (Exception e) {
