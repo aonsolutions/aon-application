@@ -135,22 +135,8 @@ public class FolderController implements ITreeListener{
 	    	FoldersTreeBean treeBean = (FoldersTreeBean)AonUtil.getRegisteredBean(AonConstants.BEAN_TREE);
 	    	AonFolder treeDest = treeBean.recoverTreeNode(dest);
 	    	moveSelectedMessages(treeDest);
-	    	/*
-	    	WebMailController webMailController = (WebMailController)AonUtil.getRegisteredBean(AonConstants.BEAN_WEBMAIL);
-	    	AonFolder dest = webMailController.getServer().getAonFolder(AonFolder.TRASH_FOLDER_NAME);
-	    	folder.moveMessages(messagesLst, dest);
-			try {
-				folder.refresh();
-		    	FoldersTreeBean treeBean = (FoldersTreeBean)AonUtil.getRegisteredBean(AonConstants.BEAN_TREE);
-		    	AonFolder treeDest = treeBean.recoverTreeNode(dest);
-		    	if (treeDest!=null){
-		    		treeDest.refresh();
-		    	}
-			} catch (WebmailException e) {
-			}
-			*/
+	    	treeBean.loadTree();
 		}
-		//setFolder(this.folder);
 		/*
 		if (currentPageObjects().size()==0){
 			try{

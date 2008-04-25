@@ -39,7 +39,7 @@ public class LoginController {
 	}
 	
 	private String startWebmail(){
-		System.out.println("LoginController -> startWebmail");
+		System.out.println("LoginController -> startWebmail v3.0.3.0");
 		logged = false;
 		mailUser = null;
 		try{
