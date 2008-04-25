@@ -322,26 +322,27 @@ public class LdapDAO implements IDAO  {
 		return list;
 	}
 	
+	private void setProperty( ITransferObject to, PropertyInfo info, Entry entry ) throws InstantiationException, IllegalAccessException, InvocationTargetException {
+		if ( entry.containsKey(info.getLdapName()) ) {
+			Object value = entry.getAsObject( info.getLdapName() );
+			if ( value != null ) {
+				if ( info.isTransferObject() ) {
+					Object innerTo = info.getPropertyClass().newInstance();
+					BeanUtils.setProperty(to, info.getToAccessPath(), innerTo);
+				}
+				BeanUtils.setProperty(to, info.getAccesPath(), value);						
+			}
+		}
+	}
+	
 	private ITransferObject convert( Entry entry ) throws DAOException {
 		ITransferObject to = null;
 		try {
 			to = this.pojoClass.newInstance();
 			for( PropertyInfo info : this.mappings ) {
-				try {
-					if ( entry.containsKey(info.getLdapName()) ) {
-						Object value = entry.getAsObject( info.getLdapName() );
-						if ( value != null ) {
-							if ( info.isTransferObject() ) {
-								Object innerTo = info.getPropertyClass().newInstance();
-								BeanUtils.setProperty(to, info.getToAccessPath(), innerTo);
-							}
-							BeanUtils.setProperty(to, info.getAccesPath(), value);						
-						}
-					}
-				} catch (Exception e) {
-					throw new DAOException( e );
-				}
+				setProperty(to, info, entry);
 			}		
+			setProperty(to, rdn, entry);
 			setDN( to, entry.getDN() );
 		} catch (Exception e) {
 			throw new DAOException( "Error in converting to ITransferObject " + entry.getDN(), e );
@@ -388,8 +389,23 @@ public class LdapDAO implements IDAO  {
 	}
 	
 	public ITransferObject get(Serializable pk) throws DAOException {
-		// TODO Auto-generated method stub
-		throw new UnsupportedOperationException("Not supported!");
+		LOGGER.info( "Get: " + pk );
+		LdapSession session = null;
+		ITransferObject to = null;
+		try {
+			session = getLdapSession();
+			String dn = (String) pk;
+			String filter = LdapSession.getObjectClass(this.mainObjectClass);
+			Entry entry = session.get(dn, filter);
+			if ( entry != null ) {
+				to = convert(entry);
+			}
+		} catch ( LdapException e ) {
+			throw new DAOException( "Error in getList of " + mainObjectClass, e );
+		} finally {
+			closeSession(session);
+		}
+		return to;
 	}
 
 	public List getList(ProjectionList projectionList, Criteria criteria)
