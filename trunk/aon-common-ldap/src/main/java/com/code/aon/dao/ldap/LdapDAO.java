@@ -18,6 +18,7 @@ import javax.persistence.Id;
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.lang.ClassUtils;
+import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.StringUtils;
 
 import com.code.aon.common.ITransferObject;
@@ -213,6 +214,7 @@ public class LdapDAO implements IDAO  {
 		return dn.toString();
 	}
 	
+	@Override
 	public int getCount(Criteria criteria) throws DAOException {
 		LdapSession session = null;
 		int count = 0;
@@ -235,8 +237,13 @@ public class LdapDAO implements IDAO  {
 
 	private Object getValue( ITransferObject to, PropertyInfo info ) throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
 		Object value = PropertyUtils.getProperty(to, info.getAccesPath());
-		if ( value instanceof String ) {
-			value = StringUtils.trimToNull( (String) value );
+		if ( value != null ) {
+			if (! (value instanceof byte[]) ) {
+				value = value.toString();
+			}
+			if ( value instanceof String ) {
+				value = StringUtils.trimToNull( (String) value );
+			}
 		}
 		return value;
 	}
@@ -260,6 +267,7 @@ public class LdapDAO implements IDAO  {
 		return field;
 	}
 	
+	@Override
 	public ITransferObject insert(ITransferObject to) throws DAOException {
 		LdapSession session = null;
 		try {
@@ -278,6 +286,7 @@ public class LdapDAO implements IDAO  {
 		return to;
 	}
 	
+	@Override
 	public boolean remove(ITransferObject to) throws DAOException {
 		LdapSession session = null;
 		try {
@@ -368,6 +377,7 @@ public class LdapDAO implements IDAO  {
 		return tos;
 	}
 	
+	@Override
 	public List<ITransferObject> getList(Criteria criteria, int offset,
 			int count) throws DAOException {
 		LOGGER.info( "Criteria: " + criteria + " offfset:" + offset + " count:" + count );
@@ -389,14 +399,23 @@ public class LdapDAO implements IDAO  {
 		return tos;
 	}
 
+	@Override
 	public List<ITransferObject> getList(Criteria criteria) throws DAOException {
 		return getList(criteria, -1, -1);
 	}
 
+	@Override
 	public Serializable getId(ITransferObject to) throws DAOException {
 		return getDN(to);
 	}
 	
+	@Override
+	public void setId(ITransferObject to, Serializable id) throws DAOException {
+		DistinguishedName dn = new DistinguishedName( (String) id );
+		setDN(to, dn);
+	}
+	
+	@Override
 	public ITransferObject get(Serializable pk) throws DAOException {
 		LOGGER.info( "Get: " + pk );
 		LdapSession session = null;
@@ -416,7 +435,57 @@ public class LdapDAO implements IDAO  {
 		}
 		return to;
 	}
+	
+	@Override
+	public ITransferObject update(ITransferObject to) throws DAOException {
+		LdapSession session = null;
+		try {
+			session = getLdapSession();
+			String dn = getDN(to);
+			String filter = LdapSession.getObjectClass(this.mainObjectClass);
+			Entry entry = session.get(dn, filter);
+			for( PropertyInfo info : this.mappings ) {
+				try {
+					Object value = getValue(to, info);
+					String name = info.getLdapName();
+					if ( entry.containsKey(name) ) {
+						if ( value != null ) {
+							Object entryValue = entry.getAsObject(name);
+							if (! ObjectUtils.equals(value, entryValue) ) {
+								session.replaceAttribute(dn, name, value);	
+							}				
+						} else {
+							session.removeAttributes(dn, name);
+						}						
+					} else {
+						if ( value != null ) {
+							session.addAttribute(dn, name, value);						
+						}						
+					}
+				} catch (Exception e) {
+					throw new DAOException( e );
+				}
+			}		
+		} catch ( LdapException e ) {
+			throw new DAOException( "Error in update of " + mainObjectClass, e );
+		} finally {
+			closeSession(session);
+		}
+		return to;
+	}
 
+	public ITransferObject insertOrUpdate(ITransferObject to)
+			throws DAOException {
+		// TODO Auto-generated method stub
+		throw new UnsupportedOperationException("Not supported!");
+	}
+
+	public void setProperty(ITransferObject to, String propertyName,
+			Object value) throws DAOException {
+		// TODO Auto-generated method stub
+		throw new UnsupportedOperationException("Not supported!");
+	}
+	
 	public List getList(ProjectionList projectionList, Criteria criteria)
 			throws DAOException {
 		// TODO Auto-generated method stub
@@ -428,27 +497,5 @@ public class LdapDAO implements IDAO  {
 		// TODO Auto-generated method stub
 		throw new UnsupportedOperationException("Not supported!");
 	}
-	
-	public ITransferObject insertOrUpdate(ITransferObject to)
-			throws DAOException {
-		// TODO Auto-generated method stub
-		throw new UnsupportedOperationException("Not supported!");
-	}
 
-	public void setId(ITransferObject to, Serializable id) throws DAOException {
-		// TODO Auto-generated method stub
-		throw new UnsupportedOperationException("Not supported!");
-	}
-
-	public void setProperty(ITransferObject to, String propertyName,
-			Object value) throws DAOException {
-		// TODO Auto-generated method stub
-		throw new UnsupportedOperationException("Not supported!");
-	}
-
-	public ITransferObject update(ITransferObject to) throws DAOException {
-		// TODO Auto-generated method stub
-		throw new UnsupportedOperationException("Not supported!");
-	}
-	
 }
