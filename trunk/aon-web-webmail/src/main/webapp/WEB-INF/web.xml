@@ -234,7 +234,11 @@
 		<load-on-startup>1</load-on-startup>
 	</servlet>
 	-->
-
+	<!-- 
+	<session-config>
+		<session-timeout>1</session-timeout>
+	</session-config>
+	 -->
 	<!-- Welcome File List -->
 	<welcome-file-list>
 		<welcome-file>index.jsp</welcome-file>
