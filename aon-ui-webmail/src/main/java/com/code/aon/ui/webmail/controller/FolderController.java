@@ -125,11 +125,32 @@ public class FolderController implements ITreeListener{
 		if ((folder.getFolder().getFullName().equals(AonFolder.TRASH_FOLDER_NAME))
 				|| (folder.getFolder().getFullName().equals(AonFolder.SPAM_FOLDER_NAME))){
 			folder.deleteMessages(messagesLst);
+			try {
+				folder.refresh();
+			} catch (WebmailException e) {
+			}
 		}else{
 	    	WebMailController webMailController = (WebMailController)AonUtil.getRegisteredBean(AonConstants.BEAN_WEBMAIL);
 	    	AonFolder dest = webMailController.getServer().getAonFolder(AonFolder.TRASH_FOLDER_NAME);
+	    	FoldersTreeBean treeBean = (FoldersTreeBean)AonUtil.getRegisteredBean(AonConstants.BEAN_TREE);
+	    	AonFolder treeDest = treeBean.recoverTreeNode(dest);
+	    	moveSelectedMessages(treeDest);
+	    	/*
+	    	WebMailController webMailController = (WebMailController)AonUtil.getRegisteredBean(AonConstants.BEAN_WEBMAIL);
+	    	AonFolder dest = webMailController.getServer().getAonFolder(AonFolder.TRASH_FOLDER_NAME);
 	    	folder.moveMessages(messagesLst, dest);
+			try {
+				folder.refresh();
+		    	FoldersTreeBean treeBean = (FoldersTreeBean)AonUtil.getRegisteredBean(AonConstants.BEAN_TREE);
+		    	AonFolder treeDest = treeBean.recoverTreeNode(dest);
+		    	if (treeDest!=null){
+		    		treeDest.refresh();
+		    	}
+			} catch (WebmailException e) {
+			}
+			*/
 		}
+		//setFolder(this.folder);
 		/*
 		if (currentPageObjects().size()==0){
 			try{
@@ -330,6 +351,11 @@ public class FolderController implements ITreeListener{
 			if ( messages.size()>0 ) {
 					folder.moveMessages(messages, dest);
 			}
+			try {
+				folder.refresh();
+				dest.refresh();
+			} catch (WebmailException e) {
+			}
 			/*
 			if (currentPageObjects().size()==0){
 				try{
@@ -339,7 +365,6 @@ public class FolderController implements ITreeListener{
 				}
 			}
 			*/
-			//folder.refresh();
 		} catch (MessagingException e) {
 			e.printStackTrace();
 		}

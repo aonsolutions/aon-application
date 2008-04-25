@@ -1,6 +1,7 @@
 package com.code.aon.ui.webmail.tree;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import javax.faces.FacesException;
@@ -66,6 +67,24 @@ public class FoldersTreeBean {
 		return rootNode;
 	}
 
+	public AonFolder recoverTreeNode(AonFolder aonFolder){
+		AonFolder top = (AonFolder)rootNode.getData();
+		ArrayList<AonFolder> lst;
+		try {
+			lst = top.getFolderList();
+			for (int i = 0; i < lst.size(); i++) {
+				AonFolder current = lst.get(i);
+				String name = current.getName();
+				if (aonFolder.getName().equals(name)){
+					return current;
+				}
+			}
+		} catch (WebmailException e) {
+			throw new FacesException(e.getMessage(), e);
+		}
+		return null;
+	}
+	
 	public void processSelection(NodeSelectedEvent event) {
 		UITree tree = (UITree) event.getComponent();
 		current = (AonFolder) tree.getRowData();

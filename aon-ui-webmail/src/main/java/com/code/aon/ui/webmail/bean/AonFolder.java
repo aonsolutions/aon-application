@@ -156,12 +156,13 @@ public class AonFolder extends AonMessageSortableList {
     }
     
     public void deleteMessages(List<AonMessage> messagesToDelete) throws MessagingException{
-    	Message[] messages = new Message[messagesToDelete.size()];
+    	//Message[] messages = new Message[messagesToDelete.size()];
     	for(int pos=0; pos<messagesToDelete.size(); pos++){
-    		messages[pos] = messagesToDelete.get(pos).getMessage();
+    		//messages[pos] = messagesToDelete.get(pos).getMessage();
+    		messagesToDelete.get(pos).getMessage().setFlag(Flags.Flag.DELETED, true);
     		messagesToDelete.get(pos).setSelected(false);
     	}
-        folder.setFlags(messages,new Flags(Flags.Flag.DELETED), true);
+        //folder.setFlags(messages,new Flags(Flags.Flag.DELETED), true);
         folder.expunge();
     }
 
