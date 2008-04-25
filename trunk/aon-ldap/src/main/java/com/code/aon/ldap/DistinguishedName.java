@@ -12,19 +12,19 @@ public class DistinguishedName {
 			this.levels = levels;			
 		} else {
 			String dn = levels[0];
-			this.levels = StringUtils.split(dn, ", ");			
+			this.levels = StringUtils.split(dn, ",");			
 		}
 	}
 
 	public DistinguishedName( String partList, DistinguishedName dn ) {
-		String[] parts = StringUtils.split(partList, ", ");
+		String[] parts = StringUtils.split(partList, ",");
 		this.levels = new String[dn.getDepth()+parts.length];
 		System.arraycopy(parts, 0, this.levels, 0, parts.length);
 		System.arraycopy(dn.levels, 0, this.levels, parts.length, dn.getDepth());
 	}
 
 	public DistinguishedName( DistinguishedName dn, String partList ) {
-		String[] parts = StringUtils.split(partList, ", ");	
+		String[] parts = StringUtils.split(partList, ",");	
 		this.levels = new String[dn.getDepth()+parts.length];
 		System.arraycopy(dn.levels, 0, this.levels, 0, dn.getDepth());
 		System.arraycopy(parts, 0, this.levels, dn.getDepth(), parts.length);

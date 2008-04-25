@@ -131,7 +131,7 @@ public class LdapRenderer implements CriterionVisitor {
 			out.append("<=");
 		}
 		expression.getRightExpression().accept(this);
-		out.append("(");
+		out.append(")");
 	}
 
 }
