@@ -2,6 +2,7 @@ package com.code.aon.dao.ldap;
 
 import java.beans.PropertyDescriptor;
 import java.io.Serializable;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -11,6 +12,8 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import javax.persistence.Id;
 
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.beanutils.PropertyUtils;
@@ -24,6 +27,7 @@ import com.code.aon.dao.ldap.annotations.Attribute;
 import com.code.aon.dao.ldap.annotations.DNModifier;
 import com.code.aon.dao.ldap.annotations.EntryObject;
 import com.code.aon.dao.ldap.annotations.RDN;
+import com.code.aon.ldap.DistinguishedName;
 import com.code.aon.ldap.Entry;
 import com.code.aon.ldap.LdapException;
 import com.code.aon.ldap.LdapSession;
@@ -48,6 +52,8 @@ public class LdapDAO implements IDAO  {
 	private Class<? extends ITransferObject> pojoClass;
 	
 	private PropertyInfo rdn;
+	
+	private String dnHolder;
 	
 	private Map<String,String> fieldMap;
 	
@@ -79,6 +85,11 @@ public class LdapDAO implements IDAO  {
 		resolveMetaInfo();
 	}
 	
+	private String getAlias( String accessPath ) {
+		String preffix = ClassUtils.getShortClassName(this.pojoClass) + "_";
+		return preffix + accessPath.replace('.', '_');		
+	}
+	
 	private PropertyInfo getPropertyInfo( Attribute attribute, PropertyDescriptor pd ) {
 		String accessPath = StringUtils.defaultIfEmpty(attribute.accessPath(), pd.getName());
 		String ldapName = StringUtils.defaultIfEmpty(attribute.name(), pd.getName());
@@ -86,8 +97,7 @@ public class LdapDAO implements IDAO  {
 		info.setPropertyClass( pd.getPropertyType() );
 		info.setLength( attribute.length() );
 		info.setNullable( attribute.nullable() );
-		String preffix = ClassUtils.getShortClassName(this.pojoClass) + "_";
-		info.setAlias( preffix + accessPath.replace('.', '_') );
+		info.setAlias( getAlias(accessPath) );
 		return info;
 	}
 	
@@ -115,6 +125,9 @@ public class LdapDAO implements IDAO  {
 					PropertyInfo info = getPropertyInfo(attribute, pd);
 					this.mappings.add(info);
 					this.fieldMap.put( info.getAlias(), info.getLdapName() );
+				} else if ( method.isAnnotationPresent(Id.class) ) {
+					dnHolder = pd.getName();
+					this.fieldMap.put( getAlias(dnHolder), dnHolder );
 				}
 			}
 		}		
@@ -165,8 +178,24 @@ public class LdapDAO implements IDAO  {
 		}
 		return result.toString();
 	}
+
+	private void setDN( ITransferObject to, DistinguishedName dn ) throws DAOException {
+		try {
+			BeanUtils.setProperty( to, this.dnHolder, dn.toString() );
+		} catch (Exception e) {
+			throw new DAOException( e );
+		}
+	}
 	
 	private String getDN( ITransferObject to ) throws DAOException {
+		try {
+			return BeanUtils.getProperty( to, this.dnHolder );
+		} catch (Exception e) {
+			throw new DAOException( e );
+		}
+	}
+	
+	private String calculateDN( ITransferObject to ) throws DAOException {
 		StringBuffer dn = new StringBuffer( this.baseDN );
 		for( DNModifier dnModifier : this.dnModifiers ) {
 			String value = dnModifier.dn();
@@ -226,11 +255,12 @@ public class LdapDAO implements IDAO  {
 		LdapSession session = null;
 		try {
 			session = getLdapSession();
-			Entry entry = new Entry( getDN(to) );
+			Entry entry = new Entry( calculateDN(to) );
 			entry.addObjectClass(mainObjectClass);
 			entry.addObjectClasses(objectClasses);
 			setProperties(to, entry);
 			session.add(entry);
+			setDN( to, entry.getDN() );
 		} catch ( LdapException e ) {
 			throw new DAOException( "Error in insert of " + mainObjectClass, e );
 		} finally {
@@ -286,7 +316,8 @@ public class LdapDAO implements IDAO  {
 
 	private List<Entry> getSubList( List<Entry> list, int offset, int count ) {
 		if ( offset >= 0 ) {
-			return list.subList( offset, offset+count );	
+			int toIndex = Math.min( offset+count, list.size() );
+			return list.subList( offset, toIndex );	
 		}
 		return list;
 	}
@@ -311,6 +342,7 @@ public class LdapDAO implements IDAO  {
 					throw new DAOException( e );
 				}
 			}		
+			setDN( to, entry.getDN() );
 		} catch (Exception e) {
 			throw new DAOException( "Error in converting to ITransferObject " + entry.getDN(), e );
 		}
@@ -350,13 +382,12 @@ public class LdapDAO implements IDAO  {
 	public List<ITransferObject> getList(Criteria criteria) throws DAOException {
 		return getList(criteria, -1, -1);
 	}
-	
-	public ITransferObject get(Serializable pk) throws DAOException {
-		// TODO Auto-generated method stub
-		throw new UnsupportedOperationException("Not supported!");
-	}
 
 	public Serializable getId(ITransferObject to) throws DAOException {
+		return getDN(to);
+	}
+	
+	public ITransferObject get(Serializable pk) throws DAOException {
 		// TODO Auto-generated method stub
 		throw new UnsupportedOperationException("Not supported!");
 	}
