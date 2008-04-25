@@ -4,6 +4,7 @@ import java.beans.PropertyDescriptor;
 import java.io.Serializable;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -11,6 +12,7 @@ import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.lang.ClassUtils;
 import org.apache.commons.lang.StringUtils;
@@ -27,6 +29,7 @@ import com.code.aon.ldap.LdapException;
 import com.code.aon.ldap.LdapSession;
 import com.code.aon.ldap.Scope;
 import com.code.aon.ql.Criteria;
+import com.code.aon.ql.Order;
 import com.code.aon.ql.Projection;
 import com.code.aon.ql.ProjectionList;
 
@@ -42,7 +45,7 @@ public class LdapDAO implements IDAO  {
 
 	private Properties properties;
 	
-	private Class<?> pojoClass;
+	private Class<? extends ITransferObject> pojoClass;
 	
 	private PropertyInfo rdn;
 	
@@ -64,7 +67,7 @@ public class LdapDAO implements IDAO  {
 	 * @param properties the properties
 	 * @param pojoClass the pojo class
 	 */
-	public LdapDAO( Properties properties, Class<?> pojoClass ) {
+	public LdapDAO( Properties properties, Class<? extends ITransferObject> pojoClass ) {
 		this.properties = properties;
 		this.pojoClass = pojoClass;
 		if ( this.pojoClass.isAnnotationPresent(EntryObject.class) ) {
@@ -242,24 +245,106 @@ public class LdapDAO implements IDAO  {
 		return true;
 	}
 
+	private String getDN( Criteria criteria ) throws DAOException {
+		StringBuffer dn = new StringBuffer( this.baseDN );
+		if ( criteria != null ) {
+		}
+		return dn.toString();
+	}
+
+	private String getFilter( Criteria criteria ) throws DAOException {
+		String expression = LdapSession.getObjectClass(this.mainObjectClass); 
+		if ( criteria != null ) {
+			LdapRenderer renderer = new LdapRenderer();
+			renderer.visitCriteria(criteria);
+			String filter = renderer.getExpression();
+			expression = "(&" + expression + filter + ")";
+		}
+		return expression;
+	}
+	
+	private List<Entry> sortList( List<Entry> list, Criteria criteria ) {
+		if ( (criteria != null) && (criteria.getOrderByList() != null) ) {
+			List<Order> orderList = criteria.getOrderByList().getOrders();
+			for( int i = orderList.size()-1; i >= 0; i-- ) {
+				Order order = orderList.get(i);
+				String attribute = order.getExpression().getName();
+				EntryComparator comparator = new EntryComparator( attribute, order.isAscending() );
+				Collections.sort( list, comparator );
+			}
+		}
+		return list;
+	}
+
+	private List<Entry> getSubList( List<Entry> list, int offset, int count ) {
+		if ( offset >= 0 ) {
+			return list.subList( offset, offset+count );	
+		}
+		return list;
+	}
+	
+	private ITransferObject convert( Entry entry ) throws DAOException {
+		ITransferObject to = null;
+		try {
+			to = this.pojoClass.newInstance();
+			for( PropertyInfo info : this.mappings ) {
+				try {
+					if ( entry.containsKey(info.getLdapName()) ) {
+						Object value = entry.getAsObject( info.getLdapName() );
+						if ( value != null ) {
+							BeanUtils.setProperty(to, info.getName(), value);						
+						}
+					}
+				} catch (Exception e) {
+					throw new DAOException( e );
+				}
+			}		
+		} catch (Exception e) {
+			throw new DAOException( "Error in converting to ITransferObject " + entry.getDN(), e );
+		}
+		return to;
+	}
+	
+	private List<ITransferObject> convertList( List<Entry> list ) throws DAOException {
+		List<ITransferObject> tos = new ArrayList<ITransferObject>();
+		for( Entry entry : list ) {
+			ITransferObject to = convert(entry);
+			tos.add(to);
+		}
+		return tos;
+	}
+	
+	public List<ITransferObject> getList(Criteria criteria, int offset,
+			int count) throws DAOException {
+		LOGGER.info( "Criteria: " + criteria + " offfset:" + offset + " count:" + count );
+		LdapSession session = null;
+		List<ITransferObject> tos = null;
+		try {
+			session = getLdapSession();
+			String dn = getDN(criteria);
+			String filter = getFilter(criteria);
+			List<Entry> list = session.search(dn.toString(), filter, Scope.SUBTREE_SCOPE );
+			list = sortList(list, criteria);
+			list = getSubList(list, offset, count);
+			tos = convertList(list);
+		} catch ( LdapException e ) {
+			throw new DAOException( "Error in getList of " + mainObjectClass, e );
+		} finally {
+			closeSession(session);
+		}
+		return tos;
+	}
+
+	public List<ITransferObject> getList(Criteria criteria) throws DAOException {
+		return getList(criteria, -1, -1);
+	}
+	
 	public ITransferObject get(Serializable pk) throws DAOException {
 		// TODO Auto-generated method stub
 		throw new UnsupportedOperationException("Not supported!");
 	}
 
 	public Serializable getId(ITransferObject to) throws DAOException {
-		// TODO Auto-generated method stub
-		throw new UnsupportedOperationException("Not supported!");
-	}
-
-	public List<ITransferObject> getList(Criteria criteria, int offset,
-			int count) throws DAOException {
-		LOGGER.info( "Criteria: " + criteria + " offfset:" + offset + " count:" + count );
-		// TODO Auto-generated method stub
-		throw new UnsupportedOperationException("Not supported!");
-	}
-
-	public List<ITransferObject> getList(Criteria criteria) throws DAOException {
 		// TODO Auto-generated method stub
 		throw new UnsupportedOperationException("Not supported!");
 	}
