@@ -7,6 +7,8 @@ import java.util.regex.Pattern;
 
 public class AonMessageUtils {
 	
+	public static final String EMAIL_SEPARATOR = ",";
+	
 	// HTML line break, need for display of message
 	public static final String HTML_LINE_BREAK = "<br/>";
 
@@ -170,4 +172,9 @@ public class AonMessageUtils {
 		}
 		return data;
 	}
+	
+	public static String parse_email(String data) {
+		return data.replaceAll(EMAIL_SEPARATOR, "");
+	}
+	
 }
