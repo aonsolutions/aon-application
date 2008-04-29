@@ -122,6 +122,7 @@ public class FoldersTreeBean {
 		AonFolder destinyFolder = (AonFolder) tree.getRowData();
    		FolderController folders = (FolderController)AonUtil.getRegisteredBean(AonConstants.BEAN_FOLDER);
    		folders.moveSelectedMessages(destinyFolder);
+   		folders.initHtmlDataScroller(null);
 	}
 
 	public void moveMessageToFolder(NodeSelectedEvent event) {
