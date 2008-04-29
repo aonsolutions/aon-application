@@ -3,7 +3,7 @@ var user_entry = false;
 
 function loadInnerWindow(){
 	try {
-		document.forms[0].j_username.focus();
+		document.forms[0].j_username_view.focus();
 		str = window.top.location.search.substring(1);
 		if (str != '' ) {
 			var start = 0;
@@ -14,27 +14,34 @@ function loadInnerWindow(){
 				end = str.length;
 			}
 			if ( "usuario" == name ) {
-				document.forms[0].j_username.value = str.substring( start, end );
+				document.forms[0].j_username_view.value = str.substring( start, end );
 				user_entry = true;
 				document.forms[0].j_password.focus();
 			}
 		}
 	} catch ( e ) { }
-	if ( domain == 'true' ) {
-		document.getElementById("domainDiv").style.display='block';
-		var context = location.pathname.substring( 1, location.pathname.length );
-		context = "/" + context.substring( 0, context.indexOf("/") );
-		try {
-			document.forms[0].j_domain.value = location.hostname + context;
-		} catch(e) {}
-	}
 }
 
 function concatHost() {
 	if ( domain == 'true' ) {
 		if (document.forms[0].j_username.value.indexOf("@") < 0) {
-			document.forms[0].j_username.value = document.forms[0].j_username.value + '@' + document.forms[0].j_domain.value;
+			var context = location.pathname.substring( 1, location.pathname.length );
+			context = "/" + context.substring( 0, context.indexOf("/") );
+			hostname = calcHost(location.hostname);
+			document.forms[0].j_username.value = document.forms[0].j_username_view.value + '@' + hostname + context;
 		}
+	}
+}
+
+function calcHost(host){
+	hostname = host;
+	while (true){
+		pos = hostname.indexOf(".");
+		lastPos = hostname.lastIndexOf(".");
+		if (pos == lastPos){
+			return hostname;
+		}
+		hostname = hostname.substring(pos+1,hostname.length);
 	}
 }
 
