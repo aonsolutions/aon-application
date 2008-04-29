@@ -3,16 +3,31 @@
 	background:#f1f1f1 url(../aonResource/images/aon-content/aon-sidebarIcons-background.png) right  top repeat-y;
 	border-left:#fff 1px solid;	
 	border-bottom:#ccc 1px solid;
-	width:75px;
-	height:100%;
-	float:left;
+	width:70px;
 	padding-bottom:20px;
+	text-align:center;
+	padding:5px;
+	vertical-align:top;
+	text-transform:uppercase;
+	font-weight:bold;
+	font-size:0.8em;
 	}
 .aon-sidebarIcons-bottom{
 	} 
 .aon-desktop-content{
-	margin-left:83px;	
+	width:auto;
+	vertical-align:top;
 	}
+.aon-sidebarIcons-icon{
+	padding-bottom:1em;
+	}
+/******************************************************************************/
+/********************************  ICONS BIG **********************************/
+/* Se utilizan en el desktop como accesos directos, con el texto en vertical */
+/******************************************************************************/
+
+
+	
 /********** PANTALLA INICIAL desktop. 3 COLUMNAS portlets************/
 .aon-portlets-column1{
 	width:180px;
