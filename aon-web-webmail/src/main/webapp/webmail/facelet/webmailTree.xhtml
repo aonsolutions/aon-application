@@ -12,11 +12,10 @@
 <ui:composition>
 
 	<aon:div>
-			
+		
 		<aon:div styleClass="aon-toolbar"  id="buttonsGrid" 
-			rendered="#{tree.treeLoaded}">
-	
-								
+			rendered="#{tree.treeLoaded}">					
+							
 					<aon:commandButton
 						id="newFolder"
 						title="#{appBundle.aon_webmail_newfolder}"
@@ -59,10 +58,10 @@
 			
 		</aon:div>
 
-	    <h:outputText value="#{tree.account}" />
+	    <h:outputText value="#{tree.account}" styleClass="aon-icon-tree-root aon-icon"/>	
 	    
 		<rich:tree nodeSelectListener="#{tree.processSelection}"
-				id="foldersTree" 
+				id="foldersTree" styleClass="aon-normal"
 				reRender="buttonsGrid,messageGrid" ajaxSubmitSelection="true"  switchType="ajax"
 				value="#{tree.treeNode}" var="item"
 				nodeFace="#{item.folderTypeName}">

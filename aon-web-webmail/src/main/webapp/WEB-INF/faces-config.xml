@@ -70,7 +70,8 @@
 		<managed-property>
 			<property-name>userStyleSheets</property-name>
 			<list-entries>
-				<value>/css/richCss/aon-richCss.css</value>
+				<value>/aonResource/aon-richCss.css</value>
+				<value>/css/webmail.css</value>
 			</list-entries>
 		</managed-property>
 		<managed-property>

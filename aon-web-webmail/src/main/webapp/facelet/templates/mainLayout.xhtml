@@ -6,8 +6,8 @@
 	xmlns:a4j="http://richfaces.org/a4j"
 	xmlns:aon="http://www.code.es/aon-rich-components">
 <f:view>
-<c:forEach items="#{aonConfiguration.applicationBundleList}" var="appBundle">
-	<a4j:loadBundle basename="#{appBundle.value}" var="#{appBundle.key}" />
+<c:forEach items="#{aonConfiguration.applicationBundleList}" var="aBundle">
+	<f:loadBundle basename="#{aBundle.value}" var="#{aBundle.key}" />
 </c:forEach>
 <head>
 	<title><ui:insert name="title">Title</ui:insert></title>
@@ -24,9 +24,10 @@
 	<a4j:loadScript src="/js/Window.js"/>
 	<a4j:loadScript src="/js/Form.js"/>
 	<a4j:loadScript src="/fckfaces/FCKeditor/fckeditor.js"/>
+	<link rel="shortcut icon" type="image/x-icon" href="#{facesContext.externalContext.requestContextPath}/aonResources/images/favicon.ico" />
 	<ui:insert name="head" />
 </head>
-<body class="aon-body" onresize="aonResizeBody();">
+<body>
 	<aon:div id="aon-content">			
 		<ui:insert name="mainHeader" />		
 		<ui:insert name="mainContent" />
