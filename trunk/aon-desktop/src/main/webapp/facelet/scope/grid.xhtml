@@ -40,7 +40,7 @@
 							<aon:confirmButton id="cancelNew"
 								value="#{bundle.aon_cancel}" rendered="#{scope.new}"
 								styleClass="aon-finding-toolbar-item aon-icon-cancel" immediate="true"
-								confirmTitle="Confirmation Dialog" confirmMessage="#{bundle.aon_cancel_confirm}"
+								confirmTitle="#{bundle.aon_confirm_title}" confirmMessage="#{bundle.aon_cancel_confirm}"
 								confirmActionListener="#{scope.onCancel}"
 								accesskey="#{bundle.aon_key_cancel}"/>
 							<aon:commandButton id="cancelEdit"
@@ -51,7 +51,7 @@
 							<aon:confirmButton id="remove"
 								value="#{bundle.aon_remove}" rendered="#{scope.to!=null and !scope.new}"
 								styleClass="aon-finding-toolbar-item aon-icon-delete" immediate="true"
-								confirmTitle="Confirmation Dialog" confirmMessage="#{bundle.aon_remove_confirm}"
+								confirmTitle="#{bundle.aon_confirm_title}" confirmMessage="#{bundle.aon_remove_confirm}"
 								confirmActionListener="#{scope.onRemove}"
 								accesskey="#{bundle.aon_key_remove}"/>
 							<aon:commandButton id="users" value="#{bundle.aon_back}"  rendered="#{scope.to==null}"
@@ -121,7 +121,7 @@
 								<aon:confirmButton title="[#{bundle.aon_remove}]"
 									styleClass="aon-editDataTable-button aon-icon-delete"
 									rendered="#{to==scope.to}"
-									confirmTitle="Confirmation Dialog" 
+									confirmTitle="#{bundle.aon_confirm_title}" 
 									confirmMessage="#{bundle.aon_remove_confirm}"
 									confirmActionListener="#{scope.onRemove}" immediate="true"
 									accesskey="#{bundle.aon_key_remove_line}" />								
@@ -137,7 +137,7 @@
 									<aon:confirmButton title="[#{bundle.aon_cancel}]"
 										styleClass="aon-editDataTable-button aon-icon-cancel"
 										rendered="#{scope.new}"
-										confirmTitle="Confirmation Dialog" 
+										confirmTitle="#{bundle.aon_confirm_title}" 
 										confirmMessage="#{bundle.aon_cancel_confirm}"
 										confirmActionListener="#{scope.onCancel}" immediate="true"
 										accesskey="#{bundle.aon_key_cancel_line}" />

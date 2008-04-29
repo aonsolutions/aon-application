@@ -73,7 +73,7 @@
 					<aon:confirmButton id="cancelRemove-userScope" title="[#{bundle.aon_remove}]"
 						styleClass="aon-editDataTable-button aon-icon-delete"
 						rendered="#{to==userScope.to}"
-						confirmTitle="Confirmation Dialog" 
+						confirmTitle="#{bundle.aon_confirm_title}" 
 						confirmMessage="#{bundle.aon_remove_confirm}"
 						confirmActionListener="#{userScope.onRemove}" immediate="true"
 						accesskey="#{bundle.aon_key_remove_line}" />
@@ -89,7 +89,7 @@
 						<aon:confirmButton id="cancelNew-userScope" title="#{bundle.aon_cancel}"
 							styleClass="aon-editDataTable-button aon-icon-cancel"
 							rendered="#{userScope.new}"
-							confirmTitle="Confirmation Dialog" 
+							confirmTitle="#{bundle.aon_confirm_title}" 
 							confirmMessage="#{bundle.aon_cancel_confirm}"
 							confirmActionListener="#{userScope.onCancel}" immediate="true"
 							accesskey="#{bundle.aon_key_cancel_line}" />

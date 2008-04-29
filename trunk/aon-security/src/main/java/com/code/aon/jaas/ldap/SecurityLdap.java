@@ -259,7 +259,10 @@ public class SecurityLdap implements ILdapConstants, ILdapSecurityConstants {
 		if ( exists(dn, PROFILE_OBJECT_CLASS) ) {
 			profile = getApplicationProfile(domainName, application, profileName);
 		} else {
-			profile = getDomainApplicationProfile(domainName, application, profileName);
+			dn = getDomainApplicationProfileDN(domainName, application, profileName);
+			if ( exists(dn, DOMAIN_APPLICATION_PROFILE_OBJECT_CLASS) ) {
+				profile = getDomainApplicationProfile(domainName, application, profileName);
+			}
 		}
 		return profile;
 	}

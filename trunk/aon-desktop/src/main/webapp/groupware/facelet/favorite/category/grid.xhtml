@@ -41,7 +41,7 @@
 							<aon:confirmButton id="cancelNew"
 								value="#{bundle.aon_cancel}" rendered="#{favoriteCategory.new}"
 								styleClass="aon-finding-toolbar-item aon-icon-cancel" immediate="#{true}"
-								confirmTitle="Confirmation Dialog" confirmMessage="#{bundle.aon_cancel_confirm}"
+								confirmTitle="#{bundle.aon_confirm_title}" confirmMessage="#{bundle.aon_cancel_confirm}"
 								confirmActionListener="#{favoriteCategory.onCancel}"
 								accesskey="#{bundle.aon_key_cancel}"/>
 							<aon:commandButton id="cancelEdit"
@@ -52,7 +52,7 @@
 							<aon:confirmButton id="remove"
 								value="#{bundle.aon_remove}" rendered="#{favoriteCategory.to!=null and !favoriteCategory.new}"
 								styleClass="aon-finding-toolbar-item aon-icon-delete" immediate="true"
-								confirmTitle="Confirmation Dialog" confirmMessage="#{bundle.aon_remove_confirm}"
+								confirmTitle="#{bundle.aon_confirm_title}" confirmMessage="#{bundle.aon_remove_confirm}"
 								confirmActionListener="#{favoriteCategory.onRemove}"
 								accesskey="#{bundle.aon_key_remove}"/>
 							<aon:commandButton id="favorite_list" value="#{bundle.aon_back}"
@@ -124,7 +124,7 @@
 								<aon:confirmButton title="[#{bundle.aon_remove}]"
 									styleClass="aon-editDataTable-button aon-icon-delete"
 									rendered="#{to==favoriteCategory.to}"
-									confirmTitle="Confirmation Dialog" 
+									confirmTitle="#{bundle.aon_confirm_title}" 
 									confirmMessage="#{bundle.aon_remove_confirm}"
 									confirmActionListener="#{favoriteCategory.onRemove}" immediate="true"
 									accesskey="#{bundle.aon_key_remove_line}" />
@@ -140,7 +140,7 @@
 									<aon:confirmButton title="[#{bundle.aon_cancel}]"
 										styleClass="aon-editDataTable-button aon-icon-cancel"
 										rendered="#{favoriteCategory.new}"
-										confirmTitle="Confirmation Dialog" 
+										confirmTitle="#{bundle.aon_confirm_title}" 
 										confirmMessage="#{bundle.aon_cancel_confirm}"
 										confirmActionListener="#{favoriteCategory.onCancel}" immediate="true"
 										accesskey="#{bundle.aon_key_cancel_line}" />

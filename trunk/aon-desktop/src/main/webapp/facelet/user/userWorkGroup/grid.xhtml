@@ -71,7 +71,7 @@
 					<aon:confirmButton id="cancelRemove-userWorkGroup" title="[#{bundle.aon_remove}]"
 						styleClass="aon-editDataTable-button aon-icon-delete"
 						rendered="#{to==userWorkGroup.to}"
-						confirmTitle="Confirmation Dialog" 
+						confirmTitle="#{bundle.aon_confirm_title}" 
 						confirmMessage="#{bundle.aon_remove_confirm}"
 						confirmActionListener="#{userWorkGroup.onRemove}" immediate="true"
 						accesskey="#{bundle.aon_key_remove_line}" />
@@ -87,7 +87,7 @@
 						<aon:confirmButton id="cancelNew-userWorkGroup" title="#{bundle.aon_cancel}"
 							styleClass="aon-editDataTable-button aon-icon-cancel"
 							rendered="#{userWorkGroup.new}"
-							confirmTitle="Confirmation Dialog" 
+							confirmTitle="#{bundle.aon_confirm_title}" 
 							confirmMessage="#{bundle.aon_cancel_confirm}"
 							confirmActionListener="#{userWorkGroup.onCancel}" immediate="true"
 							accesskey="#{bundle.aon_key_cancel_line}" />
