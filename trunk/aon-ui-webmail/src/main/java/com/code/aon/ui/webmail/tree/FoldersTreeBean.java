@@ -89,7 +89,6 @@ public class FoldersTreeBean {
 		UITree tree = (UITree) event.getComponent();
 		current = (AonFolder) tree.getRowData();
 		nodeSelected(current);
-		FolderController.assignPageNumber(0);
 	}
 
 	public AonFolder getCurrent() {

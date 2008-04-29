@@ -139,30 +139,6 @@ public class FolderController implements ITreeListener{
 	    	moveSelectedMessages(treeDest);
 	    	treeBean.loadTree();
 		}
-		/*
-		if (currentPageObjects().size()==0){
-			try{
-				int page = Math.abs(folder.getMessageCount()/pageObjectNumber);
-				FolderController.assignPageNumber(page);
-			}catch (Exception e) {
-			}
-		}
-		*/
-    }
-
-    public static void assignPageNumber(int number){
-    	// ÑAPA
-    	String id = "homepage:folderView:webmailForm:messageDataTable";
-    	UIComponent comp = FacesContext.getCurrentInstance().getViewRoot()
-    			.findComponent(id);
-    	if (comp == null)
-    		throw new IllegalArgumentException(
-    				"Can not find component with id = '" + id + "'");
-    	if (!(comp instanceof UIData))
-    		throw new IllegalArgumentException(
-    				"Id does not refer to a UIData instance");
-    	UIData uidata = (UIData) comp;
-    	uidata.setFirst(number);
     }
 
 	// *************************************************************************
@@ -213,8 +189,6 @@ public class FolderController implements ITreeListener{
     private HtmlDatascroller htmlDatascroller = null;
     
 	public void initHtmlDataScroller(ActionEvent event) {
-		if (htmlDatascroller!=null)
-			assignPageNumber(htmlDatascroller.getPageIndex());
 		htmlDatascroller = null;
     }
     
@@ -350,15 +324,6 @@ public class FolderController implements ITreeListener{
 				dest.refresh();
 			} catch (WebmailException e) {
 			}
-			/*
-			if (currentPageObjects().size()==0){
-				try{
-					int page = Math.abs(folder.getMessageCount()/pageObjectNumber);
-					FolderController.assignPageNumber(page);
-				}catch (Exception e) {
-				}
-			}
-			*/
 		} catch (MessagingException e) {
 			e.printStackTrace();
 		}
