@@ -28,6 +28,8 @@ public class LdapRenderer implements CriterionVisitor {
 	 * Where the result will be printed.
 	 */
 	private StringBuffer out;
+	
+	private boolean forceLike;
 
 	public String getExpression() {
 		return out.toString();
@@ -79,11 +81,6 @@ public class LdapRenderer implements CriterionVisitor {
 		out.append("=*)");
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see com.code.aon.ql.ast.CriterionVisitor#visitNotNullExpression(com.code.aon.ql.ast.NotNullExpression)
-	 */
 	public void visitNotNullExpression(NotNullExpression expression) {
 		out.append("(");
 		expression.getExpression().accept(this);
@@ -95,7 +92,14 @@ public class LdapRenderer implements CriterionVisitor {
 	}
 
 	public void visitConstantExpression(ConstantExpression expression) {
-		out.append( expression.getData() );
+		String value = expression.getData().toString();
+		if ( value.indexOf("_") != -1 ) {
+			this.forceLike = true;
+		}
+		if ( value.indexOf("%") != -1 ) {
+			value = value.replace('%', '*');
+		}
+		out.append( value );
 	}
 
 	public void visitBetweenExpression(BetweenExpression expression) {
@@ -113,24 +117,34 @@ public class LdapRenderer implements CriterionVisitor {
 		out.append("(");
 		expression.getLeftExpression().accept(this);
 
-		int type = expression.getType();
+		StringBuffer currentOut = out;
+		this.out = new StringBuffer();
 
+		expression.getRightExpression().accept(this);		
+		
+		int type = expression.getType();
 		if ((type & RelationalExpression.LT) > 0) {
-			out.append("<");
+			currentOut.append("<");
 		} else if ((type & RelationalExpression.GT) > 0) {
-			out.append(">");
+			currentOut.append(">");
 		} else if ((type & RelationalExpression.EQ) > 0) {
-			out.append("=");
+			currentOut.append("=");
 		} else if ((type & RelationalExpression.NEQ) > 0) {
-			out.append(" <> ");
+			currentOut.append(" <> ");
 		} else if ((type & RelationalExpression.LIKE) > 0) {
-			out.append("~=");
+			if ( this.forceLike ) {
+				currentOut.append("~=");
+				this.forceLike = false;
+			} else {
+				currentOut.append("=");				
+			}
 		} else if ((type & RelationalExpression.GTE) > 0) {
-			out.append(">=");
+			currentOut.append(">=");
 		} else if ((type & RelationalExpression.LTE) > 0) {
-			out.append("<=");
+			currentOut.append("<=");
 		}
-		expression.getRightExpression().accept(this);
+
+		this.out = currentOut.append(this.out);
 		out.append(")");
 	}
 

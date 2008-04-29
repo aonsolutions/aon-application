@@ -82,6 +82,8 @@ public class LdapDAO implements IDAO  {
 			this.baseDN = entity.baseDN();
 			this.mainObjectClass = entity.mainObjectClass();
 			this.objectClasses = entity.objectClasses();
+		} else {
+			throw new IllegalArgumentException( "EntryObject annotation is mandatory" );
 		}
 		resolveMetaInfo();
 	}
@@ -132,6 +134,12 @@ public class LdapDAO implements IDAO  {
 				}
 			}
 		}		
+		if ( this.rdn == null ) {
+			throw new IllegalArgumentException( RDN.class + " annotation is mandatory" );
+		}
+		if ( this.dnHolder == null ) {
+			throw new IllegalArgumentException( Id.class + " annotation is mandatory" );
+		}
 	}
 	
 	public String getBaseDN() {
@@ -326,6 +334,7 @@ public class LdapDAO implements IDAO  {
 				Order order = orderList.get(i);
 				String attribute = order.getExpression().getName();
 				EntryComparator comparator = new EntryComparator( attribute, order.isAscending() );
+				LOGGER.info( "Sorting " + order );
 				Collections.sort( list, comparator );
 			}
 		}
@@ -335,6 +344,7 @@ public class LdapDAO implements IDAO  {
 	private List<Entry> getSubList( List<Entry> list, int offset, int count ) {
 		if ( offset >= 0 ) {
 			int toIndex = Math.min( offset+count, list.size() );
+			LOGGER.info( "SubList, offset=" + offset + ",toIndex=" + toIndex );
 			return list.subList( offset, toIndex );	
 		}
 		return list;
@@ -380,13 +390,13 @@ public class LdapDAO implements IDAO  {
 	@Override
 	public List<ITransferObject> getList(Criteria criteria, int offset,
 			int count) throws DAOException {
-		LOGGER.info( "Criteria: " + criteria + " offfset:" + offset + " count:" + count );
 		LdapSession session = null;
 		List<ITransferObject> tos = null;
 		try {
 			session = getLdapSession();
 			String dn = getDN(criteria);
 			String filter = getFilter(criteria);
+			LOGGER.info( "getList, dn=" + dn + ",filter=" + filter );
 			List<Entry> list = session.search(dn.toString(), filter, Scope.SUBTREE_SCOPE );
 			list = sortList(list, criteria);
 			list = getSubList(list, offset, count);
@@ -429,7 +439,7 @@ public class LdapDAO implements IDAO  {
 				to = convert(entry);
 			}
 		} catch ( LdapException e ) {
-			throw new DAOException( "Error in getList of " + mainObjectClass, e );
+			throw new DAOException( "Error in get of " + mainObjectClass, e );
 		} finally {
 			closeSession(session);
 		}
@@ -476,8 +486,13 @@ public class LdapDAO implements IDAO  {
 
 	public ITransferObject insertOrUpdate(ITransferObject to)
 			throws DAOException {
-		// TODO Auto-generated method stub
-		throw new UnsupportedOperationException("Not supported!");
+		String dn = getDN(to);
+		if ( dn == null ) {
+			insert(to);
+		} else {
+			update(to);
+		}
+		return to;
 	}
 
 	public void setProperty(ITransferObject to, String propertyName,
