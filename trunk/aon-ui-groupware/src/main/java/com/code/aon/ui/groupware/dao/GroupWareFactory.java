@@ -9,7 +9,6 @@ import com.code.aon.common.bean.BeanConfig;
 import com.code.aon.common.dao.IDAO;
 import com.code.aon.dao.ldap.LdapDAO;
 import com.code.aon.dao.ldap.LdapDAOFactory;
-import com.code.aon.dao.ldap.annotations.DNModifier;
 import com.code.aon.jaas.auth.AuthPrincipal;
 
 public class GroupWareFactory extends LdapDAOFactory {
