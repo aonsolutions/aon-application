@@ -14,18 +14,13 @@
 		</loader-repository>
 	</class-loading>
 	-->
-	<!-- 
-	<security-domain flushOnSessionInvalidation="true">java:/jaas/aon-desktop</security-domain>
-	<security-domain flushOnSessionInvalidation="true">java:/jaas/aon-web-webmail.war</security-domain>
-	-->
-	<security-domain flushOnSessionInvalidation="true">java:/jaas/aon-web-webmail.war</security-domain>
+
+	<security-domain flushOnSessionInvalidation="true">java:/jaas/aon-ldap</security-domain>
 
 	<!-- The context-root element specifies the context root of a web
 	application. It may be given here for standalone wars.
-	<context-root>/aon-webmail</context-root>
-	<context-root>/aon-web-webmail</context-root>
 	-->
-	<context-root>/aon-web-webmail</context-root>
+	<context-root>/aon-webmail</context-root>
 	
 	<resource-env-ref>
 	  <resource-env-ref-name>jdbc/AonWebmail</resource-env-ref-name>
