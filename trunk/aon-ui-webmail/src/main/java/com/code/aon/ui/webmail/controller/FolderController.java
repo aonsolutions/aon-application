@@ -106,6 +106,7 @@ public class FolderController implements ITreeListener{
     public void deleteCheckedMessages(ActionEvent event) {
     	try{
    			deleteMessages(folder.getSelectedMessages());
+   			initHtmlDataScroller(event);
 		} catch (MessagingException e) {
 			AonUtil.addErrorMessage(e.getMessage());
 			throw new AbortProcessingException(e);
@@ -115,6 +116,7 @@ public class FolderController implements ITreeListener{
     public void deleteAllMessages(ActionEvent event) {
     	try{
 	    	deleteMessages(folder.getMessageList());
+   			initHtmlDataScroller(event);
 		} catch (MessagingException e) {
 			AonUtil.addErrorMessage(e.getMessage());
 			throw new AbortProcessingException(e);
@@ -211,7 +213,9 @@ public class FolderController implements ITreeListener{
     private HtmlDatascroller htmlDatascroller = null;
     
 	public void initHtmlDataScroller(ActionEvent event) {
-    	htmlDatascroller = null;
+		if (htmlDatascroller!=null)
+			assignPageNumber(htmlDatascroller.getPageIndex());
+		htmlDatascroller = null;
     }
     
 	public void dataScrollActionListener(ActionEvent event) {
