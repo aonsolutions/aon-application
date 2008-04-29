@@ -14,12 +14,12 @@
 	<ui:define name="content">
 	
 		<aon:form id="webmailForm" styleClass="aon-form">
-
+			<aon:div styleClass="aon-scroll-area">
 	        <aon:panelGroup>
 					<aon:div styleClass="aon-section-title">
 		           		 <aon:outputText value="#{folder.folder.name}"/>
 		           	</aon:div>
-					<aon:div styleClass="aon-section-toolbar">						
+					<aon:div styleClass="aon-toolbar">						
 						<aon:commandButton
 							id="search"
 							title="#{appBundle.aon_webmail_search}"
@@ -37,8 +37,9 @@
 							styleClass="aon-finding-toolbar-item aon-icon-cancel">
 						</aon:commandButton>										
 					</aon:div>
-					<aon:div styleClass="aon-box aon-box-outstanding">
-					<aon:panelGrid columns="2" border="0" cellpadding="2" cellspacing="0">
+					
+					<aon:panelGrid columns="2" border="0" style="width:100%"
+						columnClasses="aon-width-80 aon-panelGrid-odd,aon-width-auto aon-panelGrid-even">
 						<aon:outputLabel for="SearchMail_from" styleClass="aon-text-bold"
 							value="#{appBundle.aon_webmail_from}: " />
 						<aon:inputText id="SearchMail_from"
@@ -63,7 +64,7 @@
 							size="80"
 							value="#{search.bodyText}"/>
 					</aon:panelGrid>
-					</aon:div>
+					
 					<aon:div rendered="#{search.resultSelected}">
 					<aon:div rendered="#{!search.resultFound}" styleClass="aon-box aon-box-outstanding2">
 						<aon:div styleClass="aon-icon aon-icon-info" style="padding-top:2px;padding-bottom:2px;font-weight:bold;">
@@ -119,7 +120,7 @@
 					</aon:div>
 				</aon:div>
 	        </aon:panelGroup>
-							
+		    </aon:div>		
 		</aon:form>
 
 	</ui:define>

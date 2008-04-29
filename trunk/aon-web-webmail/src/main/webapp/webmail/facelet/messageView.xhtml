@@ -14,12 +14,12 @@
 	<ui:define name="content">
 
 		<aon:form id="webmailForm" styleClass="aon-form" >
-		
+		<aon:div styleClass="aon-scroll-area">
 			<aon:div styleClass="aon-section-title">
 				<aon:outputText value="#{folder.folder.name}"/>
 			</aon:div>
 
-			<aon:div styleClass="aon-toolbar">
+			<aon:div styleClass="aon-toolbar">			
 				<aon:commandButton
 					id="back"
 					title="#{appBundle.aon_webmail_back}"
@@ -100,43 +100,43 @@
 				<ui:include src="/webmail/facelet/modal/moveMessage.xhtml" />
 				
 			</aon:div>
-			
-			<aon:commandButton
-					title="#{appBundle.aon_webmail_previous_message}"
-					rendered="#{message.previousMessage}"
-					action="message"
-					actionListener="#{message.previousMessage}"
-					value="#{appBundle.aon_webmail_previous_message}"
-					styleClass="aon-icon-commandButton aon-icon-mailPrevious">
-			</aon:commandButton>
-
-			<aon:commandButton
-					title="#{appBundle.aon_webmail_previous_message}"
-					rendered="#{!message.previousMessage}"
-					value="#{appBundle.aon_webmail_previous_message}"
-					styleClass="aon-icon-commandButton aon-icon-mailPrevious-dis">
-			</aon:commandButton>
-
-			<aon:commandButton
-					title="#{appBundle.aon_webmail_next_message}"
-					rendered="#{message.nextMessage}"
-					action="message"
-					actionListener="#{message.nextMessage}"
-					value="#{appBundle.aon_webmail_next_message}"
-					styleClass="aon-icon-commandButton aon-icon-mailNext">
-			</aon:commandButton>
-			
-			<aon:commandButton
-					title="#{appBundle.aon_webmail_next_message}"
-					rendered="#{!message.nextMessage}"
-					value="#{appBundle.aon_webmail_next_message}"
-					styleClass="aon-icon-commandButton aon-icon-mailNext-dis">
-			</aon:commandButton>
-			
 			<!-- icon to collapse message details -->
+			<div>
+					<aon:commandButton
+							title="#{appBundle.aon_webmail_previous_message}"
+							rendered="#{message.previousMessage}"
+							action="message"
+							actionListener="#{message.previousMessage}"
+							value="#{appBundle.aon_webmail_previous_message}"
+							styleClass="aon-icon-commandButton aon-icon-mailPrevious">
+					</aon:commandButton>
+		
+					<aon:commandButton
+							title="#{appBundle.aon_webmail_previous_message}"
+							rendered="#{!message.previousMessage}"
+							value="#{appBundle.aon_webmail_previous_message}"
+							styleClass="aon-icon-commandButton aon-icon-mailPrevious-dis">
+					</aon:commandButton>
+		
+					<aon:commandButton
+							title="#{appBundle.aon_webmail_next_message}"
+							rendered="#{message.nextMessage}"
+							action="message"
+							actionListener="#{message.nextMessage}"
+							value="#{appBundle.aon_webmail_next_message}"
+							styleClass="aon-icon-commandButton aon-icon-mailNext">
+					</aon:commandButton>
+					
+					<aon:commandButton
+							title="#{appBundle.aon_webmail_next_message}"
+							rendered="#{!message.nextMessage}"
+							value="#{appBundle.aon_webmail_next_message}"
+							styleClass="aon-icon-commandButton aon-icon-mailNext-dis">
+					</aon:commandButton>
+				</div>
 			<aon:div>
 
-				<aon:panelGrid columns="2" cellpadding="2">
+				<aon:panelGrid columns="2" style="width:100%;" columnClasses="aon-width-100 aon-panelGrid-odd,aon-width-auto aon-panelGrid-even">
 					
 					<!-- from -->
 					<aon:outputText styleClass="aon-text-bold"											
@@ -168,7 +168,7 @@
 					</aon:div>
 					
 					<!-- To -->
-					<aon:outputText styleClass="aon-text-bold"
+					<aon:outputText 
 								value="#{appBundle.aon_webmail_to}: " />
 					<aon:div>
 						<aon:div>
@@ -198,7 +198,7 @@
 						</aon:div>
 					</aon:div>
 					<!-- Cc -->
-					<aon:outputText styleClass="aon-text-bold"
+					<aon:outputText
 							value="#{appBundle.aon_webmail_cc}: " />
 					<aon:div>
 						<aon:div>
@@ -230,7 +230,6 @@
 					</aon:div>
 
 					<aon:outputText
-						styleClass="aon-text-bold"
 						value="#{appBundle.aon_webmail_subject}: " />
 					<aon:div>
 						<aon:outputText value="&#160;" />
@@ -238,7 +237,7 @@
 					</aon:div>
 						
 						<!-- Date -->
-					<aon:outputText style="font-weight:bold;"
+					<aon:outputText 
 						styleClass="aon-form-input-text-label"
 						value="#{appBundle.aon_webmail_date}: " />
 					<aon:div>
@@ -246,7 +245,7 @@
 						<aon:outputText value="#{message.message.sentDateString}" />
 					</aon:div>
 				
-					<aon:outputText style="font-weight:bold;"
+					<aon:outputText 
 						styleClass="aon-form-input-text-label"
 						value="#{appBundle.aon_webmail_attach_files}: " />
 					<aon:div>
@@ -290,14 +289,16 @@
 					
 				</aon:panelGrid>
 				<!-- Message Body -->
-				<aon:div style="width:98%">
-					<aon:panelGroup styleClass="aon-box" >
-						<iframe src="#{webmail.context}/webmail/contentIframe.jsp?id=#{webmail.millis}" width="99%" height="430" frameborder="0">
+				<aon:div styleClass="aon-border aon-padding-top">
+					<aon:panelGroup  >
+						<aon:div>
+						<iframe src="#{webmail.context}/webmail/contentIframe.jsp?id=#{webmail.millis}" width="100%" height="430" frameborder="0">
 						</iframe>
+						</aon:div>
 					</aon:panelGroup>
 				</aon:div>
 			</aon:div>
-		
+		</aon:div>
 		</aon:form>
 
 	</ui:define>

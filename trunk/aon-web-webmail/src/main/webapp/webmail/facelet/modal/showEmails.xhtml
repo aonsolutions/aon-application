@@ -39,17 +39,16 @@
                 <h:graphicImage value="/images/icefaces/popupclose.gif" style="cursor:pointer" onclick="Richfaces.hideModalPanel('showEmailsModalPanel')" />
             </f:facet>
 			<rich:panel bodyClass="bodyPanel_">
-				<aon:panelGrid id="popupEmailBody2" width="100%" cellpadding="0" cellspacing="0" columns="1">
+				<aon:panelGrid id="popupEmailBody2" width="100%" cellpadding="0" cellspacing="0" columns="1"
+				styleClass="aon-panelGrid-formatting">
 
-					<aon:div styleClass="aon-section-toolbar">
-						<aon:div style="padding-top:5px;padding-left:1em;">
+					<aon:div styleClass="aon-toolbar">
 							<aon:commandButton id="selectEmail" 
-								action="messageNew"
-								onclick="Richfaces.hideModalPanel('showEmailsModalPanel')"
-								actionListener="#{message.acceptAllEmailItems}" 
-								value="#{appBundle.aon_webmail_accept}" 
-								styleClass="aon-icon-commandButton aon-icon-accept"/>
-						</aon:div>
+							action="messageNew"
+							onclick="Richfaces.hideModalPanel('showEmailsModalPanel')"
+							actionListener="#{message.acceptAllEmailItems}" 
+							value="#{appBundle.aon_webmail_accept}" 
+							styleClass="aon-icon-commandButton aon-icon-accept"/>			
 					</aon:div>
 					
 					<aon:dataTable id="emailData" 
