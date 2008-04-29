@@ -380,7 +380,7 @@ public class AonMessage {
 			InternetAddress tmpAddress;
 			for (int i = 0; i < addresses.length; i++) {
 				tmpAddress = (InternetAddress) addresses[i];
-				addressBuffer.append(getDisplayAddressShort((Address)tmpAddress)+",");
+				addressBuffer.append(getDisplayAddressShort((Address)tmpAddress)+AonMessageUtils.EMAIL_SEPARATOR);
 			}
 			recipientsTo = addressBuffer.toString();
 			recipientsTo = recipientsTo.substring(0, recipientsTo.length() - 1);
@@ -406,7 +406,7 @@ public class AonMessage {
 			InternetAddress tmpAddress;
 			for (int i = 0; i < addresses.length; i++) {
 				tmpAddress = (InternetAddress) addresses[i];
-				addressBuffer.append(getDisplayEmail((Address)tmpAddress)+",");
+				addressBuffer.append(getDisplayEmail((Address)tmpAddress)+AonMessageUtils.EMAIL_SEPARATOR);
 			}
 			recipientsTo = addressBuffer.toString();
 			recipientsTo = recipientsTo.substring(0, recipientsTo.length() - 1);
@@ -463,7 +463,7 @@ public class AonMessage {
 			if (addresses != null && addresses.length > 0) {
 				// Write out the addres in the order they are found.
 				for (int i = 0; i < addresses.length; i++) {
-					recipients.append(getDisplayAddressFull(addresses[i]) + ",");
+					recipients.append(getDisplayAddressFull(addresses[i]) + AonMessageUtils.EMAIL_SEPARATOR);
 				}
 				return recipients.substring(0, recipients.length() - 1)
 						.toString();
@@ -720,7 +720,7 @@ public class AonMessage {
 		String addr = null;
 		if (a instanceof InternetAddress
 				&& ((pers = ((InternetAddress)a).getPersonal()) != null)) {
-			pers = pers.replaceAll(",", "");
+			pers = AonMessageUtils.parse_email(pers);
 			addr = pers;
 		} else {
 			addr = a.toString();
@@ -733,7 +733,7 @@ public class AonMessage {
 		String addr = null;
 		if (a instanceof InternetAddress
 				&& ((pers = ((InternetAddress)a).getPersonal()) != null)) {
-			pers = pers.replaceAll(",", "");
+			pers = AonMessageUtils.parse_email(pers);
 			addr = pers + " " + "&lt;"+((InternetAddress)a).getAddress()+"&gt;";
 		} else {
 			addr = a.toString();

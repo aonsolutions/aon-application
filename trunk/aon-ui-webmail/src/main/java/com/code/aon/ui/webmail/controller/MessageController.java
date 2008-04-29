@@ -154,9 +154,9 @@ public class MessageController implements IAonFileListener{
 		initVars();
 		parentMessage = message;
 		try{
-	       	String dest = message.getSender()+",";
-	       	dest += message.getRecipientsTo()+",";
-	       	dest += message.getRecipientsCc()+",";
+	       	String dest = message.getSender()+AonMessageUtils.EMAIL_SEPARATOR;
+	       	dest += message.getRecipientsTo()+AonMessageUtils.EMAIL_SEPARATOR;
+	       	dest += message.getRecipientsCc()+AonMessageUtils.EMAIL_SEPARATOR;
 			recipientsTo = AonMessage.parseDisplayAddress(dest);
 	       	subject = "ReplyALL: "+message.getSubject();
 	        StringBuffer localBody = new StringBuffer(content);
@@ -567,7 +567,7 @@ public class MessageController implements IAonFileListener{
         	Contact e = lst.get(i);
         	email += e.getEmail();
         	if (i+1 < max)
-        		email += ", ";
+        		email += AonMessageUtils.EMAIL_SEPARATOR + " ";
 		}
         if (CONTAINER_TO.equals(selectedDestinyContainer)){
             recipientsTo = acceptEmailItem(recipientsTo);
@@ -602,10 +602,10 @@ public class MessageController implements IAonFileListener{
 	private String acceptEmailItem(String recipient){
 		if (recipient==null || recipient.trim().length()==0){
 			recipient = "";
-		}else if (!recipient.trim().endsWith(",")){
-			recipient += ", ";
+		}else if (!recipient.trim().endsWith(AonMessageUtils.EMAIL_SEPARATOR)){
+			recipient += AonMessageUtils.EMAIL_SEPARATOR + " ";
 		}
-		recipient += email + ",";
+		recipient += email + AonMessageUtils.EMAIL_SEPARATOR;
 		email = null;
 		return recipient;
 	}
