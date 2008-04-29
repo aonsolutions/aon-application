@@ -35,14 +35,14 @@
 						<aon:confirmButton id="cancel" value="#{bundle.aon_cancel}"
 							rendered="#{contact.new}"
 							styleClass="aon-finding-toolbar-item aon-icon-cancel"
-							immediate="#{true}" confirmTitle="Confirmation Dialog"
+							immediate="#{true}" confirmTitle="#{bundle.aon_confirm_title}"
 							confirmMessage="#{bundle.aon_cancel_confirm}"
 							confirmActionListener="#{contact.onCancel}"
 							confirmAction="contact_list"
 							accesskey="#{bundle.aon_key_cancel}" />
 						<aon:confirmButton id="remove" value="#{bundle.aon_remove}"
 							rendered="#{!contact.new}" immediate="true"
-							confirmTitle="Confirmation Dialog"
+							confirmTitle="#{bundle.aon_confirm_title}"
 							confirmMessage="#{bundle.aon_remove_confirm}"
 							confirmActionListener="#{contact.onRemove}"
 							confirmAction="contact_list"
@@ -70,8 +70,14 @@
 					<aon:outputLabel for="Contact_name"
 						value="#{groupwareBundle.contact_name}" />
 					<aon:inputText id="Contact_name"
-						maxlength="64" size="80"
+						maxlength="64" size="80" required="true"
 						value="#{contact.to.name}" />
+
+					<aon:outputLabel for="Contact_surname"
+						value="#{groupwareBundle.contact_surname}" />
+					<aon:inputText id="Contact_surname"
+						maxlength="64" size="80" required="true"
+						value="#{contact.to.surname}" />
 
 					<aon:outputLabel for="Contact_organization"
 						value="#{groupwareBundle.contact_organization}" />

@@ -33,7 +33,7 @@
 						<aon:confirmButton id="remove" value="#{bundle.aon_remove}"
 							rendered="#{!domain.newProfile}"
 							styleClass="aon-finding-toolbar-item aon-icon-delete"
-							immediate="true" confirmTitle="Confirmation Dialog"
+							immediate="true" confirmTitle="#{bundle.aon_confirm_title}"
 							confirmMessage="#{bundle.aon_remove_confirm}"
 							confirmActionListener="#{domain.removeProfile}"
 							confirmAction="profile_list"/>
