@@ -25,7 +25,6 @@ import com.code.aon.common.ITransferObject;
 import com.code.aon.common.dao.IDAO;
 import com.code.aon.common.dao.sql.DAOException;
 import com.code.aon.dao.ldap.annotations.Attribute;
-import com.code.aon.dao.ldap.annotations.DNModifier;
 import com.code.aon.dao.ldap.annotations.EntryObject;
 import com.code.aon.dao.ldap.annotations.RDN;
 import com.code.aon.ldap.DistinguishedName;
@@ -59,8 +58,6 @@ public class LdapDAO implements IDAO  {
 	private Map<String,String> fieldMap;
 	
 	private List<PropertyInfo> mappings;
-	
-	private List<DNModifier> dnModifiers;
 	
 	private String mainObjectClass;
 	
@@ -107,19 +104,11 @@ public class LdapDAO implements IDAO  {
 	private void resolveMetaInfo() {
 		this.fieldMap = new HashMap<String, String>();
 		this.mappings = new ArrayList<PropertyInfo>();
-		this.dnModifiers = new ArrayList<DNModifier>();
 		PropertyDescriptor[] pds = PropertyUtils.getPropertyDescriptors(this.pojoClass);
 		for (PropertyDescriptor pd : pds) {
 			Method method = pd.getReadMethod();
 			if ( method != null ) {
-				if ( method.isAnnotationPresent(DNModifier.class) ) {
-					Attribute attribute = method.getAnnotation(Attribute.class);
-					PropertyInfo info = getPropertyInfo(attribute, pd);
-					this.mappings.add(info);
-					DNModifier dnModifier = pd.getReadMethod().getAnnotation(DNModifier.class);
-					dnModifiers.add( dnModifier.order(), dnModifier );
-					this.fieldMap.put( info.getAlias(), info.getLdapName() );
-				} else if ( method.isAnnotationPresent(RDN.class) ) {
+				if ( method.isAnnotationPresent(RDN.class) ) {
 					Attribute attribute = method.getAnnotation(Attribute.class);
 					this.rdn = getPropertyInfo(attribute, pd);
 					this.fieldMap.put( rdn.getAlias(), rdn.getLdapName() );
@@ -206,11 +195,6 @@ public class LdapDAO implements IDAO  {
 	
 	private String calculateDN( ITransferObject to ) throws DAOException {
 		StringBuffer dn = new StringBuffer( this.baseDN );
-		for( DNModifier dnModifier : this.dnModifiers ) {
-			String value = dnModifier.dn();
-			String modifiedValue = replaceValues(to, value);
-			dn.insert(0, modifiedValue + "," );
-		}
 		try {
 			Object value = getValue(to, rdn);
 			if ( value != null ) {
