@@ -37,7 +37,7 @@ import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.groupware.Contact;
-import com.code.aon.groupware.dao.IGroupWareAlias;
+import com.code.aon.groupware.dao.IContactAlias;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionException;
 import com.code.aon.ui.form.BasicController;
@@ -874,16 +874,12 @@ public class MessageController implements IAonFileListener{
 	public void saveToContacts(ActionEvent event) throws WebmailException, ManagerBeanException{
 		IManagerBean contactsBean = BeanManager.getManagerBean(Contact.class);
 		Criteria criteria = new Criteria();
-    	WebMailController webMailController = (WebMailController)AonUtil.getRegisteredBean(AonConstants.BEAN_WEBMAIL);
-       	MailAccount account = webMailController.getServer().getAccount();
-		criteria.addEqualExpression(contactsBean.getFieldName(IGroupWareAlias.CONTACT_USER_ID), account.getUser().getId());
-		criteria.addEqualExpression(contactsBean.getFieldName(IGroupWareAlias.CONTACT_EMAIL), email);
+		criteria.addEqualExpression(contactsBean.getFieldName(IContactAlias.CONTACT_EMAIL), email);
 		List list = contactsBean.getList(criteria);
 		if (list.size()==0){
 			String email = message.getSenderEmail();
 			
 			Contact contact = new Contact();
-			contact.setUser(account.getUser());
 			contact.setEmail(email);
 			contact.setName(contactName);
 

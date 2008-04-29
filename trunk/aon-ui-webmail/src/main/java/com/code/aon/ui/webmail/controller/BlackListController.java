@@ -25,8 +25,6 @@ import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.groupware.Contact;
-import com.code.aon.groupware.dao.IGroupWareAlias;
-import com.code.aon.ql.Criteria;
 import com.code.aon.ui.util.AonUtil;
 import com.code.aon.ui.webmail.bean.AonConstants;
 import com.code.aon.ui.webmail.bean.AonFolder;
@@ -274,12 +272,8 @@ public class BlackListController {
 	private void addContactsToWhiteList(){
 	    List contacts = null;
 		try{
-			WebMailController wmc = (WebMailController)AonUtil.getRegisteredBean(AonConstants.BEAN_WEBMAIL);
-			MailAccount account = wmc.getServer().getAccount();
 			IManagerBean bean = BeanManager.getManagerBean(Contact.class);
-			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(bean.getFieldName(IGroupWareAlias.CONTACT_USER_ID), account.getUser().getId());
-			contacts = bean.getList(criteria);
+			contacts = bean.getList(null);
 		}catch (ManagerBeanException e) {
 			e.printStackTrace();
 		}
