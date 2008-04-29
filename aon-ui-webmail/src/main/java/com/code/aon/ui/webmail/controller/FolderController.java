@@ -210,6 +210,10 @@ public class FolderController implements ITreeListener{
 
     private HtmlDatascroller htmlDatascroller = null;
     
+	public void initHtmlDataScroller(ActionEvent event) {
+    	htmlDatascroller = null;
+    }
+    
 	public void dataScrollActionListener(ActionEvent event) {
     	htmlDatascroller = (HtmlDatascroller) event.getComponent();
     }

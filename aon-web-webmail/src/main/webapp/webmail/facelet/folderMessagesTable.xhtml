@@ -124,6 +124,9 @@
 							id="checkMessage"
 							value="#{to.selected}"
 							>
+							<a4j:support 
+								event="onclick"  
+								reRender="messageDataTable" />
 						</aon:selectBooleanCheckbox>
 						<aon:panelGroup styleClass="aon-float-left">
 							<aon:outputText rendered="#{!to.readed}" value="&#160;"  styleClass="aon-icon aon-icon-mailInbox" style="cursor: pointer;width:16px;" />
