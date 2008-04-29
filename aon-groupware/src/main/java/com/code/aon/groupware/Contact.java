@@ -4,22 +4,24 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import com.code.aon.common.ITransferObject;
-import com.code.aon.config.User;
+import com.code.aon.dao.ldap.annotations.Attribute;
+import com.code.aon.dao.ldap.annotations.EntryObject;
+import com.code.aon.dao.ldap.annotations.RDN;
 
 @Entity
 @Table(name="contact")
+@EntryObject(mainObjectClass="aonContact", objectClasses={"inetOrgPerson","organizationalPerson","person","top"})
 public class Contact implements ITransferObject {
 
-	private Integer id;
+	private String id;
 	
-	private User user;
-		
 	private String name;
+	
+	private String surname;
 	
 	private String organization;
 	
@@ -38,25 +40,17 @@ public class Contact implements ITransferObject {
 	@Id
 	@GeneratedValue
 	@Column(nullable=false)
-	public Integer getId() {
+	public String getId() {
 		return id;
 	}
 
-	public void setId(Integer id) {
+	public void setId(String id) {
 		this.id = id;
 	}
 
-	@ManyToOne
-	@JoinColumn( name="user",nullable=false )
-	public User getUser() {
-		return user;
-	}
-
-	public void setUser(User user) {
-		this.user = user;
-	}
-
 	@Column(length=64)
+	@RDN
+	@Attribute(name="cn", length=64)
 	public String getName() {
 		return name;
 	}
@@ -65,7 +59,18 @@ public class Contact implements ITransferObject {
 		this.name = name;
 	}
 
+	@Transient
+	@Attribute(name="sn", length=64)
+	public String getSurname() {
+		return surname;
+	}
+
+	public void setSurname(String surname) {
+		this.surname = surname;
+	}
+
 	@Column(length=64)
+	@Attribute(name="organizationName", length=64)
 	public String getOrganization() {
 		return organization;
 	}
@@ -75,6 +80,7 @@ public class Contact implements ITransferObject {
 	}
 
 	@Column(length=64)
+	@Attribute(name="homePhone", length=64)
 	public String getPhone() {
 		return phone;
 	}
@@ -84,6 +90,7 @@ public class Contact implements ITransferObject {
 	}
 
 	@Column(name="cellular_phone", length=64)
+	@Attribute(name="mobile", length=64)
 	public String getCellularPhone() {
 		return cellularPhone;
 	}
@@ -93,6 +100,7 @@ public class Contact implements ITransferObject {
 	}
 
 	@Column(length=64)
+	@Attribute(name="facsimileTelephoneNumber", length=64)
 	public String getFax() {
 		return fax;
 	}
@@ -102,6 +110,7 @@ public class Contact implements ITransferObject {
 	}
 
 	@Column(length=64)
+	@Attribute(name="mail",length=64)
 	public String getEmail() {
 		return email;
 	}
@@ -111,6 +120,7 @@ public class Contact implements ITransferObject {
 	}
 
 	@Column(length=128)
+	@Attribute(name="postalAddress",length=128)
 	public String getAddress() {
 		return address;
 	}
@@ -120,6 +130,7 @@ public class Contact implements ITransferObject {
 	}
 
 	@Column(length=65535)
+	@Attribute(name="comment",length=65535)
 	public String getNote() {
 		return note;
 	}
