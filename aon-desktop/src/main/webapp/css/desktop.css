@@ -61,7 +61,7 @@
 	color:#000 !important;
 	}
 #aon-content .aon-portlet-body .aon-table-portlet td{
-	border-bottom:#ccc 1px dotted;
+	border-bottom:#ccc 1px dotted !important;
 	padding:1px 5px 1px 0;
 	vertical-align:middle;
 }
