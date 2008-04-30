@@ -2,18 +2,6 @@ package com.code.aon.jaas.ldap;
 
 public interface ILdapSecurityConstants {
 
-	String DOMAINS_DN = "ou=domains";
-	
-	String APPLICATIONS_DN = "ou=applications";
-	
-	String USERS_DN = "ou=users";
-	
-	String PROFILES_DN = "ou=profiles";
-	
-	String ROLES_DN = "ou=roles";
-	
-	String BDS_DN = "ou=bds";
-	
 	String APPLICATION_OBJECT_CLASS = "aonApplication";
 
 	String DOMAIN_APPLICATION_OBJECT_CLASS = "aonDomainApplication";

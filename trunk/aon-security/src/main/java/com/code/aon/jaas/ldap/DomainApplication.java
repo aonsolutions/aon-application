@@ -11,6 +11,7 @@ import com.code.aon.jaas.client.ast.IDataSourceMetaData;
 import com.code.aon.jaas.client.ast.IDomainApplication;
 import com.code.aon.jaas.client.ast.INodeVisitor;
 import com.code.aon.jaas.client.ast.IRelation;
+import com.code.aon.ldap.AonDN;
 import com.code.aon.ldap.DistinguishedName;
 import com.code.aon.ldap.Entry;
 import com.code.aon.ldap.ILdapConstants;
@@ -115,11 +116,11 @@ public class DomainApplication implements IDomainApplication, ILdapConstants, IL
 	}
 
 	public static DistinguishedName getParentDN( String domainName ) {
-		return new DistinguishedName( APPLICATIONS_DN, Domain.getDN(domainName) );
+		return AonDN.getDomainApplicationsDN(domainName);
 	}
 	
 	public static DistinguishedName getDN( String domainName, String application ) {
-		return new DistinguishedName( LdapSession.getCN(application), getParentDN(domainName) );
+		return AonDN.getDomainApplicationDN(domainName, application);
 	}
 		
 	public static DomainApplication getObject( SecurityLdap ldap, Entry entry, String domain ) {
@@ -130,50 +131,44 @@ public class DomainApplication implements IDomainApplication, ILdapConstants, IL
 	}
 	
 	public static IDomainApplication get( SecurityLdap ldap, String domainName, String application ) {
-		LdapSession session = null;
 		IDomainApplication domainApplication = null;
 		try {
-			session = ldap.getLdapSession();
 			String objectClass = LdapSession.getObjectClass(DOMAIN_APPLICATION_OBJECT_CLASS);
 			DistinguishedName dn = getDN(domainName, application);
-			Entry entry = session.get( dn.toString(), objectClass );
+			Entry entry = ldap.getLdapSession().get( dn.toString(), objectClass );
 			if ( entry != null ) {
 				domainApplication = getObject( ldap, entry, domainName);
 			}
 		} catch ( LdapException e ) {
 			LOGGER.error( e.getMessage(), e );
 		} finally {
-			ldap.closeSession(session);
+			ldap.closeSession();
 		}
 		return domainApplication;
 	}
 
 	public IDataSourceMetaData getDataSourceMetaData( String dn ) {
-		LdapSession session = null;
 		IDataSourceMetaData dsmd = null;
 		try {
-			session = this.ldap.getLdapSession();
 			String objectClass = LdapSession.getObjectClass(DB_CONNECTION_OBJECT_CLASS);
-			Entry entry = session.get( dn, objectClass );
+			Entry entry = this.ldap.getLdapSession().get( dn, objectClass );
 			if ( entry != null ) {
 				dsmd = this.ldap.getDataSourceMetaData(entry);
 			}
 		} catch ( LdapException e ) {
 			LOGGER.error( e.getMessage(), e );
 		} finally {
-			this.ldap.closeSession(session);
+			this.ldap.closeSession();
 		}
 		return dsmd;
 	}
 	
 	public Collection<IRelation> getApplicationProfiles( String application ) {
-		LdapSession session = null;
 		List<IRelation> profiles = new ArrayList<IRelation>();
 		try {
-			session = this.ldap.getLdapSession();
 			String objectClass = LdapSession.getObjectClass(PROFILE_OBJECT_CLASS);
-			DistinguishedName dn = SecurityLdap.getApplicationProfilesDN(application);
-			List<Entry> list = session.search(dn.toString(), objectClass );
+			DistinguishedName dn = AonDN.getApplicationProfilesDN(application);
+			List<Entry> list = this.ldap.getLdapSession().search(dn.toString(), objectClass );
 			for( Entry entry : list ) {
 				IRelation profile = this.ldap.getRelation(entry);
 				profiles.add(profile);
@@ -181,19 +176,17 @@ public class DomainApplication implements IDomainApplication, ILdapConstants, IL
 		} catch ( LdapException e ) {
 			LOGGER.error( e.getMessage(), e );
 		} finally {
-			this.ldap.closeSession(session);
+			this.ldap.closeSession();
 		}
 		return profiles;
 	}	
 
 	public Collection<IRelation> getDomainApplicationProfiles( String domainId, String application ) {
-		LdapSession session = null;
 		List<IRelation> profiles = new ArrayList<IRelation>();
 		try {
-			session = this.ldap.getLdapSession();
 			String objectClass = LdapSession.getObjectClass(DOMAIN_APPLICATION_PROFILE_OBJECT_CLASS);
-			DistinguishedName dn = SecurityLdap.getDomainApplicationProfilesDN(domainId, application);
-			List<Entry> list = session.search(dn.toString(), objectClass );
+			DistinguishedName dn = AonDN.getDomainApplicationProfilesDN(domainId, application);
+			List<Entry> list = this.ldap.getLdapSession().search(dn.toString(), objectClass );
 			for( Entry entry : list ) {
 				IRelation profile = this.ldap.getRelation(entry);
 				profiles.add(profile);
@@ -201,19 +194,17 @@ public class DomainApplication implements IDomainApplication, ILdapConstants, IL
 		} catch ( LdapException e ) {
 			LOGGER.error( e.getMessage(), e );
 		} finally {
-			this.ldap.closeSession(session);
+			this.ldap.closeSession();
 		}
 		return profiles;
 	}
 	
 	public Collection<IRelation> getDomainApplicationUsers( String domainName, String application ) {
-		LdapSession session = null;
 		List<IRelation> users = new ArrayList<IRelation>();
 		try {
-			session = this.ldap.getLdapSession();
 			String objectClass = LdapSession.getObjectClass(DOMAIN_APPLICATION_USER_OBJECT_CLASS);
-			DistinguishedName dn = SecurityLdap.getDomainApplicationUsersDN(domainName, application);
-			List<Entry> list = session.search(dn.toString(), objectClass );
+			DistinguishedName dn = AonDN.getDomainApplicationUsersDN(domainName, application);
+			List<Entry> list = this.ldap.getLdapSession().search(dn.toString(), objectClass );
 			for( Entry entry : list ) {
 				IRelation user = this.ldap.getRelation(entry);
 				users.add(user);
@@ -221,17 +212,16 @@ public class DomainApplication implements IDomainApplication, ILdapConstants, IL
 		} catch ( LdapException e ) {
 			LOGGER.error( e.getMessage(), e );
 		} finally {
-			this.ldap.closeSession(session);
+			this.ldap.closeSession();
 		}
 		return users;
 	}
 	
 	public IRelation updateProfile(String appId, String domainId, IRelation relation) {
-		LdapSession session = null;
 		try {
-			session = this.ldap.getLdapSession();
+			LdapSession session = this.ldap.getLdapSession();
 			String objectClass = LdapSession.getObjectClass(DOMAIN_APPLICATION_PROFILE_OBJECT_CLASS);
-			DistinguishedName dn = SecurityLdap.getDomainApplicationProfileDN(domainId, appId, relation.getId());
+			DistinguishedName dn = AonDN.getDomainApplicationProfileDN(domainId, appId, relation.getId());
 			if ( session.exists(dn.toString(), objectClass) ) {
 				ldap.updateRelation(dn, relation);
 			} else {
@@ -241,14 +231,18 @@ public class DomainApplication implements IDomainApplication, ILdapConstants, IL
 		} catch ( LdapException e ) {
 			LOGGER.error( e.getMessage(), e );
 		} finally {
-			this.ldap.closeSession(session);
+			this.ldap.closeSession();
 		}
 		return relation;
 	}
 
 	public void removeProfile(String appId, String domainId, IRelation relation) {
-		DistinguishedName dn = SecurityLdap.getDomainApplicationProfileDN(domainId, appId, relation.getId());
-		this.ldap.delete(dn);
+		DistinguishedName dn = AonDN.getDomainApplicationProfileDN(domainId, appId, relation.getId());
+		try {
+			this.ldap.delete(dn);
+		} catch (LdapException e) {
+			LOGGER.error( e.getMessage(), e );
+		}
 	}
 	
 }
