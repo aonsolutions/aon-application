@@ -152,7 +152,7 @@ public class LdapSession implements ILdapConstants {
 	}
 	
 	private String resolveBase(String base) throws NamingException {
-		if (base.endsWith(this.baseDN)) {
+		if ( (this.baseDN != null) && (base.endsWith(this.baseDN)) ) {
 			return base.substring(0, base.length() - this.baseDN.length() - 1);
 		}
 		return base;

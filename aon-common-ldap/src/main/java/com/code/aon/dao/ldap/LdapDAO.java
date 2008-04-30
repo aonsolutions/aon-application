@@ -214,6 +214,7 @@ public class LdapDAO implements IDAO  {
 			session = getLdapSession();
 			String dn = getDN(criteria);
 			String filter = getFilter(criteria);
+			LOGGER.info( "getCount, dn=" + dn + ",filter=" + filter );
 			count = session.getCount(dn.toString(), filter, Scope.SUBTREE_SCOPE );
 		} catch ( LdapException e ) {
 			throw new DAOException( "Error getting count of " + mainObjectClass, e );
