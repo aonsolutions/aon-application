@@ -74,7 +74,7 @@ public class LinkGenerator extends Generator {
 		ArrayList<LinkCategoryHandler> lchList;
 		List<ITransferObject> linkCategoryList;
 		List<ITransferObject> linkCategoryDetailList;
-		HashMap categoryMap = new HashMap<Section, List>();
+		HashMap categoryMap = new HashMap<Integer, List>();
 		try {
 			lchList = new ArrayList<LinkCategoryHandler>();
 			
@@ -120,23 +120,27 @@ public class LinkGenerator extends Generator {
 					generate(vu, Templates.LINK, lcd.getLinkCategory().getAlias());
 					vu.remove("link_category");
 					
-					l = (List) categoryMap.get(currentSection);
+					l = (List) categoryMap.get(currentSection.getId());
 					if (l == null)
 						l = new ArrayList<LinkCategoryHandler>();
 					l.add(lch);
-					categoryMap.put(currentSection,l);
+					categoryMap.put(currentSection.getId(),l);
 				}
 			}
-			Iterator<Section> iter = categoryMap.keySet().iterator();
-			Section key;
+			Iterator<Integer> iter = categoryMap.keySet().iterator();
+			Integer key;
 			ArrayList<LinkCategoryHandler> linkCategoryHandlerSet;
 			while (iter.hasNext()){
 				key = iter.next();
+				IManagerBean beanSection = BeanManager.getManagerBean(Section.class);
+				Criteria criteriaSection = new Criteria();
+				criteriaSection.addEqualExpression(beanSection.getFieldName(ICMSAlias.SECTION_ID),key);
+				Section section = (Section)((List<ITransferObject>)beanSection.getList(criteriaSection)).get(0);
 				linkCategoryHandlerSet = (ArrayList<LinkCategoryHandler>)categoryMap.get(key);
 				vu.put("link_categories", linkCategoryHandlerSet);
 				VelocityUtil.addMessage(" Generando listado categoria seccion Link.", VelocityUtil.INFO);
-				CommonGenerator.getCommonGenerator().chargeContext(vu, key);
-				generate(vu, Templates.LINK, LINK_CATEGORY_BY_SECTION_PAGE + key.getId());
+				CommonGenerator.getCommonGenerator().chargeContext(vu, section);
+				generate(vu, Templates.LINK, LINK_CATEGORY_BY_SECTION_PAGE + section.getId());
 				vu.remove("link_categories");
 			}
 			iter = null;

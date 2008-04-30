@@ -80,7 +80,12 @@ public enum ModularPageOptionType implements IResourceable {
 	/**
 	 * Bulletin suscription
 	 */
-	BULLETIN_SUSCRIBE;
+	BULLETIN_SUSCRIBE,
+
+	/**
+	 * Bulletin suscription
+	 */
+	NEXT_ARTICLES;
 
 	/**
 	 * Ruta base del fichero de mensajes.

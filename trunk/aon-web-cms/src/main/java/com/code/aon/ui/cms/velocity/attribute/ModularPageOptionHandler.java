@@ -5,6 +5,7 @@ import com.code.aon.cms.enumeration.ArticleType;
 import com.code.aon.cms.enumeration.ModularPageOptionType;
 import com.code.aon.ui.cms.velocity.ActivityGenerator;
 import com.code.aon.ui.cms.velocity.AlbumGenerator;
+import com.code.aon.ui.cms.velocity.ArticleCalendarGenerator;
 import com.code.aon.ui.cms.velocity.ArticleGenerator;
 import com.code.aon.ui.cms.velocity.BannerGenerator;
 import com.code.aon.ui.cms.velocity.BulletinSuscribeGenerator;
@@ -68,6 +69,9 @@ public class ModularPageOptionHandler {
 		}
 		else if (mpod.getModular_page_option().getType().equals(ModularPageOptionType.BULLETIN_SUSCRIBE)) {
 			content = BulletinSuscribeGenerator.getBulletinSuscribeHandler();
+		}
+		else if (mpod.getModular_page_option().getType().equals(ModularPageOptionType.NEXT_ARTICLES)) {
+			content = ArticleCalendarGenerator.getNextArticlesHandler();
 		}
 	}
 

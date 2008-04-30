@@ -125,7 +125,8 @@ public class ModularPageOptionController extends BasicI18nController {
 		ModularPageOption to = (ModularPageOption)getTo();
 		if (to != null && 
 				to.getType() != null && 
-				!to.getType().equals(ModularPageOptionType.BULLETIN_SUSCRIBE)) {
+				!to.getType().equals(ModularPageOptionType.BULLETIN_SUSCRIBE) &&
+				!to.getType().equals(ModularPageOptionType.NEXT_ARTICLES)) {
 			return true;
 		}
 		return false;
