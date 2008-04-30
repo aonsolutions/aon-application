@@ -10,7 +10,7 @@ public class AonDN implements ILdapConstants {
 	
 	public static final String USERS = "users";
 	
-	public static final String ADDRESS_BOOK = "users";
+	public static final String ADDRESS_BOOK = "addressbook";
 	
 	public static final String ACCOUNTS = "accounts";
 	
