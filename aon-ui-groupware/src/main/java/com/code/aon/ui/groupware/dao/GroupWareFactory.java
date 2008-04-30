@@ -9,12 +9,11 @@ import javax.faces.context.FacesContext;
 import com.code.aon.common.bean.BeanConfig;
 import com.code.aon.common.dao.IDAO;
 import com.code.aon.dao.ldap.LdapDAO;
-import com.code.aon.dao.ldap.LdapDAOFactory;
 import com.code.aon.jaas.auth.AuthPrincipal;
 import com.code.aon.ldap.AonDN;
 import com.code.aon.ldap.DistinguishedName;
 
-public class GroupWareFactory extends LdapDAOFactory {
+public class GroupWareFactory {
 	
 	private static final Logger LOGGER = Logger.getLogger(GroupWareFactory.class.getName());
 
@@ -50,7 +49,7 @@ public class GroupWareFactory extends LdapDAOFactory {
 	 * @return the dAO
 	 */
 	public IDAO getContactDAO( BeanConfig config ) {
-		LdapDAO dao = getDAO(config);
+		LdapDAO dao = new LdapDAO(config.getPojoClass());
 		AuthPrincipal principal = getPrincipal();
 		DistinguishedName baseDN = AonDN.getUserAddressBookDN(principal.getDomain(), principal.getShortName());
 		LOGGER.info( "Contact DAO DN:" + baseDN );
