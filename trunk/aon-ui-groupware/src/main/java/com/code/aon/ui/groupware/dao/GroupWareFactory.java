@@ -11,6 +11,8 @@ import com.code.aon.common.dao.IDAO;
 import com.code.aon.dao.ldap.LdapDAO;
 import com.code.aon.dao.ldap.LdapDAOFactory;
 import com.code.aon.jaas.auth.AuthPrincipal;
+import com.code.aon.ldap.AonDN;
+import com.code.aon.ldap.DistinguishedName;
 
 public class GroupWareFactory extends LdapDAOFactory {
 	
@@ -39,15 +41,6 @@ public class GroupWareFactory extends LdapDAOFactory {
 		LOGGER.info( "Current User:" + user );
 		return user;
 	}
-
-	private String getUserDN( AuthPrincipal principal ) {
-		return "uid=" + principal.getShortName() + ",ou=users,cn=" + principal.getDomain() + ",ou=domains";
-	}
-
-	private String getAddressBookDN() {
-		AuthPrincipal principal = getPrincipal();
-		return "ou=addressbook," + getUserDN(principal); 
-	}
 	
 	/**
 	 * Gets the dAO.
@@ -58,9 +51,10 @@ public class GroupWareFactory extends LdapDAOFactory {
 	 */
 	public IDAO getContactDAO( BeanConfig config ) {
 		LdapDAO dao = getDAO(config);
-		String baseDN = getAddressBookDN();
+		AuthPrincipal principal = getPrincipal();
+		DistinguishedName baseDN = AonDN.getUserAddressBookDN(principal.getDomain(), principal.getShortName());
 		LOGGER.info( "Contact DAO DN:" + baseDN );
-		dao.setBaseDN( baseDN );
+		dao.setBaseDN( baseDN.toString() );
 		return dao;
 	}
 	

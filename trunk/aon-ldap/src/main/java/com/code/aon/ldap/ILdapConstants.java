@@ -4,6 +4,8 @@ public interface ILdapConstants {
 
 	String OBJECT_CLASS_ATTRIBUTE = "objectClass";
 	
+	String ORGANIZATIONAL_UNIT_NAME_ATTRIBUTE = "ou";
+	
 	String COMMON_NAME_ATTRIBUTE = "cn";
 	
 	String SURNAME_ATTRIBUTE = "sn";
