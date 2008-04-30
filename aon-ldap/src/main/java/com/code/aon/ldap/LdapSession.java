@@ -97,15 +97,7 @@ public class LdapSession implements ILdapConstants {
 	}
 
 	public static String getCommonName( String cn ) {
-		return "(" + getCN(cn) +  ")";
-	}
-
-	public static String getUserId( String uid ) {
-		return USER_ID_ATTRIBUTE + "=" + uid;
-	}
-	
-	public static String getCN( String cn ) {
-		return COMMON_NAME_ATTRIBUTE + "=" + cn;
+		return "(" + COMMON_NAME_ATTRIBUTE + "=" +  cn + ")";
 	}
 	
 	private Object convertValue(Object value, DirContext syntax)
