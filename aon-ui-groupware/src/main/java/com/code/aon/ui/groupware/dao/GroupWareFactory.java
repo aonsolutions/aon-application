@@ -1,6 +1,7 @@
 package com.code.aon.ui.groupware.dao;
 
 import java.security.Principal;
+import java.util.logging.Logger;
 
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
@@ -12,6 +13,8 @@ import com.code.aon.dao.ldap.LdapDAOFactory;
 import com.code.aon.jaas.auth.AuthPrincipal;
 
 public class GroupWareFactory extends LdapDAOFactory {
+	
+	private static final Logger LOGGER = Logger.getLogger(GroupWareFactory.class.getName());
 
 	private static final GroupWareFactory SINGLETON = new GroupWareFactory(); 
 	
@@ -33,9 +36,18 @@ public class GroupWareFactory extends LdapDAOFactory {
 		} else {
 			user = new AuthPrincipal( principal.getName() );
 		}
+		LOGGER.info( "Current User:" + user );
 		return user;
 	}
 
+	private String getUserDN( AuthPrincipal principal ) {
+		return "uid=" + principal.getShortName() + ",ou=users,cn=" + principal.getDomain() + ",ou=domains";
+	}
+
+	private String getAddressBookDN() {
+		AuthPrincipal principal = getPrincipal();
+		return "ou=addressbook," + getUserDN(principal); 
+	}
 	
 	/**
 	 * Gets the dAO.
@@ -46,9 +58,9 @@ public class GroupWareFactory extends LdapDAOFactory {
 	 */
 	public IDAO getContactDAO( BeanConfig config ) {
 		LdapDAO dao = getDAO(config);
-		AuthPrincipal principal = getPrincipal();
-		String baseDN = "ou=addressbook,uid=" + principal.getShortName() + ",ou=users,cn=" + principal.getDomain() + ",ou=domains";
-		dao.setBaseDN(baseDN);
+		String baseDN = getAddressBookDN();
+		LOGGER.info( "Contact DAO DN:" + baseDN );
+		dao.setBaseDN( baseDN );
 		return dao;
 	}
 	
