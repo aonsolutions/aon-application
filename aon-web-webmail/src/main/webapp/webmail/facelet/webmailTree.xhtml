@@ -13,8 +13,9 @@
 
 	<aon:div>
 		
+		 
 		<aon:div styleClass="aon-toolbar"  id="buttonsGrid" 
-			rendered="#{tree.treeLoaded}">					
+			rendered="#{tree.treeLoaded}" style="padding-bottom:0;">					
 							
 					<aon:commandButton
 						id="newFolder"
@@ -58,7 +59,9 @@
 			
 		</aon:div>
 
-	    <h:outputText value="#{tree.account}" styleClass="aon-icon-tree-root aon-icon"/>	
+	   <aon:div >
+			<h:outputText value="#{tree.account}" styleClass="aon-icon-tree-root aon-icon"/>
+		</aon:div>	
 	    
 		<rich:tree nodeSelectListener="#{tree.processSelection}"
 				id="foldersTree" styleClass="aon-normal"
@@ -66,8 +69,8 @@
 				value="#{tree.treeNode}" var="item"
 				nodeFace="#{item.folderTypeName}">
 			<rich:treeNode type="INBOX" 
-				iconLeaf="/css/images/folderTree/aon-icon-tree-inbox.png" 
-				icon="/css/images/folderTree/aon-icon-tree-inbox.png">
+				iconLeaf="/aonResource/images/aon-icon/aon-icon-tree-inbox.png" 
+				icon="/aonResource/images/aon-icon/aon-icon-tree-inbox.png">
 				<aon:outputText 
 	               	value="#{item.name} (#{item.folder.unreadMessageCount})"
 					rendered="#{!item.root and item.folder.unreadMessageCount>0}" />
@@ -76,8 +79,8 @@
 					rendered="#{!item.root and item.folder.unreadMessageCount==0}" />
 			</rich:treeNode>
 			<rich:treeNode type="Enviados" 
-				iconLeaf="/css/images/folderTree/aon-icon-tree-sent.png" 
-				icon="/css/images/folderTree/aon-icon-tree-sent.png">
+				iconLeaf="/aonResource/images/aon-icon/aon-icon-tree-sent.png" 
+				icon="/aonResource/images/aon-icon/aon-icon-tree-sent.png">
 				<aon:outputText 
 	               	value="#{item.name} (#{item.folder.unreadMessageCount})"
 					rendered="#{!item.root and item.folder.unreadMessageCount>0}" />
@@ -86,8 +89,8 @@
 					rendered="#{!item.root and item.folder.unreadMessageCount==0}" />
 			</rich:treeNode>
 			<rich:treeNode type="spam" 
-				iconLeaf="/css/images/folderTree/aon-icon-tree-spam.png" 
-				icon="/css/images/folderTree/aon-icon-tree-spam.png">
+				iconLeaf="/aonResource/images/aon-icon/aon-icon-tree-spam.png" 
+				icon="/aonResource/images/aon-icon/aon-icon-tree-spam.png">
 				<aon:outputText 
 	               	value="#{item.name} (#{item.folder.unreadMessageCount})"
 					rendered="#{!item.root and item.folder.unreadMessageCount>0}" />
@@ -96,8 +99,8 @@
 					rendered="#{!item.root and item.folder.unreadMessageCount==0}" />
 			</rich:treeNode>
 			<rich:treeNode type="Papelera" 
-				iconLeaf="/css/images/folderTree/aon-icon-tree-trash.png" 
-				icon="/css/images/folderTree/aon-icon-tree-trash.png">
+				iconLeaf="/aonResource/images/aon-icon/aon-icon-tree-trash.png" 
+				icon="/aonResource/images/aon-icon/aon-icon-tree-trash.png">
 				<aon:outputText 
 	               	value="#{item.name} (#{item.folder.unreadMessageCount})"
 					rendered="#{!item.root and item.folder.unreadMessageCount>0}" />
@@ -106,8 +109,8 @@
 					rendered="#{!item.root and item.folder.unreadMessageCount==0}" />
 			</rich:treeNode>
 			<rich:treeNode type="Borrador" 
-				iconLeaf="/css/images/folderTree/aon-icon-tree-draft.png" 
-				icon="/css/images/folderTree/aon-icon-tree-draft.png">
+				iconLeaf="/aonResource/images/aon-icon/aon-icon-tree-draft.png" 
+				icon="/aonResource/images/aon-icon/aon-icon-tree-draft.png">
 				<aon:outputText 
 	               	value="#{item.name} (#{item.folder.unreadMessageCount})"
 					rendered="#{!item.root and item.folder.unreadMessageCount>0}" />
@@ -116,8 +119,8 @@
 					rendered="#{!item.root and item.folder.unreadMessageCount==0}" />
 			</rich:treeNode>
 			<rich:treeNode type="other" 
-				iconLeaf="/css/images/folderTree/aon-icon-tree-folder.png" 
-				icon="/css/images/folderTree/aon-icon-tree-folder.png">
+				iconLeaf="/aonResource/images/aon-icon/aon-icon-tree-folder.png" 
+				icon="/aonResource/images/aon-icon/aon-icon-tree-folder.png">
 				<aon:outputText 
 					value="WebMail"
 					rendered="#{item.root}" />

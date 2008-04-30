@@ -46,7 +46,17 @@
 						id="deselectButton"
 						actionListener="#{folder.deselectAllPageMessages}"
 						reRender="messageGrid"
-						styleClass="aon-icon-commandButton-disabled aon-icon-checkNone">
+						styleClass="aon-icon-commandButton-disabled aon-icon-checkNone aon-finding-toolbar-item">
+				</aon:commandButton>
+				
+				<aon:commandButton
+					id="newMailMessage"
+					title="#{appBundle.aon_webmail_newmail}"
+					action="messageNew"
+					actionListener="#{message.createNewMessage}"
+					value="#{appBundle.aon_webmail_newmail}"
+					styleClass="aon-finding-toolbar-item aon-icon-newMail"
+					>
 				</aon:commandButton>
 				
 				<aon:confirmButton id="deleteButton_n"
@@ -106,7 +116,7 @@
 				rendered="#{folder.folder.messageCount==0}">
 				<aon:outputText value="#{appBundle.aon_webmail_nomessages}"/>
 			</aon:panelGroup>
-			<aon:div style="width:98%">
+			<aon:div style="width:99%">
 				<aon:dataTable id="messageDataTable" 
 					value="#{folder.folder.messageList}" 
 					var="to" styleClass="aon-dataTable"
@@ -135,7 +145,7 @@
 						</aon:panelGroup>
 						<aon:div styleClass="aon-float-left">
 							<aon:graphicImage  
-								value="/css/richCss/images/aon-icon/aon-icon-attach-file.png" 
+								value="/aonResource/images/aon-icon/aon-icon-attach-file.png" 
 								rendered="#{to.attachment}" />
 						</aon:div>
 					</aon:column>
@@ -184,12 +194,14 @@
 					</aon:column>		  
 				</aon:dataTable>
 			</aon:div>
-			<aon:div styleClass="aon-dataScroller">
-			<rich:datascroller
-				id="messageDataScroller" 
-				align="left"  for="messageDataTable" 
-				maxPages="20"
-				actionListener="#{folder.dataScrollActionListener}" />
+			<aon:div styleClass="aon-dataScroller" rendered="#{folder.folder.messageCount > 20}">
+				<aon:dataPaginator
+					id="messageDataScroller" boundaryControls="show" stepControls="show" 
+					align="left" for="messageDataTable" maxPages="20"
+					actionListener="#{folder.dataScrollActionListener}"
+				>
+					<ui:include src="/webmail/facelet/dataPaginatorButtons.xhtml" />
+				</aon:dataPaginator>
 			</aon:div>
 		</aon:div>
 	</aon:div>

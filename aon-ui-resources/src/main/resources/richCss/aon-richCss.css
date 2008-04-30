@@ -107,6 +107,9 @@ color:#000;
 .aon-width-60{
 	width:60px;
 	}
+.aon-width-70{
+	width:70px;
+	}
 .aon-width-80{
 	width:80px;
 	}
@@ -282,7 +285,7 @@ color:#000;
 .aon-icon-refresh{
 	background:transparent url(images/aon-icon/aon-icon-refresh.png) scroll left center no-repeat;
  }
-.aon-icon-attach{
+.aon-icon-attach-file{
 	background:transparent url(images/aon-icon/aon-icon-attach-file.png) scroll left center no-repeat;	
  }
 .aon-icon-mail-save{
@@ -910,9 +913,11 @@ color:#000;
 	}
 .aon-dataTable-row-odd{
 	background-color:#fff;
+	border-bottom:#ccc 1px solid;
 	}
 .aon-dataTable-row-even{
-	background-color:#f8f9f9;
+	background-color:#f2f2f2;
+	border-bottom:#ccc 1px solid;
 	}
 .aon-table-row-hover{
 	background-color:#e2f1f5;	
@@ -1155,7 +1160,7 @@ color:#000;
 /**********************************************/
 /***************   DATASCROLLER ****************/
 /**********************************************/ 
-.aon-dataScroller{
+#aon-content .aon-dataScroller{
 	background-color:#e1e3e4;
 	border:#808080 1px solid;
 	font-weight:bold;
@@ -1165,7 +1170,13 @@ color:#000;
 	overflow:auto;
 	height:100%;
 	}
+
 .aon-dataScroller table{width:auto !important;}
+.aon-dataScroller table, .aon-dataScroller table td{	
+	border:0 !important;
+	background-color:transparent !important;
+	padding:0 !important;
+	}
 .aon-dataScroller-text{	
 	text-align:left;
 	float:left;
@@ -1174,12 +1185,12 @@ color:#000;
 	border:0;
 	background-color:transparent;
 	}
+
 .aon-dataScroller-buttons{
 	float:left;	
 	}
 .aon-dataScroller-button{
 	border:0;
-	background-color:#f1f1f1;
 	width:14px;
 	height:14px;
 	margin:0 3px 0 0;
@@ -1201,6 +1212,9 @@ color:#000;
 	}
 .aon-dataScroller-button-fastRewind{
 	background:transparent url(images/aon-datascroller/aon-dataScroller-button-fastRewind.png) center center no-repeat;
+	}
+#aon-content .aon-dataScroller div, #aon-content .aon-dataScroller table, #aon-content .aon-dataScroller td{
+	background-color:transparent !important;
 	}
 /**********************************************/
 /************   SELECT INPUT DATE *************/

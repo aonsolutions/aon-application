@@ -9,6 +9,8 @@
 		<project>aon-components</project>
 		<project>aon-webmail</project>
 		<project>aon-ui-webmail</project>
+		<project>aon-ui-resources</project>
+		<project>aon-rich-components</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>
