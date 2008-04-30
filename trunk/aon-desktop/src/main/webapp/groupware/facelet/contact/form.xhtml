@@ -76,7 +76,7 @@
 					<aon:outputLabel for="Contact_surname"
 						value="#{groupwareBundle.contact_surname}" />
 					<aon:inputText id="Contact_surname"
-						maxlength="64" size="80" required="true"
+						maxlength="64" size="80"
 						value="#{contact.to.surname}" />
 
 					<aon:outputLabel for="Contact_organization"
@@ -114,6 +114,12 @@
 					<aon:inputText id="Contact_address"
 						maxlength="128" size="80"
 						value="#{contact.to.address}" />
+
+					<aon:outputLabel for="Contact_postal_code"
+						value="#{groupwareBundle.contact_postal_code}" />
+					<aon:inputText id="Contact_postal_code"
+						maxlength="40" size="40"
+						value="#{contact.to.postalCode}" />
 					
 					<aon:outputLabel for="Contact_note" value="#{groupwareBundle.contact_note}" />
 					<aon:inputTextarea id="Contact_note"
