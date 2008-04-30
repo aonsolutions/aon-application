@@ -11,7 +11,6 @@ import javax.management.MBeanServerFactory;
 import javax.management.ObjectName;
 
 import com.code.aon.common.bean.BeanConfig;
-import com.code.aon.common.dao.IDAO;
 
 public class LdapDAOFactory {
 	
@@ -28,14 +27,14 @@ public class LdapDAOFactory {
 	
 	private MBeanServer getMBeanServer() {
 		MBeanServer server = null;
-		List servers = MBeanServerFactory.findMBeanServer(null);
+		List<MBeanServer> servers = MBeanServerFactory.findMBeanServer(null);
 		if (servers.size() > 0) {
 			if (servers.size() > 1) {
 				//	Iterates over servers list untill AonMainDeployerMBean is found.
 				// TODO Isolate application server. 
-				Iterator it = servers.iterator();
+				Iterator<MBeanServer> it = servers.iterator();
 				while (it.hasNext()) {
-					server = (MBeanServer) it.next();
+					server = it.next();
 					try {
 						ObjectName jbossname = new ObjectName( "jboss.admin:service=AonMainDeployer" );
 						server.getObjectInstance( jbossname );
