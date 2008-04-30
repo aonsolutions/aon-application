@@ -16,6 +16,7 @@ import com.code.aon.jaas.client.ast.INodeVisitor;
 import com.code.aon.jaas.client.ast.IUser;
 import com.code.aon.jaas.client.ast.UserAlreadyExistException;
 import com.code.aon.jaas.client.ast.core.AccessPolicy;
+import com.code.aon.ldap.AonDN;
 import com.code.aon.ldap.DistinguishedName;
 import com.code.aon.ldap.Entry;
 import com.code.aon.ldap.ILdapConstants;
@@ -125,7 +126,7 @@ public class Domain implements IDomain, ILdapConstants, ILdapSecurityConstants {
 	}
 	
 	public static DistinguishedName getDN( String domainName ) {
-		return new DistinguishedName( LdapSession.getCN(domainName), DOMAINS_DN );
+		return AonDN.getDomainDN(domainName);
 	}
 	
 	private static Domain getObject( SecurityLdap ldap, Entry entry ) {
@@ -135,18 +136,16 @@ public class Domain implements IDomain, ILdapConstants, ILdapSecurityConstants {
 	}
 
 	public static Domain get( SecurityLdap ldap, String domainId ) {
-		LdapSession session = null;
 		Domain domain = null;
 		try {
-			session = ldap.getLdapSession();
 			String objectClass = LdapSession.getObjectClass(OBJECT_CLASS);
 			DistinguishedName dn = getDN(domainId);
-			Entry entry = session.get( dn.toString(), objectClass );
+			Entry entry = ldap.getLdapSession().get( dn.toString(), objectClass );
 			domain = getObject(ldap, entry);
 		} catch ( LdapException e ) {
 			LOGGER.error( e.getMessage(), e );
 		} finally {
-			ldap.closeSession(session);
+			ldap.closeSession();
 		}
 		return domain;
 	}
@@ -162,10 +161,9 @@ public class Domain implements IDomain, ILdapConstants, ILdapSecurityConstants {
 	}
 
 	private IAccessPolicy getAccessPolicy( String domainName ) {
-		LdapSession session = null;
 		IAccessPolicy accessPolicy = null;
 		try {
-			session = ldap.getLdapSession();
+			LdapSession session = ldap.getLdapSession();
 			String objectClass = LdapSession.getObjectClass(ACCESS_POLICY_OBJECT_CLASS);
 			DistinguishedName dn = getDN(domainName);
 			Entry entry = session.searchOne( dn.toString(), objectClass );
@@ -175,16 +173,15 @@ public class Domain implements IDomain, ILdapConstants, ILdapSecurityConstants {
 		} catch ( LdapException e ) {
 			LOGGER.error( e.getMessage(), e );
 		} finally {
-			ldap.closeSession(session);
+			ldap.closeSession();
 		}
 		return accessPolicy;
 	}
 
 	private Collection<IDomainApplication> getDomainApplications( String domainName ) {
-		LdapSession session = null;
 		List<IDomainApplication> applications = new ArrayList<IDomainApplication>();
 		try {
-			session = this.ldap.getLdapSession();
+			LdapSession session = this.ldap.getLdapSession();
 			String objectClass = LdapSession.getObjectClass(DOMAIN_APPLICATION_OBJECT_CLASS);
 			DistinguishedName dn = DomainApplication.getParentDN(domainName);
 			List<Entry> list = session.search(dn.toString(), objectClass );
@@ -195,7 +192,7 @@ public class Domain implements IDomain, ILdapConstants, ILdapSecurityConstants {
 		} catch ( LdapException e ) {
 			LOGGER.error( e.getMessage(), e );
 		} finally {
-			this.ldap.closeSession(session);
+			this.ldap.closeSession();
 		}
 		return applications;
 	}

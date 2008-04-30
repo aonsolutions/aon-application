@@ -32,8 +32,10 @@ import com.code.aon.jaas.ldap.ILdapSecurityConstants;
 import com.code.aon.jaas.ldap.SecurityLdap;
 import com.code.aon.jaas.storage.ApplicationsStorage;
 import com.code.aon.jaas.storage.StorageException;
+import com.code.aon.ldap.AonDN;
 import com.code.aon.ldap.DistinguishedName;
 import com.code.aon.ldap.ILdapConstants;
+import com.code.aon.ldap.LdapException;
 
 /**
  * @author Consulting & Development. Aimar Tellitu - 03/04/2008
@@ -143,9 +145,13 @@ public class JBossLdap extends ServiceMBeanSupport implements JBossLdapMBean, IL
 		if ( LOGGER.isDebugEnabled() ) {
 			LOGGER.debug("Removing profile relation from: DOMAIN[" + domainId + "], APPLICATION[" + appId + "]" );
 		}
-		DistinguishedName dn = SecurityLdap.getApplicationProfileDN(appId, relation.getId());
+		DistinguishedName dn = AonDN.getApplicationProfileDN(appId, relation.getId());
 		if ( this.ldap.exists(dn, PROFILE_OBJECT_CLASS) ) {
-			this.ldap.delete(dn);
+			try {
+				this.ldap.delete(dn);
+			} catch (LdapException e) {
+				throw new StorageException( e.getMessage(), e );
+			}
 		} else {
 			IDomainApplication domainApplication = DomainApplication.get(this.ldap, domainId, appId);
 			domainApplication.removeProfile(relation);
@@ -157,7 +163,7 @@ public class JBossLdap extends ServiceMBeanSupport implements JBossLdapMBean, IL
 		if ( LOGGER.isDebugEnabled() ) {
 			LOGGER.debug("Updating profile relation for: DOMAIN[" + domainId + "], APPLICATION[" + appId + "]" );
 		}
-		DistinguishedName dn = SecurityLdap.getApplicationProfileDN(appId, relation.getId());
+		DistinguishedName dn = AonDN.getApplicationProfileDN(appId, relation.getId());
 		if ( this.ldap.exists(dn, PROFILE_OBJECT_CLASS) ) {
 			ldap.updateRelation( dn, relation );
 		} else {
@@ -171,7 +177,7 @@ public class JBossLdap extends ServiceMBeanSupport implements JBossLdapMBean, IL
 		if ( LOGGER.isDebugEnabled() ) {
 			LOGGER.debug("Updating user relation for: DOMAIN[" + domainId + "], APPLICATION[" + appId + "]" );
 		}
-		DistinguishedName dn = SecurityLdap.getDomainApplicationUserDN(domainId, appId, relation.getId());
+		DistinguishedName dn = AonDN.getDomainApplicationUserDN(domainId, appId, relation.getId());
 		if ( this.ldap.exists(dn, DOMAIN_APPLICATION_USER_OBJECT_CLASS) ) {
 			this.ldap.updateRelation(dn, relation);
 		}
@@ -182,7 +188,7 @@ public class JBossLdap extends ServiceMBeanSupport implements JBossLdapMBean, IL
 		if ( LOGGER.isDebugEnabled() ) {
 			LOGGER.debug("Removing user relation from: DOMAIN[" + domainId + "], APPLICATION[" + appId + "]" );
 		}
-		DistinguishedName dn = SecurityLdap.getDomainApplicationUserDN(domainId, appId, relation.getId());
+		DistinguishedName dn = AonDN.getDomainApplicationUserDN(domainId, appId, relation.getId());
 		if ( this.ldap.exists(dn, DOMAIN_APPLICATION_USER_OBJECT_CLASS) ) {
 			this.ldap.deleteAttribute(dn, MEMBER_ATTRIBUTE);
 		}

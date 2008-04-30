@@ -13,6 +13,7 @@ import com.code.aon.jaas.client.ast.IDomain;
 import com.code.aon.jaas.client.ast.INodeVisitor;
 import com.code.aon.jaas.client.ast.IRole;
 import com.code.aon.jaas.deployment.event.SubDeployerEvent;
+import com.code.aon.ldap.AonDN;
 import com.code.aon.ldap.DistinguishedName;
 import com.code.aon.ldap.Entry;
 import com.code.aon.ldap.ILdapConstants;
@@ -170,7 +171,7 @@ public class Application implements IApplication, ILdapConstants, ILdapSecurityC
 	}
 
 	public static DistinguishedName getDN( String application ) {
-		return new DistinguishedName( LdapSession.getCN(application), APPLICATIONS_DN );
+		return AonDN.getApplicationDN(application);
 	}
 	
 	private static Application getObject( SecurityLdap ldap, Entry entry ) {
@@ -181,10 +182,9 @@ public class Application implements IApplication, ILdapConstants, ILdapSecurityC
 	}
 	
 	public static Application get( SecurityLdap ldap, String applicationId ) {
-		LdapSession session = null;
 		Application application = null;
 		try {
-			session = ldap.getLdapSession();
+			LdapSession session = ldap.getLdapSession();
 			String objectClass = LdapSession.getObjectClass(APPLICATION_OBJECT_CLASS);
 			DistinguishedName dn = getDN(applicationId);
 			Entry entry = session.get( dn.toString(), objectClass );
@@ -192,18 +192,17 @@ public class Application implements IApplication, ILdapConstants, ILdapSecurityC
 		} catch ( LdapException e ) {
 			LOGGER.error( e.getMessage(), e );
 		} finally {
-			ldap.closeSession(session);
+			ldap.closeSession();
 		}
 		return application;
 	}
 	
 	public Collection<IRole> getApplicationRoles( String application ) {
-		LdapSession session = null;
 		List<IRole> roles = new ArrayList<IRole>();
 		try {
-			session = this.ldap.getLdapSession();
+			LdapSession session = this.ldap.getLdapSession();
 			String objectClass = LdapSession.getObjectClass(ROLE_OBJECT_CLASS);
-			DistinguishedName dn = this.ldap.getRolesDN(application);
+			DistinguishedName dn = AonDN.getRolesDN(application);
 			List<Entry> list = session.search(dn.toString(), objectClass );
 			for( Entry entry : list ) {
 				IRole role = this.ldap.getRole(entry);
@@ -212,7 +211,7 @@ public class Application implements IApplication, ILdapConstants, ILdapSecurityC
 		} catch ( LdapException e ) {
 			LOGGER.error( e.getMessage(), e );
 		} finally {
-			this.ldap.closeSession(session);
+			this.ldap.closeSession();
 		}
 		return roles;
 	}
