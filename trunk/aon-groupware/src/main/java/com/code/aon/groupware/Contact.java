@@ -14,7 +14,7 @@ import com.code.aon.dao.ldap.annotations.RDN;
 
 @Entity
 @Table(name="contact")
-@EntryObject(mainObjectClass="aonContact", objectClasses={"inetOrgPerson","organizationalPerson","person","top"})
+@EntryObject(mainObjectClass="aonContact", objectClasses={"top"})
 public class Contact implements ITransferObject {
 
 	private String id;
@@ -34,6 +34,8 @@ public class Contact implements ITransferObject {
 	private String email;
 	
 	private String address;
+	
+	private String postalCode;
 	
 	private String note;
 
@@ -129,8 +131,18 @@ public class Contact implements ITransferObject {
 		this.address = address;
 	}
 
+	@Transient
+	@Attribute(name="postalCode",length=40)
+	public String getPostalCode() {
+		return postalCode;
+	}
+
+	public void setPostalCode(String postalCode) {
+		this.postalCode = postalCode;
+	}
+	
 	@Column(length=65535)
-	@Attribute(name="comment",length=65535)
+	@Attribute(name="info",length=2048)
 	public String getNote() {
 		return note;
 	}
