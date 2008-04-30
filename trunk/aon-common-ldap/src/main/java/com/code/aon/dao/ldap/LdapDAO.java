@@ -10,7 +10,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.persistence.Id;
@@ -27,6 +26,7 @@ import com.code.aon.common.dao.sql.DAOException;
 import com.code.aon.dao.ldap.annotations.Attribute;
 import com.code.aon.dao.ldap.annotations.EntryObject;
 import com.code.aon.dao.ldap.annotations.RDN;
+import com.code.aon.ldap.AbstractLdap;
 import com.code.aon.ldap.DistinguishedName;
 import com.code.aon.ldap.Entry;
 import com.code.aon.ldap.LdapException;
@@ -40,15 +40,13 @@ import com.code.aon.ql.ProjectionList;
 /**
  * The Class LdapDAO.
  */
-public class LdapDAO implements IDAO  {
+public class LdapDAO extends AbstractLdap implements IDAO  {
 
 	/**
 	 * Obtain a suitable <code>Logger</code>.
 	 */
 	private static final Logger LOGGER = Logger.getLogger(LdapDAO.class.getName());
 
-	private Properties properties;
-	
 	private Class<? extends ITransferObject> pojoClass;
 	
 	private PropertyInfo rdn;
@@ -64,6 +62,25 @@ public class LdapDAO implements IDAO  {
 	private String[] objectClasses;
 	
 	private String baseDN;
+
+	/**
+	 * Instantiates a new ldap dao.
+	 * 
+	 * @param properties the properties
+	 * @param pojoClass the pojo class
+	 */
+	public LdapDAO( Class<? extends ITransferObject> pojoClass ) {
+		this.pojoClass = pojoClass;
+		if ( this.pojoClass.isAnnotationPresent(EntryObject.class) ) {
+			EntryObject entity = this.pojoClass.getAnnotation(EntryObject.class);
+			this.baseDN = entity.baseDN();
+			this.mainObjectClass = entity.mainObjectClass();
+			this.objectClasses = entity.objectClasses();
+		} else {
+			throw new IllegalArgumentException( "EntryObject annotation is mandatory" );
+		}
+		resolveMetaInfo();
+	}
 	
 	/**
 	 * Instantiates a new ldap dao.
@@ -72,7 +89,7 @@ public class LdapDAO implements IDAO  {
 	 * @param pojoClass the pojo class
 	 */
 	public LdapDAO( Properties properties, Class<? extends ITransferObject> pojoClass ) {
-		this.properties = properties;
+		super( properties );
 		this.pojoClass = pojoClass;
 		if ( this.pojoClass.isAnnotationPresent(EntryObject.class) ) {
 			EntryObject entity = this.pojoClass.getAnnotation(EntryObject.class);
@@ -139,22 +156,6 @@ public class LdapDAO implements IDAO  {
 		this.baseDN = baseDN;
 	}
 
-	private LdapSession getLdapSession() throws LdapException {
-		LdapSession session = new LdapSession();
-		session.open(this.properties);
-		return session;
-	}
-	
-	private void closeSession( LdapSession session ) {
-		try {
-			if ( session != null ) {
-				session.close();
-			}
-		} catch (LdapException e) {
-			LOGGER.log( Level.SEVERE, e.getMessage(), e );
-		}
-	}
-	
 	private String replaceValues( ITransferObject to, String string ) throws DAOException {
 		StringBuffer result = new StringBuffer( string );
 		int end = result.indexOf("}");
@@ -219,7 +220,7 @@ public class LdapDAO implements IDAO  {
 		} catch ( LdapException e ) {
 			throw new DAOException( "Error getting count of " + mainObjectClass, e );
 		} finally {
-			closeSession(session);
+			closeSession();
 		}
 		return count;
 	}
@@ -274,7 +275,7 @@ public class LdapDAO implements IDAO  {
 		} catch ( LdapException e ) {
 			throw new DAOException( "Error in insert of " + mainObjectClass, e );
 		} finally {
-			closeSession(session);
+			closeSession();
 		}
 		return to;
 	}
@@ -289,7 +290,7 @@ public class LdapDAO implements IDAO  {
 		} catch ( LdapException e ) {
 			throw new DAOException( "Error in remove of " + mainObjectClass, e );
 		} finally {
-			closeSession(session);
+			closeSession();
 		}
 		return true;
 	}
@@ -389,7 +390,7 @@ public class LdapDAO implements IDAO  {
 		} catch ( LdapException e ) {
 			throw new DAOException( "Error in getList of " + mainObjectClass, e );
 		} finally {
-			closeSession(session);
+			closeSession();
 		}
 		return tos;
 	}
@@ -426,7 +427,7 @@ public class LdapDAO implements IDAO  {
 		} catch ( LdapException e ) {
 			throw new DAOException( "Error in get of " + mainObjectClass, e );
 		} finally {
-			closeSession(session);
+			closeSession();
 		}
 		return to;
 	}
@@ -464,7 +465,7 @@ public class LdapDAO implements IDAO  {
 		} catch ( LdapException e ) {
 			throw new DAOException( "Error in update of " + mainObjectClass, e );
 		} finally {
-			closeSession(session);
+			closeSession();
 		}
 		return to;
 	}
