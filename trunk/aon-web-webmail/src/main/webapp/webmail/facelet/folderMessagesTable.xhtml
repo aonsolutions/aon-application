@@ -116,7 +116,7 @@
 				rendered="#{folder.folder.messageCount==0}">
 				<aon:outputText value="#{appBundle.aon_webmail_nomessages}"/>
 			</aon:panelGroup>
-			<aon:div style="width:99%">
+			<aon:div style="width:99%" rendered="#{folder.folder.messageCount>0}">
 				<aon:dataTable id="messageDataTable" 
 					value="#{folder.folder.messageList}" 
 					var="to" styleClass="aon-dataTable"
