@@ -50,6 +50,8 @@ public class CompanyController extends GridController {
 		List<Activity> activityList = new LinkedList<Activity>();
 		try {
 			IManagerBean activityBean = BeanManager.getManagerBean(Activity.class);
+			Criteria criteria = new Criteria();
+			criteria.addOrder(activityBean.getFieldName(ICMSAlias.ACTIVITY_ALIAS));
 			for(ITransferObject to : activityBean.getList(null)){
 				if (!avoidable.contains(((Activity)to).getId()))
 					activityList.add((Activity)to);
