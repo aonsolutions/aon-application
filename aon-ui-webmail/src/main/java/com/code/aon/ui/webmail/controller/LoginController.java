@@ -63,22 +63,21 @@ public class LoginController {
     	return LOGIN_ERROR;
     }
 	
+	public AuthPrincipal getPrincipal() {
+		AuthPrincipal user = null;
+		Principal principal = FacesContext.getCurrentInstance().getExternalContext().getUserPrincipal();
+		if ( principal instanceof AuthPrincipal ) {
+			user = (AuthPrincipal) principal;
+		} else {
+			user = new AuthPrincipal( principal.getName() );
+		}
+		return user;
+	}
+	
     private void login() {
     	try{
 			System.out.println("LoginController -> login");
-			AuthPrincipal user = null;
-    		Principal principal = FacesContext.getCurrentInstance().getExternalContext().getUserPrincipal();
-    		try {
-    			System.out.println(">>>>>>>>>>>>>>>>>> principal.getName " + principal.getName());
-    		} catch (Exception e) {
-    			e.printStackTrace();
-    		}
-    		if ( principal instanceof AuthPrincipal ) {
-    			user = (AuthPrincipal) principal;
-    		} else {
-    			user = new AuthPrincipal( principal.getName() );
-    		}
-
+			AuthPrincipal user = getPrincipal();
     		System.out.println(">>>>>>>>>>>>>>>>>> user.getShortName " + user.getShortName());
 
     		System.out.println("LoginController -> login -> getUserPrincipal");
