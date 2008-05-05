@@ -1,21 +1,11 @@
 package com.code.aon.ui.webmail.controller;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
-import java.util.Properties;
-import java.util.regex.Pattern;
 
 import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
@@ -25,24 +15,24 @@ import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.groupware.Contact;
+import com.code.aon.jaas.auth.AuthPrincipal;
+import com.code.aon.ldap.AbstractLdap;
+import com.code.aon.ldap.AonDN;
+import com.code.aon.ldap.DistinguishedName;
 import com.code.aon.ui.util.AonUtil;
 import com.code.aon.ui.webmail.bean.AonConstants;
 import com.code.aon.ui.webmail.bean.AonFolder;
 import com.code.aon.ui.webmail.bean.AonListEmail;
 import com.code.aon.ui.webmail.exception.WebmailException;
 import com.code.aon.webmail.MailAccount;
-import com.code.aon.webmail.enumeration.SpamReportType;
+import com.code.aon.webmail.enumeration.MailAccountStatus;
 import com.code.aon.webmail.enumeration.SpamScoreType;
 
-public class BlackListController {
+public class BlackListController extends AbstractLdap {
 
-	private Properties props;
-	
 	private List<AonListEmail> whiteLst;
 
 	private List<AonListEmail> blackLst;
-	
-	private SpamReportType spamReportType;
 	
 	private SpamScoreType spamScoreType;
 	
@@ -50,14 +40,6 @@ public class BlackListController {
 	
 	private boolean addContactsToWhite;
 	
-	public SpamReportType getSpamReportType() {
-		return spamReportType;
-	}
-
-	public void setSpamReportType(SpamReportType spamReportType) {
-		this.spamReportType = spamReportType;
-	}
-
 	public SpamScoreType getSpamScoreType() {
 		return spamScoreType;
 	}
@@ -99,14 +81,23 @@ public class BlackListController {
 		load();
 	}
 	
-	public boolean isBlackListConfigured(){
+	private DistinguishedName getUserDN() {
 		WebMailController webMailController = (WebMailController)AonUtil.getRegisteredBean(AonConstants.BEAN_WEBMAIL);
 		MailAccount mailAccount = webMailController.getServer().getAccount();
-		String filename = mailAccount.getBlackList();
-		if (filename == null ||
-				filename.trim().equals(""))
-			return false;
-        return (new File(filename)).exists();
+		if ( mailAccount.getStatus() == MailAccountStatus.ACTIVE ) {
+			LoginController loginController = (LoginController)AonUtil.getRegisteredBean(AonConstants.BEAN_LOGIN);
+			AuthPrincipal principal = loginController.getPrincipal();
+			return AonDN.getUserDN( principal.getDomain(), principal.getShortName() );
+		}
+		return null;
+	}
+	
+	public boolean isBlackListConfigured() {
+		DistinguishedName userDN = getUserDN();
+		if ( userDN != null ) {
+			
+		}
+		return false;
 		
 	}
 	
@@ -114,6 +105,7 @@ public class BlackListController {
 		addContactsToWhite = false;
 		WebMailController webMailController = (WebMailController)AonUtil.getRegisteredBean(AonConstants.BEAN_WEBMAIL);
 		MailAccount mailAccount = webMailController.getServer().getAccount();
+		/*
 		String filename = mailAccount.getBlackList();
 		BufferedReader rd = null;
 		try {
@@ -155,16 +147,6 @@ public class BlackListController {
 			} catch (Exception e) {
 				setSpamScoreType(SpamScoreType.NORMAL);
 			}
-		    try {
-			    int report = new Integer(props.getProperty(REPORT)).intValue();
-			    if (report==0){
-					setSpamReportType(SpamReportType.NOT_ATTACHED);
-			    }else{
-					setSpamReportType(SpamReportType.ATTACHED);
-			    }
-			} catch (Exception e) {
-				setSpamReportType(SpamReportType.ATTACHED);
-			}
 			setRewrite_1(props.getProperty(REWRITE_1));
 		    sort(whiteLst,true);
 		    sort(blackLst,true);
@@ -175,11 +157,13 @@ public class BlackListController {
 			} catch (IOException e) {
 			}
 	    }
+	    */
 	}
 	
 	private void save(){
 		WebMailController webMailController = (WebMailController)AonUtil.getRegisteredBean(AonConstants.BEAN_WEBMAIL);
 		MailAccount mailAccount = webMailController.getServer().getAccount();
+		/*
 		String filename = mailAccount.getBlackList();
 		BufferedWriter wr = null;
 		try {
@@ -196,13 +180,6 @@ public class BlackListController {
 	        	line = SCORE+"\t3";
 	        }else if (SpamScoreType.VERY_LOW.equals(getSpamScoreType())){
 	        	line = SCORE+"\t1";
-	        }
-        	wr.write(line);
-        	wr.newLine();
-	        if (SpamReportType.NOT_ATTACHED.equals(getSpamReportType())){
-	        	line = REPORT+"\t0";
-	        }else if (SpamReportType.ATTACHED.equals(getSpamReportType())){
-	        	line = REPORT+"\t1";
 	        }
         	wr.write(line);
         	wr.newLine();
@@ -252,6 +229,7 @@ public class BlackListController {
 			} catch (IOException e) {
 			}
 	    }
+	    */
 	}
 	
 	protected void sort(List l, final boolean ascending) {
@@ -318,14 +296,6 @@ public class BlackListController {
 		}
 		return null;
 	}
-	
-	private static String SCORE = "required_score";
-	private static String REPORT = "report_safe";
-	private static String REWRITE_1 = "rewrite_header subject";
-	private static String REWRITE_2 = "rewrite_header from";
-	private static String REWRITE_3 = "rewrite_header to";
-	private static String WHITE = "whitelist_from";
-	private static String BLACK = "blacklist_from";
 
 	private static int LIST_WHITE_TYPE = 0;
 	private static int LIST_BLACK_TYPE = 1;
@@ -419,17 +389,6 @@ public class BlackListController {
     //*************************************************************
     // ADD EMAIL FROM MESSAGE END
     //*************************************************************
-	
-	@SuppressWarnings("unchecked")
-	public List<SelectItem> getReportTypes() throws ManagerBeanException{
-		Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
-		List<SelectItem> types = new LinkedList<SelectItem>();
-		for(SpamReportType type_ : SpamReportType.values()){
-			SelectItem item = new SelectItem(type_, type_.getName(locale));
-			types.add(item);
-		}
-		return types;
-	}
 
 	@SuppressWarnings("unchecked")
 	public List<SelectItem> getScoreTypes() throws ManagerBeanException{
