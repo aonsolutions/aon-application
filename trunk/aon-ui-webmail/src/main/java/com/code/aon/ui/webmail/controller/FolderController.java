@@ -5,15 +5,10 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.logging.Logger;
 
-import javax.faces.component.UIComponent;
-import javax.faces.component.UIData;
-import javax.faces.context.FacesContext;
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 import javax.mail.Folder;
 import javax.mail.MessagingException;
-
-import org.richfaces.component.html.HtmlDatascroller;
 
 import com.code.aon.ui.util.AonUtil;
 import com.code.aon.ui.webmail.bean.AonConstants;
@@ -30,8 +25,22 @@ public class FolderController implements ITreeListener{
 	
 	private AonFolder folder;
 	
+	private int currentPage;
+	
 	private int pageObjectNumber = 20;
 	
+	public int getCurrentPage() {
+		return currentPage;
+	}
+
+	public void setCurrentPage(int currentPage) {
+		this.currentPage = currentPage;
+	}
+	
+	public void resetCurrentPage() {
+		this.currentPage = 1;
+	}
+
 	/**
 	 * @return the folder
 	 */
@@ -70,7 +79,7 @@ public class FolderController implements ITreeListener{
 
 	public void nodeSelected(AonFolder selected){
 		setFolder(selected);
-		htmlDatascroller = null;
+		resetCurrentPage();
     	MessageController messageController = (MessageController)AonUtil.getRegisteredBean(AonConstants.BEAN_MESSAGE);
     	messageController.setReturnAction(AonConstants.NAVIGATION_FOLDER);
 	}
@@ -106,7 +115,7 @@ public class FolderController implements ITreeListener{
     public void deleteCheckedMessages(ActionEvent event) {
     	try{
    			deleteMessages(folder.getSelectedMessages());
-   			initHtmlDataScroller(event);
+   			resetCurrentPage();
 		} catch (MessagingException e) {
 			AonUtil.addErrorMessage(e.getMessage());
 			throw new AbortProcessingException(e);
@@ -116,7 +125,7 @@ public class FolderController implements ITreeListener{
     public void deleteAllMessages(ActionEvent event) {
     	try{
 	    	deleteMessages(folder.getMessageList());
-   			initHtmlDataScroller(event);
+	    	resetCurrentPage();
 		} catch (MessagingException e) {
 			AonUtil.addErrorMessage(e.getMessage());
 			throw new AbortProcessingException(e);
@@ -174,9 +183,7 @@ public class FolderController implements ITreeListener{
     
     private List<AonMessage> currentPageObjects() {
     	List<AonMessage> messages = new ArrayList<AonMessage>();
-    	int currentPage = 1;
-    	if (htmlDatascroller!=null)
-    		currentPage = htmlDatascroller.getPageIndex();
+    	int currentPage = this.currentPage;
     	currentPage--;
     	Object[] allMessages = folder.getMessageList().toArray();
     	for (int i = currentPage*pageObjectNumber;i < (currentPage*pageObjectNumber+pageObjectNumber); i++){
@@ -184,16 +191,6 @@ public class FolderController implements ITreeListener{
     			messages.add((AonMessage)allMessages[i]);
     	}
     	return messages;
-    }
-
-    private HtmlDatascroller htmlDatascroller = null;
-    
-	public void initHtmlDataScroller(ActionEvent event) {
-		htmlDatascroller = null;
-    }
-    
-	public void dataScrollActionListener(ActionEvent event) {
-    	htmlDatascroller = (HtmlDatascroller) event.getComponent();
     }
 
     //*************************************************************
