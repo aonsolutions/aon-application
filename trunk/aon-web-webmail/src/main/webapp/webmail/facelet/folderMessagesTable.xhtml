@@ -193,16 +193,11 @@
 							</aon:div>
 					</aon:column>		  
 				</aon:dataTable>
+
+				<aon:dataScroller rowCount="#{folder.folder.messageCount}" dataTable="messageDataTable" model="#{folder.folder.messageList}" page="#{folder.currentPage}"/>
+
 			</aon:div>
-			<aon:div styleClass="aon-dataScroller" rendered="#{folder.folder.messageCount > 20}">
-				<aon:dataPaginator
-					id="messageDataScroller" boundaryControls="show" stepControls="show" 
-					align="left" for="messageDataTable" maxPages="20"
-					actionListener="#{folder.dataScrollActionListener}"
-				>
-					<ui:include src="/webmail/facelet/dataPaginatorButtons.xhtml" />
-				</aon:dataPaginator>
-			</aon:div>
+
 		</aon:div>
 	</aon:div>
 	
