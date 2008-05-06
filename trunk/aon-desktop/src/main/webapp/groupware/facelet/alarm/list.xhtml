@@ -57,11 +57,7 @@
 
 					</aon:dataTable>
 
-					<ui:include src="/facelet/shared/dataScroller.xhtml">
-						<ui:param name="dataTable" value="alarmDataList" />
-						<ui:param name="model" value="#{alarm.model}" />
-						<ui:param name="showNote" value="#{true}" />
-					</ui:include>
+					<aon:dataScroller for="alarmDataList" rowCount="#{alarm.model.rowCount}" showNote="true" />
 
 				</aon:div>
 			</aon:div>
