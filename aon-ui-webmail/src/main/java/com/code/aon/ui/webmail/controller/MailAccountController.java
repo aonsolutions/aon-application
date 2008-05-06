@@ -39,12 +39,6 @@ public class MailAccountController extends BasicController {
 	}
 	
 	@SuppressWarnings("unused")
-	public void onSelect(ActionEvent event){
-		super.onSelect(new ActionEvent(event.getComponent()));
-		FacesContext.getCurrentInstance().getApplication().getNavigationHandler().handleNavigation(FacesContext.getCurrentInstance(), null, AonConstants.NAVIGATION_MAILACCOUNT_FORM);
-	}
-	
-	@SuppressWarnings("unused")
 	public void onChangeServer(ActionEvent event){
 		error = null;
 		FolderController folderController = (FolderController)AonUtil.getRegisteredBean(AonConstants.BEAN_FOLDER);

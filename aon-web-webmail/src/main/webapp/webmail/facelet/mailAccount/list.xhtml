@@ -27,16 +27,18 @@
 						<aon:outputText value="#{bundle.aon_listing}" />
 					</aon:div>
 
-					<aon:div styleClass="aon-section-toolbar">
-						<aon:commandButton id="back" title="#{appBundle.aon_webmail_back}"
-							value="#{appBundle.aon_webmail_back}" action="folder"
-							styleClass="aon-finding-toolbar-item aon-icon-cancel">
-						</aon:commandButton>
+					<!-- start toolbar navigation -->
+					<aon:div styleClass="aon-finding-toolbar-item-group">
 						<aon:commandButton id="reset" value="#{bundle.aon_reset}"
 							action="mailAccount_form" actionListener="#{mailAccount.onReset}"
 							styleClass="aon-finding-toolbar-item aon-icon-newMailAccount"
 							accesskey="#{bundle.aon_key_new}" />
+						<aon:commandButton id="back"
+							value="#{bundle.aon_back}" action="folder"
+							styleClass="aon-finding-toolbar-item aon-icon-cancel" />
 					</aon:div>
+
+					<!-- end toolbar navigation -->
 				</aon:panelGrid>
 			</aon:div>
 
