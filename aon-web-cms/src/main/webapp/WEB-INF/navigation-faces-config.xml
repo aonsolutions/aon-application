@@ -345,4 +345,12 @@
     </navigation-case>
   </navigation-rule>
 
+  <!-- =============================================== DIARY -->
+  <navigation-rule>
+    <navigation-case>
+      <from-outcome>diary_form</from-outcome>
+      <to-view-id>/facelet/content/diary/form.xhtml</to-view-id>
+    </navigation-case>
+  </navigation-rule>
+
 </faces-config>

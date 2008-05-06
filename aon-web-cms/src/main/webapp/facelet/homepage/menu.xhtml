@@ -108,6 +108,11 @@
 								actionListener="#{company.onSearch}" 
 								action="company_list"
 								styleClass="aon-main-menu-leaf"/>
+							<aon:menuItem id="diary" 
+								value="#{menuBundle.cms_diary}"
+								actionListener="#{diary.onInit}" 
+								action="diary_form"
+								styleClass="aon-main-menu-leaf"/>
 							<!-- 
 							<aon:menuItem id="brand" value="#{menuBundle.cms_brand}"
 								actionListener="#{brand.onReset}" action="brand_list"

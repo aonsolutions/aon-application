@@ -9,8 +9,11 @@ import java.util.List;
 import java.util.Map;
 
 import com.code.aon.cms.Article;
+import com.code.aon.cms.ArticleCategory;
+import com.code.aon.cms.ArticleCategoryDetail;
 import com.code.aon.cms.ArticleConfig;
 import com.code.aon.cms.ArticleDetail;
+import com.code.aon.cms.Diary;
 import com.code.aon.cms.Section;
 import com.code.aon.cms.dao.ICMSAlias;
 import com.code.aon.cms.enumeration.ArticleType;
@@ -25,6 +28,7 @@ import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.ui.cms.controller.GeneratorConfigController;
 import com.code.aon.ui.cms.util.ControllerUtil;
 import com.code.aon.ui.cms.util.VelocityUtil;
+import com.code.aon.ui.cms.velocity.attribute.ArticleCategoryHandler;
 import com.code.aon.ui.cms.velocity.attribute.ArticleHandler;
 import com.code.aon.ui.cms.velocity.attribute.NextArticlesHandler;
 import com.code.aon.ui.cms.velocity.utils.MonthContent;
@@ -32,6 +36,8 @@ import com.code.aon.ui.cms.velocity.utils.MonthContent;
 public class ArticleCalendarGenerator extends Generator {
 	
 	public static void generate() {
+		List<ITransferObject> articleCategoryList;
+		List<ITransferObject> articleCategoryDetailList;
 		List<ITransferObject> articleList;
 		List<ITransferObject> articleDetailList;
 		Map<String, MonthContent> months;
@@ -40,6 +46,39 @@ public class ArticleCalendarGenerator extends Generator {
 		ArrayList<ArticleDetail> dayArticleDetailList;
 		ArrayList<ArticleHandler> index_ahlist = new ArrayList<ArticleHandler>();
 		try {
+			IManagerBean diaryBean = BeanManager.getManagerBean(Diary.class);
+			List diaryLst = diaryBean.getList(null);
+			ArrayList<ArticleCategoryHandler> achlist = new ArrayList<ArticleCategoryHandler>();
+			if (diaryLst.isEmpty()){
+				Diary diary = (Diary)diaryLst.get(0);
+				if (diary.isCategories()){
+					IManagerBean articleCategoryBean = BeanManager.getManagerBean(ArticleCategory.class);
+					IManagerBean articleCategoryDetailBean = BeanManager.getManagerBean(ArticleCategoryDetail.class);
+					Criteria articleCategoryCriteria = new Criteria();
+					Criteria articleCategoryDetailCriteria;
+					ArticleCategory articleCategory;
+					ArticleCategoryDetail articleCategoryDetail;
+					articleCategoryCriteria.addEqualExpression(articleCategoryBean.getFieldName(ICMSAlias.ARTICLE_CATEGORY_ACTIVE), true);
+					articleCategoryCriteria.addOrder(articleCategoryBean.getFieldName(ICMSAlias.ARTICLE_CATEGORY_POSITION));
+					articleCategoryList = (List<ITransferObject>)articleCategoryBean.getList(articleCategoryCriteria);
+					 
+					for (int j=0; j < articleCategoryList.size(); j++) {
+						articleCategory = (ArticleCategory)articleCategoryList.get(j);
+						articleCategoryDetailCriteria = new Criteria();
+						articleCategoryDetailCriteria.addEqualExpression(articleCategoryDetailBean.getFieldName(ICMSAlias.ARTICLE_CATEGORY_DETAIL_ARTICLE_CATEGORY_ID), articleCategory.getId());
+						articleCategoryDetailCriteria.addEqualExpression(articleCategoryDetailBean.getFieldName(ICMSAlias.ARTICLE_CATEGORY_DETAIL_LANGUAGE_ID), ControllerUtil.getCurrentLanguage().getId());
+						articleCategoryDetailList = (List<ITransferObject>)articleCategoryDetailBean.getList(articleCategoryDetailCriteria);
+						if (articleCategoryDetailList.isEmpty()) {
+							VelocityUtil.addMessage(" Categoria de articulos " + articleCategory.getAlias() + " no internacionalizada.", VelocityUtil.WARN);
+						}else{
+							articleCategoryDetail = (ArticleCategoryDetail)articleCategoryDetailList.get(0);
+							ArticleCategoryHandler achandler = new ArticleCategoryHandler(articleCategoryDetail,ArticleType.EVENTS,null);
+							achlist.add(achandler);
+						}
+					}
+				}
+			}
+			
 			IManagerBean articleBean = BeanManager.getManagerBean(Article.class);
 			IManagerBean articleDetailBean = BeanManager.getManagerBean(ArticleDetail.class);
 
@@ -87,24 +126,18 @@ public class ArticleCalendarGenerator extends Generator {
 						}
 					}
 					
-					MonthContent monthContent = months.get(MonthContent.parseDateCode(initDate));
-					if (monthContent==null){
-						monthContent = MonthContent.instantiate(initDate);
-						months.put(monthContent.getCode(), monthContent);
-						monthsList.add(monthContent);
-					}
-
-					
-					monthContent.assign(initDate,articleDetail);
 					Date endDate = article.getEndDate();
-					if (endDate != null){
+					if (endDate == null){
+						assignArticleToDate(initDate,articleDetail,months,monthsList);
+					}else{
 						GregorianCalendar initCalendar = new GregorianCalendar();
 						initCalendar.setTime(initDate);
 						GregorianCalendar endCalendar = new GregorianCalendar();
 						endCalendar.setTime(endDate);
-						while (initCalendar.compareTo(endCalendar)<0){
+						while (initCalendar.compareTo(endCalendar)<=0){
+							assignArticleToDate(initCalendar.getTime(),
+									articleDetail,months,monthsList);
 							initCalendar.add(Calendar.DATE, 1);
-							monthContent.assign(initCalendar.getTime(),articleDetail);
 						}
 					}
 				}
@@ -178,9 +211,9 @@ public class ArticleCalendarGenerator extends Generator {
 				}
 			}
 
-			
+			vu.put("category_list", achlist);
 			vu.put("article_list", index_ahlist);
-
+			
 			try{
 				vu.put("previous_article_diary", (monthsList.get(0)).getCalendar());
 				vu.put("previous_article_diary_year", (monthsList.get(0)).getYear());
@@ -202,6 +235,7 @@ public class ArticleCalendarGenerator extends Generator {
 
 			VelocityUtil.addMessage(" Generando diario indice.", VelocityUtil.INFO);
 			generate(vu, Templates.DIARY, DIARY_INDEX_PAGE);
+			vu.remove("category_list");
 			vu.remove("article_list");
 			vu.remove("article_diary");
 			vu.remove("previous_article_diary");
@@ -217,6 +251,8 @@ public class ArticleCalendarGenerator extends Generator {
 		} catch (ManagerBeanException e) {
 			VelocityUtil.addMessage(e.getMessage(), VelocityUtil.ERROR);;
 		} finally {
+			articleCategoryList = null;
+			articleCategoryDetailList = null;
 			articleList = null;
 			articleDetailList = null;
 			monthArray = null;
@@ -225,6 +261,19 @@ public class ArticleCalendarGenerator extends Generator {
 		}
 	}
 	
+	private static void assignArticleToDate(Date date_,
+			ArticleDetail articleDetail,
+			Map<String, MonthContent> months,
+			List<MonthContent> monthsList){
+		MonthContent monthContent = months.get(MonthContent.parseDateCode(date_));
+		if (monthContent==null){
+			monthContent = MonthContent.instantiate(date_);
+			months.put(monthContent.getCode(), monthContent);
+			monthsList.add(monthContent);
+		}
+		monthContent.assign(date_,articleDetail);
+	}
+
 	private static void init(Date initDate, 
 			Map<String, MonthContent> months,
 			List<MonthContent> monthsList){
@@ -248,17 +297,30 @@ public class ArticleCalendarGenerator extends Generator {
 	}
 	
 	private static List<ITransferObject> getEventList(GregorianCalendar from, GregorianCalendar to) throws ManagerBeanException{
+		if (from.compareTo(to)>0)
+			return new ArrayList<ITransferObject>();
 		IManagerBean articleBean = BeanManager.getManagerBean(Article.class);
 		Criteria articleCriteria = new Criteria();
 		articleCriteria.addEqualExpression(articleBean.getFieldName(ICMSAlias.ARTICLE_ACTIVE), true);
 		articleCriteria.addEqualExpression(articleBean.getFieldName(ICMSAlias.ARTICLE_ARTICLE_TYPE), ArticleType.EVENTS);
-		Expression nullableExpr = ExpressionUtilities.getNullExpression(articleBean.getFieldName(ICMSAlias.ARTICLE_EXPIRE_DATE));
-        Expression greaterExpr = ExpressionUtilities.getGreaterThanOrEqualExpression(articleBean.getFieldName(ICMSAlias.ARTICLE_EXPIRE_DATE), new Date());
-        articleCriteria.addExpression(ExpressionUtilities.getOrExpression(nullableExpr, greaterExpr));
-        articleCriteria.addLessThanOrEqualExpression(articleBean.getFieldName(ICMSAlias.ARTICLE_PUBLISH_DATE), new Date());
+		
+        articleCriteria.addLessThanOrEqualExpression(articleBean.getFieldName(ICMSAlias.ARTICLE_PUBLISH_DATE), to.getTime());
+		
+		Expression expirenotnullableExpr = ExpressionUtilities.getNotNullExpression(articleBean.getFieldName(ICMSAlias.ARTICLE_EXPIRE_DATE));
+        Expression expiregreaterequalExpr = ExpressionUtilities.getGreaterThanOrEqualExpression(articleBean.getFieldName(ICMSAlias.ARTICLE_EXPIRE_DATE), from.getTime());
+		Expression and_1 = ExpressionUtilities.getAndExpression(expirenotnullableExpr, expiregreaterequalExpr);
+
+		Expression expirenullableExpr = ExpressionUtilities.getNullExpression(articleBean.getFieldName(ICMSAlias.ARTICLE_EXPIRE_DATE));
+        Expression endgreaterequalExpr = ExpressionUtilities.getGreaterThanOrEqualExpression(articleBean.getFieldName(ICMSAlias.ARTICLE_END_DATE), from.getTime());
+		Expression and_2 = ExpressionUtilities.getAndExpression(expirenullableExpr, endgreaterequalExpr);
+
+        articleCriteria.addExpression(ExpressionUtilities.getOrExpression(and_1, and_2));
+
         articleCriteria.addNotNullExpression(articleBean.getFieldName(ICMSAlias.ARTICLE_INIT_DATE));
-        articleCriteria.addGreaterThanOrEqualExpression(articleBean.getFieldName(ICMSAlias.ARTICLE_INIT_DATE),from.getTime());
-        articleCriteria.addLessThanOrEqualExpression(articleBean.getFieldName(ICMSAlias.ARTICLE_INIT_DATE),to.getTime());
+
+        articleCriteria.addLessThanOrEqualExpression(articleBean.getFieldName(ICMSAlias.ARTICLE_INIT_DATE), to.getTime());
+        articleCriteria.addGreaterThanOrEqualExpression(articleBean.getFieldName(ICMSAlias.ARTICLE_END_DATE), from.getTime());
+        
         articleCriteria.addOrder(articleBean.getFieldName(ICMSAlias.ARTICLE_INIT_DATE));
         articleCriteria.getExpression().toString();
 		return (List<ITransferObject>)articleBean.getList(articleCriteria);		
