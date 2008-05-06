@@ -2,9 +2,7 @@ package com.code.aon.ui.cms.controller;
 
 import javax.faces.event.ActionEvent;
 
-import com.code.aon.ui.form.BasicController;
-
-public class DiaryController extends BasicController{
+public class DiaryController extends BasicI18nController{
 
 	public void onInit(ActionEvent event) {
 		onSearch(event);
@@ -13,6 +11,7 @@ public class DiaryController extends BasicController{
 		}else{
 			onSelectFirst(event);
 		}
+		loadCurrentLanguage();
 	}
 
 	

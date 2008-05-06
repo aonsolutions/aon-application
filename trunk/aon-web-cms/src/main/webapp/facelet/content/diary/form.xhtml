@@ -53,6 +53,14 @@
 									<aon:selectBooleanCheckbox id="show_categories" 
 										value="#{diary.to.categories}" />
 								</aon:div>
+
+								<aon:outputLabel for="content"
+									value="#{appBundle.diary_content}" />
+								<aon:div style="width:600px">
+									<aon:inputRichText style="width:100%" 
+										id="content" 
+										value="#{diary.toI18n.content}" />
+								</aon:div>
 								
 							</aon:panelGrid>
 						</aon:div>

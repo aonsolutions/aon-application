@@ -76,6 +76,7 @@ import com.code.aon.cms.BulletinArticle;
 import com.code.aon.cms.BulletinEmail;
 import com.code.aon.cms.FooterBannerCategory;
 import com.code.aon.cms.Diary;
+import com.code.aon.cms.DiaryDetail;
 
 /** 
 * Interface for holding entity properties constants.
@@ -3017,6 +3018,37 @@ public interface ICMSAlias {
 	* Hibernate value: Diary.id
 	*/
 	String  DIARY_ID = DIARY_ENTRY.getAliasNames()[1];
+
+
+
+	/** 
+	* DAOConstantsEntry for DiaryDetail entity.
+	*/ 
+	DAOConstantsEntry DIARY_DETAIL_ENTRY = DAOConstants.getDAOConstant(DiaryDetail.class);
+
+	/** 
+	* Alias value: DiaryDetail_content
+	* Hibernate value: DiaryDetail.content
+	*/
+	String  DIARY_DETAIL_CONTENT = DIARY_DETAIL_ENTRY.getAliasNames()[0];
+
+	/** 
+	* Alias value: DiaryDetail_diary_id
+	* Hibernate value: DiaryDetail.diary.id
+	*/
+	String  DIARY_DETAIL_DIARY_ID = DIARY_DETAIL_ENTRY.getAliasNames()[1];
+
+	/** 
+	* Alias value: DiaryDetail_id
+	* Hibernate value: DiaryDetail.id
+	*/
+	String  DIARY_DETAIL_ID = DIARY_DETAIL_ENTRY.getAliasNames()[2];
+
+	/** 
+	* Alias value: DiaryDetail_language_id
+	* Hibernate value: DiaryDetail.language.id
+	*/
+	String  DIARY_DETAIL_LANGUAGE_ID = DIARY_DETAIL_ENTRY.getAliasNames()[3];
 
 
 }
