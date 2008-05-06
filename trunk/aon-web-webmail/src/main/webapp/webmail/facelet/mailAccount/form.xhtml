@@ -26,22 +26,16 @@
 						
 					<!-- start toolbar navigation -->
 					<aon:div styleClass="aon-finding-toolbar-item-group">					
-						<h:commandButton id="reset" value="#{bundle.aon_reset}"
-							action="mailAccount_form"
-							actionListener="#{signature.onReset}"
-							styleClass="aon-finding-toolbar-item aon-icon-reset"
-							accesskey="#{bundle.aon_key_new}"/>
 						<h:commandButton id="save"
 							value="#{bundle.aon_save}" 
 							rendered="#{mailAccount.to!=null or mailAccount.new}"
-							action="mailAccount_list"
-							actionListener="#{mailAccount.onAccept}"
+							actionListener="#{mailAccount.accept}"
 							styleClass="aon-finding-toolbar-item aon-icon-accept"
 							accesskey="#{bundle.aon_key_save}"/>
 						<aon:confirmButton id="cancel"
-							value="#{bundle.aon_cancel}" rendered="#{mailAccount.to!=null or mailAccount.new}"
+							value="#{bundle.aon_cancel}" rendered="#{mailAccount.new}"
 							styleClass="aon-finding-toolbar-item aon-icon-cancel"
-							confirmTitle="#{appBundle.aon_webmail_advice}" 
+							confirmTitle="#{bundle.aon_confirm_title}" 
 							confirmMessage="#{bundle.aon_cancel_confirm}"
 							confirmActionListener="#{mailAccount.onCancel}" 
 							confirmAction="mailAccount_list"
@@ -51,11 +45,17 @@
 							rendered="#{!mailAccount.new and !mailAccount.toDefaultAccount}"
 							styleClass="aon-finding-toolbar-item aon-icon-delete" 
 							immediate="true"
-							confirmTitle="#{appBundle.aon_webmail_advice}" 
+							confirmTitle="#{bundle.aon_confirm_title}" 
 							confirmMessage="#{bundle.aon_remove_confirm}"
 							confirmActionListener="#{mailAccount.onRemove}" 
 							confirmAction="mailAccount_list"
 							accesskey="#{bundle.aon_key_remove}"/>
+						<aon:commandButton id="back" value="#{bundle.aon_back}"
+							rendered="#{!mailAccount.new}" immediate="true"
+							styleClass="aon-finding-toolbar-item aon-icon-cancel"
+							actionListener="#{mailAccount.onCancel}"
+							action="mailAccount_list"
+							accesskey="#{bundle.aon_key_cancel}" />		
 				    </aon:div>
 					
 					<!-- end toolbar navigation -->
