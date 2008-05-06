@@ -30,7 +30,7 @@
 	
 						<aon:div styleClass="aon-finding-toolbar-item-group">
 							<aon:commandButton id="reset" value="#{bundle.aon_reset}"
-								actionListener="#{email.onReset}" rendered="#{!email.new}"
+								actionListener="#{folder.katapun}" rendered="#{!email.new}"
 								styleClass="aon-finding-toolbar-item aon-icon-reset"
 								accesskey="#{bundle.aon_key_new}"/>
 							<aon:commandButton id="save"
@@ -70,8 +70,6 @@
 						columnClasses="aon-editDataTable-iconColumn, aon-editDataTable-textColumn,
 								aon-editDataTable-textColumn, aon-editDataTable-buttonsColumn">
 								
-						<aon:rowSelector toggleOnClick="#{false}" />
-
 						<aon:column>
 							<f:facet name="header">
 								<aon:div>
@@ -98,7 +96,8 @@
 							<f:facet name="header">
 								<aon:outputText value="#{appBundle.aon_webmail_email_alias}" />
 							</f:facet>
-							<aon:outputText value="#{to.name}" rendered="#{to!=email.to}" >
+							<aon:outputText value="#{to.name}" rendered="#{to!=email.to}"
+								styleClass="aon-editDataTable-button" >
 								<a4j:support reRender="emailData"
 									actionListener="#{email.onSelect}" event="onclick" />
 							</aon:outputText>
@@ -116,7 +115,8 @@
 							<f:facet name="header">
 								<aon:outputText value="#{configBundle.email_email}" />
 							</f:facet>
-							<aon:outputText value="#{to.email}" rendered="#{to!=email.to}">
+							<aon:outputText value="#{to.email}" rendered="#{to!=email.to}"
+								styleClass="aon-editDataTable-button">
 								<a4j:support reRender="emailData"
 									actionListener="#{email.onSelect}" event="onclick" />
 							</aon:outputText>
