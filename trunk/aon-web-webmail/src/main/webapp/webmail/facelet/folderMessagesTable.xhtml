@@ -194,7 +194,7 @@
 					</aon:column>		  
 				</aon:dataTable>
 
-				<aon:dataScroller rowCount="#{folder.folder.messageCount}" dataTable="messageDataTable" model="#{folder.folder.messageList}" page="#{folder.currentPage}"/>
+				<aon:dataScroller rowCount="#{folder.folder.messageCount}" for="messageDataTable" page="#{folder.currentPage}"/>
 
 			</aon:div>
 

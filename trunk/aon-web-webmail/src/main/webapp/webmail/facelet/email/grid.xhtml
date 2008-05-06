@@ -2,10 +2,8 @@
 <html xmlns="http://www.w3.org/1999/xhtml"
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:f="http://java.sun.com/jsf/core"
-	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:aon="http://www.code.es/aon-rich-components"
 	xmlns:c="http://java.sun.com/jstl/core"
-	xmlns:rich="http://richfaces.org/rich"
 	xmlns:a4j="http://richfaces.org/a4j">
 <body>
 
@@ -15,181 +13,165 @@
 
 		<aon:form id="emailList">
 
-			<aon:div styleClass="aon-finding-title-toolbar">
-				<aon:panelGrid id="gridToolbar" columns="3" dir="true"
-					columnClasses="aon-finding-title,aon-finding-subtitle,aon-finding-toolbar">
+			<aon:div ajaxRendered="true" layout="none">
 
-					<aon:div styleClass="aon-finding-title-internal">
-						<aon:outputText value="#{appBundle.aon_webmail_email}" />
-					</aon:div>						
-
-					<aon:div styleClass="aon-finding-subtitle-internal">
-						<aon:outputText value="#{bundle.aon_listing}- #{bundle.aon_editing}" />
-					</aon:div>
-
-					<aon:div styleClass="aon-finding-toolbar-item-group">
-
-						<aon:commandButton
-							id="back"
-							title="#{appBundle.aon_webmail_back}"
-							value="#{appBundle.aon_webmail_back}"
-							action="folder"
-							styleClass="aon-finding-toolbar-item aon-icon-cancel">
-						</aon:commandButton>									
-						<aon:commandButton id="reset" value="#{bundle.aon_reset}"
-							actionListener="#{email.onReset}"
-							rendered="#{!email.new}"
-							reRender="dataTable,gridToolbar"
-							styleClass="aon-finding-toolbar-item aon-icon-reset"
-							accesskey="#{bundle.aon_key_new}" />
-						<aon:commandButton id="save" value="#{bundle.aon_save}"
-							rendered="#{email.to!=null}"
-							reRender="dataTable, gridToolbar"
-							styleClass="aon-finding-toolbar-item aon-icon-accept"
-							actionListener="#{email.onAccept}"
-							accesskey="#{bundle.aon_key_save}" />
-						<aon:commandButton id="cancel" value="#{bundle.aon_cancel}"
-							rendered="#{email.to!=null}"
-							reRender="dataTable, gridToolbar"
-							styleClass="aon-finding-toolbar-item aon-icon-cancel"
-							immediate="#{true}"
-							actionListener="#{email.onCancel}"
-							accesskey="#{bundle.aon_key_cancel}" />
-						<aon:confirmButton id="remove" value="#{bundle.aon_remove}"
-							rendered="#{!email.checklistEmpty}"
-							reRender="dataTable, gridToolbar"
-							styleClass="aon-finding-toolbar-item aon-icon-delete"
-							immediate="true" confirmTitle="#{appBundle.aon_webmail_advice}"
-							confirmMessage="#{bundle.aon_remove_confirm}"
-							confirmActionListener="#{email.onRemoveSelected}"
-							accesskey="#{bundle.aon_key_remove}" />
-					</aon:div>
-				</aon:panelGrid>
-			</aon:div>
-
-			<aon:div id="parent_" styleClass="aon-scroll-area">
-				<aon:editDataTable id="dataTable"
-					value="#{email.model}" var="to" rows="20"
-					columnClasses="aon-editDataTable-iconColumn,
-						aon-editDataTable-textColumn, aon-editDataTable-textColumn,
-						aon-editDataTable-buttonsColumn">
-
-					<aon:column>
-						<f:facet name="header">
-							<aon:div>
-								<aon:outputText value="#{bundle.aon_check}" />
-							</aon:div>	
-						</f:facet>
-						<aon:outputText value="&#160;" rendered="#{to==email.to}" />
-						<aon:selectBooleanCheckbox id="Row_checked" partialSubmit="true"
-								value="#{email.rowChecked}" reRender="gridToolbar" />
-						<f:facet name="footer">
-							<aon:div>
-								<aon:commandButton id="reset"
-									title="[#{bundle.aon_reset}]"
-									styleClass="aon-editDataTable-button aon-icon-reset"
-									value="" immediate="true"
-									reRender="dataTable,gridToolbar"
-									rendered="#{!email.new}"
-									actionListener="#{email.onReset}"
-									accesskey="#{bundle.aon_key_new_line}"/>
-							</aon:div>
-						</f:facet>
-					</aon:column>
-
-					<aon:column>
-						<f:facet name="header">
-							<aon:outputText value="#{appBundle.aon_webmail_email_alias}" />
-						</f:facet>
-						<aon:outputText value="#{to.name}"
-							rendered="#{to!=email.to}" 
-							styleClass="aon-editDataTable-button">
-							<a4j:support 
-								reRender="dataTable,gridToolbar"
-								actionListener="#{email.onSelect}"
-								event="onclick" />
-						</aon:outputText>	
-						<aon:inputText value="#{to.name}"
-							rendered="#{to==email.to}"
-							required="#{true}" size="35" maxlength="32" />
-						<f:facet name="footer">
-							<aon:div>
-								<aon:inputText value="#{email.to.name}"
-									rendered="#{email.new}"
-									required="#{true}" size="35" maxlength="32" />
-							</aon:div>
-						</f:facet>
-					</aon:column>
-
-					<aon:column>
-						<f:facet name="header">
-							<aon:outputText value="#{appBundle.aon_webmail_email_email}" />
-						</f:facet>
-						<aon:outputText value="#{to.email}"
-							rendered="#{to!=email.to}" 
-							styleClass="aon-editDataTable-button">
-							<a4j:support 
-								reRender="dataTable,gridToolbar"
-								actionListener="#{email.onSelect}"
-								event="onclick" />
-						</aon:outputText>	
-						<aon:inputText value="#{email.to.email}"
-							rendered="#{to==email.to}"
-							required="#{true}" size="70" maxlength="64" />
-						<f:facet name="footer">
-							<aon:div>
-								<aon:inputText value="#{email.to.email}"
-									rendered="#{email.new}"
-									required="#{true}" size="70" maxlength="64" />
-							</aon:div>
-						</f:facet>
-					</aon:column>
-
-					<aon:column>
-						<f:facet name="header">
-							<aon:outputText value="&#160;" />
-						</f:facet>
-						<f:verbatim rendered="#{to!=email.to}">&#160;</f:verbatim>
-						<aon:div rendered="#{to==email.to}">
-							<aon:commandButton id="lineAccept"
-								title="[#{bundle.aon_accept}]"
-								styleClass="aon-editDataTable-button aon-icon-accept"
-								reRender="dataTable,gridToolbar"
-								actionListener="#{email.onAccept}" />
-							<aon:commandButton id="lineCancel"
-								title="[#{bundle.aon_cancel}]"
-								styleClass="aon-editDataTable-button aon-icon-cancel"
-								reRender="dataTable,gridToolbar" immediate="true"
-								actionListener="#{email.onCancel}" />
-							<aon:commandButton id="lineRemove"
-								title="[#{bundle.aon_remove}]"
-								styleClass="aon-editDataTable-button aon-icon-delete"
-								reRender="dataTable,gridToolbar" immediate="true"
-								actionListener="#{email.onRemove}" />
+				<aon:div styleClass="aon-finding-title-toolbar">
+					<aon:panelGrid columns="3" dir="true"
+						columnClasses="aon-finding-title,aon-finding-subtitle,aon-finding-toolbar">
+	
+						<aon:div styleClass="aon-finding-title-internal">
+							<aon:outputText value="#{appBundle.aon_webmail_email}" />
 						</aon:div>
-						<f:facet name="footer">
-							<aon:div rendered="#{email.new}">
-								<f:verbatim rendered="#{!email.new}">&#160;</f:verbatim>
-								<aon:commandButton id="newAccept"
-									title="[#{bundle.aon_accept}]"
-									styleClass="aon-editDataTable-button aon-icon-accept"
-									reRender="dataTable,gridToolbar"
-									actionListener="#{email.onAccept}" />
-								<aon:commandButton id="newCancel"
-									title="[#{bundle.aon_cancel}]"
-									styleClass="aon-editDataTable-button aon-icon-cancel"
-									reRender="dataTable,gridToolbar" immediate="true"
-									actionListener="#{email.onCancel}" />
-							</aon:div>
-						</f:facet>
-					</aon:column>
-				</aon:editDataTable>
+	
+						<aon:div styleClass="aon-finding-subtitle-internal">
+							<aon:outputText
+								value="#{bundle.aon_listing}- #{bundle.aon_editing}" />
+						</aon:div>
+	
+						<aon:div styleClass="aon-finding-toolbar-item-group">
+							<aon:commandButton id="reset" value="#{bundle.aon_reset}"
+								actionListener="#{email.onReset}" rendered="#{!email.new}"
+								styleClass="aon-finding-toolbar-item aon-icon-reset"
+								accesskey="#{bundle.aon_key_new}"/>
+							<aon:commandButton id="save"
+								value="#{bundle.aon_save}" rendered="#{email.to!=null or email.new}"
+								styleClass="aon-finding-toolbar-item aon-icon-accept"
+								actionListener="#{email.onAccept}" 
+								accesskey="#{bundle.aon_key_new}" />
+							<aon:confirmButton id="cancelNew"
+								value="#{bundle.aon_cancel}" rendered="#{email.new}"
+								styleClass="aon-finding-toolbar-item aon-icon-cancel" immediate="true"
+								confirmTitle="#{bundle.aon_confirm_title}" confirmMessage="#{bundle.aon_cancel_confirm}"
+								confirmActionListener="#{email.onCancel}"
+								accesskey="#{bundle.aon_key_cancel}"/>
+							<aon:commandButton id="cancelEdit"
+								value="#{bundle.aon_cancel}" rendered="#{email.to!=null and (!email.new)}"
+								styleClass="aon-finding-toolbar-item aon-icon-cancel" immediate="true"
+								actionListener="#{email.onCancel}"
+								accesskey="#{bundle.aon_key_cancel}"/>
+							<aon:confirmButton id="remove"
+								value="#{bundle.aon_remove}" rendered="#{email.to!=null and !email.new}"
+								styleClass="aon-finding-toolbar-item aon-icon-delete" immediate="true"
+								confirmTitle="#{bundle.aon_confirm_title}" confirmMessage="#{bundle.aon_remove_confirm}"
+								confirmActionListener="#{email.onRemove}"
+								accesskey="#{bundle.aon_key_remove}"/>
+							<aon:commandButton id="back" value="#{bundle.aon_back}"
+								action="folder" rendered="#{email.to==null}"
+								styleClass="aon-finding-toolbar-item aon-icon-cancel"/>
+						</aon:div>
+					</aon:panelGrid>
+				</aon:div>
 
-				<aon:dataScroller dataTable="dataTable" model="#{email.model}" showNote="true" />
-				
+				<!--  aon-region-body -->
+	 			<aon:div styleClass="aon-scroll-area">
+					
+					<aon:editDataTable id="emailData" var="to" rows="20"
+						rendered="#{(email.model.rowCount > 0) or (email.new)}" value="#{email.model}"
+						columnClasses="aon-editDataTable-iconColumn, aon-editDataTable-textColumn,
+								aon-editDataTable-textColumn, aon-editDataTable-buttonsColumn">
+								
+						<aon:rowSelector toggleOnClick="#{email.to == null}"
+							actionListener="#{email.onSelect}" />
+
+						<aon:column>
+							<f:facet name="header">
+								<aon:outputText value="&#160;" />
+							</f:facet>
+							<aon:outputText value="&#160;" />
+							<f:facet name="footer">
+								<aon:div>
+									<aon:commandButton alt="[#{bundle.aon_reset}]"
+										styleClass="aon-editDataTable-button aon-icon-reset"
+										actionListener="#{email.onReset}" value=""
+										rendered="#{!email.new}"
+										accesskey="#{bundle.aon_key_new_line}" />
+								</aon:div>
+							</f:facet>
+						</aon:column>
+	
+						<aon:column>
+							<f:facet name="header">
+								<aon:outputText value="#{appBundle.aon_webmail_email_alias}" />
+							</f:facet>
+							<aon:outputText value="#{to.name}" rendered="#{to!=email.to}" />
+							<aon:inputText styleClass="aon-form-input-text " required="true"
+								rendered="#{to==email.to}" size="35"
+								value="#{email.to.name}" maxlength="32" />
+							<f:facet name="footer">
+								<aon:inputText styleClass="aon-form-input-text" required="true"
+									rendered="#{email.new}" size="35"
+									value="#{email.to.name}" maxlength="32" />
+							</f:facet>
+						</aon:column>
+
+						<aon:column>
+							<f:facet name="header">
+								<aon:outputText value="#{configBundle.email_email}" />
+							</f:facet>
+							<aon:outputText value="#{to.email}" rendered="#{to!=email.to}" />
+							<aon:inputText styleClass="aon-form-input-text " required="true"
+								rendered="#{to==email.to}" size="70"
+								value="#{email.to.email}" maxlength="64" />
+							<f:facet name="footer">
+								<aon:inputText styleClass="aon-form-input-text" required="true"
+									rendered="#{email.new}" size="70"
+									value="#{email.to.email}" maxlength="64" />
+							</f:facet>
+						</aon:column>
+	
+						<aon:column>
+							<f:facet name="header">
+								<aon:outputText value="&#160;" />
+							</f:facet>
+							<aon:div>
+								<f:verbatim rendered="#{to!=email.to}">&#160;</f:verbatim>
+								<aon:commandButton id="acceptEdit-email" title="[#{bundle.aon_accept}]" 
+									rendered="#{to==email.to}"
+									styleClass="aon-editDataTable-button aon-icon-accept"
+									actionListener="#{email.onAccept}"
+									accesskey="#{bundle.aon_key_save_line}" />
+								<aon:commandButton title="[#{bundle.aon_cancel}]"
+									styleClass="aon-editDataTable-button aon-icon-cancel"
+									rendered="#{to==email.to}"
+									actionListener="#{email.onCancel}" immediate="true"
+									accesskey="#{bundle.aon_key_cancel_line}" />
+								<aon:confirmButton title="[#{bundle.aon_remove}]"
+									styleClass="aon-editDataTable-button aon-icon-delete"
+									rendered="#{to==email.to}"
+									confirmTitle="#{bundle.aon_confirm_title}" 
+									confirmMessage="#{bundle.aon_remove_confirm}"
+									confirmActionListener="#{email.onRemove}" immediate="true"
+									accesskey="#{bundle.aon_key_remove_line}" />								
+							</aon:div>
+							<f:facet name="footer">
+								<aon:div>
+									<f:verbatim rendered="#{!email.new}">&#160;</f:verbatim>
+									<aon:commandButton title="[#{bundle.aon_accept}]" 
+										styleClass="aon-editDataTable-button aon-icon-accept"
+										rendered="#{email.new}"
+										actionListener="#{email.onAccept}"
+										accesskey="#{bundle.aon_key_save_line}" />
+									<aon:confirmButton title="[#{bundle.aon_cancel}]"
+										styleClass="aon-editDataTable-button aon-icon-cancel"
+										rendered="#{email.new}"
+										confirmTitle="#{bundle.aon_confirm_title}" 
+										confirmMessage="#{bundle.aon_cancel_confirm}"
+										confirmActionListener="#{email.onCancel}" immediate="true"
+										accesskey="#{bundle.aon_key_cancel_line}" />
+								</aon:div>
+							</f:facet>
+						</aon:column>
+						
+					</aon:editDataTable>
+
+					<aon:dataScroller for="emailData" rowCount="#{email.model.rowCount}" showNote="true" />
+
+				</aon:div>
 			</aon:div>
 		</aon:form>
 	</ui:define>
+
 </ui:composition>
+
 </body>
 </html>
