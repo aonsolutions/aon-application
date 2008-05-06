@@ -1597,4 +1597,17 @@
 		<managed-bean-scope>none</managed-bean-scope>
 	</managed-bean>
 
+	<!-- ************** DIARY ************** -->
+	<managed-bean>
+		<managed-bean-name>diary</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.cms.controller.DiaryController
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.cms.Diary</value>
+		</managed-property>
+	</managed-bean>
+
 </faces-config>

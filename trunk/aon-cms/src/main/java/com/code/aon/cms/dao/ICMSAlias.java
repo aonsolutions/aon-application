@@ -75,6 +75,7 @@ import com.code.aon.cms.BulletinDetail;
 import com.code.aon.cms.BulletinArticle;
 import com.code.aon.cms.BulletinEmail;
 import com.code.aon.cms.FooterBannerCategory;
+import com.code.aon.cms.Diary;
 
 /** 
 * Interface for holding entity properties constants.
@@ -2997,6 +2998,25 @@ public interface ICMSAlias {
 	* Hibernate value: FooterBannerCategory.id
 	*/
 	String  FOOTER_BANNER_CATEGORY_ID = FOOTER_BANNER_CATEGORY_ENTRY.getAliasNames()[2];
+
+
+
+	/** 
+	* DAOConstantsEntry for Diary entity.
+	*/ 
+	DAOConstantsEntry DIARY_ENTRY = DAOConstants.getDAOConstant(Diary.class);
+
+	/** 
+	* Alias value: Diary_categories
+	* Hibernate value: Diary.categories
+	*/
+	String  DIARY_CATEGORIES = DIARY_ENTRY.getAliasNames()[0];
+
+	/** 
+	* Alias value: Diary_id
+	* Hibernate value: Diary.id
+	*/
+	String  DIARY_ID = DIARY_ENTRY.getAliasNames()[1];
 
 
 }
