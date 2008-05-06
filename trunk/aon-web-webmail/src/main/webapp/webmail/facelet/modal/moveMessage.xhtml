@@ -21,10 +21,15 @@
         <rich:modalPanel  id="msgMoveModalPanel"  
             height="380" width="380" zindex="2000">
             <f:facet name="header">
-                <h:outputText value="#{appBundle.aon_webmail_move_message}" />
+				<aon:div styleClass="aon-popupWindow-title">
+                	<aon:outputText value="#{appBundle.aon_webmail_move_message}" />
+                </aon:div>
             </f:facet>
             <f:facet name="controls">
-                <h:graphicImage value="/images/icefaces/popupclose.gif" style="cursor:pointer" onclick="Richfaces.hideModalPanel('msgMoveModalPanel')" />
+				<aon:commandButton type="button"
+					styleClass="aon-popupWindow-close" immediate="true"
+					onclick="Richfaces.hideModalPanel('msgMoveModalPanel');">
+				</aon:commandButton>
             </f:facet>
 			<rich:panel bodyClass="bodyPanel_">
 				<rich:tree style="width:380px" 

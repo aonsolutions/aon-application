@@ -13,10 +13,15 @@
         <rich:modalPanel  id="addContactModalPanel"  
             height="150" width="600" zindex="2000">
             <f:facet name="header">
-                <h:outputText value="#{appBundle.aon_webmail_folder_create_new}" />
+				<aon:div styleClass="aon-popupWindow-title">
+                	<aon:outputText value="#{appBundle.aon_webmail_email_add}" />
+                </aon:div>
             </f:facet>
             <f:facet name="controls">
-                <h:graphicImage value="/images/icefaces/popupclose.gif" style="cursor:pointer" onclick="Richfaces.hideModalPanel('addContactModalPanel')" />
+				<aon:commandButton type="button"
+					styleClass="aon-popupWindow-close" immediate="true"
+					onclick="Richfaces.hideModalPanel('addContactModalPanel');">
+				</aon:commandButton>
             </f:facet>
 			<h:panelGrid id="addContactModalPanel_panelGrid" width="100%" cellpadding="0" cellspacing="0" columns="1"
 				columnClasses="popupIcon,aon-text-right popupButton">
