@@ -25,34 +25,35 @@
 					</aon:div>					
 						
 					<!-- start toolbar navigation -->
-					<aon:div styleClass="aon-finding-toolbar-item-group">					
-						<h:commandButton id="reset" value="#{bundle.aon_reset}"
-							action="signature_form"
-							actionListener="#{signature.onReset}"
-							styleClass="aon-finding-toolbar-item aon-icon-reset"
-							accesskey="#{bundle.aon_key_new}"/>
-						<h:commandButton id="save"
-							value="#{bundle.aon_save}" 
+					<aon:div styleClass="aon-finding-toolbar-item-group">				
+						<aon:commandButton id="save" value="#{bundle.aon_save}"
 							rendered="#{signature.to!=null or signature.new}"
-							action="signature_form"
-							actionListener="#{signature.accept}"
 							styleClass="aon-finding-toolbar-item aon-icon-accept"
-							accesskey="#{bundle.aon_key_save}"/>
-						<aon:confirmButton id="remove"
-							value="#{bundle.aon_remove}" rendered="#{!signature.new}" 
-							immediate="#{true}"
+							actionListener="#{signature.accept}"
+							action="signature_form"
+							accesskey="#{bundle.aon_key_save}" />
+						<aon:confirmButton id="cancel" value="#{bundle.aon_cancel}"
+							rendered="#{signature.new}"
+							styleClass="aon-finding-toolbar-item aon-icon-cancel"
+							immediate="true" confirmTitle="#{bundle.aon_confirm_title}"
+							confirmMessage="#{bundle.aon_cancel_confirm}"
+							confirmActionListener="#{signature.onCancel}"
+							confirmAction="signature_list"
+							accesskey="#{bundle.aon_key_cancel}" />
+						<aon:confirmButton id="remove" value="#{bundle.aon_remove}"
+							rendered="#{!signature.new}" immediate="true"
 							styleClass="aon-finding-toolbar-item aon-icon-delete"
-							confirmTitle="#{appBundle.aon_webmail_advice}" 
+							confirmTitle="#{bundle.aon_confirm_title}"
 							confirmMessage="#{bundle.aon_remove_confirm}"
 							confirmActionListener="#{signature.onRemove}"
 							confirmAction="signature_list"
-							accesskey="#{bundle.aon_key_remove}"/>
-						<h:commandButton id="exit" value="#{bundle.aon_close}"
-							action="signature_list" 
-							actionListener="#{signature.onSearch}"
-							immediate="#{true}"
+							accesskey="#{bundle.aon_key_remove}" />
+						<aon:commandButton id="back" value="#{bundle.aon_back}"
+							rendered="#{!signature.new}" immediate="true"
 							styleClass="aon-finding-toolbar-item aon-icon-cancel"
-							accesskey="#{bundle.aon_key_close}"/>
+							actionListener="#{favorite.onCancel}"
+							action="signature_list"
+							accesskey="#{bundle.aon_key_cancel}" />
 				    </aon:div>
 					
 					<!-- end toolbar navigation -->

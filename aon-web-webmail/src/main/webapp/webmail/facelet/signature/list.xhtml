@@ -28,10 +28,6 @@
 
 					<!-- start toolbar navigation -->
 					<aon:div styleClass="aon-finding-toolbar-item-group">
-						<aon:commandButton id="back" title="#{appBundle.aon_webmail_back}"
-							value="#{appBundle.aon_webmail_back}" action="folder"
-							styleClass="aon-finding-toolbar-item aon-icon-cancel">
-						</aon:commandButton>
 						<h:commandButton id="reset" value="#{bundle.aon_reset}"
 							action="signature_form" actionListener="#{signature.onReset}"
 							styleClass="aon-finding-toolbar-item aon-icon-reset"
@@ -39,11 +35,14 @@
 						<aon:confirmButton id="remove" value="#{bundle.aon_remove}"
 							rendered="#{!signature.checklistEmpty}" inmediate="true"
 							styleClass="aon-finding-toolbar-item aon-icon-delete"
-							confirmTitle="#{appBundle.aon_webmail_advice}"
+							confirmTitle="#{bundle.aon_confirm_title}"
 							confirmMessage="#{bundle.aon_remove_confirm}"
 							confirmActionListener="#{signature.onRemoveSelected}"
 							confirmAction="signature_list"
 							accesskey="#{bundle.aon_key_remove}" />
+						<aon:commandButton id="back"
+							value="#{bundle.aon_back}" action="folder"
+							styleClass="aon-finding-toolbar-item aon-icon-cancel" />
 					</aon:div>
 
 					<!-- end toolbar navigation -->
