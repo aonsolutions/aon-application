@@ -50,7 +50,7 @@
 								actionListener="#{email.onCancel}"
 								accesskey="#{bundle.aon_key_cancel}"/>
 							<aon:confirmButton id="remove"
-								value="#{bundle.aon_remove}" rendered="#{email.to!=null and !email.new}"
+								value="#{bundle.aon_remove}" rendered="#{!email.checklistEmpty}"
 								styleClass="aon-finding-toolbar-item aon-icon-delete" immediate="true"
 								confirmTitle="#{bundle.aon_confirm_title}" confirmMessage="#{bundle.aon_remove_confirm}"
 								confirmActionListener="#{email.onRemove}"
@@ -70,14 +70,19 @@
 						columnClasses="aon-editDataTable-iconColumn, aon-editDataTable-textColumn,
 								aon-editDataTable-textColumn, aon-editDataTable-buttonsColumn">
 								
-						<aon:rowSelector toggleOnClick="#{email.to == null}"
-							actionListener="#{email.onSelect}" />
+						<aon:rowSelector toggleOnClick="#{false}" />
 
 						<aon:column>
 							<f:facet name="header">
-								<aon:outputText value="&#160;" />
+								<aon:div>
+									<aon:outputText value="#{bundle.aon_check}" />
+								</aon:div>
 							</f:facet>
-							<aon:outputText value="&#160;" />
+							<aon:div layout="none">
+								<aon:selectBooleanCheckbox rendered="#{to!=email.to}"
+									value="#{email.rowChecked}" partialSubmit="true" />
+								<aon:outputText value="&#160;" rendered="#{to==email.to}" />
+							</aon:div>		 
 							<f:facet name="footer">
 								<aon:div>
 									<aon:commandButton alt="[#{bundle.aon_reset}]"
@@ -93,7 +98,10 @@
 							<f:facet name="header">
 								<aon:outputText value="#{appBundle.aon_webmail_email_alias}" />
 							</f:facet>
-							<aon:outputText value="#{to.name}" rendered="#{to!=email.to}" />
+							<aon:outputText value="#{to.name}" rendered="#{to!=email.to}" >
+								<a4j:support reRender="emailData"
+									actionListener="#{email.onSelect}" event="onclick" />
+							</aon:outputText>
 							<aon:inputText styleClass="aon-form-input-text " required="true"
 								rendered="#{to==email.to}" size="35"
 								value="#{email.to.name}" maxlength="32" />
@@ -108,7 +116,10 @@
 							<f:facet name="header">
 								<aon:outputText value="#{configBundle.email_email}" />
 							</f:facet>
-							<aon:outputText value="#{to.email}" rendered="#{to!=email.to}" />
+							<aon:outputText value="#{to.email}" rendered="#{to!=email.to}">
+								<a4j:support reRender="emailData"
+									actionListener="#{email.onSelect}" event="onclick" />
+							</aon:outputText>
 							<aon:inputText styleClass="aon-form-input-text " required="true"
 								rendered="#{to==email.to}" size="70"
 								value="#{email.to.email}" maxlength="64" />
