@@ -26,6 +26,8 @@ public class DataScrollerHandler extends TagHandler {
 	
 	private static final String DATA_TABLE = "dataTable";
 	
+	private static final String FOR = "for";
+	
 	private static final String PAGE_SIZE = "pageSize";
 	
    	private static final String SHOW_NOTE = "showNote";
@@ -34,7 +36,7 @@ public class DataScrollerHandler extends TagHandler {
    	
    	private static final String PAGE = "page";
    	
-	private TagAttribute dataTable;
+	private TagAttribute forTag;
 	
    	private TagAttribute rowCount;	
 
@@ -46,12 +48,12 @@ public class DataScrollerHandler extends TagHandler {
 	 */
 	public DataScrollerHandler(TagConfig config) {
 		super(config);
-		dataTable = getRequiredAttribute(DATA_TABLE);
+		forTag = getRequiredAttribute(FOR);
 		rowCount = getRequiredAttribute(ROW_COUNT);
 	}
 
 	private UIData getDataTable( FaceletContext ctx, UIComponent parent ) {
-		return (UIData) ComponentSupport.findChild( parent, dataTable.getValue(ctx) );
+		return (UIData) ComponentSupport.findChild( parent, forTag.getValue(ctx) );
 	}
 	
 	private int getPageSize( FaceletContext ctx, UIComponent parent ) {
@@ -65,7 +67,7 @@ public class DataScrollerHandler extends TagHandler {
 	
 	private void insertTemplate(FaceletContext ctx, UIComponent component) {
 		VariableMapper newMapper = new VariableMapperWrapper(ctx.getVariableMapper());
-		newMapper.setVariable(DATA_TABLE, dataTable.getValueExpression(ctx, String.class));		
+		newMapper.setVariable(DATA_TABLE, forTag.getValueExpression(ctx, String.class));		
 		newMapper.setVariable(ROW_COUNT, rowCount.getValueExpression(ctx, Integer.class));
 		ValueExpression showNote = FaceletUtil.getBooleanValueExpression(ctx, getAttribute(SHOW_NOTE));
 		newMapper.setVariable(SHOW_NOTE, showNote);
