@@ -26,8 +26,6 @@ public class DataScrollerHandler extends TagHandler {
 	
 	private static final String DATA_TABLE = "dataTable";
 	
-	private static final String MODEL = "model";
-	
 	private static final String PAGE_SIZE = "pageSize";
 	
    	private static final String SHOW_NOTE = "showNote";
@@ -38,7 +36,7 @@ public class DataScrollerHandler extends TagHandler {
    	
 	private TagAttribute dataTable;
 	
-   	private TagAttribute model;	
+   	private TagAttribute rowCount;	
 
 	/**
 	 * The Constructor.
@@ -49,7 +47,7 @@ public class DataScrollerHandler extends TagHandler {
 	public DataScrollerHandler(TagConfig config) {
 		super(config);
 		dataTable = getRequiredAttribute(DATA_TABLE);
-		model = getRequiredAttribute(MODEL);
+		rowCount = getRequiredAttribute(ROW_COUNT);
 	}
 
 	private UIData getDataTable( FaceletContext ctx, UIComponent parent ) {
@@ -64,21 +62,11 @@ public class DataScrollerHandler extends TagHandler {
 		}
 		return rows;
 	}
-
-	private int getRowCount( FaceletContext ctx, UIComponent parent ) {
-		int rowCount = 0;
-		UIData table = getDataTable(ctx, parent);
-		if ( table != null ) {
-			rowCount = table.getRowCount();
-		}
-		return rowCount;
-	}
 	
 	private void insertTemplate(FaceletContext ctx, UIComponent component) {
 		VariableMapper newMapper = new VariableMapperWrapper(ctx.getVariableMapper());
-		ValueExpression modelExpression = model.getValueExpression(ctx, Object.class);
-		newMapper.setVariable(MODEL, modelExpression);
 		newMapper.setVariable(DATA_TABLE, dataTable.getValueExpression(ctx, String.class));		
+		newMapper.setVariable(ROW_COUNT, rowCount.getValueExpression(ctx, Integer.class));
 		ValueExpression showNote = FaceletUtil.getBooleanValueExpression(ctx, getAttribute(SHOW_NOTE));
 		newMapper.setVariable(SHOW_NOTE, showNote);
 		TagAttribute page = getAttribute(PAGE);
@@ -93,15 +81,6 @@ public class DataScrollerHandler extends TagHandler {
 			newMapper.setVariable(PAGE_SIZE, ctx.getExpressionFactory()
 					.createValueExpression(ctx, String.valueOf(rows), Integer.class));
 		}
-		TagAttribute rowCount = getAttribute(ROW_COUNT);
-		if (rowCount != null) {
-			newMapper.setVariable(ROW_COUNT, rowCount.getValueExpression(ctx, Integer.class));
-		} else {
-			int count = getRowCount(ctx, component);
-			newMapper.setVariable(ROW_COUNT, ctx.getExpressionFactory()
-					.createValueExpression(ctx, String.valueOf(count), Integer.class));
-		}
-		
 		FaceletUtil.insertTemplate(ctx, tag, component, FaceletUtil.getTemplate(TEMPLATE), newMapper);
 	}
 
