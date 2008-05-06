@@ -100,7 +100,17 @@ public class Product implements ITransferObject,ILookupObject {
      * 0: is not a composition. 1: is a composition
      */
     private boolean composition;
-    
+
+    /**
+     * Sales account. 
+     */
+    private String salesAccount;
+
+    /**
+     * Purchase account. 
+     */
+    private String purchaseAccount;
+
     /**
      * The set of items linked to this product. 
      */
@@ -348,7 +358,51 @@ public class Product implements ITransferObject,ILookupObject {
     public void setComposition(boolean composition) {
         this.composition = composition;
     }
-    
+
+    /**
+	 * Returns the sales account
+	 * 
+     * @return String the sales account.
+     * 
+     */
+	@Transient
+	public String getSalesAccount() {
+		return salesAccount;
+	}
+
+    /**
+     * Assigns the sales account.
+     * 
+     * @param salesAccount
+     *            the sales account.
+     */
+	@Transient
+	public void setSalesAccount(String salesAccount) {
+		this.salesAccount = salesAccount;
+	}
+
+    /**
+	 * Returns the purchase account
+	 * 
+     * @return String the purchase account.
+     * 
+     */
+	@Transient
+	public String getPurchaseAccount() {
+		return purchaseAccount;
+	}
+
+    /**
+     * Assigns the purchase account.
+     * 
+     * @param purchaseAccount
+     *            the purchase account.
+     */
+	@Transient
+	public void setPurchaseAccount(String purchaseAccount) {
+		this.purchaseAccount = purchaseAccount;
+	}
+
 	/**
 	 * Returns the items linked to this product.
 	 *
