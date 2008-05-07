@@ -19,11 +19,11 @@
             </f:facet>
             <f:facet name="controls">
 				<aon:commandButton type="button"
-					styleClass="aon-popupWindow-close" immediate="true"
-					onclick="Richfaces.hideModalPanel('addContactModalPanel');">
+					styleClass="aon-popupWindow-close" immediate="true" >
+					<rich:componentControl for="addContactModalPanel" operation="hide" event="onclick"/>
 				</aon:commandButton>
             </f:facet>
-			<h:panelGrid id="addContactModalPanel_panelGrid" width="100%" cellpadding="0" cellspacing="0" columns="1"
+			<h:panelGrid width="100%" cellpadding="0" cellspacing="0" columns="1"
 				columnClasses="popupIcon,aon-text-right popupButton">
 				<aon:outputText value="#{appBundle.aon_webmail_email_alias}" />
 				<aon:inputText id="Contact_name"
@@ -33,8 +33,9 @@
 				<aon:commandButton id="closeModalAddContact" 
 					styleClass="aon-icon-commandButton aon-icon-accept"
 					reRender="foldersTree"
-					onclick="Richfaces.hideModalPanel('addContactModalPanel')"
-					actionListener="#{message.saveToContacts}" value="Ok"/>
+					actionListener="#{message.saveToContacts}" value="#{bundle.aon_accept}">
+					<rich:componentControl for="addContactModalPanel" operation="hide" event="onclick"/>
+				</aon:commandButton>
 			</h:panelGrid>
         </rich:modalPanel>													
 

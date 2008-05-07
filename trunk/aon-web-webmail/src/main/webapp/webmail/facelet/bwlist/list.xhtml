@@ -51,8 +51,8 @@
 							value="#{appBundle.aon_webmail_add_white_list}" 
 							styleClass="aon-finding-toolbar-item aon-icon-white-list"
 							title="#{appBundle.aon_webmail_add_white_list}"
-							onclick="javascript:Richfaces.showModalPanel('addBlackWhiteListModalPanel',{width:350, top:100})"
 							actionListener="#{blacklist.openNewWhitePanelPopup}">
+							<rich:componentControl for="addBlackWhiteListModalPanel" operation="show" event="onclick"/>
 						</aon:commandButton>
 						
 						<aon:commandButton
@@ -60,8 +60,8 @@
 							value="#{appBundle.aon_webmail_add_black_list}" 
 							styleClass="aon-finding-toolbar-item aon-icon-black-list"
 							title="#{appBundle.aon_webmail_add_black_list}"
-							onclick="javascript:Richfaces.showModalPanel('addBlackWhiteListModalPanel',{width:350, top:100})"
 							actionListener="#{blacklist.openNewBlackPanelPopup}" >
+							<rich:componentControl for="addBlackWhiteListModalPanel" operation="show" event="onclick"/>
 						</aon:commandButton>
 						
 						<ui:include src="/webmail/facelet/modal/blackWhiteList.xhtml" />
