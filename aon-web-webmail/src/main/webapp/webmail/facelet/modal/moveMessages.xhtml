@@ -28,8 +28,8 @@
             </f:facet>
             <f:facet name="controls">
 				<aon:commandButton type="button"
-					styleClass="aon-popupWindow-close" immediate="true"
-					onclick="Richfaces.hideModalPanel('msgMoveModalPanel');">
+					styleClass="aon-popupWindow-close" immediate="true">
+					<rich:componentControl for="msgMoveModalPanel" operation="hide" event="onclick"/>
 				</aon:commandButton>
             </f:facet>
 			<rich:panel bodyClass="bodyPanel_">
@@ -42,10 +42,11 @@
 		                var="item">
 					<rich:treeNode>
 						<aon:commandLink 
-							onclick="Richfaces.hideModalPanel('msgMoveModalPanel')"
 		                	value="#{item.name}"
 							action="folder"
-							rendered="#{!item.root}" />
+							rendered="#{!item.root}" >
+							<rich:componentControl for="msgMoveModalPanel" operation="hide" event="onclick"/>
+						</aon:commandLink>
 					</rich:treeNode>
 				</rich:tree>
 			</rich:panel>	
