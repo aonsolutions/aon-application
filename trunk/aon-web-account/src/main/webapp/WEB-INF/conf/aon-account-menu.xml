@@ -87,5 +87,9 @@
 			key="aon_product_tax" descriptionKey="aon_product_tax_desc"/>
 		<option contextRelative="false" external="false" ref="series" 
 			key="aon_series" descriptionKey="aon_series_desc"/>
+		<option contextRelative="false" external="false" ref="geozone" 
+			key="aon_geozone" descriptionKey="aon_geozone_desc">
+			<actionListener action="#{geotreeParent.onSearch}" />
+		</option>
 	</menu>
 </root>
