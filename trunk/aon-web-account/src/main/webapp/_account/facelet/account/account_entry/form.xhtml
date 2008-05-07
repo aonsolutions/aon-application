@@ -106,7 +106,7 @@
 						<h:panelGroup>
 							<h:selectOneMenu id="AccountEntry_accountPeriod"
 								styleClass="aon-form-selectOneMenu-field"
-								value="#{accountEntry.to.accountPeriod}"
+								forceId="#{true}" value="#{accountEntry.to.accountPeriod}"
 								rendered="#{accountEntry.manual and accountEntry.new}">
 								<f:selectItems value="#{accountCollections.accountPeriods}" />
 							</h:selectOneMenu>
@@ -126,11 +126,18 @@
 						<h:outputLabel for="AccountEntry_securityLevel"
 							value="#{accountBundle.aon_account_security_level}"
 							styleClass="aon-form-input-text-label aon-form-table-column-odd-label" />
-						<h:selectOneMenu id="AccountEntry_securityLevel"
-							styleClass="aon-form-selectOneMenu-field"
-							forceId="#{true}" value="#{accountEntry.to.securityLevel}">
-							<f:selectItems value="#{accountCollections.securityLevels}" />
-						</h:selectOneMenu>
+						<h:panelGroup>
+							<h:selectOneMenu id="AccountEntry_securityLevel"
+								styleClass="aon-form-selectOneMenu-field"
+								forceId="#{true}" value="#{accountEntry.to.securityLevel}"
+								rendered="#{accountEntry.manual}">
+								<f:selectItems value="#{accountCollections.securityLevels}" />
+							</h:selectOneMenu>
+							<t:inputText id="AccountEntry_securityLevel_disabled" styleClass="aon-form-input-text-disabled"
+								value="#{accountEntry.to.securityLevel}" size="12"
+								rendered="#{!accountEntry.manual}"
+								forceId="#{true}" disabled="true" />
+						</h:panelGroup>
 
 						<h:outputLabel for="AccountEntry_entryDate"
 							value="#{accountBundle.aon_date}"
