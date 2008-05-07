@@ -1,6 +1,7 @@
 package com.code.aon.account.bridge.writer;
 
 import java.util.Iterator;
+import java.util.Map;
 
 import com.code.aon.account.Account;
 import com.code.aon.account.AccountEntry;
@@ -57,22 +58,23 @@ public class AccountEntryInvoiceWriter {
 	 * 
 	 * @throws ManagerBeanException the manager bean exception
 	 */
-	public void insertEntryDetails(AccountEntry entry, Account account, Account balancingAccount, String series, int number, double invoiceTotal, double retentionTotal, double taxQuota, double taxableBase ) throws ManagerBeanException {
+	@SuppressWarnings("unchecked")
+	public void insertEntryDetails(AccountEntry entry, Account account, String series, int number, double invoiceTotal, double retentionTotal, double taxQuota, Map basesPerAccount) throws ManagerBeanException {
 		IManagerBean entryDetailBean = BeanManager.getManagerBean(AccountEntryDetail.class);
 		// Primer Apunte
 		AccountEntryDetail entryDetail = new AccountEntryDetail();
 		entryDetail.setAccount(account);
 		entryDetail.setAccountEntry(entry);
+		if (basesPerAccount.size() == 1) {
+			entryDetail.setBalancingAccount((Account)basesPerAccount.keySet().iterator().next());
+		}
 		if(entry.getType().equals(AccountEntryType.SALES_INVOICE)){
-			entryDetail.setBalancingAccount(AccountUtil.obtainDefaultAccount(DefaultAccounts.SALES_ACCOUNT));
 			entryDetail.setDebit(invoiceTotal);
 		}
 		if(entry.getType().equals(AccountEntryType.PURCHASE_INVOICE)){
-			entryDetail.setBalancingAccount(AccountUtil.obtainDefaultAccount(DefaultAccounts.PURCHASE_ACCOUNT));
 			entryDetail.setCredit(invoiceTotal);
 		}
 		if(entry.getType().equals(AccountEntryType.EXPENSE_INVOICE)){
-			entryDetail.setBalancingAccount(AccountUtil.obtainAccount(balancingAccount.getId()));
 			entryDetail.setCredit(invoiceTotal);
 		}
 		entryDetail.setConcept("N/Fra: " + series + "/" + number);
@@ -107,18 +109,21 @@ public class AccountEntryInvoiceWriter {
 			entryDetail.setConcept("N/Fra: " + series + "/" + number);
 			entryDetailBean.insert(entryDetail);
 		}
-		// Cuarto Apunte
-		entryDetail = new AccountEntryDetail();
-		entryDetail.setAccount(balancingAccount);
-		entryDetail.setAccountEntry(entry);
-		entryDetail.setBalancingAccount(account);
-		entryDetail.setConcept("N/Fra: " + series + "/" + number);
-		if(entry.getType().equals(AccountEntryType.SALES_INVOICE)){
-			entryDetail.setCredit(taxableBase);
-		}else{
-			entryDetail.setDebit(taxableBase);
+		// Cuarto Apunte (o varios Apuntes en funcion del Mapa de bases por cuenta)
+		Iterator iterator = basesPerAccount.keySet().iterator();
+		while (iterator.hasNext()) {
+			entryDetail = new AccountEntryDetail();
+			entryDetail.setAccount((Account)iterator.next());
+			entryDetail.setAccountEntry(entry);
+			entryDetail.setBalancingAccount(account);
+			entryDetail.setConcept("N/Fra: " + series + "/" + number);
+			if(entry.getType().equals(AccountEntryType.SALES_INVOICE)){
+				entryDetail.setCredit(((Double)basesPerAccount.get(entryDetail.getAccount())).doubleValue());
+			}else{
+				entryDetail.setDebit(((Double)basesPerAccount.get(entryDetail.getAccount())).doubleValue());
+			}
+			entryDetailBean.insert(entryDetail);
 		}
-		entryDetailBean.insert(entryDetail);
 	}
 	
 	/**
