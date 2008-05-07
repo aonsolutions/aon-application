@@ -2,13 +2,12 @@ package com.code.aon.ui.finance.event;
 
 import com.code.aon.config.util.SeriesNumberUtil;
 import com.code.aon.finance.Invoice;
-import com.code.aon.finance.dao.IFinanceAlias;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
 
 /**
- * Listener added to the controller of any entity with series and number
+ * Listener added to invoice controller
  * 
  */
 public class InvoiceHeaderControllerListener extends HeaderControllerListener {
@@ -25,7 +24,7 @@ public class InvoiceHeaderControllerListener extends HeaderControllerListener {
 		Invoice invoiceHeader = (Invoice)event.getController().getTo();
         if(invoiceHeader.getNumber() == 0) {
         	Criteria criteria = new Criteria();
-        	criteria.addEqualExpression(IFinanceAlias.INVOICE_TYPE, invoiceHeader.getType());
+        	criteria.addEqualExpression(getTable().toLowerCase() + ".type", invoiceHeader.getType().ordinal());
         	invoiceHeader.setNumber(SeriesNumberUtil.obtainNumber(invoiceHeader.getSeries(), getTable(), criteria));
 		}
     }
