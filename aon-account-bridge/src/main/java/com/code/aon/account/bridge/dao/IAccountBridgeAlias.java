@@ -5,6 +5,7 @@ import com.code.aon.common.dao.DAOConstantsEntry;
 import com.code.aon.account.bridge.CustomerAccount;
 import com.code.aon.account.bridge.SupplierAccount;
 import com.code.aon.account.bridge.CreditorAccount;
+import com.code.aon.account.bridge.ProductAccount;
 import com.code.aon.account.bridge.RegistryBankAccount;
 import com.code.aon.account.bridge.LoanAccount;
 import com.code.aon.account.bridge.LeasingAccount;
@@ -91,6 +92,37 @@ public interface IAccountBridgeAlias {
 	* Hibernate value: CreditorAccount.id
 	*/
 	String  CREDITOR_ACCOUNT_ID = CREDITOR_ACCOUNT_ENTRY.getAliasNames()[2];
+
+
+
+	/** 
+	* DAOConstantsEntry for ProductAccount entity.
+	*/ 
+	DAOConstantsEntry PRODUCT_ACCOUNT_ENTRY = DAOConstants.getDAOConstant(ProductAccount.class);
+
+	/** 
+	* Alias value: ProductAccount_account_id
+	* Hibernate value: ProductAccount.account.id
+	*/
+	String  PRODUCT_ACCOUNT_ACCOUNT_ID = PRODUCT_ACCOUNT_ENTRY.getAliasNames()[0];
+
+	/** 
+	* Alias value: ProductAccount_id
+	* Hibernate value: ProductAccount.id
+	*/
+	String  PRODUCT_ACCOUNT_ID = PRODUCT_ACCOUNT_ENTRY.getAliasNames()[1];
+
+	/** 
+	* Alias value: ProductAccount_product_id
+	* Hibernate value: ProductAccount.product.id
+	*/
+	String  PRODUCT_ACCOUNT_PRODUCT_ID = PRODUCT_ACCOUNT_ENTRY.getAliasNames()[2];
+
+	/** 
+	* Alias value: ProductAccount_type
+	* Hibernate value: ProductAccount.type
+	*/
+	String  PRODUCT_ACCOUNT_TYPE = PRODUCT_ACCOUNT_ENTRY.getAliasNames()[3];
 
 
 
