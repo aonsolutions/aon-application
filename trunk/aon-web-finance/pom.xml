@@ -18,7 +18,7 @@
 		<finalName>aon-finance</finalName>
 	</build>
 	<properties>
-		<dbVersion>1.4.0</dbVersion>
+		<dbVersion>1.5.0</dbVersion>
 	</properties>
 	<dependencies>
 		<dependency>
