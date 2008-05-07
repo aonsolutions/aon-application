@@ -1,10 +1,12 @@
 package com.code.aon.ui.account.controller;
 
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -278,7 +280,7 @@ public class AccountInvoiceController {
 		this.setNewDetail(false);
 	}
 	
-	@SuppressWarnings({"unused","unchecked"})
+	@SuppressWarnings({"unchecked", "unused"})
 	public void onRemoveDetail(ActionEvent event){
 		((LinkedList)this.details.getWrappedData()).remove(this.currentDetail);
 	}
@@ -289,7 +291,7 @@ public class AccountInvoiceController {
 		this.setNewDetail(false);
 	}
 	
-	@SuppressWarnings({"unused", "unchecked"})
+	@SuppressWarnings({"unchecked", "unused"})
 	public void onUpdateDetail(ActionEvent event) throws ManagerBeanException{
 		applySurcharge();
 		int i = ((LinkedList)this.details.getWrappedData()).indexOf(this.currentDetail);
@@ -378,7 +380,7 @@ public class AccountInvoiceController {
 		this.setNewFinance(false);
 	}
 	
-	@SuppressWarnings({"unused", "unchecked"})
+	@SuppressWarnings({"unchecked", "unused"})
 	public void onUpdateFinance(ActionEvent event){
 		int i = ((LinkedList)this.finances.getWrappedData()).indexOf(this.currentFinance);
 		((LinkedList)this.finances.getWrappedData()).remove(i);
@@ -495,7 +497,7 @@ public class AccountInvoiceController {
 		insertInvoiceDetails(invoice);
 		insertFinances(invoice);
 		entry = getWriter().insertorUpdateAccountEntry(entry, this.isNew);
-		getWriter().insertEntryDetails(entry, account, header.getAccount(), invoice.getSeries(), invoice.getNumber(), getInvoiceTotal(), obtainTotalRetention(), obtainVATandSurchargeQuota(), obtainTotalTaxableBase());
+		getWriter().insertEntryDetails(entry, account, invoice.getSeries(), invoice.getNumber(), getInvoiceTotal(), obtainTotalRetention(), obtainVATandSurchargeQuota(), getBasesPerAccount());
 		this.setAccountEntryInvoice(getWriter().insertAccountEntryInvoice(entry, invoice));
 		this.isNew = false;
 		loadAccountEntryController(entry);
@@ -532,7 +534,19 @@ public class AccountInvoiceController {
 		}
 		return total;
 	}
-	
+
+	/**
+	 * Get the bases per account map.
+	 * 
+	 * @return the double
+	 */
+	@SuppressWarnings("unchecked")
+	private Map getBasesPerAccount() {
+		Map basesPerAccount = new HashMap();
+		basesPerAccount.put(header.getAccount(), new Double(obtainTotalTaxableBase()));
+		return basesPerAccount;
+	}
+
 	/**
 	 * Obtain total taxable base.
 	 * 
