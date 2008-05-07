@@ -1,15 +1,21 @@
 package com.code.aon.ui.webmail.controller;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
+import java.util.logging.Logger;
 
 import javax.faces.context.FacesContext;
+import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 import javax.faces.model.SelectItem;
+
+import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.math.NumberUtils;
 
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
@@ -19,6 +25,9 @@ import com.code.aon.jaas.auth.AuthPrincipal;
 import com.code.aon.ldap.AbstractLdap;
 import com.code.aon.ldap.AonDN;
 import com.code.aon.ldap.DistinguishedName;
+import com.code.aon.ldap.Entry;
+import com.code.aon.ldap.LdapException;
+import com.code.aon.ldap.LdapSession;
 import com.code.aon.ui.util.AonUtil;
 import com.code.aon.ui.webmail.bean.AonConstants;
 import com.code.aon.ui.webmail.bean.AonFolder;
@@ -30,6 +39,18 @@ import com.code.aon.webmail.enumeration.SpamScoreType;
 
 public class BlackListController extends AbstractLdap {
 
+	private static final Logger LOGGER = Logger.getLogger(BlackListController.class.getName());
+	
+	private static final String AMAVIS_ACCOUNT_OBJECT_CLASS = "amavisAccount";
+
+	private static final String WHITE_LIST = "amavisWhitelistSender";
+	
+	private static final String BLACK_LIST = "amavisBlacklistSender";
+	
+	private static final String SUBJECT_TAG = "amavisSpamSubjectTag";
+
+	private static final String SPAM_LEVEL = "amavisSpamTagLevel";
+	
 	private List<AonListEmail> whiteLst;
 
 	private List<AonListEmail> blackLst;
@@ -95,141 +116,91 @@ public class BlackListController extends AbstractLdap {
 	public boolean isBlackListConfigured() {
 		DistinguishedName userDN = getUserDN();
 		if ( userDN != null ) {
-			
+			return exists(userDN, AMAVIS_ACCOUNT_OBJECT_CLASS);
 		}
-		return false;
-		
+		return false;	
+	}
+	
+	private Entry getSpamEntry( DistinguishedName dn ) {
+		Entry entry = null;
+		try {
+			LdapSession session = getLdapSession();
+			String filter = LdapSession.getObjectClass(AMAVIS_ACCOUNT_OBJECT_CLASS);
+			entry = session.get(dn.toString(), filter, WHITE_LIST, BLACK_LIST, SUBJECT_TAG, SPAM_LEVEL );
+		} catch ( LdapException e ) {
+			AonUtil.addErrorMessage( "Error getting spam information" );
+			throw new AbortProcessingException( e.getMessage(), e );
+		} finally {
+			closeSession();
+		}		
+		return entry;
 	}
 	
 	private void load(){
 		addContactsToWhite = false;
-		WebMailController webMailController = (WebMailController)AonUtil.getRegisteredBean(AonConstants.BEAN_WEBMAIL);
-		MailAccount mailAccount = webMailController.getServer().getAccount();
-		/*
-		String filename = mailAccount.getBlackList();
-		BufferedReader rd = null;
-		try {
-	        String patternStr = "\t";
-	        Pattern pattern = Pattern.compile(patternStr);
-	        rd = new BufferedReader(new FileReader(filename));
-	        String line = null;
-	        props = new Properties();
-	        whiteLst = new ArrayList<AonListEmail>();
-	        blackLst = new ArrayList<AonListEmail>();
-	        while ((line = rd.readLine()) != null) {
-        		try{
-		        	String[] a = pattern.split(line);
-		        	if (WHITE.equalsIgnoreCase(a[0])&&
-		        			!whiteLst.contains(a[1])){
-	        			whiteLst.add(new AonListEmail(a[1]));
-		        	}else if (BLACK.equalsIgnoreCase(a[0])&&
-		        			!blackLst.contains(a[1])){
-	        			blackLst.add(new AonListEmail(a[1]));
-		        	}else{
-		        			props.put(a[0], a[1]);
-		        	}
-        		}catch (Exception e) {
+		DistinguishedName userDN = getUserDN();
+		Entry entry = getSpamEntry( userDN );
+		if ( entry != null ) {
+			if ( entry.containsKey(SUBJECT_TAG) ) {
+				this.rewrite_1 = entry.getAsString(SUBJECT_TAG);
+			} else {
+				this.rewrite_1 = null;
+			}
+			SpamScoreType score = null;
+			if ( entry.containsKey(SPAM_LEVEL) ) {
+ 				String levelString = entry.getAsString(SPAM_LEVEL);
+				if ( NumberUtils.isNumber(levelString) ) {
+					double value = Double.valueOf(entry.getAsString(SPAM_LEVEL));
+					score = SpamScoreType.get(value);
 				}
-	        }
-		    try {
-			    int score = new Integer(props.getProperty(SCORE)).intValue();
-			    if (score>=15){
-					setSpamScoreType(SpamScoreType.VERY_HIGH);
-			    }else if (score>=10){
-					setSpamScoreType(SpamScoreType.HIGH);
-			    }else if (score>=5){
-					setSpamScoreType(SpamScoreType.NORMAL);
-			    }else if (score>=3){
-					setSpamScoreType(SpamScoreType.LOW);
-			    }else{
-					setSpamScoreType(SpamScoreType.VERY_LOW);
-			    }
-			} catch (Exception e) {
-				setSpamScoreType(SpamScoreType.NORMAL);
 			}
-			setRewrite_1(props.getProperty(REWRITE_1));
-		    sort(whiteLst,true);
-		    sort(blackLst,true);
-		} catch (IOException e) {
-	    } finally {
-	    	try {
-				rd.close();
-			} catch (IOException e) {
+			setSpamScoreType( score != null ? score : SpamScoreType.NORMAL );
+	        whiteLst = new ArrayList<AonListEmail>();
+			if ( entry.containsKey(WHITE_LIST) ) {
+				for( Object o : entry.get(WHITE_LIST) ) {
+					whiteLst.add(new AonListEmail(o.toString()));	
+				}
 			}
-	    }
-	    */
+	        blackLst = new ArrayList<AonListEmail>();
+			if ( entry.containsKey(BLACK_LIST) ) {
+				for( Object o : entry.get(BLACK_LIST) ) {
+					blackLst.add(new AonListEmail(o.toString()));	
+				}					
+			}
+		}
 	}
 	
-	private void save(){
-		WebMailController webMailController = (WebMailController)AonUtil.getRegisteredBean(AonConstants.BEAN_WEBMAIL);
-		MailAccount mailAccount = webMailController.getServer().getAccount();
-		/*
-		String filename = mailAccount.getBlackList();
-		BufferedWriter wr = null;
-		try {
-	        String patternStr = "\t";
-	        wr = new BufferedWriter(new FileWriter(filename));
-	        String line = null;
-	        if (SpamScoreType.VERY_HIGH.equals(getSpamScoreType())){
-	        	line = SCORE+"\t15";
-	        }else if (SpamScoreType.HIGH.equals(getSpamScoreType())){
-	        	line = SCORE+"\t10";
-	        }else if (SpamScoreType.NORMAL.equals(getSpamScoreType())){
-	        	line = SCORE+"\t5";
-	        }else if (SpamScoreType.LOW.equals(getSpamScoreType())){
-	        	line = SCORE+"\t3";
-	        }else if (SpamScoreType.VERY_LOW.equals(getSpamScoreType())){
-	        	line = SCORE+"\t1";
-	        }
-        	wr.write(line);
-        	wr.newLine();
-        	line = REWRITE_1+"\t"+getRewrite_1();
-        	wr.write(line);
-        	wr.newLine();
-	        for (Enumeration keys = props.keys() ; keys.hasMoreElements() ;) {
-	        	String key = (String)keys.nextElement();
-	        	if (!key.equalsIgnoreCase(SCORE) &&
-	        			!key.equalsIgnoreCase(REPORT) &&
-	        			!key.equalsIgnoreCase(REWRITE_1)
-	        			){
-		        	line = key+"\t"+props.getProperty(key);
-		        	wr.write(line);
-		        	wr.newLine();
-	        	}
-	        }
-	        wr.flush();
-	        if (addContactsToWhite){
-	        	addContactsToWhiteList();
-	        }
-	        Iterator<AonListEmail> iter = whiteLst.iterator();
-	        AonListEmail ale;
-	        while (iter.hasNext()){
-	        	ale = iter.next();
-	        	if (!ale.isSelected()){
-		        	line = "whitelist_from\t"+ale.getEmail();
-		        	wr.write(line);
-		        	wr.newLine();
-	        	}
-	        }
-	        wr.flush();
-	        iter = blackLst.iterator();
-	        while (iter.hasNext()){
-	        	ale = iter.next();
-	        	if (!ale.isSelected()){
-		        	line = "blacklist_from\t"+ale.getEmail();
-		        	wr.write(line);
-		        	wr.newLine();
-	        	}
-	        }
-	        wr.flush();
-	    } catch (IOException e) {
-	    } finally {
-	    	try {
-				wr.close();
-			} catch (IOException e) {
+	private List<Object> getSaveList( List<AonListEmail> emailList ) {
+		List<Object> list = new ArrayList<Object>();
+		for( AonListEmail email : emailList ) {
+			if (! email.isSelected() ) {
+				list.add( email.getEmail() );				
 			}
-	    }
-	    */
+		}
+		return list;
+	}
+	
+	private void save() {
+		DistinguishedName userDN = getUserDN();		
+		Entry entry = getSpamEntry( userDN );
+		if ( entry != null ) {
+			try {
+				LdapSession session = getLdapSession();
+				session.updateAttribute(session, entry, SUBJECT_TAG, StringUtils.trimToNull(this.rewrite_1) );
+				String spamLevelValue = String.valueOf( getSpamScoreType().getValue() );
+				session.updateAttribute(session, entry, SPAM_LEVEL, spamLevelValue);
+				if ( isAddContactsToWhite() ) {
+					addContactsToWhiteList();
+				}
+				session.updateAttribute(session, entry, WHITE_LIST, getSaveList(this.whiteLst) );
+				session.updateAttribute(session, entry, BLACK_LIST, getSaveList(this.blackLst) );
+			} catch ( LdapException e ) {
+				AonUtil.addErrorMessage( "Error updating spam information" );
+				throw new AbortProcessingException( e.getMessage(), e );
+			} finally {
+				closeSession();
+			}					
+		}		
 	}
 	
 	protected void sort(List l, final boolean ascending) {
@@ -332,7 +303,7 @@ public class BlackListController extends AbstractLdap {
 	}
 
 	public boolean isBlackList(){
-		return list_type==LIST_BLACK_TYPE?true:false; 
+		return (list_type==LIST_BLACK_TYPE); 
 	}
 	
     //*************************************************************
@@ -372,6 +343,7 @@ public class BlackListController extends AbstractLdap {
 			addEmail(email, LIST_WHITE_TYPE);
 			save();
 		} catch (WebmailException e) {
+			LOGGER.severe( e.getMessage() );
 		}
 	}
 
@@ -383,6 +355,7 @@ public class BlackListController extends AbstractLdap {
 			addEmail(email, LIST_BLACK_TYPE);
 			save();
 		} catch (WebmailException e) {
+			LOGGER.severe( e.getMessage() );
 		}
 	}
 
