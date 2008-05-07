@@ -124,12 +124,12 @@
 						
 						<aon:panelGrid columns="2" dir="true" >
 						
-							<aon:outputLabel for="isFaqToGenerate"
+							<aon:outputLabel for="isArticleCalendarToGenerate"
 								styleClass="aon-form-input-text-label"
-								value="#{appBundle.isFaqToGenerate}" />
+								value="#{appBundle.isArticleCalendarToGenerate}" />
 							<aon:div>
-								<aon:selectBooleanCheckbox id="isFaqToGenerate" 
-									value="#{generator.faqToGenerate}" />
+								<aon:selectBooleanCheckbox id="isArticleCalendarToGenerate" 
+									value="#{generator.articleCalendarToGenerate}" />
 							</aon:div>
 							
 							<aon:outputLabel for="isLinkToGenerate"
@@ -152,6 +152,14 @@
 						
 						<aon:panelGrid columns="2" dir="true" >
 						
+							<aon:outputLabel for="isFaqToGenerate"
+								styleClass="aon-form-input-text-label"
+								value="#{appBundle.isFaqToGenerate}" />
+							<aon:div>
+								<aon:selectBooleanCheckbox id="isFaqToGenerate" 
+									value="#{generator.faqToGenerate}" />
+							</aon:div>
+							
 							<aon:outputLabel for="isAlbumToGenerate"
 								styleClass="aon-form-input-text-label"
 								value="#{appBundle.isAlbumToGenerate}" />

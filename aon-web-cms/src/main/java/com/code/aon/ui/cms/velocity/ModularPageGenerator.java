@@ -80,7 +80,8 @@ public class ModularPageGenerator extends Generator {
 							mpod = (ModularPageOptionDetail) modularPageOptionDetailList.get(0);
 							if (mpod.getModular_page_option().isActive()) {
 								ModularPageOptionHandler mpoh = new ModularPageOptionHandler(mpod);
-								modularPageOptionHandlerList.add(mpoh);
+								if (mpoh.getContent()!=null)
+									modularPageOptionHandlerList.add(mpoh);
 							}
 						}
 						modularPageOptionDetailList = null;

@@ -266,35 +266,6 @@ public class ArticleCalendarGenerator extends Generator {
 			if (!diaryDetailLst.isEmpty()){
 				diaryDetail = (DiaryDetail)diaryDetailLst.get(0);
 			}
-			/*
-			ArrayList<ArticleCategoryHandler> achlist = new ArrayList<ArticleCategoryHandler>();
-			if (diary.isCategories()){
-				IManagerBean articleCategoryBean = BeanManager.getManagerBean(ArticleCategory.class);
-				IManagerBean articleCategoryDetailBean = BeanManager.getManagerBean(ArticleCategoryDetail.class);
-				Criteria articleCategoryCriteria = new Criteria();
-				Criteria articleCategoryDetailCriteria;
-				ArticleCategory articleCategory;
-				ArticleCategoryDetail articleCategoryDetail;
-				articleCategoryCriteria.addEqualExpression(articleCategoryBean.getFieldName(ICMSAlias.ARTICLE_CATEGORY_ACTIVE), true);
-				articleCategoryCriteria.addOrder(articleCategoryBean.getFieldName(ICMSAlias.ARTICLE_CATEGORY_POSITION));
-				articleCategoryList = (List<ITransferObject>)articleCategoryBean.getList(articleCategoryCriteria);
-				
-				for (int j=0; j < articleCategoryList.size(); j++) {
-					articleCategory = (ArticleCategory)articleCategoryList.get(j);
-					articleCategoryDetailCriteria = new Criteria();
-					articleCategoryDetailCriteria.addEqualExpression(articleCategoryDetailBean.getFieldName(ICMSAlias.ARTICLE_CATEGORY_DETAIL_ARTICLE_CATEGORY_ID), articleCategory.getId());
-					articleCategoryDetailCriteria.addEqualExpression(articleCategoryDetailBean.getFieldName(ICMSAlias.ARTICLE_CATEGORY_DETAIL_LANGUAGE_ID), ControllerUtil.getCurrentLanguage().getId());
-					articleCategoryDetailList = (List<ITransferObject>)articleCategoryDetailBean.getList(articleCategoryDetailCriteria);
-					if (articleCategoryDetailList.isEmpty()) {
-						VelocityUtil.addMessage(" Categoria de articulos " + articleCategory.getAlias() + " no internacionalizada.", VelocityUtil.WARN);
-					}else{
-						articleCategoryDetail = (ArticleCategoryDetail)articleCategoryDetailList.get(0);
-						ArticleCategoryHandler achandler = new ArticleCategoryHandler(articleCategoryDetail,ArticleType.EVENTS,null);
-						achlist.add(achandler);
-					}
-				}
-			}
-			*/
 			return new DiaryCategoriesHandler(diaryDetail==null?"":diaryDetail.getContent(),diary.isCategories(),achlist);
 		}
 		return null;

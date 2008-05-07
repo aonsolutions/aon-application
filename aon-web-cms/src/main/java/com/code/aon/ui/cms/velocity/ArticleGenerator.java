@@ -29,7 +29,7 @@ import com.code.aon.ui.cms.velocity.attribute.ArticleHandler;
 
 public class ArticleGenerator extends Generator {
 	
-	public static void generate() {
+	public static void generate(ArticleType articleType) {
 		List<ITransferObject> articleCategoryList;
 		List<ITransferObject> articleCategoryDetailList;
 		List<ITransferObject> articleList;
@@ -41,7 +41,6 @@ public class ArticleGenerator extends Generator {
 			IManagerBean articleBean = BeanManager.getManagerBean(Article.class);
 			IManagerBean articleDetailBean = BeanManager.getManagerBean(ArticleDetail.class);
 			
-			ArticleType[] values = ArticleType.values();
 			Templates templates;
 			
 			Criteria articleCategoryCriteria = new Criteria();
@@ -75,67 +74,65 @@ public class ArticleGenerator extends Generator {
 				}else{
 					articleCategoryDetail = (ArticleCategoryDetail)articleCategoryDetailList.get(0);
 					boolean emptyCategory = true;
-					for (int art_type = 0; art_type < values.length; art_type++){
-						templates = ArticleGenerator.getTemplate(art_type);
-						articleCriteria = new Criteria();
-						articleCriteria.addEqualExpression(articleBean.getFieldName(ICMSAlias.ARTICLE_ARTICLE_CATEGORY_ID), articleCategory.getId());
-						articleCriteria.addEqualExpression(articleBean.getFieldName(ICMSAlias.ARTICLE_ACTIVE), true);
-						articleCriteria.addEqualExpression(articleBean.getFieldName(ICMSAlias.ARTICLE_ARTICLE_TYPE), values[art_type]);
-						Expression nullableExpr = ExpressionUtilities.getNullExpression(articleBean.getFieldName(ICMSAlias.ARTICLE_EXPIRE_DATE));
-			            Expression greaterExpr = ExpressionUtilities.getGreaterThanOrEqualExpression(articleBean.getFieldName(ICMSAlias.ARTICLE_EXPIRE_DATE), new Date());
-			            articleCriteria.addExpression(ExpressionUtilities.getOrExpression(nullableExpr, greaterExpr));
-						articleCriteria.addLessThanOrEqualExpression(articleBean.getFieldName(ICMSAlias.ARTICLE_PUBLISH_DATE), new Date());
-						articleCriteria.addOrder(articleBean.getFieldName(ICMSAlias.ARTICLE_POSITION));
-						articleList = (List<ITransferObject>)articleBean.getList(articleCriteria);
-						ArrayList<ArticleHandler> ahlist = new ArrayList<ArticleHandler>();
-						if (!articleList.isEmpty()){
-							emptyCategory = false;
-							String back_url = templates.getHtmlName();
-							back_url = back_url.replaceAll("%NAME%", values[art_type].getName()+"_"+articleCategory.getAlias());
-							
-							if (articleCategory.getElementSection()!=null){
-								CommonGenerator.getCommonGenerator().chargeContext(vu, articleCategory.getElementSection());
-							}else{
-								if (articleCategory.getSection()!=null)
-									CommonGenerator.getCommonGenerator().chargeContext(vu, articleCategory.getSection());
-								else
-									CommonGenerator.getCommonGenerator().chargeContext(vu, configSection);
-							}
-							for (int i=0; i < articleList.size(); i++) {
-								article = (Article)articleList.get(i);
-								articleDetailCriteria = new Criteria();
-								articleDetailCriteria.addEqualExpression(articleDetailBean.getFieldName(ICMSAlias.ARTICLE_DETAIL_ARTICLE_ID), article.getId());
-								articleDetailCriteria.addEqualExpression(articleDetailBean.getFieldName(ICMSAlias.ARTICLE_DETAIL_LANGUAGE_ID), ControllerUtil.getCurrentLanguage().getId());
-								articleDetailList = (List<ITransferObject>)articleDetailBean.getList(articleDetailCriteria);
-								if (articleDetailList.isEmpty()) {
-									VelocityUtil.addMessage(" Articulo " + article.getAlias() + " de la categoria " + articleCategory.getAlias() + " no internacionalizado.", VelocityUtil.WARN);
-								}else{
-									articleDetail = (ArticleDetail)articleDetailList.get(0);
-									ArticleHandler ahandler = new ArticleHandler(articleDetail);
-									ahlist.add(ahandler);
-									vu.put("back_url", back_url);
-									vu.put("article", ahandler);
-									VelocityUtil.addMessage(" Generando article " + article.getAlias() + ".", VelocityUtil.INFO);
-									generate(vu, templates, article.getAlias());
-									vu.remove("article");
-									vu.remove("back_url");
-								}
-							}
+					templates = ArticleGenerator.getTemplate(articleType.ordinal());
+					articleCriteria = new Criteria();
+					articleCriteria.addEqualExpression(articleBean.getFieldName(ICMSAlias.ARTICLE_ARTICLE_CATEGORY_ID), articleCategory.getId());
+					articleCriteria.addEqualExpression(articleBean.getFieldName(ICMSAlias.ARTICLE_ACTIVE), true);
+					articleCriteria.addEqualExpression(articleBean.getFieldName(ICMSAlias.ARTICLE_ARTICLE_TYPE), articleType);
+					Expression nullableExpr = ExpressionUtilities.getNullExpression(articleBean.getFieldName(ICMSAlias.ARTICLE_EXPIRE_DATE));
+		            Expression greaterExpr = ExpressionUtilities.getGreaterThanOrEqualExpression(articleBean.getFieldName(ICMSAlias.ARTICLE_EXPIRE_DATE), new Date());
+		            articleCriteria.addExpression(ExpressionUtilities.getOrExpression(nullableExpr, greaterExpr));
+					articleCriteria.addLessThanOrEqualExpression(articleBean.getFieldName(ICMSAlias.ARTICLE_PUBLISH_DATE), new Date());
+					articleCriteria.addOrder(articleBean.getFieldName(ICMSAlias.ARTICLE_POSITION));
+					articleList = (List<ITransferObject>)articleBean.getList(articleCriteria);
+					ArrayList<ArticleHandler> ahlist = new ArrayList<ArticleHandler>();
+					if (!articleList.isEmpty()){
+						emptyCategory = false;
+						String back_url = templates.getHtmlName();
+						back_url = back_url.replaceAll("%NAME%", articleType.getName()+"_"+articleCategory.getAlias());
+						
+						if (articleCategory.getElementSection()!=null){
+							CommonGenerator.getCommonGenerator().chargeContext(vu, articleCategory.getElementSection());
+						}else{
 							if (articleCategory.getSection()!=null)
 								CommonGenerator.getCommonGenerator().chargeContext(vu, articleCategory.getSection());
 							else
 								CommonGenerator.getCommonGenerator().chargeContext(vu, configSection);
-							ArticleCategoryHandler achandler = new ArticleCategoryHandler(articleCategoryDetail,values[art_type],ahlist);
-							vu.put("article_category", achandler);
-							vu.put("article_list", ahlist);
-							VelocityUtil.addMessage(" Generando list de article.", VelocityUtil.INFO);
-							generate(vu, templates, values[art_type].getName()+"_"+articleCategory.getAlias());
-							vu.remove("article_category");
-							vu.remove("article_list");
-							achlist.add(achandler);
 						}
-						ahlist = null;
+						for (int i=0; i < articleList.size(); i++) {
+							article = (Article)articleList.get(i);
+							articleDetailCriteria = new Criteria();
+							articleDetailCriteria.addEqualExpression(articleDetailBean.getFieldName(ICMSAlias.ARTICLE_DETAIL_ARTICLE_ID), article.getId());
+							articleDetailCriteria.addEqualExpression(articleDetailBean.getFieldName(ICMSAlias.ARTICLE_DETAIL_LANGUAGE_ID), ControllerUtil.getCurrentLanguage().getId());
+							articleDetailList = (List<ITransferObject>)articleDetailBean.getList(articleDetailCriteria);
+							if (articleDetailList.isEmpty()) {
+								VelocityUtil.addMessage(" Articulo " + article.getAlias() + " de la categoria " + articleCategory.getAlias() + " no internacionalizado.", VelocityUtil.WARN);
+							}else{
+								articleDetail = (ArticleDetail)articleDetailList.get(0);
+								ArticleHandler ahandler = new ArticleHandler(articleDetail);
+								ahlist.add(ahandler);
+								vu.put("back_url", back_url);
+								vu.put("article", ahandler);
+								VelocityUtil.addMessage(" Generando article " + article.getAlias() + ".", VelocityUtil.INFO);
+								generate(vu, templates, article.getAlias());
+								vu.remove("article");
+								vu.remove("back_url");
+							}
+						}
+						if (articleCategory.getSection()!=null)
+							CommonGenerator.getCommonGenerator().chargeContext(vu, articleCategory.getSection());
+						else
+							CommonGenerator.getCommonGenerator().chargeContext(vu, configSection);
+						ArticleCategoryHandler achandler = new ArticleCategoryHandler(articleCategoryDetail,articleType,ahlist);
+						vu.put("article_category", achandler);
+						vu.put("article_list", ahlist);
+						VelocityUtil.addMessage(" Generando list de article.", VelocityUtil.INFO);
+						generate(vu, templates,articleType.getName()+"_"+articleCategory.getAlias());
+						vu.remove("article_category");
+						vu.remove("article_list");
+						achlist.add(achandler);
 					}
+					ahlist = null;
 					if (emptyCategory){
 						VelocityUtil.addMessage("La categoria de articulos " + articleCategory.getAlias() + " no tiene articulos.", VelocityUtil.WARN);
 					}
