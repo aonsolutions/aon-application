@@ -130,6 +130,7 @@ public class FeeInvoicingController extends BasicController {
 		IManagerBean invoiceBean = BeanManager.getManagerBean(Invoice.class);
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(invoiceBean.getFieldName(IFinanceAlias.INVOICE_SERIES), seriesId);
+		criteria.addEqualExpression(invoiceBean.getFieldName(IFinanceAlias.INVOICE_TYPE), InvoiceType.SALES);
 		Projection projection = Projection.max(invoiceBean.getFieldName(IFinanceAlias.INVOICE_NUMBER));
 		Object value = invoiceBean.getUniqueResult(projection, criteria);
 		if(value != null){
@@ -452,7 +453,7 @@ public class FeeInvoicingController extends BasicController {
 		entry.setAccountPeriod(AccountUtil.obtainPeriod(invoice.getIssueDate()).getId());
 		entry.setEntryDate(invoice.getIssueDate());
 		entry.setJournal(null);
-		entry.setType((invoice.getType().equals(InvoiceType.SALES)?AccountEntryType.SALES_INVOICE:AccountEntryType.PURCHASE_INVOICE));
+		entry.setType(AccountEntryType.SALES_INVOICE);
 		entry.setSecurityLevel(invoice.getSecurityLevel());
 		entry = getAccountEntryInvoiceWriter().insertorUpdateAccountEntry(entry, true);
 		List taxBreakDown = getPriceStrategy().getTaxBreakDowns(invoice, invoice);
@@ -508,11 +509,10 @@ public class FeeInvoicingController extends BasicController {
 			Account account = null;
 			if (invoiceDetail.getItem() != null) {
 				Integer productId = invoiceDetail.getItem().getProduct().getId();
-				ProductAccountType accountType = (invoice.getType().equals(InvoiceType.SALES))?ProductAccountType.SALES:ProductAccountType.PURCHASE; 
 				IManagerBean productAccountBean = BeanManager.getManagerBean(ProductAccount.class);
 				Criteria criteria = new Criteria();
 				criteria.addEqualExpression(productAccountBean.getFieldName(IAccountBridgeAlias.PRODUCT_ACCOUNT_PRODUCT_ID), productId);
-				criteria.addEqualExpression(productAccountBean.getFieldName(IAccountBridgeAlias.PRODUCT_ACCOUNT_TYPE), accountType);
+				criteria.addEqualExpression(productAccountBean.getFieldName(IAccountBridgeAlias.PRODUCT_ACCOUNT_TYPE), ProductAccountType.SALES);
 				Iterator iter = productAccountBean.getList(criteria).iterator();
 				if (iter.hasNext()) {
 					account = ((ProductAccount)iter.next()).getAccount();
@@ -529,10 +529,9 @@ public class FeeInvoicingController extends BasicController {
 
 	@SuppressWarnings("unchecked")
 	private Account obtainDefaultAccount(Invoice invoice) throws ManagerBeanException {
-		String paramName = (invoice.getType().equals(InvoiceType.SALES)?DefaultAccounts.SALES_ACCOUNT:DefaultAccounts.PURCHASE_ACCOUNT);
 		IManagerBean appParamsBean = BeanManager.getManagerBean(ApplicationParameter.class);
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(appParamsBean.getFieldName(IConfigAlias.APPLICATION_PARAMETER_NAME), paramName);
+		criteria.addEqualExpression(appParamsBean.getFieldName(IConfigAlias.APPLICATION_PARAMETER_NAME), DefaultAccounts.SALES_ACCOUNT);
 		Iterator iter = appParamsBean.getList(criteria).iterator();
 		if(iter.hasNext()){
 			ApplicationParameter param = (ApplicationParameter)iter.next();
