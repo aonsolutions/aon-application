@@ -871,14 +871,13 @@ public class MessageController implements IAonFileListener{
 		*/
     }
 
-	public void saveToContacts(ActionEvent event) throws WebmailException, ManagerBeanException{
+	public void saveToContacts(ActionEvent event) throws WebmailException, ManagerBeanException {
+		String email = message.getSenderEmail();
 		IManagerBean contactsBean = BeanManager.getManagerBean(Contact.class);
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(contactsBean.getFieldName(IContactAlias.CONTACT_EMAIL), email);
 		List list = contactsBean.getList(criteria);
 		if (list.size()==0){
-			String email = message.getSenderEmail();
-			
 			Contact contact = new Contact();
 			contact.setEmail(email);
 			contact.setName(contactName);
