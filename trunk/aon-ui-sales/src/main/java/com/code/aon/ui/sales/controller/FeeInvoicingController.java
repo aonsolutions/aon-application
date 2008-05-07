@@ -3,9 +3,11 @@ package com.code.aon.ui.sales.controller;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
@@ -17,6 +19,9 @@ import com.code.aon.account.Account;
 import com.code.aon.account.AccountEntry;
 import com.code.aon.account.DefaultAccounts;
 import com.code.aon.account.Period;
+import com.code.aon.account.bridge.ProductAccount;
+import com.code.aon.account.bridge.dao.IAccountBridgeAlias;
+import com.code.aon.account.bridge.enumeration.ProductAccountType;
 import com.code.aon.account.bridge.util.AccountUtil;
 import com.code.aon.account.bridge.writer.AccountEntryInvoiceWriter;
 import com.code.aon.account.dao.IAccountAlias;
@@ -35,6 +40,7 @@ import com.code.aon.finance.Finance;
 import com.code.aon.finance.FinanceTracking;
 import com.code.aon.finance.Invoice;
 import com.code.aon.finance.InvoiceAddress;
+import com.code.aon.finance.InvoiceDetail;
 import com.code.aon.finance.dao.IFinanceAlias;
 import com.code.aon.finance.enumeration.InvoiceStatus;
 import com.code.aon.finance.enumeration.InvoiceType;
@@ -450,7 +456,7 @@ public class FeeInvoicingController extends BasicController {
 		entry.setSecurityLevel(invoice.getSecurityLevel());
 		entry = getAccountEntryInvoiceWriter().insertorUpdateAccountEntry(entry, true);
 		List taxBreakDown = getPriceStrategy().getTaxBreakDowns(invoice, invoice);
-		getAccountEntryInvoiceWriter().insertEntryDetails(entry, AccountUtil.obtainCustomerAccount(invoice.getRegistry()), obtainBalancingAccount(invoice), invoice.getSeries(), invoice.getNumber(), getPriceStrategy().getTotalPrice(invoice, invoice), getRetentionTotal(taxBreakDown), getTaxQuota(taxBreakDown), getPriceStrategy().getTaxableBase(invoice));
+		getAccountEntryInvoiceWriter().insertEntryDetails(entry, AccountUtil.obtainCustomerAccount(invoice.getRegistry()), invoice.getSeries(), invoice.getNumber(), getPriceStrategy().getTotalPrice(invoice, invoice), getRetentionTotal(taxBreakDown), getTaxQuota(taxBreakDown), getBasesPerAccount(invoice));
 		getAccountEntryInvoiceWriter().insertAccountEntryInvoice(entry, invoice);
 		IManagerBean invoiceBean = BeanManager.getManagerBean(Invoice.class);
 		invoice.setStatus(InvoiceStatus.SCORED);
@@ -492,9 +498,37 @@ public class FeeInvoicingController extends BasicController {
 		}
 		return retentionQuota;
 	}
-	
+
 	@SuppressWarnings("unchecked")
-	private Account obtainBalancingAccount(Invoice invoice) throws ManagerBeanException {
+	private Map getBasesPerAccount(Invoice invoice) throws ManagerBeanException {
+		Map basesPerAccount = new HashMap();
+		Iterator<InvoiceDetail> iterator = invoice.getLines().iterator();
+		while (iterator.hasNext()) {
+			InvoiceDetail invoiceDetail = iterator.next();
+			Account account = null;
+			if (invoiceDetail.getItem() != null) {
+				Integer productId = invoiceDetail.getItem().getProduct().getId();
+				ProductAccountType accountType = (invoice.getType().equals(InvoiceType.SALES))?ProductAccountType.SALES:ProductAccountType.PURCHASE; 
+				IManagerBean productAccountBean = BeanManager.getManagerBean(ProductAccount.class);
+				Criteria criteria = new Criteria();
+				criteria.addEqualExpression(productAccountBean.getFieldName(IAccountBridgeAlias.PRODUCT_ACCOUNT_PRODUCT_ID), productId);
+				criteria.addEqualExpression(productAccountBean.getFieldName(IAccountBridgeAlias.PRODUCT_ACCOUNT_TYPE), accountType);
+				Iterator iter = productAccountBean.getList(criteria).iterator();
+				if (iter.hasNext()) {
+					account = ((ProductAccount)iter.next()).getAccount();
+				}
+			}
+			account = (account==null)?account = obtainDefaultAccount(invoice):account;
+
+			double base = invoiceDetail.getTaxableBase();
+			base += (basesPerAccount.containsKey(account))?((Double)basesPerAccount.get(account)).doubleValue():0;
+			basesPerAccount.put(account, new Double(base));
+		}
+		return basesPerAccount;
+	}
+
+	@SuppressWarnings("unchecked")
+	private Account obtainDefaultAccount(Invoice invoice) throws ManagerBeanException {
 		String paramName = (invoice.getType().equals(InvoiceType.SALES)?DefaultAccounts.SALES_ACCOUNT:DefaultAccounts.PURCHASE_ACCOUNT);
 		IManagerBean appParamsBean = BeanManager.getManagerBean(ApplicationParameter.class);
 		Criteria criteria = new Criteria();
@@ -512,7 +546,7 @@ public class FeeInvoicingController extends BasicController {
 		}
 		return null;
 	}
-	
+
 	public boolean isRecorded(){
 		Invoice invoice = (Invoice)this.getTo();
 		if(invoice.getStatus() != null){
