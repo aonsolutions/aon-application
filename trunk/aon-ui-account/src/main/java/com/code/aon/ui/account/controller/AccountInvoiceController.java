@@ -602,7 +602,7 @@ public class AccountInvoiceController {
 		Invoice invoice = new Invoice();
 		invoice.setIssueDate(getHeader().getDate());
 		if(getHeader().getType().equals(InvoiceType.SALES)){
-			invoice.setNumber(calculateNextNumber(getHeader().getSeries()));
+			invoice.setNumber(calculateNextNumber(getHeader().getSeries(), getHeader().getType()));
 		}else{
 			invoice.setNumber(getHeader().getNumber());
 		}
@@ -616,10 +616,11 @@ public class AccountInvoiceController {
 		return invoice;
 	}
 	
-	private int calculateNextNumber(String series) throws ManagerBeanException {
+	private int calculateNextNumber(String series, InvoiceType invoiceType) throws ManagerBeanException {
 		IManagerBean invoiceBean = BeanManager.getManagerBean(Invoice.class);
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(invoiceBean.getFieldName(IFinanceAlias.INVOICE_SERIES), series);
+		criteria.addEqualExpression(invoiceBean.getFieldName(IFinanceAlias.INVOICE_TYPE), invoiceType);
 		Projection projection = Projection.max(invoiceBean.getFieldName(IFinanceAlias.INVOICE_NUMBER));
 		Object value = invoiceBean.getUniqueResult(projection, criteria);
 		if(value != null){
