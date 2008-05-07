@@ -97,13 +97,13 @@
 							<t:inputText id="Account_Lookup_id"
 								valueChangeListener="#{accountEntryReport.addAccountExpression}"
 								styleClass="aon-form-input-text" forceId="#{true}"
-								onchange="return findBeanLookup(event,'#{facesContext.externalContext.requestContextPath}','accountLookup');"
+								onchange="return findBeanLookupExt(event,'#{facesContext.externalContext.requestContextPath}','accountLookup','Account_Lookup_id','Account_id|Account_Lookup_id,Account_description|Account_Lookup_description');"
 								size="14" maxlength="12">
 								<f:validateLength minimum="1" maximum="12" />
 							</t:inputText>
 							<h:commandButton id="find_Account_Lookup"
 								styleClass="aon-form-lookup-button" value="" immediate="true"
-								onclick="lookupSearchWindow(this, 'placeList', '#{accountLookup.encodedSearchPagePath}');return false;" />	
+								onclick="lookupSearchWindow(this, 'placeList', '#{accountLookup.encodedSearchPagePath}','Account_id|Account_Lookup_id,Account_description|Account_Lookup_description');return false;" />	
 							<t:inputText id="Account_Lookup_description"
 								disabled="true" forceId="#{true}"
 								styleClass="aon-form-input-text-disabled" size="50"/>
