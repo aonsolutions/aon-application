@@ -47,24 +47,20 @@
 							reRender="mainData,listData"
 							accesskey="#{appBundle.aon_webmail_black_white_list_reload}"/>
 						<aon:commandButton
-							id="addWhiteList"
+							id="addWhiteList" reRender="addBlackWhiteListWindow"
 							value="#{appBundle.aon_webmail_add_white_list}" 
 							styleClass="aon-finding-toolbar-item aon-icon-white-list"
 							title="#{appBundle.aon_webmail_add_white_list}"
 							actionListener="#{blacklist.openNewWhitePanelPopup}">
-							<rich:componentControl for="addBlackWhiteListModalPanel" operation="show" event="onclick"/>
 						</aon:commandButton>
 						
 						<aon:commandButton
-							id="addBlackList"
+							id="addBlackList" reRender="addBlackWhiteListWindow"
 							value="#{appBundle.aon_webmail_add_black_list}" 
 							styleClass="aon-finding-toolbar-item aon-icon-black-list"
 							title="#{appBundle.aon_webmail_add_black_list}"
 							actionListener="#{blacklist.openNewBlackPanelPopup}" >
-							<rich:componentControl for="addBlackWhiteListModalPanel" operation="show" event="onclick"/>
 						</aon:commandButton>
-						
-						<ui:include src="/webmail/facelet/modal/blackWhiteList.xhtml" />
 						
 					</aon:div>
 				</aon:panelGrid>
@@ -174,7 +170,10 @@
 						</aon:div>
 					</aon:div>
 				</aon:div>
-			</aon:panelGrid>	
+			</aon:panelGrid>
+				
+			<ui:include src="/webmail/facelet/modal/blackWhiteList.xhtml" />
+				
 		</aon:form>
 		
 	</ui:define>
