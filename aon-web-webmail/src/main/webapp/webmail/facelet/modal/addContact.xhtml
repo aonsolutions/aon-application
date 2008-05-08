@@ -32,7 +32,6 @@
 					value="#{message.contactName}" />
 				<aon:commandButton id="closeModalAddContact" 
 					styleClass="aon-icon-commandButton aon-icon-accept"
-					reRender="foldersTree"
 					actionListener="#{message.saveToContacts}" value="#{bundle.aon_accept}">
 					<rich:componentControl for="addContactModalPanel" operation="hide" event="onclick"/>
 				</aon:commandButton>

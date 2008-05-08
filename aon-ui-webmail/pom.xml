@@ -15,12 +15,6 @@
 	<description>AON UI WEBMAIL</description>
 	<dependencies>
 		<dependency>
-		   <groupId>com.code.aon</groupId>
-		   <artifactId>aon.common</artifactId>
-		   <version>1.9.18</version>
-		   <scope>compile</scope>
-		</dependency>
-		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.rich.components</artifactId>
 			<version>1.0.7</version>
