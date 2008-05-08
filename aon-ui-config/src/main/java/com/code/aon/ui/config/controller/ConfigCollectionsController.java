@@ -86,7 +86,7 @@ public class ConfigCollectionsController {
 	@SuppressWarnings("unchecked")
 	public List<SelectItem> getCurrentUserScopes() throws ManagerBeanException{
 		List<SelectItem> currentUserScopes = new LinkedList<SelectItem>();
-		Iterator iter = UserUtils.getCurrentUserScopes().iterator();
+		Iterator iter = UserUtils.getInstance().getCurrentUserScopes().iterator();
 		while(iter.hasNext()){
 			Scope scope = (Scope)iter.next();
 			SelectItem item = new SelectItem(scope.getId(), scope.getDescription());
