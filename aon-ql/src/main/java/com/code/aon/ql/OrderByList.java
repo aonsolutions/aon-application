@@ -63,7 +63,7 @@ public class OrderByList implements Criterion {
             if (hasNext)
                 buf.append(", ");
         }		
-		return super.toString();
+		return buf.toString();
 	}
     
 }

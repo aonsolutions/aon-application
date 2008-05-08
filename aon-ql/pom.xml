@@ -10,7 +10,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.code.aon</groupId>
 	<artifactId>aon.ql</artifactId>
-	<version>1.9.14</version>
+	<version>1.9.15</version>
 	<description>AON QL</description>
 	<name>AON QL</name>
 	<dependencies>
