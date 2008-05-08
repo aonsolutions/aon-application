@@ -31,6 +31,7 @@ import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMultipart;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.myfaces.custom.fileupload.UploadedFile;
 
 import com.code.aon.common.BeanManager;
@@ -99,6 +100,7 @@ public class MessageController implements IAonFileListener{
 
 	private void afterSetMessage(){
 		initShotMessageToCcBcc();
+		initContactName();
 	}
 	
 	
@@ -845,30 +847,16 @@ public class MessageController implements IAonFileListener{
 		this.contactName = contactName;
 	}
 
-	public void addToContacts(ActionEvent event) throws WebmailException, ManagerBeanException{
-		String email = message.getSenderEmail();
-		contactName = message.getSenderShort();
-		if (email.equals(contactName)){
-			contactName = "";
-		}
-		/*
-		String email = message.getSenderEmail();
-		contactName = message.getSenderShort();
-		IManagerBean contactsBean = BeanManager.getManagerBean(Contact.class);
-		Criteria criteria = new Criteria();
-    	WebMailController webMailController = (WebMailController)AonUtil.getRegisteredBean(AonConstants.BEAN_WEBMAIL);
-       	MailAccount account = webMailController.getServer().getAccount();
-		criteria.addEqualExpression(contactsBean.getFieldName(IGroupWareAlias.CONTACT_USER_ID), account.getUser().getId());
-		criteria.addEqualExpression(contactsBean.getFieldName(IGroupWareAlias.CONTACT_EMAIL), email);
-		List list = contactsBean.getList(criteria);
-		if (list.size()==0){
-			if (email.equals(contactName)){
-				contactName = "";
-			}else{
-				saveToContacts(event);
+	public void initContactName() {
+		this.contactName = "";
+		try {
+			String sender = message.getSenderShort();
+			if (! StringUtils.equals(sender, message.getSenderEmail()) ) {
+				this.contactName = sender;
 			}
+		} catch (WebmailException e) {
+			LOGGER.severe( "Error setting contactName" );
 		}
-		*/
     }
 
 	public void saveToContacts(ActionEvent event) throws WebmailException, ManagerBeanException {
