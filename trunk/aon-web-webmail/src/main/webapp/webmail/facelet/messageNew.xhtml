@@ -29,10 +29,6 @@
 						confirmMessage="#{appBundle.aon_webmail_send_confirm}"
 						confirmAction="#{message.getReturnAction}"
 						confirmActionListener="#{message.send}">
-						<a4j:support 
-							actionListener="#{folder.initHtmlDataScroller}" 
-							event="onclick">
-						</a4j:support>						
 					</aon:confirmButton>
 					<aon:commandButton
 							action="#{message.getReturnAction}"
