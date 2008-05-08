@@ -1,11 +1,14 @@
 package com.code.aon.ui.form;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.faces.context.ExternalContext;
@@ -15,14 +18,21 @@ import javax.faces.event.ActionEvent;
 import javax.faces.event.ValueChangeEvent;
 import javax.faces.model.DataModel;
 
+import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.SerializationUtils;
+import org.apache.commons.lang.StringUtils;
 
 import com.code.aon.common.ICollectionProvider;
 import com.code.aon.common.ILookupObject;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ql.Criteria;
+import com.code.aon.ql.Order;
+import com.code.aon.ql.OrderByList;
+import com.code.aon.ql.ast.Expression;
+import com.code.aon.ql.ast.IdentExpression;
 import com.code.aon.ql.util.ExpressionException;
+import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
 import com.code.aon.ui.form.event.ControllerListenerSupport;
@@ -60,6 +70,10 @@ public class BasicController extends AbstractPojoController implements IControll
     private boolean saveState;
     
     private Serializable savedToId;
+    
+    private OrderByList orderList;
+    
+    private List<Expression> initExpressions;
 
     /**
      * Constructor.
@@ -533,6 +547,8 @@ public class BasicController extends AbstractPojoController implements IControll
      */
     public void clearCriteria() throws ManagerBeanException {
         this.criteria = new Criteria();
+        updateOrderList();
+        updateInitExpression();
     }
 
     /* (non-Javadoc)
@@ -806,6 +822,110 @@ public class BasicController extends AbstractPojoController implements IControll
 	    		setRowData(to);
     		}
     		this.savedToId = null;
+    	}
+    }
+    
+    /**
+     * Gets the order list.
+     * 
+     * @return the order list
+     */
+    public OrderByList getOrderList() {
+		return orderList;
+	}
+
+	/**
+	 * Sets the order list.
+	 * 
+	 * @param orderList the new order list
+	 */
+	public void setOrderList(OrderByList orderList) {
+		this.orderList = orderList;
+	}
+
+	private void updateOrderList() {
+    	if ( orderList != null ) {
+    		this.criteria.setOrderByList(orderList);
+    	}
+    }
+    
+    /**
+     * Sets the order list.
+     * 
+     * @param value the new order list
+     */
+    public void setDefaultOrder( String value ) {
+    	String[] values = StringUtils.split(value, ',') ;
+    	if (! ArrayUtils.isEmpty(values) ) {
+    		this.orderList = new OrderByList();
+	    	for( String part : StringUtils.split(value, ',') ) {
+	    		String[] parts = StringUtils.split(part);
+				try {
+					String name = getFieldName( parts[0] );
+		    		boolean ascending = true;
+		    		if ( parts.length == 2 ) {
+		    			ascending = "ASC".equalsIgnoreCase(parts[1]);
+		    		}
+		    		IdentExpression identifier = ExpressionUtilities.getIdentifierExpression(name);
+		    		Order order = new Order(identifier, ascending);
+		    		this.orderList.addOrder( order );
+				} catch (ManagerBeanException e) {
+					LOGGER.log(Level.SEVERE, "Error resolving alias " + parts[0], e);
+				}
+	    	}
+	    	updateOrderList();
+    	}
+    }
+    
+    private void updateInitExpression() {
+	    if (initExpressions != null) {
+	    	for( Expression expression : initExpressions ) {
+	    		this.criteria.addExpression(expression);
+	    	}
+	    }
+    }
+    
+    /**
+     * Gets the inits the expressions.
+     * 
+     * @return the inits the expressions
+     */
+    public List<Expression> getInitExpressions() {
+		return initExpressions;
+	}
+
+	/**
+	 * Sets the inits the expressions.
+	 * 
+	 * @param initExpressions the new inits the expressions
+	 */
+	public void setInitExpressions(List<Expression> initExpressions) {
+		this.initExpressions = initExpressions;
+	}
+
+	/**
+     * Sets the init expressions.
+     * 
+     * @param expressions the expressions
+     */
+    public void setDefaultExpressions( Map<String, Object> expressions ) {
+    	if (! expressions.isEmpty() ) {
+    		this.initExpressions = new ArrayList<Expression>();
+    		for( Map.Entry<String,Object> entry : expressions.entrySet() ) {
+				try {
+					String identifier = getFieldName( entry.getKey() );
+					Object value = entry.getValue();
+					if ( value != null ) {
+						Expression expression = ExpressionUtilities.getExpression(value.toString(), identifier);
+						this.initExpressions.add( expression );
+					}
+				} catch (ManagerBeanException e) {
+					LOGGER.log(Level.SEVERE, "Error resolving alias " + entry.getKey(), e);
+				} catch (ExpressionException e) {
+					LOGGER.log(Level.SEVERE, "Error resolving expression " + entry.getValue(), e);
+				}    			
+    		}
+    		updateInitExpression();
     	}
     }
 
