@@ -286,16 +286,28 @@ public class BlackListController extends AbstractLdap {
 		this.newEmail = newEmail;
 	}
 
-	private int list_type;
+	private boolean showNewSpamAddressWindow;
 	
+	private int list_type;
+
+	public boolean isShowNewSpamAddressWindow() {
+		return showNewSpamAddressWindow;
+	}
+
+	public void setShowNewSpamAddressWindow(boolean showNewSpamAddressWindow) {
+		this.showNewSpamAddressWindow = showNewSpamAddressWindow;
+	}
+
 	public void openNewBlackPanelPopup(ActionEvent event){
 		this.newEmail = "";
 		list_type = LIST_BLACK_TYPE;
+		setShowNewSpamAddressWindow(true);
 	}
 
 	public void openNewWhitePanelPopup(ActionEvent event){
 		this.newEmail = "";
 		list_type = LIST_WHITE_TYPE;
+		setShowNewSpamAddressWindow(true);
 	}
 
 	public void createNew(ActionEvent event){
