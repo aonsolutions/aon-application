@@ -10,8 +10,8 @@
 
 <ui:composition>
 
-        <rich:modalPanel  id="addContactModalPanel"  
-            height="150" width="600" zindex="2000">
+             <rich:modalPanel id="addContactModalPanel"  
+            height="100" width="290" zindex="2000">
             <f:facet name="header">
 				<aon:div styleClass="aon-popupWindow-title">
                 	<aon:outputText value="#{appBundle.aon_webmail_email_add}" />
@@ -23,15 +23,16 @@
 					<rich:componentControl for="addContactModalPanel" operation="hide" event="onclick"/>
 				</aon:commandButton>
             </f:facet>
-			<h:panelGrid width="100%" cellpadding="0" cellspacing="0" columns="1"
-				columnClasses="popupIcon,aon-text-right popupButton">
-				<aon:outputText value="#{appBundle.aon_webmail_email_alias}" />
+            
+            <aon:outputText value="#{appBundle.aon_webmail_email_alias}" />
+			<h:panelGrid  cellpadding="2" cellspacing="0" columns="2" 
+				styleClass="aon-panelGrid-formatting">		
 				<aon:inputText id="Contact_name"
 					styleClass="aon-form-input-text"
-					size="70" maxlength="64"
+					size="30" maxlength="64"
 					value="#{message.contactName}" />
 				<aon:commandButton id="closeModalAddContact" 
-					styleClass="aon-icon-commandButton aon-icon-accept"
+					styleClass="aon-commandButton"
 					actionListener="#{message.saveToContacts}" value="#{bundle.aon_accept}">
 					<rich:componentControl for="addContactModalPanel" operation="hide" event="onclick"/>
 				</aon:commandButton>

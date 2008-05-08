@@ -10,6 +10,14 @@
 
 <ui:composition>
 
+<style>
+.bodyPanel_ {
+	width:580px;
+    height:350px;
+    overflow:auto;
+}
+</style>
+
 	<aon:panelGroup id="showEmailWindow">
         <rich:modalPanel id="showEmailsModalPanel"  
         	rendered="#{message.showEmailsWindow}" showWhenRendered="true"
@@ -36,16 +44,8 @@
 					<rich:componentControl for="showEmailsModalPanel" operation="hide" event="onclick"/>
 				</aon:commandButton>
             </f:facet>
-			<style>
-				.bodyPanel_ {
-					width:580px;
-				    height:350px;
-				    overflow:auto;
-				}
-			</style>
-            <rich:panel bodyClass="bodyPanel_">
-				<aon:panelGrid width="100%" cellpadding="0" cellspacing="0" columns="1"
-				styleClass="aon-panelGrid-formatting">
+			 <aon:div styleClass="modalPanel-scroll1">		
+				
 
 					<aon:div styleClass="aon-toolbar">
 						<aon:commandButton id="selectEmail" 
@@ -86,8 +86,8 @@
 						</aon:column>
 					</aon:dataTable>
 				
-				</aon:panelGrid>
-			</rich:panel>
+				
+			</aon:div>
         </rich:modalPanel>													
 	</aon:panelGroup>
 </ui:composition>

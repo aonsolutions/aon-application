@@ -10,17 +10,8 @@
 
 <ui:composition>
 
-<style>
-.bodyPanel_ {
-	width:380px;
-    height:350px;
-    overflow:auto;
-}
-</style>
-
-
         <rich:modalPanel  id="msgMoveModalPanel"  
-            height="380" width="380" zindex="2000">
+             minHeight="250" height="370" width="290" zindex="2000">
             <f:facet name="header">
 				<aon:div styleClass="aon-popupWindow-title">
                 	<aon:outputText value="#{appBundle.aon_webmail_move_message}" />
@@ -32,8 +23,8 @@
 					<rich:componentControl for="msgMoveModalPanel" operation="hide" event="onclick"/>
 				</aon:commandButton>
             </f:facet>
-			<rich:panel bodyClass="bodyPanel_">
-				<rich:tree style="width:380px" 
+			 <aon:div styleClass="modalPanel-scroll1">		
+				<rich:tree 
 						nodeSelectListener="#{tree.moveMessagesToFolder}"
 						id="foldersTree_modal" 
 		                ajaxSubmitSelection="true"  
@@ -48,8 +39,9 @@
 							<rich:componentControl for="msgMoveModalPanel" operation="hide" event="onclick"/>
 						</aon:commandLink>
 					</rich:treeNode>
-				</rich:tree>
-			</rich:panel>	
+					</rich:tree>	
+				</aon:div>
+			
         </rich:modalPanel>													
 
 </ui:composition>
