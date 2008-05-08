@@ -93,7 +93,7 @@
 
 			<aon:div styleClass="aon-scroll-area">
 				<aon:div style="width:99%;">
-					<aon:panelGrid columns="3" dir="true" >
+					<aon:panelGrid columns="4" dir="true" >
 						<aon:panelGrid columns="2" dir="true" >
 
 							<aon:outputLabel for="isModularPageToGenerate"
@@ -112,12 +112,40 @@
 									value="#{generator.genericToGenerate}" />
 							</aon:div>
 							
-							<aon:outputLabel for="isArticleToGenerate"
+							<aon:outputLabel for="isArticleNEWSToGenerate"
 								styleClass="aon-form-input-text-label"
-								value="#{appBundle.isArticleToGenerate}" />
+								value="#{appBundle.isArticleNEWSToGenerate}" />
 							<aon:div>
-								<aon:selectBooleanCheckbox id="isArticleToGenerate" 
-									value="#{generator.articleToGenerate}" />
+								<aon:selectBooleanCheckbox id="isArticleNEWSToGenerate" 
+									value="#{generator.articleNEWSToGenerate}" />
+							</aon:div>
+							
+						</aon:panelGrid>
+
+						<aon:panelGrid columns="2" dir="true" >
+
+							<aon:outputLabel for="isArticleEVENTSToGenerate"
+								styleClass="aon-form-input-text-label"
+								value="#{appBundle.isArticleEVENTSToGenerate}" />
+							<aon:div>
+								<aon:selectBooleanCheckbox id="isArticleEVENTSToGenerate" 
+									value="#{generator.articleEVENTSToGenerate}" />
+							</aon:div>
+							
+							<aon:outputLabel for="isArticleSERVICESToGenerate"
+								styleClass="aon-form-input-text-label"
+								value="#{appBundle.isArticleSERVICESToGenerate}" />
+							<aon:div>
+								<aon:selectBooleanCheckbox id="isArticleSERVICESToGenerate" 
+									value="#{generator.articleSERVICESToGenerate}" />
+							</aon:div>
+							
+							<aon:outputLabel for="isArticleOTHERToGenerate"
+								styleClass="aon-form-input-text-label"
+								value="#{appBundle.isArticleOTHERToGenerate}" />
+							<aon:div>
+								<aon:selectBooleanCheckbox id="isArticleOTHERToGenerate" 
+									value="#{generator.articleOTHERToGenerate}" />
 							</aon:div>
 							
 						</aon:panelGrid>

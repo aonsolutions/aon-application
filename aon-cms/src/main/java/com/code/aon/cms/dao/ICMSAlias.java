@@ -3019,6 +3019,12 @@ public interface ICMSAlias {
 	*/
 	String  DIARY_ID = DIARY_ENTRY.getAliasNames()[1];
 
+	/** 
+	* Alias value: Diary_pastEvents
+	* Hibernate value: Diary.pastEvents
+	*/
+	String  DIARY_PAST_EVENTS = DIARY_ENTRY.getAliasNames()[2];
+
 
 
 	/** 

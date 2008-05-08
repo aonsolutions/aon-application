@@ -54,6 +54,14 @@
 										value="#{diary.to.categories}" />
 								</aon:div>
 
+								<aon:outputLabel for="past_events"
+									styleClass="aon-form-input-text-label"
+									value="#{appBundle.past_events}" />
+								<aon:div>
+									<aon:selectBooleanCheckbox id="past_events" 
+										value="#{diary.to.pastEvents}" />
+								</aon:div>
+
 								<aon:outputLabel for="content"
 									value="#{appBundle.diary_content}" />
 								<aon:div style="width:600px">
