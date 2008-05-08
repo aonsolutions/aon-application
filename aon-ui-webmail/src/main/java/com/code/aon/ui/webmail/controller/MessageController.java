@@ -542,7 +542,17 @@ public class MessageController implements IAonFileListener{
 	// EMAIL SELECTION POPUP
 	//********************************************************************************************
     
+    private boolean showEmailsWindow;
+    
     private String selectedDestinyContainer;
+    
+	public boolean isShowEmailsWindow() {
+		return showEmailsWindow;
+	}
+
+	public void setShowEmailsWindow(boolean showEmailsWindow) {
+		this.showEmailsWindow = showEmailsWindow;
+	}
 
 	public String getSelectedDestinyContainer() {
 		return selectedDestinyContainer;
@@ -550,14 +560,17 @@ public class MessageController implements IAonFileListener{
 	
 	public void openEmailsToPanelPopup(ActionEvent event){
 		this.selectedDestinyContainer = CONTAINER_TO;
+		setShowEmailsWindow(true);
 	}
 
 	public void openEmailsCcPanelPopup(ActionEvent event){
 		this.selectedDestinyContainer = CONTAINER_CC;
+		setShowEmailsWindow(true);
 	}
 
 	public void openEmailsBccPanelPopup(ActionEvent event){
 		this.selectedDestinyContainer = CONTAINER_BCC;
+		setShowEmailsWindow(true);
 	}
 
 
