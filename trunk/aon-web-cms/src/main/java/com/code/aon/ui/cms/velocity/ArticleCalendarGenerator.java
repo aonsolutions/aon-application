@@ -66,8 +66,12 @@ public class ArticleCalendarGenerator extends Generator {
 	        lastDay.add(Calendar.MONTH, 1);
 	        lastDay.set(Calendar.DATE, MonthContent.diasDelMes(lastDay.get(Calendar.MONTH), lastDay.get(Calendar.YEAR)));
 
-			articleList = ArticleCalendarGenerator.getEventList(firstDay, lastDay);
-
+	        Diary diary = getDiary();
+	        if (diary !=null)
+	        	articleList = ArticleCalendarGenerator.getEventList(firstDay, lastDay, diary.isPastEvents());
+	        else
+	        	articleList = ArticleCalendarGenerator.getEventList(firstDay, lastDay, true);
+	        	
 			months = new HashMap<String, MonthContent>();
 			monthsList = new ArrayList<MonthContent>();
 			
@@ -251,6 +255,15 @@ public class ArticleCalendarGenerator extends Generator {
 			}
 		}
 	}
+
+	private static Diary getDiary() throws ManagerBeanException{
+		IManagerBean diaryBean = BeanManager.getManagerBean(Diary.class);
+		List diaryLst = diaryBean.getList(null);
+		if (!diaryLst.isEmpty()){
+			return (Diary)diaryLst.get(0);
+		}
+		return null;
+	}
 	
 	private static DiaryCategoriesHandler assignDiaryCategories(ArrayList<ArticleCategoryHandler> achlist) throws ManagerBeanException{
 		IManagerBean diaryBean = BeanManager.getManagerBean(Diary.class);
@@ -306,7 +319,7 @@ public class ArticleCalendarGenerator extends Generator {
 		monthsList.add(monthContent);
 	}
 	
-	private static List<ITransferObject> getEventList(GregorianCalendar from, GregorianCalendar to) throws ManagerBeanException{
+	private static List<ITransferObject> getEventList(GregorianCalendar from, GregorianCalendar to, boolean pastEvents) throws ManagerBeanException{
 		if (from.compareTo(to)>0)
 			return new ArrayList<ITransferObject>();
 		IManagerBean articleBean = BeanManager.getManagerBean(Article.class);
@@ -315,22 +328,23 @@ public class ArticleCalendarGenerator extends Generator {
 		articleCriteria.addEqualExpression(articleBean.getFieldName(ICMSAlias.ARTICLE_ARTICLE_TYPE), ArticleType.EVENTS);
 		
         articleCriteria.addLessThanOrEqualExpression(articleBean.getFieldName(ICMSAlias.ARTICLE_PUBLISH_DATE), to.getTime());
-		
-		Expression expirenotnullableExpr = ExpressionUtilities.getNotNullExpression(articleBean.getFieldName(ICMSAlias.ARTICLE_EXPIRE_DATE));
-        Expression expiregreaterequalExpr = ExpressionUtilities.getGreaterThanOrEqualExpression(articleBean.getFieldName(ICMSAlias.ARTICLE_EXPIRE_DATE), from.getTime());
-		Expression and_1 = ExpressionUtilities.getAndExpression(expirenotnullableExpr, expiregreaterequalExpr);
-
-		Expression expirenullableExpr = ExpressionUtilities.getNullExpression(articleBean.getFieldName(ICMSAlias.ARTICLE_EXPIRE_DATE));
-        Expression endgreaterequalExpr = ExpressionUtilities.getGreaterThanOrEqualExpression(articleBean.getFieldName(ICMSAlias.ARTICLE_END_DATE), from.getTime());
-		Expression and_2 = ExpressionUtilities.getAndExpression(expirenullableExpr, endgreaterequalExpr);
-
-        articleCriteria.addExpression(ExpressionUtilities.getOrExpression(and_1, and_2));
-
         articleCriteria.addNotNullExpression(articleBean.getFieldName(ICMSAlias.ARTICLE_INIT_DATE));
-
         articleCriteria.addLessThanOrEqualExpression(articleBean.getFieldName(ICMSAlias.ARTICLE_INIT_DATE), to.getTime());
-        articleCriteria.addGreaterThanOrEqualExpression(articleBean.getFieldName(ICMSAlias.ARTICLE_END_DATE), from.getTime());
-        
+
+        if (pastEvents){
+    		Expression expirenotnullableExpr = ExpressionUtilities.getNotNullExpression(articleBean.getFieldName(ICMSAlias.ARTICLE_EXPIRE_DATE));
+            Expression expiregreaterequalExpr = ExpressionUtilities.getGreaterThanOrEqualExpression(articleBean.getFieldName(ICMSAlias.ARTICLE_EXPIRE_DATE), new Date());
+    		Expression and_1 = ExpressionUtilities.getAndExpression(expirenotnullableExpr, expiregreaterequalExpr);
+
+    		Expression expirenullableExpr = ExpressionUtilities.getNullExpression(articleBean.getFieldName(ICMSAlias.ARTICLE_EXPIRE_DATE));
+            Expression endgreaterequalExpr = ExpressionUtilities.getGreaterThanOrEqualExpression(articleBean.getFieldName(ICMSAlias.ARTICLE_END_DATE), from.getTime());
+    		Expression and_2 = ExpressionUtilities.getAndExpression(expirenullableExpr, endgreaterequalExpr);
+            
+            articleCriteria.addExpression(ExpressionUtilities.getOrExpression(and_1, and_2));
+        }else{
+        	articleCriteria.addGreaterThanOrEqualExpression(articleBean.getFieldName(ICMSAlias.ARTICLE_END_DATE), new Date());
+        }
+
         articleCriteria.addOrder(articleBean.getFieldName(ICMSAlias.ARTICLE_INIT_DATE));
         articleCriteria.getExpression().toString();
 		return (List<ITransferObject>)articleBean.getList(articleCriteria);		
@@ -381,20 +395,21 @@ public class ArticleCalendarGenerator extends Generator {
 		ArrayList<ArticleHandler> month_ahlist = null;
 		
 		GregorianCalendar currentDate = new GregorianCalendar();
+		
 		try {
 	        GregorianCalendar firstDay = new GregorianCalendar();
 	        GregorianCalendar lastDay = new GregorianCalendar();
-			articleList = ArticleCalendarGenerator.getEventList(firstDay, lastDay);
+			articleList = ArticleCalendarGenerator.getEventList(firstDay, lastDay,false);
 			day_ahlist = recoverHandlers(articleList);
 			
 	        lastDay = new GregorianCalendar();
 	        lastDay.add(Calendar.DATE, 7);
-			articleList = ArticleCalendarGenerator.getEventList(firstDay, lastDay);
+			articleList = ArticleCalendarGenerator.getEventList(firstDay, lastDay,false);
 			week_ahlist = recoverHandlers(articleList);
 			
 	        lastDay = new GregorianCalendar();
 	        lastDay.add(Calendar.DATE, 31);
-			articleList = ArticleCalendarGenerator.getEventList(firstDay, lastDay);
+			articleList = ArticleCalendarGenerator.getEventList(firstDay, lastDay,false);
 			month_ahlist = recoverHandlers(articleList);
 			
 			NextArticlesHandler nah = new NextArticlesHandler(currentDate.getTime(),

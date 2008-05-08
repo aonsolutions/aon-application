@@ -16,6 +16,8 @@ public class Diary implements ITransferObject {
 
 	private boolean categories;
 
+	private boolean pastEvents;
+
 	@Id
 	@GeneratedValue
 	@Column(name = "id", nullable = false)
@@ -36,4 +38,13 @@ public class Diary implements ITransferObject {
 		this.categories = categories;
 	}
 
+	@Column(name = "is_past_events", nullable = false)
+	public boolean isPastEvents() {
+		return pastEvents;
+	}
+
+	public void setPastEvents(boolean pastEvents) {
+		this.pastEvents = pastEvents;
+	}
+	
 }

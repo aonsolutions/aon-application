@@ -89,14 +89,26 @@ public class GeneratorController extends BasicController implements Constants {
 		
 		System.gc();
 
-		if (isArticleToGenerate){
-			ArticleType[] values = ArticleType.values();
-			for (int art_type = 0; art_type < values.length; art_type++){
-				
-				System.gc();
+		if (isArticleNEWSToGenerate){
+			ArticleGenerator.generate(ArticleType.NEWS);
+		}
 
-				ArticleGenerator.generate(values[art_type]);
-			}
+		System.gc();
+
+		if (isArticleSERVICESToGenerate){
+			ArticleGenerator.generate(ArticleType.SERVICES);
+		}
+
+		System.gc();
+
+		if (isArticleEVENTSToGenerate){
+			ArticleGenerator.generate(ArticleType.EVENTS);
+		}
+
+		System.gc();
+
+		if (isArticleOTHERToGenerate){
+			ArticleGenerator.generate(ArticleType.OTHER);
 		}
 		
 		System.gc();
@@ -121,10 +133,13 @@ public class GeneratorController extends BasicController implements Constants {
 	private boolean isLinkToGenerate = true;
 	private boolean isDirectAccessToGenerate = true;
 	private boolean isAlbumToGenerate = true;
-	private boolean isArticleToGenerate = true;
 	private boolean isArticleCalendarToGenerate = true;
 	private boolean isDownloadsToGenerate = true;
-	
+	private boolean isArticleNEWSToGenerate = true;
+	private boolean isArticleSERVICESToGenerate = true;
+	private boolean isArticleEVENTSToGenerate = true;
+	private boolean isArticleOTHERToGenerate = true;
+
 	public boolean isModularPageToGenerate() {
 		return isModularPageToGenerate;
 	}
@@ -167,12 +182,6 @@ public class GeneratorController extends BasicController implements Constants {
 	public void setAlbumToGenerate(boolean isAlbumToGenerate) {
 		this.isAlbumToGenerate = isAlbumToGenerate;
 	}
-	public boolean isArticleToGenerate() {
-		return isArticleToGenerate;
-	}
-	public void setArticleToGenerate(boolean isArticleToGenerate) {
-		this.isArticleToGenerate = isArticleToGenerate;
-	}
 	public boolean isDownloadsToGenerate() {
 		return isDownloadsToGenerate;
 	}
@@ -185,6 +194,30 @@ public class GeneratorController extends BasicController implements Constants {
 	public void setArticleCalendarToGenerate(boolean isArticleCalendarToGenerate) {
 		this.isArticleCalendarToGenerate = isArticleCalendarToGenerate;
 	}
+	public boolean isArticleNEWSToGenerate() {
+		return isArticleNEWSToGenerate;
+	}
+	public void setArticleNEWSToGenerate(boolean isArticleNEWSToGenerate) {
+		this.isArticleNEWSToGenerate = isArticleNEWSToGenerate;
+	}
+	public boolean isArticleSERVICESToGenerate() {
+		return isArticleSERVICESToGenerate;
+	}
+	public void setArticleSERVICESToGenerate(boolean isArticleSERVICESToGenerate) {
+		this.isArticleSERVICESToGenerate = isArticleSERVICESToGenerate;
+	}
+	public boolean isArticleEVENTSToGenerate() {
+		return isArticleEVENTSToGenerate;
+	}
+	public void setArticleEVENTSToGenerate(boolean isArticleEVENTSToGenerate) {
+		this.isArticleEVENTSToGenerate = isArticleEVENTSToGenerate;
+	}
+	public boolean isArticleOTHERToGenerate() {
+		return isArticleOTHERToGenerate;
+	}
+	public void setArticleOTHERToGenerate(boolean isArticleOTHERToGenerate) {
+		this.isArticleOTHERToGenerate = isArticleOTHERToGenerate;
+	}
 	public void onSelectAll(ActionEvent event) {
 		isModularPageToGenerate = true;
 		isMenuToGenerate = true;
@@ -193,9 +226,12 @@ public class GeneratorController extends BasicController implements Constants {
 		isLinkToGenerate = true;
 		isDirectAccessToGenerate = true;
 		isAlbumToGenerate = true;
-		isArticleToGenerate = true;
 		isDownloadsToGenerate = true;
 		isArticleCalendarToGenerate = true;
+		isArticleNEWSToGenerate = true;
+		isArticleSERVICESToGenerate = true;
+		isArticleEVENTSToGenerate = true;
+		isArticleOTHERToGenerate = true;
 	}
 	public void onDeselectAll(ActionEvent event) {
 		isModularPageToGenerate = false;
@@ -205,9 +241,12 @@ public class GeneratorController extends BasicController implements Constants {
 		isLinkToGenerate = false;
 		isDirectAccessToGenerate = false;
 		isAlbumToGenerate = false;
-		isArticleToGenerate = false;
 		isArticleCalendarToGenerate = false;
 		isDownloadsToGenerate = false;
+		isArticleNEWSToGenerate = false;
+		isArticleSERVICESToGenerate = false;
+		isArticleEVENTSToGenerate = false;
+		isArticleOTHERToGenerate = false;
 	}
 	
 }
