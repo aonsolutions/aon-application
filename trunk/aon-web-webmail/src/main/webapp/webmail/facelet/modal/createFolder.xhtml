@@ -11,7 +11,7 @@
 <ui:composition>
 
         <rich:modalPanel  id="newFolderModalPanel"  
-            height="150" width="290" zindex="2000">
+            height="100" width="290" zindex="2000">
 			<f:facet name="header">
 				<aon:div styleClass="aon-popupWindow-title">
 					<aon:outputText value="#{appBundle.aon_webmail_folder_create_new}" />
@@ -22,22 +22,21 @@
 					styleClass="aon-popupWindow-close" immediate="true">
 					<rich:componentControl for="newFolderModalPanel" operation="hide" event="onclick"/>
 				</aon:commandButton>
-            </f:facet>
-            <aon:div styleClass="aon-toolbar">
-            	<aon:commandButton 
-					styleClass="aon-icon-commandButton aon-icon-accept"
+            </f:facet>           
+            	
+            
+            <aon:outputText value="#{appBundle.aon_webmail_folder_name}:" />
+			<h:panelGrid width="100%" cellpadding="2" cellspacing="0" columns="2" 
+				styleClass="aon-panelGrid-formatting">							
+				<aon:inputText id="newFolderName"
+					size="27"
+					value="#{folder.newFolderName}"/>
+				<aon:commandButton 
+					styleClass="aon-commandButton"
 					reRender="foldersTree"
 					actionListener="#{folder.createFolder}" value="#{bundle.aon_accept}">
 					<rich:componentControl for="newFolderModalPanel" operation="hide" event="onclick"/>
 				</aon:commandButton>
-            </aon:div>
-			<h:panelGrid width="100%" cellpadding="0" cellspacing="0" columns="1"
-				columnClasses="popupIcon,aon-text-right popupButton">
-				<aon:outputText value="#{appBundle.aon_webmail_folder_name}:" />
-				<aon:inputText id="newFolderName"
-					size="40"
-					value="#{folder.newFolderName}"/>
-				
 			</h:panelGrid>
         </rich:modalPanel>													
 

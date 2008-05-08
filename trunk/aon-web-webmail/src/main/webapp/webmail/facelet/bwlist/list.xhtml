@@ -35,11 +35,7 @@
 							actionListener="#{blacklist.onSave}"
 							reRender="mainData,listData"
 							accesskey="#{appBundle.aon_webmail_black_white_list_save}"/>
-						<aon:commandButton id="back" value="#{bundle.aon_back}"
-							immediate="true"
-							styleClass="aon-finding-toolbar-item aon-icon-cancel"
-							action="folder"
-							accesskey="#{bundle.aon_key_cancel}" />		
+						
 						<aon:commandButton id="load"
 							value="#{appBundle.aon_webmail_black_white_list_reload}" 
 							styleClass="aon-finding-toolbar-item aon-icon-refresh"
@@ -61,6 +57,11 @@
 							title="#{appBundle.aon_webmail_add_black_list}"
 							actionListener="#{blacklist.openNewBlackPanelPopup}" >
 						</aon:commandButton>
+						<aon:commandButton id="back" value="#{bundle.aon_back}"
+							immediate="true"
+							styleClass="aon-finding-toolbar-item aon-icon-cancel"
+							action="folder"
+							accesskey="#{bundle.aon_key_cancel}" />		
 						
 					</aon:div>
 				</aon:panelGrid>
@@ -68,7 +69,7 @@
 					
 			<aon:panelGroup>
 				<aon:panelGrid id="mainData" columns="2" dir="true" style="margin:1em;"
-					cellpadding="0" cellspacing="0">
+					>
 
 					<aon:outputLabel for="blacklist_score"
 						value="#{appBundle.aon_webmail_blacklist_score}" />
@@ -87,7 +88,8 @@
 			</aon:panelGroup>
 						
 					
-			<aon:panelGrid id="listData" columns="2" cellpadding="0" cellspacing="10" styleClass="aon-panelGrid-formatting">
+			<aon:panelGrid id="listData" columns="2" cellpadding="0" cellspacing="10" styleClass="aon-panelGrid-formatting"
+			columnClasses="aon-width-50percent,aon-width-50percent">
 				<aon:div styleClass="aon-group">
 					<aon:div styleClass="aon-group-title">
 						<aon:outputText value="#{appBundle.aon_webmail_blacklist_white}"/>

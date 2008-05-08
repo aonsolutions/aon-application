@@ -11,8 +11,8 @@
 <ui:composition>
 
 	<aon:panelGroup id="addBlackWhiteListWindow">
-        <rich:modalPanel id="addBlackWhiteListModalPanel"  
-        	rendered="#{blacklist.showNewSpamAddressWindow}" showWhenRendered="true"
+        <rich:modalPanel id="addBlackWhiteListModalPanel"
+        	rendered="#{blacklist.showNewSpamAddressWindow}" showWhenRendered="true"          
             height="100" width="350" zindex="2000">
             <f:facet name="header">
 				<aon:div styleClass="aon-popupWindow-title">
@@ -29,13 +29,13 @@
 					<rich:componentControl for="addBlackWhiteListModalPanel" operation="hide" event="onclick"/>
 				</aon:commandButton>
             </f:facet>
-			<h:panelGrid width="100%" cellpadding="0" cellspacing="0" columns="1"
-				columnClasses="popupIcon,aon-text-right popupButton">
+			<h:panelGrid width="100%" cellpadding="2" cellspacing="0" columns="2"
+				styleClass="aon-panelGrid-formatting">	
 				<aon:inputText 
-					size="40"
+					size="27"
 					value="#{blacklist.newEmail}"/>
 				<aon:commandButton 
-					styleClass="aon-icon-commandButton aon-icon-accept"
+					styleClass="aon-commandButton"
 					reRender="emailList"
 					actionListener="#{blacklist.createNew}" value="#{bundle.aon_accept}">
 					<f:setPropertyActionListener target="#{blacklist.showNewSpamAddressWindow}" value="#{false}" />
