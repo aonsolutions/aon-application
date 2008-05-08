@@ -47,7 +47,7 @@ public class AlarmController extends BasicController {
 			Criteria criteria = getCriteria();
 			criteria.addEqualExpression(getFieldName(IGroupWareAlias.ALARM_STATUS), AlarmStatus.PENDING);
 			criteria.addLessThanOrEqualExpression(getFieldName(IGroupWareAlias.ALARM_ALARM_DATE), new Date());
-			User user = UserUtils.getLoggedUser();
+			User user = UserUtils.getInstance().getLoggedUser();
 			criteria.addEqualExpression(getFieldName(IGroupWareAlias.ALARM_USER_ID), user.getId());
 			onSearch(null);
 		} catch (ManagerBeanException e) {
@@ -70,7 +70,7 @@ public class AlarmController extends BasicController {
 				alarm.setSourceId(currentAlarm.getSourceId());
 				alarm.setStatus(AlarmStatus.PENDING);
 				currentAlarm.setStatus(AlarmStatus.FINISHED);
-				currentAlarm.setUser(UserUtils.getLoggedUser());
+				currentAlarm.setUser(UserUtils.getInstance().getLoggedUser());
 				alarmBean.update(currentAlarm);
 				this.setTo(alarmBean.insert(alarm));
 			} catch (ManagerBeanException e) {
@@ -97,7 +97,7 @@ public class AlarmController extends BasicController {
 		try {
 			IManagerBean alarmBean = BeanManager.getManagerBean(Alarm.class);
 			alarm.setStatus(AlarmStatus.FINISHED);
-			alarm.setUser(UserUtils.getLoggedUser());
+			alarm.setUser(UserUtils.getInstance().getLoggedUser());
 			alarmBean.update(alarm);
 			this.obtainInboxModel(null);
 		} catch (ManagerBeanException e) {
