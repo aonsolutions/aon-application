@@ -12,6 +12,7 @@ import com.code.aon.dao.ldap.LdapDAO;
 import com.code.aon.jaas.auth.AuthPrincipal;
 import com.code.aon.ldap.AonDN;
 import com.code.aon.ldap.DistinguishedName;
+import com.code.aon.ui.config.util.UserUtils;
 
 public class GroupWareFactory {
 	
@@ -28,19 +29,6 @@ public class GroupWareFactory {
 		return SINGLETON;
 	}
 	
-	private AuthPrincipal getPrincipal() {
-		ExternalContext ec = FacesContext.getCurrentInstance().getExternalContext();
-		AuthPrincipal user = null;
-		Principal principal = ec.getUserPrincipal();
-		if ( principal instanceof AuthPrincipal ) {
-			user = (AuthPrincipal) principal;
-		} else {
-			user = new AuthPrincipal( principal.getName() );
-		}
-		LOGGER.info( "Current User:" + user );
-		return user;
-	}
-	
 	/**
 	 * Gets the dAO.
 	 * 
@@ -50,7 +38,7 @@ public class GroupWareFactory {
 	 */
 	public IDAO getContactDAO( BeanConfig config ) {
 		LdapDAO dao = new LdapDAO(config.getPojoClass());
-		AuthPrincipal principal = getPrincipal();
+		AuthPrincipal principal = UserUtils.getInstance().getPrincipal();
 		DistinguishedName baseDN = AonDN.getUserAddressBookDN(principal.getDomain(), principal.getShortName());
 		LOGGER.info( "Contact DAO DN:" + baseDN );
 		dao.setBaseDN( baseDN.toString() );
