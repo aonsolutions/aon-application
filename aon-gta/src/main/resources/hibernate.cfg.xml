@@ -24,12 +24,10 @@
 		<mapping class="com.code.aon.config.UserWorkGroup"/>
 		
 		<!-- AON-TAS Mapping files -->		
-		<mapping class="com.code.aon.tas.Appraiser"/>
 		<mapping class="com.code.aon.tas.Make"/>
 		<mapping class="com.code.aon.tas.Model"/>
 		<mapping class="com.code.aon.tas.TasItem"/>
 		<mapping class="com.code.aon.tas.SupportOrder"/>
-		<mapping class="com.code.aon.tas.SupportOrderInsurance"/>
 
 		<!-- AON-PRODUCT Mapping files -->		
 		<mapping class="com.code.aon.product.Product"/>
@@ -72,9 +70,8 @@
 		<mapping class="com.code.aon.warehouse.IncomeDetail" />
 		<mapping class="com.code.aon.warehouse.Warehouse" />
 		<mapping class="com.code.aon.warehouse.Delivery" />
-		<mapping class="com.code.aon.warehouse.DeliveryDetail" />
-		<mapping class="com.code.aon.warehouse.DeliveryDetailLabour" />
 		<mapping class="com.code.aon.warehouse.Stock" />
+		<mapping class="com.code.aon.warehouse.DeliveryDetail" />
 		<mapping class="com.code.aon.warehouse.Inventory"/>
 		<mapping class="com.code.aon.warehouse.InventoryDetail" />
 		

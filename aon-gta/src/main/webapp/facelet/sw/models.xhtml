@@ -21,25 +21,6 @@
 						<h:outputText value="#{tasBundle.model_name}" />
 					</t:div>
 			</t:div>
-			
-			<t:div styleClass="aon-content-toolbar" id="aon-content-toolbar" forceId="#{true}">
-				<t:div styleClass="aon-content-toolbar-internal">
-					<t:div styleClass="aon-content-toolbar-item-group">
-						<t:commandButton id="search" value="#{bundle.aon_search}"
-							action="TasModel_sw_search"
-							styleClass="aon-content-toolbar-item aon-content-toolbar-item-search"
-							onmouseover="this.className='aon-content-toolbar-item aon-content-toolbar-item-hover aon-content-toolbar-item-search'"
-							onmouseout="this.className='aon-content-toolbar-item aon-content-toolbar-item-search'"
-							accesskey="#{bundle.aon_key_search}" />
-						<h:commandButton id="cancel" value="#{bundle.aon_cancel}"
-							onclick="window.close();return false;"
-							styleClass="aon-content-toolbar-item aon-content-toolbar-item-cancel"
-							onmouseover="this.className='aon-content-toolbar-item aon-content-toolbar-item-hover aon-content-toolbar-item-cancel'"
-							onmouseout="this.className='aon-content-toolbar-item aon-content-toolbar-item-cancel'" 
-							accesskey="#{bundle.aon_key_cancel}"/>
-					</t:div>
-				</t:div>
-			</t:div>
 
 			<t:div forceId="#{true}" id="aon-scroll-area">
 				<t:div styleClass="aon-scroll-area-internal">

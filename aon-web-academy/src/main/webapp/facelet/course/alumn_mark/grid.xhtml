@@ -140,8 +140,7 @@
 										styleClass="aon-table-row-selected"
 										actionListener="#{courseAlumnMark.onSelect}">
 									</t:commandLink>
-									<h:outputText value="#{to.customer.registry.surname}, " rendered="#{to.customer.registry.surname != null and to.customer.registry.surname != ''}"/>								
-									<h:outputText value="#{to.customer.registry.name}" />
+									<t:outputText value="#{to.customer.registry.name} #{to.customer.registry.surname}" />
 								</h:column>
 				
 							</t:dataTable>
@@ -197,7 +196,7 @@
 									<f:facet name="header">
 										<h:outputText value="#{appBundle.evaluation_observation_comment}" />
 									</f:facet>
-									<h:outputText value="#{to_evaluation_observation.commentsHead}" 
+									<h:outputText value="#{to_evaluation_observation.comments}" 
 										rendered="#{to_evaluation_observation!=evaluation_observation.to}" />
 									<t:inputText 
 										id="Observation_Lookup_id"
@@ -307,7 +306,7 @@
 								rowClasses="aon-edit-table-row-odd,aon-edit-table-row-even"
 								columnClasses="aon-edit-table-body aon-edit-table-body-icon,
 								aon-edit-table-body aon-edit-table-body-string,
-								aon-edit-table-body aon-edit-table-body-number,
+								aon-edit-table-body aon-edit-table-body-string,
 								aon-edit-table-body aon-edit-table-body-buttons">
 	
 								<h:column>

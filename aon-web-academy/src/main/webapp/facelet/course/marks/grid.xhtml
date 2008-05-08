@@ -126,8 +126,7 @@
 								<f:facet name="header">
 									<f:verbatim>&#160;</f:verbatim>
 								</f:facet>
-								<h:outputText value="#{to.customer.registry.surname}, " rendered="#{to.customer.registry.surname != null and to.customer.registry.surname != ''}"/>								
-								<h:outputText value="#{to.customer.registry.name}" />
+								<h:outputText value="#{to.customer.registry.name} #{to.customer.registry.surname}" />
 								<t:commandLink immediate="#{true}"
 									rendered="#{to!=courseMark.to}"
 									styleClass="aon-table-row-selected"

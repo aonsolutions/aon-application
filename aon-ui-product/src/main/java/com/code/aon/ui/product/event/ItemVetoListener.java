@@ -110,7 +110,8 @@ public class ItemVetoListener extends ControllerAdapter {
         try {
             criteria = controller.getCriteria();
             criteria.addEqualExpression(controller.getManagerBean().getFieldName(IProductAlias.ITEM_PRODUCT_COMPOSITION), new Boolean(false));
-            criteria.addOrder(controller.getManagerBean().getFieldName(IProductAlias.ITEM_PRODUCT_NAME));
+            criteria.addOrder(controller.getManagerBean().getFieldName(IProductAlias.ITEM_PRODUCT_CATEGORY_ID));
+            criteria.addOrder(controller.getManagerBean().getFieldName(IProductAlias.ITEM_PRODUCT_CODE));
             controller.setCriteria(criteria);
         } catch (ManagerBeanException e) {
             throw new ControllerListenerException(e.getMessage(), e);

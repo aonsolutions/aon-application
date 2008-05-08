@@ -139,7 +139,24 @@
 						</t:div>
 					</f:facet>
 				</t:column>
-
+<!-- 
+				<t:column>
+					<f:facet name="header">
+						<t:outputText value="#{financeBundle.aon_bank_sufix}" />
+					</f:facet>
+					<t:outputText value="#{to.sufix}"
+						rendered="#{to!=controllerAlias.to}" />
+					<t:inputText value="#{to.sufix}" styleClass="aon-form-input-text"
+						rendered="#{to==controllerAlias.to}" size="5" maxlength="3" />
+					<f:facet name="footer">
+						<t:div>
+							<t:inputText value="#{controllerAlias.to.sufix}"
+								styleClass="aon-form-input-text" rendered="#{controllerAlias.new}"
+								size="5" maxlength="3" />
+						</t:div>
+					</f:facet>
+				</t:column>
+ -->
 				<h:column>
 					<f:facet name="header">
 						<f:verbatim>&#160;</f:verbatim>

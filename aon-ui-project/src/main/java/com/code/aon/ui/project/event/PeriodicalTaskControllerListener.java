@@ -1,9 +1,6 @@
 package com.code.aon.ui.project.event;
 
 import java.util.Iterator;
-import java.util.LinkedList;
-
-import javax.faces.model.SelectItem;
 
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
@@ -112,13 +109,4 @@ public class PeriodicalTaskControllerListener extends ControllerAdapter {
 		}
 		return null;
 	}
-	
-    @Override
-    public void afterBeanCreated(ControllerEvent event) throws ControllerListenerException {
-    	PeriodicalTaskController controller = (PeriodicalTaskController) event.getController();
-
-        controller.setDossiers(new LinkedList<SelectItem>());
-        controller.setActivities(new LinkedList<SelectItem>());
-    }
-	
 }

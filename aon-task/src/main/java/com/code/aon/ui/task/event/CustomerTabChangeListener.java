@@ -9,7 +9,7 @@ import com.icesoft.faces.component.paneltabset.TabChangeListener;
 
 public class CustomerTabChangeListener implements TabChangeListener {
 	
-	private static final String DOSSIER_CONTROLLER_NAME = "dossier";
+	private static final String DOSSIER_CONTROLLER_NAME = "ICEDossier";
 
 	public void processTabChange(TabChangeEvent tabChangeEvent) throws AbortProcessingException {
 		if(tabChangeEvent.getNewTabIndex() == 1){

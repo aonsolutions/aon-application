@@ -304,6 +304,14 @@
 			<value>com.code.aon.academy.CourseAlumn</value>
 		</managed-property>
 		<managed-property>
+			<property-name>listenerClasses</property-name>
+			<list-entries>
+				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+				<value>#{courseAlumnMarkControllerListener}</value>
+				<value>#{courseAlumnEvaluationObservationControllerListener}</value>
+			</list-entries>
+		</managed-property>
+		<managed-property>
 			<property-name>masterControllerName</property-name>
 			<value>course</value>
 		</managed-property>
@@ -315,14 +323,6 @@
 					<value>course.id</value>
 				</map-entry>
 			</map-entries>
-		</managed-property>
-		<managed-property>
-			<property-name>listenerClasses</property-name>
-			<list-entries>
-				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
-				<value>#{courseAlumnMarkControllerListener}</value>
-				<value>#{courseAlumnEvaluationObservationControllerListener}</value>
-			</list-entries>
 		</managed-property>
 	</managed-bean>
 	
@@ -868,7 +868,8 @@
 		</managed-property>
 	</managed-bean>
 
-	<!-- ************* COURSEMARK ***************** -->
+
+	<!-- ************* ALUMNLOAN ***************** -->
 	<managed-bean>
 		<managed-bean-name>courseMark</managed-bean-name>
 		<managed-bean-class>com.code.aon.ui.academy.controller.CourseMarkController</managed-bean-class>
@@ -881,40 +882,6 @@
 			com.code.aon.ui.academy.event.CourseMarksControllerListener
 		</managed-bean-class>
 		<managed-bean-scope>none</managed-bean-scope>
-	</managed-bean>
-	
-	<!-- ************* ACADEMIC UTILS ***************** -->
-	<managed-bean>
-		<managed-bean-name>academicSkillToGroup</managed-bean-name>
-		<managed-bean-class>
-			com.code.aon.ui.academy.controller.AcademicSkillToGroupController
-		</managed-bean-class>
-		<managed-bean-scope>session</managed-bean-scope>
-		<managed-property>
-			<property-name>queryOnStartUP</property-name>
-			<value>true</value>
-		</managed-property>
-		<managed-property>
-			<property-name>pojo</property-name>
-			<value>com.code.aon.academy.Course</value>
-		</managed-property>
-	</managed-bean>
-
-	<!-- ************* FEE UTILS ***************** -->
-	<managed-bean>
-		<managed-bean-name>feeToGroup</managed-bean-name>
-		<managed-bean-class>
-			com.code.aon.ui.academy.controller.CustomerFeeToGroupController
-		</managed-bean-class>
-		<managed-bean-scope>session</managed-bean-scope>
-		<managed-property>
-			<property-name>queryOnStartUP</property-name>
-			<value>true</value>
-		</managed-property>
-		<managed-property>
-			<property-name>pojo</property-name>
-			<value>com.code.aon.academy.Course</value>
-		</managed-property>
 	</managed-bean>
 
 	<!-- ************* REPORT ***************** -->
@@ -1089,30 +1056,6 @@
 	      <to-view-id>/facelet/course/evaluation/grid.faces</to-view-id>
 	    </navigation-case>
 	  </navigation-rule>
-	  
-	<!-- =================== Academic Skil to Group ====================== -->
-	<navigation-rule>
-	  <navigation-case>
-	    <from-outcome>ac_skill_to_group_search</from-outcome>
-	    <to-view-id>/facelet/academic_util/ac_skill_to_group/search.faces</to-view-id>
-	  </navigation-case>
-	  <navigation-case>
-	    <from-outcome>ac_skill_to_group_form</from-outcome>
-	    <to-view-id>/facelet/academic_util/ac_skill_to_group/form.faces</to-view-id>
-	  </navigation-case>
-	</navigation-rule>
-
-	<!-- =================== Fee Skil to Group ====================== -->
-	<navigation-rule>
-	  <navigation-case>
-	    <from-outcome>fee_to_group_search</from-outcome>
-	    <to-view-id>/facelet/finance/fee_to_group/search.faces</to-view-id>
-	  </navigation-case>
-	  <navigation-case>
-	    <from-outcome>fee_to_group_form</from-outcome>
-	    <to-view-id>/facelet/finance/fee_to_group/form.faces</to-view-id>
-	  </navigation-case>
-	</navigation-rule>
 
   <!-- =================== Application Menu Navigation Rules ================= -->	
   <navigation-rule>
@@ -1160,17 +1103,9 @@
 		<from-outcome>loan</from-outcome>
 		<to-view-id>/facelet/loan/search.faces</to-view-id>
 	</navigation-case>
-    <navigation-case>
+     <navigation-case>
       <from-outcome>quality_skill</from-outcome>
       <to-view-id>/facelet/auxiliary/quality_skill/grid.faces</to-view-id>
-    </navigation-case>
-    <navigation-case>
-      <from-outcome>academic_skill_to_group</from-outcome>
-      <to-view-id>/facelet/academic_util/ac_skill_to_group/search.faces</to-view-id>
-    </navigation-case>
-    <navigation-case>
-      <from-outcome>fee_to_group</from-outcome>
-      <to-view-id>/facelet/finance/fee_to_group/search.faces</to-view-id>
-    </navigation-case>
+    </navigation-case>    
  </navigation-rule>
 </faces-config>

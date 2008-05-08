@@ -15,7 +15,6 @@ import javax.faces.model.SelectItem;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
-import com.code.aon.customer.Customer;
 import com.code.aon.project.Activity;
 import com.code.aon.project.Dossier;
 import com.code.aon.project.PeriodicalTask;
@@ -53,15 +52,7 @@ public class PeriodicalTaskController extends BasicController {
         } else {
             dossiers = new LinkedList<SelectItem>();
         }
-    }
-	
-    public void customerPojoChange(ValueChangeEvent event) {
-        if ( event.getNewValue() != null ) {
-        	Customer customer = (Customer) event.getNewValue();
-            loadDossiers( customer.getId() );
-        } else {
-            dossiers = new LinkedList<SelectItem>();
-        }
+        activities = new LinkedList<SelectItem>();
     }
 	
     public void dossierChange(ValueChangeEvent event) {
@@ -75,7 +66,6 @@ public class PeriodicalTaskController extends BasicController {
 	@SuppressWarnings("unchecked")
     public void loadDossiers(Integer customerId) {
         dossiers = new LinkedList<SelectItem>();
-        activities = new LinkedList<SelectItem>();        
         try {
             IManagerBean managerBean = BeanManager.getManagerBean(Dossier.class);
             Criteria criteria = new Criteria();

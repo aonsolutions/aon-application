@@ -18,6 +18,10 @@
 			src="${facesContext.externalContext.requestContextPath}/js/itemLookup.js">
 			// nothing
 		</script>
+		<script type='text/javascript'
+			src="${facesContext.externalContext.requestContextPath}/js/SupplierLookup.js">
+			// nothing
+		</script>
 		<t:stylesheet path="/jscalendar-1.0/calendar-system.css" />
 		<script type='text/javascript'
 			src="${facesContext.externalContext.requestContextPath}/jscalendar-1.0/calendar.js">
@@ -166,26 +170,29 @@
 								<f:selectItems value="#{financeCollections.securityLevels}" />
 							</h:selectOneMenu>
 						
-						<t:outputLabel for="Supplier_Lookup_id"
+
+						<t:outputLabel for="Supplier_id"
 							styleClass="aon-form-input-text-label"
 							value="#{purchaseBundle.aon_supplier}" />
-						<t:div>
-							<t:inputText id="Supplier_Lookup_id" size="5" forceId="#{true}"
-								styleClass="aon-form-input-text"
-								onchange="return findBeanLookupExt(event,'#{facesContext.externalContext.requestContextPath}','supplierLookup','Supplier_Lookup_id','Supplier_id|Supplier_Lookup_id,Supplier_full_name|Supplier_full_name');"
+						<h:panelGroup>
+							<t:inputText id="Supplier_id" size="5" forceId="#{true}"
+								styleClass="aon-form-input-text" required="true" disabled="#{!income.editable}"
+								onchange="return findSupplierLookup(event,'#{facesContext.externalContext.request.contextPath}','com.code.aon.purchase.Supplier');"
 								value="#{income.to.supplier.id}" valueChangeListener="#{income.supplierData}"/>
-							<h:commandButton id="find_Supplier_Lookup_id"
-								styleClass="aon-form-lookup-button" value="" immediate="true"
-								onclick="lookupSearchWindow(this, 'placeList', '#{supplierLookup.encodedSearchPagePath}','Supplier_id|Supplier_Lookup_id,Supplier_full_name|Supplier_full_name');return false;" />	
-							<h:commandButton id="new_Supplier_Lookup_id"
-								styleClass="aon-form-new-button" value="" immediate="true"
-								onclick="lookupNewWindow(this, 'placeList', '#{supplierLookup.encodedNewPagePath}','Supplier_id|Supplier_Lookup_id,Supplier_full_name|Supplier_full_name');return false;" />	
+							<h:commandButton id="findSupplier" disabled="#{!income.editable}"
+								styleClass="aon-form-lookup-button"
+								onclick="selectWindow(this, 'placeList', '#{supplierSearch.encodedPagePath}');return false;"
+								value="" immediate="true" />
+							<h:commandButton id="addSupplier" disabled="#{!income.editable}"
+								styleClass="aon-form-new-button"
+								onclick="selectWindow(this, 'placeList', '#{supplierAdd.encodedPagePath}');return false;"
+								value="" immediate="true" />
 							<t:inputText id="Supplier_full_name" forceId="#{true}"
 								styleClass="aon-form-input-text-disabled"
 								disabled="true" size="40"
 								value="#{income.to.supplier.name} #{income.to.supplier.surname==null?' ':(income.to.supplier.surname)}" />	 		
-						</t:div>
-
+						</h:panelGroup>
+						
 						<t:outputLabel for="IncomeDetail_warehouse_id"
 							styleClass="aon-form-selectOneMenu-label"
 							value="#{purchaseBundle.aon_warehouse}" />

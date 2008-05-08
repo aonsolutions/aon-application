@@ -10,65 +10,47 @@
 
 <ui:composition>
 
-	<aon:div styleClass="aon-section-toolbar">
+	<aon:div styleClass="aon-toolbar">
 		<aon:confirmButton id="save" value="#{bundle.aon_save}"
-			styleClass="aon-content-toolbar-item aon-icon-accept"
+			styleClass="aon-finding-toolbar-item aon-icon-accept"
 			confirmTitle="Confirmation Dialog"
 			confirmMessage="#{bundle.aon_save_confirm}"
 			confirmActionListener="#{company.onAccept}"
-			onmouseout="this.className='aon-content-toolbar-item aon-icon-accept';"
-			onmouseover="this.className='aon-content-toolbar-item aon-icon-accept aon-content-toolbar-item-hover';"
 			accesskey="#{bundle.aon_key_save}" />
 	</aon:div>
 
 	<aon:div style="float:left;margin-right:20px;">
-		<aon:panelGrid columns="2" dir="true" styleClass="aon-formTable"
-			cellpadding="0" cellspacing="0"
-			columnClasses="aon-formTable-column-odd,aon-formTable-column-even">
+		<aon:panelGrid columns="2" dir="true">
 	
-			<aon:outputLabel for="Company_name"
-				value="#{registryBundle.aon_name}" />
-			<aon:inputText id="Company_name"
-				styleClass="aon-inputText" required="true" size="45"
+			<aon:outputLabel for="Company_name" value="#{registryBundle.aon_name}" />
+			<aon:inputText id="Company_name" required="true" size="45"
 				maxlength="50" value="#{company.to.name}" />
 	
-			<aon:outputLabel for="Company_document"
-				value="#{registryBundle.aon_cif}" />
-			<aon:inputText id="Company_document"
-				styleClass="aon-inputText" required="true" size="15"
+			<aon:outputLabel for="Company_document" value="#{registryBundle.aon_cif}" />
+			<aon:inputText id="Company_document" required="true" size="15"
 				maxlength="9" value="#{company.to.document}" />
 
-			<aon:outputLabel for="Company_alias"
-				value="#{appBundle.aon_web_info_company_alias}" />
-			<aon:inputText id="Company_alias"
-				styleClass="aon-inputText" required="true" size="45"
+			<aon:outputLabel for="Company_alias" value="#{appBundle.aon_web_info_company_alias}" />
+			<aon:inputText id="Company_alias" required="true" size="45"
 				maxlength="50" value="#{company.to.alias}" />
 			
-			<aon:outputLabel for="Company_telephone"
-				value="#{registryBundle.aon_phone}" />
-			<aon:inputText id="Company_telephone"
-				styleClass="aon-inputText" size="20" maxlength="15" 
+			<aon:outputLabel for="Company_telephone" value="#{registryBundle.aon_phone}" />
+			<aon:inputText id="Company_telephone" size="20" maxlength="15" 
 				value="#{company.phone.value}" 
 				valueChangeListener="#{company.phoneChanged}"/>
 
-			<aon:outputLabel for="Company_fax"
-				value="#{registryBundle.aon_fax}" />
-			<aon:inputText id="Company_fax"
-				styleClass="aon-inputText" size="20" maxlength="15" 
+			<aon:outputLabel for="Company_fax" value="#{registryBundle.aon_fax}" />
+			<aon:inputText id="Company_fax" size="20" maxlength="15" 
 				value="#{company.fax.value}" 
 				valueChangeListener="#{company.faxChanged}"/>
 
-			<aon:outputLabel for="Company_email"
-				value="#{registryBundle.aon_email}" />
-			<aon:inputText id="Company_email"
-				styleClass="aon-inputText" size="45" 
+			<aon:outputLabel for="Company_email" value="#{registryBundle.aon_email}" />
+			<aon:inputText id="Company_email" size="45" 
 				value="#{company.email.value}" 
 				valueChangeListener="#{company.emailChanged}"/>
 
-			<aon:outputLabel for="Company_web"
-				value="#{registryBundle.aon_web}" />
-			<aon:inputText id="Company_web"
-				styleClass="aon-inputText" size="45" 
+			<aon:outputLabel for="Company_web" value="#{registryBundle.aon_web}" />
+			<aon:inputText id="Company_web" size="45" 
 				value="#{company.web.value}" 
 				valueChangeListener="#{company.webChanged}"/>
 		</aon:panelGrid>
@@ -76,101 +58,84 @@
 	<aon:div id="logoDiv" style="float:left;">	
 		<aon:div styleClass="aon-group" >		
 			<aon:div styleClass="aon-group-title">							
-			<aon:outputLabel for="Company_logo"
-				rendered="#{!company.new}"
+			<aon:outputLabel for="Company_logo" rendered="#{!company.new}"
 				value="#{registryBundle.aon_company_logo}" />
 			</aon:div>
 			<aon:div styleClass="aon-group-body">
-				<aon:div styleClass="aon-section-toolbar" >
+				<aon:div styleClass="aon-toolbar" >
 					<aon:commandButton id="Company_logo_remove" value="#{bundle.aon_fileupload_remove}"
-						styleClass="aon-icon-delete aon-content-toolbar-item"
+						styleClass="aon-icon-delete aon-finding-toolbar-item"
 						rendered="#{company.fileData != null}" reRender="logoDiv"
-						actionListener="#{company.fileRemove}"
-						onmouseout="this.className='aon-icon-delete aon-content-toolbar-item'"
-						onmouseover="this.className='aon-icon-delete aon-content-toolbar-item aon-content-toolbar-item-hover'"
-						/>
+						actionListener="#{company.fileRemove}"/>
 					<h:commandButton id="Company_logo_upload" value="#{bundle.aon_fileupload_insert}"
-						styleClass="aon-icon-attach aon-content-toolbar-item"
+						styleClass="aon-icon-attach aon-finding-toolbar-item"
 						rendered="#{company.fileData == null}"
-						actionListener="#{company.fileUploaded}"
-						onmouseout="this.className='aon-icon-attach aon-content-toolbar-item'"
-						onmouseover="this.className='aon-icon-attach aon-content-toolbar-item aon-content-toolbar-item-hover'"
-						/>
+						actionListener="#{company.fileUploaded}"/>
 				</aon:div>		
 				
-				<aon:panelGrid columns="2"
-					style="margin-left:10px;margin-right:10px;" styleClass="aon-formTable"
-					columnClasses="aon-formTable-column-odd,aon-formTable-column-even"
-					cellpadding="0" cellspacing="0">
+				<aon:panelGrid columns="2" style="margin-left:10px;margin-right:10px;">
 						
-					<aon:outputLabel for="Company_logo"
-						value="#{registryBundle.aon_registry_attach_file}" />
-					<t:inputFileUpload id="Company_logo"
-						value="#{company.inputFile}"
-						rendered="#{company.fileData == null}"
-						accept="image/*"
-						storage="file"
-						size="45"
-					/>
-					<aon:panelGroup styleClass="aon-text-center" rendered="#{company.fileData != null}">
-						<aon:mediaOutput id="Logo_preview"
-							element="img" cacheable="false"
-							createContent="#{company.paint}" 
-							mimeType="#{company.mimeType}"/>
-					</aon:panelGroup>
+					<aon:outputLabel value="#{registryBundle.aon_registry_attach_file}" />
+					<aon:div>
+						<t:inputFileUpload id="Company_logo"
+							value="#{company.inputFile}" rendered="#{company.fileData == null}"
+							accept="image/*" storage="file" size="45"/>
+						<aon:panelGroup styleClass="aon-text-center" rendered="#{company.fileData != null}">
+							<aon:mediaOutput id="Logo_preview"
+								element="img" cacheable="false"
+								createContent="#{company.paint}" 
+								mimeType="#{company.mimeType}"/>
+						</aon:panelGroup>
+					</aon:div>
 				</aon:panelGrid>				
 			</aon:div>
 		</aon:div>
 	</aon:div>
-		
+
 	<aon:div style="clear:both;padding-top:1em;">
-		<aon:panelGrid  columns="4" styleClass="aon-box aon-box-outstanding"
-			cellpadding="0" cellspacing="0" 
-			style="width:100%">
-			
-	  		<aon:div styleClass="aon-text-bold">	  
-				<aon:outputLabel for="Company_address"
-					value="#{registryBundle.aon_address}" />
+		<aon:panelGrid columns="4" styleClass="aon-editDataTable"
+			cellpadding="0" cellspacing="0"
+			columnClasses="aon-editDataTable-textColumn,aon-editDataTable-textColumn,aon-editDataTable-textColumn,aon-editDataTable-textColumn">
+
+	  		<aon:div styleClass="aon-editDataTable-header">	  
+				<aon:outputLabel for="Company_address" value="#{registryBundle.aon_address}" />
 			</aon:div>		
-			<aon:outputLabel for="Company_zip" styleClass="aon-text-bold"
-				value="#{registryBundle.aon_zip}" />
-			<aon:outputLabel for="Company_city" styleClass="aon-text-bold"
-				value="#{registryBundle.aon_city}" />
-			<aon:outputLabel for="Company_address_geozone" styleClass="aon-text-bold"
-				value="#{registryBundle.aon_geozone}" />
-					
+	  		<aon:div styleClass="aon-editDataTable-header">	  
+				<aon:outputLabel for="Company_zip" value="#{registryBundle.aon_zip}" />
+			</aon:div>		
+	  		<aon:div styleClass="aon-editDataTable-header">	  
+				<aon:outputLabel for="Company_city" value="#{registryBundle.aon_city}" />
+			</aon:div>		
+	  		<aon:div styleClass="aon-editDataTable-header">	  
+				<aon:outputLabel for="Company_address_geozone" value="#{registryBundle.aon_geozone}" />
+			</aon:div>		
+
+			<aon:div>
 				<aon:div>
-					<aon:div>
-						<aon:inputText id="Company_address"
-							styleClass="aon-inputText" required="true" size="50"
-							maxlength="50" value="#{company.mainAddress.address}"
-							valueChangeListener="#{company.addressChanged}" />
-					</aon:div>
-					<aon:div>
-						<aon:inputText id="Company_address2"
-							styleClass="aon-inputText" size="50"
-							maxlength="50" value="#{company.mainAddress.address2}"
-							valueChangeListener="#{company.addressChanged}" />
-					</aon:div>
-					<aon:div>
-						<aon:inputText id="Company_address3"
-							styleClass="aon-inputText" size="50"
-							maxlength="50" value="#{company.mainAddress.address3}"
-							valueChangeListener="#{company.addressChanged}" />	
-					</aon:div>	
-				</aon:div>		
-				
-				<aon:div>
-					<aon:inputText id="Company_zip"
-						styleClass="aon-inputText" size="6"
-						maxlength="50" value="#{company.mainAddress.zip}"
-						valueChangeListener="#{company.addressChanged}" />			
-		
+					<aon:inputText id="Company_address" required="true" size="50"
+						maxlength="50" value="#{company.mainAddress.address}"
+						valueChangeListener="#{company.addressChanged}" />
 				</aon:div>
+				<aon:div>
+					<aon:inputText id="Company_address2" size="50"
+						maxlength="50" value="#{company.mainAddress.address2}"
+						valueChangeListener="#{company.addressChanged}" />
+				</aon:div>
+				<aon:div>
+					<aon:inputText id="Company_address3" size="50"
+						maxlength="50" value="#{company.mainAddress.address3}"
+						valueChangeListener="#{company.addressChanged}" />	
+				</aon:div>	
+			</aon:div>		
+
+			<aon:div>
+				<aon:inputText id="Company_zip" size="6"
+					maxlength="50" value="#{company.mainAddress.zip}"
+					valueChangeListener="#{company.addressChanged}" />			
+			</aon:div>
 
 				<aon:div>
-						<aon:inputText id="Company_city"
-						styleClass="aon-inputText" size="45"
+						<aon:inputText id="Company_city" size="45"
 						maxlength="50" value="#{company.mainAddress.city}"
 						valueChangeListener="#{company.addressChanged}" />			
 				</aon:div>
@@ -183,7 +148,8 @@
 					</aon:selectOneMenu>
 			</aon:div>
 		</aon:panelGrid>
-		<aon:div style="clear:both">
+		
+		<aon:div style="clear:both;margin-top:1em">
 			<ui:include src="/facelet/shared/tabs/addresses.xhtml">
 				<ui:param name="controllerAlias" value="#{companyAddress}" />
 				<ui:param name="dataTable" value="companyAddressDataList" />

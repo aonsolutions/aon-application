@@ -11,6 +11,7 @@ import com.code.aon.academy.dao.IAcademyAlias;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.customer.enumeration.CustomerStatus;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
@@ -38,17 +39,7 @@ public class CourseAlumnControllerListener extends ControllerAdapter {
 			throw new AbortProcessingException();
 		}
 	}
-
-	@Override
-	public void beforeModelInitialized(ControllerEvent event) throws ControllerListenerException {
-		try {
-			event.getController().getCriteria().addOrder(event.getController().getFieldName(IAcademyAlias.COURSE_ALUMN_CUSTOMER_REGISTRY_SURNAME));
-			event.getController().getCriteria().addOrder(event.getController().getFieldName(IAcademyAlias.COURSE_ALUMN_CUSTOMER_REGISTRY_SURNAME));
-		} catch (ManagerBeanException e) {
-			throw new ControllerListenerException(e);
-		}
-	}
-
+	
 	@SuppressWarnings("unchecked")
 	private boolean existingAlumn(CourseAlumn courseAlumn) {
 		try {

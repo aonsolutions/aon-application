@@ -4,7 +4,6 @@ import java.util.Iterator;
 import java.util.List;
 
 import javax.faces.event.ActionEvent;
-import javax.faces.event.PhaseId;
 import javax.faces.event.ValueChangeEvent;
 
 import com.code.aon.commercial.Offer;
@@ -15,7 +14,6 @@ import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ql.Criteria;
-import com.code.aon.ql.Projection;
 import com.code.aon.ql.util.ExpressionException;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.form.PageDataModel;
@@ -199,29 +197,4 @@ public class OfferController extends BasicController {
         manager.setReportKey("offer");
         manager.setOutputFormat(OutputFormat.PDF);
     }
-    
-	public void onSeriesChanged(ValueChangeEvent event) throws ManagerBeanException{
-		if (event.getPhaseId() == PhaseId.ANY_PHASE) {
-			event.setPhaseId(PhaseId.INVOKE_APPLICATION );
-			event.queue();
-		}
-		if (event.getPhaseId() == PhaseId.INVOKE_APPLICATION) {
-			int number = obtainMaxNumber((String)event.getNewValue());
-			if(this.getTo() != null){
-				((Offer)this.getTo()).setNumber(number);	
-			}
-		}
-	}
-
-	private int obtainMaxNumber(String seriesId) throws ManagerBeanException {
-		IManagerBean offerBean = BeanManager.getManagerBean(Offer.class);
-		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(offerBean.getFieldName(ICommercialAlias.OFFER_SERIES), seriesId);
-		Projection projection = Projection.max(offerBean.getFieldName(ICommercialAlias.OFFER_NUMBER));
-		Object value = offerBean.getUniqueResult(projection, criteria);
-		if(value != null){
-			return ((Integer)value).intValue() + 1;
-		}
-		return 1;
-	}
 }

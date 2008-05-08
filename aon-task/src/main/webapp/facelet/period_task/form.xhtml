@@ -199,11 +199,11 @@
 										value="#{projectBundle.aon_customer}" />
 									<aon:div styleClass="aon-nowrap" rendered="#{periodTask.new}">
 										<aon:lookupInputText id="Task_customer_id"
-											lookup="#{customerICELookup}"
+											lookup="#{customerLookup}"
 											valueChangeListener="#{periodTask.customerChange}"
 											value="#{periodTask.to.task.dossier.customer.id}" size="5">
 										</aon:lookupInputText>
-										<aon:lookupButton lookup="#{customerICELookup}"
+										<aon:lookupButton lookup="#{customerLookup}"
 											valueChangeListener="#{periodTask.customerPojoChange}"
 											property="#{periodTask.to.task.dossier.customer}"
 											windowTitle="#{projectBundle.aon_customer}"
@@ -256,7 +256,7 @@
 			</aon:div>
 
 		</aon:form>
-		<aon:lookupButtonPopup lookup="#{customerICELookup}" />
+		<aon:lookupButtonPopup lookup="#{customerLookup}" />
 	</ui:define>
 </ui:composition>
 

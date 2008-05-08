@@ -54,7 +54,7 @@
 						styleClass="aon-dataTable">
 					
 							<aon:column>
-								<aon:rowSelector action="customer_form" actionListener="#{customer.onSelect}" />
+								<aon:rowSelector selectionListener="#{customer.onSelect}" />
 								<f:facet name="header">
 									<aon:outputText value="#{registryBundle.aon_name}" />
 								</f:facet>

@@ -109,6 +109,7 @@ public class CourseMarkController{
 		this.evaluation = evaluation;
 	}
 
+
 	/**
 	 * @return the result
 	 */
@@ -160,8 +161,6 @@ public class CourseMarkController{
     	Criteria courseAlumnCriteria = new Criteria();
     	courseAlumnCriteria.addEqualExpression(courseAlumnBean.getFieldName(IAcademyAlias.COURSE_ALUMN_COURSE_ID), course.getId());
     	courseAlumnCriteria.addEqualExpression(courseAlumnBean.getFieldName(IAcademyAlias.COURSE_ALUMN_STATUS), CourseAlumnStatus.ACTIVE);
-    	courseAlumnCriteria.addOrder(courseAlumnBean.getFieldName(IAcademyAlias.COURSE_ALUMN_CUSTOMER_REGISTRY_SURNAME));
-    	courseAlumnCriteria.addOrder(courseAlumnBean.getFieldName(IAcademyAlias.COURSE_ALUMN_CUSTOMER_REGISTRY_NAME));
     	List<ITransferObject> courseAlumnList = courseAlumnBean.getList(courseAlumnCriteria);
     	Iterator<ITransferObject> courseAlumnIter = courseAlumnList.iterator();
     	Criteria markCriteria;
@@ -174,7 +173,6 @@ public class CourseMarkController{
         	markCriteria = new Criteria();
         	markCriteria.addEqualExpression(markBean.getFieldName(IAcademyAlias.MARK_ALUMN_ID), courseAlumn.getId());
         	markCriteria.addEqualExpression(markBean.getFieldName(IAcademyAlias.MARK_EVALUATION), new Integer(evaluation));
-        	markCriteria.addOrder(markBean.getFieldName(IAcademyAlias.MARK_SUBJECT_ID));
         	markList = markBean.getList(markCriteria);
         	markIter = markList.iterator();
         	markMap = initMarks(courseAlumn);
@@ -184,24 +182,15 @@ public class CourseMarkController{
         	}
         	AlumnMarks alumnMarks = new AlumnMarks();
         	alumnMarks.setCustomer(courseAlumn.getCustomer());
-        	alumnMarks.setValues(obtainOrderedValues(markMap));
+        	alumnMarks.setValues(markMap.values().toArray());
         	alumnMarksList.add(alumnMarks);
     	}
 		setResult(new ListDataModel(alumnMarksList));
     }
 
-    private Object[] obtainOrderedValues(Map<Integer, Mark> markMap) {
-    	Object[] array = new Object[academicSkills.size()];
-    	for(int i = 0; i<academicSkills.size();i++){
-    		CourseAcademicSkill courseAcademicSkill = (CourseAcademicSkill)academicSkills.get(i);
-    		array[i] = markMap.get(courseAcademicSkill.getId());
-    	}
-		return array;
-	}
-
-	private Map<Integer, Mark> initMarks(CourseAlumn alumn){
-    	Map<Integer, Mark> map = new HashMap<Integer, Mark>();
+    private Map<Integer, Mark> initMarks(CourseAlumn alumn){
     	Iterator<ITransferObject> iter = academicSkills.iterator();
+    	Map<Integer, Mark> map = new HashMap<Integer, Mark>();
     	while (iter.hasNext()){
     		Mark mark = new Mark();
     		mark.setAlumn(alumn);
@@ -256,5 +245,9 @@ public class CourseMarkController{
 		public void setDescription(String description) {
 			this.description = description;
 		}
+    	
+		
+    	
     }
+    
 }

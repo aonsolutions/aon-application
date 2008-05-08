@@ -53,7 +53,7 @@
 						<t:div styleClass="#{(sbnode.identifier==treeMenu.menuModel.selectedNodeId) ? 'aon-sidebar-menu-selected': ''}" >			
 							<t:div styleClass="aon-sidebar-menu-branch">
 								<h:commandLink immediate="true" action="#{treeMenu.nodeAction}"
-									actionListener="#{treeMenu.menuIconPressed}" id="menuToggle">
+									actionListener="#{treeMenu.menuIconPressed}">
 									
 									<t:div
 										styleClass="aon-sidebar-menu-branch-icon aon-sidebar-menu-branch-iconMinus"
@@ -69,7 +69,7 @@
 								<h:commandLink styleClass="aon-sidebar-menu-branch-link"
 									immediate="true"
 									action="#{treeMenu.nodeAction}"
-									actionListener="#{treeMenu.menuPressed}" id="menu">
+									actionListener="#{treeMenu.menuPressed}">
 									<h:outputText value="#{sbnode.description}" />
 								</h:commandLink>
 							</t:div>						
@@ -84,13 +84,13 @@
 									immediate="true"
 									action="#{treeMenu.nodeAction}"
 									actionListener="#{treeMenu.optionPressed}"
-									rendered="#{!sbnode.menuItem.external}" id="option">
+									rendered="#{!sbnode.menuItem.external}">
 									<h:outputText value="#{sbnode.description}" />
 								</h:commandLink>
 								<h:outputLink styleClass="aon-sidebar-menu-leaf-link"
 									target="#{sbnode.menuItem.target}"
 									value="#{sbnode.optionValue}"
-									rendered="#{sbnode.menuItem.external}" id="optionExternal">
+									rendered="#{sbnode.menuItem.external}">
 									<h:outputText value="#{sbnode.description}" />
 								</h:outputLink>
 	 						</t:div>

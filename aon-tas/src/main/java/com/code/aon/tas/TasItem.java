@@ -54,11 +54,6 @@ public class TasItem implements ITransferObject, ILookupObject{
 	 * The description code of the tas item
 	 */
 	private String description;
-	
-	/**
-	 * Additional info
-	 */
-	private String addInfo;
 
 	/**
 	 * Void constructor
@@ -171,25 +166,6 @@ public class TasItem implements ITransferObject, ILookupObject{
 	 */
 	public void setDescription(String description) {
 		this.description = description;
-	}
-
-	/**
-	 * Returns the additional info
-	 * 
-	 * @return the additional info
-	 */
-	@Column(name="add_info", length=255)
-	public String getAddInfo() {
-		return addInfo;
-	}
-
-	/**
-	 * Assigns the additional info
-	 * 
-	 * @param addInfo
-	 */
-	public void setAddInfo(String addInfo) {
-		this.addInfo = addInfo;
 	}
 
 	/* (non-Javadoc)

@@ -11,7 +11,7 @@
 	</bean>
 
 	<bean class="com.code.aon.warehouse.InventoryDetail">
-		<alias names="id,inventory_id,item_id,actualQuantity,realQuantity,cost,item_product_name"/>
-		<hibernate names="id,inventory.id,item.id,actualQuantity,realQuantity,cost,item.product.name"/>
+		<alias names="id,inventory_id,item_id,actualQuantity,realQuantity,cost,item_product_code"/>
+		<hibernate names="id,inventory.id,item.id,actualQuantity,realQuantity,cost,item.product.code"/>
 	</bean>
 </dao>

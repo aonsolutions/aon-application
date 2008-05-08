@@ -94,19 +94,33 @@
 							styleClass="aon-form-input-text-label"
 							value="#{accountBundle.aon_account}" />
 						<t:div>
-							<t:inputText id="Account_Lookup_id"
-								valueChangeListener="#{accountEntryReport.addAccountExpression}"
+							<h:outputLabel for="Account_Lookup_id-From"
+								styleClass="aon-form-input-text-label"
+								value="#{accountBundle.aon_date_from}" />
+							<t:inputText id="Account_Lookup_id-From"
+								valueChangeListener="#{accountEntryReport.addAccountFromExpression}"
 								styleClass="aon-form-input-text" forceId="#{true}"
-								onchange="return findBeanLookup(event,'#{facesContext.externalContext.requestContextPath}','accountLookup');"
+								onchange="return findBeanLookupExt(event,'#{facesContext.externalContext.requestContextPath}','accountLookup','Account_Lookup_id-From','Account_id|Account_Lookup_id-From');"
 								size="14" maxlength="12">
 								<f:validateLength minimum="1" maximum="12" />
 							</t:inputText>
-							<h:commandButton id="find_Account_Lookup"
+							<h:commandButton id="find_Account_Lookup-From"
 								styleClass="aon-form-lookup-button" value="" immediate="true"
-								onclick="lookupSearchWindow(this, 'placeList', '#{accountLookup.encodedSearchPagePath}');return false;" />	
-							<t:inputText id="Account_Lookup_description"
-								disabled="true" forceId="#{true}"
-								styleClass="aon-form-input-text-disabled" size="50"/>
+								onclick="lookupSearchWindow(this, 'placeList', '#{accountLookup.encodedSearchPagePath}','Account_id|Account_Lookup_id-From');return false;" />	
+
+							<h:outputLabel for="Account_Lookup_id-To"
+								styleClass="aon-form-input-text-label"
+								value="#{accountBundle.aon_date_to}" />
+							<t:inputText id="Account_Lookup_id-To"
+								valueChangeListener="#{accountEntryReport.addAccountToExpression}"
+								styleClass="aon-form-input-text" forceId="#{true}"
+								onchange="return findBeanLookupExt(event,'#{facesContext.externalContext.requestContextPath}','accountLookup','Account_Lookup_id-To','Account_id|Account_Lookup_id-To');"
+								size="14" maxlength="12">
+								<f:validateLength minimum="1" maximum="12" />
+							</t:inputText>
+							<h:commandButton id="find_Account_Lookup-To"
+								styleClass="aon-form-lookup-button" value="" immediate="true"
+								onclick="lookupSearchWindow(this, 'placeList', '#{accountLookup.encodedSearchPagePath}','Account_id|Account_Lookup_id-To');return false;" />	
 						</t:div>
 						
 					</h:panelGrid>

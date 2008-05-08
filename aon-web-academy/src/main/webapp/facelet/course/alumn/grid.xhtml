@@ -161,10 +161,8 @@
 								<f:facet name="header">
 									<h:outputText value="#{appBundle.course_alumn}" />
 								</f:facet>
-								<t:div rendered="#{to!=courseAlumn.to}">
-									<h:outputText value="#{to.customer.registry.surname}, " rendered="#{to.customer.registry.surname != null and to.customer.registry.surname != ''}"/>								
-									<h:outputText value="#{to.customer.registry.name}" />
-								</t:div>
+								<t:outputText value="#{to.customer.registry.name} #{to.customer.registry.surname}"
+									rendered="#{to!=courseAlumn.to}" />
 								<t:div rendered="#{to==courseAlumn.to}">
 									<t:inputText id="Customer_Lookup_id-Edit" forceId="#{true}"
 										styleClass="aon-form-input-text" size="5" 

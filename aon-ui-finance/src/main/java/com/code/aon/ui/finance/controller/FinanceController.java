@@ -91,22 +91,6 @@ public class FinanceController extends BasicController {
 		}
 	}
 	
-	@SuppressWarnings({"unused","unchecked"})
-	public void checkAll(ActionEvent event) throws ManagerBeanException{
-		Iterator iter = this.getManagerBean().getList(this.getCriteria()).iterator();
-		while(iter.hasNext()){
-			Finance finance = (Finance)iter.next();
-			if (!checks.contains( finance )) {
-				checks.add( finance );
-			}
-		}
-	}
-
-	@SuppressWarnings("unused")
-	public void checkNone(ActionEvent event) {
-		clearCheckedFinances();
-	}
-
 	/**
 	 * Determines if the current row is selected or not
 	 * 

@@ -18,7 +18,6 @@ import com.code.aon.config.WorkGroup;
 import com.code.aon.config.dao.IConfigAlias;
 import com.code.aon.config.enumeration.WorkGroupStatus;
 import com.code.aon.ql.Criteria;
-import com.code.aon.ui.config.util.UserUtils;
 
 public class ConfigCollectionsController {
 	
@@ -81,17 +80,5 @@ public class ConfigCollectionsController {
 			}
 		}
 		return workGroupStatuses;
-	}
-	
-	@SuppressWarnings("unchecked")
-	public List<SelectItem> getCurrentUserScopes() throws ManagerBeanException{
-		List<SelectItem> currentUserScopes = new LinkedList<SelectItem>();
-		Iterator iter = UserUtils.getCurrentUserScopes().iterator();
-		while(iter.hasNext()){
-			Scope scope = (Scope)iter.next();
-			SelectItem item = new SelectItem(scope.getId(), scope.getDescription());
-			currentUserScopes.add(item);
-		}
-		return currentUserScopes;
 	}
 }

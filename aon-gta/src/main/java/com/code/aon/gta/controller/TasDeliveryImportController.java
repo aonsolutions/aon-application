@@ -15,9 +15,6 @@ import com.code.aon.commercial.dao.ICommercialAlias;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
-import com.code.aon.config.Scope;
-import com.code.aon.customer.Customer;
-import com.code.aon.customer.dao.ICustomerAlias;
 import com.code.aon.gta.util.DeliveryWrapper;
 import com.code.aon.gta.util.TasDeliveryImport;
 import com.code.aon.ql.Criteria;
@@ -26,7 +23,6 @@ import com.code.aon.registry.RegistryAddress;
 import com.code.aon.registry.dao.IRegistryAlias;
 import com.code.aon.tas.SupportOrder;
 import com.code.aon.tas.dao.ITASAlias;
-import com.code.aon.ui.config.util.UserUtils;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.util.AonUtil;
 import com.code.aon.ui.warehouse.controller.DeliveryController;
@@ -56,7 +52,6 @@ public class TasDeliveryImportController extends BasicController {
 	 * 
 	 * @throws ManagerBeanException the manager bean exception
 	 */
-	@SuppressWarnings("unchecked")
 	public void importDelivery(ActionEvent event) throws ManagerBeanException{
 		DeliveryController deliveryController = (DeliveryController)AonUtil.getController(DELIVERY_CONTROLLER_NAME);
 		if(deliveryController.getSupportOrderId() == null){
@@ -106,7 +101,6 @@ public class TasDeliveryImportController extends BasicController {
      * 
      * @throws ManagerBeanException the manager bean exception
      */
-	@SuppressWarnings("unchecked")
     public String getSupportOrderData() throws ManagerBeanException{
         DeliveryController deliveryController = (DeliveryController)AonUtil.getController(DELIVERY_CONTROLLER_NAME);
         IManagerBean supportOrderBean = BeanManager.getManagerBean(SupportOrder.class);
@@ -129,7 +123,6 @@ public class TasDeliveryImportController extends BasicController {
      * 
      * @throws ManagerBeanException the manager bean exception
      */
-	@SuppressWarnings("unchecked")
     public String getOfferData() throws ManagerBeanException{
         DeliveryController deliveryController = (DeliveryController)AonUtil.getController(DELIVERY_CONTROLLER_NAME);
         IManagerBean offerBean = BeanManager.getManagerBean(Offer.class);
@@ -152,7 +145,6 @@ public class TasDeliveryImportController extends BasicController {
 	 * 
 	 * @return the registry address
 	 */
-	@SuppressWarnings("unchecked")
 	private RegistryAddress obtainAddress(Registry registry) {
 		try {
 			IManagerBean registryAddressBean = BeanManager.getManagerBean(RegistryAddress.class);
@@ -164,49 +156,6 @@ public class TasDeliveryImportController extends BasicController {
 			}
 		} catch (ManagerBeanException e) {
 			LOGGER.log(Level.SEVERE,"Error obtaining RegistryAddress for registry with id: " + registry.getId(), e);
-		}
-		return null;
-	}
-	
-	@SuppressWarnings("unchecked")
-	public boolean isScopeNeeded() throws ManagerBeanException{
-		DeliveryController deliveryController = (DeliveryController)AonUtil.getController(DELIVERY_CONTROLLER_NAME);
-		if(deliveryController.getSupportOrderId() != null){
-			IManagerBean supportOrderBean = BeanManager.getManagerBean(SupportOrder.class);
-			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(supportOrderBean.getFieldName(ITASAlias.SUPPORT_ORDER_ID), deliveryController.getSupportOrderId());
-			Iterator iter = supportOrderBean.getList(criteria,0,1).iterator();
-			if(iter.hasNext()){
-				SupportOrder supportOrder = (SupportOrder)iter.next();
-				Customer customer = obtainCustomer(supportOrder.getTarget().getId());
-				if(customer != null){
-					deliveryController.setScopeId(customer.getScope().getId());
-					return false;
-				}else{
-					return true;
-				}
-			}
-		}else{
-			return false;
-		}
-		List<Scope> scopes = UserUtils.getCurrentUserScopes();
-		if( scopes.size() > 1){
-			return true;
-		}else if(scopes.size() == 1){
-			deliveryController.setScopeId(scopes.get(0).getId());
-			return false;
-		}
-		return false;
-	}
-
-	@SuppressWarnings("unchecked")
-	private Customer obtainCustomer(Integer id) throws ManagerBeanException {
-		IManagerBean customerBean = BeanManager.getManagerBean(Customer.class);
-		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(customerBean.getFieldName(ICustomerAlias.CUSTOMER_ID), id);
-		Iterator iter = customerBean.getList(criteria,0,1).iterator();
-		if(iter.hasNext()){
-			return (Customer)iter.next();
 		}
 		return null;
 	}

@@ -8,15 +8,20 @@ import java.util.logging.Logger;
 
 import javax.faces.context.FacesContext;
 
+import com.code.aon.common.BeanManager;
+import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.finance.Finance;
 import com.code.aon.finance.FinanceBatch;
 import com.code.aon.finance.FinanceBatchDetail;
 import com.code.aon.finance.dao.IFinanceAlias;
 import com.code.aon.finance.enumeration.FinanceBatchStatus;
+import com.code.aon.finance.enumeration.FinanceStatus;
+import com.code.aon.finance.enumeration.FinanceTrackingType;
+import com.code.aon.finance.invoicing.FinanceTrackingWriter;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.finance.controller.FBatchController;
 import com.code.aon.ui.finance.controller.FBatchDetailController;
-import com.code.aon.ui.finance.controller.FinanceController;
 import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
@@ -26,7 +31,6 @@ public class FBatchControllerListener extends ControllerAdapter {
 	
 	private static final Logger LOGGER = Logger.getLogger(FBatchControllerListener.class.getName());
 	
-	private static final String FINANCE_CONTROLLER = "finance"; 
 	private static final String FINANCE_BATCH_DETAIL_CONTROLLER = "fBatchDetail"; 
 	
 	@Override
@@ -76,23 +80,27 @@ public class FBatchControllerListener extends ControllerAdapter {
 		FBatchController fBatchController = (FBatchController)event.getController();
 		FinanceBatch fBatch = (FinanceBatch)fBatchController.getTo();
 		fBatchController.loadAvailableFinances(fBatch.isPayment());
-		fBatchController.setCsbOutput(null);
-
-        FBatchDetailController fBatchDetailController = (FBatchDetailController)AonUtil.getController(FINANCE_BATCH_DETAIL_CONTROLLER);
-        fBatchDetailController.clearCheckedFinanceBatchDetails();
-        FinanceController financeController = (FinanceController)AonUtil.getController(FINANCE_CONTROLLER);
-        financeController.clearCheckedFinances();
-    }
+		fBatchController.setFile(null);
+	}
 
     @Override
-    @SuppressWarnings("unchecked")
 	public void beforeBeanRemoved(ControllerEvent event) throws ControllerListenerException {
         FBatchDetailController fBatchDetailController = (FBatchDetailController)AonUtil.getController(FINANCE_BATCH_DETAIL_CONTROLLER);
         Iterator iter = fBatchDetailController.getWrappedList().iterator();
-		while (iter.hasNext()) {
-			FinanceBatchDetail fBatchDetail = (FinanceBatchDetail)iter.next();
-			((FBatchController)event.getController()).updateRelatedInfo(fBatchDetail);
-        }
+		try {
+			IManagerBean financeBean = BeanManager.getManagerBean(Finance.class);
+			while (iter.hasNext()) {
+				FinanceBatchDetail fBatchDetail = (FinanceBatchDetail)iter.next();
+                FinanceStatus financeStatus = (fBatchDetailController.wasFinanceReturned(fBatchDetail.getFinance())) ? FinanceStatus.RETURNED: FinanceStatus.PENDING;
+                fBatchDetail.getFinance().setFinanceStatus(financeStatus);
+				financeBean.update(fBatchDetail.getFinance());
+
+                FinanceTrackingWriter.removeLastTrackingByType(fBatchDetail.getFinance(), FinanceTrackingType.BATCHED);
+
+            }
+		} catch (ManagerBeanException e) {
+			LOGGER.log(Level.SEVERE, "Error updating finances in FinanceBatch with id=" + ((FinanceBatch)event.getController().getTo()).getId(), e);
+		}
 	}
 
 }

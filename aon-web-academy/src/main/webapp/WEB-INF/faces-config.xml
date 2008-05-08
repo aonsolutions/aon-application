@@ -236,13 +236,6 @@
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
 	<managed-bean>
-		<managed-bean-name>purchaseCollections</managed-bean-name>
-		<managed-bean-class>
-			com.code.aon.ui.purchase.controller.PurchaseCollectionsController
-		</managed-bean-class>
-		<managed-bean-scope>session</managed-bean-scope>
-	</managed-bean>
-	<managed-bean>
 		<managed-bean-name>productCollections</managed-bean-name>
 		<managed-bean-class>com.code.aon.ui.product.controller.ProductCollectionsController</managed-bean-class>
 		<managed-bean-scope>request</managed-bean-scope>
@@ -368,6 +361,116 @@
     
 
 	<!-- ************** EXTERNAL LOOKUPS (RELOCATE) ****************** -->
+	<!-- ************* CUSTOMERLOOKUP ***************** -->
+	<managed-bean>
+		<managed-bean-name>customerLookup</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.customer.controller.CustomerLookupController
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>foreignPojo</property-name>
+			<value>com.code.aon.customer.Customer</value>
+		</managed-property>
+		<managed-property>
+			<property-name>aliasPrefix</property-name>
+			<value>Customer</value>
+		</managed-property>
+		<managed-property>
+			<property-name>foreignJoinProperties</property-name>
+			<list-entries>
+				<value>id</value>
+			</list-entries>
+		</managed-property>
+		<managed-property>
+			<property-name>foreignDisplayProperties</property-name>
+			<list-entries>
+				<value>id</value>
+				<value>registry.document</value>
+			</list-entries>
+		</managed-property>
+		<managed-property>
+			<description>Needed for Search Select Window</description>
+			<property-name>searchPagePath</property-name>
+			<value>/facelet/sw/customerSearch.faces</value>
+		</managed-property>
+		<managed-property>
+			<property-name>listenerClasses</property-name>
+			<list-entries>
+				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+				<value>#{customerScopeListener}</value>
+			</list-entries>
+		</managed-property>
+	</managed-bean>
+	
+	<!-- ************* SUPPLIER LOOKUP ***************** -->
+	<managed-bean>
+		<managed-bean-name>supplierLookup</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.purchase.controller.SupplierLookupController
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>foreignPojo</property-name>
+			<value>com.code.aon.purchase.Supplier</value>
+		</managed-property>
+		<managed-property>
+			<property-name>aliasPrefix</property-name>
+			<value>Supplier_Lookup</value>
+		</managed-property>
+		<managed-property>
+			<property-name>foreignJoinProperties</property-name>
+			<list-entries>
+				<value>id</value>
+			</list-entries>
+		</managed-property>
+		<managed-property>
+			<description>Needed for Search Select Window</description>
+			<property-name>searchPagePath</property-name>
+			<value>/facelet/sw/supplierSearch.faces</value>
+		</managed-property>
+	</managed-bean>
+	
+	<!-- ************* CREDITOR LOOKUP ***************** -->
+	<managed-bean>
+		<managed-bean-name>creditorLookup</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.finance.controller.CreditorLookupController
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>foreignPojo</property-name>
+			<value>com.code.aon.finance.Creditor</value>
+		</managed-property>
+		<managed-property>
+			<property-name>aliasPrefix</property-name>
+			<value>Creditor_Lookup</value>
+		</managed-property>
+		<managed-property>
+			<property-name>foreignJoinProperties</property-name>
+			<list-entries>
+				<value>id</value>
+			</list-entries>
+		</managed-property>
+		<managed-property>
+			<description>Needed for Search Select Window</description>
+			<property-name>searchPagePath</property-name>
+			<value>/facelet/sw/creditorSearch.faces</value>
+		</managed-property>
+	</managed-bean>
+	
 	<!-- ************* ITEMLOOKUP ***************** -->
 	<managed-bean>
 		<managed-bean-name>itemLookup</managed-bean-name>
@@ -1882,6 +1985,30 @@
 		<navigation-case>
 			<from-outcome>rrelationship</from-outcome>
 			<to-view-id>/facelet/customer/rrelationship/grid.faces</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>customer_sw</from-outcome>
+			<to-view-id>/facelet/sw/customer.faces</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>customer_sw_search</from-outcome>
+			<to-view-id>/facelet/sw/customerSearch.faces</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>supplier_sw</from-outcome>
+			<to-view-id>/facelet/sw/supplier.faces</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>supplier_sw_search</from-outcome>
+			<to-view-id>/facelet/sw/supplierSearch.faces</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>creditor_sw</from-outcome>
+			<to-view-id>/facelet/sw/creditor.faces</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>creditor_sw_search</from-outcome>
+			<to-view-id>/facelet/sw/creditorSearch.faces</to-view-id>
 		</navigation-case>
 		<navigation-case>
 			<from-outcome>absence</from-outcome>

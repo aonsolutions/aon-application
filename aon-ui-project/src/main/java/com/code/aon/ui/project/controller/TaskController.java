@@ -8,7 +8,6 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
 import javax.faces.event.ValueChangeEvent;
 import javax.faces.model.DataModel;
@@ -57,7 +56,6 @@ public class TaskController extends BasicController implements ITaskController {
 
     private ArrayList<Task> checks = new ArrayList<Task>();
     
-    private boolean disableOnSelect;    
 
     public Expression getMyStatusExpression() {
         return myStatusExpression;
@@ -126,19 +124,8 @@ public class TaskController extends BasicController implements ITaskController {
         if(event.getNewValue() != null){
             setRowChecked(((Boolean)event.getNewValue()).booleanValue());
         }
-        this.disableOnSelect = true;
     }
 
-    @Override
-    public void onSelect(ActionEvent event){
-    	if(!this.disableOnSelect){
-        	super.onSelect( event );
-        	FacesContext context = FacesContext.getCurrentInstance();
-        	context.getApplication().getNavigationHandler().handleNavigation(context, null, "task_form");
-    	}
-    	this.disableOnSelect = false;
-    }
-    
 	@SuppressWarnings("unused")
     public void onSearch(MenuEvent event) {
     	obtainTaskInbox();
@@ -338,26 +325,17 @@ public class TaskController extends BasicController implements ITaskController {
     }
 
     public void customerChange(ValueChangeEvent event) {
-        if ( event.getNewValue() != null && !"".equals(event.getNewValue())) {
+        if (event.getNewValue() != null && !"".equals(event.getNewValue())) {
             loadDossiers(new Integer(event.getNewValue().toString()));
         } else {
             dossiers = new LinkedList<SelectItem>();
         }
+        activities = new LinkedList<SelectItem>();
     }
 
-    public void customerPojoChange(ValueChangeEvent event) {
-        if ( event.getNewValue() != null ) {
-        	Customer customer = (Customer) event.getNewValue();
-            loadDossiers( customer.getId() );
-        } else {
-            dossiers = new LinkedList<SelectItem>();
-        }
-    }
-    
     @SuppressWarnings("unchecked")
     public void loadDossiers(Integer customerId) {
         dossiers = new LinkedList<SelectItem>();
-        activities = new LinkedList<SelectItem>();
         try {
             IManagerBean managerBean = BeanManager.getManagerBean(Dossier.class);
             Criteria criteria = new Criteria();

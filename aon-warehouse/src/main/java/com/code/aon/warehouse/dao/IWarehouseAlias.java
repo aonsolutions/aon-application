@@ -4,7 +4,6 @@ import com.code.aon.common.dao.DAOConstants;
 import com.code.aon.common.dao.DAOConstantsEntry;
 import com.code.aon.warehouse.Delivery;
 import com.code.aon.warehouse.DeliveryDetail;
-import com.code.aon.warehouse.DeliveryDetailLabour;
 import com.code.aon.warehouse.Income;
 import com.code.aon.warehouse.IncomeDetail;
 import com.code.aon.warehouse.Inventory;
@@ -144,37 +143,6 @@ public interface IWarehouseAlias {
 	* Hibernate value: DeliveryDetail.item.product.type
 	*/
 	String  DELIVERY_DETAIL_ITEM_PRODUCT_TYPE = DELIVERY_DETAIL_ENTRY.getAliasNames()[10];
-
-
-
-	/** 
-	* DAOConstantsEntry for DeliveryDetailLabour entity.
-	*/ 
-	DAOConstantsEntry DELIVERY_DETAIL_LABOUR_ENTRY = DAOConstants.getDAOConstant(DeliveryDetailLabour.class);
-
-	/** 
-	* Alias value: DeliveryDetailLabour_deliveryDetail_id
-	* Hibernate value: DeliveryDetailLabour.deliveryDetail.id
-	*/
-	String  DELIVERY_DETAIL_LABOUR_DELIVERY_DETAIL_ID = DELIVERY_DETAIL_LABOUR_ENTRY.getAliasNames()[0];
-
-	/** 
-	* Alias value: DeliveryDetailLabour_employee_id
-	* Hibernate value: DeliveryDetailLabour.employee.id
-	*/
-	String  DELIVERY_DETAIL_LABOUR_EMPLOYEE_ID = DELIVERY_DETAIL_LABOUR_ENTRY.getAliasNames()[1];
-
-	/** 
-	* Alias value: DeliveryDetailLabour_id
-	* Hibernate value: DeliveryDetailLabour.id
-	*/
-	String  DELIVERY_DETAIL_LABOUR_ID = DELIVERY_DETAIL_LABOUR_ENTRY.getAliasNames()[2];
-
-	/** 
-	* Alias value: DeliveryDetailLabour_quantity
-	* Hibernate value: DeliveryDetailLabour.quantity
-	*/
-	String  DELIVERY_DETAIL_LABOUR_QUANTITY = DELIVERY_DETAIL_LABOUR_ENTRY.getAliasNames()[3];
 
 
 
@@ -373,10 +341,10 @@ public interface IWarehouseAlias {
 	String  INVENTORY_DETAIL_COST = INVENTORY_DETAIL_ENTRY.getAliasNames()[5];
 
 	/** 
-	* Alias value: InventoryDetail_item_product_name
-	* Hibernate value: InventoryDetail.item.product.name
+	* Alias value: InventoryDetail_item_product_code
+	* Hibernate value: InventoryDetail.item.product.code
 	*/
-	String  INVENTORY_DETAIL_ITEM_PRODUCT_NAME = INVENTORY_DETAIL_ENTRY.getAliasNames()[6];
+	String  INVENTORY_DETAIL_ITEM_PRODUCT_CODE = INVENTORY_DETAIL_ENTRY.getAliasNames()[6];
 
 
 

@@ -67,8 +67,8 @@
 								<f:facet name="header">
 									<aon:outputText value="&#160;"/>
 								</f:facet>
-								<aon:rowSelector
-									actionListener="#{task.onSelect}" />
+								<aon:rowSelector 
+									selectionListener="#{task.onSelect}" />
 								<aon:selectBooleanCheckbox id="Row_checked"
 									value="#{task.rowChecked}" partialSubmit="true"
 									valueChangeListener="#{task.rowSelected}"

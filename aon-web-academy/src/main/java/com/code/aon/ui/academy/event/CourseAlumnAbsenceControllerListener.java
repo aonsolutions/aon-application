@@ -23,7 +23,6 @@ public class CourseAlumnAbsenceControllerListener extends ControllerAdapter {
 			absenceController.setCourse(getCourse());
 			absenceController.onSearchAbsences(null);
 		}catch (ManagerBeanException e) {
-			throw new ControllerListenerException(e);
 		}
 	}
 
@@ -31,11 +30,8 @@ public class CourseAlumnAbsenceControllerListener extends ControllerAdapter {
 	public void beforeModelInitialized(ControllerEvent event) throws ControllerListenerException {
 		try {
 			Criteria criteria = event.getController().getCriteria();
-			criteria.addEqualExpression(event.getController().getFieldName(IAcademyAlias.COURSE_ALUMN_STATUS), CourseAlumnStatus.ACTIVE);
-			criteria.addOrder(event.getController().getFieldName(IAcademyAlias.COURSE_ALUMN_CUSTOMER_REGISTRY_SURNAME));
-			criteria.addOrder(event.getController().getFieldName(IAcademyAlias.COURSE_ALUMN_CUSTOMER_REGISTRY_NAME));
+			criteria.addEqualExpression(event.getController().getManagerBean().getFieldName(IAcademyAlias.COURSE_ALUMN_STATUS), CourseAlumnStatus.ACTIVE);
 		} catch (ManagerBeanException e) {
-			throw new ControllerListenerException(e);
 		}
 		
 	}

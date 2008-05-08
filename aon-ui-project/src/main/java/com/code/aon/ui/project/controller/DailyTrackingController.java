@@ -467,10 +467,7 @@ public class DailyTrackingController extends BasicController {
 
 	public String onReportByCustomer() throws ReportException, DAOException, ManagerBeanException{
     	IManagerBean dailyTrackingBean = BeanManager.getManagerBean(DailyTracking.class);
-    	Criteria criteria = createCriteria();
-    	criteria.addOrder(dailyTrackingBean.getFieldName(IProjectAlias.DAILY_TRACKING_CUSTOMER_REGISTRY_SURNAME));
-    	criteria.addOrder(dailyTrackingBean.getFieldName(IProjectAlias.DAILY_TRACKING_CUSTOMER_REGISTRY_NAME));
-    	this.setCriteria(criteria);
+    	createCriteria().addOrder(dailyTrackingBean.getFieldName(IProjectAlias.DAILY_TRACKING_CUSTOMER_ID));
     	ReportManager manager = (ReportManager)AonUtil.getRegisteredBean("report");
         manager.setReportKey("dailyTrackingByCustomer");
         manager.setOutputFormat((getOutputFormat()== null?OutputFormat.PDF:getOutputFormat()));
@@ -480,9 +477,7 @@ public class DailyTrackingController extends BasicController {
     
 	public String onReportByUser() throws ReportException, DAOException, ManagerBeanException{
     	IManagerBean dailyTrackingBean = BeanManager.getManagerBean(DailyTracking.class);
-    	Criteria criteria = createCriteria();
-    	criteria.addOrder(dailyTrackingBean.getFieldName(IProjectAlias.DAILY_TRACKING_USER_ID));
-    	this.setCriteria(criteria);
+    	createCriteria().addOrder(dailyTrackingBean.getFieldName(IProjectAlias.DAILY_TRACKING_USER_ID));
     	ReportManager manager = (ReportManager)AonUtil.getRegisteredBean("report");
         manager.setReportKey("dailyTrackingByUser");
         manager.setOutputFormat((getOutputFormat()== null?OutputFormat.PDF:getOutputFormat()));

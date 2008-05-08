@@ -73,15 +73,6 @@
 					<f:selectItem itemLabel="-" itemValue="" itemDisabled="true"/>
 					<f:selectItems value="#{purchaseCollections.supplierSegments}" />
 				</h:selectOneMenu>
-				
-				<h:outputLabel for="Supplier_scope_id"
-					styleClass="aon-form-input-text-label"
-					value="#{purchaseBundle.supplier_scope}" />
-				<h:selectOneMenu id="Supplier_scope_id"
-					styleClass="aon-form-selectOneMenu-field"
-					value="#{supplierAlias.to.scope.id}">
-					<f:selectItems value="#{configCollections.scopes}" />
-				</h:selectOneMenu>
 
 				<h:outputLabel for="Supplier_status"
 					styleClass="aon-form-input-text-label"

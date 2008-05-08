@@ -7,7 +7,7 @@
 
 	<!-- ************ CUSTOMER LOOKUP ************** -->
 	<managed-bean>
-		<managed-bean-name>customerICELookup</managed-bean-name>
+		<managed-bean-name>customerLookup</managed-bean-name>
 		<managed-bean-class>com.code.aon.faces.controller.ICELookupBean</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>

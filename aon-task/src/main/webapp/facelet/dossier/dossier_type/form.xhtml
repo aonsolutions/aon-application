@@ -10,7 +10,7 @@
 
 	<ui:define name="content">
 
-		<aon:form id="dossierTypeForm">
+		<aon:form id="ICEdossierTypeForm">
 
 			<aon:panelGrid columns="2" dir="true" styleClass="aon-title-toolbar"
 				cellpadding="0" cellspacing="0" columnClasses="aon-content-title,aon-content-toolbar">
@@ -23,38 +23,38 @@
 				<aon:div styleClass="aon-content-toolbar-internal">
 					<aon:div styleClass="aon-content-toolbar-item-group">
 						<aon:confirmButton id="save"
-							value="#{bundle.aon_save}" rendered="#{dossierType.to!=null or dossierType.new}"
+							value="#{bundle.aon_save}" rendered="#{ICEdossierType.to!=null or ICEdossierType.new}"
 							styleClass="aon-content-toolbar-item aon-icon-accept"
 							confirmTitle="Confirmation Dialog" confirmMessage="#{bundle.aon_save_confirm}"
-							confirmActionListener="#{dossierType.accept}"
+							confirmActionListener="#{ICEdossierType.accept}"
 							onmouseout="this.className='aon-content-toolbar-item aon-icon-accept'"
 							onmouseover="this.className='aon-content-toolbar-item aon-icon-accept aon-content-toolbar-item-hover'"
 							accesskey="#{bundle.aon_key_save}"/>
 						<aon:confirmButton id="cancel"
-							value="#{bundle.aon_cancel}" rendered="#{dossierType.to!=null or dossierType.new}"
+							value="#{bundle.aon_cancel}" rendered="#{ICEdossierType.to!=null or ICEdossierType.new}"
 							styleClass="aon-content-toolbar-item aon-icon-cancel" immediate="#{true}"
 							confirmTitle="Confirmation Dialog" confirmMessage="#{bundle.aon_cancel_confirm}"
-							confirmActionListener="#{dossierType.onCancel}" confirmAction="dossier_type_list"
+							confirmActionListener="#{ICEdossierType.onCancel}" confirmAction="dossier_type_list"
 							onmouseout="this.className='aon-content-toolbar-item aon-icon-cancel'"
 							onmouseover="this.className='aon-content-toolbar-item aon-icon-cancel aon-content-toolbar-item-hover'"
 							accesskey="#{bundle.aon_key_cancel}"/>
 						<aon:confirmButton id="remove"
-							value="#{bundle.aon_remove}" rendered="#{!dossierType.new}"
+							value="#{bundle.aon_remove}" rendered="#{!ICEdossierType.new}"
 							styleClass="aon-content-toolbar-item aon-icon-delete" immediate="true"
 							confirmTitle="Confirmation Dialog" confirmMessage="#{bundle.aon_remove_confirm}"
-							confirmActionListener="#{dossierType.onRemove}" confirmAction="dossier_type_list"
+							confirmActionListener="#{ICEdossierType.onRemove}" confirmAction="dossier_type_list"
 							onmouseout="this.className='aon-content-toolbar-item aon-icon-delete'"
 							onmouseover="this.className='aon-content-toolbar-item aon-icon-delete aon-content-toolbar-item-hover'"
 							accesskey="#{bundle.aon_key_remove}"/>
 						<aon:commandButton id="search"
 							value="#{bundle.aon_search}" immediate="true"
-							action="dossier_type_search" actionListener="#{dossierType.onEditSearch}"
+							action="dossier_type_search" actionListener="#{ICEdossierType.onEditSearch}"
 							styleClass="aon-content-toolbar-item aon-icon-search"
 							onmouseout="this.className='aon-content-toolbar-item aon-icon-search'"
 							onmouseover="this.className='aon-content-toolbar-item aon-icon-search aon-content-toolbar-item-hover'"
 							accesskey="#{bundle.aon_key_search}"/>
 						<aon:commandButton id="reset" value="#{bundle.aon_reset}"
-							actionListener="#{dossierType.onReset}" rendered="#{!dossierType.new}"
+							actionListener="#{ICEdossierType.onReset}" rendered="#{!ICEdossierType.new}"
 							styleClass="aon-content-toolbar-item aon-icon-reset"
 							onmouseout="this.className='aon-content-toolbar-item aon-icon-reset'"
 							onmouseover="this.className='aon-content-toolbar-item aon-icon-reset aon-content-toolbar-item-hover'"
@@ -69,7 +69,7 @@
 					<aon:div styleClass="aon-content-subtitle" id="aon-content-subtitle">
 						<aon:div styleClass="aon-content-subtitle-internal">
 							<aon:outputText
-								value="#{dossierType.new?(bundle.aon_reset):(bundle.aon_editing)}" />
+								value="#{ICEdossierType.new?(bundle.aon_reset):(bundle.aon_editing)}" />
 						</aon:div>
 					</aon:div>			
 
@@ -83,14 +83,14 @@
 							<aon:inputText id="DossierType_description"
 								styleClass="aon-inputText"
 								required="true" size="60" maxlength="45"
-								value="#{dossierType.to.description}" />
+								value="#{ICEdossierType.to.description}" />
 
 						</aon:panelGrid>
 
 
-					<aon:div styleClass="aon-form-group" rendered="#{!dossierType.new}">
+					<aon:div styleClass="aon-form-group" rendered="#{!ICEdossierType.new}">
 						<aon:div styleClass="aon-form-group-title">
-							<aon:outputLabel for="dossierTypeDataList" value="#{projectBundle.activity_activity_types}" />
+							<aon:outputLabel for="ICEdossierTypeDataList" value="#{projectBundle.activity_activity_types}" />
 						</aon:div>
 
 						<aon:div styleClass="aon-form-group-body">
@@ -104,7 +104,7 @@
 								<aon:column>
 									<aon:rowSelector multiple="false"
 										toggleOnClick="#{activityType.to == null}"
-										actionListener="#{activityType.onSelect}" />
+										selectionListener="#{activityType.onSelect}" />
 									<f:facet name="header">
 										<aon:outputText value="&#160;" />
 									</f:facet>

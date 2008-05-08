@@ -6,12 +6,10 @@ import java.util.List;
 import java.util.ResourceBundle;
 
 import javax.faces.context.FacesContext;
-import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 import javax.faces.model.DataModel;
 import javax.faces.model.ListDataModel;
 
-import com.code.aon.common.AonException;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
@@ -87,27 +85,22 @@ public class FinanceFractionController {
 	
 	@SuppressWarnings({"unused","unchecked"})
 	public void onAcceptFractions(ActionEvent event) throws ManagerBeanException{
-		try{
-			IManagerBean financeBean = BeanManager.getManagerBean(Finance.class);
-			List list = (List)getFractionModel().getWrappedData();
-			Finance finance = (Finance) list.get(0);
-			targetFinance.setAmount(finance.getAmount());
-			targetFinance.setBank((targetFinance.getBank().getId() == null?null:targetFinance.getBank()));
-			targetFinance.setPayMethod((targetFinance.getPayMethod().getId() == null?null:targetFinance.getPayMethod()));
-			financeBean.update(targetFinance);
-			ResourceBundle bundle = ResourceBundle.getBundle(AonUtil.getConfigurationController().getApplicationBundles().get("financeBundle"),FacesContext.getCurrentInstance().getViewRoot().getLocale());
-			FinanceTrackingWriter.addFinanceTracking(targetFinance, FinanceTrackingType.FRACTIONED, bundle.getString("aon_finance_tracking_fractioned"));
-			for(int i = 1;i<list.size();i++){
-				finance = (Finance)list.get(i);
-				finance.setBank((finance.getBank().getId() == null?null:finance.getBank()));
-				finance.setPayMethod((finance.getPayMethod().getId() == null?null:finance.getPayMethod()));
-				financeBean.insert(finance);
-			}
-			initializeFinanceControllerList(((List)getFractionModel().getWrappedData()));
-		}catch (AonException e) {
-			AonUtil.addErrorMessage(e.getMessage());
-			throw new AbortProcessingException(e);
+		IManagerBean financeBean = BeanManager.getManagerBean(Finance.class);
+		List list = (List)getFractionModel().getWrappedData();
+		Finance finance = (Finance) list.get(0);
+		targetFinance.setAmount(finance.getAmount());
+		targetFinance.setBank((targetFinance.getBank().getId() == null?null:targetFinance.getBank()));
+		targetFinance.setPayMethod((targetFinance.getPayMethod().getId() == null?null:targetFinance.getPayMethod()));
+		financeBean.update(targetFinance);
+		ResourceBundle bundle = ResourceBundle.getBundle(AonUtil.getConfigurationController().getApplicationBundles().get("financeBundle"),FacesContext.getCurrentInstance().getViewRoot().getLocale());
+		FinanceTrackingWriter.addFinanceTracking(targetFinance, FinanceTrackingType.FRACTIONED, bundle.getString("aon_finance_tracking_fractioned"));
+		for(int i = 1;i<list.size();i++){
+			finance = (Finance)list.get(i);
+			finance.setBank((finance.getBank().getId() == null?null:finance.getBank()));
+			finance.setPayMethod((finance.getPayMethod().getId() == null?null:finance.getPayMethod()));
+			financeBean.insert(finance);
 		}
+		initializeFinanceControllerList(((List)getFractionModel().getWrappedData()));
 	}
 	
 	private void initializeController() {
@@ -157,8 +150,6 @@ public class FinanceFractionController {
 	@SuppressWarnings({"unused","unchecked"})
 	public void onRemoveFraction(ActionEvent event){
 		((LinkedList)getFractionModel().getWrappedData()).remove(this.currentFinance);
-		this.currentFinance = null;
-		this.setNew(false);
 	}
 
 	@SuppressWarnings("unused")

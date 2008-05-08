@@ -72,9 +72,8 @@
 						<t:div styleClass="aon-form-note-internal">
 							<t:panelGrid columns="1" width="95%">
 								<t:div styleClass="aon-text-outstanding">
-									<h:outputText value="#{to.customer.registry.surname}, " rendered="#{to.customer.registry.surname != null and to.customer.registry.surname != ''}"/>								
-									<h:outputText value="#{to.customer.registry.name}" />
-										
+									<t:outputText rendered="#{courseAlumnAbsence.to != null}" style="font-style:italic;padding-right:1em;font-weight:normal;"
+										value="#{courseAlumnAbsence.to.customer.registry.name} #{courseAlumnAbsence.to.customer.registry.surname}" />
 									<h:outputText value="#{appBundle.mark_evaluation}: " />
 									<t:outputText value="#{absence_coursealumn.evaluation}" />
 								</t:div>

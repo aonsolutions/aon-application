@@ -61,7 +61,7 @@
 							<t:outputLabel for="Customer_Lookup_id"
 								rendered="#{!financePayment.payment}"
 								styleClass="aon-form-input-text-label"
-								value="#{financeBundle.aon_customer}" />
+								value="#{appBundle.aon_alumn}" />
 							<t:div rendered="#{!financePayment.payment}">
 								<t:inputText id="Customer_Lookup_id" size="5" forceId="#{true}"
 									styleClass="aon-form-input-text"
@@ -179,8 +179,7 @@
 									<f:facet name="header">
 										<h:outputText value="#{financeBundle.aon_finance_batch_name}" />
 									</f:facet>
-									<h:outputText value="#{to.registry.surname}, " rendered="#{to.registry.surname != null and to.registry.surname != ''}"/>								
-									<h:outputText value="#{to.registry.name}" />
+									<h:outputText value="#{to.registry.name} #{to.registry.surname}" />
 								</h:column>
 
 								<h:column>

@@ -3,6 +3,7 @@ package com.code.aon.ui.finance.csb;
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
@@ -12,9 +13,9 @@ import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.company.Company;
-import com.code.aon.csb.fd0.core.Account;
 import com.code.aon.csb.fd0.model.FileFiller;
 import com.code.aon.csb.fd0.model.CSB19.CSB19;
+import com.code.aon.csb.fd0.model.CSB19.data.Account;
 import com.code.aon.csb.fd0.model.CSB19.data.Individual;
 import com.code.aon.csb.fd0.model.CSB19.data.Lot;
 import com.code.aon.csb.fd0.model.CSB19.data.Orderer;

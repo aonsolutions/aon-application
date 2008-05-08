@@ -62,7 +62,7 @@
 							<t:outputLabel for="Customer_Lookup_id"
 								rendered="#{!financeReturn.payment}"
 								styleClass="aon-form-input-text-label"
-								value="#{financeBundle.aon_customer}" />
+								value="#{customerBundle.customer_customer}" />
 							<t:inputText id="Customer_full_name" forceId="#{true}"
 								rendered="#{!financeReturn.payment}"
 								styleClass="aon-form-input-text-disabled" disabled="true"
@@ -83,8 +83,8 @@
 							<h:panelGrid columns="2">
 								<t:inputText id="Finance_invoice_series"
 									value="#{financeReturn.to.invoice.series}"
-									styleClass="aon-form-input-text-disabled" forceId="#{true}" size="5"
-									maxlength="5" disabled="true" />
+									styleClass="aon-form-input-text-disabled" forceId="#{true}" size="3"
+									maxlength="3" disabled="true" />
 								<t:inputText id="Finance_invoice_number"
 									value="#{financeReturn.to.invoice.number}"
 									styleClass="aon-form-input-text-disabled" forceId="#{true}"
@@ -106,14 +106,14 @@
 							<t:outputLabel for="Finance_amount"
 								value="#{financeBundle.finance_amount}"
 								styleClass="aon-form-lookup-label" />
-							<t:inputText id="Finance_amount" size="5" forceId="#{true}"
-								styleClass="aon-form-input-text" disabled="true"
-								value="#{financeReturn.to.amount}"/>
+							<t:inputText id="Finance_amount" size="8" forceId="#{true}"
+								styleClass="aon-form-input-text-disabled" disabled="true"
+								value="#{financeReturn.to.amount}" />
 
 							<t:outputLabel for="Finance_expenses"
 								value="#{financeBundle.finance_expenses}"
 								styleClass="aon-form-lookup-label" />
-							<t:inputText id="Finance_expenses" size="5" forceId="#{true}"
+							<t:inputText id="Finance_expenses" size="8" forceId="#{true}"
 								styleClass="aon-form-input-text"
 								value="#{financeReturn.to.expenses}"/>
 						

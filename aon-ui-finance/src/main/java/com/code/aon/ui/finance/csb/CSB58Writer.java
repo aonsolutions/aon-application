@@ -10,9 +10,9 @@ import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.company.Company;
-import com.code.aon.csb.fd0.core.Account;
 import com.code.aon.csb.fd0.model.FileFiller;
 import com.code.aon.csb.fd0.model.CSB58.CSB58;
+import com.code.aon.csb.fd0.model.CSB58.data.Account;
 import com.code.aon.csb.fd0.model.CSB58.data.Individual;
 import com.code.aon.csb.fd0.model.CSB58.data.Lot;
 import com.code.aon.csb.fd0.model.CSB58.data.Orderer;
@@ -31,7 +31,6 @@ public class CSB58Writer {
 	
 	private static final String FINANCE_BATCH_DETAIL_CONTROLLER_NAME = "fBatchDetail";
 
-	@SuppressWarnings("unchecked")
 	public CSBOutput createCSB58(Company company, FinanceBatch fbatch) throws ManagerBeanException {
 		try {
 			Lot lot = new Lot();
@@ -105,7 +104,6 @@ public class CSB58Writer {
 		return individual;
 	}
 	
-	@SuppressWarnings("unchecked")
 	private RegistryAddress obtainRegistryAddress(Integer id) throws ManagerBeanException {
 		IManagerBean rAddressBean = BeanManager.getManagerBean(RegistryAddress.class);
 		Criteria criteria = new Criteria();
@@ -116,4 +114,5 @@ public class CSB58Writer {
 		}
 		return null;
 	}
+
 }

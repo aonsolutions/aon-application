@@ -24,8 +24,8 @@
 								<f:facet name="header">
 									<aon:outputText value="&#160;"/>
 								</f:facet>
-								<aon:rowSelector action="task_form"
-									actionListener="#{task.onSelect}" />
+								<aon:rowSelector 
+									selectionListener="#{task.onSelect}" />
 								<aon:div style="width:14px; height:14px;" rendered="#{task.myListTask}">
 									<aon:graphicImage
 										url="/css/images/icons/aon-user-icon.gif"

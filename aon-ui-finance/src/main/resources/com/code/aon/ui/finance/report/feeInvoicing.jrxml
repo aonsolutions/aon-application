@@ -2,7 +2,7 @@
 <!-- Created with iReport - A designer for JasperReports -->
 <!DOCTYPE jasperReport PUBLIC "//JasperReports//DTD Report Design//EN" "http://jasperreports.sourceforge.net/dtds/jasperreport.dtd">
 <jasperReport
-		 name="tmpFeeInvoicing"
+		 name="feeInvoicing"
 		 columnCount="1"
 		 printOrder="Vertical"
 		 orientation="Portrait"
@@ -40,8 +40,6 @@
 	<field name="id" class="java.lang.Integer"/>
 	<field name="registry" class="com.code.aon.registry.Registry"/>
 	<field name="registryDocument" class="java.lang.String"/>
-	<field name="lines" class="java.util.Set"/>
-	<field name="finances" class="java.util.Set"/>
 
 	<variable name="invoiceTotal" class="java.lang.Double" resetType="Group" resetGroup="invoiceGroup" calculation="Nothing">
 	</variable>
@@ -195,7 +193,7 @@
 			</band>
 		</columnHeader>
 		<detail>
-			<band height="218"  isSplitAllowed="true" >
+			<band height="174"  isSplitAllowed="true" >
 				<subreport  isUsingCache="true">
 					<reportElement
 						x="0"
@@ -217,7 +215,7 @@
 						height="29"
 						key="subreport-1"/>
 					<parametersMapExpression><![CDATA[$P{REPORT_PARAMETERS_MAP}]]></parametersMapExpression>
-					<dataSourceExpression><![CDATA[new com.code.aon.ui.report.jr.JRBeanCollectionDataSource($F{lines})]]></dataSourceExpression>
+					<dataSourceExpression><![CDATA[new com.code.aon.ui.report.jr.JRBeanCollectionDataSource($F{detailList})]]></dataSourceExpression>
 					<returnValue subreportVariable="invoiceTotal" toVariable="invoiceTotal"/>
 					<subreportExpression  class="net.sf.jasperreports.engine.JasperReport"><![CDATA[$P{nestedReports}.get("feeInvoicingDetail")]]></subreportExpression>
 				</subreport>
@@ -359,32 +357,6 @@
 						<font size="10"/>
 					</textElement>
 				<textFieldExpression   class="java.lang.String"><![CDATA[$F{registry}.getDefaultAddress().getGeozone().getName()]]></textFieldExpression>
-				</textField>
-				<subreport  isUsingCache="true">
-					<reportElement
-						x="0"
-						y="189"
-						width="535"
-						height="29"
-						key="subreport-3"
-						positionType="Float"/>
-					<parametersMapExpression><![CDATA[$P{REPORT_PARAMETERS_MAP}]]></parametersMapExpression>
-					<dataSourceExpression><![CDATA[new com.code.aon.ui.report.jr.JRBeanCollectionDataSource($F{finances})]]></dataSourceExpression>
-					<subreportExpression  class="net.sf.jasperreports.engine.JasperReport"><![CDATA[$P{nestedReports}.get("feeInvoicingFinances")]]></subreportExpression>
-				</subreport>
-				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
-					<reportElement
-						x="1"
-						y="176"
-						width="246"
-						height="12"
-						key="textField-38"
-						positionType="Float"/>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
-					<textElement>
-						<font fontName="Arial Narrow" pdfFontName="Helvetica-Bold" size="9" isBold="true" isUnderline="true"/>
-					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$R{aon_finances}]]></textFieldExpression>
 				</textField>
 			</band>
 		</detail>

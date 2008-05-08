@@ -62,11 +62,11 @@
 								styleClass="aon-form-input-text-label"
 								value="#{accountBundle.aon_series_number}" />
 						<h:panelGrid columns="2" cellpadding="0" cellspacing="0"> 
-							<h:selectOneMenu id="Account_invoice_series"
-								value="#{accountLeasingFee.header.series}"
-								styleClass="aon-form-selectOneMenu-field">
-								<f:selectItems value="#{configCollections.series}" />
-							</h:selectOneMenu>
+							<t:inputText id="Account_invoice_series"
+								value="#{accountLeasingFee.header.series}" size="3" maxlength="3"
+								styleClass="aon-form-input-text" forceId="#{true}" >
+								<f:validateLength maximum="3" />
+							</t:inputText>	
 							<t:inputText id="Account_invoice_number"
 								value="#{accountLeasingFee.header.number}" size="7" maxlength="7"
 								styleClass="aon-form-input-text" forceId="#{true}">

@@ -211,47 +211,41 @@
 					</crosstabDataset>
 					<crosstabHeaderCell>						<cellContents mode="Transparent">
 					<box topBorder="Thin" topBorderColor="#000000" leftBorder="Thin" leftBorderColor="#000000" rightBorder="Thin" rightBorderColor="#000000" bottomBorder="Thin" bottomBorderColor="#000000"/>
-				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						mode="Transparent"
 						x="0"
 						y="0"
-						width="200"
+						width="95"
 						height="25"
 						key="textField-18"
 						stretchType="RelativeToTallestObject"/>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" leftPadding="5" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
-					<textElement textAlignment="Left" verticalAlignment="Middle">
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
 						<font pdfFontName="Helvetica-Bold" size="8" isBold="true"/>
 					</textElement>
 				<textFieldExpression   class="java.lang.String"><![CDATA["Habilidades:"]]></textFieldExpression>
 				</textField>
 						</cellContents>
-					</crosstabHeaderCell>					<rowGroup name="subjectId" width="0">
-						<bucket>
-							<bucketExpression class="java.lang.Integer"><![CDATA[$F{mark}.getSubject().getId()]]></bucketExpression>
-						</bucket>
-					</rowGroup>
-					<rowGroup name="subject" width="200">
+					</crosstabHeaderCell>					<rowGroup name="subject" width="95">
 						<bucket>
 							<bucketExpression class="java.lang.String"><![CDATA[$F{mark}.getSubject().getAcademicSkill().getDescription()]]></bucketExpression>
 						</bucket>
 						<crosstabRowHeader>
 						<cellContents mode="Transparent">
 					<box topBorder="None" topBorderColor="#000000" leftBorder="Thin" leftBorderColor="#000000" rightBorder="Thin" rightBorderColor="#000000" bottomBorder="Thin" bottomBorderColor="#000000"/>
-				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						x="0"
 						y="0"
-						width="200"
+						width="95"
 						height="15"
-						key="textField"
-						isPrintWhenDetailOverflows="true"/>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" leftPadding="5" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
-					<textElement textAlignment="Left" verticalAlignment="Middle">
-						<font size="7"/>
+						key="textField"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font size="8"/>
 					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$V{subject}]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.String"><![CDATA[""+$V{subject}]]></textFieldExpression>
 				</textField>
 						</cellContents>
 						</crosstabRowHeader>
@@ -263,12 +257,12 @@
 						<crosstabColumnHeader>
 						<cellContents mode="Transparent">
 					<box topBorder="Thin" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="Thin" rightBorderColor="#000000" bottomBorder="Thin" bottomBorderColor="#000000"/>
-				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						mode="Transparent"
 						x="0"
 						y="0"
-						width="60"
+						width="85"
 						height="25"
 						key="textField-18"
 						stretchType="RelativeToTallestObject"/>
@@ -291,21 +285,21 @@
 					<measure name="description" class="java.lang.String">
 						<measureExpression><![CDATA[$F{description}]]></measureExpression>
 					</measure>
-					<crosstabCell width="60" height="15">
+					<crosstabCell width="85" height="15">
 						<cellContents mode="Transparent">
 					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="Thin" rightBorderColor="#000000" bottomBorder="Thin" bottomBorderColor="#000000"/>
-				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						x="0"
 						y="0"
-						width="60"
+						width="85"
 						height="15"
 						key="textField"/>
 					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
 					<textElement textAlignment="Center" verticalAlignment="Middle">
 						<font size="8"/>
 					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[($P{encode}.booleanValue() == true?($V{code}!=null?$V{code}:$V{mark}.toString()):$V{mark}.toString())]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.String"><![CDATA[($P{encode}.booleanValue() == true?$V{code}:$V{mark}.toString())]]></textFieldExpression>
 				</textField>
 						</cellContents>
 					</crosstabCell>
@@ -314,7 +308,7 @@
 					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="1Point" rightBorderColor="#000000" bottomBorder="1Point" bottomBorderColor="#000000"/>
 						</cellContents>
 					</crosstabCell>
-					<crosstabCell width="60" height="0" rowTotalGroup="subject">
+					<crosstabCell width="85" height="0" rowTotalGroup="subject">
 						<cellContents mode="Transparent">
 					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="1Point" rightBorderColor="#000000" bottomBorder="1Point" bottomBorderColor="#000000"/>
 						</cellContents>
@@ -322,16 +316,6 @@
 					<crosstabCell width="0" height="0" rowTotalGroup="subject" columnTotalGroup="evaluation">
 						<cellContents mode="Transparent">
 					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="1Point" rightBorderColor="#000000" bottomBorder="1Point" bottomBorderColor="#000000"/>
-						</cellContents>
-					</crosstabCell>
-					<crosstabCell width="60" height="0" rowTotalGroup="subjectId">
-						<cellContents mode="Transparent">
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
-						</cellContents>
-					</crosstabCell>
-					<crosstabCell width="0" height="0" rowTotalGroup="subjectId" columnTotalGroup="evaluation">
-						<cellContents mode="Transparent">
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
 						</cellContents>
 					</crosstabCell>
 					<whenNoDataCell>						<cellContents mode="Transparent">

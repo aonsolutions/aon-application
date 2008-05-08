@@ -5,7 +5,7 @@
 		<actionListener action="#{customer.onEditSearch}"/>
 	</option>
 
-	<option id="aon_course" key="aon_course" descriptionKey="aon_course_desc" ref="course" role="Grupos">
+	<option key="aon_course" descriptionKey="aon_course_desc" ref="course" role="Grupos">
 		<actionListener action="#{course.onEditSearch}"/>
 	</option>
 
@@ -19,11 +19,6 @@
 		<option key="aon_loan" descriptionKey="aon_loan_desc" ref="loan" role="Prestamos">
 			<actionListener action="#{loan.onEditSearch}"/>
 		</option>
-		<menu ref="content" key="aon_academic_utilities" descriptionKey="aon_academic_utilities_desc" role="UtilidadesAcadémicas">
-			<option key="aon_academic_skill_to_groups" descriptionKey="aon_academic_skill_to_groups_desc" ref="academic_skill_to_group" role="HabilidadesAGrupos">
-				<actionListener action="#{academicSkillToGroup.onEditSearch}"/>
-			</option>
-		</menu>
 	</menu>
 
 	<menu id="aon_administrative_management" ref="content" key="aon_administrative_management" descriptionKey="aon_administrative_management_desc" role="GestionAdministrativa">
@@ -40,9 +35,6 @@
 			<option key="aon_pre_invoicing" descriptionKey="aon_pre_invoicing" ref="feePreInvoicing" role="Prefacturacion">
 				<actionListener action="#{preInvoicing.onInitialize}"/>
 			</option>
-			<option key="aon_fee_to_group" descriptionKey="aon_fee_to_group_desc" ref="fee_to_group" role="CuotasAGrupos">
-				<actionListener action="#{feeToGroup.onEditSearch}"/>
-			</option>
 		</menu>
 		<menu ref="content" key="finance" descriptionKey="finance_desc" role="Tesoreria">
 			<option key="aon_finance" descriptionKey="aon_finance_desc" ref="finance" role="Vencimientos">
@@ -56,12 +48,6 @@
 			</option>
 			<option key="aon_fbatch" descriptionKey="aon_fbatch_desc" ref="fbatch" role="Remesas"/>
 			<option key="aon_invoicing_group" descriptionKey="aon_invoicing_group_desc" ref="invoicingGroup" role="GruposFacturacion"/>
-			<menu ref="content" key="aon_finance_utilities" descriptionKey="aon_finance_utilities_desc" role="UtilidadesTesoreria">
-				<option key="aon_cheking" descriptionKey="aon_cheking_desc" ref="util_checking" role="ChecksTesoreria"/>
-				<option key="aon_fee_print" descriptionKey="aon_fee_print" ref="util_fee_print" role="ListadoCuotas">
-					<actionListener action="#{feePrint.onEditSearch}"/>				
-				</option>
-			</menu>
 		</menu>
 	</menu>
 	

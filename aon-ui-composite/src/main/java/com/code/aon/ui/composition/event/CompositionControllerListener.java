@@ -33,7 +33,7 @@ public class CompositionControllerListener extends ControllerAdapter {
     public void afterBeanCreated(ControllerEvent event) throws ControllerListenerException {
         double percentage = 0;
 
-        ProductCollectionsController collections = (ProductCollectionsController)AonUtil.getRegisteredBean("productCollections");
+        ProductCollectionsController collections = (ProductCollectionsController)AonUtil.getController("productCollections");
         IManagerBean bean;
         try {
             List vats = collections.getVatTaxes();

@@ -60,7 +60,6 @@ public class CustomerFeeInvoicingEngine implements IInvoicingEngine {
 		try {
 			Criteria criteria = createInvoicingCriteria(params);
 			List invoicedList = invoiceGroupFees(criteria, params);
-			criteria = completeCriteriaWithCustomerData(criteria, params);
 			List feeList = obtainFeeList(updateCriteria(criteria,invoicedList));
 			invoiceFees(feeList, params);
 		} catch (ExpressionException e) {
@@ -68,19 +67,14 @@ public class CustomerFeeInvoicingEngine implements IInvoicingEngine {
 		}
 	}
 
-	private Criteria completeCriteriaWithCustomerData(Criteria criteria,InvoicingParameters params) throws ManagerBeanException {
-		IManagerBean customerFeeBean = BeanManager.getManagerBean(CustomerFee.class);
-		if(params.getCustomerId() != null){
-			criteria.addEqualExpression(customerFeeBean.getFieldName(ISalesAlias.CUSTOMER_FEE_CUSTOMER_ID), params.getCustomerId());
-		}
-		return criteria;
-	}
-
 	private Criteria createInvoicingCriteria(InvoicingParameters params) throws ManagerBeanException {
 		IManagerBean customerFeeBean = BeanManager.getManagerBean(CustomerFee.class);
 		Criteria criteria = new Criteria();
 		Expression dateExpression = createFromToExpression(params.getMonth(), params.getYear());
 		criteria.addExpression(dateExpression);
+		if(params.getCustomerId() != null){
+			criteria.addEqualExpression(customerFeeBean.getFieldName(ISalesAlias.CUSTOMER_FEE_CUSTOMER_ID), params.getCustomerId());
+		}
 		if(params.getSecurityLevel() != null){
 			criteria.addEqualExpression(customerFeeBean.getFieldName(ISalesAlias.CUSTOMER_FEE_SECURITY_LEVEL), params.getSecurityLevel());
 		}
@@ -153,25 +147,21 @@ public class CustomerFeeInvoicingEngine implements IInvoicingEngine {
 			exp = ExpressionUtilities.getOrExpression(exp, ExpressionUtilities.getEqualExpression(customerFeeBean.getFieldName(ISalesAlias.CUSTOMER_FEE_CUSTOMER_ID), detail.getChild().getId()));
 		}
 		groupCriteria.addExpression(ExpressionUtilities.getAndExpression(criteria.getExpression(), exp));
-		// Cuotas tanto del padre como de los hijos
+		invoicedList.add(group.getParent().getId());
+		Invoice invoice = createInvoice(group, params);
+		getInvoicingDAO().insertInvoice(invoice);
+		getInvoicingFeedBack().addMessage("\t" + "Invoice: " + invoice.getSeries() + "/" + invoice.getNumber());
+		params.setNumber(params.getNumber()+1);
 		Iterator feeIter = customerFeeBean.getList(groupCriteria).iterator();
-		if(feeIter.hasNext()){
-			invoicedList.add(group.getParent().getId());
-			params.setNumber(calculateNextNumber(params.getNumber(), params.getSeries()));
-			Invoice invoice = createInvoice(group, params);
-			getInvoicingDAO().insertInvoice(invoice);
-			getInvoicingFeedBack().addMessage("\t" + "Invoice: " + invoice.getSeries() + "/" + invoice.getNumber());
-			params.setNumber(params.getNumber()+1);
-			while(feeIter.hasNext()){
-				CustomerFee fee = (CustomerFee)feeIter.next();
-				InvoiceDetail invoiceDetail = createInvoiceDetail(fee, invoice, params);
-				getInvoicingDAO().insertInvoiceDetail(invoiceDetail);
-				getInvoicingDAO().updateSource(fee);
-				getInvoicingFeedBack().addMessage("\t \t" + "InvoiceDetail: " + invoiceDetail.getDescription() + " price= " + invoiceDetail.getTaxableBase());			
-				invoicedList.add(fee.getCustomer().getId());
-			}
-			getInvoicingDAO().createFinances(invoice);
+		while(feeIter.hasNext()){
+			CustomerFee fee = (CustomerFee)feeIter.next();
+			InvoiceDetail invoiceDetail = createInvoiceDetail(fee, invoice, params);
+			getInvoicingDAO().insertInvoiceDetail(invoiceDetail);
+			getInvoicingDAO().updateSource(fee);
+			getInvoicingFeedBack().addMessage("\t \t" + "InvoiceDetail: " + invoiceDetail.getDescription() + " price= " + invoiceDetail.getTaxableBase());			
+			invoicedList.add(fee.getCustomer().getId());
 		}
+		getInvoicingDAO().createFinances(invoice);
 		return invoicedList;
 	}
 

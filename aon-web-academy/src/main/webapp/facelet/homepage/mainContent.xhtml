@@ -33,7 +33,7 @@
 						<t:div styleClass="aon-content-tree-branch">
 							<h:commandLink
 								immediate="true"
-								action="#{cnt.toggleExpanded}" id="root">
+								action="#{cnt.toggleExpanded}">
 								<t:div styleClass="aon-content-tree-branch-name">				
 									<h:outputText value="#{cnode.description}"/>
 								</t:div>
@@ -47,7 +47,7 @@
 						<t:div styleClass="aon-content-tree-branch">
 							<h:commandLink styleClass="aon-content-tree-branch-link"
 								action="#{contentMenu.nodeAction}"
-								actionListener="#{contentMenu.menuPressed}" id="menuCommand">
+								actionListener="#{contentMenu.menuPressed}">
 								<t:div styleClass="aon-content-tree-branch-name">	
 									<h:outputText value="#{cnode.description}"/>
 								</t:div>
@@ -64,7 +64,7 @@
 							<h:commandLink styleClass="aon-content-tree-leaf-link"
 								target="#{cnode.menuItem.target}"
 								action="#{contentMenu.nodeAction}"
-								actionListener="#{contentMenu.optionPressed}" id="optionCommand">
+								actionListener="#{contentMenu.optionPressed}">
 															
 								<t:div styleClass="aon-content-tree-leaf-name">				
 									<h:outputText value="#{cnode.description}" />
@@ -79,7 +79,7 @@
 							rendered="#{cnode.menuItem.external and !cnode.menuItem.contextRelative}">
 							<h:outputLink styleClass="aon-content-tree-leaf-link"
 								target="#{cnode.menuItem.target}" 
-								value="#{cnode.menuItem.reference}" id="optionExternal">								
+								value="#{cnode.menuItem.reference}">								
 							
 								<t:div styleClass="aon-content-tree-leaf-name">				
 									<h:outputText value="#{cnode.description}" />
@@ -94,7 +94,7 @@
 							styleClass="aon-content-tree-leaf aon-content-tree-leaf_report" 
 							rendered="#{cnode.menuItem.external and cnode.menuItem.contextRelative and !cnode.hyperView}">
 							<h:outputLink styleClass="aon-content-tree-leaf-link"
-								target="#{cnode.menuItem.target}" id="optionExternalRelative"
+								target="#{cnode.menuItem.target}"
 								value="#{facesContext.externalContext.requestContextPath}#{cnode.menuItem.reference}">
 															
 								<t:div styleClass="aon-content-tree-leaf-name">				
@@ -111,7 +111,7 @@
 							styleClass="aon-content-tree-leaf aon-content-tree-leaf_hyperview" 
 							rendered="#{cnode.menuItem.external and cnode.menuItem.contextRelative and cnode.hyperView}">
 							<h:outputLink styleClass="aon-content-tree-leaf-link"
-								target="#{cnode.menuItem.target}" id="optionHyperView"
+								target="#{cnode.menuItem.target}"
 								value="#{facesContext.externalContext.requestContextPath}#{cnode.menuItem.reference}">
 								<t:div styleClass="aon-content-tree-leaf-name">				
 									<h:outputText value="#{cnode.description}" />

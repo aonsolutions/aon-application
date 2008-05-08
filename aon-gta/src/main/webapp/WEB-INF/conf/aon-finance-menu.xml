@@ -10,7 +10,7 @@
 	</option>
 	<option key="aon_bank" descriptionKey="aon_bank_desc" ref="bank"/>
 	<option key="aon_pay_method" descriptionKey="aon_pay_method_desc" ref="pay_method"/>
-	<menu ref="content" key="aon_finance_utilities" descriptionKey="aon_finance_utilities_desc">
-		<option key="aon_cheking" descriptionKey="aon_cheking_desc" ref="util_checking"/>
-	</menu>
+	<option key="aon_creditor" descriptionKey="aon_creditor_desc" ref="creditor" >
+		<actionListener action="#{creditor.onReset}" />
+	</option>
 </root>

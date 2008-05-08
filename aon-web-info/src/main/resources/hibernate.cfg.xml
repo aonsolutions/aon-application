@@ -37,6 +37,8 @@
 		<mapping class="com.code.aon.config.Series"/>
 		<mapping class="com.code.aon.config.User"/>
 		<mapping class="com.code.aon.config.UserScope"/>
+		<mapping class="com.code.aon.config.WorkGroup"/>
+		<mapping class="com.code.aon.config.UserWorkGroup"/>
 
 		<!-- AON-GEOZONE Mapping files -->
 		<mapping class="com.code.aon.geozone.GeoZone"/>

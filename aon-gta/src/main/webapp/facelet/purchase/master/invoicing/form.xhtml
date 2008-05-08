@@ -18,7 +18,10 @@
 			src="${facesContext.externalContext.requestContextPath}/js/itemLookup.js">
 			// nothing
 		</script>
-
+		<script type='text/javascript'
+			src="${facesContext.externalContext.requestContextPath}/js/SupplierLookup.js">
+			// nothing
+		</script>
 		<t:stylesheet path="/jscalendar-1.0/calendar-system.css" />
 		<script type='text/javascript'
 			src="${facesContext.externalContext.requestContextPath}/jscalendar-1.0/calendar.js">
@@ -216,32 +219,34 @@
 							styleClass="aon-form-table"
 							columnClasses="aon-form-table-column-odd,aon-form-table-column-even">
 
-							<t:outputLabel for="Supplier_Lookup_id"
-								styleClass="aon-form-input-text-label"
-								value="#{purchaseBundle.aon_supplier}" />
-							<t:div>
-								<t:inputText id="Supplier_Lookup_id" size="5" forceId="#{true}"
-									styleClass="aon-form-input-text"
-									disabled="#{!invoicing.editable}" required="true"
-									onchange="return findBeanLookupExt(event,'#{facesContext.externalContext.requestContextPath}','supplierLookup','Supplier_Lookup_id','Supplier_id|Supplier_Lookup_id,Supplier_full_name|Supplier_full_name,Supplier_document|Supplier_Lookup_document');"
+							<t:outputLabel for="Supplier_id"
+								value="#{purchaseBundle.aon_supplier}"
+								styleClass="aon-form-lookup-label" />
+							<h:panelGroup>
+								<t:inputText id="Supplier_id" size="5" forceId="#{true}"
+									styleClass="aon-form-input-text" required="true"
+									disabled="#{!invoicing.editable}"
+									onchange="return findSupplierLookup(event,'#{facesContext.externalContext.request.contextPath}','com.code.aon.purchase.Supplier');"
 									value="#{invoicing.to.registry.id}"
 									valueChangeListener="#{invoicing.supplierData}" />
-								<h:commandButton id="find_Supplier_Lookup_id"
-									styleClass="aon-form-lookup-button" value="" immediate="true"
-									onclick="lookupSearchWindow(this, 'placeList', '#{supplierLookup.encodedSearchPagePath}','Supplier_id|Supplier_Lookup_id,Supplier_full_name|Supplier_full_name,Supplier_document|Supplier_Lookup_document');return false;" />	
-								<h:commandButton id="new_Supplier_Lookup_id"
-									styleClass="aon-form-new-button" value="" immediate="true"
-									onclick="lookupNewWindow(this, 'placeList', '#{supplierLookup.encodedNewPagePath}','Supplier_id|Supplier_Lookup_id,Supplier_full_name|Supplier_full_name,Supplier_document|Supplier_Lookup_document');return false;" />	
+								<h:commandButton styleClass="aon-form-lookup-button"
+									disabled="#{!invoicing.editable}" id="findSupplier" value=""
+									immediate="true"
+									onclick="selectWindow(this, 'placeList', '#{supplierSearch.encodedPagePath}');return false;" />
+								<h:commandButton styleClass="aon-form-new-button"
+									disabled="#{!invoicing.editable}" id="addSupplier" value=""
+									immediate="true"
+									onclick="selectWindow(this, 'placeList', '#{supplierAdd.encodedPagePath}');return false;" />
 								<t:inputText id="Supplier_full_name" forceId="#{true}"
-									styleClass="aon-form-input-text-disabled"
+									styleClass="aon-form-input-text" 
 									size="40" disabled="#{!invoicing.editable}"
 									value="#{invoicing.to.registryName}" />
-							</t:div>
-
-							<t:outputLabel for="Supplier_Lookup_document"
+							</h:panelGroup>
+							
+							<t:outputLabel for="Supplier_document"
 								styleClass="aon-form-input-text-label"
 								value="#{financeBundle.aon_document}" />
-							<t:inputText id="Supplier_Lookup_document"
+							<t:inputText id="Supplier_document"
 								value="#{invoicing.to.registryDocument}"
 								disabled="#{!invoicing.editable}"
 								styleClass="aon-form-input-text" forceId="#{true}"
@@ -619,10 +624,8 @@
 						</t:div>
 					</t:div>
 
-					<t:div rendered="#{invoicingDetail.model.rowCount > 0 or salesFinance.model.rowCount>0}" >
-						<ui:include src="/facelet/sales/master/invoicing/finance/grid.xhtml" />
-					</t:div>	
-
+					<ui:include src="/facelet/purchase/master/invoicing/finance/grid.xhtml" />
+					
 				</t:div>
 			</t:div>
 		</h:form>

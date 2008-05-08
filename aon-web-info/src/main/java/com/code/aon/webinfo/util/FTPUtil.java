@@ -6,20 +6,23 @@ import java.io.FileInputStream;
 import org.apache.commons.net.ftp.FTPClient;
 import org.apache.commons.net.ftp.FTPFile;
 
+import com.code.aon.ui.util.AonUtil;
+
 public class FTPUtil {
 
-	private static String server = "127.0.0.1";
+	private static String server = "ftp.";
 	private static String user = "ftpcms";
 	private static String password = "cms2001";
 	
-	public static void uploadFTP(String source, String destination) {
+	public static void uploadFTP(String source, String destination, String domain) {
 
 		try {
 			FTPClient ftp = new FTPClient();
-			ftp.connect(server);
+			System.out.println("FTP>>>>>>>>>>>>>>>>>>>>>> Connecting to server " + server + domain);
+			ftp.connect(server + domain);
 			ftp.login(user, password);
 			ftp.changeWorkingDirectory(destination);
-			System.out.println("FTP>>>>>>>>>>>>>>>>>>>>>> Connected to server");
+			System.out.println("FTP>>>>>>>>>>>>>>>>>>>>>> Connected.");
 			System.out.println("FTP>>>>>>>>>>>>>>>>>>>>>> " + ftp.getReplyString());
 			System.out.println("FTP>>>>>>>>>>>>>>>>>>>>>> " + ftp.getSystemName());
 			System.out.println("FTP>>>>>>>>>>>>>>>>>>>>>> " + ftp.printWorkingDirectory());
@@ -28,6 +31,7 @@ public class FTPUtil {
 			if (files.length > 0) {
 				if (!files[0].hasPermission(FTPFile.USER_ACCESS, FTPFile.WRITE_PERMISSION) ) {
 					System.out.println("FTP>>>>>>>>>>>>>>>>>>>>>> WRITE PERMISSION DENIED");
+					AonUtil.addErrorMessage("FTP ERROR: Error intentando escribir en el servidor.");
 				}
 			}
 			ftpDir(source, ftp, destination);
@@ -37,7 +41,7 @@ public class FTPUtil {
 			//addMessage("La publicacion por FTP de la pagina web a finalizado.", GEN_INFO);
 		} catch (Exception e) {
 			e.printStackTrace();
-			//addMessage("FTP Error. Se produjo un error durante la conexion al FTP, si el error persite consulte con su administrador.", GEN_ERROR);
+			AonUtil.addErrorMessage("FTP Error. Se produjo un error durante la conexion al FTP, si el error persite consulte con su administrador.");
 		}
 	}
 
@@ -66,7 +70,7 @@ public class FTPUtil {
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
-			//addMessage("FTP Error. Se produjo un error al intentar subir el fichero " + file, GEN_ERROR);
+			AonUtil.addErrorMessage("FTP Error. Se produjo un error al intentar subir los ficheros.");
 		}
 	}
 

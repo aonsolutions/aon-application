@@ -31,13 +31,6 @@
 	</bean>
 
 	<bean description="">
-		<pojo>com.code.aon.finance.Finance</pojo>
-		<vetoListeners>
-	        <vetoListener>com.code.aon.finance.event.FinanceBeanVetoListener</vetoListener>
-		</vetoListeners>
-	</bean>
-
-	<bean description="">
 		<pojo>com.code.aon.academy.Course</pojo>
 		<vetoListeners>
 	        <vetoListener>com.code.aon.academy.event.CourseVetoListener</vetoListener>

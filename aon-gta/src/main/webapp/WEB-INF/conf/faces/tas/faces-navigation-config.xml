@@ -34,7 +34,7 @@
 	    </navigation-case>
 	    <navigation-case>
 	      <from-outcome>TasModel_sw_search</from-outcome>
-	      <to-view-id>/facelet/sw/modelSearch.faces</to-view-id>
+	      <to-view-id>//facelet/sw/modelSearch.faces</to-view-id>
 	    </navigation-case>
 	</navigation-rule>
 
@@ -51,14 +51,6 @@
 		<navigation-case>
 			<from-outcome>SupportOrder_search</from-outcome>
 			<to-view-id>/facelet/TAS/support/search.faces</to-view-id>
-		</navigation-case>
-		<navigation-case>
-			<from-outcome>supportOrder_customer_data</from-outcome>
-			<to-view-id>/facelet/TAS/support/customer/form.faces</to-view-id>
-		</navigation-case>
-		<navigation-case>
-			<from-outcome>supportOrder_insurance_data</from-outcome>
-			<to-view-id>/facelet/TAS/support/insurance/form.faces</to-view-id>
 		</navigation-case>
 	</navigation-rule>
 
@@ -93,22 +85,6 @@
       <to-view-id>/facelet/TAS/employee/search.faces</to-view-id>
     </navigation-case>
   </navigation-rule>
-
-  <!-- =================== Appraiser ========================== -->
-  <navigation-rule>
-    <navigation-case>
-      <from-outcome>appraiser_form</from-outcome>
-      <to-view-id>/facelet/TAS/appraiser/form.faces</to-view-id>
-    </navigation-case>
-    <navigation-case>
-      <from-outcome>appraiser_list</from-outcome>
-      <to-view-id>/facelet/TAS/appraiser/list.faces</to-view-id>
-    </navigation-case>
-    <navigation-case>
-      <from-outcome>appraiser_search</from-outcome>
-      <to-view-id>/facelet/TAS/appraiser/search.faces</to-view-id>
-    </navigation-case>
-  </navigation-rule>
   
 	<!-- **************** MENU  *************** -->
 	<navigation-rule>
@@ -131,10 +107,6 @@
 	    <navigation-case>
 	      <from-outcome>employee</from-outcome>
 	      <to-view-id>/facelet/TAS/employee/form.faces</to-view-id>
-	    </navigation-case>
-	    <navigation-case>
-	      <from-outcome>appraiser</from-outcome>
-	      <to-view-id>/facelet/TAS/appraiser/form.faces</to-view-id>
 	    </navigation-case>
 	</navigation-rule>
 

@@ -10,16 +10,16 @@
 	<!-- Isolate nh classes from other deployments -->
 	<class-loading>
 		<loader-repository>
-			transtools.com:loader=aon-web-info.war
+			transtools.com:loader=aon-webinfo.war
 		</loader-repository>
 	</class-loading>
 
-	<security-domain flushOnSessionInvalidation="true">java:/jaas/aon-web-info</security-domain>
+	<security-domain flushOnSessionInvalidation="true">java:/jaas/aon-webinfo.war</security-domain>
 
 	<!-- The context-root element specifies the context root of a web
 	application. It may be given here for standalone wars.
 	-->
-	<context-root>/aon-web-info</context-root>
+	<context-root>/aon-webinfo</context-root>
 	
 	<resource-env-ref>
 	  <resource-env-ref-name>jdbc/AonWebinfo</resource-env-ref-name>

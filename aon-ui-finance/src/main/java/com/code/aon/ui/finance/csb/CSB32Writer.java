@@ -10,9 +10,9 @@ import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.company.Company;
-import com.code.aon.csb.fd0.core.Account;
 import com.code.aon.csb.fd0.model.FileFiller;
 import com.code.aon.csb.fd0.model.CSB32.CSB32;
+import com.code.aon.csb.fd0.model.CSB32.data.Account;
 import com.code.aon.csb.fd0.model.CSB32.data.Delivery;
 import com.code.aon.csb.fd0.model.CSB32.data.Individual;
 import com.code.aon.csb.fd0.model.CSB32.data.Lot;
@@ -30,7 +30,6 @@ public class CSB32Writer {
 
 	private static final String FINANCE_BATCH_DETAIL_CONTROLLER_NAME = "fBatchDetail";
 
-	@SuppressWarnings("unchecked")
 	public CSBOutput createCSB32(Company company, FinanceBatch fbatch) throws ManagerBeanException {
 		try {
 			Lot lot = new Lot();
@@ -115,7 +114,6 @@ public class CSB32Writer {
 		return individual;
 	}
 
-	@SuppressWarnings("unchecked")
 	private RegistryAddress obtainRegistryAddress(Integer id) throws ManagerBeanException {
 		IManagerBean rAddressBean = BeanManager.getManagerBean(RegistryAddress.class);
 		Criteria criteria = new Criteria();

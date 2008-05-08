@@ -123,11 +123,11 @@
 							styleClass="aon-form-input-text-label"
 							value="#{projectBundle.aon_customer}" />
 						<aon:div styleClass="aon-nowrap">	
-							<aon:lookupInputText id="Task_customer_id" lookup="#{customerICELookup}"
+							<aon:lookupInputText id="Task_customer_id" lookup="#{customerLookup}"
 								value="#{taskMonitor.customer.id}"
 								valueChangeListener="#{taskMonitor.addCustomerExpression}" size="5">
 							</aon:lookupInputText>
-							<aon:lookupButton lookup="#{customerICELookup}"
+							<aon:lookupButton lookup="#{customerLookup}"
 								property="#{taskMonitor.customer}" 
 								windowTitle="#{projectBundle.aon_customer}" 
 								styleClass="aon-lookup-button aon-icon-lookup" />
@@ -143,7 +143,7 @@
 			</aon:div>
 
 		</aon:form>
-		<aon:lookupButtonPopup lookup="#{customerICELookup}" />
+		<aon:lookupButtonPopup lookup="#{customerLookup}" />
 	</ui:define>
 </ui:composition>
 

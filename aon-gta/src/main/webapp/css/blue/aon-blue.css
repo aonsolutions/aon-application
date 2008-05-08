@@ -26,11 +26,8 @@
 	_font-size:5px;
 	}
 .aon-logo{
-	background:transparent url("images/content/blue-logo.gif") left top no-repeat;
-	padding:15px 110px;
-	}
-.aon-auxiliary-window-content{
-	background:transparent url("images/content/blue-home.jpg") left top no-repeat;
+	display:inline;
+	
 	}
 .aon-logo img{
 	height:45px;
@@ -70,10 +67,6 @@
 	}
 .aon-header-menu-item-link:active{
 	color:#C8D7E3;
-	}
-.aon-header-userAdOnRight{
-	padding:1em;
-	text-align:right;
 	}
 /********************/
 /**** FOOT ******/
@@ -715,38 +708,6 @@ div.aon-form-collapsiblePanel{
 	font-size:11px;
 	font-family:arial,verdana,sans-serif;
 	}
-.aon-form-button-plus{
-	padding:3px 1em 3px 20px;
-	margin-right:5px;
-	color:#5C81A7;
-	text-decoration:none;
-	text-align:left;
-	font-weight:bold;
-	border:0;
-	background:transparent url("images/content/blue-form-button-plus.gif") 0px 3px no-repeat;
-	font-size:11px;
-	font-family:arial,verdana,sans-serif;
-	display:inline;
-	width:auto;
-   	overflow:visible;	
-	cursor:pointer;
-}
-.aon-form-button-minus{
-	padding:3px 1em 3px 20px;
-	margin-right:5px;
-	color:#5C81A7;
-	text-decoration:none;
-	text-align:left;
-	font-weight:bold;
-	border:0;
-	background:transparent url("images/content/blue-form-button-minus.gif") 0px 3px no-repeat;
-	font-size:11px;
-	font-family:arial,verdana,sans-serif;
-	display:inline;
-	width:auto;
-   	overflow:visible;	
-	cursor:pointer;
-}
 .aon-navigation-link{
 	padding:2px 1em 2px 14px;
 	background:transparent url("images/content/blue-navigation-link.gif") left 5px no-repeat;

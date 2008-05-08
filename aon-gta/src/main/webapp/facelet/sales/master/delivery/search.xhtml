@@ -10,6 +10,10 @@
 
 	<ui:define name="head">
 		<ui:include src="/facelet/shared/head.xhtml" />
+		<script type='text/javascript'
+			src="${facesContext.externalContext.requestContextPath}/js/CustomerLookup.js">
+			// nothing
+		</script>
 		<t:stylesheet path="/jscalendar-1.0/calendar-system.css" />
 		<script type='text/javascript'
 			src="${facesContext.externalContext.requestContextPath}/jscalendar-1.0/calendar.js">
@@ -75,29 +79,26 @@
 							for="Delivery_series" 
 							value="#{warehouseBundle.aon_series_number}" />
 						<t:div>
-							<t:selectOneMenu id="Delivery_series"
-								value="#{delivery.to.series}"
-								styleClass="aon-form-selectOneMenu-field"
-								valueChangeListener="#{delivery.addExpression}">
-								<f:selectItem itemValue="" itemDisabled="true" itemLabel="-" />
-								<f:selectItems value="#{configCollections.series}" />
-							</t:selectOneMenu>
+							<t:inputText id="Delivery_series" size="5"
+								styleClass="aon-form-input-text" onblur="toUpperCase(this);"
+								valueChangeListener="#{delivery.addExpression}" />
 							<t:inputText id="Delivery_number" size="15"
 								styleClass="aon-form-input-text"
 								valueChangeListener="#{delivery.addExpression}" />
 						</t:div>
 						
-						<t:outputLabel for="Customer_Lookup_id"
+						<t:outputLabel for="Customer_id"
 							styleClass="aon-form-input-text-label"
 							value="#{warehouseBundle.aon_customer}" />
 						<t:div>
-							<t:inputText id="Customer_Lookup_id" size="5" forceId="#{true}"
+							<t:inputText id="Customer_id" size="5" forceId="#{true}"
 								styleClass="aon-form-input-text"
-								onchange="return findBeanLookupExt(event,'#{facesContext.externalContext.requestContextPath}','customerLookup','Customer_Lookup_id','Customer_id|Customer_Lookup_id,Customer_full_name|Customer_full_name');"
+								onchange="return findCustomerLookup(event,'#{facesContext.externalContext.request.contextPath}','com.code.aon.customer.Customer' );"
 								valueChangeListener="#{delivery.addCustomerExpression}" />
-							<h:commandButton id="find_Customer_Lookup_id"
-								onclick="lookupSearchWindow(this, 'placeList', '#{customerLookup.encodedSearchPagePath}','Customer_id|Customer_Lookup_id,Customer_full_name|Customer_full_name');return false;"	
-								value="" immediate="true" styleClass="aon-form-lookup-button" />
+							<h:commandButton id="findCustomer"
+								onclick="selectWindow(this, 'placeList', '#{customerSearch.encodedPagePath}');return false;"
+								value="" immediate="true" styleClass="aon-form-lookup-button"
+								disabled="#{!delivery.editable}" tabindex="6"/>
 							<t:inputText id="Customer_full_name" forceId="#{true}"
 								styleClass="aon-form-input-text-disabled" disabled="true"
 								size="40" />

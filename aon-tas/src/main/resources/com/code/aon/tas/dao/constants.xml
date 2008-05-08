@@ -9,9 +9,4 @@
 		<alias names="id,make_id,make_name,name" />
 		<hibernate names="id,make.id,make.name,name" />
 	</bean>
-
-	<bean class="com.code.aon.tas.Appraiser">
-		<alias names="id,registry_id,registry_name,registry_surname,registry_alias,registry_document"/>
-		<hibernate names="id,registry.id,registry.name,registry.surname,registry.alias,registry.document"/>
-	</bean>
 </dao>

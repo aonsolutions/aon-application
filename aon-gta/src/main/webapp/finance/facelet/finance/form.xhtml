@@ -26,7 +26,7 @@
 							styleClass="aon-content-toolbar-item aon-content-toolbar-item-save"
 							onmouseover="this.className='aon-content-toolbar-item aon-content-toolbar-item-hover aon-content-toolbar-item-save'"
 							onmouseout="this.className='aon-content-toolbar-item aon-content-toolbar-item-save'"
-							accesskey="#{bundle.aon_key_save}" disabled="#{!finance.pending}"/>
+							accesskey="#{bundle.aon_key_save}" />
 						<h:commandButton id="cancel" value="#{bundle.aon_cancel}"
 							actionListener="#{finance.onCancel}" action="finance_list"
 							immediate="#{true}"
@@ -81,7 +81,7 @@
 						<h:panelGrid columns="2" cellpadding="0" cellspacing="0"> 
 							<t:inputText id="Finance_invoice_series"
 								value="#{finance.to.invoice.series}"
-								disabled="#{true}" size="6" maxlength="5"
+								disabled="#{true}" size="3"
 								styleClass="aon-form-input-text-disabled" forceId="#{true}" />
 							<t:inputText id="Finance_invoice_number"
 								value="#{finance.to.invoice.number}"
@@ -97,7 +97,7 @@
 							size="9" disabled="true"
 							value="#{finance.to.invoice.issueDate}" >
 							<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
-								timeZone="#{timeZoneController.timeZoneId}" />
+										timeZone="#{timeZoneController.timeZoneId}" />
 						</t:inputText>
 						
 						<h:outputLabel for="Finance_dueDate"
@@ -118,7 +118,8 @@
 						<t:div >
 							<t:selectOneMenu id="RegistryBank_Lookup_id"
 								value="#{finance.registryBankId}" forceId="#{true}"
-								styleClass="aon-form-selectOneMenu-field" disabled="#{!finance.pending}"
+								disabled="#{!finance.pending}"
+								styleClass="aon-form-selectOneMenu-field"
 								onchange="return findBeanLookupExt(event,'#{facesContext.externalContext.requestContextPath}','rBankLookup','RegistryBank_Lookup_id','RegistryBank_id|RegistryBank_Lookup_id,RegistryBank_bankAccount|RegistryBank_Lookup_bankAccount');">
 								<f:selectItem itemDisabled="true" itemLabel ="-" itemValue="" />
 								<f:selectItems value="#{finance.registryBanks}" />
@@ -129,8 +130,8 @@
 							styleClass="aon-form-input-text-label"
 							value="#{financeBundle.aon_bank_account}" />
 						<t:inputText id="RegistryBank_Lookup_bankAccount"
-							forceId="#{true}" value="#{finance.to.bankAccount}"
 							disabled="#{!finance.pending}"
+							forceId="#{true}" value="#{finance.to.bankAccount}"
 							styleClass="aon-form-input-text" size="35" maxlength="23">
 							<f:validateLength minimum="20" maximum="23"/>
 						</t:inputText>
@@ -149,24 +150,6 @@
 							styleClass="aon-form-input-text-label"
 							value="#{financeBundle.aon_amount}" />
 						<t:inputText id="Finance_amount"
-							value="#{finance.to.amount}" size="15" disabled="true"
-							styleClass="aon-form-input-text-disabled" forceId="#{true}" >
-							<f:convertNumber pattern="#,##0.00" />
-						</t:inputText>	
-
-						<h:outputLabel for="Finance_expenses"
-							styleClass="aon-form-input-text-label"
-							value="#{financeBundle.finance_expenses}" />
-						<t:inputText id="Finance_expenses"
-							value="#{finance.to.expenses}" size="15" disabled="#{!finance.pending}"
-							styleClass="aon-form-input-text" forceId="#{true}" >
-							<f:convertNumber pattern="#,##0.00" />
-						</t:inputText>
-						
-						<h:outputLabel for="Finance_total"
-							styleClass="aon-form-input-text-label"
-							value="#{financeBundle.finance_total}" />
-						<t:inputText id="Finance_total"
 							value="#{finance.to.totalAmount}" size="15" disabled="true"
 							styleClass="aon-form-input-text-disabled" forceId="#{true}" >
 							<f:convertNumber pattern="#,##0.00" />

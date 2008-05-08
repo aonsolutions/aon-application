@@ -59,8 +59,8 @@
 										<h:outputText value="#{finance.payment?(financeBundle.aon_creditor):(financeBundle.aon_debtor)}" />
 									</h:panelGroup>
 								</f:facet>
-								<h:outputText value="#{to.registry.surname}, " rendered="#{to.registry.surname != null and to.registry.surname != ''}"/>								
-								<h:outputText value="#{to.registry.name}" />
+								<h:outputText
+									value="#{to.registry.name}, #{to.registry.surname}" />
 							</h:column>
 
 							<h:column>

@@ -9,7 +9,7 @@ import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.registry.RegistryNote;
 import com.code.aon.registry.dao.IRegistryAlias;
 import com.code.aon.registry.enumeration.NoteType;
-import com.code.aon.ui.customer.controller.CustomerNoteController;
+import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
@@ -22,12 +22,9 @@ public class CustomerControllerNoteListener extends ControllerAdapter {
 	@Override
 	public void afterBeanSelected(ControllerEvent event) throws ControllerListenerException {
 		Customer customer = (Customer)event.getController().getTo();
-		CustomerNoteController rNoteController = (CustomerNoteController)AonUtil.getController(REGISTRY_NOTE_CONTROLLER_NAME);
+		BasicController rNoteController = (BasicController)AonUtil.getController(REGISTRY_NOTE_CONTROLLER_NAME);
 		try {
 			IManagerBean rNoteBean = BeanManager.getManagerBean(RegistryNote.class);
-			rNoteController.setFromDate(null);
-			rNoteController.setToDate(null);
-			rNoteController.setNoteType(null);
 			rNoteController.clearCriteria();
 			rNoteController.getCriteria().addEqualExpression(rNoteBean.getFieldName(IRegistryAlias.REGISTRY_NOTE_REGISTRY_ID), customer.getId());
 			Expression expression = ExpressionUtilities.getNotEqualExpression(rNoteBean.getFieldName(IRegistryAlias.REGISTRY_NOTE_NOTETYPE), NoteType.OBSERVATION);

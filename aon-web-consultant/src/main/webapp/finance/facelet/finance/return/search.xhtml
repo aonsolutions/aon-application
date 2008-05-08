@@ -53,7 +53,7 @@
 							<h:outputLabel for="Finance_payment"
 								styleClass="aon-form-input-text-label"
 								value="#{financeBundle.aon_payment} / #{financeBundle.aon_charge}" />
-							<t:selectOneRadio id="Finance_payment" value="#{financeReturn.payment}" onclick="submit();">
+							<t:selectOneRadio id="Finance_payment" value="#{financeReturn.payment}" onclick="submit();" valueChangeListener="#{financeReturn.onPaymentChange}">
 								<f:selectItem itemLabel="#{financeBundle.aon_payment}" itemValue="#{true}" />
 								<f:selectItem itemLabel="#{financeBundle.aon_charge}" itemValue="#{false}" />
 							</t:selectOneRadio>

@@ -11,7 +11,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.faces.event.ActionEvent;
-import javax.faces.event.PhaseId;
 import javax.faces.event.ValueChangeEvent;
 import javax.faces.model.SelectItem;
 
@@ -27,7 +26,6 @@ import com.code.aon.product.strategy.IPriceStrategy;
 import com.code.aon.product.strategy.PriceStrategyFactory;
 import com.code.aon.product.strategy.TaxBreakDown;
 import com.code.aon.ql.Criteria;
-import com.code.aon.ql.Projection;
 import com.code.aon.ql.util.ExpressionException;
 import com.code.aon.tasCommercial.TasOffer;
 import com.code.aon.tasCommercial.dao.ITasCommercialAlias;
@@ -90,8 +88,6 @@ public class DeliveryController extends BasicController {
 	 * The ident of the warehouse
 	 */
 	private Integer warehouseId;
-	
-	private Integer scopeId;
 	
     /**
      * Returns the support order id
@@ -199,15 +195,6 @@ public class DeliveryController extends BasicController {
 	 */
 	public void setWarehouseId(Integer warehouseId) {
 		this.warehouseId = warehouseId;
-	}
-	
-
-	public Integer getScopeId() {
-		return scopeId;
-	}
-
-	public void setScopeId(Integer scopeId) {
-		this.scopeId = scopeId;
 	}
 
 	/**
@@ -433,7 +420,6 @@ public class DeliveryController extends BasicController {
 	 * @param event the event that contains customer ident
 	 * @throws ManagerBeanException
 	 */
-	@SuppressWarnings("unchecked")
 	public void customerData(ValueChangeEvent event) throws ManagerBeanException{
 		if(event.getNewValue() != null){
 			IManagerBean customerBean = BeanManager.getManagerBean(Customer.class);
@@ -462,7 +448,6 @@ public class DeliveryController extends BasicController {
 	/* (non-Javadoc)
 	 * @see com.code.aon.ui.form.BasicController#getCollection()
 	 */
-	@SuppressWarnings("unchecked")
 	public Collection getCollection(){
 		List<ITransferObject> l = new LinkedList<ITransferObject>();
 		l.add(obtainDelivery(((Delivery)this.getTo()).getId()));
@@ -475,7 +460,6 @@ public class DeliveryController extends BasicController {
 	 * @param deliveryId the ident of the delivery
 	 * @return the delivery of this ident
 	 */
-	@SuppressWarnings("unchecked")
 	private ITransferObject obtainDelivery(Integer deliveryId) {
 		try {
 			IManagerBean deliveryBean = BeanManager.getManagerBean(Delivery.class);
@@ -496,7 +480,6 @@ public class DeliveryController extends BasicController {
 	 * 
 	 * @return the tasdelivery
 	 */
-	@SuppressWarnings("unchecked")
 	public TasDelivery obtainTasDelivery(){
 		try {
 			IManagerBean tasDeliveryBean = BeanManager.getManagerBean(TasDelivery.class);
@@ -551,7 +534,6 @@ public class DeliveryController extends BasicController {
 	 * @throws ManagerBeanException
 	 * @throws ExpressionException
 	 */
-	@SuppressWarnings("unchecked")
 	public void addTargetExpression(ValueChangeEvent event)
 		throws ManagerBeanException, ExpressionException {
 	    if ((event.getNewValue() != null)
@@ -619,7 +601,6 @@ public class DeliveryController extends BasicController {
      * @return offers List
      * @throws ManagerBeanException
      */
-	@SuppressWarnings("unchecked")
     public List<SelectItem> getRelatedTASOffers() throws ManagerBeanException {
         LinkedList<SelectItem> offers = new LinkedList<SelectItem>();
         offerId = null;
@@ -653,29 +634,5 @@ public class DeliveryController extends BasicController {
         manager.setReportKey("delivery");
         manager.setOutputFormat(OutputFormat.PDF);
     }
-	
-	public void onSeriesChanged(ValueChangeEvent event) throws ManagerBeanException{
-		if (event.getPhaseId() == PhaseId.ANY_PHASE) {
-			event.setPhaseId(PhaseId.INVOKE_APPLICATION );
-			event.queue();
-		}
-		if (event.getPhaseId() == PhaseId.INVOKE_APPLICATION) {
-			int number = obtainMaxNumber((String)event.getNewValue());
-			if(this.getTo() != null){
-				((Delivery)this.getTo()).setNumber(number);	
-			}
-		}
-	}
 
-	private int obtainMaxNumber(String seriesId) throws ManagerBeanException {
-		IManagerBean deliveryBean = BeanManager.getManagerBean(Delivery.class);
-		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(deliveryBean.getFieldName(IWarehouseAlias.DELIVERY_SERIES), seriesId);
-		Projection projection = Projection.max(deliveryBean.getFieldName(IWarehouseAlias.DELIVERY_NUMBER));
-		Object value = deliveryBean.getUniqueResult(projection, criteria);
-		if(value != null){
-			return ((Integer)value).intValue() + 1;
-		}
-		return 1;
-	}
 }

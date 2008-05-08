@@ -71,7 +71,7 @@
 		<managed-property>
 			<description>Needed for Add Select Window</description>
 			<property-name>newPagePath</property-name>
-			<value>/finance/facelet/sw/bankNew.faces</value>
+			<value>/finance/facelet/sw/bankForm.faces</value>
 		</managed-property>
 	</managed-bean>
 	
@@ -106,61 +106,6 @@
 				<value>bankAccount</value>
 				<value>sufix</value>
 			</list-entries>
-		</managed-property>
-	</managed-bean>
-	
-	<!-- ************* CREDITOR LOOKUP ***************** -->
-	<managed-bean>
-		<managed-bean-name>creditorLookup</managed-bean-name>
-		<managed-bean-class>
-			com.code.aon.ui.finance.controller.CreditorLookupController
-		</managed-bean-class>
-		<managed-bean-scope>session</managed-bean-scope>
-		<managed-property>
-			<property-name>queryOnStartUP</property-name>
-			<value>true</value>
-		</managed-property>
-		<managed-property>
-			<property-name>foreignPojo</property-name>
-			<value>com.code.aon.finance.Creditor</value>
-		</managed-property>
-		<managed-property>
-			<property-name>aliasPrefix</property-name>
-			<value>Creditor_Lookup</value>
-		</managed-property>
-		<managed-property>
-			<property-name>foreignJoinProperties</property-name>
-			<list-entries>
-				<value>id</value>
-			</list-entries>
-		</managed-property>
-		<managed-property>
-			<property-name>foreignDisplayProperties</property-name>
-			<list-entries>
-				<value>registry.document</value>
-			</list-entries>
-		</managed-property>
-		<managed-property>
-			<description>Needed for Search Select Window</description>
-			<property-name>searchPagePath</property-name>
-			<value>/facelet/sw/creditorSearch.faces</value>
-		</managed-property>
-		<managed-property>
-			<property-name>listenerClasses</property-name>
-			<list-entries>
-				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
-				<value>#{creditorScopeListener}</value>
-			</list-entries>
-		</managed-property>
-	</managed-bean>
-
-	<managed-bean>
-		<managed-bean-name>creditorScopeListener</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.config.event.ScopeFilterListener</managed-bean-class>
-		<managed-bean-scope>none</managed-bean-scope>
-		<managed-property>
-			<property-name>aliasName</property-name>
-			<value>Creditor_scope_id</value>
 		</managed-property>
 	</managed-bean>
 	
@@ -256,7 +201,7 @@
 		</managed-property>
 		<managed-property>
 			<property-name>pageLimit</property-name>
-			<value>20</value>
+			<value>400000</value>
 		</managed-property>
 		<managed-property>
 			<property-name>pojo</property-name>
@@ -311,7 +256,7 @@
 		</managed-property>
 		<managed-property>
 			<property-name>pageLimit</property-name>
-			<value>20</value>
+			<value>400000</value>
 		</managed-property>
 		<managed-property>
 			<property-name>pojo</property-name>
@@ -486,7 +431,6 @@
 			<property-name>listenerClasses</property-name>
 			<list-entries>
 				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
-				<value>#{creditorScopeListener}</value>
 				<value>#{creditorAddressListener}</value>
 				<value>#{creditorMediaListener}</value>
 				<value>#{creditorRBankChildListener}</value>
@@ -792,41 +736,6 @@
 			<value>com.code.aon.finance.Invoice</value>
 		</managed-property>
 	</managed-bean>
-
-	<!-- ************ FEE CHECKING PRINTER ************* -->
-	<managed-bean>
-		<managed-bean-name>feeCheckingPrinter</managed-bean-name>
-		<managed-bean-class>
-			com.code.aon.ui.finance.util.print.FeeCheckingPrinter
-		</managed-bean-class>
-		<managed-bean-scope>session</managed-bean-scope>
-	</managed-bean>
-
-	<!-- ************ FINANCE CHECKING PRINTER ************* -->
-	<managed-bean>
-		<managed-bean-name>financeCheckingPrinter</managed-bean-name>
-		<managed-bean-class>
-			com.code.aon.ui.finance.util.print.FinanceCheckingPrinter
-		</managed-bean-class>
-		<managed-bean-scope>session</managed-bean-scope>
-	</managed-bean>
-
-	<!-- ************ FEE PRINTER ************* -->
-	<managed-bean>
-		<managed-bean-name>feePrint</managed-bean-name>
-		<managed-bean-class>
-			com.code.aon.ui.finance.util.print.FeePrinter
-		</managed-bean-class>
-		<managed-bean-scope>session</managed-bean-scope>
-		<managed-property>
-			<property-name>queryOnStartUP</property-name>
-			<value>false</value>
-		</managed-property>
-		<managed-property>
-			<property-name>pojo</property-name>
-			<value>com.code.aon.sales.CustomerFee</value>
-		</managed-property>
-	</managed-bean>
 	
 	<!-- **************** CONVERTERS  *************** -->
 	<converter>
@@ -839,12 +748,6 @@
 		<description>Conversor para FinanceBatchType</description>
 		<converter-id>fBatchTypeConverter</converter-id>
 		<converter-class>com.code.aon.ui.finance.converter.FinanceBatchTypeConverter</converter-class>
-	</converter>
-
-	<converter>
-		<description>Conversor para FinanceStatus</description>
-		<converter-id>financeStatusConverter</converter-id>
-		<converter-class>com.code.aon.ui.finance.converter.FinanceStatusConverter</converter-class>
 	</converter>
 	
   <!-- =================== Navigation Rules ================= -->
@@ -894,15 +797,7 @@
     <navigation-case>
       <from-outcome>invoicePrint</from-outcome>
       <to-view-id>/facelet/finance/invoice_print/search.faces</to-view-id>
-    </navigation-case>
-    <navigation-case>
-      <from-outcome>util_checking</from-outcome>
-      <to-view-id>/finance/facelet/util/checking/checking.faces</to-view-id>
-    </navigation-case>
-    <navigation-case>
-      <from-outcome>util_fee_print</from-outcome>
-      <to-view-id>/finance/facelet/util/fee_print/search.faces</to-view-id>
-    </navigation-case>
+    </navigation-case>    
   </navigation-rule>
   
   	<!-- =================== Finance Batch ================= -->
@@ -979,14 +874,6 @@
       <from-outcome>creditor_search</from-outcome>
       <to-view-id>/finance/facelet/creditor/search.faces</to-view-id>
     </navigation-case>
-	<navigation-case>
-		<from-outcome>creditor_sw</from-outcome>
-		<to-view-id>/facelet/sw/creditor.faces</to-view-id>
-	</navigation-case>
-	<navigation-case>
-		<from-outcome>creditor_sw_search</from-outcome>
-		<to-view-id>/facelet/sw/creditorSearch.faces</to-view-id>
-	</navigation-case>
   </navigation-rule>
   
   <!-- =================== Invoicing Group ========================== -->
@@ -1017,18 +904,6 @@
     </navigation-case>
    </navigation-rule> 
   
-  <!-- =================== Fee Print ========================== -->
-  <navigation-rule>
-    <navigation-case>
-      <from-outcome>fee_print_list</from-outcome>
-      <to-view-id>/finance/facelet/util/fee_print/list.faces</to-view-id>
-    </navigation-case>
-    <navigation-case>
-      <from-outcome>fee_print_search</from-outcome>
-      <to-view-id>/finance/facelet/util/fee_print/search.faces</to-view-id>
-    </navigation-case>
-   </navigation-rule> 
-   
   <!-- =================== Select Windows ========================== -->
   <navigation-rule>
 		<navigation-case>

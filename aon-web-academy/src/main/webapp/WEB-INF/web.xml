@@ -158,18 +158,6 @@
 		<url-pattern>*.jsp</url-pattern>
 	</filter-mapping>
 
-	<!-- BackDoorAuthentication Filter -->
-	<filter>
-		<filter-name>BackDoorAuthenticationFilter</filter-name>
-		<filter-class>com.code.aon.bridge.session.BackDoorAuthenticationFilter</filter-class>
-	</filter>
-	
-	<!-- Enables and Registers session for concurrent sessions -->
-	<filter-mapping>
-		<filter-name>BackDoorAuthenticationFilter</filter-name>
-		<url-pattern>/auth/*</url-pattern>
-	</filter-mapping>
-
 	<!-- Enables and Registers session for concurrent sessions -->
 	<filter-mapping>
 	   <filter-name>SessionFilter</filter-name>
@@ -205,7 +193,7 @@
 		<servlet-class>com.code.aon.bridge.servlet.DeployServlet</servlet-class>
 		<init-param>
 			<param-name>name</param-name>
-			<param-value>aon-academy.war</param-value>
+			<param-value>aon-web-academy.war</param-value>
 		</init-param>
 		<load-on-startup>2</load-on-startup>
 	</servlet>
@@ -277,16 +265,8 @@
 			<url-pattern>/facelet/*</url-pattern>
 		</web-resource-collection>
 		<web-resource-collection>
-			<web-resource-name>account</web-resource-name>
-			<url-pattern>/account/*</url-pattern>
-		</web-resource-collection>
-		<web-resource-collection>
-			<web-resource-name>finance</web-resource-name>
-			<url-pattern>/finance/*</url-pattern>
-		</web-resource-collection>
-		<web-resource-collection>
 			<web-resource-name>jsp</web-resource-name>
-			<url-pattern>/index.jsp</url-pattern>
+			<url-pattern>*.jsp</url-pattern>
 		</web-resource-collection>
 		<web-resource-collection>
 			<web-resource-name>actions</web-resource-name>
@@ -312,24 +292,18 @@
 			<role-name>Profesores</role-name>
 			<role-name>ConsultaNotas</role-name>
 			<role-name>Prestamos</role-name>
-			<role-name>UtilidadesAcadémicas</role-name>
-			<role-name>HabilidadesAGrupos</role-name>
 			<role-name>GestionAdministrativa</role-name>
 			<role-name>GestionFacturas</role-name>
 			<role-name>ImpresionFacturas</role-name>
 			<role-name>GestionCuotas</role-name>
 			<role-name>Facturacion</role-name>
 			<role-name>Prefacturacion</role-name>
-			<role-name>CuotasAGrupos</role-name>
 			<role-name>Tesoreria</role-name>
 			<role-name>Vencimientos</role-name>
 			<role-name>DevolucionVencimientos</role-name>
 			<role-name>GestionCartera</role-name>
 			<role-name>Remesas</role-name>
 			<role-name>GruposFacturacion</role-name>
-			<role-name>UtilidadesTesoreria</role-name>
-			<role-name>ChecksTesoreria</role-name>
-			<role-name>ListadoCuotas</role-name>
 			<role-name>Auxiliares</role-name>
 			<role-name>AuxiliaresAlumnos</role-name>
 			<role-name>AuxiliaresTiposRelaciones</role-name>
@@ -382,24 +356,18 @@
 	<security-role><role-name>Profesores</role-name></security-role>
 	<security-role><role-name>ConsultaNotas</role-name></security-role>
 	<security-role><role-name>Prestamos</role-name></security-role>
-	<security-role><role-name>UtilidadesAcadémicas</role-name></security-role>
-	<security-role><role-name>HabilidadesAGrupos</role-name></security-role>
 	<security-role><role-name>GestionAdministrativa</role-name></security-role>
 	<security-role><role-name>GestionFacturas</role-name></security-role>
 	<security-role><role-name>ImpresionFacturas</role-name></security-role>
 	<security-role><role-name>GestionCuotas</role-name></security-role>
 	<security-role><role-name>Facturacion</role-name></security-role>
 	<security-role><role-name>Prefacturacion</role-name></security-role>
-	<security-role><role-name>CuotasAGrupos</role-name></security-role>
 	<security-role><role-name>Tesoreria</role-name></security-role>
 	<security-role><role-name>Vencimientos</role-name></security-role>
 	<security-role><role-name>DevolucionVencimientos</role-name></security-role>
 	<security-role><role-name>GestionCartera</role-name></security-role>
 	<security-role><role-name>Remesas</role-name></security-role>
 	<security-role><role-name>GruposFacturacion</role-name></security-role>
-	<security-role><role-name>UtilidadesTesoreria</role-name></security-role>
-	<security-role><role-name>ChecksTesoreria</role-name></security-role>
-	<security-role><role-name>ListadoCuotas</role-name></security-role>
 	<security-role><role-name>Auxiliares</role-name></security-role>
 	<security-role><role-name>AuxiliaresAlumnos</role-name></security-role>
 	<security-role><role-name>AuxiliaresTiposRelaciones</role-name></security-role>

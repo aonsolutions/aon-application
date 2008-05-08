@@ -86,25 +86,21 @@
 		<option key="aon_workplace" descriptionKey="aon_workplace_desc" ref="workplace" role="Centros">
 			<actionListener action="#{workplace.onSearch}" />
 		</option>
-		<!-- 
 		<menu ref="content" key="aon_user_management" descriptionKey="aon_user_management_desc" role="GestionUsuarios">
 			<option key="aon_user" descriptionKey="aon_user_desc" ref="user" role="Usuarios"/>
 			<option key="aon_work_group" descriptionKey="aon_work_group_desc" ref="workgroup" role="GruposTrabajo">
 				<actionListener action="#{workGroup.onSearch}" />
 			</option>
 		</menu>
-		 -->
 		<option ref="tax" key="aon_product_tax" descriptionKey="aon_product_tax_desc" role="Impuestos"/>
 		<option ref="series" key="aon_series" descriptionKey="aon_series_desc"/>
 		<option ref="scope" key="aon_scope" descriptionKey="aon_scope_desc"/>
-		<!-- 
 		<menu ref="content" key="aon_utilities"  descriptionKey="aon_utilities_desc" role="UtilidadesConfiguracion">
 			<option ref="dump" key="aon_dump" descriptionKey="aon_dump_desc" role="VolcadoDatos">
 				<actionListener action="#{dumper.dbDump}" />
 			</option>
 			<option ref="recover" key="aon_recover" descriptionKey="aon_recover_desc" role="RecuperacionDatos"/>
 		</menu>
-		 -->
 	</menu>
 	
 	<option ref="inbox" key="aon_inbox" descriptionKey="aon_inbox_desc" role="BandejaEntrada">
