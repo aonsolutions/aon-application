@@ -37,6 +37,15 @@ public class Criteria implements Criterion {
 	public OrderByList getOrderByList() {
 		return this.orderByList;
 	}
+	
+	/**
+	 * Sets the order by list.
+	 * 
+	 * @param orderByList the new order by list
+	 */
+	public void setOrderByList(OrderByList orderByList) {
+		this.orderByList = orderByList;
+	}
 
 	/**
 	 * Adds a equal expression to this Criteria (a=b).
