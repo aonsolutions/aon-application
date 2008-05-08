@@ -195,8 +195,14 @@
 												confirmActionListener="#{article.onRemove}" 
 												styleClass="aon-finding-toolbar-item aon-icon-delete"
 												accesskey="#{bundle.aon_key_remove}"/>
+											<h:commandButton id="generate_article"
+												value="#{appBundle.aon_generate}" 
+												rendered="#{article.to!=null}"
+												reRender="detail_panel,tab0,tab1,tab2,tab3"
+												actionListener="#{article.onGenerateCurrentArticle}"
+												styleClass="aon-finding-toolbar-item aon-icon-accept"
+												accesskey="#{bundle.aon_key_save}"/>										
 									    </aon:div>
-										
 									</aon:panelGrid>
 								</aon:div>
 					
