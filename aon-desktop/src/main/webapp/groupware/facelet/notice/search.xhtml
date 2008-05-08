@@ -48,16 +48,14 @@
 						
 						<aon:outputLabel for="Notice_date-From"
 							value="#{groupwareBundle.aon_date_from}" />
-						<aon:selectInputDate id="Note_date-From"
-							valueChangeListener="#{notice.addFromDateExpression}"
+						<aon:selectInputDate id="Notice_date-From" value="#{notice.fromDate}"
 							popupDateFormat="#{bundle.aon_date_pattern}"
 							renderAsPopup="true">
 						</aon:selectInputDate>
 
 						<aon:outputLabel for="Notice_date-To"
 							value="#{groupwareBundle.aon_date_to}" />
-						<aon:selectInputDate id="Notice_date-To"
-							valueChangeListener="#{notice.addToDateExpression}"
+						<aon:selectInputDate id="Notice_date-To" value="#{notice.toDate}"
 							popupDateFormat="#{bundle.aon_date_pattern}"
 							renderAsPopup="true">
 						</aon:selectInputDate>
