@@ -11,14 +11,14 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.code.aon</groupId>
 	<artifactId>aon.common</artifactId>
-	<version>1.9.18</version>
+	<version>1.9.19</version>
 	<description>AON COMMON</description>
 	<name>AON COMMON</name>
 	<dependencies>
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ql</artifactId>
-			<version>1.9.14</version>
+			<version>1.9.15</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
