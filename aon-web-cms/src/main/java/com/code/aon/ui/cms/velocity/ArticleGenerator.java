@@ -235,7 +235,7 @@ public class ArticleGenerator extends Generator {
             Expression greaterExpr = ExpressionUtilities.getGreaterThanOrEqualExpression(bean.getFieldName(ICMSAlias.ARTICLE_EXPIRE_DATE), new Date());
             criteria.addExpression(ExpressionUtilities.getOrExpression(nullableExpr, greaterExpr));
 			criteria.addLessThanOrEqualExpression(bean.getFieldName(ICMSAlias.ARTICLE_PUBLISH_DATE), new Date());
-			criteria.addOrder(bean.getFieldName(ICMSAlias.ARTICLE_POSITION));
+			criteria.addOrder(bean.getFieldName(ICMSAlias.ARTICLE_PUBLISH_DATE),false);
 			l = (List<ITransferObject>)bean.getList(criteria);
 			iter = l.iterator();
 			ArrayList<ArticleHandler> ahlist = new ArrayList<ArticleHandler>();
