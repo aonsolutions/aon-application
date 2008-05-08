@@ -42,9 +42,8 @@
 				<aon:div>
 					<aon:panelGrid columns="2" cellpadding="0" cellspacing="0" style="width:100%;">
 						
-						<aon:commandButton id="addToEmail" 
+						<aon:commandButton id="addToEmail" reRender="showEmailWindow"
 							actionListener="#{message.openEmailsToPanelPopup}"
-							onclick="javascript:Richfaces.showModalPanel('showEmailsModalPanel',{width:650, top:100})"
 							styleClass="aon-icon-commandButton aon-icon-search" 
 							value="#{appBundle.aon_webmail_to}:"/>
 						<aon:div>
@@ -54,9 +53,8 @@
 							
 						</aon:div>
 	
-						<aon:commandButton id="addCcEmail" 
+						<aon:commandButton id="addCcEmail" reRender="showEmailWindow"
 							actionListener="#{message.openEmailsCcPanelPopup}" 
-							onclick="javascript:Richfaces.showModalPanel('showEmailsModalPanel',{width:650, top:100})"
 							styleClass="aon-icon-commandButton aon-icon-search" 
 							value="#{appBundle.aon_webmail_cc}:"/>
 						<aon:div>
@@ -65,9 +63,8 @@
 								value="#{message.recipientsCc}"/>								
 						</aon:div>
 	
-						<aon:commandButton id="addBccEmail" 
+						<aon:commandButton id="addBccEmail" reRender="showEmailWindow"
 							actionListener="#{message.openEmailsBccPanelPopup}" 
-							onclick="javascript:Richfaces.showModalPanel('showEmailsModalPanel',{width:650, top:100})"
 							styleClass="aon-icon-commandButton aon-icon-search" 
 							value="#{appBundle.aon_webmail_bcc}:"/>
 						<aon:div>
@@ -75,8 +72,6 @@
 								size="120"
 								value="#{message.recipientsBcc}"/>											
 						</aon:div>
-						
-						<ui:include src="/webmail/facelet/modal/showEmails.xhtml" />
 						
 						<aon:div>
 							<aon:outputLabel for="NewMail_Subject" 
@@ -130,6 +125,9 @@
 					</aon:panelGroup>
 				</aon:div>
 			</aon:div>
+
+			<ui:include src="/webmail/facelet/modal/showEmails.xhtml" />
+
 		</aon:form>
 		
 	</ui:define>
