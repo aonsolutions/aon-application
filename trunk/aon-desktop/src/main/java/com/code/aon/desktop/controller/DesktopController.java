@@ -64,7 +64,7 @@ public class DesktopController extends BasicController {
 		//Connect to mail server.
 		try {
 			WebMailController webmail = (WebMailController)AonUtil.getRegisteredBean(AonConstants.BEAN_WEBMAIL);
-			webmail.initDesktop(UserUtils.getLoggedUser());
+			webmail.initDesktop(UserUtils.getInstance().getLoggedUser());
 			mail_server = webmail.getServer();
 		}
 		catch (Exception e) {
@@ -92,7 +92,7 @@ public class DesktopController extends BasicController {
                         "where notice.id = alarm.sourceId " +
                         "and alarm.source = " + AlarmSource.NOTICE.ordinal() + " " +
                         "and alarm.status = " + AlarmStatus.PENDING.ordinal() + " " +
-                        "and alarm.user = " + UserUtils.getLoggedUser().getId() + " " +
+                        "and alarm.user = " + UserUtils.getInstance().getLoggedUser().getId() + " " +
                         "and alarm.alarmDate < '" + formatter.format(to.getTime()) + "' " +
                         "group by notice.type " +
                         "order by notice.type";
@@ -120,7 +120,7 @@ public class DesktopController extends BasicController {
         try {
             IManagerBean noteBean = BeanManager.getManagerBean(Note.class);
             Criteria criteria = new Criteria();
-            criteria.addEqualExpression(noteBean.getFieldName(IGroupWareAlias.NOTE_OWNER_ID), UserUtils.getLoggedUser().getId());
+            criteria.addEqualExpression(noteBean.getFieldName(IGroupWareAlias.NOTE_OWNER_ID), UserUtils.getInstance().getLoggedUser().getId());
             criteria.addOrder(noteBean.getFieldName(IGroupWareAlias.NOTE_DATE), false);
             this.recentNoteModel = new ListDataModel(noteBean.getList(criteria));
 
@@ -179,7 +179,7 @@ public class DesktopController extends BasicController {
                         "where notice.id = alarm.sourceId " +
                         "and alarm.source = " + AlarmSource.NOTICE.ordinal() + " " +
                         "and alarm.status = " + AlarmStatus.PENDING.ordinal() + " " +
-                        "and alarm.user = " + UserUtils.getLoggedUser().getId() + " ";
+                        "and alarm.user = " + UserUtils.getInstance().getLoggedUser().getId() + " ";
         if (from != null) {
             select += "and alarm.alarmDate >= '" + formatter.format(from) + "' ";
         }
@@ -250,7 +250,7 @@ public class DesktopController extends BasicController {
         NoticeController noticeController = (NoticeController)AonUtil.getController(NOTICE_CONTROLLER_NAME);
         Criteria criteria = new Criteria();
         try {
-            criteria.addEqualExpression(noticeController.getFieldName(IGroupWareAlias.NOTICE_RECIPIENT_ID), UserUtils.getLoggedUser().getId());
+            criteria.addEqualExpression(noticeController.getFieldName(IGroupWareAlias.NOTICE_RECIPIENT_ID), UserUtils.getInstance().getLoggedUser().getId());
             criteria.addBetweenExpression(noticeController.getFieldName(IGroupWareAlias.NOTICE_DATE), from.getTime(), to.getTime());
             noticeController.setCriteria(criteria);
             noticeController.onSearch(null);
@@ -326,7 +326,7 @@ public class DesktopController extends BasicController {
 	}
 
     public String getLoggedUserName() {
-        User user = UserUtils.getLoggedUser();
+        User user = UserUtils.getInstance().getLoggedUser();
         return user.getName();
     }
 
