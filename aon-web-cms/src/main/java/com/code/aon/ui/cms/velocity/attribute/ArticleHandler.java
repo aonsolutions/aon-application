@@ -167,6 +167,7 @@ public class ArticleHandler {
 				IManagerBean articleDocumentBean = BeanManager.getManagerBean(ArticleDocument.class);
 				Criteria articleDocumentCriteria = new Criteria();
 				articleDocumentCriteria.addEqualExpression(articleDocumentBean.getFieldName(ICMSAlias.ARTICLE_DOCUMENT_ARTICLE_ID), article.getId());
+				articleDocumentCriteria.addOrder(articleDocumentBean.getFieldName(ICMSAlias.ARTICLE_DOCUMENT_ID), false);
 				List<ITransferObject> articleDocumentList = (List<ITransferObject>)articleDocumentBean.getList(articleDocumentCriteria);
 				for (int k=0; k < articleDocumentList.size(); k++) {
 					ArticleDocument articleDocument = (ArticleDocument)articleDocumentList.get(k);
