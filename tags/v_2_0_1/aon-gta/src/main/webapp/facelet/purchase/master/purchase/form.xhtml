@@ -1,0 +1,494 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:h="http://java.sun.com/jsf/html">
+<body>
+
+<ui:composition template="/facelet/templates/aon.ui.content.xhtml">
+
+	<ui:define name="head">
+		<ui:include src="/facelet/shared/head.xhtml" />
+		<script type='text/javascript'
+			src="${facesContext.externalContext.requestContextPath}/js/Calculations.js">
+			// nothing
+		</script>
+		<script type='text/javascript'
+			src="${facesContext.externalContext.requestContextPath}/js/itemLookup.js">
+			// nothing
+		</script>
+		<script type='text/javascript'
+			src="${facesContext.externalContext.requestContextPath}/js/SupplierLookup.js">
+			// nothing
+		</script>
+		<t:stylesheet path="/jscalendar-1.0/calendar-system.css" />
+		<script type='text/javascript'
+			src="${facesContext.externalContext.requestContextPath}/jscalendar-1.0/calendar.js">
+			// nothing
+		</script>
+		<script type='text/javascript'
+			src="${facesContext.externalContext.requestContextPath}/jscalendar-1.0/lang/calendar-es.js">
+			// nothing
+		</script>
+		<script type='text/javascript'
+			src="${facesContext.externalContext.requestContextPath}/jscalendar-1.0/calendar-setup.js">
+			// nothing
+		</script>
+	</ui:define>
+
+	<ui:define name="content">
+
+		<h:form id="incomeForm">
+			<t:div styleClass="aon-content-toolbar" id="aon-content-toolbar"
+				forceId="#{true}">
+				<t:div styleClass="aon-content-toolbar-internal">
+				<t:div styleClass="aon-content-toolbar-item-group">
+					<t:commandButton id="save" value="#{bundle.aon_save}"
+						rendered="#{income.editable}"
+						forceId="#{true}" actionListener="#{income.accept}"
+						onclick="return (confirm('#{bundle.aon_save_confirm}'))"
+						styleClass="aon-content-toolbar-item aon-content-toolbar-item-save"
+						onmouseover="this.className='aon-content-toolbar-item aon-content-toolbar-item-hover aon-content-toolbar-item-save'"
+						onmouseout="this.className='aon-content-toolbar-item aon-content-toolbar-item-save'" 
+						disabled="#{incomeDetail.to!=null}"
+						accesskey="#{bundle.aon_key_save}"/>
+					<t:commandButton id="cancel" value="#{bundle.aon_cancel}"
+						forceId="#{true}" immediate="#{true}" action="purchase_list"
+						actionListener="#{income.onCancel}"
+						onclick="return (confirm('#{bundle.aon_cancel_confirm}'))"
+						styleClass="aon-content-toolbar-item aon-content-toolbar-item-cancel"
+						onmouseover="this.className='aon-content-toolbar-item aon-content-toolbar-item-hover aon-content-toolbar-item-cancel'"
+						onmouseout="this.className='aon-content-toolbar-item aon-content-toolbar-item-cancel'" 
+						disabled="#{incomeDetail.to!=null}"
+						accesskey="#{bundle.aon_key_cancel}"/>
+					<t:commandButton id="remove" value="#{bundle.aon_remove}"
+						rendered="#{!purchase.new and income.editable}" forceId="#{true}" immediate="#{true}"
+						action="purchase_list" actionListener="#{income.onRemove}"
+						onclick="return (confirm('#{bundle.aon_remove_confirm}'))"
+						styleClass="aon-content-toolbar-item aon-content-toolbar-item-delete"
+						onmouseover="this.className='aon-content-toolbar-item aon-content-toolbar-item-hover aon-content-toolbar-item-delete'"
+						onmouseout="this.className='aon-content-toolbar-item aon-content-toolbar-item-delete'" 
+						disabled="#{incomeDetail.to!=null}"
+						accesskey="#{bundle.aon_key_remove}"/>
+					<t:commandButton id="reset" value="#{bundle.aon_reset}"
+						forceId="#{true}" immediate="#{true}" rendered="#{!income.new}"
+						action="purchase_form" actionListener="#{income.onReset}"
+						styleClass="aon-content-toolbar-item aon-content-toolbar-item-reset"
+						onmouseover="this.className='aon-content-toolbar-item aon-content-toolbar-item-hover aon-content-toolbar-item-reset'"
+						onmouseout="this.className='aon-content-toolbar-item aon-content-toolbar-item-reset'" 
+						disabled="#{incomeDetail.to!=null}"
+						accesskey="#{bundle.aon_key_new}"/>
+					<t:commandButton id="search" value="#{bundle.aon_search}"
+						forceId="#{true}" immediate="#{true}" action="purchase_search"
+						actionListener="#{income.onEditSearch}"
+						styleClass="aon-content-toolbar-item aon-content-toolbar-item-search"
+						onmouseover="this.className='aon-content-toolbar-item aon-content-toolbar-item-hover aon-content-toolbar-item-search'"
+						onmouseout="this.className='aon-content-toolbar-item aon-content-toolbar-item-search'" 
+						disabled="#{incomeDetail.to!=null}"
+						accesskey="#{bundle.aon_key_search}"/>
+					<t:commandButton id="incomeDisabled" value="#{bundle.aon_report}"
+						forceId="#{true}" rendered="#{!income.new and incomeDetail.to != null}"
+						styleClass="aon-content-toolbar-item aon-content-toolbar-item-print"
+						onmouseover="this.className='aon-content-toolbar-item aon-content-toolbar-item-hover aon-content-toolbar-item-print'"
+						onmouseout="this.className='aon-content-toolbar-item aon-content-toolbar-item-print'" 
+						disabled="#{true}" accesskey="#{bundle.aon_key_print}"/>
+					<t:commandLink id="income" value="#{bundle.aon_report}" target="_new"
+						forceId="#{true}" rendered="#{!income.new and incomeDetail.to == null}"
+						action="#{report.onExecute}"
+						actionListener="#{income.onReport}"
+						styleClass="aon-content-toolbar-item aon-content-toolbar-item-print"
+						onmouseover="this.className='aon-content-toolbar-item aon-content-toolbar-item-hover aon-content-toolbar-item-print'"
+						onmouseout="this.className='aon-content-toolbar-item aon-content-toolbar-item-print'" 
+						accesskey="#{bundle.aon_key_print}"/>
+				</t:div>
+				</t:div>
+			</t:div>
+			<t:div styleClass="aon-content-subtitle" id="aon-content-subtitle"
+				forceId="#{true}">
+				<t:div styleClass="aon-content-subtitle-internal">
+				<h:outputText
+					value="#{income.new?(bundle.aon_reset):(bundle.aon_editing)}" />
+				</t:div>
+			</t:div>
+
+			<t:div id="aon-scroll-area" forceId="#{true}">
+				<t:div styleClass="aon-scroll-area-internal">
+
+					<h:panelGrid columns="4" styleClass="aon-form-table" 
+						columnClasses="aon-form-table-column-odd,aon-form-table-column-even,aon-form-table-column-odd,aon-form-table-column-even">
+						<h:outputLabel for="Income_series"
+							styleClass="aon-form-input-text-label"
+							value="#{purchaseBundle.aon_series_number}" />
+						<t:div>
+							<t:inputText id="Income_series" value="#{income.to.series}" disabled="#{!income.new}"
+								styleClass="aon-form-input-text" forceId="#{true}" size="3"
+								maxlength="3" onblur="toUpperCase(this);">
+								<f:validateLength maximum="3" />
+							</t:inputText>
+							<h:inputText id="Income_number" value="#{income.to.number}" disabled="#{!income.new}"
+								styleClass="aon-form-input-text" forceId="#{true}"
+								required="true" size="7">
+								<f:validateLongRange minimum="1" />
+							</h:inputText>
+						</t:div>
+						<t:outputLabel for="Income_incomeStatus"
+							styleClass="aon-form-selectOneMenu-label"
+							value="#{purchaseBundle.aon_status}" />
+						<h:selectOneMenu id="Income_incomeStatus" disabled="true"
+							styleClass="aon-form-selectOneMenu-field"
+							value="#{income.to.incomeStatus}">
+							<f:selectItems value="#{warehouseCollections.incomeStatuses}" />
+						</h:selectOneMenu>
+						
+
+						<h:outputLabel for="Income_issueTime"
+							value="#{purchaseBundle.aon_date}"
+							styleClass="aon-form-input-text-label " />
+						<t:div>
+							<t:inputText styleClass="aon-form-input-text" disabled="#{!income.editable}"
+								id="Income_issueTime" required="true" forceId="#{true}"
+								value="#{income.to.issueTime}" size="10" maxlength="1">
+								<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+									timeZone="#{timeZoneController.timeZoneId}" />
+							</t:inputText>
+							<t:commandButton styleClass="aon-form-calendar-button" disabled="#{!income.editable}"
+								id="Income_issueTime_button" forceId="#{true}" value=""
+								immediate="true" />
+							<script type="text/javascript">
+							  Calendar.setup( {
+								inputField  : "Income_issueTime", button : "Income_issueTime_button",
+								ifFormat    : "%d/%m/%Y" } );
+							</script>
+						</t:div>
+							<t:outputLabel for="Income_securityLevel"
+								styleClass="aon-form-selectOneMenu-label"
+								value="#{purchaseBundle.aon_security_level}" />
+							<h:selectOneMenu id="Income_securityLevel" disabled="#{!income.editable}"
+								styleClass="aon-form-selectOneMenu-field"
+								value="#{income.to.securityLevel}">
+								<f:selectItems value="#{financeCollections.securityLevels}" />
+							</h:selectOneMenu>
+						
+
+						<t:outputLabel for="Supplier_id"
+							styleClass="aon-form-input-text-label"
+							value="#{purchaseBundle.aon_supplier}" />
+						<h:panelGroup>
+							<t:inputText id="Supplier_id" size="5" forceId="#{true}"
+								styleClass="aon-form-input-text" required="true" disabled="#{!income.editable}"
+								onchange="return findSupplierLookup(event,'#{facesContext.externalContext.request.contextPath}','com.code.aon.purchase.Supplier');"
+								value="#{income.to.supplier.id}" valueChangeListener="#{income.supplierData}"/>
+							<h:commandButton id="findSupplier" disabled="#{!income.editable}"
+								styleClass="aon-form-lookup-button"
+								onclick="selectWindow(this, 'placeList', '#{supplierSearch.encodedPagePath}');return false;"
+								value="" immediate="true" />
+							<h:commandButton id="addSupplier" disabled="#{!income.editable}"
+								styleClass="aon-form-new-button"
+								onclick="selectWindow(this, 'placeList', '#{supplierAdd.encodedPagePath}');return false;"
+								value="" immediate="true" />
+							<t:inputText id="Supplier_full_name" forceId="#{true}"
+								styleClass="aon-form-input-text-disabled"
+								disabled="true" size="40"
+								value="#{income.to.supplier.name} #{income.to.supplier.surname==null?' ':(income.to.supplier.surname)}" />	 		
+						</h:panelGroup>
+						
+						<t:outputLabel for="IncomeDetail_warehouse_id"
+							styleClass="aon-form-selectOneMenu-label"
+							value="#{purchaseBundle.aon_warehouse}" />
+						<h:selectOneMenu id="IncomeDetail_warehouse_id" 
+							disabled="#{!income.new and income.warehouseId != null}"
+							styleClass="aon-form-selectOneMenu-field"
+							value="#{income.warehouseId}">
+							<f:selectItems value="#{warehouseCollections.warehouses}" />
+						</h:selectOneMenu>
+
+					</h:panelGrid>
+
+					<t:div styleClass="aon-form-group" rendered="#{!income.new}">
+						<t:div styleClass="aon-form-group-title">
+							<t:outputLabel for="incomeLineData"
+								value="#{purchaseBundle.aon_purchase_lines}" />
+						</t:div>
+
+						<t:div styleClass="aon-form-group-body">
+							<t:dataTable id="incomeLineDataList" var="to"
+								rendered="#{!income.new}" styleClass="aon-edit-table"
+								headerClass="aon-edit-table-header"
+								footerClass="aon-edit-table-footer" rows="20" cellpadding="0"
+								cellspacing="0" value="#{incomeDetail.model}"
+								rowOnMouseOver="selectRow( this )"
+								rowOnMouseOut="unselectRow( this )" rowOnClick="sendRow( this )"
+								rowIndexVar="rowIndex"
+								rowClasses="aon-edit-table-row-odd,aon-edit-table-row-even"
+								columnClasses="aon-edit-table-body aon-edit-table-body-icon,aon-edit-table-body aon-edit-table-body-string aon-edit-table-mainColumn,aon-edit-table-body aon-edit-table-body-number,aon-edit-table-body aon-edit-table-body-number,aon-edit-table-body aon-edit-table-body-number,aon-edit-table-body aon-edit-table-body-number,aon-edit-table-body aon-edit-table-body-number,aon-edit-table-body aon-edit-table-body-buttons">
+
+								<h:column>
+									<f:facet name="header">
+										<f:verbatim>&#160;</f:verbatim>
+									</f:facet>
+									<t:commandLink immediate="#{true}"
+										styleClass="aon-table-row-selected" disabled="#{!income.editable}"
+										rendered="#{to!=incomeDetail.to}"
+										actionListener="#{incomeDetail.onSelect}" />
+									<f:verbatim>&#160;</f:verbatim>
+									<f:facet name="footer">
+										<t:div>
+											<t:commandButton value=""
+												styleClass="aon-edit-table-icon-button aon-edit-table-icon-button-new"
+												title="#{purchaseBundle.aon_newLine}"
+												actionListener="#{incomeDetail.onReset}"
+												rendered="#{!incomeDetail.new and income.editable}" 
+												accesskey="#{bundle.aon_key_new_line}"/>
+											<f:verbatim rendered="#{incomeDetail.new}">&#160;</f:verbatim>
+										</t:div>
+									</f:facet>
+								</h:column>
+
+								<h:column>
+									<f:facet name="header">
+										<h:outputText value="#{productBundle.item_item}" />
+									</f:facet>
+									<t:outputText value="#{to.description}"
+										rendered="#{to!=incomeDetail.to}" />
+
+									<h:panelGroup rendered="#{to==incomeDetail.to}">
+										<t:inputHidden id="Item_id-Edit" forceId="#{true}"
+											value="#{incomeDetail.to.item.id}"
+											valueChangeListener="#{incomeDetail.itemData}" />
+										<t:inputText size="10" id="Item_product_code-Edit"
+											required="true" forceId="#{true}"
+											styleClass="aon-form-input-text"
+											value="#{incomeDetail.to.item.product.code}"
+											onchange="return findItemLookup(event,'#{facesContext.externalContext.request.contextPath}','com.code.aon.product.Item','Item_id-Edit[#{rowIndex}],Item_product_code-Edit[#{rowIndex}],Item_full_name-Edit[#{rowIndex}]'),Item_purchase_price-Edit[#{rowIndex}];" />
+										<h:commandButton id="findInvoice_item"
+											onclick="selectWindow(this, 'placeList', '#{itemSearch.encodedPagePath}','Item_id-Edit[#{rowIndex}],Item_product_code-Edit[#{rowIndex}],Item_full_name-Edit[#{rowIndex}],Item_purchase_price-Edit[#{rowIndex}]');return false;"
+											value="" immediate="true" styleClass="aon-form-lookup-button" />
+										<h:commandButton id="addInvoice_item"
+											onclick="selectWindow(this, 'placeList', '#{itemAdd.encodedPagePath}','Item_id-Edit[#{rowIndex}],Item_product_code-Edit[#{rowIndex}],Item_full_name-Edit[#{rowIndex}],Item_purchase_price-Edit[#{rowIndex}]');return false;"
+											value="" immediate="true" styleClass="aon-form-new-button" />
+										<t:inputText id="Item_full_name-Edit"
+											size="40" forceId="#{true}" required="#{true}"
+											styleClass="aon-form-input-text"
+											value="#{incomeDetail.to.description}" />
+									</h:panelGroup>
+
+									<f:facet name="footer">
+										<t:div>
+											<h:panelGroup rendered="#{incomeDetail.new}">
+												<t:inputHidden id="Item_id-New" forceId="#{true}"
+													value="#{incomeDetail.to.item.id}"
+													valueChangeListener="#{incomeDetail.itemData}" />
+												<t:inputText size="10" id="Item_product_code-New"
+													required="true" forceId="#{true}"
+													styleClass="aon-form-input-text"
+													value="#{incomeDetail.to.item.product.code}"
+													onchange="return findItemLookup(event,'#{facesContext.externalContext.request.contextPath}','com.code.aon.product.Item','Item_id-New,Item_product_code-New,Item_full_name-New,Item_purchase_price-New');" />
+												<h:commandButton id="findInvoice_item_new"
+													onclick="selectWindow(this, 'placeList', '#{itemSearch.encodedPagePath}','Item_id-New,Item_product_code-New,Item_full_name-New,Item_purchase_price-New');return false;"
+													value="" immediate="true"
+													styleClass="aon_button aon-form-lookup-button" />
+												<h:commandButton id="addInvoice_item_new"
+													onclick="selectWindow(this, 'placeList', '#{itemAdd.encodedPagePath}','Item_id-New,Item_product_code-New,Item_full_name-New,Item_purchase_price-New');return false;"
+													value="" immediate="true"
+													styleClass="aon_button aon-form-new-button" />
+												<t:inputText id="Item_full_name-New"
+													size="40" forceId="#{true}" required="#{true}"
+													styleClass="aon-form-input-text"
+													value="#{incomeDetail.to.description}" />
+											</h:panelGroup>
+											<f:verbatim rendered="#{!incomeDetail.new}">&#160;</f:verbatim>
+										</t:div>
+									</f:facet>
+								</h:column>
+
+								<h:column>
+									<f:facet name="header">
+										<t:outputText value="#{purchaseBundle.aon_quantity}" />
+									</f:facet>
+									<t:outputText value="#{to.quantity}"
+										rendered="#{to!=incomeDetail.to}" >
+										<f:convertNumber pattern="#,##0.00" />
+									</t:outputText>	
+									<f:verbatim>&#160;</f:verbatim>
+									<t:inputText id="Item_quantity-Edit" forceId="#{true}"
+										rendered="#{to==incomeDetail.to}"
+										styleClass="aon-form-input-text" size="7"
+										value="#{incomeDetail.to.quantity}" required="#{true}"
+										onchange="calcPrice( #{rowIndex} );" />
+									<f:facet name="footer">
+										<t:div>
+											<t:inputText id="Item_quantity-New" forceId="#{true}"
+												rendered="#{incomeDetail.new}"
+												styleClass="aon-form-input-text" size="7"
+												value="#{incomeDetail.to.quantity}" required="#{true}"
+												onchange="calcPrice( -1 );" />
+											<f:verbatim rendered="#{!incomeDetail.new}">&#160;</f:verbatim>
+										</t:div>
+									</f:facet>
+								</h:column>
+
+								<h:column>
+									<f:facet name="header">
+										<t:outputText value="#{purchaseBundle.aon_price}" />
+									</f:facet>
+									<t:outputText value="#{to.price}"
+										rendered="#{to!=incomeDetail.to}">
+										<f:convertNumber pattern="#,##0.00" />
+									</t:outputText>
+									<f:verbatim>&#160;</f:verbatim>
+									<t:inputText id="Item_purchase_price-Edit"
+										rendered="#{to==incomeDetail.to}" forceId="#{true}"
+										styleClass="aon-form-input-text" size="7"
+										value="#{incomeDetail.to.price}" required="#{true}"
+										onchange="calcPrice( #{rowIndex} );" />
+									<f:facet name="footer">
+										<t:div>
+											<t:inputText id="Item_purchase_price-New"
+												rendered="#{incomeDetail.new}" forceId="#{true}"
+												styleClass="aon-form-input-text" size="7"
+												value="#{incomeDetail.to.price}" required="#{true}"
+												onchange="calcPrice( -1 );" />
+											<f:verbatim rendered="#{!incomeDetail.new}">&#160;</f:verbatim>
+										</t:div>
+									</f:facet>
+								</h:column>
+								
+								<h:column>
+									<f:facet name="header">
+										<t:outputText value="#{purchaseBundle.aon_discount}" />
+									</f:facet>
+									<t:outputText id="Discount" forceId="#{true}"
+										rendered="#{to!=incomeDetail.to}"
+										value="#{to.discountExpression.discountExpr}" >
+										<f:convertNumber pattern="#,##0.00" />
+									</t:outputText>	
+									<t:inputText id="Discount-Edit"
+										rendered="#{to==incomeDetail.to}" forceId="#{true}"
+										styleClass="aon-form-input-text" size="7"
+										value="#{incomeDetail.to.discountExpression.discountExpr}"
+										required="#{true}" onchange="calcPrice( #{rowIndex} );" />
+									<f:facet name="footer">
+										<t:inputText id="Discount-New" rendered="#{incomeDetail.new}"
+											styleClass="aon-form-input-text"
+											forceId="#{true}" size="7"
+											value="#{incomeDetail.to.discountExpression.discountExpr}"
+											required="#{true}" onchange="calcPrice( -1 );" />
+									</f:facet>
+								</h:column>
+								
+								<h:column>
+									<f:facet name="header">
+										<t:outputText value="#{purchaseBundle.aon_amount}" />
+									</f:facet>
+									<t:outputText id="Item_price_new-Edit"
+										value="#{incomeDetail.modelToBasePrice}" forceId="#{true}">
+										<f:convertNumber pattern="#,##0.00" />
+									</t:outputText>
+									<f:facet name="footer">
+										<t:div style="text-align:right;">
+											<t:outputText id="Item_price_new-New"
+												rendered="#{incomeDetail.new}" forceId="#{true}"
+												value="#{incomeDetail.toBasePrice}" required="#{true}" />
+											<t:outputText id="Item_details_total"
+												rendered="#{!incomeDetail.new}"
+												value="#{incomeDetail.taxableBase}">
+												<f:convertNumber pattern="#,##0.00" />
+											</t:outputText>
+										</t:div>
+									</f:facet>
+								</h:column>
+								
+								<h:column>
+									<f:facet name="header">
+										<f:verbatim>&#160;</f:verbatim>
+									</f:facet>
+									<t:div rendered="#{to==incomeDetail.to}">
+										<t:commandButton title="#{bundle.aon_save}"
+											actionListener="#{incomeDetail.onAccept}"
+											styleClass="aon-edit-table-icon-button aon-edit-table-icon-button-save"
+											value="" accesskey="#{bundle.aon_key_save_line}"/>
+										<t:commandButton title="#{bundle.aon_cancel}"
+											actionListener="#{incomeDetail.onCancel}" immediate="#{true}"
+											onclick="return (confirm('#{bundle.aon_cancel_confirm}'));"
+											value=""
+											styleClass="aon-edit-table-icon-button aon-edit-table-icon-button-cancel"
+											accesskey="#{bundle.aon_key_cancel_line}"/>
+										<t:commandButton title="#{bundle.aon_remove}"
+											actionListener="#{incomeDetail.onRemove}" immediate="#{true}"
+											onclick="return (confirm('#{bundle.aon_remove_confirm}'));"
+											value=""
+											styleClass="aon-edit-table-icon-button aon-edit-table-icon-button-delete"
+											accesskey="#{bundle.aon_key_remove_line}"/>
+									</t:div>
+									<f:verbatim rendered="#{to!=incomeDetail.to}">&#160;</f:verbatim>
+									<f:facet name="footer">
+										<t:div>
+											<t:div rendered="#{incomeDetail.new}">
+												<t:commandButton title="#{bundle.aon_save}"
+													actionListener="#{incomeDetail.onAccept}"
+													onclick="return (confirm('#{bundle.aon_accept_confirm}'));"
+													value=""
+													styleClass="aon-edit-table-icon-button aon-edit-table-icon-button-save"
+													accesskey="#{bundle.aon_key_save_line}"/>
+												<t:commandButton title="#{bundle.aon_cancel}"
+													actionListener="#{incomeDetail.onCancel}"
+													immediate="#{true}"
+													onclick="return (confirm('#{bundle.aon_cancel_confirm}'));"
+													value=""
+													styleClass="aon-edit-table-icon-button aon-edit-table-icon-button-cancel"
+													accesskey="#{bundle.aon_key_cancel_line}"/>
+											</t:div>
+											<f:verbatim rendered="#{!incomeDetail.new}">&#160;</f:verbatim>
+										</t:div>
+									</f:facet>
+								</h:column>
+							</t:dataTable>
+							
+							<ui:include src="/facelet/shared/dataScroller.xhtml">
+								<ui:param name="dataTable" value="incomeLineDataList" />
+								<ui:param name="model" value="#{incomeDetail.model}" />
+								<ui:param name="showNote" value="#{false}" />
+							</ui:include>
+
+						</t:div>
+					</t:div>
+				</t:div>
+			</t:div>	
+		</h:form>
+		<script>
+			function calcPrice(index){
+				priceName = "Item_purchase_price";
+				quantityName = "Item_quantity";
+				priceNewName = "Item_price_new"
+				discountName = "Discount";
+				if(index != -1){
+					priceName = priceName + "-Edit[" + index + "]";
+					quantityName = quantityName + "-Edit[" + index + "]";
+					priceNewName = priceNewName + "-Edit[" + index + "]";
+					discountName = discountName + "-Edit[" + index + "]";
+				}else{
+					priceName = priceName + "-New";
+					quantityName = quantityName + "-New";
+					priceNewName = priceNewName + "-New";
+					discountName = discountName + "-New";					
+				}
+				price = document.getElementById( priceName );
+				quantity = document.getElementById( quantityName );
+				discount = document.getElementById( discountName );
+				amount = document.getElementById( priceNewName );
+				temp = redondea( price.value * quantity.value , 2 );
+				amount.innerText = "" + redondea( temp - ( temp * discount.value / 100 ), 2 );
+			}
+			function isUnsignedInteger(number) {
+				var Template = /^\d+$/ 
+				res = (Template.test(number)) ? true : false
+				return res;
+			}			
+			/*window.onload=focusTableRow;*/
+		</script>
+		<h:form id="placeList" target="list" />
+	</ui:define>
+</ui:composition>
+</body>
+</html>

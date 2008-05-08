@@ -1,0 +1,109 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:aon="http://www.code.es/aon-ice-components">
+<body>
+
+<ui:composition template="/facelet/templates/aon.ui.main.xhtml">
+	<ui:define name="content">
+
+		<aon:form id="periodTaskList">
+
+		<aon:panelGrid columns="2" dir="true" styleClass="aon-title-toolbar"
+		cellpadding="0" cellspacing="0" columnClasses="aon-content-title,aon-content-toolbar">
+			<aon:div styleClass="aon-content-title-internal">
+				<aon:outputText value="#{menuBundle.aon_master}"/>
+				<aon:outputText value="#{menuBundle.aon_period_task}"/>	  						
+			</aon:div>		
+
+			<!-- start toolbar navigation -->
+			<aon:div styleClass="aon-content-toolbar-internal">
+				<aon:div styleClass="aon-content-toolbar-item-group">
+					<aon:commandButton id="reset" value="#{bundle.aon_reset}"
+						action="period_task_form" actionListener="#{periodTask.onReset}"
+						styleClass="aon-content-toolbar-item aon-icon-reset"
+						onmouseout="this.className='aon-content-toolbar-item aon-icon-reset'"
+						onmouseover="this.className='aon-content-toolbar-item aon-icon-reset aon-content-toolbar-item-hover'"
+						accesskey="#{bundle.aon_key_new}"/>
+					<aon:commandButton id="search" value="#{bundle.aon_search}"
+						action="period_task_search" actionListener="#{periodTask.onEditSearch}"
+						styleClass="aon-content-toolbar-item aon-icon-search"
+						onmouseout="this.className='aon-content-toolbar-item aon-icon-search'"
+						onmouseover="this.className='aon-content-toolbar-item aon-icon-search aon-content-toolbar-item-hover'"
+						accesskey="#{bundle.aon_key_search}"/>
+				</aon:div>
+			</aon:div>
+			<!-- end toolbar navigation -->
+		</aon:panelGrid>
+		
+		<!--  aon-region-body -->
+		<aon:div styleClass="aon-scroll-area">
+				<aon:div styleClass="aon-scroll-area-internal">
+					
+					<aon:dataTable id="periodTaskDataList" 
+						value="#{periodTask.model}" var="to" rows="20"
+						rendered="#{periodTask.model.rowCount > 0}"
+						styleClass="aon-dataTable">
+  
+							<aon:column>
+								<f:facet name="header">
+									<aon:outputText value="&#160;"/>
+								</f:facet>
+								<aon:rowSelector selectionListener="#{periodTask.onSelect}" />
+								<aon:outputText value="&#160;"/>
+							</aon:column>
+  													
+							<aon:column>
+								<f:facet name="header">
+									<aon:outputText value="#{projectBundle.aon_description}" />
+								</f:facet>
+								<aon:outputText value="#{to.task.description}"/>
+							</aon:column>
+
+							<aon:column>
+								<f:facet name="header">
+									<aon:outputText value="#{projectBundle.period_task_frequency}" />
+								</f:facet>
+								<aon:outputText value="#{to.quantity}"/>
+								<aon:outputText value="#{to.period}"/>
+							</aon:column>
+
+							<aon:column>
+								<f:facet name="header">
+									<aon:outputText value="#{projectBundle.period_task_initial_date}" />
+								</f:facet>
+								<aon:outputText value="#{to.startDate}">
+									<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+										timeZone="#{timeZoneController.timeZoneId}"/>
+								</aon:outputText>		
+							</aon:column>
+
+							<aon:column>
+								<f:facet name="header">
+									<aon:outputText value="#{projectBundle.period_task_end_date}" />
+								</f:facet>
+								<aon:outputText value="#{to.endDate}">
+									<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+										timeZone="#{timeZoneController.timeZoneId}"/>
+								</aon:outputText>		
+							</aon:column>
+
+						</aon:dataTable>
+						
+						<ui:include src="/facelet/shared/dataScroller.xhtml">
+							<ui:param name="dataTable" value="periodTaskDataList" />
+							<ui:param name="model" value="#{periodTask.model}" />
+							<ui:param name="showNote" value="#{true}" />
+						</ui:include>					
+					
+				</aon:div>
+			</aon:div>
+		</aon:form>
+	</ui:define>
+
+</ui:composition>
+
+</body>
+</html>

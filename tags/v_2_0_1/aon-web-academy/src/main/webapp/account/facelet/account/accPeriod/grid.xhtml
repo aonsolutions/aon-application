@@ -1,0 +1,184 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:h="http://java.sun.com/jsf/html">
+<body>
+
+<ui:composition template="/facelet/templates/aon.ui.form.xhtml">
+	<ui:define name="content">
+
+		<h:form id="accPeriodList">
+
+			<ui:include src="/facelet/shared/gridToolbar.xhtml">
+				<ui:param name="controller" value="#{accPeriod}" />
+			</ui:include>
+
+			<t:div forceId="#{true}" id="aon-scroll-area">
+				<t:div styleClass="aon-scroll-area-internal">
+					<t:div styleClass="aon-table-hack">
+						<t:dataTable id="accPeriodDataList" value="#{accPeriod.model}"
+							rows="20" var="to" rowOnMouseOver="selectRow( this )"
+							rowOnMouseOut="unselectRow( this )" rowOnClick="sendRow( this )"
+							styleClass="aon-edit-table" headerClass="aon-edit-table-header"
+							footerClass="aon-edit-table-footer"
+							rowClasses="aon-table-row-odd, aon-table-row-even"
+							columnClasses="aon-edit-table-body aon-edit-table-body-string, aon-edit-table-body-string, aon-edit-table-body-string, aon-edit-table-body aon-edit-table-body-buttons">
+
+							<h:column>
+								<f:facet name="header">
+									<h:outputText value="#{accountBundle.aon_accPeriod_id}" />
+								</f:facet>
+
+								<t:commandLink immediate="#{true}"
+									styleClass="aon-table-row-selected"
+									rendered="#{to.id!=accPeriod.to.id}"
+									actionListener="#{accPeriod.onSelect}" />
+
+								<t:outputText value="#{to.id}" id="Period_id-LABEL"
+									rendered="#{to.id!=accPeriod.to.id}" />
+								<t:outputLabel for="Period_id-EDIT"
+									value="#{accountBundle.aon_accPeriod_id}" rendered="#{false}" />
+								<t:inputText rendered="#{to.id==accPeriod.to.id}"
+									disabled="true" id="Period_id-EDIT" style="width:100%"
+									styleClass="aon-form-input-text" value="#{accPeriod.to.id}"
+									required="#{true}" />
+
+								<f:facet name="footer">
+									<t:div id="Period_id-NEW-DIV">
+										<t:commandButton id="reset" alt="[#{bundle.aon_reset}]"
+											styleClass="aon-edit-table-icon-button aon-edit-table-icon-button-new"
+											value=""
+											actionListener="#{accPeriod.onReset}"
+											rendered="#{!accPeriod.new}"
+											accesskey="#{bundle.aon_key_new_line}">
+										</t:commandButton>
+										<h:outputLabel for="Period_id-NEW"
+											value="#{accountBundle.aon_accPeriod_id}" rendered="#{false}" />
+										<h:inputText id="Period_id-NEW" rendered="#{accPeriod.new}"
+											style="width:100%" styleClass="aon-form-input-text"
+											value="#{accPeriod.to.id}" required="#{true}" />
+									</t:div>
+								</f:facet>
+							</h:column>
+
+							<h:column>
+								<f:facet name="header">
+									<h:outputText
+										value="#{accountBundle.aon_accPeriod_initiation_date}" />
+								</f:facet>
+
+								<t:outputText value="#{to.initiationDate}"
+									id="Period_initiationDate-LABEL"
+									rendered="#{to.id!=accPeriod.to.id}">
+									<f:convertDateTime type="date" timeStyle="medium"
+										timeZone="#{timeZoneController.timeZoneId}" />
+								</t:outputText>
+								<t:outputLabel id="Period_initiationDate-LABEL-EDIT"
+									for="Period_initiationDate-EDIT"
+									value="#{accountBundle.aon_accPeriod_initiation_date}"
+									rendered="#{false}" />
+								<t:div id="Period_initiationDate-CALENDAR-EDIT-DIV"
+									styleClass="aon-form-nowrap">
+									<t:inputCalendar size="8" required="true"
+										id="Period_initiationDate-EDIT"
+										rendered="#{to.id==accPeriod.to.id}"
+										value="#{accPeriod.to.initiationDate}" style="width:90%"
+										monthYearRowClass="yearMonthHeader" weekRowClass="weekHeader"
+										currentDayCellClass="currentDayCell" renderAsPopup="true"
+										styleClass="aon-form-input-text" popupButtonStyleClass="aon-form-calendar-button"
+										popupTodayString="#{bundle.aon_popup_today}"
+										popupWeekString="#{bundle.aon_popup_week}" />
+								</t:div>
+
+								<f:facet name="footer">
+									<t:div id="Period_initiationDate-NEW-DIV">
+										<t:outputLabel id="Period_initiationDate-LABEL-NEW"
+											for="Period_initiationDate-NEW"
+											value="#{accountBundle.aon_accPeriod_initiation_date}"
+											rendered="#{false}" />
+										<t:div id="Period_initiationDate-CALENDAR-NEW-DIV"
+											styleClass="aon-form-nowrap">
+											<t:inputCalendar size="8" id="Period_initiationDate-NEW"
+												rendered="#{accPeriod.new}" forceID="true"
+												value="#{accPeriod.to.initiationDate}" style="width:90%"
+												monthYearRowClass="yearMonthHeader"
+												weekRowClass="weekHeader" popupButtonStyleClass="aon-form-calendar-button"
+												currentDayCellClass="currentDayCell" required="true"
+												renderAsPopup="true" styleClass="aon-form-input-text"
+												popupTodayString="#{bundle.aon_popup_today}"
+												popupWeekString="#{bundle.aon_popup_week}" />
+										</t:div>
+									</t:div>
+								</f:facet>
+							</h:column>
+
+							<h:column>
+								<f:facet name="header">
+									<h:outputText value="#{accountBundle.aon_accPeriod_deadline}" />
+								</f:facet>
+
+								<t:outputText value="#{to.deadline}" id="Period_deadline-LABEL"
+									rendered="#{to.id!=accPeriod.to.id}">
+									<f:convertDateTime type="date" timeStyle="medium"
+										timeZone="#{timeZoneController.timeZoneId}" />
+								</t:outputText>
+								<t:outputLabel id="Period_deadline-LABEL-EDIT"
+									for="Period_deadline-EDIT"
+									value="#{accountBundle.aon_accPeriod_deadline}" rendered="#{false}" />
+								<t:div id="Period_deadline-CALENDAR-EDIT-DIV"
+									styleClass="aon-form-nowrap">
+									<t:inputCalendar size="8" required="true"
+										id="Period_deadline-EDIT" rendered="#{to.id==accPeriod.to.id}"
+										value="#{accPeriod.to.deadline}" style="width:90%"
+										monthYearRowClass="yearMonthHeader" weekRowClass="weekHeader"
+										currentDayCellClass="currentDayCell" renderAsPopup="true"
+										styleClass="aon-form-input-text" popupButtonStyleClass="aon-form-calendar-button"
+										popupTodayString="#{bundle.aon_popup_today}"
+										popupWeekString="#{bundle.aon_popup_week}" />
+								</t:div>
+								<f:facet name="footer">
+									<t:div id="Period_deadline-NEW-DIV">
+										<t:outputLabel id="Period_deadline-LABEL-NEW"
+											for="Period_deadline-NEW"
+											value="#{accountBundle.aon_accPeriod_deadline}"
+											rendered="#{false}" />
+										<t:div id="Period_deadline-CALENDAR-NEW-DIV"
+											styleClass="aon-form-nowrap">
+											<t:inputCalendar size="8" id="Period_deadline-NEW"
+												rendered="#{accPeriod.new}" value="#{accPeriod.to.deadline}"
+												style="width:90%" monthYearRowClass="yearMonthHeader"
+												weekRowClass="weekHeader" forceID="true"
+												popupButtonStyleClass="aon-form-calendar-button"
+												currentDayCellClass="currentDayCell" required="true"
+												renderAsPopup="true" styleClass="aon-form-input-text"
+												popupTodayString="#{bundle.aon_popup_today}"
+												popupWeekString="#{bundle.aon_popup_week}"/>
+										</t:div>
+									</t:div>
+								</f:facet>
+							</h:column>
+
+							<ui:include src="/facelet/shared/gridLineToolbar.xhtml">
+								<ui:param name="controller" value="#{accPeriod}" />
+							</ui:include>
+
+						</t:dataTable>
+					</t:div>
+
+					<ui:include src="/facelet/shared/dataScroller.xhtml">
+						<ui:param name="dataTable" value="accPeriodDataList" />
+						<ui:param name="model" value="#{accPeriod.model}" />
+					</ui:include>
+
+				</t:div>
+			</t:div>
+		</h:form>
+		<h:form id="placeList" target="list" />
+	</ui:define>
+
+</ui:composition>
+
+</body>
+</html>

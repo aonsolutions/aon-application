@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<table tableName="sales_attach">
+    <columns>
+        <column label="" name="id" sqlType="integer" type="integer"/>
+        <column label="" name="sales" sqlType="integer" type="integer"/>
+        <column label="" length="4" name="mimeType" sqlType="tinyint" type="string"/>
+        <column label="" length="65535" name="data"
+            sqlType="longvarbinary" type="string"/>
+    </columns>
+    <virtualColumns/>
+    <primaryKey>
+        <column name="id"/>
+    </primaryKey>
+    <joins>
+        <join description="sales_attach_ibfk_1" foreignPath="data/sales.exdm.xml">
+            <sourceColumns>
+                <column name="sales"/>
+            </sourceColumns>
+        </join>
+    </joins>
+    <descriptionColumns/>
+</table>

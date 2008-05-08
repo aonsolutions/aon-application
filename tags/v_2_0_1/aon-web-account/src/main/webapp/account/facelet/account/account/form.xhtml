@@ -1,0 +1,118 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:h="http://java.sun.com/jsf/html">
+<body>
+
+<ui:composition template="/facelet/templates/aon.ui.content.xhtml">
+
+	<ui:define name="head">
+		<ui:include src="/facelet/shared/head.xhtml" />
+	</ui:define>
+
+	<ui:define name="content">
+
+		<h:form id="accountForm" styleClass="aon-form">
+
+			<!-- start toolbar navigation -->
+			<t:div styleClass="aon-content-toolbar" forceId="#{true}"
+				id="aon-content-toolbar">
+				<t:div styleClass="aon-content-toolbar-internal">
+					<t:div styleClass="aon-content-toolbar-item-group">
+
+						<h:commandButton id="save" value="#{bundle.aon_save}"
+							accesskey="#{bundle.aon_key_save}"
+							actionListener="#{account.accept}"
+							styleClass="aon-content-toolbar-item"
+							onclick="return (confirm('#{bundle.aon_save_confirm}'))"
+							onmouseout="this.className='aon-content-toolbar-item'"
+							onmouseover="this.className='aon-content-toolbar-item aon-content-toolbar-item-hover'">
+						</h:commandButton>
+						<h:commandButton id="reset" value="#{bundle.aon_reset}"
+							accesskey="#{bundle.aon_key_new}" action="account_form"
+							actionListener="#{account.onReset}" rendered="#{!account.new}"
+							styleClass="aon-content-toolbar-item"
+							onmouseout="this.className='aon-content-toolbar-item'"
+							onmouseover="this.className='aon-content-toolbar-item aon-content-toolbar-item-hover'">
+						</h:commandButton>
+						<h:commandButton id="remove" value="#{bundle.aon_remove}"
+							accesskey="#{bundle.aon_key_remove}" action="account_list"
+							actionListener="#{account.onRemove}" rendered="#{!account.new}"
+							styleClass="aon-content-toolbar-item" immediate="true"
+							onclick="return (confirm('#{bundle.aon_remove_confirm}'))"
+							onmouseout="this.className='aon-content-toolbar-item'"
+							onmouseover="this.className='aon-content-toolbar-item aon-content-toolbar-item-hover'">
+						</h:commandButton>
+						<h:commandButton id="search" value="#{bundle.aon_search}"
+							accesskey="#{bundle.aon_key_search}" action="account_search"
+							actionListener="#{account.onEditSearch}"
+							styleClass="aon-content-toolbar-item"
+							onmouseout="this.className='aon-content-toolbar-item'"
+							onmouseover="this.className='aon-content-toolbar-item aon-content-toolbar-item-hover'">
+						</h:commandButton>
+						<h:commandButton id="cancel" value="#{bundle.aon_cancel}"
+							accesskey="#{bundle.aon_key_cancel}" action="account_list"
+							actionListener="#{account.onCancel}"
+							styleClass="aon-content-toolbar-item" immediate="true"
+							onclick="return (confirm('#{bundle.aon_cancel_confirm}'))"
+							onmouseout="this.className='aon-content-toolbar-item'"
+							onmouseover="this.className='aon-content-toolbar-item aon-content-toolbar-item-hover'">
+						</h:commandButton>
+
+					</t:div>
+				</t:div>
+			</t:div>
+			<!-- end toolbar navigation -->
+
+			<ui:include src="/facelet/shared/contentSubtitle.xhtml">
+				<ui:param name="controller" value="#{account}" />
+			</ui:include>
+
+			<t:div id="aon-scroll-area" forceId="#{true}">
+				<t:div styleClass="aon-scroll-area-internal">
+					<!-- start of bag panel -->
+					<!-- start of grid layout -->
+					<h:panelGrid columns="2" dir="true" styleClass="aon-form-table"
+						columnClasses="aon-form-table-column-odd,aon-form-table-column-even">
+
+						<h:outputLabel for="Account_id"
+							value="#{accountBundle.aon_account_id}"
+							styleClass="aon-form-input-text-label aon-form-table-column-odd-label" />
+						<t:inputText id="Account_id" styleClass="aon-form-input-text"
+							value="#{account.to.id}" required="#{true}" size="16"
+							forceId="#{true}">
+							<f:validateLength maximum="12" />
+						</t:inputText>
+						
+						<h:outputLabel for="Account_description"
+							value="#{accountBundle.aon_account_description}"
+							styleClass="aon-form-input-text-label aon-form-table-column-odd-label" />
+						<t:inputText id="Account_description" styleClass="aon-form-input-text"
+							value="#{account.to.description}" required="#{true}" size="100"
+							forceId="#{true}">
+							<f:validateLength maximum="100" />
+						</t:inputText>
+						
+						<h:outputLabel for="Account_alias"
+							value="#{accountBundle.aon_account_alias}"
+							styleClass="aon-form-input-text-label aon-form-table-column-odd-label" />
+						<t:inputText id="Account_alias" styleClass="aon-form-input-text"
+							value="#{account.to.alias}" size="20"
+							forceId="#{true}">
+							<f:validateLength maximum="15" />
+						</t:inputText>
+
+					</h:panelGrid>
+					<!-- end of grid layout -->
+					<!-- end of bag panel -->
+				</t:div>
+			</t:div>
+		</h:form>
+	</ui:define>
+</ui:composition>
+
+</body>
+</html>

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<root key="AON_FINANCE" descriptionKey="aon_application_menu_title" ref="firstContent">
+	<option key="aon_finance" descriptionKey="aon_finance_desc" ref="finance"/>
+	<option key="aon_fbatch" descriptionKey="aon_fbatch_desc" ref="fbatch"/>
+	<option key="aon_finance_return" descriptionKey="aon_finance_return_desc" ref="finance_return">
+		<actionListener action="#{financeReturn.onEditSearch}"/>
+	</option>
+	<option key="aon_finance_payment" descriptionKey="aon_finance_payment_desc" ref="finance_payment">
+		<actionListener action="#{financePayment.onEditSearch}"/>
+	</option>
+	<option key="aon_bank" descriptionKey="aon_bank_desc" ref="bank"/>
+	<option key="aon_pay_method" descriptionKey="aon_pay_method_desc" ref="pay_method"/>
+	<option key="aon_creditor" descriptionKey="aon_creditor_desc" ref="creditor" >
+		<actionListener action="#{creditor.onReset}" />
+	</option>
+</root>

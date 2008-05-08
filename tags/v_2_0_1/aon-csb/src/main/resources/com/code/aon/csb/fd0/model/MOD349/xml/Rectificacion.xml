@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<register name="Rectificacion">
+
+ <field name="type" value="2" format="Numeric" pattern="9(1)" />
+ <field name="modelo" value="349" format="Numeric" pattern="9(3)" />
+ <field name="ejercicio" value="bean" bean="DEPONENT" property="year" format="Numeric" pattern="9(4)" />
+ <field name="nif" value="bean" bean="DEPONENT" property="code" format="Nif" pattern="X(9)" />
+ <field name="free1" value=" " format="AlphaNumeric" pattern="X(58)" />
+ <field name="pais" value="bean" bean="CORRECTION" property="country" format="Alphabetic" pattern="X(2)" />
+ <field name="nif_comunitario" value="bean" bean="CORRECTION" property="code" format="AlphaNumeric" pattern="X(15)" />
+ <field name="nombre" value="bean" bean="CORRECTION" property="name" format="AlphaNumeric" pattern="X(40)" />
+ <field name="clave" value="bean" bean="CORRECTION" property="key" format="Alphabetic" pattern="X(1)" />
+ <field name="free2" value=" " format="Alphabetic" pattern="X(13)" />
+ <field name="ejercicio" value="bean" bean="CORRECTION" property="year" format="Numeric" pattern="9(4)" />
+ <field name="periodo" value="bean" bean="CORRECTION" property="period" format="AlphaNumeric" pattern="X(2)" />
+ <field name="base_imponible" value="bean" bean="CORRECTION" property="base" format="Numeric" pattern="9(11)V99" />
+ <field name="base_imponible_ant" value="bean" bean="CORRECTION" property="previousBase" format="Numeric" pattern="9(11)V99" />
+ <field name="free3" value=" " format="Alphabetic" pattern="X(72)" />
+ 
+</register>
