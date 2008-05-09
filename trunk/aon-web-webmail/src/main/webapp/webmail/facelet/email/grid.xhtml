@@ -14,7 +14,7 @@
 		<aon:form id="emailList">
 
 			<aon:div styleClass="aon-finding-title-toolbar">
-				<aon:panelGrid columns="3" dir="true"
+				<aon:panelGrid columns="3" dir="true" id="buttonsGrid"
 					columnClasses="aon-finding-title,aon-finding-subtitle,aon-finding-toolbar">
 
 					<aon:div styleClass="aon-finding-title-internal">
@@ -26,32 +26,32 @@
 							value="#{bundle.aon_listing}- #{bundle.aon_editing}" />
 					</aon:div>
 
-					<aon:div styleClass="aon-finding-toolbar-item-group" ajaxRendered="true">
-						<aon:commandButton id="reset" value="#{bundle.aon_reset}" reRender="emailData"
+					<aon:div styleClass="aon-finding-toolbar-item-group">
+						<aon:commandButton id="reset" value="#{bundle.aon_reset}" reRender="emailData,buttonsGrid"
 							actionListener="#{email.onReset}" rendered="#{!email.new}"
 							styleClass="aon-finding-toolbar-item aon-icon-reset"
 							accesskey="#{bundle.aon_key_new}"/>
-						<aon:commandButton id="save" reRender="emailData"
+						<aon:commandButton id="save" reRender="emailData,buttonsGrid"
 							value="#{bundle.aon_save}" rendered="#{email.to!=null or email.new}"
 							styleClass="aon-finding-toolbar-item aon-icon-accept"
 							actionListener="#{email.onAccept}" 
 							accesskey="#{bundle.aon_key_new}" />
-						<aon:confirmButton id="cancelNew" reRender="emailData"
+						<aon:confirmButton id="cancelNew" reRender="emailData,buttonsGrid"
 							value="#{bundle.aon_cancel}" rendered="#{email.new}"
 							styleClass="aon-finding-toolbar-item aon-icon-cancel" immediate="true"
 							confirmTitle="#{bundle.aon_confirm_title}" confirmMessage="#{bundle.aon_cancel_confirm}"
 							confirmActionListener="#{email.onCancel}"
 							accesskey="#{bundle.aon_key_cancel}"/>
-						<aon:commandButton id="cancelEdit" reRender="emailData"
+						<aon:commandButton id="cancelEdit" reRender="emailData,buttonsGrid"
 							value="#{bundle.aon_cancel}" rendered="#{email.to!=null and (!email.new)}"
 							styleClass="aon-finding-toolbar-item aon-icon-cancel" immediate="true"
 							actionListener="#{email.onCancel}"
 							accesskey="#{bundle.aon_key_cancel}"/>
-						<aon:confirmButton id="remove" reRender="emailData"
+						<aon:confirmButton id="remove" reRender="emailData,buttonsGrid"
 							value="#{bundle.aon_remove}" rendered="#{!email.checklistEmpty}"
 							styleClass="aon-finding-toolbar-item aon-icon-delete" immediate="true"
 							confirmTitle="#{bundle.aon_confirm_title}" confirmMessage="#{bundle.aon_remove_confirm}"
-							confirmActionListener="#{email.onRemove}"
+							confirmActionListener="#{email.onRemoveSelected}"
 							accesskey="#{bundle.aon_key_remove}"/>
 						<aon:commandButton id="back" value="#{bundle.aon_back}"
 							action="folder" rendered="#{email.to==null}"
@@ -75,7 +75,7 @@
 							</aon:div>
 						</f:facet>
 						<aon:div layout="none">
-							<aon:selectBooleanCheckbox rendered="#{to!=email.to}"
+							<aon:selectBooleanCheckbox rendered="#{to!=email.to}" reRender="buttonsGrid"
 								value="#{email.rowChecked}" partialSubmit="true" />
 							<aon:outputText value="&#160;" rendered="#{to==email.to}" />
 						</aon:div>		 
@@ -84,7 +84,7 @@
 								<aon:commandButton alt="[#{bundle.aon_reset}]"
 									styleClass="aon-editDataTable-button aon-icon-reset"
 									actionListener="#{email.onReset}" value=""
-									rendered="#{!email.new}"
+									rendered="#{!email.new}" reRender="buttonsGrid"
 									accesskey="#{bundle.aon_key_new_line}" />
 							</aon:div>
 						</f:facet>
@@ -96,7 +96,7 @@
 						</f:facet>
 						<aon:outputText value="#{to.name}" rendered="#{to!=email.to}"
 							styleClass="aon-editDataTable-button" >
-							<a4j:support reRender="emailData"
+							<a4j:support reRender="emailData,buttonsGrid"
 								actionListener="#{email.onSelect}" event="onclick" />
 						</aon:outputText>
 						<aon:inputText styleClass="aon-form-input-text " required="true"
@@ -115,7 +115,7 @@
 						</f:facet>
 						<aon:outputText value="#{to.email}" rendered="#{to!=email.to}"
 							styleClass="aon-editDataTable-button">
-							<a4j:support reRender="emailData"
+							<a4j:support reRender="emailData,buttonsGrid"
 								actionListener="#{email.onSelect}" event="onclick" />
 						</aon:outputText>
 						<aon:inputText styleClass="aon-form-input-text " required="true"
@@ -135,18 +135,18 @@
 						<aon:div>
 							<f:verbatim rendered="#{to!=email.to}">&#160;</f:verbatim>
 							<aon:commandButton id="acceptEdit-email" title="[#{bundle.aon_accept}]" 
-								rendered="#{to==email.to}"
+								rendered="#{to==email.to}" reRender="buttonsGrid"
 								styleClass="aon-editDataTable-button aon-icon-accept"
 								actionListener="#{email.onAccept}"
 								accesskey="#{bundle.aon_key_save_line}" />
 							<aon:commandButton title="[#{bundle.aon_cancel}]"
 								styleClass="aon-editDataTable-button aon-icon-cancel"
-								rendered="#{to==email.to}"
+								rendered="#{to==email.to}" reRender="buttonsGrid"
 								actionListener="#{email.onCancel}" immediate="true"
 								accesskey="#{bundle.aon_key_cancel_line}" />
 							<aon:confirmButton id="rowRemove" title="[#{bundle.aon_remove}]"
 								styleClass="aon-editDataTable-button aon-icon-delete"
-								rendered="#{to==email.to}"
+								rendered="#{to==email.to}" reRender="buttonsGrid"
 								confirmTitle="#{bundle.aon_confirm_title}" 
 								confirmMessage="#{bundle.aon_remove_confirm}"
 								confirmActionListener="#{email.onRemove}" immediate="true"
@@ -157,12 +157,12 @@
 								<f:verbatim rendered="#{!email.new}">&#160;</f:verbatim>
 								<aon:commandButton title="[#{bundle.aon_accept}]" 
 									styleClass="aon-editDataTable-button aon-icon-accept"
-									rendered="#{email.new}"
+									rendered="#{email.new}" reRender="buttonsGrid"
 									actionListener="#{email.onAccept}"
 									accesskey="#{bundle.aon_key_save_line}" />
 								<aon:confirmButton id="footerNewCancel" title="[#{bundle.aon_cancel}]"
 									styleClass="aon-editDataTable-button aon-icon-cancel"
-									rendered="#{email.new}"
+									rendered="#{email.new}" reRender="buttonsGrid"
 									confirmTitle="#{bundle.aon_confirm_title}" 
 									confirmMessage="#{bundle.aon_cancel_confirm}"
 									confirmActionListener="#{email.onCancel}" immediate="true"
