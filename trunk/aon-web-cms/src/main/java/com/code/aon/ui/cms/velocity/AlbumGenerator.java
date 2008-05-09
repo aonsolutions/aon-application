@@ -27,48 +27,12 @@ import com.code.aon.ui.cms.velocity.attribute.AlbumHandler;
 import com.code.aon.ui.cms.velocity.attribute.AlbumImageHandler;
 
 public class AlbumGenerator extends Generator {
-	
-	public static ArrayList<AlbumImageHandler> getAlbumImageList(AlbumDetail albumDetail) {
-		ArrayList<AlbumImageHandler> list = new ArrayList<AlbumImageHandler>();
-		List<ITransferObject> albumImageList;
-		List<ITransferObject> albumImageDetailList;
-		try {
-			IManagerBean albumImageBean = BeanManager.getManagerBean(AlbumImage.class);
-			IManagerBean albumImageDetailBean = BeanManager.getManagerBean(AlbumImageDetail.class);
-			Criteria criteria_detail;
-			AlbumImage albumImage;
-			AlbumImageDetail albumImageDetail;
-			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(albumImageBean.getFieldName(ICMSAlias.ALBUM_IMAGE_ALBUM_ID), albumDetail.getAlbum().getId());
-			criteria.addEqualExpression(albumImageBean.getFieldName(ICMSAlias.ALBUM_IMAGE_ACTIVE), true);
-			criteria.addOrder(albumImageBean.getFieldName(ICMSAlias.ALBUM_IMAGE_POSITION));
-			albumImageList = (List<ITransferObject>)albumImageBean.getList(criteria);
-			if(albumImageList.isEmpty())
-				VelocityUtil.addMessage("El album "+albumDetail.getAlbum().getAlias()+" no tiene imagenes.", VelocityUtil.WARN);
-			for (int i = 0; i < albumImageList.size(); i++) {
-				albumImage = (AlbumImage)albumImageList.get(i);
-				criteria_detail = new Criteria();
-				criteria_detail.addEqualExpression(albumImageDetailBean.getFieldName(ICMSAlias.ALBUM_IMAGE_DETAIL_ALBUM_IMAGE_ID), albumImage.getId());
-				criteria_detail.addEqualExpression(albumImageDetailBean.getFieldName(ICMSAlias.ALBUM_IMAGE_DETAIL_LANGUAGE_ID), ControllerUtil.getCurrentLanguage().getId());
-				albumImageDetailList = (List<ITransferObject>)albumImageDetailBean.getList(criteria_detail);
-				if (albumImageDetailList.isEmpty()) {
-					VelocityUtil.addMessage("La imagen "+albumImage.getImage()+" no esta internacionalizada.", VelocityUtil.WARN);
-				}else{
-					albumImageDetail = (AlbumImageDetail)albumImageDetailList.get(0);
-					AlbumImageHandler handler = new AlbumImageHandler(albumImageDetail);
-					list.add(handler);
-				}
-			}
-		} catch (ManagerBeanException e) {
-			VelocityUtil.addMessage(e.getMessage(), VelocityUtil.ERROR);;
-		}finally{
-			albumImageList = null;
-			albumImageDetailList = null;
-		}
-		return list;
-	}
-	
+
 	public static void generate() {
+		AlbumGenerator.generate(null);
+	}
+
+	public static void generate(AlbumCategory selectedCategory) {
 		VelocityUtil vu = new VelocityUtil();
 		CommonGenerator.getCommonGenerator().init(vu);
 		vu.setTemplate_path(ControllerUtil.getCurrentVmTemplatePath());
@@ -88,6 +52,8 @@ public class AlbumGenerator extends Generator {
 			Criteria albumCriteria;
 			Criteria albumDetailCriteria;
 			Criteria albumCategoryCriteria = new Criteria();
+			if (selectedCategory!=null)
+				albumCategoryCriteria.addEqualExpression(albumCategoryBean.getFieldName(ICMSAlias.ALBUM_CATEGORY_ID), selectedCategory.getId());
 			albumCategoryCriteria.addEqualExpression(albumCategoryBean.getFieldName(ICMSAlias.ALBUM_CATEGORY_ACTIVE), true);
 			albumCategoryCriteria.addOrder(albumCategoryBean.getFieldName(ICMSAlias.ALBUM_CATEGORY_POSITION));
 			albumCategoryList = (List<ITransferObject>)albumCategoryBean.getList(albumCategoryCriteria);
@@ -217,6 +183,46 @@ public class AlbumGenerator extends Generator {
 		vu = null;
 	}
 
+	public static ArrayList<AlbumImageHandler> getAlbumImageList(AlbumDetail albumDetail) {
+		ArrayList<AlbumImageHandler> list = new ArrayList<AlbumImageHandler>();
+		List<ITransferObject> albumImageList;
+		List<ITransferObject> albumImageDetailList;
+		try {
+			IManagerBean albumImageBean = BeanManager.getManagerBean(AlbumImage.class);
+			IManagerBean albumImageDetailBean = BeanManager.getManagerBean(AlbumImageDetail.class);
+			Criteria criteria_detail;
+			AlbumImage albumImage;
+			AlbumImageDetail albumImageDetail;
+			Criteria criteria = new Criteria();
+			criteria.addEqualExpression(albumImageBean.getFieldName(ICMSAlias.ALBUM_IMAGE_ALBUM_ID), albumDetail.getAlbum().getId());
+			criteria.addEqualExpression(albumImageBean.getFieldName(ICMSAlias.ALBUM_IMAGE_ACTIVE), true);
+			criteria.addOrder(albumImageBean.getFieldName(ICMSAlias.ALBUM_IMAGE_POSITION));
+			albumImageList = (List<ITransferObject>)albumImageBean.getList(criteria);
+			if(albumImageList.isEmpty())
+				VelocityUtil.addMessage("El album "+albumDetail.getAlbum().getAlias()+" no tiene imagenes.", VelocityUtil.WARN);
+			for (int i = 0; i < albumImageList.size(); i++) {
+				albumImage = (AlbumImage)albumImageList.get(i);
+				criteria_detail = new Criteria();
+				criteria_detail.addEqualExpression(albumImageDetailBean.getFieldName(ICMSAlias.ALBUM_IMAGE_DETAIL_ALBUM_IMAGE_ID), albumImage.getId());
+				criteria_detail.addEqualExpression(albumImageDetailBean.getFieldName(ICMSAlias.ALBUM_IMAGE_DETAIL_LANGUAGE_ID), ControllerUtil.getCurrentLanguage().getId());
+				albumImageDetailList = (List<ITransferObject>)albumImageDetailBean.getList(criteria_detail);
+				if (albumImageDetailList.isEmpty()) {
+					VelocityUtil.addMessage("La imagen "+albumImage.getImage()+" no esta internacionalizada.", VelocityUtil.WARN);
+				}else{
+					albumImageDetail = (AlbumImageDetail)albumImageDetailList.get(0);
+					AlbumImageHandler handler = new AlbumImageHandler(albumImageDetail);
+					list.add(handler);
+				}
+			}
+		} catch (ManagerBeanException e) {
+			VelocityUtil.addMessage(e.getMessage(), VelocityUtil.ERROR);;
+		}finally{
+			albumImageList = null;
+			albumImageDetailList = null;
+		}
+		return list;
+	}
+	
 	public static Object getAlbumCategoryHandler(Integer ident) {
 		List<ITransferObject> l;
 		List<ITransferObject> ld;

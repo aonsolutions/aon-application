@@ -2,8 +2,10 @@ package com.code.aon.ui.cms.controller;
 
 import javax.faces.event.ActionEvent;
 
+import com.code.aon.cms.AlbumCategory;
 import com.code.aon.cms.Article;
 import com.code.aon.cms.ArticleCategory;
+import com.code.aon.cms.DownloadCategory;
 import com.code.aon.cms.FaqCategory;
 import com.code.aon.cms.GenericPage;
 import com.code.aon.cms.LinkCategory;
@@ -170,6 +172,20 @@ public class GeneratorController extends BasicController implements Constants {
 		initGenerator();
 		FaqCategoryController controller = (FaqCategoryController)AonUtil.getRegisteredBean("faq_category");
 		FaqGenerator.generate((FaqCategory) controller.getTo());
+		finalizeGenerator();
+	}
+
+	public void onGenerateCurrentDownloadCategory(ActionEvent event) throws ManagerBeanException, ExpressionException {
+		initGenerator();
+		DownloadCategoryController controller = (DownloadCategoryController)AonUtil.getRegisteredBean("download_category");
+		DownloadsGenerator.generate((DownloadCategory) controller.getTo());
+		finalizeGenerator();
+	}
+
+	public void onGenerateCurrentAlbumCategory(ActionEvent event) throws ManagerBeanException, ExpressionException {
+		initGenerator();
+		AlbumCategoryController controller = (AlbumCategoryController)AonUtil.getRegisteredBean("album_category");
+		AlbumGenerator.generate((AlbumCategory) controller.getTo());
 		finalizeGenerator();
 	}
 
