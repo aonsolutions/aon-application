@@ -39,7 +39,11 @@ public class GridController extends BasicController {
 	 */
 	@Override
 	public void onRemove(ActionEvent event) {
+		ITransferObject to = getTo();
 		super.remove(event);
+		if (checkList.contains( to )) {
+			checkList.remove( to );
+		}		
 		super.onReset(event);
 	}
 
@@ -91,6 +95,7 @@ public class GridController extends BasicController {
 			for (ITransferObject to: checkList) {
 				getManagerBean().remove(to);
 			}
+			clearCheckList();
 			onSearch( event );
 		} catch (ManagerBeanException e) {
 			addMessage(e.getMessage());
