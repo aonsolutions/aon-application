@@ -19,9 +19,6 @@ import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionException;
-import com.code.aon.ui.cms.util.ControllerUtil;
-import com.code.aon.ui.cms.util.FileUtil;
-import com.code.aon.ui.cms.velocity.ArticleGenerator;
 import com.code.aon.ui.util.AonUtil;
 
 public class ArticleController extends GridI18nController {
@@ -247,18 +244,6 @@ public class ArticleController extends GridI18nController {
 			currentType = ArticleType.OTHER;
 		} 
 		changeArticleList();
-	}
-
-	public void onGenerateCurrentArticle(ActionEvent event) throws ManagerBeanException, ExpressionException {
-		GeneratorStatusController status = (GeneratorStatusController)AonUtil.getRegisteredBean("generator_status");
-		status.onInit(event);
-		//Copy css and js files from current template
-		FileUtil.copyDir(ControllerUtil.getCssTemplatePath(), ControllerUtil.getPreviewPath());
-		FileUtil.copyDir(ControllerUtil.getJsTemplatePath(), ControllerUtil.getPreviewPath());
-		
-		ArticleGenerator.generateArticle((Article) this.getTo());
-		
-		status.finalized();
 	}
 
 }

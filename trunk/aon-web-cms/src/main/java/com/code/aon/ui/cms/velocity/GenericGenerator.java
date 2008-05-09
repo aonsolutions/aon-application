@@ -18,6 +18,10 @@ import com.code.aon.ui.cms.velocity.attribute.GenericPageHandler;
 public class GenericGenerator extends Generator {
 
 	public static void generate() {
+		GenericGenerator.generate(null);
+	}
+
+	public static void generate(GenericPage selectedPage) {
 		VelocityUtil vu = new VelocityUtil();
 		CommonGenerator.getCommonGenerator().init(vu);
 		vu.setTemplate_path(ControllerUtil.getCurrentVmTemplatePath());
@@ -29,6 +33,8 @@ public class GenericGenerator extends Generator {
 			IManagerBean bean = BeanManager.getManagerBean(GenericPage.class);
 			Criteria criteria = new Criteria();
 			criteria.addEqualExpression(bean.getFieldName(ICMSAlias.GENERIC_PAGE_ACTIVE), true);
+			if (selectedPage!=null)
+				criteria.addEqualExpression(bean.getFieldName(ICMSAlias.GENERIC_PAGE_ID), selectedPage.getId());
 			genericPageList = (List<ITransferObject>)bean.getList(criteria);
 			
 			GenericPage gp;
