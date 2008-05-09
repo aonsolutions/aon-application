@@ -75,8 +75,8 @@
 							</aon:div>
 						</f:facet>
 						<aon:div layout="none">
-							<aon:selectBooleanCheckbox rendered="#{to!=email.to}" reRender="buttonsGrid"
-								value="#{email.rowChecked}" partialSubmit="true" />
+							<aon:selectBooleanCheckbox rendered="#{to!=email.to}" reRender="buttonsGrid,emailData"
+								value="#{email.rowChecked}"/>
 							<aon:outputText value="&#160;" rendered="#{to==email.to}" />
 						</aon:div>		 
 						<f:facet name="footer">

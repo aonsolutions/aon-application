@@ -43,12 +43,10 @@
 		<param-value>true</param-value>
 	</context-param>
 
-	<!-- 
 	<context-param>
 		<param-name>facelets.REFRESH_PERIOD</param-name>
 		<param-value>-1</param-value>
 	</context-param>
- 	-->
 
 	<context-param>
 		<description>

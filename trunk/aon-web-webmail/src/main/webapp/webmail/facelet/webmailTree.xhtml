@@ -21,8 +21,8 @@
 						id="newFolder"
 						title="#{appBundle.aon_webmail_newfolder}"
 						styleClass="aon-icon-commandButton aon-icon-newFolder"
-						actionListener="#{folder.openNewFolderPanelPopup}"
-						onclick="javascript:Richfaces.showModalPanel('newFolderModalPanel',{width:300, top:100})">
+						actionListener="#{folder.openNewFolderPanelPopup}">
+						<rich:componentControl for="newFolderModalPanel" operation="show" event="onclick"/>
 					</aon:commandButton>
 				
 					<aon:commandButton
@@ -46,8 +46,8 @@
 						rendered="#{folder.folder.renameable}"
 						title="#{appBundle.aon_webmail_renamefolder}"
 						actionListener="#{folder.openRenameFolderPanelPopup}"
-						onclick="javascript:Richfaces.showModalPanel('renameFolderModalPanel',{width:300, top:100})"
 						styleClass="aon-icon-commandButton aon-icon-renameFolder">
+						<rich:componentControl for="renameFolderModalPanel" operation="show" event="onclick"/>
 					</aon:commandButton>
 					
 					<aon:commandButton
