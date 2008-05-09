@@ -103,8 +103,8 @@
 						id="moveButton"
 						title="#{appBundle.aon_webmail_movemail}"
 						value="#{appBundle.aon_webmail_movemail}"
-						styleClass="aon-finding-toolbar-item aon-icon-mail-move"
-						onclick="javascript:Richfaces.showModalPanel('msgMoveModalPanel',{width:440, top:100})">
+						styleClass="aon-finding-toolbar-item aon-icon-mail-move">
+						<rich:componentControl for="msgMoveModalPanel" operation="show" event="onclick"/>
 				</aon:commandButton>									
 
 				<ui:include src="/webmail/facelet/modal/moveMessages.xhtml" />
