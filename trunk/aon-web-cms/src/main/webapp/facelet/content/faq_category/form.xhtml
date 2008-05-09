@@ -54,6 +54,12 @@
 							immediate="#{true}"
 							styleClass="aon-finding-toolbar-item aon-icon-cancel"
 							accesskey="#{bundle.aon_key_close}"/>
+						<h:commandButton id="partial_generate"
+							value="#{appBundle.aon_generate}" 
+							rendered="#{faq_category.to!=null}"
+							actionListener="#{generator.onGenerateCurrentFaqCategory}"
+							styleClass="aon-finding-toolbar-item aon-icon-accept"
+							accesskey="#{bundle.aon_key_save}"/>										
 				    </aon:div>
 					
 					<!-- end toolbar navigation -->
