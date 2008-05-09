@@ -758,7 +758,7 @@ color:#000;
 /*******************/
 .aon-message-big{
 	padding:5px 1em 5px 40px;
-	font-size:1.2em;
+	font-size:1.1em;
 	font-weight:bold;
 	background-position:left center !important;	
 	white-space:nowrap;
@@ -924,10 +924,10 @@ color:#000;
 .aon-table-row-hover{
 	background-color:#e2f1f5;	
 	cursor:pointer;
+	
 	}	
 .aon-table-row-hover td{
-	
-	}
+		}
 .aon-table-row-selected{
 	font-weight:bold;
 	}	
@@ -985,8 +985,7 @@ color:#000;
 	border:0;
 	cursor:pointer;
 	width:auto;
-	overflow:visible;
-	padding-left:16px;
+	padding-left:12px;
 	}
 /*************************/
 /******  PANEL TABSET  ******/
@@ -1181,7 +1180,7 @@ color:#000;
 	}
 .aon-dataScroller-text{	
 	text-align:left;
-	float:left;
+	padding:0 1em 0 0;
 	}
 .aon-dataScroller-text table, aon-dataScroller-text table td{	
 	border:0;
@@ -1189,7 +1188,11 @@ color:#000;
 	}
 
 .aon-dataScroller-buttons{
-	float:left;	
+	padding-left:1em;
+	}
+.aon-dataScroller-buttons td{
+	width:auto;
+	padding:2px;
 	}
 .aon-dataScroller-button{
 	border:0;
