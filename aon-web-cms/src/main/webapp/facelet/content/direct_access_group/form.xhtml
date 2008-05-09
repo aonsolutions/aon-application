@@ -61,6 +61,12 @@
 							immediate="#{true}"
 							styleClass="aon-finding-toolbar-item aon-icon-cancel"
 							accesskey="#{bundle.aon_key_close}"/>
+						<h:commandButton id="partial_generate"
+							value="#{appBundle.aon_generate}" 
+							rendered="#{direct_access_group.to!=null}"
+							actionListener="#{generator.onGenerateCurrentDirectAccessCategory}"
+							styleClass="aon-finding-toolbar-item aon-icon-accept"
+							accesskey="#{bundle.aon_key_save}"/>										
 				    </aon:div>
 					
 					<!-- end toolbar navigation -->
