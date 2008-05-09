@@ -4,7 +4,9 @@ import javax.faces.event.ActionEvent;
 
 import com.code.aon.cms.Article;
 import com.code.aon.cms.ArticleCategory;
+import com.code.aon.cms.FaqCategory;
 import com.code.aon.cms.GenericPage;
+import com.code.aon.cms.LinkCategory;
 import com.code.aon.cms.ModularPage;
 import com.code.aon.cms.enumeration.ArticleType;
 import com.code.aon.common.ManagerBeanException;
@@ -154,6 +156,20 @@ public class GeneratorController extends BasicController implements Constants {
 		initGenerator();
 		GenericPageController controller = (GenericPageController)AonUtil.getRegisteredBean("generic_page");
 		GenericGenerator.generate((GenericPage) controller.getTo());
+		finalizeGenerator();
+	}
+	
+	public void onGenerateCurrentLinkCategory(ActionEvent event) throws ManagerBeanException, ExpressionException {
+		initGenerator();
+		LinkCategoryController controller = (LinkCategoryController)AonUtil.getRegisteredBean("link_category");
+		LinkGenerator.generate((LinkCategory) controller.getTo());
+		finalizeGenerator();
+	}
+
+	public void onGenerateCurrentFaqCategory(ActionEvent event) throws ManagerBeanException, ExpressionException {
+		initGenerator();
+		FaqCategoryController controller = (FaqCategoryController)AonUtil.getRegisteredBean("faq_category");
+		FaqGenerator.generate((FaqCategory) controller.getTo());
 		finalizeGenerator();
 	}
 

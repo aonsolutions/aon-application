@@ -26,46 +26,11 @@ import com.code.aon.ui.cms.velocity.attribute.LinkHandler;
 
 public class LinkGenerator extends Generator {
 
-	private static ArrayList<LinkHandler> getlinkList(LinkCategory lc) {
-		ArrayList<LinkHandler> list = new ArrayList<LinkHandler>();
-		List<ITransferObject> linkList;
-		List<ITransferObject> linkDetailList;
-		try {
-			IManagerBean bean = BeanManager.getManagerBean(Link.class);
-			IManagerBean detailBean = BeanManager.getManagerBean(LinkDetail.class);
-			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(bean.getFieldName(ICMSAlias.LINK_LINK_CATEGORY_ID), lc.getId());
-			criteria.addEqualExpression(bean.getFieldName(ICMSAlias.LINK_ACTIVE), true);
-			criteria.addOrder(bean.getFieldName(ICMSAlias.LINK_POSITION));
-			linkList = (List<ITransferObject>)bean.getList(criteria);
-			if (linkList.isEmpty())
-				VelocityUtil.addMessage("La categoria de links " + lc.getAlias() + " no tiene links asociados.", VelocityUtil.WARN);
-			Link l;
-			Criteria detailCriteria;
-			for (int i = 0; i < linkList.size(); i++) {
-				l = (Link)linkList.get(i);
-				detailCriteria = new Criteria();
-				detailCriteria.addEqualExpression(detailBean.getFieldName(ICMSAlias.LINK_DETAIL_LINK_ID), l.getId());
-				detailCriteria.addEqualExpression(detailBean.getFieldName(ICMSAlias.LINK_DETAIL_LANGUAGE_ID), ControllerUtil.getCurrentLanguage().getId());
-				linkDetailList = (List<ITransferObject>)detailBean.getList(detailCriteria);
-				if (linkDetailList.isEmpty()) {
-					VelocityUtil.addMessage("El link " + l.getAlias() + " no esta internacionalizado.", VelocityUtil.WARN);
-				}else{
-					LinkDetail fd = (LinkDetail)linkDetailList.get(0);
-					LinkHandler fh = new LinkHandler(fd);
-					list.add(fh);
-				}
-			}
-		} catch (ManagerBeanException e) {
-			e.printStackTrace();
-		} finally {
-			linkList = null;
-			linkDetailList = null;
-		}
-		return list;
+	public static void generate() {
+		LinkGenerator.generate(null);
 	}
 
-	public static void generate() {
+	public static void generate(LinkCategory selectedCategory) {
 		VelocityUtil vu = new VelocityUtil();
 		CommonGenerator.getCommonGenerator().init(vu);
 		vu.setTemplate_path(ControllerUtil.getCurrentVmTemplatePath());
@@ -80,6 +45,8 @@ public class LinkGenerator extends Generator {
 			
 			IManagerBean bean = BeanManager.getManagerBean(LinkCategory.class);
 			Criteria criteria = new Criteria();
+			if (selectedCategory!=null)
+				criteria.addEqualExpression(bean.getFieldName(ICMSAlias.LINK_CATEGORY_ID), selectedCategory.getId());
 			criteria.addEqualExpression(bean.getFieldName(ICMSAlias.LINK_CATEGORY_ACTIVE), true);
 			criteria.addOrder(bean.getFieldName(ICMSAlias.LINK_CATEGORY_POSITION));
 			linkCategoryList = (List<ITransferObject>)bean.getList(criteria);
@@ -161,6 +128,46 @@ public class LinkGenerator extends Generator {
 		vu = null;
 	}
 	
+	private static ArrayList<LinkHandler> getlinkList(LinkCategory lc) {
+		ArrayList<LinkHandler> list = new ArrayList<LinkHandler>();
+		List<ITransferObject> linkList;
+		List<ITransferObject> linkDetailList;
+		try {
+			IManagerBean bean = BeanManager.getManagerBean(Link.class);
+			IManagerBean detailBean = BeanManager.getManagerBean(LinkDetail.class);
+			Criteria criteria = new Criteria();
+			criteria.addEqualExpression(bean.getFieldName(ICMSAlias.LINK_LINK_CATEGORY_ID), lc.getId());
+			criteria.addEqualExpression(bean.getFieldName(ICMSAlias.LINK_ACTIVE), true);
+			criteria.addOrder(bean.getFieldName(ICMSAlias.LINK_POSITION));
+			linkList = (List<ITransferObject>)bean.getList(criteria);
+			if (linkList.isEmpty())
+				VelocityUtil.addMessage("La categoria de links " + lc.getAlias() + " no tiene links asociados.", VelocityUtil.WARN);
+			Link l;
+			Criteria detailCriteria;
+			for (int i = 0; i < linkList.size(); i++) {
+				l = (Link)linkList.get(i);
+				detailCriteria = new Criteria();
+				detailCriteria.addEqualExpression(detailBean.getFieldName(ICMSAlias.LINK_DETAIL_LINK_ID), l.getId());
+				detailCriteria.addEqualExpression(detailBean.getFieldName(ICMSAlias.LINK_DETAIL_LANGUAGE_ID), ControllerUtil.getCurrentLanguage().getId());
+				linkDetailList = (List<ITransferObject>)detailBean.getList(detailCriteria);
+				if (linkDetailList.isEmpty()) {
+					VelocityUtil.addMessage("El link " + l.getAlias() + " no esta internacionalizado.", VelocityUtil.WARN);
+				}else{
+					LinkDetail fd = (LinkDetail)linkDetailList.get(0);
+					LinkHandler fh = new LinkHandler(fd);
+					list.add(fh);
+				}
+			}
+		} catch (ManagerBeanException e) {
+			e.printStackTrace();
+		} finally {
+			linkList = null;
+			linkDetailList = null;
+		}
+		return list;
+	}
+
+
 	public static Object getLinkCategoryHandler(Integer ident) {
 		try {
 			IManagerBean bean = BeanManager.getManagerBean(LinkCategory.class);
