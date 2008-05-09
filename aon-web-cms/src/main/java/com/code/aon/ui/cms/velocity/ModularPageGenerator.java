@@ -21,7 +21,7 @@ import com.code.aon.ui.cms.velocity.attribute.ModularPageOptionHandler;
 
 public class ModularPageGenerator extends Generator {
 
-	public static void generate() {
+	public static void generate(ModularPage selected_modular) {
 		VelocityUtil vu = new VelocityUtil();
 		CommonGenerator.getCommonGenerator().init(vu);
 		vu.setTemplate_path(ControllerUtil.getCurrentVmTemplatePath());
@@ -37,8 +37,13 @@ public class ModularPageGenerator extends Generator {
 			IManagerBean moBean = BeanManager.getManagerBean(ModularPageOption.class);
 			IManagerBean modBean = BeanManager.getManagerBean(ModularPageOptionDetail.class);
 			IManagerBean mdBean = BeanManager.getManagerBean(ModularPageDetail.class);
-			
-			modularPageList = (List<ITransferObject>) bean.getList(null);
+
+			Criteria criteria_mBean = null;
+			if (selected_modular!=null){
+				criteria_mBean = new Criteria();
+				criteria_mBean.addEqualExpression(bean.getFieldName(ICMSAlias.MODULAR_PAGE_ID),selected_modular.getId());
+			}
+			modularPageList = (List<ITransferObject>) bean.getList(criteria_mBean);
 
 			ModularPage mp;
 			ModularPageOption mpo;
@@ -129,6 +134,10 @@ public class ModularPageGenerator extends Generator {
 		}
 		vu.finalize();
 		vu = null;
+	}
+
+	public static void generate() {
+		ModularPageGenerator.generate(null);
 	}
 	
 }
