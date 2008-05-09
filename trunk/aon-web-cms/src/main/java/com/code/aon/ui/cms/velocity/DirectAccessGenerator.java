@@ -22,6 +22,10 @@ import com.code.aon.ui.cms.velocity.attribute.DirectAccessHandler;
 public class DirectAccessGenerator extends Generator {
 	
 	public static void generate() {
+		
+	}
+	
+	public static void generate(DirectAccessGroup selectedCategory) {
 		VelocityUtil vu = new VelocityUtil();
 		CommonGenerator.getCommonGenerator().init(vu);
 		vu.setTemplate_path(ControllerUtil.getCurrentVmTemplatePath());
@@ -33,7 +37,12 @@ public class DirectAccessGenerator extends Generator {
 		try {
 			IManagerBean bean = BeanManager.getManagerBean(DirectAccessGroup.class);
 			IManagerBean detailBean = BeanManager.getManagerBean(DirectAccessGroupDetail.class);
-			directAccessGroupList = (List<ITransferObject>)bean.getList(null);
+			Criteria criteria = null;
+			if (selectedCategory!=null){
+				criteria = new Criteria();
+				criteria.addEqualExpression(bean.getFieldName(ICMSAlias.DIRECT_ACCESS_GROUP_ID), selectedCategory.getId());
+			}
+			directAccessGroupList = (List<ITransferObject>)bean.getList(criteria);
 			DirectAccessGroup group;
 			DirectAccessGroupDetail detail;
 			Criteria detailCriteria;

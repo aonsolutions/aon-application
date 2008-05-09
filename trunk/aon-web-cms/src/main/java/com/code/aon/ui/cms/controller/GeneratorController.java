@@ -5,6 +5,7 @@ import javax.faces.event.ActionEvent;
 import com.code.aon.cms.AlbumCategory;
 import com.code.aon.cms.Article;
 import com.code.aon.cms.ArticleCategory;
+import com.code.aon.cms.DirectAccessGroup;
 import com.code.aon.cms.DownloadCategory;
 import com.code.aon.cms.FaqCategory;
 import com.code.aon.cms.GenericPage;
@@ -186,6 +187,13 @@ public class GeneratorController extends BasicController implements Constants {
 		initGenerator();
 		AlbumCategoryController controller = (AlbumCategoryController)AonUtil.getRegisteredBean("album_category");
 		AlbumGenerator.generate((AlbumCategory) controller.getTo());
+		finalizeGenerator();
+	}
+
+	public void onGenerateCurrentDirectAccessCategory(ActionEvent event) throws ManagerBeanException, ExpressionException {
+		initGenerator();
+		DirectAccessGroupController controller = (DirectAccessGroupController)AonUtil.getRegisteredBean("direct_access_group");
+		DirectAccessGenerator.generate((DirectAccessGroup) controller.getTo());
 		finalizeGenerator();
 	}
 
