@@ -14,6 +14,9 @@ import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionException;
+import com.code.aon.ui.cms.util.ControllerUtil;
+import com.code.aon.ui.cms.util.FileUtil;
+import com.code.aon.ui.cms.velocity.ModularPageGenerator;
 import com.code.aon.ui.util.AonUtil;
 
 public class ModularPageController extends GridI18nController {
@@ -71,5 +74,16 @@ public class ModularPageController extends GridI18nController {
 		return label;
 	}
 
+	public void onGenerateCurrentModular(ActionEvent event) throws ManagerBeanException, ExpressionException {
+		GeneratorStatusController status = (GeneratorStatusController)AonUtil.getRegisteredBean("generator_status");
+		status.onInit(event);
+		//Copy css and js files from current template
+		FileUtil.copyDir(ControllerUtil.getCssTemplatePath(), ControllerUtil.getPreviewPath());
+		FileUtil.copyDir(ControllerUtil.getJsTemplatePath(), ControllerUtil.getPreviewPath());
+		
+		ModularPageGenerator.generate((ModularPage) this.getTo());
+		
+		status.finalized();
+	}
 
 }

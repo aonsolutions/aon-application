@@ -10,6 +10,7 @@ import com.code.aon.cms.Article;
 import com.code.aon.cms.ArticleCategory;
 import com.code.aon.cms.ArticleCategoryDetail;
 import com.code.aon.cms.dao.ICMSAlias;
+import com.code.aon.cms.enumeration.ArticleType;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
@@ -17,6 +18,8 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionException;
 import com.code.aon.ui.cms.util.ControllerUtil;
+import com.code.aon.ui.cms.util.FileUtil;
+import com.code.aon.ui.cms.velocity.ArticleGenerator;
 import com.code.aon.ui.util.AonUtil;
 
 
@@ -140,5 +143,20 @@ public class ArticleCategoryController extends BasicI18nController {
 		positionOrdered = true;
 	}
 	// END ORDER ALIAS
-	
+
+	public void onGenerateCurrentArticleCategory(ActionEvent event) throws ManagerBeanException, ExpressionException {
+		GeneratorStatusController status = (GeneratorStatusController)AonUtil.getRegisteredBean("generator_status");
+		status.onInit(event);
+		//Copy css and js files from current template
+		FileUtil.copyDir(ControllerUtil.getCssTemplatePath(), ControllerUtil.getPreviewPath());
+		FileUtil.copyDir(ControllerUtil.getJsTemplatePath(), ControllerUtil.getPreviewPath());
+		
+		ArticleType[] types_ = ArticleType.values();
+		for (int i = 0; i < types_.length; i++) {
+			ArticleGenerator.generate(types_[i],(ArticleCategory) this.getTo());
+		}
+		
+		status.finalized();
+	}
+
 }

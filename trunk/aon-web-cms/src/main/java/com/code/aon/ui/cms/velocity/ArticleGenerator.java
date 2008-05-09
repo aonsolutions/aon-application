@@ -22,13 +22,10 @@ import com.code.aon.ql.Criteria;
 import com.code.aon.ql.ast.Expression;
 import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.ui.cms.controller.GeneratorConfigController;
-import com.code.aon.ui.cms.controller.GeneratorStatusController;
 import com.code.aon.ui.cms.util.ControllerUtil;
-import com.code.aon.ui.cms.util.FileUtil;
 import com.code.aon.ui.cms.util.VelocityUtil;
 import com.code.aon.ui.cms.velocity.attribute.ArticleCategoryHandler;
 import com.code.aon.ui.cms.velocity.attribute.ArticleHandler;
-import com.code.aon.ui.util.AonUtil;
 
 public class ArticleGenerator extends Generator {
 
@@ -42,23 +39,11 @@ public class ArticleGenerator extends Generator {
 			if (articleDetailList.isEmpty()) {
 				VelocityUtil.addMessage(" Articulo " + article.getAlias() + " de la categoria " + article.getArticleCategory().getAlias() + " no internacionalizado.", VelocityUtil.WARN);
 			}else{
+				ArticleDetail articleDetail = (ArticleDetail)articleDetailList.get(0);
 				String backURL = ArticleGenerator.getBackURL(article.getArticleType(),article.getArticleCategory());
 				Templates templates = ArticleGenerator.getTemplate(article.getArticleType().ordinal());
-				VelocityUtil vu = new VelocityUtil();
-				CommonGenerator.getCommonGenerator().init(vu);
-				vu.setTemplate_path(ControllerUtil.getCurrentVmTemplatePath());
-				vu.initialize();
-				if (article.getArticleCategory().getElementSection()!=null){
-					CommonGenerator.getCommonGenerator().chargeContext(vu, article.getArticleCategory().getElementSection());
-				}else{
-					if (article.getArticleCategory().getSection()!=null){
-						CommonGenerator.getCommonGenerator().chargeContext(vu, article.getArticleCategory().getSection());
-					}else{
-						Section configSection = GeneratorConfigController.currentSection(ArticleConfig.class);
-						CommonGenerator.getCommonGenerator().chargeContext(vu, configSection);
-					}
-				}
-				ArticleDetail articleDetail = (ArticleDetail)articleDetailList.get(0);
+				VelocityUtil vu = ArticleGenerator.initVelocity();
+				ArticleGenerator.chargeArticleContext(vu, article.getArticleCategory());
 				ArticleGenerator.generateArticle(vu, templates, backURL, articleDetail);
 				vu.finalize();
 				vu = null;		
@@ -66,6 +51,36 @@ public class ArticleGenerator extends Generator {
 		} catch (ManagerBeanException e) {
 			VelocityUtil.addMessage(e.getMessage(), VelocityUtil.ERROR);;
 		} finally {
+		}
+	}
+	
+	private static VelocityUtil initVelocity(){
+		VelocityUtil vu = new VelocityUtil();
+		CommonGenerator.getCommonGenerator().init(vu);
+		vu.setTemplate_path(ControllerUtil.getCurrentVmTemplatePath());
+		vu.initialize();
+		return vu;
+	}
+
+	private static void chargeArticleCategoryContext(VelocityUtil vu, ArticleCategory articleCategory) throws ManagerBeanException{
+		if (articleCategory.getSection()!=null){
+			CommonGenerator.getCommonGenerator().chargeContext(vu, articleCategory.getSection());
+		}else{
+			Section configSection = GeneratorConfigController.currentSection(ArticleConfig.class);
+			CommonGenerator.getCommonGenerator().chargeContext(vu, configSection);
+		}
+	}
+
+	private static void chargeArticleContext(VelocityUtil vu, ArticleCategory articleCategory) throws ManagerBeanException{
+		if (articleCategory.getElementSection()!=null){
+			CommonGenerator.getCommonGenerator().chargeContext(vu, articleCategory.getElementSection());
+		}else{
+			if (articleCategory.getSection()!=null){
+				CommonGenerator.getCommonGenerator().chargeContext(vu, articleCategory.getSection());
+			}else{
+				Section configSection = GeneratorConfigController.currentSection(ArticleConfig.class);
+				CommonGenerator.getCommonGenerator().chargeContext(vu, configSection);
+			}
 		}
 	}
 	
@@ -90,13 +105,12 @@ public class ArticleGenerator extends Generator {
 		vu.remove("back_url");
 	}
 	
-	public static void generate(ArticleType articleType) {
+	public static void generate(ArticleType articleType, ArticleCategory selectedArticleCategory) {
 		List<ITransferObject> articleCategoryList;
 		List<ITransferObject> articleCategoryDetailList;
 		List<ITransferObject> articleList;
 		List<ITransferObject> articleDetailList;
 		try {
-			Section configSection = GeneratorConfigController.currentSection(ArticleConfig.class);
 			IManagerBean articleCategoryBean = BeanManager.getManagerBean(ArticleCategory.class);
 			IManagerBean articleCategoryDetailBean = BeanManager.getManagerBean(ArticleCategoryDetail.class);
 			IManagerBean articleBean = BeanManager.getManagerBean(Article.class);
@@ -115,15 +129,14 @@ public class ArticleGenerator extends Generator {
 			ArticleDetail articleDetail;
 			
 			articleCategoryCriteria.addEqualExpression(articleCategoryBean.getFieldName(ICMSAlias.ARTICLE_CATEGORY_ACTIVE), true);
+			if (selectedArticleCategory!=null)
+				articleCategoryCriteria.addEqualExpression(articleCategoryBean.getFieldName(ICMSAlias.ARTICLE_CATEGORY_ID), selectedArticleCategory.getId());
 			articleCategoryCriteria.addOrder(articleCategoryBean.getFieldName(ICMSAlias.ARTICLE_CATEGORY_POSITION));
 			articleCategoryList = (List<ITransferObject>)articleCategoryBean.getList(articleCategoryCriteria);
 			ArrayList<ArticleCategoryHandler> achlist = new ArrayList<ArticleCategoryHandler>(); 
 			for (int j=0; j < articleCategoryList.size(); j++) {
 				
-				VelocityUtil vu = new VelocityUtil();
-				CommonGenerator.getCommonGenerator().init(vu);
-				vu.setTemplate_path(ControllerUtil.getCurrentVmTemplatePath());
-				vu.initialize();
+				VelocityUtil vu = ArticleGenerator.initVelocity();
 
 				articleCategory = (ArticleCategory)articleCategoryList.get(j);
 				articleCategoryDetailCriteria = new Criteria();
@@ -150,15 +163,7 @@ public class ArticleGenerator extends Generator {
 					if (!articleList.isEmpty()){
 						emptyCategory = false;
 						String back_url = getBackURL(articleType, articleCategory);
-						
-						if (articleCategory.getElementSection()!=null){
-							CommonGenerator.getCommonGenerator().chargeContext(vu, articleCategory.getElementSection());
-						}else{
-							if (articleCategory.getSection()!=null)
-								CommonGenerator.getCommonGenerator().chargeContext(vu, articleCategory.getSection());
-							else
-								CommonGenerator.getCommonGenerator().chargeContext(vu, configSection);
-						}
+						ArticleGenerator.chargeArticleContext(vu, articleCategory);
 						for (int i=0; i < articleList.size(); i++) {
 							article = (Article)articleList.get(i);
 							articleDetailCriteria = new Criteria();
@@ -179,10 +184,8 @@ public class ArticleGenerator extends Generator {
 								vu.remove("back_url");
 							}
 						}
-						if (articleCategory.getSection()!=null)
-							CommonGenerator.getCommonGenerator().chargeContext(vu, articleCategory.getSection());
-						else
-							CommonGenerator.getCommonGenerator().chargeContext(vu, configSection);
+						ArticleGenerator.chargeArticleCategoryContext(vu, articleCategory);
+						
 						ArticleCategoryHandler achandler = new ArticleCategoryHandler(articleCategoryDetail,articleType,ahlist);
 						vu.put("article_category", achandler);
 						vu.put("article_list", ahlist);
@@ -208,6 +211,10 @@ public class ArticleGenerator extends Generator {
 			articleList = null;
 			articleDetailList = null;
 		}
+	}
+
+	public static void generate(ArticleType articleType) {
+		ArticleGenerator.generate(articleType,null);
 	}
 	
 	public static Templates getTemplate(int art_type) {
