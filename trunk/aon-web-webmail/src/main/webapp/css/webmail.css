@@ -13,7 +13,7 @@
 	height:325px;
 	overflow:scroll;
  }
- .aon-border-newmessage{
+.aon-border-newmessage{
  border:#ccc 1px solid;
- border-top:0;
+ border-top-width:0;
  }
