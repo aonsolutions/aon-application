@@ -65,7 +65,7 @@
 							value="#{appBundle.aon_generate}" 
 							rendered="#{article_category.to!=null}"
 							action="article_category_form"
-							actionListener="#{article_category.onGenerateCurrentArticleCategory}"
+							actionListener="#{generator.onGenerateCurrentArticleCategory}"
 							styleClass="aon-finding-toolbar-item aon-icon-accept"
 							accesskey="#{bundle.aon_key_save}"/>										
 				    </aon:div>
@@ -206,7 +206,7 @@
 												value="#{appBundle.aon_generate}" 
 												rendered="#{article.to!=null}"
 												reRender="detail_panel,tab0,tab1,tab2,tab3"
-												actionListener="#{article.onGenerateCurrentArticle}"
+												actionListener="#{generator.onGenerateCurrentArticle}"
 												styleClass="aon-finding-toolbar-item aon-icon-accept"
 												accesskey="#{bundle.aon_key_save}"/>										
 									    </aon:div>

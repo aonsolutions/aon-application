@@ -2,8 +2,13 @@ package com.code.aon.ui.cms.controller;
 
 import javax.faces.event.ActionEvent;
 
+import com.code.aon.cms.Article;
+import com.code.aon.cms.ArticleCategory;
+import com.code.aon.cms.GenericPage;
+import com.code.aon.cms.ModularPage;
 import com.code.aon.cms.enumeration.ArticleType;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.ql.util.ExpressionException;
 import com.code.aon.ui.cms.Constants;
 import com.code.aon.ui.cms.util.ControllerUtil;
 import com.code.aon.ui.cms.util.FileUtil;
@@ -23,17 +28,15 @@ import com.code.aon.ui.util.AonUtil;
 
 public class GeneratorController extends BasicController implements Constants {
 
+	private GeneratorStatusController status;
+
+	public GeneratorController(){
+		super();
+		status = (GeneratorStatusController)AonUtil.getRegisteredBean("generator_status");
+	}
+	
 	public void onGenerate(ActionEvent event) throws ManagerBeanException {
-		GeneratorStatusController status = (GeneratorStatusController)AonUtil.getRegisteredBean("generator_status");
-		status.onInit(event);
-		
-		//Copy css and js files from current template
-		FileUtil.copyDir(ControllerUtil.getCssTemplatePath(), ControllerUtil.getPreviewPath());
-		FileUtil.copyDir(ControllerUtil.getJsTemplatePath(), ControllerUtil.getPreviewPath());
-
-		CommonGenerator.getCommonGenerator().generateLanguagePage();
-
-		CommonGenerator.getCommonGenerator().generateEmailSendPage();
+		initGenerator();
 
 		if (isModularPageToGenerate){
 			//Generar index.html del idioma seleccionado
@@ -120,12 +123,54 @@ public class GeneratorController extends BasicController implements Constants {
 		
 		System.gc();
 
-		status.addMessage("¡¡¡¡¡ YOUR WEB IS DONE !!!!! ;-DDDD");
-		
-		status.finalized();
-		
+		finalizeGenerator();
 	}
 	
+	public void onGenerateCurrentArticle(ActionEvent event) throws ManagerBeanException, ExpressionException {
+		initGenerator();
+		ArticleController controller = (ArticleController)AonUtil.getRegisteredBean("article");
+		ArticleGenerator.generateArticle((Article) controller.getTo());
+		finalizeGenerator();
+	}
+
+	public void onGenerateCurrentArticleCategory(ActionEvent event) throws ManagerBeanException, ExpressionException {
+		initGenerator();
+		ArticleCategoryController controller = (ArticleCategoryController)AonUtil.getRegisteredBean("article_category");
+		ArticleType[] types_ = ArticleType.values();
+		for (int i = 0; i < types_.length; i++) {
+			ArticleGenerator.generate(types_[i],(ArticleCategory) controller.getTo());
+		}
+		finalizeGenerator();
+	}
+
+	public void onGenerateCurrentModular(ActionEvent event) throws ManagerBeanException, ExpressionException {
+		initGenerator();
+		ModularPageController controller = (ModularPageController)AonUtil.getRegisteredBean("modular_page");
+		ModularPageGenerator.generate((ModularPage) controller.getTo());
+		finalizeGenerator();
+	}
+
+	public void onGenerateCurrentGenericPage(ActionEvent event) throws ManagerBeanException, ExpressionException {
+		initGenerator();
+		GenericPageController controller = (GenericPageController)AonUtil.getRegisteredBean("generic_page");
+		GenericGenerator.generate((GenericPage) controller.getTo());
+		finalizeGenerator();
+	}
+
+	private void initGenerator(){
+		status.onInit(null);
+		//Copy css and js files from current template
+		FileUtil.copyDir(ControllerUtil.getCssTemplatePath(), ControllerUtil.getPreviewPath());
+		FileUtil.copyDir(ControllerUtil.getJsTemplatePath(), ControllerUtil.getPreviewPath());
+		CommonGenerator.getCommonGenerator().generateLanguagePage();
+		CommonGenerator.getCommonGenerator().generateEmailSendPage();
+	}
+
+	private void finalizeGenerator(){
+		status.addMessage("¡¡¡¡¡ YOUR WEB IS DONE !!!!! ;-DDDD");
+		status.finalized();
+	}
+
 	private boolean isModularPageToGenerate = true;
 	private boolean isMenuToGenerate = true;
 	private boolean isGenericToGenerate = true;
@@ -249,4 +294,5 @@ public class GeneratorController extends BasicController implements Constants {
 		isArticleOTHERToGenerate = false;
 	}
 	
+
 }
