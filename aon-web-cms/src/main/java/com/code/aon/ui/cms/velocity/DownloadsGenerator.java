@@ -24,42 +24,12 @@ import com.code.aon.ui.cms.velocity.attribute.DownloadCategoryHandler;
 import com.code.aon.ui.cms.velocity.attribute.DownloadHandler;
 
 public class DownloadsGenerator extends Generator {
-	
-	public static ArrayList<DownloadHandler> getDownloadsList(DownloadCategoryDetail groupDetail) {
-		ArrayList<DownloadHandler> list = new ArrayList<DownloadHandler>();
 
-		try {
-			IManagerBean bean = BeanManager.getManagerBean(Download.class);
-			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(bean.getFieldName(ICMSAlias.DOWNLOAD_DOWNLOAD_CATEGORY_ID), groupDetail.getDownloadCategory().getId());
-			criteria.addEqualExpression(bean.getFieldName(ICMSAlias.DOWNLOAD_ACTIVE), true);
-			criteria.addOrder(bean.getFieldName(ICMSAlias.DOWNLOAD_POSITION));
-			List<ITransferObject> l = (List<ITransferObject>)bean.getList(criteria);
-			if (l.isEmpty())
-				VelocityUtil.addMessage("La categoria de descargas " + groupDetail.getDownloadCategory().getAlias() + " no tiene descargas.", VelocityUtil.WARN);
-			for (int i = 0; i < l.size(); i++) {
-				Download da = (Download)l.get(i);
-				IManagerBean detailBean = BeanManager.getManagerBean(DownloadDetail.class);
-				Criteria criteria_detail = new Criteria();
-				criteria_detail.addEqualExpression(detailBean.getFieldName(ICMSAlias.DOWNLOAD_DETAIL_DOWNLOAD_ID), da.getId());
-				criteria_detail.addEqualExpression(detailBean.getFieldName(ICMSAlias.DOWNLOAD_DETAIL_LANGUAGE_ID), ControllerUtil.getCurrentLanguage().getId());
-				List<ITransferObject> ld = (List<ITransferObject>)detailBean.getList(criteria_detail);
-				if (ld.isEmpty()) {
-					VelocityUtil.addMessage("La descarga " + da.getAlias() + " no esta internacionalizada.", VelocityUtil.WARN);
-				}else{
-					DownloadDetail detail = (DownloadDetail)ld.get(0);
-					DownloadHandler handler = new DownloadHandler(detail);
-					list.add(handler);
-				}
-			}
-		} catch (ManagerBeanException e) {
-			VelocityUtil.addMessage(e.getMessage(), VelocityUtil.ERROR);;
-		}
-		
-		return list;
-	}
-	
 	public static void generate() {
+		DownloadsGenerator.generate(null);
+	}
+
+	public static void generate(DownloadCategory selectedCategory) {
 		VelocityUtil vu = new VelocityUtil();
 		CommonGenerator.getCommonGenerator().init(vu);
 		vu.setTemplate_path(ControllerUtil.getCurrentVmTemplatePath());
@@ -68,7 +38,12 @@ public class DownloadsGenerator extends Generator {
 		try {
 			Section configSection = GeneratorConfigController.currentSection(DownloadConfig.class);
 			IManagerBean bean = BeanManager.getManagerBean(DownloadCategory.class);
-			List<ITransferObject> l = (List<ITransferObject>)bean.getList(null);
+			Criteria criteria = null;
+			if (selectedCategory!=null){
+				criteria = new Criteria();
+				criteria.addEqualExpression(bean.getFieldName(ICMSAlias.DOWNLOAD_CATEGORY_ID), selectedCategory.getId());
+			}
+			List<ITransferObject> l = (List<ITransferObject>)bean.getList(criteria);
 			ArrayList<DownloadCategoryHandler> downloadCategoryHandlerList = new ArrayList<DownloadCategoryHandler>();
 			for (int i=0; i < l.size(); i++) {
 				DownloadCategory group = (DownloadCategory)l.get(i);
@@ -131,6 +106,40 @@ public class DownloadsGenerator extends Generator {
 		}
 		vu.finalize();
 		vu = null;
+	}
+	
+	public static ArrayList<DownloadHandler> getDownloadsList(DownloadCategoryDetail groupDetail) {
+		ArrayList<DownloadHandler> list = new ArrayList<DownloadHandler>();
+
+		try {
+			IManagerBean bean = BeanManager.getManagerBean(Download.class);
+			Criteria criteria = new Criteria();
+			criteria.addEqualExpression(bean.getFieldName(ICMSAlias.DOWNLOAD_DOWNLOAD_CATEGORY_ID), groupDetail.getDownloadCategory().getId());
+			criteria.addEqualExpression(bean.getFieldName(ICMSAlias.DOWNLOAD_ACTIVE), true);
+			criteria.addOrder(bean.getFieldName(ICMSAlias.DOWNLOAD_POSITION));
+			List<ITransferObject> l = (List<ITransferObject>)bean.getList(criteria);
+			if (l.isEmpty())
+				VelocityUtil.addMessage("La categoria de descargas " + groupDetail.getDownloadCategory().getAlias() + " no tiene descargas.", VelocityUtil.WARN);
+			for (int i = 0; i < l.size(); i++) {
+				Download da = (Download)l.get(i);
+				IManagerBean detailBean = BeanManager.getManagerBean(DownloadDetail.class);
+				Criteria criteria_detail = new Criteria();
+				criteria_detail.addEqualExpression(detailBean.getFieldName(ICMSAlias.DOWNLOAD_DETAIL_DOWNLOAD_ID), da.getId());
+				criteria_detail.addEqualExpression(detailBean.getFieldName(ICMSAlias.DOWNLOAD_DETAIL_LANGUAGE_ID), ControllerUtil.getCurrentLanguage().getId());
+				List<ITransferObject> ld = (List<ITransferObject>)detailBean.getList(criteria_detail);
+				if (ld.isEmpty()) {
+					VelocityUtil.addMessage("La descarga " + da.getAlias() + " no esta internacionalizada.", VelocityUtil.WARN);
+				}else{
+					DownloadDetail detail = (DownloadDetail)ld.get(0);
+					DownloadHandler handler = new DownloadHandler(detail);
+					list.add(handler);
+				}
+			}
+		} catch (ManagerBeanException e) {
+			VelocityUtil.addMessage(e.getMessage(), VelocityUtil.ERROR);;
+		}
+		
+		return list;
 	}
 	
 	public static Object getDownloadsHandler(Integer ident) {
