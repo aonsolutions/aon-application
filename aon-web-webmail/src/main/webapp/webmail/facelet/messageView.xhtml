@@ -31,14 +31,6 @@
 					>
 				</aon:commandButton>
 						
-				<aon:commandButton
-					id="back"
-					title="#{appBundle.aon_webmail_back}"
-					value="#{appBundle.aon_webmail_back}"
-					action="#{message.getReturnAction}"
-					styleClass="aon-finding-toolbar-item aon-icon-cancel">
-				</aon:commandButton>									
-			
 				<!-- Reply to message  -->									
 				<aon:commandButton
 						id="replyButton"
@@ -107,6 +99,14 @@
 						onclick="javascript:Richfaces.showModalPanel('msgMoveModalPanel',{width:440, top:100})">
 				</aon:commandButton>									
 
+				<aon:commandButton
+					id="back"
+					title="#{appBundle.aon_webmail_back}"
+					value="#{appBundle.aon_webmail_back}"
+					action="#{message.getReturnAction}"
+					styleClass="aon-finding-toolbar-item aon-icon-cancel">
+				</aon:commandButton>											
+
 				<ui:include src="/webmail/facelet/modal/moveMessage.xhtml" />
 				
 			</aon:div>
@@ -156,8 +156,8 @@
 						<aon:commandButton
 							id="addToContacts"
 							title="#{appBundle.aon_webmail_email_add}"
-							onclick="javascript:Richfaces.showModalPanel('addContactModalPanel',{width:600, top:100})"
 							styleClass="aon-icon-commandButton aon-icon-agenda aon-italic aon-bold">
+							<rich:componentControl for="addContactModalPanel" operation="show" event="onclick"/>
 						</aon:commandButton>
 						<aon:commandButton id="add_white_list"
 							reRender="webmailForm"
@@ -254,8 +254,8 @@
 						<aon:outputText value="#{message.message.sentDateString}" />
 					</aon:div>
 				
-					<aon:outputText styleClass="aon-nowrap"
-						styleClass="aon-form-input-text-label"
+					<aon:outputText 
+						styleClass="aon-form-input-text-label aon-nowrap"
 						value="#{appBundle.aon_webmail_attach_files}: " />
 					<aon:div>
 						<aon:outputText value="&#160;" />
