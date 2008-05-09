@@ -47,6 +47,11 @@
 		<param-name>facelets.REFRESH_PERIOD</param-name>
 		<param-value>-1</param-value>
 	</context-param>
+	
+	<context-param>
+		<param-name>facelets.BUFFER_SIZE</param-name>
+		<param-value>500000</param-value>
+	</context-param>	
 
 	<context-param>
 		<description>
@@ -75,6 +80,11 @@
 		<param-name>com.sun.faces.displayConfiguration</param-name>
 		<param-value>true</param-value>
 	</context-param>
+	
+	<context-param>
+		<param-name>com.sun.faces.responseBufferSize</param-name>
+		<param-value>500000</param-value>
+	</context-param>		
 
 	<context-param>
   		<param-name>org.ajax4jsf.VIEW_HANDLERS</param-name>
@@ -90,8 +100,7 @@
 		<param-name>facelets.LIBRARIES</param-name>
 		<param-value>/WEB-INF/tomahawk.taglib.xml</param-value>
 	</context-param>
-	
-	
+ 	
 	<!-- Extensions Filter -->
     <filter>
         <filter-name>extensionsFilter</filter-name>
