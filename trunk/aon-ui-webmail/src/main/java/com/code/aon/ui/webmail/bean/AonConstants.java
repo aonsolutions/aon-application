@@ -26,7 +26,7 @@ public class AonConstants {
 	public static final String BEAN_ATTACH = "attach";
 	public static final String BEAN_SEARCH = "search";
 	public static final String BEAN_INPUTFILE = "inputFile";
-	public static final String BEAN_EMAIL = "email";
+	public static final String BEAN_CONTACT = "contact";
 	public static final String BEAN_SIGNATURE = "signature";
 	public static final String BEAN_AUTOCOMPLETEEMAILDICC = "autoCompleteEmailDictionary";
 	public static final String BEAN_AUTOCOMPLETEEMAIL = "autoCompleteEmailBean";

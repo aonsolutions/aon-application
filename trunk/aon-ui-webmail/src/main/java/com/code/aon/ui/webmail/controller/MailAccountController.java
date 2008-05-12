@@ -66,7 +66,7 @@ public class MailAccountController extends BasicController {
 		SignatureController signatureController = (SignatureController)AonUtil.getRegisteredBean(AonConstants.BEAN_SIGNATURE);
 		signatureController.initializeModel();
 		signatureController.onSearch(null);
-    	BasicController emailController = (BasicController)AonUtil.getRegisteredBean(AonConstants.BEAN_EMAIL);
+    	BasicController emailController = (BasicController)AonUtil.getRegisteredBean(AonConstants.BEAN_CONTACT);
     	emailController.initializeModel();
     	emailController.onSearch(null);
 		if (error==null){
