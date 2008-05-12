@@ -3,7 +3,6 @@ package com.code.aon.ui.webmail.controller;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.groupware.Contact;
@@ -17,16 +16,12 @@ public class MultiSelectionEmailBean {
 
 	private List<SelectionEmail> emails; 
 
-	public MultiSelectionEmailBean(){
-		this.reload();
-	}
-	
     public void reload() {
         emails = new ArrayList<SelectionEmail>();
     	try{
 			WebMailController wmc = (WebMailController)AonUtil.getRegisteredBean(AonConstants.BEAN_WEBMAIL);
 			MailAccount account = wmc.getServer().getAccount();
-			IManagerBean bean = BeanManager.getManagerBean(Contact.class);
+			IManagerBean bean = AonUtil.getController(AonConstants.BEAN_CONTACT).getManagerBean();
 			Criteria criteria = new Criteria();
 			criteria.addOrder(bean.getFieldName(IContactAlias.CONTACT_NAME));
 			List lst = lst = bean.getList(criteria);
