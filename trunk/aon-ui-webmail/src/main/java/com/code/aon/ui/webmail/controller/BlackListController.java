@@ -28,6 +28,7 @@ import com.code.aon.ldap.DistinguishedName;
 import com.code.aon.ldap.Entry;
 import com.code.aon.ldap.LdapException;
 import com.code.aon.ldap.LdapSession;
+import com.code.aon.ui.form.IController;
 import com.code.aon.ui.util.AonUtil;
 import com.code.aon.ui.webmail.bean.AonConstants;
 import com.code.aon.ui.webmail.bean.AonFolder;
@@ -220,8 +221,8 @@ public class BlackListController extends AbstractLdap {
 
 	private void addContactsToWhiteList(){
 	    List contacts = null;
-		try{
-			IManagerBean bean = BeanManager.getManagerBean(Contact.class);
+		try {
+			IManagerBean bean = AonUtil.getController(AonConstants.BEAN_CONTACT).getManagerBean();
 			contacts = bean.getList(null);
 		}catch (ManagerBeanException e) {
 			e.printStackTrace();
