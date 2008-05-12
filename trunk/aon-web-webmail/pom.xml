@@ -21,8 +21,8 @@
 	<dependencies>
 		<dependency>
 			<groupId>com.code.aon</groupId>
-			<artifactId>aon.ql</artifactId>
-			<version>1.9.15</version>
+			<artifactId>aon.common</artifactId>
+			<version>1.9.19</version>
 			<scope>compile</scope>
 		</dependency>	
 		<dependency>
