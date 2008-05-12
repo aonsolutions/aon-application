@@ -93,6 +93,10 @@
 					<key>securityBundle</key>
 					<value>com.code.aon.bridge.i18n.messages</value>
 				</map-entry>
+				<map-entry>
+					<key>groupwareBundle</key>
+					<value>com.code.aon.ui.groupware.i18n.messages</value>
+				</map-entry>
 			</map-entries>
 		</managed-property>
 	</managed-bean>
