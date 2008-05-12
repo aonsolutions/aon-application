@@ -42,6 +42,7 @@ import com.code.aon.groupware.dao.IContactAlias;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionException;
 import com.code.aon.ui.form.BasicController;
+import com.code.aon.ui.form.IController;
 import com.code.aon.ui.util.AonUtil;
 import com.code.aon.ui.webmail.bean.AonAttachment;
 import com.code.aon.ui.webmail.bean.AonConstants;
@@ -558,19 +559,26 @@ public class MessageController implements IAonFileListener{
 		return selectedDestinyContainer;
 	}
 	
+	public void openEmailsPanelPopup(ActionEvent event){
+		MultiSelectionEmailBean multiSelectionEmailBean = (MultiSelectionEmailBean)AonUtil.getRegisteredBean(AonConstants.BEAN_MULTISELECTIONEMAIL);
+		multiSelectionEmailBean.reload();
+		setShowEmailsWindow(true);
+	}
+
+	
 	public void openEmailsToPanelPopup(ActionEvent event){
 		this.selectedDestinyContainer = CONTAINER_TO;
-		setShowEmailsWindow(true);
+		openEmailsPanelPopup(event);
 	}
 
 	public void openEmailsCcPanelPopup(ActionEvent event){
 		this.selectedDestinyContainer = CONTAINER_CC;
-		setShowEmailsWindow(true);
+		openEmailsPanelPopup(event);
 	}
 
 	public void openEmailsBccPanelPopup(ActionEvent event){
 		this.selectedDestinyContainer = CONTAINER_BCC;
-		setShowEmailsWindow(true);
+		openEmailsPanelPopup(event);
 	}
 
 
@@ -874,7 +882,8 @@ public class MessageController implements IAonFileListener{
 
 	public void saveToContacts(ActionEvent event) throws WebmailException, ManagerBeanException {
 		String email = message.getSenderEmail();
-		IManagerBean contactsBean = BeanManager.getManagerBean(Contact.class);
+		IController contactController = AonUtil.getController(AonConstants.BEAN_CONTACT);
+		IManagerBean contactsBean = contactController.getManagerBean();
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(contactsBean.getFieldName(IContactAlias.CONTACT_EMAIL), email);
 		List list = contactsBean.getList(criteria);
@@ -883,13 +892,8 @@ public class MessageController implements IAonFileListener{
 			contact.setEmail(email);
 			contact.setName(contactName);
 
-			contactsBean.insert(contact);
-			
-			BasicController contactController = (BasicController)AonUtil.getRegisteredBean(AonConstants.BEAN_EMAIL);
+			contactsBean.insert(contact);		
 			contactController.onSearch(null);
-			
-			MultiSelectionEmailBean multiSelectionEmailBean = (MultiSelectionEmailBean)AonUtil.getRegisteredBean(AonConstants.BEAN_MULTISELECTIONEMAIL);
-			multiSelectionEmailBean.reload();
 		}
     }
 
