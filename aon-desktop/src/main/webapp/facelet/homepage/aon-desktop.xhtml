@@ -3,11 +3,18 @@
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:f="http://java.sun.com/jsf/core" 
 	xmlns:h="http://java.sun.com/jsf/html"
-	xmlns:aon="http://www.code.es/aon-rich-components">
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:a4j="http://richfaces.org/a4j">
 <body>
 
 <ui:composition>
 
+   <a4j:region>
+        <h:form>
+            <a4j:poll status="aonStatus" interval="300000" reRender="desktopDiv1,desktopDiv2" />
+        </h:form>
+    </a4j:region>
+    
 	<aon:form id="mainForm">
 
 		<aon:div styleClass="aon-scroll-area">		
@@ -15,7 +22,7 @@
 				<aon:panelGrid columns="3" styleClass="aon-panelGrid-formatting"
 					columnClasses="aon-portlets-column1,aon-portlets-column2,aon-portlets-column3">
 
-					<aon:div>
+					<aon:div id="desktopDiv1">
 						<aon:div styleClass="aon-portlet" rendered="#{desktop.mailActive}">
 							<aon:div styleClass="aon-portlet-title">
 							
@@ -112,7 +119,7 @@
 						</aon:div>
 					</aon:div>
 
-					<aon:div>
+					<aon:div id="desktopDiv2">
 						<aon:div styleClass="aon-portlet">
 							<aon:div styleClass="aon-portlet-title">
 								<aon:commandLink actionListener="#{notice.onSearch}" action="notice">
