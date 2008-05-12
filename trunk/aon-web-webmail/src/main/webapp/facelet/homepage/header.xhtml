@@ -12,7 +12,7 @@
 		<aon:panelGrid columns="3" width="100%" 
 			columnClasses="aon-header-name,aon-header-slogan,aon-header-info">
 			<aon:div>
-				<aon:outputConnectionStatus	styleClass="aon-outputConnectionStatus"		
+				<aon:outputConnectionStatus id="aonStatus" styleClass="aon-outputConnectionStatus"		
 					startStyleClass="aon-outputConnectionStatus-start"
 					stopStyleClass="aon-outputConnectionStatus-stop"/>
 				<aon:outputText value="#{appBundle.aon_application_title}" 
@@ -55,7 +55,7 @@
 			<aon:outputText value="#{webmail.currentDate}" />
 		    <a4j:region>
 		        <h:form>
-		            <a4j:poll id="poll" interval="25000" enabled="true" />
+		            <a4j:poll id="poll" interval="25000" status="aonStatus" />
 		        </h:form>
 		    </a4j:region>
 		</aon:div>
