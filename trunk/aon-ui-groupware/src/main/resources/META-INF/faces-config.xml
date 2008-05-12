@@ -95,7 +95,7 @@
 		</managed-property>
 		<managed-property>
 			<property-name>defaultOrder</property-name>
-			<value>Notice_date</value>
+			<value>Notice_date DESC</value>
 		</managed-property>		
 		<managed-property>
 			<property-name>defaultExpressions</property-name>
@@ -127,7 +127,7 @@
 	<managed-bean>
 		<managed-bean-name>contact</managed-bean-name>
 		<managed-bean-class>
-			com.code.aon.ui.form.BasicController
+			com.code.aon.ui.groupware.controller.ContactController
 		</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
