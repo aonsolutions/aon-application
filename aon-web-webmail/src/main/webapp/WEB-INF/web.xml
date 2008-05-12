@@ -164,17 +164,6 @@
 		</listener-class>
 	</listener>
 	
-	<!-- Bean Loader Listener -->
-	<listener>
-		<listener-class>
-			com.code.aon.ui.common.listener.BeanRegisterContextListener
-		</listener-class>
-	</listener>
-	<context-param>
-		<param-name>config-file</param-name>
-		<param-value>/WEB-INF/bean_config.xml</param-value>
-	</context-param>
-	
 	<!-- Faces Servlet -->
 	<servlet>
 		<servlet-name>Faces Servlet</servlet-name>
@@ -278,6 +267,10 @@
 		<web-resource-collection>
 			<web-resource-name>webmail</web-resource-name>
 			<url-pattern>/webmail/*</url-pattern>
+		</web-resource-collection>
+		<web-resource-collection>
+			<web-resource-name>groupware</web-resource-name>
+			<url-pattern>/groupware/*</url-pattern>
 		</web-resource-collection>
 		<web-resource-collection>
 			<web-resource-name>jsp</web-resource-name>
