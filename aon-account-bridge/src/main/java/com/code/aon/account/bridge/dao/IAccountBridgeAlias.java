@@ -9,6 +9,7 @@ import com.code.aon.account.bridge.ProductAccount;
 import com.code.aon.account.bridge.RegistryBankAccount;
 import com.code.aon.account.bridge.LoanAccount;
 import com.code.aon.account.bridge.LeasingAccount;
+import com.code.aon.account.bridge.InvoiceDetailAccount;
 import com.code.aon.account.bridge.AccountEntryInvoice;
 import com.code.aon.account.bridge.AccountEntryFinanceBatch;
 import com.code.aon.account.bridge.AccountEntryFinanceTracking;
@@ -198,6 +199,31 @@ public interface IAccountBridgeAlias {
 	* Hibernate value: LeasingAccount.leasing.id
 	*/
 	String  LEASING_ACCOUNT_LEASING_ID = LEASING_ACCOUNT_ENTRY.getAliasNames()[2];
+
+
+
+	/** 
+	* DAOConstantsEntry for InvoiceDetailAccount entity.
+	*/ 
+	DAOConstantsEntry INVOICE_DETAIL_ACCOUNT_ENTRY = DAOConstants.getDAOConstant(InvoiceDetailAccount.class);
+
+	/** 
+	* Alias value: InvoiceDetailAccount_account_id
+	* Hibernate value: InvoiceDetailAccount.account.id
+	*/
+	String  INVOICE_DETAIL_ACCOUNT_ACCOUNT_ID = INVOICE_DETAIL_ACCOUNT_ENTRY.getAliasNames()[0];
+
+	/** 
+	* Alias value: InvoiceDetailAccount_id
+	* Hibernate value: InvoiceDetailAccount.id
+	*/
+	String  INVOICE_DETAIL_ACCOUNT_ID = INVOICE_DETAIL_ACCOUNT_ENTRY.getAliasNames()[1];
+
+	/** 
+	* Alias value: InvoiceDetailAccount_invoiceDetail_id
+	* Hibernate value: InvoiceDetailAccount.invoiceDetail.id
+	*/
+	String  INVOICE_DETAIL_ACCOUNT_INVOICE_DETAIL_ID = INVOICE_DETAIL_ACCOUNT_ENTRY.getAliasNames()[2];
 
 
 
