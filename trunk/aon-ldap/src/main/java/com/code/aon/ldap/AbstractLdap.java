@@ -68,6 +68,10 @@ public class AbstractLdap {
 		}
 		return ldapProperties;
 	}
+	
+	public Properties getProperties() {
+		return properties;
+	}
 
 	public LdapSession getLdapSession() throws LdapException {
 		if ( this.session != null ) {
@@ -82,6 +86,7 @@ public class AbstractLdap {
 		try {
 			if ( session != null ) {
 				session.close();
+				session = null;
 			}
 		} catch (LdapException e) {
 			LOGGER.log( Level.SEVERE, e.getMessage(), e );
