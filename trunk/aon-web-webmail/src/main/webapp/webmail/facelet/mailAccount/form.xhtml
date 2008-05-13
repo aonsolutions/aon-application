@@ -26,13 +26,13 @@
 						
 					<!-- start toolbar navigation -->
 					<aon:div styleClass="aon-finding-toolbar-item-group">					
-						<h:commandButton id="save"
-							value="#{bundle.aon_save}" 
+						<aon:commandButton id="save"
+							value="#{bundle.aon_save}" action="mailAccount_form"  
 							rendered="#{mailAccount.to!=null or mailAccount.new}"
 							actionListener="#{mailAccount.accept}"
 							styleClass="aon-finding-toolbar-item aon-icon-accept"
 							accesskey="#{bundle.aon_key_save}"/>
-						<aon:confirmButton id="cancel"
+						<aon:confirmButton id="cancel" immediate="true"
 							value="#{bundle.aon_cancel}" rendered="#{mailAccount.new}"
 							styleClass="aon-finding-toolbar-item aon-icon-cancel"
 							confirmTitle="#{bundle.aon_confirm_title}" 
@@ -42,7 +42,7 @@
 							accesskey="#{bundle.aon_key_cancel}"/>
 						<aon:confirmButton id="remove"
 							value="#{bundle.aon_remove}" 
-							rendered="#{!mailAccount.new and !mailAccount.toDefaultAccount}"
+							rendered="#{!mailAccount.new}"
 							styleClass="aon-finding-toolbar-item aon-icon-delete" 
 							immediate="true"
 							confirmTitle="#{bundle.aon_confirm_title}" 
@@ -64,12 +64,25 @@
 			
 			<aon:div styleClass="aon-scroll-area">
 				<aon:panelGrid id="menuGrid" columns="2" dir="true"  width="100%">
+
+					<aon:outputLabel for="MailAccount_name"
+						value="#{appBundle.aon_webmail_mailAccount_name}" />
+					<aon:inputText id="MailAccount_name"
+						size="60" maxlength="45" required="true"
+						value="#{mailAccount.to.name}" />
 	
 					<aon:outputLabel for="MailAccount_email"
 						value="#{appBundle.aon_webmail_mailAccount_email}" />
 					<aon:inputText id="MailAccount_email"
-						size="60" maxlength="45"
+						size="60" maxlength="45" required="true"
 						value="#{mailAccount.to.email}" />
+
+					<aon:outputLabel for="MailAccount_signature"
+						value="#{appBundle.aon_webmail_signature_signature}" />
+					<aon:selectOneMenu id="MailAccount_signature"
+						value="#{mailAccount.to.signature.id}">
+						<f:selectItems value="#{signature.signatures}" />
+					</aon:selectOneMenu>
 
 					<aon:outputLabel for="MailAccount_protocol"
 						value="#{appBundle.aon_webmail_mailAccount_protocol}" />
@@ -133,7 +146,7 @@
 						value="#{appBundle.aon_webmail_mailAccount_password}" />
 					<aon:inputText id="MailAccount_password"
 						size="60" maxlength="45"
-						value="#{mailAccount.to.password}" />							
+						value="#{mailAccount.to.passwordString}" />							
 						
 				</aon:panelGrid>
 			</aon:div>
