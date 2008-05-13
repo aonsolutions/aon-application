@@ -9,20 +9,23 @@ import com.code.aon.product.enumeration.TaxType;
  */
 public class AccountInvoiceDetail implements ITransferObject {
 
-	/** The vat. */
-	private Tax vat;
-	
-	/** The retention. */
-	private Tax retention;
-	
 	/** The taxable base. */
 	private double taxableBase;
-	
+
+	/** The vat. */
+	private Tax vat;
+
+	/** The surcharge. */
 	private double surcharge;
-	
+
+	/** The retention. */
+	private Tax retention;
+
+	/** The retention. */
+	private String account;
+
 	/**
-	 * The empty constructor.
-	 * 
+	 * The constructor.
 	 */
 	public AccountInvoiceDetail() {
 		super();
@@ -31,42 +34,6 @@ public class AccountInvoiceDetail implements ITransferObject {
 		this.vat = vat;
 		Tax retention = new Tax();
 		retention.setType(TaxType.RETENTION);
-		this.retention = retention;
-	}
-
-	/**
-	 * Gets the vat.
-	 * 
-	 * @return the vat
-	 */
-	public Tax getVat() {
-		return vat;
-	}
-
-	/**
-	 * Sets the vat.
-	 * 
-	 * @param vat the vat
-	 */
-	public void setVat(Tax vat) {
-		this.vat = vat;
-	}
-
-	/**
-	 * Gets the retention.
-	 * 
-	 * @return the retention
-	 */
-	public Tax getRetention() {
-		return retention;
-	}
-
-	/**
-	 * Sets the retention.
-	 * 
-	 * @param retention the retention
-	 */
-	public void setRetention(Tax retention) {
 		this.retention = retention;
 	}
 
@@ -89,6 +56,78 @@ public class AccountInvoiceDetail implements ITransferObject {
 	}
 
 	/**
+	 * Gets the vat.
+	 * 
+	 * @return the vat
+	 */
+	public Tax getVat() {
+		return vat;
+	}
+
+	/**
+	 * Sets the vat.
+	 * 
+	 * @param vat the vat
+	 */
+	public void setVat(Tax vat) {
+		this.vat = vat;
+	}
+
+	/**
+	 * Gets the surcharge.
+	 * 
+	 * @return the surcharge
+	 */
+	public double getSurcharge() {
+		return surcharge;
+	}
+
+	/**
+	 * Sets the surcharge.
+	 * 
+	 * @param surcharge the surcharge
+	 */
+	public void setSurcharge(double surcharge) {
+		this.surcharge = surcharge;
+	}
+	
+	/**
+	 * Gets the retention.
+	 * 
+	 * @return the retention
+	 */
+	public Tax getRetention() {
+		return retention;
+	}
+
+	/**
+	 * Sets the retention.
+	 * 
+	 * @param retention the retention
+	 */
+	public void setRetention(Tax retention) {
+		this.retention = retention;
+	}
+
+	/**
+	 * Gets the account.
+	 * 
+	 * @return the account
+	 */
+	public String getAccount() {
+		return account;
+	}
+
+	/**
+	 * Sets the account.
+	 * 
+	 * @param account the account
+	 */
+	public void setAccount(String account) {
+		this.account = account;
+	}
+
+	/**
 	 * Gets the vat quota.
 	 * 
 	 * @return the quota
@@ -99,6 +138,15 @@ public class AccountInvoiceDetail implements ITransferObject {
 			vatQuota = round(this.getTaxableBase() * this.getVat().getPercentage() / 100, 2);
 		}
 		return vatQuota;
+	}
+
+	public void calculateSurcharge(boolean surcharge) {
+		setSurcharge(0.0);
+		if(surcharge){
+			if(this.getVat() != null){
+				setSurcharge(round(this.getTaxableBase() * this.getVat().getSurcharge() / 100, 2));
+			}
+		}
 	}
 
 	/**
@@ -112,30 +160,6 @@ public class AccountInvoiceDetail implements ITransferObject {
 			retentionQuota = round(this.getTaxableBase() * this.getRetention().getPercentage() / 100, 2);
 		}
 		return retentionQuota;
-	}
-
-	/**
-	 * Gets the surcharge.
-	 * 
-	 * @return the surcharge
-	 */
-	public double getSurcharge() {
-		return surcharge;
-	}
-
-	public void setSurcharge(double surcharge) {
-		this.surcharge = surcharge;
-	}
-	
-	public void calculateSurcharge(boolean surcharge){
-		if(surcharge){
-			setSurcharge(0.0);
-			if(this.getVat() != null){
-				setSurcharge(round(this.getTaxableBase() * this.getVat().getSurcharge() / 100, 2));
-			}
-		}else{
-			setSurcharge(0.0);
-		}
 	}
 
 	/**
