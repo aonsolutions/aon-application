@@ -88,7 +88,7 @@ public class LdapDAO extends AbstractLdap implements IDAO  {
 		}
 	}
 	
-	private String calculateDN( ITransferObject to ) throws DAOException {
+	public String calculateDN( ITransferObject to ) throws DAOException {
 		StringBuffer dn = new StringBuffer( this.baseDN );
 		try {
 			Object value = getValue(to, metadata.getRDN());
