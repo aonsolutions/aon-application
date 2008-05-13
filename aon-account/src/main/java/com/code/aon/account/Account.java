@@ -151,4 +151,9 @@ public class Account implements ITransferObject {
     public boolean equals(Object obj) {
         return this.id.equals(((Account)obj).getId()); 
     }
+
+	@Override
+	public int hashCode() {
+		return Integer.parseInt(this.id);
+	}
 }
