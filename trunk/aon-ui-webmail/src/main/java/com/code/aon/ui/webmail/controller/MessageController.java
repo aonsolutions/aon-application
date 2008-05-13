@@ -34,14 +34,11 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.lang.StringUtils;
 import org.apache.myfaces.custom.fileupload.UploadedFile;
 
-import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.groupware.Contact;
 import com.code.aon.groupware.dao.IContactAlias;
 import com.code.aon.ql.Criteria;
-import com.code.aon.ql.util.ExpressionException;
-import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.form.IController;
 import com.code.aon.ui.util.AonUtil;
 import com.code.aon.ui.webmail.bean.AonAttachment;
@@ -55,8 +52,6 @@ import com.code.aon.ui.webmail.exception.WebmailException;
 import com.code.aon.ui.webmail.listener.IAonFileListener;
 import com.code.aon.webmail.MailAccount;
 import com.code.aon.webmail.Signature;
-import com.code.aon.webmail.dao.IWebMailAlias;
-import com.code.aon.webmail.enumeration.SignatureType;
 import com.sun.mail.util.LineOutputStream;
 
 public class MessageController implements IAonFileListener{
@@ -520,23 +515,9 @@ public class MessageController implements IAonFileListener{
 	//********************************************************************************************
     
     private Signature getSignature(){
-    	try{
-    		WebMailController wmc = (WebMailController)AonUtil.getRegisteredBean(AonConstants.BEAN_WEBMAIL);
-    		MailAccount account = wmc.getServer().getAccount();
-    		IManagerBean bean = BeanManager.getManagerBean(Signature.class);
-    		Criteria criteria = new Criteria();
-    		criteria.addEqualExpression(bean.getFieldName(IWebMailAlias.SIGNATURE_MAIL_ACCOUNT_ID), account.getId());
-    		criteria.addExpression(bean.getFieldName(IWebMailAlias.SIGNATURE_ACTIVE), String.valueOf(SignatureType.ACTIVE.ordinal()));
-    		List list = bean.getList(criteria);
-    		if (!list.isEmpty()){
-    			return (Signature)list.get(0);
-    		}
-    	}catch (ManagerBeanException e) {
-			AonUtil.addErrorMessage(e.getMessage());
-		} catch (ExpressionException e) {
-			AonUtil.addErrorMessage(e.getMessage());
-		}
-    	return null;
+   		WebMailController wmc = (WebMailController)AonUtil.getRegisteredBean(AonConstants.BEAN_WEBMAIL);
+   		MailAccount account = wmc.getServer().getAccount();
+   		return account.getSignature();
     }
     
 	//********************************************************************************************
