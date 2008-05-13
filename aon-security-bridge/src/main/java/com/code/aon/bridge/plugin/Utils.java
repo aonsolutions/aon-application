@@ -14,6 +14,8 @@ package com.code.aon.bridge.plugin;
 
 import java.security.Principal;
 
+import javax.faces.context.FacesContext;
+
 import com.code.aon.bridge.jmx.mbean.IConsoleAdmin;
 import com.code.aon.bridge.jmx.mbean.core.JBossConsoleAdminFactory;
 import com.code.aon.bridge.jndi.IJNDIConstants;
@@ -65,5 +67,17 @@ public class Utils {
 		}
 		return authPrincipal;
 	}
+	
+	/**
+	 * Gets security <code>AuthPrincipal</code> from the FacecContext Principal.
+	 * This is because some AS do not give us an instance of <code>Principal</code>. 
+	 * 
+	 * @return the auth principal
+	 */
+	public static AuthPrincipal getAuthPrincipal() {
+		FacesContext ctx = FacesContext.getCurrentInstance();
+		Principal principal = ctx.getExternalContext().getUserPrincipal();
+		return getAuthPrincipal(principal);
+	}	
 
 }
