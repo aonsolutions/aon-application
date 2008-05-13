@@ -23,6 +23,9 @@ public class AccountLeasingFeeHeader implements ITransferObject {
 	/** The number. */
 	private int number;
 	
+	/** The reference code. */
+	private String referenceCode;
+	
 	/** The amortization. */
 	private double amortization;
 	
@@ -111,6 +114,24 @@ public class AccountLeasingFeeHeader implements ITransferObject {
 	 */
 	public void setNumber(int number) {
 		this.number = number;
+	}
+
+	/**
+	 * Gets the reference code.
+	 * 
+	 * @return the reference code
+	 */
+	public String getReferenceCode() {
+		return referenceCode;
+	}
+
+	/**
+	 * Sets the reference code.
+	 * 
+	 * @param referenceCode the reference code
+	 */
+	public void setReferenceCode(String referenceCode) {
+		this.referenceCode = referenceCode;
 	}
 
 	/**
