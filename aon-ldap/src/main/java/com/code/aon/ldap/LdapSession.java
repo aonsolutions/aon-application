@@ -1,7 +1,6 @@
 package com.code.aon.ldap;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -25,13 +24,16 @@ import javax.naming.directory.SearchControls;
 import javax.naming.directory.SearchResult;
 
 import org.apache.commons.lang.ArrayUtils;
+import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 public class LdapSession implements ILdapConstants {
 
-	private static final String TRUE_VALUE = "TRUE";
+	public static final String TRUE_VALUE = "TRUE";
+	
+	public static final String FALSE_VALUE = "FALSE";
 
 	private static final String NUMERIC_OID = "NUMERICOID";
 
@@ -341,7 +343,7 @@ public class LdapSession implements ILdapConstants {
 			}
 			dc.modifyAttributes( dn, items );
 		} catch (NamingException ne) {
-			throw new LdapException("Error in delete Attribute. " + ne.getMessage(), ne);
+			throw new LdapException("Error in remove Attribute. " + ne.getMessage(), ne);
 		}
 	}
 
@@ -349,49 +351,85 @@ public class LdapSession implements ILdapConstants {
 		this.removeAttributes(dn.toString(), attribute, moreAttributes);
 	}
 
-	public void addAttribute(String dn, String name, Object value, Object ... values ) throws LdapException {
+	private Attribute getAttribute( String name, Object value ) {
+		Attribute attribute = new BasicAttribute(name);
+		if ( List.class.isAssignableFrom(value.getClass()) ) {
+			for( Object _value : (List<Object>) value ) {
+				attribute.add(_value);
+			}				
+		} else {
+			attribute.add(value);
+		}
+		return attribute;
+	}
+	
+	public void addAttribute(String dn, String name, Object value) throws LdapException {
 		try {
 			ModificationItem[] items = new ModificationItem[1];
 
-			Attribute attribute = new BasicAttribute(name, value );
-			for( Object _value : values ) {
-				attribute.add(_value);
-			}
+			Attribute attribute = getAttribute(name, value);
 			items[0] = new ModificationItem( DirContext.ADD_ATTRIBUTE, attribute );
 			dc.modifyAttributes( dn, items );
 		} catch (NamingException ne) {
-			throw new LdapException("Error in delete Attribute. " + ne.getMessage(), ne);
+			throw new LdapException("Error in add Attribute. " + ne.getMessage(), ne);
 		}
 	}
 
-	public void addAttribute(DistinguishedName dn, String name, Object value, Object ... values ) throws LdapException {
-		this.addAttribute(dn.toString(), name, value, values);
+	public void addAttribute(DistinguishedName dn, String name, Object value ) throws LdapException {
+		this.addAttribute(dn.toString(), name, value);
 	}
 
-	public void replaceAttributeValues(String dn, String name, List<Object> values ) throws LdapException {
+	public void replaceAttribute(String dn, String name, Object value ) throws LdapException {
 		try {
 			ModificationItem[] items = new ModificationItem[1];
 
-			Attribute attribute = new BasicAttribute(name);
-			for( Object _value : values ) {
-				attribute.add(_value);
-			}
+			Attribute attribute = getAttribute(name, value);
 			items[0] = new ModificationItem( DirContext.REPLACE_ATTRIBUTE, attribute );
 			dc.modifyAttributes( dn, items );
 		} catch (NamingException ne) {
-			throw new LdapException("Error in delete Attribute. " + ne.getMessage(), ne);
+			throw new LdapException("Error in replace Attribute. " + ne.getMessage(), ne);
 		}
-	}
-
-	public void replaceAttributeValues(DistinguishedName dn, String name, List<Object> values ) throws LdapException {
-		this.replaceAttributeValues(dn.toString(), name, values);
-	}
-	
-	public void replaceAttribute(String dn, String name, Object value) throws LdapException {
-		this.replaceAttributeValues(dn, name, Arrays.asList(new Object[]{value}));
 	}
 
 	public void replaceAttribute(DistinguishedName dn, String name, Object value ) throws LdapException {
 		this.replaceAttribute(dn.toString(), name, value);
 	}
+	
+	private Object getRealValue( Object value ) {
+		if ( value != null ) {
+			if ( List.class.isAssignableFrom(value.getClass()) ) {
+				List<Object> list = (List<Object>) value;
+				if ( list.isEmpty() ) {
+					return null;
+				} else if ( list.size() == 1 ) {
+					return list.get(0);
+				}
+			}
+		}
+		return value;
+	}
+
+	public void updateAttribute( LdapSession session, Entry entry, String name, Object newValue ) throws LdapException {
+		Object oldValue = entry.containsKey(name) ? entry.get(name) : null;
+		this.updateAttribute(session, entry.getDN(), name, oldValue, newValue);
+	}
+
+	public void updateAttribute( LdapSession session, DistinguishedName dn, String name, Object oldValue, Object newValue ) throws LdapException {
+		Object _oldValue = getRealValue(oldValue);
+		Object _newValue = getRealValue(newValue);
+		if ( _oldValue != null ) {
+			if ( _newValue != null ) {
+				if (! ObjectUtils.equals(_newValue, _oldValue) ) {
+					session.replaceAttribute( dn, name, _newValue);	
+				}				
+			} else {
+				session.removeAttributes( dn, name);
+			}						
+		} else {
+			if ( _newValue != null ) {
+				session.addAttribute( dn, name, _newValue);						
+			}						
+		}		
+	}
+	
 }
