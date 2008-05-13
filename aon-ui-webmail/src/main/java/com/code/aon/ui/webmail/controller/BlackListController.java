@@ -17,7 +17,6 @@ import javax.faces.model.SelectItem;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.NumberUtils;
 
-import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.groupware.Contact;
@@ -28,14 +27,12 @@ import com.code.aon.ldap.DistinguishedName;
 import com.code.aon.ldap.Entry;
 import com.code.aon.ldap.LdapException;
 import com.code.aon.ldap.LdapSession;
-import com.code.aon.ui.form.IController;
 import com.code.aon.ui.util.AonUtil;
 import com.code.aon.ui.webmail.bean.AonConstants;
 import com.code.aon.ui.webmail.bean.AonFolder;
 import com.code.aon.ui.webmail.bean.AonListEmail;
 import com.code.aon.ui.webmail.exception.WebmailException;
 import com.code.aon.webmail.MailAccount;
-import com.code.aon.webmail.enumeration.MailAccountStatus;
 import com.code.aon.webmail.enumeration.SpamScoreType;
 
 public class BlackListController extends AbstractLdap {
@@ -106,7 +103,7 @@ public class BlackListController extends AbstractLdap {
 	private DistinguishedName getUserDN() {
 		WebMailController webMailController = (WebMailController)AonUtil.getRegisteredBean(AonConstants.BEAN_WEBMAIL);
 		MailAccount mailAccount = webMailController.getServer().getAccount();
-		if ( mailAccount.getStatus() == MailAccountStatus.ACTIVE ) {
+		if ( mailAccount.isDefault() ) {
 			LoginController loginController = (LoginController)AonUtil.getRegisteredBean(AonConstants.BEAN_LOGIN);
 			AuthPrincipal principal = loginController.getPrincipal();
 			return AonDN.getUserDN( principal.getDomain(), principal.getShortName() );

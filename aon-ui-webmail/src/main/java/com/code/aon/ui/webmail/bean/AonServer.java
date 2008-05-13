@@ -82,8 +82,7 @@ public class AonServer {
                 mailProperties.remove("mail.imap.port");
                 mailProperties.remove("mail.imap.socketFactory.port");
             }
-
-            URLName url = new URLName(IMAP, account.getHost(), -1, "INBOX", account.getMailUsername(),account.getPassword());
+            URLName url = new URLName(IMAP, account.getHost(), -1, "INBOX", account.getMailUsername(),account.getPasswordString());
             session = Session.getInstance(mailProperties, null);
             store = session.getStore(url);
             store.connect();
@@ -195,7 +194,7 @@ public class AonServer {
                 		account.getOutgoingHost(),
                 		account.getOutgoingPort(),
                 		account.getMailUsername(),
-                		account.getPassword());
+                		account.getPasswordString());
             } else {
             	session.getProperties().put("mail.smtp.auth", "false");
                 transport.connect(

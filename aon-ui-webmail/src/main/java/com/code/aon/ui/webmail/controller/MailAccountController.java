@@ -1,24 +1,50 @@
 package com.code.aon.ui.webmail.controller;
 
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Locale;
+import java.util.logging.Logger;
 
 import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
-import javax.faces.model.SelectItem;
 import javax.mail.MessagingException;
 
+import com.code.aon.common.BasicManagerBean;
+import com.code.aon.common.IManagerBean;
+import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.dao.IDAO;
+import com.code.aon.dao.ldap.LdapDAO;
+import com.code.aon.jaas.auth.AuthPrincipal;
+import com.code.aon.ldap.AonDN;
+import com.code.aon.ldap.DistinguishedName;
 import com.code.aon.ui.form.BasicController;
+import com.code.aon.ui.form.IController;
 import com.code.aon.ui.util.AonUtil;
 import com.code.aon.ui.webmail.bean.AonConstants;
 import com.code.aon.ui.webmail.tree.FoldersTreeBean;
 import com.code.aon.webmail.MailAccount;
-import com.code.aon.webmail.enumeration.MailAccountStatus;
 
 public class MailAccountController extends BasicController {
 
+	private static final Logger LOGGER = Logger.getLogger(MailAccountController.class.getName());
+	
 	private String error;
+	
+	private BasicManagerBean ldapManagerBean;
+
+	public IDAO getDAO( AuthPrincipal principal ) {
+		LdapDAO dao = new LdapDAO(MailAccount.class);
+		DistinguishedName baseDN = AonDN.getUserAccountsDN(principal.getDomain(), principal.getShortName());
+		LOGGER.info( "MailAccount DAO DN:" + baseDN );
+		dao.setBaseDN( baseDN.toString() );
+		return dao;
+	}
+	
+	@Override
+	public IManagerBean getManagerBean() throws ManagerBeanException {
+		if (this.ldapManagerBean == null) {
+			IDAO dao = getDAO(LoginController.getPrincipal());
+			this.ldapManagerBean = new BasicManagerBean(dao);
+		}
+		return this.ldapManagerBean;
+	}	
 	
 	/**
 	 * @return the error
@@ -63,7 +89,7 @@ public class MailAccountController extends BasicController {
 		}
     	FoldersTreeBean treeBean = (FoldersTreeBean)AonUtil.getRegisteredBean(AonConstants.BEAN_TREE);
     	treeBean.loadTree();
-		SignatureController signatureController = (SignatureController)AonUtil.getRegisteredBean(AonConstants.BEAN_SIGNATURE);
+    	IController signatureController = (IController)AonUtil.getRegisteredBean(AonConstants.BEAN_SIGNATURE);
 		signatureController.initializeModel();
 		signatureController.onSearch(null);
     	BasicController emailController = (BasicController)AonUtil.getRegisteredBean(AonConstants.BEAN_CONTACT);
@@ -73,35 +99,15 @@ public class MailAccountController extends BasicController {
 			FacesContext.getCurrentInstance().getApplication().getNavigationHandler().handleNavigation(FacesContext.getCurrentInstance(), null, AonConstants.NAVIGATION_FOLDER);
 		}
 	}
-	
-	
-	@SuppressWarnings("unchecked")
-	public List<SelectItem> getStatusTypes(){
-		Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
-		List<SelectItem> types = new LinkedList<SelectItem>();
-		for(MailAccountStatus type_ : MailAccountStatus.values()){
-			SelectItem item = new SelectItem(type_, type_.getName(locale));
-			types.add(item);
-		}
-		return types;
-	}
 
 	public boolean isToDefaultAccount(){
 		MailAccount account = (MailAccount)getTo();
-		if (account.getStatus()!=null &&
-				account.getStatus().compareTo(MailAccountStatus.ACTIVE)==0){
-			return true;
-		}
-		return false;
+		return account.isDefault();
 	}
 
 	public boolean isCurrentToDefaultAccount(){
 		MailAccount account = (MailAccount)getSelectedTO();
-		if (account.getStatus()!=null &&
-				account.getStatus().compareTo(MailAccountStatus.ACTIVE)==0){
-			return true;
-		}
-		return false;
+		return account.isDefault();
 	}
 
 }

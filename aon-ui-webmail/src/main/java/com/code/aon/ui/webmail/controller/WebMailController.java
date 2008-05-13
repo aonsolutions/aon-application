@@ -5,7 +5,6 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Locale;
 import java.util.ResourceBundle;
 import java.util.logging.Logger;
@@ -13,23 +12,19 @@ import java.util.logging.Logger;
 import javax.faces.context.FacesContext;
 import javax.faces.event.AbortProcessingException;
 
-import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
+import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
-import com.code.aon.company.Company;
-import com.code.aon.config.User;
+import com.code.aon.jaas.auth.AuthPrincipal;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.util.AonUtil;
 import com.code.aon.ui.webmail.bean.AonConstants;
 import com.code.aon.ui.webmail.bean.AonFolder;
 import com.code.aon.ui.webmail.bean.AonServer;
-import com.code.aon.ui.webmail.exception.WebmailException;
 import com.code.aon.ui.webmail.tree.FoldersTreeBean;
 import com.code.aon.webmail.MailAccount;
 import com.code.aon.webmail.Signature;
 import com.code.aon.webmail.dao.IWebMailAlias;
-import com.code.aon.webmail.enumeration.MailAccountStatus;
-import com.code.aon.webmail.enumeration.SignatureType;
 
 public class WebMailController {
 
@@ -44,7 +39,7 @@ public class WebMailController {
 		return server;
 	}
 
-	public void initDefault(User mailUser){
+	public void initDefault(AuthPrincipal mailUser){
 		
 		try {
 			MailAccount mailAccount = getAccount(mailUser);
@@ -59,7 +54,7 @@ public class WebMailController {
 		}
 	}
 
-	public void initDesktop(User mailUser){
+	public void initDesktop(AuthPrincipal mailUser){
 		try {
 			MailAccount mailAccount = getAccount(mailUser);
 			if (mailAccount!=null){
@@ -85,12 +80,11 @@ public class WebMailController {
     	folderBean.nodeSelected(getServer().getAonFolder(AonFolder.INBOX_FOLDER_NAME));
 	}
 
-    private MailAccount getAccount(User mailUser) throws ManagerBeanException {
-		IManagerBean beanAccount = BeanManager.getManagerBean(MailAccount.class);
+    private MailAccount getAccount(AuthPrincipal mailUser) throws ManagerBeanException {
+		IManagerBean beanAccount = AonUtil.getController(AonConstants.BEAN_MAIL_ACCOUNT).getManagerBean();
 		Criteria criteriaAccount = new Criteria();
-		criteriaAccount.addEqualExpression(beanAccount.getFieldName(IWebMailAlias.MAIL_ACCOUNT_USER_ID), mailUser.getId());
-		criteriaAccount.addEqualExpression(beanAccount.getFieldName(IWebMailAlias.MAIL_ACCOUNT_STATUS), MailAccountStatus.ACTIVE);
-		Iterator iterAccount = beanAccount.getList(criteriaAccount).iterator();
+		criteriaAccount.addEqualExpression(beanAccount.getFieldName(IWebMailAlias.MAIL_ACCOUNT_NAME), MailAccount.DEFAULT_MAIL_ACCOUNT_NAME);
+		Iterator<ITransferObject> iterAccount = beanAccount.getList(criteriaAccount).iterator();
 		if (iterAccount.hasNext()){
 			MailAccount mailAccount = (MailAccount)iterAccount.next();
 			return mailAccount;
@@ -98,29 +92,6 @@ public class WebMailController {
 		return null;
     }
 
-    @SuppressWarnings("unchecked")
-    public String getCompanyName(){
-        IManagerBean companyBean;
-		try {
-			companyBean = BeanManager.getManagerBean(Company.class);
-	        List companyList = companyBean.getList(null);
-	        if (companyList.size() > 0) {
-	            Company company = (Company)companyList.get(0);
-	            return company.getName();
-	        }
-		} catch (Exception e) {
-		}
-        return "";
-    }
-
-    public String getLoggedUserName() {
-    	if (server==null)
-    		return "";
-        User user = server.getAccount().getUser();
-        return user.getName();
-    }
-
-    
     public String getCurrentDate() {
         DateFormat formatter = new SimpleDateFormat("EEEE, dd MMMM yyyy");
         return formatter.format(new Date()).toUpperCase();
@@ -135,26 +106,24 @@ public class WebMailController {
     }
     
     private void createDefaultSignature(MailAccount mailAccount){
-        try {
-			IManagerBean signatureBean = BeanManager.getManagerBean(Signature.class);
-			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(signatureBean.getFieldName(IWebMailAlias.SIGNATURE_MAIL_ACCOUNT_ID), mailAccount.getId());
-			if (signatureBean.getList(criteria).isEmpty()){
+    	if ( mailAccount.getSignature() == null ) {
+    		try {
+    			LoginController loginController = (LoginController) AonUtil.getRegisteredBean(AonConstants.BEAN_LOGIN);
+				IManagerBean signatureBean = AonUtil.getController(AonConstants.BEAN_SIGNATURE).getManagerBean();
 	        	String BASE_NAME = "com.code.aon.ui.webmail.i18n.messages";
 	    		Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
 	            ResourceBundle bundle = ResourceBundle.getBundle(BASE_NAME, locale); 
 	        	Signature signature = new Signature();
-	        	signature.setActive(SignatureType.ACTIVE);
 	        	signature.setName(bundle.getString("aon_webmail_signature_defname"));
-	        	signature.setMailAccount(mailAccount);
 	        	signature.setSignature("<br><br><br><hr>"+
-	        			"<b><font size='4'>"+getLoggedUserName()+"</font></b><p>"+
-	        			"<b><font size='2'>"+getCompanyName()+"</font></b><p>"+
+	        			"<b><font size='4'>"+ loginController.getLoggedUserName()+"</font></b><p>"+
+	        			"<b><font size='2'>"+ loginController.getCompanyName()+"</font></b><p>"+
 	        			"<br>"+
 	        			"<i>"+bundle.getString("aon_webmail_signature_deftext")+"</i>");
 				signatureBean.insert(signature);
-			}
-		} catch (ManagerBeanException e) {
-		}
+    		} catch (ManagerBeanException e) {
+    			LOGGER.severe( e.getMessage() );
+        	}    		
+    	}
     }
 }
