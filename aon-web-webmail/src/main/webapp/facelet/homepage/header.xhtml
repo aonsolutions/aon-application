@@ -30,9 +30,9 @@
 			
 			<aon:div styleClass="aon-nowrap">
 				<aon:div style="white-space:nowrap;">
-					<aon:outputText value="#{webmail.companyName}" />
+					<aon:outputText value="#{login.companyName}" />
 					<aon:outputText value=" / " rendered="#{login.logged}" />
-					<aon:outputText value="#{webmail.loggedUserName}" rendered="#{login.logged}" styleClass="aon-bold"/>
+					<aon:outputText value="#{login.loggedUserName}" rendered="#{login.logged}" styleClass="aon-bold"/>
 				</aon:div>
 			</aon:div>	
 		
@@ -55,7 +55,7 @@
 			<aon:outputText value="#{webmail.currentDate}" />
 		    <a4j:region>
 		        <h:form>
-		            <a4j:poll id="poll" interval="25000" status="aonStatus" />
+		            <a4j:poll id="poll" interval="300000" status="aonStatus" />
 		        </h:form>
 		    </a4j:region>
 		</aon:div>

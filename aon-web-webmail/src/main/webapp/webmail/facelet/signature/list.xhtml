@@ -58,13 +58,15 @@
 					columnClasses="aon-editDataTable-iconColumn, aon-editDataTable-textColumn,
 								aon-editDataTable-textColumn">
 
+					<aon:rowSelector 
+						action="signature_form" actionListener="#{signature.onSelect}" />
+						
 					<aon:column>
 						<f:facet name="header">
-							<aon:div>
-								<aon:outputText value="#{bundle.aon_check}" />
-							</aon:div>
+							<aon:outputText value="#{bundle.aon_check}" />
 						</f:facet>
-						<aon:selectBooleanCheckbox id="Row_checked"
+						<aon:selectBooleanCheckbox
+							onmouseover="disableRowSelector();" onmouseout="enableRowSelector();"
 							value="#{signature.rowChecked}">
 							<a4j:support event="onclick"
 								reRender="dataTable,buttonsGrid" />
@@ -75,18 +77,7 @@
 						<f:facet name="header">
 							<aon:outputText value="#{appBundle.aon_webmail_signature_name}" />
 						</f:facet>
-						<aon:outputText value="#{to.name}"
-							styleClass="aon-editDataTable-button" >
-							<a4j:support action="signature_form"
-								actionListener="#{signature.onSelect}" event="onclick" />
-						</aon:outputText>
-					</aon:column>
-
-					<aon:column>
-						<f:facet name="header">
-							<aon:outputText value="#{appBundle.aon_webmail_signature_active}" />
-						</f:facet>
-						<aon:outputText value="#{to.active} " />
+						<aon:outputText value="#{to.name}" />
 					</aon:column>
 
 				</aon:editDataTable>

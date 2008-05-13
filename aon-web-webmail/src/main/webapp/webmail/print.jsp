@@ -4,25 +4,12 @@
 		java.util.ResourceBundle.getBundle("com.code.aon.ui.webmail.i18n.messages");
 	com.code.aon.ui.webmail.controller.MessageController messageBean = 
 		(com.code.aon.ui.webmail.controller.MessageController) session.getAttribute("message");
-	com.code.aon.ui.common.controller.ConfigurationController configBean = 
-		(com.code.aon.ui.common.controller.ConfigurationController) session.getAttribute("aonConfiguration");
+	com.code.aon.ui.webmail.controller.LoginController loginBean = 
+		(com.code.aon.ui.webmail.controller.LoginController) session.getAttribute("login");
 %>
 <%
-	java.security.Principal principal = request.getUserPrincipal();
-	com.code.aon.jaas.auth.AuthPrincipal user; 
-	if ( principal instanceof com.code.aon.jaas.auth.AuthPrincipal ) {
-		user = (com.code.aon.jaas.auth.AuthPrincipal) principal;
-	} else {
-		user = new com.code.aon.jaas.auth.AuthPrincipal( principal.getName() );
-	}
-	com.code.aon.common.IManagerBean beanUser = com.code.aon.common.BeanManager.getManagerBean(com.code.aon.config.User.class);
-	com.code.aon.ql.Criteria criteriaUser = new com.code.aon.ql.Criteria();
-	criteriaUser.addExpression(beanUser.getFieldName(com.code.aon.config.dao.IConfigAlias.USER_LOGIN), user.getShortName());
-	java.util.Iterator iterUser = beanUser.getList(criteriaUser).iterator();
-	String username = "";
-	if (iterUser.hasNext()){
-		username = ((com.code.aon.config.User)iterUser.next()).getName();
-	}
+	String username = loginBean.getLoggedUserName();
+
 	java.util.Date date = new java.util.Date();
 	java.text.SimpleDateFormat df = new java.text.SimpleDateFormat("EEE, dd/MM/yy-HH:mm");
 %>

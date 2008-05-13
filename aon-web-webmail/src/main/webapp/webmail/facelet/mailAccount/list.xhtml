@@ -50,20 +50,23 @@
 				<aon:editDataTable id="dataTable" value="#{mailAccount.model}" var="to"
 					rows="20" styleClass="dr-table rich-table aon-editDataTable"
 					columnClasses="aon-editDataTable-textColumn, aon-editDataTable-textColumn,
-								aon-editDataTable-textColumn">
+								aon-editDataTable-textColumn, aon-editDataTable-textColumn">
+
+					<aon:rowSelector toggleOnClick="#{!mailAccount.currentToDefaultAccount}" 
+						action="mailAccount_form" actionListener="#{mailAccount.onSelect}" />
 
 					<aon:column>
 						<f:facet name="header">
 							<aon:outputText value="#{appBundle.aon_webmail_mailAccount_name}" />
 						</f:facet>
-						<aon:outputText value="#{to.email}"
-							styleClass="aon-editDataTable-button"
-							rendered="#{!mailAccount.currentToDefaultAccount}">
-							<a4j:support action="mailAccount_form"
-								actionListener="#{mailAccount.onSelect}" event="onclick" />
-						</aon:outputText>
-						<aon:outputText value="#{to.email}"
-							rendered="#{mailAccount.currentToDefaultAccount}" />
+						<aon:outputText value="#{to.name}" />
+					</aon:column>
+
+					<aon:column>
+						<f:facet name="header">
+							<aon:outputText value="#{appBundle.aon_webmail_mailAccount_email}" />
+						</f:facet>
+						<aon:outputText value="#{to.email}" />
 					</aon:column>
 
 					<aon:column>
@@ -73,10 +76,7 @@
 						</f:facet>
 						<aon:outputText
 							value="#{appBundle.aon_webmail_mailAccount_user_account}"
-							styleClass="aon-editDataTable-button"
 							rendered="#{!mailAccount.currentToDefaultAccount}">
-							<a4j:support action="mailAccount_form"
-								actionListener="#{mailAccount.onSelect}" event="onclick" />
 						</aon:outputText>
 						<aon:outputText
 							value="#{appBundle.aon_webmail_mailAccount_default_account}"
@@ -87,7 +87,12 @@
 						<f:facet name="header">
 							<aon:outputText value="&nbsp;" />
 						</f:facet>
+						<aon:outputText
+							value="#{appBundle.aon_webmail_signature_active}"
+							rendered="#{webmail.server.account.name==to.name}" />
 						<aon:commandButton id="mailAccountChange"
+							rendered="#{webmail.server.account.name!=to.name}"
+							onmouseover="disableRowSelector();" onmouseout="enableRowSelector();"
 							title="#{appBundle.aon_webmail_mailAccountChange}"
 							action="folder" actionListener="#{mailAccount.onChangeServer}"
 							value="#{appBundle.aon_webmail_mailAccountChange}"
