@@ -69,7 +69,8 @@ public class BasicController extends AbstractPojoController implements IControll
     
     private boolean saveState;
     
-    private Serializable savedToId;
+    /** The saved to id. */
+    protected Serializable savedToId;
     
     private OrderByList orderList;
     
