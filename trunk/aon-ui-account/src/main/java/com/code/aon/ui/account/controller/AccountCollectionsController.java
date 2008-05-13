@@ -41,7 +41,7 @@ public class AccountCollectionsController {
 		salesAccounts = new LinkedList<SelectItem>();
 		IManagerBean accountBean = BeanManager.getManagerBean(Account.class);
 		Criteria criteria = new Criteria();
-		criteria.addExpression(accountBean.getFieldName(IAccountAlias.ACCOUNT_ID), "700*");
+		criteria.addExpression(accountBean.getFieldName(IAccountAlias.ACCOUNT_ID), "70*");
 		criteria.addEqualExpression(accountBean.getFieldName(IAccountAlias.ACCOUNT_ENTRY_ENABLED), new Boolean(true));
 		Iterator iter = accountBean.getList(criteria).iterator();
 		while(iter.hasNext()){
@@ -64,7 +64,7 @@ public class AccountCollectionsController {
 		List purchaseAccounts = new LinkedList<SelectItem>();
 		IManagerBean accountBean = BeanManager.getManagerBean(Account.class);
 		Criteria criteria = new Criteria();
-		criteria.addExpression(accountBean.getFieldName(IAccountAlias.ACCOUNT_ID), "600*");
+		criteria.addExpression(accountBean.getFieldName(IAccountAlias.ACCOUNT_ID), "60*");
 		criteria.addEqualExpression(accountBean.getFieldName(IAccountAlias.ACCOUNT_ENTRY_ENABLED), new Boolean(true));
 		Iterator iter = accountBean.getList(criteria).iterator();
 		while(iter.hasNext()){
@@ -102,12 +102,11 @@ public class AccountCollectionsController {
 	public List<SelectItem> getExpensesAccounts() throws ManagerBeanException, ExpressionException {
 		List expensesAccounts = new LinkedList<SelectItem>();
 		IManagerBean accountBean = BeanManager.getManagerBean(Account.class);
+
+		Expression expression1 = ExpressionUtilities.getLikeExpression(accountBean.getFieldName(IAccountAlias.ACCOUNT_ID), "62%");
+		Expression expression2 = ExpressionUtilities.getLikeExpression(accountBean.getFieldName(IAccountAlias.ACCOUNT_ID), "66%");
 		Criteria criteria = new Criteria();
-		criteria.addExpression(accountBean.getFieldName(IAccountAlias.ACCOUNT_ID), "6*");
-		Expression expression = ExpressionUtilities.getNotEqualExpression(accountBean.getFieldName(IAccountAlias.ACCOUNT_ID), "600*");
-		criteria.addExpression(expression);
-		expression = ExpressionUtilities.getNotEqualExpression(accountBean.getFieldName(IAccountAlias.ACCOUNT_ID), "600");
-		criteria.addExpression(expression);
+		criteria.addExpression(ExpressionUtilities.getOrExpression(expression1, expression2));
 		criteria.addEqualExpression(accountBean.getFieldName(IAccountAlias.ACCOUNT_ENTRY_ENABLED), new Boolean(true));
 		Iterator iter = accountBean.getList(criteria).iterator();
 		while(iter.hasNext()){
