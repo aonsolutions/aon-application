@@ -35,7 +35,11 @@ public class RowSelectorHandler extends TagHandler implements IRichFacesTags {
 	
 	private static final String SELECTED_CLASS_ATTRIBUTE = "selectedClass";
 	
-	private static final String SELECTED_CLASS_VALUE = "aon-table-row-selected";	
+	private static final String SELECTED_CLASS_VALUE = "aon-table-row-selected";
+	
+	private static final String ON_SUBMIT_ATTRIBUTE = "onsubmit";
+	
+	private static final String ON_SUBMIT_VALUE = "if (isRowSelectorDisabled()){return false}";
 	
 	private ComponentConfig config;
 	
@@ -92,6 +96,8 @@ public class RowSelectorHandler extends TagHandler implements IRichFacesTags {
 				AttributeInfo info = new AttributeInfo(RERENDER, value);
 				attributes.add(info);
 			}
+			AttributeInfo onSubmit = new AttributeInfo(ON_SUBMIT_ATTRIBUTE, ON_SUBMIT_VALUE);
+			attributes.add(onSubmit);
 			AonComponentConfig aonConfig = new AonComponentConfig(config, attributes); 
 			ajaxSupportHandler = new AjaxSupportHandler(aonConfig);
 		}
