@@ -19,6 +19,8 @@ public class Contact implements ITransferObject {
 
 	private String id;
 	
+	private String displayName;
+	
 	private String name;
 	
 	private String surname;
@@ -49,9 +51,18 @@ public class Contact implements ITransferObject {
 	public void setId(String id) {
 		this.id = id;
 	}
+	
+	@RDN
+	@Attribute(name="displayName")
+	public String getDisplayName() {
+		return displayName;
+	}
+
+	public void setDisplayName(String displayName) {
+		this.displayName = displayName;
+	}
 
 	@Column(length=64)
-	@RDN
 	@Attribute(name="cn", length=64)
 	public String getName() {
 		return name;
