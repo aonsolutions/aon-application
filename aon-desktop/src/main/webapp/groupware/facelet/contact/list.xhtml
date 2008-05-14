@@ -49,16 +49,16 @@
 
 					<aon:column>
 						<f:facet name="header">
-							<aon:outputText value="#{groupwareBundle.contact_name}" />
+							<aon:outputText value="#{groupwareBundle.contact_displayName}" />
 						</f:facet>
-						<aon:outputText value="#{to.name}"/>
+						<aon:outputText value="#{to.displayName}"/>
 					</aon:column>
 
 					<aon:column>
 						<f:facet name="header">
-							<aon:outputText value="#{groupwareBundle.contact_surname}" />
+							<aon:outputText value="#{groupwareBundle.contact_email}" />
 						</f:facet>
-						<aon:outputText value="#{to.surname}"/>
+						<aon:outputText value="#{to.email}"/>
 					</aon:column>
 
 					<aon:column>
@@ -80,13 +80,6 @@
 							<aon:outputText value="#{groupwareBundle.contact_cellular_phone}" />
 						</f:facet>
 						<aon:outputText value="#{to.cellularPhone}"/>
-					</aon:column>
-
-					<aon:column>
-						<f:facet name="header">
-							<aon:outputText value="#{groupwareBundle.contact_email}" />
-						</f:facet>
-						<aon:outputText value="#{to.email}"/>
 					</aon:column>
 
 				</aon:dataTable>
