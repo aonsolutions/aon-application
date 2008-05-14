@@ -21,8 +21,9 @@
 						aon-edit-table-body aon-edit-table-body-string,
 						aon-edit-table-body aon-edit-table-body-string,
 						aon-edit-table-body aon-edit-table-body-string,
+						aon-edit-table-body aon-edit-table-body-string,
 						aon-edit-table-body aon-edit-table-body-buttons">
-
+						
 		<h:column>
 			<f:facet name="header">
 				<f:verbatim>&#160;</f:verbatim>
@@ -42,6 +43,28 @@
 						actionListener="#{controllerAlias.onReset}"
 						accesskey="#{bundle.aon_key_new_line}">
 					</t:commandButton>
+				</t:div>
+			</f:facet>
+		</h:column>
+		
+		<h:column>
+			<f:facet name="header">
+				<h:outputText value="#{registryBundle.aon_type}" />
+			</f:facet>
+			<t:outputText value="#{to.addressType}"
+				rendered="#{to!=controllerAlias.to}" />
+			<h:selectOneMenu value="#{controllerAlias.to.addressType}"
+				styleClass="aon-form-selectOneMenu-field"
+				rendered="#{to==controllerAlias.to}">
+				<f:selectItems value="#{registryCollections.addressTypes}" />
+			</h:selectOneMenu>
+			<f:facet name="footer">
+				<t:div>
+					<h:selectOneMenu value="#{controllerAlias.to.addressType}"
+						styleClass="aon-form-selectOneMenu-field"
+						rendered="#{controllerAlias.new}">
+						<f:selectItems value="#{registryCollections.addressTypes}" />
+					</h:selectOneMenu>
 				</t:div>
 			</f:facet>
 		</h:column>

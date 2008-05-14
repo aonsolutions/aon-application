@@ -137,10 +137,8 @@
 									<f:facet name="header">
 										<t:outputText value="#{financeBundle.aon_name}" />
 									</f:facet>
-									<t:div rendered="#{to!=invoicingGroupDetail.to}">
-										<h:outputText value="#{to.child.surname}, " rendered="#{to.child.surname != null and to.child.surname != ''}"/>								
-										<h:outputText value="#{to.child.name}" />
-									</t:div>
+									<t:outputText value="#{to.child.name} #{to.child.surname}"
+										rendered="#{to!=invoicingGroupDetail.to}" />
 									<t:div rendered="#{to==invoicingGroupDetail.to}">
 										<t:inputText id="Customer_Lookup_id-Edit" size="5"
 											forceId="#{true}" styleClass="aon-form-input-text"

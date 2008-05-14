@@ -47,7 +47,7 @@
 						</t:div>
 					</f:facet>
 				</h:column>
-
+				
 				<t:column width="300">
 					<f:facet name="header">
 						<t:outputText value="#{financeBundle.aon_bank_name}" />
@@ -55,13 +55,19 @@
 					<t:outputText value="#{to.bank.name}"
 						rendered="#{to!=controllerAlias.to}" />
 					<t:div rendered="#{to==controllerAlias.to}">
-						<t:inputText id="Bank_Lookup_id-Edit" size="5" forceId="#{true}"
+						<t:inputHidden id="Bank_Lookup_id-Edit" size="5" forceId="#{true}"
 							styleClass="aon-form-input-text"
-							onchange="return findBeanLookup(event,'#{facesContext.externalContext.requestContextPath}','bankLookup','Bank_Lookup_id-Edit[#{rowIndex}],Bank_Lookup_name-Edit[#{rowIndex}]');"
 							value="#{controllerAlias.to.bank.id}" />
+						<t:inputText id="Bank_Lookup_code-Edit" size="5" forceId="#{true}"
+							styleClass="aon-form-input-text"
+							onchange="return findBeanLookupExt(event,'#{facesContext.externalContext.requestContextPath}','bankLookup','Bank_Lookup_code-Edit[#{rowIndex}]','Bank_id|Bank_Lookup_id-Edit[#{rowIndex}],Bank_code|Bank_Lookup_code-Edit[#{rowIndex}],Bank_name|Bank_Lookup_name-Edit[#{rowIndex}]');"
+							value="#{controllerAlias.entity}" />
 						<h:commandButton id="find_Bank_Lookup_id-Edit"
 							styleClass="aon-form-lookup-button" value="" immediate="true"
-							onclick="lookupSearchWindow(this, 'placeList', '#{bankLookup.encodedSearchPagePath}','Bank_Lookup_id-Edit[#{rowIndex}],Bank_Lookup_name-Edit[#{rowIndex}]');return false;" />
+							onclick="lookupSearchWindow(this, 'placeList', '#{bankLookup.encodedSearchPagePath}','Bank_id|Bank_Lookup_id-Edit[#{rowIndex}],Bank_code|Bank_Lookup_code-Edit[#{rowIndex}],Bank_name|Bank_Lookup_name-Edit[#{rowIndex}]');return false;" />
+						<h:commandButton id="add_Bank_Lookup_id-Edit"
+							styleClass="aon-form-new-button" value="" immediate="true"
+							onclick="lookupNewWindow(this, 'placeList', '#{bankLookup.encodedNewPagePath}','Bank_id|Bank_Lookup_id-Edit[#{rowIndex}],Bank_code|Bank_Lookup_code-Edit[#{rowIndex}],Bank_name|Bank_Lookup_name-Edit[#{rowIndex}]');return false;" />
 						<t:inputText id="Bank_Lookup_name-Edit" forceId="#{true}"
 							styleClass="aon-form-input-text-disabled"
 							disabledOnClientSide="true" size="30"
@@ -69,13 +75,19 @@
 					</t:div>
 					<f:facet name="footer">
 						<t:div rendered="#{controllerAlias.new}">
-							<t:inputText id="Bank_Lookup_id-New" size="5" forceId="#{true}"
+							<t:inputHidden id="Bank_Lookup_id-New" size="5" forceId="#{true}"
 								styleClass="aon-form-input-text"
-								onchange="return findBeanLookup(event,'#{facesContext.externalContext.requestContextPath}','bankLookup','Bank_Lookup_id-New,Bank_Lookup_name-New');"
 								value="#{controllerAlias.to.bank.id}" />
+							<t:inputText id="Bank_Lookup_code-New" size="5" forceId="#{true}"
+								styleClass="aon-form-input-text"
+								onchange="return findBeanLookupExt(event,'#{facesContext.externalContext.requestContextPath}','bankLookup','Bank_Lookup_code-New','Bank_id|Bank_Lookup_id-New,Bank_code|Bank_Lookup_code-New,Bank_name|Bank_Lookup_name-New');"
+								value="#{controllerAlias.entity}" />
 							<h:commandButton id="find_Bank_Lookup_id-New"
 								styleClass="aon-form-lookup-button" value="" immediate="true"
-								onclick="lookupSearchWindow(this, 'placeList', '#{bankLookup.encodedSearchPagePath}','Bank_Lookup_id-New,Bank_Lookup_name-New');return false;" />
+								onclick="lookupSearchWindow(this, 'placeList', '#{bankLookup.encodedSearchPagePath}','Bank_id|Bank_Lookup_id-New,Bank_code|Bank_Lookup_code-New,Bank_name|Bank_Lookup_name-New');return false;" />
+							<h:commandButton id="add_Bank_Lookup_id-New"
+								styleClass="aon-form-new-button" value="" immediate="true"
+								onclick="lookupNewWindow(this, 'placeList', '#{bankLookup.encodedNewPagePath}','Bank_id|Bank_Lookup_id-New,Bank_code|Bank_Lookup_code-New,Bank_name|Bank_Lookup_name-New');return false;" />
 							<t:inputText id="Bank_Lookup_name-New" forceId="#{true}"
 								styleClass="aon-form-input-text-disabled"
 								disabledOnClientSide="true" size="30"
@@ -83,25 +95,68 @@
 						</t:div>
 					</f:facet>
 				</t:column>
-
-				<t:column width="50">
+					
+				<t:column>
 					<f:facet name="header">
 						<t:outputText value="#{financeBundle.aon_bank_account}" />
 					</f:facet>
-					<t:outputText value="#{to.bankAccount}"
+					<t:outputText value="#{to.formattedBankAccount}"
 						rendered="#{to!=controllerAlias.to}" />
-					<t:inputText value="#{controllerAlias.to.bankAccount}"
-						styleClass="aon-form-input-text" rendered="#{to==controllerAlias.to}"
-						required="#{true}" size="35" />
+					<t:div rendered="#{to==controllerAlias.to}">
+						<t:inputText value="#{controllerAlias.office}"
+							styleClass="aon-form-input-text"
+							required="#{true}" size="4" maxlength="4">
+							<f:validateLength minimum="4" maximum="4"/>
+						</t:inputText>	
+						<t:inputText value="#{controllerAlias.control}"
+							styleClass="aon-form-input-text"
+							required="#{true}" size="2" maxlength="2">
+							<f:validateLength minimum="2" maximum="2"/>
+						</t:inputText>	
+						<t:inputText value="#{controllerAlias.account}"
+							styleClass="aon-form-input-text"
+							required="#{true}" size="10" maxlength="10">
+							<f:validateLength minimum="10" maximum="10"/>
+						</t:inputText>	
+					</t:div>	
 					<f:facet name="footer">
-						<t:div>
-							<t:inputText value="#{controllerAlias.to.bankAccount}"
-								styleClass="aon-form-input-text" rendered="#{controllerAlias.new}"
-								required="#{true}" size="35" />
+						<t:div rendered="#{controllerAlias.new}">
+							<t:inputText value="#{controllerAlias.office}"
+								styleClass="aon-form-input-text"
+								required="#{true}" size="4" maxlength="4">
+								<f:validateLength minimum="4" maximum="4"/>
+							</t:inputText>	
+							<t:inputText value="#{controllerAlias.control}"
+								styleClass="aon-form-input-text"
+								required="#{true}" size="2" maxlength="2">
+								<f:validateLength minimum="2" maximum="2"/>
+							</t:inputText>	
+							<t:inputText value="#{controllerAlias.account}"
+								styleClass="aon-form-input-text"
+								required="#{true}" size="10" maxlength="10">
+								<f:validateLength minimum="10" maximum="10"/>
+							</t:inputText>	
 						</t:div>
 					</f:facet>
 				</t:column>
-
+<!-- 
+				<t:column>
+					<f:facet name="header">
+						<t:outputText value="#{financeBundle.aon_bank_sufix}" />
+					</f:facet>
+					<t:outputText value="#{to.sufix}"
+						rendered="#{to!=controllerAlias.to}" />
+					<t:inputText value="#{to.sufix}" styleClass="aon-form-input-text"
+						rendered="#{to==controllerAlias.to}" size="5" maxlength="3" />
+					<f:facet name="footer">
+						<t:div>
+							<t:inputText value="#{controllerAlias.to.sufix}"
+								styleClass="aon-form-input-text" rendered="#{controllerAlias.new}"
+								size="5" maxlength="3" />
+						</t:div>
+					</f:facet>
+				</t:column>
+ -->
 				<h:column>
 					<f:facet name="header">
 						<f:verbatim>&#160;</f:verbatim>

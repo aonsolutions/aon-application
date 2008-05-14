@@ -273,8 +273,7 @@
 									<f:facet name="header">
 										<h:outputText value="#{financeBundle.aon_finance_batch_description}" />
 									</f:facet>
-									<h:outputText value="#{to.finance.registry.surname}, " rendered="#{to.finance.registry.surname != null and to.finance.registry.surname != ''}"/>								
-									<h:outputText value="#{to.finance.registry.name}" />
+									<h:outputText value="#{to.finance.registry.name} #{to.finance.registry.surname}" />
 								</h:column>
 
 								<h:column>
@@ -392,8 +391,7 @@
 									<f:facet name="header">
 										<h:outputText value="#{financeBundle.aon_finance_batch_description}" />
 									</f:facet>
-									<h:outputText value="#{to.registry.surname}, " rendered="#{to.registry.surname != null and to.registry.surname != ''}"/>								
-									<h:outputText value="#{to.registry.name}" />
+									<h:outputText value="#{to.registry.name} #{to.registry.surname}" />
 								</h:column>
 
 								<h:column>

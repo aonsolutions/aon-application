@@ -36,9 +36,7 @@ function sendRow( e ){
 		element = e.firstChild;
 		link = getTblLink( element );
 		if ( link ) {
-			if ( !link.disabled ) {
-				link.onclick();
-			}
+			link.onclick();
 		}
 	}
 }
@@ -61,11 +59,17 @@ function getTblLink( e ){
 	return null;
 }
 
-function disableTblLink( element, prop ){
-	par = element.parentNode;
-	while(par.tagName != "TR"){
-		par = par.parentNode;
-	}
-	link = getTblLink( par );
-	link.disabled = prop;
+function focusTableRow() {
+	try {
+		var mylist = document.forms[0];
+		var listitems = mylist.getElementsByTagName("table");
+		for (i=0; i < listitems.length; i++) {
+			if (listitems[i].getAttribute("id").length > 0) {
+				var inputEl = listitems[i].getElementsByTagName("input");
+				if (inputEl.length > 1)
+					inputEl[0].focus();
+			}
+		}
+	} catch(e) {}
 }
+window.onload=focusTableRow;

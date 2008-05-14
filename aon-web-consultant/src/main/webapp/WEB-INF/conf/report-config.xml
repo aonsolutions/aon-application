@@ -120,6 +120,19 @@
 		<nested-report report="feeInvoicingDetail"/>
 	</report>
 	
+	<!--  *********  FinanceList  ********* -->
+	<report id="financeList" description="Finance List">
+		<template path="/com/code/aon/ui/finance/report/financeList.jasper" />
+		<bean key="com.code.aon.finance.Finance" />
+		<criteria provider="#{finance}"/>
+		<params>
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.finance.i18n.messages" />
+			<param id="logoImageFile" value="#{company.getAttachAsInputStream}" />
+			<param id="company" value="#{company.obtainCompany}" />
+			<param id="payment" value="#{finance.getPayment}" />
+		</params>
+	</report>
+	
 	<!--  *********  feeCheckingPrint  ********* -->
 	<report id="customeFeeChecking" description="Fee Checking">
 		<template path="/com/code/aon/ui/finance/report/feeChecking.jasper"/>

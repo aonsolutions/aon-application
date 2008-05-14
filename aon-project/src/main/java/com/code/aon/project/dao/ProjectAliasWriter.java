@@ -17,7 +17,7 @@ public class ProjectAliasWriter {
 
 	public static void main(String[] args) throws IOException {
 
-		File file = new File("/PROYECTOS/aon-project/src/com/code/aon/project/dao/IProjectAlias.java");
+		File file = new File("/AON-PROJECT/aon-project/src/main/java/com/code/aon/project/dao/IProjectAlias.java");
 		String[] classes = new String[8]; 
 		classes[0] = Activity.class.getName();
 		classes[1] = ActivityType.class.getName();

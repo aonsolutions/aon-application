@@ -152,6 +152,9 @@ public class LinesController extends BasicController {
 	 * @throws ManagerBeanException the manager bean exception
 	 */
 	public void saveModel( ITransferObject masterTO ) throws ManagerBeanException {
+		if ( this.masterController == null ) {
+			throw new AbortProcessingException("Unable to locate Master Controller!"); 
+		}
 		List list = (List) this.model.getWrappedData();
 		Iterator i = list.iterator();
 		while ( i.hasNext() ) {
@@ -169,6 +172,9 @@ public class LinesController extends BasicController {
 	 * @throws ManagerBeanException the manager bean exception
 	 */
 	public void deleteOrphans() throws ManagerBeanException {
+		if ( this.masterController == null ) {
+			throw new AbortProcessingException("Unable to locate Master Controller!"); 
+		}
 		if ( this.cascadeDelete ) {
 			List list = (List) getModel().getWrappedData();
 			Iterator i = list.iterator();
@@ -209,6 +215,9 @@ public class LinesController extends BasicController {
 	 */
 	@Override
 	public void accept(ActionEvent event)  {
+		if ( this.masterController == null ) {
+			throw new AbortProcessingException("Unable to locate Master Controller!"); 
+		}
         try {
 			if (isNew()) {
 				updateJoinProperties( getMasterController().getTo(), getTo() );

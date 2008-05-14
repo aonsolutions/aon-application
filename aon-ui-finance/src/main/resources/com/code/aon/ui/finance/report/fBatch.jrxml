@@ -34,7 +34,6 @@
 	<field name="issueDate" class="java.util.Date"/>
 	<field name="registryBank" class="com.code.aon.finance.RegistryBank"/>
 	<field name="payment" class="java.lang.Boolean"/>
-	<field name="lines" class="java.util.Set"/>
 	<field name="detailList" class="java.util.List"/>
 
 		<background>

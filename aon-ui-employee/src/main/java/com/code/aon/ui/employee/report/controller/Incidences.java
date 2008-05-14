@@ -454,4 +454,9 @@ public class Incidences implements ICollectionProvider, IEntityVisitor {
 		criteria.addEqualExpression( field, identifier );
 		return (IncidenceType) bean.getList( criteria ).get( 0 );
 	}
+
+	@Override
+	public Collection getCollection(boolean forceRefresh) throws ManagerBeanException {
+		return this.getCollection();
+	}
 }

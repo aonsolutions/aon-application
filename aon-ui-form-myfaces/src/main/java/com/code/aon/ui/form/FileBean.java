@@ -12,6 +12,12 @@ import javax.faces.el.ValueBinding;
 import javax.faces.event.ActionEvent;
 import javax.faces.model.DataModel;
 
+import net.sf.jmimemagic.Magic;
+import net.sf.jmimemagic.MagicException;
+import net.sf.jmimemagic.MagicMatch;
+import net.sf.jmimemagic.MagicMatchNotFoundException;
+import net.sf.jmimemagic.MagicParseException;
+
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.lang.ClassUtils;
 import org.apache.commons.lang.StringUtils;
@@ -19,11 +25,6 @@ import org.apache.commons.lang.StringUtils;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.MimeType;
-import com.code.aon.common.mime.Magic;
-import com.code.aon.common.mime.MagicException;
-import com.code.aon.common.mime.MagicMatch;
-import com.code.aon.common.mime.MagicMatchNotFoundException;
-import com.code.aon.common.mime.MagicParseException;
 import com.code.aon.ui.fileupload.IFileUploadListener;
 import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;

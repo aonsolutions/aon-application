@@ -208,4 +208,8 @@ public class Seniority implements ICollectionProvider {
 		return bean.getList( criteria );
 	}
 
+	@Override
+	public Collection getCollection(boolean forceRefresh) throws ManagerBeanException {
+		return this.getCollection();
+	}
 }

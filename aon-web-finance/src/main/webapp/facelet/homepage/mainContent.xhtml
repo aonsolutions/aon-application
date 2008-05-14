@@ -24,7 +24,6 @@
 					id="content-tree"
 					var="cnode"
 					varNodeToggler="cnt"
-					binding="#{contentMenu.htmlTree}"
 					showRootNode="false"
 					showLines="false"
 					showNav="false"				
@@ -34,9 +33,7 @@
 						<t:div styleClass="aon-content-tree-branch">
 							<h:commandLink
 								immediate="true"
-								action="#{cnt.toggleExpanded}"
-								id="contentMenuRoot"
-							>
+								action="#{cnt.toggleExpanded}" id="root">
 								<t:div styleClass="aon-content-tree-branch-name">				
 									<h:outputText value="#{cnode.description}"/>
 								</t:div>
@@ -49,10 +46,8 @@
 					<f:facet name="menu">
 						<t:div styleClass="aon-content-tree-branch">
 							<h:commandLink styleClass="aon-content-tree-branch-link"
-								action="#{contentMenu.menuAction}"
-								actionListener="#{contentMenu.pressed}"
-								id="#{treeMenu.menuId}"
-							>
+								action="#{contentMenu.nodeAction}"
+								actionListener="#{contentMenu.menuPressed}" id="menuCommand">
 								<t:div styleClass="aon-content-tree-branch-name">	
 									<h:outputText value="#{cnode.description}"/>
 								</t:div>
@@ -69,8 +64,7 @@
 							<h:commandLink styleClass="aon-content-tree-leaf-link"
 								target="#{cnode.menuItem.target}"
 								action="#{contentMenu.nodeAction}"
-								actionListener="#{contentMenu.pressed}"
-								id="#{treeMenu.nodeId}">
+								actionListener="#{contentMenu.optionPressed}" id="optionCommand">
 															
 								<t:div styleClass="aon-content-tree-leaf-name">				
 									<h:outputText value="#{cnode.description}" />
@@ -85,7 +79,7 @@
 							rendered="#{cnode.menuItem.external and !cnode.menuItem.contextRelative}">
 							<h:outputLink styleClass="aon-content-tree-leaf-link"
 								target="#{cnode.menuItem.target}" 
-								value="#{cnode.menuItem.reference}">								
+								value="#{cnode.menuItem.reference}" id="optionExternal">								
 							
 								<t:div styleClass="aon-content-tree-leaf-name">				
 									<h:outputText value="#{cnode.description}" />
@@ -96,10 +90,11 @@
 							</h:outputLink>
 						</t:div>
 
-						<t:div styleClass="aon-content-tree-leaf aon-content-tree-leaf_report" 
+						<t:div
+							styleClass="aon-content-tree-leaf aon-content-tree-leaf_report" 
 							rendered="#{cnode.menuItem.external and cnode.menuItem.contextRelative and !cnode.hyperView}">
 							<h:outputLink styleClass="aon-content-tree-leaf-link"
-								target="#{cnode.menuItem.target}"
+								target="#{cnode.menuItem.target}" id="optionExternalRelative"
 								value="#{facesContext.externalContext.requestContextPath}#{cnode.menuItem.reference}">
 															
 								<t:div styleClass="aon-content-tree-leaf-name">				
@@ -112,10 +107,11 @@
 							</h:outputLink>	
 						</t:div>
 
-						<t:div styleClass="aon-content-tree-leaf aon-content-tree-leaf_hyperview" 
+						<t:div
+							styleClass="aon-content-tree-leaf aon-content-tree-leaf_hyperview" 
 							rendered="#{cnode.menuItem.external and cnode.menuItem.contextRelative and cnode.hyperView}">
 							<h:outputLink styleClass="aon-content-tree-leaf-link"
-								target="#{cnode.menuItem.target}"
+								target="#{cnode.menuItem.target}" id="optionHyperView"
 								value="#{facesContext.externalContext.requestContextPath}#{cnode.menuItem.reference}">
 								<t:div styleClass="aon-content-tree-leaf-name">				
 									<h:outputText value="#{cnode.description}" />

@@ -22,7 +22,7 @@
 			columnClasses="aon-datascroller-text,aon-datascroller-buttons">
 			<t:dataScroller for="#{dataTable}"
 				rowsCountVar="rowsCount" firstRowIndexVar="firstRowIndex"
-				lastRowIndexVar="lastRowIndex" rendered="#{model.rowCount>0}">
+				lastRowIndexVar="lastRowIndex" rendered="#{model.rowCount>20}">
 				<h:outputFormat value="#{bundle.aon_scroll}">
 					<f:param value="#{firstRowIndex}" />
 					<f:param value="#{lastRowIndex}" />
@@ -30,8 +30,8 @@
 				</h:outputFormat>
 			</t:dataScroller>
 
-			<t:dataScroller for="#{dataTable}" fastStep="5"
-				paginator="#{true}" paginatorMaxPages="5"
+			<t:dataScroller for="#{dataTable}" fastStep="5" immediate="true"
+				paginator="#{true}" paginatorMaxPages="5" id="#{dataTable}DataScroller"
 				paginatorActiveColumnClass="aon-datascroller-currentpage"
 				paginatorColumnClass="aon-datascroller-page"
 				rendered="#{model.rowCount>20}">

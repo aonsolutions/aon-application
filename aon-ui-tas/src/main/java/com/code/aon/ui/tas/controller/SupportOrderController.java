@@ -4,6 +4,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import javax.faces.event.ActionEvent;
+import javax.faces.event.PhaseId;
 import javax.faces.event.ValueChangeEvent;
 
 import com.code.aon.commercial.Target;
@@ -12,9 +13,11 @@ import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ql.Criteria;
+import com.code.aon.ql.Projection;
 import com.code.aon.ql.util.ExpressionException;
-import com.code.aon.registry.RegistryAddress;
 import com.code.aon.registry.RegistryMedia;
+import com.code.aon.registry.dao.IRegistryAlias;
+import com.code.aon.registry.enumeration.MediaType;
 import com.code.aon.tas.SupportOrder;
 import com.code.aon.tas.TasItem;
 import com.code.aon.tas.dao.ITASAlias;
@@ -42,21 +45,6 @@ public class SupportOrderController   extends BasicController {
 	 */
 	private RegistryMedia cellular;
 
-	/**
-	 * fax linked to the target of the support order
-	 */
-	private RegistryMedia fax;
-
-	/**
-	 * email linked to the target of the support order
-	 */
-	private RegistryMedia email;
-
-	/**
-	 * address linked to the target of the support order
-	 */
-	private RegistryAddress registryAddress;
-	
 	/**
 	 * the target of the support order
 	 */
@@ -196,64 +184,6 @@ public class SupportOrderController   extends BasicController {
 	 */
 	public void setCellular(RegistryMedia cellular) {
 		this.cellular = cellular;
-	}
-
-	/**
-	 * Returns the email
-	 * 
-	 * @return Returns the email.
-	 */
-	public RegistryMedia getEmail() {
-		return email;
-	}
-
-
-	/**
-	 * Assigns the email
-	 * 
-	 * @param email The email to set.
-	 */
-	public void setEmail(RegistryMedia email) {
-		this.email = email;
-	}
-
-
-	/**
-	 * Returns the fax
-	 * 
-	 * @return Returns the fax.
-	 */
-	public RegistryMedia getFax() {
-		return fax;
-	}
-
-
-	/**
-	 * Assigns the fax
-	 * 
-	 * @param fax The fax to set.
-	 */
-	public void setFax(RegistryMedia fax) {
-		this.fax = fax;
-	}
-
-
-	/**
-	 * Returns the address 
-	 * 
-	 * @return the address
-	 */
-	public RegistryAddress getRegistryAddress() {
-		return registryAddress;
-	}
-
-	/**
-	 * Assigns the address 
-	 * 
-	 * @param address the address to set
-	 */
-	public void setRegistryAddress(RegistryAddress registryAddress) {
-		this.registryAddress = registryAddress;
 	}
 
 	/**
@@ -405,6 +335,7 @@ public class SupportOrderController   extends BasicController {
 	 * @throws ManagerBeanException
 	 * @throws ExpressionException
 	 */
+	@SuppressWarnings("unchecked")
 	public void addTargetExpression(ValueChangeEvent event)
 		throws ManagerBeanException, ExpressionException {
 	    if ((event.getNewValue() != null)
@@ -450,4 +381,54 @@ public class SupportOrderController   extends BasicController {
         manager.setReportKey("SupportOrderForm");
         manager.setOutputFormat(OutputFormat.PDF);
     }
+    
+	public void onSeriesChanged(ValueChangeEvent event) throws ManagerBeanException{
+		if (event.getPhaseId() == PhaseId.ANY_PHASE) {
+			event.setPhaseId(PhaseId.INVOKE_APPLICATION );
+			event.queue();
+		}
+		if (event.getPhaseId() == PhaseId.INVOKE_APPLICATION) {
+			int number = obtainMaxNumber((String)event.getNewValue());
+			if(this.getTo() != null){
+				((SupportOrder)this.getTo()).setNumber(number);	
+			}
+		}
+	}
+
+	private int obtainMaxNumber(String seriesId) throws ManagerBeanException {
+		IManagerBean supportOrderBean = BeanManager.getManagerBean(SupportOrder.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(supportOrderBean.getFieldName(ITASAlias.SUPPORT_ORDER_SERIES), seriesId);
+		Projection projection = Projection.max(supportOrderBean.getFieldName(ITASAlias.SUPPORT_ORDER_NUMBER));
+		Object value = supportOrderBean.getUniqueResult(projection, criteria);
+		if(value != null){
+			return ((Integer)value).intValue() + 1;
+		}
+		return 1;
+	}
+	
+	@SuppressWarnings("unchecked")
+	public void reloadMedias(ActionEvent event) throws ManagerBeanException{
+		this.setPhone(new RegistryMedia());
+		this.getPhone().setRegistry(this.getTarget().getRegistry());
+		this.getPhone().setMediaType(MediaType.FIXED_PHONE);
+		this.setCellular(new RegistryMedia());
+		this.getCellular().setRegistry(this.getTarget().getRegistry());
+		this.getCellular().setMediaType(MediaType.CELLULAR);
+		Criteria criteriaMedia = new Criteria();
+		IManagerBean beanMedia = BeanManager.getManagerBean( RegistryMedia.class);
+		String registryIdFieldName = beanMedia.getFieldName( IRegistryAlias.REGISTRY_MEDIA_REGISTRY_ID);
+		criteriaMedia.addEqualExpression(registryIdFieldName,target.getId() );
+		List mediaList = beanMedia.getList(  criteriaMedia );
+		
+		Iterator mediaIter = mediaList.iterator();
+		while (mediaIter.hasNext()){
+			RegistryMedia rmedia = (RegistryMedia)mediaIter.next();
+			if (MediaType.FIXED_PHONE == rmedia.getMediaType()){
+				this.setPhone(rmedia); 
+			}else if (MediaType.CELLULAR == rmedia.getMediaType()){
+				this.setCellular(rmedia); 
+			}
+		}
+	}
 }

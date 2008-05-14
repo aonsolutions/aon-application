@@ -7,7 +7,6 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-import javax.persistence.Transient;
 
 import com.code.aon.common.ITransferObject;
 
@@ -88,8 +87,6 @@ public class EvaluationObservation implements ITransferObject{
 		this.comments = comments;
 	}
 
-	@Transient
-	public String getCommentsHead(){
-		return ((this.comments.length() > 100)?comments.substring(0, 100):comments);
-	}
+	
+	
 }

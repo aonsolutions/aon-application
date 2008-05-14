@@ -179,8 +179,7 @@
 									<f:facet name="header">
 										<h:outputText value="#{financeBundle.aon_finance_batch_name}" />
 									</f:facet>
-									<h:outputText value="#{to.registry.surname}, " rendered="#{to.registry.surname != null and to.registry.surname != ''}"/>								
-									<h:outputText value="#{to.registry.name}" />
+									<h:outputText value="#{to.registry.name} #{to.registry.surname}" />
 								</h:column>
 
 								<h:column>

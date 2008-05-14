@@ -163,4 +163,8 @@ public class Expenditures implements ICollectionProvider {
 		return oldValue == null || newValue.intValue() != oldValue.intValue();
 	}
 
+	@Override
+	public Collection getCollection(boolean forceRefresh) throws ManagerBeanException {
+		return this.getCollection();
+	}
 }

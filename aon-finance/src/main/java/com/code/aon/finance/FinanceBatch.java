@@ -1,21 +1,16 @@
 package com.code.aon.finance;
 
 import java.util.Date;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.OrderBy;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
@@ -60,9 +55,6 @@ public class FinanceBatch implements ITransferObject {
     
     /** The payment. */
     private boolean payment;
-
-    /** The detail of this financeBatch. */
-	private Set<FinanceBatchDetail> lines = new HashSet<FinanceBatchDetail>();
 
     /**
      * Gets the id.
@@ -198,34 +190,12 @@ public class FinanceBatch implements ITransferObject {
 		this.payment = payment;
 	}
 	
-	/**
-	 * Gets the lines.
-	 * 
-	 * @return the lines
-	 */
-	@OneToMany(mappedBy = "financeBatch", cascade={CascadeType.REMOVE})
-	public Set<FinanceBatchDetail> getLines() {
-		return this.lines;
-	}
-
-	/**
-	 * Sets the lines.
-	 * 
-	 * @param lines the lines
-	 */
-	public void setLines( Set<FinanceBatchDetail> lines ) {
-		this.lines = lines;
-	}
-
 	@Transient
-	@SuppressWarnings("unchecked")
 	public List getDetailList() {
 		try {
 			IManagerBean financeBatchDetailBean = BeanManager.getManagerBean(FinanceBatchDetail.class);
 			Criteria criteria = new Criteria();
 			criteria.addEqualExpression(financeBatchDetailBean.getFieldName(IFinanceAlias.FINANCE_BATCH_DETAIL_FINANCE_BATCH_ID), getId());
-	        criteria.addOrder(financeBatchDetailBean.getFieldName(IFinanceAlias.FINANCE_BATCH_DETAIL_FINANCE_INVOICE_SERIES));
-	        criteria.addOrder(financeBatchDetailBean.getFieldName(IFinanceAlias.FINANCE_BATCH_DETAIL_FINANCE_INVOICE_NUMBER));
 			return financeBatchDetailBean.getList(criteria);
 		} catch (ManagerBeanException e) {
 			LOGGER.log(Level.SEVERE, "Error obtaining financeBatchDetail list", e);

@@ -9,7 +9,6 @@ import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ql.Criteria;
-import com.code.aon.ui.form.IController;
 import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
@@ -30,16 +29,6 @@ public class InventoryDetailControllerListener extends ControllerAdapter {
 	 * The class logger
 	 */
 	private static final Logger LOGGER = Logger.getLogger(InventoryDetailControllerListener.class.getName());
-
-	@Override
-	public void beforeModelInitialized(ControllerEvent event) throws ControllerListenerException {
-		try {
-			IController controller = event.getController();
-			controller.getCriteria().addOrder(controller.getManagerBean().getFieldName(IWarehouseAlias.INVENTORY_DETAIL_ITEM_PRODUCT_CODE));
-		} catch (ManagerBeanException e) {
-			throw new ControllerListenerException(e);
-		}
-	}
 
 	/**
 	 * After updating the inventory search the stock and updates it or creates if needed

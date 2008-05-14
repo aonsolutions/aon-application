@@ -26,7 +26,6 @@ import com.code.aon.account.bridge.writer.FinanceRecordingTo;
 import com.code.aon.account.dao.IAccountAlias;
 import com.code.aon.account.enumeration.AccountEntryType;
 import com.code.aon.common.BeanManager;
-import com.code.aon.common.ICollectionProvider;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.MimeType;
@@ -64,7 +63,7 @@ import com.code.aon.ui.util.AonUtil;
  * Controller used in the fbatch maintenance.
  * 
  */
-public class FBatchController extends BasicController implements ICollectionProvider {
+public class FBatchController extends BasicController {
 
 	private static final Logger LOGGER = Logger.getLogger(FBatchController.class.getName());
 

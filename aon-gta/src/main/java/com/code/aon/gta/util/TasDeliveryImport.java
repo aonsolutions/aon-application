@@ -63,7 +63,6 @@ public class TasDeliveryImport {
 	 * 
 	 * @throws ManagerBeanException the manager bean exception
 	 */
-	@SuppressWarnings("unchecked")
 	private static SupportOrder getSupportOrder(Integer supportOrder_Id) throws ManagerBeanException{
 		SupportOrder supportOrder = null;
 		IManagerBean supportOrderBean = BeanManager.getManagerBean(SupportOrder.class);
@@ -85,7 +84,6 @@ public class TasDeliveryImport {
 	 * 
 	 * @throws ManagerBeanException the manager bean exception
 	 */
-	@SuppressWarnings("unchecked")
 	private static Offer getOffer(Integer offer_Id) throws ManagerBeanException{
 		Offer offer = null;
 		IManagerBean offerBean = BeanManager.getManagerBean(Offer.class);
@@ -107,7 +105,6 @@ public class TasDeliveryImport {
 	 * 
 	 * @throws ManagerBeanException the manager bean exception
 	 */
-	@SuppressWarnings("unchecked")
 	private static DeliveryWrapper createDeliveryWrapper(Offer offer)throws ManagerBeanException{
 		List<ITransferObject> offerLines = getOfferLines(offer);
 		
