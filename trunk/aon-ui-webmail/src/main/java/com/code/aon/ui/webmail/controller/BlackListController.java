@@ -22,8 +22,8 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.groupware.Contact;
 import com.code.aon.jaas.auth.AuthPrincipal;
-import com.code.aon.ldap.AbstractLdap;
 import com.code.aon.ldap.AonDN;
+import com.code.aon.ldap.BasicLdap;
 import com.code.aon.ldap.DistinguishedName;
 import com.code.aon.ldap.Entry;
 import com.code.aon.ldap.LdapException;
@@ -36,7 +36,7 @@ import com.code.aon.ui.webmail.exception.WebmailException;
 import com.code.aon.webmail.MailAccount;
 import com.code.aon.webmail.enumeration.SpamScoreType;
 
-public class BlackListController extends AbstractLdap {
+public class BlackListController extends BasicLdap {
 
 	private static final Logger LOGGER = Logger.getLogger(BlackListController.class.getName());
 	

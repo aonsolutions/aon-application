@@ -4,8 +4,8 @@ import javax.faces.event.AbortProcessingException;
 
 import com.code.aon.bridge.plugin.Utils;
 import com.code.aon.jaas.auth.AuthPrincipal;
-import com.code.aon.ldap.AbstractLdap;
 import com.code.aon.ldap.AonDN;
+import com.code.aon.ldap.BasicLdap;
 import com.code.aon.ldap.DistinguishedName;
 import com.code.aon.ldap.Entry;
 import com.code.aon.ldap.ILdapConstants;
@@ -14,7 +14,7 @@ import com.code.aon.ldap.LdapSession;
 import com.code.aon.ui.util.AonUtil;
 import com.code.aon.ui.webmail.bean.AonConstants;
 
-public class LoginController extends AbstractLdap implements ILdapConstants {
+public class LoginController extends BasicLdap implements ILdapConstants {
 
 	private static final String ORGANIZATION_NAME_ATTRIBUTE = "o";
 
