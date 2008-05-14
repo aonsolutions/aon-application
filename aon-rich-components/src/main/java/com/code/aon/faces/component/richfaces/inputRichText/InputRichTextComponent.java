@@ -30,17 +30,6 @@ public class InputRichTextComponent extends HtmlInputTextarea {
 	}
 	
 	/**
-	 * 
-	 * @param context
-	 * @throws IOException
-	 */
-	public void encodeBegin(FacesContext context) throws IOException {
-		super.encodeBegin(context);
-		
-		
-	}
-	
-	/**
 	 * Moved to encode end so that the inline java script will run after the textArea was rendered before this script is run
 	 * @param context
 	 * @throws IOException
@@ -160,4 +149,5 @@ public class InputRichTextComponent extends HtmlInputTextarea {
 	public void setWidth(String width) {
 		this.width = width;
 	}
+
 }
