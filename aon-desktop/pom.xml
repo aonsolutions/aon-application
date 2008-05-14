@@ -44,14 +44,8 @@
 		</dependency>
 		<dependency>
 			<groupId>com.code.aon</groupId>
-			<artifactId>aon.ui.groupware</artifactId>
-			<version>2.1.8</version>
-			<scope>compile</scope>
-		</dependency>
-		<dependency>
-			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.webmail</artifactId>
-			<version>3.0.6</version>
+			<version>3.0.7</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
@@ -71,6 +65,12 @@
 					<artifactId>tomahawk</artifactId>
 				</exclusion>
 			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>com.code.aon</groupId>
+			<artifactId>aon.ui.groupware</artifactId>
+			<version>2.1.8</version>
+			<scope>compile</scope>
 		</dependency>
 	</dependencies>
 </project>
