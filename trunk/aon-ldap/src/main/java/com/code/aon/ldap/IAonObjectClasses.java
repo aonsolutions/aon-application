@@ -2,6 +2,8 @@ package com.code.aon.ldap;
 
 public interface IAonObjectClasses {
 
+	String TOP = "top";
+	
 	String CONTACT = "aonContact";
 
 	String DB_CONNECTION = "aonContact";
