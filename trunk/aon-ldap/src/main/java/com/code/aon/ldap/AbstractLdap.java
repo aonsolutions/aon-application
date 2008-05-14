@@ -101,10 +101,10 @@ public class AbstractLdap {
 		}
 	}
 	
-	public boolean exists( DistinguishedName dn, String objectClass ) {
+	public boolean exists( String dn, String objectClass ) {
 		boolean exists = false;
 		try {
-			exists = getLdapSession().exists( dn.toString(), LdapSession.getObjectClass(objectClass) );
+			exists = getLdapSession().exists( dn, LdapSession.getObjectClass(objectClass) );
 		} catch ( LdapException e ) {
 			LOGGER.log( Level.SEVERE, e.getMessage(), e );
 		} finally {
@@ -112,5 +112,9 @@ public class AbstractLdap {
 		}
 		return exists;
 	}
-	
+
+	public boolean exists( DistinguishedName dn, String objectClass ) {
+		return exists( dn.toString(), objectClass );
+	}
+
 }
