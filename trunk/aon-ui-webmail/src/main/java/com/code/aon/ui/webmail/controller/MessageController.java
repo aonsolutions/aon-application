@@ -871,7 +871,15 @@ public class MessageController implements IAonFileListener{
 		if (list.size()==0){
 			Contact contact = new Contact();
 			contact.setEmail(email);
-			contact.setName(contactName);
+			contact.setDisplayName(contactName);
+			int pos = contactName.indexOf(' ');
+			if ( pos != -1 ) {
+				contact.setName(contactName.substring(0, pos));
+				String surname = StringUtils.trimToNull( StringUtils.substring(contactName, pos+1) );
+				contact.setSurname(surname);
+			} else {
+				contact.setName(contactName);
+			}
 
 			contactsBean.insert(contact);		
 			contactController.onSearch(null);

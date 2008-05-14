@@ -24,12 +24,12 @@
 				</aon:commandButton>
             </f:facet>
             
-            <aon:outputText value="#{appBundle.aon_webmail_email_alias}" />
+            <aon:outputText value="#{groupwareBundle.contact_displayName}" />
 			<h:panelGrid  cellpadding="2" cellspacing="0" columns="2" 
 				styleClass="aon-panelGrid-formatting">		
-				<aon:inputText id="Contact_name"
+				<aon:inputText id="Contact_name" required="true"
 					styleClass="aon-form-input-text"
-					size="30" maxlength="64"
+					size="30" maxlength="128"
 					value="#{message.contactName}" />
 				<aon:commandButton id="closeModalAddContact" 
 					styleClass="aon-commandButton"
