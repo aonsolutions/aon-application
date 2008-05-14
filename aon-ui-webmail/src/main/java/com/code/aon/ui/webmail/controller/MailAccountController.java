@@ -132,10 +132,10 @@ public class MailAccountController extends BasicController {
 		webmail.getServer().disconnect();
 		MailAccount previous = webmail.getServer().getAccount();
 		try{
-			webmail.init((MailAccount)super.getSelectedTO());
+			webmail.initFull((MailAccount)super.getSelectedTO());
 		}catch (Exception e) {
 			error = e.getMessage();
-			webmail.init((MailAccount)previous);
+			webmail.initFull((MailAccount)previous);
 		}
     	FoldersTreeBean treeBean = (FoldersTreeBean)AonUtil.getRegisteredBean(AonConstants.BEAN_TREE);
     	treeBean.loadTree();
