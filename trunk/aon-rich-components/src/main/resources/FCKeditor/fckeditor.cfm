@@ -45,6 +45,7 @@
 <cfparam name="attributes.basePath" 	type="string" default="/fckeditor/">
 <cfparam name="attributes.checkBrowser" type="boolean" default="true">
 <cfparam name="attributes.config" 		type="struct" default="#structNew()#">
+<cfinclude template="fckutils.cfm">
 
 <!--- ::
 	 * check browser compatibility via HTTP_USER_AGENT, if checkBrowser is true
@@ -53,35 +54,7 @@
 <cfscript>
 if( attributes.checkBrowser )
 {
-	sAgent = lCase( cgi.HTTP_USER_AGENT );
-	isCompatibleBrowser = false;
-
-	// check for Internet Explorer ( >= 5.5 )
-	if( find( "msie", sAgent ) and not find( "mac", sAgent ) and not find( "opera", sAgent ) )
-	{
-		// try to extract IE version
-		stResult = reFind( "msie ([5-9]\.[0-9])", sAgent, 1, true );
-		if( arrayLen( stResult.pos ) eq 2 )
-		{
-			// get IE Version
-			sBrowserVersion = mid( sAgent, stResult.pos[2], stResult.len[2] );
-			if( sBrowserVersion GTE 5.5 )
-				isCompatibleBrowser = true;
-		}
-	}
-	// check for Gecko ( >= 20030210+ )
-	else if( find( "gecko/", sAgent ) )
-	{
-		// try to extract Gecko version date
-		stResult = reFind( "gecko/(200[3-9][0-1][0-9][0-3][0-9])", sAgent, 1, true );
-		if( arrayLen( stResult.pos ) eq 2 )
-		{
-			// get Gecko build (i18n date)
-			sBrowserVersion = mid( sAgent, stResult.pos[2], stResult.len[2] );
-			if( sBrowserVersion GTE 20030210 )
-				isCompatibleBrowser = true;
-		}
-	}
+	isCompatibleBrowser = FCKeditor_IsCompatibleBrowser();
 }
 else
 {
@@ -117,12 +90,12 @@ else
 		 * changed 20041206 hk@lwd.de (improvements are welcome!)
 		 */
 		lConfigKeys = "";
-		lConfigKeys = lConfigKeys & "DisableEnterKeyHandler,CustomConfigurationsPath,EditorAreaCSS,ToolbarComboPreviewCSS,DocType";
+		lConfigKeys = lConfigKeys & "CustomConfigurationsPath,EditorAreaCSS,ToolbarComboPreviewCSS,DocType";
 		lConfigKeys = lConfigKeys & ",BaseHref,FullPage,Debug,AllowQueryStringDebug,SkinPath";
 		lConfigKeys = lConfigKeys & ",PreloadImages,PluginsPath,AutoDetectLanguage,DefaultLanguage,ContentLangDirection";
 		lConfigKeys = lConfigKeys & ",ProcessHTMLEntities,IncludeLatinEntities,IncludeGreekEntities,ProcessNumericEntities,AdditionalNumericEntities";
-		lConfigKeys = lConfigKeys & ",FillEmptyBlocks,FormatSource,FormatOutput,FormatIndentator,ForceStrongEm";
-		lConfigKeys = lConfigKeys & ",GeckoUseSPAN,StartupFocus,ForcePasteAsPlainText,AutoDetectPasteFromWord,ForceSimpleAmpersand";
+		lConfigKeys = lConfigKeys & ",FillEmptyBlocks,FormatSource,FormatOutput,FormatIndentator";
+		lConfigKeys = lConfigKeys & ",StartupFocus,ForcePasteAsPlainText,AutoDetectPasteFromWord,ForceSimpleAmpersand";
 		lConfigKeys = lConfigKeys & ",TabSpaces,ShowBorders,SourcePopup,ToolbarStartExpanded,ToolbarCanCollapse";
 		lConfigKeys = lConfigKeys & ",IgnoreEmptyParagraphValue,PreserveSessionOnFileBrowser,FloatingPanelsZIndex,TemplateReplaceAll,TemplateReplaceCheckbox";
 		lConfigKeys = lConfigKeys & ",ToolbarLocation,ToolbarSets,EnterMode,ShiftEnterMode,Keystrokes";

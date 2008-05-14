@@ -26,7 +26,7 @@ public class InputRichTextServlet extends HttpServlet {
 
 	private static final String modify=calcModify();
 	
-	private String customResourcePath;
+	private volatile String customResourcePath;
 	
 	private static final String calcModify() {
 		Date mod = new Date(System.currentTimeMillis());
@@ -37,7 +37,7 @@ public class InputRichTextServlet extends HttpServlet {
 	
 	public void init(ServletConfig config) throws ServletException { 
 		super.init(config); 
-		customResourcePath = config.getInitParameter("customResourcePath");
+		setCustomResourcePath(config.getInitParameter("customResourcePath"));
 	} 
 
 	public void doGet(HttpServletRequest request, HttpServletResponse response)
@@ -51,21 +51,21 @@ public class InputRichTextServlet extends HttpServlet {
         if(getCustomResourcePath() != null) { //Use custom path to FCKeditor
         	this.getServletContext().getRequestDispatcher(getCustomResourcePath() + path).forward(request,response);
         } else {  //Use default FCKeditor bundled up in the jar
-        	if (uri.endsWith(".jsf")) {
-	        	response.setContentType("text/html;");
+        	if (uri.endsWith(".jsf") || uri.endsWith(".html")) {
+	        	response.setContentType("text/html;charset=UTF-8");
 	        } else {
 	            response.setHeader("Cache-Control", "public");
 	            response.setHeader("Last-Modified", modify);
 	        }
 	        if (uri.endsWith(".css")) {
-	        	response.setContentType("text/css;");
+	        	response.setContentType("text/css;charset=UTF-8");
 	        } else if (uri.endsWith(".js")) {
-	        	response.setContentType("text/javascript;");
+	        	response.setContentType("text/javascript;charset=UTF-8");
 	        } else if (uri.endsWith(".gif")) {
 	        	response.setContentType("image/gif;");
 	        } else if (uri.endsWith(".xml")) {
-	        	response.setContentType("application/xml;");
-	        }
+	        	response.setContentType("text/xml;charset=UTF-8");
+	        } 
 	        
 	        InputStream is = cl.getResourceAsStream(path);
 	        // if no resource found in classloader return nothing
@@ -74,13 +74,16 @@ public class InputRichTextServlet extends HttpServlet {
 	        OutputStream out = response.getOutputStream();
 	        byte[] buffer = new byte[2048];
 	        BufferedInputStream bis = new BufferedInputStream(is);
-	        int read = 0;
-	        read = bis.read(buffer);
-	        while (read!=-1) {
-	            out.write(buffer,0,read);
-	            read = bis.read(buffer);
+	        try {
+	        	int read = 0;
+	        	read = bis.read(buffer);
+	        	while (read!=-1) {
+	        		out.write(buffer,0,read);
+	        		read = bis.read(buffer);
+	        	}
+	        } finally {
+	        	bis.close();
 	        }
-	        bis.close();
 	        out.flush();
 	        out.close();
         }
@@ -91,7 +94,9 @@ public class InputRichTextServlet extends HttpServlet {
 	}
 
 	public void setCustomResourcePath(String customResourcePath) {
-		this.customResourcePath = customResourcePath;
+		synchronized (this) {
+			this.customResourcePath = customResourcePath;
+		}
 	}
 
 }
