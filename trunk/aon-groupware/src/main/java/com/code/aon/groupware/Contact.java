@@ -11,11 +11,14 @@ import com.code.aon.common.ITransferObject;
 import com.code.aon.dao.ldap.annotations.Attribute;
 import com.code.aon.dao.ldap.annotations.EntryObject;
 import com.code.aon.dao.ldap.annotations.RDN;
+import com.code.aon.ldap.IAonObjectClasses;
 
 @Entity
 @Table(name="contact")
-@EntryObject(mainObjectClass="aonContact", objectClasses={"top"})
+@EntryObject(mainObjectClass=IAonObjectClasses.CONTACT, objectClasses={IAonObjectClasses.TOP})
 public class Contact implements ITransferObject {
+
+	private static final long serialVersionUID = 7825997921660369372L;
 
 	private String id;
 	

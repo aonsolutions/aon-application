@@ -16,7 +16,7 @@ import org.apache.commons.lang.StringUtils;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.dao.IDAO;
 import com.code.aon.common.dao.sql.DAOException;
-import com.code.aon.ldap.AbstractLdap;
+import com.code.aon.ldap.BasicLdap;
 import com.code.aon.ldap.DistinguishedName;
 import com.code.aon.ldap.Entry;
 import com.code.aon.ldap.LdapException;
@@ -30,7 +30,7 @@ import com.code.aon.ql.ProjectionList;
 /**
  * The Class LdapDAO.
  */
-public class LdapDAO extends AbstractLdap implements IDAO  {
+public class LdapDAO extends BasicLdap implements IDAO  {
 
 	/**
 	 * Obtain a suitable <code>Logger</code>.

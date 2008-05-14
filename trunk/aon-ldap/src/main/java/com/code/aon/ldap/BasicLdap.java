@@ -11,22 +11,22 @@ import javax.management.MBeanServerFactory;
 import javax.management.ObjectName;
 
 
-public class AbstractLdap {
+public class BasicLdap {
 
 	/**
 	 * Obtain a suitable <code>Logger</code>.
 	 */
-	private static final Logger LOGGER = Logger.getLogger(AbstractLdap.class.getName());
+	private static final Logger LOGGER = Logger.getLogger(BasicLdap.class.getName());
 	
 	private Properties properties;
 	
 	private LdapSession session;
 
-	public AbstractLdap(Properties properties) {
+	public BasicLdap(Properties properties) {
 		this.properties = properties;
 	}
 
-	public AbstractLdap() {
+	public BasicLdap() {
 		this( getLdapProperties() );
 	}
 	
