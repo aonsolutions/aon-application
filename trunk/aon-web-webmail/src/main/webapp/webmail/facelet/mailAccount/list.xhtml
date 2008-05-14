@@ -71,6 +71,13 @@
 
 					<aon:column>
 						<f:facet name="header">
+							<aon:outputText value="#{appBundle.aon_webmail_signature_signature}" />
+						</f:facet>
+						<aon:outputText value="#{to.signature.name}" />
+					</aon:column>
+
+					<aon:column>
+						<f:facet name="header">
 							<aon:outputText
 								value="#{appBundle.aon_webmail_mailAccount_active}" />
 						</f:facet>
