@@ -22,6 +22,8 @@ public class AonDN implements ILdapConstants {
 	
 	public static final String BDS = "bds";
 	
+	public static final String DEFAULT_MAIL_ACCOUNT_NAME = "default";
+	
 	public static String userId( String uid ) {
 		return USER_ID_ATTRIBUTE + "=" + uid;
 	}
@@ -62,6 +64,10 @@ public class AonDN implements ILdapConstants {
 		return new DistinguishedName( ou(ACCOUNTS), getUserDN(domain, user) );
 	}
 
+	public static DistinguishedName getUserDefaultAccount( String domain, String user ) {
+		return new DistinguishedName( cn(DEFAULT_MAIL_ACCOUNT_NAME), getUserAccountsDN(domain, user) );
+	}
+	
 	public static DistinguishedName getUserSignaturesDN( String domain, String user ) {
 		return new DistinguishedName( ou(SIGNATURES), getUserDN(domain, user) );
 	}
