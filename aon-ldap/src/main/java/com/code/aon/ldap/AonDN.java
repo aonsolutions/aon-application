@@ -1,7 +1,5 @@
 package com.code.aon.ldap;
 
-
-
 public class AonDN implements ILdapConstants {
 
 	public static final String DOMAINS = "domains";
