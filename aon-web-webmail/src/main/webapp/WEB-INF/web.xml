@@ -231,13 +231,11 @@
 	<servlet>
 		<servlet-name>InputRichText Servlet</servlet-name>
 		<servlet-class>com.code.aon.faces.component.richfaces.inputRichText.InputRichTextServlet</servlet-class>
-		<load-on-startup>1</load-on-startup>
 	</servlet>
 	<servlet-mapping>
 		<servlet-name>InputRichText Servlet</servlet-name>
 		<url-pattern>/fckfaces/*</url-pattern>
 	</servlet-mapping> 
-
 
 	<!-- Deploy Servlet 
 	<servlet>
