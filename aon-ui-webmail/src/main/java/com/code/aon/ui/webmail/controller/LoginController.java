@@ -1,10 +1,8 @@
 package com.code.aon.ui.webmail.controller;
 
-import java.security.Principal;
-
-import javax.faces.context.FacesContext;
 import javax.faces.event.AbortProcessingException;
 
+import com.code.aon.bridge.plugin.Utils;
 import com.code.aon.jaas.auth.AuthPrincipal;
 import com.code.aon.ldap.AbstractLdap;
 import com.code.aon.ldap.AonDN;
@@ -67,17 +65,6 @@ public class LoginController extends AbstractLdap implements ILdapConstants {
     	return LOGIN_ERROR;
     }
 	
-	public static AuthPrincipal getPrincipal() {
-		AuthPrincipal user = null;
-		Principal principal = FacesContext.getCurrentInstance().getExternalContext().getUserPrincipal();
-		if ( principal instanceof AuthPrincipal ) {
-			user = (AuthPrincipal) principal;
-		} else {
-			user = new AuthPrincipal( principal.getName() );
-		}
-		return user;
-	}
-	
 	private Entry getAonUser( AuthPrincipal principal ) {
 		Entry entry = null;
 		try {
@@ -95,7 +82,7 @@ public class LoginController extends AbstractLdap implements ILdapConstants {
 	
     private void login() {
 		System.out.println("LoginController -> login");
-		this.mailUser = getPrincipal();
+		this.mailUser = Utils.getAuthPrincipal();
    		System.out.println(">>>>>>>>>>>>>>>>>> user.getShortName " + mailUser.getShortName());
    		this.aonUser = getAonUser(this.mailUser);
     }

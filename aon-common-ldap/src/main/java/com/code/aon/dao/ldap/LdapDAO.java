@@ -100,6 +100,10 @@ public class LdapDAO extends AbstractLdap implements IDAO  {
 		}		
 		return dn.toString();
 	}
+
+	public boolean exists( String id ) throws DAOException {
+		return exists( id, this.metadata.getMainObjectClass() );
+	}
 	
 	@Override
 	public int getCount(Criteria criteria) throws DAOException {
