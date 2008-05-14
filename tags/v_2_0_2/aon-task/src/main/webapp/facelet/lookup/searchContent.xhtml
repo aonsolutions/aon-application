@@ -1,0 +1,58 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:aon="http://www.code.es/aon-ice-components">
+<body>
+
+<ui:composition>
+
+	<!-- start toolbar navigation -->
+	<aon:div styleClass="aon-content-toolbar">
+		<aon:div styleClass="aon-content-toolbar-internal">
+			<aon:div styleClass="aon-content-toolbar-item-group">
+
+				<aon:commandButton id="search" value="#{bundle.aon_search}"
+					accesskey="#{bundle.aon_key_search}"
+					actionListener="#{lookup.onFilterSearch}"
+					styleClass="aon-content-toolbar-item"
+					onmouseout="this.className='aon-content-toolbar-item'"
+					onmouseover="this.className='aon-content-toolbar-item aon-content-toolbar-item-hover'"/>
+				<aon:commandButton id="cancel" value="#{bundle.aon_cancel}"
+					accesskey="#{bundle.aon_key_cancel}" 				
+					actionListener="#{lookup.onCloseWindow}"
+					styleClass="aon-content-toolbar-item aon-content-toolbar-item-cancel"
+					onmouseover="this.className='aon-content-toolbar-item aon-content-toolbar-item-hover aon-content-toolbar-item-cancel'"
+					onmouseout="this.className='aon-content-toolbar-item aon-content-toolbar-item-cancel'"/>
+				<aon:commandButton id="clear" type="reset"
+					value="#{bundle.aon_clear}" styleClass="aon-content-toolbar-item"
+					onmouseout="this.className='aon-content-toolbar-item'"
+					onmouseover="this.className='aon-content-toolbar-item aon-content-toolbar-item-hover'"/>
+			</aon:div>
+		</aon:div>
+	</aon:div>
+	<!-- end toolbar navigation -->
+
+	<aon:div styleClass="aon-content-subtitle">
+		<aon:div styleClass="aon-content-subtitle-internal">
+			<aon:outputText value="#{bundle.aon_search}" />
+		</aon:div>
+	</aon:div>
+
+	
+	<aon:div styleClass="aon-popup-scroll-Body">
+		<aon:div styleClass="aon-scroll-area-internal">
+			<aon:panelGrid columns="2" styleClass="aon-form-table"
+				columnClasses="aon-form-table-column-odd,aon-form-table-column-even">
+
+				<ui:include src="#{lookup.searchPagePath}" />
+
+			</aon:panelGrid>
+		</aon:div>
+	</aon:div>
+
+</ui:composition>
+
+</body>
+</html>

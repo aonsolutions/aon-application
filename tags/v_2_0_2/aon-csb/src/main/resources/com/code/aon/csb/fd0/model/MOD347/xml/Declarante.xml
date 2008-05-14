@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<register name="Declarante">
+
+ <field name="type" value="1" format="Numeric" pattern="9(1)" />
+ <field name="modelo" value="347" format="Numeric" pattern="9(3)" />
+ <field name="ejercicio" value="bean" bean="DEPONENT" property="year" format="Numeric" pattern="9(4)" />
+ <field name="nif" value="bean" bean="DEPONENT" property="code" format="Nif" pattern="X(9)" />
+ <field name="nombre" value="bean" bean="DEPONENT" property="name" format="AlphaNumeric" pattern="X(40)" />
+ <field name="tipo_soporte" value="bean" bean="DEPONENT" property="type" format="Alphabetic" pattern="X(1)" />
+ <field name="telfcont" value="bean" bean="DEPONENT" property="relPhone" format="Numeric" pattern="9(9)" />
+ <field name="perscont" value="bean" bean="DEPONENT" property="relName" format="AlphaNumeric" pattern="X(40)" />
+ <field name="justificante" value="bean" bean="DEPONENT" property="justify" format="Numeric" pattern="9(13)" />
+ <field name="complementaria" value="bean" bean="DEPONENT" property="complementary" format="Alphabetic" pattern="X(1)" />
+ <field name="sustitutiva" value="bean" bean="DEPONENT" property="replaces" format="Alphabetic" pattern="X(1)" />
+ <field name="justificante_sustitutiva" value="bean" bean="DEPONENT" property="replacedJustify" format="Numeric" pattern="9(13)" />
+ <field name="c001" value="bean" bean="DEPONENT" property="c001" format="Numeric" pattern="9(9)" />
+ <field name="c002" value="bean" bean="DEPONENT" property="c002" format="Numeric" pattern="9(13)V99" />
+ <field name="c003" value="bean" bean="DEPONENT" property="c003" format="Numeric" pattern="9(9)" />
+ <field name="c004" value="bean" bean="DEPONENT" property="c004" format="Numeric" pattern="9(13)V99" />
+ <field name="free1" value=" " format="Alphabetic" pattern="X(54)" />
+ <field name="free2" value=" " format="Alphabetic" pattern="X(13)" />
+ 
+</register>

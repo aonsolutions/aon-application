@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<view description="Factura" label="Factura" sqlSentence="SELECT invoice.id, invoice.series, invoice.number, invoice.issue_date, invoice.registry, invoice.raddress &#xd;&#xa;FROM invoice,invoice_detail, delivery_detail, delivery, tas_delivery&#xd;&#xa;WHERE invoice_detail.invoice = invoice.id&#xd;&#xa; AND invoice_detail.delivery_detail = delivery_detail.id&#xd;&#xa; AND delivery_detail.delivery = delivery.id&#xd;&#xa; AND tas_delivery.delivery = delivery.id&#xd;&#xa; AND tas_delivery.support_order = ?&#xd;&#xa;GROUP BY invoice.series, invoice.number, invoice.issue_date, invoice.registry, invoice.raddress &#xd;&#xa;">
+    <parameters>
+        <parameter name="support_order" type="INTEGER"/>
+    </parameters>
+    <results>
+        <result accessName="INVOICE_ID" columnId="id" export="true"
+            label="CODIGO" tableId="invoice" type="INTEGER"/>
+        <result accessName="INVOICE_SERIES" columnId="series"
+            export="true" label="SERIE" tableId="invoice" type="STRING"/>
+        <result accessName="INVOICE_NUMBER" columnId="number"
+            export="true" label="NUMERO" tableId="invoice" type="INTEGER"/>
+        <result accessName="INVOICE_DATE" columnId="issue_date"
+            export="true" label="FECHA" tableId="invoice" type="DATE"/>
+        <result accessName="INVOICE_REGISTRY" columnId="registry"
+            export="true" label="registry" tableId="invoice" type="INTEGER"/>
+        <result accessName="INVOICE_RADDRESS" columnId="raddress"
+            export="true" label="raddress" tableId="invoice" type="INTEGER"/>
+    </results>
+    <dataModelReferences/>
+</view>

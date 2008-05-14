@@ -1,0 +1,165 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:h="http://java.sun.com/jsf/html">
+<body>
+
+<ui:composition template="/facelet/templates/aon.ui.form.xhtml">
+
+	<ui:define name="head">
+		<ui:include src="/facelet/shared/head.xhtml" />
+		<t:stylesheet path="/jscalendar-1.0/calendar-system.css" />
+		<script type='text/javascript'
+			src="${facesContext.externalContext.requestContextPath}/jscalendar-1.0/calendar.js">
+			// nothing
+		</script>
+		<script type='text/javascript'
+			src="${facesContext.externalContext.requestContextPath}/jscalendar-1.0/lang/calendar-es.js">
+			// nothing
+		</script>
+		<script type='text/javascript'
+			src="${facesContext.externalContext.requestContextPath}/jscalendar-1.0/calendar-setup.js">
+			// nothing
+		</script>
+	</ui:define>		
+
+	<ui:define name="content">
+		<h:form id="financeCheckingForm" styleClass="aon-form">
+
+			<t:div styleClass="aon-content-toolbar">
+				<t:div styleClass="aon-content-toolbar-internal">
+				<t:div styleClass="aon-content-toolbar-item-group">
+					<t:commandButton id="search" value="#{bundle.aon_search}"
+						actionListener="#{financeChecking.onSearch}" action="finance_checking_list"
+						styleClass="aon-content-toolbar-item aon-content-toolbar-item-accept"
+						onmouseover="this.className='aon-content-toolbar-item aon-content-toolbar-item-hover aon-content-toolbar-item-accept'"
+						onmouseout="this.className='aon-content-toolbar-item aon-content-toolbar-item-accept'" 
+						accesskey="#{bundle.aon_key_search}"/>
+					<h:commandButton id="clear" value="#{bundle.aon_clear}"
+						type="reset"
+						styleClass="aon-content-toolbar-item aon-content-toolbar-item-reset"
+						onmouseover="this.className='aon-content-toolbar-item aon-content-toolbar-item-hover aon-content-toolbar-item-reset'"
+						onmouseout="this.className='aon-content-toolbar-item aon-content-toolbar-item-reset'" />
+				</t:div>
+				</t:div>
+			</t:div>
+			
+			<t:div styleClass="aon-content-subtitle" id="aon-content-subtitle"
+				forceId="#{true}">
+				<t:div styleClass="aon-content-subtitle-internal">
+				<h:outputText value="#{bundle.aon_search_header}" />
+				</t:div>
+			</t:div>
+			
+			<t:div forceId="#{true}" id="aon-scroll-area">
+				<t:div styleClass="aon-scroll-area-internal">
+					<h:panelGrid columns="2" styleClass="aon-form-table"
+						columnClasses="aon-form-table-column-odd,aon-form-table-column-even">
+
+							<h:outputLabel for="Finance_invoice_series"
+								styleClass="aon-form-input-text-label"
+								value="#{financeBundle.aon_series_number}" />
+							<h:panelGrid columns="2">
+								<t:inputText id="Finance_invoice_series"
+									onblur="toUpperCase(this);"
+									valueChangeListener="#{financeChecking.addExpression}"
+									styleClass="aon-form-input-text" forceId="#{true}" size="3"
+									maxlength="3">
+									<f:validateLength maximum="3" />
+								</t:inputText>
+								<t:inputText id="Finance_invoice_number"
+									valueChangeListener="#{financeChecking.addExpression}"
+									styleClass="aon-form-input-text" forceId="#{true}"
+									size="7" />
+							</h:panelGrid>
+
+							<h:outputLabel
+								styleClass="aon-form-input-text-label aon-form-table-column-odd-label"
+								for="Finance_dueDate1" value="#{financeBundle.finance_due_date}" />
+							<t:div>
+								<t:div styleClass="aon-form-nowrap aon-form-layout-unit aon-form-layout-unit-inline-label-block">
+									<h:outputText value="#{financeBundle.finance_date_from}" 
+									styleClass="aon-form-input-text-label aon-form-layout-label-block"/>
+									<t:inputText styleClass="aon-form-input-text"
+										id="Finance_dueDate1" 
+										forceId="#{true}"
+										valueChangeListener="#{financeChecking.addIssuedate1Expression}"
+										size="10" maxlength="12">
+										<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+											timeZone="#{timeZoneController.timeZoneId}" />
+									</t:inputText>
+									<t:commandButton styleClass="aon-form-calendar-button"
+										id="Finance_dueDate1_button" forceId="#{true}" value=""
+										immediate="true" />
+									<script type="text/javascript">
+									  Calendar.setup( {
+										inputField  : "Finance_dueDate1", button : "Finance_dueDate1_button",
+										ifFormat    : "%d/%m/%Y" } );
+									</script>
+								</t:div>
+								<t:div styleClass="aon-form-nowrap aon-form-layout-unit aon-form-layout-unit-inline-label-block">
+									<h:outputText value="#{financeBundle.finance_date_to}" 
+									styleClass="aon-form-input-text-label aon-form-layout-label-block"/>
+									
+									<t:inputText styleClass="aon-form-input-text"
+										id="Finance_dueDate2" 
+										forceId="#{true}"
+										valueChangeListener="#{financeChecking.addIssuedate2Expression}"
+										size="10" maxlength="12">
+										<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+											timeZone="#{timeZoneController.timeZoneId}" />
+									</t:inputText>
+									<t:commandButton styleClass="aon-form-calendar-button"
+										id="Finance_dueDate2_button" forceId="#{true}" value=""
+										immediate="true" />
+									<script type="text/javascript">
+									  Calendar.setup( {
+										inputField  : "Finance_dueDate2", button : "Finance_dueDate2_button",
+										ifFormat    : "%d/%m/%Y" } );
+									</script>
+								</t:div>
+							</t:div>
+							
+							
+							<h:outputLabel for="Finance_payMethod_id"
+								styleClass="aon-form-input-text-label"
+								value="#{financeBundle.finance_payMethod}" />
+							<h:selectOneMenu id="Finance_payMethod_id"
+								styleClass="aon-form-selectOneMenu-field"
+								converter="IntegerEmptyConverter" forceId="#{true}"
+								valueChangeListener="#{financeChecking.addEqualExpression}">
+								<f:selectItem itemDisabled="true" itemLabel="-" itemValue=""/>
+								<f:selectItems value="#{financeCollections.payMethods}" />
+							</h:selectOneMenu>
+							 
+							<h:outputLabel for="Finance_financeStatus"
+								styleClass="aon-form-input-text-label"
+								value="#{financeBundle.finance_status}" />
+							<h:selectOneMenu id="Finance_financeStatus"
+								styleClass="aon-form-selectOneMenu-field"
+								value="#{financeChecking.pending}"
+								valueChangeListener="#{financeChecking.addStatusExpression}">
+								<f:selectItem itemLabel="#{financeBundle.finance_pending}" itemValue="#{true}" />
+								<f:selectItem itemLabel="#{financeBundle.finance_paid}" itemValue="#{false}" />
+							</h:selectOneMenu>
+							
+							<h:outputLabel for="Finance_amount"
+								styleClass="aon-form-input-text-label"
+								value="#{financeBundle.finance_amount}" />
+							<t:inputText id="Finance_amount"
+									valueChangeListener="#{financeChecking.addExpression}"
+									styleClass="aon-form-input-text" forceId="#{true}"
+									size="31" />
+							
+					</h:panelGrid>
+				</t:div>
+			</t:div>
+		</h:form>
+		<h:form id="placeList" target="list" />
+	</ui:define>
+</ui:composition>
+
+</body>
+</html>

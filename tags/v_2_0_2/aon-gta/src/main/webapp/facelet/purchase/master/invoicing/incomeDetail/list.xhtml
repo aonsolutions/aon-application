@@ -1,0 +1,156 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:h="http://java.sun.com/jsf/html">
+<body>
+
+<ui:composition template="/facelet/templates/aon.ui.content.xhtml">
+
+	<ui:define name="head">
+		<ui:include src="/facelet/shared/head.xhtml" />
+	</ui:define>
+
+	<ui:define name="content">
+
+		<h:form id="incomeDetailList">
+
+			<t:div styleClass="aon-content-toolbar" forceId="#{true}"
+				id="aon-content-toolbar">
+				<t:div styleClass="aon-content-toolbar-internal">
+					<t:div styleClass="aon-content-toolbar-item-group">
+						<t:commandButton value="#{bundle.aon_cancel}" forceId="#{true}"
+							immediate="#{true}" action="purchase_invoicing_form"
+							actionListener="#{income.onCancel}"
+							onclick="return (confirm('#{bundle.aon_cancel_confirm}'))"
+							styleClass="aon-content-toolbar-item aon-content-toolbar-item-cancel"
+							onmouseover="this.className='aon-content-toolbar-item aon-content-toolbar-item-hover aon-content-toolbar-item-cancel'"
+							onmouseout="this.className='aon-content-toolbar-item aon-content-toolbar-item-cancel'" 
+							accesskey="#{bundle.aon_key_cancel}"/>
+					</t:div>
+				</t:div>
+			</t:div>
+
+			<t:div id="aon-scroll-area" forceId="#{true}">
+				<t:div styleClass="aon-scroll-area-internal">
+
+					<h:panelGrid columns="2" cellpadding="0" cellspacing="0"
+						styleClass="aon-form-table"
+						columnClasses="aon-form-table-column-odd,aon-form-table-column-even">
+						
+						<h:outputLabel for="Income_series"
+							styleClass="aon-form-input-text-label"
+							value="#{purchaseBundle.aon_series_number}" />
+						<h:panelGroup>
+							<h:outputText
+								value="#{income.to.series} / #{income.to.number}" />
+						</h:panelGroup>
+
+						<h:outputLabel for="Income_issue_date"
+							value="#{purchaseBundle.aon_date}"
+							styleClass="aon-form-input-text-label" />
+						<t:outputText id="Income_issue_date"
+							value="#{income.to.issueTime}">
+							<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+								timeZone="#{timeZoneController.timeZoneId}" />
+						</t:outputText>
+
+						<t:outputLabel for="Supplier_id"
+							styleClass="aon-form-input-text-label"
+							value="#{purchaseBundle.aon_supplier}" />
+						<h:panelGroup>
+							<t:outputText id="Supplier_id" size="5"
+								value="#{income.to.supplier.id} " />
+							<t:outputText id="Supplier_name" size="20"
+								value="#{income.to.supplier.name} " />
+							<t:outputText id="Supplier_surname" size="20"
+								value="#{income.to.supplier.surname}" />
+						</h:panelGroup>
+
+						<t:outputLabel for="Income_securityLevel"
+							value="#{purchaseBundle.aon_security_level}"
+							styleClass="aon-form-input-text-label" />
+						<t:outputText id="Income_securityLevel"
+							value="#{income.to.securityLevel}" />
+
+						<t:outputLabel for="Income_status"
+							styleClass="aon-form-input-text-label"
+							value="#{purchaseBundle.aon_status}" />
+						<t:outputText id="Income_status" value="#{income.to.incomeStatus}" />
+					</h:panelGrid>
+
+					<t:div styleClass="aon-form-group-body">
+						<t:dataTable id="incomeDetailDataList" var="to"
+							value="#{incomeDetail.model}"
+							rendered="#{incomeDetail.model.rowCount > 0}"
+							styleClass="aon-edit-table" headerClass="aon-edit-table-header"
+							footerClass="aon-edit-table-footer"
+							rowClasses="aon-table-row-odd,aon-table-row-even"
+							columnClasses="aon-edit-table-body aon-edit-table-body-string,aon-edit-table-body aon-edit-table-body-string,aon-edit-table-body aon-edit-table-body-number,aon-edit-table-body aon-edit-table-body-number,aon-edit-table-body aon-edit-table-body-number">
+
+							<h:column>
+								<f:facet name="header">
+									<h:outputText value="#{productBundle.item_item}" />
+								</f:facet>
+								<t:outputText value="#{to.item.product.code}" />
+								<t:commandLink immediate="#{true}"
+									styleClass="aon-table-row-selected"
+									actionListener="#{incomeDetail.onSelect}" action="income_lines" />
+							</h:column>
+
+							<h:column>
+								<f:facet name="header">
+									<t:outputText value="#{productBundle.item_description}" />
+								</f:facet>
+								<t:outputText id="Item_description"
+									value="#{to.description}" />
+							</h:column>
+
+							<t:column width="60" >
+								<f:facet name="header">
+									<t:outputText value="#{purchaseBundle.aon_quantity}" />
+								</f:facet>
+								<t:outputText value="#{to.quantity}">
+									<f:convertNumber pattern="#,##0.00" />
+								</t:outputText>
+							</t:column>
+
+							<t:column width="60" >
+								<f:facet name="header">
+									<t:outputText value="#{purchaseBundle.aon_price}" />
+								</f:facet>
+								<t:outputText id="Item_price" value="#{to.price}"
+									forceId="#{true}">
+									<f:convertNumber pattern="#,##0.00" />
+								</t:outputText>
+							</t:column>
+							
+							<t:column width="60" >
+								<f:facet name="header">
+									<t:outputText value="#{purchaseBundle.aon_discount}" />
+								</f:facet>
+								<t:outputText id="Item_price" value="#{to.discountExpression.discountExpr}"
+									forceId="#{true}">
+									<f:convertNumber pattern="#,##0.00" />
+								</t:outputText>
+							</t:column>
+
+						</t:dataTable>
+					</t:div>
+
+					<ui:include src="/facelet/shared/dataScroller.xhtml">
+						<ui:param name="dataTable" value="incomeDetailDataList" />
+						<ui:param name="model" value="#{incomeDetail.model}" />
+						<ui:param name="showNote" value="#{true}" />
+					</ui:include>
+
+				</t:div>
+			</t:div>
+		</h:form>
+		<h:form id="placeList" target="list" />
+	</ui:define>
+</ui:composition>
+
+</body>
+</html>

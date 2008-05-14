@@ -1,0 +1,105 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:aon="http://www.code.es/aon-ice-components"
+	xmlns:h="http://java.sun.com/jsf/html">
+<body>
+
+<ui:composition>
+
+	<!-- start toolbar navigation -->
+	
+	<aon:div rendered="#{lookup.showSearchButtons}" >
+		<aon:panelGrid columns="2" dir="true"  styleClass="aon-title-toolbar"
+			cellpadding="0" cellspacing="0" columnClasses="aon-content-title,aon-content-toolbar">
+	
+			<aon:div styleClass="aon-content-title-internal">
+				<aon:outputText value="#{menuBundle.cse_diccionario}"/>
+			</aon:div>		
+
+			<aon:div styleClass="aon-content-toolbar-internal">
+				<aon:div styleClass="aon-content-toolbar-item-group">
+					<aon:commandButton value="#{bundle.aon_search}"
+						actionListener="#{lookup.onListCancel}"				
+						styleClass="aon-content-toolbar-item aon-icon-accept"
+						onmouseover="this.className='aon-content-toolbar-item aon-content-toolbar-item-hover aon-icon-accept'"
+						onmouseout="this.className='aon-content-toolbar-item aon-icon-accept'"
+						accesskey="#{bundle.aon_key_search}"/>
+					<aon:commandButton value="#{bundle.aon_cancel}"
+						actionListener="#{lookup.onCloseWindow}"
+						styleClass="aon-content-toolbar-item aon-icon-cancel"
+						onmouseover="this.className='aon-content-toolbar-item aon-content-toolbar-item-hover aon-icon-cancel'"
+						onmouseout="this.className='aon-content-toolbar-item aon-icon-cancel'"
+						accesskey="#{bundle.aon_key_cancel}" />
+				</aon:div>
+			</aon:div>			
+		</aon:panelGrid>
+	</aon:div>
+	
+
+		
+	<!-- end toolbar navigation -->
+	<aon:div styleClass="aon-scroll-area aon-lookup-area">
+		<aon:div styleClass="aon-scroll-area-internal">		
+		
+				<aon:dataTable id="#{lookup.beanName}Data" styleClass="aon-dataTable"
+					var="to" value="#{lookup.model}" rows="20">
+
+					<ui:include src="#{lookup.listPagePath}" />
+
+				</aon:dataTable>
+			
+
+			<aon:div styleClass="aon-note" rendered="#{model.rowCount == 0}">
+				<aon:div styleClass="aon-note-internal">
+						<aon:outputText value="#{bundle.aon_search_no_results}" />
+				</aon:div>
+			</aon:div>
+
+			<aon:div styleClass="aon-dataScroller"
+				rendered="#{lookup.model.rowCount>0}">
+				<aon:panelGrid columns="2"
+					columnClasses="aon-datascroller-text,aon-datascroller-buttons">
+					<aon:dataPaginator for="#{lookup.beanName}Data"
+						rowsCountVar="rowsCount" firstRowIndexVar="firstRowIndex"
+						lastRowIndexVar="lastRowIndex">
+						<h:outputFormat value="#{bundle.aon_scroll}">
+							<f:param value="#{firstRowIndex}" />
+							<f:param value="#{lastRowIndex}" />
+							<f:param value="#{rowsCount}" />
+						</h:outputFormat>
+					</aon:dataPaginator>
+					<aon:dataPaginator for="#{lookup.beanName}Data" fastStep="5"
+						paginator="true" paginatorMaxPages="5"
+						rendered="#{lookup.model.rowCount>20}">
+
+						<f:facet name="first">
+							<aon:div styleClass="aon-datascroller-button-first">&#160;</aon:div>
+						</f:facet>
+						<f:facet name="last">
+							<aon:div styleClass="aon-datascroller-button-last">&#160;</aon:div>
+						</f:facet>
+						<f:facet name="previous">
+							<aon:div styleClass="aon-datascroller-button-previous">&#160;</aon:div>
+						</f:facet>
+						<f:facet name="next">
+							<aon:div styleClass="aon-datascroller-button-next">&#160;</aon:div>
+						</f:facet>
+						<f:facet name="fastforward">
+							<aon:div styleClass="aon-datascroller-button-fastforward">&#160;</aon:div>
+						</f:facet>
+						<f:facet name="fastrewind">
+							<aon:div styleClass="aon-datascroller-button-fastrewind">&#160;</aon:div>
+						</f:facet>
+					</aon:dataPaginator>
+
+				</aon:panelGrid>
+			</aon:div>
+		</aon:div>
+	</aon:div>
+</ui:composition>
+
+</body>
+</html>

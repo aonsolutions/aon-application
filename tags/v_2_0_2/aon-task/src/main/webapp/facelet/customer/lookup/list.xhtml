@@ -1,0 +1,27 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:aon="http://www.code.es/aon-ice-components">
+<body>
+
+<ui:composition>
+
+	<aon:column>
+		<f:facet name="header">
+			<aon:outputText value="#{projectBundle.aon_customer}" />
+		</f:facet>
+
+		<ui:include src="/facelet/lookup/rowSelector.xhtml" />
+
+		<aon:outputText value="#{to.registry.name} #{to.registry.surname}">
+
+		</aon:outputText>
+
+	</aon:column>
+
+</ui:composition>
+
+</body>
+</html>

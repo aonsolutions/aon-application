@@ -1,0 +1,136 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:aon="http://www.code.es/aon-ice-components">
+<body>
+
+<ui:composition template="/facelet/templates/aon.ui.main.xhtml">
+	<ui:define name="content">
+
+		<aon:form id="taskMonitorList">
+
+		<aon:panelGrid columns="2" dir="true" styleClass="aon-title-toolbar"
+		cellpadding="0" cellspacing="0" columnClasses="aon-content-title,aon-content-toolbar">
+			<aon:div styleClass="aon-content-title-internal">
+				<aon:outputText value="#{menuBundle.aon_master}"/>
+				<aon:outputText value="#{menuBundle.aon_task_monitor}"/>	  						
+			</aon:div>		
+
+			<!-- start toolbar navigation -->
+			<aon:div styleClass="aon-content-toolbar-internal">
+				<aon:div styleClass="aon-content-toolbar-item-group">
+					<aon:commandButton id="search" value="#{bundle.aon_search}"
+						action="task_monitor_search" actionListener="#{taskMonitor.onEditSearch}"
+						styleClass="aon-content-toolbar-item aon-icon-search"
+						onmouseout="this.className='aon-content-toolbar-item aon-icon-search'"
+						onmouseover="this.className='aon-content-toolbar-item aon-icon-search aon-content-toolbar-item-hover'"
+						accesskey="#{bundle.aon_key_search}"/>
+				</aon:div>
+			</aon:div>
+			<!-- end toolbar navigation -->
+		</aon:panelGrid>
+		
+		<!--  aon-region-body -->
+		<aon:div styleClass="aon-scroll-area">
+				<aon:div styleClass="aon-scroll-area-internal">
+					
+					<aon:dataTable id="taskMonitorDataList" 
+						value="#{taskMonitor.model}" var="to" rows="20"
+						rendered="#{taskMonitor.model.rowCount > 0}"
+						styleClass="aon-dataTable">
+  
+							<aon:column>
+								<f:facet name="header">
+									<aon:outputText value="#{projectBundle.aon_description}" />
+								</f:facet>
+								<aon:outputText value="#{to.description}"/>
+							</aon:column>
+
+							<aon:column>
+								<f:facet name="header">
+									<aon:outputText value="#{customerBundle.customer_customer}" />
+								</f:facet>
+								<aon:outputText value="#{to.dossier.customer.registry.name} #{to.dossier.customer.registry.surname}"/>
+							</aon:column>
+
+							<aon:column>
+								<f:facet name="header">
+									<aon:outputText value="#{projectBundle.dossier_dossier}" />
+								</f:facet>
+								<aon:outputText value="#{to.dossier.number}"/>
+							</aon:column>
+
+							<aon:column>
+								<f:facet name="header">
+									<aon:outputText value="#{projectBundle.aon_initial_date}" />
+								</f:facet>
+								<aon:outputText value="#{to.startDate}">
+									<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+										timeZone="#{timeZoneController.timeZoneId}"/>
+								</aon:outputText>		
+							</aon:column>
+
+							<aon:column>
+								<f:facet name="header">
+									<aon:outputText value="#{projectBundle.aon_final_date}" />
+								</f:facet>
+								<aon:outputText value="#{to.dueDate}">
+									<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+										timeZone="#{timeZoneController.timeZoneId}"/>
+								</aon:outputText>		
+							</aon:column>
+
+							<aon:column>
+								<f:facet name="header">
+									<aon:outputText value="#{projectBundle.task_priority}" />
+								</f:facet>
+								<aon:outputText value="#{to.priority}"/>
+							</aon:column>
+
+							<aon:column>
+								<f:facet name="header">
+									<aon:outputText value="#{projectBundle.task_percent_abv}" />
+								</f:facet>
+								<aon:outputText value="#{to.percent}"/>
+							</aon:column>
+
+							<aon:column>
+								<f:facet name="header">
+									<aon:outputText value="#{projectBundle.aon_status}" />
+								</f:facet>
+								<aon:outputText value="#{to.status}"/>
+							</aon:column>
+
+							<aon:column>
+								<f:facet name="header">
+									<aon:outputText value="#{projectBundle.aon_work_group}" />
+								</f:facet>
+								<aon:outputText value="#{to.workGroup.description}"/>
+							</aon:column>
+
+							<aon:column>
+								<f:facet name="header">
+									<aon:outputText value="#{projectBundle.task_user}" />
+								</f:facet>
+								<aon:outputText value="#{to.user.name}"/>
+							</aon:column>
+
+						</aon:dataTable>
+						
+						<ui:include src="/facelet/shared/dataScroller.xhtml">
+							<ui:param name="dataTable" value="taskMonitorDataList" />
+							<ui:param name="model" value="#{taskMonitor.model}" />
+							<ui:param name="showNote" value="#{true}" />
+						</ui:include>					
+					
+				</aon:div>
+			</aon:div>
+		</aon:form>
+	</ui:define>
+
+</ui:composition>
+
+</body>
+</html>

@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<workstation description="" label="Comparativa Beneficios 2">
+    <external-parameters>
+        <external-parameter defaultValue="${currentMonthFirstDay}"
+            label="Fecha Inventario Inicial" name="inidate" type="DATE"/>
+        <external-parameter defaultValue="${currentMonthLastDay}"
+            label="Fecha Inventario Final" name="enddate" type="DATE"/>
+    </external-parameters>
+    <node iconClose="icons/icon_beneficio.gif"
+        iconOpen="icons/icon_beneficio.gif" label="Comparativa Beneficios">
+        <layout type="COLUMN"/>
+        <contents>
+            <contentComposite label="Beneficios por grupo familia">
+                <layout type="COLUMN"/>
+                <contents>
+                    <viewContent
+                        id="view/Beneficios/Grupos Familias Compras.exvw.xml" type="LIST">
+                        <parameters>
+                            <parameter name="inidate"/>
+                            <parameter name="inidate"/>
+                            <parameter name="enddate"/>
+                            <parameter name="inidate"/>
+                            <parameter name="enddate"/>
+                            <parameter name="enddate"/>
+                        </parameters>
+                    </viewContent>
+                </contents>
+            </contentComposite>
+            <viewContent id="view/Beneficios/Total Beneficios.exvw.xml" type="LIST">
+                <parameters>
+                    <parameter name="inidate"/>
+                    <parameter name="inidate"/>
+                    <parameter name="enddate"/>
+                    <parameter name="inidate"/>
+                    <parameter name="enddate"/>
+                    <parameter name="enddate"/>
+                </parameters>
+            </viewContent>
+        </contents>
+        <node dynamicViewId="view/Beneficios/Grupos Familias.exvw.xml"
+            iconClose="icons/icon_categoria.gif" label="${CATEGORY_GROUP_NAME}">
+            <dynamicParameters>
+                <parameter name="inidate"/>
+                <parameter name="enddate"/>
+            </dynamicParameters>
+            <layout type="COLUMN"/>
+            <contents>
+                <viewContent
+                    id="view/Beneficios/Beneficios por grupo familia.exvw.xml" type="LIST">
+                    <parameters>
+                        <parameter name="CATEGORY_GROUP_ID"/>
+                        <parameter name="inidate"/>
+                        <parameter name="CATEGORY_GROUP_ID"/>
+                        <parameter name="inidate"/>
+                        <parameter name="enddate"/>
+                        <parameter name="CATEGORY_GROUP_ID"/>
+                        <parameter name="inidate"/>
+                        <parameter name="enddate"/>
+                        <parameter name="CATEGORY_GROUP_ID"/>
+                        <parameter name="enddate"/>
+                    </parameters>
+                </viewContent>
+            </contents>
+        </node>
+    </node>
+</workstation>

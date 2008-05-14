@@ -1,0 +1,188 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:aon="http://www.code.es/aon-ice-components"
+	xmlns:c="http://java.sun.com/jstl/core">
+<body>
+
+<ui:composition template="/facelet/templates/aon.ui.main.xhtml">
+
+	<ui:define name="content">
+
+		<aon:form id="ICEdossierTypeForm">
+
+			<aon:panelGrid columns="2" dir="true" styleClass="aon-title-toolbar"
+				cellpadding="0" cellspacing="0" columnClasses="aon-content-title,aon-content-toolbar">
+					
+				<aon:div styleClass="aon-content-title-internal">
+					<aon:outputText value="#{menuBundle.aon_auxiliary}" />
+					<aon:outputText value="#{menuBundle.aon_dossier_type}" />					
+				</aon:div>
+			
+				<aon:div styleClass="aon-content-toolbar-internal">
+					<aon:div styleClass="aon-content-toolbar-item-group">
+						<aon:confirmButton id="save"
+							value="#{bundle.aon_save}" rendered="#{ICEdossierType.to!=null or ICEdossierType.new}"
+							styleClass="aon-content-toolbar-item aon-icon-accept"
+							confirmTitle="Confirmation Dialog" confirmMessage="#{bundle.aon_save_confirm}"
+							confirmActionListener="#{ICEdossierType.accept}"
+							onmouseout="this.className='aon-content-toolbar-item aon-icon-accept'"
+							onmouseover="this.className='aon-content-toolbar-item aon-icon-accept aon-content-toolbar-item-hover'"
+							accesskey="#{bundle.aon_key_save}"/>
+						<aon:confirmButton id="cancel"
+							value="#{bundle.aon_cancel}" rendered="#{ICEdossierType.to!=null or ICEdossierType.new}"
+							styleClass="aon-content-toolbar-item aon-icon-cancel" immediate="#{true}"
+							confirmTitle="Confirmation Dialog" confirmMessage="#{bundle.aon_cancel_confirm}"
+							confirmActionListener="#{ICEdossierType.onCancel}" confirmAction="dossier_type_list"
+							onmouseout="this.className='aon-content-toolbar-item aon-icon-cancel'"
+							onmouseover="this.className='aon-content-toolbar-item aon-icon-cancel aon-content-toolbar-item-hover'"
+							accesskey="#{bundle.aon_key_cancel}"/>
+						<aon:confirmButton id="remove"
+							value="#{bundle.aon_remove}" rendered="#{!ICEdossierType.new}"
+							styleClass="aon-content-toolbar-item aon-icon-delete" immediate="true"
+							confirmTitle="Confirmation Dialog" confirmMessage="#{bundle.aon_remove_confirm}"
+							confirmActionListener="#{ICEdossierType.onRemove}" confirmAction="dossier_type_list"
+							onmouseout="this.className='aon-content-toolbar-item aon-icon-delete'"
+							onmouseover="this.className='aon-content-toolbar-item aon-icon-delete aon-content-toolbar-item-hover'"
+							accesskey="#{bundle.aon_key_remove}"/>
+						<aon:commandButton id="search"
+							value="#{bundle.aon_search}" immediate="true"
+							action="dossier_type_search" actionListener="#{ICEdossierType.onEditSearch}"
+							styleClass="aon-content-toolbar-item aon-icon-search"
+							onmouseout="this.className='aon-content-toolbar-item aon-icon-search'"
+							onmouseover="this.className='aon-content-toolbar-item aon-icon-search aon-content-toolbar-item-hover'"
+							accesskey="#{bundle.aon_key_search}"/>
+						<aon:commandButton id="reset" value="#{bundle.aon_reset}"
+							actionListener="#{ICEdossierType.onReset}" rendered="#{!ICEdossierType.new}"
+							styleClass="aon-content-toolbar-item aon-icon-reset"
+							onmouseout="this.className='aon-content-toolbar-item aon-icon-reset'"
+							onmouseover="this.className='aon-content-toolbar-item aon-icon-reset aon-content-toolbar-item-hover'"
+							accesskey="#{bundle.aon_key_new}" />
+					</aon:div>
+				</aon:div>
+			</aon:panelGrid>
+			
+			<aon:div styleClass="aon-scroll-area">
+				<aon:div styleClass="aon-scroll-area-internal">
+				
+					<aon:div styleClass="aon-content-subtitle" id="aon-content-subtitle">
+						<aon:div styleClass="aon-content-subtitle-internal">
+							<aon:outputText
+								value="#{ICEdossierType.new?(bundle.aon_reset):(bundle.aon_editing)}" />
+						</aon:div>
+					</aon:div>			
+
+
+						<aon:panelGrid columns="2" dir="true" styleClass="aon-formTable"
+						cellpadding="0" cellspacing="0"
+							columnClasses="aon-formTable-column-odd,aon-formTable-column-even">
+	
+							<aon:outputLabel for="DossierType_description"
+								value="#{projectBundle.aon_description}" />
+							<aon:inputText id="DossierType_description"
+								styleClass="aon-inputText"
+								required="true" size="60" maxlength="45"
+								value="#{ICEdossierType.to.description}" />
+
+						</aon:panelGrid>
+
+
+					<aon:div styleClass="aon-form-group" rendered="#{!ICEdossierType.new}">
+						<aon:div styleClass="aon-form-group-title">
+							<aon:outputLabel for="ICEdossierTypeDataList" value="#{projectBundle.activity_activity_types}" />
+						</aon:div>
+
+						<aon:div styleClass="aon-form-group-body">
+							<aon:editDataTable id="activityTypeDataList" var="to"
+								value="#{activityType.model}" rows="20"
+								styleClass="aon-editTable"
+								columnClasses="aon-editTable-icon,
+									aon-editTable-cell,
+									aon-editTable-buttons">
+  									
+								<aon:column>
+									<aon:rowSelector multiple="false"
+										toggleOnClick="#{activityType.to == null}"
+										selectionListener="#{activityType.onSelect}" />
+									<f:facet name="header">
+										<aon:outputText value="&#160;" />
+									</f:facet>
+									<aon:outputText value="&#160;" />
+									<f:facet name="footer">
+										<aon:div>
+											<aon:commandButton alt="[#{bundle.aon_reset}]"
+												styleClass="aon-editTable-button aon-icon-reset"
+												actionListener="#{activityType.onReset}" value=""
+												rendered="#{!activityType.new}"
+												accesskey="#{bundle.aon_key_new_line}"/>
+										</aon:div>
+									</f:facet>
+								</aon:column>
+
+								<aon:column>
+									<f:facet name="header">
+										<aon:outputText value="#{projectBundle.aon_description}" />
+									</f:facet>
+									<aon:outputText value="#{to.description}" rendered="#{to!=activityType.to}" />
+									<aon:inputText styleClass="aon-form-input-text " required="true"
+										rendered="#{to==activityType.to}" size="60"
+										value="#{activityType.to.description}" maxlength="45" />
+									<f:facet name="footer">
+										<aon:inputText styleClass="aon-form-input-text" required="true"
+											rendered="#{activityType.new}" size="60"
+											value="#{activityType.to.description}" maxlength="45" />
+									</f:facet>
+								</aon:column>
+						
+								<aon:column>
+									<f:facet name="header">
+										<aon:outputText value="&#160;"/>
+									</f:facet>
+									<aon:div>
+										<f:verbatim rendered="#{to!=activityType.to}">&#160;</f:verbatim>
+										<aon:commandButton title="#{bundle.aon_save}"
+											actionListener="#{activityType.onAccept}"
+											rendered="#{to==activityType.to}" value=""
+											styleClass="aon-editTable-button aon-icon-accept"
+											accesskey="#{bundle.aon_key_save_line}" />
+										<aon:commandButton title="#{bundle.aon_cancel}"
+											actionListener="#{activityType.onCancel}" immediate="#{true}"
+											styleClass="aon-editTable-button aon-icon-cancel"
+											value="" rendered="#{to==activityType.to}"
+											accesskey="#{bundle.aon_key_cancel_line}" />
+										<aon:commandButton title="#{bundle.aon_remove}"
+											actionListener="#{activityType.onRemove}"
+											rendered="#{to==activityType.to}"
+											styleClass="aon-editTable-button aon-icon-delete"
+											value="" accesskey="#{bundle.aon_key_remove_line}" />
+									</aon:div>
+									<f:facet name="footer">
+										<aon:div>
+											<f:verbatim rendered="#{!activityType.new}">&#160;</f:verbatim>
+											<aon:commandButton title="#{bundle.aon_save}"
+												actionListener="#{activityType.onAccept}"
+												rendered="#{activityType.new}" value=""
+												styleClass="aon-editTable-button aon-icon-accept"
+												accesskey="#{bundle.aon_key_save_line}" />
+											<aon:commandButton title="#{bundle.aon_cancel}"
+												actionListener="#{activityType.onCancel}" immediate="#{true}"
+												rendered="#{activityType.new}"
+												styleClass="aon-editTable-button aon-icon-cancel"
+												value="" accesskey="#{bundle.aon_key_cancel_line}" />
+										</aon:div>
+									</f:facet>
+								</aon:column>
+							</aon:editDataTable>
+						</aon:div>
+					</aon:div>
+					
+				</aon:div>
+			</aon:div>
+		</aon:form>
+
+	</ui:define>
+</ui:composition>
+
+</body>
+</html>

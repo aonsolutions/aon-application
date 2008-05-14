@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<view description="Orden de Reparacion" label="Orden de Reparacion" sqlSentence="SELECT CONCAT(support_order.series,&quot;/&quot;,support_order.number),&#xd;&#xa;       support_order.start_date, support_order.target, &#xd;&#xa;registry.document, CONCAT_WS(&quot;, &quot;, registry.surname, registry.name)&#xd;&#xa;FROM support_order, tas_item, registry&#xd;&#xa;WHERE tas_item.id = support_order.tas_item &#xd;&#xa;  AND tas_item.publicCode = ?&#xd;&#xa;  AND support_order.target = registry.id&#xd;&#xa;ORDER BY support_order.start_date DESC">
+    <parameters>
+        <parameter label="plate_number" name="plate_number" type="STRING"/>
+    </parameters>
+    <results>
+        <result accessName="SERIE_NUMERO"
+            columnId="CONCAT(support_order.series,&quot;/&quot;,support_order.number)"
+            label="SERIE/NUMERO" type="STRING"/>
+        <result accessName="SUPPORT_ORDER_DATE" columnId="start_date"
+            label="FECHA" tableId="support_order" type="DATE"/>
+        <result accessName="REGISTRY_ID" columnId="target"
+            label="CLIENTE" tableId="support_order" type="INTEGER"/>
+        <result accessName="document" columnId="document" label="NIF"
+            tableId="registry" type="STRING"/>
+        <result accessName="registry_name"
+            columnId="CONCAT_WS(&quot;, &quot;, registry.surname, registry.name)"
+            label="NOMBRE CLIENTE" type="STRING"/>
+    </results>
+    <dataModelReferences/>
+</view>

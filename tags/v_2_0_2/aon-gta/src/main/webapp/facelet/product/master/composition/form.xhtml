@@ -1,0 +1,407 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:h="http://java.sun.com/jsf/html">
+<body>
+
+<ui:composition template="/facelet/templates/aon.ui.content.xhtml">
+	<ui:define name="head">
+		<ui:include src="/facelet/shared/head.xhtml" />
+		<script type='text/javascript'
+			src="${facesContext.externalContext.requestContextPath}/js/itemLookup.js">
+			// nothing
+		</script>
+		<script type='text/javascript'
+			src="${facesContext.externalContext.requestContextPath}/js/Calculations.js">
+			// nothing
+		</script>
+		<script type='text/javascript'
+			src="${facesContext.externalContext.requestContextPath}/js/Item.js">
+			// nothing
+		</script>
+	</ui:define>
+
+	<ui:define name="content">
+
+		<h:form id="compositionForm">
+			<t:div styleClass="aon-content-toolbar" id="aon-content-toolbar"
+				forceId="#{true}">
+				<t:div styleClass="aon-content-toolbar-internal">
+					<t:div styleClass="aon-content-toolbar-item-group">
+						<t:commandButton id="save" value="#{bundle.aon_save}"
+							forceId="#{true}" actionListener="#{composition.accept}"
+							onclick="return (confirm('#{bundle.aon_save_confirm}'))"
+							styleClass="aon-content-toolbar-item aon-content-toolbar-item-save"
+							onmouseover="this.className='aon-content-toolbar-item aon-content-toolbar-item-hover aon-content-toolbar-item-save'"
+							onmouseout="this.className='aon-content-toolbar-item aon-content-toolbar-item-save'" 
+							disabled="#{compositionDetail.to!=null}"
+							accesskey="#{bundle.aon_key_save}"/>
+						<h:commandButton id="cancel" value="#{bundle.aon_cancel}"
+							actionListener="#{composition.onCancel}"
+							action="composition_list" immediate="#{true}"
+							onclick="return (confirm('#{bundle.aon_cancel_confirm}'))"
+							styleClass="aon-content-toolbar-item aon-content-toolbar-item-cancel"
+							onmouseover="this.className='aon-content-toolbar-item aon-content-toolbar-item-hover aon-content-toolbar-item-cancel'"
+							onmouseout="this.className='aon-content-toolbar-item aon-content-toolbar-item-cancel'" 
+							disabled="#{compositionDetail.to!=null}"
+							accesskey="#{bundle.aon_key_cancel}"/>
+						<t:commandButton id="remove" value="#{bundle.aon_remove}"
+							forceId="#{true}" actionListener="#{composition.onRemove}"
+							action="composition_list" rendered="#{!composition.new}"
+							onclick="return (confirm('#{bundle.aon_remove_confirm}'))"
+							styleClass="aon-content-toolbar-item aon-content-toolbar-item-delete"
+							onmouseover="this.className='aon-content-toolbar-item aon-content-toolbar-item-hover aon-content-toolbar-item-delete'"
+							onmouseout="this.className='aon-content-toolbar-item aon-content-toolbar-item-delete'" 
+							disabled="#{compositionDetail.to!=null}"
+							accesskey="#{bundle.aon_key_remove}"/>
+						<h:commandButton id="reset" value="#{bundle.aon_reset}"
+							styleClass="aon-content-toolbar-item aon-content-toolbar-item-new"
+							onmouseover="this.className='aon-content-toolbar-item aon-content-toolbar-item-hover aon-content-toolbar-item-new'"
+							onmouseout="this.className='aon-content-toolbar-item aon-content-toolbar-item-new'"
+							actionListener="#{composition.onReset}"
+							rendered="#{!composition.new}" 
+							disabled="#{compositionDetail.to!=null}"
+							accesskey="#{bundle.aon_key_new}"/>
+						<t:commandButton id="search" value="#{bundle.aon_search}"
+							styleClass="aon-content-toolbar-item aon-content-toolbar-item-search"
+							onmouseover="this.className='aon-content-toolbar-item aon-content-toolbar-item-hover aon-content-toolbar-item-search'"
+							onmouseout="this.className='aon-content-toolbar-item aon-content-toolbar-item-search'"
+							forceId="#{true}" actionListener="#{composition.onEditSearch}"
+							action="composition_search" immediate="#{true}" 
+							disabled="#{compositionDetail.to!=null}"
+							accesskey="#{bundle.aon_key_search}"/>
+					</t:div>
+				</t:div>
+			</t:div>
+
+			<t:div styleClass="aon-content-subtitle" id="aon-content-subtitle"
+				forceId="#{true}">
+				<t:div styleClass="aon-content-subtitle-internal">
+					<h:outputText
+						value="#{composition.new?(bundle.aon_reset):(bundle.aon_editing)}" />
+				</t:div>
+			</t:div>
+
+			<t:div id="aon-scroll-area" forceId="#{true}">
+				<t:div styleClass="aon-scroll-area-internal">
+					<h:panelGrid columns="2" dir="true" styleClass="aon-form-table"
+						columnClasses="aon-form-table-column-odd,aon-form-table-column-even">
+
+						<h:outputLabel for="Item_product_code"
+							value="#{productBundle.item_code}"
+							styleClass="aon-form-input-text-label aon-form-table-column-odd-label" />
+						<t:inputText id="Item_product_code" size="10"
+							styleClass="aon-form-input-text" required="#{true}"
+							forceId="#{true}" value="#{composition.to.item.product.code}"
+							onblur="toUpperCase(this);" />
+
+						<h:outputLabel for="Item_full_name"
+							value="#{productBundle.item_name}"
+							styleClass="aon-form-input-text-label aon-form-table-column-odd-label" />
+						<t:inputText id="Item_full_name" size="48"
+							styleClass="aon-form-input-text" required="#{true}"
+							forceId="#{true}" value="#{composition.to.item.product.name}" />
+
+						<h:outputLabel for="Item_category" 
+							value="#{productBundle.item_category}"
+							styleClass="aon-form-selectOneMenu-label aon-form-table-column-odd-label" />
+						<h:selectOneMenu id="Item_category"
+							styleClass="aon-form-selectOneMenu-field" 
+							forceId="#{true}" value="#{composition.to.item.product.category.id}">
+							<f:selectItems value="#{productCollections.categories}" />
+						</h:selectOneMenu>
+			
+						<h:outputLabel for="Item_price"
+							value="#{productBundle.item_price}"
+							styleClass="aon-form-input-text-label aon-form-table-column-odd-label" />
+						<t:inputText id="Item_price" size="10"
+							styleClass="aon-form-input-text" required="#{true}"
+							forceId="#{true}" value="#{composition.to.price}"
+							onblur="onExit(this);calculate(this);">
+							<f:validateDoubleRange />
+						</t:inputText>
+
+						<h:outputLabel for="Tax_id" 
+							value="#{productBundle.item_tax}"
+							styleClass="aon-form-selectOneMenu-label aon-form-table-column-odd-label" />
+						<t:div>
+							<t:selectOneMenu id="Tax_id" 
+								styleClass="aon-form-selectOneMenu-field" 
+								forceId="#{true}" value="#{composition.to.item.product.vat.id}"
+								onchange="return findLookup(event,'#{facesContext.externalContext.request.contextPath}','com.code.aon.product.Tax');" 
+								onblur="calculate(this);">
+								<f:selectItems value="#{productCollections.vatTaxes}" />
+							</t:selectOneMenu>
+							<t:inputText id="Tax_percentage" size="5"
+								styleClass="aon-form-input-text" readonly="#{true}" disabledOnClientSide="#{true}" 
+								forceId="#{true}" value="#{composition.to.item.product.vat.percentage}">
+								<f:validateDoubleRange />
+							</t:inputText>
+							<t:outputLabel for="Tax_percentage" 
+								forceId="#{true}" value="%" />	
+						</t:div>
+
+						<h:outputLabel for="Item_salesPrice" 
+							value="#{productBundle.item_salesPrice}"
+							styleClass="aon-form-input-text-label aon-form-layout-label-block" />
+						<t:div>
+							<t:inputText id="Item_salesPrice" size="10"
+								styleClass="aon-form-input-text"
+								forceId="#{true}" value=""
+								onfocus="this.select();"
+								onblur="onExit(this);calculate(this);">
+								<f:validateDoubleRange />
+							</t:inputText>
+							<t:htmlTag value="span" styleClass="aon-form-selectBooleanCheckbox"  style="padding-left:3px;">
+								<t:selectBooleanCheckbox id="Composition_priceInDetails"
+									styleClass="aon-form-selectBooleanCheckbox-field"
+									forceId="#{true}" value="#{composition.to.priceInDetails}" />
+								<t:outputLabel for="Composition_priceInDetails"
+									styleClass="aon-form-input-text-label"
+									forceId="#{true}" value="#{compositionBundle.composition_priceInDetails}" />
+							</t:htmlTag>
+						</t:div>
+					</h:panelGrid>
+
+					<t:div styleClass="aon-form-group" rendered="#{!composition.new}">
+						<t:div styleClass="aon-form-group-title">
+							<t:outputLabel for="compositionDetailData"
+								value="#{compositionBundle.composition_details}" />
+						</t:div>
+
+						<t:div styleClass="aon-form-group-body" rendered="#{!composition.new}">
+							<t:dataTable id="compositionDetailDataList"
+								value="#{compositionDetail.model}" var="to"
+								rowOnMouseOver="selectRow( this )"
+								rowOnMouseOut="unselectRow( this )" rowOnClick="sendRow( this )"
+								styleClass="aon-edit-table" headerClass="aon-edit-table-header"
+								footerClass="aon-edit-table-footer" rows="20" rowIndexVar="rowIndex"
+								rowClasses="aon-edit-table-row-odd,aon-edit-table-row-even"
+								columnClasses="aon-edit-table-body aon-edit-table-body-icon,
+								aon-edit-table-body aon-edit-table-body-string,
+								aon-edit-table-body aon-edit-table-body-number,
+								aon-edit-table-body aon-edit-table-body-number,
+								aon-edit-table-body aon-edit-table-body-number,
+								aon-edit-table-body aon-edit-table-body-buttons">
+
+								<h:column>
+									<f:facet name="header">
+										<f:verbatim>&#160;</f:verbatim>
+									</f:facet>
+									<f:verbatim>&#160;</f:verbatim>
+									<t:commandLink immediate="#{true}"
+										rendered="#{to!=compositionDetail.to}"
+										styleClass="aon-table-row-selected"
+										actionListener="#{compositionDetail.onSelect}">
+									</t:commandLink>
+									<f:facet name="footer">
+										<t:div>
+											<t:commandButton id="reset"
+												styleClass="aon-edit-table-icon-button aon-edit-table-icon-button-new"
+												value="" 
+												immediate="#{true}" rendered="#{!compositionDetail.new}"
+												actionListener="#{compositionDetail.onReset}"
+												accesskey="#{bundle.aon_key_new_line}">
+											</t:commandButton>
+										</t:div>				
+									</f:facet>
+								</h:column>
+
+								<h:column>
+									<f:facet name="header">
+										<h:outputText value="#{compositionBundle.composition_item}" />
+									</f:facet>
+									<t:outputText value="#{to.description}"
+										rendered="#{to!=compositionDetail.to}" />
+									<h:panelGroup rendered="#{to==compositionDetail.to}">
+										<t:inputHidden id="Item_id-Edit" forceId="#{true}"
+											value="#{compositionDetail.to.item.id}"
+											valueChangeListener="#{compositionDetail.itemData}" />
+										<t:inputText size="10" id="Item_product_code-Edit"
+											styleClass="aon-form-input-text"
+											required="#{true}" forceId="#{true}"
+											value="#{compositionDetail.to.item.product.code}"
+											onchange="return findItemLookup(event, '#{facesContext.externalContext.request.contextPath}', 'com.code.aon.product.Item', 'Item_id-Edit[#{rowIndex}], Item_product_code-Edit[#{rowIndex}], Item_full_name-Edit[#{rowIndex}], Item_price-Edit[#{rowIndex}]');" />
+										<h:commandButton id="findItem-Edit"
+											onclick="selectWindow(this, 'placeList', '#{itemSearch.encodedPagePath}', 'Item_id-Edit[#{rowIndex}], Item_product_code-Edit[#{rowIndex}], Item_full_name-Edit[#{rowIndex}], Item_price-Edit[#{rowIndex}]'); return false;"
+											action="showPlace" value="" immediate="true"
+											styleClass="aon-form-lookup-button" />
+										<h:commandButton id="addItem-Edit" 
+											onclick="selectWindow(this, 'placeList', '#{itemAdd.encodedPagePath}', 'Item_id-Edit[#{rowIndex}], Item_product_code-Edit[#{rowIndex}], Item_full_name-Edit[#{rowIndex}], Item_price-Edit[#{rowIndex}]'); return false;"
+											value="" immediate="true" styleClass="aon-form-new-button" />
+										<t:inputText id="Item_full_name-Edit"
+											size="40" forceId="#{true}" required="#{true}"
+											styleClass="aon-form-input-text"
+											value="#{compositionDetail.to.description}" />
+									</h:panelGroup>
+									<f:facet name="footer">
+										<t:div>
+											<h:panelGroup rendered="#{compositionDetail.new}">
+												<t:inputHidden id="Item_id-New" forceId="#{true}"
+													value="#{compositionDetail.to.item.id}"
+													valueChangeListener="#{compositionDetail.itemData}" />
+												<t:inputText size="10" id="Item_product_code-New"
+													styleClass="aon-form-input-text"
+													required="#{true}" forceId="#{true}"
+													value="#{compositionDetail.to.item.product.code}"
+													onchange="return findItemLookup(event, '#{facesContext.externalContext.request.contextPath}', 'com.code.aon.product.Item', 'Item_id-New, Item_product_code-New, Item_full_name-New, Item_price-New');" />
+												<h:commandButton id="findItem-New"
+													onclick="selectWindow(this, 'placeList', '#{itemSearch.encodedPagePath}', 'Item_id-New, Item_product_code-New, Item_full_name-New, Item_price-New'); return false;"
+													action="showPlace" value="" immediate="true"
+													styleClass="aon-form-lookup-button" />
+												<h:commandButton id="addItem-New" 
+													onclick="selectWindow(this, 'placeList', '#{itemAdd.encodedPagePath}', 'Item_id-New, Item_product_code-New, Item_full_name-New, Item_price-New'); return false;"
+													value="" immediate="true" styleClass="aon-form-new-button" />
+												<t:inputText id="Item_full_name-New"
+													size="40" forceId="#{true}" required="#{true}"
+													styleClass="aon-form-input-text"
+													value="#{compositionDetail.to.description}" />
+											</h:panelGroup>
+										</t:div>
+									</f:facet>
+								</h:column>
+								<t:column width="60">
+									<f:facet name="header">
+										<t:outputText
+											value="#{compositionBundle.composition_quantity}" />
+									</f:facet>
+									<t:outputText value="#{to.quantity}"
+										rendered="#{to!=compositionDetail.to}">
+										<f:convertNumber pattern="#,##0.000" />
+									</t:outputText>
+									<h:inputText value="#{compositionDetail.to.quantity}"
+										styleClass="aon-form-input-text"
+										rendered="#{to==compositionDetail.to}" required="#{true}"
+										size="8">
+										<f:validateDoubleRange />
+									</h:inputText>
+									<f:facet name="footer">
+										<t:div style="text-align:right;">
+											<t:outputText value="#{composition.saleQuantity}"
+												rendered="#{!compositionDetail.new}">
+												<f:convertNumber pattern="#,##0.000" />
+											</t:outputText>
+											<h:inputText value="#{compositionDetail.to.quantity}"
+												styleClass="aon-form-input-text"
+												rendered="#{compositionDetail.new}" required="#{true}"
+												size="8">
+												<f:validateDoubleRange />
+											</h:inputText>
+										</t:div>
+									</f:facet>
+								</t:column>
+								<t:column width="60">
+									<f:facet name="header">
+										<t:outputText
+											value="#{compositionBundle.composition_price}" />
+									</f:facet>
+									<t:outputText value="#{to.price}"
+										rendered="#{to!=compositionDetail.to}">
+										<f:convertNumber pattern="#,##0.00" />
+									</t:outputText>
+									<t:inputText id="Item_price-Edit" forceId="#{true}"
+										styleClass="aon-form-input-text"
+										value="#{compositionDetail.to.price}"
+										rendered="#{to==compositionDetail.to}" required="#{true}"
+										size="8">
+										<f:validateDoubleRange />
+									</t:inputText>
+									<f:facet name="footer">
+										<t:div style="text-align:right;">
+											<f:verbatim rendered="#{!compositionDetail.new}">&#160;</f:verbatim>
+											<t:inputText id="Item_price-New" forceId="#{true}"
+												styleClass="aon-form-input-text"
+												value="#{compositionDetail.to.price}"
+												rendered="#{compositionDetail.new}" required="#{true}"
+												size="8">
+												<f:validateDoubleRange />
+											</t:inputText>
+										</t:div>
+									</f:facet>
+								</t:column>
+								<t:column width="60">
+									<f:facet name="header">
+										<t:outputText value="#{compositionBundle.composition_total}" />
+									</f:facet>
+									<t:outputText value="#{compositionDetail.listTotal}">
+										<f:convertNumber pattern="#,##0.00" />
+									</t:outputText>
+									<f:facet name="footer">
+										<t:div style="text-align:right;">
+											<t:outputText value="#{composition.totalDetails}"
+												rendered="#{!compositionDetail.new}">
+												<f:convertNumber pattern="#,##0.00" />
+											</t:outputText>
+										</t:div>
+									</f:facet>
+								</t:column>
+								<t:column width="60">
+									<f:facet name="header">
+										<f:verbatim>&#160;</f:verbatim>
+									</f:facet>
+									<t:div>
+										<f:verbatim rendered="#{to!=compositionDetail.to}">&#160;</f:verbatim>
+
+										<t:commandButton title="#{bundle.aon_save}"
+											actionListener="#{compositionDetail.onAccept}"
+											rendered="#{to==compositionDetail.to}" value=""
+											styleClass="aon-edit-table-icon-button aon-edit-table-icon-button-save"
+											accesskey="#{bundle.aon_key_save_line}"/>
+										<t:commandButton title="#{bundle.aon_cancel}"
+											actionListener="#{compositionDetail.onCancel}"
+											immediate="#{true}"
+											onclick="return (confirm('#{bundle.aon_cancel_confirm}'));"
+											styleClass="aon-edit-table-icon-button aon-edit-table-icon-button-cancel"
+											value="" rendered="#{to==compositionDetail.to}" 
+											accesskey="#{bundle.aon_key_cancel_line}"/>
+										<t:commandButton title="#{bundle.aon_remove}"
+											actionListener="#{compositionDetail.onRemove}"
+											onclick="return (confirm('#{bundle.aon_remove_confirm}'));"
+											rendered="#{to==compositionDetail.to}"
+											styleClass="aon-edit-table-icon-button aon-edit-table-icon-button-delete"
+											value="" accesskey="#{bundle.aon_key_remove_line}"/>
+									</t:div>
+									<f:facet name="footer">
+										<t:div>
+											<f:verbatim rendered="#{!compositionDetail.new}">&#160;</f:verbatim>
+											<t:commandButton title="#{bundle.aon_save}"
+												actionListener="#{compositionDetail.onAccept}"
+												rendered="#{compositionDetail.new}" value=""
+												styleClass="aon-edit-table-icon-button aon-edit-table-icon-button-save"
+												accesskey="#{bundle.aon_key_save_line}"/>
+											<t:commandButton title="#{bundle.aon_cancel}"
+												actionListener="#{compositionDetail.onCancel}"
+												immediate="#{true}"
+												onclick="return (confirm('#{bundle.aon_cancel_confirm}'));"
+												rendered="#{compositionDetail.new}"
+												styleClass="aon-edit-table-icon-button aon-edit-table-icon-button-cancel"
+												value=""  accesskey="#{bundle.aon_key_cancel_line}"/>
+										</t:div>
+									</f:facet>
+								</t:column>
+							</t:dataTable>
+
+							<ui:include src="/facelet/shared/dataScroller.xhtml">
+								<ui:param name="dataTable" value="compositionDetailDataList" />
+								<ui:param name="model" value="#{compositionDetail.model}" />
+								<ui:param name="showNote" value="#{false}" />
+							</ui:include>
+
+						</t:div>
+					</t:div>
+				</t:div>
+			</t:div>
+		</h:form>
+		<script>
+			try {
+				onLoad();
+			} catch(e) {
+			}
+		</script>
+		<h:form id="placeList" target="list" />
+	</ui:define>
+</ui:composition>
+</body>
+</html>

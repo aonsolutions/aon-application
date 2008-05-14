@@ -1,0 +1,157 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:jstl="http://java.sun.com/jstl/core"	
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:h="http://java.sun.com/jsf/html">
+<body>
+
+<ui:composition template="/facelet/templates/aon.ui.content.xhtml">
+
+	<ui:define name="head">
+		<ui:include src="/facelet/shared/head.xhtml" />
+	</ui:define>
+
+	<ui:define name="content">
+
+		<h:form id="TASItemForm" styleClass="aon-form">
+
+			<t:div styleClass="aon-content-toolbar" id="aon-content-toolbar"
+				forceId="#{true}">
+				<t:div styleClass="aon-content-toolbar-internal">
+				<t:div styleClass="aon-content-toolbar-item-group">
+					<t:commandButton id="save" value="#{bundle.aon_save}"
+						forceId="#{true}" actionListener="#{TASItem.accept}"
+						onclick="return (confirm('#{bundle.aon_save_confirm}'))"
+						styleClass="aon-content-toolbar-item aon-content-toolbar-item-save"
+						onmouseover="this.className='aon-content-toolbar-item aon-content-toolbar-item-hover aon-content-toolbar-item-save'"
+						onmouseout="this.className='aon-content-toolbar-item aon-content-toolbar-item-save'" 
+						accesskey="#{bundle.aon_key_save}"/>
+					<h:commandButton id="cancel" value="#{bundle.aon_cancel}"
+						actionListener="#{TASItem.onCancel}" action="TasItem_list"
+						immediate="#{true}"
+						onclick="return (confirm('#{bundle.aon_cancel_confirm}'))"
+						styleClass="aon-content-toolbar-item aon-content-toolbar-item-cancel"
+						onmouseover="this.className='aon-content-toolbar-item aon-content-toolbar-item-hover aon-content-toolbar-item-cancel'"
+						onmouseout="this.className='aon-content-toolbar-item aon-content-toolbar-item-cancel'" 
+						accesskey="#{bundle.aon_key_cancel}"/>
+					<t:commandButton id="remove" value="#{bundle.aon_remove}"
+						forceId="#{true}" actionListener="#{TASItem.onRemove}"
+						action="TasItem_list" rendered="#{!TASItem.new}"
+						onclick="return (confirm('#{bundle.aon_remove_confirm}'))"
+						styleClass="aon-content-toolbar-item aon-content-toolbar-item-delete"
+						onmouseover="this.className='aon-content-toolbar-item aon-content-toolbar-item-hover aon-content-toolbar-item-delete'"
+						onmouseout="this.className='aon-content-toolbar-item aon-content-toolbar-item-delete'" 
+						accesskey="#{bundle.aon_key_remove}"/>
+					<t:commandButton id="reset" value="#{bundle.aon_reset}"
+						styleClass="aon-content-toolbar-item aon-content-toolbar-item-new"
+						onmouseover="this.className='aon-content-toolbar-item aon-content-toolbar-item-hover aon-content-toolbar-item-new'"
+						onmouseout="this.className='aon-content-toolbar-item aon-content-toolbar-item-new'"
+						rendered="#{!TASItem.new}"
+						actionListener="#{TASItem.onReset}" 
+						accesskey="#{bundle.aon_key_new}"/>
+					<h:commandButton id="search" value="#{bundle.aon_search}"
+						actionListener="#{TASItem.onEditSearch}" action="TasItem_search"
+						immediate="#{true}"
+						styleClass="aon-content-toolbar-item aon-content-toolbar-item-search"
+						onmouseover="this.className='aon-content-toolbar-item aon-content-toolbar-item-hover aon-content-toolbar-item-search'"
+						onmouseout="this.className='aon-content-toolbar-item aon-content-toolbar-item-search'" 
+						accesskey="#{bundle.aon_key_search}"/>
+				</t:div>
+				</t:div>
+			</t:div>
+			
+			<t:div styleClass="aon-content-subtitle" id="aon-content-subtitle"
+				forceId="#{true}">
+				<t:div styleClass="aon-content-subtitle-internal">
+				<h:outputText
+					value="#{TASItem.new?(bundle.aon_reset):(bundle.aon_editing)}" />
+				</t:div>
+			</t:div>
+
+			<t:div id="aon-scroll-area" forceId="#{true}">
+				<t:div styleClass="aon-scroll-area-internal">
+					<!-- start of bag panel -->
+					<!-- start of flow layout -->
+			
+								<h:panelGrid columns="2" 
+									dir="true" 
+									styleClass="aon-form-table" 
+									columnClasses="aon-form-table-column-odd,aon-form-table-column-even">
+
+										<t:outputLabel for="Model_id"
+											styleClass="aon-form-lookup-label aon-form-layout-label-block"
+											value="#{tasBundle.tasItem_model}" />
+										<h:panelGroup>
+											<t:inputText id="Model_id" size="5" forceId="#{true}"
+												styleClass="aon-form-input-text" required="true"
+												onchange="return findLookup(event,'#{facesContext.externalContext.request.contextPath}','com.code.aon.tas.Model');"
+												value="#{TASItem.to.model.id}" />
+											<h:commandButton id="findTasModel"
+												styleClass="aon-form-lookup-button"
+												onclick="selectWindow(this, 'placeList', '#{TASModelSearch.encodedPagePath}');return false;"
+												value="" immediate="true" />
+											<h:commandButton id="addModel" 
+												styleClass="aon-form-new-button"
+												onclick="selectWindow(this, 'placeList', '#{TASModelAdd.encodedPagePath}');return false;"
+												value="" immediate="true" />
+											<t:inputText id="Make_name" forceId="#{true}"
+												styleClass="aon-form-input-text-disabled"
+												disabledOnClientSide="true" size="20"
+												value="#{TASItem.to.model.make.name}" />
+											<t:inputText id="Model_name" forceId="#{true}"
+												styleClass="aon-form-input-text-disabled"
+												disabledOnClientSide="true" readonly="true" size="20"
+												value="#{TASItem.to.model.name}" />
+										</h:panelGroup>
+				
+										<h:outputLabel for="TasItem_publicCode"
+											value="#{tasBundle.tasItem_publicCode}"
+											styleClass="aon-form-input-text-label aon-form-layout-label-block" />
+										<t:inputText styleClass="aon-form-input-text"
+											id="TasItem_publicCode" required="true" forceId="#{true}"
+											value="#{TASItem.to.publicCode}" size="35" maxlength="25"
+											disabledOnClientSide="false" onblur="toUpperCase(this);">
+											<f:validateLength maximum="25" />
+										</t:inputText>
+				
+										<h:outputLabel for="TasItem_privateCode"
+											value="#{tasBundle.tasItem_privateCode}"
+											styleClass="aon-form-input-text-label aon-form-layout-label-block" />
+										<t:inputText styleClass="aon-form-input-text"
+											id="TasItem_privateCode" 
+											required="#{appParams.parameters['AON_TAS_PRIVATE_CODE_REQUIRED']=='true'}"
+											forceId="#{true}"
+											value="#{TASItem.to.privateCode}" size="35" maxlength="25"
+											disabledOnClientSide="false" onblur="toUpperCase(this);">
+											<f:validateLength maximum="255" />
+										</t:inputText>
+				
+										<h:outputLabel for="TasItem_description"
+											value="#{tasBundle.tasItem_description}"
+											styleClass="aon-form-input-text-label aon-form-layout-label-block" />
+										<t:inputTextarea styleClass="aon-form-input-text"
+											id="TasItem_description" required="false" forceId="#{true}"
+											value="#{TASItem.to.description}" cols="50" rows="5">
+											<f:validateLength maximum="255" />
+										</t:inputTextarea>
+										
+										<t:inputHidden id="TasItem_id" 
+											forceId="#{true}"
+											value="#{TASItem.to.id}" />
+										
+									</h:panelGrid>
+					<!-- end of flow layout -->
+					<!-- end of bag panel -->
+					<t:inputText id="pojoName" value="TasItem" forceId="#{true}"
+						style="display: none" />
+				</t:div>
+			</t:div>
+		</h:form>
+		<h:form id="placeList" target="list" />
+	</ui:define>
+</ui:composition>
+</body>
+</html>					
+				

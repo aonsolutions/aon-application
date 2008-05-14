@@ -1,0 +1,152 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core" 
+	xmlns:t="http://myfaces.apache.org/tomahawk"            
+	xmlns:s="http://myfaces.apache.org/sandbox"            
+	xmlns:h="http://java.sun.com/jsf/html">
+<body>
+
+<ui:composition template="/facelet/templates/aon.ui.form.xhtml">
+
+	<ui:define name="head">
+		<ui:include src="/facelet/shared/head.xhtml" />
+	</ui:define>
+
+	<ui:define name="content">
+		<h:form id="feeInvoicingForm" styleClass="aon-form">
+
+			<t:div styleClass="aon-content-toolbar">
+				<t:div styleClass="aon-content-toolbar-internal">
+				<t:div styleClass="aon-content-toolbar-item-group">
+					<t:commandLink id="feeInvoicing" value="#{financeBundle.aon_to_invoice}"
+						forceId="#{true}" action="fee_invoicing_list"
+						actionListener="#{feeInvoicing.onInvoice}"
+						onclick="viewDialog.show();"							
+						styleClass="aon-content-toolbar-item aon-content-toolbar-item-print"
+						onmouseover="this.className='aon-content-toolbar-item aon-content-toolbar-item-hover aon-content-toolbar-item-print'"
+						onmouseout="this.className='aon-content-toolbar-item aon-content-toolbar-item-print'"
+						accesskey="#{bundle.aon_key_print}" />	
+					<h:commandButton id="clear" value="#{bundle.aon_clear}"
+						type="reset"
+						styleClass="aon-content-toolbar-item aon-content-toolbar-item-reset"
+						onmouseover="this.className='aon-content-toolbar-item aon-content-toolbar-item-hover aon-content-toolbar-item-reset'"
+						onmouseout="this.className='aon-content-toolbar-item aon-content-toolbar-item-reset'" />
+				</t:div>
+				</t:div>
+			</t:div>
+			
+			<t:div styleClass="aon-content-subtitle" id="aon-content-subtitle"
+				forceId="#{true}">
+				<t:div styleClass="aon-content-subtitle-internal" >
+					<h:outputText value="#{salesBundle.aon_customer_fee_selection}" />
+				</t:div>
+			</t:div>
+			
+			<t:div forceId="#{true}" id="aon-scroll-area">
+				<t:div styleClass="aon-scroll-area-internal">
+					<h:panelGrid columns="2" styleClass="aon-form-table"
+						columnClasses="aon-form-table-column-odd,aon-form-table-column-even">
+						
+						<h:outputLabel for="Invoice_series"
+							styleClass="aon-form-input-text-label"
+							value="#{financeBundle.aon_series_number}" />
+						<h:panelGrid columns="2">
+							<t:selectOneMenu id="Invoice_series"
+								value="#{feeInvoicing.invoicingParams.series}"
+								styleClass="aon-form-selectOneMenu-field"
+								onchange="submit();" valueChangeListener="#{feeInvoicing.onSeriesChanged}">
+								<f:selectItem itemValue="" itemDisabled="true" itemLabel="-" />
+								<f:selectItems value="#{configCollections.series}" />
+							</t:selectOneMenu>
+							<t:inputText id="Invoice_number" required="true"
+								value="#{feeInvoicing.invoicingParams.number}"
+								styleClass="aon-form-input-text" forceId="#{true}"
+								size="7" />
+						</h:panelGrid>
+						
+ 						<t:outputLabel for="Customer_Lookup_id" value="#{customerBundle.customer_customer}" 
+							styleClass="aon-form-input-text-label" />
+						<t:div>
+							<t:inputText id="Customer_Lookup_id" forceId="#{true}"
+								value="#{feeInvoicing.invoicingParams.customerId}"
+								styleClass="aon-form-input-text" size="5" 
+								onchange="return findBeanLookupExt(event,'#{facesContext.externalContext.requestContextPath}','customerLookup','Customer_Lookup_id','Customer_id|Customer_Lookup_id,Customer_full_name|Customer_full_name');"/>
+							<h:commandButton id="find_Customer_Lookup_id"
+								styleClass="aon-form-lookup-button" value="" immediate="true"
+								onclick="lookupSearchWindow(this, 'placeList', '#{customerLookup.encodedSearchPagePath}','Customer_id|Customer_Lookup_id,Customer_full_name|Customer_full_name');return false;" />	
+							<t:inputText id="Customer_full_name"
+								disabled="true" forceId="#{true}"
+								styleClass="aon-form-input-text-disabled" size="40" />
+						</t:div>
+ 
+  						<h:outputLabel value="#{appBundle.aon_date}"
+							styleClass="aon-form-input-text-label" />
+						<h:panelGrid columns="4">
+							<h:outputLabel for="BillingDate_Month" value="#{appBundle.aon_month}"
+								styleClass="aon-form-input-text-label" />
+							<h:selectOneMenu id="BillingDate_Month"
+								value="#{feeInvoicing.invoicingParams.month}"
+								styleClass="aon-form-selectOneMenu-field">
+								<f:selectItems value="#{consultantCollections.months}" />
+							</h:selectOneMenu>
+
+							<h:outputLabel for="BillingDate_Year" value="#{appBundle.aon_year}"
+								styleClass="aon-form-input-text-label" />
+							<h:inputText id="BillingDate_Year"
+								styleClass="aon-form-input-text" size="5"
+								value="#{feeInvoicing.invoicingParams.year}" />
+						</h:panelGrid>						
+
+						<h:outputLabel for="Invoicing_invoiceDate" value="#{financeBundle.aon_invoice_date}"
+							styleClass="aon-form-input-text-label" />
+						<t:inputCalendar id="Invoicing_invoiceDate" size="10" required="true"
+							value="#{feeInvoicing.invoicingParams.invoiceDate}"
+							monthYearRowClass="yearMonthHeader" weekRowClass="weekHeader"
+							currentDayCellClass="currentDayCell" renderAsPopup="true"
+							styleClass="aon-form-input-text" popupButtonStyleClass="aon-form-calendar-button"
+							popupTodayString="#{bundle.aon_popup_today}"
+							popupWeekString="#{bundle.aon_popup_week}" />
+							
+						<t:outputLabel for="Invoicing_securityLevel"
+							styleClass="aon-form-selectOneMenu-label"
+							value="#{financeBundle.aon_security_level}" />
+						<h:selectOneMenu id="Invoicing_securityLevel"
+							styleClass="aon-form-selectOneMenu-field"
+							value="#{feeInvoicing.invoicingParams.securityLevel}">
+							<f:selectItems value="#{financeCollections.securityLevels}" />
+						</h:selectOneMenu>
+						
+ 						<h:outputLabel for="CustomerFee_WorkPlace" 
+ 							value="#{salesBundle.aon_customer_fee_workplace_abrv}"
+							styleClass="aon-form-input-text-label" />
+						<h:selectOneMenu id="CustomerFee_WorkPlace"
+							value="#{feeInvoicing.invoicingParams.workPlaceId}"
+							styleClass="aon-form-selectOneMenu-field">
+							<f:selectItem itemDisabled="true" itemLabel ="-" itemValue="" />
+							<f:selectItems value="#{companyCollections.workPlaces}" />
+						</h:selectOneMenu>
+
+					</h:panelGrid>
+				</t:div>
+			</t:div>
+			
+			<s:modalDialog
+		       dialogId="viewDialog"
+		       dialogVar="viewDialog"
+		       closeButton="false">
+		       <t:div styleClass="aon-timer">		       		
+		       		<h:graphicImage value="/css/images/content/aon-timer.gif" />
+		       		<t:div styleClass="aon-timer-title" >
+		       			<t:outputText value="#{appBundle.aon_in_progress}" /> 
+		       		</t:div>
+  			   </t:div>
+			</s:modalDialog>
+			
+		</h:form>
+		<h:form id="placeList" target="list" />
+	</ui:define>
+</ui:composition>
+
+</body>
+</html>

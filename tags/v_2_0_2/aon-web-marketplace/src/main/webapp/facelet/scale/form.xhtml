@@ -1,0 +1,250 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core" 
+	xmlns:t="http://myfaces.apache.org/tomahawk"            
+	xmlns:h="http://java.sun.com/jsf/html">
+<body>
+
+<ui:composition template="/facelet/templates/aon.ui.scale.xhtml">
+
+	<ui:define name="head">
+		<ui:include src="/facelet/shared/head.xhtml" />
+		<t:stylesheet path="/jscalendar-1.0/calendar-system.css" />
+		<script type='text/javascript'
+			src="${facesContext.externalContext.requestContextPath}/jscalendar-1.0/calendar.js">
+			// nothing
+		</script>
+		<script type='text/javascript'
+			src="${facesContext.externalContext.requestContextPath}/jscalendar-1.0/lang/calendar-es.js">
+			// nothing
+		</script>
+		<script type='text/javascript'
+			src="${facesContext.externalContext.requestContextPath}/jscalendar-1.0/calendar-setup.js">
+			// nothing
+		</script>
+
+	</ui:define>
+
+	<ui:define name="content">
+		<h:form id="form">
+			<t:div styleClass="aon-content-toolbar" id="aon-content-toolbar" forceId="#{true}">
+				<t:div styleClass="aon-content-toolbar-internal">
+					<t:div styleClass="aon-content-toolbar-item-group">
+						<t:commandButton id="save" value="#{bundle.aon_save}"
+							forceId="#{true}" actionListener="#{scale.onAccept}"
+							onclick="return (confirm('#{bundle.aon_accept_confirm}'))"
+							styleClass="aon-content-toolbar-item aon-content-toolbar-item-save"
+							onmouseover="this.className='aon-content-toolbar-item aon-content-toolbar-item-hover aon-content-toolbar-item-save'"
+							onmouseout="this.className='aon-content-toolbar-item aon-content-toolbar-item-save'" 
+							accesskey="#{bundle.aon_key_save}"/>
+						<h:commandButton id="cancel" value="#{bundle.aon_cancel}"
+							actionListener="#{scale.onCancel}" immediate="#{true}"
+							onclick="return (confirm('#{bundle.aon_cancel_confirm}'))"
+							styleClass="aon-content-toolbar-item aon-content-toolbar-item-cancel"
+							onmouseover="this.className='aon-content-toolbar-item aon-content-toolbar-item-hover aon-content-toolbar-item-cancel'"
+							onmouseout="this.className='aon-content-toolbar-item aon-content-toolbar-item-cancel'" 
+							accesskey="#{bundle.aon_key_cancel}"/>
+						<t:commandButton id="test" value="#{appBundle.aon_test}"
+							forceId="#{true}" actionListener="#{scale.onTest}"
+							action="scale"
+							styleClass="aon-content-toolbar-item aon-content-toolbar-item-delete"
+							onmouseover="this.className='aon-content-toolbar-item aon-content-toolbar-item-hover aon-content-toolbar-item-delete'"
+							onmouseout="this.className='aon-content-toolbar-item aon-content-toolbar-item-delete'" />
+						<t:commandButton id="relation" value="#{appBundle.aon_scale_relation}"  rendered="#{scale.to.verified}"
+							forceId="#{true}" action="scale_relation" actionListener="#{scaleRelation.onLoad}"
+							styleClass="aon-content-toolbar-item aon-content-toolbar-item-delete"
+							onmouseover="this.className='aon-content-toolbar-item aon-content-toolbar-item-hover aon-content-toolbar-item-delete'"
+							onmouseout="this.className='aon-content-toolbar-item aon-content-toolbar-item-delete'" />
+					</t:div>
+				</t:div>
+			</t:div>
+			
+			<t:div styleClass="aon-content-subtitle" id="aon-content-subtitle"
+				forceId="#{true}">
+				<t:div styleClass="aon-content-subtitle-internal">
+				<h:outputText
+					value="#{appBundle.aon_scale}" />
+				</t:div>
+			</t:div>
+			
+			<t:div id="aon-scroll-area" forceId="#{true}">
+				<t:div styleClass="aon-scroll-area-internal">
+					<h:panelGrid columns="2" cellpadding="0" cellspacing="0"
+						styleClass="aon-form-table"
+						columnClasses="aon-form-table-column-odd,aon-form-table-column-even">
+
+						<t:outputLabel for="Scale_scaleModel" 
+							styleClass="aon-form-input-text-label" 
+							value="#{appBundle.aon_scale_model}"  style="width:150px" />
+						<h:selectOneMenu id="Scale_scaleModel" value="#{scale.to.scaleModel}" immediate="#{true}" >
+							<f:selectItems value="#{scale.scaleModels}" />
+						</h:selectOneMenu>
+
+						<t:outputLabel for="Scale_programPath" 
+							styleClass="aon-form-input-text-label" 
+							value="#{appBundle.aon_scale_program_path}" />
+						<t:inputText id="Scale_programPath" size="50" 
+							styleClass="aon-form-input-text"
+							value="#{scale.to.programPath}" />
+
+						<t:outputLabel for="Scale_code1" rendered="#{scale.euroscale}"
+							styleClass="aon-form-input-text-label" 
+							value="#{appBundle.aon_scale_euroscale_tienda}" />
+						<h:selectOneMenu id="Scale_code1" value="#{scale.to.code1}" immediate="#{true}" rendered="#{scale.euroscale}">
+							<f:selectItems value="#{scale.euroscaleTiendas}" />
+						</h:selectOneMenu>
+
+						<t:outputLabel for="Scale_code2" rendered="#{scale.euroscale}"
+							styleClass="aon-form-input-text-label" 
+							value="#{appBundle.aon_scale_euroscale_seccion}" />
+						<h:selectOneMenu id="Scale_code2" value="#{scale.to.code2}" immediate="#{true}" rendered="#{scale.euroscale}">
+							<f:selectItems value="#{scale.euroscaleSeccion}" />
+						</h:selectOneMenu>
+
+						<t:outputLabel for="Scale_getCategories" rendered="#{scale.to.verified}"
+							styleClass="aon-form-input-text-label" 
+							value="&#160;" />
+						<t:commandButton id="Scale_getCategories" value="#{appBundle.aon_get_categories}"
+							forceId="#{true}" actionListener="#{scale.onGetCategory}" rendered="#{scale.to.verified}"
+							onclick="return (scale_confirm(this, '#{appBundle.aon_get_categories_confirm}'))"
+							styleClass="aon-form-button" />
+
+						<t:outputLabel for="Scale_setCategories" rendered="#{scale.to.verified}"
+							styleClass="aon-form-input-text-label" 
+							value="&#160;" />
+						<t:commandButton id="Scale_setCategories" value="#{appBundle.aon_set_categories}"
+							forceId="#{true}" actionListener="#{scale.onSetCategory}" rendered="#{scale.to.verified}"
+							onclick="return (scale_confirm(this, '#{appBundle.aon_set_categories_confirm}'))"
+							styleClass="aon-form-button" />
+
+						<t:outputLabel for="Scale_getItems" rendered="#{scale.to.verified}"
+							styleClass="aon-form-input-text-label" 
+							value="&#160;" />
+						<t:commandButton id="Scale_getItems" value="#{appBundle.aon_get_items}"
+							forceId="#{true}" actionListener="#{scale.onGetItems}" rendered="#{scale.to.verified}"
+							onclick="return (scale_confirm(this, '#{appBundle.aon_get_items_confirm}'))"
+							styleClass="aon-form-button" />
+
+						<t:outputLabel for="Scale_setItems" rendered="#{scale.to.verified}"
+							styleClass="aon-form-input-text-label" 
+							value="&#160;" />
+						<t:commandButton id="Scale_setItems" value="#{appBundle.aon_set_items}"
+							forceId="#{true}" actionListener="#{scale.onSetItems}" rendered="#{scale.to.verified}"
+							onclick="return (scale_confirm(this, '#{appBundle.aon_set_items_confirm}'))"
+							styleClass="aon-form-button" />
+					</h:panelGrid>
+				</t:div>
+
+
+				<t:div styleClass="aon-content-subtitle" id="aon-content-subtitle"
+					forceId="#{true}" rendered="#{scale.euroscale or scale.dibal or scale.bizerba}">
+					<t:div styleClass="aon-content-subtitle-internal">
+					<h:outputText
+						value="#{appBundle.aon_scale_tickets}" />
+					</t:div>
+				</t:div>
+				<t:div styleClass="aon-scroll-area-internal">
+					<h:panelGrid columns="2" cellpadding="0" cellspacing="0"
+						styleClass="aon-form-table"
+						columnClasses="aon-form-table-column-odd,aon-form-table-column-even">
+
+						<t:outputLabel for="Scale_code5" rendered="#{scale.euroscale}"
+							styleClass="aon-form-input-text-label" 
+							value="#{appBundle.aon_scale_euroscale_tienda}" />
+						<h:selectOneMenu id="Scale_code5" value="#{scale.to.code5}" immediate="#{true}" rendered="#{scale.euroscale}">
+							<f:selectItems value="#{scale.euroscaleTiendas}" />
+						</h:selectOneMenu>
+
+						<t:outputLabel for="Scale_inidate" rendered="#{scale.to.verified}"
+							styleClass="aon-form-input-text-label" 
+							value="#{appBundle.aon_scale_dates}" style="width:150px" />
+						<t:div rendered="#{scale.to.verified}" style="width:365px" >
+							<t:outputText value="#{appBundle.aon_scale_from} "/>
+							<t:inputText styleClass="aon-form-input-text"
+								id="Scale_inidate" required="true" forceId="#{true}"
+								value="#{scale.to.inidate}"
+								size="10" maxlength="12">
+								<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+									timeZone="#{timeZoneController.timeZoneId}" />
+							</t:inputText>
+							<t:commandButton styleClass="aon-form-lookup-button"
+								id="Scale_inidate_button" forceId="#{true}" value=""
+								immediate="true" tabindex="3"/>
+							<script type="text/javascript">
+							  Calendar.setup( {
+								inputField  : "Scale_inidate", button : "Scale_inidate_button",
+								ifFormat    : "%d/%m/%Y" } );
+							</script>								
+							<t:outputText value="#{appBundle.aon_scale_to} "/>
+							<t:inputText styleClass="aon-form-input-text"
+								id="Scale_enddate" required="true" forceId="#{true}"
+								value="#{scale.to.enddate}"
+								size="10" maxlength="12">
+								<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+									timeZone="#{timeZoneController.timeZoneId}" />
+							</t:inputText>
+							<t:commandButton styleClass="aon-form-lookup-button"
+								id="Scale_enddate_button" forceId="#{true}" value=""
+								immediate="true" tabindex="4"/>
+							<script type="text/javascript">
+							  Calendar.setup( {
+								inputField  : "Scale_enddate", button : "Scale_enddate_button",
+								ifFormat    : "%d/%m/%Y" } );
+							</script>								
+						</t:div>
+						<h:outputLabel for="Scale_serie" rendered="#{scale.euroscale or scale.dibal or scale.bizerba}"
+							styleClass="aon-form-input-text-label" 
+							value="#{appBundle.aon_scale_serie}" />
+						<t:inputText id="Scale_serie" size="5" 
+							styleClass="aon-form-input-text" value="#{scale.to.serie}" rendered="#{scale.euroscale or scale.dibal or scale.bizerba}"/>
+
+						<h:outputLabel for="Scale_code3" rendered="#{scale.euroscale or scale.dibal or scale.bizerba}"
+							styleClass="aon-form-input-text-label" 
+							value="#{appBundle.aon_scale_pos}" />
+						<h:selectOneMenu id="Scale_code3" value="#{scale.to.code3}" immediate="#{true}" rendered="#{scale.euroscale or scale.dibal or scale.bizerba}">
+							<f:selectItems value="#{scale.pos}" />
+						</h:selectOneMenu>
+
+						<h:outputLabel for="Scale_code4" rendered="#{scale.euroscale or scale.dibal or scale.bizerba}"
+							styleClass="aon-form-input-text-label" 
+							value="#{appBundle.aon_scale_customer}" />
+						<h:selectOneMenu id="Scale_code4" value="#{scale.to.code4}" immediate="#{true}" rendered="#{scale.euroscale or scale.dibal or scale.bizerba}">
+							<f:selectItems value="#{scale.customers}" />
+						</h:selectOneMenu>
+
+						<t:outputLabel for="Scale_getTickets" rendered="#{scale.to.verified}"
+							styleClass="aon-form-input-text-label" 
+							value="&#160;" />
+						<t:commandButton id="Scale_getTickets" value="#{appBundle.aon_get_tickets}" 
+							forceId="#{true}" actionListener="#{scale.onGetTickets}" rendered="#{scale.to.verified}"
+							onclick="return (scale_confirm(this, '#{appBundle.aon_get_tickets_confirm}'))"
+							styleClass="aon-form-button" />
+					</h:panelGrid>
+				</t:div>
+				<t:div>
+					<t:messages infoStyle="color:blue;padding-left:15px" errorStyle="color:red;padding-left:15px" warnStyle="color:orange;padding-left:15px"/>
+				</t:div>
+			</t:div>
+			<f:verbatim>
+				<script>
+					function scale_confirm(button, message)	{
+						ret = confirm(message)
+						if (ret) {
+							button.value = "ESPERE, POR FAVOR...";
+							button.style.backgroundColor = 'lightgrey';
+							button.style.color = 'white';
+						}
+						return ret;
+					}
+				</script>
+			</f:verbatim>
+			
+
+		</h:form>
+	</ui:define>
+
+</ui:composition>
+
+</body>
+</html>

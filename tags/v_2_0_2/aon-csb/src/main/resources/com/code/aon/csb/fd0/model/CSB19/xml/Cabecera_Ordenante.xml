@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- Registro Cabecera_Ordenante -->
+<register name="Cabecera_Ordenante">
+
+ <field name="inicial" value="5380" format="AlphaNumeric" pattern="X(4)" />
+ <field name="nif" value="bean" bean="ORDERER" property="code" format="Nif" pattern="X(9)" />
+ <field name="sufijo" value="bean" bean="ORDERER" property="sufix" format="AlphaNumeric" pattern="X(3)" />
+ <field name="fecha_confeccion" value="bean" bean="ORDERER" property="makeDate" format="FormatDate" pattern="ddMMyy" />
+ <field name="fecha_cargo" value="bean" bean="ORDERER" property="startDate" format="FormatDate" pattern="ddMMyy" />
+ <field name="nombre" value="bean" bean="ORDERER" property="name" format="AlphaNumeric" pattern="X(40)" />
+ <field name="ccc" value="bean" bean="ORDERER_ACCOUNT" property="ccc" format="CCC" pattern="ESDC" />
+ <field name="free1" value=" " format="Alphabetic" pattern="X(8)" />
+ <field name="procedimiento" value="bean" bean="ORDERER" property="procedure" format="Numeric" pattern="9(2)" />
+ <field name="free2" value=" " format="Alphabetic" pattern="X(10)" />
+ <field name="free3" value=" " format="Alphabetic" pattern="X(40)" />
+ <field name="free4" value=" " format="Alphabetic" pattern="X(14)" />
+ 
+</register>

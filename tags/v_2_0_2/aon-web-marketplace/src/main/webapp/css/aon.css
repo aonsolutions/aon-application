@@ -1,0 +1,1631 @@
+/* --- GENERAL STYLES --- */
+/*Set the default font family, font size and set the document height*/
+/* Previous considerations:
+
+When a style is defined with a identifier , use  a " forceId="#{true}"  to prevent faces changing it. It´s necessary for all the elements that take part in the scroll height.
+
+Include in a layer with  #aon-scroll-area identifier all the elements you want to scroll and call a javascript function to set the height. */
+
+* { font-size: 100%; 
+    padding: 0; 
+    margin: 0;}
+html{height:100%;}
+
+td{
+	vertical-align:top;
+	}
+img{border:0;}
+
+/*Default font values, scroll colors and layout height*/
+body#aon-body{
+	font: 11px/1.333 arial, helvetica, verdana, sans-serif;
+	margin:0;
+	padding:0;
+	color: #414142;
+	background: white;
+	height:100%;
+	scrollbar-base-color: #E7E7E7;
+	scrollbar-arrow-color: #666;
+	overflow:hidden;
+	}
+
+
+
+.aon-all-width{
+	width:100%;
+	}
+.aon-table-default{
+	border-collapse: collapse; 
+	width:100%;	
+	}
+	
+
+/*****************
+* CONTENT CONTAINER REGIONS   *
+******************/
+/* External content container layer. Use it  only is the application is defined with frames ( Due to the height  property value)  */
+.aon-central-content{	
+	}
+
+/* Follows one of the previous “aon-content-container” external layers and set internal borders.*/
+.aon-central-content-internal{
+	width:100%;
+	height:100%;
+}
+
+
+/*CONTENT REGION*/
+.aon-content-region{	
+	vertical-align:top;
+	margin:0;
+	padding:0 5px 0 5px;
+	_padding-left:2px;
+	_width:100%;
+	}
+.aon-content-region-contrated{
+	margin-left:20%;	
+	}
+	
+.aon-content-region-expanded{
+	margin-left:8px;
+	
+	}
+	
+/*TITLE AND BREADCRUMB. Use only if these elements don´t scroll*/
+.aon-content-region-header{
+	padding:0 0px 0 0;	
+	
+	}
+/*CONTENT SCROLL AREA WITHOUT SIDEBAR*/
+/*Content  that scrolls. IMPORTANT: Use a forceId="#{true}" in the <div> and set it in the javascript funcion*/
+#aon-scroll-area{
+	overflow:auto;
+	_width:100%;
+}
+/*Apply padding and margin to the aon-scroll-area region.*/
+.aon-scroll-area-internal{
+	padding:10px;
+	_width:100%;
+}
+
+/* Shows an image in the content region when there is no selected an option  */
+.aon-content-home{	
+	background:transparent url("../images/aon-home.jpg") left top no-repeat;
+	}
+/*****************
+* HEADER   *
+******************/
+
+/* Wraps all header items */
+.aon-header{
+	}
+/* Left column of a table. Contains the logo and application name */
+.aon-header-leftGroup{
+	padding:0px;
+	width:20%;
+	}
+/* Right column of a table. Contains the recursive menu and the text ads on by the user */
+.aon-header-rightGroup{
+	vertical-align:top;
+	text-align:right;
+	padding:5px 5px 3px 10px;
+	
+}
+/* Decorative botton <div>  */
+.aon-header-bottom{
+	text-align:right;
+	font-size:5px;
+		}
+		
+/*Wraps logo image*/
+.aon-logo{
+	padding:0px;
+	}
+/*Sets the height of the logo image to avoid big size images.*/
+.aon-logo img{
+	height:30px;
+	}
+	
+/*Wraps the <span> that contains the Application name*/
+.aon-applicationName{
+	padding:2px 5px 3px 5px;
+	font:normal 12px tahoma,arial,verdana,sans-serif;
+	color:#000;
+	font-weight:bold;
+	}
+	
+/* Text introduced by the user placed next to the logo */
+.aon-header-userAdOnLeft{
+	text-align:left;
+	font-size:1.2em;
+	padding:5px;
+	}
+/* Text introduced by the user placed bellow the header menu */
+.aon-header-userAdOnRight{
+	font-size:0.9em;
+	}
+		
+/* HEADER MENU */
+/* Groups all recursive menu items (init, about, …)*/
+.aon-header-menu{	
+	display:inline;
+	white-space:nowrap;
+	}
+/* each menu item */
+.aon-header-menu-item{	
+	display:inline;		
+	}
+/* each menu link item  */
+.aon-header-menu-item-link{
+	color: #000;
+	text-decoration:none;
+	padding:0px 0.7em 0px 0.7em;	
+	font-weight:bold;	
+	font-size:0.9em;
+	}
+/* each menu link item hover */
+.aon-header-menu-item-link:visited{
+	color:#000;
+	text-decoration:none;
+	}
+
+/* each menu link item visited */
+.aon-header-menu-item-link:hover{
+	color:#808080;
+	text-decoration:none;
+	}
+/* each menu link item active */
+.aon-header-menu-item-link:active{
+	color:#000;
+	text-decoration:none;
+	}
+
+/*****************
+* FOOT CONTAINER  *
+******************/
+/* Wraps all foot items */
+.aon-foot{
+	height:20px;
+	clear:both;	
+	font-weight:bold;
+	font-size:10px;
+	font-family:arial,verdana,sans-serif;
+}
+
+/* Left column */
+.aon-foot-leftGroup{
+	padding:3px 5px 2px 0px;		
+}
+
+/* Right column */
+.aon-foot-rightGroup{
+	text-align:right;
+	padding:3px 5px 2px 0px;
+	}
+
+/* Each left column item */
+.aon-foot-leftGroup-item{	
+	padding:0 8px;
+	display:inline;		
+	}
+
+/*****************
+* SIDEBAR REGION *
+******************/
+/* Wraps all sidebar items: menu title, menu items and the button that allow to show/hidde the sidebar region */
+.aon-sidebar{		
+	height:100%;
+	overflow:auto;
+	float:left;	
+	padding: 0;	
+	position:relative;		
+	}
+/*Sets the sidebar width when it is shown */
+.aon-sidebar-visible{
+	width:20%;		
+	}
+/* Sets the sidebar width when it is hidden*/
+.aon-sidebar-hidden{
+	width:8px;
+	_width:13px;	
+	}
+/*Sidebar region title*/
+.aon-sidebar-title{
+	color:#000;
+	padding:3px 0 2px 0.5em;	
+	font-weight:bold;	
+	}
+/* Wraps the link that allow to show/hidde the sidebar region */
+.aon-sidebar-button-showSidebar{
+	}
+/* Link to perform the show/hidde sidebar action */
+.aon-sidebar-button-showSidebar a{
+	text-decoration:none;
+	display:block;
+	cursor:pointer;
+	}
+/* Sets a background image to the button when the sidebar is shown */
+.aon-sidebar-button-showSidebar-visible{
+	}
+/* Sets a background image to the button when the sidebar is hidden */
+.aon-sidebar-button-showSidebar-hidden{
+	}
+/* Wraps all menu items */
+.aon-sidebar-menu{
+	width:100%;	
+	}
+/* Table sets by the faces component tree2 */
+.aon-sidebar-menu table{
+	width:99%;
+	_width:100%;
+	}
+.aon-sidebar-menu td{
+	padding:0;
+	margin:0;
+	vertical-align:bottom;
+	}	
+/* Branch node. Wraps the icon and text that perform the branch */
+.aon-sidebar-menu-branch{
+	font-family:tahoma,arial,verdana,sans-serif;
+	padding:2px 5px 2px 5px;
+	border-bottom:#DCDCDC 1px solid;
+	}	
+/* Branch icon characteristics */
+.aon-sidebar-menu-branch-icon{
+	text-decoration:none;
+	width:12px;
+	display:inline;
+	padding:0px 3px 0px 5px;
+	}
+/* Branch plus icon background image */
+.aon-sidebar-menu-branch-iconPlus{	
+	cursor:pointer;	
+	}
+/* Branch minus icon background image */
+.aon-sidebar-menu-branch-iconMinus{	
+	cursor:pointer;	
+	}
+/* Link that wraps a span tag with the branch text*/
+.aon-sidebar-menu-branch-link{
+	text-decoration:none;
+	font-weight:bold;
+	padding:0px 2px;		
+	display:inline;
+	color:#71828A;
+	}
+	
+.aon-sidebar-menu-branch-link:visited{
+	text-decoration:none;
+	color:#71828A;
+	}
+.aon-sidebar-menu-branch-link:hover{
+	text-decoration:none;
+	color:#000;
+	}
+.aon-sidebar-menu-branch-link:active{
+	text-decoration:none;
+	color:#71828A;
+	}
+
+/* LEAF NODE*/
+/* Wraps Leaf node items, in this case one la link, the leaf node background image is sets here as no image is placed */
+.aon-sidebar-menu-leaf{
+	padding:2px 0px 2px 20px;	
+	border-bottom:#DCDCDC 1px solid;
+	}
+/*Leaf node item link*/
+.aon-sidebar-menu-leaf-link{
+	text-decoration:none;
+	color:#71828A;
+	font-family:tahoma,arial,verdana,sans-serif;
+	display:block;
+	padding:0px 5px 0px 0px;
+	}
+.aon-sidebar-menu-leaf-link:visited{
+	color:#71828A;
+	text-decoration:none;
+	}
+.aon-sidebar-menu-leaf-link:hover{
+	color:#000;
+	text-decoration:none;
+	}
+.aon-sidebar-menu-leaf-link:active{
+	color:#2F4E6F;
+	text-decoration:none;
+	}
+
+/*item selected*/
+.aon-sidebar-menu-selected{
+	color:#ccc;
+	background-color:#fff;
+	}
+	
+/*****************
+* TITLE, SUBTITLE AND BREADCRUMB  *
+******************/
+/*Only if necessary. General title of the application, previous to the menu tree and the general-toolbar*/
+.aon-general-title{	
+	padding:2px 0.5em;
+	font-family:tahoma,arial,verdana,sans-serif;
+	font-size:1.2em;	
+	font-weight:bold;
+}
+/*It is the title of the option selected. */
+.aon-content-title{	
+	display:block;
+	}
+/* It is included in the previous style */
+.aon-content-title-internal{
+	font:normal 1.2em tahoma,arial,verdana,sans-serif;
+	padding:1px 1em 1px 20px;
+	font-weight:bold;
+	}
+/*Subtitle*/
+.aon-content-subtitle{	
+	}
+/* It is included in the previous style */
+.aon-content-subtitle-internal{
+	font-weight:bold;	
+	color:#333333;
+	}
+/* Breadcrumb */
+.aon-breadcrumb{
+	padding:5px 1em 2px 1em;	
+	}
+/* It is included in the previous style */	
+.aon-breadcrumb-internal{	
+	}
+/* each breadcrumb item*/
+.aon-breadcrumb-item{
+	text-decoration:none;
+	font-size:0.8em;
+}
+.aon-breadcrumb-item:visited{
+ }
+.aon-breadcrumb-item:hover{
+}
+
+/*****************
+*  MAIN MENU SHOWN IN THE CONTENT REGION *
+******************/
+
+/* Wraps all the tree menu  */
+.aon-content-tree{	
+	height:100%;	
+	}
+.aon-content-tree table{
+	width:100%;	
+	}
+.aon-content-tree table td{
+	border-bottom:#ddd 1px solid;
+	}
+
+/*Branch tree node. Contains the text , description and a background image for branch items*/
+.aon-content-tree-branch{
+	padding-bottom:5px;
+	text-decoration:none;	
+	}
+
+/* Branch node link. Wrap only  the name, not the description */
+.aon-content-tree-branch-link{
+	text-decoration:none;	
+	width:100%;
+	color:#71828A;
+	}
+.aon-content-tree-branch-link:visited{
+	color:#71828A;
+	text-decoration:none;
+	}
+.aon-content-tree-branch-link:hover{
+	color:#000;
+	text-decoration:none;
+	}
+.aon-content-tree-branch-link:active{
+	color:#71828A;
+	text-decoration:none;
+	}
+/* Branch name */
+.aon-content-tree-branch-name{
+	padding:2px 0 2px 15px;	
+	font-weight:bold;
+	font-family:tahoma,arial,verdana,sans-serif;
+	}
+/* Branch description */
+.aon-content-tree-branch-description{
+	padding-top: 1px;	
+	padding-left:15px;
+	font-size:0.9em;
+	}
+
+/* Leaf node. Contains the icon (background image) and the text. */
+.aon-content-tree-leaf{	
+	padding-bottom:5px;
+	border:0;
+	}
+/* Link of the leaf node item. Wraps the lead node name */
+.aon-content-tree-leaf-link{	
+	text-decoration:none;	
+	color:#71828A;
+	font-weight:bold;
+	font-family:tahoma,arial,verdana,sans-serif;	
+	}
+
+.aon-content-tree-leaf-link:visited{
+	color:#71828A;
+	text-decoration:none;
+	}
+.aon-content-tree-leaf-link:hover{
+	color:#000;
+	text-decoration:none;
+	}
+.aon-content-tree-leaf-link:active{
+	color:#71828A;
+	text-decoration:none;
+	}
+/* Leaf node name */
+.aon-content-tree-leaf-name{
+	padding:2px 0 0px 15px; 	
+	}
+
+/* Leaf node description */
+.aon-content-tree-leaf-description{
+	padding-top: 1px;	
+	padding-left:15px;
+	font-size:0.9em;
+	color:#000;
+	font-weight:normal;
+	}
+
+/*****************
+* TREE MENU  *
+******************/
+/* Container that groups all the tree nodes */
+.aon-tree-menu{
+	border-right:#ccc 1px solid;
+	padding-right:5px;
+	width:20%;
+	float:left;	
+	padding: 0;	
+	position:relative;	
+	overflow:auto;
+}
+
+/*Root node (imagen+text)*/
+.aon-tree-menu-root{
+	padding:2px 0;
+	}
+/*Root node link (without image)*/
+.aon-tree-menu-root-link{
+	color:#000;
+	font-weight:bold;
+	text-decoration:none;
+	padding:0 5px;	
+	}
+/* Root node link  selected */
+.aon-tree-menu-root-link-selected{
+	background-color:#E8E8E8;
+	color:#000;
+	padding:0px 15px 0px 5px;
+	font-weight:bold;
+	margin:0 3px;
+	border:#999 1px solid;
+	border-right:#ccc 1px solid;
+	border-bottom:#ccc 1px solid;
+	}
+
+/*Leaf node (imagen+text)*/
+.aon-tree-menu-leaf{
+	padding:2px 0;
+	white-space:nowrap;
+	}
+/* Leaf node link (without image) */
+.aon-tree-menu-leaf-link{
+	color:#000;
+	text-decoration:none;
+	padding-left:3px;
+	
+	}
+.aon-tree-menu-leaf-link:visited{
+	color:#000;
+	text-decoration:none;
+	}
+.aon-tree-menu-leaf-link:hover{
+	color:#3366CC;
+	text-decoration:none;
+	}
+.aon-tree-menu-leaf-link:active{
+	color:#000;
+	text-decoration:none;
+	}
+/* Leaf node link  selected */
+.aon-tree-menu-leaf-link-selected{
+	background-color:#E8E8E8;
+	color:#000;
+	padding:0 15px 0 5px;
+	font-weight:bold;
+	margin:0 3px;
+	font-family:arial,verdana,sans-serif;
+	border:#999 1px solid;
+	border-right:#ccc 1px solid;
+	border-bottom:#ccc 1px solid;
+	}
+
+/*Branch node (imagen+text)*/
+.aon-tree-menu-branch{
+	padding:2px 0;
+	white-space:nowrap;
+	}
+/* Branch node link (without image) */
+.aon-tree-menu-branch-link{
+	color:#000;
+	text-decoration:none;
+	margin:0 3px;	
+	}
+.aon-tree-menu-branch-link:visited{
+	color:#000;
+	text-decoration:none;
+	}
+.aon-tree-menu-branch-link:hover{
+	color:#aaa;
+	text-decoration:none;
+	}
+.aon-tree-menu-branch-link:active{
+	color:#000;
+	text-decoration:none;
+	}
+/* Branch node link  selected */
+.aon-tree-menu-branch-link-selected{
+	background-color:#E8E8E8;
+	color:#000;
+	padding:0 15px 0 5px;
+	font-weight:bold;
+	margin:0 3px;
+	font-family:arial,verdana,sans-serif;border:#999 1px solid;
+	border-right:#ccc 1px solid;
+	border-bottom:#ccc 1px solid;
+	}
+
+
+/*****************
+* GENERAL TOOLBAR   *
+******************/
+
+/* Layer that wraps all the buttons*/
+.aon-general-toolbar{
+	}
+	
+/*Group of buttons */
+.aon-general-toolbar-item-group{
+	display:inline;
+	}
+/* Each button */	
+.aon-general-toolbar-item{	
+	padding: 0px 0.8em 0px 0.8em; 
+	cursor:pointer;	
+	width:auto;
+   	overflow:visible;
+	font:bold 1em arial,verdana,sans-serif;
+	text-decoration:none;
+	}
+/* Hover status of a button. Added to the previous style */
+.aon-general-toolbar-item-hover{
+	text-decoration:none;
+	cursor:pointer;
+	}
+
+/*****************
+*  CONTENT TOOLBAR   *
+******************/
+
+/*Wraps the aon-content-toolbar-internal <div>  */
+.aon-content-toolbar{	
+	border:#000 1px solid;
+	}
+/* Wraps all the buttons  */
+.aon-content-toolbar-internal{
+	}	
+/* A group of buttons   */
+.aon-content-toolbar-item-group{
+	display:inline;
+	}
+/* Each toolbar button   */	
+.aon-content-toolbar-item{
+	padding: 2px 0.8em 1px 0.8em; 
+	_padding-top:0px;
+	cursor:pointer;
+	width:auto;
+   	overflow:visible;	
+	text-decoration:none;
+	height:20px;
+	white-space:nowrap;
+	border:0;
+	background-color:#fff;
+	
+
+	}
+/* Hover status style, added to the previous style*/
+.aon-content-toolbar-item-hover{
+	text-decoration:none;
+	cursor:pointer;
+	width:auto;
+   	overflow:visible;	
+   	border:0;
+   	height:20px;
+	}
+
+/* Used simultaneously with aon-content-toolbar-item className for a new button. These styles (new, save, etc) are not currently in use. */
+.aon-content-toolbar-item-save{}
+.aon-content-toolbar-item-delete{}
+.aon-content-toolbar-item-cancel{}
+.aon-content-toolbar-item-acrobat{}
+.aon-content-toolbar-item-search{}
+.aon-content-toolbar-item-reset{}
+.aon-content-toolbar-item-print{}
+.aon-content-toolbar-item-list{}
+
+/*****************
+* DATA TABLE   *
+******************/
+/* Table style */
+.aon-table{
+	border-collapse: collapse; 
+	width:100%;
+	_border:0;
+	border:#808080 1px solid;
+	}
+
+/*  Table header   */
+.aon-table-header{
+	padding:2px 0.5em 2px 0.5em;
+	font-weight:bold;
+	text-align:left;
+	white-space:nowrap;
+	}
+/* Applied to the table header links*/
+.aon-table-header-link{
+	color:#fff;
+	text-decoration:none;
+	padding-left:10px;
+	}
+
+/* Odd row*/
+.aon-table-row-odd{
+	background-color:#fff;
+	color:#000;
+	}
+
+/* Even tow */
+.aon-table-row-even{
+	background-color:#EEEEEE;
+	color:#000;
+}
+
+/*  Every column of the table.  Used simultaneously with another style that specifies the type of data  */
+.aon-table-body{
+	padding: 2px 0.5em;
+	border-collapse: collapse; 	
+	border-bottom:#ddd 1px solid;
+	}
+	
+/*  Used simultaneously with aon-table-body for  numeric content.  */
+.aon-table-body-number{
+	text-align:right;
+	}
+/*  String cell. Used simultaneously with aon-table-body .   */
+.aon-table-body-string{
+	}
+/*   Use it when you do not want to break the line . Used simultaneously with aon-table-body    */
+.aon-table-body-nowrap{
+	white-space:nowrap;
+	}
+/*  Icon cell. Used simultaneously with aon-table-body  */
+.aon-table-body-icon{
+	white-space:nowrap;
+	color:#000;
+	font-weight:bold;
+	text-align:center;	
+}
+
+/* Style of the row during the mouse over event. All the styles declared here must use an !important atribute */
+.aon-table-row-hover{
+	color:#fff !important;
+	background-color:#C2C2C2 !important;
+	cursor:pointer;
+	}
+
+/* Cell that contains  info help text */
+.aon-table-body-info{}
+
+/* Cell that simulte a  boolean check as a  background image */
+.aon-table-boolean-check-on{
+	background:transparent url("images/icons/aon-check-on.gif") center center no-repeat;
+	}
+/* Cell that simulate a  boolean check off as a background image */
+.aon-table-boolean-check-off{
+	background:transparent url("images/icons/aon-check-off.gif") center center no-repeat;
+	}
+	
+/*  Foot cell  */
+.aon-table-footer{	
+	}	
+
+
+/**************************/
+/***** EDIT TABLE *********/
+/**************************/
+
+/* Table style */
+.aon-edit-table{
+	border-collapse:collapse;
+	width:100%;
+	clear:both;
+	border:#808080 1px solid;
+	margin:10px 0;
+	}
+.aon-edit-table .aon-form-lookup-button, .aon-edit-table .aon-form-new-button{
+	_top:0;
+	}
+/* Header class */
+.aon-edit-table-header{
+	padding:2px 0.5em 2px 0.5em;
+	font-weight:bold;
+	text-align:left;
+	white-space:nowrap;
+	}
+/* Applied to the table header links */
+.aon-edit-table-header-link{
+	text-decoration:none;
+	}
+.aon-edit-table-header-link:visited{
+	}
+.aon-edit-table-header-link:hover{
+	}
+.aon-edit-table-header-link:active{
+	}
+/*  odd row */
+.aon-edit-table-row-odd{
+	background-color:#fff;
+}
+
+/*  even row */
+.aon-edit-table-row-even{
+	background-color:#eee;
+}
+/* Every column of the table.  Used simultaneously with another style that specifies the type of data. */
+.aon-edit-table-body{
+	padding:1px 3px;
+	white-space:nowrap;
+	}
+/*String cell. Use it simultaneously with aon-edit-table-body*/
+.aon-edit-table-body-string{
+	}
+/*Numeric cell. Use it simultaneously with aon-edit-table-body*/
+.aon-edit-table-body-number{
+	text-align:right;
+	}
+/*Icon cell. Use it simultaneously with aon-edit-table-body */
+.aon-edit-table-body-icon{
+	width:16px;
+	text-align:center;
+	font-weight:bold;
+	font-size:0.9em;
+	
+	}
+/* Sets the width of the Buttons cell (accept, cancel and delete). Use it simultaneously with aon-edit-table-body.
+The buttons images are set image in the commandbutton declaration. You can not change then with styles
+ */
+.aon-edit-table-body-buttons{
+	white-space:nowrap;
+	width:63px;
+	}
+/*Each button of a aon-edit-table-body-buttons cell*/
+.aon-edit-table-icon-button{
+	margin:2px 2px 2px 2px;
+	cursor:pointer;
+	width:16px;
+	border:0;
+	background-color:#ddd;
+	}
+.aon-edit-table-icon-button-new{
+	background:transparent url("images/edit-table/aon-edit-table-button-new.gif") left top no-repeat;
+	}
+.aon-edit-table-icon-button-save{
+	background:transparent url("images/edit-table/aon-edit-table-button-save.gif") left top no-repeat;
+	}
+.aon-edit-table-icon-button-cancel{
+	background:transparent url("images/edit-table/aon-edit-table-button-cancel.gif") left top no-repeat;
+	}
+.aon-edit-table-icon-button-delete{
+	background:transparent url("images/edit-table/aon-edit-table-button-delete.gif") left top no-repeat;
+	}
+/* Foot style */
+.aon-edit-table-footer{
+	border-top:0;
+	padding:0px 3px;
+	}
+	
+
+/*************************/
+/* FORM TABLE */
+/*********************/
+/*A form group of controls (label and fields) that are displayed with a table, with one column for the label and the next one for the field.*/
+
+/*table style*/
+.aon-form-table{	
+	border-collapse:collapse;
+	border:#ddd 1px solid;
+	_border:#808080 1px solid;
+	margin:10px 0px;
+	}
+/*headerClass*/
+.aon-form-table-header{
+	padding:4px 0.5em 4px 0.5em;
+	font-size:1em;
+	font-weight:bold;
+	text-align:left;
+	font-family:tahoma,arial,verdana,sans;
+	}
+/* Odd column wich contains the label */
+.aon-form-table-column-odd{
+	margin:0;
+	padding:0;
+	vertical-align:top;
+	white-space:nowrap;
+	padding:2px 6px 2px 0.6em;
+	background-color:#f4f4f4;
+	border:#ddd 1px solid;
+	text-align:left;
+	}
+	
+/* Even column which contains the input  */
+.aon-form-table-column-even{
+	padding:2px 5px 2px 5px;	
+	border:#ddd 1px solid;
+	border-left-width:0;
+	border-right-width:0;
+	vertical-align:top;
+	background-color:#fff;
+	text-align:left;	
+	}
+	
+/* Label that is placed in the odd column. Use it simultaneously with aon-form-input-text-label */
+.aon-form-table-column-odd-label{
+	
+	}
+
+.aon-form-table-mainColumn {
+	
+}
+
+	
+/*****************
+* DATASCROLLER   *
+******************/
+/*Wraps all datascroller objects*/
+.aon-datascroller{
+	padding:0em 10px;
+	margin:1em 0 0.7em 0;	
+	text-align:left;
+	}
+
+/* Text with the literals of the search result */
+.aon-datascroller-text{
+	padding-right:1em;
+	font-weight:bold;
+	vertical-align:middle;
+	}
+	
+/* Wraps all the buttons of the datascroller, contained in a table column */
+.aon-datascroller-buttons{
+	vertical-align:middle;
+	}
+
+/* Style of the first  button   */
+.aon-datascroller-button-first{
+	width:16px;
+	height:16px;
+	cursor:pointer;
+		background:transparent url("images/datascroller/aon-datascroller-button-first.gif") center center no-repeat;
+	}
+
+/* Style of the last button */
+.aon-datascroller-button-last{
+	width:16px;
+	height:16px;
+	cursor:pointer;
+	background:transparent url("images/datascroller/aon-datascroller-button-last.gif") center center no-repeat;
+	}
+/*Style of the  previous image button*/
+.aon-datascroller-button-previous{
+	width:16px;
+	height:16px;
+	cursor:pointer;
+	background:transparent url("images/datascroller/aon-datascroller-button-previous.gif") center center no-repeat;
+	}
+/*Style of the  next image button*/
+.aon-datascroller-button-next{
+	width:16px;
+	height:16px;
+	cursor:pointer;
+	background:transparent url("images/datascroller/aon-datascroller-button-next.gif") center center no-repeat;
+	}
+	
+/*Style for the fast forward image button*/
+.aon-datascroller-button-fastforward{
+	width:16px;
+	height:16px;
+	cursor:pointer;
+	background:transparent url("images/datascroller/aon-datascroller-button-fastforward.gif") center center no-repeat;
+	}
+	
+/*Style for the fast rewind image button*/
+.aon-datascroller-button-fastrewind{
+	width:16px;
+	height:16px;
+	cursor:pointer;
+	background:transparent url("images/datascroller/aon-datascroller-button-fastrewind.gif") center center no-repeat;
+	}
+	
+/*Current page number*/
+.aon-datascroller-currentpage{	
+	padding:0;	
+	vertical-align:middle;
+	}
+/*link text of the current page*/
+.aon-datascroller-currentpage a{
+	text-decoration:none;
+	padding:0px 3px;	
+	line-height:14px;
+	color:#000;
+	font-weight:bold;
+	}
+.aon-datascroller-currentpage a:visited{
+	color:#000;
+	}
+.aon-datascroller-currentpage a:hover{
+	color:#000;
+	cursor:default;
+	}
+.aon-datascroller-currentpage a:active{
+	color:#000;
+	}
+
+/*Pages numbers except of the current one*/
+.aon-datascroller-page{
+	vertical-align:middle;
+	}
+.aon-datascroller-page a{
+	color:#5C81A7;
+	text-decoration:none;	
+	padding:0px 3px;
+	line-height:15px;
+	border:#eee 1px solid;
+	}
+.aon-datascroller-page a:visited{
+	color:#5C81A7;
+	border-color:#eee;
+	}
+.aon-datascroller-page a:hover{
+	color:#fff;
+	border-color:#000;
+	background-color:#72828A;
+	}
+.aon-datascroller-page a:active{
+	color:#5C81A7;
+	border-color:#eee;
+	}
+	
+
+/*****************
+* FORMS  *
+******************/
+
+/*Applied to the form tag*/
+.aon-form{
+	margin:0;
+	padding:0;
+	}
+	
+/* Title used to identify a group of fields */
+.aon-form-legend{
+	font-weight:bold;
+	padding:1em 0 5px 0;
+}
+/* Used with several controls to avoid a line return */
+.aon-form-nowrap{
+	white-space:nowrap;
+	display:inline;
+	}
+/***** INPUT TEXT *********/
+/* Text label of a form field type input text */
+.aon-form-input-text-label{
+	padding-right:5px;
+	color:#000;;
+	font-weight:bold;
+	white-space:nowrap;
+	
+	}
+/* Input text field */
+.aon-form-input-text{
+	font:1em verdana,arial,sans-serif;
+	margin-right:2px;
+	}
+/* Used when the input text receives the focus */
+.aon-form-input-text:focus{
+	background-color:#f1f1f1;
+	margin-right:2px;
+	}
+/* Disabled input text */
+.aon-form-input-text-disabled{
+	font:1em verdana,arial,sans-serif;
+	margin-right:2px;
+	background-color:#D4D0C8;
+	color: #666;
+   	}
+
+/***** TEXTAREA*********/
+/* Textarea field */
+.aon-form-textarea-field{
+	display:block;
+	clear:both;
+	width:100%;
+	overflow:auto;
+	font:1em verdana,arial,sans-serif;
+	}	
+
+/***** LOOKUP *********/	
+/* label */
+.aon-form-lookup-label{
+	padding-right:5px;
+	white-space:nowrap;
+	color:#363636;	
+	}
+/* Lookup button. Use a image background to change the image. By default the size of the button is 16x16 */
+.aon-form-lookup-button{
+	border:0;
+	width:16px;
+	height:16px;
+	margin:0 2px;
+	position:relative;
+	top:0px;
+	_top:-1px;
+	cursor:pointer;
+	_margin-right:6px;
+	background:transparent url("images/buttons/aon-form-lookup-button.gif") left top no-repeat;
+	}	
+/* New button of a lookup control. Use a image background to change the image. By default the size of the button is 16x16 */
+.aon-form-new-button{
+	border:0;
+	width:16px;
+	height:16px;
+	margin:0 2px;
+	position:relative;
+	top:0px;
+	_top:-1px;
+	cursor:pointer;
+	background:transparent url("images/buttons/aon-form-new-button.gif") left top no-repeat;
+	_margin-right:6px;
+	}	
+.aon-form-lookup-label .aon-form-input-text-disabled{
+	margin-left:2px;
+	}	
+	
+	
+/***** FILE CONTROL*********/	
+/* Generic styles of the file control buttons  */
+.aon-fileControl-button{
+	background-color:#E0DDD6;
+	border:0;
+	width:16px;
+	height:16px;
+	margin:0 2px;
+	position:relative;
+	top:0px;
+	_top:-1px;
+	cursor:pointer;
+	}
+/* Image background of the download button  */
+.aon-fileControl-button-download{
+	background:transparent url("images/buttons/aon-fileControl-button-download.gif") left top no-repeat;
+	}
+/* Image background of the fileUpload button  */
+.aon-fileControl-button-fileUpload{
+	background:transparent url("images/buttons/aon-fileControl-button-fileUpload.gif") left top no-repeat;
+	}
+/* Image background of the remove button  */
+.aon-fileControl-button-remove{
+	background:transparent url("images/buttons/aon-fileControl-button-remove.gif") left top no-repeat;
+	}
+	
+/***** SELECTONELISTBOX *********/
+/*Label */
+.aon-form-selectOneListBox-label{
+	padding-right:5px;
+	color:#363636;
+	font-weight:bold;
+	white-space:nowrap;
+	}
+/*Field */
+.aon-form-selectOneListBox-field{
+	margin-right:2px;
+	}
+	
+	
+/***** SELECTONEMENU *********/
+
+/*Label */
+.aon-form-selectOneMenu-label{
+	padding-right:5px;
+	color:#363636;
+	font-weight:bold;
+	white-space:nowrap;
+	}
+/*Field  */
+.aon-form-selectOneMenu-field{
+	font:1em verdana,arial,sans-serif;
+	margin:0;
+	}
+
+/***** SELECTONERADIO *********/
+/* Wraps the title of a group of radio buttons and the radio buttons themselves */
+div.aon-form-selectOneRadio{
+	border:#666 1px solid;	
+	clear:both;
+	display:block;
+	margin:0.5em 0 0.5em 0;	
+	padding:0.5em;	
+	}
+
+/* Title of a group of radio buttons */
+.aon-form-selectOneRadio-title{	
+	padding:0 5px 5px 0;
+	white-space:nowrap;
+	color:#363636;
+	font-weight:bold;
+	}	
+
+/*Each radio button*/
+.aon-form-selectOneRadio-field{
+	margin:0;
+	padding:0;
+	vertical-align:middle;
+	}
+/* Column  that contains each radio button */
+.aon-form-selectOneRadio>table td{
+	padding-right:1.5em;
+	vertical-align:middle;
+	white-space:nowrap;
+	}
+/* Text of each radio button */
+.aon-form-selectOneRadio-field label{
+	font-style:italic;
+	}
+
+/***** SELECT BOOLEAN CHECKBOX *********/
+
+/* Groups several checkboxes */
+div.aon-form-selectBooleanCheckbox-group{
+	clear:both;
+	display:block;
+	margin:0.5em 0 0.5em 0;	
+	padding:0.5em;	
+	}
+/* Set the title of a group of checkboxes */
+.aon-form-selectBooleanCheckbox-title{	
+	padding:0 5px 5px 0;
+	color:#000;
+	white-space:nowrap;
+	font-weight:bold;
+	}
+	
+/* Groups the label and the field. Label follows the checkbox */
+div.aon-form-selectBooleanCheckbox{
+	white-space:nowrap;
+	vertical-align:middle;
+	}
+/*Label */
+.aon-form-selectBooleanCheckbox-label{	
+	_position:relative;
+	_top:-3px;
+	color:#363636;
+	font-weight:bold;
+	white-space:nowrap;
+	}
+	
+/*Field */
+.aon-form-selectBooleanCheckbox-field{
+	margin:0 2px 0 0;	
+	padding:0;		
+	}
+
+
+	
+/***** CALENDAR *********/
+/* Style of the calendar button. Set the image as a background image */
+.aon-form-calendar-button{
+	background-color:#E0DDD6;
+	border:0;
+	width:16px;
+	height:16px;
+	margin:0 2px;
+	position:relative;
+	top:1px;
+	_top:-1px;
+	cursor:pointer;
+	background:transparent url("images/buttons/aon-form-lookup-button.gif") left top no-repeat;
+	}
+
+
+/***** NOTES *********/
+
+/* External container. Wraps the note */
+.aon-form-note{	
+	clear:both;
+	margin:5px 0;
+	}
+/* Note container */
+.aon-form-note-internal{
+	padding:5px 1em;
+	background-color:#EEEEEE;
+	font-style:italic;
+	border:#ccc 1px solid;
+	color:#000 !important;
+	}
+
+/***** IMAGES *********/
+
+/* Wraps the image container */
+.aon-form-image{
+	clear:both;
+	float:left;
+	margin:10px 0;	
+	border:#ccc 1px solid;
+	background-color:white;
+	padding:1px;
+	}
+/* Image container */
+.aon-form-image-int{
+	background-color:#f4f4f4;
+	border:#ccc 1px solid;
+	padding:5PX;	
+	}
+
+/***** BUTTONS *********/
+/* Div that contains a group of buttons  */
+.aon-form-button-group{
+	padding:10px 5px 5px 5px;
+	text-align:left;
+	}
+/* Button */
+.aon-form-button{
+	width:auto;
+	overflow:visible;
+	padding-right:20px;
+	padding-left:5px;
+	color:#666666;
+	text-transform:uppercase;
+	margin-left:5px;
+	border:#fff 1px solid;
+	background-color:#fff;	
+	border-left:#CCCCCB 1px solid;
+	border-top:#CCCCCB 1px solid;
+	border-bottom:#777778 1px solid;
+	border-right:#777778 1px solid;
+	cursor:pointer;
+	}
+
+
+/***** EXTERNAL LINKS ********/
+/* Applied to links that open an external url in a new window.  */
+.aon-navigation-link{
+	padding:2px 1em 2px 14px;	
+	color:#72828A;
+	text-decoration:none;
+	font-weight:bold;
+	border:0;
+	width:auto;
+   	overflow:visible;
+   	margin: 0 5px;
+ 	}
+.aon-navigation-link:hover{
+	color:#72828A;
+	cursor:pointer;
+	} 
+.aon-navigation-link:visited{
+	color:#000;
+	} 
+
+
+/**************************/
+/***** COLLAPSIBLE PANEL *********/
+/**************************/
+
+/* Wraps the collapsible title and collapsible body */
+div.aon-form-collapsiblePanel{
+	clear:both;
+	display:block;
+	padding:0px;
+	margin:1em 0;
+	}
+
+.aon-form-collapsiblePanel:after{
+	content:".";
+	display:block;
+	height:0;
+	clear:both;
+	visibility:hidden;
+	}
+*html .aon-form-collapsiblePanel{height:1%;}
+
+/* Link that expand/contract the  collapsible body. Contains also the “>!” symbol */
+.aon-form-collapsiblePanel a{
+	text-decoration:none;
+	font-weight:bold;	
+	padding:2px 0em 8px 10px;
+	margin:0 5px;
+	white-space:nowrap;
+	}
+.aon-form-collapsiblePanel a:visited{
+	text-decoration:none;
+	}
+.aon-form-collapsiblePanel a:hover{
+	text-decoration:none;	
+	}
+.aon-form-collapsiblePanel a:active{
+	text-decoration:none;
+	}
+
+/* Wraps all the items included in the collapsible panel  */
+.aon-form-collapsiblePanel-body{	
+	padding:1em;	
+	margin-bottom:1px;
+	_width:100%;
+	}	
+/* reset the link style set by the previous .aon-form-collapsiblePanel a selected*/
+.aon-form-collapsiblePanel-body a{
+	background-color:transparent;
+	background-image:none;
+	margin:0;
+	padding:2px 5px;
+	color:#000;		
+	text-decoration:none;
+	}
+/**************************/
+/***** GROUP PANEL *********/
+/**************************/
+/* Wraps the title and the body of the collapsible */
+div.aon-form-group{	
+	clear:both;
+	display:block;
+	padding:0px 0;
+	margin:1em 0;
+	padding-top:10px;
+	
+	}
+.aon-form-group:after{
+	content:".";
+	display:block;
+	height:0;
+	clear:both;
+	visibility:hidden;
+	}
+	
+/* Group title */
+.aon-form-group-title{
+	clear:both;
+	padding:2px 2.5em 8px 10px;
+	margin:0 5px;
+	font-weight:bold;	
+	font-family:arial,verdana,sans-serif;
+	white-space:nowrap;
+	}
+	
+/* Wraps all the group items */
+.aon-form-group-body{
+	padding:0.5em;
+	_width:100%;
+	margin:5px 0;
+	}
+.aon-form-group-body:after{
+	content:".";
+	display:block;
+	height:0;
+	clear:both;
+	visibility:hidden;
+	}
+*html .aon-form-group{height:1%;}	
+
+
+
+/*********************/
+/***** TAB PANEL *********/
+/*********************/
+
+/* Wraps all tabs items */
+/* By default, the faces tab component creates a table with tree rows, the first one has the tabs buttons, the second one has a decorative subheader and the last one places the content. */
+.aon-tabpanel{
+	border-width:1px;
+	border-color:#000;
+	width:100%;
+	margin:1em 0;
+	display: block;
+	clear: both;
+}
+
+.aon-tabpanel table{
+	border-collapse:collapse;
+	}
+/* Allow /eliminate  the space between rows */
+.aon-tabpanel table td{
+	padding-top:0;
+	}
+/* Style for the active tab column */
+.aon-tabpanel-active{
+}
+/* Style for the active tab button  */
+.aon-tabpanel-active input{
+	margin:0;
+	}
+/* Style for the inactive tab column  */
+.aon-tabpanel-inactive{
+	color:#fff;
+	background:transparent;	
+	border:none;
+	margin:0;
+}
+
+/* Style for the inactive tab button */
+.aon-tabpanel-inactive input{
+	margin:0;
+}
+
+
+/* This styles and the following two ones concern to the subheader row, and correspond to the columns of the active, inactive and last column */
+.myFaces_panelTabbedPane_subHeaderCell_active{
+	border:none;
+	background-color:#fff;	
+	
+	}
+/* See previous coment */	
+.myFaces_panelTabbedPane_subHeaderCell_inactive{
+	border-width:0px;
+	border-style:solid;
+	border-left:none;
+	border-right:none;
+	background-color:#fff;
+	border-top:#ccc 1px solid;
+
+	}
+/* See previous coment */
+.myFaces_panelTabbedPane_subHeaderCell_last{
+	background-color:#fff;
+	border:none;
+	border-top:#ccc 1px solid;
+	
+	}
+/* It is the third row of the table, and wraps the tab active content */
+.myFaces_panelTabbedPane_pane{
+	border-width:1px;
+	border-color:#000;
+	background-color:#fff;	
+	border:#ccc 1px solid;
+	border-top:none;
+}
+/* Container inside the previous style */
+.aon-tabpanel-body{
+	}
+
+/********************/
+/***** ERROR MESSAGES *********/
+/********************/
+
+/* Layer that contains all the error messages. Use a id with the same name and a forceId if you don´t want them to scroll */
+.aon-errors{
+	/* BE CAREFUL. DO NOT USE A MARGIN DECLARION. THERE ARE PROBLEMS WITH INTERNET EXPLORER*/
+	padding:0 1em 3PX 20px;
+	}
+/* selector */
+.aon-errors ul{
+	list-style-type:none;
+	padding:0;
+	margin:0;
+	}
+/* Simple error message. You can tell the diference of the several error types with a background image.  */
+.aon-error-message{
+	background:transparent url("images/icons/aon-error-message.gif") left center no-repeat;
+	padding:5px 0 5px 20px;
+	color:#ff0000;
+	}
+/* Simple error message. You can tell the diference of the the several error types with a background image.  */
+.aon-fatal-error-message{
+	background:transparent url("images/icons/aon-fatal-error-message.gif") left center no-repeat;
+	padding:5px 0 5px 20px;
+	color:#ff0000;
+	}
+/* Simple error message. You can tell the diference of the  the several error types with a background image.  */
+.aon-info-message{
+	background:transparent url("images/icons/aon-info-message.gif") left center no-repeat;
+	padding:5px 0 5px 10px;
+	}
+	
+/****** APPLICATION ERRROR PAGE **********/
+/*Page error title */
+.aon-errorPage-title{
+	font-weight:bold;
+	font-size: 1.5em; 
+	background-color:#035B87; 
+	color:#fff;
+	margin-top: 15px; 
+	padding:2px 10px;
+	}
+/* The error message block, which contains, the error definition and it´s descripcion */
+.aon-errorPage-message{
+	margin:10px 0px 10px 30px;
+	border:#808080 1px solid;
+	background-color:#eee;
+	padding:5px 10px 10px 20px;;
+	font-size:1.1em;
+	}
+
+/* Error message definition */
+.aon-errorPage-message{
+	}
+	
+/* Error message explanation */	
+.aon-errorPage-message-explanation{
+	padding:0px 0 0 20px;
+	font-weight:bold;
+	}
+/* Inside a collapsible panel, wraps the error detail list. */
+.aon-errorPage-message-detail{
+	padding-left: 15px;
+	font-family: Courier;
+	}
+/* Label of a list item, which describes the error  */
+.aon-errorPage-message-detail-label{
+	font-weight:bold;
+	}	
+/* Text of list item which explain the error */
+.aon-errorPage-message-detail-text{
+	padding-left: 15px;
+	font-size: 0.6em; 
+	line-height: 1.8em;
+	}
+/* Applied to the error trace */
+.aon-errorPage-message-detail-nowrapText{
+	white-space:nowrap;
+	}
+	
+
+/*****************
+* WINDOW POP UP  *
+******************/
+
+.aon-window-popup-body{
+	padding:0 5px;
+	}
+
+/*************/	
+/* ICONS*/
+/*************/
+/* Images background. Can be used for buttons, links,… */
+
+/* Set a background with a excel icon */
+.aon-xls-icon {
+	background:#fff url("images/icons/aon-excel-icon.gif") left top no-repeat; 
+	padding-left: 20px; 
+	display:inline;
+	padding-bottom: 6px;
+	color:#000;
+	}
+	
+/* Set a background with a pdf icon */
+.aon-pdf-icon{
+	background:#fff url("images/icons/aon-pdf-icon.gif") left top no-repeat; 
+	padding-left: 20px; 
+	display:inline;
+	padding-bottom: 6px;
+	color:#000;
+	}
+
+

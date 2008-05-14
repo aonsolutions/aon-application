@@ -1,0 +1,94 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:aon="http://www.code.es/aon-ice-components">
+<body>
+
+<ui:composition template="/facelet/templates/aon.ui.main.xhtml">
+	<ui:define name="content">
+
+		<aon:form id="customerList">
+
+		<aon:panelGrid columns="2" dir="true" styleClass="aon-title-toolbar"
+		cellpadding="0" cellspacing="0" columnClasses="aon-content-title,aon-content-toolbar">
+			<aon:div styleClass="aon-content-title-internal">
+				<aon:outputText value="#{menuBundle.aon_master}"/>
+				<aon:outputText value="#{menuBundle.aon_customer}"/>	  						
+			</aon:div>		
+
+			<!-- start toolbar navigation -->
+			<aon:div styleClass="aon-content-toolbar-internal">
+				<aon:div styleClass="aon-content-toolbar-item-group">
+					<aon:commandButton id="reset" value="#{bundle.aon_reset}"
+						action="customer_form" actionListener="#{customer.onReset}"
+						styleClass="aon-content-toolbar-item aon-icon-reset"
+						onmouseout="this.className='aon-content-toolbar-item aon-icon-reset'"
+						onmouseover="this.className='aon-content-toolbar-item aon-icon-reset aon-content-toolbar-item-hover'"
+						accesskey="#{bundle.aon_key_new}"/>
+					<aon:commandButton id="search" value="#{bundle.aon_search}"
+						action="customer_search" actionListener="#{customer.onEditSearch}"
+						styleClass="aon-content-toolbar-item aon-icon-search"
+						onmouseout="this.className='aon-content-toolbar-item aon-icon-search'"
+						onmouseover="this.className='aon-content-toolbar-item aon-icon-search aon-content-toolbar-item-hover'"
+						accesskey="#{bundle.aon_key_search}"/>
+				</aon:div>
+			</aon:div>
+			<!-- end toolbar navigation -->
+		</aon:panelGrid>
+		
+		<!--  aon-region-body -->
+		<aon:div styleClass="aon-scroll-area">
+				<aon:div styleClass="aon-scroll-area-internal">
+					
+					<aon:div styleClass="aon-content-subTitle">
+						<aon:div styleClass="aon-content-subTitle-internal">
+								<aon:outputText
+						value="#{nombre.new?(bundle.aon_reset):(bundle.aon_editing)}" />
+						</aon:div>
+					</aon:div>		
+					
+					<aon:dataTable id="customerDataList" 
+						value="#{customer.model}" var="to" rows="20"
+						styleClass="aon-dataTable">
+					
+							<aon:column>
+								<aon:rowSelector selectionListener="#{customer.onSelect}" />
+								<f:facet name="header">
+									<aon:outputText value="#{registryBundle.aon_name}" />
+								</f:facet>
+								<aon:outputText value="#{to.registry.name}"/>
+							</aon:column>
+
+							<aon:column>
+								<f:facet name="header">
+									<aon:outputText value="#{registryBundle.aon_surname}" />
+								</f:facet>
+								<aon:outputText value="#{to.registry.surname}"/>
+							</aon:column>
+
+							<aon:column>
+								<f:facet name="header">
+									<aon:outputText value="#{registryBundle.aon_cif}" />
+								</f:facet>
+								<aon:outputText value="#{to.registry.document}"/>
+							</aon:column>
+
+						</aon:dataTable>
+						
+						<ui:include src="/facelet/shared/dataScroller.xhtml">
+							<ui:param name="dataTable" value="customerDataList" />
+							<ui:param name="model" value="#{customer.model}" />
+							<ui:param name="showNote" value="#{true}" />
+						</ui:include>					
+					
+				</aon:div>
+			</aon:div>
+		</aon:form>
+	</ui:define>
+
+</ui:composition>
+
+</body>
+</html>
