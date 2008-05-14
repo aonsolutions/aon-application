@@ -24,8 +24,8 @@
 					</f:facet>
 					<f:facet name="controls">
 						<aon:commandButton type="button"
-							styleClass="aon-popupWindow-close" immediate="true"
-							onclick="Richfaces.hideModalPanel('messagesModalPanel');">
+							styleClass="aon-popupWindow-close" immediate="true">
+							<rich:componentControl for="messagesModalPanel" operation="hide" event="onclick"/>
 						</aon:commandButton>
 					</f:facet>
 		            <rich:panel bodyClass="body3">

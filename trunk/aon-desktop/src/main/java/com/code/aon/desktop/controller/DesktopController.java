@@ -18,6 +18,7 @@ import javax.servlet.http.HttpSession;
 import org.hibernate.Query;
 import org.hibernate.Session;
 
+import com.code.aon.bridge.plugin.Utils;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
@@ -64,7 +65,7 @@ public class DesktopController extends BasicController {
 		//Connect to mail server.
 		try {
 			WebMailController webmail = (WebMailController)AonUtil.getRegisteredBean(AonConstants.BEAN_WEBMAIL);
-			webmail.initDesktop(UserUtils.getInstance().getLoggedUser());
+			webmail.initDesktop(Utils.getAuthPrincipal());
 			mail_server = webmail.getServer();
 		}
 		catch (Exception e) {
