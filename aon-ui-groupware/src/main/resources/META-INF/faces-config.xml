@@ -140,7 +140,7 @@
 		</managed-property>
 		<managed-property>
 			<property-name>defaultOrder</property-name>
-			<value>Contact_name</value>
+			<value>Contact_displayName</value>
 		</managed-property>
 	</managed-bean>
 	

@@ -19,6 +19,12 @@ public interface IContactAlias {
 	String  CONTACT_CELLULAR_PHONE = "Contact_cellularPhone";
 
 	/** 
+	* Alias value: Contact_displayName
+	* Hibernate value: Contact.displayName
+	*/
+	String  CONTACT_DISPLAY_NAME = "Contact_displayName";
+	
+	/** 
 	* Alias value: Contact_email
 	* Hibernate value: Contact.email
 	*/
