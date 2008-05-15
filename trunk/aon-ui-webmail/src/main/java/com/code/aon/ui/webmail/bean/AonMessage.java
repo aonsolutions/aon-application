@@ -24,8 +24,9 @@ import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
 import javax.mail.search.SearchTerm;
 
+import org.apache.commons.lang.StringUtils;
+
 import com.code.aon.ui.util.AonUtil;
-import com.code.aon.ui.webmail.controller.FolderController;
 import com.code.aon.ui.webmail.controller.MessageController;
 import com.code.aon.ui.webmail.exception.WebmailException;
 
@@ -299,9 +300,8 @@ public class AonMessage {
 			LOGGER.log(Level.INFO, "Null message could not set sender address");
 		}
 	}
-	
-	public String getSenderShort() throws WebmailException {
-		int maxLength = 25;
+
+	public String getSender( int maxWidth ) throws WebmailException {
 		Address[] addresses = null;
 		try {
 			addresses = message.getFrom();
@@ -314,9 +314,11 @@ public class AonMessage {
 			InternetAddress tmpAddress = (InternetAddress) addresses[0];
 			sender = getDisplayAddressShort((Address)tmpAddress);
 		}
-		if (sender.length()>maxLength)
-			return sender.substring(0,maxLength)+"..";
-		return sender.substring(0,sender.length());
+		return (maxWidth != -1) ? StringUtils.abbreviate(sender, maxWidth) : sender;
+	}
+	
+	public String getSenderShort() throws WebmailException {
+		return getSender(25);
 	}
 
 	public String getSenderEmail() throws WebmailException {
