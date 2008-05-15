@@ -156,7 +156,7 @@ public class AccountInvoiceDetail implements ITransferObject {
 	 */
 	public double getRetentionQuota() {
 		double retentionQuota = 0.0;
-		if(this.getVat() != null){
+		if(this.getRetention() != null){
 			retentionQuota = round(this.getTaxableBase() * this.getRetention().getPercentage() / 100, 2);
 		}
 		return retentionQuota;
