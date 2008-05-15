@@ -42,7 +42,7 @@
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.account.bridge</artifactId>
-			<version>1.0.0</version>
+			<version>1.0.1</version>
 			<scope>runtime</scope>
 		</dependency>
 		<dependency>
