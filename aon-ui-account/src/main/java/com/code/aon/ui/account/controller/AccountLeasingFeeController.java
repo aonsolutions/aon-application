@@ -249,6 +249,7 @@ public class AccountLeasingFeeController {
 			invoice.setIssueDate(getHeader().getLeasingFeeDate());
 			invoice.setSeries(getHeader().getSeries());
 			invoice.setNumber(getHeader().getNumber());
+			invoice.setReferenceCode(getHeader().getReferenceCode());
 			// A INVOICE SE LE METE COMPANY EN REGISTRY
 			invoice.setRegistry(obtainCompany());
 			invoice.setRegistryDocument(getHeader().getLeasing().getSupplierDocument());
