@@ -12,6 +12,10 @@ import org.apache.jackrabbit.name.QName;
 public interface IConstants {
 
 	static final String CDR_BUNDLE_NAME = "es.code.cdr.ui.i18n.messages";
+    /** External categories properties file. */
+    static final String CATEGORIES_PATH_FILE_KEY = "java.resources.categories";
+    /** Default categories properties file. */
+	static final String CATEGORIES_PATH = "resources/categories.properties";
 
 	static final String ES = "es";
 	static final String EN = "en";

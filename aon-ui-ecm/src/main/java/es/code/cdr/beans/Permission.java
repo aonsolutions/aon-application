@@ -12,6 +12,8 @@ import java.util.StringTokenizer;
  */
 public class Permission implements Serializable {
 
+	private static final long serialVersionUID = 3697630070716768802L;
+
 	/** Role/Profile name. */
 	private Object name;
 	/** Enabled permissions. */

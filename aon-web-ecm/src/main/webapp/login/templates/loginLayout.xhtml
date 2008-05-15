@@ -4,8 +4,7 @@
 	xmlns:f="http://java.sun.com/jsf/core" 
 	xmlns:c="http://java.sun.com/jstl/core"		
 	xmlns:ui="http://java.sun.com/jsf/facelets"
-	xmlns:ice="http://www.icesoft.com/icefaces/component"
-	xmlns:aon="http://www.code.es/aon-ice-components">
+	xmlns:aon="http://www.code.es/aon-rich-components">
 
 <c:forEach items="#{aonConfiguration.applicationBundleList}" var="bundle">
 	<f:loadBundle basename="#{bundle.value}" var="#{bundle.key}" />
@@ -47,9 +46,9 @@
 								<aon:outputText value="#{appBundle.aon_login_phone}" />
 							</aon:div>
 							<aon:div>
-								<ice:outputLink value="mailto:#{appBundle.aon_login_email}" target="_blank" >
+								<h:outputLink value="mailto:#{appBundle.aon_login_email}" target="_blank" >
 									<aon:outputText value="#{appBundle.aon_login_email}" />
-								</ice:outputLink>
+								</h:outputLink>
 							</aon:div>
 						</aon:div>							
 

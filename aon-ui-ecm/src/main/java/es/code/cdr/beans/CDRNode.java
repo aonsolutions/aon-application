@@ -15,10 +15,18 @@ import javax.jcr.RepositoryException;
  */
 public interface CDRNode extends Serializable {
 
+	public static final String FOLDER_TYPE = "folder";
+	public static final String DOCUMENT_TYPE = "document";
+
 	/**
 	 * @return the node
 	 */
 	Node getNode();
+
+	/**
+	 * @return the type
+	 */
+	String getType();
 
 	/**
 	 * @return the status

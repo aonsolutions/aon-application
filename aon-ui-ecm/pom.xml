@@ -17,35 +17,25 @@
 
 		<dependency>
 			<groupId>com.code.aon</groupId>
-			<artifactId>aon.security.bridge</artifactId>
-			<version>1.2.7</version>
-			<scope>compile</scope>
-		</dependency>
-
-		<dependency>
-			<groupId>com.code.aon</groupId>
-			<artifactId>aon.security</artifactId>
-			<version>1.2.7</version>
-			<scope>provided</scope>
-		</dependency>
-
-		<dependency>
-			<groupId>com.code.aon</groupId>
-			<artifactId>aon.common</artifactId>
-			<version>1.9.15</version>
+			<artifactId>aon.ui.resources</artifactId>
+			<version>1.0.0-SNAPSHOT</version>
 			<scope>compile</scope>
 			<exclusions>
 				<exclusion>
-					<groupId>commons-digester</groupId>
-					<artifactId>commons-digester</artifactId>
+					<groupId>log4j</groupId>
+					<artifactId>log4j</artifactId>
 				</exclusion>
 				<exclusion>
-					<groupId>commons-beanutils</groupId>
-					<artifactId>commons-beanutils</artifactId>
+					<groupId>commons-logging</groupId>
+					<artifactId>commons-logging</artifactId>
 				</exclusion>
 				<exclusion>
-					<groupId>commons-collections</groupId>
-					<artifactId>commons-collections</artifactId>
+					<groupId>com.code.aon</groupId>
+					<artifactId>aon.ql</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.hibernate</groupId>
+					<artifactId>hibernate</artifactId>
 				</exclusion>
 				<exclusion>
 					<groupId>commons-dbcp</groupId>
@@ -56,47 +46,12 @@
 					<artifactId>velocity</artifactId>
 				</exclusion>
 				<exclusion>
-					<groupId>velocity-tools</groupId>
-					<artifactId>velocity-tools</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>org.hibernate</groupId>
-					<artifactId>hibernate</artifactId>
-				</exclusion>
-				<exclusion>
 					<groupId>org.hibernate</groupId>
 					<artifactId>hibernate-annotations</artifactId>
 				</exclusion>
 				<exclusion>
-					<groupId>com.code.aon</groupId>
-					<artifactId>aon.ql</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>
-
-		<dependency>
-			<groupId>javax.faces</groupId>
-			<artifactId>jsf-api</artifactId>
-			<version>1.2_02</version>
-			<scope>provided</scope>
-		</dependency>
-
-		<dependency>
-			<groupId>junit</groupId>
-			<artifactId>junit</artifactId>
-			<version>4.1</version>
-			<scope>test</scope>
-		</dependency>
-
-		<dependency>
-			<groupId>commons-logging</groupId>
-			<artifactId>commons-logging</artifactId>
-			<version>1.1</version>
-			<scope>provided</scope>
-			<exclusions>
-				<exclusion>
-					<groupId>avalon-framework</groupId>
-					<artifactId>avalon-framework</artifactId>
+					<groupId>velocity-tools</groupId>
+					<artifactId>velocity-tools</artifactId>
 				</exclusion>
 			</exclusions>
 		</dependency>
@@ -107,10 +62,6 @@
 		    <version>1.3.3</version>
 			<scope>compile</scope>
 			<exclusions>
-				<exclusion>
-					<groupId>commons-collections</groupId>
-					<artifactId>commons-collections</artifactId>
-				</exclusion>
 				<exclusion>
 					<groupId>org.apache.geronimo.specs</groupId>
 					<artifactId>geronimo-jta_1.0.1B_spec</artifactId>
@@ -126,6 +77,10 @@
 				<exclusion>
 					<groupId>xerces</groupId>
 					<artifactId>xercesImpl</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.slf4j</groupId>
+					<artifactId>slf4j-api</artifactId>
 				</exclusion>
 				<exclusion>
 				    <groupId>pdfbox</groupId>
@@ -151,6 +106,55 @@
 		    <artifactId>pdfbox</artifactId>
 		    <version>0.7.3</version>
 		</dependency> 
+
+		<dependency>
+		    <groupId>org.slf4j</groupId>
+		    <artifactId>slf4j-log4j12</artifactId> 
+		    <version>1.4.3</version>
+			<scope>compile</scope>
+		</dependency> 
+
+		<dependency>
+			<groupId>com.code.aon</groupId>
+			<artifactId>aon.security.bridge</artifactId>
+			<version>1.2.7</version>
+			<scope>compile</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>com.code.aon</groupId>
+			<artifactId>aon.security</artifactId>
+			<version>1.2.7</version>
+			<scope>provided</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>commons-logging</groupId>
+			<artifactId>commons-logging</artifactId>
+			<version>1.1</version>
+			<scope>provided</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>javax.servlet</groupId>
+			<artifactId>servlet-api</artifactId>
+			<version>2.4</version>
+			<scope>provided</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>javax.faces</groupId>
+			<artifactId>jsf-api</artifactId>
+			<version>1.2_02</version>
+			<scope>provided</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>4.1</version>
+			<scope>test</scope>
+		</dependency>
 
 	</dependencies>
 </project>

@@ -21,10 +21,10 @@ import es.code.cdr.core.ContentRepository;
  */
 public class Folder implements CDRNode {
 
-	private static final long serialVersionUID = 8494047319282391384L;
+	private static final long serialVersionUID = -1184696122504083008L;
 
 	/** Wrapped JCR node. */
-	Node node;
+	transient Node node;
 
 	/**
 	 * Constructs a <code>Folder</code> object.
@@ -80,6 +80,11 @@ public class Folder implements CDRNode {
 	@Override
 	public Node getNode() {
 		return node;
+	}
+
+	@Override
+	public String getType() {
+		return FOLDER_TYPE;
 	}
 
 	@Override

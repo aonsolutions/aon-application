@@ -4,6 +4,7 @@
 package es.code.cdr.ui.controller;
 
 import java.io.IOException;
+import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
@@ -25,7 +26,9 @@ import es.code.cdr.event.WidgetListener;
  * @author Consulting & Development. Iñaki Ayerbe - 10/07/2007
  *
  */
-public class CDRMediator implements WidgetListener {
+public class CDRMediator implements WidgetListener, Serializable {
+
+	private static final long serialVersionUID = 7585804319800307314L;
 
 	/** CDRMediator class Logger */
 	private static final Logger LOGGER = LoggerFactory.getLogger( CDRMediator.class.getName() );
@@ -35,7 +38,7 @@ public class CDRMediator implements WidgetListener {
 	CDRMenu menu;
 	InfoTabbedPane info;
 	/** Application message bundle. */
-	ResourceBundle bundle;
+	transient ResourceBundle bundle;
 
 	/**
 	 * Constructs a <code>CDRMediator</code> object.
@@ -117,7 +120,20 @@ public class CDRMediator implements WidgetListener {
 	/**
 	 * @param event
 	 */
-	public void onCheckin(ActionEvent event) {
+	public void onAddDocument(ActionEvent event) {
+		try {
+			documents.add( folders.getSelectedNode().getNode() );
+		} catch (RepositoryException e) {
+			LOGGER.error( e.getMessage(), e );
+		} catch (IOException e) {
+			LOGGER.error( e.getMessage(), e );
+		}
+	}
+
+	/**
+	 * @param event
+	 */
+	public void onStartCheckin(ActionEvent event) {
 		menu.setShowCheckinModalPanel( true );
 		documents.reset( event );
 	}
@@ -125,11 +141,11 @@ public class CDRMediator implements WidgetListener {
 	/**
 	 * @param event
 	 */
-	public void onAddDocument(ActionEvent event) {
+	public void onCheckin(ActionEvent event) {
+		onCloseModalPanel( event );
 		try {
-			documents.add( folders.getSelectedNode().getNode() );
-		} catch (RepositoryException e) {
-			LOGGER.error( e.getMessage(), e );
+			documents.getUpload().setSelected( 0 );
+			documents.checkin( event );
 		} catch (IOException e) {
 			LOGGER.error( e.getMessage(), e );
 		}

@@ -52,6 +52,9 @@
 	<category name="org.apache.jackrabbit">
 		<priority value="WARN" />
 	</category>
+	<category name="net.sf.jmimemagic">
+		<priority value="WARN" />
+	</category>
 	<category name="es.code">
 		<priority value="DEBUG" />
 	</category>

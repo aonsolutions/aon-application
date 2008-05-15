@@ -3,6 +3,6 @@
 <head>
 </head>
 <body>
-<jsp:forward page="facelet/homepage/home.iface" />
+<jsp:forward page="/home.jsf" />
 </body>
 </html>

@@ -2,6 +2,7 @@ package es.code.cdr.security;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.Serializable;
 import java.security.Principal;
 import java.util.ArrayList;
 import java.util.Enumeration;
@@ -28,7 +29,9 @@ import es.code.repository.util.Path;
  * @author Consulting & Development. Iñaki Ayerbe - 20/12/2007
  *
  */
-public class PermissionsManager {
+public class PermissionsManager implements Serializable {
+
+	private static final long serialVersionUID = 3304323707292777241L;
 
 	/** PermissionsManager Logger instance. */
 	static final Logger LOGGER = Logger.getLogger( PermissionsManager.class.getName() );

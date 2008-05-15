@@ -14,6 +14,8 @@ import es.code.cdr.event.WidgetListener;
  */
 public class InfoTabbedPane implements Widget {
 
+	private static final long serialVersionUID = -2535022508224906010L;
+
 	/** A description of any WidgetListeners which have been registered. */
 	WidgetSupport support;
 
