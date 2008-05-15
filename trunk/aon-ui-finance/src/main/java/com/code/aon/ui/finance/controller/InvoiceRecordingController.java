@@ -13,6 +13,7 @@ import javax.faces.event.ActionEvent;
 import com.code.aon.account.Account;
 import com.code.aon.account.AccountEntry;
 import com.code.aon.account.DefaultAccounts;
+import com.code.aon.account.bridge.InvoiceDetailAccount;
 import com.code.aon.account.bridge.ProductAccount;
 import com.code.aon.account.bridge.dao.IAccountBridgeAlias;
 import com.code.aon.account.bridge.enumeration.ProductAccountType;
@@ -173,7 +174,7 @@ public class InvoiceRecordingController extends BasicController{
 			entry.setSecurityLevel(invoice.getSecurityLevel());
 			entry = getAccountEntryInvoiceWriter().insertorUpdateAccountEntry(entry, true);
 			List taxBreakDown = getPriceStrategy().getTaxBreakDowns(invoice, invoice);
-			getAccountEntryInvoiceWriter().insertEntryDetails(entry, AccountUtil.obtainCustomerAccount(invoice.getRegistry()), invoice.getSeries(), invoice.getNumber(), getPriceStrategy().getTotalPrice(invoice, invoice), getRetentionTotal(taxBreakDown), getTaxQuota(taxBreakDown), getBasesPerAccount(invoice));
+			getAccountEntryInvoiceWriter().insertEntryDetails(entry, AccountUtil.obtainCustomerAccount(invoice.getRegistry()), invoice.getSeries(), invoice.getNumber(), getPriceStrategy().getTotalPrice(invoice, invoice), getRetentionTotal(taxBreakDown), getTaxQuota(taxBreakDown), obtainBasesPerAccount(invoice));
 			getAccountEntryInvoiceWriter().insertAccountEntryInvoice(entry, invoice);
 			IManagerBean invoiceBean = BeanManager.getManagerBean(Invoice.class);
 			invoice.setStatus(InvoiceStatus.SCORED);
@@ -214,17 +215,20 @@ public class InvoiceRecordingController extends BasicController{
 	}
 	
 	@SuppressWarnings("unchecked")
-	private Map getBasesPerAccount(Invoice invoice) throws ManagerBeanException {
+	private Map obtainBasesPerAccount(Invoice invoice) throws ManagerBeanException {
 		Map basesPerAccount = new HashMap();
-		Iterator<InvoiceDetail> iterator = invoice.getLines().iterator();
+		IManagerBean invoiceDetailBean = BeanManager.getManagerBean(InvoiceDetail.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(invoiceDetailBean.getFieldName(IFinanceAlias.INVOICE_DETAIL_INVOICE_ID), invoice.getId());
+		Iterator iterator = invoiceDetailBean.getList(criteria).iterator();
 		while (iterator.hasNext()) {
-			InvoiceDetail invoiceDetail = iterator.next();
+			InvoiceDetail invoiceDetail = (InvoiceDetail)iterator.next();
 			Account account = null;
 			if (invoiceDetail.getItem() != null) {
 				Integer productId = invoiceDetail.getItem().getProduct().getId();
 				ProductAccountType accountType = (invoice.getType().equals(InvoiceType.SALES))?ProductAccountType.SALES:ProductAccountType.PURCHASE; 
 				IManagerBean productAccountBean = BeanManager.getManagerBean(ProductAccount.class);
-				Criteria criteria = new Criteria();
+				criteria = new Criteria();
 				criteria.addEqualExpression(productAccountBean.getFieldName(IAccountBridgeAlias.PRODUCT_ACCOUNT_PRODUCT_ID), productId);
 				criteria.addEqualExpression(productAccountBean.getFieldName(IAccountBridgeAlias.PRODUCT_ACCOUNT_TYPE), accountType);
 				Iterator iter = productAccountBean.getList(criteria).iterator();
@@ -237,6 +241,8 @@ public class InvoiceRecordingController extends BasicController{
 			double base = invoiceDetail.getTaxableBase();
 			base += (basesPerAccount.containsKey(account))?((Double)basesPerAccount.get(account)).doubleValue():0;
 			basesPerAccount.put(account, new Double(base));
+
+			insertInvoiceDetailAccount(invoiceDetail, account);
 		}
 		return basesPerAccount;
 	}
@@ -259,5 +265,13 @@ public class InvoiceRecordingController extends BasicController{
 			}
 		}
 		return null;
+	}
+
+	private void insertInvoiceDetailAccount(InvoiceDetail invoiceDetail, Account account) throws ManagerBeanException {
+		IManagerBean invoiceAccountBean = BeanManager.getManagerBean(InvoiceDetailAccount.class);
+		InvoiceDetailAccount invoiceDetailAccount = new InvoiceDetailAccount();
+		invoiceDetailAccount.setInvoiceDetail(invoiceDetail);
+		invoiceDetailAccount.setAccount(account);
+		invoiceAccountBean.insert(invoiceDetailAccount);
 	}
 }
