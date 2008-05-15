@@ -11,6 +11,7 @@
 		<project>aon-ui-webmail</project>
 		<project>aon-ui-resources</project>
 		<project>aon-rich-components</project>
+		<project>aon-common-ldap</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>
