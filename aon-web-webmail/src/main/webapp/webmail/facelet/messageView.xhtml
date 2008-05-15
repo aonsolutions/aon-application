@@ -33,43 +33,43 @@
 						
 				<!-- Reply to message  -->									
 				<aon:commandButton
-						id="replyButton"
-						title="#{appBundle.aon_webmail_newmail_reply}"
-						action="messageNew"
-						actionListener="#{message.replyToSelectedMessage}"
-						value="#{appBundle.aon_webmail_newmail_reply}"
-						styleClass="aon-finding-toolbar-item aon-icon-mailReply"
-						>
+					id="replyButton"
+					title="#{appBundle.aon_webmail_newmail_reply}"
+					action="messageNew"
+					actionListener="#{message.replyToSelectedMessage}"
+					value="#{appBundle.aon_webmail_newmail_reply}"
+					styleClass="aon-finding-toolbar-item aon-icon-mailReply"
+					>
 				</aon:commandButton>									
 
 				<!-- Reply to all button  -->										
 				<aon:commandButton
-						id="replyAllButton"
-						title="#{appBundle.aon_webmail_newmail_replyAll}"
-						action="messageNew"
-						actionListener="#{message.replyToAllMessage}"
-						value="#{appBundle.aon_webmail_newmail_replyAll}"
-						styleClass="aon-finding-toolbar-item aon-icon-mailReplyAll">
+					id="replyAllButton"
+					title="#{appBundle.aon_webmail_newmail_replyAll}"
+					action="messageNew"
+					actionListener="#{message.replyToAllMessage}"
+					value="#{appBundle.aon_webmail_newmail_replyAll}"
+					styleClass="aon-finding-toolbar-item aon-icon-mailReplyAll">
 				</aon:commandButton>							
 
 				<!-- Forward button  -->
 				<aon:commandButton
-						id="forwardButton"
-						title="#{appBundle.aon_webmail_newmail_forward}"
-						action="messageNew"
-						actionListener="#{message.forwardMessage}"
-						value="#{appBundle.aon_webmail_newmail_forward}"
-						styleClass="aon-finding-toolbar-item aon-icon-mailForward">
+					id="forwardButton"
+					title="#{appBundle.aon_webmail_newmail_forward}"
+					action="messageNew"
+					actionListener="#{message.forwardMessage}"
+					value="#{appBundle.aon_webmail_newmail_forward}"
+					styleClass="aon-finding-toolbar-item aon-icon-mailForward">
 				</aon:commandButton>					
 
 				<!-- Delete button  -->
 				<aon:commandButton
-						id="deleteButton"
-						title="#{appBundle.aon_webmail_deletemail}"
-						action="#{message.getDeleteReturnAction}"
-						actionListener="#{message.deleteSelectedMessageAndMove}"
-						value="#{appBundle.aon_webmail_deletemail}"
-						styleClass="aon-finding-toolbar-item aon-icon-mailDelete">
+					id="deleteButton"
+					title="#{appBundle.aon_webmail_deletemail}"
+					action="#{message.getDeleteReturnAction}"
+					actionListener="#{message.deleteSelectedMessageAndMove}"
+					value="#{appBundle.aon_webmail_deletemail}"
+					styleClass="aon-finding-toolbar-item aon-icon-mailDelete">
 				</aon:commandButton>									
 			
 				<h:outputLink 
@@ -92,23 +92,21 @@
 					
 				<!-- Move button  -->
 				<aon:commandButton
-						id="moveButton"
-						title="#{appBundle.aon_webmail_movemail}"
-						value="#{appBundle.aon_webmail_movemail}"
-						styleClass="aon-finding-toolbar-item aon-icon-mail-move">
-						<rich:componentControl for="msgMoveModalPanel" operation="show" event="onclick"/>
+					id="moveButton"
+					title="#{appBundle.aon_webmail_movemail}"
+					value="#{appBundle.aon_webmail_movemail}"
+					styleClass="aon-finding-toolbar-item aon-icon-mail-move">
+					<rich:componentControl for="msgMoveModalPanel" operation="show" event="onclick"/>
 				</aon:commandButton>									
 
 				<aon:commandButton
-					id="back"
+					id="back" immediate="true"
 					title="#{appBundle.aon_webmail_back}"
 					value="#{appBundle.aon_webmail_back}"
 					action="#{message.getReturnAction}"
 					styleClass="aon-finding-toolbar-item aon-icon-cancel">
 				</aon:commandButton>											
 
-				<ui:include src="/webmail/facelet/modal/moveMessage.xhtml" />
-				
 			</aon:div>
 			<!-- icon to collapse message details -->
 			<div>
@@ -171,8 +169,6 @@
 							title="#{appBundle.aon_webmail_add_black_list}" 
 							styleClass="aon-icon-commandButton aon-icon-black-list aon-italic aon-bold"
 							actionListener="#{blacklist.onAddBlackMessageFrom}" />
-							
-						<ui:include src="/webmail/facelet/modal/addContact.xhtml" />
 						
 					</aon:div>
 					
@@ -309,6 +305,10 @@
 			</aon:div>
 		</aon:div>
 		</aon:form>
+
+		<ui:include src="/webmail/facelet/modal/moveMessage.xhtml" />
+
+		<ui:include src="/webmail/facelet/modal/addContact.xhtml" />
 
 	</ui:define>
 </ui:composition>
