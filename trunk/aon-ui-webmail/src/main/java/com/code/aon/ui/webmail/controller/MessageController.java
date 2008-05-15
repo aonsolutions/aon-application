@@ -604,14 +604,18 @@ public class MessageController implements IAonFileListener{
 	}
 
 	private String acceptEmailItem(String recipient){
-		if (recipient==null || recipient.trim().length()==0){
-			recipient = "";
-		}else if (!recipient.trim().endsWith(AonMessageUtils.EMAIL_SEPARATOR)){
-			recipient += AonMessageUtils.EMAIL_SEPARATOR + " ";
+		String result = StringUtils.trimToEmpty(recipient);
+		if (! StringUtils.isEmpty(result) ) {
+			if (!result.endsWith(AonMessageUtils.EMAIL_SEPARATOR)) {
+				result += AonMessageUtils.EMAIL_SEPARATOR;
+			}
+			result += " ";
 		}
-		recipient += email + AonMessageUtils.EMAIL_SEPARATOR;
+		if (! StringUtils.isBlank(email) ) {
+			result += email + AonMessageUtils.EMAIL_SEPARATOR;
+		}
 		email = null;
-		return recipient;
+		return result;
 	}
 	
 	//********************************************************************************************
@@ -852,8 +856,12 @@ public class MessageController implements IAonFileListener{
 	public void initContactName() {
 		this.contactName = "";
 		try {
-			String sender = message.getSenderShort();
-			if (! StringUtils.equals(sender, message.getSenderEmail()) ) {
+			String sender = message.getSender(-1);
+			String email = message.getSenderEmail();
+			if ( StringUtils.equals(sender, email) ) {
+				int pos = email.indexOf('@');
+				this.contactName = (pos != -1) ? email.substring(0, pos) : email;
+			} else {
 				this.contactName = sender;
 			}
 		} catch (WebmailException e) {
