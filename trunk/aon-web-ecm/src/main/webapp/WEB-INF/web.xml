@@ -6,6 +6,24 @@
 	xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee 
 						http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd">
 
+	<distributable/>
+
+	<context-param>
+		<param-name>javax.faces.CONFIG_FILES</param-name>
+		<param-value>
+			/WEB-INF/faces-config.xml
+		</param-value>
+	</context-param>
+
+	<context-param>
+		<description>
+			State saving method: "client" or "server" (= default) See
+			JSF Specification 2.5.2
+		</description>
+		<param-name>javax.faces.STATE_SAVING_METHOD</param-name>
+		<param-value>server</param-value>
+	</context-param>
+
 	<context-param>
 		<description>Use Documents Saved as *.xhtml</description>
 		<param-name>javax.faces.DEFAULT_SUFFIX</param-name>
@@ -13,9 +31,15 @@
 	</context-param>
 
 	<context-param>
+		<param-name>com.sun.faces.serializationProvider</param-name>
+		<param-value>org.jboss.web.jsf.integration.serialization.JBossSerializationProvider</param-value>
+	</context-param> 
+
+	<context-param>
 		<description>
-			Setting this to true will cause the FaceletViewHandler to print out debug information in an easy to use
-			screen when an error occurs during the rendering process.
+			Setting this to true will cause the FaceletViewHandler to
+			print out debug information in an easy to use screen when an
+			error occurs during the rendering process.
 		</description>
 		<param-name>facelets.DEVELOPMENT</param-name>
 		<param-value>false</param-value>
@@ -30,8 +54,8 @@
 		<description>
 			Set this flag to true if you want the JavaServer Faces
 			Reference Implementation to validate the XML in your
-			faces-config.xml resources against the DTD.  Default
-			value is false.
+			faces-config.xml resources against the DTD. Default value is
+			false.
 		</description>
 		<param-name>com.sun.faces.validateXml</param-name>
 		<param-value>true</param-value>
@@ -40,91 +64,33 @@
 	<context-param>
 		<description>
 			Set this flag to true if you want the JavaServer Faces
-			Reference Implementation to verify that all of the application
-			objects you have configured (components, converters,
-			renderers, and validators) can be successfully created.
-			Default value is false.
+			Reference Implementation to verify that all of the
+			application objects you have configured (components,
+			converters, renderers, and validators) can be successfully
+			created. Default value is false.
 		</description>
 		<param-name>com.sun.faces.verifyObjects</param-name>
 		<param-value>true</param-value>
 	</context-param>
 
-   <context-param>
-		<description>
-			To cause request scope to last only for the duration of a
-			single user event, "standard request scope" must be enabled.
-		</description>
-        <param-name>com.icesoft.faces.standardRequestScope</param-name>
-        <param-value>true</param-value>
-   </context-param>
-
 	<context-param>
-		<description>
-			To allow multiple windows for a single application,
-			concurrent DOM views must be enabled. This is set through
-			the ICEfaces context parameter,
-			com.icesoft.faces.concurrentDOMViews.
-		</description>
-		<param-name>com.icesoft.faces.concurrentDOMViews</param-name>
+		<param-name>com.sun.faces.displayConfiguration</param-name>
 		<param-value>true</param-value>
 	</context-param>
 
 	<context-param>
-		<param-name>com.icesoft.faces.actionURLSuffix</param-name>
-		<param-value>.iface</param-value>
+  		<param-name>org.ajax4jsf.VIEW_HANDLERS</param-name>
+  		<param-value>com.sun.facelets.FaceletViewHandler</param-value>
+ 	</context-param>
+	
+	<context-param>
+		<param-name>org.richfaces.SKIN</param-name>
+		<param-value>aon</param-value>
 	</context-param>
 
-	<context-param>
-		<description>
-			Resources such as JavaScript and CSS files can be compressed
-			when sent to the browser. This can improve application load
-			time in certain deployments. This configuration works
-			independently from the web-server configuration. The feature
-			can be turned on application-wide using the ICEfaces context
-			parameter, com.icesoft.faces.compressResources. Default is
-			false.
-		</description>
-		<param-name>com.icesoft.faces.compressResources</param-name>
-		<param-value>false</param-value>
-	</context-param>
-
-	<context-param>
-		<param-name>com.icesoft.faces.debugDOMUpdate</param-name>
-		<param-value>true</param-value>
-	</context-param>
-
-	<!-- Asynchronous Updates -->
-	<context-param>
-		<description>
-			Synchronous or asynchronous updates can be turned off/on
-			application-wide using the ICEfaces context parameter,
-			com.icesoft.faces.synchronousUpdate. Typically this is set
-			in the web.xml file of your web application. If not
-			specified, the parameter value is false; thus, by default,
-			the application will run in asynchronous mode.
-		</description>
-		<param-name>com.icesoft.faces.synchronousUpdate</param-name>
-		<param-value>false</param-value>
-	</context-param>
-
-	<context-param>
-		<param-name>com.icesoft.faces.doJSFStateManagement</param-name>
-		<param-value>true</param-value>
-	</context-param>
-
-	<!-- UPLOAD PARAMS -->
-	<context-param>
-	    <param-name>com.icesoft.faces.uploadDirectory</param-name>
-	    <param-value>/home/COMMON-RESOURCES/TMP</param-value>
-	</context-param>
-    <context-param>
-        <param-name>com.icesoft.faces.uploadDirectoryAbsolute</param-name>
-        <param-value>true</param-value>
-    </context-param>	
-	<context-param>
-		<param-name>com.icesoft.faces.uploadMaxFileSize</param-name>
-		<param-value>12582912</param-value>
-	</context-param>
+	<listener>
+		<listener-class>org.jboss.web.tomcat.service.session.NonSerializableAttributeTester</listener-class>
+	</listener>
 
 	<listener>
 		<listener-class>es.code.cdr.ui.servlets.CDRInitializer</listener-class>
@@ -135,92 +101,66 @@
 	   <filter-name>LoginSessionFilter</filter-name>
 	   <filter-class>es.code.cdr.ui.servlets.LoginSessionFilter</filter-class>
 	</filter>
-	<!-- Enables and Registers session for concurrent sessions -->
 	<filter-mapping>
 	   <filter-name>LoginSessionFilter</filter-name>
 		<url-pattern>*.jsp</url-pattern>
 	</filter-mapping>
-
 	<!-- BackDoorAuthentication Filter -->
 	<filter>
 		<filter-name>BackDoorAuthenticationFilter</filter-name>
 		<filter-class>com.code.aon.bridge.session.BackDoorAuthenticationFilter</filter-class>
 	</filter>
-	<!-- Enables and Registers session for concurrent sessions -->
 	<filter-mapping>
 		<filter-name>BackDoorAuthenticationFilter</filter-name>
 		<url-pattern>/auth/*</url-pattern>
 	</filter-mapping>
 
+	<!-- Faces Servlet -->
 	<servlet>
-		<servlet-name>Persistent Faces Servlet</servlet-name>
-		<servlet-class>
-			com.icesoft.faces.webapp.xmlhttp.PersistentFacesServlet
-		</servlet-class>
+		<servlet-name>Faces Servlet</servlet-name>
+		<servlet-class>javax.faces.webapp.FacesServlet</servlet-class>
 		<load-on-startup>1</load-on-startup>
 	</servlet>
 	<servlet-mapping>
-		<servlet-name>Persistent Faces Servlet</servlet-name>
-		<url-pattern>/xmlhttp/*</url-pattern>
+		<servlet-name>Faces Servlet</servlet-name>
+		<url-pattern>*.jsf</url-pattern>
 	</servlet-mapping>
 	<servlet-mapping>
-		<servlet-name>Persistent Faces Servlet</servlet-name>
-		<url-pattern>*.iface</url-pattern>
-	</servlet-mapping>
-	<servlet-mapping>
-		<servlet-name>Persistent Faces Servlet</servlet-name>
+		<servlet-name>Faces Servlet</servlet-name>
 		<url-pattern>*.jspx</url-pattern>
 	</servlet-mapping>
 
-	<!-- Blocking Servlet -->
+	<filter>
+		<display-name>RichFaces Filter</display-name>
+		<filter-name>richfaces</filter-name>
+		<filter-class>org.ajax4jsf.Filter</filter-class>
+		<init-param>
+			<param-name>createTempFiles</param-name>
+			<param-value>false</param-value>
+		</init-param>
+		<init-param> 
+			<param-name>maxRequestSize</param-name>
+			<param-value>12582912</param-value>
+		</init-param>
+	</filter>
+	<filter-mapping>
+		<filter-name>richfaces</filter-name>
+		<servlet-name>Faces Servlet</servlet-name>
+		<dispatcher>REQUEST</dispatcher>
+		<dispatcher>FORWARD</dispatcher>
+		<dispatcher>INCLUDE</dispatcher>
+		<dispatcher>ERROR</dispatcher>
+	</filter-mapping>
+
+	<!-- Resource Servlet -->
 	<servlet>
-		<servlet-name>Blocking Servlet</servlet-name>
-		<servlet-class>
-			com.icesoft.faces.webapp.xmlhttp.BlockingServlet
-		</servlet-class>
-		<load-on-startup>1</load-on-startup>
+		<servlet-name>ResourceServlet</servlet-name>
+		<servlet-class>com.code.aon.ui.resources.servlet.ResourceServlet</servlet-class>
 	</servlet>
 	<servlet-mapping>
-		<servlet-name>Blocking Servlet</servlet-name>
-		<url-pattern>/block/*</url-pattern>
+		<servlet-name>ResourceServlet</servlet-name>
+		<url-pattern>/aonResource/*</url-pattern>
 	</servlet-mapping>
-
-    <!-- Faces Servlet -->
-    <servlet>
-        <servlet-name>Faces Servlet</servlet-name>
-        <servlet-class>javax.faces.webapp.FacesServlet</servlet-class>
-        <load-on-startup>1</load-on-startup>
-    </servlet>
-    <servlet-mapping>
-        <servlet-name>Faces Servlet</servlet-name>
-        <url-pattern>*.faces</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>Faces Servlet</servlet-name>
-        <url-pattern>/faces/</url-pattern>
-    </servlet-mapping>
-
-    <!-- file download Servlet -->
-    <servlet>
-         <servlet-name>downloadServlet</servlet-name>
-         <servlet-class>es.code.cdr.ui.servlets.FileDownloadServlet</servlet-class>
-         <load-on-startup>1</load-on-startup>
-    </servlet>
-	<servlet-mapping>
-         <servlet-name>downloadServlet</servlet-name>
-         <url-pattern>*.download</url-pattern>
-    </servlet-mapping>   
-
-    <!-- file upload Servlet -->
-    <servlet>
-         <servlet-name>uploadServlet</servlet-name>
-         <servlet-class>com.icesoft.faces.component.inputfile.FileUploadServlet</servlet-class>
-         <load-on-startup>1</load-on-startup>
-    </servlet>
-	<servlet-mapping>
-         <servlet-name>uploadServlet</servlet-name>
-         <url-pattern>/uploadHtml</url-pattern>
-    </servlet-mapping>   
 
 	<!-- Welcome File List -->
     <welcome-file-list>
@@ -238,8 +178,8 @@
 			<url-pattern>/index.jsp</url-pattern>
 		</web-resource-collection>
 		<web-resource-collection>
-			<web-resource-name>faces</web-resource-name>
-			<url-pattern>*.iface</url-pattern>
+			<web-resource-name>jsf</web-resource-name>
+			<url-pattern>*.jsf</url-pattern>
 		</web-resource-collection>
 		<auth-constraint>
 			<role-name>Manager</role-name>

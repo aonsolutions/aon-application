@@ -1,9 +1,8 @@
 package es.code.cdr.beans;
 
-import java.io.File;
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -24,15 +23,10 @@ import org.apache.jackrabbit.value.StringValue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.code.aon.common.mime.Magic;
-import com.code.aon.common.mime.MagicException;
-import com.code.aon.common.mime.MagicMatch;
-import com.code.aon.common.mime.MagicMatchNotFoundException;
-import com.code.aon.common.mime.MagicParseException;
-
 import es.code.cdr.CDRQName;
 import es.code.cdr.IConstants;
 import es.code.cdr.core.ContentRepository;
+import es.code.cdr.ui.util.DocumentUpload;
 import es.code.cdr.ui.util.JCRUtils;
 
 /**
@@ -41,13 +35,13 @@ import es.code.cdr.ui.util.JCRUtils;
  */
 public class Document implements CDRNode {
 
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 6783041184514068135L;
 
 	/** Document class Logger */
 	private static final Logger LOGGER = LoggerFactory.getLogger( Document.class.getName() );
 
 	/** Wrapped JCR node. */
-	Node node;
+	transient Node node;
 
 	/**
 	 * Constructs a <code>Document</code> object.
@@ -149,20 +143,31 @@ public class Document implements CDRNode {
 	}
 
 	/**
-	 * Adds the document resouce.
+	 * Adds the document.
 	 * 
-	 * @param resource
+	 * @param dup
 	 * @throws IOException
 	 * @throws RepositoryException
 	 */
-	public void addContent(URL resource) throws IOException, RepositoryException {
-		Node resNode = node.addNode( ContentRepository.getNodeName( CDRQName.AON_CONTENT ), ContentRepository.getNodeName( CDRQName.AON_RESOURCE ) );
-		setContent( resNode, resource );
+	public void add(DocumentUpload dup) throws IOException, RepositoryException {
+		setKeywords( dup.getKeywords() );
+		setNowords( dup.getNowords() );
+		setCategory( dup.getCategory() );
+		setLanguage( dup.getLanguage() );
+		setRoles( new String[] {"Manager"} );
+		Node resNode = 
+			node.addNode( ContentRepository.getNodeName( CDRQName.AON_CONTENT ), ContentRepository.getNodeName( CDRQName.AON_RESOURCE ) );
+		setContent( resNode, dup );
 	}
 
 	@Override
 	public Node getNode() {
 		return node;
+	}
+
+	@Override
+	public String getType() {
+		return DOCUMENT_TYPE;
 	}
 
 	@Override
@@ -345,8 +350,8 @@ public class Document implements CDRNode {
 		node.refresh( bol );
 	}
 
-	public Version checkin(URL resource) throws IOException, RepositoryException {
-		setContent( getContentNode(), resource );
+	public Version checkin(DocumentUpload dup) throws IOException, RepositoryException {
+		setContent( getContentNode(), dup );
 		node.save();
 		Version version = checkin();
 		unlock();
@@ -392,28 +397,12 @@ public class Document implements CDRNode {
         return node.isLocked();
 	}
 
-	private void setContent(Node resNode, URL resource) throws IOException, RepositoryException {
-		File file = new File( resource.getFile() );
-		String mimeType = "application/octet-stream";
-		try {
-			MagicMatch match = Magic.getMagicMatch( file, true, false );
-			mimeType = match.getMimeType();
-		} catch (MagicParseException e) {
-			if ( LOGGER.isDebugEnabled() )
-				LOGGER.debug( e.getMessage(), e );
-		} catch (MagicMatchNotFoundException e) {
-			if ( LOGGER.isDebugEnabled() )
-				LOGGER.debug( e.getMessage(), e );
-		} catch (MagicException e) {
-			if ( LOGGER.isDebugEnabled() )
-				LOGGER.debug( e.getMessage(), e );
-		}
-		resNode.setProperty( ContentRepository.getNodeName( CDRQName.AON_SIZE ), new LongValue( file.length() ) );
-		resNode.setProperty( IConstants.JCR_MIMETYPE, mimeType );
+	private void setContent(Node resNode, DocumentUpload dup) throws IOException, RepositoryException {
+		resNode.setProperty( ContentRepository.getNodeName( CDRQName.AON_SIZE ), new LongValue( dup.getLength() ) );
+		resNode.setProperty( IConstants.JCR_MIMETYPE, dup.getMimeType() );
 		resNode.setProperty( IConstants.JCR_ENCODING, JCRUtils.EMPTY_STRING );
-		resNode.setProperty( IConstants.JCR_DATA, resource.openStream() );
-		Calendar lastModified = Calendar.getInstance();
-		lastModified.setTimeInMillis(file.lastModified());
-		resNode.setProperty( IConstants.JCR_LASTMODIFIED, lastModified );
+		resNode.setProperty( IConstants.JCR_DATA, new ByteArrayInputStream( dup.getData() ) );
+		resNode.setProperty( IConstants.JCR_LASTMODIFIED, dup.getLastModified() );
 	}
+
 }

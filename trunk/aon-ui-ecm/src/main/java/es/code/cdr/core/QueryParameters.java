@@ -3,8 +3,12 @@
  */
 package es.code.cdr.core;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.Locale;
+import java.util.Properties;
 import java.util.ResourceBundle;
 
 import javax.faces.context.FacesContext;
@@ -12,12 +16,15 @@ import javax.faces.model.SelectItem;
 
 import es.code.cdr.IConstants;
 import es.code.cdr.beans.CDRNode;
+import es.code.repository.util.Path;
 
 /**
  * @author Consulting & Development. Iñaki Ayerbe - 17/07/2007
  *
  */
 public class QueryParameters extends AbstractWidget {
+
+	private static final long serialVersionUID = 5013580659737102750L;
 
 	String bycontent;
 	String allwords;
@@ -26,10 +33,12 @@ public class QueryParameters extends AbstractWidget {
 	String phrase;
 
 	String language;
+	String category;
 	String fileformat;
 	Date publishDate;
 
     private static SelectItem[] LANGUAGES;
+    private static SelectItem[] CATEGORIES;
 
     private static final SelectItem[] FILE_FORMATS = new SelectItem[]{
     	new SelectItem( IConstants.UNKNOWN, IConstants.EMPTY_STRING ),
@@ -153,6 +162,20 @@ public class QueryParameters extends AbstractWidget {
 	}
 
 	/**
+	 * @return the category
+	 */
+	public String getCategory() {
+		return category;
+	}
+
+	/**
+	 * @param category the category to set
+	 */
+	public void setCategory(String category) {
+		this.category = category;
+	}
+
+	/**
 	 * @return the publishDate
 	 */
 	public Date getPublishDate() {
@@ -184,6 +207,36 @@ public class QueryParameters extends AbstractWidget {
     		    };
     	}
         return LANGUAGES;
+    }
+
+    /**
+     * Gets the option categories.
+     *
+     * @return array of categories
+     */
+    public SelectItem[] getCategories() {
+    	if ( CATEGORIES == null ) {
+    		FacesContext ctx = FacesContext.getCurrentInstance();
+	    	Locale locale = ctx.getExternalContext().getRequestLocale();
+	    	ResourceBundle bundle = ResourceBundle.getBundle( IConstants.CDR_BUNDLE_NAME, locale );
+	    	Properties categories = new Properties();
+			try {
+				InputStream is = Path.getResource( System.getProperty( IConstants.CATEGORIES_PATH_FILE_KEY ), IConstants.CATEGORIES_PATH, "" ).openStream();
+				categories.load( is );
+	    		CATEGORIES = new SelectItem[ categories.size() + 1 ];
+				Iterator<Object> iter = categories.values().iterator();
+				int i = 0;
+				CATEGORIES[ i ] = new SelectItem( IConstants.UNKNOWN, IConstants.EMPTY_STRING );
+				while (iter.hasNext()) {
+					i++;
+					Object elem = iter.next();
+					CATEGORIES[ i ] = new SelectItem( elem, bundle.getString( "aon_category_" + elem ) );
+				}
+			} catch (IOException e) {
+	    		CATEGORIES = new SelectItem[]{ new SelectItem( IConstants.UNKNOWN, IConstants.EMPTY_STRING ) };
+			}
+    	}
+        return CATEGORIES;
     }
 
     /**

@@ -13,19 +13,13 @@ import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
 import javax.faces.model.DataModel;
-import javax.faces.model.ListDataModel;
 import javax.jcr.AccessDeniedException;
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 import javax.jcr.version.Version;
-import javax.servlet.http.HttpSession;
 
 import org.apache.jackrabbit.core.security.AnonymousPrincipal;
-
-import com.code.aon.ui.util.AonUtil;
-import com.icesoft.faces.component.ext.RowSelectorEvent;
-import com.icesoft.faces.context.effects.JavascriptContext;
 
 import es.code.cdr.CDRQName;
 import es.code.cdr.beans.CDRNode;
@@ -35,12 +29,17 @@ import es.code.cdr.core.Widget;
 import es.code.cdr.core.WidgetSupport;
 import es.code.cdr.event.WidgetListener;
 import es.code.cdr.ui.controller.query.QueryMenu;
+import es.code.cdr.ui.util.CDRDataModel;
+import es.code.cdr.ui.util.CDRUtils;
+import es.code.cdr.ui.util.DocumentUpload;
 
 /**
  * @author Consulting & Development. Iñaki Ayerbe - 11/07/2007
  *
  */
 public class DocumentsList implements Widget {
+
+	private static final long serialVersionUID = -8856985254062000747L;
 
 	/** A description of any WidgetListeners which have been registered. */
 	WidgetSupport support;
@@ -51,13 +50,13 @@ public class DocumentsList implements Widget {
 	/** Selected document version history model. */
 	DataModel versionHistoryModel;
 	/** Document uploading manager. */
-	DocumentUpload upload;
+	DocumentUploadBean upload;
 
 	/**
 	 * Constructs a <code>DocumentsList</code> object.
 	 */
 	public DocumentsList() {
-		upload = new DocumentUpload();
+		upload = new DocumentUploadBean();
 	}
 
 	/**
@@ -79,10 +78,10 @@ public class DocumentsList implements Widget {
 	 */
 	public DataModel getVersionHistoryModel() {
 		try {
-			versionHistoryModel = new ListDataModel( selected.getVersionHistory() );
+			versionHistoryModel = new CDRDataModel( selected.getVersionHistory() );
 		} catch (RepositoryException e) {
-			versionHistoryModel = new ListDataModel();
-			AonUtil.addErrorMessage( e.getMessage() );
+			versionHistoryModel = new CDRDataModel();
+			CDRUtils.addErrorMessage( e.getMessage() );
 		}
 		return versionHistoryModel;
 	}
@@ -90,14 +89,14 @@ public class DocumentsList implements Widget {
 	/**
 	 * @return the upload
 	 */
-	public DocumentUpload getUpload() {
+	public DocumentUploadBean getUpload() {
 		return upload;
 	}
 
 	/**
 	 * @param upload the upload to set
 	 */
-	public void setUpload(DocumentUpload upload) {
+	public void setUpload(DocumentUploadBean upload) {
 		this.upload = upload;
 	}
 
@@ -115,10 +114,6 @@ public class DocumentsList implements Widget {
 	 * @param selected the document to set
 	 */
 	public void setSelected(Document selected) {
-		try {
-			removeDocument4Download();
-		} catch (RepositoryException e) {
-		}
 		this.selected = selected;
     	support.fireWidgetSelected();
 	}
@@ -128,7 +123,7 @@ public class DocumentsList implements Widget {
 	 *
 	 * @param event that fired this method
 	 */
-	public void documentSelected(RowSelectorEvent event) {
+	public void documentSelected(ActionEvent event) {
 		setSelected( (Document) this.model.getRowData() );
 	}
 
@@ -138,7 +133,7 @@ public class DocumentsList implements Widget {
 	 * @param event
 	 */
 	public void reset(ActionEvent event) {
-		upload = new DocumentUpload();
+		upload.clearUploadData();
 	}
 
 	/**
@@ -149,18 +144,14 @@ public class DocumentsList implements Widget {
 	 */
 	@SuppressWarnings("unchecked")
 	public void add(Node folderNode) throws RepositoryException, IOException {
+		DocumentUpload dup = upload.getSelectedDocument();
 		ExternalContext ec = FacesContext.getCurrentInstance().getExternalContext();
 		String author = getAuthor( ec );
 		try {
-			Document document = new Document( folderNode.addNode( upload.getName(), ContentRepository.getNodeName( CDRQName.AON_DOCUMENT ) ) );
+			Document document = new Document( folderNode.addNode( dup.getName(), ContentRepository.getNodeName( CDRQName.AON_DOCUMENT ) ) );
 			document.setAuthor( author );
 			document.setEntryDate( Calendar.getInstance( ec.getRequestLocale() ) );
-			document.setKeywords( upload.getKeywords() );
-			document.setNowords( upload.getNowords() );
-			document.setCategory( upload.getCategory() );
-			document.setLanguage( upload.getLanguage() );
-			document.setRoles( new String[] {"Manager"} );
-			document.addContent( upload.getResource() );
+			document.add( dup );
 			folderNode.save();
 			document.checkin();
 			List l = (List) model.getWrappedData();
@@ -168,13 +159,13 @@ public class DocumentsList implements Widget {
 			l.add( index, document );
 			model.setRowIndex( index );
 			setSelected( document );
+			upload.clearSelectedUploadData();
 		} catch (AccessDeniedException e) {
-			AonUtil.addWarningMessage( e.getMessage() );
+			CDRUtils.addWarningMessage( e.getMessage() );
 			folderNode.refresh( false );
 		} catch (RepositoryException e) {
+			CDRUtils.addWarningMessage( e.getMessage() );
 			folderNode.refresh( false );
-		} finally {
-			upload.clear();
 		}
 	}
 
@@ -187,7 +178,7 @@ public class DocumentsList implements Widget {
 	 */
 	public void remove(ActionEvent event) throws RepositoryException, WidgetLoadingException {
 		if( selected.getNode().isLocked() ) {
-			AonUtil.addErrorMessage( "Can't delete locked document[" + selected.getName() + "]" );
+			CDRUtils.addErrorMessage( "Can't delete locked document[" + selected.getName() + "]" );
 			return;
 		}
 
@@ -199,7 +190,7 @@ public class DocumentsList implements Widget {
 			setSelected( null );
 			load( parent );
 		} catch (AccessDeniedException e) {
-			AonUtil.addWarningMessage( e.getMessage() );
+			CDRUtils.addWarningMessage( e.getMessage() );
 			parent.refresh( false );
 		} catch (RepositoryException e) {
 			if ( parent != null )
@@ -214,17 +205,11 @@ public class DocumentsList implements Widget {
 	 */
 	public void download(ActionEvent event) {
 		try {
-//	Removes selected document from current session.
-			HttpSession session = removeDocument4Download();
-			session.removeAttribute( selected.getName() );
-			session.setAttribute( selected.getName(), selected );
-//			String js = "window.open(\"" + URL_TO_PDF+ "\", 'popup_window');"; Con URL directamente.
-//			String js = "document.forms[0].action='http://localhost:8180/aon-cr/download?selected="+ selected.getName() +"';document.forms[0].submit();";
-			String js = "popup_window = window.open('file.download?selected="+ selected.getName() +"','popup_window','location=0,status=1,scrollbars=0,width=200,height=50');";
-			JavascriptContext.addJavascriptCall( FacesContext.getCurrentInstance(), js ); 
+			CDRUtils.download( FacesContext.getCurrentInstance(), getSelected() );
+		} catch (IOException e) {
+			CDRUtils.addErrorMessage( e.getMessage() );
 		} catch (RepositoryException e) {
-			e.printStackTrace();
-			AonUtil.addErrorMessage( e.getMessage() );
+			CDRUtils.addErrorMessage( e.getMessage() );
 		}
 	}
 
@@ -235,15 +220,12 @@ public class DocumentsList implements Widget {
 	 */
 	public void downloadVersion(ActionEvent event) {
 		try {
-//	Removes selected document from current session.
-			HttpSession session = removeDocument4Download();
-			session.removeAttribute( selected.getName() );
 			Version version = (Version) versionHistoryModel.getRowData();
-			session.setAttribute( selected.getName(), selected.getDocument4Version( version ) );
-			String js = "popup_window = window.open('download?selected="+ selected.getName() +"','popup_window','location=0,status=1,scrollbars=0,width=200,height=50');";
-			JavascriptContext.addJavascriptCall( FacesContext.getCurrentInstance(), js ); 
+			CDRUtils.download( FacesContext.getCurrentInstance(), selected.getDocument4Version( version ) );
+		} catch (IOException e) {
+			CDRUtils.addErrorMessage( e.getMessage() );
 		} catch (RepositoryException e) {
-			AonUtil.addErrorMessage( e.getMessage() );
+			CDRUtils.addErrorMessage( e.getMessage() );
 		}
 	}
 
@@ -257,9 +239,10 @@ public class DocumentsList implements Widget {
 		try {
 			ExternalContext ec = FacesContext.getCurrentInstance().getExternalContext();
 			selected.setAuthor( getAuthor( ec ) );
-			selected.checkin( upload.getResource() );
+			selected.checkin( upload.getSelectedDocument() );
+			upload.clearUploadData();
 		} catch (RepositoryException e) {
-			AonUtil.addErrorMessage( e.getMessage() );
+			CDRUtils.addErrorMessage( e.getMessage() );
 		}
 	}
 
@@ -274,7 +257,7 @@ public class DocumentsList implements Widget {
 			selected.checkout();
 			download( event );
 		} catch (RepositoryException e) {
-			AonUtil.addErrorMessage( e.getMessage() );
+			CDRUtils.addErrorMessage( e.getMessage() );
 		}
 	}
 
@@ -289,7 +272,7 @@ public class DocumentsList implements Widget {
 	}
 
 	/**
-	 * Restores selected document.
+	 * Restores selected document. This method cancels previously checked out document. 
 	 * 
 	 * @param event
 	 */
@@ -298,7 +281,7 @@ public class DocumentsList implements Widget {
 			selected.refresh( false );
 			selected.restore();
 		} catch (RepositoryException e) {
-			AonUtil.addErrorMessage( e.getMessage() );
+			CDRUtils.addErrorMessage( e.getMessage() );
 		}
 	}
 
@@ -313,7 +296,7 @@ public class DocumentsList implements Widget {
 			selected.refresh( false );
 			selected.restoreVersion( version.getName() );
 		} catch (RepositoryException e) {
-			AonUtil.addErrorMessage( e.getMessage() );
+			CDRUtils.addErrorMessage( e.getMessage() );
 		}
 	}
 
@@ -328,7 +311,7 @@ public class DocumentsList implements Widget {
 			selected.refresh( false );
 			selected.lock();
 		} catch (RepositoryException e) {
-			AonUtil.addErrorMessage( e.getMessage() );
+			CDRUtils.addErrorMessage( e.getMessage() );
 		}
 	}
 
@@ -344,7 +327,7 @@ public class DocumentsList implements Widget {
 			selected.refresh( false );
 			selected.unlock();
 		} catch (RepositoryException e) {
-			AonUtil.addErrorMessage( e.getMessage() );
+			CDRUtils.addErrorMessage( e.getMessage() );
 		}		
 	}
 
@@ -417,7 +400,7 @@ public class DocumentsList implements Widget {
 			} catch (RepositoryException e) {
 			}
 		}
-        model = new ListDataModel( l );
+        model = new CDRDataModel( l );
 	}
 
 	/**
@@ -433,21 +416,6 @@ public class DocumentsList implements Widget {
 			author = p.getName();
 		}
 		return author;
-	}
-
-	/**
-	 * Removes selected document used in download phase.
-	 *  
-	 * @return
-	 * @throws RepositoryException
-	 */
-	private HttpSession removeDocument4Download() throws RepositoryException {
-		HttpSession session = 
-			(HttpSession) FacesContext.getCurrentInstance().getExternalContext().getSession( false );
-//	Removes selected document from current session.
-		if ( session != null && this.selected != null )
-			session.removeAttribute( this.selected.getName() );
-		return session;
 	}
 
 }

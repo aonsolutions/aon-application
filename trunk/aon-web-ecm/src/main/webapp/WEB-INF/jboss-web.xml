@@ -2,6 +2,12 @@
 
 <jboss-web>
 
+	<replication-config>
+		<replication-trigger>SET_AND_NON_PRIMITIVE_GET</replication-trigger>
+		<replication-granularity>SESSION</replication-granularity>
+		<replication-field-batch-mode>true</replication-field-batch-mode>
+	</replication-config>
+
 	<!-- Isolate classes from other deployments -->
 	<class-loading>
 		<loader-repository>

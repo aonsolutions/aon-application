@@ -3,6 +3,8 @@
  */
 package es.code.cdr.core;
 
+import java.io.Serializable;
+
 import es.code.cdr.beans.CDRNode;
 import es.code.cdr.event.WidgetListener;
 
@@ -10,7 +12,7 @@ import es.code.cdr.event.WidgetListener;
  * @author Consulting & Development. Iñaki Ayerbe - 11/07/2007
  *
  */
-public interface Widget {
+public interface Widget extends Serializable {
 
 	/**
 	 * Add a WidgetListener to the listener list.

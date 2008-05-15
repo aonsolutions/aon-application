@@ -14,13 +14,12 @@ import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
 import javax.jcr.lock.LockException;
 import javax.servlet.http.HttpSession;
-import javax.swing.tree.DefaultMutableTreeNode;
-import javax.swing.tree.DefaultTreeModel;
 
 import org.apache.jackrabbit.core.security.AnonymousPrincipal;
-
-import com.code.aon.ui.util.AonUtil;
-import com.icesoft.faces.component.tree.IceUserObject;
+import org.richfaces.component.UITree;
+import org.richfaces.event.NodeSelectedEvent;
+import org.richfaces.model.TreeNode;
+import org.richfaces.model.TreeNodeImpl;
 
 import es.code.cdr.CDRQName;
 import es.code.cdr.beans.CDRNode;
@@ -30,6 +29,7 @@ import es.code.cdr.core.SessionManager;
 import es.code.cdr.core.Widget;
 import es.code.cdr.core.WidgetSupport;
 import es.code.cdr.event.WidgetListener;
+import es.code.cdr.ui.util.CDRUtils;
 
 /**
  * @author Consulting & Development. Iñaki Ayerbe - 11/07/2007
@@ -37,14 +37,16 @@ import es.code.cdr.event.WidgetListener;
  */
 public class FoldersTree implements Widget {
 
+	private static final long serialVersionUID = -5736845221746376317L;
+
 	/** A description of any WidgetListeners which have been registered. */
 	WidgetSupport support;
 
-    // tree default model, used as a value for the tree component
-    private DefaultTreeModel model;
-    private DefaultMutableTreeNode rootTreeNode;
-	/** Selected user object node. */
-    CDRUserObject selected;
+	@SuppressWarnings("unchecked")
+	TreeNode rootTreeNode;
+	/** Selected folder TreeNode. */
+    @SuppressWarnings("unchecked")
+	TreeNode selected;
 	/** New Folder node name. */
 	String name;
 
@@ -53,44 +55,36 @@ public class FoldersTree implements Widget {
 	 * 
 	 * @throws WidgetLoadingException 
 	 */
+	@SuppressWarnings("unchecked")
 	public FoldersTree() throws WidgetLoadingException {
         HttpSession session = 
         	(HttpSession) FacesContext.getCurrentInstance().getExternalContext().getSession( false ); 
         Node root = SessionManager.getInstance().getHierarchyManager( session.getId() ).getRootNode();
         try {
 			Node cdr = root.getNode( ContentRepository.getNodeName( CDRQName.AON_CDR ) );
-	        rootTreeNode = createDefaultMutableTreeNode( new Folder( cdr ) );
-	        model = new DefaultTreeModel( rootTreeNode );
-			load( rootTreeNode );
+			rootTreeNode = new TreeNodeImpl();
+			TreeNode cdrTreeNode = new TreeNodeImpl();
+			Folder cdrFolder = new Folder( cdr );
+			cdrTreeNode.setData( cdrFolder );
+			rootTreeNode.addChild( cdrFolder.getNode().getIndex(), cdrTreeNode );
+			rootTreeNode.setData( cdrFolder );
+			load( cdrTreeNode );
         } catch (RepositoryException e) {
         	throw new WidgetLoadingException( e );
 		}
     }
 
-    /**
-     * Gets the tree's default model.
-     *
-     * @return tree model.
-     */
-    public DefaultTreeModel getModel() {
-        return model;
-    }
+    @SuppressWarnings("unchecked")
+	public TreeNode getRootTreeNode() {
+		return rootTreeNode;
+	}
 
-    /**
-     * Sets the tree's default model.
-     *
-     * @param model new default tree model
-     */
-    public void setModel(DefaultTreeModel model) {
-        this.model = model;
-    }
-
-    /**
+	/**
      * Sets the root tree node folder as selected.
      * @throws WidgetLoadingException 
      */
 	public void setRootTreeNodeSelected() throws WidgetLoadingException {
-		setSelected( (CDRUserObject) rootTreeNode.getUserObject() );
+		setSelected( rootTreeNode );
 	}
 
 	/**
@@ -100,7 +94,8 @@ public class FoldersTree implements Widget {
 	 * @param selected.
 	 * @throws WidgetLoadingException 
 	 */
-	public void setSelected(CDRUserObject selected) throws WidgetLoadingException {
+	@SuppressWarnings("unchecked")
+	public void setSelected(TreeNode selected) throws WidgetLoadingException {
 		this.selected = selected;
 		support.fireWidgetSelected();
 	}
@@ -135,10 +130,11 @@ public class FoldersTree implements Widget {
 	 * @param event
 	 * @throws WidgetLoadingException 
 	 */
+	@SuppressWarnings("unchecked")
 	public void add(ActionEvent event) throws RepositoryException, WidgetLoadingException {
 		Principal p = FacesContext.getCurrentInstance().getExternalContext().getUserPrincipal();
 		String author = new AnonymousPrincipal().getName();
-		Node selectedNode = selected.getFolder().getNode();
+		Node selectedNode = ( (Folder) selected.getData() ).getNode();
 		try {
 			Folder newFolder = 
 				new Folder( selectedNode.addNode( getName(), ContentRepository.getNodeName( CDRQName.AON_FOLDER ) ) );
@@ -149,11 +145,12 @@ public class FoldersTree implements Widget {
 			newFolder.setEntryDate( Calendar.getInstance() );
 			newFolder.setRoles( new String[] {"Manager"} );
 			selectedNode.save();
-			DefaultMutableTreeNode newNode = createDefaultMutableTreeNode( newFolder );
-			selected.getWrapper().add( newNode );
-			setSelected( (CDRUserObject) newNode.getUserObject() );
+			TreeNodeImpl newNode = new TreeNodeImpl();
+			newNode.setData( newFolder );
+			selected.addChild( newFolder.getNode().getIndex(), newNode );
+			setSelected( newNode );
 		} catch (AccessDeniedException e) {
-			AonUtil.addWarningMessage( e.getMessage() );
+			CDRUtils.addWarningMessage( e.getMessage() );
 			selectedNode.refresh( false );
 		} catch (RepositoryException e) {
 			selectedNode.refresh( false );
@@ -167,29 +164,38 @@ public class FoldersTree implements Widget {
 	 * @throws WidgetLoadingException 
 	 * @throws RepositoryException 
 	 */
+	@SuppressWarnings("unchecked")
 	public void remove(ActionEvent event) throws RepositoryException, WidgetLoadingException {
-		Node selectedNode = selected.getFolder().getNode();
+		Node selectedNode = ( (Folder) selected.getData() ).getNode();
 		if ( hasLockedNodes( selectedNode ) )
             throw new LockException("Can't delete a locked node");
 
 		Node parentNode = selectedNode.getParent();
-		DefaultMutableTreeNode treeNode = selected.getWrapper();
-		CDRUserObject userObject = 
-			(CDRUserObject) ( (DefaultMutableTreeNode) treeNode.getParent() ).getUserObject();
+		TreeNode parentTreeNode = selected.getParent();
 		selectedNode.remove();
 		try {
 			parentNode.save();
-			treeNode.removeFromParent();
+			Folder folder = (Folder) selected.getData();
+			parentTreeNode.removeChild( folder.getNode().getIndex() );
 		} catch (AccessDeniedException e) {
-			AonUtil.addWarningMessage( e.getMessage() );
+			CDRUtils.addWarningMessage( e.getMessage() );
 			parentNode.refresh( false );
 		}
-		setSelected( userObject );
+		setSelected( parentTreeNode );
 	}
 
-	/* (non-Javadoc)
-	 * @see es.code.cdr.ui.controller.Widget#addWidgetListener(es.code.cdr.ui.controller.event.WidgetListener)
+	/**
+	 * Selects tree node.
+	 * 
+	 * @param event
+	 * @throws WidgetLoadingException 
 	 */
+	public void nodeSelected(NodeSelectedEvent event) throws WidgetLoadingException {
+		UITree tree = (UITree) event.getComponent();
+		setSelected( tree.getTreeNode() );
+	}
+
+//	************************************** Widget methods implementation ****************************************
 	public void addWidgetListener(WidgetListener l) {
 		if ( l != null ) {
 			synchronized (this) {
@@ -201,9 +207,6 @@ public class FoldersTree implements Widget {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see es.code.cdr.ui.controller.Widget#removeWidgetListener(es.code.cdr.ui.controller.event.WidgetListener)
-	 */
 	public void removeWidgetListener(WidgetListener l) {
 		if ( l != null ) {
 			synchronized (this) {
@@ -214,77 +217,35 @@ public class FoldersTree implements Widget {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see es.code.cdr.ui.controller.Widget#getSelected()
-	 */
 	public CDRNode getSelectedNode() {
-		return selected.getFolder();
+		return (Folder) selected.getData();
 	}
 
-	/* (non-Javadoc)
-	 * @see es.code.cdr.ui.controller.Widget#perform(es.code.cdr.ui.controller.Widget)
-	 */
 	public void perform(Widget dependentWidget) {
 		// TODO Auto-generated method stub
 		
 	}
+//	********************************** Ends of Widget methods implementation ************************************
 
 	/**
-	 * 
-	 * @author Consulting & Development. Iñaki Ayerbe - 12/07/2007
-	 *
-	 */
-	protected class CDRUserObject extends IceUserObject {
-
-		Folder folder;
-
-		public CDRUserObject(DefaultMutableTreeNode wrapper, Folder folder) throws RepositoryException {
-			super(wrapper);
-
-	        setLeafIcon("/css/iceCss/images/aon-icon/aon-icon-folder-contracted.png");
-	        setBranchContractedIcon("/css/iceCss/images/aon-icon/aon-icon-folder-contracted.png");
-	        setBranchExpandedIcon("/css/iceCss/images/aon-icon/aon-icon-folder-expanded.png");
-
-			setText( folder.getName() );
-			setExpanded( true );
-			this.folder = folder;
-		}
-
-		/**
-		 * @return the folder
-		 */
-		public Folder getFolder() {
-			return folder;
-		}
-
-		/**
-		 * Registers a user click with this object .
-		 *
-		 * @param event that fired this method
-		 * @throws WidgetLoadingException 
-		 */
-		public void nodeClicked(ActionEvent event) throws WidgetLoadingException {
-			setSelected( this );
-		}
-	}
-
-	/**
-	 * Loads folders tree model.
+	 * Loads folders tree.
 	 * 
 	 * @param current
 	 * @throws WidgetLoadingException
 	 */
-	private void load(DefaultMutableTreeNode defNode) throws WidgetLoadingException {
+	@SuppressWarnings("unchecked")
+	private void load(TreeNode defNode) throws WidgetLoadingException {
 		try {
-			CDRUserObject userObject = (CDRUserObject) defNode.getUserObject();
-	        NodeIterator iter = userObject.getFolder().getNode().getNodes();
+			Folder folder = (Folder) defNode.getData();
+	        NodeIterator iter = folder.getNode().getNodes();
 	        while ( iter.hasNext() ) {
 	        	Node node = (Node) iter.next();
 	        	String name = ContentRepository.getNodeName( CDRQName.AON_FOLDER );
 	        	if ( node.getPrimaryNodeType().isNodeType( name ) ) {
-		        	DefaultMutableTreeNode branchNode = 
-		        		createDefaultMutableTreeNode( new Folder( node ) );
-		        	defNode.add( branchNode );
+	    			TreeNodeImpl branchNode = new TreeNodeImpl();
+	    			Folder branchFolder = new Folder( node );
+	    			branchNode.setData( branchFolder );
+	    			defNode.addChild( branchFolder.getNode().getIndex(), branchNode );
 		        	if ( node.hasNodes() ) {
 		        		load( branchNode );
 		        	}
@@ -296,19 +257,12 @@ public class FoldersTree implements Widget {
 	}
 
 	/**
-	 * Creates a <code>DefaultMutableTreeNode</code>.
+	 * Tells if node passed by parameter has locked nodes inside.
 	 * 
-	 * @param folder
+	 * @param node
 	 * @return
 	 * @throws RepositoryException
 	 */
-	private DefaultMutableTreeNode createDefaultMutableTreeNode(Folder folder) throws RepositoryException {
-		DefaultMutableTreeNode branchNode = new DefaultMutableTreeNode();
-		CDRUserObject branchObject = new CDRUserObject( branchNode, folder );
-		branchNode.setUserObject( branchObject );
-		return branchNode;
-	}
-
 	private boolean hasLockedNodes(Node node) throws RepositoryException {
 		boolean hasLock = false;
 		for(NodeIterator ni = node.getNodes(); ni.hasNext();) {

@@ -16,6 +16,8 @@ import es.code.cdr.core.Widget;
  */
 public class QueryMenu extends AbstractWidget {
 
+	private static final long serialVersionUID = -1131543133804398407L;
+
 	/** Tells whether a menu option is visible or not. */
 	boolean visible;
 

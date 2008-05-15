@@ -14,6 +14,8 @@ import es.code.cdr.event.WidgetListener;
  */
 public class CDRMenu implements Widget {
 
+	private static final long serialVersionUID = -4377533127671999159L;
+
 	/** A description of any WidgetListeners which have been registered. */
 	WidgetSupport support;
 	/** Tells whether a menu option is visible or not. */

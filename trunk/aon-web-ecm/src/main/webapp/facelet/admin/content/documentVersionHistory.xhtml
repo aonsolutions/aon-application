@@ -2,7 +2,8 @@
 <html xmlns="http://www.w3.org/1999/xhtml"
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:f="http://java.sun.com/jsf/core" 
-	xmlns:aon="http://www.code.es/aon-ice-components">
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:aon="http://www.code.es/aon-rich-components">
 <body>
 
 <ui:composition>
@@ -14,24 +15,27 @@
 
 		<aon:dataTable id="docVersionList" 
 				value="#{manager.documents.versionHistoryModel}" var="to"
-				styleClass="aon-dataTable" style="font-size:1.1em;"
-				 >
+				styleClass="aon-dataTable" style="font-size:1.1em;" >
 
 			<aon:column>
 				<f:facet name="header">
 					<aon:outputText value="" />
 				</f:facet>
-				<aon:outputText style="display:inline;padding-left:16px;" styleClass="#{(to.name == manager.documents.selected.version)?'aon-icon aon-icon-checked':'aon-icon aon-icon-check'}" value="&#160;" />
-				<aon:commandButton id="downloadVersion"
-					title="#{menuBundle.aon_admin_document_download}"
-					actionListener="#{manager.documents.downloadVersion}"					
-					styleClass="aon-icon-commandButton aon-icon-mail-save"
-					style="background-position:left 5px;" />
+				<aon:outputText style="display:inline;padding-left:16px;" 
+					styleClass="#{(to.name == manager.documents.selected.version)?'aon-icon aon-icon-checked':'aon-icon aon-icon-check'}" 
+					value="&#160;" />
+				<h:commandLink id="downloadVersion" value="|"
+						title="#{menuBundle.aon_admin_document_download}"
+						actionListener="#{manager.documents.downloadVersion}"
+						styleClass="aon-icon-commandButton aon-icon-file-download"
+						style="background-position:left 5px;"
+						target="_blank" />
 				<aon:commandButton id="restoreVersion"
-					title="#{menuBundle.aon_admin_document_download}"
+					title="#{menuBundle.aon_version_restore}"
 					actionListener="#{manager.documents.restoreVersion}"					
-					styleClass="aon-icon-commandButton aon-icon-mail-save"
-					style="background-position:left 5px;" />
+					styleClass="aon-icon-commandButton aon-icon-file-upload"
+					style="background-position:left 5px;" 
+					reRender="adminForm, docVersionList"/>
 			</aon:column>
 
 			<aon:column>

@@ -3,6 +3,7 @@
  */
 package es.code.cdr.ui.controller.query;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -10,7 +11,6 @@ import java.util.ResourceBundle;
 
 import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
-import javax.faces.model.ListDataModel;
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
@@ -18,8 +18,6 @@ import javax.jcr.Session;
 import javax.jcr.query.Query;
 import javax.jcr.query.QueryResult;
 import javax.servlet.http.HttpSession;
-
-import com.code.aon.ui.util.AonUtil;
 
 import es.code.cdr.beans.Document;
 import es.code.cdr.core.InvalidStatementException;
@@ -31,19 +29,25 @@ import es.code.cdr.event.WidgetEvent;
 import es.code.cdr.event.WidgetListener;
 import es.code.cdr.ui.controller.DocumentsList;
 import es.code.cdr.ui.controller.WidgetLoadingException;
+import es.code.cdr.ui.util.CDRDataModel;
+import es.code.cdr.ui.util.CDRUtils;
 
 /**
  * @author Consulting & Development. Iñaki Ayerbe - 17/07/2007
  *
  */
-public class QueryMediator implements WidgetListener {
+public class QueryMediator implements WidgetListener, Serializable {
+
+	private static final long serialVersionUID = -1069531467214866277L;
+
+	static final String BUNDLE_BASENAME = "es.code.cdr.ui.i18n.messages";
 
 	QueryMenu menu;
 	QueryParameters parameters;
 	DocumentsList documents;
 
 	/** Application message bundle. */
-	ResourceBundle bundle;
+	transient ResourceBundle bundle;
 	
 	/**
 	 * Constructs a <code>QueryMediator</code> object.
@@ -51,10 +55,6 @@ public class QueryMediator implements WidgetListener {
 	 * @throws WidgetLoadingException 
 	 */
 	public QueryMediator() throws WidgetLoadingException {
-		FacesContext ctx = FacesContext.getCurrentInstance();
-		Locale locale = ctx.getExternalContext().getRequestLocale();
-		bundle = ResourceBundle.getBundle( ctx.getApplication().getMessageBundle(), locale );
-		createWidgets();
 	}
 
 	/**
@@ -82,7 +82,31 @@ public class QueryMediator implements WidgetListener {
 	 * @return the bundle
 	 */
 	public ResourceBundle getBundle() {
+		if ( bundle == null ) {
+			FacesContext ctx = FacesContext.getCurrentInstance();
+			Locale locale = ctx.getExternalContext().getRequestLocale();
+			bundle = ResourceBundle.getBundle( BUNDLE_BASENAME, locale );
+		}
 		return bundle;
+	}
+
+	/**
+	 * Initializes Bean.
+	 * 
+	 * @param event
+	 */
+	public void onReset(ActionEvent event) throws WidgetLoadingException {
+		createWidgets();
+	}
+
+	/**
+	 * Registers a user selection with this object .
+	 *
+	 * @param event that fired this method
+	 */
+	public void onDownloadSelectedDocument(ActionEvent event) {
+		documents.documentSelected( event );
+		documents.download( event );
 	}
 
 	/**
@@ -102,11 +126,11 @@ public class QueryMediator implements WidgetListener {
 				l.add( new Document( n ) );
 			}
 		} catch (RepositoryException e) {
-			AonUtil.addErrorMessage( bundle.getString( "aon_cdr_document_not_found" ) );
+			CDRUtils.addErrorMessage( bundle.getString( "aon_cdr_document_not_found" ) );
 		} catch (InvalidStatementException e) {
-			AonUtil.addErrorMessage( bundle.getString( "aon_cdr_empty_expression" ) );
+			CDRUtils.addErrorMessage( bundle.getString( "aon_cdr_empty_expression" ) );
 		}
-		documents.setModel( new ListDataModel( l ) );
+		documents.setModel( new CDRDataModel( l ) );
 	}
 
 	/* (non-Javadoc)
