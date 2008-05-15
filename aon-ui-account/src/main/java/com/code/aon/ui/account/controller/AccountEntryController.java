@@ -24,6 +24,7 @@ import com.code.aon.account.Leasing;
 import com.code.aon.account.Loan;
 import com.code.aon.account.Period;
 import com.code.aon.account.bridge.AccountEntryInvoice;
+import com.code.aon.account.bridge.InvoiceDetailAccount;
 import com.code.aon.account.bridge.LeasingAccount;
 import com.code.aon.account.bridge.LoanAccount;
 import com.code.aon.account.bridge.RegistryBankAccount;
@@ -171,27 +172,28 @@ public class AccountEntryController extends BasicController {
 				AccountEntryInvoice accountEntryInvoice = (AccountEntryInvoice)iter.next();
 				accountInvoiceController.setAccountEntryInvoice(accountEntryInvoice);
 				AccountInvoiceHeader header = new AccountInvoiceHeader();
-				AccountEntryDetail detail;
+				AccountEntryDetail detail = null;
 				if(entry.getType().equals(AccountEntryType.SALES_INVOICE)){
 					header.setType(InvoiceType.SALES);
-					detail = obtainEntryDetailFromAccountPattern(entry, "7*");
-					header.setAccount(detail.getAccount());
+					detail = obtainEntryDetailFromAccountPattern(entry, "70*");
+					header.setAccount((detail!=null)?detail.getAccount():null);
 				}
 				if(entry.getType().equals(AccountEntryType.PURCHASE_INVOICE)){
 					header.setType(InvoiceType.PURCHASE);
-					detail = obtainEntryDetailFromAccountPattern(entry, "6*");
-					header.setAccount(detail.getAccount());
+					detail = obtainEntryDetailFromAccountPattern(entry, "60*");
+					header.setAccount((detail!=null)?detail.getAccount():null);
 				}
 				if(entry.getType().equals(AccountEntryType.EXPENSE_INVOICE)){
 					header.setType(InvoiceType.EXPENSES);
 					detail = obtainEntryDetailFromAccountPattern(entry, "6*");
-					header.setAccount(detail.getAccount());
+					header.setAccount((detail!=null)?detail.getAccount():null);
 				}
 				header.setDate(entry.getEntryDate());
 				header.setDocument(accountEntryInvoice.getInvoice().getRegistryDocument());
 				header.setName(accountEntryInvoice.getInvoice().getRegistryName());
-				header.setNumber(accountEntryInvoice.getInvoice().getNumber());
 				header.setSeries(accountEntryInvoice.getInvoice().getSeries());
+				header.setNumber(accountEntryInvoice.getInvoice().getNumber());
+				header.setReferenceCode(accountEntryInvoice.getInvoice().getReferenceCode());
 				header.setPeriod(new Period());
 				header.getPeriod().setId(entry.getAccountPeriod());
 				header.setSecurityLevel(entry.getSecurityLevel());
@@ -338,9 +340,10 @@ public class AccountEntryController extends BasicController {
 				header.setExpenses(detail.getDebit());
 				header.setLeasing(obtainLeasing(entry));
 				header.setLeasingFeeDate(accountEntryInvoice.getInvoice().getIssueDate());
-				header.setNumber(accountEntryInvoice.getInvoice().getNumber());
 				header.setSecurityLevel(accountEntryInvoice.getInvoice().getSecurityLevel());
 				header.setSeries(accountEntryInvoice.getInvoice().getSeries());
+				header.setNumber(accountEntryInvoice.getInvoice().getNumber());
+				header.setReferenceCode(accountEntryInvoice.getInvoice().getReferenceCode());
 				
 				accountLeasingFeeController.setHeader(header);
 			}
@@ -372,12 +375,15 @@ public class AccountEntryController extends BasicController {
 		try {
 			IManagerBean invoiceDetailBean = BeanManager.getManagerBean(InvoiceDetail.class);
 			IManagerBean invoiceTaxBean = BeanManager.getManagerBean(InvoiceTax.class);
+			IManagerBean invoiceAccountBean = BeanManager.getManagerBean(InvoiceDetailAccount.class);
 			Criteria criteria = new Criteria();
 			criteria.addEqualExpression(invoiceDetailBean.getFieldName(IFinanceAlias.INVOICE_DETAIL_INVOICE_ID), invoice.getId());
 			Iterator iter = invoiceDetailBean.getList(criteria).iterator();
 			while(iter.hasNext()){
 				AccountInvoiceDetail detail = new AccountInvoiceDetail();
 				InvoiceDetail invoiceDetail = (InvoiceDetail)iter.next();
+				detail.setTaxableBase(invoiceDetail.getTaxableBase());
+
 				Criteria taxCriteria = new Criteria();
 				taxCriteria.addEqualExpression(invoiceTaxBean.getFieldName(IFinanceAlias.INVOICE_TAX_INVOICE_DETAIL_ID), invoiceDetail.getId());
 				Iterator taxIter= invoiceTaxBean.getList(taxCriteria).iterator();
@@ -386,9 +392,20 @@ public class AccountEntryController extends BasicController {
 					if(invoiceTax.getTaxType().equals(TaxType.VAT)){
 						detail.getVat().setPercentage(invoiceTax.getPercentage());
 						detail.getVat().setSurcharge(invoiceTax.getSurcharge());
+					} else if(invoiceTax.getTaxType().equals(TaxType.RETENTION)){
+						detail.getRetention().setPercentage(invoiceTax.getPercentage());
+						detail.getRetention().setSurcharge(invoiceTax.getSurcharge());
 					}
 				}
-				detail.setTaxableBase(invoiceDetail.getTaxableBase());
+
+				Criteria accountCriteria = new Criteria();
+				accountCriteria.addEqualExpression(invoiceAccountBean.getFieldName(IAccountBridgeAlias.INVOICE_DETAIL_ACCOUNT_INVOICE_DETAIL_ID), invoiceDetail.getId());
+				Iterator accountIter= invoiceAccountBean.getList(accountCriteria).iterator();
+				if(accountIter.hasNext()){
+					InvoiceDetailAccount invoiceDetailAccount = (InvoiceDetailAccount)accountIter.next();
+					detail.setAccount(invoiceDetailAccount.getAccount().getId());
+				}
+
 				details.add(detail);
 			}
 		} catch (ManagerBeanException e) {
