@@ -56,12 +56,17 @@ public class ArticleDocumentController extends GridI18nController {
 		if ( this.inputFile!= null ) {
 			long size = this.inputFile.getSize();
 			String upload_name = inputFile.getName();
-			upload_name = upload_name.substring(upload_name.lastIndexOf(File.separator));
+			upload_name = upload_name.replace('\\', '/');
+			upload_name = upload_name.substring(upload_name.lastIndexOf('/'));
 			String fileName = File.separator+"article_documents";
-			if (upload_name.startsWith(File.separator))
+			File file_dir = new File( currentPath+fileName);
+			if (!file_dir.exists()) {
+				file_dir.mkdir();
+			}
+			if (upload_name.startsWith("/"))
 				fileName += upload_name;
 			else
-				fileName += File.separator + upload_name;
+				fileName += "/" + upload_name;
 			File file = new File( currentPath+fileName);
 			if ( (maximumSize != -1) && (size > maximumSize) ) {
 				FacesContext ctx = FacesContext.getCurrentInstance();
