@@ -58,21 +58,15 @@
 					<h:panelGrid columns="2" styleClass="aon-form-table"
 						columnClasses="aon-form-table-column-odd,aon-form-table-column-even">
 
-							<h:outputLabel for="Invoice_series"
+							<h:outputLabel for="Invoice_referenceCode"
 								styleClass="aon-form-input-text-label"
-								value="#{financeBundle.aon_series_number}" />
+								value="#{financeBundle.aon_invoice_number}" />
 							<h:panelGrid columns="2">
-								<t:inputText id="Invoice_series"
+								<t:inputText id="Invoice_referenceCode"
 									onblur="toUpperCase(this);"
 									valueChangeListener="#{purchaseDirectInvoicing.addExpression}"
-									styleClass="aon-form-input-text" forceId="#{true}" size="4"
-									maxlength="5">
-									<f:validateLength maximum="5" />
-								</t:inputText>
-								<t:inputText id="Invoice_number"
-									valueChangeListener="#{purchaseDirectInvoicing.addExpression}"
-									styleClass="aon-form-input-text" forceId="#{true}"
-									size="7" />
+									styleClass="aon-form-input-text" forceId="#{true}" size="25"
+									maxlength="32"/>
 							</h:panelGrid>
 							
 							<t:outputLabel for="Supplier_Lookup_id"
