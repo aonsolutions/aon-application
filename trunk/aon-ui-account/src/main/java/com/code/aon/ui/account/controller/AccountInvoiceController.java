@@ -24,6 +24,8 @@ import com.code.aon.account.AccountInvoiceDetail;
 import com.code.aon.account.AccountInvoiceHeader;
 import com.code.aon.account.Period;
 import com.code.aon.account.bridge.AccountEntryInvoice;
+import com.code.aon.account.bridge.InvoiceDetailAccount;
+import com.code.aon.account.bridge.dao.IAccountBridgeAlias;
 import com.code.aon.account.bridge.util.AccountUtil;
 import com.code.aon.account.bridge.writer.AccountEntryInvoiceWriter;
 import com.code.aon.account.dao.IAccountAlias;
@@ -265,6 +267,7 @@ public class AccountInvoiceController {
 	public void onNewDetail(ActionEvent event){
 		this.isNewDetail = true;
 		this.currentDetail = new AccountInvoiceDetail();
+		this.currentDetail.setAccount((header.getAccount()!=null)?header.getAccount().getId():null);
 	}
 	
 	@SuppressWarnings("unused")
@@ -274,10 +277,12 @@ public class AccountInvoiceController {
 	
 	@SuppressWarnings({"unchecked", "unused"})
 	public void onAddDetail(ActionEvent event) throws ManagerBeanException{
-		applySurcharge();
-		((LinkedList)this.details.getWrappedData()).add(this.currentDetail);
-		this.currentDetail = new AccountInvoiceDetail();
-		this.setNewDetail(false);
+		if (validateDetail(this.currentDetail)) {
+			applySurcharge();
+			((LinkedList)this.details.getWrappedData()).add(this.currentDetail);
+			this.currentDetail = new AccountInvoiceDetail();
+			this.setNewDetail(false);
+		}
 	}
 	
 	@SuppressWarnings({"unchecked", "unused"})
@@ -293,13 +298,41 @@ public class AccountInvoiceController {
 	
 	@SuppressWarnings({"unchecked", "unused"})
 	public void onUpdateDetail(ActionEvent event) throws ManagerBeanException{
-		applySurcharge();
-		int i = ((LinkedList)this.details.getWrappedData()).indexOf(this.currentDetail);
-		((LinkedList)this.details.getWrappedData()).remove(i);
-		((LinkedList)this.details.getWrappedData()).add(i, this.currentDetail);
-		this.currentDetail = new AccountInvoiceDetail();
+		if (validateDetail(this.currentDetail)) {
+			applySurcharge();
+			int i = ((LinkedList)this.details.getWrappedData()).indexOf(this.currentDetail);
+			((LinkedList)this.details.getWrappedData()).remove(i);
+			((LinkedList)this.details.getWrappedData()).add(i, this.currentDetail);
+			this.currentDetail = new AccountInvoiceDetail();
+		}
 	}
-	
+
+	@SuppressWarnings("unchecked")
+	private boolean validateDetail(AccountInvoiceDetail detail) {
+		if (detail.getAccount()!=null && !detail.getAccount().equals("")) {
+			try {
+				IManagerBean accountBean = BeanManager.getManagerBean(Account.class);
+				Criteria criteria = new Criteria();
+				criteria.addEqualExpression(accountBean.getFieldName(IAccountAlias.ACCOUNT_ID), detail.getAccount());
+				Iterator iterator = accountBean.getList(criteria).iterator();
+				if (iterator.hasNext()) {
+					Account account = (Account)iterator.next();
+					if (!account.isEntryEnabled()) {
+						AonUtil.addErrorMessage("La Cuenta Contable " + detail.getAccount() + " no permite apuntes.");
+						return false;
+					}
+				} else {
+					AonUtil.addErrorMessage("La Cuenta Contable " + detail.getAccount() + " no existe.");
+					return false;
+				}
+			} catch (ManagerBeanException e) {
+				AonUtil.addErrorMessage("Error al obtener el pojo de la cuenta con id = " + detail.getAccount());
+				return false;
+			}
+		}
+		return true;
+	}
+
 	@SuppressWarnings("unused")
 	public void onNewFinance(ActionEvent event){
 		this.isNewFinance = true;
@@ -309,6 +342,12 @@ public class AccountInvoiceController {
 	@SuppressWarnings("unused")
 	public void onSelectFinance(ActionEvent event) throws ManagerBeanException{
 		this.currentFinance = (Finance)finances.getRowData();
+		if (currentFinance.getPayMethod() == null) {
+			currentFinance.setPayMethod(new PayMethod());
+		}
+		if (currentFinance.getBank() == null) {
+			currentFinance.setBank(new Bank());
+		}
 		if(!header.getType().equals(InvoiceType.SALES)){
 			this.setRegistryBankId(obtainRegistryBankId(obtainCompany().getId(), currentFinance.getBank().getId()));
 		}
@@ -497,7 +536,7 @@ public class AccountInvoiceController {
 		insertInvoiceDetails(invoice);
 		insertFinances(invoice);
 		entry = getWriter().insertorUpdateAccountEntry(entry, this.isNew);
-		getWriter().insertEntryDetails(entry, account, invoice.getSeries(), invoice.getNumber(), getInvoiceTotal(), obtainTotalRetention(), obtainVATandSurchargeQuota(), getBasesPerAccount());
+		getWriter().insertEntryDetails(entry, account, invoice.getSeries(), invoice.getNumber(), getInvoiceTotal(), obtainTotalRetention(), obtainVATandSurchargeQuota(), obtainBasesPerAccount(details));
 		this.setAccountEntryInvoice(getWriter().insertAccountEntryInvoice(entry, invoice));
 		this.isNew = false;
 		loadAccountEntryController(entry);
@@ -541,28 +580,20 @@ public class AccountInvoiceController {
 	 * @return the double
 	 */
 	@SuppressWarnings("unchecked")
-	private Map getBasesPerAccount() {
+	private Map obtainBasesPerAccount(DataModel details) {
 		Map basesPerAccount = new HashMap();
-		basesPerAccount.put(header.getAccount(), new Double(obtainTotalTaxableBase()));
+		Iterator iterator = ((LinkedList)details.getWrappedData()).iterator();
+		while (iterator.hasNext()) {
+			AccountInvoiceDetail detail = (AccountInvoiceDetail)iterator.next();
+			Account account = new Account();
+			account.setId(detail.getAccount());
+			double base = detail.getTaxableBase();
+			base += (basesPerAccount.containsKey(account))?((Double)basesPerAccount.get(account)).doubleValue():0;
+			basesPerAccount.put(account, new Double(base));
+		}
 		return basesPerAccount;
 	}
 
-	/**
-	 * Obtain total taxable base.
-	 * 
-	 * @return the double
-	 */
-	@SuppressWarnings("unchecked")
-	private double obtainTotalTaxableBase() {
-		double total = 0.0;
-		Iterator iter = ((List)details.getWrappedData()).iterator();
-		while(iter.hasNext()){
-			AccountInvoiceDetail detail = (AccountInvoiceDetail)iter.next();
-			total += detail.getTaxableBase();
-		}
-		return total;
-	}
-	
 	/**
 	 * Obtain total retention.
 	 * 
@@ -601,15 +632,16 @@ public class AccountInvoiceController {
 	private Invoice createInvoice() throws ManagerBeanException{
 		Invoice invoice = new Invoice();
 		invoice.setIssueDate(getHeader().getDate());
+		invoice.setSeries(getHeader().getSeries());
 		if(getHeader().getType().equals(InvoiceType.SALES)){
 			invoice.setNumber(calculateNextNumber(getHeader().getSeries(), getHeader().getType()));
 		}else{
 			invoice.setNumber(getHeader().getNumber());
 		}
+		invoice.setReferenceCode(getHeader().getReferenceCode());
 		invoice.setRegistry(getHeader().getRegistry());
 		invoice.setRegistryDocument(getHeader().getDocument());
 		invoice.setRegistryName(getHeader().getName());
-		invoice.setSeries(getHeader().getSeries());
 		invoice.setStatus(InvoiceStatus.SCORED);
 		invoice.setType(getHeader().getType());
 		invoice.setSecurityLevel(getHeader().getSecurityLevel());
@@ -646,6 +678,7 @@ public class AccountInvoiceController {
 				invoiceDetail.setTaxableBase(detail.getTaxableBase());
 				invoiceDetail = (InvoiceDetail) invoiceDetailBean.insert(invoiceDetail);
 				insertInvoiceTaxes(invoiceDetail, detail);
+				insertInvoiceAccounts(invoiceDetail, detail);
 			}
 		} catch (ManagerBeanException e) {
 			LOGGER.log(Level.SEVERE, "Error inserting invoiceDetails for invoice with id= " + invoice.getId(), e);
@@ -682,9 +715,25 @@ public class AccountInvoiceController {
 				invoiceTaxBean.insert(invoiceTax);
 			}
 		} catch (ManagerBeanException e) {
-			LOGGER.log(Level.SEVERE, "Error insertin invoiceTaxes for InvoiceDetail with id= " + invoiceDetail.getId(), e);
+			LOGGER.log(Level.SEVERE, "Error inserting invoiceTaxes for InvoiceDetail with id= " + invoiceDetail.getId(), e);
 		}
-		
+	}
+
+	private void insertInvoiceAccounts(InvoiceDetail invoiceDetail, AccountInvoiceDetail detail) {
+		try {
+			IManagerBean invoiceAccountBean = BeanManager.getManagerBean(InvoiceDetailAccount.class);
+			if (detail.getAccount() != null && !detail.getAccount().equals("")) {
+				Account account = new Account();
+				account.setId(detail.getAccount());
+
+				InvoiceDetailAccount invoiceDetailAccount = new InvoiceDetailAccount();
+				invoiceDetailAccount.setInvoiceDetail(invoiceDetail);
+				invoiceDetailAccount.setAccount(account);
+				invoiceAccountBean.insert(invoiceDetailAccount);
+			}
+		} catch (ManagerBeanException e) {
+			LOGGER.log(Level.SEVERE, "Error inserting invoiceAccounts for InvoiceDetail with id= " + invoiceDetail.getId(), e);
+		}
 	}
 
 	@SuppressWarnings("unchecked")
@@ -781,6 +830,7 @@ public class AccountInvoiceController {
 		try {
 			IManagerBean invoiceDetailBean = BeanManager.getManagerBean(InvoiceDetail.class);
 			IManagerBean invoiceTaxBean = BeanManager.getManagerBean(InvoiceTax.class);
+			IManagerBean invoiceAccountBean = BeanManager.getManagerBean(InvoiceDetailAccount.class);
 			Criteria criteria = new Criteria();
 			criteria.addEqualExpression(invoiceDetailBean.getFieldName(IFinanceAlias.INVOICE_DETAIL_INVOICE_ID), invoice.getId());
 			Iterator iter = invoiceDetailBean.getList(criteria).iterator();
@@ -791,6 +841,13 @@ public class AccountInvoiceController {
 				Iterator taxIter = invoiceTaxBean.getList(taxCriteria).iterator();
 				while(taxIter.hasNext()){
 					invoiceTaxBean.remove((InvoiceTax)taxIter.next());
+				}
+
+				Criteria accountCriteria = new Criteria();
+				accountCriteria.addEqualExpression(invoiceAccountBean.getFieldName(IAccountBridgeAlias.INVOICE_DETAIL_ACCOUNT_INVOICE_DETAIL_ID), invoiceDetail.getId());
+				Iterator accountIter = invoiceAccountBean.getList(accountCriteria).iterator();
+				while(accountIter.hasNext()){
+					invoiceAccountBean.remove((InvoiceDetailAccount)accountIter.next());
 				}
 				invoiceDetailBean.remove(invoiceDetail);
 			}
