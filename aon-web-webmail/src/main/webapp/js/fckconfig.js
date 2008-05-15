@@ -1,6 +1,6 @@
 FCKConfig.ToolbarSets["AonWebMail"] = [
 ['Undo','Redo'],
-['OrderedList','UnorderedList','-','Outdent','Indent','Blockquote'],
+['OrderedList','UnorderedList','-','Outdent','Indent'],
 ['JustifyLeft','JustifyCenter','JustifyRight','JustifyFull'],
 ['Link','Unlink'],
 ['Image','Table','Rule'],
