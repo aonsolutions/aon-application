@@ -12,3 +12,8 @@ FCKConfig.ToolbarSets["AonWebMail"] = [
 ['Style','FontFormat','FontName','FontSize'],
 ['TextColor']
 ] ;
+
+FCKConfig.FlashBrowser = false;
+FCKConfig.LinkUpload = false;
+FCKConfig.ImageUpload = false;
+FCKConfig.FlashUpload = false;
