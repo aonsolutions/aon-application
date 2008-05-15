@@ -30,11 +30,11 @@
 						confirmAction="#{message.getReturnAction}"
 						confirmActionListener="#{message.send}">
 					</aon:confirmButton>
-					<aon:commandButton
-							action="#{message.getReturnAction}"
-							title="#{appBundle.aon_webmail_back}"
-							value="#{appBundle.aon_webmail_back}"
-							styleClass="aon-icon-cancel aon-finding-toolbar-item">
+					<aon:commandButton id="back" immediate="true"
+						action="#{message.getReturnAction}"
+						title="#{bundle.aon_back}"
+						value="#{bundle.aon_back}"
+						styleClass="aon-icon-cancel aon-finding-toolbar-item">
 					</aon:commandButton>
 						
 				</aon:div>
@@ -80,7 +80,7 @@
 						<aon:inputText id="NewMail_Subject"
 							size="130"
 							value="#{message.subject}"/>			
-	
+
 						<aon:outputLabel for="attach_file" 
 							value="#{appBundle.aon_webmail_attach_file}: " />
 						<aon:div>
@@ -94,8 +94,6 @@
 								actionListener="#{message.fileUploaded}"/>
 								
 							<aon:div>
-								<!-- <aon:outputLabel for="attach_file" styleClass="aon-bold"
-										value="#{appBundle.aon_webmail_attach_files}: " /> -->
 									
 								<aon:dataTable id="attachDataTable" 
 									value="#{message.files}" 
@@ -114,6 +112,7 @@
 								
 							</aon:div>		
 						</aon:div>
+
 					</aon:panelGrid>
 				</aon:div>
 				
@@ -126,9 +125,9 @@
 				</aon:div>
 			</aon:div>
 
-			<ui:include src="/webmail/facelet/modal/showEmails.xhtml" />
-
 		</aon:form>
+
+		<ui:include src="/webmail/facelet/modal/showEmails.xhtml" />
 		
 	</ui:define>
 </ui:composition>
