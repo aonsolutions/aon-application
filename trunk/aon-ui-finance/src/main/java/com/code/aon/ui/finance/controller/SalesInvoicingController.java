@@ -19,6 +19,7 @@ import javax.faces.model.SelectItem;
 import com.code.aon.account.Account;
 import com.code.aon.account.AccountEntry;
 import com.code.aon.account.DefaultAccounts;
+import com.code.aon.account.bridge.InvoiceDetailAccount;
 import com.code.aon.account.bridge.ProductAccount;
 import com.code.aon.account.bridge.dao.IAccountBridgeAlias;
 import com.code.aon.account.bridge.enumeration.ProductAccountType;
@@ -261,6 +262,7 @@ public class SalesInvoicingController extends BasicController {
 	@SuppressWarnings("unused")
 	public void onUnrecordInvoice(ActionEvent event) throws ManagerBeanException, ExpressionException{
 		Invoice invoice = (Invoice)this.getTo();
+		removeInvoiceDetailAccount(invoice);
 		getAccountEntryInvoiceWriter().unrecordInvoice(invoice);
 		IManagerBean invoiceBean = BeanManager.getManagerBean(Invoice.class);
 		invoice.setStatus(InvoiceStatus.PENDING);
@@ -271,6 +273,18 @@ public class SalesInvoicingController extends BasicController {
 	}
 	
 	@SuppressWarnings("unchecked")
+	private void removeInvoiceDetailAccount(Invoice invoice) throws ManagerBeanException {
+		IManagerBean invoiceAccountBean = BeanManager.getManagerBean(InvoiceDetailAccount.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(invoiceAccountBean.getFieldName(IAccountBridgeAlias.INVOICE_DETAIL_ACCOUNT_INVOICE_DETAIL_INVOICE_ID), invoice.getId());
+		Iterator iterator = invoiceAccountBean.getList(criteria).iterator();
+		while (iterator.hasNext()) {
+			InvoiceDetailAccount invoiceDetailAccount = (InvoiceDetailAccount)iterator.next();
+			invoiceAccountBean.remove(invoiceDetailAccount);
+		}
+	}
+
+	@SuppressWarnings("unchecked")
 	private void recordInvoice(Invoice invoice) throws ManagerBeanException, ExpressionException {
 		AccountEntry entry = new AccountEntry();
 		entry.setAccountPeriod(AccountUtil.obtainPeriod(invoice.getIssueDate()).getId());
@@ -279,7 +293,7 @@ public class SalesInvoicingController extends BasicController {
 		entry.setType(AccountEntryType.SALES_INVOICE);
 		entry = getAccountEntryInvoiceWriter().insertorUpdateAccountEntry(entry, true);
 		List taxBreakDown = getPriceStrategy().getTaxBreakDowns(invoice, invoice);
-		getAccountEntryInvoiceWriter().insertEntryDetails(entry, AccountUtil.obtainCustomerAccount(invoice.getRegistry()), invoice.getSeries(), invoice.getNumber(), getPriceStrategy().getTotalPrice(invoice, invoice), getRetentionTotal(taxBreakDown), getTaxQuota(taxBreakDown), getBasesPerAccount(invoice));
+		getAccountEntryInvoiceWriter().insertEntryDetails(entry, AccountUtil.obtainCustomerAccount(invoice.getRegistry()), invoice.getSeries(), invoice.getNumber(), getPriceStrategy().getTotalPrice(invoice, invoice), getRetentionTotal(taxBreakDown), getTaxQuota(taxBreakDown), obtainBasesPerAccount(invoice));
 		getAccountEntryInvoiceWriter().insertAccountEntryInvoice(entry, invoice);
 		IManagerBean invoiceBean = BeanManager.getManagerBean(Invoice.class);
 		invoice.setStatus(InvoiceStatus.SCORED);
@@ -323,16 +337,19 @@ public class SalesInvoicingController extends BasicController {
 	}
 	
 	@SuppressWarnings("unchecked")
-	private Map getBasesPerAccount(Invoice invoice) throws ManagerBeanException {
+	private Map obtainBasesPerAccount(Invoice invoice) throws ManagerBeanException {
 		Map basesPerAccount = new HashMap();
-		Iterator<InvoiceDetail> iterator = invoice.getLines().iterator();
+		IManagerBean invoiceDetailBean = BeanManager.getManagerBean(InvoiceDetail.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(invoiceDetailBean.getFieldName(IFinanceAlias.INVOICE_DETAIL_INVOICE_ID), invoice.getId());
+		Iterator iterator = invoiceDetailBean.getList(criteria).iterator();
 		while (iterator.hasNext()) {
-			InvoiceDetail invoiceDetail = iterator.next();
+			InvoiceDetail invoiceDetail = (InvoiceDetail)iterator.next();
 			Account account = null;
 			if (invoiceDetail.getItem() != null) {
 				Integer productId = invoiceDetail.getItem().getProduct().getId();
 				IManagerBean productAccountBean = BeanManager.getManagerBean(ProductAccount.class);
-				Criteria criteria = new Criteria();
+				criteria = new Criteria();
 				criteria.addEqualExpression(productAccountBean.getFieldName(IAccountBridgeAlias.PRODUCT_ACCOUNT_PRODUCT_ID), productId);
 				criteria.addEqualExpression(productAccountBean.getFieldName(IAccountBridgeAlias.PRODUCT_ACCOUNT_TYPE), ProductAccountType.SALES);
 				Iterator iter = productAccountBean.getList(criteria).iterator();
@@ -340,17 +357,19 @@ public class SalesInvoicingController extends BasicController {
 					account = ((ProductAccount)iter.next()).getAccount();
 				}
 			}
-			account = (account==null)?account = obtainDefaultAccount(invoice):account;
+			account = (account==null)?account = obtainDefaultAccount():account;
 
 			double base = invoiceDetail.getTaxableBase();
 			base += (basesPerAccount.containsKey(account))?((Double)basesPerAccount.get(account)).doubleValue():0;
 			basesPerAccount.put(account, new Double(base));
+
+			insertInvoiceDetailAccount(invoiceDetail, account);
 		}
 		return basesPerAccount;
 	}
 
 	@SuppressWarnings("unchecked")
-	private Account obtainDefaultAccount(Invoice invoice) throws ManagerBeanException {
+	private Account obtainDefaultAccount() throws ManagerBeanException {
 		IManagerBean appParamsBean = BeanManager.getManagerBean(ApplicationParameter.class);
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(appParamsBean.getFieldName(IConfigAlias.APPLICATION_PARAMETER_NAME), DefaultAccounts.SALES_ACCOUNT);
@@ -368,6 +387,14 @@ public class SalesInvoicingController extends BasicController {
 		return null;
 	}
 	
+	private void insertInvoiceDetailAccount(InvoiceDetail invoiceDetail, Account account) throws ManagerBeanException {
+		IManagerBean invoiceAccountBean = BeanManager.getManagerBean(InvoiceDetailAccount.class);
+		InvoiceDetailAccount invoiceDetailAccount = new InvoiceDetailAccount();
+		invoiceDetailAccount.setInvoiceDetail(invoiceDetail);
+		invoiceDetailAccount.setAccount(account);
+		invoiceAccountBean.insert(invoiceDetailAccount);
+	}
+
 	/**
 	 * Recovers DeliveryControllers Delivery.
 	 * Creates a new invoice, fills invoice data.
