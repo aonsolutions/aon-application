@@ -6,7 +6,6 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 
 import org.apache.commons.lang.ObjectUtils;
-import org.apache.commons.lang.StringUtils;
 import org.hibernate.annotations.Formula;
 
 import com.code.aon.common.ITransferObject;
@@ -155,11 +154,10 @@ public class Account implements ITransferObject {
 			return true;
 		}
 		if (obj instanceof Account) {
-			Account a = (Account) obj;
-			if (!ObjectUtils.equals(getId(), a.getId())) {
-				return false;
+			Account account = (Account) obj;
+			if (ObjectUtils.equals(getId(), account.getId())) {
+				return true;
 			}
-			return true;
 		}
 		return false;
 	}
