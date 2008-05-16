@@ -30,19 +30,19 @@
 
 					<aon:div styleClass="aon-finding-toolbar-item-group">
 
-						<h:commandButton id="reset" value="#{bundle.aon_reset}"
+						<aon:commandButton id="reset" value="#{bundle.aon_reset}"
 							actionListener="#{bulletin_email.onReset}"
 							rendered="#{!bulletin_email.new}"
 							reRender="dataTable,gridToolbar"
 							styleClass="aon-finding-toolbar-item aon-icon-reset"
 							accesskey="#{bundle.aon_key_new}" />
-						<h:commandButton id="save" value="#{bundle.aon_save}"
+						<aon:commandButton id="save" value="#{bundle.aon_save}"
 							rendered="#{bulletin_email.to!=null}"
 							reRender="dataTable, gridToolbar"
 							styleClass="aon-finding-toolbar-item aon-icon-accept"
 							actionListener="#{bulletin_email.onAccept}"
 							accesskey="#{bundle.aon_key_save}" />
-						<h:commandButton id="cancel" value="#{bundle.aon_cancel}"
+						<aon:commandButton id="cancel" value="#{bundle.aon_cancel}"
 							rendered="#{bulletin_email.to!=null}"
 							reRender="dataTable, gridToolbar"
 							styleClass="aon-finding-toolbar-item aon-icon-cancel"
@@ -89,7 +89,7 @@
 						</aon:selectBooleanCheckbox>
 						<f:facet name="footer">
 							<aon:div>
-								<h:commandButton id="reset"
+								<aon:commandButton id="reset"
 									title="[#{bundle.aon_reset}]"
 									styleClass="aon-editDataTable-button aon-icon-reset"
 									value="" immediate="true"
@@ -97,7 +97,7 @@
 									rendered="#{!bulletin_email.new}"
 									actionListener="#{bulletin_email.onReset}"
 									accesskey="#{bundle.aon_key_new_line}">
-								</h:commandButton>
+								</aon:commandButton>
 							</aon:div>
 						</f:facet>
 					</aon:column>
@@ -160,17 +160,17 @@
 						</f:facet>
 						<f:verbatim rendered="#{to!=bulletin_email.to}">&#160;</f:verbatim>
 						<aon:div rendered="#{to==bulletin_email.to}">
-							<h:commandButton id="lineAccept"
+							<aon:commandButton id="lineAccept"
 								title="[#{bundle.aon_accept}]"
 								styleClass="aon-editDataTable-button aon-icon-accept"
 								reRender="dataTable,gridToolbar"
 								actionListener="#{bulletin_email.onAccept}" />
-							<h:commandButton id="lineCancel"
+							<aon:commandButton id="lineCancel"
 								title="[#{bundle.aon_cancel}]"
 								styleClass="aon-editDataTable-button aon-icon-cancel"
 								reRender="dataTable,gridToolbar" immediate="true"
 								actionListener="#{bulletin_email.onCancel}" />
-							<h:commandButton id="lineRemove"
+							<aon:commandButton id="lineRemove"
 								title="[#{bundle.aon_remove}]"
 								styleClass="aon-editDataTable-button aon-icon-delete"
 								reRender="dataTable,gridToolbar" immediate="true"
@@ -179,12 +179,12 @@
 						<f:facet name="footer">
 							<aon:div rendered="#{bulletin_email.new}">
 								<f:verbatim rendered="#{!bulletin_email.new}">&#160;</f:verbatim>
-								<h:commandButton id="newAccept"
+								<aon:commandButton id="newAccept"
 									title="[#{bundle.aon_accept}]"
 									styleClass="aon-editDataTable-button aon-icon-accept"
 									reRender="dataTable,gridToolbar"
 									actionListener="#{bulletin_email.onAccept}" />
-								<h:commandButton id="newCancel"
+								<aon:commandButton id="newCancel"
 									title="[#{bundle.aon_cancel}]"
 									styleClass="aon-editDataTable-button aon-icon-cancel"
 									reRender="dataTable,gridToolbar" immediate="true"
