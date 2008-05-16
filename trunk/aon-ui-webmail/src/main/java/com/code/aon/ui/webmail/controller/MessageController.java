@@ -135,7 +135,7 @@ public class MessageController implements IAonFileListener{
 			recipientsTo = AonMessage.parseDisplayAddress(message.getSender());
 	       	subject = "Reply: "+message.getSubject();
 	        StringBuffer localBody = new StringBuffer(content);
-	        localBody.append("<br/>---------- Replyed message ----------");
+	        localBody.append("<br/>---------- Replied message ----------");
 	        localBody.append("<br/>From: ").append(message.getSender());
 	        localBody.append("<br/>Date: ").append(message.getSentDate());
 	        localBody.append("<br/>Subject: ").append(message.getSubject());
@@ -158,7 +158,7 @@ public class MessageController implements IAonFileListener{
 			recipientsTo = AonMessage.parseDisplayAddress(dest);
 	       	subject = "ReplyALL: "+message.getSubject();
 	        StringBuffer localBody = new StringBuffer(content);
-	        localBody.append("<br/>---------- Replyed message ----------");
+	        localBody.append("<br/>---------- Replied message ----------");
 	        localBody.append("<br/>From: ").append(message.getSender());
 	        localBody.append("<br/>Date: ").append(message.getSentDate());
 	        localBody.append("<br/>Subject: ").append(message.getSubject());
