@@ -12,6 +12,7 @@ public class AonConstants {
 	public static final String NAVIGATION_EMAILS = "emails";
 	public static final String NAVIGATION_SIGNATURE_FORM = "signature_form";
 	public static final String NAVIGATION_MAILACCOUNT_FORM = "mailAccount_form";
+	public static final String NAVIGATION_MAILACCOUNT_LIST = "mailAccount_list";
 
 	// ************************************************************
 	// BEAN
