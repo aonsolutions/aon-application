@@ -1161,15 +1161,14 @@ color:#000;
 /**********************************************/
 /***************   DATASCROLLER ****************/
 /**********************************************/ 
-#aon-content .aon-dataScroller{
+.aon-dataScroller{
 	background-color:#e1e3e4;
 	border:#808080 1px solid;
 	font-weight:bold;
 	padding:3px 1em;
 	margin:1em 0;
 	text-align:left;
-	overflow:auto;
-	height:100%;
+
 	}
 
 .aon-dataScroller table{width:auto !important;}
@@ -1177,6 +1176,7 @@ color:#000;
 	border:0 !important;
 	background-color:transparent !important;
 	padding:0 !important;
+	vertical-align:middle;
 	}
 .aon-dataScroller-text{	
 	text-align:left;
@@ -1202,25 +1202,44 @@ color:#000;
 	}
 .aon-dataScroller-button-first{
 	background:transparent url(images/aon-datascroller/aon-dataScroller-button-first.png) center center no-repeat;
+	
 	}
 .aon-dataScroller-button-last{
 	background:transparent url(images/aon-datascroller/aon-dataScroller-button-last.png) center center no-repeat;
+	
 	}
 .aon-dataScroller-button-previous{
 	background:transparent url(images/aon-datascroller/aon-dataScroller-button-previous.png) center center no-repeat;
+
 	}
 .aon-dataScroller-button-next{
 	background:transparent url(images/aon-datascroller/aon-dataScroller-button-next.png) center center no-repeat;
+
 	}
 .aon-dataScroller-button-fastForward{
 	background:transparent url(images/aon-datascroller/aon-dataScroller-button-fastForward.png) center center no-repeat;
+
 	}
 .aon-dataScroller-button-fastRewind{
 	background:transparent url(images/aon-datascroller/aon-dataScroller-button-fastRewind.png) center center no-repeat;
+
 	}
-#aon-content .aon-dataScroller div, #aon-content .aon-dataScroller table, #aon-content .aon-dataScroller td{
-	background-color:transparent !important;
+.aon-dataScroller-selected{
+		font-weight:bold;
+		font-size:1.2em;
+		padding:1px 2px !important;
+		color:#000;
+		border-right:#000 1px solid !important;
+		display:block;
+	}	
+.aon-dataScroller-inactive{
+	color:#037bcf;																																							
+	font-weight:normal;
+	padding:1px 2px !important;
+	border-right:#000 1px solid !important;
+	display:block;
 	}
+
 /**********************************************/
 /************   SELECT INPUT DATE *************/
 /**********************************************/ 
@@ -1231,7 +1250,7 @@ color:#000;
 	margin-right:5px;
 	cursor:pointer;
 	}
-.aon-selectInputDate-inputClass{
+.aon-selectInputDate-inputClass{																																																																																												
 	background-color:#f2f2f2;
 	border:#808080 1px solid;	
 	color:#808080;
