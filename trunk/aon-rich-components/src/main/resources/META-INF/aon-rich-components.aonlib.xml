@@ -151,6 +151,8 @@
     	<attribute name="maxPages" alias="paginatorMaxPages" />			
     	<attribute name="pagesVar" alias="pageCountVar" />
     	<attribute name="paginator" ignore="true" />
+    	<attribute name="inactiveStyleClass" value="aon-dataScroller-inactive" />
+    	<attribute name="selectedStyleClass" value="aon-dataScroller-selected" />
 	</component>
 
 	<component localName="rowSelector">

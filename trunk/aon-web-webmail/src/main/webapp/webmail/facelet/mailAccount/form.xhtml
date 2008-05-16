@@ -67,13 +67,13 @@
 
 					<aon:outputLabel for="MailAccount_name"
 						value="#{appBundle.aon_webmail_mailAccount_name}" />
-					<aon:inputText id="MailAccount_name"
+					<aon:inputText id="MailAccount_name" disabled="#{mailAccount.to.default}"
 						size="60" maxlength="45" required="true"
 						value="#{mailAccount.to.name}" />
 	
 					<aon:outputLabel for="MailAccount_email"
 						value="#{appBundle.aon_webmail_mailAccount_email}" />
-					<aon:inputText id="MailAccount_email"
+					<aon:inputText id="MailAccount_email" disabled="#{mailAccount.to.default}"
 						size="60" maxlength="45" required="true"
 						value="#{mailAccount.to.email}" />
 
@@ -94,58 +94,61 @@
 					<aon:outputLabel for="MailAccount_host"
 						value="#{appBundle.aon_webmail_mailAccount_host}" />
 					<aon:inputText id="MailAccount_host"
-						size="60" maxlength="45"
+						size="60" maxlength="45" disabled="#{mailAccount.to.default}"
 						value="#{mailAccount.to.host}" />
 
 					<aon:outputLabel for="MailAccount_incomingHost"
 						value="#{appBundle.aon_webmail_mailAccount_incomingHost}" />
 					<aon:inputText id="MailAccount_incomingHost"
-						size="60" maxlength="45"
+						size="60" maxlength="45" disabled="#{mailAccount.to.default}"
 						value="#{mailAccount.to.incomingHost}" />
 
 					<aon:outputLabel for="MailAccount_incomingPort"
 						value="#{appBundle.aon_webmail_mailAccount_incomingPort}" />
 					<aon:inputText id="MailAccount_incomingPort"
-						size="60" maxlength="45"
+						size="60" maxlength="45" disabled="#{mailAccount.to.default}"
 						value="#{mailAccount.to.incomingPort}" />
 
 					<aon:outputLabel for="MailAccount_incomingSsl"
 						value="#{appBundle.aon_webmail_mailAccount_incomingSsl}" />
 	                <aon:selectBooleanCheckbox id="MailAccount_incomingSsl"
+						disabled="#{mailAccount.to.default}"
 						value="#{mailAccount.to.incomingSsl}"/>
 					
 					<aon:outputLabel for="MailAccount_outgoingVerification"
 						value="#{appBundle.aon_webmail_mailAccount_outgoingVerification}" />
 	                <aon:selectBooleanCheckbox id="MailAccount_outgoingVerification"
+						disabled="#{mailAccount.to.default}"
 						value="#{mailAccount.to.outgoingVerification}"/>
 
 					<aon:outputLabel for="MailAccount_outgoingHost"
 						value="#{appBundle.aon_webmail_mailAccount_outgoingHost}" />
 					<aon:inputText id="MailAccount_outgoingHost"
-						size="60" maxlength="45"
+						size="60" maxlength="45" disabled="#{mailAccount.to.default}"
 						value="#{mailAccount.to.outgoingHost}" />
 
 					<aon:outputLabel for="MailAccount_outgoingPort"
 						value="#{appBundle.aon_webmail_mailAccount_outgoingPort}" />
 					<aon:inputText id="MailAccount_outgoingPort"
-						size="60" maxlength="45"
+						size="60" maxlength="45" disabled="#{mailAccount.to.default}"
 						value="#{mailAccount.to.outgoingPort}" />
 
 					<aon:outputLabel for="MailAccount_outgoingSsl"
 						value="#{appBundle.aon_webmail_mailAccount_outgoingSsl}" />
 	                <aon:selectBooleanCheckbox id="MailAccount_outgoingSsl"
+	                 	disabled="#{mailAccount.to.default}"
 						value="#{mailAccount.to.outgoingSsl}"/>
 
 					<aon:outputLabel for="MailAccount_mailUsername"
 						value="#{appBundle.aon_webmail_mailAccount_mailUsername}" />
 					<aon:inputText id="MailAccount_mailUsername"
-						size="60" maxlength="45"
+						size="60" maxlength="45" disabled="#{mailAccount.to.default}"
 						value="#{mailAccount.to.mailUsername}" />
 
 					<aon:outputLabel for="MailAccount_password"
 						value="#{appBundle.aon_webmail_mailAccount_password}" />
-					<aon:inputText id="MailAccount_password"
-						size="60" maxlength="45"
+					<aon:inputSecret id="MailAccount_password"
+						size="60" maxlength="45" disabled="#{mailAccount.to.default}"
 						value="#{mailAccount.to.passwordString}" />							
 						
 				</aon:panelGrid>

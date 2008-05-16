@@ -204,10 +204,6 @@
 			<to-view-id>/webmail/facelet/mailAccount/form.xhtml</to-view-id>
 		</navigation-case>
 		<navigation-case>
-			<from-outcome>mailAccount_change</from-outcome>
-			<to-view-id>/webmail/facelet/mailAccount/change.xhtml</to-view-id>
-		</navigation-case>
-		<navigation-case>
 			<from-outcome>bwlist</from-outcome>
 			<to-view-id>/webmail/facelet/bwlist/list.xhtml</to-view-id>
 		</navigation-case>
