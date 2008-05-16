@@ -118,7 +118,7 @@ public class AonServer {
     protected void ensureConnection() {
         if (ensure_connection && (! isConnected())) {
             if (!connect()) {
-        		LOGGER.log(Level.INFO,"Connection Failed!");
+        		LOGGER.log(Level.INFO,"Error connecting to " + account.getHost() );
             }
         }
     }
@@ -248,7 +248,8 @@ public class AonServer {
 			if (!getRoot().getFolder(AonFolder.SPAM_FOLDER_NAME).exists()){
 				createAonFolder(null, AonFolder.SPAM_FOLDER_NAME, Folder.HOLDS_MESSAGES);
 			}
-		}catch (MessagingException e) {
+		} catch (MessagingException e) {
+			LOGGER.severe( e.getMessage() );
 		}
 	}
 	

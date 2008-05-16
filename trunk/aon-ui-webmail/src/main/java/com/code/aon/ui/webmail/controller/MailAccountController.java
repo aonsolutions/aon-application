@@ -4,7 +4,6 @@ import java.util.Locale;
 import java.util.ResourceBundle;
 import java.util.logging.Logger;
 
-import javax.faces.context.FacesContext;
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 import javax.mail.MessagingException;
@@ -32,8 +31,6 @@ public class MailAccountController extends BasicController {
 	private static final String MAIL_ACCOUNT_DUPLICATED = "aon_webmail_mailAccount_duplicated";
 
 	private static final Logger LOGGER = Logger.getLogger(MailAccountController.class.getName());
-	
-	private String error;
 	
 	private LdapDAO dao;	
 	
@@ -96,27 +93,8 @@ public class MailAccountController extends BasicController {
 		super.accept(event);
 	}
 	
-	/**
-	 * @return the error
-	 */
-	public String getError() {
-		return error;
-	}
-
-	/**
-	 * @param error the error to set
-	 */
-	public void setError(String error) {
-		this.error = error;
-	}
-
-	public void onInit(ActionEvent event){
-		error = null;
-	}
-	
 	@SuppressWarnings("unused")
 	public void onChangeServer(ActionEvent event){
-		error = null;
 		FolderController folderController = (FolderController)AonUtil.getRegisteredBean(AonConstants.BEAN_FOLDER);
 		if (folderController.getFolder()!=null){
 			try {
@@ -134,8 +112,8 @@ public class MailAccountController extends BasicController {
 		try{
 			webmail.initFull((MailAccount)super.getSelectedTO());
 		}catch (Exception e) {
-			error = e.getMessage();
 			webmail.initFull((MailAccount)previous);
+			AonUtil.addErrorMessage( e.getMessage() );
 		}
     	FoldersTreeBean treeBean = (FoldersTreeBean)AonUtil.getRegisteredBean(AonConstants.BEAN_TREE);
     	treeBean.loadTree();
@@ -145,9 +123,6 @@ public class MailAccountController extends BasicController {
     	BasicController emailController = (BasicController)AonUtil.getRegisteredBean(AonConstants.BEAN_CONTACT);
     	emailController.initializeModel();
     	emailController.onSearch(null);
-		if (error==null){
-			FacesContext.getCurrentInstance().getApplication().getNavigationHandler().handleNavigation(FacesContext.getCurrentInstance(), null, AonConstants.NAVIGATION_FOLDER);
-		}
 	}
 
 	public boolean isToDefaultAccount(){

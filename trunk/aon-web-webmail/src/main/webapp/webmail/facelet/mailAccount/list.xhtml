@@ -45,14 +45,12 @@
 			<!--  aon-region-body -->
 			<aon:div styleClass="aon-scroll-area">
 
-				<aon:outputText value="#{mailAccount.error}" />
-
 				<aon:editDataTable id="dataTable" value="#{mailAccount.model}" var="to"
 					rows="20" styleClass="dr-table rich-table aon-editDataTable"
 					columnClasses="aon-editDataTable-textColumn, aon-editDataTable-textColumn,
 								aon-editDataTable-textColumn, aon-editDataTable-textColumn">
 
-					<aon:rowSelector toggleOnClick="#{!mailAccount.currentToDefaultAccount}" 
+					<aon:rowSelector
 						action="mailAccount_form" actionListener="#{mailAccount.onSelect}" />
 
 					<aon:column>
@@ -101,7 +99,7 @@
 							rendered="#{webmail.server.account.name!=to.name}"
 							onmouseover="disableRowSelector();" onmouseout="enableRowSelector();"
 							title="#{appBundle.aon_webmail_mailAccountChange}"
-							action="folder" actionListener="#{mailAccount.onChangeServer}"
+							action="mailAccount_list" actionListener="#{mailAccount.onChangeServer}"
 							value="#{appBundle.aon_webmail_mailAccountChange}"
 							styleClass="aon-icon-commandButton aon-icon-mailAccountChange">
 						</aon:commandButton>

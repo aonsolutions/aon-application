@@ -10,22 +10,28 @@ import java.util.logging.Logger;
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 import javax.faces.model.SelectItem;
+import javax.swing.plaf.ListUI;
 
 import org.apache.commons.lang.StringUtils;
 
 import com.code.aon.bridge.plugin.Utils;
 import com.code.aon.common.BasicManagerBean;
 import com.code.aon.common.IManagerBean;
+import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.sql.DAOException;
 import com.code.aon.dao.ldap.LdapDAO;
+import com.code.aon.faces.component.tomahawk.ArrayUtils;
 import com.code.aon.jaas.auth.AuthPrincipal;
 import com.code.aon.ldap.AonDN;
 import com.code.aon.ldap.DistinguishedName;
+import com.code.aon.ql.Criteria;
 import com.code.aon.ui.form.GridController;
 import com.code.aon.ui.util.AonUtil;
 import com.code.aon.ui.webmail.bean.AonConstants;
+import com.code.aon.webmail.MailAccount;
 import com.code.aon.webmail.Signature;
+import com.code.aon.webmail.dao.IWebMailAlias;
 
 public class SignatureController extends GridController {
 
@@ -105,5 +111,48 @@ public class SignatureController extends GridController {
 		}
 		return series;
 	}
+
+	/*
+	@SuppressWarnings("unchecked")
+	private List<MailAccount> getReferences( Signature signature ) {
+		List<MailAccount> list = null;
+		try {
+			IManagerBean mailAccountBean = AonUtil.getController(AonConstants.BEAN_MAIL_ACCOUNT).getManagerBean();
+			Criteria criteria = new Criteria();
+			criteria.addEqualExpression(mailAccountBean.getFieldName(IWebMailAlias.MAIL_ACCOUNT_ID), signature.getName());
+			list = (List) mailAccountBean.getList(criteria);
+		} catch (ManagerBeanException e) {
+            LOGGER.severe(">>>> getReferences " + e.getMessage());
+		}		
+		return list;
+	}
+	
+	private boolean checkRemovable( Signature signature ) {
+		List<MailAccount> list = getReferences( signature );
+		if ( (list!=null) && (!list.isEmpty()) ) {
+			AonUtil.addErrorMessage( "La Firma " + signature.getName() + " no se puede borrar porque esta siendo utlizada." );
+			return false;
+		}
+		return true;
+	}
+	
+	@Override
+	public void onRemove(ActionEvent event) {
+		if ( checkRemovable((Signature) getTo() ) ) {
+			super.onRemove(event);			
+		}
+	}
+
+	@Override
+	public void onRemoveSelected(ActionEvent event) {
+		boolean remove = true;
+		for (ITransferObject to: getCheckList()) {
+			remove = checkRemovable(( Signature) to );
+		}
+		if ( remove ) {
+			super.onRemoveSelected(event);	
+		}
+	}
+	*/
 	
 }
