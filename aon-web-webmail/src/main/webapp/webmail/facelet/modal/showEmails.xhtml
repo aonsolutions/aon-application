@@ -55,20 +55,20 @@
 				</aon:div>
 				<aon:div>
 
-					<aon:dataTable id="emailData" style="width:100%" rows="20"
+					<aon:dataTable id="emailData" style="width:100%" rows="10"
 						value="#{multiSelectionEmailBean.model}" var="to"
 						columnClasses="aon-editDataTable-iconColumn, aon-editDataTable-textColumn,
 							aon-editDataTable-textColumn">
-							
+
 						<aon:rowSelector reRender="messageSelected"
-							actionListener="#{multiSelectionEmailBean.onToggleSelected}" />							
-							
+							actionListener="#{multiSelectionEmailBean.onToggleSelected}" />
+
 						<aon:column id="selectionCol">
 							<f:facet name="header">
 								<aon:outputText value="&#160;" />
 							</f:facet>
-							<aon:selectBooleanCheckbox id="messageSelected" styleClass="aon-float-left"
-								value="#{to.readOnlySelected}">
+							<aon:selectBooleanCheckbox id="messageSelected"
+								styleClass="aon-float-left" value="#{to.readOnlySelected}">
 							</aon:selectBooleanCheckbox>
 						</aon:column>
 						<aon:column>
@@ -85,10 +85,10 @@
 						</aon:column>
 					</aon:dataTable>
 
-					
-						<aon:dataScroller for="emailData" rows="20"
-						rowCount="#{multiSelectionEmailBean.model.rowCount}" showNote="true" />
-					
+					<aon:dataScroller for="emailData" rows="10"
+						rowCount="#{multiSelectionEmailBean.model.rowCount}"
+						showNote="true" />
+
 				</aon:div>
 			</rich:modalPanel>
 		</aon:panelGroup>
