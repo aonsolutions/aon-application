@@ -2,12 +2,12 @@ package com.code.aon.ui.cms.controller;
 
 import java.util.List;
 
-import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
 
 import com.code.aon.cms.Download;
 import com.code.aon.cms.DownloadCategory;
 import com.code.aon.cms.DownloadCategoryDetail;
+import com.code.aon.cms.DownloadConfig;
 import com.code.aon.cms.Image;
 import com.code.aon.cms.dao.ICMSAlias;
 import com.code.aon.common.BeanManager;
@@ -20,6 +20,11 @@ import com.code.aon.ui.util.AonUtil;
 
 public class DownloadCategoryController extends BasicI18nController {
 
+	public void onInit(ActionEvent event) {
+		((GeneratorConfigController)AonUtil.getRegisteredBean("generator_config")).initSection(DownloadConfig.class);
+		super.onSearch(event);
+	}
+	
 	@SuppressWarnings("unused")
 	public void onSelect(ActionEvent event) {
 		super.onSelect(event);

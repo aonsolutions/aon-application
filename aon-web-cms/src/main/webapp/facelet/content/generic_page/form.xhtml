@@ -30,13 +30,13 @@
 						
 					<!-- start toolbar navigation -->
 					<aon:div styleClass="aon-finding-toolbar-item-group">
-						<h:commandButton id="reset" value="#{bundle.aon_reset}"
+						<aon:commandButton id="reset" value="#{bundle.aon_reset}"
 							action="generic_page_form"
 							actionListener="#{generic_page.onReset}" 
 							rendered="#{!generic_page.new}"
 							styleClass="aon-finding-toolbar-item aon-icon-reset"
 							accesskey="#{bundle.aon_key_new}" />
-						<h:commandButton id="save"
+						<aon:commandButton id="save"
 							value="#{bundle.aon_save}" 
 							rendered="#{generic_page.to!=null or header.new}"
 							actionListener="#{generic_page.onAccept}"
@@ -51,13 +51,13 @@
 							confirmAction="generic_page_list"
 							styleClass="aon-finding-toolbar-item aon-icon-delete"
 							accesskey="#{bundle.aon_key_remove}"/>
-						<h:commandButton id="exit" value="#{bundle.aon_close}"
+						<aon:commandButton id="exit" value="#{bundle.aon_close}"
 							action="generic_page_list" 
 							actionListener="#{generic_page.onSearch}"
 							immediate="#{true}"
 							styleClass="aon-finding-toolbar-item aon-icon-cancel"
 							accesskey="#{bundle.aon_key_close}"/>
-						<h:commandButton id="generate_nodular"
+						<aon:commandButton id="generate_nodular"
 							value="#{appBundle.aon_generate}" 
 							rendered="#{generic_page.to!=null}"
 							actionListener="#{generator.onGenerateCurrentGenericPage}"

@@ -28,7 +28,7 @@
 					
 				<!-- start toolbar navigation -->
 				<aon:div styleClass="aon-finding-toolbar-item-group">					
-					<h:commandButton id="reset" value="#{bundle.aon_reset}"
+					<aon:commandButton id="reset" value="#{bundle.aon_reset}"
 						action="album_category_form"
 						actionListener="#{album_category.onReset}"
 						styleClass="aon-finding-toolbar-item aon-icon-reset"
@@ -58,7 +58,7 @@
 						<f:selectItems value="#{collections.sectionList}" />
 					</aon:selectOneMenu>
 					
-					<h:commandButton id="save"
+					<aon:commandButton id="save"
 						value="#{bundle.aon_save}" 
 						actionListener="#{generator_config.onSaveAlbumConfig}"
 						styleClass="aon-content-toolbar-item aon-icon-accept" />

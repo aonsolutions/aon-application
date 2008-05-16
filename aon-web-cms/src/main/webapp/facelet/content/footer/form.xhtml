@@ -15,58 +15,57 @@
 	<ui:define name="content">
 
 		<aon:form id="headerForm">
-		
+
+			<aon:div styleClass="aon-finding-title-toolbar">
+				<aon:panelGrid id="buttonsGrid" columns="3" dir="true" 
+					columnClasses="aon-finding-title,aon-finding-subtitle,aon-finding-toolbar">				
+				
+					<aon:div styleClass="aon-finding-title-internal">
+						<aon:outputText value="#{appBundle.footer}"/>	  						
+					</aon:div>					
+					
+					<aon:div styleClass="aon-finding-subtitle-internal">
+						<aon:outputText
+							value="#{footer.new?(bundle.aon_reset):(bundle.aon_editing)}" />
+					</aon:div>					
+						
+					<!-- start toolbar navigation -->
+					<aon:div styleClass="aon-finding-toolbar-item-group">
+						<aon:commandButton id="reset" value="#{bundle.aon_reset}"
+							action="footer_form"
+							actionListener="#{footer.onReset}" 
+							rendered="#{!footer.new}"
+							styleClass="aon-finding-toolbar-item aon-icon-reset"
+							accesskey="#{bundle.aon_key_new}" />
+						<aon:commandButton id="save"
+							value="#{bundle.aon_save}" 
+							rendered="#{footer.to!=null or footer.new}"
+							actionListener="#{footer.onAccept}"
+							styleClass="aon-finding-toolbar-item aon-icon-accept"
+							accesskey="#{bundle.aon_key_save}"/>
+						<aon:confirmButton id="remove"
+							value="#{bundle.aon_remove}" rendered="#{!footer.new}" 
+							immediate="true"
+							confirmTitle="Confirmation Dialog" 
+							confirmMessage="#{bundle.aon_remove_confirm}"
+							confirmActionListener="#{footer.onRemove}" 
+							confirmAction="footer_list"
+							styleClass="aon-finding-toolbar-item aon-icon-delete"
+							accesskey="#{bundle.aon_key_remove}"/>
+						<aon:commandButton id="exit" value="#{bundle.aon_close}"
+							action="footer_list" 
+							actionListener="#{footer.onSearch}"
+							immediate="#{true}"
+							styleClass="aon-finding-toolbar-item aon-icon-cancel"
+							accesskey="#{bundle.aon_key_close}"/>
+				    </aon:div>
+					
+					<!-- end toolbar navigation -->
+				</aon:panelGrid>
+			</aon:div>		
+					
 			<aon:panelTabSet id="tabPanelTypesForm"> 
 				<aon:panelTab id="contentTab" label="#{appBundle.aon_content}">
-		
-		
-					<aon:div styleClass="aon-finding-title-toolbar">
-						<aon:panelGrid id="buttonsGrid" columns="3" dir="true" 
-							columnClasses="aon-finding-title,aon-finding-subtitle,aon-finding-toolbar">				
-						
-							<aon:div styleClass="aon-finding-title-internal">
-								<aon:outputText value="#{appBundle.footer}"/>	  						
-							</aon:div>					
-							
-							<aon:div styleClass="aon-finding-subtitle-internal">
-								<aon:outputText
-									value="#{footer.new?(bundle.aon_reset):(bundle.aon_editing)}" />
-							</aon:div>					
-								
-							<!-- start toolbar navigation -->
-							<aon:div styleClass="aon-finding-toolbar-item-group">
-								<h:commandButton id="reset" value="#{bundle.aon_reset}"
-									action="footer_form"
-									actionListener="#{footer.onReset}" 
-									rendered="#{!footer.new}"
-									styleClass="aon-finding-toolbar-item aon-icon-reset"
-									accesskey="#{bundle.aon_key_new}" />
-								<h:commandButton id="save"
-									value="#{bundle.aon_save}" 
-									rendered="#{footer.to!=null or footer.new}"
-									actionListener="#{footer.onAccept}"
-									styleClass="aon-finding-toolbar-item aon-icon-accept"
-									accesskey="#{bundle.aon_key_save}"/>
-								<aon:confirmButton id="remove"
-									value="#{bundle.aon_remove}" rendered="#{!footer.new}" 
-									immediate="true"
-									confirmTitle="Confirmation Dialog" 
-									confirmMessage="#{bundle.aon_remove_confirm}"
-									confirmActionListener="#{footer.onRemove}" 
-									confirmAction="footer_list"
-									styleClass="aon-finding-toolbar-item aon-icon-delete"
-									accesskey="#{bundle.aon_key_remove}"/>
-								<h:commandButton id="exit" value="#{bundle.aon_close}"
-									action="footer_list" 
-									actionListener="#{footer.onSearch}"
-									immediate="#{true}"
-									styleClass="aon-finding-toolbar-item aon-icon-cancel"
-									accesskey="#{bundle.aon_key_close}"/>
-						    </aon:div>
-							
-							<!-- end toolbar navigation -->
-						</aon:panelGrid>
-					</aon:div>
 		
 					<aon:div styleClass="aon-scroll-area">
 						<aon:div style="width:99%;">
@@ -121,21 +120,21 @@
 								<aon:outputText value="&#160;" />
 							</f:facet>
 							<aon:outputText value="&#160;" rendered="#{to==footer_banner_category.to}" />
-							<h:commandButton id="lineRemove" title="[#{bundle.aon_remove}]"
+							<aon:commandButton id="lineRemove" title="[#{bundle.aon_remove}]"
 								rendered="#{to!=footer_banner_category.to}"
 								styleClass="aon-editDataTable-button aon-icon-delete"
 								reRender="footer_banner_category_Data" immediate="true"
 								actionListener="#{footer_banner_category.onRemoveCurrent}" />
 							<f:facet name="footer">
 								<aon:div>
-									<h:commandButton id="reset"
+									<aon:commandButton id="reset"
 										title="[#{bundle.aon_reset}]"
 										styleClass="aon-editDataTable-button aon-icon-reset" value=""
 										immediate="true" reRender="footer_banner_category_Data"
 										rendered="#{!footer_banner_category.new}" 
 										actionListener="#{footer_banner_category.onReset}"
 										accesskey="#{bundle.aon_key_new_line}">
-									</h:commandButton>
+									</aon:commandButton>
 								</aon:div>
 							</f:facet>
 						</aon:column>
@@ -163,11 +162,11 @@
 							<f:facet name="footer">
 								<aon:div rendered="#{footer_banner_category.new}">
 									<f:verbatim rendered="#{!footer_banner_category.new}">&#160;</f:verbatim>
-									<h:commandButton id="newAccept" title="[#{bundle.aon_accept}]"
+									<aon:commandButton id="newAccept" title="[#{bundle.aon_accept}]"
 										styleClass="aon-editDataTable-button aon-icon-accept"
 										reRender="footer_banner_category_Data"
 										actionListener="#{footer_banner_category.onAccept}" />
-									<h:commandButton id="newCancel" title="[#{bundle.aon_cancel}]"
+									<aon:commandButton id="newCancel" title="[#{bundle.aon_cancel}]"
 										styleClass="aon-editDataTable-button aon-icon-cancel"
 										reRender="footer_banner_category_Data" immediate="true"
 										actionListener="#{footer_banner_category.onCancel}" />

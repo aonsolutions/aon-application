@@ -20,10 +20,9 @@ import com.code.aon.ui.util.AonUtil;
 
 public class LinkCategoryController extends BasicI18nController {
 
-	@Override
-	public void onReset(ActionEvent event) {
+	public void onInit(ActionEvent event) {
 		((GeneratorConfigController)AonUtil.getRegisteredBean("generator_config")).initSection(LinkConfig.class);
-		super.onReset(event);
+		super.onSearch(event);
 	}
 
 	@SuppressWarnings("unused")
