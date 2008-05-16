@@ -3,7 +3,6 @@ package com.code.aon.ui.cms.controller;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.List;
 
 import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
@@ -13,12 +12,7 @@ import javax.faces.validator.LengthValidator;
 import org.apache.myfaces.custom.fileupload.UploadedFile;
 
 import com.code.aon.cms.Article;
-import com.code.aon.cms.ArticleDocument;
 import com.code.aon.cms.ArticleDocumentDetail;
-import com.code.aon.cms.dao.ICMSAlias;
-import com.code.aon.common.ITransferObject;
-import com.code.aon.common.ManagerBeanException;
-import com.code.aon.ql.Criteria;
 import com.code.aon.ui.cms.util.ControllerUtil;
 import com.code.aon.ui.util.AonUtil;
 
