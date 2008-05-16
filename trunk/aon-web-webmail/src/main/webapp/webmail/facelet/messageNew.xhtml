@@ -40,12 +40,13 @@
 				</aon:div>
 			
 				<aon:div>
-					<aon:panelGrid columns="2" cellpadding="0" cellspacing="0" style="width:100%;">
+					<aon:panelGrid columns="2" cellpadding="0" cellspacing="0" style="width:100%;"
+					>
 						
 						<aon:commandButton id="addToEmail" reRender="showEmailWindow"
 							actionListener="#{message.openEmailsToPanelPopup}"
-							styleClass="aon-icon-commandButton aon-icon-search" 
-							value="#{appBundle.aon_webmail_to}:"/>
+							styleClass="aon-commandButton aon-icon-search" 
+							value="#{appBundle.aon_webmail_to}" style="background-position:4px 2px;width:60px;padding:2px 1em 2px 22px !important;text-align:left;"/>
 						<aon:div>
 							<aon:inputText id="NewMail_to"
 								size="120"
@@ -55,8 +56,8 @@
 	
 						<aon:commandButton id="addCcEmail" reRender="showEmailWindow"
 							actionListener="#{message.openEmailsCcPanelPopup}" 
-							styleClass="aon-icon-commandButton aon-icon-search" 
-							value="#{appBundle.aon_webmail_cc}:"/>
+							styleClass="aon-commandButton aon-icon-search" 
+							value="#{appBundle.aon_webmail_cc}" style="background-position:4px 2px;width:60px;padding:2px 1em 2px 22px !important;text-align:left;"/>
 						<aon:div>
 							<aon:inputText id="NewMail_cc"
 								size="120"
@@ -65,8 +66,8 @@
 	
 						<aon:commandButton id="addBccEmail" reRender="showEmailWindow"
 							actionListener="#{message.openEmailsBccPanelPopup}" 
-							styleClass="aon-icon-commandButton aon-icon-search" 
-							value="#{appBundle.aon_webmail_bcc}:"/>
+							styleClass="aon-commandButton aon-icon-search" 
+							value="#{appBundle.aon_webmail_bcc}" style="background-position:4px 2px;width:60px;padding:2px 1em 2px 22px !important;text-align:left;"/>
 						<aon:div>
 							<aon:inputText id="NewMail_Bcc"
 								size="120"
