@@ -28,7 +28,7 @@
 					
 				<!-- start toolbar navigation -->
 				<aon:div styleClass="aon-finding-toolbar-item-group">					
-					<h:commandButton id="reset" value="#{bundle.aon_reset}"
+					<aon:commandButton id="reset" value="#{bundle.aon_reset}"
 						action="article_category_form"
 						actionListener="#{article_category.onReset}"
 						styleClass="aon-finding-toolbar-item aon-icon-reset"
@@ -58,8 +58,9 @@
 						<f:selectItems value="#{collections.sectionList}" />
 					</aon:selectOneMenu>
 					
-					<h:commandButton id="save"
+					<aon:commandButton id="save"
 						value="#{bundle.aon_save}" 
+						action="article_category_list"
 						actionListener="#{generator_config.onSaveArticleConfig}"
 						styleClass="aon-content-toolbar-item aon-icon-accept" />
 
@@ -98,12 +99,12 @@
 								event="onclick" />
 							<f:facet name="header">
 								<aon:div>
-									<h:commandButton id="alias_order" value=""
+									<aon:commandButton id="alias_order" value=""
 										styleClass="aon-finding-toolbar-item aon-icon-search"
 										action="article_category_list"
 										actionListener="#{article_category.onAliasOrdered}">
 										<aon:outputText value="#{appBundle.article_category_alias}" />
-									</h:commandButton>
+									</aon:commandButton>
 								</aon:div>
 							</f:facet>
 							<aon:outputText value="#{to.alias}" styleClass="aon-editDataTable-button"/>
@@ -144,22 +145,22 @@
 						<aon:column>
 							<f:facet name="header">
 								<aon:div>
-									<h:commandButton id="position_order" value=""
+									<aon:commandButton id="position_order" value=""
 										action="article_category_list"
 										styleClass="aon-finding-toolbar-item aon-icon-search"
 										actionListener="#{article_category.onPosition}">
 										<aon:outputText value="#{appBundle.article_category_position}" />
-									</h:commandButton>
+									</aon:commandButton>
 								</aon:div>
 							</f:facet>
 							<aon:outputText value="&nbsp;" 
 								rendered="#{!article_category.positionOrdered}"/>
-							<h:commandButton id="moveUp" 
+							<aon:commandButton id="moveUp" 
 								reRender="dataTable"
 								actionListener="#{article_category.onMoveUp}" 
 								rendered="#{to.position != 0 and article_category.positionOrdered}"
 								image="/images/cms/up.gif" styleClass="aon-icon-commandButton" />
-							<h:commandButton id="moveDown"
+							<aon:commandButton id="moveDown"
 								reRender="dataTable" 
 								actionListener="#{article_category.onMoveDown}"
 								rendered="#{to.position &lt; (article_category.model.rowCount - 1) and article_category.positionOrdered}"

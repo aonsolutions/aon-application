@@ -2,7 +2,6 @@ package com.code.aon.ui.cms.controller;
 
 import java.util.List;
 
-import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
 
 import com.code.aon.cms.Faq;
@@ -21,10 +20,9 @@ import com.code.aon.ui.util.AonUtil;
 
 public class FaqCategoryController extends BasicI18nController {
 
-	@Override
-	public void onReset(ActionEvent event) {
+	public void onInit(ActionEvent event) {
 		((GeneratorConfigController)AonUtil.getRegisteredBean("generator_config")).initSection(FaqConfig.class);
-		super.onReset(event);
+		super.onSearch(event);
 	}
 	
 	@SuppressWarnings("unused")

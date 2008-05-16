@@ -31,12 +31,12 @@
 						
 					<!-- start toolbar navigation -->
 					<aon:div styleClass="aon-finding-toolbar-item-group">
-						<h:commandButton id="reset" value="#{bundle.aon_reset}"
+						<aon:commandButton id="reset" value="#{bundle.aon_reset}"
 							action="section_form"
 							actionListener="#{section.onReset}" rendered="#{!section.new}"
 							styleClass="aon-finding-toolbar-item aon-icon-reset"
 							accesskey="#{bundle.aon_key_new}" />
-						<h:commandButton id="save"
+						<aon:commandButton id="save"
 							action="section_form"
 							value="#{bundle.aon_save}" rendered="#{section.to!=null or section.new}"
 							actionListener="#{section.accept}"
@@ -48,7 +48,7 @@
 							confirmActionListener="#{section.onRemove}" confirmAction="section_list"
 							styleClass="aon-finding-toolbar-item aon-icon-delete"
 							accesskey="#{bundle.aon_key_remove}"/>
-						<h:commandButton id="exit" value="#{bundle.aon_close}"
+						<aon:commandButton id="exit" value="#{bundle.aon_close}"
 							action="section_list" 
 							actionListener="#{section.onSearch}"
 							immediate="#{true}"

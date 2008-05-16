@@ -28,19 +28,19 @@
 						
 					<!-- start toolbar navigation -->
 					<aon:div styleClass="aon-finding-toolbar-item-group">					
-						<h:commandButton id="reset" value="#{bundle.aon_reset}"
+						<aon:commandButton id="reset" value="#{bundle.aon_reset}"
 							action="direct_access_group_form"
 							actionListener="#{direct_access_group.onReset}"
 							styleClass="aon-finding-toolbar-item aon-icon-reset"
 							accesskey="#{bundle.aon_key_new}"/>
-						<h:commandButton id="save_new"
+						<aon:commandButton id="save_new"
 							value="#{bundle.aon_save}" 
 							rendered="#{direct_access_group.new}"
 							action="direct_access_group_form"
 							actionListener="#{direct_access_group.accept}"
 							styleClass="aon-finding-toolbar-item aon-icon-accept"
 							accesskey="#{bundle.aon_key_save}"/>
-						<h:commandButton id="save_edit"
+						<aon:commandButton id="save_edit"
 							value="#{bundle.aon_save}" 
 							rendered="#{direct_access_group.to!=null and !direct_access_group.new}"
 							actionListener="#{direct_access_group.accept}"
@@ -55,13 +55,13 @@
 							confirmActionListener="#{direct_access_group.onRemove}"
 							confirmAction="direct_access_group_list"
 							accesskey="#{bundle.aon_key_remove}"/>
-						<h:commandButton id="exit" value="#{bundle.aon_close}"
+						<aon:commandButton id="exit" value="#{bundle.aon_close}"
 							action="direct_access_group_list" 
 							actionListener="#{direct_access_group.onSearch}"
 							immediate="#{true}"
 							styleClass="aon-finding-toolbar-item aon-icon-cancel"
 							accesskey="#{bundle.aon_key_close}"/>
-						<h:commandButton id="partial_generate"
+						<aon:commandButton id="partial_generate"
 							value="#{appBundle.aon_generate}" 
 							rendered="#{direct_access_group.to!=null}"
 							actionListener="#{generator.onGenerateCurrentDirectAccessCategory}"
@@ -113,7 +113,7 @@
 							
 								<!-- start toolbar navigation -->
 								<aon:div styleClass="aon-finding-toolbar-item-group">
-									<h:commandButton id="reset_list" value="#{bundle.aon_reset}"
+									<aon:commandButton id="reset_list" value="#{bundle.aon_reset}"
 										rendered="#{!direct_access.new}"
 										action="direct_access_group_form"
 										actionListener="#{direct_access.onReset}"
@@ -215,12 +215,12 @@
 								</f:facet>
 								<aon:graphicImage rendered="#{to.position == 0}"
 									url="/images/cms/spacer16.gif" style="margin-left: 8px;"/>
-								<h:commandButton  
+								<aon:commandButton  
 									action="direct_access_group_form"
 									actionListener="#{direct_access.onMoveUp}" 
 									rendered="#{to.position != 0 and direct_access.to==null}"
 									image="/images/cms/up.gif" styleClass="aon-icon-commandButton" />
-								<h:commandButton 
+								<aon:commandButton 
 									action="direct_access_group_form"
 									actionListener="#{direct_access.onMoveDown}"
 									rendered="#{to.position &lt; (direct_access.model.rowCount - 1)  and direct_access.to==null}"
@@ -237,14 +237,14 @@
 									<aon:panelGrid id="buttonsGrid_list_form" columns="1" dir="true" 
 										columnClasses="aon-finding-toolbar">				
 										<aon:div styleClass="aon-finding-toolbar-item-group">
-											<h:commandButton id="save_list_form"
+											<aon:commandButton id="save_list_form"
 												value="#{bundle.aon_save}" 
 												rendered="#{direct_access.to!=null or direct_access.new}"
 												action="direct_access_group_form"
 												actionListener="#{direct_access.onAccept}"
 												styleClass="aon-finding-toolbar-item aon-icon-accept"
 												accesskey="#{bundle.aon_key_save}"/>
-											<h:commandButton id="cancel_list_form"
+											<aon:commandButton id="cancel_list_form"
 												value="#{bundle.aon_cancel}" 
 												rendered="#{direct_access.to!=null or direct_access.new}" immediate="#{true}"
 												action="direct_access_group_form"

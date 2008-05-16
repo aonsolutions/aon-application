@@ -7,6 +7,7 @@ import javax.faces.event.ActionEvent;
 import com.code.aon.cms.Article;
 import com.code.aon.cms.ArticleCategory;
 import com.code.aon.cms.ArticleCategoryDetail;
+import com.code.aon.cms.ArticleConfig;
 import com.code.aon.cms.dao.ICMSAlias;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
@@ -19,6 +20,11 @@ import com.code.aon.ui.util.AonUtil;
 
 public class ArticleCategoryController extends BasicI18nController {
 
+	public void onInit(ActionEvent event){
+		((GeneratorConfigController)AonUtil.getRegisteredBean("generator_config")).initSection(ArticleConfig.class);
+		this.onSearch(event);
+	}
+	
 	@SuppressWarnings("unused")
 	public void onSelect(ActionEvent event){
 		super.onSelect(event);
