@@ -234,6 +234,10 @@ public class AonServer {
 		return account;
 	}
     
+	public void setAccount(MailAccount account) {
+		this.account = account;
+	}
+
 	public void createBasicFolders(){
 		try{
 			if (!getRoot().getFolder(AonFolder.SENT_FOLDER_NAME).exists()){
