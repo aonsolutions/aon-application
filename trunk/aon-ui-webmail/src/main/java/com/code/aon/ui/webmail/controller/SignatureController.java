@@ -10,28 +10,22 @@ import java.util.logging.Logger;
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 import javax.faces.model.SelectItem;
-import javax.swing.plaf.ListUI;
 
 import org.apache.commons.lang.StringUtils;
 
 import com.code.aon.bridge.plugin.Utils;
 import com.code.aon.common.BasicManagerBean;
 import com.code.aon.common.IManagerBean;
-import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.sql.DAOException;
 import com.code.aon.dao.ldap.LdapDAO;
-import com.code.aon.faces.component.tomahawk.ArrayUtils;
 import com.code.aon.jaas.auth.AuthPrincipal;
 import com.code.aon.ldap.AonDN;
 import com.code.aon.ldap.DistinguishedName;
-import com.code.aon.ql.Criteria;
 import com.code.aon.ui.form.GridController;
 import com.code.aon.ui.util.AonUtil;
 import com.code.aon.ui.webmail.bean.AonConstants;
-import com.code.aon.webmail.MailAccount;
 import com.code.aon.webmail.Signature;
-import com.code.aon.webmail.dao.IWebMailAlias;
 
 public class SignatureController extends GridController {
 
@@ -42,6 +36,8 @@ public class SignatureController extends GridController {
 	private LdapDAO dao;
 	
 	private BasicManagerBean ldapManagerBean;
+	
+	private List<SelectItem> signatures;
 
 	public LdapDAO getDAO( AuthPrincipal principal ) {
 		LdapDAO dao = new LdapDAO(Signature.class);
@@ -100,16 +96,19 @@ public class SignatureController extends GridController {
 		super.accept(event);
 	}
 
+	public List<SelectItem> getSignatures() {
+		return signatures;
+	}
+
 	@SuppressWarnings("unchecked")
-	public List<SelectItem> getSignatures() throws ManagerBeanException {
-		List<SelectItem> series = new LinkedList<SelectItem>();
+	public void updateSignatureList() throws ManagerBeanException {
+		this.signatures = new LinkedList<SelectItem>();
 		Iterator iter = getManagerBean().getList(getCriteria()).iterator();
 		while(iter.hasNext()){
 			Signature signature = (Signature)iter.next();
 			SelectItem item = new SelectItem(signature.getId(),signature.getName());
-			series.add(item);
+			this.signatures.add(item);
 		}
-		return series;
 	}
 
 	/*
