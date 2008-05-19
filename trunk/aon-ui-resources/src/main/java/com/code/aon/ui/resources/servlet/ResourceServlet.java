@@ -2,6 +2,11 @@ package com.code.aon.ui.resources.servlet;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.GregorianCalendar;
+import java.util.Locale;
+import java.util.TimeZone;
 import java.util.logging.Logger;
 
 import javax.servlet.ServletConfig;
@@ -27,18 +32,21 @@ import com.code.aon.common.enumeration.MimeType;
 
 public class ResourceServlet extends HttpServlet {
 
+	private static final long serialVersionUID = -2158184452139430686L;
+
 	/**
 	 * Logger initialization
 	 */
 	private static final Logger LOGGER = Logger.getLogger(ResourceServlet.class
 			.getName());
 
-	/**
-	 * One year in milliseconds. (Actually, just short of on year, since RFC
-	 * 2616 says Expires should not be more than one year out, so cutting back
-	 * just to be safe.)
-	 */
-	public static final long ONE_YEAR_MILLIS = 31363200000L;
+	private static final int LAST_MODIFIED_YEAR = 2008;
+	
+	private static final int LAST_MODIFIED_MOTH = 5;
+	
+	private static final int LAST_MODIFIED_DAY = 19;
+	
+	private static final String MODIFY = calcModify();
 
 	/** The Constant PATTERN_INIT_PARAMETER. */
 	private static final String PATTERN_INIT_PARAMETER = "pattern";
@@ -91,6 +99,13 @@ public class ResourceServlet extends HttpServlet {
 	    	debug = Boolean.valueOf(debugValue);
 	    }
 	}
+	
+	private static final String calcModify() {
+		Date date = new GregorianCalendar( LAST_MODIFIED_YEAR, LAST_MODIFIED_MOTH, LAST_MODIFIED_DAY ).getTime();
+		SimpleDateFormat sdf = new SimpleDateFormat("EEE, d MMM yyyy HH:mm:ss z",Locale.ENGLISH);
+		sdf.setTimeZone(TimeZone.getTimeZone("GMT"));
+		return sdf.format(date);
+	}	
 
 	private String getResource(HttpServletRequest req) {
 		String uri = req.getRequestURI();
@@ -147,10 +162,7 @@ public class ResourceServlet extends HttpServlet {
 			// Set Cache-Control to "Public".
 			response.setHeader("Cache-Control", "Public");
 
-			// Set Expires to current time + one year.
-			long currentTime = System.currentTimeMillis();
-
-			response.setDateHeader("Expires", currentTime + ONE_YEAR_MILLIS);
+			response.setHeader("Last-Modified", MODIFY);
 		}
 	}
 
