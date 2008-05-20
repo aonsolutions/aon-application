@@ -1,7 +1,6 @@
 package com.code.aon.ui.webmail.bean;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -11,6 +10,8 @@ import javax.mail.Folder;
 import javax.mail.Message;
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
+
+import org.apache.commons.lang.ArrayUtils;
 
 import com.code.aon.ui.webmail.exception.WebmailException;
 
@@ -46,7 +47,7 @@ public class AonFolder extends AonMessageSortableList {
 		return folderList;
 	}
 
-	public ArrayList<AonMessage> getMessageList(){
+	public AonMessage[] getMessageList(){
 		if (!oldSort.equals(sort) || oldAscending != ascending) {
 			sort();
 		}
@@ -68,14 +69,14 @@ public class AonFolder extends AonMessageSortableList {
 			open(Folder.READ_WRITE);
 			Message[] messages = folder.getMessages();
 
-			messageList = new ArrayList<AonMessage>(messages.length);
+			messageList = new AonMessage[messages.length];
 			AonMessage aonMessage;
-			for (int i = 0; i < messages.length; i++) {
+			for (int i = 0, n = 0; i < messages.length; i++) {
 				if (messages[i] != null && !messages[i].isExpunged()) {
 					aonMessage = new AonMessage();
                 	aonMessage.setParent(this);
                 	aonMessage.setMessage((MimeMessage)messages[i]);
-                    messageList.add(aonMessage);
+                    messageList[n++] = aonMessage;
                 }
             }
         } catch (MessagingException e) {
@@ -141,11 +142,11 @@ public class AonFolder extends AonMessageSortableList {
     // Spam folder decloration
     public static final String SPAM_FOLDER_NAME = "spam";
 
-    public void moveMessages(List<AonMessage> messagesToMove, AonFolder destinationFolder) throws MessagingException {
-    	Message[] messages = new Message[messagesToMove.size()];
-    	for(int pos=0; pos<messagesToMove.size(); pos++){
-    		messages[pos] = messagesToMove.get(pos).getMessage();
-    		messagesToMove.get(pos).setSelected(false);
+    public void moveMessages(AonMessage[] messagesToMove, AonFolder destinationFolder) throws MessagingException {
+    	Message[] messages = new Message[messagesToMove.length];
+    	for(int pos=0; pos<messagesToMove.length; pos++){
+    		messages[pos] = messagesToMove[pos].getMessage();
+    		messagesToMove[pos].setSelected(false);
     	}
     	destinationFolder.open(Folder.READ_WRITE);
     	Folder desfFolder = destinationFolder.getFolder();
@@ -155,12 +156,10 @@ public class AonFolder extends AonMessageSortableList {
         destinationFolder.close(true);
     }
     
-    public void deleteMessages(List<AonMessage> messagesToDelete) throws MessagingException{
-    	//Message[] messages = new Message[messagesToDelete.size()];
-    	for(int pos=0; pos<messagesToDelete.size(); pos++){
-    		//messages[pos] = messagesToDelete.get(pos).getMessage();
-    		messagesToDelete.get(pos).getMessage().setFlag(Flags.Flag.DELETED, true);
-    		messagesToDelete.get(pos).setSelected(false);
+    public void deleteMessages(AonMessage[] messagesToDelete) throws MessagingException{
+    	for(int pos=0; pos<messagesToDelete.length; pos++){
+    		messagesToDelete[pos].getMessage().setFlag(Flags.Flag.DELETED, true);
+    		messagesToDelete[pos].setSelected(false);
     	}
         //folder.setFlags(messages,new Flags(Flags.Flag.DELETED), true);
         folder.expunge();
@@ -243,20 +242,20 @@ public class AonFolder extends AonMessageSortableList {
     //**************************************************************
 
     public AonMessage getSelectedMessage() {
-    	Iterator<AonMessage> iter = messageList.iterator();
-    	while (iter.hasNext()){
-        	return iter.next();
+    	if (! ArrayUtils.isEmpty(messageList) ) {
+    		return messageList[0];
     	}
     	return null;
     }
 
-    public List<AonMessage> getSelectedMessages(){
+    public AonMessage[] getSelectedMessages(){
     	List<AonMessage> selectedAonMessages = new ArrayList<AonMessage>();
     	for (AonMessage aonMessage : messageList) {
-    		if (aonMessage.isSelected())
+    		if (aonMessage.isSelected()) {
     			selectedAonMessages.add(aonMessage);
+    		}
 		}
-    	return selectedAonMessages;
+    	return selectedAonMessages.toArray(new AonMessage[selectedAonMessages.size()]);
     }
 
 }
