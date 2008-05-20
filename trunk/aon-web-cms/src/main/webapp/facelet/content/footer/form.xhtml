@@ -40,6 +40,7 @@
 						<aon:commandButton id="save"
 							value="#{bundle.aon_save}" 
 							rendered="#{footer.to!=null or footer.new}"
+							action="footer_form"
 							actionListener="#{footer.onAccept}"
 							styleClass="aon-finding-toolbar-item aon-icon-accept"
 							accesskey="#{bundle.aon_key_save}"/>
