@@ -16,16 +16,20 @@ import org.apache.commons.lang.StringUtils;
 import com.code.aon.bridge.plugin.Utils;
 import com.code.aon.common.BasicManagerBean;
 import com.code.aon.common.IManagerBean;
+import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.sql.DAOException;
 import com.code.aon.dao.ldap.LdapDAO;
 import com.code.aon.jaas.auth.AuthPrincipal;
 import com.code.aon.ldap.AonDN;
 import com.code.aon.ldap.DistinguishedName;
+import com.code.aon.ql.Criteria;
 import com.code.aon.ui.form.GridController;
 import com.code.aon.ui.util.AonUtil;
 import com.code.aon.ui.webmail.bean.AonConstants;
+import com.code.aon.webmail.MailAccount;
 import com.code.aon.webmail.Signature;
+import com.code.aon.webmail.dao.IWebMailAlias;
 
 public class SignatureController extends GridController {
 
@@ -64,6 +68,7 @@ public class SignatureController extends GridController {
 	
 	@Override
 	public void accept(ActionEvent event) {		
+		boolean renamed = false;
 		String oldId = (String) this.savedToId;
 		try {
 			String currentId = this.dao.calculateDN(getTo());
@@ -82,6 +87,7 @@ public class SignatureController extends GridController {
 					getManagerBean().remove( getTo() );
 					getManagerBean().setId( getTo(), null );
 					setNew(true);
+					renamed = true;
 				}
 			}
 		} catch (ManagerBeanException e) {
@@ -94,6 +100,9 @@ public class SignatureController extends GridController {
 	        throw new AbortProcessingException(e.getMessage(), e);	        
 		}				
 		super.accept(event);
+		if ( renamed ) {
+			updateReferences( oldId, (Signature) getTo() );
+		}
 	}
 
 	public List<SelectItem> getSignatures() {
@@ -111,23 +120,34 @@ public class SignatureController extends GridController {
 		}
 	}
 
-	/*
 	@SuppressWarnings("unchecked")
-	private List<MailAccount> getReferences( Signature signature ) {
+	private List<MailAccount> getReferences( String id ) {
 		List<MailAccount> list = null;
 		try {
 			IManagerBean mailAccountBean = AonUtil.getController(AonConstants.BEAN_MAIL_ACCOUNT).getManagerBean();
 			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(mailAccountBean.getFieldName(IWebMailAlias.MAIL_ACCOUNT_ID), signature.getName());
+			criteria.addEqualExpression(mailAccountBean.getFieldName(IWebMailAlias.MAIL_ACCOUNT_SIGNATURE_ID), id);
 			list = (List) mailAccountBean.getList(criteria);
 		} catch (ManagerBeanException e) {
             LOGGER.severe(">>>> getReferences " + e.getMessage());
 		}		
 		return list;
 	}
+
+	private void updateReferences( String id, Signature signature ) {
+		try {
+			IManagerBean mailAccountBean = AonUtil.getController(AonConstants.BEAN_MAIL_ACCOUNT).getManagerBean();
+			for( MailAccount mailAccount : getReferences(id) ) {
+				mailAccount.setSignature( signature );
+				mailAccountBean.update( mailAccount );
+			}
+		} catch (ManagerBeanException e) {
+            LOGGER.severe(">>>> getReferences " + e.getMessage());
+		}					
+	}
 	
 	private boolean checkRemovable( Signature signature ) {
-		List<MailAccount> list = getReferences( signature );
+		List<MailAccount> list = getReferences( signature.getId() );
 		if ( (list!=null) && (!list.isEmpty()) ) {
 			AonUtil.addErrorMessage( "La Firma " + signature.getName() + " no se puede borrar porque esta siendo utlizada." );
 			return false;
@@ -152,6 +172,5 @@ public class SignatureController extends GridController {
 			super.onRemoveSelected(event);	
 		}
 	}
-	*/
 	
 }
