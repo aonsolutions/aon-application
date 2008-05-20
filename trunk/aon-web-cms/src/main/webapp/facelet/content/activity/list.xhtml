@@ -115,11 +115,13 @@
 								event="onclick" />
 						</aon:outputText>	
 						<aon:inputText value="#{to.alias}"
+							id="#{to.id}_alias"
 							rendered="#{to==activity.to}"
 							required="#{true}" size="35" maxlength="32" />
 						<f:facet name="footer">
 							<aon:div>
 								<aon:inputText value="#{activity.to.alias}"
+									id="new_alias"
 									rendered="#{activity.new}"
 									required="#{true}" size="35" maxlength="32" />
 							</aon:div>
@@ -139,11 +141,13 @@
 								event="onclick" />
 						</aon:outputText>	
 						<aon:inputText value="#{activity.toI18n.description}"
+							id="#{to.id}_description"
 							rendered="#{to==activity.to}"
 							required="#{true}" size="70" maxlength="64" />
 						<f:facet name="footer">
 							<aon:div>
 								<aon:inputText value="#{activity.toI18n.description}"
+									id="new_description"
 									rendered="#{activity.new}"
 									required="#{true}" size="70" maxlength="64" />
 							</aon:div>
