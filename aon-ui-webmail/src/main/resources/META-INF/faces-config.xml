@@ -163,9 +163,9 @@
 	<!-- ************ BWLIST ************** -->
 
 	<managed-bean>
-		<managed-bean-name>blacklist</managed-bean-name>
+		<managed-bean-name>spam</managed-bean-name>
 		<managed-bean-class>
-				com.code.aon.ui.webmail.controller.BlackListController
+				com.code.aon.ui.webmail.controller.SpamController
 			</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
@@ -235,8 +235,8 @@
 			<to-view-id>/webmail/facelet/mailAccount/form.xhtml</to-view-id>
 		</navigation-case>
 		<navigation-case>
-			<from-outcome>bwlist</from-outcome>
-			<to-view-id>/webmail/facelet/bwlist/list.xhtml</to-view-id>
+			<from-outcome>spam</from-outcome>
+			<to-view-id>/webmail/facelet/spam/list.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>
 	

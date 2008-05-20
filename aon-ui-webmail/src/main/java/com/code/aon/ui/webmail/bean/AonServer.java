@@ -28,20 +28,19 @@ public class AonServer {
 	private static final Logger LOGGER = Logger.getLogger(AonServer.class.getName());
 	
 	private static final String IMAP = "imap";
-	private static final String POP3 = "pop3";
-	private static final String SMTP = "smtp";
 	
-    protected Store store;
+    private Store store;
 
-    protected Session session;
+    private Session session;
 
-    protected MailAccount account;
+    private MailAccount account;
     
-    protected boolean ensure_connection = true;
+    private boolean ensure_connection;
     
     /** Creates a new instance of Server */
     public AonServer(MailAccount account){
-        this.account = account;
+        setAccount( account );
+        this.ensure_connection = true;
     }
     
     /**

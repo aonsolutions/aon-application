@@ -159,16 +159,16 @@
 						</aon:commandButton>
 						<aon:commandButton id="add_white_list"
 							reRender="webmailForm"
-							rendered="#{blacklist.whiteListEmail}"
+							rendered="#{spam.whiteListEmail}"
 							title="#{appBundle.aon_webmail_add_white_list}" 
 							styleClass="aon-icon-commandButton aon-icon-white-list aon-italic aon-bold"
-							actionListener="#{blacklist.onAddWhiteMessageFrom}" />
+							actionListener="#{spam.onAddWhiteMessageFrom}" />
 						<aon:commandButton id="add_black_list"
 							reRender="webmailForm"
-							rendered="#{blacklist.blackListEmail}"
+							rendered="#{spam.blackListEmail}"
 							title="#{appBundle.aon_webmail_add_black_list}" 
 							styleClass="aon-icon-commandButton aon-icon-black-list aon-italic aon-bold"
-							actionListener="#{blacklist.onAddBlackMessageFrom}" />
+							actionListener="#{spam.onAddBlackMessageFrom}" />
 						
 					</aon:div>
 					

@@ -13,33 +13,33 @@
 <aon:form id="addBlackWhiteListForm">
 	<aon:panelGroup id="addBlackWhiteListWindow">
 		<rich:modalPanel id="addBlackWhiteListModalPanel"
-			rendered="#{blacklist.showNewSpamAddressWindow}"
+			rendered="#{spam.showNewSpamAddressWindow}"
 			showWhenRendered="true" height="100" width="350" zindex="2000">
 			<f:facet name="header">
 				<aon:div styleClass="aon-popupWindow-title">
 					<aon:outputText value="#{appBundle.aon_webmail_add_white_list}"
-						rendered="#{!blacklist.blackList}" />
+						rendered="#{!spam.blackList}" />
 					<aon:outputText value="#{appBundle.aon_webmail_add_black_list}"
-						rendered="#{blacklist.blackList}" />
+						rendered="#{spam.blackList}" />
 				</aon:div>
 			</f:facet>
 			<f:facet name="controls">
 				<aon:commandButton type="button" styleClass="aon-popupWindow-close"
 					immediate="true">
 					<f:setPropertyActionListener
-						target="#{blacklist.showNewSpamAddressWindow}" value="#{false}" />
+						target="#{spam.showNewSpamAddressWindow}" value="#{false}" />
 					<rich:componentControl for="addBlackWhiteListModalPanel"
 						operation="hide" event="onclick" />
 				</aon:commandButton>
 			</f:facet>
 			<h:panelGrid width="100%" cellpadding="2" cellspacing="0" columns="2"
 				styleClass="aon-panelGrid-formatting">
-				<aon:inputText size="35" value="#{blacklist.newEmail}" />
+				<aon:inputText size="35" value="#{spam.newEmail}" />
 				<aon:commandButton styleClass="aon-commandButton"
-					reRender="emailList" actionListener="#{blacklist.createNew}"
+					reRender="emailList" actionListener="#{spam.createNew}"
 					value="#{bundle.aon_accept}">
 					<f:setPropertyActionListener
-						target="#{blacklist.showNewSpamAddressWindow}" value="#{false}" />
+						target="#{spam.showNewSpamAddressWindow}" value="#{false}" />
 					<rich:componentControl for="addBlackWhiteListModalPanel"
 						operation="hide" event="onclick" />
 				</aon:commandButton>

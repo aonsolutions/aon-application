@@ -87,6 +87,8 @@ public class WebMailController implements AonConstants, ILdapConstants {
 		server.createBasicFolders();
 		this.aonUser = getAonUser(Utils.getAuthPrincipal());
 		createDefaultSignature(mailAccount);
+		SpamController spamController = (SpamController) AonUtil.getRegisteredBean(BEAN_SPAM);
+		spamController.updateSpamEnabled(mailAccount);
 	}
 	
 	public void initFull(MailAccount mailAccount) {

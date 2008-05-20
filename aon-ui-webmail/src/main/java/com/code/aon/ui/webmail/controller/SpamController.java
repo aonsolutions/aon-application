@@ -36,9 +36,9 @@ import com.code.aon.ui.webmail.exception.WebmailException;
 import com.code.aon.webmail.MailAccount;
 import com.code.aon.webmail.enumeration.SpamScoreType;
 
-public class BlackListController extends BasicLdap {
+public class SpamController extends BasicLdap implements AonConstants {
 
-	private static final Logger LOGGER = Logger.getLogger(BlackListController.class.getName());
+	private static final Logger LOGGER = Logger.getLogger(SpamController.class.getName());
 	
 	private static final String AMAVIS_ACCOUNT_OBJECT_CLASS = "amavisAccount";
 
@@ -59,6 +59,8 @@ public class BlackListController extends BasicLdap {
 	private String rewrite_1;
 	
 	private boolean addContactsToWhite;
+	
+	private boolean spamEnabled;
 	
 	public SpamScoreType getSpamScoreType() {
 		return spamScoreType;
@@ -102,22 +104,20 @@ public class BlackListController extends BasicLdap {
 	}
 	
 	private DistinguishedName getUserDN() {
-		WebMailController webMailController = (WebMailController)AonUtil.getRegisteredBean(AonConstants.BEAN_WEBMAIL);
-		MailAccount mailAccount = webMailController.getServer().getAccount();
-		if ( mailAccount.isDefault() ) {
-			LoginController loginController = (LoginController)AonUtil.getRegisteredBean(AonConstants.BEAN_LOGIN);
-			AuthPrincipal principal = Utils.getAuthPrincipal();
-			return AonDN.getUserDN( principal.getDomain(), principal.getShortName() );
-		}
-		return null;
+		AuthPrincipal principal = Utils.getAuthPrincipal();
+		return AonDN.getUserDN( principal.getDomain(), principal.getShortName() );
 	}
 	
-	public boolean isBlackListConfigured() {
-		DistinguishedName userDN = getUserDN();
-		if ( userDN != null ) {
-			return exists(userDN, AMAVIS_ACCOUNT_OBJECT_CLASS);
+	public void updateSpamEnabled( MailAccount mailAccount ) {
+		this.spamEnabled = false;
+		if ( mailAccount.isDefault() ) {
+			DistinguishedName userDN = getUserDN();
+			this.spamEnabled = exists(userDN, AMAVIS_ACCOUNT_OBJECT_CLASS);
 		}
-		return false;	
+	}
+	
+	public boolean isSpamEnabled() {
+		return this.spamEnabled;
 	}
 	
 	private Entry getSpamEntry( DistinguishedName dn ) {
@@ -220,7 +220,7 @@ public class BlackListController extends BasicLdap {
 	private void addContactsToWhiteList(){
 	    List contacts = null;
 		try {
-			IManagerBean bean = AonUtil.getController(AonConstants.BEAN_CONTACT).getManagerBean();
+			IManagerBean bean = AonUtil.getController(BEAN_CONTACT).getManagerBean();
 			contacts = bean.getList(null);
 		}catch (ManagerBeanException e) {
 			e.printStackTrace();
@@ -326,28 +326,32 @@ public class BlackListController extends BasicLdap {
     //*************************************************************
 
 	public boolean isWhiteListEmail(){
-		if (!isBlackListConfigured())
+		if (! isSpamEnabled() ) {
 			return false;
-    	MessageController messageController = (MessageController)AonUtil.getRegisteredBean(AonConstants.BEAN_MESSAGE);
+		}
+    	MessageController messageController = (MessageController)AonUtil.getRegisteredBean(BEAN_MESSAGE);
     	String aonFolderName = messageController.getMessage().getParent().getName();
-    	if (AonFolder.SPAM_FOLDER_NAME.equalsIgnoreCase(aonFolderName))
+    	if (AonFolder.SPAM_FOLDER_NAME.equalsIgnoreCase(aonFolderName)) {
     		return true;
+    	}
 		return false;
 	}
 
 	public boolean isBlackListEmail(){
-		if (!isBlackListConfigured())
+		if (!isSpamEnabled() ) {
 			return false;
-    	MessageController messageController = (MessageController)AonUtil.getRegisteredBean(AonConstants.BEAN_MESSAGE);
+		}
+    	MessageController messageController = (MessageController)AonUtil.getRegisteredBean(BEAN_MESSAGE);
     	String aonFolderName = messageController.getMessage().getParent().getName();
     	if (!AonFolder.SPAM_FOLDER_NAME.equalsIgnoreCase(aonFolderName) &&
-    			!AonFolder.SENT_FOLDER_NAME.equalsIgnoreCase(aonFolderName))
+    			!AonFolder.SENT_FOLDER_NAME.equalsIgnoreCase(aonFolderName)) {
     		return true;
+    	}
 		return false;
 	}
 	
 	public void onAddWhiteMessageFrom(ActionEvent event){
-    	MessageController messageController = (MessageController)AonUtil.getRegisteredBean(AonConstants.BEAN_MESSAGE);
+    	MessageController messageController = (MessageController)AonUtil.getRegisteredBean(BEAN_MESSAGE);
     	try {
 			String email = messageController.getMessage().getSenderEmail();
 			load();
@@ -359,7 +363,7 @@ public class BlackListController extends BasicLdap {
 	}
 
 	public void onAddBlackMessageFrom(ActionEvent event){
-    	MessageController messageController = (MessageController)AonUtil.getRegisteredBean(AonConstants.BEAN_MESSAGE);
+    	MessageController messageController = (MessageController)AonUtil.getRegisteredBean(BEAN_MESSAGE);
     	try {
 			String email = messageController.getMessage().getSenderEmail();
 			load();
@@ -386,7 +390,7 @@ public class BlackListController extends BasicLdap {
 	}
 
 	public static void main(String[] args) {
-		BlackListController b = new BlackListController();
+		SpamController b = new SpamController();
 		b.load();
 		b.save();
 	}
