@@ -301,7 +301,7 @@
 											onclick="lookupSearchWindow(this, 'placeList', '#{itemLookup.encodedSearchPagePath}','Item_product_code|Item_Lookup_product_code-Edit[#{rowIndex}],Item_id|Item_Lookup_id-Edit[#{rowIndex}],Item_price|Item_Lookup_price-Edit[#{rowIndex}],Item_full_name|Item_full_name-Edit[#{rowIndex}]');return false;" />										
 										<t:inputText id="Item_full_name-Edit" size="40"
 											forceId="#{true}" required="#{true}"
-											styleClass="aon-form-input-text"
+											styleClass="aon-form-input-text" maxlength="64"
 											value="#{feeInvoicingDetail.to.description}" />
 									</h:panelGroup>
 
@@ -320,7 +320,7 @@
 													onclick="lookupSearchWindow(this, 'placeList', '#{itemLookup.encodedSearchPagePath}','Item_product_code|Item_Lookup_product_code-New,Item_id|Item_Lookup_id-New,Item_price|Item_Lookup_price-New,Item_full_name|Item_full_name-New');return false;" />
 												<t:inputText id="Item_full_name-New" size="40"
 													forceId="#{true}" required="#{true}"
-													styleClass="aon-form-input-text"
+													styleClass="aon-form-input-text" maxlength="64"
 													value="#{feeInvoicingDetail.to.description}" />
 											</h:panelGroup>
 										</t:div>
