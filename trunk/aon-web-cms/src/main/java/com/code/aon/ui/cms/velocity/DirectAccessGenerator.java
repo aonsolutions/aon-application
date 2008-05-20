@@ -22,7 +22,7 @@ import com.code.aon.ui.cms.velocity.attribute.DirectAccessHandler;
 public class DirectAccessGenerator extends Generator {
 	
 	public static void generate() {
-		
+		generate(null);
 	}
 	
 	public static void generate(DirectAccessGroup selectedCategory) {
