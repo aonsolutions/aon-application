@@ -148,8 +148,8 @@
 	</component>
 
 	<component localName="dataPaginator">
-    	<attribute name="maxPages" alias="paginatorMaxPages" />			
-    	<attribute name="pagesVar" alias="pageCountVar" />
+    	<attribute name="paginatorMaxPages" alias="maxPages" />			
+    	<attribute name="pageCountVar" alias="pagesVar" />
     	<attribute name="paginator" ignore="true" />
     	<attribute name="inactiveStyleClass" value="aon-dataScroller-inactive" />
     	<attribute name="selectedStyleClass" value="aon-dataScroller-selected" />
