@@ -22,14 +22,12 @@
 				
 				<aon:div styleClass="aon-toolbar">
 						
-					<aon:confirmButton id="send"
+					<aon:commandButton id="send"
 						value="#{appBundle.aon_webmail_send}"
 						styleClass="aon-icon-accept aon-finding-toolbar-item"
-						confirmTitle="#{appBundle.aon_webmail_advice}" 
-						confirmMessage="#{appBundle.aon_webmail_send_confirm}"
-						confirmAction="#{message.getReturnAction}"
-						confirmActionListener="#{message.send}">
-					</aon:confirmButton>
+						action="#{message.getReturnAction}"
+						actionListener="#{message.send}">
+					</aon:commandButton>					 
 					<aon:commandButton id="back" immediate="true"
 						action="#{message.getReturnAction}"
 						title="#{bundle.aon_back}"
