@@ -117,12 +117,6 @@ public class MailAccountController extends BasicController {
 		}
     	FoldersTreeBean treeBean = (FoldersTreeBean)AonUtil.getRegisteredBean(AonConstants.BEAN_TREE);
     	treeBean.loadTree();
-    	IController signatureController = (IController)AonUtil.getRegisteredBean(AonConstants.BEAN_SIGNATURE);
-		signatureController.initializeModel();
-		signatureController.onSearch(null);
-    	BasicController emailController = (BasicController)AonUtil.getRegisteredBean(AonConstants.BEAN_CONTACT);
-    	emailController.initializeModel();
-    	emailController.onSearch(null);
 	}
 
 	public boolean isToDefaultAccount(){
