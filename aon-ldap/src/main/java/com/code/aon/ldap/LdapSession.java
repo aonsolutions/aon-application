@@ -301,7 +301,7 @@ public class LdapSession implements ILdapConstants {
 				}
 				attributes.put(attribute);
 			}
-			dc.createSubcontext(entry.getDN().toString(), attributes);
+			dc.createSubcontext( resolveBase(entry.getDN().toString()), attributes);
 		} catch (NameAlreadyBoundException nabe) {
 			throw new LdapException("Entry Already Exists: " + entry.getDN(),
 					nabe);
@@ -318,7 +318,7 @@ public class LdapSession implements ILdapConstants {
 
 	public void delete(String dn) throws LdapException {
 		try {
-			dc.destroySubcontext(dn);
+			dc.destroySubcontext( resolveBase(dn) );
 		} catch (NamingException ne) {
 			throw new LdapException("Error in delete. " + ne.getMessage(), ne);
 		}
@@ -326,7 +326,7 @@ public class LdapSession implements ILdapConstants {
 
 	public void rename(String dn, String newDN) throws LdapException {
 		try {
-			dc.rename(dn, newDN);
+			dc.rename( resolveBase(dn), resolveBase(newDN) );
 		} catch (NamingException ne) {
 			throw new LdapException("Error in rename. " + ne.getMessage(), ne);
 		}
@@ -341,7 +341,7 @@ public class LdapSession implements ILdapConstants {
 			for( String value : moreAttributes ) {
 				items[i++] = new ModificationItem( DirContext.REMOVE_ATTRIBUTE, new BasicAttribute(value) );
 			}
-			dc.modifyAttributes( dn, items );
+			dc.modifyAttributes( resolveBase(dn), items );
 		} catch (NamingException ne) {
 			throw new LdapException("Error in remove Attribute. " + ne.getMessage(), ne);
 		}
@@ -369,7 +369,7 @@ public class LdapSession implements ILdapConstants {
 
 			Attribute attribute = getAttribute(name, value);
 			items[0] = new ModificationItem( DirContext.ADD_ATTRIBUTE, attribute );
-			dc.modifyAttributes( dn, items );
+			dc.modifyAttributes( resolveBase(dn), items );
 		} catch (NamingException ne) {
 			throw new LdapException("Error in add Attribute. " + ne.getMessage(), ne);
 		}
@@ -385,7 +385,7 @@ public class LdapSession implements ILdapConstants {
 
 			Attribute attribute = getAttribute(name, value);
 			items[0] = new ModificationItem( DirContext.REPLACE_ATTRIBUTE, attribute );
-			dc.modifyAttributes( dn, items );
+			dc.modifyAttributes( resolveBase(dn), items );
 		} catch (NamingException ne) {
 			throw new LdapException("Error in replace Attribute. " + ne.getMessage(), ne);
 		}
