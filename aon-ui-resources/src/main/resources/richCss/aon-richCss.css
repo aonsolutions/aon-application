@@ -871,6 +871,7 @@ color:#000;
 	vertical-align:top;
 	background-color:transparent !important;
 	border:0 !important;
+	
 	}
 .aon-panelGrid-formatting-odd{
 	border:0 !important;
@@ -1163,19 +1164,18 @@ color:#000;
 /**********************************************/ 
 .aon-dataScroller{
 	background-color:#e1e3e4;
-	border:#808080 1px solid;
 	font-weight:bold;
 	padding:3px 1em;
 	margin:1em 0;
 	text-align:left;
-
+	border:#666 1px solid;
 	}
 
-.aon-dataScroller table{width:auto !important;}
+.aon-dataScroller table{}
 .aon-dataScroller table, .aon-dataScroller table td{	
-	border:0 !important;
+	border:0;
 	background-color:transparent !important;
-	padding:0 !important;
+	padding:0;
 	vertical-align:middle;
 	}
 .aon-dataScroller-text{	
@@ -1189,10 +1189,10 @@ color:#000;
 
 .aon-dataScroller-buttons{
 	padding-left:1em;
+	text-align:left;
 	}
 .aon-dataScroller-buttons td{
-	width:auto;
-	padding:2px;
+	padding:2px 0;
 	}
 .aon-dataScroller-button{
 	border:0;
@@ -1227,17 +1227,12 @@ color:#000;
 .aon-dataScroller-selected{
 		font-weight:bold;
 		font-size:1.2em;
-		padding:1px 2px !important;
 		color:#000;
-		border-right:#000 1px solid !important;
-		display:block;
 	}	
 .aon-dataScroller-inactive{
 	color:#037bcf;																																							
 	font-weight:normal;
-	padding:1px 2px !important;
-	border-right:#000 1px solid !important;
-	display:block;
+
 	}
 
 /**********************************************/
