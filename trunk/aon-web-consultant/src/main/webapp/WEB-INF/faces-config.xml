@@ -44,6 +44,12 @@
 	</converter>
 
 	<converter>
+		<description>Conversor para los CustomerStatus</description>
+		<converter-id>aonCustomerStatusConverter</converter-id>
+		<converter-class>com.code.aon.ui.customer.converter.CustomerStatusConverter</converter-class>
+	</converter>
+
+	<converter>
 		<description>Conversor para los SupplierStatus</description>
 		<converter-id>aonSupplierStatusConverter</converter-id>
 		<converter-class>com.code.aon.ui.supplier.converter.SupplierStatusConverter</converter-class>
@@ -246,6 +252,13 @@
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
 	<managed-bean>
+		<managed-bean-name>productCollections</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.product.controller.ProductCollectionsController
+		</managed-bean-class>
+		<managed-bean-scope>request</managed-bean-scope>
+	</managed-bean>
+	<managed-bean>
 		<managed-bean-name>registryCollections</managed-bean-name>
 		<managed-bean-class>
 			com.code.aon.ui.registry.controller.RegistryCollectionsController
@@ -265,13 +278,6 @@
 			com.code.aon.ui.supplier.controller.SupplierCollectionsController
 		</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
-	</managed-bean>
-	<managed-bean>
-		<managed-bean-name>productCollections</managed-bean-name>
-		<managed-bean-class>
-			com.code.aon.ui.product.controller.ProductCollectionsController
-		</managed-bean-class>
-		<managed-bean-scope>request</managed-bean-scope>
 	</managed-bean>
 
 	<!-- ******************
@@ -644,6 +650,14 @@
 	</managed-bean>
 	
 	<managed-bean>
+		<managed-bean-name>companyControllerListener</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.company.event.CompanyControllerListener
+		</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+	</managed-bean>
+	
+	<managed-bean>
 		<managed-bean-name>companyLogoControllerListener</managed-bean-name>
 		<managed-bean-class>
 			com.code.aon.ui.company.event.CompanyLogoControllerListener
@@ -659,14 +673,6 @@
 		<managed-bean-scope>none</managed-bean-scope>
 	</managed-bean>
 
-	<managed-bean>
-		<managed-bean-name>companyControllerListener</managed-bean-name>
-		<managed-bean-class>
-			com.code.aon.ui.company.event.CompanyControllerListener
-		</managed-bean-class>
-		<managed-bean-scope>none</managed-bean-scope>
-	</managed-bean>
-	
 	<managed-bean>
 		<managed-bean-name>companyAddress</managed-bean-name>
 		<managed-bean-class>
@@ -1916,7 +1922,7 @@
 			<value>Invoice</value>
 		</managed-property>
 	</managed-bean>
-	
+
 	<!-- ************ FEEINVOICING DETAIL ************* -->
 	<managed-bean>
 		<managed-bean-name>feeInvoicingDetail</managed-bean-name>
