@@ -39,11 +39,11 @@
 			styleClass="aon-finding-toolbar-item aon-icon-mailAccountChange">
 		</aon:commandButton>
 
-		<aon:commandButton id="blackListCB"
-			rendered="#{blacklist.blackListConfigured}"
-			title="#{appBundle.aon_webmail_black_white_list}" action="bwlist"
-			actionListener="#{blacklist.onLoad}"
-			value="#{appBundle.aon_webmail_black_white_list}"
+		<aon:commandButton id="spam"
+			rendered="#{spam.spamEnabled}"
+			title="#{appBundle.aon_webmail_spam}" action="spam"
+			actionListener="#{spam.onLoad}"
+			value="#{appBundle.aon_webmail_spam}"
 			styleClass="aon-finding-toolbar-item aon-icon-mail-spam">
 		</aon:commandButton>
 
