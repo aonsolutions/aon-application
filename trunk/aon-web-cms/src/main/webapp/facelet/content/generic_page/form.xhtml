@@ -39,6 +39,7 @@
 						<aon:commandButton id="save"
 							value="#{bundle.aon_save}" 
 							rendered="#{generic_page.to!=null or header.new}"
+							action="generic_page_form"
 							actionListener="#{generic_page.onAccept}"
 							styleClass="aon-finding-toolbar-item aon-icon-accept"
 							accesskey="#{bundle.aon_key_save}"/>
