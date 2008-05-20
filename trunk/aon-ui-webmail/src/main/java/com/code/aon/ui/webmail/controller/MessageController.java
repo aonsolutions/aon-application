@@ -54,7 +54,7 @@ import com.code.aon.webmail.MailAccount;
 import com.code.aon.webmail.Signature;
 import com.sun.mail.util.LineOutputStream;
 
-public class MessageController implements IAonFileListener{
+public class MessageController implements AonConstants, IAonFileListener {
 
 	private static final Logger LOGGER = Logger.getLogger(MessageController.class.getName());
 	
@@ -76,7 +76,7 @@ public class MessageController implements IAonFileListener{
 
     private List<AonFile> newMsgFileList;
 
-    private String returnAction = AonConstants.NAVIGATION_FOLDER;
+    private String returnAction = NAVIGATION_FOLDER;
     
 	/**
 	 * @return the message
@@ -111,8 +111,9 @@ public class MessageController implements IAonFileListener{
 	 * @return the returnAction
 	 */
 	public String getDeleteReturnAction() {
-		if (getMessageList().size()>0)
-			return AonConstants.NAVIGATION_MESSAGE;
+		if ( getMessageList().size()>0 ) {
+			return NAVIGATION_MESSAGE;
+		}
 		return returnAction;
 	}
 
@@ -225,7 +226,7 @@ public class MessageController implements IAonFileListener{
 			}else if (message.getParent().getFolder().getFullName().equals(AonFolder.SPAM_FOLDER_NAME)){
 				message.getParent().deleteMessages(lst);
 			}else{
-		    	WebMailController webMailController = (WebMailController)AonUtil.getRegisteredBean(AonConstants.BEAN_WEBMAIL);
+		    	WebMailController webMailController = (WebMailController)AonUtil.getRegisteredBean(BEAN_WEBMAIL);
 		    	AonFolder dest = webMailController.getServer().getAonFolder(AonFolder.TRASH_FOLDER_NAME);
 		    	message.getParent().moveMessages(lst, dest);
 			}
@@ -312,7 +313,7 @@ public class MessageController implements IAonFileListener{
 	
     public void send(ActionEvent event) {
     	try{
-	    	WebMailController webMailController = (WebMailController)AonUtil.getRegisteredBean(AonConstants.BEAN_WEBMAIL);
+	    	WebMailController webMailController = (WebMailController)AonUtil.getRegisteredBean(BEAN_WEBMAIL);
 	    	AonMessage aonMessage = compoundMessage(
 	    			recipientsTo,
 	    			recipientsCc, 
@@ -369,7 +370,7 @@ public class MessageController implements IAonFileListener{
 			AonMessage parentAonMsg,
 			List<AonFile> fileList) 
 			throws MessagingException, WebmailException {
-    	WebMailController webMailController = (WebMailController)AonUtil.getRegisteredBean(AonConstants.BEAN_WEBMAIL);
+    	WebMailController webMailController = (WebMailController)AonUtil.getRegisteredBean(BEAN_WEBMAIL);
     	AonMessage newMessage = webMailController.getServer().createAonMessage();
        	if (recipientsTo!=null)
        		newMessage.setRecipientsTo(recipientsTo);
@@ -420,7 +421,7 @@ public class MessageController implements IAonFileListener{
 	}
 
 	private void initVars(){
-    	WebMailController webMailController = (WebMailController)AonUtil.getRegisteredBean(AonConstants.BEAN_WEBMAIL);
+    	WebMailController webMailController = (WebMailController)AonUtil.getRegisteredBean(BEAN_WEBMAIL);
 		sender = webMailController.getServer().getAccount().getEmail();
 		recipientsTo = null;
 		recipientsCc = null;
@@ -515,7 +516,7 @@ public class MessageController implements IAonFileListener{
 	//********************************************************************************************
     
     private Signature getSignature(){
-   		WebMailController wmc = (WebMailController)AonUtil.getRegisteredBean(AonConstants.BEAN_WEBMAIL);
+   		WebMailController wmc = (WebMailController)AonUtil.getRegisteredBean(BEAN_WEBMAIL);
    		MailAccount account = wmc.getServer().getAccount();
    		return account.getSignature();
     }
@@ -541,7 +542,7 @@ public class MessageController implements IAonFileListener{
 	}
 	
 	public void openEmailsPanelPopup(ActionEvent event){
-		MultiSelectionEmailBean multiSelectionEmailBean = (MultiSelectionEmailBean)AonUtil.getRegisteredBean(AonConstants.BEAN_MULTISELECTIONEMAIL);
+		MultiSelectionEmailBean multiSelectionEmailBean = (MultiSelectionEmailBean)AonUtil.getRegisteredBean(BEAN_MULTISELECTIONEMAIL);
 		multiSelectionEmailBean.reload();
 		setShowEmailsWindow(true);
 	}
@@ -564,7 +565,7 @@ public class MessageController implements IAonFileListener{
 
 
 	public void acceptAllEmailItems(ActionEvent event){
-		MultiSelectionEmailBean bean = (MultiSelectionEmailBean)AonUtil.getRegisteredBean(AonConstants.BEAN_MULTISELECTIONEMAIL);
+		MultiSelectionEmailBean bean = (MultiSelectionEmailBean)AonUtil.getRegisteredBean(BEAN_MULTISELECTIONEMAIL);
 		List<Contact> lst = bean.getSelectedRows();
 		email = "";
         for (int i = 0, max = lst.size(); i < max; i++) {
@@ -696,12 +697,12 @@ public class MessageController implements IAonFileListener{
 	// ****************************************************************
 
 	private ArrayList<AonMessage> getMessageList(){
-		if (AonConstants.NAVIGATION_FOLDER.equals(returnAction)){
+		if (NAVIGATION_FOLDER.equals(returnAction)){
 			if (this.getMessage()==null)
 				return new ArrayList<AonMessage>();
 			return this.getMessage().getParent().getMessageList();
-		}else if(AonConstants.NAVIGATION_SEARCH.equals(returnAction)){
-			SearchController sc = (SearchController)AonUtil.getRegisteredBean(AonConstants.BEAN_SEARCH);
+		}else if(NAVIGATION_SEARCH.equals(returnAction)){
+			SearchController sc = (SearchController)AonUtil.getRegisteredBean(BEAN_SEARCH);
 			return sc.getSortableList().getMessageList();
 		}
 		return null;
@@ -856,13 +857,15 @@ public class MessageController implements IAonFileListener{
 	public void initContactName() {
 		this.contactName = "";
 		try {
-			String sender = message.getSender(-1);
-			String email = message.getSenderEmail();
-			if ( StringUtils.equals(sender, email) ) {
-				int pos = email.indexOf('@');
-				this.contactName = (pos != -1) ? email.substring(0, pos) : email;
-			} else {
-				this.contactName = sender;
+			if ( this.message != null ) {
+				String sender = message.getSender(-1);
+				String email = message.getSenderEmail();
+				if ( StringUtils.equals(sender, email) ) {
+					int pos = email.indexOf('@');
+					this.contactName = (pos != -1) ? email.substring(0, pos) : email;
+				} else {
+					this.contactName = sender;
+				}
 			}
 		} catch (WebmailException e) {
 			LOGGER.severe( "Error setting contactName" );
@@ -871,7 +874,7 @@ public class MessageController implements IAonFileListener{
 
 	public void saveToContacts(ActionEvent event) throws WebmailException, ManagerBeanException {
 		String email = message.getSenderEmail();
-		IController contactController = AonUtil.getController(AonConstants.BEAN_CONTACT);
+		IController contactController = AonUtil.getController(BEAN_CONTACT);
 		IManagerBean contactsBean = contactController.getManagerBean();
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(contactsBean.getFieldName(IContactAlias.CONTACT_EMAIL), email);
