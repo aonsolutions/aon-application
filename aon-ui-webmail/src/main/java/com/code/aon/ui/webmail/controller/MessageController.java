@@ -31,6 +31,7 @@ import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMultipart;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.myfaces.custom.fileupload.UploadedFile;
 
@@ -111,7 +112,7 @@ public class MessageController implements AonConstants, IAonFileListener {
 	 * @return the returnAction
 	 */
 	public String getDeleteReturnAction() {
-		if ( getMessageList().size()>0 ) {
+		if (! ArrayUtils.isEmpty(getMessageList()) ) {
 			return NAVIGATION_MESSAGE;
 		}
 		return returnAction;
@@ -218,8 +219,7 @@ public class MessageController implements AonConstants, IAonFileListener {
     }
 
     public void deleteSelectedMessage(ActionEvent event){
-    	ArrayList<AonMessage> lst = new ArrayList<AonMessage>();
-		lst.add(this.message);
+    	AonMessage[] lst = new AonMessage[] { this.message };
 		try{
 			if (message.getParent().getFolder().getFullName().equals(AonFolder.TRASH_FOLDER_NAME)){
 				message.getParent().deleteMessages(lst);
@@ -696,10 +696,10 @@ public class MessageController implements AonConstants, IAonFileListener {
 	// NEXT - PREVIOUS
 	// ****************************************************************
 
-	private ArrayList<AonMessage> getMessageList(){
+	private AonMessage[] getMessageList(){
 		if (NAVIGATION_FOLDER.equals(returnAction)){
 			if (this.getMessage()==null)
-				return new ArrayList<AonMessage>();
+				return new AonMessage[0];
 			return this.getMessage().getParent().getMessageList();
 		}else if(NAVIGATION_SEARCH.equals(returnAction)){
 			SearchController sc = (SearchController)AonUtil.getRegisteredBean(BEAN_SEARCH);
@@ -709,11 +709,11 @@ public class MessageController implements AonConstants, IAonFileListener {
 	}
 
 	public int getCurrentIndex(){
-		return getMessageList().indexOf(this.getMessage());
+		return ArrayUtils.indexOf( getMessageList(), getMessage() );
 	}
 	
 	public boolean isPreviousMessage(){
-		int index = getMessageList().indexOf(this.getMessage());
+		int index = getCurrentIndex();
 		index--;
 		if (index>=0)
 			return true;
@@ -721,26 +721,28 @@ public class MessageController implements AonConstants, IAonFileListener {
 	}
 
 	public boolean isNextMessage(){
-		int index = getMessageList().indexOf(this.getMessage());
+		int index = getCurrentIndex();
 		index++;
-		if (index<getMessageList().size())
+		if (index<getMessageList().length)
 			return true;
 		return false;
 	}
 
 	private AonMessage getPreviousMessage(){
-		int index = getMessageList().indexOf(this.getMessage());
+		int index = getCurrentIndex();
 		index--;
-		if (index>=0)
-			return getMessageList().get(index);
+		if (index>=0) {
+			return getMessageList()[index];
+		}
 		return null;
 	}
 	
 	private AonMessage getNextMessage(){
-		int index = getMessageList().indexOf(this.getMessage());
+		int index = getCurrentIndex();
 		index++;
-		if (index<getMessageList().size())
-			return getMessageList().get(index);
+		if (index < getMessageList().length ) {
+			return getMessageList()[index];
+		}
 		return null;
 	}
 	
@@ -763,8 +765,7 @@ public class MessageController implements AonConstants, IAonFileListener {
     	}else if (isPreviousMessage()){
     		nextMessage = getPreviousMessage();
     	}
-    	ArrayList<AonMessage> lst = new ArrayList<AonMessage>();
-		lst.add(this.message);
+    	AonMessage[] lst = new AonMessage[] { this.message };
 		try{
 	    	message.getParent().moveMessages(lst, dest);
 		} catch (MessagingException e) {

@@ -10,6 +10,8 @@ import javax.faces.event.ActionEvent;
 import javax.mail.Folder;
 import javax.mail.MessagingException;
 
+import org.apache.commons.lang.ArrayUtils;
+
 import com.code.aon.ui.util.AonUtil;
 import com.code.aon.ui.webmail.bean.AonConstants;
 import com.code.aon.ui.webmail.bean.AonFolder;
@@ -94,24 +96,6 @@ public class FolderController implements ITreeListener{
 		}
 	}
 
-	public void replyToCheckedMessage(ActionEvent event) {
-    	MessageController messageController = (MessageController)AonUtil.getRegisteredBean(AonConstants.BEAN_MESSAGE);
-    	messageController.setMessage(folder.getSelectedMessage());
-    	messageController.replyToSelectedMessage(null);
-    }
-
-	public void replyToAllCheckedMessage(ActionEvent event) {
-    	MessageController messageController = (MessageController)AonUtil.getRegisteredBean(AonConstants.BEAN_MESSAGE);
-    	messageController.setMessage(folder.getSelectedMessage());
-    	messageController.replyToAllMessage(null);
-    }
-
-	public void forwardCheckedMessage(ActionEvent event) {
-    	MessageController messageController = (MessageController)AonUtil.getRegisteredBean(AonConstants.BEAN_MESSAGE);
-    	messageController.setMessage(folder.getSelectedMessage());
-    	messageController.forwardMessage(null);
-    }
-
     public void deleteCheckedMessages(ActionEvent event) {
     	try{
    			deleteMessages(folder.getSelectedMessages());
@@ -132,7 +116,7 @@ public class FolderController implements ITreeListener{
 		}
     }
 
-    private void deleteMessages(List<AonMessage> messagesLst) throws MessagingException {
+    private void deleteMessages(AonMessage[] messagesLst) throws MessagingException {
 		if ((folder.getFolder().getFullName().equals(AonFolder.TRASH_FOLDER_NAME))
 				|| (folder.getFolder().getFullName().equals(AonFolder.SPAM_FOLDER_NAME))){
 			folder.deleteMessages(messagesLst);
@@ -154,16 +138,14 @@ public class FolderController implements ITreeListener{
 	// SELECT / UNSELECT ALL 
 	// *************************************************************************
     public void selectAllMessages(ActionEvent event){
-    	Iterator<AonMessage> iter = folder.getMessageList().iterator();
-    	while (iter.hasNext()){
-    		iter.next().setSelected(true);
+    	for( AonMessage message : folder.getMessageList() ) {
+    		message.setSelected(true);
     	}
     }
 
     public void deselectAllMessages(ActionEvent event){
-    	Iterator<AonMessage> iter = folder.getMessageList().iterator();
-    	while (iter.hasNext()){
-    		iter.next().setSelected(false);
+    	for( AonMessage message : folder.getMessageList() ) {
+    		message.setSelected(false);
     	}
     }
 
@@ -185,7 +167,7 @@ public class FolderController implements ITreeListener{
     	List<AonMessage> messages = new ArrayList<AonMessage>();
     	int currentPage = this.currentPage;
     	currentPage--;
-    	Object[] allMessages = folder.getMessageList().toArray();
+    	Object[] allMessages = folder.getMessageList();
     	for (int i = currentPage*pageObjectNumber;i < (currentPage*pageObjectNumber+pageObjectNumber); i++){
     		if (i < allMessages.length)
     			messages.add((AonMessage)allMessages[i]);
@@ -312,9 +294,9 @@ public class FolderController implements ITreeListener{
 	//********************************************************************************************
     public void moveSelectedMessages(AonFolder dest){
 		try {
-			List<AonMessage> messages = folder.getSelectedMessages();
-			if ( messages.size()>0 ) {
-					folder.moveMessages(messages, dest);
+			AonMessage[] messages = folder.getSelectedMessages();
+			if (! ArrayUtils.isEmpty(messages) ) {
+				folder.moveMessages(messages, dest);
 			}
 			try {
 				folder.refresh();

@@ -3,6 +3,8 @@ package com.code.aon.ui.webmail.controller;
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 
+import org.apache.commons.lang.ArrayUtils;
+
 import com.code.aon.ui.util.AonUtil;
 import com.code.aon.ui.webmail.bean.AonConstants;
 import com.code.aon.ui.webmail.bean.AonFolder;
@@ -136,7 +138,7 @@ public class SearchController {
 	}
 	
 	public boolean isResultFound(){
-		return !this.sortableList.getMessageList().isEmpty();
+		return ! ArrayUtils.isEmpty(this.sortableList.getMessageList());
 	}
 
 	public boolean isResultSelected(){
