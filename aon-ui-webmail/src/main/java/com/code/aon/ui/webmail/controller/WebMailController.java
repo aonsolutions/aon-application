@@ -5,6 +5,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Locale;
 import java.util.ResourceBundle;
 import java.util.logging.Logger;
@@ -34,7 +35,7 @@ import com.code.aon.webmail.MailAccount;
 import com.code.aon.webmail.Signature;
 import com.code.aon.webmail.dao.IWebMailAlias;
 
-public class WebMailController implements ILdapConstants {
+public class WebMailController implements AonConstants, ILdapConstants {
 
 	private static final Logger LOGGER = Logger.getLogger(WebMailController.class.getName());
 	
@@ -90,14 +91,14 @@ public class WebMailController implements ILdapConstants {
 	
 	public void initFull(MailAccount mailAccount) {
 		initBasic(mailAccount);
-    	FoldersTreeBean treeBean = (FoldersTreeBean)AonUtil.getRegisteredBean(AonConstants.BEAN_TREE);
+    	FoldersTreeBean treeBean = (FoldersTreeBean)AonUtil.getRegisteredBean(BEAN_TREE);
     	treeBean.loadTree();
-    	FolderController folderBean = (FolderController)AonUtil.getRegisteredBean(AonConstants.BEAN_FOLDER);
+    	FolderController folderBean = (FolderController)AonUtil.getRegisteredBean(BEAN_FOLDER);
     	folderBean.nodeSelected(getServer().getAonFolder(AonFolder.INBOX_FOLDER_NAME));
 	}
 
     private MailAccount getAccount(AuthPrincipal mailUser) throws ManagerBeanException {
-		IManagerBean beanAccount = AonUtil.getController(AonConstants.BEAN_MAIL_ACCOUNT).getManagerBean();
+		IManagerBean beanAccount = AonUtil.getController(BEAN_MAIL_ACCOUNT).getManagerBean();
 		Criteria criteriaAccount = new Criteria();
 		criteriaAccount.addEqualExpression(beanAccount.getFieldName(IWebMailAlias.MAIL_ACCOUNT_NAME), MailAccount.DEFAULT_MAIL_ACCOUNT_NAME);
 		Iterator<ITransferObject> iterAccount = beanAccount.getList(criteriaAccount).iterator();
@@ -139,19 +140,27 @@ public class WebMailController implements ILdapConstants {
     private void createDefaultSignature(MailAccount mailAccount){
     	if ( mailAccount.getSignature() == null ) {
     		try {
-				IManagerBean signatureBean = AonUtil.getController(AonConstants.BEAN_SIGNATURE).getManagerBean();
-	        	String BASE_NAME = "com.code.aon.ui.webmail.i18n.messages";
-	    		Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
-	            ResourceBundle bundle = ResourceBundle.getBundle(BASE_NAME, locale); 
-	        	Signature signature = new Signature();
-	        	signature.setName(Utils.getAuthPrincipal().getDomain());
-	        	signature.setSignature("<br><br><br><hr>"+
-	        			"<b><font size='4'>"+ getLoggedUserName()+"</font></b><p>"+
-	        			"<b><font size='2'>"+ getCompanyName()+"</font></b><p>"+
-	        			"<br>"+
-	        			"<i>"+bundle.getString("aon_webmail_signature_deftext")+"</i>");
-				signatureBean.insert(signature);
-				IManagerBean mailAccountBean = AonUtil.getController(AonConstants.BEAN_MAIL_ACCOUNT).getManagerBean();
+    			Signature signature = null;
+    			String name = Utils.getAuthPrincipal().getDomain();
+				IManagerBean signatureBean = AonUtil.getController(BEAN_SIGNATURE).getManagerBean();
+				Criteria criteria = new Criteria();
+				criteria.addEqualExpression(signatureBean.getFieldName(IWebMailAlias.SIGNATURE_NAME), name);
+				List<ITransferObject> list = signatureBean.getList(criteria);
+				if ( list.size() == 1) {
+					signature = (Signature) list.get(0);
+				} else {
+		    		Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
+		            ResourceBundle bundle = ResourceBundle.getBundle(RESOURCE_BUNDLE, locale); 
+		        	signature = new Signature();
+		        	signature.setName(name);
+		        	signature.setSignature("<br><br><br><hr>"+
+		        			"<b><font size='4'>"+ getLoggedUserName()+"</font></b><p>"+
+		        			"<b><font size='2'>"+ getCompanyName()+"</font></b><p>"+
+		        			"<br>"+
+		        			"<i>"+bundle.getString("aon_webmail_signature_deftext")+"</i>");
+					signatureBean.insert(signature);					
+				}
+				IManagerBean mailAccountBean = AonUtil.getController(BEAN_MAIL_ACCOUNT).getManagerBean();
 				mailAccount.setSignature(signature);
 				mailAccountBean.update(mailAccount);
     		} catch (ManagerBeanException e) {
