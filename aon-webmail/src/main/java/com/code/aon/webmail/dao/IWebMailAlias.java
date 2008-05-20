@@ -90,7 +90,13 @@ public interface IWebMailAlias {
 	*/
 	String  MAIL_ACCOUNT_PROTOCOL = "MailAccount_protocol";
 
+	/** 
+	* Alias value: MailAccount_signature
+	* Hibernate value: MailAccount.signature
+	*/
+	String  MAIL_ACCOUNT_SIGNATURE_ID = "MailAccount_signature";
 
+	
 	/** 
 	* Alias value: Signature_id
 	* Hibernate value: Signature.id

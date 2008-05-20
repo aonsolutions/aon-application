@@ -29,12 +29,12 @@
 
 		<aon:commandButton id="signature"
 			title="#{appBundle.aon_webmail_signature}" action="signature_list"
-			value="#{appBundle.aon_webmail_signature}"
+			value="#{appBundle.aon_webmail_signature}" actionListener="#{signature.onSearch}"
 			styleClass="aon-finding-toolbar-item aon-icon-signature">
 		</aon:commandButton>
 
 		<aon:commandButton id="mailAccountCahnge"
-			title="#{appBundle.aon_webmail_mailAccount}"
+			title="#{appBundle.aon_webmail_mailAccount}" actionListener="#{mailAccount.onSearch}"
 			action="mailAccount_list" value="#{appBundle.aon_webmail_mailAccount}"
 			styleClass="aon-finding-toolbar-item aon-icon-mailAccountChange">
 		</aon:commandButton>
