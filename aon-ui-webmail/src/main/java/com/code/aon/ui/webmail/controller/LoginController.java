@@ -4,9 +4,14 @@ import com.code.aon.bridge.plugin.Utils;
 import com.code.aon.jaas.auth.AuthPrincipal;
 import com.code.aon.ui.util.AonUtil;
 import com.code.aon.ui.webmail.bean.AonConstants;
+import com.code.aon.ui.webmail.bean.AonFolder;
 
-public class LoginController {
+public class LoginController implements AonConstants {
 
+	private static final String LOGIN_SUCCESS = NAVIGATION_FOLDER;
+	
+	private static final String LOGIN_ERROR = NAVIGATION_LOGIN;
+	
 	private AuthPrincipal mailUser;
 
 	private boolean logged;
@@ -36,7 +41,7 @@ public class LoginController {
 			System.out.println("LoginController -> startWebmail -> logged");
 	    	if (mailUser != null) {
 				System.out.println("LoginController -> startWebmail -> initWebmail");
-	    		WebMailController webmail = (WebMailController)AonUtil.getRegisteredBean(AonConstants.BEAN_WEBMAIL);
+	    		WebMailController webmail = (WebMailController)AonUtil.getRegisteredBean(BEAN_WEBMAIL);
 	    		webmail.initDefault(mailUser);
 	    		if (webmail.getServer()!=null){
 	    			logged = true;
@@ -72,8 +77,5 @@ public class LoginController {
 	public String getPage() {
 		return page;
 	}
-    
-	private static String LOGIN_SUCCESS = AonConstants.NAVIGATION_FOLDER;
-	private static String LOGIN_ERROR = AonConstants.NAVIGATION_LOGIN;
 	
 }

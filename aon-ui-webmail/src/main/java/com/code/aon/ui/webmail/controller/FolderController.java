@@ -47,8 +47,9 @@ public class FolderController implements ITreeListener{
 	 * @return the folder
 	 */
 	public AonFolder getFolder() {
-		if (this.folder!=null && !this.folder.isOpen())
+		if (this.folder!=null && !this.folder.isOpen()) {
 			this.folder.open(Folder.READ_WRITE);
+		}
 		return this.folder;
 	}
 
