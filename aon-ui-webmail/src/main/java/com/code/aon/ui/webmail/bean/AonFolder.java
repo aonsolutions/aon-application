@@ -6,6 +6,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.faces.event.ActionEvent;
+import javax.mail.FetchProfile;
 import javax.mail.Flags;
 import javax.mail.Folder;
 import javax.mail.Message;
@@ -77,6 +78,10 @@ public class AonFolder extends AonMessageSortableList {
 		try {
 			open(Folder.READ_WRITE);
 			Message[] messages = folder.getMessages();
+			FetchProfile profile = new FetchProfile();
+			profile.add(FetchProfile.Item.FLAGS);
+			profile.add(FetchProfile.Item.ENVELOPE);
+			folder.fetch(messages, profile);
 
 			AonMessage[] list = new AonMessage[messages.length];
 			for (int i = 0, n = 0; i < messages.length; i++) {
