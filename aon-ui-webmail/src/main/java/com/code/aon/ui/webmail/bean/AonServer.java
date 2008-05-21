@@ -62,6 +62,7 @@ public class AonServer {
         try {
             Properties mailProperties = System.getProperties();
 
+            // mailProperties.setProperty("mail.debug", "true");
             // setup SSL connection factory
             if (account.isIncomingSsl()) {
                 mailProperties.setProperty("mail.imap.socketFactory.class",
