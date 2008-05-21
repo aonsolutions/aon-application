@@ -18,9 +18,17 @@ import com.code.aon.jaas.client.ast.IDomainApplication;
 import com.code.aon.jaas.client.ast.IRelation;
 import com.code.aon.jaas.client.ast.core.Relation;
 import com.code.aon.jaas.deployment.DeploymentException;
+import com.code.aon.ldap.AonDN;
+import com.code.aon.ldap.BasicLdap;
+import com.code.aon.ldap.DistinguishedName;
+import com.code.aon.ldap.IAonObjectClasses;
+import com.code.aon.ldap.ILdapConstants;
+import com.code.aon.ldap.LdapException;
 import com.code.aon.ui.form.BasicController;
+import com.code.aon.ui.form.IController;
+import com.code.aon.ui.util.AonUtil;
 
-public class AonDomainController extends BasicController {
+public class AonDomainController extends BasicController implements IAonObjectClasses {
 
 	/** Domain manager. */
     private DomainManager domainManager = null;
@@ -142,6 +150,7 @@ public class AonDomainController extends BasicController {
 
 	public void acceptProfile(ActionEvent event) {
 		try {
+			newProfile = false;
 			getDomainManager().saveProfile();
 			loadProfiles();
 		} catch (DeploymentException e) {
@@ -221,5 +230,20 @@ public class AonDomainController extends BasicController {
 	public void setCurrentTab(String currentTab) {
 		this.currentTab = currentTab;
 	}
+	
+	private boolean isSystemProfile( String name ) {
+		DistinguishedName profileDN = AonDN.getApplicationProfileDN(da.getId(), name);
+		BasicLdap ldap = new BasicLdap();
+		return ldap.exists( profileDN, PROFILE );
+	}
+	
+	public boolean isSelectedSystemProfile() {
+		return isSystemProfile(this.profile.getId());
+	}
 
+	public boolean isCurrentSystemProfile() {
+		Relation profile = (Relation)this.profiles.getRowData();
+		return isSystemProfile(profile.getId());
+	}
+	
 }

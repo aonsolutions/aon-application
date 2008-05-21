@@ -59,6 +59,18 @@
 								</f:facet>
 								<aon:outputText value="#{to.id}"/>
 							</aon:column>
+							<aon:column>
+								<f:facet name="header">
+									<aon:outputText value="#{appBundle.aon_desktop_profile_type}"/>
+								</f:facet>
+								<aon:outputText
+									value="#{appBundle.aon_desktop_profile_domain}"
+									rendered="#{!domain.currentSystemProfile}">
+								</aon:outputText>
+								<aon:outputText
+									value="#{appBundle.aon_desktop_profile_system}"
+									rendered="#{domain.currentSystemProfile}" />
+							</aon:column>
 
 						</aon:dataTable>
                     </aon:panelTab>
