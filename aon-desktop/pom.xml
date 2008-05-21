@@ -11,7 +11,7 @@
 	<groupId>com.code.aon</groupId>
 	<artifactId>aon.desktop</artifactId>
 	<packaging>war</packaging>
-	<version>1.0.5</version>
+	<version>1.0.8</version>
 	<description>AON DESKTOP</description>
 	<name>AON DESKTOP</name>
 	<build>
@@ -26,14 +26,20 @@
 		</dependency>
 		<dependency>
 			<groupId>com.code.aon</groupId>
+			<artifactId>aon.ui.form</artifactId>
+			<version>2.0.4</version>
+			<scope>compile</scope>
+		</dependency>		
+		<dependency>
+			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.resources</artifactId>
-			<version>1.0.0</version>
+			<version>1.0.2</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.security.bridge</artifactId>
-			<version>1.2.13</version>
+			<version>1.2.14</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
@@ -41,6 +47,24 @@
 			<artifactId>aon.security</artifactId>
 			<version>1.2.11</version>
 			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.code.aon</groupId>
+			<artifactId>aon.ui.webmail</artifactId>
+			<version>3.0.10</version>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.code.aon</groupId>
+			<artifactId>aon.ui.config</artifactId>
+			<version>2.0.8</version>
+			<scope>compile</scope>
+			<exclusions>
+				<exclusion>
+					<groupId>com.code.aon</groupId>
+					<artifactId>aon.ui.menu</artifactId>
+				</exclusion>
+			</exclusions>			
 		</dependency>
 		<dependency>
 			<groupId>com.code.aon</groupId>
@@ -52,24 +76,16 @@
 					<groupId>org.apache.myfaces.tomahawk</groupId>
 					<artifactId>tomahawk</artifactId>
 				</exclusion>
+				<exclusion>
+					<groupId>com.code.aon</groupId>
+					<artifactId>aon.ui.menu</artifactId>
+				</exclusion>
 			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>com.code.aon</groupId>
-			<artifactId>aon.ui.webmail</artifactId>
-			<version>3.0.4</version>
-			<scope>compile</scope>
-		</dependency>
-		<dependency>
-			<groupId>com.code.aon</groupId>
-			<artifactId>aon.ui.config</artifactId>
-			<version>2.0.8</version>
-			<scope>compile</scope>
-		</dependency>
-		<dependency>
-			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.groupware</artifactId>
-			<version>2.1.5</version>
+			<version>2.1.9</version>
 			<scope>compile</scope>
 		</dependency>
 	</dependencies>

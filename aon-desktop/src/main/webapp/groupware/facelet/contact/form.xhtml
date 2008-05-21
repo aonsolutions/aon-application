@@ -67,10 +67,16 @@
 
 				<aon:panelGrid columns="2" dir="true">
 
+					<aon:outputLabel for="Contact_displayName"
+						value="#{groupwareBundle.contact_displayName}" />
+					<aon:inputText id="Contact_displayName"
+						maxlength="64" size="80" required="true"
+						value="#{contact.to.displayName}" />
+
 					<aon:outputLabel for="Contact_name"
 						value="#{groupwareBundle.contact_name}" />
 					<aon:inputText id="Contact_name"
-						maxlength="64" size="80" required="true"
+						maxlength="64" size="80"
 						value="#{contact.to.name}" />
 
 					<aon:outputLabel for="Contact_surname"
