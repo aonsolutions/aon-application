@@ -5,21 +5,37 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import javax.faces.event.ActionEvent;
 import javax.mail.Flags;
 import javax.mail.Folder;
 import javax.mail.Message;
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
 
-import org.apache.commons.lang.ArrayUtils;
-
+import com.code.aon.ui.util.AonUtil;
+import com.code.aon.ui.webmail.controller.MessageController;
 import com.code.aon.ui.webmail.exception.WebmailException;
 
 public class AonFolder extends AonMessageSortableList {
 
+    // Draft folder
+    public static final String DRAFT_FOLDER_NAME = "Borrador";
+
+    // Trash folder
+    public static final String TRASH_FOLDER_NAME = "Papelera";
+
+    // Sent Items folder decloration
+    public static final String SENT_FOLDER_NAME = "Enviados";
+
+    // Sent Items folder decloration
+    public static final String INBOX_FOLDER_NAME = "INBOX";
+
+    // Spam folder decloration
+    public static final String SPAM_FOLDER_NAME = "spam";
+	
 	private static final Logger LOGGER = Logger.getLogger(AonFolder.class
 			.getName());
-
+	
 	public AonFolder(Folder folder) {
 		super(DATE_COLUMN,folder);
 	}
@@ -47,13 +63,6 @@ public class AonFolder extends AonMessageSortableList {
 		return folderList;
 	}
 
-	public AonMessage[] getMessageList(){
-		if (!oldSort.equals(sort) || oldAscending != ascending) {
-			sort();
-		}
-		return messageList;
-	}
-
 	public void deleteFolder(boolean content) throws WebmailException{
 		try {
 			close(false);
@@ -69,16 +78,16 @@ public class AonFolder extends AonMessageSortableList {
 			open(Folder.READ_WRITE);
 			Message[] messages = folder.getMessages();
 
-			messageList = new AonMessage[messages.length];
-			AonMessage aonMessage;
+			AonMessage[] list = new AonMessage[messages.length];
 			for (int i = 0, n = 0; i < messages.length; i++) {
 				if (messages[i] != null && !messages[i].isExpunged()) {
-					aonMessage = new AonMessage();
+					AonMessage aonMessage = new AonMessage();
                 	aonMessage.setParent(this);
                 	aonMessage.setMessage((MimeMessage)messages[i]);
-                    messageList[n++] = aonMessage;
+                	list[n++] = aonMessage;
                 }
             }
+			setMessageList(list);
         } catch (MessagingException e) {
 			LOGGER.log(Level.ALL,"Error reading messages ", e);
 			throw new WebmailException(e);
@@ -127,21 +136,6 @@ public class AonFolder extends AonMessageSortableList {
 		return false;
 	}
 
-    // Draft folder
-    public static final String DRAFT_FOLDER_NAME = "Borrador";
-
-    // Trash folder
-    public static final String TRASH_FOLDER_NAME = "Papelera";
-
-    // Sent Items folder decloration
-    public static final String SENT_FOLDER_NAME = "Enviados";
-
-    // Sent Items folder decloration
-    public static final String INBOX_FOLDER_NAME = "INBOX";
-
-    // Spam folder decloration
-    public static final String SPAM_FOLDER_NAME = "spam";
-
     public void moveMessages(AonMessage[] messagesToMove, AonFolder destinationFolder) throws MessagingException {
     	Message[] messages = new Message[messagesToMove.length];
     	for(int pos=0; pos<messagesToMove.length; pos++){
@@ -161,7 +155,6 @@ public class AonFolder extends AonMessageSortableList {
     		messagesToDelete[pos].getMessage().setFlag(Flags.Flag.DELETED, true);
     		messagesToDelete[pos].setSelected(false);
     	}
-        //folder.setFlags(messages,new Flags(Flags.Flag.DELETED), true);
         folder.expunge();
     }
 
@@ -241,16 +234,9 @@ public class AonFolder extends AonMessageSortableList {
     // SELECTED ROWS
     //**************************************************************
 
-    public AonMessage getSelectedMessage() {
-    	if (! ArrayUtils.isEmpty(messageList) ) {
-    		return messageList[0];
-    	}
-    	return null;
-    }
-
     public AonMessage[] getSelectedMessages(){
     	List<AonMessage> selectedAonMessages = new ArrayList<AonMessage>();
-    	for (AonMessage aonMessage : messageList) {
+    	for (AonMessage aonMessage : getMessageList()) {
     		if (aonMessage.isSelected()) {
     			selectedAonMessages.add(aonMessage);
     		}
@@ -258,4 +244,10 @@ public class AonFolder extends AonMessageSortableList {
     	return selectedAonMessages.toArray(new AonMessage[selectedAonMessages.size()]);
     }
 
+    public void changeSelectedMessage(ActionEvent event) {
+    	AonMessage message = (AonMessage) getModel().getRowData();
+       	MessageController messageController = (MessageController) AonUtil.getRegisteredBean(AonConstants.BEAN_MESSAGE);
+       	messageController.setMessage( message );      	
+    }
+    
 }
