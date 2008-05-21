@@ -343,4 +343,8 @@ public class DesktopController extends BasicController {
 		if (session.getAttribute("AON_KEY_VALIDATOR_OK") != null) return true;
 		return false;
     }
+    
+    public boolean isRoleManager() {
+    	return FacesContext.getCurrentInstance().getExternalContext().isUserInRole("Manager");
+    }
 }
