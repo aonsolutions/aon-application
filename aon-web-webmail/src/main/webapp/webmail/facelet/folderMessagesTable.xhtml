@@ -109,20 +109,24 @@
 			</aon:panelGroup>
 			<aon:div style="width:99%" rendered="#{folder.folder.messageCount>0}">
 				<aon:dataTable id="messageDataTable"
-					value="#{folder.folder.messageList}" var="to"
+					value="#{folder.folder.model}" var="to"
 					rows="#{folder.pageObjectNumber}"
 					columnClasses="aon-width-80,
 							aon-editDataTable-textColumn,
 							aon-editDataTable-textColumn,
 							aon-editDataTable-textColumn">
 							
+					<aon:rowSelector 
+						action="message" actionListener="#{folder.folder.changeSelectedMessage}" />							
+							
 					<aon:column id="folderCol">
 						<f:facet name="header">
 							<aon:outputText value="&nbsp;" />
 						</f:facet>
 						<aon:selectBooleanCheckbox styleClass="aon-float-left"
-							id="checkMessage" value="#{to.selected}">
-							<a4j:support event="onclick" eventsQueue="deleteMessage"
+							id="checkMessage" value="#{to.selected}"
+							onmouseover="disableRowSelector();" onmouseout="enableRowSelector();">
+							<a4j:support event="onclick" eventsQueue="deleteMessage" reRender="checkMessage"
 								ajaxSingle="true" delay="200" ignoreDupResponses="true" />
 						</aon:selectBooleanCheckbox>
 						<aon:panelGroup styleClass="aon-float-left">
@@ -158,19 +162,16 @@
 							</aon:div>
 						</f:facet>
 						<aon:div style="white-space:nowrap">
-							<aon:commandLink action="message"
-								actionListener="#{to.changeSelectedMessage}">
-								<aon:outputText escape="false" title="#{to.senderEmail}"
-									value="#{to.senderShort}"
-									rendered="#{!folder.sentItemColumn and to.readed}" />
-								<aon:outputText escape="false" title="#{to.senderEmail}"
-									value="#{to.senderShort}"
-									rendered="#{!folder.sentItemColumn and !to.readed}"
-									style="font-weight: bold" />
-								<aon:outputText escape="false" title="#{to.recipientsToEmail}"
-									value="#{to.recipientsToShort}"
-									rendered="#{folder.sentItemColumn}" />
-							</aon:commandLink>
+							<aon:outputText escape="false" title="#{to.senderEmail}"
+								value="#{to.senderShort}"
+								rendered="#{!folder.sentItemColumn and to.readed}" />
+							<aon:outputText escape="false" title="#{to.senderEmail}"
+								value="#{to.senderShort}"
+								rendered="#{!folder.sentItemColumn and !to.readed}"
+								style="font-weight: bold" />
+							<aon:outputText escape="false" title="#{to.recipientsToEmail}"
+								value="#{to.recipientsToShort}"
+								rendered="#{folder.sentItemColumn}" />
 						</aon:div>
 					</aon:column>
 					<aon:column>
@@ -180,13 +181,10 @@
 								<aon:outputText value="#{appBundle.aon_webmail_subject}" />
 							</aon:commandLink>
 						</f:facet>
-						<aon:commandLink action="message"
-							actionListener="#{to.changeSelectedMessage}">
-							<aon:outputText escape="false" value="#{to.subjectShort}"
-								rendered="#{to.readed}" />
-							<aon:outputText escape="false" value="#{to.subjectShort}"
-								rendered="#{!to.readed}" style="font-weight: bold" />
-						</aon:commandLink>
+						<aon:outputText escape="false" value="#{to.subjectShort}"
+							rendered="#{to.readed}" />
+						<aon:outputText escape="false" value="#{to.subjectShort}"
+							rendered="#{!to.readed}" style="font-weight: bold" />
 					</aon:column>
 					<aon:column>
 						<f:facet name="header">
@@ -196,13 +194,10 @@
 							</aon:commandLink>
 						</f:facet>
 						<aon:div style="white-space:nowrap">
-							<aon:commandLink action="message"
-								actionListener="#{to.changeSelectedMessage}">
-								<aon:outputText value="#{to.sentDateString}"
-									rendered="#{to.readed}" />
-								<aon:outputText value="#{to.sentDateString}"
-									rendered="#{!to.readed}" style="font-weight: bold" />
-							</aon:commandLink>
+							<aon:outputText value="#{to.sentDateString}"
+								rendered="#{to.readed}" />
+							<aon:outputText value="#{to.sentDateString}"
+								rendered="#{!to.readed}" style="font-weight: bold" />
 						</aon:div>
 					</aon:column>
 				</aon:dataTable>
