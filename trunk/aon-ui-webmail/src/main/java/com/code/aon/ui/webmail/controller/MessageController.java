@@ -19,6 +19,7 @@ import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
+import javax.faces.event.ValueChangeEvent;
 import javax.faces.validator.LengthValidator;
 import javax.mail.BodyPart;
 import javax.mail.Folder;
@@ -52,7 +53,6 @@ import com.code.aon.ui.webmail.converter.MaxLenghtStringConverter;
 import com.code.aon.ui.webmail.exception.WebmailException;
 import com.code.aon.ui.webmail.listener.IAonFileListener;
 import com.code.aon.webmail.MailAccount;
-import com.code.aon.webmail.Signature;
 import com.sun.mail.util.LineOutputStream;
 
 public class MessageController implements AonConstants, IAonFileListener {
@@ -78,6 +78,10 @@ public class MessageController implements AonConstants, IAonFileListener {
     private List<AonFile> newMsgFileList;
 
     private String returnAction = NAVIGATION_FOLDER;
+    
+    private String senderMailAccountId;
+    
+    private String messageBody;
     
 	/**
 	 * @return the message
@@ -136,14 +140,10 @@ public class MessageController implements AonConstants, IAonFileListener {
 		try {
 			recipientsTo = AonMessage.parseDisplayAddress(message.getSender());
 	       	subject = "Reply: "+message.getSubject();
-	        StringBuffer localBody = new StringBuffer(content);
-	        localBody.append("<br/>---------- Replied message ----------");
-	        localBody.append("<br/>From: ").append(message.getSender());
-	        localBody.append("<br/>Date: ").append(message.getSentDate());
-	        localBody.append("<br/>Subject: ").append(message.getSubject());
-	        localBody.append("<br/><br/><br/>");
-	        localBody.append(message.getContent());
-	       	content = localBody.toString();
+	       	messageBody = "<br/>---------- Replied message ----------" +
+	       		"<br/>From: " + message.getSender() + "<br/>Date: " + message.getSentDate() +
+	       		"<br/>Subject: " + message.getSubject() + "<br/><br/><br/>" + message.getContent();
+	       	content += messageBody;
 		} catch (WebmailException e) {
     		AonUtil.addErrorMessage(e.getMessage());
     		throw new AbortProcessingException(e);
@@ -159,14 +159,10 @@ public class MessageController implements AonConstants, IAonFileListener {
 	       	dest += message.getRecipientsCc()+AonMessageUtils.EMAIL_SEPARATOR;
 			recipientsTo = AonMessage.parseDisplayAddress(dest);
 	       	subject = "ReplyALL: "+message.getSubject();
-	        StringBuffer localBody = new StringBuffer(content);
-	        localBody.append("<br/>---------- Replied message ----------");
-	        localBody.append("<br/>From: ").append(message.getSender());
-	        localBody.append("<br/>Date: ").append(message.getSentDate());
-	        localBody.append("<br/>Subject: ").append(message.getSubject());
-	        localBody.append("<br/><br/><br/>");
-	        localBody.append(message.getContent());
-	       	content = localBody.toString();
+	       	messageBody = "<br/>---------- Replied message ----------" +
+       			"<br/>From: " + message.getSender() + "<br/>Date: " + message.getSentDate() +
+       			"<br/>Subject: " + message.getSubject() + "<br/><br/><br/>" + message.getContent();
+	       	content += messageBody;
 		} catch (WebmailException e) {
 			AonUtil.addErrorMessage(e.getMessage());
 			throw new AbortProcessingException(e);
@@ -204,14 +200,10 @@ public class MessageController implements AonConstants, IAonFileListener {
 				}
 	       	}
 	       	subject = "Fwd: "+message.getSubject();
-	        StringBuffer localBody = new StringBuffer(content);
-	        localBody.append("<br/>---------- Forwarded message ----------");
-	        localBody.append("<br/>From: ").append(message.getSender());
-	        localBody.append("<br/>Date: ").append(message.getSentDate());
-	        localBody.append("<br/>Subject: ").append(message.getSubject());
-	        localBody.append("<br/><br/><br/>");
-	        localBody.append(message.getContent());
-	       	content = localBody.toString();
+	       	messageBody = "<br/>---------- Forwarded message ----------" +
+	       		"<br/>From: " + message.getSender() + "<br/>Date: " + message.getSentDate() +
+	       		"<br/>Subject: " + message.getSubject() + "<br/><br/><br/>";
+	       	content += messageBody;
 		} catch (WebmailException e) {
 			AonUtil.addErrorMessage(e.getMessage());
 			throw new AbortProcessingException(e);
@@ -312,9 +304,12 @@ public class MessageController implements AonConstants, IAonFileListener {
 	
 	
     public void send(ActionEvent event) {
-    	try{
+    	try {
+			IManagerBean mailAccountBean = AonUtil.getController(BEAN_MAIL_ACCOUNT).getManagerBean();	
+			MailAccount mailAccount = (MailAccount) mailAccountBean.get( senderMailAccountId );   		
 	    	WebMailController webMailController = (WebMailController)AonUtil.getRegisteredBean(BEAN_WEBMAIL);
 	    	AonMessage aonMessage = compoundMessage(
+	    			mailAccount.getEmail(),
 	    			recipientsTo,
 	    			recipientsCc, 
 	    			recipientsBcc,
@@ -347,6 +342,9 @@ public class MessageController implements AonConstants, IAonFileListener {
 		} catch (MessagingException e) {
 			AonUtil.addErrorMessage(e.getMessage());
 			throw new AbortProcessingException(e);
+		} catch (ManagerBeanException e) {
+			AonUtil.addErrorMessage(e.getMessage());
+			throw new AbortProcessingException(e);
 		}
     }
 
@@ -361,7 +359,8 @@ public class MessageController implements AonConstants, IAonFileListener {
 	* Method for compounding the message.
 	 * @throws WebmailException 
 	*/
-	private AonMessage compoundMessage( 
+	private AonMessage compoundMessage(
+			String sender,
 			String recipientsTo,
 			String recipientsCC, 
 			String recipientsBCC,
@@ -371,7 +370,7 @@ public class MessageController implements AonConstants, IAonFileListener {
 			List<AonFile> fileList) 
 			throws MessagingException, WebmailException {
     	WebMailController webMailController = (WebMailController)AonUtil.getRegisteredBean(BEAN_WEBMAIL);
-    	AonMessage newMessage = webMailController.getServer().createAonMessage();
+    	AonMessage newMessage = webMailController.getServer().createAonMessage(sender);
        	if (recipientsTo!=null)
        		newMessage.setRecipientsTo(recipientsTo);
        	if (recipientsCC!=null)
@@ -422,12 +421,14 @@ public class MessageController implements AonConstants, IAonFileListener {
 
 	private void initVars(){
     	WebMailController webMailController = (WebMailController)AonUtil.getRegisteredBean(BEAN_WEBMAIL);
-		sender = webMailController.getServer().getAccount().getEmail();
+    	MailAccount account = webMailController.getServer().getAccount();
+		sender = account.getEmail();
+		senderMailAccountId = account.getId();
 		recipientsTo = null;
 		recipientsCc = null;
 		recipientsBcc = null;
-		subject = null;
-		content = getSignature()!=null?getSignature().getSignature():"";
+		subject = null;		
+		content = (account.getSignature()!=null)?account.getSignature().getSignature():"";
     	newMsgFileList = new ArrayList<AonFile>();
 		
 	}
@@ -511,16 +512,6 @@ public class MessageController implements AonConstants, IAonFileListener {
     	this.content = content;
     }
 
-	//********************************************************************************************
-	//SIGNATURE
-	//********************************************************************************************
-    
-    private Signature getSignature(){
-   		WebMailController wmc = (WebMailController)AonUtil.getRegisteredBean(BEAN_WEBMAIL);
-   		MailAccount account = wmc.getServer().getAccount();
-   		return account.getSignature();
-    }
-    
 	//********************************************************************************************
 	// EMAIL SELECTION POPUP
 	//********************************************************************************************
@@ -897,5 +888,26 @@ public class MessageController implements AonConstants, IAonFileListener {
 			contactController.onSearch(null);
 		}
     }
+	
+	public String getSenderMailAccountId() {
+		return senderMailAccountId;
+	}
 
+	public void setSenderMailAccountId(String senderMailAccountId) {
+		this.senderMailAccountId = senderMailAccountId;
+	}
+	
+	@SuppressWarnings("unchecked")
+	public void onMailAccountChanged(ValueChangeEvent event) throws ManagerBeanException {
+		if(event.getNewValue() != null) {
+			IManagerBean mailAccountBean = AonUtil.getController(BEAN_MAIL_ACCOUNT).getManagerBean();	
+			MailAccount mailAccount = (MailAccount) mailAccountBean.get( event.getNewValue().toString() );
+			if ( mailAccount.getSignature() != null ) {
+				content = mailAccount.getSignature().getSignature() + StringUtils.defaultString(messageBody);
+			} else {
+				content = StringUtils.defaultString(messageBody);	
+			}
+		}
+	}	
+	
 }

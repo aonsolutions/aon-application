@@ -1,11 +1,15 @@
 package com.code.aon.ui.webmail.controller;
 
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Locale;
 import java.util.ResourceBundle;
 import java.util.logging.Logger;
 
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
+import javax.faces.model.SelectItem;
 import javax.mail.MessagingException;
 
 import org.apache.commons.lang.StringUtils;
@@ -25,6 +29,7 @@ import com.code.aon.ui.util.AonUtil;
 import com.code.aon.ui.webmail.bean.AonConstants;
 import com.code.aon.ui.webmail.tree.FoldersTreeBean;
 import com.code.aon.webmail.MailAccount;
+import com.code.aon.webmail.Signature;
 
 public class MailAccountController extends BasicController {
 
@@ -35,6 +40,8 @@ public class MailAccountController extends BasicController {
 	private LdapDAO dao;	
 	
 	private BasicManagerBean ldapManagerBean;
+	
+	private List<SelectItem> mailAccounts;
 
 	public LdapDAO getDAO( AuthPrincipal principal ) {
 		LdapDAO dao = new LdapDAO(MailAccount.class);
@@ -129,4 +136,19 @@ public class MailAccountController extends BasicController {
 		return account.isDefault();
 	}
 
+	public List<SelectItem> getMailAccounts() {
+		return mailAccounts;
+	}
+
+	@SuppressWarnings("unchecked")
+	public void updateMailAccountList() throws ManagerBeanException {
+		this.mailAccounts = new LinkedList<SelectItem>();
+		Iterator iter = getManagerBean().getList(getCriteria()).iterator();
+		while(iter.hasNext()){
+			MailAccount mailAccount = (MailAccount)iter.next();
+			SelectItem item = new SelectItem(mailAccount.getId(),mailAccount.getEmail());
+			this.mailAccounts.add(item);
+		}
+	}
+	
 }

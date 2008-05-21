@@ -6,12 +6,23 @@ import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
 import com.code.aon.ui.util.AonUtil;
 import com.code.aon.ui.webmail.bean.AonConstants;
+import com.code.aon.ui.webmail.controller.MailAccountController;
 import com.code.aon.ui.webmail.controller.SignatureController;
 import com.code.aon.ui.webmail.controller.WebMailController;
 import com.code.aon.webmail.MailAccount;
 import com.code.aon.webmail.Signature;
 
 public class MailAccountControllerListener extends ControllerAdapter {
+
+	@Override
+	public void afterModelInitialized(ControllerEvent event) throws ControllerListenerException {
+		MailAccountController controller = (MailAccountController) event.getController();
+		try {
+			controller.updateMailAccountList();
+		} catch (ManagerBeanException e) {
+			throw new ControllerListenerException( e.getMessage(), e );
+		}					
+	}
 
 	@Override
 	public void afterBeanCreated(ControllerEvent event) throws ControllerListenerException {
