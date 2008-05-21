@@ -169,10 +169,10 @@ public class AonServer {
         return this.account.toString();
     }
         
-    public AonMessage createAonMessage() throws AddressException, MessagingException, WebmailException{
+    public AonMessage createAonMessage( String sender ) throws AddressException, MessagingException, WebmailException{
     	AonMessage aonMessage = new AonMessage();
 		aonMessage.setMessage(new MimeMessage(session));
-		aonMessage.setSender(new InternetAddress(account.getEmail()));
+		aonMessage.setSender(new InternetAddress(sender));
     	return aonMessage;
     }
     
