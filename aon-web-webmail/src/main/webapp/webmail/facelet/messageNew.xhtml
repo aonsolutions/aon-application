@@ -28,18 +28,29 @@
 						action="#{message.getReturnAction}"
 						actionListener="#{message.send}">
 					</aon:commandButton>					 
-					<aon:commandButton id="back" immediate="true"
-						action="#{message.getReturnAction}"
-						title="#{bundle.aon_back}"
-						value="#{bundle.aon_back}"
-						styleClass="aon-icon-cancel aon-finding-toolbar-item">
-					</aon:commandButton>
-						
+					<aon:confirmButton id="back" immediate="true"
+						title="#{bundle.aon_back}" value="#{bundle.aon_back}"
+						confirmTitle="#{appBundle.aon_webmail_advice}"
+						confirmMessage="#{appBundle.aon_webmail_back_confirm}"
+						confirmAction="#{message.getReturnAction}"
+						accesskey="#{bundle.aon_key_cancel}"
+						styleClass="aon-icon-cancel aon-finding-toolbar-item" />						
 				</aon:div>
 			
 				<aon:div>
 					<aon:panelGrid columns="2" cellpadding="0" cellspacing="0" style="width:100%;"
 					>
+
+						<aon:div>
+							<aon:outputLabel for="NewMail_From"
+								rendered="#{mailAccount.model.rowCount>1}" 
+								value="#{appBundle.aon_webmail_from}: " />
+						</aon:div>							
+						<aon:selectOneMenu id="NewMail_From" reRender="messageContent"
+							valueChangeListener="#{message.onMailAccountChanged}"
+							value="#{message.senderMailAccountId}">
+							<f:selectItems value="#{mailAccount.mailAccounts}" />
+						</aon:selectOneMenu>
 						
 						<aon:commandButton id="addToEmail" reRender="showEmailWindow"
 							actionListener="#{message.openEmailsToPanelPopup}"
@@ -117,9 +128,9 @@
 				
 				
 				<!-- Message Body -->
-				<aon:div styleClass="padding-top">
+				<aon:div id="messageContent" styleClass="padding-top">
 					<aon:panelGroup scrollWidth="90%">
-							<aon:inputRichText toolbarSet="AonWebMail" height="400" value="#{message.content}" />
+						<aon:inputRichText toolbarSet="AonWebMail" value="#{message.content}" />
 					</aon:panelGroup>
 				</aon:div>
 			</aon:div>
