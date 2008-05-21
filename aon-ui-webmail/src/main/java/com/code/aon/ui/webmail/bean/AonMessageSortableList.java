@@ -1,12 +1,12 @@
 package com.code.aon.ui.webmail.bean;
 
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import javax.faces.model.ArrayDataModel;
+import javax.faces.model.ListDataModel;
 import javax.mail.Folder;
 import javax.mail.Message;
 import javax.mail.MessagingException;
@@ -31,7 +31,9 @@ public class AonMessageSortableList extends AonSortableList implements MessageCo
     
     public static String DATE_COLUMN = "date";
 	
-    protected AonMessage[] messageList;
+    private ArrayDataModel model;
+    
+    private AonMessage[] messageList;
 
 	protected Folder folder;
 	
@@ -71,6 +73,11 @@ public class AonMessageSortableList extends AonSortableList implements MessageCo
 	 */
 	public void setMessageList(AonMessage[] messageList) {
 		this.messageList = messageList;
+		this.model = new ArrayDataModel( this.messageList );
+	}
+	
+	public ArrayDataModel getModel() {
+		return model;
 	}
 
 	@Override
@@ -117,29 +124,32 @@ public class AonMessageSortableList extends AonSortableList implements MessageCo
         if (messageCountEvent.getMessages() != null) {
             removeMessage(messageCountEvent.getMessages());
         }
-    	//this.messageCountEvent = messageCountEvent;
     }
     
     protected synchronized void removeMessage(Message[] messages) {
         if (messages != null) {
-            Message message;
-            AonMessage aonMessage;
-            for (int i = messages.length - 1; i >= 0; i--) {
-                message = messages[i];
-                aonMessage = findMessage(message);
+        	boolean changed = false;
+        	AonMessage[] list = getMessageList();
+        	for( Message message : messages ) {
+                AonMessage aonMessage = findMessage(message);
                 if (aonMessage != null){
-                    int index = ArrayUtils.indexOf( messageList, aonMessage );
-                    if (index >= 0){
-                    	messageList = (AonMessage[]) ArrayUtils.remove( messageList, index );
+                    int index = ArrayUtils.indexOf( list, aonMessage );
+                    if (index >= 0) {
+                    	changed = true;
+                    	list = (AonMessage[]) ArrayUtils.remove( list, index );
                     }
                 }
             }
+        	if ( changed ) {
+        		setMessageList( list );
+        	}
         }
     }
 
     protected synchronized AonMessage findMessage(Message message){
-        if (message == null)
+        if (message == null) {
             return null;
+        }
         for (int i = this.messageList.length - 1; i >= 0 ; i--) {
             if (message.equals(messageList[i].getMessage())){
                 return messageList[i];

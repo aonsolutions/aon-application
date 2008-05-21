@@ -673,14 +673,7 @@ public class AonMessage {
 			throw new WebmailException(e);
 		}
 	}
-
 	
-    public void changeSelectedMessage(ActionEvent event) {
-       	MessageController messageController = (MessageController) AonUtil.getRegisteredBean(AonConstants.BEAN_MESSAGE);
-       	messageController.setMessage(this);
-       	
-    }
-
     public boolean isReaded() throws WebmailException{
     	try {
 			return message.isSet(Flag.SEEN);

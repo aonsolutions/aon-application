@@ -4,6 +4,7 @@ import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 
 import org.apache.commons.lang.ArrayUtils;
+import org.apache.commons.lang.StringUtils;
 
 import com.code.aon.ui.util.AonUtil;
 import com.code.aon.ui.webmail.bean.AonConstants;
@@ -111,18 +112,18 @@ public class SearchController {
 			sortableList = new AonMessageSortableList(sourceFolder.getFolder());
 			AonSearcher as = new AonSearcher();
 			as.setAonFolder(sourceFolder);
-			if (bodyText!=null &&
-					bodyText.trim().length()>0)
+			if (! StringUtils.isEmpty(bodyText) ) {
 				as.addStringTerm(bodyText,AonSearcher.BODYTERM);
-			if (address_cc!=null &&
-					address_cc.trim().length()>0)
+			}
+			if (! StringUtils.isEmpty(address_cc) ) {
 				as.addStringTerm(address_cc,AonSearcher.ADDRESS_CC);
-			if (address_from!=null &&
-					address_from.trim().length()>0)
+			}
+			if (! StringUtils.isEmpty(address_from) ) {
 				as.addStringTerm(address_from,AonSearcher.ADDRESS_FROM);
-			if (subject!=null &&
-					subject.trim().length()>0)
+			}
+			if (! StringUtils.isEmpty(subject) ) {
 				as.addStringTerm(subject,AonSearcher.SUBJECT);
+			}
 			sortableList.setMessageList(as.search());
 	    	MessageController messageController = (MessageController)AonUtil.getRegisteredBean(AonConstants.BEAN_MESSAGE);
 	    	messageController.setReturnAction(AonConstants.NAVIGATION_SEARCH);

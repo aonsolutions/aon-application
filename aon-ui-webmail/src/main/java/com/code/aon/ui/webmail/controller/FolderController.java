@@ -88,8 +88,9 @@ public class FolderController implements ITreeListener{
 
 	public void refresh(ActionEvent event) {
 		try{
-			if (folder!=null)
+			if (folder!=null) {
 				folder.refresh();
+			}
 		} catch (WebmailException e) {
 			AonUtil.addErrorMessage(e.getMessage());
 			throw new AbortProcessingException(e);
@@ -167,10 +168,11 @@ public class FolderController implements ITreeListener{
     	List<AonMessage> messages = new ArrayList<AonMessage>();
     	int currentPage = this.currentPage;
     	currentPage--;
-    	Object[] allMessages = folder.getMessageList();
+    	AonMessage[] allMessages = folder.getMessageList();
     	for (int i = currentPage*pageObjectNumber;i < (currentPage*pageObjectNumber+pageObjectNumber); i++){
-    		if (i < allMessages.length)
-    			messages.add((AonMessage)allMessages[i]);
+    		if (i < allMessages.length) {
+    			messages.add(allMessages[i]);
+    		}
     	}
     	return messages;
     }
