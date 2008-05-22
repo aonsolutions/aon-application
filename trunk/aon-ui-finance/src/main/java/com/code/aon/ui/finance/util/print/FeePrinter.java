@@ -30,6 +30,8 @@ public class FeePrinter extends BasicController {
 
 	private CustomerStatus customerStatus;
 
+	private Integer customerScopeId;
+
 	public Integer getItemId() {
 		return itemId;
 	}
@@ -62,6 +64,14 @@ public class FeePrinter extends BasicController {
 		this.customerStatus = customerStatus;
 	}
 
+	public Integer getCustomerScopeId() {
+		return customerScopeId;
+	}
+
+	public void setCustomerScopeId(Integer customerScopeId) {
+		this.customerScopeId = customerScopeId;
+	}
+
 	private void initializeParams(){
 		setItemId(null);
 		Calendar calendar = new GregorianCalendar();
@@ -69,6 +79,7 @@ public class FeePrinter extends BasicController {
 		setBillingDateMonth(Month.getMonthByValue(calendar.get(Calendar.MONTH)));
 		setBillingDateYear(calendar.get(Calendar.YEAR));
 		setCustomerStatus(null);
+		setCustomerScopeId(null);
 	}
 	
 	public void onEditSearch(MenuEvent event){
@@ -102,6 +113,9 @@ public class FeePrinter extends BasicController {
 			}
 			if(getCustomerStatus() != null){
 				criteria.addEqualExpression(getFieldName(ISalesAlias.CUSTOMER_FEE_CUSTOMER_STATUS), getCustomerStatus());
+			}
+			if(getCustomerScopeId() != null){
+				criteria.addEqualExpression(getFieldName(ISalesAlias.CUSTOMER_FEE_CUSTOMER_SCOPE_ID), getCustomerScopeId());
 			}
 			criteria.addOrder(getFieldName(ISalesAlias.CUSTOMER_FEE_CUSTOMER_REGISTRY_SURNAME));
 			criteria.addOrder(getFieldName(ISalesAlias.CUSTOMER_FEE_CUSTOMER_REGISTRY_NAME));
