@@ -205,7 +205,7 @@ public class TasDeliveryImportController extends BasicController {
 		}else{
 			return false;
 		}
-		List<Scope> scopes = UserUtils.getCurrentUserScopes();
+		List<Scope> scopes = UserUtils.getInstance().getCurrentUserScopes();
 		if( scopes.size() > 1){
 			return true;
 		}else if(scopes.size() == 1){
