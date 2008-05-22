@@ -1,5 +1,6 @@
 package com.code.aon.ui.webmail.bean;
 
+import java.io.UnsupportedEncodingException;
 import java.util.Date;
 import java.util.Properties;
 import java.util.logging.Level;
@@ -169,10 +170,10 @@ public class AonServer {
         return this.account.toString();
     }
         
-    public AonMessage createAonMessage( String sender ) throws AddressException, MessagingException, WebmailException{
+    public AonMessage createAonMessage( String address, String personal ) throws AddressException, MessagingException, WebmailException, UnsupportedEncodingException{
     	AonMessage aonMessage = new AonMessage();
 		aonMessage.setMessage(new MimeMessage(session));
-		aonMessage.setSender(new InternetAddress(sender));
+		aonMessage.setSender(new InternetAddress(address, personal));
     	return aonMessage;
     }
     
