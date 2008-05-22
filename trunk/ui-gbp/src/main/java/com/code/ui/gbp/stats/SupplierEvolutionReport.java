@@ -5,6 +5,8 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
+import javax.faces.event.ActionEvent;
+
 import org.apache.commons.lang.StringUtils;
 import org.hibernate.Query;
 import org.hibernate.Session;
@@ -18,7 +20,7 @@ public class SupplierEvolutionReport implements ICollectionProvider {
 	private String supplier;
 	private Date fromDate;
 	private Date toDate;
-
+	
 	public String getSupplier() {
 		return supplier;
 	}
@@ -55,7 +57,7 @@ public class SupplierEvolutionReport implements ICollectionProvider {
 		Session s = HibernateUtil.getSession();
 		String subStmt = "(SELECT SUM(inv.amount) FROM ProFormaInvoice inv WHERE inv.supplier.id = cs.supplier.id AND inv.campaign.id = cs.campaign.id)";
 		String stmt = "SELECT " + "new com.code.ui.gbp.stats.SupplierEvolution("
-				+ "cs.supplier.id,cs.supplier.name,cs.campaign.name,SUM(off.price)," + subStmt
+				+ "cs.supplier.id,cs.supplier.name,cs.campaign.code,cs.campaign.name,SUM(off.price)," + subStmt
 				+ ") FROM CampaignSupplier cs,Offer off WHERE ";
 		StringBuilder sentence = new StringBuilder(stmt);
 		if (!StringUtils.isEmpty(getSupplier())) {
@@ -66,7 +68,8 @@ public class SupplierEvolutionReport implements ICollectionProvider {
 		sentence.append(" cs.campaign.startDate <= ? AND cs.campaign.endDate >= ?");
 		sentence.append(" AND cs.campaign.id = off.campaign.id ");
 		sentence.append(" AND cs.supplier.id = off.supplier.id ");
-		sentence.append(" GROUP BY cs.supplier.id,cs.supplier.name,cs.campaign.name");
+		sentence.append(" GROUP BY cs.supplier.id,cs.supplier.name,cs.campaign.code,cs.campaign.name");
+		sentence.append(" ORDER BY cs.supplier.name,cs.campaign.code,cs.campaign.name");
 
 		Query query = s.createQuery(sentence.toString());
 		query.setDate(0, getToDate());
@@ -76,16 +79,13 @@ public class SupplierEvolutionReport implements ICollectionProvider {
 
 	}
 
-	public static void main(String[] args) {
-		SupplierEvolutionReport ser = new SupplierEvolutionReport();
+	public void onInitialize(ActionEvent event) {
 		Date from = new Date();
 		Calendar c = Calendar.getInstance();
 		c.setTime(from);
-		c.add(Calendar.YEAR, -1);
-		ser.setFromDate(c.getTime());
-		ser.setToDate(new Date());
-		System.out.println(ser.getFromDate());
-		System.out.println(ser.getToDate());
-		ser.getCollection();
+		c.set(Calendar.DAY_OF_MONTH, 1);
+		c.set(Calendar.MONTH, 0);
+		setFromDate(c.getTime());
+		setToDate(new Date());
 	}
 }

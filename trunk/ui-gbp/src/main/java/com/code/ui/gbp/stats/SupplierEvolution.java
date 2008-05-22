@@ -6,9 +6,10 @@ package com.code.ui.gbp.stats;
 public class SupplierEvolution {
 	private Integer supplierId;
 	private String supplierName;
+	private Integer campaignId;
 	private String campaignName;
-	private double offer;
-	private double invoice;
+	private Double offer;
+	private Double invoice;
 	
 	public SupplierEvolution() {
 	}
@@ -16,12 +17,14 @@ public class SupplierEvolution {
 	public SupplierEvolution(
 			Integer supplierId,
 			String supplierName,
+			Integer campaignId,
 			String campaignName,
-			double offer,
-			double invoice) {
+			Double offer,
+			Double invoice) {
 		
 		this.supplierId = supplierId;
 		this.supplierName = supplierName;
+		this.campaignId = campaignId;
 		this.campaignName = campaignName;
 		this.offer = offer;
 		this.invoice = invoice;
@@ -46,24 +49,25 @@ public class SupplierEvolution {
 		this.campaignName = campaignName;
 	}
 
-	public double getOffer() {
+	public Double getOffer() {
 		return offer;
 	}
 
-	public void setOffer(double offer) {
+	public void setOffer(Double offer) {
 		this.offer = offer;
 	}
 
-	public double getInvoice() {
+	public Double getInvoice() {
 		return invoice;
 	}
 
-	public void setInvoice(double invoice) {
+	public void setInvoice(Double invoice) {
 		this.invoice = invoice;
 	}
 	
 	public double getPercent() {
-		return getInvoice() * 100 / getOffer();
+		double percent = (getInvoice() * 100 / getOffer()); 
+        return Math.round(100*percent) / 100;
 	}
 
 	public Integer getSupplierId() {
@@ -72,5 +76,13 @@ public class SupplierEvolution {
 
 	public void setSupplierId(Integer supplierId) {
 		this.supplierId = supplierId;
+	}
+
+	public Integer getCampaignId() {
+		return campaignId;
+	}
+
+	public void setCampaignId(Integer campaignId) {
+		this.campaignId = campaignId;
 	}
 }
