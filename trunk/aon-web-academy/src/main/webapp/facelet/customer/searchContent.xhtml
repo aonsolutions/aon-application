@@ -48,6 +48,15 @@
 					valueChangeListener="#{customerAlias.addExpression}"
 					styleClass="aon-form-input-text" />
 
+				<t:outputLabel for="CourseAlumn"
+					value="#{appBundle.course_course} #{appBundle.course_code}"
+					styleClass="aon-form-input-text-label aon-form-table-column-odd-label"
+					rendered="#{alumnSearcherAlias!=null}" />
+				<t:inputText id="CourseAlumn" size="20"
+					valueChangeListener="#{alumnSearcherAlias.addCourseExpression}"
+					styleClass="aon-form-input-text"
+					rendered="#{alumnSearcherAlias!=null}" />
+
 				<t:outputLabel for="Customer_customerSegment_id"
 					value="#{appBundle.aon_alumn_segment}"
 					styleClass="aon-form-input-text-label aon-form-table-column-odd-label" />
@@ -70,13 +79,6 @@
 					<f:selectItems value="#{customerCollections.customerStatuses}" />
 				</h:selectOneMenu>
 
-				<t:outputLabel for="CourseAlumn"
-					value="#{appBundle.course_course} #{appBundle.course_code}"
-					styleClass="aon-form-input-text-label aon-form-table-column-odd-label" />
-				<t:inputText id="CourseAlumn" size="20"
-					valueChangeListener="#{courseAlumnSearcher.addCourseExpression}"
-					styleClass="aon-form-input-text" />
-
 				<t:outputLabel for="Customer_scope_id"
 					value="#{customerBundle.customer_scope}"
 					styleClass="aon-form-input-text-label aon-form-table-column-odd-label" />
@@ -85,7 +87,7 @@
 					converter="IntegerEmptyConverter" forceId="#{true}"
 					valueChangeListener="#{customerAlias.addExpression}">
 					<f:selectItem itemDisabled="true" itemLabel="-" itemValue="" />
-					<f:selectItems value="#{configCollections.scopes}" />
+					<f:selectItems value="#{configCollections.currentUserScopes}" />
 				</h:selectOneMenu>
 
 				<t:outputLabel for="Customer_registry_type"
