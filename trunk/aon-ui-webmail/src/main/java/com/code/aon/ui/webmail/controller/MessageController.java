@@ -5,6 +5,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.UnsupportedEncodingException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -202,7 +203,7 @@ public class MessageController implements AonConstants, IAonFileListener {
 	       	subject = "Fwd: "+message.getSubject();
 	       	messageBody = "<br/>---------- Forwarded message ----------" +
 	       		"<br/>From: " + message.getSender() + "<br/>Date: " + message.getSentDate() +
-	       		"<br/>Subject: " + message.getSubject() + "<br/><br/><br/>";
+	       		"<br/>Subject: " + message.getSubject() + "<br/><br/><br/>" + message.getContent();
 	       	content += messageBody;
 		} catch (WebmailException e) {
 			AonUtil.addErrorMessage(e.getMessage());
@@ -345,6 +346,9 @@ public class MessageController implements AonConstants, IAonFileListener {
 		} catch (ManagerBeanException e) {
 			AonUtil.addErrorMessage(e.getMessage());
 			throw new AbortProcessingException(e);
+		} catch (UnsupportedEncodingException e) {
+			AonUtil.addErrorMessage(e.getMessage());
+			throw new AbortProcessingException(e);
 		}
     }
 
@@ -358,6 +362,7 @@ public class MessageController implements AonConstants, IAonFileListener {
 	/**
 	* Method for compounding the message.
 	 * @throws WebmailException 
+	 * @throws UnsupportedEncodingException 
 	*/
 	private AonMessage compoundMessage(
 			String sender,
@@ -368,9 +373,10 @@ public class MessageController implements AonConstants, IAonFileListener {
 			String text, 
 			AonMessage parentAonMsg,
 			List<AonFile> fileList) 
-			throws MessagingException, WebmailException {
+			throws MessagingException, WebmailException, UnsupportedEncodingException {
     	WebMailController webMailController = (WebMailController)AonUtil.getRegisteredBean(BEAN_WEBMAIL);
-    	AonMessage newMessage = webMailController.getServer().createAonMessage(sender);
+    	String personal = webMailController.getLoggedUserName();
+    	AonMessage newMessage = webMailController.getServer().createAonMessage(sender, personal);
        	if (recipientsTo!=null)
        		newMessage.setRecipientsTo(recipientsTo);
        	if (recipientsCC!=null)
