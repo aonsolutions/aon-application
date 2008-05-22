@@ -29,7 +29,7 @@
 						<t:commandButton id="remove" value="#{bundle.aon_remove}"
 							forceId="#{true}" immediate="true"
 							rendered="#{!customerFee.new}"
-							actionListener="#{customerFee.onRemove}"
+							actionListener="#{customerFee.onRemove}" action="economic_data"
 							onclick="return (confirm('#{bundle.aon_remove_confirm}'))"
 							styleClass="aon-content-toolbar-item aon-content-toolbar-item-delete"
 							onmouseover="this.className='aon-content-toolbar-item aon-content-toolbar-item-hover aon-content-toolbar-item-delete'"
