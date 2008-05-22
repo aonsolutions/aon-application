@@ -15,7 +15,7 @@
 		<property name="c3p0.max_statements">0</property>
 		<property name="c3p0.preferredTestQuery">select 1;</property>
 
-		<property name="connection.service">jboss.admin:service=AonSecurity</property>
+		<property name="connection.service">jboss.admin:service=AonLdap</property>
 		<property name="connection.datasource">java:comp/env/jdbc/AonAcademy</property>		
 		<property name="dialect">org.hibernate.dialect.MySQLDialect</property>
 
