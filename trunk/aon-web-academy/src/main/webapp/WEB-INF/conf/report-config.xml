@@ -209,17 +209,17 @@
 		</params>
 		
 		<nested-report report="preInvoicingDetail"/>
-		<nested-report report="taxBreakDown"/>
+		<nested-report report="preInvoicingTaxBreakDown"/>
 	</report>	  
 	
 	<report id="preInvoicingDetail" description="preInvoicing Details">
 		<template path="/com/code/aon/ui/finance/report/preInvoicingDetail.jasper"/>
 	</report>
 	
-	<report id="taxBreakDown" description="taxBreakDown">
-		<template path="/com/code/aon/ui/finance/report/taxBreakDown.jasper"/>
+	<report id="preInvoicingTaxBreakDown" description="preInvoicing TaxBreakDown">
+		<template path="/com/code/aon/ui/finance/report/preInvoicingTaxBreakDown.jasper"/>
 	</report>
-	
+
 	<!--  *********  InvoiceList  ********* -->
 	<report id="salesInvoiceList" description="Sales Invoice's List">
 		<template path="/com/code/aon/ui/finance/report/salesInvoiceList.jasper"/>
@@ -254,14 +254,18 @@
 		</params>
 		
 		<nested-report report="feeInvoicingDetail"/>
-		<nested-report report="feeInvoicingFinances"/>
 		<nested-report report="taxBreakDown"/>
+		<nested-report report="feeInvoicingFinances"/>
 	</report>
 	
 	<report id="feeInvoicingDetail" description="feeInvoicing Details">
 		<template path="/com/code/aon/ui/finance/report/feeInvoicingDetail.jasper"/>
 	</report>
 
+	<report id="taxBreakDown" description="taxBreakDown">
+		<template path="/com/code/aon/ui/finance/report/taxBreakDown.jasper"/>
+	</report>
+	
 	<report id="feeInvoicingFinances" description="feeInvoicing Finances">
 		<template path="/com/code/aon/ui/finance/report/feeInvoicingFinances.jasper"/>
 	</report>
@@ -286,6 +290,7 @@
 		
 		<nested-report report="feeInvoicingDetail"/>
 		<nested-report report="taxBreakDown"/>
+		<nested-report report="feeInvoicingFinances"/>
 	</report>
 	
 	<!--  *********  feeCheckingPrint  ********* -->
