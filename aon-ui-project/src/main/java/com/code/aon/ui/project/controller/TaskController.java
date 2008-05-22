@@ -319,7 +319,7 @@ public class TaskController extends BasicController implements ITaskController {
     }
 
     public boolean isMyTask(Task task) {
-        return (task.getUser() == null) ? false : UserUtils.getLoggedUser().getId().equals(task.getUser().getId());
+        return (task.getUser() == null) ? false : UserUtils.getInstance().getLoggedUser().getId().equals(task.getUser().getId());
     }
 
     public boolean isFreeTask() {
@@ -491,7 +491,7 @@ public class TaskController extends BasicController implements ITaskController {
         if (isFreeTask(task) || isMyTask(task)) {
             task.setEndDate(new Date());
             task.setStatus(TaskStatus.DELETED);
-            task.setUser(UserUtils.getLoggedUser());
+            task.setUser(UserUtils.getInstance().getLoggedUser());
             updateTask(task);
 
             if (task.getSource().equals(TaskSource.AON_CONSULTANT)) {
@@ -534,7 +534,7 @@ public class TaskController extends BasicController implements ITaskController {
 
     private void assumeTask(Task task) {
         if (isFreeTask(task)) {
-            task.setUser(UserUtils.getLoggedUser());
+            task.setUser(UserUtils.getInstance().getLoggedUser());
             updateTask(task);
         }
     }
@@ -595,7 +595,7 @@ public class TaskController extends BasicController implements ITaskController {
         if (isFreeTask(task) || isMyTask(task)) {
             task.setEndDate(new Date());
             task.setStatus(TaskStatus.FINISHED);
-            task.setUser(UserUtils.getLoggedUser());
+            task.setUser(UserUtils.getInstance().getLoggedUser());
             updateTask(task);
 
             if (task.getSource().equals(TaskSource.AON_CONSULTANT)) {

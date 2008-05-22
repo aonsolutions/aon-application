@@ -21,7 +21,7 @@ public class InboxDailyTrackingControllerListener extends ControllerAdapter {
 		try {
 			Criteria criteria = event.getController().getCriteria();
 			IManagerBean dailyTrackingBean = BeanManager.getManagerBean(DailyTracking.class);
-			criteria.addEqualExpression(dailyTrackingBean.getFieldName(IProjectAlias.DAILY_TRACKING_USER_ID), UserUtils.getLoggedUser().getId());
+			criteria.addEqualExpression(dailyTrackingBean.getFieldName(IProjectAlias.DAILY_TRACKING_USER_ID), UserUtils.getInstance().getLoggedUser().getId());
 			criteria.addEqualExpression(dailyTrackingBean.getFieldName(IProjectAlias.DAILY_TRACKING_TRACKING_DATE), new Date());
 		} catch (ManagerBeanException e) {
 			throw new ControllerListenerException(e);

@@ -28,7 +28,7 @@ public class PeriodicalTaskControllerListener extends ControllerAdapter {
 	@Override
 	public void beforeModelInitialized(ControllerEvent event) throws ControllerListenerException {
 		try {
-			User user = UserUtils.getLoggedUser();
+			User user = UserUtils.getInstance().getLoggedUser();
 			PeriodicalTaskController periodTaskController = (PeriodicalTaskController) event.getController();
 			Criteria criteria = periodTaskController.getCriteria();
 			criteria.addEqualExpression(periodTaskController.getFieldName(IProjectAlias.PERIODICAL_TASK_OWNER_ID) , user.getId());
@@ -42,7 +42,7 @@ public class PeriodicalTaskControllerListener extends ControllerAdapter {
 		try {
 			PeriodicalTaskController periodicalTaskController = (PeriodicalTaskController)event.getController();
 			PeriodicalTask periodTask = (PeriodicalTask)periodicalTaskController.getTo();
-			User user = UserUtils.getLoggedUser();
+			User user = UserUtils.getInstance().getLoggedUser();
 			periodTask.setOwner(user);
 			periodTask.setNextDate(periodicalTaskController.addPeriodToDate(periodTask, periodTask.getTask().getStartDate()));
 			periodTask.getTask().setSender(user);

@@ -10,7 +10,6 @@ import javax.faces.model.SelectItem;
 
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
-import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.config.User;
 import com.code.aon.customer.Customer;
@@ -40,7 +39,7 @@ public class TaskControllerListener extends ControllerAdapter {
         TaskController controller = (TaskController)event.getController();
         controller.resetChecks();
         try {
-            User user = UserUtils.getLoggedUser();
+            User user = UserUtils.getInstance().getLoggedUser();
 
             Expression userExpr = ExpressionUtilities.getEqualExpression(controller.getFieldName(IProjectAlias.TASK_USER_ID), user.getId());
             if (controller.getMyStatusExpression() != null) {
@@ -86,7 +85,7 @@ public class TaskControllerListener extends ControllerAdapter {
     	Task to = (Task)controller.getTo();
         if (!controller.isMyTask()) {
             to.setSource(TaskSource.ASSIGNED);
-            to.setSender(UserUtils.getLoggedUser());
+            to.setSender(UserUtils.getInstance().getLoggedUser());
         }
 
         try { 
