@@ -3,8 +3,6 @@ package com.code.aon.ui.academy.controller;
 import java.util.Iterator;
 import java.util.List;
 
-import javax.faces.context.FacesContext;
-import javax.faces.el.ValueBinding;
 import javax.faces.event.ValueChangeEvent;
 
 import com.code.aon.academy.Course;
@@ -18,16 +16,39 @@ import com.code.aon.ql.Criteria;
 import com.code.aon.ql.ast.Expression;
 import com.code.aon.ql.util.ExpressionException;
 import com.code.aon.ql.util.ExpressionUtilities;
-import com.code.aon.ui.form.BasicController;
+import com.code.aon.ui.form.IController;
+import com.code.aon.ui.util.AonUtil;
 
 
 public class CourseAlumnSearcherController {
+
+	/** The table. */
+	private String alumnController;
+
+	/**
+	 * Gets the table.
+	 * 
+	 * @return the table
+	 */
+	public String getAlumnController() {
+		return alumnController;
+	}
+
+	/**
+	 * Sets the table.
+	 * 
+	 * @param table the table
+	 */
+	public void setAlumnController(String alumnController) {
+		this.alumnController = alumnController;
+	}
 
 	/**
 	 * @param event contains the customer document
 	 * @throws ManagerBeanException
 	 * @throws ExpressionException
 	 */
+	@SuppressWarnings("unchecked")
 	public void addCourseExpression(ValueChangeEvent event)
 		throws ManagerBeanException, ExpressionException {
 	    if ((event.getNewValue() != null)
@@ -40,7 +61,7 @@ public class CourseAlumnSearcherController {
 			List list_course = bean_course.getList(criteria_course);
 			Iterator iter_course = list_course.iterator();
 			
-			BasicController controller = getAlumnController();
+			IController controller = (IController)AonUtil.getController(getAlumnController());
 	    	Criteria c = controller.getCriteria();
 	    	
 	    	if (iter_course.hasNext()){
@@ -79,11 +100,4 @@ public class CourseAlumnSearcherController {
 		}
 	}
 
-	private BasicController getAlumnController() throws ManagerBeanException{
-        FacesContext ctx = FacesContext.getCurrentInstance();
-        ValueBinding vb = ctx.getApplication().createValueBinding("#{customer}");
-        BasicController controller = (BasicController)vb.getValue(ctx);
-        return controller;
-	}
-	
 }
