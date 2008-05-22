@@ -24,6 +24,7 @@
 							forceId="#{true}" actionListener="#{academicSkillToGroup.onAssign}"
 							action="course_list" onclick="if(confirm('#{bundle.aon_accept_confirm}')){viewDialog.show();}else{ return false; }"
 							styleClass="aon-content-toolbar-item aon-content-toolbar-item-save"
+							rendered="#{academicSkillToGroup.model.rowCount >0}"
 							onmouseover="this.className='aon-content-toolbar-item aon-content-toolbar-item-hover aon-content-toolbar-item-save'"
 							onmouseout="this.className='aon-content-toolbar-item aon-content-toolbar-item-save'"/>
 						<h:commandButton id="search" value="#{bundle.aon_search}"
@@ -50,17 +51,15 @@
 							styleClass="aon-form-selectOneMenu-field">
 							<f:selectItems value="#{academyCollections.academicSkills}" />
 						</h:selectOneMenu>	
-							
 
 					</h:panelGrid>
 
-					<t:div styleClass="aon-form-group"
-						rendered="#{academicSkillToGroup.model.rowCount >0}">
+					<t:div styleClass="aon-form-group">
 						<t:div styleClass="aon-form-group-title">
 							<t:outputLabel for="academicSkillToGroupDataList"
 								value="#{appBundle.course_courses}" />
 						</t:div>
-						<t:div styleClass="aon-form-group-body">
+						<t:div styleClass="aon-form-group-body" rendered="#{academicSkillToGroup.model.rowCount >0}">
 							<t:div>
 								<t:commandButton title="#{financeBundle.aon_select_all}"
 									styleClass="aon-form-button-plus" onclick="viewDialog.show();"
@@ -78,6 +77,8 @@
 								headerClass="aon-table-header"
 								rowClasses="aon-table-row-odd,aon-table-row-even"
 								columnClasses="aon-table-body aon-table-body-icon,
+											   aon-table-body aon-table-body-string,
+											   aon-table-body aon-table-body-string,
 											   aon-table-body aon-table-body-string,
 											   aon-table-body aon-table-body-string,
 											   aon-table-body aon-table-body-string,
@@ -112,6 +113,33 @@
 									<h:outputText value="#{to.academicYear.description}" />
 									<f:verbatim>&#160;</f:verbatim>
 								</h:column>
+
+								<h:column>
+									<f:facet name="header">
+										<h:panelGroup>
+											<h:outputText value="#{appBundle.course_start_date}" />
+										</h:panelGroup>
+									</f:facet>
+									<h:outputText value="#{to.startDate}">
+										<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+											timeZone="#{timeZoneController.timeZoneId}" />
+									</h:outputText>
+									<f:verbatim>&#160;</f:verbatim>
+								</h:column>
+
+								<h:column>
+									<f:facet name="header">
+										<h:panelGroup>
+											<h:outputText value="#{appBundle.course_end_date}" />
+										</h:panelGroup>
+									</f:facet>
+									<h:outputText value="#{to.endDate}">
+										<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+											timeZone="#{timeZoneController.timeZoneId}" />
+									</h:outputText>
+									<f:verbatim>&#160;</f:verbatim>
+								</h:column>
+
 								<h:column>
 									<f:facet name="header">
 										<h:panelGroup>
@@ -121,6 +149,7 @@
 									<h:outputText value="#{to.courseSubject.description}" />
 									<f:verbatim>&#160;</f:verbatim>
 								</h:column>
+
 								<h:column>
 									<f:facet name="header">
 										<h:panelGroup>
@@ -130,6 +159,7 @@
 									<h:outputText value="#{to.courseLevel.description}" />
 									<f:verbatim>&#160;</f:verbatim>
 								</h:column>
+
 								<h:column>
 									<f:facet name="header">
 										<h:panelGroup>
@@ -139,6 +169,7 @@
 									<h:outputText value="#{to.workPlace.description}" />
 									<f:verbatim>&#160;</f:verbatim>
 								</h:column>
+
 								<h:column>
 									<f:facet name="header">
 										<h:panelGroup>
@@ -155,7 +186,7 @@
 						<ui:include src="/facelet/shared/dataScroller.xhtml">
 							<ui:param name="dataTable" value="academicSkillToGroupDataList" />
 							<ui:param name="model" value="#{academicSkillToGroup.model}" />
-							<ui:param name="showNote" value="#{false}" />
+							<ui:param name="showNote" value="#{true}" />
 						</ui:include>
 
 					</t:div>
