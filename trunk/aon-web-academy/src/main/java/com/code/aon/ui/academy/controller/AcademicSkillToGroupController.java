@@ -99,16 +99,23 @@ public class AcademicSkillToGroupController extends BasicController {
 	public void onEditSearch(ActionEvent event) {
 		clearCheckedCourses();
 		super.onEditSearch(event);
+		try {
+			getCriteria().addOrder(getManagerBean().getFieldName(IAcademyAlias.COURSE_CODE));
+		} catch (ManagerBeanException e) {
+			AonUtil.addErrorMessage("Unable to apply criteria");
+			LOGGER.log(Level.SEVERE, "Unable to apply criteria", e);
+			throw new AbortProcessingException(e);
+		}
 	}
 	
 	@SuppressWarnings("unchecked")
 	public void onAssign(ActionEvent event){
 		try {
+			CourseController courseController = (CourseController)AonUtil.getController(COURSE_CONTROLLER_NAME);
+			Criteria criteria = new Criteria();
 			if(skillId != null && checks.size() > 0){
-				if(validateCourseAcademicSkills()){
+				if(validateCourseAcademicSkills()) {
 					IManagerBean courseAcademicSkillBean = BeanManager.getManagerBean(CourseAcademicSkill.class);
-					CourseController courseController = (CourseController)AonUtil.getController(COURSE_CONTROLLER_NAME);
-					Criteria criteria = new Criteria();
 					AcademicSkill skill = obtainAcademicSkill();
 					Iterator iter = checks.iterator();
 					while(iter.hasNext()){
@@ -119,12 +126,11 @@ public class AcademicSkillToGroupController extends BasicController {
 						courseAcademicSkill.setCourse(course);
 						courseAcademicSkillBean.insert(courseAcademicSkill);
 					}
-					courseController.setCriteria(criteria);
-					courseController.onSearch(null);
-					updateBreadCrumb();
 				}
 			}
-
+			courseController.setCriteria(criteria);
+			courseController.onSearch(null);
+			updateBreadCrumb();
 		} catch (ManagerBeanException e) {
 			AonUtil.addErrorMessage("Unable to assign the academic skill to selected courses");
 			LOGGER.log(Level.SEVERE, "Unable to assign the academic skill to selected courses", e);
@@ -153,7 +159,7 @@ public class AcademicSkillToGroupController extends BasicController {
 			List courseAcademicSkills = courseAcademicSkillBean.getList(criteria);
 			valid = courseAcademicSkills.size() == 0;
 			Iterator iter = courseAcademicSkills.iterator();
-			String message = "Selected Academic Skill is already included in next courses:";
+			String message = "Selected Academic Skill was already included in next courses:";
 			while(iter.hasNext()){
 				CourseAcademicSkill courseAcademicSkill = (CourseAcademicSkill)iter.next();
 				message += " " + courseAcademicSkill.getCourse().getCode();
@@ -188,8 +194,7 @@ public class AcademicSkillToGroupController extends BasicController {
 				return (AcademicSkill)iter.next();
 			}
 		} catch (ManagerBeanException e) {
-			LOGGER.log(Level.SEVERE,
-					"Error obtaining academic skill with id = " + skillId, e);
+			LOGGER.log(Level.SEVERE, "Error obtaining academic skill with id = " + skillId, e);
 		}
 		return null;
 	}
