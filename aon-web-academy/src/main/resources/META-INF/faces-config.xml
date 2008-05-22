@@ -885,9 +885,41 @@
 	
 	<!-- ************* ACADEMIC UTILS ***************** -->
 	<managed-bean>
+		<managed-bean-name>alumnReclassification</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.academy.controller.AlumnReclassificationController
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.customer.Customer</value>
+		</managed-property>
+	</managed-bean>
+
+	<managed-bean>
 		<managed-bean-name>academicSkillToGroup</managed-bean-name>
 		<managed-bean-class>
 			com.code.aon.ui.academy.controller.AcademicSkillToGroupController
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.academy.Course</value>
+		</managed-property>
+	</managed-bean>
+
+	<managed-bean>
+		<managed-bean-name>closeGroup</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.academy.controller.CloseGroupController
 		</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
@@ -1090,6 +1122,18 @@
 	    </navigation-case>
 	  </navigation-rule>
 	  
+	<!-- =================== Alumn Reclassification ====================== -->
+	<navigation-rule>
+	  <navigation-case>
+	    <from-outcome>alumn_reclassification_search</from-outcome>
+	    <to-view-id>/facelet/academic_util/alumn_reclassification/search.faces</to-view-id>
+	  </navigation-case>
+	  <navigation-case>
+	    <from-outcome>alumn_reclassification_form</from-outcome>
+	    <to-view-id>/facelet/academic_util/alumn_reclassification/form.faces</to-view-id>
+	  </navigation-case>
+	</navigation-rule>
+
 	<!-- =================== Academic Skil to Group ====================== -->
 	<navigation-rule>
 	  <navigation-case>
@@ -1099,6 +1143,18 @@
 	  <navigation-case>
 	    <from-outcome>ac_skill_to_group_form</from-outcome>
 	    <to-view-id>/facelet/academic_util/ac_skill_to_group/form.faces</to-view-id>
+	  </navigation-case>
+	</navigation-rule>
+
+	<!-- =================== Close Group ====================== -->
+	<navigation-rule>
+	  <navigation-case>
+	    <from-outcome>close_group_search</from-outcome>
+	    <to-view-id>/facelet/academic_util/close_group/search.faces</to-view-id>
+	  </navigation-case>
+	  <navigation-case>
+	    <from-outcome>close_group_form</from-outcome>
+	    <to-view-id>/facelet/academic_util/close_group/form.faces</to-view-id>
 	  </navigation-case>
 	</navigation-rule>
 
@@ -1165,8 +1221,16 @@
       <to-view-id>/facelet/auxiliary/quality_skill/grid.faces</to-view-id>
     </navigation-case>
     <navigation-case>
+      <from-outcome>alumn_reclassification</from-outcome>
+      <to-view-id>/facelet/academic_util/alumn_reclassification/search.faces</to-view-id>
+    </navigation-case>
+    <navigation-case>
       <from-outcome>academic_skill_to_group</from-outcome>
       <to-view-id>/facelet/academic_util/ac_skill_to_group/search.faces</to-view-id>
+    </navigation-case>
+    <navigation-case>
+      <from-outcome>close_group</from-outcome>
+      <to-view-id>/facelet/academic_util/close_group/search.faces</to-view-id>
     </navigation-case>
     <navigation-case>
       <from-outcome>fee_to_group</from-outcome>
