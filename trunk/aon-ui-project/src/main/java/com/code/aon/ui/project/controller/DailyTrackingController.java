@@ -309,7 +309,7 @@ public class DailyTrackingController extends BasicController {
     	try {
 			IManagerBean taskBean = BeanManager.getManagerBean(Task.class);
 			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(taskBean.getFieldName(IProjectAlias.TASK_USER_ID), UserUtils.getLoggedUser().getId());
+			criteria.addEqualExpression(taskBean.getFieldName(IProjectAlias.TASK_USER_ID), UserUtils.getInstance().getLoggedUser().getId());
 			criteria.addEqualExpression(taskBean.getFieldName(IProjectAlias.TASK_END_DATE), new Date());
 			finishedTaskModel = new PageDataModel(null,20);
 			List taskList = taskBean.getList(criteria, 0, 20);

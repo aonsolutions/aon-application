@@ -34,7 +34,7 @@ public class CampaignControllerListener extends ControllerAdapter {
     public void beforeModelInitialized(ControllerEvent event) throws ControllerListenerException {
         CampaignController controller = (CampaignController)event.getController();
         try {
-        	Expression empWorkGroupsExpr = obtainEmployeeWorkGroupsExpr(UserUtils.getLoggedUser());
+        	Expression empWorkGroupsExpr = obtainEmployeeWorkGroupsExpr(UserUtils.getInstance().getLoggedUser());
         	if(empWorkGroupsExpr != null){
                 controller.getCriteria().addExpression(empWorkGroupsExpr);
         	}else{
@@ -85,7 +85,7 @@ public class CampaignControllerListener extends ControllerAdapter {
 
     @SuppressWarnings("unchecked")
     private WorkGroup obtainLoggedUserWorkGroup() throws ControllerListenerException {
-		User user = UserUtils.getLoggedUser();
+		User user = UserUtils.getInstance().getLoggedUser();
 		try {
 			IManagerBean empWorkGroupBean = BeanManager.getManagerBean(UserWorkGroup.class);
 			Criteria criteria = new Criteria();
