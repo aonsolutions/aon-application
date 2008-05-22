@@ -37,6 +37,62 @@
 					<f:selectItems value="#{academyCollections.academicYears}" />
 				</h:selectOneMenu>
 
+				<h:outputLabel
+					value="#{appBundle.course_start_date}"
+					styleClass="aon-form-input-text-label"
+					rendered="#{hideDates==null}" />
+				<h:panelGrid columns="4" rendered="#{hideDates==null}">
+					<h:outputLabel for="Course_startDate-From"
+						styleClass="aon-form-input-text-label"
+						value="#{appBundle.aon_date_from}" />
+					<t:inputCalendar size="8" id="Course_startDate-From"
+						valueChangeListener="#{courseAlias.addStartDateFromExpression}"
+						monthYearRowClass="yearMonthHeader" weekRowClass="weekHeader"
+						currentDayCellClass="currentDayCell" renderAsPopup="true"
+						styleClass="aon-form-input-text" popupButtonStyleClass="aon-form-calendar-button"
+						popupTodayString="#{bundle.aon_popup_today}"
+						popupWeekString="#{bundle.aon_popup_week}" />
+					
+					<h:outputLabel for="Course_startDate-To"
+						styleClass="aon-form-input-text-label"
+						value="#{appBundle.aon_date_to}" />
+					<t:inputCalendar size="8" id="Course_startDate-To"
+						valueChangeListener="#{courseAlias.addStartDateToExpression}"
+						monthYearRowClass="yearMonthHeader" weekRowClass="weekHeader"
+						currentDayCellClass="currentDayCell" renderAsPopup="true"
+						styleClass="aon-form-input-text" popupButtonStyleClass="aon-form-calendar-button"
+						popupTodayString="#{bundle.aon_popup_today}"
+						popupWeekString="#{bundle.aon_popup_week}" />	
+				</h:panelGrid>
+
+				<h:outputLabel
+					value="#{appBundle.course_end_date}"
+					styleClass="aon-form-input-text-label"
+					rendered="#{hideDates==null}" />
+				<h:panelGrid columns="4" rendered="#{hideDates==null}">
+					<h:outputLabel for="Course_endDate-From"
+						styleClass="aon-form-input-text-label"
+						value="#{appBundle.aon_date_from}" />
+					<t:inputCalendar size="8" id="Course_endDate-From"
+						valueChangeListener="#{courseAlias.addEndDateFromExpression}"
+						monthYearRowClass="yearMonthHeader" weekRowClass="weekHeader"
+						currentDayCellClass="currentDayCell" renderAsPopup="true"
+						styleClass="aon-form-input-text" popupButtonStyleClass="aon-form-calendar-button"
+						popupTodayString="#{bundle.aon_popup_today}"
+						popupWeekString="#{bundle.aon_popup_week}" />
+					
+					<h:outputLabel for="Course_endDate-To"
+						styleClass="aon-form-input-text-label"
+						value="#{appBundle.aon_date_to}" />
+					<t:inputCalendar size="8" id="Course_endDate-To"
+						valueChangeListener="#{courseAlias.addEndDateToExpression}"
+						monthYearRowClass="yearMonthHeader" weekRowClass="weekHeader"
+						currentDayCellClass="currentDayCell" renderAsPopup="true"
+						styleClass="aon-form-input-text" popupButtonStyleClass="aon-form-calendar-button"
+						popupTodayString="#{bundle.aon_popup_today}"
+						popupWeekString="#{bundle.aon_popup_week}" />	
+				</h:panelGrid>
+
 				<t:outputLabel for="Course_courseSubject_id"
 					value="#{appBundle.course_subject}"
 					styleClass="aon-form-input-text-label" />
@@ -72,11 +128,13 @@
 
 				<t:outputLabel for="Course_status"
 					value="#{appBundle.course_status}"
-					styleClass="aon-form-input-text-label aon-form-table-column-odd-label" />
+					styleClass="aon-form-input-text-label aon-form-table-column-odd-label"
+					rendered="#{hideStatus==null}" />
 				<h:selectOneMenu id="Course_status"
 					styleClass="aon-form-selectOneMenu-field"
 					converter="aonCourseStatusConverter" forceId="#{true}"
-					valueChangeListener="#{courseAlias.addExpression}">
+					valueChangeListener="#{courseAlias.addExpression}"
+					rendered="#{hideStatus==null}">
 					<f:selectItems value="#{academyCollections.courseStatuses}" />
 				</h:selectOneMenu>
 			</h:panelGrid>
