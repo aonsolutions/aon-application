@@ -184,4 +184,12 @@
 		</params>
 	</report>
 
+	<report id="offer_control_stat" description="Offer Control">
+		<template path="/com/code/ui/gbp/stats/offerControl.jasper" />
+		<collection provider="#{offerControlReport}"/>
+		<params>
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.ui.gbp.i18n.messages" />
+		</params>
+	</report>
+
 </report-config>

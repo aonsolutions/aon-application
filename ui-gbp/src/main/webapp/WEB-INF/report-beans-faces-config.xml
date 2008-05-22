@@ -45,4 +45,12 @@
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
 
+	<managed-bean>
+		<managed-bean-name>offerControlReport</managed-bean-name>
+		<managed-bean-class>
+			com.code.ui.gbp.stats.OfferControlReport
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
+	
 </faces-config>
