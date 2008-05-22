@@ -57,6 +57,15 @@
 								size="45" onblur="toUpperCase(this);"/>
 								
 							<t:outputLabel 
+								for="Company_surcharge" 
+								styleClass="aon-form-input-text-label"
+								value="#{registryBundle.aon_company_surcharge}" />
+							<h:selectBooleanCheckbox 
+								styleClass="aon-form-selectBooleanCheckbox-field"
+								id="Company_surcharge" 
+								value="#{company.to.surcharge}" />		
+
+							<t:outputLabel 
 								for="RegistryAttachment_id" 
 								styleClass="aon-form-input-text-label"
 								value="#{registryBundle.aon_company_logo}" />
@@ -75,15 +84,6 @@
 								rendered="#{company.imageAttached}" 
 								url="company.logo"/>	
 
-							<t:outputLabel 
-								for="Company_print_header" 
-								styleClass="aon-form-input-text-label"
-								value="#{registryBundle.aon_company_print_header}" />
-							<h:selectBooleanCheckbox 
-								styleClass="aon-form-input-text"
-								id="Company_print_header" 
-								value="#{company.printHeader}" />		
-								
 						</h:panelGrid>
 						<h:panelGrid columns="2" cellpadding="0" cellspacing="0"
 							styleClass="aon-form-table"
@@ -131,7 +131,7 @@
 								value="#{company.mainAddress.geozone.id}"
 								styleClass="aon-form-selectOneMenu-field"
 								valueChangeListener="#{company.addressChanged}">
-								<f:selectItems value="#{registryCollections.geoZones}" />
+								<f:selectItems value="#{geozoneCollections.geoTrees}" />
 							</h:selectOneMenu>
 							
 							<h:outputLabel 
@@ -175,20 +175,20 @@
 								valueChangeListener="#{company.webChanged}" size="45"/>
 								
 							<t:outputLabel 
-								for="Company_surcharge" 
+								for="Company_print_header" 
 								styleClass="aon-form-input-text-label"
-								value="#{registryBundle.aon_company_surcharge}" />
+								value="#{registryBundle.aon_company_print_header}" />
 							<h:selectBooleanCheckbox 
-								styleClass="aon-form-input-text"
-								id="Company_surcharge" 
-								value="#{company.to.surcharge}" />		
-
+								styleClass="aon-form-selectBooleanCheckbox-field"
+								id="Company_print_header" 
+								value="#{company.printHeader}" />		
+								
 							<t:outputLabel 
 								for="Company_print_record_data" 
 								styleClass="aon-form-input-text-label"
 								value="#{registryBundle.aon_company_print_record_data}" />
 							<h:selectBooleanCheckbox 
-								styleClass="aon-form-input-text"
+								styleClass="aon-form-selectBooleanCheckbox-field"
 								id="Company_print_record_data" 
 								value="#{company.printRecordData}" />		
 								
