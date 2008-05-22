@@ -158,6 +158,10 @@
 			<from-outcome>supplier_evolution_stat</from-outcome>
 			<to-view-id>/facelet/stats/supplierEvolution.xhtml</to-view-id>
 		</navigation-case>
+		<navigation-case>
+			<from-outcome>supplier_type_evolution_stat</from-outcome>
+			<to-view-id>/facelet/stats/supplierTypeEvolution.xhtml</to-view-id>
+		</navigation-case>
 	</navigation-rule>	
 
 	
