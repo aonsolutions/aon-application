@@ -38,6 +38,7 @@ import com.code.aon.customer.Customer;
 import com.code.aon.customer.dao.ICustomerAlias;
 import com.code.aon.finance.Finance;
 import com.code.aon.finance.Invoice;
+import com.code.aon.finance.InvoiceAddress;
 import com.code.aon.finance.InvoiceDetail;
 import com.code.aon.finance.dao.IFinanceAlias;
 import com.code.aon.finance.enumeration.InvoiceSource;
@@ -84,6 +85,9 @@ public class SalesInvoicingController extends BasicController {
 	
 	/** Delivery controllers name. */
 	private static final String DELIVERY_CONTROLLER_NAME = "delivery";
+
+	/** SalesInvoicingAddress controllers name. */
+	private static final String SALES_INVOICING_ADDRESS_CONTROLLER_NAME = "salesInvoicingAddress";
 
 	/** SalesInvoicingDetail controllers name. */
 	private static final String SALES_INVOICING_DETAIL_CONTROLLER_NAME = "salesInvoicingDetail";
@@ -210,21 +214,49 @@ public class SalesInvoicingController extends BasicController {
 	 * @param customerId the ident of a customer
 	 */
 	@SuppressWarnings("unchecked")
-	public void loadAddresses(Integer customerId) {
-		addresses  = new LinkedList<SelectItem>();
-		try {
-			IManagerBean rAddressBean = BeanManager.getManagerBean(RegistryAddress.class);
-			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(rAddressBean.getFieldName(IRegistryAlias.REGISTRY_ADDRESS_REGISTRY_ID), customerId);
-			Iterator iter = rAddressBean.getList(criteria).iterator();
-			while(iter.hasNext()){
-				RegistryAddress address = (RegistryAddress)iter.next();
-				SelectItem item = new SelectItem(address.getId(), address.getAddress()+ " " + address.getAddress2() + " " + address.getCity());
-				addresses.add(item);
+	public void loadAddresses(Integer id) {
+		List<SelectItem> addresses = new LinkedList<SelectItem>();
+		if (id != null) {
+			try{
+				IManagerBean rAddressBean = BeanManager.getManagerBean(RegistryAddress.class);
+				Criteria criteria = new Criteria();
+				criteria.addEqualExpression(rAddressBean.getFieldName(IRegistryAlias.REGISTRY_ADDRESS_REGISTRY_ID), id);
+				Iterator iter = rAddressBean.getList(criteria).iterator();
+				while(iter.hasNext()){
+					RegistryAddress address = (RegistryAddress)iter.next();
+					String addressLabel = address.getAddress() + " " + address.getAddress2() + " " + address.getAddress3();
+					addressLabel = ((addressLabel.length()>30)?addressLabel.substring(0,27)+"...":addressLabel) + " - " + address.getCity();
+					addressLabel = ((addressLabel.length()>48)?addressLabel.substring(0,45)+"...":addressLabel);
+					SelectItem item = new SelectItem(address.getId(), addressLabel);
+					addresses.add(item);
+				}
+			} catch (ManagerBeanException e) {
+				LOGGER.log(Level.SEVERE, "error loading addresses for customer with id= " + id, e);
 			}
-		} catch (ManagerBeanException e) {
-			LOGGER.log(Level.SEVERE, "error loading addresses for customer with id= " + customerId, e);
 		}
+		this.addresses = addresses;
+	}
+
+	public String getAddress() throws ManagerBeanException {
+		RegistryAddress rAddress = ((Invoice)this.getTo()).getRegistryAddress();
+		String address = (rAddress!=null)?rAddress.getAddress()+" "+rAddress.getAddress2()+" "+rAddress.getAddress3():"";
+		BasicController addressController = (BasicController)AonUtil.getController(SALES_INVOICING_ADDRESS_CONTROLLER_NAME);
+		if (addressController.getTo() != null && ((InvoiceAddress)addressController.getTo()).getId() != null) {
+			InvoiceAddress invoiceAddress = (InvoiceAddress)addressController.getTo();
+			address = invoiceAddress.getAddress() + " " + invoiceAddress.getAddress2();
+		}
+		return address;
+	}
+
+	public String getCity() throws ManagerBeanException {
+		RegistryAddress rAddress = ((Invoice)this.getTo()).getRegistryAddress();
+		String city = (rAddress!=null)?rAddress.getCity():"";
+		BasicController addressController = (BasicController)AonUtil.getController(SALES_INVOICING_ADDRESS_CONTROLLER_NAME);
+		if (addressController.getTo() != null && ((InvoiceAddress)addressController.getTo()).getId() != null) {
+			InvoiceAddress invoiceAddress = (InvoiceAddress)addressController.getTo();
+			city = invoiceAddress.getCity();
+		}
+		return city;
 	}
 
 	/**
