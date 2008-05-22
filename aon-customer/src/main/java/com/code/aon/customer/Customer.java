@@ -235,6 +235,17 @@ public class Customer implements ITransferObject, ILookupObject, ITaxInfo, IScop
 		this.scope = scope;
 	}
 
+	@Override
+	public boolean equals(Object obj) {
+		if (id == null) {
+			return super.equals(obj);
+		}
+		if (obj instanceof Customer) {
+			return (this.id.equals(((Customer) obj).getId()));
+		}
+		return false;
+	}
+
 	/**
 	 * Gets the map of values used by the lookup.
 	 * 
