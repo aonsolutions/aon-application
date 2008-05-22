@@ -152,5 +152,13 @@
 		</navigation-case>
 	</navigation-rule>	
 
+	<!-- =================== STATISTICS ================= -->	
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>supplier_evolution_stat</from-outcome>
+			<to-view-id>/facelet/stats/supplierEvolution.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>	
+
 	
 </faces-config>

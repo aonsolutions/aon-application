@@ -11,7 +11,7 @@
 	</bean>
 
 	<bean class="com.code.gbp.CampaignSupplier" sqlName="campaign_supplier">
-		<alias names="campaign_id,campaign_code,campaign_startDate,campaign_status,id,supplier_id,supplier_name" />
-		<hibernate names="campaign.id,campaign.code,campaign.startDate,campaign.status,id,supplier.id,supplier.name" />
+		<alias names="campaign_id,campaign_code,campaign_startDate,campaign_endDate,campaign_status,id,supplier_id,supplier_name" />
+		<hibernate names="campaign.id,campaign.code,campaign.startDate,campaign.endDate,campaign.status,id,supplier.id,supplier.name" />
 	</bean>
 </dao>

@@ -167,4 +167,13 @@
 		<template path="/com/code/ui/gbp/report/proForma_banks.jasper"/>
 	</report>
 	
+	<!--  *********  ESTADISTICAS ********* -->
+	<report id="supplier_evolution_stat" description="Evolucion de proveedores">
+		<template path="/com/code/ui/gbp/stats/supplierEvolution.jasper" />
+		<collection provider="#{supplierEvolutionReport}"/>
+		<params>
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.ui.gbp.i18n.messages" />
+		</params>
+	</report>
+
 </report-config>
