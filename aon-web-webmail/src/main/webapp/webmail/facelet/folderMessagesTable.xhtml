@@ -2,11 +2,12 @@
 <html xmlns="http://www.w3.org/1999/xhtml"
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:f="http://java.sun.com/jsf/core"
-	xmlns:h="http://java.sun.com/jsf/html"
-	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:h="http://java.sun.com/jsf/html"	
 	xmlns:c="http://java.sun.com/jstl/core"
 	xmlns:rich="http://richfaces.org/rich"
-	xmlns:a4j="http://richfaces.org/a4j">
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	>
 <body>
 
 <ui:composition>
@@ -31,7 +32,7 @@
 
 			<ui:include src="/webmail/facelet/webmailButtons.xhtml" />
 
-			<aon:div styleClass="aon-section-title">
+			<aon:div styleClass="aon-section-title" >
 				<aon:outputText value="#{folder.folder.name}" />
 			</aon:div>
 
@@ -108,7 +109,8 @@
 				<aon:outputText value="#{appBundle.aon_webmail_nomessages}" />
 			</aon:panelGroup>
 			<aon:div style="width:99%" rendered="#{folder.folder.messageCount>0}">
-				<aon:dataTable id="messageDataTable"
+				
+				<aon:dataTable id="messageDataTable" style="border-right:#ccc 1px solid;"
 					value="#{folder.folder.model}" var="to"
 					rows="#{folder.pageObjectNumber}"
 					columnClasses="aon-width-80,
@@ -201,7 +203,7 @@
 						</aon:div>
 					</aon:column>
 				</aon:dataTable>
-
+				
 				<aon:dataScroller rowCount="#{folder.folder.messageCount}"
 					for="messageDataTable" page="#{folder.currentPage}" />
 
