@@ -240,7 +240,7 @@
 					<textElement verticalAlignment="Middle">
 						<font size="8"/>
 					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[($F{courseAlumn}.getCustomer().getRegistry().getName()!=null?$F{courseAlumn}.getCustomer().getRegistry().getName():"") + " " + ($F{courseAlumn}.getCustomer().getRegistry().getSurname()!=null?$F{courseAlumn}.getCustomer().getRegistry().getSurname():"")]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.String"><![CDATA[($F{courseAlumn}.getCustomer().getRegistry().getSurname()!=null?$F{courseAlumn}.getCustomer().getRegistry().getSurname()+", ":"") + ($F{courseAlumn}.getCustomer().getRegistry().getName()!=null?$F{courseAlumn}.getCustomer().getRegistry().getName():"")]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="false" pattern="dd/MM/yyyy" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement

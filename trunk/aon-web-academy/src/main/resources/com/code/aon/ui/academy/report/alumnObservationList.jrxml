@@ -213,7 +213,7 @@
 					<textElement verticalAlignment="Middle">
 						<font size="8"/>
 					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[($F{alumn}.getRegistry().getName()!=null?$F{alumn}.getRegistry().getName():"") + " " + ($F{alumn}.getRegistry().getSurname()!=null?$F{alumn}.getRegistry().getSurname():"")]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.String"><![CDATA[($F{alumn}.getRegistry().getSurname()!=null?$F{alumn}.getRegistry().getSurname()+", ":"") + ($F{alumn}.getRegistry().getName()!=null?$F{alumn}.getRegistry().getName():"")]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
