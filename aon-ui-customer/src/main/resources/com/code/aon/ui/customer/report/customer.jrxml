@@ -202,7 +202,7 @@
 						mode="Opaque"
 						x="483"
 						y="0"
-						width="71"
+						width="72"
 						height="20"
 						forecolor="#000000"
 						backcolor="#FFFFFF"
@@ -221,9 +221,9 @@
 				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						mode="Opaque"
-						x="191"
+						x="193"
 						y="0"
-						width="152"
+						width="151"
 						height="19"
 						forecolor="#000000"
 						backcolor="#FFFFFF"
@@ -238,9 +238,9 @@
 				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						mode="Opaque"
-						x="343"
+						x="344"
 						y="0"
-						width="138"
+						width="139"
 						height="19"
 						forecolor="#000000"
 						backcolor="#FFFFFF"
@@ -257,7 +257,7 @@
 						mode="Opaque"
 						x="48"
 						y="0"
-						width="144"
+						width="145"
 						height="19"
 						forecolor="#000000"
 						backcolor="#FFFFFF"
@@ -289,9 +289,9 @@
 				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						mode="Opaque"
-						x="482"
+						x="483"
 						y="0"
-						width="70"
+						width="72"
 						height="19"
 						forecolor="#000000"
 						backcolor="#FFFFFF"
