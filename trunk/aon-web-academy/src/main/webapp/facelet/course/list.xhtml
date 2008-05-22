@@ -65,7 +65,7 @@
 							rendered="#{course.model.rowCount > 0}"
 							styleClass="aon-table" headerClass="aon-table-header"
 							rowClasses="aon-table-row-odd,aon-table-row-even"
-							columnClasses="aon-table-body aon-table-body-string,aon-table-body aon-table-body-string,aon-table-body aon-table-body-string,aon-table-body aon-table-body-string"
+							columnClasses="aon-table-body aon-table-body-string,aon-table-body aon-table-body-string,aon-table-body aon-table-body-string,aon-table-body aon-table-body-string,aon-table-body aon-table-body-string,aon-table-body aon-table-body-string"
 							rowOnMouseOver="selectRow( this )"
 							rowOnMouseOut="unselectRow( this )" rowOnClick="sendRow( this )">
 
@@ -79,7 +79,6 @@
 								<h:outputText value="#{to.code}" />
 								<f:verbatim>&#160;</f:verbatim>
 							</h:column>
-
 							<h:column>
 								<f:facet name="header">
 									<h:panelGroup>
@@ -87,6 +86,30 @@
 									</h:panelGroup>
 								</f:facet>
 								<h:outputText value="#{to.academicYear.description}" />
+								<f:verbatim>&#160;</f:verbatim>
+							</h:column>
+							<h:column>
+								<f:facet name="header">
+									<h:panelGroup>
+										<h:outputText value="#{appBundle.course_start_date}" />
+									</h:panelGroup>
+								</f:facet>
+								<h:outputText value="#{to.startDate}">
+									<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+										timeZone="#{timeZoneController.timeZoneId}" />
+								</h:outputText>
+								<f:verbatim>&#160;</f:verbatim>
+							</h:column>
+							<h:column>
+								<f:facet name="header">
+									<h:panelGroup>
+										<h:outputText value="#{appBundle.course_end_date}" />
+									</h:panelGroup>
+								</f:facet>
+								<h:outputText value="#{to.endDate}">
+									<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+										timeZone="#{timeZoneController.timeZoneId}" />
+								</h:outputText>
 								<f:verbatim>&#160;</f:verbatim>
 							</h:column>
 							<h:column>
