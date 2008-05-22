@@ -36,6 +36,12 @@
 			<aon:div styleClass="aon-scroll-area">
 				<aon:panelGrid id="campaignGrid" columns="2" dir="true">
 
+					<aon:outputLabel for="Supplier"
+						value="#{appBundle.gbp_campaign_supplier}" />
+					<aon:inputText id="Supplier"
+						value="#{supplierEvolutionReport.supplier}" 
+						inputSize="15" />
+
 					<aon:outputLabel for="Campaign_startDate"
 						value="#{appBundle.gbp_campaign_start_date}" />
 					<aon:selectInputDate id="Campaign_startDate"
