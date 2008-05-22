@@ -149,28 +149,34 @@ public interface IGBPAlias {
 	String  CAMPAIGN_SUPPLIER_CAMPAIGN_START_DATE = CAMPAIGN_SUPPLIER_ENTRY.getAliasNames()[2];
 
 	/** 
+	* Alias value: CampaignSupplier_campaign_endDate
+	* Hibernate value: CampaignSupplier.campaign.endDate
+	*/
+	String  CAMPAIGN_SUPPLIER_CAMPAIGN_END_DATE = CAMPAIGN_SUPPLIER_ENTRY.getAliasNames()[3];
+
+	/** 
 	* Alias value: CampaignSupplier_campaign_status
 	* Hibernate value: CampaignSupplier.campaign.status
 	*/
-	String  CAMPAIGN_SUPPLIER_CAMPAIGN_STATUS = CAMPAIGN_SUPPLIER_ENTRY.getAliasNames()[3];
+	String  CAMPAIGN_SUPPLIER_CAMPAIGN_STATUS = CAMPAIGN_SUPPLIER_ENTRY.getAliasNames()[4];
 
 	/** 
 	* Alias value: CampaignSupplier_id
 	* Hibernate value: CampaignSupplier.id
 	*/
-	String  CAMPAIGN_SUPPLIER_ID = CAMPAIGN_SUPPLIER_ENTRY.getAliasNames()[4];
+	String  CAMPAIGN_SUPPLIER_ID = CAMPAIGN_SUPPLIER_ENTRY.getAliasNames()[5];
 
 	/** 
 	* Alias value: CampaignSupplier_supplier_id
 	* Hibernate value: CampaignSupplier.supplier.id
 	*/
-	String  CAMPAIGN_SUPPLIER_SUPPLIER_ID = CAMPAIGN_SUPPLIER_ENTRY.getAliasNames()[5];
+	String  CAMPAIGN_SUPPLIER_SUPPLIER_ID = CAMPAIGN_SUPPLIER_ENTRY.getAliasNames()[6];
 
 	/** 
 	* Alias value: CampaignSupplier_supplier_name
 	* Hibernate value: CampaignSupplier.supplier.name
 	*/
-	String  CAMPAIGN_SUPPLIER_SUPPLIER_NAME = CAMPAIGN_SUPPLIER_ENTRY.getAliasNames()[6];
+	String  CAMPAIGN_SUPPLIER_SUPPLIER_NAME = CAMPAIGN_SUPPLIER_ENTRY.getAliasNames()[7];
 
 
 
