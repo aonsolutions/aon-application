@@ -10,7 +10,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.code.gbp</groupId>
 	<artifactId>gbp</artifactId>
-	<version>0.1.0</version>
+	<version>0.1.1</version>
 	<description>GBP</description>
 	<name>GBP</name>
 	<dependencies>
