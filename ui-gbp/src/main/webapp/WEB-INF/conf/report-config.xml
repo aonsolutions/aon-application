@@ -192,4 +192,12 @@
 		</params>
 	</report>
 
+	<report id="invoice_control_stat" description="Invoice Control">
+		<template path="/com/code/ui/gbp/stats/invoiceControl.jasper" />
+		<collection provider="#{invoiceControlReport}"/>
+		<params>
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.ui.gbp.i18n.messages" />
+		</params>
+	</report>
+
 </report-config>

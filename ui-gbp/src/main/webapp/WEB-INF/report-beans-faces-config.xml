@@ -53,4 +53,12 @@
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
 	
+	<managed-bean>
+		<managed-bean-name>invoiceControlReport</managed-bean-name>
+		<managed-bean-class>
+			com.code.ui.gbp.stats.InvoiceControlReport
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
+	
 </faces-config>

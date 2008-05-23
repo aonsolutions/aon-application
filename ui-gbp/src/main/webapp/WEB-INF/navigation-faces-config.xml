@@ -166,6 +166,10 @@
 			<from-outcome>offer_control_stat</from-outcome>
 			<to-view-id>/facelet/stats/offerControl.xhtml</to-view-id>
 		</navigation-case>
+		<navigation-case>
+			<from-outcome>invoice_control_stat</from-outcome>
+			<to-view-id>/facelet/stats/invoiceControl.xhtml</to-view-id>
+		</navigation-case>
 	</navigation-rule>	
 
 	
