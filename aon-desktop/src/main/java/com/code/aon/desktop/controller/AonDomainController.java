@@ -11,7 +11,10 @@ import javax.faces.event.ActionEvent;
 import javax.faces.event.ValueChangeEvent;
 import javax.faces.model.ListDataModel;
 
+import com.code.aon.bridge.jmx.mbean.IConsoleAdmin;
 import com.code.aon.bridge.plugin.DomainManager;
+import com.code.aon.bridge.plugin.UserManager;
+import com.code.aon.bridge.plugin.Utils;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.jaas.auth.AuthPrincipal;
 import com.code.aon.jaas.client.ast.IDomainApplication;
@@ -24,6 +27,7 @@ import com.code.aon.ldap.DistinguishedName;
 import com.code.aon.ldap.IAonObjectClasses;
 import com.code.aon.ldap.ILdapConstants;
 import com.code.aon.ldap.LdapException;
+import com.code.aon.ui.config.util.UserUtils;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.form.IController;
 import com.code.aon.ui.util.AonUtil;
@@ -153,6 +157,7 @@ public class AonDomainController extends BasicController implements IAonObjectCl
 			newProfile = false;
 			getDomainManager().saveProfile();
 			loadProfiles();
+			flushAuthenticationCache(null);			
 		} catch (DeploymentException e) {
 			e.printStackTrace();
 		}
@@ -167,9 +172,20 @@ public class AonDomainController extends BasicController implements IAonObjectCl
 		}
 	}
 
+	public void flushAuthenticationCache( String userName ) throws DeploymentException {
+		IConsoleAdmin console = Utils.getSecurityConsole();
+		AuthPrincipal principal = null;
+		if ( userName != null ) {
+			String name = UserUtils.getInstance().getPrincipal().getName();
+			principal = new AuthPrincipal( userName + name.substring(name.indexOf('@')));			
+		}
+		console.flushAuthenticationCache(UserManager.LDAP_SECURITY_DOMAIN, principal);
+	}
+
 	public void acceptUser(ActionEvent event) {
 		try {
 			getDomainManager().updateUserProfiles();
+			flushAuthenticationCache(this.user.getId());
 		} catch (DeploymentException e) {
 			e.printStackTrace();
 		}
