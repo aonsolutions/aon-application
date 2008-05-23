@@ -33,6 +33,9 @@ public class BackDoorAuthentication extends HttpServlet {
 		Request activeRequest = (Request) BackDoorAuthenticationValve.activeRequest.get();
 		String uri = activeRequest.getRequestURI();
 		uri = uri.substring( uri.lastIndexOf( "/" ), uri.lastIndexOf( ".auth" ) ) + AUTH_PAGE;
+		if ( activeRequest.getQueryString() != null ) {
+			uri += "?" + activeRequest.getQueryString();
+		}
 		String id = activeRequest.getSession( false ).getId();
 		activeRequest.recycle();
 		activeRequest.getCoyoteRequest().getCookies().recycle();
