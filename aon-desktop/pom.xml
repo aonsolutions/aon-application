@@ -51,7 +51,7 @@
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.webmail</artifactId>
-			<version>3.0.10</version>
+			<version>3.0.12</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
