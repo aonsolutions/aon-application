@@ -178,6 +178,10 @@
 			<from-outcome>campaign_comparer_stat</from-outcome>
 			<to-view-id>/facelet/stats/campaignComparer.xhtml</to-view-id>
 		</navigation-case>
+		<navigation-case>
+			<from-outcome>anual_comparer_stat</from-outcome>
+			<to-view-id>/facelet/stats/anualComparer.xhtml</to-view-id>
+		</navigation-case>
 	</navigation-rule>	
 
 	

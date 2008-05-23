@@ -77,4 +77,12 @@
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
 	
+	<managed-bean>
+		<managed-bean-name>anualComparerReport</managed-bean-name>
+		<managed-bean-class>
+			com.code.ui.gbp.stats.AnualComparerReport
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
+	
 </faces-config>
