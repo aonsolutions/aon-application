@@ -41,7 +41,7 @@
 	<variable name="amountTotal2" class="java.lang.Double" resetType="Report" calculation="Sum">
 		<variableExpression><![CDATA[$F{invoiceAmount_2}]]></variableExpression>
 	</variable>
-	<variable name="diffTotal" class="java.lang.Double" resetType="None" calculation="Sum">
+	<variable name="diffTotal" class="java.lang.Double" resetType="Report" calculation="Sum">
 		<variableExpression><![CDATA[$F{invoiceAmountDiff}]]></variableExpression>
 	</variable>
 		<background>
@@ -459,11 +459,29 @@
 			</band>
 		</detail>
 		<columnFooter>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+		</columnFooter>
+		<pageFooter>
+			<band height="0"  isSplitAllowed="true" >
+				<line direction="TopDown">
+					<reportElement
+						x="0"
+						y="-20"
+						width="535"
+						height="0"
+						forecolor="#999999"
+						key="line-1"/>
+					<graphicElement stretchType="NoStretch"/>
+				</line>
+			</band>
+		</pageFooter>
+		<summary>
 			<band height="200"  isSplitAllowed="true" >
 				<textField isStretchWithOverflow="false" pattern="#,##0.00" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						x="172"
-						y="1"
+						y="2"
 						width="93"
 						height="14"
 						key="textField-26"
@@ -477,7 +495,7 @@
 				<textField isStretchWithOverflow="false" pattern="#,##0.00" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						x="431"
-						y="1"
+						y="2"
 						width="97"
 						height="14"
 						key="textField-28"
@@ -491,8 +509,8 @@
 				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						mode="Opaque"
-						x="12"
-						y="162"
+						x="21"
+						y="158"
 						width="228"
 						height="19"
 						forecolor="#000000"
@@ -507,8 +525,8 @@
 				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						mode="Opaque"
-						x="275"
-						y="162"
+						x="284"
+						y="158"
 						width="228"
 						height="19"
 						forecolor="#000000"
@@ -523,7 +541,7 @@
 				<textField isStretchWithOverflow="false" pattern="#,##0.00" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						x="302"
-						y="1"
+						y="2"
 						width="93"
 						height="14"
 						key="textField-50"
@@ -537,8 +555,8 @@
 				<pie3DChart>
 					<chart  hyperlinkTarget="Self" >
 					<reportElement
-						x="12"
-						y="25"
+						x="21"
+						y="21"
 						width="229"
 						height="137"
 						key="element-3"/>
@@ -547,7 +565,7 @@
 					</chartLegend>
 					</chart>
 					<pieDataset>
-						<dataset >
+						<dataset resetType="None" >
 						</dataset>
 						<keyExpression><![CDATA[$F{supplierType}]]></keyExpression>
 						<valueExpression><![CDATA[$F{invoiceAmount_1}]]></valueExpression>
@@ -562,8 +580,8 @@
 				<pie3DChart>
 					<chart  hyperlinkTarget="Self" >
 					<reportElement
-						x="275"
-						y="25"
+						x="284"
+						y="21"
 						width="229"
 						height="137"
 						key="element-4"/>
@@ -572,7 +590,7 @@
 					</chartLegend>
 					</chart>
 					<pieDataset>
-						<dataset >
+						<dataset resetType="None" >
 						</dataset>
 						<keyExpression><![CDATA[$F{supplierType}]]></keyExpression>
 						<valueExpression><![CDATA[$F{invoiceAmount_2}]]></valueExpression>
@@ -584,14 +602,10 @@
 						<plot />
 					</pie3DPlot>
 				</pie3DChart>
-			</band>
-		</columnFooter>
-		<pageFooter>
-			<band height="20"  isSplitAllowed="true" >
 				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Report" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
-						x="516"
-						y="2"
+						x="520"
+						y="184"
 						width="13"
 						height="14"
 						key="textField-15"/>
@@ -603,8 +617,8 @@
 				</textField>
 				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
-						x="457"
-						y="2"
+						x="461"
+						y="184"
 						width="57"
 						height="14"
 						key="textField-16"/>
@@ -614,20 +628,6 @@
 					</textElement>
 				<textFieldExpression   class="java.lang.String"><![CDATA[$R{aon_page} + " " + $V{PAGE_NUMBER} + " " + $R{aon_of} + " "]]></textFieldExpression>
 				</textField>
-				<line direction="TopDown">
-					<reportElement
-						x="0"
-						y="-200"
-						width="535"
-						height="0"
-						forecolor="#999999"
-						key="line-1"/>
-					<graphicElement stretchType="NoStretch"/>
-				</line>
-			</band>
-		</pageFooter>
-		<summary>
-			<band height="0"  isSplitAllowed="true" >
 			</band>
 		</summary>
 </jasperReport>
