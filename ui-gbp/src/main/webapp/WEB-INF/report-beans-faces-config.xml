@@ -60,5 +60,13 @@
 		</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
+
+	<managed-bean>
+		<managed-bean-name>campaignComparerReport</managed-bean-name>
+		<managed-bean-class>
+			com.code.ui.gbp.stats.CampaignComparerReport
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
 	
 </faces-config>
