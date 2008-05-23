@@ -382,7 +382,7 @@
 						<dataset resetType="Group" resetGroup="campaignGroup" >
 						</dataset>
 						<keyExpression><![CDATA[$F{supplier}.getName()]]></keyExpression>
-						<valueExpression><![CDATA[new Double($F{invoice}.doubleValue() * 100 / $F{campaignTotal}.doubleValue() )]]></valueExpression>
+						<valueExpression><![CDATA[$V{percent}]]></valueExpression>
 				<sectionHyperlink >
 				</sectionHyperlink>
 					</pieDataset>
