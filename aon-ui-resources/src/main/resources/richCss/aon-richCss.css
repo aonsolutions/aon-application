@@ -1048,10 +1048,13 @@ color:#000;
   top:8px;
   background:#304055 url(images/aon-header/aon-outputConnectionStatus-stop.gif) scroll left top no-repeat;
 }
-.aon-outputConnectionStatus-failed {
+.aon-outputConnectionStatus-failed{
+  width:21px;
+  height:13px;
   position:absolute;
   left:8px;
   top:8px;
+  background:#304055 url(images/aon-header/aon-outputConnectionStatus-failed.png) scroll left top no-repeat;
 }
 /**********************/
 /****  HEADER SECTION ******/
