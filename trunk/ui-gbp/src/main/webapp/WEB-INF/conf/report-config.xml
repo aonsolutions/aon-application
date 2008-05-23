@@ -176,6 +176,14 @@
 		</params>
 	</report>
 
+	<report id="campaign_evolution_stat" description="Evolucion de Campanyas">
+		<template path="/com/code/ui/gbp/stats/campaignEvolution.jasper" />
+		<collection provider="#{campaignEvolutionReport}"/>
+		<params>
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.ui.gbp.i18n.messages" />
+		</params>
+	</report>
+
 	<report id="supplier_type_evolution_stat" description="Evolucion de tipos de proveedores">
 		<template path="/com/code/ui/gbp/stats/supplierTypeEvolution.jasper" />
 		<collection provider="#{supplierTypeEvolutionReport}"/>

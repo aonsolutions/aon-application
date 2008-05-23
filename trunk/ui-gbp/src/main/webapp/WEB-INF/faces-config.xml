@@ -42,12 +42,6 @@
 		<converter-class>com.code.ui.gbp.converter.ProFormaStatusConverter</converter-class>
 	</converter>
 
-	<converter>
-		<description>Conversor for report's OutputFormat Enumeration class</description>
-		<converter-for-class>com.code.aon.report.OutputFormat</converter-for-class>
-		<converter-class>com.code.aon.ui.report.converter.OutputFormatConverter</converter-class>
-	</converter>
-
 	<lifecycle>
 		<phase-listener>
 			com.code.aon.faces.component.sandbox.ValueChangePhaseListener
@@ -163,15 +157,6 @@
 		<managed-bean-name>requestController</managed-bean-name>
 		<managed-bean-class>
 			com.code.aon.ui.form.RequestController
-		</managed-bean-class>
-		<managed-bean-scope>request</managed-bean-scope>
-	</managed-bean>
-
-	<!-- **************** REPORT *************** -->
-	<managed-bean>
-		<managed-bean-name>report</managed-bean-name>
-		<managed-bean-class>
-			com.code.aon.ui.report.controller.ReportManager
 		</managed-bean-class>
 		<managed-bean-scope>request</managed-bean-scope>
 	</managed-bean>
