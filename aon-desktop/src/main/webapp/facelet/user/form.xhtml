@@ -40,6 +40,9 @@
 							immediate="true"
 							actionListener="#{user.onCancel}" action="user"
 							accesskey="#{bundle.aon_key_cancel}" />
+						<aon:commandButton id="changePassword" value="#{appBundle.aon_change_password}"
+							action="changepassword_form" actionListener="#{currentUser.onLoadUser}"
+							styleClass="aon-finding-toolbar-item aon-icon-user-change-password" />
 						<aon:commandButton id="groups" value="#{appBundle.aon_workgroups}"
 							action="work_group" actionListener="#{workGroup.onSearch}"
 							styleClass="aon-finding-toolbar-item aon-icon-group" />
