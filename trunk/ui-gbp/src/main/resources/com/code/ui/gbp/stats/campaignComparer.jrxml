@@ -106,9 +106,9 @@
 				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						mode="Opaque"
-						x="172"
+						x="190"
 						y="95"
-						width="93"
+						width="75"
 						height="15"
 						forecolor="#FFFFFF"
 						backcolor="#000000"
@@ -124,7 +124,7 @@
 						mode="Opaque"
 						x="136"
 						y="95"
-						width="36"
+						width="54"
 						height="15"
 						forecolor="#FFFFFF"
 						backcolor="#000000"
@@ -248,9 +248,9 @@
 				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						mode="Opaque"
-						x="302"
+						x="319"
 						y="95"
-						width="93"
+						width="75"
 						height="15"
 						forecolor="#FFFFFF"
 						backcolor="#000000"
@@ -266,7 +266,7 @@
 						mode="Opaque"
 						x="265"
 						y="95"
-						width="36"
+						width="54"
 						height="15"
 						forecolor="#FFFFFF"
 						backcolor="#000000"
@@ -280,9 +280,9 @@
 				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						mode="Opaque"
-						x="395"
+						x="394"
 						y="95"
-						width="36"
+						width="54"
 						height="15"
 						forecolor="#FFFFFF"
 						backcolor="#000000"
@@ -296,9 +296,9 @@
 				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						mode="Opaque"
-						x="432"
+						x="448"
 						y="95"
-						width="96"
+						width="75"
 						height="15"
 						forecolor="#FFFFFF"
 						backcolor="#000000"
@@ -323,7 +323,7 @@
 					<textElement textAlignment="Left" verticalAlignment="Middle">
 						<font pdfFontName="Helvetica-Bold" size="9" isBold="true"/>
 					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$R{gbp_campaign_campaign}+"1"]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{campaign_1}.getCode()+" "+$F{campaign_1}.getName()]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
@@ -339,7 +339,7 @@
 					<textElement textAlignment="Left" verticalAlignment="Middle">
 						<font pdfFontName="Helvetica-Bold" size="9" isBold="true"/>
 					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$R{gbp_campaign_campaign}+"1"]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{campaign_2}.getCode()+" "+$F{campaign_2}.getName()]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
@@ -378,7 +378,7 @@
 					<reportElement
 						x="136"
 						y="0"
-						width="36"
+						width="54"
 						height="14"
 						key="textField-20"
 						isPrintWhenDetailOverflows="true"/>
@@ -392,7 +392,7 @@
 					<reportElement
 						x="265"
 						y="0"
-						width="37"
+						width="54"
 						height="14"
 						key="textField-21"/>
 					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" leftPadding="5" rightBorder="None" rightBorderColor="#000000" rightPadding="5" bottomBorder="None" bottomBorderColor="#999999"/>
@@ -403,9 +403,9 @@
 				</textField>
 				<textField isStretchWithOverflow="false" pattern="#,##0.00" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
-						x="172"
+						x="190"
 						y="0"
-						width="93"
+						width="75"
 						height="14"
 						key="textField-46"
 						isPrintWhenDetailOverflows="true"/>
@@ -417,9 +417,9 @@
 				</textField>
 				<textField isStretchWithOverflow="false" pattern="#,##0.00" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
-						x="302"
+						x="319"
 						y="0"
-						width="93"
+						width="75"
 						height="14"
 						key="textField-47"
 						isPrintWhenDetailOverflows="true"/>
@@ -431,9 +431,9 @@
 				</textField>
 				<textField isStretchWithOverflow="false" pattern="#,##0.00" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
-						x="431"
+						x="448"
 						y="0"
-						width="97"
+						width="75"
 						height="14"
 						key="textField-48"
 						isPrintWhenDetailOverflows="true"/>
@@ -445,9 +445,9 @@
 				</textField>
 				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
-						x="395"
+						x="394"
 						y="0"
-						width="36"
+						width="54"
 						height="14"
 						key="textField-49"/>
 					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" leftPadding="5" rightBorder="None" rightBorderColor="#000000" rightPadding="5" bottomBorder="None" bottomBorderColor="#999999"/>
@@ -480,9 +480,9 @@
 			<band height="200"  isSplitAllowed="true" >
 				<textField isStretchWithOverflow="false" pattern="#,##0.00" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
-						x="172"
+						x="190"
 						y="2"
-						width="93"
+						width="75"
 						height="14"
 						key="textField-26"
 						isPrintWhenDetailOverflows="true"/>
@@ -494,9 +494,9 @@
 				</textField>
 				<textField isStretchWithOverflow="false" pattern="#,##0.00" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
-						x="431"
+						x="448"
 						y="2"
-						width="97"
+						width="75"
 						height="14"
 						key="textField-28"
 						isPrintWhenDetailOverflows="true"/>
@@ -540,9 +540,9 @@
 				</textField>
 				<textField isStretchWithOverflow="false" pattern="#,##0.00" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
-						x="302"
+						x="319"
 						y="2"
-						width="93"
+						width="75"
 						height="14"
 						key="textField-50"
 						isPrintWhenDetailOverflows="true"/>

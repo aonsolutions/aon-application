@@ -37,7 +37,7 @@
 	<variable name="supInvoiceTotal" class="java.lang.Double" resetType="Group" resetGroup="supplierTypeGroup" calculation="Sum">
 		<variableExpression><![CDATA[$F{invoice}]]></variableExpression>
 	</variable>
-	<variable name="supPercentTotal" class="java.lang.Double" resetType="None" calculation="Sum">
+	<variable name="supPercentTotal" class="java.lang.Double" resetType="None" calculation="Nothing">
 		<variableExpression><![CDATA[new Double($V{supInvoiceTotal}.doubleValue() * 100 / $F{campaignTotal}.doubleValue() )]]></variableExpression>
 	</variable>
 	<variable name="percent" class="java.lang.Double" resetType="None" calculation="Nothing">
@@ -129,7 +129,7 @@
 					<textElement verticalAlignment="Middle">
 						<font pdfFontName="Helvetica-Bold" size="10" isBold="true"/>
 					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$F{campaign}.getName()]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{campaign}.getCode() + " " + $F{campaign}.getName()]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
@@ -375,6 +375,7 @@
 								<titleExpression><![CDATA[$R{gbp_campaign_evolution_report_graph1}]]></titleExpression>
 					</chartTitle>
 						<chartLegend textColor="#000000" backgroundColor="#FFFFFF" >
+					<font fontName="SansSerif" pdfFontName="Helvetica" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" isPdfEmbedded="false" pdfEncoding="Cp1252"/>
 					</chartLegend>
 					</chart>
 					<pieDataset>
