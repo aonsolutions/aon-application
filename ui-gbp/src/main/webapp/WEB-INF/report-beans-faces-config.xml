@@ -38,6 +38,14 @@
 	</managed-bean>
 	
 	<managed-bean>
+		<managed-bean-name>campaignEvolutionReport</managed-bean-name>
+		<managed-bean-class>
+			com.code.ui.gbp.stats.CampaignEvolutionReport
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
+
+	<managed-bean>
 		<managed-bean-name>supplierTypeEvolutionReport</managed-bean-name>
 		<managed-bean-class>
 			com.code.ui.gbp.stats.SupplierTypeEvolutionReport
