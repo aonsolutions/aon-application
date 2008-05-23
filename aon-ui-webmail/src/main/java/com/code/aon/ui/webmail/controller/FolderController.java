@@ -3,8 +3,10 @@ package com.code.aon.ui.webmail.controller;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Logger;
 
+import javax.faces.context.FacesContext;
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 import javax.mail.Folder;
@@ -357,4 +359,23 @@ public class FolderController implements ITreeListener{
 		}
 	}
 
+	public boolean isRefreshNeeded() {
+		FacesContext context = FacesContext.getCurrentInstance();
+		Map<String, String> parameters = context.getExternalContext().getRequestParameterMap();
+		if ( parameters.containsKey("aonDestop") && (getFolder() != null) ) {
+			String name = getFolder().getName();
+			if ( AonFolder.INBOX_FOLDER_NAME.equals(name) ) {
+				try {
+					if ( getFolder().getMessageCount() != getFolder().getModel().getRowCount() ) {
+						getFolder().refresh();
+						return true;
+					}
+				} catch (WebmailException e) {
+					AonUtil.addErrorMessage(e.getMessage());
+					throw new AbortProcessingException(e);
+				}
+			}
+		}
+		return false;
+	}
 }
