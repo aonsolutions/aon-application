@@ -170,6 +170,10 @@
 			<from-outcome>invoice_control_stat</from-outcome>
 			<to-view-id>/facelet/stats/invoiceControl.xhtml</to-view-id>
 		</navigation-case>
+		<navigation-case>
+			<from-outcome>campaign_comparer_stat</from-outcome>
+			<to-view-id>/facelet/stats/campaignComparer.xhtml</to-view-id>
+		</navigation-case>
 	</navigation-rule>	
 
 	

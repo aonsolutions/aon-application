@@ -55,11 +55,4 @@ public class InvoiceControlReport implements ICollectionProvider {
 		setCampaign(null);
 	}
 	
-	public static void main(String[] args) {
-		InvoiceControlReport rep = new InvoiceControlReport();
-		rep.setCampaign("614");
-		System.out.println(rep.getCollection().size());
-		System.out.println("->");		
-	}
-
 }

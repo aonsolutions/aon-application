@@ -75,9 +75,4 @@ public class OfferControl {
 		return difference;
 	}
 
-	public void setDifference(Double difference) {
-		this.difference = difference;
-	}
-	
-	
 }

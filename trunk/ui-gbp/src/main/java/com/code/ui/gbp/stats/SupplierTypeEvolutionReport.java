@@ -57,7 +57,7 @@ public class SupplierTypeEvolutionReport implements ICollectionProvider {
 		Session s = HibernateUtil.getSession();
 		String subStmt = "(SELECT SUM(inv.amount) " +
 			"FROM ProFormaInvoice inv " +
-			"WHERE inv.supplier.id = cs.supplier.id " +
+			"WHERE inv.supplier.supplierType.id = cs.supplier.supplierType.id " +
 			"AND inv.campaign.id = cs.campaign.id)";
 		String stmt = "SELECT " + "new com.code.ui.gbp.stats.SupplierTypeEvolution("
 				+ "cs.supplier.supplierType.id,cs.supplier.supplierType.description,cs.campaign.code,cs.campaign.name,SUM(off.price)," + subStmt
