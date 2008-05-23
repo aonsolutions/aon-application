@@ -216,4 +216,12 @@
 		</params>
 	</report>
 
+	<report id="anual_comparer_stat" description="Invoice Control">
+		<template path="/com/code/ui/gbp/stats/anualComparer.jasper" />
+		<collection provider="#{anualComparerReport}"/>
+		<params>
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.ui.gbp.i18n.messages" />
+		</params>
+	</report>
+
 </report-config>
