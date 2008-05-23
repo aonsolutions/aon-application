@@ -39,7 +39,7 @@
 	<variable name="supInvoiceTotal" class="java.lang.Double" resetType="Group" resetGroup="supplierGroup" calculation="Sum">
 		<variableExpression><![CDATA[$F{invoice}]]></variableExpression>
 	</variable>
-	<variable name="supPercentTotal" class="java.lang.Double" resetType="None" calculation="Sum">
+	<variable name="supPercentTotal" class="java.lang.Double" resetType="None" calculation="Nothing">
 		<variableExpression><![CDATA[new Double($V{supInvoiceTotal}.doubleValue() * 100 / $V{supOfferTotal}.doubleValue() )]]></variableExpression>
 	</variable>
 	<variable name="supCampaignTotal" class="java.lang.Integer" resetType="Group" resetGroup="supplierGroup" calculation="Count">
