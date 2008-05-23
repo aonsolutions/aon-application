@@ -46,7 +46,8 @@ public class UserManager implements Serializable {
 	private static final long serialVersionUID = 5967483672644450772L;
 
 	public static final String USER_DESCRIPTION = "Usuario Generado"; 
-	public static final String SECURITY_CONTEXT_NAME = "/aon-security"; 
+	public static final String SECURITY_CONTEXT_NAME = "/aon-security";
+	public static final String LDAP_SECURITY_DOMAIN = "aon-ldap"; 
 	/** UserManager Logger instance. */
 	private static final Logger LOGGER = Logger.getLogger( UserManager.class.getName() );
 
@@ -488,6 +489,26 @@ public class UserManager implements Serializable {
 		saveUser( app, domain.getId(), oldUserId );
 		setChangePassword( false );
 		return updateRelation( app, domain.getId() );
+	}
+
+	/**
+	 * Accept user, in the application domain. 
+	 * 
+	 * @param app
+	 * @param domain
+	 * @return
+	 * @throws DeploymentException
+	 */
+	public void savePassword() {
+		try {
+			IApplication app = getApplication();
+			IDomain domain = getDomain();
+			setPassword( getNewPassword() );
+			this.user.changePasswd( encryptPassword( app ) );
+			saveUser( app, domain.getId(), null );
+		} catch (DeploymentException e) {
+			LOGGER.severe( e.getMessage() );
+		}	
 	}
 
 	/**
