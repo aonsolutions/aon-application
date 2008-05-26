@@ -127,9 +127,9 @@
 				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						mode="Opaque"
-						x="455"
+						x="475"
 						y="0"
-						width="80"
+						width="60"
 						height="15"
 						forecolor="#FFFFFF"
 						backcolor="#000000"
@@ -143,7 +143,7 @@
 				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						mode="Opaque"
-						x="375"
+						x="395"
 						y="0"
 						width="80"
 						height="15"
@@ -161,7 +161,7 @@
 						mode="Opaque"
 						x="270"
 						y="0"
-						width="105"
+						width="125"
 						height="15"
 						forecolor="#FFFFFF"
 						backcolor="#000000"
@@ -191,9 +191,9 @@
 				</textField>
 				<textField isStretchWithOverflow="false" pattern="dd/MM/yyyy" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
-						x="455"
+						x="475"
 						y="0"
-						width="80"
+						width="60"
 						height="14"
 						key="textField-9"/>
 					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" leftPadding="5" rightBorder="None" rightBorderColor="#000000" rightPadding="5" bottomBorder="Thin" bottomBorderColor="#999999"/>
@@ -213,13 +213,13 @@
 					<textElement verticalAlignment="Middle">
 						<font size="8"/>
 					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[($F{alumn}.getRegistry().getSurname()!=null?$F{alumn}.getRegistry().getSurname()+", ":"") + ($F{alumn}.getRegistry().getName()!=null?$F{alumn}.getRegistry().getName():"")]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.String"><![CDATA[($F{alumn}.getRegistry().getSurname()!=null&&!$F{alumn}.getRegistry().getSurname().trim().equals("")?$F{alumn}.getRegistry().getSurname()+", ":"") + ($F{alumn}.getRegistry().getName()!=null?$F{alumn}.getRegistry().getName():"")]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						x="270"
 						y="0"
-						width="105"
+						width="125"
 						height="14"
 						key="textField-20"
 						isPrintWhenDetailOverflows="true"/>
@@ -231,7 +231,7 @@
 				</textField>
 				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
-						x="375"
+						x="395"
 						y="0"
 						width="80"
 						height="14"
