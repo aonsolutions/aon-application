@@ -22,13 +22,6 @@
 			<h:panelGrid columns="2" dir="true" styleClass="aon-form-table"
 				columnClasses="aon-form-table-column-odd,aon-form-table-column-even">
 				
-				<h:outputLabel for="AlumnLoan_id" value="#{appBundle.loan_code}"
-					styleClass="aon-form-input-text-label aon-form-table-column-odd-label" />
-				<t:inputText id="AlumnLoan_id" styleClass="aon-form-input-text"
-					value="#{loanAlias.to.id}"
-					size="16" forceId="#{true}"
-					disabledOnClientSide="true" />
-
 				<h:outputLabel for="Customer_Lookup_id-Edit" value="#{appBundle.aon_alumn}"
 					styleClass="aon-form-input-text-label aon-form-table-column-odd-label" />
 				<t:div>
@@ -49,7 +42,7 @@
 					styleClass="aon-form-input-text-label aon-form-table-column-odd-label" />
 				<t:inputText styleClass="aon-form-input-text" id="AlumnLoan_material"
 					value="#{loanAlias.to.material}" required="#{true}"
-					forceId="#{true}" size="70" 
+					forceId="#{true}" size="25" maxlength="16"
 					disabledOnClientSide="false" />
 					
 				<h:outputLabel for="AlumnLoan_loanDate" value="#{appBundle.loan_date}"
@@ -78,7 +71,7 @@
 					styleClass="aon-form-input-text-label aon-form-table-column-odd-label" />
 				<t:inputText styleClass="aon-form-input-text" id="AlumnLoan_comments"
 					value="#{loanAlias.to.comments}"
-					forceId="#{true}" size="70" 
+					forceId="#{true}" size="70" maxlength="64"
 					disabledOnClientSide="false" />
 
 			</h:panelGrid>
