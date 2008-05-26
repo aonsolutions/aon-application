@@ -23,56 +23,61 @@
 			<option key="aon_alumn_reclassification" descriptionKey="aon_alumn_reclassification_desc" ref="alumn_reclassification" role="ReclasificacionAlumnos">
 				<actionListener action="#{alumnReclassification.onEditSearch}"/>
 			</option>
-			<option key="aon_academic_skill_to_groups" descriptionKey="aon_academic_skill_to_groups_desc" ref="academic_skill_to_group" role="HabilidadesAGrupos">
-				<actionListener action="#{academicSkillToGroup.onEditSearch}"/>
-			</option>
 			<option key="aon_close_groups" descriptionKey="aon_close_groups_desc" ref="close_group" role="CierreGrupos">
 				<actionListener action="#{closeGroup.onEditSearch}"/>
+			</option>
+			<option key="aon_duplicate_groups" descriptionKey="aon_duplicate_groups_desc" ref="duplicate_group" role="DuplicarGrupos">
+				<actionListener action="#{duplicateGroup.onEditSearch}"/>
+			</option>
+			<option key="aon_academic_skill_to_groups" descriptionKey="aon_academic_skill_to_groups_desc" ref="academic_skill_to_group" role="HabilidadesAGrupos">
+				<actionListener action="#{academicSkillToGroup.onEditSearch}"/>
 			</option>
 		</menu>
 	</menu>
 
 	<menu id="aon_administrative_management" ref="content" key="aon_administrative_management" descriptionKey="aon_administrative_management_desc">
-		<option id="aon_invoice_management" key="aon_invoice_management" descriptionKey="aon_invoice_management_desc" ref="invoiceManagement" role="GestionFacturas">
-			<actionListener action="#{feeInvoicing.onEditSearch}"/>
-		</option>
-		<option key="aon_invoice_print" descriptionKey="aon_invoice_print_desc" ref="invoicePrint" role="ImpresionFacturas">
-			<actionListener action="#{invoicePrint.onEditSearch}"/>
-		</option>
-		<menu ref="content" key="aon_fee_management" descriptionKey="aon_fee_management_desc">
+		<menu ref="content" key="aon_invoices" descriptionKey="aon_invoices_desc">
+			<option id="aon_invoice_management" key="aon_invoice_management" descriptionKey="aon_invoice_management_desc" ref="invoiceManagement" role="GestionFacturas">
+				<actionListener action="#{feeInvoicing.onEditSearch}"/>
+			</option>
+			<option key="aon_invoice_print" descriptionKey="aon_invoice_print_desc" ref="invoicePrint" role="ImpresionFacturas">
+				<actionListener action="#{invoicePrint.onEditSearch}"/>
+			</option>
+			<option key="aon_invoice_recording" descriptionKey="aon_invoice_recording" ref="invoiceRecording" role="ContabilizacionFacturas">
+				<actionListener action="#{invoiceRecording.onInitialize}"/>				
+			</option>
+			<option key="aon_invoice_removing" descriptionKey="aon_invoice_removing" ref="invoiceRemoving" role="BorradoFacturas">
+				<actionListener action="#{invoiceRemover.onEditSearch}"/>				
+			</option>
+		</menu>
+		<menu ref="content" key="aon_fees" descriptionKey="aon_fees_desc">
+			<option key="aon_pre_invoicing" descriptionKey="aon_pre_invoicing" ref="feePreInvoicing" role="Prefacturacion">
+				<actionListener action="#{preInvoicing.onInitialize}"/>
+			</option>
 			<option key="aon_invoicing" descriptionKey="aon_invoicing_desc" ref="feeInvoicing" role="Facturacion">
 				<actionListener action="#{feeInvoicing.onInitialize}"/>
 			</option>
-			<option key="aon_pre_invoicing" descriptionKey="aon_pre_invoicing" ref="feePreInvoicing" role="Prefacturacion">
-				<actionListener action="#{preInvoicing.onInitialize}"/>
+			<option key="aon_fee_print" descriptionKey="aon_fee_print_desc" ref="util_fee_print" role="ListadoCuotas">
+				<actionListener action="#{feePrint.onEditSearch}"/>				
 			</option>
 			<option key="aon_fee_to_group" descriptionKey="aon_fee_to_group_desc" ref="fee_to_group" role="CuotasAGrupos">
 				<actionListener action="#{feeToGroup.onEditSearch}"/>
 			</option>
+			<option key="aon_invoicing_group" descriptionKey="aon_invoicing_group_desc" ref="invoicingGroup" role="GruposFacturacion"/>
 		</menu>
 		<menu ref="content" key="finance" descriptionKey="finance_desc">
 			<option key="aon_finance" descriptionKey="aon_finance_desc" ref="finance" role="Vencimientos">
 				<actionListener action="#{finance.onEditSearch}"/>
 			</option>
-			<option key="aon_finance_return" descriptionKey="aon_finance_return_desc" ref="finance_return" role="DevolucionVencimientos">
-				<actionListener action="#{financeReturn.onEditSearch}"/>
-			</option>
 			<option key="aon_finance_payment" descriptionKey="aon_finance_payment_desc" ref="finance_payment" role="GestionCartera">
 				<actionListener action="#{financePayment.onEditSearch}"/>
 			</option>
 			<option key="aon_fbatch" descriptionKey="aon_fbatch_desc" ref="fbatch" role="Remesas"/>
-			<option key="aon_invoicing_group" descriptionKey="aon_invoicing_group_desc" ref="invoicingGroup" role="GruposFacturacion"/>
+			<option key="aon_finance_return" descriptionKey="aon_finance_return_desc" ref="finance_return" role="DevolucionVencimientos">
+				<actionListener action="#{financeReturn.onEditSearch}"/>
+			</option>
 			<menu ref="content" key="aon_finance_utilities" descriptionKey="aon_finance_utilities_desc">
 				<option key="aon_cheking" descriptionKey="aon_cheking_desc" ref="util_checking" role="ChecksTesoreria"/>
-				<option key="aon_fee_print" descriptionKey="aon_fee_print" ref="util_fee_print" role="ListadoCuotas">
-					<actionListener action="#{feePrint.onEditSearch}"/>				
-				</option>
-				<option key="aon_invoice_recording" descriptionKey="aon_invoice_recording" ref="invoiceRecording" role="ContabilizacionFacturas">
-					<actionListener action="#{invoiceRecording.onInitialize}"/>				
-				</option>
-				<option key="aon_invoice_removing" descriptionKey="aon_invoice_removing" ref="invoiceRemoving" role="BorradoFacturas">
-					<actionListener action="#{invoiceRemover.onEditSearch}"/>				
-				</option>
 			</menu>
 		</menu>
 	</menu>
