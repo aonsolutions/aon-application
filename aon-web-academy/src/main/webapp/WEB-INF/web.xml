@@ -325,6 +325,7 @@
 			<role-name>ContabilizacionFacturas</role-name>
 			<role-name>CuotasAGrupos</role-name>
 			<role-name>DevolucionVencimientos</role-name>
+			<role-name>DuplicarGrupos</role-name>
 			<role-name>Empresa</role-name>
 			<role-name>Facturacion</role-name>
 			<role-name>GestionCartera</role-name>
@@ -390,6 +391,7 @@
 	<security-role><role-name>ContabilizacionFacturas</role-name></security-role>
 	<security-role><role-name>CuotasAGrupos</role-name></security-role>
 	<security-role><role-name>DevolucionVencimientos</role-name></security-role>
+	<security-role><role-name>DuplicarGrupos</role-name></security-role>
 	<security-role><role-name>Empresa</role-name></security-role>
 	<security-role><role-name>Facturacion</role-name></security-role>
 	<security-role><role-name>GestionCartera</role-name></security-role>
