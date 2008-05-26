@@ -40,11 +40,16 @@ public class ResourceServlet extends HttpServlet {
 	private static final Logger LOGGER = Logger.getLogger(ResourceServlet.class
 			.getName());
 
+	/**
+	 * One week in milliseconds.
+	 */
+	public static final long ONE_WEEK_MILLIS = 604800000L;
+
 	private static final int LAST_MODIFIED_YEAR = 2008;
 	
 	private static final int LAST_MODIFIED_MOTH = 5;
 	
-	private static final int LAST_MODIFIED_DAY = 22;
+	private static final int LAST_MODIFIED_DAY = 26;
 	
 	private static final String MODIFY = calcModify();
 
@@ -163,6 +168,11 @@ public class ResourceServlet extends HttpServlet {
 			response.setHeader("Cache-Control", "Public");
 
 			response.setHeader("Last-Modified", MODIFY);
+
+			// Set Expires to current time + one year.
+			long currentTime = System.currentTimeMillis();
+
+			response.setDateHeader("Expires", currentTime + ONE_WEEK_MILLIS);
 		}
 	}
 
