@@ -7,9 +7,6 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import javax.faces.context.FacesContext;
-import javax.faces.el.ValueBinding;
-
 import com.code.aon.academy.print.ReportAlumn;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.customer.Customer;
@@ -21,18 +18,16 @@ public class AlumnObservationPrinter extends AlumnPrinter{
 
 	private static final Logger LOGGER = Logger.getLogger(AlumnObservationPrinter.class.getName());
 	
+	private static final String OBSERVATION_CONTROLLER_NAME = "customerObservation";
 	private static final String CUSTOMER_CONTROLLER_NAME = "customer";
-	private static final String OBSEVATION_CONTROLLER_NAME = "customerObservation";
 
+	@SuppressWarnings("unchecked")
 	public Collection getCollection() {
 		List<ReportAlumn> reportAlumnList = new LinkedList<ReportAlumn>();
 		try {
-	        FacesContext ctx = FacesContext.getCurrentInstance();
-	        ValueBinding vb = ctx.getApplication().createValueBinding("#{"+OBSEVATION_CONTROLLER_NAME+"}");
-	        RegistryObservationController observationController = (RegistryObservationController)vb.getValue(ctx);
-
-			CustomerController customerController = (CustomerController)AonUtil.getController(CUSTOMER_CONTROLLER_NAME);
-			Iterator iter = ((List)customerController.getModel().getWrappedData()).iterator();
+	        RegistryObservationController observationController = (RegistryObservationController)AonUtil.getRegisteredBean(OBSERVATION_CONTROLLER_NAME);
+	        CustomerController customerController = (CustomerController)AonUtil.getController(CUSTOMER_CONTROLLER_NAME);
+            Iterator iter = customerController.getManagerBean().getList(customerController.getCriteria()).iterator();
 			while(iter.hasNext()){
 				Customer alumn = (Customer)iter.next();
 				ReportAlumn reportAlumn = new ReportAlumn();
