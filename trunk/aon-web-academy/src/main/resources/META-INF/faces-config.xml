@@ -901,6 +901,22 @@
 	</managed-bean>
 
 	<managed-bean>
+		<managed-bean-name>feeToGroup</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.academy.controller.CustomerFeeToGroupController
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.academy.Course</value>
+		</managed-property>
+	</managed-bean>
+
+	<managed-bean>
 		<managed-bean-name>academicSkillToGroup</managed-bean-name>
 		<managed-bean-class>
 			com.code.aon.ui.academy.controller.AcademicSkillToGroupController
@@ -932,11 +948,10 @@
 		</managed-property>
 	</managed-bean>
 
-	<!-- ************* FEE UTILS ***************** -->
 	<managed-bean>
-		<managed-bean-name>feeToGroup</managed-bean-name>
+		<managed-bean-name>duplicateGroup</managed-bean-name>
 		<managed-bean-class>
-			com.code.aon.ui.academy.controller.CustomerFeeToGroupController
+			com.code.aon.ui.academy.controller.DuplicateGroupController
 		</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
@@ -1134,6 +1149,18 @@
 	  </navigation-case>
 	</navigation-rule>
 
+	<!-- =================== Fee to Group ====================== -->
+	<navigation-rule>
+	  <navigation-case>
+	    <from-outcome>fee_to_group_search</from-outcome>
+	    <to-view-id>/facelet/finance/fee_to_group/search.faces</to-view-id>
+	  </navigation-case>
+	  <navigation-case>
+	    <from-outcome>fee_to_group_form</from-outcome>
+	    <to-view-id>/facelet/finance/fee_to_group/form.faces</to-view-id>
+	  </navigation-case>
+	</navigation-rule>
+
 	<!-- =================== Academic Skil to Group ====================== -->
 	<navigation-rule>
 	  <navigation-case>
@@ -1158,15 +1185,15 @@
 	  </navigation-case>
 	</navigation-rule>
 
-	<!-- =================== Fee Skil to Group ====================== -->
+	<!-- =================== Duplicate Group ====================== -->
 	<navigation-rule>
 	  <navigation-case>
-	    <from-outcome>fee_to_group_search</from-outcome>
-	    <to-view-id>/facelet/finance/fee_to_group/search.faces</to-view-id>
+	    <from-outcome>duplicate_group_search</from-outcome>
+	    <to-view-id>/facelet/academic_util/duplicate_group/search.faces</to-view-id>
 	  </navigation-case>
 	  <navigation-case>
-	    <from-outcome>fee_to_group_form</from-outcome>
-	    <to-view-id>/facelet/finance/fee_to_group/form.faces</to-view-id>
+	    <from-outcome>duplicate_group_form</from-outcome>
+	    <to-view-id>/facelet/academic_util/duplicate_group/form.faces</to-view-id>
 	  </navigation-case>
 	</navigation-rule>
 
@@ -1225,6 +1252,10 @@
       <to-view-id>/facelet/academic_util/alumn_reclassification/search.faces</to-view-id>
     </navigation-case>
     <navigation-case>
+      <from-outcome>fee_to_group</from-outcome>
+      <to-view-id>/facelet/finance/fee_to_group/search.faces</to-view-id>
+    </navigation-case>
+    <navigation-case>
       <from-outcome>academic_skill_to_group</from-outcome>
       <to-view-id>/facelet/academic_util/ac_skill_to_group/search.faces</to-view-id>
     </navigation-case>
@@ -1233,8 +1264,8 @@
       <to-view-id>/facelet/academic_util/close_group/search.faces</to-view-id>
     </navigation-case>
     <navigation-case>
-      <from-outcome>fee_to_group</from-outcome>
-      <to-view-id>/facelet/finance/fee_to_group/search.faces</to-view-id>
+      <from-outcome>duplicate_group</from-outcome>
+      <to-view-id>/facelet/academic_util/duplicate_group/search.faces</to-view-id>
     </navigation-case>
  </navigation-rule>
 </faces-config>
