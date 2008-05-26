@@ -10,7 +10,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.code.aon</groupId>
 	<artifactId>aon.ui.finance</artifactId>
-	<version>2.3.3</version>
+	<version>2.3.4</version>
 	<description>AON UI FINANCE</description>
 	<name>AON UI FINANCE</name>
 	<dependencies>
@@ -95,7 +95,7 @@
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.sales</artifactId>
-			<version>2.2.0</version>
+			<version>2.2.1</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
@@ -113,7 +113,7 @@
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.sales</artifactId>
-			<version>2.2.3</version>
+			<version>2.2.4</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
