@@ -32,11 +32,11 @@ public class AlumnPrinter implements ICollectionProvider{
 	
 	private static final String CUSTOMER_CONTROLLER_NAME = "customer";
 
+	@SuppressWarnings("unchecked")
 	public Collection getCollection() {
 		List<ReportAlumn> reportAlumnList = new LinkedList<ReportAlumn>();
 		try {
 			CustomerController customerController = (CustomerController)AonUtil.getController(CUSTOMER_CONTROLLER_NAME);
-			//Iterator iter = ((List)customerController.getModel().getWrappedData()).iterator();
             Iterator iter = customerController.getManagerBean().getList(customerController.getCriteria()).iterator();
             while(iter.hasNext()){
 				Customer alumn = (Customer)iter.next();
@@ -60,6 +60,7 @@ public class AlumnPrinter implements ICollectionProvider{
 		return getCollection();
 	}
 	
+	@SuppressWarnings("unchecked")
 	protected String obtainPhone(Registry registry) {
 		try {
 			IManagerBean registryMediaBean = BeanManager.getManagerBean(RegistryMedia.class);
@@ -76,6 +77,7 @@ public class AlumnPrinter implements ICollectionProvider{
 		return null;
 	}
 	
+	@SuppressWarnings("unchecked")
 	protected String obtainCellular(Registry registry) {
 		try {
 			IManagerBean registryMediaBean = BeanManager.getManagerBean(RegistryMedia.class);
@@ -92,6 +94,7 @@ public class AlumnPrinter implements ICollectionProvider{
 		return null;
 	}
 	
+	@SuppressWarnings("unchecked")
 	protected String obtainCourseCode(Registry registry) {
 		try {
 			IManagerBean courseAlumnBean = BeanManager.getManagerBean(CourseAlumn.class);
@@ -108,6 +111,7 @@ public class AlumnPrinter implements ICollectionProvider{
 		return null;
 	}
 
+	@SuppressWarnings("unchecked")
 	protected Date obtainBirthDate(Registry registry) {
 		try {
 			IManagerBean personBean = BeanManager.getManagerBean(Person.class);
