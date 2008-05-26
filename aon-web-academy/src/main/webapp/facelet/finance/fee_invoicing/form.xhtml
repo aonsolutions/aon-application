@@ -206,7 +206,7 @@
 									disabled="#{true}"
 									styleClass="aon-form-input-text" size="16" />
 								<t:commandButton id="popupButton"
-									rendered="#{!feeInvoicing.new}"
+									rendered="#{!feeInvoicing.new and !feeInvoicing.recorded}"
 									styleClass="aon-navigation-link"
 									value="#{registryBundle.aon_address_other}"
 									onclick="showPopup();return false;" />
@@ -265,8 +265,6 @@
 								rowClasses="aon-edit-table-row-odd,aon-edit-table-row-even"
 								columnClasses="aon-edit-table-body aon-edit-table-body-icon,
 									aon-edit-table-body aon-edit-table-body-string,
-									aon-edit-table-body aon-edit-table-body-number,
-									aon-edit-table-body aon-edit-table-body-number,
 									aon-edit-table-body aon-edit-table-body-number,
 									aon-edit-table-body aon-edit-table-body-number,
 									aon-edit-table-body aon-edit-table-body-number,
@@ -443,13 +441,13 @@
 									<h:selectOneMenu value="#{feeInvoicingDetail.to.workPlace.id}"
 										styleClass="aon-form-selectOneMenu-field"
 										rendered="#{to==feeInvoicingDetail.to}">
-										<f:selectItems value="#{companyCollections.workPlaces}" />
+										<f:selectItems value="#{companyCollections.workPlacesDetailed}" />
 									</h:selectOneMenu>	
 									<f:facet name="footer">
 										<h:selectOneMenu value="#{feeInvoicingDetail.to.workPlace.id}"
 											styleClass="aon-form-selectOneMenu-field"
 											rendered="#{feeInvoicingDetail.new}">
-											<f:selectItems value="#{companyCollections.workPlaces}" />
+											<f:selectItems value="#{companyCollections.workPlacesDetailed}" />
 										</h:selectOneMenu>	
 									</f:facet>
 								</t:column>
