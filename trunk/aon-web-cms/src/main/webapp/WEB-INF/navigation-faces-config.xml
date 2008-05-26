@@ -353,4 +353,27 @@
     </navigation-case>
   </navigation-rule>
 
+  <!-- ===================================================== HIRU -->
+  <navigation-rule>
+    <navigation-case>
+      <from-outcome>hiru_organizer_centre_list</from-outcome>
+      <to-view-id>/facelet/content/hiru/organizer_centre/list.xhtml</to-view-id>
+    </navigation-case>
+    <navigation-case>
+      <from-outcome>hiru_organizer_centre_form</from-outcome>
+      <to-view-id>/facelet/content/hiru/organizer_centre/form.xhtml</to-view-id>
+    </navigation-case>
+  </navigation-rule>
+
+  <navigation-rule>
+    <navigation-case>
+      <from-outcome>hiru_course_list</from-outcome>
+      <to-view-id>/facelet/content/hiru/course/list.xhtml</to-view-id>
+    </navigation-case>
+    <navigation-case>
+      <from-outcome>hiru_course_form</from-outcome>
+      <to-view-id>/facelet/content/hiru/course/form.xhtml</to-view-id>
+    </navigation-case>
+  </navigation-rule>
+
 </faces-config>

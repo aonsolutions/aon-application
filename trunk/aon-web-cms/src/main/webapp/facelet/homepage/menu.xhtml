@@ -125,6 +125,18 @@
 								styleClass="aon-main-menu-leaf"/>
 							 -->
 						</aon:dropDownMenu>
+						<aon:dropDownMenu id="hiru"
+							value="#{menuBundle.cms_hiru}" submitMode="ajax"
+							event="onclick">
+							<aon:menuItem id="hiru_organizer_centre" value="#{menuBundle.cms_hiru_organizer_centre}"
+								action="hiru_organizer_centre_list"
+								actionListener="#{hiru_organizer_centre.onSearch}"
+								styleClass="aon-main-menu-leaf"/>
+							<aon:menuItem id="hiru_course" value="#{menuBundle.cms_hiru_course}"
+								action="hiru_course_list"
+								actionListener="#{hiru_course.onSearch}"
+								styleClass="aon-main-menu-leaf"/>
+						</aon:dropDownMenu>
 						<aon:dropDownMenu id="bulletins"
 							value="#{menuBundle.cms_bulletins}" submitMode="ajax"
 							event="onclick">
