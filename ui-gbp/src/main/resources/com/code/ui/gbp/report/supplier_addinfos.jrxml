@@ -69,7 +69,7 @@
 					<textElement>
 						<font size="9"/>
 					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[""+$F{type}]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{type}.getName($P{REPORT_LOCALE})]]></textFieldExpression>
 				</textField>
 			</band>
 		</detail>
