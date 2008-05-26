@@ -13,6 +13,7 @@ import javax.mail.Folder;
 import javax.mail.MessagingException;
 
 import org.apache.commons.lang.ArrayUtils;
+import org.richfaces.event.DropEvent;
 
 import com.code.aon.ui.util.AonUtil;
 import com.code.aon.ui.webmail.bean.AonConstants;
@@ -378,4 +379,15 @@ public class FolderController implements ITreeListener{
 		}
 		return false;
 	}
+	
+	public void messagesDrop( DropEvent event ) {
+		AonMessage message = (AonMessage) event.getDragValue();
+		if (! message.isSelected() ) {
+			message.setSelected(true);
+		}
+		AonFolder dest = (AonFolder) event.getDropValue();
+		moveSelectedMessages(dest);
+		resetCurrentPage();
+	}
+	
 }
