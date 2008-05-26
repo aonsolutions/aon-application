@@ -38,7 +38,7 @@
 					<t:commandButton id="reset"
 						styleClass="aon-edit-table-icon-button aon-edit-table-icon-button-new"
 						value="" immediate="#{true}"
-						rendered="#{!controllerAlias.new and controllerAlias.model.rowCount == 0}"
+						rendered="#{!controllerAlias.new}"
 						actionListener="#{controllerAlias.onReset}"
 						accesskey="#{bundle.aon_key_new_line}">
 					</t:commandButton>
@@ -122,7 +122,7 @@
 				styleClass="aon-form-selectOneMenu-field"
 				rendered="#{to==controllerAlias.to}"
 				valueChangeListener="#{controllerAlias.onChangeGeoZone}">
-				<f:selectItems value="#{registryCollections.geoZones}" />
+				<f:selectItems value="#{geozoneCollections.geoTrees}" />
 			</h:selectOneMenu>
 			<f:facet name="footer">
 				<t:div>
@@ -130,7 +130,7 @@
 						styleClass="aon-form-selectOneMenu-field"
 						rendered="#{controllerAlias.new}"
 						valueChangeListener="#{controllerAlias.onChangeGeoZone}">
-						<f:selectItems value="#{registryCollections.geoZones}" />
+						<f:selectItems value="#{geozoneCollections.geoTrees}" />
 					</h:selectOneMenu>
 				</t:div>
 			</f:facet>
