@@ -125,7 +125,8 @@
 	<tag>
 		<tag-name>inputRichText</tag-name>
 		<component>
-			<component-type>com.code.aon.faces.HtmlInputRichText</component-type>
+			<component-type>com.code.aon.faces.InputRichText</component-type>
+			<renderer-type>com.code.aon.faces.InputRichTextRenderer</renderer-type>
 			<handler-class>com.code.aon.faces.component.richfaces.RegionableInputHandler</handler-class>
 		</component>
 	</tag>
