@@ -101,6 +101,13 @@ public class CustomerFeeToGroupController extends BasicController {
 	public void onEditSearch(ActionEvent event) {
 		clearCheckedCourses();
 		super.onEditSearch(event);
+		try {
+			getCriteria().addOrder(getManagerBean().getFieldName(IAcademyAlias.COURSE_CODE));
+		} catch (ManagerBeanException e) {
+			AonUtil.addErrorMessage("Unable to apply criteria");
+			LOGGER.log(Level.SEVERE, "Unable to apply criteria", e);
+			throw new AbortProcessingException(e);
+		}
 	}
 	
 	@Override
@@ -112,24 +119,24 @@ public class CustomerFeeToGroupController extends BasicController {
 	@SuppressWarnings("unchecked")
 	public void onAssign(ActionEvent event){
 		try {
+			CourseController courseController = (CourseController)AonUtil.getController(COURSE_CONTROLLER_NAME);
+			Criteria criteria = new Criteria();
 			if(fee.getQuantity() <= 0){
 				String message = "Quantity must be > 0";
 				AonUtil.addErrorMessage(message);
 				LOGGER.log(Level.SEVERE, message);
 				throw new AbortProcessingException(message);
-			}else if(checks.size() > 0){
-				CourseController courseController = (CourseController)AonUtil.getController(COURSE_CONTROLLER_NAME);
-				Criteria criteria = new Criteria();
+			} else if(checks.size() > 0){
 				Iterator iter = checks.iterator();
 				while(iter.hasNext()){
 					Course course = (Course)iter.next();
 					criteria.addOrExpression(courseController.getFieldName(IAcademyAlias.COURSE_ID), course.getId().toString());
 					createCustomerFeesToCourse(course);
 				}
-				courseController.setCriteria(criteria);
-				courseController.onSearch(null);
-				updateBreadCrumb();
 			}
+			courseController.setCriteria(criteria);
+			courseController.onSearch(null);
+			updateBreadCrumb();
 		} catch (ManagerBeanException e) {
 			String message = "Unable to add fee to selected courses";
 			AonUtil.addErrorMessage(message);
