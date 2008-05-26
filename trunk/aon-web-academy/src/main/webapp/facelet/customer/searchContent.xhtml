@@ -68,17 +68,6 @@
 					<f:selectItems value="#{customerCollections.customerSegments}" />
 				</h:selectOneMenu>
 
-				<t:outputLabel for="Customer_status"
-					value="#{registryBundle.aon_status}"
-					styleClass="aon-form-input-text-label aon-form-table-column-odd-label" />
-				<h:selectOneMenu id="Customer_status"
-					styleClass="aon-form-selectOneMenu-field"
-					converter="aonCustomerStatusConverter" forceId="#{true}"
-					valueChangeListener="#{customerAlias.addExpression}">
-					<f:selectItem itemDisabled="true" itemLabel="-" itemValue="" />
-					<f:selectItems value="#{customerCollections.customerStatuses}" />
-				</h:selectOneMenu>
-
 				<t:outputLabel for="Customer_scope_id"
 					value="#{customerBundle.customer_scope}"
 					styleClass="aon-form-input-text-label aon-form-table-column-odd-label" />
@@ -101,6 +90,16 @@
 					<f:selectItems value="#{registryCollections.registryTypes}" />
 				</h:selectOneMenu>
 				
+				<t:outputLabel for="Customer_status"
+					value="#{registryBundle.aon_status}"
+					styleClass="aon-form-input-text-label aon-form-table-column-odd-label" />
+				<h:selectOneMenu id="Customer_status"
+					styleClass="aon-form-selectOneMenu-field"
+					converter="aonCustomerStatusConverter" forceId="#{true}"
+					valueChangeListener="#{customerAlias.addExpression}">
+					<f:selectItems value="#{customerCollections.customerStatuses}" />
+				</h:selectOneMenu>
+
 			</h:panelGrid>
 		</t:div>
 	</t:div>
