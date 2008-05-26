@@ -77,6 +77,9 @@ import com.code.aon.cms.BulletinEmail;
 import com.code.aon.cms.FooterBannerCategory;
 import com.code.aon.cms.Diary;
 import com.code.aon.cms.DiaryDetail;
+import com.code.aon.cms.HiruOrganizerCentre;
+import com.code.aon.cms.HiruCourse;
+import com.code.aon.cms.HiruCourseDetail;
 
 /** 
 * Interface for holding entity properties constants.
@@ -3055,6 +3058,219 @@ public interface ICMSAlias {
 	* Hibernate value: DiaryDetail.language.id
 	*/
 	String  DIARY_DETAIL_LANGUAGE_ID = DIARY_DETAIL_ENTRY.getAliasNames()[3];
+
+
+
+	/** 
+	* DAOConstantsEntry for HiruOrganizerCentre entity.
+	*/ 
+	DAOConstantsEntry HIRU_ORGANIZER_CENTRE_ENTRY = DAOConstants.getDAOConstant(HiruOrganizerCentre.class);
+
+	/** 
+	* Alias value: HiruOrganizerCentre_active
+	* Hibernate value: HiruOrganizerCentre.active
+	*/
+	String  HIRU_ORGANIZER_CENTRE_ACTIVE = HIRU_ORGANIZER_CENTRE_ENTRY.getAliasNames()[0];
+
+	/** 
+	* Alias value: HiruOrganizerCentre_address
+	* Hibernate value: HiruOrganizerCentre.address
+	*/
+	String  HIRU_ORGANIZER_CENTRE_ADDRESS = HIRU_ORGANIZER_CENTRE_ENTRY.getAliasNames()[1];
+
+	/** 
+	* Alias value: HiruOrganizerCentre_email
+	* Hibernate value: HiruOrganizerCentre.email
+	*/
+	String  HIRU_ORGANIZER_CENTRE_EMAIL = HIRU_ORGANIZER_CENTRE_ENTRY.getAliasNames()[2];
+
+	/** 
+	* Alias value: HiruOrganizerCentre_fax
+	* Hibernate value: HiruOrganizerCentre.fax
+	*/
+	String  HIRU_ORGANIZER_CENTRE_FAX = HIRU_ORGANIZER_CENTRE_ENTRY.getAliasNames()[3];
+
+	/** 
+	* Alias value: HiruOrganizerCentre_feed
+	* Hibernate value: HiruOrganizerCentre.feed
+	*/
+	String  HIRU_ORGANIZER_CENTRE_FEED = HIRU_ORGANIZER_CENTRE_ENTRY.getAliasNames()[4];
+
+	/** 
+	* Alias value: HiruOrganizerCentre_id
+	* Hibernate value: HiruOrganizerCentre.id
+	*/
+	String  HIRU_ORGANIZER_CENTRE_ID = HIRU_ORGANIZER_CENTRE_ENTRY.getAliasNames()[5];
+
+	/** 
+	* Alias value: HiruOrganizerCentre_locality
+	* Hibernate value: HiruOrganizerCentre.locality
+	*/
+	String  HIRU_ORGANIZER_CENTRE_LOCALITY = HIRU_ORGANIZER_CENTRE_ENTRY.getAliasNames()[6];
+
+	/** 
+	* Alias value: HiruOrganizerCentre_name
+	* Hibernate value: HiruOrganizerCentre.name
+	*/
+	String  HIRU_ORGANIZER_CENTRE_NAME = HIRU_ORGANIZER_CENTRE_ENTRY.getAliasNames()[7];
+
+	/** 
+	* Alias value: HiruOrganizerCentre_postal_code
+	* Hibernate value: HiruOrganizerCentre.postal_code
+	*/
+	String  HIRU_ORGANIZER_CENTRE_POSTAL_CODE = HIRU_ORGANIZER_CENTRE_ENTRY.getAliasNames()[8];
+
+	/** 
+	* Alias value: HiruOrganizerCentre_telephone
+	* Hibernate value: HiruOrganizerCentre.telephone
+	*/
+	String  HIRU_ORGANIZER_CENTRE_TELEPHONE = HIRU_ORGANIZER_CENTRE_ENTRY.getAliasNames()[9];
+
+	/** 
+	* Alias value: HiruOrganizerCentre_web
+	* Hibernate value: HiruOrganizerCentre.web
+	*/
+	String  HIRU_ORGANIZER_CENTRE_WEB = HIRU_ORGANIZER_CENTRE_ENTRY.getAliasNames()[10];
+
+
+
+	/** 
+	* DAOConstantsEntry for HiruCourse entity.
+	*/ 
+	DAOConstantsEntry HIRU_COURSE_ENTRY = DAOConstants.getDAOConstant(HiruCourse.class);
+
+	/** 
+	* Alias value: HiruCourse_active
+	* Hibernate value: HiruCourse.active
+	*/
+	String  HIRU_COURSE_ACTIVE = HIRU_COURSE_ENTRY.getAliasNames()[0];
+
+	/** 
+	* Alias value: HiruCourse_alias
+	* Hibernate value: HiruCourse.alias
+	*/
+	String  HIRU_COURSE_ALIAS = HIRU_COURSE_ENTRY.getAliasNames()[1];
+
+	/** 
+	* Alias value: HiruCourse_endDate
+	* Hibernate value: HiruCourse.endDate
+	*/
+	String  HIRU_COURSE_END_DATE = HIRU_COURSE_ENTRY.getAliasNames()[2];
+
+	/** 
+	* Alias value: HiruCourse_hiruOrganizerCentre_id
+	* Hibernate value: HiruCourse.hiruOrganizerCentre.id
+	*/
+	String  HIRU_COURSE_HIRU_ORGANIZER_CENTRE_ID = HIRU_COURSE_ENTRY.getAliasNames()[3];
+
+	/** 
+	* Alias value: HiruCourse_hiruPlace
+	* Hibernate value: HiruCourse.hiruPlace
+	*/
+	String  HIRU_COURSE_HIRU_PLACE = HIRU_COURSE_ENTRY.getAliasNames()[4];
+
+	/** 
+	* Alias value: HiruCourse_id
+	* Hibernate value: HiruCourse.id
+	*/
+	String  HIRU_COURSE_ID = HIRU_COURSE_ENTRY.getAliasNames()[5];
+
+	/** 
+	* Alias value: HiruCourse_initDate
+	* Hibernate value: HiruCourse.initDate
+	*/
+	String  HIRU_COURSE_INIT_DATE = HIRU_COURSE_ENTRY.getAliasNames()[6];
+
+
+
+	/** 
+	* DAOConstantsEntry for HiruCourseDetail entity.
+	*/ 
+	DAOConstantsEntry HIRU_COURSE_DETAIL_ENTRY = DAOConstants.getDAOConstant(HiruCourseDetail.class);
+
+	/** 
+	* Alias value: HiruCourseDetail_contents
+	* Hibernate value: HiruCourseDetail.contents
+	*/
+	String  HIRU_COURSE_DETAIL_CONTENTS = HIRU_COURSE_DETAIL_ENTRY.getAliasNames()[0];
+
+	/** 
+	* Alias value: HiruCourseDetail_employeeRegistration
+	* Hibernate value: HiruCourseDetail.employeeRegistration
+	*/
+	String  HIRU_COURSE_DETAIL_EMPLOYEE_REGISTRATION = HIRU_COURSE_DETAIL_ENTRY.getAliasNames()[1];
+
+	/** 
+	* Alias value: HiruCourseDetail_genericInfo
+	* Hibernate value: HiruCourseDetail.genericInfo
+	*/
+	String  HIRU_COURSE_DETAIL_GENERIC_INFO = HIRU_COURSE_DETAIL_ENTRY.getAliasNames()[2];
+
+	/** 
+	* Alias value: HiruCourseDetail_giverEntity
+	* Hibernate value: HiruCourseDetail.giverEntity
+	*/
+	String  HIRU_COURSE_DETAIL_GIVER_ENTITY = HIRU_COURSE_DETAIL_ENTRY.getAliasNames()[3];
+
+	/** 
+	* Alias value: HiruCourseDetail_hiruCourse_id
+	* Hibernate value: HiruCourseDetail.hiruCourse.id
+	*/
+	String  HIRU_COURSE_DETAIL_HIRU_COURSE_ID = HIRU_COURSE_DETAIL_ENTRY.getAliasNames()[4];
+
+	/** 
+	* Alias value: HiruCourseDetail_id
+	* Hibernate value: HiruCourseDetail.id
+	*/
+	String  HIRU_COURSE_DETAIL_ID = HIRU_COURSE_DETAIL_ENTRY.getAliasNames()[5];
+
+	/** 
+	* Alias value: HiruCourseDetail_info
+	* Hibernate value: HiruCourseDetail.info
+	*/
+	String  HIRU_COURSE_DETAIL_INFO = HIRU_COURSE_DETAIL_ENTRY.getAliasNames()[6];
+
+	/** 
+	* Alias value: HiruCourseDetail_language_id
+	* Hibernate value: HiruCourseDetail.language.id
+	*/
+	String  HIRU_COURSE_DETAIL_LANGUAGE_ID = HIRU_COURSE_DETAIL_ENTRY.getAliasNames()[7];
+
+	/** 
+	* Alias value: HiruCourseDetail_length
+	* Hibernate value: HiruCourseDetail.length
+	*/
+	String  HIRU_COURSE_DETAIL_LENGTH = HIRU_COURSE_DETAIL_ENTRY.getAliasNames()[8];
+
+	/** 
+	* Alias value: HiruCourseDetail_name
+	* Hibernate value: HiruCourseDetail.name
+	*/
+	String  HIRU_COURSE_DETAIL_NAME = HIRU_COURSE_DETAIL_ENTRY.getAliasNames()[9];
+
+	/** 
+	* Alias value: HiruCourseDetail_notEmployeeRegistration
+	* Hibernate value: HiruCourseDetail.notEmployeeRegistration
+	*/
+	String  HIRU_COURSE_DETAIL_NOT_EMPLOYEE_REGISTRATION = HIRU_COURSE_DETAIL_ENTRY.getAliasNames()[10];
+
+	/** 
+	* Alias value: HiruCourseDetail_numberParticipant
+	* Hibernate value: HiruCourseDetail.numberParticipant
+	*/
+	String  HIRU_COURSE_DETAIL_NUMBER_PARTICIPANT = HIRU_COURSE_DETAIL_ENTRY.getAliasNames()[11];
+
+	/** 
+	* Alias value: HiruCourseDetail_objetives
+	* Hibernate value: HiruCourseDetail.objetives
+	*/
+	String  HIRU_COURSE_DETAIL_OBJETIVES = HIRU_COURSE_DETAIL_ENTRY.getAliasNames()[12];
+
+	/** 
+	* Alias value: HiruCourseDetail_url
+	* Hibernate value: HiruCourseDetail.url
+	*/
+	String  HIRU_COURSE_DETAIL_URL = HIRU_COURSE_DETAIL_ENTRY.getAliasNames()[13];
 
 
 }

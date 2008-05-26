@@ -6,7 +6,7 @@
 
 	<session-factory>
 
-		<property name="connection.url">jdbc:mysql://192.168.2.4:3306/cms_void?autoReconnect=true</property>		
+		<property name="connection.url">jdbc:mysql://192.168.2.4:3306/cms?autoReconnect=true</property>		
 		<property name="connection.username">dbuser</property>		
 		<property name="show_sql">true</property>		
 		<property name="dialect">org.hibernate.dialect.MySQLInnoDBDialect</property>
@@ -89,6 +89,9 @@
 		<mapping class="com.code.aon.cms.FooterBannerCategory"/>
 		<mapping class="com.code.aon.cms.Diary"/>
 		<mapping class="com.code.aon.cms.DiaryDetail"/>
+		<mapping class="com.code.aon.cms.HiruOrganizerCentre"/>
+		<mapping class="com.code.aon.cms.HiruCourse"/>
+		<mapping class="com.code.aon.cms.HiruCourseDetail"/>
 
 	</session-factory>
 

@@ -107,6 +107,9 @@
 		<mapping class="com.code.aon.cms.FooterBannerCategory"/>
 		<mapping class="com.code.aon.cms.Diary"/>
 		<mapping class="com.code.aon.cms.DiaryDetail"/>
+		<mapping class="com.code.aon.cms.HiruOrganizerCentre"/>
+		<mapping class="com.code.aon.cms.HiruCourse"/>
+		<mapping class="com.code.aon.cms.HiruCourseDetail"/>
 
 	</session-factory>
 

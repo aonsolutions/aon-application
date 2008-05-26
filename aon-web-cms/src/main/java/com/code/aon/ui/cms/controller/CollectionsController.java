@@ -23,6 +23,7 @@ import com.code.aon.cms.FaqCategory;
 import com.code.aon.cms.Footer;
 import com.code.aon.cms.GenericPage;
 import com.code.aon.cms.Header;
+import com.code.aon.cms.HiruOrganizerCentre;
 import com.code.aon.cms.Language;
 import com.code.aon.cms.LinkCategory;
 import com.code.aon.cms.Menu;
@@ -611,5 +612,19 @@ public class CollectionsController {
 		return activityList;
 	}
 
-	
+	public List<SelectItem> getHiruOrganizerCentreList() throws ManagerBeanException {
+		List<SelectItem> select_list = new LinkedList<SelectItem>();
+		IManagerBean bean = BeanManager.getManagerBean(HiruOrganizerCentre.class);
+		Criteria criteria = new Criteria();
+		criteria.addOrder(bean.getFieldName(ICMSAlias.HIRU_ORGANIZER_CENTRE_NAME));
+		List<ITransferObject> list = (List<ITransferObject>)bean.getList(criteria);
+		for (int i = 0; i < list.size(); i++) {
+			HiruOrganizerCentre ac = (HiruOrganizerCentre)list.get(i);
+			int id = ac.getId();
+			String name = ac.getName();
+			SelectItem item = new SelectItem(id, name);
+			select_list.add(item);
+		}
+		return select_list;
+	}
 }

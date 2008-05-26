@@ -70,9 +70,10 @@ public class BannerGenerator extends Generator {
 					VelocityUtil.addMessage("La categoria de banners " + group.getAlias() + " no esta internacionalizada.", VelocityUtil.WARN);
 				}else{
 					BannerCategoryDetail detail = (BannerCategoryDetail)detailList.get(0);
+					BannerCategoryHandler bch = new BannerCategoryHandler(detail);
 					ArrayList<BannerHandler> accessList = getBannerList(detail);
 					if (accessList != null && accessList.size() > 0) {
-						vu.put("banner_category", detail);
+						vu.put("banner_category", bch);
 						vu.put("banner_list", accessList);
 						VelocityUtil.addMessage(" Generando banners " + group.getAlias() + ".", VelocityUtil.INFO);
 						CommonGenerator.getCommonGenerator().chargeContext(vu, group.getSection());
