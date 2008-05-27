@@ -70,7 +70,7 @@
 				<h:selectOneMenu id="Creditor_scope_id"
 					styleClass="aon-form-selectOneMenu-field"
 					value="#{creditorAlias.to.scope.id}">
-					<f:selectItems value="#{configCollections.scopes}" />
+					<f:selectItems value="#{configCollections.currentUserScopes}" />
 				</h:selectOneMenu>
 
 				<h:outputLabel for="Creditor_status"

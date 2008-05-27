@@ -70,7 +70,7 @@
 				<h:selectOneMenu id="Supplier_scope_id"
 					styleClass="aon-form-selectOneMenu-field"
 					value="#{supplierAlias.to.scope.id}">
-					<f:selectItems value="#{configCollections.scopes}" />
+					<f:selectItems value="#{configCollections.currentUserScopes}" />
 				</h:selectOneMenu>
 
 				<h:outputLabel for="Supplier_status"
