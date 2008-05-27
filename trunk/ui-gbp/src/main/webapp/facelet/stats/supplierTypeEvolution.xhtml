@@ -24,7 +24,7 @@
 
 					<aon:div styleClass="aon-finding-toolbar-item-group">
 						<h:commandLink target="_blank" value="Listado"
-							styleClass="aon-finding-toolbar-item aon-icon-report"
+							styleClass="aon-finding-toolbar-item aon-icon-printer"
 							action="#{report.onExecute}">
 							<f:param name="reportKey" value="supplier_type_evolution_stat" />
 							<f:param name="outputFormat" value="PDF" />
@@ -38,9 +38,11 @@
 
 					<aon:outputLabel for="SupplierType"
 						value="#{appBundle.gbp_supplier_supplierType}" />
-					<aon:inputText id="SupplierType"
-						value="#{supplierTypeEvolutionReport.supplierType}" 
-						inputSize="15" />
+					<aon:selectOneMenu id="SupplierType"
+						value="#{supplierTypeEvolutionReport.supplierType}">
+						<f:selectItem value="#{nullSelectItem.value}" />
+						<f:selectItems value="#{GBPCollections.supplierTypes}" />
+					</aon:selectOneMenu>
 
 					<aon:outputLabel for="Campaign_startDate"
 						value="#{appBundle.gbp_campaign_start_date}" />

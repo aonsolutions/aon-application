@@ -7,25 +7,28 @@ import java.util.List;
 
 import javax.faces.event.ActionEvent;
 
-import org.apache.commons.lang.StringUtils;
 import org.hibernate.Query;
 import org.hibernate.Session;
 
 import com.code.aon.common.ICollectionProvider;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
+import com.code.gbp.Supplier;
 
 public class SupplierEvolutionReport implements ICollectionProvider {
 
-	private String supplier;
+	private Supplier supplier;
 	private Date fromDate;
 	private Date toDate;
 	
-	public String getSupplier() {
+	public Supplier getSupplier() {
+		if (supplier==null) {
+			supplier = new Supplier();
+		}
 		return supplier;
 	}
 
-	public void setSupplier(String supplier) {
+	public void setSupplier(Supplier supplier) {
 		this.supplier = supplier;
 	}
 
@@ -60,9 +63,9 @@ public class SupplierEvolutionReport implements ICollectionProvider {
 				+ "cs.supplier.id,cs.supplier.name,cs.campaign.code,cs.campaign.name,SUM(off.price)," + subStmt
 				+ ") FROM CampaignSupplier cs,Offer off WHERE ";
 		StringBuilder sentence = new StringBuilder(stmt);
-		if (!StringUtils.isEmpty(getSupplier())) {
+		if (getSupplier() != null && getSupplier().getId() != null) {
 			sentence.append("cs.supplier.id = ");
-			sentence.append(getSupplier());
+			sentence.append(getSupplier().getId());
 			sentence.append(" AND ");
 		}
 		sentence.append(" cs.campaign.startDate <= ? AND cs.campaign.endDate >= ?");

@@ -14,18 +14,22 @@ import org.hibernate.Session;
 import com.code.aon.common.ICollectionProvider;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
+import com.code.gbp.Campaign;
 
 public class CampaignEvolutionReport implements ICollectionProvider {
 
-	private String campaign;
+	private Campaign campaign;
 	private Date fromDate;
 	private Date toDate;
 	
-	public String getCampaign() {
+	public Campaign getCampaign() {
+		if (campaign==null) {
+			campaign = new Campaign();
+		}
 		return campaign;
 	}
 
-	public void setCampaign(String campaign) {
+	public void setCampaign(Campaign campaign) {
 		this.campaign = campaign;
 	}
 
@@ -61,9 +65,9 @@ public class CampaignEvolutionReport implements ICollectionProvider {
 				+ ") "
 				+ " FROM ProFormaInvoice inv WHERE ";
 		StringBuilder sentence = new StringBuilder(stmt);
-		if (!StringUtils.isEmpty(getCampaign())) {
+		if (getCampaign() != null && getCampaign().getId()!= null) {
 			sentence.append("inv.campaign.id = ");
-			sentence.append(getCampaign());
+			sentence.append(getCampaign().getId());
 			sentence.append(" AND ");
 		}
 		sentence.append(" inv.campaign.startDate <= ? AND inv.campaign.endDate >= ?");

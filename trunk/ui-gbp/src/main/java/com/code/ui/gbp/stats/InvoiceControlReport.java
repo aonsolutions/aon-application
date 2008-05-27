@@ -11,16 +11,20 @@ import org.hibernate.Session;
 import com.code.aon.common.ICollectionProvider;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
+import com.code.gbp.Campaign;
 
 public class InvoiceControlReport implements ICollectionProvider {
 
-	private String campaign;
+	private Campaign campaign;
 	
-	public String getCampaign() {
+	public Campaign getCampaign() {
+		if (campaign==null) {
+			campaign = new Campaign();
+		}
 		return campaign;
 	}
 
-	public void setCampaign(String campaign) {
+	public void setCampaign(com.code.gbp.Campaign campaign) {
 		this.campaign = campaign;
 	}
 
@@ -45,7 +49,7 @@ public class InvoiceControlReport implements ICollectionProvider {
 		sentence.append(" ORDER BY inv.supplier.supplierType.id");
 
 		Query query = s.createQuery(sentence.toString());
-		query.setString(0, getCampaign());
+		query.setInteger(0, getCampaign().getId());
 		List<SupplierEvolution> list = query.list();
 		return list;
 

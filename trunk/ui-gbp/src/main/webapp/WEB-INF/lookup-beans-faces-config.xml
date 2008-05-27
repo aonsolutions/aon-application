@@ -26,4 +26,26 @@
 			<value>/facelet/supplier/lookup/search.xhtml</value>
 		</managed-property>
 	</managed-bean>
+	<!-- ************ CAMPAIGN LOOKUP ************** -->
+	<managed-bean>
+		<managed-bean-name>campaignLookup</managed-bean-name>
+		<managed-bean-class>com.code.aon.faces.controller.RichLookupBean</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>campaignLookup</value>
+		</managed-property>
+		<managed-property>
+			<property-name>foreignPojo</property-name>
+			<value>com.code.gbp.Campaign</value>
+		</managed-property>
+		<managed-property>
+			<property-name>listPagePath</property-name>
+			<value>/facelet/campaign/lookup/list.xhtml</value>
+		</managed-property>
+		<managed-property>
+			<property-name>searchPagePath</property-name>
+			<value>/facelet/campaign/lookup/search.xhtml</value>
+		</managed-property>
+	</managed-bean>
 </faces-config>
