@@ -24,6 +24,8 @@
 	<import value="net.sf.jasperreports.engine.data.*" />
 
 	<parameter name="printHeaders" isForPrompting="false" class="java.lang.Boolean"/>
+	<parameter name="INIT_DATE" isForPrompting="false" class="java.util.Date"/>
+	<parameter name="END_DATE" isForPrompting="false" class="java.util.Date"/>
 
 	<field name="supplierName" class="java.lang.String"/>
 	<field name="campaignName" class="java.lang.String"/>
@@ -43,6 +45,8 @@
 		<variableExpression><![CDATA[new Double($V{supInvoiceTotal}.doubleValue() * 100 / $V{supOfferTotal}.doubleValue() )]]></variableExpression>
 	</variable>
 	<variable name="supCampaignTotal" class="java.lang.Integer" resetType="Group" resetGroup="supplierGroup" calculation="Count">
+		<variableExpression><![CDATA[new Integer($V{supCampaignTotal}.intValue()+1)]]></variableExpression>
+		<initialValueExpression><![CDATA[new Integer(0)]]></initialValueExpression>
 	</variable>
 
 		<group  name="supplierGroup" isStartNewPage="true" >
@@ -117,7 +121,7 @@
 					<reportElement
 						x="137"
 						y="5"
-						width="270"
+						width="232"
 						height="16"
 						key="textField-24"/>
 					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" leftPadding="5" rightBorder="None" rightBorderColor="#000000" rightPadding="5" bottomBorder="Thin" bottomBorderColor="#999999"/>
@@ -142,6 +146,45 @@
 					</textElement>
 				<textFieldExpression   class="java.lang.String"><![CDATA[$R{gbp_campaign_supplier}]]></textFieldExpression>
 				</textField>
+				<textField isStretchWithOverflow="false" pattern="dd/MM/yyyy" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="370"
+						y="5"
+						width="79"
+						height="16"
+						key="textField-33"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font size="10"/>
+					</textElement>
+				<textFieldExpression   class="java.util.Date"><![CDATA[$P{INIT_DATE}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="false" pattern="dd/MM/yyyy" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="455"
+						y="5"
+						width="76"
+						height="16"
+						key="textField-34"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Left" verticalAlignment="Middle">
+						<font size="10"/>
+					</textElement>
+				<textFieldExpression   class="java.util.Date"><![CDATA[$P{END_DATE}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement
+						x="449"
+						y="6"
+						width="6"
+						height="13"
+						key="staticText-1"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font/>
+					</textElement>
+				<text><![CDATA[-]]></text>
+				</staticText>
 			</band>
 			</groupHeader>
 			<groupFooter>
@@ -188,7 +231,7 @@
 					</textElement>
 				<textFieldExpression   class="java.lang.Double"><![CDATA[$V{supPercentTotal}]]></textFieldExpression>
 				</textField>
-				<textField isStretchWithOverflow="false" pattern="#,##0.00" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+				<textField isStretchWithOverflow="false" pattern="#,##0" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						x="0"
 						y="2"

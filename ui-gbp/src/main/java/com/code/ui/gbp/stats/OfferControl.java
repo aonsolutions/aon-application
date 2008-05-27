@@ -1,12 +1,14 @@
 package com.code.ui.gbp.stats;
 
+import com.code.gbp.enumeration.CampaignStatus;
+
 public class OfferControl {
 
 	private Integer campaignCode;
 	
 	private String campaignName;
 	
-	private String campaignStatus;
+	private CampaignStatus campaignStatus;
 	
 	private Double offer;
 	
@@ -19,7 +21,7 @@ public class OfferControl {
 	
 	public OfferControl	(Integer campaignCode,
 			String campaignName,
-			String campaignStatus,
+			CampaignStatus campaignStatus,
 			Double offer,
 			Double invoice){
 		this.campaignCode = campaignCode; 
@@ -47,11 +49,11 @@ public class OfferControl {
 		this.campaignName = campaignName;
 	}
 
-	public String getCampaignStatus() {
+	public CampaignStatus getCampaignStatus() {
 		return campaignStatus;
 	}
 
-	public void setCampaignStatus(String campaignStatus) {
+	public void setCampaignStatus(CampaignStatus campaignStatus) {
 		this.campaignStatus = campaignStatus;
 	}
 

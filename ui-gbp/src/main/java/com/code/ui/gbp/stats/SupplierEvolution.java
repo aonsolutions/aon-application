@@ -3,6 +3,8 @@
  */
 package com.code.ui.gbp.stats;
 
+import java.util.Date;
+
 public class SupplierEvolution {
 	private Integer supplierId;
 	private String supplierName;
@@ -21,7 +23,6 @@ public class SupplierEvolution {
 			String campaignName,
 			Double offer,
 			Double invoice) {
-		
 		this.supplierId = supplierId;
 		this.supplierName = supplierName;
 		this.campaignId = campaignId;
@@ -85,4 +86,5 @@ public class SupplierEvolution {
 	public void setCampaignId(Integer campaignId) {
 		this.campaignId = campaignId;
 	}
+
 }
