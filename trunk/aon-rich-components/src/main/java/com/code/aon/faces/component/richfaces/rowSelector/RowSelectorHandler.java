@@ -39,7 +39,7 @@ public class RowSelectorHandler extends TagHandler implements IRichFacesTags {
 	
 	private static final String ON_SUBMIT_ATTRIBUTE = "onsubmit";
 	
-	private static final String ON_SUBMIT_VALUE = "if (isRowSelectorDisabled()){return false}";
+	private static final String ON_SUBMIT_VALUE = "if (isRowSelectorDisabled()){return true}";
 	
 	private ComponentConfig config;
 	
