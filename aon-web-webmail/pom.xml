@@ -13,7 +13,7 @@
 	<artifactId>aon-web-webmail</artifactId>
 	<packaging>war</packaging>
 	<name>AON WEB WEBMAIL</name>
-	<version>3.1.0</version>
+	<version>3.1.1</version>
 	<description>AON WEB WEBMAIL</description>
 	<build>
 		<finalName>aon-webmail</finalName>
@@ -24,6 +24,12 @@
 			<artifactId>aon.security</artifactId>
 			<version>1.2.11</version>
 			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.code.aon</groupId>
+			<artifactId>aon.rich.components</artifactId>
+			<version>1.0.12</version>
+			<scope>compile</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.code.aon</groupId>
