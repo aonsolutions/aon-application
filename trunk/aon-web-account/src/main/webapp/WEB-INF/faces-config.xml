@@ -309,83 +309,6 @@
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
 
-	<!-- ************** EXTERNAL LOOKUPS (RELOCATE) ****************** -->
-	<!-- ************* CUSTOMERLOOKUP ***************** -->
-	<managed-bean>
-		<managed-bean-name>customerLookup</managed-bean-name>
-		<managed-bean-class>
-			com.code.aon.ui.customer.controller.CustomerLookupController
-		</managed-bean-class>
-		<managed-bean-scope>session</managed-bean-scope>
-		<managed-property>
-			<property-name>queryOnStartUP</property-name>
-			<value>true</value>
-		</managed-property>
-		<managed-property>
-			<property-name>foreignPojo</property-name>
-			<value>com.code.aon.customer.Customer</value>
-		</managed-property>
-		<managed-property>
-			<property-name>aliasPrefix</property-name>
-			<value>Customer_Lookup</value>
-		</managed-property>
-		<managed-property>
-			<property-name>foreignJoinProperties</property-name>
-			<list-entries>
-				<value>id</value>
-			</list-entries>
-		</managed-property>
-		<managed-property>
-			<property-name>foreignDisplayProperties</property-name>
-			<list-entries>
-				<value>registry.document</value>
-			</list-entries>
-		</managed-property>
-		<managed-property>
-			<description>Needed for Search Select Window</description>
-			<property-name>searchPagePath</property-name>
-			<value>/facelet/sw/customerSearch.faces</value>
-		</managed-property>
-	</managed-bean>
-	
-	<!-- ************* CREDITOR ***************** -->
-	<managed-bean>
-		<managed-bean-name>creditorLookup</managed-bean-name>
-		<managed-bean-class>
-			com.code.aon.ui.finance.controller.CreditorLookupController
-		</managed-bean-class>
-		<managed-bean-scope>session</managed-bean-scope>
-		<managed-property>
-			<property-name>queryOnStartUP</property-name>
-			<value>true</value>
-		</managed-property>
-		<managed-property>
-			<property-name>foreignPojo</property-name>
-			<value>com.code.aon.finance.Creditor</value>
-		</managed-property>
-		<managed-property>
-			<property-name>aliasPrefix</property-name>
-			<value>Creditor_Lookup</value>
-		</managed-property>
-		<managed-property>
-			<property-name>foreignJoinProperties</property-name>
-			<list-entries>
-				<value>id</value>
-			</list-entries>
-		</managed-property>
-		<managed-property>
-			<property-name>foreignDisplayProperties</property-name>
-			<list-entries>
-				<value>registry.document</value>
-			</list-entries>
-		</managed-property>
-		<managed-property>
-			<description>Needed for Search Select Window</description>
-			<property-name>searchPagePath</property-name>
-			<value>/facelet/sw/creditorSearch.faces</value>
-		</managed-property>
-	</managed-bean>
-	
 	<!-- ************* BANK LOOKUP ***************** -->
 	<managed-bean>
 		<managed-bean-name>bankLookup</managed-bean-name>
@@ -684,6 +607,7 @@
 			<list-entries>
 				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
 				<value>#{invoiceRegistryVetoListener}</value>
+				<value>#{customerScopeListener}</value>
 				<value>#{customerControllerListener}</value>
 				<value>#{customerAddressListener}</value>
 				<value>#{customerMediaListener}</value>
