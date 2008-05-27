@@ -1,0 +1,109 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:aon="http://www.code.es/aon-rich-components">
+<body>
+
+<ui:composition template="/facelet/templates/aon.ui.content.xhtml">
+
+	<ui:define name="content">
+
+		<aon:form id="noticeList">
+
+			<aon:div styleClass="aon-finding-title-toolbar">
+				<aon:panelGrid columns="3" dir="true"
+					columnClasses="aon-finding-title,aon-finding-subtitle,aon-finding-toolbar">
+
+					<aon:div styleClass="aon-finding-title-internal">
+						<aon:outputText value="#{groupwareBundle.aon_notice}" />
+					</aon:div>
+
+					<aon:div styleClass="aon-finding-subtitle-internal">
+						<aon:outputText value="#{bundle.aon_listing}" />
+					</aon:div>
+
+					<!-- start toolbar navigation -->
+					<aon:div styleClass="aon-finding-toolbar-item-group">
+						<aon:commandButton id="search" value="#{bundle.aon_search}"
+							action="notice_search" actionListener="#{notice.onEditSearch}"
+							styleClass="aon-finding-toolbar-item aon-icon-search"
+							accesskey="#{bundle.aon_key_search}" />
+						<aon:commandButton id="reset" value="#{bundle.aon_reset}"
+							action="notice_form" actionListener="#{notice.onReset}"
+							styleClass="aon-finding-toolbar-item aon-icon-reset"
+							accesskey="#{bundle.aon_key_new}" />
+					</aon:div>
+
+					<!-- end toolbar navigation -->
+				</aon:panelGrid>
+			</aon:div>
+
+			<!--  aon-region-body -->
+			<aon:div styleClass="aon-scroll-area">
+			
+				<aon:dataTable id="noticeDataList" value="#{notice.model}"
+					var="to" rows="20" rendered="#{notice.model.rowCount > 0}"
+					columnsWidth="150,100,150,auto,auto,170">
+
+					<aon:rowSelector action="notice_form" actionListener="#{notice.onSelect}" />
+
+					<aon:column>
+						<f:facet name="header">
+							<aon:outputText value="#{groupwareBundle.notice_recipient}" />
+						</f:facet>
+						<aon:outputText
+							value="#{to.recipient.name}" />
+					</aon:column>
+
+					<aon:column>
+						<f:facet name="header">
+							<aon:outputText value="#{groupwareBundle.notice_work_group}" />
+						</f:facet>
+						<aon:outputText value="#{to.workGroup.description}" />
+					</aon:column>
+					
+					<aon:column>
+						<f:facet name="header">
+							<aon:outputText value="#{groupwareBundle.notice_source}" />
+						</f:facet>
+						<aon:outputText value="&#160; #{to.source}" />
+					</aon:column>
+
+					<aon:column>
+						<f:facet name="header">
+							<aon:outputText value="#{groupwareBundle.notice_company}" />
+						</f:facet>
+						<aon:outputText value="&#160; #{to.company}" />
+					</aon:column>
+					
+					<aon:column>
+						<f:facet name="header">
+							<aon:outputText value="#{groupwareBundle.notice_subject}" />
+						</f:facet>
+						<aon:outputText value="&#160; #{to.subjectHead}" />
+					</aon:column>						
+					
+					<aon:column>
+						<f:facet name="header">
+							<aon:outputText value="#{groupwareBundle.aon_date}" />
+						</f:facet>
+						<aon:outputText value="#{to.date}">
+							<f:convertDateTime pattern="#{bundle.aon_timestamp_pattern}"
+								timeZone="#{timeZoneController.timeZoneId}" />
+						</aon:outputText>
+					</aon:column>				
+				</aon:dataTable>
+
+				<aon:dataScroller for="noticeDataList" rowCount="#{notice.model.rowCount}" showNote="true" />
+
+			</aon:div>
+
+		</aon:form>
+	</ui:define>
+
+</ui:composition>
+
+</body>
+</html>
