@@ -153,6 +153,7 @@
     	<attribute name="paginator" ignore="true" />
     	<attribute name="inactiveStyleClass" value="aon-dataScroller-inactive" />
     	<attribute name="selectedStyleClass" value="aon-dataScroller-selected" />
+    	<attribute name="ajaxSingle" value="false" type="1" />
 	</component>
 
 	<component localName="rowSelector">
