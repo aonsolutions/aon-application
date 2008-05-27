@@ -216,6 +216,8 @@
 		<collection provider="#{invoiceControlReport}"/>
 		<params>
 			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.ui.gbp.i18n.messages" />
+			<param id="INIT_DATE" value="#{invoiceControlReport.getFromDate}" />
+			<param id="END_DATE" value="#{invoiceControlReport.getToDate}" />
 		</params>
 	</report>
 
