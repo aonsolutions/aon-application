@@ -55,6 +55,21 @@
 						value="#{invoiceControlReport.campaign.name}"
 						size="64" disabled="true" />
 				</aon:div>
+				
+				<aon:outputLabel for="Invoice_startDate"
+					value="#{appBundle.gbp_campaign_start_date}" />
+				<aon:selectInputDate id="Invoice_startDate"
+					value="#{invoiceControlReport.fromDate}" required="true"
+					datePattern="#{bundle.aon_date_pattern}" enableManualInput="true"
+					inputSize="15" />
+
+				<aon:outputLabel for="Invoice_endDate"
+					value="#{appBundle.gbp_campaign_end_date}" />
+				<aon:selectInputDate id="Invoice_endDate" required="true"
+					value="#{invoiceControlReport.toDate}"
+					datePattern="#{bundle.aon_date_pattern}" enableManualInput="true"
+					inputSize="15" />
+
 <!-- 
 					<aon:outputLabel for="Campaign_code"
 						value="#{appBundle.gbp_campaign_code}" />

@@ -1,6 +1,8 @@
 package com.code.ui.gbp.stats;
 
+import java.util.Calendar;
 import java.util.Collection;
+import java.util.Date;
 import java.util.List;
 
 import javax.faces.event.ActionEvent;
@@ -17,6 +19,26 @@ public class InvoiceControlReport implements ICollectionProvider {
 
 	private Campaign campaign;
 	
+	private Date fromDate;
+	
+	private Date toDate;
+	
+	public Date getFromDate() {
+		return fromDate;
+	}
+
+	public void setFromDate(Date fromDate) {
+		this.fromDate = fromDate;
+	}
+
+	public Date getToDate() {
+		return toDate;
+	}
+
+	public void setToDate(Date toDate) {
+		this.toDate = toDate;
+	}
+
 	public Campaign getCampaign() {
 		if (campaign==null) {
 			campaign = new Campaign();
@@ -45,11 +67,14 @@ public class InvoiceControlReport implements ICollectionProvider {
 				+ ") "
 				+ "FROM ProFormaInvoice inv WHERE ";
 		StringBuilder sentence = new StringBuilder(stmt);
-		sentence.append(" inv.campaign.code = ? ");
+		sentence.append(" inv.campaign.id = ? ");
+		sentence.append(" AND inv.invoiceDate >= ? AND inv.invoiceDate <= ?");
 		sentence.append(" ORDER BY inv.supplier.supplierType.id");
 
 		Query query = s.createQuery(sentence.toString());
 		query.setInteger(0, getCampaign().getId());
+		query.setDate(1, getFromDate());
+		query.setDate(2, getToDate());
 		List<SupplierEvolution> list = query.list();
 		return list;
 
@@ -57,6 +82,13 @@ public class InvoiceControlReport implements ICollectionProvider {
 
 	public void onInitialize(ActionEvent event) {
 		setCampaign(null);
+		Date from = new Date();
+		Calendar c = Calendar.getInstance();
+		c.setTime(from);
+		c.set(Calendar.DAY_OF_MONTH, 1);
+		c.set(Calendar.MONTH, 0);
+		setFromDate(c.getTime());
+		setToDate(new Date());
 	}
 	
 }
