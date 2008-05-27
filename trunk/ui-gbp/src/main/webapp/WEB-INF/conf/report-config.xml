@@ -178,6 +178,8 @@
 		<collection provider="#{supplierEvolutionReport}"/>
 		<params>
 			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.ui.gbp.i18n.messages" />
+			<param id="INIT_DATE" value="#{supplierEvolutionReport.getFromDate}" />
+			<param id="END_DATE" value="#{supplierEvolutionReport.getToDate}" />
 		</params>
 	</report>
 
@@ -194,6 +196,8 @@
 		<collection provider="#{supplierTypeEvolutionReport}"/>
 		<params>
 			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.ui.gbp.i18n.messages" />
+			<param id="INIT_DATE" value="#{supplierTypeEvolutionReport.getFromDate}" />
+			<param id="END_DATE" value="#{supplierTypeEvolutionReport.getToDate}" />
 		</params>
 	</report>
 
@@ -202,6 +206,8 @@
 		<collection provider="#{offerControlReport}"/>
 		<params>
 			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.ui.gbp.i18n.messages" />
+			<param id="INIT_DATE" value="#{offerControlReport.getFromDate}" />
+			<param id="END_DATE" value="#{offerControlReport.getToDate}" />
 		</params>
 	</report>
 

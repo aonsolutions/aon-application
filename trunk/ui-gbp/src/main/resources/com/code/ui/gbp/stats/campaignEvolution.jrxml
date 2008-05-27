@@ -336,33 +336,7 @@
 				<textFieldExpression   class="java.lang.Double"><![CDATA[new Double($F{campaign}.getBudget().doubleValue() - $V{cmpInvoiceTotal}.doubleValue())]]></textFieldExpression>
 				</textField>
 				<pie3DChart>
-					<chart isShowLegend="false" evaluationTime="Group" evaluationGroup="supplierTypeGroup"  hyperlinkTarget="Self" >
-					<reportElement
-						x="276"
-						y="39"
-						width="259"
-						height="158"
-						key="element-2"
-						printWhenGroupChanges="campaignGroup"/>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
-						<chartTitle color="#000000" >
-								<titleExpression><![CDATA[$R{gbp_campaign_evolution_report_graph2}]]></titleExpression>
-					</chartTitle>
-					</chart>
-					<pieDataset>
-						<dataset resetType="Group" resetGroup="campaignGroup" incrementType="Group" incrementGroup="supplierTypeGroup" >
-						</dataset>
-						<keyExpression><![CDATA[$F{supplier}.getSupplierType().getDescription()]]></keyExpression>
-						<valueExpression><![CDATA[$V{supPercentTotal}]]></valueExpression>
-				<sectionHyperlink >
-				</sectionHyperlink>
-					</pieDataset>
-					<pie3DPlot >
-						<plot />
-					</pie3DPlot>
-				</pie3DChart>
-				<pie3DChart>
-					<chart evaluationTime="Band" evaluationGroup="campaignGroup"  hyperlinkTarget="Self" >
+					<chart evaluationTime="Group" evaluationGroup="campaignGroup"  hyperlinkTarget="Self" >
 					<reportElement
 						x="4"
 						y="39"
@@ -383,6 +357,37 @@
 						</dataset>
 						<keyExpression><![CDATA[$F{supplier}.getName()]]></keyExpression>
 						<valueExpression><![CDATA[$V{percent}]]></valueExpression>
+						<labelExpression><![CDATA[null]]></labelExpression>
+				<sectionHyperlink >
+				</sectionHyperlink>
+					</pieDataset>
+					<pie3DPlot >
+						<plot />
+					</pie3DPlot>
+				</pie3DChart>
+				<pie3DChart>
+					<chart evaluationTime="Group" evaluationGroup="campaignGroup"  hyperlinkTarget="Self" >
+					<reportElement
+						x="269"
+						y="39"
+						width="259"
+						height="158"
+						key="element-3"
+						printWhenGroupChanges="campaignGroup"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+						<chartTitle color="#000000" >
+								<titleExpression><![CDATA[$R{gbp_campaign_evolution_report_graph1}]]></titleExpression>
+					</chartTitle>
+						<chartLegend textColor="#000000" backgroundColor="#FFFFFF" >
+					<font fontName="SansSerif" pdfFontName="Helvetica" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" isPdfEmbedded="false" pdfEncoding="Cp1252"/>
+					</chartLegend>
+					</chart>
+					<pieDataset>
+						<dataset resetType="Group" resetGroup="campaignGroup" >
+						</dataset>
+						<keyExpression><![CDATA[$F{supplier}.getSupplierType().getDescription()]]></keyExpression>
+						<valueExpression><![CDATA[$V{supPercentTotal}]]></valueExpression>
+						<labelExpression><![CDATA[null]]></labelExpression>
 				<sectionHyperlink >
 				</sectionHyperlink>
 					</pieDataset>

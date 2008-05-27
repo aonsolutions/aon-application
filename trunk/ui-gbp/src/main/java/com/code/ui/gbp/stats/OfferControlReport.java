@@ -48,7 +48,7 @@ public class OfferControlReport implements ICollectionProvider {
 		String subStmt_Inv = "(SELECT SUM(inv.amount) FROM ProFormaInvoice inv WHERE inv.campaign.id = c.id)";
 		String subStmt_Off = "(SELECT SUM(off.price) FROM Offer off WHERE off.campaign.id = c.id)";
 		String stmt = "SELECT " + "new com.code.ui.gbp.stats.OfferControl("
-				+ "c.code,c.name,c.status.name,"+subStmt_Off+"," + subStmt_Inv
+				+ "c.code,c.name,c.status,"+subStmt_Off+"," + subStmt_Inv
 				+ ") FROM Campaign c WHERE ";
 		StringBuilder sentence = new StringBuilder(stmt);
 		sentence.append(" c.startDate <= ? AND c.endDate >= ?");
