@@ -29,6 +29,8 @@ public class AonUserController extends UserController implements ILdapConstants,
 	
 	private boolean managerChangingPassword;
 	
+	private boolean showPasswordChangedWindow;
+	
 	private boolean accepted;
 	
 	public AonUserController() {
@@ -104,15 +106,25 @@ public class AonUserController extends UserController implements ILdapConstants,
 			} else {
 				super.accept(event);
 			}
-			changeDefaultMailAccountPassword( user.getLogin(), getUserManager().getPassword() );
 			FacesContext ctx = FacesContext.getCurrentInstance();
 			if ( ctx.getMaximumSeverity() == null ) {
-				AonUtil.addInfoMessage("Su contraseña se ha actualizado con exito.");
+				changeDefaultMailAccountPassword( user.getLogin(), getUserManager().getPassword() );
+				AonDomainController domainController = (AonDomainController) AonUtil.getController("domain");
+				domainController.flushAuthenticationCache( user.getLogin() );
+				setShowPasswordChangedWindow(true);
 			}
 		} catch (Exception e) {
 			LOGGER.log(Level.SEVERE, "Error cambiando la contraseña.", e );
 			user.setStatus(status);
 		}
+	}
+
+	public boolean isShowPasswordChangedWindow() {
+		return showPasswordChangedWindow;
+	}
+
+	public void setShowPasswordChangedWindow(boolean showPasswordChangedWindow) {
+		this.showPasswordChangedWindow = showPasswordChangedWindow;
 	}
 	
 }
