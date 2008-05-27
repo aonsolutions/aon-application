@@ -31,12 +31,17 @@
 		<params>
 			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.ui.gbp.i18n.messages" />
 			<param id="signatures" value="#{proForma.getSignatures}" />
+			<param id="banks" value="#{proForma.getBanks}" />
 		</params>
-		<nested-report report="proFormaSignatures"/>
+		<nested-report report="proofSignatures"/>
+		<nested-report report="proofBanks"/>
 	</report>
 	
-	<report id="proFormaSignatures" description="proFormaSignatures">
+	<report id="proofSignatures" description="proofSignatures">
 		<template path="/com/code/ui/gbp/report/proofSignatures.jasper"/>
+	</report>
+	<report id="proofBanks" description="proofBanks">
+		<template path="/com/code/ui/gbp/report/proofBanks.jasper"/>
 	</report>
 	
 	<!--  *********  SUPPLIER LIST  ********* -->
