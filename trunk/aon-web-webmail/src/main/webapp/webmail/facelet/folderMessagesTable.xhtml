@@ -132,8 +132,6 @@
 							<aon:selectBooleanCheckbox styleClass="aon-float-left"
 								id="checkMessage" value="#{to.selected}"
 								onmouseover="disableRowSelector();" onmouseout="enableRowSelector();">
-								<a4j:support event="onclick" eventsQueue="deleteMessage" reRender="checkMessage"
-									ajaxSingle="true" immediate="true" />
 							</aon:selectBooleanCheckbox>
 							<aon:div styleClass="aon-float-left">
 	 							<rich:dragSupport dragIndicator="messageIndicator" dragType="MESSAGE" dragValue="#{to}" />
