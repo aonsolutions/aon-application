@@ -22,3 +22,6 @@
 .dr-table-cell{
 	border-right:0;
 }
+ .aon-icon-big-sendingMail{
+	background:transparent url(../images/aon-sending-mail.gif) scroll left center no-repeat;	
+ }
