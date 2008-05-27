@@ -96,3 +96,36 @@
 	border-right:#a1a6b1 1px solid;
 	line-height:2em;
 	}
+	
+/************* CUADRO DERECHA  ****************/
+.aon-support{
+	border:#b2b2b2 1px solid;
+	margin:1em 0;
+	}
+.aon-support-title{
+	background:transparent url(../images/aon-content/aon-soporte-background.png) scroll right top no-repeat;
+	color:#fff;
+	padding:5px 80px 5px 7px;
+	font-weight:bold;
+	}
+.aon-support-title div{
+	padding:7px 0 0 0;
+	font-weight:bold;
+   }
+.aon-support-telephone{
+	background:transparent url(../images/aon-content/aon-arrow-left.png) scroll right center no-repeat;
+	padding-right:16px;
+	margin:5px 10px 0px 10px;
+	}
+.aon-support-telephone-internal{
+	background:transparent url(../images/aon-content/aon-arrow-right.png) scroll left center no-repeat;
+	padding-left:18px;
+	color:#fd6e00;
+	font-size:22px;
+	font-weight:bold;
+	font-family:arial narrow, arial, sans;
+	}
+.aon-support-mail{
+	font-weight:bold;
+	margin: 0px 10px 10px 10px;
+ }
