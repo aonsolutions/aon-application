@@ -25,6 +25,7 @@
 
 	<parameter name="signatures" isForPrompting="false" class="java.util.List"/>
 	<parameter name="nestedReports" isForPrompting="true" class="java.util.Map"/>
+	<parameter name="banks" isForPrompting="false" class="java.util.List"/>
 
 	<field name="supplier" class="com.code.gbp.Supplier"/>
 	<field name="campaign" class="com.code.gbp.Campaign"/>
@@ -177,7 +178,7 @@
 			</band>
 		</columnHeader>
 		<detail>
-			<band height="340"  isSplitAllowed="true" >
+			<band height="390"  isSplitAllowed="true" >
 				<textField isStretchWithOverflow="false" pattern="dd/MM/yyyy" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						x="463"
@@ -556,6 +557,21 @@
 					</textElement>
 				<textFieldExpression   class="java.lang.String"><![CDATA[$F{concept}]]></textFieldExpression>
 				</textField>
+				<subreport  isUsingCache="true">
+					<reportElement
+						mode="Transparent"
+						x="145"
+						y="334"
+						width="300"
+						height="42"
+						key="subreport-2"/>
+					<parametersMapExpression><![CDATA[$P{REPORT_PARAMETERS_MAP}]]></parametersMapExpression>
+					<subreportParameter  name="amount">
+						<subreportParameterExpression><![CDATA[$F{amount}]]></subreportParameterExpression>
+					</subreportParameter>
+					<dataSourceExpression><![CDATA[new com.code.aon.report.jr.JRBeanCollectionDataSource($P{banks})]]></dataSourceExpression>
+					<subreportExpression  class="net.sf.jasperreports.engine.JasperReport"><![CDATA[$P{nestedReports}.get("proofBanks")]]></subreportExpression>
+				</subreport>
 			</band>
 		</detail>
 		<columnFooter>
