@@ -363,7 +363,7 @@ public class FolderController implements ITreeListener{
 	public boolean isRefreshNeeded() {
 		FacesContext context = FacesContext.getCurrentInstance();
 		Map<String, String> parameters = context.getExternalContext().getRequestParameterMap();
-		if ( parameters.containsKey("aonDestop") && (getFolder() != null) ) {
+		if ( parameters.containsKey("aonDesktop") && (getFolder() != null) ) {
 			String name = getFolder().getName();
 			if ( AonFolder.INBOX_FOLDER_NAME.equals(name) ) {
 				try {
