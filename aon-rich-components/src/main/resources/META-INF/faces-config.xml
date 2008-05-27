@@ -72,11 +72,8 @@
         <component-class>javax.faces.component.html.HtmlInputTextarea</component-class>
     </component>
     <component>
-        <component-type>com.code.aon.faces.InputRichText</component-type>
+        <component-type>com.code.aon.faces.HtmlInputRichText</component-type>
         <component-class>com.code.aon.faces.component.richfaces.inputRichText.InputRichTextComponent</component-class>
-        <component-extension>
-            <renderer-type>com.code.aon.faces.InputRichTextRenderer</renderer-type>
-        </component-extension>        
     </component>
     <component>
         <component-type>com.code.aon.faces.InputSecret</component-type>
@@ -198,11 +195,6 @@
             <component-family>com.code.aon.faces.RowSelector</component-family>
             <renderer-type>com.code.aon.faces.RowSelectorRenderer</renderer-type>
             <renderer-class>com.code.aon.faces.component.richfaces.rowSelector.RowSelectorRenderer</renderer-class>
-        </renderer>
-        <renderer>
-            <component-family>com.code.aon.faces.InputRichText</component-family>
-            <renderer-type>com.code.aon.faces.InputRichTextRenderer</renderer-type>
-            <renderer-class>com.code.aon.faces.component.richfaces.inputRichText.InputRichtTextRenderer</renderer-class>
         </renderer>
     </render-kit>
 </faces-config>
