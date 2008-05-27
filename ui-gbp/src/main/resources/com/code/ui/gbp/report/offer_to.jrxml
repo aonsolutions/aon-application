@@ -513,7 +513,7 @@
 					<textElement textAlignment="Left" verticalAlignment="Middle">
 						<font size="8"/>
 					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[""+$F{offer}.getStatus()]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{offer}.getStatus()==null?"":($F{offer}.getStatus().getName($P{REPORT_LOCALE}))]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
@@ -559,7 +559,7 @@
 					<textElement textAlignment="Left" verticalAlignment="Middle">
 						<font size="8"/>
 					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[""+$F{offer}.getCostType()]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{offer}.getCostType()==null?"":$F{offer}.getCostType().getName($P{REPORT_LOCALE})]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement

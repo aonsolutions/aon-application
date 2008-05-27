@@ -47,7 +47,12 @@
 		<!--  aon-region-body -->
 		<aon:div styleClass="aon-scroll-area">					
 			<aon:dataTable id="campaignDataList" 
-				value="#{campaign.model}" var="to" rows="20">
+				value="#{campaign.model}" var="to" rows="20"
+				columnClasses="aon-width-auto aon-text-left,
+							   aon-width-auto aon-text-left,
+							   aon-width-auto aon-text-left,
+							   aon-width-auto aon-text-left,
+							   aon-width-auto aon-text-left">
 					<aon:rowSelector action="campaign_form" actionListener="#{campaign.onSelect}" />
 					
 					<aon:column>
@@ -79,6 +84,13 @@
 							<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
 								timeZone="#{timeZoneController.timeZoneId}" />
 						</aon:outputText>
+					</aon:column>
+
+					<aon:column>
+						<f:facet name="header">
+							<aon:outputText value="#{appBundle.gbp_campaign_budget}" />
+						</f:facet>
+						<aon:outputText value="#{to.budget}"/>
 					</aon:column>
 
 				</aon:dataTable>

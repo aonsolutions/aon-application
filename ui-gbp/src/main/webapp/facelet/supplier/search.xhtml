@@ -73,6 +73,14 @@
 						<f:selectItems value="#{GBPCollections.geozones}" />
 					</aon:selectOneMenu>
 
+					<aon:outputLabel for="Supplier_supplierType_id"
+						value="#{appBundle.gbp_supplier_supplierType}" />
+					<aon:selectOneMenu id="Supplier_supplierType_id"
+						valueChangeListener="#{supplier.addExpression}">
+						<f:selectItem value="#{nullSelectItem.value}" />
+						<f:selectItems value="#{GBPCollections.supplierTypes}" />
+					</aon:selectOneMenu>
+
 				</aon:panelGrid>
 			</aon:div>
 		</aon:form>

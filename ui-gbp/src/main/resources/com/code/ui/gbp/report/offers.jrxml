@@ -183,7 +183,7 @@
 					<textElement textAlignment="Left" verticalAlignment="Middle">
 						<font size="8"/>
 					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$F{status}==null?"":""+$F{status}]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{status}==null?"":$F{status}.getName($P{REPORT_LOCALE})]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="false" pattern="dd/MM/yyyy" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement

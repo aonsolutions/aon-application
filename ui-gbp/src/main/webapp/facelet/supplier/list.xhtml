@@ -50,7 +50,9 @@
 				value="#{supplier.model}" var="to" rows="20"
 				columnClasses="aon-width-auto aon-text-left,
 							   aon-width-auto aon-text-left,
-							   aon-width-40 aon-text-right" >
+							   aon-width-auto aon-text-left,
+							   aon-width-auto aon-text-left,
+							   aon-width-auto aon-text-left" >
 					<aon:rowSelector action="supplier_form" actionListener="#{supplier.onSelect}" />
 					
 					<aon:column>
@@ -71,10 +73,28 @@
 
 					<aon:column>
 						<f:facet name="header">
-							<aon:outputText value="#{appBundle.gbp_supplier_employee_number}" />
+							<aon:outputText value="#{appBundle.gbp_supplier_supplierType}" />
 						</f:facet>
 						<aon:div>
-							<aon:outputText value="#{to.employeeNumber}" />
+							<aon:outputText value="#{to.supplierType.description}" />
+						</aon:div>
+					</aon:column>
+
+					<aon:column>
+						<f:facet name="header">
+							<aon:outputText value="#{appBundle.gbp_supplier_city}" />
+						</f:facet>
+						<aon:div>
+							<aon:outputText value="#{to.city}" />
+						</aon:div>
+					</aon:column>
+
+					<aon:column>
+						<f:facet name="header">
+							<aon:outputText value="#{appBundle.gbp_supplier_geozone}" />
+						</f:facet>
+						<aon:div>
+							<aon:outputText value="#{to.geozone.name}" />
 						</aon:div>
 					</aon:column>
 

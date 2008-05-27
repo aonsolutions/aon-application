@@ -227,13 +227,13 @@
 					</textElement>
 				<textFieldExpression   class="java.lang.String"><![CDATA[$F{proFormaInvoice}.getOffer().getQuality()]]></textFieldExpression>
 				</textField>
-				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						mode="Opaque"
 						x="7"
 						y="135"
 						width="84"
-						height="14"
+						height="46"
 						forecolor="#000000"
 						backcolor="#FFFFFF"
 						key="textField-47"/>
@@ -262,7 +262,7 @@
 						x="7"
 						y="185"
 						width="84"
-						height="14"
+						height="46"
 						forecolor="#000000"
 						backcolor="#FFFFFF"
 						key="textField-49"/>
@@ -368,7 +368,7 @@
 					<textElement textAlignment="Left" verticalAlignment="Middle">
 						<font size="8"/>
 					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[""+$F{proFormaInvoice}.getStatus()]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{proFormaInvoice}.getStatus()==null?"":($F{proFormaInvoice}.getStatus().getName($P{REPORT_LOCALE}))]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
@@ -414,7 +414,7 @@
 					<textElement textAlignment="Left" verticalAlignment="Middle">
 						<font size="8"/>
 					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[""+$F{proFormaInvoice}.getCostType()]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{proFormaInvoice}.getCostType()==null?"":($F{proFormaInvoice}.getCostType().getName($P{REPORT_LOCALE}))]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
