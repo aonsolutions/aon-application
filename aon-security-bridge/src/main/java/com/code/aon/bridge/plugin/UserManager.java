@@ -501,10 +501,15 @@ public class UserManager implements Serializable {
 	 */
 	public void savePassword() {
 		try {
+			if ( areEqualPasswords() ) {
+				setPassword( getNewPassword() );
+			} else {
+				Messages.addInfoMessage( bundle.getString("aon_security_new_passwd_error") );
+				return;
+			}
 			IApplication app = getApplication();
-			IDomain domain = getDomain();
-			setPassword( getNewPassword() );
 			this.user.changePasswd( encryptPassword( app ) );
+			IDomain domain = getDomain();
 			saveUser( app, domain.getId(), null );
 		} catch (DeploymentException e) {
 			LOGGER.severe( e.getMessage() );
