@@ -1,0 +1,26 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:aon="http://www.code.es/aon-rich-components">
+<body>
+
+<ui:composition>
+	<aon:panelGrid columns="2" dir="true">
+
+		<aon:outputLabel for="Campaign_code"
+			value="#{appBundle.gbp_campaign_code}" />
+		<aon:inputText id="Campaign_code" size="5" maxlength="10"
+			valueChangeListener="#{lookup.addExpression}" />
+
+		<aon:outputLabel for="Campaign_name"
+			value="#{appBundle.gbp_campaign_name}" />
+		<aon:inputText id="Campaign_name" size="40" maxlength="64"
+			valueChangeListener="#{lookup.addExpression}" />
+
+	</aon:panelGrid>
+</ui:composition>
+
+</body>
+</html>

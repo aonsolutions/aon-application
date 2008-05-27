@@ -11,27 +11,34 @@ import org.hibernate.Session;
 import com.code.aon.common.ICollectionProvider;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
+import com.code.gbp.Campaign;
 
 public class CampaignComparerReport implements ICollectionProvider {
 
-	private String campaign_1;
+	private Campaign campaign1;
 
-	private String campaign_2;
+	private Campaign campaign2;
 
-	public String getCampaign_1() {
-		return campaign_1;
+	public Campaign getCampaign1() {
+		if (campaign1 == null) {
+			campaign1 = new Campaign();
+		}
+		return campaign1;
 	}
 
-	public void setCampaign_1(String campaign_1) {
-		this.campaign_1 = campaign_1;
+	public void setCampaign1(Campaign campaign1) {
+		this.campaign1 = campaign1;
 	}
 
-	public String getCampaign_2() {
-		return campaign_2;
+	public Campaign getCampaign2() {
+		if (campaign2 == null) {
+			campaign2 = new Campaign();
+		}
+		return campaign2;
 	}
 
-	public void setCampaign_2(String campaign_2) {
-		this.campaign_2 = campaign_2;
+	public void setCampaign2(Campaign campaign2) {
+		this.campaign2 = campaign2;
 	}
 
 	@SuppressWarnings("unchecked")
@@ -46,47 +53,39 @@ public class CampaignComparerReport implements ICollectionProvider {
 		Session s = HibernateUtil.getSession();
 		String subStmt_1 = "(SELECT c " +
 				"FROM Campaign c " +
-				"WHERE c.code = ? )";
+				"WHERE c.id = ? )";
 		String subStmt_2 = "(SELECT COUNT(*) " +
 				"FROM ProFormaInvoice inv " +
 				"WHERE inv.supplier.supplierType.id = cs.supplier.supplierType.id " +
-				"AND inv.campaign.code = ? )";
+				"AND inv.campaign.id = ? )";
 		String subStmt_3 = "(SELECT SUM(inv.amount) " +
 				"FROM ProFormaInvoice inv " +
 				"WHERE inv.supplier.supplierType.id = cs.supplier.supplierType.id " +
-				"AND inv.campaign.code = ? )";
+				"AND inv.campaign.id = ? )";
 		String stmt = "SELECT " + "new com.code.ui.gbp.stats.CampaignComparer("
 				+ "cs.supplier.supplierType.description," + subStmt_1+","+subStmt_1+","+subStmt_2+","+subStmt_3+","+subStmt_2+","+subStmt_3
 				+" ) "
 				+ "FROM CampaignSupplier cs WHERE ";
 		StringBuilder sentence = new StringBuilder(stmt);
-		sentence.append(" ( cs.campaign.code = ? OR cs.campaign.code = ? ) ");
+		sentence.append(" ( cs.campaign.id = ? OR cs.campaign.id = ? ) ");
 		sentence.append(" GROUP BY cs.supplier.supplierType.id");
 
 		Query query = s.createQuery(sentence.toString());
-		query.setString(0, getCampaign_1());
-		query.setString(1, getCampaign_2());
-		query.setString(2, getCampaign_1());
-		query.setString(3, getCampaign_1());
-		query.setString(4, getCampaign_2());
-		query.setString(5, getCampaign_2());
-		query.setString(6, getCampaign_1());
-		query.setString(7, getCampaign_2());
+		query.setInteger(0, getCampaign1().getId());
+		query.setInteger(1, getCampaign2().getId());
+		query.setInteger(2, getCampaign1().getId());
+		query.setInteger(3, getCampaign1().getId());
+		query.setInteger(4, getCampaign2().getId());
+		query.setInteger(5, getCampaign2().getId());
+		query.setInteger(6, getCampaign1().getId());
+		query.setInteger(7, getCampaign2().getId());
 		List<SupplierEvolution> list = query.list();
 		return list;
 	}
 
 	public void onInitialize(ActionEvent event) {
-		setCampaign_1(null);
-		setCampaign_2(null);
-	}
-	
-	public static void main(String[] args) {
-		CampaignComparerReport rep = new CampaignComparerReport();
-		rep.setCampaign_1("614");
-		rep.setCampaign_2("1215");
-		System.out.println(rep.getCollection().size());
-		System.out.println("->");		
+		setCampaign1(null);
+		setCampaign2(null);
 	}
 
 }
