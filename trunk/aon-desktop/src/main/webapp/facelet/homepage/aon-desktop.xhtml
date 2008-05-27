@@ -238,12 +238,28 @@
 								rendered="#{desktop.logoAttached}"
 								url="desktop.logo"/>	
 						</aon:div>
-						
-						<aon:outputLink target="_blank" value="http://www.esferalia.com/es/contact.html">
-							<h:graphicImage url="/images/aon-soporte.png"/>
-						</aon:outputLink>
+						<!--  soporte -->
+						<aon:div styleClass="aon-support">
+							<aon:div styleClass="aon-support-title">
+								<h:graphicImage url="/images/aon-content/aon-esferalia-logo.png" />
+								<aon:div><aon:outputText value="#{appBundle.aon_desktop_support_title}" /></aon:div>
+							</aon:div>
+							
+							<aon:div styleClass="aon-support-telephone">
+								<aon:div styleClass="aon-support-telephone-internal">
+									<aon:outputText value="#{appBundle.aon_desktop_support_telephone_number}" />
+								</aon:div>
+							</aon:div>		
+							
+							<aon:div styleClass="aon-support-mail">
+								<aon:outputLink target="_blank" value="http://www.esferalia.com/aon-soporte/es/aon-soporte.html">	
+										<aon:outputText value="#{appBundle.aon_desktop_support_send_email}" />
+							    </aon:outputLink>
+							</aon:div>
+						</aon:div>
+						<!-- fin soporte -->
 					</aon:div>
-
+					
 				</aon:panelGrid>
 
 		</aon:div>
