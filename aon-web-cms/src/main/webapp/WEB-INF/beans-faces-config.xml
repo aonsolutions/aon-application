@@ -1696,4 +1696,12 @@
 		<managed-bean-class>com.code.aon.ui.cms.event.HiruCourseControllerListener</managed-bean-class>
 		<managed-bean-scope>none</managed-bean-scope>
 	</managed-bean>
+	
+	<!-- ************** HIRU GENERATOR ************** -->
+	<managed-bean>
+		<managed-bean-name>hiru_generator</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.cms.controller.HiruGeneratorController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
+
 </faces-config>

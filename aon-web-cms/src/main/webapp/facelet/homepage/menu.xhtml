@@ -136,6 +136,10 @@
 								action="hiru_course_list"
 								actionListener="#{hiru_course.onSearch}"
 								styleClass="aon-main-menu-leaf"/>
+							<aon:menuItem id="hiru_generator" value="#{menuBundle.cms_hiru_generator}"
+								action="hiru_generator"
+								actionListener="#{hiru_generator.onInit}"
+								styleClass="aon-main-menu-leaf"/>
 						</aon:dropDownMenu>
 						<aon:dropDownMenu id="bulletins"
 							value="#{menuBundle.cms_bulletins}" submitMode="ajax"

@@ -134,6 +134,14 @@
 							size="100" maxlength="255"
 							value="#{hiru_course.toI18n.url}" />
 
+						<aon:outputLabel for="subject"
+							value="#{appBundle.hiru_course_subject}"/>
+						<aon:selectOneMenu id="subject"
+							styleClass="aon-form-selectOneMenu-field"
+							value="#{hiru_course.to.subject}">
+							<f:selectItems value="#{collections.hiruCourseSubjects}" />
+						</aon:selectOneMenu>
+
 						<aon:outputLabel for="generic_info"
 							value="#{appBundle.hiru_course_genericInfo}" />
 						<aon:inputText id="generic_info"

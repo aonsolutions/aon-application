@@ -33,6 +33,7 @@ import com.code.aon.cms.Sidebar;
 import com.code.aon.cms.dao.ICMSAlias;
 import com.code.aon.cms.enumeration.ArticleType;
 import com.code.aon.cms.enumeration.ContentLevel;
+import com.code.aon.cms.enumeration.HiruCourseSubject;
 import com.code.aon.cms.enumeration.LanguageMenuType;
 import com.code.aon.cms.enumeration.MenuType;
 import com.code.aon.cms.enumeration.ModularPageOptionType;
@@ -627,4 +628,17 @@ public class CollectionsController {
 		}
 		return select_list;
 	}
+	
+	public List<SelectItem> getHiruCourseSubjects() throws ManagerBeanException {
+		List<SelectItem> hiruCourseSubjects = new LinkedList<SelectItem>();
+		Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
+		SelectItem item;
+		for (HiruCourseSubject hiruCourseSubject : HiruCourseSubject.values()) {
+			String name = hiruCourseSubject.getName(locale);
+			item = new SelectItem(hiruCourseSubject, name);
+			hiruCourseSubjects.add(item);
+		}
+		return hiruCourseSubjects;
+	}
+
 }
