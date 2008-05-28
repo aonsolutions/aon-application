@@ -327,4 +327,10 @@ public class Registry implements ITransferObject, ILookupObject {
         map.put(REGISTRY_FULL_NAME, getName() + " " + ((getSurname() == null) ? "" : getSurname()) );
         return map;
     }
+    
+    @Transient
+    public String getFullName() {
+    	return getName() + " " + ((getSurname() == null) ? "" : getSurname());
+    }
+    
 }
