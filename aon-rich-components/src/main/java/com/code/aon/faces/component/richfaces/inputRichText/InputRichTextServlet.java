@@ -1,9 +1,7 @@
 package com.code.aon.faces.component.richfaces.inputRichText;
 
-import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
@@ -14,6 +12,8 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import org.apache.commons.io.IOUtils;
 
 
 /**
@@ -48,6 +48,13 @@ public class InputRichTextServlet extends HttpServlet {
         String uri = request.getRequestURI();
         String path = uri.substring(uri.indexOf(InputRichTextUtil.FCK_FACES_RESOURCE_PREFIX)+InputRichTextUtil.FCK_FACES_RESOURCE_PREFIX.length()+1);
         
+        InputStream is = cl.getResourceAsStream(path);
+        // if no resource found in classloader return nothing
+        if (is==null) return;
+        // resource found, copying on output stream
+		byte[] data = IOUtils.toByteArray(is);
+		response.setContentLength(data.length);
+        
         if(getCustomResourcePath() != null) { //Use custom path to FCKeditor
         	this.getServletContext().getRequestDispatcher(getCustomResourcePath() + path).forward(request,response);
         } else {  //Use default FCKeditor bundled up in the jar
@@ -67,25 +74,9 @@ public class InputRichTextServlet extends HttpServlet {
 	        	response.setContentType("text/xml;charset=UTF-8");
 	        } 
 	        
-	        InputStream is = cl.getResourceAsStream(path);
-	        // if no resource found in classloader return nothing
-	        if (is==null) return;
-	        // resource found, copying on output stream
-	        OutputStream out = response.getOutputStream();
-	        byte[] buffer = new byte[2048];
-	        BufferedInputStream bis = new BufferedInputStream(is);
-	        try {
-	        	int read = 0;
-	        	read = bis.read(buffer);
-	        	while (read!=-1) {
-	        		out.write(buffer,0,read);
-	        		read = bis.read(buffer);
-	        	}
-	        } finally {
-	        	bis.close();
-	        }
-	        out.flush();
-	        out.close();
+			response.getOutputStream().write(data);
+			response.flushBuffer();
+			response.getOutputStream().close();
         }
     }
 
