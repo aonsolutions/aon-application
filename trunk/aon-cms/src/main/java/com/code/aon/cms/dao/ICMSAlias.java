@@ -3181,6 +3181,12 @@ public interface ICMSAlias {
 	*/
 	String  HIRU_COURSE_INIT_DATE = HIRU_COURSE_ENTRY.getAliasNames()[6];
 
+	/** 
+	* Alias value: HiruCourse_subject
+	* Hibernate value: HiruCourse.subject
+	*/
+	String  HIRU_COURSE_SUBJECT = HIRU_COURSE_ENTRY.getAliasNames()[7];
+
 
 
 	/** 

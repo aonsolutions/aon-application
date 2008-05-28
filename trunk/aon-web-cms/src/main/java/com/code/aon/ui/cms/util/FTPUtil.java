@@ -16,8 +16,15 @@ public class FTPUtil {
 
 	private static Config config;
 
-	@SuppressWarnings({ "finally", "finally" })
 	public static boolean uploadFTP() throws IOException {
+		config = ControllerUtil.getCurrentConfig();
+		String destinationFolder = config.getFtp_path();
+		String sourceFolder = ControllerUtil.getPreviewPath();
+		return uploadFTP(destinationFolder, sourceFolder);
+	}
+
+	@SuppressWarnings({ "finally", "finally" })
+	public static boolean uploadFTP(String dest, String source) throws IOException {
 		GeneratorStatusController status = (GeneratorStatusController)AonUtil.getRegisteredBean("generator_status");
 		status.addMessage("Publicando via FTP");
 		status.addMessage("Connecting....");
@@ -27,8 +34,8 @@ public class FTPUtil {
 		String server = config.getFtp_server();
 		String user = config.getFtp_user();
 		String password = config.getFtp_password();
-		String destinationFolder = config.getFtp_path();
-		String sourceFolder = ControllerUtil.getPreviewPath();
+		String destinationFolder = dest;
+		String sourceFolder = source;
 		FTPClient ftp = new FTPClient();
 
 		try {

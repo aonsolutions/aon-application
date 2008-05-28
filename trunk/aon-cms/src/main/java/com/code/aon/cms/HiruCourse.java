@@ -11,6 +11,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import com.code.aon.cms.enumeration.HiruCourseSubject;
 import com.code.aon.common.ITransferObject;
 
 @Entity
@@ -30,6 +31,8 @@ public class HiruCourse implements ITransferObject {
 	private HiruOrganizerCentre hiruOrganizerCentre; 
 	
 	private String hiruPlace;
+	
+	private HiruCourseSubject subject;
 	
 	@Id
 	@GeneratedValue
@@ -95,6 +98,15 @@ public class HiruCourse implements ITransferObject {
 
 	public void setHiruPlace(String hiruPlace) {
 		this.hiruPlace = hiruPlace;
+	}
+
+	@Column(name = "subject",nullable=false)
+	public HiruCourseSubject getSubject() {
+		return subject;
+	}
+
+	public void setSubject(HiruCourseSubject subject) {
+		this.subject = subject;
 	}
 
 	
