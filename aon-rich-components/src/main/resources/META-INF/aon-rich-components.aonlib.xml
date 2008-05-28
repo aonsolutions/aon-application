@@ -104,7 +104,8 @@
 	</component>
 
 	<component localName="inputRichText">
-    	<attribute name="styleClass" value="aon-inputRichText" />			
+    	<attribute name="styleClass" value="aon-inputRichText" />
+    	<attribute name="style" value="display: none;" />			
 	</component>
 
 	<component localName="inputSecret">
