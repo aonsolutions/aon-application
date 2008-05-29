@@ -6,6 +6,7 @@ import java.util.List;
 
 import javax.faces.component.UIComponent;
 
+import com.code.aon.faces.component.richfaces.inputRichText.InputRichTextHandler;
 import com.code.aon.faces.component.richfaces.lookup.inputText.LookupInputTextHandler;
 import com.code.aon.faces.component.richfaces.selectInputDate.SelectInputDateHandler;
 import com.code.aon.faces.component.util.BasicComponentConfig;
@@ -30,6 +31,8 @@ public class RegionableInputHandler extends TagHandler implements IRichFacesTags
 	
 	private static final String SELECT_INPUT_DATE_COMPONENT_TYPE = "com.code.aon.faces.SelectInputDate";
 
+	private static final String INPUT_RICH_TEXT_COMPONENT_TYPE = "com.code.aon.faces.InputRichText";
+
 	private ComponentConfig config;
 	
 	private AonAjaxInputHandler inputHandler;
@@ -53,6 +56,8 @@ public class RegionableInputHandler extends TagHandler implements IRichFacesTags
 			return new LookupInputTextHandler(config);
 		} else if ( SELECT_INPUT_DATE_COMPONENT_TYPE.equals(componentType) ) {
 			return new SelectInputDateHandler(config);
+		} else if ( INPUT_RICH_TEXT_COMPONENT_TYPE.equals(componentType) ) {
+			return new InputRichTextHandler(config);
 		}
 		return new AonAjaxInputHandler(config);
 	}
