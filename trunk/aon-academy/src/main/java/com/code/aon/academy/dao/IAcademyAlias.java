@@ -292,22 +292,40 @@ public interface IAcademyAlias {
 	String  COURSE_ALUMN_ID = COURSE_ALUMN_ENTRY.getAliasNames()[4];
 
 	/** 
+	* Alias value: CourseAlumn_course_code
+	* Hibernate value: CourseAlumn.course.code
+	*/
+	String  COURSE_ALUMN_COURSE_CODE = COURSE_ALUMN_ENTRY.getAliasNames()[5];
+
+	/** 
 	* Alias value: CourseAlumn_course_academicYear_id
 	* Hibernate value: CourseAlumn.course.academicYear.id
 	*/
-	String  COURSE_ALUMN_COURSE_ACADEMIC_YEAR_ID = COURSE_ALUMN_ENTRY.getAliasNames()[5];
+	String  COURSE_ALUMN_COURSE_ACADEMIC_YEAR_ID = COURSE_ALUMN_ENTRY.getAliasNames()[6];
 
 	/** 
 	* Alias value: CourseAlumn_course_startDate
 	* Hibernate value: CourseAlumn.course.startDate
 	*/
-	String  COURSE_ALUMN_COURSE_START_DATE = COURSE_ALUMN_ENTRY.getAliasNames()[6];
+	String  COURSE_ALUMN_COURSE_START_DATE = COURSE_ALUMN_ENTRY.getAliasNames()[7];
+
+	/** 
+	* Alias value: CourseAlumn_course_endDate
+	* Hibernate value: CourseAlumn.course.endDate
+	*/
+	String  COURSE_ALUMN_COURSE_END_DATE = COURSE_ALUMN_ENTRY.getAliasNames()[8];
+
+	/** 
+	* Alias value: CourseAlumn_course_status
+	* Hibernate value: CourseAlumn.course.status
+	*/
+	String  COURSE_ALUMN_COURSE_STATUS = COURSE_ALUMN_ENTRY.getAliasNames()[9];
 
 	/** 
 	* Alias value: CourseAlumn_status
 	* Hibernate value: CourseAlumn.status
 	*/
-	String  COURSE_ALUMN_STATUS = COURSE_ALUMN_ENTRY.getAliasNames()[7];
+	String  COURSE_ALUMN_STATUS = COURSE_ALUMN_ENTRY.getAliasNames()[10];
 
 
 
