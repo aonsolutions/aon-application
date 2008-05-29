@@ -10,10 +10,8 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Locale;
 
 import javax.faces.context.FacesContext;
-import javax.faces.el.ValueBinding;
 import javax.faces.event.ActionEvent;
 import javax.servlet.http.HttpServletResponse;
 
@@ -24,11 +22,12 @@ import com.code.aon.customer.Customer;
 import com.code.aon.ql.Criteria;
 import com.code.aon.registry.RegistryAddress;
 import com.code.aon.ui.customer.controller.CustomerController;
+import com.code.aon.ui.util.AonUtil;
 
 public class MailingController {
 
-	private Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
-	
+	private static final String CUSTOMER_CONTROLLER_NAME = "customer";
+
 	protected String getFicheroDestino() {
 		return getTmpPath()+FILENAME;
 	}
@@ -51,11 +50,8 @@ public class MailingController {
 			throw new ManagerBeanException(e);
 		}
 		
-        FacesContext ctx = FacesContext.getCurrentInstance();
-        ValueBinding vb = ctx.getApplication().createValueBinding("#{customer}");
-        CustomerController customerController = (CustomerController) vb.getValue(ctx);
+        CustomerController customerController = (CustomerController)AonUtil.getController(CUSTOMER_CONTROLLER_NAME);
         Criteria criteria = customerController.getCriteria();
-        
         List<ITransferObject> customers = BeanManager.getManagerBean(Customer.class).getList(criteria);
         Iterator<ITransferObject> customersIter = customers.iterator();
     	pw.print(parseStructure());
@@ -70,14 +66,10 @@ public class MailingController {
         
 		try {
 			FacesContext faces = FacesContext.getCurrentInstance();
-			HttpServletResponse response = (HttpServletResponse) faces
-					.getExternalContext().getResponse();
+			HttpServletResponse response = (HttpServletResponse) faces.getExternalContext().getResponse();
 			response.setContentType("aplication/disk");
-			response.setHeader("content-disposition", "attachment;filename=\""
-					+ FILENAME + "\"");
-			BufferedOutputStream bos = new BufferedOutputStream(response
-					.getOutputStream());
-
+			response.setHeader("content-disposition", "attachment;filename=\"" + FILENAME + "\"");
+			BufferedOutputStream bos = new BufferedOutputStream(response.getOutputStream());
 			byte[] data = new byte[1024];
 			FileInputStream file = new FileInputStream(filename);
 			BufferedInputStream bis = new BufferedInputStream(file);
@@ -90,7 +82,6 @@ public class MailingController {
 					bos.write(data, 0, length);
 				}
 			}
-
 			bos.flush();
 			bos.close();
 			bis.close();
@@ -128,8 +119,6 @@ public class MailingController {
         	line += SEPARATOR;
     	}else{
         	String address = "";
-        	if (customer.getRegistry().getDefaultAddress().getStreetType()!=null)
-        		address += customer.getRegistry().getDefaultAddress().getStreetType().getName(locale);
         	address += parseValue(customer.getRegistry().getDefaultAddress().getAddress());
         	address += parseValue(customer.getRegistry().getDefaultAddress().getAddress2());
         	address += parseValue(customer.getRegistry().getDefaultAddress().getAddress3());
