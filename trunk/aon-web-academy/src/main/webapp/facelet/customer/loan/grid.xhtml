@@ -15,7 +15,7 @@
 		</t:div>
 
 		<t:div styleClass="aon-form-group-body">
-			<t:dataTable id="alumnLoanDataList" value="#{alumnLoan.model}"
+			<t:dataTable id="alumnLoanDataList" value="#{modelAlias}"
 				rows="20" var="to" rowIndexVar="rowIndex"
 				rowOnMouseOver="selectRow( this )"
 				rowOnMouseOut="unselectRow( this )" rowOnClick="sendRow( this )"
@@ -35,15 +35,15 @@
 					</f:facet>
 					<t:commandLink immediate="#{true}"
 						styleClass="aon-table-row-selected"
-						rendered="#{to.id!=alumnLoan.to.id}"
+						rendered="#{to.id!=alumnLoan.to.id and editMode}"
 						actionListener="#{alumnLoan.onSelect}" />
 					<f:verbatim>&#160;</f:verbatim>
 					<f:facet name="footer">
-						<t:div>
+						<t:div rendered="#{editMode}">
 							<t:commandButton id="reset" alt="[#{bundle.aon_reset}]"
 								styleClass="aon-edit-table-icon-button aon-edit-table-icon-button-new"
 								actionListener="#{alumnLoan.onReset}"
-								rendered="#{!alumnLoan.new}" value=""
+								rendered="#{!alumnLoan.new and editMode}" value=""
 								accesskey="#{bundle.aon_key_new_line}">
 							</t:commandButton>
 						</t:div>
@@ -60,7 +60,7 @@
 						value="#{alumnLoan.to.material}" maxlength="16"/>
 					<f:verbatim>&#160;</f:verbatim>
 					<f:facet name="footer">
-						<h:inputText rendered="#{alumnLoan.new}" 
+						<h:inputText rendered="#{alumnLoan.new and editMode}" 
 							styleClass="aon-form-input-text" size="20" required="#{true}"
 							value="#{alumnLoan.to.material}" maxlength="16"/>
 					</f:facet>
@@ -88,7 +88,7 @@
 							popupWeekString="#{bundle.aon_popup_week}" />
 					</t:div>
 					<f:facet name="footer">
-						<t:div>
+						<t:div rendered="#{editMode}">
 							<t:inputCalendar size="10" required="true"
 								id="AlumnLoan_loanDate-New"
 								rendered="#{alumnLoan.new}" 
@@ -125,7 +125,7 @@
 							popupWeekString="#{bundle.aon_popup_week}" />
 					</t:div>
 					<f:facet name="footer">
-						<t:div>
+						<t:div rendered="#{editMode}">
 							<t:inputCalendar size="10"
 								id="AlumnLoan_endDate-New"
 								rendered="#{alumnLoan.new}" 
@@ -150,7 +150,7 @@
 						value="#{alumnLoan.to.comments}" maxlength="64"/>
 					<f:verbatim>&#160;</f:verbatim>
 					<f:facet name="footer">
-						<h:inputText rendered="#{alumnLoan.new}" 
+						<h:inputText rendered="#{alumnLoan.new and editMode}" 
 							styleClass="aon-form-input-text" size="80"
 							value="#{alumnLoan.to.comments}" maxlength="64"/>
 					</f:facet>
@@ -180,7 +180,7 @@
 						rendered="#{to.id==alumnLoan.to.id}" />
 					<f:verbatim rendered="#{to.id!=alumnLoan.to.id}">&#160;</f:verbatim>
 					<f:facet name="footer">
-						<t:div>
+						<t:div rendered="#{editMode}">
 							<f:verbatim rendered="#{!alumnLoan.new}">&#160;</f:verbatim>
 							<t:commandButton title="#{bundle.aon_accept}"
 								actionListener="#{alumnLoan.onAccept}"
@@ -202,7 +202,7 @@
 
 			<ui:include src="/facelet/shared/dataScroller.xhtml">
 				<ui:param name="dataTable" value="alumnLoanDataList" />
-				<ui:param name="model" value="#{alumnLoan.model}" />
+				<ui:param name="model" value="#{modelAlias}" />
 				<ui:param name="showNote" value="#{false}" />
 			</ui:include>
 
