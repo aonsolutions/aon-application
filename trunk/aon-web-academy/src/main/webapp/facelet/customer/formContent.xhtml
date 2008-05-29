@@ -154,9 +154,15 @@
 				</h:panelGrid>
 
 			<t:div rendered="#{customerAlias.naturalType}">
-				<ui:include src="/facelet/customer/academic_data/grid.xhtml" />
-	
-				<ui:include src="/facelet/customer/loan/grid.xhtml" />
+				<ui:include src="/facelet/customer/academic_data/grid.xhtml">
+					<ui:param name="modelAlias" value="#{alumnCourse.activeCourseModel}"/>
+					<ui:param name="editMode" value="#{true}"/>
+				</ui:include>
+
+				<ui:include src="/facelet/customer/loan/grid.xhtml">
+					<ui:param name="modelAlias" value="#{alumnLoan.currentLoanModel}"/>
+					<ui:param name="editMode" value="#{true}"/>
+				</ui:include>
 			</t:div>
 		</t:div>
 	</t:div>
