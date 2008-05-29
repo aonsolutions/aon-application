@@ -161,7 +161,7 @@
 								<f:facet name="header">
 									<h:outputText value="#{appBundle.course_alumn}" />
 								</f:facet>
-								<t:div rendered="#{!courseAlumn.new}">
+								<t:div rendered="#{!courseAlumn.new or to!=courseAlumn.to}">
 									<h:outputText value="#{to.customer.registry.surname}, " rendered="#{to.customer.registry.surname != null and to.customer.registry.surname != ''}"/>								
 									<h:outputText value="#{to.customer.registry.name}" />
 								</t:div>
@@ -213,7 +213,7 @@
 									<f:verbatim>&#160;</f:verbatim>
 								</f:facet>
 								<t:div>
-									<f:verbatim rendered="#{to!=courseAlumn.to}">&#160;</f:verbatim>
+									<f:verbatim rendered="#{!courseAlumn.new or to!=courseAlumn.to}">&#160;</f:verbatim>
 			
 									<t:commandButton title="#{bundle.aon_save}"
 										actionListener="#{courseAlumn.onAccept}"
