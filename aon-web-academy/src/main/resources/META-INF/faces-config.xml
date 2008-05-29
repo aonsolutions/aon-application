@@ -855,7 +855,7 @@
 	<managed-bean>
 		<managed-bean-name>loan</managed-bean-name>
 		<managed-bean-class>
-			com.code.aon.ui.academy.controller.AlumnLoanController
+			com.code.aon.ui.academy.controller.LoanController
 		</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
@@ -866,8 +866,23 @@
 			<property-name>pojo</property-name>
 			<value>com.code.aon.academy.AlumnLoan</value>
 		</managed-property>
+		<managed-property>
+			<property-name>listenerClasses</property-name>
+			<list-entries>
+				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+				<value>#{alumnLoanControllerListener}</value>
+			</list-entries>
+		</managed-property>
 	</managed-bean>
 
+	<managed-bean>
+		<managed-bean-name>alumnLoanControllerListener</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.academy.event.AlumnLoanControllerListener
+		</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+	</managed-bean>
+	
 	<!-- ************* COURSEMARK ***************** -->
 	<managed-bean>
 		<managed-bean-name>courseMark</managed-bean-name>
