@@ -37,9 +37,11 @@ public class InputRichTextComponent extends HtmlInputTextarea {
 	}
 	
 	public Object saveState(FacesContext context) {
-		Object values[] = new Object[2];
+		Object values[] = new Object[4];
 		values[0] = super.saveState(context);
 		values[1] = toolbarSet;
+		values[2] = height;
+		values[3] = width;
 		
 		return values;
 	}
@@ -48,6 +50,8 @@ public class InputRichTextComponent extends HtmlInputTextarea {
 		Object values[] = (Object[]) state;
 		super.restoreState(context, values[0]);
 		this.toolbarSet = (String)values[1];
+		this.height = (String)values[2];
+		this.width = (String)values[3];
 	}
 
 	public String getToolbarSet() {
