@@ -15,5 +15,8 @@ function applyEditor( sBasePath, sTextAreaName, configPath, toolBar, height, wid
 }
 
 function updateEditorContent( sTextAreaName ) {
-	FCKeditorAPI.GetInstance(sTextAreaName).UpdateLinkedField();
+	try {
+		FCKeditorAPI.GetInstance(sTextAreaName).UpdateLinkedField();
+	} catch ( e ) {
+	}
 }	
