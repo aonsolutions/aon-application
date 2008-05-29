@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <dao>
 	<bean class="com.code.aon.academy.CourseAlumn" sqlName="course_alumn">
-		<alias names="course_id,customer_id,customer_registry_name,customer_registry_surname,id,course_academicYear_id,course_startDate,status" />
-		<hibernate names="course.id,customer.id,customer.registry.name,customer.registry.surname,id,course.academicYear.id,course.startDate,status" />
+		<alias names="course_id,customer_id,customer_registry_name,customer_registry_surname,id,course_code,course_academicYear_id,course_startDate,course_endDate,course_status,status" />
+		<hibernate names="course.id,customer.id,customer.registry.name,customer.registry.surname,id,course.code,course.academicYear.id,course.startDate,course.endDate,course.status,status" />
 	</bean>
 	<bean class="com.code.aon.academy.Mark" sqlName="mark">
 		<alias names="alumn_course_academicYear_id,alumn_course_courseLevel_id,alumn_course_courseSubject_id,alumn_course_id,alumn_customer_registry_name,alumn_customer_registry_surname,alumn_id,evaluation,id,mark,subject_academicSkill_id,subject_id" />
