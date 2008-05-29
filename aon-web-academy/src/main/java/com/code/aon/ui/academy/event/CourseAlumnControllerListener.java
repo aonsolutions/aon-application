@@ -42,8 +42,10 @@ public class CourseAlumnControllerListener extends ControllerAdapter {
 	@Override
 	public void beforeModelInitialized(ControllerEvent event) throws ControllerListenerException {
 		try {
+			event.getController().getCriteria().addOrder(event.getController().getFieldName(IAcademyAlias.COURSE_ALUMN_COURSE_END_DATE), false);
+			event.getController().getCriteria().addOrder(event.getController().getFieldName(IAcademyAlias.COURSE_ALUMN_COURSE_CODE));
 			event.getController().getCriteria().addOrder(event.getController().getFieldName(IAcademyAlias.COURSE_ALUMN_CUSTOMER_REGISTRY_SURNAME));
-			event.getController().getCriteria().addOrder(event.getController().getFieldName(IAcademyAlias.COURSE_ALUMN_CUSTOMER_REGISTRY_SURNAME));
+			event.getController().getCriteria().addOrder(event.getController().getFieldName(IAcademyAlias.COURSE_ALUMN_CUSTOMER_REGISTRY_NAME));
 		} catch (ManagerBeanException e) {
 			throw new ControllerListenerException(e);
 		}
