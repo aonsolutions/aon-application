@@ -110,6 +110,7 @@
 		<mapping class="com.code.aon.cms.HiruOrganizerCentre"/>
 		<mapping class="com.code.aon.cms.HiruCourse"/>
 		<mapping class="com.code.aon.cms.HiruCourseDetail"/>
+		<mapping class="com.code.aon.cms.HiruConfig"/>
 
 	</session-factory>
 

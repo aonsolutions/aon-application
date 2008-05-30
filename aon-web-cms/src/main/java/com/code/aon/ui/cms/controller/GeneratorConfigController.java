@@ -8,6 +8,7 @@ import com.code.aon.cms.AlbumConfig;
 import com.code.aon.cms.ArticleConfig;
 import com.code.aon.cms.DownloadConfig;
 import com.code.aon.cms.FaqConfig;
+import com.code.aon.cms.HiruConfig;
 import com.code.aon.cms.LinkConfig;
 import com.code.aon.cms.Section;
 import com.code.aon.cms.dao.ICMSAlias;
@@ -108,4 +109,9 @@ public class GeneratorConfigController {
 	public void onSaveDownloadConfig(ActionEvent event) throws ManagerBeanException{
 		onSaveConfig(DownloadConfig.class);
 	}
+	
+	public void onSaveHiruConfig(ActionEvent event) throws ManagerBeanException{
+		onSaveConfig(HiruConfig.class);
+	}
+	
 }
