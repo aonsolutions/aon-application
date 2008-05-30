@@ -23,6 +23,7 @@ import javax.faces.event.ActionEvent;
 import javax.faces.event.ValueChangeEvent;
 import javax.faces.validator.LengthValidator;
 import javax.mail.BodyPart;
+import javax.mail.Flags;
 import javax.mail.Folder;
 import javax.mail.Header;
 import javax.mail.Message;
@@ -54,6 +55,8 @@ import com.code.aon.ui.webmail.converter.MaxLenghtStringConverter;
 import com.code.aon.ui.webmail.exception.WebmailException;
 import com.code.aon.ui.webmail.listener.IAonFileListener;
 import com.code.aon.webmail.MailAccount;
+import com.sun.mail.imap.AppendUID;
+import com.sun.mail.imap.IMAPFolder;
 import com.sun.mail.util.LineOutputStream;
 
 public class MessageController implements AonConstants, IAonFileListener {
@@ -63,6 +66,8 @@ public class MessageController implements AonConstants, IAonFileListener {
 	private AonMessage message;
 
 	private AonMessage parentMessage;
+	
+	private Long draftMessageUID;
 
 	private String sender;
 
@@ -306,20 +311,9 @@ public class MessageController implements AonConstants, IAonFileListener {
 	
     public void send(ActionEvent event) {
     	try {
-			IManagerBean mailAccountBean = AonUtil.getController(BEAN_MAIL_ACCOUNT).getManagerBean();	
-			MailAccount mailAccount = (MailAccount) mailAccountBean.get( senderMailAccountId );   		
+	    	AonMessage aonMessage = compoundMessage();
+	    	AonFolder dest = null;
 	    	WebMailController webMailController = (WebMailController)AonUtil.getRegisteredBean(BEAN_WEBMAIL);
-	    	AonMessage aonMessage = compoundMessage(
-	    			mailAccount.getEmail(),
-	    			recipientsTo,
-	    			recipientsCc, 
-	    			recipientsBcc,
-	    			subject, 
-	    			AonMessageUtils.unparse_cid(content),
-	    			parentMessage,
-	    			newMsgFileList
-	    			);
-	    	AonFolder dest;
 	    	if (webMailController.getServer().sendMessage(aonMessage)){
 		    	dest = webMailController.getServer().getAonFolder(AonFolder.SENT_FOLDER_NAME);
 		    	if (parentMessage!=null){
@@ -352,6 +346,44 @@ public class MessageController implements AonConstants, IAonFileListener {
 		}
     }
 
+    public void saveDraft(ActionEvent event) {
+    	try {
+	    	AonMessage aonMessage = compoundMessage();    		
+	    	WebMailController webMailController = (WebMailController)AonUtil.getRegisteredBean(BEAN_WEBMAIL);
+	    	AonFolder dest = webMailController.getServer().getAonFolder(AonFolder.DRAFT_FOLDER_NAME);
+	    	Message[] messages = new Message[1];
+    		messages[0] = aonMessage.getMessage();
+    		messages[0].setFlag(Flag.DRAFT, true);
+	    	dest.open(Folder.READ_WRITE);
+	    	IMAPFolder desfFolder = (IMAPFolder) dest.getFolder();
+	    	if ( this.draftMessageUID != null ) {
+	    		Message message = desfFolder.getMessageByUID(this.draftMessageUID);
+	    		if ( message != null ) {
+		    		message.setFlag(Flags.Flag.DELETED, true);	    			
+	    		}
+	    		this.draftMessageUID = null;
+	    	}
+	    	AppendUID[] uids = desfFolder.appendUIDMessages(messages);
+	    	if (! ArrayUtils.isEmpty(uids) ) {
+		    	this.draftMessageUID = uids[0].uid;	
+	    	}
+	    	desfFolder.expunge();
+	    	dest.close(false);
+		} catch (WebmailException e) {
+			AonUtil.addErrorMessage(e.getMessage());
+			throw new AbortProcessingException(e);
+		} catch (MessagingException e) {
+			AonUtil.addErrorMessage(e.getMessage());
+			throw new AbortProcessingException(e);
+		} catch (ManagerBeanException e) {
+			AonUtil.addErrorMessage(e.getMessage());
+			throw new AbortProcessingException(e);
+		} catch (UnsupportedEncodingException e) {
+			AonUtil.addErrorMessage(e.getMessage());
+			throw new AbortProcessingException(e);
+		}
+    }
+    
     public void addAttach(MimeMultipart multipart,File file) throws IOException, MessagingException{
     	MimeBodyPart adjunto = new MimeBodyPart ();
     	adjunto.attachFile(file);
@@ -425,6 +457,22 @@ public class MessageController implements AonConstants, IAonFileListener {
 		return newMessage; 
 	}
 
+	private AonMessage compoundMessage() throws ManagerBeanException, UnsupportedEncodingException, MessagingException, WebmailException {
+		IManagerBean mailAccountBean = AonUtil.getController(BEAN_MAIL_ACCOUNT).getManagerBean();	
+		MailAccount mailAccount = (MailAccount) mailAccountBean.get( senderMailAccountId );   		
+    	AonMessage aonMessage = compoundMessage(
+    			mailAccount.getEmail(),
+    			recipientsTo,
+    			recipientsCc, 
+    			recipientsBcc,
+    			subject, 
+    			AonMessageUtils.unparse_cid(content),
+    			parentMessage,
+    			newMsgFileList
+    			);
+    	return aonMessage;
+	}
+	
 	private void initVars(){
     	WebMailController webMailController = (WebMailController)AonUtil.getRegisteredBean(BEAN_WEBMAIL);
     	MailAccount account = webMailController.getServer().getAccount();
@@ -436,7 +484,7 @@ public class MessageController implements AonConstants, IAonFileListener {
 		subject = null;		
 		content = (account.getSignature()!=null)?account.getSignature().getSignature():"";
     	newMsgFileList = new ArrayList<AonFile>();
-		
+		draftMessageUID = null;
 	}
 	//********************************************************************************************
 
