@@ -125,13 +125,4 @@ public class HiruOrganizerCentre implements ITransferObject {
 		this.web = web;
 	}
 
-	@Column(length=128)
-	public String getFeed() {
-		return feed;
-	}
-
-	public void setFeed(String feed) {
-		this.feed = feed;
-	}
-
 }

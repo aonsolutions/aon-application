@@ -3091,46 +3091,40 @@ public interface ICMSAlias {
 	String  HIRU_ORGANIZER_CENTRE_FAX = HIRU_ORGANIZER_CENTRE_ENTRY.getAliasNames()[3];
 
 	/** 
-	* Alias value: HiruOrganizerCentre_feed
-	* Hibernate value: HiruOrganizerCentre.feed
-	*/
-	String  HIRU_ORGANIZER_CENTRE_FEED = HIRU_ORGANIZER_CENTRE_ENTRY.getAliasNames()[4];
-
-	/** 
 	* Alias value: HiruOrganizerCentre_id
 	* Hibernate value: HiruOrganizerCentre.id
 	*/
-	String  HIRU_ORGANIZER_CENTRE_ID = HIRU_ORGANIZER_CENTRE_ENTRY.getAliasNames()[5];
+	String  HIRU_ORGANIZER_CENTRE_ID = HIRU_ORGANIZER_CENTRE_ENTRY.getAliasNames()[4];
 
 	/** 
 	* Alias value: HiruOrganizerCentre_locality
 	* Hibernate value: HiruOrganizerCentre.locality
 	*/
-	String  HIRU_ORGANIZER_CENTRE_LOCALITY = HIRU_ORGANIZER_CENTRE_ENTRY.getAliasNames()[6];
+	String  HIRU_ORGANIZER_CENTRE_LOCALITY = HIRU_ORGANIZER_CENTRE_ENTRY.getAliasNames()[5];
 
 	/** 
 	* Alias value: HiruOrganizerCentre_name
 	* Hibernate value: HiruOrganizerCentre.name
 	*/
-	String  HIRU_ORGANIZER_CENTRE_NAME = HIRU_ORGANIZER_CENTRE_ENTRY.getAliasNames()[7];
+	String  HIRU_ORGANIZER_CENTRE_NAME = HIRU_ORGANIZER_CENTRE_ENTRY.getAliasNames()[6];
 
 	/** 
 	* Alias value: HiruOrganizerCentre_postal_code
 	* Hibernate value: HiruOrganizerCentre.postal_code
 	*/
-	String  HIRU_ORGANIZER_CENTRE_POSTAL_CODE = HIRU_ORGANIZER_CENTRE_ENTRY.getAliasNames()[8];
+	String  HIRU_ORGANIZER_CENTRE_POSTAL_CODE = HIRU_ORGANIZER_CENTRE_ENTRY.getAliasNames()[7];
 
 	/** 
 	* Alias value: HiruOrganizerCentre_telephone
 	* Hibernate value: HiruOrganizerCentre.telephone
 	*/
-	String  HIRU_ORGANIZER_CENTRE_TELEPHONE = HIRU_ORGANIZER_CENTRE_ENTRY.getAliasNames()[9];
+	String  HIRU_ORGANIZER_CENTRE_TELEPHONE = HIRU_ORGANIZER_CENTRE_ENTRY.getAliasNames()[8];
 
 	/** 
 	* Alias value: HiruOrganizerCentre_web
 	* Hibernate value: HiruOrganizerCentre.web
 	*/
-	String  HIRU_ORGANIZER_CENTRE_WEB = HIRU_ORGANIZER_CENTRE_ENTRY.getAliasNames()[10];
+	String  HIRU_ORGANIZER_CENTRE_WEB = HIRU_ORGANIZER_CENTRE_ENTRY.getAliasNames()[9];
 
 
 

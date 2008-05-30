@@ -33,9 +33,12 @@ import com.code.aon.ql.Criteria;
 public class XmlBuilder {
 	
 	private String destDir;
-	
-	public XmlBuilder(String destDir){
+
+	private String uploadDir;
+
+	public XmlBuilder(String destDir, String uploadDir){
 		this.destDir = destDir;
+		this.uploadDir = uploadDir;
 	}
 
 	public void generate() throws FileNotFoundException, XmlBuilderException{
@@ -46,33 +49,21 @@ public class XmlBuilder {
 			fileDir.mkdir();
 			this.fireMessage("Created.");
 		}
-		File file = new File(destDir+"/centros.xml");
-		PrintWriter out = new PrintWriter(file);
-
+		
+		File file = null;
+		PrintWriter out = null;
 		try {
+			file = new File(destDir+"/centros.xml");
+			out = new PrintWriter(file);
 			this.fireMessage("Start centres xml.");
 			buildOrganizerCentre(out);
 			this.fireMessage("Centres xml finished.");
 		} catch (Exception e) {
 			this.fireMessage(" ** ERROR ** Centres xml error: "+e.getMessage());
 			throw new XmlBuilderException(e);
+		} finally {
+			out.close();
 		}
-
-		out.close();
-
-		file = new File(destDir+"/cursos.xml");
-		out = new PrintWriter(file);
-		
-		try{
-			this.fireMessage("Start courses xml.");
-			buildCourse(out);
-			this.fireMessage("Courses xml finished.");
-		} catch (Exception e) {
-			this.fireMessage(" ** ERROR ** Courses xml error: "+e.getMessage());
-			throw new XmlBuilderException(e);
-		}
-
-		out.close();
 	}
 	
 	@SuppressWarnings("unused")
@@ -80,7 +71,8 @@ public class XmlBuilder {
 		throws FileNotFoundException, 
 				TransformerConfigurationException, 
 				SAXException, 
-				ManagerBeanException{
+				ManagerBeanException,
+				XmlBuilderException{
 			StreamResult streamResult = new StreamResult(out);
 			SAXTransformerFactory tf = (SAXTransformerFactory) SAXTransformerFactory.newInstance();
 			TransformerHandler hd = tf.newTransformerHandler();
@@ -103,9 +95,9 @@ public class XmlBuilder {
 				HiruOrganizerCentre object = (HiruOrganizerCentre) iteratorHOC.next();
 				this.fireMessage("--> Centre " + object.getName());
 			
-				String value = object.getId().toString();
-				generateElement(hd,atts,"","","unique_id",value);
-				value = object.getName()==null?"":object.getName();
+				String id = object.getId().toString();
+				generateElement(hd,atts,"","","unique_id",id);
+				String value = object.getName()==null?"":object.getName();
 				generateElement(hd,atts,"","","izena",value);
 				value = object.getTelephone()==null?"":object.getTelephone();
 				generateElement(hd,atts,"","","telefonoa",value);
@@ -121,10 +113,26 @@ public class XmlBuilder {
 				generateElement(hd,atts,"","","gaiak",value);
 				value = object.getLocality()==null?"":object.getLocality();
 				generateElement(hd,atts,"","","herria",value);
-				value = object.getFeed()==null?"":object.getFeed();
+				value = this.uploadDir+"/curso_id_"+id+".xml";
 				generateElement(hd,atts,"","","feed",value);
 
 				hd.endElement("","","zentroa");
+				
+				File coursefile = null;
+				PrintWriter courseout = null;
+				try{
+					coursefile= new File(destDir+"/curso_id_"+id+".xml");
+					courseout = new PrintWriter(coursefile);
+					this.fireMessage("Start courses xml.");
+					buildCourse(object,courseout);
+					this.fireMessage("Courses xml finished.");
+				} catch (Exception e) {
+					this.fireMessage(" ** ERROR ** Courses xml error: "+e.getMessage());
+					throw new XmlBuilderException(e);
+				} finally {
+					courseout.close();
+				}
+
 			}
 			hd.endElement("","","zentroak");
 			hd.endDocument();
@@ -132,7 +140,7 @@ public class XmlBuilder {
 	}
 
 	@SuppressWarnings("unused")
-	private void buildCourse(Writer out) 
+	private void buildCourse(HiruOrganizerCentre hiruOrganizerCentre,Writer out) 
 		throws FileNotFoundException, 
 				TransformerConfigurationException, 
 				SAXException, 
@@ -161,6 +169,7 @@ public class XmlBuilder {
 		IManagerBean beanHC = BeanManager.getManagerBean(HiruCourse.class);
 		Criteria criteriaHC = new Criteria();
 		criteriaHC.addEqualExpression(beanHC.getFieldName(ICMSAlias.HIRU_COURSE_ACTIVE), true);
+		criteriaHC.addEqualExpression(beanHC.getFieldName(ICMSAlias.HIRU_COURSE_HIRU_ORGANIZER_CENTRE_ID), hiruOrganizerCentre.getId());
 		List<ITransferObject> listHC = beanHC.getList(criteriaHC);
 		for (Iterator<ITransferObject> iteratorHC = listHC.iterator(); iteratorHC.hasNext();) {
 			object = (HiruCourse) iteratorHC.next();
@@ -260,7 +269,7 @@ public class XmlBuilder {
 		try{
 			
 			// ControllerUtil.getDocumentsPath()
-			XmlBuilder b = new XmlBuilder("c:/tmp"+"/"+"hiru");
+			XmlBuilder b = new XmlBuilder("c:/tmp"+"/"+"hiru","http://hiru.com/xml");
 			b.generate();			
 		}catch (Exception e) {
 			e.printStackTrace();
