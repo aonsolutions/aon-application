@@ -140,6 +140,22 @@ public class MessageController implements AonConstants, IAonFileListener {
 		parentMessage = null;
     }
 
+	public void editDraftMessage(AonMessage message, long uid) {
+		initVars();
+		this.draftMessageUID = uid;
+		parentMessage = null;
+		try {
+			recipientsTo = message.getRecipientsTo();
+			recipientsCc = message.getRecipientsCc();
+			recipientsBcc = message.getRecipientsBcc();
+	       	subject = message.getSubject();
+	       	content = message.getContent().toString();
+		} catch (WebmailException e) {
+    		AonUtil.addErrorMessage(e.getMessage());
+    		throw new AbortProcessingException(e);
+		}
+	}	
+	
 	public void replyToSelectedMessage(ActionEvent event) {
 		initVars();
 		parentMessage = message;
