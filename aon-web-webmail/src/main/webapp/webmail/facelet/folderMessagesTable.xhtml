@@ -122,8 +122,8 @@
 								aon-editDataTable-textColumn,
 								aon-editDataTable-textColumn">
 								
-						<aon:rowSelector 
-							action="message" actionListener="#{folder.folder.changeSelectedMessage}" />							
+						<aon:rowSelector action="#{folder.getSelectedMessageAction}"
+							actionListener="#{folder.changeSelectedMessage}" />							
 								
 						<aon:column id="folderCol">
 							<f:facet name="header">

@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import javax.faces.event.ActionEvent;
 import javax.mail.FetchProfile;
 import javax.mail.Flags;
 import javax.mail.Folder;
@@ -13,8 +12,6 @@ import javax.mail.Message;
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
 
-import com.code.aon.ui.util.AonUtil;
-import com.code.aon.ui.webmail.controller.MessageController;
 import com.code.aon.ui.webmail.exception.WebmailException;
 
 public class AonFolder extends AonMessageSortableList {
@@ -248,11 +245,9 @@ public class AonFolder extends AonMessageSortableList {
 		}
     	return selectedAonMessages.toArray(new AonMessage[selectedAonMessages.size()]);
     }
-
-    public void changeSelectedMessage(ActionEvent event) {
-    	AonMessage message = (AonMessage) getModel().getRowData();
-       	MessageController messageController = (MessageController) AonUtil.getRegisteredBean(AonConstants.BEAN_MESSAGE);
-       	messageController.setMessage( message );      	
+    
+    public AonMessage getSelectedMessage() {
+    	return (AonMessage) getModel().getRowData();
     }
     
 }
