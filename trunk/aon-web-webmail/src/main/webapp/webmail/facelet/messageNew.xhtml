@@ -14,7 +14,7 @@
 
 	<ui:define name="content">
 
-		<aon:form id="webmailForm" onsubmit="updateEditorContent('homepage:webmailForm:messageEditor');" enctype="multipart/form-data">
+		<aon:form id="webmailForm" enctype="multipart/form-data">
 		
 			<aon:div styleClass="aon-scroll-area">
 				<aon:div styleClass="aon-section-title">
@@ -29,10 +29,13 @@
 						action="#{message.getReturnAction}"
 						actionListener="#{message.send}"
 						onclick="Richfaces.showModalPanel('waitProccess')" 
-		     			oncomplete="Richfaces.hideModalPanel('waitProccess')"						
-						>
-					</aon:commandButton>					 
-					<aon:confirmButton id="back" immediate="true"
+		     			oncomplete="Richfaces.hideModalPanel('waitProccess')" />						
+					<aon:commandButton id="save_draft"
+						value="#{appBundle.aon_webmail_save_draft}"
+						styleClass="aon-icon aon-icon-mail-save aon-finding-toolbar-item"
+						action="messageNew"
+						actionListener="#{message.saveDraft}" />
+		     		<aon:confirmButton id="back" immediate="true"
 						title="#{bundle.aon_back}" value="#{bundle.aon_back}"
 						confirmTitle="#{bundle.aon_confirm_title}"
 						confirmMessage="#{appBundle.aon_webmail_back_confirm}"
