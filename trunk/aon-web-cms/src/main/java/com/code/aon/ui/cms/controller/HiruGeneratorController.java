@@ -17,8 +17,19 @@ import com.code.aon.ui.cms.util.FTPUtil;
 
 public class HiruGeneratorController implements XmlBuilderListener{
 
+	private String destinationFolder;
+
+	private String sourceFolder;
+
+	public HiruGeneratorController(){
+		super();
+		Config config = ControllerUtil.getCurrentConfig();
+		destinationFolder = config.getFtp_path()+"/"+Constants.DOCUMENTS_PATH+"/"+"hiru";		
+		sourceFolder = ControllerUtil.getDocumentsPath()+"/"+"hiru";
+	}
+	
 	public void onGenerateXmlFiles(ActionEvent event) throws ManagerBeanException{
-		XmlBuilder b = new XmlBuilder(ControllerUtil.getDocumentsPath()+"/"+"hiru");
+		XmlBuilder b = new XmlBuilder(sourceFolder, destinationFolder);
 		b.addXmlBuilderListener(this);
 		try {
 			b.generate();
@@ -36,9 +47,6 @@ public class HiruGeneratorController implements XmlBuilderListener{
 		this.activePoll = true;
 		this.messages = new ArrayList<String>();
 		try {
-			Config config = ControllerUtil.getCurrentConfig();
-			String destinationFolder = config.getFtp_path()+"/"+Constants.DOCUMENTS_PATH+"/"+"hiru";
-			String sourceFolder = ControllerUtil.getDocumentsPath()+"/"+"hiru";
 			if (FTPUtil.uploadFTP(destinationFolder, sourceFolder))
 				this.published = true;
 		}catch (Exception e) {
