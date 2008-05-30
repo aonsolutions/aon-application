@@ -25,6 +25,7 @@ import com.code.aon.ui.cms.velocity.DirectAccessGenerator;
 import com.code.aon.ui.cms.velocity.DownloadsGenerator;
 import com.code.aon.ui.cms.velocity.FaqGenerator;
 import com.code.aon.ui.cms.velocity.GenericGenerator;
+import com.code.aon.ui.cms.velocity.HiruGenerator;
 import com.code.aon.ui.cms.velocity.LinkGenerator;
 import com.code.aon.ui.cms.velocity.MenuGenerator;
 import com.code.aon.ui.cms.velocity.ModularPageGenerator;
@@ -128,6 +129,13 @@ public class GeneratorController extends BasicController implements Constants {
 		
 		System.gc();
 
+		if (isHiruCoursesToGenerate){
+			//Generar articulo
+			HiruGenerator.generate();
+		}
+		
+		System.gc();
+
 		finalizeGenerator();
 	}
 	
@@ -224,6 +232,7 @@ public class GeneratorController extends BasicController implements Constants {
 	private boolean isArticleSERVICESToGenerate = true;
 	private boolean isArticleEVENTSToGenerate = true;
 	private boolean isArticleOTHERToGenerate = true;
+	private boolean isHiruCoursesToGenerate = true;
 
 	public boolean isModularPageToGenerate() {
 		return isModularPageToGenerate;
@@ -303,6 +312,13 @@ public class GeneratorController extends BasicController implements Constants {
 	public void setArticleOTHERToGenerate(boolean isArticleOTHERToGenerate) {
 		this.isArticleOTHERToGenerate = isArticleOTHERToGenerate;
 	}
+	public boolean isHiruCoursesToGenerate() {
+		return isHiruCoursesToGenerate;
+	}
+	public void setHiruCoursesToGenerate(boolean isHiruCoursesToGenerate) {
+		this.isHiruCoursesToGenerate = isHiruCoursesToGenerate;
+	}
+
 	public void onSelectAll(ActionEvent event) {
 		isModularPageToGenerate = true;
 		isMenuToGenerate = true;
@@ -317,6 +333,7 @@ public class GeneratorController extends BasicController implements Constants {
 		isArticleSERVICESToGenerate = true;
 		isArticleEVENTSToGenerate = true;
 		isArticleOTHERToGenerate = true;
+		isHiruCoursesToGenerate = true;
 	}
 	public void onDeselectAll(ActionEvent event) {
 		isModularPageToGenerate = false;
@@ -332,6 +349,7 @@ public class GeneratorController extends BasicController implements Constants {
 		isArticleSERVICESToGenerate = false;
 		isArticleEVENTSToGenerate = false;
 		isArticleOTHERToGenerate = false;
+		isHiruCoursesToGenerate = false;
 	}
 	
 

@@ -165,7 +165,7 @@ public class XmlBuilder {
 		HiruCourseDetail objectDetailEu = null;
 		HiruCourseDetail objectDetailEs = null;
 		
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd");
 		IManagerBean beanHC = BeanManager.getManagerBean(HiruCourse.class);
 		Criteria criteriaHC = new Criteria();
 		criteriaHC.addEqualExpression(beanHC.getFieldName(ICMSAlias.HIRU_COURSE_ACTIVE), true);

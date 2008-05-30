@@ -120,7 +120,13 @@ public enum Templates implements IResourceable {
 	/**
 	 * DIARY
 	 */
-	DIARY;
+	DIARY,
+
+	/**
+	 * HIRU_COURSES
+	 */
+	HIRU_COURSES;
+
 
 	/**
 	 * Ruta base del fichero de mensajes.

@@ -80,6 +80,7 @@ import com.code.aon.cms.DiaryDetail;
 import com.code.aon.cms.HiruOrganizerCentre;
 import com.code.aon.cms.HiruCourse;
 import com.code.aon.cms.HiruCourseDetail;
+import com.code.aon.cms.HiruConfig;
 
 /** 
 * Interface for holding entity properties constants.
@@ -3271,6 +3272,25 @@ public interface ICMSAlias {
 	* Hibernate value: HiruCourseDetail.url
 	*/
 	String  HIRU_COURSE_DETAIL_URL = HIRU_COURSE_DETAIL_ENTRY.getAliasNames()[13];
+
+
+
+	/** 
+	* DAOConstantsEntry for HiruConfig entity.
+	*/ 
+	DAOConstantsEntry HIRU_CONFIG_ENTRY = DAOConstants.getDAOConstant(HiruConfig.class);
+
+	/** 
+	* Alias value: HiruConfig_id
+	* Hibernate value: HiruConfig.id
+	*/
+	String  HIRU_CONFIG_ID = HIRU_CONFIG_ENTRY.getAliasNames()[0];
+
+	/** 
+	* Alias value: HiruConfig_section_id
+	* Hibernate value: HiruConfig.section.id
+	*/
+	String  HIRU_CONFIG_SECTION_ID = HIRU_CONFIG_ENTRY.getAliasNames()[1];
 
 
 }

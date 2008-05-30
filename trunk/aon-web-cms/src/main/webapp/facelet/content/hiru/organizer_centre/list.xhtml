@@ -50,6 +50,20 @@
 		<!--  aon-region-body -->
 		<aon:div styleClass="aon-scroll-area">
 
+					<aon:outputLabel for="OrgenizerCenter_section"
+						value="#{appBundle.section}"/>
+					<aon:selectOneMenu id="OrgenizerCenter_section"  
+						value="#{generator_config.sectionId}">
+						<f:selectItem itemLabel="-" itemValue="-1" />
+						<f:selectItems value="#{collections.sectionList}" />
+					</aon:selectOneMenu>
+					
+					<aon:commandButton id="save"
+						value="#{bundle.aon_save}" 
+						action="hiru_organizer_centre_list"
+						actionListener="#{generator_config.onSaveHiruConfig}"
+						styleClass="aon-content-toolbar-item aon-icon-accept" />
+						
 					<aon:dataTable id="dataTable" value="#{hiru_organizer_centre.model}" var="to"
 						rows="#{hiru_organizer_centre.pageLimit}" 
 						styleClass="dr-table rich-table aon-editDataTable"
