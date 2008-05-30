@@ -7,7 +7,8 @@ public interface AonConstants {
 	// ************************************************************
 	String NAVIGATION_LOGIN = "login"; 
 	String NAVIGATION_FOLDER = "folder"; 
-	String NAVIGATION_MESSAGE = "message"; 
+	String NAVIGATION_MESSAGE = "message";
+	String NAVIGATION_MESSAGE_NEW = "messageNew";
 	String NAVIGATION_SEARCH = "messageSearch"; 
 	String NAVIGATION_EMAILS = "emails";
 	String NAVIGATION_SIGNATURE_FORM = "signature_form";
