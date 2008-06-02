@@ -1,11 +1,11 @@
 package com.code.ui.gbp.stats;
 
-import java.util.Date;
+import java.util.GregorianCalendar;
 
 public class AnualComparer {
 
-	private Date start;
-	private Date end;
+	private GregorianCalendar start;
+	private GregorianCalendar end;
 	private Long campaignNumber;
 	private Double offer;
 	private Double invoice;
@@ -15,8 +15,8 @@ public class AnualComparer {
 	}
 	
 	public AnualComparer	(
-			Date start,
-			Date end,
+			GregorianCalendar start,
+			GregorianCalendar end,
 			Long campaignNumber,
 			Double offer,
 			Double invoice
@@ -61,19 +61,19 @@ public class AnualComparer {
 		this.diff = diff;
 	}
 
-	public Date getStart() {
+	public GregorianCalendar getStart() {
 		return start;
 	}
 
-	public void setStart(Date start) {
+	public void setStart(GregorianCalendar start) {
 		this.start = start;
 	}
 
-	public Date getEnd() {
+	public GregorianCalendar getEnd() {
 		return end;
 	}
 
-	public void setEnd(Date end) {
+	public void setEnd(GregorianCalendar end) {
 		this.end = end;
 	}
 	

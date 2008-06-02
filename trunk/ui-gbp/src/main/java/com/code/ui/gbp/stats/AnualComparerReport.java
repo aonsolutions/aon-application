@@ -3,21 +3,17 @@ package com.code.ui.gbp.stats;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
-import java.util.Date;
 import java.util.GregorianCalendar;
-import java.util.Iterator;
 import java.util.List;
 
 import javax.faces.event.ActionEvent;
 
-import org.apache.commons.lang.StringUtils;
 import org.hibernate.Query;
 import org.hibernate.Session;
 
 import com.code.aon.common.ICollectionProvider;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
-import com.code.gbp.Campaign;
 
 public class AnualComparerReport implements ICollectionProvider {
 
@@ -51,11 +47,13 @@ public class AnualComparerReport implements ICollectionProvider {
 	@SuppressWarnings("unchecked")
 	@Override
 	public Collection getCollection() {
+		return getAnualComparerCollection();
+	}
+
+	private List<AnualComparer> getAnualComparerCollection(){
 		List<AnualComparer> list = new ArrayList<AnualComparer>();
-		
 		list.add(getAnualComparer(true));
 		list.add(getAnualComparer(false));
-
 		return list;
 	}
 
@@ -79,9 +77,9 @@ public class AnualComparerReport implements ICollectionProvider {
 			initDate = new GregorianCalendar(current.get(Calendar.YEAR),init-1,1);
 		GregorianCalendar endDate;
 		if (prev)
-			endDate= new GregorianCalendar(current.get(Calendar.YEAR)-1,end-1,30);
+			endDate= new GregorianCalendar(current.get(Calendar.YEAR)-1,end-1,CalendarUtils.diasDelMes(current.get(Calendar.YEAR)-1,end-1));
 		else
-			endDate = new GregorianCalendar(current.get(Calendar.YEAR),end-1,30);
+			endDate = new GregorianCalendar(current.get(Calendar.YEAR),end-1,CalendarUtils.diasDelMes(current.get(Calendar.YEAR),end-1));
 		query.setDate(0, initDate.getTime());
 		query.setDate(1, endDate.getTime());
 		List<Long> list_1 = query.list();
@@ -96,7 +94,7 @@ public class AnualComparerReport implements ICollectionProvider {
 		query.setDate(1, endDate.getTime());
 		List<Double> list_3 = query.list();
 		
-		AnualComparer ac = new AnualComparer(initDate.getTime(),endDate.getTime(),list_1.get(0),list_2.get(0),list_3.get(0));
+		AnualComparer ac = new AnualComparer(initDate,endDate,list_1.get(0),list_2.get(0),list_3.get(0));
 		return ac;
 	}
 	

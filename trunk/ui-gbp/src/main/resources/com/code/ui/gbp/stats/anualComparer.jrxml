@@ -25,8 +25,8 @@
 
 	<parameter name="printHeaders" isForPrompting="false" class="java.lang.Boolean"/>
 
-	<field name="start" class="java.util.Date"/>
-	<field name="end" class="java.util.Date"/>
+	<field name="start" class="java.util.GregorianCalendar"/>
+	<field name="end" class="java.util.GregorianCalendar"/>
 	<field name="campaignNumber" class="java.lang.Long"/>
 	<field name="offer" class="java.lang.Double"/>
 	<field name="invoice" class="java.lang.Double"/>
@@ -176,7 +176,7 @@
 					<textElement verticalAlignment="Middle">
 						<font size="8"/>
 					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$F{start}.getYear()+""]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.Integer"><![CDATA[new Integer($F{start}.get(Calendar.YEAR))]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
@@ -192,7 +192,7 @@
 					</textElement>
 				<textFieldExpression   class="java.lang.Long"><![CDATA[$F{campaignNumber}]]></textFieldExpression>
 				</textField>
-				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+				<textField isStretchWithOverflow="false" pattern="#,##0.00" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						x="185"
 						y="0"
@@ -206,7 +206,7 @@
 					</textElement>
 				<textFieldExpression   class="java.lang.Double"><![CDATA[$F{offer}]]></textFieldExpression>
 				</textField>
-				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+				<textField isStretchWithOverflow="false" pattern="#,##0.00" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						x="302"
 						y="0"
@@ -220,7 +220,7 @@
 					</textElement>
 				<textFieldExpression   class="java.lang.Double"><![CDATA[$F{invoice}]]></textFieldExpression>
 				</textField>
-				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+				<textField isStretchWithOverflow="false" pattern="#,##0.00" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						x="419"
 						y="0"
@@ -333,6 +333,7 @@
 						</dataset>
 						<keyExpression><![CDATA[$R{gbp_anual_comparer_report_offer}]]></keyExpression>
 						<valueExpression><![CDATA[$F{offer}]]></valueExpression>
+						<labelExpression><![CDATA[null]]></labelExpression>
 				<sectionHyperlink >
 				</sectionHyperlink>
 					</pieDataset>
@@ -357,6 +358,7 @@
 						</dataset>
 						<keyExpression><![CDATA[$R{gbp_anual_comparer_report_invoice}]]></keyExpression>
 						<valueExpression><![CDATA[$F{invoice}]]></valueExpression>
+						<labelExpression><![CDATA[null]]></labelExpression>
 				<sectionHyperlink >
 				</sectionHyperlink>
 					</pieDataset>
