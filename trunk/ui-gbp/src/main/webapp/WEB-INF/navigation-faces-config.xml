@@ -38,6 +38,10 @@
 			<from-outcome>internal_customer_list</from-outcome>
 			<to-view-id>/facelet/internal_customer/list.xhtml</to-view-id>
 		</navigation-case>
+		<navigation-case>
+			<from-outcome>internal_customer_search</from-outcome>
+			<to-view-id>/facelet/internal_customer/search.xhtml</to-view-id>
+		</navigation-case>
 	</navigation-rule>	
 
     <!-- =================== Account Contact ================= -->	
