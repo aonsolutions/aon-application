@@ -145,6 +145,7 @@ public class MessageController implements AonConstants, IAonFileListener {
 		this.draftMessageUID = uid;
 		parentMessage = null;
 		try {
+			copyAttachmentsToFileList( message );			
 			recipientsTo = message.getRecipientsTo();
 			recipientsCc = message.getRecipientsCc();
 			recipientsBcc = message.getRecipientsBcc();
@@ -190,37 +191,49 @@ public class MessageController implements AonConstants, IAonFileListener {
 			throw new AbortProcessingException(e);
 		}
     }
+	
+	private void refreshDraftFolder() {
+    	FolderController folderController = (FolderController) AonUtil.getRegisteredBean(BEAN_FOLDER);
+    	if ( folderController.getFolder().isDraftFolder() ) {
+    		folderController.getFolder().close(false);
+    		folderController.refresh(null);
+    	}
+	}
 
+	private void copyAttachmentsToFileList( AonMessage message ) throws WebmailException {
+       	Iterator<AonAttachment> iter =message.getAttachements().iterator();
+       	while (iter.hasNext()){
+       		AonAttachment attach = iter.next();
+       		MimeBodyPart m = (MimeBodyPart) attach.getPart();
+       		try {
+       			AonFile af = new AonFile();
+       			InputStream is = m.getInputStream();
+       			File f = new File("/tmp/"+attach.getFileName()); 
+       			FileOutputStream fos = new FileOutputStream(f);
+    			byte buff [] = new byte [ 2048 ];
+    			int read = is.read ( buff );
+    			while ( read != -1  ) {
+    				fos.write ( buff,0,read );
+    				read = is.read ( buff );
+    			}
+    			fos.flush();
+    			fos.close();
+    			af.setFile(f);
+    	    	af.addAonFileListener(this);
+       			newMsgFileList.add(af);
+			} catch (IOException e) {
+				AonUtil.addErrorMessage(e.getMessage());
+			} catch (MessagingException e) {
+				AonUtil.addErrorMessage(e.getMessage());
+			}
+       	}		
+	}
+	
 	public void forwardMessage(ActionEvent event) {
 		initVars();
 		parentMessage = message;
-		try{
-	       	Iterator<AonAttachment> iter =message.getAttachements().iterator();
-	       	while (iter.hasNext()){
-	       		AonAttachment attach = iter.next();
-	       		MimeBodyPart m = (MimeBodyPart) attach.getPart();
-	       		try {
-	       			AonFile af = new AonFile();
-	       			InputStream is = m.getInputStream();
-	       			File f = new File("/tmp/"+attach.getFileName()); 
-	       			FileOutputStream fos = new FileOutputStream(f);
-	    			byte buff [] = new byte [ 256 ];
-	    			int read = is.read ( buff );
-	    			while ( read != -1  ) {
-	    				fos.write ( buff,0,read );
-	    				read = is.read ( buff );
-	    			}
-	    			fos.flush();
-	    			fos.close();
-	    			af.setFile(f);
-	    	    	af.addAonFileListener(this);
-	       			newMsgFileList.add(af);
-				} catch (IOException e) {
-					AonUtil.addErrorMessage(e.getMessage());
-				} catch (MessagingException e) {
-					AonUtil.addErrorMessage(e.getMessage());
-				}
-	       	}
+		try {
+			copyAttachmentsToFileList( message );
 	       	subject = "Fwd: "+message.getSubject();
 	       	messageBody = "<br/>---------- Forwarded message ----------" +
 	       		"<br/>From: " + message.getSender() + "<br/>Date: " + message.getSentDate() +
@@ -347,6 +360,8 @@ public class MessageController implements AonConstants, IAonFileListener {
 	    	desfFolder.appendMessages(messages);
 	    	desfFolder.expunge();
 	    	dest.close(false);
+	    	deleteDraftMessage();
+	    	refreshDraftFolder();
 		} catch (WebmailException e) {
 			AonUtil.addErrorMessage(e.getMessage());
 			throw new AbortProcessingException(e);
@@ -361,6 +376,21 @@ public class MessageController implements AonConstants, IAonFileListener {
 			throw new AbortProcessingException(e);
 		}
     }
+    
+    private void deleteDraftMessage() throws MessagingException {
+    	if ( this.draftMessageUID != null ) {
+    		WebMailController webMailController = (WebMailController)AonUtil.getRegisteredBean(BEAN_WEBMAIL);
+    		AonFolder folder = webMailController.getServer().getAonFolder(AonFolder.DRAFT_FOLDER_NAME);
+    		IMAPFolder imapFolder = (IMAPFolder) folder.getFolder();
+    		imapFolder.open(Folder.READ_WRITE);
+    		Message message = imapFolder.getMessageByUID(this.draftMessageUID);
+    		if ( message != null ) {
+	    		message.setFlag(Flags.Flag.DELETED, true);	    			
+    		}
+    		imapFolder.close(true);
+    		this.draftMessageUID = null;
+    	}    	
+    }
 
     public void saveDraft(ActionEvent event) {
     	try {
@@ -371,20 +401,15 @@ public class MessageController implements AonConstants, IAonFileListener {
     		messages[0] = aonMessage.getMessage();
     		messages[0].setFlag(Flag.DRAFT, true);
 	    	dest.open(Folder.READ_WRITE);
+	    	deleteDraftMessage();
 	    	IMAPFolder desfFolder = (IMAPFolder) dest.getFolder();
-	    	if ( this.draftMessageUID != null ) {
-	    		Message message = desfFolder.getMessageByUID(this.draftMessageUID);
-	    		if ( message != null ) {
-		    		message.setFlag(Flags.Flag.DELETED, true);	    			
-	    		}
-	    		this.draftMessageUID = null;
-	    	}
 	    	AppendUID[] uids = desfFolder.appendUIDMessages(messages);
 	    	if (! ArrayUtils.isEmpty(uids) ) {
 		    	this.draftMessageUID = uids[0].uid;	
 	    	}
 	    	desfFolder.expunge();
 	    	dest.close(false);
+	    	refreshDraftFolder();
 		} catch (WebmailException e) {
 			AonUtil.addErrorMessage(e.getMessage());
 			throw new AbortProcessingException(e);
