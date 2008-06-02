@@ -26,7 +26,6 @@
 					aon-table-body aon-table-body-string,
 					aon-table-body aon-table-body-string,
 					aon-table-body aon-table-body-string,
-					aon-table-body aon-table-body-string,
 					aon-table-body aon-table-body-number">
 
 				<h:column>
@@ -34,16 +33,6 @@
 						<h:outputText value="#{financeBundle.aon_invoice}" />
 					</f:facet>
 					<h:outputText value="#{to.invoice.series} / #{to.invoice.number}" />
-				</h:column>
-
-				<h:column>
-					<f:facet name="header">
-						<h:panelGroup>
-							<h:outputText value="#{finance.payment?(financeBundle.aon_creditor):(financeBundle.aon_debtor)}" />
-						</h:panelGroup>
-					</f:facet>
-					<h:outputText value="#{to.registry.surname}, " rendered="#{to.registry.surname != null and to.registry.surname != ''}"/>								
-					<h:outputText value="#{to.registry.name}" />
 				</h:column>
 
 				<h:column>
