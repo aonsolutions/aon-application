@@ -71,7 +71,7 @@ public class MarkPrinter implements ICollectionProvider{
 				reportMark.setMarks(obtainMarks(courseAlumn));
 				reportMark.setEvaluation(obtainMaxEvaluation(reportMark.getMarks()));
 				reportMark.setAbsences(obtainAbsences(courseAlumn, reportMark.getEvaluation()));
-				reportMark.setObservations(obtainObservations(courseAlumn));
+				reportMark.setObservations(obtainObservations(courseAlumn, reportMark.getEvaluation()));
 				reportMark.setCourseSchedule(obtainCourseSchedule(courseAlumn));
 				reportMarkList.add(reportMark);
 			}
@@ -164,21 +164,19 @@ public class MarkPrinter implements ICollectionProvider{
 			IManagerBean absenceBean = BeanManager.getManagerBean(Absence.class);
 			Expression courseAlumnExp = ExpressionUtilities.getEqualExpression(absenceBean.getFieldName(IAcademyAlias.ABSENCE_COURSE_ALUMN_ID), courseAlumn.getId());
 			List<Absence> absencesLst = new ArrayList<Absence>();
-			for(int i = 1; i <=  evaluation.intValue(); i++){
+			for(int i=1; i<=evaluation.intValue(); i++){
 				Criteria criteria = new Criteria();
 				Expression evalExp = ExpressionUtilities.getEqualExpression(absenceBean.getFieldName(IAcademyAlias.ABSENCE_EVALUATION), new Integer(i));
 				criteria.addExpression(ExpressionUtilities.getAndExpression(courseAlumnExp, evalExp));
 				Iterator iter = absenceBean.getList(criteria).iterator();
-				if(iter.hasNext()){
-					while (iter.hasNext()){
-						absencesLst.add((Absence)iter.next());
-					}
-				}else{
-					Absence emptyAbsence = new Absence();
-					emptyAbsence.setComments("");
-					emptyAbsence.setCourseAlumn(courseAlumn);
-					emptyAbsence.setEvaluation(i);
-					absencesLst.add(emptyAbsence);
+
+				Absence emptyAbsence = new Absence();
+				emptyAbsence.setCourseAlumn(courseAlumn);
+				emptyAbsence.setEvaluation(i);
+				emptyAbsence.setComments(Integer.toString(absenceBean.getCount(criteria)));
+				absencesLst.add(emptyAbsence);
+				while (iter.hasNext()){
+					absencesLst.add((Absence)iter.next());
 				}
 			}
 			return absencesLst;
@@ -189,17 +187,27 @@ public class MarkPrinter implements ICollectionProvider{
 	}
 	
 	@SuppressWarnings("unchecked")
-	private List<EvaluationObservation> obtainObservations(CourseAlumn courseAlumn){
+	private List<EvaluationObservation> obtainObservations(CourseAlumn courseAlumn, Integer evaluation){
 		try {
-			IManagerBean evaluationObservationBean = BeanManager.getManagerBean(EvaluationObservation.class);
-			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(evaluationObservationBean.getFieldName(IAcademyAlias.EVALUATION_OBSERVATION_ALUMN_ID), courseAlumn.getId());
-			List<EvaluationObservation> evaluationObservationsLst = new ArrayList<EvaluationObservation>();
-			Iterator iter = evaluationObservationBean.getList(criteria).iterator();
-			while (iter.hasNext()){
-				evaluationObservationsLst.add((EvaluationObservation)iter.next());
+			IManagerBean observationBean = BeanManager.getManagerBean(EvaluationObservation.class);
+			Expression courseAlumnExp = ExpressionUtilities.getEqualExpression(observationBean.getFieldName(IAcademyAlias.EVALUATION_OBSERVATION_ALUMN_ID), courseAlumn.getId());
+			List<EvaluationObservation> observationsLst = new ArrayList<EvaluationObservation>();
+			for(int i=1; i<=evaluation.intValue(); i++){
+				Criteria criteria = new Criteria();
+				Expression evalExp = ExpressionUtilities.getEqualExpression(observationBean.getFieldName(IAcademyAlias.EVALUATION_OBSERVATION_EVALUATION), new Integer(i));
+				criteria.addExpression(ExpressionUtilities.getAndExpression(courseAlumnExp, evalExp));
+				Iterator iter = observationBean.getList(criteria).iterator();
+
+				EvaluationObservation emptyObservation = new EvaluationObservation();
+				emptyObservation.setAlumn(courseAlumn);
+				emptyObservation.setEvaluation(i);
+				emptyObservation.setComments("");
+				observationsLst.add(emptyObservation);
+				while (iter.hasNext()){
+					observationsLst.add((EvaluationObservation)iter.next());
+				}
 			}
-			return evaluationObservationsLst;
+			return observationsLst;
 		} catch (ManagerBeanException e) {
 			LOGGER.log(Level.SEVERE, "Error obtaining observations with course alumn = " + courseAlumn.getId(), e);
 		}
@@ -231,8 +239,14 @@ public class MarkPrinter implements ICollectionProvider{
 	}
 
 	@SuppressWarnings("unchecked")
-	public List getQualificationLegend() throws ManagerBeanException{
+	public String getQualificationLegend() throws ManagerBeanException{
+		String qualificationLegend = "";
 		IManagerBean qualificationBean = BeanManager.getManagerBean(Qualification.class);
-		return qualificationBean.getList(null);
+		Iterator iter = qualificationBean.getList(null).iterator();
+		while (iter.hasNext()) {
+			Qualification qualification = (Qualification)iter.next();
+			qualificationLegend += qualification.getCode() + "-" + qualification.getDescription() + "; ";
+		}
+		return qualificationLegend;
 	}
 }
