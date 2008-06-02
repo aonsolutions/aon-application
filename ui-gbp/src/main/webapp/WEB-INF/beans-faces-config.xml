@@ -7,6 +7,13 @@
 
 	<!-- ************ COLLECTIONS ************** -->
 	<managed-bean>
+		<managed-bean-name>GBP</managed-bean-name>
+		<managed-bean-class>com.code.ui.gbp.controller.GBPController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
+	
+	<!-- ************ COLLECTIONS ************** -->
+	<managed-bean>
 		<managed-bean-name>GBPCollections</managed-bean-name>
 		<managed-bean-class>com.code.ui.gbp.controller.GBPCollectionsController</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>

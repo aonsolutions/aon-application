@@ -285,16 +285,22 @@ public interface IGBPAlias {
 	DAOConstantsEntry INTERNAL_CUSTOMER_ENTRY = DAOConstants.getDAOConstant(InternalCustomer.class);
 
 	/** 
+	* Alias value: InternalCustomer_code
+	* Hibernate value: InternalCustomer.code
+	*/
+	String  INTERNAL_CUSTOMER_CODE = INTERNAL_CUSTOMER_ENTRY.getAliasNames()[0];
+
+	/** 
 	* Alias value: InternalCustomer_description
 	* Hibernate value: InternalCustomer.description
 	*/
-	String  INTERNAL_CUSTOMER_DESCRIPTION = INTERNAL_CUSTOMER_ENTRY.getAliasNames()[0];
+	String  INTERNAL_CUSTOMER_DESCRIPTION = INTERNAL_CUSTOMER_ENTRY.getAliasNames()[1];
 
 	/** 
 	* Alias value: InternalCustomer_id
 	* Hibernate value: InternalCustomer.id
 	*/
-	String  INTERNAL_CUSTOMER_ID = INTERNAL_CUSTOMER_ENTRY.getAliasNames()[1];
+	String  INTERNAL_CUSTOMER_ID = INTERNAL_CUSTOMER_ENTRY.getAliasNames()[2];
 
 
 
