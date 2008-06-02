@@ -7,17 +7,19 @@ import com.code.aon.academy.enumeration.CourseAlumnStatus;
 import com.code.aon.academy.enumeration.CourseStatus;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.customer.Customer;
+import com.code.aon.ql.ast.Expression;
+import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.ui.form.LinesController;
 
 public class AlumnCourseController extends LinesController {
 
 	private boolean active;
-	private boolean all;
+	private boolean inactive;
 
 	@Override
 	public void initModel() {
 		active = false;
-		all = false;
+		inactive = false;
 		super.initModel();
 	}
 
@@ -27,25 +29,28 @@ public class AlumnCourseController extends LinesController {
 			setModel(null);
 			clearCriteria();
 			getCriteria().addEqualExpression(getFieldName(IAcademyAlias.COURSE_ALUMN_CUSTOMER_ID), ((Customer)getMasterController().getTo()).getId());
-			getCriteria().addEqualExpression(getFieldName(IAcademyAlias.COURSE_ALUMN_STATUS), CourseAlumnStatus.ACTIVE);
-			getCriteria().addEqualExpression(getFieldName(IAcademyAlias.COURSE_ALUMN_COURSE_STATUS), CourseStatus.ACTIVE);
+			getCriteria().addEqualExpression(getFieldName(IAcademyAlias.COURSE_ALUMN_STATUS), CourseStatus.ACTIVE);
+			getCriteria().addEqualExpression(getFieldName(IAcademyAlias.COURSE_ALUMN_COURSE_STATUS), CourseAlumnStatus.ACTIVE);
 		}
 		return getModel();
 	}
 
-	public DataModel getAllCourseModel() throws ManagerBeanException {
-		if (!all) {
+	public DataModel getInactiveCourseModel() throws ManagerBeanException {
+		if (!inactive) {
 			setActiveMode(false);
 			setModel(null);
 			clearCriteria();
 			getCriteria().addEqualExpression(getFieldName(IAcademyAlias.COURSE_ALUMN_CUSTOMER_ID), ((Customer)getMasterController().getTo()).getId());
+			Expression courseInactive = ExpressionUtilities.getEqualExpression(getFieldName(IAcademyAlias.COURSE_ALUMN_STATUS), CourseStatus.INACTIVE);
+			Expression alumnInactive = ExpressionUtilities.getEqualExpression(getFieldName(IAcademyAlias.COURSE_ALUMN_COURSE_STATUS), CourseAlumnStatus.INACTIVE);
+			getCriteria().addExpression(ExpressionUtilities.getOrExpression(courseInactive, alumnInactive));
 		}
 		return getModel();
 	}
 
 	private void setActiveMode(boolean active) {
 		this.active = active;
-		this.all = !active;
+		this.inactive = !active;
 	}
 
 }
