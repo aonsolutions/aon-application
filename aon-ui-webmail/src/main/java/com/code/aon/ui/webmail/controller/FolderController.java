@@ -32,7 +32,7 @@ public class FolderController implements ITreeListener, AonConstants {
 	
 	private AonFolder folder;
 	
-	private int currentPage;
+	private int currentPage = 1;
 	
 	private int pageObjectNumber = 20;
 	
@@ -292,7 +292,7 @@ public class FolderController implements ITreeListener, AonConstants {
     //*************************************************************
 	public boolean isSentItemColumn(){
 		if (folder.getFolder().getFullName().equals(AonFolder.SENT_FOLDER_NAME) ||
-				folder.getFolder().getFullName().equals(AonFolder.DRAFT_FOLDER_NAME))
+				folder.isDraftFolder())
 			return true;
 		return false;
 	}
@@ -393,7 +393,7 @@ public class FolderController implements ITreeListener, AonConstants {
 	}
 	
 	public String getSelectedMessageAction() {
-		if ( AonFolder.DRAFT_FOLDER_NAME.equals(getFolder().getFolder().getFullName()) ) {
+		if ( getFolder().isDraftFolder() ) {
 			return NAVIGATION_MESSAGE_NEW;
 		}
 		return NAVIGATION_MESSAGE;
@@ -402,7 +402,7 @@ public class FolderController implements ITreeListener, AonConstants {
     public void changeSelectedMessage(ActionEvent event) throws MessagingException {
     	AonMessage aonMessage = getFolder().getSelectedMessage();
     	MessageController messageController = (MessageController) AonUtil.getRegisteredBean(BEAN_MESSAGE);
-    	if ( AonFolder.DRAFT_FOLDER_NAME.equals(getFolder().getFolder().getFullName()) ) {
+    	if ( getFolder().isDraftFolder() ) {
     		IMAPFolder imapFolder = (IMAPFolder) getFolder().getFolder();
     		long uid = imapFolder.getUID(aonMessage.getMessage());
     		messageController.editDraftMessage(aonMessage, uid);
