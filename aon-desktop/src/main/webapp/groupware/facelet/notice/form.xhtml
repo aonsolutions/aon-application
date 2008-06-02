@@ -76,9 +76,10 @@
 
 						<aon:outputLabel for="Notice_workGroup_id"
 							value="#{groupwareBundle.notice_work_group}" />
-						<aon:selectOneMenu id="Notice_workGroup_id"
+						<aon:selectOneMenu id="Notice_workGroup_id" required="true"
 							value="#{notice.to.workGroup.id}" reRender="Notice_recipient_id"
 							valueChangeListener="#{notice.workGroupChange}">
+							<f:selectItem value="#{desktop.nullValue}" />
 							<f:selectItems value="#{configCollections.workgroups}" />
 						</aon:selectOneMenu>
 
