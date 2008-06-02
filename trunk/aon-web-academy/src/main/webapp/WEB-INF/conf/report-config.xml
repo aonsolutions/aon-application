@@ -62,15 +62,8 @@
 			<param id="encode" value="#{markPrinter.isEncodedMarks}" />
 			<param id="qualifications" value="#{markPrinter.getQualificationLegend}" />
 		</params>
+	</report>
 
-		<nested-report report="qualificationLegend"/>
-	</report>
-	
-	<report id="qualificationLegend" description="Qualification Legend">
-		<template path="/com/code/aon/ui/academy/report/qualificationLegend.jasper" />
-	</report>
-	
-	
 	<!--  *********  alumnMarkTemplate  ********* -->
 	<report id="markTemplateList" description="Alumn Mark Template report">
 		<template path="/com/code/aon/ui/academy/report/markTemplateList.jasper" />
