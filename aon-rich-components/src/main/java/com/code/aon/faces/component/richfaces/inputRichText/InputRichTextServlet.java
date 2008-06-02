@@ -24,6 +24,11 @@ public class InputRichTextServlet extends HttpServlet {
 
 	private static final long serialVersionUID = 7260045528613530636L;
 
+	/**
+	 * One week in milliseconds.
+	 */
+	private static final long ONE_WEEK_MILLIS = 604800000L;
+	
 	private static final String modify=calcModify();
 	
 	private volatile String customResourcePath;
@@ -63,6 +68,8 @@ public class InputRichTextServlet extends HttpServlet {
 	        } else {
 	            response.setHeader("Cache-Control", "public");
 	            response.setHeader("Last-Modified", modify);
+				long currentTime = System.currentTimeMillis();
+				response.setDateHeader("Expires", currentTime + ONE_WEEK_MILLIS);            
 	        }
 	        if (uri.endsWith(".css")) {
 	        	response.setContentType("text/css;charset=UTF-8");
