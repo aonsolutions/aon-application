@@ -30,18 +30,15 @@
 				<aon:div styleClass="aon-login-box-internal">
 				<form id="login" method="post" action="j_security_check" style="display: inline;">
 					<aon:div styleClass="aon-login-title">
-					<!-- 
-						<aon:graphicImage url="images/login/main-logo.gif"/>
-					 -->	
+						<aon:graphicImage url="login/css/images/login/main-logo.gif"/>
+						<aon:outputText value=" / " />
 						<aon:outputText value="#{appBundle.aon_application_title}" styleClass="aon-bold"/>
 					</aon:div>
 					<aon:div styleClass="aon-login-box">
 						<aon:outputText value="#{securityBundle.aon_login_label}" styleClass="aon-login-help"/>
 						<ui:insert name="error"/>
 						<ui:insert name="content"/>
-<!--
 						<aon:div styleClass="aon-login-info">
-						
 							<aon:div styleClass="aon-login-info-title">
 								<aon:outputText value="#{appBundle.aon_login_support}." />
 							</aon:div>
@@ -60,7 +57,6 @@
 							 <aon:outputText value="#{appBundle.aon_esferalia}" style="font-weight:bold;font-style:italic;font-size:12;" />
 							 <aon:outputText value="#{appBundle.aon_networks}" />
 						</aon:div>	
- -->							
 					</aon:div>
 					</form>
 				</aon:div>

@@ -27,8 +27,21 @@ function concatHost() {
 		if (document.forms[0].j_username.value.indexOf("@") < 0) {
 			var context = location.pathname.substring( 1, location.pathname.length );
 			context = "/" + context.substring( 0, context.indexOf("/") );
-			document.forms[0].j_username.value = document.forms[0].j_username_view.value + '@' + location.hostname + context;
+			hostname = calcHost(location.hostname);
+			document.forms[0].j_username.value = document.forms[0].j_username_view.value + '@' + hostname + context;
 		}
+	}
+}
+
+function calcHost(host){
+	hostname = host;
+	while (true){
+		pos = hostname.indexOf(".");
+		lastPos = hostname.lastIndexOf(".");
+		if (pos == lastPos){
+			return hostname;
+		}
+		hostname = hostname.substring(pos+1,hostname.length);
 	}
 }
 
