@@ -12,6 +12,8 @@ import javax.mail.Message;
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
 
+import org.apache.commons.lang.ArrayUtils;
+
 import com.code.aon.ui.webmail.exception.WebmailException;
 
 public class AonFolder extends AonMessageSortableList {
@@ -80,15 +82,19 @@ public class AonFolder extends AonMessageSortableList {
 			profile.add(FetchProfile.Item.ENVELOPE);
 			folder.fetch(messages, profile);
 
+			int realLength = 0;
 			AonMessage[] list = new AonMessage[messages.length];
-			for (int i = 0, n = 0; i < messages.length; i++) {
+			for (int i = 0; i < messages.length; i++) {
 				if (messages[i] != null && !messages[i].isExpunged()) {
 					AonMessage aonMessage = new AonMessage();
                 	aonMessage.setParent(this);
                 	aonMessage.setMessage((MimeMessage)messages[i]);
-                	list[n++] = aonMessage;
+                	list[realLength++] = aonMessage;
                 }
             }
+			if ( realLength != messages.length ) {
+				list = (AonMessage[]) ArrayUtils.subarray( list, 0, realLength);
+			}
 			setMessageList(list);
         } catch (MessagingException e) {
 			LOGGER.log(Level.ALL,"Error reading messages ", e);
@@ -230,6 +236,10 @@ public class AonFolder extends AonMessageSortableList {
 			return folder.getName();
 		}
     	return "other";
+    }
+    
+    public boolean isDraftFolder() {
+    	return AonFolder.DRAFT_FOLDER_NAME.equals( getFolder().getFullName() );	
     }
     
     //**************************************************************
