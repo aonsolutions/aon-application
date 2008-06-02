@@ -26,7 +26,9 @@ public class Generator {
 		
 	    if (template != null && content != null) {
 	        vu.put("content", content);
+	        vu.put("current_page", getPageHtmlName(type, name)); 
 	        vu.generate(template, page);
+	        vu.remove("current_page");
 	        vu.remove("content");
 	    }
 	    else {
@@ -57,6 +59,12 @@ public class Generator {
 		String page_full_path = ControllerUtil.getLanguagePreviewPath() + "/" + page;
 		if (t == Templates.LANGUAGE) page_full_path = ControllerUtil.getPreviewPath() + "/" + page;
 		return page_full_path;
+	}
+
+	private static String getPageHtmlName(Templates t, String name) {
+		String page = t.getHtmlName();
+		page = page.replaceAll("%NAME%", name);
+		return page;
 	}
 
 	private static boolean validateTemplate(String template) {
