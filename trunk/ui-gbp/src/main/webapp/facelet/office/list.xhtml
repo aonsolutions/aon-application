@@ -55,6 +55,10 @@
 							confirmMessage="#{bundle.aon_remove_confirm}"
 							confirmActionListener="#{office.onRemove}"
 							accesskey="#{bundle.aon_key_remove}" />
+						<aon:commandButton id="search" value="#{bundle.aon_search}"
+							action="office_search" actionListener="#{office.onEditSearch}"
+							styleClass="aon-finding-toolbar-item aon-icon-search"
+							accesskey="#{bundle.aon_key_search}"/>
 					</aon:div>
 				</aon:panelGrid>
 			</aon:div>
