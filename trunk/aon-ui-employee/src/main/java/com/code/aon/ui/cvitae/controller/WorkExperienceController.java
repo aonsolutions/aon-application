@@ -10,7 +10,10 @@ import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.util.AonUtil;
 
 public class WorkExperienceController extends BasicController {
-	
+
+	private static final long serialVersionUID = 1041775561730537644L;
+	public static final String MANAGER_BEAN_NAME = "WorkExperience";
+
 	public void onWorkExperience(ActionEvent event) throws ManagerBeanException{
 		CurriculumController curriculumController = 
 			(CurriculumController) AonUtil.getController( CurriculumController.MANAGER_BEAN_NAME );

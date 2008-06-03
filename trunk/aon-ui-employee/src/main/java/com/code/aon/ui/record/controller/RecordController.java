@@ -49,6 +49,6 @@ public class RecordController implements TabChangeListener {
 
 	public void processTabChange(TabChangeEvent arg0) throws AbortProcessingException {
 		// TODO Auto-generated method stub
-//		System.out.println("**********-->> processTabChange ");
 	}
+
 }

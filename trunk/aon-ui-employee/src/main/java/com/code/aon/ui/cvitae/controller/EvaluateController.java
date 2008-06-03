@@ -22,6 +22,10 @@ import com.code.aon.ui.util.AonUtil;
 
 public class EvaluateController extends BasicController {
 
+	private static final long serialVersionUID = 7100543598171135895L;
+
+	public static final String MANAGER_BEAN_NAME = "evaluate";
+
 	DataModel types;
 	Integer score = 0;
 
@@ -53,6 +57,7 @@ public class EvaluateController extends BasicController {
 		this.score = score;
 	}
 
+	@SuppressWarnings("unchecked")
 	public Integer getTotalScore() {
 		Integer total = 0;
 		Iterator iter = ( (List) this.types.getWrappedData() ).iterator();

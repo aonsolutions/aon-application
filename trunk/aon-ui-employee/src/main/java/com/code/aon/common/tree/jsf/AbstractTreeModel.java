@@ -215,7 +215,8 @@ public abstract class AbstractTreeModel extends TreeModelBase {
      * 
      * @param event
      */
-    protected void fireValueChanged(TreeSelectionEvent event) {
+    @SuppressWarnings("unchecked")
+	protected void fireValueChanged(TreeSelectionEvent event) {
         LOGGER.fine( "Selected node: " + this.selectedNodeId + " - Selected Old node: " + this.getSelectedNode().getIdentifier() );
         Iterator i = this.listeners.iterator();
         while (i.hasNext()) {

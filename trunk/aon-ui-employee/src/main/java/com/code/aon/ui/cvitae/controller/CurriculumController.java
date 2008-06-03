@@ -3,8 +3,6 @@ package com.code.aon.ui.cvitae.controller;
 import java.util.Date;
 import java.util.StringTokenizer;
 
-import javax.faces.context.FacesContext;
-import javax.faces.el.ValueBinding;
 import javax.faces.event.ActionEvent;
 
 import org.apache.myfaces.custom.fileupload.UploadedFile;
@@ -17,8 +15,11 @@ import com.code.aon.registry.RegistryAttachment;
 import com.code.aon.ui.employee.util.Constants;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.menu.jsf.MenuEvent;
+import com.code.aon.ui.util.AonUtil;
 
 public class CurriculumController extends BasicController {
+
+	private static final long serialVersionUID = 3850759963483739573L;
 
 	public static final String MANAGER_BEAN_NAME = "curriculum";
 
@@ -94,17 +95,13 @@ public class CurriculumController extends BasicController {
 	@Override
 	public void onSelect(ActionEvent event) {
 		super.onSelect(event);
-		FacesContext ctx = FacesContext.getCurrentInstance();
-		ValueBinding vb = ctx.getApplication().createValueBinding( "#{Studies}" );
-		StudiesController sc = (StudiesController) vb.getValue(ctx);
-		vb = ctx.getApplication().createValueBinding( "#{Knowledge}" );
-		KnowledgeController kc = (KnowledgeController) vb.getValue(ctx);
-		vb = ctx.getApplication().createValueBinding( "#{WorkExperience}" );
-		WorkExperienceController wec = (WorkExperienceController) vb.getValue(ctx);
-		vb = ctx.getApplication().createValueBinding( "#{language}" );
-		LanguageController lc = (LanguageController) vb.getValue(ctx);
-		vb = ctx.getApplication().createValueBinding( "#{evaluate}" );
-		EvaluateController oc = (EvaluateController) vb.getValue(ctx);
+		StudiesController sc = (StudiesController) AonUtil.getController( StudiesController.MANAGER_BEAN_NAME );
+		KnowledgeController kc = 
+			(KnowledgeController) AonUtil.getController( KnowledgeController.MANAGER_BEAN_NAME );
+		WorkExperienceController wec = 
+			(WorkExperienceController) AonUtil.getController( WorkExperienceController.MANAGER_BEAN_NAME );
+		LanguageController lc = (LanguageController) AonUtil.getController( LanguageController.MANAGER_BEAN_NAME );
+		EvaluateController oc = (EvaluateController) AonUtil.getController( EvaluateController.MANAGER_BEAN_NAME );
 		try {
 			sc.onStudies(null);
 			kc.onKnowledges(null);

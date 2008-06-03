@@ -11,6 +11,10 @@ import com.code.aon.ui.util.AonUtil;
 
 public class StudiesController extends BasicController {
 	
+	private static final long serialVersionUID = 293874611449456697L;
+
+	public static final String MANAGER_BEAN_NAME = "Studies";
+
 	public void onStudies(ActionEvent event) throws ManagerBeanException{
 		CurriculumController curriculumController = 
 			(CurriculumController) AonUtil.getController( CurriculumController.MANAGER_BEAN_NAME );
