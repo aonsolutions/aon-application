@@ -110,7 +110,7 @@
 							rendered="#{to!=activity.to}" 
 							styleClass="aon-editDataTable-button">
 							<a4j:support 
-								action="activity_list"
+								reRender="dataTable,gridToolbar"
 								actionListener="#{activity.onSelect}"
 								event="onclick" />
 						</aon:outputText>	
@@ -136,7 +136,7 @@
 							rendered="#{to!=activity.to}" 
 							styleClass="aon-editDataTable-button">
 							<a4j:support 
-								action="activity_list"
+								reRender="dataTable,gridToolbar"
 								actionListener="#{activity.onSelect}"
 								event="onclick" />
 						</aon:outputText>	
