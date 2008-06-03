@@ -147,4 +147,362 @@
 		</managed-property>
 	</managed-bean>
 	
+	<!-- ************** CURRICULUM ****************** -->
+	<managed-bean>
+		<managed-bean-name>curriculum</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.cvitae.controller.CurriculumController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>false</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.cvitae.Curriculum</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pageLimit</property-name>
+			<value>20</value>
+		</managed-property>
+		<managed-property>
+			<property-name>listenerClasses</property-name>
+			<list-entries>
+				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+				<value>#{curriculumControllerListener}</value>
+				<value>#{curriculumPhotoListener}</value>
+			</list-entries>
+		</managed-property>
+	</managed-bean>
+	
+	<managed-bean>
+		<managed-bean-name>curriculumControllerListener</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.cvitae.event.CurriculumControllerListener</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+	</managed-bean>	
+
+	<managed-bean>
+		<managed-bean-name>curriculumPhotoListener</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.cvitae.event.CurriculumPhotoControllerListener</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+	</managed-bean>		
+	
+	<!-- ************** STUDIES ****************** -->
+	<managed-bean>
+		<managed-bean-name>Studies</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.cvitae.controller.StudiesController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>false</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.cvitae.Studies</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pageLimit</property-name>
+			<value>20</value>
+		</managed-property>
+		<managed-property>
+			<property-name>listenerClasses</property-name>
+			<list-entries>
+				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+				<value>#{StudiesControllerListener}</value>
+			</list-entries>
+		</managed-property>
+	</managed-bean>
+	
+	<managed-bean>
+		<managed-bean-name>StudiesControllerListener</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.cvitae.event.StudiesControllerListener</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+	</managed-bean>
+	
+	<!-- ************** WORKEXPERIENCE ****************** -->
+	<managed-bean>
+		<managed-bean-name>WorkExperience</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.cvitae.controller.WorkExperienceController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>false</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.cvitae.WorkExperience</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pageLimit</property-name>
+			<value>20</value>
+		</managed-property>
+		<managed-property>
+			<property-name>listenerClasses</property-name>
+			<list-entries>
+				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+				<value>#{WorkExperienceControllerListener}</value>
+			</list-entries>
+		</managed-property>
+	</managed-bean>
+	
+	<managed-bean>
+		<managed-bean-name>WorkExperienceControllerListener</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.cvitae.event.WorkExperienceControllerListener</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+	</managed-bean>
+	
+	<!-- ************** KNWOLEDGE ****************** -->
+	<managed-bean>
+		<managed-bean-name>Knowledge</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.cvitae.controller.KnowledgeController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>false</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.cvitae.Knowledge</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pageLimit</property-name>
+			<value>20</value>
+		</managed-property>
+		<managed-property>
+			<property-name>listenerClasses</property-name>
+			<list-entries>
+				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+				<value>#{KnowledgeControllerListener}</value>
+			</list-entries>
+		</managed-property>
+	</managed-bean>
+	
+	<managed-bean>
+		<managed-bean-name>KnowledgeControllerListener</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.cvitae.event.KnowledgeControllerListener</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+	</managed-bean>
+	
+	<!-- ************** LANGUAGE ****************** -->
+	<managed-bean>
+		<managed-bean-name>language</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.cvitae.controller.LanguageController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>false</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.cvitae.Language</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pageLimit</property-name>
+			<value>20</value>
+		</managed-property>
+		<managed-property>
+			<property-name>listenerClasses</property-name>
+			<list-entries>
+				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+				<value>#{LanguageControllerListener}</value>
+			</list-entries>
+		</managed-property>
+	</managed-bean>
+	
+	<managed-bean>
+		<managed-bean-name>LanguageControllerListener</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.cvitae.event.LanguageControllerListener</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+	</managed-bean>
+	
+	<!-- ************** EVALUATE ****************** -->
+	<managed-bean>
+		<managed-bean-name>evaluate</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.cvitae.controller.EvaluateController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.cvitae.EvaluateSummary</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pageLimit</property-name>
+			<value>20</value>
+		</managed-property>
+		<managed-property>
+			<property-name>listenerClasses</property-name>
+			<list-entries>
+				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+				<value>#{EvaluateControllerListener}</value>
+			</list-entries>
+		</managed-property>
+	</managed-bean>
+	
+	<managed-bean>
+		<managed-bean-name>EvaluateControllerListener</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.cvitae.event.EvaluateControllerListener</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+	</managed-bean>
+	
+	<managed-bean>
+		<managed-bean-name>evaluateType</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.form.BasicController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.cvitae.EvaluateType</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pageLimit</property-name>
+			<value>20</value>
+		</managed-property>
+	</managed-bean>
+
+	<!-- ************** RECORD ****************** -->
+	<managed-bean>
+		<managed-bean-name>record</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.record.controller.RecordController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
+
+	<!-- ************** WORK ****************** -->
+	<managed-bean>
+		<managed-bean-name>work</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.record.controller.WorkController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>false</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.record.Work</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pageLimit</property-name>
+			<value>20</value>
+		</managed-property>
+		<managed-property>
+			<property-name>listenerClasses</property-name>
+			<list-entries>
+				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+				<value>#{EmployeeWorkListener}</value>
+			</list-entries>
+		</managed-property>
+	</managed-bean>
+	
+	<managed-bean>
+		<managed-bean-name>EmployeeWorkListener</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.employee.event.EmployeeWorkListener</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+	</managed-bean>
+	
+	<!-- ************** COURSE ****************** -->
+	<managed-bean>
+		<managed-bean-name>course</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.record.controller.CourseController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>false</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.record.Course</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pageLimit</property-name>
+			<value>20</value>
+		</managed-property>
+		<managed-property>
+			<property-name>listenerClasses</property-name>
+			<list-entries>
+				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+				<value>#{EmployeeCourseListener}</value>
+			</list-entries>
+		</managed-property>
+	</managed-bean>
+	
+	<managed-bean>
+		<managed-bean-name>EmployeeCourseListener</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.employee.event.EmployeeCourseListener</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+	</managed-bean>
+	
+	<!-- ************** POSITION ****************** -->
+	<managed-bean>
+		<managed-bean-name>position</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.record.controller.PositionController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>false</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.record.Position</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pageLimit</property-name>
+			<value>20</value>
+		</managed-property>
+		<managed-property>
+			<property-name>listenerClasses</property-name>
+			<list-entries>
+				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+				<value>#{EmployeePositionListener}</value>
+			</list-entries>
+		</managed-property>
+	</managed-bean>
+	
+	<managed-bean>
+		<managed-bean-name>EmployeePositionListener</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.employee.event.EmployeePositionListener</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+	</managed-bean>
+	
+	<!-- ************** CONTRACT ****************** -->
+	<managed-bean>
+		<managed-bean-name>contract</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.record.controller.ContractController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>false</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.record.Contract</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pageLimit</property-name>
+			<value>20</value>
+		</managed-property>
+		<managed-property>
+			<property-name>listenerClasses</property-name>
+			<list-entries>
+				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+				<value>#{EmployeeContractListener}</value>
+				<value>#{PositionContractListener}</value>
+			</list-entries>
+		</managed-property>
+	</managed-bean>
+	
+	<managed-bean>
+		<managed-bean-name>EmployeeContractListener</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.employee.event.EmployeeContractListener</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+	</managed-bean>
+	<managed-bean>
+		<managed-bean-name>PositionContractListener</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.record.event.PositionContractListener</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+	</managed-bean>
+	
 </faces-config>
