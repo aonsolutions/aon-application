@@ -69,28 +69,11 @@ public class DataPaginatorHandler extends DataScrollerTagHandler {
 		return set;
 	}
 	
-	/**
-	 * Chapuza necesaria porque el componente de Rich Faces no devuelve correctamente. El getter deberia
-	 * devolver el valor en función de un ValueExpression pero no lo hace, porque lo que hay que resolver
-	 * el valor y llamar al setter de For. En la version 3.2.0.SR1.
-	 * 
-	 * @param ctx the ctx
-	 * @param component the component
-	 */
-	private void updateForAttribute( FaceletContext ctx, UIComponent component ) {
-		TagAttribute tag = getAttribute(FOR_ATTRIBUTE);
-		if (tag != null) {
-			String value = tag.getValue(ctx);
-			((UIDatascroller) component).setFor(value);
-		}
-	}
-
 	@Override
 	protected void setAttributes(FaceletContext ctx, Object instance) {
 		super.setAttributes(ctx, instance);
 		ComponentManager.getInstance().setAttributes( tag, ctx, (UIComponent) instance );
 		UIComponent component = (UIComponent) instance;
-		updateForAttribute(ctx, component);
 		if ( isPaginator(ctx) ) {
 			setControlsValue(ctx, component, SHOW_VALUE);
 		} else {
