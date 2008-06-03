@@ -2,8 +2,6 @@ package com.code.aon.ui.employee.controller;
 
 import java.util.Iterator;
 
-import javax.faces.context.FacesContext;
-import javax.faces.el.ValueBinding;
 import javax.faces.event.ActionEvent;
 import javax.faces.event.ValueChangeEvent;
 
@@ -15,30 +13,30 @@ import com.code.aon.geozone.dao.IGeoZoneAlias;
 import com.code.aon.ql.Criteria;
 import com.code.aon.registry.RegistryAddress;
 import com.code.aon.ui.form.BasicController;
+import com.code.aon.ui.form.IController;
+import com.code.aon.ui.util.AonUtil;
 
 public class EmployeeAddressController extends BasicController {
 	
-    @Override
-    public void onReset(ActionEvent event) {
-        FacesContext ctx = FacesContext.getCurrentInstance();
-        ValueBinding vb = ctx.getApplication().createValueBinding("#{employeeMedia}");
-        BasicController mediaController = (BasicController)vb.getValue(ctx);
-        mediaController.onCancel(event);
+	private static final long serialVersionUID = -4654786512841650734L;
+	static final String MANAGER_BEAN_NAME = "employeeAddress";
 
+	@Override
+    public void onReset(ActionEvent event) {
+        IController mediaController = AonUtil.getController( EmployeeMediaController.MANAGER_BEAN_NAME );
+        mediaController.onCancel(event);
         super.onReset(event);
     }
 
     @Override
     public void onSelect(ActionEvent event) {
-        FacesContext ctx = FacesContext.getCurrentInstance();
-        ValueBinding vb = ctx.getApplication().createValueBinding("#{employeeMedia}");
-        BasicController mediaController = (BasicController)vb.getValue(ctx);
+        IController mediaController = AonUtil.getController( EmployeeMediaController.MANAGER_BEAN_NAME );
         mediaController.onCancel(event); 
-
         super.onSelect(event);
     }
 
-    public void onChangeGeoZone(ValueChangeEvent event) throws ManagerBeanException {
+    @SuppressWarnings("unchecked")
+	public void onChangeGeoZone(ValueChangeEvent event) throws ManagerBeanException {
     	if(event.getNewValue() != null){
     		IManagerBean geoZoneBean = BeanManager.getManagerBean(GeoZone.class);
     		Criteria criteria = new Criteria();

@@ -4,11 +4,26 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 
+import javax.faces.context.FacesContext;
+import javax.faces.el.ValueBinding;
 import javax.faces.model.SelectItem;
 
 import com.code.aon.ui.util.AonUtil;
 
 public class Utils {
+
+	/**
+	 * Returns Controller name.
+	 * 
+	 * @param name
+	 * @return
+	 */
+	public static Object getController(String name) {
+	    FacesContext ctx = FacesContext.getCurrentInstance();
+	    ValueBinding vb = 
+	    	ctx.getApplication().createValueBinding( "#{" + name + "}" );
+	    return vb.getValue(ctx);
+	}
 
 	/**
 	 * @return the seniority types.

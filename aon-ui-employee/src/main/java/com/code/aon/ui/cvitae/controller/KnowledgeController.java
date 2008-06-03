@@ -11,6 +11,9 @@ import com.code.aon.ui.util.AonUtil;
 
 public class KnowledgeController extends BasicController {
 
+	private static final long serialVersionUID = -2159682638961509902L;
+	public static final String MANAGER_BEAN_NAME = "Knowledge";
+
 	public void onKnowledges(ActionEvent event) throws ManagerBeanException{
 		CurriculumController curriculumController = 
 			(CurriculumController) AonUtil.getController( CurriculumController.MANAGER_BEAN_NAME );

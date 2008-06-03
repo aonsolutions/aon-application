@@ -21,12 +21,14 @@ import com.code.aon.record.Work;
 import com.code.aon.record.dao.IRecordAlias;
 import com.code.aon.registry.Registry;
 import com.code.aon.ui.company.controller.CompanyUtil;
+import com.code.aon.ui.employee.controller.EmployeeController;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.util.AonUtil;
-import com.code.aon.ui.employee.controller.EmployeeController;
 
 public class PositionController extends BasicController {
 	
+	private static final long serialVersionUID = 7098665416912294857L;
+
 	public static final String MANAGER_BEAN_NAME = "position";
 
 	private Employee employee;
@@ -87,6 +89,7 @@ public class PositionController extends BasicController {
 		this.activities = CompanyUtil.findActivities( workPlaceId );
 	}
 
+	@SuppressWarnings("unchecked")
 	private Employee obtainEmployee(Object value) {
 		Employee employee;
 		try {

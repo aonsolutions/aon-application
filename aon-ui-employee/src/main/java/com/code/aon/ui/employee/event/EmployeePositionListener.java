@@ -16,14 +16,15 @@ import com.code.aon.ui.util.AonUtil;
 import com.code.aon.ui.employee.controller.EmployeeController;
 
 /**
- * @author Consulting & Development. Iñaki Ayerbe - 06/09/2007
+ * The employee listener class for receiving position events. 
+ * 
+ * @author iayerbe
  *
  */
 public class EmployeePositionListener extends ControllerAdapter {
 
-	/* (non-Javadoc)
-	 * @see com.code.aon.ui.form.event.ControllerAdapter#afterBeanAdded(com.code.aon.ui.form.event.ControllerEvent)
-	 */
+	private static final long serialVersionUID = -7753434020030241056L;
+
 	@Override
 	public void afterBeanAdded(ControllerEvent event) throws ControllerListenerException {
 		EmployeeController ec = (EmployeeController) event.getController();
@@ -37,7 +38,7 @@ public class EmployeePositionListener extends ControllerAdapter {
 		try {
 			bean.insert( position );
 		} catch (ManagerBeanException e) {
-			throw new ControllerListenerException("Error addding Employee Position", e);
+			throw new ControllerListenerException("Error al añadir el cargo al empleado", e);
 		}
 	}
 

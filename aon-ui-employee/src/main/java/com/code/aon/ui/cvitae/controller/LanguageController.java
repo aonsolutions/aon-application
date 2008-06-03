@@ -10,7 +10,11 @@ import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.util.AonUtil;
 
 public class LanguageController extends BasicController {
-	
+
+	private static final long serialVersionUID = -5373225168757169982L;
+
+	public static final String MANAGER_BEAN_NAME = "language";
+
 	public void onLanguages(ActionEvent event) throws ManagerBeanException{
 		CurriculumController curriculumController = 
 			(CurriculumController) AonUtil.getController( CurriculumController.MANAGER_BEAN_NAME );

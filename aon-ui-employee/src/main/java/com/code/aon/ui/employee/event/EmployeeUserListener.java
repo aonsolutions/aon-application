@@ -14,6 +14,12 @@ import com.code.aon.ui.form.event.ControllerListenerException;
 import com.code.aon.ui.util.AonUtil;
 import com.code.aon.ui.employee.controller.EmployeeController;
 
+/**
+ * The user listener class for receiving employee events. 
+ * 
+ * @author iayerbe
+ *
+ */
 public class EmployeeUserListener extends ControllerAdapter {
 
 	@Override

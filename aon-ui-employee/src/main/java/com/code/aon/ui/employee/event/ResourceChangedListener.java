@@ -13,7 +13,15 @@ import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
 
+/**
+ * The resource listener class for receiving employee events. 
+ * 
+ * @author iayerbe
+ *
+ */
 public class ResourceChangedListener extends ControllerAdapter {
+
+	private static final long serialVersionUID = -5482058485291268778L;
 
 	@Override
 	public void afterBeanCreated(ControllerEvent event) throws ControllerListenerException {
@@ -63,14 +71,6 @@ public class ResourceChangedListener extends ControllerAdapter {
 	public void afterBeanRemoved(ControllerEvent event) throws ControllerListenerException {
 		EmployeeController ec = (EmployeeController) event.getController();
 		try {
-//TODO	Remove employee calendar if exists.
-//			Integer calendarId = ec.getEmployee().getCalendar();
-//			if ( calendarId != null ) {
-//				IManagerBean bean = BeanManager.getManagerBean( Calendar.class );
-//				Calendar to = new Calendar();
-//				to.setId( calendarId );
-//				bean.remove(to);
-//			}
 			Resource resource = ec.getResource();
 			resource.setEndingDate( new Date() );
 			ResourceManager.getResourceManager().updateResource( resource );
@@ -107,8 +107,10 @@ public class ResourceChangedListener extends ControllerAdapter {
 		if ( ec.isResourceDirty() ) {
 			try {
 				Resource r = ResourceManager.getResourceManager().getResource( employee );
-				r.setEndingDate( new Date() );
-				ResourceManager.getResourceManager().updateResource( r );
+				if ( r.getEndingDate() == null ) {
+					r.setEndingDate( new Date() );
+					ResourceManager.getResourceManager().updateResource( r );
+				}
 		    	r = ResourceManager.getResourceManager().createResource( employee );
 		    	r.setWorkPlace( ec.getResource().getWorkPlace() );
 		    	r.setWorkActivity( ec.getResource().getWorkActivity() );

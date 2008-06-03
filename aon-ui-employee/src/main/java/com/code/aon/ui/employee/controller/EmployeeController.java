@@ -30,7 +30,6 @@ import com.code.aon.cvitae.dao.ICVitaeAlias;
 import com.code.aon.geozone.GeoZone;
 import com.code.aon.geozone.dao.IGeoZoneAlias;
 import com.code.aon.ql.Criteria;
-import com.code.aon.registry.Registry;
 import com.code.aon.registry.RegistryAddress;
 import com.code.aon.registry.dao.IRegistryAlias;
 import com.code.aon.ui.company.controller.CompanyUtil;
@@ -39,23 +38,22 @@ import com.code.aon.ui.employee.util.Constants;
 import com.code.aon.ui.employee.util.Utils;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.form.IController;
+import com.code.aon.ui.form.event.ControllerEvent;
+import com.code.aon.ui.form.event.ControllerListenerException;
 import com.code.aon.ui.menu.jsf.MenuEvent;
 import com.code.aon.ui.record.controller.RecordController;
 import com.code.aon.ui.util.AonUtil;
 
 public class EmployeeController extends BasicController {
 	
+	private static final long serialVersionUID = 7638824496547268973L;
 	private static final Logger LOGGER = Logger.getLogger(EmployeeController.class.getName());
 	private static final String REGISTRY_ADDRESS_ID = "raddress_id";
 	private static final String REGISTRY_ADDRESS = "raddress";
 	private static final String REGISTRY_ADDRESS_CITY = "city";
 	
-	public static final String EMPLOYEE_ADDRESS_CONTROLLER_NAME = "employeeAddress";
-	public static final String EMPLOYEE_MEDIA_CONTROLLER_NAME = "employeeMedia";
 	public static final String MANAGER_BEAN_NAME = "employee";
 
-//	/** Employee calendar */
-//	private AonCalendar calendar;
 	/** Employee current resource */
 	private Resource resource;
 	/** Tell if the resource can be updated */
@@ -79,14 +77,6 @@ public class EmployeeController extends BasicController {
 	public Employee getEmployee() {
 		return (Employee) getTo();
 	}
-
-//    /**
-//     * Return Employee calendar.
-//     * @return
-//     */
-//    public AonCalendar getAonCalendar() {
-//    	return this.calendar;
-//    }
 
 	/**
 	 * @return the resource
@@ -176,10 +166,6 @@ public class EmployeeController extends BasicController {
 	public void onSearch(MenuEvent event) throws ManagerBeanException {
 		this.onEditSearch( (ActionEvent) event );
 		this.onSearch( (ActionEvent) event );
-//        clearCriteria();
-//		this.onReset( (ActionEvent) event );
-//		Employee employee = (Employee) getTo();
-//		employee.setActive( true );
 	}
 
 	@SuppressWarnings("unused")
@@ -207,9 +193,6 @@ public class EmployeeController extends BasicController {
     	super.addExpression( event );
     }
 
-    /* (non-Javadoc)
-	 * @see com.code.aon.ui.form.BasicController#onEditSearch(javax.faces.event.ActionEvent)
-	 */
 	@Override
 	public void onEditSearch(ActionEvent event) {
 		super.onEditSearch(event);
@@ -218,9 +201,6 @@ public class EmployeeController extends BasicController {
 		employee.setActive( true );
 	}
 
-	/* (non-Javadoc)
-	 * @see com.code.aon.ui.form.BasicController#onSearch(javax.faces.event.ActionEvent)
-	 */
 	@Override
 	public void onSearch(ActionEvent event) {
 		if ( !activeFieldChanged ) {
@@ -237,49 +217,42 @@ public class EmployeeController extends BasicController {
 
 	@Override
     public void onReset(ActionEvent event) {
-    	IController addressController = AonUtil.getController(EMPLOYEE_ADDRESS_CONTROLLER_NAME);
+    	IController addressController = AonUtil.getController( EmployeeAddressController.MANAGER_BEAN_NAME );
         addressController.onCancel(event);
-        IController mediaController = AonUtil.getController(EMPLOYEE_MEDIA_CONTROLLER_NAME);
+        IController mediaController = AonUtil.getController( EmployeeMediaController.MANAGER_BEAN_NAME );
         mediaController.onCancel(event);
         super.onReset(event);
         setResourceAllowed( true );
         setUserEnabled( false );
     }
 
-    /* (non-Javadoc)
-	 * @see com.code.aon.ui.form.BasicController#onRemove(javax.faces.event.ActionEvent)
-	 */
 	@Override
 	public void onRemove(ActionEvent event) {
-//TODO Estudiar si borrar o darle de baja de la empresa.
-		Registry registry = ( (Employee) getTo() ).getRegistry();
-    	HibernateUtil.setCloseSession(false);
-        HibernateUtil.setBeginTransaction(false);
-        try {
-			HibernateUtil.beginTransaction();
-			super.onRemove(event);
-            HibernateUtil.commitTransaction();
-	        LOGGER.fine("Employee: [" + registry.getName() + " " + registry.getSurname() + "] removed.");
-        } catch (DAOException e) {
-        	try {
-        		HibernateUtil.rollbackTransaction();
-        	} catch (DAOException e1) {
-        		LOGGER.severe("Can not rollback Transaction [" + e1.getMessage() + "]");
-        	}
-        	return;
-        } finally {
-			HibernateUtil.setCloseSession(true);
-        	HibernateUtil.setBeginTransaction(true);
-			HibernateUtil.closeSession();
+		// Employee termination.
+		try {
+			ControllerEvent evt = new ControllerEvent(this);
+			controllerListenerSupport.fireBeforeBeanRemoved(evt);
+			getEmployee().setActive( false );
+			getManagerBean().update( getEmployee() );
+			initializeModel();
+			controllerListenerSupport.fireAfterBeanRemoved(evt);
+		} catch (ControllerListenerException e) {
+			LOGGER.severe(">>>> onRemove exception[" + e.getMessage() + "]");
+			addMessage(e.getMessage());
+			throw new AbortProcessingException(e.getMessage(), e);
+		} catch (ManagerBeanException e) {
+			LOGGER.severe(">>>> onRemove exception[" + e.getMessage() + "]");
+			addMessage(e.getMessage());
+			throw new AbortProcessingException(e.getMessage(), e);
 		}
-//        CalendarsController.getCalendarsController().setDirty( true );
+		super.resetTo();
 	}
 
 	@Override
     public void onSelect(ActionEvent event) {
-    	IController addressController = AonUtil.getController(EMPLOYEE_ADDRESS_CONTROLLER_NAME);
+    	IController addressController = AonUtil.getController( EmployeeAddressController.MANAGER_BEAN_NAME );
         addressController.onCancel(event); 
-        IController mediaController = AonUtil.getController(EMPLOYEE_MEDIA_CONTROLLER_NAME);
+        IController mediaController = AonUtil.getController( EmployeeMediaController.MANAGER_BEAN_NAME );
         mediaController.onCancel(event);
         super.onSelect(event);
         setResourceAllowed( false );
@@ -287,38 +260,45 @@ public class EmployeeController extends BasicController {
         setUserEnabled( false ); 
     }
 
-	/* (non-Javadoc)
-	 * @see com.code.aon.ui.form.BasicController#accept(javax.faces.event.ActionEvent)
-	 */
 	@Override
 	public void accept(ActionEvent event) {
-    	if ( super.isNew() )
-    		look4DuplicatedDocument();
+		HibernateUtil.setBeginTransaction( false );
+		HibernateUtil.setCloseSession( false );
 		try {
-			super.accept(event);
-		} catch (AbortProcessingException e) {
-//	Checks if social security number is unique.
-			if ( e.getMessage().indexOf( "Duplicate entry" ) > -1 ) {
-				String select = "FROM Employee employee WHERE socialSecurityNumber = :ssn";
-				Query query = HibernateUtil.getSession().createQuery( select );
-				query.setString( "ssn", this.getEmployee().getSocialSecurityNumber() );
-				if ( query.uniqueResult() != null ) {
-					Utils.addMessage( "aon_employee_unique_ssn_exception", true );
+			HibernateUtil.beginTransaction();
+	    	if ( super.isNew() )
+	    		look4DuplicatedDocument();
+			try {
+				super.accept(event);
+			} catch (AbortProcessingException e) {
+				//	Checks if social security number is unique.
+				if ( e.getMessage().indexOf( "Duplicate entry" ) > -1 ) {
+					String select = "FROM Employee employee WHERE socialSecurityNumber = :ssn";
+					Query query = HibernateUtil.getSession().createQuery( select );
+					query.setString( "ssn", this.getEmployee().getSocialSecurityNumber() );
+					if ( query.uniqueResult() != null ) {
+						Utils.addMessage( "aon_employee_unique_ssn_exception", true );
+					}
 				}
+				throw e;
+			}
+			HibernateUtil.commitTransaction();
+		} catch (AbortProcessingException e) {
+			try {
+				HibernateUtil.rollbackTransaction();
+			} catch (DAOException e1) {
 			}
 			throw e;
+		} catch (DAOException e) {
+			try {
+				HibernateUtil.rollbackTransaction();
+			} catch (DAOException e1) {
+			}
+            throw new AbortProcessingException(e.getMessage(), e);
+		} finally {
+			HibernateUtil.setBeginTransaction( true );
+			HibernateUtil.setCloseSession( true );
 		}
-//		CalendarsController.getCalendarsController().setDirty( true );
-//        setResourceAllowed( false );
-//		try {
-//			getCalendarScheduleModel();
-//		} catch (CalendarException e) {
-//			Utils.addMessage( "aon_employee_calendar_creation_exception", true );
-//            throw new AbortProcessingException(e.getMessage(), e);
-//		} catch (ManagerBeanException e) {
-//			Utils.addMessage( "aon_employee_calendar_creation_exception", true );
-//            throw new AbortProcessingException(e.getMessage(), e);
-//		}
 	}
 
 	@SuppressWarnings("unused")
@@ -367,78 +347,12 @@ public class EmployeeController extends BasicController {
     		Criteria criteria = new Criteria();
     		criteria.addEqualExpression(geoZoneBean.getFieldName(IGeoZoneAlias.GEO_ZONE_ID), event.getNewValue());
     		Iterator iter = geoZoneBean.getList(criteria).iterator();
+        	IController addressController = AonUtil.getController( EmployeeAddressController.MANAGER_BEAN_NAME );
     		if(iter.hasNext()){
-    			((RegistryAddress)AonUtil.getController(EMPLOYEE_ADDRESS_CONTROLLER_NAME).getTo()).setGeozone((GeoZone)iter.next());
+    			( (RegistryAddress) addressController.getTo() ).setGeozone((GeoZone)iter.next());
     		}
     	}
     }
-
-//	public void onSchedule(ActionEvent event) throws CalendarException, ManagerBeanException {
-//		PlannerController planner = ControllerUtil.getPlannerController();
-//		CalendarScheduleModel csm = getCalendarScheduleModel();
-//		csm.setMode( ScheduleModel.WEEK );
-//		planner.setMode( ScheduleModel.WEEK );
-//		planner.setDate( new Date() );
-//		planner.setScheduleModel(csm);
-//		Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
-//		LinkedList<SelectItem> categories = new LinkedList<SelectItem>();
-//		for (int i = 0; i < EventCategory.values().length; i++) {
-//			if ( EventCategory.values()[i] != null 
-//					&& EventCategory.values()[i] != EventCategory.WORK 
-//					&& EventCategory.values()[i] != EventCategory.INCIDENCE) {
-//				String name = EventCategory.values()[i].getName(locale);
-//				SelectItem si = new SelectItem( EventCategory.values()[i], name );
-//				categories.add(si);
-//			}
-//		}
-//		planner.setCategories(categories);
-//		planner.setOutcome( MANAGER_BEAN_NAME );
-//		planner.setSpreadable( false );
-//		planner.setEvents( new ListDataModel( new ArrayList<ScheduleEntry>() ) );
-//		ControllerUtil.getWorkingTime().initialize( this.calendar, ( (Employee) getTo() ).getAgreementTime() );
-//		ControllerUtil.getIncidences().initialize( this.resource, false );
-//	}
-//
-//    /**
-//     * Return Employee schedule model.
-//     * 
-//     * @return
-//     * @throws CalendarException 
-//     * @throws ManagerBeanException 
-//     * @throws ExpressionException 
-//     */
-//	public CalendarScheduleModel getCalendarScheduleModel() throws CalendarException, ManagerBeanException {
-//		Employee employee = (Employee) getTo();
-//		if ( employee.getCalendar() == null ) {
-//			CalendarManagerBean cmb = ControllerUtil.getCalendarManagerBean();
-//			Resource r = (Resource) this.resource;
-//			if ( r.getWorkActivity() != null ) {
-////	Ask for working activity calendar, if not exist creates it and returns to the employee.
-//				WorkActivityController wac = 
-//					(WorkActivityController) AonUtil.getController( WorkActivityController.MANAGER_BEAN_NAME );
-//				AonCalendar waCalendar = 
-//					wac.getCalendarScheduleModel( r.getWorkActivity() ).getCalendar();
-//				this.calendar = cmb.cloneCalendar( waCalendar );
-//			} else {
-////	Ask for working place calendar, if not exist creates it and returns to the employee.
-//				WorkPlaceController wpc = 
-//					(WorkPlaceController) AonUtil.getController( WorkPlaceController.MANAGER_BEAN_NAME );
-//				AonCalendar wpCalendar = 
-//					wpc.getCalendarScheduleModel( r.getWorkPlace() ).getCalendar();
-//				this.calendar = cmb.cloneCalendar( wpCalendar );
-//			}
-//			String description = 
-//				employee.getRegistry().getName() + " " + employee.getRegistry().getSurname(); 
-//			this.calendar.setDescription( description );
-//			this.calendar.setAddSpreadEventAllowed( true );
-//			cmb.updateCalendar( this.calendar );
-//			employee.setCalendar( this.calendar.getPrimaryKey() );
-//			update();
-//		} else {
-//			this.calendar = CalendarHelper.getCalendar( employee.getCalendar() );
-//		}
-//        return new CalendarScheduleModel( this.calendar );
-//	}
 
 	@SuppressWarnings("unchecked")
 	@Override

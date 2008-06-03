@@ -14,14 +14,15 @@ import com.code.aon.ui.util.AonUtil;
 import com.code.aon.ui.employee.controller.EmployeeController;
 
 /**
+ * The listener class for receiving tracking events. 
+ * 
  * @author Consulting & Development. Iñaki Ayerbe - 24/08/2007
  *
  */
 public class TrackingControllerListener extends ControllerAdapter {
 
-	/* (non-Javadoc)
-	 * @see com.code.aon.ui.form.event.ControllerAdapter#beforeBeanAdded(com.code.aon.ui.form.event.ControllerEvent)
-	 */
+	private static final long serialVersionUID = -4815046216687687708L;
+
 	@Override
 	public void beforeBeanAdded(ControllerEvent event) throws ControllerListenerException {
 		EmployeeController ec = 

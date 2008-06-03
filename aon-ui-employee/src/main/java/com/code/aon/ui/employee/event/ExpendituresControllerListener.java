@@ -20,14 +20,15 @@ import com.code.aon.ui.form.event.ControllerListenerException;
 import com.code.aon.ui.util.AonUtil;
 
 /**
- * @author Consulting & Development. Iñaki Ayerbe - 31/08/2007
+ * The listener class for receiving expenditures events. 
+ * 
+ * @author iayerbe
  *
  */
 public class ExpendituresControllerListener extends ControllerAdapter {
 
-	/* (non-Javadoc)
-	 * @see com.code.aon.ui.form.event.ControllerAdapter#beforeBeanAdded(com.code.aon.ui.form.event.ControllerEvent)
-	 */
+	private static final long serialVersionUID = -5438237066694446245L;
+
 	@Override
 	public void beforeBeanAdded(ControllerEvent event) throws ControllerListenerException {
 		ExpendituresController ec = (ExpendituresController) event.getController();
@@ -41,9 +42,6 @@ public class ExpendituresControllerListener extends ControllerAdapter {
 		e.setResource( ec.getResource().getId() );
 	}
 
-	/* (non-Javadoc)
-	 * @see com.code.aon.ui.form.event.ControllerAdapter#beforeBeanUpdated(com.code.aon.ui.form.event.ControllerEvent)
-	 */
 	@Override
 	public void beforeBeanUpdated(ControllerEvent event) throws ControllerListenerException {
 		ExpendituresController ec = (ExpendituresController) event.getController();
@@ -56,18 +54,12 @@ public class ExpendituresControllerListener extends ControllerAdapter {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see com.code.aon.ui.form.event.ControllerAdapter#afterBeanAdded(com.code.aon.ui.form.event.ControllerEvent)
-	 */
 	@Override
 	public void afterBeanAdded(ControllerEvent event) throws ControllerListenerException {
 		ExpendituresController ec = (ExpendituresController) event.getController();
 		loadItem( (Expenditures) ec.getTo() );
 	}
 
-	/* (non-Javadoc)
-	 * @see com.code.aon.ui.form.event.ControllerAdapter#afterBeanUpdated(com.code.aon.ui.form.event.ControllerEvent)
-	 */
 	@Override
 	public void afterBeanUpdated(ControllerEvent event) throws ControllerListenerException {
 		ExpendituresController ec = (ExpendituresController) event.getController();

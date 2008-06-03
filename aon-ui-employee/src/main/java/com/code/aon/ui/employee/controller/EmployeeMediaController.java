@@ -1,30 +1,27 @@
 package com.code.aon.ui.employee.controller;
 
-import javax.faces.context.FacesContext;
-import javax.faces.el.ValueBinding;
 import javax.faces.event.ActionEvent;
 
 import com.code.aon.ui.form.BasicController;
+import com.code.aon.ui.form.IController;
+import com.code.aon.ui.util.AonUtil;
 
 public class EmployeeMediaController extends BasicController {
 	
-    @Override
-    public void onReset(ActionEvent event) {
-        FacesContext ctx = FacesContext.getCurrentInstance();
-        ValueBinding vb = ctx.getApplication().createValueBinding("#{employeeAddress}");
-        BasicController addressController = (BasicController)vb.getValue(ctx);
-        addressController.onCancel(event);
+	private static final long serialVersionUID = -6505795941584003674L;
+	static final String MANAGER_BEAN_NAME = "employeeMedia";
 
+	@Override
+    public void onReset(ActionEvent event) {
+        IController addressController = AonUtil.getController( EmployeeAddressController.MANAGER_BEAN_NAME );
+        addressController.onCancel(event);
         super.onReset(event);
     }
 
     @Override
     public void onSelect(ActionEvent event) {
-        FacesContext ctx = FacesContext.getCurrentInstance();
-        ValueBinding vb = ctx.getApplication().createValueBinding("#{employeeAddress}");
-        BasicController addressController = (BasicController)vb.getValue(ctx);
+        IController addressController = AonUtil.getController( EmployeeAddressController.MANAGER_BEAN_NAME );
         addressController.onCancel(event); 
-
         super.onSelect(event);
     }
 

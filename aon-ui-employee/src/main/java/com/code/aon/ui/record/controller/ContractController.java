@@ -1,6 +1,7 @@
 package com.code.aon.ui.record.controller;
 
 import java.util.Iterator;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -13,6 +14,7 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.company.dao.ICompanyAlias;
 import com.code.aon.company.resources.Employee;
 import com.code.aon.ql.Criteria;
+import com.code.aon.record.Contract;
 import com.code.aon.record.Course;
 import com.code.aon.record.Position;
 import com.code.aon.record.Work;
@@ -21,13 +23,23 @@ import com.code.aon.registry.Registry;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.util.AonUtil;
 
+/**
+ * This class manages employee contracts.
+ * 
+ * @author iayerbe
+ *
+ */
 public class ContractController extends BasicController {
 	
+	private static final long serialVersionUID = -6879321358994217799L;
+
 	public static final String MANAGER_BEAN_NAME = "contract";
 
 	private Logger LOGGER = Logger.getLogger(ContractController.class.getName());
 	
 	private Employee employee;
+	/** Tells if the application user can add a new contract. */
+	private boolean newContractAllowed;
 	
 	public Employee getEmployee() {
 		return employee;
@@ -37,18 +49,31 @@ public class ContractController extends BasicController {
 		this.employee = employee;
 	}
 
+	public boolean isNewContractAllowed() {
+		return newContractAllowed;
+	}
+
+	@SuppressWarnings("unchecked")
 	public void employeeChanged(ValueChangeEvent event) throws ManagerBeanException{
-		if(event.getNewValue() != null){
+		if(event != null && event.getNewValue() != null){
 			this.setEmployee(obtainEmployee(event.getNewValue()));
 		}
 		if(this.getEmployee().getId() != null){
 			Criteria criteria = new Criteria();
 			criteria.addEqualExpression(getManagerBean().getFieldName(IRecordAlias.CONTRACT_EMPLOYEE_ID), getEmployee().getId());
 			setCriteria(criteria);
-			this.onSearch(null);
+			onSearch(null);
+			List l = (List) getModel().getWrappedData();
+			if ( l.size() > 0 ) {
+				Contract c = (Contract) l.get( getModel().getRowCount() - 1 );
+				newContractAllowed = ( c.getEndingDate() != null )? true: false;
+			} else {
+				newContractAllowed = true;
+			}
 		}
 	}
 
+	@SuppressWarnings("unchecked")
 	private Employee obtainEmployee(Object value) {
 		Employee employee;
 		try {
