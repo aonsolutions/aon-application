@@ -7,7 +7,6 @@ import com.code.aon.common.enumeration.IResourceable;
 
 
 /**
- * Enumeración para identificar los diferentes títulos académicos.
  * 
  * @author Consulting & Development. Iñaki Ayerbe - 16-nov-2006
  * @version 1.0

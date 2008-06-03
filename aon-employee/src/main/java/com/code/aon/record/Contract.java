@@ -18,34 +18,24 @@ import com.code.aon.record.enumeration.ContractType;
 @Table(name="lh_contract")
 public class Contract implements ITransferObject {
 	
-	/**
-	 * Identificador único
-	 */
+	private static final long serialVersionUID = -6365401274115311112L;
+
+	/** Identifier */
 	private Integer id;
 	
-	/**
-	 * Empleado
-	 */
+	/** Employee */
 	private Employee employee;
 	
-	/**
-	 * Fecha inicio
-	 */
+	/** Starting date */
 	private Date startingDate;
 	
-	/**
-	 * Fecha fin
-	 */
+	/** Ending date */
 	private Date endingDate;
 	
-	/**
-	 * Tipo de contrato
-	 */
+	/** Contract type */
 	private ContractType contractType;
 	
-	/**
-	 * Salario bruto
-	 */
+	/** Gross salary */
 	private double grossSalary;
 
 	@Id
@@ -104,4 +94,5 @@ public class Contract implements ITransferObject {
 	public void setGrossSalary(double grossSalary) {
 		this.grossSalary = grossSalary;
 	}
+
 }
