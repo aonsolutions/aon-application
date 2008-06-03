@@ -21,8 +21,8 @@
 	<aon:div styleClass="aon-dataScroller" rendered="#{rowCount>0}">					
 	    <aon:panelGrid columns="2" styleClass="aon-panelGrid-formatting" style="width:auto;">
 			<c:if test="#{page != null}">
-				<aon:dataPaginator for="#{dataTable}" rowsCountVar="rowsCount"
-					firstRowIndexVar="firstRowIndex" lastRowIndexVar="lastRowIndex"
+				<aon:dataPaginator for="#{dataTable}" id="#{dataTable}PaginatorInfo"
+					rowsCountVar="rowsCount" firstRowIndexVar="firstRowIndex" lastRowIndexVar="lastRowIndex"
 					styleClass="aon-dataScroller-text" page="#{page}">
 					<f:facet name="pages">
 						<h:outputFormat value="#{bundle.aon_scroll}">
@@ -35,12 +35,13 @@
 				<aon:div>
 					<aon:dataPaginator for="#{dataTable}" fastStep="5" paginator="true"
 						paginatorMaxPages="5" rendered="#{pageSize != 0 and (rowCount > pageSize)}"
-						styleClass="aon-dataScroller-buttons" page="#{page}"/>
+						styleClass="aon-dataScroller-buttons" reRender="#{dataTable}PaginatorInfo" 
+						page="#{page}"/>
 				</aon:div>
 			</c:if>		
 			<c:if test="#{page == null}">
-				<aon:dataPaginator for="#{dataTable}" rowsCountVar="rowsCount"
-					firstRowIndexVar="firstRowIndex" lastRowIndexVar="lastRowIndex"
+				<aon:dataPaginator for="#{dataTable}" id="#{dataTable}PaginatorInfo"
+					rowsCountVar="rowsCount" firstRowIndexVar="firstRowIndex" lastRowIndexVar="lastRowIndex"
 					styleClass="aon-dataScroller-text">
 					<f:facet name="pages">
 						<h:outputFormat value="#{bundle.aon_scroll}">
@@ -53,7 +54,7 @@
 				<aon:div>
 					<aon:dataPaginator for="#{dataTable}" fastStep="5" paginator="true"
 						paginatorMaxPages="5" rendered="#{pageSize != 0 and (rowCount > pageSize)}"
-						styleClass="aon-dataScroller-buttons" />
+						styleClass="aon-dataScroller-buttons" reRender="#{dataTable}PaginatorInfo"/>
 				</aon:div>
 			</c:if>		
 		</aon:panelGrid>	
