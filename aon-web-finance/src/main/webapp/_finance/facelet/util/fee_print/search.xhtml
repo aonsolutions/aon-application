@@ -80,12 +80,22 @@
 							
 							<h:outputLabel for="Customer_status"
 								styleClass="aon-form-input-text-label"
-								value="#{financeBundle.finance_checking_customer_status}" />
+								value="#{financeBundle.finance_fee_status}" />
 							<h:selectOneMenu id="Customer_status"
 								styleClass="aon-form-selectOneMenu-field"
 								value="#{feePrint.customerStatus}">
 								<f:selectItem itemValue="" itemLabel="-" itemDisabled="true" /> 
 								<f:selectItems value="#{customerCollections.customerStatuses}" />
+							</h:selectOneMenu>
+
+							<h:outputLabel for="Customer_scope_id"
+								styleClass="aon-form-input-text-label"
+								value="#{financeBundle.finance_fee_scope}" />
+							<h:selectOneMenu id="Customer_scope_id"
+								styleClass="aon-form-selectOneMenu-field"
+								value="#{feePrint.customerScopeId}">
+								<f:selectItem itemValue="" itemLabel="-" itemDisabled="true" /> 
+								<f:selectItems value="#{configCollections.currentUserScopes}" />
 							</h:selectOneMenu>
 
 					</h:panelGrid>
