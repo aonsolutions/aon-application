@@ -50,8 +50,6 @@ import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
 import com.code.aon.ui.menu.jsf.MenuEvent;
-import com.code.aon.ui.planner.CalendarManagerBean;
-import com.code.aon.ui.planner.ControllerUtil;
 import com.code.aon.ui.planner.core.Event;
 import com.code.aon.ui.planner.util.PlannerUtil;
 
@@ -60,6 +58,8 @@ import com.code.aon.ui.planner.util.PlannerUtil;
  *
  */
 public class IncidencesController extends BasicController {
+
+	private static final long serialVersionUID = -6796699215123511620L;
 
 	public static final String MANAGER_BEAN_NAME = "incidences";
 
@@ -316,6 +316,7 @@ public class IncidencesController extends BasicController {
 	 * 
 	 * @param id
 	 */
+	@SuppressWarnings("unchecked")
 	public void setSelected(String id) {
 		List l = (List) super.model.getWrappedData();
 		for (int i = 0; i < l.size(); i++) {
@@ -515,6 +516,7 @@ public class IncidencesController extends BasicController {
 	/* (non-Javadoc)
 	 * @see com.code.aon.ui.form.BasicController#initializeModel()
 	 */
+	@SuppressWarnings("unchecked")
 	@Override
 	public void initializeModel() {
 		try {
@@ -553,6 +555,7 @@ public class IncidencesController extends BasicController {
 	 * 
 	 * @throws CalendarException
 	 */
+	@SuppressWarnings("unchecked")
 	public void findStartTime() throws CalendarException {
     	CalendarManagerBean cmb = ControllerUtil.getCalendarManagerBean();
 		AonCalendar aonCalendar = cmb.getCalendar( this.resource.getCalendar() );
@@ -578,7 +581,8 @@ public class IncidencesController extends BasicController {
 	/**
 	 * Finds current resource working end time. 
 	 */
-    private void findEndTime() {
+	@SuppressWarnings("unchecked")
+	private void findEndTime() {
     	CalendarManagerBean cmb = ControllerUtil.getCalendarManagerBean();
 		AonCalendar aonCalendar = cmb.getCalendar( this.resource.getCalendar() );
 		ComponentList cl = aonCalendar.getVEvents(EventCategory.WORK);
@@ -619,6 +623,7 @@ public class IncidencesController extends BasicController {
      * @return
      * @throws ManagerBeanException 
      */
+	@SuppressWarnings("unchecked")
 	private VEvent createVEvent() throws ManagerBeanException {
 		IManagerBean bean = BeanManager.getManagerBean( IncidenceType.class );
 		Criteria criteria = new Criteria();
@@ -645,6 +650,9 @@ public class IncidencesController extends BasicController {
 			c.set( Calendar.MINUTE, this.minute );
 			net.fortuna.ical4j.model.Date start = 
 				CalendarUtil.getICalDateTime( c.getTime(), false );
+			if ( !isFrecuency() ) { 
+				( (Event) event ).setEndTime( event.getStartTime() );
+			}
 			if ( event.getEndTime().after( event.getStartTime() ) ) { 
 				net.fortuna.ical4j.model.Date end = 
 					CalendarUtil.getICalDateTime( event.getEndTime(), false);
