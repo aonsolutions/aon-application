@@ -2,6 +2,7 @@ package com.code.aon.ui.cms.event;
 
 import java.util.List;
 
+import com.code.aon.cms.Section;
 import com.code.aon.cms.Sidebar;
 import com.code.aon.cms.dao.ICMSAlias;
 import com.code.aon.common.BeanManager;
@@ -71,4 +72,34 @@ public class SidebarControllerListener extends ControllerAdapter {
 			throw new ControllerListenerException(e);
 		}
 	}
+	
+	@Override
+	public void beforeBeanRemoved(ControllerEvent event)
+			throws ControllerListenerException {
+		SidebarController controller = (SidebarController)event.getController();
+		Sidebar sidebar = (Sidebar)controller.getTo();
+		try {
+			boolean dependences = false;
+			String dependences_msg = "DEPENDENCES TO REMOVE. ";
+			
+			IManagerBean bean = BeanManager.getManagerBean(Section.class);
+			Criteria criteria = new Criteria();
+			criteria.addEqualExpression(bean.getFieldName(ICMSAlias.SECTION_SIDEBAR_ID),sidebar.getId());
+			List<ITransferObject> list = (List<ITransferObject>)bean.getList(criteria);
+			for (int i = 0; i < list.size(); i++) {
+				dependences = true;
+				Section section = (Section)list.get(i);
+				int id = section.getId();
+				String name = section.getAlias();
+				dependences_msg += "Section "+id+"-"+name+"; ";
+			}
+			
+			if (dependences){
+				throw new ControllerListenerException(dependences_msg);
+			}
+		} catch (ManagerBeanException e) {
+			throw new ControllerListenerException(e);
+		}
+	}
+
 }

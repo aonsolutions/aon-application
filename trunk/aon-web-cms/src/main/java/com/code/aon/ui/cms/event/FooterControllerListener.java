@@ -3,6 +3,7 @@ package com.code.aon.ui.cms.event;
 import java.util.List;
 
 import com.code.aon.cms.Footer;
+import com.code.aon.cms.Section;
 import com.code.aon.cms.dao.ICMSAlias;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
@@ -70,6 +71,35 @@ public class FooterControllerListener extends ControllerAdapter {
 			e.printStackTrace();
 		} catch (ExpressionException e) {
 			e.printStackTrace();
+		}
+	}
+
+	@Override
+	public void beforeBeanRemoved(ControllerEvent event)
+			throws ControllerListenerException {
+		FooterController controller = (FooterController)event.getController();
+		Footer footer  = (Footer)controller.getTo();
+		try {
+			boolean dependences = false;
+			String dependences_msg = "DEPENDENCES TO REMOVE. ";
+			
+			IManagerBean bean = BeanManager.getManagerBean(Section.class);
+			Criteria criteria = new Criteria();
+			criteria.addEqualExpression(bean.getFieldName(ICMSAlias.SECTION_FOOTER_ID),footer.getId());
+			List<ITransferObject> list = (List<ITransferObject>)bean.getList(criteria);
+			for (int i = 0; i < list.size(); i++) {
+				dependences = true;
+				Section section = (Section)list.get(i);
+				int id = section.getId();
+				String name = section.getAlias();
+				dependences_msg += "Section "+id+"-"+name+"; ";
+			}
+			
+			if (dependences){
+				throw new ControllerListenerException(dependences_msg);
+			}
+		} catch (ManagerBeanException e) {
+			throw new ControllerListenerException(e);
 		}
 	}
 
