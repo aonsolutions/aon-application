@@ -2,7 +2,11 @@ package com.code.aon.ui.webmail.bean;
 
 public interface IMimeType {
 
+	String IMAGE_ANY = "image/*";
+	
 	String APPLICATION_ANY = "application/*";
+	
+	String APPLICATION_APPLEFILE = "application/applefile";
 
 	String MULTIPART_ANY = "multipart/*";
 	
@@ -17,6 +21,8 @@ public interface IMimeType {
 	String TEXT_PLAIN = "text/plain";
 
 	String TEXT_HTML = "text/html";
+	
+	String MESSAGE_ANY = "message/*";
 	
 	String MESSAGE_RFC822 = "message/rfc822";
 	
