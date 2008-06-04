@@ -4,7 +4,9 @@ import java.util.Date;
 
 import javax.faces.event.AbortProcessingException;
 
+import com.code.aon.common.BeanManager;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.company.resources.Employee;
 import com.code.aon.record.Contract;
 import com.code.aon.ui.employee.controller.EmployeeController;
 import com.code.aon.ui.employee.util.Utils;
@@ -58,8 +60,18 @@ public class EmployeeContractListener extends ControllerAdapter {
 		EmployeeController ec = 
 			(EmployeeController) AonUtil.getController( EmployeeController.MANAGER_BEAN_NAME );
 		ec.setResourceDirty( true );
-		ec.getEmployee().setActive( true );
-		ec.onAccept( null );
+		try {
+			ec.getEmployee().setActive( true );
+			ContractController cc = (ContractController) event.getController();
+		//	Checks if the user is creating a new Employee or adding a new contract to an existing one.
+			if ( cc.getModel().getRowCount() > 0 ) {
+				ec.onAccept( null );
+			} else {
+				BeanManager.getManagerBean( Employee.class ).update( ec.getEmployee() );
+			}
+		} catch (ManagerBeanException ex) {
+			throw new ControllerListenerException( ex );
+		}
 	}
 
 	/**
