@@ -43,7 +43,7 @@ public class AttachController {
 		List<SelectItem> types = new LinkedList<SelectItem>();
 		for (AonAttachment aonAttachment : getAttachments()) {
 			String name = aonAttachment.getFileName()+" ("+aonAttachment.getFileSize()+")";
-			types.add(new SelectItem(aonAttachment.getPosition()-1, name));
+			types.add(new SelectItem(aonAttachment.getPosition(), name));
 		}
 		return types;
 	}
