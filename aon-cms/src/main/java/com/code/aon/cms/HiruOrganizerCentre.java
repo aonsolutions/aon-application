@@ -32,8 +32,6 @@ public class HiruOrganizerCentre implements ITransferObject {
 	
 	private String locality;
 	
-	private String feed; 	
-	
 	@Id
 	@GeneratedValue
 	@Column(nullable=false)
