@@ -2,8 +2,6 @@ package com.code.aon.ui.cms.event;
 
 import java.util.List;
 
-import javax.faces.model.SelectItem;
-
 import com.code.aon.cms.Footer;
 import com.code.aon.cms.Header;
 import com.code.aon.cms.Menu;
