@@ -61,6 +61,10 @@ import com.sun.mail.util.LineOutputStream;
 
 public class MessageController implements AonConstants, IAonFileListener {
 
+	private static final String REPLIED_MESSAGE = "aon_webmail_replied_message";
+
+	private static final String FORWARDED_MESSAGE = "aon_webmail_forwarded_message";
+
 	private static final Logger LOGGER = Logger.getLogger(MessageController.class.getName());
 	
 	private AonMessage message;
@@ -102,6 +106,8 @@ public class MessageController implements AonConstants, IAonFileListener {
 	public void setMessage(AonMessage message) {
 		this.message = message;
 		afterSetMessage();
+		AttachController attachController = (AttachController) AonUtil.getRegisteredBean(BEAN_ATTACH);
+		attachController.update(this.message);
 	}
 
 
@@ -163,11 +169,12 @@ public class MessageController implements AonConstants, IAonFileListener {
 		try {
 			recipientsTo = AonMessage.parseDisplayAddress(message.getSender());
 	       	subject = "Reply: "+message.getSubject();
-	       	messageBody = "<br/>---------- Replied message ----------" +
-	       		"<br/>From: " + message.getSender() + "<br/>Date: " + message.getSentDate() +
-	       		"<br/>Subject: " + message.getSubject() + "<br/><br/><br/>" + message.getContent();
+	       	messageBody = AonMessage.getMessageEnvelope(message.getMessage(), message.getContent(), REPLIED_MESSAGE);
 	       	content += messageBody;
 		} catch (WebmailException e) {
+    		AonUtil.addErrorMessage(e.getMessage());
+    		throw new AbortProcessingException(e);
+		} catch (MessagingException e) {
     		AonUtil.addErrorMessage(e.getMessage());
     		throw new AbortProcessingException(e);
 		}
@@ -182,13 +189,14 @@ public class MessageController implements AonConstants, IAonFileListener {
 	       	dest += message.getRecipientsCc()+AonMessageUtils.EMAIL_SEPARATOR;
 			recipientsTo = AonMessage.parseDisplayAddress(dest);
 	       	subject = "ReplyALL: "+message.getSubject();
-	       	messageBody = "<br/>---------- Replied message ----------" +
-       			"<br/>From: " + message.getSender() + "<br/>Date: " + message.getSentDate() +
-       			"<br/>Subject: " + message.getSubject() + "<br/><br/><br/>" + message.getContent();
+	       	messageBody = AonMessage.getMessageEnvelope(message.getMessage(), message.getContent(), REPLIED_MESSAGE);
 	       	content += messageBody;
 		} catch (WebmailException e) {
 			AonUtil.addErrorMessage(e.getMessage());
 			throw new AbortProcessingException(e);
+		} catch (MessagingException e) {
+    		AonUtil.addErrorMessage(e.getMessage());
+    		throw new AbortProcessingException(e);			
 		}
     }
 	
@@ -235,13 +243,14 @@ public class MessageController implements AonConstants, IAonFileListener {
 		try {
 			copyAttachmentsToFileList( message );
 	       	subject = "Fwd: "+message.getSubject();
-	       	messageBody = "<br/>---------- Forwarded message ----------" +
-	       		"<br/>From: " + message.getSender() + "<br/>Date: " + message.getSentDate() +
-	       		"<br/>Subject: " + message.getSubject() + "<br/><br/><br/>" + message.getContent();
+	       	messageBody = AonMessage.getMessageEnvelope(message.getMessage(), message.getContent(), FORWARDED_MESSAGE);
 	       	content += messageBody;
 		} catch (WebmailException e) {
 			AonUtil.addErrorMessage(e.getMessage());
 			throw new AbortProcessingException(e);
+		} catch (MessagingException e) {
+    		AonUtil.addErrorMessage(e.getMessage());
+    		throw new AbortProcessingException(e);			
 		}
     }
 
