@@ -64,11 +64,7 @@
 			<value>/__theme_images/html/aon-home.jpg</value>
 		</managed-property>
 		<managed-property>
-			<property-name>style</property-name>
-			<value>richCss</value>
-		</managed-property>
-		<managed-property>
-			<property-name>userStyleSheets</property-name>
+			<property-name>styleSheets</property-name>
 			<list-entries>
 				<value>/aonResource/aon-richCss.css</value>
 				<value>/css/webmail.css</value>
