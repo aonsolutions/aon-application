@@ -66,8 +66,8 @@
 				<aon:commandButton
 					id="deleteButton"
 					title="#{appBundle.aon_webmail_deletemail}"
-					action="#{message.getDeleteReturnAction}"
-					actionListener="#{message.deleteSelectedMessageAndMove}"
+					action="#{message.getReturnAction}"
+					actionListener="#{message.deleteSelectedMessage}"
 					value="#{appBundle.aon_webmail_deletemail}"
 					styleClass="aon-finding-toolbar-item aon-icon-mailDelete">
 				</aon:commandButton>									
