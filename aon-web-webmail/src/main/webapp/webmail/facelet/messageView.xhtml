@@ -257,14 +257,10 @@
 						<aon:panelGroup styleClass="aon-icon aon-icon-attach">
 						
 							<aon:selectOneMenu 
-								id="attach"
+								id="attach" reRender="download"
 								style="font-size: 0.9em;boder: #000 1px solid;"
 								styleClass="aon-inputText"
 								value="#{attach.attachPos}">
-								<a4j:support id="attachAjaxSupport" 
-									event="onchange" 
-									action="message"
-									 /> 
 								<f:selectItems value="#{attach.attachmentsDrop}" />
 							</aon:selectOneMenu> 
 							
