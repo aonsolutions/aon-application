@@ -6,7 +6,6 @@ import java.util.List;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
-import com.code.aon.company.resources.Employee;
 import com.code.aon.ql.Criteria;
 import com.code.aon.record.Contract;
 import com.code.aon.record.dao.IRecordAlias;
@@ -39,12 +38,6 @@ public class EmployeeListener extends ControllerAdapter {
 		c.setStartingDate( new Date() );
 		c.setContractType( ContractType.SERVICE_CONTRACT );
 		cc.onAccept( null );
-		try {
-			cc.getEmployee().setActive( true );
-			BeanManager.getManagerBean( Employee.class ).update( ec.getEmployee() );
-		} catch (ManagerBeanException ex) {
-			throw new ControllerListenerException( ex );
-		}
 	}
 
 	@SuppressWarnings("unchecked")
