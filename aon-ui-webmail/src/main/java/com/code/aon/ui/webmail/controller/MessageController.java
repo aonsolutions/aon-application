@@ -125,16 +125,6 @@ public class MessageController implements AonConstants, IAonFileListener {
 	}
 
 	/**
-	 * @return the returnAction
-	 */
-	public String getDeleteReturnAction() {
-		if (! ArrayUtils.isEmpty(getMessageList()) ) {
-			return NAVIGATION_MESSAGE;
-		}
-		return returnAction;
-	}
-
-	/**
 	 * @param returnAction the returnAction to set
 	 */
 	public void setReturnAction(String returnAction) {
@@ -271,17 +261,6 @@ public class MessageController implements AonConstants, IAonFileListener {
 			throw new AbortProcessingException(e);
 		}
 	}
-
-    public void deleteSelectedMessageAndMove(ActionEvent event){
-    	AonMessage message = null; 
-    	if(isNextMessage()){
-    		message = getNextMessage();
-    	}else if (isPreviousMessage()){
-    		message = getPreviousMessage();
-    	}
-    	deleteSelectedMessage(event);
-    	setMessage(message);
-    }
 
     public List<AonFile> getFiles(){
     	return newMsgFileList;
