@@ -250,12 +250,11 @@
 						<aon:outputText value="#{message.message.sentDateString}" />
 					</aon:div>
 				
-					<aon:outputText 
+					<aon:outputText rendered="#{attach.attachment}" 
 						styleClass="aon-form-input-text-label aon-nowrap"
 						value="#{appBundle.aon_webmail_attach_files}: " />
-					<aon:div>
-						<aon:outputText value="&#160;" />
-						<aon:panelGroup rendered="#{attach.attachment}" styleClass="aon-icon aon-icon-attach">
+					<aon:div rendered="#{attach.attachment}">
+						<aon:panelGroup styleClass="aon-icon aon-icon-attach">
 						
 							<aon:selectOneMenu 
 								id="attach"
