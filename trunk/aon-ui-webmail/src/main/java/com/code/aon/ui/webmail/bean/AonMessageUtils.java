@@ -41,12 +41,12 @@ public class AonMessageUtils {
 	 *            content
 	 * @return message content between html tags.
 	 */
-	public static StringBuffer extractBodyInnerHTML(StringBuffer content) {
-		StringBuffer match = new StringBuffer();
+	public static String extractBodyInnerHTML(String content) {
+		String match = null;
 		try {
 			Matcher bodyPatternMatcher = BODY_PATTERN.matcher(content);
 			if (bodyPatternMatcher.find()) {
-				match.append(bodyPatternMatcher.group(1));
+				match = bodyPatternMatcher.group(1);
 			} else {
 				return content;
 			}
@@ -124,8 +124,8 @@ public class AonMessageUtils {
 		return textRplc;
     }
 
-    public static List getAllCid(String content){
-    	List cids = new ArrayList();
+    public static List<String> getAllCid(String content) {
+    	List<String> cids = new ArrayList<String>();
 		Matcher tagMatcher = UNDO_CID_PATTERN.matcher(content);
 		while(tagMatcher.find()){
 			String text = tagMatcher.group();
