@@ -10,7 +10,6 @@ A4J.AJAX.onError = function(req,status,message) {
 	try {
 		var status_error = document.getElementById("status_error");
 		if ( status_error ) {
-			status_error.className = "aon-outputConnectionStatus-failed"
 			status_error.style.display = "block";
 		} else {
 			alert( "Connection Error: " + message );
@@ -19,4 +18,15 @@ A4J.AJAX.onError = function(req,status,message) {
 		alert( e );
 	}	
 };
+
+function resetStatusError() {
+	try {
+		var status_error = document.getElementById("status_error");
+		if ( status_error ) {
+			status_error.style.display = "none";
+		}
+	} catch(e) {
+		alert( e );
+	}
+}
 
