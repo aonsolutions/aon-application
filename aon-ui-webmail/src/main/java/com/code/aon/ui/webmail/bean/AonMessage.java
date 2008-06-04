@@ -27,6 +27,7 @@ import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
 import javax.mail.search.SearchTerm;
 
+import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.lang.StringUtils;
 
 import com.code.aon.ui.util.AonUtil;
@@ -222,13 +223,18 @@ public class AonMessage implements IMimeType {
 		}
 	}
 
-	public String getSubjectShort() throws WebmailException{
-		String subject = getSubject();
-		if (subject==null)
-			subject = "";
-		if (subject.length()>50)
-			return subject.substring(0,50)+"...";
-		return subject.substring(0,subject.length());
+	private static String getDisplaySubject( Message message ) throws MessagingException {
+		String subject = message.getSubject();
+		return StringUtils.defaultString(StringEscapeUtils.escapeHtml(subject));
+	}
+	
+	public String getDisplaySubject() throws MessagingException {
+		return getDisplaySubject(message);
+	}
+	
+	public String getSubjectShort() throws WebmailException {
+		String subject = StringUtils.abbreviate( getSubject(), 50 );
+		return StringUtils.defaultString(StringEscapeUtils.escapeHtml(subject));
 	}
 
 	/**
@@ -247,7 +253,7 @@ public class AonMessage implements IMimeType {
 		}
 	}
 
-	public static String getSender( Message message ) throws MessagingException {
+	private static String getSender( Message message ) throws MessagingException {
 		Address[] addresses = message.getFrom();
 		if (addresses!=null && addresses.length>0){
 			InternetAddress tmpAddress = (InternetAddress) addresses[0];
@@ -372,7 +378,12 @@ public class AonMessage implements IMimeType {
 	 * @throws WebmailException 
 	 */
 	public String getRecipientsTo() throws WebmailException {
-		return getRecipient(MimeMessage.RecipientType.TO);
+		try {
+			return getRecipient(message, MimeMessage.RecipientType.TO);
+		} catch (MessagingException e) {
+			LOGGER.log(Level.ALL, "Error getting message recepients ", e);
+			throw new WebmailException(e);
+		}
 	}
 
 	public String getRecipientsToShort() throws WebmailException {
@@ -429,6 +440,10 @@ public class AonMessage implements IMimeType {
 	public void setRecipientsCc(String addresses) throws WebmailException {
 		setRecipients(addresses, MimeMessage.RecipientType.CC);
 	}
+
+	private static String getRecipientsCc( Message message ) throws MessagingException {
+		return getRecipient(message, MimeMessage.RecipientType.CC);
+	}
 	
 	/**
 	 * Gets the recipients specifiedy by the "CC" header.
@@ -438,7 +453,12 @@ public class AonMessage implements IMimeType {
 	 * @throws WebmailException 
 	 */
 	public String getRecipientsCc() throws WebmailException {
-		return getRecipient(MimeMessage.RecipientType.CC);
+		try {
+			return getRecipientsCc(message);
+		} catch (MessagingException e) {
+			LOGGER.log(Level.ALL, "Error getting message recepients ", e);
+			throw new WebmailException(e);
+		}
 	}
 
 	public void setRecipientsBcc(String addresses) throws WebmailException {
@@ -453,7 +473,12 @@ public class AonMessage implements IMimeType {
 	 * @throws WebmailException 
 	 */
 	public String getRecipientsBcc() throws WebmailException {
-		return getRecipient(MimeMessage.RecipientType.BCC);
+		try {
+			return getRecipient(message, MimeMessage.RecipientType.BCC);
+		} catch (MessagingException e) {
+			LOGGER.log(Level.ALL, "Error getting message recepients ", e);
+			throw new WebmailException(e);
+		}
 	}
 
 	/**
@@ -464,27 +489,24 @@ public class AonMessage implements IMimeType {
 	 *            javax.mail.Message.RecipientType
 	 * @return String representing the specified recipient. Empty string if no
 	 *         such reciepient is found.
+	 * @throws MessagingException 
 	 * @throws WebmailException 
 	 */
-	private String getRecipient(final javax.mail.Message.RecipientType type) throws WebmailException {
+	private static String getRecipient(Message message, RecipientType type) throws MessagingException {
 		StringBuffer recipients = new StringBuffer();
-		try {
-			Address[] addresses = message.getRecipients(type);
-			if (addresses != null && addresses.length > 0) {
-				// Write out the addres in the order they are found.
-				for (int i = 0; i < addresses.length; i++) {
-					recipients.append(getDisplayAddressFull(addresses[i]) + AonMessageUtils.EMAIL_SEPARATOR);
-				}
-				return recipients.substring(0, recipients.length() - 1)
-						.toString();
+		Address[] addresses = message.getRecipients(type);
+		if (addresses != null && addresses.length > 0) {
+			// Write out the addres in the order they are found.
+			for (int i = 0; i < addresses.length; i++) {
+				recipients.append(getDisplayAddressFull(addresses[i]) + AonMessageUtils.EMAIL_SEPARATOR);
 			}
-			return "";
-		} catch (MessagingException e) {
-			LOGGER.log(Level.ALL, "Error getting message recepients ", e);
-			throw new WebmailException(e);
+			return recipients.substring(0, recipients.length() - 1).toString();
 		}
+		return "";
 	}
 
+		
+		
 	/**
 	 * Set the "TO" recipient type to the given addresses. If the address
 	 * parameter is null, the corresponding recipient field is removed.
@@ -805,9 +827,15 @@ public class AonMessage implements IMimeType {
 			sb.append("----------").append( bundle.getString(headerId) ).append("----------");
 		}
 		sb.append( "<DIV style='BACKGROUND: #e4e4e4'>" );
-		sb.append( "<b>" ).append(bundle.getString("aon_webmail_from")).append(":</b> ").append( AonMessage.getSender(message) ).append( "</DIV>" );
+		String from = getSender(message);
+		sb.append( "<b>" ).append(bundle.getString("aon_webmail_from")).append(":</b> ").append(from).append( "</DIV>" );
 		sb.append( "<b>" ).append(bundle.getString("aon_webmail_date")).append(":</b> ").append( message.getSentDate() );
-		sb.append( "<br/><b>" ).append(bundle.getString("aon_webmail_subject")).append(":</b> ").append( message.getSubject() );
+		String cc = getRecipientsCc(message);
+		if (! StringUtils.isEmpty(cc) ) {
+			sb.append( "<br/><b>" ).append(bundle.getString("aon_webmail_cc")).append(":</b> ").append( cc );
+		}
+		String subject = getDisplaySubject(message);
+		sb.append( "<br/><b>" ).append(bundle.getString("aon_webmail_subject")).append(":</b> ").append( subject );
    		sb.append( "</font><br/><br/>" );
    		sb.append( content );
 		if ( headerId != null ) {
