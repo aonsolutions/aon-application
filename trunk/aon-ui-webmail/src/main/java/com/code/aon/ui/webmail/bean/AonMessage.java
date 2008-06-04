@@ -48,6 +48,8 @@ public class AonMessage implements IMimeType {
 	private AonMessageTracer amt;
 	
 	private boolean selected;
+	
+	private Boolean attachment;
 
 	public AonMessage(){
 	}
@@ -77,8 +79,9 @@ public class AonMessage implements IMimeType {
 		}
 
 		this.message = message;
-		amt = new AonMessageTracer();
-		amt.setMessage(message);
+		this.attachment = null;
+		this.amt = new AonMessageTracer();
+		this.amt.setMessage(message);
 	}
 
 	/**
@@ -545,6 +548,21 @@ public class AonMessage implements IMimeType {
 	//ATTACHMENTS
 	//**************************************************************************
 	//**************************************************************************
+	private boolean isAttachment( BodyPart part ) throws MessagingException {
+		boolean attachment = false;
+		String disposition = part.getDisposition();
+		if ( (disposition != null) ) {
+			if (disposition.equalsIgnoreCase(Part.ATTACHMENT) ) {
+				attachment = true;
+			} else if (part.getFileName() != null) {
+				if (! part.isMimeType(APPLICATION_APPLEFILE) ) {
+					attachment = part.isMimeType(IMAGE_ANY) || part.isMimeType(APPLICATION_ANY);	
+				}
+			}
+		}		
+		return attachment;
+	}
+	
 	public List<Part> getAttachmentParts( Part part ) throws MessagingException, IOException {
 		List<Part> parts = new ArrayList<Part>();
 		if ( part.isMimeType(MULTIPART_ANY) ) {
@@ -552,14 +570,27 @@ public class AonMessage implements IMimeType {
 			int numPart = mp.getCount();
 			for (int i = 0; i < numPart; i++) {
 				BodyPart bodyPart = mp.getBodyPart(i);
-				String disposition = bodyPart.getDisposition();
-				if ( (disposition != null) && (disposition.equalsIgnoreCase(Part.ATTACHMENT))) {
+				if ( isAttachment(bodyPart) ) {
 					parts.add( bodyPart );
 				}
 				parts.addAll( getAttachmentParts(bodyPart) );
 			}			
 		}
 		return parts;
+	}
+
+	public boolean hasAttachments( Part part ) throws MessagingException, IOException {
+		if ( part.isMimeType(MULTIPART_ANY) ) {
+			Multipart mp = (Multipart) part.getContent();
+			int numPart = mp.getCount();
+			for (int i = 0; i < numPart; i++) {
+				BodyPart bodyPart = mp.getBodyPart(i);
+				if ( isAttachment(bodyPart) || hasAttachments(bodyPart) ) {
+					return true;
+				}
+			}			
+		}
+		return false;
 	}
 	
 	public List<AonAttachment> getAttachements() throws WebmailException {
@@ -590,27 +621,16 @@ public class AonMessage implements IMimeType {
 	* Method for checking if the message has attachments.
 	*/
 	public boolean isAttachment() throws WebmailException {
-		boolean hasAttachments = false;
-		try {
-			if (message.isMimeType(MULTIPART_ANY)) {
-				Multipart mp = (Multipart)message.getContent();
-				if (message.isMimeType(MULTIPART_ALTERNATIVE)) {
-					if (mp.getCount() > 2) {
-						hasAttachments = true;
-					}
-				}	else {
-					if (mp.getCount() > 1) {
-						hasAttachments = true;
-					}
-				}
+		if ( this.attachment == null ) {
+			try {
+				this.attachment = hasAttachments( message );
+			} catch (Exception ex) {
+				LOGGER.log(Level.ALL, "Error determining if message has attachement", ex);
+				throw new WebmailException(ex);
 			}
-		} catch (Exception ex) {
-			LOGGER.log(Level.ALL, "Error determining if message has attachement", ex);
-			throw new WebmailException(ex);
 		}
-		return hasAttachments;
+		return this.attachment;
 	}
-
 
 	//**************************************************************************
 	//**************************************************************************
