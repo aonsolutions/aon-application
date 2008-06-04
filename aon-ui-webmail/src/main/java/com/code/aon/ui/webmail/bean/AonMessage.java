@@ -5,14 +5,17 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
+import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import javax.faces.event.ActionEvent;
 import javax.mail.Address;
+import javax.mail.BodyPart;
 import javax.mail.Flags;
 import javax.mail.Folder;
 import javax.mail.IllegalWriteException;
+import javax.mail.Message;
 import javax.mail.MessagingException;
 import javax.mail.Multipart;
 import javax.mail.Part;
@@ -27,10 +30,9 @@ import javax.mail.search.SearchTerm;
 import org.apache.commons.lang.StringUtils;
 
 import com.code.aon.ui.util.AonUtil;
-import com.code.aon.ui.webmail.controller.MessageController;
 import com.code.aon.ui.webmail.exception.WebmailException;
 
-public class AonMessage {
+public class AonMessage implements IMimeType {
 
 	private static final Logger LOGGER = Logger.getLogger(AonMessage.class
 			.getName());
@@ -242,20 +244,23 @@ public class AonMessage {
 		}
 	}
 
-	public String getSender() throws WebmailException {
-		Address[] addresses = null;
-		try {
-			addresses = message.getFrom();
-		} catch (MessagingException e) {
-			LOGGER.log(Level.ALL,"Can not recover address.",e);
-			throw new WebmailException(e);
-		}
+	public static String getSender( Message message ) throws MessagingException {
+		Address[] addresses = message.getFrom();
 		if (addresses!=null && addresses.length>0){
 			InternetAddress tmpAddress = (InternetAddress) addresses[0];
 			String sender = getDisplayAddressFull((Address)tmpAddress);
 			return sender;
 		}else{
 			return "";
+		}
+	}
+	
+	public String getSender() throws WebmailException {
+		try {
+			return getSender( message );
+		} catch (MessagingException e) {
+			LOGGER.log(Level.ALL,"Can not recover address.",e);
+			throw new WebmailException(e);
 		}
 	}
 
@@ -540,26 +545,33 @@ public class AonMessage {
 	//ATTACHMENTS
 	//**************************************************************************
 	//**************************************************************************
+	public List<Part> getAttachmentParts( Part part ) throws MessagingException, IOException {
+		List<Part> parts = new ArrayList<Part>();
+		if ( part.isMimeType(MULTIPART_ANY) ) {
+			Multipart mp = (Multipart) part.getContent();
+			int numPart = mp.getCount();
+			for (int i = 0; i < numPart; i++) {
+				BodyPart bodyPart = mp.getBodyPart(i);
+				String disposition = bodyPart.getDisposition();
+				if ( (disposition != null) && (disposition.equalsIgnoreCase(Part.ATTACHMENT))) {
+					parts.add( bodyPart );
+				}
+				parts.addAll( getAttachmentParts(bodyPart) );
+			}			
+		}
+		return parts;
+	}
+	
 	public List<AonAttachment> getAttachements() throws WebmailException {
 		List<AonAttachment> attachs = new ArrayList<AonAttachment>();
 		try {
-			Object content = message.getContent();
-			if (content instanceof Multipart) {
-				Multipart mp = (Multipart) content;
-				int numPart = mp.getCount();
-				int attachPosition = 0;
-				for (int i = 0; i < numPart; i++) {
-					Part part = mp.getBodyPart(i);
-					String disposition = part.getDisposition();
-					if ((disposition != null)
-							&& (disposition.equalsIgnoreCase(Part.ATTACHMENT))
-						){
-						attachPosition++;
-						AonAttachment attach = new AonAttachment();
-						attach.setPart(part);
-						attach.setPosition(attachPosition);
-						attachs.add(attach);
-					}
+			List<Part> parts = getAttachmentParts( message );
+			if (! parts.isEmpty() ) {
+				for( int i = 0; i < parts.size(); i++) {
+					AonAttachment attach = new AonAttachment();
+					attach.setPart( parts.get(i) );
+					attach.setPosition( i );
+					attachs.add(attach);					
 				}
 			}
 		} catch (MessagingException e) {
@@ -580,10 +592,11 @@ public class AonMessage {
 	public boolean isAttachment() throws WebmailException {
 		boolean hasAttachments = false;
 		try {
-			if (message.isMimeType("multipart/*")) {
+			if (message.isMimeType(MULTIPART_ANY)) {
 				Multipart mp = (Multipart)message.getContent();
-				if (message.isMimeType("multipart/alternative")) {
-					if (mp.getCount() > 2) { hasAttachments = true;
+				if (message.isMimeType(MULTIPART_ALTERNATIVE)) {
+					if (mp.getCount() > 2) {
+						hasAttachments = true;
 					}
 				}	else {
 					if (mp.getCount() > 1) {
@@ -591,10 +604,8 @@ public class AonMessage {
 					}
 				}
 			}
-		}
-		catch (Exception ex) {
-			LOGGER.log(Level.ALL,
-					"Error determining if message has attachement", ex);
+		} catch (Exception ex) {
+			LOGGER.log(Level.ALL, "Error determining if message has attachement", ex);
 			throw new WebmailException(ex);
 		}
 		return hasAttachments;
@@ -761,4 +772,28 @@ public class AonMessage {
 		this.selected = selected;
 	}
 	
+	public static String getMessageEnvelope( Message message, String content, String headerId ) throws MessagingException {
+		StringBuffer sb = new StringBuffer();
+		Locale locale = AonUtil.getCurrentLocale();
+		ResourceBundle bundle = ResourceBundle.getBundle(AonConstants.RESOURCE_BUNDLE, locale);	
+		sb.append( "<br/>" );
+		if ( headerId != null ) {
+			sb.append( "<BLOCKQUOTE style='PADDING-RIGHT: 0px; PADDING-LEFT: 10px; MARGIN-LEFT: 5px; BORDER-LEFT: #000000 2px solid; MARGIN-RIGHT: 0px'>" );
+		}
+		sb.append("<font face='arial' size='2' >");
+		if ( headerId != null ) {
+			sb.append("----------").append( bundle.getString(headerId) ).append("----------");
+		}
+		sb.append( "<DIV style='BACKGROUND: #e4e4e4'>" );
+		sb.append( "<b>" ).append(bundle.getString("aon_webmail_from")).append(":</b> ").append( AonMessage.getSender(message) ).append( "</DIV>" );
+		sb.append( "<b>" ).append(bundle.getString("aon_webmail_date")).append(":</b> ").append( message.getSentDate() );
+		sb.append( "<br/><b>" ).append(bundle.getString("aon_webmail_subject")).append(":</b> ").append( message.getSubject() );
+   		sb.append( "</font><br/><br/>" );
+   		sb.append( content );
+		if ( headerId != null ) {
+			sb.append( "</BLOCKQUOTE><br/>" );
+		}
+		return sb.toString();
+	}
+		
 }
