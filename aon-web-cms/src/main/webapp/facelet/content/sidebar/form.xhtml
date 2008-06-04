@@ -183,8 +183,9 @@
 
 						</aon:dataTable>
 							
-						<aon:dataScroller dataTable="dataTable"
-							model="#{sidebar_option.model}" showNote="true" />					
+						<aon:dataScroller for="dataTable"
+							rowCount="#{sidebar_option.model.rowCount}" 
+							showNote="true" />					
 					</rich:panel>
 					
 					<rich:panel id="detail_edit_panel" rendered="#{sidebar_option.new or sidebar_option.to != null}">

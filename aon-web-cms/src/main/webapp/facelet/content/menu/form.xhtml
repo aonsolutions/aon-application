@@ -186,8 +186,9 @@
 
 						</aon:dataTable>
 							
-						<aon:dataScroller dataTable="dataTable"
-							model="#{menu_option.model}" showNote="true" />					
+						<aon:dataScroller for="dataTable"
+							rowCount="#{menu_option.model.rowCount}"
+							showNote="true" />					
 					</rich:panel>
 					<rich:panel id="detail_edit_panel" rendered="#{menu_option.new or menu_option.to != null}">
         				<f:facet name="header">#{menu_option.new?(bundle.aon_reset):(bundle.aon_editing)}</f:facet>

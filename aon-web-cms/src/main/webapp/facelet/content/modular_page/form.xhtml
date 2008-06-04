@@ -230,8 +230,9 @@
 	
 							</aon:dataTable>
 								
-							<aon:dataScroller dataTable="dataTable"
-								model="#{modular_page_option.model}" showNote="true" />					
+							<aon:dataScroller for="dataTable"
+								rowCount="#{modular_page_option.model.rowCount}" 
+								showNote="true" />					
 						</aon:panelGrid>
 						
 						<aon:div id="detailEdit">
