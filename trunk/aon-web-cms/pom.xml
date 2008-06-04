@@ -20,21 +20,45 @@
 	<dependencies>
 		<dependency>
 			<groupId>com.code.aon</groupId>
+			<artifactId>aon.rich.components</artifactId>
+			<version>1.1.0</version>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.code.aon</groupId>
 			<artifactId>aon.cms</artifactId>
 			<version>2.1.1</version>
 			<scope>compile</scope>
+		</dependency> 
+		<dependency>
+			<groupId>com.code.aon</groupId>
+			<artifactId>aon.security</artifactId>
+			<version>1.2.11</version>
+			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.security.bridge</artifactId>
-			<version>1.2.9</version>
+			<version>1.2.15</version>
 			<scope>compile</scope>
 		</dependency>
+	    <dependency>
+	      <groupId>com.code.aon</groupId>
+	      <artifactId>aon.ui.resources</artifactId>
+	      <version>1.0.4</version>
+	      <scope>compile</scope>
+	    </dependency>
 		<dependency>
 			<groupId>com.code.aon</groupId>
-			<artifactId>aon.rich.components</artifactId>
-			<version>1.0.3</version>
+			<artifactId>aon.ui.groupware</artifactId>
+			<version>2.1.10</version>
 			<scope>compile</scope>
+			<exclusions>
+				<exclusion>			
+					<groupId>com.code.aon</groupId>
+					<artifactId>aon.ui.config</artifactId>
+				</exclusion>
+			</exclusions>			
 		</dependency>
 		<dependency>
 		    <groupId>commons-fileupload</groupId>
