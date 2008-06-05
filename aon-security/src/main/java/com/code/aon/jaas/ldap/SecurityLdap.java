@@ -310,17 +310,17 @@ public class SecurityLdap extends BasicLdap implements ILdapConstants, ILdapSecu
 
 	public void updateUser( String algorithm, String domainId, IUser user, String oldUserId ) {
 		try {
+			Entry userEntry = getUser(domainId, user.getId());
 			LdapSession session = getLdapSession();
-			DistinguishedName dn = AonDN.getUserDN(domainId, user.getId());
-			session.replaceAttribute(dn, DESCRIPTION_ATTRIBUTE, user.getDescription());
+			session.updateAttribute( userEntry, DESCRIPTION_ATTRIBUTE, user.getDescription());
 			String password = user.getPasswd();
 			if ( algorithm != null ) {
 				password = "{" + algorithm + "}" + password;
 			}
-			session.replaceAttribute(dn, USER_PASSWORD_ATTRIBUTE, password);
+			session.updateAttribute( userEntry, USER_PASSWORD_ATTRIBUTE, password);
 			if ( (oldUserId != null) && (! user.getId().equals(oldUserId)) ) {
 				DistinguishedName newDN = AonDN.getUserDN(domainId, user.getId());
-				session.rename(dn.toString(), newDN.toString());
+				session.rename(userEntry.getDN().toString(), newDN.toString());
 			}
 		} catch ( LdapException e ) {
 			LOGGER.error( e.getMessage(), e );
