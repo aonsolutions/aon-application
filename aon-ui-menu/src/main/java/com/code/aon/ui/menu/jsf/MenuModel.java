@@ -10,6 +10,7 @@ import javax.faces.context.FacesContext;
 
 import org.xml.sax.SAXException;
 
+import com.code.aon.ui.menu.IMenuItem;
 import com.code.aon.ui.menu.IRoot;
 import com.code.aon.ui.menu.MenuBeanException;
 import com.code.aon.ui.menu.MenuParser;
@@ -136,4 +137,11 @@ public class MenuModel extends AbstractMenuModel {
 		return this.menuRoot.find( identifier );
 	}
 
+	/**
+	 * @param key
+	 * @return Object
+	 */
+	public IMenuItem getMenuItemByKey(String key) {
+		return this.menuRoot.find( key );
+	}
 }
