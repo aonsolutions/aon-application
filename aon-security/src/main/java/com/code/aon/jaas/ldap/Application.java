@@ -16,11 +16,12 @@ import com.code.aon.jaas.deployment.event.SubDeployerEvent;
 import com.code.aon.ldap.AonDN;
 import com.code.aon.ldap.DistinguishedName;
 import com.code.aon.ldap.Entry;
+import com.code.aon.ldap.IAonObjectClasses;
 import com.code.aon.ldap.ILdapConstants;
 import com.code.aon.ldap.LdapException;
 import com.code.aon.ldap.LdapSession;
 
-public class Application implements IApplication, ILdapConstants, ILdapSecurityConstants {
+public class Application implements IApplication, ILdapConstants, ILdapSecurityConstants, IAonObjectClasses {
 
 	private static final long serialVersionUID = -7774786273060605086L;
 
@@ -185,7 +186,7 @@ public class Application implements IApplication, ILdapConstants, ILdapSecurityC
 		Application application = null;
 		try {
 			LdapSession session = ldap.getLdapSession();
-			String objectClass = LdapSession.getObjectClass(APPLICATION_OBJECT_CLASS);
+			String objectClass = LdapSession.getObjectClass(APPLICATION);
 			DistinguishedName dn = getDN(applicationId);
 			Entry entry = session.get( dn.toString(), objectClass );
 			application = getObject(ldap, entry);
@@ -201,7 +202,7 @@ public class Application implements IApplication, ILdapConstants, ILdapSecurityC
 		List<IRole> roles = new ArrayList<IRole>();
 		try {
 			LdapSession session = this.ldap.getLdapSession();
-			String objectClass = LdapSession.getObjectClass(ROLE_OBJECT_CLASS);
+			String objectClass = LdapSession.getObjectClass(ROLE);
 			DistinguishedName dn = AonDN.getRolesDN(application);
 			List<Entry> list = session.search(dn.toString(), objectClass );
 			for( Entry entry : list ) {
