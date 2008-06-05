@@ -9,6 +9,7 @@ import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import com.code.aon.jaas.auth.session.AuthenticationLoginException;
 import com.code.aon.jaas.client.ast.IDataSourceMetaData;
 import com.code.aon.jaas.client.ast.IRelation;
 import com.code.aon.jaas.client.ast.IRole;
@@ -17,19 +18,22 @@ import com.code.aon.jaas.client.ast.core.DataSourceMetaData;
 import com.code.aon.jaas.client.ast.core.Relation;
 import com.code.aon.jaas.client.ast.core.Role;
 import com.code.aon.jaas.client.ast.core.User;
-import com.code.aon.ldap.AbstractLdap;
 import com.code.aon.ldap.AonDN;
+import com.code.aon.ldap.BasicLdap;
 import com.code.aon.ldap.DistinguishedName;
 import com.code.aon.ldap.Entry;
+import com.code.aon.ldap.IAonObjectClasses;
 import com.code.aon.ldap.ILdapConstants;
 import com.code.aon.ldap.LdapException;
 import com.code.aon.ldap.LdapSession;
 import com.code.aon.ldap.Scope;
 
-public class SecurityLdap extends AbstractLdap implements ILdapConstants, ILdapSecurityConstants {
+public class SecurityLdap extends BasicLdap implements ILdapConstants, ILdapSecurityConstants, IAonObjectClasses {
 	
     /** Obtiene un logger apropiado. */
 	private static final Log LOGGER = LogFactory.getLog( SecurityLdap.class.getName() );
+	
+	private static final String LOGIN_ERROR_PREFFIX = "aon_login_error_";
 	
 	public SecurityLdap( Properties properties ) {
 		super( properties );
@@ -72,15 +76,46 @@ public class SecurityLdap extends AbstractLdap implements ILdapConstants, ILdapS
 		return exists(dn, Domain.OBJECT_CLASS);
 	}
 
-	public boolean hasUser( String domainName, String application, String user ) {
-		DistinguishedName dn = AonDN.getDomainApplicationUserDN(domainName, application, user);
-		return exists(dn, DOMAIN_APPLICATION_USER_OBJECT_CLASS);
+	public boolean hasUser( String domainId, String applicationId, String user ) throws AuthenticationLoginException {
+		Object[] arguments = new Object[] { user, applicationId, domainId };
+		// Validación de que el status del Dominio es correcto
+		Domain domain = Domain.get(this, domainId);
+    	if ( domain.getStatus() != 0 ) {
+    		throw new AuthenticationLoginException( LOGIN_ERROR_PREFFIX + domain.getStatus(), arguments );
+    	}
+		// Validación de que el Usuario esta activado
+    	Entry userEntry = getUser(domainId, user);
+    	if ( userEntry == null ) {
+    		return false;
+    	}
+    	boolean active = userEntry.getAsBoolean(ACTIVE_ATTRIBUTE);
+    	if (! active ) {
+    		throw new AuthenticationLoginException( "aon_login_user_inactive", arguments );
+    	}
+		// Validación de que el status de la Aplicación del Dominio es correcto
+    	DomainApplication domainApplication = DomainApplication.get(this, domainId, applicationId);
+    	if ( domainApplication == null ) {
+    		return false;
+    	}
+    	if ( domainApplication.getStatus() != 0 ) {
+    		throw new AuthenticationLoginException( LOGIN_ERROR_PREFFIX + domainApplication.getStatus(), arguments );
+    	}
+		// Validación de que el status del Usuario de la Aplicación es correcto
+    	Entry domainUserEntry = getDomainApplicationUser(domainId, applicationId, user);
+    	if ( domainUserEntry == null ) {
+    		return false;
+    	}
+    	int status = domainUserEntry.getAsInteger(STATUS_ATTRIBUTE);
+    	if ( status != 0 ) {
+    		throw new AuthenticationLoginException( LOGIN_ERROR_PREFFIX + status, arguments );
+    	}		
+		return true;
 	}
 	
 	public Entry getUser( String domainName, String user ) {
 		Entry entry = null;
 		try {
-			String objectClass = LdapSession.getObjectClass(USER_OBJECT_CLASS);
+			String objectClass = LdapSession.getObjectClass(USER);
 			DistinguishedName dn = AonDN.getUserDN(domainName, user);
 			entry = getLdapSession().get( dn.toString(), objectClass );
 		} catch ( LdapException e ) {
@@ -94,7 +129,7 @@ public class SecurityLdap extends AbstractLdap implements ILdapConstants, ILdapS
 	public Entry getDomainApplicationUser( String domainName, String application, String user ) {
 		Entry entry = null;
 		try {
-			String objectClass = LdapSession.getObjectClass(DOMAIN_APPLICATION_USER_OBJECT_CLASS);
+			String objectClass = LdapSession.getObjectClass(DOMAIN_APPLICATION_USER);
 			DistinguishedName dn = AonDN.getDomainApplicationUserDN(domainName, application, user);
 			entry = getLdapSession().get( dn.toString(), objectClass );
 		} catch ( LdapException e ) {
@@ -114,7 +149,7 @@ public class SecurityLdap extends AbstractLdap implements ILdapConstants, ILdapS
 				DistinguishedName member = session.getFullDN( AonDN.getRoleDN(appId, role) );
 				members.add( member.toString() );
 			}
-			session.replaceAttributeValues(dn, MEMBER_ATTRIBUTE, members);
+			session.replaceAttribute(dn, MEMBER_ATTRIBUTE, members);
 		} catch ( LdapException e ) {
 			LOGGER.error( e.getMessage(), e );
 		} finally {
@@ -135,7 +170,7 @@ public class SecurityLdap extends AbstractLdap implements ILdapConstants, ILdapS
 	public Entry getApplicationProfile( String domainName, String application, String profileName ) {
 		Entry entry = null;
 		try {
-			String objectClass = LdapSession.getObjectClass(PROFILE_OBJECT_CLASS);
+			String objectClass = LdapSession.getObjectClass(PROFILE);
 			DistinguishedName dn = AonDN.getApplicationProfileDN(application, profileName);
 			entry = getLdapSession().get( dn.toString(), objectClass );
 		} catch ( LdapException e ) {
@@ -149,7 +184,7 @@ public class SecurityLdap extends AbstractLdap implements ILdapConstants, ILdapS
 	public Entry getDomainApplicationProfile( String domainName, String application, String profileName ) {
 		Entry entry = null;
 		try {
-			String objectClass = LdapSession.getObjectClass(DOMAIN_APPLICATION_PROFILE_OBJECT_CLASS);
+			String objectClass = LdapSession.getObjectClass(DOMAIN_APPLICATION_PROFILE);
 			DistinguishedName dn = AonDN.getDomainApplicationProfileDN(domainName, application, profileName);
 			entry = getLdapSession().get( dn.toString(), objectClass );
 		} catch ( LdapException e ) {
@@ -163,11 +198,11 @@ public class SecurityLdap extends AbstractLdap implements ILdapConstants, ILdapS
 	public Entry getProfile( String domainName, String application, String profileName ) {
 		Entry profile = null;
 		DistinguishedName dn = AonDN.getApplicationProfileDN(application, profileName);
-		if ( exists(dn, PROFILE_OBJECT_CLASS) ) {
+		if ( exists(dn, PROFILE) ) {
 			profile = getApplicationProfile(domainName, application, profileName);
 		} else {
 			dn = AonDN.getDomainApplicationProfileDN(domainName, application, profileName);
-			if ( exists(dn, DOMAIN_APPLICATION_PROFILE_OBJECT_CLASS) ) {
+			if ( exists(dn, DOMAIN_APPLICATION_PROFILE) ) {
 				profile = getDomainApplicationProfile(domainName, application, profileName);
 			}
 		}
@@ -257,7 +292,7 @@ public class SecurityLdap extends AbstractLdap implements ILdapConstants, ILdapS
 		List<String> applications = new ArrayList<String>();
 		try {
 			LdapSession session = getLdapSession();
-			String objectClass = LdapSession.getObjectClass(DOMAIN_APPLICATION_USER_OBJECT_CLASS);
+			String objectClass = LdapSession.getObjectClass(DOMAIN_APPLICATION_USER);
 			String cn = LdapSession.getCommonName(userId);
 			DistinguishedName dn = DomainApplication.getParentDN(domainId);
 			List<Entry> list = session.search( dn.toString(), getAndExpression(objectClass, cn), Scope.SUBTREE_SCOPE, COMMON_NAME_ATTRIBUTE);
