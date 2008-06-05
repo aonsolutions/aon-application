@@ -171,6 +171,14 @@
 						<f:selectItems value="#{GBPCollections.offerStatus}" />
 					</aon:selectOneMenu>
 
+					<aon:outputLabel for="Offer_batch_config_id"
+						value="#{appBundle.gbp_offer_batch_config}" />
+					<aon:selectOneMenu id="Offer_batch_config_id"
+						value="#{offer.to.batchConfig.id}">
+						<f:selectItem value="#{nullSelectItem.value}" />
+						<f:selectItems value="#{GBPCollections.batchConfigs}" />
+					</aon:selectOneMenu>
+
 				</aon:panelGrid>
 
 				<aon:div id="offerTab">

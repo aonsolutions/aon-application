@@ -55,6 +55,8 @@ public class Offer implements ITransferObject {
 	
 	private OfferType type;
 	
+	private BatchConfig batchConfig;
+	
 	@Id
 	@GeneratedValue
 	@Column(nullable=false)
@@ -211,4 +213,16 @@ public class Offer implements ITransferObject {
 	public void setType(OfferType type) {
 		this.type = type;
 	}
+
+	@ManyToOne
+	@JoinColumn( name="batch_config" )
+	public BatchConfig getBatchConfig() {
+		return batchConfig;
+	}
+
+	public void setBatchConfig(BatchConfig batchConfig) {
+		this.batchConfig = batchConfig;
+	}
+	
+	
 }

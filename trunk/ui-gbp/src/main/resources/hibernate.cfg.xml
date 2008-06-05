@@ -43,6 +43,7 @@
 		<mapping class="com.code.gbp.Bank"/>
 		<mapping class="com.code.gbp.BankPercent"/>
 		<mapping class="com.code.gbp.ProFormaBank"/>
+		<mapping class="com.code.gbp.BatchConfig"/>
 	</session-factory>
 
 </hibernate-configuration>

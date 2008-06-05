@@ -188,20 +188,6 @@
 		<dispatcher>ERROR</dispatcher>
 	</filter-mapping>
 	
-	<!-- Deploy Servlet 
-	<servlet>
-		<servlet-name>autodeploy</servlet-name>
-		<servlet-class>
-			com.code.aon.bridge.servlet.DeployServlet
-		</servlet-class>
-		<init-param>
-			<param-name>name</param-name>
-			<param-value>gbp.war</param-value>
-		</init-param>
-		<load-on-startup>1</load-on-startup>
-	</servlet>
-	-->
-
 	<!-- Welcome File List -->
 	<welcome-file-list>
 		<welcome-file>index.html</welcome-file>

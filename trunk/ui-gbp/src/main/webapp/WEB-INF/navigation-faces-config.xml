@@ -192,5 +192,17 @@
 		</navigation-case>
 	</navigation-rule>	
 
+    <!-- =================== Batch Config ================= -->	
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>batch_config_list</from-outcome>
+			<to-view-id>/facelet/batch_config/list.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>batch_config_search</from-outcome>
+			<to-view-id>/facelet/batch_config/search.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>	
+
 	
 </faces-config>
