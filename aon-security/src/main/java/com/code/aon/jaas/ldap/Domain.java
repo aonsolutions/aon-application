@@ -19,11 +19,12 @@ import com.code.aon.jaas.client.ast.core.AccessPolicy;
 import com.code.aon.ldap.AonDN;
 import com.code.aon.ldap.DistinguishedName;
 import com.code.aon.ldap.Entry;
+import com.code.aon.ldap.IAonObjectClasses;
 import com.code.aon.ldap.ILdapConstants;
 import com.code.aon.ldap.LdapException;
 import com.code.aon.ldap.LdapSession;
 
-public class Domain implements IDomain, ILdapConstants, ILdapSecurityConstants {
+public class Domain implements IDomain, ILdapConstants, ILdapSecurityConstants, IAonObjectClasses {
 	
     /** Obtiene un logger apropiado. */
 	private static final Log LOGGER = LogFactory.getLog( Domain.class.getName() );
@@ -36,6 +37,8 @@ public class Domain implements IDomain, ILdapConstants, ILdapSecurityConstants {
 	private String id;
 
 	private SecurityLdap ldap;
+	
+	private int status;
 	
 	public Domain(SecurityLdap ldap) {
 		this.ldap = ldap;
@@ -125,6 +128,14 @@ public class Domain implements IDomain, ILdapConstants, ILdapSecurityConstants {
 		return this.id;
 	}
 	
+	public int getStatus() {
+		return status;
+	}
+
+	public void setStatus(int status) {
+		this.status = status;
+	}
+
 	public static DistinguishedName getDN( String domainName ) {
 		return AonDN.getDomainDN(domainName);
 	}
@@ -132,6 +143,7 @@ public class Domain implements IDomain, ILdapConstants, ILdapSecurityConstants {
 	private static Domain getObject( SecurityLdap ldap, Entry entry ) {
 		Domain domain = new Domain(ldap);
 		domain.setId(entry.getAsString(COMMON_NAME_ATTRIBUTE));
+		domain.setStatus(entry.getAsInteger(STATUS_ATTRIBUTE));
 		return domain;
 	}
 
@@ -164,7 +176,7 @@ public class Domain implements IDomain, ILdapConstants, ILdapSecurityConstants {
 		IAccessPolicy accessPolicy = null;
 		try {
 			LdapSession session = ldap.getLdapSession();
-			String objectClass = LdapSession.getObjectClass(ACCESS_POLICY_OBJECT_CLASS);
+			String objectClass = LdapSession.getObjectClass(ACCESS_POLICY);
 			DistinguishedName dn = getDN(domainName);
 			Entry entry = session.searchOne( dn.toString(), objectClass );
 			if ( entry != null ) {
@@ -182,7 +194,7 @@ public class Domain implements IDomain, ILdapConstants, ILdapSecurityConstants {
 		List<IDomainApplication> applications = new ArrayList<IDomainApplication>();
 		try {
 			LdapSession session = this.ldap.getLdapSession();
-			String objectClass = LdapSession.getObjectClass(DOMAIN_APPLICATION_OBJECT_CLASS);
+			String objectClass = LdapSession.getObjectClass(DOMAIN_APPLICATION);
 			DistinguishedName dn = DomainApplication.getParentDN(domainName);
 			List<Entry> list = session.search(dn.toString(), objectClass );
 			for( Entry entry : list ) {
