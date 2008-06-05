@@ -11,14 +11,18 @@ import javax.faces.model.SelectItem;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.ql.Criteria;
 import com.code.gbp.AccountContact;
 import com.code.gbp.Bank;
+import com.code.gbp.BatchConfig;
 import com.code.gbp.GeoZone;
 import com.code.gbp.IncidenceType;
 import com.code.gbp.InternalCustomer;
 import com.code.gbp.Office;
 import com.code.gbp.SupplierType;
+import com.code.gbp.dao.IGBPAlias;
 import com.code.gbp.enumeration.AddInfoType;
+import com.code.gbp.enumeration.BatchConfigStatus;
 import com.code.gbp.enumeration.CampaignStatus;
 import com.code.gbp.enumeration.ContactType;
 import com.code.gbp.enumeration.CostType;
@@ -198,6 +202,31 @@ public class GBPCollectionsController {
 			banks.add(item);
 		}
 		return banks;
+	}
+	
+	public List<SelectItem> getBatchConfigStatus(){
+		List<SelectItem> statusList = new LinkedList<SelectItem>();
+		Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
+		for(BatchConfigStatus status:BatchConfigStatus.values()){
+			SelectItem item = new SelectItem(status, status.getName(locale));
+			statusList.add(item);
+		}
+		return statusList;
+	}
+	
+	@SuppressWarnings("unchecked")
+	public List<SelectItem> getBatchConfigs() throws ManagerBeanException {
+		List<SelectItem> items = new LinkedList<SelectItem>();
+		IManagerBean bean = BeanManager.getManagerBean(BatchConfig.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(bean.getFieldName(IGBPAlias.BATCH_CONFIG_STATUS), BatchConfigStatus.ACTIVE);
+		Iterator iter = bean.getList(criteria).iterator();
+		while(iter.hasNext()){
+			BatchConfig object = (BatchConfig)iter.next();
+			SelectItem item = new SelectItem(object.getId(), object.getDescription());
+			items.add(item);
+		}
+		return items;
 	}
 	
 }

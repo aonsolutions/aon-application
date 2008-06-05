@@ -7,6 +7,7 @@ import com.code.aon.common.dao.AliasWriter;
 import com.code.gbp.AccountContact;
 import com.code.gbp.Bank;
 import com.code.gbp.BankPercent;
+import com.code.gbp.BatchConfig;
 import com.code.gbp.Campaign;
 import com.code.gbp.CampaignSupplier;
 import com.code.gbp.GeoZone;
@@ -35,7 +36,7 @@ public class GBPAliasWriter {
 	 */
 	public static void main(String[] args) throws IOException {
 		File file = new File("/AON-PROJECT/gbp/src/main/java/com/code/gbp/dao/IGBPAlias.java");
-		String[] classes = new String[23];
+		String[] classes = new String[24];
 		classes[0] = AccountContact.class.getName();
 		classes[1] = Campaign.class.getName();
 		classes[2] = CampaignSupplier.class.getName();
@@ -59,6 +60,7 @@ public class GBPAliasWriter {
 		classes[20] = Bank.class.getName();
 		classes[21] = BankPercent.class.getName();
 		classes[22] = ProFormaBank.class.getName();
+		classes[23] = BatchConfig.class.getName();
 		AliasWriter writer = new AliasWriter("com.code.gbp.dao");
 		writer.write(classes, file);
 		System.out.println(file.getAbsolutePath());

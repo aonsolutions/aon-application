@@ -37,6 +37,7 @@
 	<field name="amount" class="java.lang.Double"/>
 	<field name="paymentDate" class="java.util.Date"/>
 	<field name="concept" class="java.lang.String"/>
+	<field name="offer" class="com.code.gbp.Offer"/>
 
 		<background>
 			<band height="0"  isSplitAllowed="true" >
@@ -338,7 +339,7 @@
 				<staticText>
 					<reportElement
 						x="0"
-						y="128"
+						y="142"
 						width="535"
 						height="14"
 						key="staticText-5"/>
@@ -351,7 +352,7 @@
 				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						x="0"
-						y="144"
+						y="158"
 						width="56"
 						height="13"
 						key="textField-15"/>
@@ -364,7 +365,7 @@
 				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						x="92"
-						y="144"
+						y="158"
 						width="48"
 						height="13"
 						key="textField-16"/>
@@ -377,7 +378,7 @@
 				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						x="92"
-						y="157"
+						y="171"
 						width="48"
 						height="13"
 						key="textField-17"/>
@@ -390,7 +391,7 @@
 				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						x="140"
-						y="144"
+						y="158"
 						width="154"
 						height="13"
 						key="textField-18"/>
@@ -403,7 +404,7 @@
 				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						x="140"
-						y="157"
+						y="171"
 						width="154"
 						height="13"
 						key="textField-19"/>
@@ -416,7 +417,7 @@
 				<staticText>
 					<reportElement
 						x="0"
-						y="185"
+						y="189"
 						width="279"
 						height="14"
 						key="staticText-6"/>
@@ -429,7 +430,7 @@
 				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						x="279"
-						y="184"
+						y="188"
 						width="73"
 						height="14"
 						key="textField-20"/>
@@ -481,7 +482,7 @@
 				<staticText>
 					<reportElement
 						x="352"
-						y="184"
+						y="188"
 						width="13"
 						height="14"
 						key="staticText-9">
@@ -572,6 +573,32 @@
 					<dataSourceExpression><![CDATA[new com.code.aon.report.jr.JRBeanCollectionDataSource($P{banks})]]></dataSourceExpression>
 					<subreportExpression  class="net.sf.jasperreports.engine.JasperReport"><![CDATA[$P{nestedReports}.get("proofBanks")]]></subreportExpression>
 				</subreport>
+				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="43"
+						y="123"
+						width="97"
+						height="13"
+						key="textField-26"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" rightPadding="1" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Right">
+						<font pdfFontName="Helvetica" size="9" isBold="false" isUnderline="false"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$R{gbp_offer_batch_config} + ": "]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="140"
+						y="123"
+						width="377"
+						height="13"
+						key="textField-27"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" leftPadding="1" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Left">
+						<font pdfFontName="Helvetica-Bold" size="9" isBold="true"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{offer}.getBatchConfig().getCode()+" "+$F{offer}.getBatchConfig().getDescription()]]></textFieldExpression>
+				</textField>
 			</band>
 		</detail>
 		<columnFooter>

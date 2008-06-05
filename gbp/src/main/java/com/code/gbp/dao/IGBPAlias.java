@@ -25,6 +25,7 @@ import com.code.gbp.SupplierType;
 import com.code.gbp.Bank;
 import com.code.gbp.BankPercent;
 import com.code.gbp.ProFormaBank;
+import com.code.gbp.BatchConfig;
 
 /** 
 * Interface for holding entity properties constants.
@@ -1061,6 +1062,37 @@ public interface IGBPAlias {
 	* Hibernate value: ProFormaBank.proFormaInvoice.id
 	*/
 	String  PRO_FORMA_BANK_PRO_FORMA_INVOICE_ID = PRO_FORMA_BANK_ENTRY.getAliasNames()[3];
+
+
+
+	/** 
+	* DAOConstantsEntry for BatchConfig entity.
+	*/ 
+	DAOConstantsEntry BATCH_CONFIG_ENTRY = DAOConstants.getDAOConstant(BatchConfig.class);
+
+	/** 
+	* Alias value: BatchConfig_code
+	* Hibernate value: BatchConfig.code
+	*/
+	String  BATCH_CONFIG_CODE = BATCH_CONFIG_ENTRY.getAliasNames()[0];
+
+	/** 
+	* Alias value: BatchConfig_description
+	* Hibernate value: BatchConfig.description
+	*/
+	String  BATCH_CONFIG_DESCRIPTION = BATCH_CONFIG_ENTRY.getAliasNames()[1];
+
+	/** 
+	* Alias value: BatchConfig_id
+	* Hibernate value: BatchConfig.id
+	*/
+	String  BATCH_CONFIG_ID = BATCH_CONFIG_ENTRY.getAliasNames()[2];
+
+	/** 
+	* Alias value: BatchConfig_status
+	* Hibernate value: BatchConfig.status
+	*/
+	String  BATCH_CONFIG_STATUS = BATCH_CONFIG_ENTRY.getAliasNames()[3];
 
 
 }
