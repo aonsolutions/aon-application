@@ -1,6 +1,9 @@
 package com.code.aon.ldap;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -41,7 +44,11 @@ public class LdapSession implements ILdapConstants {
 
 	private static final String INTEGER_SYNTAX = "1.3.6.1.4.1.1466.115.121.1.27";
 
+	private static final String GENERALIZED_TIME_SYNTAX = "1.3.6.1.4.1.1466.115.121.1.24";
+	
 	private static final String DISTINGUISHED_NAME_SYNTAX = "1.3.6.1.4.1.1466.115.121.1.12";
+	
+	private static final SimpleDateFormat GENERALIZED_TIME_FORMAT = new SimpleDateFormat( "yyyyMMddHHmmss'Z'" );
 
 	private static final Log LOGGER = LogFactory.getLog(LdapSession.class
 			.getName());
@@ -116,6 +123,12 @@ public class LdapSession implements ILdapConstants {
 			} else if (oid.equals(BOOLEAN_SYNTAX)) {
 				result = TRUE_VALUE.equals(value) ? Boolean.TRUE
 						: Boolean.FALSE;
+			} else if (oid.equals(GENERALIZED_TIME_SYNTAX)) {
+				try {
+					result = GENERALIZED_TIME_FORMAT.parse( value.toString() );
+				} catch (ParseException e) {
+					LOGGER.error( "Error parsing Generalized Time: " + value, e );
+				}
 			}
 		}
 		return result;
@@ -357,6 +370,9 @@ public class LdapSession implements ILdapConstants {
 			for( Object _value : (List<Object>) value ) {
 				attribute.add(_value);
 			}				
+		} else if ( Date.class.isAssignableFrom(value.getClass()) ) {
+			String date = GENERALIZED_TIME_FORMAT.format( (Date) value );
+			attribute.add( date );
 		} else {
 			attribute.add(value);
 		}
@@ -409,25 +425,25 @@ public class LdapSession implements ILdapConstants {
 		return value;
 	}
 
-	public void updateAttribute( LdapSession session, Entry entry, String name, Object newValue ) throws LdapException {
+	public void updateAttribute( Entry entry, String name, Object newValue ) throws LdapException {
 		Object oldValue = entry.containsKey(name) ? entry.get(name) : null;
-		this.updateAttribute(session, entry.getDN(), name, oldValue, newValue);
+		this.updateAttribute(entry.getDN(), name, oldValue, newValue);
 	}
 
-	public void updateAttribute( LdapSession session, DistinguishedName dn, String name, Object oldValue, Object newValue ) throws LdapException {
+	public void updateAttribute( DistinguishedName dn, String name, Object oldValue, Object newValue ) throws LdapException {
 		Object _oldValue = getRealValue(oldValue);
 		Object _newValue = getRealValue(newValue);
 		if ( _oldValue != null ) {
 			if ( _newValue != null ) {
 				if (! ObjectUtils.equals(_newValue, _oldValue) ) {
-					session.replaceAttribute( dn, name, _newValue);	
+					replaceAttribute( dn, name, _newValue);	
 				}				
 			} else {
-				session.removeAttributes( dn, name);
+				removeAttributes( dn, name);
 			}						
 		} else {
 			if ( _newValue != null ) {
-				session.addAttribute( dn, name, _newValue);						
+				addAttribute( dn, name, _newValue);						
 			}						
 		}		
 	}
