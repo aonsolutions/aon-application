@@ -49,7 +49,7 @@ public class LDAPReaderTest {
 	}
 	
 	@Test
-    public void testGetApplications() {
+    public void testGetApplications() throws AuthenticationLoginException {
 		Assert.assertTrue( ldap.hasDomain( "aon.code.es") );
 		Assert.assertTrue( ldap.hasDomain( "localhost") );
 		Assert.assertTrue( ldap.hasUser("localhost", "aon-task", "atellitu") );
