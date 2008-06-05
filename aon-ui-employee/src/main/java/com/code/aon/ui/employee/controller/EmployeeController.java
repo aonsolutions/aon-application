@@ -41,6 +41,7 @@ import com.code.aon.ui.form.IController;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
 import com.code.aon.ui.menu.jsf.MenuEvent;
+import com.code.aon.ui.record.controller.ContractController;
 import com.code.aon.ui.record.controller.RecordController;
 import com.code.aon.ui.util.AonUtil;
 
@@ -224,6 +225,9 @@ public class EmployeeController extends BasicController {
         super.onReset(event);
         setResourceAllowed( true );
         setUserEnabled( false );
+        //	Initializes ContractController session bean.
+        ContractController contract = (ContractController) AonUtil.getController(ContractController.MANAGER_BEAN_NAME);
+        contract.setModel( null );
     }
 
 	@Override
