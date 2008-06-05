@@ -40,6 +40,7 @@
 						<aon:commandButton id="save"
 							value="#{bundle.aon_save}" 
 							rendered="#{bulletin.to!=null or bulletin.new}"
+							action="bulletin_form"
 							actionListener="#{bulletin.onAccept}"
 							styleClass="aon-finding-toolbar-item aon-icon-accept"
 							accesskey="#{bundle.aon_key_save}"/>
@@ -89,11 +90,6 @@
 											timeZone="#{timeZoneController.timeZoneId}" />
 								</aon:selectInputDate>	
 								
-								<aon:outputText value="#{appBundle.bulletin_template}" 
-									for="template"/>
-								<aon:inputText id="template"
-									value="#{bulletin.to.template}" size="70" maxlength="64" />
-		
 								<aon:outputLabel for="title"
 									value="#{appBundle.bulletin_title}" />
 								<aon:inputText id="title" 
@@ -110,9 +106,11 @@
 							
 							</aon:panelGrid>
 						</aon:panelTab>
-						<aon:panelTab id="articles" label="#{appBundle.articles}">
+						
+						<aon:panelTab id="articlesTab" label="#{appBundle.bulletin_articles}"
+							rendered="#{!bulletin.new}" >
 
-							<rich:panel id="detail_list_panel"  rendered="#{!bulletin.new}">
+							<rich:panel id="detail_list_panel">
 								<f:facet name="header">#{appBundle.aon_listing}</f:facet>
 						
 								<aon:div styleClass="aon-finding-title-toolbar">
