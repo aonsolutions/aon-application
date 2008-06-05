@@ -3,7 +3,7 @@
 
 	<property name="mgr" value="aon-security-mgr" />
 	<property name="client" value="aon.security" />
-	<property name="version" value="1.2.12" />
+	<property name="version" value="1.2.13" />
 	<property name="jar.valve.name" value="valve-${version}" />
 
     <property name="src.dir" value="src/main/java" />
@@ -32,7 +32,7 @@
 	<property name="commons.lang.home" value="/JAVA/commons-lang-2.2" />
 
 	<!-- AON -->
-	<property name="aon.ldap.home" value="${user.home}/.m2/repository/com/code/aon/aon.ldap/0.8" />
+	<property name="aon.ldap.home" value="${user.home}/.m2/repository/com/code/aon/aon.ldap/0.8.4" />
 
 	<!-- The classpath required to build classes. -->
     <path id="javac.classpath">
@@ -74,7 +74,7 @@
     <!-- The classpath required to build classes. -->
     <path id="jboss.ldap.javac.classpath">
 		<path refid="jboss.javac.classpath"/>
-        <pathelement path="${aon.ldap.home}/aon.ldap-0.8.jar"/>		
+        <pathelement path="${aon.ldap.home}/aon.ldap-0.8.4.jar"/>		
     	<pathelement path="${commons.lang.home}/commons-lang-2.2.jar"/>
     </path>
 
@@ -439,7 +439,7 @@
 				<include name="commons-lang-2.2.jar"/>
 			</fileset>
     		<fileset dir="${aon.ldap.home}">
-				<include name="aon.ldap-0.8.jar"/>
+				<include name="aon.ldap-0.8.4.jar"/>
 			</fileset>
 			<fileset dir="${mgr.dist.dir}">
 				<include name="${mgr}-${version}.jar"/>
