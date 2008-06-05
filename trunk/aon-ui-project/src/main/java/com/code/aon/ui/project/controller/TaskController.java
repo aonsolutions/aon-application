@@ -48,6 +48,12 @@ public class TaskController extends BasicController implements ITaskController {
 	private static final String PERIOD_TASK_CONTROLLER_NAME = "periodTask";
 
     private Expression myStatusExpression;
+    private Date startDateFrom;
+    private Date startDateTo;
+    private Date endDateFrom;
+    private Date endDateTo;
+    private Date dueDateFrom;
+    private Date dueDateTo;
 
     private Customer customer;
     private List<SelectItem> dossiers = new LinkedList<SelectItem>();
@@ -164,18 +170,25 @@ public class TaskController extends BasicController implements ITaskController {
     }
     
     public DataModel getInboxModel(){
-    	obtainTaskInbox();
+		obtainTaskInbox();	
     	return this.model;
     }
 
     @Override
     public void onEditSearch(ActionEvent event) {
         setMyStatusExpression(null);
+        setCustomer(null);
+        setStartDateFrom(null);
+        setStartDateTo(null);
+        setEndDateFrom(null);
+        setEndDateTo(null);
+        setDueDateFrom(null);
+        setDueDateTo(null);
         super.onEditSearch(event);
     }
     
     public void addStartDateFromExpression(ValueChangeEvent event){
-        if(event.getNewValue() != null) {
+        if(event.getNewValue() != null && getStartDateFrom() != null) {
             try {
                 getCriteria().addGreaterThanOrEqualExpression(getFieldName(IProjectAlias.TASK_START_DATE), event.getNewValue());
             } catch (ManagerBeanException e) {
@@ -185,7 +198,7 @@ public class TaskController extends BasicController implements ITaskController {
     }
     
     public void addStartDateToExpression(ValueChangeEvent event){
-        if(event.getNewValue() != null) {
+        if(event.getNewValue() != null && getStartDateTo() != null) {
             try {
                 getCriteria().addLessThanOrEqualExpression(getFieldName(IProjectAlias.TASK_START_DATE), event.getNewValue());
             } catch (ManagerBeanException e) {
@@ -195,7 +208,7 @@ public class TaskController extends BasicController implements ITaskController {
     }
 
     public void addEndDateFromExpression(ValueChangeEvent event){
-        if(event.getNewValue() != null) {
+        if(event.getNewValue() != null && getEndDateFrom() != null) {
             try {
                 getCriteria().addGreaterThanOrEqualExpression(getFieldName(IProjectAlias.TASK_END_DATE), event.getNewValue());
             } catch (ManagerBeanException e) {
@@ -205,7 +218,7 @@ public class TaskController extends BasicController implements ITaskController {
     }
     
     public void addEndDateToExpression(ValueChangeEvent event){
-        if(event.getNewValue() != null) {
+        if(event.getNewValue() != null && getEndDateTo() != null) {
             try {
                 getCriteria().addLessThanOrEqualExpression(getFieldName(IProjectAlias.TASK_END_DATE), event.getNewValue());
             } catch (ManagerBeanException e) {
@@ -215,7 +228,7 @@ public class TaskController extends BasicController implements ITaskController {
     }
 
     public void addDueDateFromExpression(ValueChangeEvent event){
-        if(event.getNewValue() != null) {
+        if(event.getNewValue() != null && getDueDateFrom() != null) {
             try {
                 getCriteria().addGreaterThanOrEqualExpression(getFieldName(IProjectAlias.TASK_DUE_DATE), event.getNewValue());
             } catch (ManagerBeanException e) {
@@ -225,7 +238,7 @@ public class TaskController extends BasicController implements ITaskController {
     }
     
     public void addDueDateToExpression(ValueChangeEvent event){
-        if(event.getNewValue() != null) {
+        if(event.getNewValue() != null && getDueDateTo() != null) {
             try {
                 getCriteria().addLessThanOrEqualExpression(getFieldName(IProjectAlias.TASK_DUE_DATE), event.getNewValue());
             } catch (ManagerBeanException e) {
@@ -238,6 +251,17 @@ public class TaskController extends BasicController implements ITaskController {
         if(event.getNewValue() != null && !event.getNewValue().equals("")) {
             try {
                 getCriteria().addEqualExpression(getFieldName(IProjectAlias.TASK_CUSTOMER_ID), new Integer(event.getNewValue().toString()));
+            } catch (ManagerBeanException e) {
+                LOGGER.log(Level.SEVERE, "Error adding customer expression", e);
+            }
+        }
+    }
+
+    public void addCustomerPojoExpression(ValueChangeEvent event) {
+        if(event.getNewValue() != null && !event.getNewValue().equals("")) {
+            try {
+            	Customer c = (Customer) event.getNewValue();
+                getCriteria().addEqualExpression(getFieldName(IProjectAlias.TASK_CUSTOMER_ID), new Integer(c.getId().toString()));
             } catch (ManagerBeanException e) {
                 LOGGER.log(Level.SEVERE, "Error adding customer expression", e);
             }
@@ -551,7 +575,7 @@ public class TaskController extends BasicController implements ITaskController {
         Iterator<Task> iter = checks.iterator();
         while(iter.hasNext()){
             Task task = iter.next();
-            releaseTask(task);
+            task = releaseTask(task);
             if (!message && !isFreeTask(task)) {
                 addMessage("Existen Tareas que no se han podido liberar por estar asumidas por otros Usuarios.");
                 message = true;
@@ -560,11 +584,12 @@ public class TaskController extends BasicController implements ITaskController {
         resetChecks();
     }
 
-    private void releaseTask(Task task) {
+    private Task releaseTask(Task task) {
         if (isMyTask(task)) {
             task.setUser(null);
-            updateTask(task);
+            task = updateTask(task);
         }
+        return task;
     }
 
     @SuppressWarnings("unused")
@@ -715,5 +740,53 @@ public class TaskController extends BasicController implements ITaskController {
         }
         return null;
     }
+
+	public Date getStartDateFrom() {
+		return startDateFrom;
+	}
+
+	public void setStartDateFrom(Date startDateFrom) {
+		this.startDateFrom = startDateFrom;
+	}
+
+	public Date getStartDateTo() {
+		return startDateTo;
+	}
+
+	public void setStartDateTo(Date startDateTo) {
+		this.startDateTo = startDateTo;
+	}
+
+	public Date getEndDateFrom() {
+		return endDateFrom;
+	}
+
+	public void setEndDateFrom(Date endDateFrom) {
+		this.endDateFrom = endDateFrom;
+	}
+
+	public Date getEndDateTo() {
+		return endDateTo;
+	}
+
+	public void setEndDateTo(Date endDateTo) {
+		this.endDateTo = endDateTo;
+	}
+
+	public Date getDueDateFrom() {
+		return dueDateFrom;
+	}
+
+	public void setDueDateFrom(Date dueDateFrom) {
+		this.dueDateFrom = dueDateFrom;
+	}
+
+	public Date getDueDateTo() {
+		return dueDateTo;
+	}
+
+	public void setDueDateTo(Date dueDateTo) {
+		this.dueDateTo = dueDateTo;
+	}
 
 }

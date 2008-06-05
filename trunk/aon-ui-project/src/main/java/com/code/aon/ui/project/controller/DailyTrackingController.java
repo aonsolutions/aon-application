@@ -31,12 +31,12 @@ import com.code.aon.ql.Criteria;
 import com.code.aon.ql.ast.Expression;
 import com.code.aon.ql.util.ExpressionException;
 import com.code.aon.ql.util.ExpressionUtilities;
+import com.code.aon.report.OutputFormat;
+import com.code.aon.report.ReportException;
 import com.code.aon.ui.config.util.UserUtils;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.form.PageDataModel;
 import com.code.aon.ui.menu.jsf.MenuEvent;
-import com.code.aon.ui.report.OutputFormat;
-import com.code.aon.ui.report.ReportException;
 import com.code.aon.ui.report.controller.ReportManager;
 import com.code.aon.ui.util.AonUtil;
 
@@ -51,6 +51,9 @@ public class DailyTrackingController extends BasicController {
     private DataModel finishedTaskModel;
     
     private boolean reportMode;
+    
+    private Customer customer;
+    private Customer customerReport;
     
     private Integer customerId;
     
@@ -74,6 +77,9 @@ public class DailyTrackingController extends BasicController {
     
     private OutputFormat outputFormat;
     
+    private Date trackingDateFrom;
+    
+    private Date trackingDateTo;
     
     public List<SelectItem> getDossiers() {
         return dossiers;
@@ -196,6 +202,9 @@ public class DailyTrackingController extends BasicController {
 	}
 
 	public OutputFormat getOutputFormat() {
+		if (outputFormat == null) {
+			outputFormat = OutputFormat.PDF; 
+		}
 		return outputFormat;
 	}
 
@@ -207,6 +216,14 @@ public class DailyTrackingController extends BasicController {
         super.onReset(event);
     }
 	
+	@Override
+	public void onEditSearch(ActionEvent event) {
+		super.onEditSearch(event);
+		setCustomer(null);
+		setTrackingDateFrom(null);
+		setTrackingDateTo(null);
+	}
+	
     public void customerChange(ValueChangeEvent event) {
         if (event.getNewValue() != null && !"".equals(event.getNewValue())) {
             loadDossiers(new Integer(event.getNewValue().toString()));
@@ -215,6 +232,16 @@ public class DailyTrackingController extends BasicController {
             dossiers = new LinkedList<SelectItem>();
         }
         activities = new LinkedList<SelectItem>();
+    }
+
+    public void customerPojoChange(ValueChangeEvent event) {
+        if ( event.getNewValue() != null ) {
+        	Customer customer = (Customer) event.getNewValue();
+            loadDossiers( customer.getId() );
+            loadCustomer(customer.getId());
+        } else {
+            dossiers = new LinkedList<SelectItem>();
+        }
     }
     
     public void workgroupChanged(ValueChangeEvent event) {
@@ -335,7 +362,7 @@ public class DailyTrackingController extends BasicController {
     }
     
     public void addTrackingDateFromExpression(ValueChangeEvent event){
-        if(event.getNewValue() != null) {
+        if(event.getNewValue() != null && getTrackingDateFrom() != null) {
             try {
                 IManagerBean dailyTrackingBean = BeanManager.getManagerBean(DailyTracking.class);
                 getCriteria().addGreaterThanOrEqualExpression(dailyTrackingBean.getFieldName(IProjectAlias.DAILY_TRACKING_TRACKING_DATE), event.getNewValue());
@@ -346,7 +373,7 @@ public class DailyTrackingController extends BasicController {
     }
     
     public void addTrackingDateToExpression(ValueChangeEvent event){
-        if(event.getNewValue() != null){
+        if(event.getNewValue() != null && getTrackingDateTo() != null){
             try {
             	IManagerBean dailyTrackingBean = BeanManager.getManagerBean(DailyTracking.class);
                 getCriteria().addLessThanOrEqualExpression(dailyTrackingBean.getFieldName(IProjectAlias.DAILY_TRACKING_TRACKING_DATE), event.getNewValue());
@@ -375,10 +402,28 @@ public class DailyTrackingController extends BasicController {
 			}
     	}
     }
-    
+
+    public void addCustomerPojoExpression(ValueChangeEvent event) {
+        if(event.getNewValue() != null && !event.getNewValue().equals("")) {
+            try {
+            	Customer c = (Customer) event.getNewValue();
+                getCriteria().addEqualExpression(getFieldName(IProjectAlias.DAILY_TRACKING_CUSTOMER_ID), new Integer(c.getId().toString()));
+            } catch (ManagerBeanException e) {
+                LOGGER.log(Level.SEVERE, "Error adding customer expression", e);
+            }
+        }
+    }
+
     public void reloadDossiers(ValueChangeEvent event){
     	if (event.getNewValue() != null && !"".equals(event.getNewValue())) {
-            loadDossiers(new Integer(event.getNewValue().toString()));
+    		Object newValue = event.getNewValue();
+    		if (newValue instanceof Customer) {
+    			Customer c = (Customer) newValue;
+    			loadDossiers(c.getId());
+    		} else {
+    			//customerId
+    			loadDossiers(new Integer(newValue.toString()));	
+    		}
         } else {
             dossiers = new LinkedList<SelectItem>();
         }
@@ -390,6 +435,11 @@ public class DailyTrackingController extends BasicController {
     	setReportMode(true);
     	initializeSearchParameters();
     }
+    
+    public void onResetReportSearch(ActionEvent event){
+    	setReportMode(true);
+    	initializeSearchParameters();
+    }
 	
     @SuppressWarnings("unused")
     public void disableReportMode(MenuEvent event){
@@ -397,6 +447,7 @@ public class DailyTrackingController extends BasicController {
     }
     
     private void initializeSearchParameters() {
+		setCustomerReport(null);
 		setCustomerId(null);
 		setCustomerName("");
 		setWorkgroupId(null);
@@ -419,6 +470,9 @@ public class DailyTrackingController extends BasicController {
 		}
 		if(getCustomerId() != null){
 			criteria.addEqualExpression(bean.getFieldName(IProjectAlias.DAILY_TRACKING_CUSTOMER_ID), getCustomerId());
+		}
+		if(getCustomerReport() != null && getCustomerReport().getId() != null){
+			criteria.addEqualExpression(bean.getFieldName(IProjectAlias.DAILY_TRACKING_CUSTOMER_ID), getCustomerReport().getId());
 		}
 		if(getDossierId() != null){
 			criteria.addEqualExpression(bean.getFieldName(IProjectAlias.DAILY_TRACKING_DOSSIER_ID), getDossierId());
@@ -491,4 +545,36 @@ public class DailyTrackingController extends BasicController {
         String outcome = manager.onExecute();
         return outcome;
     }
+
+	public Date getTrackingDateFrom() {
+		return trackingDateFrom;
+	}
+
+	public void setTrackingDateFrom(Date trackingDateFrom) {
+		this.trackingDateFrom = trackingDateFrom;
+	}
+
+	public Date getTrackingDateTo() {
+		return trackingDateTo;
+	}
+
+	public void setTrackingDateTo(Date trackingDateTo) {
+		this.trackingDateTo = trackingDateTo;
+	}
+
+	public Customer getCustomer() {
+		return customer;
+	}
+
+	public void setCustomer(Customer customer) {
+		this.customer = customer;
+	}
+
+	public Customer getCustomerReport() {
+		return customerReport;
+	}
+
+	public void setCustomerReport(Customer customerReport) {
+		this.customerReport = customerReport;
+	}
 }

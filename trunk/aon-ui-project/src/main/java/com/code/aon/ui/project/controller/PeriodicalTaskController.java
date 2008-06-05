@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import javax.faces.event.ActionEvent;
 import javax.faces.event.ValueChangeEvent;
 import javax.faces.model.SelectItem;
 
@@ -30,6 +31,9 @@ public class PeriodicalTaskController extends BasicController {
 	
     private List<SelectItem> dossiers = new LinkedList<SelectItem>();
     private List<SelectItem> activities = new LinkedList<SelectItem>();
+    
+    private Date nextDateFrom;
+    private Date nextDateTo;
 
     public List<SelectItem> getDossiers() {
         return dossiers;
@@ -41,6 +45,13 @@ public class PeriodicalTaskController extends BasicController {
 
     public List<SelectItem> getActivities() {
         return activities;
+    }
+    
+    @Override
+    public void onEditSearch(ActionEvent event) {
+    	super.onEditSearch(event);
+    	setNextDateFrom(null);
+    	setNextDateTo(null);
     }
 
     public void setActivities(List<SelectItem> activities) {
@@ -111,7 +122,7 @@ public class PeriodicalTaskController extends BasicController {
     }
     
 	public void addNextDateFromExpression(ValueChangeEvent event){
-        if(event.getNewValue() != null) {
+        if(event.getNewValue() != null && getNextDateFrom() != null) {
             try {
                 getCriteria().addGreaterThanOrEqualExpression(getFieldName(IProjectAlias.PERIODICAL_TASK_NEXT_DATE), event.getNewValue());
             } catch (ManagerBeanException e) {
@@ -121,7 +132,7 @@ public class PeriodicalTaskController extends BasicController {
     }
     
     public void addNextDateToExpression(ValueChangeEvent event){
-        if(event.getNewValue() != null) {
+        if(event.getNewValue() != null && getNextDateTo() != null) {
             try {
                 getCriteria().addLessThanOrEqualExpression(getFieldName(IProjectAlias.PERIODICAL_TASK_NEXT_DATE), event.getNewValue());
             } catch (ManagerBeanException e) {
@@ -135,5 +146,21 @@ public class PeriodicalTaskController extends BasicController {
 		calendar.setTime(date);
 		calendar.add(periodTask.getPeriod().getField(), periodTask.getQuantity() * periodTask.getPeriod().getValue());
 		return calendar.getTime();
+	}
+
+	public Date getNextDateFrom() {
+		return nextDateFrom;
+	}
+
+	public void setNextDateFrom(Date nextDateFrom) {
+		this.nextDateFrom = nextDateFrom;
+	}
+
+	public Date getNextDateTo() {
+		return nextDateTo;
+	}
+
+	public void setNextDateTo(Date nextDateTo) {
+		this.nextDateTo = nextDateTo;
 	}
 }
