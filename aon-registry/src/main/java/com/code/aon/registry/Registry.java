@@ -278,6 +278,18 @@ public class Registry implements ITransferObject, ILookupObject {
 	}
 	
 	/**
+	 * Gets the cellular.
+	 * 
+	 * @return the cellular
+	 * 
+	 * @throws ManagerBeanException the manager bean exception
+	 */
+	@Transient
+	public RegistryMedia getCellular() throws ManagerBeanException{
+		return getRegistryMedia(MediaType.CELLULAR);
+	}
+	
+	/**
 	 * Gets the fax.
 	 * 
 	 * @return the fax
@@ -287,6 +299,18 @@ public class Registry implements ITransferObject, ILookupObject {
 	@Transient
 	public RegistryMedia getFax() throws ManagerBeanException{
 		return getRegistryMedia(MediaType.FAX);
+	}
+	
+	/**
+	 * Gets the email.
+	 * 
+	 * @return the email
+	 * 
+	 * @throws ManagerBeanException the manager bean exception
+	 */
+	@Transient
+	public RegistryMedia getEmail() throws ManagerBeanException{
+		return getRegistryMedia(MediaType.EMAIL);
 	}
 	
 	/**
