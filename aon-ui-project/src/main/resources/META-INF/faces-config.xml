@@ -146,7 +146,11 @@
 				<value>#{activityListener}</value>
 			</list-entries>
 		</managed-property>
-	</managed-bean>
+		<managed-property>
+         <property-name>defaultOrder</property-name>
+         <value>Dossier_number</value>
+      </managed-property>
+      	</managed-bean>
 	
 	<managed-bean>
 		<managed-bean-name>dossierControllerListener</managed-bean-name>
