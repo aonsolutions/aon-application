@@ -105,10 +105,10 @@ public class FeeInvoicingControllerListener extends ControllerAdapter {
 	
 	@Override
 	public void afterBeanCreated(ControllerEvent event) throws ControllerListenerException {
-		((FeeInvoicingController)event.getController()).setSeriesDescripition("");
 		try {
 			FeeInvoicingController feeInvoicingController = (FeeInvoicingController)this.getController(); 
 			feeInvoicingController.loadAddresses(null);
+			feeInvoicingController.setSeriesDescripition("");
 		} catch (ManagerBeanException e) {
 			throw new ControllerListenerException(e.getMessage());
 		}
