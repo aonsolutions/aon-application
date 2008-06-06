@@ -12,7 +12,9 @@ public class InvoiceRemovingParameters {
 
 	private String series;
 	
-	private String number;
+	private Integer fromNumber;
+	
+	private Integer toNumber;
 	
 	private Integer customerId;
 	
@@ -42,12 +44,20 @@ public class InvoiceRemovingParameters {
 		this.series = series;
 	}
 
-	public String getNumber() {
-		return number;
+	public Integer getFromNumber() {
+		return fromNumber;
 	}
 
-	public void setNumber(String number) {
-		this.number = number;
+	public void setFromNumber(Integer fromNumber) {
+		this.fromNumber = fromNumber;
+	}
+
+	public Integer getToNumber() {
+		return toNumber;
+	}
+
+	public void setToNumber(Integer toNumber) {
+		this.toNumber = toNumber;
 	}
 
 	public Integer getCustomerId() {
