@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<view description="Lista de Vencimientos" label="Lista de Vencimientos" sqlSentence="SELECT &#xd;&#xa;due_date, pay_method, amount&#xd;&#xa;  FROM finance&#xd;&#xa;WHERE invoice = ?&#xd;&#xa;">
+    <parameters>
+        <parameter name="parameter1" type="STRING"/>
+    </parameters>
+    <results>
+        <result accessName="due_date" columnId="due_date"
+            columnReference="data/finance.exdm.xml/due_date" label=""
+            tableId="finance" type="DATE"/>
+        <result accessName="pay_method" columnId="pay_method"
+            columnReference="data/finance.exdm.xml/pay_method" label=""
+            tableId="finance" type="INTEGER"/>
+        <result accessName="amount" columnId="amount"
+            columnReference="data/finance.exdm.xml/amount" label=""
+            tableId="finance" type="DOUBLE"/>
+    </results>
+    <dataModelReferences>
+        <dataModelReference id="data/finance.exdm.xml"/>
+    </dataModelReferences>
+</view>

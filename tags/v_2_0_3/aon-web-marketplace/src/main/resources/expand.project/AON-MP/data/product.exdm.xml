@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<table tableName="product">
+    <columns>
+        <column label="Identificador unico del Producto" name="id"
+            sqlType="integer" type="integer"/>
+        <column label="Nombre del Producto" length="64" name="name"
+            sqlType="varchar" type="string"/>
+        <column label="Codigo del Producto" length="15" name="code"
+            sqlType="varchar" type="string"/>
+        <column label="Marca Comercial del Producto" name="brand"
+            sqlType="integer" type="integer"/>
+        <column label="Categoria del Producto" name="category"
+            sqlType="integer" type="integer"/>
+        <column label="Indica si el Producto es inventariable"
+            length="1" name="inventoriable" sqlType="bit" type="string"/>
+        <column label="Estado del Producto" length="2" name="status"
+            sqlType="tinyint" type="string"/>
+        <column label="IVA del Producto" name="vat" sqlType="integer" type="integer"/>
+        <column label="Tipo de Producto" length="2" name="type"
+            sqlType="tinyint" type="string"/>
+        <column label="Indica si el Producto es una Composicion"
+            length="1" name="composition" sqlType="bit" type="string"/>
+    </columns>
+    <virtualColumns/>
+    <primaryKey>
+        <column name="id"/>
+    </primaryKey>
+    <joins>
+        <join description="product_ibfk_1" foreignPath="data/pcategory.exdm.xml">
+            <sourceColumns>
+                <column name="category"/>
+            </sourceColumns>
+        </join>
+        <join description="product_ibfk_2" foreignPath="data/brand.exdm.xml">
+            <sourceColumns>
+                <column name="brand"/>
+            </sourceColumns>
+        </join>
+        <join description="product_ibfk_3" foreignPath="data/tax.exdm.xml">
+            <sourceColumns>
+                <column name="vat"/>
+            </sourceColumns>
+        </join>
+    </joins>
+    <descriptionColumns/>
+</table>

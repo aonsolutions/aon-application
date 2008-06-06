@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<digester-rules>
+
+	<pattern value="workstation">
+		<object-create-rule
+			classname="com.code.aon.hyperview.model.HyperView" />
+		<set-properties-rule />
+	</pattern>
+
+	<pattern value="*/external-parameter">
+		<object-create-rule
+			classname="com.code.aon.hyperview.model.HyperViewParameter" />
+		<set-properties-rule />
+		<call-method-rule methodname="convertType" paramcount="1" />
+		<call-param-rule attrname="type" paramnumber="0" />
+		<set-next-rule methodname="addParameter" />
+	</pattern>
+
+	<pattern value="workstation/node">
+		<object-create-rule
+			classname="com.code.aon.hyperview.model.HyperViewNode" />
+
+		<set-properties-rule />
+
+		<set-next-rule methodname="addNode" />
+	</pattern>
+
+	<pattern value="*/hyperCube">
+		<call-method-rule methodname="activateHyperCube" />
+	</pattern>
+	
+	<pattern value="*/node">
+		<object-create-rule
+			classname="com.code.aon.hyperview.model.HyperViewNode" />
+
+		<set-properties-rule />
+
+		<set-next-rule methodname="addNode" />
+	</pattern>
+
+	<pattern value="*/dynamicSentence">
+		<object-create-rule
+			classname="com.code.aon.hyperview.model.HyperViewDynamicSQLNode" />
+		<set-next-rule methodname="setDynamicNode" />
+	</pattern>
+
+	<pattern value="*/hyperCube/contents">
+		<call-method-rule methodname="hyperCubeContents" />
+	</pattern>
+
+	<pattern value="*/contents">
+		<object-create-rule
+			classname="com.code.aon.hyperview.model.HyperViewContents" />
+			
+		<set-next-rule methodname="setContents" />		
+	</pattern>
+	
+	<pattern value="*/layout">
+		<object-create-rule
+			classname="com.code.aon.hyperview.model.HyperViewLayout" />
+		<call-method-rule methodname="convertType" paramcount="1" />
+		<call-param-rule attrname="type" paramnumber="0" />
+		<set-next-rule methodname="setLayout" />		
+	</pattern>
+
+	<pattern value="*/listViewContent">
+		<object-create-rule
+			classname="com.code.aon.hyperview.model.HyperViewListSQLNode" />
+		<set-properties-rule />
+		<set-next-rule methodname="addContent" />
+	</pattern>
+
+	<pattern value="*/formViewContent">
+		<object-create-rule
+			classname="com.code.aon.hyperview.model.HyperViewFormSQLNode" />
+		<set-properties-rule />
+		<set-next-rule methodname="addContent" />
+	</pattern>
+
+	<pattern value="*/contentComposite">
+		<object-create-rule
+			classname="com.code.aon.hyperview.model.HyperViewCompositeView" />
+		<set-properties-rule />
+		<set-next-rule methodname="addContent" />
+	</pattern>
+
+	<pattern value="*/hyperlinkContent">
+		<object-create-rule
+			classname="com.code.aon.hyperview.model.HyperViewLinkContent" />
+		<set-properties-rule />
+		<set-next-rule methodname="addContent" />
+	</pattern>
+
+	<pattern value="*/imageContent">
+		<object-create-rule
+			classname="com.code.aon.hyperview.model.HyperViewImageContent" />
+		<set-properties-rule />
+		<set-next-rule methodname="addContent" />
+	</pattern>
+
+	<pattern value="*/sentence">
+		<call-method-rule methodname="setSentence" paramcount="0" />
+	</pattern>
+
+	<pattern value="*/parameters/parameter">
+		<object-create-rule
+			classname="com.code.aon.hyperview.model.HyperViewParameter" />
+		<set-properties-rule />
+		<set-next-rule methodname="addParameter" />
+	</pattern>
+
+	<pattern value="*/metadata/attribute">
+		<object-create-rule
+			classname="com.code.aon.hyperview.model.HyperViewAttribute" />
+
+		<set-properties-rule />
+
+		<call-method-rule methodname="convertType" paramcount="1" />
+		<call-param-rule attrname="type" paramnumber="0" />
+
+		<set-next-rule methodname="addAttribute" />
+
+	</pattern>
+
+</digester-rules>

@@ -1,0 +1,225 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core" 
+	xmlns:t="http://myfaces.apache.org/tomahawk"            
+	xmlns:h="http://java.sun.com/jsf/html">
+<body>
+
+<ui:composition template="/facelet/templates/aon.ui.content.xhtml">
+
+	<ui:define name="head">
+		<ui:include src="/facelet/shared/head.xhtml" />
+		<t:stylesheet path="/jscalendar-1.0/calendar-system.css" />
+		<script type='text/javascript'
+			src="${facesContext.externalContext.requestContextPath}/jscalendar-1.0/calendar.js">
+			// nothing
+		</script>
+		<script type='text/javascript'
+			src="${facesContext.externalContext.requestContextPath}/jscalendar-1.0/lang/calendar-es.js">
+			// nothing
+		</script>
+		<script type='text/javascript'
+			src="${facesContext.externalContext.requestContextPath}/jscalendar-1.0/calendar-setup.js">
+			// nothing
+		</script>
+	</ui:define>
+
+	<ui:define name="content">
+		<h:form id="traceForm">
+		
+			<t:div styleClass="aon-content-toolbar" id="aon-content-toolbar"
+				forceId="#{true}">
+				<t:div styleClass="aon-content-toolbar-internal">
+				<t:div styleClass="aon-content-toolbar-item-group">
+					<t:commandButton 
+						value="#{bundle.aon_save}"
+						action="trace" 
+						actionListener="#{trace.onSave}" 
+						forceId="#{true}"
+						styleClass="aon-content-toolbar-item aon-content-toolbar-item-save"
+						onmouseover="this.className='aon-content-toolbar-item aon-content-toolbar-item-hover aon-content-toolbar-item-save'"
+						onmouseout="this.className='aon-content-toolbar-item aon-content-toolbar-item-save'" />
+					<t:commandButton id="trace" 
+						value="#{bundle.aon_report} A"
+						rendered="#{trace.saved}"
+						forceId="#{true}"
+						onclick="reportWindow(this, 'traceAuxForm', '${facesContext.externalContext.requestContextPath}/facelet/report/preferences.faces');return false;"
+						styleClass="aon-content-toolbar-item aon-content-toolbar-item-save"
+						onmouseover="this.className='aon-content-toolbar-item aon-content-toolbar-item-hover aon-content-toolbar-item-save'"
+						onmouseout="this.className='aon-content-toolbar-item aon-content-toolbar-item-save'" />
+					<t:commandButton id="traceB" 
+						value="#{bundle.aon_report} B"
+						rendered="#{trace.saved}"
+						forceId="#{true}"
+						onclick="reportWindow(this, 'traceAuxForm', '${facesContext.externalContext.requestContextPath}/facelet/report/preferences.faces');return false;"
+						styleClass="aon-content-toolbar-item aon-content-toolbar-item-save"
+						onmouseover="this.className='aon-content-toolbar-item aon-content-toolbar-item-hover aon-content-toolbar-item-save'"
+						onmouseout="this.className='aon-content-toolbar-item aon-content-toolbar-item-save'" />
+				</t:div>
+				</t:div>
+			</t:div>
+
+			<t:div id="aon-scroll-area" forceId="#{true}">
+				<t:div styleClass="aon-scroll-area-internal">
+				
+					<h:panelGrid columns="2" cellpadding="0" cellspacing="0"
+						styleClass="aon-form-table"
+						columnClasses="aon-form-table-column-odd,aon-form-table-column-even">
+
+						<t:outputLabel for="Trace_crotal" 
+							styleClass="aon-form-input-text-label" 
+							value="#{appBundle.trace_crotal}" />			
+						<t:inputText id="Trace_crotal" size="30" 
+							styleClass="aon-form-input-text"
+							value="#{trace.to.crotal}"
+							valueChangeListener="#{trace.addCrotal}" />
+	
+						<t:outputLabel for="Trace_born" 
+							styleClass="aon-form-input-text-label" 
+							value="#{appBundle.trace_born}" />
+						<t:inputText id="Trace_born" size="50" 
+							styleClass="aon-form-input-text"
+							value="#{trace.to.born}"
+							valueChangeListener="#{trace.addBorn}" />
+	
+						<t:outputLabel for="Trace_raised" 
+							styleClass="aon-form-input-text-label" 
+							value="#{appBundle.trace_raised}" />
+						<t:inputText id="Trace_raised" size="50" 
+							value="#{trace.to.raised}"
+							styleClass="aon-form-input-text"
+							valueChangeListener="#{trace.addRaised}" />
+	
+						<t:outputLabel for="Trace_sacrificed" 
+							styleClass="aon-form-input-text-label" 
+							value="#{appBundle.trace_sacrificed}" />
+						<t:inputText id="Trace_sacrificed" size="50" 
+							value="#{trace.to.sacrificed}"
+							styleClass="aon-form-input-text"
+							valueChangeListener="#{trace.addSacrificed}" />
+	
+						<t:outputLabel for="Trace_quartered" 
+							styleClass="aon-form-input-text-label" 
+							value="#{appBundle.trace_quartered}" />
+						<t:inputText id="Trace_quartered" size="50" 
+							value="#{trace.to.quartered}"
+							styleClass="aon-form-input-text"
+							valueChangeListener="#{trace.addQuartered}" />
+							
+					</h:panelGrid>
+					
+					<t:div styleClass="aon-form-group">
+						<t:div styleClass="aon-form-group-title">
+							<t:outputLabel for="salesInvoicingLineData"
+								value="A.)" />
+						</t:div>
+						<t:div styleClass="aon-form-group-body">
+
+							<h:panelGrid columns="2" cellpadding="0" cellspacing="0"
+								styleClass="aon-form-table"
+								columnClasses="aon-form-table-column-odd,aon-form-table-column-even">
+
+								<t:outputLabel for="Trace_startDate" 
+									styleClass="aon-form-input-text-label" 
+									value="#{appBundle.trace_startDate}" />
+								<t:div>
+									<t:inputText styleClass="aon-form-input-text"
+										id="Trace_startDate" forceId="#{true}"
+										valueChangeListener="#{trace.addStartDate}"
+										value="#{trace.to.startDate}" size="10" maxlength="12">
+										<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+											timeZone="#{timeZoneController.timeZoneId}" />
+									</t:inputText>
+									<t:commandButton styleClass="aon-form-lookup-button"
+										id="Trace_startDate_button" forceId="#{true}" value=""
+										immediate="true"/>
+									<script type="text/javascript">
+								  Calendar.setup( {
+									inputField  : "Trace_startDate", button : "Trace_startDate_button",
+									ifFormat    : "%d/%m/%Y" } );
+									</script>								
+								</t:div>
+								
+								<t:outputLabel for="Trace_endDate" 
+									styleClass="aon-form-input-text-label" 
+									value="#{appBundle.trace_endDate}" />		
+								<t:div>
+									<t:inputText styleClass="aon-form-input-text"
+										id="Trace_endDate" forceId="#{true}"
+										valueChangeListener="#{trace.addEndDate}"
+										value="#{trace.to.endDate}" size="10" maxlength="12">
+										<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+											timeZone="#{timeZoneController.timeZoneId}" />
+									</t:inputText>
+									<t:commandButton styleClass="aon-form-lookup-button"
+										id="Trace_endDate_button" forceId="#{true}" value=""
+										immediate="true" />
+									<script type="text/javascript">
+								  Calendar.setup( {
+									inputField  : "Trace_endDate", button : "Trace_endDate_button",
+									ifFormat    : "%d/%m/%Y" } );
+									</script>								
+								</t:div>					
+								
+							</h:panelGrid>
+						
+						</t:div>
+					</t:div>
+
+					<t:div styleClass="aon-form-group">
+						<t:div styleClass="aon-form-group-title">
+							<t:outputLabel for="salesInvoicingLineData"
+								value="B.)" />
+						</t:div>
+						<t:div styleClass="aon-form-group-body">
+
+							<h:panelGrid columns="2" cellpadding="0" cellspacing="0"
+								styleClass="aon-form-table"
+								columnClasses="aon-form-table-column-odd,aon-form-table-column-even">
+
+								<t:outputLabel for="Trace_name" 
+									styleClass="aon-form-input-text-label" 
+									value="#{appBundle.trace_name}" />
+								<t:inputText id="Trace_name" size="50" 
+									value="#{trace.to.name}"
+									styleClass="aon-form-input-text"
+									valueChangeListener="#{trace.addName}" />
+							
+								
+								<t:outputLabel for="Trace_expiry" 
+									styleClass="aon-form-input-text-label" 
+									value="#{appBundle.trace_expiry}" />		
+								<t:div>
+									<t:inputText styleClass="aon-form-input-text"
+										id="Trace_expiry" forceId="#{true}"
+										valueChangeListener="#{trace.addExpiry}"
+										value="#{trace.to.expiry}" size="10" maxlength="12">
+										<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+											timeZone="#{timeZoneController.timeZoneId}" />
+									</t:inputText>
+									<t:commandButton styleClass="aon-form-lookup-button"
+										id="Trace_expiry_button" forceId="#{true}" value=""
+										immediate="true" />
+									<script type="text/javascript">
+								  Calendar.setup( {
+									inputField  : "Trace_expiry", button : "Trace_expiry_button",
+									ifFormat    : "%d/%m/%Y" } );
+									</script>								
+								</t:div>					
+								
+							</h:panelGrid>
+						
+						</t:div>
+					</t:div>
+						
+				</t:div>
+			</t:div>
+		</h:form>
+		<h:form id="traceAuxForm" target="list" />
+		
+	</ui:define>
+</ui:composition>
+
+</body>
+</html>

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<report>
+	<datasheet name="Model" description="Modelo">
+		<field>
+			<name>id</name>
+			<fieldlabel>ID</fieldlabel>
+		</field>
+		<lookup name="input_make" description="make">
+			<displayColumns>Marca</displayColumns>
+		</lookup>
+		<field>
+			<name>name</name>
+			<fieldlabel>Nombre</fieldlabel>
+		</field>
+	</datasheet>
+</report>

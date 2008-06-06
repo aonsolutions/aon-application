@@ -1,0 +1,124 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:h="http://java.sun.com/jsf/html">
+<body>
+
+<ui:composition template="/facelet/templates/template.xhtml">
+
+	<ui:define name="content">
+
+		<h:form id="testSQL">
+
+			<t:div id="aon-general-title" forceId="#{true}" styleClass="aon-general-title">
+				<t:div styleClass="aon-general-title-internal">
+					<h:outputText value="#{runnableTree.hyperViewLabel}" />
+				</t:div>
+			</t:div>
+			<t:div id="aon-general-toolbar" forceId="#{true}" styleClass="aon-general-toolbar">
+				<t:div styleClass="aon-general-toolbar-item-group">
+					<t:commandButton id="accept"
+						styleClass="aon-general-toolbar-item aon-content-toolbar-item-list"
+						onmouseover="this.className='aon-general-toolbar-item aon-general-toolbar-item-hover aon-content-toolbar-item-new'"
+						onmouseout="this.className='aon-general-toolbar-item aon-content-toolbar-item-new'"
+						value="#{bundle.aon_accept}"
+						actionListener="#{runnableTree.onRun}" action="hyperview_view" />
+					<t:commandButton id="cancel"
+						styleClass="aon-general-toolbar-item aon-content-toolbar-item-list"
+						onmouseover="this.className='aon-general-toolbar-item aon-general-toolbar-item-hover aon-content-toolbar-item-new'"
+						onmouseout="this.className='aon-general-toolbar-item aon-content-toolbar-item-new'"
+						value="#{bundle.aon_cancel}"
+						onclick="window.close();return false;" />
+				</t:div>
+			</t:div>
+			<t:div id="aon-scroll-area" forceId="#{true}">
+				<t:div styleClass="aon-scroll-area-internal">
+					
+					<t:div styleClass="aon-content-region-without-sidebar">
+				
+						<t:div styleClass="aon-form-group">
+							<t:div styleClass="aon-form-group-title">
+								<h:outputText value="#{hyperviewBundle.hyperview_parameters}" />
+							</t:div>
+							<t:div styleClass="aon-form-group-body">
+								<h:dataTable id="runnableTreeData" var="to"
+									styleClass="aon-form-table" 
+									value="#{runnableTree.parametersModel}" rows="0"
+									columnClasses="aon-form-table-column-odd,aon-form-table-column-even">
+	
+									<h:column>
+										<h:panelGroup>
+											<h:outputText value="#{to.label}" rendered="#{to.prompt}"
+												styleClass="aon-form-field-label" />
+											<!--
+											<h:outputText value=" (#{bundle.aon_date_pattern})"
+												styleClass="aon-form-field-label"
+												rendered="#{to.date and to.prompt}" />
+											-->
+										</h:panelGroup>
+									</h:column>
+									<h:column>
+										
+											<h:inputText value="#{to.value}" size="25" required="#{true}"
+												styleClass="aon-form-input-text"
+												rendered="#{to.string and to.prompt}" />
+										
+											<h:inputText value="#{to.valueAsInteger}" size="10"
+												styleClass="aon-form-input-text" required="#{true}"
+												rendered="#{to.integer and to.prompt}" />
+										
+											<h:inputText value="#{to.valueAsDouble}" size="10"
+												styleClass="aon-form-input-text" required="#{true}"
+												rendered="#{to.double and to.prompt}" />
+										
+										<!--
+										<t:inputCalendar value="#{to.valueAsDate}"
+											styleClass="aon-form-input-text"
+											popupButtonStyleClass="aon-form-calendar-button"
+											renderAsPopup="#{true}" alt="#{to.label}" required="#{true}"
+											monthYearRowClass="yearMonthHeader" weekRowClass="weekHeader"
+											currentDayCellClass="currentDayCell"
+											popupDateFormat="#{bundle.aon_date_pattern}"
+											popupTodayString="#{bundle.aon_popup_today}"
+											popupWeekString="#{bundle.aon_popup_week}"
+											rendered="#{to.date and to.prompt}">
+											<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+												timeZone="#{timeZoneController.timeZoneId}" />
+										</t:inputCalendar>
+										-->
+										
+											<t:inputDate value="#{to.valueAsDate}" type="date"
+												styleClass="aon-form-input-text" required="#{true}"
+												rendered="#{to.date and to.prompt}" />
+										
+											<h:selectBooleanCheckbox rendered="#{to.boolean and to.prompt}"
+												required="#{true}" value="#{to.valueAsBoolean}"
+												styleClass="aon-form-selectBooleanCheckbox-field">
+											</h:selectBooleanCheckbox>
+										
+											<t:inputDate value="#{to.valueAsDate}" type="time"
+												styleClass="aon-form-input-text" required="#{true}"
+												rendered="#{to.time and to.prompt}" />
+										
+											<t:inputDate value="#{to.valueAsDate}" type="both"
+												styleClass="aon-form-input-text" required="#{true}"
+												popupCalendar="#{true}"
+												rendered="#{to.timestamp and to.prompt}" />
+										
+									</h:column>
+								</h:dataTable>
+							</t:div>
+						</t:div>
+					</t:div>
+				</t:div>
+			</t:div>
+
+		</h:form>
+	</ui:define>
+</ui:composition>
+
+</body>
+</html>
+

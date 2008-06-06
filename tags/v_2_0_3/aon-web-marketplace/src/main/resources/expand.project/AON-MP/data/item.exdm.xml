@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<table tableName="item">
+    <columns>
+        <column label="Identificador unico del Articulo" name="id"
+            sqlType="integer" type="integer"/>
+        <column label="Identificador del Producto" name="product"
+            sqlType="integer" type="integer"/>
+        <column label="Detalle del Articulo" length="64" name="detail"
+            sqlType="varchar" type="string"/>
+        <column label="Descripcion del Articulo" length="65535"
+            name="description" sqlType="longvarchar" type="string"/>
+        <column label="Precio del Articulo" name="price"
+            sqlType="double" type="double"/>
+        <column label="Estado del Articulo" length="2" name="status"
+            sqlType="tinyint" type="string"/>
+        <column label="Gastos porcentuales del Articulo"
+            name="expenses_percent" sqlType="double" type="double"/>
+        <column label="Gastos fijos del Articulo" name="expenses_fixed"
+            sqlType="double" type="double"/>
+        <column label="Porcentaje de beneficio del Articulo"
+            name="profit_percent" sqlType="double" type="double"/>
+        <column label="Precio de compra del Articulo"
+            name="purchase_price" sqlType="double" type="double"/>
+    </columns>
+    <virtualColumns/>
+    <primaryKey>
+        <column name="id"/>
+    </primaryKey>
+    <joins>
+        <join description="item_ibfk_1" foreignPath="data/product.exdm.xml">
+            <sourceColumns>
+                <column name="product"/>
+            </sourceColumns>
+        </join>
+    </joins>
+    <descriptionColumns/>
+</table>

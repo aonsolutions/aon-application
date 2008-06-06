@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<table tableName="category">
+    <columns>
+        <column label="Identificador unico de la Categoria" name="id"
+            sqlType="integer" type="integer"/>
+        <column label="Nombre de la Categoria" length="32" name="name"
+            sqlType="varchar" type="string"/>
+    </columns>
+    <virtualColumns/>
+    <primaryKey>
+        <column name="id"/>
+    </primaryKey>
+    <joins/>
+    <descriptionColumns/>
+</table>

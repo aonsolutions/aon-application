@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE bean-config 
+	PUBLIC "-//CODE-AON//DTD Bean Config//EN" 
+	"http://co-de.com/aon/bean-config.dtd">
+
+<bean-config>
+	
+	<bean description="">
+		<pojo>com.code.aon.finance.InvoiceDetail</pojo>
+		<listeners>
+	        <listener>com.code.aon.finance.event.InvoiceDetailBeanListener</listener>
+		</listeners>
+		<vetoListeners>
+	        <vetoListener>com.code.aon.finance.event.InvoiceDetailBeanVetoListener</vetoListener>
+		</vetoListeners>
+	</bean>
+
+	<bean description="">
+		<pojo>com.code.aon.product.Item</pojo>
+		<listeners>
+	        <listener>com.code.aon.ui.product.event.ItemListener</listener>
+		</listeners>
+	</bean>
+	
+	<bean description="">
+		<pojo>com.code.aon.finance.Invoice</pojo>
+		<listeners>
+	        <listener>com.code.aon.finance.event.InvoiceBeanListener</listener>
+		</listeners>
+	</bean>
+	
+	<bean description="Listener para controlar el stock al haber movientos en albaranes de compra">
+		<pojo>com.code.aon.warehouse.IncomeDetail</pojo>
+		<listeners>
+	        <listener>com.code.aon.warehouse.event.StockableBeanListener</listener>
+		</listeners>
+		<vetoListeners>
+	        <vetoListener>com.code.aon.warehouse.event.StockableBeanVetoListener</vetoListener>
+		</vetoListeners>
+	</bean>
+	
+	<bean description="Listener para controlar el stock al haber movientos en albaranes de venta">
+		<pojo>com.code.aon.warehouse.DeliveryDetail</pojo>
+		<listeners>
+	        <listener>com.code.aon.warehouse.event.StockableBeanListener</listener>
+		</listeners>
+		<vetoListeners>
+	        <vetoListener>com.code.aon.warehouse.event.StockableBeanVetoListener</vetoListener>
+		</vetoListeners>
+	</bean>
+
+	<bean description="">
+		<pojo>com.code.aon.tas.TasItem</pojo>
+		<vetoListeners>
+	        <vetoListener>com.code.aon.ui.tas.event.TasItemBeanVetoListener</vetoListener>
+		</vetoListeners>
+	</bean>
+	
+	<bean description="">
+		<pojo>com.code.aon.account.AccountEntryDetail</pojo>
+		<listeners>
+	        <listener>com.code.aon.account.event.AccountSummaryBeanListener</listener>
+		</listeners>
+		<vetoListeners>
+	        <vetoListener>com.code.aon.account.event.AccountSummaryBeanVetoListener</vetoListener>
+		</vetoListeners>
+	</bean>
+
+</bean-config>

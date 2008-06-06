@@ -1,0 +1,300 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:h="http://java.sun.com/jsf/html">
+
+<body>
+
+<ui:composition>
+
+	<t:div styleClass="aon-content-subtitle" id="aon-content-subtitle"
+		forceId="#{true}">
+		<t:div styleClass="aon-content-subtitle-internal">
+			<h:outputText
+				value="#{itemAlias.new?(bundle.aon_reset):(bundle.aon_editing)}" />
+		</t:div>
+	</t:div>
+
+	<t:div id="aon-scroll-area" forceId="#{true}">
+		<t:div styleClass="aon-scroll-area-internal">
+			<!-- start of bag panel -->
+			<!-- start of flow layout -->
+			<h:panelGrid columns="2" dir="true" styleClass="aon-form-table" 
+				columnClasses="aon-form-table-column-odd,aon-form-table-column-even">
+				<h:outputLabel for="Item_code" value="#{productBundle.item_code}"
+					styleClass="aon-form-input-text-label aon-form-table-column-odd-label" />
+				<t:inputText id="Item_code" forceId="#{true}" size="16"
+					styleClass="aon-form-input-text"
+					value="#{itemAlias.to.product.code}"
+					required="#{true}" disabledOnClientSide="false"
+					onblur="toUpperCase(this);">
+					<f:validateLength maximum="15" />
+				</t:inputText>
+
+				<h:outputLabel for="Item_status"
+					value="#{productBundle.item_status}"
+					styleClass="aon-form-selectOneMenu-label aon-form-table-column-odd-label" />
+				<h:selectOneMenu id="Item_status" forceId="#{true}"
+					styleClass="aon-form-selectOneMenu-field"
+					value="#{itemAlias.to.status}"
+					required="#{false}" disabledOnClientSide="false">
+					<f:selectItems value="#{productCollections.productStatuses}" />
+				</h:selectOneMenu>
+
+				<h:outputLabel for="Item_name" 
+					value="#{productBundle.item_name}"
+					styleClass="aon-form-input-text-label aon-form-table-column-odd-label" />
+				<t:inputText id="Item_name" forceId="#{true}" size="64" maxlength="64"
+					styleClass="aon-form-input-text" 
+					value="#{itemAlias.to.product.name}"
+					required="#{true}" disabledOnClientSide="false">
+					<f:validateLength minimum="1" maximum="64" />
+				</t:inputText>
+
+				<h:outputLabel for="Item_Category" 
+					value="#{productBundle.item_category}"
+					styleClass="aon-form-selectOneMenu-label aon-form-table-column-odd-label" />
+				<h:selectOneMenu id="Item_Category" forceId="#{true}"
+					styleClass="aon-form-selectOneMenu-field" 
+					value="#{itemAlias.to.product.category.id}"
+					disabledOnClientSide="false">
+					<f:selectItems value="#{productCollections.categoriesByGroup}" />
+				</h:selectOneMenu>
+
+				<h:outputLabel for="Tax_id" 
+					value="#{productBundle.item_tax}"
+					styleClass="aon-form-selectOneMenu-label aon-form-table-column-odd-label" />
+				<t:div>
+					<t:selectOneMenu id="Tax_id" forceId="#{true}"
+						styleClass="aon-form-selectOneMenu-field" 
+						value="#{itemAlias.to.product.vat.id}"
+						onchange="return findLookup(event,'#{facesContext.externalContext.request.contextPath}','com.code.aon.product.Tax');">
+						<f:selectItems value="#{productCollections.vatTaxes}" />
+					</t:selectOneMenu>
+					<t:inputText id="Tax_percentage" forceId="#{true}" size="5"
+						styleClass="aon-form-input-text-disabled"
+						value="#{itemAlias.to.product.vat.percentage}"
+						readonly="true" disabledOnClientSide="true">
+						<f:validateDoubleRange />
+					</t:inputText>
+					<t:outputLabel for="Tax_percentage" 
+						value="%" />	
+					<t:panelGroup rendered="#{item.surcharge}">
+						<t:inputHidden id="Tax_surcharge" forceId="#{true}"
+							value="#{itemAlias.to.product.vat.surcharge}" />
+					</t:panelGroup>
+				</t:div>
+
+				<h:outputLabel for="Item_purchasePrice" 
+					value="#{productBundle.item_initialPrice}"
+					styleClass="aon-form-input-text-label aon-form-table-column-odd-label" />
+				<t:inputText id="Item_purchasePrice" forceId="#{true}" size="10"
+					styleClass="aon-form-input-text" 
+					value="#{itemAlias.to.purchasePrice}"
+					disabledOnClientSide="#{!itemAlias.new}"
+					onblur="onExit(this);calculate(this);">
+					<f:validateDoubleRange />
+				</t:inputText>
+
+				<h:outputLabel for="Item_salesPrice" 
+					value="#{productBundle.item_salesPrice}"
+					styleClass="aon-form-input-text-label aon-form-layout-label-block" />
+				<t:div>
+					<t:inputText id="Item_salesPrice" forceId="#{true}" size="10"
+						styleClass="aon-form-input-text"
+						disabled="#{!itemAlias.new}"
+						onblur="onExit(this);calculate(this);">
+						<f:validateDoubleRange />
+					</t:inputText>
+					<t:htmlTag value="span" styleClass="aon-form-selectBooleanCheckbox">
+						<t:selectBooleanCheckbox id="Product_inventoriable" forceId="#{true}"
+							styleClass="aon-form-selectBooleanCheckbox-field"
+							value="#{itemAlias.to.product.inventoriable}" />
+						<t:outputLabel for="Product_inventoriable" 
+							value="#{productBundle.item_inventoriable}"
+							styleClass="aon-form-selectBooleanCheckbox-label" />
+					</t:htmlTag>
+				</t:div>
+			</h:panelGrid>
+
+			<t:div id="hiddenInputs">
+				<t:inputHidden id="Item_basePrice" forceId="#{true}" />
+				<t:inputHidden id="Item_expensesPercentReal" forceId="#{true}" 
+					value="#{itemAlias.to.expensesPercent}" />
+				<t:inputHidden id="Item_expensesFixedReal" forceId="#{true}" 
+					value="#{itemAlias.to.expensesFixed}" />
+				<t:inputHidden id="Item_benefitPercentReal" forceId="#{true}" 
+					value="#{itemAlias.to.profitPercent}" />
+				<t:inputHidden id="Item_price" forceId="#{true}" 
+					value="#{itemAlias.to.price}" />
+			</t:div>
+
+			<t:div styleClass="aon-form-collapsiblePanel" 
+				rendered="#{viewDetails}" >
+				<t:collapsiblePanel 
+					styleClass="aon-form-collapsiblePanel-title"
+					value="false" title="#{productBundle.itempos}" rendered="#{!itemAlias.new}">
+					<t:div styleClass="aon-form-collapsiblePanel-body">
+						<ui:include src="/facelet/product/master/item/itemPos/list.xhtml"/>
+					</t:div>
+				</t:collapsiblePanel>
+			</t:div>
+
+			<t:div styleClass="aon-form-collapsiblePanel" 
+				rendered="#{viewDetails}" >
+				<t:collapsiblePanel 
+					styleClass="aon-form-collapsiblePanel-title"
+					value="false" title="#{productBundle.item_price_simulation}">						
+					<t:div styleClass="aon-form-collapsiblePanel-body">
+						<h:panelGrid columns="2" 
+							dir="true" 
+							styleClass="aon-form-table" 
+							columnClasses="aon-form-table-column-odd,aon-form-table-column-even">
+
+							<t:outputLabel for="Item_purchasePrice2"
+								value="#{productBundle.item_last_purchase_price}"
+								styleClass="aon-form-input-text-label aon-form-table-column-odd-label" />
+							<t:inputText id="Item_purchasePrice2" forceId="#{true}" size="10"
+								styleClass="aon-form-input-text"
+								value="#{item.purchasePrice}"
+								onchange="onExit(this);calculate(this);">
+								<f:validateDoubleRange />
+							</t:inputText>
+
+							<t:outputLabel for="Item_expensesPercent"
+								value="#{productBundle.item_taxes}"
+								styleClass="aon-form-input-text-label aon-form-table-column-odd-label" />
+							<h:panelGroup>
+								<t:outputLabel for="Item_expensesPercent"
+									value="#{productBundle.item_percent}"
+									styleClass="aon-form-input-text-label" />
+								<t:inputText id="Item_expensesPercent" forceId="#{true}" size="10"
+									styleClass="aon-form-input-text"
+									onchange="onExit(this);calculate(this);">
+									<f:validateDoubleRange />
+								</t:inputText>
+								<t:outputLabel for="Item_expensesFixed"
+									value="#{productBundle.item_fixed}"
+									styleClass="aon-form-input-text-label" />
+								<t:inputText id="Item_expensesFixed" forceId="#{true}" size="10"
+									styleClass="aon-form-input-text"
+									onchange="onExit(this);calculate(this);">
+									<f:validateDoubleRange />
+								</t:inputText>
+							</h:panelGroup>
+
+							<t:outputLabel for="Item_tax"
+								value="#{productBundle.item_tax}"
+								styleClass="aon-form-input-text-label aon-form-table-column-odd-label" />
+							<t:panelGroup>
+								<t:inputText id="Item_tax" forceId="#{true}" size="5"
+									styleClass="aon-form-input-text"
+									value="#{itemAlias.to.product.vat.percentage}" 
+									disabled="true">
+									<f:validateDoubleRange />
+								</t:inputText>
+								<t:panelGroup rendered="#{item.surcharge}">
+									<t:outputLabel for="Item_surcharge"
+										value=" #{productBundle.item_surcharge}"
+										styleClass="aon-form-input-text-label" />
+									<t:inputText id="Item_surcharge" forceId="#{true}" size="5"
+										styleClass="aon-form-input-text"
+										value="#{itemAlias.to.product.vat.surcharge}" 
+										disabled="true">
+										<f:validateDoubleRange />
+									</t:inputText>
+								</t:panelGroup>
+							</t:panelGroup>
+
+							<t:outputLabel for="Item_basePrice2"
+								value="#{productBundle.item_cost}"
+								styleClass="aon-form-input-text-label aon-form-table-column-odd-label" />
+							<t:inputText id="Item_basePrice2" forceId="#{true}" size="10"
+								styleClass="aon-form-input-text"
+								onchange="onExit(this);calculate(this);">
+								<f:validateDoubleRange />
+							</t:inputText>
+
+							<t:outputLabel for="Item_benefitPercent" 
+								value="#{productBundle.item_benefitPercent}"
+								styleClass="aon-form-input-text-label aon-form-table-column-odd-label" />
+							<t:inputText id="Item_benefitPercent" forceId="#{true}" size="10"
+								styleClass="aon-form-input-text"
+								onchange="onExit(this);calculate(this);" />
+							
+							<t:outputLabel for="Item_benefitPercent2" 
+								value="#{productBundle.item_benefitPercent2}"
+								styleClass="aon-form-input-text-label aon-form-table-column-odd-label" />
+							<t:inputText id="Item_benefitPercent2" forceId="#{true}" size="10" 
+								styleClass="aon-form-input-text"
+								onchange="onExit(this);calculate(this);"/>
+							
+							<t:outputLabel for="Item_benefit" 
+								value="#{productBundle.item_benefit}"
+								styleClass="aon-form-input-text-label aon-form-table-column-odd-label" />
+							<t:inputText id="Item_benefit" forceId="#{true}" size="10" 
+								styleClass="aon-form-input-text"
+								onchange="onExit(this);calculate(this);"/>
+
+							<t:outputLabel for="Item_taxableBase" 
+								value="#{productBundle.item_taxable_base}"
+								styleClass="aon-form-input-text-label aon-form-table-column-odd-label" />
+							<t:inputText id="Item_taxableBase" forceId="#{true}" size="10"
+								styleClass="aon-form-input-text"
+								onchange="onExit(this);calculate(this);"/>
+
+							<t:outputLabel for="Item_tax2" 
+								value="#{productBundle.item_tax}"
+								styleClass="aon-form-input-text-label aon-form-table-column-odd-label" />
+							<t:inputText id="Item_tax2" forceId="#{true}" size="5"
+								styleClass="aon-form-input-text"
+								value="#{itemAlias.to.product.vat.percentage}" 
+								disabled="true">
+							</t:inputText>
+
+							<t:outputLabel for="Item_salesPrice2"
+								value="#{productBundle.item_salesPrice}"
+								styleClass="aon-form-input-text-label aon-form-table-column-odd-label" />
+							<t:inputText id="Item_salesPrice2" forceId="#{true}" size="10" 
+								styleClass="aon-form-input-text"
+								onchange="onExit(this);calculate(this);"/>
+						</h:panelGrid>
+					</t:div>
+				</t:collapsiblePanel>
+			</t:div>				
+			<!-- end of flow layout -->
+			<!-- end of bag panel -->
+		</t:div>
+	</t:div>
+
+	<script>
+		function confirmSave() {
+			return (confirm('#{bundle.aon_save_confirm}'))
+		}
+		function updatePrices(){
+			if (confirmSave()) {
+				document.getElementById("Item_purchasePrice").value = document.getElementById("Item_purchasePrice2").value;
+				document.getElementById("Item_purchasePrice").onchange();
+				document.getElementById("Item_basePrice").value = document.getElementById("Item_basePrice2").value;
+				document.getElementById("Item_price").value = document.getElementById("Item_taxableBase").value;
+				document.getElementById("Item_salesPrice").value = document.getElementById("Item_salesPrice2").value;
+	
+				document.getElementById("Item_expensesFixedReal").value = document.getElementById("Item_expensesFixed").value;
+				document.getElementById("Item_expensesPercentReal").value = document.getElementById("Item_expensesPercent").value;
+				document.getElementById("Item_benefitPercentReal").value = document.getElementById("Item_benefitPercent").value;
+
+				return true;
+			} else {
+				return false;
+			}			
+		}
+		try {
+			onLoad();
+		} catch(e) {
+		}
+	</script>
+</ui:composition>
+</body>
+</html>

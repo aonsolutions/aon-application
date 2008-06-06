@@ -1,0 +1,63 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html">
+<body>
+
+<ui:composition>
+
+	<!--  toolbar navigation -->
+	<t:div styleClass="aon-content-toolbar" forceId="#{true}"
+		id="aon-content-toolbar">
+		<t:div styleClass="aon-content-toolbar-internal">
+			<t:div styleClass="aon-content-toolbar-item-group">
+				<h:commandButton id="save" value="#{bundle.aon_save}"
+					styleClass="aon-content-toolbar-item aon-content-toolbar-item-save"
+					onmouseover="this.className='aon-content-toolbar-item aon-content-toolbar-item-hover aon-content-toolbar-item-save'"
+					onmouseout="this.className='aon-content-toolbar-item aon-content-toolbar-item-save'"
+					actionListener="#{controller.onAccept}"
+					rendered="#{controller.to!=null}"
+					onclick="return (confirm('#{bundle.aon_save_confirm}'));"
+					accesskey="#{bundle.aon_key_save}" />
+				<h:commandButton id="cancel" value="#{bundle.aon_cancel}"
+					immediate="#{true}"
+					styleClass="aon-content-toolbar-item aon-content-toolbar-item-cancel"
+					onmouseover="this.className='aon-content-toolbar-item aon-content-toolbar-item-hover aon-content-toolbar-item-cancel'"
+					onmouseout="this.className='aon-content-toolbar-item aon-content-toolbar-item-cancel'"
+					actionListener="#{controller.onCancel}"
+					rendered="#{controller.to!=null}"
+					onclick="return (confirm('#{bundle.aon_cancel_confirm}'));"
+					accesskey="#{bundle.aon_key_cancel}" />
+				<h:commandButton id="remove" value="#{bundle.aon_remove}"
+					styleClass="aon-content-toolbar-item aon-content-toolbar-item-delete"
+					onmouseover="this.className='aon-content-toolbar-item aon-content-toolbar-item-hover aon-content-toolbar-item-delete'"
+					onmouseout="this.className='aon-content-toolbar-item aon-content-toolbar-item-delete'"
+					actionListener="#{controller.onRemove}"
+					rendered="#{controller.to!=null and !controller.new}"
+					onclick="return (confirm('#{bundle.aon_remove_confirm}'));"
+					accesskey="#{bundle.aon_key_remove}" />
+				<h:commandButton id="reset" value="#{bundle.aon_reset}"
+					styleClass="aon-content-toolbar-item aon-content-toolbar-item-new"
+					onmouseover="this.className='aon-content-toolbar-item aon-content-toolbar-item-hover aon-content-toolbar-item-new'"
+					onmouseout="this.className='aon-content-toolbar-item aon-content-toolbar-item-new'"
+					actionListener="#{controller.onReset}"
+					rendered="#{!controller.new}" accesskey="#{bundle.aon_key_new}" />
+				<t:commandButton id="controller" value="#{bundle.aon_listing}"
+					styleClass="aon-content-toolbar-item aon-content-toolbar-item-list"
+					onmouseover="this.className='aon-content-toolbar-item aon-content-toolbar-item-hover aon-content-toolbar-item-list'"
+					onmouseout="this.className='aon-content-toolbar-item aon-content-toolbar-item-list'"
+					forceId="#{true}"
+					rendered="#{controller.model.rowCount > 0 and controller.to==null and !controller.new}"
+					onclick="reportWindow(this, 'placeList', '${facesContext.externalContext.requestContextPath}/facelet/report/preferences.faces');return false;"
+					accesskey="#{bundle.aon_key_print}" />
+			</t:div>
+		</t:div>
+	</t:div>
+
+</ui:composition>
+
+</body>
+</html>
+

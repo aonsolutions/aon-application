@@ -1,0 +1,51 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:h="http://java.sun.com/jsf/html">
+<body>
+
+<ui:composition>
+
+	<t:div styleClass="aon-content-subtitle" id="aon-content-subtitle"
+		forceId="#{true}">
+		<t:div styleClass="aon-content-subtitle-internal">
+		<h:outputText value="#{bundle.aon_search_header}" />
+		</t:div>
+	</t:div>
+
+	<t:div forceId="#{true}" id="aon-scroll-area">
+		<t:div styleClass="aon-scroll-area-internal">
+			<h:panelGrid columns="2" styleClass="aon-form-table"
+				columnClasses="aon-form-table-column-odd,aon-form-table-column-even">
+
+				<t:outputLabel for="Account_id"
+					value="#{accountBundle.aon_id}"
+					styleClass="aon-form-input-text-label aon-form-table-column-odd-label" />
+				<t:inputText id="Account_id" size="20"
+					valueChangeListener="#{accountAlias.addExpression}"
+					styleClass="aon-form-input-text" />
+
+				<t:outputLabel for="Account_description"
+					value="#{accountBundle.aon_description}"
+					styleClass="aon-form-input-text-label aon-form-table-column-odd-label" />
+				<t:inputText id="Account_description" size="20"
+					valueChangeListener="#{accountAlias.addExpression}"
+					styleClass="aon-form-input-text" />
+
+				<t:outputLabel for="Account_alias"
+					value="#{accountBundle.aon_alias}"
+					styleClass="aon-form-input-text-label aon-form-table-column-odd-label" />
+				<t:inputText id="Account_alias" size="20"
+					valueChangeListener="#{accountAlias.addExpression}"
+					styleClass="aon-form-input-text" />
+
+			</h:panelGrid>
+		</t:div>
+	</t:div>
+
+</ui:composition>
+
+</body>
+</html>

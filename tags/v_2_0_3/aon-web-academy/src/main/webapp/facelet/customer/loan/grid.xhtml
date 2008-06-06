@@ -1,0 +1,214 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:h="http://java.sun.com/jsf/html">
+<body>
+
+<ui:composition>
+
+	<t:div styleClass="aon-form-group" rendered="#{!customer.new}">
+		<t:div styleClass="aon-form-group-title">
+			<t:outputLabel for="alumnLoanDataTable"
+				value="#{appBundle.loan_loans}" />
+		</t:div>
+
+		<t:div styleClass="aon-form-group-body">
+			<t:dataTable id="alumnLoanDataList" value="#{alumnLoan.model}"
+				rows="20" var="to" rowIndexVar="rowIndex"
+				rowOnMouseOver="selectRow( this )"
+				rowOnMouseOut="unselectRow( this )" rowOnClick="sendRow( this )"
+				styleClass="aon-edit-table" headerClass="aon-edit-table-header"
+				footerClass="aon-edit-table-footer"
+				rowClasses="aon-edit-table-row-odd,aon-edit-table-row-even"
+				columnClasses="aon-edit-table-body aon-edit-table-body-icon, 
+					aon-edit-table-body aon-edit-table-body-string,
+					aon-edit-table-body aon-edit-table-body-string,
+					aon-edit-table-body aon-edit-table-body-string,
+					aon-edit-table-body aon-edit-table-body-string,
+					aon-edit-table-body aon-edit-table-body-buttons">
+
+				<t:column width="40">
+					<f:facet name="header">
+						<f:verbatim>&#160;</f:verbatim>
+					</f:facet>
+					<t:commandLink immediate="#{true}"
+						styleClass="aon-table-row-selected"
+						rendered="#{to.id!=alumnLoan.to.id}"
+						actionListener="#{alumnLoan.onSelect}" />
+					<f:verbatim>&#160;</f:verbatim>
+					<f:facet name="footer">
+						<t:div>
+							<t:commandButton id="reset" alt="[#{bundle.aon_reset}]"
+								styleClass="aon-edit-table-icon-button aon-edit-table-icon-button-new"
+								actionListener="#{alumnLoan.onReset}"
+								rendered="#{!alumnLoan.new}" value=""
+								accesskey="#{bundle.aon_key_new_line}">
+							</t:commandButton>
+						</t:div>
+					</f:facet>
+				</t:column>
+
+				<t:column>
+					<f:facet name="header">
+						<h:outputText value="#{appBundle.loan_material}" />
+					</f:facet>
+					<h:outputText value="#{to.material}" rendered="#{to.id!=alumnLoan.to.id}" />
+					<h:inputText rendered="#{to.id==alumnLoan.to.id}" 
+						styleClass="aon-form-input-text" size="20" required="#{true}"
+						value="#{alumnLoan.to.material}" maxlength="16"/>
+					<f:verbatim>&#160;</f:verbatim>
+					<f:facet name="footer">
+						<h:inputText rendered="#{alumnLoan.new}" 
+							styleClass="aon-form-input-text" size="20" required="#{true}"
+							value="#{alumnLoan.to.material}" maxlength="16"/>
+					</f:facet>
+				</t:column>
+				
+				<t:column width="100">
+					<f:facet name="header">
+						<h:outputText value="#{appBundle.loan_date}" />
+					</f:facet>
+					<t:outputText value="#{to.loanDate}"
+						rendered="#{to.id!=alumnLoan.to.id}">
+						<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+							timeZone="#{timeZoneController.timeZoneId}" />
+					</t:outputText>
+					<t:div>
+						<t:inputCalendar size="10" required="true"
+							id="AlumnLoan_loanDate-Edit"
+							rendered="#{to.id==alumnLoan.to.id}"
+							value="#{alumnLoan.to.loanDate}" forceId="#{true}"
+							monthYearRowClass="yearMonthHeader" weekRowClass="weekHeader"
+							currentDayCellClass="currentDayCell" renderAsPopup="true"
+							styleClass="aon-form-input-text"
+							popupButtonStyleClass="aon-form-calendar-button"
+							popupTodayString="#{bundle.aon_popup_today}"
+							popupWeekString="#{bundle.aon_popup_week}" />
+					</t:div>
+					<f:facet name="footer">
+						<t:div>
+							<t:inputCalendar size="10" required="true"
+								id="AlumnLoan_loanDate-New"
+								rendered="#{alumnLoan.new}" 
+								value="#{alumnLoan.to.loanDate}" forceId="#{true}"
+								monthYearRowClass="yearMonthHeader" weekRowClass="weekHeader"
+								popupButtonStyleClass="aon-form-calendar-button"
+								currentDayCellClass="currentDayCell"
+								renderAsPopup="true" styleClass="aon-form-input-text"
+								popupTodayString="#{bundle.aon_popup_today}"
+								popupWeekString="#{bundle.aon_popup_week}" />
+						</t:div>
+					</f:facet>
+				</t:column>
+				
+				<t:column width="100">
+					<f:facet name="header">
+						<h:outputText value="#{appBundle.loan_end_date}" />
+					</f:facet>
+					<t:outputText value="#{to.endDate}"
+						rendered="#{to.id!=alumnLoan.to.id}">
+						<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+							timeZone="#{timeZoneController.timeZoneId}" />
+					</t:outputText>
+					<t:div>
+						<t:inputCalendar size="10"
+							id="AlumnLoan_endDate-Edit"
+							rendered="#{to.id==alumnLoan.to.id}"
+							value="#{alumnLoan.to.endDate}" forceId="#{true}"
+							monthYearRowClass="yearMonthHeader" weekRowClass="weekHeader"
+							currentDayCellClass="currentDayCell" renderAsPopup="true"
+							styleClass="aon-form-input-text"
+							popupButtonStyleClass="aon-form-calendar-button"
+							popupTodayString="#{bundle.aon_popup_today}"
+							popupWeekString="#{bundle.aon_popup_week}" />
+					</t:div>
+					<f:facet name="footer">
+						<t:div>
+							<t:inputCalendar size="10"
+								id="AlumnLoan_endDate-New"
+								rendered="#{alumnLoan.new}" 
+								value="#{alumnLoan.to.endDate}" forceId="#{true}"
+								monthYearRowClass="yearMonthHeader" weekRowClass="weekHeader"
+								popupButtonStyleClass="aon-form-calendar-button"
+								currentDayCellClass="currentDayCell"
+								renderAsPopup="true" styleClass="aon-form-input-text"
+								popupTodayString="#{bundle.aon_popup_today}"
+								popupWeekString="#{bundle.aon_popup_week}" />
+						</t:div>
+					</f:facet>
+				</t:column>
+								
+				<t:column>
+					<f:facet name="header">
+						<h:outputText value="#{appBundle.loan_comments}" />
+					</f:facet>
+					<h:outputText value="#{to.comments}" rendered="#{to.id!=alumnLoan.to.id}" />
+					<h:inputText rendered="#{to.id==alumnLoan.to.id}" 
+						styleClass="aon-form-input-text" size="80"
+						value="#{alumnLoan.to.comments}" maxlength="64"/>
+					<f:verbatim>&#160;</f:verbatim>
+					<f:facet name="footer">
+						<h:inputText rendered="#{alumnLoan.new}" 
+							styleClass="aon-form-input-text" size="80"
+							value="#{alumnLoan.to.comments}" maxlength="64"/>
+					</f:facet>
+				</t:column>
+
+				<t:column>
+					<f:facet name="header">
+						<f:verbatim>&#160;</f:verbatim>
+					</f:facet>
+					<t:commandButton title="#{bundle.aon_accept}"
+						actionListener="#{alumnLoan.onAccept}"
+						onclick="return (confirm('#{bundle.aon_accept_confirm}'));"
+						styleClass="aon-edit-table-icon-button aon-edit-table-icon-button-save"
+						value="" rendered="#{to.id==alumnLoan.to.id}"
+						accesskey="#{bundle.aon_key_save_line}" />
+					<t:commandButton title="#{bundle.aon_cancel}"
+						actionListener="#{alumnLoan.onCancel}" immediate="#{true}"
+						onclick="return (confirm('#{bundle.aon_cancel_confirm}'));"
+						styleClass="aon-edit-table-icon-button aon-edit-table-icon-button-cancel"
+						value="" accesskey="#{bundle.aon_key_cancel_line}"
+						rendered="#{to.id==alumnLoan.to.id}" />
+					<t:commandButton title="#{bundle.aon_remove}"
+						actionListener="#{alumnLoan.onRemove}"
+						onclick="return (confirm('#{bundle.aon_remove_confirm}'));"
+						styleClass="aon-edit-table-icon-button aon-edit-table-icon-button-delete"
+						value="" accesskey="#{bundle.aon_key_remove_line}"
+						rendered="#{to.id==alumnLoan.to.id}" />
+					<f:verbatim rendered="#{to.id!=alumnLoan.to.id}">&#160;</f:verbatim>
+					<f:facet name="footer">
+						<t:div>
+							<f:verbatim rendered="#{!alumnLoan.new}">&#160;</f:verbatim>
+							<t:commandButton title="#{bundle.aon_accept}"
+								actionListener="#{alumnLoan.onAccept}"
+								onclick="return (confirm('#{bundle.aon_accept_confirm}'));"
+								styleClass="aon-edit-table-icon-button aon-edit-table-icon-button-save"
+								value="" accesskey="#{bundle.aon_key_save_line}"
+								rendered="#{alumnLoan.new}" />
+							<t:commandButton title="#{bundle.aon_cancel}"
+								actionListener="#{alumnLoan.onCancel}" immediate="#{true}"
+								onclick="return (confirm('#{bundle.aon_cancel_confirm}'));"
+								styleClass="aon-edit-table-icon-button aon-edit-table-icon-button-cancel"
+								value="" accesskey="#{bundle.aon_key_cancel_line}"
+								rendered="#{alumnLoan.new}" />
+						</t:div>
+					</f:facet>
+				</t:column>
+
+			</t:dataTable>
+
+			<ui:include src="/facelet/shared/dataScroller.xhtml">
+				<ui:param name="dataTable" value="alumnLoanDataList" />
+				<ui:param name="model" value="#{alumnLoan.model}" />
+				<ui:param name="showNote" value="#{false}" />
+			</ui:include>
+
+		</t:div>
+	</t:div>
+
+</ui:composition>
+</body>
+</html>

@@ -1,0 +1,50 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core" 
+	xmlns:t="http://myfaces.apache.org/tomahawk"      
+	xmlns:h="http://java.sun.com/jsf/html">
+
+<body>
+
+<ui:composition>
+
+	<t:div styleClass="aon-content-region-header" forceId="#{true}" id="aon-content-region-header">
+		<t:div styleClass="aon-breadcrumb">	
+            <t:div styleClass="aon-breadcrumb-internal">
+    			<h:form id="breadcrumForm">
+    				<t:dataList
+    					id="breadcrumb-list"
+    					var="bcnode"
+    					value="#{breadCrumbList.list}"
+    					layout="simple"
+    					rowCountVar="rowCount"
+    					rowIndexVar="rowIndex"
+    				>
+    					<h:commandLink 
+    						immediate="true"
+    						action="#{breadCrumbList.nodeAction}"
+    						actionListener="#{breadCrumbList.optionPressed}"
+    						styleClass="aon-breadcrumb-item"
+    					>
+    						<h:outputText id="rowIndex" style="display:none" value="#{bcnode.identifier}"/>
+    						<h:outputText value="#{bcnode.description}"/>
+    					</h:commandLink>
+    					<h:outputText value=" / "/>			
+    				</t:dataList>
+    			</h:form>
+		    </t:div>    			
+		</t:div>	
+		
+		<t:div styleClass="aon-content-title">
+			<t:div styleClass="aon-content-title-internal" >
+				<h:outputText value="#{breadCrumbList.title}"/>
+			</t:div>
+		</t:div>
+		
+	</t:div>		
+	
+</ui:composition>
+
+</body>
+</html>
