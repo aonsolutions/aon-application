@@ -128,12 +128,14 @@ public class CustomerFeeInvoicingEngine implements IInvoicingEngine {
 	@SuppressWarnings("unchecked")
 	private List invoiceGroupFees(Criteria criteria, InvoicingParameters params) throws ManagerBeanException, ExpressionException {
 		List<Integer> invoicedList = new LinkedList<Integer>();
-		IManagerBean invoicigGroupBean = BeanManager.getManagerBean(InvoicingGroup.class);
+		IManagerBean invoicingGroupBean = BeanManager.getManagerBean(InvoicingGroup.class);
 		Criteria groupCriteria = new Criteria();
 		if(params.getCustomerId() != null){
-			groupCriteria.addEqualExpression(invoicigGroupBean.getFieldName(IFinanceAlias.INVOICING_GROUP_PARENT_ID), params.getCustomerId());
+			groupCriteria.addEqualExpression(invoicingGroupBean.getFieldName(IFinanceAlias.INVOICING_GROUP_PARENT_ID), params.getCustomerId());
 		}
-		Iterator iter = invoicigGroupBean.getList(groupCriteria).iterator();
+		criteria.addOrder(invoicingGroupBean.getFieldName(IFinanceAlias.INVOICING_GROUP_PARENT_SURNAME));
+		criteria.addOrder(invoicingGroupBean.getFieldName(IFinanceAlias.INVOICING_GROUP_PARENT_NAME));
+		Iterator iter = invoicingGroupBean.getList(groupCriteria).iterator();
 		while(iter.hasNext()){
 			InvoicingGroup group = (InvoicingGroup)iter.next();
 			List list = invoiceGroup(group, criteria, params);
