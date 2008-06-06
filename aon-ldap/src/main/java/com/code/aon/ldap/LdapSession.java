@@ -370,6 +370,9 @@ public class LdapSession implements ILdapConstants {
 			for( Object _value : (List<Object>) value ) {
 				attribute.add(_value);
 			}				
+		} else if ( Boolean.class.isAssignableFrom(value.getClass()) ) {
+			Boolean b = (Boolean) value;
+			attribute.add( b ? TRUE_VALUE : FALSE_VALUE );
 		} else if ( Date.class.isAssignableFrom(value.getClass()) ) {
 			String date = GENERALIZED_TIME_FORMAT.format( (Date) value );
 			attribute.add( date );
