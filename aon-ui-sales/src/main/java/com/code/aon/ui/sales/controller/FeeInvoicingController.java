@@ -19,6 +19,7 @@ import com.code.aon.account.Account;
 import com.code.aon.account.AccountEntry;
 import com.code.aon.account.DefaultAccounts;
 import com.code.aon.account.Period;
+import com.code.aon.account.bridge.AccountEntryInvoice;
 import com.code.aon.account.bridge.InvoiceDetailAccount;
 import com.code.aon.account.bridge.ProductAccount;
 import com.code.aon.account.bridge.dao.IAccountBridgeAlias;
@@ -183,8 +184,7 @@ public class FeeInvoicingController extends BasicController {
 	}
 
 	@SuppressWarnings({"unused","unchecked"})
-	public void onInvoice(ActionEvent event) throws InvoicingException,
-			ManagerBeanException, ExpressionException {
+	public void onInvoice(ActionEvent event) throws InvoicingException, ManagerBeanException, ExpressionException {
 	    IManagerBean periodBean = BeanManager.getManagerBean(Period.class);
         Criteria criteria = new Criteria();
         criteria.addLessThanOrEqualExpression(periodBean.getFieldName(IAccountAlias.PERIOD_INITIATION_DATE), invoicingParams.getInvoiceDate());
@@ -379,7 +379,7 @@ public class FeeInvoicingController extends BasicController {
 	private void updateBreadCrumb() {
 		MenuManager menuManager = (MenuManager)AonUtil.getRegisteredBean(MENU_MANAGER_NAME);
         menuManager.setCurrentMenu("AON_APP");
-        menuManager.getCurrentMenuModel().setSelectedNode("root.aon_administrative_management.aon_invoice_management");
+        menuManager.getCurrentMenuModel().setSelectedNode(menuManager.getCurrentMenuModel().getOptionByKey("aon_invoice_management").getId());
     }
 	
 	public boolean isRemovable(){
@@ -580,4 +580,21 @@ public class FeeInvoicingController extends BasicController {
 		}
 		return false;
 	}
+
+	@SuppressWarnings("unchecked")
+	public Integer getAccountEntryId() throws ManagerBeanException {
+    	Invoice invoice = (Invoice)this.getTo();
+		if (invoice != null && invoice.getId() != null) {
+			IManagerBean accountEntryInvoiceBean = BeanManager.getManagerBean(AccountEntryInvoice.class);
+			Criteria criteria = new Criteria();
+			criteria.addEqualExpression(accountEntryInvoiceBean.getFieldName(IAccountBridgeAlias.ACCOUNT_ENTRY_INVOICE_INVOICE_ID), invoice.getId());
+			Iterator iterator = accountEntryInvoiceBean.getList(criteria).iterator();
+			if (iterator.hasNext()) {
+				AccountEntryInvoice accountEntryInvoice = (AccountEntryInvoice)iterator.next();
+				return accountEntryInvoice.getAccountEntry().getId();
+			}
+		}
+    	return null;
+	}
+
 }
