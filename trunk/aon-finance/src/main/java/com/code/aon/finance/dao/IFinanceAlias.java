@@ -781,6 +781,18 @@ public interface IFinanceAlias {
 	*/
 	String  INVOICING_GROUP_PARENT_ID = INVOICING_GROUP_ENTRY.getAliasNames()[1];
 
+	/** 
+	* Alias value: InvoicingGroup_parent_surname
+	* Hibernate value: InvoicingGroup.parent.surname
+	*/
+	String  INVOICING_GROUP_PARENT_SURNAME = INVOICING_GROUP_ENTRY.getAliasNames()[2];
+
+	/** 
+	* Alias value: InvoicingGroup_parent_name
+	* Hibernate value: InvoicingGroup.parent.name
+	*/
+	String  INVOICING_GROUP_PARENT_NAME = INVOICING_GROUP_ENTRY.getAliasNames()[3];
+
 
 
 	/** 
