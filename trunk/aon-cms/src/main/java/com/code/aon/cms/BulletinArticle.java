@@ -13,7 +13,7 @@ import com.code.aon.common.ITransferObject;
 
 @Entity
 @Table(name="bulletin_article")
-public class BulletinArticle implements ITransferObject {
+public class BulletinArticle implements ITransferObject, IPositionObject {
 
 	private Integer id;
 	

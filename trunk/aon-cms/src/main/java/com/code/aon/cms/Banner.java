@@ -17,7 +17,7 @@ import com.code.aon.common.ITransferObject;
 
 @Entity
 @Table(name="banner")
-public class Banner implements ITransferObject {
+public class Banner implements ITransferObject, IPositionObject {
 	
 	private Integer id;
 	
@@ -25,7 +25,7 @@ public class Banner implements ITransferObject {
 	
 	private boolean active;
 	
-	private int position;
+	private Integer position;
 	
 	private BannerCategory bannerCategory;
 	
@@ -60,11 +60,11 @@ public class Banner implements ITransferObject {
 		this.active = active;
 	}
 
-	public int getPosition() {
+	public Integer getPosition() {
 		return position;
 	}
 
-	public void setPosition(int position) {
+	public void setPosition(Integer position) {
 		this.position = position;
 	}
 

@@ -349,16 +349,26 @@ public class BasicI18nController extends BasicController implements I18NControll
 	 */
 	public void onRemoveSelected(ActionEvent event){
 		try{
+			beforeRemoveSelected();
 			for (ITransferObject to: checkList) {
 				getManagerBean().remove(to);
 			}
+			afterRemoveSelected();
 			onSearch( event );
 		} catch (ManagerBeanException e) {
 			addMessage(e.getMessage());
 			throw new AbortProcessingException(e.getMessage(), e);
 		}
 	}
-	
+
+	protected void beforeRemoveSelected(){
+		
+	}
+
+	protected void afterRemoveSelected(){
+		
+	}
+
 	public boolean isChecklistEmpty() {
 		return (this.checkList.size() <= 0);
 	}
@@ -388,19 +398,9 @@ public class BasicI18nController extends BasicController implements I18NControll
 	@Override
 	public void initializeModel() {
 		checkList= new ArrayList<ITransferObject>();
-		try {
-			reorderObjects();
-		} catch (ManagerBeanException e) {
-			e.printStackTrace();
-		}
 		super.initializeModel();
 	}
 
-	public void reorderObjects() throws ManagerBeanException {
-		
-	}
-
-	
 	public ITransferObject getModelRowdataI18n() {
 		try {
 			if (this.model.getRowData() != null) {

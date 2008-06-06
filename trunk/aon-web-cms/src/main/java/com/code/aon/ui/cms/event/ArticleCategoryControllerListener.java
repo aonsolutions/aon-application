@@ -1,12 +1,9 @@
 package com.code.aon.ui.cms.event;
 
-import java.util.List;
-
 import com.code.aon.cms.ArticleCategory;
 import com.code.aon.cms.dao.ICMSAlias;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
-import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionException;
@@ -17,6 +14,17 @@ import com.code.aon.ui.form.event.ControllerListenerException;
 
 public class ArticleCategoryControllerListener extends ControllerAdapter {
 
+	@Override
+	public void afterBeanRemoved(ControllerEvent event)
+			throws ControllerListenerException {
+		ArticleCategoryController controller = (ArticleCategoryController) event.getController();
+		try {
+			controller.orderedControllerSupport.reorderObjects(controller);
+		} catch (ManagerBeanException e) {
+			throw new ControllerListenerException(e);
+		}
+	}
+	
 	@Override
 	public void beforeModelInitialized(ControllerEvent event)
 			throws ControllerListenerException {
@@ -31,9 +39,10 @@ public class ArticleCategoryControllerListener extends ControllerAdapter {
 	
 	@Override
 	public void beforeBeanAdded(ControllerEvent event) throws ControllerListenerException {
-		ArticleCategory articleCategory = (ArticleCategory)event.getController().getTo();
+		ArticleCategoryController controller = (ArticleCategoryController)event.getController();
+		ArticleCategory articleCategory = (ArticleCategory)controller.getTo();
 		articleCategory.setActive(true);
-		articleCategory.setPosition(getLastPosition(event));
+		articleCategory.setPosition(controller.orderedControllerSupport.getLastPosition(controller));
 		assignSection(event);
 	}
 
@@ -42,22 +51,6 @@ public class ArticleCategoryControllerListener extends ControllerAdapter {
 		assignSection(event);
 	}
 	
-	private int getLastPosition(ControllerEvent event) {
-		int position = 0;
-		try{
-			Criteria criteria = new Criteria();
-			criteria.addOrder(event.getController().getManagerBean().getFieldName(ICMSAlias.ARTICLE_CATEGORY_POSITION), false);
-			List<ITransferObject> list = (List<ITransferObject>)event.getController().getManagerBean().getList(criteria);
-			if (list.size() > 0) {
-				ArticleCategory articleCategory = (ArticleCategory)list.get(0);
-				position = articleCategory.getPosition();
-				++position;
-			}
-		}catch (ManagerBeanException e) {
-		}
-		return position;
-	}
-
 	private void assignSection(ControllerEvent event){
 		ArticleCategory to = (ArticleCategory)event.getController().getTo();
 		if (to.getSection().getId()==-1){

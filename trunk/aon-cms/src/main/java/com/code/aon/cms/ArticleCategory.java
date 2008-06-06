@@ -17,7 +17,7 @@ import com.code.aon.common.ITransferObject;
 
 @Entity
 @Table(name = "article_category")
-public class ArticleCategory implements ITransferObject {
+public class ArticleCategory implements ITransferObject, IPositionObject {
 
 	private Integer id;
 

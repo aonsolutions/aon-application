@@ -11,14 +11,17 @@ import com.code.aon.cms.ModularPageOption;
 import com.code.aon.cms.ModularPageOptionDetail;
 import com.code.aon.cms.dao.ICMSAlias;
 import com.code.aon.cms.enumeration.ModularPageOptionType;
-import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionException;
+import com.code.aon.ui.cms.controller.support.OrderedControllerSupport;
+import com.code.aon.ui.cms.controller.support.IOrderedControllerListener;
 import com.code.aon.ui.util.AonUtil;
 
 
-public class ModularPageOptionController extends BasicI18nController {
+public class ModularPageOptionController extends BasicI18nController implements IOrderedControllerListener {
+
+	public OrderedControllerSupport orderedControllerSupport = new OrderedControllerSupport(ICMSAlias.MODULAR_PAGE_OPTION_POSITION);
 
 	private ModularPage currentModularPage;
 	
@@ -51,75 +54,6 @@ public class ModularPageOptionController extends BasicI18nController {
 		return label;
 	}
 
-	@SuppressWarnings("unchecked")
-	private void move( ModularPageOption so, int movement ) throws ManagerBeanException, ExpressionException {
-		int oldPosition = so.getPosition();
-		int newPosition = oldPosition + movement;
-		so.setPosition(newPosition);
-		Criteria criteria = new Criteria();
-		criteria.addExpression(getManagerBean().getFieldName(ICMSAlias.MODULAR_PAGE_OPTION_ID), ""+so.getId());
-		List<ITransferObject> list = getManagerBean().getList(criteria);
-		if (list.size() > 0) {
-			ModularPageOption option = (ModularPageOption)list.get(0);
-			option.setPosition(newPosition);
-			getManagerBean().update(option);
-		}
-    	List<ModularPageOption> listObjects = (List<ModularPageOption>) this.model.getWrappedData();
-		ModularPageOption soMoved = listObjects.get( newPosition );
-		soMoved.setPosition( oldPosition );
-		criteria = new Criteria();
-		criteria.addExpression(getManagerBean().getFieldName(ICMSAlias.MODULAR_PAGE_OPTION_ID), ""+soMoved.getId());
-		list = getManagerBean().getList(criteria);
-		if (list.size() > 0) {
-			ModularPageOption option = (ModularPageOption)list.get(0);
-			option.setPosition(oldPosition);
-			getManagerBean().update(option);
-		}
-		listObjects.set( newPosition, so);
-		listObjects.set( oldPosition, soMoved );
-	}
-	
-    public void onMoveUp(ActionEvent event) throws ManagerBeanException, ExpressionException {
-    	move((ModularPageOption) this.model.getRowData(), -1);
-    }
-
-    public void onMoveDown(ActionEvent event) throws ManagerBeanException, ExpressionException {
-    	move((ModularPageOption) this.model.getRowData(), 1);    	
-    }
-
-	public void reorderObjects() throws ManagerBeanException {
-		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(getManagerBean().getFieldName(ICMSAlias.MODULAR_PAGE_OPTION_MODULAR_PAGE_ID),currentModularPage.getId());
-		criteria.addOrder(getManagerBean().getFieldName(ICMSAlias.MODULAR_PAGE_OPTION_POSITION));
-		List<ITransferObject> list = getManagerBean().getList(criteria);
-		for (int i = 0; i < list.size(); i++) {
-			ModularPageOption so = (ModularPageOption)list.get(i);
-			int oldPosition = so.getPosition();
-			int newPosition = i;
-			if (oldPosition != newPosition) {
-				so.setPosition(newPosition);
-				getManagerBean().update(so);
-			}
-		}
-	}
-
-	public int getLastPosition() {
-		int position = 0;
-		try{
-			Criteria criteria = new Criteria();
-			criteria.addExpression(getManagerBean().getFieldName(ICMSAlias.MODULAR_PAGE_OPTION_MODULAR_PAGE_ID), "" + getCurrentModularPage().getId());
-			criteria.addOrder(getManagerBean().getFieldName(ICMSAlias.MODULAR_PAGE_OPTION_POSITION), false);
-			List<ITransferObject> list = (List<ITransferObject>)getManagerBean().getList(criteria);
-			if (list.size() > 0) {
-				ModularPageOption so = (ModularPageOption)list.get(0);
-				position = so.getPosition();
-				++position;
-			}
-		}catch (ManagerBeanException e) {
-		} catch (ExpressionException e) {
-		}
-		return position;
-	}
 
 	public boolean isVisibleIdent() {
 		ModularPageOption to = (ModularPageOption)getTo();
@@ -150,6 +84,29 @@ public class ModularPageOptionController extends BasicI18nController {
 		else if (mo.getType().equals(ModularPageOptionType.ACTIVITY)) idents = ((CollectionsController)AonUtil.getRegisteredBean("collections")).getActivityList();
 		else if (mo.getType().equals(ModularPageOptionType.ALBUM_CATEGORY)) idents = ((CollectionsController)AonUtil.getRegisteredBean("collections")).getAlbumCategoryList();
 		return idents;
+	}
+
+    public void onMoveUp(ActionEvent event) throws ManagerBeanException, ExpressionException {
+    	orderedControllerSupport.onMoveUp(this);
+    }
+
+    public void onMoveDown(ActionEvent event) throws ManagerBeanException, ExpressionException {
+    	orderedControllerSupport.onMoveDown(this);
+    }
+
+	public void fireBeforeUseCriteria(Criteria criteria) {
+		try {
+			criteria.addEqualExpression(getManagerBean().getFieldName(ICMSAlias.MODULAR_PAGE_OPTION_MODULAR_PAGE_ID),currentModularPage.getId());
+		} catch (ManagerBeanException e) {
+		}
+	}
+
+	protected void afterRemoveSelected(){
+		try {
+			orderedControllerSupport.reorderObjects(this);
+		} catch (ManagerBeanException e) {
+			e.printStackTrace();
+		}
 	}
 
 }

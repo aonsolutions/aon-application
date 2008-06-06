@@ -1,20 +1,21 @@
 package com.code.aon.ui.cms.controller;
 
-import java.util.List;
-
 import javax.faces.event.ActionEvent;
 
 import com.code.aon.cms.Link;
 import com.code.aon.cms.LinkCategory;
 import com.code.aon.cms.LinkDetail;
 import com.code.aon.cms.dao.ICMSAlias;
-import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionException;
+import com.code.aon.ui.cms.controller.support.OrderedControllerSupport;
+import com.code.aon.ui.cms.controller.support.IOrderedControllerListener;
 
 
-public class LinkController extends BasicI18nController {
+public class LinkController extends BasicI18nController implements IOrderedControllerListener {
+
+	public OrderedControllerSupport orderedControllerSupport = new OrderedControllerSupport(ICMSAlias.LINK_POSITION);
 
 	private LinkCategory currentLinkCategory;
 	
@@ -57,59 +58,27 @@ public class LinkController extends BasicI18nController {
 		super.accept(event);
 	}
 
-	@SuppressWarnings("unchecked")
-	private void move( Link l, int movement ) throws ManagerBeanException, ExpressionException {
-		int oldPosition = l.getPosition();
-		int newPosition = oldPosition + movement;
-		l.setPosition(newPosition);
-		Criteria criteria = new Criteria();
-		criteria.addExpression(getManagerBean().getFieldName(ICMSAlias.LINK_ID), ""+l.getId());
-		List<ITransferObject> list = getManagerBean().getList(criteria);
-		if (list.size() > 0) {
-			Link link = (Link)list.get(0);
-			link.setPosition(newPosition);
-			getManagerBean().update(link);
-		}
-    	List<Link> listObjects = (List<Link>) this.model.getWrappedData();
-		Link lMoved = listObjects.get( newPosition );
-		lMoved.setPosition( oldPosition );
-		criteria = new Criteria();
-		criteria.addExpression(getManagerBean().getFieldName(ICMSAlias.LINK_ID), ""+lMoved.getId());
-		list = getManagerBean().getList(criteria);
-		if (list.size() > 0) {
-			Link link = (Link)list.get(0);
-			link.setPosition(oldPosition);
-			getManagerBean().update(link);
-		}
-		listObjects.set( newPosition, l);
-		listObjects.set( oldPosition, lMoved );
-	}
-	
     public void onMoveUp(ActionEvent event) throws ManagerBeanException, ExpressionException {
-    	move((Link) this.model.getRowData(), -1);
+    	orderedControllerSupport.onMoveUp(this);
     }
 
     public void onMoveDown(ActionEvent event) throws ManagerBeanException, ExpressionException {
-    	move((Link) this.model.getRowData(), 1);    	
+    	orderedControllerSupport.onMoveDown(this);
     }
 
-	public void reorderObjects() throws ManagerBeanException{
-		Criteria criteria = new Criteria();
+	public void fireBeforeUseCriteria(Criteria criteria) {
 		try {
 			criteria.addExpression(getManagerBean().getFieldName(ICMSAlias.LINK_LINK_CATEGORY_ID), "" + getCurrentLinkCategory().getId());
+		} catch (ManagerBeanException e) {
 		} catch (ExpressionException e) {
-			throw new ManagerBeanException(e);
 		}
-		criteria.addOrder(getManagerBean().getFieldName(ICMSAlias.LINK_POSITION));
-		List<ITransferObject> list = getManagerBean().getList(criteria);
-		for (int i = 0; i < list.size(); i++) {
-			Link l = (Link)list.get(i);
-			int oldPosition = l.getPosition();
-			int newPosition = i;
-			if (oldPosition != newPosition) {
-				l.setPosition(newPosition);
-				getManagerBean().update(l);
-			}
+	}
+
+	protected void afterRemoveSelected(){
+		try {
+			orderedControllerSupport.reorderObjects(this);
+		} catch (ManagerBeanException e) {
+			e.printStackTrace();
 		}
 	}
 

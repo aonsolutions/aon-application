@@ -1,7 +1,5 @@
 package com.code.aon.ui.cms.controller;
 
-import java.util.List;
-
 import javax.faces.event.ActionEvent;
 
 import com.code.aon.cms.Banner;
@@ -9,13 +7,16 @@ import com.code.aon.cms.BannerCategory;
 import com.code.aon.cms.BannerDetail;
 import com.code.aon.cms.Image;
 import com.code.aon.cms.dao.ICMSAlias;
-import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionException;
+import com.code.aon.ui.cms.controller.support.OrderedControllerSupport;
+import com.code.aon.ui.cms.controller.support.IOrderedControllerListener;
 import com.code.aon.ui.util.AonUtil;
 
-public class BannerController extends BasicI18nController {
+public class BannerController extends BasicI18nController implements IOrderedControllerListener {
+
+	public OrderedControllerSupport orderedControllerSupport = new OrderedControllerSupport(ICMSAlias.BANNER_POSITION);
 
 	private BannerCategory currentBannerCategory;
 	
@@ -57,62 +58,6 @@ public class BannerController extends BasicI18nController {
 	public void onAccept(ActionEvent event) {
 		super.accept(event);
 	}
-
-	@SuppressWarnings("unchecked")
-	private void move( Banner b, int movement ) throws ManagerBeanException, ExpressionException {
-		int oldPosition = b.getPosition();
-		int newPosition = oldPosition + movement;
-		b.setPosition(newPosition);
-		Criteria criteria = new Criteria();
-		criteria.addExpression(getManagerBean().getFieldName(ICMSAlias.BANNER_ID), ""+b.getId());
-		List<ITransferObject> list = getManagerBean().getList(criteria);
-		if (list.size() > 0) {
-			Banner banner = (Banner)list.get(0);
-			banner.setPosition(newPosition);
-			getManagerBean().update(banner);
-		}
-    	List<Banner> listObjects = (List<Banner>) this.model.getWrappedData();
-    	Banner bMoved = listObjects.get( newPosition );
-		bMoved.setPosition( oldPosition );
-		criteria = new Criteria();
-		criteria.addExpression(getManagerBean().getFieldName(ICMSAlias.BANNER_ID), ""+bMoved.getId());
-		list = getManagerBean().getList(criteria);
-		if (list.size() > 0) {
-			Banner banner = (Banner)list.get(0);
-			banner.setPosition(oldPosition);
-			getManagerBean().update(banner);
-		}
-		listObjects.set( newPosition, b);
-		listObjects.set( oldPosition, bMoved );
-	}
-	
-    public void onMoveUp(ActionEvent event) throws ManagerBeanException, ExpressionException {
-    	move((Banner) this.model.getRowData(), -1);
-    }
-
-    public void onMoveDown(ActionEvent event) throws ManagerBeanException, ExpressionException {
-    	move((Banner) this.model.getRowData(), 1);    	
-    }
-
-	public void reorderObjects() throws ManagerBeanException{
-		Criteria criteria = new Criteria();
-		try {
-			criteria.addExpression(getManagerBean().getFieldName(ICMSAlias.BANNER_BANNER_CATEGORY_ID), "" + getCurrentBannerCategory().getId());
-		} catch (ExpressionException e) {
-			throw new ManagerBeanException(e);
-		}
-		criteria.addOrder(getManagerBean().getFieldName(ICMSAlias.BANNER_POSITION));
-		List<ITransferObject> list = getManagerBean().getList(criteria);
-		for (int i = 0; i < list.size(); i++) {
-			Banner b = (Banner)list.get(i);
-			int oldPosition = b.getPosition();
-			int newPosition = i;
-			if (oldPosition != newPosition) {
-				b.setPosition(newPosition);
-				getManagerBean().update(b);
-			}
-		}
-	}
 	
 	public void onDelImage(ActionEvent event) {
 		BannerDetail current = (BannerDetail)getToI18n();
@@ -124,6 +69,30 @@ public class BannerController extends BasicI18nController {
 		String image = ((Image)controller.getModel().getRowData()).getRelativePath();
 		BannerDetail current = (BannerDetail)getToI18n();
 		current.setImage(image);
+	}
+
+	public void fireBeforeUseCriteria(Criteria criteria) {
+		try {
+			criteria.addExpression(getManagerBean().getFieldName(ICMSAlias.BANNER_BANNER_CATEGORY_ID), "" + getCurrentBannerCategory().getId());
+		} catch (ManagerBeanException e) {
+		} catch (ExpressionException e) {
+		}
+	}
+
+    public void onMoveUp(ActionEvent event) throws ManagerBeanException, ExpressionException {
+    	orderedControllerSupport.onMoveUp(this);
+    }
+
+    public void onMoveDown(ActionEvent event) throws ManagerBeanException, ExpressionException {
+    	orderedControllerSupport.onMoveDown(this);
+    }
+
+	protected void afterRemoveSelected(){
+		try {
+			orderedControllerSupport.reorderObjects(this);
+		} catch (ManagerBeanException e) {
+			e.printStackTrace();
+		}
 	}
 
 }

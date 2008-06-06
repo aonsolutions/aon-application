@@ -9,14 +9,17 @@ import com.code.aon.cms.Menu;
 import com.code.aon.cms.MenuOption;
 import com.code.aon.cms.MenuOptionDetail;
 import com.code.aon.cms.dao.ICMSAlias;
-import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionException;
+import com.code.aon.ui.cms.controller.support.OrderedControllerSupport;
+import com.code.aon.ui.cms.controller.support.IOrderedControllerListener;
 import com.code.aon.ui.cms.util.MenuOptionUtil;
 
 
-public class MenuOptionController extends BasicI18nController {
+public class MenuOptionController extends BasicI18nController implements IOrderedControllerListener{
+
+	public OrderedControllerSupport orderedControllerSupport = new OrderedControllerSupport(ICMSAlias.MENU_OPTION_POSITION);
 
 	private Menu currentMenu;
 	
@@ -111,74 +114,28 @@ public class MenuOptionController extends BasicI18nController {
 		return MenuOptionUtil.getIdents(mo.getType(),mo.getLevel());
 	}
 
-	@SuppressWarnings("unchecked")
-	private void move( MenuOption mo, int movement ) throws ManagerBeanException, ExpressionException {
-		int oldPosition = mo.getPosition();
-		int newPosition = oldPosition + movement;
-		mo.setPosition(newPosition);
-		Criteria criteria = new Criteria();
-		criteria.addExpression(getManagerBean().getFieldName(ICMSAlias.MENU_OPTION_ID), ""+mo.getId());
-		List<ITransferObject> list = getManagerBean().getList(criteria);
-		if (list.size() > 0) {
-			MenuOption option = (MenuOption)list.get(0);
-			option.setPosition(newPosition);
-			getManagerBean().update(option);
-		}
-    	List<MenuOption> listObjects = (List<MenuOption>) this.model.getWrappedData();
-		MenuOption moMoved = listObjects.get( newPosition );
-		moMoved.setPosition( oldPosition );
-		criteria = new Criteria();
-		criteria.addExpression(getManagerBean().getFieldName(ICMSAlias.MENU_OPTION_ID), ""+moMoved.getId());
-		list = getManagerBean().getList(criteria);
-		if (list.size() > 0) {
-			MenuOption option = (MenuOption)list.get(0);
-			option.setPosition(oldPosition);
-			getManagerBean().update(option);
-		}
-		listObjects.set( newPosition, mo);
-		listObjects.set( oldPosition, moMoved );
-	}
-	
     public void onMoveUp(ActionEvent event) throws ManagerBeanException, ExpressionException {
-    	move((MenuOption) this.model.getRowData(), -1);
+    	orderedControllerSupport.onMoveUp(this);
     }
 
     public void onMoveDown(ActionEvent event) throws ManagerBeanException, ExpressionException {
-    	move((MenuOption) this.model.getRowData(), 1);    	
+    	orderedControllerSupport.onMoveDown(this);
     }
 
-	public void reorderObjects() throws ManagerBeanException {
-		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(getManagerBean().getFieldName(ICMSAlias.MENU_OPTION_MENU_ID),currentMenu.getId());
-		criteria.addOrder(getManagerBean().getFieldName(ICMSAlias.MENU_OPTION_POSITION));
-		List<ITransferObject> list = getManagerBean().getList(criteria);
-		for (int i = 0; i < list.size(); i++) {
-			MenuOption mo = (MenuOption)list.get(i);
-			int oldPosition = mo.getPosition();
-			int newPosition = i;
-			if (oldPosition != newPosition) {
-				mo.setPosition(newPosition);
-				getManagerBean().update(mo);
-			}
+	protected void afterRemoveSelected(){
+		try {
+			orderedControllerSupport.reorderObjects(this);
+		} catch (ManagerBeanException e) {
+			e.printStackTrace();
 		}
 	}
 
-	public int getLastPosition() {
-		int position = 0;
-		try{
-			Criteria criteria = new Criteria();
+	public void fireBeforeUseCriteria(Criteria criteria) {
+		try {
 			criteria.addExpression(getManagerBean().getFieldName(ICMSAlias.MENU_OPTION_MENU_ID), "" + getCurrentMenu().getId());
-			criteria.addOrder(getManagerBean().getFieldName(ICMSAlias.MENU_OPTION_POSITION), false);
-			List<ITransferObject> list = (List<ITransferObject>)getManagerBean().getList(criteria);
-			if (list.size() > 0) {
-				MenuOption mo = (MenuOption)list.get(0);
-				position = mo.getPosition();
-				++position;
-			}
-		}catch (ManagerBeanException e) {
+		} catch (ManagerBeanException e) {
 		} catch (ExpressionException e) {
 		}
-		return position;
 	}
 
 }

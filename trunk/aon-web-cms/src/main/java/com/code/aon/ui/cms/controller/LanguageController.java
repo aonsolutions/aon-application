@@ -17,9 +17,12 @@ import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionException;
+import com.code.aon.ui.cms.controller.support.OrderedControllerSupport;
 import com.code.aon.ui.form.BasicController;
 
 public class LanguageController extends BasicController {
+
+	public OrderedControllerSupport orderedControllerSupport = new OrderedControllerSupport(ICMSAlias.ALBUM_CATEGORY_POSITION);
 
 	private ListDataModel languages;
 	
@@ -27,7 +30,6 @@ public class LanguageController extends BasicController {
 
 	public ListDataModel getLanguages() throws ManagerBeanException {
 		if (languages == null) {
-			reorderLanguages();
 			languages = obtainLanguageList();
 		}
 		return languages;
@@ -116,24 +118,6 @@ public class LanguageController extends BasicController {
 	}
 
 	@SuppressWarnings("unchecked")
-	private void reorderLanguages() throws ManagerBeanException {
-		IManagerBean languageBean = BeanManager.getManagerBean(Language.class);
-		Criteria criteria = new Criteria();
-		criteria.addOrder(languageBean.getFieldName(ICMSAlias.LANGUAGE_POSITION));
-		List<ITransferObject> list = languageBean.getList(criteria);
-		int count = 0;
-		for (int i = 0; i < list.size(); i++) {
-			Language language = (Language)list.get(i);
-			int oldPosition = language.getPosition();
-			int newPosition = count++;
-			if (oldPosition != newPosition) {
-				language.setPosition(newPosition);
-				languageBean.update(language);
-			}
-		}
-	}
-
-	@SuppressWarnings("unchecked")
 	private void updateDefaultLanguage(LanguageObject defaultLanguage) throws ManagerBeanException, ExpressionException {
 		// Quitamos el defaultLanguage de todos los idiomas de la base de datos y el modelo.
 		List<ITransferObject> list = (List<ITransferObject>)languages.getWrappedData();
@@ -186,41 +170,12 @@ public class LanguageController extends BasicController {
 		return rowCount;
 	}
 
-	@SuppressWarnings("unchecked")
-	private void move( LanguageObject languageObject, int movement ) throws ManagerBeanException, ExpressionException {
-		int oldPosition = languageObject.getPosition();
-		int newPosition = oldPosition + movement;
-		languageObject.setPosition(newPosition);
-		IManagerBean languageBean = BeanManager.getManagerBean(Language.class);
-		Criteria criteria = new Criteria();
-		criteria.addExpression(languageBean.getFieldName(ICMSAlias.LANGUAGE_LANGUAGE), ""+languageObject.getLanguage().ordinal());
-		List<ITransferObject> list = languageBean.getList(criteria);
-		if (list.size() > 0) {
-			Language language = (Language)list.get(0);
-			language.setPosition(newPosition);
-			languageBean.update(language);
-		}
-    	List<LanguageObject> listObjects = (List<LanguageObject>) this.languages.getWrappedData();
-		LanguageObject languageObjectMoved = listObjects.get( newPosition );
-		languageObjectMoved.setPosition( oldPosition );
-		criteria = new Criteria();
-		criteria.addExpression(languageBean.getFieldName(ICMSAlias.LANGUAGE_LANGUAGE), ""+languageObjectMoved.getLanguage().ordinal());
-		list = languageBean.getList(criteria);
-		if (list.size() > 0) {
-			Language language = (Language)list.get(0);
-			language.setPosition(oldPosition);
-			languageBean.update(language);
-		}
-		listObjects.set( newPosition, languageObject );
-		listObjects.set( oldPosition, languageObjectMoved );
-	}
-	
     public void onMoveUp(ActionEvent event) throws ManagerBeanException, ExpressionException {
-    	move((LanguageObject) this.languages.getRowData(), -1);
+    	orderedControllerSupport.onMoveUp(this);
     }
 
     public void onMoveDown(ActionEvent event) throws ManagerBeanException, ExpressionException {
-    	move((LanguageObject) this.languages.getRowData(), 1);    	
+    	orderedControllerSupport.onMoveDown(this);
     }
 
 }

@@ -18,7 +18,7 @@ import com.code.aon.common.ITransferObject;
 
 @Entity
 @Table(name = "modular_page_option")
-public class ModularPageOption implements ITransferObject {
+public class ModularPageOption implements ITransferObject, IPositionObject {
 
 	private Integer id;
 

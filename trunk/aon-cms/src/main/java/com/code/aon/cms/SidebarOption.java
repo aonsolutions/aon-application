@@ -20,7 +20,7 @@ import com.code.aon.common.ITransferObject;
 
 @Entity
 @Table(name = "sidebar_option")
-public class SidebarOption implements ITransferObject {
+public class SidebarOption implements ITransferObject, IPositionObject {
 
 	private Integer id;
 

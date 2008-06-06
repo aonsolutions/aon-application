@@ -19,7 +19,7 @@ import com.code.aon.common.ITransferObject;
 
 @Entity
 @Table(name = "direct_access")
-public class DirectAccess implements ITransferObject {
+public class DirectAccess implements ITransferObject, IPositionObject {
 
 	private Integer id;
 
