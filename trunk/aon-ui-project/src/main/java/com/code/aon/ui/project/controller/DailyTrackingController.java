@@ -45,6 +45,7 @@ public class DailyTrackingController extends BasicController {
     private static final Logger LOGGER = Logger.getLogger(DailyTrackingController.class.getName());
 
     private List<SelectItem> dossiers = new LinkedList<SelectItem>();
+    private List<SelectItem> allDossiers;
     private List<SelectItem> activities = new LinkedList<SelectItem>();
     private List<SelectItem> users = new LinkedList<SelectItem>();
     
@@ -260,6 +261,7 @@ public class DailyTrackingController extends BasicController {
             Criteria criteria = new Criteria();
             criteria.addEqualExpression(managerBean.getFieldName(IProjectAlias.DOSSIER_CUSTOMER_ID), customerId);
             criteria.addEqualExpression(managerBean.getFieldName(IProjectAlias.DOSSIER_STATUS), DossierStatus.ACTIVE);
+            criteria.addOrder(managerBean.getFieldName(IProjectAlias.DOSSIER_NUMBER));
             Iterator iterator = managerBean.getList(criteria).iterator();
             while (iterator.hasNext()) {
                 Dossier dossier = (Dossier)iterator.next();
@@ -268,6 +270,30 @@ public class DailyTrackingController extends BasicController {
             }
         } catch (ManagerBeanException e) {
         	LOGGER.log(Level.SEVERE, "Error loading dossiers related with customer with id= " + customerId.toString(), e);
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+	public void loadAllDossiers() {
+        allDossiers = new LinkedList<SelectItem>();
+        try {
+            IManagerBean managerBean = BeanManager.getManagerBean(Dossier.class);
+            Criteria criteria = new Criteria();
+            criteria.addEqualExpression(managerBean.getFieldName(IProjectAlias.DOSSIER_STATUS), DossierStatus.ACTIVE);
+            criteria.addOrder(managerBean.getFieldName(IProjectAlias.DOSSIER_NUMBER));
+            criteria.addOrder(managerBean.getFieldName(IProjectAlias.DOSSIER_CUSTOMER_ID));
+            Iterator iterator = managerBean.getList(criteria).iterator();
+            while (iterator.hasNext()) {
+                Dossier dossier = (Dossier)iterator.next();
+                StringBuilder sb = new StringBuilder(dossier.getNumber()); 
+                sb.append(" (");
+                sb.append( dossier.getCustomer().getRegistry().getAlias() );
+                sb.append(")");
+                SelectItem item = new SelectItem(dossier.getId(), sb.toString() );
+                allDossiers.add(item);
+            }
+        } catch (ManagerBeanException e) {
+        	LOGGER.log(Level.SEVERE, "Error loading all dossiers!", e);
         }
     }
 
@@ -289,6 +315,21 @@ public class DailyTrackingController extends BasicController {
 
     public void dossierChange(ValueChangeEvent event) {
         if (event.getNewValue() != null && !"".equals(event.getNewValue())) {
+        	DailyTracking dt = (DailyTracking) getTo();
+            try {
+	        	IManagerBean bean = BeanManager.getManagerBean(Dossier.class);
+	        	Dossier d = (Dossier) bean.get((Integer)event.getNewValue());
+	        	if (d!= null) {
+	        		if (dt.getCustomer()== null || dt.getCustomer().getId() == null || !d.getId().equals( dt.getCustomer().getId() )) {
+	        			Integer old = (dt.getCustomer() != null && dt.getCustomer().getId() != null)?dt.getCustomer().getId():null;
+	        			dt.setCustomer( d.getCustomer() );
+	        			ValueChangeEvent ev = new ValueChangeEvent(event.getComponent(),old,d.getCustomer().getId());
+	        			customerChange(ev);
+	        		}
+            	}
+            } catch (ManagerBeanException e) {
+            	LOGGER.log(Level.SEVERE, "Error setting dossier customer", e);
+            }
             loadActivities(new Integer(event.getNewValue().toString()));
         } else {
             activities = new LinkedList<SelectItem>();
@@ -577,4 +618,24 @@ public class DailyTrackingController extends BasicController {
 	public void setCustomerReport(Customer customerReport) {
 		this.customerReport = customerReport;
 	}
+
+	public List<SelectItem> getAllDossiers() {
+		if (allDossiers == null) {
+			loadAllDossiers();
+		}
+		return allDossiers;
+	}
+
+	public void setAllDossiers(List<SelectItem> allDossiers) {
+		this.allDossiers = allDossiers;
+	}
+
+	public List<SelectItem> getAvailableDossiers() {
+		DailyTracking dt = (DailyTracking) getTo();
+		if (dt.getCustomer() != null && dt.getCustomer().getId() != null) {
+			return getDossiers();
+		} 
+		return getAllDossiers();
+    }
+	
 }
