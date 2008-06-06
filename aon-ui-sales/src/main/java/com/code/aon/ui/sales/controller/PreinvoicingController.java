@@ -72,13 +72,7 @@ public class PreinvoicingController implements ICollectionProvider{
 	public Collection getCollection(){
 		return engine.getInvoicingDAO().getCollection();
 	}
-
-	@Override
-	@SuppressWarnings("unchecked")
-	public Collection getCollection(boolean forceRefresh) throws ManagerBeanException {
-		return this.getCollection();
-	}
-
+	
 	public String onExecute() throws ReportException, DAOException{
 		ReportManager manager = (ReportManager)AonUtil.getRegisteredBean("report");
         manager.setReportKey("preInvoicing");
@@ -93,5 +87,4 @@ public class PreinvoicingController implements ICollectionProvider{
 	public IPriceStrategy getPriceStrategy(){
 		return new InvoicePriceStrategy();
 	}
-
 }

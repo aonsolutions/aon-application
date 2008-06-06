@@ -136,15 +136,6 @@
 											value="#{TASItem.to.description}" cols="50" rows="5">
 											<f:validateLength maximum="255" />
 										</t:inputTextarea>
-
-										<h:outputLabel for="TasItem_addInfo"
-											value="#{tasBundle.tasItem_add_info}"
-											styleClass="aon-form-input-text-label aon-form-layout-label-block" />
-										<t:inputTextarea styleClass="aon-form-input-text"
-											id="TasItem_addInfo" required="false" forceId="#{true}"
-											value="#{TASItem.to.addInfo}" cols="50" rows="5">
-											<f:validateLength maximum="255" />
-										</t:inputTextarea>
 										
 										<t:inputHidden id="TasItem_id" 
 											forceId="#{true}"

@@ -258,20 +258,6 @@
 	</report>
 	
 	<!--  **********************************************************
-						      rNote
-		  ********************************************************** -->
-	<report id="rnote" description="Customer RegistryNotes List">
-		<template path="/com/code/aon/ui/customer/report/rnote.jasper" />
-		<bean key="com.code.aon.registry.RegistryNote" />
-		<criteria provider="#{rnote}" />
-		<params>
-			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.consultant.i18n.messages" />
-			<param id="logoImageFile" value="#{company.getAttachAsInputStream}" />
-			<param id="company" value="#{company.obtainCompany}" />
-		</params>
-	</report>	
-	
-	<!--  **********************************************************
 						      ACCOUNT  
 		  ********************************************************** -->
 		  

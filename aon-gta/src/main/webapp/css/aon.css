@@ -90,7 +90,7 @@ body#aon-body{
 
 /* Shows an image in the content region when there is no selected an option  */
 .aon-content-home{	
-	/*background:transparent url("../images/aon-home.jpg") left top no-repeat;*/
+	background:transparent url("../images/aon-home.jpg") left top no-repeat;
 	}
 /*****************
 * HEADER   *
@@ -1074,7 +1074,7 @@ The buttons images are set image in the commandbutton declaration. You can not c
 .aon-form-input-text-disabled{
 	font:1em verdana,arial,sans-serif;
 	margin-right:2px;
-	background-color:#f2f2f2;
+	background-color:#D4D0C8;
 	color: #666;
    	}
 
@@ -1642,22 +1642,5 @@ div.aon-form-group{
 	padding-bottom: 6px;
 	color:#000;
 	}
-
-/* Set a background with a user icon. Use standalone */
-.aon-user-icon{
-	background:transparent url("images/icons/aon-user-icon.gif") left top no-repeat; 
-	display:inline;
-	width:14px;
-	height:14px;
-	}
-
-/* Set a background with a group icon. Use standalone */
-.aon-group-icon{
-	background:transparent url("images/icons/aon-group-icon.gif") left top no-repeat; 
-	display:inline;
-	width:14px;
-	height:14px;
-	}
-
 
 

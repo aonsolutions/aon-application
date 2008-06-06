@@ -72,13 +72,9 @@
 							for="SupportOrder_series" 
 							value="#{tasBundle.aon_series_number}" />
 						<t:div>
-							<t:selectOneMenu id="SupportOrder_series"
-								value="#{SupportOrder.to.series}"
-								styleClass="aon-form-selectOneMenu-field"
-								valueChangeListener="#{SupportOrder.addExpression}">
-								<f:selectItem itemValue="" itemDisabled="true" itemLabel="-" />
-								<f:selectItems value="#{configCollections.series}" />
-							</t:selectOneMenu>
+							<t:inputText id="SupportOrder_series" size="5"
+								styleClass="aon-form-input-text" onblur="toUpperCase(this);"
+								valueChangeListener="#{SupportOrder.addExpression}" />
 							<t:inputText id="SupportOrder_number" size="15"
 								styleClass="aon-form-input-text"
 								valueChangeListener="#{SupportOrder.addExpression}" />

@@ -619,10 +619,8 @@
 						</t:div>
 					</t:div>
 
-					<t:div rendered="#{invoicingDetail.model.rowCount > 0 or salesFinance.model.rowCount>0}" >
-						<ui:include src="/facelet/sales/master/invoicing/finance/grid.xhtml" />
-					</t:div>	
-
+					<ui:include src="/facelet/purchase/master/invoicing/finance/grid.xhtml" />
+					
 				</t:div>
 			</t:div>
 		</h:form>

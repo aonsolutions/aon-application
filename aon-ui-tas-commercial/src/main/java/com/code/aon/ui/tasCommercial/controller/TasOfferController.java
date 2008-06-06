@@ -9,6 +9,7 @@ import java.util.logging.Logger;
 
 import com.code.aon.commercial.Offer;
 import com.code.aon.common.BeanManager;
+import com.code.aon.common.ICollectionProvider;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ql.Criteria;
@@ -23,7 +24,7 @@ import com.code.aon.ui.util.AonUtil;
 /**
  * Controller used to manage <code>TasOffer</code> class
  */
-public class TasOfferController extends BasicController {
+public class TasOfferController extends BasicController implements ICollectionProvider {
 
 	/** The LOGGER. */
 	private static final Logger LOGGER = Logger.getLogger(TasOfferController.class.getName());
@@ -56,7 +57,14 @@ public class TasOfferController extends BasicController {
 	}
 	
 	
-    /**
+	
+    @Override
+    @SuppressWarnings("unchecked")
+	public Collection getCollection(boolean forceRefresh) throws ManagerBeanException {
+		return this.getCollection();
+	}
+
+	/**
      * Gets some data as a String of the supportOrder related with the current offer.
      * 
      * @return the support order data

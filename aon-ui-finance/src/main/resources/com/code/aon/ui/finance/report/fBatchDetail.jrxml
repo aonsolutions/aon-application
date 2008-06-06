@@ -151,7 +151,7 @@
 					<textElement verticalAlignment="Middle">
 						<font size="8"/>
 					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[(($F{finance}.getRegistry().getSurname() == null || $F{finance}.getRegistry().getSurname().equals(""))?"":$F{finance}.getRegistry().getSurname() + ", ") + $F{finance}.getRegistry().getName()]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.String"><![CDATA[($F{finance}.getRegistry().getName()!=null?$F{finance}.getRegistry().getName():"") + " " + ($F{finance}.getRegistry().getSurname()!=null?$F{finance}.getRegistry().getSurname():"")]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="false" pattern="dd/MM/yyyy" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement

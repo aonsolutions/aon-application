@@ -107,9 +107,6 @@ public class SalesInvoicingListener extends ControllerAdapter {
 			DeliveryDetail deliveryDetail = obtainDeliveryDetail(invoiceDetail.getDeliveryDetail());
 			Sales sales = deliveryDetail.getSalesDetail().getSales();
 			sales.setPos(obtainPos(posId));
-
-			IManagerBean salesBean = BeanManager.getManagerBean(Sales.class);
-			salesBean.update(sales);
 		}
 	}
 

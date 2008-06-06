@@ -106,58 +106,8 @@
 									onmouseout="this.className='aon-content-toolbar-item aon-content-toolbar-item-new'"
 									actionListener="#{rnote.onReset}" rendered="#{!rnote.new}"
 									accesskey="#{bundle.aon_key_new}" />
-								<t:commandButton id="rnote" value="#{bundle.aon_listing}"
-									forceId="#{true}"
-									onclick="reportWindow(this, 'placeList', '${facesContext.externalContext.requestContextPath}/facelet/report/preferences.faces');return false;"
-									styleClass="aon-content-toolbar-item aon-content-toolbar-item-print"
-									onmouseover="this.className='aon-content-toolbar-item aon-content-toolbar-item-hover aon-content-toolbar-item-print'"
-									onmouseout="this.className='aon-content-toolbar-item aon-content-toolbar-item-print'"
-									accesskey="#{bundle.aon_key_print}" />
 							</t:div>
 						</t:div>
-					</t:div>
-
-					<h:panelGrid columns="2" cellpadding="0" cellspacing="0"
-						styleClass="aon-form-table"
-						columnClasses="aon-form-table-column-odd,aon-form-table-column-even">
-		
-						<h:outputLabel for="Rnote_fromDate" value="#{appBundle.aon_date_from}"
-							styleClass="aon-form-input-text-label" />								
-						<t:div>
-							<t:inputCalendar id="Rnote_fromDate" size="10"
-								value="#{rnote.fromDate}"
-								monthYearRowClass="yearMonthHeader" weekRowClass="weekHeader"
-								currentDayCellClass="currentDayCell" renderAsPopup="true"
-								styleClass="aon-form-input-text" popupButtonStyleClass="aon-form-calendar-button"
-								popupTodayString="#{bundle.aon_popup_today}"
-								popupWeekString="#{bundle.aon_popup_week}" />
-							<h:outputLabel for="Rnote_toDate" value="#{appBundle.aon_date_to}"
-								styleClass="aon-form-input-text-label" />								
-							<t:inputCalendar id="Rnote_toDate" size="10"
-								value="#{rnote.toDate}"
-								monthYearRowClass="yearMonthHeader" weekRowClass="weekHeader"
-								currentDayCellClass="currentDayCell" renderAsPopup="true"
-								styleClass="aon-form-input-text" popupButtonStyleClass="aon-form-calendar-button"
-								popupTodayString="#{bundle.aon_popup_today}"
-								popupWeekString="#{bundle.aon_popup_week}" />
-						</t:div>
-		
-						<t:outputLabel for="Rnote_noteType"
-							styleClass="aon-form-input-text-label"
-							value="#{appBundle.aon_type}" />
-						<t:selectOneMenu id="Rnote_noteType" 
-							styleClass="aon-form-selectOneMenu-field"
-							forceId="#{true}" value="#{rnote.noteType}">
-							<f:selectItem itemDisabled="true" itemLabel ="-" itemValue="" />
-							<f:selectItems value="#{registryCollections.noteTypes}" />
-						</t:selectOneMenu>
-						
-					</h:panelGrid>
-					
-					<t:div>
-						<t:commandButton styleClass="aon-form-button"
-							value="#{bundle.aon_search}"
-							actionListener="#{rnote.onCustomSearch}"/>
 					</t:div>
 
 					<t:div styleClass="aon-table-hack">
@@ -283,7 +233,7 @@
 								<f:facet name="header">
 									<t:outputText value="#{appBundle.aon_comments}" />
 								</f:facet>
-								<t:outputText value="#{to.shortComments}"
+								<t:outputText value="#{to.comments}"
 									rendered="#{to.id!=rnote.to.id}" title="#{to.comments}" />
 								<t:div rendered="#{to==rnote.to}">
 									<t:inputTextarea id="RegistryNote_comments-Edit"

@@ -115,19 +115,21 @@
 								styleClass="aon-form-input-text-label"
 								value="#{financeBundle.aon_series_number}" />
 							<h:panelGrid columns="2" cellpadding="0" cellspacing="0">
-								<t:selectOneMenu id="Invoice_series"
+								<t:selectOneMenu id="Invoice_series-New"
 									value="#{feeInvoicing.to.series}"
-									disabled="#{!feeInvoicing.new or feeInvoicing.recorded}"
+									rendered="#{feeInvoicing.new}"
 									styleClass="aon-form-selectOneMenu-field"
 									onchange="submit();" valueChangeListener="#{feeInvoicing.onSeriesChanged}">
-									<f:selectItem itemValue="" itemDisabled="true" itemLabel="-" />
+									<f:selectItem itemValue="" itemLabel=" " />
 									<f:selectItems value="#{configCollections.series}" />
 								</t:selectOneMenu>
-								<t:inputText id="Invoice_number"
-									value="#{feeInvoicing.to.number}"
-									disabled="#{!feeInvoicing.new or feeInvoicing.recorded}"
-									styleClass="aon-form-input-text" forceId="#{true}"
-									required="true" size="7" />
+								<t:inputText id="Invoice_series-Edit" forceId="#{true}"
+									value="#{feeInvoicing.to.series}"
+									rendered="#{!feeInvoicing.new}" disabled="#{true}"
+									styleClass="aon-form-input-text" size="4" />
+								<t:inputText id="Invoice_number" forceId="#{true}"
+									value="#{feeInvoicing.to.number}" disabled="#{!feeInvoicing.new}"
+									styleClass="aon-form-input-text" required="true" size="7" />
 							</h:panelGrid>
 
 							<h:outputLabel for="Invoice_issueDate"
@@ -248,7 +250,7 @@
 										<t:div>
 											<t:commandButton value=""
 												styleClass="aon-edit-table-icon-button aon-edit-table-icon-button-new"
-												title="#{purchaseBundle.aon_newLine}"
+												title="#{bundle.aon_reset}"
 												actionListener="#{feeInvoicingDetail.onReset}"
 												rendered="#{!feeInvoicingDetail.new and !feeInvoicing.recorded}"
 												accesskey="#{bundle.aon_key_new_line}" />
@@ -508,8 +510,12 @@
 						</t:div>
 					</t:div>
 					
-					<ui:include src="/facelet/finance/finance/grid.xhtml" />
-					
+					<t:div rendered="#{feeInvoicingDetail.model.rowCount > 0 or feeFinance.model.rowCount>0}" >
+						<ui:include src="/facelet/finance/finance/grid.xhtml" >
+							<ui:param name="controllerAlias" value="#{feeFinance}" />
+							<ui:param name="dataTable" value="feeFinanceData" />
+						</ui:include>
+					</t:div>
 				</t:div>
 			</t:div>
 		</h:form>

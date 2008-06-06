@@ -10,7 +10,6 @@ import javax.faces.model.SelectItem;
 
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
-import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.config.User;
 import com.code.aon.customer.Customer;
@@ -66,17 +65,14 @@ public class TaskControllerListener extends ControllerAdapter {
 
     @Override
     public void afterBeanCreated(ControllerEvent event) throws ControllerListenerException {
-    	TaskController controller = (TaskController) event.getController();
-    	Task task = (Task) controller.getTo();
-        task.setStartDate(new Date());
-        task.setStatus(TaskStatus.PENDING);
-        task.setPercent(0);
-        task.setSource(TaskSource.MANUAL);
+        ((Task)event.getController().getTo()).setStartDate(new Date());
+        ((Task)event.getController().getTo()).setStatus(TaskStatus.PENDING);
+        ((Task)event.getController().getTo()).setPercent(0);
+        ((Task)event.getController().getTo()).setSource(TaskSource.MANUAL);
 
-        controller.setCustomer(initializeCustomer());
-        controller.setDossiers(new LinkedList<SelectItem>());
-        controller.setActivities(new LinkedList<SelectItem>());
-        controller.setUsers(new LinkedList<SelectItem>());
+        ((TaskController)event.getController()).setCustomer(initializeCustomer());
+        ((TaskController)event.getController()).setDossiers(new LinkedList<SelectItem>());
+        ((TaskController)event.getController()).setActivities(new LinkedList<SelectItem>());
     }
 
 	@Override

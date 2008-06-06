@@ -22,8 +22,8 @@
 		<mapping class="com.code.aon.groupware.Favorite"/>
 
 		<mapping class="com.code.aon.company.resources.Employee"/>
-		
-		<mapping class="com.code.aon.employee.WorkGroup"/>
+ 		
+		<mapping class="com.code.aon.config.WorkGroup"/>
 
 		<mapping class="com.code.aon.registry.Registry"/>
 		<mapping class="com.code.aon.registry.RegistryAddress"/>

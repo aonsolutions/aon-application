@@ -15,7 +15,6 @@
 		<!-- AON-WAREHOUSE Mapping files -->	
 		<mapping class="com.code.aon.warehouse.Delivery"/>
 		<mapping class="com.code.aon.warehouse.DeliveryDetail"/>
-		<mapping class="com.code.aon.warehouse.DeliveryDetailLabour"/>
 		<mapping class="com.code.aon.warehouse.Income"/>
 		<mapping class="com.code.aon.warehouse.IncomeDetail"/>		
 		<mapping class="com.code.aon.warehouse.Inventory"/>		

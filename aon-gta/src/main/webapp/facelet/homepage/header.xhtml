@@ -16,19 +16,17 @@
 			columnClasses="aon-header-leftGroup,aon-header-rightGroup" dir="true">
 			<h:panelGroup>
 				<t:div styleClass="aon-logo">
-					<t:outputText value="&#160;" />
+					<h:graphicImage
+						url="#{aonConfiguration.applicationLogoContextRelativePath}"
+						alt="#{appBundle.aon_application_title}"/>
 				</t:div>
 				<t:div styleClass="aon-applicationName">
-					<h:outputText value="#{appBundle.aon_application_title}" />
-					<h:outputText value="[" rendered="#{aonConfiguration.applicationVersion != null}"/>
-					<h:outputText value="#{aonConfiguration.applicationVersion}" rendered="#{aonConfiguration.applicationVersion != null}"/>
-					<h:outputText value="]" rendered="#{aonConfiguration.applicationVersion != null}" /> 
+					<h:outputText value="#{appBundle.aon_application_title}" /> 
 				</t:div>				
 			</h:panelGroup>
 
 			<h:panelGroup>
-					<t:panelGrid columns="2" styleClass="aon-table-default"
-				   cellpadding="0">
+				<t:panelGrid columns="2" styleClass="aon-table-default" cellpadding="0">
 
 					<h:panelGroup rendered="#{aonConfiguration.properties.middleHeader == null}">
 						<t:div styleClass="aon-header-userAdOnLeft">
@@ -60,15 +58,6 @@
 									<h:outputText value="#{bundle.aon_help}" />
 								</h:outputLink>
 							</t:div>
-							<!-- 
-							<t:div styleClass="aon-header-menu-item">
-								<h:outputLink styleClass="aon-header-menu-item-link"
-									target="_blank"
-									value="#{user.adminConsoleUrl}">
-									<h:outputText value="Seguridad" />
-								</h:outputLink>
-							</t:div>
-							 -->
 							<t:div styleClass="aon-header-menu-item" >
 								<h:form style="display:inline;" >
 									<h:commandLink styleClass="aon-header-menu-item-link" style="border-right:0;"
@@ -80,7 +69,7 @@
 								</h:form>
 							</t:div>
 						</t:div>
-						<t:div styleClass="aon-header-userAdOnRight">
+						<t:div styleClass="aon-header-userAdOnRight" style="padding:10px 1em 0 0;">
 							<h:outputText value="#{securityBundle.aon_login_user}: " styleClass="aon-header-information-description"/>
 							<h:outputText value="#{user.userManager.userFromPrincipal.name}" styleClass="aon-header-information-item" />
 						</t:div>

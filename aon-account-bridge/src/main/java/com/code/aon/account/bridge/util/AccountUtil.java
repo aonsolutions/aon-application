@@ -7,6 +7,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import com.code.aon.account.Account;
+import com.code.aon.account.DefaultAccounts;
 import com.code.aon.account.Leasing;
 import com.code.aon.account.Loan;
 import com.code.aon.account.Period;
@@ -28,11 +29,11 @@ import com.code.aon.customer.dao.ICustomerAlias;
 import com.code.aon.finance.Creditor;
 import com.code.aon.finance.RegistryBank;
 import com.code.aon.finance.dao.IFinanceAlias;
-import com.code.aon.purchase.Supplier;
-import com.code.aon.purchase.dao.IPurchaseAlias;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionException;
 import com.code.aon.registry.Registry;
+import com.code.aon.supplier.Supplier;
+import com.code.aon.supplier.dao.ISupplierAlias;
 
 public class AccountUtil {
 	
@@ -51,8 +52,8 @@ public class AccountUtil {
 			}
 			IManagerBean accountBean = BeanManager.getManagerBean(Account.class);
 			Account account = new Account();
-			account.setId(obtainNextAccountId("572"));
-			account.setDescription("Banco: " + rBank.getBank().getName() + " Cuenta: " + rBank.getBankAccount());
+			account.setId(obtainNextAccountId(AccountConstants.BANK_ACCOUNT_PREFIX));
+			account.setDescription(rBank.getBank().getName() + " " + rBank.getBankAccount());
 			account.setEntryEnabled(true);
 			account.setAlias(account.getId());
 			account = (Account) accountBean.insert(account);
@@ -82,10 +83,10 @@ public class AccountUtil {
 			}
 			IManagerBean accountBean = BeanManager.getManagerBean(Account.class);
 			Account account = new Account();
-			account.setId(obtainNextAccountId("430"));
-			account.setDescription("Cliente: " + registry.getName() + " " + registry.getSurname());
+			account.setId(obtainNextAccountId(AccountConstants.CUSTOMER_ACCOUNT_PREFIX));
+			account.setDescription((registry.getName()!= null?registry.getName() + " ":"") + (registry.getSurname()!=null?registry.getSurname():""));
 			account.setEntryEnabled(true);
-			account.setAlias(account.getId());
+			account.setAlias(registry.getAlias());
 			account = (Account) accountBean.insert(account);
 			CustomerAccount customerAccount = new CustomerAccount();
 			customerAccount.setAccount(account);
@@ -113,10 +114,10 @@ public class AccountUtil {
 			}
 			IManagerBean accountBean = BeanManager.getManagerBean(Account.class);
 			Account account = new Account();
-			account.setId(obtainNextAccountId("400"));
-			account.setDescription("Proveedor: " + registry.getName() + " " + registry.getSurname());
+			account.setId(obtainNextAccountId(AccountConstants.SUPPLIER_ACCOUNT_PREFIX));
+			account.setDescription((registry.getName()!=null?registry.getName() + " ":"") + (registry.getSurname()!=null?registry.getSurname():""));
 			account.setEntryEnabled(true);
-			account.setAlias(account.getId());
+			account.setAlias(registry.getAlias());
 			account = (Account) accountBean.insert(account);
 			SupplierAccount supplierAccount = new SupplierAccount();
 			supplierAccount.setAccount(account);
@@ -144,10 +145,10 @@ public class AccountUtil {
 			}
 			IManagerBean accountBean = BeanManager.getManagerBean(Account.class);
 			Account account = new Account();
-			account.setId(obtainNextAccountId("410"));
-			account.setDescription("Acreedor: " + registry.getName() + " " + registry.getSurname());
+			account.setId(obtainNextAccountId(AccountConstants.CREDITOR_ACCOUNT_PREFIX));
+			account.setDescription((registry.getName()!=null?registry.getName() + " ":"") + (registry.getSurname()!=null?registry.getSurname():""));
 			account.setEntryEnabled(true);
-			account.setAlias(account.getId());
+			account.setAlias(registry.getAlias());
 			account = (Account) accountBean.insert(account);
 			CreditorAccount creditorAccount = new CreditorAccount();
 			creditorAccount.setAccount(account);
@@ -175,8 +176,8 @@ public class AccountUtil {
 			}
 			IManagerBean accountBean = BeanManager.getManagerBean(Account.class);
 			Account account = new Account();
-			account.setId(obtainNextAccountId("52000"));
-			account.setDescription("Leasing: " + leasing.getDescription());
+			account.setId(obtainNextAccountId(AccountConstants.LEASING_ACCOUNT_PREFIX));
+			account.setDescription(leasing.getDescription());
 			account.setEntryEnabled(true);
 			account.setAlias(account.getId());
 			account = (Account) accountBean.insert(account);
@@ -206,8 +207,8 @@ public class AccountUtil {
 			}
 			IManagerBean accountBean = BeanManager.getManagerBean(Account.class);
 			Account account = new Account();
-			account.setId(obtainNextAccountId("520"));
-			account.setDescription("Prestamo: " + loan.getDescription());
+			account.setId(obtainNextAccountId(AccountConstants.LOAN_ACCOUNT_PREFIX));
+			account.setDescription(loan.getDescription());
 			account.setEntryEnabled(true);
 			account.setAlias(account.getId());
 			account = (Account) accountBean.insert(account);
@@ -228,7 +229,7 @@ public class AccountUtil {
 	public static Account obtainCashAccount() throws ManagerBeanException {
 		IManagerBean accountBean = BeanManager.getManagerBean(Account.class);
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(accountBean.getFieldName(IAccountAlias.ACCOUNT_ID), "570");
+		criteria.addEqualExpression(accountBean.getFieldName(IAccountAlias.ACCOUNT_ID), obtainDefaultAccount(DefaultAccounts.CASH_ACCOUNT));
 		List list = accountBean.getList(criteria);
 		if(list.size() > 0){
 			return (Account)list.iterator().next();
@@ -298,7 +299,7 @@ public class AccountUtil {
 		try {
 			IManagerBean supplierBean = BeanManager.getManagerBean(Supplier.class);
 			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(supplierBean.getFieldName(IPurchaseAlias.SUPPLIER_ID), id);
+			criteria.addEqualExpression(supplierBean.getFieldName(ISupplierAlias.SUPPLIER_ID), id);
 			Iterator iter = supplierBean.getList(criteria).iterator();
 			if(iter.hasNext()){
 				return (Supplier)iter.next();

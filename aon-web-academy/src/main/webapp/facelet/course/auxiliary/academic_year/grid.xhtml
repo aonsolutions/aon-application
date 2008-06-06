@@ -102,21 +102,21 @@
 									<f:verbatim>&#160;</f:verbatim>
 								</f:facet>
 			
-								<t:commandButton title="#{bundle.aon_accept}" id="editSave"
+								<t:commandButton title="#{bundle.aon_accept}" 
 									actionListener="#{academicYear.onAccept}"
 									onclick="return (confirm('#{bundle.aon_accept_confirm}'));" 
 									styleClass="aon-edit-table-icon-button aon-edit-table-icon-button-save"
 									value=""
 									rendered="#{to.id==academicYear.to.id}"
 									accesskey="#{bundle.aon_key_save_line}"/>
-								<t:commandButton title="#{bundle.aon_cancel}" id="editCancel"
+								<t:commandButton title="#{bundle.aon_cancel}" 
 									actionListener="#{academicYear.onCancel}"
 									immediate="#{true}" 
 									onclick="return (confirm('#{bundle.aon_cancel_confirm}'));" 
 									styleClass="aon-edit-table-icon-button aon-edit-table-icon-button-cancel"
 									value="" accesskey="#{bundle.aon_key_cancel_line}"
 									rendered="#{to.id==academicYear.to.id}"/>
-								<t:commandButton title="#{bundle.aon_remove}" id="editRemove"
+								<t:commandButton title="#{bundle.aon_remove}" 
 									actionListener="#{academicYear.onRemove}" 
 									onclick="return (confirm('#{bundle.aon_remove_confirm}'));" 
 									styleClass="aon-edit-table-icon-button aon-edit-table-icon-button-delete"
@@ -126,13 +126,13 @@
 								<f:facet name="footer">
 									<t:div>
 										<f:verbatim rendered="#{!academicYear.new}">&#160;</f:verbatim>
-										<t:commandButton title="#{bundle.aon_accept}" id="newSave"
+										<t:commandButton title="#{bundle.aon_accept}" 
 											actionListener="#{academicYear.onAccept}"
 											onclick="return (confirm('#{bundle.aon_accept_confirm}'));" 
 											styleClass="aon-edit-table-icon-button aon-edit-table-icon-button-save"
 											value="" accesskey="#{bundle.aon_key_save_line}"
 											rendered="#{academicYear.new}"/>
-										<t:commandButton title="#{bundle.aon_cancel}" id="newCancel"
+										<t:commandButton title="#{bundle.aon_cancel}" 
 											actionListener="#{academicYear.onCancel}"
 											immediate="#{true}" 
 											onclick="return (confirm('#{bundle.aon_cancel_confirm}'));" 

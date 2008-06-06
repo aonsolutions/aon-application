@@ -175,7 +175,7 @@ public class InventoryDetailController extends BasicController implements IColle
 	        "and inventoryDetail.inventory.id=" + inventoryId.intValue() +
 	        (categoryId==null || categoryId.equals(new Integer(-1))?"":" and cat.id=" + categoryId.intValue()) + 
 	        (categoryGroupId==null || categoryGroupId.equals(new Integer(-1))?"":" and catGroup.id=" + categoryGroupId.intValue()) +
-	        " order by item.product.name";
+	        " order by item.product.code";
         Query q = session.createQuery(query);
         return q.list();
 	}

@@ -792,41 +792,6 @@
 			<value>com.code.aon.finance.Invoice</value>
 		</managed-property>
 	</managed-bean>
-
-	<!-- ************ FEE CHECKING PRINTER ************* -->
-	<managed-bean>
-		<managed-bean-name>feeCheckingPrinter</managed-bean-name>
-		<managed-bean-class>
-			com.code.aon.ui.finance.util.print.FeeCheckingPrinter
-		</managed-bean-class>
-		<managed-bean-scope>session</managed-bean-scope>
-	</managed-bean>
-
-	<!-- ************ FINANCE CHECKING PRINTER ************* -->
-	<managed-bean>
-		<managed-bean-name>financeCheckingPrinter</managed-bean-name>
-		<managed-bean-class>
-			com.code.aon.ui.finance.util.print.FinanceCheckingPrinter
-		</managed-bean-class>
-		<managed-bean-scope>session</managed-bean-scope>
-	</managed-bean>
-
-	<!-- ************ FEE PRINTER ************* -->
-	<managed-bean>
-		<managed-bean-name>feePrint</managed-bean-name>
-		<managed-bean-class>
-			com.code.aon.ui.finance.util.print.FeePrinter
-		</managed-bean-class>
-		<managed-bean-scope>session</managed-bean-scope>
-		<managed-property>
-			<property-name>queryOnStartUP</property-name>
-			<value>false</value>
-		</managed-property>
-		<managed-property>
-			<property-name>pojo</property-name>
-			<value>com.code.aon.sales.CustomerFee</value>
-		</managed-property>
-	</managed-bean>
 	
 	<!-- **************** CONVERTERS  *************** -->
 	<converter>
@@ -894,15 +859,7 @@
     <navigation-case>
       <from-outcome>invoicePrint</from-outcome>
       <to-view-id>/facelet/finance/invoice_print/search.faces</to-view-id>
-    </navigation-case>
-    <navigation-case>
-      <from-outcome>util_checking</from-outcome>
-      <to-view-id>/finance/facelet/util/checking/checking.faces</to-view-id>
-    </navigation-case>
-    <navigation-case>
-      <from-outcome>util_fee_print</from-outcome>
-      <to-view-id>/finance/facelet/util/fee_print/search.faces</to-view-id>
-    </navigation-case>
+    </navigation-case>    
   </navigation-rule>
   
   	<!-- =================== Finance Batch ================= -->
@@ -1017,18 +974,6 @@
     </navigation-case>
    </navigation-rule> 
   
-  <!-- =================== Fee Print ========================== -->
-  <navigation-rule>
-    <navigation-case>
-      <from-outcome>fee_print_list</from-outcome>
-      <to-view-id>/finance/facelet/util/fee_print/list.faces</to-view-id>
-    </navigation-case>
-    <navigation-case>
-      <from-outcome>fee_print_search</from-outcome>
-      <to-view-id>/finance/facelet/util/fee_print/search.faces</to-view-id>
-    </navigation-case>
-   </navigation-rule> 
-   
   <!-- =================== Select Windows ========================== -->
   <navigation-rule>
 		<navigation-case>

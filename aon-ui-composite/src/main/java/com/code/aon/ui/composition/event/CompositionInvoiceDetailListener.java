@@ -44,7 +44,6 @@ public class CompositionInvoiceDetailListener extends ControllerAdapter {
      * @throws ControllerListenerException
      */
 	@Override
-	@SuppressWarnings("unchecked")
 	public void afterBeanAdded(ControllerEvent event) throws ControllerListenerException {
 		InvoiceDetail invoiceDetail = duplicateInvoiceDetail((InvoiceDetail)event.getController().getTo());
 		try {
@@ -57,7 +56,7 @@ public class CompositionInvoiceDetailListener extends ControllerAdapter {
 				while(iter.hasNext()){
 					CompositionDetail compositionDetail = (CompositionDetail)iter.next();
                     ((InvoiceDetail)event.getController().getTo()).setItem(compositionDetail.getItem());
-                    ((InvoiceDetail)event.getController().getTo()).setDescription(compositionDetail.getDescription() + "( " + composition.getItem().getProduct().getName() + " )");
+                    ((InvoiceDetail)event.getController().getTo()).setDescription(composition.getItem().getProduct().getName() + " - " + compositionDetail.getDescription());
 					((InvoiceDetail)event.getController().getTo()).setDeliveryDetail(null);
 					((InvoiceDetail)event.getController().getTo()).setDiscountExpression(new DiscountExpression("0.0"));
 					((InvoiceDetail)event.getController().getTo()).setQuantity(invoiceDetail.getQuantity() * compositionDetail.getQuantity());
@@ -82,7 +81,6 @@ public class CompositionInvoiceDetailListener extends ControllerAdapter {
      * @param item
      * @return Composition
      */
-	@SuppressWarnings("unchecked")
 	private Composition obtainComposition(Item item) {
 		try {
 			IManagerBean compositionBean = BeanManager.getManagerBean(Composition.class);

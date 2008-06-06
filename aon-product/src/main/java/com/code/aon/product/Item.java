@@ -198,6 +198,7 @@ public class Item implements ITransferObject, ILookupObject {
      */
     @ManyToOne
     @JoinColumn(name="product", nullable=false)
+    @org.hibernate.annotations.Cascade(value = org.hibernate.annotations.CascadeType.SAVE_UPDATE)
     @AonPOJOInitializationInvalidateRestoreNull
     public Product getProduct() {
         return product;

@@ -16,8 +16,6 @@ public class FinanceReturnControllerListener extends ControllerAdapter {
 		try {
 			Criteria criteria = event.getController().getCriteria();
 			criteria.addEqualExpression(event.getController().getManagerBean().getFieldName(IFinanceAlias.FINANCE_FINANCE_STATUS), FinanceStatus.PAID);
-			criteria.addOrder(event.getController().getFieldName(IFinanceAlias.FINANCE_INVOICE_SERIES));
-			criteria.addOrder(event.getController().getFieldName(IFinanceAlias.FINANCE_INVOICE_NUMBER));
 		} catch (ManagerBeanException e) {
 			throw new ControllerListenerException("Cannot add criteria before model Initialized", e);
 		}

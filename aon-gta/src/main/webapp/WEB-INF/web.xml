@@ -90,7 +90,7 @@
 		the first request hits the FaceletViewHandler for page compilation. -->
 	<context-param>
 		<param-name>facelets.LIBRARIES</param-name>
-		<param-value>/WEB-INF/tomahawk.taglib.xml;/WEB-INF/sandbox.taglib.xml</param-value>
+		<param-value>/WEB-INF/tomahawk.taglib.xml</param-value>
 	</context-param>
 
 	<!-- CONTEXT-PARAM para JBOSS4.2.1GA --> 	
@@ -160,18 +160,6 @@
 	    <url-pattern>/faces/*</url-pattern>
 	</filter-mapping>
 
-	<!-- BackDoorAuthentication Filter -->
-	<filter>
-		<filter-name>BackDoorAuthenticationFilter</filter-name>
-		<filter-class>com.code.aon.bridge.session.BackDoorAuthenticationFilter</filter-class>
-	</filter>
-	
-	<!-- Enables and Registers session for concurrent sessions -->
-	<filter-mapping>
-		<filter-name>BackDoorAuthenticationFilter</filter-name>
-		<url-pattern>/auth/*</url-pattern>
-	</filter-mapping>
-
 	<!-- Enables and Registers session for concurrent sessions -->
 	<filter-mapping>
 	   <filter-name>SessionFilter</filter-name>
@@ -208,7 +196,7 @@
         <load-on-startup>1</load-on-startup>
     </servlet>
 
-   	<!-- Deploy Servlet 
+   	<!-- Deploy Servlet -->
     <servlet>
 		<servlet-name>autodeploy</servlet-name>
 		<servlet-class>com.code.aon.bridge.servlet.DeployServlet</servlet-class>
@@ -218,7 +206,6 @@
 		</init-param>
 		<load-on-startup>2</load-on-startup>
 	</servlet>
-	-->
 
     <!-- Lookup Servlet -->
 	<servlet>
@@ -358,16 +345,8 @@
 			<url-pattern>/facelet/*</url-pattern>
 		</web-resource-collection>
 		<web-resource-collection>
-			<web-resource-name>account</web-resource-name>
-			<url-pattern>/account/*</url-pattern>
-		</web-resource-collection>
-		<web-resource-collection>
-			<web-resource-name>finance</web-resource-name>
-			<url-pattern>/finance/*</url-pattern>
-		</web-resource-collection>
-		<web-resource-collection>
 			<web-resource-name>jsp</web-resource-name>
-			<url-pattern>/index.jsp</url-pattern>
+			<url-pattern>*.jsp</url-pattern>
 		</web-resource-collection>
 		<web-resource-collection>
 			<web-resource-name>actions</web-resource-name>
@@ -382,7 +361,7 @@
 		<auth-method>FORM</auth-method>
 		<form-login-config>
 			<form-login-page>/login/login.jaas</form-login-page>
-			<form-error-page>/login/LoginError.jsp?aon_login_error_code=666</form-error-page>
+			<form-error-page>/login/login.jaas?error='true'</form-error-page>
 		</form-login-config>
 	</login-config>
 

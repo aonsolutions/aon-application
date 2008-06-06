@@ -15,7 +15,7 @@ public class GroupWareAliasWriter {
 
 	public static void main(String[] args) throws IOException {
 
-		File file = new File("/PROYECTOS/aon-groupware/src/com/code/aon/groupware/dao/IGroupWareAlias.java");
+		File file = new File("/AON-PROJECT/aon-groupware/src/main/java/com/code/aon/groupware/dao/IGroupWareAlias.java");
 		String[] classes = new String[6]; 
 		classes[0] = Alarm.class.getName();
 		classes[1] = Notice.class.getName();

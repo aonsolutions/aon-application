@@ -4,22 +4,22 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import com.code.aon.common.ITransferObject;
-import com.code.aon.webmail.enumeration.SignatureType;
+import com.code.aon.dao.ldap.annotations.Attribute;
+import com.code.aon.dao.ldap.annotations.EntryObject;
+import com.code.aon.dao.ldap.annotations.RDN;
 
 @Entity
 @Table(name="signature")
+@EntryObject(mainObjectClass="aonSignature", objectClasses={"top"})
 public class Signature implements ITransferObject{
 
-	// ident
-	private Integer id;
+	private static final long serialVersionUID = 714322089783136934L;
 
-	// MailAccount
-    private MailAccount mailAccount;
+	// ident
+	private String id;
 
 	// signature
     private String signature;
@@ -27,45 +27,27 @@ public class Signature implements ITransferObject{
 	// name
     private String name;
 
-	// active
-    private SignatureType active;
-
 	/**
 	 * @return the id
 	 */
 	@Id
 	@GeneratedValue
 	@Column(nullable=false)
-	public Integer getId() {
+	public String getId() {
 		return id;
 	}
 
 	/**
 	 * @param id the id to set
 	 */
-	public void setId(Integer id) {
+	public void setId(String id) {
 		this.id = id;
-	}
-
-	/**
-	 * @return the mailAccount
-	 */
-	@ManyToOne
-	@JoinColumn(name = "mail_account", nullable = false)
-	public MailAccount getMailAccount() {
-		return mailAccount;
-	}
-
-	/**
-	 * @param mailAccount the mailAccount to set
-	 */
-	public void setMailAccount(MailAccount mailAccount) {
-		this.mailAccount = mailAccount;
 	}
 
 	/**
 	 * @return the signature
 	 */
+	@Attribute(name="signature", length=32768)
 	public String getSignature() {
 		return signature;
 	}
@@ -78,23 +60,10 @@ public class Signature implements ITransferObject{
 	}
 
 	/**
-	 * @return the active
-	 */
-	@Column(nullable=false)
-	public SignatureType getActive() {
-		return active;
-	}
-
-	/**
-	 * @param active the active to set
-	 */
-	public void setActive(SignatureType active) {
-		this.active = active;
-	}
-
-	/**
 	 * @return the name
 	 */
+	@RDN
+	@Attribute(name="cn", length=32768)    	
 	public String getName() {
 		return name;
 	}

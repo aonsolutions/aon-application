@@ -16,7 +16,6 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
-import javax.persistence.OrderBy;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
@@ -98,13 +97,8 @@ public class Invoice implements ITransferObject, IHeaderObject, ICalculableConta
     
     private boolean withholding;
     
-    private String comments;
-    
     /** The detail of this invoice. */
 	private Set<InvoiceDetail> lines = new HashSet<InvoiceDetail>();
-
-	/** The detail of this invoice. */
-	private Set<Finance> finances = new HashSet<Finance>();
 
     /**
      * Gets the id.
@@ -362,22 +356,12 @@ public class Invoice implements ITransferObject, IHeaderObject, ICalculableConta
 		this.withholding = withholding;
 	}
 	
-	@Column(length=65535)
-	public String getComments() {
-		return comments;
-	}
-
-	public void setComments(String comments) {
-		this.comments = comments;
-	}
-
 	/**
 	 * Gets the lines.
 	 * 
 	 * @return the lines
 	 */
 	@OneToMany(mappedBy = "invoice", cascade={CascadeType.REMOVE})
-	@OrderBy()
 	public Set<InvoiceDetail> getLines() {
 		return this.lines;
 	}
@@ -390,27 +374,7 @@ public class Invoice implements ITransferObject, IHeaderObject, ICalculableConta
 	public void setLines( Set<InvoiceDetail> lines ) {
 		this.lines = lines;
 	}
-
-	/**
-	 * Gets the finances.
-	 * 
-	 * @return the finances
-	 */
-	@OneToMany(mappedBy = "invoice", cascade={CascadeType.REMOVE})
-	@OrderBy()
-	public Set<Finance> getFinances() {
-		return this.finances;
-	}
-
-	/**
-	 * Sets the finances.
-	 * 
-	 * @param lines the finances
-	 */
-	public void setFinances( Set<Finance> finances ) {
-		this.finances = finances;
-	}
-
+	
 	/**
 	 * Gets the date. Necessary to implement <code>ICalculableContainer</code>
 	 * 
@@ -428,7 +392,6 @@ public class Invoice implements ITransferObject, IHeaderObject, ICalculableConta
 	 */
 	@Transient
 	@SuppressWarnings("unchecked")
-	@Deprecated
 	public List getDetailList() {
 		try {
 			IManagerBean incomeDetailBean = BeanManager.getManagerBean(InvoiceDetail.class);
@@ -448,7 +411,6 @@ public class Invoice implements ITransferObject, IHeaderObject, ICalculableConta
 	 */
 	@Transient
 	@SuppressWarnings("unchecked")
-	@Deprecated
 	public List getOrderedDetailList() {
 		try {
 			IManagerBean offerDetailBean = BeanManager.getManagerBean(InvoiceDetail.class);

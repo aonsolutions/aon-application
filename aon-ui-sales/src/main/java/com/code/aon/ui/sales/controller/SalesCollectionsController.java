@@ -11,7 +11,6 @@ import javax.faces.model.SelectItem;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
-import com.code.aon.common.enumeration.Month;
 import com.code.aon.ql.Criteria;
 import com.code.aon.sales.PointOfSale;
 import com.code.aon.sales.dao.ISalesAlias;
@@ -57,18 +56,5 @@ public class SalesCollectionsController {
 			periods.add(item);
 		}
 		return periods;
-	}
-	
-	public List<SelectItem> getMonths(){
-		List<SelectItem> monthList = new LinkedList<SelectItem>();
-		Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
-		Month[] months = Month.values();
-		for (int i = 0; i < months.length; i++) {
-			Month month = months[i];
-			String name = month.getName(locale);
-			SelectItem item = new SelectItem(month, name);
-			monthList.add(item);
-		}
-		return monthList;
 	}
 }

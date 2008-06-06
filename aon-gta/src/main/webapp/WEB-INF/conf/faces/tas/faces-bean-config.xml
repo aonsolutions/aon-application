@@ -208,27 +208,6 @@
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>	
 	
-	<!-- **** APPRAISER **** -->
-	<managed-bean>
-		<managed-bean-name>appraiser</managed-bean-name>
-		<managed-bean-class>
-			com.code.aon.ui.tas.controller.AppraiserController
-		</managed-bean-class>
-		<managed-bean-scope>session</managed-bean-scope>
-		<managed-property>
-			<property-name>queryOnStartUP</property-name>
-			<value>true</value>
-		</managed-property>
-		<managed-property>
-			<property-name>pojo</property-name>
-			<value>com.code.aon.tas.Appraiser</value>
-		</managed-property>
-		<managed-property>
-			<property-name>pageLimit</property-name>
-			<value>20</value>
-		</managed-property>
-	</managed-bean>
-	
 	<!--  **** WORKPLACE **** -->
 	<managed-bean>
 		<managed-bean-name>workplace</managed-bean-name>
@@ -247,6 +226,7 @@
 	</managed-bean>
 
 	<!-- ****** EMPLOYEE ****** -->
+	
 	<managed-bean>
 		<managed-bean-name>employee</managed-bean-name>
 		<managed-bean-class>com.code.aon.ui.employee.controller.EmployeeController</managed-bean-class>
@@ -268,6 +248,7 @@
 			</list-entries>
 		</managed-property>
 	</managed-bean>
+	
 	
 	<managed-bean>
 		<managed-bean-name>employeeAddressListener</managed-bean-name>
@@ -362,6 +343,7 @@
 	</managed-bean>
 	
 	<!--  **** MEDIA **** -->
+	
 	<managed-bean>
 		<managed-bean-name>employeeMedia</managed-bean-name>
 		<managed-bean-class>
@@ -433,270 +415,6 @@
 		<managed-bean-scope>none</managed-bean-scope>
 	</managed-bean>
 	
-
-	<!-- ****** SUPPORT ORDER INSURANCE ****** -->
-	<managed-bean>
-		<managed-bean-name>supportOrderInsurance</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.tas.controller.SupportOrderInsuranceController</managed-bean-class>
-		<managed-bean-scope>session</managed-bean-scope>
-		<managed-property>
-			<property-name>queryOnStartUP</property-name>
-			<value>false</value>
-		</managed-property>
-		<managed-property>
-			<property-name>pojo</property-name>
-			<value>com.code.aon.tas.SupportOrderInsurance</value>
-		</managed-property>
-	</managed-bean>
-	
-	<!-- ****** SUPPORT ORDER TARGET ****** -->
-	<managed-bean>
-		<managed-bean-name>supportOrderTarget</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.tas.controller.SupportOrderTargetController</managed-bean-class>
-		<managed-bean-scope>session</managed-bean-scope>
-		<managed-property>
-			<property-name>queryOnStartUP</property-name>
-			<value>false</value>
-		</managed-property>
-		<managed-property>
-			<property-name>pojo</property-name>
-			<value>com.code.aon.commercial.Target</value>
-		</managed-property>
-		<managed-property>
-			<property-name>listenerClasses</property-name>
-			<list-entries>
-				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
-				<value>#{supportOrderTargetAddressListener}</value>
-				<value>#{supportOrderTargetMediaListener}</value>
-				<value>#{supportOrderTargetRBankChildListener}</value>
-				<value>#{supportOrderTargetRPayMethodChildListener}</value>
-			</list-entries>
-		</managed-property>
-	</managed-bean>
-	
-	<managed-bean>
-		<managed-bean-name>supportOrderTargetAddressListener</managed-bean-name>
-		<managed-bean-class>
-			com.code.aon.ui.form.listener.MasterControllerListener
-		</managed-bean-class>
-		<managed-bean-scope>none</managed-bean-scope>
-		<managed-property>
-			<property-name>childBean</property-name>
-			<value>supportOrderTargetAddress</value>
-		</managed-property>
-		<managed-property>
-			<property-name>aliasMap</property-name>
-			<map-entries>
-				<map-entry>
-					<key>RegistryAddress_registry_id</key>
-                    <value>id</value>
-				</map-entry>
-			</map-entries>
-		</managed-property>
-	</managed-bean>
-	
-	<managed-bean>
-		<managed-bean-name>supportOrderTargetMediaListener</managed-bean-name>
-		<managed-bean-class>
-			com.code.aon.ui.form.listener.MasterControllerListener
-		</managed-bean-class>
-		<managed-bean-scope>none</managed-bean-scope>
-		<managed-property>
-			<property-name>childBean</property-name>
-			<value>supportOrderTargetMedia</value>
-		</managed-property>
-		<managed-property>
-			<property-name>aliasMap</property-name>
-			<map-entries>
-				<map-entry>
-					<key>RegistryMedia_registry_id</key>
-                    <value>id</value>
-				</map-entry>
-			</map-entries>
-		</managed-property>
-	</managed-bean>
-	
-	<managed-bean>
-		<managed-bean-name>supportOrderTargetRBankChildListener</managed-bean-name>
-		<managed-bean-class>
-			com.code.aon.ui.form.listener.LinesControllerListener
-		</managed-bean-class>
-		<managed-bean-scope>none</managed-bean-scope>
-		<managed-property>
-			<property-name>childBean</property-name>
-			<value>supportOrderTargetRbank</value>
-		</managed-property>
-		<managed-property>
-			<property-name>aliasMap</property-name>
-			<map-entries>
-				<map-entry>
-					<key>RegistryBank_registry_id</key>
-                    <value>id</value>
-				</map-entry>
-			</map-entries>
-		</managed-property>
-	</managed-bean>
-	
-	<managed-bean>
-		<managed-bean-name>supportOrderTargetRPayMethodChildListener</managed-bean-name>
-		<managed-bean-class>
-			com.code.aon.ui.form.listener.LinesControllerListener
-		</managed-bean-class>
-		<managed-bean-scope>none</managed-bean-scope>
-		<managed-property>
-			<property-name>childBean</property-name>
-			<value>supportOrderTargetRpayMethod</value>
-		</managed-property>
-		<managed-property>
-			<property-name>aliasMap</property-name>
-			<map-entries>
-				<map-entry>
-					<key>RegistryPayMethod_registry_id</key>
-                    <value>id</value>
-				</map-entry>
-			</map-entries>
-		</managed-property>
-	</managed-bean>
-
-	<!-- **** SUPPORT ORDER TARGET RBANK **** -->
-	<managed-bean>
-		<managed-bean-name>supportOrderTargetRbank</managed-bean-name>
-		<managed-bean-class>
-			com.code.aon.ui.finance.controller.RegistryBankController
-		</managed-bean-class>
-		<managed-bean-scope>session</managed-bean-scope>
-		<managed-property>
-			<property-name>pojo</property-name>
-			<value>com.code.aon.finance.RegistryBank</value>
-		</managed-property>
-		<managed-property>
-			<property-name>cascadeDelete</property-name>
-			<value>true</value>
-		</managed-property>
-		<managed-property>
-			<property-name>masterControllerName</property-name>
-			<value>supportOrderTarget</value>
-		</managed-property>
-		<managed-property>
-			<property-name>propertyMap</property-name>
-			<map-entries>
-				<map-entry>
-					<key>id</key>
-					<value>registry.id</value>
-				</map-entry>
-			</map-entries>
-		</managed-property>
-		<managed-property>
-			<property-name>listenerClasses</property-name>
-			<list-entries>
-				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
-				<value>#{rBankValidatorListener}</value>
-				<value>#{rBankControllerListener}</value>
-			</list-entries>
-		</managed-property>
-	</managed-bean>
-
-	<managed-bean>
-		<managed-bean-name>rBankControllerListener</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.finance.event.RegistryBankControllerListener</managed-bean-class>
-		<managed-bean-scope>none</managed-bean-scope>
-	</managed-bean>
-
-	<managed-bean>
-		<managed-bean-name>rBankValidatorListener</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.finance.event.RegistryBankValidationListener</managed-bean-class>
-		<managed-bean-scope>none</managed-bean-scope>
-	</managed-bean>
-
-	<!-- **** SUPPORT ORDER TARGET RPAYMETHOD **** -->
-	<managed-bean>
-		<managed-bean-name>supportOrderTargetRpayMethod</managed-bean-name>
-		<managed-bean-class>
-			com.code.aon.ui.finance.controller.RegistryRPayMethodController
-		</managed-bean-class>
-		<managed-bean-scope>session</managed-bean-scope>
-		<managed-property>
-			<property-name>pojo</property-name>
-			<value>com.code.aon.finance.RegistryPayMethod</value>
-		</managed-property>
-		<managed-property>
-			<property-name>cascadeDelete</property-name>
-			<value>true</value>
-		</managed-property>
-		<managed-property>
-			<property-name>masterControllerName</property-name>
-			<value>supportOrderTarget</value>
-		</managed-property>
-		<managed-property>
-			<property-name>propertyMap</property-name>
-			<map-entries>
-				<map-entry>
-					<key>id</key>
-					<value>registry.id</value>
-				</map-entry>
-			</map-entries>
-		</managed-property>
-	</managed-bean>
-
-	<!-- **** SUPPORT ORDER TARGET RADDRESS **** -->
-	<managed-bean>
-		<managed-bean-name>supportOrderTargetAddress</managed-bean-name>
-		<managed-bean-class>
-			com.code.aon.ui.form.LinesController
-		</managed-bean-class>
-		<managed-bean-scope>session</managed-bean-scope>
-		<managed-property>
-			<property-name>pojo</property-name>
-			<value>com.code.aon.registry.RegistryAddress</value>
-		</managed-property>
-		<managed-property>
-			<property-name>cascadeDelete</property-name>
-			<value>true</value>
-		</managed-property>
-		<managed-property>
-			<property-name>masterControllerName</property-name>
-			<value>supportOrderTarget</value>
-		</managed-property>
-		<managed-property>
-			<property-name>propertyMap</property-name>
-			<map-entries>
-				<map-entry>
-					<key>id</key>
-					<value>registry.id</value>
-				</map-entry>
-			</map-entries>
-		</managed-property>
-	</managed-bean>
-
-	<!-- **** SUPPORT ORDER TARGET RMEDIA **** -->
-	<managed-bean>
-		<managed-bean-name>supportOrderTargetMedia</managed-bean-name>
-		<managed-bean-class>
-			com.code.aon.ui.form.LinesController
-		</managed-bean-class>
-		<managed-bean-scope>session</managed-bean-scope>
-		<managed-property>
-			<property-name>pojo</property-name>
-			<value>com.code.aon.registry.RegistryMedia</value>
-		</managed-property>
-		<managed-property>
-			<property-name>cascadeDelete</property-name>
-			<value>true</value>
-		</managed-property>
-		<managed-property>
-			<property-name>masterControllerName</property-name>
-			<value>supportOrderTarget</value>
-		</managed-property>
-		<managed-property>
-			<property-name>propertyMap</property-name>
-			<map-entries>
-				<map-entry>
-					<key>id</key>
-					<value>registry.id</value>
-				</map-entry>
-			</map-entries>
-		</managed-property>
-	</managed-bean>
 	
 	<!--  **** MAKE COLLECTIONS **** 
 	-->

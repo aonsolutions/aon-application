@@ -10,16 +10,21 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.code.aon</groupId>
 	<artifactId>aon.ui.form.myfaces</artifactId>
-	<version>2.0.0</version>
+	<version>2.0.3</version>
 	<description>AON UI FORM MYFACES</description>
 	<name>AON UI FORM MYFACES</name>
 	<dependencies>
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.form</artifactId>
-			<version>2.0.0</version>
+			<version>2.0.3</version>
 			<scope>compile</scope>
 		</dependency>
+		<dependency>
+    		<groupId>jmimemagic</groupId>
+    		<artifactId>jmimemagic</artifactId>
+    		<version>0.1.2</version>
+		</dependency>		
 		<dependency>
 			<groupId>javax.faces</groupId>
 			<artifactId>jsf-api</artifactId>

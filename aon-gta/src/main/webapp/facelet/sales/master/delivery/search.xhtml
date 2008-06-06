@@ -75,13 +75,9 @@
 							for="Delivery_series" 
 							value="#{warehouseBundle.aon_series_number}" />
 						<t:div>
-							<t:selectOneMenu id="Delivery_series"
-								value="#{delivery.to.series}"
-								styleClass="aon-form-selectOneMenu-field"
-								valueChangeListener="#{delivery.addExpression}">
-								<f:selectItem itemValue="" itemDisabled="true" itemLabel="-" />
-								<f:selectItems value="#{configCollections.series}" />
-							</t:selectOneMenu>
+							<t:inputText id="Delivery_series" size="5"
+								styleClass="aon-form-input-text" onblur="toUpperCase(this);"
+								valueChangeListener="#{delivery.addExpression}" />
 							<t:inputText id="Delivery_number" size="15"
 								styleClass="aon-form-input-text"
 								valueChangeListener="#{delivery.addExpression}" />

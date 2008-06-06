@@ -20,6 +20,7 @@ import com.code.aon.finance.PayMethod;
 import com.code.aon.product.util.DiscountExpression;
 import com.code.aon.purchase.enumeration.PurchaseDocumentType;
 import com.code.aon.purchase.enumeration.PurchaseStatus;
+import com.code.aon.supplier.Supplier;
 
 /**
  * Transfer Object that represents a purchase.
