@@ -67,5 +67,17 @@
 			<value>#{user}</value>
 		</managed-property>
 	</managed-bean>
-	
+
+	<!-- ************ SMS ************** -->
+	<managed-bean>
+		<managed-bean-name>sms</managed-bean-name>
+		<managed-bean-class>com.code.aon.desktop.controller.SMSController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
+	<managed-bean>
+		<managed-bean-name>smsContact</managed-bean-name>
+		<managed-bean-class>com.code.aon.desktop.controller.SMSContactController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
+
 </faces-config>

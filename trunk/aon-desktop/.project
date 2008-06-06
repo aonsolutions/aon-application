@@ -10,6 +10,7 @@
 		<project>aon-common</project>
 		<project>aon-groupware</project>
 		<project>aon-common-ldap</project>
+		<project>aon-messaging</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>
