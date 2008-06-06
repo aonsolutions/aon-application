@@ -291,7 +291,32 @@
 			<url-pattern>*.faces</url-pattern>
 		</web-resource-collection>
 		<auth-constraint>
-			<role-name>Manager</role-name>
+			<role-name>AuxiliaresBancos</role-name>
+			<role-name>AuxiliaresCategorias</role-name>
+			<role-name>AuxiliaresConceptos</role-name>
+			<role-name>AuxiliaresFormasDePago</role-name>
+			<role-name>AuxiliaresImpuestos</role-name>
+			<role-name>AuxiliaresProvincias</role-name>
+			<role-name>AuxiliaresSeries</role-name>
+			<role-name>BorradoFacturas</role-name>
+			<role-name>CentrosFormacion</role-name>
+			<role-name>ChecksTesoreria</role-name>
+			<role-name>Clientes</role-name>
+			<role-name>ContabilizacionFacturas</role-name>
+			<role-name>DevolucionVencimientos</role-name>
+			<role-name>Empresa</role-name>
+			<role-name>Facturacion</role-name>
+			<role-name>FacturasCompra</role-name>
+			<role-name>GestionCartera</role-name>
+			<role-name>GestionFacturas</role-name>
+			<role-name>GruposFacturacion</role-name>
+			<role-name>ImpresionFacturas</role-name>
+			<role-name>ListadoCuotas</role-name>
+			<role-name>Prefacturacion</role-name>
+			<role-name>Proveedores</role-name>
+			<role-name>Remesas</role-name>
+			<role-name>Vencimientos</role-name>
+			<role-name>Invitado</role-name>
 		</auth-constraint>
 	</security-constraint>
 
@@ -303,9 +328,32 @@
 		</form-login-config>
 	</login-config>
 
-	<security-role>
-		<role-name>Manager</role-name>
-	</security-role>
+	<security-role><role-name>AuxiliaresBancos</role-name></security-role>
+	<security-role><role-name>AuxiliaresCategorias</role-name></security-role>
+	<security-role><role-name>AuxiliaresConceptos</role-name></security-role>
+	<security-role><role-name>AuxiliaresFormasDePago</role-name></security-role>
+	<security-role><role-name>AuxiliaresImpuestos</role-name></security-role>
+	<security-role><role-name>AuxiliaresProvincias</role-name></security-role>
+	<security-role><role-name>AuxiliaresSeries</role-name></security-role>
+	<security-role><role-name>BorradoFacturas</role-name></security-role>
+	<security-role><role-name>CentrosFormacion</role-name></security-role>
+	<security-role><role-name>ChecksTesoreria</role-name></security-role>
+	<security-role><role-name>Clientes</role-name></security-role>
+	<security-role><role-name>ContabilizacionFacturas</role-name></security-role>
+	<security-role><role-name>DevolucionVencimientos</role-name></security-role>
+	<security-role><role-name>Empresa</role-name></security-role>
+	<security-role><role-name>Facturacion</role-name></security-role>
+	<security-role><role-name>FacturasCompra</role-name></security-role>
+	<security-role><role-name>GestionCartera</role-name></security-role>
+	<security-role><role-name>GestionFacturas</role-name></security-role>
+	<security-role><role-name>GruposFacturacion</role-name></security-role>
+	<security-role><role-name>ImpresionFacturas</role-name></security-role>
+	<security-role><role-name>ListadoCuotas</role-name></security-role>
+	<security-role><role-name>Prefacturacion</role-name></security-role>
+	<security-role><role-name>Proveedores</role-name></security-role>
+	<security-role><role-name>Remesas</role-name></security-role>
+	<security-role><role-name>Vencimientos</role-name></security-role>
+	<security-role><role-name>Invitado</role-name></security-role>
 
 	<resource-env-ref>
 	  <resource-env-ref-name>jdbc/AonFinance</resource-env-ref-name>
