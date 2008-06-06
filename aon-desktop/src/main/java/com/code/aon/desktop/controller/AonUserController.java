@@ -121,6 +121,8 @@ public class AonUserController extends UserController implements ILdapConstants,
 				session.replaceAttribute(userDN, PASSWORD_EXPIRATION_TIMESTAMP, newDate);
 			} catch (LdapException e) {
 				AonUtil.addErrorMessage("Error actualizando la fecha de expiración de la contraseña" );
+			} finally {
+				ldap.closeSession();
 			}
 		} else {
 			LOGGER.severe( "No existe en LDAP el usuario " + userName + " para el dominio " + domain );
