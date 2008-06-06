@@ -19,7 +19,7 @@ import com.code.aon.common.ITransferObject;
 
 @Entity
 @Table(name = "menu_option")
-public class MenuOption implements ITransferObject {
+public class MenuOption implements ITransferObject, IPositionObject {
 
 	private Integer id;
 

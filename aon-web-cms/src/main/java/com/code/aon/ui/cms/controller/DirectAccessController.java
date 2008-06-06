@@ -5,20 +5,23 @@ import java.util.List;
 import javax.faces.event.ActionEvent;
 import javax.faces.model.SelectItem;
 
-import com.code.aon.cms.DirectAccessGroup;
 import com.code.aon.cms.DirectAccess;
 import com.code.aon.cms.DirectAccessDetail;
+import com.code.aon.cms.DirectAccessGroup;
 import com.code.aon.cms.Image;
 import com.code.aon.cms.dao.ICMSAlias;
-import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionException;
+import com.code.aon.ui.cms.controller.support.OrderedControllerSupport;
+import com.code.aon.ui.cms.controller.support.IOrderedControllerListener;
 import com.code.aon.ui.cms.util.MenuOptionUtil;
 import com.code.aon.ui.util.AonUtil;
 
 
-public class DirectAccessController extends BasicI18nController {
+public class DirectAccessController extends BasicI18nController  implements IOrderedControllerListener {
+
+	public OrderedControllerSupport orderedControllerSupport = new OrderedControllerSupport(ICMSAlias.DIRECT_ACCESS_POSITION);
 
 	private DirectAccessGroup currentGroup;
 	
@@ -98,76 +101,6 @@ public class DirectAccessController extends BasicI18nController {
 		return MenuOptionUtil.getIdents(mo.getType(),mo.getLevel());
 	}
 
-	@SuppressWarnings("unchecked")
-	private void move( DirectAccess da, int movement ) throws ManagerBeanException, ExpressionException {
-		int oldPosition = da.getPosition();
-		int newPosition = oldPosition + movement;
-		da.setPosition(newPosition);
-		Criteria criteria = new Criteria();
-		criteria.addExpression(getManagerBean().getFieldName(ICMSAlias.DIRECT_ACCESS_ID), ""+da.getId());
-		List<ITransferObject> list = getManagerBean().getList(criteria);
-		if (list.size() > 0) {
-			DirectAccess option = (DirectAccess)list.get(0);
-			option.setPosition(newPosition);
-			getManagerBean().update(option);
-		}
-    	List<DirectAccess> listObjects = (List<DirectAccess>) this.model.getWrappedData();
-		DirectAccess daMoved = listObjects.get( newPosition );
-		daMoved.setPosition( oldPosition );
-		criteria = new Criteria();
-		criteria.addExpression(getManagerBean().getFieldName(ICMSAlias.DIRECT_ACCESS_ID), ""+daMoved.getId());
-		list = getManagerBean().getList(criteria);
-		if (list.size() > 0) {
-			DirectAccess option = (DirectAccess)list.get(0);
-			option.setPosition(oldPosition);
-			getManagerBean().update(option);
-		}
-		listObjects.set( newPosition, da);
-		listObjects.set( oldPosition, daMoved );
-	}
-	
-    public void onMoveUp(ActionEvent event) throws ManagerBeanException, ExpressionException {
-    	move((DirectAccess) this.model.getRowData(), -1);
-    }
-
-    public void onMoveDown(ActionEvent event) throws ManagerBeanException, ExpressionException {
-    	move((DirectAccess) this.model.getRowData(), 1);    	
-    }
-
-	public void reorderObjects() throws ManagerBeanException {
-		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(getManagerBean().getFieldName(ICMSAlias.DIRECT_ACCESS_DIRECT_ACCESS_GROUP_ID),getCurrentGroup().getId());
-		criteria.addOrder(getManagerBean().getFieldName(ICMSAlias.DIRECT_ACCESS_POSITION));
-		List<ITransferObject> list = getManagerBean().getList(criteria);
-		for (int i = 0; i < list.size(); i++) {
-			DirectAccess da = (DirectAccess)list.get(i);
-			int oldPosition = da.getPosition();
-			int newPosition = i;
-			if (oldPosition != newPosition) {
-				da.setPosition(newPosition);
-				getManagerBean().update(da);
-			}
-		}
-	}
-
-	public int getLastPosition() {
-		int position = 0;
-		try{
-			Criteria criteria = new Criteria();
-			criteria.addExpression(getManagerBean().getFieldName(ICMSAlias.DIRECT_ACCESS_DIRECT_ACCESS_GROUP_ID), "" + getCurrentGroup().getId());
-			criteria.addOrder(getManagerBean().getFieldName(ICMSAlias.DIRECT_ACCESS_POSITION), false);
-			List<ITransferObject> list = (List<ITransferObject>)getManagerBean().getList(criteria);
-			if (list.size() > 0) {
-				DirectAccess da = (DirectAccess)list.get(0);
-				position = da.getPosition();
-				++position;
-			}
-		}catch (ManagerBeanException e) {
-		} catch (ExpressionException e) {
-		}
-		return position;
-	}
-
 	public void onDelImage(ActionEvent event) {
 		DirectAccess current = (DirectAccess)getTo();
 		current.setImage(null);
@@ -178,6 +111,30 @@ public class DirectAccessController extends BasicI18nController {
 		String image = ((Image)controller.getModel().getRowData()).getRelativePath();
 		DirectAccess current = (DirectAccess)getTo();
 		current.setImage(image);
+	}
+
+    public void onMoveUp(ActionEvent event) throws ManagerBeanException, ExpressionException {
+    	orderedControllerSupport.onMoveUp(this);
+    }
+
+    public void onMoveDown(ActionEvent event) throws ManagerBeanException, ExpressionException {
+    	orderedControllerSupport.onMoveDown(this);
+    }
+
+	public void fireBeforeUseCriteria(Criteria criteria) {
+		try {
+			criteria.addExpression(getManagerBean().getFieldName(ICMSAlias.DIRECT_ACCESS_DIRECT_ACCESS_GROUP_ID), "" + getCurrentGroup().getId());
+		} catch (ManagerBeanException e) {
+		} catch (ExpressionException e) {
+		}
+	}
+
+	protected void afterRemoveSelected(){
+		try {
+			orderedControllerSupport.reorderObjects(this);
+		} catch (ManagerBeanException e) {
+			e.printStackTrace();
+		}
 	}
 
 }

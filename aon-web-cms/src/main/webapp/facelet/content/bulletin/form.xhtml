@@ -110,6 +110,33 @@
 						<aon:panelTab id="articlesTab" label="#{appBundle.bulletin_articles}"
 							rendered="#{!bulletin.new}" >
 
+							<aon:outputLabel for="BulletinArticle_publishDate"
+								value="#{appBundle.article_publishDate}" />
+							<aon:selectInputDate id="BulletinArticle_publishDate"
+								 style="z-index:2001;margin:0;vertical-align:middle;"
+								 imageDir="#{aonConfiguration.stylePath}/images/selectInputDate/"
+								 value="#{bulletin.publishDate}" renderAsPopup="true"
+								 popupDateFormat="#{bundle.aon_date_pattern}">
+								 <f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+										timeZone="#{timeZoneController.timeZoneId}" />
+							</aon:selectInputDate>	
+							
+							<aon:outputLabel for="BulletinArticle_expireDate"
+								value="#{appBundle.article_expireDate}" />
+							<aon:selectInputDate id="BulletinArticle_expireDate" 
+								 style="z-index:2001;margin:0;vertical-align:middle;"
+								 imageDir="#{aonConfiguration.stylePath}/images/selectInputDate/"
+								 value="#{bulletin.expireDate}" renderAsPopup="true"
+								 popupDateFormat="#{bundle.aon_date_pattern}">
+								 <f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+										timeZone="#{timeZoneController.timeZoneId}" />
+							</aon:selectInputDate>	
+
+							<aon:commandButton id="reset_articles" 
+								value="#{appBundle.bulletin_refresh_articles}"
+								styleClass="aon-finding-toolbar-item aon-icon-accept"
+								reRender="detail_list_panel" />
+
 							<rich:panel id="detail_list_panel">
 								<f:facet name="header">#{appBundle.aon_listing}</f:facet>
 						
@@ -210,7 +237,7 @@
 													rendered="#{bulletin_article.new}"
 													value="#{bulletin_article.to.article.id}">
 													<f:selectItem itemLabel="-" itemValue="-1" />
-													<f:selectItems value="#{collections.articleList}" />
+													<f:selectItems value="#{bulletin.articleList}" />
 												</aon:selectOneMenu>
 											</aon:div>
 										</f:facet>

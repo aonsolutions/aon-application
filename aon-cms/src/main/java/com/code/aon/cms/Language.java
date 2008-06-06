@@ -11,7 +11,7 @@ import com.code.aon.common.ITransferObject;
 
 @Entity
 @Table(name = "language")
-public class Language implements ITransferObject {
+public class Language implements ITransferObject, IPositionObject {
 
 	private Integer id;
 

@@ -1,7 +1,5 @@
 package com.code.aon.ui.cms.controller;
 
-import java.util.List;
-
 import javax.faces.event.ActionEvent;
 
 import com.code.aon.cms.Faq;
@@ -11,15 +9,17 @@ import com.code.aon.cms.FaqConfig;
 import com.code.aon.cms.dao.ICMSAlias;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
-import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionException;
+import com.code.aon.ui.cms.controller.support.OrderedControllerSupport;
 import com.code.aon.ui.util.AonUtil;
 
 
-public class FaqCategoryController extends BasicI18nController {
+public class FaqCategoryController extends BasicI18nController{
 
+	public OrderedControllerSupport orderedControllerSupport = new OrderedControllerSupport(ICMSAlias.FAQ_CATEGORY_POSITION);
+	
 	public void onInit(ActionEvent event) {
 		((GeneratorConfigController)AonUtil.getRegisteredBean("generator_config")).initSection(FaqConfig.class);
 		super.onSearch(event);
@@ -55,42 +55,6 @@ public class FaqCategoryController extends BasicI18nController {
 	public void onAccept(ActionEvent event) {
 		super.accept(event);
 	}
-
-	@SuppressWarnings("unchecked")
-	private void move( FaqCategory faqCategory, int movement ) throws ManagerBeanException, ExpressionException {
-		int oldPosition = faqCategory.getPosition();
-		int newPosition = oldPosition + movement;
-		faqCategory.setPosition(newPosition);
-		Criteria criteria = new Criteria();
-		criteria.addExpression(getManagerBean().getFieldName(ICMSAlias.FAQ_CATEGORY_ID), ""+faqCategory.getId());
-		List<ITransferObject> list = getManagerBean().getList(criteria);
-		if (list.size() > 0) {
-			FaqCategory faqCat = (FaqCategory)list.get(0);
-			faqCat.setPosition(newPosition);
-			getManagerBean().update(faqCat);
-		}
-    	List<FaqCategory> listObjects = (List<FaqCategory>) this.model.getWrappedData();
-    	FaqCategory faqCategoryMoved = listObjects.get( newPosition );
-    	faqCategoryMoved.setPosition( oldPosition );
-		criteria = new Criteria();
-		criteria.addExpression(getManagerBean().getFieldName(ICMSAlias.FAQ_CATEGORY_ID), ""+faqCategoryMoved.getId());
-		list = getManagerBean().getList(criteria);
-		if (list.size() > 0) {
-			FaqCategory faqCat = (FaqCategory)list.get(0);
-			faqCat.setPosition(oldPosition);
-			getManagerBean().update(faqCat);
-		}
-		listObjects.set( newPosition, faqCategory);
-		listObjects.set( oldPosition, faqCategoryMoved );
-	}
-	
-    public void onMoveUp(ActionEvent event) throws ManagerBeanException, ExpressionException {
-    	move((FaqCategory) this.model.getRowData(), -1);
-    }
-
-    public void onMoveDown(ActionEvent event) throws ManagerBeanException, ExpressionException {
-    	move((FaqCategory) this.model.getRowData(), 1);    	
-    }
     
 	public void onSelectFaqs(ActionEvent event) throws ManagerBeanException, ExpressionException {
 		FaqController fc = (FaqController)AonUtil.getController("faq");
@@ -104,22 +68,20 @@ public class FaqCategoryController extends BasicI18nController {
 		fc.onSearch(event);
 	}
 
-	public void reorderObjects() throws ManagerBeanException {
-		Criteria criteria = new Criteria();
-		criteria.addOrder(getManagerBean().getFieldName(ICMSAlias.FAQ_CATEGORY_POSITION));
-		List<ITransferObject> list = getManagerBean().getList(criteria);
-		for (int i = 0; i < list.size(); i++) {
-			FaqCategory f = (FaqCategory)list.get(i);
-			int oldPosition = f.getPosition();
-			int newPosition = i;
-			if (oldPosition != newPosition) {
-				f.setPosition(newPosition);
-				getManagerBean().update(f);
-			}
+    public void onMoveUp(ActionEvent event) throws ManagerBeanException, ExpressionException {
+    	orderedControllerSupport.onMoveUp(this);
+    }
+
+    public void onMoveDown(ActionEvent event) throws ManagerBeanException, ExpressionException {
+    	orderedControllerSupport.onMoveDown(this);
+    }
+
+	protected void afterRemoveSelected(){
+		try {
+			orderedControllerSupport.reorderObjects(this);
+		} catch (ManagerBeanException e) {
+			e.printStackTrace();
 		}
 	}
 
-
-
-	
 }

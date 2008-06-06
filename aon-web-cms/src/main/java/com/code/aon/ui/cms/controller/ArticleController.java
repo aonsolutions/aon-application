@@ -1,7 +1,5 @@
 package com.code.aon.ui.cms.controller;
 
-import java.util.List;
-
 import javax.faces.event.ActionEvent;
 import javax.faces.event.ValueChangeEvent;
 
@@ -15,13 +13,16 @@ import com.code.aon.cms.dao.ICMSAlias;
 import com.code.aon.cms.enumeration.ArticleType;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
-import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionException;
+import com.code.aon.ui.cms.controller.support.OrderedControllerSupport;
+import com.code.aon.ui.cms.controller.support.IOrderedControllerListener;
 import com.code.aon.ui.util.AonUtil;
 
-public class ArticleController extends GridI18nController {
+public class ArticleController extends GridI18nController implements IOrderedControllerListener {
+
+	public OrderedControllerSupport orderedControllerSupport = new OrderedControllerSupport(ICMSAlias.ARTICLE_POSITION);
 
 	private ArticleCategory currentArticleCategory;
 	
@@ -86,63 +87,6 @@ public class ArticleController extends GridI18nController {
 
 	public void onAccept(ActionEvent event) {
 		super.accept(event);
-	}
-
-	@SuppressWarnings("unchecked")
-	private void move( Article f, int movement ) throws ManagerBeanException, ExpressionException {
-		int oldPosition = f.getPosition();
-		int newPosition = oldPosition + movement;
-		f.setPosition(newPosition);
-		Criteria criteria = new Criteria();
-		criteria.addExpression(getManagerBean().getFieldName(ICMSAlias.ARTICLE_ID), ""+f.getId());
-		List<ITransferObject> list = getManagerBean().getList(criteria);
-		if (list.size() > 0) {
-			Article faq = (Article)list.get(0);
-			faq.setPosition(newPosition);
-			getManagerBean().update(faq);
-		}
-    	List<Article> listObjects = (List<Article>) this.model.getWrappedData();
-		Article fMoved = listObjects.get( newPosition );
-		fMoved.setPosition( oldPosition );
-		criteria = new Criteria();
-		criteria.addExpression(getManagerBean().getFieldName(ICMSAlias.ARTICLE_ID), ""+fMoved.getId());
-		list = getManagerBean().getList(criteria);
-		if (list.size() > 0) {
-			Article faq = (Article)list.get(0);
-			faq.setPosition(oldPosition);
-			getManagerBean().update(faq);
-		}
-		listObjects.set( newPosition, f);
-		listObjects.set( oldPosition, fMoved );
-	}
-	
-    public void onMoveUp(ActionEvent event) throws ManagerBeanException, ExpressionException {
-    	move((Article) this.model.getRowData(), -1);
-    }
-
-    public void onMoveDown(ActionEvent event) throws ManagerBeanException, ExpressionException {
-    	move((Article) this.model.getRowData(), 1);    	
-    }
-
-	public void reorderObjects() throws ManagerBeanException {
-		Criteria criteria = new Criteria();
-		try {
-			criteria.addExpression(getManagerBean().getFieldName(ICMSAlias.ARTICLE_ARTICLE_CATEGORY_ID), "" + getCurrentArticleCategory().getId());
-		} catch (ExpressionException e) {
-			throw new ManagerBeanException(e);
-		}
-		criteria.addEqualExpression(getManagerBean().getFieldName(ICMSAlias.ARTICLE_ARTICLE_TYPE), currentType);
-		criteria.addOrder(getManagerBean().getFieldName(ICMSAlias.ARTICLE_POSITION));
-		List<ITransferObject> list = getManagerBean().getList(criteria);
-		for (int i = 0; i < list.size(); i++) {
-			Article f = (Article)list.get(i);
-			int oldPosition = f.getPosition();
-			int newPosition = i;
-			if (oldPosition != newPosition) {
-				f.setPosition(newPosition);
-				getManagerBean().update(f);
-			}
-		}
 	}
 
 	public void onDelImage(ActionEvent event) {
@@ -244,6 +188,31 @@ public class ArticleController extends GridI18nController {
 			currentType = ArticleType.OTHER;
 		} 
 		changeArticleList();
+	}
+
+    public void onMoveUp(ActionEvent event) throws ManagerBeanException, ExpressionException {
+    	orderedControllerSupport.onMoveUp(this);
+    }
+
+    public void onMoveDown(ActionEvent event) throws ManagerBeanException, ExpressionException {
+    	orderedControllerSupport.onMoveDown(this);
+    }
+
+	public void fireBeforeUseCriteria(Criteria criteria) {
+		try {
+			criteria.addExpression(getManagerBean().getFieldName(ICMSAlias.ARTICLE_ARTICLE_CATEGORY_ID), "" + getCurrentArticleCategory().getId());
+			criteria.addEqualExpression(getManagerBean().getFieldName(ICMSAlias.ARTICLE_ARTICLE_TYPE), getCurrentType());
+		} catch (ManagerBeanException e) {
+		} catch (ExpressionException e) {
+		}
+	}
+
+	protected void afterRemoveSelected(){
+		try {
+			orderedControllerSupport.reorderObjects(this);
+		} catch (ManagerBeanException e) {
+			e.printStackTrace();
+		}
 	}
 
 }

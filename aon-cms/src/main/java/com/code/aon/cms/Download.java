@@ -18,7 +18,7 @@ import com.code.aon.common.ITransferObject;
 
 @Entity
 @Table(name="download")
-public class Download implements ITransferObject {
+public class Download implements ITransferObject, IPositionObject {
 
 	private Integer id;
 	
@@ -26,7 +26,7 @@ public class Download implements ITransferObject {
 	
 	private boolean active;
 	
-	private int position;
+	private Integer position;
 	
 	private DownloadCategory downloadCategory;
 	
@@ -66,11 +66,11 @@ public class Download implements ITransferObject {
 		this.active = active;
 	}
 
-	public int getPosition() {
+	public Integer getPosition() {
 		return position;
 	}
 
-	public void setPosition(int position) {
+	public void setPosition(Integer position) {
 		this.position = position;
 	}
 

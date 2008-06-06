@@ -17,7 +17,7 @@ import com.code.aon.common.ITransferObject;
 
 @Entity
 @Table(name = "faq")
-public class Faq implements ITransferObject {
+public class Faq implements ITransferObject, IPositionObject {
 
 	private Integer id;
 

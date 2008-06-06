@@ -1,14 +1,9 @@
 package com.code.aon.ui.cms.event;
 
 import java.io.File;
-import java.util.List;
 
 import com.code.aon.cms.AlbumImage;
-import com.code.aon.cms.dao.ICMSAlias;
-import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
-import com.code.aon.ql.Criteria;
-import com.code.aon.ql.util.ExpressionException;
 import com.code.aon.ui.cms.controller.AlbumImageController;
 import com.code.aon.ui.cms.util.ControllerUtil;
 import com.code.aon.ui.cms.util.ImageUtil;
@@ -17,6 +12,25 @@ import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
 
 public class AlbumImageControllerListener extends ControllerAdapter {
+	
+	@Override
+	public void afterBeanRemoved(ControllerEvent event)
+			throws ControllerListenerException {
+		AlbumImageController controller = (AlbumImageController) event.getController();
+		try {
+			controller.orderedControllerSupport.reorderObjects(controller);
+		} catch (ManagerBeanException e) {
+			throw new ControllerListenerException(e);
+		}
+	}
+	
+
+	@Override
+	public void afterModelInitialized(ControllerEvent event)
+			throws ControllerListenerException {
+		AlbumImageController controller = (AlbumImageController)event.getController();
+		controller.orderedControllerSupport.addListenerSupport(controller);
+	}
 	
 	@Override
 	public void afterBeanCreated(ControllerEvent event) throws ControllerListenerException {
@@ -29,7 +43,7 @@ public class AlbumImageControllerListener extends ControllerAdapter {
 		AlbumImageController aic = (AlbumImageController)event.getController();
 		AlbumImage ai = (AlbumImage)event.getController().getTo();
 		ai.setAlbum(aic.getCurrentAlbum());
-		ai.setPosition(getLastPosition(aic));
+		ai.setPosition(aic.orderedControllerSupport.getLastPosition(aic));
 		generateThumbnail(ai);
 	}
 	
@@ -54,21 +68,4 @@ public class AlbumImageControllerListener extends ControllerAdapter {
 		}
 	}
 	
-	private int getLastPosition(AlbumImageController aic) {
-		int position = 0;
-		try{
-			Criteria criteria = new Criteria();
-			criteria.addExpression(aic.getManagerBean().getFieldName(ICMSAlias.ALBUM_IMAGE_ALBUM_ID), "" + aic.getCurrentAlbum().getId());
-			criteria.addOrder(aic.getManagerBean().getFieldName(ICMSAlias.ALBUM_IMAGE_POSITION), false);
-			List<ITransferObject> list = (List<ITransferObject>)aic.getManagerBean().getList(criteria);
-			if (list.size() > 0) {
-				AlbumImage ai = (AlbumImage)list.get(0);
-				position = ai.getPosition();
-				++position;
-			}
-		}catch (ManagerBeanException e) {
-		} catch (ExpressionException e) {
-		}
-		return position;
-	}
 }

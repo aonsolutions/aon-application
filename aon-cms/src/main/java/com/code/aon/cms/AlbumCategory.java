@@ -17,7 +17,7 @@ import com.code.aon.common.ITransferObject;
 
 @Entity
 @Table(name="album_category")
-public class AlbumCategory implements ITransferObject {
+public class AlbumCategory implements ITransferObject, IPositionObject {
 	
 	private Integer id;
 	
@@ -25,7 +25,7 @@ public class AlbumCategory implements ITransferObject {
 	
 	private boolean active;
 	
-	private int position;
+	private Integer position;
 	
 	private Section section;
 	
@@ -62,11 +62,11 @@ public class AlbumCategory implements ITransferObject {
 	}
 
 	@Column(nullable=false)
-	public int getPosition() {
+	public Integer getPosition() {
 		return position;
 	}
 
-	public void setPosition(int position) {
+	public void setPosition(Integer position) {
 		this.position = position;
 	}
 

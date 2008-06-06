@@ -5,13 +5,17 @@ import java.io.File;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.LinkedList;
 import java.util.List;
 
 import javax.faces.event.ActionEvent;
+import javax.faces.model.SelectItem;
 import javax.mail.Address;
 import javax.mail.AuthenticationFailedException;
 import javax.mail.internet.InternetAddress;
 
+import com.code.aon.cms.Article;
 import com.code.aon.cms.ArticleDetail;
 import com.code.aon.cms.Bulletin;
 import com.code.aon.cms.BulletinArticle;
@@ -35,6 +39,46 @@ import com.code.aon.ui.util.AonUtil;
 
 public class BulletinController extends BasicI18nController {
 
+	private Date publishDate = new Date();
+	
+	private Date expireDate;
+
+	public Date getPublishDate() {
+		return publishDate;
+	}
+
+	public void setPublishDate(Date publishDate) {
+		this.publishDate = publishDate;
+	}
+
+	public Date getExpireDate() {
+		return expireDate;
+	}
+
+	public void setExpireDate(Date expireDate) {
+		this.expireDate = expireDate;
+	}
+
+	public List<SelectItem> getArticleList() throws ManagerBeanException {
+		List<SelectItem> itemList = new LinkedList<SelectItem>();
+		IManagerBean bean = BeanManager.getManagerBean(Article.class);
+		Criteria criteria = new Criteria();
+		if (publishDate!=null)
+			criteria.addGreaterThanOrEqualExpression(bean.getFieldName(ICMSAlias.ARTICLE_PUBLISH_DATE),publishDate);
+		if (expireDate!=null)
+			criteria.addLessThanOrEqualExpression(bean.getFieldName(ICMSAlias.ARTICLE_EXPIRE_DATE),expireDate);
+		criteria.addOrder(bean.getFieldName(ICMSAlias.ARTICLE_ALIAS));
+		List<ITransferObject> list = (List<ITransferObject>)bean.getList(criteria);
+		for (int i = 0; i < list.size(); i++) {
+			Article article = (Article)list.get(i);
+			int id = article.getId();
+			String name = article.getAlias();
+			SelectItem item = new SelectItem(id, name);
+			itemList.add(item);
+		}
+		return itemList;
+	}
+
 	@SuppressWarnings("unused")
 	public void onSelect(ActionEvent event) {
 		super.onSelect(event);
@@ -51,6 +95,12 @@ public class BulletinController extends BasicI18nController {
 		c.setCurrentBulletin(bulletin);
 		c.setCriteria(criteria);
 		c.onSearch(event);
+	}
+
+	public void onInit(ActionEvent event){
+		GeneratorStatusController status = (GeneratorStatusController)AonUtil.getRegisteredBean("generator_status");
+		status.onInit(event);
+		this.onSearch(event);
 	}
 
 	public void onGenerate(ActionEvent event){
@@ -89,7 +139,7 @@ public class BulletinController extends BasicI18nController {
 					
 					bean = BeanManager.getManagerBean(ArticleDetail.class); 
 					criteria = new Criteria();
-					criteria.addEqualExpression(bean.getFieldName(ICMSAlias.ARTICLE_DETAIL_ARTICLE_ID), ((BulletinArticle)bulletinArticle).getId());
+					criteria.addEqualExpression(bean.getFieldName(ICMSAlias.ARTICLE_DETAIL_ARTICLE_ID), ((BulletinArticle)bulletinArticle).getArticle().getId());
 					criteria.addEqualExpression(bean.getFieldName(ICMSAlias.ARTICLE_DETAIL_LANGUAGE_ID), bulletinDetail.getLanguage().getId());
 					article_list = (List<ITransferObject>)bean.getList(criteria);
 					if (!article_list.isEmpty()){
