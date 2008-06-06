@@ -1145,7 +1145,6 @@
 				<value>#{purchaseDirectInvoicingControllerListener}</value>
 				<value>#{purchaseDirectInvoicingDetailListener}</value>
 				<value>#{purchaseDirectFinanceListener}</value>
-				<value>#{purchaseDirectInvoicingHeaderControllerListener}</value>
 			</list-entries>
 		</managed-property>
 	</managed-bean>
@@ -1199,17 +1198,7 @@
 			</map-entries>
 		</managed-property>
 	</managed-bean>
-	
-	<managed-bean>
-		<managed-bean-name>purchaseDirectInvoicingHeaderControllerListener</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.finance.event.InvoiceHeaderControllerListener</managed-bean-class>
-		<managed-bean-scope>none</managed-bean-scope>
-		<managed-property>
-			<property-name>table</property-name>
-			<value>Invoice</value>
-		</managed-property>
-	</managed-bean>
-	
+
 	<!-- ************ PURCHASE DIRECT INVOICING DETAIL ************* -->
 	<managed-bean>
 		<managed-bean-name>purchaseDirectInvoicingDetail</managed-bean-name>
