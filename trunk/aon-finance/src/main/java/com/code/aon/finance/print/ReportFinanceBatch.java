@@ -7,6 +7,8 @@ public class ReportFinanceBatch implements ITransferObject {
 
 	private FinanceBatch financeBatch;
 	
+	private Integer regs;
+
 	private Double total;
 
 	public FinanceBatch getFinanceBatch() {
@@ -15,6 +17,14 @@ public class ReportFinanceBatch implements ITransferObject {
 
 	public void setFinanceBatch(FinanceBatch batch) {
 		financeBatch = batch;
+	}
+
+	public Integer getRegs() {
+		return regs;
+	}
+
+	public void setRegs(Integer regs) {
+		this.regs = regs;
 	}
 
 	public Double getTotal() {
