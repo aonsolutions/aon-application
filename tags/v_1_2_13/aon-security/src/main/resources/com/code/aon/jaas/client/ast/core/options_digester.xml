@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<digester-rules>
+	<object-create-rule pattern="applications" classname="com.code.aon.jaas.storage.ApplicationsStorage"/>
+
+	<pattern value="*/options/option">
+		<object-create-rule classname="com.code.aon.jaas.client.ast.core.Option" />
+		<set-properties-rule />
+		<set-next-rule methodname="addOption"/>
+	</pattern>
+
+</digester-rules>
