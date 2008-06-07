@@ -80,7 +80,7 @@ public class SecurityLdap extends BasicLdap implements ILdapConstants, ILdapSecu
 		Object[] arguments = new Object[] { user, applicationId, domainId };
 		// Validación de que el status del Dominio es correcto
 		Domain domain = Domain.get(this, domainId);
-    	if ( domain.getStatus() < 10 ) {
+    	if ( domain.getStatus() > 10 ) {
     		throw new AuthenticationLoginException( LOGIN_ERROR_PREFFIX + domain.getStatus(), arguments );
     	}
 		// Validación de que el Usuario esta activado
@@ -97,7 +97,7 @@ public class SecurityLdap extends BasicLdap implements ILdapConstants, ILdapSecu
     	if ( domainApplication == null ) {
     		return false;
     	}
-    	if ( domainApplication.getStatus() < 10 ) {
+    	if ( domainApplication.getStatus() > 10 ) {
     		throw new AuthenticationLoginException( LOGIN_ERROR_PREFFIX + domainApplication.getStatus(), arguments );
     	}
 		// Validación de que el status del Usuario de la Aplicación es correcto
@@ -106,7 +106,7 @@ public class SecurityLdap extends BasicLdap implements ILdapConstants, ILdapSecu
     		return false;
     	}
     	int status = domainUserEntry.getAsInteger(STATUS_ATTRIBUTE);
-    	if ( status < 10 ) {
+    	if ( status > 10 ) {
     		throw new AuthenticationLoginException( LOGIN_ERROR_PREFFIX + status, arguments );
     	}		
 		return true;
