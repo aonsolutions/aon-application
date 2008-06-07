@@ -42,7 +42,7 @@ public class FailedLogin implements ILdapConstants, IAonObjectClasses {
 	
 	private static final String LOGIN_ERROR_DEFAULT = "aon_login_error_default";
 	
-	private static final int DEFAULT_STATUS = 999;
+	private static final int DEFAULT_STATUS = 10;
 
 	private String message;
 
