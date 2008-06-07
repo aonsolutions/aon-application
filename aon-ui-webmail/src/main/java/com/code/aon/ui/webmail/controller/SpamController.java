@@ -185,14 +185,14 @@ public class SpamController extends BasicLdap implements AonConstants {
 		if ( entry != null ) {
 			try {
 				LdapSession session = getLdapSession();
-				session.updateAttribute(session, entry, SUBJECT_TAG, StringUtils.trimToNull(this.rewrite_1) );
+				session.updateAttribute( entry, SUBJECT_TAG, StringUtils.trimToNull(this.rewrite_1) );
 				String spamLevelValue = String.valueOf( getSpamScoreType().getValue() );
-				session.updateAttribute(session, entry, SPAM_LEVEL, spamLevelValue);
+				session.updateAttribute( entry, SPAM_LEVEL, spamLevelValue);
 				if ( isAddContactsToWhite() ) {
 					addContactsToWhiteList();
 				}
-				session.updateAttribute(session, entry, WHITE_LIST, getSaveList(this.whiteLst) );
-				session.updateAttribute(session, entry, BLACK_LIST, getSaveList(this.blackLst) );
+				session.updateAttribute( entry, WHITE_LIST, getSaveList(this.whiteLst) );
+				session.updateAttribute( entry, BLACK_LIST, getSaveList(this.blackLst) );
 			} catch ( LdapException e ) {
 				AonUtil.addErrorMessage( "Error updating spam information" );
 				throw new AbortProcessingException( e.getMessage(), e );
