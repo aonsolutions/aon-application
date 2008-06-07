@@ -32,7 +32,7 @@
 					switchType="server" value="#{tree.treeNode}" var="item">
 					<rich:treeNode>
 						<aon:commandLink value="#{item.name}"
-							action="#{message.getDeleteReturnAction}"
+							action="#{message.getReturnAction}"
 							rendered="#{!item.root}">
 							<rich:componentControl for="msgMoveModalPanel" operation="hide"
 								event="onclick" />
