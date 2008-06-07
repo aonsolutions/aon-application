@@ -152,13 +152,36 @@ public class AonUserController extends UserController implements ILdapConstants,
 			user.setStatus(status);
 		}
 	}
-
+	
 	public boolean isShowPasswordChangedWindow() {
 		return showPasswordChangedWindow;
 	}
 
 	public void setShowPasswordChangedWindow(boolean showPasswordChangedWindow) {
 		this.showPasswordChangedWindow = showPasswordChangedWindow;
+	}
+
+	public boolean isPasswordExpired() {
+		boolean passwordExpired = false;
+		AuthPrincipal user = UserUtils.getInstance().getPrincipal();
+		DistinguishedName userDN = AonDN.getUserDN( domain, user.getShortName() );
+		BasicLdap ldap = new BasicLdap();
+		if ( ldap.exists(userDN, USER) ) {
+			try {
+				LdapSession session = ldap.getLdapSession();
+				String filter = LdapSession.getObjectClass(USER);
+				Entry userEntry = session.get(userDN.toString(), filter, PASSWORD_EXPIRATION_TIMESTAMP);
+				Date expirationDate = userEntry.getAsDate(PASSWORD_EXPIRATION_TIMESTAMP);
+				passwordExpired = new Date().after(expirationDate);
+			} catch (LdapException e) {
+				AonUtil.addErrorMessage("Error actualizando la fecha de expiración de la contraseña" );
+			} finally {
+				ldap.closeSession();
+			}
+		} else {
+			LOGGER.severe( "No existe en LDAP el usuario " + user.getShortName() + " para el dominio " + domain );
+		}
+		return passwordExpired;
 	}
 	
 }
