@@ -338,6 +338,9 @@ public class DesktopController extends BasicController {
         return user.getName();
     }
 
+    public String getLoggedUser() {
+        return UserUtils.getInstance().getPrincipal().getShortName();
+    }
     
     public String getCurrentDate() {
         DateFormat formatter = new SimpleDateFormat("EEEE, dd MMMM yyyy");
