@@ -11,58 +11,51 @@
 	<ui:define name="content">
 		<aon:form id="usersForm" >
 			
-			<aon:div styleClass="aon-scroll-area">
-				<aon:div styleClass="aon-scroll-area-internal">
+			<aon:div styleClass="aon-scroll-area" style="padding-top:0;">				
 
-					<aon:div styleClass="aon-content-subtitle">
-						<aon:outputText value="#{menuBundle.aon_permissions}" />	
+					<aon:div styleClass="aon-section-title" style="padding-top:0;">
+						<aon:outputText value="#{menuBundle.aon_permissions}" />: <aon:outputLabel for="tree" value="#{menuBundle.aon_permissions_profiles}" />	
 					</aon:div>
 
-					<aon:div styleClass="aon-section-toolbar">
+					<aon:div styleClass="aon-toolbar">
 						<aon:commandButton id="synchButton" 
-							styleClass="aon-content-toolbar-item aon-icon-printer"
+							styleClass="aon-finding-toolbar-item aon-icon-sincronize"
 							actionListener="#{permissions.synchronize}"
 				            value="#{menuBundle.aon_permissions_synch}" />
 					</aon:div>
 
-					<rich:panel style="padding:0" headerClass="outpanelHeader">
-						<aon:div styleClass="aon-group">
-							<aon:div styleClass="aon-group-title" id="aon-content-subtitle">
-								<aon:outputLabel for="tree" value="#{menuBundle.aon_permissions_profiles}" />
-							</aon:div>	
-							<aon:dataTable id="profilesDataList" 
-									value="#{permissions.model}" var="to" 
-									styleClass="aon-dataTable" 
-									rendered="#{permissions.model.rowCount > 0}">
-								<aon:column>
-									<f:facet name="header">
-										<aon:outputText value="#{appBundle.aon_cdr_name}" />
-									</f:facet>
-									<aon:outputText value="#{to.name}"/>
-								</aon:column>
-					
-								<aon:column>
-									<f:facet name="header">
-										<aon:outputText value="#{appBundle.aon_permission_label}" />
-									</f:facet>
-						            <aon:selectManyCheckbox id="userData" 
-						            		value="#{to.permissions}"
-						            		partialSubmit="true" 
-						            		styleClass="selectManyCheckbox">
-						                <f:selectItems value="#{permissions.values}" />
-						            </aon:selectManyCheckbox>
-								</aon:column>
+					<aon:dataTable id="profilesDataList" 
+							value="#{permissions.model}" var="to" 
+							styleClass="aon-dataTable" 
+							rendered="#{permissions.model.rowCount > 0}">
+						<aon:column>
+							<f:facet name="header">
+								<aon:outputText value="#{appBundle.aon_cdr_name}" />
+							</f:facet>
+							<aon:outputText value="#{to.name}"/>
+						</aon:column>
+			
+						<aon:column styleClass="aon-width-240">
+							<f:facet name="header">
+								<aon:outputText value="#{appBundle.aon_permission_label}" />
+							</f:facet>
+							<aon:div styleClass="aon-multiple-chekboxes">
+					            <aon:selectManyCheckbox id="userData" 
+					            		value="#{to.permissions}"
+					            		partialSubmit="true"> 
+					                <f:selectItems value="#{permissions.values}" />
+					            </aon:selectManyCheckbox>
+					         </aon:div>
+						</aon:column>
 
-								<aon:column>
-									<f:facet name="header">
-										<aon:outputText value="#{appBundle.aon_permission_user}" />
-									</f:facet>
-									<aon:outputText value="#{to.users}"/>
-								</aon:column>
-							</aon:dataTable>
-						</aon:div>	
-				    </rich:panel>
-				</aon:div>
+						<aon:column>
+							<f:facet name="header">
+								<aon:outputText value="#{appBundle.aon_permission_user}" />
+							</f:facet>
+							<aon:outputText value="#{to.users}"/>
+						</aon:column>
+					</aon:dataTable>
+						
 			</aon:div>
 		</aon:form>
 
