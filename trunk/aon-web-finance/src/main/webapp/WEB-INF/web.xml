@@ -272,12 +272,6 @@
 			<web-resource-name>facelet</web-resource-name>
 			<url-pattern>/facelet/*</url-pattern>
 		</web-resource-collection>
-		<!-- 
-		<web-resource-collection>
-			<web-resource-name>account</web-resource-name>
-			<url-pattern>/account/*</url-pattern>
-		</web-resource-collection>
-		 -->
 		<web-resource-collection>
 			<web-resource-name>finance</web-resource-name>
 			<url-pattern>/_finance/*</url-pattern>
