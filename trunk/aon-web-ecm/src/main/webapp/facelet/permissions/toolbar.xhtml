@@ -5,16 +5,16 @@
 <body>
 
 <ui:composition>
-	<aon:div styleClass="aon-content-subtitle">
+	<aon:div styleClass="aon-section-title" style="padding-top:0;">
 		<aon:outputText value="#{menuBundle.aon_permissions}" />	
 	</aon:div>
-	<aon:div styleClass="aon-section-toolbar">
+	<aon:div styleClass="aon-toolbar">
 		<aon:commandButton id="profilesButton" 
-			styleClass="aon-content-toolbar-item aon-icon-accept"
+			styleClass="aon-finding-toolbar-item aon-icon-accept"
 			action="permissions_profiles"
             value="#{menuBundle.aon_permissions_profiles}" />
 		<aon:commandButton id="usersDownload"
-			styleClass="aon-content-toolbar-item aon-icon-mail-save"
+			styleClass="aon-finding-toolbar-item aon-icon-mail-save"
 			action="permissions_users_list"
 			value="#{menuBundle.aon_permissions_users}" />
 	</aon:div>

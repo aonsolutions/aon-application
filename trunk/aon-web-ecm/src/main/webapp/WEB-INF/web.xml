@@ -6,8 +6,6 @@
 	xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee 
 						http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd">
 
-	<distributable/>
-
 	<context-param>
 		<param-name>javax.faces.CONFIG_FILES</param-name>
 		<param-value>
@@ -19,7 +17,7 @@
 		<description>
 			State saving method: "client" or "server" (= default) See
 			JSF Specification 2.5.2
-		</description>
+	</description>
 		<param-name>javax.faces.STATE_SAVING_METHOD</param-name>
 		<param-value>server</param-value>
 	</context-param>

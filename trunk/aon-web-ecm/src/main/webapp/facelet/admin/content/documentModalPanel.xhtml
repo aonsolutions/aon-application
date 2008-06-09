@@ -16,9 +16,10 @@
 }
 </style>
 
-	<aon:panelGrid columns="1" width="100%">
+	
 		<rich:modalPanel id="documentModalPanel" top="50" left="300"
-				minHeight="100" minWidth="100" height="580" width="680" zindex="1000">
+				minHeight="100" minWidth="100" height="580" width="680" zindex="1000"
+				headerClass="aon-popupWindow-title">
 			<f:facet name="header">
             	<h:outputText value="#{appBundle.aon_cdr_add_document}"/>
 			</f:facet>
@@ -66,13 +67,15 @@
 											value="#{document.category}" >
 										<f:selectItems value="#{search.parameters.categories}"/>
 									</aon:selectOneMenu>						
-	 -->		
+
 									<aon:outputLabel for="document_language"
 										value="#{appBundle.aon_cdr_language}:" style="margin-left:1em" />
 									<aon:selectOneMenu id="document_language" 
 											value="#{document.language}" >
 										<f:selectItems value="#{search.parameters.languages}"/>
 									</aon:selectOneMenu>
+	 -->		
+
 								</aon:panelGrid>
 				
 								<aon:panelGrid columns="2" dir="true" cellpadding="0" cellspacing="0"
@@ -118,7 +121,7 @@
 				</aon:div>
 			</aon:form>
 		</rich:modalPanel>
-	</aon:panelGrid>
+	
 
 </ui:composition>
 </body>

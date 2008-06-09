@@ -8,22 +8,25 @@
 <ui:composition template="/facelet/templates/aon.ui.main.xhtml">
 
 	<ui:define name="content">			
-		<aon:div styleClass="aon-scroll-area" >
+		<aon:div styleClass="aon-scroll-area" style="padding-top:0;">
 			<aon:form id="searchForm" >
-				<rich:panel style="padding:0" headerClass="outpanelHeader">
-			        <f:facet name="header">
-						<aon:outputText value="#{menuBundle.aon_search_bycontent}" />
-			        </f:facet>
-			 		<aon:div styleClass="aon-section-toolbar">
-						<aon:outputLabel for="document_content" value="#{appBundle.aon_search_label}" />
-						<aon:inputText id="document_content" value="#{search.parameters.bycontent}" size="50" />					                
-						<aon:commandButton id="searchButton" value="#{menuBundle.aon_ecm_search}" 
-							reRender="searchForm" 
-							actionListener="#{search.onExecute}"
-							styleClass="aon-content-toolbar-item aon-icon-accept" />
-					</aon:div>
-					<ui:include src="/facelet/search/results.xhtml" />
-				</rich:panel>
+				<aon:div styleClass="aon-section-title" style="padding-top:0;">
+					<aon:outputText value="#{menuBundle.aon_search_bycontent}" />
+				</aon:div>
+				<aon:div styleClass="aon-toolbar">
+					<aon:commandButton id="searchButton" value="#{menuBundle.aon_ecm_search}" 
+					reRender="searchForm" 
+					actionListener="#{search.onExecute}"
+					styleClass="aon-finding-toolbar-item aon-icon-accept" />
+				</aon:div>			
+				
+			    <aon:panelGrid columns="2" styleClass="aon-panelGrid-formatting" style="width:auto;"> 		 		
+					<aon:outputLabel for="document_content" value="#{appBundle.aon_search_label}" />
+					<aon:inputText id="document_content" value="#{search.parameters.bycontent}" size="80" />					                
+				</aon:panelGrid>	
+				
+				<ui:include src="/facelet/search/results.xhtml" />
+				
 			</aon:form>
 		</aon:div>		
 	</ui:define>

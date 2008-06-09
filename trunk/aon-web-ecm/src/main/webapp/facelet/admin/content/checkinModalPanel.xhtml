@@ -10,9 +10,10 @@
 
 <ui:composition>
 
-	<aon:panelGrid columns="1" width="100%">
+	
 		<rich:modalPanel id="checkinModalPanel" top="100" left="200"
-				minHeight="100" minWidth="100" height="200" width="550" zindex="1000">
+				minHeight="100" minWidth="100" height="200" width="550" zindex="1000"
+				headerClass="aon-popupWindow-title">
 			<f:facet name="header">
             	<h:outputText value="#{appBundle.aon_cdr_checkin_document}"/>
 			</f:facet>
@@ -56,7 +57,7 @@
 
 			</aon:form>
 		</rich:modalPanel>
-	</aon:panelGrid>
+	
 
 </ui:composition>
 
