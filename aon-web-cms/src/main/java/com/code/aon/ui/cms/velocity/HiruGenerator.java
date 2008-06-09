@@ -1,6 +1,7 @@
 package com.code.aon.ui.cms.velocity;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import com.code.aon.cms.HiruConfig;
@@ -29,7 +30,8 @@ public class HiruGenerator extends Generator {
 		vu.setTemplate_path(ControllerUtil.getCurrentVmTemplatePath());
 		vu.initialize();
 		List<ITransferObject> center_list = null;
-		ArrayList<HiruCenterHandler> center_handler_list = null;
+		ArrayList<HiruCenterHandler> center_handler_list_started = null;
+		ArrayList<HiruCenterHandler> center_handler_list_future = null;
 		ArrayList<HiruCourseHandler> course_handler_list = null;
 		Criteria criteria;
 		Criteria criteria_detail;
@@ -38,7 +40,12 @@ public class HiruGenerator extends Generator {
 			IManagerBean courseBean = BeanManager.getManagerBean(HiruCourse.class);
 			IManagerBean courseDetailBean = BeanManager.getManagerBean(HiruCourseDetail.class);
 			center_list = (List<ITransferObject>)centerbean.getList(null);
-			center_handler_list = new ArrayList<HiruCenterHandler>();
+			center_handler_list_started = new ArrayList<HiruCenterHandler>();
+			center_handler_list_future = new ArrayList<HiruCenterHandler>();
+			
+			Section configSection = GeneratorConfigController.currentSection(HiruConfig.class);
+			CommonGenerator.getCommonGenerator().chargeContext(vu, configSection);
+			
 			for (int i=0; i < center_list.size(); i++) {
 				HiruOrganizerCentre hoc = (HiruOrganizerCentre)center_list.get(i);
 				
@@ -47,9 +54,11 @@ public class HiruGenerator extends Generator {
 				criteria = new Criteria();
 				criteria.addEqualExpression(courseBean.getFieldName(ICMSAlias.HIRU_COURSE_HIRU_ORGANIZER_CENTRE_ID), hoc.getId());
 				criteria.addEqualExpression(courseBean.getFieldName(ICMSAlias.HIRU_COURSE_ACTIVE), true);
+				criteria.addLessThanOrEqualExpression(courseBean.getFieldName(ICMSAlias.HIRU_COURSE_INIT_DATE), new Date());
+				criteria.addGreaterThanOrEqualExpression(courseBean.getFieldName(ICMSAlias.HIRU_COURSE_END_DATE), new Date());
 				List<ITransferObject> l = (List<ITransferObject>)courseBean.getList(criteria);
 				if (l.isEmpty())
-					VelocityUtil.addMessage("El centro "+hoc.getName()+" no tiene cursos", VelocityUtil.WARN);
+					VelocityUtil.addMessage("El centro "+hoc.getName()+" no tiene cursos ya iniciados", VelocityUtil.WARN);
 				for (int j = 0; j < l.size(); j++) {
 					HiruCourse hc = (HiruCourse)l.get(j);
 					criteria_detail = new Criteria();
@@ -62,20 +71,56 @@ public class HiruGenerator extends Generator {
 						HiruCourseDetail hcd = (HiruCourseDetail)ld.get(0);
 						HiruCourseHandler hcoh = new HiruCourseHandler(hcd);
 						course_handler_list.add(hcoh);
+						vu.put("course", hcoh);
+						VelocityUtil.addMessage(" Generando hiru course.", VelocityUtil.INFO);
+						generate(vu, Templates.HIRU_COURSE, hcoh.getAlias());
+						vu.remove("course");
 					}
 				}
-
 				HiruCenterHandler hch = new HiruCenterHandler(hoc,course_handler_list);
-				center_handler_list.add(hch);
+				center_handler_list_started.add(hch);
 			}
-			if (center_handler_list != null && center_handler_list.size() > 0) {  
-				Section configSection = GeneratorConfigController.currentSection(HiruConfig.class);
-				CommonGenerator.getCommonGenerator().chargeContext(vu, configSection);
-				vu.put("center_list", center_handler_list);
-				VelocityUtil.addMessage(" Generando hiru.", VelocityUtil.INFO);
-				generate(vu, Templates.HIRU_COURSES, "hiru");
-				vu.remove("center_list");
+			
+			for (int i=0; i < center_list.size(); i++) {
+				HiruOrganizerCentre hoc = (HiruOrganizerCentre)center_list.get(i);
+				
+				course_handler_list = new ArrayList<HiruCourseHandler>();
+				
+				criteria = new Criteria();
+				criteria.addEqualExpression(courseBean.getFieldName(ICMSAlias.HIRU_COURSE_HIRU_ORGANIZER_CENTRE_ID), hoc.getId());
+				criteria.addEqualExpression(courseBean.getFieldName(ICMSAlias.HIRU_COURSE_ACTIVE), true);
+				criteria.addGreaterThanExpression(courseBean.getFieldName(ICMSAlias.HIRU_COURSE_INIT_DATE), new Date());
+				List<ITransferObject> l = (List<ITransferObject>)courseBean.getList(criteria);
+				if (l.isEmpty())
+					VelocityUtil.addMessage("El centro "+hoc.getName()+" no tiene cursos futuros", VelocityUtil.WARN);
+				for (int j = 0; j < l.size(); j++) {
+					HiruCourse hc = (HiruCourse)l.get(j);
+					criteria_detail = new Criteria();
+					criteria_detail.addEqualExpression(courseDetailBean.getFieldName(ICMSAlias.HIRU_COURSE_DETAIL_HIRU_COURSE_ID), hc.getId());
+					criteria_detail.addEqualExpression(courseDetailBean.getFieldName(ICMSAlias.HIRU_COURSE_DETAIL_LANGUAGE_ID), ControllerUtil.getCurrentLanguage().getId());
+					List<ITransferObject> ld = (List<ITransferObject>)courseDetailBean.getList(criteria_detail);
+					if (ld.isEmpty()) {
+						VelocityUtil.addMessage("La curso "+hc.getAlias()+" no esta internacionalizada", VelocityUtil.WARN);
+					}else{
+						HiruCourseDetail hcd = (HiruCourseDetail)ld.get(0);
+						HiruCourseHandler hcoh = new HiruCourseHandler(hcd);
+						course_handler_list.add(hcoh);
+						vu.put("course", hcoh);
+						VelocityUtil.addMessage(" Generando hiru course.", VelocityUtil.INFO);
+						generate(vu, Templates.HIRU_COURSE, hcoh.getAlias());
+						vu.remove("course");
+					}
+				}
+				HiruCenterHandler hch = new HiruCenterHandler(hoc,course_handler_list);
+				center_handler_list_future.add(hch);
 			}
+			
+			vu.put("center_list_started", center_handler_list_started);
+			vu.put("center_list_future", center_handler_list_future);
+			VelocityUtil.addMessage(" Generando hiru.", VelocityUtil.INFO);
+			generate(vu, Templates.HIRU_COURSES, "hiru");
+			vu.remove("center_list_started");
+			vu.remove("center_list_future");
 		} catch (ManagerBeanException e) {
 			VelocityUtil.addMessage(e.getMessage(), VelocityUtil.ERROR);
 		} finally {
@@ -83,7 +128,8 @@ public class HiruGenerator extends Generator {
 			vu = null;
 			center_list = null;
 			course_handler_list = null;
-			center_handler_list = null;
+			center_handler_list_started = null;
+			center_handler_list_future = null;
 		}
 	}
 

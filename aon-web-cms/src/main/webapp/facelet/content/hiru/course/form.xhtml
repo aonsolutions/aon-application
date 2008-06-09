@@ -70,13 +70,13 @@
 					<aon:panelGrid id="generalGrid" columns="2" dir="true">
 					
 						<aon:outputLabel for="Alias"
-							value="#{appBundle.hiru_course_alias}" />
+							value="#{appBundle.hiru_course_alias}(*)" />
 						<aon:inputText id="Alias"
 							required="true" size="32" maxlength="32"
 							value="#{hiru_course.to.alias}" />
 
 						<aon:outputLabel for="InitDate"
-							value="#{appBundle.hiru_course_initDate}" />
+							value="#{appBundle.hiru_course_initDate}(*)" />
 						<aon:selectInputDate id="InitDate"
 							required="true"
 							 style="z-index:2001;margin:0;vertical-align:middle;"
@@ -88,7 +88,7 @@
 						</aon:selectInputDate>	
 						
 						<aon:outputLabel for="EndDate"
-							value="#{appBundle.hiru_course_endDate}" />
+							value="#{appBundle.hiru_course_endDate}(*)" />
 						<aon:selectInputDate id="EndDate"
 							 required="true"
 							 style="z-index:2001;margin:0;vertical-align:middle;"
@@ -100,14 +100,14 @@
 						</aon:selectInputDate>	
 
 						<aon:outputLabel for="hiruOrganizerCentre"
-							value="#{appBundle.hiru_course_hiruOrganizerCentre}"/>
+							value="#{appBundle.hiru_course_hiruOrganizerCentre}(*)"/>
 						<aon:selectOneMenu id="hiruOrganizerCentre"  
 							value="#{hiru_course.to.hiruOrganizerCentre.id}">
 							<f:selectItems value="#{collections.hiruOrganizerCentreList}" />
 						</aon:selectOneMenu>
 
 						<aon:outputLabel for="place"
-							value="#{appBundle.hiru_course_hiruPlace}" />
+							value="#{appBundle.hiru_course_hiruPlace}(*)" />
 						<aon:inputText id="place"
 							required="true" size="100" maxlength="128"
 							value="#{hiru_course.to.hiruPlace}" />
@@ -134,7 +134,7 @@
 							value="#{hiru_course.toI18n.url}" />
 
 						<aon:outputLabel for="subject"
-							value="#{appBundle.hiru_course_subject}"/>
+							value="#{appBundle.hiru_course_subject}(*)"/>
 						<aon:selectOneMenu id="subject"
 							styleClass="aon-form-selectOneMenu-field"
 							value="#{hiru_course.to.subject}">
@@ -144,7 +144,7 @@
 						<aon:outputLabel for="generic_info"
 							value="#{appBundle.hiru_course_genericInfo}" />
 						<aon:inputText id="generic_info"
-							required="true" size="100" maxlength="255"
+							size="100" maxlength="255"
 							value="#{hiru_course.toI18n.genericInfo}" />
 
 						<aon:outputLabel for="objetives"

@@ -125,8 +125,12 @@ public enum Templates implements IResourceable {
 	/**
 	 * HIRU_COURSES
 	 */
-	HIRU_COURSES;
+	HIRU_COURSES,
 
+	/**
+	 * HIRU_COURSE
+	 */
+	HIRU_COURSE;
 
 	/**
 	 * Ruta base del fichero de mensajes.
