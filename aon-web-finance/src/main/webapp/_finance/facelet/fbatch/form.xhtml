@@ -198,11 +198,17 @@
 							<h:outputLabel for="FinanceBatch_financeBatchStatus"
 								styleClass="aon-form-input-text-label"
 								value="#{financeBundle.aon_status}" />
-							<h:selectOneMenu id="FinanceBatch_financeBatchStatus"
-								styleClass="aon-form-selectOneMenu-field" forceId="#{true}"
-								value="#{fbatch.to.financeBatchStatus}" disabled="#{true}" >
-								<f:selectItems value="#{financeCollections.financeBatchStatus}" />
-							</h:selectOneMenu>
+							<t:div>
+								<h:selectOneMenu id="FinanceBatch_financeBatchStatus"
+									styleClass="aon-form-selectOneMenu-field" forceId="#{true}"
+									value="#{fbatch.to.financeBatchStatus}" disabled="#{true}" >
+									<f:selectItems value="#{financeCollections.financeBatchStatus}" />
+								</h:selectOneMenu>
+								<f:verbatim>&#160;</f:verbatim>
+								<h:outputLabel styleClass="aon-form-input-text-label"
+									value="#{financeBundle.aon_account_entry}: #{fbatch.accountEntryId}"
+									rendered="#{fbatch.recorded}" />
+							</t:div>
 	
 							<h:outputLabel for="FinanceBatch_totalAmount"
 								styleClass="aon-form-input-text-label"
