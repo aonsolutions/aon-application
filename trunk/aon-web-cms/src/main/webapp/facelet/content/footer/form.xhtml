@@ -41,9 +41,10 @@
 							value="#{bundle.aon_save}" 
 							rendered="#{footer.to!=null or footer.new}"
 							action="footer_form"
-							actionListener="#{footer.onAccept}"
 							styleClass="aon-finding-toolbar-item aon-icon-accept"
-							accesskey="#{bundle.aon_key_save}"/>
+							accesskey="#{bundle.aon_key_save}">
+							<aon:actionListener method="#{footer.onAccept}" />
+						</aon:commandButton>
 						<aon:confirmButton id="remove"
 							value="#{bundle.aon_remove}" rendered="#{!footer.new}" 
 							immediate="true"

@@ -127,7 +127,8 @@
 									<aon:outputText value="#{appBundle.generic_page_create_date}" />
 								</f:facet>
 								<aon:outputText value="#{to.create_date}">
-									<f:convertDateTime pattern="#{bundle.aon_timestamp_pattern}"/>
+									 <f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+											timeZone="#{timeZoneController.timeZoneId}" />
 								</aon:outputText>
 							</aon:column>
 							

@@ -4,6 +4,9 @@ import java.util.Date;
 
 import com.code.aon.cms.HiruCourseDetail;
 import com.code.aon.cms.enumeration.HiruCourseSubject;
+import com.code.aon.cms.enumeration.Templates;
+import com.code.aon.ui.cms.velocity.ArticleGenerator;
+import com.code.aon.ui.cms.velocity.HiruGenerator;
 
 public class HiruCourseHandler {
 
@@ -22,6 +25,8 @@ public class HiruCourseHandler {
 	private String info;
 
 	private String url;
+
+	private String local_url;
 
 	private String genericInfo;
 
@@ -56,6 +61,9 @@ public class HiruCourseHandler {
 		this.notEmployeeRegistration = hcd.getNotEmployeeRegistration();
 		this.giverEntity = hcd.getGiverEntity();
 		this.numberParticipant = hcd.getNumberParticipant();	
+		
+		this.local_url = Templates.HIRU_COURSE.getHtmlName();
+		this.local_url = this.local_url.replaceAll("%NAME%", this.alias);
 	}
 
 	public String getAlias() {
@@ -122,5 +130,8 @@ public class HiruCourseHandler {
 		return numberParticipant;
 	}
 
+	public String getLocal_url() {
+		return local_url;
+	}
 	
 }
