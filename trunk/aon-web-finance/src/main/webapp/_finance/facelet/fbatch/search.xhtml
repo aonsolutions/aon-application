@@ -68,6 +68,14 @@
 								<f:selectItem itemLabel="#{financeBundle.aon_charge}" itemValue="#{false}" />
 							</t:selectOneRadio>
 							
+							<h:outputLabel for="FinanceBatch_id"
+								styleClass="aon-form-input-text-label"
+								value="#{financeBundle.aon_code}" />
+							<t:inputText id="FinanceBatch_id"
+								valueChangeListener="#{fbatch.addExpression}"
+								styleClass="aon-form-input-text" forceId="#{true}"
+								size="8" />
+							
 							<h:outputLabel for="FinanceBatch_description"
 								styleClass="aon-form-input-text-label"
 								value="#{financeBundle.aon_finance_batch_description}" />
