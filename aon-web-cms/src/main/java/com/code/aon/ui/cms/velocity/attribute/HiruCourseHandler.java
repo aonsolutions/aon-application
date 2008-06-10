@@ -80,11 +80,11 @@ public class HiruCourseHandler {
 		return alias;
 	}
 
-	public String getInitDate_short() {
+	public String getInitDate() {
 		return formatter.format(initDate);
 	}
 
-	public String getEndDate_short() {
+	public String getEndDate() {
 		return formatter.format(endDate);
 	}
 
