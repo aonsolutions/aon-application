@@ -1,5 +1,6 @@
 package com.code.aon.ui.finance.controller;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -8,7 +9,10 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
+import javax.faces.event.ValueChangeEvent;
+import javax.faces.model.SelectItem;
 
 import com.code.aon.account.Account;
 import com.code.aon.account.AccountEntry;
@@ -24,7 +28,6 @@ import com.code.aon.account.enumeration.AccountEntryType;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
-import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.config.ApplicationParameter;
 import com.code.aon.config.dao.IConfigAlias;
 import com.code.aon.finance.Invoice;
@@ -38,24 +41,20 @@ import com.code.aon.product.enumeration.TaxType;
 import com.code.aon.product.strategy.IPriceStrategy;
 import com.code.aon.product.strategy.TaxBreakDown;
 import com.code.aon.ql.Criteria;
-import com.code.aon.ql.util.ExpressionException;
 import com.code.aon.ui.form.BasicController;
+import com.code.aon.ui.form.PageDataModel;
 import com.code.aon.ui.menu.jsf.MenuEvent;
-import com.code.aon.ui.menu.jsf.MenuManager;
-import com.code.aon.ui.sales.controller.FeeInvoicingController;
 import com.code.aon.ui.util.AonUtil;
 
 public class InvoiceRecordingController extends BasicController{
 	
 	private static final Logger LOGGER = Logger.getLogger(InvoiceRecordingController.class.getName());
 	
-	private static final String FEE_INVOICING_CONTROLLER_NAME = "feeInvoicing";
-
-	private static final String MENU_MANAGER_NAME = "menuManager";
-
 	private RecordingParameters recordingParams;
 
 	private AccountEntryInvoiceWriter accountEntryInvoiceWriter;
+
+	private ArrayList<Invoice> checks = new ArrayList<Invoice>();
 
 	private IPriceStrategy priceStrategy;
 
@@ -81,88 +80,113 @@ public class InvoiceRecordingController extends BasicController{
 		return priceStrategy;
 	}
 	
-	@SuppressWarnings("unused")
-	public void onInitialize(MenuEvent event) throws ManagerBeanException{
-		this.recordingParams = new RecordingParameters();
-		this.recordingParams.setInvoiceType(InvoiceType.SALES);
-		this.recordingParams.setSecurityLevel(SecurityLevel.OFFICIAL);
+	public void rowSelected(ValueChangeEvent event) {
+		if (event.getNewValue() != null) {
+			setRowChecked(((Boolean) event.getNewValue()).booleanValue());
+		}
 	}
 
-	@SuppressWarnings("unchecked")
-	public void onRecord(ActionEvent event){
-		try {
-			Criteria criteria = null;
-			Iterator iter = obtainInvoiceList().iterator();
-			while(iter.hasNext()){
-				Invoice invoice = (Invoice)iter.next();
-				recordInvoice(invoice);
-				if(criteria == null){
-					criteria = new Criteria();
+	@SuppressWarnings({"unused","unchecked"})
+	public void checkAll(ActionEvent event) throws ManagerBeanException{
+		Iterator iter = this.getManagerBean().getList(this.getCriteria()).iterator();
+		while(iter.hasNext()){
+			Invoice invoice = (Invoice)iter.next();
+			if(isRecordable(invoice)){
+				if (!checks.contains( invoice )) {
+					checks.add( invoice );
 				}
-				criteria.addOrExpression(getManagerBean().getFieldName(IFinanceAlias.INVOICE_ID), invoice.getId().toString());
 			}
-			FeeInvoicingController invoicingController = (FeeInvoicingController)AonUtil.getController(FEE_INVOICING_CONTROLLER_NAME);
-			if(criteria == null){
-				criteria = new Criteria();
-				criteria.addNullExpression(getFieldName(IFinanceAlias.INVOICE_ID));
+		}
+	}
+
+	@SuppressWarnings("unused")
+	public void checkNone(ActionEvent event) {
+		clearCheckedInvoices();
+	}
+
+	public boolean getRowChecked() {
+		Invoice to = (Invoice) model.getRowData();
+		return checks.contains(to);
+	}
+
+	public void setRowChecked(boolean rowChecked) {
+		if (rowChecked) {
+			Invoice to = (Invoice) model.getRowData();
+			if (!checks.contains(to)) {
+				checks.add(to);
 			}
-			invoicingController.setCriteria(criteria);
-			invoicingController.onSearch(null);
-			updateBreadCrumb();
+		} else {
+			Invoice to = (Invoice) model.getRowData();
+			if (checks.contains(to)) {
+				checks.remove(to);
+			}
+		}
+	}
+
+	public ArrayList<Invoice> getCheckedInvoices() {
+		return checks;
+	}
+
+	public void clearCheckedInvoices() {
+		checks = new ArrayList<Invoice>();
+	}
+
+	public void onEditSearch(MenuEvent event) throws ManagerBeanException {
+		this.onEditSearch((ActionEvent)event);
+	}
+
+	@Override
+	public void onEditSearch(ActionEvent event) {
+		super.onEditSearch(event);
+		initializeSearch();
+	}
+	
+	private void initializeSearch() {
+		try {
+			((PageDataModel)this.getModel()).resize(0);
+			recordingParams = new RecordingParameters();
+			recordingParams.setInvoiceType(InvoiceType.SALES);
+			clearCheckedInvoices();
 		} catch (ManagerBeanException e) {
-			AonUtil.addErrorMessage(e.getMessage());
-			LOGGER.log(Level.SEVERE, e.getMessage(), e);
-		} catch (ExpressionException e) {
-			AonUtil.addErrorMessage(e.getMessage());
-			LOGGER.log(Level.SEVERE, e.getMessage(), e);
+			AonUtil.addErrorMessage("Error initializing search");
+			LOGGER.log(Level.SEVERE, "Error initializing search", e);
+			throw new AbortProcessingException(e.getMessage());
 		}
 	}
 	
-	@SuppressWarnings("unchecked")
-	private List obtainInvoiceList() {
-		List list = new LinkedList();
-		Criteria criteria = new Criteria();
-		try {
-			criteria.addEqualExpression(this.getFieldName(IFinanceAlias.INVOICE_TYPE), recordingParams.getInvoiceType());
-			criteria.addEqualExpression(this.getFieldName(IFinanceAlias.INVOICE_STATUS), InvoiceStatus.PENDING);
-			if(recordingParams.getFromDate() != null){
-				criteria.addGreaterThanOrEqualExpression(this.getFieldName(IFinanceAlias.INVOICE_ISSUE_DATE), recordingParams.getFromDate());
-			}
-			if(recordingParams.getToDate() != null){
-				criteria.addLessThanOrEqualExpression(this.getFieldName(IFinanceAlias.INVOICE_ISSUE_DATE), recordingParams.getToDate());
-			}
-			if(recordingParams.getSeries() != null && !recordingParams.getSeries().equals("")){
-				criteria.addExpression(this.getFieldName(IFinanceAlias.INVOICE_ISSUE_DATE), recordingParams.getSeries());
-			}
-			if(recordingParams.getFromNumber() != null){
-				criteria.addGreaterThanOrEqualExpression(this.getFieldName(IFinanceAlias.INVOICE_NUMBER), recordingParams.getFromNumber());
-			}
-			if(recordingParams.getToNumber() != null){
-				criteria.addLessThanOrEqualExpression(this.getFieldName(IFinanceAlias.INVOICE_NUMBER), recordingParams.getToNumber());
-			}
-			if(recordingParams.getRegistryId() != null){
-				criteria.addEqualExpression(this.getFieldName(IFinanceAlias.INVOICE_REGISTRY_ID), recordingParams.getRegistryId());
-			}
-			if(recordingParams.getSecurityLevel() != null){
-				criteria.addEqualExpression(this.getFieldName(IFinanceAlias.INVOICE_SECURITY_LEVEL), recordingParams.getSecurityLevel());
-			}
-			list = this.getManagerBean().getList(criteria);
-		} catch (ManagerBeanException e) {
-			AonUtil.addErrorMessage(e.getMessage());
-			LOGGER.log(Level.SEVERE, e.getMessage(), e);
-		} catch (ExpressionException e) {
-			AonUtil.addErrorMessage(e.getMessage());
-			LOGGER.log(Level.SEVERE, e.getMessage(), e);
-		}
-		return list;
+	public boolean isModelToRecordable() throws ManagerBeanException{
+		Invoice invoice = (Invoice)this.getModel().getRowData();
+		return isRecordable(invoice);
+	}
+	
+	private boolean isRecordable(Invoice invoice) throws ManagerBeanException {
+		return InvoiceStatus.PENDING.equals(invoice.getStatus());
 	}
 
-	private void updateBreadCrumb() {
-		MenuManager menuManager = (MenuManager)AonUtil.getRegisteredBean(MENU_MANAGER_NAME);
-        menuManager.setCurrentMenu("AON_APP");
-        menuManager.getCurrentMenuModel().setSelectedNode("root.aon_administrative_management.aon_invoice_management");
-    }
+	public List<SelectItem> getInvoiceTypes() {
+		LinkedList<SelectItem> types = new LinkedList<SelectItem>();
+		SelectItem item = new SelectItem(InvoiceType.SALES, InvoiceType.SALES.getName(AonUtil.getCurrentLocale()));
+		types.add(item);
+		item = new SelectItem(InvoiceType.PURCHASE, InvoiceType.PURCHASE.getName(AonUtil.getCurrentLocale()));
+		types.add(item);
+		return types;
+	}
 
+	public boolean isSales(){
+		return getRecordingParams().getInvoiceType().equals(InvoiceType.SALES);
+	}
+	
+	@SuppressWarnings("unchecked")
+	public void onRecordSelected(ActionEvent event){
+		Iterator<Invoice> iter = getCheckedInvoices().iterator();
+		while(iter.hasNext()){
+			Invoice invoice = iter.next();
+			recordInvoice(invoice);
+		}
+		clearCheckedInvoices();
+		this.onSearch(null);
+	}
+	
 	@SuppressWarnings("unchecked")
 	private void recordInvoice(Invoice invoice) {
 		AccountEntry entry = new AccountEntry();
@@ -174,7 +198,7 @@ public class InvoiceRecordingController extends BasicController{
 			entry.setSecurityLevel(invoice.getSecurityLevel());
 			entry = getAccountEntryInvoiceWriter().insertorUpdateAccountEntry(entry, true);
 			List taxBreakDown = getPriceStrategy().getTaxBreakDowns(invoice, invoice);
-			getAccountEntryInvoiceWriter().insertEntryDetails(entry, AccountUtil.obtainCustomerAccount(invoice.getRegistry()), invoice.getSeries(), invoice.getNumber(), getPriceStrategy().getTotalPrice(invoice, invoice), getRetentionTotal(taxBreakDown), getTaxQuota(taxBreakDown), obtainBasesPerAccount(invoice));
+			getAccountEntryInvoiceWriter().insertEntryDetails(entry, (invoice.getType().equals(InvoiceType.SALES)?AccountUtil.obtainCustomerAccount(invoice.getRegistry()):AccountUtil.obtainSupplierAccount(invoice.getRegistry())), invoice.getSeries(), invoice.getNumber(), getPriceStrategy().getTotalPrice(invoice, invoice), getRetentionTotal(taxBreakDown), getTaxQuota(taxBreakDown), obtainBasesPerAccount(invoice));
 			getAccountEntryInvoiceWriter().insertAccountEntryInvoice(entry, invoice);
 			IManagerBean invoiceBean = BeanManager.getManagerBean(Invoice.class);
 			invoice.setStatus(InvoiceStatus.SCORED);
@@ -274,4 +298,5 @@ public class InvoiceRecordingController extends BasicController{
 		invoiceDetailAccount.setAccount(account);
 		invoiceAccountBean.insert(invoiceDetailAccount);
 	}
+
 }
