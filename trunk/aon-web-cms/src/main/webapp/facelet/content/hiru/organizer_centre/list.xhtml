@@ -30,9 +30,10 @@
 				<aon:div styleClass="aon-finding-toolbar-item-group">					
 					<aon:commandButton id="reset" value="#{bundle.aon_reset}"
 						action="hiru_organizer_centre_form"
-						actionListener="#{hiru_organizer_centre.onReset}"
 						styleClass="aon-finding-toolbar-item aon-icon-reset"
-						accesskey="#{bundle.aon_key_new}"/>
+						accesskey="#{bundle.aon_key_new}">
+						<aon:actionListener method="#{hiru_organizer_centre.onReset}" />
+					</aon:commandButton>
 					<aon:confirmButton id="remove"
 						value="#{bundle.aon_remove}" rendered="#{!hiru_organizer_centre.checklistEmpty}" 
 						inmediate="true"
@@ -61,8 +62,9 @@
 					<aon:commandButton id="save"
 						value="#{bundle.aon_save}" 
 						action="hiru_organizer_centre_list"
-						actionListener="#{generator_config.onSaveHiruConfig}"
-						styleClass="aon-content-toolbar-item aon-icon-accept" />
+						styleClass="aon-content-toolbar-item aon-icon-accept">
+						<aon:actionListener method="#{generator_config.onSaveHiruConfig}" />
+					</aon:commandButton>
 						
 					<aon:dataTable id="dataTable" value="#{hiru_organizer_centre.model}" var="to"
 						rows="#{hiru_organizer_centre.pageLimit}" 

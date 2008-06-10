@@ -30,23 +30,26 @@
 					<aon:div styleClass="aon-finding-toolbar-item-group">					
 						<aon:commandButton id="reset" value="#{bundle.aon_reset}"
 							action="album_category_form"
-							actionListener="#{album_category.onReset}"
 							styleClass="aon-finding-toolbar-item aon-icon-reset"
-							accesskey="#{bundle.aon_key_new}"/>
+							accesskey="#{bundle.aon_key_new}">
+							<aon:actionListener method="#{album_category.onReset}" />
+						</aon:commandButton>
 						<aon:commandButton id="save_new"
 							value="#{bundle.aon_save}" 
 							rendered="#{album_category.new}"
 							action="album_category_form"
-							actionListener="#{album_category.accept}"
 							styleClass="aon-finding-toolbar-item aon-icon-accept"
-							accesskey="#{bundle.aon_key_save}"/>
+							accesskey="#{bundle.aon_key_save}">
+							<aon:actionListener method="#{album_category.accept}" />
+						</aon:commandButton>
 						<aon:commandButton id="save_edit"
 							value="#{bundle.aon_save}" 
 							rendered="#{album_category.to!=null and !album_category.new}"
-							actionListener="#{album_category.accept}"
 							action="album_category_form"
 							styleClass="aon-finding-toolbar-item aon-icon-accept"
-							accesskey="#{bundle.aon_key_save}"/>
+							accesskey="#{bundle.aon_key_save}">
+							<aon:actionListener method="#{album_category.accept}" />
+						</aon:commandButton>
 						<aon:confirmButton id="remove"
 							value="#{bundle.aon_remove}" rendered="#{!album_category.new}" 
 							immediate="#{true}"
@@ -58,16 +61,18 @@
 							accesskey="#{bundle.aon_key_remove}"/>
 						<aon:commandButton id="exit" value="#{bundle.aon_close}"
 							action="album_category_list" 
-							actionListener="#{album_category.onSearch}"
 							immediate="#{true}"
 							styleClass="aon-finding-toolbar-item aon-icon-cancel"
-							accesskey="#{bundle.aon_key_close}"/>
+							accesskey="#{bundle.aon_key_close}">
+							<aon:actionListener method="#{album_category.onSearch}" />
+						</aon:commandButton>
 						<aon:commandButton id="partial_generate"
 							value="#{appBundle.aon_generate}" 
 							rendered="#{album_category.to!=null}"
-							actionListener="#{generator.onGenerateCurrentAlbumCategory}"
 							styleClass="aon-finding-toolbar-item aon-icon-accept"
-							accesskey="#{bundle.aon_key_save}"/>										
+							accesskey="#{bundle.aon_key_save}">										
+							<aon:actionListener method="#{generator.onGenerateCurrentAlbumCategory}" />
+						</aon:commandButton>
 				    </aon:div>
 					
 					<!-- end toolbar navigation -->
@@ -116,9 +121,10 @@
 									<aon:commandButton id="reset_list" value="#{bundle.aon_reset}"
 										rendered="#{!album.new}"
 										action="album_form"
-										actionListener="#{album.onReset}"
 										styleClass="aon-finding-toolbar-item aon-icon-reset"
-										accesskey="#{bundle.aon_key_new}"/>
+										accesskey="#{bundle.aon_key_new}">
+										<aon:actionListener method="#{album.onReset}" />
+									</aon:commandButton>
 									<aon:confirmButton id="remove_list"
 										value="#{bundle.aon_remove}" 
 										rendered="#{!album.checklistEmpty and album.to==null}" 

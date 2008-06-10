@@ -32,17 +32,19 @@
 					<aon:div styleClass="aon-finding-toolbar-item-group">
 						<aon:commandButton id="reset" value="#{bundle.aon_reset}"
 							action="hiru_course_form"
-							actionListener="#{hiru_course.onReset}" 
 							rendered="#{!hiru_course.new}"
 							styleClass="aon-finding-toolbar-item aon-icon-reset"
-							accesskey="#{bundle.aon_key_new}" />
+							accesskey="#{bundle.aon_key_new}">
+							<aon:actionListener method="#{hiru_course.onReset}" />
+						</aon:commandButton>
 						<aon:commandButton id="save"
 							value="#{bundle.aon_save}" 
 							rendered="#{hiru_course.to!=null or header.new}"
 							action="hiru_course_form"
-							actionListener="#{hiru_course.onAccept}"
 							styleClass="aon-finding-toolbar-item aon-icon-accept"
-							accesskey="#{bundle.aon_key_save}"/>
+							accesskey="#{bundle.aon_key_save}">
+							<aon:actionListener method="#{hiru_course.onAccept}" />
+						</aon:commandButton>
 						<aon:confirmButton id="remove"
 							value="#{bundle.aon_remove}" rendered="#{!hiru_course.new}" 
 							immediate="true"
@@ -54,10 +56,11 @@
 							accesskey="#{bundle.aon_key_remove}"/>
 						<aon:commandButton id="exit" value="#{bundle.aon_close}"
 							action="hiru_course_list" 
-							actionListener="#{hiru_course.onSearch}"
 							immediate="#{true}"
 							styleClass="aon-finding-toolbar-item aon-icon-cancel"
-							accesskey="#{bundle.aon_key_close}"/>
+							accesskey="#{bundle.aon_key_close}">
+							<aon:actionListener method="#{hiru_course.onSearch}" />
+						</aon:commandButton>
 				    </aon:div>
 					
 					<!-- end toolbar navigation -->

@@ -30,22 +30,25 @@
 					<aon:div styleClass="aon-finding-toolbar-item-group">					
 						<aon:commandButton id="reset" value="#{bundle.aon_reset}"
 							action="direct_access_group_form"
-							actionListener="#{direct_access_group.onReset}"
 							styleClass="aon-finding-toolbar-item aon-icon-reset"
-							accesskey="#{bundle.aon_key_new}"/>
+							accesskey="#{bundle.aon_key_new}">
+							<aon:actionListener method="#{direct_access_group.onReset}" />
+						</aon:commandButton>
 						<aon:commandButton id="save_new"
 							value="#{bundle.aon_save}" 
 							rendered="#{direct_access_group.new}"
 							action="direct_access_group_form"
-							actionListener="#{direct_access_group.accept}"
 							styleClass="aon-finding-toolbar-item aon-icon-accept"
-							accesskey="#{bundle.aon_key_save}"/>
+							accesskey="#{bundle.aon_key_save}">
+							<aon:actionListener method="#{direct_access_group.accept}" />
+						</aon:commandButton>
 						<aon:commandButton id="save_edit"
 							value="#{bundle.aon_save}" 
 							rendered="#{direct_access_group.to!=null and !direct_access_group.new}"
-							actionListener="#{direct_access_group.accept}"
 							styleClass="aon-finding-toolbar-item aon-icon-accept"
-							accesskey="#{bundle.aon_key_save}"/>
+							accesskey="#{bundle.aon_key_save}">
+							<aon:actionListener method="#{direct_access_group.accept}" />
+						</aon:commandButton>
 						<aon:confirmButton id="remove"
 							value="#{bundle.aon_remove}" rendered="#{!direct_access_group.new}" 
 							immediate="#{true}"
@@ -57,16 +60,18 @@
 							accesskey="#{bundle.aon_key_remove}"/>
 						<aon:commandButton id="exit" value="#{bundle.aon_close}"
 							action="direct_access_group_list" 
-							actionListener="#{direct_access_group.onSearch}"
 							immediate="#{true}"
 							styleClass="aon-finding-toolbar-item aon-icon-cancel"
-							accesskey="#{bundle.aon_key_close}"/>
+							accesskey="#{bundle.aon_key_close}">
+							<aon:actionListener method="#{direct_access_group.onSearch}" />
+						</aon:commandButton>
 						<aon:commandButton id="partial_generate"
 							value="#{appBundle.aon_generate}" 
 							rendered="#{direct_access_group.to!=null}"
-							actionListener="#{generator.onGenerateCurrentDirectAccessCategory}"
 							styleClass="aon-finding-toolbar-item aon-icon-accept"
-							accesskey="#{bundle.aon_key_save}"/>										
+							accesskey="#{bundle.aon_key_save}">
+							<aon:actionListener method="#{generator.onGenerateCurrentDirectAccessCategory}" />
+						</aon:commandButton>
 				    </aon:div>
 					
 					<!-- end toolbar navigation -->
@@ -116,9 +121,10 @@
 									<aon:commandButton id="reset_list" value="#{bundle.aon_reset}"
 										rendered="#{!direct_access.new}"
 										action="direct_access_group_form"
-										actionListener="#{direct_access.onReset}"
 										styleClass="aon-finding-toolbar-item aon-icon-reset"
-										accesskey="#{bundle.aon_key_new}"/>
+										accesskey="#{bundle.aon_key_new}">
+										<aon:actionListener method="#{direct_access.onReset}" />
+									</aon:commandButton>
 									<aon:confirmButton id="remove_list"
 										value="#{bundle.aon_remove}" 
 										rendered="#{!direct_access.checklistEmpty and direct_access.to==null}" 
@@ -241,20 +247,22 @@
 												value="#{bundle.aon_save}" 
 												rendered="#{direct_access.to!=null or direct_access.new}"
 												action="direct_access_group_form"
-												actionListener="#{direct_access.onAccept}"
 												styleClass="aon-finding-toolbar-item aon-icon-accept"
-												accesskey="#{bundle.aon_key_save}"/>
+												accesskey="#{bundle.aon_key_save}">
+												<aon:actionListener method="#{direct_access.onAccept}" />
+											</aon:commandButton>
 											<aon:commandButton id="cancel_list_form"
 												value="#{bundle.aon_cancel}" 
 												rendered="#{direct_access.to!=null or direct_access.new}" immediate="#{true}"
 												action="direct_access_group_form"
-												actionListener="#{direct_access.onCancel}" 
 												styleClass="aon-finding-toolbar-item aon-icon-cancel"
-												accesskey="#{bundle.aon_key_cancel}"/>
+												accesskey="#{bundle.aon_key_cancel}">
+												<aon:actionListener method="#{direct_access.onCancel}" />
+											</aon:commandButton>
 											<aon:confirmButton id="remove_list_form"
 												value="#{bundle.aon_remove}" rendered="#{!direct_access.new}" 
-												immediate="true"
-												conformAction="direct_access_group_form"
+												immediate="#{true}"
+												confirmAction="direct_access_group_form"
 												confirmTitle="Confirmation Dialog" 
 												confirmMessage="#{bundle.aon_remove_confirm}"
 												confirmActionListener="#{direct_access.onRemove}" 

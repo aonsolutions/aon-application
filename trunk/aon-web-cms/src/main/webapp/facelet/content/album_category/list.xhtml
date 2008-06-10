@@ -30,9 +30,10 @@
 				<aon:div styleClass="aon-finding-toolbar-item-group">					
 					<aon:commandButton id="reset" value="#{bundle.aon_reset}"
 						action="album_category_form"
-						actionListener="#{album_category.onReset}"
 						styleClass="aon-finding-toolbar-item aon-icon-reset"
-						accesskey="#{bundle.aon_key_new}"/>
+						accesskey="#{bundle.aon_key_new}">
+						<aon:actionListener method="#{album_category.onReset}" />
+					</aon:commandButton>
 					<aon:confirmButton id="remove"
 						value="#{bundle.aon_remove}" rendered="#{!album_category.checklistEmpty}" 
 						inmediate="true"
@@ -60,8 +61,9 @@
 					
 					<aon:commandButton id="save"
 						value="#{bundle.aon_save}" 
-						actionListener="#{generator_config.onSaveAlbumConfig}"
-						styleClass="aon-content-toolbar-item aon-icon-accept" />
+						styleClass="aon-content-toolbar-item aon-icon-accept">
+						<aon:actionListener method="#{generator_config.onSaveAlbumConfig}" />
+					</aon:commandButton>
 
 					<aon:dataTable id="dataTable" value="#{album_category.model}" var="to"
 						rows="#{album_category.pageLimit}" 

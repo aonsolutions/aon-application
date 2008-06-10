@@ -31,24 +31,27 @@
 					<aon:div styleClass="aon-finding-toolbar-item-group">
 
 						<aon:commandButton id="reset" value="#{bundle.aon_reset}"
-							actionListener="#{activity.onReset}"
 							rendered="#{!activity.new}"
 							reRender="dataTable,gridToolbar"
 							styleClass="aon-finding-toolbar-item aon-icon-reset"
-							accesskey="#{bundle.aon_key_new}" />
+							accesskey="#{bundle.aon_key_new}">
+							<aon:actionListener method="#{activity.onReset}" />
+						</aon:commandButton>
 						<aon:commandButton id="save" value="#{bundle.aon_save}"
 							rendered="#{activity.to!=null}"
 							reRender="dataTable, gridToolbar"
 							styleClass="aon-finding-toolbar-item aon-icon-accept"
-							actionListener="#{activity.onAccept}"
-							accesskey="#{bundle.aon_key_save}" />
+							accesskey="#{bundle.aon_key_save}">
+							<aon:actionListener method="#{activity.onAccept}" />
+						</aon:commandButton>
 						<aon:commandButton id="cancel" value="#{bundle.aon_cancel}"
 							rendered="#{activity.to!=null}"
 							reRender="dataTable, gridToolbar"
 							styleClass="aon-finding-toolbar-item aon-icon-cancel"
 							immediate="#{true}"
-							actionListener="#{activity.onCancel}"
-							accesskey="#{bundle.aon_key_cancel}" />
+							accesskey="#{bundle.aon_key_cancel}">
+							<aon:actionListener method="#{activity.onCancel}" />
+						</aon:commandButton>
 						<aon:confirmButton id="remove" value="#{bundle.aon_remove}"
 							rendered="#{!activity.checklistEmpty}"
 							reRender="dataTable, gridToolbar"
@@ -163,13 +166,15 @@
 							<aon:commandButton id="lineAccept"
 								title="[#{bundle.aon_accept}]"
 								styleClass="aon-editDataTable-button aon-icon-accept"
-								reRender="dataTable,gridToolbar"
-								actionListener="#{activity.onAccept}" />
+								reRender="dataTable,gridToolbar">
+								<aon:actionListener method="#{activity.onAccept}" />
+							</aon:commandButton>
 							<aon:commandButton id="lineCancel"
 								title="[#{bundle.aon_cancel}]"
 								styleClass="aon-editDataTable-button aon-icon-cancel"
-								reRender="dataTable,gridToolbar" immediate="true"
-								actionListener="#{activity.onCancel}" />
+								reRender="dataTable,gridToolbar" immediate="true">
+								<aon:actionListener method="#{activity.onCancel}" />
+							</aon:commandButton>
 							<aon:commandButton id="lineRemove"
 								title="[#{bundle.aon_remove}]"
 								styleClass="aon-editDataTable-button aon-icon-delete"
@@ -182,13 +187,15 @@
 								<aon:commandButton id="newAccept"
 									title="[#{bundle.aon_accept}]"
 									styleClass="aon-editDataTable-button aon-icon-accept"
-									reRender="dataTable,gridToolbar"
-									actionListener="#{activity.onAccept}" />
+									reRender="dataTable,gridToolbar">
+									<aon:actionListener method="#{activity.onAccept}" />
+								</aon:commandButton>
 								<aon:commandButton id="newCancel"
 									title="[#{bundle.aon_cancel}]"
 									styleClass="aon-editDataTable-button aon-icon-cancel"
-									reRender="dataTable,gridToolbar" immediate="true"
-									actionListener="#{activity.onCancel}" />
+									reRender="dataTable,gridToolbar" immediate="true">
+									<aon:actionListener method="#{activity.onCancel}" />
+								</aon:commandButton>
 							</aon:div>
 						</f:facet>
 					</aon:column>

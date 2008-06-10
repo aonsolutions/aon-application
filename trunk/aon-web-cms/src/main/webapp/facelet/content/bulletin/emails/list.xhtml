@@ -31,24 +31,27 @@
 					<aon:div styleClass="aon-finding-toolbar-item-group">
 
 						<aon:commandButton id="reset" value="#{bundle.aon_reset}"
-							actionListener="#{bulletin_email.onReset}"
 							rendered="#{!bulletin_email.new}"
 							reRender="dataTable,gridToolbar"
 							styleClass="aon-finding-toolbar-item aon-icon-reset"
-							accesskey="#{bundle.aon_key_new}" />
+							accesskey="#{bundle.aon_key_new}">
+							<aon:actionListener method="#{bulletin_email.onReset}" />
+						</aon:commandButton>
 						<aon:commandButton id="save" value="#{bundle.aon_save}"
 							rendered="#{bulletin_email.to!=null}"
 							reRender="dataTable, gridToolbar"
 							styleClass="aon-finding-toolbar-item aon-icon-accept"
-							actionListener="#{bulletin_email.onAccept}"
-							accesskey="#{bundle.aon_key_save}" />
+							accesskey="#{bundle.aon_key_save}">
+							<aon:actionListener method="#{bulletin_email.onAccept}" />
+						</aon:commandButton>
 						<aon:commandButton id="cancel" value="#{bundle.aon_cancel}"
 							rendered="#{bulletin_email.to!=null}"
 							reRender="dataTable, gridToolbar"
 							styleClass="aon-finding-toolbar-item aon-icon-cancel"
 							immediate="#{true}"
-							actionListener="#{bulletin_email.onCancel}"
-							accesskey="#{bundle.aon_key_cancel}" />
+							accesskey="#{bundle.aon_key_cancel}" >
+							<aon:actionListener method="#{bulletin_email.onCancel}" />
+						</aon:commandButton>
 						<aon:confirmButton id="remove" value="#{bundle.aon_remove}"
 							rendered="#{!bulletin_email.checklistEmpty}"
 							reRender="dataTable, gridToolbar"
@@ -62,18 +65,20 @@
 			</aon:div>
 
 			<aon:div id="parent_" styleClass="aon-scroll-area">
-				<h:dataTable id="dataTable"
-					value="#{bulletin_email.model}" var="to" rows="20"
+			
+				<aon:dataTable id="dataTable" 
+					value="#{bulletin_email.model}" var="to"
+					rows="20"
 					styleClass="dr-table rich-table aon-editDataTable"
 					headerClass="dr-table-subheader rich-table-subheader aon-editDataTable-header"
 					footerClass="dr-table-subfooter rich-table-subfooter aon-editDataTable-footer"
 					rowClasses="aon-editDataTable-row-odd,dr-table-firstrow rich-table-firstrow aon-editDataTable-row-even"
 					cellpadding="0" cellspacing="0"
 					columnClasses="dr-table-cell rich-table-cell aon-editDataTable-iconColumn,
-							   dr-table-cell rich-table-cell aon-editDataTable-textColumn,
-							   dr-table-cell rich-table-cell aon-editDataTable-textColumn,
-							   dr-table-cell rich-table-cell aon-editDataTable-buttonsColumn">
-
+							dr-table-cell rich-table-cell aon-editDataTable-textColumn,
+							dr-table-cell rich-table-cell aon-editDataTable-textColumn,
+							dr-table-cell rich-table-cell aon-editDataTable-textColumn">
+											
 					<aon:column>
 						<f:facet name="header">
 							<aon:div>
@@ -95,8 +100,8 @@
 									value="" immediate="true"
 									reRender="dataTable,gridToolbar"
 									rendered="#{!bulletin_email.new}"
-									actionListener="#{bulletin_email.onReset}"
 									accesskey="#{bundle.aon_key_new_line}">
+									<aon:actionListener method="#{bulletin_email.onReset}" />
 								</aon:commandButton>
 							</aon:div>
 						</f:facet>
@@ -163,18 +168,21 @@
 							<aon:commandButton id="lineAccept"
 								title="[#{bundle.aon_accept}]"
 								styleClass="aon-editDataTable-button aon-icon-accept"
-								reRender="dataTable,gridToolbar"
-								actionListener="#{bulletin_email.onAccept}" />
+								reRender="dataTable,gridToolbar">
+								<aon:actionListener method="#{bulletin_email.onAccept}" />
+							</aon:commandButton>
 							<aon:commandButton id="lineCancel"
 								title="[#{bundle.aon_cancel}]"
 								styleClass="aon-editDataTable-button aon-icon-cancel"
-								reRender="dataTable,gridToolbar" immediate="true"
-								actionListener="#{bulletin_email.onCancel}" />
+								reRender="dataTable,gridToolbar" immediate="true">
+								<aon:actionListener method="#{bulletin_email.onCancel}" />
+							</aon:commandButton>
 							<aon:commandButton id="lineRemove"
 								title="[#{bundle.aon_remove}]"
 								styleClass="aon-editDataTable-button aon-icon-delete"
-								reRender="dataTable,gridToolbar" immediate="true"
-								actionListener="#{bulletin_email.onRemove}" />
+								reRender="dataTable,gridToolbar" immediate="true">
+								<aon:actionListener method="#{bulletin_email.onRemove}" />
+							</aon:commandButton>
 						</aon:div>
 						<f:facet name="footer">
 							<aon:div rendered="#{bulletin_email.new}">
@@ -182,17 +190,19 @@
 								<aon:commandButton id="newAccept"
 									title="[#{bundle.aon_accept}]"
 									styleClass="aon-editDataTable-button aon-icon-accept"
-									reRender="dataTable,gridToolbar"
-									actionListener="#{bulletin_email.onAccept}" />
+									reRender="dataTable,gridToolbar">
+									<aon:actionListener method="#{bulletin_email.onAccept}" />
+								</aon:commandButton>
 								<aon:commandButton id="newCancel"
 									title="[#{bundle.aon_cancel}]"
 									styleClass="aon-editDataTable-button aon-icon-cancel"
-									reRender="dataTable,gridToolbar" immediate="true"
-									actionListener="#{bulletin_email.onCancel}" />
+									reRender="dataTable,gridToolbar" immediate="true">
+									<aon:actionListener method="#{bulletin_email.onCancel}" />
+								</aon:commandButton>
 							</aon:div>
 						</f:facet>
 					</aon:column>
-				</h:dataTable>
+				</aon:dataTable>
 
 				<rich:datascroller align="left"  for="dataTable" maxPages="20" />
 					

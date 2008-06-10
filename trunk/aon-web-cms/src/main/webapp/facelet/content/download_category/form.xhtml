@@ -30,22 +30,25 @@
 					<aon:div styleClass="aon-finding-toolbar-item-group">					
 						<aon:commandButton id="reset" value="#{bundle.aon_reset}"
 							action="download_category_form"
-							actionListener="#{download_category.onReset}"
 							styleClass="aon-finding-toolbar-item aon-icon-reset"
-							accesskey="#{bundle.aon_key_new}"/>
+							accesskey="#{bundle.aon_key_new}">
+							<aon:actionListener method="#{download_category.onReset}" />
+						</aon:commandButton>
 						<aon:commandButton id="save_new"
 							value="#{bundle.aon_save}" 
 							rendered="#{download_category.new}"
 							action="download_category_form"
-							actionListener="#{download_category.accept}"
 							styleClass="aon-finding-toolbar-item aon-icon-accept"
-							accesskey="#{bundle.aon_key_save}"/>
+							accesskey="#{bundle.aon_key_save}">
+							<aon:actionListener method="#{download_category.accept}" />
+						</aon:commandButton>
 						<aon:commandButton id="save_edit"
 							value="#{bundle.aon_save}" 
 							rendered="#{download_category.to!=null and !download_category.new}"
-							actionListener="#{download_category.accept}"
 							styleClass="aon-finding-toolbar-item aon-icon-accept"
-							accesskey="#{bundle.aon_key_save}"/>
+							accesskey="#{bundle.aon_key_save}">
+							<aon:actionListener method="#{download_category.accept}" />
+						</aon:commandButton>
 						<aon:confirmButton id="remove"
 							value="#{bundle.aon_remove}" rendered="#{!download_category.new}" 
 							immediate="#{true}"
@@ -57,16 +60,18 @@
 							accesskey="#{bundle.aon_key_remove}"/>
 						<aon:commandButton id="exit" value="#{bundle.aon_close}"
 							action="download_category_list" 
-							actionListener="#{download_category.onSearch}"
 							immediate="#{true}"
 							styleClass="aon-finding-toolbar-item aon-icon-cancel"
-							accesskey="#{bundle.aon_key_close}"/>
+							accesskey="#{bundle.aon_key_close}">
+							<aon:actionListener method="#{download_category.onSearch}" />
+						</aon:commandButton>
 						<aon:commandButton id="partial_generate"
 							value="#{appBundle.aon_generate}" 
 							rendered="#{download_category.to!=null}"
-							actionListener="#{generator.onGenerateCurrentDownloadCategory}"
 							styleClass="aon-finding-toolbar-item aon-icon-accept"
-							accesskey="#{bundle.aon_key_save}"/>										
+							accesskey="#{bundle.aon_key_save}">
+							<aon:actionListener method="#{generator.onGenerateCurrentDownloadCategory}" />
+						</aon:commandButton>										
 				    </aon:div>
 					
 					<!-- end toolbar navigation -->
@@ -145,9 +150,10 @@
 									<aon:commandButton id="reset_list" value="#{bundle.aon_reset}"
 										rendered="#{!download.new}"
 										action="download_category_form"
-										actionListener="#{download.onReset}"
 										styleClass="aon-finding-toolbar-item aon-icon-reset"
-										accesskey="#{bundle.aon_key_new}"/>
+										accesskey="#{bundle.aon_key_new}">
+										<aon:actionListener method="#{download.onReset}" />
+									</aon:commandButton>
 									<aon:confirmButton id="remove_list"
 										value="#{bundle.aon_remove}" 
 										rendered="#{!download.checklistEmpty and download.to==null}" 
@@ -270,16 +276,18 @@
 												value="#{bundle.aon_save}" 
 												rendered="#{download.to!=null or download.new}"
 												action="download_category_form"
-												actionListener="#{download.onAccept}"
 												styleClass="aon-finding-toolbar-item aon-icon-accept"
-												accesskey="#{bundle.aon_key_save}"/>
+												accesskey="#{bundle.aon_key_save}">
+												<aon:actionListener method="#{download.onAccept}" />
+											</aon:commandButton>
 											<aon:commandButton id="cancel_list_form"
 												value="#{bundle.aon_cancel}" 
 												rendered="#{download.to!=null or download.new}" immediate="#{true}"
 												action="download_category_form"
-												actionListener="#{download.onCancel}" 
 												styleClass="aon-finding-toolbar-item aon-icon-cancel"
-												accesskey="#{bundle.aon_key_cancel}"/>
+												accesskey="#{bundle.aon_key_cancel}">
+												<aon:actionListener method="#{download.onCancel}" />
+											</aon:commandButton>
 											<aon:confirmButton id="remove_list_form"
 												value="#{bundle.aon_remove}" rendered="#{!download.new}" 
 												immediate="true"
