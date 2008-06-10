@@ -43,7 +43,6 @@ public class ArticleCalendarGenerator extends Generator {
 		List<ITransferObject> articleDetailList;
 		Map<String, MonthContent> months;
 		List<MonthContent> monthsList;
-		Object[] monthArray;
 		ArrayList<ArticleDetail> dayArticleDetailList;
 		ArrayList<ArticleHandler> index_ahlist = new ArrayList<ArticleHandler>();
 		DiaryCategoriesHandler dch = null;
@@ -233,7 +232,6 @@ public class ArticleCalendarGenerator extends Generator {
 		} finally {
 			articleList = null;
 			articleDetailList = null;
-			monthArray = null;
 			months = null;
 			dayArticleDetailList = null;
 		}
@@ -420,6 +418,77 @@ public class ArticleCalendarGenerator extends Generator {
 			VelocityUtil.addMessage(e.getMessage(), VelocityUtil.ERROR);;
 		} finally {
 			articleList = null;
+		}
+		return null;
+	}
+
+	public static Object getDiaryCalendarHandler() {
+		List<ITransferObject> articleList;
+		List<ITransferObject> articleDetailList;
+		Map<String, MonthContent> months;
+		List<MonthContent> monthsList;
+		try {
+			
+			IManagerBean articleDetailBean = BeanManager.getManagerBean(ArticleDetail.class);
+
+			Criteria articleDetailCriteria;
+			
+			Article article;
+			ArticleDetail articleDetail;
+			
+	        GregorianCalendar firstDay = new GregorianCalendar();
+	        firstDay.set(Calendar.DATE, 1);
+	        firstDay.add(Calendar.MONTH, -1);
+	        GregorianCalendar lastDay = new GregorianCalendar();
+	        lastDay.add(Calendar.MONTH, 1);
+	        lastDay.set(Calendar.DATE, MonthContent.diasDelMes(lastDay.get(Calendar.MONTH), lastDay.get(Calendar.YEAR)));
+
+	        Diary diary = getDiary();
+	        if (diary !=null)
+	        	articleList = ArticleCalendarGenerator.getEventList(firstDay, lastDay, diary.isPastEvents());
+	        else
+	        	articleList = ArticleCalendarGenerator.getEventList(firstDay, lastDay, true);
+	        	
+			months = new HashMap<String, MonthContent>();
+			monthsList = new ArrayList<MonthContent>();
+			
+			init(firstDay.getTime(),months,monthsList);
+			Map<Integer,ArticleCategoryHandler> map = new HashMap<Integer,ArticleCategoryHandler>(); 
+			for (int i=0; i < articleList.size(); i++) {
+				article = (Article)articleList.get(i);
+				ArticleCalendarGenerator.addArticleCategoryHandler(map, article.getArticleCategory());
+				articleDetailCriteria = new Criteria();
+				articleDetailCriteria.addEqualExpression(articleDetailBean.getFieldName(ICMSAlias.ARTICLE_DETAIL_ARTICLE_ID), article.getId());
+				articleDetailCriteria.addEqualExpression(articleDetailBean.getFieldName(ICMSAlias.ARTICLE_DETAIL_LANGUAGE_ID), ControllerUtil.getCurrentLanguage().getId());
+				articleDetailList = (List<ITransferObject>)articleDetailBean.getList(articleDetailCriteria);
+				if (articleDetailList.isEmpty()) {
+					VelocityUtil.addMessage(" Articulo " + article.getAlias() + " de la categoria " + article.getArticleCategory().getAlias() + " no internacionalizado.", VelocityUtil.WARN);
+				}else{
+					articleDetail = (ArticleDetail)articleDetailList.get(0);
+					Date initDate = article.getInitDate();
+					Date endDate = article.getEndDate();
+					if (endDate == null){
+						assignArticleToDate(initDate,articleDetail,months,monthsList);
+					}else{
+						GregorianCalendar initCalendar = new GregorianCalendar();
+						initCalendar.setTime(initDate);
+						GregorianCalendar endCalendar = new GregorianCalendar();
+						endCalendar.setTime(endDate);
+						while (initCalendar.compareTo(endCalendar)<=0){
+							assignArticleToDate(initCalendar.getTime(),
+									articleDetail,months,monthsList);
+							initCalendar.add(Calendar.DATE, 1);
+						}
+					}
+				}
+			}
+			return monthsList;
+		} catch (ManagerBeanException e) {
+			VelocityUtil.addMessage(e.getMessage(), VelocityUtil.ERROR);;
+		} finally {
+			articleList = null;
+			articleDetailList = null;
+			months = null;
 		}
 		return null;
 	}

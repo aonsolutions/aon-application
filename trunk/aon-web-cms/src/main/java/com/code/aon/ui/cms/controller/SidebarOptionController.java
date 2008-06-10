@@ -62,10 +62,13 @@ public class SidebarOptionController extends BasicI18nController implements IOrd
 
 	public boolean isVisibleIdent() {
 		SidebarOption to = (SidebarOption)getTo();
-		if (to != null && to.getType() != null) {
-			return true;
+		if (to == null || to.getType() == null) {
+			return false;
 		}
-		return false;
+		if (to.getType()==SidebarType.DIARY_CALENDAR) {
+			return false;
+		}
+		return true;
 	}
 
 	public List<SelectItem> getIdents() throws ManagerBeanException, ExpressionException {
