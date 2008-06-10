@@ -15,6 +15,7 @@ import javax.faces.event.ValueChangeEvent;
 import com.code.aon.account.Account;
 import com.code.aon.account.AccountEntry;
 import com.code.aon.account.DefaultAccounts;
+import com.code.aon.account.bridge.AccountEntryInvoice;
 import com.code.aon.account.bridge.InvoiceDetailAccount;
 import com.code.aon.account.bridge.ProductAccount;
 import com.code.aon.account.bridge.dao.IAccountBridgeAlias;
@@ -621,4 +622,20 @@ public class InvoicingController extends BasicController {
         manager.setReportKey("invoice");
         manager.setOutputFormat(OutputFormat.PDF);
     }
+
+	@SuppressWarnings("unchecked")
+	public Integer getAccountEntryId() throws ManagerBeanException {
+    	Invoice invoice = (Invoice)this.getTo();
+		if (invoice != null && invoice.getId() != null) {
+			IManagerBean accountEntryInvoiceBean = BeanManager.getManagerBean(AccountEntryInvoice.class);
+			Criteria criteria = new Criteria();
+			criteria.addEqualExpression(accountEntryInvoiceBean.getFieldName(IAccountBridgeAlias.ACCOUNT_ENTRY_INVOICE_INVOICE_ID), invoice.getId());
+			Iterator iterator = accountEntryInvoiceBean.getList(criteria).iterator();
+			if (iterator.hasNext()) {
+				AccountEntryInvoice accountEntryInvoice = (AccountEntryInvoice)iterator.next();
+				return accountEntryInvoice.getAccountEntry().getId();
+			}
+		}
+    	return null;
+	}
 }
