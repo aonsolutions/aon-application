@@ -46,6 +46,10 @@ public class HiruGenerator extends Generator {
 			Section configSection = GeneratorConfigController.currentSection(HiruConfig.class);
 			CommonGenerator.getCommonGenerator().chargeContext(vu, configSection);
 			
+			String back_url = Templates.HIRU_COURSES.getHtmlName();
+			back_url = back_url.replaceAll("%NAME%", COURSES_HTML);
+
+			
 			for (int i=0; i < center_list.size(); i++) {
 				HiruOrganizerCentre hoc = (HiruOrganizerCentre)center_list.get(i);
 				
@@ -71,9 +75,11 @@ public class HiruGenerator extends Generator {
 						HiruCourseDetail hcd = (HiruCourseDetail)ld.get(0);
 						HiruCourseHandler hcoh = new HiruCourseHandler(hcd);
 						course_handler_list.add(hcoh);
+						vu.put("back_url", back_url);
 						vu.put("course", hcoh);
 						VelocityUtil.addMessage(" Generando hiru course.", VelocityUtil.INFO);
 						generate(vu, Templates.HIRU_COURSE, hcoh.getAlias());
+						vu.remove("back_url");
 						vu.remove("course");
 					}
 				}
@@ -105,9 +111,11 @@ public class HiruGenerator extends Generator {
 						HiruCourseDetail hcd = (HiruCourseDetail)ld.get(0);
 						HiruCourseHandler hcoh = new HiruCourseHandler(hcd);
 						course_handler_list.add(hcoh);
+						vu.put("back_url", back_url);
 						vu.put("course", hcoh);
 						VelocityUtil.addMessage(" Generando hiru course.", VelocityUtil.INFO);
 						generate(vu, Templates.HIRU_COURSE, hcoh.getAlias());
+						vu.remove("back_url");
 						vu.remove("course");
 					}
 				}
@@ -118,7 +126,7 @@ public class HiruGenerator extends Generator {
 			vu.put("center_list_started", center_handler_list_started);
 			vu.put("center_list_future", center_handler_list_future);
 			VelocityUtil.addMessage(" Generando hiru.", VelocityUtil.INFO);
-			generate(vu, Templates.HIRU_COURSES, "hiru");
+			generate(vu, Templates.HIRU_COURSES, COURSES_HTML);
 			vu.remove("center_list_started");
 			vu.remove("center_list_future");
 		} catch (ManagerBeanException e) {
@@ -133,4 +141,6 @@ public class HiruGenerator extends Generator {
 		}
 	}
 
+	private static String COURSES_HTML = "main";
+	
 }
