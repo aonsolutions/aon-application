@@ -4,6 +4,7 @@ import com.code.aon.cms.SidebarOptionDetail;
 import com.code.aon.cms.enumeration.ArticleType;
 import com.code.aon.cms.enumeration.SidebarType;
 import com.code.aon.ui.cms.velocity.AlbumGenerator;
+import com.code.aon.ui.cms.velocity.ArticleCalendarGenerator;
 import com.code.aon.ui.cms.velocity.ArticleGenerator;
 import com.code.aon.ui.cms.velocity.BannerGenerator;
 import com.code.aon.ui.cms.velocity.DirectAccessGenerator;
@@ -58,6 +59,9 @@ public class SidebarOptionHandler {
 		}
 		else if (sidebarOptionDetail.getSidebar_option().getType().equals(SidebarType.ALBUM_CATEGORY)) {
 			content = AlbumGenerator.getAlbumCategoryHandler(sidebarOptionDetail.getSidebar_option().getIdent());
+		}
+		else if (sidebarOptionDetail.getSidebar_option().getType().equals(SidebarType.DIARY_CALENDAR)) {
+			content = ArticleCalendarGenerator.getDiaryCalendarHandler();
 		}
 	}
 

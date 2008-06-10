@@ -70,7 +70,12 @@ public enum SidebarType implements IResourceable {
 	/**
 	 * Album Category
 	 */
-	ALBUM_CATEGORY;
+	ALBUM_CATEGORY,
+	
+	/**
+	 * Diary
+	 */
+	DIARY_CALENDAR;
 	
 	/**
 	 * Ruta base del fichero de mensajes.
