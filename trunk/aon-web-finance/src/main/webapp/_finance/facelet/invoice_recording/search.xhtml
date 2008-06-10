@@ -48,8 +48,7 @@
 						<t:selectOneMenu id="Invoice_type"
 							value="#{invoiceRecording.recordingParams.invoiceType}"
 							styleClass="aon-form-selectOneMenu-field" onchange="submit();">
-							<f:selectItem itemValue="" itemLabel=" " />
-							<f:selectItems value="#{financeCollections.invoiceTypes}" />
+							<f:selectItems value="#{invoiceRecording.invoiceTypes}" />
 						</t:selectOneMenu>
 						
 						<h:outputLabel for="Invoice_series"
@@ -77,9 +76,10 @@
 						</h:panelGrid>
 						
  						<t:outputLabel for="Customer_Lookup_id" 
- 							value="#{customerBundle.customer_customer}" 
-							styleClass="aon-form-input-text-label" />
-						<t:div>
+							styleClass="aon-form-input-text-label"
+							rendered="#{invoiceRecording.sales}"
+ 							value="#{customerBundle.customer_customer}" /> 
+						<t:div rendered="#{invoiceRecording.sales}">
 							<t:inputText id="Customer_Lookup_id" forceId="#{true}"
 								value="#{invoiceRecording.recordingParams.registryId}"
 								styleClass="aon-form-input-text" size="5" 
@@ -94,9 +94,9 @@
 
 						<t:outputLabel for="Supplier_Lookup_id"
 							styleClass="aon-form-input-text-label"
-							rendered="false"
+							rendered="#{!invoiceRecording.sales}"
 							value="#{supplierBundle.aon_supplier}" />
-						<t:div rendered="false">
+						<t:div rendered="#{!invoiceRecording.sales}">
 							<t:inputText id="Supplier_Lookup_id" size="5" forceId="#{true}"
 								styleClass="aon-form-input-text"
 								value="#{invoiceRecording.recordingParams.registryId}"
@@ -108,7 +108,7 @@
 								styleClass="aon-form-input-text-disabled"
 								disabled="true" size="40"/>	 		
 						</t:div>
- 
+
 						<h:outputLabel for="Invoicing_invoiceDate" 
 							value="#{financeBundle.aon_invoice_date}"
 							styleClass="aon-form-input-text-label" />
