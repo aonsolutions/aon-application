@@ -20,27 +20,33 @@
 				<aon:div styleClass="aon-content-toolbar-internal">
 					<aon:div styleClass="aon-content-toolbar-item-group">
 
-						<h:commandButton id="search"
+						<aon:commandButton id="search"
 							value="#{bundle.aon_search}"
-							action="generic_page_list" actionListener="#{generic_page.onSearch}"
+							action="generic_page_list"
 							styleClass="aon-content-toolbar-item aon-icon-accept"
 							onmouseout="this.className='aon-content-toolbar-item aon-icon-accept'"
 							onmouseover="this.className='aon-content-toolbar-item aon-icon-accept aon-content-toolbar-item-hover'"
-							accesskey="#{bundle.aon_key_search}"/>
-						<h:commandButton id="reset"
+							accesskey="#{bundle.aon_key_search}">
+							<aon:actionListener method="#{generic_page.onSearch}" />
+						</aon:commandButton>
+						<aon:commandButton id="reset"
 							value="#{bundle.aon_reset}"
-							action="generic_page_form" actionListener="#{generic_page.onReset}"
+							action="generic_page_form" 
 							styleClass="aon-content-toolbar-item aon-icon-reset"
 							onmouseout="this.className='aon-content-toolbar-item aon-icon-reset'"
 							onmouseover="this.className='aon-content-toolbar-item aon-icon-reset aon-content-toolbar-item-hover'"
-							accesskey="#{bundle.aon_key_new}"/>
-						<h:commandButton id="cancel"
+							accesskey="#{bundle.aon_key_new}">
+							<aon:actionListener method="#{generic_page.onReset}" />
+						</aon:commandButton>
+						<aon:commandButton id="cancel"
 							value="#{bundle.aon_cancel}"
-							action="generic_page_list" actionListener="#{generic_page.onCancel}"
+							action="generic_page_list" 
 							styleClass="aon-content-toolbar-item aon-icon-cancel"
 							onmouseout="this.className='aon-content-toolbar-item aon-icon-cancel'"
 							onmouseover="this.className='aon-content-toolbar-item aon-icon-cancel aon-content-toolbar-item-hover'"
-							accesskey="#{bundle.aon_key_cancel}"/>
+							accesskey="#{bundle.aon_key_cancel}">
+							<aon:actionListener method="#{generic_page.onCancel}" />
+						</aon:commandButton>
 
 					</aon:div>
 				</aon:div>			

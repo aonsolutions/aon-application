@@ -29,16 +29,18 @@
 					<aon:div styleClass="aon-finding-toolbar-item-group">					
 						<aon:commandButton id="reset" value="#{bundle.aon_reset}"
 							action="menu_form"
-							actionListener="#{menu.onReset}"
 							styleClass="aon-finding-toolbar-item aon-icon-reset"
-							accesskey="#{bundle.aon_key_new}"/>
+							accesskey="#{bundle.aon_key_new}">
+							<aon:actionListener method="#{menu.onReset}" />
+						</aon:commandButton>
 						<aon:commandButton id="save"
 							value="#{bundle.aon_save}" 
 							rendered="#{menu.to!=null or menu.new}"
 							action="menu_form"
-							actionListener="#{menu.accept}"
 							styleClass="aon-finding-toolbar-item aon-icon-accept"
-							accesskey="#{bundle.aon_key_save}"/>
+							accesskey="#{bundle.aon_key_save}">
+							<aon:actionListener method="#{menu.accept}" />
+						</aon:commandButton>
 						<aon:confirmButton id="remove"
 							value="#{bundle.aon_remove}" rendered="#{!menu.new}" 
 							immediate="#{true}"
@@ -49,10 +51,11 @@
 							accesskey="#{bundle.aon_key_remove}"/>
 						<aon:commandButton id="exit" value="#{bundle.aon_close}"
 							action="menu_list" 
-							actionListener="#{menu.onSearch}"
 							immediate="#{true}"
 							styleClass="aon-finding-toolbar-item aon-icon-cancel"
-							accesskey="#{bundle.aon_key_close}"/>
+							accesskey="#{bundle.aon_key_close}">
+							<aon:actionListener method="#{menu.onSearch}" />
+						</aon:commandButton>
 				    </aon:div>
 					
 					<!-- end toolbar navigation -->
@@ -85,9 +88,11 @@
 								<!-- start toolbar navigation -->
 								<aon:div styleClass="aon-finding-toolbar-item-group">
 									<aon:commandButton id="reset_list" value="#{bundle.aon_reset}"
-										action="menu_form" actionListener="#{menu_option.onReset}"
+										action="menu_form" 
 										styleClass="aon-finding-toolbar-item aon-icon-reset"
-										accesskey="#{bundle.aon_key_new}"/>
+										accesskey="#{bundle.aon_key_new}">
+										<aon:actionListener method="#{menu_option.onReset}" />
+									</aon:commandButton>
 									<aon:confirmButton id="remove_list"
 										value="#{bundle.aon_remove}" 
 										rendered="#{!menu_option.checklistEmpty and menu_option.to==null}" 
@@ -202,16 +207,18 @@
 										value="#{bundle.aon_save}" 
 										rendered="#{menu_option.to!=null or menu_option.new}"
 										action="menu_form"
-										actionListener="#{menu_option.onAccept}"
 										styleClass="aon-finding-toolbar-item aon-icon-accept"
-										accesskey="#{bundle.aon_key_save}"/>
+										accesskey="#{bundle.aon_key_save}">
+										<aon:actionListener method="#{menu_option.onAccept}" />
+									</aon:commandButton>
 									<aon:commandButton id="cancel_list_form"
 										value="#{bundle.aon_cancel}" 
 										rendered="#{menu_option.to!=null or menu_option.new}" immediate="#{true}"
-										actionListener="#{menu_option.onCancel}" 
 										action="menu_form"
 										styleClass="aon-finding-toolbar-item aon-icon-cancel"
-										accesskey="#{bundle.aon_key_cancel}"/>
+										accesskey="#{bundle.aon_key_cancel}">
+										<aon:actionListener method="#{menu_option.onCancel}" />
+									</aon:commandButton>
 									<aon:confirmButton id="remove_list_form"
 										value="#{bundle.aon_remove}" rendered="#{!menu_option.new}" 
 										immediate="true"

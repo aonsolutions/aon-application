@@ -32,17 +32,19 @@
 					<aon:div styleClass="aon-finding-toolbar-item-group">
 						<aon:commandButton id="reset" value="#{bundle.aon_reset}"
 							action="generic_page_form"
-							actionListener="#{generic_page.onReset}" 
 							rendered="#{!generic_page.new}"
 							styleClass="aon-finding-toolbar-item aon-icon-reset"
-							accesskey="#{bundle.aon_key_new}" />
+							accesskey="#{bundle.aon_key_new}" >
+							<aon:actionListener method="#{generic_page.onReset}" />
+						</aon:commandButton>
 						<aon:commandButton id="save"
 							value="#{bundle.aon_save}" 
 							rendered="#{generic_page.to!=null or header.new}"
 							action="generic_page_form"
-							actionListener="#{generic_page.onAccept}"
 							styleClass="aon-finding-toolbar-item aon-icon-accept"
-							accesskey="#{bundle.aon_key_save}"/>
+							accesskey="#{bundle.aon_key_save}">
+							<aon:actionListener method="#{generic_page.onAccept}" />
+						</aon:commandButton>
 						<aon:confirmButton id="remove"
 							value="#{bundle.aon_remove}" rendered="#{!generic_page.new}" 
 							immediate="true"
@@ -54,16 +56,18 @@
 							accesskey="#{bundle.aon_key_remove}"/>
 						<aon:commandButton id="exit" value="#{bundle.aon_close}"
 							action="generic_page_list" 
-							actionListener="#{generic_page.onSearch}"
 							immediate="#{true}"
 							styleClass="aon-finding-toolbar-item aon-icon-cancel"
-							accesskey="#{bundle.aon_key_close}"/>
+							accesskey="#{bundle.aon_key_close}">
+							<aon:actionListener method="#{generic_page.onSearch}" />
+						</aon:commandButton>
 						<aon:commandButton id="generate_nodular"
 							value="#{appBundle.aon_generate}" 
 							rendered="#{generic_page.to!=null}"
-							actionListener="#{generator.onGenerateCurrentGenericPage}"
 							styleClass="aon-finding-toolbar-item aon-icon-accept"
-							accesskey="#{bundle.aon_key_save}"/>										
+							accesskey="#{bundle.aon_key_save}">
+							<aon:actionListener method="#{generator.onGenerateCurrentGenericPage}" />
+						</aon:commandButton>	
 				    </aon:div>
 					
 					<!-- end toolbar navigation -->

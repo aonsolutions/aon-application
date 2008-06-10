@@ -30,9 +30,10 @@
 				<aon:div styleClass="aon-finding-toolbar-item-group">					
 					<aon:commandButton id="reset" value="#{bundle.aon_reset}"
 						action="direct_access_group_form"
-						actionListener="#{direct_access_group.onReset}"
 						styleClass="aon-finding-toolbar-item aon-icon-reset"
-						accesskey="#{bundle.aon_key_new}"/>
+						accesskey="#{bundle.aon_key_new}">
+						<aon:actionListener method="#{direct_access_group.onReset}" />
+					</aon:commandButton>
 					<aon:confirmButton id="remove"
 						value="#{bundle.aon_remove}" rendered="#{!direct_access_group.checklistEmpty}" 
 						inmediate="true"

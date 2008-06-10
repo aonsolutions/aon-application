@@ -30,19 +30,21 @@
 						
 					<!-- start toolbar navigation -->
 					<aon:div styleClass="aon-finding-toolbar-item-group">
-						<h:commandButton id="reset" value="#{bundle.aon_reset}"
+						<aon:commandButton id="reset" value="#{bundle.aon_reset}"
 							action="header_form"
-							actionListener="#{headers.onReset}" 
 							rendered="#{!headers.new}"
 							styleClass="aon-finding-toolbar-item aon-icon-reset"
-							accesskey="#{bundle.aon_key_new}" />
-						<h:commandButton id="save"
+							accesskey="#{bundle.aon_key_new}">
+							<aon:actionListener method="#{headers.onReset}" />
+						</aon:commandButton>
+						<aon:commandButton id="save"
 							value="#{bundle.aon_save}" 
 							rendered="#{headers.to!=null or header.new}"
 							action="header_form"
-							actionListener="#{headers.onAccept}"
 							styleClass="aon-finding-toolbar-item aon-icon-accept"
-							accesskey="#{bundle.aon_key_save}"/>
+							accesskey="#{bundle.aon_key_save}">
+							<aon:actionListener method="#{headers.onAccept}" />
+						</aon:commandButton>
 						<aon:confirmButton id="remove"
 							value="#{bundle.aon_remove}" rendered="#{!headers.new}" 
 							immediate="true"
@@ -52,12 +54,13 @@
 							confirmAction="header_list"
 							styleClass="aon-finding-toolbar-item aon-icon-delete"
 							accesskey="#{bundle.aon_key_remove}"/>
-						<h:commandButton id="exit" value="#{bundle.aon_close}"
+						<aon:commandButton id="exit" value="#{bundle.aon_close}"
 							action="header_list" 
-							actionListener="#{headers.onSearch}"
 							immediate="#{true}"
 							styleClass="aon-finding-toolbar-item aon-icon-cancel"
-							accesskey="#{bundle.aon_key_close}"/>
+							accesskey="#{bundle.aon_key_close}">
+							<aon:actionListener method="#{headers.onSearch}" />
+						</aon:commandButton>
 				    </aon:div>
 					
 					<!-- end toolbar navigation -->

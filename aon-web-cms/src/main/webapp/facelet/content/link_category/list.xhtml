@@ -30,9 +30,10 @@
 				<aon:div styleClass="aon-finding-toolbar-item-group">					
 					<aon:commandButton id="reset" value="#{bundle.aon_reset}"
 						action="link_category_form"
-						actionListener="#{link_category.onReset}"
 						styleClass="aon-finding-toolbar-item aon-icon-reset"
-						accesskey="#{bundle.aon_key_new}"/>
+						accesskey="#{bundle.aon_key_new}">
+						<aon:actionListener method="#{link_category.onReset}" />
+					</aon:commandButton>
 					<aon:confirmButton id="remove"
 						value="#{bundle.aon_remove}" rendered="#{!link_category.checklistEmpty}" 
 						inmediate="true"
@@ -61,8 +62,9 @@
 					<aon:commandButton id="save"
 						value="#{bundle.aon_save}"
 						action="link_category_list" 
-						actionListener="#{generator_config.onSaveLinkConfig}"
-						styleClass="aon-content-toolbar-item aon-icon-accept" />
+						styleClass="aon-content-toolbar-item aon-icon-accept">
+						<aon:actionListener method="#{generator_config.onSaveLinkConfig}" />
+					</aon:commandButton>
 
 					
 					<aon:dataTable id="dataTable" value="#{link_category.model}" var="to"

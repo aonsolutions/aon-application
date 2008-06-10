@@ -28,10 +28,12 @@
 						
 					<!-- start toolbar navigation -->
 					<aon:div styleClass="aon-finding-toolbar-item-group">
-						<h:commandButton id="reset" value="#{bundle.aon_reset}"
-							action="section_form" actionListener="#{section.onReset}"
+						<aon:commandButton id="reset" value="#{bundle.aon_reset}"
+							action="section_form" 
 							styleClass="aon-finding-toolbar-item aon-icon-reset"
-							accesskey="#{bundle.aon_key_new}"/>
+							accesskey="#{bundle.aon_key_new}">
+							<aon:actionListener method="#{section.onReset}" />
+						</aon:commandButton>
 						<aon:confirmButton id="remove"
 							value="#{bundle.aon_remove}" rendered="#{!section.checklistEmpty}" inmediate="true"
 							confirmTitle="Confirmation Dialog" confirmMessage="#{bundle.aon_remove_confirm}"

@@ -33,17 +33,19 @@
 					<aon:div styleClass="aon-finding-toolbar-item-group">
 						<aon:commandButton id="reset" value="#{bundle.aon_reset}"
 							action="bulletin_form"
-							actionListener="#{bulletin.onReset}" 
 							rendered="#{!bulletin.new}"
 							styleClass="aon-finding-toolbar-item aon-icon-reset"
-							accesskey="#{bundle.aon_key_new}" />
+							accesskey="#{bundle.aon_key_new}">
+							<aon:actionListener method="#{bulletin.onReset}" />
+						</aon:commandButton>
 						<aon:commandButton id="save"
 							value="#{bundle.aon_save}" 
 							rendered="#{bulletin.to!=null or bulletin.new}"
 							action="bulletin_form"
-							actionListener="#{bulletin.onAccept}"
 							styleClass="aon-finding-toolbar-item aon-icon-accept"
-							accesskey="#{bundle.aon_key_save}"/>
+							accesskey="#{bundle.aon_key_save}">
+							<aon:actionListener method="#{bulletin.onAccept}" />
+						</aon:commandButton>
 						<aon:confirmButton id="remove"
 							value="#{bundle.aon_remove}" rendered="#{!bulletin.new}" 
 							immediate="true"
@@ -55,10 +57,11 @@
 							accesskey="#{bundle.aon_key_remove}"/>
 						<aon:commandButton id="exit" value="#{bundle.aon_close}"
 							action="bulletin_list" 
-							actionListener="#{bulletin.onCancel}"
 							immediate="#{true}"
 							styleClass="aon-finding-toolbar-item aon-icon-cancel"
-							accesskey="#{bundle.aon_key_close}"/>
+							accesskey="#{bundle.aon_key_close}">
+							<aon:actionListener method="#{bulletin.onCancel}" />
+						</aon:commandButton>
 				    </aon:div>
 					
 					<!-- end toolbar navigation -->
@@ -147,10 +150,11 @@
 										<!-- start toolbar navigation -->
 										<aon:div styleClass="aon-finding-toolbar-item-group">
 											<aon:commandButton id="reset_list" value="#{bundle.aon_reset}"
-												actionListener="#{bulletin_article.onReset}"
 												styleClass="aon-finding-toolbar-item aon-icon-reset"
 												accesskey="#{bundle.aon_key_new}"
-												reRender="detail_list_panel" />
+												reRender="detail_list_panel">
+												<aon:actionListener method="#{bulletin_article.onReset}" />
+											</aon:commandButton>
 											<aon:confirmButton id="remove_list"
 												value="#{bundle.aon_remove}" 
 												rendered="#{!bulletin_article.checklistEmpty and bulletin_article.to==null}" 
@@ -167,7 +171,8 @@
 									</aon:panelGrid>
 								</aon:div>
 						
-								<h:dataTable id="gridDataTable" value="#{bulletin_article.model}" var="to"
+								<aon:dataTable id="gridDataTable" 
+									value="#{bulletin_article.model}" var="to"
 									rows="#{bulletin_article.pageLimit}"
 									styleClass="dr-table rich-table aon-editDataTable"
 									headerClass="dr-table-subheader rich-table-subheader aon-editDataTable-header"
@@ -200,8 +205,8 @@
 													value="" immediate="true"
 													reRender="gridDataTable,gridToolbar"
 													rendered="#{!bulletin_article.new}"
-													actionListener="#{bulletin_article.onReset}"
 													accesskey="#{bundle.aon_key_new_line}">
+													<aon:actionListener method="#{bulletin_article.onReset}" />
 												</aon:commandButton>
 											</aon:div>
 										</f:facet>
@@ -270,18 +275,21 @@
 											<aon:commandButton id="lineAccept"
 												title="[#{bundle.aon_accept}]"
 												styleClass="aon-editDataTable-button aon-icon-accept"
-												reRender="gridDataTable,gridToolbar"
-												actionListener="#{bulletin_article.onAccept}" />
+												reRender="gridDataTable,gridToolbar">
+												<aon:actionListener method="#{bulletin_article.onAccept}" />
+											</aon:commandButton>
 											<aon:commandButton id="lineCancel"
 												title="[#{bundle.aon_cancel}]"
 												styleClass="aon-editDataTable-button aon-icon-cancel"
-												reRender="gridDataTable,gridToolbar" immediate="true"
-												actionListener="#{bulletin_article.onCancel}" />
+												reRender="gridDataTable,gridToolbar" immediate="true">
+												<aon:actionListener method="#{bulletin_article.onCancel}" />
+											</aon:commandButton>
 											<aon:commandButton id="lineRemove"
 												title="[#{bundle.aon_remove}]"
 												styleClass="aon-editDataTable-button aon-icon-delete"
-												reRender="gridDataTable,gridToolbar" immediate="true"
-												actionListener="#{bulletin_article.onRemove}" />
+												reRender="gridDataTable,gridToolbar" immediate="true">
+												<aon:actionListener method="#{bulletin_article.onRemove}" />
+											</aon:commandButton>
 										</aon:div>
 										<f:facet name="footer">
 											<aon:div rendered="#{bulletin_article.new}">
@@ -289,18 +297,20 @@
 												<aon:commandButton id="newAccept"
 													title="[#{bundle.aon_accept}]"
 													styleClass="aon-editDataTable-button aon-icon-accept"
-													reRender="gridDataTable,gridToolbar"
-													actionListener="#{bulletin_article.onAccept}" />
+													reRender="gridDataTable,gridToolbar">
+													<aon:actionListener method="#{bulletin_article.onAccept}" />
+												</aon:commandButton>
 												<aon:commandButton id="newCancel"
 													title="[#{bundle.aon_cancel}]"
 													styleClass="aon-editDataTable-button aon-icon-cancel"
-													reRender="gridDataTable,gridToolbar" immediate="true"
-													actionListener="#{bulletin_article.onCancel}" />
+													reRender="gridDataTable,gridToolbar" immediate="true">
+													<aon:actionListener method="#{bulletin_article.onCancel}" />
+												</aon:commandButton>
 											</aon:div>
 										</f:facet>
 									</aon:column>
 
-								</h:dataTable>						
+								</aon:dataTable>						
 							</rich:panel>
 						</aon:panelTab>
 					</aon:panelTabSet>
