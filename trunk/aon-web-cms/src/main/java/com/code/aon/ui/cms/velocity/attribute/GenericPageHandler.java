@@ -1,10 +1,13 @@
 package com.code.aon.ui.cms.velocity.attribute;
 
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Locale;
 
 import com.code.aon.cms.GenericPageDetail;
+import com.code.aon.ui.cms.util.ControllerUtil;
 import com.code.aon.ui.cms.velocity.MenuGenerator;
 
 public class GenericPageHandler {
@@ -20,6 +23,8 @@ public class GenericPageHandler {
 	private String description;
 	
 	private String keywords;
+	
+	private SimpleDateFormat formatter;
 
 	public GenericPageHandler (GenericPageDetail gpd) {
 		title = gpd.getTitle();
@@ -29,6 +34,12 @@ public class GenericPageHandler {
 		date = gpd.getGeneric_page().getCreate_date();
 		menu = null;
 		if (gpd.getGeneric_page().getMenu() > 0) menu = MenuGenerator.getMenuOptionList(gpd.getGeneric_page().getMenu());
+		
+		Locale locale = ControllerUtil.getCurrentLanguage().getLanguage().getLocale();
+		if ("eu".equals(locale.getLanguage()))
+			formatter = new SimpleDateFormat ("dd/MM/yy");
+		else
+			formatter = (SimpleDateFormat)SimpleDateFormat.getDateInstance(DateFormat.SHORT,locale);
 	}
 
 	public String getTitle() {
@@ -40,7 +51,7 @@ public class GenericPageHandler {
 	}
 
 	public String getDate() {
-        return new SimpleDateFormat("dd/MM/yyyy").format(date);
+        return formatter.format(date);
 	}
 
 	public ArrayList<MenuOptionHandler> getMenu() {
