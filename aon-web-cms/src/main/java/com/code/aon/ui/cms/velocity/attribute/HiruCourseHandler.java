@@ -1,12 +1,14 @@
 package com.code.aon.ui.cms.velocity.attribute;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Locale;
 
 import com.code.aon.cms.HiruCourseDetail;
 import com.code.aon.cms.enumeration.HiruCourseSubject;
 import com.code.aon.cms.enumeration.Templates;
-import com.code.aon.ui.cms.velocity.ArticleGenerator;
-import com.code.aon.ui.cms.velocity.HiruGenerator;
+import com.code.aon.ui.cms.util.ControllerUtil;
 
 public class HiruCourseHandler {
 
@@ -44,6 +46,8 @@ public class HiruCourseHandler {
 
 	private String numberParticipant;	
 	
+	private SimpleDateFormat formatter;
+	
 	public HiruCourseHandler (HiruCourseDetail hcd) {
 		this.alias = hcd.getHiruCourse().getAlias();
 		this.initDate = hcd.getHiruCourse().getInitDate();
@@ -64,18 +68,24 @@ public class HiruCourseHandler {
 		
 		this.local_url = Templates.HIRU_COURSE.getHtmlName();
 		this.local_url = this.local_url.replaceAll("%NAME%", this.alias);
+		
+		Locale locale = ControllerUtil.getCurrentLanguage().getLanguage().getLocale();
+		if ("eu".equals(locale.getLanguage()))
+			formatter = new SimpleDateFormat ("dd/MM/yy");
+		else
+			formatter = (SimpleDateFormat)SimpleDateFormat.getDateInstance(DateFormat.SHORT,locale);
 	}
 
 	public String getAlias() {
 		return alias;
 	}
 
-	public Date getInitDate() {
-		return initDate;
+	public String getInitDate_short() {
+		return formatter.format(initDate);
 	}
 
-	public Date getEndDate() {
-		return endDate;
+	public String getEndDate_short() {
+		return formatter.format(endDate);
 	}
 
 	public String getHiruPlace() {
@@ -133,5 +143,5 @@ public class HiruCourseHandler {
 	public String getLocal_url() {
 		return local_url;
 	}
-	
+
 }

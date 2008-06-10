@@ -1,9 +1,10 @@
 package com.code.aon.ui.cms.velocity.attribute;
 
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 import com.code.aon.cms.Article;
 import com.code.aon.cms.ArticleDetail;
@@ -52,6 +53,8 @@ public class ArticleHandler {
 
 	private ArrayList<ArticleDocumentHandler> documents;
 	
+	private SimpleDateFormat formatter;
+
 	public ArticleHandler (ArticleDetail ad) {
 		this.title = ad.getTitle();
 		this.subtitle = ad.getSubtitle();
@@ -63,7 +66,13 @@ public class ArticleHandler {
 		this.image = this.article.getImage(); 
 		this.thumbnail = this.article.getThumbnail();
 		
-		SimpleDateFormat formatter = new SimpleDateFormat ("dd/MM/yyyy");
+		
+		Locale locale = ControllerUtil.getCurrentLanguage().getLanguage().getLocale();
+		if ("eu".equals(locale.getLanguage()))
+			formatter = new SimpleDateFormat ("dd/MM/yy");
+		else
+			formatter = (SimpleDateFormat)SimpleDateFormat.getDateInstance(DateFormat.SHORT,locale);
+
 		this.publishDate = "";
 		if (this.article.getPublishDate()!=null)
 			this.publishDate = formatter.format(this.article.getPublishDate());
