@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<dao>
+	<bean class="com.code.gbp.Offer" sqlName="offer">
+		<alias names="additionalConditions,campaign_id,campaign_code,centralized,costType,defectiveGoods,deliveryDate,id,offerDate,office_id,price,quality,status,stockProvision,supplier_id" />
+		<hibernate names="additionalConditions,campaign.id,campaign.code,centralized,costType,defectiveGoods,deliveryDate,id,offerDate,office.id,price,quality,status,stockProvision,supplier.id" />
+	</bean>
+	
+	<bean class="com.code.gbp.ProFormaInvoice" sqlName="proforma_invoice">
+		<alias names="amount,campaign_id,campaign_code,centralized,costType,id,invoiceDate,number,office_id,status,supplier_id" />
+		<hibernate names="amount,campaign.id,campaign.code,centralized,costType,id,invoiceDate,number,office.id,status,supplier.id" />
+	</bean>
+
+	<bean class="com.code.gbp.CampaignSupplier" sqlName="campaign_supplier">
+		<alias names="campaign_id,campaign_code,campaign_startDate,campaign_status,id,supplier_id,supplier_name" />
+		<hibernate names="campaign.id,campaign.code,campaign.startDate,campaign.status,id,supplier.id,supplier.name" />
+	</bean>
+</dao>

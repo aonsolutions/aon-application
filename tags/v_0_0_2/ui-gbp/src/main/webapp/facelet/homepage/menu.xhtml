@@ -1,0 +1,60 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:aon="http://www.code.es/aon-rich-components">
+<body>
+
+<ui:composition>
+
+	<aon:panelGroup>
+		<aon:div>
+			<aon:panelGroup>
+				<!-- main menu declaration  -->
+				<aon:form>
+					<aon:menuBar id="menu">
+						<aon:dropDownMenu id="config"
+							value="#{menuBundle.gbp_config}" submitMode="ajax"
+							event="onclick">
+							<aon:menuItem id="incidence_type"
+								value="#{menuBundle.gbp_incidence_type}"
+								action="incidence_type_list" />
+							<aon:menuItem id="office"
+								value="#{menuBundle.gbp_office}"
+								action="office_list" />
+							<aon:menuItem id="requirement"
+								value="#{menuBundle.gbp_requirement}"
+								action="requirement_list" />
+						</aon:dropDownMenu>
+						<aon:menuItem id="supplier"
+							styleClass="aon-dropDownMenu-item-root"
+							iconClass="aon-menuItem-no-iconClass"
+							value="#{menuBundle.gbp_supplier}"
+							action="supplier_list" />
+						<aon:menuItem id="campaign" 
+							styleClass="aon-dropDownMenu-item-root"
+							iconClass="aon-menuItem-no-iconClass"
+							value="#{menuBundle.gbp_campaign}"
+							action="campaign_list" />
+						<aon:menuItem id="offer" 
+							styleClass="aon-dropDownMenu-item-root"
+							iconClass="aon-menuItem-no-iconClass"
+							value="#{menuBundle.gbp_offer}"
+							actionListener="#{offer.onInitialModel}"
+							action="offer_list" />
+						<aon:menuItem id="pro_forma" 
+							styleClass="aon-dropDownMenu-item-root"
+							iconClass="aon-menuItem-no-iconClass"
+							value="#{menuBundle.gbp_pro_forma}"
+							actionListener="#{proForma.onInitialModel}"
+							action="pro_forma_list" />
+					</aon:menuBar>
+				</aon:form>
+			</aon:panelGroup>
+		</aon:div>
+	</aon:panelGroup>
+			
+</ui:composition>
+
+</body>
+</html>
