@@ -2,6 +2,7 @@ package com.code.aon.ui.common.controller;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
+import java.io.Serializable;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
@@ -17,7 +18,9 @@ import org.apache.commons.lang.StringEscapeUtils;
 /**
  * The Class ExceptionBean handles the exceptions ocurred within the application while it's running.
  */
-public class ExceptionBean {
+public class ExceptionBean implements Serializable {
+
+	private static final long serialVersionUID = 2507626847725395948L;
 
 	/** The cause of the generated exception */
 	private Throwable cause;

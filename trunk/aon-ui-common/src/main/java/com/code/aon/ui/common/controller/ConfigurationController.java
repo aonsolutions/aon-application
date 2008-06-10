@@ -1,6 +1,7 @@
 package com.code.aon.ui.common.controller;
 
 import java.io.InputStream;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -17,8 +18,10 @@ import javax.faces.context.FacesContext;
  * The Class ConfigurationController is used to set some default configurable
  * parameters of the application.
  */
-public class ConfigurationController {
+public class ConfigurationController implements Serializable {
 	
+	private static final long serialVersionUID = -1159615075844874762L;
+
 	private static final Logger LOGGER = Logger.getLogger(ConfigurationController.class.getName());
 
 	/** The application logo context relative path. */
