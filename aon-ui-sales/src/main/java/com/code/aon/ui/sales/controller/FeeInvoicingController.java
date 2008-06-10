@@ -3,11 +3,9 @@ package com.code.aon.ui.sales.controller;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
@@ -19,11 +17,6 @@ import com.code.aon.account.Account;
 import com.code.aon.account.AccountEntry;
 import com.code.aon.account.DefaultAccounts;
 import com.code.aon.account.Period;
-import com.code.aon.account.bridge.AccountEntryInvoice;
-import com.code.aon.account.bridge.InvoiceDetailAccount;
-import com.code.aon.account.bridge.ProductAccount;
-import com.code.aon.account.bridge.dao.IAccountBridgeAlias;
-import com.code.aon.account.bridge.enumeration.ProductAccountType;
 import com.code.aon.account.bridge.util.AccountUtil;
 import com.code.aon.account.bridge.writer.AccountEntryInvoiceWriter;
 import com.code.aon.account.dao.IAccountAlias;
@@ -41,8 +34,6 @@ import com.code.aon.customer.dao.ICustomerAlias;
 import com.code.aon.finance.Finance;
 import com.code.aon.finance.FinanceTracking;
 import com.code.aon.finance.Invoice;
-import com.code.aon.finance.InvoiceAddress;
-import com.code.aon.finance.InvoiceDetail;
 import com.code.aon.finance.dao.IFinanceAlias;
 import com.code.aon.finance.enumeration.InvoiceStatus;
 import com.code.aon.finance.enumeration.InvoiceType;
@@ -73,7 +64,6 @@ import com.code.aon.ui.util.AonUtil;
 
 public class FeeInvoicingController extends BasicController {
 	
-	private static final String FEE_INVOICING_ADDRESS_CONTROLLER_NAME = "feeInvoicingAddress";
 	private static final String FEE_INVOICING_DETAIL_CONTROLLER_NAME = "feeInvoicingDetail";
 	private static final String FEE_FINANCE_CONTROLLER_NAME = "feeFinance";
 	private static final String MENU_MANAGER_NAME = "menuManager";
@@ -132,7 +122,6 @@ public class FeeInvoicingController extends BasicController {
 		IManagerBean invoiceBean = BeanManager.getManagerBean(Invoice.class);
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(invoiceBean.getFieldName(IFinanceAlias.INVOICE_SERIES), seriesId);
-		criteria.addEqualExpression(invoiceBean.getFieldName(IFinanceAlias.INVOICE_TYPE), InvoiceType.SALES);
 		Projection projection = Projection.max(invoiceBean.getFieldName(IFinanceAlias.INVOICE_NUMBER));
 		Object value = invoiceBean.getUniqueResult(projection, criteria);
 		if(value != null){
@@ -184,7 +173,8 @@ public class FeeInvoicingController extends BasicController {
 	}
 
 	@SuppressWarnings({"unused","unchecked"})
-	public void onInvoice(ActionEvent event) throws InvoicingException, ManagerBeanException, ExpressionException {
+	public void onInvoice(ActionEvent event) throws InvoicingException,
+			ManagerBeanException, ExpressionException {
 	    IManagerBean periodBean = BeanManager.getManagerBean(Period.class);
         Criteria criteria = new Criteria();
         criteria.addLessThanOrEqualExpression(periodBean.getFieldName(IAccountAlias.PERIOD_INITIATION_DATE), invoicingParams.getInvoiceDate());
@@ -231,47 +221,20 @@ public class FeeInvoicingController extends BasicController {
 	}
 	
 	@SuppressWarnings("unchecked")
-	public void loadAddresses(Integer id) throws ManagerBeanException {
+	private void loadAddresses(Integer id) throws ManagerBeanException {
 		List<SelectItem> addresses = new LinkedList<SelectItem>();
-		if (id != null) {
-			IManagerBean rAddressBean = BeanManager.getManagerBean(RegistryAddress.class);
-			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(rAddressBean.getFieldName(IRegistryAlias.REGISTRY_ADDRESS_REGISTRY_ID), id);
-			Iterator iter = rAddressBean.getList(criteria).iterator();
-			while(iter.hasNext()){
-				RegistryAddress address = (RegistryAddress)iter.next();
-				String addressLabel = address.getAddress() + " " + address.getAddress2() + " " + address.getAddress3();
-				addressLabel = ((addressLabel.length()>30)?addressLabel.substring(0,27)+"...":addressLabel) + " - " + address.getCity();
-				addressLabel = ((addressLabel.length()>48)?addressLabel.substring(0,45)+"...":addressLabel);
-				SelectItem item = new SelectItem(address.getId(), addressLabel);
-				addresses.add(item);
-			}
+		IManagerBean rAddressBean = BeanManager.getManagerBean(RegistryAddress.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(rAddressBean.getFieldName(IRegistryAlias.REGISTRY_ADDRESS_REGISTRY_ID), id);
+		Iterator iter = rAddressBean.getList(criteria).iterator();
+		while(iter.hasNext()){
+			RegistryAddress address = (RegistryAddress)iter.next();
+			SelectItem item = new SelectItem(address.getId(), address.getAddress() + " " + address.getAddress2() + " " + address.getAddress3());
+			addresses.add(item);
 		}
 		this.addresses = addresses;
 	}
-
-	public String getAddress() throws ManagerBeanException {
-		RegistryAddress rAddress = ((Invoice)this.getTo()).getRegistryAddress();
-		String address = (rAddress!=null)?rAddress.getAddress()+" "+rAddress.getAddress2()+" "+rAddress.getAddress3():"";
-		BasicController addressController = (BasicController)AonUtil.getController(FEE_INVOICING_ADDRESS_CONTROLLER_NAME);
-		if (addressController.getTo() != null && ((InvoiceAddress)addressController.getTo()).getId() != null) {
-			InvoiceAddress invoiceAddress = (InvoiceAddress)addressController.getTo();
-			address = invoiceAddress.getAddress() + " " + invoiceAddress.getAddress2();
-		}
-		return address;
-	}
-
-	public String getCity() throws ManagerBeanException {
-		RegistryAddress rAddress = ((Invoice)this.getTo()).getRegistryAddress();
-		String city = (rAddress!=null)?rAddress.getCity():"";
-		BasicController addressController = (BasicController)AonUtil.getController(FEE_INVOICING_ADDRESS_CONTROLLER_NAME);
-		if (addressController.getTo() != null && ((InvoiceAddress)addressController.getTo()).getId() != null) {
-			InvoiceAddress invoiceAddress = (InvoiceAddress)addressController.getTo();
-			city = invoiceAddress.getCity();
-		}
-		return city;
-	}
-
+	
 	@SuppressWarnings("unchecked")
 	public void customerData(ValueChangeEvent event) throws ManagerBeanException, ExpressionException{
 		if(event.getNewValue() != null && !event.getNewValue().equals("")){
@@ -379,7 +342,7 @@ public class FeeInvoicingController extends BasicController {
 	private void updateBreadCrumb() {
 		MenuManager menuManager = (MenuManager)AonUtil.getRegisteredBean(MENU_MANAGER_NAME);
         menuManager.setCurrentMenu("AON_APP");
-        menuManager.getCurrentMenuModel().setSelectedNode(menuManager.getCurrentMenuModel().getOptionByKey("aon_invoice_management").getId());
+        menuManager.getCurrentMenuModel().setSelectedNode("root.aon_administrative_management.aon_invoice_management");
     }
 	
 	public boolean isRemovable(){
@@ -407,7 +370,7 @@ public class FeeInvoicingController extends BasicController {
 					Finance finance = (Finance)iter.next();
 					financeBean.remove(finance);
 				}
-				getFinanceGenerator().generateFinances(invoice, invoice.getRegistry(), getPriceStrategy().getTotalPrice(invoice, invoice));
+				getFinanceGenerator().generateFinances(invoice,invoice.getRegistry(), getPriceStrategy().getTotalPrice(invoice, invoice));
 				feeFinanceController.onSearch(null);
 			}
 		} catch (ManagerBeanException e) {
@@ -439,7 +402,6 @@ public class FeeInvoicingController extends BasicController {
 	@SuppressWarnings("unused")
 	public void onUnrecordInvoice(ActionEvent event) throws ManagerBeanException, ExpressionException{
 		Invoice invoice = (Invoice)this.getTo();
-		removeInvoiceDetailAccount(invoice);
 		getAccountEntryInvoiceWriter().unrecordInvoice(invoice);
 		IManagerBean invoiceBean = BeanManager.getManagerBean(Invoice.class);
 		invoice.setStatus(InvoiceStatus.PENDING);
@@ -450,28 +412,16 @@ public class FeeInvoicingController extends BasicController {
 	}
 
 	@SuppressWarnings("unchecked")
-	private void removeInvoiceDetailAccount(Invoice invoice) throws ManagerBeanException {
-		IManagerBean invoiceAccountBean = BeanManager.getManagerBean(InvoiceDetailAccount.class);
-		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(invoiceAccountBean.getFieldName(IAccountBridgeAlias.INVOICE_DETAIL_ACCOUNT_INVOICE_DETAIL_INVOICE_ID), invoice.getId());
-		Iterator iterator = invoiceAccountBean.getList(criteria).iterator();
-		while (iterator.hasNext()) {
-			InvoiceDetailAccount invoiceDetailAccount = (InvoiceDetailAccount)iterator.next();
-			invoiceAccountBean.remove(invoiceDetailAccount);
-		}
-	}
-
-	@SuppressWarnings("unchecked")
 	private void recordInvoice(Invoice invoice) throws ManagerBeanException, ExpressionException {
 		AccountEntry entry = new AccountEntry();
 		entry.setAccountPeriod(AccountUtil.obtainPeriod(invoice.getIssueDate()).getId());
 		entry.setEntryDate(invoice.getIssueDate());
 		entry.setJournal(null);
-		entry.setType(AccountEntryType.SALES_INVOICE);
+		entry.setType((invoice.getType().equals(InvoiceType.SALES)?AccountEntryType.SALES_INVOICE:AccountEntryType.PURCHASE_INVOICE));
 		entry.setSecurityLevel(invoice.getSecurityLevel());
 		entry = getAccountEntryInvoiceWriter().insertorUpdateAccountEntry(entry, true);
 		List taxBreakDown = getPriceStrategy().getTaxBreakDowns(invoice, invoice);
-		getAccountEntryInvoiceWriter().insertEntryDetails(entry, AccountUtil.obtainCustomerAccount(invoice.getRegistry()), invoice.getSeries(), invoice.getNumber(), getPriceStrategy().getTotalPrice(invoice, invoice), getRetentionTotal(taxBreakDown), getTaxQuota(taxBreakDown), obtainBasesPerAccount(invoice));
+		getAccountEntryInvoiceWriter().insertEntryDetails(entry, AccountUtil.obtainCustomerAccount(invoice.getRegistry()), obtainBalancingAccount(invoice), invoice.getSeries(), invoice.getNumber(), getPriceStrategy().getTotalPrice(invoice, invoice), getRetentionTotal(taxBreakDown), getTaxQuota(taxBreakDown), getPriceStrategy().getTaxableBase(invoice));
 		getAccountEntryInvoiceWriter().insertAccountEntryInvoice(entry, invoice);
 		IManagerBean invoiceBean = BeanManager.getManagerBean(Invoice.class);
 		invoice.setStatus(InvoiceStatus.SCORED);
@@ -513,44 +463,13 @@ public class FeeInvoicingController extends BasicController {
 		}
 		return retentionQuota;
 	}
-
+	
 	@SuppressWarnings("unchecked")
-	private Map obtainBasesPerAccount(Invoice invoice) throws ManagerBeanException {
-		Map basesPerAccount = new HashMap();
-		IManagerBean invoiceDetailBean = BeanManager.getManagerBean(InvoiceDetail.class);
-		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(invoiceDetailBean.getFieldName(IFinanceAlias.INVOICE_DETAIL_INVOICE_ID), invoice.getId());
-		Iterator iterator = invoiceDetailBean.getList(criteria).iterator();
-		while (iterator.hasNext()) {
-			InvoiceDetail invoiceDetail = (InvoiceDetail)iterator.next();
-			Account account = null;
-			if (invoiceDetail.getItem() != null) {
-				Integer productId = invoiceDetail.getItem().getProduct().getId();
-				IManagerBean productAccountBean = BeanManager.getManagerBean(ProductAccount.class);
-				criteria = new Criteria();
-				criteria.addEqualExpression(productAccountBean.getFieldName(IAccountBridgeAlias.PRODUCT_ACCOUNT_PRODUCT_ID), productId);
-				criteria.addEqualExpression(productAccountBean.getFieldName(IAccountBridgeAlias.PRODUCT_ACCOUNT_TYPE), ProductAccountType.SALES);
-				Iterator iter = productAccountBean.getList(criteria).iterator();
-				if (iter.hasNext()) {
-					account = ((ProductAccount)iter.next()).getAccount();
-				}
-			}
-			account = (account==null)?account = obtainDefaultAccount():account;
-
-			double base = invoiceDetail.getTaxableBase();
-			base += (basesPerAccount.containsKey(account))?((Double)basesPerAccount.get(account)).doubleValue():0;
-			basesPerAccount.put(account, new Double(base));
-
-			insertInvoiceDetailAccount(invoiceDetail, account);
-		}
-		return basesPerAccount;
-	}
-
-	@SuppressWarnings("unchecked")
-	private Account obtainDefaultAccount() throws ManagerBeanException {
+	private Account obtainBalancingAccount(Invoice invoice) throws ManagerBeanException {
+		String paramName = (invoice.getType().equals(InvoiceType.SALES)?DefaultAccounts.SALES_ACCOUNT:DefaultAccounts.PURCHASE_ACCOUNT);
 		IManagerBean appParamsBean = BeanManager.getManagerBean(ApplicationParameter.class);
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(appParamsBean.getFieldName(IConfigAlias.APPLICATION_PARAMETER_NAME), DefaultAccounts.SALES_ACCOUNT);
+		criteria.addEqualExpression(appParamsBean.getFieldName(IConfigAlias.APPLICATION_PARAMETER_NAME), paramName);
 		Iterator iter = appParamsBean.getList(criteria).iterator();
 		if(iter.hasNext()){
 			ApplicationParameter param = (ApplicationParameter)iter.next();
@@ -564,15 +483,7 @@ public class FeeInvoicingController extends BasicController {
 		}
 		return null;
 	}
-
-	private void insertInvoiceDetailAccount(InvoiceDetail invoiceDetail, Account account) throws ManagerBeanException {
-		IManagerBean invoiceAccountBean = BeanManager.getManagerBean(InvoiceDetailAccount.class);
-		InvoiceDetailAccount invoiceDetailAccount = new InvoiceDetailAccount();
-		invoiceDetailAccount.setInvoiceDetail(invoiceDetail);
-		invoiceDetailAccount.setAccount(account);
-		invoiceAccountBean.insert(invoiceDetailAccount);
-	}
-
+	
 	public boolean isRecorded(){
 		Invoice invoice = (Invoice)this.getTo();
 		if(invoice.getStatus() != null){
@@ -580,21 +491,4 @@ public class FeeInvoicingController extends BasicController {
 		}
 		return false;
 	}
-
-	@SuppressWarnings("unchecked")
-	public Integer getAccountEntryId() throws ManagerBeanException {
-    	Invoice invoice = (Invoice)this.getTo();
-		if (invoice != null && invoice.getId() != null) {
-			IManagerBean accountEntryInvoiceBean = BeanManager.getManagerBean(AccountEntryInvoice.class);
-			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(accountEntryInvoiceBean.getFieldName(IAccountBridgeAlias.ACCOUNT_ENTRY_INVOICE_INVOICE_ID), invoice.getId());
-			Iterator iterator = accountEntryInvoiceBean.getList(criteria).iterator();
-			if (iterator.hasNext()) {
-				AccountEntryInvoice accountEntryInvoice = (AccountEntryInvoice)iterator.next();
-				return accountEntryInvoice.getAccountEntry().getId();
-			}
-		}
-    	return null;
-	}
-
 }
