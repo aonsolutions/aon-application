@@ -32,6 +32,7 @@ import com.code.aon.ui.cms.util.ControllerUtil;
 import com.code.aon.ui.cms.util.VelocityUtil;
 import com.code.aon.ui.cms.velocity.attribute.ArticleCategoryHandler;
 import com.code.aon.ui.cms.velocity.attribute.ArticleHandler;
+import com.code.aon.ui.cms.velocity.attribute.DiaryCalendarHandler;
 import com.code.aon.ui.cms.velocity.attribute.DiaryCategoriesHandler;
 import com.code.aon.ui.cms.velocity.attribute.NextArticlesHandler;
 import com.code.aon.ui.cms.velocity.utils.MonthContent;
@@ -482,7 +483,8 @@ public class ArticleCalendarGenerator extends Generator {
 					}
 				}
 			}
-			return monthsList;
+			DiaryCalendarHandler diaryCalendarHandler = new DiaryCalendarHandler(monthsList);
+			return diaryCalendarHandler;
 		} catch (ManagerBeanException e) {
 			VelocityUtil.addMessage(e.getMessage(), VelocityUtil.ERROR);;
 		} finally {
