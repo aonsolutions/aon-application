@@ -29,6 +29,7 @@ public class FBatchPrinter implements ICollectionProvider {
 				FinanceBatch fBatch = (FinanceBatch)iter.next();
 				ReportFinanceBatch rFBatch = new ReportFinanceBatch();
 				rFBatch.setFinanceBatch(fBatch);
+				rFBatch.setRegs(fBatchController.getFinanceBatchTotalDetails(fBatch));
 				rFBatch.setTotal(fBatchController.getFinanceBatchTotalAmount(fBatch));
 				reportFBatchList.add(rFBatch);
 			}
