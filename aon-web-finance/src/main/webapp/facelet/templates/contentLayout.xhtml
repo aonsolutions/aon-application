@@ -18,14 +18,9 @@
 	<meta http-equiv="Expires" content="0" />
 	<meta http-equiv="Pragma" content="no-cache" />
 	<meta http-equiv="Cache-Control" content="no-store" />
-<!--
-	<t:stylesheet path="/css/aon.css" />
-	<t:stylesheet path="/css/layout.css" />
-  -->
-  	<c:forEach items="#{aonConfiguration.styleSheets}" var="styleSheet">	
+	<c:forEach items="#{aonConfiguration.styleSheets}" var="styleSheet">	
 		<t:stylesheet path="#{styleSheet}" />
 	</c:forEach>
-  	
 	<script type='text/javascript' src="${facesContext.externalContext.requestContextPath}/js/Accelerators.js">
 		// nothing
 	</script>
@@ -38,23 +33,24 @@
 	<ui:insert name="head"/>
 	</head>
   <body id="aon-body" onload="windowLoaded();" onresize="aonResizeBody();">
-	<t:div id="aon-content-container">
-		<ui:insert name="sidebar" />
-		<t:div styleClass="aon-content-region aon-content-region-#{treeMenu.hidden ? 'expanded' : 'contrated'}">
-			<ui:insert name="header" />
-			<t:div>
-					<t:div styleClass="aon-errors" id="aon-errors">
-						<t:messages showSummary="false" showDetail="true"
-						errorClass="aon-error-message"
-						fatalClass="aon-fatal-error-message"
-						infoClass="aon-info-message"
-						replaceIdWithLabel="true"
-						/>
+		<t:div id="aon-content-container" styleClass="aon-central-content">
+			<t:div styleClass="aon-content-container-internal">
+				<ui:insert name="sidebar" />
+				<t:div styleClass="aon-content-region aon-content-region-#{treeMenu.hidden ? 'expanded' : 'contrated'}">
+					<ui:insert name="header" />
+					<t:div>
+						<t:div styleClass="aon-errors" id="aon-errors" forceId="#{true}">
+							<t:messages showSummary="false" showDetail="true" replaceIdWithLabel="true"
+								errorClass="aon-error-message"
+								fatalClass="aon-fatal-error-message"
+								infoClass="aon-info-message"
+							/>
+						</t:div>
+						<ui:insert name="content" />
+					</t:div>
 				</t:div>
-				<ui:insert name="content" />
-			</t:div>
+			</t:div>				
 		</t:div>
-	</t:div>
 	</body>
 </f:view>
 </html>
