@@ -14,16 +14,16 @@
 					columnClasses="aon-finding-title,aon-finding-subtitle,aon-finding-toolbar">
 
 					<aon:div styleClass="aon-finding-title-internal">
-						<aon:outputText value="#{menuBundle.gbp_campaign}" />
+						<aon:outputText value="#{menuBundle.gbp_campaign_evolution_report}" />
 					</aon:div>
 
 					<aon:div styleClass="aon-finding-subtitle-internal">
 						<aon:outputText
-							value="#{campaign.new?(bundle.aon_reset):(bundle.aon_editing)}" />
+							value="#{bundle.aon_search}" />
 					</aon:div>
 
 					<aon:div styleClass="aon-finding-toolbar-item-group">
-						<h:commandLink target="_blank" value="Listado"
+						<h:commandLink target="_blank" value="#{appBundle.gbp_print}"
 							styleClass="aon-finding-toolbar-item aon-icon-printer"
 							action="#{report.onExecute}">
 							<f:param name="reportKey" value="campaign_evolution_stat" />
