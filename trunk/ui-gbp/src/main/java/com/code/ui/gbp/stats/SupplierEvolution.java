@@ -12,6 +12,7 @@ public class SupplierEvolution {
 	private String campaignName;
 	private Double offer;
 	private Double invoice;
+	private Double invoiceTotal;
 	
 	public SupplierEvolution() {
 	}
@@ -22,13 +23,15 @@ public class SupplierEvolution {
 			Integer campaignId,
 			String campaignName,
 			Double offer,
-			Double invoice) {
+			Double invoice,
+			Double invoiceTotal) {
 		this.supplierId = supplierId;
 		this.supplierName = supplierName;
 		this.campaignId = campaignId;
 		this.campaignName = campaignName;
 		this.offer = offer;
 		this.invoice = invoice;
+		this.invoiceTotal = invoiceTotal;
 	}
 
 			
@@ -66,9 +69,19 @@ public class SupplierEvolution {
 		this.invoice = invoice;
 	}
 	
+	public Double getInvoiceTotal() {
+		return invoiceTotal;
+	}
+
+	public void setInvoiceTotal(Double invoiceTotal) {
+		this.invoiceTotal = invoiceTotal;
+	}
+
 	public double getPercent() {
-		double percent = (getInvoice() * 100 / getOffer()); 
-        return Math.round(100*percent) / 100;
+		double percent = (getInvoice() * 100 / getInvoiceTotal());
+		percent = Math.round(100*percent); 
+		percent = percent / 100; 
+        return percent;
 	}
 
 	public Integer getSupplierId() {

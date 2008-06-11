@@ -188,7 +188,7 @@
 			</band>
 			</groupHeader>
 			<groupFooter>
-			<band height="200"  isSplitAllowed="true" >
+			<band height="375"  isSplitAllowed="true" >
 				<textField isStretchWithOverflow="false" pattern="#,##0.00" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						x="290"
@@ -217,20 +217,6 @@
 					</textElement>
 				<textFieldExpression   class="java.lang.Double"><![CDATA[$V{supInvoiceTotal}]]></textFieldExpression>
 				</textField>
-				<textField isStretchWithOverflow="false" pattern="#,##0.00" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
-					<reportElement
-						x="449"
-						y="2"
-						width="80"
-						height="14"
-						key="textField-28"
-						isPrintWhenDetailOverflows="true"/>
-					<box topBorder="1Point" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" leftPadding="5" rightBorder="None" rightBorderColor="#000000" rightPadding="5" bottomBorder="Thin" bottomBorderColor="#999999"/>
-					<textElement textAlignment="Right" verticalAlignment="Middle">
-						<font size="8"/>
-					</textElement>
-				<textFieldExpression   class="java.lang.Double"><![CDATA[$V{supPercentTotal}]]></textFieldExpression>
-				</textField>
 				<textField isStretchWithOverflow="false" pattern="#,##0" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						x="0"
@@ -248,10 +234,10 @@
 				<bar3DChart>
 					<chart  hyperlinkTarget="Self" >
 					<reportElement
-						x="3"
-						y="40"
+						x="19"
+						y="27"
 						width="229"
-						height="137"
+						height="287"
 						key="element-1"/>
 					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
 						<chartLegend textColor="#000000" backgroundColor="#FFFFFF" >
@@ -261,8 +247,8 @@
 						<dataset resetType="Group" resetGroup="supplierGroup" >
 						</dataset>
 						<categorySeries>
-							<seriesExpression><![CDATA[$F{campaignId}]]></seriesExpression>
-							<categoryExpression><![CDATA[$F{supplierId}]]></categoryExpression>
+							<seriesExpression><![CDATA[$F{campaignName}]]></seriesExpression>
+							<categoryExpression><![CDATA[$F{supplierName}]]></categoryExpression>
 							<valueExpression><![CDATA[$F{invoice}]]></valueExpression>
 				<itemHyperlink >
 				</itemHyperlink>
@@ -283,10 +269,10 @@
 				<bar3DChart>
 					<chart  hyperlinkTarget="Self" >
 					<reportElement
-						x="267"
-						y="39"
+						x="283"
+						y="27"
 						width="229"
-						height="137"
+						height="287"
 						key="element-2"/>
 					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
 						<chartLegend textColor="#000000" backgroundColor="#FFFFFF" >
@@ -296,8 +282,8 @@
 						<dataset resetType="Group" resetGroup="supplierGroup" >
 						</dataset>
 						<categorySeries>
-							<seriesExpression><![CDATA[$F{campaignId}]]></seriesExpression>
-							<categoryExpression><![CDATA[$F{supplierId}]]></categoryExpression>
+							<seriesExpression><![CDATA[$F{campaignName}]]></seriesExpression>
+							<categoryExpression><![CDATA[$F{supplierName}]]></categoryExpression>
 							<valueExpression><![CDATA[$F{percent}]]></valueExpression>
 				<itemHyperlink >
 				</itemHyperlink>
@@ -318,9 +304,9 @@
 				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						mode="Opaque"
-						x="3"
-						y="176"
-						width="228"
+						x="19"
+						y="322"
+						width="229"
 						height="19"
 						forecolor="#000000"
 						backcolor="#FFFFFF"
@@ -334,9 +320,9 @@
 				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						mode="Opaque"
-						x="266"
-						y="176"
-						width="228"
+						x="283"
+						y="322"
+						width="229"
 						height="19"
 						forecolor="#000000"
 						backcolor="#FFFFFF"
@@ -346,6 +332,20 @@
 						<font pdfFontName="Helvetica-Bold" size="12" isBold="true" isUnderline="true"/>
 					</textElement>
 				<textFieldExpression   class="java.lang.String"><![CDATA[$R{gbp_supplier_evolution_report_graph2}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="false" pattern="#,##0.00" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="449"
+						y="2"
+						width="80"
+						height="14"
+						key="textField-35"
+						isPrintWhenDetailOverflows="true"/>
+					<box topBorder="1Point" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" leftPadding="5" rightBorder="None" rightBorderColor="#000000" rightPadding="5" bottomBorder="Thin" bottomBorderColor="#999999"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font size="8"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.Double"><![CDATA[]]></textFieldExpression>
 				</textField>
 			</band>
 			</groupFooter>
