@@ -676,6 +676,8 @@ public class AccountInvoiceController {
 				invoiceDetail.setSource(InvoiceSource.ACCOUNT);
 				invoiceDetail.setWorkPlace(obtainWorkPlace());
 				invoiceDetail.setTaxableBase(detail.getTaxableBase());
+				invoiceDetail.setPrice(detail.getTaxableBase());
+				invoiceDetail.setQuantity(1);
 				invoiceDetail = (InvoiceDetail) invoiceDetailBean.insert(invoiceDetail);
 				insertInvoiceTaxes(invoiceDetail, detail);
 				insertInvoiceAccounts(invoiceDetail, detail);
