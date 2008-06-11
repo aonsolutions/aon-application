@@ -129,3 +129,8 @@
 	font-weight:bold;
 	margin: 0px 10px 10px 10px;
  }
+
+.aon-dataList-scroll {
+	height:210px;
+	overflow:auto;
+}

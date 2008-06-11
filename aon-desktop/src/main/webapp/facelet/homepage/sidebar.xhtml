@@ -59,6 +59,14 @@
 
 			<aon:div styleClass="aon-sidebarIcons-icon">
 				<aon:commandLink 
+					actionListener="#{sms.reset}" action="sms" rendered="#{sms.roleSMSSender}">
+					<h:graphicImage url="/images/aon-icon-big-sms.png" />
+					<aon:div><aon:outputText value="#{appBundle.aon_desktop_sms}" /></aon:div>
+				</aon:commandLink>
+			</aon:div>
+
+			<aon:div styleClass="aon-sidebarIcons-icon">
+				<aon:commandLink 
 					actionListener="#{user.onSearch}" action="user"
 					rendered="#{desktop.roleManager}">
 					<h:graphicImage url="/images/aon-icon-big-users.png" />

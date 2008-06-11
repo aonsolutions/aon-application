@@ -13,6 +13,7 @@ import java.util.List;
 import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
 import javax.faces.model.ListDataModel;
+import javax.faces.model.SelectItem;
 import javax.servlet.http.HttpSession;
 
 import org.hibernate.Query;
@@ -49,16 +50,22 @@ import com.code.aon.ui.webmail.controller.WebMailController;
 
 public class DesktopController extends BasicController {
 	
-	private String NOTE_CONTROLLER_NAME = "note";
-    private String ALARM_CONTROLLER_NAME = "alarm";
-    private String NOTICE_CONTROLLER_NAME = "notice";
+	private static final String NOTE_CONTROLLER_NAME = "note";
+	private static final String ALARM_CONTROLLER_NAME = "alarm";
+    private static final String NOTICE_CONTROLLER_NAME = "notice";
 
+	private static final SelectItem NULL_SELECT_ITEM = new SelectItem(null, " ");	
+    
     private ListDataModel recentNoteModel;
     private ListDataModel todayAlarmModel;
     private ListDataModel recentAlarmModel;
     private ListDataModel ancientAlarmModel;
 
     private AonServer mail_server;
+    
+	public SelectItem getNullValue() {
+		return NULL_SELECT_ITEM;
+	}
     
     public DesktopController() {
 		super();
@@ -298,6 +305,22 @@ public class DesktopController extends BasicController {
         }
     }
 
+    @SuppressWarnings("unchecked")
+    public String getCompanyAlias() throws ManagerBeanException {
+        try {
+	    	IManagerBean companyBean = BeanManager.getManagerBean(Company.class);
+	        List companyList = companyBean.getList(null);
+	        if (companyList.size() > 0) {
+	            Company company = (Company)companyList.get(0);
+	            return company.getAlias();
+	        }
+	        return null;
+        }
+        catch (Exception e) {
+        	return null;
+        }
+    }
+
 	public boolean isLogoAttached() throws ManagerBeanException {
 		return !(obtainCompanyLogo() == null);
 	}
@@ -331,6 +354,9 @@ public class DesktopController extends BasicController {
         return user.getName();
     }
 
+    public String getLoggedUser() {
+        return UserUtils.getInstance().getPrincipal().getShortName();
+    }
     
     public String getCurrentDate() {
         DateFormat formatter = new SimpleDateFormat("EEEE, dd MMMM yyyy");

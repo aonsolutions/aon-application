@@ -13,23 +13,22 @@
 			<aon:div>
 				<aon:outputConnectionStatus id="aonStatus" styleClass="aon-outputConnectionStatus"
 					startStyleClass="aon-outputConnectionStatus-start"
-					stopStyleClass="aon-outputConnectionStatus-stop" />
-					
+					stopStyleClass="aon-outputConnectionStatus-stop"
+					onstart="resetStatusError();" />
+				<aon:div id="status_error" layout="inline" styleClass="aon-outputConnectionStatus-failed" style="display: none"/>					
 				<aon:outputText value="#{appBundle.aon_application_title}"
 					styleClass="aon-applicationName"  />
 			</aon:div>
 
 			<aon:div>
-				<aon:div
-					rendered="#{aonConfiguration.properties.middleHeader == null}">
+				<aon:div rendered="#{aonConfiguration.properties.middleHeader == null}">
 					<aon:outputText value="&#160;" />
 				</aon:div>
-				<aon:div
-					rendered="#{aonConfiguration.properties.middleHeader != null}">
-					<aon:outputText escape="false"
-						value="#{aonConfiguration.properties.middleHeader}" />
+				<aon:div rendered="#{aonConfiguration.properties.middleHeader != null}">
+					<aon:outputText escape="false" value="#{aonConfiguration.properties.middleHeader}" />
 				</aon:div>
 			</aon:div>
+
 			<aon:div styleClass="aon-nowrap">
 				<aon:div>					
 					<aon:div styleClass="aon-nowrap">

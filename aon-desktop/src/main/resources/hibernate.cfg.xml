@@ -60,6 +60,8 @@
 		<mapping class="com.code.aon.groupware.Contact"/>
 		<mapping class="com.code.aon.groupware.FavoriteCategory"/>
 		<mapping class="com.code.aon.groupware.Favorite"/>
+		<mapping class="com.code.aon.groupware.Message"/>
+		<mapping class="com.code.aon.groupware.MessageContent"/>
 		
 		<!-- AON-COMPANY Mapping files -->
 		<mapping class="com.code.aon.company.resources.Employee"/>

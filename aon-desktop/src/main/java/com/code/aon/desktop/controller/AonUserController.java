@@ -1,10 +1,13 @@
 package com.code.aon.desktop.controller;
 
+import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
+
+import org.apache.commons.lang.time.DateUtils;
 
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.config.User;
@@ -12,9 +15,11 @@ import com.code.aon.jaas.auth.AuthPrincipal;
 import com.code.aon.ldap.AonDN;
 import com.code.aon.ldap.BasicLdap;
 import com.code.aon.ldap.DistinguishedName;
+import com.code.aon.ldap.Entry;
 import com.code.aon.ldap.IAonObjectClasses;
 import com.code.aon.ldap.ILdapConstants;
 import com.code.aon.ldap.LdapException;
+import com.code.aon.ldap.LdapSession;
 import com.code.aon.ui.config.controller.ConfigConstants;
 import com.code.aon.ui.config.controller.UserController;
 import com.code.aon.ui.config.util.UserUtils;
@@ -22,6 +27,8 @@ import com.code.aon.ui.form.IController;
 import com.code.aon.ui.util.AonUtil;
 
 public class AonUserController extends UserController implements ILdapConstants, IAonObjectClasses {
+
+	private static final String PASSWORD_EXPIRATION_TIMESTAMP = "passwordExpirationTimestamp";
 
 	private static final Logger LOGGER = Logger.getLogger(AonUserController.class.getName());
 	
@@ -96,6 +103,32 @@ public class AonUserController extends UserController implements ILdapConstants,
 		}
 	}
 
+	private void updateExpirationTimestamp( String userName, boolean today ) {
+		DistinguishedName userDN = AonDN.getUserDN( domain, userName );
+		BasicLdap ldap = new BasicLdap();
+		if ( ldap.exists(userDN, USER) ) {
+			try {
+				Date newDate = null;
+				LdapSession session = ldap.getLdapSession();
+				if ( today ) {
+					newDate = new Date();
+				} else {
+					String filter = LdapSession.getObjectClass(USER);
+					Entry user = session.get(userDN.toString(), filter, PASSWORD_EXPIRATION_TIMESTAMP);
+					Date date = user.getAsDate(PASSWORD_EXPIRATION_TIMESTAMP);
+					newDate = DateUtils.addDays(date, 180);
+				}	
+				session.replaceAttribute(userDN, PASSWORD_EXPIRATION_TIMESTAMP, newDate);
+			} catch (LdapException e) {
+				AonUtil.addErrorMessage("Error actualizando la fecha de expiración de la contraseña" );
+			} finally {
+				ldap.closeSession();
+			}
+		} else {
+			LOGGER.severe( "No existe en LDAP el usuario " + userName + " para el dominio " + domain );
+		}
+	}
+	
 	public void accept(ActionEvent event) {
 		User user = (User) getTo();
 		int status = user.getStatus();
@@ -108,7 +141,8 @@ public class AonUserController extends UserController implements ILdapConstants,
 			}
 			FacesContext ctx = FacesContext.getCurrentInstance();
 			if ( ctx.getMaximumSeverity() == null ) {
-				changeDefaultMailAccountPassword( user.getLogin(), getUserManager().getPassword() );
+				updateExpirationTimestamp( user.getLogin(), managerChangingPassword );
+				changeDefaultMailAccountPassword( user.getLogin(), getUserManager().getPassword() );				
 				AonDomainController domainController = (AonDomainController) AonUtil.getController("domain");
 				domainController.flushAuthenticationCache( user.getLogin() );
 				setShowPasswordChangedWindow(true);
@@ -118,13 +152,36 @@ public class AonUserController extends UserController implements ILdapConstants,
 			user.setStatus(status);
 		}
 	}
-
+	
 	public boolean isShowPasswordChangedWindow() {
 		return showPasswordChangedWindow;
 	}
 
 	public void setShowPasswordChangedWindow(boolean showPasswordChangedWindow) {
 		this.showPasswordChangedWindow = showPasswordChangedWindow;
+	}
+
+	public boolean isPasswordExpired() {
+		boolean passwordExpired = false;
+		AuthPrincipal user = UserUtils.getInstance().getPrincipal();
+		DistinguishedName userDN = AonDN.getUserDN( domain, user.getShortName() );
+		BasicLdap ldap = new BasicLdap();
+		if ( ldap.exists(userDN, USER) ) {
+			try {
+				LdapSession session = ldap.getLdapSession();
+				String filter = LdapSession.getObjectClass(USER);
+				Entry userEntry = session.get(userDN.toString(), filter, PASSWORD_EXPIRATION_TIMESTAMP);
+				Date expirationDate = userEntry.getAsDate(PASSWORD_EXPIRATION_TIMESTAMP);
+				passwordExpired = new Date().after(expirationDate);
+			} catch (LdapException e) {
+				AonUtil.addErrorMessage("Error actualizando la fecha de expiración de la contraseña" );
+			} finally {
+				ldap.closeSession();
+			}
+		} else {
+			LOGGER.severe( "No existe en LDAP el usuario " + user.getShortName() + " para el dominio " + domain );
+		}
+		return passwordExpired;
 	}
 	
 }

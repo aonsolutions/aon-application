@@ -69,6 +69,12 @@
 						required="true" size="20"
 						maxlength="16" value="#{user.to.login}" />
 
+					<aon:outputLabel for="User_active"
+						value="#{configBundle.series_active}" />
+					<aon:selectBooleanCheckbox id="User_active" disabled="#{securityUser.disabled}" 
+							value="#{securityUser.active}">
+					</aon:selectBooleanCheckbox>
+
 					<!--aon:outputLabel for="userData"
 						value="#{securityBundle.aon_security_profiles}"
 						styleClass="aon-form-input-text-label" />

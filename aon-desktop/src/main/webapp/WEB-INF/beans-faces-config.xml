@@ -56,5 +56,35 @@
 			<value>com.code.aon.jaas.client.ast.IDomainApplication</value>
 		</managed-property>
 	</managed-bean>
-	
+
+	<!-- ************ USER ************** -->
+	<managed-bean>
+		<managed-bean-name>securityUser</managed-bean-name>
+		<managed-bean-class>com.code.aon.desktop.event.SecurityUserListener</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>controller</property-name>
+			<value>#{user}</value>
+		</managed-property>
+	</managed-bean>
+
+	<!-- ************ SMS ************** -->
+	<managed-bean>
+		<managed-bean-name>sms</managed-bean-name>
+		<managed-bean-class>com.code.aon.desktop.controller.SMSController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
+	<managed-bean>
+		<managed-bean-name>smsContact</managed-bean-name>
+		<managed-bean-class>com.code.aon.desktop.controller.SMSContactController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
+
+	<!-- ************ Collections ************** -->
+	<managed-bean>
+		<managed-bean-name>commonsCollections</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.common.controller.CommonsCollections</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
+
 </faces-config>
