@@ -78,10 +78,15 @@ public class SupplierEvolution {
 	}
 
 	public double getPercent() {
-		double percent = (getInvoice() * 100 / getInvoiceTotal());
-		percent = Math.round(100*percent); 
-		percent = percent / 100; 
-        return percent;
+		double percent = 0;
+		try{
+			percent = (getInvoice() * 100 / getInvoiceTotal());
+			percent = Math.round(100*percent); 
+			percent = percent / 100;
+	        return percent;
+		}catch (Exception e){
+	        return 0;
+		}
 	}
 
 	public Integer getSupplierId() {
