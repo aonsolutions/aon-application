@@ -129,9 +129,8 @@
 	font-weight:bold;
 	margin: 0px 10px 10px 10px;
  }
-.aon-width-300{
-	width:300px;
-}
-.aon-width-500{
-	width:500px;
+
+.aon-dataList-scroll {
+	height:210px;
+	overflow:auto;
 }
