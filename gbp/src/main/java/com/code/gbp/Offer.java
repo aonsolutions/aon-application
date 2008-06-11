@@ -57,6 +57,8 @@ public class Offer implements ITransferObject {
 	
 	private BatchConfig batchConfig;
 	
+	private String breakdown;
+	
 	@Id
 	@GeneratedValue
 	@Column(nullable=false)
@@ -222,6 +224,14 @@ public class Offer implements ITransferObject {
 
 	public void setBatchConfig(BatchConfig batchConfig) {
 		this.batchConfig = batchConfig;
+	}
+
+	public String getBreakdown() {
+		return breakdown;
+	}
+
+	public void setBreakdown(String breakdown) {
+		this.breakdown = breakdown;
 	}
 	
 	
