@@ -305,6 +305,22 @@ public class DesktopController extends BasicController {
         }
     }
 
+    @SuppressWarnings("unchecked")
+    public String getCompanyAlias() throws ManagerBeanException {
+        try {
+	    	IManagerBean companyBean = BeanManager.getManagerBean(Company.class);
+	        List companyList = companyBean.getList(null);
+	        if (companyList.size() > 0) {
+	            Company company = (Company)companyList.get(0);
+	            return company.getAlias();
+	        }
+	        return null;
+        }
+        catch (Exception e) {
+        	return null;
+        }
+    }
+
 	public boolean isLogoAttached() throws ManagerBeanException {
 		return !(obtainCompanyLogo() == null);
 	}

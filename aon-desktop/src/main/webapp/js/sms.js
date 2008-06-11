@@ -1,10 +1,9 @@
   function UpdateMessageLength() {
   	var messageBox = document.getElementById( 'homepage:smsForm:SMS_message' );
-    var countDescription = '{0} caracteres (max 160)';
     var currentCount = messageBox.value.length;	
+    var countDescription = '{0} caracter' + ((currentCount > 1)? 'es': '') + ' (max 160)';
     currentCount = currentCount + GetExtendedCharacterCount( messageBox.value );
     document.getElementById( 'homepage:smsForm:messageLength' ).value = countDescription.replace('{0}', currentCount);
-  alert( document.getElementById( 'homepage:smsForm:messageLength' ).value );
   }		
 
   function GetExtendedCharacterCount(message) {
