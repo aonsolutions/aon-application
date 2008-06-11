@@ -17,7 +17,7 @@
 		 whenNoDataType="NoPages"
 		 isTitleNewPage="false"
 		 isSummaryNewPage="false">
-	<property name="ireport.scriptlethandling" value="2" />
+	<property name="ireport.scriptlethandling" value="0" />
 	<property name="ireport.encoding" value="UTF-8" />
 	<import value="java.util.*" />
 	<import value="net.sf.jasperreports.engine.*" />
@@ -25,6 +25,7 @@
 
 
 	<field name="userName" class="java.lang.String"/>
+	<field name="signatureDate" class="java.util.Date"/>
 
 		<background>
 			<band height="0"  isSplitAllowed="true" >
@@ -51,7 +52,7 @@
 					<textElement>
 						<font size="9"/>
 					</textElement>
-				<text><![CDATA[Oficina de Marketing]]></text>
+				<text><![CDATA[Factura Autorizada por:]]></text>
 				</staticText>
 			</band>
 		</columnHeader>
@@ -61,7 +62,7 @@
 					<reportElement
 						x="0"
 						y="0"
-						width="300"
+						width="206"
 						height="14"
 						key="textField-1"/>
 					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" leftPadding="1" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
@@ -70,23 +71,23 @@
 					</textElement>
 				<textFieldExpression   class="java.lang.String"><![CDATA[$F{userName}]]></textFieldExpression>
 				</textField>
-			</band>
-		</detail>
-		<columnFooter>
-			<band height="14"  isSplitAllowed="true" >
-				<staticText>
+				<textField isStretchWithOverflow="false" pattern="dd/MM/yyyy" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
-						x="0"
+						x="206"
 						y="0"
-						width="300"
+						width="94"
 						height="14"
-						key="staticText-2"/>
+						key="textField-2"/>
 					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" leftPadding="1" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
 					<textElement>
 						<font size="9"/>
 					</textElement>
-				<text><![CDATA[Atentamente]]></text>
-				</staticText>
+				<textFieldExpression   class="java.util.Date"><![CDATA[$F{signatureDate}]]></textFieldExpression>
+				</textField>
+			</band>
+		</detail>
+		<columnFooter>
+			<band height="0"  isSplitAllowed="true" >
 			</band>
 		</columnFooter>
 		<pageFooter>

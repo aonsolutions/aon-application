@@ -29,7 +29,7 @@
 					<aon:div styleClass="aon-finding-toolbar-item-group">
 						<aon:commandButton id="save" value="#{bundle.aon_save}"
 							rendered="#{campaign.to!=null or campaign.new}"
-							reRender="gridToolbar"
+							reRender="gridToolbar,campaignTab"
 							styleClass="aon-finding-toolbar-item aon-icon-accept"
 							actionListener="#{campaign.accept}"
 							accesskey="#{bundle.aon_key_save}" />

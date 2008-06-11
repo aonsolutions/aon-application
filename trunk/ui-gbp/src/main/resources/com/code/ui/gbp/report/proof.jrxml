@@ -443,7 +443,7 @@
 				<staticText>
 					<reportElement
 						x="0"
-						y="214"
+						y="221"
 						width="535"
 						height="14"
 						key="staticText-7"/>
@@ -456,7 +456,7 @@
 				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						x="31"
-						y="228"
+						y="235"
 						width="212"
 						height="13"
 						key="textField-21"/>
@@ -498,23 +498,24 @@
 					<reportElement
 						x="0"
 						y="256"
-						width="535"
+						width="140"
 						height="14"
 						key="staticText-10"/>
 					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" leftPadding="1" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
 					<textElement>
 						<font pdfFontName="Helvetica-Bold" size="9" isBold="true"/>
 					</textElement>
-				<text><![CDATA[Imputar de acuerdo con Tabla ______]]></text>
+				<text><![CDATA[Imputar de acuerdo con Tabla]]></text>
 				</staticText>
 				<subreport  isUsingCache="true">
 					<reportElement
 						mode="Transparent"
-						x="145"
+						x="13"
 						y="283"
-						width="300"
-						height="42"
-						key="subreport-1"/>
+						width="512"
+						height="17"
+						key="subreport-1"
+						positionType="Float"/>
 					<parametersMapExpression><![CDATA[$P{REPORT_PARAMETERS_MAP}]]></parametersMapExpression>
 					<dataSourceExpression><![CDATA[new com.code.aon.report.jr.JRBeanCollectionDataSource($P{signatures})]]></dataSourceExpression>
 					<subreportExpression  class="net.sf.jasperreports.engine.JasperReport"><![CDATA[$P{nestedReports}.get("proofSignatures")]]></subreportExpression>
@@ -522,7 +523,7 @@
 				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						x="0"
-						y="228"
+						y="235"
 						width="31"
 						height="13"
 						key="textField-23"/>
@@ -561,11 +562,12 @@
 				<subreport  isUsingCache="true">
 					<reportElement
 						mode="Transparent"
-						x="145"
-						y="334"
-						width="300"
-						height="42"
-						key="subreport-2"/>
+						x="13"
+						y="300"
+						width="512"
+						height="17"
+						key="subreport-2"
+						positionType="Float"/>
 					<parametersMapExpression><![CDATA[$P{REPORT_PARAMETERS_MAP}]]></parametersMapExpression>
 					<subreportParameter  name="amount">
 						<subreportParameterExpression><![CDATA[$F{amount}]]></subreportParameterExpression>
@@ -598,6 +600,45 @@
 						<font pdfFontName="Helvetica-Bold" size="9" isBold="true"/>
 					</textElement>
 				<textFieldExpression   class="java.lang.String"><![CDATA[$F{offer}.getBatchConfig().getCode()+" "+$F{offer}.getBatchConfig().getDescription()]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="140"
+						y="256"
+						width="395"
+						height="13"
+						key="textField-28"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" leftPadding="1" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Left">
+						<font pdfFontName="Helvetica" size="9" isBold="false"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{offer}.getBreakdown()]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="56"
+						y="203"
+						width="479"
+						height="13"
+						key="textField-29"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" leftPadding="1" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Left">
+						<font pdfFontName="Helvetica" size="9" isBold="false"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{offer}.getBatchConfig().getCode()+" "+$F{offer}.getBatchConfig().getDescription()]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="0"
+						y="202"
+						width="56"
+						height="13"
+						key="textField-30"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" leftPadding="1" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Left">
+						<font pdfFontName="Helvetica-Bold" isBold="true"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$R{gbp_offer_batch_config} + ": "]]></textFieldExpression>
 				</textField>
 			</band>
 		</detail>
