@@ -1,0 +1,61 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:aon="http://www.code.es/aon-rich-components">
+
+	<aon:form id="frontSummaryList">
+		<!--  aon-region-body -->
+		<aon:div styleClass="aon-scroll-area">
+			<aon:div style="float:left;width:47%;margin-right:1em;">
+				<aon:div styleClass="aon-section-title">
+					<aon:outputText value="#{appBundle.gbp_offer_summary}" />
+				</aon:div>
+				<aon:dataTable id="frontSummaryOfferDataList"
+					columnClasses="aon-width-auto,aon-text-right aon-width-40"
+					value="#{frontSummary.offerSumaryModel}" var="to" rows="20">
+
+					<aon:column>
+						<f:facet name="header">
+							<aon:outputText value="#{appBundle.gbp_offer_status}" />
+						</f:facet>
+						<aon:outputText value="#{to.status}" />
+					</aon:column>
+
+					<aon:column>
+						<f:facet name="header">
+							<aon:outputText value="#{appBundle.gbp_count}" />
+						</f:facet>
+						<aon:outputText value="#{to.count}" />
+					</aon:column>
+
+				</aon:dataTable>
+			</aon:div>
+			<aon:div style="float:left;width:47%;">
+				<aon:div styleClass="aon-section-title">
+					<aon:outputText value="#{appBundle.gbp_pro_forma_summary}" />				
+				</aon:div>
+				<aon:dataTable id="frontSummaryProFormaDataList"
+					columnClasses="aon-width-auto,aon-text-right aon-width-40"
+					value="#{frontSummary.proFormaSumaryModel}" var="to" rows="20">
+
+					<aon:column>
+						<f:facet name="header">
+							<aon:outputText value="#{appBundle.gbp_offer_status}" />
+						</f:facet>
+						<aon:outputText value="#{to.status}" />
+					</aon:column>
+
+					<aon:column>
+						<f:facet name="header">
+							<aon:outputText value="#{appBundle.gbp_count}" />
+						</f:facet>
+						<aon:outputText value="#{to.count}" />
+					</aon:column>
+
+				</aon:dataTable>
+			</aon:div>
+		</aon:div>
+	</aon:form>
+</ui:composition>
