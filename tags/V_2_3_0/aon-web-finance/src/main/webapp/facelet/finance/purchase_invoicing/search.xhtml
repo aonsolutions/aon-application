@@ -1,0 +1,120 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:h="http://java.sun.com/jsf/html">
+<body>
+
+<ui:composition template="/facelet/templates/aon.ui.form.xhtml">
+
+	<ui:define name="head">
+		<ui:include src="/facelet/shared/head.xhtml" />
+	</ui:define>		
+
+	<ui:define name="content">
+		<h:form id="purchaseDirectInvoicingForm" styleClass="aon-form">
+
+			<t:div styleClass="aon-content-toolbar">
+				<t:div styleClass="aon-content-toolbar-internal">
+				<t:div styleClass="aon-content-toolbar-item-group">
+					<t:commandButton id="search" value="#{bundle.aon_search}"
+						action="purchase_direct_invoicing_list"
+						actionListener="#{purchaseDirectInvoicing.onSearch}" 
+						styleClass="aon-content-toolbar-item aon-content-toolbar-item-accept"
+						onmouseover="this.className='aon-content-toolbar-item aon-content-toolbar-item-hover aon-content-toolbar-item-accept'"
+						onmouseout="this.className='aon-content-toolbar-item aon-content-toolbar-item-accept'" 
+						accesskey="#{bundle.aon_key_search}"/>
+					<t:commandButton id="cancel" value="#{bundle.aon_cancel}"
+					 	action="purchase_direct_invoicing_list"
+						actionListener="#{purchaseDirectInvoicing.onCancel}"
+						styleClass="aon-content-toolbar-item aon-content-toolbar-item-cancel"
+						onmouseover="this.className='aon-content-toolbar-item aon-content-toolbar-item-hover aon-content-toolbar-item-cancel'"
+						onmouseout="this.className='aon-content-toolbar-item aon-content-toolbar-item-cancel'" 
+						accesskey="#{bundle.aon_key_cancel}"/>
+					<h:commandButton id="clear" value="#{bundle.aon_clear}"
+						type="reset"
+						styleClass="aon-content-toolbar-item aon-content-toolbar-item-reset"
+						onmouseover="this.className='aon-content-toolbar-item aon-content-toolbar-item-hover aon-content-toolbar-item-reset'"
+						onmouseout="this.className='aon-content-toolbar-item aon-content-toolbar-item-reset'" />
+					<t:commandButton id="reset" value="#{bundle.aon_reset}"
+						action="purchase_direct_invoicing_form"
+						actionListener="#{purchaseDirectInvoicing.onReset}"
+						styleClass="aon-content-toolbar-item aon-content-toolbar-item-new"
+						onmouseover="this.className='aon-content-toolbar-item aon-content-toolbar-item-hover aon-content-toolbar-item-new'"
+						onmouseout="this.className='aon-content-toolbar-item aon-content-toolbar-item-new'" 
+						accesskey="#{bundle.aon_key_new}"/>
+				</t:div>
+				</t:div>
+			</t:div>
+			<t:div styleClass="aon-content-subtitle" id="aon-content-subtitle"
+				forceId="#{true}">
+				<t:div styleClass="aon-content-subtitle-internal">
+				<h:outputText value="#{bundle.aon_search_header}" />
+				</t:div>
+			</t:div>
+			<t:div styleClass="aon_content">
+				<t:div forceId="#{true}" id="aon-scroll-area">
+					<t:div styleClass="aon-scroll-area-internal">
+						<h:panelGrid columns="2" styleClass="aon-form-table"
+							columnClasses="aon-form-table-column-odd,aon-form-table-column-even">
+
+							<h:outputLabel for="Invoice_referenceCode"
+								styleClass="aon-form-input-text-label"
+								value="#{financeBundle.aon_invoice_number}" />
+							<t:inputText id="Invoice_referenceCode"
+								onblur="toUpperCase(this);"
+								valueChangeListener="#{purchaseDirectInvoicing.addExpression}"
+								styleClass="aon-form-input-text" forceId="#{true}" size="25"
+								maxlength="32"/>
+							
+							<t:outputLabel for="Supplier_Lookup_id" value="#{supplierBundle.aon_supplier}"
+								styleClass="aon-form-input-text-label" />
+							<t:div>
+								<t:inputText id="Supplier_Lookup_id" forceId="#{true}"
+									styleClass="aon-form-input-text" size="5"
+									onchange="return findBeanLookupExt(event,'#{facesContext.externalContext.requestContextPath}','supplierLookup','Supplier_Lookup_id','Supplier_id|Supplier_Lookup_id,Supplier_full_name|Supplier_full_name');"
+									valueChangeListener="#{purchaseDirectInvoicing.addSupplierEqualExpression}"/>
+								<h:commandButton id="find_Supplier_Lookup_id"
+									styleClass="aon-form-lookup-button" value="" immediate="true"
+									onclick="lookupSearchWindow(this, 'placeList', '#{supplierLookup.encodedSearchPagePath}','Supplier_id|Supplier_Lookup_id,Supplier_full_name|Supplier_full_name');return false;" />	
+								<t:inputText id="Supplier_full_name" forceId="#{true}"
+									disabled="true"
+									styleClass="aon-form-input-text-disabled" size="40"/>	 		
+							</t:div>
+
+							<h:outputLabel
+								styleClass="aon-form-input-text-label aon-form-table-column-odd-label"
+								for="Invoice_issue_date1" value="#{financeBundle.aon_date}" />
+							<t:div>
+								<h:outputLabel for="Invoice_fromDate" value="#{financeBundle.finance_date_from}" 
+									styleClass="aon-form-input-text-label" />
+								<t:inputCalendar id="Invoice_fromDate" size="10"
+									valueChangeListener="#{purchaseDirectInvoicing.addIssuedateFromExpression}"
+									monthYearRowClass="yearMonthHeader" weekRowClass="weekHeader"
+									currentDayCellClass="currentDayCell" renderAsPopup="true"
+									styleClass="aon-form-input-text" popupButtonStyleClass="aon-form-calendar-button"
+									popupTodayString="#{bundle.aon_popup_today}"
+									popupWeekString="#{bundle.aon_popup_week}" />
+								<h:outputLabel for="Invoice_toDate" value="#{financeBundle.finance_date_to}" 
+									styleClass="aon-form-input-text-label" />
+								<t:inputCalendar id="Invoice_toDate" size="10"
+									valueChangeListener="#{purchaseDirectInvoicing.addIssuedateToExpression}"
+									monthYearRowClass="yearMonthHeader" weekRowClass="weekHeader"
+									currentDayCellClass="currentDayCell" renderAsPopup="true"
+									styleClass="aon-form-input-text" popupButtonStyleClass="aon-form-calendar-button"
+									popupTodayString="#{bundle.aon_popup_today}"
+									popupWeekString="#{bundle.aon_popup_week}" />
+							</t:div>
+
+						</h:panelGrid>
+					</t:div>
+				</t:div>
+			</t:div>
+		</h:form>
+		<h:form id="placeList" target="list" />
+	</ui:define>
+</ui:composition>
+
+</body>
+</html>
