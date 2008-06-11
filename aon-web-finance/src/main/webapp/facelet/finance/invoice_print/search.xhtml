@@ -45,16 +45,6 @@
 						<h:panelGrid columns="2" styleClass="aon-form-table"
 							columnClasses="aon-form-table-column-odd,aon-form-table-column-even">
 
-							<h:outputLabel for="Invoice_type"
-								value="#{financeBundle.aon_type}"
-								styleClass="aon-form-input-text-label aon-form-table-column-odd-label" />
-							<h:selectOneMenu id="Invoice_type"
-								styleClass="aon-form-selectOneMenu-field"
-								value="#{invoicePrint.type}"
-								onchange="submit();">
-								<f:selectItems value="#{invoicePrint.invoiceTypes}" />
-							</h:selectOneMenu>
-
 							<h:outputLabel for="Invoice_series"
 								styleClass="aon-form-input-text-label"
 								value="#{financeBundle.aon_series_number}" />

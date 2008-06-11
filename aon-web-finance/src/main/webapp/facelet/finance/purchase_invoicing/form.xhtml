@@ -107,9 +107,9 @@
 			<t:div id="aon-scroll-area" forceId="#{true}">
 				<t:div styleClass="aon-scroll-area-internal">
 					<h:panelGrid columns="2">
-						<h:panelGrid columns="2" cellpadding="0" cellspacing="0"
+						<h:panelGrid columns="4" cellpadding="0" cellspacing="0"
 							styleClass="aon-form-table"
-							columnClasses="aon-form-table-column-odd,aon-form-table-column-even">
+							columnClasses="aon-form-table-column-odd,aon-form-table-column-even,aon-form-table-column-odd,aon-form-table-column-even">
 
 							<h:outputLabel for="Invoice_referenceCode"
 								styleClass="aon-form-input-text-label"
@@ -125,7 +125,7 @@
 								value="#{financeBundle.aon_date}"
 								styleClass="aon-form-input-text-label " />
 							<t:div styleClass="aon-form-nowrap">
-								<t:inputCalendar id="Invoice_issueDate" size="12"
+								<t:inputCalendar id="Invoice_issueDate" size="10"
 									required="#{true}" forceId="#{true}"
 									value="#{purchaseDirectInvoicing.to.issueDate}"
 									disabled="#{!purchaseDirectInvoicing.editable}"
@@ -135,31 +135,6 @@
 									popupTodayString="#{bundle.aon_popup_today}"
 									popupWeekString="#{bundle.aon_popup_week}" />
 							</t:div>
-
-							<t:outputLabel for="Invoice_securityLevel"
-								styleClass="aon-form-selectOneMenu-label"
-								value="#{financeBundle.aon_security_level}" />
-							<h:selectOneMenu id="Invoice_securityLevel"
-								styleClass="aon-form-selectOneMenu-field"
-								disabled="#{!purchaseDirectInvoicing.editable}"
-								value="#{purchaseDirectInvoicing.to.securityLevel}">
-								<f:selectItems value="#{financeCollections.securityLevels}" />
-							</h:selectOneMenu>
-
-							<t:outputLabel for="Invoice_status"
-								styleClass="aon-form-selectOneMenu-label"
-								value="#{financeBundle.aon_status}" />
-							<h:selectOneMenu id="Invoice_status" disabled="true"
-								styleClass="aon-form-selectOneMenu-field"
-								value="#{purchaseDirectInvoicing.to.status}">
-								<f:selectItems value="#{financeCollections.invoiceStatuses}" />
-							</h:selectOneMenu>
-							
-						</h:panelGrid>
-
-						<h:panelGrid columns="2" cellpadding="0" cellspacing="0"
-							styleClass="aon-form-table"
-							columnClasses="aon-form-table-column-odd,aon-form-table-column-even">
 
 							<t:outputLabel for="Supplier_Lookup_id"
 								styleClass="aon-form-input-text-label"
@@ -176,27 +151,69 @@
 									styleClass="aon-form-lookup-button" value="" immediate="true"
 									onclick="lookupSearchWindow(this, 'placeList', '#{supplierLookup.encodedSearchPagePath}','Supplier_id|Supplier_Lookup_id,Supplier_full_name|Supplier_full_name,Supplier_registry_document|Supplier_Lookup_document');return false;" />	
 								<t:inputText id="Supplier_full_name" forceId="#{true}"
-									styleClass="aon-form-input-text-disabled"
+									styleClass="aon-form-input-text"
 									size="40" disabled="#{!purchaseDirectInvoicing.editable}"
 									value="#{purchaseDirectInvoicing.to.registryName}" />
 							</t:div>
 
 							<t:outputLabel for="Supplier_Lookup_document"
 								styleClass="aon-form-input-text-label"
-								value="#{financeBundle.aon_document}" />
+								value="#{registryBundle.aon_nif}" />
 							<t:inputText id="Supplier_Lookup_document"
 								value="#{purchaseDirectInvoicing.to.registryDocument}"
 								disabled="#{!purchaseDirectInvoicing.editable}"
 								styleClass="aon-form-input-text" forceId="#{true}"
 								required="true" size="10" />
 
+							<h:outputLabel for="Invoice_registryAddress_id"
+								styleClass="aon-form-input-text-label"
+								value="#{registryBundle.aon_address}" />
+							<t:div>
+								<h:selectOneMenu id="Invoice_registryAddress_id" forceId="#{true}"
+									rendered="#{purchaseDirectInvoicing.addressCount > 0}"
+									styleClass="aon-form-selectOneMenu-field"
+									disabled="#{purchaseDirectInvoicing.recorded}"
+									value="#{purchaseDirectInvoicing.to.registryAddress.id}">
+									<f:selectItems value="#{purchaseDirectInvoicing.addresses}" />
+								</h:selectOneMenu>	
+								<h:outputLabel value="#{financeBundle.invoice_no_available_address}"
+									rendered="#{purchaseDirectInvoicing.addressCount == 0}" />
+							</t:div>
+
+							<t:outputLabel for="Invoice_securityLevel"
+								styleClass="aon-form-selectOneMenu-label"
+								value="#{financeBundle.aon_security_level}" />
+							<h:selectOneMenu id="Invoice_securityLevel"
+								styleClass="aon-form-selectOneMenu-field"
+								disabled="#{!purchaseDirectInvoicing.editable}"
+								value="#{purchaseDirectInvoicing.to.securityLevel}">
+								<f:selectItems value="#{financeCollections.securityLevels}" />
+							</h:selectOneMenu>
+
+							<t:outputLabel for="Invoice_status"
+								styleClass="aon-form-selectOneMenu-label"
+								value="#{financeBundle.aon_status}" />
+							<t:div>
+								<h:selectOneMenu id="Invoice_status" disabled="true"
+									styleClass="aon-form-selectOneMenu-field"
+									value="#{purchaseDirectInvoicing.to.status}">
+									<f:selectItems value="#{financeCollections.invoiceStatuses}" />
+								</h:selectOneMenu>
+								<f:verbatim>&#160;</f:verbatim>
+								<t:outputText styleClass="aon-form-input-text-label"
+									value="#{financeBundle.aon_account_entry}: #{purchaseDirectInvoicing.accountEntryId}"
+									rendered="#{purchaseDirectInvoicing.recorded}" />
+							</t:div>
+							
 							<t:outputLabel for="Invoice_total"
 								styleClass="aon-form-selectOneMenu-label"
 								value="#{financeBundle.aon_total}" />
 							<t:outputText id="Invoice_total" forceId="#{true}" size="15"
+								styleClass="aon-form-input-text-label"
 								value="#{purchaseDirectInvoicing.toInvoiceTotalPrice}">
 								<f:convertNumber pattern="#,##0.00" />
 							</t:outputText>
+
 						</h:panelGrid>
 					</h:panelGrid>
 
