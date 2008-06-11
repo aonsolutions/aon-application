@@ -113,14 +113,12 @@
 			<value>com/code/aon/ui/report/resources/expand_logo.gif</value>
 		</managed-property>
 		<managed-property>
-			<property-name>style</property-name>
-			<value>blue</value>
-		</managed-property>
-		<managed-property>
-			<property-name>userStyleSheets</property-name>
+			<property-name>styleSheets</property-name>
 			<list-entries>
-				<value>/css/aon-solutions.css</value>
+				<value>/css/aon.css</value>
 				<value>/css/layout.css</value>
+				<value>/css/blue/aon-blue.css</value>
+				<value>/css/aon-solutions.css</value>
 			</list-entries>
 		</managed-property>
 		<managed-property>
