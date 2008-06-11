@@ -277,10 +277,6 @@
 			<url-pattern>/_account/*</url-pattern>
 		</web-resource-collection>
 		<web-resource-collection>
-			<web-resource-name>finance</web-resource-name>
-			<url-pattern>/finance/*</url-pattern>
-		</web-resource-collection>
-		<web-resource-collection>
 			<web-resource-name>jsp</web-resource-name>
 			<url-pattern>/index.jsp</url-pattern>
 		</web-resource-collection>
@@ -289,7 +285,31 @@
 			<url-pattern>*.faces</url-pattern>
 		</web-resource-collection>
 		<auth-constraint>
-			<role-name>Manager</role-name>
+			<role-name>Acreedores</role-name>
+			<role-name>ApuntesCuotaLeasing</role-name>
+			<role-name>ApuntesCuotaPrestamo</role-name>
+			<role-name>ApuntesFacturas</role-name>
+			<role-name>ApuntesGastos</role-name>
+			<role-name>ApuntesNominas</role-name>
+			<role-name>ApuntesSegSocial</role-name>
+			<role-name>Clientes</role-name>
+			<role-name>ConceptosAutomaticos</role-name>
+			<role-name>ConfiguracionImpuestos</role-name>
+			<role-name>ConfiguracionProvincias</role-name>
+			<role-name>ConfiguracionSeries</role-name>
+			<role-name>CreacionLeasing</role-name>
+			<role-name>CreacionPrestamos</role-name>
+			<role-name>DatosEmpresa</role-name>
+			<role-name>DiarioMovimientos</role-name>
+			<role-name>EjerciciosContables</role-name>
+			<role-name>ExplotacionPyG</role-name>
+			<role-name>ExtractoCuentas</role-name>
+			<role-name>GestionApuntes</role-name>
+			<role-name>ParametrosContables</role-name>
+			<role-name>PlanGeneralContable</role-name>
+			<role-name>Proveedores</role-name>
+			<role-name>RegenerarAcumulados</role-name>
+			<role-name>Invitado</role-name>
 		</auth-constraint>
 	</security-constraint>
 
@@ -301,9 +321,31 @@
 		</form-login-config>
 	</login-config>
 
-	<security-role>
-		<role-name>Manager</role-name>
-	</security-role>
+	<security-role><role-name>Acreedores</role-name></security-role>
+	<security-role><role-name>ApuntesCuotaLeasing</role-name></security-role>
+	<security-role><role-name>ApuntesCuotaPrestamo</role-name></security-role>
+	<security-role><role-name>ApuntesFacturas</role-name></security-role>
+	<security-role><role-name>ApuntesGastos</role-name></security-role>
+	<security-role><role-name>ApuntesNominas</role-name></security-role>
+	<security-role><role-name>ApuntesSegSocial</role-name></security-role>
+	<security-role><role-name>Clientes</role-name></security-role>
+	<security-role><role-name>ConceptosAutomaticos</role-name></security-role>
+	<security-role><role-name>ConfiguracionImpuestos</role-name></security-role>
+	<security-role><role-name>ConfiguracionProvincias</role-name></security-role>
+	<security-role><role-name>ConfiguracionSeries</role-name></security-role>
+	<security-role><role-name>CreacionLeasing</role-name></security-role>
+	<security-role><role-name>CreacionPrestamos</role-name></security-role>
+	<security-role><role-name>DatosEmpresa</role-name></security-role>
+	<security-role><role-name>DiarioMovimientos</role-name></security-role>
+	<security-role><role-name>EjerciciosContables</role-name></security-role>
+	<security-role><role-name>ExplotacionPyG</role-name></security-role>
+	<security-role><role-name>ExtractoCuentas</role-name></security-role>
+	<security-role><role-name>GestionApuntes</role-name></security-role>
+	<security-role><role-name>ParametrosContables</role-name></security-role>
+	<security-role><role-name>PlanGeneralContable</role-name></security-role>
+	<security-role><role-name>Proveedores</role-name></security-role>
+	<security-role><role-name>RegenerarAcumulados</role-name></security-role>
+	<security-role><role-name>Invitado</role-name></security-role>
 
 	<resource-env-ref>
 	  <resource-env-ref-name>jdbc/AonAccount</resource-env-ref-name>
