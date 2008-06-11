@@ -9,6 +9,7 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
+import java.util.StringTokenizer;
 import java.util.logging.Logger;
 
 import javax.xml.rpc.ServiceException;
@@ -44,10 +45,6 @@ public class Sender implements IConstants, Runnable {
 		bootstrap = new Properties();
 		InputStream is = getClass().getResourceAsStream( "/bootstrap.properties" );
 		bootstrap.load(is);
-		header = new EsendexHeader( bootstrap.getProperty( USERNAME ), 
-					bootstrap.getProperty( PASSWORD ), 
-					bootstrap.getProperty( ACCOUNT ) );
-		init();
 	}
 
 	/**
@@ -77,12 +74,26 @@ public class Sender implements IConstants, Runnable {
 	}
 
 	/**
-	 * Set username.
+	 * Initializes messages list and <code>EsendexHeader</code> class.
+	 * @throws SOAPException 
 	 * 
-	 * @param username
+	 * @throws SOAPException 
 	 */
-	public void setUsername(String username) {
-		bootstrap.setProperty( USERNAME, username );
+	public void init() throws SOAPException {
+		init( bootstrap.getProperty( USERNAME ) );
+	}
+
+	/**
+	 * Initializes messages list and <code>EsendexHeader</code> class.
+	 * 
+	 * @throws SOAPException 
+	 */
+	public void init(String username) throws SOAPException {
+		messages = new ArrayList<Message>();
+		if ( header == null ) {
+			header = 
+				new EsendexHeader( "sms@" + username, bootstrap.getProperty( PASSWORD ), bootstrap.getProperty( ACCOUNT ) );
+		}
 	}
 
 	/**
@@ -104,13 +115,6 @@ public class Sender implements IConstants, Runnable {
 			LOGGER.severe( e.getMessage() );
 		}
 		return null;
-	}
-
-	/**
-	 * Initializes message list.
-	 */
-	public void init() {
-		messages = new ArrayList<Message>();
 	}
 
 	/**
@@ -163,6 +167,42 @@ public class Sender implements IConstants, Runnable {
 	public synchronized void sendBatch(List<Message> l) {
 		messages = l;
 		send();
+	}
+
+	public static void main(String[] args) {
+		Message message = new Message();
+		String username = null;
+		for(int i=0; i < args.length; i++) {
+			if ( args[i].equals( "-originator" ) ) {
+				message.getInfo().setOriginator( args[ ++i ] );
+			}
+			if ( args[i].equals( "-recipients" ) ) {
+				StringTokenizer st = new StringTokenizer( args[ ++i ] );
+				while ( st.hasMoreTokens() ) {
+					String recipient = st.nextToken( ";" );
+					message.add( recipient );
+				}
+			}
+			if ( args[i].equals( "-username" ) ) {
+				username = args[ ++i ];
+			}
+			if ( args[i].equals( "-message" ) ) {
+				message.getInfo().setMessage( args[ ++i ] );
+			}
+		}
+		Sender sender;
+		try {
+			sender = new Sender();
+			if ( username == null )
+				sender.init();
+			else
+				sender.init( username );
+			sender.send( message );
+		} catch (IOException e) {
+			LOGGER.severe( e.getMessage() );
+		} catch (SOAPException e) {
+			LOGGER.severe( e.getMessage() );
+		}
 	}
 
 	@Override
@@ -229,7 +269,7 @@ public class Sender implements IConstants, Runnable {
 			LOGGER.severe( e.getMessage() );
 			fireMessageFailed( null );
 		} finally {
-			init();
+			messages = new ArrayList<Message>();
 		}
 	}
 
