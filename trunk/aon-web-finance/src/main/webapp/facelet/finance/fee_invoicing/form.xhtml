@@ -323,7 +323,7 @@
 													onclick="lookupSearchWindow(this, 'placeList', '#{itemLookup.encodedSearchPagePath}','Item_product_code|Item_Lookup_product_code-New,Item_id|Item_Lookup_id-New,Item_price|Item_Lookup_price-New,Item_full_name|Item_full_name-New');return false;" />
 												<t:inputText id="Item_full_name-New" size="40"
 													forceId="#{true}" required="#{true}"
-													styleClass="aon-form-input-text"
+													styleClass="aon-form-input-text" maxlength="64"
 													value="#{feeInvoicingDetail.to.description}" />
 											</h:panelGroup>
 										</t:div>
@@ -543,6 +543,7 @@
 							<ui:param name="dataTable" value="feeFinanceData" />
 						</ui:include>
 					</t:div>
+
 				</t:div>
 			</t:div>
 		</h:form>
@@ -570,7 +571,6 @@
 				temp = redondea( price.value * quantity.value , 2 );
 				amount.innerText = "" + redondea( temp - ( temp * discount.value / 100 ), 2 );
 			}
-			
 			function redondea(xparam , digits ){
 			    retvalue = xparam;
 			    if ( digits > 0 ) {
