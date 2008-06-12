@@ -52,21 +52,14 @@
 					<f:facet name="header">
 						<h:outputText value="#{appBundle.instructor_instructor}" />
 					</f:facet>
-					<t:outputText value="#{to.employee.registry.name} #{to.employee.registry.surname}"
-						rendered="#{to!=courseInstructor.to}" />
-					<h:selectOneMenu value="#{courseInstructor.to.employee.id}"
-						styleClass="aon-form-selectOneMenu-field"
-						valueChangeListener="#{courseInstructor.onInstructorChanged}"
-						rendered="#{to==courseInstructor.to}">
-						<f:selectItems value="#{employeeCollections.employees}" />
-					</h:selectOneMenu>
+					<t:outputText value="#{to.employee.registry.name} #{to.employee.registry.surname}" />
 					<f:facet name="footer">
 						<t:div>
 							<h:selectOneMenu value="#{courseInstructor.to.employee.id}"
 								styleClass="aon-form-selectOneMenu-field"
 								valueChangeListener="#{courseInstructor.onInstructorChanged}"
 								rendered="#{courseInstructor.new}">
-								<f:selectItems value="#{employeeCollections.employees}" />
+								<f:selectItems value="#{academyCollections.instructors}" />
 							</h:selectOneMenu>
 						</t:div>
 					</f:facet>
