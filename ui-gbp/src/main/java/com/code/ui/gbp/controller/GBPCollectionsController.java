@@ -13,6 +13,8 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ql.Criteria;
 import com.code.gbp.AccountContact;
+import com.code.gbp.Area;
+import com.code.gbp.AreaGroup;
 import com.code.gbp.Bank;
 import com.code.gbp.BatchConfig;
 import com.code.gbp.GeoZone;
@@ -22,6 +24,7 @@ import com.code.gbp.Office;
 import com.code.gbp.SupplierType;
 import com.code.gbp.dao.IGBPAlias;
 import com.code.gbp.enumeration.AddInfoType;
+import com.code.gbp.enumeration.AreaStatus;
 import com.code.gbp.enumeration.BatchConfigStatus;
 import com.code.gbp.enumeration.CampaignStatus;
 import com.code.gbp.enumeration.ContactType;
@@ -223,6 +226,42 @@ public class GBPCollectionsController {
 		Iterator iter = bean.getList(criteria).iterator();
 		while(iter.hasNext()){
 			BatchConfig object = (BatchConfig)iter.next();
+			SelectItem item = new SelectItem(object.getId(), object.getDescription());
+			items.add(item);
+		}
+		return items;
+	}
+	
+	public List<SelectItem> getAreaStatus(){
+		List<SelectItem> statusList = new LinkedList<SelectItem>();
+		Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
+		for(AreaStatus status:AreaStatus.values()){
+			SelectItem item = new SelectItem(status, status.getName(locale));
+			statusList.add(item);
+		}
+		return statusList;
+	}
+	
+	@SuppressWarnings("unchecked")
+	public List<SelectItem> getAreaGroups() throws ManagerBeanException {
+		List<SelectItem> items = new LinkedList<SelectItem>();
+		IManagerBean bean = BeanManager.getManagerBean(AreaGroup.class);
+		Iterator iter = bean.getList(null).iterator();
+		while(iter.hasNext()){
+			AreaGroup object = (AreaGroup)iter.next();
+			SelectItem item = new SelectItem(object.getId(), object.getDescription());
+			items.add(item);
+		}
+		return items;
+	}
+	
+	@SuppressWarnings("unchecked")
+	public List<SelectItem> getAreas() throws ManagerBeanException {
+		List<SelectItem> items = new LinkedList<SelectItem>();
+		IManagerBean bean = BeanManager.getManagerBean(Area.class);
+		Iterator iter = bean.getList(null).iterator();
+		while(iter.hasNext()){
+			Area object = (Area)iter.next();
 			SelectItem item = new SelectItem(object.getId(), object.getDescription());
 			items.add(item);
 		}

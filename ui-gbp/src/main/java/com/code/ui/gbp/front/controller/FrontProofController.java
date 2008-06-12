@@ -21,6 +21,7 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.util.AonUtil;
+import com.code.gbp.ProFormaBank;
 import com.code.gbp.ProFormaInvoice;
 import com.code.gbp.ProFormaSignature;
 import com.code.gbp.dao.IGBPAlias;
@@ -137,4 +138,19 @@ public class FrontProofController extends BasicController implements ICollection
 		}
 		return null;
 	}
+	
+	@SuppressWarnings("unchecked")
+	public List getBanks(){
+		try {
+			ProFormaInvoice invoice = (ProFormaInvoice)getTo();
+			IManagerBean bankBean = BeanManager.getManagerBean(ProFormaBank.class);
+			Criteria criteria = new Criteria();
+			criteria.addEqualExpression(bankBean.getFieldName(IGBPAlias.PRO_FORMA_BANK_PRO_FORMA_INVOICE_ID), invoice.getId());
+			return bankBean.getList(criteria);
+		} catch (ManagerBeanException e) {
+			LOGGER.log(Level.SEVERE, e.getMessage(), e);
+		}
+		return null;
+	}	
+	
 }
