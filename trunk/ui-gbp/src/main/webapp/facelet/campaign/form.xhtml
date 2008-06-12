@@ -120,6 +120,14 @@
 						<f:selectItems value="#{GBPCollections.internalCustomers}" />
 					</aon:selectOneMenu>
 
+					<aon:outputLabel for="Campaign_area_id"
+						value="#{appBundle.gbp_campaign_area}" />
+					<aon:selectOneMenu id="Campaign_area_id"
+						value="#{campaign.to.area.id}">
+						<f:selectItem value="#{nullSelectItem.value}" />
+						<f:selectItems value="#{GBPCollections.areas}" />
+					</aon:selectOneMenu>
+
 				</aon:panelGrid>
 
 				<aon:div id="campaignTab">

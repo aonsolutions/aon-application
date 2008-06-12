@@ -511,7 +511,7 @@
 					<reportElement
 						mode="Transparent"
 						x="13"
-						y="283"
+						y="304"
 						width="512"
 						height="17"
 						key="subreport-1"
@@ -563,7 +563,7 @@
 					<reportElement
 						mode="Transparent"
 						x="13"
-						y="300"
+						y="275"
 						width="512"
 						height="17"
 						key="subreport-2"

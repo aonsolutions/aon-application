@@ -50,9 +50,29 @@
 						datePattern="#{bundle.aon_date_pattern}" enableManualInput="true"
 						inputSize="15" />
 
+					<aon:outputLabel for="Campaign_area_id"
+						value="#{appBundle.gbp_campaign_area}" />
+					<aon:div>
+						<aon:lookupInputText id="Campaign_area_id"
+							lookup="#{areaLookup}"
+							value="#{offerControlReport.area.id}" size="5"
+							reRender="Campaign_area_description">
+						</aon:lookupInputText>
+						<aon:lookupButton id="Campaign_area_Lookup"
+							windowTitle="#{appBundle.gbp_campaign_area}"
+							selectReRender="Campaign_area_id,Campaign_area_description"
+							lookup="#{areaLookup}" actionType="search"
+							property="#{offerControlReport.area}">
+						</aon:lookupButton>
+						<aon:inputText id="Campaign_area_description"
+							value="#{offerControlReport.area.description}"
+							size="64" disabled="true" />
+					</aon:div>
+
 				</aon:panelGrid>
 			</aon:div>
 		</aon:form>
+		<aon:lookupButtonPopup lookup="#{areaLookup}" />
 	</ui:define>
 
 </ui:composition>

@@ -42,6 +42,12 @@
 		<converter-class>com.code.ui.gbp.converter.ProFormaStatusConverter</converter-class>
 	</converter>
 
+	<converter>
+		<description>Conversor para los AreaStatus</description>
+		<converter-id>areaStatusConverter</converter-id>
+		<converter-class>com.code.ui.gbp.converter.AreaStatusConverter</converter-class>
+	</converter>
+
 	<lifecycle>
 		<phase-listener>
 			com.code.aon.faces.component.sandbox.ValueChangePhaseListener

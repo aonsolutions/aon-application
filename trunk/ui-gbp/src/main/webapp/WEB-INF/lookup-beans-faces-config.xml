@@ -70,4 +70,26 @@
 			<value>/facelet/office/lookup/search.xhtml</value>
 		</managed-property>
 	</managed-bean>
+	<!-- ************ AREA LOOKUP ************** -->
+	<managed-bean>
+		<managed-bean-name>areaLookup</managed-bean-name>
+		<managed-bean-class>com.code.aon.faces.controller.RichLookupBean</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>areaLookup</value>
+		</managed-property>
+		<managed-property>
+			<property-name>foreignPojo</property-name>
+			<value>com.code.gbp.Area</value>
+		</managed-property>
+		<managed-property>
+			<property-name>listPagePath</property-name>
+			<value>/facelet/area/lookup/list.xhtml</value>
+		</managed-property>
+		<managed-property>
+			<property-name>searchPagePath</property-name>
+			<value>/facelet/area/lookup/search.xhtml</value>
+		</managed-property>
+	</managed-bean>
 </faces-config>
