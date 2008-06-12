@@ -37,6 +37,8 @@ public class Campaign implements ITransferObject {
 	
 	private InternalCustomer internalCustomer;
 
+	private Area area;
+
 	@Id
 	@GeneratedValue
 	@Column(nullable=false)
@@ -121,4 +123,15 @@ public class Campaign implements ITransferObject {
 	public void setInternalCustomer(InternalCustomer internalCustomer) {
 		this.internalCustomer = internalCustomer;
 	}
+
+	@ManyToOne
+	@JoinColumn( name="area")
+	public Area getArea() {
+		return area;
+	}
+
+	public void setArea(Area area) {
+		this.area = area;
+	}
+	
 }

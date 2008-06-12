@@ -6,12 +6,25 @@
 
 	<session-factory>
 		
+ 		<property name="connection.datasource">java:comp/env/jdbc/GBP</property>		
+		<property name="show_sql">true</property>		
+<!-- 
+		<property name="connection.url">jdbc:mysql://192.168.2.4:3306/gbp?autoReconnect=true</property>		
+		<property name="connection.username">dbuser</property>		
+		<property name="connection.driver_class">org.gjt.mm.mysql.Driver</property>		
+		<property name="connection.password">serubd2000</property>		
+
+ 		<property name="connection.datasource">java:comp/env/jdbc/GBP</property>		
+		<property name="show_sql">true</property>		
+-->		
+<!-- 	
 		<property name="connection.url">jdbc:mysql://localhost:3306/gbp?autoReconnect=true</property>		
 		<property name="connection.username">dbuser</property>		
 		<property name="show_sql">true</property>		
 		<property name="dialect">org.hibernate.dialect.MySQLInnoDBDialect</property>
 		<property name="connection.driver_class">org.gjt.mm.mysql.Driver</property>		
 		<property name="connection.password">serubd2000</property>		
+ -->
 
 		<!-- Mapping files -->
 		<mapping class="com.code.gbp.AccountContact"/>
@@ -39,6 +52,7 @@
 		<mapping class="com.code.gbp.ProFormaBank"/>
 		<mapping class="com.code.gbp.BatchConfig"/>
 		<mapping class="com.code.gbp.AreaGroup"/>
+		<mapping class="com.code.gbp.Area"/>
 	</session-factory>
 
 </hibernate-configuration>
