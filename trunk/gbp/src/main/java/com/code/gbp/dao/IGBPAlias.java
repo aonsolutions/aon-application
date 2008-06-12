@@ -27,6 +27,7 @@ import com.code.gbp.BankPercent;
 import com.code.gbp.ProFormaBank;
 import com.code.gbp.BatchConfig;
 import com.code.gbp.AreaGroup;
+import com.code.gbp.Area;
 
 /** 
 * Interface for holding entity properties constants.
@@ -72,58 +73,64 @@ public interface IGBPAlias {
 	DAOConstantsEntry CAMPAIGN_ENTRY = DAOConstants.getDAOConstant(Campaign.class);
 
 	/** 
+	* Alias value: Campaign_area_id
+	* Hibernate value: Campaign.area.id
+	*/
+	String  CAMPAIGN_AREA_ID = CAMPAIGN_ENTRY.getAliasNames()[0];
+
+	/** 
 	* Alias value: Campaign_budget
 	* Hibernate value: Campaign.budget
 	*/
-	String  CAMPAIGN_BUDGET = CAMPAIGN_ENTRY.getAliasNames()[0];
+	String  CAMPAIGN_BUDGET = CAMPAIGN_ENTRY.getAliasNames()[1];
 
 	/** 
 	* Alias value: Campaign_code
 	* Hibernate value: Campaign.code
 	*/
-	String  CAMPAIGN_CODE = CAMPAIGN_ENTRY.getAliasNames()[1];
+	String  CAMPAIGN_CODE = CAMPAIGN_ENTRY.getAliasNames()[2];
 
 	/** 
 	* Alias value: Campaign_endDate
 	* Hibernate value: Campaign.endDate
 	*/
-	String  CAMPAIGN_END_DATE = CAMPAIGN_ENTRY.getAliasNames()[2];
+	String  CAMPAIGN_END_DATE = CAMPAIGN_ENTRY.getAliasNames()[3];
 
 	/** 
 	* Alias value: Campaign_id
 	* Hibernate value: Campaign.id
 	*/
-	String  CAMPAIGN_ID = CAMPAIGN_ENTRY.getAliasNames()[3];
+	String  CAMPAIGN_ID = CAMPAIGN_ENTRY.getAliasNames()[4];
 
 	/** 
 	* Alias value: Campaign_internalCustomer_id
 	* Hibernate value: Campaign.internalCustomer.id
 	*/
-	String  CAMPAIGN_INTERNAL_CUSTOMER_ID = CAMPAIGN_ENTRY.getAliasNames()[4];
+	String  CAMPAIGN_INTERNAL_CUSTOMER_ID = CAMPAIGN_ENTRY.getAliasNames()[5];
 
 	/** 
 	* Alias value: Campaign_name
 	* Hibernate value: Campaign.name
 	*/
-	String  CAMPAIGN_NAME = CAMPAIGN_ENTRY.getAliasNames()[5];
+	String  CAMPAIGN_NAME = CAMPAIGN_ENTRY.getAliasNames()[6];
 
 	/** 
 	* Alias value: Campaign_offerDueDate
 	* Hibernate value: Campaign.offerDueDate
 	*/
-	String  CAMPAIGN_OFFER_DUE_DATE = CAMPAIGN_ENTRY.getAliasNames()[6];
+	String  CAMPAIGN_OFFER_DUE_DATE = CAMPAIGN_ENTRY.getAliasNames()[7];
 
 	/** 
 	* Alias value: Campaign_startDate
 	* Hibernate value: Campaign.startDate
 	*/
-	String  CAMPAIGN_START_DATE = CAMPAIGN_ENTRY.getAliasNames()[7];
+	String  CAMPAIGN_START_DATE = CAMPAIGN_ENTRY.getAliasNames()[8];
 
 	/** 
 	* Alias value: Campaign_status
 	* Hibernate value: Campaign.status
 	*/
-	String  CAMPAIGN_STATUS = CAMPAIGN_ENTRY.getAliasNames()[8];
+	String  CAMPAIGN_STATUS = CAMPAIGN_ENTRY.getAliasNames()[9];
 
 
 
@@ -1113,6 +1120,49 @@ public interface IGBPAlias {
 	* Hibernate value: AreaGroup.id
 	*/
 	String  AREA_GROUP_ID = AREA_GROUP_ENTRY.getAliasNames()[1];
+
+
+
+	/** 
+	* DAOConstantsEntry for Area entity.
+	*/ 
+	DAOConstantsEntry AREA_ENTRY = DAOConstants.getDAOConstant(Area.class);
+
+	/** 
+	* Alias value: Area_areaGroup_id
+	* Hibernate value: Area.areaGroup.id
+	*/
+	String  AREA_AREA_GROUP_ID = AREA_ENTRY.getAliasNames()[0];
+
+	/** 
+	* Alias value: Area_budget
+	* Hibernate value: Area.budget
+	*/
+	String  AREA_BUDGET = AREA_ENTRY.getAliasNames()[1];
+
+	/** 
+	* Alias value: Area_description
+	* Hibernate value: Area.description
+	*/
+	String  AREA_DESCRIPTION = AREA_ENTRY.getAliasNames()[2];
+
+	/** 
+	* Alias value: Area_estimate
+	* Hibernate value: Area.estimate
+	*/
+	String  AREA_ESTIMATE = AREA_ENTRY.getAliasNames()[3];
+
+	/** 
+	* Alias value: Area_id
+	* Hibernate value: Area.id
+	*/
+	String  AREA_ID = AREA_ENTRY.getAliasNames()[4];
+
+	/** 
+	* Alias value: Area_status
+	* Hibernate value: Area.status
+	*/
+	String  AREA_STATUS = AREA_ENTRY.getAliasNames()[5];
 
 
 }
