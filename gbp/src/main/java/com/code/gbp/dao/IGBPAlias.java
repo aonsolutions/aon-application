@@ -26,6 +26,7 @@ import com.code.gbp.Bank;
 import com.code.gbp.BankPercent;
 import com.code.gbp.ProFormaBank;
 import com.code.gbp.BatchConfig;
+import com.code.gbp.AreaGroup;
 
 /** 
 * Interface for holding entity properties constants.
@@ -1093,6 +1094,25 @@ public interface IGBPAlias {
 	* Hibernate value: BatchConfig.status
 	*/
 	String  BATCH_CONFIG_STATUS = BATCH_CONFIG_ENTRY.getAliasNames()[3];
+
+
+
+	/** 
+	* DAOConstantsEntry for AreaGroup entity.
+	*/ 
+	DAOConstantsEntry AREA_GROUP_ENTRY = DAOConstants.getDAOConstant(AreaGroup.class);
+
+	/** 
+	* Alias value: AreaGroup_description
+	* Hibernate value: AreaGroup.description
+	*/
+	String  AREA_GROUP_DESCRIPTION = AREA_GROUP_ENTRY.getAliasNames()[0];
+
+	/** 
+	* Alias value: AreaGroup_id
+	* Hibernate value: AreaGroup.id
+	*/
+	String  AREA_GROUP_ID = AREA_GROUP_ENTRY.getAliasNames()[1];
 
 
 }
