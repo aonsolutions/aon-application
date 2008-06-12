@@ -22,12 +22,17 @@ import com.code.aon.academy.enumeration.CourseStatus;
 import com.code.aon.academy.enumeration.InstructorType;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
+import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
-import com.code.aon.common.enumeration.Month;
 import com.code.aon.common.enumeration.WeekDay;
+import com.code.aon.company.dao.ICompanyAlias;
+import com.code.aon.company.resources.Employee;
 import com.code.aon.customer.Customer;
 import com.code.aon.ql.Criteria;
+import com.code.aon.record.Contract;
+import com.code.aon.record.dao.IRecordAlias;
 import com.code.aon.ui.customer.controller.CustomerController;
+import com.code.aon.ui.employee.util.Constants;
 import com.code.aon.ui.util.AonUtil;
 
 public class AcademyCollectionsController {
@@ -93,6 +98,22 @@ public class AcademyCollectionsController {
 		return courseStatuses;
 	}
 	
+	public List<SelectItem> getInstructors() throws ManagerBeanException {
+		List<SelectItem> employees = new LinkedList<SelectItem>();
+		IManagerBean employeeBean = BeanManager.getManagerBean(Employee.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(employeeBean.getFieldName(ICompanyAlias.EMPLOYEE_ACTIVE), new Boolean(true));
+		criteria.addOrder(employeeBean.getFieldName(ICompanyAlias.EMPLOYEE_REGISTRY_NAME));
+		criteria.addOrder(employeeBean.getFieldName(ICompanyAlias.EMPLOYEE_REGISTRY_SURNAME));
+		Iterator<ITransferObject> iter = employeeBean.getList(criteria).iterator();
+		while (iter.hasNext()) {
+			Employee employee = (Employee) iter.next();
+			SelectItem item = new SelectItem(employee.getId(), employee.getRegistry().getName() + (employee.getRegistry().getSurname()==null?Constants.EMPTY_STRING:" " + employee.getRegistry().getSurname()));
+			employees.add(item);
+		}
+		return employees;
+	}
+	
 	public List<SelectItem> getInstructorTypes() {
 		List<SelectItem> instructorTypes = new LinkedList<SelectItem>();
 		Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
@@ -117,19 +138,6 @@ public class AcademyCollectionsController {
 			weekDays.add(item);
 		}
 		return weekDays;
-	}
-	
-	public List<SelectItem> getMonths(){
-		List<SelectItem> monthList = new LinkedList<SelectItem>();
-		Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
-		Month[] months = Month.values();
-		for (int i = 0; i < months.length; i++) {
-			Month month = months[i];
-			String name = month.getName(locale);
-			SelectItem item = new SelectItem(month, name);
-			monthList.add(item);
-		}
-		return monthList;
 	}
 	
 	@SuppressWarnings("unchecked")
