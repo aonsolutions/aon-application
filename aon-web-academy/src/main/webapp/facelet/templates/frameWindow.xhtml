@@ -3,11 +3,14 @@
 	xmlns:f="http://java.sun.com/jsf/core" 
 	xmlns:t="http://myfaces.apache.org/tomahawk"	
 	xmlns:c="http://java.sun.com/jstl/core"		
+	xmlns:h="http://java.sun.com/jsf/html"	
 	xmlns:ui="http://java.sun.com/jsf/facelets">
 <f:view>
 	<head>
 		<title>
-			<ui:insert name="title">Title</ui:insert>					
+			<ui:insert name="title">
+				<h:outputText value="#{appBundle.aon_application_title}" />
+			</ui:insert>					
 		</title>
 		<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
 		<c:forEach items="#{aonConfiguration.applicationBundleList}" var="appBundle">
