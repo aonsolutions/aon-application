@@ -78,4 +78,16 @@ public class ProFormaInvoiceController extends BasicController implements IColle
 		}
 		return null;
 	}	
+	
+	public String getToTruncatedConcept(){
+		try{
+			ProFormaInvoice object = (ProFormaInvoice) this.getModel().getRowData();
+			String concept = object.getConcept();
+			if (concept.length()>40)
+				return concept.substring(0,40)+"..."; 
+			return concept;
+		}catch (Exception e) {
+		}
+		return "";
+	}
 }
