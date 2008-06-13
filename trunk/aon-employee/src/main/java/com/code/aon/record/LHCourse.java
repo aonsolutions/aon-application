@@ -15,8 +15,10 @@ import com.code.aon.company.resources.Employee;
 
 @Entity
 @Table(name="lh_course")
-public class Course implements ITransferObject {
+public class LHCourse implements ITransferObject {
 	
+	private static final long serialVersionUID = -5584410544741478146L;
+
 	/**
 	 * Identificador único
 	 */
