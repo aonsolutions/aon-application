@@ -20,6 +20,8 @@ import com.code.aon.company.resources.Employee;
 @Table(name="lh_position")
 public class Position implements ITransferObject {
 
+	private static final long serialVersionUID = 8326077287347834756L;
+
 	/** Identifier */
 	private Integer id;
 	

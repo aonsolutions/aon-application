@@ -12,6 +12,8 @@ import com.code.aon.common.ITransferObject;
 @Table(name="expenditures_items")
 public class ExpendituresItems implements ITransferObject {
 	
+	private static final long serialVersionUID = 8451397707757550332L;
+
 	/** Identifier */
 	private Integer id;
 	
