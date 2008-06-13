@@ -20,6 +20,7 @@ import com.code.aon.ui.util.AonUtil;
 import com.code.gbp.ProFormaInvoice;
 import com.code.gbp.ProFormaSignature;
 import com.code.gbp.dao.IGBPAlias;
+import com.code.gbp.enumeration.ProFormaInvoiceStatus;
 import com.code.ui.gbp.constants.GBPConstants;
 
 public class ProFormaSignatureController extends LinesController {
@@ -53,6 +54,12 @@ public class ProFormaSignatureController extends LinesController {
 			return (getManagerBean().getCount(criteria)>0);
 		}
 		return false;
+	}
+
+	public boolean isPending() throws ManagerBeanException{
+		IController controller = (IController)AonUtil.getController(PRO_FORMA_INVOICE_CONTROLLER_NAME);
+		ProFormaInvoice invoice = (ProFormaInvoice)controller.getTo();
+		return invoice.getStatus() == ProFormaInvoiceStatus.PENDING;
 	}
 
 	private String obtainUserRole() {

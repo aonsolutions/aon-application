@@ -10,7 +10,7 @@
 
 	<aon:div id="signDiv">
 		<aon:div styleClass="aon-toolbar"
-			rendered="#{!proFormaSignature.signedByUser}">
+			rendered="#{!proFormaSignature.signedByUser and proFormaSignature.pending}" >
 			<aon:commandButton id="sign" value="#{appBundle.gbp_sign}"
 				styleClass="aon-finding-toolbar-item aon-icon-signature"
 				reRender="proFormaSignatureDataTable,signDiv,proFormaGrid"

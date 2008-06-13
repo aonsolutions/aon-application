@@ -10,7 +10,7 @@
 
 	<aon:div id="signDiv">
 		<aon:div styleClass="aon-toolbar"
-			rendered="#{!offerSignature.signedByUser}" >
+			rendered="#{!offerSignature.signedByUser and offerSignature.pending}" >
 			<aon:commandButton id="sign" value="#{appBundle.gbp_sign}"
 				styleClass="aon-finding-toolbar-item aon-icon-signature"
 				reRender="offerSignatureDataTable,signDiv,offerGrid"

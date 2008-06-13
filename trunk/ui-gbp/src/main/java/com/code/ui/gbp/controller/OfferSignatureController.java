@@ -20,6 +20,7 @@ import com.code.aon.ui.util.AonUtil;
 import com.code.gbp.Offer;
 import com.code.gbp.OfferSignature;
 import com.code.gbp.dao.IGBPAlias;
+import com.code.gbp.enumeration.OfferStatus;
 import com.code.ui.gbp.constants.GBPConstants;
 
 public class OfferSignatureController extends LinesController {
@@ -53,6 +54,12 @@ public class OfferSignatureController extends LinesController {
 			return (getManagerBean().getCount(criteria)>0);
 		}
 		return false;
+	}
+
+	public boolean isPending() throws ManagerBeanException{
+		IController offerController = (IController)AonUtil.getController(OFFER_CONTROLLER_NAME);
+		Offer offer = (Offer)offerController.getTo();
+		return offer.getStatus() == OfferStatus.PENDING;
 	}
 
 	private String obtainUserRole() {
