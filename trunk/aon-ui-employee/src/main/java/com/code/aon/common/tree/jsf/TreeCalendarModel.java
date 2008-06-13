@@ -15,6 +15,8 @@ import com.code.aon.common.tree.CalendarTreeVisitor;
 import com.code.aon.common.tree.ITreeNode;
 import com.code.aon.common.tree.TreeModelException;
 import com.code.aon.company.WorkPlace;
+import com.code.aon.company.dao.ICompanyAlias;
+import com.code.aon.ql.Criteria;
 
 /**
  * 
@@ -34,13 +36,16 @@ public class TreeCalendarModel extends AbstractTreeModel {
         super(root);
     }
 
-    protected void loadModel() throws TreeModelException {
+    @SuppressWarnings("unchecked")
+	protected void loadModel() throws TreeModelException {
         LOGGER.info( "Start loading tree calendar model:" );
     	HibernateUtil.setCloseSession( false );
         CalendarTreeVisitor visitor = new CalendarTreeVisitor( getRoot() );
         Collection c = null;
         try {
         	IManagerBean bean = BeanManager.getManagerBean(WorkPlace.class);
+        	Criteria criteria = new Criteria();
+        	criteria.addOrder( bean.getFieldName( ICompanyAlias.WORK_PLACE_ID ) );
         	c = bean.getList(null);
 			visitor.visitRoot(c);
 		} catch (ManagerBeanException e) {
