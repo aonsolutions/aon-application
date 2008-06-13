@@ -15,10 +15,11 @@ public class FrontProFormaInvoiceControllerListener extends ControllerAdapter {
 		try {
 			Supplier currentSupplier = FrontUtil.getCurrentSupplier();
 			event.getController().getCriteria().addEqualExpression(event.getController().getFieldName(IGBPAlias.PRO_FORMA_INVOICE_SUPPLIER_ID), currentSupplier.getId());
-			event.getController().getCriteria().addOrder(event.getController().getFieldName(IGBPAlias.PRO_FORMA_INVOICE_CAMPAIGN_CODE));
 			event.getController().getCriteria().addOrder(event.getController().getFieldName(IGBPAlias.PRO_FORMA_INVOICE_INVOICE_DATE), false);
+			event.getController().getCriteria().addOrder(event.getController().getFieldName(IGBPAlias.PRO_FORMA_INVOICE_CAMPAIGN_CODE));
 		} catch (ManagerBeanException e) {
 			throw new ControllerListenerException(e);
 		}
 	}	
+	
 }
