@@ -46,6 +46,8 @@ public class FrontOfferController extends BasicController {
 		clearCriteria();
 		Expression notDiscardedExp = ExpressionUtilities.getNotEqualExpression(getFieldName(IGBPAlias.OFFER_STATUS), OfferStatus.DISCARDED);
 		getCriteria().addExpression(notDiscardedExp);
+		Expression notTransferedExp = ExpressionUtilities.getNotEqualExpression(getFieldName(IGBPAlias.OFFER_STATUS), OfferStatus.TRANSFERED);
+		getCriteria().addExpression(notTransferedExp);
 		this.onSearch(event);
 	}
 
@@ -67,6 +69,8 @@ public class FrontOfferController extends BasicController {
 		invoice.setOffer(offer);
 		proFormaController.accept(event);
 		proFormaController.setModel(null);
+		offer.setStatus(OfferStatus.TRANSFERED);
+		this.onAccept(event);
 	}
 	
 	@SuppressWarnings("unchecked")

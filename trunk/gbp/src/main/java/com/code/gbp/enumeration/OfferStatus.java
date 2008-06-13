@@ -17,7 +17,10 @@ public enum OfferStatus implements IResourceable {
 	INCIDENCES,
 	
 	/** DISCARDED */
-	DISCARDED;
+	DISCARDED,
+	
+	/** TRANSFERED */
+	TRANSFERED;
 	
 	/** Message file base path. */
     private static final String BASE_NAME = "com.code.gbp.i18n.messages";
