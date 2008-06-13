@@ -30,7 +30,7 @@
 				<aon:div styleClass="aon-login-box-internal">
 				<form id="login" method="post" action="j_security_check" style="display: inline;">
 					<aon:div styleClass="aon-login-title">
-					<!-- 
+						<!-- 
 						<aon:graphicImage url="images/login/main-logo.gif"/>
 					 -->	
 						<aon:outputText value="#{appBundle.gbp_application_title}" styleClass="aon-bold"/>
@@ -62,6 +62,10 @@
 						</aon:div>	
  -->							
 					</aon:div>
+					<aon:div styleClass="aon-login-info2">						
+						<aon:outputText value="#{appBundle.gbp_support}" />
+						<a href="mailto:gbp@glodimark.com">gbp@glodimark.com</a>
+					</aon:div>	
 					</form>
 				</aon:div>
 			</aon:panelGrid>

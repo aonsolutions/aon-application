@@ -62,8 +62,12 @@ public class CampaignComparerReport implements ICollectionProvider {
 				"FROM ProFormaInvoice inv " +
 				"WHERE inv.supplier.supplierType.id = cs.supplier.supplierType.id " +
 				"AND inv.campaign.id = ? )";
+		String subStmt_4 = "(SELECT SUM(off.price) " +
+				"FROM Offer off " +
+				"WHERE off.supplier.supplierType.id = cs.supplier.supplierType.id " +
+				"AND off.campaign.id = ? )";
 		String stmt = "SELECT " + "new com.code.ui.gbp.stats.CampaignComparer("
-				+ "cs.supplier.supplierType.description," + subStmt_1+","+subStmt_1+","+subStmt_2+","+subStmt_3+","+subStmt_2+","+subStmt_3
+				+ "cs.supplier.supplierType.description," + subStmt_1+","+subStmt_1+","+subStmt_2+","+subStmt_3+","+subStmt_2+","+subStmt_3+","+subStmt_4+","+subStmt_4
 				+" ) "
 				+ "FROM CampaignSupplier cs WHERE ";
 		StringBuilder sentence = new StringBuilder(stmt);
@@ -79,13 +83,26 @@ public class CampaignComparerReport implements ICollectionProvider {
 		query.setInteger(5, getCampaign2().getId());
 		query.setInteger(6, getCampaign1().getId());
 		query.setInteger(7, getCampaign2().getId());
-		List<SupplierEvolution> list = query.list();
+		query.setInteger(8, getCampaign1().getId());
+		query.setInteger(9, getCampaign2().getId());
+		List<CampaignComparer> list = query.list();
 		return list;
 	}
 
 	public void onInitialize(ActionEvent event) {
 		setCampaign1(null);
 		setCampaign2(null);
+	}
+
+	public static void main(String[] args) {
+		CampaignComparerReport rep = new CampaignComparerReport();
+		Campaign c1 = new Campaign();
+		c1.setId(1);
+		rep.setCampaign1(c1);
+		Campaign c2 = new Campaign();
+		c2.setId(2);
+		rep.setCampaign2(c2);
+		rep.getCollection();
 	}
 
 }

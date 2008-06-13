@@ -13,6 +13,8 @@ public class CampaignComparer {
 	private Double invoiceAmount_2;
 	private Integer supplierDiff;
 	private Double invoiceAmountDiff;
+	private Double offerAmount_1;
+	private Double offerAmount_2;
 
 	public CampaignComparer(){
 	}
@@ -24,7 +26,9 @@ public class CampaignComparer {
 			Long supplierCount_1,
 			Double invoiceAmount_1,
 			Long supplierCount_2,
-			Double invoiceAmount_2
+			Double invoiceAmount_2,
+			Double offerAmount_1,
+			Double offerAmount_2
 			){
 		this.supplierType = supplierType;
 		this.campaign_1 = campaign_1;
@@ -35,6 +39,8 @@ public class CampaignComparer {
 		this.invoiceAmount_2 = invoiceAmount_2==null?new Double(0):invoiceAmount_2;
 		this.supplierDiff = new Integer(supplierCount_1.intValue() - supplierCount_1.intValue());
 		this.invoiceAmountDiff = new Double(this.invoiceAmount_1.doubleValue() - this.invoiceAmount_2.doubleValue());
+		this.offerAmount_1 = offerAmount_1==null?new Double(0):offerAmount_1;
+		this.offerAmount_2 = offerAmount_2==null?new Double(0):offerAmount_2;
 	}
 
 	public Campaign getCampaign_1() {
@@ -101,6 +107,20 @@ public class CampaignComparer {
 		this.supplierType = supplierType;
 	}
 
-	
+	public Double getOfferAmount_1() {
+		return offerAmount_1;
+	}
+
+	public void setOfferAmount_1(Double offerAmount_1) {
+		this.offerAmount_1 = offerAmount_1;
+	}
+
+	public Double getOfferAmount_2() {
+		return offerAmount_2;
+	}
+
+	public void setOfferAmount_2(Double offerAmount_2) {
+		this.offerAmount_2 = offerAmount_2;
+	}
 	
 }
