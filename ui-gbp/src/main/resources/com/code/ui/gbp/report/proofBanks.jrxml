@@ -6,9 +6,9 @@
 		 columnCount="1"
 		 printOrder="Vertical"
 		 orientation="Landscape"
-		 pageWidth="300"
+		 pageWidth="500"
 		 pageHeight="42"
-		 columnWidth="300"
+		 columnWidth="500"
 		 columnSpacing="0"
 		 leftMargin="0"
 		 rightMargin="0"
@@ -46,7 +46,7 @@
 					<reportElement
 						x="0"
 						y="0"
-						width="148"
+						width="346"
 						height="14"
 						key="staticText-1"/>
 					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" leftPadding="1" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
@@ -57,7 +57,7 @@
 				</staticText>
 				<staticText>
 					<reportElement
-						x="148"
+						x="346"
 						y="0"
 						width="63"
 						height="14"
@@ -70,7 +70,7 @@
 				</staticText>
 				<staticText>
 					<reportElement
-						x="211"
+						x="409"
 						y="0"
 						width="89"
 						height="14"
@@ -89,7 +89,7 @@
 					<reportElement
 						x="0"
 						y="0"
-						width="148"
+						width="262"
 						height="13"
 						key="textField-1"/>
 					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
@@ -100,7 +100,7 @@
 				</textField>
 				<textField isStretchWithOverflow="false" pattern="#,##0.00" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
-						x="148"
+						x="346"
 						y="0"
 						width="63"
 						height="13"
@@ -113,7 +113,7 @@
 				</textField>
 				<textField isStretchWithOverflow="false" pattern="#,##0.00" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
-						x="211"
+						x="409"
 						y="0"
 						width="89"
 						height="13"
@@ -123,6 +123,19 @@
 						<font pdfFontName="Helvetica-Bold" isBold="true"/>
 					</textElement>
 				<textFieldExpression   class="java.lang.Double"><![CDATA[new Double($F{percent}.doubleValue()*$P{amount}.doubleValue()/100)]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="255"
+						y="0"
+						width="91"
+						height="13"
+						key="textField-4"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Left">
+						<font pdfFontName="Helvetica-Bold" isBold="true"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{bank}.getDocument()]]></textFieldExpression>
 				</textField>
 			</band>
 		</detail>
