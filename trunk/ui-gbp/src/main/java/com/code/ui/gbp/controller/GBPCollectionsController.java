@@ -33,6 +33,7 @@ import com.code.gbp.enumeration.DocumentType;
 import com.code.gbp.enumeration.OfferStatus;
 import com.code.gbp.enumeration.OfferType;
 import com.code.gbp.enumeration.ProFormaInvoiceStatus;
+import com.code.gbp.enumeration.SupplierStatus;
 
 public class GBPCollectionsController {
 
@@ -267,5 +268,16 @@ public class GBPCollectionsController {
 		}
 		return items;
 	}
+
+	public List<SelectItem> getSupplierStatus(){
+		List<SelectItem> statusList = new LinkedList<SelectItem>();
+		Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
+		for(SupplierStatus status:SupplierStatus.values()){
+			SelectItem item = new SelectItem(status, status.getName(locale));
+			statusList.add(item);
+		}
+		return statusList;
+	}
 	
+
 }

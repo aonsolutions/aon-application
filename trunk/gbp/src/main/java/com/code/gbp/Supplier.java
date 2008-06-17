@@ -13,6 +13,8 @@ import javax.persistence.Table;
 import javax.persistence.Entity;
 
 import com.code.aon.common.ITransferObject;
+import com.code.gbp.enumeration.AreaStatus;
+import com.code.gbp.enumeration.SupplierStatus;
 
 @Entity
 @Table(name="supplier")
@@ -39,6 +41,8 @@ public class Supplier implements ITransferObject {
 	private String bankAccount;
 	
 	private String passWord;
+
+	private SupplierStatus status;
 
 	@Id
 	@GeneratedValue
@@ -143,4 +147,14 @@ public class Supplier implements ITransferObject {
 		this.supplierType = supplierType;
 	}
 
+	@Column(nullable=false)
+	public SupplierStatus getStatus() {
+		return status;
+	}
+
+	public void setStatus(SupplierStatus status) {
+		this.status = status;
+	}
+
+	
 }

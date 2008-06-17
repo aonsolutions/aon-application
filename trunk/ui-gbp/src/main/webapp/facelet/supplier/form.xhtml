@@ -131,6 +131,13 @@
 						size="16" maxlength="16" required="true"
 						value="#{supplier.to.passWord}" />
 
+					<aon:outputLabel for="Supplier_status"
+						value="#{appBundle.gbp_supplier_status}" />
+					<aon:selectOneMenu id="Supplier_status"
+						value="#{supplier.to.status}">
+						<f:selectItems value="#{GBPCollections.supplierStatus}" />
+					</aon:selectOneMenu>
+
 				</aon:panelGrid>
 
 				<aon:div id="supplierTab">

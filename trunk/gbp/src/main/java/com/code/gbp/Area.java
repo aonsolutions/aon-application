@@ -57,6 +57,7 @@ public class Area implements ITransferObject {
 		this.areaGroup = areaGroup;
 	}
 
+	@Column(nullable=false)
 	public AreaStatus getStatus() {
 		return status;
 	}

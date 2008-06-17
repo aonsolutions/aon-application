@@ -49,6 +49,7 @@
 						<aon:menuItem id="supplier"
 							styleClass="aon-dropDownMenu-item-root"
 							iconClass="aon-menuItem-no-iconClass"
+							actionListener="#{supplier.onInitialModel}"
 							value="#{menuBundle.gbp_supplier}" action="supplier_list" />
 						<aon:menuItem id="campaign"
 							styleClass="aon-dropDownMenu-item-root"
@@ -94,6 +95,10 @@
 								value="#{menuBundle.gbp_anual_comparer_report}"
 								actionListener="#{anualComparerReport.onInitialize}"
 								action="anual_comparer_stat" />
+							<aon:menuItem id="byAreaEvolutionStat"
+								value="#{menuBundle.gbp_area_control_report}"
+								actionListener="#{byAreaEvolutionReport.onInitialize}"
+								action="byarea_evolution_stat" />
 						</aon:dropDownMenu>
 					</aon:menuBar>
 				</aon:form>
