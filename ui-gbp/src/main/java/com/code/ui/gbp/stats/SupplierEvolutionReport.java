@@ -61,7 +61,7 @@ public class SupplierEvolutionReport implements ICollectionProvider {
 		String subStmt = "(SELECT SUM(inv.amount) FROM ProFormaInvoice inv WHERE inv.supplier.id = cs.supplier.id AND inv.campaign.id = cs.campaign.id)";
 		String subStmtTotal = "(SELECT SUM(inv.amount) FROM ProFormaInvoice inv WHERE inv.supplier.id = cs.supplier.id AND inv.campaign.startDate <= ? AND inv.campaign.endDate >= ?)";
 		String stmt = "SELECT " + "new com.code.ui.gbp.stats.SupplierEvolution("
-				+ "cs.supplier.id,cs.supplier.name,cs.campaign.code,cs.campaign.name,SUM(off.price)," + subStmt +","+ subStmtTotal
+				+ "cs.supplier.id,cs.supplier.name,cs.supplier.status,cs.campaign.code,cs.campaign.name,SUM(off.price)," + subStmt +","+ subStmtTotal
 				+ ") FROM CampaignSupplier cs,Offer off WHERE ";
 		StringBuilder sentence = new StringBuilder(stmt);
 		if (getSupplier() != null && getSupplier().getId() != null) {

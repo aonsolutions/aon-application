@@ -28,6 +28,13 @@
 
 		<aon:column>
 			<f:facet name="header">
+				<aon:outputText value="#{appBundle.gbp_supplier_campaign_name}" />
+			</f:facet>
+			<aon:outputText value="#{to.campaign.name}"/>
+		</aon:column>
+
+		<aon:column>
+			<f:facet name="header">
 				<aon:outputText value="#{appBundle.gbp_supplier_campaign_start_date}" />
 			</f:facet>
 			<aon:outputText value="#{to.campaign.startDate}">

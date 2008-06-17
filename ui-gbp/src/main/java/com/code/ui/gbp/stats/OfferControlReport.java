@@ -62,13 +62,15 @@ public class OfferControlReport implements ICollectionProvider {
 				+ ") FROM Campaign c WHERE ";
 		StringBuilder sentence = new StringBuilder(stmt);
 		sentence.append(" c.startDate <= ? AND c.endDate >= ?");
-		sentence.append(" AND c.area.id = ?");
+		if (getArea()!=null && getArea().getId()!=null)
+			sentence.append(" AND c.area.id = ?");
 		sentence.append(" ORDER BY c.code,c.name");
 
 		Query query = s.createQuery(sentence.toString());
 		query.setDate(0, getToDate());
 		query.setDate(1, getFromDate());
-		query.setInteger(2, getArea().getId());
+		if (getArea()!=null && getArea().getId()!=null)
+			query.setInteger(2, getArea().getId());
 		List<SupplierEvolution> list = query.list();
 		return list;
 

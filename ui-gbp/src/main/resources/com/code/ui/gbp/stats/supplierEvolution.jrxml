@@ -34,6 +34,7 @@
 	<field name="percent" class="java.lang.Double"/>
 	<field name="supplierId" class="java.lang.Integer"/>
 	<field name="campaignId" class="java.lang.Integer"/>
+	<field name="supplierStatus" class="com.code.gbp.enumeration.SupplierStatus"/>
 
 	<variable name="supOfferTotal" class="java.lang.Double" resetType="Group" resetGroup="supplierGroup" calculation="Sum">
 		<variableExpression><![CDATA[$F{offer}]]></variableExpression>
@@ -119,9 +120,9 @@
 				</textField>
 				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
-						x="137"
+						x="116"
 						y="5"
-						width="232"
+						width="184"
 						height="16"
 						key="textField-24"/>
 					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" leftPadding="5" rightBorder="None" rightBorderColor="#000000" rightPadding="5" bottomBorder="Thin" bottomBorderColor="#999999"/>
@@ -133,9 +134,9 @@
 				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						mode="Opaque"
-						x="4"
+						x="0"
 						y="5"
-						width="133"
+						width="116"
 						height="16"
 						forecolor="#000000"
 						backcolor="#FFFFFF"
@@ -185,6 +186,19 @@
 					</textElement>
 				<text><![CDATA[-]]></text>
 				</staticText>
+				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="300"
+						y="5"
+						width="64"
+						height="16"
+						key="textField-36"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" leftPadding="5" rightBorder="None" rightBorderColor="#000000" rightPadding="5" bottomBorder="Thin" bottomBorderColor="#999999"/>
+					<textElement verticalAlignment="Middle">
+						<font pdfFontName="Helvetica-Bold" size="10" isBold="true"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA["("+$F{supplierStatus}.getName($P{REPORT_LOCALE})+")"]]></textFieldExpression>
+				</textField>
 			</band>
 			</groupHeader>
 			<groupFooter>

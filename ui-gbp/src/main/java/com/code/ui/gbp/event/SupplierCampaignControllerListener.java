@@ -11,8 +11,8 @@ public class SupplierCampaignControllerListener extends ControllerAdapter {
 	@Override
 	public void beforeModelInitialized(ControllerEvent event) throws ControllerListenerException {
 		try {
-			event.getController().getCriteria().addOrder(event.getController().getFieldName(IGBPAlias.CAMPAIGN_SUPPLIER_CAMPAIGN_CODE));
 			event.getController().getCriteria().addOrder(event.getController().getFieldName(IGBPAlias.CAMPAIGN_SUPPLIER_CAMPAIGN_START_DATE), false);
+			event.getController().getCriteria().addOrder(event.getController().getFieldName(IGBPAlias.CAMPAIGN_SUPPLIER_CAMPAIGN_CODE));
 		} catch (ManagerBeanException e) {
 			throw new ControllerListenerException(e);
 		}

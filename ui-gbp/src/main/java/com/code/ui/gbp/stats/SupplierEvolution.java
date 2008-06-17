@@ -3,11 +3,12 @@
  */
 package com.code.ui.gbp.stats;
 
-import java.util.Date;
+import com.code.gbp.enumeration.SupplierStatus;
 
 public class SupplierEvolution {
 	private Integer supplierId;
 	private String supplierName;
+	private SupplierStatus supplierStatus;
 	private Integer campaignId;
 	private String campaignName;
 	private Double offer;
@@ -20,6 +21,7 @@ public class SupplierEvolution {
 	public SupplierEvolution(
 			Integer supplierId,
 			String supplierName,
+			SupplierStatus supplierStatus,
 			Integer campaignId,
 			String campaignName,
 			Double offer,
@@ -27,6 +29,7 @@ public class SupplierEvolution {
 			Double invoiceTotal) {
 		this.supplierId = supplierId;
 		this.supplierName = supplierName;
+		this.supplierStatus = supplierStatus;
 		this.campaignId = campaignId;
 		this.campaignName = campaignName;
 		this.offer = offer;
@@ -105,4 +108,14 @@ public class SupplierEvolution {
 		this.campaignId = campaignId;
 	}
 
+	public SupplierStatus getSupplierStatus() {
+		return supplierStatus;
+	}
+
+	public void setSupplierStatus(SupplierStatus supplierStatus) {
+		this.supplierStatus = supplierStatus;
+	}
+
+	
+	
 }
