@@ -96,6 +96,7 @@ public class Campaign implements ITransferObject {
 		this.endDate = endDate;
 	}
 
+	//@Column(name="budget",columnDefinition="DOUBLE",precision=15,scale=3)
 	public Double getBudget() {
 		return budget;
 	}

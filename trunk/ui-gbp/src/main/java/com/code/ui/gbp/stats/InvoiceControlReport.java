@@ -62,7 +62,7 @@ public class InvoiceControlReport implements ICollectionProvider {
 		Session s = HibernateUtil.getSession();
 		String stmt = "SELECT " + "new com.code.ui.gbp.stats.InvoiceControl("
 				+ "inv.campaign.code,inv.campaign.name,"
-				+ "inv.supplier.supplierType.description,inv.supplier.name,"
+				+ "inv.supplier.supplierType.description,inv.supplier.name,inv.supplier.status,"
 				+ "inv.concept,inv.number,inv.amount,inv.invoiceDate,inv.paymentDate"
 				+ ") "
 				+ "FROM ProFormaInvoice inv WHERE ";

@@ -2,6 +2,8 @@ package com.code.ui.gbp.stats;
 
 import java.util.Date;
 
+import com.code.gbp.enumeration.SupplierStatus;
+
 public class InvoiceControl {
 
 	private Integer campaignCode;
@@ -22,6 +24,8 @@ public class InvoiceControl {
 	
 	private Date paymentDate;
 
+	private SupplierStatus supplierStatus;
+	
 	public InvoiceControl(){
 	}
 	
@@ -30,6 +34,7 @@ public class InvoiceControl {
 			String campaignName,
 			String supplierType,
 			String supplierName,
+			SupplierStatus supplierStatus,
 			String invoiceConcept,
 			String number,
 			Double amount,
@@ -40,6 +45,7 @@ public class InvoiceControl {
 		this.campaignName = campaignName;
 		this.supplierType = supplierType;
 		this.supplierName = supplierName;
+		this.supplierStatus = supplierStatus;
 		this.invoiceConcept = invoiceConcept;
 		this.number = number;
 		this.amount = amount==null?new Double(0):amount;
@@ -117,6 +123,14 @@ public class InvoiceControl {
 
 	public void setPaymentDate(Date paymentDate) {
 		this.paymentDate = paymentDate;
+	}
+
+	public SupplierStatus getSupplierStatus() {
+		return supplierStatus;
+	}
+
+	public void setSupplierStatus(SupplierStatus supplierStatus) {
+		this.supplierStatus = supplierStatus;
 	}
 	
 	
