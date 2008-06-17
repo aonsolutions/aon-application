@@ -52,6 +52,7 @@
 							   aon-width-auto aon-text-left,
 							   aon-width-auto aon-text-left,
 							   aon-width-auto aon-text-left,
+							   aon-width-auto aon-text-left,
 							   aon-width-auto aon-text-left" >
 					<aon:rowSelector action="supplier_form" actionListener="#{supplier.onSelect}" />
 					
@@ -98,6 +99,13 @@
 						</aon:div>
 					</aon:column>
 
+					<aon:column>
+						<f:facet name="header">
+							<aon:outputText value="#{appBundle.gbp_supplier_status}" />
+						</f:facet>
+						<aon:outputText value="#{to.status}"/>
+					</aon:column>
+					
 				</aon:dataTable>
 						
 				<aon:dataScroller dataTable="supplierDataList"

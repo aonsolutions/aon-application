@@ -240,4 +240,14 @@
 		</params>
 	</report>
 
+	<report id="byarea_evolution_stat" description="Area Evolution">
+		<template path="/com/code/ui/gbp/stats/ByAreaEvolution.jasper" />
+		<collection provider="#{byAreaEvolutionReport}"/>
+		<params>
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.ui.gbp.i18n.messages" />
+			<param id="INIT_DATE" value="#{byAreaEvolutionReport.getFromDate}" />
+			<param id="END_DATE" value="#{byAreaEvolutionReport.getToDate}" />
+		</params>
+	</report>
+
 </report-config>
