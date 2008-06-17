@@ -123,12 +123,9 @@
 
 						<aon:outputLabel for="info"
 							value="#{appBundle.hiru_course_info}" />
-						<aon:div style="width:600px">
-							<aon:inputRichText style="width:100%" 
-									required="true"
-									id="info" 
-									value="#{hiru_course.toI18n.info}" />
-						</aon:div>
+						<aon:inputTextarea id="info"
+							cols="60" rows="20" 
+							value="#{hiru_course.toI18n.info}"/>
 
 						<aon:outputLabel for="url"
 							value="#{appBundle.hiru_course_url}" />

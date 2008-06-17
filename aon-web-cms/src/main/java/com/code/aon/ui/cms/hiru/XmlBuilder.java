@@ -34,11 +34,11 @@ public class XmlBuilder {
 	
 	private String destDir;
 
-	private String uploadDir;
+	private String url;
 
-	public XmlBuilder(String destDir, String uploadDir){
+	public XmlBuilder(String destDir, String url){
 		this.destDir = destDir;
-		this.uploadDir = uploadDir;
+		this.url = url;
 	}
 
 	public void generate() throws FileNotFoundException, XmlBuilderException{
@@ -109,11 +109,11 @@ public class XmlBuilder {
 				generateElement(hd,atts,"","","web_orria",value);
 				value = object.getAddress()==null?"":object.getAddress();
 				generateElement(hd,atts,"","","helbidea",value);
-				value = "";
-				generateElement(hd,atts,"","","gaiak",value);
+				value = object.getPostal_code()==null?"":""+object.getPostal_code();
+				generateElement(hd,atts,"","","pk",value);
 				value = object.getLocality()==null?"":object.getLocality();
 				generateElement(hd,atts,"","","herria",value);
-				value = this.uploadDir+"/curso_id_"+id+".xml";
+				value = this.url+"/curso_id_"+id+".xml";
 				generateElement(hd,atts,"","","feed",value);
 
 				hd.endElement("","","zentroa");
@@ -242,9 +242,9 @@ public class XmlBuilder {
 			String qName,
 			String value) throws SAXException{
 		hd.startElement(uri,localName,qName,atts);
-		hd.startCDATA();
+		//hd.startCDATA();
 		hd.characters(value.toCharArray(),0,value.length());
-		hd.endCDATA();
+		//hd.endCDATA();
 		hd.endElement(uri,localName,qName);
 	}
 	
