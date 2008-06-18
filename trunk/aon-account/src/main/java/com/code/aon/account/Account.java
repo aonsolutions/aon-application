@@ -71,7 +71,7 @@ public class Account implements ITransferObject {
 	 * 
 	 * @return The description of this account
 	 */
-	@Column(nullable = false, length = 100)
+	@Column(nullable = false, length = 128)
 	public String getDescription() {
 		return description;
 	}
@@ -91,7 +91,7 @@ public class Account implements ITransferObject {
 	 * 
 	 * @return The alias of this account
 	 */
-	@Column(length = 15)
+	@Column(length = 32)
 	public String getAlias() {
 		return alias;
 	}
