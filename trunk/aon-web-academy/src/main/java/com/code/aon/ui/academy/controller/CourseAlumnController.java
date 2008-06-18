@@ -21,6 +21,7 @@ public class CourseAlumnController extends LinesController {
 	
 	private static final String COURSE_CONTROLLER_NAME = "course";
 
+	@SuppressWarnings("unchecked")
 	public void onAlumnChanged(ValueChangeEvent event) throws ManagerBeanException{
 		if(event.getNewValue() != null){
 			IManagerBean customerBean = BeanManager.getManagerBean(Customer.class);
