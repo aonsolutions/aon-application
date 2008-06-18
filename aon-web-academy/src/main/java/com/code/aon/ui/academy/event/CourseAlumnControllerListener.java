@@ -1,6 +1,7 @@
 package com.code.aon.ui.academy.event;
 
 import java.util.Iterator;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -8,10 +9,12 @@ import javax.faces.event.AbortProcessingException;
 
 import com.code.aon.academy.CourseAlumn;
 import com.code.aon.academy.dao.IAcademyAlias;
+import com.code.aon.academy.enumeration.CourseAlumnStatus;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ql.Criteria;
+import com.code.aon.ui.academy.controller.AlumnCourseController;
 import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
@@ -22,6 +25,12 @@ public class CourseAlumnControllerListener extends ControllerAdapter {
 	private static final Logger LOGGER = Logger.getLogger(CourseAlumnControllerListener.class.getName());
 
 	@Override
+	public void afterBeanCreated(ControllerEvent event) throws ControllerListenerException {
+		CourseAlumn courseAlumn = (CourseAlumn)event.getController().getTo();
+		courseAlumn.setStatus(CourseAlumnStatus.ACTIVE);
+	}
+
+	@Override
 	public void beforeBeanAdded(ControllerEvent event) throws ControllerListenerException {
 		CourseAlumn courseAlumn = (CourseAlumn)event.getController().getTo();
 		if(existingAlumn(courseAlumn)){
@@ -29,7 +38,31 @@ public class CourseAlumnControllerListener extends ControllerAdapter {
 			throw new AbortProcessingException();
 		}
 	}
-	
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public void afterBeanAdded(ControllerEvent event) throws ControllerListenerException {
+		if (event.getController() instanceof AlumnCourseController) {
+			CourseAlumn courseAlumn = (CourseAlumn)event.getController().getTo();
+			try {
+				IManagerBean courseAlumnBean = BeanManager.getManagerBean(CourseAlumn.class);
+				Criteria criteria = new Criteria();
+				criteria.addEqualExpression(courseAlumnBean.getFieldName(IAcademyAlias.COURSE_ALUMN_COURSE_ID), courseAlumn.getCourse().getId());
+				criteria.addEqualExpression(courseAlumnBean.getFieldName(IAcademyAlias.COURSE_ALUMN_STATUS), CourseAlumnStatus.ACTIVE);
+				List courseAlumnList = courseAlumnBean.getList(criteria);
+				Iterator iterator = courseAlumnList.iterator();
+				if (iterator.hasNext()) {
+					CourseAlumn to = (CourseAlumn)iterator.next();
+					if (courseAlumnList.size() > to.getCourse().getAlumnLimit()) {
+						AonUtil.addErrorMessage("Se ha excedido el límite de Alumnos para el Grupo " + to.getCourse().getDescription());
+					}
+				}
+			} catch (ManagerBeanException e) {
+				LOGGER.log(Level.SEVERE, "Error checking course alumn limit", e);
+			}
+		}
+	}
+
 	@Override
 	public void beforeBeanUpdated(ControllerEvent event) throws ControllerListenerException {
 		CourseAlumn courseAlumn = (CourseAlumn)event.getController().getTo();
