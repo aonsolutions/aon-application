@@ -2,9 +2,12 @@
 <html xmlns="http://www.w3.org/1999/xhtml"
 	xmlns:f="http://java.sun.com/jsf/core" 
 	xmlns:t="http://myfaces.apache.org/tomahawk"	
-	xmlns:c="http://java.sun.com/jstl/core"		
+	xmlns:c="http://java.sun.com/jstl/core"
 	xmlns:h="http://java.sun.com/jsf/html"	
 	xmlns:ui="http://java.sun.com/jsf/facelets">
+<c:forEach items="#{aonConfiguration.applicationBundleList}" var="appBundle">
+	<f:loadBundle basename="#{appBundle.value}" var="#{appBundle.key}" />
+</c:forEach>
 <f:view>
 	<head>
 		<title>
@@ -16,7 +19,7 @@
 		<c:forEach items="#{aonConfiguration.applicationBundleList}" var="appBundle">
 			<f:loadBundle basename="#{appBundle.value}" var="#{appBundle.key}" />
 		</c:forEach>
-	  	<c:forEach items="#{aonConfiguration.styleSheets}" var="styleSheet">	
+		<c:forEach items="#{aonConfiguration.styleSheets}" var="styleSheet">	
 			<t:stylesheet path="#{styleSheet}" />
 		</c:forEach>
 		<ui:insert name="head"/>
