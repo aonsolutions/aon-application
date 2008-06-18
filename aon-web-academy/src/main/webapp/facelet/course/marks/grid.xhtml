@@ -124,7 +124,7 @@
 							rowClasses="aon-table-row-odd, aon-table-row-even">
 							<t:column>
 								<f:facet name="header">
-									<f:verbatim>&#160;</f:verbatim>
+									<h:outputText value="#{appBundle.course_alumn}" />
 								</f:facet>
 								<h:outputText value="#{to.customer.registry.surname}, " rendered="#{to.customer.registry.surname != null and to.customer.registry.surname != ''}"/>								
 								<h:outputText value="#{to.customer.registry.name}" />
@@ -147,7 +147,7 @@
 								<t:outputText value="#{to.values[column.position].mark}"
 									rendered="#{to!=courseMark.to}" />
 								<t:div rendered="#{to==courseMark.to}">
-									<t:inputText styleClass="aon-form-input-text" size="5" 
+									<t:inputText styleClass="aon-form-input-text" size="3" 
 										value="#{courseMark.to.values[column.position].mark}" />
 								</t:div>
 								<f:facet name="footer">
