@@ -11,7 +11,7 @@
 
 <ui:composition template="/facelet/templates/aon.ui.content.xhtml">
 	<ui:define name="content">
-		<aon:form id="menu">
+		<aon:form id="mainForm">
 			<aon:div styleClass="aon-finding-title-toolbar">
 				<aon:panelGrid id="buttonsGrid" columns="3" dir="true" 
 					columnClasses="aon-finding-title,aon-finding-subtitle,aon-finding-toolbar">				
@@ -28,7 +28,7 @@
 					<!-- start toolbar navigation -->
 					<aon:div styleClass="aon-finding-toolbar-item-group">					
 						<aon:commandButton id="reset" value="#{bundle.aon_reset}"
-							action="menu_form"
+							reRender="mainForm"
 							styleClass="aon-finding-toolbar-item aon-icon-reset"
 							accesskey="#{bundle.aon_key_new}">
 							<aon:actionListener method="#{menu.onReset}" />
@@ -36,7 +36,7 @@
 						<aon:commandButton id="save"
 							value="#{bundle.aon_save}" 
 							rendered="#{menu.to!=null or menu.new}"
-							action="menu_form"
+							reRender="mainForm"
 							styleClass="aon-finding-toolbar-item aon-icon-accept"
 							accesskey="#{bundle.aon_key_save}">
 							<aon:actionListener method="#{menu.accept}" />
@@ -74,12 +74,10 @@
 			</aon:div>
 		
 			<rich:panel id="detail_panel" rendered="#{!menu.new}">
-				<f:facet name="header">#{appBundle.menu_option}</f:facet>
-				
-				<aon:panelGrid columns="2" styleClass="none" columnClasses="aon-vertical-align-top,aon-vertical-align-top">
-				
-					<rich:panel id="detail_list_panel">
-						<f:facet name="header">#{appBundle.aon_listing}</f:facet>
+			
+					<rich:panel id="detail_list_panel" rendered="#{menu_option.to == null}">
+					
+						<f:facet name="header">#{appBundle.menu_option} - #{appBundle.aon_listing}</f:facet>
 				
 						<aon:div styleClass="aon-finding-title-toolbar">
 							<aon:panelGrid id="buttonsGrid_list" columns="1" dir="true" 
@@ -88,7 +86,7 @@
 								<!-- start toolbar navigation -->
 								<aon:div styleClass="aon-finding-toolbar-item-group">
 									<aon:commandButton id="reset_list" value="#{bundle.aon_reset}"
-										action="menu_form" 
+										reRender="detail_panel" 
 										styleClass="aon-finding-toolbar-item aon-icon-reset"
 										accesskey="#{bundle.aon_key_new}">
 										<aon:actionListener method="#{menu_option.onReset}" />
@@ -131,13 +129,13 @@
 										value="#{menu_option.rowChecked}">
 										<a4j:support 
 											event="onclick"  
-											reRender="dataTable,buttonsGrid_list" />
+											reRender="detail_panel" />
 								</aon:selectBooleanCheckbox>
 							</aon:column>
 					
 							<aon:column>
 								<a4j:support 
-									action="menu_form"
+									reRender="detail_panel"
 									actionListener="#{menu_option.onSelect}"
 									event="onclick" />
 								<f:facet name="header">
@@ -157,13 +155,15 @@
 								<f:facet name="header">
 									<aon:outputText value="#{appBundle.menu_option_active}" />
 								</f:facet>
-								<aon:commandLink title="#{appBundle.menu_option_activate}" action="menu_form"
+								<aon:commandLink title="#{appBundle.menu_option_activate}" 
+									reRender="dataTable"
 									actionListener="#{menu_option.onActivate}" 
 									rendered="#{!to.active}">
 									<aon:graphicImage id="MenuOption_active" alt="#{appBundle.menu_option_activate}"
 										url="/images/cms/inactive.png" />
 								</aon:commandLink>
-								<aon:commandLink title="#{appBundle.menu_option_deactivate}" action="menu_form"
+								<aon:commandLink title="#{appBundle.menu_option_deactivate}" 
+									reRender="dataTable"
 									actionListener="#{menu_option.onDeactivate}" 
 									rendered="#{to.active}">
 									<aon:graphicImage id="MenuOption_deactive" alt="#{appBundle.menu_option_deactivate}"
@@ -194,19 +194,29 @@
 						<aon:dataScroller for="dataTable"
 							rowCount="#{menu_option.model.rowCount}"
 							showNote="true" />					
+							
 					</rich:panel>
+					
 					<rich:panel id="detail_edit_panel" rendered="#{menu_option.new or menu_option.to != null}">
-        				<f:facet name="header">#{menu_option.new?(bundle.aon_reset):(bundle.aon_editing)}</f:facet>
+					
+        				<f:facet name="header">#{appBundle.menu_option} - #{menu_option.new?(bundle.aon_reset):(bundle.aon_editing)}</f:facet>
+        				
 						<aon:div styleClass="aon-finding-title-toolbar">
 							<aon:panelGrid id="buttonsGrid_list_form" columns="1" dir="true" 
 								columnClasses="aon-finding-toolbar">				
 							
 								<!-- start toolbar navigation -->
 								<aon:div styleClass="aon-finding-toolbar-item-group">
+									<aon:commandButton id="reset_list_form" value="#{bundle.aon_reset}"
+										reRender="detail_panel" 
+										styleClass="aon-finding-toolbar-item aon-icon-reset"
+										accesskey="#{bundle.aon_key_new}">
+										<aon:actionListener method="#{menu_option.onReset}" />
+									</aon:commandButton>
 									<aon:commandButton id="save_list_form"
 										value="#{bundle.aon_save}" 
 										rendered="#{menu_option.to!=null or menu_option.new}"
-										action="menu_form"
+										reRender="detail_panel"
 										styleClass="aon-finding-toolbar-item aon-icon-accept"
 										accesskey="#{bundle.aon_key_save}">
 										<aon:actionListener method="#{menu_option.onAccept}" />
@@ -214,7 +224,7 @@
 									<aon:commandButton id="cancel_list_form"
 										value="#{bundle.aon_cancel}" 
 										rendered="#{menu_option.to!=null or menu_option.new}" immediate="#{true}"
-										action="menu_form"
+										reRender="detail_panel"
 										styleClass="aon-finding-toolbar-item aon-icon-cancel"
 										accesskey="#{bundle.aon_key_cancel}">
 										<aon:actionListener method="#{menu_option.onCancel}" />
@@ -293,7 +303,7 @@
 							</aon:panelGrid>
 						</aon:div>
 					</rich:panel>
-				</aon:panelGrid>
+
 			</rich:panel>
 		</aon:form>
 	</ui:define>

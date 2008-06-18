@@ -42,7 +42,7 @@
 					immediate="#{true}"
 					actionListener="#{article.onSelect}"
 					event="onclick"
-					reRender="detailEdit,buttonsGridDetailList,div_tab0,div_tab1,div_tab2,div_tab3" />
+					reRender="detail_panel" />
 				<f:facet name="header">
 					<aon:outputText value="#{appBundle.article_alias}"/>
 				</f:facet>
@@ -54,7 +54,7 @@
 					immediate="#{true}"
 					actionListener="#{article.onSelect}"
 					event="onclick"
-					reRender="detailEdit,buttonsGridDetailList,div_tab0,div_tab1,div_tab2,div_tab3" />
+					reRender="detail_panel" />
 				<f:facet name="header">
 					<aon:outputText value="#{appBundle.article_title}"/>
 				</f:facet>
@@ -102,7 +102,9 @@
 
 		</aon:dataTable>
 
-		<rich:datascroller align="left"  for="#{dataTable}" maxPages="#{article.pageLimit}" />
+		<aon:dataScroller for="#{dataTable}"
+			rowCount="#{article.model.rowCount}" 
+			showNote="true" />					
 
 </ui:composition>
 

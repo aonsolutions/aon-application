@@ -175,7 +175,7 @@
 		</managed-property>
 		<managed-property>
 			<property-name>pageLimit</property-name>
-			<value>20000000</value>
+			<value>10</value>
 		</managed-property>
 		<managed-property>
 			<property-name>listenerClasses</property-name>
@@ -263,7 +263,7 @@
 		</managed-property>
 		<managed-property>
 			<property-name>pageLimit</property-name>
-			<value>20000000</value>
+			<value>10</value>
 		</managed-property>
 		<managed-property>
 			<property-name>listenerClasses</property-name>
@@ -351,7 +351,7 @@
 		</managed-property>
 		<managed-property>
 			<property-name>pageLimit</property-name>
-			<value>20000000</value>
+			<value>10</value>
 		</managed-property>
 		<managed-property>
 			<property-name>listenerClasses</property-name>
@@ -653,7 +653,7 @@
 		</managed-property>
 		<managed-property>
 			<property-name>pageLimit</property-name>
-			<value>20000000</value>
+			<value>10</value>
 		</managed-property>
 		<managed-property>
 			<property-name>listenerClasses</property-name>
@@ -741,7 +741,7 @@
 		</managed-property>
 		<managed-property>
 			<property-name>pageLimit</property-name>
-			<value>20000000</value>
+			<value>10</value>
 		</managed-property>
 		<managed-property>
 			<property-name>listenerClasses</property-name>
@@ -829,7 +829,7 @@
 		</managed-property>
 		<managed-property>
 			<property-name>pageLimit</property-name>
-			<value>20</value>
+			<value>10</value>
 		</managed-property>
 		<managed-property>
 			<property-name>listenerClasses</property-name>
@@ -873,7 +873,7 @@
 		</managed-property>
 		<managed-property>
 			<property-name>pageLimit</property-name>
-			<value>20000000</value>
+			<value>10</value>
 		</managed-property>
 		<managed-property>
 			<property-name>listenerClasses</property-name>
@@ -1024,7 +1024,7 @@
 		</managed-property>
 		<managed-property>
 			<property-name>pageLimit</property-name>
-			<value>20000000</value>
+			<value>10</value>
 		</managed-property>
 		<managed-property>
 			<property-name>listenerClasses</property-name>
@@ -1146,7 +1146,7 @@
 		</managed-property>
 		<managed-property>
 			<property-name>pageLimit</property-name>
-			<value>20000000</value>
+			<value>10</value>
 		</managed-property>
 		<managed-property>
 			<property-name>listenerClasses</property-name>
@@ -1234,7 +1234,7 @@
 		</managed-property>
 		<managed-property>
 			<property-name>pageLimit</property-name>
-			<value>20000000</value>
+			<value>10</value>
 		</managed-property>
 		<managed-property>
 			<property-name>listenerClasses</property-name>
@@ -1319,7 +1319,7 @@
 		</managed-property>
 		<managed-property>
 			<property-name>pageLimit</property-name>
-			<value>20000000</value>
+			<value>10</value>
 		</managed-property>
 		<managed-property>
 			<property-name>listenerClasses</property-name>
@@ -1363,7 +1363,7 @@
 		</managed-property>
 		<managed-property>
 			<property-name>pageLimit</property-name>
-			<value>20000000</value>
+			<value>10</value>
 		</managed-property>
 		<managed-property>
 			<property-name>listenerClasses</property-name>
@@ -1594,7 +1594,7 @@
 		</managed-property>
 		<managed-property>
 			<property-name>pageLimit</property-name>
-			<value>20000000</value>
+			<value>10</value>
 		</managed-property>
 		<managed-property>
 			<property-name>listenerClasses</property-name>
