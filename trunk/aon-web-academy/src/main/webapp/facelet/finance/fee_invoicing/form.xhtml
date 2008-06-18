@@ -309,7 +309,7 @@
 											value="#{feeInvoicingDetail.to.item.id}"
 											valueChangeListener="#{feeInvoicingDetail.itemData}" />
 										<t:inputText id="Item_Lookup_product_code-Edit" size="5" forceId="#{true}"
-											styleClass="aon-form-input-text" maxlength="64"
+											styleClass="aon-form-input-text" maxlength="15"
 											onchange="return findBeanLookupExt(event,'#{facesContext.externalContext.requestContextPath}','itemLookup','Item_Lookup_product_code-Edit[#{rowIndex}]','Item_product_code|Item_Lookup_product_code-Edit[#{rowIndex}],Item_id|Item_Lookup_id-Edit[#{rowIndex}],Item_price|Item_Lookup_price-Edit[#{rowIndex}],Item_full_name|Item_full_name-Edit[#{rowIndex}]');"
 											value="#{feeInvoicingDetail.to.item.product.code}"/>
 										<h:commandButton id="find_Item_Lookup_id-Edit"
@@ -328,7 +328,7 @@
 													value="#{feeInvoicingDetail.to.item.id}"
 													valueChangeListener="#{feeInvoicingDetail.itemData}" />
 												<t:inputText id="Item_Lookup_product_code-New" size="5" forceId="#{true}"
-													styleClass="aon-form-input-text"
+													styleClass="aon-form-input-text" maxlength="15"
 													onchange="return findBeanLookupExt(event,'#{facesContext.externalContext.requestContextPath}','itemLookup','Item_Lookup_product_code-New','Item_product_code|Item_Lookup_product_code-New,Item_id|Item_Lookup_id-New,Item_price|Item_Lookup_price-New,Item_full_name|Item_full_name-New');"													
 													value="#{feeInvoicingDetail.to.item.product.code}"/>
 												<h:commandButton id="find_Item_Lookup_id-New"
