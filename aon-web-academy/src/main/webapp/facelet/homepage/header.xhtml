@@ -22,9 +22,9 @@
 				</t:div>
 				<t:div styleClass="aon-applicationName">
 					<h:outputText value="#{appBundle.aon_application_title}" />
-					<h:outputText value="[" />
-					<h:outputText value="#{aonConfiguration.applicationVersion}" />
-					<h:outputText value="]" /> 
+					<h:outputText value="[" rendered="#{aonConfiguration.applicationVersion != null}"/>
+					<h:outputText value="#{aonConfiguration.applicationVersion}" rendered="#{aonConfiguration.applicationVersion != null}"/>
+					<h:outputText value="]" rendered="#{aonConfiguration.applicationVersion != null}" /> 
 				</t:div>				
 			</h:panelGroup>
 
@@ -63,13 +63,6 @@
 								</h:outputLink>
 							</t:div>
 							<!-- 
-							<t:div styleClass="aon-header-menu-item">
-								<h:outputLink styleClass="aon-header-menu-item-link" style="border-right:0;"
-									onclick="window.open('${facesContext.externalContext.requestContextPath}/facelet/about/content.faces','','height=401,width=505,status=no,toolbar=no,menubar=no,location=no,resizable=no');"
-									value="#" >
-									<h:outputText value="#{bundle.aon_about}"  />
-								</h:outputLink>
-							</t:div>
 							<t:div styleClass="aon-header-menu-item">
 								<h:outputLink styleClass="aon-header-menu-item-link"
 									target="_blank"
