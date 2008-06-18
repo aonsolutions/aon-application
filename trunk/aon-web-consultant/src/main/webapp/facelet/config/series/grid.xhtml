@@ -125,7 +125,7 @@
 									rendered="#{to.id==series.to.id}"
 									valueChangeListener="#{series.onWorkPlaceChanged}"
 									required="#{true}" value="#{series.to.workPlace.id}">
-									<f:selectItems value="#{companyCollections.workPlaces}" />
+									<f:selectItems value="#{companyCollections.workPlacesDetailed}" />
 								</h:selectOneMenu>
 								<f:verbatim>&#160;</f:verbatim>
 								<f:facet name="footer">
@@ -133,7 +133,7 @@
 										rendered="#{series.new}"
 										valueChangeListener="#{series.onWorkPlaceChanged}"
 										required="#{true}" value="#{series.to.workPlace.id}">
-										<f:selectItems value="#{companyCollections.workPlaces}" />
+										<f:selectItems value="#{companyCollections.workPlacesDetailed}" />
 									</h:selectOneMenu>
 								</f:facet>
 							</h:column>
