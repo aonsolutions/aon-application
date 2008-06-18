@@ -276,11 +276,11 @@
 		</web-resource-collection>
 		<web-resource-collection>
 			<web-resource-name>account</web-resource-name>
-			<url-pattern>/account/*</url-pattern>
+			<url-pattern>/_account/*</url-pattern>
 		</web-resource-collection>
 		<web-resource-collection>
 			<web-resource-name>finance</web-resource-name>
-			<url-pattern>/finance/*</url-pattern>
+			<url-pattern>/_finance/*</url-pattern>
 		</web-resource-collection>
 		<web-resource-collection>
 			<web-resource-name>jsp</web-resource-name>
@@ -291,49 +291,47 @@
 			<url-pattern>*.faces</url-pattern>
 		</web-resource-collection>
 		<auth-constraint>
-			<role-name>GestionClientes</role-name>
-			<role-name>Clientes</role-name>
-			<role-name>DatosEconomicos</role-name>
-			<role-name>TipoExpedientes</role-name>
-			<role-name>TipoActividad</role-name>
-			<role-name>TipoRelacion</role-name>
-			<role-name>GestionCuotas</role-name>
-			<role-name>Facturacion</role-name>
-			<role-name>PreFacturacion</role-name>
-			<role-name>Tesoreria</role-name>
-			<role-name>Vencimientos</role-name>
-			<role-name>Remesas</role-name>
-			<role-name>GruposFacturacion</role-name>
-			<role-name>UtilidadesTesoreria</role-name>
-			<role-name>ChecksTesoreria</role-name>
-			<role-name>ListadoCuotas</role-name>
-			<role-name>Bancos</role-name>
-			<role-name>FormasDePago</role-name>
-			<role-name>Conceptos</role-name>
-			<role-name>Categorias</role-name>
-			<role-name>GestionTiempos</role-name>
-			<role-name>ParteDiario</role-name>
-			<role-name>TipoTrabajo</role-name>
-			<role-name>Informes</role-name>
-			<role-name>GestionTareas</role-name>
-			<role-name>BandejaTareas</role-name>
+			<role-name>AuxiliaresBancos</role-name>
+			<role-name>AuxiliaresCategorias</role-name>
+			<role-name>AuxiliaresFormasDePago</role-name>
+			<role-name>AuxiliaresProductos</role-name>
 			<role-name>Avisos</role-name>
-			<role-name>GestionCampanas</role-name>
-			<role-name>BandejaCampanas</role-name>
-			<role-name>Procesos</role-name>
-			<role-name>Configuracion</role-name>
-			<role-name>Centros</role-name>
-			<role-name>Empresa</role-name>
-			<role-name>GestionUsuarios</role-name>
-			<role-name>Usuarios</role-name>
-			<role-name>GruposTrabajo</role-name>
-			<role-name>Impuestos</role-name>
-			<role-name>CambioContrasena</role-name>
-			<role-name>UtilidadesConfiguracion</role-name>
-			<role-name>VolcadoDatos</role-name>
-			<role-name>RecuperacionDatos</role-name>
+			<role-name>BandejaCampanyas</role-name>
 			<role-name>BandejaEntrada</role-name>
+			<role-name>BandejaTareas</role-name>
+			<role-name>BorradoFacturas</role-name>
+			<role-name>CentrosFormacion</role-name>
+			<role-name>ChecksTesoreria</role-name>
+			<role-name>Clientes</role-name>
+			<role-name>ConfiguracionAmbitos</role-name>
+			<role-name>ConfiguracionGruposTrabajo</role-name>
+			<role-name>ConfiguracionImpuestos</role-name>
+			<role-name>ConfiguracionProvincias</role-name>
+			<role-name>ConfiguracionSeries</role-name>
+			<role-name>ConfiguracionUsuarios</role-name>
+			<role-name>ContabilizacionFacturas</role-name>
+			<role-name>DatosEmpresa</role-name>
+			<role-name>DevolucionVencimientos</role-name>
+			<role-name>FacturacionCuotas</role-name>
+			<role-name>FacturasVenta</role-name>
+			<role-name>GestionCartera</role-name>
+			<role-name>GruposFacturacion</role-name>
+			<role-name>ImpresionFacturas</role-name>
+			<role-name>InformesTiempos</role-name>
+			<role-name>ListadoCuotas</role-name>
 			<role-name>MenuContabilidad</role-name>
+			<role-name>MonitorTareas</role-name>
+			<role-name>ParteDiario</role-name>
+			<role-name>Prefacturacion</role-name>
+			<role-name>Procesos</role-name>
+			<role-name>TipoExpedientes</role-name>
+			<role-name>TipoRelaciones</role-name>
+			<role-name>TipoTrabajos</role-name>
+			<role-name>RecuperacionDatos</role-name>
+			<role-name>Remesas</role-name>
+			<role-name>Vencimientos</role-name>
+			<role-name>VolcadoDatos</role-name>
+			<role-name>Invitado</role-name>
 		</auth-constraint>
 	</security-constraint>
 
@@ -345,56 +343,48 @@
 		</form-login-config>
 	</login-config>
 
-	<security-role><role-name>GestionClientes</role-name></security-role>
-	<security-role><role-name>Clientes</role-name></security-role>
-	<security-role><role-name>DatosEconomicos</role-name></security-role>
-	<security-role><role-name>TipoExpedientes</role-name></security-role>
-	<security-role><role-name>TipoActividad</role-name></security-role>
-	<security-role><role-name>TipoRelacion</role-name></security-role>
-	
-	<security-role><role-name>GestionCuotas</role-name></security-role>
-	<security-role><role-name>Facturacion</role-name></security-role>
-	<security-role><role-name>PreFacturacion</role-name></security-role>
-	<security-role><role-name>Tesoreria</role-name></security-role>
-	<security-role><role-name>Vencimientos</role-name></security-role>
-	<security-role><role-name>Remesas</role-name></security-role>
-	<security-role><role-name>GruposFacturacion</role-name></security-role>
-	<security-role><role-name>UtilidadesTesoreria</role-name></security-role>
-	<security-role><role-name>ChecksTesoreria</role-name></security-role>
-	<security-role><role-name>ListadoCuotas</role-name></security-role>
-	<security-role><role-name>Bancos</role-name></security-role>
-	<security-role><role-name>FormasDePago</role-name></security-role>
-	<security-role><role-name>Conceptos</role-name></security-role>
-	<security-role><role-name>Categorias</role-name></security-role>
-	
-	<security-role><role-name>GestionTiempos</role-name></security-role>
-	<security-role><role-name>ParteDiario</role-name></security-role>
-	<security-role><role-name>TipoTrabajo</role-name></security-role>
-	<security-role><role-name>Informes</role-name></security-role>
-
-	<security-role><role-name>GestionTareas</role-name></security-role>
-	<security-role><role-name>BandejaTareas</role-name></security-role>
-	<security-role><role-name>MonitorTareas</role-name></security-role>
+	<security-role><role-name>AuxiliaresBancos</role-name></security-role>
+	<security-role><role-name>AuxiliaresCategorias</role-name></security-role>
+	<security-role><role-name>AuxiliaresFormasDePago</role-name></security-role>
+	<security-role><role-name>AuxiliaresProductos</role-name></security-role>
 	<security-role><role-name>Avisos</role-name></security-role>
-	
-	<security-role><role-name>GestionCampanas</role-name></security-role>	
-	<security-role><role-name>BandejaCampanas</role-name></security-role>
-	<security-role><role-name>Procesos</role-name></security-role>
-	
-	<security-role><role-name>Configuracion</role-name></security-role>
-	<security-role><role-name>Centros</role-name></security-role>
-	<security-role><role-name>Empresa</role-name></security-role>
-	<security-role><role-name>GestionUsuarios</role-name></security-role>
-	<security-role><role-name>Usuarios</role-name></security-role>
-	<security-role><role-name>GruposTrabajo</role-name></security-role>
-	<security-role><role-name>Impuestos</role-name></security-role>
-	<security-role><role-name>CambioContrasena</role-name></security-role>
-	<security-role><role-name>UtilidadesConfiguracion</role-name></security-role>
-	<security-role><role-name>VolcadoDatos</role-name></security-role>
-	<security-role><role-name>RecuperacionDatos</role-name></security-role>
+	<security-role><role-name>BandejaCampanyas</role-name></security-role>
 	<security-role><role-name>BandejaEntrada</role-name></security-role>
-
+	<security-role><role-name>BandejaTareas</role-name></security-role>
+	<security-role><role-name>BorradoFacturas</role-name></security-role>
+	<security-role><role-name>CentrosFormacion</role-name></security-role>
+	<security-role><role-name>ChecksTesoreria</role-name></security-role>
+	<security-role><role-name>Clientes</role-name></security-role>
+	<security-role><role-name>ClientesDatosEconomicos</role-name></security-role>
+	<security-role><role-name>ConfiguracionAmbitos</role-name></security-role>
+	<security-role><role-name>ConfiguracionGruposTrabajo</role-name></security-role>
+	<security-role><role-name>ConfiguracionImpuestos</role-name></security-role>
+	<security-role><role-name>ConfiguracionProvincias</role-name></security-role>
+	<security-role><role-name>ConfiguracionSeries</role-name></security-role>
+	<security-role><role-name>ConfiguracionUsuarios</role-name></security-role>
+	<security-role><role-name>ContabilizacionFacturas</role-name></security-role>
+	<security-role><role-name>DatosEmpresa</role-name></security-role>
+	<security-role><role-name>DevolucionVencimientos</role-name></security-role>
+	<security-role><role-name>FacturacionCuotas</role-name></security-role>
+	<security-role><role-name>FacturasVenta</role-name></security-role>
+	<security-role><role-name>GestionCartera</role-name></security-role>
+	<security-role><role-name>GruposFacturacion</role-name></security-role>
+	<security-role><role-name>ImpresionFacturas</role-name></security-role>
+	<security-role><role-name>InformesTiempos</role-name></security-role>
+	<security-role><role-name>ListadoCuotas</role-name></security-role>
 	<security-role><role-name>MenuContabilidad</role-name></security-role>
+	<security-role><role-name>MonitorTareas</role-name></security-role>
+	<security-role><role-name>ParteDiario</role-name></security-role>
+	<security-role><role-name>Prefacturacion</role-name></security-role>
+	<security-role><role-name>Procesos</role-name></security-role>
+	<security-role><role-name>TipoExpedientes</role-name></security-role>
+	<security-role><role-name>TipoRelaciones</role-name></security-role>
+	<security-role><role-name>TipoTrabajos</role-name></security-role>
+	<security-role><role-name>RecuperacionDatos</role-name></security-role>
+	<security-role><role-name>Remesas</role-name></security-role>
+	<security-role><role-name>Vencimientos</role-name></security-role>
+	<security-role><role-name>VolcadoDatos</role-name></security-role>
+	<security-role><role-name>Invitado</role-name></security-role>
 
 	<resource-env-ref>
 	  <resource-env-ref-name>jdbc/AonConsultant</resource-env-ref-name>
