@@ -97,6 +97,11 @@ public class CourseDetailListPrinter implements ICollectionProvider {
 			criteria.addOrExpression(courseAlumnBean.getFieldName(IAcademyAlias.COURSE_ALUMN_COURSE_ID), course.getId().toString());
 		}
 		criteria.addEqualExpression(courseAlumnBean.getFieldName(IAcademyAlias.COURSE_ALUMN_STATUS), CourseAlumnStatus.ACTIVE);
+		criteria.addOrder(courseAlumnBean.getFieldName(IAcademyAlias.COURSE_ALUMN_COURSE_CODE));
+		criteria.addOrder(courseAlumnBean.getFieldName(IAcademyAlias.COURSE_ALUMN_COURSE_ACADEMIC_YEAR_ID), false);
+		criteria.addOrder(courseAlumnBean.getFieldName(IAcademyAlias.COURSE_ALUMN_COURSE_ID));
+		criteria.addOrder(courseAlumnBean.getFieldName(IAcademyAlias.COURSE_ALUMN_CUSTOMER_REGISTRY_SURNAME));
+		criteria.addOrder(courseAlumnBean.getFieldName(IAcademyAlias.COURSE_ALUMN_CUSTOMER_REGISTRY_NAME));
 		return courseAlumnBean.getList(criteria);
 	}
 
