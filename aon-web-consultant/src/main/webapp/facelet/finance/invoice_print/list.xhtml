@@ -51,9 +51,7 @@
 							columnClasses="aon-table-body aon-table-body-string,
 								aon-table-body aon-table-body-string,
 								aon-table-body aon-table-body-string,
-								aon-table-body aon-table-body-string"
-							rowOnMouseOver="selectRow( this )"
-							rowOnMouseOut="unselectRow( this )" rowOnClick="sendRow( this )">
+								aon-table-body aon-table-body-string">
 
 							<h:column>
 								<f:facet name="header">
@@ -69,7 +67,7 @@
 									</h:panelGroup>
 								</f:facet>
 								<h:outputText
-									value="#{to.registry.name}, #{to.registry.surname}" />
+									value="#{to.registryName}" />
 							</h:column>
 
 							<h:column>
