@@ -28,7 +28,7 @@
 					<!-- start toolbar navigation -->
 					<aon:div styleClass="aon-finding-toolbar-item-group">					
 						<aon:commandButton id="reset" value="#{bundle.aon_reset}"
-							action="link_category_form"
+							reRender="main_form"
 							styleClass="aon-finding-toolbar-item aon-icon-reset"
 							accesskey="#{bundle.aon_key_new}">
 							<aon:actionListener method="#{link_category.onReset}" />
@@ -36,7 +36,7 @@
 						<aon:commandButton id="save"
 							value="#{bundle.aon_save}" 
 							rendered="#{link_category.to!=null or link_category.new}"
-							action="link_category_form"
+							reRender="main_form"
 							styleClass="aon-finding-toolbar-item aon-icon-accept"
 							accesskey="#{bundle.aon_key_save}">
 							<aon:actionListener method="#{link_category.accept}" />
@@ -96,13 +96,10 @@
 				</aon:panelGrid>
 			</aon:div>
 		
-			<rich:panel id="detail_panel" rendered="#{!link_category.new and link_category.toI18n.id != null}">
-				<f:facet name="header">#{appBundle.link}</f:facet>
-				
-				<aon:panelGrid columns="2" styleClass="none" columnClasses="aon-vertical-align-top,aon-vertical-align-top">
-				
-					<rich:panel id="detail_list_panel">
-						<f:facet name="header">#{appBundle.aon_listing}</f:facet>
+			<aon:div id="detail_panel" rendered="#{!link_category.new and link_category.toI18n.id != null}">
+
+					<rich:panel id="detail_list_panel" rendered="#{link.to==null}">
+						<f:facet name="header">#{appBundle.link} - #{appBundle.aon_listing}</f:facet>
 				
 						<aon:div styleClass="aon-finding-title-toolbar">
 							<aon:panelGrid id="buttonsGrid_list" columns="1" dir="true" 
@@ -112,7 +109,7 @@
 								<aon:div styleClass="aon-finding-toolbar-item-group">
 									<aon:commandButton id="reset_list" value="#{bundle.aon_reset}"
 										rendered="#{!link.new}"
-										action="link_category_form"
+										reRender="detail_panel"
 										styleClass="aon-finding-toolbar-item aon-icon-reset"
 										accesskey="#{bundle.aon_key_new}">
 										<aon:actionListener method="#{link.onReset}" />
@@ -156,14 +153,14 @@
 										value="#{link.rowChecked}">
 										<a4j:support 
 											event="onclick"  
-											action="link_category_form" />
+											reRender="detail_panel" />
 								</aon:selectBooleanCheckbox>
 							</aon:column>
 					
 							<aon:column>
 								<a4j:support 
 									immediate="#{true}"
-									action="link_category_form"
+									reRender="detail_panel"
 									actionListener="#{link.onSelect}"
 									event="onclick" />
 								<f:facet name="header">
@@ -176,7 +173,7 @@
 							<aon:column>
 								<a4j:support 
 									immediate="#{true}"
-									action="link_category_form"
+									reRender="detail_panel"
 									actionListener="#{link.onSelect}"
 									event="onclick" />
 								<f:facet name="header">
@@ -192,13 +189,13 @@
 								</f:facet>
 								<aon:commandLink title="#{appBundle.link_activate}" 
 									actionListener="#{link.onActivate}"
-									action="link_category_form"
+									reRender="dataTable"
 									rendered="#{!to.active}">
 									<aon:graphicImage id="link_active" alt="#{appBundle.link_activate}"
 										url="/images/cms/inactive.png" />
 								</aon:commandLink>
 								<aon:commandLink title="#{appBundle.link_deactivate}" 
-									action="link_category_form"
+									reRender="dataTable"
 									actionListener="#{link.onDeactivate}" 
 									rendered="#{to.active}">
 									<aon:graphicImage id="link_deactive" alt="#{appBundle.link_deactivate}"
@@ -213,33 +210,44 @@
 								<aon:graphicImage rendered="#{to.position == 0}"
 									url="/images/cms/spacer16.gif" style="margin-left: 8px;"/>
 								<aon:commandButton id="moveUp" 
-									action="link_category_form"
+									reRender="dataTable"
 									actionListener="#{link.onMoveUp}" 
 									rendered="#{to.position != 0 and link.to==null}"
 									image="/images/cms/up.gif" styleClass="aon-icon-commandButton" />
 								<aon:commandButton id="moveDown"
-									action="link_category_form"
+									reRender="dataTable"
 									actionListener="#{link.onMoveDown}"
 									rendered="#{to.position &lt; (link.model.rowCount - 1)  and link.to==null}"
 									image="/images/cms/down.gif" styleClass="aon-icon-commandButton" />
 							</aon:column>
 
 						</aon:dataTable>
+
+						<aon:dataScroller for="dataTable"
+							rowCount="#{link.model.rowCount}" 
+							showNote="true" />					
 							
 					</rich:panel>
 					
 					<rich:panel id="detail_edit_panel" rendered="#{link.new or link.to != null}">
-        				<f:facet name="header">#{link.new?(bundle.aon_reset):(bundle.aon_editing)}</f:facet>
+        				<f:facet name="header">#{appBundle.link} - #{link.new?(bundle.aon_reset):(bundle.aon_editing)}</f:facet>
 						<aon:div styleClass="aon-finding-title-toolbar">
 							<aon:panelGrid id="buttonsGrid_list_form" columns="1" dir="true" 
 								columnClasses="aon-finding-toolbar">				
 							
 								<!-- start toolbar navigation -->
 								<aon:div styleClass="aon-finding-toolbar-item-group">
+									<aon:commandButton id="reset_list_form" value="#{bundle.aon_reset}"
+										rendered="#{!link.new}"
+										reRender="detail_panel"
+										styleClass="aon-finding-toolbar-item aon-icon-reset"
+										accesskey="#{bundle.aon_key_new}">
+										<aon:actionListener method="#{link.onReset}" />
+									</aon:commandButton>
 									<aon:commandButton id="save_list_form"
 										value="#{bundle.aon_save}" 
 										rendered="#{link.to!=null or link.new}"
-										action="link_category_form"
+										reRender="detail_panel"
 										styleClass="aon-finding-toolbar-item aon-icon-accept"
 										accesskey="#{bundle.aon_key_save}">
 										<aon:actionListener method="#{link.onAccept}" />
@@ -247,7 +255,7 @@
 									<aon:commandButton id="cancel_list_form"
 										value="#{bundle.aon_cancel}" 
 										rendered="#{link.to!=null or link.new}" immediate="#{true}"
-										action="link_category_form"
+										reRender="detail_panel"
 										styleClass="aon-finding-toolbar-item aon-icon-cancel"
 										accesskey="#{bundle.aon_key_cancel}">
 										<aon:actionListener method="#{link.onCancel}" />
@@ -262,8 +270,7 @@
 										styleClass="aon-finding-toolbar-item aon-icon-delete"
 										accesskey="#{bundle.aon_key_remove}"/>
 							    </aon:div>
-								
-								<!-- end toolbar navigation -->
+
 							</aon:panelGrid>
 						</aon:div>
 			
@@ -291,8 +298,8 @@
 							</aon:panelGrid>
 						</aon:div>
 					</rich:panel>
-				</aon:panelGrid>
-			</rich:panel>
+					
+			</aon:div>
 		</aon:form>
 	</ui:define>
 

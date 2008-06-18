@@ -29,23 +29,15 @@
 					<!-- start toolbar navigation -->
 					<aon:div styleClass="aon-finding-toolbar-item-group">					
 						<aon:commandButton id="reset" value="#{bundle.aon_reset}"
-							action="article_category_form"
+							reRender="mainForm"
 							styleClass="aon-finding-toolbar-item aon-icon-reset"
 							accesskey="#{bundle.aon_key_new}">
 							<aon:actionListener method="#{article_category.onReset}" />
 						</aon:commandButton>
-						<aon:commandButton id="save_new"
+						<aon:commandButton id="save"
 							value="#{bundle.aon_save}" 
-							rendered="#{article_category.new}"
-							action="article_category_form"
-							styleClass="aon-finding-toolbar-item aon-icon-accept"
-							accesskey="#{bundle.aon_key_save}">
-							<aon:actionListener method="#{article_category.accept}" />
-						</aon:commandButton>
-						<aon:commandButton id="save_edit"
-							value="#{bundle.aon_save}" 
-							rendered="#{article_category.to!=null and !article_category.new}"
-							action="article_category_form"
+							rendered="#{article_category.to!=null or article_category.new}"
+							reRender="main_form"
 							styleClass="aon-finding-toolbar-item aon-icon-accept"
 							accesskey="#{bundle.aon_key_save}">
 							<aon:actionListener method="#{article_category.accept}" />
@@ -114,14 +106,11 @@
 				</aon:panelGrid>
 			</aon:div>
 		
-			<aon:div id="detailPanel">
-				<rich:panel rendered="#{!article_category.new and article_category.toI18n.id != null}">
-					<f:facet name="header">#{appBundle.article}</f:facet>
+			
+				<rich:panel id="detail_panel" rendered="#{!article_category.new and article_category.toI18n.id != null}">
 					
-					<aon:panelGrid columns="2" styleClass="none" columnClasses="aon-vertical-align-top,aon-vertical-align-top">
-					
-						<rich:panel>
-							<f:facet name="header">#{appBundle.aon_listing}</f:facet>
+						<rich:panel  rendered="#{article.to == null}">
+							<f:facet name="header">#{appBundle.article} - #{appBundle.aon_listing}</f:facet>
 					
 							<aon:div styleClass="aon-finding-title-toolbar">
 								<aon:panelGrid id="buttonsGridDetailList" columns="1" dir="true" 
@@ -133,7 +122,7 @@
 											rendered="#{!article.new}"
 											styleClass="aon-finding-toolbar-item aon-icon-reset"
 											accesskey="#{bundle.aon_key_new}"
-											reRender="buttonsGridDetailList,detailEdit,div_tab0,div_tab1,div_tab2,div_tab3">
+											reRender="detail_panel">
 											<aon:actionListener method="#{article.onReset}" />
 										</aon:commandButton>
 										<aon:confirmButton id="remove_list"
@@ -145,7 +134,7 @@
 											confirmActionListener="#{article.onRemoveSelected}" 
 											styleClass="aon-finding-toolbar-item aon-icon-delete"
 											accesskey="#{bundle.aon_key_remove}"
-											reRender="buttonsGridDetailList,detailEdit,div_tab0,div_tab1,div_tab2,div_tab3"  />
+											reRender="detail_panel"  />
 								    </aon:div>
 									
 									<!-- end toolbar navigation -->
@@ -185,9 +174,9 @@
 							</aon:panelTabSet>
 						</rich:panel>
 	
-						<aon:div id="detailEdit">
-							<rich:panel rendered="#{article.new or article.to != null}">
-		        				<f:facet name="header">#{article.new?(bundle.aon_reset):(bundle.aon_editing)}</f:facet>
+						<rich:panel rendered="#{article.new or article.to != null}">
+						
+		        				<f:facet name="header">#{appBundle.article} - #{article.new?(bundle.aon_reset):(bundle.aon_editing)}</f:facet>
 		
 		
 								<aon:panelTabSet id="tabPanelTypesForm"> 
@@ -197,10 +186,17 @@
 											<aon:panelGrid id="buttonsGridDetailForm" columns="1" dir="true" 
 												columnClasses="aon-finding-toolbar">				
 												<aon:div styleClass="aon-finding-toolbar-item-group">
+													<aon:commandButton id="reset_list_form" value="#{bundle.aon_reset}"
+														rendered="#{!article.new}"
+														styleClass="aon-finding-toolbar-item aon-icon-reset"
+														accesskey="#{bundle.aon_key_new}"
+														reRender="detail_panel">
+														<aon:actionListener method="#{article.onReset}" />
+													</aon:commandButton>
 													<aon:commandButton id="save_list_form"
 														value="#{bundle.aon_save}" 
 														rendered="#{article.to!=null or article.new}"
-														reRender="buttonsGridDetailList,detailEdit,div_tab0,div_tab1,div_tab2,div_tab3"
+														reRender="detail_panel"
 														styleClass="aon-finding-toolbar-item aon-icon-accept"
 														accesskey="#{bundle.aon_key_save}">
 														<aon:actionListener method="#{article.onAccept}" />
@@ -208,14 +204,14 @@
 													<aon:commandButton id="cancel_list_form"
 														value="#{bundle.aon_cancel}" 
 														rendered="#{article.to!=null or article.new}" immediate="#{true}"
-														reRender="buttonsGridDetailList,detailEdit,div_tab0,div_tab1,div_tab2,div_tab3"
+														reRender="detail_panel"
 														styleClass="aon-finding-toolbar-item aon-icon-cancel"
 														accesskey="#{bundle.aon_key_cancel}">
 														<aon:actionListener method="#{article.onCancel}" />
 													</aon:commandButton>
 													<aon:confirmButton id="remove_list_form"
 														value="#{bundle.aon_remove}" rendered="#{!article.new}" 
-														reRender="buttonsGridDetailList,detailEdit,div_tab0,div_tab1,div_tab2,div_tab3"
+														reRender="detail_panel"
 														confirmTitle="Confirmation Dialog" 
 														confirmMessage="#{bundle.aon_remove_confirm}"
 														confirmActionListener="#{article.onRemove}" 
@@ -224,7 +220,7 @@
 													<aon:commandButton id="generate_article"
 														value="#{appBundle.aon_generate}" 
 														rendered="#{article.to!=null}"
-														reRender="buttonsGridDetailList,detailEdit,div_tab0,div_tab1,div_tab2,div_tab3"
+														reRender="detail_panel"
 														styleClass="aon-finding-toolbar-item aon-icon-accept"
 														accesskey="#{bundle.aon_key_save}">
 														<aon:actionListener method="#{generator.onGenerateCurrentArticle}" />
@@ -400,201 +396,172 @@
 		
 									<aon:panelTab id="meta_tags" label="#{appBundle.article_related_list}"
 										rendered="#{!article.new}">
-		
-										<aon:dataTable id="articleRelatedData" 
-											value="#{articleRelated.model}" var="to"
-											rows="#{articleRelated.pageLimit}"
-											styleClass="dr-table rich-table aon-editDataTable"
-											headerClass="dr-table-subheader rich-table-subheader aon-editDataTable-header"
-											footerClass="dr-table-subfooter rich-table-subfooter aon-editDataTable-footer"
-											rowClasses="aon-editDataTable-row-odd,dr-table-firstrow rich-table-firstrow aon-editDataTable-row-even"
-											cellpadding="0" cellspacing="0"
-											columnClasses="dr-table-cell rich-table-cell aon-editDataTable-iconColumn,
-													dr-table-cell rich-table-cell aon-editDataTable-textColumn,
-													dr-table-cell rich-table-cell aon-editDataTable-textColumn,
-													dr-table-cell rich-table-cell aon-editDataTable-textColumn,
-													dr-table-cell rich-table-cell aon-editDataTable-textColumn,
-													dr-table-cell rich-table-cell aon-editDataTable-textColumn">
-									
-											<aon:column>
-												<f:facet name="header">
-													<aon:outputText value="&#160;" />
-												</f:facet>
-												<aon:outputText value="&#160;" rendered="#{to==articleRelated.to}" />
-												<aon:commandButton id="lineRemove" title="[#{bundle.aon_remove}]"
-													rendered="#{to!=articleRelated.to}"
-													styleClass="aon-editDataTable-button aon-icon-delete"
-													reRender="articleRelatedData" immediate="true">
-													<aon:actionListener method="#{articleRelated.onRemoveCurrent}" />
-												</aon:commandButton>
-												<f:facet name="footer">
-													<aon:div>
-														<aon:commandButton id="reset"
-															title="[#{bundle.aon_reset}]"
-															styleClass="aon-editDataTable-button aon-icon-reset" value=""
-															immediate="true" reRender="articleRelatedData"
-															rendered="#{!articleRelated.new}" 
-															accesskey="#{bundle.aon_key_new_line}">
-															<aon:actionListener method="#{articleRelated.onReset}" />
-														</aon:commandButton>
-													</aon:div>
-												</f:facet>
-											</aon:column>
-									
-											<aon:column>
-												<f:facet name="header">
-													<aon:outputText value="#{appBundle.article_related_name}" />
-												</f:facet>
-												<aon:outputText value="#{to.articleRelated.alias}" 
-													rendered="#{to!=articleRelated.to}" />
-												<f:facet name="footer">
-													<aon:selectOneMenu styleClass="aon-form-selectOneMenu-field"
-														rendered="#{articleRelated.new}" 
-														value="#{articleRelated.to.articleRelated.id}">
-														<f:selectItems value="#{collections.articleList}" />
-													</aon:selectOneMenu>
-												</f:facet>
-											</aon:column>
-									
-											<aon:column>
-												<f:facet name="header">
-													<aon:outputText value="&#160;" />
-												</f:facet>
-												<f:verbatim rendered="#{to!=articleRelated.to}">&#160;</f:verbatim>
-												<f:facet name="footer">
-													<aon:div rendered="#{articleRelated.new}">
-														<f:verbatim rendered="#{!articleRelated.new}">&#160;</f:verbatim>
-														<aon:commandButton id="newAccept" title="[#{bundle.aon_accept}]"
-															styleClass="aon-editDataTable-button aon-icon-accept"
-															reRender="articleRelatedData">
-															<aon:actionListener method="#{articleRelated.onAccept}" />
-														</aon:commandButton>
-														<aon:commandButton id="newCancel" title="[#{bundle.aon_cancel}]"
-															styleClass="aon-editDataTable-button aon-icon-cancel"
-															reRender="articleRelatedData" immediate="true">
-															<aon:actionListener method="#{articleRelated.onCancel}" />
-														</aon:commandButton>
-													</aon:div>
-												</f:facet>
-											</aon:column>
-										</aon:dataTable>
+										
+										<aon:div id="articleRelatedData">
+										
+											<aon:dataTable id="articleRelatedDataTable" 
+												value="#{articleRelated.model}" var="to"
+												rows="#{articleRelated.pageLimit}"
+												styleClass="dr-table rich-table aon-editDataTable"
+												headerClass="dr-table-subheader rich-table-subheader aon-editDataTable-header"
+												footerClass="dr-table-subfooter rich-table-subfooter aon-editDataTable-footer"
+												rowClasses="aon-editDataTable-row-odd,dr-table-firstrow rich-table-firstrow aon-editDataTable-row-even"
+												cellpadding="0" cellspacing="0"
+												columnClasses="dr-table-cell rich-table-cell aon-editDataTable-iconColumn,
+														dr-table-cell rich-table-cell aon-editDataTable-textColumn,
+														dr-table-cell rich-table-cell aon-editDataTable-textColumn,
+														dr-table-cell rich-table-cell aon-editDataTable-textColumn,
+														dr-table-cell rich-table-cell aon-editDataTable-textColumn,
+														dr-table-cell rich-table-cell aon-editDataTable-textColumn">
+										
+												<aon:column>
+													<f:facet name="header">
+														<aon:outputText value="&#160;" />
+													</f:facet>
+													<aon:outputText value="&#160;" rendered="#{to==articleRelated.to}" />
+													<aon:commandButton id="lineRemove" title="[#{bundle.aon_remove}]"
+														rendered="#{to!=articleRelated.to}"
+														styleClass="aon-editDataTable-button aon-icon-delete"
+														reRender="articleRelatedData" 
+														immediate="true">
+														<aon:actionListener method="#{articleRelated.onRemoveCurrent}" />
+													</aon:commandButton>
+													<f:facet name="footer">
+														<aon:div>
+															<aon:commandButton id="reset"
+																title="[#{bundle.aon_reset}]"
+																styleClass="aon-editDataTable-button aon-icon-reset" 
+																value=""
+																immediate="true" 
+																reRender="articleRelatedData"
+																rendered="#{!articleRelated.new}" 
+																accesskey="#{bundle.aon_key_new_line}">
+																<aon:actionListener method="#{articleRelated.onReset}" />
+															</aon:commandButton>
+														</aon:div>
+													</f:facet>
+												</aon:column>
+										
+												<aon:column>
+													<f:facet name="header">
+														<aon:outputText value="#{appBundle.article_related_name}" />
+													</f:facet>
+													<aon:outputText value="#{to.articleRelated.alias}" 
+														rendered="#{to!=articleRelated.to}" />
+													<f:facet name="footer">
+														<aon:selectOneMenu styleClass="aon-form-selectOneMenu-field"
+															rendered="#{articleRelated.new}" 
+															value="#{articleRelated.to.articleRelated.id}">
+															<f:selectItems value="#{collections.articleList}" />
+														</aon:selectOneMenu>
+													</f:facet>
+												</aon:column>
+										
+												<aon:column>
+													<f:facet name="header">
+														<aon:outputText value="&#160;" />
+													</f:facet>
+													<f:verbatim rendered="#{to!=articleRelated.to}">&#160;</f:verbatim>
+													<f:facet name="footer">
+														<aon:div rendered="#{articleRelated.new}">
+															<f:verbatim rendered="#{!articleRelated.new}">&#160;</f:verbatim>
+															<aon:commandButton id="newAccept" title="[#{bundle.aon_accept}]"
+																styleClass="aon-editDataTable-button aon-icon-accept"
+																reRender="articleRelatedData">
+																<aon:actionListener method="#{articleRelated.onAccept}" />
+															</aon:commandButton>
+															<aon:commandButton id="newCancel" title="[#{bundle.aon_cancel}]"
+																styleClass="aon-editDataTable-button aon-icon-cancel"
+																reRender="articleRelatedData" 
+																immediate="true">
+																<aon:actionListener method="#{articleRelated.onCancel}" />
+															</aon:commandButton>
+														</aon:div>
+													</f:facet>
+												</aon:column>
+											</aon:dataTable>
+											
+											<aon:dataScroller
+												for="articleRelatedDataTable"
+												rowCount="#{articleRelated.model.rowCount}" 
+												showNote="true" />					
+												
+										</aon:div>
+										
 				                    </aon:panelTab>
 		
 									<aon:panelTab id="files" label="#{appBundle.document_related_list}"
 										rendered="#{!article.new}">
 
-										<aon:dataTable id="articleDocumentData" 
-											value="#{articleDocument.model}" var="to"
-											rows="#{articleDocument.pageLimit}"
-											styleClass="dr-table rich-table aon-editDataTable"
-											headerClass="dr-table-subheader rich-table-subheader aon-editDataTable-header"
-											footerClass="dr-table-subfooter rich-table-subfooter aon-editDataTable-footer"
-											rowClasses="aon-editDataTable-row-odd,dr-table-firstrow rich-table-firstrow aon-editDataTable-row-even"
-											cellpadding="0" cellspacing="0"
-											columnClasses="dr-table-cell rich-table-cell aon-editDataTable-iconColumn,
-													dr-table-cell rich-table-cell aon-editDataTable-textColumn,
-													dr-table-cell rich-table-cell aon-editDataTable-textColumn,
-													dr-table-cell rich-table-cell aon-editDataTable-textColumn,
-													dr-table-cell rich-table-cell aon-editDataTable-textColumn,
-													dr-table-cell rich-table-cell aon-editDataTable-textColumn">
-									
-											<aon:column>
-												<f:facet name="header">
-													<aon:outputText value="&#160;" />
-												</f:facet>
-												<aon:outputText value="&#160;" rendered="#{to==articleDocument.to}" />
-												<f:facet name="footer">
-													<aon:div>
-														<aon:commandButton id="reset"
-															title="[#{bundle.aon_reset}]"
-															styleClass="aon-editDataTable-button aon-icon-reset" value=""
-															immediate="true" reRender="articleDocumentData"
-															rendered="#{!articleDocument.new}" 
-															accesskey="#{bundle.aon_key_new_line}">
-															<aon:actionListener method="#{articleDocument.onReset}" />
-														</aon:commandButton>
-													</aon:div>
-												</f:facet>
-											</aon:column>
-									
-											<aon:column>
-												<f:facet name="header">
-													<aon:outputText value="#{appBundle.document_related_name}" />
-												</f:facet>
-												<aon:div rendered="#{to!=articleDocument.to}" >
-													<aon:outputText value="#{to.alias}" >
-														<a4j:support 
-															reRender="articleDocumentData"
-															actionListener="#{articleDocument.onSelect}"
-															event="onclick" />
-													</aon:outputText>					
-												</aon:div>
-												<aon:div rendered="#{to==articleDocument.to}">
-													<aon:panelGrid columns="2" dir="true">
-														<aon:outputText value="#{appBundle.document_related_alias}" />
-														<aon:inputText  
-															id="Alias"
-															size="60" maxlength="255"
-															value="#{articleDocument.to.alias}" />
-															
-														<aon:outputText value="#{appBundle.document_related_title}" />
-														<aon:inputText 
-															id="Title"
-															size="60" maxlength="255"
-															value="#{articleDocument.toI18n.title}" />
-															
-														<aon:outputText value="#{appBundle.document_related}" />
-														<aon:div rendered="#{articleDocument.toI18n.file!=null or articleDocument.inputFile!=null}">
-															<aon:outputText 
-																size="60" maxlength="255"
-																value="#{articleDocument.toI18n.file}" />
+										<aon:div id="articleDocumentData">
+											<aon:dataTable id="articleDocumentDataTable" 
+												value="#{articleDocument.model}" var="to"
+												rows="#{articleDocument.pageLimit}"
+												styleClass="dr-table rich-table aon-editDataTable"
+												headerClass="dr-table-subheader rich-table-subheader aon-editDataTable-header"
+												footerClass="dr-table-subfooter rich-table-subfooter aon-editDataTable-footer"
+												rowClasses="aon-editDataTable-row-odd,dr-table-firstrow rich-table-firstrow aon-editDataTable-row-even"
+												cellpadding="0" cellspacing="0"
+												columnClasses="dr-table-cell rich-table-cell aon-editDataTable-iconColumn,
+														dr-table-cell rich-table-cell aon-editDataTable-textColumn,
+														dr-table-cell rich-table-cell aon-editDataTable-textColumn,
+														dr-table-cell rich-table-cell aon-editDataTable-textColumn,
+														dr-table-cell rich-table-cell aon-editDataTable-textColumn,
+														dr-table-cell rich-table-cell aon-editDataTable-textColumn">
+										
+												<aon:column>
+													<f:facet name="header">
+														<aon:outputText value="&#160;" />
+													</f:facet>
+													<aon:outputText value="&#160;" rendered="#{to==articleDocument.to}" />
+													<f:facet name="footer">
+														<aon:div>
+															<aon:commandButton id="reset"
+																title="[#{bundle.aon_reset}]"
+																styleClass="aon-editDataTable-button aon-icon-reset" value=""
+																immediate="true" reRender="articleDocumentData"
+																rendered="#{!articleDocument.new}" 
+																accesskey="#{bundle.aon_key_new_line}">
+																<aon:actionListener method="#{articleDocument.onReset}" />
+															</aon:commandButton>
 														</aon:div>
-														<aon:div rendered="#{articleDocument.toI18n.file==null and articleDocument.inputFile==null}">
-															<t:inputFileUpload id="ArticleDocument_inputFile_edit"
-																value="#{articleDocument.inputFile}"
-																accept="*/*" size="45"
-																storage="file"
-																required="true"/>
-															<h:commandButton value="#{bundle.aon_fileupload_insert}"
+													</f:facet>
+												</aon:column>
+										
+												<aon:column>
+													<f:facet name="header">
+														<aon:outputText value="#{appBundle.document_related_name}" />
+													</f:facet>
+													<aon:div rendered="#{to!=articleDocument.to}" >
+														<aon:outputText value="#{to.alias}" >
+															<a4j:support 
 																reRender="articleDocumentData"
-																styleClass="aon-icon-attach aon-finding-toolbar-item"
-																actionListener="#{articleDocument.fileUploaded}"/>
-														</aon:div>
-														
-														<aon:outputText value="#{appBundle.document_related_description}" 
-															for="Description" />
-														<aon:inputTextarea
-															id="Description"
-															cols="60" rows="20" 
-															value="#{articleDocument.toI18n.description}"/>
-													</aon:panelGrid>
-												</aon:div>
-												<f:facet name="footer">
-													<aon:div rendered="#{articleDocument.new}">
+																actionListener="#{articleDocument.onSelect}"
+																event="onclick" />
+														</aon:outputText>					
+													</aon:div>
+													<aon:div rendered="#{to==articleDocument.to}">
 														<aon:panelGrid columns="2" dir="true">
-															<aon:outputText value="#{appBundle.document_related_alias}" 
-																for="Alias_" />
-															<aon:inputText 
-																id="Alias_"
-																size="80" maxlength="255"
+															<aon:outputText value="#{appBundle.document_related_alias}" />
+															<aon:inputText  
+																id="Alias"
+																size="60" maxlength="255"
 																value="#{articleDocument.to.alias}" />
 																
-															<aon:outputText value="#{appBundle.document_related_title}" 
-																for ="Title_"/>
+															<aon:outputText value="#{appBundle.document_related_title}" />
 															<aon:inputText 
-																id="Title_"
-																size="80" maxlength="255"
+																id="Title"
+																size="60" maxlength="255"
 																value="#{articleDocument.toI18n.title}" />
 																
-															<aon:outputText value="#{appBundle.document_related}" 
-																for="Description" />
-															<aon:div rendered="#{articleDocument.inputFile!=null}">
+															<aon:outputText value="#{appBundle.document_related}" />
+															<aon:div rendered="#{articleDocument.toI18n.file!=null or articleDocument.inputFile!=null}">
 																<aon:outputText 
-																	size="90" maxlength="255"
+																	size="60" maxlength="255"
 																	value="#{articleDocument.toI18n.file}" />
 															</aon:div>
-															<aon:div rendered="#{articleDocument.inputFile==null}">
-																<t:inputFileUpload id="ArticleDocument_inputFile"
+															<aon:div rendered="#{articleDocument.toI18n.file==null and articleDocument.inputFile==null}">
+																<t:inputFileUpload id="ArticleDocument_inputFile_edit"
 																	value="#{articleDocument.inputFile}"
 																	accept="*/*" size="45"
 																	storage="file"
@@ -606,45 +573,69 @@
 															</aon:div>
 															
 															<aon:outputText value="#{appBundle.document_related_description}" 
-																for="Description_" />
+																for="Description" />
 															<aon:inputTextarea
-																id="Description_"
-																cols="80" rows="20" 
+																id="Description"
+																cols="60" rows="20" 
 																value="#{articleDocument.toI18n.description}"/>
 														</aon:panelGrid>
 													</aon:div>
-												</f:facet>
-											</aon:column>
-											
-											<aon:column>
-												<f:facet name="header">
-													<aon:outputText value="&#160;" />
-												</f:facet>
-												<f:verbatim rendered="#{to!=articleDocument.to}">&#160;</f:verbatim>
-												<aon:div rendered="#{to==articleDocument.to}">
-													<aon:commandButton title="[#{bundle.aon_accept}]"
-														styleClass="aon-editDataTable-button aon-icon-accept"
-														reRender="articleDocumentData">
-														<aon:actionListener method="#{articleDocument.onAccept}" />
-													</aon:commandButton>
-													<aon:commandButton title="[#{bundle.aon_cancel}]"
-														styleClass="aon-editDataTable-button aon-icon-cancel"
-														reRender="articleDocumentData" immediate="true">
-														<aon:actionListener method="#{articleDocument.onCancel}" />
-													</aon:commandButton>
-													<aon:commandButton title="[#{bundle.aon_remove}]"
-														styleClass="aon-editDataTable-button aon-icon-delete"
-														reRender="articleDocumentData" immediate="true">
-														<aon:actionListener method="#{articleDocument.onRemove}" />
-													</aon:commandButton>
-												</aon:div>
-												<f:facet name="footer">
-													<aon:div rendered="#{articleDocument.new}">
-														<f:verbatim rendered="#{!articleDocument.new}">&#160;</f:verbatim>
+													<f:facet name="footer">
+														<aon:div rendered="#{articleDocument.new}">
+															<aon:panelGrid columns="2" dir="true">
+																<aon:outputText value="#{appBundle.document_related_alias}" 
+																	for="Alias_" />
+																<aon:inputText 
+																	id="Alias_"
+																	size="80" maxlength="255"
+																	value="#{articleDocument.to.alias}" />
+																	
+																<aon:outputText value="#{appBundle.document_related_title}" 
+																	for ="Title_"/>
+																<aon:inputText 
+																	id="Title_"
+																	size="80" maxlength="255"
+																	value="#{articleDocument.toI18n.title}" />
+																	
+																<aon:outputText value="#{appBundle.document_related}" 
+																	for="Description" />
+																<aon:div rendered="#{articleDocument.inputFile!=null}">
+																	<aon:outputText 
+																		size="90" maxlength="255"
+																		value="#{articleDocument.toI18n.file}" />
+																</aon:div>
+																<aon:div rendered="#{articleDocument.inputFile==null}">
+																	<t:inputFileUpload id="ArticleDocument_inputFile"
+																		value="#{articleDocument.inputFile}"
+																		accept="*/*" size="45"
+																		storage="file"
+																		required="true"/>
+																	<h:commandButton value="#{bundle.aon_fileupload_insert}"
+																		reRender="articleDocumentData"
+																		styleClass="aon-icon-attach aon-finding-toolbar-item"
+																		actionListener="#{articleDocument.fileUploaded}"/>
+																</aon:div>
+																
+																<aon:outputText value="#{appBundle.document_related_description}" 
+																	for="Description_" />
+																<aon:inputTextarea
+																	id="Description_"
+																	cols="80" rows="20" 
+																	value="#{articleDocument.toI18n.description}"/>
+															</aon:panelGrid>
+														</aon:div>
+													</f:facet>
+												</aon:column>
+												
+												<aon:column>
+													<f:facet name="header">
+														<aon:outputText value="&#160;" />
+													</f:facet>
+													<f:verbatim rendered="#{to!=articleDocument.to}">&#160;</f:verbatim>
+													<aon:div rendered="#{to==articleDocument.to}">
 														<aon:commandButton title="[#{bundle.aon_accept}]"
 															styleClass="aon-editDataTable-button aon-icon-accept"
-															reRender="articleDocumentData"
-															rendered="#{articleDocument.inputFile != null}" >
+															reRender="articleDocumentData">
 															<aon:actionListener method="#{articleDocument.onAccept}" />
 														</aon:commandButton>
 														<aon:commandButton title="[#{bundle.aon_cancel}]"
@@ -652,21 +643,46 @@
 															reRender="articleDocumentData" immediate="true">
 															<aon:actionListener method="#{articleDocument.onCancel}" />
 														</aon:commandButton>
+														<aon:commandButton title="[#{bundle.aon_remove}]"
+															styleClass="aon-editDataTable-button aon-icon-delete"
+															reRender="articleDocumentData" immediate="true">
+															<aon:actionListener method="#{articleDocument.onRemove}" />
+														</aon:commandButton>
 													</aon:div>
-												</f:facet>
-											</aon:column>
-										</aon:dataTable>
+													<f:facet name="footer">
+														<aon:div rendered="#{articleDocument.new}">
+															<f:verbatim rendered="#{!articleDocument.new}">&#160;</f:verbatim>
+															<aon:commandButton title="[#{bundle.aon_accept}]"
+																styleClass="aon-editDataTable-button aon-icon-accept"
+																reRender="articleDocumentData"
+																rendered="#{articleDocument.inputFile != null}" >
+																<aon:actionListener method="#{articleDocument.onAccept}" />
+															</aon:commandButton>
+															<aon:commandButton title="[#{bundle.aon_cancel}]"
+																styleClass="aon-editDataTable-button aon-icon-cancel"
+																reRender="articleDocumentData" immediate="true">
+																<aon:actionListener method="#{articleDocument.onCancel}" />
+															</aon:commandButton>
+														</aon:div>
+													</f:facet>
+												</aon:column>
+											</aon:dataTable>
+											
+											<aon:dataScroller for="articleDocumentDataTable"
+												rowCount="#{articleDocument.model.rowCount}" 
+												showNote="true" />					
+
+										</aon:div>
 		
 				                    </aon:panelTab>
 		
 								</aon:panelTabSet>
 		
 									
-							</rich:panel>
-						</aon:div>
-					</aon:panelGrid>
+						</rich:panel>
+
 				</rich:panel>
-			</aon:div>
+
 		</aon:form>
 	</ui:define>
 

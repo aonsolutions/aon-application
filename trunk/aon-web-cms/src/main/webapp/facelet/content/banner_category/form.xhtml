@@ -29,7 +29,7 @@
 					<!-- start toolbar navigation -->
 					<aon:div styleClass="aon-finding-toolbar-item-group">					
 						<aon:commandButton id="reset" value="#{bundle.aon_reset}"
-							action="banner_category_form"
+							reRender="main_form"
 							styleClass="aon-finding-toolbar-item aon-icon-reset"
 							accesskey="#{bundle.aon_key_new}">
 							<aon:actionListener method="#{banner_category.onReset}" />
@@ -37,7 +37,7 @@
 						<aon:commandButton id="save_new"
 							value="#{bundle.aon_save}" 
 							rendered="#{banner_category.new}"
-							action="banner_category_form"
+							reRender="main_form"
 							styleClass="aon-finding-toolbar-item aon-icon-accept"
 							accesskey="#{bundle.aon_key_save}">
 							<aon:actionListener method="#{banner_category.accept}" />
@@ -98,12 +98,9 @@
 			</aon:div>
 		
 			<rich:panel id="detail_panel" rendered="#{!banner_category.new and banner_category.toI18n.id != null}">
-				<f:facet name="header">#{appBundle.banner}</f:facet>
 				
-				<aon:panelGrid columns="2" styleClass="none" columnClasses="aon-vertical-align-top,aon-vertical-align-top">
-				
-					<rich:panel id="detail_list_panel">
-						<f:facet name="header">#{appBundle.aon_listing}</f:facet>
+					<rich:panel id="detail_list_panel" rendered="#{banner.to == null}">
+						<f:facet name="header">#{appBundle.banner} - #{appBundle.aon_listing}</f:facet>
 				
 						<aon:div styleClass="aon-finding-title-toolbar">
 							<aon:panelGrid id="buttonsGrid_list" columns="1" dir="true" 
@@ -113,7 +110,7 @@
 								<aon:div styleClass="aon-finding-toolbar-item-group">
 									<aon:commandButton id="reset_list" value="#{bundle.aon_reset}"
 										rendered="#{!banner.new}"
-										action="banner_category_form"
+										reRender="detail_panel"
 										styleClass="aon-finding-toolbar-item aon-icon-reset"
 										accesskey="#{bundle.aon_key_new}">
 										<aon:actionListener method="#{banner.onReset}" />
@@ -134,7 +131,7 @@
 							</aon:panelGrid>
 						</aon:div>
 
-						<aon:dataTable id="detail_list" value="#{banner.model}" var="to"
+						<aon:dataTable id="dataTable" value="#{banner.model}" var="to"
 							rows="#{banner.pageLimit}"
 							styleClass="dr-table rich-table aon-editDataTable"
 							headerClass="dr-table-subheader rich-table-subheader aon-editDataTable-header"
@@ -157,14 +154,14 @@
 										value="#{banner.rowChecked}">
 										<a4j:support 
 											event="onclick"  
-											reRender="detail_list,buttonsGrid_list" />
+											reRender="detail_panel" />
 								</aon:selectBooleanCheckbox>
 							</aon:column>
 					
 							<aon:column>
 								<a4j:support 
 									immediate="#{true}"
-									action="banner_category_form"
+									reRender="detail_panel"
 									actionListener="#{banner.onSelect}"
 									event="onclick" />
 								<f:facet name="header">
@@ -177,7 +174,7 @@
 							<aon:column>
 								<a4j:support 
 									immediate="#{true}"
-									action="banner_category_form"
+									reRender="detail_panel"
 									actionListener="#{banner.onSelect}"
 									event="onclick" />
 								<f:facet name="header">
@@ -193,14 +190,14 @@
 								</f:facet>
 								<aon:commandLink title="#{appBundle.banner_activate}" 
 									actionListener="#{banner.onActivate}"
-									action="banner_category_form"
+									reRender="dataTable"
 									rendered="#{!to.active}">
 									<aon:graphicImage alt="#{appBundle.banner_activate}"
 										url="/images/cms/inactive.png" />
 								</aon:commandLink>
 								<aon:commandLink title="#{appBundle.banner_deactivate}" 
 									actionListener="#{banner.onDeactivate}" 
-									action="banner_category_form"
+									reRender="dataTable"
 									rendered="#{to.active}">
 									<aon:graphicImage alt="#{appBundle.banner_deactivate}"
 										url="/images/cms/active.png" />
@@ -215,31 +212,43 @@
 								<aon:graphicImage rendered="#{to.position == 0}"
 									url="/images/cms/spacer16.gif" style="margin-left: 8px;"/>
 								<aon:commandButton  
-									action="banner_category_form"
+									reRender="dataTable"
 									actionListener="#{banner.onMoveUp}" 
 									rendered="#{to.position != 0 and banner.to==null}"
 									image="/images/cms/up.gif" styleClass="aon-icon-commandButton" />
 								<aon:commandButton 
-									action="banner_category_form"
+									reRender="dataTable"
 									actionListener="#{banner.onMoveDown}"
 									rendered="#{to.position &lt; (banner.model.rowCount - 1)  and banner.to==null}"
 									image="/images/cms/down.gif" styleClass="aon-icon-commandButton" />
 							</aon:column>
 				
 						</aon:dataTable>
+						
+						<aon:dataScroller for="dataTable"
+							rowCount="#{banner.model.rowCount}" 
+							showNote="true" />					
+							
 					</rich:panel>
 					
 					<rich:panel id="detail_edit_panel" rendered="#{banner.new or banner.to != null}">
-        				<f:facet name="header">#{banner.new?(bundle.aon_reset):(bundle.aon_editing)}</f:facet>
+        				<f:facet name="header">#{appBundle.banner} - #{banner.new?(bundle.aon_reset):(bundle.aon_editing)}</f:facet>
 
 								<aon:div styleClass="aon-finding-title-toolbar">
 									<aon:panelGrid id="buttonsGrid_list_form" columns="1" dir="true" 
 										columnClasses="aon-finding-toolbar">				
 										<aon:div styleClass="aon-finding-toolbar-item-group">
+											<aon:commandButton id="reset_list_form" value="#{bundle.aon_reset}"
+												rendered="#{!banner.new}"
+												reRender="detail_panel"
+												styleClass="aon-finding-toolbar-item aon-icon-reset"
+												accesskey="#{bundle.aon_key_new}">
+												<aon:actionListener method="#{banner.onReset}" />
+											</aon:commandButton>
 											<aon:commandButton id="save_list_form"
 												value="#{bundle.aon_save}" 
 												rendered="#{banner.to!=null or banner.new}"
-												action="banner_category_form"
+												reRender="detail_panel"
 												styleClass="aon-finding-toolbar-item aon-icon-accept"
 												accesskey="#{bundle.aon_key_save}">
 												<aon:actionListener method="#{banner.onAccept}" />
@@ -247,7 +256,7 @@
 											<aon:commandButton id="cancel_list_form"
 												value="#{bundle.aon_cancel}" 
 												rendered="#{banner.to!=null or banner.new}" immediate="#{true}"
-												action="banner_category_form"
+												reRender="detail_panel"
 												styleClass="aon-finding-toolbar-item aon-icon-cancel"
 												accesskey="#{bundle.aon_key_cancel}">
 												<aon:actionListener method="#{banner.onCancel}" />
@@ -321,7 +330,6 @@
 
 					</rich:panel>
 
-				</aon:panelGrid>
 			</rich:panel>
 		</aon:form>
 	</ui:define>

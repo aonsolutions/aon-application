@@ -64,8 +64,9 @@
 				</aon:panelGrid>
 			</aon:div>
 
-			<aon:div id="parent_" styleClass="aon-scroll-area">
-				<h:dataTable id="dataTable"
+			<aon:div styleClass="aon-scroll-area">
+
+				<aon:dataTable id="dataTable"
 					value="#{activity.model}" var="to" rows="20"
 					styleClass="dr-table rich-table aon-editDataTable"
 					headerClass="dr-table-subheader rich-table-subheader aon-editDataTable-header"
@@ -199,11 +200,14 @@
 							</aon:div>
 						</f:facet>
 					</aon:column>
-				</h:dataTable>
+				</aon:dataTable>
 
-				<rich:datascroller align="left"  for="dataTable" maxPages="20" />
-					
+				<aon:dataScroller for="dataTable"
+					rowCount="#{activity.model.rowCount}" 
+					showNote="true" />					
+			
 			</aon:div>
+			
 		</aon:form>
 	</ui:define>
 </ui:composition>

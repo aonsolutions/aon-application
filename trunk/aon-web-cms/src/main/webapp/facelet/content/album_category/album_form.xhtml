@@ -28,23 +28,15 @@
 					<!-- start toolbar navigation -->
 					<aon:div styleClass="aon-finding-toolbar-item-group">					
 						<aon:commandButton id="reset" value="#{bundle.aon_reset}"
-							action="album_form"
+							reRender="main_form"
 							styleClass="aon-finding-toolbar-item aon-icon-reset"
 							accesskey="#{bundle.aon_key_new}">
 							<aon:actionListener method="#{album.onReset}" />
 						</aon:commandButton>
-						<aon:commandButton id="save_new"
+						<aon:commandButton id="save"
 							value="#{bundle.aon_save}" 
-							rendered="#{album.new}"
-							action="album_form"
-							styleClass="aon-finding-toolbar-item aon-icon-accept"
-							accesskey="#{bundle.aon_key_save}">
-							<aon:actionListener method="#{album.accept}" />
-						</aon:commandButton>
-						<aon:commandButton id="save_edit"
-							value="#{bundle.aon_save}" 
-							rendered="#{album.to!=null and !album.new}"
-							action="album_form"
+							rendered="#{album.to!=null or album.new}"
+							reRender="main_form"
 							styleClass="aon-finding-toolbar-item aon-icon-accept"
 							accesskey="#{bundle.aon_key_save}">
 							<aon:actionListener method="#{album.accept}" />
@@ -143,12 +135,10 @@
 			</aon:div>
 		
 			<rich:panel id="detail_panel" rendered="#{!album.new and album.toI18n.id != null}">
-				<f:facet name="header">#{appBundle.albumImage}</f:facet>
-				
-				<aon:panelGrid columns="2" styleClass="none" columnClasses="aon-vertical-align-top,aon-vertical-align-top">
-				
-					<rich:panel id="detail_list_panel">
-						<f:facet name="header">#{appBundle.aon_listing}</f:facet>
+			
+					<rich:panel id="detail_list_panel" rendered="#{albumImage.to == null}">
+					
+						<f:facet name="header">#{appBundle.albumImage} - #{appBundle.aon_listing}</f:facet>
 				
 						<aon:div styleClass="aon-finding-title-toolbar">
 							<aon:panelGrid id="buttonsGrid_list" columns="1" dir="true" 
@@ -158,7 +148,7 @@
 								<aon:div styleClass="aon-finding-toolbar-item-group">
 									<aon:commandButton id="reset_list" value="#{bundle.aon_reset}"
 										rendered="#{!albumImage.new}"
-										action="album_form"
+										reRender="detail_panel"
 										styleClass="aon-finding-toolbar-item aon-icon-reset"
 										accesskey="#{bundle.aon_key_new}">
 										<aon:actionListener method="#{albumImage.onReset}" />
@@ -179,7 +169,7 @@
 							</aon:panelGrid>
 						</aon:div>
 
-						<aon:dataTable id="detail_list" value="#{albumImage.model}" var="to"
+						<aon:dataTable id="dataTable" value="#{albumImage.model}" var="to"
 							rows="#{albumImage.pageLimit}"
 							styleClass="dr-table rich-table aon-editDataTable"
 							headerClass="dr-table-subheader rich-table-subheader aon-editDataTable-header"
@@ -202,7 +192,7 @@
 										value="#{albumImage.rowChecked}">
 										<a4j:support 
 											event="onclick"  
-											reRender="detail_list,buttonsGrid_list" />
+											reRender="detail_panel" />
 								</aon:selectBooleanCheckbox>
 							</aon:column>
 					
@@ -211,7 +201,7 @@
 									immediate="#{true}"
 									actionListener="#{albumImage.onSelect}"
 									event="onclick"
-									action="album_form" />
+									reRender="detail_panel" />
 								<f:facet name="header">
 									<aon:outputText value="#{appBundle.albumImage_thumbnail}" />
 								</f:facet>
@@ -222,7 +212,7 @@
 							<aon:column>
 								<a4j:support 
 									immediate="#{true}"
-									action="album_form"
+									reRender="detail_panel"
 									actionListener="#{albumImage.onSelect}"
 									event="onclick" />
 								<f:facet name="header">
@@ -238,14 +228,14 @@
 								</f:facet>
 								<aon:commandLink title="#{appBundle.albumImage_activate}" 
 									actionListener="#{albumImage.onActivate}"
-									action="album_form"
+									reRender="dataTable"
 									rendered="#{!to.active}">
 									<aon:graphicImage alt="#{appBundle.albumImage_activate}"
 										url="/images/cms/inactive.png" />
 								</aon:commandLink>
 								<aon:commandLink title="#{appBundle.albumImage_deactivate}" 
 									actionListener="#{albumImage.onDeactivate}" 
-									action="album_form"
+									reRender="dataTable"
 									rendered="#{to.active}">
 									<aon:graphicImage alt="#{appBundle.albumImage_deactivate}"
 										url="/images/cms/active.png" />
@@ -260,12 +250,12 @@
 								<aon:graphicImage rendered="#{to.position == 0}"
 									url="/images/cms/spacer16.gif" style="margin-left: 8px;"/>
 								<aon:commandButton  
-									action="album_form"
+									reRender="dataTable"
 									actionListener="#{albumImage.onMoveUp}" 
 									rendered="#{to.position != 0 and albumImage.to==null}"
 									image="/images/cms/up.gif" styleClass="aon-icon-commandButton" />
 								<aon:commandButton 
-									action="album_form"
+									reRender="dataTable"
 									actionListener="#{albumImage.onMoveDown}"
 									rendered="#{to.position &lt; (albumImage.model.rowCount - 1)  and albumImage.to==null}"
 									image="/images/cms/down.gif" styleClass="aon-icon-commandButton" />
@@ -275,16 +265,23 @@
 					</rich:panel>
 					
 					<rich:panel id="detail_edit_panel" rendered="#{albumImage.new or albumImage.to != null}">
-        				<f:facet name="header">#{albumImage.new?(bundle.aon_reset):(bundle.aon_editing)}</f:facet>
+        				<f:facet name="header">#{appBundle.albumImage} - #{albumImage.new?(bundle.aon_reset):(bundle.aon_editing)}</f:facet>
 
 								<aon:div styleClass="aon-finding-title-toolbar">
 									<aon:panelGrid id="buttonsGrid_list_form" columns="1" dir="true" 
 										columnClasses="aon-finding-toolbar">				
 										<aon:div styleClass="aon-finding-toolbar-item-group">
+											<aon:commandButton id="reset_list_form" value="#{bundle.aon_reset}"
+												rendered="#{!albumImage.new}"
+												reRender="detail_panel"
+												styleClass="aon-finding-toolbar-item aon-icon-reset"
+												accesskey="#{bundle.aon_key_new}">
+												<aon:actionListener method="#{albumImage.onReset}" />
+											</aon:commandButton>
 											<aon:commandButton id="save_list_form"
 												value="#{bundle.aon_save}" 
 												rendered="#{albumImage.to!=null or albumImage.new}"
-												action="album_form"
+												reRender="detail_panel"
 												styleClass="aon-finding-toolbar-item aon-icon-accept"
 												accesskey="#{bundle.aon_key_save}">
 												<aon:actionListener method="#{albumImage.onAccept}" />
@@ -293,7 +290,7 @@
 												value="#{bundle.aon_cancel}" 
 												rendered="#{albumImage.to!=null or albumImage.new}" 
 												immediate="#{true}"
-												action="album_form"
+												reRender="detail_panel"
 												styleClass="aon-finding-toolbar-item aon-icon-cancel"
 												accesskey="#{bundle.aon_key_cancel}">
 												<aon:actionListener method="#{albumImage.onCancel}" />
@@ -389,7 +386,6 @@
 
 					</rich:panel>
 
-				</aon:panelGrid>
 			</rich:panel>
 		</aon:form>
 	</ui:define>

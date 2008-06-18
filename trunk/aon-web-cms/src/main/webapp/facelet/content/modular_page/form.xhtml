@@ -28,7 +28,7 @@
 					<!-- start toolbar navigation -->
 					<aon:div styleClass="aon-finding-toolbar-item-group">					
 						<aon:commandButton id="reset" value="#{bundle.aon_reset}"
-							action="modular_page_form"
+							reRender="modular"
 							styleClass="aon-finding-toolbar-item aon-icon-reset"
 							accesskey="#{bundle.aon_key_new}">
 							<aon:actionListener method="#{modular_page.onReset}" />
@@ -36,7 +36,7 @@
 						<aon:commandButton id="save"
 							value="#{bundle.aon_save}" 
 							rendered="#{modular_page.to!=null or modular_page.new}"
-							reRender="buttonsMain,mainForm,detail"
+							reRender="modular"
 							styleClass="aon-finding-toolbar-item aon-icon-accept"
 							accesskey="#{bundle.aon_key_save}">
 							<aon:actionListener method="#{modular_page.accept}" />
@@ -105,14 +105,11 @@
 				</aon:panelGrid>
 			</aon:div>
 		
-			<aon:div id="detail">
-				<aon:panelGrid rendered="#{!modular_page.new and modular_page.toI18n.id != null}">
-					<f:facet name="header">#{appBundle.sidebar_option}</f:facet>
+			<aon:div id="detail" rendered="#{!modular_page.new and modular_page.toI18n.id != null}">
 					
-					<aon:panelGrid columns="2" styleClass="none" columnClasses="aon-vertical-align-top,aon-vertical-align-top">
+					<rich:panel id="detail_list_panel" rendered="#{modular_page_option.to==null}">
 					
-						<aon:panelGrid id="detailList">
-							<f:facet name="header">#{appBundle.aon_listing}</f:facet>
+							<f:facet name="header">#{appBundle.sidebar_option} - #{appBundle.aon_listing}</f:facet>
 					
 							<aon:div styleClass="aon-finding-title-toolbar">
 								<aon:panelGrid columns="1" dir="true" 
@@ -122,7 +119,7 @@
 									<aon:div id="detailButtonsGrid" styleClass="aon-finding-toolbar-item-group">
 										<aon:commandButton id="reset_list"
 											rendered="#{!modular_page_option.new}"
-											reRender="detailList,detailEdit"
+											reRender="detail"
 											value="#{bundle.aon_reset}"
 											styleClass="aon-finding-toolbar-item aon-icon-reset"
 											accesskey="#{bundle.aon_key_new}">
@@ -167,7 +164,7 @@
 											value="#{modular_page_option.rowChecked}">
 											<a4j:support 
 												event="onclick"  
-												reRender="detailButtonsGrid" />
+												reRender="detail" />
 									</aon:selectBooleanCheckbox>
 								</aon:column>
 						
@@ -238,17 +235,27 @@
 							<aon:dataScroller for="dataTable"
 								rowCount="#{modular_page_option.model.rowCount}" 
 								showNote="true" />					
-						</aon:panelGrid>
+
+						</rich:panel>
 						
-						<aon:div id="detailEdit">
-							<aon:panelGrid rendered="#{modular_page_option.new or modular_page_option.to != null}">
-		        				<f:facet name="header">#{modular_page_option.new?(bundle.aon_reset):(bundle.aon_editing)}</f:facet>
+						<rich:panel id="detail_edit_panel" rendered="#{modular_page_option.new or modular_page_option.to != null}">
+
+		        				<f:facet name="header">#{appBundle.sidebar_option} - #{modular_page_option.new?(bundle.aon_reset):(bundle.aon_editing)}</f:facet>
+
 								<aon:div styleClass="aon-finding-title-toolbar">
 									<aon:panelGrid columns="1" dir="true" 
 										columnClasses="aon-finding-toolbar">				
 									
 										<!-- start toolbar navigation -->
 										<aon:div styleClass="aon-finding-toolbar-item-group">
+											<aon:commandButton id="reset_list_form"
+												rendered="#{!modular_page_option.new}"
+												reRender="detail"
+												value="#{bundle.aon_reset}"
+												styleClass="aon-finding-toolbar-item aon-icon-reset"
+												accesskey="#{bundle.aon_key_new}">
+												<aon:actionListener method="#{modular_page_option.onReset}" />
+											</aon:commandButton>
 											<aon:commandButton id="save_list_form"
 												value="#{bundle.aon_save}" 
 												rendered="#{modular_page_option.to!=null or modular_page_option.new}"
@@ -317,11 +324,10 @@
 						
 									</aon:panelGrid>
 								</aon:div>
-							</aon:panelGrid>
+
+							</rich:panel>								
 						</aon:div>
-					</aon:panelGrid>
-				</aon:panelGrid>
-			</aon:div>
+						
 		</aon:form>
 	</ui:define>
 

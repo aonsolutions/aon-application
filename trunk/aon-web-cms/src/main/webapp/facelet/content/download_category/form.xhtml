@@ -29,22 +29,15 @@
 					<!-- start toolbar navigation -->
 					<aon:div styleClass="aon-finding-toolbar-item-group">					
 						<aon:commandButton id="reset" value="#{bundle.aon_reset}"
-							action="download_category_form"
+							reRender="main_form"
 							styleClass="aon-finding-toolbar-item aon-icon-reset"
 							accesskey="#{bundle.aon_key_new}">
 							<aon:actionListener method="#{download_category.onReset}" />
 						</aon:commandButton>
-						<aon:commandButton id="save_new"
+						<aon:commandButton id="save"
 							value="#{bundle.aon_save}" 
-							rendered="#{download_category.new}"
-							action="download_category_form"
-							styleClass="aon-finding-toolbar-item aon-icon-accept"
-							accesskey="#{bundle.aon_key_save}">
-							<aon:actionListener method="#{download_category.accept}" />
-						</aon:commandButton>
-						<aon:commandButton id="save_edit"
-							value="#{bundle.aon_save}" 
-							rendered="#{download_category.to!=null and !download_category.new}"
+							rendered="#{download_category.to!=null or download_category.new}"
+							reRender="main_form"
 							styleClass="aon-finding-toolbar-item aon-icon-accept"
 							accesskey="#{bundle.aon_key_save}">
 							<aon:actionListener method="#{download_category.accept}" />
@@ -95,9 +88,11 @@
 
 					<aon:outputLabel for="DownloadCategoryDetail_itemsPerPage"
 						value="#{appBundle.album_items_per_page}" />
-					<aon:inputText id="DownloadCategoryDetail_itemsPerPage"
-						required="true" size="5" maxlength="5"
-						value="#{download_category.to.itemsPerPage}" />
+					<rich:inputNumberSlider id="DownloadCategoryDetail_itemsPerPage" 
+						value="#{download_category.to.itemsPerPage}" 
+						width="500" 
+						minValue="1" 
+						maxValue="50" />
 						
 					<aon:outputLabel 
 						value="#{appBundle.download_category_image}" />
@@ -134,12 +129,9 @@
 			</aon:div>
 		
 			<rich:panel id="detail_panel" rendered="#{!download_category.new and download_category.toI18n.id != null}">
-				<f:facet name="header">#{appBundle.download}</f:facet>
 				
-				<aon:panelGrid columns="2" styleClass="none" columnClasses="aon-vertical-align-top,aon-vertical-align-top">
-				
-					<rich:panel id="detail_list_panel">
-						<f:facet name="header">#{appBundle.aon_listing}</f:facet>
+					<rich:panel id="detail_list_panel" rendered="#{download.to == null}">
+						<f:facet name="header">#{appBundle.download} - #{appBundle.aon_listing}</f:facet>
 				
 						<aon:div styleClass="aon-finding-title-toolbar">
 							<aon:panelGrid id="buttonsGrid_list" columns="1" dir="true" 
@@ -149,7 +141,7 @@
 								<aon:div styleClass="aon-finding-toolbar-item-group">
 									<aon:commandButton id="reset_list" value="#{bundle.aon_reset}"
 										rendered="#{!download.new}"
-										action="download_category_form"
+										reRender="detail_panel"
 										styleClass="aon-finding-toolbar-item aon-icon-reset"
 										accesskey="#{bundle.aon_key_new}">
 										<aon:actionListener method="#{download.onReset}" />
@@ -170,7 +162,7 @@
 							</aon:panelGrid>
 						</aon:div>
 
-						<aon:dataTable id="detail_list" value="#{download.model}" var="to"
+						<aon:dataTable id="dataTable" value="#{download.model}" var="to"
 							rows="#{download.pageLimit}"
 							styleClass="dr-table rich-table aon-editDataTable"
 							headerClass="dr-table-subheader rich-table-subheader aon-editDataTable-header"
@@ -193,7 +185,7 @@
 										value="#{download.rowChecked}">
 										<a4j:support 
 											event="onclick"  
-											reRender="detail_list,buttonsGrid_list" />
+											reRender="detail_panel" />
 								</aon:selectBooleanCheckbox>
 							</aon:column>
 					
@@ -202,7 +194,7 @@
 									actionListener="#{download.onSelect}"
 									event="onclick"
 									immediate="#{true}"
-									action="download_category_form" />
+									reRender="detail_panel" />
 								<f:facet name="header">
 									<aon:outputText value="#{appBundle.download_alias}" />
 								</f:facet>
@@ -214,7 +206,7 @@
 								<a4j:support 
 									immediate="#{true}"
 									actionListener="#{download.onSelect}"
-									action="download_category_form"
+									reRender="detail_panel"
 									event="onclick" />
 								<f:facet name="header">
 									<aon:outputText value="#{appBundle.download_title}"/>
@@ -229,14 +221,14 @@
 								</f:facet>
 								<aon:commandLink title="#{appBundle.download_activate}" 
 									actionListener="#{download.onActivate}"
-									action="download_category_form"
+									reRender="dataTable"
 									rendered="#{!to.active}">
 									<aon:graphicImage alt="#{appBundle.download_activate}"
 										url="/images/cms/inactive.png" />
 								</aon:commandLink>
 								<aon:commandLink title="#{appBundle.download_deactivate}" 
 									actionListener="#{download.onDeactivate}" 
-									action="download_category_form"
+									reRender="dataTable"
 									rendered="#{to.active}">
 									<aon:graphicImage alt="#{appBundle.download_deactivate}"
 										url="/images/cms/active.png" />
@@ -251,12 +243,12 @@
 								<aon:graphicImage rendered="#{to.position == 0}"
 									url="/images/cms/spacer16.gif" style="margin-left: 8px;"/>
 								<aon:commandButton  
-									action="download_category_form"
+									reRender="dataTable"
 									actionListener="#{download.onMoveUp}" 
 									rendered="#{to.position != 0 and download.to==null}"
 									image="/images/cms/up.gif" styleClass="aon-icon-commandButton" />
 								<aon:commandButton 
-									action="download_category_form"
+									reRender="dataTable"
 									actionListener="#{download.onMoveDown}"
 									rendered="#{to.position &lt; (download.model.rowCount - 1)  and download.to==null}"
 									image="/images/cms/down.gif" styleClass="aon-icon-commandButton" />
@@ -266,16 +258,23 @@
 					</rich:panel>
 					
 					<rich:panel id="detail_edit_panel" rendered="#{download.new or download.to != null}">
-        				<f:facet name="header">#{download.new?(bundle.aon_reset):(bundle.aon_editing)}</f:facet>
+        				<f:facet name="header">#{appBundle.download} - #{download.new?(bundle.aon_reset):(bundle.aon_editing)}</f:facet>
 
 								<aon:div styleClass="aon-finding-title-toolbar">
 									<aon:panelGrid id="buttonsGrid_list_form" columns="1" dir="true" 
 										columnClasses="aon-finding-toolbar">				
 										<aon:div styleClass="aon-finding-toolbar-item-group">
+											<aon:commandButton id="reset_listform" value="#{bundle.aon_reset}"
+												rendered="#{!download.new}"
+												reRender="detail_panel"
+												styleClass="aon-finding-toolbar-item aon-icon-reset"
+												accesskey="#{bundle.aon_key_new}">
+												<aon:actionListener method="#{download.onReset}" />
+											</aon:commandButton>
 											<aon:commandButton id="save_list_form"
 												value="#{bundle.aon_save}" 
 												rendered="#{download.to!=null or download.new}"
-												action="download_category_form"
+												reRender="detail_panel"
 												styleClass="aon-finding-toolbar-item aon-icon-accept"
 												accesskey="#{bundle.aon_key_save}">
 												<aon:actionListener method="#{download.onAccept}" />
@@ -283,7 +282,7 @@
 											<aon:commandButton id="cancel_list_form"
 												value="#{bundle.aon_cancel}" 
 												rendered="#{download.to!=null or download.new}" immediate="#{true}"
-												action="download_category_form"
+												reRender="detail_panel"
 												styleClass="aon-finding-toolbar-item aon-icon-cancel"
 												accesskey="#{bundle.aon_key_cancel}">
 												<aon:actionListener method="#{download.onCancel}" />
@@ -392,7 +391,6 @@
 
 					</rich:panel>
 
-				</aon:panelGrid>
 			</rich:panel>
 		</aon:form>
 	</ui:define>

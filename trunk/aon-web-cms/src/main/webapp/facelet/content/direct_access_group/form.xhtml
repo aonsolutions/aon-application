@@ -29,22 +29,15 @@
 					<!-- start toolbar navigation -->
 					<aon:div styleClass="aon-finding-toolbar-item-group">					
 						<aon:commandButton id="reset" value="#{bundle.aon_reset}"
-							action="direct_access_group_form"
+							reRender="main_form"
 							styleClass="aon-finding-toolbar-item aon-icon-reset"
 							accesskey="#{bundle.aon_key_new}">
 							<aon:actionListener method="#{direct_access_group.onReset}" />
 						</aon:commandButton>
-						<aon:commandButton id="save_new"
+						<aon:commandButton id="save"
 							value="#{bundle.aon_save}" 
-							rendered="#{direct_access_group.new}"
-							action="direct_access_group_form"
-							styleClass="aon-finding-toolbar-item aon-icon-accept"
-							accesskey="#{bundle.aon_key_save}">
-							<aon:actionListener method="#{direct_access_group.accept}" />
-						</aon:commandButton>
-						<aon:commandButton id="save_edit"
-							value="#{bundle.aon_save}" 
-							rendered="#{direct_access_group.to!=null and !direct_access_group.new}"
+							rendered="#{direct_access_group.to!=null or direct_access_group.new}"
+							reRender="main_form"
 							styleClass="aon-finding-toolbar-item aon-icon-accept"
 							accesskey="#{bundle.aon_key_save}">
 							<aon:actionListener method="#{direct_access_group.accept}" />
@@ -105,12 +98,9 @@
 			</aon:div>
 		
 			<rich:panel id="detail_panel" rendered="#{!direct_access_group.new and direct_access_group.toI18n.id != null}">
-				<f:facet name="header">#{appBundle.direct_access}</f:facet>
 				
-				<aon:panelGrid columns="2" styleClass="none" columnClasses="aon-vertical-align-top,aon-vertical-align-top">
-				
-					<rich:panel id="detail_list_panel">
-						<f:facet name="header">#{appBundle.aon_listing}</f:facet>
+					<rich:panel id="detail_list_panel"  rendered="#{direct_access.to == null}">
+						<f:facet name="header">#{appBundle.direct_access} - #{appBundle.aon_listing}</f:facet>
 				
 						<aon:div styleClass="aon-finding-title-toolbar">
 							<aon:panelGrid id="buttonsGrid_list" columns="1" dir="true" 
@@ -120,7 +110,7 @@
 								<aon:div styleClass="aon-finding-toolbar-item-group">
 									<aon:commandButton id="reset_list" value="#{bundle.aon_reset}"
 										rendered="#{!direct_access.new}"
-										action="direct_access_group_form"
+										reRender="detail_panel"
 										styleClass="aon-finding-toolbar-item aon-icon-reset"
 										accesskey="#{bundle.aon_key_new}">
 										<aon:actionListener method="#{direct_access.onReset}" />
@@ -141,7 +131,7 @@
 							</aon:panelGrid>
 						</aon:div>
 
-						<aon:dataTable id="detail_list" value="#{direct_access.model}" var="to"
+						<aon:dataTable id="dataTable" value="#{direct_access.model}" var="to"
 							rows="#{direct_access.pageLimit}"
 							styleClass="dr-table rich-table aon-editDataTable"
 							headerClass="dr-table-subheader rich-table-subheader aon-editDataTable-header"
@@ -164,14 +154,14 @@
 										value="#{direct_access.rowChecked}">
 										<a4j:support 
 											event="onclick"  
-											reRender="detail_list,buttonsGrid_list" />
+											reRender="detail_panel" />
 								</aon:selectBooleanCheckbox>
 							</aon:column>
 					
 							<aon:column>
 								<a4j:support 
 									immediate="#{true}"
-									action="direct_access_group_form"
+									reRender="detail_panel"
 									actionListener="#{direct_access.onSelect}"
 									event="onclick" />
 								<f:facet name="header">
@@ -184,7 +174,7 @@
 							<aon:column>
 								<a4j:support 
 									immediate="#{true}"
-									action="direct_access_group_form"
+									reRender="detail_panel"
 									actionListener="#{direct_access.onSelect}"
 									event="onclick" />
 								<f:facet name="header">
@@ -200,14 +190,14 @@
 								</f:facet>
 								<aon:commandLink title="#{appBundle.direct_access_activate}" 
 									actionListener="#{direct_access.onActivate}"
-									action="direct_access_group_form"
+									reRender="dataTable"
 									rendered="#{!to.active}">
 									<aon:graphicImage alt="#{appBundle.direct_access_activate}"
 										url="/images/cms/inactive.png" />
 								</aon:commandLink>
 								<aon:commandLink title="#{appBundle.direct_access_deactivate}" 
 									actionListener="#{direct_access.onDeactivate}" 
-									action="direct_access_group_form"
+									reRender="dataTable"
 									rendered="#{to.active}">
 									<aon:graphicImage alt="#{appBundle.direct_access_deactivate}"
 										url="/images/cms/active.png" />
@@ -222,31 +212,44 @@
 								<aon:graphicImage rendered="#{to.position == 0}"
 									url="/images/cms/spacer16.gif" style="margin-left: 8px;"/>
 								<aon:commandButton  
-									action="direct_access_group_form"
+									reRender="dataTable"
 									actionListener="#{direct_access.onMoveUp}" 
 									rendered="#{to.position != 0 and direct_access.to==null}"
 									image="/images/cms/up.gif" styleClass="aon-icon-commandButton" />
 								<aon:commandButton 
-									action="direct_access_group_form"
+									reRender="dataTable"
 									actionListener="#{direct_access.onMoveDown}"
 									rendered="#{to.position &lt; (direct_access.model.rowCount - 1)  and direct_access.to==null}"
 									image="/images/cms/down.gif" styleClass="aon-icon-commandButton" />
 							</aon:column>
 				
 						</aon:dataTable>
+						
+						<aon:dataScroller for="dataTable"
+							rowCount="#{direct_access.model.rowCount}" 
+							showNote="true" />					
+						
 					</rich:panel>
 					
 					<rich:panel id="detail_edit_panel" rendered="#{direct_access.new or direct_access.to != null}">
-        				<f:facet name="header">#{direct_access.new?(bundle.aon_reset):(bundle.aon_editing)}</f:facet>
+
+        				<f:facet name="header">#{appBundle.direct_access} - #{direct_access.new?(bundle.aon_reset):(bundle.aon_editing)}</f:facet>
 
 								<aon:div styleClass="aon-finding-title-toolbar">
 									<aon:panelGrid id="buttonsGrid_list_form" columns="1" dir="true" 
 										columnClasses="aon-finding-toolbar">				
 										<aon:div styleClass="aon-finding-toolbar-item-group">
+											<aon:commandButton id="reset_list_form" value="#{bundle.aon_reset}"
+												rendered="#{!direct_access.new}"
+												reRender="detail_panel"
+												styleClass="aon-finding-toolbar-item aon-icon-reset"
+												accesskey="#{bundle.aon_key_new}">
+												<aon:actionListener method="#{direct_access.onReset}" />
+											</aon:commandButton>
 											<aon:commandButton id="save_list_form"
 												value="#{bundle.aon_save}" 
 												rendered="#{direct_access.to!=null or direct_access.new}"
-												action="direct_access_group_form"
+												reRender="detail_panel"
 												styleClass="aon-finding-toolbar-item aon-icon-accept"
 												accesskey="#{bundle.aon_key_save}">
 												<aon:actionListener method="#{direct_access.onAccept}" />
@@ -254,7 +257,7 @@
 											<aon:commandButton id="cancel_list_form"
 												value="#{bundle.aon_cancel}" 
 												rendered="#{direct_access.to!=null or direct_access.new}" immediate="#{true}"
-												action="direct_access_group_form"
+												reRender="detail_panel"
 												styleClass="aon-finding-toolbar-item aon-icon-cancel"
 												accesskey="#{bundle.aon_key_cancel}">
 												<aon:actionListener method="#{direct_access.onCancel}" />
@@ -363,7 +366,6 @@
 
 					</rich:panel>
 
-				</aon:panelGrid>
 			</rich:panel>
 		</aon:form>
 	</ui:define>
