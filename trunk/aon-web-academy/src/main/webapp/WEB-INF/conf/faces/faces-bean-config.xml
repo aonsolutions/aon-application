@@ -209,7 +209,7 @@
 		</managed-property>
 		<managed-property>
 			<property-name>cascadeDelete</property-name>
-			<value>true</value>
+			<value>false</value>
 		</managed-property>
 		<managed-property>
 			<property-name>masterControllerName</property-name>
