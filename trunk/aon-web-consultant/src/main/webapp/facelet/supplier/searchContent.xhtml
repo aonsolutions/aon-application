@@ -63,7 +63,7 @@
 					converter="IntegerEmptyConverter" forceId="#{true}"
 					valueChangeListener="#{supplierAlias.addExpression}">
 					<f:selectItem itemDisabled="true" itemLabel="-" itemValue="" />
-					<f:selectItems value="#{configCollections.scopes}" />
+					<f:selectItems value="#{configCollections.currentUserScopes}" />
 				</h:selectOneMenu>
 
 				<t:outputLabel for="Supplier_status"
