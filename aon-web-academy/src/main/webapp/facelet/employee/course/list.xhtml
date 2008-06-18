@@ -22,6 +22,7 @@
 				rowClasses="aon-table-row-odd,aon-table-row-even"
 				columnClasses="aon-table-body aon-table-body-string,
 					aon-table-body aon-table-body-string,
+					aon-table-body aon-table-body-string,
 					aon-table-body aon-table-body-string"
 				rowOnMouseOver="selectRow( this )"
 				rowOnMouseOut="unselectRow( this )" rowOnClick="sendRow( this )">
@@ -32,7 +33,6 @@
 					</f:facet>
 					<h:outputText value="#{to.course.code}" />
 				</h:column>
-
 				<h:column>
 					<f:facet name="header">
 						<h:panelGroup>
@@ -49,6 +49,15 @@
 						</h:panelGroup>
 					</f:facet>
 					<h:outputText value="#{instructorCourse.courseSchedule}" />
+					<f:verbatim>&#160;</f:verbatim>
+				</h:column>
+				<h:column>
+					<f:facet name="header">
+						<h:panelGroup>
+							<h:outputText value="#{appBundle.course_status}" />
+						</h:panelGroup>
+					</f:facet>
+					<h:outputText value="#{to.course.status}" />
 					<f:verbatim>&#160;</f:verbatim>
 				</h:column>
 			</t:dataTable>
