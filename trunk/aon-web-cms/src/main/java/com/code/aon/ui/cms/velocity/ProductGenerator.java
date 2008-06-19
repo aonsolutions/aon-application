@@ -271,6 +271,6 @@ public class ProductGenerator extends Generator {
 		ProductGenerator.generate();
 	}
 	
-	private static final String MAIN_PAGE = "main_page"; 
+	public static final String MAIN_PAGE = "main_page"; 
 	
 }
