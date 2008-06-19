@@ -39,25 +39,24 @@ public class TaskControllerListener extends ControllerAdapter {
         TaskController controller = (TaskController)event.getController();
         controller.resetChecks();
         try {
-            User user = UserUtils.getInstance().getLoggedUser();
+            if (!controller.isMonitor()) {
+            	User user = UserUtils.getInstance().getLoggedUser();
+            	
+//                Expression expr1 = ExpressionUtilities.getEqualExpression(controller.getManagerBean().getFieldName(IProjectAlias.TASK_STATUS), TaskStatus.PENDING);
+//                Expression expr2 = ExpressionUtilities.getEqualExpression(controller.getManagerBean().getFieldName(IProjectAlias.TASK_STATUS), TaskStatus.IN_PROGRESS);
+//                Expression myExpression = ExpressionUtilities.getOrExpression(expr1, expr2);
 
-            Expression userExpr = ExpressionUtilities.getEqualExpression(controller.getFieldName(IProjectAlias.TASK_USER_ID), user.getId());
-            if (controller.getMyStatusExpression() != null) {
-                userExpr = ExpressionUtilities.getAndExpression(userExpr, controller.getMyStatusExpression());
+                Expression userExpr = ExpressionUtilities.getEqualExpression(TaskController.USER_ALIAS, user.getId());
+//                userExpr = ExpressionUtilities.getAndExpression(userExpr, myExpression);
+
+                Expression workGroupExpr = UserUtils.obtainUserWorkGroupsExpr(user, TaskController.WORKGROUP_ALIAS);
+            	Expression groupExpr = ExpressionUtilities.getNullExpression(TaskController.USER_ALIAS);
+            	workGroupExpr = ExpressionUtilities.getAndExpression(workGroupExpr, groupExpr);
+            	
+//                workGroupExpr = ExpressionUtilities.getAndExpression(workGroupExpr, myExpression);
+                controller.getCriteria().addExpression(ExpressionUtilities.getOrExpression(userExpr, workGroupExpr));
             }
-
-            Expression workGroupExpr = UserUtils.obtainUserWorkGroupsExpr(user, controller.getFieldName(IProjectAlias.TASK_WORK_GROUP_ID));
-            Expression groupExpr = ExpressionUtilities.getNullExpression(controller.getFieldName(IProjectAlias.TASK_USER_ID));
-            workGroupExpr = ExpressionUtilities.getAndExpression(workGroupExpr, groupExpr);
-            if (controller.getMyStatusExpression() != null) {
-                workGroupExpr = ExpressionUtilities.getAndExpression(workGroupExpr, controller.getMyStatusExpression());
-            }
-
-            controller.getCriteria().addExpression(ExpressionUtilities.getOrExpression(userExpr, workGroupExpr));
-            controller.getCriteria().addOrder(controller.getManagerBean().getFieldName(IProjectAlias.TASK_USER_ID), false);
-            controller.getCriteria().addOrder(controller.getManagerBean().getFieldName(IProjectAlias.TASK_STATUS), false);
-            controller.getCriteria().addOrder(controller.getManagerBean().getFieldName(IProjectAlias.TASK_PRIORITY), false);
-            controller.getCriteria().addOrder(controller.getManagerBean().getFieldName(IProjectAlias.TASK_DUE_DATE));
+            controller.completeCriteria();
         } catch (ManagerBeanException e) {
             LOGGER.log(Level.SEVERE, "Error initializing Task Model", e);
         }
@@ -136,7 +135,7 @@ public class TaskControllerListener extends ControllerAdapter {
         TaskController controller = (TaskController)event.getController();
         try {
             Task task = (Task)controller.getModel().getRowData();
-            if (task != null && !controller.isFreeTask(task) && !controller.isMyTask(task)) {
+            if (task != null && !controller.isMonitor() && !controller.isFreeTask(task) && !controller.isMyTask(task)) {
                 throw new ControllerListenerException("No se puede Editar la Tarea. Ha sido asumida por otro Usuario.");
             }
         } catch (ManagerBeanException e) {

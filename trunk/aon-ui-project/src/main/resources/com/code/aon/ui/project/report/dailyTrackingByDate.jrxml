@@ -2,7 +2,7 @@
 <!-- Created with iReport - A designer for JasperReports -->
 <!DOCTYPE jasperReport PUBLIC "//JasperReports//DTD Report Design//EN" "http://jasperreports.sourceforge.net/dtds/jasperreport.dtd">
 <jasperReport
-		 name="dailyTrackingByCustomer"
+		 name="dailyTrackingByDate"
 		 columnCount="1"
 		 printOrder="Vertical"
 		 orientation="Portrait"
@@ -43,18 +43,18 @@
 	<field name="activityId" class="java.lang.Integer"/>
 	<field name="activityDescription" class="java.lang.String"/>
 
-	<variable name="totalDuration" class="java.lang.Double" resetType="Group" resetGroup="customerGroup" calculation="Sum">
+	<variable name="totalDuration" class="java.lang.Double" resetType="Group" resetGroup="dateGroup" calculation="Sum">
 		<variableExpression><![CDATA[$F{duration}]]></variableExpression>
 	</variable>
 
-		<group  name="customerGroup" >
-			<groupExpression><![CDATA[$F{customerId}]]></groupExpression>
+		<group  name="dateGroup" >
+			<groupExpression><![CDATA[$F{date}]]></groupExpression>
 			<groupHeader>
-			<band height="30"  isSplitAllowed="true" >
-				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+			<band height="17"  isSplitAllowed="true" >
+				<textField isStretchWithOverflow="false" pattern="dd/MM/yyyy" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						x="0"
-						y="6"
+						y="0"
 						width="535"
 						height="17"
 						key="textField-24"/>
@@ -66,13 +66,13 @@
 					<textElement textAlignment="Left" verticalAlignment="Middle">
 						<font pdfFontName="Helvetica-Bold" size="10" isBold="true"/>
 					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$F{customerName}]]></textFieldExpression>
+				<textFieldExpression   class="java.util.Date"><![CDATA[$F{date}]]></textFieldExpression>
 				</textField>
 			</band>
 			</groupHeader>
 			<groupFooter>
-			<band height="22"  isSplitAllowed="true" >
-				<textField isStretchWithOverflow="false" pattern="#,##0.00" isBlankWhenNull="true" evaluationTime="Group" evaluationGroup="customerGroup"  hyperlinkType="None"  hyperlinkTarget="Self" >
+			<band height="17"  isSplitAllowed="true" >
+				<textField isStretchWithOverflow="false" pattern="#,##0.00" isBlankWhenNull="true" evaluationTime="Group" evaluationGroup="dateGroup"  hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						x="490"
 						y="0"
@@ -89,7 +89,7 @@
 					</textElement>
 				<textFieldExpression   class="java.lang.Double"><![CDATA[$V{totalDuration}]]></textFieldExpression>
 				</textField>
-				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="true" evaluationTime="Group" evaluationGroup="customerGroup"  hyperlinkType="None"  hyperlinkTarget="Self" >
+				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="true" evaluationTime="Group" evaluationGroup="dateGroup"  hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						x="388"
 						y="0"
@@ -155,7 +155,7 @@
 					<textElement textAlignment="Right" verticalAlignment="Middle">
 						<font pdfFontName="Helvetica-Bold" size="10" isBold="true"/>
 					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$R{daily_tracking_by_customer}]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$R{daily_tracking_by_date}]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="false" pattern="dd/MM/yyyy" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
@@ -259,7 +259,7 @@
 						mode="Opaque"
 						x="0"
 						y="0"
-						width="153"
+						width="88"
 						height="15"
 						forecolor="#FFFFFF"
 						backcolor="#000000"
@@ -277,9 +277,9 @@
 				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						mode="Opaque"
-						x="153"
+						x="88"
 						y="0"
-						width="60"
+						width="100"
 						height="15"
 						forecolor="#FFFFFF"
 						backcolor="#000000"
@@ -292,14 +292,14 @@
 					<textElement textAlignment="Center" verticalAlignment="Middle">
 						<font pdfFontName="Helvetica-Bold" size="9" isBold="true"/>
 					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$R{aon_date}]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$R{aon_daily_tracking_dossier}]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						mode="Opaque"
-						x="213"
+						x="188"
 						y="0"
-						width="93"
+						width="118"
 						height="15"
 						forecolor="#FFFFFF"
 						backcolor="#000000"
@@ -312,7 +312,7 @@
 					<textElement textAlignment="Center" verticalAlignment="Middle">
 						<font pdfFontName="Helvetica-Bold" size="9" isBold="true"/>
 					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$R{aon_daily_tracking_dossier}]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$R{aon_customer}]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
@@ -397,9 +397,9 @@
 				</textField>
 				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
-						x="213"
+						x="188"
 						y="0"
-						width="93"
+						width="118"
 						height="14"
 						key="textField-10"/>
 					<box leftPadding="5" rightPadding="5">					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -410,13 +410,13 @@
 					<textElement verticalAlignment="Middle">
 						<font size="8"/>
 					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$F{dossierNumber}]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{customerName}]]></textFieldExpression>
 				</textField>
-				<textField isStretchWithOverflow="false" pattern="dd/MM/yyyy" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
-						x="153"
+						x="88"
 						y="0"
-						width="60"
+						width="100"
 						height="14"
 						key="textField-11"/>
 					<box leftPadding="5" rightPadding="5">					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -427,13 +427,13 @@
 					<textElement verticalAlignment="Middle">
 						<font size="8"/>
 					</textElement>
-				<textFieldExpression   class="java.util.Date"><![CDATA[$F{date}]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{dossierNumber}]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						x="0"
 						y="0"
-						width="153"
+						width="88"
 						height="14"
 						key="textField-12"/>
 					<box leftPadding="5" rightPadding="5">					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>

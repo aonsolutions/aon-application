@@ -43,26 +43,39 @@ public class PeriodicalTaskControllerListener extends ControllerAdapter {
 			PeriodicalTaskController periodicalTaskController = (PeriodicalTaskController)event.getController();
 			PeriodicalTask periodTask = (PeriodicalTask)periodicalTaskController.getTo();
 			User user = UserUtils.getInstance().getLoggedUser();
+			Task task = periodTask.getTask(); 
 			periodTask.setOwner(user);
 			periodTask.setNextDate(periodicalTaskController.addPeriodToDate(periodTask, periodTask.getTask().getStartDate()));
-			periodTask.getTask().setSender(user);
-			periodTask.getTask().setSource(TaskSource.PERIODICAL);
-			periodTask.getTask().setStatus(TaskStatus.PENDING);
-			periodTask.getTask().setUser(null);
+			task.setSender(user);
+			task.setSource(TaskSource.PERIODICAL);
+			task.setStatus(TaskStatus.PENDING);
+			ensureTask(task);
 			IManagerBean taskBean = BeanManager.getManagerBean(Task.class);
-			periodTask.setTask((Task)taskBean.insert(periodTask.getTask()));
+			periodTask.setTask((Task)taskBean.insert(task));
 		} catch (ManagerBeanException e) {
 			throw new ControllerListenerException("Error inserting related Task", e);
 		}
 	}
 	
+	private void ensureTask(Task task) {
+		if (task.getDossier() != null && task.getDossier().getId() == null) {
+			task.setDossier(null);
+		}
+		if (task.getActivity() != null && task.getActivity().getId() == null) {
+			task.setActivity(null);
+		}
+		if (task.getUser() != null && task.getUser().getId() == null) {
+			task.setUser(null);
+		}
+	}
+
 	@Override
 	public void afterBeanAdded(ControllerEvent event) throws ControllerListenerException {
 		PeriodicalTask periodTask = (PeriodicalTask)event.getController().getTo();
-		if(periodTask.getTask().getDossier().getId() != null){
+		if(periodTask.getTask().getDossier() != null && periodTask.getTask().getDossier().getId() != null){
 			periodTask.getTask().setDossier(obtainDossier(periodTask.getTask().getDossier().getId()));
 		}
-		if(periodTask.getTask().getActivity().getId() != null){
+		if(periodTask.getTask().getActivity() != null && periodTask.getTask().getActivity().getId() != null){
 			periodTask.getTask().setActivity(obtainActivity(periodTask.getTask().getActivity().getId()));
 		}
 	}
@@ -73,9 +86,10 @@ public class PeriodicalTaskControllerListener extends ControllerAdapter {
 			PeriodicalTaskController periodicalTaskController = (PeriodicalTaskController)event.getController();
 			PeriodicalTask periodTask = (PeriodicalTask)periodicalTaskController.getTo();
 			periodTask.setNextDate(periodicalTaskController.addPeriodToDate(periodTask, periodTask.getTask().getStartDate()));
-			periodTask.getTask().setUser(null);
+			Task task = periodTask.getTask(); 
+			ensureTask(task);
 			IManagerBean taskBean = BeanManager.getManagerBean(Task.class);
-			periodTask.setTask((Task)taskBean.update(periodTask.getTask()));
+			periodTask.setTask((Task)taskBean.update(task));
 		} catch (ManagerBeanException e) {
 			throw new ControllerListenerException("Error updating related Task", e);
 		}

@@ -51,6 +51,8 @@ public class DailyTrackingController extends BasicController {
     
     private DataModel finishedTaskModel;
     
+    private String returnAction;
+    
     private boolean reportMode;
     
     private Customer customer;
@@ -575,6 +577,19 @@ public class DailyTrackingController extends BasicController {
         return outcome;
     }
     
+	public String onReportByDossier() throws ReportException, DAOException, ManagerBeanException{
+    	IManagerBean dailyTrackingBean = BeanManager.getManagerBean(DailyTracking.class);
+    	Criteria criteria = createCriteria();
+    	criteria.addOrder(dailyTrackingBean.getFieldName(IProjectAlias.DAILY_TRACKING_DOSSIER_ID));
+    	criteria.addOrder(dailyTrackingBean.getFieldName(IProjectAlias.DAILY_TRACKING_TRACKING_DATE));
+    	this.setCriteria(criteria);
+    	ReportManager manager = (ReportManager)AonUtil.getRegisteredBean("report");
+        manager.setReportKey("dailyTrackingByDossier");
+        manager.setOutputFormat((getOutputFormat()== null?OutputFormat.PDF:getOutputFormat()));
+        String outcome = manager.onExecute();
+        return outcome;
+    }
+
 	public String onReportByUser() throws ReportException, DAOException, ManagerBeanException{
     	IManagerBean dailyTrackingBean = BeanManager.getManagerBean(DailyTracking.class);
     	Criteria criteria = createCriteria();
@@ -637,5 +652,19 @@ public class DailyTrackingController extends BasicController {
 		} 
 		return getAllDossiers();
     }
+
+	public String getReturnAction() {
+		 
+		if (returnAction == null) {
+			returnAction = "daily_tracking_list";	
+		}
+		String a = returnAction;
+		setReturnAction(null);
+		return a;
+	}
+
+	public void setReturnAction(String returnAction) {
+		this.returnAction = returnAction;
+	}
 	
 }
