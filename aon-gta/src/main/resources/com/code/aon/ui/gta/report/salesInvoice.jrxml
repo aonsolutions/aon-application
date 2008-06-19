@@ -247,13 +247,15 @@
 				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						x="5"
-						y="60"
+						y="66"
 						width="246"
-						height="12"
-						key="textField-62"/>
+						height="15"
+						key="textField-62">
+							<printWhenExpression><![CDATA[$P{printHeader}]]></printWhenExpression>
+						</reportElement>
 					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
-					<textElement>
-						<font fontName="Arial Narrow" pdfFontName="Helvetica" size="9"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Arial Narrow" pdfFontName="Helvetica" size="10"/>
 					</textElement>
 				<textFieldExpression   class="java.lang.String"><![CDATA[$R{aon_document} + ": " + $P{company}.getDocument()]]></textFieldExpression>
 				</textField>
@@ -306,7 +308,7 @@
 						x="5"
 						y="0"
 						width="246"
-						height="24"
+						height="16"
 						key="textField-73">
 							<printWhenExpression><![CDATA[$P{printHeader}]]></printWhenExpression>
 						</reportElement>
@@ -319,15 +321,15 @@
 				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						x="5"
-						y="48"
+						y="51"
 						width="246"
-						height="12"
+						height="15"
 						key="textField-74">
 							<printWhenExpression><![CDATA[$P{printHeader}]]></printWhenExpression>
 						</reportElement>
 					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
-					<textElement>
-						<font fontName="Arial Narrow" pdfFontName="Helvetica" size="9"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Arial Narrow" pdfFontName="Helvetica" size="10"/>
 					</textElement>
 				<textFieldExpression   class="java.lang.String"><![CDATA[$R{offer_tel} + ": " + $P{phone}.getValue()]]></textFieldExpression>
 				</textField>
@@ -336,28 +338,28 @@
 						x="5"
 						y="36"
 						width="246"
-						height="12"
+						height="15"
 						key="textField-75">
 							<printWhenExpression><![CDATA[$P{printHeader}]]></printWhenExpression>
 						</reportElement>
 					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
-					<textElement>
-						<font fontName="Arial Narrow" pdfFontName="Helvetica" size="9"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Arial Narrow" pdfFontName="Helvetica" size="10"/>
 					</textElement>
 				<textFieldExpression   class="java.lang.String"><![CDATA[($P{address}.getZip()==null?"":$P{address}.getZip() + " ") + ($P{address}.getCity()==null?"":$P{address}.getCity() + " ") + "(" + $P{address}.getGeozone().getName() + ")"]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						x="5"
-						y="24"
+						y="21"
 						width="246"
-						height="12"
+						height="15"
 						key="textField-76">
 							<printWhenExpression><![CDATA[$P{printHeader}]]></printWhenExpression>
 						</reportElement>
 					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
-					<textElement>
-						<font fontName="Arial Narrow" pdfFontName="Helvetica" size="9"/>
+					<textElement verticalAlignment="Middle">
+						<font fontName="Arial Narrow" pdfFontName="Helvetica" size="10"/>
 					</textElement>
 				<textFieldExpression   class="java.lang.String"><![CDATA[($P{address}.getAddress()==null?"":$P{address}.getAddress() + " ") + ($P{address}.getAddress2()==null?"":$P{address}.getAddress2() + " ") + ($P{address}.getAddress3()==null?"":$P{address}.getAddress3())]]></textFieldExpression>
 				</textField>
