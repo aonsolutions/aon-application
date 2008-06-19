@@ -17,6 +17,10 @@
 		<option ref="customerSegment" key="aon_customer_segment" descriptionKey="aon_customer_segment_desc" />
 		<option ref="supplierSegment" key="aon_supplier_segment" descriptionKey="aon_supplier_segment_desc" />
 		<option ref="series" key="aon_series" descriptionKey="aon_series_desc"/>		
+		<option contextRelative="false" external="false" ref="geozone" 
+			key="aon_geozone" descriptionKey="aon_geozone_desc">
+			<actionListener action="#{geotreeParent.onSearch}" />
+		</option>
 	</menu>
 	<menu ref="content" key="aon_utilities"  descriptionKey="aon_utilities_desc">
 		<option ref="appParams" key="aon_appParams" descriptionKey="aon_appParams_desc" />
