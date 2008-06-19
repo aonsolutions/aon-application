@@ -75,7 +75,17 @@ public enum PageType implements IResourceable {
 	/**
 	 * DIARY
 	 */
-	DIARY;
+	DIARY,
+
+	/**
+	 * PRODUCT_CATEGORIES,
+	 */
+	PRODUCT_CATEGORIES,
+
+	/**
+	 * BRANDS,
+	 */
+	BRANDS;
 
 	/**
 	 * Ruta base del fichero de mensajes.

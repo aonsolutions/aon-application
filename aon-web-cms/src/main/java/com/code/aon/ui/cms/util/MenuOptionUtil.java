@@ -39,6 +39,7 @@ import com.code.aon.ui.cms.velocity.ArticleGenerator;
 import com.code.aon.ui.cms.velocity.DownloadsGenerator;
 import com.code.aon.ui.cms.velocity.FaqGenerator;
 import com.code.aon.ui.cms.velocity.LinkGenerator;
+import com.code.aon.ui.cms.velocity.ProductGenerator;
 import com.code.aon.ui.util.AonUtil;
 
 public class MenuOptionUtil {
@@ -515,6 +516,16 @@ public class MenuOptionUtil {
 		if (pageType == PageType.DIARY) {
 			String link = Templates.DIARY.getHtmlName();
 			link = link.replaceAll("%NAME%", ArticleCalendarGenerator.DIARY_INDEX_PAGE);
+			return link;
+		}
+		if (pageType == PageType.PRODUCT_CATEGORIES) {
+			String link = Templates.PRODUCT_CATEGORY.getHtmlName();
+			link = link.replaceAll("%NAME%", ProductGenerator.MAIN_PAGE);
+			return link;
+		}
+		if (pageType == PageType.BRANDS) {
+			String link = Templates.BRAND.getHtmlName();
+			link = link.replaceAll("%NAME%", ProductGenerator.MAIN_PAGE);
 			return link;
 		}
 		return null;
