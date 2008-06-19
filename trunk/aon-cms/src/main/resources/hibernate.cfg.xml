@@ -93,6 +93,7 @@
 		<mapping class="com.code.aon.cms.HiruCourse"/>
 		<mapping class="com.code.aon.cms.HiruCourseDetail"/>
 		<mapping class="com.code.aon.cms.HiruConfig"/>
+		<mapping class="com.code.aon.cms.ProductCategoryConfig"/>
 
 	</session-factory>
 

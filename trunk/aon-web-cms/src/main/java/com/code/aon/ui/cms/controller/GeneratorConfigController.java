@@ -10,6 +10,7 @@ import com.code.aon.cms.DownloadConfig;
 import com.code.aon.cms.FaqConfig;
 import com.code.aon.cms.HiruConfig;
 import com.code.aon.cms.LinkConfig;
+import com.code.aon.cms.ProductCategoryConfig;
 import com.code.aon.cms.Section;
 import com.code.aon.cms.dao.ICMSAlias;
 import com.code.aon.cms.util.ISectionContainer;
@@ -18,7 +19,6 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ql.Criteria;
-import com.code.aon.ui.cms.util.ControllerUtil;
 
 /**
  * @author igayarre
@@ -112,6 +112,10 @@ public class GeneratorConfigController {
 	
 	public void onSaveHiruConfig(ActionEvent event) throws ManagerBeanException{
 		onSaveConfig(HiruConfig.class);
+	}
+	
+	public void onSaveProductCategoryConfig(ActionEvent event) throws ManagerBeanException{
+		onSaveConfig(ProductCategoryConfig.class);
 	}
 	
 }

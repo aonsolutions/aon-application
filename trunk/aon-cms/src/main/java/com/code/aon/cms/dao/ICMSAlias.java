@@ -81,6 +81,7 @@ import com.code.aon.cms.HiruOrganizerCentre;
 import com.code.aon.cms.HiruCourse;
 import com.code.aon.cms.HiruCourseDetail;
 import com.code.aon.cms.HiruConfig;
+import com.code.aon.cms.ProductCategoryConfig;
 
 /** 
 * Interface for holding entity properties constants.
@@ -3291,6 +3292,25 @@ public interface ICMSAlias {
 	* Hibernate value: HiruConfig.section.id
 	*/
 	String  HIRU_CONFIG_SECTION_ID = HIRU_CONFIG_ENTRY.getAliasNames()[1];
+
+
+
+	/** 
+	* DAOConstantsEntry for ProductCategoryConfig entity.
+	*/ 
+	DAOConstantsEntry PRODUCT_CATEGORY_CONFIG_ENTRY = DAOConstants.getDAOConstant(ProductCategoryConfig.class);
+
+	/** 
+	* Alias value: ProductCategoryConfig_id
+	* Hibernate value: ProductCategoryConfig.id
+	*/
+	String  PRODUCT_CATEGORY_CONFIG_ID = PRODUCT_CATEGORY_CONFIG_ENTRY.getAliasNames()[0];
+
+	/** 
+	* Alias value: ProductCategoryConfig_section_id
+	* Hibernate value: ProductCategoryConfig.section.id
+	*/
+	String  PRODUCT_CATEGORY_CONFIG_SECTION_ID = PRODUCT_CATEGORY_CONFIG_ENTRY.getAliasNames()[1];
 
 
 }

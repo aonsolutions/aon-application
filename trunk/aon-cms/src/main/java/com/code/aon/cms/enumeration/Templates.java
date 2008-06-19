@@ -130,7 +130,22 @@ public enum Templates implements IResourceable {
 	/**
 	 * HIRU_COURSE
 	 */
-	HIRU_COURSE;
+	HIRU_COURSE,
+
+	/**
+	 * PRODUCT
+	 */
+	PRODUCT,
+
+	/**
+	 * BRAND
+	 */
+	BRAND,
+
+	/**
+	 * PRODUCT_CATEGORY
+	 */
+	PRODUCT_CATEGORY;
 
 	/**
 	 * Ruta base del fichero de mensajes.

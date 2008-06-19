@@ -29,6 +29,7 @@ import com.code.aon.ui.cms.velocity.HiruGenerator;
 import com.code.aon.ui.cms.velocity.LinkGenerator;
 import com.code.aon.ui.cms.velocity.MenuGenerator;
 import com.code.aon.ui.cms.velocity.ModularPageGenerator;
+import com.code.aon.ui.cms.velocity.ProductGenerator;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.util.AonUtil;
 
@@ -136,6 +137,13 @@ public class GeneratorController extends BasicController implements Constants {
 		
 		System.gc();
 
+		if (isProductsToGenerate){
+			//Generar productos
+			ProductGenerator.generate();
+		}
+		
+		System.gc();
+		
 		finalizeGenerator();
 	}
 	
@@ -233,7 +241,8 @@ public class GeneratorController extends BasicController implements Constants {
 	private boolean isArticleEVENTSToGenerate = true;
 	private boolean isArticleOTHERToGenerate = true;
 	private boolean isHiruCoursesToGenerate = true;
-
+	private boolean isProductsToGenerate = true;
+	
 	public boolean isModularPageToGenerate() {
 		return isModularPageToGenerate;
 	}
@@ -318,6 +327,12 @@ public class GeneratorController extends BasicController implements Constants {
 	public void setHiruCoursesToGenerate(boolean isHiruCoursesToGenerate) {
 		this.isHiruCoursesToGenerate = isHiruCoursesToGenerate;
 	}
+	public boolean isProductsToGenerate() {
+		return isProductsToGenerate;
+	}
+	public void setProductsToGenerate(boolean isProductsToGenerate) {
+		this.isProductsToGenerate = isProductsToGenerate;
+	}
 
 	public void onSelectAll(ActionEvent event) {
 		isModularPageToGenerate = true;
@@ -334,6 +349,7 @@ public class GeneratorController extends BasicController implements Constants {
 		isArticleEVENTSToGenerate = true;
 		isArticleOTHERToGenerate = true;
 		isHiruCoursesToGenerate = true;
+		isProductsToGenerate = true;
 	}
 	public void onDeselectAll(ActionEvent event) {
 		isModularPageToGenerate = false;
@@ -350,6 +366,7 @@ public class GeneratorController extends BasicController implements Constants {
 		isArticleEVENTSToGenerate = false;
 		isArticleOTHERToGenerate = false;
 		isHiruCoursesToGenerate = false;
+		isProductsToGenerate = false;
 	}
 	
 
