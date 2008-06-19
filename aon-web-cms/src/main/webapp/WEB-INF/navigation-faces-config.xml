@@ -87,10 +87,6 @@
       <from-outcome>brand_list</from-outcome>
       <to-view-id>/facelet/content/brand/list.xhtml</to-view-id>
     </navigation-case>
-    <navigation-case>
-      <from-outcome>brand_form</from-outcome>
-      <to-view-id>/facelet/content/brand/form.xhtml</to-view-id>
-    </navigation-case>
   </navigation-rule>
   
   <!-- ======================================= PRODUCT CATEGORY -->
@@ -102,18 +98,6 @@
     <navigation-case>
       <from-outcome>product_category_form</from-outcome>
       <to-view-id>/facelet/content/product_category/form.xhtml</to-view-id>
-    </navigation-case>
-  </navigation-rule>
-  
-  <!-- ======================================= SUB CATEGORY -->
-  <navigation-rule>
-    <navigation-case>
-      <from-outcome>subcategory_list</from-outcome>
-      <to-view-id>/facelet/content/product_category/subcategory/list.xhtml</to-view-id>
-    </navigation-case>
-    <navigation-case>
-      <from-outcome>subcategory_form</from-outcome>
-      <to-view-id>/facelet/content/product_category/subcategory/form.xhtml</to-view-id>
     </navigation-case>
   </navigation-rule>
   

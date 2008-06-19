@@ -113,17 +113,18 @@
 								actionListener="#{diary.onInit}" 
 								action="diary_form"
 								styleClass="aon-main-menu-leaf"/>
-							<!-- 
-							<aon:menuItem id="brand" value="#{menuBundle.cms_brand}"
-								actionListener="#{brand.onReset}" action="brand_list"
+							<aon:menuItem id="productCategory" 
+								value="#{menuBundle.cms_product_category}"
+								actionListener="#{productCategory.onSearch}" 
+								action="product_category_list"
 								styleClass="aon-main-menu-leaf"/>
-							<aon:menuItem id="productCategory" value="#{menuBundle.cms_product_category}"
-								actionListener="#{productCategory.onReset}" action="product_category_list"
+							<aon:menuItem id="brand" value="#{menuBundle.cms_brand}"
+								actionListener="#{brand.onSearch}" 
+								action="brand_list"
 								styleClass="aon-main-menu-leaf"/>
 							<aon:menuItem id="product" value="#{menuBundle.cms_product}"
 								actionListener="#{product.onReset}" action="product_list"
 								styleClass="aon-main-menu-leaf"/>
-							 -->
 						</aon:dropDownMenu>
 						<aon:dropDownMenu id="hiru"
 							value="#{menuBundle.cms_hiru}" submitMode="ajax"

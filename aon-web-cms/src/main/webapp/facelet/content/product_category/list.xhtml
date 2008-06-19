@@ -1,152 +1,150 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml"
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:aon="http://www.code.es/aon-rich-components"
 	xmlns:c="http://java.sun.com/jstl/core"
-	xmlns:aon="http://www.code.es/aon-ice-components">
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j">
 <body>
 
-<ui:composition template="/facelet/templates/aon.ui.main.xhtml">
+<ui:composition template="/facelet/templates/aon.ui.content.xhtml">
 	<ui:define name="content">
 
-		<aon:form id="productCategoryList">
+		<aon:form id="list">
+		<aon:div styleClass="aon-finding-title-toolbar">
+			<aon:panelGrid id="buttonsGrid" columns="3" dir="true" 
+				columnClasses="aon-finding-title,aon-finding-subtitle,aon-finding-toolbar">				
 			
-			<aon:panelGrid columns="2" dir="true" styleClass="aon-title-toolbar"
-			cellpadding="0" cellspacing="0" columnClasses="aon-content-title,aon-content-toolbar">
-			
-				<aon:div styleClass="aon-content-title-internal">
-					<aon:outputText value="#{appBundle.product_category}" />					
-				</aon:div>		
-			
-				<!-- start toolbar navigation -->
-				<aon:div styleClass="aon-content-toolbar-internal">
-					<aon:div styleClass="aon-content-toolbar-item-group">
-						<h:commandButton id="reset" value="#{bundle.aon_reset}"
-							action="product_category_form" actionListener="#{productCategory.onReset}"
-							styleClass="aon-content-toolbar-item aon-icon-reset"
-							onmouseout="this.className='aon-content-toolbar-item aon-icon-reset'"
-							onmouseover="this.className='aon-content-toolbar-item aon-icon-reset aon-content-toolbar-item-hover'"
-							accesskey="#{bundle.aon_key_new}"/>
-						<aon:confirmButton id="remove"
-							value="#{bundle.aon_remove}" rendered="#{!productCategory.checklistEmpty}" inmediate="true"
-							confirmTitle="Confirmation Dialog" confirmMessage="#{bundle.aon_remove_confirm}"
-							confirmActionListener="#{productCategory.onRemoveSelected}" 
-							confirmAction="product_category_list"
-							styleClass="aon-content-toolbar-item aon-icon-delete"
-							onmouseout="this.className='aon-content-toolbar-item aon-icon-delete'"
-							onmouseover="this.className='aon-content-toolbar-item aon-icon-delete aon-content-toolbar-item-hover'"
-							accesskey="#{bundle.aon_key_remove}"/>
-						<h:commandButton id="exit" value="#{bundle.aon_close}"
-							action="home" styleClass="aon-content-toolbar-item aon-icon-cancel"
-							onmouseout="this.className='aon-content-toolbar-item aon-icon-cancel'"
-							onmouseover="this.className='aon-content-toolbar-item aon-icon-cancel aon-content-toolbar-item-hover'"
-							accesskey="#{bundle.aon_key_close}"/>
-					</aon:div>
-				</aon:div>
-			<!-- end toolbar navigation -->
-			</aon:panelGrid> 
-			
-			<!--  aon-region-body -->
-			<aon:div styleClass="aon-scroll-area">
-				<aon:div styleClass="aon-scroll-area-internal">	
+				<aon:div styleClass="aon-finding-title-internal">
+					<aon:outputText value="#{appBundle.product_category}"/>	  						
+				</aon:div>					
 				
-					<aon:div styleClass="aon-content-subTitle">
-						<aon:div styleClass="aon-content-subTitle-internal">
-							<aon:outputText value="Listado registros" />
-						</aon:div>
-					</aon:div>
+				<aon:div styleClass="aon-finding-subtitle-internal">
+					<aon:outputText
+						value="#{appBundle.aon_listing}" />
+				</aon:div>					
 					
-					<aon:dataTable id="productCategoryDataList" styleClass="aon-dataTable"
-					 	columnWidths="120,200,50,*,50,60" 
-						value="#{productCategory.model}" var="to" rows="0"
-						rowClasses="aon-dataTable-odd, aon-dataTable-even"
-						columnClasses="aon-table-body aon-table-body-icon,
-							aon-table-body aon-table-body-string,
-							aon-table-body aon-table-body-string,
-							aon-table-body aon-table-body-string,
-							aon-table-body aon-table-body-icon">
+				<!-- start toolbar navigation -->
+				<aon:div styleClass="aon-finding-toolbar-item-group">					
+					<aon:commandButton id="reset" value="#{bundle.aon_reset}"
+						action="product_category_form"
+						styleClass="aon-finding-toolbar-item aon-icon-reset"
+						accesskey="#{bundle.aon_key_new}">
+						<aon:actionListener method="#{productCategory.onReset}" />
+					</aon:commandButton>
+					<aon:confirmButton id="remove"
+						value="#{bundle.aon_remove}" rendered="#{!productCategory.checklistEmpty}" 
+						inmediate="true"
+						styleClass="aon-finding-toolbar-item aon-icon-delete"
+						confirmTitle="Confirmation Dialog" confirmMessage="#{bundle.aon_remove_confirm}"
+						confirmActionListener="#{productCategory.onRemoveSelected}"
+						confirmAction="product_category_list"
+						accesskey="#{bundle.aon_key_remove}"/>
+			    </aon:div>
+				
+				<!-- end toolbar navigation -->
+			</aon:panelGrid>
+		</aon:div>
+		
+		<!--  aon-region-body -->
+		<aon:div styleClass="aon-scroll-area">
 
-							<aon:column>
-								<aon:rowSelector selectionListener="#{productCategory.onSelect}" toggleOnClick="true"/>
-								<f:facet name="header">
-									<aon:div>
-										<aon:outputText value="#{bundle.aon_check}" />
-										<aon:div>
-											<aon:commandLink id="all" value="#{bundle.aon_check_all}" 
-											styleClass="aon-table-header-link-secundary"
-											onclick="selectAll();return false;" />
-											<aon:commandLink id="none" value="#{bundle.aon_uncheck_all}"
-											styleClass="aon-table-header-link-secundary"
-											onclick="unSelectAll();return false;" />
-											<aon:commandLink id="inverse" value="#{bundle.aon_inverse_all}"
-											styleClass="aon-table-header-link-secundary"
-											onclick="inverseAll();return false;" />
-										</aon:div>										
-									</aon:div>	
-								</f:facet>
-								<aon:selectBooleanCheckbox id="Row_checked" forceId="#{true}"
-										value="#{productCategory.rowChecked}" partialSubmit="true" 
-										valueChangeListener="#{productCategory.onChecked}"/>
-							</aon:column>
+					<aon:outputLabel for="ProductCategory_section"
+						value="#{appBundle.section}"/>
+					<aon:selectOneMenu id="ProductCategory_section"  
+						value="#{generator_config.sectionId}">
+						<f:selectItem itemLabel="-" itemValue="-1" />
+						<f:selectItems value="#{collections.sectionList}" />
+					</aon:selectOneMenu>
 					
-							<aon:column>
-								<f:facet name="header">
-									<aon:outputText value="#{appBundle.product_category_alias}" />
-								</f:facet>
-								<aon:outputText value="#{to.alias}"/>
-							</aon:column>
+					<aon:commandButton id="save"
+						value="#{bundle.aon_save}"
+						reRender="list" 
+						styleClass="aon-content-toolbar-item aon-icon-accept">
+						<aon:actionListener method="#{generator_config.onSaveProductCategoryConfig}" />
+					</aon:commandButton>
 
-							<aon:column>
-								<f:facet name="header">
-									<aon:outputText value="#{appBundle.product_category_label}" />
-								</f:facet>
-								<aon:outputText value="#{productCategory.i18nLabel}"
-									style="padding-left:20px"/>
-							</aon:column>
-
-							<aon:column>
-								<f:facet name="header">
-									<aon:outputText value="#{appBundle.product_category_active}" />
-								</f:facet>
-								<aon:commandLink title="#{appBundle.productCategory_activate}" action="productCategory_list"
-									actionListener="#{productCategory.onActivate}" 
-									rendered="#{!to.active}">
-									<aon:graphicImage id="productCategory_active" alt="#{appBundle.product_category_activate}"
-										url="/images/cms/inactive.png" />
-								</aon:commandLink>
-								<aon:commandLink title="#{appBundle.product_category_deactivate}" action="productCategory_list"
-									actionListener="#{productCategory.onDeactivate}" 
-									rendered="#{to.active}">
-									<aon:graphicImage id="productCategory_deactive" alt="#{appBundle.product_category_deactivate}"
-										url="/images/cms/active.png" />
-								</aon:commandLink>
-							</aon:column>
-							
-							<aon:column>
-								<f:facet name="header">
-									<aon:outputText for="links" value="#{appBundle.productCategory_links}" />
-								</f:facet>
-									<aon:commandLink title="#{appBundle.productCategory_links}" 
-										action="subcategory_list"
-										actionListener="#{productCategory.onSelectSubCategories}">
-										<aon:graphicImage id="ProductCategory_links" 
-											alt="#{appBundle.productCategory_links}"
-											url="/images/cms/content.gif" />
-									</aon:commandLink>
-							</aon:column>
-							
-						</aon:dataTable>
+					
+					<aon:dataTable id="dataTable" value="#{productCategory.model}" var="to"
+						rows="#{productCategory.pageLimit}" 
+						styleClass="dr-table rich-table aon-editDataTable"
+						headerClass="dr-table-subheader rich-table-subheader aon-editDataTable-header"
+						footerClass="dr-table-subfooter rich-table-subfooter aon-editDataTable-footer"
+						rowClasses="aon-editDataTable-row-odd,dr-table-firstrow rich-table-firstrow aon-editDataTable-row-even"
+						cellpadding="0" cellspacing="0"
+						columnClasses="dr-table-cell rich-table-cell aon-editDataTable-iconColumn,
+								dr-table-cell rich-table-cell aon-editDataTable-textColumn,
+								dr-table-cell rich-table-cell aon-editDataTable-textColumn,
+								dr-table-cell rich-table-cell aon-editDataTable-iconColumn">
+				
+						<aon:column>
+							<f:facet name="header">
+								<aon:div>
+									<aon:outputText value="#{bundle.aon_check}" />
+								</aon:div>	
+							</f:facet>
+							<aon:selectBooleanCheckbox id="Row_checked"
+									value="#{productCategory.rowChecked}">
+									<a4j:support 
+										event="onclick"  
+										reRender="dataTable,buttonsGrid" />
+							</aon:selectBooleanCheckbox>
+						</aon:column>
 						
-						<ui:include src="/facelet/shared/dataScroller.xhtml">
-							<ui:param name="dataTable" value="productCategoryDataList" />
-							<ui:param name="model" value="#{productCategory.model}" />
-							<ui:param name="showNote" value="#{false}" />
-						</ui:include>
-					
-				</aon:div>
+						<aon:column>
+							<a4j:support 
+								action="product_category_form"
+								actionListener="#{productCategory.onSelect}"
+								event="onclick" />
+							<f:facet name="header">
+								<aon:outputText value="#{appBundle.product_category_alias}" />
+							</f:facet>
+							<aon:outputText value="#{to.alias}" styleClass="aon-editDataTable-button"/>
+						</aon:column>
+
+						<aon:column>
+							<a4j:support 
+								action="product_category_form"
+								actionListener="#{productCategory.onSelect}"
+								event="onclick" />
+							<f:facet name="header">
+								<aon:outputText value="#{appBundle.product_category_label}" />
+							</f:facet>
+							<aon:outputText value="#{productCategory.i18nLabel}"
+								styleClass="aon-editDataTable-button"/>
+						</aon:column>
+
+						<aon:column>
+							<f:facet name="header">
+								<aon:outputText value="#{appBundle.product_category_active}" />
+							</f:facet>
+							<aon:commandLink title="#{appBundle.product_category_activate}" 
+								reRender="dataTable"
+								actionListener="#{productCategory.onActivate}" 
+								rendered="#{!to.active}">
+								<aon:graphicImage id="ProductCategory_active" alt="#{appBundle.product_category_activate}"
+									url="/images/cms/inactive.png" />
+							</aon:commandLink>
+							<aon:commandLink title="#{appBundle.product_category_deactivate}" 
+								reRender="dataTable"
+								actionListener="#{product_category.onDeactivate}" 
+								rendered="#{to.active}">
+								<aon:graphicImage id="ProductCategory_deactive" 
+									alt="#{appBundle.product_category_deactivate}"
+									url="/images/cms/active.png" />
+							</aon:commandLink>
+						</aon:column>
+
+					</aon:dataTable>
+				
+					<aon:dataScroller for="dataTable"
+						rowCount="#{productCategory.model.rowCount}" 
+						showNote="true" />					
+
 			</aon:div>
 		</aon:form>
-		<aon:form id="placeList" target="list" />
+		
 	</ui:define>
 
 </ui:composition>

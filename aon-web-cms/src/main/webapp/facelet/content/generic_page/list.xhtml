@@ -135,7 +135,9 @@
 							
 						</aon:dataTable>
 						
-						<rich:datascroller align="left"  for="dataTable" maxPages="20" />
+						<aon:dataScroller for="dataTable"
+							rowCount="#{generic_page.model.rowCount}" 
+							showNote="true" />					
 					
 				</aon:div>
 		</aon:form>

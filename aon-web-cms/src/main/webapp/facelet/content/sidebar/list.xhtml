@@ -73,7 +73,7 @@
 									rendered="#{!to.default_}">
 									<a4j:support 
 										event="onclick"  
-										reRender="dataTable,parentGrid,buttonsGrid" />
+										reRender="dataTable,buttonsGrid" />
 							</aon:selectBooleanCheckbox>
 							<aon:graphicImage id="Menu_selected_blocked" rendered="#{to.default_}"
 								url="/images/cms/blocked.gif" alt="#{appBundle.sidebar_blocked}"/>
@@ -102,7 +102,7 @@
 									<a4j:support 
 										actionListener="#{sidebar.defaultChanged}"
 										event="onclick"  
-										reRender="dataTable,parentGrid" />
+										reRender="dataTable" />
 							</aon:selectBooleanCheckbox>
 							<aon:graphicImage id="Menu_default_blocked" rendered="#{to.default_}"
 								url="/images/cms/selected.gif" alt="#{appBundle.menu_blocked}"/>
