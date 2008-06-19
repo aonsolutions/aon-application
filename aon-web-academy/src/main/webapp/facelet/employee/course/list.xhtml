@@ -23,6 +23,7 @@
 				columnClasses="aon-table-body aon-table-body-string,
 					aon-table-body aon-table-body-string,
 					aon-table-body aon-table-body-string,
+					aon-table-body aon-table-body-number,
 					aon-table-body aon-table-body-string"
 				rowOnMouseOver="selectRow( this )"
 				rowOnMouseOut="unselectRow( this )" rowOnClick="sendRow( this )">
@@ -45,10 +46,19 @@
 				<h:column>
 					<f:facet name="header">
 						<h:panelGroup>
-							<h:outputText value="#{appBundle.schedule_schedule}" />
+							<h:outputText value="#{appBundle.schedule_week_days}" />
 						</h:panelGroup>
 					</f:facet>
 					<h:outputText value="#{instructorCourse.courseSchedule}" />
+					<f:verbatim>&#160;</f:verbatim>
+				</h:column>
+				<h:column>
+					<f:facet name="header">
+						<h:panelGroup>
+							<h:outputText value="#{appBundle.schedule_week_hours}" />
+						</h:panelGroup>
+					</f:facet>
+					<h:outputText value="#{instructorCourse.courseHours}" />
 					<f:verbatim>&#160;</f:verbatim>
 				</h:column>
 				<h:column>
