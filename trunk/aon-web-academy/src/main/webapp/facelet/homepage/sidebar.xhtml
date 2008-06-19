@@ -25,7 +25,7 @@
 			<t:div styleClass="aon-sidebar-title" style="padding:1px 16px 1px 5px;">
 				<t:selectOneMenu id="Application_menus" value="#{menuController.selectedMenu}" 
 					valueChangeListener="#{menuController.onMenuChange}" onchange="submit();"
-					style="width=85%;">
+					style="width=85%;" visibleOnUserRole="MenuContabilidad">
 					<f:selectItems value="#{menuController.menus}" />
 				</t:selectOneMenu>
 			</t:div>
