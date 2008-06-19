@@ -335,10 +335,10 @@
 		<template path="/com/code/aon/ui/gta/report/purchaseInvoiceDetail.jasper"/>
 	</report>
 	
-	<report id="invoiceList" description="Sales Invoice's List">
+	<report id="invoiceList" description="Purchase Invoice's List">
 		<template path="/com/code/aon/ui/finance/report/invoiceList.jasper"/>
 		<bean key="com.code.aon.finance.Invoice" />
-		<criteria provider="#{invoicing}"/>
+		<criteria provider="#{purchaseDirectInvoicing}"/>
 
 		<params>
 			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.finance.i18n.messages" />
