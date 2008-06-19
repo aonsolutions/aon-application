@@ -302,6 +302,7 @@
 			<role-name>AlumnosDatosAlumno</role-name>
 			<role-name>AlumnosDatosEconomicos</role-name>
 			<role-name>AlumnosDatosPersonales</role-name>
+			<role-name>AlumnosHistorial</role-name>
 			<role-name>AlumnosRelaciones</role-name>
 			<role-name>AlumnosSeguimiento</role-name>
 			<role-name>AuxiliaresAnyosAcademicos</role-name>
@@ -369,6 +370,7 @@
 	<security-role><role-name>AlumnosDatosAlumno</role-name></security-role>
 	<security-role><role-name>AlumnosDatosEconomicos</role-name></security-role>
 	<security-role><role-name>AlumnosDatosPersonales</role-name></security-role>
+	<security-role><role-name>AlumnosHistorial</role-name></security-role>
 	<security-role><role-name>AlumnosRelaciones</role-name></security-role>
 	<security-role><role-name>AlumnosSeguimiento</role-name></security-role>
 	<security-role><role-name>AuxiliaresAnyosAcademicos</role-name></security-role>
