@@ -15,8 +15,6 @@ import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 import javax.faces.event.ValueChangeEvent;
 
-import org.apache.myfaces.custom.fileupload.UploadedFile;
-
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
@@ -42,7 +40,7 @@ import com.code.aon.ui.util.AonUtil;
 /**
  * Controller used in the company maintenance.
  */
-public class CompanyReportController extends BasicController {
+public class CompanyParentController extends BasicController implements ICompanyController {
 	
 	public static final String COMPANY_NAME = "company";
 	
@@ -92,7 +90,7 @@ public class CompanyReportController extends BasicController {
      * 
      * @throws ManagerBeanException the manager bean exception
      */
-    public CompanyReportController() throws ManagerBeanException {
+    public CompanyParentController() throws ManagerBeanException {
         super();
     }
 
@@ -543,7 +541,8 @@ public class CompanyReportController extends BasicController {
 		}
 		IManagerBean registryAttachBean = BeanManager.getManagerBean(RegistryAttachment.class);
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(registryAttachBean.getFieldName(IRegistryAlias.REGISTRY_ATTACHMENT_REGISTRY_ID), ((Company)this.getTo()).getId());
+		String alias = registryAttachBean.getFieldName(IRegistryAlias.REGISTRY_ATTACHMENT_REGISTRY_ID);
+		criteria.addEqualExpression(alias, ((Company)this.getTo()).getId());
 		Iterator iter = registryAttachBean.getList(criteria).iterator();
 		if(iter.hasNext()){
 			return (RegistryAttachment)iter.next();
