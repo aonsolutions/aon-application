@@ -130,7 +130,13 @@
 		<mapping class="com.code.aon.company.WorkActivity"/>
 		<mapping class="com.code.aon.company.resources.Resource"/>
 		<mapping class="com.code.aon.company.resources.Employee"/>
-		
+
+		<!-- AON-EMPLOYEE Mapping files -->	
+		<mapping class="com.code.aon.record.Contract"/>
+		<mapping class="com.code.aon.record.LHCourse"/>
+		<mapping class="com.code.aon.record.Position"/>
+		<mapping class="com.code.aon.record.Work"/>
+
 		<!-- AON-GEOZONE Mapping files -->		
 		<mapping class="com.code.aon.geozone.GeoTree"/>			
 		<mapping class="com.code.aon.geozone.GeoZone"/>			
