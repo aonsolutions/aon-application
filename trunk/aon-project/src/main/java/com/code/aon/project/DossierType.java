@@ -7,11 +7,15 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
+import org.apache.commons.lang.ObjectUtils;
+
 import com.code.aon.common.ITransferObject;
 
 @Entity
 @Table(name="dossier_type")
 public class DossierType implements ITransferObject {
+
+	private static final long serialVersionUID = 4694408011382916566L;
 
 	private Integer id;
 	
@@ -36,4 +40,20 @@ public class DossierType implements ITransferObject {
 	public void setDescription(String description) {
 		this.description = description;
 	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		}
+		if (obj instanceof DossierType) {
+			DossierType dt = (DossierType) obj;
+			if (!ObjectUtils.equals(getId(), dt.getId())) {
+				return false;
+			}
+			return true;
+		}
+		return false;
+	}
+	
 }
