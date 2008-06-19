@@ -13,6 +13,7 @@ import com.code.aon.registry.RegistryMedia;
 import com.code.aon.registry.dao.IRegistryAlias;
 import com.code.aon.registry.enumeration.MediaType;
 import com.code.aon.ui.company.controller.CompanyController;
+import com.code.aon.ui.company.controller.ICompanyController;
 import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
@@ -34,7 +35,7 @@ public class CompanyControllerListener extends ControllerAdapter {
 	@SuppressWarnings("unchecked")
 	public void afterBeanSelected(ControllerEvent event) throws ControllerListenerException {
 		try {
-			CompanyController c = (CompanyController)event.getController();
+			ICompanyController c = (ICompanyController)event.getController();
 			Company company = (Company) c.getTo();
 			
 			Criteria criteriaMedia = new Criteria();
@@ -90,7 +91,7 @@ public class CompanyControllerListener extends ControllerAdapter {
 	@Override
 	public void afterBeanUpdated(ControllerEvent event) throws ControllerListenerException {
 		try{
-			CompanyController c = (CompanyController)event.getController();
+			ICompanyController c = (ICompanyController)event.getController();
 
 			if (c.isPhoneDirty()){
 				saveRegistryMedia(c.getPhone());
@@ -124,7 +125,7 @@ public class CompanyControllerListener extends ControllerAdapter {
 	@Override
 	public void afterBeanAdded(ControllerEvent event) throws ControllerListenerException {
 		try{
-			CompanyController c = (CompanyController)event.getController();
+			ICompanyController c = (ICompanyController)event.getController();
 
 			if (c.isPhoneDirty()){
 				c.getPhone().setMediaType(MediaType.FIXED_PHONE);

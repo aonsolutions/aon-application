@@ -13,6 +13,7 @@ import com.code.aon.ql.Criteria;
 import com.code.aon.registry.RegistryAddress;
 import com.code.aon.registry.enumeration.AddressType;
 import com.code.aon.ui.company.controller.CompanyController;
+import com.code.aon.ui.company.controller.ICompanyController;
 import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
@@ -47,8 +48,8 @@ public class CompanyAddressListener extends ControllerAdapter {
 	@Override
 	public void afterBeanAdded(ControllerEvent event) throws ControllerListenerException {
 		RegistryAddress address = null;
-		if ( event.getController() instanceof CompanyController ) {
-			CompanyController cc = (CompanyController) event.getController();
+		if ( event.getController() instanceof ICompanyController ) {
+			ICompanyController cc = (ICompanyController) event.getController();
 			address = cc.getMainAddress();
 		}
 		if ( address == null && event.getController().getTo() instanceof RegistryAddress ) {
@@ -78,8 +79,8 @@ public class CompanyAddressListener extends ControllerAdapter {
 	@Override
 	public void beforeBeanRemoved(ControllerEvent event) throws ControllerListenerException {
 		RegistryAddress address = null;
-		if ( event.getController() instanceof CompanyController ) {
-			CompanyController cc = (CompanyController) event.getController();
+		if ( event.getController() instanceof ICompanyController ) {
+			ICompanyController cc = (ICompanyController) event.getController();
 			address = cc.getMainAddress();
 		}
 		if ( address == null && event.getController().getTo() instanceof RegistryAddress ) {

@@ -5,6 +5,7 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.config.ApplicationParameter;
 import com.code.aon.ui.company.controller.CompanyController;
+import com.code.aon.ui.company.controller.ICompanyController;
 import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
@@ -13,7 +14,7 @@ public class CompanyAppParamControllerListener extends ControllerAdapter {
 
 	@Override
 	public void afterBeanSelected(ControllerEvent event) throws ControllerListenerException {
-		CompanyController companyController = (CompanyController)event.getController();
+		ICompanyController companyController = (ICompanyController)event.getController();
 		try {
 			companyController.setPrintHeader(companyController.obtainPrintHeader());
 			companyController.setPrintRecordData(companyController.obtainPrintRecordData());
@@ -24,7 +25,7 @@ public class CompanyAppParamControllerListener extends ControllerAdapter {
 
 	@Override
 	public void afterBeanAdded(ControllerEvent event)throws ControllerListenerException {
-		CompanyController companyController = (CompanyController)event.getController();
+		ICompanyController companyController = (ICompanyController)event.getController();
 		try {
 			ApplicationParameter printHeaderParam = companyController.obtainApplicationParameter(CompanyController.printHeaderParam);
 			ApplicationParameter printRecorDataParam = companyController.obtainApplicationParameter(CompanyController.printRecordDataParam);
@@ -43,7 +44,7 @@ public class CompanyAppParamControllerListener extends ControllerAdapter {
 
 	@Override
 	public void afterBeanUpdated(ControllerEvent event)throws ControllerListenerException {
-		CompanyController companyController = (CompanyController)event.getController();
+		ICompanyController companyController = (ICompanyController)event.getController();
 		try {
 			ApplicationParameter printHeaderParam = companyController.obtainApplicationParameter(CompanyController.printHeaderParam);
 			ApplicationParameter printRecorDataParam = companyController.obtainApplicationParameter(CompanyController.printRecordDataParam);
