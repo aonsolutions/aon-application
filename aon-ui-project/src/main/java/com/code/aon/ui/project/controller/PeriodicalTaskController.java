@@ -16,6 +16,8 @@ import javax.faces.model.SelectItem;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.config.UserWorkGroup;
+import com.code.aon.config.dao.IConfigAlias;
 import com.code.aon.customer.Customer;
 import com.code.aon.project.Activity;
 import com.code.aon.project.Dossier;
@@ -31,6 +33,8 @@ public class PeriodicalTaskController extends BasicController {
 	
     private List<SelectItem> dossiers = new LinkedList<SelectItem>();
     private List<SelectItem> activities = new LinkedList<SelectItem>();
+    private List<SelectItem> users = new LinkedList<SelectItem>();
+
     
     private Date nextDateFrom;
     private Date nextDateTo;
@@ -163,4 +167,37 @@ public class PeriodicalTaskController extends BasicController {
 	public void setNextDateTo(Date nextDateTo) {
 		this.nextDateTo = nextDateTo;
 	}
+    public List<SelectItem> getUsers() {
+		return users;
+	}
+
+	public void setUsers(List<SelectItem> users) {
+		this.users = users;
+	}
+	
+    public void workgroupChanged(ValueChangeEvent event) {
+    	if(event.getNewValue() != null && !event.getNewValue().equals("")){
+    		loadUsers(new Integer(event.getNewValue().toString()));
+    	}else{
+    		users = new LinkedList<SelectItem>();
+    	}
+    }
+    
+    @SuppressWarnings("unchecked")
+    public void loadUsers(Integer workgroupId){
+    	users = new LinkedList<SelectItem>();
+    	try {
+			IManagerBean userWorkGroupBean = BeanManager.getManagerBean(UserWorkGroup.class);
+			Criteria criteria = new Criteria();
+			criteria.addEqualExpression(userWorkGroupBean.getFieldName(IConfigAlias.USER_WORK_GROUP_WORK_GROUP_ID), workgroupId);
+			Iterator iter = userWorkGroupBean.getList(criteria).iterator();
+			while(iter.hasNext()){
+				UserWorkGroup userWorkGroup = (UserWorkGroup)iter.next();
+				SelectItem item = new SelectItem(userWorkGroup.getUser().getId(), userWorkGroup.getUser().getName());
+				users.add(item);
+			}
+		} catch (ManagerBeanException e) {
+			LOGGER.log(Level.SEVERE, "Error loading users related with workgroup with id= " + workgroupId, e);
+		}
+    }
 }

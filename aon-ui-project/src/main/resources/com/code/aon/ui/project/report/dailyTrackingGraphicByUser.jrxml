@@ -2,7 +2,7 @@
 <!-- Created with iReport - A designer for JasperReports -->
 <!DOCTYPE jasperReport PUBLIC "//JasperReports//DTD Report Design//EN" "http://jasperreports.sourceforge.net/dtds/jasperreport.dtd">
 <jasperReport
-		 name="dailyTrackingByCustomer"
+		 name="dailyTrackingGraphicByUser"
 		 columnCount="1"
 		 printOrder="Vertical"
 		 orientation="Portrait"
@@ -30,72 +30,59 @@
 	<parameter name="toDate" isForPrompting="false" class="java.util.Date"/>
 
 	<field name="id" class="java.lang.Integer"/>
-	<field name="userId" class="java.lang.Integer"/>
-	<field name="userName" class="java.lang.String"/>
-	<field name="date" class="java.util.Date"/>
+	<field name="description" class="java.lang.String"/>
 	<field name="duration" class="java.lang.Double"/>
-	<field name="jobTypeId" class="java.lang.Integer"/>
-	<field name="jobTypeDescription" class="java.lang.String"/>
-	<field name="customerId" class="java.lang.Integer"/>
-	<field name="customerName" class="java.lang.String"/>
-	<field name="dossierId" class="java.lang.Integer"/>
-	<field name="dossierNumber" class="java.lang.String"/>
-	<field name="activityId" class="java.lang.Integer"/>
-	<field name="activityDescription" class="java.lang.String"/>
 
-	<variable name="totalDuration" class="java.lang.Double" resetType="Group" resetGroup="customerGroup" calculation="Sum">
+	<variable name="totalDuration" class="java.lang.Double" resetType="Report" calculation="Sum">
 		<variableExpression><![CDATA[$F{duration}]]></variableExpression>
 	</variable>
 
-		<group  name="customerGroup" >
-			<groupExpression><![CDATA[$F{customerId}]]></groupExpression>
+		<group  name="reportGroup" >
+			<groupExpression><![CDATA["nunca"]]></groupExpression>
 			<groupHeader>
-			<band height="30"  isSplitAllowed="true" >
-				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
-					<reportElement
-						x="0"
-						y="6"
-						width="535"
-						height="17"
-						key="textField-24"/>
-					<box>					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<bottomPen lineWidth="0.0" lineColor="#000000"/>
-					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-</box>
-					<textElement textAlignment="Left" verticalAlignment="Middle">
-						<font pdfFontName="Helvetica-Bold" size="10" isBold="true"/>
-					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$F{customerName}]]></textFieldExpression>
-				</textField>
+			<band height="0"  isSplitAllowed="true" >
 			</band>
 			</groupHeader>
 			<groupFooter>
-			<band height="22"  isSplitAllowed="true" >
-				<textField isStretchWithOverflow="false" pattern="#,##0.00" isBlankWhenNull="true" evaluationTime="Group" evaluationGroup="customerGroup"  hyperlinkType="None"  hyperlinkTarget="Self" >
+			<band height="320"  isSplitAllowed="true" >
+				<pie3DChart>
+					<chart isShowLegend="false" evaluationTime="Page"  hyperlinkTarget="Self" >
 					<reportElement
-						x="490"
-						y="0"
-						width="45"
-						height="17"
-						key="textField-25"/>
-					<box leftPadding="5" rightPadding="5">					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<bottomPen lineWidth="0.0" lineColor="#000000"/>
-					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+						x="65"
+						y="26"
+						width="404"
+						height="289"
+						key="element-1"/>
+					<box>					<pen lineWidth="0.5" lineStyle="Solid" lineColor="#999999"/>
+					<topPen lineWidth="0.5" lineStyle="Solid" lineColor="#999999"/>
+					<leftPen lineWidth="0.5" lineStyle="Solid" lineColor="#999999"/>
+					<bottomPen lineWidth="0.5" lineStyle="Solid" lineColor="#999999"/>
+					<rightPen lineWidth="0.5" lineStyle="Solid" lineColor="#999999"/>
 </box>
-					<textElement textAlignment="Right" verticalAlignment="Middle">
-						<font pdfFontName="Helvetica-Bold" size="10" isBold="true"/>
-					</textElement>
-				<textFieldExpression   class="java.lang.Double"><![CDATA[$V{totalDuration}]]></textFieldExpression>
-				</textField>
-				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="true" evaluationTime="Group" evaluationGroup="customerGroup"  hyperlinkType="None"  hyperlinkTarget="Self" >
+						<chartTitle color="#000000" >
+								<titleExpression><![CDATA[$R{daily_tracking_graphic_by_customer}]]></titleExpression>
+					</chartTitle>
+					</chart>
+					<pieDataset>
+						<dataset resetType="None" >
+						</dataset>
+						<keyExpression><![CDATA[$F{id}]]></keyExpression>
+						<valueExpression><![CDATA[$F{duration}]]></valueExpression>
+						<labelExpression><![CDATA[$F{description} + "(" + $F{duration} + ")"]]></labelExpression>
+				<sectionHyperlink >
+				</sectionHyperlink>
+					</pieDataset>
+					<pie3DPlot >
+						<plot orientation="Horizontal" />
+					</pie3DPlot>
+				</pie3DChart>
+				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="true" evaluationTime="Group" evaluationGroup="reportGroup"  hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
-						x="388"
+						x="282"
 						y="0"
 						width="102"
 						height="17"
-						key="textField-26"/>
+						key="textField-33"/>
 					<box leftPadding="5" rightPadding="5">					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<bottomPen lineWidth="0.0" lineColor="#000000"/>
@@ -105,6 +92,23 @@
 						<font pdfFontName="Helvetica-Bold" size="10" isBold="true"/>
 					</textElement>
 				<textFieldExpression   class="java.lang.String"><![CDATA[$R{aon_total} + ": "]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="false" pattern="#,##0.00" isBlankWhenNull="true" evaluationTime="Group" evaluationGroup="reportGroup"  hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="384"
+						y="0"
+						width="60"
+						height="17"
+						key="textField-34"/>
+					<box>					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="0.0" lineColor="#000000"/>
+					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
+</box>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font pdfFontName="Helvetica-Bold" size="10" isBold="true"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.Double"><![CDATA[$V{totalDuration}]]></textFieldExpression>
 				</textField>
 			</band>
 			</groupFooter>
@@ -155,7 +159,7 @@
 					<textElement textAlignment="Right" verticalAlignment="Middle">
 						<font pdfFontName="Helvetica-Bold" size="10" isBold="true"/>
 					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$R{daily_tracking_by_customer}]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$R{daily_tracking_graphic_by_user}]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="false" pattern="dd/MM/yyyy" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
@@ -253,23 +257,23 @@
 			</band>
 		</pageHeader>
 		<columnHeader>
-			<band height="15"  isSplitAllowed="true" >
+			<band height="16"  isSplitAllowed="true" >
 				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						mode="Opaque"
-						x="0"
+						x="88"
 						y="0"
-						width="153"
+						width="296"
 						height="15"
 						forecolor="#FFFFFF"
 						backcolor="#000000"
-						key="textField-4"/>
+						key="textField-31"/>
 					<box>					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<bottomPen lineWidth="0.0" lineColor="#000000"/>
 					<rightPen lineWidth="0.25" lineStyle="Solid" lineColor="#FFFFFF"/>
 </box>
-					<textElement textAlignment="Center" verticalAlignment="Middle">
+					<textElement textAlignment="Left" verticalAlignment="Middle">
 						<font pdfFontName="Helvetica-Bold" size="9" isBold="true"/>
 					</textElement>
 				<textFieldExpression   class="java.lang.String"><![CDATA[$R{aon_daily_tracking_user}]]></textFieldExpression>
@@ -277,208 +281,52 @@
 				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						mode="Opaque"
-						x="153"
+						x="384"
 						y="0"
 						width="60"
 						height="15"
 						forecolor="#FFFFFF"
 						backcolor="#000000"
-						key="textField-5"/>
+						key="textField-32"/>
 					<box>					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
 					<bottomPen lineWidth="0.0" lineColor="#000000"/>
 					<rightPen lineWidth="0.25" lineStyle="Solid" lineColor="#FFFFFF"/>
 </box>
-					<textElement textAlignment="Center" verticalAlignment="Middle">
-						<font pdfFontName="Helvetica-Bold" size="9" isBold="true"/>
-					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$R{aon_date}]]></textFieldExpression>
-				</textField>
-				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
-					<reportElement
-						mode="Opaque"
-						x="213"
-						y="0"
-						width="93"
-						height="15"
-						forecolor="#FFFFFF"
-						backcolor="#000000"
-						key="textField-6"/>
-					<box>					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<bottomPen lineWidth="0.0" lineColor="#000000"/>
-					<rightPen lineWidth="0.25" lineStyle="Solid" lineColor="#FFFFFF"/>
-</box>
-					<textElement textAlignment="Center" verticalAlignment="Middle">
-						<font pdfFontName="Helvetica-Bold" size="9" isBold="true"/>
-					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$R{aon_daily_tracking_dossier}]]></textFieldExpression>
-				</textField>
-				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
-					<reportElement
-						mode="Opaque"
-						x="306"
-						y="0"
-						width="93"
-						height="15"
-						forecolor="#FFFFFF"
-						backcolor="#000000"
-						key="textField-7"/>
-					<box>					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<bottomPen lineWidth="0.0" lineColor="#000000"/>
-					<rightPen lineWidth="0.25" lineStyle="Solid" lineColor="#FFFFFF"/>
-</box>
-					<textElement textAlignment="Center" verticalAlignment="Middle">
-						<font pdfFontName="Helvetica-Bold" size="9" isBold="true"/>
-					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$R{aon_daily_tracking_activity}]]></textFieldExpression>
-				</textField>
-				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
-					<reportElement
-						mode="Opaque"
-						x="490"
-						y="0"
-						width="45"
-						height="15"
-						forecolor="#FFFFFF"
-						backcolor="#000000"
-						key="textField-19"/>
-					<box>					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<bottomPen lineWidth="0.0" lineColor="#000000"/>
-					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-</box>
-					<textElement textAlignment="Center" verticalAlignment="Middle">
+					<textElement textAlignment="Right" verticalAlignment="Middle">
 						<font pdfFontName="Helvetica-Bold" size="9" isBold="true"/>
 					</textElement>
 				<textFieldExpression   class="java.lang.String"><![CDATA[$R{aon_daily_tracking_duration}]]></textFieldExpression>
-				</textField>
-				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
-					<reportElement
-						mode="Opaque"
-						x="399"
-						y="0"
-						width="91"
-						height="15"
-						forecolor="#FFFFFF"
-						backcolor="#000000"
-						key="textField-21"/>
-					<box>					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<bottomPen lineWidth="0.0" lineColor="#000000"/>
-					<rightPen lineWidth="0.25" lineStyle="Solid" lineColor="#FFFFFF"/>
-</box>
-					<textElement textAlignment="Center" verticalAlignment="Middle">
-						<font pdfFontName="Helvetica-Bold" size="9" isBold="true"/>
-					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$R{aon_daily_tracking_job_type}]]></textFieldExpression>
 				</textField>
 			</band>
 		</columnHeader>
 		<detail>
 			<band height="14"  isSplitAllowed="true" >
-				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
-						x="306"
+						x="88"
 						y="0"
-						width="93"
+						width="296"
 						height="14"
-						key="textField-9"/>
-					<box leftPadding="5" rightPadding="5">					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<bottomPen lineWidth="0.0" lineColor="#999999"/>
-					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-</box>
-					<textElement textAlignment="Left" verticalAlignment="Middle">
-						<font size="8"/>
+						key="textField"/>
+					<box></box>
+					<textElement>
+						<font/>
 					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$F{activityDescription}]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{description}]]></textFieldExpression>
 				</textField>
-				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+				<textField isStretchWithOverflow="false" pattern="##0.00" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
-						x="213"
-						y="0"
-						width="93"
-						height="14"
-						key="textField-10"/>
-					<box leftPadding="5" rightPadding="5">					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<bottomPen lineWidth="0.0" lineColor="#999999"/>
-					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-</box>
-					<textElement verticalAlignment="Middle">
-						<font size="8"/>
-					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$F{dossierNumber}]]></textFieldExpression>
-				</textField>
-				<textField isStretchWithOverflow="false" pattern="dd/MM/yyyy" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
-					<reportElement
-						x="153"
+						x="384"
 						y="0"
 						width="60"
 						height="14"
-						key="textField-11"/>
-					<box leftPadding="5" rightPadding="5">					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<bottomPen lineWidth="0.0" lineColor="#999999"/>
-					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-</box>
-					<textElement verticalAlignment="Middle">
-						<font size="8"/>
-					</textElement>
-				<textFieldExpression   class="java.util.Date"><![CDATA[$F{date}]]></textFieldExpression>
-				</textField>
-				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
-					<reportElement
-						x="0"
-						y="0"
-						width="153"
-						height="14"
-						key="textField-12"/>
-					<box leftPadding="5" rightPadding="5">					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<bottomPen lineWidth="0.0" lineColor="#999999"/>
-					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-</box>
-					<textElement verticalAlignment="Middle">
-						<font size="8"/>
-					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$F{userName}]]></textFieldExpression>
-				</textField>
-				<textField isStretchWithOverflow="false" pattern="#,##0.00" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
-					<reportElement
-						x="490"
-						y="0"
-						width="45"
-						height="14"
-						key="textField-20"/>
-					<box leftPadding="5" rightPadding="5">					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<bottomPen lineWidth="0.0" lineColor="#999999"/>
-					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-</box>
-					<textElement textAlignment="Right" verticalAlignment="Middle">
-						<font size="8"/>
+						key="textField"/>
+					<box></box>
+					<textElement textAlignment="Right">
+						<font/>
 					</textElement>
 				<textFieldExpression   class="java.lang.Double"><![CDATA[$F{duration}]]></textFieldExpression>
-				</textField>
-				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
-					<reportElement
-						x="399"
-						y="0"
-						width="91"
-						height="14"
-						key="textField-22"/>
-					<box leftPadding="5" rightPadding="5">					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<bottomPen lineWidth="0.0" lineColor="#999999"/>
-					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-</box>
-					<textElement textAlignment="Left" verticalAlignment="Middle">
-						<font size="8"/>
-					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$F{jobTypeDescription}]]></textFieldExpression>
 				</textField>
 			</band>
 		</detail>
@@ -487,11 +335,11 @@
 			</band>
 		</columnFooter>
 		<pageFooter>
-			<band height="14"  isSplitAllowed="true" >
+			<band height="17"  isSplitAllowed="true" >
 				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Report" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
-						x="522"
-						y="0"
+						x="521"
+						y="3"
 						width="13"
 						height="14"
 						key="textField-15"/>
@@ -507,8 +355,8 @@
 				</textField>
 				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
-						x="463"
-						y="0"
+						x="464"
+						y="3"
 						width="57"
 						height="14"
 						key="textField-16"/>
@@ -524,8 +372,8 @@
 				</textField>
 				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
-						x="6"
-						y="0"
+						x="0"
+						y="3"
 						width="262"
 						height="14"
 						key="textField-17"/>
@@ -542,7 +390,7 @@
 				<line direction="TopDown">
 					<reportElement
 						x="0"
-						y="0"
+						y="1"
 						width="535"
 						height="0"
 						forecolor="#999999"
