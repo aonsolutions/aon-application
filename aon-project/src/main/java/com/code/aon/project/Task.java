@@ -29,6 +29,8 @@ import com.code.aon.project.enumeration.TaskStatus;
 @Table(name = "task")
 public class Task implements ITransferObject {
 
+	private static final long serialVersionUID = 7790266586372796095L;
+
 	/** The id. */
 	private Integer id;
 
@@ -394,4 +396,53 @@ public class Task implements ITransferObject {
 		}
 		return false;
 	}
+	
+	@Transient
+    public boolean isPending() {
+        return getStatus().equals(TaskStatus.PENDING);
+    }
+	@Transient
+    public boolean isDeleted() {
+        return getStatus().equals(TaskStatus.DELETED);
+    }
+	@Transient
+    public boolean isInProgress() {
+        return getStatus().equals(TaskStatus.IN_PROGRESS);
+    }
+	@Transient
+    public boolean isFinished() {
+        return getStatus().equals(TaskStatus.FINISHED);
+    }
+	@Transient
+    public boolean isHighPriority() {
+        return getPriority().equals(Priority.HIGH);
+    }
+	@Transient
+    public boolean isLowPriority() {
+        return getPriority().equals(Priority.LOW);
+    }
+	@Transient
+    public boolean isMediumPriority() {
+        return getPriority().equals(Priority.MEDIUM);
+    }
+	@Transient
+    public boolean isNonePriority() {
+        return getPriority().equals(Priority.NONE);
+    }
+	@Transient
+    public boolean isSourceCampaign() {
+        return getSource().equals(TaskSource.AON_CONSULTANT);
+    }
+	@Transient
+    public boolean isSourceAssigned() {
+        return getSource().equals(TaskSource.ASSIGNED);
+    }
+	@Transient
+    public boolean isSourceManual() {
+        return getSource().equals(TaskSource.MANUAL);
+    }
+	@Transient
+    public boolean isSourcePeriodical() {
+        return getSource().equals(TaskSource.PERIODICAL);
+    }
 }
