@@ -137,7 +137,7 @@
 			<t:div id="aon-scroll-area" forceId="#{true}">
 				<t:div styleClass="aon-scroll-area-internal">
 
-					<h:panelGrid columns="4" style="width:100%;"
+					<h:panelGrid columns="4"
 						dir="true"
 						styleClass="aon-form-table"
 						columnClasses="aon-form-table-column-odd,aon-form-table-column-even,aon-form-table-column-odd,aon-form-table-column-even">
@@ -191,7 +191,7 @@
 							  Calendar.setup( {
 								inputField  : "Invoice_issueDate", button : "Invoice_issueDate_button",
 								ifFormat    : "%d/%m/%Y" } );
-						</script>
+							</script>
 						</t:div>
 
 						<t:outputLabel for="Invoice_securityLevel"
@@ -233,7 +233,7 @@
 							styleClass="aon-form-selectOneMenu-label"
 							value="#{purchaseBundle.aon_warehouse}" />
 						<h:selectOneMenu id="DeliveryDetail_warehouse_id" 
-							disabled="#{!salesInvoicing.new and salesInvoicing.warehouseId == null}"
+							disabled="#{!salesInvoicing.editable}"
 							styleClass="aon-form-selectOneMenu-field"
 							value="#{salesInvoicing.warehouseId}">
 							<f:selectItems value="#{warehouseCollections.warehouses}" />
@@ -254,23 +254,40 @@
 						<h:selectOneMenu id="Pos_id"
 							styleClass="aon-form-selectOneMenu-field"
 							value="#{salesInvoicing.posId}"
-							disabled="#{!salesInvoicing.new and !salesInvoicing.editable}" >
+							disabled="#{!salesInvoicing.editable}" >
 							<f:selectItems value="#{salesCollections.pointsOfSale}" />
 						</h:selectOneMenu>
 						
 						<h:outputLabel for="Invoice_registryAddress_id"
 							styleClass="aon-form-input-text-label"
 							value="#{warehouseBundle.aon_customer_address}" />
-						<t:div>	
-							<h:selectOneMenu id="Invoice_registryAddress_id"
-									rendered="#{salesInvoicing.addressCount > 0}"
-									disabled="#{!salesInvoicing.editable}"
-									styleClass="aon-form-selectOneMenu-field"
-									value="#{salesInvoicing.to.registryAddress.id}">
-									<f:selectItems value="#{salesInvoicing.addresses}" />
+						<t:div>
+							<h:selectOneMenu id="Invoice_registryAddress_id" forceId="#{true}"
+								rendered="#{(salesInvoicing.new or salesInvoicingAddress.to.id == null) and salesInvoicing.addressCount > 0}"
+								styleClass="aon-form-selectOneMenu-field"
+								disabled="#{!salesInvoicing.editable}"
+								value="#{salesInvoicing.to.registryAddress.id}">
+								<f:selectItems value="#{salesInvoicing.addresses}" />
 							</h:selectOneMenu>	
+							<h:outputLabel value="#{financeBundle.invoice_no_available_address}"
+								rendered="#{(salesInvoicing.new or salesInvoicingAddress.to.id == null) and salesInvoicing.addressCount == 0}" />
+							<t:inputText id="Invoice_registryAddress_address" forceId="#{true}"
+								rendered="#{!salesInvoicing.new and salesInvoicingAddress.to.id != null}"
+								value="#{salesInvoicing.address}"
+								disabled="#{true}"
+								styleClass="aon-form-input-text" size="33" />
+							<t:inputText id="Invoice_registryAddress_city" forceId="#{true}"
+								rendered="#{!salesInvoicing.new and salesInvoicingAddress.to.id != null}"
+								value="#{salesInvoicing.city}"
+								disabled="#{true}"
+								styleClass="aon-form-input-text" size="16" />
+							<t:commandButton id="popupButton"
+								rendered="#{!salesInvoicing.new}"
+								styleClass="aon-navigation-link"
+								value="#{registryBundle.aon_address_other}"
+								onclick="showPopup();return false;" />
 						</t:div>
-						
+
 						<t:outputLabel for="Invoice_total"
 							styleClass="aon-form-selectOneMenu-label"
 							value="#{financeBundle.aon_total}" />
@@ -645,7 +662,9 @@
 								<ui:param name="model" value="#{salesInvoicingDetail.model}" />
 								<ui:param name="showNote" value="#{false}" />
 							</ui:include>
-							
+
+							<ui:include src="/facelet/sales/master/invoicing/popup/popup.xhtml"/>
+
 							<t:div rendered="#{salesInvoicingDetail.model.rowCount > 0 or salesFinance.model.rowCount > 0}" >
 								<ui:include src="/facelet/sales/master/invoicing/finance/grid.xhtml" />
 							</t:div>	
@@ -679,6 +698,28 @@
 				amount = document.getElementById( priceNewName );
 				temp = redondea( price.value * quantity.value , 2 );
 				amount.innerText = "" + redondea( temp - ( temp * discount.value / 100 ), 2 );
+			}
+			function redondea(xparam , digits ){
+			    retvalue = xparam;
+			    if ( digits > 0 ) {
+			    	value = Math.pow(10,digits);
+			        retvalue = Math.round(parseFloat(xparam)*value)/value;
+			    }
+			    if ( digits == 0 ) {
+			        retvalue = Math.round(parseFloat(xparam));
+			    }
+			    if ( isNaN(parseFloat(retvalue)) ) {
+			        retvalue = 0;
+			    }
+			    return retvalue;
+			}
+			function showPopup(){
+				document.getElementById( "popup" ).style.display='block';
+				document.getElementById( "Address_required" ).style.display = 'none';
+				document.getElementById( "Zip_required" ).style.display = 'none';
+				document.getElementById( "City_required" ).style.display = 'none';
+				document.getElementById( "Geozone_required" ).style.display = 'none';
+				document.getElementById( "InvoiceAddress_address" ).focus();
 			}
 		</script>
 		<h:form id="placeList" target="list" />

@@ -83,7 +83,6 @@
 					<f:validateDoubleRange />
 				</t:inputText>
 
-
 				<h:outputLabel for="Tax_id" value="#{productBundle.item_tax}"
 					styleClass="aon-form-selectOneMenu-label aon-form-table-column-odd-label" />
 				<t:div>
@@ -102,7 +101,6 @@
 					<t:outputLabel for="Tax_percentage" value="%" forceId="#{true}" />
 				</t:div>
 
-
 				<h:outputLabel for="Item_salesPrice"
 					value="#{productBundle.item_salesPrice}"
 					styleClass="aon-form-input-text-label aon-form-layout-label-block" />
@@ -119,6 +117,36 @@
 							styleClass="aon-form-selectBooleanCheckbox-label"
 							value="#{productBundle.item_inventoriable}" forceId="#{true}" />
 					</t:htmlTag>
+				</t:div>
+
+				<h:outputLabel for="Sales_Account_Lookup_id"
+					value="#{productBundle.item_salesAccount}"
+					styleClass="aon-form-input-text-label aon-form-layout-label-block" />
+				<t:div>
+					<t:inputText id="Sales_Account_Lookup_id"
+						value="#{item.to.product.salesAccount}"
+						styleClass="aon-form-input-text" forceId="#{true}"
+						size="12">
+						<f:validateLength minimum="1" maximum="12" />
+					</t:inputText>
+					<h:commandButton id="find_Sales_Account_Lookup"
+						styleClass="aon-form-lookup-button" value="" immediate="true"
+						onclick="lookupSearchWindow(this, 'placeList', '#{accountLookup.encodedSearchPagePath}','Account_id|Sales_Account_Lookup_id');return false;" />
+				</t:div>
+
+				<h:outputLabel for="Purchase_Account_Lookup_id"
+					value="#{productBundle.item_purchaseAccount}"
+					styleClass="aon-form-input-text-label aon-form-layout-label-block" />
+				<t:div>
+					<t:inputText id="Purchase_Account_Lookup_id"
+						value="#{item.to.product.purchaseAccount}"
+						styleClass="aon-form-input-text" forceId="#{true}"
+						size="12">
+						<f:validateLength minimum="1" maximum="12" />
+					</t:inputText>
+					<h:commandButton id="find_Purchase_Account_Lookup"
+						styleClass="aon-form-lookup-button" value="" immediate="true"
+						onclick="lookupSearchWindow(this, 'placeList', '#{accountLookup.encodedSearchPagePath}','Account_id|Purchase_Account_Lookup_id');return false;" />
 				</t:div>
 
 			</h:panelGrid>
