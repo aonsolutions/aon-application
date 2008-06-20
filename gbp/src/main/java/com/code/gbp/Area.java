@@ -1,5 +1,7 @@
 package com.code.gbp;
 
+import java.math.BigDecimal;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -23,9 +25,9 @@ public class Area implements ITransferObject {
 	
 	private AreaStatus status;
 	
-	private Double budget;
+	private BigDecimal budget;
 	
-	private Double estimate;
+	private BigDecimal estimate;
 	
 	@Id
 	@GeneratedValue
@@ -66,19 +68,19 @@ public class Area implements ITransferObject {
 		this.status = status;
 	}
 
-	public Double getBudget() {
+	public BigDecimal getBudget() {
 		return budget;
 	}
 
-	public void setBudget(Double budget) {
+	public void setBudget(BigDecimal budget) {
 		this.budget = budget;
 	}
 
-	public Double getEstimate() {
+	public BigDecimal getEstimate() {
 		return estimate;
 	}
 
-	public void setEstimate(Double estimate) {
+	public void setEstimate(BigDecimal estimate) {
 		this.estimate = estimate;
 	}
 	

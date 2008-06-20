@@ -1,5 +1,6 @@
 package com.code.gbp;
 
+import java.math.BigDecimal;
 import java.util.Date;
 
 import javax.persistence.Column;
@@ -29,13 +30,13 @@ public class Offer implements ITransferObject {
 	
 	private Date offerDate;
 	
-	private double price;
+	private BigDecimal price;
 	
 	private String deliveryDate;
 	
 	private String quality;
 	
-	private double stockProvision;
+	private BigDecimal stockProvision;
 	
 	private String defectiveGoods;
 	
@@ -100,11 +101,11 @@ public class Offer implements ITransferObject {
 		this.offerDate = offerDate;
 	}
 
-	public double getPrice() {
+	public BigDecimal getPrice() {
 		return price;
 	}
 
-	public void setPrice(double price) {
+	public void setPrice(BigDecimal price) {
 		this.price = price;
 	}
 
@@ -127,11 +128,11 @@ public class Offer implements ITransferObject {
 	}
 
 	@Column(name="stock_provision")
-	public double getStockProvision() {
+	public BigDecimal getStockProvision() {
 		return stockProvision;
 	}
 
-	public void setStockProvision(double stockProvision) {
+	public void setStockProvision(BigDecimal stockProvision) {
 		this.stockProvision = stockProvision;
 	}
 

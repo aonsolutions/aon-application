@@ -1,5 +1,7 @@
 package com.code.ui.gbp.stats;
 
+import java.math.BigDecimal;
+
 import com.code.gbp.Campaign;
 
 public class CampaignComparer {
@@ -24,23 +26,23 @@ public class CampaignComparer {
 			Campaign campaign_1,
 			Campaign campaign_2,
 			Long supplierCount_1,
-			Double invoiceAmount_1,
+			BigDecimal invoiceAmount_1,
 			Long supplierCount_2,
-			Double invoiceAmount_2,
-			Double offerAmount_1,
-			Double offerAmount_2
+			BigDecimal invoiceAmount_2,
+			BigDecimal offerAmount_1,
+			BigDecimal offerAmount_2
 			){
 		this.supplierType = supplierType;
 		this.campaign_1 = campaign_1;
 		this.campaign_2 = campaign_2;
 		this.supplierCount_1 = supplierCount_1==null?new Integer(0):supplierCount_1;
 		this.supplierCount_2 = supplierCount_2==null?new Integer(0):supplierCount_2;
-		this.invoiceAmount_1 = invoiceAmount_1==null?new Double(0):invoiceAmount_1;
-		this.invoiceAmount_2 = invoiceAmount_2==null?new Double(0):invoiceAmount_2;
+		this.invoiceAmount_1 = invoiceAmount_1==null?new Double(0):new Double(invoiceAmount_1.doubleValue());
+		this.invoiceAmount_2 = invoiceAmount_2==null?new Double(0):new Double(invoiceAmount_2.doubleValue());
 		this.supplierDiff = new Integer(supplierCount_1.intValue() - supplierCount_1.intValue());
 		this.invoiceAmountDiff = new Double(this.invoiceAmount_1.doubleValue() - this.invoiceAmount_2.doubleValue());
-		this.offerAmount_1 = offerAmount_1==null?new Double(0):offerAmount_1;
-		this.offerAmount_2 = offerAmount_2==null?new Double(0):offerAmount_2;
+		this.offerAmount_1 = offerAmount_1==null?new Double(0):new Double(offerAmount_1.doubleValue());
+		this.offerAmount_2 = offerAmount_2==null?new Double(0):new Double(offerAmount_2.doubleValue());
 	}
 
 	public Campaign getCampaign_1() {

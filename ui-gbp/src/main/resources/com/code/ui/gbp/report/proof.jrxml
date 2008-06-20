@@ -34,7 +34,7 @@
 	<field name="accountContact" class="com.code.gbp.AccountContact"/>
 	<field name="invoiceDate" class="java.util.Date"/>
 	<field name="number" class="java.lang.String"/>
-	<field name="amount" class="java.lang.Double"/>
+	<field name="amount" class="java.math.BigDecimal"/>
 	<field name="paymentDate" class="java.util.Date"/>
 	<field name="concept" class="java.lang.String"/>
 	<field name="offer" class="com.code.gbp.Offer"/>
@@ -334,7 +334,7 @@
 					<textElement textAlignment="Left">
 						<font pdfFontName="Helvetica-Bold" size="9" isBold="true"/>
 					</textElement>
-				<textFieldExpression   class="java.lang.Double"><![CDATA[$F{amount}]]></textFieldExpression>
+				<textFieldExpression   class="java.math.BigDecimal"><![CDATA[$F{amount}]]></textFieldExpression>
 				</textField>
 				<staticText>
 					<reportElement

@@ -1,5 +1,7 @@
 package com.code.ui.gbp.stats;
 
+import java.math.BigDecimal;
+
 public class ByAreaEvolution {
 
 	private String area;
@@ -17,14 +19,14 @@ public class ByAreaEvolution {
 	public ByAreaEvolution	(
 			String area,
 			Long campaigns,
-			Double budget,
-			Double offer,
-			Double invoice){
+			BigDecimal budget,
+			BigDecimal offer,
+			BigDecimal invoice){
 		this.area = area; 
 		this.campaigns = campaigns;
-		this.budget = budget; 
-		this.offer = offer==null?new Double(0):offer;
-		this.invoice = invoice==null?new Double(0):invoice;
+		this.budget = new Double(budget.doubleValue()); 
+		this.offer = offer==null?new Double(0):new Double(offer.doubleValue());
+		this.invoice = invoice==null?new Double(0):new Double(invoice.doubleValue());
 		this.difference = new Double(this.offer.doubleValue() - this.invoice.doubleValue());
 	}
 

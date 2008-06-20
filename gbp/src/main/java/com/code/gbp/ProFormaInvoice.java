@@ -1,5 +1,6 @@
 package com.code.gbp;
 
+import java.math.BigDecimal;
 import java.util.Date;
 
 import javax.persistence.Column;
@@ -36,7 +37,7 @@ public class ProFormaInvoice implements ITransferObject {
 	
 	private String number;
 	
-	private double amount;
+	private BigDecimal amount;
 	
 	private ProFormaInvoiceStatus status;
 	
@@ -127,11 +128,11 @@ public class ProFormaInvoice implements ITransferObject {
 		this.number = number;
 	}
 
-	public double getAmount() {
+	public BigDecimal getAmount() {
 		return amount;
 	}
 
-	public void setAmount(double amount) {
+	public void setAmount(BigDecimal amount) {
 		this.amount = amount;
 	}
 

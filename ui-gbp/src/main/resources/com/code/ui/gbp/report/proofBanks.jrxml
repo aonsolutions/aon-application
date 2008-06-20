@@ -23,7 +23,7 @@
 	<import value="net.sf.jasperreports.engine.*" />
 	<import value="net.sf.jasperreports.engine.data.*" />
 
-	<parameter name="amount" isForPrompting="false" class="java.lang.Double"/>
+	<parameter name="amount" isForPrompting="false" class="java.math.BigDecimal"/>
 
 	<field name="bank" class="com.code.gbp.Bank"/>
 	<field name="percent" class="java.lang.Double"/>

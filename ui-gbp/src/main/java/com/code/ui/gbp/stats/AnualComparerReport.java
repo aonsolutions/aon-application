@@ -1,5 +1,6 @@
 package com.code.ui.gbp.stats;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
@@ -87,12 +88,12 @@ public class AnualComparerReport implements ICollectionProvider {
 		query = s.createQuery(stmt2.toString());
 		query.setDate(0, initDate.getTime());
 		query.setDate(1, endDate.getTime());
-		List<Double> list_2 = query.list();
+		List<BigDecimal> list_2 = query.list();
 
 		query = s.createQuery(stmt3.toString());
 		query.setDate(0, initDate.getTime());
 		query.setDate(1, endDate.getTime());
-		List<Double> list_3 = query.list();
+		List<BigDecimal> list_3 = query.list();
 		
 		AnualComparer ac = new AnualComparer(initDate,endDate,list_1.get(0),list_2.get(0),list_3.get(0));
 		return ac;

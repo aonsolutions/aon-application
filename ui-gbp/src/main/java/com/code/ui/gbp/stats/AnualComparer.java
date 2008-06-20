@@ -1,5 +1,6 @@
 package com.code.ui.gbp.stats;
 
+import java.math.BigDecimal;
 import java.util.GregorianCalendar;
 
 public class AnualComparer {
@@ -18,14 +19,14 @@ public class AnualComparer {
 			GregorianCalendar start,
 			GregorianCalendar end,
 			Long campaignNumber,
-			Double offer,
-			Double invoice
+			BigDecimal offer,
+			BigDecimal invoice
 			){
 		this.start = start;
 		this.end = end;
 		this.campaignNumber = campaignNumber;
-		this.offer = offer==null?new Long(0):offer;
-		this.invoice = invoice==null?new Double(0):invoice;
+		this.offer = offer==null?new Double(0):new Double(offer.doubleValue());
+		this.invoice = invoice==null?new Double(0):new Double(invoice.doubleValue());
 		this.diff = new Double(this.offer.doubleValue() - this.invoice.doubleValue());
 	}
 

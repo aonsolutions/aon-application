@@ -28,7 +28,7 @@
 	<field name="supplier" class="com.code.gbp.Supplier"/>
 	<field name="status" class="com.code.gbp.enumeration.OfferStatus"/>
 	<field name="offerDate" class="java.util.Date"/>
-	<field name="price" class="java.lang.Double"/>
+	<field name="price" class="java.math.BigDecimal"/>
 	<field name="campaign" class="com.code.gbp.Campaign"/>
 
 		<background>
@@ -209,7 +209,7 @@
 					<textElement textAlignment="Left" verticalAlignment="Middle">
 						<font size="8"/>
 					</textElement>
-				<textFieldExpression   class="java.lang.Double"><![CDATA[$F{price}]]></textFieldExpression>
+				<textFieldExpression   class="java.math.BigDecimal"><![CDATA[$F{price}]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement

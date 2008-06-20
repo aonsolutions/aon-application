@@ -1,5 +1,6 @@
 package com.code.gbp;
 
+import java.math.BigDecimal;
 import java.util.Date;
 
 import javax.persistence.Column;
@@ -23,7 +24,7 @@ public class Requirement implements ITransferObject {
 	
 	private DocumentType documentType;
 	
-	private double amount;
+	private BigDecimal amount;
 	
 	private int managerNumber;
 	
@@ -62,11 +63,11 @@ public class Requirement implements ITransferObject {
 		this.documentType = documentType;
 	}
 
-	public double getAmount() {
+	public BigDecimal getAmount() {
 		return amount;
 	}
 
-	public void setAmount(double amount) {
+	public void setAmount(BigDecimal amount) {
 		this.amount = amount;
 	}
 

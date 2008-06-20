@@ -3,6 +3,8 @@
  */
 package com.code.ui.gbp.stats;
 
+import java.math.BigDecimal;
+
 import com.code.gbp.enumeration.SupplierStatus;
 
 public class SupplierEvolution {
@@ -24,17 +26,17 @@ public class SupplierEvolution {
 			SupplierStatus supplierStatus,
 			Integer campaignId,
 			String campaignName,
-			Double offer,
-			Double invoice,
-			Double invoiceTotal) {
+			BigDecimal offer,
+			BigDecimal invoice,
+			BigDecimal invoiceTotal) {
 		this.supplierId = supplierId;
 		this.supplierName = supplierName;
 		this.supplierStatus = supplierStatus;
 		this.campaignId = campaignId;
 		this.campaignName = campaignName;
-		this.offer = offer;
-		this.invoice = invoice;
-		this.invoiceTotal = invoiceTotal;
+		this.offer = offer.doubleValue();
+		this.invoice = invoice.doubleValue();
+		this.invoiceTotal = invoiceTotal.doubleValue();
 	}
 
 			
