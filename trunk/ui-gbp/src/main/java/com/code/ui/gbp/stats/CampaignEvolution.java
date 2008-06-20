@@ -3,8 +3,9 @@
  */
 package com.code.ui.gbp.stats;
 
+import java.math.BigDecimal;
+
 import com.code.gbp.Campaign;
-import com.code.gbp.CampaignSupplier;
 import com.code.gbp.Supplier;
 
 public class CampaignEvolution {
@@ -18,14 +19,14 @@ public class CampaignEvolution {
 	public CampaignEvolution() {
 	}
 
-	public CampaignEvolution(Campaign campaign, Supplier supplier, Double campaignTotal,
-			Long invoiceCount, Double invoice) {
+	public CampaignEvolution(Campaign campaign, Supplier supplier, BigDecimal campaignTotal,
+			Long invoiceCount, BigDecimal invoice) {
 
 		this.campaign = campaign;
 		this.supplier = supplier;
-		this.campaignTotal = campaignTotal;
+		this.campaignTotal = campaignTotal.doubleValue();
 		this.invoiceCount = invoiceCount;
-		this.invoice = invoice;
+		this.invoice = invoice.doubleValue();
 	}
 
 	public Campaign getCampaign() {

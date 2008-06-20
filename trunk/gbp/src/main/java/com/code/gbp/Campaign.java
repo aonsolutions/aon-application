@@ -1,5 +1,6 @@
 package com.code.gbp;
 
+import java.math.BigDecimal;
 import java.util.Date;
 
 import javax.persistence.Column;
@@ -31,7 +32,7 @@ public class Campaign implements ITransferObject {
 	
 	private Date endDate;
 	
-	private Double budget;
+	private BigDecimal budget;
 	
 	private Date offerDueDate;
 	
@@ -96,12 +97,11 @@ public class Campaign implements ITransferObject {
 		this.endDate = endDate;
 	}
 
-	//@Column(name="budget",columnDefinition="DOUBLE",precision=15,scale=3)
-	public Double getBudget() {
+	public BigDecimal getBudget() {
 		return budget;
 	}
 
-	public void setBudget(Double budget) {
+	public void setBudget(BigDecimal budget) {
 		this.budget = budget;
 	}
 

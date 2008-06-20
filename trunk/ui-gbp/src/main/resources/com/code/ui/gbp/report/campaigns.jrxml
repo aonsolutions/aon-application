@@ -30,7 +30,7 @@
 	<field name="startDate" class="java.util.Date"/>
 	<field name="endDate" class="java.util.Date"/>
 	<field name="code" class="java.lang.Integer"/>
-	<field name="budget" class="java.lang.Double"/>
+	<field name="budget" class="java.math.BigDecimal"/>
 
 		<background>
 			<band height="0"  isSplitAllowed="true" >
@@ -252,7 +252,7 @@
 					<textElement textAlignment="Left" verticalAlignment="Middle">
 						<font size="8"/>
 					</textElement>
-				<textFieldExpression   class="java.lang.Double"><![CDATA[$F{budget}]]></textFieldExpression>
+				<textFieldExpression   class="java.math.BigDecimal"><![CDATA[$F{budget}]]></textFieldExpression>
 				</textField>
 			</band>
 		</detail>

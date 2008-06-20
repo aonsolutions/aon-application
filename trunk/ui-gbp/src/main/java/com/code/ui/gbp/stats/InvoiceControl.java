@@ -1,5 +1,6 @@
 package com.code.ui.gbp.stats;
 
+import java.math.BigDecimal;
 import java.util.Date;
 
 import com.code.gbp.enumeration.SupplierStatus;
@@ -37,7 +38,7 @@ public class InvoiceControl {
 			SupplierStatus supplierStatus,
 			String invoiceConcept,
 			String number,
-			Double amount,
+			BigDecimal amount,
 			Date invoiceDate,
 			Date paymentDate
 			){
@@ -48,7 +49,7 @@ public class InvoiceControl {
 		this.supplierStatus = supplierStatus;
 		this.invoiceConcept = invoiceConcept;
 		this.number = number;
-		this.amount = amount==null?new Double(0):amount;
+		this.amount = amount==null?new Double(0):new Double(amount.doubleValue());
 		this.invoiceDate = invoiceDate;
 		this.paymentDate = paymentDate;
 	}

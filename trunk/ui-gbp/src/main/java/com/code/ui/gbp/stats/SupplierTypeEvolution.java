@@ -3,6 +3,7 @@
  */
 package com.code.ui.gbp.stats;
 
+import java.math.BigDecimal;
 import java.util.Date;
 
 public class SupplierTypeEvolution {
@@ -21,14 +22,14 @@ public class SupplierTypeEvolution {
 			String supplierTypeName,
 			Integer campaignId,
 			String campaignName,
-			double offer,
-			double invoice) {
+			BigDecimal offer,
+			BigDecimal invoice) {
 		this.supplierTypeId = supplierTypeId;
 		this.supplierTypeName = supplierTypeName;
 		this.campaignId = campaignId;
 		this.campaignName = campaignName;
-		this.offer = offer;
-		this.invoice = invoice;
+		this.offer = offer.doubleValue();
+		this.invoice = invoice.doubleValue();
 	}
 
 	public String getSupplierTypeName() {

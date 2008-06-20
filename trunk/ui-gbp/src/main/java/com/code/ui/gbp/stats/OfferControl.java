@@ -1,5 +1,7 @@
 package com.code.ui.gbp.stats;
 
+import java.math.BigDecimal;
+
 import com.code.gbp.enumeration.CampaignStatus;
 
 public class OfferControl {
@@ -22,13 +24,13 @@ public class OfferControl {
 	public OfferControl	(Integer campaignCode,
 			String campaignName,
 			CampaignStatus campaignStatus,
-			Double offer,
-			Double invoice){
+			BigDecimal offer,
+			BigDecimal invoice){
 		this.campaignCode = campaignCode; 
 		this.campaignName = campaignName;
 		this.campaignStatus = campaignStatus; 
-		this.offer = offer==null?new Double(0):offer;
-		this.invoice = invoice==null?new Double(0):invoice;
+		this.offer = offer==null?new Double(0):new Double(offer.doubleValue());
+		this.invoice = invoice==null?new Double(0):new Double(invoice.doubleValue());
 		this.difference = new Double(this.offer.doubleValue() - this.invoice.doubleValue());
 	}
 
