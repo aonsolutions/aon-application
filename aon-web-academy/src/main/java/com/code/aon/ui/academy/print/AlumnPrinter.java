@@ -10,6 +10,8 @@ import java.util.logging.Logger;
 
 import com.code.aon.academy.CourseAlumn;
 import com.code.aon.academy.dao.IAcademyAlias;
+import com.code.aon.academy.enumeration.CourseAlumnStatus;
+import com.code.aon.academy.enumeration.CourseStatus;
 import com.code.aon.academy.print.ReportAlumn;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.ICollectionProvider;
@@ -96,19 +98,23 @@ public class AlumnPrinter implements ICollectionProvider{
 	
 	@SuppressWarnings("unchecked")
 	protected String obtainCourseCode(Registry registry) {
+		String course = "";
 		try {
 			IManagerBean courseAlumnBean = BeanManager.getManagerBean(CourseAlumn.class);
 			Criteria criteria = new Criteria();
 			criteria.addEqualExpression(courseAlumnBean.getFieldName(IAcademyAlias.COURSE_ALUMN_CUSTOMER_ID), registry.getId());
+			criteria.addEqualExpression(courseAlumnBean.getFieldName(IAcademyAlias.COURSE_ALUMN_COURSE_STATUS), CourseStatus.ACTIVE);
+			criteria.addEqualExpression(courseAlumnBean.getFieldName(IAcademyAlias.COURSE_ALUMN_STATUS), CourseAlumnStatus.ACTIVE);
+			criteria.addOrder(courseAlumnBean.getFieldName(IAcademyAlias.COURSE_ALUMN_COURSE_CODE));
 			Iterator iter = courseAlumnBean.getList(criteria).iterator();
-			if(iter.hasNext()){
+			while(iter.hasNext()){
 				CourseAlumn courseAlumn = (CourseAlumn)iter.next();
-				return courseAlumn.getCourse().getCode();
+				course += (course.equals("")?"":" | ") + courseAlumn.getCourse().getCode();
 			}
 		} catch (ManagerBeanException e) {
 			LOGGER.log(Level.SEVERE, "Error obtaining course of alumn with id= " + registry.getId(), e);
 		}
-		return null;
+		return course;
 	}
 
 	@SuppressWarnings("unchecked")
