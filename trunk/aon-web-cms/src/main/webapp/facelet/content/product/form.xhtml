@@ -105,6 +105,18 @@
 								<f:selectItems value="#{collections.categories}" />
 							</aon:selectOneMenu> 
 							
+							<aon:outputLabel for="productDetail_price"
+								value="#{appBundle.product_price}" />
+							<aon:inputText id="productDetail_price"
+								size="20" maxlength="15"
+								value="#{product.to.price}" />
+
+							<aon:outputLabel for="productDetail_price2"
+								value="#{appBundle.product_price}" />
+							<aon:inputText id="productDetail_price2"
+								size="20" maxlength="15"
+								value="#{product.to.offerPrice}" />
+								
 					</aon:panelGrid>
 
 			</aon:div>

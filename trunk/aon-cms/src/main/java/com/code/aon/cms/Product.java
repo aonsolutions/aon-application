@@ -1,5 +1,6 @@
 package com.code.aon.cms;
 
+import java.math.BigDecimal;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
@@ -45,12 +46,12 @@ public class Product implements ITransferObject{
     /**
      * Price
      */
-	private double price;
+	private BigDecimal price;
 	
     /**
      * Offer Price
      */
-	private double offerPrice;
+	private BigDecimal offerPrice;
 	
     /**
      * Brand
@@ -104,20 +105,20 @@ public class Product implements ITransferObject{
 	}
 
 	@Column(name = "price")
-	public double getPrice() {
+	public BigDecimal getPrice() {
 		return price;
 	}
 
-	public void setPrice(double price) {
+	public void setPrice(BigDecimal price) {
 		this.price = price;
 	}
 
 	@Column(name = "offer_price")
-	public double getOfferPrice() {
+	public BigDecimal getOfferPrice() {
 		return offerPrice;
 	}
 
-	public void setOfferPrice(double offerPrice) {
+	public void setOfferPrice(BigDecimal offerPrice) {
 		this.offerPrice = offerPrice;
 	}
 

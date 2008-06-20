@@ -27,7 +27,7 @@ public class FTPUtil {
 	public static boolean uploadFTP(String dest, String source) throws IOException {
 		GeneratorStatusController status = (GeneratorStatusController)AonUtil.getRegisteredBean("generator_status");
 		status.addMessage("Publicando via FTP");
-		status.addMessage("Connecting....");
+		status.addMessage("Conectando....");
 		
 		boolean error = true;
 		config = ControllerUtil.getCurrentConfig();
@@ -66,6 +66,7 @@ public class FTPUtil {
 					}
 				}
 				ftpDir(sourceFolder, ftp, destinationFolder);
+				status.addMessage("Publicacion finalizada.");
 			}
 			else {
 				status.addMessage("No hubo conexion con el servidor.");
@@ -81,7 +82,6 @@ public class FTPUtil {
 			status.addMessage("Desconectado.");
 			return error;
 		}
-		
 	}
 
 	public static String invalidFolder[] = {"ckfinder", "_thumbs"};

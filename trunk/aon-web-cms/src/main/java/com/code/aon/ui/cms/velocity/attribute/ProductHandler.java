@@ -11,9 +11,9 @@ public class ProductHandler {
 
 	private boolean active;
 	
-	private double price;
+	private String price;
 	
-	private double offerPrice;
+	private String offerPrice;
 	
 	private BrandHandler brand;
 	
@@ -25,8 +25,8 @@ public class ProductHandler {
 		this.alias = detail.getProduct().getAlias();
 		this.label = detail.getLabel();
 		this.active = detail.getProduct().isActive();
-		this.price = detail.getProduct().getPrice();
-		this.offerPrice = detail.getProduct().getOfferPrice();
+		this.price = detail.getProduct().getPrice().toString();
+		this.offerPrice = detail.getProduct().getOfferPrice().toString();
 		this.brand = new BrandHandler(detail.getProduct().getBrand());
 		this.productCategory = new ProductCategoryHandler(detail.getProduct().getProductCategory());
 		this.url = Templates.PRODUCT.getHtmlName();
@@ -45,11 +45,11 @@ public class ProductHandler {
 		return active;
 	}
 
-	public double getPrice() {
+	public String getPrice() {
 		return price;
 	}
 
-	public double getOfferPrice() {
+	public String getOfferPrice() {
 		return offerPrice;
 	}
 
