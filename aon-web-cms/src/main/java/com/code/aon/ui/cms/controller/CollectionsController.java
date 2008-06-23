@@ -667,21 +667,23 @@ public class CollectionsController {
 		criteria.addEqualExpression(categoryBean.getFieldName(ICMSAlias.PRODUCT_CATEGORY_ACTIVE),true);
 		criteria.addNullExpression(categoryBean.getFieldName(ICMSAlias.PRODUCT_CATEGORY_PARENT_ID));
 		List<ITransferObject> list = (List<ITransferObject>)categoryBean.getList(criteria);
-		SelectItem item;
 		for (int i = 0; i < list.size(); i++) {
+			SelectItem item;
 			ProductCategory pcd = (ProductCategory)list.get(i);
-			item = new SelectItem(pcd.getId(),pcd.getAlias());
-			categories.add(item);
 			IManagerBean categorySubCatBean = BeanManager.getManagerBean(ProductCategory.class);
 			Criteria criteriaSubCat = new Criteria();
 			criteriaSubCat.addEqualExpression(categorySubCatBean.getFieldName(ICMSAlias.PRODUCT_CATEGORY_ACTIVE),true);
 			criteriaSubCat.addExpression(categorySubCatBean.getFieldName(ICMSAlias.PRODUCT_CATEGORY_PARENT_ID), ""+pcd.getId());
 			List<ITransferObject> listSubCat = (List<ITransferObject>)categorySubCatBean.getList(criteriaSubCat);
+			SelectItem[] subList = new SelectItem[listSubCat.size()];
 			for (int j = 0; j < listSubCat.size(); j++) {
+				SelectItem subItem;
 				ProductCategory pcdSubCat = (ProductCategory)listSubCat.get(j);
-				item = new SelectItem(pcdSubCat.getId(),"-"+pcd.getAlias());
-				categories.add(item);
+				subItem = new SelectItem(pcdSubCat.getId(),"-"+pcdSubCat.getAlias());
+				subList[j] = subItem; 
 			}
+			item = new SelectItemGroup(pcd.getAlias(),pcd.getAlias(),true,subList);
+			categories.add(item);
 		}
 		return categories;
 	}

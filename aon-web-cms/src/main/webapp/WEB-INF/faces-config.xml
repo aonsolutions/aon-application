@@ -10,6 +10,7 @@
 		</message-bundle>
 		<locale-config>
 			<default-locale>es</default-locale>
+			<supported-locale>en</supported-locale>
 		</locale-config>
 	</application>
 
