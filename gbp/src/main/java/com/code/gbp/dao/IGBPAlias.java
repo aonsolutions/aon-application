@@ -464,10 +464,16 @@ public interface IGBPAlias {
 	String  OFFER_SUPPLIER_ID = OFFER_ENTRY.getAliasNames()[16];
 
 	/** 
+	* Alias value: Offer_supplier_name
+	* Hibernate value: Offer.supplier.name
+	*/
+	String  OFFER_SUPPLIER_NAME = OFFER_ENTRY.getAliasNames()[17];
+
+	/** 
 	* Alias value: Offer_type
 	* Hibernate value: Offer.type
 	*/
-	String  OFFER_TYPE = OFFER_ENTRY.getAliasNames()[17];
+	String  OFFER_TYPE = OFFER_ENTRY.getAliasNames()[18];
 
 
 
@@ -526,64 +532,76 @@ public interface IGBPAlias {
 	String  PRO_FORMA_INVOICE_CAMPAIGN_CODE = PRO_FORMA_INVOICE_ENTRY.getAliasNames()[3];
 
 	/** 
+	* Alias value: ProFormaInvoice_concept
+	* Hibernate value: ProFormaInvoice.concept
+	*/
+	String  PRO_FORMA_INVOICE_CONCEPT = PRO_FORMA_INVOICE_ENTRY.getAliasNames()[4];
+
+	/** 
 	* Alias value: ProFormaInvoice_costType
 	* Hibernate value: ProFormaInvoice.costType
 	*/
-	String  PRO_FORMA_INVOICE_COST_TYPE = PRO_FORMA_INVOICE_ENTRY.getAliasNames()[4];
+	String  PRO_FORMA_INVOICE_COST_TYPE = PRO_FORMA_INVOICE_ENTRY.getAliasNames()[5];
 
 	/** 
 	* Alias value: ProFormaInvoice_id
 	* Hibernate value: ProFormaInvoice.id
 	*/
-	String  PRO_FORMA_INVOICE_ID = PRO_FORMA_INVOICE_ENTRY.getAliasNames()[5];
+	String  PRO_FORMA_INVOICE_ID = PRO_FORMA_INVOICE_ENTRY.getAliasNames()[6];
 
 	/** 
 	* Alias value: ProFormaInvoice_invoiceDate
 	* Hibernate value: ProFormaInvoice.invoiceDate
 	*/
-	String  PRO_FORMA_INVOICE_INVOICE_DATE = PRO_FORMA_INVOICE_ENTRY.getAliasNames()[6];
+	String  PRO_FORMA_INVOICE_INVOICE_DATE = PRO_FORMA_INVOICE_ENTRY.getAliasNames()[7];
 
 	/** 
 	* Alias value: ProFormaInvoice_number
 	* Hibernate value: ProFormaInvoice.number
 	*/
-	String  PRO_FORMA_INVOICE_NUMBER = PRO_FORMA_INVOICE_ENTRY.getAliasNames()[7];
+	String  PRO_FORMA_INVOICE_NUMBER = PRO_FORMA_INVOICE_ENTRY.getAliasNames()[8];
 
 	/** 
 	* Alias value: ProFormaInvoice_offer_id
 	* Hibernate value: ProFormaInvoice.offer_id
 	*/
-	String  PRO_FORMA_INVOICE_OFFER_ID = PRO_FORMA_INVOICE_ENTRY.getAliasNames()[8];
+	String  PRO_FORMA_INVOICE_OFFER_ID = PRO_FORMA_INVOICE_ENTRY.getAliasNames()[9];
 
 	/** 
 	* Alias value: ProFormaInvoice_office_id
 	* Hibernate value: ProFormaInvoice.office.id
 	*/
-	String  PRO_FORMA_INVOICE_OFFICE_ID = PRO_FORMA_INVOICE_ENTRY.getAliasNames()[9];
+	String  PRO_FORMA_INVOICE_OFFICE_ID = PRO_FORMA_INVOICE_ENTRY.getAliasNames()[10];
 
 	/** 
 	* Alias value: ProFormaInvoice_paymentDate
 	* Hibernate value: ProFormaInvoice.paymentDate
 	*/
-	String  PRO_FORMA_INVOICE_PAYMENT_DATE = PRO_FORMA_INVOICE_ENTRY.getAliasNames()[10];
+	String  PRO_FORMA_INVOICE_PAYMENT_DATE = PRO_FORMA_INVOICE_ENTRY.getAliasNames()[11];
 
 	/** 
 	* Alias value: ProFormaInvoice_paymentTerm
 	* Hibernate value: ProFormaInvoice.paymentTerm
 	*/
-	String  PRO_FORMA_INVOICE_PAYMENT_TERM = PRO_FORMA_INVOICE_ENTRY.getAliasNames()[11];
+	String  PRO_FORMA_INVOICE_PAYMENT_TERM = PRO_FORMA_INVOICE_ENTRY.getAliasNames()[12];
 
 	/** 
 	* Alias value: ProFormaInvoice_status
 	* Hibernate value: ProFormaInvoice.status
 	*/
-	String  PRO_FORMA_INVOICE_STATUS = PRO_FORMA_INVOICE_ENTRY.getAliasNames()[12];
+	String  PRO_FORMA_INVOICE_STATUS = PRO_FORMA_INVOICE_ENTRY.getAliasNames()[13];
 
 	/** 
 	* Alias value: ProFormaInvoice_supplier_id
 	* Hibernate value: ProFormaInvoice.supplier.id
 	*/
-	String  PRO_FORMA_INVOICE_SUPPLIER_ID = PRO_FORMA_INVOICE_ENTRY.getAliasNames()[13];
+	String  PRO_FORMA_INVOICE_SUPPLIER_ID = PRO_FORMA_INVOICE_ENTRY.getAliasNames()[14];
+
+	/** 
+	* Alias value: ProFormaInvoice_supplier_name
+	* Hibernate value: ProFormaInvoice.supplier.name
+	*/
+	String  PRO_FORMA_INVOICE_SUPPLIER_NAME = PRO_FORMA_INVOICE_ENTRY.getAliasNames()[15];
 
 
 
