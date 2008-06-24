@@ -55,6 +55,13 @@
 
 					<aon:column>
 						<f:facet name="header">
+							<aon:outputText value="#{appBundle.gbp_offer_price}" />
+						</f:facet>
+						<aon:outputText value="#{to.price}"/>
+					</aon:column>
+
+					<aon:column>
+						<f:facet name="header">
 							<aon:outputText value="#{appBundle.gbp_offer_offer_date}" />
 						</f:facet>
 						<aon:outputText value="#{to.offerDate}">
