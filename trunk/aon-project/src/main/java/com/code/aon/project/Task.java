@@ -422,8 +422,8 @@ public class Task implements ITransferObject {
         return getPriority().equals(Priority.LOW);
     }
 	@Transient
-    public boolean isMediumPriority() {
-        return getPriority().equals(Priority.MEDIUM);
+    public boolean isNormalPriority() {
+        return getPriority().equals(Priority.NORMAL);
     }
 	@Transient
     public boolean isNonePriority() {
