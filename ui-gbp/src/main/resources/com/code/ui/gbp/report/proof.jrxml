@@ -443,7 +443,7 @@
 				<staticText>
 					<reportElement
 						x="0"
-						y="221"
+						y="210"
 						width="535"
 						height="14"
 						key="staticText-7"/>
@@ -456,7 +456,7 @@
 				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						x="31"
-						y="235"
+						y="224"
 						width="212"
 						height="13"
 						key="textField-21"/>
@@ -497,7 +497,7 @@
 				<staticText>
 					<reportElement
 						x="0"
-						y="256"
+						y="245"
 						width="140"
 						height="14"
 						key="staticText-10"/>
@@ -511,7 +511,7 @@
 					<reportElement
 						mode="Transparent"
 						x="13"
-						y="304"
+						y="305"
 						width="512"
 						height="17"
 						key="subreport-1"
@@ -523,7 +523,7 @@
 				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						x="0"
-						y="235"
+						y="224"
 						width="31"
 						height="13"
 						key="textField-23"/>
@@ -563,7 +563,7 @@
 					<reportElement
 						mode="Transparent"
 						x="13"
-						y="275"
+						y="282"
 						width="512"
 						height="17"
 						key="subreport-2"
@@ -604,8 +604,8 @@
 				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						x="140"
-						y="256"
-						width="395"
+						y="245"
+						width="281"
 						height="13"
 						key="textField-28"/>
 					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" leftPadding="1" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
@@ -614,32 +614,28 @@
 					</textElement>
 				<textFieldExpression   class="java.lang.String"><![CDATA[$F{offer}.getBreakdown()]]></textFieldExpression>
 				</textField>
-				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+				<line direction="TopDown">
 					<reportElement
-						x="56"
-						y="203"
-						width="479"
-						height="13"
-						key="textField-29"/>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" leftPadding="1" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
-					<textElement textAlignment="Left">
-						<font pdfFontName="Helvetica" size="9" isBold="false"/>
-					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$F{offer}.getBatchConfig().getCode()+" "+$F{offer}.getBatchConfig().getDescription()]]></textFieldExpression>
-				</textField>
-				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+						x="140"
+						y="259"
+						width="281"
+						height="0"
+						key="line-6"/>
+					<graphicElement stretchType="NoStretch"/>
+				</line>
+				<staticText>
 					<reportElement
-						x="0"
-						y="202"
-						width="56"
-						height="13"
-						key="textField-30"/>
+						x="13"
+						y="264"
+						width="408"
+						height="14"
+						key="staticText-11"/>
 					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" leftPadding="1" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
-					<textElement textAlignment="Left">
-						<font pdfFontName="Helvetica-Bold" isBold="true"/>
+					<textElement>
+						<font pdfFontName="Helvetica-Bold" size="10" isBold="true"/>
 					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$R{gbp_offer_batch_config} + ": "]]></textFieldExpression>
-				</textField>
+				<text><![CDATA[Facturar los importes siguientes a las entidades:]]></text>
+				</staticText>
 			</band>
 		</detail>
 		<columnFooter>
