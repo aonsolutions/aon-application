@@ -20,6 +20,8 @@ import com.code.aon.config.User;
 @Table(name="note")
 public class Note implements ITransferObject {
 
+	private static final long serialVersionUID = -4521279825663201587L;
+
 	private Integer id;
 	
     private String subject;
