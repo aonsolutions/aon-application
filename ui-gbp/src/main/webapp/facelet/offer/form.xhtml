@@ -65,9 +65,14 @@
 
 					<aon:outputLabel for="Offer_campaign_code"
 						value="#{appBundle.gbp_offer_campaign_code}" />
-					<aon:inputText id="Offer_campaign_code" size="16"
-						disabled="true" styleClass="aon-inputText-disabled"
-						maxlength="16" value="#{offer.to.campaign.code}" />
+					<aon:div>
+						<aon:inputText id="Offer_campaign_code" size="16"
+							disabled="true" styleClass="aon-inputText-disabled"
+							maxlength="16" value="#{offer.to.campaign.code}" />
+						<aon:inputText id="Offer_campaign_name" size="60"
+							disabled="true" styleClass="aon-inputText-disabled"
+							value="#{offer.to.campaign.name}" />
+					</aon:div>
 
 					<aon:outputLabel for="Offer_supplier"
 						value="#{appBundle.gbp_offer_supplier}" />

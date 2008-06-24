@@ -91,7 +91,7 @@
 					<textElement textAlignment="Left" verticalAlignment="Middle">
 						<font size="8"/>
 					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[""+$F{proFormaInvoice}.getCampaign().getCode()]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{proFormaInvoice}.getCampaign().getCode()+" "+$F{proFormaInvoice}.getCampaign().getName()]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement

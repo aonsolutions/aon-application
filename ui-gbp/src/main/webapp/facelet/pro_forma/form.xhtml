@@ -63,9 +63,14 @@
 
 					<aon:outputLabel for="ProFormaInvoice_campaign_code"
 						value="#{appBundle.gbp_proforma_invoice_campaign_code}" />
-					<aon:inputText id="ProFormaInvoice_campaign_code" size="16"
-						disabled="true" styleClass="aon-inputText-disabled"
-						maxlength="16" value="#{proForma.to.campaign.code}" />
+					<aon:div>
+						<aon:inputText id="ProFormaInvoice_campaign_code" size="16"
+							disabled="true" styleClass="aon-inputText-disabled"
+							maxlength="16" value="#{proForma.to.campaign.code}" />
+						<aon:inputText id="ProFormaInvoice_campaign_name" size="60"
+							disabled="true" styleClass="aon-inputText-disabled"
+							value="#{proForma.to.campaign.name}" />
+					</aon:div>
 
 					<aon:outputLabel for="ProFormaInvoice_supplier"
 						value="#{appBundle.gbp_proforma_invoice_supplier}" />
