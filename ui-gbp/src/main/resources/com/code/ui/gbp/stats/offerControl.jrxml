@@ -85,7 +85,7 @@
 				</textField>
 				<textField isStretchWithOverflow="false" pattern="dd/MM/yyyy" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
-						x="376"
+						x="366"
 						y="24"
 						width="79"
 						height="16"
@@ -99,7 +99,7 @@
 				<staticText>
 					<reportElement
 						x="448"
-						y="18"
+						y="25"
 						width="6"
 						height="13"
 						key="staticText-1"/>
