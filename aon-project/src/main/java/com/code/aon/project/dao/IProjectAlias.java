@@ -379,7 +379,7 @@ public interface IProjectAlias {
 
 	/** 
 	* Alias value: Task_customer_id
-	* Hibernate value: Task.dossier.customer.id
+	* Hibernate value: Task.dossier<customer.id
 	*/
 	String  TASK_CUSTOMER_ID = TASK_ENTRY.getAliasNames()[17];
 
