@@ -2,7 +2,8 @@
 <html xmlns="http://www.w3.org/1999/xhtml"
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:f="http://java.sun.com/jsf/core"
-	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a4j="http://richfaces.org/a4j"
 	xmlns:aon="http://www.code.es/aon-rich-components">
 <body>
 
@@ -25,12 +26,12 @@
 
 					<!-- start toolbar navigation -->
 					<aon:div styleClass="aon-finding-toolbar-item-group">
-						<aon:commandButton id="reset" value="#{bundle.aon_reset}"
+						<h:commandButton id="reset" value="#{bundle.aon_reset}"
 							action="dossier_type_form"
 							actionListener="#{dossierType.onReset}"
 							styleClass="aon-finding-toolbar-item aon-icon-reset"
 							accesskey="#{bundle.aon_key_new}" />
-						<aon:commandButton id="search" value="#{bundle.aon_search}"
+						<h:commandButton id="search" value="#{bundle.aon_search}"
 							action="dossier_type_search"
 							actionListener="#{dossierType.onEditSearch}"
 							styleClass="aon-finding-toolbar-item aon-icon-search"
@@ -45,11 +46,20 @@
 			<aon:div styleClass="aon-scroll-area">
 				<aon:div styleClass="aon-scroll-area-internal">
 
-					<aon:dataTable id="dossierTypeDataList"
-						value="#{dossierType.model}" var="to" rows="20">
+					<aon:editDataTable id="dossierTypeDataList"
+						value="#{dossierType.model}" var="to" rows="20"
+						columnClasses="aon-editDataTable-iconColumn,aon-editDataTable-text">
 
-						<aon:rowSelector action="dossier_type_form"
-							actionListener="#{dossierType.onSelect}" reRender="content" />
+						<aon:column>
+							<f:facet name="header">
+								<aon:outputText value="&#160;" />
+							</f:facet>
+							<h:commandButton
+								styleClass="aon-icon-commandButton aon-icon-rowSelector"
+								actionListener="#{dossierType.onSelect}"
+								action="dossier_type_form" value="">
+							</h:commandButton>
+						</aon:column>
 
 						<aon:column>
 							<f:facet name="header">
@@ -58,10 +68,10 @@
 							<aon:outputText value="#{to.description}" />
 						</aon:column>
 
-					</aon:dataTable>
+					</aon:editDataTable>
 
-					<aon:dataScroller dataTable="dossierTypeDataList"
-						model="#{dossierType.model}" />
+					<aon:dataScroller for="dossierTypeDataList"
+						rowCount="#{dossierType.model.rowCount}" />
 
 				</aon:div>
 			</aon:div>

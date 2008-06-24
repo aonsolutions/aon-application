@@ -8,26 +8,24 @@
 <ui:composition>
 
 	<aon:editDataTable id="#{dataTable}" value="#{controllerAlias.model}"
-		var="to" rows="20" 
-		columnClasses="aon-editDataTable-iconColumn,aon-editDataTable-textColumn,aon-editDataTable-textColumn,aon-editDataTable-textColumn,aon-editDataTable-buttonsColumn"
-		>
+		var="to" rows="20"
+		columnClasses="aon-editDataTable-iconColumn,aon-editDataTable-textColumn,aon-editDataTable-textColumn,aon-editDataTable-textColumn,aon-editDataTable-buttonsColumn">
 
-		<aon:rowSelector
-			toggleOnClick="#{controllerAlias.to == null}"
-			actionListener="#{controllerAlias.onSelect}" />
 
 		<aon:column>
 			<f:facet name="header">
-				<aon:outputText value="&#160;"/>
+				<aon:outputText value="&#160;" />
 			</f:facet>
-			<aon:outputText value="&#160;"/>
-			<f:facet name="footer">				
-				<aon:commandButton id="reset"
-					value="" rendered="#{!controllerAlias.new}"
+			<aon:commandButton focus="mediaType_edit" 
+				styleClass="aon-icon-commandButton aon-icon-rowSelector"
+				actionListener="#{controllerAlias.onSelect}" />
+			<f:facet name="footer">
+				<aon:commandButton id="reset" value="" focus="mediaType_new"
+					rendered="#{!controllerAlias.new}"
 					actionListener="#{controllerAlias.onReset}"
 					styleClass="aon-editDataTable-button aon-icon-new"
 					accesskey="#{bundle.aon_key_new_line}">
-				</aon:commandButton>				
+				</aon:commandButton>
 			</f:facet>
 		</aon:column>
 
@@ -37,12 +35,14 @@
 			</f:facet>
 			<aon:outputText value="#{to.mediaType}"
 				rendered="#{to!=controllerAlias.to}" />
-			<aon:selectOneMenu value="#{controllerAlias.to.mediaType}"
+			<aon:selectOneMenu id="mediaType_edit"
+				value="#{controllerAlias.to.mediaType}"
 				rendered="#{to==controllerAlias.to}">
 				<f:selectItems value="#{registryCollections.mediaTypes}" />
 			</aon:selectOneMenu>
 			<f:facet name="footer">
-				<aon:selectOneMenu value="#{controllerAlias.to.mediaType}"
+				<aon:selectOneMenu id="mediaType_new"
+					value="#{controllerAlias.to.mediaType}"
 					rendered="#{controllerAlias.new}">
 					<f:selectItems value="#{registryCollections.mediaTypes}" />
 				</aon:selectOneMenu>
@@ -53,16 +53,16 @@
 			<f:facet name="header">
 				<aon:outputText value="#{registryBundle.aon_value}" />
 			</f:facet>
-			<aon:outputText value="#{to.value}" rendered="#{to!=controllerAlias.to}" />
+			<aon:outputText value="#{to.value}"
+				rendered="#{to!=controllerAlias.to}" />
 			<aon:inputText value="#{to.value}" styleClass="aon-form-input-text"
-				rendered="#{to==controllerAlias.to}" required="#{true}" size="40"/>
+				rendered="#{to==controllerAlias.to}" required="#{true}" size="40" />
 			<f:facet name="footer">
 				<aon:div>
 					<aon:outputLabel for="Media" value="#{registryBundle.aon_value}"
 						rendered="#{false}" />
 					<aon:inputText id="Media" value="#{controllerAlias.to.value}"
-						rendered="#{controllerAlias.new}"
-						required="#{true}" size="40" />
+						rendered="#{controllerAlias.new}" required="#{true}" size="40" />
 				</aon:div>
 			</f:facet>
 		</aon:column>
@@ -73,57 +73,67 @@
 			</f:facet>
 			<aon:outputText value="#{to.comment}"
 				rendered="#{to!=controllerAlias.to}" />
-			<aon:inputText value="#{controllerAlias.to.comment}" 
+			<aon:inputText value="#{controllerAlias.to.comment}"
 				rendered="#{to==controllerAlias.to}" size="40" />
-			<f:facet name="footer">	
+			<f:facet name="footer">
 				<aon:inputText value="#{controllerAlias.to.comment}"
-					rendered="#{controllerAlias.new}"
-					size="40" />				
+					rendered="#{controllerAlias.new}" size="40" />
 			</f:facet>
 		</aon:column>
 
 		<aon:column>
 			<f:facet name="header">
-				<aon:outputText value="&#160;"/>
+				<aon:outputText value="&#160;" />
 			</f:facet>
 			<aon:div>
-				<aon:outputText rendered="#{to!=controllerAlias.to}" value="&#160;"/>
+				<aon:outputText rendered="#{to!=controllerAlias.to}" value="&#160;" />
 				<aon:commandButton title="#{bundle.aon_save}"
-					actionListener="#{controllerAlias.onAccept}"
+					onclick="if (!confirm('#{bundle.aon_save_confirm}')) return false;"
 					rendered="#{to==controllerAlias.to}" value=""
 					styleClass="aon-editDataTable-button aon-icon-accept"
-					accesskey="#{bundle.aon_key_save_line}" />
+					accesskey="#{bundle.aon_key_save_line}">
+					<aon:actionListener method="#{controllerAlias.onAccept}" />
+				</aon:commandButton>
 				<aon:commandButton title="#{bundle.aon_cancel}"
-					actionListener="#{controllerAlias.onCancel}" immediate="#{true}"
-					styleClass="aon-editDataTable-button aon-icon-cancel"
-					value="" rendered="#{to==controllerAlias.to}"
-					accesskey="#{bundle.aon_key_cancel_line}" />
-				<aon:commandButton title="#{bundle.aon_remove}"
-					actionListener="#{controllerAlias.onRemove}"
+					onclick="if (!confirm('#{bundle.aon_cancel_confirm}')) return false;"
+					immediate="#{true}"
+					styleClass="aon-editDataTable-button aon-icon-cancel" value=""
 					rendered="#{to==controllerAlias.to}"
-					styleClass="aon-editDataTable-button aon-icon-delete"
-					value="" accesskey="#{bundle.aon_key_remove_line}" />
+					accesskey="#{bundle.aon_key_cancel_line}">
+					<aon:actionListener method="#{controllerAlias.onCancel}" />
+				</aon:commandButton>
+				<aon:commandButton title="#{bundle.aon_remove}"
+					onclick="if (!confirm('#{bundle.aon_remove_confirm}')) return false;"
+					rendered="#{to==controllerAlias.to}"
+					styleClass="aon-editDataTable-button aon-icon-delete" value=""
+					accesskey="#{bundle.aon_key_remove_line}">
+					<aon:actionListener method="#{controllerAlias.onRemove}" />
+				</aon:commandButton>
 			</aon:div>
 			<f:facet name="footer">
 				<aon:div>
-					<aon:outputText rendered="#{!controllerAlias.new}" value="&#160;"/>
+					<aon:outputText rendered="#{!controllerAlias.new}" value="&#160;" />
 					<aon:commandButton title="#{bundle.aon_save}"
-						actionListener="#{controllerAlias.onAccept}"
+						onclick="if (!confirm('#{bundle.aon_save_confirm}')) return false;"
 						rendered="#{controllerAlias.new}" value=""
 						styleClass="aon-editDataTable-button aon-icon-accept"
-						accesskey="#{bundle.aon_key_save_line}" />
-					<aon:commandButton title="#{bundle.aon_cancel}"
-						actionListener="#{controllerAlias.onCancel}" immediate="#{true}"
+						accesskey="#{bundle.aon_key_save_line}">
+						<aon:actionListener method="#{controllerAlias.onAccept}" />
+					</aon:commandButton>
+					<aon:commandButton title="#{bundle.aon_cancel}" immediate="#{true}"
+						onclick="if (!confirm('#{bundle.aon_cancel_confirm}')) return false;"
 						rendered="#{controllerAlias.new}"
-						styleClass="aon-editDataTable-button aon-icon-cancel"
-						value="" accesskey="#{bundle.aon_key_cancel_line}" />
+						styleClass="aon-editDataTable-button aon-icon-cancel" value=""
+						accesskey="#{bundle.aon_key_cancel_line}">
+						<aon:actionListener method="#{controllerAlias.onCancel}" />
+					</aon:commandButton>
 				</aon:div>
 			</f:facet>
 		</aon:column>
 	</aon:editDataTable>
 
-	<aon:dataScroller dataTable="#{dataTable}"
-		model="#{controllerAlias.model}" />
+	<aon:dataScroller for="#{dataTable}"
+		rowCount="#{controllerAlias.model.rowCount}" />
 
 </ui:composition>
 </body>

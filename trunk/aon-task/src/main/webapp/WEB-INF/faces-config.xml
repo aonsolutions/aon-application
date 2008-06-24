@@ -11,6 +11,7 @@
 		<locale-config>
 			<default-locale>es</default-locale>
 		</locale-config>
+		<view-handler>com.sun.facelets.FaceletViewHandler</view-handler>  
 	</application>
 
 	<!--  *************** COLLECTIONS ***************** -->
@@ -25,6 +26,13 @@
 		<managed-bean-name>configCollections</managed-bean-name>
 		<managed-bean-class>
 			com.code.aon.ui.config.controller.ConfigCollectionsController
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
+	<managed-bean>
+		<managed-bean-name>customerCollections</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.customer.controller.CustomerCollectionsController
 		</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
@@ -78,17 +86,9 @@
 			<value>/__theme_images/html/aon-home.jpg</value>
 		</managed-property>
 		<managed-property>
-			<property-name>style</property-name>
-			<value>richCss</value>
-		</managed-property>
-		<managed-property>
-			<property-name>userStyleSheets</property-name>
+			<property-name>styleSheets</property-name>
 			<list-entries>
-				<value>/css/panelPopup.css</value>
-				<value>/css/panelTabSet.css</value>
-				<value>/css/selectInputDate.css</value>
-				<value>/css/outputConnectionStatus.css</value>
-				<value>/css/hyperview.css</value>
+				<value>/aonResource/aon-richCss.css</value>
 			</list-entries>
 		</managed-property>
 		<managed-property>
@@ -108,7 +108,7 @@
 				</map-entry>
 				<map-entry>
 					<key>projectBundle</key>
-					<value>com.code.aon.ui.project.i18n.messages</value>
+					<value>com.code.aon.ui.project.i18n.messagesTask</value>
 				</map-entry>
 				<map-entry>
 					<key>registryBundle</key>

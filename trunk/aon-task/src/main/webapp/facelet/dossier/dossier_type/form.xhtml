@@ -1,12 +1,11 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml"
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a4j="http://richfaces.org/a4j"
 	xmlns:aon="http://www.code.es/aon-rich-components"
-	xmlns:c="http://java.sun.com/jstl/core">
-<body>
-
-<ui:composition template="/facelet/templates/aon.ui.content.xhtml">
+	template="/facelet/templates/aon.ui.content.xhtml">
 
 	<ui:define name="content">
 
@@ -26,36 +25,33 @@
 					</aon:div>
 
 					<aon:div styleClass="aon-finding-toolbar-item-group">
-						<aon:confirmButton id="save" value="#{bundle.aon_save}"
+						<h:commandButton id="save" value="#{bundle.aon_save}"
 							rendered="#{dossierType.to!=null or dossierType.new}"
 							styleClass="aon-finding-toolbar-item aon-icon-accept"
-							confirmTitle="Confirmation Dialog"
-							confirmMessage="#{bundle.aon_save_confirm}"
-							confirmActionListener="#{dossierType.accept}"
+							onclick="return (confirm('#{bundle.aon_save_confirm}'));"
+							actionListener="#{dossierType.accept}"
 							accesskey="#{bundle.aon_key_save}" />
-						<aon:confirmButton id="cancel" reRender="activityTypeDataList"
+						<h:commandButton id="cancel" reRender="activityTypeDataList"
 							value="#{bundle.aon_cancel}"
 							rendered="#{dossierType.to!=null or dossierType.new}"
 							styleClass="aon-finding-toolbar-item aon-icon-cancel"
-							immediate="#{true}" confirmTitle="Confirmation Dialog"
-							confirmMessage="#{bundle.aon_cancel_confirm}"
-							confirmActionListener="#{dossierType.onCancel}"
-							confirmAction="dossier_type_list"
-							accesskey="#{bundle.aon_key_cancel}" />
-						<aon:confirmButton id="remove" value="#{bundle.aon_remove}"
+							immediate="#{true}"
+							onclick="return (confirm('#{bundle.aon_cancel_confirm}'));"
+							actionListener="#{dossierType.onCancel}"
+							action="dossier_type_list" accesskey="#{bundle.aon_key_cancel}" />
+						<h:commandButton id="remove" value="#{bundle.aon_remove}"
 							rendered="#{!dossierType.new}"
 							styleClass="aon-finding-toolbar-item aon-icon-delete"
-							immediate="true" confirmTitle="Confirmation Dialog"
-							confirmMessage="#{bundle.aon_remove_confirm}"
-							confirmActionListener="#{dossierType.onRemove}"
-							confirmAction="dossier_type_list"
-							accesskey="#{bundle.aon_key_remove}" />
-						<aon:commandButton id="search" value="#{bundle.aon_search}"
+							immediate="true"
+							onclick="return (confirm('#{bundle.aon_remove_confirm}'));"
+							actionListener="#{dossierType.onRemove}"
+							action="dossier_type_list" accesskey="#{bundle.aon_key_remove}" />
+						<h:commandButton id="search" value="#{bundle.aon_search}"
 							immediate="true" action="dossier_type_search"
 							actionListener="#{dossierType.onEditSearch}"
 							styleClass="aon-finding-toolbar-item aon-icon-search"
 							accesskey="#{bundle.aon_key_search}" />
-						<aon:commandButton id="reset" value="#{bundle.aon_reset}"
+						<h:commandButton id="reset" value="#{bundle.aon_reset}"
 							actionListener="#{dossierType.onReset}"
 							rendered="#{!dossierType.new}"
 							styleClass="aon-finding-toolbar-item aon-icon-reset"
@@ -89,17 +85,17 @@
 									aon-editDataTable-textColumn,
 									aon-editDataTable-buttonsColumn">
 
-							<aon:rowSelector toggleOnClick="#{activityType.to == null}"
-								actionListener="#{activityType.onSelect}" />
-
 							<aon:column>
 								<f:facet name="header">
 									<aon:outputText value="&#160;" />
 								</f:facet>
-								<aon:outputText value="&#160;" />
+								<aon:commandButton focus="description_edit"
+									styleClass="aon-icon-commandButton aon-icon-rowSelector"
+									actionListener="#{activityType.onSelect}" />
 								<f:facet name="footer">
 									<aon:div>
 										<aon:commandButton alt="[#{bundle.aon_reset}]"
+											focus="description_new"
 											styleClass="aon-editDataTable-button aon-icon-new"
 											actionListener="#{activityType.onReset}" value=""
 											rendered="#{!activityType.new}"
@@ -115,11 +111,11 @@
 								<aon:outputText value="#{to.description}"
 									rendered="#{to!=activityType.to}" />
 								<aon:inputText styleClass="aon-form-input-text " required="true"
-									rendered="#{to==activityType.to}" size="60"
-									value="#{activityType.to.description}" maxlength="45" />
+									id="description_edit" rendered="#{to==activityType.to}"
+									size="60" value="#{activityType.to.description}" maxlength="45" />
 								<f:facet name="footer">
 									<aon:inputText styleClass="aon-form-input-text" required="true"
-										rendered="#{activityType.new}" size="60"
+										id="description_new" rendered="#{activityType.new}" size="60"
 										value="#{activityType.to.description}" maxlength="45" />
 								</f:facet>
 							</aon:column>
@@ -129,36 +125,52 @@
 									<aon:outputText value="&#160;" />
 								</f:facet>
 								<aon:div>
-									<aon:outputText rendered="#{to!=activityType.to}" value="&#160;" />
+									<aon:outputText rendered="#{to!=activityType.to}"
+										value="&#160;" />
 									<aon:commandButton title="#{bundle.aon_save}"
-										actionListener="#{activityType.onAccept}"
+										onclick="if (!confirm('#{bundle.aon_save_confirm}')) return false;"
 										rendered="#{to==activityType.to}" value=""
 										styleClass="aon-editDataTable-button aon-icon-accept"
-										accesskey="#{bundle.aon_key_save_line}" />
+										accesskey="#{bundle.aon_key_save_line}">
+										<aon:actionListener method="#{activityType.onAccept}" />
+									</aon:commandButton>
 									<aon:commandButton title="#{bundle.aon_cancel}"
-										actionListener="#{activityType.onCancel}" immediate="#{true}"
-										styleClass="aon-editDataTable-button aon-icon-cancel"
-										value="" rendered="#{to==activityType.to}"
-										accesskey="#{bundle.aon_key_cancel_line}" />
-									<aon:commandButton title="#{bundle.aon_remove}"
-										actionListener="#{activityType.onRemove}"
+										immediate="#{true}"
+										onclick="if (!confirm('#{bundle.aon_cancel_confirm}')) return false;"
+										styleClass="aon-editDataTable-button aon-icon-cancel" value=""
 										rendered="#{to==activityType.to}"
-										styleClass="aon-editDataTable-button aon-icon-delete"
-										value="" accesskey="#{bundle.aon_key_remove_line}" />
+										accesskey="#{bundle.aon_key_cancel_line}">
+										<aon:actionListener method="#{activityType.onCancel}" />
+									</aon:commandButton>
+
+									<aon:commandButton title="#{bundle.aon_remove}"
+										rendered="#{to==activityType.to}"
+										onclick="if (!confirm('#{bundle.aon_remove_confirm}')) return false;"
+										styleClass="aon-editDataTable-button aon-icon-delete" value=""
+										accesskey="#{bundle.aon_key_remove_line}">
+										<aon:actionListener method="#{activityType.onRemove}" />
+									</aon:commandButton>
+
 								</aon:div>
+
 								<f:facet name="footer">
 									<aon:div>
 										<aon:outputText rendered="#{!activityType.new}" value="&#160;" />
 										<aon:commandButton title="#{bundle.aon_save}"
-											actionListener="#{activityType.onAccept}"
+											onclick="if (!confirm('#{bundle.aon_save_confirm}')) return false;"
 											rendered="#{activityType.new}" value=""
 											styleClass="aon-editDataTable-button aon-icon-accept"
-											accesskey="#{bundle.aon_key_save_line}" />
+											accesskey="#{bundle.aon_key_save_line}">
+											<aon:actionListener method="#{activityType.onAccept}" />
+										</aon:commandButton>
 										<aon:commandButton title="#{bundle.aon_cancel}"
-											actionListener="#{activityType.onCancel}" immediate="#{true}"
+											immediate="#{true}"
+											onclick="if (!confirm('#{bundle.aon_cancel_confirm}')) return false;"
 											rendered="#{activityType.new}"
-											styleClass="aon-editDataTable-button aon-icon-cancel" 
-											value="" accesskey="#{bundle.aon_key_cancel_line}" />
+											styleClass="aon-editDataTable-button aon-icon-cancel"
+											value="" accesskey="#{bundle.aon_key_cancel_line}">
+											<aon:actionListener method="#{activityType.onCancel}" />
+										</aon:commandButton>
 									</aon:div>
 								</f:facet>
 							</aon:column>
@@ -171,6 +183,3 @@
 
 	</ui:define>
 </ui:composition>
-
-</body>
-</html>

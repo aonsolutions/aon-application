@@ -9,15 +9,15 @@
 	<navigation-rule>
 		<navigation-case>
 			<from-outcome>dossier_type_list</from-outcome>
-			<to-view-id>/facelet/dossier/dossier_type/list.xhtml</to-view-id>
+			<to-view-id>/facelet/dossier/dossier_type/list.jsf</to-view-id>
 		</navigation-case>
 		<navigation-case>
 			<from-outcome>dossier_type_form</from-outcome>
-			<to-view-id>/facelet/dossier/dossier_type/form.xhtml</to-view-id>
+			<to-view-id>/facelet/dossier/dossier_type/form.jsf</to-view-id>
 		</navigation-case>
 		<navigation-case>
 			<from-outcome>dossier_type_search</from-outcome>
-			<to-view-id>/facelet/dossier/dossier_type/search.xhtml</to-view-id>
+			<to-view-id>/facelet/dossier/dossier_type/search.jsf</to-view-id>
 		</navigation-case>
 	</navigation-rule>	
 
@@ -25,15 +25,15 @@
 	<navigation-rule>
 		<navigation-case>
 			<from-outcome>employee_list</from-outcome>
-			<to-view-id>/facelet/employee/list.xhtml</to-view-id>
+			<to-view-id>/facelet/employee/list.jsf</to-view-id>
 		</navigation-case>
 		<navigation-case>
 			<from-outcome>employee_form</from-outcome>
-			<to-view-id>/facelet/employee/form.xhtml</to-view-id>
+			<to-view-id>/facelet/employee/form.jsf</to-view-id>
 		</navigation-case>
 		<navigation-case>
 			<from-outcome>employee_search</from-outcome>
-			<to-view-id>/facelet/employee/search.xhtml</to-view-id>
+			<to-view-id>/facelet/employee/search.jsf</to-view-id>
 		</navigation-case>
 	</navigation-rule>	
 	
@@ -41,15 +41,15 @@
 	<navigation-rule>
 		<navigation-case>
 			<from-outcome>customer_list</from-outcome>
-			<to-view-id>/facelet/customer/list.xhtml</to-view-id>
+			<to-view-id>/facelet/customer/list.jsf</to-view-id>
 		</navigation-case>
 		<navigation-case>
 			<from-outcome>customer_form</from-outcome>
-			<to-view-id>/facelet/customer/form.xhtml</to-view-id>
+			<to-view-id>/facelet/customer/form.jsf</to-view-id>
 		</navigation-case>
 		<navigation-case>
 			<from-outcome>customer_search</from-outcome>
-			<to-view-id>/facelet/customer/search.xhtml</to-view-id>
+			<to-view-id>/facelet/customer/search.jsf</to-view-id>
 		</navigation-case>
 	</navigation-rule>	
 
@@ -57,15 +57,15 @@
 	<navigation-rule>
 		<navigation-case>
 			<from-outcome>dossier_list</from-outcome>
-			<to-view-id>/facelet/dossier/list.xhtml</to-view-id>
+			<to-view-id>/facelet/dossier/list.jsf</to-view-id>
 		</navigation-case>
 		<navigation-case>
 			<from-outcome>dossier_form</from-outcome>
-			<to-view-id>/facelet/dossier/form.xhtml</to-view-id>
+			<to-view-id>/facelet/dossier/form.jsf</to-view-id>
 		</navigation-case>
 		<navigation-case>
 			<from-outcome>dossier_search</from-outcome>
-			<to-view-id>/facelet/dossier/search.xhtml</to-view-id>
+			<to-view-id>/facelet/dossier/search.jsf</to-view-id>
 		</navigation-case>
 	</navigation-rule>	
 
@@ -73,15 +73,15 @@
 	<navigation-rule>
 		<navigation-case>
 			<from-outcome>task_list</from-outcome>
-			<to-view-id>/facelet/task/list.xhtml</to-view-id>
+			<to-view-id>/facelet/task/list.jsf</to-view-id>
 		</navigation-case>
 		<navigation-case>
 	        <from-outcome>task_form</from-outcome>
-	        <to-view-id>/facelet/task/form.xhtml</to-view-id>
+	        <to-view-id>/facelet/task/form.jsf</to-view-id>
 	    </navigation-case>
 		<navigation-case>
 	        <from-outcome>task_search</from-outcome>
-	        <to-view-id>/facelet/task/search.xhtml</to-view-id>
+	        <to-view-id>/facelet/task/search.jsf</to-view-id>
 	    </navigation-case>
 	</navigation-rule>
   
@@ -89,11 +89,11 @@
 	<navigation-rule>
 		<navigation-case>
 			<from-outcome>task_monitor_list</from-outcome>
-			<to-view-id>/facelet/task/monitor/list.xhtml</to-view-id>
+			<to-view-id>/facelet/task/monitor/list.jsf</to-view-id>
 		</navigation-case>
 		<navigation-case>
 	        <from-outcome>task_monitor_search</from-outcome>
-	        <to-view-id>/facelet/task/monitor/search.xhtml</to-view-id>
+	        <to-view-id>/facelet/task/monitor/search.jsf</to-view-id>
 	    </navigation-case>
 	</navigation-rule>
 	
@@ -101,15 +101,15 @@
 	<navigation-rule>
 		<navigation-case>
 			<from-outcome>period_task_list</from-outcome>
-			<to-view-id>/facelet/period_task/list.xhtml</to-view-id>
+			<to-view-id>/facelet/period_task/list.jsf</to-view-id>
 		</navigation-case>
 		<navigation-case>
 	        <from-outcome>period_task_form</from-outcome>
-	        <to-view-id>/facelet/period_task/form.xhtml</to-view-id>
+	        <to-view-id>/facelet/period_task/form.jsf</to-view-id>
 	    </navigation-case>
 		<navigation-case>
 	        <from-outcome>period_task_search</from-outcome>
-	        <to-view-id>/facelet/period_task/search.xhtml</to-view-id>
+	        <to-view-id>/facelet/period_task/search.jsf</to-view-id>
 	    </navigation-case>
 	</navigation-rule>
   
@@ -117,31 +117,31 @@
   <navigation-rule>
 	<navigation-case>
 		<from-outcome>firstContent</from-outcome>
-		<to-view-id>/facelet/homepage/firstContent.xhtml</to-view-id>
+		<to-view-id>/facelet/homepage/firstContent.jsf</to-view-id>
 	</navigation-case>
 	<navigation-case>
 		<from-outcome>content</from-outcome>
-		<to-view-id>/facelet/homepage/content.xhtml</to-view-id>
+		<to-view-id>/facelet/homepage/content.jsf</to-view-id>
 	</navigation-case>
 	<navigation-case>
 		<from-outcome>work_group</from-outcome>
-		<to-view-id>/facelet/workGroup/grid.xhtml</to-view-id>
+		<to-view-id>/facelet/workGroup/grid.jsf</to-view-id>
 	</navigation-case>
 	<navigation-case>
 		<from-outcome>customer</from-outcome>
-		<to-view-id>/facelet/customer/form.xhtml</to-view-id>
+		<to-view-id>/facelet/customer/list.jsf</to-view-id>
 	</navigation-case>
  	<navigation-case>
         <from-outcome>task</from-outcome>
-        <to-view-id>/facelet/task/list.xhtml</to-view-id>
+        <to-view-id>/facelet/task/list.jsf</to-view-id>
     </navigation-case>
  	<navigation-case>
         <from-outcome>task_monitor</from-outcome>
-        <to-view-id>/facelet/task/monitor/search.xhtml</to-view-id>
+        <to-view-id>/facelet/task/monitor/search.jsf</to-view-id>
     </navigation-case>
     <navigation-case>
         <from-outcome>period_task</from-outcome>
-        <to-view-id>/facelet/period_task/form.xhtml</to-view-id>
+        <to-view-id>/facelet/period_task/form.jsf</to-view-id>
     </navigation-case>
   </navigation-rule>
 

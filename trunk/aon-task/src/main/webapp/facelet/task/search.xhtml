@@ -2,6 +2,8 @@
 <html xmlns="http://www.w3.org/1999/xhtml"
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a4j="http://richfaces.org/a4j"
 	xmlns:aon="http://www.code.es/aon-rich-components">
 <body>
 
@@ -22,46 +24,50 @@
 						<aon:outputText value="#{bundle.aon_search}" />
 					</aon:div>
 
-					<aon:div styleClass="aon-finding-toolbar-item-group">
-						<aon:commandButton id="search" value="#{bundle.aon_search}"
+					<aon:div id="toolbar" styleClass="aon-finding-toolbar-item-group">
+						<h:commandButton id="search" value="#{bundle.aon_search}"
 							action="task_list" actionListener="#{task.onSearch}"
 							styleClass="aon-finding-toolbar-item aon-icon-accept"
 							accesskey="#{bundle.aon_key_search}" />
-						<aon:commandButton id="reset" value="#{bundle.aon_reset}"
+						<h:commandButton id="reset" value="#{bundle.aon_reset}"
 							action="task_form" actionListener="#{task.onReset}"
 							styleClass="aon-finding-toolbar-item aon-icon-reset"
 							accesskey="#{bundle.aon_key_new}" />
-						<aon:commandButton id="cancel" value="#{bundle.aon_cancel}"
+						<h:commandButton id="cancel" value="#{bundle.aon_cancel}"
 							action="task_list" actionListener="#{task.onCancel}"
 							styleClass="aon-finding-toolbar-item aon-icon-cancel"
 							accesskey="#{bundle.aon_key_cancel}" />
+						<aon:selectBooleanCheckbox id="monitor" value="#{task.monitor}" 
+						rendered="#{role.monitorRole}">
+							<a4j:support event="onclick" reRender="toolbar,fieldContainer" />
+						</aon:selectBooleanCheckbox>
+						<aon:outputLabel for="monitor" value="Monitor" rendered="#{role.monitorRole}"/>
 					</aon:div>
 				</aon:panelGrid>
 			</aon:div>
 
-			<aon:div styleClass="aon-scroll-area">
+			<aon:div id="fieldContainer" styleClass="aon-scroll-area">
 
 				<aon:panelGrid columns="2">
 
 					<aon:outputLabel for="Task_description"
 						value="#{projectBundle.aon_description}" />
 					<aon:inputText id="Task_description" size="60"
-						valueChangeListener="#{task.addExpression}" />
+						value="#{task.description}" />
 
 					<aon:outputLabel value="#{projectBundle.aon_initial_date}" />
-
 					<aon:div>
 						<aon:outputLabel for="Task_startDate-From"
 							value="#{projectBundle.aon_date_from}" />
 						<aon:selectInputDate id="Task_startDate-From"
-							valueChangeListener="#{task.addStartDateFromExpression}"
+							value="#{task.startDateFrom}"
 							popupDateFormat="#{bundle.aon_date_pattern}" renderAsPopup="true">
 						</aon:selectInputDate>
 
 						<aon:outputLabel for="Task_startDate-To"
 							value="#{projectBundle.aon_date_to}" />
 						<aon:selectInputDate id="Task_startDate-To"
-							valueChangeListener="#{task.addStartDateToExpression}"
+							value="#{task.startDateTo}"
 							popupDateFormat="#{bundle.aon_date_pattern}" renderAsPopup="true">
 						</aon:selectInputDate>
 					</aon:div>
@@ -71,56 +77,103 @@
 						<aon:outputLabel for="Task_endDate-From"
 							value="#{projectBundle.aon_date_from}" />
 						<aon:selectInputDate id="Task_endDate-From"
-							valueChangeListener="#{task.addEndDateFromExpression}"
+							value="#{task.endDateFrom}"
 							popupDateFormat="#{bundle.aon_date_pattern}" renderAsPopup="true">
 						</aon:selectInputDate>
 
 						<aon:outputLabel for="Task_endDate-To"
 							value="#{projectBundle.aon_date_to}" />
 						<aon:selectInputDate id="Task_endDate-To"
-							valueChangeListener="#{task.addEndDateToExpression}"
+							value="#{task.endDateTo}"
 							popupDateFormat="#{bundle.aon_date_pattern}" renderAsPopup="true">
 						</aon:selectInputDate>
-
 					</aon:div>
+
 					<aon:outputLabel value="#{projectBundle.aon_due_date}" />
 					<aon:div>
 						<aon:outputLabel for="Task_dueDate-From"
 							value="#{projectBundle.aon_date_from}" />
 						<aon:selectInputDate id="Task_dueDate-From"
-							valueChangeListener="#{task.addDueDateFromExpression}"
+							value="#{task.dueDateFrom}"
 							popupDateFormat="#{bundle.aon_date_pattern}" renderAsPopup="true">
 						</aon:selectInputDate>
 
 						<aon:outputLabel for="Task_dueDate-To"
 							value="#{projectBundle.aon_date_to}" />
 						<aon:selectInputDate id="Task_dueDate-To"
-							valueChangeListener="#{task.addDueDateToExpression}"
+							value="#{task.dueDateTo}"
 							popupDateFormat="#{bundle.aon_date_pattern}" renderAsPopup="true">
 						</aon:selectInputDate>
 					</aon:div>
 
-					<aon:outputLabel for="Task_customer_id"
-						value="#{projectBundle.aon_customer}" />
-					<aon:div styleClass="aon-lookup">
-						<aon:lookupInputText id="Task_customer_id"
-							lookup="#{customerICELookup}" value="#{task.customer.id}"
-							reRender="Task_customer_name"
-							valueChangeListener="#{task.addCustomerExpression}" size="5">
-						</aon:lookupInputText>
-						<aon:lookupButton lookup="#{customerICELookup}"
-							property="#{task.customer}"
-							windowTitle="#{projectBundle.aon_customer}"
-							selectReRender="Task_customer_id, Task_customer_name" />
-						<aon:inputText id="Task_customer_name"
-							value="#{task.customer.registry.name} #{task.customer.registry.surname}"
-							styleClass="aon-inputText-disabled" size="45" disabled="true" />
+					<aon:outputLabel for="Task_workgroup"
+						value="#{projectBundle.aon_work_group}" rendered="#{task.monitor}" />
+					<aon:selectOneMenu id="Task_workgroup" value="#{task.workgroup}"
+						valueChangeListener="#{task.workGroupChange}"
+						rendered="#{task.monitor}">
+						<f:selectItem value="#{nullSelectItem.value}" />
+						<f:selectItems value="#{configCollections.workgroups}" />
+					</aon:selectOneMenu>
+
+					<aon:outputLabel for="Task_user"
+						value="#{projectBundle.task_assigned}" rendered="#{task.monitor}" />
+					<aon:selectOneMenu id="Task_user" value="#{task.user}"
+						rendered="#{task.monitor}">
+						<f:selectItem value="#{nullSelectItem.value}" />
+						<f:selectItems value="#{task.users}" />
+					</aon:selectOneMenu>
+
+					<aon:outputText value="#{projectBundle.aon_status}"/>
+					<aon:div>
+						<h:selectBooleanCheckbox id="st0" value="#{task.statusPending}" />
+						<aon:outputLabel for="st0"
+							value="#{projectBundle.task_status_pending}" />
+						<h:selectBooleanCheckbox id="st1" value="#{task.statusInProgress}" />
+						<aon:outputLabel for="st1"
+							value="#{projectBundle.task_status_in_progress}" />
+						<h:selectBooleanCheckbox id="st2" value="#{task.statusFinished}" />
+						<aon:outputLabel for="st2"
+							value="#{projectBundle.task_status_finished}" />
+						<h:selectBooleanCheckbox id="st3" value="#{task.statusDeleted}" />
+						<aon:outputLabel for="st3"
+							value="#{projectBundle.task_status_deleted}" />
 					</aon:div>
+
+					<aon:outputLabel for="Task_dossier_id"
+						value="#{projectBundle.dossier_dossier}" />
+					<aon:selectOneMenu id="Task_dossier_id" value="#{task.dossierId}"
+						valueChangeListener="#{task.dossierSearchChange}"
+						reRender="customerIdContainer,Task_activity_id">
+						<f:selectItem value="#{nullSelectItem.value}" />
+						<f:selectItems value="#{task.availableSearchDossiers}" />
+					</aon:selectOneMenu>
+
+					<aon:outputText value="#{projectBundle.aon_customer}" />
+					<ui:include src="/facelet/shared/customer/customerIdInput.xhtml">
+						<ui:param name="customer_id" value="customerId" />
+						<ui:param name="renderedAttr" value="true" />
+						<ui:param name="disabled" value="false" />
+						<ui:param name="reRenderAttr"
+							value="Task_dossier_id, Task_activity_id" />
+						<ui:param name="required" value="#{false}" />
+						<ui:param name="customerEntity" value="#{task.customer}" />
+						<ui:param name="customerELExpression" value="task.customer" />
+						<ui:param name="valueChangeListener"
+							value="task.customerPojoChange" />
+					</ui:include>
+
+					<aon:outputLabel for="Task_activity_id"
+						value="#{projectBundle.activity_activity}" />
+					<aon:selectOneMenu id="Task_activity_id" value="#{task.activityId}">
+						<f:selectItem value="#{nullSelectItem.value}" />
+						<f:selectItems value="#{task.activities}" />
+					</aon:selectOneMenu>
+
+
 				</aon:panelGrid>
 			</aon:div>
 
 		</aon:form>
-		<aon:lookupButtonPopup lookup="#{customerICELookup}" />
 	</ui:define>
 </ui:composition>
 
