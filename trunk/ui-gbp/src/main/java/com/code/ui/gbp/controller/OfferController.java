@@ -16,6 +16,12 @@ public class OfferController extends BasicController {
 		}
 	}
 	
+	public void addOfferDateExpression(ValueChangeEvent event) throws ManagerBeanException{
+		if(event.getNewValue() != null){
+			getCriteria().addEqualExpression(getFieldName(IGBPAlias.OFFER_OFFER_DATE), event.getNewValue());
+		}
+	}
+	
 	public void onInitialModel(ActionEvent event) throws ManagerBeanException{
 		clearCriteria();
 		getCriteria().addEqualExpression(getFieldName(IGBPAlias.OFFER_STATUS), OfferStatus.PENDING);

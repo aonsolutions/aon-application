@@ -63,6 +63,32 @@
 						<f:selectItems value="#{GBPCollections.proformaInvoiceStatus}" />
 					</aon:selectOneMenu>
 
+					<aon:outputLabel for="ProFormaInvoice_supplier_name"
+						value="#{appBundle.gbp_proforma_invoice_supplier}" />
+					<aon:inputText id="ProFormaInvoice_supplier_name"
+						size="60" 
+						valueChangeListener="#{proForma.addExpression}" />
+
+					<aon:outputLabel for="ProFormaInvoice_invoiceDate"
+						value="#{appBundle.gbp_proforma_invoice_invoice_date}" />
+					<aon:selectInputDate id="ProFormaInvoice_invoiceDate"
+						datePattern="#{bundle.aon_date_pattern}" 
+						enableManualInput="true"
+						inputSize="15" 
+						valueChangeListener="#{proForma.addInvoiceDateExpression}" />
+
+					<aon:outputLabel for="ProFormaInvoice_amount"
+						value="#{appBundle.gbp_proforma_invoice_amount}" />
+					<aon:inputText id="ProFormaInvoice_amount" 
+						size="16" maxlength="16"
+						valueChangeListener="#{proForma.addExpression}" />
+
+					<aon:outputLabel for="ProFormaInvoice_concept"
+						value="#{appBundle.gbp_proforma_invoice_concept}" />
+					<aon:inputText id="ProFormaInvoice_concept" 
+						size="128" maxlength="128" 
+						valueChangeListener="#{proForma.addExpression}" />
+
 				</aon:panelGrid>
 			</aon:div>
 		</aon:form>

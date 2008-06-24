@@ -30,7 +30,13 @@ public class ProFormaInvoiceController extends BasicController implements IColle
 			getCriteria().addEqualExpression(getFieldName(IGBPAlias.PRO_FORMA_INVOICE_STATUS), event.getNewValue());
 		}
 	}
-	
+
+	public void addInvoiceDateExpression(ValueChangeEvent event) throws ManagerBeanException{
+		if(event.getNewValue() != null){
+			getCriteria().addEqualExpression(getFieldName(IGBPAlias.PRO_FORMA_INVOICE_INVOICE_DATE), event.getNewValue());
+		}
+	}
+
 	public void onInitialModel(ActionEvent event) throws ManagerBeanException{
 		clearCriteria();
 		getCriteria().addEqualExpression(getFieldName(IGBPAlias.PRO_FORMA_INVOICE_STATUS), ProFormaInvoiceStatus.PENDING);

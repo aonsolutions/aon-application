@@ -56,6 +56,26 @@
 						<f:selectItems value="#{GBPCollections.offerStatus}" />
 					</aon:selectOneMenu>
 
+					<aon:outputLabel for="Offer_supplier_name"
+						value="#{appBundle.gbp_offer_supplier}" />
+					<aon:inputText id="Offer_supplier_name"
+						size="60" 
+						valueChangeListener="#{offer.addExpression}" />
+
+					<aon:outputLabel for="Offer_offerDate"
+						value="#{appBundle.gbp_offer_offer_date}" />
+					<aon:selectInputDate id="Offer_offerDate"
+						datePattern="#{bundle.aon_date_pattern}" 
+						enableManualInput="true"
+						inputSize="15" 
+						valueChangeListener="#{offer.addOfferDateExpression}" />
+
+					<aon:outputLabel for="Offer_price"
+						value="#{appBundle.gbp_offer_price}" />
+					<aon:inputText id="Offer_price" 
+						size="16" maxlength="16"
+						valueChangeListener="#{offer.addExpression}" />
+
 				</aon:panelGrid>
 			</aon:div>
 		</aon:form>
