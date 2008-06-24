@@ -116,7 +116,7 @@
 					<textElement textAlignment="Left" verticalAlignment="Middle">
 						<font size="8"/>
 					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[""+$F{offer}.getCampaign().getCode()]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{offer}.getCampaign().getCode()+" "+$F{offer}.getCampaign().getName()]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
@@ -145,7 +145,7 @@
 					<textElement textAlignment="Right" verticalAlignment="Middle">
 						<font pdfFontName="Helvetica-Bold" size="9" isBold="true"/>
 					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$R{gbp_offer_campaign_code}]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$R{gbp_offer_type}]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
