@@ -67,7 +67,7 @@ public class TaskController extends BasicController implements ITaskController {
 	public static String STATUS_ALIAS = null;
 	public static String PRIORITY_ALIAS = null;
 	public static String PERCENT_ALIAS = null;
-	
+
 	static {
 		try {
 			IManagerBean taskBean = BeanManager.getManagerBean(Task.class);
@@ -109,12 +109,15 @@ public class TaskController extends BasicController implements ITaskController {
 	private boolean statusDeleted = false;
 
 	private User loggedUser;
-	
-	private String  orderColumn;
+
+	private String orderColumn;
 	private boolean orderAscending;
 
+	private boolean richEditor;
+	
 	private List<SelectItem> dossiers;
-	private List<SelectItem> activities = new LinkedList<SelectItem>();
+    private List<SelectItem> allDossiers;
+    private List<SelectItem> activities;
 
 	private List<SelectItem> users;
 
@@ -122,10 +125,53 @@ public class TaskController extends BasicController implements ITaskController {
 
 	private boolean monitor;
 
-	public List<SelectItem> getDossiers() {
-		if (dossiers == null) {
-			loadDossiers(null);
+	public List<SelectItem> getAvailableFormDossiers() {
+		Task t = (Task) getTo();
+		if (t.getDossier().getCustomer() != null && t.getDossier().getCustomer().getId() != null) {
+			return getDossiers();
+		} 
+		return getAllDossiers();
+    }
+
+	public List<SelectItem> getAvailableSearchDossiers() {
+		if (getCustomer() != null && getCustomer().getId() != null) {
+			return getDossiers();
+		} 
+		return getAllDossiers();
+    }
+
+	public List<SelectItem> getAllDossiers() {
+		if (allDossiers == null) {
+			loadAllDossiers();
 		}
+		return allDossiers;
+	}
+
+	@SuppressWarnings("unchecked")
+	public void loadAllDossiers() {
+        allDossiers = new LinkedList<SelectItem>();
+        try {
+            IManagerBean managerBean = BeanManager.getManagerBean(Dossier.class);
+            Criteria criteria = new Criteria();
+            criteria.addEqualExpression(managerBean.getFieldName(IProjectAlias.DOSSIER_STATUS), DossierStatus.ACTIVE);
+            criteria.addOrder(managerBean.getFieldName(IProjectAlias.DOSSIER_NUMBER));
+            criteria.addOrder(managerBean.getFieldName(IProjectAlias.DOSSIER_CUSTOMER_ID));
+            Iterator iterator = managerBean.getList(criteria).iterator();
+            while (iterator.hasNext()) {
+                Dossier dossier = (Dossier)iterator.next();
+                StringBuilder sb = new StringBuilder(dossier.getNumber()); 
+                sb.append(" (");
+                sb.append( dossier.getCustomer().getRegistry().getAlias() );
+                sb.append(")");
+                SelectItem item = new SelectItem(dossier.getId(), sb.toString() );
+                allDossiers.add(item);
+            }
+        } catch (ManagerBeanException e) {
+        	LOGGER.log(Level.SEVERE, "Error loading all dossiers!", e);
+        }
+    }
+
+	public List<SelectItem> getDossiers() {
 		return dossiers;
 	}
 
@@ -134,6 +180,9 @@ public class TaskController extends BasicController implements ITaskController {
 	}
 
 	public List<SelectItem> getActivities() {
+		if (activities == null) {
+			setActivities(new LinkedList<SelectItem>());
+		}
 		return activities;
 	}
 
@@ -209,9 +258,10 @@ public class TaskController extends BasicController implements ITaskController {
 		initializeStatusFilter();
 		setUsers(null);
 		setDossiers(null);
-		setActivities(new LinkedList<SelectItem>());
+		setActivities(null);
 		super.onEditSearch(event);
 	}
+
 	private void initializeStatusFilter() {
 		setStatusPending(true);
 		setStatusInProgress(true);
@@ -237,22 +287,22 @@ public class TaskController extends BasicController implements ITaskController {
 	}
 
 	public boolean isFreeTask(Task task) {
-        Criteria criteria = new Criteria();
-        try {
-            criteria.addEqualExpression(getFieldName(IProjectAlias.TASK_ID), task.getId());
-            criteria.addNotNullExpression(getFieldName(IProjectAlias.TASK_USER_ID));
-            return (getManagerBean().getList(criteria).size() == 0);
-        } catch (ManagerBeanException e) {
-            LOGGER.log(Level.SEVERE, "Error obtaining task with id= " + task.getId(), e);
-        }
-        return false;
+		Criteria criteria = new Criteria();
+		try {
+			criteria.addEqualExpression(getFieldName(IProjectAlias.TASK_ID), task.getId());
+			criteria.addNotNullExpression(getFieldName(IProjectAlias.TASK_USER_ID));
+			return (getManagerBean().getList(criteria).size() == 0);
+		} catch (ManagerBeanException e) {
+			LOGGER.log(Level.SEVERE, "Error obtaining task with id= " + task.getId(), e);
+		}
+		return false;
 	}
 
 	public void customerChange(ValueChangeEvent event) {
 		if (event.getNewValue() != null && !"".equals(event.getNewValue())) {
 			loadDossiers(new Integer(event.getNewValue().toString()));
 		} else {
-			dossiers = new LinkedList<SelectItem>();
+			setDossiers(null);
 		}
 	}
 
@@ -262,14 +312,13 @@ public class TaskController extends BasicController implements ITaskController {
 			loadDossiers(customer.getId());
 			setDossierId(null);
 		} else {
-			dossiers = new LinkedList<SelectItem>();
+			setDossiers(null);
 		}
 	}
 
 	@SuppressWarnings("unchecked")
 	public void loadDossiers(Integer customerId) {
-		dossiers = new LinkedList<SelectItem>();
-		activities = new LinkedList<SelectItem>();
+		setDossiers(new LinkedList<SelectItem>());
 		try {
 			IManagerBean managerBean = BeanManager.getManagerBean(Dossier.class);
 			Criteria criteria = new Criteria();
@@ -298,16 +347,45 @@ public class TaskController extends BasicController implements ITaskController {
 	}
 
 	public void dossierChange(ValueChangeEvent event) {
-		if (event.getNewValue() != null && !"".equals(event.getNewValue())) {
-			loadActivities(new Integer(event.getNewValue().toString()));
-		} else {
-			activities = new LinkedList<SelectItem>();
+		try {
+			if (event.getNewValue() != null && !"".equals(event.getNewValue())) {
+				IManagerBean bean = BeanManager.getManagerBean(Dossier.class);
+				Dossier d = (Dossier) bean.get((Integer) event.getNewValue());
+				if (d != null) {
+					((Task)getTo()).setDossier(d);
+					loadDossiers(d.getCustomer().getId());
+				}
+				loadActivities(new Integer(event.getNewValue().toString()));
+			} else {
+				setActivities(new LinkedList<SelectItem>());
+			}
+		} catch (ManagerBeanException e) {
+			LOGGER.log(Level.SEVERE, "Error loading dossier", e);
+		}
+	}
+
+	public void dossierSearchChange(ValueChangeEvent event) {
+		try {
+			if (event.getNewValue() != null && !"".equals(event.getNewValue())) {
+				IManagerBean bean = BeanManager.getManagerBean(Dossier.class);
+				Integer id = (Integer) event.getNewValue();
+				Dossier d = (Dossier) bean.get(id);
+				if (d != null) {
+					setCustomer(d.getCustomer());
+					loadDossiers(d.getCustomer().getId());
+				}
+				loadActivities(new Integer(event.getNewValue().toString()));
+			} else {
+				setActivities(new LinkedList<SelectItem>());
+			}
+		} catch (ManagerBeanException e) {
+			LOGGER.log(Level.SEVERE, "Error loading dossier", e);
 		}
 	}
 
 	@SuppressWarnings("unchecked")
 	public void loadActivities(Integer dossierId) {
-		activities = new LinkedList<SelectItem>();
+		setActivities( new LinkedList<SelectItem>());
 		try {
 			IManagerBean managerBean = BeanManager.getManagerBean(Activity.class);
 			Criteria criteria = new Criteria();
@@ -665,9 +743,6 @@ public class TaskController extends BasicController implements ITaskController {
 			if (!StringUtils.isEmpty(getDescription())) {
 				getCriteria().addExpression(DESCRIPTION_ALIAS, getDescription());
 			}
-			if (getCustomer() != null && getCustomer().getId() != null) {
-				getCriteria().addEqualExpression(CUSTOMER_ALIAS, customer.getId());
-			}
 			if (getStartDateFrom() != null) {
 				getCriteria().addGreaterThanOrEqualExpression(TASK_START_DATE_ALIAS,
 						getStartDateFrom());
@@ -695,9 +770,15 @@ public class TaskController extends BasicController implements ITaskController {
 			if (getUser() != null) {
 				getCriteria().addEqualExpression(USER_ALIAS, getUser());
 			}
+
 			if (getDossierId() != null) {
 				getCriteria().addEqualExpression(DOSSIER_ALIAS, getDossierId());
+			} else {
+				if (getCustomer() != null && getCustomer().getId() != null) {
+					getCriteria().addEqualExpression(CUSTOMER_ALIAS, customer.getId());
+				}
 			}
+			
 			if (getActivityId() != null) {
 				getCriteria().addEqualExpression(ACTIVITY_ALIAS, getActivityId());
 			}
@@ -765,15 +846,21 @@ public class TaskController extends BasicController implements ITaskController {
 	private void addOrder() throws ManagerBeanException {
 		OrderByList list = new OrderByList();
 		if (getOrderColumn() == null) {
-			list.addOrder( new Order(ExpressionUtilities.getIdentifierExpression(USER_ALIAS), false));
-			list.addOrder( new Order(ExpressionUtilities.getIdentifierExpression(PRIORITY_ALIAS), false));
-			list.addOrder( new Order(ExpressionUtilities.getIdentifierExpression(STATUS_ALIAS), false));
-			list.addOrder( new Order(ExpressionUtilities.getIdentifierExpression(TASK_DUE_DATE_ALIAS), false));
+			list
+					.addOrder(new Order(ExpressionUtilities.getIdentifierExpression(USER_ALIAS),
+							false));
+			list.addOrder(new Order(ExpressionUtilities.getIdentifierExpression(PRIORITY_ALIAS),
+					false));
+			list.addOrder(new Order(ExpressionUtilities.getIdentifierExpression(STATUS_ALIAS),
+					false));
+			list.addOrder(new Order(ExpressionUtilities
+					.getIdentifierExpression(TASK_DUE_DATE_ALIAS), false));
 		} else {
-			list.addOrder( new Order(ExpressionUtilities.getIdentifierExpression(getOrderColumn()), isOrderAscending()));
+			list.addOrder(new Order(ExpressionUtilities.getIdentifierExpression(getOrderColumn()),
+					isOrderAscending()));
 		}
 		getCriteria().setOrderByList(list);
-		
+
 	}
 
 	// -------------------------------------------------
@@ -975,7 +1062,7 @@ public class TaskController extends BasicController implements ITaskController {
 			addMessage("No se puede Finalizar la Tarea. Ha sido asumida por otro Usuario.");
 		}
 	}
-	
+
 	private Task updateTask(Task task) {
 		try {
 			restoreNullSubPOJOs(task);
@@ -987,30 +1074,31 @@ public class TaskController extends BasicController implements ITaskController {
 		}
 		return null;
 	}
-	
+
 	// -------------------------------------------------
 	// FIN Operaciones que se realizan sobre una tarea
 	// -------------------------------------------------
 
-	
 	public boolean isAssumeSelectedDisabled() {
-		for (Task task :checks) {
+		for (Task task : checks) {
 			if (!isFreeTask(task)) {
 				return true;
 			}
 		}
 		return (checks.size() == 0);
 	}
-	public boolean  isReleaseSelectedDisabled() {
-		for (Task task :checks) {
+
+	public boolean isReleaseSelectedDisabled() {
+		for (Task task : checks) {
 			if (!isMyTask(task) || task.isInProgress()) {
 				return true;
 			}
 		}
 		return (checks.size() == 0);
 	}
-	public boolean  isFinishSelectedDisabled() {
-		for (Task task :checks) {
+
+	public boolean isFinishSelectedDisabled() {
+		for (Task task : checks) {
 			if (!(isMyTask(task) || isFreeTask(task))) {
 				return true;
 			}
@@ -1023,7 +1111,7 @@ public class TaskController extends BasicController implements ITaskController {
 	}
 
 	public void setOrderColumn(String orderColumn) {
-		if (orderColumn.equals(this.orderColumn) ) {
+		if (orderColumn.equals(this.orderColumn)) {
 			setOrderAscending(!orderAscending);
 		} else {
 			setOrderAscending(orderColumn != PRIORITY_ALIAS && orderColumn != USER_ALIAS);
@@ -1038,19 +1126,21 @@ public class TaskController extends BasicController implements ITaskController {
 	public void setOrderAscending(boolean orderAscending) {
 		this.orderAscending = orderAscending;
 	}
-	
+
 	public void sortByDescription(ActionEvent event) {
 		setOrderColumn(DESCRIPTION_ALIAS);
 		onRefresh(event);
 	}
+
 	public boolean isSortedByDescription() {
 		return (DESCRIPTION_ALIAS == getOrderColumn());
 	}
-	
+
 	public void sortByPriority(ActionEvent event) {
 		setOrderColumn(PRIORITY_ALIAS);
 		onRefresh(event);
 	}
+
 	public boolean isSortedByPriority() {
 		return (PRIORITY_ALIAS == getOrderColumn());
 	}
@@ -1059,6 +1149,7 @@ public class TaskController extends BasicController implements ITaskController {
 		setOrderColumn(STATUS_ALIAS);
 		onRefresh(event);
 	}
+
 	public boolean isSortedByStatus() {
 		return (STATUS_ALIAS == getOrderColumn());
 	}
@@ -1067,22 +1158,25 @@ public class TaskController extends BasicController implements ITaskController {
 		setOrderColumn(USER_NAME_ALIAS);
 		onRefresh(event);
 	}
+
 	public boolean isSortedByUser() {
 		return (USER_NAME_ALIAS == getOrderColumn());
 	}
-	
+
 	public void sortByWorkGroup(ActionEvent event) {
 		setOrderColumn(WORKGROUP_ALIAS);
 		onRefresh(event);
 	}
+
 	public boolean isSortedByWorkGroup() {
 		return (WORKGROUP_ALIAS == getOrderColumn());
 	}
-		
+
 	public void sortByDossier(ActionEvent event) {
 		setOrderColumn(DOSSIER_NUMBER_ALIAS);
 		onRefresh(event);
 	}
+
 	public boolean isSortedByDossier() {
 		return (DOSSIER_NUMBER_ALIAS == getOrderColumn());
 	}
@@ -1091,27 +1185,38 @@ public class TaskController extends BasicController implements ITaskController {
 		setOrderColumn(TASK_START_DATE_ALIAS);
 		onRefresh(event);
 	}
+
 	public boolean isSortedByStartDate() {
 		return (TASK_START_DATE_ALIAS == getOrderColumn());
 	}
 
-	public void sortByEndDate(ActionEvent event) {
-		setOrderColumn(TASK_END_DATE_ALIAS);
+	public void sortByDueDate(ActionEvent event) {
+		setOrderColumn(TASK_DUE_DATE_ALIAS);
 		onRefresh(event);
 	}
-	public boolean isSortedByEndDate() {
-		return (TASK_END_DATE_ALIAS == getOrderColumn());
+
+	public boolean isSortedByDueDate() {
+		return (TASK_DUE_DATE_ALIAS == getOrderColumn());
 	}
-	
+
 	public void sortByPercent(ActionEvent event) {
 		setOrderColumn(PERCENT_ALIAS);
 		onRefresh(event);
 	}
+
 	public boolean isSortedByPercent() {
 		return (PERCENT_ALIAS == getOrderColumn());
 	}
-	
+
 	public String getOrderAscendingLiteral() {
-		return isOrderAscending()?ASCENDING:DESCENDING;
+		return isOrderAscending() ? ASCENDING : DESCENDING;
+	}
+
+	public boolean isRichEditor() {
+		return richEditor;
+	}
+
+	public void setRichEditor(boolean richEditor) {
+		this.richEditor = richEditor;
 	}
 }
