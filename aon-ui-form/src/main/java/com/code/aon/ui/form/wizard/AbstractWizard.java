@@ -17,7 +17,6 @@ import javax.faces.model.ListDataModel;
 
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.lang.StringUtils;
-import org.hibernate.mapping.ValueVisitor;
 
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
@@ -385,13 +384,15 @@ public abstract class AbstractWizard {
 
 	private void fireValueChangeListener(ActionEvent event,Object oldValue, Object newValue) {
 		String expression = getELValueChangeListener();
-		FacesContext ctx = FacesContext.getCurrentInstance();
-		ELContext elctx = ctx.getELContext();
-		ExpressionFactory factory = ctx.getApplication().getExpressionFactory();
-		MethodExpression me = 
-			factory.createMethodExpression(elctx, getELValueChangeListener(), Object.class, new Class[]{ValueChangeEvent.class} );
-		ValueChangeEvent changeEvent = new ValueChangeEvent(event.getComponent(),oldValue,newValue); 
-		me.invoke(elctx, new Object[]{changeEvent});
+		if (!"#{null}".equals(expression)) {
+			FacesContext ctx = FacesContext.getCurrentInstance();
+			ELContext elctx = ctx.getELContext();
+			ExpressionFactory factory = ctx.getApplication().getExpressionFactory();
+			MethodExpression me = 
+				factory.createMethodExpression(elctx, expression, Object.class, new Class[]{ValueChangeEvent.class} );
+			ValueChangeEvent changeEvent = new ValueChangeEvent(event.getComponent(),oldValue,newValue); 
+			me.invoke(elctx, new Object[]{changeEvent});
+		}
 	}
 
 	/**
