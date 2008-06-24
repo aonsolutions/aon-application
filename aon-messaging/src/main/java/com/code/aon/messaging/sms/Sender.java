@@ -264,10 +264,10 @@ public class Sender implements IConstants, Runnable {
 			}
 		} catch (ServiceException e) {
 			LOGGER.severe( e.getMessage() );
-			fireMessageFailed( null );
+			fireMessageFailed( new SenderEvent( messages.get( 0 ) ) );
 		} catch (RemoteException e) {
 			LOGGER.severe( e.getMessage() );
-			fireMessageFailed( null );
+			fireMessageFailed( new SenderEvent( messages.get( 0 ), 2 ) );
 		} finally {
 			messages = new ArrayList<Message>();
 		}
