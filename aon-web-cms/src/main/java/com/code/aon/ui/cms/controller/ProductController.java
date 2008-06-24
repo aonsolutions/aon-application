@@ -5,6 +5,7 @@ import java.util.List;
 import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
 
+import com.code.aon.cms.Image;
 import com.code.aon.cms.Product;
 import com.code.aon.cms.ProductDetail;
 import com.code.aon.cms.dao.ICMSAlias;
@@ -12,6 +13,7 @@ import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.cms.util.ControllerUtil;
+import com.code.aon.ui.util.AonUtil;
 
 
 public class ProductController extends BasicI18nController {
@@ -64,4 +66,17 @@ public class ProductController extends BasicI18nController {
 		}
 		return title;
 	}
+	
+	public void onDelImage(ActionEvent event) {
+		Product current = (Product)getTo();
+		current.setImage(null);
+	}
+	
+	public void onSelectImage(ActionEvent event) throws ManagerBeanException {
+		GalleryController controller = (GalleryController)AonUtil.getRegisteredBean("gallery");
+		String image = ((Image)controller.getModel().getRowData()).getRelativePath();
+		Product current = (Product)getTo();
+		current.setImage(image);
+	}
+	
 }

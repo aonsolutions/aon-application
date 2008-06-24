@@ -63,7 +63,8 @@ public class Product implements ITransferObject{
      */
 	private ProductCategory productCategory;
 	
-
+	private String image;
+	
 	private Set<ProductDetail> details;
 
     @Id
@@ -140,6 +141,16 @@ public class Product implements ITransferObject{
 
 	public void setBrand(Brand brand) {
 		this.brand = brand;
+	}
+
+
+	@Column(length=255)
+	public String getImage() {
+		return image;
+	}
+
+	public void setImage(String image) {
+		this.image = image;
 	}
 
 }

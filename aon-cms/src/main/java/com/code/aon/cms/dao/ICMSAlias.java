@@ -1116,22 +1116,28 @@ public interface ICMSAlias {
 	String  PRODUCT_ID = PRODUCT_ENTRY.getAliasNames()[3];
 
 	/** 
+	* Alias value: Product_image
+	* Hibernate value: Product.image
+	*/
+	String  PRODUCT_IMAGE = PRODUCT_ENTRY.getAliasNames()[4];
+
+	/** 
 	* Alias value: Product_offerPrice
 	* Hibernate value: Product.offerPrice
 	*/
-	String  PRODUCT_OFFER_PRICE = PRODUCT_ENTRY.getAliasNames()[4];
+	String  PRODUCT_OFFER_PRICE = PRODUCT_ENTRY.getAliasNames()[5];
 
 	/** 
 	* Alias value: Product_price
 	* Hibernate value: Product.price
 	*/
-	String  PRODUCT_PRICE = PRODUCT_ENTRY.getAliasNames()[5];
+	String  PRODUCT_PRICE = PRODUCT_ENTRY.getAliasNames()[6];
 
 	/** 
 	* Alias value: Product_productCategory_id
 	* Hibernate value: Product.productCategory.id
 	*/
-	String  PRODUCT_PRODUCT_CATEGORY_ID = PRODUCT_ENTRY.getAliasNames()[6];
+	String  PRODUCT_PRODUCT_CATEGORY_ID = PRODUCT_ENTRY.getAliasNames()[7];
 
 
 
@@ -1141,34 +1147,40 @@ public interface ICMSAlias {
 	DAOConstantsEntry PRODUCT_DETAIL_ENTRY = DAOConstants.getDAOConstant(ProductDetail.class);
 
 	/** 
+	* Alias value: ProductDetail_alt
+	* Hibernate value: ProductDetail.alt
+	*/
+	String  PRODUCT_DETAIL_ALT = PRODUCT_DETAIL_ENTRY.getAliasNames()[0];
+
+	/** 
 	* Alias value: ProductDetail_id
 	* Hibernate value: ProductDetail.id
 	*/
-	String  PRODUCT_DETAIL_ID = PRODUCT_DETAIL_ENTRY.getAliasNames()[0];
+	String  PRODUCT_DETAIL_ID = PRODUCT_DETAIL_ENTRY.getAliasNames()[1];
 
 	/** 
 	* Alias value: ProductDetail_label
 	* Hibernate value: ProductDetail.label
 	*/
-	String  PRODUCT_DETAIL_LABEL = PRODUCT_DETAIL_ENTRY.getAliasNames()[1];
+	String  PRODUCT_DETAIL_LABEL = PRODUCT_DETAIL_ENTRY.getAliasNames()[2];
 
 	/** 
 	* Alias value: ProductDetail_language_id
 	* Hibernate value: ProductDetail.language.id
 	*/
-	String  PRODUCT_DETAIL_LANGUAGE_ID = PRODUCT_DETAIL_ENTRY.getAliasNames()[2];
+	String  PRODUCT_DETAIL_LANGUAGE_ID = PRODUCT_DETAIL_ENTRY.getAliasNames()[3];
 
 	/** 
 	* Alias value: ProductDetail_product_id
 	* Hibernate value: ProductDetail.product.id
 	*/
-	String  PRODUCT_DETAIL_PRODUCT_ID = PRODUCT_DETAIL_ENTRY.getAliasNames()[3];
+	String  PRODUCT_DETAIL_PRODUCT_ID = PRODUCT_DETAIL_ENTRY.getAliasNames()[4];
 
 	/** 
 	* Alias value: ProductDetail_shortLabel
 	* Hibernate value: ProductDetail.shortLabel
 	*/
-	String  PRODUCT_DETAIL_SHORT_LABEL = PRODUCT_DETAIL_ENTRY.getAliasNames()[4];
+	String  PRODUCT_DETAIL_SHORT_LABEL = PRODUCT_DETAIL_ENTRY.getAliasNames()[5];
 
 
 

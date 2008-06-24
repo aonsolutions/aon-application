@@ -24,7 +24,9 @@ public class ProductDetail implements ITransferObject {
 	private String label;
 
 	private String shortLabel;
-	
+
+	private String alt;
+
 	@Id
 	@GeneratedValue
 	@Column(name = "id", nullable = false)
@@ -72,6 +74,15 @@ public class ProductDetail implements ITransferObject {
 
 	public void setShortLabel(String shortLabel) {
 		this.shortLabel = shortLabel;
+	}
+
+	@Column(length=64)
+	public String getAlt() {
+		return alt;
+	}
+
+	public void setAlt(String alt) {
+		this.alt = alt;
 	}
 
 }
