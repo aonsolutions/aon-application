@@ -250,7 +250,7 @@
 			</band>
 			</groupHeader>
 			<groupFooter>
-			<band height="202"  isSplitAllowed="true" >
+			<band height="300"  isSplitAllowed="true" >
 				<textField isStretchWithOverflow="false" pattern="#,##0" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						x="289"
@@ -341,7 +341,7 @@
 						x="4"
 						y="39"
 						width="259"
-						height="158"
+						height="251"
 						key="element-1"
 						printWhenGroupChanges="campaignGroup"/>
 					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
@@ -349,13 +349,13 @@
 								<titleExpression><![CDATA[$R{gbp_campaign_evolution_report_graph1}]]></titleExpression>
 					</chartTitle>
 						<chartLegend textColor="#000000" backgroundColor="#FFFFFF" >
-					<font fontName="SansSerif" pdfFontName="Helvetica" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" isPdfEmbedded="false" pdfEncoding="Cp1252"/>
+					<font fontName="SansSerif" pdfFontName="Helvetica" size="8" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" isPdfEmbedded="false" pdfEncoding="Cp1252"/>
 					</chartLegend>
 					</chart>
 					<pieDataset>
 						<dataset resetType="Group" resetGroup="campaignGroup" >
 						</dataset>
-						<keyExpression><![CDATA[$F{supplier}.getName()]]></keyExpression>
+						<keyExpression><![CDATA[$F{supplier}.getId()]]></keyExpression>
 						<valueExpression><![CDATA[$V{percent}]]></valueExpression>
 						<labelExpression><![CDATA[null]]></labelExpression>
 				<sectionHyperlink >
@@ -371,7 +371,7 @@
 						x="269"
 						y="39"
 						width="259"
-						height="158"
+						height="251"
 						key="element-3"
 						printWhenGroupChanges="campaignGroup"/>
 					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
@@ -379,7 +379,7 @@
 								<titleExpression><![CDATA[$R{gbp_campaign_evolution_report_graph1}]]></titleExpression>
 					</chartTitle>
 						<chartLegend textColor="#000000" backgroundColor="#FFFFFF" >
-					<font fontName="SansSerif" pdfFontName="Helvetica" size="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" isPdfEmbedded="false" pdfEncoding="Cp1252"/>
+					<font fontName="SansSerif" pdfFontName="Helvetica" size="8" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" isPdfEmbedded="false" pdfEncoding="Cp1252"/>
 					</chartLegend>
 					</chart>
 					<pieDataset>
@@ -535,7 +535,7 @@
 					<textElement verticalAlignment="Middle">
 						<font size="8"/>
 					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$F{supplier}.getName()]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{supplier}.getId()+" "+$F{supplier}.getName()]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="false" pattern="#,##0" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
