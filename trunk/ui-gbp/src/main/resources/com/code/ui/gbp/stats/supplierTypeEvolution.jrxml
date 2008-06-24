@@ -188,7 +188,7 @@
 			</band>
 			</groupHeader>
 			<groupFooter>
-			<band height="200"  isSplitAllowed="true" >
+			<band height="370"  isSplitAllowed="true" >
 				<textField isStretchWithOverflow="false" pattern="#,##0.00" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						x="290"
@@ -250,7 +250,7 @@
 					<reportElement
 						x="3"
 						y="40"
-						width="229"
+						width="519"
 						height="137"
 						key="element-1"/>
 					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
@@ -283,9 +283,9 @@
 				<bar3DChart>
 					<chart  hyperlinkTarget="Self" >
 					<reportElement
-						x="267"
-						y="39"
-						width="229"
+						x="4"
+						y="204"
+						width="516"
 						height="137"
 						key="element-2"/>
 					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
@@ -320,7 +320,7 @@
 						mode="Opaque"
 						x="3"
 						y="176"
-						width="228"
+						width="519"
 						height="19"
 						forecolor="#000000"
 						backcolor="#FFFFFF"
@@ -334,9 +334,9 @@
 				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						mode="Opaque"
-						x="266"
-						y="176"
-						width="228"
+						x="3"
+						y="341"
+						width="517"
 						height="19"
 						forecolor="#000000"
 						backcolor="#FFFFFF"
