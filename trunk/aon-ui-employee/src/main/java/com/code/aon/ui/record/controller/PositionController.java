@@ -63,7 +63,9 @@ public class PositionController extends BasicController {
 		if ( ec.getResource() != null ) {
 			Integer workPlaceId = ec.getResource().getWorkPlace().getId();
 			try {
-				this.activities = CompanyUtil.findActivities( workPlaceId );
+				// Find working place active activities, otherwise inactive.
+				int active = ( ec.getResource().getWorkPlace().isActive() )? 1: -1;
+				this.activities = CompanyUtil.findActivities( workPlaceId, active );
 			} catch (ManagerBeanException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -86,7 +88,8 @@ public class PositionController extends BasicController {
 
 	public void workingPlaceChanged(ValueChangeEvent event) throws ManagerBeanException {
 		Integer workPlaceId = (Integer) event.getNewValue();
-		this.activities = CompanyUtil.findActivities( workPlaceId );
+		// Find working place active and inactive activities.
+		this.activities = CompanyUtil.findActivities( workPlaceId, 0 );
 	}
 
 	@SuppressWarnings("unchecked")
