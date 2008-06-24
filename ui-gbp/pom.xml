@@ -11,7 +11,7 @@
 	<groupId>com.code.gbp</groupId>
 	<artifactId>ui.gbp</artifactId>
 	<packaging>war</packaging>
-	<version>1.0.0</version>
+	<version>1.0.1</version>
 	<description>UI GBP</description>
 	<name>UI GBP</name>
 	<build>
@@ -21,7 +21,7 @@
 		<dependency>
 			<groupId>com.code.gbp</groupId>
 			<artifactId>gbp</artifactId>
-			<version>1.0.0</version>
+			<version>1.0.1</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
