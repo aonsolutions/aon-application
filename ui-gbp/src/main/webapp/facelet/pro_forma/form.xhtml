@@ -107,7 +107,9 @@
 					<aon:inputText id="ProFormaInvoice_amount" 
 						size="16" maxlength="16"
 						disabled="true" styleClass="aon-inputText-disabled"
-						value="#{proForma.to.amount}" />
+						value="#{proForma.to.amount}">
+						<f:convertNumber pattern="#,##0.000" />
+					</aon:inputText>
 
 					<aon:outputLabel for="ProFormaInvoice_offer_quality"
 						value="#{appBundle.gbp_proforma_invoice_quality}" />
