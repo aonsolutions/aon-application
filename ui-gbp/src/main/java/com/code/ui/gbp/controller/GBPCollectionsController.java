@@ -7,6 +7,7 @@ import java.util.Locale;
 
 import javax.faces.context.FacesContext;
 import javax.faces.model.SelectItem;
+import javax.faces.model.SelectItemGroup;
 
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
@@ -264,6 +265,33 @@ public class GBPCollectionsController {
 		while(iter.hasNext()){
 			Area object = (Area)iter.next();
 			SelectItem item = new SelectItem(object.getId(), object.getDescription());
+			items.add(item);
+		}
+		return items;
+	}
+
+	@SuppressWarnings("unchecked")
+	public List<SelectItem> getAreasByGroup() throws ManagerBeanException {
+		List<SelectItem> items = new LinkedList<SelectItem>();
+		IManagerBean bean = BeanManager.getManagerBean(AreaGroup.class);
+		Criteria criteria = new Criteria();
+		criteria.addOrder(bean.getFieldName(IGBPAlias.AREA_GROUP_DESCRIPTION));
+		Iterator iter = bean.getList(criteria).iterator();
+		while(iter.hasNext()){
+			AreaGroup object = (AreaGroup)iter.next();
+			IManagerBean beanSub = BeanManager.getManagerBean(Area.class);
+			Criteria criteriaSub = new Criteria();
+			criteriaSub.addEqualExpression(beanSub.getFieldName(IGBPAlias.AREA_AREA_GROUP_ID), object.getId());
+			criteriaSub.addOrder(beanSub.getFieldName(IGBPAlias.AREA_DESCRIPTION));
+			List listSub = beanSub.getList(criteriaSub);
+			SelectItem[] subList = new SelectItem[listSub.size()];
+			for (int j = 0; j < listSub.size(); j++) {
+				SelectItem subItem;
+				Area area = (Area)listSub.get(j);
+				subItem = new SelectItem(area.getId(),area.getDescription());
+				subList[j] = subItem; 
+			}
+			SelectItem item = new SelectItemGroup(object.getDescription(),object.getDescription(),true,subList);
 			items.add(item);
 		}
 		return items;
