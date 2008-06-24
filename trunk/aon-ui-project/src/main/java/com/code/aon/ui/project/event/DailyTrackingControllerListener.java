@@ -66,6 +66,7 @@ public class DailyTrackingControllerListener extends ControllerAdapter {
     			IManagerBean dailyTrackingBean = BeanManager.getManagerBean(DailyTracking.class);
     			trackingController.getCriteria().addEqualExpression(dailyTrackingBean.getFieldName(IProjectAlias.DAILY_TRACKING_USER_ID), UserUtils.getInstance().getLoggedUser().getId());
     		}
+    		trackingController.completeCriteria();
 		} catch (ManagerBeanException e) {
 			throw new ControllerListenerException(e);
 		}
