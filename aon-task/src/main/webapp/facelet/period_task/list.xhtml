@@ -1,12 +1,12 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml"
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:c="http://java.sun.com/jstl/core"
-	xmlns:aon="http://www.code.es/aon-rich-components">
-<body>
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	template="/facelet/templates/aon.ui.content.xhtml">
 
-<ui:composition template="/facelet/templates/aon.ui.content.xhtml">
 	<ui:define name="content">
 
 		<aon:form id="periodTaskList">
@@ -22,40 +22,34 @@
 					<aon:div styleClass="aon-finding-subtitle-internal">
 						<aon:outputText value="#{bundle.aon_listing}" />
 					</aon:div>
-
-					<!-- start toolbar navigation -->
 					<aon:div styleClass="aon-finding-toolbar-item-group">
-						<aon:commandButton id="reset" value="#{bundle.aon_reset}"
+						<h:commandButton id="reset" value="#{bundle.aon_reset}"
 							action="period_task_form" actionListener="#{periodTask.onReset}"
 							styleClass="aon-finding-toolbar-item aon-icon-reset"
 							accesskey="#{bundle.aon_key_new}" />
-						<aon:commandButton id="search" value="#{bundle.aon_search}"
+						<h:commandButton id="search" value="#{bundle.aon_search}"
 							action="period_task_search"
 							actionListener="#{periodTask.onEditSearch}"
 							styleClass="aon-finding-toolbar-item aon-icon-search"
 							accesskey="#{bundle.aon_key_search}" />
 					</aon:div>
-
-					<!-- end toolbar navigation -->
 				</aon:panelGrid>
 			</aon:div>
 
-			<!--  aon-region-body -->
 			<aon:div styleClass="aon-scroll-area">
 				<aon:div styleClass="aon-scroll-area-internal">
 
 					<aon:dataTable id="periodTaskDataList" value="#{periodTask.model}"
-						var="to" rows="20" rendered="#{periodTask.model.rowCount > 0}"
-						styleClass="aon-dataTable">
-
-						<aon:rowSelector action="period_task_form"
-							actionListener="#{periodTask.onSelect}" />
+						var="to" rows="20" rendered="#{periodTask.model.rowCount > 0}">
 
 						<aon:column>
 							<f:facet name="header">
 								<aon:outputText value="&#160;" />
 							</f:facet>
-							<aon:outputText value="&#160;" />
+							<h:commandButton
+								styleClass="aon-icon-commandButton aon-icon-rowSelector"
+								actionListener="#{periodTask.onSelect}"
+								action="period_task_form" />
 						</aon:column>
 
 						<aon:column>
@@ -70,6 +64,7 @@
 								<aon:outputText value="#{projectBundle.period_task_frequency}" />
 							</f:facet>
 							<aon:outputText value="#{to.quantity}" />
+							<aon:outputText value="&#160;" />
 							<aon:outputText value="#{to.period}" />
 						</aon:column>
 
@@ -96,8 +91,8 @@
 
 					</aon:dataTable>
 
-					<aon:dataScroller dataTable="periodTaskDataList"
-						model="#{periodTask.model}" showNote="true" />
+					<aon:dataScroller for="periodTaskDataList"
+						rowCount="#{periodTask.model.rowCount}" showNote="true" />
 
 				</aon:div>
 			</aon:div>
@@ -105,6 +100,3 @@
 	</ui:define>
 
 </ui:composition>
-
-</body>
-</html>

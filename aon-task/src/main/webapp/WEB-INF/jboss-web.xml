@@ -7,14 +7,15 @@
 -->
 <jboss-web>
 
-	<!-- Isolate nh classes from other deployments -->
+	<!-- Isolate nh classes from other deployments 
 	<class-loading>
 		<loader-repository>
 			transtools.com:loader=aon-task.war
 		</loader-repository>
 	</class-loading>
-
-	<security-domain flushOnSessionInvalidation="true">java:/jaas/aon-task</security-domain>
+	-->
+	
+	<security-domain flushOnSessionInvalidation="true">java:/jaas/aon-ldap</security-domain>
 
 	<!-- The context-root element specifies the context root of a web
 	application. It may be given here for standalone wars.
