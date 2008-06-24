@@ -31,7 +31,8 @@ public class ResourceChangedListener extends ControllerAdapter {
 	    	Resource r = ResourceManager.getResourceManager().createResource( ec.getEmployee() );
 			ec.setResource( r );
 			ec.setResourceDirty( true );
-			ec.setWorkActivities( CompanyUtil.getSelectItemActivities( r.getWorkPlace() ) );
+			// Find working place active activities, otherwise inactive.
+			ec.setWorkActivities( CompanyUtil.getSelectItemActivities( r.getWorkPlace(), ( (r.getWorkPlace().isActive())? 1: -1) ) );
 			ec.setActivityId( -1 );
 		} catch (ManagerBeanException e) {
 			 throw new ControllerListenerException( e.getMessage(), e );
@@ -48,7 +49,8 @@ public class ResourceChangedListener extends ControllerAdapter {
 	    	Resource r = ResourceManager.getResourceManager().createResource( ec.getEmployee() );
 			ec.setResource( r );
 			ec.setResourceDirty( true );
-			ec.setWorkActivities( CompanyUtil.getSelectItemActivities( r.getWorkPlace() ) );
+			// Find working place active activities, otherwise inactive.
+			ec.setWorkActivities( CompanyUtil.getSelectItemActivities( r.getWorkPlace(), ( (r.getWorkPlace().isActive())? 1: -1) ) );
 			ec.setActivityId( -1 );
 		} catch (ManagerBeanException e) {
 			 throw new ControllerListenerException( e.getMessage(), e );
@@ -93,7 +95,8 @@ public class ResourceChangedListener extends ControllerAdapter {
 			Resource r = ResourceManager.getResourceManager().getResource( ec.getEmployee() );
 			ec.setResource( r );
 			ec.setResourceDirty( false );
-			ec.setWorkActivities( CompanyUtil.findActivities( r.getWorkPlace().getId() ) );
+			// Find working place active activities, otherwise inactive.
+			ec.setWorkActivities( CompanyUtil.findActivities( r.getWorkPlace().getId(), ( (r.getWorkPlace().isActive())? 1: -1) ) );
 			ec.setActivityId( (r.getWorkActivity() == null)? -1: r.getWorkActivity().getId() );
 		} catch (ManagerBeanException e) {
 			 throw new ControllerListenerException( e.getMessage(), e );
