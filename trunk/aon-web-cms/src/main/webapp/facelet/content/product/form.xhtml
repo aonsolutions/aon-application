@@ -109,14 +109,45 @@
 								value="#{appBundle.product_price}" />
 							<aon:inputText id="productDetail_price"
 								size="20" maxlength="15"
+								required="true" 
 								value="#{product.to.price}" />
 
 							<aon:outputLabel for="productDetail_price2"
 								value="#{appBundle.product_offer_price}" />
 							<aon:inputText id="productDetail_price2"
 								size="20" maxlength="15"
+								required="true" 
 								value="#{product.to.offerPrice}" />
-								
+
+							<aon:outputLabel 
+								value="#{appBundle.albumImage_image}" />
+							<aon:panelGroup id="thumbnail_preview">
+								<aon:graphicImage 
+									url="#{product.to.image}.thumbnail" 
+									alt="#{product.to.image}"/>
+				                <aon:commandLink
+				                	immediate="#{true}"
+				                	reRender="thumbnail_preview"
+				                    actionListener="#{product.onDelImage}">
+									<aon:graphicImage url="/images/cms/inactive.png" />
+				        		</aon:commandLink>
+								<ui:include src="/facelet/content/utils/image_modal.xhtml">
+									<ui:param name="modalPanelName" value="mp" />
+									<ui:param name="roots" value="#{fileSystemBean.imageRoots}" />
+									<ui:param name="galleryBean" value="#{gallery}" />
+									<ui:param name="listenerBean" value="#{product}" />
+									<ui:param name="reRender" value="thumbnail_preview" />
+									<ui:param name="image" value="#{true}" />
+									<ui:param name="thumbnail" value="#{false}" />
+								</ui:include>
+							</aon:panelGroup>
+
+							<aon:outputLabel for="ProductDetail_alt"
+								value="#{appBundle.product_alt}" />
+							<aon:inputText id="ProductDetail_alt"
+								size="64" maxlength="64"
+								value="#{product.toI18n.alt}" />
+															
 					</aon:panelGrid>
 
 			</aon:div>

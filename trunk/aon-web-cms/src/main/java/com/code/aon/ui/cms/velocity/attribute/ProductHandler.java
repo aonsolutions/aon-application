@@ -7,6 +7,8 @@ public class ProductHandler {
 
 	private String alias;
 	
+	private String short_label;
+
 	private String label;
 
 	private boolean active;
@@ -20,9 +22,14 @@ public class ProductHandler {
 	private ProductCategoryHandler productCategory;
 
 	private String url;
-	
+
+	private String image;
+
+	private String alt;
+
 	public ProductHandler(ProductDetail detail){
 		this.alias = detail.getProduct().getAlias();
+		this.short_label = detail.getShortLabel();
 		this.label = detail.getLabel();
 		this.active = detail.getProduct().isActive();
 		this.price = detail.getProduct().getPrice().toString();
@@ -31,10 +38,16 @@ public class ProductHandler {
 		this.productCategory = new ProductCategoryHandler(detail.getProduct().getProductCategory());
 		this.url = Templates.PRODUCT.getHtmlName();
 		this.url = this.url.replaceAll("%NAME%", this.alias);
+		this.alt = detail.getAlt(); 
+		this.image = detail.getProduct().getImage(); 
 	}
 
 	public String getAlias() {
 		return alias;
+	}
+
+	public String getShort_label() {
+		return short_label;
 	}
 
 	public String getLabel() {
@@ -63,6 +76,14 @@ public class ProductHandler {
 	
 	public String getUrl() {
 		return url;
+	}
+
+	public String getImage() {
+		return image;
+	}
+
+	public String getAlt() {
+		return alt;
 	}
 
 }
