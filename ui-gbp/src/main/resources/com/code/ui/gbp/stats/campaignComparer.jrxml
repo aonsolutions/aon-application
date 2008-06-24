@@ -36,6 +36,8 @@
 	<field name="supplierType" class="java.lang.String"/>
 	<field name="offerAmount_1" class="java.lang.Double"/>
 	<field name="offerAmount_2" class="java.lang.Double"/>
+	<field name="total_1" class="java.lang.Double"/>
+	<field name="total_2" class="java.lang.Double"/>
 
 	<variable name="amountTotal1" class="java.lang.Double" resetType="Report" calculation="Sum">
 		<variableExpression><![CDATA[$F{invoiceAmount_1}]]></variableExpression>
@@ -642,7 +644,7 @@
 					</textElement>
 				<textFieldExpression   class="java.lang.Double"><![CDATA[$V{amountTotal1}]]></textFieldExpression>
 				</textField>
-				<textField isStretchWithOverflow="false" pattern="#,##0.00" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+				<textField isStretchWithOverflow="false" pattern="#,##0.00" isBlankWhenNull="true" evaluationTime="Report" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						x="448"
 						y="2"
@@ -712,13 +714,14 @@
 						key="element-3"/>
 					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
 						<chartLegend textColor="#000000" backgroundColor="#FFFFFF" >
+					<font fontName="SansSerif" pdfFontName="Helvetica" size="8" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" isPdfEmbedded="false" pdfEncoding="Cp1252"/>
 					</chartLegend>
 					</chart>
 					<pieDataset>
 						<dataset resetType="None" >
 						</dataset>
 						<keyExpression><![CDATA[$F{supplierType}]]></keyExpression>
-						<valueExpression><![CDATA[$F{invoiceAmount_1}]]></valueExpression>
+						<valueExpression><![CDATA[new Double($F{invoiceAmount_1}.doubleValue()*100/$F{total_1}.doubleValue())]]></valueExpression>
 						<labelExpression><![CDATA[null]]></labelExpression>
 				<sectionHyperlink >
 				</sectionHyperlink>
@@ -737,13 +740,14 @@
 						key="element-4"/>
 					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
 						<chartLegend textColor="#000000" backgroundColor="#FFFFFF" >
+					<font fontName="SansSerif" pdfFontName="Helvetica" size="8" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" isPdfEmbedded="false" pdfEncoding="Cp1252"/>
 					</chartLegend>
 					</chart>
 					<pieDataset>
 						<dataset resetType="None" >
 						</dataset>
 						<keyExpression><![CDATA[$F{supplierType}]]></keyExpression>
-						<valueExpression><![CDATA[$F{invoiceAmount_2}]]></valueExpression>
+						<valueExpression><![CDATA[new Double($F{invoiceAmount_2}.doubleValue()*100/$F{total_2}.doubleValue())]]></valueExpression>
 						<labelExpression><![CDATA[null]]></labelExpression>
 				<sectionHyperlink >
 				</sectionHyperlink>
