@@ -60,16 +60,14 @@ public class AnualComparerReport implements ICollectionProvider {
 
 	private AnualComparer getAnualComparer(boolean prev){
 		Session s = HibernateUtil.getSession();
-		String stmt1 = "SELECT COUNT(*) FROM Campaign c WHERE c.offerDueDate >= ? AND c.offerDueDate <= ?";
-		String subStmt = "SELECT c.id FROM  WHERE c.offerDueDate >= ? AND c.offerDueDate <= ?";
-		String stmt2 = "SELECT SUM(off.price) FROM Campaign c, Offer off " +
-				" WHERE c.offerDueDate >= ? AND c.offerDueDate <= ?" +
-				" AND off.campaign.id = c.id ";
-		String stmt3 = "SELECT SUM(inv.amount) FROM ProFormaInvoice inv, Campaign c " +
-				" WHERE c.offerDueDate >= ? AND c.offerDueDate <= ? " +
-				" AND inv.campaign.id = c.id ";
+		String stmtCampaign = "SELECT COUNT(DISTINCT inv.campaign) FROM ProFormaInvoice inv " +
+				" WHERE inv.invoiceDate >= ? AND inv.invoiceDate <= ? ";
+		String stmtOffer = "SELECT SUM(off.price) FROM Offer off " +
+				" WHERE off.offerDate >= ? AND off.offerDate <= ?";
+		String stmtInvoice = "SELECT SUM(inv.amount) FROM ProFormaInvoice inv " +
+				" WHERE inv.invoiceDate >= ? AND inv.invoiceDate <= ? ";
 		
-		Query query = s.createQuery(stmt1.toString());
+		Query query = s.createQuery(stmtCampaign.toString());
 		GregorianCalendar current = new GregorianCalendar();
 		GregorianCalendar initDate;
 		if (prev)
@@ -85,12 +83,12 @@ public class AnualComparerReport implements ICollectionProvider {
 		query.setDate(1, endDate.getTime());
 		List<Long> list_1 = query.list();
 		
-		query = s.createQuery(stmt2.toString());
+		query = s.createQuery(stmtOffer.toString());
 		query.setDate(0, initDate.getTime());
 		query.setDate(1, endDate.getTime());
 		List<BigDecimal> list_2 = query.list();
 
-		query = s.createQuery(stmt3.toString());
+		query = s.createQuery(stmtInvoice.toString());
 		query.setDate(0, initDate.getTime());
 		query.setDate(1, endDate.getTime());
 		List<BigDecimal> list_3 = query.list();

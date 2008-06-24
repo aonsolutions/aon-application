@@ -1,7 +1,9 @@
 package com.code.ui.gbp.stats;
 
 import java.math.BigDecimal;
+import java.util.Calendar;
 import java.util.GregorianCalendar;
+import java.util.ResourceBundle;
 
 public class AnualComparer {
 
@@ -77,5 +79,25 @@ public class AnualComparer {
 	public void setEnd(GregorianCalendar end) {
 		this.end = end;
 	}
+
+	/**
+	 * Ruta base del fichero de mensajes.
+	 */
+	private static final String BASE_NAME = "com.code.ui.gbp.i18n.enumeration";
 	
+    /**
+     * Prefijo de la llave de mensajes. 
+     */
+    private static final String MSG_KEY_PREFIX = "aon_enum_month_";
+
+    public String getInitMonth() {
+		ResourceBundle bundle = ResourceBundle.getBundle(BASE_NAME);
+		return bundle.getString(MSG_KEY_PREFIX + this.start.get(Calendar.MONTH));
+	}
+
+    public String getEndMonth() {
+		ResourceBundle bundle = ResourceBundle.getBundle(BASE_NAME);
+		return bundle.getString(MSG_KEY_PREFIX + this.end.get(Calendar.MONTH));
+	}
+
 }
