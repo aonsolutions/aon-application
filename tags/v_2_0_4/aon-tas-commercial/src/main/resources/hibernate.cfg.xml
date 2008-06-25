@@ -1,0 +1,48 @@
+<!DOCTYPE hibernate-configuration PUBLIC
+	"-//Hibernate/Hibernate Configuration DTD 3.0//EN"
+	"http://hibernate.sourceforge.net/hibernate-configuration-3.0.dtd">
+
+<hibernate-configuration>
+
+	<session-factory>
+
+		<property name="connection.url">jdbc:mysql://192.168.2.4:3306/aon_gtm?autoReconnect=true</property>		
+		<property name="connection.username">dbuser</property>		
+		<property name="show_sql">true</property>		
+		<property name="dialect">org.hibernate.dialect.MySQLInnoDBDialect</property>
+		<property name="connection.driver_class">org.gjt.mm.mysql.Driver</property>		
+		<property name="connection.password">serubd2000</property>		
+
+		<!-- Mapping files -->
+		<mapping class="com.code.aon.tasCommercial.TasOffer"/>
+
+		<mapping class="com.code.aon.commercial.Offer"/>
+		<mapping class="com.code.aon.commercial.OfferDetail"/>
+		<mapping class="com.code.aon.commercial.Target"/>
+		
+		<mapping class="com.code.aon.tas.SupportOrder"/>
+		<mapping class="com.code.aon.tas.TasItem"/>
+		<mapping class="com.code.aon.tas.Model"/>
+		<mapping class="com.code.aon.tas.Make"/>
+		
+		<mapping class="com.code.aon.company.resources.Employee"/>
+		
+		<mapping class="com.code.aon.sales.Seller"/>
+		
+		<mapping class="com.code.aon.product.Item"/>
+		<mapping class="com.code.aon.product.Product"/>
+		<mapping class="com.code.aon.product.Brand"/>
+		<mapping class="com.code.aon.product.Tax"/>
+		<mapping class="com.code.aon.product.ProductCategory"/>
+		<mapping class="com.code.aon.product.Tariff"/>
+		
+		<mapping class="com.code.aon.finance.PayMethod"/>
+		
+		<mapping class="com.code.aon.registry.Registry"/>
+		<mapping class="com.code.aon.registry.RegistryAddress"/>
+		<mapping class="com.code.aon.registry.RegistryMedia"/>
+		
+		<mapping class="com.code.aon.geozone.GeoZone"/>
+	</session-factory>
+
+</hibernate-configuration>

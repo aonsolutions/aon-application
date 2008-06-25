@@ -1,0 +1,161 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core" 
+	xmlns:t="http://myfaces.apache.org/tomahawk"            
+	xmlns:h="http://java.sun.com/jsf/html">
+<body>
+
+<ui:composition template="/facelet/templates/aon.ui.form.xhtml">
+
+	<ui:define name="head">
+		<ui:include src="/facelet/shared/head.xhtml" />
+		<t:stylesheet path="/jscalendar-1.0/calendar-system.css" />
+		<script type='text/javascript'
+			src="${facesContext.externalContext.requestContextPath}/jscalendar-1.0/calendar.js">
+			// nothing
+		</script>
+		<script type='text/javascript'
+			src="${facesContext.externalContext.requestContextPath}/jscalendar-1.0/lang/calendar-es.js">
+			// nothing
+		</script>
+		<script type='text/javascript'
+			src="${facesContext.externalContext.requestContextPath}/jscalendar-1.0/calendar-setup.js">
+			// nothing
+		</script>
+	</ui:define>		
+
+	<ui:define name="content">
+	
+		<h:form id="offerForm">
+		
+			<t:div styleClass="aon-content-toolbar">
+				<t:div styleClass="aon-content-toolbar-internal">
+				<t:div styleClass="aon-content-toolbar-item-group">
+					<t:commandButton id="search" value="#{bundle.aon_search}" 
+						action="offer_list" actionListener="#{offer.onSearch}" 
+						styleClass="aon-content-toolbar-item aon-content-toolbar-item-search"
+						onmouseover="this.className='aon-content-toolbar-item aon-content-toolbar-item-hover aon-content-toolbar-item-search'"
+						onmouseout="this.className='aon-content-toolbar-item aon-content-toolbar-item-search'" 
+						accesskey="#{bundle.aon_key_search}"/>
+					<t:commandButton id="cancel" value="#{bundle.aon_cancel}" 
+						action="offer_list" actionListener="#{offer.onCancel}" 
+						styleClass="aon-content-toolbar-item aon-content-toolbar-item-cancel"
+						onmouseover="this.className='aon-content-toolbar-item aon-content-toolbar-item-hover aon-content-toolbar-item-cancel'"
+						onmouseout="this.className='aon-content-toolbar-item aon-content-toolbar-item-cancel'" 
+						accesskey="#{bundle.aon_key_cancel}"/>
+					<h:commandButton id="clear" value="#{bundle.aon_clear}"
+						type="reset"
+						styleClass="aon-content-toolbar-item aon-content-toolbar-item-reset"
+						onmouseover="this.className='aon-content-toolbar-item aon-content-toolbar-item-hover aon-content-toolbar-item-reset'"
+						onmouseout="this.className='aon-content-toolbar-item aon-content-toolbar-item-reset'" />
+					<t:commandButton id="reset" value="#{bundle.aon_reset}"
+						action="offer_form" actionListener="#{offer.onReset}"
+						styleClass="aon-content-toolbar-item aon-content-toolbar-item-new"
+						onmouseover="this.className='aon-content-toolbar-item aon-content-toolbar-item-hover aon-content-toolbar-item-new'"
+						onmouseout="this.className='aon-content-toolbar-item aon-content-toolbar-item-new'" 
+						accesskey="#{bundle.aon_key_new}"/>
+				</t:div>
+				</t:div>
+			</t:div>
+			
+			<t:div styleClass="aon-content-subtitle" id="aon-content-subtitle"
+				forceId="#{true}">
+				<t:div styleClass="aon-content-subtitle-internal">
+				<h:outputText value="#{bundle.aon_search_header}" />
+				</t:div>
+			</t:div>
+			
+			<t:div forceId="#{true}" id="aon-scroll-area">
+				<t:div styleClass="aon-scroll-area-internal">
+					<h:panelGrid columns="2" styleClass="aon-form-table" 
+						columnClasses="aon-form-table-column-odd,aon-form-table-column-even">
+							
+						<h:outputLabel
+							styleClass="aon-form-input-text-label aon-form-table-column-odd-label"
+							for="Offer_series" 
+							value="#{commercialBundle.aon_series_number}" />
+						<t:div>
+							<t:inputText id="Offer_series" size="5"
+								styleClass="aon-form-input-text" onblur="toUpperCase(this);"
+								valueChangeListener="#{offer.addExpression}" />
+							<t:inputText id="Offer_number" size="15"
+								styleClass="aon-form-input-text"
+								valueChangeListener="#{offer.addExpression}" />
+						</t:div>
+
+						<h:outputLabel
+							styleClass="aon-form-input-text-label aon-form-table-column-odd-label"
+							for="Offer_startDate" value="#{commercialBundle.aon_date}" />
+						<t:div>
+							<t:div styleClas="aon-form-unit aon-form-layout-unit-inline-label-block" style="display:inline;">
+								<h:outputLabel styleClass="aon-form-input-text-label" 
+								value="#{commercialBundle.aon_date_from}"/>
+								<t:inputText styleClass="aon-form-input-text"
+									id="Offer_issueDate1" 
+									forceId="#{true}"
+									valueChangeListener="#{offer.addIssueDateGreaterThanExpression}"
+									size="10" maxlength="12">
+									<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+										timeZone="#{timeZoneController.timeZoneId}" />
+								</t:inputText>
+								<t:commandButton styleClass="aon-form-calendar-button"
+									id="Offer_issueDate1_button" forceId="#{true}" value=""
+									immediate="true" />
+								<script type="text/javascript">
+								  Calendar.setup( {
+									inputField  : "Offer_issueDate1", button : "Offer_issueDate1_button",
+									ifFormat    : "%d/%m/%Y" } );
+								</script>
+							</t:div>
+							<t:div styleClas="aon-form-unit aon-form-layout-unit-inline-label-block" style="display:inline;">
+								<h:outputLabel styleClass="aon-form-input-text-label" 
+								value="#{commercialBundle.aon_date_to}"/>
+								<t:inputText styleClass="aon-form-input-text"
+									id="Offer_issueDate2" 
+									forceId="#{true}"
+									valueChangeListener="#{offer.addIssueDateLessThanExpression}"
+									size="10" maxlength="12">
+									<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+										timeZone="#{timeZoneController.timeZoneId}" />
+								</t:inputText>
+								<t:commandButton styleClass="aon-form-calendar-button"
+									id="Offer_issueDate2_button" forceId="#{true}" value=""
+									immediate="true" />
+								<script type="text/javascript">
+								  Calendar.setup( {
+									inputField  : "Offer_issueDate2", button : "Offer_issueDate2_button",
+									ifFormat    : "%d/%m/%Y" } );
+								</script>
+							</t:div>
+						</t:div>
+						
+						<h:outputLabel
+							styleClass="aon-form-input-text-label aon-form-table-column-odd-label"
+							for="Offer_target_registry_document" 
+							value="#{commercialBundle.aon_customer_document}" />
+						<t:inputText id="Offer_target_registry_document" size="15"
+							styleClass="aon-form-input-text"
+							valueChangeListener="#{offer.addTargetExpression}" />
+
+						<t:outputLabel for="Offer_status"
+							styleClass="aon-form-selectOneMenu-label"
+							value="#{commercialBundle.aon_status}" />
+						<h:selectOneMenu id="Offer_status" 
+							styleClass="aon-form-selectOneMenu-field"
+							valueChangeListener="#{offer.addEqualExpression}"
+							converter="aonOfferStatusConverter">
+							<f:selectItem itemDisabled="true" itemLabel="-" itemValue=""/>
+							<f:selectItems value="#{commecialCollections.offerStatuses}" />
+						</h:selectOneMenu>
+							
+					</h:panelGrid>
+				</t:div>
+			</t:div>	
+		</h:form>
+		<h:form id="placeList" target="list" />
+	</ui:define>
+</ui:composition>
+
+</body>
+</html>
