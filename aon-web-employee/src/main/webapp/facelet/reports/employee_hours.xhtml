@@ -64,7 +64,7 @@
 
 					<t:div styleClass="aon-form-group" rendered="#{hourssummary.hours > 0}">
 						<t:div styleClass="aon-form-group-title" >
-							<h:outputText value="Informe" />
+							<h:outputText value="#{appBundle.aon_report}" />
 						</t:div>
 						<t:div styleClass="aon-form-group-body">
 
@@ -78,27 +78,27 @@
 									value="#{hourssummary.employee.agreementTime}" />
 
 								<h:outputLabel for="Employee_hours" styleClass="aon-form-input-text-label" 
-									value="#{appBundle.aon_working_time}" />
+									value="#{appBundle.aon_esteemed_time} #{appBundle.aon_date_till_now}" />
 								<h:outputText id="Employee_hours" size="4" 
 									value="#{hourssummary.hours}" />
 
 								<h:outputLabel for="Incidence_equal" styleClass="aon-form-input-text-label" 
-									value="Horas Permiso Retribuido" />
+									value="#{appBundle.aon_reward_time}" />
 								<h:outputText id="Incidence_equal" size="4" 
 									value="#{hourssummary.incidenceEqual}" />
 
 								<h:outputLabel for="Incidence_plus" styleClass="aon-form-input-text-label" 
-									value="Horas a sumar" />
+									value="#{appBundle.aon_add_time}" />
 								<h:outputText id="Incidence_plus" size="4" 
 									value="#{hourssummary.incidencePlus}" />
 
 								<h:outputLabel for="Incidence_minus" styleClass="aon-form-input-text-label" 
-									value="Horas a restar" />
+									value="#{appBundle.aon_minus_time}" />
 								<h:outputText id="Incidence_minus" size="4" 
 									value="#{hourssummary.incidenceMinus}" />
 
 								<h:outputLabel for="Employee_real_hours" styleClass="aon-form-input-text-label" 
-									value="Horas Reales" />
+									value="#{appBundle.aon_working_time} #{appBundle.aon_date_till_now}" />
 								<h:outputText id="Employee_real_hours" size="4" 
 									value="#{hourssummary.hours + hourssummary.incidencePlus - (hourssummary.incidenceEqual + hourssummary.incidenceMinus) }" />
 

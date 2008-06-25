@@ -41,10 +41,10 @@
 			<t:div>
 				<t:inputDate id="Event_startTime" styleClass="aon-form-input-text" type="both" 
 					rendered="#{!event.event.allDay and !event.recur}"
-					value="#{event.event.startTime}" 
+					value="#{event.startTime}" 
 					valueChangeListener="#{event.startTimeChanged}"
 				/>
-
+ 
 				<t:div style="display:inline;">
 					<h:outputLabel for="Event_startTime_allday" styleClass="aon-form-input-text-label"
 						rendered="#{event.event.allDay and !event.recur}"
@@ -52,7 +52,7 @@
 					<f:verbatim>&#160;&#160;&#160;</f:verbatim>
 					<t:inputDate id="Event_startTime_allday" type="date" 
 						rendered="#{event.event.allDay and !event.recur}"
-						value="#{event.event.startTime}"
+						value="#{event.startTime}"
 						valueChangeListener="#{event.startTimeChanged}"
 					/>
 					<h:selectBooleanCheckbox id="Event_allday" styleClass="checkbox"
@@ -64,37 +64,46 @@
 						value="#{plannerBundle.aon_planner_event_allday}" />
 
 					<t:div style="padding-top:10px;" rendered="#{event.recur}" >
-						<h:outputLabel for="Event_allday" styleClass="aon-form-input-text-label"
+						<h:outputLabel styleClass="aon-form-input-text-label"
 							rendered="#{event.recur}"
 							value="#{plannerBundle.aon_planner_event_recurrence}" />
 						<f:verbatim>Desde el&#160;</f:verbatim>
-						<t:outputText value="#{event.startDate}" >
+						<t:inputText id="Event_startDate_recur_summary" forceId="#{true}" readonly="#{true}" size="6" 
+								value="#{event.startDate}" 
+								style="border:0;display:inline;padding:0;position:relative;top:1;" >
 							<f:convertDateTime pattern="#{bundle.aon_date_pattern}" timeZone="#{timeZoneController.timeZoneId}" />
-						</t:outputText>
-						<f:verbatim>&#160;</f:verbatim>
-						<t:outputText value="#{event.startTime}" >
+						</t:inputText>
+						<f:verbatim>&#160;a las&#160;</f:verbatim>
+						<t:inputText id="Event_startTime_recur_summary" forceId="#{true}" readonly="#{true}" size="2"
+								value="#{event.startTime}"
+								style="border:0;display:inline;padding:0;position:relative;top:1;" >
 							<f:convertDateTime pattern="#{appBundle.aon_time_pattern}" timeZone="#{timeZoneController.timeZoneId}" />
-						</t:outputText>
-						<h:panelGroup rendered="#{event.recurrence.until != null}">
-							<f:verbatim>&#160;Hasta el&#160;</f:verbatim>
-							<t:outputText value="#{event.recurrence.until}" >
+						</t:inputText>
+						<h:panelGroup rendered="#{event.recurrence.until != null}" >
+							<f:verbatim>Hasta el&#160;</f:verbatim>
+							<t:inputText id="Event_endDate_recur_summary" forceId="#{true}" readonly="#{true}" size="6"
+									value="#{event.recurrence.until}"
+									style="border:0;display:inline;padding:0;position:relative;top:1;" >
 								<f:convertDateTime pattern="#{bundle.aon_date_pattern}" timeZone="#{timeZoneController.timeZoneId}" />
-							</t:outputText>
-							<f:verbatim>&#160;</f:verbatim>
-							<t:outputText value="#{event.event.endTime}" >
+							</t:inputText>
+							<f:verbatim>&#160;a las&#160;</f:verbatim>
+							<t:inputText id="Event_endTime_recur_summary" forceId="#{true}" readonly="#{true}" size="2"
+									value="#{event.endTime}"
+									style="border:0;display:inline;padding:0;position:relative;top:1;" >
 								<f:convertDateTime pattern="#{appBundle.aon_time_pattern}" timeZone="#{timeZoneController.timeZoneId}" />
-							</t:outputText>
+							</t:inputText>
 						</h:panelGroup>
 					</t:div>
-				</t:div>
-			</t:div>
 
+				</t:div>
+
+			</t:div>
 			<h:outputLabel for="Event_endTime" rendered="#{!event.event.allDay and !event.recur}"
 				value="#{plannerBundle.aon_planner_event_end}" styleClass="aon-form-input-text-label"/>
 				
 			<t:inputDate id="Event_endTime" styleClass="aon-form-input-text" type="both"
 				rendered="#{!event.event.allDay and !event.recur}"
-				value="#{event.event.endTime}" 
+				value="#{event.endTime}" 
 				valueChangeListener="#{event.endTimeChanged}"
 				/>
 
@@ -112,14 +121,16 @@
 				</h:selectOneMenu>
 			</t:div>
 			<t:div>
-				<h:outputLabel for="Event_category" value="#{plannerBundle.aon_planner_event_category}" styleClass="aon-form-input-text-label"/>
+				<h:outputLabel for="Event_category" value="#{plannerBundle.aon_planner_event_category}" 
+					styleClass="aon-form-input-text-label"/>
 				<h:selectOneMenu id="Event_category" value="#{event.event.category}" >
 					<f:selectItems id="categories" value="#{event.categories}" />
 				</h:selectOneMenu>
 			</t:div>
 			<t:div>
 				<t:selectBooleanCheckbox id="selone" forceId="#{true}" styleClass="radio" 
-					value="#{event.recur}" valueChangeListener="#{event.allowRecurrence}"
+					value="#{event.recur}" 
+					valueChangeListener="#{event.allowRecurrence}"
 					onclick="if ( this.form.Event_title.value == '') {alert('#{plannerBundle.aon_planner_event_fill_subject}');this.form.Event_title.focus();this.checked = false;return false;}this.form.submit();" />
 				<h:outputLabel for="selone" value="#{plannerBundle.aon_planner_event_recurrence_panel}" styleClass="aon-form-input-text-label" />
 			</t:div>

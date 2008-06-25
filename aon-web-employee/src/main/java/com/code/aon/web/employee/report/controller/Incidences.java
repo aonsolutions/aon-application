@@ -219,9 +219,11 @@ public class Incidences implements ICollectionProvider, IEntityVisitor {
 		this.workActivity.setId( -1 );
 		setStartingDate( new Date() );
 		setEndingDate( new Date() );
-		setWorkActivities( CompanyUtil.getSelectItemActivities( this.workPlace ) );
+		// Find working place active activities and employees, otherwise inactive.
+		int active = ( this.workPlace.isActive() )? 1: -1;
+		setWorkActivities( CompanyUtil.getSelectItemActivities( this.workPlace, active ) );
 		setEmployeeId( -1 );
-		setEmployees( CompanyUtil.getSelectItemEmployees( this.workPlace ) );
+		setEmployees( CompanyUtil.getSelectItemEmployees( this.workPlace, active ) );
 		setIncidenceType( -1 );
 		setIncidenceCompute( 99 );
 	}
@@ -253,8 +255,10 @@ public class Incidences implements ICollectionProvider, IEntityVisitor {
 			try {
 		    	HibernateUtil.setCloseSession( false );
 				this.workPlace = CompanyUtil.getWorkPlace( workPlaceId );
-				setWorkActivities( CompanyUtil.getSelectItemActivities( this.workPlace ) );
-				setEmployees( CompanyUtil.getSelectItemEmployees( this.workPlace ) );
+				// Find working place active activities and employees, otherwise inactive.
+				int active = ( this.workPlace.isActive() )? 1: -1;
+				setWorkActivities( CompanyUtil.getSelectItemActivities( this.workPlace, active ) );
+				setEmployees( CompanyUtil.getSelectItemEmployees( this.workPlace, active ) );
 				this.workActivity = (WorkActivity) BeanManager.getManagerBean( WorkActivity.class ).createNewTo();
 				setEmployeeId( -1 );
 			} finally {
@@ -275,7 +279,9 @@ public class Incidences implements ICollectionProvider, IEntityVisitor {
 			try {
 		    	HibernateUtil.setCloseSession( false );
 				this.workActivity = CompanyUtil.getWorkActivity( (Integer) event.getNewValue() );
-				setEmployees( CompanyUtil.getSelectItemEmployees( this.workActivity ) );
+				// Find active or inactive working activities.
+				int active = ( this.workActivity.isActive() )? 1: -1;
+				setEmployees( CompanyUtil.getSelectItemEmployees( this.workActivity, active ) );
 			} finally {
 		    	HibernateUtil.setCloseSession( true );
 			}

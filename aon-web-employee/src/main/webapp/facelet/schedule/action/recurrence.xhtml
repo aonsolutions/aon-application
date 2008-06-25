@@ -19,7 +19,7 @@
 					type="short_time" 
 					disabled="#{event.event.allDay or event.event.holiday}"
 					value="#{event.startTime}"
-					onchange="this.form.submit();" 
+					onchange="document.getElementById('Event_startTime_recur_summary').value = document.getElementById('Event_startTime_recur.hours').value + ':' + document.getElementById('Event_startTime_recur.minutes').value;" 
 					 />
 
 				<f:verbatim>&#160;</f:verbatim>
@@ -29,9 +29,8 @@
 				<t:inputDate id="Event_endTime_recur" forceId="#{true}" styleClass="aon-form-input-text"
 					type="short_time" 
 					disabled="#{event.event.allDay or event.event.holiday}"
-					value="#{event.event.endTime}" 
-					valueChangeListener="#{event.endTimeChanged}"
-					onchange="this.form.submit();" 
+					value="#{event.endTime}" 
+					onchange="document.getElementById('Event_endTime_recur_summary').value = document.getElementById('Event_endTime_recur.hours').value + ':' + document.getElementById('Event_endTime_recur.minutes').value;" 
 					/>
 			</t:div>
 		</t:div>
@@ -179,7 +178,7 @@
 						<t:inputText id="Event_startDate_recur" forceId="#{true}"
 								styleClass="aon-form-input-text" maxlength="12"
 								value="#{event.startDate}" 
-								onchange="this.form.submit();" >
+								onchange="document.getElementById('Event_startDate_recur_summary').value = this.value;" >
 							<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
 								timeZone="#{timeZoneController.timeZoneId}" />
 						</t:inputText>
@@ -215,7 +214,8 @@
 							<f:verbatim>&#160;</f:verbatim>
 							<t:inputText id="Event_endDate_recur" forceId="#{true}"
 									styleClass="aon-form-input-text" maxlength="12"
-									value="#{event.recurrence.until}" onchange="this.form.submit();" >
+									value="#{event.recurrence.until}" 
+									onchange="document.getElementById('Event_endDate_recur_summary').value = this.value;" >
 								<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
 									timeZone="#{timeZoneController.timeZoneId}" />
 							</t:inputText>

@@ -27,9 +27,7 @@ import com.code.aon.ui.planner.Utils;
  */
 public class PlannerResourceLoaderListener extends ControllerAdapter {
 
-	/* (non-Javadoc)
-	 * @see com.code.aon.ui.form.event.ControllerAdapter#afterBeanCreated(com.code.aon.ui.form.event.ControllerEvent)
-	 */
+	@SuppressWarnings("unchecked")
 	@Override
 	public void afterBeanCreated(ControllerEvent event) throws ControllerListenerException {
 		IncidencesController ic = (IncidencesController) event.getController();
@@ -37,7 +35,7 @@ public class PlannerResourceLoaderListener extends ControllerAdapter {
     		boolean found = false;
     		ic.setItemResources( new ArrayList<SelectItem>() );
     		ic.setResources( new ArrayList<Resource>() );
-    		List l = ResourceManager.getResourceManager().getResources();
+    		List l = ResourceManager.getResourceManager().getActiveResources();
     		if ( l.size() > 0 ) {
     			found = true;
     			Iterator iter = l.iterator();
