@@ -196,7 +196,7 @@ public class PlannerUtil {
     	c.setTime( new Date() );
     	c.set( c.get(Calendar.YEAR), 0, 01 );
 		DateTime start = CalendarUtil.getICalDateTime( c.getTime(), true);
-    	c.set( c.get(Calendar.YEAR), 11, 31 );
+    	c.set( c.get(Calendar.YEAR) + 1, 0, 01 );
 		DateTime end = CalendarUtil.getICalDateTime( c.getTime(), true);
 		if ( endDate != null ) {
 			end = CalendarUtil.getICalDateTime( endDate, true);
@@ -212,7 +212,8 @@ public class PlannerUtil {
 	            minutes += p.getDuration().getMinutes();
 	        }
         }
-        return hours + Math.round(minutes/60);
+//        return hours + Math.round(minutes/60);
+        return hours + minutes/60;
     }
 
     /**
