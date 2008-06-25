@@ -93,7 +93,8 @@ public abstract class GalleryController extends BasicController implements IGall
 		if ( this.inputFile!= null ) {
 			long size = this.inputFile.getSize();
 			String upload_name = inputFile.getName();
-			upload_name = upload_name.substring(upload_name.lastIndexOf(File.separator));
+			upload_name = upload_name.replace('\\', '/');
+			upload_name = upload_name.substring(upload_name.lastIndexOf('/'));
 			String fileName = File.separator+upload_name;
 			File file = new File( currentPath+File.separator+fileName);
 			if ( (maximumSize != -1) && (size > maximumSize) ) {
