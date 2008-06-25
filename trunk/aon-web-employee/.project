@@ -3,6 +3,12 @@
 	<name>aon-web-employee</name>
 	<comment></comment>
 	<projects>
+		<project>aon-calendar</project>
+		<project>aon-employee</project>
+		<project>aon-ui-planner</project>
+		<project>aon-common</project>
+		<project>aon-planner</project>
+		<project>aon-ui-employee</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>

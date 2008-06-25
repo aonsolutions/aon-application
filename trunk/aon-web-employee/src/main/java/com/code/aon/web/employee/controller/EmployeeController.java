@@ -31,6 +31,8 @@ import com.code.aon.ui.util.AonUtil;
 
 public class EmployeeController extends com.code.aon.ui.employee.controller.EmployeeController {
 	
+	private static final long serialVersionUID = 4312327540171952885L;
+
 	/** Employee calendar */
 	private AonCalendar calendar;
 

@@ -182,15 +182,15 @@ public class WorkingHoursSummary {
 		if ( aonCalendar != null ) {
 			loadIncidenceTypes();
 			Date date = new Date();
-			Calendar calendar = Calendar.getInstance();
-			calendar.setTime( date );
-			if ( calendar.get( Calendar.YEAR ) != this.year ) {
-				calendar.set( this.year, 11, 31 );
-				date = calendar.getTime();
+			Calendar cal = Calendar.getInstance();
+			cal.setTime( date );
+			if ( cal.get( Calendar.YEAR ) != this.year ) {
+				cal.set( this.year, 11, 31 );
+				date = cal.getTime();
 			}
-			calendar.add( Calendar.DATE, 1);
+			cal.add( Calendar.DATE, 1);
 			hours = 
-				PlannerUtil.calcYearlyHours( PlannerUtil.getYearlyComponentList( aonCalendar ), calendar.getTime() );
+				PlannerUtil.calcYearlyHours( PlannerUtil.getYearlyComponentList( aonCalendar ), cal.getTime() );
 			computeIncidences( aonCalendar, date );
 		}
 	}

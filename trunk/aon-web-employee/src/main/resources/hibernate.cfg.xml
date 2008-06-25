@@ -5,10 +5,11 @@
 <hibernate-configuration>
 
 	<session-factory>
+		<property name="connection.datasource">java:comp/env/jdbc/AonEmployee</property>		
+		<property name="dialect">org.hibernate.dialect.MySQLDialect</property>
+		<!--
 		<property name="connection.provider_class">com.code.aon.common.dao.hibernate.DBCPConnectionProvider</property>
 		<property name="connection.service">jboss.admin:service=AonSecurity</property>
-
-		<!--
 		<property name="connection.service">Catalina:type=Security,name=AonSecurity</property>
 
  		<property name="connection.url">jdbc:mysql://192.168.2.4:3306/aon_employee?autoReconnect=true</property>		
@@ -17,9 +18,6 @@
 		<property name="connection.password">serubd2000</property>		
 		 -->
 		<property name="show_sql">true</property>
-
-		<property name="connection.datasource">java:comp/env/jdbc/AonEmployee</property>		
-		<property name="dialect">org.hibernate.dialect.MySQLDialect</property>
 
 		<!-- AON-REGISTRY Mapping files -->	
 		<mapping class="com.code.aon.registry.Registry"/>
@@ -33,12 +31,14 @@
 		<mapping class="com.code.aon.registry.RegistryDirStaff"/>
 		<mapping class="com.code.aon.registry.RecordData"/>
 
-		<!-- AON-CONFIG Mapping files -->	
+		<!-- AON-CONFIG Mapping files -->
 		<mapping class="com.code.aon.config.ApplicationParameter"/>
 		<mapping class="com.code.aon.config.Scope"/>
 		<mapping class="com.code.aon.config.Series"/>
 		<mapping class="com.code.aon.config.User"/>
 		<mapping class="com.code.aon.config.UserScope"/>
+		<mapping class="com.code.aon.config.WorkGroup"/>
+		<mapping class="com.code.aon.config.UserWorkGroup"/>
 
 		<!-- AON-COMPANY Mapping files -->
 		<mapping class="com.code.aon.company.Company"/>
@@ -49,8 +49,8 @@
 		<mapping class="com.code.aon.company.resources.Employee"/>
 
 		<!-- AON-GEOZONE Mapping files -->	
+		<mapping class="com.code.aon.geozone.GeoTree"/>			
 		<mapping class="com.code.aon.geozone.GeoZone"/>			
-		<mapping class="com.code.aon.geozone.Country"/>
 
 		<!-- AON-PLANNER Mapping files -->		
 		<mapping class="com.code.aon.planner.core.Calendar"/>
@@ -72,7 +72,7 @@
 
 		<!-- AON-EMPLOYEE Record Mapping files -->		
 		<mapping class="com.code.aon.record.Work"/>
-		<mapping class="com.code.aon.record.Course"/>
+		<mapping class="com.code.aon.record.LHCourse"/>
 		<mapping class="com.code.aon.record.Position"/>
 		<mapping class="com.code.aon.record.Contract"/>		
 

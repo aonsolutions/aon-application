@@ -122,7 +122,7 @@
 						value="#{company.mainAddress.geozone.id}"
 						styleClass="aon-form-selectOneMenu-field"
 						valueChangeListener="#{company.addressChanged}">
-						<f:selectItems value="#{registryCollections.geoZones}" />
+						<f:selectItems value="#{geozoneCollections.geoZones}" />
 					</h:selectOneMenu>
 					
 					<h:outputLabel 
@@ -311,14 +311,14 @@
 									styleClass="aon-form-selectOneMenu-field"
 									rendered="#{to==companyAddress.to}"
 									valueChangeListener="#{company.onChangeGeoZone}">
-									<f:selectItems value="#{registryCollections.geoZones}" />
+									<f:selectItems value="#{geozoneCollections.geoZones}" />
 								</h:selectOneMenu>
 								<f:facet name="footer">
 									<t:div>
 										<h:selectOneMenu value="#{companyAddress.to.geozone.id}"
 											styleClass="aon-form-selectOneMenu-field"
 											rendered="#{companyAddress.new}">
-											<f:selectItems value="#{registryCollections.geoZones}" />
+											<f:selectItems value="#{geozoneCollections.geoZones}" />
 										</h:selectOneMenu>
 									</t:div>
 								</f:facet>

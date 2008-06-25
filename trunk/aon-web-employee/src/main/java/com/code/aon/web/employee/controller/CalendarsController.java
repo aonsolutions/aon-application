@@ -9,8 +9,6 @@ import java.util.List;
 import java.util.Map;
 
 import javax.faces.application.FacesMessage;
-import javax.faces.context.FacesContext;
-import javax.faces.el.ValueBinding;
 import javax.faces.event.ActionEvent;
 
 import net.fortuna.ical4j.model.Property;
@@ -48,6 +46,7 @@ import com.code.aon.registry.RegistryAddress;
 import com.code.aon.registry.enumeration.AddressType;
 import com.code.aon.ui.company.controller.CompanyUtil;
 import com.code.aon.ui.employee.util.Constants;
+import com.code.aon.ui.employee.util.Utils;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.menu.jsf.MenuEvent;
 import com.code.aon.ui.planner.ControllerUtil;
@@ -74,10 +73,7 @@ public class CalendarsController implements TreeSelectionListener, IPlannerListe
 	private Transfer transfer;
 
 	public static final CalendarsController getCalendarsController() {
-	    FacesContext ctx = FacesContext.getCurrentInstance();
-	    ValueBinding vb = 
-	    	ctx.getApplication().createValueBinding( "#{" + CALENDARS_NAME + "}" );
-	    return (CalendarsController) vb.getValue(ctx);
+	    return (CalendarsController) Utils.getController( CALENDARS_NAME );
 	}
 
 	/**
@@ -470,7 +466,7 @@ public class CalendarsController implements TreeSelectionListener, IPlannerListe
 
 		public String getName() {
 			Company c = (Company) selected;
-			return c.getName() + " " + c.getSurname();
+			return c.getName() + ( (c.getSurname() == null)? "": " " + c.getSurname() );
 		}
 
 		public void onSelect(ActionEvent event) throws ManagerBeanException {
@@ -521,7 +517,9 @@ public class CalendarsController implements TreeSelectionListener, IPlannerListe
 			ec.setResourceAllowed( false );
 			Resource wpr = (Resource) ec.getResource();
 			wpr.setWorkPlace( (WorkPlace) selected );
-			ec.setWorkActivities( CompanyUtil.findActivities( ( (WorkPlace) selected ).getId() ) );
+			// Find working place active activities, otherwise inactive.
+			int active = ( wpr.getWorkPlace().isActive() )? 1: -1;
+			ec.setWorkActivities( CompanyUtil.findActivities( ( (WorkPlace) selected ).getId(), active ) );
 //	Initialize Working activity controller.
 			WorkActivityController wac = 
 				(WorkActivityController) AonUtil.getController( WorkActivityController.MANAGER_BEAN_NAME );
@@ -611,7 +609,9 @@ public class CalendarsController implements TreeSelectionListener, IPlannerListe
 						ec.getResource().setWorkPlace( wa.getWorkPlace() );
 						ec.getResource().setWorkActivity( wa );
 						ec.setActivityId( wa.getId() );
-						ec.setWorkActivities( CompanyUtil.findActivities( wa.getWorkPlace().getId() ) );
+						// Find working place active activities, otherwise inactive.
+						int active = ( wa.getWorkPlace().isActive() )? 1: -1;
+						ec.setWorkActivities( CompanyUtil.findActivities( wa.getWorkPlace().getId(), active ) );
 						break;
 					}
 					index++;

@@ -21,6 +21,9 @@
 					</t:div>
 					<t:div styleClass="aon-applicationName">
 						<h:outputText value="#{appBundle.aon_application}" /> 
+						<h:outputText value="[" rendered="#{aonConfiguration.applicationVersion != null}"/>
+						<h:outputText value="#{aonConfiguration.applicationVersion}" rendered="#{aonConfiguration.applicationVersion != null}"/>
+						<h:outputText value="]" rendered="#{aonConfiguration.applicationVersion != null}" /> 
 					</t:div>				
 				</h:panelGroup>
 	

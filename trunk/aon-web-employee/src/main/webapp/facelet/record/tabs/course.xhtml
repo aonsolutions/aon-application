@@ -9,7 +9,7 @@
 <ui:composition >
 
 	<t:dataTable id="CourseDataList" var="to" style="width:100%"
-		value="#{course.model}" styleClass="aon-edit-table"
+		value="#{lhcourse.model}" styleClass="aon-edit-table"
 		headerClass="aon-edit-table-header"
 		footerClass="aon-edit-table-footer" rowIndexVar="rowIndex"
 		rows="20"
@@ -29,14 +29,14 @@
 			</f:facet>
 			<t:commandLink
 				styleClass="aon-table-row-selected"
-				rendered="#{to!=course.to}"
-				actionListener="#{course.onSelect}" />
+				rendered="#{to!=lhcourse.to}"
+				actionListener="#{lhcourse.onSelect}" />
 			<f:facet name="footer">
 				<t:div>
-					<t:div rendered="#{!course.new}">
+					<t:div rendered="#{!lhcourse.new}">
 						<t:commandButton value=""
 							styleClass="aon-edit-table-icon-button aon-edit-table-icon-button-new"
-							actionListener="#{course.onReset}"
+							actionListener="#{lhcourse.onReset}"
 							immediate="#{true}" />
 					</t:div>
 				</t:div>
@@ -47,25 +47,25 @@
 			<f:facet name="header">
 				<t:outputText value="#{appBundle.aon_start_date}" />
 			</f:facet>
-			<t:outputText value="#{to.startingDate}" rendered="#{to!=course.to}">
+			<t:outputText value="#{to.startingDate}" rendered="#{to!=lhcourse.to}">
 				<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
 					timeZone="#{timeZoneController.timeZoneId}" />
 			</t:outputText>
 			<t:inputCalendar size="8" id="Course_startingDate-Edit"
-					value="#{course.to.startingDate}"
+					value="#{lhcourse.to.startingDate}"
 					monthYearRowClass="yearMonthHeader" weekRowClass="weekHeader"
 					currentDayCellClass="currentDayCell"
-					renderAsPopup="true" rendered="#{to==course.to}"
+					renderAsPopup="true" rendered="#{to==lhcourse.to}"
 					popupButtonStyleClass="aon-form-calendar-button"
 					styleClass="aon-form-input-text"
 					popupTodayString="#{bundle.aon_popup_today}"
 					popupWeekString="#{bundle.aon_popup_week}" />	
 			<f:facet name="footer">
 				<t:inputCalendar size="8" id="Course_startingDate-New"
-					value="#{course.to.startingDate}"
+					value="#{lhcourse.to.startingDate}"
 					monthYearRowClass="yearMonthHeader" weekRowClass="weekHeader"
 					currentDayCellClass="currentDayCell"
-					renderAsPopup="true" rendered="#{course.new}"
+					renderAsPopup="true" rendered="#{lhcourse.new}"
 					popupButtonStyleClass="aon-form-calendar-button"
 					styleClass="aon-form-input-text"
 					popupTodayString="#{bundle.aon_popup_today}"
@@ -77,25 +77,25 @@
 			<f:facet name="header">
 				<t:outputText value="#{appBundle.aon_end_date}" />
 			</f:facet>
-			<t:outputText value="#{to.endingDate}" rendered="#{to!=course.to}">
+			<t:outputText value="#{to.endingDate}" rendered="#{to!=lhcourse.to}">
 				<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
 					timeZone="#{timeZoneController.timeZoneId}" />
 			</t:outputText>
 			<t:inputCalendar size="8" id="Course_endingDate-Edit"
-					value="#{course.to.endingDate}"
+					value="#{lhcourse.to.endingDate}"
 					monthYearRowClass="yearMonthHeader" weekRowClass="weekHeader"
 					currentDayCellClass="currentDayCell"
-					renderAsPopup="true" rendered="#{to==course.to}"
+					renderAsPopup="true" rendered="#{to==lhcourse.to}"
 					popupButtonStyleClass="aon-form-calendar-button"
 					styleClass="aon-form-input-text"
 					popupTodayString="#{bundle.aon_popup_today}"
 					popupWeekString="#{bundle.aon_popup_week}" />	
 			<f:facet name="footer">
 				<t:inputCalendar size="8" id="Course_endingDate-New"
-					value="#{course.to.endingDate}"
+					value="#{lhcourse.to.endingDate}"
 					monthYearRowClass="yearMonthHeader" weekRowClass="weekHeader"
 					currentDayCellClass="currentDayCell"
-					renderAsPopup="true" rendered="#{course.new}"
+					renderAsPopup="true" rendered="#{lhcourse.new}"
 					popupButtonStyleClass="aon-form-calendar-button"
 					styleClass="aon-form-input-text"
 					popupTodayString="#{bundle.aon_popup_today}"
@@ -107,15 +107,15 @@
 			<f:facet name="header">
 				<t:outputText value="#{rBundle.aon_description}" />
 			</f:facet>
-			<t:outputText value="#{to.description}" rendered="#{to!=course.to}" />
+			<t:outputText value="#{to.description}" rendered="#{to!=lhcourse.to}" />
 			<t:inputText styleClass="aon-form-input-text"
-				rendered="#{to==course.to}" id="Course_description-Edit"
-				forceId="#{true}" value="#{course.to.description}" size="32"
+				rendered="#{to==lhcourse.to}" id="Course_description-Edit"
+				forceId="#{true}" value="#{lhcourse.to.description}" size="32"
 				maxlength="32" />
 			<f:facet name="footer">
 				<t:inputText styleClass="aon-form-input-text"
-					rendered="#{course.new}" id="Course_description-New"
-					forceId="#{true}" value="#{course.to.description}" size="32"
+					rendered="#{lhcourse.new}" id="Course_description-New"
+					forceId="#{true}" value="#{lhcourse.to.description}" size="32"
 					maxlength="32" />
 			</f:facet>
 		</h:column>
@@ -124,29 +124,29 @@
 			<f:facet name="header">
 				<f:verbatim>&#160;</f:verbatim>
 			</f:facet>
-			<t:div rendered="#{to==course.to}">
+			<t:div rendered="#{to==lhcourse.to}">
 				<t:commandButton title="#{bundle.aon_save}"
 					styleClass="aon-edit-table-icon-button aon-edit-table-icon-button-save" value=""
-					actionListener="#{course.onAccept}" />
+					actionListener="#{lhcourse.onAccept}" />
 				<t:commandButton title="#{bundle.aon_cancel}"
 					styleClass="aon-edit-table-icon-button aon-edit-table-icon-button-cancel" value=""
 					onclick="return (confirm('#{bundle.aon_cancel_confirm}'));"
-					actionListener="#{course.onCancel}" immediate="true" />
+					actionListener="#{lhcourse.onCancel}" immediate="true" />
 				<t:commandButton title="#{bundle.aon_remove}"
 					styleClass="aon-edit-table-icon-button aon-edit-table-icon-button-delete" value=""
-					actionListener="#{course.onRemove}" immediate="true"
+					actionListener="#{lhcourse.onRemove}" immediate="true"
 					onclick="return (confirm('#{bundle.aon_remove_confirm}'));" />
 			</t:div>
 			<f:facet name="footer">
 				<t:div>
-					<t:div rendered="#{course.new}">
+					<t:div rendered="#{lhcourse.new}">
 						<t:commandButton title="#{bundle.aon_save}"
 							styleClass="aon-edit-table-icon-button aon-edit-table-icon-button-save" value=""
-							actionListener="#{course.onAccept}" />
+							actionListener="#{lhcourse.onAccept}" />
 						<t:commandButton title="#{bundle.aon_cancel}"
 							styleClass="aon-edit-table-icon-button aon-edit-table-icon-button-cancel" value=""
 							onclick="return (confirm('#{bundle.aon_cancel_confirm}'));"
-							actionListener="#{course.onCancel}" immediate="true" />
+							actionListener="#{lhcourse.onCancel}" immediate="true" />
 					</t:div>
 				</t:div>
 			</f:facet>

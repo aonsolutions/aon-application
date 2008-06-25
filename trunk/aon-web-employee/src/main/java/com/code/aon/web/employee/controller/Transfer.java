@@ -20,6 +20,8 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.common.dao.sql.DAOException;
 import com.code.aon.company.resources.Employee;
+import com.code.aon.company.resources.Resource;
+import com.code.aon.company.resources.ResourceManager;
 import com.code.aon.planner.calendar.CalendarHelper;
 import com.code.aon.ql.Criteria;
 import com.code.aon.record.Position;
@@ -86,8 +88,25 @@ public class Transfer {
 //		HibernateUtil.setCloseSession( false );
 		try {
 //			HibernateUtil.beginTransaction();
-//	Updates employee calendar.
 			Integer oldCalendarId = employee.getCalendar();
+//	Finishes employee position.
+			if ( l.size() > 0 ) {
+				Position position = (Position) l.get( 0 );
+				position.setEndingDate( new Date() );
+				position.setCalendar( oldCalendarId );
+				bean.update( position );
+			} else {
+				Resource oldResource = ResourceManager.getResourceManager().getResource( employee );
+				Position position = new Position();
+				position.setEmployee( employee );
+				position.setStartingDate( oldResource.getStartingDate() );
+				position.setEndingDate( new Date() );
+				position.setWorkPlace( oldResource.getWorkPlace() );
+				position.setWorkActivity( oldResource.getWorkActivity() );
+				position.setCalendar( oldCalendarId );
+				bean.insert( position );
+			}
+//	Updates employee calendar.
 			AonCalendar old = CalendarHelper.getCalendar( oldCalendarId );
 			employee.setCalendar( null );
 			ec.accept( event );
@@ -102,19 +121,6 @@ public class Transfer {
 					aonCalendar.getCalendar().getComponents().add( vevent );
 				}
 				ControllerUtil.getCalendarManagerBean().updateCalendar(aonCalendar);
-			}
-//	Finishes employee position.
-			if ( l.size() > 0 ) {
-				Position position = (Position) l.get( 0 );
-				position.setEndingDate( new Date() );
-				position.setCalendar( oldCalendarId );
-				bean.update( position );
-			} else {
-				Position position = new Position();
-				position.setEmployee( employee );
-				position.setEndingDate( new Date() );
-				position.setCalendar( oldCalendarId );
-				bean.insert( position );
 			}
 //	Adds a new employee position.
 			Position position = new Position();

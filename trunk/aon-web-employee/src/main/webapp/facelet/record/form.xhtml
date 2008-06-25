@@ -20,7 +20,7 @@
 				forceId="#{true}">
 				<t:div styleClass="aon-content-subtitle-internal">
 				<h:outputText
-					value="#{course.new?(bundle.aon_reset):(bundle.aon_editing)}"/>
+					value="#{lhcourse.new?(bundle.aon_reset):(bundle.aon_editing)}"/>
 				</t:div>
 			</t:div>
 			
@@ -38,7 +38,7 @@
 								<t:inputText id="Employee_id" size="5" forceId="#{true}"
 									styleClass="aon-form-input-text" required="true"
 									onchange="findLookupAndSubmit(this.form, event,'#{facesContext.externalContext.request.contextPath}','com.code.aon.company.resources.Employee');"
-									value="#{course.employee.id}" 
+									value="#{lhcourse.employee.id}" 
 									valueChangeListener="#{record.employeeChanged}"/>
 								<h:commandButton styleClass="aon-form-lookup-button"
 									id="findEmployee" value="" immediate="true"
@@ -50,28 +50,28 @@
 								value="#{rBundle.aon_cif}" />
 							<t:inputText id="Employee_registry_document" forceId="#{true}"
 									styleClass="aon-form-input-text-disabled" disabled="true"
-									size="40" value="#{course.employee.registry.document}" />
+									size="40" value="#{lhcourse.employee.registry.document}" />
 							
 							<t:outputLabel for="Employee_registry_name"
 								styleClass="aon-form-input-text-label"
 								value="#{rBundle.aon_name}" />
 							<t:inputText id="Employee_registry_name" forceId="#{true}"
 									styleClass="aon-form-input-text-disabled" disabled="true"
-									size="40" value="#{course.employee.registry.name}" />
+									size="40" value="#{lhcourse.employee.registry.name}" />
 									
 							<t:outputLabel for="Employee_registry_surname"
 								styleClass="aon-form-input-text-label"
 								value="#{rBundle.aon_surname}" />
 							<t:inputText id="Employee_registry_surname" forceId="#{true}"
 									styleClass="aon-form-input-text-disabled" disabled="true"
-									size="40" value="#{course.employee.registry.surname}" />
+									size="40" value="#{lhcourse.employee.registry.surname}" />
 					</h:panelGrid>
 					
 					<t:panelTabbedPane styleClass="aon-tabpanel" 
 									activeTabStyleClass="aon-tabpanel-active" 
 									inactiveTabStyleClass="aon-tabpanel-inactive" 
 									serverSideTabSwitch="true"
-									rendered="#{course.employee.id!=null}" style="width:590px;">
+									rendered="#{lhcourse.employee.id!=null}" style="width:590px;">
 
 					 	<t:tabChangeListener type="com.code.aon.ui.record.controller.RecordController" />
 
