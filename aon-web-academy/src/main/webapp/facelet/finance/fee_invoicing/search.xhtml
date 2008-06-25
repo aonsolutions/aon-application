@@ -62,22 +62,15 @@
 							<h:outputLabel for="Invoice_series"
 								styleClass="aon-form-input-text-label"
 								value="#{financeBundle.aon_series_number}" />
-							<h:panelGrid columns="3">
-								<t:selectOneMenu id="Invoice_series"
-									styleClass="aon-form-selectOneMenu-field" forceId="#{true}"
-									onchange="return findBeanLookupExt(event,'#{facesContext.externalContext.requestContextPath}','seriesLookup','Invoice_series','Series_id|Invoice_series,Series_description|Series_Lookup_description');"
-									valueChangeListener="#{feeInvoicing.addExpression}">
-									<f:selectItem itemValue="" itemDisabled="true" itemLabel="-" />
-									<f:selectItems value="#{configCollections.series}" />
-								</t:selectOneMenu>
+							<h:panelGrid columns="2">
+								<t:inputText id="Invoice_series"
+									valueChangeListener="#{feeInvoicing.addExpression}"
+									styleClass="aon-form-input-text" forceId="#{true}"
+									size="4" />
 								<t:inputText id="Invoice_number"
 									valueChangeListener="#{feeInvoicing.addExpression}"
 									styleClass="aon-form-input-text" forceId="#{true}"
 									size="7" />
-								<t:inputText id="Series_Lookup_description"
-									styleClass="aon-form-input-text-disabled" forceId="#{true}"
-									readonly="true" disabledOnClientSide="true" size="50">
-								</t:inputText>
 							</h:panelGrid>
 							
 							<t:outputLabel for="Customer_Lookup_id" value="#{appBundle.aon_alumn}" 

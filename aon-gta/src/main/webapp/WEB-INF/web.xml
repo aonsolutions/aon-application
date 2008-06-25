@@ -90,7 +90,7 @@
 		the first request hits the FaceletViewHandler for page compilation. -->
 	<context-param>
 		<param-name>facelets.LIBRARIES</param-name>
-		<param-value>/WEB-INF/tomahawk.taglib.xml;/WEB-INF/sandbox.taglib.xml</param-value>
+		<param-value>/WEB-INF/tomahawk.taglib.xml</param-value>
 	</context-param>
 
 	<!-- CONTEXT-PARAM para JBOSS4.2.1GA --> 	

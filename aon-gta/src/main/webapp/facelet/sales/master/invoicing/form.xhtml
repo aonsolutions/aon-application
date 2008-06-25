@@ -61,7 +61,7 @@
 							accesskey="#{bundle.aon_key_cancel}" />
 						<t:commandButton id="remove" value="#{bundle.aon_remove}"
 							forceId="#{true}" immediate="#{true}"
-							onclick="if(confirm('#{bundle.aon_remove_confirm}')){viewDialog.show();}else{ return false; }"
+							onclick="return (confirm('#{bundle.aon_remove_confirm}'))"
 							action="sales_invoicing_list"
 							actionListener="#{salesInvoicing.onRemove}"
 							rendered="#{!salesInvoicing.new}"
@@ -146,14 +146,13 @@
 							styleClass="aon-form-input-text-label"
 							value="#{financeBundle.aon_series_number}" />
 						<h:panelGrid columns="2" cellpadding="0" cellspacing="0"> 
-							<t:selectOneMenu id="Invoice_series"
+							<t:inputText id="Invoice_series"
 								value="#{salesInvoicing.to.series}"
 								disabled="#{!salesInvoicing.new and !salesInvoicing.editable}"
-								styleClass="aon-form-selectOneMenu-field"
-								onchange="submit();" valueChangeListener="#{salesInvoicing.onSeriesChanged}">
-								<f:selectItem itemValue="" itemDisabled="true" itemLabel="-" />
-								<f:selectItems value="#{configCollections.series}" />
-							</t:selectOneMenu>
+								styleClass="aon-form-input-text" forceId="#{true}" size="3"
+								maxlength="3" onblur="toUpperCase(this);">
+								<f:validateLength maximum="3" />
+							</t:inputText>
 							<t:inputText id="Invoice_number"
 								value="#{salesInvoicing.to.number}"
 								disabled="#{!salesInvoicing.new and !salesInvoicing.editable}"
@@ -207,7 +206,7 @@
 							value="#{financeBundle.aon_customer}" />
 						<h:panelGroup>
 							<t:inputText id="Customer_Lookup_id" size="5" forceId="#{true}"
-								styleClass="aon-form-input-text"
+								styleClass="aon-form-input-text" required="true"
 								onchange="return findBeanLookupAndSubmitExt(this.form, event,'#{facesContext.externalContext.requestContextPath}','customerLookup','Customer_Lookup_id','Customer_id|Customer_Lookup_id,Customer_full_name|Customer_full_name');"
 								value="#{salesInvoicing.to.registry.id}"
 								disabled="#{!salesInvoicing.editable}"
@@ -243,12 +242,12 @@
 						<t:inputText id="Customer_registry_document"
 							value="#{salesInvoicing.to.registryDocument}"
 							disabled="#{!salesInvoicing.editable}"
-							styleClass="aon-form-input-text"
-							forceId="#{true}" size="10" />	
+							styleClass="aon-form-input-text" forceId="#{true}"
+							required="true" size="10" />	
 						
 						<t:outputLabel for="Pos_id"
-							styleClass="aon-form-selectOneMenu-label"
-							value="#{warehouseBundle.aon_pos}" />
+								styleClass="aon-form-selectOneMenu-label"
+								value="#{warehouseBundle.aon_pos}" />
 						<h:selectOneMenu id="Pos_id"
 							styleClass="aon-form-selectOneMenu-field"
 							value="#{salesInvoicing.posId}"
@@ -278,19 +277,6 @@
 						</t:outputText>
 
 					</h:panelGrid>
-					
-					<h:panelGrid columns="2" cellpadding="0" cellspacing="0"
-						styleClass="aon-form-table"
-						columnClasses="aon-form-table-column-odd,aon-form-table-column-even">
-		
-						<h:outputLabel for="Invoice_comments"
-							styleClass="aon-form-input-text-label"
-							value="#{financeBundle.aon_invoice_comments}" />
-						<t:inputTextarea id="Invoice_comments" forceId="#{true}"
-							styleClass="aon-form-input-text" cols="51" rows="5"
-							value="#{salesInvoicing.to.comments}" />
-					</h:panelGrid>
-					
 
 					<t:div styleClass="aon-form-group"
 						rendered="#{!salesInvoicing.new and delivery.model.rowCount >0 and salesInvoicing.editable}">
@@ -396,7 +382,6 @@
 							<t:div style="text-align:right;">
 								<t:commandButton title="#{financeBundle.aon_transfer}"
 									styleClass="aon-form-button"
-									onclick="viewDialog.show();"
 									value="#{financeBundle.aon_transfer}"
 									actionListener="#{salesInvoicing.onInvoice}"
 									accesskey="#{bundle.aon_key_invoice}" />
@@ -644,9 +629,7 @@
 								<ui:param name="showNote" value="#{false}" />
 							</ui:include>
 							
-							<t:div rendered="#{salesInvoicingDetail.model.rowCount > 0 or salesFinance.model.rowCount > 0}" >
-								<ui:include src="/facelet/sales/master/invoicing/finance/grid.xhtml" />
-							</t:div>	
+							<ui:include src="/facelet/sales/master/invoicing/finance/grid.xhtml" />
 							
 						</t:div>
 					</t:div>

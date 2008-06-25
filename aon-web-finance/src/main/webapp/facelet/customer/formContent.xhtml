@@ -57,6 +57,15 @@
 						<f:validateLength minimum="1" maximum="64" />
 					</t:inputText>
 
+					<t:outputLabel for="Customer_alias"
+						styleClass="aon-form-input-text-label"
+						value="#{customerBundle.customer_alias}" />
+					<t:inputText id="Customer_alias" styleClass="aon-form-input-text"
+						forceId="#{true}" value="#{customerAlias.to.registry.alias}"
+						size="64">
+						<f:validateLength minimum="1" maximum="64" />
+					</t:inputText>
+
 					<h:outputLabel for="Customer_scope_id"
 						styleClass="aon-form-input-text-label"
 						value="#{customerBundle.customer_scope}" />

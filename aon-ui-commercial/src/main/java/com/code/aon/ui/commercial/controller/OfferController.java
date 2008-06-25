@@ -212,6 +212,19 @@ public class OfferController extends BasicController {
 			}
 		}
 	}
+	
+	@SuppressWarnings("unchecked")
+	public void targetChanged(ValueChangeEvent event) throws ManagerBeanException{
+		if(event.getNewValue() != null){
+			IManagerBean targetBean = BeanManager.getManagerBean(Target.class);
+			Criteria criteria = new Criteria();
+			criteria.addEqualExpression(targetBean.getFieldName(ICommercialAlias.TARGET_ID), event.getNewValue());
+			Iterator iter = targetBean.getList(criteria, 0, 1).iterator();
+			if(iter.hasNext()){
+				((Offer)getTo()).setTarget((Target)iter.next());
+			}
+		}
+	}
 
 	private int obtainMaxNumber(String seriesId) throws ManagerBeanException {
 		IManagerBean offerBean = BeanManager.getManagerBean(Offer.class);

@@ -124,7 +124,7 @@
 						mode="Opaque"
 						x="0"
 						y="0"
-						width="100"
+						width="170"
 						height="25"
 						forecolor="#FFFFFF"
 						backcolor="#000000"
@@ -136,9 +136,9 @@
 				<text><![CDATA[Alumno]]></text>
 				</staticText>
 						</cellContents>
-					</crosstabHeaderCell>					<rowGroup name="alumn" width="100">
+					</crosstabHeaderCell>					<rowGroup name="alumn" width="170">
 						<bucket>
-							<bucketExpression class="java.lang.String"><![CDATA[$F{alumn}.getRegistry().getName()+" "+$F{alumn}.getRegistry().getSurname()]]></bucketExpression>
+							<bucketExpression class="java.lang.String"><![CDATA[$F{alumn}.getRegistry().getSurname()+" "+$F{alumn}.getRegistry().getName()]]></bucketExpression>
 						</bucket>
 						<crosstabRowHeader>
 						<cellContents mode="Transparent">
@@ -147,7 +147,7 @@
 					<reportElement
 						x="0"
 						y="0"
-						width="100"
+						width="170"
 						height="20"
 						key="textField"/>
 					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>

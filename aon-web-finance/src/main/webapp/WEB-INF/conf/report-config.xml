@@ -9,6 +9,18 @@
 		<fetch-mode paginated="false" />
 	</default-config>
 
+	<!--  *********  CustomerList  ********* -->
+	<report id="customerList" description="Customers List">
+		<template path="/com/code/aon/ui/customer/report/customer.jasper"/>
+		<bean key="com.code.aon.customer.Customer" />
+		<criteria provider="#{customer}"/>
+		<params>
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.customer.i18n.messages" />
+			<param id="company" value="#{company.obtainCompany}" />
+			<param id="logoImageFile" value="#{company.getAttachAsInputStream}" />
+		</params>
+	</report>
+
 	<!--  *********  InvoiceList  ********* -->
 	<report id="salesInvoiceList" description="Sales Invoice's List">
 		<template path="/com/code/aon/ui/finance/report/salesInvoiceList.jasper"/>
@@ -148,6 +160,7 @@
 			<param id="company" value="#{company.obtainCompany}" />
 			<param id="logoImageFile" value="#{company.getAttachAsInputStream}" />
 			<param id="total" value="#{fbatch.getToTotalAmount}" />
+			<param id="totalRegs" value="#{fbatch.getToTotalDetails}" />
 		</params>
 		
 		<nested-report report="fBatchDetail"/>

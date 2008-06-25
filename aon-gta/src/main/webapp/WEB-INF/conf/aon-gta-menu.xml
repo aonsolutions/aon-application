@@ -71,10 +71,6 @@
 			ref="target">
 			<actionListener action="#{target.onReset}"/>
 		</option>
-		<option key="aon_appraiser" descriptionKey="aon_appraiser_desc" 
-			ref="appraiser">
-			<actionListener action="#{appraiser.onReset}"/>
-		</option>
 	</menu>
 	<menu ref="content" key="aon_inventory"  descriptionKey="aon_inventory_desc">
 		<option ref="inventory" key="aon_inventory_remake" descriptionKey="aon_inventory_remake_desc">

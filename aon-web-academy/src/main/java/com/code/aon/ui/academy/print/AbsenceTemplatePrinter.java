@@ -47,11 +47,18 @@ public class AbsenceTemplatePrinter implements ICollectionProvider {
 	}
 
 	@SuppressWarnings("unchecked")
+	public Collection getCollection(boolean forceRefresh) throws ManagerBeanException {
+		return getCollection();
+	}
+	
+	@SuppressWarnings("unchecked")
 	private List obtainCourseAlumnList(Course course)throws ManagerBeanException {
 		IManagerBean courseAlumnBean = BeanManager.getManagerBean(CourseAlumn.class);
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(courseAlumnBean.getFieldName(IAcademyAlias.COURSE_ALUMN_COURSE_ID), course.getId());
 		criteria.addEqualExpression(courseAlumnBean.getFieldName(IAcademyAlias.COURSE_ALUMN_STATUS), CourseAlumnStatus.ACTIVE);
+		criteria.addOrder(courseAlumnBean.getFieldName(IAcademyAlias.COURSE_ALUMN_CUSTOMER_REGISTRY_SURNAME));
+		criteria.addOrder(courseAlumnBean.getFieldName(IAcademyAlias.COURSE_ALUMN_CUSTOMER_REGISTRY_NAME));
 		return courseAlumnBean.getList(criteria);
 	}
 

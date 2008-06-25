@@ -10,14 +10,14 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.code.aon</groupId>
 	<artifactId>aon.ui.registry</artifactId>
-	<version>2.0.2</version>
+	<version>2.0.4</version>
 	<description>AON UI REGISTRY</description>
 	<name>AON UI REGISTRY</name>
 	<dependencies>
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.form</artifactId>
-			<version>2.0.0</version>
+			<version>2.0.1-SNAPSHOT</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
@@ -29,7 +29,7 @@
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.registry</artifactId>
-			<version>2.0.1</version>
+			<version>2.0.2</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
@@ -37,6 +37,50 @@
 			<artifactId>aon.geozone</artifactId>
 			<version>2.0.1</version>
 			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.myfaces.tomahawk</groupId>
+			<artifactId>tomahawk</artifactId>
+			<version>1.1.6</version>
+			<scope>compile</scope>
+			<exclusions>
+				<exclusion>
+					<groupId>oro</groupId>
+					<artifactId>oro</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>javax.servlet</groupId>
+					<artifactId>jstl</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>commons-lang</groupId>
+					<artifactId>commons-lang</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>commons-collections</groupId>
+					<artifactId>commons-collections</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>commons-codec</groupId>
+					<artifactId>commons-codec</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>commons-fileupload</groupId>
+					<artifactId>commons-fileupload</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>commons-validator</groupId>
+					<artifactId>commons-validator</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>commons-logging</groupId>
+					<artifactId>commons-logging</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>commons-el</groupId>
+					<artifactId>commons-el</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>javax.servlet</groupId>

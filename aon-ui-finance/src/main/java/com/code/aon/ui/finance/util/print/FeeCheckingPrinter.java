@@ -9,7 +9,6 @@ import org.hibernate.Session;
 
 import com.code.aon.common.ICollectionProvider;
 import com.code.aon.common.ITransferObject;
-import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.finance.enumeration.PayMethodType;
 import com.code.aon.finance.print.CheckingTo;
@@ -64,10 +63,5 @@ public class FeeCheckingPrinter implements ICollectionProvider {
 		Session session = HibernateUtil.getSession();
 		Query query = session.createQuery(select);
 		return query.list();
-	}
-	@Override
-	public Collection getCollection(boolean forceRefresh)
-			throws ManagerBeanException {
-		return getCollection();
 	}
 }

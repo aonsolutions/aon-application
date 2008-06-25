@@ -54,7 +54,12 @@ public class AlumnPrinter implements ICollectionProvider{
 		}
 		return reportAlumnList;
 	}
-
+	
+	@SuppressWarnings("unchecked")
+	public Collection getCollection(boolean forceRefresh) throws ManagerBeanException {
+		return getCollection();
+	}
+	
 	protected String obtainPhone(Registry registry) {
 		try {
 			IManagerBean registryMediaBean = BeanManager.getManagerBean(RegistryMedia.class);
@@ -117,5 +122,4 @@ public class AlumnPrinter implements ICollectionProvider{
 		}
 		return null;
 	}
-
 }

@@ -36,6 +36,11 @@ public class CourseEvaluationPrinter implements ICollectionProvider{
 		return reportCourseEvaluationList;
 	}
 
+	@SuppressWarnings("unchecked")
+	public Collection getCollection(boolean forceRefresh) throws ManagerBeanException {
+		return getCollection();
+	}
+	
 	private List<CourseEvaluation> obtainCourseEvaluations(Course course){
 		try {
 			IController courseEvaluationController = AonUtil.getController(COURSE_EVALUATION_CONTROLLER_NAME);
@@ -55,5 +60,4 @@ public class CourseEvaluationPrinter implements ICollectionProvider{
 		}
 		return null;
 	}
-	
 }

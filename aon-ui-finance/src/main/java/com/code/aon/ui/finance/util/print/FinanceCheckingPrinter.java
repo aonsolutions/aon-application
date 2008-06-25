@@ -9,7 +9,6 @@ import org.hibernate.Session;
 
 import com.code.aon.common.ICollectionProvider;
 import com.code.aon.common.ITransferObject;
-import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.finance.enumeration.PayMethodType;
 import com.code.aon.finance.print.CheckingTo;
@@ -27,13 +26,7 @@ public class FinanceCheckingPrinter implements ICollectionProvider {
 		list.add(checkingTo);
 		return list;
 	}
-	@Override
-	public Collection getCollection(boolean forceRefresh)
-			throws ManagerBeanException {
-		return getCollection();
-	}
 
-	
 	@SuppressWarnings("unchecked")
 	private List<ITransferObject> obtainNoPaymethodList() {
 		String select = "SELECT finance " +

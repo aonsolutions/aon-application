@@ -4,8 +4,13 @@
 		key="customer" descriptionKey="customer_desc">
 		<actionListener action="#{customer.onReset}" />
 	</option>
+	<option contextRelative="false" external="false"  ref="supplier"
+		key="supplier" descriptionKey="supplier_desc">
+		<actionListener action="#{supplier.onReset}" />
+	</option>
 	<menu id="aon_administrative_management" ref="content" key="aon_invoice_management" descriptionKey="aon_invoice_management_desc" role="GestionCuotas">
 		<option id="aon_invoice_management" key="aon_invoice_management" descriptionKey="aon_invoice_management_desc" ref="invoiceManagement"/>
+		<option id="aon_purchase_invoice_management" key="aon_purchase_invoice_management" descriptionKey="aon_invoice_management_desc" ref="purchaseInvoiceManagement"/>
 		<option key="aon_invoice_print" descriptionKey="aon_invoice_print_desc" ref="invoicePrint">
 			<actionListener action="#{invoicePrint.onEditSearch}"/>
 		</option>
@@ -17,25 +22,6 @@
 				<actionListener action="#{preInvoicing.onInitialize}"/>
 			</option>
 		</menu>
-		<menu ref="content" key="finance" descriptionKey="finance_desc" role="Tesoreria">
-			<option key="aon_finance" descriptionKey="aon_finance_desc" ref="finance" role="Vencimientos">
-				<actionListener action="#{finance.onEditSearch}"/>
-			</option>
-			<option key="aon_finance_return" descriptionKey="aon_finance_return_desc" ref="finance_return">
-				<actionListener action="#{financeReturn.onEditSearch}"/>
-			</option>
-			<option key="aon_finance_payment" descriptionKey="aon_finance_payment_desc" ref="finance_payment">
-				<actionListener action="#{financePayment.onEditSearch}"/>
-			</option>
-			<option key="aon_fbatch" descriptionKey="aon_fbatch_desc" ref="fbatch" role="Remesas"/>
-			<option key="aon_invoicing_group" descriptionKey="aon_invoicing_group_desc" ref="invoicingGroup" role="GruposFacturacion"/>
-			<menu ref="content" key="aon_finance_utilities" descriptionKey="aon_finance_utilities_desc" role="UtilidadesTesoreria">
-				<option key="aon_cheking" descriptionKey="aon_cheking_desc" ref="util_checking" role="ChecksTesoreria"/>
-				<option key="aon_fee_print" descriptionKey="aon_fee_print" ref="util_fee_print" role="ListadoCuotas">
-					<actionListener action="#{feePrint.onEditSearch}"/>				
-				</option>
-			</menu>
-		</menu>	
 		<menu ref="content" key="aon_auxiliar" descriptionKey="aon_auxiliar_desc" >
 			<option key="aon_bank" descriptionKey="aon_bank_desc" ref="bank" />
 			<option key="aon_pay_method" descriptionKey="aon_pay_method_desc" ref="pay_method" />
@@ -44,6 +30,28 @@
 			</option>
 			<option key="aon_product_category" descriptionKey="aon_product_category_desc" ref="productCategory" />
 		</menu>	
+	</menu>	
+	<menu ref="content" key="finance" descriptionKey="finance_desc" role="Tesoreria">
+		<option key="aon_finance" descriptionKey="aon_finance_desc" ref="finance" role="Vencimientos">
+			<actionListener action="#{finance.onEditSearch}"/>
+		</option>
+		<option key="aon_finance_return" descriptionKey="aon_finance_return_desc" ref="finance_return">
+			<actionListener action="#{financeReturn.onEditSearch}"/>
+		</option>
+		<option key="aon_finance_payment" descriptionKey="aon_finance_payment_desc" ref="finance_payment">
+			<actionListener action="#{financePayment.onEditSearch}"/>
+		</option>
+		<option key="aon_fbatch" descriptionKey="aon_fbatch_desc" ref="fbatch" role="Remesas"/>
+		<option key="aon_invoicing_group" descriptionKey="aon_invoicing_group_desc" ref="invoicingGroup" role="GruposFacturacion"/>
+		<menu ref="content" key="aon_finance_utilities" descriptionKey="aon_finance_utilities_desc" role="UtilidadesTesoreria">
+			<option key="aon_cheking" descriptionKey="aon_cheking_desc" ref="util_checking" role="ChecksTesoreria"/>
+			<option key="aon_fee_print" descriptionKey="aon_fee_print" ref="util_fee_print" role="ListadoCuotas">
+				<actionListener action="#{feePrint.onEditSearch}"/>				
+			</option>
+			<option key="aon_invoice_recording" descriptionKey="aon_invoice_recording" ref="invoiceRecording">
+				<actionListener action="#{invoiceRecording.onInitialize}"/>				
+			</option>
+		</menu>
 	</menu>	
 	<menu ref="content" key="aon_configuration" descriptionKey="aon_configuration_desc">
 		<option contextRelative="false" external="false" ref="company"

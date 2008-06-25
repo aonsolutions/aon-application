@@ -35,7 +35,7 @@ public class InventoryDetailControllerListener extends ControllerAdapter {
 	public void beforeModelInitialized(ControllerEvent event) throws ControllerListenerException {
 		try {
 			IController controller = event.getController();
-			controller.getCriteria().addOrder(controller.getManagerBean().getFieldName(IWarehouseAlias.INVENTORY_DETAIL_ITEM_PRODUCT_NAME));
+			controller.getCriteria().addOrder(controller.getManagerBean().getFieldName(IWarehouseAlias.INVENTORY_DETAIL_ITEM_PRODUCT_CODE));
 		} catch (ManagerBeanException e) {
 			throw new ControllerListenerException(e);
 		}

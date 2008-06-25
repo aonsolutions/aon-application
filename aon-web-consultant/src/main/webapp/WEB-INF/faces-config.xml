@@ -1626,7 +1626,7 @@
 	
 	<managed-bean>
 		<managed-bean-name>feeInvoicingHeaderControllerListener</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.finance.event.HeaderControllerListener</managed-bean-class>
+		<managed-bean-class>com.code.aon.ui.consultant.event.HeaderControllerListener</managed-bean-class>
 		<managed-bean-scope>none</managed-bean-scope>
 		<managed-property>
 			<property-name>table</property-name>

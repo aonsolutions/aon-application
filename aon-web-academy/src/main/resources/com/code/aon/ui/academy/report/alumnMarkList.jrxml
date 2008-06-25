@@ -458,7 +458,7 @@
 						x="0"
 						y="213"
 						width="535"
-						height="50"
+						height="75"
 						key="crosstab-3"
 						positionType="Float">
 							<printWhenExpression><![CDATA[(($F{observations}.isEmpty())?new Boolean(false):new Boolean(true))]]></printWhenExpression>
@@ -502,7 +502,7 @@
 						x="0"
 						y="0"
 						width="95"
-						height="25"
+						height="50"
 						key="textField-18"
 						stretchType="RelativeToTallestObject"/>
 					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
@@ -528,7 +528,7 @@
 					<measure name="comments_First" class="java.lang.String" incrementerFactoryClass="com.code.aon.ui.academy.print.utils.CommentsIncrementorFactory">
 						<measureExpression><![CDATA[$F{comments} + ". "]]></measureExpression>
 					</measure>
-					<crosstabCell width="425" height="25">
+					<crosstabCell width="425" height="50">
 						<cellContents mode="Transparent">
 					<box topBorder="None" topBorderColor="#000000" leftBorder="Thin" leftBorderColor="#000000" rightBorder="Thin" rightBorderColor="#000000" bottomBorder="Thin" bottomBorderColor="#000000"/>
 				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
@@ -536,7 +536,7 @@
 						x="0"
 						y="0"
 						width="425"
-						height="25"
+						height="50"
 						key="textField"/>
 					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
 					<textElement textAlignment="Left" verticalAlignment="Top">
@@ -546,7 +546,7 @@
 				</textField>
 						</cellContents>
 					</crosstabCell>
-					<crosstabCell width="0" height="25" columnTotalGroup="alumn">
+					<crosstabCell width="0" height="50" columnTotalGroup="alumn">
 						<cellContents mode="Transparent">
 					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="1Point" rightBorderColor="#000000" bottomBorder="1Point" bottomBorderColor="#000000"/>
 						</cellContents>

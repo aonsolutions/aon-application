@@ -29,6 +29,7 @@ public class MarkTemplatePrinter implements ICollectionProvider{
 	
 	private static final String COURSE_CONTROLLER_NAME = "course";
 
+	@SuppressWarnings("unchecked")
 	public Collection getCollection() {
 		List<ReportTemplateMark> reportTemplateMarkList = new LinkedList<ReportTemplateMark>();
 		try{
@@ -47,7 +48,12 @@ public class MarkTemplatePrinter implements ICollectionProvider{
 		return reportTemplateMarkList;
 	}
 
+	@SuppressWarnings("unchecked")
+	public Collection getCollection(boolean forceRefresh) throws ManagerBeanException {
+		return getCollection();
+	}
 	
+	@SuppressWarnings("unchecked")
 	private void obtainDetails(ReportTemplateMark reportTemplateMark, Course course){
 		List<CourseAlumn> courseAlumns = obtainAlumns(course);
 		Iterator<CourseAlumn> courseAlumnsIter = courseAlumns.iterator(); 
@@ -61,12 +67,15 @@ public class MarkTemplatePrinter implements ICollectionProvider{
 		}
 	}
 	
+	@SuppressWarnings("unchecked")
 	private List<CourseAlumn> obtainAlumns(Course course){
 		try {
 			IManagerBean bean = BeanManager.getManagerBean(CourseAlumn.class);
 			Criteria criteria = new Criteria();
 			criteria.addEqualExpression(bean.getFieldName(IAcademyAlias.COURSE_ALUMN_COURSE_ID), course.getId());
 			criteria.addEqualExpression(bean.getFieldName(IAcademyAlias.COURSE_ALUMN_STATUS), CourseAlumnStatus.ACTIVE);
+			criteria.addOrder(bean.getFieldName(IAcademyAlias.COURSE_ALUMN_CUSTOMER_REGISTRY_SURNAME));
+			criteria.addOrder(bean.getFieldName(IAcademyAlias.COURSE_ALUMN_CUSTOMER_REGISTRY_NAME));
 			List<CourseAlumn> lst = new ArrayList<CourseAlumn>();
 			Iterator iter = bean.getList(criteria).iterator();
 			while (iter.hasNext()){
@@ -79,6 +88,7 @@ public class MarkTemplatePrinter implements ICollectionProvider{
 		return null;
 	}
 
+	@SuppressWarnings("unchecked")
 	private List<CourseAcademicSkill> obtainSkills(Course course){
 		try {
 			IManagerBean bean = BeanManager.getManagerBean(CourseAcademicSkill.class);
@@ -95,5 +105,4 @@ public class MarkTemplatePrinter implements ICollectionProvider{
 		}
 		return null;
 	}
-
 }

@@ -20,6 +20,7 @@ public class PendingAlumnLoanPrinter implements ICollectionProvider{
 
 	private static final Logger LOGGER = Logger.getLogger(PendingAlumnLoanPrinter.class.getName());
 	
+	@SuppressWarnings("unchecked")
 	public Collection getCollection() {
 		List<ITransferObject> reportList = new LinkedList<ITransferObject>();
 		try {
@@ -35,4 +36,10 @@ public class PendingAlumnLoanPrinter implements ICollectionProvider{
 		}
 		return reportList;
 	}
+
+	@SuppressWarnings("unchecked")
+	public Collection getCollection(boolean forceRefresh) throws ManagerBeanException {
+		return getCollection();
+	}
+	
 }

@@ -55,17 +55,17 @@
 								<f:selectItems value="#{invoicePrint.invoiceTypes}" />
 							</h:selectOneMenu>
 
-							<h:outputLabel for="Series_Lookup_id"
+							<h:outputLabel for="Invoice_series"
 								styleClass="aon-form-input-text-label"
 								value="#{financeBundle.aon_series_number}" />
 							<h:panelGrid columns="6">
-								<t:selectOneMenu id="Series_Lookup_id"
-									styleClass="aon-form-selectOneMenu-field" forceId="#{true}"
-									onchange="return findBeanLookupExt(event,'#{facesContext.externalContext.requestContextPath}','seriesLookup','Series_Lookup_id','Series_id|Series_Lookup_id,Series_description|Series_Lookup_description');"
-									value="#{invoicePrint.series}">
-									<f:selectItem itemValue="" itemDisabled="true" itemLabel="-" />
-									<f:selectItems value="#{configCollections.series}" />
-								</t:selectOneMenu>
+								<t:inputText id="Invoice_series"
+									onblur="toUpperCase(this);"
+									value="#{invoicePrint.series}"
+									styleClass="aon-form-input-text" forceId="#{true}" size="4"
+									maxlength="5">
+									<f:validateLength maximum="5" />
+								</t:inputText>
 								<h:outputLabel for="Invoice_number_from" value="#{financeBundle.finance_date_from}"
 									styleClass="aon-form-input-text-label" />								
 								<t:inputText id="Invoice_number_from"
@@ -78,16 +78,13 @@
 									value="#{invoicePrint.toNumber}"
 									styleClass="aon-form-input-text" forceId="#{true}"
 									size="7" />
-								<t:inputText id="Series_Lookup_description"
-									styleClass="aon-form-input-text-disabled" forceId="#{true}"
-									readonly="true" disabledOnClientSide="true" size="50">
-								</t:inputText>
-									
 							</h:panelGrid>
 							
-							<t:outputLabel for="Customer_Lookup_id" value="#{customerBundle.customer_customer}" 
+							<t:outputLabel for="Customer_Lookup_id"
+								rendered="#{invoicePrint.sales}" 
+								value="#{customerBundle.customer_customer}" 
 								styleClass="aon-form-input-text-label" />
-							<t:div>
+							<t:div rendered="#{invoicePrint.sales}">
 								<t:inputText id="Customer_Lookup_id" forceId="#{true}"
 									styleClass="aon-form-input-text" size="5" 
 									onchange="return findBeanLookupExt(event,'#{facesContext.externalContext.requestContextPath}','customerLookup','Customer_Lookup_id','Customer_id|Customer_Lookup_id,Customer_full_name|Customer_full_name');"
@@ -102,20 +99,20 @@
 							</t:div>
 							
 							<t:outputLabel for="Supplier_Lookup_id"
-								styleClass="aon-form-lookup-label" 
-								value="#{financeBundle.aon_supplier}" rendered="#{accountInvoice.purchase}"/>
-							<t:div rendered="#{accountInvoice.purchase}">
+								rendered="#{!invoicePrint.sales}"
+								value="#{financeBundle.aon_supplier}"
+								styleClass="aon-form-lookup-label" />
+							<t:div rendered="#{!invoicePrint.sales}">
 								<t:inputText id="Supplier_Lookup_id" size="5" forceId="#{true}"
 									styleClass="aon-form-input-text"
-									onchange="return findBeanLookup(event,'#{facesContext.externalContext.requestContextPath}','supplierLookup');"
-									value="#{accountInvoice.header.registry.id}" 
-									valueChangeListener="#{accountInvoice.onRegistryChange}"/>
+									onchange="return findBeanLookupExt(event,'#{facesContext.externalContext.requestContextPath}','supplierLookup','Supplier_Lookup_id','Supplier_id|Supplier_Lookup_id,Supplier_full_name|Supplier_full_name');"
+									value="#{invoicePrint.registry.id}" />
 								<h:commandButton id="find_Supplier_Lookup_id"
 									styleClass="aon-form-lookup-button" value="" immediate="true"
-									onclick="lookupSearchWindow(this, 'placeList', '#{supplierLookup.encodedSearchPagePath}');return false;" />	
+									onclick="lookupSearchWindow(this, 'placeList', '#{supplierLookup.encodedSearchPagePath}','Supplier_id|Supplier_Lookup_id,Supplier_full_name|Supplier_full_name');return false;" />	
 								<t:inputText id="Supplier_full_name" forceId="#{true}"
 									styleClass="aon-form-input-text" size="40" 
-									value="#{accountInvoice.header.name}"/>
+									value="#{invoicePrint.registry.name}"/>
 							</t:div>
 
 							<h:outputLabel

@@ -40,25 +40,6 @@
 
 		<h:form id="SupportOrderForm" styleClass="aon-form">
 
-			<t:div styleClass="aon-content-menu" rendered="#{!SupportOrder.new}" id="aon-content-menu" forceId="#{true}">
-				<t:panelGrid columns="7" cellpadding="0" cellspacing="0" border="0">
-					<t:panelGroup>						
-						<t:commandLink id="support_order_data" value="#{tasBundle.supportOrder_data}"
-							forceId="#{true}" styleClass="aon-content-menu-item-active"	/>					
-					</t:panelGroup>	
-					<t:panelGroup>						
-						<t:commandLink id="support_order_customer_data" forceId="#{true}" value="#{tasBundle.supportOrder_customer_data}"
-							actionListener="#{supportOrderTarget.onTarget}" action="supportOrder_customer_data" 
-							styleClass="aon-content-menu-item"/>						
-					</t:panelGroup>	
-					<t:panelGroup>						
-						<t:commandLink id="support_order_insurance_data" forceId="#{true}" value="#{tasBundle.supportOrder_insurance_data}"
-							actionListener="#{supportOrderInsurance.onInsurance}" action="supportOrder_insurance_data" 
-							styleClass="aon-content-menu-item" />						
-					</t:panelGroup>
-				</t:panelGrid>
-			</t:div>
-
 			<t:div styleClass="aon-content-toolbar" id="aon-content-toolbar"
 				forceId="#{true}">
 				<t:div styleClass="aon-content-toolbar-internal">
@@ -146,14 +127,12 @@
 										styleClass="aon-form-input-text-label"
 										value="#{tasBundle.aon_series_number}" />
 									<t:div>
-										<t:selectOneMenu id="SupportOrder_series"
-											value="#{SupportOrder.to.series}"
-											disabled="#{SupportOrder.finished}"
-											styleClass="aon-form-selectOneMenu-field"
-											onchange="disableRequiredFields();submit();" valueChangeListener="#{SupportOrder.onSeriesChanged}">
-											<f:selectItem itemValue="" itemDisabled="true" itemLabel="-" />
-											<f:selectItems value="#{configCollections.series}" />
-										</t:selectOneMenu>
+										<t:inputText id="SupportOrder_series"
+											value="#{SupportOrder.to.series}" disabled="#{SupportOrder.finished}"
+											styleClass="aon-form-input-text" forceId="#{true}" size="3"
+											maxlength="3" onblur="toUpperCase(this);" tabIndex="1">
+											<f:validateLength maximum="3" />
+										</t:inputText>
 										<h:inputText id="SupportOrder_number"
 											value="#{SupportOrder.to.number}" disabled="#{SupportOrder.finished}"
 											styleClass="aon-form-input-text" forceId="#{true}"
@@ -163,22 +142,13 @@
 									<h:outputLabel for="SupportOrder_counterti"
 										value="#{tasBundle.supportOrder_counter}"
 										styleClass="aon-form-input-text-label aon-form-table-column-odd-label"/>
-									<t:div>
-										<t:inputText styleClass="aon-form-input-text"
-											id="SupportOrder_counterti" forceId="#{true}"
-											value="#{SupportOrder.to.counterti}" size="10" maxlength="10"
-											disabled="#{SupportOrder.finished}">
-											<f:convertNumber integerOnly="true" />
-										</t:inputText>	
-										<h:outputLabel for="SupportOrder_levelti"
-											value="#{tasBundle.supportOrder_level}"
-											styleClass="aon-form-input-text-label aon-form-table-column-odd-label"/>
-										<t:inputText styleClass="aon-form-input-text"
-											id="SupportOrder_levelti" forceId="#{true}"
-											value="#{SupportOrder.to.levelti}" size="8" maxlength="8"
-											disabled="#{SupportOrder.finished}"/>
-									</t:div>
-									
+									<t:inputText styleClass="aon-form-input-text"
+										id="SupportOrder_counterti" required="false" forceId="#{true}"
+										value="#{SupportOrder.to.counterti}" size="15"
+										disabled="#{SupportOrder.finished}" tabIndex="4">
+										<f:convertNumber integerOnly="true" />
+									</t:inputText>
+
 									<h:outputLabel for="SupportOrder_startDate"
 										styleClass="aon-form-input-text-label aon-form-table-column-odd-label"
 										value="#{tasBundle.supportOrder_currentDate}" />
@@ -225,7 +195,6 @@
 										styleClass="aon-form-input-text-label aon-form-table-column-odd-label"/>
 									<h:selectOneMenu id="SupportOrder_operation"
 										styleClass="aon-form-selectOneMenu-field"
-										disabled="#{SupportOrder.finished}"
 										value="#{SupportOrder.to.operation}">
 										<f:selectItems
 											value="#{TASCollections.supportOrderOperations}" />
@@ -244,7 +213,7 @@
 										styleClass="aon-form-input-text-label aon-form-table-column-odd-label"/>
 									<t:panelGroup colspan="3">
 										<t:inputTextarea styleClass="aon-form-input-text"
-											id="SupportOrder_description" forceId="#{true}"
+											id="SupportOrder_description" required="false" forceId="#{true}"
 											value="#{SupportOrder.to.description}" cols="100" rows="6"
 											disabled="#{SupportOrder.finished}" >
 										</t:inputTextarea>
@@ -297,17 +266,14 @@
 									<h:panelGroup>
 										<t:inputText id="Model_id" size="5" forceId="#{true}"
 											styleClass="aon-form-input-text" required="true"
-											disabled="#{SupportOrder.finished}"
 											onchange="return findLookup(event,'#{facesContext.externalContext.request.contextPath}','com.code.aon.tas.Model');"
 											value="#{SupportOrder.tasItem.model.id}" />
 										<h:commandButton id="findTasModel"
 											styleClass="aon-form-lookup-button"
-											disabled="#{SupportOrder.finished}"
 											onclick="selectWindow(this, 'placeList', '#{TASModelSearch.encodedPagePath}');return false;"
 											value="" immediate="true" />
 										<h:commandButton id="addModel" 
 											styleClass="aon-form-new-button"
-											disabled="#{SupportOrder.finished}"
 											onclick="selectWindow(this, 'placeList', '#{TASModelAdd.encodedPagePath}');return false;"
 											value="" immediate="true" />
 										<t:inputText id="Make_name" forceId="#{true}"
@@ -417,11 +383,117 @@
 													disabledOnClientSide="#{SupportOrder.finished}" 
 													size="15" forceId="#{true}" />
 										</t:div>
+										<t:div styleClass="aon-form-unit aon-form-layout-unit-inline-label-block">
+											<h:outputLabel for="Registry_fax"
+											value="#{registryBundle.aon_fax}"
+											styleClass="aon-form-input-text-label aon-form-table-column-odd-label aon-form-layout-label-block"/>
+										
+											<t:inputText id="Registry_fax" 
+												styleClass="aon-form-input-text"
+												value="#{SupportOrder.fax.value}"
+												valueChangeListener="#{SupportOrder.targetChanged}"
+												disabledOnClientSide="#{SupportOrder.finished}" 
+												size="15" forceId="#{true}" />
+										</t:div>
+										<t:div styleClass="aon-form-unit aon-form-layout-unit-inline-label-block">
+											<h:outputLabel for="Registry_email"
+												value="#{registryBundle.aon_email}"
+												styleClass="aon-form-input-text-label aon-form-table-column-odd-label aon-form-layout-label-block"/>
+											<t:inputText id="Registry_email" style="padding-left:3px;"
+												styleClass="aon-form-input-text"
+												value="#{SupportOrder.email.value}"
+												valueChangeListener="#{SupportOrder.targetChanged}"
+												disabledOnClientSide="#{SupportOrder.finished}" 
+												size="30" forceId="#{true}" />
+											</t:div>
 									</t:div>
-							</h:panelGrid>									
+									<h:outputLabel for="RegistryAddress_address"
+											styleClass="aon-form-input-text-label"
+											value="#{registryBundle.aon_postal_address}" />
+									<t:div>
+									
+											<t:div styleClass="aon-form-unit aon-form-layout-unit-inline-label-block">																		
+												<h:outputLabel for="RegistryAddress_address"
+													styleClass="aon-form-input-text-label aon-form-table-column-odd-label aon-form-layout-label-block"
+													value="#{registryBundle.aon_address}" />
+												
+													<t:inputText id="RegistryAddress_address"
+														styleClass="aon-form-input-text"
+														forceId="#{true}"
+														disabledOnClientSide="#{SupportOrder.finished}" 
+														valueChangeListener="#{SupportOrder.targetChanged}"
+														value="#{SupportOrder.registryAddress.address}"
+														size="25" />
+											</t:div>
+											<t:div styleClass="aon-form-unit aon-form-layout-unit-inline-label-block">		
+													<h:outputLabel for="RegistryAddress_address2"
+														styleClass="aon-form-input-text-label aon-form-table-column-odd-label aon-form-layout-label-block"
+														value="#{registryBundle.aon_address2}" />
+													<t:inputText id="RegistryAddress_address2"
+														styleClass="aon-form-input-text"
+														forceId="#{true}"
+														disabledOnClientSide="#{SupportOrder.finished}" 
+														valueChangeListener="#{SupportOrder.targetChanged}"
+														value="#{SupportOrder.registryAddress.address2}" size="25" />
+											</t:div>
+											<t:div styleClass="aon-form-unit aon-form-layout-unit-inline-label-block">		
+													<h:outputLabel for="RegistryAddress_address3"
+														styleClass="aon-form-input-text-label aon-form-table-column-odd-label aon-form-layout-label-block"
+														value="#{registryBundle.aon_address3}" />
+													<t:inputText id="RegistryAddress_address3"
+														styleClass="aon-form-input-text"
+														forceId="#{true}"
+														disabledOnClientSide="#{SupportOrder.finished}" 
+														valueChangeListener="#{SupportOrder.targetChanged}"
+														value="#{SupportOrder.registryAddress.address3}" size="25" />
+											</t:div>
+											
+											<t:div styleClass="aon-form-breakline" />
+											
+											<t:div>
+												<t:div styleClass="aon-form-unit aon-form-layout-unit-inline-label-block">
+													<t:outputLabel for="RegistryAddress_city"
+													styleClass="aon-form-input-text-label aon-form-layout-label-block"
+													value="#{registryBundle.aon_city}" />
+													<t:inputText id="RegistryAddress_city"
+														styleClass="aon-form-input-text"
+														forceId="#{true}"
+														disabledOnClientSide="#{SupportOrder.finished}" 
+														valueChangeListener="#{SupportOrder.targetChanged}"
+														value="#{SupportOrder.registryAddress.city}" size="25" />
+												</t:div>
+												<t:div styleClass="aon-form-unit aon-form-layout-unit-inline-label-block">
+													<t:outputLabel for="RegistryAddress_zip"
+														styleClass="aon-form-input-text-label aon-form-layout-label-block"
+														value="#{registryBundle.aon_zip}" />
+													<t:inputText id="RegistryAddress_zip"
+														styleClass="aon-form-input-text"
+														forceId="#{true}"
+														disabledOnClientSide="#{SupportOrder.finished}" 
+														valueChangeListener="#{SupportOrder.targetChanged}"
+														value="#{SupportOrder.registryAddress.zip}" size="4" />
+												</t:div>
+												<t:div styleClass="aon-form-unit aon-form-layout-unit-inline-label-block">
+													<t:outputLabel for="Geozone_id"
+														styleClass="aon-form-input-text-label aon-form-layout-label-block"
+														value="#{registryBundle.aon_geozone}" />
+													<t:selectOneMenu id="Geozone_id" 
+														forceId="#{true}"
+														styleClass="aon-form-selectOneMenu-field"
+														valueChangeListener="#{SupportOrder.targetChanged}"
+														disabled="#{SupportOrder.finished}" 
+														value="#{SupportOrder.registryAddress.geozone.id}">
+														<f:selectItem itemDisabled="true" itemLabel="-" itemValue=""/>
+														<f:selectItems value="#{registryCollections.geoZones}" />												
+													</t:selectOneMenu>
+												</t:div>
+											</t:div>
+										</t:div>
+									</h:panelGrid>
+									
 						</t:div>
 					</t:div>
-
+		
 					<!-- end of flow layout -->
 					<!-- end of bag panel -->
 					<t:inputText id="pojoName" value="SupportOrder" forceId="#{true}"
@@ -437,16 +509,9 @@
 				}
 				return findBeanLookup(event, '#{facesContext.externalContext.request.contextPath}', 'TASModel_TASMake_Lookup');
 			}
-			function disableRequiredFields(){
-				document.getElementById("SupportOrder_startDate").disabled=true;
-				document.getElementById("TasItem_publicCode").disabled=true;
-				document.getElementById("TasItem_privateCode").disabled=true;
-				document.getElementById("Model_id").disabled=true;
-				document.getElementById("Target_registry_document").disabled=true;
-			}
 		</script>
 		<h:form id="placeList" target="list" />
 	</ui:define>
 </ui:composition>
 </body>
-</html>
+</html>					

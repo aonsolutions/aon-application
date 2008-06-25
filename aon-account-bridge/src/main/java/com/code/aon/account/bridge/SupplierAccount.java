@@ -10,7 +10,7 @@ import javax.persistence.Table;
 
 import com.code.aon.account.Account;
 import com.code.aon.common.ITransferObject;
-import com.code.aon.purchase.Supplier;
+import com.code.aon.supplier.Supplier;
 
 /**
  * The Class SupplierAccount.

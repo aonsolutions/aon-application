@@ -44,15 +44,8 @@
 				<value>#{customerRBankChildListener}</value>
 				<value>#{customerRPayMethodChildListener}</value>
 				<value>#{customerScopeListener}</value>
-				<value>#{customerObservationListener}</value>
 			</list-entries>
 		</managed-property>
-	</managed-bean>
-
-	<managed-bean>
-		<managed-bean-name>customerObservationListener</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.customer.event.CustomerObservationListener</managed-bean-class>
-		<managed-bean-scope>none</managed-bean-scope>
 	</managed-bean>
 
 	<managed-bean>
@@ -288,13 +281,6 @@
 			<value>com.code.aon.customer.CustomerSegment</value>
 		</managed-property>
 	</managed-bean>
-
-    <!-- ****** Customer Observation ******** -->
-	<managed-bean>
-		<managed-bean-name>customerObservation</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.registry.controller.RegistryObservationController</managed-bean-class>
-		<managed-bean-scope>session</managed-bean-scope>
-	</managed-bean>
 	
 	<!--  **** SALES INVOICING **** -->
 	<managed-bean>
@@ -505,7 +491,6 @@
 				<value>#{deliverySalesPurchaseListener}</value>
 				<value>#{deliveryTargetListener}</value>
 				<value>#{deliveryTasListener}</value>
-				<value>#{deliveryControllerLabourListener}</value>
 				<value>#{deliveryControllerListener}</value>
 			</list-entries>
 		</managed-property>
@@ -551,15 +536,8 @@
 				<value>#{deliveryDetailControllerListener}</value>
 				<value>#{salesPurchaseListener}</value>
 				<value>#{compositionDeliveryDetailListener}</value>
-				<value>#{deliveryDetailControllerLabourListener}</value>
 			</list-entries>
 		</managed-property>
-	</managed-bean>
-	
-	<managed-bean>
-		<managed-bean-name>deliveryDetailControllerLabourListener</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.warehouse.event.DeliveryDetailControllerLabourListener</managed-bean-class>
-		<managed-bean-scope>none</managed-bean-scope>
 	</managed-bean>
 	
 	<!--  **** POINT OF SALE **** -->
@@ -574,21 +552,6 @@
 		<managed-property>
 			<property-name>pojo</property-name>
 			<value>com.code.aon.sales.PointOfSale</value>
-		</managed-property>
-	</managed-bean>
-
-	<!--  **** DELIVERY DETAIL LABOUR **** -->
-	<managed-bean>
-		<managed-bean-name>deliveryDetailLabour</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.warehouse.controller.DeliveryDetailLabourController</managed-bean-class>
-		<managed-bean-scope>session</managed-bean-scope>
-		<managed-property>
-			<property-name>queryOnStartUP</property-name>
-			<value>true</value>
-		</managed-property>
-		<managed-property>
-			<property-name>pojo</property-name>
-			<value>com.code.aon.warehouse.DeliveryDetailLabour</value>
 		</managed-property>
 	</managed-bean>
 	
@@ -615,12 +578,6 @@
 		</managed-property>
 	</managed-bean>
 	 
-	<managed-bean>
-		<managed-bean-name>deliveryControllerLabourListener</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.warehouse.event.DeliveryControllerLabourListener</managed-bean-class>
-		<managed-bean-scope>none</managed-bean-scope>
-	</managed-bean>
-
 	<managed-bean>
 		<managed-bean-name>deliveryDetailControllerListener</managed-bean-name>
 		<managed-bean-class>com.code.aon.ui.warehouse.event.DeliveryDetailControllerListener</managed-bean-class>

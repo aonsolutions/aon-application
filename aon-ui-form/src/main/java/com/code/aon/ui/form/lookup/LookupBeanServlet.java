@@ -94,9 +94,8 @@ public class LookupBeanServlet extends HttpServlet {
      * @param response
      */
     private void setCacheControls(HttpServletResponse httpResponse) {
-        httpResponse.setHeader("Cache-Control", "no-cache"); //HTTP 1.1
-        httpResponse.setHeader("Cache-Control", "no-store"); //HTTP 1.1
-        httpResponse.setHeader("Cache-Control", "must-revalidate"); //HTTP 1.1
+        // Not caching AJAX request
+        httpResponse.setHeader("Cache-Control", "no-cache, must-revalidate, max-age=0, no-store");
         httpResponse.setHeader("Pragma", "no-cache"); //HTTP 1.0
         httpResponse.setDateHeader("Expires", 0); //prevents proxy caching
     }

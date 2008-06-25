@@ -76,12 +76,13 @@
 								styleClass="aon-form-input-text-label"
 								value="#{financeBundle.aon_series_number}" />
 							<h:panelGrid columns="2">
-								<t:selectOneMenu id="Invoice_series"
-									styleClass="aon-form-selectOneMenu-field"
-									valueChangeListener="#{salesInvoicing.addExpression}">
-									<f:selectItem itemValue="" itemDisabled="true" itemLabel="-" />
-									<f:selectItems value="#{configCollections.series}" />
-								</t:selectOneMenu>
+								<t:inputText id="Invoice_series"
+									onblur="toUpperCase(this);"
+									valueChangeListener="#{salesInvoicing.addExpression}"
+									styleClass="aon-form-input-text" forceId="#{true}" size="3"
+									maxlength="3">
+									<f:validateLength maximum="3" />
+								</t:inputText>
 								<t:inputText id="Invoice_number"
 									valueChangeListener="#{salesInvoicing.addExpression}"
 									styleClass="aon-form-input-text" forceId="#{true}"

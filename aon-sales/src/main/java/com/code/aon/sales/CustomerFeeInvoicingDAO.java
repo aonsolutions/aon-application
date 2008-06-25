@@ -87,7 +87,7 @@ public class CustomerFeeInvoicingDAO implements IInvoicingDAO {
 	}
 	
 	public void createFinances(Invoice invoice) throws ManagerBeanException {
-		getFinanceGenerator().generateFinances(invoice, getPriceStrategy().getTotalPrice(invoice, invoice));
+		getFinanceGenerator().generateFinances(invoice, invoice.getRegistry(), getPriceStrategy().getTotalPrice(invoice, invoice), true);
 	}
 	
 	@SuppressWarnings("unchecked")

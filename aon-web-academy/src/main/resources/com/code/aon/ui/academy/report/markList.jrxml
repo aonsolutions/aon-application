@@ -166,7 +166,7 @@
 					<textElement verticalAlignment="Middle">
 						<font size="8"/>
 					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$F{alumn}.getCustomer().getRegistry().getName()+" "+$F{alumn}.getCustomer().getRegistry().getSurname()]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{alumn}.getCustomer().getRegistry().getSurname()+" "+$F{alumn}.getCustomer().getRegistry().getName()]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement

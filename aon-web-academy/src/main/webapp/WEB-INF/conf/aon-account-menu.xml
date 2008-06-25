@@ -15,11 +15,11 @@
 		</option>
 		<option contextRelative="false" external="false" ref="accSupplier"
 			key="account_supplier" descriptionKey="account_supplier_desc">
-			<actionListener action="#{accSupplier.onEditSearch}" />
+			<actionListener action="#{accBasicSupplier.onEditSearch}" />
 		</option>
 		<option contextRelative="false" external="false" ref="accCreditor"
 			key="account_creditor" descriptionKey="account_creditor_desc">
-			<actionListener action="#{accCreditor.onEditSearch}" />
+			<actionListener action="#{accBasicCreditor.onEditSearch}" />
 		</option>
 	</menu>
 	<menu ref="content" key="aon_account_entries" descriptionKey="aon_account_entries_desc">
