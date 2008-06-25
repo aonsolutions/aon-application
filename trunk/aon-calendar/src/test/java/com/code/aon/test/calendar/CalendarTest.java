@@ -13,8 +13,11 @@ import net.fortuna.ical4j.model.DateTime;
 import net.fortuna.ical4j.model.Dur;
 import net.fortuna.ical4j.model.Period;
 import net.fortuna.ical4j.model.PeriodList;
+import net.fortuna.ical4j.model.Property;
 import net.fortuna.ical4j.model.component.VEvent;
+import net.fortuna.ical4j.model.component.VFreeBusy;
 import net.fortuna.ical4j.model.property.Categories;
+import net.fortuna.ical4j.model.property.FreeBusy;
 
 import com.code.aon.calendar.AonCalendar;
 import com.code.aon.calendar.CalendarException;
@@ -118,7 +121,31 @@ public class CalendarTest extends TestCase {
 		cal.set( 2006, 11, 6 );
 		checkEventsCategory( calendar, cal.getTime(), EventCategory.PUBLIC_HOLIDAY );		
 	}
+
+	public void testCalcYearlyHours() throws CalendarException, ParseException {
+		AonCalendar calendar = this.calendarManager.getCalendar( 2008 );
+
+		if ( calendar != null ) {
+			float hours = 0, minutes = 0;
+			DateTime start = new DateTime( "20080101T000000" );
+			DateTime end = new DateTime( "20081231T000000" );
 	
+			VFreeBusy request = new VFreeBusy( start, end );
+			VFreeBusy busyTime = new VFreeBusy( request, calendar.getCalendar().getComponents() );
+	        FreeBusy fg = (FreeBusy) busyTime.getProperties().getProperty( Property.FREEBUSY );
+	        if ( fg != null ) {
+		        Iterator iter = fg.getPeriods().iterator();
+		        while (iter.hasNext()) {
+		            Period p = (Period) iter.next();
+		            hours += p.getDuration().getHours();
+		            minutes += p.getDuration().getMinutes();
+		        }
+	        }
+	        assertEquals( 308, hours, 0 );
+	        assertEquals( 0, minutes, 0 );
+		}
+	}
+
 	public void testWorkingTime() throws CalendarException, ParseException {
 		AonCalendar calendar = this.calendarManager.getCalendar( 2006 );
 
