@@ -11,12 +11,15 @@
 	<groupId>com.code.aon</groupId>
 	<artifactId>aon-web-cms</artifactId>
 	<packaging>war</packaging>
-	<version>1.2.1</version>
+	<version>1.2.2</version>
 	<description>WEB CMS</description>
 	<name>WEB CMS</name>
 	<build>
 		<finalName>aon-web-cms</finalName>
 	</build>
+	<properties>
+		<dbVersion>1.0.0</dbVersion>
+	</properties>
 	<dependencies>
 		<dependency>
 			<groupId>com.code.aon</groupId>
