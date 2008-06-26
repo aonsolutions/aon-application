@@ -28,7 +28,6 @@ public class InvoiceBeanVetoListener extends ManagerBeanVetoListenerAdapter {
 	        	criteria.addExpression(ExpressionUtilities.getNotEqualExpression("invoice.type", InvoiceType.SALES.ordinal()));
 	        	invoice.setNumber(SeriesNumberUtil.obtainNumber(invoice.getSeries(), "Invoice", criteria));
 			}
-
 		}
 	}
 
