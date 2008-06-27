@@ -57,14 +57,16 @@ public class AlbumImageControllerListener extends ControllerAdapter {
 	private void generateThumbnail(AlbumImage ai){
 		if (ai.getThumbnail()==null ||
 				ai.getThumbnail().trim().isEmpty()){
-			String thumb = ImageUtil.resize(ControllerUtil.getImagesPath()+ai.getImage(),ImageUtil.DEF_MAX_SIZE);
-			thumb = thumb.substring(ControllerUtil.getImagesPath().length(), thumb.length());
-			try{
-				thumb = thumb.replaceAll(File.separator, "/");
-			}catch(Exception e){
-				thumb = thumb.replaceAll(File.separator+File.separator, "/");
+			if (ai.getImage()!=null && !ai.getImage().trim().isEmpty()){
+				String thumb = ImageUtil.resize(ControllerUtil.getImagesPath()+ai.getImage(),ImageUtil.DEF_MAX_SIZE);
+				thumb = thumb.substring(ControllerUtil.getImagesPath().length(), thumb.length());
+				try{
+					thumb = thumb.replaceAll(File.separator, "/");
+				}catch(Exception e){
+					thumb = thumb.replaceAll(File.separator+File.separator, "/");
+				}
+				ai.setThumbnail(thumb);
 			}
-			ai.setThumbnail(thumb);
 		}
 	}
 	
