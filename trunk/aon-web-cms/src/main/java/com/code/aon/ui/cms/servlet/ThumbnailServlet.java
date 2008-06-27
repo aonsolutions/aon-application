@@ -44,6 +44,11 @@ public class ThumbnailServlet extends HttpServlet implements Constants{
 		HttpSession session = req.getSession();
 		int maxDim = 100;
 		if (req.getParameter("width") != null) maxDim = Integer.parseInt(req.getParameter("width").toString());
+		
+		InputStream is = null;
+		BufferedInputStream bis = null;
+        OutputStream os = null;
+		BufferedOutputStream bos = null;
 		try {
 			String servlet = req.getServletPath();
 			String basePath = getImagesPath(session);
@@ -59,10 +64,10 @@ public class ThumbnailServlet extends HttpServlet implements Constants{
                 ImageUtil.resize(file, res.getOutputStream(), maxDim);
             }
             else {
-        		InputStream is = ThumbnailServlet.class.getResourceAsStream(BLANK_IMAGE);
-        		BufferedInputStream bis = new BufferedInputStream(is);
-                OutputStream os = res.getOutputStream();
-        		BufferedOutputStream bos = new BufferedOutputStream(os);
+        		is = ThumbnailServlet.class.getResourceAsStream(BLANK_IMAGE);
+        		bis = new BufferedInputStream(is);
+                os = res.getOutputStream();
+        		bos = new BufferedOutputStream(os);
         		byte[] input = new byte[1024];
         		boolean eof = false;
         		while (!eof) {
@@ -82,6 +87,15 @@ public class ThumbnailServlet extends HttpServlet implements Constants{
 		catch (Throwable th) {
             th.printStackTrace();
             throw new ServletException(th.getMessage(), th);
+        }finally{
+        	try {bis.close();} catch (Exception e) {}
+        	try {bos.close();} catch (Exception e) {}
+        	try {is.close();} catch (Exception e) {}
+        	try {os.close();} catch (Exception e) {}
+    		is = null;
+    		bis = null;
+            os = null;
+    		bos = null;
         }
     }
 	

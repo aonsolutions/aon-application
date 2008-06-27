@@ -5,7 +5,6 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
-import java.io.IOException;
 
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.Velocity;
@@ -13,7 +12,6 @@ import org.apache.velocity.app.VelocityEngine;
 
 import com.code.aon.cms.enumeration.Templates;
 import com.code.aon.ui.cms.Constants;
-import com.code.aon.ui.cms.controller.GeneratorController;
 import com.code.aon.ui.cms.controller.GeneratorStatusController;
 import com.code.aon.ui.util.AonUtil;
 
@@ -57,16 +55,6 @@ public class VelocityUtil extends VelocityEngine implements Constants {
     }
     
     public void finalize() {
-    	/*
-    	try{
-        	Iterator iter = Arrays.asList(this.getContext().getKeys()).iterator();
-        	while (iter.hasNext()){
-        		this.remove(""+iter.next());
-        	}
-        	this.finalize();
-    	}catch (RuntimeException e) {
-		}
-		*/
     }
 
 	public static void addMessage(String msg, int type) {
@@ -105,10 +93,11 @@ public class VelocityUtil extends VelocityEngine implements Constants {
 		}
         
 		boolean error = false;
+		File fo;
         FileWriter fw = null;
         BufferedWriter writer = null;
     	try{
-	        File fo = new File(page);
+	        fo = new File(page);
 	        fw = new FileWriter(fo);
 	        writer = new BufferedWriter(fw);
 	        
@@ -123,12 +112,11 @@ public class VelocityUtil extends VelocityEngine implements Constants {
 	        try {
 	            if (writer != null) {
 	                writer.flush();
-	                writer.close();
-	                fw.close();
 	            }
-	        } catch (IOException e) {
-	            e.printStackTrace();
-	        }
+	        } catch (Exception e) {e.printStackTrace();}
+	        try {writer.close();} catch (Exception e) {e.printStackTrace();}
+	        try{fw.close();} catch (Exception e) {e.printStackTrace();}
+	        fo = null;
 	    }
 	    return error;
     }
@@ -172,90 +160,11 @@ public class VelocityUtil extends VelocityEngine implements Constants {
 			e.printStackTrace();
 		}
         finally {
-            try {
-                if (reader != null) {
-                    reader.close();
-                    fr.close();
-                }
-                fi = null;
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            try {reader.close();} catch (Exception e) {e.printStackTrace();}
+            try {fr.close();} catch (Exception e) {e.printStackTrace();}
+            fi = null;
         }
 
 		return error;
     }
-/*    
-    public boolean generate(String template, String page) {
-		boolean error = false;
-
-        File fi = new File(template);
-        BufferedReader reader = null;
-        FileReader fr = null;
-
-        File fo = new File(page);
-        BufferedWriter writer = null;
-        FileWriter fw = null;
-
-        String pageShortName;
-        try{
-        	pageShortName = page.substring(page.lastIndexOf('/'));
-        }catch (Exception e) {
-        	pageShortName = page;
-		}
-        
-        try {
-			if (!fi.exists()) {
-				error = true;
-				addMessage("Fichero de plantilla '" + template + "' no encontrado.", ERROR);
-			}
-			else {
-                fr = new FileReader(fi);
-				reader = new BufferedReader(fr);
-			}
-
-			if (!error) {
-				try {
-                    fw = new FileWriter(fo);
-                    writer = new BufferedWriter(fw);
-
-                    this.evaluate(context, writer, "¡AON-CMS!", reader);
-					writer.flush();
-					addMessage("Página " + pageShortName + " generada con exito", INFO);
-				}
-				catch(Exception e) {
-				    error = true;
-					addMessage("Error al evaluar el contexto en el fichero '" + pageShortName + "' <BR/>" + e.getMessage(), ERROR);
-				}
-			}
-			else {
-				addMessage("No se pudo generar el fichero '" + pageShortName + "'", ERROR);
-			}
-		}
-		catch(Exception e) {
-		    error = true;
-			addMessage("Error al generar el fichero '" + pageShortName + "' </BR> " + e.getMessage() + "", ERROR);
-			e.printStackTrace();
-		}
-        finally {
-            try {
-                if (writer != null) {
-                    writer.flush();
-                    writer.close();
-                    fw.close();
-                }
-                if (reader != null) {
-                    reader.close();
-                    fr.close();
-                }
-                fi = null;
-                fo = null;
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-
-		return error;
-	}
-*/
 }

@@ -3,7 +3,6 @@ package com.code.aon.ui.cms.util;
 import java.awt.Image;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -73,63 +72,78 @@ public class ImageUtil {
 	}
 
 	public static void copyfile(File f1, File f2) {
+		InputStream in = null;
+		OutputStream out = null;
 		try {
-			InputStream in = new FileInputStream(f1);
-			OutputStream out = new FileOutputStream(f2);
+			in = new FileInputStream(f1);
+			out = new FileOutputStream(f2);
 			byte[] buf = new byte[1024];
 			int len;
 			while ((len = in.read(buf)) > 0) {
 				out.write(buf, 0, len);
 			}
-			in.close();
-			out.close();
-		} catch (FileNotFoundException e) {
+		} catch (Exception e) {
 			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
+		} finally {
+			try{in.close();}catch (Exception e) {}
+			try{out.close();}catch (Exception e) {}
 		}
 	}
 
 	public static String resize(String file, int maxDim) {
-		String name = null;
-		try {
-			File f = new File(file);
-			name = f.getParentFile().getPath();
-			name += File.separator + DEF_NAME + f.getName();
-
-			File tmp = File.createTempFile(f.getName(),"tmp");
-
-			ImageUtil.copyfile(f,tmp);
-
-			String tmp_name = tmp.getParentFile().getPath();
-			tmp_name += File.separator + tmp.getName();
-
-			Image image = new ImageIcon(tmp_name).getImage();
-			ImageUtil util = new ImageUtil(image, maxDim);
-			
-			name = name.replace('\\', '/');
-			
-			OutputStream os = new FileOutputStream(name);
-			util.writeResizedImage(os);
-			
-			tmp.deleteOnExit();
-		} catch (Exception e) {
-			e.printStackTrace();
+		File f = new File(file);
+		if (f.isFile()){
+			String name = null;
+			OutputStream os = null;
+			File tmp = null;
+			try {
+				name = f.getParentFile().getPath();
+				name += File.separator + DEF_NAME + f.getName();
+	
+				tmp = File.createTempFile(f.getName(),"tmp");
+	
+				ImageUtil.copyfile(f,tmp);
+	
+				String tmp_name = tmp.getParentFile().getPath();
+				tmp_name += File.separator + tmp.getName();
+	
+				Image image = new ImageIcon(tmp_name).getImage();
+				ImageUtil util = new ImageUtil(image, maxDim);
+				
+				name = name.replace('\\', '/');
+				
+				os = new FileOutputStream(name);
+				util.writeResizedImage(os);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}finally{
+				try{os.close();}catch (Exception e) {}
+				try{tmp.deleteOnExit();}catch (Exception e) {}
+				f = null;
+				tmp = null;
+			}
+			return name;
 		}
-		return name;
+		return null;
 	}
 
 	public static void resize(String file, OutputStream os, int maxDim) {
-		Image image = new ImageIcon(file).getImage();
-		ImageUtil util = new ImageUtil(image, maxDim);
-		util.writeResizedImage(os);
+		File f = new File(file);
+		if (f.isFile()){
+			Image image = new ImageIcon(file).getImage();
+			ImageUtil util = new ImageUtil(image, maxDim);
+			util.writeResizedImage(os);
+		}
 	}
 
 	public static void resize(String file, OutputStream os, int scaledW,
 			int scaledH) {
-		Image image = new ImageIcon(file).getImage();
-		ImageUtil util = new ImageUtil(image, scaledW, scaledH);
-		util.writeResizedImage(os);
+		File f = new File(file);
+		if (f.isFile()){
+			Image image = new ImageIcon(file).getImage();
+			ImageUtil util = new ImageUtil(image, scaledW, scaledH);
+			util.writeResizedImage(os);
+		}
 	}
 
 	public static void main(String[] args) {

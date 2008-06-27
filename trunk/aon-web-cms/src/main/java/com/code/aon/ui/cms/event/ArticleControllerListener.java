@@ -91,14 +91,16 @@ public class ArticleControllerListener extends ControllerAdapter {
 	private void generateThumbnail(Article a){
 		if (a.getThumbnail()==null ||
 				a.getThumbnail().trim().isEmpty()){
-			String thumb = ImageUtil.resize(ControllerUtil.getImagesPath()+a.getImage(),ImageUtil.DEF_MAX_SIZE);
-			thumb = thumb.substring(ControllerUtil.getImagesPath().length(), thumb.length());
-			try{
-				thumb = thumb.replaceAll(File.separator, "/");
-			}catch(Exception e){
-				thumb = thumb.replaceAll(File.separator+File.separator, "/");
+			if (a.getImage()!=null && !a.getImage().trim().isEmpty()){
+				String thumb = ImageUtil.resize(ControllerUtil.getImagesPath()+a.getImage(),ImageUtil.DEF_MAX_SIZE);
+				thumb = thumb.substring(ControllerUtil.getImagesPath().length(), thumb.length());
+				try{
+					thumb = thumb.replaceAll(File.separator, "/");
+				}catch(Exception e){
+					thumb = thumb.replaceAll(File.separator+File.separator, "/");
+				}
+				a.setThumbnail(thumb);
 			}
-			a.setThumbnail(thumb);
 		}
 	}
 	
