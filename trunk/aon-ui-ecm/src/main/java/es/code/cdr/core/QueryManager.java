@@ -4,12 +4,15 @@
 package es.code.cdr.core;
 
 import java.text.MessageFormat;
+import java.util.Calendar;
 
 import javax.jcr.Node;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.Workspace;
 import javax.jcr.query.QueryResult;
+
+import org.apache.jackrabbit.value.DateValue;
 
 import es.code.cdr.CDRQName;
 import es.code.cdr.IConstants;
@@ -73,14 +76,15 @@ public class QueryManager {
 		StringBuffer sb = new StringBuffer();
 		String defaultRootNode = ContentRepository.getNodeName( CDRQName.AON_CDR );
 		sb.append( (root == null)? defaultRootNode: root.getPath() );		
-		sb.append( "//*[" );
 		String linker = IConstants.EMPTY_STRING;
 		boolean isEmptyStatement = true;
 		String statement = createStatementByContent( params );
 		if ( statement != null ) { 
-			sb.append( statement );
+			sb.append( "//element(*," + ContentRepository.getNodeName( CDRQName.AON_CONTENT ) + ")/jcr:data[" + statement );
 			linker = IConstants.BLANK + IConstants.AND_LINKER + IConstants.BLANK;
 			isEmptyStatement = false;
+		} else {
+			sb.append( "//*[" );
 		}
 		boolean isEmptyProperties = fillStatementWithAdvancedParams( params, sb, linker );
 //	Order by score.
@@ -98,7 +102,7 @@ public class QueryManager {
 //	Search inside document content.
 				return jcrContainsFunction.format( new String[] { statement } );
 		} else {
-			return jcrContainsFunction.format( new String[] { ContentRepository.getNodeName( CDRQName.AON_CONTENT ), statement } );
+			return jcrContainsFunction.format( new String[] { ".", statement } );
 		}
 		return null;
 	}
@@ -107,14 +111,15 @@ public class QueryManager {
 //	Search document properties.
 		boolean isEmpty = true;
 		if ( params.getLanguage() != null && !params.getLanguage().equals( IConstants.UNKNOWN ) ) {
+			String nodeType = ContentRepository.getNodeName( CDRQName.AON_LANGUAGE );
 			String l = 
-				jcrContainsFunction.format( new String[] { ContentRepository.getNodeName( CDRQName.AON_LANGUAGE ), params.getLanguage() } );
+				jcrContainsFunction.format( new String[] { "@" + nodeType, params.getLanguage() } );
 			sb.append( linker + l );
 			linker = IConstants.BLANK + IConstants.AND_LINKER + IConstants.BLANK;
 			isEmpty = false;
 		}
 		if ( params.getFileformat() != null && !params.getFileformat().equals( IConstants.UNKNOWN ) ) {
-			String nodeType = ContentRepository.getNodeName( CDRQName.AON_CONTENT ) + "/jcr:mimeType";
+			String nodeType = ContentRepository.getNodeName( CDRQName.AON_CONTENT ) + "/" + IConstants.JCR_MIMETYPE;
 			String l = 
 				jcrContainsFunction.format( new String[] { "@" + nodeType, params.getFileformat() } );
 			sb.append( linker + l );
@@ -122,8 +127,14 @@ public class QueryManager {
 			isEmpty = false;
 		}			
 		if ( params.getPublishDate() != null ) {
+			String nodeType = ContentRepository.getNodeName( CDRQName.AON_ENTRYDATE );
+			Calendar c = Calendar.getInstance();
+			c.setTime( params.getPublishDate() );
+			c.set( Calendar.HOUR_OF_DAY, 0 );
+			c.set( Calendar.MINUTE, 0 );
+			c.set( Calendar.SECOND, 0 );
 			String l = 
-				jcrContainsFunction.format( new Object[] { ContentRepository.getNodeName( CDRQName.AON_ENTRYDATE ), params.getPublishDate() } );
+				jcrContainsFunction.format( new Object[] { "@" + nodeType, new DateValue( c ) } );
 			sb.append( linker + l );
 			isEmpty = false;
 		}

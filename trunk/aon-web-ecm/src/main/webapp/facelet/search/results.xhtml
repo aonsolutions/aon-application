@@ -18,7 +18,7 @@
 				<f:facet name="header">
 					<aon:outputText value="" />
 				</f:facet>
-				<h:commandLink id="documentDownload" value="|"
+				<h:commandLink id="documentDownload" value=""
 						title="#{menuBundle.aon_admin_document_download}"
 						actionListener="#{search.onDownloadSelectedDocument}"
 						styleClass="aon-icon-commandButton aon-icon-file-download"
@@ -59,7 +59,7 @@
 					<aon:outputText value="#{appBundle.aon_cdr_entrydate}" />
 				</f:facet>
 				<aon:outputText value="#{to.entryDate}">
-                    <f:convertDateTime pattern="MM/dd/yyyy"/>
+                    <f:convertDateTime pattern="dd/MM/yyyy"/>
                 </aon:outputText>
 			</aon:column>
 		</aon:dataTable>

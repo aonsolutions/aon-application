@@ -10,19 +10,21 @@
 
 <ui:composition>
 
-	
-		<rich:modalPanel id="checkinModalPanel" top="100" left="200"
-				minHeight="100" minWidth="100" height="200" width="550" zindex="1000"
-				headerClass="aon-popupWindow-title">
+	<aon:panelGroup id="showCheckinModalPanel">
+		<rich:modalPanel id="checkinModalPanel"
+				rendered="#{manager.menu.showCheckinModalPanel}" showWhenRendered="true"
+				headerClass="aon-popupWindow-title"
+				minHeight="200" height="200" width="550" top="100" left="200" zindex="2000">
 			<f:facet name="header">
             	<h:outputText value="#{appBundle.aon_cdr_checkin_document}"/>
 			</f:facet>
 			<f:facet name="controls">
-				<h:graphicImage
-					value="/aonResource/images/aon-icon/aon-icon-popupWindow-close.gif"
-					style="cursor:pointer"
-					onclick="Richfaces.hideModalPanel('checkinModalPanel')" />
+				<aon:commandButton type="button" styleClass="aon-popupWindow-close" immediate="true">
+					<f:setPropertyActionListener target="#{manager.menu.showCheckinModalPanel}" value="#{false}" />
+					<rich:componentControl for="checkinModalPanel" operation="hide" event="onclick" />
+				</aon:commandButton>
 			</f:facet>
+
 			<aon:form id="checkinModalPanelForm">
 				<rich:fileUpload id="upload" reRender="table"
 						addControlLabel="#{menuBundle.aon_ecm_add}" 
@@ -40,26 +42,27 @@
 						<rich:spacer height="3"/>
 						<br />
 			            <aon:panelGrid columns="2" style="float:right">
-							<a4j:commandButton value="#{menuBundle.aon_version_checkin}"
-								reRender="checkinModalPanel, documentPanel" 
-								actionListener="#{manager.onCheckin}"
-								onclick="javascript:Richfaces.hideModalPanel('checkinModalPanel')"
-								styleClass="aon-form-button" />
-
-							<a4j:commandButton action="#{manager.documents.upload.clearUploadData}"
-								reRender="checkinModalPanel" value="#{menuBundle.aon_ecm_close}"
-								actionListener="#{manager.onCloseModalPanel}"
-								onclick="javascript:Richfaces.hideModalPanel('checkinModalPanel')"
-								styleClass="aon-form-button"/>
+							<aon:commandButton value="#{menuBundle.aon_version_checkin}" immediate="true"
+									reRender="checkinModalPanel, documentPanel"
+									actionListener="#{manager.onCheckin}" 
+									styleClass="aon-icon-commandButton aon-icon-checkin">
+								<f:setPropertyActionListener target="#{manager.menu.showCheckinModalPanel}" value="#{false}" />
+								<rich:componentControl for="checkinModalPanel" operation="hide" event="onclick" />
+							</aon:commandButton>
+							<aon:commandButton value="#{menuBundle.aon_ecm_close}" immediate="true"
+									reRender="checkinModalPanel"
+									actionListener="#{manager.documents.upload.clearUploadData}" 
+									styleClass="aon-icon-commandButton aon-icon-close">
+								<f:setPropertyActionListener target="#{manager.menu.showCheckinModalPanel}" value="#{false}" />
+								<rich:componentControl for="checkinModalPanel" operation="hide" event="onclick" />
+							</aon:commandButton>
 						</aon:panelGrid>
 					</aon:div>
 				</aon:div>
-
 			</aon:form>
 		</rich:modalPanel>
-	
+	</aon:panelGroup>
 
 </ui:composition>
-
 </body>
 </html>

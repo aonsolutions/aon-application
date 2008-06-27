@@ -15,18 +15,15 @@
 				</aon:div>
 				<aon:div styleClass="aon-toolbar">
 					<aon:commandButton id="searchButton" value="#{menuBundle.aon_ecm_search}" 
-					reRender="searchForm" 
-					actionListener="#{search.onExecute}"
-					styleClass="aon-finding-toolbar-item aon-icon-accept" />
+						reRender="searchForm" 
+						actionListener="#{search.onExecute}"
+						styleClass="aon-finding-toolbar-item aon-icon-accept" />
 				</aon:div>			
-				
 			    <aon:panelGrid columns="2" styleClass="aon-panelGrid-formatting" style="width:auto;"> 		 		
 					<aon:outputLabel for="document_content" value="#{appBundle.aon_search_label}" />
 					<aon:inputText id="document_content" value="#{search.parameters.bycontent}" size="80" />					                
 				</aon:panelGrid>	
-				
 				<ui:include src="/facelet/search/results.xhtml" />
-				
 			</aon:form>
 		</aon:div>		
 	</ui:define>

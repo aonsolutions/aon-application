@@ -44,6 +44,7 @@ public class FoldersTree implements Widget {
 
 	@SuppressWarnings("unchecked")
 	TreeNode rootTreeNode;
+	String rootTreeNodeId;
 	/** Selected folder TreeNode. */
     @SuppressWarnings("unchecked")
 	TreeNode selected;
@@ -58,7 +59,7 @@ public class FoldersTree implements Widget {
 	@SuppressWarnings("unchecked")
 	public FoldersTree() throws WidgetLoadingException {
         HttpSession session = 
-        	(HttpSession) FacesContext.getCurrentInstance().getExternalContext().getSession( false ); 
+        	(HttpSession) FacesContext.getCurrentInstance().getExternalContext().getSession( false );
         Node root = SessionManager.getInstance().getHierarchyManager( session.getId() ).getRootNode();
         try {
 			Node cdr = root.getNode( ContentRepository.getNodeName( CDRQName.AON_CDR ) );
@@ -66,8 +67,8 @@ public class FoldersTree implements Widget {
 			TreeNode cdrTreeNode = new TreeNodeImpl();
 			Folder cdrFolder = new Folder( cdr );
 			cdrTreeNode.setData( cdrFolder );
-			rootTreeNode.addChild( cdrFolder.getNode().getIndex(), cdrTreeNode );
-			rootTreeNode.setData( cdrFolder );
+			rootTreeNode.addChild( rootTreeNodeId = cdr.toString(), cdrTreeNode );
+			rootTreeNode.setData( null );
 			load( cdrTreeNode );
         } catch (RepositoryException e) {
         	throw new WidgetLoadingException( e );
@@ -84,7 +85,7 @@ public class FoldersTree implements Widget {
      * @throws WidgetLoadingException 
      */
 	public void setRootTreeNodeSelected() throws WidgetLoadingException {
-		setSelected( rootTreeNode );
+		setSelected( rootTreeNode.getChild( rootTreeNodeId ) );
 	}
 
 	/**
@@ -147,7 +148,7 @@ public class FoldersTree implements Widget {
 			selectedNode.save();
 			TreeNodeImpl newNode = new TreeNodeImpl();
 			newNode.setData( newFolder );
-			selected.addChild( newFolder.getNode().getIndex(), newNode );
+			selected.addChild( newFolder.getNode().toString(), newNode );
 			setSelected( newNode );
 		} catch (AccessDeniedException e) {
 			CDRUtils.addWarningMessage( e.getMessage() );
@@ -176,7 +177,7 @@ public class FoldersTree implements Widget {
 		try {
 			parentNode.save();
 			Folder folder = (Folder) selected.getData();
-			parentTreeNode.removeChild( folder.getNode().getIndex() );
+			parentTreeNode.removeChild( folder.getNode().toString() );
 		} catch (AccessDeniedException e) {
 			CDRUtils.addWarningMessage( e.getMessage() );
 			parentNode.refresh( false );
@@ -245,7 +246,7 @@ public class FoldersTree implements Widget {
 	    			TreeNodeImpl branchNode = new TreeNodeImpl();
 	    			Folder branchFolder = new Folder( node );
 	    			branchNode.setData( branchFolder );
-	    			defNode.addChild( branchFolder.getNode().getIndex(), branchNode );
+	    			defNode.addChild( branchFolder.getNode().toString(), branchNode );
 		        	if ( node.hasNodes() ) {
 		        		load( branchNode );
 		        	}

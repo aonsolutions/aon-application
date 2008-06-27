@@ -9,25 +9,25 @@
 <ui:composition template="/facelet/templates/aon.ui.main.xhtml">
 
 	<ui:define name="content">		
-			<aon:form id="searchForm">
-		<aon:div styleClass="aon-scroll-area" style="padding-top:0;">
-			<aon:div styleClass="aon-section-title" style="padding-top:0;">
-				<aon:outputText value="#{menuBundle.aon_search_advanced}" />
-			</aon:div>
-			<aon:div styleClass="aon-toolbar">
-				<aon:commandButton id="searchButton" value="#{menuBundle.aon_ecm_search}" 
-				reRender="searchForm" 
-				actionListener="#{search.onExecute}"
-				styleClass="aon-finding-toolbar-item aon-icon-accept" />				
-				
-			</aon:div>
+		<aon:form id="searchForm">
+			<aon:div styleClass="aon-scroll-area" style="padding-top:0;">
+				<aon:div styleClass="aon-section-title" style="padding-top:0;">
+					<aon:outputText value="#{menuBundle.aon_search_advanced}" />
+				</aon:div>
+				<aon:div styleClass="aon-toolbar">
+					<aon:commandButton id="searchButton" value="#{menuBundle.aon_ecm_search}" 
+						reRender="searchForm" 
+						actionListener="#{search.onExecute}"
+						styleClass="aon-finding-toolbar-item aon-icon-accept" />				
+					
+				</aon:div>
 			
 				 <aon:div id="aon-content-subtitle" styleClass="aon-bold" style="padding-bottom:10px;" forceId="#{true}">
-					<aon:outputLabel for="tree" value="#{appBundle.aon_search_title}" />
+					<aon:outputLabel for="searchForm" value="#{appBundle.aon_search_title}" />
 				 </aon:div>	
 				
 				<aon:panelGrid styleClass="aon-panelGrid-formatting" columns="4"  style="width:auto;"
-				columnClasses=",aon-padding-left,aon-padding-left,aon-padding-left">	
+						columnClasses=",aon-padding-left,aon-padding-left,aon-padding-left">	
 					<aon:div>								
 						<aon:outputLabel for="document_allwords"
 							value="#{appBundle.aon_search_allwords1}" />
@@ -85,14 +85,12 @@
 					</aon:div>
 					<aon:inputText id="document_nowords"
 						value="#{search.parameters.nowords}" size="50" />				
-	
-					
 				</aon:panelGrid>
+
 				<ui:include src="/facelet/search/results.xhtml" />
-	
-		
-</aon:div>
-			</aon:form>
+
+			</aon:div>
+		</aon:form>
 	</ui:define>
 </ui:composition>
 
