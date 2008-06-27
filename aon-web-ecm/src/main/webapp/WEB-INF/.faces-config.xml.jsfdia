@@ -3,19 +3,20 @@
  <PROCESS-ITEM NAME="rules:" SHAPE="32,17,0,0" model-entity="JSFProcessGroup">
   <PROCESS-ITEM ID="rules::0" NAME="item" model-entity="JSFProcessItem">
    <PROCESS-ITEM-OUTPUT
-    ID="admin_repository::#facelet#admin#repository.jsf" NAME="output"
-    PATH="/facelet/admin/repository.jsf"
-    TARGET="rules:#facelet#admin#repository.jsf"
+    ID="admin_repository::#facelet#repository#content.xhtml"
+    NAME="output" PATH="/facelet/repository/content.xhtml"
+    TARGET="rules:#facelet#repository#content.xhtml"
     TITLE="admin_repository" model-entity="JSFProcessItemOutput"/>
    <PROCESS-ITEM-OUTPUT
-    ID="search_by_content::#facelet#search#bycontent.jsf" NAME="output1"
-    PATH="/facelet/search/bycontent.jsf"
-    TARGET="rules:#facelet#search#bycontent.jsf"
+    ID="search_by_content::#facelet#search#bycontent.xhtml"
+    NAME="output1" PATH="/facelet/search/bycontent.xhtml"
+    TARGET="rules:#facelet#search#bycontent.xhtml"
     TITLE="search_by_content" model-entity="JSFProcessItemOutput"/>
    <PROCESS-ITEM-OUTPUT
-    ID="advanced_search::#facelet#search#advanced.jsf" NAME="output2"
-    PATH="/facelet/search/advanced.jsf"
-    TARGET="rules:#facelet#search#advanced.jsf" TITLE="advanced_search" model-entity="JSFProcessItemOutput"/>
+    ID="advanced_search::#facelet#search#advanced.xhtml" NAME="output2"
+    PATH="/facelet/search/advanced.xhtml"
+    TARGET="rules:#facelet#search#advanced.xhtml"
+    TITLE="advanced_search" model-entity="JSFProcessItemOutput"/>
    <PROCESS-ITEM-OUTPUT
     ID="permissions_list::#facelet#permissions#list.xhtml"
     NAME="output3" PATH="/facelet/permissions/list.xhtml"
@@ -25,10 +26,10 @@
  </PROCESS-ITEM>
  <PROCESS-ITEM NAME="rules:#facelet#permissions#list.xhtml"
   PATH="/facelet/permissions/list.xhtml" SHAPE="288,465,0,0" model-entity="JSFProcessGroup"/>
- <PROCESS-ITEM NAME="rules:#facelet#search#advanced.jsf"
-  PATH="/facelet/search/advanced.jsf" SHAPE="288,353,0,0" model-entity="JSFProcessGroup"/>
- <PROCESS-ITEM NAME="rules:#facelet#admin#repository.jsf"
-  PATH="/facelet/admin/repository.jsf" SHAPE="288,33,0,0" model-entity="JSFProcessGroup"/>
- <PROCESS-ITEM NAME="rules:#facelet#search#bycontent.jsf"
-  PATH="/facelet/search/bycontent.jsf" SHAPE="288,241,0,0" model-entity="JSFProcessGroup"/>
+ <PROCESS-ITEM NAME="rules:#facelet#search#bycontent.xhtml"
+  PATH="/facelet/search/bycontent.xhtml" SHAPE="288,241,0,0" model-entity="JSFProcessGroup"/>
+ <PROCESS-ITEM NAME="rules:#facelet#search#advanced.xhtml"
+  PATH="/facelet/search/advanced.xhtml" SHAPE="288,353,0,0" model-entity="JSFProcessGroup"/>
+ <PROCESS-ITEM NAME="rules:#facelet#repository#content.xhtml"
+  PATH="/facelet/repository/content.xhtml" SHAPE="288,33,0,0" model-entity="JSFProcessGroup"/>
 </PROCESS>

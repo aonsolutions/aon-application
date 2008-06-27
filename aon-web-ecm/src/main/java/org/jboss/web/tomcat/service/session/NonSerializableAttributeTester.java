@@ -29,6 +29,7 @@ import java.io.Serializable;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.logging.Logger;
 
 import javax.servlet.http.HttpSessionAttributeListener;
 import javax.servlet.http.HttpSessionBindingEvent;
@@ -44,121 +45,86 @@ import javax.servlet.http.HttpSessionBindingEvent;
  * @author <a href="brian.stansberry@jboss.com">Brian Stansberry</a>
  * @version $Revision$
  */
-public class NonSerializableAttributeTester 
-   implements HttpSessionAttributeListener
-{
+@SuppressWarnings("unchecked")
+public class NonSerializableAttributeTester implements HttpSessionAttributeListener {
 
-   public NonSerializableAttributeTester()
-   {
-      super();
-   }
+	private static final Logger LOGGER = Logger.getLogger(NonSerializableAttributeTester.class.getName());
 
-   public void attributeAdded(HttpSessionBindingEvent event)
-   {
-      testAttributeSerializability(event.getName(), event.getValue());
-   }
+	public NonSerializableAttributeTester() {
+		super();
+	}
 
-   public void attributeRemoved(HttpSessionBindingEvent event)
-   {
+	public void attributeAdded(HttpSessionBindingEvent event) {
+		testAttributeSerializability(event.getName(), event.getValue());
+	}
+
+	public void attributeRemoved(HttpSessionBindingEvent event) {
       // do nothing
-   }
+	}
 
-   public void attributeReplaced(HttpSessionBindingEvent event)
-   {
+	public void attributeReplaced(HttpSessionBindingEvent event) {
       testAttributeSerializability(event.getName(), event.getValue());
-   }
+	}
+
+	private void testAttributeSerializability(String name, Object value) {
+		if (!testSerializability(value)) {
+			LOGGER.warning( name + " of type " + value.getClass() + " cannot be serialized" );
+			testRecursively(value);
+		}
+	}
+
+	private boolean testSerializability(Object obj) {
+		if (obj == null)
+			return true;
+		if (!(obj instanceof Serializable)) {
+			return false;
+		} else {
+			ByteArrayOutputStream baos = new ByteArrayOutputStream(1024);
+			try {
+				ObjectOutputStream oos = new ObjectOutputStream(baos);
+				oos.writeObject(obj);
+				oos.close();
+			} catch (NotSerializableException io) {
+				return false;
+			} catch (IOException io) {
+				LOGGER.warning( "Unexpected IOException:" + io.getMessage() );
+			}
+		}
+		return true;
+	}
+
+	private void testRecursively(Object obj) {
+		if (obj instanceof Collection) {
+			testCollectionSerializability((Collection) obj);
+		} else if (obj instanceof Map) {
+			testMapSerializability((Map) obj);
+		}
+	}
+
+	private void testCollectionSerializability(Collection coll) {
+		LOGGER.info("Testing Collection elements");
+		int i = 0;
+		for (Iterator iter = coll.iterator(); iter.hasNext(); i++) {
+			Object obj = iter.next();
+			if (!(testSerializability(obj))) {
+				LOGGER.warning("Element " + i + " of type " + obj.getClass() + " cannot be serialized");
+				testRecursively(obj);
+			}
+		}
+	}
    
-   private void testAttributeSerializability(String name, Object value)
-   {
-      if (!testSerializability(value))
-      {
-         System.out.println(name + " of type " + value.getClass() + 
-                            " cannot be serialized");
-         testRecursively(value);
-      }
-      
-   }
-   
-   private boolean testSerializability(Object obj)
-   {
-      if (obj == null)
-         return true;
-      
-      if (!(obj instanceof Serializable))
-      {
-         return false;
-      }
-      else
-      {
-         ByteArrayOutputStream baos = new ByteArrayOutputStream(1024);
-         try
-         {
-            ObjectOutputStream oos = new ObjectOutputStream(baos);
-            oos.writeObject(obj);
-            oos.close();
-         }
-         catch (NotSerializableException io)
-         {
-            return false;
-         }
-         catch (IOException io)
-         {
-            System.out.println("Unexpected IOException");
-            io.printStackTrace(System.out);
-         }
-      }
-      
-      return true;
-   }
-   
-   private void testRecursively(Object obj)
-   {
-      if (obj instanceof Collection)
-      {
-         testCollectionSerializability((Collection) obj);
-      }
-      else if (obj instanceof Map)
-      {
-         testMapSerializability((Map) obj);
-      }
-      
-   }
-   
-   private void testCollectionSerializability(Collection coll)
-   {
-      System.out.println("Testing Collection elements");
-      int i = 0;
-      for (Iterator iter = coll.iterator(); iter.hasNext(); i++)
-      {
-         Object obj = iter.next();
-         if (!(testSerializability(obj)))
-         {
-            System.out.println("Element " + i + " of type " + obj.getClass() +
-                               " cannot be serialized");
-            testRecursively(obj);
-         }
-      }
-   }
-   
-   private void testMapSerializability(Map map)
-   {
-      System.out.println("Testing Map entries");
-      for (Iterator iter = map.entrySet().iterator(); iter.hasNext();)
-      {
-         Map.Entry entry = (Map.Entry) iter.next();
-         if (!testSerializability(entry.getKey()))
-         {
-            System.out.println("Map Key " + entry.getKey() + " of type " +
-                  entry.getKey().getClass() + " cannot be serialized");
-            testRecursively(entry.getKey());
-         }
-         else if (!testSerializability(entry.getValue()))
-         {
-            System.out.println("Map value under Key " + entry.getKey() + " of type " +
-                  entry.getValue().getClass() + " cannot be serialized");
-            testRecursively(entry.getValue());
-         }
-      }
-   }
+	private void testMapSerializability(Map map) {
+		LOGGER.info("Testing Map entries");
+		for (Iterator iter = map.entrySet().iterator(); iter.hasNext();) {
+			Map.Entry entry = (Map.Entry) iter.next();
+			if (!testSerializability(entry.getKey())) {
+				LOGGER.warning("Map Key " + entry.getKey() + " of type " + entry.getKey().getClass() + " cannot be serialized");
+				testRecursively(entry.getKey());
+			} else if (!testSerializability(entry.getValue())) {
+				LOGGER.warning("Map value under Key " + entry.getKey() + " of type " + entry.getValue().getClass() + " cannot be serialized");
+				testRecursively(entry.getValue());
+			}
+		}
+	}
 
 }

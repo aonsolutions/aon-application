@@ -10,29 +10,29 @@
 		columnClasses="aon-text-right aon-vertical-align-middle, aon-text-left aon-vertical-align-middle"
 		cellpadding="1" cellspacing="0" style="font-size:1.1em;">
 
-		<aon:outputLabel for="selected_document_name" styleClass="aon-bold" value="Name" />
+		<aon:outputLabel for="selected_document_name" styleClass="aon-bold" value="#{appBundle.aon_cdr_name}" />
 		<aon:inputText id="selected_document_name" styleClass="aon-inputText-disabled"
 			value="#{manager.documents.selected.name}" size="80" />
-<!-- 
-		<aon:outputLabel for="selected_document_keywords" styleClass="aon-bold" value="Palabras Clave" />
+ 
+		<aon:outputLabel for="selected_document_keywords" styleClass="aon-bold" value="#{appBundle.aon_cdr_keywords}" />
 		<aon:inputText id="selected_document_keywords" styleClass="aon-inputText-disabled"
 			value="#{manager.documents.selected.keywords}" size="80" />
 
-		<aon:outputLabel for="selected_document_nowords" styleClass="aon-bold" value="Palabras a excluir" />
+		<aon:outputLabel for="selected_document_nowords" styleClass="aon-bold" value="#{appBundle.aon_cdr_nowords}" />
 		<aon:inputText id="selected_document_nowords" styleClass="aon-inputText-disabled"
 			value="#{manager.documents.selected.nowords}" size="80" />
 
-		<aon:outputLabel for="selected_document_category" styleClass="aon-bold" value="Category" />
+		<aon:outputLabel for="selected_document_category" styleClass="aon-bold" value="#{appBundle.aon_cdr_category}" />
 		<aon:selectOneMenu id="selected_document_category" value="#{manager.documents.selected.category}" >
 			<f:selectItems value="#{search.parameters.categories}"/>
 		</aon:selectOneMenu>						
 	
-		<aon:outputLabel for="selected_document_language" styleClass="aon-bold" value="Language" />
+		<aon:outputLabel for="selected_document_language" styleClass="aon-bold" value="#{appBundle.aon_cdr_language}" />
 		<aon:selectOneMenu id="selected_document_language" styleClass="aon-inputText-disabled"
 				value="#{manager.documents.selected.language}" >
 			<f:selectItems value="#{search.parameters.languages}"/>
 		</aon:selectOneMenu>						
- -->
+
 	</aon:panelGrid>
 
 </ui:composition>

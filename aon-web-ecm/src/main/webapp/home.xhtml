@@ -2,19 +2,14 @@
 <html xmlns="http://www.w3.org/1999/xhtml"
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:h="http://java.sun.com/jsf/html"
-	xmlns:f="http://java.sun.com/jsf/core"
-	xmlns:a4j="http://richfaces.org/a4j">
-
+	xmlns:f="http://java.sun.com/jsf/core">
 <body>
-
 <ui:composition template="/facelet/templates/aon.ui.main.xhtml">
 
 	<ui:define name="content">
-		<a4j:include id="homepage" viewId="/facelet/homepage/content.xhtml" />
-		<!--  ui:include src="/facelet/homepage/content.xhtml" / -->
+		<ui:include src="/facelet/homepage/content.xhtml" />
 	</ui:define>
-  
-</ui:composition>
 
+</ui:composition>
 </body>
 </html>

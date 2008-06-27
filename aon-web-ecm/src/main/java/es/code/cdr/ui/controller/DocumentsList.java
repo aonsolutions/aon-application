@@ -133,7 +133,7 @@ public class DocumentsList implements Widget {
 	 * @param event
 	 */
 	public void reset(ActionEvent event) {
-		upload.clearUploadData();
+		upload.clearUploadData( event );
 	}
 
 	/**
@@ -240,7 +240,7 @@ public class DocumentsList implements Widget {
 			ExternalContext ec = FacesContext.getCurrentInstance().getExternalContext();
 			selected.setAuthor( getAuthor( ec ) );
 			selected.checkin( upload.getSelectedDocument() );
-			upload.clearUploadData();
+			upload.clearUploadData( event );
 		} catch (RepositoryException e) {
 			CDRUtils.addErrorMessage( e.getMessage() );
 		}

@@ -8,6 +8,8 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
+import javax.faces.event.ActionEvent;
+
 import org.richfaces.event.UploadEvent;
 import org.richfaces.model.UploadItem;
 
@@ -69,20 +71,19 @@ public class DocumentUploadBean implements Serializable {
 	    uploadsAvailable--;
 	}
 	
+	public void clearUploadData(ActionEvent event) {
+		documents.clear();
+		setUploadsAvailable(5);
+	    selected = -1;
+	}
+	
 	public void clearSelectedUploadData() {
 	    documents.remove( selected );
 	    uploadsAvailable++;
 	    selected = -1;
 	}
 
-	public String clearUploadData() {
-		documents.clear();
-		setUploadsAvailable(5);
-	    selected = -1;
-		return null;
-	}
-	
-	private String getFileName( String path ) {
+	private String getFileName(String path) {
 		int index = path.lastIndexOf( File.separatorChar ) + 1;
 		return path.substring( index, path.length() );
 	}

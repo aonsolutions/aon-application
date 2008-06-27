@@ -55,6 +55,7 @@ public class QueryMediator implements WidgetListener, Serializable {
 	 * @throws WidgetLoadingException 
 	 */
 	public QueryMediator() throws WidgetLoadingException {
+		createWidgets();
 	}
 
 	/**
@@ -125,10 +126,12 @@ public class QueryMediator implements WidgetListener, Serializable {
 				Node n = it.nextNode();
 				l.add( new Document( n ) );
 			}
+			if ( l.size() == 0 )
+				CDRUtils.addErrorMessage( getBundle().getString( "aon_cdr_document_not_found" ) );
 		} catch (RepositoryException e) {
-			CDRUtils.addErrorMessage( bundle.getString( "aon_cdr_document_not_found" ) );
+			CDRUtils.addErrorMessage( getBundle().getString( "aon_cdr_document_not_found" ) );
 		} catch (InvalidStatementException e) {
-			CDRUtils.addErrorMessage( bundle.getString( "aon_cdr_empty_expression" ) );
+			CDRUtils.addErrorMessage( getBundle().getString( "aon_cdr_empty_expression" ) );
 		}
 		documents.setModel( new CDRDataModel( l ) );
 	}

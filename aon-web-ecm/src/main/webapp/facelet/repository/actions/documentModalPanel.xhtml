@@ -8,29 +8,29 @@
 	xmlns:a4j="http://richfaces.org/a4j">
 <body>
 <ui:composition>
-<style>
-.info {
-    height: 320px;
-    width: 97%;
-    overflow: auto;
-}
-</style>
+	<style>
+	.info {
+	    height: 320px;
+	    width: 97%;
+	    overflow: auto;
+	}
+	</style>
 
-	
-		<rich:modalPanel id="documentModalPanel" top="50" left="300"
-				minHeight="100" minWidth="100" height="580" width="680" zindex="1000"
-				headerClass="aon-popupWindow-title">
+	<aon:panelGroup id="showDocumentModalPanel">
+		<rich:modalPanel id="documentModalPanel"
+				rendered="#{manager.menu.showDocumentModalPanel}" showWhenRendered="true"
+				headerClass="aon-popupWindow-title"
+				minHeight="580" height="580" width="680" top="50" left="300" zindex="1000">
 			<f:facet name="header">
-            	<h:outputText value="#{appBundle.aon_cdr_add_document}"/>
+           	<h:outputText value="#{appBundle.aon_cdr_add_document}"/>
 			</f:facet>
 			<f:facet name="controls">
-				<h:graphicImage
-					value="/aonResource/images/aon-icon/aon-icon-popupWindow-close.gif"
-					style="cursor:pointer"
-					onclick="Richfaces.hideModalPanel('documentModalPanel')" />
+				<aon:commandButton type="button" styleClass="aon-popupWindow-close" immediate="true">
+					<f:setPropertyActionListener target="#{manager.menu.showDocumentModalPanel}" value="#{false}" />
+					<rich:componentControl for="documentModalPanel" operation="hide" event="onclick" />
+				</aon:commandButton>
 			</f:facet>
 			<aon:form id="documentModalPanelForm">
-
 				<rich:fileUpload id="upload" reRender="table"
 						addControlLabel="#{menuBundle.aon_ecm_add}" 
 						stopControlLabel="#{menuBundle.aon_ecm_stop}" 
@@ -60,7 +60,7 @@
 										value="#{appBundle.aon_cdr_name}:" />
 									<aon:inputText id="document_name"
 										value="#{document.name}" size="30" />
-<!-- 
+ 
 									<aon:outputLabel for="document_category"
 										value="#{appBundle.aon_cdr_category}:" style="margin-left:1em"/>
 									<aon:selectOneMenu id="document_category" 
@@ -74,7 +74,6 @@
 											value="#{document.language}" >
 										<f:selectItems value="#{search.parameters.languages}"/>
 									</aon:selectOneMenu>
-	 -->		
 
 								</aon:panelGrid>
 				
@@ -111,18 +110,20 @@
 						<rich:spacer height="3"/>
 						<br />
 			            <aon:panelGrid style="float:right">
-							<a4j:commandButton action="#{manager.documents.upload.clearUploadData}"
-								reRender="info, closeModalPanel, upload" value="#{menuBundle.aon_ecm_close}"
-								actionListener="#{manager.onCloseModalPanel}"
-								onclick="javascript:Richfaces.hideModalPanel('documentModalPanel')"
-								styleClass="aon-form-button"/>
+							<aon:commandButton id="closeDocument" 
+									reRender="info, closeModalPanel, upload"
+									value="#{menuBundle.aon_ecm_close}" immediate="true"
+									actionListener="#{manager.documents.upload.clearUploadData}" 
+									styleClass="aon-icon-commandButton aon-icon-cancel">
+								<f:setPropertyActionListener target="#{manager.menu.showDocumentModalPanel}" value="#{false}" />
+								<rich:componentControl for="documentModalPanel" operation="hide" event="onclick" />
+							</aon:commandButton>
 						</aon:panelGrid>
 					</aon:div>
 				</aon:div>
 			</aon:form>
 		</rich:modalPanel>
-	
-
+	</aon:panelGroup>	
 </ui:composition>
 </body>
 </html>

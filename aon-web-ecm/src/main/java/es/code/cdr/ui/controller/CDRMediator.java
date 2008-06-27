@@ -142,22 +142,12 @@ public class CDRMediator implements WidgetListener, Serializable {
 	 * @param event
 	 */
 	public void onCheckin(ActionEvent event) {
-		onCloseModalPanel( event );
 		try {
 			documents.getUpload().setSelected( 0 );
 			documents.checkin( event );
 		} catch (IOException e) {
 			LOGGER.error( e.getMessage(), e );
 		}
-	}
-
-	/**
-	 * @param event
-	 */
-	public void onCloseModalPanel(ActionEvent event) {
-		menu.setShowFolderModalPanel( false );
-		menu.setShowDocumentModalPanel( false );
-		menu.setShowCheckinModalPanel( false );
 	}
 
 	/*

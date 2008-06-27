@@ -79,6 +79,10 @@ public class Document implements CDRNode {
 	 */
 	public void setEntryDate(Calendar calendar) throws RepositoryException {
 		String name = ContentRepository.getNodeName( CDRQName.AON_ENTRYDATE );
+		// Initializes time.
+		calendar.set( Calendar.HOUR_OF_DAY, 0 );
+		calendar.set( Calendar.MINUTE, 0 );
+		calendar.set( Calendar.SECOND, 0 );
 		node.setProperty( name, new DateValue( calendar ) );
 	}
 
