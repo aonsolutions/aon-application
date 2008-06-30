@@ -83,6 +83,17 @@ import com.code.aon.cms.Section;
 import com.code.aon.cms.Sidebar;
 import com.code.aon.cms.SidebarOption;
 import com.code.aon.cms.SidebarOptionDetail;
+import com.code.aon.cms.SportCareerPath;
+import com.code.aon.cms.SportCategory;
+import com.code.aon.cms.SportCategoryDetail;
+import com.code.aon.cms.SportClub;
+import com.code.aon.cms.SportCoach;
+import com.code.aon.cms.SportNationality;
+import com.code.aon.cms.SportNationalityDetail;
+import com.code.aon.cms.SportPlayer;
+import com.code.aon.cms.SportPosition;
+import com.code.aon.cms.SportPositionDetail;
+import com.code.aon.cms.SportSeason;
 import com.code.aon.common.dao.AliasWriter;
 
 public class CMSAliasWriter {
@@ -90,7 +101,7 @@ public class CMSAliasWriter {
 	public static void main(String[] args) throws IOException {
 
 		File file = new File("/AON-PROJECT/aon-cms/src/main/java/com/code/aon/cms/dao/ICMSAlias.java");
-		String[] classes = new String[80]; 
+		String[] classes = new String[91]; 
 		classes[0] = Language.class.getName();
 		classes[1] = Config.class.getName();
 		classes[2] = ConfigDetail.class.getName();
@@ -171,6 +182,17 @@ public class CMSAliasWriter {
 		classes[77] = HiruCourseDetail.class.getName();
 		classes[78] = HiruConfig.class.getName();
 		classes[79] = ProductCategoryConfig.class.getName();
+		classes[80] = SportCategory.class.getName();
+		classes[81] = SportCategoryDetail.class.getName();
+		classes[82] = SportClub.class.getName();
+		classes[83] = SportPosition.class.getName();
+		classes[84] = SportPositionDetail.class.getName();
+		classes[85] = SportNationality.class.getName();
+		classes[86] = SportNationalityDetail.class.getName();
+		classes[87] = SportSeason.class.getName();
+		classes[88] = SportPlayer.class.getName();
+		classes[89] = SportCareerPath.class.getName();
+		classes[90] = SportCoach.class.getName();
 		AliasWriter writer = new AliasWriter("com.code.aon.cms.dao");
 		writer.write(classes, file);
 		System.out.println( file.getAbsolutePath() );

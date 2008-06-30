@@ -161,6 +161,14 @@
 								actionListener="#{bulletin.onInit}" 
 								styleClass="aon-main-menu-leaf"/>
 						</aon:dropDownMenu>
+						<aon:dropDownMenu id="sport"
+							value="#{menuBundle.cms_sport}" submitMode="ajax"
+							event="onclick">
+							<aon:menuItem id="sport_category" value="#{menuBundle.cms_sport_category}"
+								action="sport_category_list"
+								actionListener="#{sport_category.onSearch}"
+								styleClass="aon-main-menu-leaf"/>
+						</aon:dropDownMenu>
 						<aon:dropDownMenu id="production"
 							value="#{menuBundle.cms_production}" submitMode="ajax"
 							event="onclick">

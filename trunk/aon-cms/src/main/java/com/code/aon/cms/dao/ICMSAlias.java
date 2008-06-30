@@ -82,6 +82,17 @@ import com.code.aon.cms.HiruCourse;
 import com.code.aon.cms.HiruCourseDetail;
 import com.code.aon.cms.HiruConfig;
 import com.code.aon.cms.ProductCategoryConfig;
+import com.code.aon.cms.SportCategory;
+import com.code.aon.cms.SportCategoryDetail;
+import com.code.aon.cms.SportClub;
+import com.code.aon.cms.SportPosition;
+import com.code.aon.cms.SportPositionDetail;
+import com.code.aon.cms.SportNationality;
+import com.code.aon.cms.SportNationalityDetail;
+import com.code.aon.cms.SportSeason;
+import com.code.aon.cms.SportPlayer;
+import com.code.aon.cms.SportCareerPath;
+import com.code.aon.cms.SportCoach;
 
 /** 
 * Interface for holding entity properties constants.
@@ -3323,6 +3334,395 @@ public interface ICMSAlias {
 	* Hibernate value: ProductCategoryConfig.section.id
 	*/
 	String  PRODUCT_CATEGORY_CONFIG_SECTION_ID = PRODUCT_CATEGORY_CONFIG_ENTRY.getAliasNames()[1];
+
+
+
+	/** 
+	* DAOConstantsEntry for SportCategory entity.
+	*/ 
+	DAOConstantsEntry SPORT_CATEGORY_ENTRY = DAOConstants.getDAOConstant(SportCategory.class);
+
+	/** 
+	* Alias value: SportCategory_alias
+	* Hibernate value: SportCategory.alias
+	*/
+	String  SPORT_CATEGORY_ALIAS = SPORT_CATEGORY_ENTRY.getAliasNames()[0];
+
+	/** 
+	* Alias value: SportCategory_default_
+	* Hibernate value: SportCategory.default_
+	*/
+	String  SPORT_CATEGORY_DEFAULT_ = SPORT_CATEGORY_ENTRY.getAliasNames()[1];
+
+	/** 
+	* Alias value: SportCategory_id
+	* Hibernate value: SportCategory.id
+	*/
+	String  SPORT_CATEGORY_ID = SPORT_CATEGORY_ENTRY.getAliasNames()[2];
+
+
+
+	/** 
+	* DAOConstantsEntry for SportCategoryDetail entity.
+	*/ 
+	DAOConstantsEntry SPORT_CATEGORY_DETAIL_ENTRY = DAOConstants.getDAOConstant(SportCategoryDetail.class);
+
+	/** 
+	* Alias value: SportCategoryDetail_description
+	* Hibernate value: SportCategoryDetail.description
+	*/
+	String  SPORT_CATEGORY_DETAIL_DESCRIPTION = SPORT_CATEGORY_DETAIL_ENTRY.getAliasNames()[0];
+
+	/** 
+	* Alias value: SportCategoryDetail_id
+	* Hibernate value: SportCategoryDetail.id
+	*/
+	String  SPORT_CATEGORY_DETAIL_ID = SPORT_CATEGORY_DETAIL_ENTRY.getAliasNames()[1];
+
+	/** 
+	* Alias value: SportCategoryDetail_language_id
+	* Hibernate value: SportCategoryDetail.language.id
+	*/
+	String  SPORT_CATEGORY_DETAIL_LANGUAGE_ID = SPORT_CATEGORY_DETAIL_ENTRY.getAliasNames()[2];
+
+	/** 
+	* Alias value: SportCategoryDetail_sportCategory_id
+	* Hibernate value: SportCategoryDetail.sportCategory.id
+	*/
+	String  SPORT_CATEGORY_DETAIL_SPORT_CATEGORY_ID = SPORT_CATEGORY_DETAIL_ENTRY.getAliasNames()[3];
+
+
+
+	/** 
+	* DAOConstantsEntry for SportClub entity.
+	*/ 
+	DAOConstantsEntry SPORT_CLUB_ENTRY = DAOConstants.getDAOConstant(SportClub.class);
+
+	/** 
+	* Alias value: SportClub_default_
+	* Hibernate value: SportClub.default_
+	*/
+	String  SPORT_CLUB_DEFAULT_ = SPORT_CLUB_ENTRY.getAliasNames()[0];
+
+	/** 
+	* Alias value: SportClub_description
+	* Hibernate value: SportClub.description
+	*/
+	String  SPORT_CLUB_DESCRIPTION = SPORT_CLUB_ENTRY.getAliasNames()[1];
+
+	/** 
+	* Alias value: SportClub_id
+	* Hibernate value: SportClub.id
+	*/
+	String  SPORT_CLUB_ID = SPORT_CLUB_ENTRY.getAliasNames()[2];
+
+	/** 
+	* Alias value: SportClub_image
+	* Hibernate value: SportClub.image
+	*/
+	String  SPORT_CLUB_IMAGE = SPORT_CLUB_ENTRY.getAliasNames()[3];
+
+	/** 
+	* Alias value: SportClub_logo
+	* Hibernate value: SportClub.logo
+	*/
+	String  SPORT_CLUB_LOGO = SPORT_CLUB_ENTRY.getAliasNames()[4];
+
+	/** 
+	* Alias value: SportClub_sportCategory_id
+	* Hibernate value: SportClub.sportCategory.id
+	*/
+	String  SPORT_CLUB_SPORT_CATEGORY_ID = SPORT_CLUB_ENTRY.getAliasNames()[5];
+
+	/** 
+	* Alias value: SportClub_stadium
+	* Hibernate value: SportClub.stadium
+	*/
+	String  SPORT_CLUB_STADIUM = SPORT_CLUB_ENTRY.getAliasNames()[6];
+
+
+
+	/** 
+	* DAOConstantsEntry for SportPosition entity.
+	*/ 
+	DAOConstantsEntry SPORT_POSITION_ENTRY = DAOConstants.getDAOConstant(SportPosition.class);
+
+	/** 
+	* Alias value: SportPosition_alias
+	* Hibernate value: SportPosition.alias
+	*/
+	String  SPORT_POSITION_ALIAS = SPORT_POSITION_ENTRY.getAliasNames()[0];
+
+	/** 
+	* Alias value: SportPosition_id
+	* Hibernate value: SportPosition.id
+	*/
+	String  SPORT_POSITION_ID = SPORT_POSITION_ENTRY.getAliasNames()[1];
+
+
+
+	/** 
+	* DAOConstantsEntry for SportPositionDetail entity.
+	*/ 
+	DAOConstantsEntry SPORT_POSITION_DETAIL_ENTRY = DAOConstants.getDAOConstant(SportPositionDetail.class);
+
+	/** 
+	* Alias value: SportPositionDetail_description
+	* Hibernate value: SportPositionDetail.description
+	*/
+	String  SPORT_POSITION_DETAIL_DESCRIPTION = SPORT_POSITION_DETAIL_ENTRY.getAliasNames()[0];
+
+	/** 
+	* Alias value: SportPositionDetail_id
+	* Hibernate value: SportPositionDetail.id
+	*/
+	String  SPORT_POSITION_DETAIL_ID = SPORT_POSITION_DETAIL_ENTRY.getAliasNames()[1];
+
+	/** 
+	* Alias value: SportPositionDetail_language_id
+	* Hibernate value: SportPositionDetail.language.id
+	*/
+	String  SPORT_POSITION_DETAIL_LANGUAGE_ID = SPORT_POSITION_DETAIL_ENTRY.getAliasNames()[2];
+
+	/** 
+	* Alias value: SportPositionDetail_sportPosition_id
+	* Hibernate value: SportPositionDetail.sportPosition.id
+	*/
+	String  SPORT_POSITION_DETAIL_SPORT_POSITION_ID = SPORT_POSITION_DETAIL_ENTRY.getAliasNames()[3];
+
+
+
+	/** 
+	* DAOConstantsEntry for SportNationality entity.
+	*/ 
+	DAOConstantsEntry SPORT_NATIONALITY_ENTRY = DAOConstants.getDAOConstant(SportNationality.class);
+
+	/** 
+	* Alias value: SportNationality_alias
+	* Hibernate value: SportNationality.alias
+	*/
+	String  SPORT_NATIONALITY_ALIAS = SPORT_NATIONALITY_ENTRY.getAliasNames()[0];
+
+	/** 
+	* Alias value: SportNationality_id
+	* Hibernate value: SportNationality.id
+	*/
+	String  SPORT_NATIONALITY_ID = SPORT_NATIONALITY_ENTRY.getAliasNames()[1];
+
+	/** 
+	* Alias value: SportNationality_image
+	* Hibernate value: SportNationality.image
+	*/
+	String  SPORT_NATIONALITY_IMAGE = SPORT_NATIONALITY_ENTRY.getAliasNames()[2];
+
+
+
+	/** 
+	* DAOConstantsEntry for SportNationalityDetail entity.
+	*/ 
+	DAOConstantsEntry SPORT_NATIONALITY_DETAIL_ENTRY = DAOConstants.getDAOConstant(SportNationalityDetail.class);
+
+	/** 
+	* Alias value: SportNationalityDetail_description
+	* Hibernate value: SportNationalityDetail.description
+	*/
+	String  SPORT_NATIONALITY_DETAIL_DESCRIPTION = SPORT_NATIONALITY_DETAIL_ENTRY.getAliasNames()[0];
+
+	/** 
+	* Alias value: SportNationalityDetail_id
+	* Hibernate value: SportNationalityDetail.id
+	*/
+	String  SPORT_NATIONALITY_DETAIL_ID = SPORT_NATIONALITY_DETAIL_ENTRY.getAliasNames()[1];
+
+	/** 
+	* Alias value: SportNationalityDetail_language_id
+	* Hibernate value: SportNationalityDetail.language.id
+	*/
+	String  SPORT_NATIONALITY_DETAIL_LANGUAGE_ID = SPORT_NATIONALITY_DETAIL_ENTRY.getAliasNames()[2];
+
+	/** 
+	* Alias value: SportNationalityDetail_sportNationality_id
+	* Hibernate value: SportNationalityDetail.sportNationality.id
+	*/
+	String  SPORT_NATIONALITY_DETAIL_SPORT_NATIONALITY_ID = SPORT_NATIONALITY_DETAIL_ENTRY.getAliasNames()[3];
+
+
+
+	/** 
+	* DAOConstantsEntry for SportSeason entity.
+	*/ 
+	DAOConstantsEntry SPORT_SEASON_ENTRY = DAOConstants.getDAOConstant(SportSeason.class);
+
+	/** 
+	* Alias value: SportSeason_default_
+	* Hibernate value: SportSeason.default_
+	*/
+	String  SPORT_SEASON_DEFAULT_ = SPORT_SEASON_ENTRY.getAliasNames()[0];
+
+	/** 
+	* Alias value: SportSeason_description
+	* Hibernate value: SportSeason.description
+	*/
+	String  SPORT_SEASON_DESCRIPTION = SPORT_SEASON_ENTRY.getAliasNames()[1];
+
+	/** 
+	* Alias value: SportSeason_id
+	* Hibernate value: SportSeason.id
+	*/
+	String  SPORT_SEASON_ID = SPORT_SEASON_ENTRY.getAliasNames()[2];
+
+
+
+	/** 
+	* DAOConstantsEntry for SportPlayer entity.
+	*/ 
+	DAOConstantsEntry SPORT_PLAYER_ENTRY = DAOConstants.getDAOConstant(SportPlayer.class);
+
+	/** 
+	* Alias value: SportPlayer_bornDate
+	* Hibernate value: SportPlayer.bornDate
+	*/
+	String  SPORT_PLAYER_BORN_DATE = SPORT_PLAYER_ENTRY.getAliasNames()[0];
+
+	/** 
+	* Alias value: SportPlayer_bornPlace
+	* Hibernate value: SportPlayer.bornPlace
+	*/
+	String  SPORT_PLAYER_BORN_PLACE = SPORT_PLAYER_ENTRY.getAliasNames()[1];
+
+	/** 
+	* Alias value: SportPlayer_comunitary
+	* Hibernate value: SportPlayer.comunitary
+	*/
+	String  SPORT_PLAYER_COMUNITARY = SPORT_PLAYER_ENTRY.getAliasNames()[2];
+
+	/** 
+	* Alias value: SportPlayer_id
+	* Hibernate value: SportPlayer.id
+	*/
+	String  SPORT_PLAYER_ID = SPORT_PLAYER_ENTRY.getAliasNames()[3];
+
+	/** 
+	* Alias value: SportPlayer_lenght
+	* Hibernate value: SportPlayer.lenght
+	*/
+	String  SPORT_PLAYER_LENGHT = SPORT_PLAYER_ENTRY.getAliasNames()[4];
+
+	/** 
+	* Alias value: SportPlayer_name
+	* Hibernate value: SportPlayer.name
+	*/
+	String  SPORT_PLAYER_NAME = SPORT_PLAYER_ENTRY.getAliasNames()[5];
+
+	/** 
+	* Alias value: SportPlayer_number
+	* Hibernate value: SportPlayer.number
+	*/
+	String  SPORT_PLAYER_NUMBER = SPORT_PLAYER_ENTRY.getAliasNames()[6];
+
+	/** 
+	* Alias value: SportPlayer_photo
+	* Hibernate value: SportPlayer.photo
+	*/
+	String  SPORT_PLAYER_PHOTO = SPORT_PLAYER_ENTRY.getAliasNames()[7];
+
+	/** 
+	* Alias value: SportPlayer_sportClub_id
+	* Hibernate value: SportPlayer.sportClub.id
+	*/
+	String  SPORT_PLAYER_SPORT_CLUB_ID = SPORT_PLAYER_ENTRY.getAliasNames()[8];
+
+	/** 
+	* Alias value: SportPlayer_sportNationality_id
+	* Hibernate value: SportPlayer.sportNationality.id
+	*/
+	String  SPORT_PLAYER_SPORT_NATIONALITY_ID = SPORT_PLAYER_ENTRY.getAliasNames()[9];
+
+	/** 
+	* Alias value: SportPlayer_sportPosition_id
+	* Hibernate value: SportPlayer.sportPosition.id
+	*/
+	String  SPORT_PLAYER_SPORT_POSITION_ID = SPORT_PLAYER_ENTRY.getAliasNames()[10];
+
+	/** 
+	* Alias value: SportPlayer_sportSeason_id
+	* Hibernate value: SportPlayer.sportSeason.id
+	*/
+	String  SPORT_PLAYER_SPORT_SEASON_ID = SPORT_PLAYER_ENTRY.getAliasNames()[11];
+
+	/** 
+	* Alias value: SportPlayer_weight
+	* Hibernate value: SportPlayer.weight
+	*/
+	String  SPORT_PLAYER_WEIGHT = SPORT_PLAYER_ENTRY.getAliasNames()[12];
+
+
+
+	/** 
+	* DAOConstantsEntry for SportCareerPath entity.
+	*/ 
+	DAOConstantsEntry SPORT_CAREER_PATH_ENTRY = DAOConstants.getDAOConstant(SportCareerPath.class);
+
+	/** 
+	* Alias value: SportCareerPath_endDate
+	* Hibernate value: SportCareerPath.endDate
+	*/
+	String  SPORT_CAREER_PATH_END_DATE = SPORT_CAREER_PATH_ENTRY.getAliasNames()[0];
+
+	/** 
+	* Alias value: SportCareerPath_id
+	* Hibernate value: SportCareerPath.id
+	*/
+	String  SPORT_CAREER_PATH_ID = SPORT_CAREER_PATH_ENTRY.getAliasNames()[1];
+
+	/** 
+	* Alias value: SportCareerPath_initDate
+	* Hibernate value: SportCareerPath.initDate
+	*/
+	String  SPORT_CAREER_PATH_INIT_DATE = SPORT_CAREER_PATH_ENTRY.getAliasNames()[2];
+
+	/** 
+	* Alias value: SportCareerPath_sportClub_id
+	* Hibernate value: SportCareerPath.sportClub.id
+	*/
+	String  SPORT_CAREER_PATH_SPORT_CLUB_ID = SPORT_CAREER_PATH_ENTRY.getAliasNames()[3];
+
+	/** 
+	* Alias value: SportCareerPath_sportPlayer_id
+	* Hibernate value: SportCareerPath.sportPlayer.id
+	*/
+	String  SPORT_CAREER_PATH_SPORT_PLAYER_ID = SPORT_CAREER_PATH_ENTRY.getAliasNames()[4];
+
+
+
+	/** 
+	* DAOConstantsEntry for SportCoach entity.
+	*/ 
+	DAOConstantsEntry SPORT_COACH_ENTRY = DAOConstants.getDAOConstant(SportCoach.class);
+
+	/** 
+	* Alias value: SportCoach_id
+	* Hibernate value: SportCoach.id
+	*/
+	String  SPORT_COACH_ID = SPORT_COACH_ENTRY.getAliasNames()[0];
+
+	/** 
+	* Alias value: SportCoach_job
+	* Hibernate value: SportCoach.job
+	*/
+	String  SPORT_COACH_JOB = SPORT_COACH_ENTRY.getAliasNames()[1];
+
+	/** 
+	* Alias value: SportCoach_name
+	* Hibernate value: SportCoach.name
+	*/
+	String  SPORT_COACH_NAME = SPORT_COACH_ENTRY.getAliasNames()[2];
+
+	/** 
+	* Alias value: SportCoach_sportClub_id
+	* Hibernate value: SportCoach.sportClub.id
+	*/
+	String  SPORT_COACH_SPORT_CLUB_ID = SPORT_COACH_ENTRY.getAliasNames()[3];
 
 
 }
