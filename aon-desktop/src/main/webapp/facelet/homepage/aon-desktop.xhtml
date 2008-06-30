@@ -23,7 +23,7 @@
 					columnClasses="aon-portlets-column1,aon-portlets-column2,aon-portlets-column3">
 
 					<aon:div id="desktopDiv1">
-						<aon:div styleClass="aon-portlet" rendered="#{desktop.mailActive}">
+						<aon:div styleClass="aon-portlet" rendered="#{email.infobarEnabled and email.mailActive}">
 							<aon:div styleClass="aon-portlet-title">
 							
 								<aon:outputLink value="/aon-desktop/aon-webmail.auth?aonDesktop=true" target="aonWebMail">
@@ -33,7 +33,7 @@
 							<aon:div styleClass="aon-portlet-body">
 								<aon:dataTable id="mailSummaryList"
 									cellpadding="0" cellspacing="0"
-									value="#{desktop.mailSummaryModel}" var="to"
+									value="#{email.mailSummaryModel}" var="to"
 									style="width:165px;" columnClasses="aon-text-left,aon-text-right"
 									styleClass="aon-table-portlet">
 
@@ -49,7 +49,7 @@
 							</aon:div>
 						</aon:div>
 
-						<aon:div styleClass="aon-portlet" rendered="#{!desktop.mailActive}">
+						<aon:div styleClass="aon-portlet" rendered="#{email.infobarEnabled and !email.mailActive}">
 							<aon:div styleClass="aon-portlet-title">
 								<aon:outputText value="#{appBundle.aon_desktop_mails}" styleClass="aon-portlet-title-text aon-icon aon-icon-webmail"/>
 							</aon:div>
@@ -57,7 +57,33 @@
 								<aon:outputText value="#{appBundle.aon_desktop_mail_error}"/>
 							</aon:div>
 						</aon:div>
-						
+
+						<aon:div styleClass="aon-portlet" rendered="#{task.infobarEnabled}">
+							<aon:div styleClass="aon-portlet-title">
+							
+								<aon:outputLink value="/aon-desktop/aon-task.auth?aonDesktop=true" target="aonTask">
+									<aon:outputText value="#{appBundle.aon_desktop_tasks}" styleClass="aon-portlet-title-text aon-icon aon-icon-task-assume"/>
+								</aon:outputLink>
+							</aon:div>
+							<aon:div styleClass="aon-portlet-body">
+								<aon:dataTable id="taskSummaryList"
+									cellpadding="0" cellspacing="0"
+									value="#{task.taskSummaryModel}" var="to"
+									style="width:165px;" columnClasses="aon-text-left,aon-text-right"
+									styleClass="aon-table-portlet">
+
+									<aon:column>
+										<aon:outputText value="#{to.description}"/>
+									</aon:column>
+
+									<aon:column>
+										<aon:outputText value="#{to.total}"/>
+									</aon:column>
+
+								</aon:dataTable>
+							</aon:div>
+						</aon:div>
+
 						<aon:div styleClass="aon-portlet">
 							<aon:div styleClass="aon-portlet-title">								
 								<aon:div styleClass="aon-portlet-title-buttons">

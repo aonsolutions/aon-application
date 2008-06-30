@@ -2,7 +2,6 @@ package com.code.aon.desktop.controller;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -19,7 +18,6 @@ import javax.servlet.http.HttpSession;
 import org.hibernate.Query;
 import org.hibernate.Session;
 
-import com.code.aon.bridge.plugin.Utils;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
@@ -43,10 +41,6 @@ import com.code.aon.ui.groupware.controller.AlarmController;
 import com.code.aon.ui.groupware.controller.NoteController;
 import com.code.aon.ui.groupware.controller.NoticeController;
 import com.code.aon.ui.util.AonUtil;
-import com.code.aon.ui.webmail.bean.AonConstants;
-import com.code.aon.ui.webmail.bean.AonFolder;
-import com.code.aon.ui.webmail.bean.AonServer;
-import com.code.aon.ui.webmail.controller.WebMailController;
 
 public class DesktopController extends BasicController {
 	
@@ -61,25 +55,10 @@ public class DesktopController extends BasicController {
     private ListDataModel recentAlarmModel;
     private ListDataModel ancientAlarmModel;
 
-    private AonServer mail_server;
-    
 	public SelectItem getNullValue() {
 		return NULL_SELECT_ITEM;
 	}
     
-    public DesktopController() {
-		super();
-		//Connect to mail server.
-		try {
-			WebMailController webmail = (WebMailController)AonUtil.getRegisteredBean(AonConstants.BEAN_WEBMAIL);
-			webmail.initDesktop(Utils.getAuthPrincipal());
-			mail_server = webmail.getServer();
-		}
-		catch (Exception e) {
-			e.printStackTrace();
-		}
-    }
-
     @SuppressWarnings("unchecked")
     public List<DesktopNoticeSummary> getNoticeSummaryModel() {
         List<DesktopNoticeSummary> noticeSummaryList = new LinkedList<DesktopNoticeSummary>();
@@ -265,28 +244,6 @@ public class DesktopController extends BasicController {
         } catch (ManagerBeanException e) {
             throw new ManagerBeanException("Error obtaining notice for logged user", e);
         }
-    }
-
-    public List<AonFolder> getMailSummaryModel() {
-    	List<AonFolder> result = new ArrayList<AonFolder>();
-		if (mail_server!=null){
-			AonFolder folder = mail_server.getAonFolder(AonFolder.INBOX_FOLDER_NAME);
-			result.add(folder);
-			return result;
-		}
-		return null;
-    }
-
-    public boolean isMailActive() {
-    	try {
-	    	if (mail_server != null){
-				AonFolder folder = mail_server.getAonFolder(AonFolder.INBOX_FOLDER_NAME);
-				if (folder != null) return true;
-			}
-    	} catch (Exception e) {
-    		e.printStackTrace();
-    	}
-		return false;
     }
 
     @SuppressWarnings("unchecked")

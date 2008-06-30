@@ -5,13 +5,6 @@
 
 <faces-config>
 
-	<!-- ************ APPLICATION ************** -->
-	<managed-bean>
-		<managed-bean-name>aonapps</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.desktop.apps.controller.AonApplicationController</managed-bean-class>
-		<managed-bean-scope>session</managed-bean-scope>
-	</managed-bean>
-	
 	<!-- ************ DESKTOP ************** -->
 	<managed-bean>
 		<managed-bean-name>desktop</managed-bean-name>
@@ -68,15 +61,36 @@
 		</managed-property>
 	</managed-bean>
 
-	<!-- ************ SMS ************** -->
+	<!-- ************ DESKTOP SERVICES ************** -->
+	<managed-bean>
+		<managed-bean-name>aonapps</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.desktop.applications.ApplicationsManager</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
+	
+	<managed-bean>
+		<managed-bean-name>email</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.desktop.applications.WebmailManager</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
 	<managed-bean>
 		<managed-bean-name>sms</managed-bean-name>
-		<managed-bean-class>com.code.aon.desktop.controller.SMSController</managed-bean-class>
+		<managed-bean-class>com.code.aon.ui.desktop.applications.SMSManager</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
 	<managed-bean>
 		<managed-bean-name>smsContact</managed-bean-name>
 		<managed-bean-class>com.code.aon.desktop.controller.SMSContactController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
+	<managed-bean>
+		<managed-bean-name>fax</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.desktop.applications.FAXManager</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
+	<managed-bean>
+		<managed-bean-name>task</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.desktop.applications.TaskManager</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
 

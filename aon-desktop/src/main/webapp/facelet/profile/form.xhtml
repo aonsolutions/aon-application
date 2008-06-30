@@ -17,12 +17,17 @@
 					columnClasses="aon-finding-title,aon-finding-subtitle,aon-finding-toolbar">
 
 					<aon:div styleClass="aon-finding-title-internal">
-						<aon:outputText value="#{appBundle.aon_profile}" />
+						<aon:outputText value="#{appBundle.aon_profiles}" />
 					</aon:div>
 
 					<aon:div styleClass="aon-finding-subtitle-internal">
-						<aon:outputText
-							value="#{user.new?(bundle.aon_reset):(bundle.aon_editing)}" />
+						<aon:outputText value="#{appBundle.aon_application}" />		
+						<aon:outputText value=" : " />		
+						<aon:outputText value="#{domain.da.id}" />		
+						<aon:outputText value=" / " />		
+						<aon:outputText value="#{appBundle.aon_profile}" />
+						<aon:outputText value=" : " />		
+						<aon:outputText value="#{domain.newProfile?(bundle.aon_reset):(bundle.aon_editing)}" />
 					</aon:div>
 
 					<aon:div id="buttonDiv" styleClass="aon-finding-toolbar-item-group">
