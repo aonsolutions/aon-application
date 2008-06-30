@@ -10,7 +10,7 @@ import com.code.aon.ui.util.AonUtil;
 
 public class FTPUtil {
 
-	private static String server = "ftp.";
+	private static String server = "192.168.3.47";
 	private static String user = "ftpcms";
 	private static String password = "cms2001";
 	
@@ -18,8 +18,8 @@ public class FTPUtil {
 
 		try {
 			FTPClient ftp = new FTPClient();
-			System.out.println("FTP>>>>>>>>>>>>>>>>>>>>>> Connecting to server " + server + domain);
-			ftp.connect(server + domain);
+			System.out.println("FTP>>>>>>>>>>>>>>>>>>>>>> Connecting to server " + server);
+			ftp.connect(server); // + domain
 			ftp.login(user, password);
 			ftp.changeWorkingDirectory(destination);
 			System.out.println("FTP>>>>>>>>>>>>>>>>>>>>>> Connected.");
