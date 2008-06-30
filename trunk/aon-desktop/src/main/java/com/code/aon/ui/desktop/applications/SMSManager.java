@@ -1,4 +1,4 @@
-package com.code.aon.desktop.controller;
+package com.code.aon.ui.desktop.applications;
 
 import java.io.IOException;
 import java.io.Serializable;
@@ -6,9 +6,9 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Iterator;
 import java.util.List;
+import java.util.ResourceBundle;
 import java.util.logging.Logger;
 
-import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
 import javax.xml.soap.SOAPException;
 
@@ -20,6 +20,8 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.common.enumeration.Month;
+import com.code.aon.desktop.controller.DesktopController;
+import com.code.aon.desktop.controller.SMSContactController;
 import com.code.aon.groupware.Contact;
 import com.code.aon.groupware.MessageContent;
 import com.code.aon.messaging.event.ISenderListener;
@@ -30,11 +32,14 @@ import com.code.aon.messaging.util.Utils;
 import com.code.aon.ui.config.util.UserUtils;
 import com.code.aon.ui.util.AonUtil;
 
-public class SMSController implements ISenderListener, Serializable {
+public class SMSManager implements ISenderListener, Serializable, IServices {
 
 	private static final long serialVersionUID = -5534264216750579958L;
-	private static final Logger LOGGER = Logger.getLogger( SMSController.class.getName() );
+	private static final Logger LOGGER = Logger.getLogger( SMSManager.class.getName() );
 	private static final String SMS_CONTACT_MANAGED_BEAN = "smsContact";
+
+	private ApplicationsManager.App app;
+	ResourceBundle bundle;
 
 	private boolean showWindow;
 	private boolean allowSending = true;
@@ -63,15 +68,19 @@ public class SMSController implements ISenderListener, Serializable {
 	private Double companyTotalConsume;
 
 	@SuppressWarnings("unchecked")
-	public SMSController() {
+	public SMSManager() {
 		try {
+			ApplicationsManager apps = 
+				(ApplicationsManager) AonUtil.getRegisteredBean( ApplicationsManager.BEAN_NAME );
+			app = apps.getApplication( "aon-sms" );
 			this.message = new Message();
 			this.sender = new Sender();
-			this.sender.init( UserUtils.getInstance().getPrincipal().getDomain() );
+			smsEnabling( UserUtils.getInstance().getPrincipal().getDomain() );
 			this.sender.addSenderListener( this );
 			loadPriceTariff();
 			username = UserUtils.getInstance().getPrincipal().getShortName();
 			reset( null );
+			bundle = ResourceBundle.getBundle( "com.code.aon.desktop.i18n.messages", AonUtil.getCurrentLocale() );
 		} catch (IOException e) {
 			LOGGER.severe( e.getMessage() );
 		} catch (SOAPException e) {
@@ -100,6 +109,12 @@ public class SMSController implements ISenderListener, Serializable {
 		if ( dirtyMessage ) {
 			setActivePoll( false );
 			dirtyMessage = false;
+			if ( errorCode != 0 ) {
+				String bundleName = "com.code.aon.messaging.i18n.messages";
+				ResourceBundle bundle = ResourceBundle.getBundle( bundleName, AonUtil.getCurrentLocale() );
+				AonUtil.addErrorMessage( bundle.getString( "aon_sms_esendex_" + errorCode ) );
+				errorCode = 0;
+			}
 		}
 		return active;
 	}
@@ -196,9 +211,19 @@ public class SMSController implements ISenderListener, Serializable {
 	}
 
 	public void sendMessage(ActionEvent event) throws CloneNotSupportedException {
+		if ( !isExecutable() ) {
+			AonUtil.addInfoMessage( bundle.getString( "aon_sms_application_service_exception" ) );
+			return;
+		}
 		setActivePoll( true );
-		sender.send( (Message) this.message.clone() );
-		reset( event );
+		add2List( event ); // if the recipient is not null, then adds to the recipients list.
+		if ( this.recipients.size() > 0 ) {
+			sender.send( (Message) this.message.clone() );
+			reset( event );
+		} else {
+			setActivePoll( false );
+			AonUtil.addInfoMessage( bundle.getString( "aon_messaging_empty_recipient_error" ) );
+		}
 	}
 
 	public void reset(ActionEvent event) {
@@ -215,6 +240,11 @@ public class SMSController implements ISenderListener, Serializable {
 			LOGGER.severe( e.getMessage() );
 		}
 		summary( event );
+		try {
+			smsEnabling( UserUtils.getInstance().getPrincipal().getDomain() );
+		} catch (SOAPException e) {
+			LOGGER.severe( e.getMessage() );
+		}
 	}
 
 	public void accept(ActionEvent event) {
@@ -258,8 +288,9 @@ public class SMSController implements ISenderListener, Serializable {
 				greaterThan = false;
 			}
 		}
-		this.companyTotalConsume = this.companyMessageUnitPrice * 
-			(this.companyTotalSentMessages - ( (PriceTariff) priceList.get(0) ).getNumber() + 1 );
+        long msgNumber = this.companyTotalSentMessages - ( (PriceTariff) priceList.get(0) ).getNumber() + 1;
+        if ( msgNumber <= 0 ) msgNumber = msgNumber * -1;
+		this.companyTotalConsume = this.companyMessageUnitPrice * msgNumber;
 	}
 
 // ************************************** ISenderListener methods implementation *************************************
@@ -291,12 +322,44 @@ public class SMSController implements ISenderListener, Serializable {
 		dirtyMessage = true;
 	}
 
+	int errorCode;
 	public void messageFailed(SenderEvent event) {
-		// TODO Auto-generated method stub
-		
+		errorCode = event.getErrorCode();
+		dirtyMessage = true;
 	}
 // ********************************** End of ISenderListener methods implementation **********************************
 
+// ************************************** IServices methods implementation *************************************
+	public boolean isExecutable() {
+		if ( app == null ) {
+			try {
+				IManagerBean bean = BeanManager.getManagerBean( com.code.aon.groupware.Message.class );
+				int sent = bean.getCount( null );
+				if ( sent >= 5 )
+					return false;
+
+				return true;
+			} catch (ManagerBeanException e) {
+				LOGGER.severe( e.getMessage() );
+				return false;
+			}
+		}
+		return app.isExecutable();
+	}
+
+	public boolean isInfobarEnabled() {
+		return app != null && app.isInfobarEnabled();
+	}
+
+	public boolean isSidebarEnabled() {
+		return (app == null)? true: app.isSidebarEnabled();
+	}
+
+	public boolean isToolbarEnabled() {
+		return app != null && app.isToolbarEnabled();
+	}
+// ********************************** End of IServices methods implementation **********************************
+	
 	public class PriceTariff {
 		
 		private String filter, currency;
@@ -346,17 +409,29 @@ public class SMSController implements ISenderListener, Serializable {
 
 	private void loadPriceTariff() {
 		priceList = new ArrayList<PriceTariff>();
-		priceList.add( new PriceTariff( "<", 6, 0d, "\u20AC + IVA" ) );
-		priceList.add( new PriceTariff( "<", 100, 0.13d, "\u20AC + IVA" ) );
-		priceList.add( new PriceTariff( "<", 500, 0.14d, "\u20AC + IVA" ) );
-		priceList.add( new PriceTariff( "<", 2000, 0.12d, "\u20AC + IVA" ) );
-		priceList.add( new PriceTariff( "<", 5000, 0.11d, "\u20AC + IVA" ) );
-		priceList.add( new PriceTariff( "<", 10000, 0.10d, "\u20AC + IVA" ) );
-		priceList.add( new PriceTariff( ">=", 10000, 0.09d, "\u20AC + IVA" ) );
+		priceList.add( new PriceTariff( "<", 6, 0d, "Promocion Lanzamiento. Gratis" ) );
+		priceList.add( new PriceTariff( "<", 100, 0.14d, "\u20AC + IVA" ) );
+		priceList.add( new PriceTariff( "<", 500, 0.13d, "\u20AC + IVA" ) );
+		priceList.add( new PriceTariff( "<", 1000, 0.12d, "\u20AC + IVA" ) );
+		priceList.add( new PriceTariff( "<", 2000, 0.11d, "\u20AC + IVA" ) );
+		priceList.add( new PriceTariff( "<", 5000, 0.10d, "\u20AC + IVA" ) );
+		priceList.add( new PriceTariff( ">=", 5000, 0.09d, "\u20AC + IVA" ) );
 	}
 
-    public boolean isRoleSMSSender() {
-    	return FacesContext.getCurrentInstance().getExternalContext().isUserInRole("SMSSender");
-    }
+	private void smsEnabling(String domain) throws SOAPException {
+		if ( app == null ) {
+			try {
+				IManagerBean bean = BeanManager.getManagerBean( com.code.aon.groupware.Message.class );
+				int sent = bean.getCount( null );
+				if ( sent < 6 )
+					this.sender.init();
+			} catch (ManagerBeanException e) {
+				LOGGER.severe( e.getMessage() );
+				this.sender.init();
+			}
+			return;
+		}
+		this.sender.init( domain );
+	}
 
 }

@@ -43,6 +43,7 @@ public class AonUserController extends UserController implements ILdapConstants,
 	public AonUserController() {
 		AuthPrincipal user = UserUtils.getInstance().getPrincipal();
 		domain = user.getDomain();
+		onLoadCurrentUser( null );
 	}
 
 	public boolean isAccepted() {
@@ -83,6 +84,7 @@ public class AonUserController extends UserController implements ILdapConstants,
 	
 	@SuppressWarnings("unchecked")
 	private void loadUser( User user ) throws ManagerBeanException {
+		setShowPasswordChangedWindow(false);
 		getUserManager().findUser(user.getLogin());
 		setUserTO(user);
 	}

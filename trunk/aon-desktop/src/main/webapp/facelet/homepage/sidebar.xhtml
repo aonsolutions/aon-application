@@ -7,7 +7,7 @@
 <body>
 
 <ui:composition>
-	<aon:form>
+	<aon:form >
 		<aon:div styleClass="aon-sidebarIcons-bottom">
 
 			<aon:div styleClass="aon-sidebarIcons-icon">
@@ -19,7 +19,7 @@
 
 			<aon:div styleClass="aon-sidebarIcons-icon">
 				<aon:outputLink value="/aon-desktop/aon-webmail.auth?aonDesktop=true" target="aonWebMail"
-					rendered="#{desktop.mailActive}">
+					rendered="#{email.sidebarEnabled}">
 					<h:graphicImage url="/images/aon-icon-big-correo.png" />
 					<aon:div><aon:outputText value="#{appBundle.aon_webmail}" /></aon:div>
 				</aon:outputLink>
@@ -59,9 +59,17 @@
 
 			<aon:div styleClass="aon-sidebarIcons-icon">
 				<aon:commandLink 
-					actionListener="#{sms.reset}" action="sms" rendered="#{sms.roleSMSSender}">
+					actionListener="#{sms.reset}" action="sms" rendered="#{sms.sidebarEnabled}">
 					<h:graphicImage url="/images/aon-icon-big-sms.png" />
 					<aon:div><aon:outputText value="#{appBundle.aon_desktop_sms}" /></aon:div>
+				</aon:commandLink>
+			</aon:div>
+
+			<aon:div styleClass="aon-sidebarIcons-icon">
+				<aon:commandLink 
+					actionListener="#{fax.createNewMessage}" action="fax" rendered="#{fax.sidebarEnabled}">
+					<h:graphicImage url="/images/aon-icon-sendFax-big.png" />
+					<aon:div><aon:outputText value="#{appBundle.aon_desktop_fax}" /></aon:div>
 				</aon:commandLink>
 			</aon:div>
 
@@ -73,7 +81,15 @@
 					<aon:div><aon:outputText value="#{appBundle.aon_users}" /></aon:div>
 				</aon:commandLink>
 			</aon:div>
-			
+
+			<aon:div styleClass="aon-sidebarIcons-icon">
+				<aon:commandLink 
+					actionListener="#{domain.onLoadCurrentDomain}" action="application_list"
+					rendered="#{desktop.roleManager}">
+					<h:graphicImage url="/images/aon-icon-big-ambito.png" />
+					<aon:div><aon:outputText value="#{appBundle.aon_profiles}" /></aon:div>
+				</aon:commandLink>
+			</aon:div>
 			
 		</aon:div>
 	</aon:form>
