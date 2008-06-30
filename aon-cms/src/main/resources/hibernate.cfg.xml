@@ -94,6 +94,17 @@
 		<mapping class="com.code.aon.cms.HiruCourseDetail"/>
 		<mapping class="com.code.aon.cms.HiruConfig"/>
 		<mapping class="com.code.aon.cms.ProductCategoryConfig"/>
+		<mapping class="com.code.aon.cms.SportCategory"/>
+		<mapping class="com.code.aon.cms.SportCategoryDetail"/>
+		<mapping class="com.code.aon.cms.SportClub"/>
+		<mapping class="com.code.aon.cms.SportPosition"/>
+		<mapping class="com.code.aon.cms.SportPositionDetail"/>
+		<mapping class="com.code.aon.cms.SportNationality"/>
+		<mapping class="com.code.aon.cms.SportNationalityDetail"/>
+		<mapping class="com.code.aon.cms.SportSeason"/>
+		<mapping class="com.code.aon.cms.SportPlayer"/>
+		<mapping class="com.code.aon.cms.SportCareerPath"/>
+		<mapping class="com.code.aon.cms.SportCoach"/>
 
 	</session-factory>
 

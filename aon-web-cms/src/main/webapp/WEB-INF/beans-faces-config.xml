@@ -1761,4 +1761,50 @@
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
 
+	<!-- ************** SPORT ************** -->
+
+	<!-- ************** SPORT_CATEGORY ************** -->
+	<managed-bean>
+		<managed-bean-name>sport_category</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.cms.controller.SportCategoryController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.cms.SportCategory</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojoI18n</property-name>
+			<value>com.code.aon.cms.SportCategoryDetail</value>
+		</managed-property>
+		<managed-property>
+			<property-name>joinAlias</property-name>
+			<value>SportCategoryDetail_sportCategory_id</value>
+		</managed-property>
+		<managed-property>
+			<property-name>languageAlias</property-name>
+			<value>SportCategoryDetail_language_id</value>
+		</managed-property>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pageLimit</property-name>
+			<value>20</value>
+		</managed-property>
+		<managed-property>
+			<property-name>listenerClasses</property-name>
+			<list-entries>
+				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+				<value>#{sportCategoryControllerListener}</value>
+			</list-entries>
+		</managed-property>
+	</managed-bean>
+
+	<managed-bean>
+		<managed-bean-name>sportCategoryControllerListener</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.cms.event.SportCategoryControllerListener</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+	</managed-bean>
+
 </faces-config>
