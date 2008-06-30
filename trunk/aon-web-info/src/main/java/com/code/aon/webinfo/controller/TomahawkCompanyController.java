@@ -566,8 +566,13 @@ public class TomahawkCompanyController extends TomahawkFileController {
     }
 
     public String getLoggedUserName() {
-        User user = UserUtils.getLoggedUser();
-        return user.getName();
+    	try {
+	        User user = UserUtils.getLoggedUser();
+	        return user.getName();
+    	}
+    	catch (Exception e) {
+    	}
+    	return null;
     }
 
     

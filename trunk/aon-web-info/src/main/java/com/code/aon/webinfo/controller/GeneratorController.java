@@ -213,10 +213,12 @@ public class GeneratorController extends BasicController implements VelocityCons
 				AonUtil.addInfoMessage("OK: La web ha sido generada." );
 			}
 			catch (Exception e) {
+				e.printStackTrace();
 				AonUtil.addErrorMessage("ERROR: Se ha producido un error durante la publicacion de la pagina.");
 			}
 		}
 		catch (Exception e) {
+			e.printStackTrace();
 			AonUtil.addErrorMessage("ERROR: Se ha producido un error durante la generacion de los contenidos.");
 		} 
 		finally {
