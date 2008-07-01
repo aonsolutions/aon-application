@@ -19,6 +19,7 @@ import com.code.aon.common.ITransferObject;
 import com.code.aon.config.User;
 import com.code.aon.config.WorkGroup;
 import com.code.aon.groupware.enumeration.Priority;
+import com.code.aon.project.enumeration.TaskPeriod;
 import com.code.aon.project.enumeration.TaskSource;
 import com.code.aon.project.enumeration.TaskStatus;
 
@@ -76,6 +77,8 @@ public class Task implements ITransferObject {
 	/** The comments. */
 	private String comments;
 
+	/** The source. */
+	private TaskPeriod repeatPeriod;
 	/**
 	 * Gets the id.
 	 * 
@@ -381,6 +384,15 @@ public class Task implements ITransferObject {
 		this.comments = comments;
 	}
 	
+	@Column(name = "repeat_period")
+	public TaskPeriod getRepeatPeriod() {
+		return repeatPeriod;
+	}
+
+	public void setRepeatPeriod(TaskPeriod repeatPeriod) {
+		this.repeatPeriod = repeatPeriod;
+	}
+
 	@Transient
 	public boolean isExpired() {
 		if (this.getStatus() != TaskStatus.FINISHED && this.getStatus() != TaskStatus.DELETED) {
@@ -430,8 +442,8 @@ public class Task implements ITransferObject {
         return getPriority().equals(Priority.NONE);
     }
 	@Transient
-    public boolean isSourceCampaign() {
-        return getSource().equals(TaskSource.AON_CONSULTANT);
+    public boolean isSourceProcess() {
+        return getSource().equals(TaskSource.PROCESS);
     }
 	@Transient
     public boolean isSourceAssigned() {
@@ -442,7 +454,44 @@ public class Task implements ITransferObject {
         return getSource().equals(TaskSource.MANUAL);
     }
 	@Transient
-    public boolean isSourcePeriodical() {
-        return getSource().equals(TaskSource.PERIODICAL);
+    public boolean isRepeatable() {
+        return (!getRepeatPeriod().equals(TaskPeriod.NONE));
     }
+	@Transient
+    public boolean isDailyRepeatable() {
+        return (!getRepeatPeriod().equals(TaskPeriod.DAILY));
+    }
+	@Transient
+    public boolean isWeeklyRepeatable() {
+        return (!getRepeatPeriod().equals(TaskPeriod.WEEKLY));
+    }
+	@Transient
+	public boolean isBiWeeklyRepeatable() {
+        return (!getRepeatPeriod().equals(TaskPeriod.BI_WEEKLY));
+    }
+	@Transient
+	public boolean isMonthlyRepeatable() {
+        return (!getRepeatPeriod().equals(TaskPeriod.MONTHLY));
+    }
+	@Transient
+	public boolean isBiMonthlyRepeatable() {
+        return (!getRepeatPeriod().equals(TaskPeriod.BI_MONTHLY));
+    }
+	@Transient
+	public boolean isThreeMonthlyRepeatable() {
+        return (!getRepeatPeriod().equals(TaskPeriod.THREE_MONTHLY));
+    }
+	@Transient
+	public boolean isFourMonthlyRepeatable() {
+        return (!getRepeatPeriod().equals(TaskPeriod.FOUR_MONTHLY));
+    }
+	@Transient
+	public boolean isHalfYearlyRepeatable() {
+        return (!getRepeatPeriod().equals(TaskPeriod.HALF_YEARLY));
+    }
+	@Transient
+	public boolean isYearlyRepeatable() {
+        return (!getRepeatPeriod().equals(TaskPeriod.YEARLY));
+    }
+
 }
