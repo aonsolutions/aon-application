@@ -32,6 +32,7 @@ import com.code.aon.cms.ModularPage;
 import com.code.aon.cms.ProductCategory;
 import com.code.aon.cms.Section;
 import com.code.aon.cms.Sidebar;
+import com.code.aon.cms.SportCategory;
 import com.code.aon.cms.dao.ICMSAlias;
 import com.code.aon.cms.enumeration.ArticleType;
 import com.code.aon.cms.enumeration.ContentLevel;
@@ -688,4 +689,20 @@ public class CollectionsController {
 		return categories;
 	}
 
+	public List<SelectItem> getSportCategoryList() throws ManagerBeanException {
+		List<SelectItem> itemList = new LinkedList<SelectItem>();
+		IManagerBean bean = BeanManager.getManagerBean(SportCategory.class);
+		Criteria criteria = new Criteria();
+		criteria.addOrder(bean.getFieldName(ICMSAlias.SPORT_CATEGORY_ALIAS));
+		List<ITransferObject> list = (List<ITransferObject>)bean.getList(criteria);
+		for (int i = 0; i < list.size(); i++) {
+			SportCategory object = (SportCategory)list.get(i);
+			int id = object.getId();
+			String name = object.getAlias();
+			SelectItem item = new SelectItem(id, name);
+			itemList.add(item);
+		}
+		return itemList;
+	}
+	
 }

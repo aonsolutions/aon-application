@@ -375,5 +375,24 @@
     </navigation-case>
   </navigation-rule>
 
+  <!-- ===================================================== SPORT CATEGORY -->
+  <navigation-rule>
+    <navigation-case>
+      <from-outcome>sport_club_list</from-outcome>
+      <to-view-id>/facelet/content/sport/sport_club/list.xhtml</to-view-id>
+    </navigation-case>
+    <navigation-case>
+      <from-outcome>sport_club_form</from-outcome>
+      <to-view-id>/facelet/content/sport/sport_club/form.xhtml</to-view-id>
+    </navigation-case>
+  </navigation-rule>
+
+  <!-- ===================================================== SPORT POSITION -->
+  <navigation-rule>
+    <navigation-case>
+      <from-outcome>sport_position_list</from-outcome>
+      <to-view-id>/facelet/content/sport/sport_position/list.xhtml</to-view-id>
+    </navigation-case>
+  </navigation-rule>
 
 </faces-config>

@@ -168,6 +168,14 @@
 								action="sport_category_list"
 								actionListener="#{sport_category.onSearch}"
 								styleClass="aon-main-menu-leaf"/>
+							<aon:menuItem id="sport_club" value="#{menuBundle.cms_sport_club}"
+								action="sport_club_list"
+								actionListener="#{sport_club.onSearch}"
+								styleClass="aon-main-menu-leaf"/>
+							<aon:menuItem id="sport_position" value="#{menuBundle.cms_sport_position}"
+								action="sport_position_list"
+								actionListener="#{sport_position.onSearch}"
+								styleClass="aon-main-menu-leaf"/>
 						</aon:dropDownMenu>
 						<aon:dropDownMenu id="production"
 							value="#{menuBundle.cms_production}" submitMode="ajax"

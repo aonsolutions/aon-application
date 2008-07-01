@@ -1807,4 +1807,80 @@
 		<managed-bean-scope>none</managed-bean-scope>
 	</managed-bean>
 
+	<!-- ************** SPORT_CLUB ************** -->
+	<managed-bean>
+		<managed-bean-name>sport_club</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.cms.controller.SportClubController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.cms.SportClub</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pageLimit</property-name>
+			<value>20</value>
+		</managed-property>
+		<managed-property>
+			<property-name>listenerClasses</property-name>
+			<list-entries>
+				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+				<value>#{sportClubControllerListener}</value>
+			</list-entries>
+		</managed-property>
+	</managed-bean>
+
+	<managed-bean>
+		<managed-bean-name>sportClubControllerListener</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.cms.event.SportClubControllerListener</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+	</managed-bean>
+	
+	<!-- ************** SPORT_POSITION ************** -->
+	<managed-bean>
+		<managed-bean-name>sport_position</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.cms.controller.SportPositionController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.cms.SportPosition</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojoI18n</property-name>
+			<value>com.code.aon.cms.SportPositionDetail</value>
+		</managed-property>
+		<managed-property>
+			<property-name>joinAlias</property-name>
+			<value>SportPositionDetail_sportPosition_id</value>
+		</managed-property>
+		<managed-property>
+			<property-name>languageAlias</property-name>
+			<value>SportPositionDetail_language_id</value>
+		</managed-property>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pageLimit</property-name>
+			<value>20</value>
+		</managed-property>
+		<managed-property>
+			<property-name>listenerClasses</property-name>
+			<list-entries>
+				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+				<value>#{sportPositionControllerListener}</value>
+			</list-entries>
+		</managed-property>
+	</managed-bean>
+
+	<managed-bean>
+		<managed-bean-name>sportPositionControllerListener</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.cms.event.SportPositionControllerListener</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+	</managed-bean>	
+	
 </faces-config>
