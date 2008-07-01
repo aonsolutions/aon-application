@@ -9,7 +9,6 @@ import com.code.aon.project.Dossier;
 import com.code.aon.project.DossierType;
 import com.code.aon.project.JobType;
 import com.code.aon.project.Task;
-import com.code.aon.project.PeriodicalTask;
 
 /** 
 * Interface for holding entity properties constants.
@@ -382,61 +381,6 @@ public interface IProjectAlias {
 	* Hibernate value: Task.dossier<customer.id
 	*/
 	String  TASK_CUSTOMER_ID = TASK_ENTRY.getAliasNames()[17];
-
-
-
-	/** 
-	* DAOConstantsEntry for PeriodicalTask entity.
-	*/ 
-	DAOConstantsEntry PERIODICAL_TASK_ENTRY = DAOConstants.getDAOConstant(PeriodicalTask.class);
-
-	/** 
-	* Alias value: PeriodicalTask_endDate
-	* Hibernate value: PeriodicalTask.endDate
-	*/
-	String  PERIODICAL_TASK_END_DATE = PERIODICAL_TASK_ENTRY.getAliasNames()[0];
-
-	/** 
-	* Alias value: PeriodicalTask_id
-	* Hibernate value: PeriodicalTask.id
-	*/
-	String  PERIODICAL_TASK_ID = PERIODICAL_TASK_ENTRY.getAliasNames()[1];
-
-	/** 
-	* Alias value: PeriodicalTask_nextDate
-	* Hibernate value: PeriodicalTask.nextDate
-	*/
-	String  PERIODICAL_TASK_NEXT_DATE = PERIODICAL_TASK_ENTRY.getAliasNames()[2];
-
-	/** 
-	* Alias value: PeriodicalTask_owner_id
-	* Hibernate value: PeriodicalTask.owner.id
-	*/
-	String  PERIODICAL_TASK_OWNER_ID = PERIODICAL_TASK_ENTRY.getAliasNames()[3];
-
-	/** 
-	* Alias value: PeriodicalTask_period
-	* Hibernate value: PeriodicalTask.period
-	*/
-	String  PERIODICAL_TASK_PERIOD = PERIODICAL_TASK_ENTRY.getAliasNames()[4];
-
-	/** 
-	* Alias value: PeriodicalTask_quantity
-	* Hibernate value: PeriodicalTask.quantity
-	*/
-	String  PERIODICAL_TASK_QUANTITY = PERIODICAL_TASK_ENTRY.getAliasNames()[5];
-
-	/** 
-	* Alias value: PeriodicalTask_startDate
-	* Hibernate value: PeriodicalTask.startDate
-	*/
-	String  PERIODICAL_TASK_START_DATE = PERIODICAL_TASK_ENTRY.getAliasNames()[6];
-
-	/** 
-	* Alias value: PeriodicalTask_task_id
-	* Hibernate value: PeriodicalTask.task.id
-	*/
-	String  PERIODICAL_TASK_TASK_ID = PERIODICAL_TASK_ENTRY.getAliasNames()[7];
 
 
 }
