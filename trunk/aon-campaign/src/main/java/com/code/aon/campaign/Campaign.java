@@ -20,6 +20,8 @@ import com.code.aon.project.ActivityType;
 @Table(name="campaign")
 public class Campaign implements ITransferObject {
 	
+	private static final long serialVersionUID = 4650721068543504917L;
+
 	private Integer id;
 	
 	private String description;
@@ -69,7 +71,7 @@ public class Campaign implements ITransferObject {
 	}
 
 	@ManyToOne
-	@JoinColumn(name="activity_type", nullable=false)
+	@JoinColumn(name="activity_type")
 	public ActivityType getActivityType() {
 		return activityType;
 	}
