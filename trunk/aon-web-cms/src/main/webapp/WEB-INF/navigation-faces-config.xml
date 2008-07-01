@@ -395,4 +395,12 @@
     </navigation-case>
   </navigation-rule>
 
+  <!-- ===================================================== SPORT NATIOAITY -->
+  <navigation-rule>
+    <navigation-case>
+      <from-outcome>sport_natiolity_list</from-outcome>
+      <to-view-id>/facelet/content/sport/sport_nationality/list.xhtml</to-view-id>
+    </navigation-case>
+  </navigation-rule>
+
 </faces-config>

@@ -2,6 +2,7 @@ package com.code.aon.cms;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
@@ -18,7 +19,8 @@ public class SportNationality implements ITransferObject {
 	private String image;
 
 	@Id
-	@Column(name = "id", nullable = false)
+	@GeneratedValue
+	@Column(nullable=false)
 	public Integer getId() {
 		return this.id;
 	}
