@@ -12,6 +12,8 @@ import com.code.aon.common.ITransferObject;
 @Table(name="user")
 public class User implements ITransferObject{
 	
+	private static final long serialVersionUID = -151638379810317997L;
+
 	private Integer id;
 	
 	private String name;
