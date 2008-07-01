@@ -2,6 +2,7 @@ package com.code.aon.cms;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
@@ -16,7 +17,8 @@ public class SportPosition implements ITransferObject {
 	private String alias;
 	
 	@Id
-	@Column(name = "id", nullable = false)
+	@GeneratedValue
+	@Column(nullable=false)
 	public Integer getId() {
 		return this.id;
 	}
