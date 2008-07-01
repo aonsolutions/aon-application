@@ -87,4 +87,16 @@ public class Dossier implements ITransferObject {
 	public void setStatus(DossierStatus status) {
 		this.status = status;
 	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (id == null) {
+			return super.equals(obj);
+		}
+		if (obj instanceof Dossier) {
+			return (this.id.equals(((Dossier) obj).getId()));
+		}
+		return false;
+	}
+	
 }
