@@ -33,6 +33,10 @@ import com.code.aon.cms.ProductCategory;
 import com.code.aon.cms.Section;
 import com.code.aon.cms.Sidebar;
 import com.code.aon.cms.SportCategory;
+import com.code.aon.cms.SportClub;
+import com.code.aon.cms.SportNationality;
+import com.code.aon.cms.SportPosition;
+import com.code.aon.cms.SportSeason;
 import com.code.aon.cms.dao.ICMSAlias;
 import com.code.aon.cms.enumeration.ArticleType;
 import com.code.aon.cms.enumeration.ContentLevel;
@@ -705,4 +709,67 @@ public class CollectionsController {
 		return itemList;
 	}
 	
+	public List<SelectItem> getSportSeasonList() throws ManagerBeanException {
+		List<SelectItem> itemList = new LinkedList<SelectItem>();
+		IManagerBean bean = BeanManager.getManagerBean(SportSeason.class);
+		Criteria criteria = new Criteria();
+		criteria.addOrder(bean.getFieldName(ICMSAlias.SPORT_SEASON_DESCRIPTION));
+		List<ITransferObject> list = (List<ITransferObject>)bean.getList(criteria);
+		for (int i = 0; i < list.size(); i++) {
+			SportSeason object = (SportSeason)list.get(i);
+			int id = object.getId();
+			String name = object.getDescription();
+			SelectItem item = new SelectItem(id, name);
+			itemList.add(item);
+		}
+		return itemList;
+	}
+	
+	public List<SelectItem> getSportClubList() throws ManagerBeanException {
+		List<SelectItem> itemList = new LinkedList<SelectItem>();
+		IManagerBean bean = BeanManager.getManagerBean(SportClub.class);
+		Criteria criteria = new Criteria();
+		criteria.addOrder(bean.getFieldName(ICMSAlias.SPORT_CLUB_DESCRIPTION));
+		List<ITransferObject> list = (List<ITransferObject>)bean.getList(criteria);
+		for (int i = 0; i < list.size(); i++) {
+			SportClub object = (SportClub)list.get(i);
+			int id = object.getId();
+			String name = object.getDescription();
+			SelectItem item = new SelectItem(id, name);
+			itemList.add(item);
+		}
+		return itemList;
+	}
+	
+	public List<SelectItem> getSportPositionList() throws ManagerBeanException {
+		List<SelectItem> itemList = new LinkedList<SelectItem>();
+		IManagerBean bean = BeanManager.getManagerBean(SportPosition.class);
+		Criteria criteria = new Criteria();
+		criteria.addOrder(bean.getFieldName(ICMSAlias.SPORT_POSITION_ALIAS));
+		List<ITransferObject> list = (List<ITransferObject>)bean.getList(criteria);
+		for (int i = 0; i < list.size(); i++) {
+			SportPosition object = (SportPosition)list.get(i);
+			int id = object.getId();
+			String name = object.getAlias();
+			SelectItem item = new SelectItem(id, name);
+			itemList.add(item);
+		}
+		return itemList;
+	}
+	
+	public List<SelectItem> getSportNationalityList() throws ManagerBeanException {
+		List<SelectItem> itemList = new LinkedList<SelectItem>();
+		IManagerBean bean = BeanManager.getManagerBean(SportNationality.class);
+		Criteria criteria = new Criteria();
+		criteria.addOrder(bean.getFieldName(ICMSAlias.SPORT_NATIONALITY_ALIAS));
+		List<ITransferObject> list = (List<ITransferObject>)bean.getList(criteria);
+		for (int i = 0; i < list.size(); i++) {
+			SportNationality object = (SportNationality)list.get(i);
+			int id = object.getId();
+			String name = object.getAlias();
+			SelectItem item = new SelectItem(id, name);
+			itemList.add(item);
+		}
+		return itemList;
+	}
 }

@@ -411,4 +411,16 @@
     </navigation-case>
   </navigation-rule>
 
+  <!-- ===================================================== SPORT PLAYER -->
+  <navigation-rule>
+    <navigation-case>
+      <from-outcome>sport_player_list</from-outcome>
+      <to-view-id>/facelet/content/sport/sport_player/list.xhtml</to-view-id>
+    </navigation-case>
+    <navigation-case>
+      <from-outcome>sport_player_form</from-outcome>
+      <to-view-id>/facelet/content/sport/sport_player/form.xhtml</to-view-id>
+    </navigation-case>
+  </navigation-rule>
+  
 </faces-config>
