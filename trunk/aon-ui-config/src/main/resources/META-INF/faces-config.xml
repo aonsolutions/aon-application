@@ -4,6 +4,11 @@
   "http://java.sun.com/dtd/web-facesconfig_1_1.dtd">
 
 <faces-config>
+	<!--  ********* WORKGROUP CONVERTER ***************** -->
+	<converter>
+		<converter-for-class>com.code.aon.config.WorkGroup</converter-for-class>
+		<converter-class>com.code.aon.ui.config.converter.WorkGroupConverter</converter-class>
+	</converter>
 
 	<!--  *************** COLLECTIONS ***************** -->
 	<managed-bean>
