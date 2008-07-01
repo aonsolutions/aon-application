@@ -16,6 +16,8 @@ import com.code.aon.project.Task;
 @Table(name="activity_process")
 public class ActivityProcess implements ITransferObject {
 
+	private static final long serialVersionUID = 5454224486922816197L;
+
 	private Integer id;
 	
 	private Campaign campaign;
@@ -48,7 +50,7 @@ public class ActivityProcess implements ITransferObject {
 	}
 
 	@ManyToOne
-	@JoinColumn(name="activity", nullable=false)
+	@JoinColumn(name="activity")
 	public Activity getActivity() {
 		return activity;
 	}
