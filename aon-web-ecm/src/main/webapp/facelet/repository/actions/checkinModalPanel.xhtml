@@ -25,15 +25,18 @@
 				</aon:commandButton>
 			</f:facet>
 
-			<aon:form id="checkinModalPanelForm">
+			
+				
+			<aon:form id="checkinModalPanelForm">				
+				
 				<rich:fileUpload id="upload" reRender="table"
-						addControlLabel="#{menuBundle.aon_ecm_add}" 
+						addControlLabel="#{menuBundle.aon_ecm_selectDocument}" 
 						stopControlLabel="#{menuBundle.aon_ecm_stop}" stopEntryControlLabel="#{menuBundle.aon_ecm_stop}"
 						clearControlLabel="#{menuBundle.aon_ecm_clear}" clearAllControlLabel="#{menuBundle.aon_ecm_clearall}"
 						uploadControlLabel="#{menuBundle.aon_ecm_uploading}"
 						fileUploadListener="#{manager.documents.upload.listener}"
 						maxFilesQuantity="#{manager.documents.upload.uploadsAvailable}"
-						immediateUpload="true" listHeight="70px" listWidth="100%">
+						immediateUpload="true">
 					<a4j:support event="onuploadcomplete" reRender="closeModalPanel" />
 				</rich:fileUpload>
 

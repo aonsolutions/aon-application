@@ -8,14 +8,6 @@
 	xmlns:a4j="http://richfaces.org/a4j">
 <body>
 <ui:composition>
-	<style>
-	.info {
-	    height: 320px;
-	    width: 97%;
-	    overflow: auto;
-	}
-	</style>
-
 	<aon:panelGroup id="showDocumentModalPanel">
 		<rich:modalPanel id="documentModalPanel"
 				rendered="#{manager.menu.showDocumentModalPanel}" showWhenRendered="true"
@@ -41,86 +33,64 @@
 						immediateUpload="true" autoclear="true" listHeight="70px" listWidth="100%">
 					<a4j:support event="onuploadcomplete" reRender="info, closeModalPanel" />
 				</rich:fileUpload>
-
-				<aon:div id="info" >
-					<rich:panel bodyClass="info" rendered="#{manager.documents.upload.size>0}">
-						<f:facet name="header" >
-							<h:outputText value="#{appBundle.aon_cdr_index_title}" />
-						</f:facet>
-
-						<rich:dataGrid columns="1" value="#{manager.documents.upload.documents}"
-							var="document" rowKeyVar="row" >
-
-							<rich:simpleTogglePanel switchType="client" label="#{document.name}">
-								<h:messages />   
-
-								<aon:panelGrid columns="6" dir="true" cellpadding="0" cellspacing="0"
-										columnClasses="aon-bold, aon-text-left,aon-bold, aon-text-left,aon-bold, aon-text-left" >
-									<aon:outputLabel for="document_name"
-										value="#{appBundle.aon_cdr_name}:" />
-									<aon:inputText id="document_name"
-										value="#{document.name}" size="30" />
- 
-									<aon:outputLabel for="document_category"
-										value="#{appBundle.aon_cdr_category}:" style="margin-left:1em"/>
-									<aon:selectOneMenu id="document_category" 
-											value="#{document.category}" >
-										<f:selectItems value="#{search.parameters.categories}"/>
-									</aon:selectOneMenu>						
-
-									<aon:outputLabel for="document_language"
-										value="#{appBundle.aon_cdr_language}:" style="margin-left:1em" />
-									<aon:selectOneMenu id="document_language" 
-											value="#{document.language}" >
-										<f:selectItems value="#{search.parameters.languages}"/>
-									</aon:selectOneMenu>
-
-								</aon:panelGrid>
-				
-								<aon:panelGrid columns="2" dir="true" cellpadding="0" cellspacing="0"
-										columnClasses="aon-bold, aon-text-left" >
-									<aon:outputLabel for="document_keywords"
-										value="#{appBundle.aon_cdr_keywords}:" />
-									<aon:inputText id="document_keywords"
-										value="#{document.keywords}" size="70" />
-				
-									<aon:outputLabel for="document_nowords"
-										value="#{appBundle.aon_cdr_nowords}:" />
-									<aon:inputText id="document_nowords"
-										value="#{document.nowords}" size="70" />
-								</aon:panelGrid>
-												
-								<aon:div style="text-align:right;">
-						            <aon:panelGrid columns="2" cellpadding="0" cellspacing="0" style="float:right">
+				<aon:div styleClass="info-scroll">
+				<aon:div id="info">
+					<aon:div rendered="#{manager.documents.upload.size>0}">
+						<aon:div styleClass="aon-section-title">
+								<h:outputText value="#{appBundle.aon_cdr_index_title}" />
+						</aon:div>
+						<rich:dataList columns="1" value="#{manager.documents.upload.documents}"
+							var="document" rowKeyVar="row" style="border:0;list-style-type:none;" >
+							
+							<aon:div styleClass="aon-group">
+							    <aon:div styleClass="aon-group-title">
+							    	<aon:outputText value="#{document.name}" />
+							    </aon:div>
+							    <aon:div styleClass="aon-group-body">
+									<h:messages />   
+									<aon:div styleClass="aon-toolbar">						          
 						                <a4j:commandButton id="acceptDocument" value="#{appBundle.aon_cdr_index}"
 						                	actionListener="#{manager.onAddDocument}" 
 											reRender="documentModalPanelForm, documentPanel"
-											styleClass="aon-form-button" >
+											styleClass="aon-finding-toolbar-item aon-icon-file-entrance" >
 								            <a4j:actionparam name="selected" value="#{row}" assignTo="#{manager.documents.upload.selected}"/>
-								        </a4j:commandButton>
+								        </a4j:commandButton>									
+									</aon:div>
+									<aon:panelGrid columns="2" style="width:100%">
+										<aon:outputLabel for="document_name" 
+											value="#{appBundle.aon_cdr_name}" />
+										<aon:inputText id="document_name"
+											value="#{document.name}" size="30" />
+										<aon:outputLabel for="document_keywords" 
+											value="#{appBundle.aon_cdr_keywords}" />
+										<aon:inputText id="document_keywords"
+											value="#{document.keywords}" size="70" />
+									
+										<aon:outputLabel for="document_nowords" 
+											value="#{appBundle.aon_cdr_nowords}" />
+										<aon:inputText id="document_nowords"
+											value="#{document.nowords}" size="70" />
+											<aon:outputLabel for="document_category" 
+											value="#{appBundle.aon_cdr_category}" />
+										<aon:selectOneMenu id="document_category" 
+												value="#{document.category}" >
+											<f:selectItems value="#{search.parameters.categories}"/>
+										</aon:selectOneMenu>						
+	
+										<aon:outputLabel for="document_language"
+											value="#{appBundle.aon_cdr_language}"  />
+										<aon:selectOneMenu id="document_language" 
+												value="#{document.language}" >
+											<f:selectItems value="#{search.parameters.languages}"/>
+										</aon:selectOneMenu>
 									</aon:panelGrid>
-								</aon:div>
-					        </rich:simpleTogglePanel>
-						</rich:dataGrid>
-					</rich:panel>
-				</aon:div>
-
-				<aon:div id="closeModalPanel" >
-					<aon:div style="text-align:right;" rendered="#{manager.documents.upload.size>0}">
-						<rich:spacer height="3"/>
-						<br />
-			            <aon:panelGrid style="float:right">
-							<aon:commandButton id="closeDocument" 
-									reRender="info, closeModalPanel, upload"
-									value="#{menuBundle.aon_ecm_close}" immediate="true"
-									actionListener="#{manager.documents.upload.clearUploadData}" 
-									styleClass="aon-icon-commandButton aon-icon-cancel">
-								<f:setPropertyActionListener target="#{manager.menu.showDocumentModalPanel}" value="#{false}" />
-								<rich:componentControl for="documentModalPanel" operation="hide" event="onclick" />
-							</aon:commandButton>
-						</aon:panelGrid>
+								</aon:div>				
+							</aon:div>					        
+						</rich:dataList>
 					</aon:div>
 				</aon:div>
+		</aon:div>
+				
 			</aon:form>
 		</rich:modalPanel>
 	</aon:panelGroup>	
