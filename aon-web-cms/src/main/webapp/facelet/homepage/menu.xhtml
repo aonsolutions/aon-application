@@ -131,7 +131,7 @@
 							event="onclick">
 							<aon:menuItem id="hiru_organizer_centre" value="#{menuBundle.cms_hiru_organizer_centre}"
 								action="hiru_organizer_centre_list"
-								actionListener="#{hiru_organizer_centre.onSearch}"
+								actionListener="#{hiru_organizer_centre.onInit}"
 								styleClass="aon-main-menu-leaf"/>
 							<aon:menuItem id="hiru_course" value="#{menuBundle.cms_hiru_course}"
 								action="hiru_course_list"
@@ -195,6 +195,10 @@
 							<aon:menuItem id="sport_coach" value="#{menuBundle.cms_sport_coach}"
 								action="sport_coach_list"
 								actionListener="#{sport_coach.onSearch}"
+								styleClass="aon-main-menu-leaf"/>
+							<aon:menuItem id="sport_config" value="#{menuBundle.cms_sport_config}"
+								action="sport_config_list"
+								actionListener="#{sport_config.onInit}"
 								styleClass="aon-main-menu-leaf"/>
 						</aon:dropDownMenu>
 						<aon:dropDownMenu id="production"

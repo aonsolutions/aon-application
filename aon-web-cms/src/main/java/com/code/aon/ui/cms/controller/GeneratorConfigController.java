@@ -12,6 +12,7 @@ import com.code.aon.cms.HiruConfig;
 import com.code.aon.cms.LinkConfig;
 import com.code.aon.cms.ProductCategoryConfig;
 import com.code.aon.cms.Section;
+import com.code.aon.cms.SportConfig;
 import com.code.aon.cms.dao.ICMSAlias;
 import com.code.aon.cms.util.ISectionContainer;
 import com.code.aon.common.BeanManager;
@@ -116,6 +117,10 @@ public class GeneratorConfigController {
 	
 	public void onSaveProductCategoryConfig(ActionEvent event) throws ManagerBeanException{
 		onSaveConfig(ProductCategoryConfig.class);
+	}
+	
+	public void onSaveSportConfig(ActionEvent event) throws ManagerBeanException{
+		onSaveConfig(SportConfig.class);
 	}
 	
 }
