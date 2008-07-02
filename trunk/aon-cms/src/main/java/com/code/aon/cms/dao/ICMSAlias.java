@@ -93,6 +93,7 @@ import com.code.aon.cms.SportSeason;
 import com.code.aon.cms.SportPlayer;
 import com.code.aon.cms.SportCareerPath;
 import com.code.aon.cms.SportCoach;
+import com.code.aon.cms.SportConfig;
 
 /** 
 * Interface for holding entity properties constants.
@@ -3723,6 +3724,25 @@ public interface ICMSAlias {
 	* Hibernate value: SportCoach.sportClub.id
 	*/
 	String  SPORT_COACH_SPORT_CLUB_ID = SPORT_COACH_ENTRY.getAliasNames()[3];
+
+
+
+	/** 
+	* DAOConstantsEntry for SportConfig entity.
+	*/ 
+	DAOConstantsEntry SPORT_CONFIG_ENTRY = DAOConstants.getDAOConstant(SportConfig.class);
+
+	/** 
+	* Alias value: SportConfig_id
+	* Hibernate value: SportConfig.id
+	*/
+	String  SPORT_CONFIG_ID = SPORT_CONFIG_ENTRY.getAliasNames()[0];
+
+	/** 
+	* Alias value: SportConfig_section_id
+	* Hibernate value: SportConfig.section.id
+	*/
+	String  SPORT_CONFIG_SECTION_ID = SPORT_CONFIG_ENTRY.getAliasNames()[1];
 
 
 }
