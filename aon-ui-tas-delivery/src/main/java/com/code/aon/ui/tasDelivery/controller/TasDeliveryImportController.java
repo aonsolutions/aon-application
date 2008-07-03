@@ -132,7 +132,7 @@ public class TasDeliveryImportController extends BasicController {
         String data = new String();
         if(iter.hasNext()){
             SupportOrder supportOrder = (SupportOrder)iter.next();
-            data = supportOrder.getTasItem().getPublicCode() + " / " + supportOrder.getTasItem().getModel().getMake().getName()+ " " + supportOrder.getTasItem().getModel().getName();
+            data = (supportOrder.getSeries()==null?"":supportOrder.getSeries()+"/")+supportOrder.getNumber()+ ": " +supportOrder.getTasItem().getPublicCode() + " / " + supportOrder.getTasItem().getModel().getMake().getName()+ " " + supportOrder.getTasItem().getModel().getName();
             deliveryController.setDescription(supportOrder.getDescription());
         }
         return data;
