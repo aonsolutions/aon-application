@@ -16,12 +16,9 @@ import java.util.logging.Logger;
 
 import javax.activation.DataHandler;
 import javax.activation.FileDataSource;
-import javax.faces.application.FacesMessage;
-import javax.faces.context.FacesContext;
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 import javax.faces.event.ValueChangeEvent;
-import javax.faces.validator.LengthValidator;
 import javax.mail.BodyPart;
 import javax.mail.Flags;
 import javax.mail.Folder;
@@ -34,9 +31,11 @@ import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMultipart;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.myfaces.custom.fileupload.UploadedFile;
+import org.richfaces.event.UploadEvent;
+import org.richfaces.model.UploadItem;
 
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
@@ -273,54 +272,16 @@ public class MessageController implements AonConstants, IAonFileListener {
 	//***************************************************************
 	//*********** ATTACH ********************************************
 	//***************************************************************
-	public void fileUploaded(File file) {
+
+	public void fileUploaded(UploadEvent event) {
+		UploadItem item = event.getUploadItem();
     	AonFile f = new AonFile();
-    	f.setFile(file);
+    	f.setFile(item.getFile());
+    	f.setFileName(item.getFileName());
     	f.addAonFileListener(this);
     	newMsgFileList.add(f);
-	}
-    
-	private UploadedFile inputFile;
+	}	
 	
-	private long maximumSize = -1;
-
-	public UploadedFile getInputFile() {
-		return inputFile;
-	}
-
-	public void setInputFile(UploadedFile inputFile) {
-		this.inputFile = inputFile;
-	}
-	
-	public void fileUploaded( ActionEvent event ) throws IOException {
-		if ( this.inputFile!= null ) {
-			long size = this.inputFile.getSize();
-			String upload_name = inputFile.getName();
-			upload_name = upload_name.replace('\\', '/');
-			if (upload_name.lastIndexOf('/')>=0)
-				upload_name = upload_name.substring(upload_name.lastIndexOf('/'));
-			String preffix = upload_name;
-			String suffix = "";
-			if (upload_name.lastIndexOf('.')>=0){
-				preffix = upload_name.substring(0,upload_name.lastIndexOf('.'));
-				suffix = upload_name.substring(upload_name.lastIndexOf('.'));
-			}
-			File file = File.createTempFile(preffix, suffix);
-			if ( (maximumSize != -1) && (size > maximumSize) ) {
-				FacesContext ctx = FacesContext.getCurrentInstance();
-				FacesMessage message = AonUtil.getMessage( ctx,
-						LengthValidator.MAXIMUM_MESSAGE_ID, new Object[]{maximumSize, upload_name} );
-				ctx.addMessage(AonUtil.AON_ERROR, message);
-			} else {
-				byte[] data = this.inputFile.getBytes();
-		        FileOutputStream outputStream = new FileOutputStream(file);
-		        outputStream.write(data);
-		        outputStream.close();			
-		        fileUploaded(file);
-			}
-		}
-	}
-
 	//***************************************************************
 	//*********** END ATTACH ****************************************
 	//***************************************************************
@@ -471,9 +432,11 @@ public class MessageController implements AonConstants, IAonFileListener {
 		if ( fileList.size() > 0 ) {
 			FileDataSource fds;
 			for ( int i=0; i < fileList.size(); i++ ) {
+				AonFile file = fileList.get(i);
 				MimeBodyPart mbpNext = new MimeBodyPart();
-				fds = new FileDataSource((fileList.get(i)).getFile());
-				mbpNext.setFileName(fds.getName());
+				fds = new FileDataSource(file.getFile());
+				String name = FilenameUtils.getName(file.getFileName());
+				mbpNext.setFileName( name );
 				mbpNext.setDataHandler(new DataHandler(fds));
 				multipart1.addBodyPart(mbpNext);
 			}
