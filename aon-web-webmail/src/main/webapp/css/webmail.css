@@ -25,3 +25,15 @@
  .aon-icon-big-sendingMail{
 	background:transparent url(../images/aon-sending-mail.gif) scroll left center no-repeat;	
  }
+ 
+  /***********  FILE UPLOAD  ************/
+ 
+ .rich-fileupload-list-decor, .rich-fileupload-toolbar-decor{
+ 	border:0;
+ 	background-color:transparent;
+ }
+.rich-fileupload-list-overflow{
+	}
+.rich-fileupload-button{
+
+  }
