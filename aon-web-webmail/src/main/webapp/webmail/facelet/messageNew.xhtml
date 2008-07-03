@@ -6,7 +6,6 @@
 	xmlns:aon="http://www.code.es/aon-rich-components"
 	xmlns:c="http://java.sun.com/jstl/core"
 	xmlns:rich="http://richfaces.org/rich"
-	xmlns:t="http://myfaces.apache.org/tomahawk"
 	xmlns:a4j="http://richfaces.org/a4j">
 <body>
 
@@ -14,7 +13,7 @@
 
 	<ui:define name="content">
 
-		<aon:form id="webmailForm" enctype="multipart/form-data">
+		<aon:form id="webmailForm">
 		
 			<aon:div styleClass="aon-scroll-area">
 				<aon:div styleClass="aon-section-title">
@@ -101,32 +100,33 @@
 						<aon:outputLabel for="attach_file" 
 							value="#{appBundle.aon_webmail_attach_file}: " />
 						<aon:div>
-							<t:inputFileUpload id="attach_file"
-								value="#{message.inputFile}"
-								accept="*/*" size="45"
-								storage="file"/>
-							<h:commandButton value="#{bundle.aon_fileupload_insert}"
-								reRender="attachDataTable" style="margin-left:10px;"
-								styleClass="aon-commandButton"
-								actionListener="#{message.fileUploaded}"/>
-								
-							<aon:div>
-									
-								<aon:dataTable id="attachDataTable" 
-									value="#{message.files}" 
-									var="attachment"
-									styleClass="aon-panelGrid-formatting">
-										<aon:column>
-											<aon:outputText value="#{attachment.file.name}" styleClass="aon-bold" />
-											<aon:commandLink
-												reRender="attachDataTable" style="font-size:0.9em;margin-left:20px;"
-												value="#{appBundle.aon_webmail_deletemail}"
-												styleClass="aon-icon-commandButton aon-icon-delete"
-												actionListener="#{attachment.fileDeleted}">
-											</aon:commandLink>
-										</aon:column>
+							<rich:fileUpload id="attach_file"
+								addControlLabel="#{appBundle.aon_fileUpload_add}" 
+								stopControlLabel="#{appBundle.aon_fileUpload_stop}" 
+								stopEntryControlLabel="#{appBundle.aon_fileUpload_stop}"
+								uploadControlLabel="#{appBundle.aon_fileUpload_upload}"
+								fileUploadListener="#{message.fileUploaded}"
+								maxFilesQuantity="20" listHeight="0px"
+								immediateUpload="true" autoclear="true"
+								onupload="startUpload();" onuploadcanceled="endUpload();" onerror="endUpload();">
+								<f:facet name="label">
+									<h:outputText value="#{appBundle.aon_fileUpload_upload_label}" />
+								</f:facet>								
+								<a4j:support event="onuploadcomplete" oncomplete="endUpload();" reRender="attachDataTable" />
+							</rich:fileUpload>								
+							<aon:div id="attachDataTable">					
+								<aon:dataTable value="#{message.files}" 
+									var="attachment" styleClass="aon-panelGrid-formatting">
+									<aon:column>
+										<aon:outputText value="#{attachment.fileName}" styleClass="aon-bold" />
+										<aon:commandLink
+											reRender="attachDataTable" style="font-size:0.9em;margin-left:20px;"
+											value="#{appBundle.aon_webmail_deletemail}"
+											styleClass="aon-icon-commandButton aon-icon-delete"
+											actionListener="#{attachment.fileDeleted}">
+										</aon:commandLink>
+									</aon:column>
 								</aon:dataTable>									
-								
 							</aon:div>		
 						</aon:div>
 
