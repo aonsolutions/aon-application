@@ -12,6 +12,8 @@ public class AonFile{
 
 	private File file;
 
+	private String fileName;
+	
     private List<IAonFileListener> listeners = new ArrayList<IAonFileListener>();
 
 	/**
@@ -27,6 +29,22 @@ public class AonFile{
 	public void setFile(File file) {
 		this.file = file;
 	}
+	
+    /**
+     * Sets the file name.
+     * 
+     * @param fileName the new file name
+     */
+    public void setFileName(String fileName) {
+		this.fileName = fileName;
+	}
+
+	/**
+     * @return the fileName
+     */
+    public String getFileName() {
+        return fileName;
+    }	
 	
     public void fileDeleted(ActionEvent event){
     	for (IAonFileListener l: listeners) {
