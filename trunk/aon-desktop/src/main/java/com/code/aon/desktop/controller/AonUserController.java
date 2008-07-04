@@ -5,6 +5,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.faces.context.FacesContext;
+import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 
 import org.apache.commons.lang.time.DateUtils;
@@ -184,6 +185,27 @@ public class AonUserController extends UserController implements ILdapConstants,
 			LOGGER.severe( "No existe en LDAP el usuario " + user.getShortName() + " para el dominio " + domain );
 		}
 		return passwordExpired;
+	}
+	
+	public String getUserName( String login ) {
+		String name = login;
+		BasicLdap ldap = new BasicLdap();
+		try {
+			DistinguishedName dn = AonDN.getUserDN(domain, login);
+			String filter = LdapSession.getObjectClass("aonUser");
+			Entry entry = ldap.getLdapSession().get(dn.toString(), filter, COMMON_NAME_ATTRIBUTE, SURNAME_ATTRIBUTE);
+			if ( entry != null ) {
+		    	name = entry.getAsString(COMMON_NAME_ATTRIBUTE);
+		    	if (entry.containsKey(SURNAME_ATTRIBUTE) ) {
+		    		name += " " + entry.getAsString(SURNAME_ATTRIBUTE);
+		    	}				
+			}
+		} catch ( LdapException e ) {
+			throw new AbortProcessingException( "Error getting name for " + login + ". " + e.getMessage(), e );
+		} finally {
+			ldap.closeSession();
+		}
+		return name;
 	}
 	
 }
