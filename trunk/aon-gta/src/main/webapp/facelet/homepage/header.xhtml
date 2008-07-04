@@ -16,7 +16,9 @@
 			columnClasses="aon-header-leftGroup,aon-header-rightGroup" dir="true">
 			<h:panelGroup>
 				<t:div styleClass="aon-logo">
-					<t:outputText value="&#160;" />
+					<h:graphicImage
+						url="#{aonConfiguration.applicationLogoContextRelativePath}"
+						alt="#{appBundle.aon_application_title}"/>
 				</t:div>
 				<t:div styleClass="aon-applicationName">
 					<h:outputText value="#{appBundle.aon_application_title}" />
@@ -82,7 +84,7 @@
 						</t:div>
 						<t:div styleClass="aon-header-userAdOnRight">
 							<h:outputText value="#{securityBundle.aon_login_user}: " styleClass="aon-header-information-description"/>
-							<h:outputText value="#{user.userManager.userFromPrincipal.name}" styleClass="aon-header-information-item" />
+							<h:outputText value="#{userUtils.loggedUser.name}" styleClass="aon-header-information-item" />
 						</t:div>
 					</t:panelGroup>
 				</t:panelGrid>
