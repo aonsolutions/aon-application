@@ -21,7 +21,7 @@ public class SportCareerPath implements ITransferObject {
 	
 	private SportPlayer sportPlayer;
 	
-	private SportClub sportClub;
+	private String club;
 
 	private Date initDate;
 	
@@ -48,16 +48,6 @@ public class SportCareerPath implements ITransferObject {
 		this.sportPlayer = sportPlayer;
 	}
 
-	@ManyToOne(fetch = FetchType.EAGER)
-	@JoinColumn(name = "sport_club", nullable = false)
-	public SportClub getSportClub() {
-		return sportClub;
-	}
-
-	public void setSportClub(SportClub sportClub) {
-		this.sportClub = sportClub;
-	}
-	
 	@Column(name = "init_date")
 	public Date getInitDate() {
 		return initDate;
@@ -76,4 +66,14 @@ public class SportCareerPath implements ITransferObject {
 		this.endDate = endDate;
 	}
 
+	@Column(name = "club", nullable = false)
+	public String getClub() {
+		return club;
+	}
+
+	public void setClub(String club) {
+		this.club = club;
+	}
+
+	
 }

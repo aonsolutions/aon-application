@@ -17,8 +17,8 @@ public class SportPlayerControllerListener extends ControllerAdapter {
 		try{
 			Criteria criteria = event.getController().getCriteria();
 			IManagerBean bean = BeanManager.getManagerBean(SportPlayer.class);
+			criteria.addOrder(bean.getFieldName(ICMSAlias.SPORT_PLAYER_ACTIVE));
 			criteria.addOrder(bean.getFieldName(ICMSAlias.SPORT_PLAYER_SPORT_CLUB_ID));
-			criteria.addOrder(bean.getFieldName(ICMSAlias.SPORT_PLAYER_SPORT_SEASON_ID));
 			criteria.addOrder(bean.getFieldName(ICMSAlias.SPORT_PLAYER_NAME));
 			event.getController().setCriteria(criteria);
 		}catch (Exception e) {

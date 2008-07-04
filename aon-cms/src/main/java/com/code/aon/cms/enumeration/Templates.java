@@ -145,8 +145,13 @@ public enum Templates implements IResourceable {
 	/**
 	 * PRODUCT_CATEGORY
 	 */
-	PRODUCT_CATEGORY;
+	PRODUCT_CATEGORY,
 
+	/**
+	 * SPORT
+	 */
+	SPORT;
+	
 	/**
 	 * Ruta base del fichero de mensajes.
 	 */

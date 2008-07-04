@@ -39,7 +39,7 @@ public class SportPlayer implements ITransferObject {
 	
 	private SportClub sportClub;
 
-	private SportSeason sportSeason;
+	private boolean active = true;
 	
 	private Integer number;
   
@@ -143,15 +143,14 @@ public class SportPlayer implements ITransferObject {
 	public void setSportClub(SportClub sportClub) {
 		this.sportClub = sportClub;
 	}
-
-	@ManyToOne(fetch = FetchType.EAGER)
-	@JoinColumn(name = "sport_season", nullable = false)
-	public SportSeason getSportSeason() {
-		return sportSeason;
+	
+	@Column(name = "active", nullable = false)
+	public boolean isActive() {
+		return active;
 	}
 
-	public void setSportSeason(SportSeason sportSeason) {
-		this.sportSeason = sportSeason;
+	public void setActive(boolean active) {
+		this.active = active;
 	}
 
 	public Integer getNumber() {

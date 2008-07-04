@@ -3580,76 +3580,76 @@ public interface ICMSAlias {
 	DAOConstantsEntry SPORT_PLAYER_ENTRY = DAOConstants.getDAOConstant(SportPlayer.class);
 
 	/** 
+	* Alias value: SportPlayer_active
+	* Hibernate value: SportPlayer.active
+	*/
+	String  SPORT_PLAYER_ACTIVE = SPORT_PLAYER_ENTRY.getAliasNames()[0];
+
+	/** 
 	* Alias value: SportPlayer_bornDate
 	* Hibernate value: SportPlayer.bornDate
 	*/
-	String  SPORT_PLAYER_BORN_DATE = SPORT_PLAYER_ENTRY.getAliasNames()[0];
+	String  SPORT_PLAYER_BORN_DATE = SPORT_PLAYER_ENTRY.getAliasNames()[1];
 
 	/** 
 	* Alias value: SportPlayer_bornPlace
 	* Hibernate value: SportPlayer.bornPlace
 	*/
-	String  SPORT_PLAYER_BORN_PLACE = SPORT_PLAYER_ENTRY.getAliasNames()[1];
+	String  SPORT_PLAYER_BORN_PLACE = SPORT_PLAYER_ENTRY.getAliasNames()[2];
 
 	/** 
 	* Alias value: SportPlayer_comunitary
 	* Hibernate value: SportPlayer.comunitary
 	*/
-	String  SPORT_PLAYER_COMUNITARY = SPORT_PLAYER_ENTRY.getAliasNames()[2];
+	String  SPORT_PLAYER_COMUNITARY = SPORT_PLAYER_ENTRY.getAliasNames()[3];
 
 	/** 
 	* Alias value: SportPlayer_id
 	* Hibernate value: SportPlayer.id
 	*/
-	String  SPORT_PLAYER_ID = SPORT_PLAYER_ENTRY.getAliasNames()[3];
+	String  SPORT_PLAYER_ID = SPORT_PLAYER_ENTRY.getAliasNames()[4];
 
 	/** 
 	* Alias value: SportPlayer_lenght
 	* Hibernate value: SportPlayer.lenght
 	*/
-	String  SPORT_PLAYER_LENGHT = SPORT_PLAYER_ENTRY.getAliasNames()[4];
+	String  SPORT_PLAYER_LENGHT = SPORT_PLAYER_ENTRY.getAliasNames()[5];
 
 	/** 
 	* Alias value: SportPlayer_name
 	* Hibernate value: SportPlayer.name
 	*/
-	String  SPORT_PLAYER_NAME = SPORT_PLAYER_ENTRY.getAliasNames()[5];
+	String  SPORT_PLAYER_NAME = SPORT_PLAYER_ENTRY.getAliasNames()[6];
 
 	/** 
 	* Alias value: SportPlayer_number
 	* Hibernate value: SportPlayer.number
 	*/
-	String  SPORT_PLAYER_NUMBER = SPORT_PLAYER_ENTRY.getAliasNames()[6];
+	String  SPORT_PLAYER_NUMBER = SPORT_PLAYER_ENTRY.getAliasNames()[7];
 
 	/** 
 	* Alias value: SportPlayer_photo
 	* Hibernate value: SportPlayer.photo
 	*/
-	String  SPORT_PLAYER_PHOTO = SPORT_PLAYER_ENTRY.getAliasNames()[7];
+	String  SPORT_PLAYER_PHOTO = SPORT_PLAYER_ENTRY.getAliasNames()[8];
 
 	/** 
 	* Alias value: SportPlayer_sportClub_id
 	* Hibernate value: SportPlayer.sportClub.id
 	*/
-	String  SPORT_PLAYER_SPORT_CLUB_ID = SPORT_PLAYER_ENTRY.getAliasNames()[8];
+	String  SPORT_PLAYER_SPORT_CLUB_ID = SPORT_PLAYER_ENTRY.getAliasNames()[9];
 
 	/** 
 	* Alias value: SportPlayer_sportNationality_id
 	* Hibernate value: SportPlayer.sportNationality.id
 	*/
-	String  SPORT_PLAYER_SPORT_NATIONALITY_ID = SPORT_PLAYER_ENTRY.getAliasNames()[9];
+	String  SPORT_PLAYER_SPORT_NATIONALITY_ID = SPORT_PLAYER_ENTRY.getAliasNames()[10];
 
 	/** 
 	* Alias value: SportPlayer_sportPosition_id
 	* Hibernate value: SportPlayer.sportPosition.id
 	*/
-	String  SPORT_PLAYER_SPORT_POSITION_ID = SPORT_PLAYER_ENTRY.getAliasNames()[10];
-
-	/** 
-	* Alias value: SportPlayer_sportSeason_id
-	* Hibernate value: SportPlayer.sportSeason.id
-	*/
-	String  SPORT_PLAYER_SPORT_SEASON_ID = SPORT_PLAYER_ENTRY.getAliasNames()[11];
+	String  SPORT_PLAYER_SPORT_POSITION_ID = SPORT_PLAYER_ENTRY.getAliasNames()[11];
 
 	/** 
 	* Alias value: SportPlayer_weight
@@ -3665,28 +3665,28 @@ public interface ICMSAlias {
 	DAOConstantsEntry SPORT_CAREER_PATH_ENTRY = DAOConstants.getDAOConstant(SportCareerPath.class);
 
 	/** 
+	* Alias value: SportCareerPath_club
+	* Hibernate value: SportCareerPath.club
+	*/
+	String  SPORT_CAREER_PATH_CLUB = SPORT_CAREER_PATH_ENTRY.getAliasNames()[0];
+
+	/** 
 	* Alias value: SportCareerPath_endDate
 	* Hibernate value: SportCareerPath.endDate
 	*/
-	String  SPORT_CAREER_PATH_END_DATE = SPORT_CAREER_PATH_ENTRY.getAliasNames()[0];
+	String  SPORT_CAREER_PATH_END_DATE = SPORT_CAREER_PATH_ENTRY.getAliasNames()[1];
 
 	/** 
 	* Alias value: SportCareerPath_id
 	* Hibernate value: SportCareerPath.id
 	*/
-	String  SPORT_CAREER_PATH_ID = SPORT_CAREER_PATH_ENTRY.getAliasNames()[1];
+	String  SPORT_CAREER_PATH_ID = SPORT_CAREER_PATH_ENTRY.getAliasNames()[2];
 
 	/** 
 	* Alias value: SportCareerPath_initDate
 	* Hibernate value: SportCareerPath.initDate
 	*/
-	String  SPORT_CAREER_PATH_INIT_DATE = SPORT_CAREER_PATH_ENTRY.getAliasNames()[2];
-
-	/** 
-	* Alias value: SportCareerPath_sportClub_id
-	* Hibernate value: SportCareerPath.sportClub.id
-	*/
-	String  SPORT_CAREER_PATH_SPORT_CLUB_ID = SPORT_CAREER_PATH_ENTRY.getAliasNames()[3];
+	String  SPORT_CAREER_PATH_INIT_DATE = SPORT_CAREER_PATH_ENTRY.getAliasNames()[3];
 
 	/** 
 	* Alias value: SportCareerPath_sportPlayer_id

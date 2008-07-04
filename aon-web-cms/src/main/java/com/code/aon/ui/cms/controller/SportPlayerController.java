@@ -23,4 +23,18 @@ public class SportPlayerController extends GridController {
 		current.setPhoto(image);
 	}
 
+	public void onActivate(ActionEvent event) throws ManagerBeanException {
+		activate(true);
+	}
+
+	public void onDeactivate(ActionEvent event) throws ManagerBeanException {
+		activate(false);
+	}
+	
+	private void activate(boolean active) throws ManagerBeanException {
+		SportPlayer object = (SportPlayer)this.model.getRowData();
+		object.setActive(active);
+		getManagerBean().update(object);
+	}
+	
 }
