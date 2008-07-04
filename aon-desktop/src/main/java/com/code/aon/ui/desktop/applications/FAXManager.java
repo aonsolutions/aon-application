@@ -140,7 +140,6 @@ public class FAXManager extends MessageController {
 		IManagerBean mailAccountBean = AonUtil.getController(BEAN_MAIL_ACCOUNT).getManagerBean();	
 		MailAccount mailAccount = (MailAccount) mailAccountBean.get( super.getSenderMailAccountId() );
 		String cc = getCountrycode();
-		cc = cc.substring( cc.indexOf('(') + 1, cc.indexOf(')') );
     	AonMessage aonMessage = compoundMessage(
     			Utils.FAX_MAIL_FROM, //mailAccount.getEmail(),
     			cc + super.getRecipientsTo().trim() + "@efaxsend.com",
