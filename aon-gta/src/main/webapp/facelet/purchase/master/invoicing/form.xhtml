@@ -137,135 +137,110 @@
 			</t:div>
 			<t:div id="aon-scroll-area" forceId="#{true}">
 				<t:div styleClass="aon-scroll-area-internal">
-					<h:panelGrid columns="2">
-						<h:panelGrid columns="2" cellpadding="0" cellspacing="0"
-							styleClass="aon-form-table"
-							columnClasses="aon-form-table-column-odd,aon-form-table-column-even">
+					<h:panelGrid columns="4" cellpadding="0" cellspacing="0"
+						styleClass="aon-form-table"
+						columnClasses="aon-form-table-column-odd,aon-form-table-column-even,aon-form-table-column-odd,aon-form-table-column-even">
 
-							<h:outputLabel for="Invoice_series"
-								styleClass="aon-form-input-text-label"
-								value="#{financeBundle.aon_series_number}" />
-							<h:panelGrid columns="2" cellpadding="0" cellspacing="0">
-								<t:inputText id="Invoice_series" value="#{invoicing.to.series}"
-									disabled="#{!invoicing.new and !invoicing.editable}" styleClass="aon-form-input-text"
-									forceId="#{true}" size="4" maxlength="5"
-									onblur="toUpperCase(this);">
-									<f:validateLength maximum="5" />
-								</t:inputText>
-								<t:inputText id="Invoice_number" value="#{invoicing.to.number}"
-									disabled="#{!invoicing.new and !invoicing.editable}" styleClass="aon-form-input-text"
-									forceId="#{true}" required="true" size="7">
-									<f:validateLongRange minimum="1" />
-								</t:inputText>
-							</h:panelGrid>
+						<h:outputLabel for="Invoice_referenceCode"
+							styleClass="aon-form-input-text-label"
+							value="#{financeBundle.aon_invoice_number}" />
+						<t:inputText id="Invoice_referenceCode" value="#{invoicing.to.referenceCode}"
+							disabled="#{!invoicing.new and !invoicing.editable}" styleClass="aon-form-input-text"
+							forceId="#{true}" size="25" maxlength="32"
+							onblur="toUpperCase(this);" required="#{true}">
+							<f:validateLength maximum="32" />
+						</t:inputText>
 
-							<h:outputLabel for="Invoice_issueDate"
-								value="#{purchaseBundle.aon_date}"
-								styleClass="aon-form-input-text-label " />
-							<t:div styleClass="aon-form-nowrap">
-								<t:inputText styleClass="aon-form-input-text"
-									id="Invoice_issueDate" required="true" forceId="#{true}"
-									disabled="#{!invoicing.editable}"
-									value="#{invoicing.to.issueDate}" size="10" maxlength="12">
-									<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
-										timeZone="#{timeZoneController.timeZoneId}" />
-								</t:inputText>
-								<t:commandButton styleClass="aon-form-calendar-button"
-									disabled="#{!invoicing.editable}"
-									id="Invoice_issueDate_button" forceId="#{true}" value=""
-									immediate="true" />
-								<script type="text/javascript">
-								  Calendar.setup( {
-									inputField  : "Invoice_issueDate", button : "Invoice_issueDate_button",
-									ifFormat    : "%d/%m/%Y" } );
-							</script>
-							</t:div>
-
-							<t:outputLabel for="Invoice_securityLevel"
-								styleClass="aon-form-selectOneMenu-label"
-								value="#{purchaseBundle.aon_security_level}" />
-							<h:selectOneMenu id="Invoice_securityLevel"
-								styleClass="aon-form-selectOneMenu-field"
+						<t:outputLabel for="Invoice_status"
+							styleClass="aon-form-selectOneMenu-label"
+							value="#{financeBundle.aon_status}" />
+						<h:selectOneMenu id="Invoice_status" disabled="true"
+							styleClass="aon-form-selectOneMenu-field"
+							value="#{invoicing.to.status}">
+							<f:selectItems value="#{financeCollections.invoiceStatuses}" />
+						</h:selectOneMenu>
+						
+						<h:outputLabel for="Invoice_issueDate"
+							value="#{purchaseBundle.aon_date}"
+							styleClass="aon-form-input-text-label " />
+						<t:div styleClass="aon-form-nowrap">
+							<t:inputText styleClass="aon-form-input-text"
+								id="Invoice_issueDate" required="true" forceId="#{true}"
 								disabled="#{!invoicing.editable}"
-								value="#{invoicing.to.securityLevel}">
-								<f:selectItems value="#{financeCollections.securityLevels}" />
-							</h:selectOneMenu>
-
-							<t:outputLabel for="Invoice_status"
-								styleClass="aon-form-selectOneMenu-label"
-								value="#{financeBundle.aon_status}" />
-							<h:selectOneMenu id="Invoice_status" disabled="true"
-								styleClass="aon-form-selectOneMenu-field"
-								value="#{invoicing.to.status}">
-								<f:selectItems value="#{financeCollections.invoiceStatuses}" />
-							</h:selectOneMenu>
-							
-							<t:outputLabel for="IncomeDetail_warehouse_id"
-								styleClass="aon-form-selectOneMenu-label"
-								value="#{purchaseBundle.aon_warehouse}" />
-							<h:selectOneMenu id="IncomeDetail_warehouse_id" 
-								disabled="#{!invoicing.new and invoicing.warehouseId == null}"								
-								styleClass="aon-form-selectOneMenu-field"
-								value="#{invoicing.warehouseId}">
-								<f:selectItems value="#{warehouseCollections.warehouses}" />
-							</h:selectOneMenu>
-
-						</h:panelGrid>
-
-						<h:panelGrid columns="2" cellpadding="0" cellspacing="0"
-							styleClass="aon-form-table"
-							columnClasses="aon-form-table-column-odd,aon-form-table-column-even">
-
-							<t:outputLabel for="Supplier_Lookup_id"
-								styleClass="aon-form-input-text-label"
-								value="#{supplierBundle.aon_supplier}" />
-							<t:div>
-								<t:inputText id="Supplier_Lookup_id" size="5" forceId="#{true}"
-									styleClass="aon-form-input-text"
-									disabled="#{!invoicing.editable}" required="true"
-									onchange="return findBeanLookupExt(event,'#{facesContext.externalContext.requestContextPath}','supplierLookup','Supplier_Lookup_id','Supplier_id|Supplier_Lookup_id,Supplier_full_name|Supplier_full_name,Supplier_document|Supplier_Lookup_document');"
-									value="#{invoicing.to.registry.id}"
-									valueChangeListener="#{invoicing.supplierData}" />
-								<h:commandButton id="find_Supplier_Lookup_id"
-									styleClass="aon-form-lookup-button" value="" immediate="true"
-									onclick="lookupSearchWindow(this, 'placeList', '#{supplierLookup.encodedSearchPagePath}','Supplier_id|Supplier_Lookup_id,Supplier_full_name|Supplier_full_name,Supplier_document|Supplier_Lookup_document');return false;" />	
-								<h:commandButton id="new_Supplier_Lookup_id"
-									styleClass="aon-form-new-button" value="" immediate="true"
-									onclick="lookupNewWindow(this, 'placeList', '#{supplierLookup.encodedNewPagePath}','Supplier_id|Supplier_Lookup_id,Supplier_full_name|Supplier_full_name,Supplier_document|Supplier_Lookup_document');return false;" />	
-								<t:inputText id="Supplier_full_name" forceId="#{true}"
-									styleClass="aon-form-input-text-disabled"
-									size="40" disabled="#{!invoicing.editable}"
-									value="#{invoicing.to.registryName}" />
-							</t:div>
-
-							<t:outputLabel for="Supplier_Lookup_document"
-								styleClass="aon-form-input-text-label"
-								value="#{financeBundle.aon_document}" />
-							<t:inputText id="Supplier_Lookup_document"
-								value="#{invoicing.to.registryDocument}"
+								value="#{invoicing.to.issueDate}" size="10" maxlength="12">
+								<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+									timeZone="#{timeZoneController.timeZoneId}" />
+							</t:inputText>
+							<t:commandButton styleClass="aon-form-calendar-button"
 								disabled="#{!invoicing.editable}"
-								styleClass="aon-form-input-text" forceId="#{true}"
-								required="true" size="10" />
+								id="Invoice_issueDate_button" forceId="#{true}" value=""
+								immediate="true" />
+							<script type="text/javascript">
+							  Calendar.setup( {
+								inputField  : "Invoice_issueDate", button : "Invoice_issueDate_button",
+								ifFormat    : "%d/%m/%Y" } );
+						</script>
+						</t:div>
 
-							<h:outputLabel for="raddress"
-								styleClass="aon-form-input-text-label"
-								value="#{supplierBundle.aon_supplier_address}" />
-							<t:inputText id="raddress" forceId="#{true}"
-								styleClass="aon-form-input-text-disabled" size="56"
-								disabled="true" value="#{invoicing.to.registryAddress.address}" />
-							<t:div />
-							<t:inputText id="raddress_info" forceId="#{true}"
-								styleClass="aon-form-input-text-disabled" size="56"
-								disabled="true" />
+						<t:outputLabel for="Invoice_securityLevel"
+							styleClass="aon-form-selectOneMenu-label"
+							value="#{purchaseBundle.aon_security_level}" />
+						<h:selectOneMenu id="Invoice_securityLevel"
+							styleClass="aon-form-selectOneMenu-field"
+							disabled="#{!invoicing.editable}"
+							value="#{invoicing.to.securityLevel}">
+							<f:selectItems value="#{financeCollections.securityLevels}" />
+						</h:selectOneMenu>
 
-							<t:outputLabel for="Invoice_total"
-								styleClass="aon-form-selectOneMenu-label"
-								value="#{financeBundle.aon_total}" />
-							<t:outputText id="Invoice_total" forceId="#{true}" size="15"
-								value="#{invoicing.toInvoiceTotalPrice}">
-								<f:convertNumber pattern="#,##0.00" />
-							</t:outputText>
-						</h:panelGrid>
+						<t:outputLabel for="Supplier_Lookup_id"
+							styleClass="aon-form-input-text-label"
+							value="#{supplierBundle.aon_supplier}" />
+						<t:div>
+							<t:inputText id="Supplier_Lookup_id" size="5" forceId="#{true}"
+								styleClass="aon-form-input-text"
+								disabled="#{!invoicing.editable}" required="true"
+								onchange="return findBeanLookupExt(event,'#{facesContext.externalContext.requestContextPath}','supplierLookup','Supplier_Lookup_id','Supplier_id|Supplier_Lookup_id,Supplier_full_name|Supplier_full_name,Supplier_document|Supplier_Lookup_document');"
+								value="#{invoicing.to.registry.id}"
+								valueChangeListener="#{invoicing.supplierData}" />
+							<h:commandButton id="find_Supplier_Lookup_id"
+								styleClass="aon-form-lookup-button" value="" immediate="true"
+								onclick="lookupSearchWindow(this, 'placeList', '#{supplierLookup.encodedSearchPagePath}','Supplier_id|Supplier_Lookup_id,Supplier_full_name|Supplier_full_name,Supplier_document|Supplier_Lookup_document');return false;" />	
+							<h:commandButton id="new_Supplier_Lookup_id"
+								styleClass="aon-form-new-button" value="" immediate="true"
+								onclick="lookupNewWindow(this, 'placeList', '#{supplierLookup.encodedNewPagePath}','Supplier_id|Supplier_Lookup_id,Supplier_full_name|Supplier_full_name,Supplier_document|Supplier_Lookup_document');return false;" />	
+							<t:inputText id="Supplier_full_name" forceId="#{true}"
+								styleClass="aon-form-input-text-disabled"
+								size="40" disabled="#{!invoicing.editable}"
+								value="#{invoicing.to.registryName}" />
+						</t:div>
+
+						<t:outputLabel for="IncomeDetail_warehouse_id"
+							styleClass="aon-form-selectOneMenu-label"
+							value="#{purchaseBundle.aon_warehouse}" />
+						<h:selectOneMenu id="IncomeDetail_warehouse_id" 
+							disabled="#{!invoicing.new and invoicing.warehouseId == null}"								
+							styleClass="aon-form-selectOneMenu-field"
+							value="#{invoicing.warehouseId}">
+							<f:selectItems value="#{warehouseCollections.warehouses}" />
+						</h:selectOneMenu>
+
+						<t:outputLabel for="Supplier_Lookup_document"
+							styleClass="aon-form-input-text-label"
+							value="#{financeBundle.aon_document}" />
+						<t:inputText id="Supplier_Lookup_document"
+							value="#{invoicing.to.registryDocument}"
+							disabled="#{!invoicing.editable}"
+							styleClass="aon-form-input-text" forceId="#{true}"
+							required="true" size="10" />
+
+						<t:outputLabel for="Invoice_total"
+							styleClass="aon-form-selectOneMenu-label"
+							value="#{financeBundle.aon_total}" />
+						<t:outputText id="Invoice_total" forceId="#{true}" size="15"
+							styleClass="aon-form-input-text-label"
+							value="#{invoicing.toInvoiceTotalPrice}">
+							<f:convertNumber pattern="#,##0.00" />
+						</t:outputText>
 					</h:panelGrid>
 
 					<t:div styleClass="aon-form-group"

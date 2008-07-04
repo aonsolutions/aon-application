@@ -137,7 +137,7 @@
 			<t:div id="aon-scroll-area" forceId="#{true}">
 				<t:div styleClass="aon-scroll-area-internal">
 
-					<h:panelGrid columns="4"
+					<t:panelGrid columns="4"
 						dir="true"
 						styleClass="aon-form-table"
 						columnClasses="aon-form-table-column-odd,aon-form-table-column-even,aon-form-table-column-odd,aon-form-table-column-even">
@@ -173,7 +173,7 @@
 						</h:selectOneMenu>
 						
 						<h:outputLabel for="Invoice_issueDate"
-							value="#{purchaseBundle.aon_date}"
+							value="#{financeBundle.aon_date}"
 							styleClass="aon-form-input-text-label " />
 						<t:div styleClass="aon-form-nowrap">
 							<t:inputText styleClass="aon-form-input-text"
@@ -196,7 +196,7 @@
 
 						<t:outputLabel for="Invoice_securityLevel"
 							styleClass="aon-form-selectOneMenu-label"
-							value="#{purchaseBundle.aon_security_level}" />
+							value="#{financeBundle.aon_security_level}" />
 						<h:selectOneMenu id="Invoice_securityLevel"
 							styleClass="aon-form-selectOneMenu-field"
 							disabled="#{!salesInvoicing.editable}"
@@ -231,7 +231,7 @@
 
 						<t:outputLabel for="DeliveryDetail_warehouse_id"
 							styleClass="aon-form-selectOneMenu-label"
-							value="#{purchaseBundle.aon_warehouse}" />
+							value="#{warehouseBundle.aon_warehouse}" />
 						<h:selectOneMenu id="DeliveryDetail_warehouse_id" 
 							disabled="#{!salesInvoicing.editable}"
 							styleClass="aon-form-selectOneMenu-field"
@@ -282,7 +282,7 @@
 								disabled="#{true}"
 								styleClass="aon-form-input-text" size="16" />
 							<t:commandButton id="popupButton"
-								rendered="#{!salesInvoicing.new}"
+								rendered="#{!salesInvoicing.new and !salesInvoicing.recorded}"
 								styleClass="aon-navigation-link"
 								value="#{registryBundle.aon_address_other}"
 								onclick="showPopup();return false;" />
@@ -292,24 +292,20 @@
 							styleClass="aon-form-selectOneMenu-label"
 							value="#{financeBundle.aon_total}" />
 						<t:outputText id="Invoice_total" forceId="#{true}" size="15"
+							styleClass="aon-form-input-text-label"
 							value="#{salesInvoicing.toInvoiceTotalPrice}">
 							<f:convertNumber pattern="#,##0.00" />
 						</t:outputText>
 
-					</h:panelGrid>
-					
-					<h:panelGrid columns="2" cellpadding="0" cellspacing="0"
-						styleClass="aon-form-table"
-						columnClasses="aon-form-table-column-odd,aon-form-table-column-even">
-		
 						<h:outputLabel for="Invoice_comments"
 							styleClass="aon-form-input-text-label"
 							value="#{financeBundle.aon_invoice_comments}" />
-						<t:inputTextarea id="Invoice_comments" forceId="#{true}"
-							styleClass="aon-form-input-text" cols="51" rows="5"
-							value="#{salesInvoicing.to.comments}" />
-					</h:panelGrid>
-					
+						<t:panelGroup colspan="3">
+							<t:inputTextarea id="Invoice_comments" forceId="#{true}"
+								styleClass="aon-form-input-text" cols="100" rows="5"
+								value="#{salesInvoicing.to.comments}" />
+						</t:panelGroup>
+					</t:panelGrid>
 
 					<t:div styleClass="aon-form-group"
 						rendered="#{!salesInvoicing.new and delivery.model.rowCount >0 and salesInvoicing.editable}">
@@ -324,7 +320,7 @@
 								styleClass="aon-edit-table" headerClass="aon-edit-table-header"
 								footerClass="aon-edit-table-footer" rows="20"
 								rowClasses="aon-edit-table-row-odd,aon-edit-table-row-even"
-								columnClasses="aon-edit-table-body-icon,aon-edit-table-body aon-edit-table-body-string,aon-edit-table-body aon-edit-table-body-string,aon-edit-table-body aon-edit-table-body-number,aon-edit-table-body aon-edit-table-body-number,aon-edit-table-body aon-edit-table-body-number,aon-edit-table-body aon-edit-table-body-number,aon-edit-table-body aon-edit-table-body-string"
+								columnClasses="aon-edit-table-body-icon,aon-edit-table-body aon-edit-table-body-string,aon-edit-table-body aon-edit-table-body-string,aon-edit-table-body aon-edit-table-body-string,aon-edit-table-body aon-edit-table-body-number,aon-edit-table-body aon-edit-table-body-number,aon-edit-table-body aon-edit-table-body-number,aon-edit-table-body aon-edit-table-body-number,aon-edit-table-body aon-edit-table-body-string"
 								rowOnMouseOver="selectRow( this )"
 								rowOnMouseOut="unselectRow( this )" rowOnClick="sendRow( this )"
 								cellpadding="0" cellspacing="0">
@@ -352,15 +348,21 @@
 
 								<h:column>
 									<f:facet name="header">
-										<h:outputText value="#{purchaseBundle.aon_id}" />
+										<h:outputText value="#{warehouseBundle.aon_series_number}" />
 									</f:facet>
 									<h:outputText value="#{to.series} / #{to.number}" />
-									<f:verbatim>&#160;</f:verbatim>
 								</h:column>
 
 								<h:column>
 									<f:facet name="header">
-										<h:outputText value="#{purchaseBundle.aon_issue_date}" />
+										<h:outputText value="#{warehouseBundle.offer_tasItem_publicCode} / #{warehouseBundle.offer_tasItem_model}" />
+									</f:facet>
+									<h:outputText value="#{delivery.supportOrderData}" />
+								</h:column>
+
+								<h:column>
+									<f:facet name="header">
+										<h:outputText value="#{warehouseBundle.aon_date}" />
 									</f:facet>
 									<h:outputText value="#{to.issueTime}">
 										<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
@@ -370,7 +372,7 @@
 
 								<t:column width="60">
 									<f:facet name="header">
-										<h:outputText value="#{purchaseBundle.aon_taxable_base}" />
+										<h:outputText value="#{warehouseBundle.aon_taxable_base}" />
 									</f:facet>
 									<t:outputText value="#{delivery.deliveryBasePrice}">
 										<f:convertNumber pattern="#,##0.00" />
@@ -379,7 +381,7 @@
 
 								<t:column width="60">
 									<f:facet name="header">
-										<h:outputText value="#{purchaseBundle.aon_vat}" />
+										<h:outputText value="#{warehouseBundle.aon_vat}" />
 									</f:facet>
 									<t:outputText value="#{delivery.deliveryTotalTaxRate}">
 										<f:convertNumber pattern="#,##0.00" />
@@ -388,7 +390,7 @@
 
 								<t:column width="60">
 									<f:facet name="header">
-										<h:outputText value="#{purchaseBundle.aon_surch}" />
+										<h:outputText value="#{warehouseBundle.aon_surch}" />
 									</f:facet>
 									<t:outputText value="#{delivery.deliveryTotalSurchargeRate}">
 										<f:convertNumber pattern="#,##0.00" />
@@ -407,7 +409,7 @@
 
 								<h:column>
 									<f:facet name="header">
-										<h:outputText value="#{purchaseBundle.aon_status}" />
+										<h:outputText value="#{warehouseBundle.aon_status}" />
 									</f:facet>
 									<h:outputText value="#{to.status}" />
 								</h:column>
@@ -439,7 +441,7 @@
 								rowIndexVar="rowIndex" rowOnMouseOut="unselectRow( this )"
 								rowOnClick="sendRow( this )" rendered="#{!salesInvoicing.new}"
 								rowClasses="aon-edit-table-row-odd,aon-edit-table-row-even"
-								columnClasses="aon-edit-table-body aon-edit-table-body-icon,aon-edit-table-body aon-edit-table-body-string,aon-edit-table-body aon-edit-table-body-number,aon-edit-table-body aon-edit-table-body-number,aon-edit-table-body aon-edit-table-body-number,aon-edit-table-body aon-edit-table-body-number,aon-edit-table-body aon-edit-table-body-number,aon-edit-table-body aon-edit-table-body-number,aon-edit-table-body aon-edit-table-body-buttons">
+								columnClasses="aon-edit-table-body aon-edit-table-body-icon,aon-edit-table-body aon-edit-table-body-string,aon-edit-table-body aon-edit-table-body-string,aon-edit-table-body aon-edit-table-body-number,aon-edit-table-body aon-edit-table-body-number,aon-edit-table-body aon-edit-table-body-number,aon-edit-table-body aon-edit-table-body-number,aon-edit-table-body aon-edit-table-body-buttons">
 
 								<h:column>
 									<f:facet name="header">
@@ -454,13 +456,20 @@
 										<t:div>
 											<t:commandButton value=""
 												styleClass="aon-edit-table-icon-button aon-edit-table-icon-button-new"
-												title="#{purchaseBundle.aon_newLine}"
+												title="#{warehouseBundle.aon_newLine}"
 												actionListener="#{salesInvoicingDetail.onReset}"
 												rendered="#{!salesInvoicingDetail.new and salesInvoicing.editable}"
 												accesskey="#{bundle.aon_key_new_line}" />
 										</t:div>
 									</f:facet>
 								</h:column>
+
+								<t:column width="80">
+									<f:facet name="header">
+										<t:outputText value="#{financeBundle.aon_delivery}" />
+									</f:facet>
+									<t:outputText value="#{salesInvoicingDetail.deliveryData}"/>
+								</t:column>
 
 								<h:column>
 									<f:facet name="header">
@@ -475,7 +484,7 @@
 											valueChangeListener="#{salesInvoicingDetail.itemData}" />
 										<t:inputText size="10" id="Item_product_code-Edit"
 											styleClass="aon-form-input-text" required="true"
-											forceId="#{true}"
+											forceId="#{true}" maxlength="15"
 											value="#{salesInvoicingDetail.to.item.product.code}"
 											onchange="return findItemLookup(event,'#{facesContext.externalContext.request.contextPath}','com.code.aon.product.Item','Item_id-Edit[#{rowIndex}],Item_product_code-Edit[#{rowIndex}],Item_full_name-Edit[#{rowIndex}],Item_price-Edit[#{rowIndex}]');" />
 										<h:commandButton id="findInvoice_item"
@@ -486,7 +495,7 @@
 											value="" immediate="true" styleClass="aon-form-new-button" />
 										<t:inputText id="Item_full_name-Edit" size="40"
 											forceId="#{true}" required="#{true}"
-											styleClass="aon-form-input-text"
+											styleClass="aon-form-input-text" maxlength="64"
 											value="#{salesInvoicingDetail.to.description}" />
 									</h:panelGroup>
 
@@ -498,7 +507,7 @@
 													valueChangeListener="#{salesInvoicingDetail.itemData}" />
 												<t:inputText size="10" id="Item_product_code-New"
 													styleClass="aon-form-input-text" required="true"
-													forceId="#{true}"
+													forceId="#{true}" maxlength="15"
 													value="#{salesInvoicingDetail.to.item.product.code}"
 													onchange="return findItemLookup(event,'#{facesContext.externalContext.request.contextPath}','com.code.aon.product.Item','Item_id-New,Item_product_code-New,Item_full_name-New,Item_price-New');" />
 												<h:commandButton id="findInvoice_item_new"
@@ -510,7 +519,7 @@
 													value="" immediate="true" styleClass="aon-form-new-button" />
 												<t:inputText id="Item_full_name-New" size="40"
 													forceId="#{true}" required="#{true}"
-													styleClass="aon-form-input-text"
+													styleClass="aon-form-input-text" maxlength="64"
 													value="#{salesInvoicingDetail.to.description}" />
 											</h:panelGroup>
 										</t:div>
