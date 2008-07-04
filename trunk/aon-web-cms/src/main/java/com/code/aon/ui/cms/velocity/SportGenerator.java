@@ -87,6 +87,7 @@ public class SportGenerator extends Generator {
 						splCriteria = new Criteria();
 						splCriteria.addEqualExpression(splBean.getFieldName(ICMSAlias.SPORT_PLAYER_SPORT_CLUB_ID), sc.getId());
 						splCriteria.addEqualExpression(splBean.getFieldName(ICMSAlias.SPORT_PLAYER_SPORT_POSITION_ID), sp.getId());
+						splCriteria.addEqualExpression(splBean.getFieldName(ICMSAlias.SPORT_PLAYER_ACTIVE), true);
 						splCriteria.addOrder(splBean.getFieldName(ICMSAlias.SPORT_PLAYER_NAME));
 						playerList = (List<ITransferObject>)splBean.getList(splCriteria);
 						
