@@ -70,9 +70,8 @@
 					<h:panelGrid columns="2" styleClass="aon-form-table" 
 						columnClasses="aon-form-table-column-odd,aon-form-table-column-even">
 							
-						<h:outputLabel
+						<h:outputLabel for="Delivery_series"
 							styleClass="aon-form-input-text-label aon-form-table-column-odd-label"
-							for="Delivery_series" 
 							value="#{warehouseBundle.aon_series_number}" />
 						<t:div>
 							<t:inputText id="Delivery_series" size="4"
@@ -81,6 +80,52 @@
 							<t:inputText id="Delivery_number" size="7"
 								styleClass="aon-form-input-text"
 								valueChangeListener="#{delivery.addExpression}" />
+						</t:div>
+						
+						<h:outputLabel
+							styleClass="aon-form-input-text-label aon-form-table-column-odd-label"
+							for="Delivery_startDate" value="#{warehouseBundle.aon_date}" />
+						<t:div>
+							<t:div style="display:inline;">
+								<h:outputLabel value="#{warehouseBundle.aon_date_from}" 
+									styleClass="aon-form-input-text-label" />
+								<t:inputText styleClass="aon-form-input-text"
+									id="Delivery_issueDate1" 
+									forceId="#{true}"
+									valueChangeListener="#{delivery.addIssueDateGreaterThanExpression}"
+									size="10" maxlength="12">
+									<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+										timeZone="#{timeZoneController.timeZoneId}" />
+								</t:inputText>
+								<t:commandButton styleClass="aon-form-calendar-button"
+									id="Delivery_issueDate1_button" forceId="#{true}" value=""
+									immediate="true" />
+								<script type="text/javascript">
+								  Calendar.setup( {
+									inputField  : "Delivery_issueDate1", button : "Delivery_issueDate1_button",
+									ifFormat    : "%d/%m/%Y" } );
+								</script>
+							</t:div>
+							<t:div style="display:inline;">
+								<h:outputLabel value="#{warehouseBundle.aon_date_to}" 
+									styleClass="aon-form-input-text-label" />
+								<t:inputText styleClass="aon-form-input-text"
+									id="Delivery_issueDate2" 
+									forceId="#{true}"
+									valueChangeListener="#{delivery.addIssueDateLessThanExpression}"
+									size="10" maxlength="12">
+									<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+										timeZone="#{timeZoneController.timeZoneId}" />
+								</t:inputText>
+								<t:commandButton styleClass="aon-form-calendar-button"
+									id="Delivery_issueDate2_button" forceId="#{true}" value=""
+									immediate="true" />
+								<script type="text/javascript">
+								  Calendar.setup( {
+									inputField  : "Delivery_issueDate2", button : "Delivery_issueDate2_button",
+									ifFormat    : "%d/%m/%Y" } );
+								</script>
+							</t:div>
 						</t:div>
 						
 						<t:outputLabel for="Customer_Lookup_id"
@@ -99,56 +144,6 @@
 								size="40" />
 						</t:div>
 
-						<h:outputLabel
-							styleClass="aon-form-input-text-label aon-form-table-column-odd-label"
-							for="Delivery_startDate" value="#{warehouseBundle.aon_date}" />
-						<t:div>
-							<t:div styleClass="aon-form-unit aon-form-layout-unit-inline-label-block">
-								<h:outputLabel value="#{warehouseBundle.aon_date_from}" 
-								styleClass="aon-form-input-text-label aon-form-layout-label-block" />
-								<t:div styleClass="aon-form-nowrap">
-								<t:inputText styleClass="aon-form-input-text"
-										id="Delivery_issueDate1" 
-										forceId="#{true}"
-										valueChangeListener="#{delivery.addIssueDateGreaterThanExpression}"
-										size="10" maxlength="12">
-										<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
-											timeZone="#{timeZoneController.timeZoneId}" />
-									</t:inputText>
-									<t:commandButton styleClass="aon-form-lookup-button"
-										id="Delivery_issueDate1_button" forceId="#{true}" value=""
-										immediate="true" />
-									<script type="text/javascript">
-									  Calendar.setup( {
-										inputField  : "Delivery_issueDate1", button : "Delivery_issueDate1_button",
-										ifFormat    : "%d/%m/%Y" } );
-									</script>
-								</t:div>
-							</t:div>
-							<t:div styleClass="aon-form-unit aon-form-layout-unit-inline-label-block">
-								<h:outputLabel value="#{warehouseBundle.aon_date_to}" 
-								styleClass="aon-form-input-text-label aon-form-layout-label-block" />
-								<t:div styleClass="aon-form-nowrap">
-									<t:inputText styleClass="aon-form-input-text"
-										id="Delivery_issueDate2" 
-										forceId="#{true}"
-										valueChangeListener="#{delivery.addIssueDateLessThanExpression}"
-										size="10" maxlength="12">
-										<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
-											timeZone="#{timeZoneController.timeZoneId}" />
-									</t:inputText>
-									<t:commandButton styleClass="aon-form-lookup-button"
-										id="Delivery_issueDate2_button" forceId="#{true}" value=""
-										immediate="true" />
-									<script type="text/javascript">
-									  Calendar.setup( {
-										inputField  : "Delivery_issueDate2", button : "Delivery_issueDate2_button",
-										ifFormat    : "%d/%m/%Y" } );
-									</script>
-								</t:div>
-							</t:div>
-						</t:div>
-						
 						<h:outputLabel
 							styleClass="aon-form-input-text-label aon-form-table-column-odd-label"
 							for="Delivery_target_registry_document" 

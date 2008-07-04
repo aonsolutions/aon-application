@@ -70,9 +70,8 @@
 					<h:panelGrid columns="2" styleClass="aon-form-table"
 						columnClasses="aon-form-table-column-odd,aon-form-table-column-even">
 
-						<h:outputLabel
+						<h:outputLabel for="Income_series"
 							styleClass="aon-form-input-text-label aon-form-table-column-odd-label"
-							for="Income_series" 
 							value="#{purchaseBundle.aon_series_number}" />
 						<t:div>
 							<t:inputText id="Income_series" size="4"
@@ -81,6 +80,52 @@
 							<t:inputText id="Income_number" size="7"
 								styleClass="aon-form-input-text"
 								valueChangeListener="#{income.addExpression}" />
+						</t:div>
+						
+						<h:outputLabel
+							styleClass="aon-form-input-text-label aon-form-table-column-odd-label"
+							for="Income_startDate" value="#{purchaseBundle.aon_date}" />
+						<t:div>
+							<t:div style="display:inline;">
+								<h:outputLabel value="#{purchaseBundle.aon_date_from}" 
+									styleClass="aon-form-input-text-label" />
+								<t:inputText styleClass="aon-form-input-text"
+									id="Income_issueDate1" 
+									forceId="#{true}"
+									valueChangeListener="#{income.addIssueDateGreaterThanExpression}"
+									size="10" maxlength="12">
+									<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+										timeZone="#{timeZoneController.timeZoneId}" />
+								</t:inputText>
+								<t:commandButton styleClass="aon-form-calendar-button"
+									id="Income_issueDate1_button" forceId="#{true}" value=""
+									immediate="true" />
+								<script type="text/javascript">
+								  Calendar.setup( {
+									inputField  : "Income_issueDate1", button : "Income_issueDate1_button",
+									ifFormat    : "%d/%m/%Y" } );
+								</script>
+							</t:div>
+							<t:div style="display:inline;">
+								<h:outputLabel value="#{purchaseBundle.aon_date_to}" 
+									styleClass="aon-form-input-text-label" />
+								<t:inputText styleClass="aon-form-input-text"
+									id="Income_issueDate2" 
+									forceId="#{true}"
+									valueChangeListener="#{income.addIssueDateLessThanExpression}"
+									size="10" maxlength="12">
+									<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+										timeZone="#{timeZoneController.timeZoneId}" />
+								</t:inputText>
+								<t:commandButton styleClass="aon-form-calendar-button"
+									id="Income_issueDate2_button" forceId="#{true}" value=""
+									immediate="true" />
+								<script type="text/javascript">
+								  Calendar.setup( {
+									inputField  : "Income_issueDate2", button : "Income_issueDate2_button",
+									ifFormat    : "%d/%m/%Y" } );
+								</script>
+							</t:div>
 						</t:div>
 						
 						<t:outputLabel for="Supplier_Lookup_id"
@@ -101,56 +146,6 @@
 
 						<h:outputLabel
 							styleClass="aon-form-input-text-label aon-form-table-column-odd-label"
-							for="Income_startDate" value="#{purchaseBundle.aon_date}" />
-						<t:div>
-							<t:div styleClass="aon-form-unit aon-form-layout-unit-inline-label-block">
-								<h:outputLabel value="#{purchaseBundle.aon_date_from}" 
-								styleClass="aon-form-input-text-label aon-form-layout-label-block" />
-								<t:div styleClass="aon-form-nowrap">
-								<t:inputText styleClass="aon-form-input-text"
-										id="Income_issueDate1" 
-										forceId="#{true}"
-										valueChangeListener="#{income.addIssueDateGreaterThanExpression}"
-										size="10" maxlength="12">
-										<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
-											timeZone="#{timeZoneController.timeZoneId}" />
-									</t:inputText>
-									<t:commandButton styleClass="aon-form-lookup-button"
-										id="Income_issueDate1_button" forceId="#{true}" value=""
-										immediate="true" />
-									<script type="text/javascript">
-									  Calendar.setup( {
-										inputField  : "Income_issueDate1", button : "Income_issueDate1_button",
-										ifFormat    : "%d/%m/%Y" } );
-									</script>
-								</t:div>
-							</t:div>
-							<t:div styleClass="aon-form-unit aon-form-layout-unit-inline-label-block">
-								<h:outputLabel value="#{purchaseBundle.aon_date_to}" 
-								styleClass="aon-form-input-text-label aon-form-layout-label-block" />
-								<t:div styleClass="aon-form-nowrap">
-									<t:inputText styleClass="aon-form-input-text"
-										id="Income_issueDate2" 
-										forceId="#{true}"
-										valueChangeListener="#{income.addIssueDateLessThanExpression}"
-										size="10" maxlength="12">
-										<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
-											timeZone="#{timeZoneController.timeZoneId}" />
-									</t:inputText>
-									<t:commandButton styleClass="aon-form-lookup-button"
-										id="Income_issueDate2_button" forceId="#{true}" value=""
-										immediate="true" />
-									<script type="text/javascript">
-									  Calendar.setup( {
-										inputField  : "Income_issueDate2", button : "Income_issueDate2_button",
-										ifFormat    : "%d/%m/%Y" } );
-									</script>
-								</t:div>
-							</t:div>
-						</t:div>
-						
-						<h:outputLabel
-							styleClass="aon-form-input-text-label aon-form-table-column-odd-label"
 							for="Income_supplier_registry_document" 
 							value="#{purchaseBundle.aon_supplier_document}" />
 						<t:inputText id="Income_supplier_registry_document" size="15"
@@ -168,9 +163,8 @@
 							<f:selectItems value="#{warehouseCollections.incomeStatuses}" />
 						</h:selectOneMenu>
 							
-
 					</h:panelGrid>
-				</t:div>.
+				</t:div>
 			</t:div>
 		</h:form>
 		<h:form id="placeList" target="list" />

@@ -26,7 +26,6 @@
 	</ui:define>		
 
 	<ui:define name="content">
-	
 		<h:form id="offerForm">
 		
 			<t:div styleClass="aon-content-toolbar">
@@ -88,9 +87,9 @@
 							styleClass="aon-form-input-text-label aon-form-table-column-odd-label"
 							for="Offer_startDate" value="#{commercialBundle.aon_date}" />
 						<t:div>
-							<t:div styleClas="aon-form-unit aon-form-layout-unit-inline-label-block" style="display:inline;">
+							<t:div style="display:inline;">
 								<h:outputLabel styleClass="aon-form-input-text-label" 
-								value="#{commercialBundle.aon_date_from}"/>
+									value="#{commercialBundle.aon_date_from}"/>
 								<t:inputText styleClass="aon-form-input-text"
 									id="Offer_issueDate1" 
 									forceId="#{true}"
@@ -108,9 +107,9 @@
 									ifFormat    : "%d/%m/%Y" } );
 								</script>
 							</t:div>
-							<t:div styleClas="aon-form-unit aon-form-layout-unit-inline-label-block" style="display:inline;">
+							<t:div style="display:inline;">
 								<h:outputLabel styleClass="aon-form-input-text-label" 
-								value="#{commercialBundle.aon_date_to}"/>
+									value="#{commercialBundle.aon_date_to}"/>
 								<t:inputText styleClass="aon-form-input-text"
 									id="Offer_issueDate2" 
 									forceId="#{true}"
