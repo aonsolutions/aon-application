@@ -38,12 +38,12 @@
 			<list-entries>
 				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
 				<value>#{invoiceRegistryVetoListener}</value>
+				<value>#{customerScopeListener}</value>
 				<value>#{customerControllerListener}</value>
 				<value>#{customerAddressListener}</value>
 				<value>#{customerMediaListener}</value>
 				<value>#{customerRBankChildListener}</value>
 				<value>#{customerRPayMethodChildListener}</value>
-				<value>#{customerScopeListener}</value>
 				<value>#{customerObservationListener}</value>
 			</list-entries>
 		</managed-property>
