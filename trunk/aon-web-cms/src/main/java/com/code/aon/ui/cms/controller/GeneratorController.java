@@ -30,6 +30,7 @@ import com.code.aon.ui.cms.velocity.LinkGenerator;
 import com.code.aon.ui.cms.velocity.MenuGenerator;
 import com.code.aon.ui.cms.velocity.ModularPageGenerator;
 import com.code.aon.ui.cms.velocity.ProductGenerator;
+import com.code.aon.ui.cms.velocity.SportGenerator;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.util.AonUtil;
 
@@ -144,6 +145,13 @@ public class GeneratorController extends BasicController implements Constants {
 		
 		System.gc();
 		
+		if (isSportsToGenerate){
+			//Generar productos
+			SportGenerator.generate();
+		}
+		
+		System.gc();
+		
 		finalizeGenerator();
 	}
 	
@@ -242,6 +250,7 @@ public class GeneratorController extends BasicController implements Constants {
 	private boolean isArticleOTHERToGenerate = true;
 	private boolean isHiruCoursesToGenerate = true;
 	private boolean isProductsToGenerate = true;
+	private boolean isSportsToGenerate = true;
 	
 	public boolean isModularPageToGenerate() {
 		return isModularPageToGenerate;
@@ -333,6 +342,12 @@ public class GeneratorController extends BasicController implements Constants {
 	public void setProductsToGenerate(boolean isProductsToGenerate) {
 		this.isProductsToGenerate = isProductsToGenerate;
 	}
+	public boolean isSportsToGenerate() {
+		return isSportsToGenerate;
+	}
+	public void setSportsToGenerate(boolean isSportsToGenerate) {
+		this.isSportsToGenerate = isSportsToGenerate;
+	}
 
 	public void onSelectAll(ActionEvent event) {
 		isModularPageToGenerate = true;
@@ -350,6 +365,7 @@ public class GeneratorController extends BasicController implements Constants {
 		isArticleOTHERToGenerate = true;
 		isHiruCoursesToGenerate = true;
 		isProductsToGenerate = true;
+		isSportsToGenerate = true;
 	}
 	public void onDeselectAll(ActionEvent event) {
 		isModularPageToGenerate = false;
@@ -367,6 +383,7 @@ public class GeneratorController extends BasicController implements Constants {
 		isArticleOTHERToGenerate = false;
 		isHiruCoursesToGenerate = false;
 		isProductsToGenerate = false;
+		isSportsToGenerate = false;
 	}
 	
 
