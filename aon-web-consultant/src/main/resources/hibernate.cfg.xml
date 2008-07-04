@@ -27,7 +27,6 @@
 		<mapping class="com.code.aon.project.DossierType"/>
 		<mapping class="com.code.aon.project.JobType"/>
 		<mapping class="com.code.aon.project.Task"/>
-		<mapping class="com.code.aon.project.PeriodicalTask"/>
 		
 		<!-- AON-GROUPWARE Mapping files -->
 		<mapping class="com.code.aon.groupware.Alarm"/>
@@ -112,7 +111,6 @@
 
 		<!-- AON-COMPANY Mapping files -->
 		<mapping class="com.code.aon.company.Company"/>
-		<mapping class="com.code.aon.company.WebInfo"/>
 		<mapping class="com.code.aon.company.WorkPlace"/>
 		<mapping class="com.code.aon.company.WorkActivity"/>
 		<mapping class="com.code.aon.company.resources.Resource"/>
