@@ -11,7 +11,7 @@
 	<groupId>com.code.aon</groupId>
 	<artifactId>aon.desktop</artifactId>
 	<packaging>war</packaging>
-	<version>1.0.13</version>
+	<version>1.1.0</version>
 	<description>AON DESKTOP</description>
 	<name>AON DESKTOP</name>
 	<properties>
@@ -60,7 +60,7 @@
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.webmail</artifactId>
-			<version>3.1.2</version>
+			<version>3.3.0</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
