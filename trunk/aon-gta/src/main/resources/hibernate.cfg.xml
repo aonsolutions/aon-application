@@ -36,6 +36,12 @@
 		<mapping class="com.code.aon.tas.SupportOrder"/>
 		<mapping class="com.code.aon.tas.SupportOrderInsurance"/>
 
+		<!-- AON-TAS-COMMERCIAL Mapping files -->
+		<mapping class="com.code.aon.tasCommercial.TasOffer"/>
+
+		<!-- AON-TAS-DELIVERY Mapping files -->
+		<mapping class="com.code.aon.tasDelivery.TasDelivery"/>
+
 		<!-- AON-PRODUCT Mapping files -->		
 		<mapping class="com.code.aon.product.Product"/>
 		<mapping class="com.code.aon.product.Brand"/>
@@ -118,12 +124,17 @@
 		
 		<!-- AON-COMPANY Mapping files -->	
 		<mapping class="com.code.aon.company.Company"/>
-		<mapping class="com.code.aon.company.WebInfo"/>
 		<mapping class="com.code.aon.company.WorkPlace"/>
 		<mapping class="com.code.aon.company.WorkActivity"/>
 		<mapping class="com.code.aon.company.resources.Resource"/>
 		<mapping class="com.code.aon.company.resources.Employee"/>
 		
+		<!-- AON-EMPLOYEE Mapping files -->	
+		<mapping class="com.code.aon.record.Contract"/>
+		<mapping class="com.code.aon.record.LHCourse"/>
+		<mapping class="com.code.aon.record.Position"/>
+		<mapping class="com.code.aon.record.Work"/>
+
 		<!-- AON-GEOZONE Mapping files -->		
 		<mapping class="com.code.aon.geozone.GeoTree"/>
 		<mapping class="com.code.aon.geozone.GeoZone"/>			
@@ -140,16 +151,6 @@
 		<mapping class="com.code.aon.commercial.Offer"/>
 		<mapping class="com.code.aon.commercial.OfferDetail"/>
 		<mapping class="com.code.aon.commercial.Target"/>
-		
-		<!-- AON-TAS-COMMERCIAL Mapping files -->
-		<mapping class="com.code.aon.tasCommercial.TasOffer"/>
-
-		<!-- AON-TAS-DELIVERY Mapping files -->
-		<mapping class="com.code.aon.tasDelivery.TasDelivery"/>
-
-		<!-- AON-CONFIG Mapping files -->
-		<mapping class="com.code.aon.config.WorkGroup"/>
-		<mapping class="com.code.aon.config.Scope"/>
 		
 		<!-- AON-ACCOUNT Mapping files -->
 		<mapping class="com.code.aon.account.Account"/>
