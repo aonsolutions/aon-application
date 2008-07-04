@@ -6,7 +6,6 @@
 	xmlns:aon="http://www.code.es/aon-rich-components"
 	xmlns:rich="http://richfaces.org/rich"
 	xmlns:a4j="http://richfaces.org/a4j"
-	xmlns:t="http://myfaces.apache.org/tomahawk"
 	>
 <body>
 
@@ -78,25 +77,29 @@
 
 							<aon:outputLabel for="attach_file" value="#{appBundle.aon_messaging_document}: " />
 							<aon:div id="attachDiv" >
-								<t:inputFileUpload id="attach_file"
-									value="#{fax.inputFile}"
-									accept="*/*" size="45"
-									storage="file"/>
-								<h:commandButton value="#{bundle.aon_fileupload_insert}"
-									reRender="attachDiv" style="margin-left:10px;"
-									styleClass="aon-commandButton"
-									actionListener="#{fax.fileUploaded}"
-									rendered="#{fax.enabled}"/>
-								<aon:div>
-									<aon:dataTable id="attachDataTable" 
-										value="#{fax.files}" 
-										var="attachment"
-										styleClass="aon-panelGrid-formatting">
+								<rich:fileUpload id="attach_file" disabled="#{!fax.enabled}"
+									addControlLabel="#{appBundle.aon_fileUpload_add}" 
+									stopControlLabel="#{appBundle.aon_fileUpload_stop}" 
+									stopEntryControlLabel="#{appBundle.aon_fileUpload_stop}"
+									uploadControlLabel="#{appBundle.aon_fileUpload_upload}"
+									fileUploadListener="#{fax.fileUploaded}"
+									listHeight="0px" listWidth="90%"
+									immediateUpload="true" autoclear="true"
+									onupload="startUpload();" onuploadcanceled="endUpload();" onerror="endUpload();">
+									<f:facet name="label">
+										<h:outputText value="#{appBundle.aon_fileUpload_upload_label}" />
+									</f:facet>								
+									<a4j:support event="onuploadcomplete" oncomplete="endUpload();" reRender="attachDataTable" />
+								</rich:fileUpload>	
+								<aon:div id="attachDataTable">
+									<aon:dataTable  
+										value="#{fax.files}" style="width: 90%;"
+										var="attachment" styleClass="aon-panelGrid-formatting">
 											<aon:column>
-												<aon:outputText value="#{attachment.file.name}" styleClass="aon-bold" />
+												<aon:outputText value="#{attachment.fileName}" styleClass="aon-bold" />
 												<aon:commandLink
 													reRender="attachDiv" style="font-size:0.9em;margin-left:20px;"
-													value=""
+													value="#{appBundle.aon_fileUpload_remove}"
 													styleClass="aon-icon-commandButton aon-icon-delete"
 													actionListener="#{attachment.fileDeleted}">
 												</aon:commandLink>
@@ -106,7 +109,7 @@
 							</aon:div>
 
 							<aon:outputLabel for="FAX_message" value="#{appBundle.aon_messaging_cover}" />
-							<aon:panelGrid styleClass="aon-panelGrid-formatting" >
+							<aon:div>
 								<aon:div>
 									<aon:selectBooleanCheckbox value="#{fax.allowCover}" >
 									 	<a4j:support event="onclick" reRender="FAX_message" />
@@ -117,7 +120,7 @@
 									<aon:inputTextarea rendered="#{fax.allowCover}" value="#{fax.content}" 
 										cols="80" rows="20"/>
 								</aon:div>
-							</aon:panelGrid>
+							</aon:div>
 						</aon:panelGrid>
 					</aon:div>
 				</aon:panelGrid>
