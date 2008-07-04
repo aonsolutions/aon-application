@@ -80,9 +80,11 @@ public class DesktopAlarm {
 	public boolean isHighPrty() {
         return priority.equals(Priority.HIGH);
     }
+	
 	public boolean isMediumPrty() {
-        return priority.equals(Priority.MEDIUM);
+        return priority.equals(Priority.NORMAL);
     }
+	
 	public boolean isLowPrty() {
         return priority.equals(Priority.LOW);
     }
