@@ -51,7 +51,7 @@ public class CampaignTaskManager {
             task.setStatus(TaskStatus.PENDING);
             task.setPercent(0);
             task.setWorkGroup(processDetail.getWorkgroup() != null ? processDetail.getWorkgroup() : activity.getWorkgroup());
-            task.setSource(TaskSource.AON_CONSULTANT);
+            task.setSource(TaskSource.PROCESS);
             task.setDossier(campaignDossier.getDossier());
             task.setActivity(activity);
             task = addTask(task);
