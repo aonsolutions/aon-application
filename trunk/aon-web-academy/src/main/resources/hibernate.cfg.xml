@@ -125,7 +125,6 @@
 			
 		<!-- AON-COMPANY Mapping files -->	
 		<mapping class="com.code.aon.company.Company"/>
-		<mapping class="com.code.aon.company.WebInfo"/>
 		<mapping class="com.code.aon.company.WorkPlace"/>
 		<mapping class="com.code.aon.company.WorkActivity"/>
 		<mapping class="com.code.aon.company.resources.Resource"/>
