@@ -2,6 +2,8 @@ package com.code.aon.desktop.controller;
 
 import java.security.Principal;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 
@@ -10,7 +12,6 @@ import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
 import javax.faces.model.ListDataModel;
 
-import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 
 import com.code.aon.bridge.jmx.mbean.IConsoleAdmin;
@@ -20,6 +21,7 @@ import com.code.aon.bridge.plugin.Utils;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.jaas.auth.AuthPrincipal;
 import com.code.aon.jaas.client.ast.IDomainApplication;
+import com.code.aon.jaas.client.ast.INode;
 import com.code.aon.jaas.client.ast.IRelation;
 import com.code.aon.jaas.client.ast.core.Relation;
 import com.code.aon.jaas.deployment.DeploymentException;
@@ -29,6 +31,7 @@ import com.code.aon.ldap.DistinguishedName;
 import com.code.aon.ldap.IAonObjectClasses;
 import com.code.aon.ui.config.util.UserUtils;
 import com.code.aon.ui.form.BasicController;
+import com.code.aon.ui.util.AonUtil;
 
 public class AonDomainController extends BasicController implements IAonObjectClasses {
 
@@ -106,12 +109,22 @@ public class AonDomainController extends BasicController implements IAonObjectCl
 				IDomainApplication da = iter.next();
 				l.add(da);
 			}
+			Collections.sort(l, getNodeComparator());
 			applications = new ListDataModel(l); 
 		} catch (ManagerBeanException e) {
 			e.printStackTrace();
 		}
 	}
 
+	private Comparator<INode> getNodeComparator() {
+		Comparator<INode> comparator = new Comparator<INode>() {
+			public int compare(INode n1, INode n2) {
+				return n1.getId().compareTo(n2.getId());
+			}			
+		};
+		return comparator;
+	}
+	
 	public void loadProfiles()  {
 		Iterator<IRelation> iter = da.profiles().iterator();
 		List<IRelation> l = new ArrayList<IRelation>();
@@ -119,6 +132,7 @@ public class AonDomainController extends BasicController implements IAonObjectCl
 			IRelation r = iter.next();
 			l.add(r);
 		}
+		Collections.sort(l, getNodeComparator());
 		profiles = new ListDataModel(l); 
 	}
 
@@ -129,6 +143,7 @@ public class AonDomainController extends BasicController implements IAonObjectCl
 			IRelation r = iter.next();
 			l.add(r);
 		}
+		Collections.sort(l, getNodeComparator());
 		users = new ListDataModel(l); 
 	}
 	
@@ -142,6 +157,12 @@ public class AonDomainController extends BasicController implements IAonObjectCl
 		return "";
 	}	
 
+	public String getCurrentUserName() {
+		IRelation user = (IRelation) this.users.getRowData();
+		AonUserController userController = (AonUserController) AonUtil.getRegisteredBean("currentUser");		
+		return userController.getUserName(user.getId());
+	}	
+	
 	@SuppressWarnings("unchecked")
 	private void loadDomain() throws ManagerBeanException {
 		ExternalContext ec = FacesContext.getCurrentInstance().getExternalContext();
