@@ -10,6 +10,9 @@ import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
 import javax.faces.model.ListDataModel;
 
+import org.apache.commons.lang.ArrayUtils;
+import org.apache.commons.lang.StringUtils;
+
 import com.code.aon.bridge.jmx.mbean.IConsoleAdmin;
 import com.code.aon.bridge.plugin.DomainManager;
 import com.code.aon.bridge.plugin.UserManager;
@@ -128,6 +131,16 @@ public class AonDomainController extends BasicController implements IAonObjectCl
 		}
 		users = new ListDataModel(l); 
 	}
+	
+	public String getCurrentUserProfiles() {
+		IRelation user = (IRelation) this.users.getRowData();
+		List<String> relations = user.relations();
+		if ( (relations != null) && (!relations.isEmpty()) ) {
+			String profiles = StringUtils.join(relations.toArray(), ", ");
+			return StringUtils.abbreviate(profiles, 140);
+		}
+		return "";
+	}	
 
 	@SuppressWarnings("unchecked")
 	private void loadDomain() throws ManagerBeanException {
