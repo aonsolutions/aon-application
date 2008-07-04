@@ -27,6 +27,7 @@
 					aon-edit-table-body aon-edit-table-body-string,
 					aon-edit-table-body aon-edit-table-body-string,
 					aon-edit-table-body aon-edit-table-body-string,
+					aon-edit-table-body aon-edit-table-body-string,
 					aon-edit-table-body aon-edit-table-body-number,
 					aon-edit-table-body aon-edit-table-body-buttons">
 
@@ -152,6 +153,13 @@
 								popupWeekString="#{bundle.aon_popup_week}" />
 						</t:div>
 					</f:facet>
+				</t:column>
+				
+				<t:column>
+					<f:facet name="header">
+						<h:outputText value="#{financeBundle.finance_status}" />
+					</f:facet>
+					<h:outputText value="#{to.financeStatus}"/>
 				</t:column>
 				
 				<t:column width="70">
