@@ -26,8 +26,8 @@
 	_font-size:5px;
 	}
 .aon-logo{
-	background:transparent url("images/content/blue-logo.gif") left top no-repeat;
-	padding:15px 110px;
+	display:inline;
+	
 	}
 .aon-auxiliary-window-content{
 	background:transparent url("images/content/blue-home.jpg") left top no-repeat;
