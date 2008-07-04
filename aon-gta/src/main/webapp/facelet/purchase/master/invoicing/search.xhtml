@@ -26,20 +26,19 @@
 	</ui:define>		
 
 	<ui:define name="content">
-
-		<h:form id="invoiceForm" styleClass="aon-form">
+		<h:form id="invoiceForm">
 
 			<t:div styleClass="aon-content-toolbar">
 				<t:div styleClass="aon-content-toolbar-internal">
 				<t:div styleClass="aon-content-toolbar-item-group">
 					<t:commandButton id="search" value="#{bundle.aon_search}"
-						actionListener="#{invoicing.onSearch}" action="purchase_invoicing_list"
+						action="purchase_invoicing_list" actionListener="#{invoicing.onSearch}"
 						styleClass="aon-content-toolbar-item aon-content-toolbar-item-accept"
 						onmouseover="this.className='aon-content-toolbar-item aon-content-toolbar-item-hover aon-content-toolbar-item-accept'"
 						onmouseout="this.className='aon-content-toolbar-item aon-content-toolbar-item-accept'" 
 						accesskey="#{bundle.aon_key_search}"/>
 					<t:commandButton id="cancel" value="#{bundle.aon_cancel}"
-						actionListener="#{invoicing.onCancel}" action="purchase_invoicing_list"
+						action="purchase_invoicing_list" actionListener="#{invoicing.onCancel}"
 						styleClass="aon-content-toolbar-item aon-content-toolbar-item-cancel"
 						onmouseover="this.className='aon-content-toolbar-item aon-content-toolbar-item-hover aon-content-toolbar-item-cancel'"
 						onmouseout="this.className='aon-content-toolbar-item aon-content-toolbar-item-cancel'" 
@@ -50,7 +49,7 @@
 						onmouseover="this.className='aon-content-toolbar-item aon-content-toolbar-item-hover aon-content-toolbar-item-reset'"
 						onmouseout="this.className='aon-content-toolbar-item aon-content-toolbar-item-reset'" />
 					<t:commandButton id="reset" value="#{bundle.aon_reset}"
-						actionListener="#{invoicing.onReset}" action="purchase_invoicing_form"
+						action="purchase_invoicing_form" actionListener="#{invoicing.onReset}"
 						styleClass="aon-content-toolbar-item aon-content-toolbar-item-new"
 						onmouseover="this.className='aon-content-toolbar-item aon-content-toolbar-item-hover aon-content-toolbar-item-new'"
 						onmouseout="this.className='aon-content-toolbar-item aon-content-toolbar-item-new'" 
@@ -71,87 +70,77 @@
 					<h:panelGrid columns="2" styleClass="aon-form-table"
 						columnClasses="aon-form-table-column-odd,aon-form-table-column-even">
 
-							<h:outputLabel for="Invoice_series"
-								styleClass="aon-form-input-text-label"
-								value="#{financeBundle.aon_series_number}" />
-							<h:panelGrid columns="2">
-								<t:inputText id="Invoice_series"
-									onblur="toUpperCase(this);"
-									valueChangeListener="#{invoicing.addExpression}"
-									styleClass="aon-form-input-text" forceId="#{true}" size="4"
-									maxlength="5">
-									<f:validateLength maximum="5" />
-								</t:inputText>
-								<t:inputText id="Invoice_number"
-									valueChangeListener="#{invoicing.addExpression}"
-									styleClass="aon-form-input-text" forceId="#{true}"
-									size="7" />
-							</h:panelGrid>
-							
-							<t:outputLabel for="Supplier_Lookup_id"
-								styleClass="aon-form-input-text-label"
-								value="#{supplierBundle.aon_supplier}" />
-							<t:div>
-								<t:inputText id="Supplier_Lookup_id" size="5" forceId="#{true}"
-									styleClass="aon-form-input-text"
-									onchange="return findBeanLookupExt(event,'#{facesContext.externalContext.requestContextPath}','supplierLookup','Supplier_Lookup_id','Supplier_id|Supplier_Lookup_id,Supplier_full_name|Supplier_full_name');"
-									valueChangeListener="#{invoicing.addSupplierEqualExpression}"/>
-								<h:commandButton id="find_Supplier_Lookup_id"
-									styleClass="aon-form-lookup-button" value="" immediate="true"
-									onclick="lookupSearchWindow(this, 'placeList', '#{supplierLookup.encodedSearchPagePath}','Supplier_id|Supplier_Lookup_id,Supplier_full_name|Supplier_full_name');return false;" />	
-								<t:inputText id="Supplier_full_name" forceId="#{true}"
-									styleClass="aon-form-input-text-disabled"
-									disabled="true" size="40"/>	 		
-							</t:div>
+						<h:outputLabel for="Invoice_referenceCode"
+							styleClass="aon-form-input-text-label"
+							value="#{financeBundle.aon_invoice_number}" />
+						<t:inputText id="Invoice_referenceCode"
+							onblur="toUpperCase(this);"
+							valueChangeListener="#{invoicing.addExpression}"
+							styleClass="aon-form-input-text" forceId="#{true}" size="25"
+							maxlength="32"/>
 
-							<h:outputLabel
-								styleClass="aon-form-input-text-label aon-form-table-column-odd-label"
-								for="Invoice_issue_date1" value="#{purchaseBundle.aon_date}" />
-							<t:div>
-								<t:div styleClass="aon-form-nowrap aon-form-layout-unit aon-form-layout-unit-inline-label-block">
-									<h:outputText value="#{purchaseBundle.aon_date_from}" 
-									styleClass="aon-form-input-text-label aon-form-layout-label-block"/>
-									<t:inputText styleClass="aon-form-input-text"
-										id="Invoice_issue_date1" 
-										forceId="#{true}"
-										valueChangeListener="#{invoicing.addIssuedate1Expression}"
-										size="10" maxlength="12">
-										<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
-											timeZone="#{timeZoneController.timeZoneId}" />
-									</t:inputText>
-									<t:commandButton styleClass="aon-form-calendar-button"
-										id="Invoice_issue_date1_button" forceId="#{true}" value=""
-										immediate="true" />
-									<script type="text/javascript">
-									  Calendar.setup( {
-										inputField  : "Invoice_issue_date1", button : "Invoice_issue_date1_button",
-										ifFormat    : "%d/%m/%Y" } );
-									</script>
-								</t:div>
-								<t:div styleClass="aon-form-nowrap aon-form-layout-unit aon-form-layout-unit-inline-label-block">
-									<h:outputText value="#{purchaseBundle.aon_date_to}" 
-									styleClass="aon-form-input-text-label aon-form-layout-label-block"/>
-									
-									<t:inputText styleClass="aon-form-input-text"
-										id="Invoice_issue_date2" 
-										forceId="#{true}"
-										valueChangeListener="#{invoicing.addIssuedate2Expression}"
-										size="10" maxlength="12">
-										<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
-											timeZone="#{timeZoneController.timeZoneId}" />
-									</t:inputText>
-									<t:commandButton styleClass="aon-form-calendar-button"
-										id="Invoice_issue_date2_button" forceId="#{true}" value=""
-										immediate="true" />
-									<script type="text/javascript">
-									  Calendar.setup( {
-										inputField  : "Invoice_issue_date2", button : "Invoice_issue_date2_button",
-										ifFormat    : "%d/%m/%Y" } );
-									</script>
-								</t:div>
+						<h:outputLabel
+							styleClass="aon-form-input-text-label aon-form-table-column-odd-label"
+							for="Invoice_issue_date1" value="#{purchaseBundle.aon_date}" />
+						<t:div>
+							<t:div style="display:inline;">
+								<h:outputLabel value="#{purchaseBundle.aon_date_from}" 
+									styleClass="aon-form-input-text-label"/>
+								<t:inputText styleClass="aon-form-input-text"
+									id="Invoice_issue_date1" 
+									forceId="#{true}"
+									valueChangeListener="#{invoicing.addIssuedate1Expression}"
+									size="10" maxlength="12">
+									<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+										timeZone="#{timeZoneController.timeZoneId}" />
+								</t:inputText>
+								<t:commandButton styleClass="aon-form-calendar-button"
+									id="Invoice_issue_date1_button" forceId="#{true}" value=""
+									immediate="true" />
+								<script type="text/javascript">
+								  Calendar.setup( {
+									inputField  : "Invoice_issue_date1", button : "Invoice_issue_date1_button",
+									ifFormat    : "%d/%m/%Y" } );
+								</script>
 							</t:div>
+							<t:div style="display:inline;">
+								<h:outputLabel value="#{purchaseBundle.aon_date_to}" 
+									styleClass="aon-form-input-text-label"/>
+								<t:inputText styleClass="aon-form-input-text"
+									id="Invoice_issue_date2" 
+									forceId="#{true}"
+									valueChangeListener="#{invoicing.addIssuedate2Expression}"
+									size="10" maxlength="12">
+									<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+										timeZone="#{timeZoneController.timeZoneId}" />
+								</t:inputText>
+								<t:commandButton styleClass="aon-form-calendar-button"
+									id="Invoice_issue_date2_button" forceId="#{true}" value=""
+									immediate="true" />
+								<script type="text/javascript">
+								  Calendar.setup( {
+									inputField  : "Invoice_issue_date2", button : "Invoice_issue_date2_button",
+									ifFormat    : "%d/%m/%Y" } );
+								</script>
+							</t:div>
+						</t:div>
 							
-							
+						<t:outputLabel for="Supplier_Lookup_id"
+							styleClass="aon-form-input-text-label"
+							value="#{supplierBundle.aon_supplier}" />
+						<t:div>
+							<t:inputText id="Supplier_Lookup_id" size="5" forceId="#{true}"
+								styleClass="aon-form-input-text"
+								onchange="return findBeanLookupExt(event,'#{facesContext.externalContext.requestContextPath}','supplierLookup','Supplier_Lookup_id','Supplier_id|Supplier_Lookup_id,Supplier_full_name|Supplier_full_name');"
+								valueChangeListener="#{invoicing.addSupplierEqualExpression}"/>
+							<h:commandButton id="find_Supplier_Lookup_id"
+								styleClass="aon-form-lookup-button" value="" immediate="true"
+								onclick="lookupSearchWindow(this, 'placeList', '#{supplierLookup.encodedSearchPagePath}','Supplier_id|Supplier_Lookup_id,Supplier_full_name|Supplier_full_name');return false;" />	
+							<t:inputText id="Supplier_full_name" forceId="#{true}"
+								styleClass="aon-form-input-text-disabled"
+								disabled="true" size="40"/>	 		
+						</t:div>
+
 					</h:panelGrid>
 				</t:div>
 			</t:div>
