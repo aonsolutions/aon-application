@@ -38,6 +38,7 @@
 	<parameter name="printHeader" isForPrompting="false" class="java.lang.Boolean"/>
 	<parameter name="printRecordData" isForPrompting="false" class="java.lang.Boolean"/>
 	<parameter name="recordData" isForPrompting="false" class="com.code.aon.registry.RecordData"/>
+	<parameter name="invoiceDetailPrinter" isForPrompting="false" class="com.code.aon.gta.print.InvoiceDetailPrinter"/>
 
 	<field name="series" class="java.lang.String"/>
 	<field name="number" class="java.lang.Integer"/>
@@ -135,12 +136,14 @@
 						mode="Opaque"
 						x="5"
 						y="0"
-						width="244"
+						width="250"
 						height="75"
 						forecolor="#000000"
 						backcolor="#FFFFFF"
 						key="image-1"
-						positionType="Float"/>
+						positionType="Float">
+							<printWhenExpression><![CDATA[$P{printHeader}]]></printWhenExpression>
+						</reportElement>
 					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
 					<graphicElement stretchType="NoStretch" pen="None" fill="Solid" />
 					<imageExpression class="java.io.InputStream"><![CDATA[$P{logoImageFile}]]></imageExpression>
@@ -262,22 +265,22 @@
 				<subreport  isUsingCache="true">
 					<reportElement
 						x="5"
-						y="167"
+						y="121"
 						width="544"
-						height="54"
+						height="100"
 						key="subreport-1"
 						positionType="Float"/>
 					<parametersMapExpression><![CDATA[$P{REPORT_PARAMETERS_MAP}]]></parametersMapExpression>
 					<subreportParameter  name="invoice">
 						<subreportParameterExpression><![CDATA[(com.code.aon.product.strategy.ICalculableContainer)((com.code.aon.ui.report.jr.ICurrentBeanProvider)$P{REPORT_DATA_SOURCE}).getCurrentBean()]]></subreportParameterExpression>
 					</subreportParameter>
-					<dataSourceExpression><![CDATA[new com.code.aon.ui.report.jr.JRBeanCollectionDataSource(((com.code.aon.finance.Invoice)(((com.code.aon.ui.report.jr.ICurrentBeanProvider)$P{REPORT_DATA_SOURCE}).getCurrentBean())).getOrderedDetailList())]]></dataSourceExpression>
+					<dataSourceExpression><![CDATA[new com.code.aon.ui.report.jr.JRBeanCollectionDataSource($P{invoiceDetailPrinter}.getCollection($F{id}))]]></dataSourceExpression>
 					<subreportExpression  class="net.sf.jasperreports.engine.JasperReport"><![CDATA[$P{nestedReports}.get("invoiceDetail")]]></subreportExpression>
 				</subreport>
 				<textField isStretchWithOverflow="true" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						x="71"
-						y="133"
+						y="91"
 						width="478"
 						height="15"
 						key="textField-67"
@@ -286,7 +289,7 @@
 							<printWhenExpression><![CDATA[new Boolean($F{comments} != null && !"".equals($F{comments}))]]></printWhenExpression>
 						</reportElement>
 					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" leftPadding="2" rightBorder="None" rightBorderColor="#000000" rightPadding="2" bottomBorder="None" bottomBorderColor="#000000"/>
-					<textElement>
+					<textElement verticalAlignment="Middle">
 						<font/>
 					</textElement>
 				<textFieldExpression   class="java.lang.String"><![CDATA[$F{comments}]]></textFieldExpression>
@@ -294,7 +297,7 @@
 				<subreport  isUsingCache="true">
 					<reportElement
 						x="5"
-						y="267"
+						y="264"
 						width="544"
 						height="29"
 						key="subreport-5"
@@ -415,174 +418,10 @@
 					</textElement>
 				<textFieldExpression   class="java.lang.String"><![CDATA[$F{registry}.getDefaultAddress().getGeozone().getName()]]></textFieldExpression>
 				</textField>
-				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
-					<reportElement
-						x="55"
-						y="107"
-						width="124"
-						height="13"
-						key="textField-81"/>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
-					<textElement verticalAlignment="Middle">
-						<font/>
-					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$P{tasDelivery}.getSupportOrder().getTasItem().getModel().getMake().getName() + ", " + $P{tasDelivery}.getSupportOrder().getTasItem().getModel().getName()]]></textFieldExpression>
-				</textField>
 				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						x="5"
-						y="107"
-						width="50"
-						height="13"
-						key="textField-82"/>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
-					<textElement verticalAlignment="Middle">
-						<font pdfFontName="Helvetica-Bold" size="9" isBold="true" isUnderline="false" isPdfEmbedded ="false"/>
-					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$R{offer_tasItem} + ":"]]></textFieldExpression>
-				</textField>
-				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
-					<reportElement
-						x="179"
-						y="107"
-						width="51"
-						height="13"
-						key="textField-83"/>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
-					<textElement textAlignment="Left" verticalAlignment="Middle">
-						<font pdfFontName="Helvetica-Bold" size="9" isBold="true" isUnderline="false" isPdfEmbedded ="false"/>
-					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$R{offer_tasItem_publicCode} + ":"]]></textFieldExpression>
-				</textField>
-				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
-					<reportElement
-						x="230"
-						y="107"
-						width="60"
-						height="13"
-						key="textField-84"/>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
-					<textElement verticalAlignment="Middle">
-						<font/>
-					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$P{tasDelivery}.getSupportOrder().getTasItem().getPublicCode()]]></textFieldExpression>
-				</textField>
-				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
-					<reportElement
-						x="290"
-						y="107"
-						width="76"
-						height="13"
-						key="textField-85"/>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
-					<textElement verticalAlignment="Middle">
-						<font pdfFontName="Helvetica-Bold" size="9" isBold="true" isUnderline="false" isPdfEmbedded ="false"/>
-					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$R{offer_tasItem_privateCode} + ":"]]></textFieldExpression>
-				</textField>
-				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
-					<reportElement
-						x="366"
-						y="107"
-						width="105"
-						height="13"
-						key="textField-86"/>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
-					<textElement verticalAlignment="Middle">
-						<font/>
-					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$P{tasDelivery}.getSupportOrder().getTasItem().getPrivateCode()]]></textFieldExpression>
-				</textField>
-				<textField isStretchWithOverflow="false" pattern="#,##0.00" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
-					<reportElement
-						x="505"
-						y="107"
-						width="44"
-						height="13"
-						key="textField-87"/>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
-					<textElement verticalAlignment="Middle">
-						<font/>
-					</textElement>
-				<textFieldExpression   class="java.lang.Double"><![CDATA[new Double($P{tasDelivery}.getSupportOrder().getCounterti())]]></textFieldExpression>
-				</textField>
-				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
-					<reportElement
-						x="471"
-						y="107"
-						width="34"
-						height="13"
-						key="textField-88"/>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
-					<textElement verticalAlignment="Middle">
-						<font pdfFontName="Helvetica-Bold" size="9" isBold="true" isUnderline="false" isPdfEmbedded ="false"/>
-					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$R{invoice_support_order_counter} + ":"]]></textFieldExpression>
-				</textField>
-				<textField isStretchWithOverflow="true" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
-					<reportElement
-						x="5"
-						y="120"
-						width="66"
-						height="13"
-						key="textField-89">
-							<printWhenExpression><![CDATA[new Boolean($P{supportOrderInsurance} != null)]]></printWhenExpression>
-						</reportElement>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
-					<textElement verticalAlignment="Middle">
-						<font pdfFontName="Helvetica-Bold" size="9" isBold="true" isUnderline="false" isPdfEmbedded ="false"/>
-					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$R{invoice_support_order_insurance_claim_number} + ":"]]></textFieldExpression>
-				</textField>
-				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
-					<reportElement
-						x="71"
-						y="120"
-						width="90"
-						height="13"
-						key="textField-90">
-							<printWhenExpression><![CDATA[new Boolean($P{supportOrderInsurance} != null)]]></printWhenExpression>
-						</reportElement>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
-					<textElement verticalAlignment="Middle">
-						<font/>
-					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$P{supportOrderInsurance}.getClaimNumber()]]></textFieldExpression>
-				</textField>
-				<textField isStretchWithOverflow="true" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
-					<reportElement
-						x="161"
-						y="120"
-						width="69"
-						height="13"
-						key="textField-91">
-							<printWhenExpression><![CDATA[new Boolean($P{supportOrderInsurance} != null)]]></printWhenExpression>
-						</reportElement>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
-					<textElement textAlignment="Left" verticalAlignment="Middle">
-						<font pdfFontName="Helvetica-Bold" size="9" isBold="true" isUnderline="false" isPdfEmbedded ="false"/>
-					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$R{invoice_support_order_insurance} + ":"]]></textFieldExpression>
-				</textField>
-				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
-					<reportElement
-						x="230"
-						y="120"
-						width="319"
-						height="13"
-						key="textField-92">
-							<printWhenExpression><![CDATA[new Boolean($P{supportOrderInsurance} != null)]]></printWhenExpression>
-						</reportElement>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
-					<textElement verticalAlignment="Middle">
-						<font/>
-					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$P{supportOrderInsurance}.getInsurance().getRegistry().getName()]]></textFieldExpression>
-				</textField>
-				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
-					<reportElement
-						x="5"
-						y="133"
+						y="91"
 						width="66"
 						height="15"
 						key="textField-93"
