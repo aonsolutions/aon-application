@@ -30,3 +30,24 @@ function resetStatusError() {
 	}
 }
 
+function startUpload() {
+	try {
+		var fileItems = document.getElementById( "homepage:faxForm:attach_file:fileItems");
+		if ( fileItems ) {
+			fileItems.style.height = "70px";
+		}
+	} catch(e) {
+		alert( e );
+	}
+}
+
+function endUpload() {
+	try {
+		var fileItems = document.getElementById( "homepage:faxForm:attach_file:fileItems");
+		if ( fileItems ) {
+			fileItems.style.height = "0px";
+		}
+	} catch(e) {
+		alert( e );
+	}
+}
