@@ -69,11 +69,11 @@
 			<list-entries>
 				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
 				<value>#{invoiceRegistryVetoListener}</value>
+				<value>#{supplierScopeListener}</value>
 				<value>#{supplierAddressListener}</value>
 				<value>#{supplierMediaListener}</value>
 				<value>#{supplierRBankChildListener}</value>
 				<value>#{supplierRPayMethodChildListener}</value>
-				<value>#{supplierScopeListener}</value>
 			</list-entries>
 		</managed-property>
 	</managed-bean>
