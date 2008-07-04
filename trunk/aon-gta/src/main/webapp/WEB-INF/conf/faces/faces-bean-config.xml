@@ -83,13 +83,11 @@
 			<value>/images/logo.gif</value>
 		</managed-property>
 		<managed-property>
-			<property-name>style</property-name>
-			<value>blue</value>
-		</managed-property>
-		<managed-property>
-			<property-name>userStyleSheets</property-name>
+			<property-name>styleSheets</property-name>
 			<list-entries>
-				<value>/css/hyperview.css</value>
+				<value>/css/aon.css</value>
+				<value>/css/layout.css</value>
+				<value>/css/blue/aon-blue.css</value>
 				<value>/css/aon-solutions.css</value>
 			</list-entries>
 		</managed-property>
@@ -236,6 +234,22 @@
 		<managed-bean-name>failedLogin</managed-bean-name>
 		<managed-bean-class>com.code.aon.bridge.session.FailedLogin</managed-bean-class>
 		<managed-bean-scope>request</managed-bean-scope>
+	</managed-bean>
+
+	<!-- =================== Mailing ========================== -->
+	<managed-bean>
+		<managed-bean-name>mailing</managed-bean-name>
+		<managed-bean-class>com.code.aon.gta.controller.MailingController</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+	</managed-bean>
+	
+	<!-- =================== Invoice Detail Printer ========================== -->
+	<managed-bean>
+		<managed-bean-name>invoiceDetailPrinter</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.gta.print.InvoiceDetailPrinter
+		</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
 	</managed-bean>
 
 </faces-config>
