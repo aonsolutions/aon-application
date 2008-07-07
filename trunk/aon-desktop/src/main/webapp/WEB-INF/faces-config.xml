@@ -95,12 +95,6 @@ faces-config PUBLIC "-//Sun Microsystems, Inc.//DTD JavaServer Faces Config 1.1/
     com.code.aon.ui.common.controller.TimeZoneController</managed-bean-class>
     <managed-bean-scope>session</managed-bean-scope>
   </managed-bean>
-  <managed-bean>
-    <managed-bean-name>nullSelectItem</managed-bean-name>
-    <managed-bean-class>
-    com.code.ui.cms.controller.NullSelectItemController</managed-bean-class>
-    <managed-bean-scope>application</managed-bean-scope>
-  </managed-bean>
   <!-- ************** EXCEPTION HANDLER ****************** -->
   <managed-bean>
     <managed-bean-name>exceptionBean</managed-bean-name>
