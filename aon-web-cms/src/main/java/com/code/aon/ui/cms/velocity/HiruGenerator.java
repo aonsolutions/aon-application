@@ -141,6 +141,6 @@ public class HiruGenerator extends Generator {
 		}
 	}
 
-	private static String COURSES_HTML = "main";
+	public static String COURSES_HTML = "main";
 	
 }

@@ -55,6 +55,7 @@ import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionException;
+import com.code.aon.ui.cms.util.DomainUtilities;
 import com.code.aon.ui.util.AonUtil;
 
 public class CollectionsController {
@@ -254,9 +255,11 @@ public class CollectionsController {
 		SelectItem item = new SelectItem("", "");
 		types.add(item);
 		for (SidebarType sidebarType : SidebarType.values()) {
-			String name = sidebarType.getName(locale);
-			item = new SelectItem(sidebarType, name);
-			types.add(item);
+			if (DomainUtilities.hasSidebarType(sidebarType)){
+				String name = sidebarType.getName(locale);
+				item = new SelectItem(sidebarType, name);
+				types.add(item);
+			}
 		}
 		return types;
 	}
@@ -291,9 +294,11 @@ public class CollectionsController {
 		SelectItem item = new SelectItem("", "");
 		types.add(item);
 		for (PageType pageType : PageType.values()) {
-			String name = pageType.getName(locale);
-			item = new SelectItem(pageType, name);
-			types.add(item);
+			if (DomainUtilities.hasPageType(pageType)){
+				String name = pageType.getName(locale);
+				item = new SelectItem(pageType, name);
+				types.add(item);
+			}
 		}
 		return types;
 	}
@@ -365,9 +370,11 @@ public class CollectionsController {
 		SelectItem item = new SelectItem("", "");
 		types.add(item);
 		for (ModularPageOptionType pageType : ModularPageOptionType.values()) {
-			String name = pageType.getName(locale);
-			item = new SelectItem(pageType, name);
-			types.add(item);
+			if (DomainUtilities.hasModularPageOptionType(pageType)){
+				String name = pageType.getName(locale);
+				item = new SelectItem(pageType, name);
+				types.add(item);
+			}
 		}
 		return types;
 	}

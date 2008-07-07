@@ -145,4 +145,15 @@ public class ControllerUtil implements Constants {
 		return path;
 	}
 
+	public static String getConfigPath() {
+		String path = null;
+		path = DOMAINS_PATH + "/" + getCurrentConfig().getDomain() + 
+									"/" + RESOURCE_PATH + 
+									"/" + APLICATION_NAME + 
+									"/" + TEMPLATE_PATH + 
+									"/" + getCurrentConfig().getTemplate() + 
+									"/" + CONFIG_PATH; 
+		return path;
+	}	
+
 }
