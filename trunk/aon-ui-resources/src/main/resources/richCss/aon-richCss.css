@@ -339,7 +339,7 @@ color:#000;
   .aon-icon-sincronize{
 	background:transparent url(images/aon-icon/aon-icon-sincronize.png) scroll left center no-repeat;
   }
-
+  
 /* otros */
 .aon-icon-agenda{
 	background:transparent url(images/aon-icon/aon-icon-agenda.png) scroll left center no-repeat;
@@ -1438,4 +1438,16 @@ color:#000;
 	padding-left:0.5em;
 	padding-top:2px;
 	padding-bottom:2px;
+}
+
+/*************************/
+/*****  FILE UPLOAD  *****/
+/************************/
+.rich-fileupload-list-decor, .rich-fileupload-toolbar-decor{
+	border:0;
+	background-color:transparent;
+}
+.rich-fileupload-list-overflow{
+}
+.rich-fileupload-button{
 }
