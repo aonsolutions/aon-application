@@ -21,6 +21,8 @@ import com.code.aon.cms.GenericPageDetail;
 import com.code.aon.cms.LinkCategory;
 import com.code.aon.cms.MenuOption;
 import com.code.aon.cms.ModularPage;
+import com.code.aon.cms.SportCategory;
+import com.code.aon.cms.SportClub;
 import com.code.aon.cms.dao.ICMSAlias;
 import com.code.aon.cms.enumeration.ArticleType;
 import com.code.aon.cms.enumeration.ContentLevel;
@@ -38,8 +40,10 @@ import com.code.aon.ui.cms.velocity.ArticleCalendarGenerator;
 import com.code.aon.ui.cms.velocity.ArticleGenerator;
 import com.code.aon.ui.cms.velocity.DownloadsGenerator;
 import com.code.aon.ui.cms.velocity.FaqGenerator;
+import com.code.aon.ui.cms.velocity.HiruGenerator;
 import com.code.aon.ui.cms.velocity.LinkGenerator;
 import com.code.aon.ui.cms.velocity.ProductGenerator;
+import com.code.aon.ui.cms.velocity.SportGenerator;
 import com.code.aon.ui.util.AonUtil;
 
 public class MenuOptionUtil {
@@ -55,6 +59,7 @@ public class MenuOptionUtil {
 			if (type.equals(PageType.ARTICLE_SERVICES)) return true;
 			if (type.equals(PageType.ARTICLE_OTHER)) return true;
 			if (type.equals(PageType.DOWNLOAD)) return true;
+			if (type.equals(PageType.SPORT)) return true;
 		}
 		return false;
 	}
@@ -103,6 +108,14 @@ public class MenuOptionUtil {
 					return true;
 			}
 			if (type.equals(PageType.DOWNLOAD)){
+				if (ContentLevel.SECTION.equals(level))
+					return true;
+				if (ContentLevel.CATEGORY.equals(level))
+					return true;
+				if (ContentLevel.ELEMENT.equals(level))
+					return true;
+			}
+			if (type.equals(PageType.SPORT)){
 				if (ContentLevel.SECTION.equals(level))
 					return true;
 				if (ContentLevel.CATEGORY.equals(level))
@@ -245,6 +258,16 @@ public class MenuOptionUtil {
 			}
 			if (ContentLevel.ELEMENT.equals(level)){
 				idents = ((CollectionsController)AonUtil.getRegisteredBean("collections")).getDownloadList();
+			}
+		}else if (type.equals(PageType.SPORT)){
+			if (ContentLevel.SECTION.equals(level)){
+				idents.add(new SelectItem(null,"NO VALID"));
+			}
+			if (ContentLevel.CATEGORY.equals(level)){
+				idents = ((CollectionsController)AonUtil.getRegisteredBean("collections")).getSportCategoryList();
+			}
+			if (ContentLevel.ELEMENT.equals(level)){
+				idents = ((CollectionsController)AonUtil.getRegisteredBean("collections")).getSportClubList();
 			}
 		}
 		return idents;
@@ -528,6 +551,45 @@ public class MenuOptionUtil {
 			link = link.replaceAll("%NAME%", ProductGenerator.MAIN_PAGE);
 			return link;
 		}
+		if (pageType == PageType.HIRU) {
+			String link = Templates.HIRU_COURSES.getHtmlName();
+			link = link.replaceAll("%NAME%", HiruGenerator.COURSES_HTML);
+			return link;
+		}
+		if (pageType == PageType.SPORT) {
+			try {
+				if (level.equals(ContentLevel.TOP)){
+					String page = Templates.SPORT.getHtmlName();
+					page = page.replaceAll("%NAME%", SportGenerator.MAIN_PAGE);
+					return page;
+				}else if (level.equals(ContentLevel.CATEGORY)){
+					IManagerBean bean = BeanManager.getManagerBean(SportCategory.class);
+					Criteria criteria = new Criteria();
+					criteria.addEqualExpression(bean.getFieldName(ICMSAlias.SPORT_CATEGORY_ID), ident);
+					List<ITransferObject> l = (List<ITransferObject>)bean.getList(criteria);
+					if (l.size() > 0) {
+						SportCategory sc = (SportCategory)l.get(0);
+						String link = Templates.SPORT.getHtmlName();
+						link = link.replaceAll("%NAME%", SportGenerator.CATEGORY + sc.getAlias());
+						return link;
+					}
+				}else if (level.equals(ContentLevel.ELEMENT)){
+					IManagerBean bean = BeanManager.getManagerBean(SportClub.class);
+					Criteria criteria = new Criteria();
+					criteria.addEqualExpression(bean.getFieldName(ICMSAlias.SPORT_CLUB_ID), ident);
+					List<ITransferObject> l = (List<ITransferObject>)bean.getList(criteria);
+					if (l.size() > 0) {
+						SportClub s = (SportClub)l.get(0);
+						String link = Templates.SPORT.getHtmlName();
+						link = link.replaceAll("%NAME%", SportGenerator.CLUB +s.getId());
+						return link;
+					}
+				}
+			} catch (ManagerBeanException e) {
+				e.printStackTrace();
+			}
+			return null;
+		}		
 		return null;
 	}
 	

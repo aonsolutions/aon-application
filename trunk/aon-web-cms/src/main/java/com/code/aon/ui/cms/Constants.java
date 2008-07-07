@@ -21,6 +21,7 @@ public interface Constants {
 	BUNDLE_PATH					= "i18n",
 	MESSAGES_FILE				= "messages",
 	TEMPORAL_PATH				= "temp",
+	CONFIG_PATH					= "config",
 
 	//RESOURCES CONSTANTS
 	BLANK_IMAGE					= "spacer.gif",

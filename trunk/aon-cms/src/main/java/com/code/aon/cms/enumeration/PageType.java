@@ -85,8 +85,18 @@ public enum PageType implements IResourceable {
 	/**
 	 * BRANDS,
 	 */
-	BRANDS;
+	BRANDS,
 
+	/**
+	 * HIRU,
+	 */
+	HIRU,
+
+	/**
+	 * SPORT,
+	 */
+	SPORT;
+	
 	/**
 	 * Ruta base del fichero de mensajes.
 	 */
