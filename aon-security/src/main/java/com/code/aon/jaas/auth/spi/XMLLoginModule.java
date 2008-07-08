@@ -240,7 +240,7 @@ public abstract class XMLLoginModule extends AbstractLoginModule {
         IRelation relation = 
         	this.authInfo.getUserRelation( domainName, context, authPrincipal.getShortName() );
         if (relation != null) {
-            parseGroupMembers( rolesGroup, domainName, context, relation.relations() );
+            parseGroupMembers( rolesGroup, domainName, context, relation.relations(), true );
         }
         Group[] roleSets = new Group[groups.size()];
         groups.toArray(roleSets);
@@ -464,8 +464,9 @@ public abstract class XMLLoginModule extends AbstractLoginModule {
      * @param domainName
      * @param context
      * @param profiles
+     * @param flag
      */
-    private void parseGroupMembers(Group group, String domainName, String context, List<String> profiles) 
+    private void parseGroupMembers(Group group, String domainName, String context, List<String> profiles, boolean flag) 
     		throws LoginException {
         Iterator<String> iter = profiles.iterator();
         while (iter.hasNext()) {
@@ -480,11 +481,13 @@ public abstract class XMLLoginModule extends AbstractLoginModule {
              * </id> <list> <id>Echo </id> </list> </relation> ...
              */
             IRelation profile = this.authInfo.getProfileRelation( domainName, context, element );
-            if (profile == null) {
+        	LOGGER.info( "BEFORE ADDING MEMBER " + profile + " " + flag);
+            if (profile == null || !flag) {
+            	LOGGER.info( "ADDING MEMBER " + element );
                 AuthPrincipal p = new AuthPrincipal(element);
                 group.addMember(p);
             } else {
-                parseGroupMembers(group, domainName, context, profile.relations());
+                parseGroupMembers(group, domainName, context, profile.relations(), false);
             }
         }
     }
