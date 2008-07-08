@@ -57,6 +57,7 @@ public class SMSManager implements ISenderListener, Serializable, IServices {
 	private Month month = Month.JUNE;
 	private Integer year = 2008;
 	String username;
+	String domainname;
     String userMessages = "SELECT count(*) FROM Message as msg " +
 		"WHERE msg.username = :username AND msg.sentDate BETWEEN :fromDate AND :toDate";
     String companyMessages = "SELECT count(*) FROM Message as msg " +
@@ -69,15 +70,16 @@ public class SMSManager implements ISenderListener, Serializable, IServices {
 
 	@SuppressWarnings("unchecked")
 	public SMSManager() {
+		loadPriceTariff();
 		try {
 			ApplicationsManager apps = 
 				(ApplicationsManager) AonUtil.getRegisteredBean( ApplicationsManager.BEAN_NAME );
 			app = apps.getApplication( "aon-sms" );
 			this.message = new Message();
 			this.sender = new Sender();
-			smsEnabling( UserUtils.getInstance().getPrincipal().getDomain() );
 			this.sender.addSenderListener( this );
-			loadPriceTariff();
+			domainname = UserUtils.getInstance().getPrincipal().getDomain();
+			smsEnabling( domainname );
 			username = UserUtils.getInstance().getPrincipal().getShortName();
 			reset( null );
 			bundle = ResourceBundle.getBundle( "com.code.aon.desktop.i18n.messages", AonUtil.getCurrentLocale() );
@@ -240,11 +242,6 @@ public class SMSManager implements ISenderListener, Serializable, IServices {
 			LOGGER.severe( e.getMessage() );
 		}
 		summary( event );
-		try {
-			smsEnabling( UserUtils.getInstance().getPrincipal().getDomain() );
-		} catch (SOAPException e) {
-			LOGGER.severe( e.getMessage() );
-		}
 	}
 
 	public void accept(ActionEvent event) {
@@ -319,6 +316,11 @@ public class SMSManager implements ISenderListener, Serializable, IServices {
 			LOGGER.severe( e.getMessage() );
 		}
 		summary( null );
+		try {
+			smsEnabling( domainname );
+		} catch (SOAPException e) {
+			LOGGER.severe( e.getMessage() );
+		}
 		dirtyMessage = true;
 	}
 
