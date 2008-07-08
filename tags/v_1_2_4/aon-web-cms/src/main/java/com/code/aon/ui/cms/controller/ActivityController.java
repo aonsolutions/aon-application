@@ -1,0 +1,24 @@
+package com.code.aon.ui.cms.controller;
+
+import javax.faces.event.ActionEvent;
+
+import com.code.aon.cms.ActivityDetail;
+import com.code.aon.common.ManagerBeanException;
+
+
+public class ActivityController extends GridI18nController {
+
+	@SuppressWarnings("unused")
+	public void onSelect(ActionEvent event) {
+		super.onSelect(event);
+		loadCurrentLanguage();
+	}
+
+	public String getI18nDescription() throws ManagerBeanException {
+		String description = "- NO VALUE -";
+		ActivityDetail detail = (ActivityDetail)getModelRowdataI18n();
+		if (detail != null) description = detail.getDescription();
+		return description;
+	}
+
+}
