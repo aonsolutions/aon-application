@@ -55,7 +55,6 @@ import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionException;
-import com.code.aon.ui.cms.util.DomainUtilities;
 import com.code.aon.ui.util.AonUtil;
 
 public class CollectionsController {
@@ -250,12 +249,13 @@ public class CollectionsController {
 	}
 
 	public List<SelectItem> getSidebarTypes() throws ManagerBeanException, ExpressionException {
+		DomainUtilities domainUtilities = (DomainUtilities)AonUtil.getRegisteredBean(DomainUtilities.NAME);
 		List<SelectItem> types = new LinkedList<SelectItem>();
 		Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
 		SelectItem item = new SelectItem("", "");
 		types.add(item);
 		for (SidebarType sidebarType : SidebarType.values()) {
-			if (DomainUtilities.hasSidebarType(sidebarType)){
+			if (domainUtilities.hasSidebarType(sidebarType)){
 				String name = sidebarType.getName(locale);
 				item = new SelectItem(sidebarType, name);
 				types.add(item);
@@ -289,12 +289,13 @@ public class CollectionsController {
 	}
 	
 	public List<SelectItem> getPageTypes() throws ManagerBeanException, ExpressionException {
+		DomainUtilities domainUtilities = (DomainUtilities)AonUtil.getRegisteredBean(DomainUtilities.NAME);
 		List<SelectItem> types = new LinkedList<SelectItem>();
 		Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
 		SelectItem item = new SelectItem("", "");
 		types.add(item);
 		for (PageType pageType : PageType.values()) {
-			if (DomainUtilities.hasPageType(pageType)){
+			if (domainUtilities.hasPageType(pageType)){
 				String name = pageType.getName(locale);
 				item = new SelectItem(pageType, name);
 				types.add(item);
@@ -365,12 +366,13 @@ public class CollectionsController {
 	}
 
 	public List<SelectItem> getModularPageOptionTypes() throws ManagerBeanException, ExpressionException {
+		DomainUtilities domainUtilities = (DomainUtilities)AonUtil.getRegisteredBean(DomainUtilities.NAME);
 		List<SelectItem> types = new LinkedList<SelectItem>();
 		Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
 		SelectItem item = new SelectItem("", "");
 		types.add(item);
 		for (ModularPageOptionType pageType : ModularPageOptionType.values()) {
-			if (DomainUtilities.hasModularPageOptionType(pageType)){
+			if (domainUtilities.hasModularPageOptionType(pageType)){
 				String name = pageType.getName(locale);
 				item = new SelectItem(pageType, name);
 				types.add(item);
