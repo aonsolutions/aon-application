@@ -75,10 +75,9 @@ public class AonMessage implements IMimeType {
 			previousMessageFlag = message.getFlags();
 			currentMessageFlag = message.getFlags();
 		} catch (MessagingException e) {
-			LOGGER.log(Level.ALL, "Error getting message fags");
+			LOGGER.log(Level.SEVERE, "Error getting message fags", e);
 			throw new WebmailException(e);
 		}
-
 		this.message = message;
 		this.attachment = null;
 		this.amt = new AonMessageTracer();
@@ -161,9 +160,9 @@ public class AonMessage implements IMimeType {
 			if (addr.getAddress() != null)
 				email = getDisplayAddressFull((Address)addr);
 		} catch (AddressException e) {
-			LOGGER.log(Level.ALL, "Invalid sender", e);
+			LOGGER.log(Level.SEVERE, "Invalid sender", e);
 		} catch (IndexOutOfBoundsException e) {
-			LOGGER.log(Level.ALL,
+			LOGGER.log(Level.SEVERE,
 					"Invalid sender, could not par internet address", e);
 		}
 		return email;
@@ -181,7 +180,7 @@ public class AonMessage implements IMimeType {
 		try {
 			return message.getSentDate();
 		} catch (MessagingException e) {
-			LOGGER.log(Level.ALL, "Error getting message send date", e);
+			LOGGER.log(Level.SEVERE, "Error getting message send date", e);
 			throw new WebmailException(e);
 		}
 	}
@@ -203,6 +202,7 @@ public class AonMessage implements IMimeType {
 				return "";
 			}
 		}catch (Exception e) {
+			LOGGER.log(Level.SEVERE, "Error getting send date", e);
 			throw new WebmailException(e);
 		}
 	}
@@ -218,7 +218,7 @@ public class AonMessage implements IMimeType {
 		try {
 			return message.getSubject();
 		} catch (MessagingException e) {
-			LOGGER.log(Level.ALL, "Error getting message subject", e);
+			LOGGER.log(Level.SEVERE, "Error getting message subject", e);
 			throw new WebmailException(e);
 		}
 	}
@@ -248,7 +248,7 @@ public class AonMessage implements IMimeType {
 		try {
 			message.setSubject(subject);
 		} catch (MessagingException e) {
-			LOGGER.log(Level.ALL, "Error setting subject", e);
+			LOGGER.log(Level.SEVERE, "Error setting subject", e);
 			throw new WebmailException(e);
 		}
 	}
@@ -268,7 +268,7 @@ public class AonMessage implements IMimeType {
 		try {
 			return getSender( message );
 		} catch (MessagingException e) {
-			LOGGER.log(Level.ALL,"Can not recover address.",e);
+			LOGGER.log(Level.SEVERE,"Can not recover address.",e);
 			throw new WebmailException(e);
 		}
 	}
@@ -278,11 +278,11 @@ public class AonMessage implements IMimeType {
 			InternetAddress address = InternetAddress.parse(from, true)[0];
 			setSender(address);
 		} catch (javax.mail.MessagingException e) {
-			LOGGER.log(Level.ALL,
+			LOGGER.log(Level.SEVERE,
 					"Could decode from string, maynot be in RFC822 format", e);
 			throw new WebmailException(e);
 		} catch (IndexOutOfBoundsException e) {
-			LOGGER.log(Level.ALL,
+			LOGGER.log(Level.SEVERE,
 					"Invalid sender, could not par internet address", e);
 			throw new WebmailException(e);
 		}
@@ -301,11 +301,11 @@ public class AonMessage implements IMimeType {
 			try {
 				message.setFrom(from);
 			} catch (IllegalWriteException e) {
-				LOGGER.log(Level.ALL,
+				LOGGER.log(Level.SEVERE,
 						"Could not set from address, read only message", e);
 				throw new WebmailException(e);
 			} catch (javax.mail.MessagingException e) {
-				LOGGER.log(Level.ALL,
+				LOGGER.log(Level.SEVERE,
 						"Could decode from string, maynot be in RFC822 format",
 						e);
 				throw new WebmailException(e);
@@ -320,13 +320,12 @@ public class AonMessage implements IMimeType {
 		try {
 			addresses = message.getFrom();
 		} catch (MessagingException e) {
-			LOGGER.log(Level.ALL,"Can not recover address.",e);
+			LOGGER.log(Level.SEVERE,"Can not recover address.",e);
 			throw new WebmailException(e);
 		}
 		String sender = "";
 		if (addresses!=null && addresses.length>0){
-			InternetAddress tmpAddress = (InternetAddress) addresses[0];
-			sender = getDisplayAddressShort((Address)tmpAddress);
+			sender = getDisplayAddressShort( addresses[0] );
 		}
 		return (maxWidth != -1) ? StringUtils.abbreviate(sender, maxWidth) : sender;
 	}
@@ -340,13 +339,12 @@ public class AonMessage implements IMimeType {
 		try {
 			addresses = message.getFrom();
 		} catch (MessagingException e) {
-			LOGGER.log(Level.ALL,"Can not recover address.",e);
+			LOGGER.log(Level.SEVERE,"Can not recover address.",e);
 			throw new WebmailException(e);
 		}
 		String sender = "";
 		if (addresses!=null && addresses.length>0){
-			InternetAddress tmpAddress = (InternetAddress) addresses[0];
-			sender = getDisplayEmail((Address)tmpAddress);
+			sender = getDisplayEmail( addresses[0] );
 		}
 		return sender;
 	}
@@ -356,11 +354,11 @@ public class AonMessage implements IMimeType {
 			InternetAddress[] address = InternetAddress.parse(to, true);
 			setRecipients(address, type);
 		} catch (javax.mail.MessagingException e) {
-			LOGGER.log(Level.ALL,
+			LOGGER.log(Level.SEVERE,
 					"Could decode from string, maynot be in RFC822 format", e);
 			throw new WebmailException(e);
 		} catch (IndexOutOfBoundsException e) {
-			LOGGER.log(Level.ALL,
+			LOGGER.log(Level.SEVERE,
 					"Invalid sender, could not par internet address", e);
 			throw new WebmailException(e);
 		}
@@ -381,36 +379,13 @@ public class AonMessage implements IMimeType {
 		try {
 			return getRecipient(message, MimeMessage.RecipientType.TO);
 		} catch (MessagingException e) {
-			LOGGER.log(Level.ALL, "Error getting message recepients ", e);
+			LOGGER.log(Level.SEVERE, "Error getting message recepients ", e);
 			throw new WebmailException(e);
 		}
 	}
 
 	public String getRecipientsToShort() throws WebmailException {
-		int maxLength = 25;
-		Address[] addresses = null;
-		try {
-			addresses = message.getRecipients(RecipientType.TO);
-		} catch (MessagingException e) {
-			LOGGER.log(Level.ALL,"Can not recover address.",e);
-			throw new WebmailException(e);
-		}
-		String recipientsTo = null;
-		StringBuffer addressBuffer = new StringBuffer();
-		if (addresses != null && addresses.length > 0) {
-			InternetAddress tmpAddress;
-			for (int i = 0; i < addresses.length; i++) {
-				tmpAddress = (InternetAddress) addresses[i];
-				addressBuffer.append(getDisplayAddressShort((Address)tmpAddress)+AonMessageUtils.EMAIL_SEPARATOR);
-			}
-			recipientsTo = addressBuffer.toString();
-			recipientsTo = recipientsTo.substring(0, recipientsTo.length() - 1);
-		}
-		if (recipientsTo==null)
-			recipientsTo = "";
-		if (recipientsTo.length()>maxLength)
-			return recipientsTo.substring(0,maxLength)+"..";
-		return recipientsTo.substring(0,recipientsTo.length());
+		return StringUtils.abbreviate(getRecipientsToEmail(), 25);
 	}
 
 	public String getRecipientsToEmail() throws WebmailException {
@@ -418,23 +393,19 @@ public class AonMessage implements IMimeType {
 		try {
 			addresses = message.getRecipients(RecipientType.TO);
 		} catch (MessagingException e) {
-			LOGGER.log(Level.ALL,"Can not recover address.",e);
+			LOGGER.log(Level.SEVERE,"Can not recover address.",e);
 			throw new WebmailException(e);
 		}
-		String recipientsTo = null;
 		StringBuffer addressBuffer = new StringBuffer();
 		if (addresses != null && addresses.length > 0) {
-			InternetAddress tmpAddress;
 			for (int i = 0; i < addresses.length; i++) {
-				tmpAddress = (InternetAddress) addresses[i];
-				addressBuffer.append(getDisplayEmail((Address)tmpAddress)+AonMessageUtils.EMAIL_SEPARATOR);
+				addressBuffer.append(getDisplayEmail(addresses[i]));
+				if ( i+1 < addresses.length ) {
+					addressBuffer.append(AonMessageUtils.EMAIL_SEPARATOR);
+				}
 			}
-			recipientsTo = addressBuffer.toString();
-			recipientsTo = recipientsTo.substring(0, recipientsTo.length() - 1);
 		}
-		if (recipientsTo==null)
-			recipientsTo = "";
-		return recipientsTo;
+		return addressBuffer.toString();
 	}
 	
 	public void setRecipientsCc(String addresses) throws WebmailException {
@@ -456,7 +427,7 @@ public class AonMessage implements IMimeType {
 		try {
 			return getRecipientsCc(message);
 		} catch (MessagingException e) {
-			LOGGER.log(Level.ALL, "Error getting message recepients ", e);
+			LOGGER.log(Level.SEVERE, "Error getting message recepients ", e);
 			throw new WebmailException(e);
 		}
 	}
@@ -476,7 +447,7 @@ public class AonMessage implements IMimeType {
 		try {
 			return getRecipient(message, MimeMessage.RecipientType.BCC);
 		} catch (MessagingException e) {
-			LOGGER.log(Level.ALL, "Error getting message recepients ", e);
+			LOGGER.log(Level.SEVERE, "Error getting message recepients ", e);
 			throw new WebmailException(e);
 		}
 	}
@@ -556,11 +527,11 @@ public class AonMessage implements IMimeType {
 		try {
 			message.setRecipients(type, address);
 		} catch (IllegalWriteException e) {
-			LOGGER.log(Level.ALL,
+			LOGGER.log(Level.SEVERE,
 					"Could not set recipients address, read only message", e);
 			throw new WebmailException(e);
 		} catch (MessagingException e) {
-			LOGGER.log(Level.ALL, "Error setting message To recepients ", e);
+			LOGGER.log(Level.SEVERE, "Error setting message To recepients ", e);
 			throw new WebmailException(e);
 		}
 	}
@@ -628,11 +599,11 @@ public class AonMessage implements IMimeType {
 				}
 			}
 		} catch (MessagingException e) {
-			LOGGER.log(Level.ALL,
+			LOGGER.log(Level.SEVERE,
 					"Error determining if message has attachement", e);
 			throw new WebmailException(e);
 		} catch (IOException e) {
-			LOGGER.log(Level.ALL,
+			LOGGER.log(Level.SEVERE,
 					"Error determining if message has attachement", e);
 			throw new WebmailException(e);
 		}
@@ -647,7 +618,7 @@ public class AonMessage implements IMimeType {
 			try {
 				this.attachment = hasAttachments( message );
 			} catch (Exception ex) {
-				LOGGER.log(Level.ALL, "Error determining if message has attachement", ex);
+				LOGGER.log(Level.SEVERE, "Error determining if message has attachement", ex);
 				throw new WebmailException(ex);
 			}
 		}
@@ -674,7 +645,7 @@ public class AonMessage implements IMimeType {
 			try {
 				folder.open(Folder.READ_WRITE);
 			} catch (MessagingException e) {
-				LOGGER.log(Level.ALL,
+				LOGGER.log(Level.SEVERE,
 						"Error opening folder for message content", e);
 				throw new WebmailException(e);
 			}
@@ -697,7 +668,7 @@ public class AonMessage implements IMimeType {
 		try {
 			message.setContent(content);
 		} catch (MessagingException e) {
-			LOGGER.log(Level.ALL,
+			LOGGER.log(Level.SEVERE,
 					"Message content could not be set, readonly state", e);
 			throw new WebmailException(e);
 		}
@@ -708,7 +679,7 @@ public class AonMessage implements IMimeType {
 		try {
 			message.setText(content);
 		} catch (MessagingException e) {
-			LOGGER.log(Level.ALL,
+			LOGGER.log(Level.SEVERE,
 					"Message content could not be set", e);
 			throw new WebmailException(e);
 		}
@@ -722,7 +693,7 @@ public class AonMessage implements IMimeType {
 		try {
 			message.setFlag(Flag.DELETED, true);
 		} catch (MessagingException e) {
-			LOGGER.log(Level.ALL, "Problem while deleting");
+			LOGGER.log(Level.SEVERE, "Problem while deleting", e);
 			throw new WebmailException(e);
 		}
 	}
@@ -731,7 +702,7 @@ public class AonMessage implements IMimeType {
     	try {
 			return message.isSet(Flag.SEEN);
 		} catch (MessagingException e) {
-			LOGGER.log(Level.ALL, "Problem while reading message flags");
+			LOGGER.log(Level.SEVERE, "Problem while reading message flags", e);
 			throw new WebmailException(e);
 		}
     }
@@ -740,7 +711,7 @@ public class AonMessage implements IMimeType {
     	try {
 			return message.isSet(Flag.ANSWERED);
 		} catch (MessagingException e) {
-			LOGGER.log(Level.ALL, "Problem while reading message flags");
+			LOGGER.log(Level.SEVERE, "Problem while reading message flags", e);
 			throw new WebmailException(e);
 		}
     }
@@ -749,7 +720,7 @@ public class AonMessage implements IMimeType {
 		try {
 			message.setSentDate(date);
 		} catch (MessagingException e) {
-			LOGGER.log(Level.ALL, "Problem while setting date");
+			LOGGER.log(Level.SEVERE, "Problem while setting date", e);
 			throw new WebmailException(e);
 		}
 	}
@@ -758,7 +729,7 @@ public class AonMessage implements IMimeType {
 		try {
 			return message.match(term);
 		} catch (MessagingException e) {
-			LOGGER.log(Level.ALL, "Problem while searching");
+			LOGGER.log(Level.SEVERE, "Problem while searching", e);
 			throw new WebmailException(e);
 		}
 	}
