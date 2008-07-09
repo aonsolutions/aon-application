@@ -52,7 +52,7 @@ public class AonMessageComparator {
 				}
 				return m2.getSubject().compareToIgnoreCase(m1.getSubject());
 			} catch (WebmailException e) {
-				LOGGER.log(Level.ALL, "Sort error", e);
+				LOGGER.log(Level.SEVERE, "Sort error", e);
 				return 0;
 			}
 		}
@@ -75,7 +75,7 @@ public class AonMessageComparator {
 				}
 				return m2.getSender().compareToIgnoreCase(m1.getSender());
 			} catch (WebmailException e) {
-				LOGGER.log(Level.ALL, "Sort error", e);
+				LOGGER.log(Level.SEVERE, "Sort error", e);
 				return 0;
 			}
 		}
@@ -98,7 +98,7 @@ public class AonMessageComparator {
 				}
 				return m2.getRecipientsTo().compareToIgnoreCase(m1.getRecipientsTo());
 			} catch (WebmailException e) {
-				LOGGER.log(Level.ALL, "Sort error", e);
+				LOGGER.log(Level.SEVERE, "Sort error", e);
 				return 0;
 			}
 		}
@@ -140,9 +140,9 @@ public class AonMessageComparator {
 					}
 				}
 			} catch (WebmailException e) {
-				LOGGER.log(Level.ALL, "Sort error", e);
+				LOGGER.log(Level.SEVERE, "Sort error", e);
 			} catch (MessagingException e) {
-				LOGGER.log(Level.ALL, "Sort error", e);
+				LOGGER.log(Level.SEVERE, "Sort error", e);
 			}
 			return 0;
 		}

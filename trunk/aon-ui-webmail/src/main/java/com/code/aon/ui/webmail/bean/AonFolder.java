@@ -57,7 +57,7 @@ public class AonFolder extends AonMessageSortableList {
                 }
             }
 		} catch (MessagingException e) {
-			LOGGER.log(Level.ALL, "Folder list " + folder.getName(), e);
+			LOGGER.log(Level.SEVERE, "Folder list " + folder.getName(), e);
 			throw new WebmailException(e);
 		}
 		return folderList;
@@ -68,7 +68,7 @@ public class AonFolder extends AonMessageSortableList {
 			close(false);
 			folder.delete(content);
 		} catch (MessagingException e) {
-			LOGGER.log(Level.ALL,"Deleting folder failed", e);
+			LOGGER.log(Level.SEVERE,"Deleting folder failed", e);
 			throw new WebmailException(e);
 		}
 	}
@@ -97,7 +97,7 @@ public class AonFolder extends AonMessageSortableList {
 			}
 			setMessageList(list);
         } catch (MessagingException e) {
-			LOGGER.log(Level.ALL,"Error reading messages ", e);
+			LOGGER.log(Level.SEVERE,"Error reading messages ", e);
 			throw new WebmailException(e);
         }
     }
@@ -109,7 +109,7 @@ public class AonFolder extends AonMessageSortableList {
     		}
 			return true;
 		} catch (MessagingException e) {
-			LOGGER.log(Level.ALL,"Error opening folder in mode " +mode, e);
+			LOGGER.log(Level.SEVERE,"Error opening folder " + folder.getName() + " in mode " +mode, e);
 		}
 		return false;
     }
@@ -118,7 +118,7 @@ public class AonFolder extends AonMessageSortableList {
     	try {
 	    	folder.close(mode);
 		} catch (MessagingException e) {
-			LOGGER.log(Level.ALL,"Error closing folder in mode " +mode, e);
+			LOGGER.log(Level.SEVERE,"Error closing folder " + folder.getName() + " in mode " +mode, e);
 		}
 		return false;
     }
@@ -129,17 +129,18 @@ public class AonFolder extends AonMessageSortableList {
 			if (Folder.HOLDS_FOLDERS != folder.getType())
 				return true;
 		} catch (MessagingException e) {
-			LOGGER.log(Level.ALL,"Error getting folder type", e);
+			LOGGER.log(Level.SEVERE,"Error getting folder type", e);
 		}
     	return false;
     }
     
 	public boolean isRoot(){
 		try {
-			if (folder.getParent()==null)
+			if (folder.getParent()==null) {
 				return true;
+			}
 		} catch (MessagingException e) {
-			//throw new WebmailException(e);
+			LOGGER.log(Level.SEVERE,"Error checking if is root", e);
 		}
 		return false;
 	}
