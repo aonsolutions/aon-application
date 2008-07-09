@@ -18,7 +18,7 @@ public class InvoiceBeanVetoListener extends ManagerBeanVetoListenerAdapter {
 	public void vetoableBeanInserted(ManagerBeanEvent evt) throws ManagerBeanVetoListenerException {
 		Invoice invoice = (Invoice)evt.getTo();
 		if(invoice.getType() == InvoiceType.SALES){
-			invoice.setReferenceCode((invoice.getSeries()!=null&&!invoice.getSeries().equals(""))?invoice.getSeries()+"/":"" + invoice.getNumber());
+			invoice.setReferenceCode(((invoice.getSeries()!=null&&!invoice.getSeries().equals(""))?invoice.getSeries()+"/":"") + invoice.getNumber());
 		} else {
 			Calendar calendar = new GregorianCalendar();
 			calendar.setTime(invoice.getIssueDate());
