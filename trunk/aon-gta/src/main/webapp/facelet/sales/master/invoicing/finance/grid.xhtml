@@ -37,7 +37,7 @@
 					</f:facet>
 					<t:commandLink immediate="#{true}"
 						styleClass="aon-table-row-selected"
-						rendered="#{to.id!=salesFinance.to.id}"
+						rendered="#{to.id!=salesFinance.to.id and salesFinance.modelToEditable}"
 						actionListener="#{salesFinance.onSelect}" />
 					<f:verbatim>&#160;</f:verbatim>
 					<f:facet name="footer">
@@ -59,14 +59,16 @@
 					<h:outputText value="#{to.payMethod.name}" rendered="#{to.id!=salesFinance.to.id}" />
 					<h:selectOneMenu value="#{salesFinance.to.payMethod.id}"
 						styleClass="aon-form-selectOneMenu-field"
-						rendered="#{to==salesFinance.to}">
+						rendered="#{to==salesFinance.to}"
+						valueChangeListener="#{salesFinance.payMethodChanged}">
 						<f:selectItems value="#{financeCollections.payMethods}" />
 					</h:selectOneMenu>
 					<f:verbatim>&#160;</f:verbatim>
 					<f:facet name="footer">
 						<h:selectOneMenu value="#{salesFinance.to.payMethod.id}"
 							styleClass="aon-form-selectOneMenu-field"
-							rendered="#{salesFinance.new}">
+							rendered="#{salesFinance.new}"
+							valueChangeListener="#{salesFinance.payMethodChanged}">
 							<f:selectItems value="#{financeCollections.payMethods}" />
 						</h:selectOneMenu>
 					</f:facet>
