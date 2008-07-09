@@ -11,11 +11,11 @@
 	<groupId>com.code.aon</groupId>
 	<artifactId>aon.gta</artifactId>
 	<packaging>war</packaging>
-	<version>2.3.0</version>
+	<version>2.3.1</version>
 	<description>AON GTA</description>
 	<name>AON GTA</name>
 	<properties>
-		<dbVersion>1.8.0</dbVersion>
+		<dbVersion>1.8.1</dbVersion>
 	</properties>
 	<build>
 		<finalName>aon-gta</finalName>
@@ -71,7 +71,7 @@
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.account</artifactId>
-			<version>2.3.2</version>
+			<version>2.3.3</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
@@ -101,7 +101,7 @@
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.finance</artifactId>
-			<version>2.6.0</version>
+			<version>2.7.0</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
