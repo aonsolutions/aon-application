@@ -45,12 +45,10 @@
 		<param-value>true</param-value>
 	</context-param>
 
-	<!-- 
 	<context-param>
 		<param-name>facelets.REFRESH_PERIOD</param-name>
 		<param-value>-1</param-value>
 	</context-param>
-	-->
 
 	<context-param>
 		<param-name>facelets.BUFFER_SIZE</param-name>
@@ -65,7 +63,7 @@
 			false.
 		</description>
 		<param-name>com.sun.faces.validateXml</param-name>
-		<param-value>true</param-value>
+		<param-value>false</param-value>
 	</context-param>
 	
 	<context-param>
@@ -77,7 +75,7 @@
 			created. Default value is false.
 		</description>
 		<param-name>com.sun.faces.verifyObjects</param-name>
-		<param-value>true</param-value>
+		<param-value>false</param-value>
 	</context-param>
 	
 	<context-param>
@@ -89,10 +87,26 @@
 		<param-name>com.sun.faces.responseBufferSize</param-name>
 		<param-value>500000</param-value>
 	</context-param>
+
+	<context-param>
+		<param-name>com.sun.faces.numberOfViewsInSession</param-name>
+		<param-value>5</param-value>
+	</context-param>
+
+	<context-param>
+		<param-name>com.sun.faces.numberOfLogicalViews</param-name>
+		<param-value>10</param-value>
+	</context-param>	
 	
 	<context-param>
 		<param-name>org.ajax4jsf.VIEW_HANDLERS</param-name>
 		<param-value>com.sun.facelets.FaceletViewHandler</param-value>
+	</context-param>
+	
+	<context-param>
+		<description>Define que los recursos no expiren en una semana</description>
+		<param-name>org.ajax4jsf.DEFAULT_EXPIRE</param-name>
+		<param-value>604800</param-value>
 	</context-param>
 	
 	<context-param>
@@ -150,6 +164,10 @@
 		<display-name>RichFaces Filter</display-name>
 		<filter-name>richfaces</filter-name>
 		<filter-class>org.ajax4jsf.Filter</filter-class>
+		<init-param>
+			<param-name>forceparser</param-name>
+			<param-value>false</param-value>
+		</init-param>				
 	</filter>
 	<filter-mapping>
 		<filter-name>richfaces</filter-name>
