@@ -1,0 +1,82 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"	
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	>
+<body>
+
+<ui:composition>
+
+	<aon:div styleClass="aon-dataScroller" rendered="#{model.rowCount>0}">					
+	    <aon:panelGrid id="messageDataScroller" columns="2" styleClass="aon-panelGrid-formatting" style="width:auto;">
+			<aon:dataPaginator for="#{dataTable}" id="#{dataTable}PaginatorInfo"
+				rowsCountVar="rowsCount" firstRowIndexVar="firstRowIndex" lastRowIndexVar="lastRowIndex"
+				styleClass="aon-dataScroller-text">
+				<f:facet name="pages">
+					<h:outputFormat value="#{bundle.aon_scroll}">
+						<f:param value="#{firstRowIndex}" />
+						<f:param value="#{lastRowIndex}" />
+						<f:param value="#{rowsCount}" />
+					</h:outputFormat>
+				</f:facet>
+			</aon:dataPaginator>	    
+			<aon:div rendered="#{model.rowCount > model.pageSize}">
+				<!--  
+				<aon:dataPaginator for="#{dataTable}" fastStep="5" paginator="true"
+					paginatorMaxPages="5" rendered="#{pageSize != 0 and (rowCount > pageSize)}"
+					styleClass="aon-dataScroller-buttons"  
+					page="#{page}"/>
+				-->
+				<!-- 
+				<rich:datascroller
+					for="#{dataTable}"
+					page="#{page}"
+					inactiveStyleClass="aon-dataScroller-inactive"
+					selectedStyleClass="aon-dataScroller-selected"
+					styleClass="aon-dataScroller-buttons"
+					maxPages="5"
+					fastStep="5"
+					boundaryControls="show"
+					stepControls="show"
+					fastControls="hide"
+					ajaxSingle="false"
+				>
+				 -->
+
+				<aon:commandButton ajaxSingle="true" process="messageDataTable"
+					disabled="#{!model.firstNeeded}" actionListener="#{model.first}"
+					reRender="#{dataTable},messageDataScroller"
+					style="margin-right: 10px;" styleClass="aon-dataScroller-button aon-dataScroller-button-first">
+				</aon:commandButton>
+
+				<aon:commandButton ajaxSingle="true" process="messageDataTable"
+					disabled="#{!model.previousNeeded}" actionListener="#{model.previous}"
+					reRender="#{dataTable},messageDataScroller"
+					style="margin-right: 10px;" styleClass="aon-dataScroller-button aon-dataScroller-button-previous">
+				</aon:commandButton>
+				
+				<aon:commandButton ajaxSingle="true" process="messageDataTable"
+					disabled="#{!(model.nextNeeded)}" actionListener="#{model.next}"
+					reRender="#{dataTable},messageDataScroller"
+					style="margin-right: 10px;" styleClass="aon-dataScroller-button aon-dataScroller-button-next">
+				</aon:commandButton>
+
+				<aon:commandButton ajaxSingle="true" process="messageDataTable"
+					disabled="#{!(model.lastNeeded)}" actionListener="#{model.last}"
+					reRender="#{dataTable},messageDataScroller"
+					styleClass="aon-dataScroller-button aon-dataScroller-button-last">
+				</aon:commandButton>
+				
+			</aon:div>
+		</aon:panelGrid>	
+	</aon:div>
+
+</ui:composition>
+
+</body>
+</html>
