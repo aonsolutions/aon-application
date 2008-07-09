@@ -403,7 +403,7 @@
 					<textElement verticalAlignment="Middle">
 						<font size="10"/>
 					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[($F{registry}.getDefaultAddress().getZip()==null?"":$F{registry}.getDefaultAddress().getZip() + " ") + ($F{registry}.getDefaultAddress().getCity()==null?"":$F{registry}.getDefaultAddress().getCity() + " ")]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.String"><![CDATA[($F{registry}.getDefaultAddress().getZip()==null?"":$F{registry}.getDefaultAddress().getZip() + " ") + ($F{registry}.getDefaultAddress().getCity()==null?"":$F{registry}.getDefaultAddress().getCity())]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
