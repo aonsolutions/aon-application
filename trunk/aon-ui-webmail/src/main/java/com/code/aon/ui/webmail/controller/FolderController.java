@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.faces.context.FacesContext;
@@ -11,7 +12,6 @@ import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 import javax.mail.Folder;
 import javax.mail.MessagingException;
-import javax.mail.internet.MimeMessage;
 
 import org.apache.commons.lang.ArrayUtils;
 import org.richfaces.event.DropEvent;
@@ -33,8 +33,6 @@ public class FolderController implements ITreeListener, AonConstants {
 	private AonFolder folder;
 	
 	private int currentPage = 1;
-	
-	private int pageObjectNumber = 20;
 	
 	public int getCurrentPage() {
 		return currentPage;
@@ -74,17 +72,10 @@ public class FolderController implements ITreeListener, AonConstants {
 		try {
 			folder.refresh();
 		} catch (WebmailException e) {
-			e.printStackTrace();
+			LOGGER.log(Level.SEVERE,"Error refreshing folder " + folder.getName(), e);
 		}
 	}
 	
-	/**
-	 * @return the pAGE_OBJECTS
-	 */
-	public int getPageObjectNumber() {
-		return pageObjectNumber;
-	}
-
 	public void nodeSelected(AonFolder selected){
 		setFolder(selected);
 		resetCurrentPage();
@@ -175,6 +166,7 @@ public class FolderController implements ITreeListener, AonConstants {
     	int currentPage = this.currentPage;
     	currentPage--;
     	AonMessage[] allMessages = folder.getMessageList();
+    	int pageObjectNumber = folder.getModel().getPageSize();
     	for (int i = currentPage*pageObjectNumber;i < (currentPage*pageObjectNumber+pageObjectNumber); i++){
     		if (i < allMessages.length) {
     			messages.add(allMessages[i]);
@@ -410,5 +402,5 @@ public class FolderController implements ITreeListener, AonConstants {
 	       	messageController.setMessage( aonMessage );      				
 		}
     }
-	
+    
 }
