@@ -105,7 +105,7 @@
 							disabled="#{invoicingDetail.to != null || purchaseFinance.to != null}" />
 						<t:commandButton id="finances" value="#{financeBundle.finance_generate}"
 							actionListener="#{invoicing.generateFinances}"
-							rendered="#{!invoicing.new and invoicingDetail.model.rowCount > 0}"							
+							rendered="#{invoicingDetail.model.rowCount > 0 and purchaseFinance.allPending}"							
 							styleClass="aon-content-toolbar-item aon-content-toolbar-item-new"
 							onmouseover="this.className='aon-content-toolbar-item aon-content-toolbar-item-hover aon-content-toolbar-item-new'"
 							onmouseout="this.className='aon-content-toolbar-item aon-content-toolbar-item-new'"
@@ -199,15 +199,15 @@
 							<t:inputText id="Supplier_Lookup_id" size="5" forceId="#{true}"
 								styleClass="aon-form-input-text"
 								disabled="#{!invoicing.editable}" required="true"
-								onchange="return findBeanLookupExt(event,'#{facesContext.externalContext.requestContextPath}','supplierLookup','Supplier_Lookup_id','Supplier_id|Supplier_Lookup_id,Supplier_full_name|Supplier_full_name,Supplier_document|Supplier_Lookup_document');"
+								onchange="return findBeanLookupExt(event,'#{facesContext.externalContext.requestContextPath}','supplierLookup','Supplier_Lookup_id','Supplier_id|Supplier_Lookup_id,Supplier_full_name|Supplier_full_name');"
 								value="#{invoicing.to.registry.id}"
 								valueChangeListener="#{invoicing.supplierData}" />
 							<h:commandButton id="find_Supplier_Lookup_id"
 								styleClass="aon-form-lookup-button" value="" immediate="true"
-								onclick="lookupSearchWindow(this, 'placeList', '#{supplierLookup.encodedSearchPagePath}','Supplier_id|Supplier_Lookup_id,Supplier_full_name|Supplier_full_name,Supplier_document|Supplier_Lookup_document');return false;" />	
+								onclick="lookupSearchWindow(this, 'placeList', '#{supplierLookup.encodedSearchPagePath}','Supplier_id|Supplier_Lookup_id,Supplier_full_name|Supplier_full_name');return false;" />	
 							<h:commandButton id="new_Supplier_Lookup_id"
 								styleClass="aon-form-new-button" value="" immediate="true"
-								onclick="lookupNewWindow(this, 'placeList', '#{supplierLookup.encodedNewPagePath}','Supplier_id|Supplier_Lookup_id,Supplier_full_name|Supplier_full_name,Supplier_document|Supplier_Lookup_document');return false;" />	
+								onclick="lookupNewWindow(this, 'placeList', '#{supplierLookup.encodedNewPagePath}','Supplier_id|Supplier_Lookup_id,Supplier_full_name|Supplier_full_name');return false;" />	
 							<t:inputText id="Supplier_full_name" forceId="#{true}"
 								styleClass="aon-form-input-text-disabled"
 								size="40" disabled="#{!invoicing.editable}"
@@ -224,10 +224,10 @@
 							<f:selectItems value="#{warehouseCollections.warehouses}" />
 						</h:selectOneMenu>
 
-						<t:outputLabel for="Supplier_Lookup_document"
+						<t:outputLabel for="Supplier_registry_document"
 							styleClass="aon-form-input-text-label"
 							value="#{financeBundle.aon_document}" />
-						<t:inputText id="Supplier_Lookup_document"
+						<t:inputText id="Supplier_registry_document"
 							value="#{invoicing.to.registryDocument}"
 							disabled="#{!invoicing.editable}"
 							styleClass="aon-form-input-text" forceId="#{true}"
@@ -344,6 +344,13 @@
 									<h:outputText value="#{to.incomeStatus}" />
 								</h:column>
 							</t:dataTable>
+
+							<ui:include src="/facelet/shared/dataScroller.xhtml">
+								<ui:param name="dataTable" value="incomeData" />
+								<ui:param name="model" value="#{income.model}" />
+								<ui:param name="showNote" value="#{false}" />
+							</ui:include>
+
 							<t:div style="text-align:right;">
 								<t:commandButton title="#{financeBundle.aon_transfer}"
 									styleClass="aon-form-button"
