@@ -31,7 +31,7 @@ public class AonMessageSortableList extends AonSortableList implements MessageCo
     
     public static String DATE_COLUMN = "date";
 	
-    private ArrayDataModel model;
+    private MessageDataModel model;
     
     private AonMessage[] messageList;
 
@@ -73,10 +73,10 @@ public class AonMessageSortableList extends AonSortableList implements MessageCo
 	 */
 	public void setMessageList(AonMessage[] messageList) {
 		this.messageList = messageList;
-		this.model = new ArrayDataModel( this.messageList );
+		this.model = new MessageDataModel( this.messageList );
 	}
 	
-	public ArrayDataModel getModel() {
+	public MessageDataModel getModel() {
 		return model;
 	}
 
@@ -105,8 +105,12 @@ public class AonMessageSortableList extends AonSortableList implements MessageCo
 	 */
 	protected void sort(final String column, final boolean ascending) {
 		if (messageList != null) {
-			Comparator<AonMessage> comparator = AonMessageComparator.getComparator(column, ascending);
-			Arrays.sort(messageList, comparator);
+			try {
+				Comparator<AonMessage> comparator = AonMessageComparator.getComparator(column, ascending);
+				Arrays.sort(messageList, comparator);
+			} catch ( Throwable th ) {
+				LOGGER.log(Level.SEVERE, "Error sorting message list", th);
+			}
 		}
 	}
     
@@ -174,7 +178,7 @@ public class AonMessageSortableList extends AonSortableList implements MessageCo
                     try {
                         foundMessage.setMessageFlag(changedMessage.getFlags());
                     } catch (MessagingException e) {
-            			LOGGER.log(Level.ALL,"Error getting message flags",e);
+            			LOGGER.log(Level.SEVERE,"Error getting message flags",e);
                     }
                 }
             }
