@@ -491,7 +491,7 @@ public class InvoicingController extends BasicController {
 	}
 
 	@SuppressWarnings("unchecked")
-	private Company obtainCompany() throws ManagerBeanException {
+	public Company obtainCompany() throws ManagerBeanException {
 		IManagerBean companyBean = BeanManager.getManagerBean(Company.class);
 		Iterator iter = companyBean.getList(null, 0, 1).iterator();
 		if(iter.hasNext()){
