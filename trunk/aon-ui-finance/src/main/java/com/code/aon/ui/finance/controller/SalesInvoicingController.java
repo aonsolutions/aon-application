@@ -502,7 +502,7 @@ public class SalesInvoicingController extends BasicController {
 	private void updateBreadCrumb() {
 		MenuManager menuManager = (MenuManager)AonUtil.getRegisteredBean(MENU_MANAGER_NAME);
         menuManager.setCurrentMenu("AON_APP");
-        menuManager.getCurrentMenuModel().setSelectedNode(menuManager.getCurrentMenuModel().getOptionByKey("salesInvoicing").getId());
+        menuManager.getCurrentMenuModel().setSelectedNode(menuManager.getCurrentMenuModel().getOptionByKey("aon_sales_invoicing").getId());
 	}
 	
 	/**
