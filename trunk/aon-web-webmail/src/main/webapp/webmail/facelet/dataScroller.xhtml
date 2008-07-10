@@ -25,31 +25,10 @@
 					</h:outputFormat>
 				</f:facet>
 			</aon:dataPaginator>	    
-			<aon:div rendered="#{model.rowCount > model.pageSize}">
-				<!--  
-				<aon:dataPaginator for="#{dataTable}" fastStep="5" paginator="true"
-					paginatorMaxPages="5" rendered="#{pageSize != 0 and (rowCount > pageSize)}"
-					styleClass="aon-dataScroller-buttons"  
-					page="#{page}"/>
-				-->
-				<!-- 
-				<rich:datascroller
-					for="#{dataTable}"
-					page="#{page}"
-					inactiveStyleClass="aon-dataScroller-inactive"
-					selectedStyleClass="aon-dataScroller-selected"
-					styleClass="aon-dataScroller-buttons"
-					maxPages="5"
-					fastStep="5"
-					boundaryControls="show"
-					stepControls="show"
-					fastControls="hide"
-					ajaxSingle="false"
-				>
-				 -->
+			<aon:div rendered="#{model.rowCount > model.pageSize}" styleClass="aon-dataScroller-buttons">
 
 				<aon:commandButton ajaxSingle="true" process="messageDataTable"
-					disabled="#{!model.firstNeeded}" actionListener="#{model.first}"
+					disabled="#{!model.previousNeeded}" actionListener="#{model.first}"
 					reRender="#{dataTable},messageDataScroller"
 					style="margin-right: 10px;" styleClass="aon-dataScroller-button aon-dataScroller-button-first">
 				</aon:commandButton>
@@ -57,8 +36,22 @@
 				<aon:commandButton ajaxSingle="true" process="messageDataTable"
 					disabled="#{!model.previousNeeded}" actionListener="#{model.previous}"
 					reRender="#{dataTable},messageDataScroller"
-					style="margin-right: 10px;" styleClass="aon-dataScroller-button aon-dataScroller-button-previous">
+					style="margin-right: 14px;" styleClass="aon-dataScroller-button aon-dataScroller-button-previous">
 				</aon:commandButton>
+				
+				<a4j:repeat value="#{model.pages}" var="page">
+					<aon:commandLink rendered="#{(model.currentPage+1) != page}"
+						ajaxSingle="true" process="messageDataTable" 
+						actionListener="#{model.moveToPage}"
+						reRender="#{dataTable},messageDataScroller"
+						style="margin-right: 14px;" styleClass="aon-dataScroller-inactive">
+						<f:param name="page" value="#{page}" />
+						<aon:outputText value="#{page}" />
+					</aon:commandLink>
+					<aon:outputText rendered="#{(model.currentPage+1) == page}"
+						style="margin-right: 14px;" styleClass="aon-dataScroller-selected"
+						value="#{page}"/>
+				</a4j:repeat>
 				
 				<aon:commandButton ajaxSingle="true" process="messageDataTable"
 					disabled="#{!(model.nextNeeded)}" actionListener="#{model.next}"
@@ -67,7 +60,7 @@
 				</aon:commandButton>
 
 				<aon:commandButton ajaxSingle="true" process="messageDataTable"
-					disabled="#{!(model.lastNeeded)}" actionListener="#{model.last}"
+					disabled="#{!(model.nextNeeded)}" actionListener="#{model.last}"
 					reRender="#{dataTable},messageDataScroller"
 					styleClass="aon-dataScroller-button aon-dataScroller-button-last">
 				</aon:commandButton>

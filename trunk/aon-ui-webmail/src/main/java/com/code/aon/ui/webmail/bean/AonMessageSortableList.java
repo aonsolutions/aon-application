@@ -31,7 +31,7 @@ public class AonMessageSortableList extends AonSortableList implements MessageCo
     
     public static String DATE_COLUMN = "date";
 	
-    private MessageDataModel model;
+    private ScrollerDataModel model;
     
     private AonMessage[] messageList;
 
@@ -73,10 +73,10 @@ public class AonMessageSortableList extends AonSortableList implements MessageCo
 	 */
 	public void setMessageList(AonMessage[] messageList) {
 		this.messageList = messageList;
-		this.model = new MessageDataModel( this.messageList );
+		this.model = new ScrollerDataModel( this.messageList );
 	}
 	
-	public MessageDataModel getModel() {
+	public ScrollerDataModel getModel() {
 		return model;
 	}
 
