@@ -11,20 +11,23 @@ import org.ajax4jsf.model.Range;
 import org.ajax4jsf.model.SequenceRange;
 import org.apache.commons.lang.ArrayUtils;
 
-public class MessageDataModel extends ExtendedDataModel {
+public class ScrollerDataModel extends ExtendedDataModel {
 
-	private AonMessage[] list;
+	private Object[] list;
 
 	private int index;
 	
-	private int first;
+	private int currentPage;
 	
 	private int pageSize;
+	
+	private int maxPages;
 
-	public MessageDataModel(AonMessage[] list) {
+	public ScrollerDataModel(Object[] list) {
 		this.list = list;
 		this.index = -1;
 		this.pageSize = 20;
+		this.maxPages = 5;
 	}
 
 	@Override
@@ -114,54 +117,92 @@ public class MessageDataModel extends ExtendedDataModel {
 	public void setPageSize(int pageSize) {
 		this.pageSize = pageSize;
 	}
+	
+	public int getMaxPages() {
+		return maxPages;
+	}
+
+	public void setMaxPages(int maxPages) {
+		this.maxPages = maxPages;
+	}
+	
+	public int getCurrentPage() {
+		return currentPage;
+	}
 
 	public int getFirst() {
-		return first;
+		return this.currentPage * getPageSize();
 	}
 
-	public void setFirst(int first) {
-		this.first = first;
-	}
-
-	public boolean isFirstNeeded() {
-    	return this.first >= getPageSize();
-	}
-	
     public void first(ActionEvent event) {
-   		this.first = 0;
+   		this.currentPage = 0;
     }
 	
-    private int getFirstInLastPage() {
-    	int pages = getRowCount() / getPageSize();
-    	return pages * getPageSize();
-    }
-    
     public boolean isPreviousNeeded() {
-    	return (this.first - getPageSize()) >= 0;	
+    	return this.currentPage > 0;	
     }
 
     public void previous(ActionEvent event) {
     	if ( isPreviousNeeded() ) {
-    		this.first -= getPageSize();
+    		this.currentPage--;
     	}
     }
 
 	public boolean isNextNeeded() {
-    	return this.first < getFirstInLastPage();
+    	return this.currentPage < getLastPage();
 	}
 	
     public void next(ActionEvent event) {
     	if ( isNextNeeded() ) {
-    		this.first += getPageSize();
+    		this.currentPage++;
     	}
     }
         
-    public boolean isLastNeeded() {
-    	return (this.first < getFirstInLastPage());	
+    public void last(ActionEvent event) {
+    	this.currentPage = getLastPage();
+    }
+    
+    public int getLastPage() {
+    	if ( getRowCount() > 0 ) {
+    		return getRowCount() / getPageSize();
+    	}
+    	return 0;
+    }
+    
+    public int getNumberOfPages() {
+    	if ( getRowCount() > 0 ) {
+    		return (getRowCount() / getPageSize()) + 1;
+    	}
+    	return 0;
+    }
+    
+    public Integer[] getPages() {
+    	Integer[] pages = new Integer[getNumberOfVisiblePages()];
+    	int i = getFirstVisiblePage() + 1;
+    	for( int n = 0; n < pages.length; n++, i++ ) {
+    		pages[n] = i;
+    	}
+    	return pages;
     }
 
-    public void last(ActionEvent event) {
-    	this.first = getFirstInLastPage();
+    private int getFirstVisiblePage() {
+    	int lastMiddlePage = getNumberOfPages() - (getMaxPages() >> 1) - 1;
+    	if ( this.currentPage >= lastMiddlePage ) {
+    		return Math.max( 0, getNumberOfPages() - getMaxPages() );
+    	}
+    	return Math.max( 0, this.currentPage - (getMaxPages() >> 1) );
+    }
+    
+    private int getNumberOfVisiblePages() {
+    	return Math.min( getNumberOfPages(), getMaxPages());
+    }
+    
+    public void moveToPage(ActionEvent event) {
+    	FacesContext context = FacesContext.getCurrentInstance();
+    	Integer page = (Integer) context.getExternalContext().getRequestMap().get("page");
+    	if ( page != null ) {
+    		this.currentPage = page - 1;
+    	}
     }
     
 }
