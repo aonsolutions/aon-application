@@ -1214,28 +1214,41 @@ color:#000;
 	}
 .aon-dataScroller-button-first{
 	background:transparent url(images/aon-datascroller/aon-dataScroller-button-first.png) center center no-repeat;
-	
+	}
+.aon-dataScroller-button-first-disabled{
+	background:transparent url(images/aon-datascroller/aon-dataScroller-button-first-disabled.png) center center no-repeat;
 	}
 .aon-dataScroller-button-last{
 	background:transparent url(images/aon-datascroller/aon-dataScroller-button-last.png) center center no-repeat;
-	
+	}
+.aon-dataScroller-button-last-disabled{
+	background:transparent url(images/aon-datascroller/aon-dataScroller-button-last-disabled.png) center center no-repeat;
 	}
 .aon-dataScroller-button-previous{
 	background:transparent url(images/aon-datascroller/aon-dataScroller-button-previous.png) center center no-repeat;
-
+	}
+.aon-dataScroller-button-previous-disabled{
+	background:transparent url(images/aon-datascroller/aon-dataScroller-button-previous-disabled.png) center center no-repeat;
 	}
 .aon-dataScroller-button-next{
 	background:transparent url(images/aon-datascroller/aon-dataScroller-button-next.png) center center no-repeat;
-
+	}
+.aon-dataScroller-button-next-disabled{
+	background:transparent url(images/aon-datascroller/aon-dataScroller-button-next-disabled.png) center center no-repeat;
 	}
 .aon-dataScroller-button-fastForward{
 	background:transparent url(images/aon-datascroller/aon-dataScroller-button-fastForward.png) center center no-repeat;
-
+	}
+.aon-dataScroller-button-fastForward-disabled{
+	background:transparent url(images/aon-datascroller/aon-dataScroller-button-fastForward-disabled.png) center center no-repeat;
 	}
 .aon-dataScroller-button-fastRewind{
 	background:transparent url(images/aon-datascroller/aon-dataScroller-button-fastRewind.png) center center no-repeat;
-
 	}
+.aon-dataScroller-button-fastRewind-disabled{
+	background:transparent url(images/aon-datascroller/aon-dataScroller-button-fastRewind-disabled.png) center center no-repeat;
+	}
+	
 .aon-dataScroller-selected{
 		font-weight:bold;
 		font-size:1.4em;
@@ -1440,14 +1453,3 @@ color:#000;
 	padding-bottom:2px;
 }
 
-/*************************/
-/*****  FILE UPLOAD  *****/
-/************************/
-.rich-fileupload-list-decor, .rich-fileupload-toolbar-decor{
-	border:0;
-	background-color:transparent;
-}
-.rich-fileupload-list-overflow{
-}
-.rich-fileupload-button{
-}
