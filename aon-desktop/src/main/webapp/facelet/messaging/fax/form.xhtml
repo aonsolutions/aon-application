@@ -93,9 +93,9 @@
 								</rich:fileUpload>	
 								<aon:div id="attachDataTable">
 									<aon:dataTable  
-										value="#{fax.files}" style="width: 90%;"
-										var="attachment" styleClass="aon-panelGrid-formatting">
-											<aon:column>
+										value="#{fax.files}" 
+										var="attachment" style="width: 90%;background:transparent;border:0;">
+											<aon:column style="background:transparent;border:0;">
 												<aon:outputText value="#{attachment.fileName}" styleClass="aon-bold" />
 												<aon:commandLink
 													reRender="attachDiv" style="font-size:0.9em;margin-left:20px;"

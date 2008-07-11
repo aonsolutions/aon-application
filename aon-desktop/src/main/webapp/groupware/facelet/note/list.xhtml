@@ -44,7 +44,8 @@
 			<aon:div styleClass="aon-scroll-area">
 				<aon:dataTable id="noteDataList" value="#{note.model}"
 					var="to" rows="20" rendered="#{note.model.rowCount > 0}"
-					columnClasses="aon-editDataTable-textColumn, aon-editDataTable-textColumn">
+					columnClasses="aon-editDataTable-textColumn, aon-editDataTable-textColumn"
+					columnsWidth="150,auto">
 
 					<aon:rowSelector action="note_form" actionListener="#{note.onSelect}" />
 
