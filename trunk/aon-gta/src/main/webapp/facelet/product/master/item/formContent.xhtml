@@ -124,7 +124,7 @@
 					styleClass="aon-form-input-text-label aon-form-layout-label-block" />
 				<t:div>
 					<t:inputText id="Sales_Account_Lookup_id"
-						value="#{item.to.product.salesAccount}"
+						value="#{itemAlias.to.product.salesAccount}"
 						styleClass="aon-form-input-text" forceId="#{true}"
 						size="12">
 						<f:validateLength minimum="1" maximum="12" />
@@ -139,7 +139,7 @@
 					styleClass="aon-form-input-text-label aon-form-layout-label-block" />
 				<t:div>
 					<t:inputText id="Purchase_Account_Lookup_id"
-						value="#{item.to.product.purchaseAccount}"
+						value="#{itemAlias.to.product.purchaseAccount}"
 						styleClass="aon-form-input-text" forceId="#{true}"
 						size="12">
 						<f:validateLength minimum="1" maximum="12" />
