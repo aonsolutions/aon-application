@@ -20,9 +20,9 @@
 		<a4j:loadStyle src="#{styleSheet}"/>
 	</c:forEach>
 	
-	<a4j:loadScript src="/aonResource/js/richFaces.js"/>
-	<a4j:loadScript src="/aonResource/js/sms.js"/>
-	<link rel="shortcut icon" type="image/x-icon" href="#{facesContext.externalContext.requestContextPath}/aonResource/images/favicon.ico" />
+	<a4j:loadScript src="#{aonResource.resolveLocal['/js/richFaces.js']}"/>
+	<a4j:loadScript src="#{aonResource.resolveLocal['/js/sms.js']}"/>
+	<link rel="shortcut icon" type="image/x-icon" href="#{facesContext.externalContext.requestContextPath}#{aonResource.resolveLocal['/images/favicon.ico']}" />
 	<ui:insert name="head" />
 </head>
 <body>
