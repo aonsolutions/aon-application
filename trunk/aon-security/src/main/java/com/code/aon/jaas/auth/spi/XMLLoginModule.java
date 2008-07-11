@@ -481,9 +481,7 @@ public abstract class XMLLoginModule extends AbstractLoginModule {
              * </id> <list> <id>Echo </id> </list> </relation> ...
              */
             IRelation profile = this.authInfo.getProfileRelation( domainName, context, element );
-        	LOGGER.info( "BEFORE ADDING MEMBER " + profile + " " + flag);
             if (profile == null || !flag) {
-            	LOGGER.info( "ADDING MEMBER " + element );
                 AuthPrincipal p = new AuthPrincipal(element);
                 group.addMember(p);
             } else {
