@@ -23,7 +23,7 @@ public class Banner implements ITransferObject, IPositionObject {
 	
 	private String alias;
 	
-	private boolean active;
+	private boolean active = true;
 	
 	private Integer position;
 	
