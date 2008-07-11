@@ -18,7 +18,7 @@
 				columnClasses="aon-finding-title,aon-finding-subtitle,aon-finding-toolbar">				
 			
 				<aon:div styleClass="aon-finding-title-internal">
-					<aon:outputText value="#{appBundle.banner_category}"/>	  						
+					<aon:outputText value="#{appBundle.banner}"/>	  						
 				</aon:div>					
 				
 				<aon:div styleClass="aon-finding-subtitle-internal">
@@ -28,21 +28,23 @@
 					
 				<!-- start toolbar navigation -->
 				<aon:div styleClass="aon-finding-toolbar-item-group">					
-					<aon:commandButton id="reset" value="#{bundle.aon_reset}"
-						action="banner_category_form"
+					<aon:commandButton id="reset" 
+						value="#{bundle.aon_reset}"
+						action="banner_form"
 						styleClass="aon-finding-toolbar-item aon-icon-reset"
 						accesskey="#{bundle.aon_key_new}">
-						<aon:actionListener method="#{banner_category.onReset}" />
+						<aon:actionListener method="#{banner.onReset}" />
 					</aon:commandButton>
-					<aon:commandButton id="search" value="#{bundle.aon_search}"
-						action="banner_category_search"
+					<aon:commandButton id="search" 
+						value="#{bundle.aon_search}"
+						action="banner_search"
 						styleClass="aon-finding-toolbar-item aon-icon-search"
 						accesskey="#{bundle.aon_key_search}">
-						<aon:actionListener method="#{banner_category.onEditSearch}" />
+						<aon:actionListener method="#{banner.onEditSearch}" />
 					</aon:commandButton>
 					<aon:commandButton id="exit"
 						value="#{bundle.aon_close}"
-						action="banner_form" 
+						action="home" 
 						immediate="#{true}"
 						styleClass="aon-finding-toolbar-item aon-icon-cancel"
 						accesskey="#{bundle.aon_key_close}">
@@ -55,8 +57,8 @@
 		<!--  aon-region-body -->
 		<aon:div styleClass="aon-scroll-area">
 					
-					<aon:dataTable id="dataTable" value="#{banner_category.model}" var="to"
-						rows="#{banner_category.pageLimit}" 
+					<aon:dataTable id="dataTable" value="#{banner.model}" var="to"
+						rows="#{banner.pageLimit}" 
 						styleClass="dr-table rich-table aon-editDataTable"
 						headerClass="dr-table-subheader rich-table-subheader aon-editDataTable-header"
 						footerClass="dr-table-subfooter rich-table-subfooter aon-editDataTable-footer"
@@ -65,59 +67,70 @@
 						columnClasses="dr-table-cell rich-table-cell aon-editDataTable-textColumn,
 								dr-table-cell rich-table-cell aon-editDataTable-textColumn,
 								dr-table-cell rich-table-cell aon-editDataTable-textColumn,
+								dr-table-cell rich-table-cell aon-editDataTable-textColumn,
 								dr-table-cell rich-table-cell aon-editDataTable-iconColumn">
 				
 						<aon:column>
 							<a4j:support 
-								action="banner_category_form"
-								actionListener="#{banner_category.onSelect}"
+								action="banner_form"
+								actionListener="#{banner.onSelect}"
 								event="onclick" />
 							<f:facet name="header">
-								<aon:outputText value="#{appBundle.banner_category_alias}" />
+								<aon:outputText value="#{appBundle.banner_alias}" />
 							</f:facet>
 							<aon:outputText value="#{to.alias}" styleClass="aon-editDataTable-button"/>
 						</aon:column>
 
 						<aon:column>
 							<a4j:support 
-								action="banner_category_form"
-								actionListener="#{banner_category.onSelect}"
+								action="banner_form"
+								actionListener="#{banner.onSelect}"
 								event="onclick" />
 							<f:facet name="header">
-								<aon:outputText value="#{appBundle.banner_category_label}" />
+								<aon:outputText value="#{appBundle.banner_label}" />
 							</f:facet>
-							<aon:outputText value="#{banner_category.i18nLabel}"
+							<aon:outputText value="#{banner.i18nLabel}"
 								styleClass="aon-editDataTable-button"/>
 						</aon:column>
 
 						<aon:column>
 							<a4j:support 
-								action="banner_category_form"
-								actionListener="#{banner_category.onSelect}"
+								action="banner_form"
+								actionListener="#{banner.onSelect}"
 								event="onclick" />
 							<f:facet name="header">
-								<aon:outputText for="BannerCategory_position" 
-									value="#{appBundle.banner_category_position}" />
+								<aon:outputText value="#{appBundle.banner_category}" />
 							</f:facet>
-							<aon:outputText value="#{to.position}" styleClass="aon-editDataTable-button" />
+							<aon:outputText value="#{to.bannerCategory.alias}" styleClass="aon-editDataTable-button" />
 						</aon:column>
 
 						<aon:column>
+							<a4j:support 
+								action="banner_form"
+								actionListener="#{banner.onSelect}"
+								event="onclick" />
 							<f:facet name="header">
-								<aon:outputText value="#{appBundle.banner_category_active}" />
+								<aon:outputText value="#{appBundle.banner_position}" />
 							</f:facet>
-							<aon:commandLink title="#{appBundle.banner_category_activate}" 
-								action="banner_category_list"
-								actionListener="#{banner_category.onActivate}" 
+							<aon:outputText value="#{to.position}" styleClass="aon-editDataTable-button" />
+						</aon:column>
+						
+						<aon:column>
+							<f:facet name="header">
+								<aon:outputText value="#{appBundle.banner_active}" />
+							</f:facet>
+							<aon:commandLink title="#{appBundle.banner_activate}" 
+								action="banner_list"
+								actionListener="#{banner.onActivate}" 
 								rendered="#{!to.active}">
-								<aon:graphicImage id="BannerCategory_active" alt="#{appBundle.banner_category_activate}"
+								<aon:graphicImage id="Banner_active" alt="#{appBundle.banner_activate}"
 									url="/images/cms/inactive.png" />
 							</aon:commandLink>
-							<aon:commandLink title="#{appBundle.banner_category_deactivate}" 
-								action="banner_category_list"
-								actionListener="#{banner_category.onDeactivate}" 
+							<aon:commandLink title="#{appBundle.banner_deactivate}" 
+								action="banner_list"
+								actionListener="#{banner.onDeactivate}" 
 								rendered="#{to.active}">
-								<aon:graphicImage id="BannerCategory_deactive" alt="#{appBundle.banner_category_deactivate}"
+								<aon:graphicImage id="Banner_deactive" alt="#{appBundle.banner_deactivate}"
 									url="/images/cms/active.png" />
 							</aon:commandLink>
 						</aon:column>
@@ -125,8 +138,8 @@
 					</aon:dataTable>
 				
 					<aon:dataScroller for="dataTable"
-						rowCount="#{banner_category.model.rowCount}" 
-						page="#{banner_category.page}"
+						rowCount="#{banner.model.rowCount}"
+						page="#{banner.page}"
 						showNote="true" />					
 
 			</aon:div>
