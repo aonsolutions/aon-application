@@ -17,26 +17,11 @@
 			footerClass="dr-table-subfooter rich-table-subfooter aon-editDataTable-footer"
 			rowClasses="aon-editDataTable-row-odd,dr-table-firstrow rich-table-firstrow aon-editDataTable-row-even"
 			cellpadding="0" cellspacing="0"
-			columnClasses="dr-table-cell rich-table-cell aon-editDataTable-iconColumn,
-					dr-table-cell rich-table-cell aon-editDataTable-textColumn,
+			columnClasses="dr-table-cell rich-table-cell aon-editDataTable-textColumn,
 					dr-table-cell rich-table-cell aon-editDataTable-textColumn,
 					dr-table-cell rich-table-cell aon-editDataTable-iconColumn,
 					dr-table-cell rich-table-cell aon-editDataTable-textColumn">
 					
-			<aon:column>
-				<f:facet name="header">
-					<aon:div>
-						&nbsp;
-					</aon:div>	
-				</f:facet>
-				<aon:selectBooleanCheckbox 
-						value="#{article.rowChecked}">
-						<a4j:support 
-							event="onclick"  
-							reRender="#{dataTable},buttonsGridDetailList" />
-				</aon:selectBooleanCheckbox>
-			</aon:column>
-	
 			<aon:column>
 				<a4j:support 
 					immediate="#{true}"

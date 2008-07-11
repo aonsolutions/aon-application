@@ -3,31 +3,23 @@ package com.code.aon.ui.cms.controller;
 import javax.faces.event.ActionEvent;
 
 import com.code.aon.cms.Download;
-import com.code.aon.cms.DownloadCategory;
 import com.code.aon.cms.DownloadDetail;
 import com.code.aon.cms.Image;
-import com.code.aon.cms.dao.ICMSAlias;
 import com.code.aon.common.ManagerBeanException;
-import com.code.aon.ql.Criteria;
-import com.code.aon.ql.util.ExpressionException;
-import com.code.aon.ui.cms.controller.support.OrderedControllerSupport;
-import com.code.aon.ui.cms.controller.support.IOrderedControllerListener;
 import com.code.aon.ui.util.AonUtil;
 
-public class DownloadController extends BasicI18nController implements IOrderedControllerListener {
+public class DownloadController extends BasicI18nController{
 
-	public OrderedControllerSupport orderedControllerSupport = new OrderedControllerSupport(ICMSAlias.DOWNLOAD_POSITION);
-
-	private DownloadCategory currentDownloadCategory;
-
-	public DownloadCategory getCurrentDownloadCategory() {
-		return currentDownloadCategory;
+	private int page;
+	
+	public int getPage() {
+		return page;
 	}
 
-	public void setCurrentDownloadCategory(DownloadCategory currentDownloadCategory) {
-		this.currentDownloadCategory = currentDownloadCategory;
+	public void setPage(int page) {
+		this.page = page;
 	}
-
+	
 	@SuppressWarnings("unused")
 	public void onSelect(ActionEvent event) {
 		super.onSelect(event);
@@ -65,30 +57,6 @@ public class DownloadController extends BasicI18nController implements IOrderedC
 		String image = ((Image)controller.getModel().getRowData()).getRelativePath();
 		DownloadDetail current = (DownloadDetail)getToI18n();
 		current.setFile(image);
-	}
-
-    public void onMoveUp(ActionEvent event) throws ManagerBeanException, ExpressionException {
-    	orderedControllerSupport.onMoveUp(this);
-    }
-
-    public void onMoveDown(ActionEvent event) throws ManagerBeanException, ExpressionException {
-    	orderedControllerSupport.onMoveDown(this);
-    }
-
-	public void fireBeforeUseCriteria(Criteria criteria) {
-		try {
-			criteria.addExpression(getManagerBean().getFieldName(ICMSAlias.DOWNLOAD_DOWNLOAD_CATEGORY_ID), "" + getCurrentDownloadCategory().getId());
-		} catch (ManagerBeanException e) {
-		} catch (ExpressionException e) {
-		}
-	}
-
-	protected void afterRemoveSelected(){
-		try {
-			orderedControllerSupport.reorderObjects(this);
-		} catch (ManagerBeanException e) {
-			e.printStackTrace();
-		}
 	}
 
 }

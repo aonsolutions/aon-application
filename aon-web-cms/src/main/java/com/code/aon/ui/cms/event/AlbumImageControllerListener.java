@@ -3,8 +3,8 @@ package com.code.aon.ui.cms.event;
 import java.io.File;
 
 import com.code.aon.cms.AlbumImage;
+import com.code.aon.cms.dao.ICMSAlias;
 import com.code.aon.common.ManagerBeanException;
-import com.code.aon.ui.cms.controller.AlbumImageController;
 import com.code.aon.ui.cms.util.ControllerUtil;
 import com.code.aon.ui.cms.util.ImageUtil;
 import com.code.aon.ui.form.event.ControllerAdapter;
@@ -14,36 +14,17 @@ import com.code.aon.ui.form.event.ControllerListenerException;
 public class AlbumImageControllerListener extends ControllerAdapter {
 	
 	@Override
-	public void afterBeanRemoved(ControllerEvent event)
-			throws ControllerListenerException {
-		AlbumImageController controller = (AlbumImageController) event.getController();
+	public void beforeModelInitialized(ControllerEvent event) throws ControllerListenerException {
 		try {
-			controller.orderedControllerSupport.reorderObjects(controller);
+			event.getController().getCriteria().addOrder(event.getController().getFieldName(ICMSAlias.ALBUM_IMAGE_IMAGE));
 		} catch (ManagerBeanException e) {
 			throw new ControllerListenerException(e);
 		}
 	}
-	
-
-	@Override
-	public void afterModelInitialized(ControllerEvent event)
-			throws ControllerListenerException {
-		AlbumImageController controller = (AlbumImageController)event.getController();
-		controller.orderedControllerSupport.addListenerSupport(controller);
-	}
-	
-	@Override
-	public void afterBeanCreated(ControllerEvent event) throws ControllerListenerException {
-		AlbumImage albumImage = (AlbumImage)event.getController().getTo();
-		albumImage.setActive(true);
-	}
 
 	@Override
 	public void beforeBeanAdded(ControllerEvent event) throws ControllerListenerException {
-		AlbumImageController aic = (AlbumImageController)event.getController();
 		AlbumImage ai = (AlbumImage)event.getController().getTo();
-		ai.setAlbum(aic.getCurrentAlbum());
-		ai.setPosition(aic.orderedControllerSupport.getLastPosition(aic));
 		generateThumbnail(ai);
 	}
 	

@@ -3,30 +3,22 @@ package com.code.aon.ui.cms.controller;
 import javax.faces.event.ActionEvent;
 
 import com.code.aon.cms.Faq;
-import com.code.aon.cms.FaqCategory;
 import com.code.aon.cms.FaqDetail;
-import com.code.aon.cms.dao.ICMSAlias;
 import com.code.aon.common.ManagerBeanException;
-import com.code.aon.ql.Criteria;
-import com.code.aon.ql.util.ExpressionException;
-import com.code.aon.ui.cms.controller.support.OrderedControllerSupport;
-import com.code.aon.ui.cms.controller.support.IOrderedControllerListener;
 
 
-public class FaqController extends BasicI18nController implements IOrderedControllerListener {
+public class FaqController extends BasicI18nController {
 
-	public OrderedControllerSupport orderedControllerSupport = new OrderedControllerSupport(ICMSAlias.FAQ_POSITION);
-
-	private FaqCategory currentFaqCategory;
+	private int page;
 	
-	public FaqCategory getCurrentFaqCategory() {
-		return currentFaqCategory;
+	public int getPage() {
+		return page;
 	}
 
-	public void setCurrentFaqCategory(FaqCategory currentFaqCategory) {
-		this.currentFaqCategory = currentFaqCategory;
+	public void setPage(int page) {
+		this.page = page;
 	}
-
+	
 	@SuppressWarnings("unused")
 	public void onSelect(ActionEvent event) {
 		super.onSelect(event);
@@ -59,30 +51,6 @@ public class FaqController extends BasicI18nController implements IOrderedContro
 		FaqDetail fd = (FaqDetail)getModelRowdataI18n();
 		if (fd != null) label = fd.getQuestion();
 		return label;
-	}
-
-    public void onMoveUp(ActionEvent event) throws ManagerBeanException, ExpressionException {
-    	orderedControllerSupport.onMoveUp(this);
-    }
-
-    public void onMoveDown(ActionEvent event) throws ManagerBeanException, ExpressionException {
-    	orderedControllerSupport.onMoveDown(this);
-    }
-
-	public void fireBeforeUseCriteria(Criteria criteria) {
-		try {
-			criteria.addExpression(getManagerBean().getFieldName(ICMSAlias.FAQ_FAQ_CATEGORY_ID), "" + getCurrentFaqCategory().getId());
-		} catch (ManagerBeanException e) {
-		} catch (ExpressionException e) {
-		}
-	}
-
-	protected void afterRemoveSelected(){
-		try {
-			orderedControllerSupport.reorderObjects(this);
-		} catch (ManagerBeanException e) {
-			e.printStackTrace();
-		}
 	}
 
 }

@@ -2,33 +2,24 @@ package com.code.aon.ui.cms.controller;
 
 import javax.faces.event.ActionEvent;
 
-import com.code.aon.cms.Album;
 import com.code.aon.cms.AlbumImage;
 import com.code.aon.cms.AlbumImageDetail;
 import com.code.aon.cms.Image;
-import com.code.aon.cms.dao.ICMSAlias;
 import com.code.aon.common.ManagerBeanException;
-import com.code.aon.ql.Criteria;
-import com.code.aon.ql.util.ExpressionException;
-import com.code.aon.ui.cms.controller.support.OrderedControllerSupport;
-import com.code.aon.ui.cms.controller.support.IOrderedControllerListener;
 import com.code.aon.ui.util.AonUtil;
 
-public class AlbumImageController extends BasicI18nController  implements IOrderedControllerListener {
+public class AlbumImageController extends BasicI18nController {
 
-	public OrderedControllerSupport orderedControllerSupport = new OrderedControllerSupport(ICMSAlias.ARTICLE_POSITION);
-
-
-	private Album currentAlbum;
+	private int page;
 	
-	public Album getCurrentAlbum() {
-		return currentAlbum;
+	public int getPage() {
+		return page;
 	}
 
-	public void setCurrentAlbum(Album currentAlbum) {
-		this.currentAlbum = currentAlbum;
+	public void setPage(int page) {
+		this.page = page;
 	}
-
+	
 	@SuppressWarnings("unused")
 	public void onSelect(ActionEvent event) {
 		super.onSelect(event);
@@ -80,28 +71,4 @@ public class AlbumImageController extends BasicI18nController  implements IOrder
 		current.setThumbnail(image);
 	}
 	
-    public void onMoveUp(ActionEvent event) throws ManagerBeanException, ExpressionException {
-    	orderedControllerSupport.onMoveUp(this);
-    }
-
-    public void onMoveDown(ActionEvent event) throws ManagerBeanException, ExpressionException {
-    	orderedControllerSupport.onMoveDown(this);
-    }
-
-	public void fireBeforeUseCriteria(Criteria criteria) {
-		try {
-			criteria.addExpression(getManagerBean().getFieldName(ICMSAlias.ALBUM_IMAGE_ALBUM_ID), "" + getCurrentAlbum().getId());
-		} catch (ManagerBeanException e) {
-		} catch (ExpressionException e) {
-		}
-	}
-
-	protected void afterRemoveSelected(){
-		try {
-			orderedControllerSupport.reorderObjects(this);
-		} catch (ManagerBeanException e) {
-			e.printStackTrace();
-		}
-	}
-
 }

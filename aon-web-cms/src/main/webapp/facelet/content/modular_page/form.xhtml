@@ -42,7 +42,8 @@
 							<aon:actionListener method="#{modular_page.accept}" />
 						</aon:commandButton>
 						<aon:confirmButton id="remove"
-							value="#{bundle.aon_remove}" rendered="#{!modular_page.new}" 
+							value="#{bundle.aon_remove}" 
+							rendered="#{!modular_page.new and !modular_page.to.homepage}" 
 							immediate="#{true}"
 							styleClass="aon-finding-toolbar-item aon-icon-delete"
 							confirmTitle="Confirmation Dialog" 
@@ -125,16 +126,6 @@
 											accesskey="#{bundle.aon_key_new}">
 											<aon:actionListener method="#{modular_page_option.onReset}" />
 										</aon:commandButton>
-										<aon:confirmButton id="remove_list"
-											value="#{bundle.aon_remove}" 
-											rendered="#{!modular_page_option.checklistEmpty and modular_page_option.to==null}" 
-											immediate="#{true}"
-											confirmTitle="Confirmation Dialog" 
-											confirmMessage="#{bundle.aon_remove_confirm}"
-											confirmActionListener="#{modular_page_option.onRemoveSelected}" 
-											confirmAction="modular_page_form"
-											styleClass="aon-finding-toolbar-item aon-icon-delete"
-											accesskey="#{bundle.aon_key_remove}"/>
 								    </aon:div>
 									
 									<!-- end toolbar navigation -->
@@ -148,26 +139,11 @@
 								footerClass="dr-table-subfooter rich-table-subfooter aon-editDataTable-footer"
 								rowClasses="aon-editDataTable-row-odd,dr-table-firstrow rich-table-firstrow aon-editDataTable-row-even"
 								cellpadding="0" cellspacing="0"
-								columnClasses="dr-table-cell rich-table-cell aon-editDataTable-iconColumn,
-										dr-table-cell rich-table-cell aon-editDataTable-textColumn,
+								columnClasses="dr-table-cell rich-table-cell aon-editDataTable-textColumn,
 										dr-table-cell rich-table-cell aon-editDataTable-textColumn,
 										dr-table-cell rich-table-cell aon-editDataTable-iconColumn,
 										dr-table-cell rich-table-cell aon-editDataTable-textColumn">
 										
-								<aon:column>
-									<f:facet name="header">
-										<aon:div>
-											&nbsp;
-										</aon:div>	
-									</f:facet>
-									<aon:selectBooleanCheckbox id="Row_checked"
-											value="#{modular_page_option.rowChecked}">
-											<a4j:support 
-												event="onclick"  
-												reRender="detail" />
-									</aon:selectBooleanCheckbox>
-								</aon:column>
-						
 								<aon:column>
 									<a4j:support 
 										immediate="#{true}"

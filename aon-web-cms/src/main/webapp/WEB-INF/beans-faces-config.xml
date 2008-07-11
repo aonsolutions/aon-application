@@ -215,7 +215,7 @@
 		</managed-property>
 		<managed-property>
 			<property-name>queryOnStartUP</property-name>
-			<value>true</value>
+			<value>false</value>
 		</managed-property>
 		<managed-property>
 			<property-name>pageLimit</property-name>
@@ -259,11 +259,11 @@
 		</managed-property>
 		<managed-property>
 			<property-name>queryOnStartUP</property-name>
-			<value>true</value>
+			<value>false</value>
 		</managed-property>
 		<managed-property>
 			<property-name>pageLimit</property-name>
-			<value>10</value>
+			<value>20</value>
 		</managed-property>
 		<managed-property>
 			<property-name>listenerClasses</property-name>
@@ -303,7 +303,7 @@
 		</managed-property>
 		<managed-property>
 			<property-name>queryOnStartUP</property-name>
-			<value>true</value>
+			<value>false</value>
 		</managed-property>
 		<managed-property>
 			<property-name>pageLimit</property-name>
@@ -347,11 +347,11 @@
 		</managed-property>
 		<managed-property>
 			<property-name>queryOnStartUP</property-name>
-			<value>true</value>
+			<value>false</value>
 		</managed-property>
 		<managed-property>
 			<property-name>pageLimit</property-name>
-			<value>10</value>
+			<value>20</value>
 		</managed-property>
 		<managed-property>
 			<property-name>listenerClasses</property-name>
@@ -736,7 +736,7 @@
 		</managed-property>
 		<managed-property>
 			<property-name>queryOnStartUP</property-name>
-			<value>true</value>
+			<value>false</value>
 		</managed-property>
 		<managed-property>
 			<property-name>pageLimit</property-name>
@@ -780,11 +780,11 @@
 		</managed-property>
 		<managed-property>
 			<property-name>queryOnStartUP</property-name>
-			<value>true</value>
+			<value>false</value>
 		</managed-property>
 		<managed-property>
 			<property-name>pageLimit</property-name>
-			<value>10</value>
+			<value>20</value>
 		</managed-property>
 		<managed-property>
 			<property-name>listenerClasses</property-name>
@@ -824,7 +824,7 @@
 		</managed-property>
 		<managed-property>
 			<property-name>queryOnStartUP</property-name>
-			<value>true</value>
+			<value>false</value>
 		</managed-property>
 		<managed-property>
 			<property-name>pageLimit</property-name>
@@ -868,11 +868,11 @@
 		</managed-property>
 		<managed-property>
 			<property-name>queryOnStartUP</property-name>
-			<value>true</value>
+			<value>false</value>
 		</managed-property>
 		<managed-property>
 			<property-name>pageLimit</property-name>
-			<value>10</value>
+			<value>20</value>
 		</managed-property>
 		<managed-property>
 			<property-name>listenerClasses</property-name>
@@ -912,11 +912,11 @@
 		</managed-property>
 		<managed-property>
 			<property-name>queryOnStartUP</property-name>
-			<value>true</value>
+			<value>false</value>
 		</managed-property>
 		<managed-property>
 			<property-name>pageLimit</property-name>
-			<value>10</value>
+			<value>20</value>
 		</managed-property>
 		<managed-property>
 			<property-name>listenerClasses</property-name>

@@ -34,37 +34,50 @@
 						accesskey="#{bundle.aon_key_new}">
 						<aon:actionListener method="#{album_category.onReset}" />
 					</aon:commandButton>
-					<aon:confirmButton id="remove"
-						value="#{bundle.aon_remove}" rendered="#{!album_category.checklistEmpty}" 
-						inmediate="true"
-						styleClass="aon-finding-toolbar-item aon-icon-delete"
-						confirmTitle="Confirmation Dialog" confirmMessage="#{bundle.aon_remove_confirm}"
-						confirmActionListener="#{album_category.onRemoveSelected}"
-						confirmAction="album_category_list"
-						accesskey="#{bundle.aon_key_remove}"/>
+					<aon:commandButton id="search" value="#{bundle.aon_search}"
+						action="album_category_search"
+						styleClass="aon-finding-toolbar-item aon-icon-search"
+						accesskey="#{bundle.aon_key_search}">
+						<aon:actionListener method="#{album_category.onEditSearch}" />
+					</aon:commandButton>
+					<aon:commandButton id="exit"
+						value="#{bundle.aon_close}"
+						action="album_form" 
+						immediate="#{true}"
+						styleClass="aon-finding-toolbar-item aon-icon-cancel"
+						accesskey="#{bundle.aon_key_close}">
+					</aon:commandButton>
 			    </aon:div>
 				
 				<!-- end toolbar navigation -->
 			</aon:panelGrid>
 		</aon:div>
-		
-		<!--  aon-region-body -->
-		<aon:div styleClass="aon-scroll-area">
-		
+		<aon:div styleClass="aon-finding-title-toolbar">
+			<aon:panelGrid id="sectionGrid" columns="3" dir="true" 
+				columnClasses="aon-finding-title,aon-finding-subtitle,aon-finding-toolbar">				
+				
 					<aon:outputLabel for="AlbumCategory_section"
 						value="#{appBundle.section}"/>
+						
 					<aon:selectOneMenu id="AlbumCategory_section"  
 						value="#{generator_config.sectionId}">
 						<f:selectItem itemLabel="-" itemValue="-1" />
 						<f:selectItems value="#{collections.sectionList}" />
 					</aon:selectOneMenu>
 					
-					<aon:commandButton id="save"
-						value="#{bundle.aon_save}" 
-						styleClass="aon-content-toolbar-item aon-icon-accept">
-						<aon:actionListener method="#{generator_config.onSaveAlbumConfig}" />
-					</aon:commandButton>
-
+					<aon:div styleClass="aon-finding-toolbar-item-group">					
+						<aon:commandButton id="save"
+							value="#{bundle.aon_save}"
+							action="album_category_list" 
+							styleClass="aon-finding-toolbar-item aon-icon-accept">
+							<aon:actionListener method="#{generator_config.onSaveAlbumConfig}" />
+						</aon:commandButton>
+					</aon:div>		
+			</aon:panelGrid>
+		</aon:div>
+		<!--  aon-region-body -->
+		<aon:div styleClass="aon-scroll-area">
+					
 					<aon:dataTable id="dataTable" value="#{album_category.model}" var="to"
 						rows="#{album_category.pageLimit}" 
 						styleClass="dr-table rich-table aon-editDataTable"
@@ -72,25 +85,10 @@
 						footerClass="dr-table-subfooter rich-table-subfooter aon-editDataTable-footer"
 						rowClasses="aon-editDataTable-row-odd,dr-table-firstrow rich-table-firstrow aon-editDataTable-row-even"
 						cellpadding="0" cellspacing="0"
-						columnClasses="dr-table-cell rich-table-cell aon-editDataTable-iconColumn,
-								dr-table-cell rich-table-cell aon-editDataTable-textColumn,
+						columnClasses="dr-table-cell rich-table-cell aon-editDataTable-textColumn,
 								dr-table-cell rich-table-cell aon-editDataTable-textColumn,
 								dr-table-cell rich-table-cell aon-editDataTable-iconColumn">
 				
-						<aon:column>
-							<f:facet name="header">
-								<aon:div>
-									<aon:outputText value="#{bundle.aon_check}" />
-								</aon:div>	
-							</f:facet>
-							<aon:selectBooleanCheckbox id="Row_checked"
-									value="#{album_category.rowChecked}">
-									<a4j:support 
-										event="onclick"  
-										reRender="dataTable,buttonsGrid" />
-							</aon:selectBooleanCheckbox>
-						</aon:column>
-						
 						<aon:column>
 							<a4j:support 
 								action="album_category_form"
@@ -122,21 +120,24 @@
 								action="album_category_list"
 								actionListener="#{album_category.onActivate}" 
 								rendered="#{!to.active}">
-								<aon:graphicImage alt="#{appBundle.album_category_activate}"
+								<aon:graphicImage id="AlbumCategory_active" alt="#{appBundle.album_category_activate}"
 									url="/images/cms/inactive.png" />
 							</aon:commandLink>
 							<aon:commandLink title="#{appBundle.album_category_deactivate}" 
 								action="album_category_list"
 								actionListener="#{album_category.onDeactivate}" 
 								rendered="#{to.active}">
-								<aon:graphicImage alt="#{appBundle.album_category_deactivate}"
+								<aon:graphicImage id="AlbumCategory_deactive" alt="#{appBundle.album_category_deactivate}"
 									url="/images/cms/active.png" />
 							</aon:commandLink>
 						</aon:column>
 
 					</aon:dataTable>
 				
-					<rich:datascroller align="left"  for="dataTable" maxPages="20" />
+					<aon:dataScroller for="dataTable"
+						rowCount="#{album_category.model.rowCount}" 
+						page="#{album_category.page}"
+						showNote="true" />					
 
 			</aon:div>
 		</aon:form>

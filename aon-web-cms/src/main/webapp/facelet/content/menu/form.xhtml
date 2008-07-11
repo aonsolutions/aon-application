@@ -42,7 +42,7 @@
 							<aon:actionListener method="#{menu.accept}" />
 						</aon:commandButton>
 						<aon:confirmButton id="remove"
-							value="#{bundle.aon_remove}" rendered="#{!menu.new}" 
+							value="#{bundle.aon_remove}" rendered="#{!menu.new and !menu.to.defaultMenu}"
 							immediate="#{true}"
 							styleClass="aon-finding-toolbar-item aon-icon-delete"
 							confirmTitle="Confirmation Dialog" confirmMessage="#{bundle.aon_remove_confirm}"
@@ -91,16 +91,6 @@
 										accesskey="#{bundle.aon_key_new}">
 										<aon:actionListener method="#{menu_option.onReset}" />
 									</aon:commandButton>
-									<aon:confirmButton id="remove_list"
-										value="#{bundle.aon_remove}" 
-										rendered="#{!menu_option.checklistEmpty and menu_option.to==null}" 
-										inmediate="true"
-										confirmTitle="Confirmation Dialog" 
-										confirmMessage="#{bundle.aon_remove_confirm}"
-										confirmActionListener="#{menu_option.onRemoveSelected}" 
-										confirmAction="menu_form"
-										styleClass="aon-finding-toolbar-item aon-icon-delete"
-										accesskey="#{bundle.aon_key_remove}"/>
 							    </aon:div>
 								
 								<!-- end toolbar navigation -->
@@ -114,25 +104,10 @@
 							footerClass="dr-table-subfooter rich-table-subfooter aon-editDataTable-footer"
 							rowClasses="aon-editDataTable-row-odd,dr-table-firstrow rich-table-firstrow aon-editDataTable-row-even"
 							cellpadding="0" cellspacing="0"
-							columnClasses="dr-table-cell rich-table-cell aon-editDataTable-iconColumn,
-									dr-table-cell rich-table-cell aon-editDataTable-textColumn,
+							columnClasses="dr-table-cell rich-table-cell aon-editDataTable-textColumn,
 									dr-table-cell rich-table-cell aon-editDataTable-iconColumn,
 									dr-table-cell rich-table-cell aon-editDataTable-textColumn">
 									
-							<aon:column>
-								<f:facet name="header">
-									<aon:div>
-										&nbsp;
-									</aon:div>	
-								</f:facet>
-								<aon:selectBooleanCheckbox id="Row_checked"
-										value="#{menu_option.rowChecked}">
-										<a4j:support 
-											event="onclick"  
-											reRender="detail_panel" />
-								</aon:selectBooleanCheckbox>
-							</aon:column>
-					
 							<aon:column>
 								<a4j:support 
 									reRender="detail_panel"
