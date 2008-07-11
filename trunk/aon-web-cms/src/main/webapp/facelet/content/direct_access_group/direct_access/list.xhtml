@@ -18,7 +18,7 @@
 				columnClasses="aon-finding-title,aon-finding-subtitle,aon-finding-toolbar">				
 			
 				<aon:div styleClass="aon-finding-title-internal">
-					<aon:outputText value="#{appBundle.direct_access_group}"/>	  						
+					<aon:outputText value="#{appBundle.direct_access}"/>	  						
 				</aon:div>					
 				
 				<aon:div styleClass="aon-finding-subtitle-internal">
@@ -28,21 +28,23 @@
 					
 				<!-- start toolbar navigation -->
 				<aon:div styleClass="aon-finding-toolbar-item-group">					
-					<aon:commandButton id="reset" value="#{bundle.aon_reset}"
-						action="direct_access_group_form"
+					<aon:commandButton id="reset" 
+						value="#{bundle.aon_reset}"
+						action="direct_access_form"
 						styleClass="aon-finding-toolbar-item aon-icon-reset"
 						accesskey="#{bundle.aon_key_new}">
-						<aon:actionListener method="#{direct_access_group.onReset}" />
+						<aon:actionListener method="#{direct_access.onReset}" />
 					</aon:commandButton>
-					<aon:commandButton id="search" value="#{bundle.aon_search}"
-						action="direct_access_group_search"
+					<aon:commandButton id="search" 
+						value="#{bundle.aon_search}"
+						action="direct_access_search"
 						styleClass="aon-finding-toolbar-item aon-icon-search"
 						accesskey="#{bundle.aon_key_search}">
-						<aon:actionListener method="#{direct_access_group.onEditSearch}" />
+						<aon:actionListener method="#{direct_access.onEditSearch}" />
 					</aon:commandButton>
 					<aon:commandButton id="exit"
 						value="#{bundle.aon_close}"
-						action="direct_access_form" 
+						action="home" 
 						immediate="#{true}"
 						styleClass="aon-finding-toolbar-item aon-icon-cancel"
 						accesskey="#{bundle.aon_key_close}">
@@ -55,8 +57,8 @@
 		<!--  aon-region-body -->
 		<aon:div styleClass="aon-scroll-area">
 					
-					<aon:dataTable id="dataTable" value="#{direct_access_group.model}" var="to"
-						rows="#{direct_access_group.pageLimit}" 
+					<aon:dataTable id="dataTable" value="#{direct_access.model}" var="to"
+						rows="#{direct_access.pageLimit}" 
 						styleClass="dr-table rich-table aon-editDataTable"
 						headerClass="dr-table-subheader rich-table-subheader aon-editDataTable-header"
 						footerClass="dr-table-subfooter rich-table-subfooter aon-editDataTable-footer"
@@ -64,47 +66,71 @@
 						cellpadding="0" cellspacing="0"
 						columnClasses="dr-table-cell rich-table-cell aon-editDataTable-textColumn,
 								dr-table-cell rich-table-cell aon-editDataTable-textColumn,
+								dr-table-cell rich-table-cell aon-editDataTable-textColumn,
+								dr-table-cell rich-table-cell aon-editDataTable-textColumn,
 								dr-table-cell rich-table-cell aon-editDataTable-iconColumn">
 				
 						<aon:column>
 							<a4j:support 
-								action="direct_access_group_form"
-								actionListener="#{direct_access_group.onSelect}"
+								action="direct_access_form"
+								actionListener="#{direct_access.onSelect}"
 								event="onclick" />
 							<f:facet name="header">
-								<aon:outputText value="#{appBundle.direct_access_group_alias}" />
+								<aon:outputText value="#{appBundle.direct_access_alias}" />
 							</f:facet>
 							<aon:outputText value="#{to.alias}" styleClass="aon-editDataTable-button"/>
 						</aon:column>
 
 						<aon:column>
 							<a4j:support 
-								action="direct_access_group_form"
-								actionListener="#{direct_access_group.onSelect}"
+								action="direct_access_form"
+								actionListener="#{direct_access.onSelect}"
 								event="onclick" />
 							<f:facet name="header">
-								<aon:outputText value="#{appBundle.direct_access_group_label}" />
+								<aon:outputText value="#{appBundle.direct_access_label}" />
 							</f:facet>
-							<aon:outputText value="#{direct_access_group.i18nLabel}"
+							<aon:outputText value="#{direct_access.i18nLabel}"
 								styleClass="aon-editDataTable-button"/>
 						</aon:column>
 
 						<aon:column>
+							<a4j:support 
+								action="direct_access_form"
+								actionListener="#{direct_access.onSelect}"
+								event="onclick" />
 							<f:facet name="header">
-								<aon:outputText value="#{appBundle.direct_access_group_active}" />
+								<aon:outputText value="#{appBundle.direct_access_category}" />
 							</f:facet>
-							<aon:commandLink title="#{appBundle.direct_access_group_activate}" 
-								action="direct_access_group_list"
-								actionListener="#{direct_access_group.onActivate}" 
+							<aon:outputText value="#{to.directAccessGroup.alias}" styleClass="aon-editDataTable-button" />
+						</aon:column>
+
+						<aon:column>
+							<a4j:support 
+								action="direct_access_form"
+								actionListener="#{direct_access.onSelect}"
+								event="onclick" />
+							<f:facet name="header">
+								<aon:outputText value="#{appBundle.direct_access_position}" />
+							</f:facet>
+							<aon:outputText value="#{to.position}" styleClass="aon-editDataTable-button" />
+						</aon:column>
+						
+						<aon:column>
+							<f:facet name="header">
+								<aon:outputText value="#{appBundle.direct_access_active}" />
+							</f:facet>
+							<aon:commandLink title="#{appBundle.direct_access_activate}" 
+								action="direct_access_list"
+								actionListener="#{direct_access.onActivate}" 
 								rendered="#{!to.active}">
-								<aon:graphicImage id="DirectAccessGroup_active" alt="#{appBundle.direct_access_group_activate}"
+								<aon:graphicImage id="DirectAccess_active" alt="#{appBundle.direct_access_activate}"
 									url="/images/cms/inactive.png" />
 							</aon:commandLink>
-							<aon:commandLink title="#{appBundle.direct_access_group_deactivate}" 
-								action="direct_access_group_list"
-								actionListener="#{direct_access_group.onDeactivate}" 
+							<aon:commandLink title="#{appBundle.direct_access_deactivate}" 
+								action="direct_access_list"
+								actionListener="#{direct_access.onDeactivate}" 
 								rendered="#{to.active}">
-								<aon:graphicImage id="DirectAccessGroup_deactive" alt="#{appBundle.direct_access_group_deactivate}"
+								<aon:graphicImage id="DirectAccess_deactive" alt="#{appBundle.direct_access_deactivate}"
 									url="/images/cms/active.png" />
 							</aon:commandLink>
 						</aon:column>
@@ -112,8 +138,8 @@
 					</aon:dataTable>
 				
 					<aon:dataScroller for="dataTable"
-						rowCount="#{direct_access_group.model.rowCount}" 
-						page="#{direct_access_group.page}"
+						rowCount="#{direct_access.model.rowCount}"
+						page="#{direct_access.page}"
 						showNote="true" />					
 
 			</aon:div>

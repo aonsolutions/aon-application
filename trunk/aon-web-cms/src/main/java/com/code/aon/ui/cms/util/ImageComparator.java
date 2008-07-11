@@ -9,7 +9,7 @@ public class ImageComparator implements Comparator {
 		Image img1 = (Image) obj1;
 		Image img2 = (Image) obj2;
 
-	    int nameComp = img1.getName().compareTo(img2.getName());
+	    int nameComp = img1.getName().compareToIgnoreCase(img2.getName());
 
 	    return nameComp;
 	  }

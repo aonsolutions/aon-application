@@ -323,6 +323,22 @@
       <from-outcome>direct_access_group_form</from-outcome>
       <to-view-id>/facelet/content/direct_access_group/form.xhtml</to-view-id>
     </navigation-case>
+    <navigation-case>
+      <from-outcome>direct_access_group_search</from-outcome>
+      <to-view-id>/facelet/content/direct_access_group/search.xhtml</to-view-id>
+    </navigation-case>
+    <navigation-case>
+      <from-outcome>direct_access_list</from-outcome>
+      <to-view-id>/facelet/content/direct_access_group/direct_access/list.xhtml</to-view-id>
+    </navigation-case>
+    <navigation-case>
+      <from-outcome>direct_access_form</from-outcome>
+      <to-view-id>/facelet/content/direct_access_group/direct_access/form.xhtml</to-view-id>
+    </navigation-case>
+    <navigation-case>
+      <from-outcome>direct_access_search</from-outcome>
+      <to-view-id>/facelet/content/direct_access_group/direct_access/search.xhtml</to-view-id>
+    </navigation-case>
   </navigation-rule>
 
   <!-- =================================================== TEMPLATES -->
