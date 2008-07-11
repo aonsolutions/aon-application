@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ResourceBundle;
@@ -229,6 +230,10 @@ public class SMSManager implements ISenderListener, Serializable, IServices {
 	}
 
 	public void reset(ActionEvent event) {
+		Calendar calendar = Calendar.getInstance();
+		calendar.setTime( new Date() );
+		month = Month.getMonthByValue( calendar.get( Calendar.MONTH ) );
+		year = calendar.get( Calendar.YEAR );
 		this.recipients = new ArrayList<String>();
 		this.recipient = null;
 		this.message.init();
