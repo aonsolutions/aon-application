@@ -1453,3 +1453,71 @@ color:#000;
 	padding-bottom:2px;
 }
 
+/*************************/
+/*****  FILE UPLOAD  *****/
+/************************/
+.rich-fileupload-toolbar-decor{
+	border:0;
+	background-color:transparent;
+	}
+.rich-fileupload-button-border{
+	border:0;
+	padding:0;
+	}
+.rich-fileupload-list-decor{
+	border:0;
+	background-color:transparent;
+	}
+.rich-fileupload-button-content{
+	margin:0;
+	}
+/* Defines styles for a buttons */
+.rich-fileupload-button, .rich-fileupload-button-light, 
+rich-fileupload-button-light, rich-fileupload-button-press, 
+rich-fileupload-button-dis, rich-fileupload-button-selection{
+	border:#808080 1px solid;
+	font-weight:bold;
+	cursor:hand;
+	background-color:#f2f2f2;
+	background-image:none;
+	padding:0 1em !important;
+	margin:0;
+	}
+.rich-fileupload-button-press{
+	padding:0px 11px 0px 15px !important;
+	font-weight:bold;
+	border:#808080 1px solid;
+	background-color:#f2f2f2;
+	background-image:none;
+	}
+/* Defines styles for a highlight of button */
+.rich-fileupload-button-light{
+	border:#808080 1px solid;
+	}
+
+/* Defines styles for a pressed button */
+.rich-fileupload-button-press{
+	}
+/* Defines styles for "Upload", "Clean" buttons */
+.rich-fileupload-button-selection{
+	}	
+/*  Defines styles for a "Add" button icon  */
+.rich-fileupload-ico-add{
+	background:transparent url(images/aon-icon/aon-icon-attach-file.png) scroll left center no-repeat;	
+	}
+.rich-fileupload-ico-add-dis{
+	border:#808080 1px solid;
+	margin:0 5px 0 0;
+	font-weight:bold;
+	cursor:hand;
+	background-image:none;
+	padding:2px 19px 2px 32px !important;
+	background:#f2f2f2 url(images/aon-icon/aon-icon-attach-file-disabled.png) scroll 13px center no-repeat;	
+	
+	}
+/*  Defines styles for a "Upload" button icon  */
+.rich-fileupload-ico-start{
+	}
+/* Defines styles for a "Stop" button icon*/
+.rich-fileupload-ico-stop{
+	}

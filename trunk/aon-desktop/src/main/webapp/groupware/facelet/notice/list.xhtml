@@ -45,7 +45,7 @@
 			
 				<aon:dataTable id="noticeDataList" value="#{notice.model}"
 					var="to" rows="20" rendered="#{notice.model.rowCount > 0}"
-					columnsWidth="150,100,150,auto,auto,170">
+					columnsWidth="150,150,150,auto,auto,170">
 
 					<aon:rowSelector action="notice_form" actionListener="#{notice.onSelect}" />
 
@@ -57,7 +57,7 @@
 							value="#{to.recipient.name}" />
 					</aon:column>
 
-					<aon:column>
+					<aon:column styleClass="aon-nowrap">
 						<f:facet name="header">
 							<aon:outputText value="#{groupwareBundle.notice_work_group}" />
 						</f:facet>
