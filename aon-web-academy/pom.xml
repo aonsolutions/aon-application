@@ -129,7 +129,7 @@
 			<groupId>fop</groupId>
 			<artifactId>fop</artifactId>
 			<version>0.20.5</version>
-			<scope>runtime</scope>
+			<scope>provided</scope>
 			<exclusions>
 				<exclusion>
 					<groupId>xalan</groupId>
