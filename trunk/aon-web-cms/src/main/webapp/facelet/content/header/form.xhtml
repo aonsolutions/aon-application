@@ -46,7 +46,8 @@
 							<aon:actionListener method="#{headers.onAccept}" />
 						</aon:commandButton>
 						<aon:confirmButton id="remove"
-							value="#{bundle.aon_remove}" rendered="#{!headers.new}" 
+							value="#{bundle.aon_remove}" 
+							rendered="#{!headers.new and !headers.to.default_}" 
 							immediate="true"
 							confirmTitle="Confirmation Dialog" 
 							confirmMessage="#{bundle.aon_remove_confirm}"

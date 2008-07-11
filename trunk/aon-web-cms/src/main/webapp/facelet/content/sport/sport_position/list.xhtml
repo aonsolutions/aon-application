@@ -52,14 +52,6 @@
 							accesskey="#{bundle.aon_key_cancel}">
 							<aon:actionListener method="#{sport_position.onCancel}" />
 						</aon:commandButton>
-						<aon:confirmButton id="remove" value="#{bundle.aon_remove}"
-							rendered="#{!sport_position.checklistEmpty}"
-							reRender="dataTable, gridToolbar"
-							styleClass="aon-finding-toolbar-item aon-icon-delete"
-							immediate="true" confirmTitle="Confirmation Dialog"
-							confirmMessage="#{bundle.aon_remove_confirm}"
-							confirmActionListener="#{sport_position.onRemoveSelected}"
-							accesskey="#{bundle.aon_key_remove}" />
 					</aon:div>
 				</aon:panelGrid>
 			</aon:div>
@@ -83,16 +75,10 @@
 					<aon:column>
 						<f:facet name="header">
 							<aon:div>
-								<aon:outputText value="#{bundle.aon_check}" />
+								<aon:outputText value="&nbsp;" />
 							</aon:div>	
 						</f:facet>
-						<aon:outputText value="&#160;" rendered="#{to==sport_position.to}" />
-						<aon:selectBooleanCheckbox id="Row_checked"
-								value="#{sport_position.rowChecked}">
-								<a4j:support 
-									event="onclick"  
-									reRender="dataTable,gridToolbar" />
-						</aon:selectBooleanCheckbox>
+						<aon:outputText value="&#160;" />
 						<f:facet name="footer">
 							<aon:div>
 								<aon:commandButton id="reset"

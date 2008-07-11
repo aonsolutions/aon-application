@@ -155,16 +155,6 @@
 												reRender="detail_list_panel">
 												<aon:actionListener method="#{bulletin_article.onReset}" />
 											</aon:commandButton>
-											<aon:confirmButton id="remove_list"
-												value="#{bundle.aon_remove}" 
-												rendered="#{!bulletin_article.checklistEmpty and bulletin_article.to==null}" 
-												inmediate="true"
-												confirmTitle="Confirmation Dialog" 
-												confirmMessage="#{bundle.aon_remove_confirm}"
-												confirmActionListener="#{bulletin_article.onRemoveSelected}" 
-												styleClass="aon-finding-toolbar-item aon-icon-delete"
-												accesskey="#{bundle.aon_key_remove}"
-												reRender="detail_list_panel"  />
 									    </aon:div>
 										
 										<!-- end toolbar navigation -->
@@ -179,24 +169,17 @@
 									footerClass="dr-table-subfooter rich-table-subfooter aon-editDataTable-footer"
 									rowClasses="aon-editDataTable-row-odd,dr-table-firstrow rich-table-firstrow aon-editDataTable-row-even"
 									cellpadding="0" cellspacing="0"
-									columnClasses="dr-table-cell rich-table-cell aon-editDataTable-iconColumn,
-											dr-table-cell rich-table-cell aon-editDataTable-textColumn,
+									columnClasses="dr-table-cell rich-table-cell aon-editDataTable-textColumn,
 											dr-table-cell rich-table-cell aon-editDataTable-textColumn,
 											dr-table-cell rich-table-cell aon-editDataTable-textColumn">
 											
 									<aon:column>
 										<f:facet name="header">
 											<aon:div>
-												<aon:outputText value="#{bundle.aon_check}" />
+												<aon:outputText value="&nbsp;" />
 											</aon:div>	
 										</f:facet>
-										<aon:outputText value="&#160;" rendered="#{to==bulletin_article.to}" />
-										<aon:selectBooleanCheckbox id="Row_checked"
-												value="#{bulletin_article.rowChecked}">
-												<a4j:support 
-													event="onclick"  
-													reRender="gridDataTable,gridToolbar" />
-										</aon:selectBooleanCheckbox>
+										<aon:outputText value="&#160;" />
 										<f:facet name="footer">
 											<aon:div>
 												<aon:commandButton id="reset"

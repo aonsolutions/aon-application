@@ -46,7 +46,9 @@
 							<aon:actionListener method="#{section.accept}" />
 						</aon:commandButton>
 						<aon:confirmButton id="remove"
-							value="#{bundle.aon_remove}" rendered="#{!section.new and !section.to.default_}" immediate="true"
+							value="#{bundle.aon_remove}" 
+							rendered="#{!section.new and !section.to.default_}" 
+							immediate="true"
 							confirmTitle="Confirmation Dialog" confirmMessage="#{bundle.aon_remove_confirm}"
 							confirmActionListener="#{section.onRemove}" confirmAction="section_list"
 							styleClass="aon-finding-toolbar-item aon-icon-delete"

@@ -125,16 +125,6 @@
 											reRender="detail_panel">
 											<aon:actionListener method="#{article.onReset}" />
 										</aon:commandButton>
-										<aon:confirmButton id="remove_list"
-											value="#{bundle.aon_remove}" 
-											rendered="#{!article.checklistEmpty and article.to==null}" 
-											immediate="#{true}"
-											confirmTitle="Confirmation Dialog" 
-											confirmMessage="#{bundle.aon_remove_confirm}"
-											confirmActionListener="#{article.onRemoveSelected}" 
-											styleClass="aon-finding-toolbar-item aon-icon-delete"
-											accesskey="#{bundle.aon_key_remove}"
-											reRender="detail_panel"  />
 								    </aon:div>
 									
 									<!-- end toolbar navigation -->

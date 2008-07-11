@@ -62,6 +62,29 @@
 						<aon:dropDownMenu id="content"
 							value="#{menuBundle.cms_content}" submitMode="ajax"
 							event="onclick">
+							<aon:menuItem id="link" value="#{menuBundle.cms_link}"
+								rendered="#{domainUtils.linkMenu}"
+								action="link_form"
+								actionListener="#{link.onReset}" 
+								styleClass="aon-main-menu-leaf"/>
+							<aon:menuItem id="faq" value="#{menuBundle.cms_faq}"
+								rendered="#{domainUtils.faqMenu}"
+								actionListener="#{faq.onReset}" 
+								action="faq_form"
+								styleClass="aon-main-menu-leaf"/>
+							<aon:menuItem id="download" 
+								value="#{menuBundle.cms_download}"
+								rendered="#{domainUtils.downloadMenu}"
+								action="download_form"
+								actionListener="#{download.onReset}" 
+								styleClass="aon-main-menu-leaf"/>
+							<aon:menuItem id="album_image" 
+								value="#{menuBundle.cms_album_image}"
+								rendered="#{domainUtils.albumMenu}"
+								action="album_image_form"
+								actionListener="#{albumImage.onReset}" 
+								styleClass="aon-main-menu-leaf"/>
+								
 							<aon:menuItem id="modular_page" value="#{menuBundle.cms_modular_page}"
 								rendered="#{domainUtils.modularMenu}"
 								action="modular_page_list"
@@ -72,16 +95,6 @@
 								actionListener="#{generic_page.onSearch}" 
 								action="generic_page_list"
 								styleClass="aon-main-menu-leaf"/>
-							<aon:menuItem id="link_category" value="#{menuBundle.cms_link_category}"
-								rendered="#{domainUtils.linkMenu}"
-								actionListener="#{link_category.onInit}" 
-								action="link_category_list"
-								styleClass="aon-main-menu-leaf"/>
-							<aon:menuItem id="faq_category" value="#{menuBundle.cms_faq_category}"
-								rendered="#{domainUtils.faqMenu}"
-								actionListener="#{faq_category.onInit}" 
-								action="faq_category_list"
-								styleClass="aon-main-menu-leaf"/>
 							<aon:menuItem id="article_category" value="#{menuBundle.cms_article_category}"
 								rendered="#{domainUtils.articleMenu}"
 								actionListener="#{article_category.onInit}" 
@@ -91,16 +104,6 @@
 								rendered="#{domainUtils.bannerMenu}"
 								actionListener="#{banner_category.onSearch}" 
 								action="banner_category_list"
-								styleClass="aon-main-menu-leaf"/>
-							<aon:menuItem id="download_category" value="#{menuBundle.cms_download_category}"
-								rendered="#{domainUtils.downloadMenu}"
-								actionListener="#{download_category.onInit}" 
-								action="download_category_list"
-								styleClass="aon-main-menu-leaf"/>
-							<aon:menuItem id="album_category" value="#{menuBundle.cms_album_category}"
-								rendered="#{domainUtils.albumMenu}"
-								actionListener="#{album_category.onInit}" 
-								action="album_category_list"
 								styleClass="aon-main-menu-leaf"/>
 							<aon:menuItem id="direct_access_group_page" value="#{menuBundle.cms_direct_access_group}"
 								rendered="#{domainUtils.directAccessMenu}"

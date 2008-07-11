@@ -9,7 +9,7 @@
   <navigation-rule>
     <navigation-case>
       <from-outcome>home</from-outcome>
-      <to-view-id>/home.xhtml</to-view-id>
+      <to-view-id>/homepage.xhtml</to-view-id>
     </navigation-case>
   </navigation-rule>
 
@@ -57,7 +57,7 @@
     </navigation-case>
   </navigation-rule>
 
-  <!-- ================================================= LINK CATEGORY -->
+  <!-- ================================================= LINK -->
   <navigation-rule>
     <navigation-case>
       <from-outcome>link_category_list</from-outcome>
@@ -67,9 +67,25 @@
       <from-outcome>link_category_form</from-outcome>
       <to-view-id>/facelet/content/link_category/form.xhtml</to-view-id>
     </navigation-case>
+    <navigation-case>
+      <from-outcome>link_category_search</from-outcome>
+      <to-view-id>/facelet/content/link_category/search.xhtml</to-view-id>
+    </navigation-case>
+    <navigation-case>
+      <from-outcome>link_list</from-outcome>
+      <to-view-id>/facelet/content/link_category/link/list.xhtml</to-view-id>
+    </navigation-case>
+    <navigation-case>
+      <from-outcome>link_form</from-outcome>
+      <to-view-id>/facelet/content/link_category/link/form.xhtml</to-view-id>
+    </navigation-case>
+    <navigation-case>
+      <from-outcome>link_search</from-outcome>
+      <to-view-id>/facelet/content/link_category/link/search.xhtml</to-view-id>
+    </navigation-case>
   </navigation-rule>
   
-  <!-- ================================================= FAQ CATEGORY -->
+  <!-- ================================================= FAQ -->
   <navigation-rule>
     <navigation-case>
       <from-outcome>faq_category_list</from-outcome>
@@ -78,6 +94,22 @@
     <navigation-case>
       <from-outcome>faq_category_form</from-outcome>
       <to-view-id>/facelet/content/faq_category/form.xhtml</to-view-id>
+    </navigation-case>
+    <navigation-case>
+      <from-outcome>faq_category_search</from-outcome>
+      <to-view-id>/facelet/content/faq_category/search.xhtml</to-view-id>
+    </navigation-case>
+    <navigation-case>
+      <from-outcome>faq_list</from-outcome>
+      <to-view-id>/facelet/content/faq_category/faq/list.xhtml</to-view-id>
+    </navigation-case>
+    <navigation-case>
+      <from-outcome>faq_form</from-outcome>
+      <to-view-id>/facelet/content/faq_category/faq/form.xhtml</to-view-id>
+    </navigation-case>
+    <navigation-case>
+      <from-outcome>faq_search</from-outcome>
+      <to-view-id>/facelet/content/faq_category/faq/search.xhtml</to-view-id>
     </navigation-case>
   </navigation-rule>
   
@@ -161,7 +193,7 @@
     </navigation-case>
   </navigation-rule>
   
-  <!-- ================================================= DOWNLOAD CATEGORY -->
+  <!-- ================================================= DOWNLOAD -->
   <navigation-rule>
     <navigation-case>
       <from-outcome>download_category_list</from-outcome>
@@ -171,9 +203,25 @@
       <from-outcome>download_category_form</from-outcome>
       <to-view-id>/facelet/content/download_category/form.xhtml</to-view-id>
     </navigation-case>
+    <navigation-case>
+      <from-outcome>download_category_search</from-outcome>
+      <to-view-id>/facelet/content/download_category/search.xhtml</to-view-id>
+    </navigation-case>
+    <navigation-case>
+      <from-outcome>download_list</from-outcome>
+      <to-view-id>/facelet/content/download_category/download/list.xhtml</to-view-id>
+    </navigation-case>
+    <navigation-case>
+      <from-outcome>download_form</from-outcome>
+      <to-view-id>/facelet/content/download_category/download/form.xhtml</to-view-id>
+    </navigation-case>
+    <navigation-case>
+      <from-outcome>download_search</from-outcome>
+      <to-view-id>/facelet/content/download_category/download/search.xhtml</to-view-id>
+    </navigation-case>
   </navigation-rule>
   
-  <!-- ================================================= ALBUM CATEGORY -->
+  <!-- ================================================= ALBUM -->
   <navigation-rule>
     <navigation-case>
       <from-outcome>album_category_list</from-outcome>
@@ -184,8 +232,32 @@
       <to-view-id>/facelet/content/album_category/form.xhtml</to-view-id>
     </navigation-case>
     <navigation-case>
+      <from-outcome>album_category_search</from-outcome>
+      <to-view-id>/facelet/content/album_category/search.xhtml</to-view-id>
+    </navigation-case>
+    <navigation-case>
+      <from-outcome>album_list</from-outcome>
+      <to-view-id>/facelet/content/album_category/album/list.xhtml</to-view-id>
+    </navigation-case>
+    <navigation-case>
       <from-outcome>album_form</from-outcome>
-      <to-view-id>/facelet/content/album_category/album_form.xhtml</to-view-id>
+      <to-view-id>/facelet/content/album_category/album/form.xhtml</to-view-id>
+    </navigation-case>
+    <navigation-case>
+      <from-outcome>album_search</from-outcome>
+      <to-view-id>/facelet/content/album_category/album/search.xhtml</to-view-id>
+    </navigation-case>
+    <navigation-case>
+      <from-outcome>album_image_list</from-outcome>
+      <to-view-id>/facelet/content/album_category/album/album_image//list.xhtml</to-view-id>
+    </navigation-case>
+    <navigation-case>
+      <from-outcome>album_image_form</from-outcome>
+      <to-view-id>/facelet/content/album_category/album/album_image/form.xhtml</to-view-id>
+    </navigation-case>
+    <navigation-case>
+      <from-outcome>album_image_search</from-outcome>
+      <to-view-id>/facelet/content/album_category/album/album_image/search.xhtml</to-view-id>
     </navigation-case>
   </navigation-rule>
   

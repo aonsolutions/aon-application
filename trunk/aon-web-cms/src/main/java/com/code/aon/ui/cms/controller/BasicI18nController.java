@@ -41,9 +41,6 @@ public class BasicI18nController extends BasicController implements I18NControll
 
     private String join_alias = "";
 
-	/** A list that contains the selected objects of the model. */
-	private ArrayList<ITransferObject> checkList= new ArrayList<ITransferObject>();
-
     /**
      * Constructor.
      * 
@@ -304,75 +301,6 @@ public class BasicI18nController extends BasicController implements I18NControll
 		return st.nextToken();
 	}
 
-	/**
-	 * Gets the if the selected row is checked.
-	 * 
-	 * @return the row checked
-	 */
-	public boolean getRowChecked() {
-		ITransferObject to = (ITransferObject) model.getRowData();
-		return checkList.contains( to );
-	}
-	
-	/**
-	 * Sets the selected row checked.
-	 * 
-	 * @param rowChecked the row checked
-	 */
-	public void setRowChecked(boolean rowChecked) {
-		if ( rowChecked ) {
-			ITransferObject to = (ITransferObject) model.getRowData();
-			if (!checkList.contains( to )) {
-				checkList.add( to );
-			}
-		} else {
-			ITransferObject to = (ITransferObject) model.getRowData();
-			if (checkList.contains( to )) {
-				checkList.remove( to );
-			}
-		}
-	}
-	
-	/**
-	 * Gets the check list.
-	 * 
-	 * @return the check list
-	 */
-	protected ArrayList<ITransferObject> getCheckList() {
-		return checkList;
-	}
-
-	/**
-	 * Removes all the selected objects.
-	 * 
-	 * @param event the event
-	 */
-	public void onRemoveSelected(ActionEvent event){
-		try{
-			beforeRemoveSelected();
-			for (ITransferObject to: checkList) {
-				getManagerBean().remove(to);
-			}
-			afterRemoveSelected();
-			onSearch( event );
-		} catch (ManagerBeanException e) {
-			addMessage(e.getMessage());
-			throw new AbortProcessingException(e.getMessage(), e);
-		}
-	}
-
-	protected void beforeRemoveSelected(){
-		
-	}
-
-	protected void afterRemoveSelected(){
-		
-	}
-
-	public boolean isChecklistEmpty() {
-		return (this.checkList.size() <= 0);
-	}
-
 	public void addFromDateExpression(ValueChangeEvent event) throws ManagerBeanException {
 	    if (event.getNewValue() != null) {
 	    	Criteria c = getCriteria();
@@ -393,12 +321,6 @@ public class BasicI18nController extends BasicController implements I18NControll
 			c.addLessThanOrEqualExpression(getFieldName(id), value);
 			setCriteria(c);
 		}
-	}
-
-	@Override
-	public void initializeModel() {
-		checkList= new ArrayList<ITransferObject>();
-		super.initializeModel();
 	}
 
 	public ITransferObject getModelRowdataI18n() {

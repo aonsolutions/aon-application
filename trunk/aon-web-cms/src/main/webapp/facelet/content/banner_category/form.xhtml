@@ -115,16 +115,6 @@
 										accesskey="#{bundle.aon_key_new}">
 										<aon:actionListener method="#{banner.onReset}" />
 									</aon:commandButton>
-									<aon:confirmButton id="remove_list"
-										value="#{bundle.aon_remove}" 
-										rendered="#{!banner.checklistEmpty and banner.to==null}" 
-										immediate="#{true}"
-										confirmTitle="Confirmation Dialog" 
-										confirmMessage="#{bundle.aon_remove_confirm}"
-										confirmActionListener="#{banner.onRemoveSelected}" 
-										confirmAction="banner_category_form"
-										styleClass="aon-finding-toolbar-item aon-icon-delete"
-										accesskey="#{bundle.aon_key_remove}"/>
 							    </aon:div>
 								
 								<!-- end toolbar navigation -->
@@ -138,26 +128,11 @@
 							footerClass="dr-table-subfooter rich-table-subfooter aon-editDataTable-footer"
 							rowClasses="aon-editDataTable-row-odd,dr-table-firstrow rich-table-firstrow aon-editDataTable-row-even"
 							cellpadding="0" cellspacing="0"
-							columnClasses="dr-table-cell rich-table-cell aon-editDataTable-iconColumn,
-									dr-table-cell rich-table-cell aon-editDataTable-textColumn,
+							columnClasses="dr-table-cell rich-table-cell aon-editDataTable-textColumn,
 									dr-table-cell rich-table-cell aon-editDataTable-textColumn,
 									dr-table-cell rich-table-cell aon-editDataTable-iconColumn,
 									dr-table-cell rich-table-cell aon-editDataTable-textColumn">
 									
-							<aon:column>
-								<f:facet name="header">
-									<aon:div>
-										&nbsp;
-									</aon:div>	
-								</f:facet>
-								<aon:selectBooleanCheckbox 
-										value="#{banner.rowChecked}">
-										<a4j:support 
-											event="onclick"  
-											reRender="detail_panel" />
-								</aon:selectBooleanCheckbox>
-							</aon:column>
-					
 							<aon:column>
 								<a4j:support 
 									immediate="#{true}"

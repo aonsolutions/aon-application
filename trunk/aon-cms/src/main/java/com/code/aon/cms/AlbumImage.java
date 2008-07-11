@@ -23,7 +23,7 @@ public class AlbumImage implements ITransferObject, IPositionObject {
 	
 	private Album album;
 	
-	private boolean active;
+	private boolean active = true;
 	
 	private Integer position;
 	

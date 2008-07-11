@@ -3,28 +3,20 @@ package com.code.aon.ui.cms.controller;
 import javax.faces.event.ActionEvent;
 
 import com.code.aon.cms.Link;
-import com.code.aon.cms.LinkCategory;
 import com.code.aon.cms.LinkDetail;
-import com.code.aon.cms.dao.ICMSAlias;
 import com.code.aon.common.ManagerBeanException;
-import com.code.aon.ql.Criteria;
-import com.code.aon.ql.util.ExpressionException;
-import com.code.aon.ui.cms.controller.support.OrderedControllerSupport;
-import com.code.aon.ui.cms.controller.support.IOrderedControllerListener;
 
 
-public class LinkController extends BasicI18nController implements IOrderedControllerListener {
+public class LinkController extends BasicI18nController {
 
-	public OrderedControllerSupport orderedControllerSupport = new OrderedControllerSupport(ICMSAlias.LINK_POSITION);
-
-	private LinkCategory currentLinkCategory;
+	private int page;
 	
-	public LinkCategory getCurrentLinkCategory() {
-		return currentLinkCategory;
+	public int getPage() {
+		return page;
 	}
 
-	public void setCurrentLinkCategory(LinkCategory currentLinkCategory) {
-		this.currentLinkCategory = currentLinkCategory;
+	public void setPage(int page) {
+		this.page = page;
 	}
 
 	@SuppressWarnings("unused")
@@ -52,34 +44,6 @@ public class LinkController extends BasicI18nController implements IOrderedContr
 		LinkDetail ld = (LinkDetail)getModelRowdataI18n();
 		if (ld != null) label = ld.getLabel();
 		return label;
-	}
-
-	public void onAccept(ActionEvent event) {
-		super.accept(event);
-	}
-
-    public void onMoveUp(ActionEvent event) throws ManagerBeanException, ExpressionException {
-    	orderedControllerSupport.onMoveUp(this);
-    }
-
-    public void onMoveDown(ActionEvent event) throws ManagerBeanException, ExpressionException {
-    	orderedControllerSupport.onMoveDown(this);
-    }
-
-	public void fireBeforeUseCriteria(Criteria criteria) {
-		try {
-			criteria.addExpression(getManagerBean().getFieldName(ICMSAlias.LINK_LINK_CATEGORY_ID), "" + getCurrentLinkCategory().getId());
-		} catch (ManagerBeanException e) {
-		} catch (ExpressionException e) {
-		}
-	}
-
-	protected void afterRemoveSelected(){
-		try {
-			orderedControllerSupport.reorderObjects(this);
-		} catch (ManagerBeanException e) {
-			e.printStackTrace();
-		}
 	}
 
 }

@@ -34,16 +34,6 @@
 							accesskey="#{bundle.aon_key_new}">
 							<aon:actionListener method="#{product.onReset}" />
 						</aon:commandButton>
-						<aon:confirmButton id="remove"
-							value="#{bundle.aon_remove}" 
-							rendered="#{!product.checklistEmpty}" 
-							inmediate="true"
-							confirmTitle="Confirmation Dialog" 
-							confirmMessage="#{bundle.aon_remove_confirm}"
-							confirmActionListener="#{product.onRemoveSelected}" 
-							confirmAction="product"
-							styleClass="aon-finding-toolbar-item aon-icon-delete"
-							accesskey="#{bundle.aon_key_remove}"/>
 				    </aon:div>
 					
 					<!-- end toolbar navigation -->
@@ -59,25 +49,10 @@
 						footerClass="dr-table-subfooter rich-table-subfooter aon-editDataTable-footer"
 						rowClasses="aon-editDataTable-row-odd,dr-table-firstrow rich-table-firstrow aon-editDataTable-row-even"
 						cellpadding="0" cellspacing="0"
-						columnClasses="dr-table-cell rich-table-cell aon-editDataTable-iconColumn,
-								dr-table-cell rich-table-cell aon-editDataTable-textColumn,
+						columnClasses="dr-table-cell rich-table-cell aon-editDataTable-textColumn,
 								dr-table-cell rich-table-cell aon-editDataTable-textColumn,
 								dr-table-cell rich-table-cell aon-editDataTable-iconColumn">
 								
-							<aon:column>
-								<f:facet name="header">
-									<aon:div>
-										<aon:outputText value="#{bundle.aon_check}" />
-									</aon:div>	
-								</f:facet>
-								<aon:selectBooleanCheckbox id="Row_checked"
-										value="#{product.rowChecked}">
-										<a4j:support 
-											event="onclick"  
-											reRender="dataTable,buttonsGrid" />
-								</aon:selectBooleanCheckbox>
-							</aon:column>
-					
 							<aon:column>
 								<a4j:support 
 									action="product_form"
