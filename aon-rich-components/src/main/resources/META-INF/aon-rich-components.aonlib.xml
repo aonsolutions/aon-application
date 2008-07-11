@@ -1,11 +1,6 @@
 <?xml version="1.0"?>
 <components namespace="http://www.code.es/aon-rich-components">
 
-	<component localName="panelCollapsible">
-    	<attribute name="switchType" value="ajax" />
-    	<attribute name="expanded" alias="opened" />
-	</component>
-
 	<component localName="lookupInputText">
     	<attribute name="styleClass" value="aon-lookupInputText" />
 	</component>
@@ -19,10 +14,7 @@
 	</component>
 	
 	<component localName="confirmButton">
-    	<attribute name="confirmAction" ignore="true" />			
-    	<attribute name="confirmActionListener" ignore="true" />
-    	<attribute name="confirmTitle" ignore="true" />
-    	<attribute name="confirmMessage" ignore="true" />
+    	<attribute name="styleClass" value="aon-confirmButton" />
 	</component>
 
 	<component localName="selectInputDate">
@@ -77,10 +69,6 @@
     	<attribute name="styleClass" value="aon-commandLink" />			
 	</component>
 	
-	<component localName="confirmButton">
-    	<attribute name="styleClass" value="aon-confirmButton" />			
-	</component>
-
 	<component localName="panelTabSet">
     	<attribute name="switchType" value="ajax" />
     	<attribute name="styleClass" value="aon-panelTabSet" />		
@@ -173,10 +161,6 @@
     	<attribute name="styleClass" value="aon-menuBar" />			
 	</component>
 	
-	<component localName="menuBar">
-		<attribute name="styleClass" value="aon-menuBar" /> 
-	</component> 
-	
 	<component localName="dropDownMenu">  
 		<attribute name="styleClass" value="aon-dropDownMenu" /> 			
     	<attribute name="itemClass" value="aon-dropDownMenu-item" />
@@ -192,8 +176,11 @@
 	</component>
 	
 	<component localName="panelCollapsible">
+    	<attribute name="switchType" value="ajax" />
+    	<attribute name="expanded" alias="opened" />
 		<attribute name="styleClass" value="aon-portlet" /> 
 		<attribute name="headerClass" value="aon-portlet-title" /> 
 		<attribute name="bodyClass" value="aon-portlet-body" /> 	
 	</component>
+
 </components>
