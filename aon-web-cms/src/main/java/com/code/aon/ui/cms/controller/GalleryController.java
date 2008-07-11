@@ -53,6 +53,7 @@ public abstract class GalleryController extends BasicController implements IGall
 		}
 		Collections.sort(list, new ImageComparator());
 		model = new ListDataModel(list);
+		list = null;
 	}
 
 	public String getCurrentRelativePath() {
@@ -92,7 +93,7 @@ public abstract class GalleryController extends BasicController implements IGall
 		this.inputFile = inputFile;
 	}
 	
-	public void fileUploaded( ActionEvent event ) throws IOException {
+	public void fileUploaded( ActionEvent event ){
 		if ( this.inputFile!= null ) {
 			long size = this.inputFile.getSize();
 			String upload_name = inputFile.getName();
@@ -106,11 +107,16 @@ public abstract class GalleryController extends BasicController implements IGall
 						LengthValidator.MAXIMUM_MESSAGE_ID, new Object[]{maximumSize, fileName} );
 				ctx.addMessage(AonUtil.AON_ERROR, message);
 			} else {
-				byte[] data = this.inputFile.getBytes();
-		        FileOutputStream outputStream = new FileOutputStream(file);
-		        outputStream.write(data);
-		        outputStream.close();			
-				chargeImageList();
+				FileOutputStream outputStream = null; 
+				try{
+					byte[] data = this.inputFile.getBytes();
+			        outputStream = new FileOutputStream(file);
+			        outputStream.write(data);
+					chargeImageList();
+				}catch (Exception e) {
+				}finally{
+			        try{outputStream.close();}catch (Exception e) {}			
+				}
 			}
 		}
 	}

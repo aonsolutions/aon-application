@@ -88,9 +88,11 @@ public class TemplateController extends GridController implements Constants {
 				if (files.length > 0) {
 					File config = files[0];
 					to.setId(f.getName());
+					FileInputStream fis = null;
 					try {
 						XMLHandler handler = new XMLHandler();
-						saxParser.parse(new FileInputStream(config), handler);
+						fis = new FileInputStream(config);
+						saxParser.parse(fis, handler);
 						HashMap<String, String> map = handler.getDataMap();
 						to.setName(map.get(TEMPLATE_NAME));
 						to.setVersion(map.get(TEMPLATE_VERSION));
@@ -105,6 +107,9 @@ public class TemplateController extends GridController implements Constants {
 					} catch (IOException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
+					}finally{
+						try{fis.close();}catch(Exception e){}
+						fis = null;
 					}
 				}
 			}

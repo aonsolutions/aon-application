@@ -62,11 +62,15 @@ public class FileUtil {
 	}
 
 	private static void copyFile(File sf, File df) {
+		InputStream is = null;
+		BufferedInputStream bis = null;
+        OutputStream os = null;
+		BufferedOutputStream bos = null;
 		try {
-			InputStream is = new FileInputStream(sf);
-			BufferedInputStream bis = new BufferedInputStream(is);
-	        OutputStream os = new FileOutputStream(df);
-			BufferedOutputStream bos = new BufferedOutputStream(os);
+			is = new FileInputStream(sf);
+			bis = new BufferedInputStream(is);
+	        os = new FileOutputStream(df);
+			bos = new BufferedOutputStream(os);
 			byte[] input = new byte[1024];
 			boolean eof = false;
 			while (!eof) {
@@ -84,6 +88,15 @@ public class FileUtil {
 			e.printStackTrace();
 		} catch (IOException e) {
 			e.printStackTrace();
+		}finally{
+			try{bis.close();}catch(Exception e){}
+			try{is.close();}catch(Exception e){}
+			try{bos.close();}catch(Exception e){}
+			try{os.close();}catch(Exception e){}
+			is = null;
+			bis = null;
+	        os = null;
+			bos = null;
 		}
 	}
 

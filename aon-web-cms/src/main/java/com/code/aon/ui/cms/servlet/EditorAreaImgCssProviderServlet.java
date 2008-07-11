@@ -37,6 +37,10 @@ public class EditorAreaImgCssProviderServlet extends HttpServlet implements Cons
 		HttpSession session = req.getSession();
         String uri = req.getRequestURI();
         System.out.println(">>>>>>>>>>> Reading IMG CSS file: " + uri);
+		InputStream is = null;
+		BufferedInputStream bis = null;
+        OutputStream os = null;
+		BufferedOutputStream bos = null;
 		try {
 			String path = getCurrentImgCssPath(session);
 			String img = path + "/imagen.jpg";
@@ -50,10 +54,10 @@ public class EditorAreaImgCssProviderServlet extends HttpServlet implements Cons
         	res.setHeader("Cache-Control", "no-store");
             res.setCharacterEncoding("ISO-8859-1"); //$NON-NLS-1$
 			if(f.exists()){
-        		InputStream is = new FileInputStream(f);
-        		BufferedInputStream bis = new BufferedInputStream(is);
-                OutputStream os = res.getOutputStream();
-        		BufferedOutputStream bos = new BufferedOutputStream(os);
+        		is = new FileInputStream(f);
+        		bis = new BufferedInputStream(is);
+                os = res.getOutputStream();
+        		bos = new BufferedOutputStream(os);
         		byte[] input = new byte[1024];
         		boolean eof = false;
         		while (!eof) {
@@ -66,13 +70,21 @@ public class EditorAreaImgCssProviderServlet extends HttpServlet implements Cons
         			}
         		}
         		bos.flush();
-        		bis.close();
 			}
             res.flushBuffer();
         } 
 		catch (Throwable th) {
             th.printStackTrace();
             throw new ServletException(th.getMessage(), th);
+        }finally{
+    		try{bis.close();}catch(Exception e){}
+    		try{is.close();}catch(Exception e){}
+    		try{bos.close();}catch(Exception e){}
+    		try{os.close();}catch(Exception e){}
+    		bis = null;
+    		is = null;
+    		bos = null;
+    		os = null;
         }
     }
 
