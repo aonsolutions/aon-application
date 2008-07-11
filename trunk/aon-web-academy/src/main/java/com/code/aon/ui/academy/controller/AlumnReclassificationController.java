@@ -119,20 +119,22 @@ public class AlumnReclassificationController extends BasicController {
 	
 	@SuppressWarnings("unchecked")
 	public void onAssign(ActionEvent event){
+		CustomerSegment customerSegment = (customerSegmentId!=null)?obtainCustomerSegment():null;
 		try {
 			CustomerController customerController = (CustomerController)AonUtil.getController(CUSTOMER_CONTROLLER_NAME);
 			Criteria criteria = new Criteria();
-			if(customerSegmentId != null && checks.size() > 0){
-				IManagerBean customerBean = BeanManager.getManagerBean(Customer.class);
-				CustomerSegment customerSegment = obtainCustomerSegment();
-				Iterator iter = checks.iterator();
-				while(iter.hasNext()){
-					Customer customer = (Customer)iter.next();
-					criteria.addOrExpression(customerController.getFieldName(ICustomerAlias.CUSTOMER_ID), customer.getId().toString());
+			IManagerBean customerBean = BeanManager.getManagerBean(Customer.class);
+			Iterator iter = checks.iterator();
+			while(iter.hasNext()){
+				Customer customer = (Customer)iter.next();
+				criteria.addOrExpression(customerController.getFieldName(ICustomerAlias.CUSTOMER_ID), customer.getId().toString());
+				if(customerSegment != null){
 					customer.setCustomerSegment(customerSegment);
-					customer.setStatus(customerStatus);
-					customerBean.update(customer);
 				}
+				if (customerStatus != null) {
+					customer.setStatus(customerStatus);
+				}
+				customerBean.update(customer);
 			}
 			customerController.setCriteria(criteria);
 			customerController.onSearch(null);
