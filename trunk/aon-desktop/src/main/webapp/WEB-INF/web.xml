@@ -226,6 +226,10 @@
 		<servlet-class>
 			com.code.aon.ui.resources.servlet.ResourceServlet
 		</servlet-class>
+		<init-param>
+			<param-name>debug</param-name>
+			<param-value>false</param-value>
+		</init-param>		
 	</servlet>
 	<servlet-mapping>
 		<servlet-name>ResourceServlet</servlet-name>
