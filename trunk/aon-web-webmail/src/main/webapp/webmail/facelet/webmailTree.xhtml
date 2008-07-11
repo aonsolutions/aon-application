@@ -68,8 +68,8 @@
 				value="#{tree.treeNode}" var="item"
 				nodeFace="#{item.folderTypeName}">
 			<rich:treeNode type="INBOX" 
-				iconLeaf="/aonResource/images/aon-icon/aon-icon-tree-inbox.png" 
-				icon="/aonResource/images/aon-icon/aon-icon-tree-inbox.png">
+				iconLeaf="#{aonResource.resolve['/images/aon-icon/aon-icon-tree-inbox.png']}" 
+				icon="#{aonResource.resolve['/images/aon-icon/aon-icon-tree-inbox.png']}">
 				<rich:dropSupport acceptedTypes="MESSAGE" dropValue="#{item}"
 					dropListener="#{folder.messagesDrop}" reRender="messagesDiv,foldersTree" />							
 				<aon:outputText 
@@ -80,8 +80,8 @@
 					rendered="#{!item.root and item.folder.unreadMessageCount==0}" />
 			</rich:treeNode>
 			<rich:treeNode type="Enviados" 
-				iconLeaf="/aonResource/images/aon-icon/aon-icon-tree-sent.png" 
-				icon="/aonResource/images/aon-icon/aon-icon-tree-sent.png">
+				iconLeaf="#{aonResource.resolve['/images/aon-icon/aon-icon-tree-sent.png']}" 
+				icon="#{aonResource.resolve['/images/aon-icon/aon-icon-tree-sent.png']}">
 				<rich:dropSupport acceptedTypes="MESSAGE" dropValue="#{item}"
 					dropListener="#{folder.messagesDrop}" reRender="messagesDiv,foldersTree" />							
 				<aon:outputText 
@@ -92,8 +92,8 @@
 					rendered="#{!item.root and item.folder.unreadMessageCount==0}" />
 			</rich:treeNode>
 			<rich:treeNode type="spam" 
-				iconLeaf="/aonResource/images/aon-icon/aon-icon-tree-spam.png" 
-				icon="/aonResource/images/aon-icon/aon-icon-tree-spam.png">
+				iconLeaf="#{aonResource.resolve['/images/aon-icon/aon-icon-tree-spam.png']}" 
+				icon="#{aonResource.resolve['/images/aon-icon/aon-icon-tree-spam.png']}">
 				<rich:dropSupport acceptedTypes="MESSAGE" dropValue="#{item}"
 					dropListener="#{folder.messagesDrop}" reRender="messagesDiv,foldersTree" />							
 				<aon:outputText 
@@ -104,8 +104,8 @@
 					rendered="#{!item.root and item.folder.unreadMessageCount==0}" />
 			</rich:treeNode>
 			<rich:treeNode type="Papelera" 
-				iconLeaf="/aonResource/images/aon-icon/aon-icon-tree-trash.png" 
-				icon="/aonResource/images/aon-icon/aon-icon-tree-trash.png">
+				iconLeaf="#{aonResource.resolve['/images/aon-icon/aon-icon-tree-trash.png']}" 
+				icon="#{aonResource.resolve['/images/aon-icon/aon-icon-tree-trash.png']}">
 				<rich:dropSupport acceptedTypes="MESSAGE" dropValue="#{item}"
 					dropListener="#{folder.messagesDrop}" reRender="messagesDiv,foldersTree" />							
 				<aon:outputText 
@@ -116,8 +116,8 @@
 					rendered="#{!item.root and item.folder.unreadMessageCount==0}" />
 			</rich:treeNode>
 			<rich:treeNode type="Borrador" 
-				iconLeaf="/aonResource/images/aon-icon/aon-icon-tree-draft.png" 
-				icon="/aonResource/images/aon-icon/aon-icon-tree-draft.png">
+				iconLeaf="#{aonResource.resolve['/images/aon-icon/aon-icon-tree-draft.png']}" 
+				icon="#{aonResource.resolve['/images/aon-icon/aon-icon-tree-draft.png']}">
 				<rich:dropSupport acceptedTypes="MESSAGE" dropValue="#{item}"
 					dropListener="#{folder.messagesDrop}" reRender="messagesDiv,foldersTree" />			
 				<aon:outputText 
@@ -128,8 +128,8 @@
 					rendered="#{!item.root and item.folder.unreadMessageCount==0}" />
 			</rich:treeNode>
 			<rich:treeNode type="other" 
-				iconLeaf="/aonResource/images/aon-icon/aon-icon-tree-folder.png" 
-				icon="/aonResource/images/aon-icon/aon-icon-tree-folder.png">
+				iconLeaf="#{aonResource.resolve['/images/aon-icon/aon-icon-tree-folder.png']}" 
+				icon="#{aonResource.resolve['/images/aon-icon/aon-icon-tree-folder.png']}">
 				<rich:dropSupport acceptedTypes="MESSAGE" dropValue="#{item}"
 					dropListener="#{folder.messagesDrop}" reRender="messagesDiv,foldersTree" />			
 				<aon:outputText 
