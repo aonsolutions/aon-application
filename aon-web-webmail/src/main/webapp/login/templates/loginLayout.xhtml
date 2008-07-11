@@ -22,6 +22,7 @@
 		<script type='text/javascript' src="${facesContext.externalContext.requestContextPath}/login/js/Login.js">
 			// nothing
 		</script>
+		<link rel="shortcut icon" type="image/x-icon" href="#{facesContext.externalContext.requestContextPath}/#{aonResource.resolve['/images/favicon.ico']}" />		
 	</head>
 
 	<body id="aon-body" onload="loadInnerWindow();">
@@ -30,8 +31,8 @@
 				<aon:div styleClass="aon-login-box-internal">
 				<form id="login" method="post" action="j_security_check" style="display: inline;">
 					<aon:div styleClass="aon-login-title">
-						<aon:graphicImage url="/images/main-logo.gif"/>
-						<aon:outputText value="/" />
+						<aon:graphicImage url="login/css/images/login/main-logo.gif"/>
+						<aon:outputText value=" / " />
 						<aon:outputText value="#{appBundle.aon_application_title}" styleClass="aon-bold"/>
 					</aon:div>
 					<aon:div styleClass="aon-login-box">
