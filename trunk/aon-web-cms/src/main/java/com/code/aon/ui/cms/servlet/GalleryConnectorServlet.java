@@ -112,7 +112,7 @@ public class GalleryConnectorServlet extends HttpServlet implements Constants {
 	 * format. 
 	 * 
 	 */
-	public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+	public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException {
 		LOGGER.fine("--- BEGIN DOGET ---");
 		System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> GET");
 		this.request = request;
@@ -120,7 +120,6 @@ public class GalleryConnectorServlet extends HttpServlet implements Constants {
 		
 		response.setContentType("text/xml; charset=UTF-8");
 		response.setHeader("Cache-Control", "no-cache");
-		PrintWriter out = response.getWriter();
 
 		// this.locale = request.getLocale();
 		String commandStr = request.getParameter("Command");
@@ -144,6 +143,7 @@ public class GalleryConnectorServlet extends HttpServlet implements Constants {
 
 		LOGGER.fine("Command = " + commandStr);
 
+		PrintWriter out = null;
 		try {
 			if (commandStr.equals("GetFolders")) {
 				getFolders(typeStr, currentFolderStr, root, document);
@@ -161,15 +161,18 @@ public class GalleryConnectorServlet extends HttpServlet implements Constants {
 
 			DOMSource source = new DOMSource(document);
 
+			out = response.getWriter();
 			StreamResult result = new StreamResult(out);
 			transformer.transform(source, result);
-
+			out.flush();
+			
 		} catch (Exception ex) {
 			ex.printStackTrace();
+		} finally {
+			try{out.close();}catch (Exception e){}
+			out = null;
 		}
 
-		out.flush();
-		out.close();
 	}
 
 	private void setCreateFolderResponse(String retValue, Node root, Document doc) {

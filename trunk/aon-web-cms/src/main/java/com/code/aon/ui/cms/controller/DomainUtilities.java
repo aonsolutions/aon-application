@@ -41,6 +41,9 @@ public class DomainUtilities {
 			stream = new FileInputStream(file);
 			propDomainPageType.load(stream);
 		}catch (Exception e) {
+		}finally{
+			try{stream.close();}catch(Exception e){}
+			stream= null;
 		}
 	}
 
@@ -80,6 +83,9 @@ public class DomainUtilities {
 			stream = new FileInputStream(file);
 			propDomainSidebarType.load(stream);
 		}catch (Exception e) {
+		}finally{
+			try{stream.close();}catch(Exception e){}
+			stream= null;
 		}
 	}
 	
@@ -119,6 +125,9 @@ public class DomainUtilities {
 			stream = new FileInputStream(file);
 			propDomainModularPageOptionType.load(stream);
 		}catch (Exception e) {
+		}finally{
+			try{stream.close();}catch(Exception e){}
+			stream= null;
 		}
 	}
 	
@@ -158,6 +167,9 @@ public class DomainUtilities {
 			stream = new FileInputStream(file);
 			propDomainMenu.load(stream);
 		}catch (Exception e) {
+		}finally{
+			try{stream.close();}catch(Exception e){}
+			stream= null;
 		}
 	}
 	

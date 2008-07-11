@@ -103,15 +103,17 @@ public class FTPUtil {
 						}
 						continue;
 					}
-					FileInputStream fis = new FileInputStream(f);
-					//fc.deleteFile(breadCrum + "/" + f.getName());
-					fc.storeFile(breadCrum + "/" + f.getName(), fis);
-					fis.close();
+					FileInputStream fis = null;
+					try{
+						fis= new FileInputStream(f);
+						fc.storeFile(breadCrum + "/" + f.getName(), fis);
+					}catch (Exception e){
+						try{fis.close();}catch (Exception e1){}
+					}
 				}
 			}
 		} catch (Exception e) {
 			AonUtil.addErrorMessage(e.getMessage());
-			//addMessage("FTP Error. Se produjo un error al intentar subir el fichero " + file, GEN_ERROR);
 		}
 	}
 

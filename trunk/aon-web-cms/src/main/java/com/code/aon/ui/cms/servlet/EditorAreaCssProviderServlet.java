@@ -34,6 +34,11 @@ public class EditorAreaCssProviderServlet extends HttpServlet implements Constan
 
 	protected void doGet(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
 		HttpSession session = req.getSession();
+		
+		InputStream is = null;
+		BufferedInputStream bis = null;
+        OutputStream os = null;
+		BufferedOutputStream bos = null;
 		try {
 			String css = getCurrentCss(session);
 			File f = new File(css);
@@ -44,10 +49,10 @@ public class EditorAreaCssProviderServlet extends HttpServlet implements Constan
             res.setCharacterEncoding("ISO-8859-1"); //$NON-NLS-1$
 			if(f.exists()){
 				System.out.println(">>>>>>>>>>>>>>>> CSS: " + f.getAbsolutePath());
-				InputStream is = new FileInputStream(f);
-        		BufferedInputStream bis = new BufferedInputStream(is);
-                OutputStream os = res.getOutputStream();
-        		BufferedOutputStream bos = new BufferedOutputStream(os);
+				is = new FileInputStream(f);
+        		bis = new BufferedInputStream(is);
+                os = res.getOutputStream();
+        		bos = new BufferedOutputStream(os);
         		byte[] input = new byte[1024];
         		boolean eof = false;
         		while (!eof) {
@@ -60,7 +65,6 @@ public class EditorAreaCssProviderServlet extends HttpServlet implements Constan
         			}
         		}
         		bos.flush();
-        		bis.close();
 			}
 			else {
 		        String uri = req.getRequestURI();
@@ -71,22 +75,20 @@ public class EditorAreaCssProviderServlet extends HttpServlet implements Constan
 				//ClassLoader cl = this.getClass().getClassLoader();
 	            ClassLoader cl = InputRichTextServlet.class.getClassLoader();
 
-	            InputStream is = cl.getResourceAsStream(path);
+	            is = cl.getResourceAsStream(path);
 		        // if no resource found in classloader return nothing
 		        if (is==null) return;
 		        // resource found, copying on output stream
-		        OutputStream out = res.getOutputStream();
+		        os = res.getOutputStream();
 		        byte[] buffer = new byte[1024];
-		        BufferedInputStream bis = new BufferedInputStream(is);
+		        bis = new BufferedInputStream(is);
 		        int read = 0;
 		        read = bis.read(buffer);
 		        while (read!=-1) {
-		            out.write(buffer,0,read);
+		            os.write(buffer,0,read);
 		            read = bis.read(buffer);
 		        }
-		        bis.close();
-		        out.flush();
-		        out.close();
+		        os.flush();
 
 //				FCKeditor/editor/css/fck_editorarea.css
 			}
@@ -95,6 +97,15 @@ public class EditorAreaCssProviderServlet extends HttpServlet implements Constan
 		catch (Throwable th) {
             th.printStackTrace();
             throw new ServletException(th.getMessage(), th);
+        }finally{
+    		try{bis.close();}catch(Exception e){}
+    		try{is.close();}catch(Exception e){}
+    		try{bos.close();}catch(Exception e){}
+    		try{os.close();}catch(Exception e){}
+    		bis = null;
+    		is = null;
+    		bos = null;
+    		os = null;
         }
     }
 	
