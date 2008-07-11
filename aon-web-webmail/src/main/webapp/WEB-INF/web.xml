@@ -11,7 +11,6 @@
 		<param-name>javax.faces.CONFIG_FILES</param-name>
 		<param-value>
 			/WEB-INF/faces-config.xml
-			,/WEB-INF/lookup-beans-faces-config.xml
 		</param-value>
 	</context-param>
 
@@ -104,9 +103,14 @@
 	</context-param>
 	
 	<context-param>
-		<description>Define que los recursos no expiren en una semana</description>
+		<description>Define que los recursos no expiren en 100 dias</description>
 		<param-name>org.ajax4jsf.DEFAULT_EXPIRE</param-name>
-		<param-value>604800</param-value>
+		<param-value>8640000</param-value>
+	</context-param>
+	
+	<context-param>
+		<param-name>org.ajax4jsf.RESOURCE_URI_PREFIX</param-name>
+		<param-value>../aon-desktop/richFaces3.2.1/</param-value>
 	</context-param>
 	
 	<context-param>
