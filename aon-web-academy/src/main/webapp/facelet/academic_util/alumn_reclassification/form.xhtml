@@ -49,6 +49,7 @@
 						<h:selectOneMenu id="Customer_segment_id"
 							value="#{alumnReclassification.customerSegmentId}"
 							styleClass="aon-form-selectOneMenu-field">
+							<f:selectItem itemDisabled="true" itemLabel="-" itemValue="" />
 							<f:selectItems value="#{customerCollections.customerSegments}" />
 						</h:selectOneMenu>	
 
