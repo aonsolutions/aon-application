@@ -25,3 +25,12 @@
  .aon-icon-big-sendingMail{
 	background:transparent url(../images/aon-sending-mail.gif) scroll left center no-repeat;	
  }
+.aon-dataScroller-text, .aon-dataScroller-buttons{
+	padding:0 1em 3px 1em;
+	}
+.aon-dataScroller{
+}
+.aon-dataScroller table{
+	line-height:18px;
+	height:18px;
+}
