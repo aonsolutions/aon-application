@@ -90,6 +90,12 @@
 								actionListener="#{banner.onReset}" 
 								action="banner_form"
 								styleClass="aon-main-menu-leaf"/>
+							<aon:menuItem id="direct_access" 
+								value="#{menuBundle.cms_direct_access}"
+								rendered="#{domainUtils.directAccessMenu}"
+								actionListener="#{direct_access.onReset}" 
+								action="direct_access_form"
+								styleClass="aon-main-menu-leaf"/>
 								
 							<aon:menuItem id="modular_page" value="#{menuBundle.cms_modular_page}"
 								rendered="#{domainUtils.modularMenu}"
@@ -105,11 +111,6 @@
 								rendered="#{domainUtils.articleMenu}"
 								actionListener="#{article_category.onInit}" 
 								action="article_category_list"
-								styleClass="aon-main-menu-leaf"/>
-							<aon:menuItem id="direct_access_group_page" value="#{menuBundle.cms_direct_access_group}"
-								rendered="#{domainUtils.directAccessMenu}"
-								actionListener="#{direct_access_group.onSearch}" 
-								action="direct_access_group_list"
 								styleClass="aon-main-menu-leaf"/>
 							<aon:menuItem id="activity" 
 								rendered="#{domainUtils.activityMenu}"
