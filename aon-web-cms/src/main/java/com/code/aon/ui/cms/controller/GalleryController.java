@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 
 import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
@@ -17,6 +18,7 @@ import org.apache.myfaces.custom.fileupload.UploadedFile;
 import com.code.aon.cms.Image;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ui.cms.IGalleryController;
+import com.code.aon.ui.cms.util.ImageComparator;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.util.AonUtil;
 
@@ -49,6 +51,7 @@ public abstract class GalleryController extends BasicController implements IGall
 				list.add(img);
 			}
 		}
+		Collections.sort(list, new ImageComparator());
 		model = new ListDataModel(list);
 	}
 
@@ -146,4 +149,5 @@ public abstract class GalleryController extends BasicController implements IGall
 			return true;
 		return false;
 	}
+	
 }
