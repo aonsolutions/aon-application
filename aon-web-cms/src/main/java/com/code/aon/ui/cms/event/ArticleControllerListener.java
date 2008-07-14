@@ -3,6 +3,7 @@ package com.code.aon.ui.cms.event;
 import java.io.File;
 
 import com.code.aon.cms.Article;
+import com.code.aon.cms.dao.ICMSAlias;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ql.util.ExpressionException;
 import com.code.aon.ui.cms.controller.ArticleController;
@@ -15,37 +16,17 @@ import com.code.aon.ui.form.event.ControllerListenerException;
 public class ArticleControllerListener extends ControllerAdapter {
 
 	@Override
-	public void afterModelInitialized(ControllerEvent event)
-			throws ControllerListenerException {
-		ArticleController controller = (ArticleController)event.getController();
-		controller.orderedControllerSupport.addListenerSupport(controller);
-	}
-	
-	@Override
-	public void afterBeanRemoved(ControllerEvent event)
-			throws ControllerListenerException {
-		ArticleController controller = (ArticleController)event.getController();
+	public void beforeModelInitialized(ControllerEvent event) throws ControllerListenerException {
 		try {
-			controller.orderedControllerSupport.reorderObjects(controller);
+			event.getController().getCriteria().addOrder(event.getController().getFieldName(ICMSAlias.ARTICLE_ALIAS));
 		} catch (ManagerBeanException e) {
 			throw new ControllerListenerException(e);
 		}
 	}
-	
-	@Override
-	public void beforeModelInitialized(ControllerEvent event)
-			throws ControllerListenerException {
-		ArticleController controller = (ArticleController)event.getController();
-		controller.setPageLimit(10);
-	}
-	
+
 	@Override
 	public void beforeBeanAdded(ControllerEvent event) throws ControllerListenerException {
-		ArticleController fc = (ArticleController)event.getController();
 		Article f = (Article)event.getController().getTo();
-		f.setArticleCategory(fc.getCurrentArticleCategory());
-		f.setPosition(fc.orderedControllerSupport.getLastPosition(fc));
-		f.setArticleType(fc.getCurrentType());
 		generateThumbnail(f);
 	}
 
@@ -64,11 +45,7 @@ public class ArticleControllerListener extends ControllerAdapter {
 			c.onSelectRelatedArticles(null);
 			c.onSelectArticleDocuments(null);
 		} catch (ManagerBeanException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
 		} catch (ExpressionException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
 		}
 	}
 	
@@ -80,11 +57,7 @@ public class ArticleControllerListener extends ControllerAdapter {
 			c.onSelectRelatedArticles(null);
 			c.onSelectArticleDocuments(null);
 		} catch (ManagerBeanException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
 		} catch (ExpressionException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
 		}
 	}
 	

@@ -96,6 +96,12 @@
 								actionListener="#{direct_access.onReset}" 
 								action="direct_access_form"
 								styleClass="aon-main-menu-leaf"/>
+							<aon:menuItem id="article" 
+								value="#{menuBundle.cms_article}"
+								rendered="#{domainUtils.articleMenu}"
+								actionListener="#{article.onReset}" 
+								action="article_form"
+								styleClass="aon-main-menu-leaf"/>
 								
 							<aon:menuItem id="modular_page" value="#{menuBundle.cms_modular_page}"
 								rendered="#{domainUtils.modularMenu}"
@@ -106,11 +112,6 @@
 								rendered="#{domainUtils.genericPageMenu}"
 								actionListener="#{generic_page.onSearch}" 
 								action="generic_page_list"
-								styleClass="aon-main-menu-leaf"/>
-							<aon:menuItem id="article_category" value="#{menuBundle.cms_article_category}"
-								rendered="#{domainUtils.articleMenu}"
-								actionListener="#{article_category.onInit}" 
-								action="article_category_list"
 								styleClass="aon-main-menu-leaf"/>
 							<aon:menuItem id="activity" 
 								rendered="#{domainUtils.activityMenu}"
