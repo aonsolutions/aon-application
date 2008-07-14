@@ -497,4 +497,26 @@
 			</handler-class>
 		</component>
 	</tag>
+	<tag>
+		<tag-name>panel</tag-name>
+		<component>
+			<component-type>
+				com.code.aon.faces.Panel
+			</component-type>
+			<handler-class>
+				com.code.aon.faces.component.AonComponentHandler
+			</handler-class>
+		</component>
+	</tag>
+	<tag>
+		<tag-name>fileUpload</tag-name>
+		<component>
+			<component-type>
+				com.code.aon.faces.FileUpload
+			</component-type>
+			<handler-class>
+				com.code.aon.faces.component.richfaces.fileUpload.FileUploadHandler
+			</handler-class>
+		</component>
+	</tag>
 </facelet-taglib>
