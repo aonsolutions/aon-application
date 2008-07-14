@@ -51,6 +51,16 @@
 							styleClass="aon-finding-toolbar-item aon-icon-ambito" />
 					</aon:div>
 				</aon:panelGrid>
+				<aon:panelGrid columns="2" dir="true">
+					<aon:commandButton id="previous_user" disabled="#{user.inFirst}"
+						action="user_form" actionListener="#{user.onSelectPrevious}"
+						styleClass="aon-dataScroller-button #{user.inFirst?'aon-dataScroller-button-previous-disabled':'aon-dataScroller-button-previous'}">
+					</aon:commandButton>
+					<aon:commandButton id="next_user" disabled="#{user.inLast}"
+						action="user_form" actionListener="#{user.onSelectNext}"
+						styleClass="aon-dataScroller-button #{user.inLast?'aon-dataScroller-button-next-disabled':'aon-dataScroller-button-next'}">
+					</aon:commandButton>
+				</aon:panelGrid>
 			</aon:div>
 
 			<aon:div styleClass="aon-scroll-area">
