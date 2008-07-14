@@ -20,6 +20,11 @@ public class AonMessageUtils {
 			"<\\s*body[^>]*>(.*)<\\s*/\\s*body\\s*>", Pattern.CASE_INSENSITIVE
 					+ Pattern.DOTALL);
 
+	// search patterns, used for stripping html body tags from content
+	public static final Pattern HTML_PATTERN = Pattern.compile(
+			"<\\s*html[^>]*>(.*)<\\s*/\\s*html\\s*>", Pattern.CASE_INSENSITIVE
+					+ Pattern.DOTALL);
+	
 	// search pattern, common incountered eamil tags to remove
 	public static final Pattern TAG_PATTERN = Pattern
 			.compile(
@@ -56,6 +61,29 @@ public class AonMessageUtils {
 		return match;
 	}
 
+	/**
+	 * Utility method to extract content between the content of an HTML
+	 * message.
+	 * 
+	 * @param content
+	 *            content
+	 * @return message content between html tags.
+	 */
+	public static String extractInnerHTML(String content) {
+		String match = null;
+		try {
+			Matcher htmlPatternMatcher = HTML_PATTERN.matcher(content);
+			if (htmlPatternMatcher.find()) {
+				match = htmlPatternMatcher.group(1);
+			} else {
+				return content;
+			}
+		} catch (IllegalStateException e) {
+			return content;
+		}
+		return match;
+	}
+	
 	/**
 	 * Called to remove html tags from content of a text/html message to view in
 	 * FF.
