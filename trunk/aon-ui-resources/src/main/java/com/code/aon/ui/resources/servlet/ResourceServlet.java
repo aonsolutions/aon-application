@@ -49,9 +49,9 @@ public class ResourceServlet extends HttpServlet {
 
 	private static final int LAST_MODIFIED_YEAR = 2008;
 	
-	private static final int LAST_MODIFIED_MOTH = 5;
+	private static final int LAST_MODIFIED_MOTH = 7;
 	
-	private static final int LAST_MODIFIED_DAY = 26;
+	private static final int LAST_MODIFIED_DAY = 14;
 	
 	private static final String MODIFY = calcModify();
 
