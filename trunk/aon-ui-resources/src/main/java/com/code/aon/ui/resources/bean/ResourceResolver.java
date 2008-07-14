@@ -1,7 +1,13 @@
 package com.code.aon.ui.resources.bean;
 
 import java.util.AbstractMap;
+import java.util.Map;
 import java.util.Set;
+
+import javax.faces.context.FacesContext;
+import javax.servlet.http.HttpServletRequest;
+
+import org.apache.commons.lang.StringUtils;
 
 public class ResourceResolver {
 	
@@ -23,7 +29,13 @@ public class ResourceResolver {
 	}
 
 	public void setResourceContextPath(String resourceContextPath) {
-		this.resourceContextPath = resourceContextPath;
+		FacesContext context = FacesContext.getCurrentInstance();
+		Map<String, String> parameters = context.getExternalContext().getRequestParameterMap();
+		if ( parameters.containsKey("aonDesktop") ) {
+			this.resourceContextPath = "../../" + resourceContextPath;
+		} else {
+			this.resourceContextPath = "../" + resourceContextPath;
+		}
 	}
 
 	public String getResourceURIPreffix() {
@@ -55,13 +67,13 @@ public class ResourceResolver {
 		public Set entrySet() {
 			return null;
 		}
-
+		
 		@Override
 		public Object get(Object key) {
 			if ( local ) {
 				return resourceURIPreffix + key;
 			}
-			return "../" + resourceContextPath + resourceURIPreffix + key;
+			return resourceContextPath + resourceURIPreffix + key;
 		}
 		
 	}
