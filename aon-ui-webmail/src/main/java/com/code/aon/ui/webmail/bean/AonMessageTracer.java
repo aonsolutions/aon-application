@@ -222,7 +222,7 @@ public class AonMessageTracer implements IMimeType {
 		relateds = new ArrayList<BodyPart>();
 		String data = traceContent(message);
 		parseRelateds(data);
-		return AonMessageUtils.extractBodyInnerHTML(data);
+		return AonMessageUtils.extractInnerHTML(data);
 	}
 
 	/**
