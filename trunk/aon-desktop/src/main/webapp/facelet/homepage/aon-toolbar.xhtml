@@ -12,7 +12,7 @@
 		<aon:div styleClass="aon-secondary-menu" >
 			<c:forEach items="#{aonapps.applicationList}" var="app">
 				<aon:outputLink styleClass="aon-secondary-menu-application" 
-						value="#{app.context}" target="_blank" rendered="#{app.toolbarEnabled}">
+						value="#{app.context}?aonDesktop=true" target="_blank" rendered="#{app.toolbarEnabled}">
 					<aon:outputText value="#{app.name}" style="text-transform:capitalize"/> 
 				</aon:outputLink>
 			</c:forEach>
