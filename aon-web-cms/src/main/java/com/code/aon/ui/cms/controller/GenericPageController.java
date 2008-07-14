@@ -23,6 +23,16 @@ import com.code.aon.ql.util.ExpressionException;
 
 public class GenericPageController extends BasicI18nController {
 
+	private int page;
+	
+	public int getPage() {
+		return page;
+	}
+
+	public void setPage(int page) {
+		this.page = page;
+	}
+
 	private boolean richTextEnabled = false;
 
 	public boolean isRichTextEnabled() {

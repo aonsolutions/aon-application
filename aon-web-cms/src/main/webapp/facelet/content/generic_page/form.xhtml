@@ -31,10 +31,11 @@
 					<!-- start toolbar navigation -->
 					<aon:div styleClass="aon-finding-toolbar-item-group">
 						<aon:commandButton id="reset" value="#{bundle.aon_reset}"
-							action="generic_page_form"
 							rendered="#{!generic_page.new}"
+							action="generic_page_form"
+							immediate="#{true}"
 							styleClass="aon-finding-toolbar-item aon-icon-reset"
-							accesskey="#{bundle.aon_key_new}" >
+							accesskey="#{bundle.aon_key_new}">
 							<aon:actionListener method="#{generic_page.onReset}" />
 						</aon:commandButton>
 						<aon:commandButton id="save"
@@ -54,12 +55,29 @@
 							confirmAction="generic_page_list"
 							styleClass="aon-finding-toolbar-item aon-icon-delete"
 							accesskey="#{bundle.aon_key_remove}"/>
-						<aon:commandButton id="exit" value="#{bundle.aon_close}"
+						<aon:commandButton id="search" 
+							value="#{bundle.aon_search}"
+							immediate="#{true}"
+							action="generic_page_search"
+							styleClass="aon-finding-toolbar-item aon-icon-search"
+							accesskey="#{bundle.aon_key_search}">
+							<aon:actionListener method="#{generic_page.onEditSearch}" />
+						</aon:commandButton>
+						<aon:commandButton id="list"
+							value="#{bundle.aon_list}"
 							action="generic_page_list" 
 							immediate="#{true}"
 							styleClass="aon-finding-toolbar-item aon-icon-cancel"
 							accesskey="#{bundle.aon_key_close}">
-							<aon:actionListener method="#{generic_page.onSearch}" />
+							<aon:actionListener method="#{generic_page.onCancel}" />
+						</aon:commandButton>
+						<aon:commandButton id="exit"
+							value="#{bundle.aon_close}"
+							action="home" 
+							immediate="#{true}"
+							styleClass="aon-finding-toolbar-item aon-icon-cancel"
+							accesskey="#{bundle.aon_key_close}">
+							<aon:actionListener method="#{generic_page.onCancel}" />
 						</aon:commandButton>
 						<aon:commandButton id="generate_nodular"
 							value="#{appBundle.aon_generate}" 
