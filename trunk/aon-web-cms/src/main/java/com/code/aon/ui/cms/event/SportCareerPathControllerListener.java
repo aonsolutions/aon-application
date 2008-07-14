@@ -19,6 +19,7 @@ public class SportCareerPathControllerListener extends ControllerAdapter {
 			IManagerBean bean = BeanManager.getManagerBean(SportCareerPath.class);
 			criteria.addOrder(bean.getFieldName(ICMSAlias.SPORT_CAREER_PATH_SPORT_PLAYER_ID));
 			criteria.addOrder(bean.getFieldName(ICMSAlias.SPORT_CAREER_PATH_INIT_DATE),false);
+			criteria.addOrder(bean.getFieldName(ICMSAlias.SPORT_CAREER_PATH_CLUB));
 			event.getController().setCriteria(criteria);
 		}catch (Exception e) {
 		}
