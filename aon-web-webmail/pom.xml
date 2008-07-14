@@ -13,7 +13,7 @@
 	<artifactId>aon-web-webmail</artifactId>
 	<packaging>war</packaging>
 	<name>AON WEB WEBMAIL</name>
-	<version>3.4.0</version>
+	<version>3.5.0</version>
 	<description>AON WEB WEBMAIL</description>
 	<build>
 		<finalName>aon-webmail</finalName>
@@ -28,7 +28,7 @@
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.webmail</artifactId>
-			<version>3.4.0</version>
+			<version>3.5.0</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
@@ -45,7 +45,7 @@
 	    <dependency>
 	      <groupId>com.code.aon</groupId>
 	      <artifactId>aon.ui.resources</artifactId>
-	      <version>1.1.0</version>
+	      <version>1.2.0</version>
 	      <scope>compile</scope>
 	    </dependency>
 		<dependency>
