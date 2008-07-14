@@ -36,6 +36,13 @@
 									accesskey="#{bundle.aon_key_save}">
 									<aon:actionListener method="#{diary.accept}" />
 								</aon:commandButton>
+								<aon:commandButton id="exit"
+									value="#{bundle.aon_close}"
+									action="article_form" 
+									immediate="#{true}"
+									styleClass="aon-finding-toolbar-item aon-icon-cancel"
+									accesskey="#{bundle.aon_key_close}">
+								</aon:commandButton>
 						    </aon:div>
 							
 							<!-- end toolbar navigation -->
