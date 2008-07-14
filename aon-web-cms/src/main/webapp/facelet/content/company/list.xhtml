@@ -34,6 +34,19 @@
 						accesskey="#{bundle.aon_key_new}">
 						<aon:actionListener method="#{company.onReset}" />
 					</aon:commandButton>
+					<aon:commandButton id="search" value="#{bundle.aon_search}"
+						action="company_search"
+						styleClass="aon-finding-toolbar-item aon-icon-search"
+						accesskey="#{bundle.aon_key_search}">
+						<aon:actionListener method="#{company.onEditSearch}" />
+					</aon:commandButton>
+					<aon:commandButton id="exit"
+						value="#{bundle.aon_close}"
+						action="home" 
+						immediate="#{true}"
+						styleClass="aon-finding-toolbar-item aon-icon-cancel"
+						accesskey="#{bundle.aon_key_close}">
+					</aon:commandButton>
 			    </aon:div>
 				
 				<!-- end toolbar navigation -->
@@ -77,7 +90,10 @@
 
 					</aon:dataTable>
 				
-					<rich:datascroller align="left"  for="dataTable" maxPages="20" />
+					<aon:dataScroller for="dataTable"
+						rowCount="#{company.model.rowCount}" 
+						page="#{company.page}"
+						showNote="true" />					
 
 			</aon:div>
 		</aon:form>

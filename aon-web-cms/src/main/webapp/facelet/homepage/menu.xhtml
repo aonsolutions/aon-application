@@ -114,19 +114,13 @@
 								actionListener="#{generic_page.onReset}" 
 								action="generic_page_form"
 								styleClass="aon-main-menu-leaf"/>
-								
-							<aon:menuItem id="activity" 
-								rendered="#{domainUtils.activityMenu}"
-								value="#{menuBundle.cms_activity}"
-								actionListener="#{activity.onSearch}" 
-								action="activity_list"
-								styleClass="aon-main-menu-leaf"/>
 							<aon:menuItem id="company" 
 								rendered="#{domainUtils.activityMenu}"
 								value="#{menuBundle.cms_company}"
-								actionListener="#{company.onSearch}" 
-								action="company_list"
+								actionListener="#{company.onReset}" 
+								action="company_form"
 								styleClass="aon-main-menu-leaf"/>
+								
 							<aon:menuItem id="diary" 
 								value="#{menuBundle.cms_diary}"
 								rendered="#{domainUtils.articleMenu}"
