@@ -136,6 +136,19 @@
 		<servlet-name>CompanyLogo</servlet-name>
 		<url-pattern>*.logo</url-pattern>
 	</servlet-mapping>
+	<filter>
+		<filter-name>Expires Filter</filter-name>
+		<filter-class>com.code.aon.ui.resources.filter.ExpiresFilter</filter-class>
+		<init-param>
+			<param-name>defaultExpires</param-name>
+			<param-value>3600000</param-value>
+		</init-param>
+	</filter>
+	<filter-mapping>
+		<filter-name>Expires Filter</filter-name>
+		<servlet-name>CompanyLogo</servlet-name>
+	</filter-mapping>
+	
 	<!-- Key Validator
 		<servlet>
 		<servlet-name>User Servlet</servlet-name>
