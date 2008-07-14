@@ -1,31 +1,32 @@
 package com.code.aon.ui.cms.controller;
 
 import javax.faces.event.ActionEvent;
-import javax.faces.event.ValueChangeEvent;
 
 import com.code.aon.cms.Article;
-import com.code.aon.cms.ArticleCategory;
 import com.code.aon.cms.ArticleDetail;
 import com.code.aon.cms.ArticleDocument;
 import com.code.aon.cms.ArticleRelated;
 import com.code.aon.cms.Image;
 import com.code.aon.cms.dao.ICMSAlias;
-import com.code.aon.cms.enumeration.ArticleType;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionException;
-import com.code.aon.ui.cms.controller.support.OrderedControllerSupport;
-import com.code.aon.ui.cms.controller.support.IOrderedControllerListener;
 import com.code.aon.ui.util.AonUtil;
 
-public class ArticleController extends GridI18nController implements IOrderedControllerListener {
+public class ArticleController extends GridI18nController {
 
-	public OrderedControllerSupport orderedControllerSupport = new OrderedControllerSupport(ICMSAlias.ARTICLE_POSITION);
-
-	private ArticleCategory currentArticleCategory;
+	private int page;
 	
+	public int getPage() {
+		return page;
+	}
+
+	public void setPage(int page) {
+		this.page = page;
+	}
+
 	private boolean richTextEnabled = false;
 
 	public boolean isRichTextEnabled() {
@@ -34,14 +35,6 @@ public class ArticleController extends GridI18nController implements IOrderedCon
 
 	public void setRichTextEnabled(boolean richTextEnabled) {
 		this.richTextEnabled = richTextEnabled;
-	}
-
-	public ArticleCategory getCurrentArticleCategory() {
-		return currentArticleCategory;
-	}
-
-	public void setCurrentArticleCategory(ArticleCategory currentArticleCategory) {
-		this.currentArticleCategory = currentArticleCategory;
 	}
 
 	@SuppressWarnings("unused")
@@ -83,10 +76,6 @@ public class ArticleController extends GridI18nController implements IOrderedCon
 		ArticleDetail fd = (ArticleDetail)getModelRowdataI18n();
 		if (fd != null) label = fd.getContent();
 		return label;
-	}
-
-	public void onAccept(ActionEvent event) {
-		super.accept(event);
 	}
 
 	public void onDelImage(ActionEvent event) {
@@ -135,84 +124,4 @@ public class ArticleController extends GridI18nController implements IOrderedCon
 		c.onSearch(event);
 	}
 	
-	// TAB
-	private ArticleType currentType = ArticleType.SERVICES;
-
-	public ArticleType getCurrentType() {
-		return currentType;
-	}
-	
-	public boolean isEventType() {
-		return (currentType == ArticleType.EVENTS)?true:false;
-	}
-	
-	public String getTabID0(){
-		return ArticleType.SERVICES.getName();
-	}
-
-	public String getTabID1(){
-		return ArticleType.EVENTS.getName();
-	}
-
-	public String getTabID2(){
-		return ArticleType.NEWS.getName();
-	}
-
-	public String getTabID3(){
-		return ArticleType.OTHER.getName();
-	}
-
-	public void iniTab() throws ManagerBeanException, ExpressionException{
-		currentType = ArticleType.SERVICES;
-		changeArticleList();
-	}
-	
-	private void changeArticleList() throws ManagerBeanException, ExpressionException {
-		Criteria criteria = new Criteria();
-		criteria.addExpression(getManagerBean().getFieldName(ICMSAlias.ARTICLE_ARTICLE_CATEGORY_ID), "" + getCurrentArticleCategory().getId());
-		criteria.addEqualExpression(getManagerBean().getFieldName(ICMSAlias.ARTICLE_ARTICLE_TYPE), currentType);
-		criteria.addOrder(getManagerBean().getFieldName(ICMSAlias.ARTICLE_POSITION));
-		setCriteria(criteria);
-		onSearch(null);
-		clearCheckList();
-	}
-	
-	public void processTabChange(ValueChangeEvent event) throws ManagerBeanException, ExpressionException {
-		if ((""+event.getNewValue()).equals(ArticleType.SERVICES.getName())){
-			currentType = ArticleType.SERVICES;
-		}else if((""+event.getNewValue()).equals(ArticleType.EVENTS.getName())){
-			currentType = ArticleType.EVENTS;
-		}else if((""+event.getNewValue()).equals(ArticleType.NEWS.getName())){
-			currentType = ArticleType.NEWS;
-		}else{
-			currentType = ArticleType.OTHER;
-		} 
-		changeArticleList();
-	}
-
-    public void onMoveUp(ActionEvent event) throws ManagerBeanException, ExpressionException {
-    	orderedControllerSupport.onMoveUp(this);
-    }
-
-    public void onMoveDown(ActionEvent event) throws ManagerBeanException, ExpressionException {
-    	orderedControllerSupport.onMoveDown(this);
-    }
-
-	public void fireBeforeUseCriteria(Criteria criteria) {
-		try {
-			criteria.addExpression(getManagerBean().getFieldName(ICMSAlias.ARTICLE_ARTICLE_CATEGORY_ID), "" + getCurrentArticleCategory().getId());
-			criteria.addEqualExpression(getManagerBean().getFieldName(ICMSAlias.ARTICLE_ARTICLE_TYPE), getCurrentType());
-		} catch (ManagerBeanException e) {
-		} catch (ExpressionException e) {
-		}
-	}
-
-	protected void afterRemoveSelected(){
-		try {
-			orderedControllerSupport.reorderObjects(this);
-		} catch (ManagerBeanException e) {
-			e.printStackTrace();
-		}
-	}
-
 }
