@@ -18,6 +18,16 @@ import com.code.aon.ui.util.AonUtil;
 
 public class ModularPageController extends GridI18nController {
 
+	private int page;
+	
+	public int getPage() {
+		return page;
+	}
+
+	public void setPage(int page) {
+		this.page = page;
+	}
+
 	public void onSelectOptions(ActionEvent event) throws ManagerBeanException, ExpressionException {
 		ModularPageOptionController mpc = (ModularPageOptionController)AonUtil.getController("modular_page_option");
 		IManagerBean mpBean = BeanManager.getManagerBean(ModularPageOption.class);

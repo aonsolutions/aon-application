@@ -102,11 +102,11 @@
 								actionListener="#{article.onReset}" 
 								action="article_form"
 								styleClass="aon-main-menu-leaf"/>
-								
-							<aon:menuItem id="modular_page" value="#{menuBundle.cms_modular_page}"
+							<aon:menuItem id="modular_page" 
+								value="#{menuBundle.cms_modular_page}"
 								rendered="#{domainUtils.modularMenu}"
-								action="modular_page_list"
-								actionListener="#{modular_page.onSearch}"
+								action="modular_page_form"
+								actionListener="#{modular_page.onReset}"
 								styleClass="aon-main-menu-leaf"/>
 							<aon:menuItem id="generic_page" value="#{menuBundle.cms_generic_page}"
 								rendered="#{domainUtils.genericPageMenu}"
