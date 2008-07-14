@@ -13,7 +13,22 @@ import com.code.aon.ui.form.event.ControllerListenerException;
 public class BrandControllerListener extends ControllerAdapter {
 
 	@Override
+	public void beforeModelInitialized(ControllerEvent event) throws ControllerListenerException {
+		try {
+			event.getController().getCriteria().addOrder(event.getController().getFieldName(ICMSAlias.BRAND_ALIAS));
+		} catch (ManagerBeanException e) {
+			throw new ControllerListenerException(e);
+		}
+	}
+
+	@Override
 	public void beforeBeanAdded(ControllerEvent event)
+			throws ControllerListenerException {
+		checkAlias(event);
+	}
+
+	@Override
+	public void beforeBeanUpdated(ControllerEvent event)
 			throws ControllerListenerException {
 		checkAlias(event);
 	}

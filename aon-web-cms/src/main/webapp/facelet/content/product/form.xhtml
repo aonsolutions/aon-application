@@ -32,8 +32,9 @@
 					<!-- start toolbar navigation -->
 					<aon:div styleClass="aon-finding-toolbar-item-group">
 						<aon:commandButton id="reset" value="#{bundle.aon_reset}"
-							action="product_form"
 							rendered="#{!product.new}"
+							action="product_form"
+							immediate="#{true}"
 							styleClass="aon-finding-toolbar-item aon-icon-reset"
 							accesskey="#{bundle.aon_key_new}">
 							<aon:actionListener method="#{product.onReset}" />
@@ -56,12 +57,43 @@
 							confirmAction="product_list"
 							styleClass="aon-finding-toolbar-item aon-icon-delete"
 							accesskey="#{bundle.aon_key_remove}"/>
-						<aon:commandButton id="exit" value="#{bundle.aon_close}"
+						<aon:commandButton id="search" 
+							value="#{bundle.aon_search}"
+							immediate="#{true}"
+							action="product_search"
+							styleClass="aon-finding-toolbar-item aon-icon-search"
+							accesskey="#{bundle.aon_key_search}">
+							<aon:actionListener method="#{product.onEditSearch}" />
+						</aon:commandButton>
+						<aon:commandButton id="list"
+							value="#{bundle.aon_list}"
 							action="product_list" 
 							immediate="#{true}"
 							styleClass="aon-finding-toolbar-item aon-icon-cancel"
 							accesskey="#{bundle.aon_key_close}">
-							<aon:actionListener method="#{product.onSearch}" />
+							<aon:actionListener method="#{product.onCancel}" />
+						</aon:commandButton>
+						<aon:commandButton id="exit"
+							value="#{bundle.aon_close}"
+							action="home" 
+							immediate="#{true}"
+							styleClass="aon-finding-toolbar-item aon-icon-cancel"
+							accesskey="#{bundle.aon_key_close}">
+							<aon:actionListener method="#{product.onCancel}" />
+						</aon:commandButton>
+						<aon:commandButton id="product_categories"
+							value="#{appBundle.product_category}"
+							action="product_category_form"
+							immediate="#{true}"
+							styleClass="aon-finding-toolbar-item">
+							<aon:actionListener method="#{productCategory.onReset}" />
+						</aon:commandButton>
+						<aon:commandButton id="brands"
+							value="#{appBundle.brand}"
+							action="brand_list"
+							immediate="#{true}"
+							styleClass="aon-finding-toolbar-item">
+							<aon:actionListener method="#{brand.onReset}" />
 						</aon:commandButton>
 				    </aon:div>
 					
@@ -148,6 +180,11 @@
 								size="64" maxlength="64"
 								value="#{product.toI18n.alt}" />
 															
+							<aon:outputLabel for="Product_active"
+								value="#{appBundle.product_active}"/>
+							<aon:selectBooleanCheckbox id="Product_active" 
+								value="#{product.to.active}" />
+						
 					</aon:panelGrid>
 
 			</aon:div>

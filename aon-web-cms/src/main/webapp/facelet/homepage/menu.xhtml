@@ -120,27 +120,17 @@
 								actionListener="#{company.onReset}" 
 								action="company_form"
 								styleClass="aon-main-menu-leaf"/>
-								
 							<aon:menuItem id="diary" 
 								value="#{menuBundle.cms_diary}"
 								rendered="#{domainUtils.articleMenu}"
 								actionListener="#{diary.onInit}" 
 								action="diary_form"
 								styleClass="aon-main-menu-leaf"/>
-							<aon:menuItem id="productCategory" 
-								value="#{menuBundle.cms_product_category}"
+							<aon:menuItem id="product" 
+								value="#{menuBundle.cms_product}"
 								rendered="#{domainUtils.productMenu}"
-								actionListener="#{productCategory.onSearch}" 
-								action="product_category_list"
-								styleClass="aon-main-menu-leaf"/>
-							<aon:menuItem id="brand" value="#{menuBundle.cms_brand}"
-								rendered="#{domainUtils.productMenu}"
-								actionListener="#{brand.onSearch}" 
-								action="brand_list"
-								styleClass="aon-main-menu-leaf"/>
-							<aon:menuItem id="product" value="#{menuBundle.cms_product}"
-								rendered="#{domainUtils.productMenu}"
-								actionListener="#{product.onSearch}" action="product_list"
+								actionListener="#{product.onReset}" 
+								action="product_form"
 								styleClass="aon-main-menu-leaf"/>
 						</aon:dropDownMenu>
 						<aon:dropDownMenu id="hiru"

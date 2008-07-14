@@ -1,10 +1,8 @@
 package com.code.aon.ui.cms.controller;
 
-import java.util.LinkedList;
 import java.util.List;
 
 import javax.faces.event.ActionEvent;
-import javax.faces.model.SelectItem;
 
 import com.code.aon.cms.ProductCategory;
 import com.code.aon.cms.ProductCategoryDetail;
@@ -20,6 +18,16 @@ import com.code.aon.ui.util.AonUtil;
 
 
 public class ProductCategoryController extends BasicI18nController {
+
+	private int page;
+	
+	public int getPage() {
+		return page;
+	}
+
+	public void setPage(int page) {
+		this.page = page;
+	}
 
 	@SuppressWarnings("unused")
 	public void onSelect(ActionEvent event) {
