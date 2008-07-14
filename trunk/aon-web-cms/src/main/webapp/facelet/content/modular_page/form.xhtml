@@ -28,7 +28,9 @@
 					<!-- start toolbar navigation -->
 					<aon:div styleClass="aon-finding-toolbar-item-group">					
 						<aon:commandButton id="reset" value="#{bundle.aon_reset}"
-							reRender="modular"
+							rendered="#{!modular_page.new}"
+							action="modular_page_form"
+							immediate="#{true}"
 							styleClass="aon-finding-toolbar-item aon-icon-reset"
 							accesskey="#{bundle.aon_key_new}">
 							<aon:actionListener method="#{modular_page.onReset}" />
@@ -51,14 +53,31 @@
 							confirmActionListener="#{modular_page.onRemove}"
 							confirmAction="modular_page_list"
 							accesskey="#{bundle.aon_key_remove}"/>
-						<aon:commandButton id="exit" value="#{bundle.aon_close}"
+						<aon:commandButton id="search" 
+							value="#{bundle.aon_search}"
+							immediate="#{true}"
+							action="modular_page_search"
+							styleClass="aon-finding-toolbar-item aon-icon-search"
+							accesskey="#{bundle.aon_key_search}">
+							<aon:actionListener method="#{modular_page.onEditSearch}" />
+						</aon:commandButton>
+						<aon:commandButton id="list"
+							value="#{bundle.aon_list}"
 							action="modular_page_list" 
 							immediate="#{true}"
 							styleClass="aon-finding-toolbar-item aon-icon-cancel"
 							accesskey="#{bundle.aon_key_close}">
-							<aon:actionListener method="#{modular_page.onSearch}" />
+							<aon:actionListener method="#{modular_page.onCancel}" />
 						</aon:commandButton>
-						<aon:commandButton id="generate_nodular"
+						<aon:commandButton id="exit"
+							value="#{bundle.aon_close}"
+							action="home" 
+							immediate="#{true}"
+							styleClass="aon-finding-toolbar-item aon-icon-cancel"
+							accesskey="#{bundle.aon_key_close}">
+							<aon:actionListener method="#{modular_page.onCancel}" />
+						</aon:commandButton>
+						<aon:commandButton id="generate_modular"
 							value="#{appBundle.aon_generate}" 
 							rendered="#{modular_page.to!=null}"
 							styleClass="aon-finding-toolbar-item aon-icon-accept"

@@ -327,6 +327,10 @@
       <from-outcome>modular_page_form</from-outcome>
       <to-view-id>/facelet/content/modular_page/form.xhtml</to-view-id>
     </navigation-case>
+    <navigation-case>
+      <from-outcome>modular_page_search</from-outcome>
+      <to-view-id>/facelet/content/modular_page/search.xhtml</to-view-id>
+    </navigation-case>
   </navigation-rule>
 
   <!-- ========================================== DIRECT ACCESS GROUP -->
