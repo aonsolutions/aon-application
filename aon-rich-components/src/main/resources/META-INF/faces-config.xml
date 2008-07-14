@@ -183,7 +183,15 @@
         <component-type>com.code.aon.faces.PanelCollapsible</component-type>
         <component-class>org.richfaces.component.html.HtmlSimpleTogglePanel</component-class>
     </component>
-    <render-kit>
+    <component>
+        <component-type>com.code.aon.faces.Panel</component-type>
+        <component-class>org.richfaces.component.html.HtmlPanel</component-class>
+    </component>
+    <component>
+        <component-type>com.code.aon.faces.FileUpload</component-type>
+        <component-class>org.richfaces.component.html.HtmlFileUpload</component-class>
+    </component>
+	<render-kit>
         <renderer>
             <component-family>org.apache.myfaces.SubForm</component-family>
             <renderer-type>org.apache.myfaces.SubForm</renderer-type>
