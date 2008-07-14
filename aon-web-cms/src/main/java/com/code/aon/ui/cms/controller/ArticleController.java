@@ -8,6 +8,7 @@ import com.code.aon.cms.ArticleDocument;
 import com.code.aon.cms.ArticleRelated;
 import com.code.aon.cms.Image;
 import com.code.aon.cms.dao.ICMSAlias;
+import com.code.aon.cms.enumeration.ArticleType;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
@@ -122,6 +123,14 @@ public class ArticleController extends GridI18nController {
 		c.setCurrentArticle(article);
 		c.setCriteria(criteria);
 		c.onSearch(event);
+	}
+	
+	public boolean isDiary() {
+		try{
+			return (((Article)this.getTo()).getArticleType() == ArticleType.EVENTS)?true:false;
+		}catch (Exception e) {
+			return false;
+		}
 	}
 	
 }

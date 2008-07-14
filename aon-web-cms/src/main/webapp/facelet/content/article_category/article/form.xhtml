@@ -85,6 +85,14 @@
 							styleClass="aon-finding-toolbar-item">
 							<aon:actionListener method="#{article_category.onReset}" />
 						</aon:commandButton>
+						<aon:commandButton id="diary"
+							rendered="#{article.diary}"
+							value="#{appBundle.diary}"
+							action="diary_form"
+							immediate="#{true}"
+							styleClass="aon-finding-toolbar-item">
+							<aon:actionListener method="#{diary.onInit}" />
+						</aon:commandButton>
 				    </aon:div>
 					
 					<!-- end toolbar navigation -->
@@ -120,6 +128,10 @@
 								value="#{article.to.articleType}">
 								<f:selectItem itemLabel="-" itemValue="" />
 								<f:selectItems value="#{collections.articleTypes}" />
+								<a4j:support 
+									event="onchange" 
+									ajaxSingle="true" 
+									reRender="main_form" />
 							</aon:selectOneMenu>
 		
 							<aon:outputLabel for="ArticleDetail_publishDate"
@@ -158,23 +170,27 @@
 								value="#{article.toI18n.subtitle}" />
 		
 							<aon:outputLabel for="ArticleDetail_initDate"
-								value="#{appBundle.article_initDate}" />
+								value="#{appBundle.article_initDate}"
+								rendered="#{article.diary}" />
 							<aon:selectInputDate id="ArticleDetail_initDate"
 								 style="z-index:2001;margin:0;vertical-align:middle;"
 								 imageDir="#{aonConfiguration.stylePath}/images/selectInputDate/"
 								 value="#{article.to.initDate}" renderAsPopup="true"
-								 popupDateFormat="#{bundle.aon_date_pattern}">
+								 popupDateFormat="#{bundle.aon_date_pattern}"
+								 rendered="#{article.diary}">
 								 <f:convertDateTime pattern="#{bundle.aon_date_pattern}"
 										timeZone="#{timeZoneController.timeZoneId}" />
 							</aon:selectInputDate>	
 							
 							<aon:outputLabel for="ArticleDetail_endDate"
-								value="#{appBundle.article_endDate}" />
+								value="#{appBundle.article_endDate}"
+								rendered="#{article.diary}" />
 							<aon:selectInputDate id="ArticleDetail_endDate"
 								 style="z-index:2001;margin:0;vertical-align:middle;"
 								 imageDir="#{aonConfiguration.stylePath}/images/selectInputDate/"
 								 value="#{article.to.endDate}" renderAsPopup="true"
-								 popupDateFormat="#{bundle.aon_date_pattern}">
+								 popupDateFormat="#{bundle.aon_date_pattern}"
+								 rendered="#{article.diary}">
 								 <f:convertDateTime pattern="#{bundle.aon_date_pattern}"
 										timeZone="#{timeZoneController.timeZoneId}" />
 							</aon:selectInputDate>	
