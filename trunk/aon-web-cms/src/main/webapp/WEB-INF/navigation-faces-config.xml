@@ -113,26 +113,6 @@
     </navigation-case>
   </navigation-rule>
   
-  <!-- ================================================= BRAND -->
-  <navigation-rule>
-    <navigation-case>
-      <from-outcome>brand_list</from-outcome>
-      <to-view-id>/facelet/content/brand/list.xhtml</to-view-id>
-    </navigation-case>
-  </navigation-rule>
-  
-  <!-- ======================================= PRODUCT CATEGORY -->
-  <navigation-rule>
-    <navigation-case>
-      <from-outcome>product_category_list</from-outcome>
-      <to-view-id>/facelet/content/product_category/list.xhtml</to-view-id>
-    </navigation-case>
-    <navigation-case>
-      <from-outcome>product_category_form</from-outcome>
-      <to-view-id>/facelet/content/product_category/form.xhtml</to-view-id>
-    </navigation-case>
-  </navigation-rule>
-  
   <!-- ======================================= PRODUCT -->
   <navigation-rule>
     <navigation-case>
@@ -143,7 +123,28 @@
       <from-outcome>product_form</from-outcome>
       <to-view-id>/facelet/content/product/form.xhtml</to-view-id>
     </navigation-case>
+    <navigation-case>
+      <from-outcome>product_search</from-outcome>
+      <to-view-id>/facelet/content/product/search.xhtml</to-view-id>
+    </navigation-case>
+    <navigation-case>
+      <from-outcome>brand_list</from-outcome>
+      <to-view-id>/facelet/content/product/brand/list.xhtml</to-view-id>
+    </navigation-case>
+    <navigation-case>
+      <from-outcome>product_category_list</from-outcome>
+      <to-view-id>/facelet/content/product/product_category/list.xhtml</to-view-id>
+    </navigation-case>
+    <navigation-case>
+      <from-outcome>product_category_form</from-outcome>
+      <to-view-id>/facelet/content/product/product_category/form.xhtml</to-view-id>
+    </navigation-case>
+    <navigation-case>
+      <from-outcome>product_category_search</from-outcome>
+      <to-view-id>/facelet/content/product/product_category/search.xhtml</to-view-id>
+    </navigation-case>
   </navigation-rule>
+  
   
   <!-- ======================================= HEADER -->
   <navigation-rule>

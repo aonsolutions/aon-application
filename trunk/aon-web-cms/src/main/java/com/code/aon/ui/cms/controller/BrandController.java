@@ -1,7 +1,6 @@
 package com.code.aon.ui.cms.controller;
 
 import javax.faces.event.ActionEvent;
-import javax.faces.event.ValueChangeEvent;
 
 import com.code.aon.cms.Brand;
 import com.code.aon.cms.BrandDetail;
@@ -9,6 +8,16 @@ import com.code.aon.common.ManagerBeanException;
 
 
 public class BrandController extends BasicI18nController {
+
+	private int page;
+	
+	public int getPage() {
+		return page;
+	}
+
+	public void setPage(int page) {
+		this.page = page;
+	}
 
 	@SuppressWarnings("unused")
 	public void onSelect(ActionEvent event) {

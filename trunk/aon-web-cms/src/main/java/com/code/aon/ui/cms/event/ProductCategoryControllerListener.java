@@ -1,6 +1,5 @@
 package com.code.aon.ui.cms.event;
 
-import com.code.aon.cms.Brand;
 import com.code.aon.cms.ProductCategory;
 import com.code.aon.cms.dao.ICMSAlias;
 import com.code.aon.common.BeanManager;

@@ -28,13 +28,28 @@
 						
 					<!-- start toolbar navigation -->
 					<aon:div styleClass="aon-finding-toolbar-item-group">
-						<aon:commandButton id="reset" value="#{bundle.aon_reset}"
+						<aon:commandButton id="reset" 
+							value="#{bundle.aon_reset}"
 							action="product_form"
 							styleClass="aon-finding-toolbar-item aon-icon-reset"
 							accesskey="#{bundle.aon_key_new}">
 							<aon:actionListener method="#{product.onReset}" />
 						</aon:commandButton>
-				    </aon:div>
+						<aon:commandButton id="search" 
+							value="#{bundle.aon_search}"
+							action="product_search"
+							styleClass="aon-finding-toolbar-item aon-icon-search"
+							accesskey="#{bundle.aon_key_search}">
+							<aon:actionListener method="#{product.onEditSearch}" />
+						</aon:commandButton>
+						<aon:commandButton id="exit"
+							value="#{bundle.aon_close}"
+							action="home" 
+							immediate="#{true}"
+							styleClass="aon-finding-toolbar-item aon-icon-cancel"
+							accesskey="#{bundle.aon_key_close}">
+						</aon:commandButton>
+					</aon:div>
 					
 					<!-- end toolbar navigation -->
 				</aon:panelGrid>
@@ -101,6 +116,7 @@
 						
 						<aon:dataScroller for="dataTable"
 							rowCount="#{product.model.rowCount}" 
+							page="#{product.page}"
 							showNote="true" />					
 					
 				</aon:div>

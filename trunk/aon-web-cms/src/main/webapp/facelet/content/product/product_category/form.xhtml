@@ -28,7 +28,9 @@
 					<!-- start toolbar navigation -->
 					<aon:div styleClass="aon-finding-toolbar-item-group">					
 						<aon:commandButton id="reset" value="#{bundle.aon_reset}"
-							reRender="main_form"
+							rendered="#{!product_category.new}"
+							action="product_category_form"
+							immediate="#{true}"
 							styleClass="aon-finding-toolbar-item aon-icon-reset"
 							accesskey="#{bundle.aon_key_new}">
 							<aon:actionListener method="#{productCategory.onReset}" />
@@ -50,12 +52,29 @@
 							confirmActionListener="#{productCategory.onRemove}"
 							confirmAction="product_category_list"
 							accesskey="#{bundle.aon_key_remove}"/>
-						<aon:commandButton id="exit" value="#{bundle.aon_close}"
+						<aon:commandButton id="search" 
+							value="#{bundle.aon_search}"
+							immediate="#{true}"
+							action="product_category_search"
+							styleClass="aon-finding-toolbar-item aon-icon-search"
+							accesskey="#{bundle.aon_key_search}">
+							<aon:actionListener method="#{productCategory.onEditSearch}" />
+						</aon:commandButton>
+						<aon:commandButton id="list"
+							value="#{bundle.aon_list}"
 							action="product_category_list" 
 							immediate="#{true}"
 							styleClass="aon-finding-toolbar-item aon-icon-cancel"
 							accesskey="#{bundle.aon_key_close}">
-							<aon:actionListener method="#{productCategory.onSearch}" />
+							<aon:actionListener method="#{productCategory.onCancel}" />
+						</aon:commandButton>
+						<aon:commandButton id="exit"
+							value="#{bundle.aon_close}"
+							action="product_form" 
+							immediate="#{true}"
+							styleClass="aon-finding-toolbar-item aon-icon-cancel"
+							accesskey="#{bundle.aon_key_close}">
+							<aon:actionListener method="#{productCategory.onCancel}" />
 						</aon:commandButton>
 						<!-- 
 						<aon:commandButton id="partial_generate"
@@ -94,6 +113,11 @@
 						<f:selectItems value="#{collections.sectionList}" />
 					</aon:selectOneMenu>
 					
+					<aon:outputLabel for="ProductCategory_active"
+						value="#{appBundle.product_category_active}"/>
+					<aon:selectBooleanCheckbox id="ProductCategory_active" 
+						value="#{productCategory.to.active}" />
+						
 				</aon:panelGrid>
 			</aon:div>
 		
