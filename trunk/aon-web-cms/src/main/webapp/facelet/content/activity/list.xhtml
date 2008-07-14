@@ -52,6 +52,14 @@
 							accesskey="#{bundle.aon_key_cancel}">
 							<aon:actionListener method="#{activity.onCancel}" />
 						</aon:commandButton>
+						<aon:commandButton id="exit"
+							value="#{bundle.aon_close}"
+							action="company_form" 
+							immediate="#{true}"
+							styleClass="aon-finding-toolbar-item aon-icon-cancel"
+							accesskey="#{bundle.aon_key_close}">
+							<aon:actionListener method="#{company.onLoadActivities}" />
+						</aon:commandButton>
 					</aon:div>
 				</aon:panelGrid>
 			</aon:div>
@@ -190,6 +198,7 @@
 
 				<aon:dataScroller for="dataTable"
 					rowCount="#{activity.model.rowCount}" 
+					page="#{activity.page}"
 					showNote="true" />					
 			
 			</aon:div>

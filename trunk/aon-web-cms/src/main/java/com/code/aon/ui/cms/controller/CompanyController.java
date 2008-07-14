@@ -24,6 +24,16 @@ import com.code.aon.ui.util.AonUtil;
 
 public class CompanyController extends GridController {
 	
+	private int page;
+	
+	public int getPage() {
+		return page;
+	}
+
+	public void setPage(int page) {
+		this.page = page;
+	}
+
 	private DataModel currentActivitiesModel;
 
 	private DataModel activityModel;

@@ -8,6 +8,16 @@ import com.code.aon.common.ManagerBeanException;
 
 public class ActivityController extends GridI18nController {
 
+	private int page;
+	
+	public int getPage() {
+		return page;
+	}
+
+	public void setPage(int page) {
+		this.page = page;
+	}
+
 	@SuppressWarnings("unused")
 	public void onSelect(ActionEvent event) {
 		super.onSelect(event);
