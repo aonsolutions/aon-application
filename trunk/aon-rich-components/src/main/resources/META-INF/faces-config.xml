@@ -191,6 +191,10 @@
         <component-type>com.code.aon.faces.FileUpload</component-type>
         <component-class>org.richfaces.component.html.HtmlFileUpload</component-class>
     </component>
+    <component>
+        <component-type>com.code.aon.faces.OutputFormat</component-type>
+        <component-class>javax.faces.component.html.HtmlOutputFormat</component-class>
+    </component>
 	<render-kit>
         <renderer>
             <component-family>org.apache.myfaces.SubForm</component-family>
