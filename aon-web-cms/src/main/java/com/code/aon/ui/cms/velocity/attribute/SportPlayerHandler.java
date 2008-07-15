@@ -59,16 +59,28 @@ public class SportPlayerHandler {
 			formatter = new SimpleDateFormat ("dd/MM/yy");
 		else
 			formatter = (SimpleDateFormat)SimpleDateFormat.getDateInstance(DateFormat.SHORT,locale);
-		this.bornDate = formatter.format(sportPlayer.getBornDate());
+		try{
+			this.bornDate = formatter.format(sportPlayer.getBornDate());
+		}catch (Exception e) {
+		}
 		this.bornPlace = sportPlayer.getBornPlace();
 		this.weight = sportPlayer.getWeight();
 		this.lenght = sportPlayer.getLenght();
-		this.sportNationality = getNationalityString(sportPlayer.getSportNationality());
+		try{
+			this.sportNationality = getNationalityString(sportPlayer.getSportNationality());
+		}catch (Exception e) {
+		}
 		this.comunitary = sportPlayer.isComunitary();
 		this.photo = sportPlayer.getPhoto();
-		this.sportClub = sportPlayer.getSportClub().getDescription();
+		try{
+			this.sportClub = sportPlayer.getSportClub().getDescription();
+		}catch (Exception e) {
+		}
 		this.number = sportPlayer.getNumber();
-		this.careers = fillCareer(sportPlayer.getId());
+		try{
+			this.careers = fillCareer(sportPlayer.getId());
+		}catch (Exception e) {
+		}
 		this.url = Templates.SPORT.getHtmlName();
 		this.url = this.url.replaceAll("%NAME%", SportGenerator.PLAYER + this.alias);
 	}
