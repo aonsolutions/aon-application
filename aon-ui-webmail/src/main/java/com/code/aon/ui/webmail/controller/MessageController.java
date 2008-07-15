@@ -32,6 +32,7 @@ import javax.mail.internet.MimeMultipart;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 import org.richfaces.event.UploadEvent;
@@ -205,17 +206,14 @@ public class MessageController implements AonConstants, IAonFileListener {
        		try {
        			AonFile af = new AonFile();
        			InputStream is = m.getInputStream();
-       			File f = new File("/tmp/"+attach.getFileName()); 
+       			String name = attach.getFileName();
+       			File f = File.createTempFile( "webmail-", name ); 
        			FileOutputStream fos = new FileOutputStream(f);
-    			byte buff [] = new byte [ 2048 ];
-    			int read = is.read ( buff );
-    			while ( read != -1  ) {
-    				fos.write ( buff,0,read );
-    				read = is.read ( buff );
-    			}
-    			fos.flush();
+       			IOUtils.copy( is, fos );
+       			is.close();
     			fos.close();
     			af.setFile(f);
+    			af.setFileName( name );
     	    	af.addAonFileListener(this);
        			newMsgFileList.add(af);
 			} catch (IOException e) {
