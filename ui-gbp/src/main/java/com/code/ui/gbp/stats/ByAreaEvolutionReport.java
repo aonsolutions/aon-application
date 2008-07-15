@@ -52,7 +52,7 @@ public class ByAreaEvolutionReport implements ICollectionProvider {
 			"FROM Campaign campaign " +
 			"WHERE campaign.area = c.area)";
 		String stmt = "SELECT " + "new com.code.ui.gbp.stats.ByAreaEvolution("
-				+ "c.area.description," + subStmt_2 + ",c.area.budget,SUM(off.price)," + subStmt
+				+ "c.area.description,c.area.areaGroup.description,c.area.budget,c.area.estimate," + subStmt_2 + ",c.area.budget,SUM(off.price)," + subStmt
 				+ ") FROM Campaign c,Offer off WHERE ";
 		StringBuilder sentence = new StringBuilder(stmt);
 		sentence.append(" c.startDate <= ? AND c.endDate >= ?");
