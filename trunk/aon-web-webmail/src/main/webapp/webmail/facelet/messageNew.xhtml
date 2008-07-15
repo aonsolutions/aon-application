@@ -4,8 +4,6 @@
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:aon="http://www.code.es/aon-rich-components"
-	xmlns:c="http://java.sun.com/jstl/core"
-	xmlns:rich="http://richfaces.org/rich"
 	xmlns:a4j="http://richfaces.org/a4j">
 <body>
 
@@ -100,7 +98,7 @@
 						<aon:outputLabel for="attach_file" 
 							value="#{appBundle.aon_webmail_attach_file}: " />
 						<aon:div>
-							<rich:fileUpload id="attach_file"
+							<aon:fileUpload id="attach_file"
 								addControlLabel="#{appBundle.aon_fileUpload_add}" 
 								stopControlLabel="#{appBundle.aon_fileUpload_stop}" 
 								stopEntryControlLabel="#{appBundle.aon_fileUpload_stop}"
@@ -113,7 +111,7 @@
 									<h:outputText value="#{appBundle.aon_fileUpload_upload_label}" />
 								</f:facet>								
 								<a4j:support event="onuploadcomplete" oncomplete="endUpload();" reRender="attachDataTable" />
-							</rich:fileUpload>								
+							</aon:fileUpload>								
 							<aon:div id="attachDataTable">					
 								<aon:dataTable value="#{message.files}" 
 									var="attachment" styleClass="aon-panelGrid-formatting">
