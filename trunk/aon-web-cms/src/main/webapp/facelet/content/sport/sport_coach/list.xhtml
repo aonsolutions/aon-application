@@ -42,7 +42,7 @@
 							reRender="dataTable, gridToolbar"
 							styleClass="aon-finding-toolbar-item aon-icon-accept"
 							accesskey="#{bundle.aon_key_save}">
-							<aon:actionListener method="#{sport_coach.onAccept}" />
+							<aon:actionListener method="#{sport_coach.accept}" />
 						</aon:commandButton>
 						<aon:commandButton id="cancel" value="#{bundle.aon_cancel}"
 							rendered="#{sport_coach.to!=null}"
@@ -179,7 +179,7 @@
 								title="[#{bundle.aon_accept}]"
 								styleClass="aon-editDataTable-button aon-icon-accept"
 								reRender="dataTable,gridToolbar">
-								<aon:actionListener method="#{sport_coach.onAccept}" />
+								<aon:actionListener method="#{sport_coach.accept}" />
 							</aon:commandButton>
 							<aon:commandButton id="lineCancel"
 								title="[#{bundle.aon_cancel}]"
@@ -200,7 +200,7 @@
 									title="[#{bundle.aon_accept}]"
 									styleClass="aon-editDataTable-button aon-icon-accept"
 									reRender="dataTable,gridToolbar">
-									<aon:actionListener method="#{sport_coach.onAccept}" />
+									<aon:actionListener method="#{sport_coach.accept}" />
 								</aon:commandButton>
 								<aon:commandButton id="newCancel"
 									title="[#{bundle.aon_cancel}]"
