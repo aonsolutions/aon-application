@@ -51,14 +51,26 @@
 							styleClass="aon-finding-toolbar-item aon-icon-ambito" />
 					</aon:div>
 				</aon:panelGrid>
-				<aon:panelGrid columns="2" dir="true" style="float:right;">
+				<aon:panelGrid columns="5" dir="true" style="float:right;">
+					<aon:commandButton id="first_user" disabled="#{user.inFirst}"
+						action="user_form" actionListener="#{user.onSelectFirst}"
+						styleClass="aon-dataScroller-button #{user.inFirst?'aon-dataScroller-button-first-disabled':'aon-dataScroller-button-first'}">
+					</aon:commandButton>
 					<aon:commandButton id="previous_user" disabled="#{user.inFirst}"
 						action="user_form" actionListener="#{user.onSelectPrevious}"
 						styleClass="aon-dataScroller-button #{user.inFirst?'aon-dataScroller-button-previous-disabled':'aon-dataScroller-button-previous'}">
 					</aon:commandButton>
+					<aon:outputFormat value="#{appBundle.aon_spin_result}">
+						<f:param value="#{user.selectedIndex + 1}" />
+						<f:param value="#{user.model.rowCount}" />
+					</aon:outputFormat>					
 					<aon:commandButton id="next_user" disabled="#{user.inLast}"
 						action="user_form" actionListener="#{user.onSelectNext}"
 						styleClass="aon-dataScroller-button #{user.inLast?'aon-dataScroller-button-next-disabled':'aon-dataScroller-button-next'}">
+					</aon:commandButton>
+					<aon:commandButton id="last_user" disabled="#{user.inLast}"
+						action="user_form" actionListener="#{user.onSelectLast}"
+						styleClass="aon-dataScroller-button #{user.inLast?'aon-dataScroller-button-last-disabled':'aon-dataScroller-button-last'}">
 					</aon:commandButton>
 				</aon:panelGrid>
 			</aon:div>
