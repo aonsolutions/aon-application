@@ -519,4 +519,15 @@
 			</handler-class>
 		</component>
 	</tag>
+	<tag>
+		<tag-name>outputFormat</tag-name>
+		<component>
+			<component-type>
+				com.code.aon.faces.OutputFormat
+			</component-type>
+			<handler-class>
+				com.code.aon.faces.component.AonComponentHandler
+			</handler-class>
+		</component>
+	</tag>
 </facelet-taglib>
