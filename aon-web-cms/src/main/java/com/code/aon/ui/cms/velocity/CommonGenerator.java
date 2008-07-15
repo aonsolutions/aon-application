@@ -84,6 +84,7 @@ public class CommonGenerator extends Generator {
 		
         vu.put("every_languages", getActiveLanguages());
         vu.put("default_language", getDefaultLanguage());
+        vu.put("current_language", getCurrentLanguage());
 
     }
 
@@ -224,6 +225,7 @@ public class CommonGenerator extends Generator {
 		vu.remove("bundle");
         vu.remove("every_languages");
         vu.remove("default_language");
+        vu.remove("current_language");
 		vu = null;
 	}
 	
@@ -302,6 +304,7 @@ public class CommonGenerator extends Generator {
 		vu.initialize();
         vu.put("every_languages", getActiveLanguages());
         vu.put("default_language", getDefaultLanguage());
+        vu.put("current_language", getCurrentLanguage());
 
 		File f = new File(ControllerUtil.getPreviewPath());
 		if (!f.exists()) f.mkdirs();
@@ -358,6 +361,11 @@ public class CommonGenerator extends Generator {
 		return null;
 	}
 
+	private static Object getCurrentLanguage() {
+		Language lang = ControllerUtil.getCurrentLanguage();
+		return lang.getLanguage().getLocale().getLanguage();
+	}
+	
 	private ArrayList<LanguageHandler> getActiveLanguages() {
 		ArrayList<LanguageHandler> list = new ArrayList<LanguageHandler>();
 		try {
