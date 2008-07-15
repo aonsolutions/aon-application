@@ -15,7 +15,7 @@
 
 	        <rich:panel>
 	            <f:facet name="header">
-	                <aon:outputText value="GALLERIES "/>
+	                <aon:outputText value="#{appBundle.cms_home_galleries}"/>
 	            </f:facet>
 				<aon:commandButton id="cms-document-upload"
 					value="#{menuBundle.cms_document_gallery}"
@@ -35,11 +35,11 @@
 			
 	        <rich:panel>
 	            <f:facet name="header">
-	                <aon:outputText value="MENU "/>
+	                <aon:outputText value="#{appBundle.cms_home_menu}"/>
 	            </f:facet>
 				<aon:commandButton id="cms-icon-menu"
 					value="#{menuBundle.cms_menu}"
-					image="/images/cms/icons/cms-icon-def.png"
+					image="/images/cms/icons/cms-icon-menu.png"
 					styleClass="aon-icon-commandButton" 
 					action="menu_list">
 					<aon:actionListener method="#{menu.onSearch}" />
@@ -50,7 +50,7 @@
 			
 	        <rich:panel>
 	            <f:facet name="header">
-	                <aon:outputText value="CONTENTS "/>
+	                <aon:outputText value="#{appBundle.cms_home_contents}"/>
 	            </f:facet>
 				<aon:commandButton id="cms-icon-news"
 					value="#{menuBundle.cms_article}"
@@ -75,14 +75,14 @@
 				</aon:commandButton> 
 				<aon:commandButton id="cms-icon-generic-page"
 					value="#{menuBundle.cms_generic_page}"
-					image="/images/cms/icons/cms-icon-def.png"
+					image="/images/cms/icons/cms-icon-generica.png"
 					styleClass="aon-icon-commandButton" 
 					action="generic_page_form">
 					<aon:actionListener method="#{generic_page.onReset}" />
 				</aon:commandButton> 
 				<aon:commandButton id="cms-icon-modular"
 					value="#{menuBundle.cms_modular_page}"
-					image="/images/cms/icons/cms-icon-def.png"
+					image="/images/cms/icons/cms-icon-modular.png"
 					styleClass="aon-icon-commandButton" 
 					action="modular_page_form">
 					<aon:actionListener method="#{modular_page.onReset}" />
@@ -107,11 +107,11 @@
 			
 	        <rich:panel>
 	            <f:facet name="header">
-	                <aon:outputText value="GENERATOR "/>
+	                <aon:outputText value="#{appBundle.cms_home_generator}"/>
 	            </f:facet>
 				<aon:commandButton id="cms-icon-generator"
 					value="#{menuBundle.cms_generate_pages}"
-					image="/images/cms/icons/cms-icon-def.png"
+					image="/images/cms/icons/cms-icon-generator.png"
 					styleClass="aon-icon-commandButton" 
 					action="generator_form">
 					<aon:actionListener method="#{generator_status.onInit}" />
