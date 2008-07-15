@@ -27,12 +27,6 @@ public class BrandControllerListener extends ControllerAdapter {
 		checkAlias(event);
 	}
 
-	@Override
-	public void beforeBeanUpdated(ControllerEvent event)
-			throws ControllerListenerException {
-		checkAlias(event);
-	}
-
 	private void checkAlias(ControllerEvent event) throws ControllerListenerException{
 		try {
 			Brand to = (Brand)event.getController().getTo();

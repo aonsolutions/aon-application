@@ -42,7 +42,7 @@
 							reRender="dataTable, gridToolbar"
 							styleClass="aon-finding-toolbar-item aon-icon-accept"
 							accesskey="#{bundle.aon_key_save}">
-							<aon:actionListener method="#{sport_career_path.onAccept}" />
+							<aon:actionListener method="#{sport_career_path.accept}" />
 						</aon:commandButton>
 						<aon:commandButton id="cancel" value="#{bundle.aon_cancel}"
 							rendered="#{sport_career_path.to!=null}"
@@ -106,7 +106,7 @@
 								reRender="dataTable,gridToolbar"
 								actionListener="#{sport_career_path.onSelect}"
 								event="onclick" />
-						</aon:outputText>	
+						</aon:outputText>
 						<aon:selectOneMenu rendered="#{to==sport_career_path.to}"  
 							value="#{sport_career_path.to.sportPlayer.id}">
 							<f:selectItems value="#{collections.sportPlayerList}" />
@@ -226,8 +226,8 @@
 							<aon:commandButton id="lineAccept"
 								title="[#{bundle.aon_accept}]"
 								styleClass="aon-editDataTable-button aon-icon-accept"
-								reRender="dataTable,gridToolbar">
-								<aon:actionListener method="#{sport_career_path.onAccept}" />
+								reRender="dataTable,gridToolbar"
+								actionListener="#{sport_career_path.accept}">
 							</aon:commandButton>
 							<aon:commandButton id="lineCancel"
 								title="[#{bundle.aon_cancel}]"
@@ -248,7 +248,7 @@
 									title="[#{bundle.aon_accept}]"
 									styleClass="aon-editDataTable-button aon-icon-accept"
 									reRender="dataTable,gridToolbar">
-									<aon:actionListener method="#{sport_career_path.onAccept}" />
+									<aon:actionListener method="#{sport_career_path.accept}" />
 								</aon:commandButton>
 								<aon:commandButton id="newCancel"
 									title="[#{bundle.aon_cancel}]"
