@@ -470,7 +470,7 @@
 						key="textField-29"
 						isPrintWhenDetailOverflows="true"/>
 					<box topBorder="1Point" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" leftPadding="5" rightBorder="None" rightBorderColor="#000000" rightPadding="5" bottomBorder="Thin" bottomBorderColor="#999999"/>
-					<textElement textAlignment="Left" verticalAlignment="Middle">
+					<textElement textAlignment="Right" verticalAlignment="Middle">
 						<font size="8"/>
 					</textElement>
 				<textFieldExpression   class="java.lang.Long"><![CDATA[$V{supCampaignTotal}]]></textFieldExpression>
