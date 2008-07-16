@@ -1,0 +1,108 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core" 
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:aon="http://www.code.es/aon-rich-components">
+<body>
+
+<ui:composition>
+
+	<aon:form id="main_form">
+		<rich:panel styleClass="aon-scroll-area">
+			<aon:div>
+				<aon:commandButton id="cms-document-upload"
+					value="#{menuBundle.cms_document_gallery}"
+					image="/images/cms/icons/cms-document-upload.png"
+					styleClass="aon-icon-commandButton" 
+					action="document_list">
+				</aon:commandButton> 
+				<aon:commandButton id="cms-icon-image-upload"
+					value="#{menuBundle.cms_image_gallery}"
+					image="/images/cms/icons/cms-icon-image-upload.png"
+					styleClass="aon-icon-commandButton" 
+					action="gallery_list">
+				</aon:commandButton> 
+			</aon:div>
+		
+			<aon:div>
+				<aon:commandButton id="cms-icon-menu"
+					value="#{menuBundle.cms_menu}"
+					image="/images/cms/icons/cms-icon-menu.png"
+					styleClass="aon-icon-commandButton" 
+					action="menu_list">
+					<aon:actionListener method="#{menu.onSearch}" />
+				</aon:commandButton> 
+			</aon:div>
+		
+			<aon:div>
+				<aon:commandButton id="cms-document-download"
+					value="#{menuBundle.cms_download}"
+					image="/images/cms/icons/cms-document-download.png"
+					styleClass="aon-icon-commandButton" 
+					action="download_form">
+					<aon:actionListener method="#{download.onReset}" />
+				</aon:commandButton> 
+				<aon:commandButton id="cms-icon-album"
+					value="#{menuBundle.cms_album_image}"
+					image="/images/cms/icons/cms-icon-album.png"
+					styleClass="aon-icon-commandButton" 
+					action="album_image_form">
+					<aon:actionListener method="#{albumImage.onReset}" />
+				</aon:commandButton> 
+			</aon:div>
+		
+			<aon:div>
+				<aon:commandButton id="cms-icon-news"
+					value="#{menuBundle.cms_article}"
+					image="/images/cms/icons/cms-icon-news.png"
+					styleClass="aon-icon-commandButton" 
+					action="article_form">
+					<aon:actionListener method="#{article.onReset}" />
+				</aon:commandButton> 
+				<aon:commandButton id="cms-icon-links"
+					value="#{menuBundle.cms_link}"
+					image="/images/cms/icons/cms-icon-links.png"
+					styleClass="aon-icon-commandButton" 
+					action="link_form">
+					<aon:actionListener method="#{link.onReset}" />
+				</aon:commandButton> 
+				<aon:commandButton id="cms-icon-faq"
+					value="#{menuBundle.cms_faq}"
+					image="/images/cms/icons/cms-icon-faq.png"
+					styleClass="aon-icon-commandButton" 
+					action="faq_form">
+					<aon:actionListener method="#{faq.onReset}" />
+				</aon:commandButton> 
+				<aon:commandButton id="cms-icon-generic-page"
+					value="#{menuBundle.cms_generic_page}"
+					image="/images/cms/icons/cms-icon-generic-page.png"
+					styleClass="aon-icon-commandButton" 
+					action="generic_page_form">
+					<aon:actionListener method="#{generic_page.onReset}" />
+				</aon:commandButton> 
+				<aon:commandButton id="cms-icon-modular"
+					value="#{menuBundle.cms_modular_page}"
+					image="/images/cms/icons/cms-icon-modular.png"
+					styleClass="aon-icon-commandButton" 
+					action="modular_page_form">
+					<aon:actionListener method="#{modular_page.onReset}" />
+				</aon:commandButton> 
+			</aon:div>
+		
+			<aon:div>
+				<aon:commandButton id="cms-icon-generator"
+					value="#{menuBundle.cms_generate_pages}"
+					image="/images/cms/icons/cms-icon-generator.png"
+					styleClass="aon-icon-commandButton" 
+					action="generator_form">
+					<aon:actionListener method="#{generator_status.onInit}" />
+				</aon:commandButton> 
+			</aon:div>
+		</rich:panel>	
+	</aon:form>	
+</ui:composition>
+
+</body>
+</html>
