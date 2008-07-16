@@ -62,14 +62,14 @@
 									<f:validateLength maximum="13" />
 									<f:validateLongRange maximum="0099999999999" />
 								</aon:inputText>
-								<aon:commandButton id="add2List" value="" title="#{appBundle.aon_sms_add2list}"
-									styleClass="aon-icon-commandButton aon-dataScroller-button-next"
+								<aon:commandButton id="add2List" value="#{appBundle.aon_sms_add2list}" title="#{appBundle.aon_sms_add2list}"
+									styleClass="aon-commandButton aon-icon-new-phone aon-icon-button"
 									actionListener="#{sms.add2List}"
 									reRender="SMS_recipient, recipientList"
 									accesskey="#{bundle.aon_key_save}" />
-								<aon:commandButton id="findContact" value="" title="#{appBundle.aon_sms_find_contacts}"
+								<aon:commandButton id="findContact" value="#{appBundle.aon_sms_find_contacts}" title="#{appBundle.aon_sms_find_contacts}"
 									reRender="showWindow"
-									styleClass="aon-icon-commandButton  aon-icon-search"
+									styleClass="aon-commandButton  aon-icon-search aon-icon-button"
 									actionListener="#{sms.openContacts}" />
 								<aon:div styleClass="aon-dataList-scroll">
 									<rich:dataList id="recipientList" var="recipient" value="#{sms.recipients}"
@@ -91,12 +91,11 @@
 					</aon:div>
 
 					<aon:div style="margin-left:1em;">
-						<aon:div id="smsSummary" styleClass="aon-group">
-							<aon:div styleClass="aon-group-title">
+						<aon:panel id="smsSummary">
+							<f:facet name="header">
 								<aon:outputText value="#{appBundle.aon_sms_summary}" />
-							</aon:div>
-							<aon:div styleClass="aon-group-body">
-								<aon:div styleClass="aon-group-body-internal">
+							</f:facet>
+							
 									<aon:div styleClass="aon-toolbar" >
 										<aon:outputLabel styleClass="aon-bold" value="#{bundle.aon_year}" />
 										<aon:inputText id="Summary_Year" value="#{sms.year}" size="2"
@@ -141,39 +140,39 @@
 											<aon:outputLabel value=" #{appBundle.aon_sms_tarif}" />
 										</aon:panelGroup>
 									</aon:panelGrid>
-								</aon:div>
-							</aon:div>
-						</aon:div>
-						<aon:div styleClass="aon-group">
-							<aon:div styleClass="aon-group-title">
+								
+						</aon:panel>
+						
+						<aon:panel>
+							
+							<f:facet name="header">
 								<aon:outputText value="#{appBundle.aon_sms_pricelist}" />
-							</aon:div>
-							<aon:div styleClass="aon-group-body">
-								<aon:div styleClass="aon-group-body-internal">
-									<aon:dataTable id="priceDataList" value="#{sms.priceList}" var="to">
-					
-										<aon:column>
-											<f:facet name="header">
-												<aon:outputText value="#{appBundle.aon_messaging_messages_number}" />
-											</f:facet>
-											<aon:outputText value="#{to.filter} #{to.number}"/>
-										</aon:column>
-					
-					 					<aon:column>
-											<f:facet name="header">
-												<aon:outputText value="#{appBundle.aon_sms_unit_price}" />
-											</f:facet>
-											<aon:outputText value="" rendered="#{to.price == 0}" />
-											<aon:outputText value="#{to.price}" rendered="#{to.price > 0}" >
-												<f:convertNumber minFractionDigits="2" maxFractionDigits="2" />
-											</aon:outputText>
-											<aon:outputText value=" #{to.currency}" />
-										</aon:column>
-				 
-									</aon:dataTable>
-								</aon:div>
-							</aon:div>
-						</aon:div>
+							</f:facet>
+							
+						
+							<aon:dataTable id="priceDataList" value="#{sms.priceList}" var="to">
+			
+								<aon:column>
+									<f:facet name="header">
+										<aon:outputText value="#{appBundle.aon_messaging_messages_number}" />
+									</f:facet>
+									<aon:outputText value="#{to.filter} #{to.number}"/>
+								</aon:column>
+			
+			 					<aon:column>
+									<f:facet name="header">
+										<aon:outputText value="#{appBundle.aon_sms_unit_price}" />
+									</f:facet>
+									<aon:outputText value="" rendered="#{to.price == 0}" />
+									<aon:outputText value="#{to.price}" rendered="#{to.price > 0}" >
+										<f:convertNumber minFractionDigits="2" maxFractionDigits="2" />
+									</aon:outputText>
+									<aon:outputText value=" #{to.currency}" />
+								</aon:column>
+		 
+							</aon:dataTable>
+						</aon:panel>
+						
 					</aon:div>
 				</aon:panelGrid>
 				<aon:div>

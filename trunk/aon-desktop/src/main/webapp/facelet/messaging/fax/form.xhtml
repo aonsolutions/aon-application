@@ -44,7 +44,8 @@
 					<aon:div id="faxSender" >
 						<aon:panelGrid columns="2">
 							<aon:outputLabel for="FAX_recipient" value="#{appBundle.aon_messaging_recipient}" />
-								<aon:panelGrid columns="3" styleClass="aon-panelGrid-formatting" style="width:auto;" >
+								<aon:panelGrid columns="3" styleClass="aon-panelGrid-formatting" style="width:auto;" 
+									columnClasses="aon-panelGrid-formatting-td,aon-panelGrid-formatting-td,aon-panelGrid-formatting-td">
 									<aon:outputLabel value="#{appBundle.aon_messaging_calling_code}: " />
 									<aon:selectOneMenu value="#{fax.zone}" 
 											styleClass="aon-form-selectOneMenu-field">
@@ -78,7 +79,10 @@
 									fileUploadListener="#{fax.fileUploaded}"
 									listHeight="0px" listWidth="90%"
 									immediateUpload="true" autoclear="true"
-									onupload="startUpload();" onuploadcanceled="endUpload();" onerror="endUpload();">
+									onupload="startUpload();" onuploadcanceled="endUpload();" onerror="endUpload();"
+									addButtonClass="aon-fileUpload-addButtonClass"
+									addButtonClassDisabled="aon-fileUpload-addButtonClass-dis"
+									>
 									<f:facet name="label">
 										<h:outputText value="#{appBundle.aon_fileUpload_upload_label}" />
 									</f:facet>								

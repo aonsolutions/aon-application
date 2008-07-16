@@ -339,7 +339,9 @@ color:#000;
   .aon-icon-sincronize{
 	background:transparent url(images/aon-icon/aon-icon-sincronize.png) scroll left center no-repeat;
   }
-  
+  .aon-icon-new-phone{
+	background:transparent url(images/aon-icon/aon-icon-new-phone.png) scroll left center no-repeat;
+  }
 /* otros */
 .aon-icon-agenda{
 	background:transparent url(images/aon-icon/aon-icon-agenda.png) scroll left center no-repeat;
@@ -734,11 +736,13 @@ color:#000;
 #aon-content .aon-group-title{
 	position:relative;
 	top:-1em;
-	background-color:#fff;
 	display:inline;
 	font-weight:bold;
 	padding:0 0.5em 2px 0.5em;
 	font-size:0.9em;
+	background-color:#fff;
+	border:0;
+	background-image:none;
 }
 .aon-group-body{
 	padding:0 1em;
@@ -858,7 +862,7 @@ color:#000;
 .aon-panelGrid-even{
 	border:#c4c4c4 1px solid;
 	border-top-color:#fff;
-	padding:2 5px 2 2;
+	padding:2px 5px 2px 2px;
 	padding:1px 0.5em 1px 0.5em;
 }
 
@@ -870,24 +874,15 @@ color:#000;
 	width:100%;
 	background-color:transparent !important;
 		}
-.aon-panelGrid-formatting td{
-	vertical-align:top;
-	background-color:transparent !important;
-	border:0 !important;
-	
-	}
-.aon-panelGrid-formatting-odd{
+
+.aon-panelGrid-formatting-td{
 	border:0 !important;
 	font-weight:normal !important;
 	background-color:transparent !important;
 	white-space: wrap;
 	vertical-align:top;
 }
-.aon-panelGrid-formatting-even{
-	border:0 !important;
-	vertical-align:top;
-	background-color:transparent !important;
-	}
+
 
 /*************************/
 /******  TABLE HOVER  ******/
@@ -1210,7 +1205,7 @@ color:#000;
 	border:0;
 	width:14px;
 	height:14px;
-	margin:0 3px 0 0;
+	margin:0 2px 0 0;
 	}
 .aon-dataScroller-button-first{
 	background:transparent url(images/aon-datascroller/aon-dataScroller-button-first.png) center center no-repeat;
@@ -1333,7 +1328,8 @@ color:#000;
 	border:#808080 1px solid;
 	border-top-color:#fff;
 	border-left-color:#fff;
-	background-color:#d4d0c8;	
+	background-color:#d4d0c8;
+	padding-right:1em;	
 	}
 
 .aon-finding-title{
@@ -1495,29 +1491,35 @@ rich-fileupload-button-dis, rich-fileupload-button-selection{
 	border:#808080 1px solid;
 	}
 
-/* Defines styles for a pressed button */
-.rich-fileupload-button-press{
-	}
-/* Defines styles for "Upload", "Clean" buttons */
-.rich-fileupload-button-selection{
-	}	
+	
 /*  Defines styles for a "Add" button icon  */
-.rich-fileupload-ico-add{
+.aon-fileUpload-addButtonClass{
 	background:transparent url(images/aon-icon/aon-icon-attach-file.png) scroll left center no-repeat;	
 	}
-.rich-fileupload-ico-add-dis{
+.aon-fileUpload-addButtonClass-dis{
 	border:#808080 1px solid;
 	margin:0 5px 0 0;
 	font-weight:bold;
 	cursor:hand;
 	background-image:none;
 	padding:2px 19px 2px 32px !important;
-	background:#f2f2f2 url(images/aon-icon/aon-icon-attach-file-disabled.png) scroll 13px center no-repeat;	
-	
+	background:#f2f2f2 url(images/aon-icon/aon-icon-attach-file-disabled.png) scroll 13px center no-repeat;		
 	}
-/*  Defines styles for a "Upload" button icon  */
-.rich-fileupload-ico-start{
-	}
-/* Defines styles for a "Stop" button icon*/
-.rich-fileupload-ico-stop{
+
+/****************************/
+/*****  SPIN CONTROL    *****/
+/****************************/
+.aon-spin-control{
+	width:auto;
+	float:right;
+	border:0 !important;
+	background-color:transparent;
+}
+.aon-spin-control-element{
+	padding-left:2px;
+	padding-right:0px;
+	background-color:transparent;
+	border:0;	
+	vertical-align:middle;
+	font-size:0.9em;
 	}
