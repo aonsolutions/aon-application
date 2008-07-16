@@ -4,10 +4,14 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
+import javax.faces.context.FacesContext;
 import javax.faces.event.AbortProcessingException;
+import javax.faces.event.ActionEvent;
 import javax.faces.model.SelectItem;
 import javax.mail.MessagingException;
 import javax.servlet.http.HttpServletResponse;
@@ -20,6 +24,8 @@ import com.code.aon.ui.webmail.bean.AonMessage;
 import com.code.aon.ui.webmail.exception.WebmailException;
 
 public class AttachController {
+	
+	private static final Logger LOGGER = Logger.getLogger(AttachController.class.getName());
 
 	private AonMessage aonMessage;
 	
@@ -69,11 +75,26 @@ public class AttachController {
     	aonAttachment.download(response);
     }
 
+    public void downloadAttachment( ActionEvent event ) throws MessagingException, WebmailException {
+        FacesContext context = FacesContext.getCurrentInstance();
+		String index = context.getExternalContext().getRequestParameterMap().get("index");
+        HttpServletResponse response = (HttpServletResponse) context.getExternalContext().getResponse();
+        getAttachment( index, response);
+        context.responseComplete();    	
+    }
+    
+    public void downloadZippedAttachments( ActionEvent event ) throws MessagingException, WebmailException {
+        FacesContext context = FacesContext.getCurrentInstance();
+        HttpServletResponse response = (HttpServletResponse) context.getExternalContext().getResponse();
+        getZippedAttachments(response);
+        context.responseComplete();    	
+    }
+    
     public void getZippedAttachments(HttpServletResponse response) throws MessagingException, WebmailException{
         try {
 	        String outFilename = "attachments.zip";
 			response.setContentType("application/zip");
-			response.setHeader("content-disposition", "attachment;filename=\""
+			response.setHeader("Content-disposition", "attachment; filename=\""
 					+ outFilename + "\"");
 			byte[] data = new byte[1024];
 
@@ -104,12 +125,12 @@ public class AttachController {
                 in.close();
             }
 
-    		out.flush();
+    		response.flushBuffer();
             out.close();
 		} catch (IOException e) {
-			e.printStackTrace();
+			LOGGER.log( Level.SEVERE, e.getMessage(), e );
 		} catch (MessagingException e) {
-			e.printStackTrace();
+			LOGGER.log( Level.SEVERE, e.getMessage(), e );
 		}
     }
 
