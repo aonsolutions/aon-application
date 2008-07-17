@@ -33,7 +33,7 @@
 					<aon:div styleClass="aon-finding-toolbar-item-group">
 						<aon:commandButton id="reset" value="#{bundle.aon_reset}"
 							action="bulletin_form"
-							rendered="#{!bulletin.new}"
+							rendered="#{!bulletin.new and cms.roleEditor}"
 							styleClass="aon-finding-toolbar-item aon-icon-reset"
 							accesskey="#{bundle.aon_key_new}">
 							<aon:actionListener method="#{bulletin.onReset}" />
@@ -47,7 +47,8 @@
 							<aon:actionListener method="#{bulletin.accept}" />
 						</aon:commandButton>
 						<aon:confirmButton id="remove"
-							value="#{bundle.aon_remove}" rendered="#{!bulletin.new}" 
+							value="#{bundle.aon_remove}" 
+							rendered="#{!bulletin.new and cms.roleEditor}" 
 							immediate="true"
 							confirmTitle="Confirmation Dialog" 
 							confirmMessage="#{bundle.aon_remove_confirm}"

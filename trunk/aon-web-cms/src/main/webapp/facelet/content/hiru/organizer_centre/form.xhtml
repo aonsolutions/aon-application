@@ -28,6 +28,7 @@
 					<!-- start toolbar navigation -->
 					<aon:div styleClass="aon-finding-toolbar-item-group">					
 						<aon:commandButton id="reset" value="#{bundle.aon_reset}"
+							rendered="#{!hiru_course.new and cms.roleEditor}"
 							action="hiru_organizer_centre_form"
 							styleClass="aon-finding-toolbar-item aon-icon-reset"
 							accesskey="#{bundle.aon_key_new}">
@@ -42,7 +43,8 @@
 							<aon:actionListener method="#{hiru_organizer_centre.accept}" />
 						</aon:commandButton>
 						<aon:confirmButton id="remove"
-							value="#{bundle.aon_remove}" rendered="#{!hiru_organizer_centre.new}" 
+							value="#{bundle.aon_remove}" 
+							rendered="#{!hiru_organizer_centre.new and cms.roleEditor}" 
 							immediate="#{true}"
 							styleClass="aon-finding-toolbar-item aon-icon-delete"
 							confirmTitle="Confirmation Dialog" 

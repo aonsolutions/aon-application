@@ -22,6 +22,7 @@
 					<!-- start toolbar navigation -->
 					<aon:div styleClass="aon-finding-toolbar-item-group">
 						<aon:commandButton id="generate"
+							rendered="#{cms.roleEditor or cms.rolePublisher}"
 							value="#{appBundle.aon_generate}" 
 							reRender="generatorForm"
 							actionListener="#{hiru_generator.onGenerateXmlFiles}" 
@@ -34,7 +35,7 @@
 						<aon:commandButton id="publish"
 							value="#{appBundle.aon_publish}" 
 							reRender="generatorForm"
-							rendered="#{hiru_generator.generated}"
+							rendered="#{hiru_generator.generated and cms.rolePublisher}"
 							actionListener="#{hiru_generator.onPublish}" 
 							styleClass="aon-finding-toolbar-item aon-icon-accept">
 							<a4j:support 

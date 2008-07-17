@@ -30,7 +30,7 @@
 					<aon:div styleClass="aon-finding-toolbar-item-group">
 						<aon:commandButton id="sender"
 							value="#{appBundle.aon_generate}" 
-							rendered="#{bulletin.to!=null}" 
+							rendered="#{bulletin.to!=null and ( cms.roleEditor or cms.rolePublisher )}" 
 							actionListener="#{bulletin.onGenerate}" 
 							styleClass="aon-finding-toolbar-item aon-icon-accept">
 							<a4j:support 
@@ -95,6 +95,7 @@
 										title="[#{bundle.aon_accept}]"
 										styleClass="aon-editDataTable-button aon-icon-accept"
 										reRender="dataTable,gridToolbar"
+										rendered="#{cms.roleEditor or cms.rolePublisher}" 
 										actionListener="#{bulletin.onGenerate}">
 										<a4j:support 
 											event="onclick"

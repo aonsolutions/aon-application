@@ -31,7 +31,7 @@
 					<aon:div styleClass="aon-finding-toolbar-item-group">
 
 						<aon:commandButton id="reset" value="#{bundle.aon_reset}"
-							rendered="#{!bulletin_email.new}"
+							rendered="#{!bulletin_email.new and cms.roleEditor}"
 							reRender="dataTable,gridToolbar"
 							styleClass="aon-finding-toolbar-item aon-icon-reset"
 							accesskey="#{bundle.aon_key_new}">
@@ -85,7 +85,7 @@
 									styleClass="aon-editDataTable-button aon-icon-reset"
 									value="" immediate="true"
 									reRender="dataTable,gridToolbar"
-									rendered="#{!bulletin_email.new}"
+									rendered="#{!bulletin_email.new and cms.roleEditor}"
 									accesskey="#{bundle.aon_key_new_line}">
 									<aon:actionListener method="#{bulletin_email.onReset}" />
 								</aon:commandButton>
@@ -164,6 +164,7 @@
 								<aon:actionListener method="#{bulletin_email.onCancel}" />
 							</aon:commandButton>
 							<aon:commandButton id="lineRemove"
+								rendered="cms.roleEditor"
 								title="[#{bundle.aon_remove}]"
 								styleClass="aon-editDataTable-button aon-icon-delete"
 								reRender="dataTable,gridToolbar" immediate="true">
