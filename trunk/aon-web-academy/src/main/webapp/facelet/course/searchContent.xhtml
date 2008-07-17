@@ -136,6 +136,7 @@
 					valueChangeListener="#{courseAlias.addExpression}"
 					rendered="#{hideStatus==null}">
 					<f:selectItems value="#{academyCollections.courseStatuses}" />
+					<f:selectItem itemLabel="-" itemValue="" itemDisabled="true" />
 				</h:selectOneMenu>
 			</h:panelGrid>
 		</t:div>
