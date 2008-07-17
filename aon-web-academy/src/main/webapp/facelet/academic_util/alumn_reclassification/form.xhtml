@@ -59,6 +59,7 @@
 						<h:selectOneMenu id="Customer_status"
 							value="#{alumnReclassification.customerStatus}"
 							styleClass="aon-form-selectOneMenu-field">
+							<f:selectItem itemDisabled="true" itemLabel="-" itemValue="" />
 							<f:selectItems value="#{customerCollections.customerStatuses}" />
 						</h:selectOneMenu>	
 
