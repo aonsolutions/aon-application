@@ -31,7 +31,7 @@
 					<aon:div styleClass="aon-finding-toolbar-item-group">
 
 						<aon:commandButton id="reset" value="#{bundle.aon_reset}"
-							rendered="#{!sport_career_path.new}"
+							rendered="#{!sport_career_path.new and cms.roleEditor}"
 							reRender="dataTable,gridToolbar"
 							styleClass="aon-finding-toolbar-item aon-icon-reset"
 							accesskey="#{bundle.aon_key_new}">
@@ -87,7 +87,7 @@
 									styleClass="aon-editDataTable-button aon-icon-reset"
 									value="" immediate="true"
 									reRender="dataTable,gridToolbar"
-									rendered="#{!sport_career_path.new}"
+									rendered="#{!sport_career_path.new and cms.roleEditor}"
 									actionListener="#{sport_career_path.onReset}"
 									accesskey="#{bundle.aon_key_new_line}">
 								</aon:commandButton>
@@ -236,6 +236,7 @@
 								<aon:actionListener method="#{sport_career_path.onCancel}" />
 							</aon:commandButton>
 							<aon:commandButton id="lineRemove"
+								rendered="#{cms.roleEditor}"
 								title="[#{bundle.aon_remove}]"
 								styleClass="aon-editDataTable-button aon-icon-delete"
 								reRender="dataTable,gridToolbar" immediate="true"
