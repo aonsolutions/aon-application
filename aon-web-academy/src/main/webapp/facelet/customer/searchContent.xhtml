@@ -98,6 +98,7 @@
 					converter="aonCustomerStatusConverter" forceId="#{true}"
 					valueChangeListener="#{customerAlias.addExpression}">
 					<f:selectItems value="#{customerCollections.customerStatuses}" />
+					<f:selectItem itemDisabled="true" itemLabel="-" itemValue="" />
 				</h:selectOneMenu>
 
 			</h:panelGrid>
