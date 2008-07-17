@@ -879,8 +879,8 @@ color:#000;
 	border:0 !important;
 	font-weight:normal !important;
 	background-color:transparent !important;
-	white-space: wrap;
 	vertical-align:top;
+	padding:0 !important;
 }
 
 
@@ -1329,7 +1329,6 @@ color:#000;
 	border-top-color:#fff;
 	border-left-color:#fff;
 	background-color:#d4d0c8;
-	padding-right:1em;	
 	}
 
 .aon-finding-title{
@@ -1351,6 +1350,7 @@ color:#000;
 	}
 .aon-finding-toolbar{
 	background:transparent url(images/aon-content/aon-content-title-internal.png) left center repeat-y;
+	padding:0 1em;
 	}
 .aon-finding-toolbar-item-group{
 	padding: 3px 2em 3px 1em;
@@ -1510,16 +1510,16 @@ rich-fileupload-button-dis, rich-fileupload-button-selection{
 /*****  SPIN CONTROL    *****/
 /****************************/
 .aon-spin-control{
-	width:auto;
-	float:right;
+	width:auto !important;
 	border:0 !important;
 	background-color:transparent;
+	white-space:nowrap;
+	display:inline;
+	margin:0 1em;
 }
 .aon-spin-control-element{
 	padding-left:2px;
 	padding-right:0px;
-	background-color:transparent;
-	border:0;	
-	vertical-align:middle;
-	font-size:0.9em;
+	font-size:0.9em;	
+	display:inline;
 	}
