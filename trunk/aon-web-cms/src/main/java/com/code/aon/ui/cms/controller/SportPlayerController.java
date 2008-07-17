@@ -5,11 +5,11 @@ import javax.faces.event.ActionEvent;
 import com.code.aon.cms.Image;
 import com.code.aon.cms.SportPlayer;
 import com.code.aon.common.ManagerBeanException;
-import com.code.aon.ui.form.GridController;
+import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.util.AonUtil;
 
 
-public class SportPlayerController extends GridController {
+public class SportPlayerController extends BasicController {
 	
 	public void onDelImage(ActionEvent event) {
 		SportPlayer current = (SportPlayer)getTo();

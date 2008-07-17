@@ -39,6 +39,17 @@ import com.code.aon.ui.util.AonUtil;
 
 public class BulletinController extends BasicI18nController {
 
+	private int page;
+	
+	public int getPage() {
+		return page;
+	}
+
+	public void setPage(int page) {
+		this.page = page;
+	}
+
+
 	private Date publishDate = new Date();
 	
 	private Date expireDate;

@@ -66,9 +66,10 @@
 					footerClass="dr-table-subfooter rich-table-subfooter aon-editDataTable-footer"
 					rowClasses="aon-editDataTable-row-odd,dr-table-firstrow rich-table-firstrow aon-editDataTable-row-even"
 					cellpadding="0" cellspacing="0"
-					columnClasses="dr-table-cell rich-table-cell aon-editDataTable-textColumn,
+					columnClasses="dr-table-cell rich-table-cell aon-editDataTable-iconColumn,
 							dr-table-cell rich-table-cell aon-editDataTable-textColumn,
-							dr-table-cell rich-table-cell aon-editDataTable-textColumn">
+							dr-table-cell rich-table-cell aon-editDataTable-textColumn,
+							dr-table-cell rich-table-cell aon-editDataTable-buttonsColumn">
 											
 					<aon:column>
 						<f:facet name="header">
@@ -189,7 +190,10 @@
 					</aon:column>
 				</aon:dataTable>
 
-				<rich:datascroller align="left"  for="dataTable" maxPages="20" />
+				<aon:dataScroller for="dataTable"
+					rowCount="#{bulletin_email.model.rowCount}" 
+					page="#{bulletin_email.page}"
+					showNote="true" />					
 					
 			</aon:div>
 		</aon:form>

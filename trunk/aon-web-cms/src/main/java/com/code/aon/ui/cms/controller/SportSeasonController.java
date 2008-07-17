@@ -12,10 +12,10 @@ import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionException;
-import com.code.aon.ui.form.GridController;
+import com.code.aon.ui.form.BasicController;
 
 
-public class SportSeasonController extends GridController {
+public class SportSeasonController extends BasicController {
 
 	public void defaultChanged(ActionEvent event) throws ManagerBeanException, ExpressionException {
 		SportSeason row = (SportSeason) model.getRowData();

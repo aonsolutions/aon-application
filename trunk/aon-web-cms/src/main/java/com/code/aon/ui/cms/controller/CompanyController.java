@@ -18,11 +18,11 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ql.Criteria;
-import com.code.aon.ui.form.GridController;
+import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.util.AonUtil;
 
 
-public class CompanyController extends GridController {
+public class CompanyController extends BasicController {
 	
 	private int page;
 	

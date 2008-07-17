@@ -6,7 +6,7 @@ import com.code.aon.cms.SportPositionDetail;
 import com.code.aon.common.ManagerBeanException;
 
 
-public class SportPositionController extends GridI18nController {
+public class SportPositionController extends BasicI18nController {
 
 	@SuppressWarnings("unused")
 	public void onSelect(ActionEvent event) {

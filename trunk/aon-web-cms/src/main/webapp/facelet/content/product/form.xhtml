@@ -32,7 +32,7 @@
 					<!-- start toolbar navigation -->
 					<aon:div styleClass="aon-finding-toolbar-item-group">
 						<aon:commandButton id="reset" value="#{bundle.aon_reset}"
-							rendered="#{!product.new}"
+							rendered="#{!product.new and cms.roleEditor}"
 							action="product_form"
 							immediate="#{true}"
 							styleClass="aon-finding-toolbar-item aon-icon-reset"
@@ -45,11 +45,11 @@
 							action="product_form"
 							styleClass="aon-finding-toolbar-item aon-icon-accept"
 							accesskey="#{bundle.aon_key_save}">
-							<aon:actionListener method="#{product.onAccept}" />
+							<aon:actionListener method="#{product.accept}" />
 						</aon:commandButton>
 						<aon:confirmButton id="remove"
 							value="#{bundle.aon_remove}" 
-							rendered="#{!product.new}" 
+							rendered="#{!product.new and cms.roleEditor}" 
 							immediate="true"
 							confirmTitle="Confirmation Dialog" 
 							confirmMessage="#{bundle.aon_remove_confirm}"
@@ -93,7 +93,7 @@
 							action="brand_list"
 							immediate="#{true}"
 							styleClass="aon-finding-toolbar-item">
-							<aon:actionListener method="#{brand.onReset}" />
+							<aon:actionListener method="#{brand.onSearch}" />
 						</aon:commandButton>
 				    </aon:div>
 					

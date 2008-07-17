@@ -28,7 +28,7 @@
 					<!-- start toolbar navigation -->
 					<aon:div styleClass="aon-finding-toolbar-item-group">					
 						<aon:commandButton id="reset" value="#{bundle.aon_reset}"
-							rendered="#{!direct_access_group.new}"
+							rendered="#{!direct_access_group.new and cms.roleEditor}"
 							action="direct_access_group_form"
 							immediate="#{true}"
 							styleClass="aon-finding-toolbar-item aon-icon-reset"
@@ -44,7 +44,8 @@
 							<aon:actionListener method="#{direct_access_group.accept}" />
 						</aon:commandButton>
 						<aon:confirmButton id="remove"
-							value="#{bundle.aon_remove}" rendered="#{!direct_access_group.new}" 
+							value="#{bundle.aon_remove}" 
+							rendered="#{!direct_access_group.new and cms.roleEditor}" 
 							immediate="#{true}"
 							styleClass="aon-finding-toolbar-item aon-icon-delete"
 							confirmTitle="Confirmation Dialog" 

@@ -9,7 +9,7 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ui.util.AonUtil;
 
 
-public class SportNationalityController extends GridI18nController {
+public class SportNationalityController extends BasicI18nController {
 	
 	@SuppressWarnings("unused")
 	public void onSelect(ActionEvent event) {

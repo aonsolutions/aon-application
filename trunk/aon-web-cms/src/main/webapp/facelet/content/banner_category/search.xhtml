@@ -37,6 +37,7 @@
 					</aon:commandButton>					
 					<aon:commandButton id="reset" value="#{bundle.aon_reset}"
 						action="banner_category_form"
+						rendered="#{cms.roleEditor}"
 						styleClass="aon-finding-toolbar-item aon-icon-reset"
 						accesskey="#{bundle.aon_key_new}">
 						<aon:actionListener method="#{banner_category.onReset}" />

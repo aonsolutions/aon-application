@@ -78,7 +78,10 @@
 
 						</aon:dataTable>
 						
-						<rich:datascroller align="left"  for="dataTable" maxPages="20" />
+						<aon:dataScroller for="dataTable"
+							rowCount="#{bulletin.model.rowCount}" 
+							page="#{bulletin.page}"
+							showNote="true" />					
 					
 				</aon:div>
 		</aon:form>

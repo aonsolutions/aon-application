@@ -16,7 +16,7 @@ import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionException;
 import com.code.aon.ui.util.AonUtil;
 
-public class ModularPageController extends GridI18nController {
+public class ModularPageController extends BasicI18nController {
 
 	private int page;
 	

@@ -289,7 +289,10 @@
 			<url-pattern>*.jsf</url-pattern>
 		</web-resource-collection>
 		<auth-constraint>
-			<role-name>Manager</role-name>
+			<role-name>Designer</role-name>
+			<role-name>Editor</role-name>
+			<role-name>Revisor</role-name>
+			<role-name>Publisher</role-name>
 		</auth-constraint>
 	</security-constraint>
 
@@ -301,7 +304,10 @@
 		</form-login-config>
 	</login-config>
 
-	<security-role><role-name>Manager</role-name></security-role>
+	<security-role><role-name>Designer</role-name></security-role>
+	<security-role><role-name>Editor</role-name></security-role>
+	<security-role><role-name>Revisor</role-name></security-role>
+	<security-role><role-name>Publisher</role-name></security-role>
 	
 	<resource-env-ref>
 		<resource-env-ref-name>jdbc/CMS</resource-env-ref-name>

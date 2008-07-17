@@ -46,5 +46,4 @@ public class BrandController extends BasicI18nController {
 		return label;
 	}
 	
-
 }

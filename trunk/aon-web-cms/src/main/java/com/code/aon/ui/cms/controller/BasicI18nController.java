@@ -77,7 +77,7 @@ public class BasicI18nController extends BasicController implements I18NControll
      */
     public void onAccept(ActionEvent event) {
         accept(event);
-        //resetTo();
+        resetTo();
     }
 
     /**

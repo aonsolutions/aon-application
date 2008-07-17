@@ -28,7 +28,7 @@
 					<!-- start toolbar navigation -->
 					<aon:div styleClass="aon-finding-toolbar-item-group">
 						<aon:commandButton id="reset" value="#{bundle.aon_reset}"
-							rendered="#{!album_category.new}"
+							rendered="#{!album_category.new and cms.roleEditor}"
 							action="album_category_form"
 							immediate="#{true}"
 							styleClass="aon-finding-toolbar-item aon-icon-reset"
@@ -44,7 +44,8 @@
 							<aon:actionListener method="#{album_category.accept}" />
 						</aon:commandButton>
 						<aon:confirmButton id="remove"
-							value="#{bundle.aon_remove}" rendered="#{!album_category.new}" 
+							value="#{bundle.aon_remove}" 
+							rendered="#{!album_category.new and cms.roleEditor}" 
 							immediate="#{true}"
 							styleClass="aon-finding-toolbar-item aon-icon-delete"
 							confirmTitle="Confirmation Dialog" 
@@ -78,7 +79,7 @@
 						</aon:commandButton>
 						<aon:commandButton id="partial_generate"
 							value="#{appBundle.aon_generate}" 
-							rendered="#{album_category.to!=null}"
+							rendered="#{album_category.to!=null and cms.roleEditor}"
 							styleClass="aon-finding-toolbar-item aon-icon-accept"
 							accesskey="#{bundle.aon_key_save}">
 							<aon:actionListener method="#{generator.onGenerateCurrentAlbumCategory}" />
