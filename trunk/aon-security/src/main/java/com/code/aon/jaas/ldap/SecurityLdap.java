@@ -146,7 +146,7 @@ public class SecurityLdap extends BasicLdap implements ILdapConstants, ILdapSecu
 			String appId = dn.getLevelValue(2);
 			List<Object> members = new LinkedList<Object>();
 			for( String role : relation.relations() ) {
-				DistinguishedName member = session.getFullDN( AonDN.getRoleDN(appId, role) );
+				DistinguishedName member = session.getFullDN( AonDN.getApplicationProfileDN(appId, role) );
 				members.add( member.toString() );
 			}
 			session.replaceAttribute(dn, MEMBER_ATTRIBUTE, members);
@@ -222,10 +222,10 @@ public class SecurityLdap extends BasicLdap implements ILdapConstants, ILdapSecu
 	public Entry getDomainApplicationProfile( LdapSession session, IRelation relation, DistinguishedName dn ) {
 		Entry entry = new Entry(dn.toString());
 		String appId = dn.getLevelValue(2);
-		String[] objectClasses = new String[] {"top", "groupOfNames", "aonProfile", "aonDomainApplicationProfile"};
+		String[] objectClasses = new String[] {TOP, "groupOfNames", DOMAIN_APPLICATION_PROFILE};
 		entry.addObjectClasses( objectClasses );
 		for( String role : relation.relations() ) {
-			DistinguishedName member = session.getFullDN( AonDN.getRoleDN(appId, role) );
+			DistinguishedName member = session.getFullDN( AonDN.getApplicationProfileDN(appId, role) );
 			entry.put( MEMBER_ATTRIBUTE, member.toString() );
 		}
 		return entry;
