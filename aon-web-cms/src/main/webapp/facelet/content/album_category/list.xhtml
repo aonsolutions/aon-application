@@ -30,6 +30,7 @@
 				<aon:div styleClass="aon-finding-toolbar-item-group">					
 					<aon:commandButton id="reset" value="#{bundle.aon_reset}"
 						action="album_category_form"
+						rendered="#{cms.roleEditor}"
 						styleClass="aon-finding-toolbar-item aon-icon-reset"
 						accesskey="#{bundle.aon_key_new}">
 						<aon:actionListener method="#{album_category.onReset}" />

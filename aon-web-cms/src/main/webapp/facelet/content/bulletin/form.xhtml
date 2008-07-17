@@ -44,7 +44,7 @@
 							action="bulletin_form"
 							styleClass="aon-finding-toolbar-item aon-icon-accept"
 							accesskey="#{bundle.aon_key_save}">
-							<aon:actionListener method="#{bulletin.onAccept}" />
+							<aon:actionListener method="#{bulletin.accept}" />
 						</aon:commandButton>
 						<aon:confirmButton id="remove"
 							value="#{bundle.aon_remove}" rendered="#{!bulletin.new}" 
@@ -169,9 +169,10 @@
 									footerClass="dr-table-subfooter rich-table-subfooter aon-editDataTable-footer"
 									rowClasses="aon-editDataTable-row-odd,dr-table-firstrow rich-table-firstrow aon-editDataTable-row-even"
 									cellpadding="0" cellspacing="0"
-									columnClasses="dr-table-cell rich-table-cell aon-editDataTable-textColumn,
+									columnClasses="dr-table-cell rich-table-cell aon-editDataTable-iconColumn,
 											dr-table-cell rich-table-cell aon-editDataTable-textColumn,
-											dr-table-cell rich-table-cell aon-editDataTable-textColumn">
+											dr-table-cell rich-table-cell aon-editDataTable-textColumn,
+											dr-table-cell rich-table-cell aon-editDataTable-buttonsColumn">
 											
 									<aon:column>
 										<f:facet name="header">
@@ -235,20 +236,28 @@
 										<f:facet name="header">
 											<aon:outputText for="position" value="#{appBundle.bulletin_article_position}" />
 										</f:facet>
-										<aon:graphicImage rendered="#{to.position == 0}"
-											url="/images/cms/spacer16.gif" style="margin-left: 8px;"/>
-										<aon:commandButton  
-											reRender="gridDataTable,gridToolbar"
-											actionListener="#{bulletin_article.onMoveUp}" 
-											rendered="#{to.position != 0 and bulletin_article.to==null}"
-											image="/images/cms/up.gif" styleClass="aon-icon-commandButton" />
-										<aon:commandButton 
-											reRender="gridDataTable,gridToolbar"
-											actionListener="#{bulletin_article.onMoveDown}"
-											rendered="#{to.position &lt; (bulletin_article.model.rowCount - 1)  and bulletin_article.to==null}"
-											image="/images/cms/down.gif" styleClass="aon-icon-commandButton" />
+										<aon:outputText value="#{to.position}"
+											rendered="#{to!=bulletin_article.to}" 
+											styleClass="aon-editDataTable-button">
+											<a4j:support 
+												reRender="gridDataTable,gridToolbar"
+												actionListener="#{bulletin_article.onSelect}"
+												event="onclick" />
+										</aon:outputText>	
+										<aon:inputText value="#{bulletin_article.to.position}"
+											id="#{to.id}_position"
+											rendered="#{to==bulletin_article.to}"
+											required="#{true}" size="70" maxlength="64" />
+										<f:facet name="footer">
+											<aon:div>
+												<aon:inputText value="#{bulletin_article.to.position}"
+													id="new_position"
+													rendered="#{bulletin_article.new}"
+													required="#{true}" size="70" maxlength="64" />
+											</aon:div>
+										</f:facet>
 									</aon:column>
-
+									
 									<aon:column>
 										<f:facet name="header">
 											<aon:outputText value="&#160;" />

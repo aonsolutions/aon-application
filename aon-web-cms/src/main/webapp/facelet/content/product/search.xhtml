@@ -31,6 +31,7 @@
 				<aon:div styleClass="aon-finding-toolbar-item-group">					
 					<aon:commandButton id="search" value="#{bundle.aon_search}"
 						action="product_list"
+						rendered="#{cms.roleEditor}"
 						styleClass="aon-finding-toolbar-item aon-icon-accept"
 						accesskey="#{bundle.aon_key_search}">
 						<aon:actionListener method="#{product.onSearch}" />

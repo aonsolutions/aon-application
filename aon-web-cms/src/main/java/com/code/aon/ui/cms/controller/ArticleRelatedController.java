@@ -1,11 +1,9 @@
 package com.code.aon.ui.cms.controller;
 
-import javax.faces.event.ActionEvent;
-
 import com.code.aon.cms.Article;
-import com.code.aon.ui.form.GridController;
+import com.code.aon.ui.form.BasicController;
 
-public class ArticleRelatedController extends GridController {
+public class ArticleRelatedController extends BasicController {
 
 	private Article currentArticle;
 
@@ -17,8 +15,4 @@ public class ArticleRelatedController extends GridController {
 		this.currentArticle = currentArticle;
 	}
 	
-	public void onRemoveCurrent(ActionEvent event) {
-		this.setRowChecked(true);
-		this.onRemoveSelected(event);
-	}
 }

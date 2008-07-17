@@ -32,10 +32,10 @@ import com.code.aon.ui.cms.util.ControllerUtil;
 import com.code.aon.ui.cms.util.FileUtil;
 import com.code.aon.ui.cms.util.XMLHandler;
 import com.code.aon.ui.cms.util.ZipUtil;
-import com.code.aon.ui.form.GridController;
+import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.util.AonUtil;
 
-public class TemplateController extends GridController implements Constants {
+public class TemplateController extends BasicController implements Constants {
 
 	private ListDataModel templates = new ListDataModel();
 	

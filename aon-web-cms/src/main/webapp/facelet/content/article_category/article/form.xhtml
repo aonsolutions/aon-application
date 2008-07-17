@@ -29,7 +29,7 @@
 					<!-- start toolbar navigation -->
 					<aon:div styleClass="aon-finding-toolbar-item-group">					
 						<aon:commandButton id="reset" value="#{bundle.aon_reset}"
-							rendered="#{!article.new}"
+							rendered="#{!article.new and cms.roleEditor}"
 							action="article_form"
 							immediate="#{true}"
 							styleClass="aon-finding-toolbar-item aon-icon-reset"
@@ -46,7 +46,7 @@
 						</aon:commandButton>
 						<aon:confirmButton id="remove"
 							value="#{bundle.aon_remove}" 
-							rendered="#{!article.new}" 
+							rendered="#{!article.new and cms.roleEditor}" 
 							immediate="#{true}"
 							styleClass="aon-finding-toolbar-item aon-icon-delete"
 							confirmTitle="Confirmation Dialog" 
@@ -80,10 +80,10 @@
 						</aon:commandButton>
 						<aon:commandButton id="categories"
 							value="#{appBundle.article_category}"
-							action="article_category_form"
+							action="article_category_list"
 							immediate="#{true}"
 							styleClass="aon-finding-toolbar-item">
-							<aon:actionListener method="#{article_category.onReset}" />
+							<aon:actionListener method="#{article_category.onSearch}" />
 						</aon:commandButton>
 						<aon:commandButton id="diary"
 							rendered="#{article.diary}"
@@ -329,7 +329,7 @@
 										styleClass="aon-editDataTable-button aon-icon-delete"
 										reRender="articleRelatedData" 
 										immediate="true">
-										<aon:actionListener method="#{articleRelated.onRemoveCurrent}" />
+										<aon:actionListener method="#{articleRelated.onRemove}" />
 									</aon:commandButton>
 									<f:facet name="footer">
 										<aon:div>
@@ -373,7 +373,7 @@
 											<aon:commandButton id="newAccept" title="[#{bundle.aon_accept}]"
 												styleClass="aon-editDataTable-button aon-icon-accept"
 												reRender="articleRelatedData">
-												<aon:actionListener method="#{articleRelated.onAccept}" />
+												<aon:actionListener method="#{articleRelated.accept}" />
 											</aon:commandButton>
 											<aon:commandButton id="newCancel" title="[#{bundle.aon_cancel}]"
 												styleClass="aon-editDataTable-button aon-icon-cancel"
@@ -541,7 +541,7 @@
 										<aon:commandButton title="[#{bundle.aon_accept}]"
 											styleClass="aon-editDataTable-button aon-icon-accept"
 											reRender="articleDocumentData">
-											<aon:actionListener method="#{articleDocument.onAccept}" />
+											<aon:actionListener method="#{articleDocument.accept}" />
 										</aon:commandButton>
 										<aon:commandButton title="[#{bundle.aon_cancel}]"
 											styleClass="aon-editDataTable-button aon-icon-cancel"
@@ -561,7 +561,7 @@
 												styleClass="aon-editDataTable-button aon-icon-accept"
 												reRender="articleDocumentData"
 												rendered="#{articleDocument.inputFile != null}" >
-												<aon:actionListener method="#{articleDocument.onAccept}" />
+												<aon:actionListener method="#{articleDocument.accept}" />
 											</aon:commandButton>
 											<aon:commandButton title="[#{bundle.aon_cancel}]"
 												styleClass="aon-editDataTable-button aon-icon-cancel"

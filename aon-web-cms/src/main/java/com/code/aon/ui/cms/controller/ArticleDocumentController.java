@@ -16,7 +16,7 @@ import com.code.aon.cms.ArticleDocumentDetail;
 import com.code.aon.ui.cms.util.ControllerUtil;
 import com.code.aon.ui.util.AonUtil;
 
-public class ArticleDocumentController extends GridI18nController {
+public class ArticleDocumentController extends BasicI18nController {
 
 	private Article currentArticle;
 

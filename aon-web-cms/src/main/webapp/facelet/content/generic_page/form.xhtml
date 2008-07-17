@@ -31,7 +31,7 @@
 					<!-- start toolbar navigation -->
 					<aon:div styleClass="aon-finding-toolbar-item-group">
 						<aon:commandButton id="reset" value="#{bundle.aon_reset}"
-							rendered="#{!generic_page.new}"
+							rendered="#{!generic_page.new and cms.roleEditor}"
 							action="generic_page_form"
 							immediate="#{true}"
 							styleClass="aon-finding-toolbar-item aon-icon-reset"
@@ -44,10 +44,11 @@
 							action="generic_page_form"
 							styleClass="aon-finding-toolbar-item aon-icon-accept"
 							accesskey="#{bundle.aon_key_save}">
-							<aon:actionListener method="#{generic_page.onAccept}" />
+							<aon:actionListener method="#{generic_page.accept}" />
 						</aon:commandButton>
 						<aon:confirmButton id="remove"
-							value="#{bundle.aon_remove}" rendered="#{!generic_page.new}" 
+							value="#{bundle.aon_remove}" 
+							rendered="#{!generic_page.new and cms.roleEditor}" 
 							immediate="true"
 							confirmTitle="Confirmation Dialog" 
 							confirmMessage="#{bundle.aon_remove_confirm}"
@@ -81,7 +82,7 @@
 						</aon:commandButton>
 						<aon:commandButton id="generate_nodular"
 							value="#{appBundle.aon_generate}" 
-							rendered="#{generic_page.to!=null}"
+							rendered="#{generic_page.to!=null and cms.roleEditor}"
 							styleClass="aon-finding-toolbar-item aon-icon-accept"
 							accesskey="#{bundle.aon_key_save}">
 							<aon:actionListener method="#{generator.onGenerateCurrentGenericPage}" />

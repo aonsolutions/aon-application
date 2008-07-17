@@ -4,6 +4,13 @@
   "http://java.sun.com/dtd/web-facesconfig_1_1.dtd">
 
 <faces-config>
+	<!-- ************** CMS ************** -->
+	<managed-bean>
+		<managed-bean-name>cms</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.cms.controller.CmsController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
+	
 	<!-- ************** LANGUAGE ************** -->
 	<managed-bean>
 		<managed-bean-name>i18n</managed-bean-name>
@@ -1573,7 +1580,7 @@
 	<!-- ************** BULLETIN EMAIL ************** -->
 	<managed-bean>
 		<managed-bean-name>bulletin_email</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.form.GridController</managed-bean-class>
+		<managed-bean-class>com.code.aon.ui.cms.controller.BulletinEmailController</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
 			<property-name>queryOnStartUP</property-name>
@@ -2006,7 +2013,7 @@
 	<!-- ************** SPORT_CAREER_PATH ************** -->
 	<managed-bean>
 		<managed-bean-name>sport_career_path</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.form.GridController</managed-bean-class>
+		<managed-bean-class>com.code.aon.ui.form.BasicController</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
 			<property-name>pojo</property-name>
@@ -2038,7 +2045,7 @@
 	<!-- ************** SPORT_COACH ************** -->
 	<managed-bean>
 		<managed-bean-name>sport_coach</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.form.GridController</managed-bean-class>
+		<managed-bean-class>com.code.aon.ui.form.BasicController</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
 			<property-name>pojo</property-name>

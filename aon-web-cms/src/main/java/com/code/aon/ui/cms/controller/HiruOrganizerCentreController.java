@@ -5,11 +5,11 @@ import javax.faces.event.ActionEvent;
 import com.code.aon.cms.HiruConfig;
 import com.code.aon.cms.HiruOrganizerCentre;
 import com.code.aon.common.ManagerBeanException;
-import com.code.aon.ui.form.GridController;
+import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.util.AonUtil;
 
 
-public class HiruOrganizerCentreController extends GridController {
+public class HiruOrganizerCentreController extends BasicController {
 
 	public void onInit(ActionEvent event) {
 		((GeneratorConfigController)AonUtil.getRegisteredBean("generator_config")).initSection(HiruConfig.class);

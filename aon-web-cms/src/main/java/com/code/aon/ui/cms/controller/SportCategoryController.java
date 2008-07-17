@@ -15,7 +15,7 @@ import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionException;
 
 
-public class SportCategoryController extends GridI18nController {
+public class SportCategoryController extends BasicI18nController {
 
 	@SuppressWarnings("unused")
 	public void onSelect(ActionEvent event) {

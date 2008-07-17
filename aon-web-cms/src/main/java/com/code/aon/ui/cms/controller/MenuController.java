@@ -15,10 +15,10 @@ import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionException;
-import com.code.aon.ui.form.GridController;
+import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.util.AonUtil;
 
-public class MenuController extends GridController {
+public class MenuController extends BasicController {
 
 	private int currentType = MenuType.SIDEBAR.ordinal();
 
@@ -38,7 +38,6 @@ public class MenuController extends GridController {
 		criteria.addExpression(getManagerBean().getFieldName(ICMSAlias.MENU_TYPE), "" + currentType);
 		setCriteria(criteria);
 		initializeModel();
-		clearCheckList();
 	}
 
 	@SuppressWarnings("unused")

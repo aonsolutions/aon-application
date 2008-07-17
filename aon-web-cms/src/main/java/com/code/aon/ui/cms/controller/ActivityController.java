@@ -6,7 +6,7 @@ import com.code.aon.cms.ActivityDetail;
 import com.code.aon.common.ManagerBeanException;
 
 
-public class ActivityController extends GridI18nController {
+public class ActivityController extends BasicI18nController {
 
 	private int page;
 	

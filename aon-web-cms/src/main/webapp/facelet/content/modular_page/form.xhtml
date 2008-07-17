@@ -28,7 +28,7 @@
 					<!-- start toolbar navigation -->
 					<aon:div styleClass="aon-finding-toolbar-item-group">					
 						<aon:commandButton id="reset" value="#{bundle.aon_reset}"
-							rendered="#{!modular_page.new}"
+							rendered="#{!modular_page.new and cms.roleEditor}"
 							action="modular_page_form"
 							immediate="#{true}"
 							styleClass="aon-finding-toolbar-item aon-icon-reset"
@@ -45,7 +45,7 @@
 						</aon:commandButton>
 						<aon:confirmButton id="remove"
 							value="#{bundle.aon_remove}" 
-							rendered="#{!modular_page.new and !modular_page.to.homepage}" 
+							rendered="#{!modular_page.new and !modular_page.to.homepage and cms.roleEditor}" 
 							immediate="#{true}"
 							styleClass="aon-finding-toolbar-item aon-icon-delete"
 							confirmTitle="Confirmation Dialog" 
@@ -79,7 +79,7 @@
 						</aon:commandButton>
 						<aon:commandButton id="generate_modular"
 							value="#{appBundle.aon_generate}" 
-							rendered="#{modular_page.to!=null}"
+							rendered="#{modular_page.to!=null and cms.roleEditor}"
 							styleClass="aon-finding-toolbar-item aon-icon-accept"
 							accesskey="#{bundle.aon_key_save}">
 							<aon:actionListener method="#{generator.onGenerateCurrentModular}" />
@@ -138,7 +138,7 @@
 									<!-- start toolbar navigation -->
 									<aon:div id="detailButtonsGrid" styleClass="aon-finding-toolbar-item-group">
 										<aon:commandButton id="reset_list"
-											rendered="#{!modular_page_option.new}"
+											rendered="#{!modular_page_option.new and cms.roleEditor}"
 											reRender="detail"
 											value="#{bundle.aon_reset}"
 											styleClass="aon-finding-toolbar-item aon-icon-reset"
@@ -244,7 +244,7 @@
 										<!-- start toolbar navigation -->
 										<aon:div styleClass="aon-finding-toolbar-item-group">
 											<aon:commandButton id="reset_list_form"
-												rendered="#{!modular_page_option.new}"
+												rendered="#{!modular_page_option.new and cms.roleEditor}"
 												reRender="detail"
 												value="#{bundle.aon_reset}"
 												styleClass="aon-finding-toolbar-item aon-icon-reset"
@@ -257,7 +257,7 @@
 												reRender="detail"
 												styleClass="aon-finding-toolbar-item aon-icon-accept"
 												accesskey="#{bundle.aon_key_save}">
-												<aon:actionListener method="#{modular_page_option.onAccept}" />
+												<aon:actionListener method="#{modular_page_option.accept}" />
 											</aon:commandButton>
 											<aon:commandButton id="cancel_list_form"
 												value="#{bundle.aon_cancel}" 
@@ -268,7 +268,8 @@
 												<aon:actionListener method="#{modular_page_option.onCancel}" />
 											</aon:commandButton>
 											<aon:confirmButton id="remove_list_form"
-												value="#{bundle.aon_remove}" rendered="#{!modular_page_option.new}" 
+												value="#{bundle.aon_remove}" 
+												rendered="#{!modular_page_option.new and cms.roleEditor}" 
 												immediate="true"
 												confirmTitle="Confirmation Dialog" 
 												confirmMessage="#{bundle.aon_remove_confirm}"

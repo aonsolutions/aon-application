@@ -28,7 +28,7 @@
 					<!-- start toolbar navigation -->
 					<aon:div styleClass="aon-finding-toolbar-item-group">					
 						<aon:commandButton id="reset" value="#{bundle.aon_reset}"
-							rendered="#{!product_category.new}"
+							rendered="#{!product_category.new and cms.roleEditor}"
 							action="product_category_form"
 							immediate="#{true}"
 							styleClass="aon-finding-toolbar-item aon-icon-reset"
@@ -44,7 +44,8 @@
 							<aon:actionListener method="#{productCategory.accept}" />
 						</aon:commandButton>
 						<aon:confirmButton id="remove"
-							value="#{bundle.aon_remove}" rendered="#{!productCategory.new}" 
+							value="#{bundle.aon_remove}" 
+							rendered="#{!productCategory.new and cms.roleEditor}" 
 							immediate="#{true}"
 							styleClass="aon-finding-toolbar-item aon-icon-delete"
 							confirmTitle="Confirmation Dialog" 
@@ -133,7 +134,7 @@
 								<!-- start toolbar navigation -->
 								<aon:div styleClass="aon-finding-toolbar-item-group">
 									<aon:commandButton id="reset_list" value="#{bundle.aon_reset}"
-										rendered="#{!subCategory.new}"
+										rendered="#{!subCategory.new and cms.roleEditor}"
 										reRender="detail_panel"
 										styleClass="aon-finding-toolbar-item aon-icon-reset"
 										accesskey="#{bundle.aon_key_new}">
@@ -219,7 +220,7 @@
 								<!-- start toolbar navigation -->
 								<aon:div styleClass="aon-finding-toolbar-item-group">
 									<aon:commandButton id="reset_list_form" value="#{bundle.aon_reset}"
-										rendered="#{!subCategory.new}"
+										rendered="#{!subCategory.new and cms.roleEditor}"
 										reRender="detail_panel"
 										styleClass="aon-finding-toolbar-item aon-icon-reset"
 										accesskey="#{bundle.aon_key_new}">
@@ -231,7 +232,7 @@
 										reRender="detail_panel"
 										styleClass="aon-finding-toolbar-item aon-icon-accept"
 										accesskey="#{bundle.aon_key_save}">
-										<aon:actionListener method="#{subCategory.onAccept}" />
+										<aon:actionListener method="#{subCategory.accept}" />
 									</aon:commandButton>
 									<aon:commandButton id="cancel_list_form"
 										value="#{bundle.aon_cancel}" 
@@ -242,7 +243,8 @@
 										<aon:actionListener method="#{subCategory.onCancel}" />
 									</aon:commandButton>
 									<aon:confirmButton id="remove_list_form"
-										value="#{bundle.aon_remove}" rendered="#{!subCategory.new}" 
+										value="#{bundle.aon_remove}" 
+										rendered="#{!subCategory.new and cms.roleEditor}" 
 										immediate="true"
 										confirmTitle="Confirmation Dialog" 
 										confirmMessage="#{bundle.aon_remove_confirm}"

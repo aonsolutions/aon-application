@@ -28,7 +28,8 @@
 					
 				<!-- start toolbar navigation -->
 				<aon:div styleClass="aon-finding-toolbar-item-group">					
-					<aon:commandButton id="reset" 
+					<aon:commandButton id="reset"
+						rendered="#{cms.roleEditor}" 
 						value="#{bundle.aon_reset}"
 						action="link_form"
 						styleClass="aon-finding-toolbar-item aon-icon-reset"

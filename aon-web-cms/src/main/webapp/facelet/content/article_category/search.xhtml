@@ -36,6 +36,7 @@
 						<aon:actionListener method="#{article_category.onSearch}" />
 					</aon:commandButton>					
 					<aon:commandButton id="reset" value="#{bundle.aon_reset}"
+						rendered="#{cms.roleEditor}"
 						action="article_category_form"
 						styleClass="aon-finding-toolbar-item aon-icon-reset"
 						accesskey="#{bundle.aon_key_new}">
