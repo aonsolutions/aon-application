@@ -83,10 +83,10 @@
 						</aon:commandButton>
 						<aon:commandButton id="product_categories"
 							value="#{appBundle.product_category}"
-							action="product_category_form"
+							action="product_category_list"
 							immediate="#{true}"
 							styleClass="aon-finding-toolbar-item">
-							<aon:actionListener method="#{productCategory.onReset}" />
+							<aon:actionListener method="#{productCategory.onSearch}" />
 						</aon:commandButton>
 						<aon:commandButton id="brands"
 							value="#{appBundle.brand}"
