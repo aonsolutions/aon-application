@@ -1,9 +1,9 @@
 package com.code.aon.ui.webmail.bean;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import org.apache.commons.lang.StringUtils;
 
 public class AonMessageUtils {
 	
@@ -13,30 +13,29 @@ public class AonMessageUtils {
 	public static final String HTML_LINE_BREAK = "<br/>";
 
 	// &nbsp; , space attribute
-	public static final String HTML_SPACE = "&nbsp;";
+	private static final String HTML_SPACE = "&nbsp;";
 
 	// search patterns, used for stripping html body tags from content
-	public static final Pattern BODY_PATTERN = Pattern.compile(
+	private static final Pattern BODY_PATTERN = Pattern.compile(
 			"<\\s*body[^>]*>(.*)<\\s*/\\s*body\\s*>", Pattern.CASE_INSENSITIVE
 					+ Pattern.DOTALL);
 
 	// search patterns, used for stripping html body tags from content
-	public static final Pattern HTML_PATTERN = Pattern.compile(
+	private static final Pattern HTML_PATTERN = Pattern.compile(
 			"<\\s*html[^>]*>(.*)<\\s*/\\s*html\\s*>", Pattern.CASE_INSENSITIVE
 					+ Pattern.DOTALL);
 	
 	// search pattern, common incountered eamil tags to remove
-	public static final Pattern TAG_PATTERN = Pattern
+	private static final Pattern TAG_PATTERN = Pattern
 			.compile(
 					"</?\\w+((\\s+\\w+(\\s*=\\s*(?:\".*?\"|'.*?'|[^'\">\\s]+))?)+\\s*|\\s*)/?>",
 					Pattern.CASE_INSENSITIVE + Pattern.DOTALL);
 
-	public static final Pattern TEXT_LINE_BREAK_PATTERN = Pattern.compile(
+	private static final Pattern TEXT_LINE_BREAK_PATTERN = Pattern.compile(
 			"\n", Pattern.CASE_INSENSITIVE + Pattern.DOTALL);
 
-	public static final Pattern HTML_LINE_BREAK_PATTERN = Pattern.compile(
-			HTML_LINE_BREAK, Pattern.CASE_INSENSITIVE + Pattern.DOTALL);
-
+	private static final Pattern UNDO_CID_PATTERN = Pattern.compile(
+			"[\"|\'][^\"\']+.cid", Pattern.CASE_INSENSITIVE + Pattern.DOTALL);
 
 	/**
 	 * Utility method to extract content between the body tags of an HTML
@@ -118,26 +117,6 @@ public class AonMessageUtils {
 		}
 		return match;
 	}
-	
-	
-	protected static final Pattern CID_PATTERN = Pattern.compile(
-			"cid:[^\"\']+\"|\'", Pattern.CASE_INSENSITIVE + Pattern.DOTALL);
-
-    public static String parse_cid(String content){
-		String textRplc = new String(content);
-		Matcher tagMatcher = CID_PATTERN.matcher(content);
-		while(tagMatcher.find()){
-			String text = tagMatcher.group();
-			String newText = new String(text);
-			newText = newText.replace("cid:", "");
-			newText = newText.replace("\"", ".cid\"");
-			textRplc = textRplc.replace(text, newText);
-		}
-		return textRplc;
-    }
-
-	protected static final Pattern UNDO_CID_PATTERN = Pattern.compile(
-			"[\"|\'][^\"\']+.cid", Pattern.CASE_INSENSITIVE + Pattern.DOTALL);
 
     public static String unparse_cid(String content){
 		String textRplc = new String(content);
@@ -145,60 +124,23 @@ public class AonMessageUtils {
 		while(tagMatcher.find()){
 			String text = tagMatcher.group();
 			String newText = new String(text);
-			newText = newText.replace(".cid", "");
-			newText = newText.replace("\"", "\"cid:");
+			int pos = newText.lastIndexOf("/");
+			newText = "\"cid:" + newText.substring(pos+1, newText.length()-4);
 			textRplc = textRplc.replace(text, newText);
 		}
 		return textRplc;
     }
 
-    public static List<String> getAllCid(String content) {
-    	List<String> cids = new ArrayList<String>();
-		Matcher tagMatcher = UNDO_CID_PATTERN.matcher(content);
-		while(tagMatcher.find()){
-			String text = tagMatcher.group();
-			String newText = new String(text);
-			newText = newText.replace(".cid", "");
-			newText = newText.replace("\"", "");
-			cids.add(newText);
-		}
-		return cids;
-    }
-
 	public static String parse_cr(String data) {
-		int currentIndex = 0;
-		currentIndex = data.indexOf(13);
-		while (currentIndex != -1) {
-			data = data.substring(0, currentIndex) + "<br>"
-					+ data.substring(currentIndex + 1, data.length());
-			currentIndex = data.indexOf(13, currentIndex);
-		}
-		currentIndex = 0;
-		currentIndex = data.indexOf(10);
-		while (currentIndex != -1) {
-			data = data.substring(0, currentIndex)
-					+ data.substring(currentIndex + 1, data.length());
-			currentIndex = data.indexOf(10, currentIndex);
-		}
-		return data;
+		String newData = StringUtils.replace( data, "\r", "<br>" );
+		newData = StringUtils.remove( newData, '\n' );
+		return newData;
 	}
 
 	public static String parse_tags(String data) {
-		int currentIndex = 0;
-		currentIndex = data.indexOf("<");
-		while (currentIndex != -1) {
-			data = data.substring(0, currentIndex) + "&lt;"
-					+ data.substring(currentIndex + 1, data.length());
-			currentIndex = data.indexOf("<", currentIndex);
-		}
-		currentIndex = 0;
-		currentIndex = data.indexOf(">");
-		while (currentIndex != -1) {
-			data = data.substring(0, currentIndex) + "&gt;"
-					+ data.substring(currentIndex + 1, data.length());
-			currentIndex = data.indexOf(">", currentIndex);
-		}
-		return data;
+		String newData = StringUtils.replace( data, "<", "&lt;" );
+		newData = StringUtils.replace( data, ">", "&gt;" );
+		return newData;
 	}
 	
 	public static String parse_email(String data) {
