@@ -13,8 +13,8 @@
 		<aon:form id="userForm">
 
 			<aon:div styleClass="aon-finding-title-toolbar">
-				<aon:panelGrid columns="4" dir="true" style="width:100%;"
-					columnClasses="aon-finding-title,aon-finding-subtitle,aon-finding-toolbar,aon-text-right aon-width-auto">
+				<aon:panelGrid columns="3" dir="true" 
+					columnClasses="aon-finding-title,aon-finding-subtitle,aon-finding-toolbar">
 
 					<aon:div styleClass="aon-finding-title-internal">
 						<aon:outputText value="#{appBundle.aon_users}" />
@@ -25,7 +25,7 @@
 							value="#{user.new?(bundle.aon_reset):(bundle.aon_editing)}" />
 					</aon:div>
 
-					<aon:div styleClass="aon-finding-toolbar-item-group">
+					<aon:div>
 						<aon:commandButton id="save" value="#{bundle.aon_save}"
 							styleClass="aon-finding-toolbar-item aon-icon-accept"
 							actionListener="#{user.accept}"	action="user_form"
@@ -49,34 +49,40 @@
 						<aon:commandButton id="scopes" value="#{appBundle.aon_scopes}"
 							action="scope" actionListener="#{scope.onSearch}"
 							styleClass="aon-finding-toolbar-item aon-icon-ambito" />
-					</aon:div>
-					<aon:div>	
-						<aon:panelGrid columns="5" dir="true" styleClass="aon-spin-control"
-							columnClasses="aon-spin-control-element,aon-spin-control-element,aon-spin-control-element,aon-spin-control-element,aon-spin-control-element"> 
-							<aon:commandButton id="first_user" disabled="#{user.inFirst}"
-								action="user_form" actionListener="#{user.onSelectFirst}"
-								styleClass="aon-dataScroller-button #{user.inFirst?'aon-dataScroller-button-first-disabled':'aon-dataScroller-button-first'}">
-							</aon:commandButton>
-							<aon:commandButton id="previous_user" disabled="#{user.inFirst}"
-								action="user_form" actionListener="#{user.onSelectPrevious}"
-								styleClass="aon-dataScroller-button #{user.inFirst?'aon-dataScroller-button-previous-disabled':'aon-dataScroller-button-previous'}">
-							</aon:commandButton>
-							<aon:outputFormat value="#{appBundle.aon_spin_result}">
-								<f:param value="#{user.selectedIndex + 1}" />
-								<f:param value="#{user.model.rowCount}" />
-							</aon:outputFormat>					
-							<aon:commandButton id="next_user" disabled="#{user.inLast}"
-								action="user_form" actionListener="#{user.onSelectNext}"
-								styleClass="aon-dataScroller-button #{user.inLast?'aon-dataScroller-button-next-disabled':'aon-dataScroller-button-next'}">
-							</aon:commandButton>
-							<aon:commandButton id="last_user" disabled="#{user.inLast}"
-								action="user_form" actionListener="#{user.onSelectLast}"
-								styleClass="aon-dataScroller-button #{user.inLast?'aon-dataScroller-button-last-disabled':'aon-dataScroller-button-last'}">
-							</aon:commandButton>
-						</aon:panelGrid>
-						
 					
-						
+						<aon:div styleClass="aon-spin-control">
+							<aon:div styleClass="aon-spin-control-element"> 
+								<aon:commandButton id="first_user" disabled="#{user.inFirst}"
+									action="user_form" actionListener="#{user.onSelectFirst}"
+									styleClass="aon-dataScroller-button #{user.inFirst?'aon-dataScroller-button-first-disabled':'aon-dataScroller-button-first'}">
+								</aon:commandButton>
+							</aon:div>
+							<aon:div styleClass="aon-spin-control-element"> 
+								<aon:commandButton id="previous_user" disabled="#{user.inFirst}"
+									action="user_form" actionListener="#{user.onSelectPrevious}"
+									styleClass="aon-dataScroller-button #{user.inFirst?'aon-dataScroller-button-previous-disabled':'aon-dataScroller-button-previous'}">
+								</aon:commandButton>
+							</aon:div>
+							<aon:div styleClass="aon-spin-control-element aon-nowrap"> 
+								<aon:outputFormat value="#{appBundle.aon_spin_result}">
+									<f:param value="#{user.selectedIndex + 1}" />
+									<f:param value="#{user.model.rowCount}" />
+								</aon:outputFormat>	
+							</aon:div>
+							<aon:div styleClass="aon-spin-control-element"> 				
+								<aon:commandButton id="next_user" disabled="#{user.inLast}"
+									action="user_form" actionListener="#{user.onSelectNext}"
+									styleClass="aon-dataScroller-button #{user.inLast?'aon-dataScroller-button-next-disabled':'aon-dataScroller-button-next'}">
+								</aon:commandButton>
+							</aon:div>
+							<aon:div styleClass="aon-spin-control-element"> 
+								<aon:commandButton id="last_user" disabled="#{user.inLast}"
+									action="user_form" actionListener="#{user.onSelectLast}"
+									styleClass="aon-dataScroller-button #{user.inLast?'aon-dataScroller-button-last-disabled':'aon-dataScroller-button-last'}">
+								</aon:commandButton>
+							</aon:div>
+						</aon:div>
+		
 					</aon:div>
 				</aon:panelGrid>
 			</aon:div>
