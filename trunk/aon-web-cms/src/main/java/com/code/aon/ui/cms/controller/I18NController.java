@@ -36,6 +36,14 @@ public class I18NController {
 		}
 	}
 
+	public void onReloadLanguages(ActionEvent event) {
+		try {
+			init();
+		} catch (ManagerBeanException e) {
+			e.printStackTrace();
+		}
+	}
+
 	private void init() throws ManagerBeanException {
 		System.out.println(">>>>>> ----------------------------------------");
 		System.out.println(">>>>>> CARGANDO LISTA DE IDIOMAS DISPONIBLES...");

@@ -23,8 +23,14 @@ public class SportCareerHandler {
 			formatter = new SimpleDateFormat ("dd/MM/yy");
 		else
 			formatter = (SimpleDateFormat)SimpleDateFormat.getDateInstance(DateFormat.SHORT,locale);
-		this.initDate = formatter.format(sportCareer.getInitDate());
-		this.endDate = formatter.format(sportCareer.getEndDate());
+		try{
+			this.initDate = formatter.format(sportCareer.getInitDate());
+		}catch (Exception e) {
+		}
+		try{
+			this.endDate = formatter.format(sportCareer.getEndDate());
+		}catch (Exception e) {
+		}
 	}
 
 	public String getClub() {

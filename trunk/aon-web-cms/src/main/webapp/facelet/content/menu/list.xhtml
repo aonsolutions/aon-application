@@ -34,6 +34,13 @@
 						accesskey="#{bundle.aon_key_new}">
 						<aon:actionListener method="#{menu.onReset}" />
 					</aon:commandButton>
+					<aon:commandButton id="exit"
+						value="#{bundle.aon_close}"
+						action="home" 
+						immediate="#{true}"
+						styleClass="aon-finding-toolbar-item aon-icon-cancel"
+						accesskey="#{bundle.aon_key_close}">
+					</aon:commandButton>
 			    </aon:div>
 				
 				<!-- end toolbar navigation -->
