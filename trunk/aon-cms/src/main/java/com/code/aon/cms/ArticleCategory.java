@@ -25,7 +25,7 @@ public class ArticleCategory implements ITransferObject, IPositionObject {
 
 	private boolean active = true;
 
-	private Integer position;
+	private Integer position = new Integer(0);
 	
 	private Section section;
 	
