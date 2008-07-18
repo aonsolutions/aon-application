@@ -32,7 +32,7 @@ public class ApplicationsManager {
 		List list = aonUserController.getUserManager().getUserApplications();
         for (int i = 0; i < list.size(); i++) {
 			IApplication app = (IApplication) list.get(i);
-			String context = app.getContext() + "?" + BackDoorAuthenticationFilter.AUTH_SSO + "=true";
+			String context = app.getContext() + "/?" + BackDoorAuthenticationFilter.AUTH_SSO + "=true";
 			String property = services.getProperty( app.getId() );
 			if ( property != null ) {
 				char[] bar = property.substring( 0, property.indexOf( ';' ) ).toCharArray();
