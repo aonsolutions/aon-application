@@ -71,7 +71,9 @@
 						value="#{appBundle.sidebar_alias}" />
 					<aon:inputText id="sidebar_alias"
 						required="true" size="32" maxlength="32"
-						value="#{sidebar.to.alias}" />
+						value="#{sidebar.to.alias}">
+						<f:validator validatorId="AliasValidator" />
+					</aon:inputText>
 				</aon:panelGrid>
 			</aon:div>
 		
@@ -223,7 +225,9 @@
 								<aon:inputText id="Alias"
 									value="#{sidebar_option.to.alias}" 
 									required="true"
-									size="40" maxlength="64" />
+									size="40" maxlength="64">
+									<f:validator validatorId="AliasValidator" />
+								</aon:inputText>
 									
 								<aon:outputText for="Label" 
 									value="#{appBundle.sidebar_option_label}" />

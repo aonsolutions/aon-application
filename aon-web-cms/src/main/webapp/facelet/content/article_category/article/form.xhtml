@@ -110,7 +110,9 @@
 								value="#{appBundle.article_alias}" />
 							<aon:inputText id="Article_alias"
 								required="true" size="32" maxlength="32"
-								value="#{article.to.alias}" />
+								value="#{article.to.alias}">
+								<f:validator validatorId="AliasValidator" />
+							</aon:inputText>
 		
 							<aon:outputLabel for="Article_category"
 								value="#{appBundle.article_category}"/>
@@ -451,7 +453,9 @@
 											<aon:inputText  
 												id="Alias"
 												size="60" maxlength="255"
-												value="#{articleDocument.to.alias}" />
+												value="#{articleDocument.to.alias}">
+												<f:validator validatorId="AliasValidator" />
+											</aon:inputText>
 												
 											<aon:outputText value="#{appBundle.document_related_title}" />
 											<aon:inputText 

@@ -98,7 +98,9 @@
 						value="#{appBundle.faq_alias}" />
 					<aon:inputText id="Faq_alias"
 						required="true" size="32" maxlength="32"
-						value="#{faq.to.alias}" />
+						value="#{faq.to.alias}">
+						<f:validator validatorId="AliasValidator" />
+					</aon:inputText>
 
 					<aon:outputLabel for="Faq_category"
 						value="#{appBundle.faq_category}"/>

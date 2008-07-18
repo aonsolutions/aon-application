@@ -79,7 +79,9 @@
 									value="#{appBundle.header_alias}" />
 								<aon:inputText id="header_alias"
 									required="true" size="32" maxlength="32"
-									value="#{headers.to.alias}" />
+									value="#{headers.to.alias}">
+									<f:validator validatorId="AliasValidator" />
+								</aon:inputText>
 			
 								<aon:outputLabel for="header_menu"
 									value="#{appBundle.header_menu}"/>

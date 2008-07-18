@@ -105,7 +105,9 @@
 									value="#{appBundle.generic_page_alias}" />
 								<aon:inputText id="Alias"
 									required="true" size="32" maxlength="32"
-									value="#{generic_page.to.alias}" />
+									value="#{generic_page.to.alias}">
+									<f:validator validatorId="AliasValidator" />
+								</aon:inputText>
 			                    	
 								<aon:outputLabel for="GenericPageDetail_title"
 									value="#{appBundle.generic_page_title}" />

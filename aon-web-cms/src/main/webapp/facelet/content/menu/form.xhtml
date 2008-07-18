@@ -69,7 +69,9 @@
 						value="#{appBundle.menu_alias}" />
 					<aon:inputText id="Menu_alias"
 						required="true" size="32" maxlength="32"
-						value="#{menu.to.alias}" />
+						value="#{menu.to.alias}">
+						<f:validator validatorId="AliasValidator" />
+					</aon:inputText>
 				</aon:panelGrid>
 			</aon:div>
 		
@@ -226,7 +228,9 @@
 									value="#{appBundle.menu_option_alias}" />
 								<aon:inputText id="MenuOption_alias"
 									required="true" size="32" maxlength="32"
-									value="#{menu_option.to.alias}" />
+									value="#{menu_option.to.alias}">
+									<f:validator validatorId="AliasValidator" />
+								</aon:inputText>
 			
 								<aon:outputLabel for="MenuOptionDetail_label"
 									value="#{appBundle.menu_option_label}" />

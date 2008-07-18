@@ -97,7 +97,9 @@
 						value="#{appBundle.direct_access_alias}" />
 					<aon:inputText id="DirectAccess_alias"
 						required="true" size="32" maxlength="32"
-						value="#{direct_access.to.alias}" />
+						value="#{direct_access.to.alias}">
+						<f:validator validatorId="AliasValidator" />
+					</aon:inputText>
 
 					<aon:outputLabel for="DirectAccess_type"
 						value="#{appBundle.direct_access_type}" />

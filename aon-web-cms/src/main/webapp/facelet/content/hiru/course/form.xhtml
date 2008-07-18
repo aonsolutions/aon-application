@@ -77,7 +77,9 @@
 							value="#{appBundle.hiru_course_alias}(*)" />
 						<aon:inputText id="Alias"
 							required="true" size="32" maxlength="32"
-							value="#{hiru_course.to.alias}" />
+							value="#{hiru_course.to.alias}">
+							<f:validator validatorId="AliasValidator" />
+						</aon:inputText>
 
 						<aon:outputLabel for="InitDate"
 							value="#{appBundle.hiru_course_initDate}(*)" />

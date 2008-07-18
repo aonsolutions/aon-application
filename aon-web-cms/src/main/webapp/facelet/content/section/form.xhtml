@@ -80,7 +80,9 @@
 								<aon:inputText id="section_alias"
 									styleClass="aon-form-input-text aon-form-input-text-number"
 									required="true" size="32" maxlength="32"
-									value="#{section.to.alias}" />
+									value="#{section.to.alias}">
+									<f:validator validatorId="AliasValidator" />
+								</aon:inputText>
 	
 								<aon:outputLabel for="section_header"
 									styleClass="aon-form-input-text-label"
