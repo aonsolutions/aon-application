@@ -80,4 +80,12 @@ public class BackDoorAuthenticationValve extends ValveBase {
 		return sessions.get( serSessionId );
 	}
 
+	/**
+	 * Remove <code>BackDoorPrincipal</code> bound to sessionId.
+	 * 
+	 * @return
+	 */
+	public static final synchronized BackDoorPrincipal removePrincipal(String serSessionId) {
+		return sessions.remove( serSessionId );
+	}	
 }
