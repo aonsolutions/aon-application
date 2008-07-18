@@ -3,8 +3,6 @@
  */
 package com.code.aon.bridge.session;
 
-import java.io.File;
-
 import javax.servlet.http.HttpSessionEvent;
 import javax.servlet.http.HttpSessionListener;
 
@@ -30,10 +28,6 @@ public class ConcurrentSessionListener implements HttpSessionListener {
 	 * @see javax.servlet.http.HttpSessionListener#sessionCreated(javax.servlet.http.HttpSessionEvent)
 	 */
 	public void sessionCreated(HttpSessionEvent se) {
-		File file = new File ( BackDoorAuthenticationValve.RESOURCES_DEFAULT_DIR );
-		if ( !file.exists() ) {
-			file.mkdirs();
-		}
 		LOGGER.debug( "Session Created: " + se.getSession().getId() );
 	}
 
@@ -47,7 +41,7 @@ public class ConcurrentSessionListener implements HttpSessionListener {
 			IConsoleAdmin console = ConsoleAdminFactoryManager.createConsoleAdmin();
 			String oname = console.getAonSessionManagerName();
 			console.invoke( oname, IOperation.REMOVE_SESSION, params, sig );
-			BackDoorAuthenticationValve.remove( se.getSession().getId() );
+			BackDoorAuthenticationValve.removePrincipal( se.getSession().getId() );
 			LOGGER.debug( "Session Destroyed: " + se.getSession().getId() );
 		} catch (DeploymentException e) {
 			LOGGER.fatal( e );
