@@ -18,6 +18,15 @@ public class CustomerControllerRelationshipListener extends ControllerAdapter {
 
 	@Override
 	public void afterBeanSelected(ControllerEvent event) throws ControllerListenerException {
+		applyCustomerCriteria(event);
+	}
+
+	@Override
+	public void afterBeanAdded(ControllerEvent event) throws ControllerListenerException {
+		applyCustomerCriteria(event);
+	}
+
+	private void applyCustomerCriteria(ControllerEvent event) throws ControllerListenerException {
 		Customer customer = (Customer)event.getController().getTo();
 		BasicController rRelationshipController = (BasicController)AonUtil.getController(REGISTRY_RELATIONSHIP_CONTROLLER_NAME);
 		try {
@@ -28,4 +37,5 @@ public class CustomerControllerRelationshipListener extends ControllerAdapter {
 			throw new ControllerListenerException(e);
 		}
 	}
+
 }
