@@ -48,6 +48,13 @@
 					valueChangeListener="#{customerAlias.addExpression}"
 					styleClass="aon-form-input-text" />
 
+				<t:outputLabel for="Customer_registry_alias"
+					value="#{appBundle.aon_customer_alias}"
+					styleClass="aon-form-input-text-label aon-form-table-column-odd-label" />
+				<t:inputText id="Customer_registry_alias" size="20"
+					valueChangeListener="#{customerAlias.addExpression}"
+					styleClass="aon-form-input-text"  onblur="toUpperCase(this);"/>
+
 				<t:outputLabel for="CourseAlumn"
 					value="#{appBundle.course_course} #{appBundle.course_code}"
 					styleClass="aon-form-input-text-label aon-form-table-column-odd-label"
