@@ -29,13 +29,7 @@ public class ResourceResolver {
 	}
 
 	public void setResourceContextPath(String resourceContextPath) {
-		FacesContext context = FacesContext.getCurrentInstance();
-		Map<String, String> parameters = context.getExternalContext().getRequestParameterMap();
-		if ( parameters.containsKey("aonDesktop") ) {
-			this.resourceContextPath = "../../" + resourceContextPath;
-		} else {
-			this.resourceContextPath = "../" + resourceContextPath;
-		}
+		this.resourceContextPath = "../" + resourceContextPath;
 	}
 
 	public String getResourceURIPreffix() {
