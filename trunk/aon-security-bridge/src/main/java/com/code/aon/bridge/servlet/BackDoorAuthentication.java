@@ -22,7 +22,6 @@ import com.code.aon.jaas.valves.BackDoorAuthenticationValve;
 public class BackDoorAuthentication extends HttpServlet {
 
 	private static final long serialVersionUID = -1236276509878590335L;
-	private static final String AUTH_PAGE = "/auth/index.jsp";
 
 	/* (non-Javadoc)
 	 * @see javax.servlet.http.HttpServlet#service(javax.servlet.http.HttpServletRequest, javax.servlet.http.HttpServletResponse)
@@ -30,20 +29,21 @@ public class BackDoorAuthentication extends HttpServlet {
 	@Override
 	protected void service(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		//Get the active request
-		Request activeRequest = (Request) BackDoorAuthenticationValve.activeRequest.get();
+		String serSessionId = request.getSession().getId();
+		Request activeRequest = BackDoorAuthenticationValve.getActiveRequest( serSessionId );
 		String uri = activeRequest.getRequestURI();
-		uri = uri.substring( uri.lastIndexOf( "/" ), uri.lastIndexOf( ".auth" ) ) + AUTH_PAGE;
+		uri = uri.substring( uri.lastIndexOf( "/" ), uri.lastIndexOf( ".auth" ) );
 		if ( activeRequest.getQueryString() != null ) {
 			uri += "?" + activeRequest.getQueryString();
 		}
-		String id = activeRequest.getSession( false ).getId();
+//		String id = activeRequest.getSession( false ).getId();
 		activeRequest.recycle();
 		activeRequest.getCoyoteRequest().getCookies().recycle();
 		activeRequest.getCoyoteRequest().getMimeHeaders().recycle();
 		activeRequest.getResponse().recycle();
 // TODO Attribute is being remove by Application server.
-		activeRequest.getCoyoteRequest().setAttribute( BackDoorAuthenticationValve.SER_SESSION_ID, id );
-		Cookie cookie = new Cookie( BackDoorAuthenticationValve.SER_SESSION_ID, id );
+//		activeRequest.getCoyoteRequest().setAttribute( BackDoorAuthenticationValve.SER_SESSION_ID, id );
+		Cookie cookie = new Cookie( BackDoorAuthenticationValve.SER_SESSION_ID, serSessionId );
 		cookie.setPath( "/" );
 		activeRequest.getResponse().addCookie( cookie );
 		activeRequest.getResponse().sendRedirect( uri );

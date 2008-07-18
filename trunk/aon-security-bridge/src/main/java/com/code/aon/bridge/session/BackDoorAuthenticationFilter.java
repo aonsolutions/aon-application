@@ -3,16 +3,9 @@
  */
 package com.code.aon.bridge.session;
 
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.security.InvalidKeyException;
-import java.security.NoSuchAlgorithmException;
 import java.security.Principal;
-import java.security.spec.InvalidKeySpecException;
 
-import javax.crypto.SealedObject;
-import javax.crypto.SecretKey;
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
 import javax.servlet.FilterConfig;
@@ -29,9 +22,9 @@ import org.apache.catalina.connector.Request;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import com.code.aon.jaas.auth.IConstants;
 import com.code.aon.jaas.valves.BackDoorAuthenticationValve;
 import com.code.aon.jaas.valves.BackDoorPrincipal;
-import com.code.aon.jaas.valves.DesEncrypter;
 
 /**
  * @author Consulting & Development. Iñaki Ayerbe - 05/11/2007
@@ -43,6 +36,8 @@ public class BackDoorAuthenticationFilter implements Filter {
 	private static final Log LOGGER = LogFactory.getLog( BackDoorAuthenticationFilter.class.getName() );
 	/** Authentication methods for login configuration. */
 	private static final String AUTH_TYPE = "PROGRAMMATIC_WEB_LOGIN";
+	/** Authentication SSO name. */
+	public static final String AUTH_SSO = "aonDesktop";
 
 	@Override
 	public void init(FilterConfig filterConfig) throws ServletException {
@@ -56,72 +51,90 @@ public class BackDoorAuthenticationFilter implements Filter {
 	public void doFilter(ServletRequest request, ServletResponse response,
 			FilterChain chain) throws IOException, ServletException {
 		HttpServletRequest httpRequest = (HttpServletRequest) request;
-		//Get the active request
-		Request activeRequest = (Request) BackDoorAuthenticationValve.activeRequest.get();
-		String serSessionId = 
-			(String) activeRequest.getCoyoteRequest().getAttribute( BackDoorAuthenticationValve.SER_SESSION_ID );
-		if ( serSessionId == null )
+		String sso = httpRequest.getParameter( AUTH_SSO );
+		if ( sso != null && Boolean.valueOf( sso ) ) {
+			//Get the active request
+			String serSessionId = null;
 			try {
 				serSessionId = getCookie( httpRequest, BackDoorAuthenticationValve.SER_SESSION_ID ).getValue();
 			} catch (RuntimeException e) {
 				LOGGER.warn( "Accesing directly. Cookie does no exits." + e.getMessage() );
+				serSessionId = httpRequest.getSession().getId();
 			}
-		if ( httpRequest.getUserPrincipal() == null && serSessionId != null ) {
-			BackDoorPrincipal bdp = deserialize( serSessionId );
-			if ( bdp != null ) {
-				String username = 
-					bdp.getPrincipal().getShortName() + "@" + bdp.getPrincipal().getDomain() 
-					+ activeRequest.getContextPath();
-				Principal principal = 
-					activeRequest.getContext().getRealm().authenticate( username, bdp.getPassword() ); 
-				if( principal != null ) {
-					register( activeRequest, principal, username, bdp.getPassword() );
-					RequestDispatcher disp = activeRequest.getRequestDispatcher( "/" );
-					disp.forward( activeRequest.getRequest(), activeRequest.getResponse() );
-				} else {
-					//Forward to Login Page.
-					String targetUrl = activeRequest.getContext().getLoginConfig().getLoginPage();
-					RequestDispatcher disp = activeRequest.getRequestDispatcher( targetUrl );
-					disp.forward( activeRequest.getRequest(), activeRequest.getResponse() );
+			Request activeRequest = BackDoorAuthenticationValve.getActiveRequest( serSessionId );
+//			if ( httpRequest.getUserPrincipal() == null && serSessionId != null ) {
+//				BackDoorPrincipal bdp = deserialize( serSessionId );
+//			if ( bdp != null ) {
+//				String username = 
+//					bdp.getPrincipal().getShortName() + "@" + bdp.getPrincipal().getDomain() 
+//					+ activeRequest.getContextPath();
+//				Principal principal = 
+//					activeRequest.getContext().getRealm().authenticate( username, bdp.getPassword() ); 
+//				if( principal != null ) {
+//					register( activeRequest, principal, username, bdp.getPassword() );
+//				} else {
+//					//Forward to Login Page.
+//					String targetUrl = activeRequest.getContext().getLoginConfig().getLoginPage();
+//					RequestDispatcher disp = activeRequest.getRequestDispatcher( targetUrl );
+//					disp.forward( activeRequest.getRequest(), activeRequest.getResponse() );
+//					activeRequest.getResponse().finishResponse();
+//					return;
+//				}
+//			}
+			if ( httpRequest.getUserPrincipal() == null && serSessionId != null  ) {
+				BackDoorPrincipal bdp = BackDoorAuthenticationValve.getPrincipal( serSessionId );
+				if ( bdp != null ) {
+					String username = bdp.getPrincipal().getShortName() + IConstants.IDENTITY_SEPARATOR + bdp.getPrincipal().getDomain() 
+									+ activeRequest.getContextPath();
+					Principal principal = 
+						activeRequest.getContext().getRealm().authenticate( username, bdp.getPassword() ); 
+					if( principal != null ) {
+						register( activeRequest, principal, username, bdp.getPassword() );
+					} else {
+						//Forward to Login Page.
+						String targetUrl = activeRequest.getContext().getLoginConfig().getLoginPage();
+						RequestDispatcher disp = activeRequest.getRequestDispatcher( targetUrl );
+						disp.forward( activeRequest.getRequest(), activeRequest.getResponse() );
+						activeRequest.getResponse().finishResponse();
+						return;
+					}
 				}
-				activeRequest.getResponse().finishResponse();
-				return;
 			}
 		}
 		chain.doFilter( request, response );
 	}
 
-	protected BackDoorPrincipal deserialize(String serSessionId) {
-		FileInputStream istream = null;
-		try {
-			SecretKey key = DesEncrypter.getSecretKeyInstance( BackDoorAuthenticationValve.SER_EXT + serSessionId );
-			String path = 
-				BackDoorAuthenticationValve.RESOURCES_DEFAULT_DIR + serSessionId + BackDoorAuthenticationValve.SER_EXT;
-			istream = new FileInputStream( path );
-			/* Create the output stream */
-			ObjectInputStream p = new ObjectInputStream( istream );
-			SealedObject so = (SealedObject) p.readObject();
-			return (BackDoorPrincipal) so.getObject( key );
-		} catch(IOException e) {
-			LOGGER.fatal( e.getMessage() );
-		} catch (ClassNotFoundException e) {
-			LOGGER.fatal( e.getMessage() );
-		} catch (InvalidKeySpecException e) {
-			LOGGER.fatal( e.getMessage() );
-		} catch (NoSuchAlgorithmException e) {
-			LOGGER.fatal( e.getMessage() );
-		} catch (InvalidKeyException e) {
-			LOGGER.fatal( e.getMessage() );
-		} finally {
-			if ( istream != null )
-				try {
-					istream.close();
-				} catch(IOException e) {
-				}
-		}
-		return null;
-	}
-
+//	protected BackDoorPrincipal deserialize(String serSessionId) {
+//		FileInputStream istream = null;
+//		try {
+//			SecretKey key = DesEncrypter.getSecretKeyInstance( BackDoorAuthenticationValve.SER_EXT + serSessionId );
+//			String path = 
+//				BackDoorAuthenticationValve.RESOURCES_DEFAULT_DIR + serSessionId + BackDoorAuthenticationValve.SER_EXT;
+//			istream = new FileInputStream( path );
+//			/* Create the output stream */
+//			ObjectInputStream p = new ObjectInputStream( istream );
+//			SealedObject so = (SealedObject) p.readObject();
+//			return (BackDoorPrincipal) so.getObject( key );
+//		} catch(IOException e) {
+//			LOGGER.fatal( e.getMessage() );
+//		} catch (ClassNotFoundException e) {
+//			LOGGER.fatal( e.getMessage() );
+//		} catch (InvalidKeySpecException e) {
+//			LOGGER.fatal( e.getMessage() );
+//		} catch (NoSuchAlgorithmException e) {
+//			LOGGER.fatal( e.getMessage() );
+//		} catch (InvalidKeyException e) {
+//			LOGGER.fatal( e.getMessage() );
+//		} finally {
+//			if ( istream != null )
+//				try {
+//					istream.close();
+//				} catch(IOException e) {
+//				}
+//		}
+//		return null;
+//	}
+//
 	/**
 	 * Gets cookie.
 	 * 
