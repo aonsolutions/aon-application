@@ -32,7 +32,7 @@ public class ModularPageOption implements ITransferObject, IPositionObject {
 
 	private boolean active = true;
 
-	private Integer position;
+	private Integer position = new Integer(0);
 	
 	private Set<ModularPageOptionDetail> details;
 

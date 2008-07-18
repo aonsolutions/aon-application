@@ -27,7 +27,7 @@ public class Link implements ITransferObject , IPositionObject{
 
 	private boolean active = true;
 
-	private Integer position;
+	private Integer position = new Integer(0);
 	
 	private LinkCategory linkCategory;
 
