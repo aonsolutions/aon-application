@@ -35,6 +35,19 @@
 						accesskey="#{bundle.aon_key_new}">
 						<aon:actionListener method="#{sport_player.onReset}" />
 					</aon:commandButton>
+					<aon:commandButton id="search" value="#{bundle.aon_search}"
+						action="sport_player_search"
+						styleClass="aon-finding-toolbar-item aon-icon-search"
+						accesskey="#{bundle.aon_key_search}">
+						<aon:actionListener method="#{sport_player.onEditSearch}" />
+					</aon:commandButton>
+					<aon:commandButton id="exit"
+						value="#{bundle.aon_close}"
+						action="home" 
+						immediate="#{true}"
+						styleClass="aon-finding-toolbar-item aon-icon-cancel"
+						accesskey="#{bundle.aon_key_close}">
+					</aon:commandButton>
 			    </aon:div>
 				
 				<!-- end toolbar navigation -->
