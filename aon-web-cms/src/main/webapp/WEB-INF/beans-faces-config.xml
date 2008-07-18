@@ -2013,7 +2013,7 @@
 	<!-- ************** SPORT_CAREER_PATH ************** -->
 	<managed-bean>
 		<managed-bean-name>sport_career_path</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.form.BasicController</managed-bean-class>
+		<managed-bean-class>com.code.aon.ui.cms.controller.SportCareerPathController</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
 			<property-name>pojo</property-name>
@@ -2021,11 +2021,11 @@
 		</managed-property>
 		<managed-property>
 			<property-name>queryOnStartUP</property-name>
-			<value>true</value>
+			<value>false</value>
 		</managed-property>
 		<managed-property>
 			<property-name>pageLimit</property-name>
-			<value>20</value>
+			<value>10</value>
 		</managed-property>
 		<managed-property>
 			<property-name>listenerClasses</property-name>

@@ -550,16 +550,12 @@
       <from-outcome>sport_player_form</from-outcome>
       <to-view-id>/facelet/content/sport/sport_player/form.xhtml</to-view-id>
     </navigation-case>
-  </navigation-rule>
-  
-  <!-- ===================================================== SPORT CAREER PATH -->
-  <navigation-rule>
     <navigation-case>
-      <from-outcome>sport_career_path_list</from-outcome>
-      <to-view-id>/facelet/content/sport/sport_career_path/list.xhtml</to-view-id>
+      <from-outcome>sport_player_search</from-outcome>
+      <to-view-id>/facelet/content/sport/sport_player/search.xhtml</to-view-id>
     </navigation-case>
   </navigation-rule>
-
+  
   <!-- ===================================================== SPORT COACH -->
   <navigation-rule>
     <navigation-case>
