@@ -1490,13 +1490,12 @@ rich-fileupload-button-dis, rich-fileupload-button-selection{
 .rich-fileupload-button-light{
 	border:#808080 1px solid;
 	}
-
 	
 /*  Defines styles for a "Add" button icon  */
-.aon-fileUpload-addButtonClass{
+.rich-fileupload-ico-add{
 	background:transparent url(images/aon-icon/aon-icon-attach-file.png) scroll left center no-repeat;	
 	}
-.aon-fileUpload-addButtonClass-dis{
+.rich-fileupload-ico-add-dis{
 	border:#808080 1px solid;
 	margin:0 5px 0 0;
 	font-weight:bold;
