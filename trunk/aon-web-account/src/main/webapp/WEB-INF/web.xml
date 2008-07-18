@@ -123,12 +123,6 @@
 	    </init-param>
 	</filter>
 
-   <!-- Sessions Filter -->
-	<filter>
-	   <filter-name>SessionFilter</filter-name>
-	   <filter-class>com.code.aon.bridge.session.SessionFilter</filter-class>
-	</filter>
-
     <!-- Filter Mappings -->
 
 	<!-- extension mapping for adding <script/>, <link/>, and other resource tags to JSF-pages  -->
@@ -158,14 +152,16 @@
 		<filter-name>BackDoorAuthenticationFilter</filter-name>
 		<filter-class>com.code.aon.bridge.session.BackDoorAuthenticationFilter</filter-class>
 	</filter>
-	
-	<!-- Enables and Registers session for concurrent sessions -->
 	<filter-mapping>
 		<filter-name>BackDoorAuthenticationFilter</filter-name>
-		<url-pattern>/auth/*</url-pattern>
+		<url-pattern>*.jsp</url-pattern>
 	</filter-mapping>
 
-	<!-- Enables and Registers session for concurrent sessions -->
+   <!-- Sessions Filter -->
+	<filter>
+	   <filter-name>SessionFilter</filter-name>
+	   <filter-class>com.code.aon.bridge.session.SessionFilter</filter-class>
+	</filter>
 	<filter-mapping>
 	   <filter-name>SessionFilter</filter-name>
 		<url-pattern>/facelet/homepage/firstContent.faces</url-pattern>
@@ -275,10 +271,6 @@
 		<web-resource-collection>
 			<web-resource-name>account</web-resource-name>
 			<url-pattern>/_account/*</url-pattern>
-		</web-resource-collection>
-		<web-resource-collection>
-			<web-resource-name>jsp</web-resource-name>
-			<url-pattern>/index.jsp</url-pattern>
 		</web-resource-collection>
 		<web-resource-collection>
 			<web-resource-name>actions</web-resource-name>

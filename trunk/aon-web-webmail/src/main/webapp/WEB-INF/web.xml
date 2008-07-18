@@ -182,18 +182,30 @@
 		<dispatcher>ERROR</dispatcher>
 	</filter-mapping>
 
-	<!-- Enables and Registers session for concurrent sessions -->
+	<!-- BackDoorAuthentication Filter -->
 	<filter>
 		<filter-name>BackDoorAuthenticationFilter</filter-name>
-		<filter-class>
-			com.code.aon.bridge.session.BackDoorAuthenticationFilter
-		</filter-class>
+		<filter-class>com.code.aon.bridge.session.BackDoorAuthenticationFilter</filter-class>
 	</filter>
 	<filter-mapping>
 		<filter-name>BackDoorAuthenticationFilter</filter-name>
-		<url-pattern>/auth/*</url-pattern>
+		<url-pattern>*.jsp</url-pattern>
 	</filter-mapping>
 	
+	<!-- Deploy Servlet 
+		<servlet>
+		<servlet-name>autodeploy</servlet-name>
+		<servlet-class>
+		com.code.aon.bridge.servlet.DeployServlet
+		</servlet-class>
+		<init-param>
+		<param-name>name</param-name>
+		<param-value>aon-web-cms.war</param-value>
+		</init-param>
+		<load-on-startup>1</load-on-startup>
+		</servlet>
+	-->
+
 	<!-- CID image Servlet -->
 	<servlet>
 		<servlet-name>CidServlet</servlet-name>
@@ -234,20 +246,6 @@
 		<param-value>/js/fckconfig.js</param-value>
 	</context-param>
 	
-	<!-- Deploy Servlet 
-		<servlet>
-		<servlet-name>autodeploy</servlet-name>
-		<servlet-class>
-		com.code.aon.bridge.servlet.DeployServlet
-		</servlet-class>
-		<init-param>
-		<param-name>name</param-name>
-		<param-value>aon-web-cms.war</param-value>
-		</init-param>
-		<load-on-startup>1</load-on-startup>
-		</servlet>
-	-->
-	
 	<!-- Welcome File List -->
 	<welcome-file-list>
 		<welcome-file>index.jsp</welcome-file>
@@ -266,10 +264,6 @@
 		<web-resource-collection>
 			<web-resource-name>groupware</web-resource-name>
 			<url-pattern>/groupware/*</url-pattern>
-		</web-resource-collection>
-		<web-resource-collection>
-			<web-resource-name>jsp</web-resource-name>
-			<url-pattern>/index.jsp</url-pattern>
 		</web-resource-collection>
 		<web-resource-collection>
 			<web-resource-name>jsf</web-resource-name>
