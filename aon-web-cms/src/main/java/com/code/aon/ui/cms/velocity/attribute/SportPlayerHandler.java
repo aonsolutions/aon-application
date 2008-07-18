@@ -80,6 +80,7 @@ public class SportPlayerHandler {
 		try{
 			this.careers = fillCareer(sportPlayer.getId());
 		}catch (Exception e) {
+			e.printStackTrace();
 		}
 		this.url = Templates.SPORT.getHtmlName();
 		this.url = this.url.replaceAll("%NAME%", SportGenerator.PLAYER + this.alias);
@@ -101,18 +102,19 @@ public class SportPlayerHandler {
 	}
 	
 	private List<SportCareerHandler> fillCareer(Integer playerId){
-		this.careers = new ArrayList<SportCareerHandler>();
+		List<SportCareerHandler> listSportCareerHandler = new ArrayList<SportCareerHandler>();
 		try {
 			IManagerBean bean = BeanManager.getManagerBean(SportCareerPath.class);
 			Criteria criteria = new Criteria();
 			criteria.addEqualExpression(bean.getFieldName(ICMSAlias.SPORT_CAREER_PATH_SPORT_PLAYER_ID), playerId);
 			List<ITransferObject> lst = bean.getList(criteria);
 			for (Iterator iterator = lst.iterator(); iterator.hasNext();) {
-				this.careers.add(new SportCareerHandler((SportCareerPath) iterator.next()));
+				listSportCareerHandler.add(new SportCareerHandler((SportCareerPath) iterator.next()));
 			}
 		} catch (ManagerBeanException e) {
+			e.printStackTrace();
 		}
-		return this.careers;
+		return listSportCareerHandler;
 	}
 
 	public String getAlias() {

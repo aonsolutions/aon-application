@@ -32,6 +32,13 @@
 							value="#{bundle.aon_save}" 
 							actionListener="#{config.onAccept}"
 							styleClass="aon-finding-toolbar-item aon-icon-accept" />
+						<aon:commandButton id="exit"
+							value="#{bundle.aon_close}"
+							action="home" 
+							immediate="#{true}"
+							styleClass="aon-finding-toolbar-item aon-icon-cancel"
+							accesskey="#{bundle.aon_key_close}">
+						</aon:commandButton>
 				    </aon:div>
 					
 					<!-- end toolbar navigation -->
