@@ -109,7 +109,9 @@
 								value="#{appBundle.product_alias}" />
 							<aon:inputText id="product_alias"
 								required="true" size="32" maxlength="32"
-								value="#{product.to.alias}" />
+								value="#{product.to.alias}">
+								<f:validator validatorId="AliasValidator" />
+							</aon:inputText>
 
 							<aon:outputLabel for="productDetail_shortLabel"
 								value="#{appBundle.product_shorLabel}" />

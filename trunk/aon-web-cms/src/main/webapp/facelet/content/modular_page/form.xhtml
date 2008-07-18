@@ -97,7 +97,9 @@
 						value="#{appBundle.modular_page_alias}" />
 					<aon:inputText id="modular_page_alias"
 						required="true" size="32" maxlength="32"
-						value="#{modular_page.to.alias}" />
+						value="#{modular_page.to.alias}">
+						<f:validator validatorId="AliasValidator" />
+					</aon:inputText>
 						
 					<aon:outputLabel for="modular_page_label" 
 						value="#{appBundle.modular_page_label}" />
@@ -290,7 +292,9 @@
 											value="#{appBundle.modular_page_option_alias}" />
 										<aon:inputText id="modular_page_option_alias"
 											required="true" size="32" maxlength="32"
-											value="#{modular_page_option.to.alias}" />
+											value="#{modular_page_option.to.alias}">
+											<f:validator validatorId="AliasValidator" />
+										</aon:inputText>
 			
 										<aon:outputLabel for="modular_page_option_label"
 											value="#{appBundle.modular_page_option_label}" />

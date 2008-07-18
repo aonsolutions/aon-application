@@ -99,7 +99,9 @@
 						value="#{appBundle.download_category_alias}" />
 					<aon:inputText id="DownloadCategory_alias"
 						required="true" size="32" maxlength="32"
-						value="#{download_category.to.alias}" />
+						value="#{download_category.to.alias}">
+						<f:validator validatorId="AliasValidator" />
+					</aon:inputText>
 
 					<aon:outputLabel for="DownloadCategoryDetail_label"
 						value="#{appBundle.download_category_label}" />

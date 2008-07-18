@@ -116,13 +116,17 @@
 						<aon:inputText value="#{to.alias}"
 							id="#{to.id}_alias"
 							rendered="#{to==brand.to}"
-							required="#{true}" size="35" maxlength="32" />
+							required="#{true}" size="35" maxlength="32">
+							<f:validator validatorId="AliasValidator" />
+						</aon:inputText>
 						<f:facet name="footer">
 							<aon:div>
 								<aon:inputText value="#{brand.to.alias}"
 									id="new_alias"
 									rendered="#{brand.new}"
-									required="#{true}" size="35" maxlength="32" />
+									required="#{true}" size="35" maxlength="32">
+									<f:validator validatorId="AliasValidator" />
+								</aon:inputText>
 							</aon:div>
 						</f:facet>
 					</aon:column>

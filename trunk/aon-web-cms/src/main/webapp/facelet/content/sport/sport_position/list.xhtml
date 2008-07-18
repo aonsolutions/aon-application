@@ -108,13 +108,17 @@
 						<aon:inputText value="#{to.alias}"
 							id="#{to.id}_alias"
 							rendered="#{to==sport_position.to}"
-							required="#{true}" size="35" maxlength="32" />
+							required="#{true}" size="35" maxlength="32">
+							<f:validator validatorId="AliasValidator" />
+						</aon:inputText>
 						<f:facet name="footer">
 							<aon:div>
 								<aon:inputText value="#{sport_position.to.alias}"
 									id="new_alias"
 									rendered="#{sport_position.new}"
-									required="#{true}" size="35" maxlength="32" />
+									required="#{true}" size="35" maxlength="32">
+									<f:validator validatorId="AliasValidator" />
+								</aon:inputText>
 							</aon:div>
 						</f:facet>
 					</aon:column>

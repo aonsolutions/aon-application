@@ -90,7 +90,9 @@
 						value="#{appBundle.direct_access_group_alias}" />
 					<aon:inputText id="DirectAccessGroup_alias"
 						required="true" size="32" maxlength="32"
-						value="#{direct_access_group.to.alias}" />
+						value="#{direct_access_group.to.alias}">
+						<f:validator validatorId="AliasValidator" />
+					</aon:inputText>
 
 					<aon:outputLabel for="DirectAccessGroupDetail_label"
 						value="#{appBundle.direct_access_group_label}" />

@@ -98,7 +98,9 @@
 						value="#{appBundle.product_category_alias}" />
 					<aon:inputText id="ProductCategory_alias"
 						required="true" size="32" maxlength="32"
-						value="#{productCategory.to.alias}" />
+						value="#{productCategory.to.alias}">
+						<f:validator validatorId="AliasValidator" />
+					</aon:inputText>
 
 					<aon:outputLabel for="ProductCategoryDetail_label"
 						value="#{appBundle.product_category_label}" />
@@ -264,7 +266,9 @@
 									value="#{appBundle.product_category_alias}" />
 								<aon:inputText id="ProductSubCategory_alias"
 									required="true" size="32" maxlength="32"
-									value="#{subCategory.to.alias}" />
+									value="#{subCategory.to.alias}">
+									<f:validator validatorId="AliasValidator" />
+								</aon:inputText>
 			
 								<aon:outputLabel for="ProductSubCategoryDetail_label"
 									value="#{appBundle.product_category_label}" />

@@ -97,7 +97,9 @@
 						value="#{appBundle.banner_alias}" />
 					<aon:inputText id="Banner_alias"
 						required="true" size="32" maxlength="32"
-						value="#{banner.to.alias}" />
+						value="#{banner.to.alias}">
+						<f:validator validatorId="AliasValidator" />
+					</aon:inputText>
 
 					<aon:outputLabel for="Banner_category"
 						value="#{appBundle.banner_category}"/>

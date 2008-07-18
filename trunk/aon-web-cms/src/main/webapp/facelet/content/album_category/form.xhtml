@@ -97,7 +97,9 @@
 						value="#{appBundle.album_category_alias}" />
 					<aon:inputText id="AlbumCategory_alias"
 						required="true" size="32" maxlength="32"
-						value="#{album_category.to.alias}" />
+						value="#{album_category.to.alias}">
+						<f:validator validatorId="AliasValidator" />
+					</aon:inputText>
 
 					<aon:outputLabel for="AlbumCategoryDetail_label"
 						value="#{appBundle.album_category_label}" />

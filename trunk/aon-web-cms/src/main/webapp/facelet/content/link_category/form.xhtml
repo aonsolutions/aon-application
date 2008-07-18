@@ -97,7 +97,9 @@
 						value="#{appBundle.link_category_alias}" />
 					<aon:inputText id="LinkCategory_alias"
 						required="true" size="32" maxlength="32"
-						value="#{link_category.to.alias}" />
+						value="#{link_category.to.alias}">
+						<f:validator validatorId="AliasValidator" />
+					</aon:inputText>
 
 					<aon:outputLabel for="LinkCategoryDetail_label"
 						value="#{appBundle.link_category_label}" />

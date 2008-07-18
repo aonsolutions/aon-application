@@ -98,7 +98,9 @@
 						value="#{appBundle.article_category_alias}" />
 					<aon:inputText id="ArticleCategory_alias"
 						required="true" size="32" maxlength="32"
-						value="#{article_category.to.alias}" />
+						value="#{article_category.to.alias}">
+						<f:validator validatorId="AliasValidator" />
+					</aon:inputText>
 
 					<aon:outputLabel for="ArticleCategoryDetail_label"
 						value="#{appBundle.article_category_label}" />
