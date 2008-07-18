@@ -88,6 +88,7 @@
 							 style="z-index:2001;margin:0;vertical-align:middle;"
 							 imageDir="#{aonConfiguration.stylePath}/images/selectInputDate/"
 							 value="#{hiru_course.to.initDate}" renderAsPopup="true"
+							 enableManualInput="true"
 							 popupDateFormat="#{bundle.aon_date_pattern}">
 							 <f:convertDateTime pattern="#{bundle.aon_date_pattern}"
 									timeZone="#{timeZoneController.timeZoneId}" />
@@ -97,6 +98,7 @@
 							value="#{appBundle.hiru_course_endDate}(*)" />
 						<aon:selectInputDate id="EndDate"
 							 required="true"
+							 enableManualInput="true"
 							 style="z-index:2001;margin:0;vertical-align:middle;"
 							 imageDir="#{aonConfiguration.stylePath}/images/selectInputDate/"
 							 value="#{hiru_course.to.endDate}" renderAsPopup="true"

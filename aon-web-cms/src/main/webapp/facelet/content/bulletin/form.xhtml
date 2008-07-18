@@ -89,6 +89,7 @@
 									 style="z-index:2001;margin:0;vertical-align:middle;"
 									 imageDir="#{aonConfiguration.stylePath}/images/selectInputDate/"
 									 value="#{bulletin.to.publish_date}" renderAsPopup="true"
+									 enableManualInput="true"
 									 popupDateFormat="#{bundle.aon_date_pattern}">
 									 <f:convertDateTime pattern="#{bundle.aon_date_pattern}"
 											timeZone="#{timeZoneController.timeZoneId}" />
@@ -120,6 +121,7 @@
 								 style="z-index:2001;margin:0;vertical-align:middle;"
 								 imageDir="#{aonConfiguration.stylePath}/images/selectInputDate/"
 								 value="#{bulletin.publishDate}" renderAsPopup="true"
+								 enableManualInput="true"
 								 popupDateFormat="#{bundle.aon_date_pattern}">
 								 <f:convertDateTime pattern="#{bundle.aon_date_pattern}"
 										timeZone="#{timeZoneController.timeZoneId}" />
@@ -131,6 +133,7 @@
 								 style="z-index:2001;margin:0;vertical-align:middle;"
 								 imageDir="#{aonConfiguration.stylePath}/images/selectInputDate/"
 								 value="#{bulletin.expireDate}" renderAsPopup="true"
+								 enableManualInput="true"
 								 popupDateFormat="#{bundle.aon_date_pattern}">
 								 <f:convertDateTime pattern="#{bundle.aon_date_pattern}"
 										timeZone="#{timeZoneController.timeZoneId}" />
