@@ -60,4 +60,10 @@ public class AlbumController extends BasicI18nController {
 		current.setImage(image);
 	}
 
+	public String getBack(){
+		if (AonUtil.getController("albumImage").getTo()==null)
+			return "album_image_list";
+		return "album_image_form";
+	}
+
 }

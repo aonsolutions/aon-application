@@ -54,11 +54,10 @@
 						</aon:commandButton>
 						<aon:commandButton id="exit"
 							value="#{bundle.aon_close}"
-							action="company_form" 
+							action="#{activity.getBack}" 
 							immediate="#{true}"
 							styleClass="aon-finding-toolbar-item aon-icon-cancel"
 							accesskey="#{bundle.aon_key_close}">
-							<aon:actionListener method="#{company.onLoadActivities}" />
 						</aon:commandButton>
 					</aon:div>
 				</aon:panelGrid>

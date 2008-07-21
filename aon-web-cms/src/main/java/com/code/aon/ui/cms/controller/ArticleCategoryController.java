@@ -53,4 +53,10 @@ public class ArticleCategoryController extends BasicI18nController {
 		return label;
 	}
 
+	public String getBack(){
+		if (AonUtil.getController("article").getTo()==null)
+			return "article_list";
+		return "article_form";
+	}
+
 }

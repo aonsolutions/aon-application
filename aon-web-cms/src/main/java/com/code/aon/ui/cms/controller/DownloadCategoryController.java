@@ -65,4 +65,10 @@ public class DownloadCategoryController extends BasicI18nController {
 		current.setImage(image);
 	}
 	
+	public String getBack(){
+		if (AonUtil.getController("download").getTo()==null)
+			return "download_list";
+		return "download_form";
+	}
+
 }

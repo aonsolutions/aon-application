@@ -50,6 +50,20 @@
 							styleClass="aon-finding-toolbar-item aon-icon-cancel"
 							accesskey="#{bundle.aon_key_close}">
 						</aon:commandButton>
+						<aon:commandButton id="product_categories"
+							value="#{appBundle.product_category}"
+							action="product_category_list"
+							immediate="#{true}"
+							styleClass="aon-finding-toolbar-item">
+							<aon:actionListener method="#{productCategory.onSearch}" />
+						</aon:commandButton>
+						<aon:commandButton id="brands"
+							value="#{appBundle.brand}"
+							action="brand_list"
+							immediate="#{true}"
+							styleClass="aon-finding-toolbar-item">
+							<aon:actionListener method="#{brand.onSearch}" />
+						</aon:commandButton>
 					</aon:div>
 					
 					<!-- end toolbar navigation -->

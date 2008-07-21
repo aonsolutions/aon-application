@@ -50,6 +50,14 @@
 						styleClass="aon-finding-toolbar-item aon-icon-cancel"
 						accesskey="#{bundle.aon_key_close}">
 					</aon:commandButton>
+					<aon:commandButton id="categories"
+						value="#{appBundle.link_category}"
+						action="link_category_list"
+						immediate="#{true}"
+						styleClass="aon-finding-toolbar-item">
+						<aon:actionListener method="#{link_category.onInit}" />
+						<aon:actionListener method="#{link_category.onSearch}" />
+					</aon:commandButton>
 			    </aon:div>
 				
 				<!-- end toolbar navigation -->
