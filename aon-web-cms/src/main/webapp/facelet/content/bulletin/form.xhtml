@@ -142,7 +142,7 @@
 							<aon:commandButton id="reset_articles" 
 								value="#{appBundle.bulletin_refresh_articles}"
 								styleClass="aon-finding-toolbar-item aon-icon-accept"
-								reRender="detail_list_panel" />
+								reRender="gridToolbar,gridDataTable" />
 
 							<rich:panel id="detail_list_panel">
 								<f:facet name="header">#{appBundle.aon_listing}</f:facet>
@@ -204,7 +204,7 @@
 										<a4j:support 
 											actionListener="#{bulletin_article.onSelect}"
 											event="onclick"  
-											reRender="dataTable,gridToolbar" />
+											reRender="gridDataTable,gridToolbar" />
 										<f:facet name="header">
 											<aon:outputText value="#{appBundle.bulletin_article_article}"/>
 										</f:facet>
@@ -221,7 +221,7 @@
 											rendered="#{to==bulletin_article.to}"
 											value="#{to.article.id}">
 											<f:selectItem itemLabel="-" itemValue="-1" />
-											<f:selectItems value="#{collections.articleList}" />
+											<f:selectItems value="#{bulletin.articleList}" />
 										</aon:selectOneMenu>
 										<f:facet name="footer">
 											<aon:div>
