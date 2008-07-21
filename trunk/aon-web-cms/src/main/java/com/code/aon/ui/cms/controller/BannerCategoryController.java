@@ -5,6 +5,7 @@ import javax.faces.event.ActionEvent;
 import com.code.aon.cms.BannerCategory;
 import com.code.aon.cms.BannerCategoryDetail;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.ui.util.AonUtil;
 
 public class BannerCategoryController extends BasicI18nController {
 
@@ -43,6 +44,12 @@ public class BannerCategoryController extends BasicI18nController {
 		BannerCategoryDetail bannerCategoryDetail = (BannerCategoryDetail)getModelRowdataI18n();
 		if (bannerCategoryDetail != null) label = bannerCategoryDetail.getLabel();
 		return label;
+	}
+
+	public String getBack(){
+		if (AonUtil.getController("banner").getTo()==null)
+			return "banner_list";
+		return "banner_form";
 	}
 
 }

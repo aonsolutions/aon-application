@@ -52,4 +52,10 @@ public class FaqCategoryController extends BasicI18nController{
 		return label;
 	}
 
+	public String getBack(){
+		if (AonUtil.getController("faq").getTo()==null)
+			return "faq_list";
+		return "faq_form";
+	}
+
 }

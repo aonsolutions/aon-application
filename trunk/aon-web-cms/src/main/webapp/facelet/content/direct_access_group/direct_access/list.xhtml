@@ -50,6 +50,13 @@
 						styleClass="aon-finding-toolbar-item aon-icon-cancel"
 						accesskey="#{bundle.aon_key_close}">
 					</aon:commandButton>
+					<aon:commandButton id="categories"
+						value="#{appBundle.direct_access_group}"
+						action="direct_access_group_list"
+						immediate="#{true}"
+						styleClass="aon-finding-toolbar-item">
+						<aon:actionListener method="#{direct_access_group.onSearch}" />
+					</aon:commandButton>
 			    </aon:div>
 				
 				<!-- end toolbar navigation -->

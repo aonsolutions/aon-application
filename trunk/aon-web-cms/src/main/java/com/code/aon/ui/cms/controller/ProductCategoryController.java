@@ -75,4 +75,10 @@ public class ProductCategoryController extends BasicI18nController {
 		lc.onSearch(event);
 	}
 
+	public String getBack(){
+		if (AonUtil.getController("product").getTo()==null)
+			return "product_list";
+		return "product_form";
+	}
+
 }

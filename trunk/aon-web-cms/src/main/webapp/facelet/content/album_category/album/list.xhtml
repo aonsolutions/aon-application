@@ -43,10 +43,18 @@
 					</aon:commandButton>
 					<aon:commandButton id="exit"
 						value="#{bundle.aon_close}"
-						action="album_image_form" 
+						action="#{album.getBack}" 
 						immediate="#{true}"
 						styleClass="aon-finding-toolbar-item aon-icon-cancel"
 						accesskey="#{bundle.aon_key_close}">
+					</aon:commandButton>
+					<aon:commandButton id="categories"
+						value="#{appBundle.album_category}"
+						action="album_category_list"
+						immediate="#{true}"
+						styleClass="aon-finding-toolbar-item">
+						<aon:actionListener method="#{album_category.onInit}" />
+						<aon:actionListener method="#{album_category.onSearch}" />
 					</aon:commandButton>
 			    </aon:div>
 				

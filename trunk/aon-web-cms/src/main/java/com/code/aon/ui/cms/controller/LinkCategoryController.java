@@ -52,4 +52,10 @@ public class LinkCategoryController extends BasicI18nController {
 		return label;
 	}
 
+	public String getBack(){
+		if (AonUtil.getController("link").getTo()==null)
+			return "link_list";
+		return "link_form";
+	}
+	
 }

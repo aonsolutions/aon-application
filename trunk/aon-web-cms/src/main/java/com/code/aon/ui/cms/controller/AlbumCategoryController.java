@@ -51,4 +51,10 @@ public class AlbumCategoryController extends BasicI18nController {
 		return label;
 	}
 
+	public String getBack(){
+		if (AonUtil.getController("album").getTo()==null)
+			return "album_list";
+		return "album_form";
+	}
+
 }

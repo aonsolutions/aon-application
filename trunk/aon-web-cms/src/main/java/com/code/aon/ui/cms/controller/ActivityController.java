@@ -4,6 +4,7 @@ import javax.faces.event.ActionEvent;
 
 import com.code.aon.cms.ActivityDetail;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.ui.util.AonUtil;
 
 
 public class ActivityController extends BasicI18nController {
@@ -29,6 +30,12 @@ public class ActivityController extends BasicI18nController {
 		ActivityDetail detail = (ActivityDetail)getModelRowdataI18n();
 		if (detail != null) description = detail.getDescription();
 		return description;
+	}
+
+	public String getBack(){
+		if (AonUtil.getController("company").getTo()==null)
+			return "company_list";
+		return "company_form";
 	}
 
 }

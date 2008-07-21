@@ -5,6 +5,7 @@ import javax.faces.event.ActionEvent;
 import com.code.aon.cms.DirectAccessGroup;
 import com.code.aon.cms.DirectAccessGroupDetail;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.ui.util.AonUtil;
 
 
 public class DirectAccessGroupController extends BasicI18nController {
@@ -44,6 +45,12 @@ public class DirectAccessGroupController extends BasicI18nController {
 		DirectAccessGroupDetail directAccessGroupDetail = (DirectAccessGroupDetail)getModelRowdataI18n();
 		if (directAccessGroupDetail != null) label = directAccessGroupDetail.getLabel();
 		return label;
+	}
+
+	public String getBack(){
+		if (AonUtil.getController("direct_access").getTo()==null)
+			return "direct_access_list";
+		return "direct_access_form";
 	}
 
 }
