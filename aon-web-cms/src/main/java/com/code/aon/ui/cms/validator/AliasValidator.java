@@ -14,9 +14,9 @@ public class AliasValidator implements Validator {
 	public void validate(FacesContext context, UIComponent component,
 			Object value) throws ValidatorException {
 		String strValue = (String) value;
-		if (!strValue.matches("\\p{Alnum}+")){
+		if (!strValue.matches("[0-9a-zA-Z_-]+")){
 			//component.getAttributes().get("label")
-			throwException("Alias must contain only 0-9,A-Z,a-z");
+			throwException("Alias must contain only 0-9,A-Z,a-z,-,_");
 		}
 	}
 
@@ -28,4 +28,10 @@ public class AliasValidator implements Validator {
 		throw new ValidatorException(message);
 	}
 
+	public static void main(String[] args) {
+		String strValue = "A1_-12-31_23dDDFFSDFfasdfsadffsdf";
+		if (!strValue.matches("[0-9a-zA-Z_-]+")){
+			System.out.println("ERROR");
+		}
+	}
 }
