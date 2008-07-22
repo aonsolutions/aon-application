@@ -22,10 +22,6 @@
 			<property-name>beanName</property-name>
 			<value>commercialSegment</value>
 		</managed-property>
-		<managed-property>
-			<property-name>defaultOrder</property-name>
-			<value>CommercialSegment_name</value>
-		</managed-property>		
 	</managed-bean>
 
 	<!-- ************ COMMERCIAL ACTIVITY ************** -->
@@ -45,10 +41,44 @@
 			<property-name>beanName</property-name>
 			<value>commercialActivity</value> 
 		</managed-property>
-		<managed-property>
-			<property-name>defaultOrder</property-name>
-			<value>CommercialActivity_name</value>
-		</managed-property>		
 	</managed-bean>
+
+	<!-- ************ COMMERCIAL TRACKING ************** -->
+	<managed-bean>
+		<managed-bean-name>commercialTracking</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.form.BasicController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.commercial.CommercialTracking</value>
+		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>commercialTracking</value> 
+		</managed-property>
+	</managed-bean>
+	
+	<!-- ************ TARGET ************** -->
+	<managed-bean>
+		<managed-bean-name>target</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.form.BasicController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.commercial.Target</value>
+		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>target</value> 
+		</managed-property>
+	</managed-bean>		
 	
 </faces-config>

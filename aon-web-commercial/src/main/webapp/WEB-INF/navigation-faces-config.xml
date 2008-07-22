@@ -23,6 +23,14 @@
 			<from-outcome>commercialActivity</from-outcome>
 			<to-view-id>/commercial/commercialActivity/grid.xhtml</to-view-id>
 		</navigation-case>
+		<navigation-case>
+			<from-outcome>commercialTracking</from-outcome>
+			<to-view-id>/commercial/commercialTracking/form.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>target</from-outcome>
+			<to-view-id>/commercial/target/form.xhtml</to-view-id>
+		</navigation-case>
 	</navigation-rule>
 	
 </faces-config>
