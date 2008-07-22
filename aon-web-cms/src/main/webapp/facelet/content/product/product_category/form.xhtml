@@ -84,6 +84,11 @@
 							styleClass="aon-finding-toolbar-item aon-icon-accept"
 							accesskey="#{bundle.aon_key_save}">
 							<aon:actionListener method="#{generator.onGenerateCurrentProductCategory}" />
+							<a4j:support 
+								event="onclick" 
+								actionListener="#{generator_status.onActivePoll}"  
+								reRender="poll,grid" 
+								onclick="javascript:Richfaces.showModalPanel('gen_log',{width:680, top:100});" />
 						</aon:commandButton>
 						 -->
 				    </aon:div>

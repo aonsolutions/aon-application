@@ -80,10 +80,14 @@
 						<aon:commandButton id="generate_articleCategory"
 							value="#{appBundle.aon_generate}" 
 							rendered="#{article_category.to!=null and cms.roleEditor}"
-							action="article_category_form"
 							styleClass="aon-finding-toolbar-item aon-icon-accept"
 							accesskey="#{bundle.aon_key_save}">
 							<aon:actionListener method="#{generator.onGenerateCurrentArticleCategory}" />
+							<a4j:support 
+								event="onclick" 
+								actionListener="#{generator_status.onActivePoll}"  
+								reRender="poll,grid" 
+								onclick="javascript:Richfaces.showModalPanel('gen_log',{width:680, top:100});" />
 						</aon:commandButton>	
 				    </aon:div>
 					
@@ -139,6 +143,11 @@
 			</aon:div>
 		
 		</aon:form>
+		
+		<ui:include src="/facelet/content/utils/gen_log_modal.xhtml">
+			<ui:param name="modalPanelName" value="gen_log" />
+		</ui:include>
+		
 	</ui:define>
 
 </ui:composition>
