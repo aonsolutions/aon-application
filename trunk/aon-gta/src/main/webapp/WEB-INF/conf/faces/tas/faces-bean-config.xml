@@ -643,7 +643,7 @@
 	<managed-bean>
 		<managed-bean-name>supportOrderTargetAddress</managed-bean-name>
 		<managed-bean-class>
-			com.code.aon.ui.form.LinesController
+			com.code.aon.ui.tas.controller.SupportOrderTargetAddressController
 		</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
@@ -673,7 +673,7 @@
 	<managed-bean>
 		<managed-bean-name>supportOrderTargetMedia</managed-bean-name>
 		<managed-bean-class>
-			com.code.aon.ui.form.LinesController
+			com.code.aon.ui.tas.controller.SupportOrderTargetMediaController
 		</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
