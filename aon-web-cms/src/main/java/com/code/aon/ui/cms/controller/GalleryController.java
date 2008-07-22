@@ -99,6 +99,7 @@ public abstract class GalleryController extends BasicController implements IGall
 			String upload_name = inputFile.getName();
 			upload_name = upload_name.replace('\\', '/');
 			upload_name = upload_name.substring(upload_name.lastIndexOf('/'));
+			upload_name = upload_name.replaceAll("[^A-Za-z0-9._-]+", "");
 			String fileName = File.separator+upload_name;
 			File file = new File( currentPath+File.separator+fileName);
 			if ( (maximumSize != -1) && (size > maximumSize) ) {
@@ -154,6 +155,12 @@ public abstract class GalleryController extends BasicController implements IGall
 		if (file.listFiles().length==0)
 			return true;
 		return false;
+	}
+	
+	public static void main(String[] args) {
+		String fileName = "fsadfs$$$·33a6756745._-gdfsg%%%";
+		fileName = fileName.replaceAll("[^A-Za-z0-9._-]+", "");
+		System.out.println(fileName);
 	}
 	
 }

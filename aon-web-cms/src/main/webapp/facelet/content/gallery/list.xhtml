@@ -90,7 +90,9 @@
 												<aon:div styleClass="aon-finding-toolbar-item-group">
 													<aon:inputText 
 														size="25" maxlength="30"
-														value="#{gallery.folderName}" />
+														value="#{gallery.folderName}">
+														<f:validator validatorId="AliasValidator" />
+													</aon:inputText>
 													<h:commandButton value="crear carpeta"
 														action="gallery_list"
 														actionListener="#{gallery.createFolder}"/>
