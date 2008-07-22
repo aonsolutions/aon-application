@@ -17,6 +17,7 @@ import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Parameter;
 
 import com.code.aon.commercial.dao.ICommercialAlias;
+import com.code.aon.commercial.enumeration.Advertising;
 import com.code.aon.common.ILookupObject;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.registry.IRegistry;
@@ -33,11 +34,17 @@ import com.code.aon.registry.Registry;
 @Table(name="target")
 public class Target implements ITransferObject, ILookupObject, ITaxInfo, IRegistry{
 	
+	private static final long serialVersionUID = -7492435795404962788L;
+
 	/** The id. */
 	private Integer id;
 	
 	/** The registry. */
 	private Registry registry;
+	
+	
+	/** The advertising. */
+	private Advertising advertising;
 
 	/**
 	 * The empty onstructor.
@@ -98,6 +105,25 @@ public class Target implements ITransferObject, ILookupObject, ITaxInfo, IRegist
 	 */
 	public void setRegistry(Registry registry) {
 		this.registry = registry;
+	}
+
+	/**
+	 * Gets the advertising.
+	 * 
+	 * @return the advertising
+	 */
+	@Column(nullable=false)
+	public Advertising getAdvertising() {
+		return advertising;
+	}
+
+	/**
+	 * Sets the advertising.
+	 * 
+	 * @param advertising the new advertising
+	 */
+	public void setAdvertising(Advertising advertising) {
+		this.advertising = advertising;
 	}
 
 	/**
