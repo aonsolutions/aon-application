@@ -5,6 +5,12 @@ import com.code.aon.common.dao.DAOConstantsEntry;
 import com.code.aon.commercial.Offer;
 import com.code.aon.commercial.OfferDetail;
 import com.code.aon.commercial.Target;
+import com.code.aon.commercial.CommercialActivity;
+import com.code.aon.commercial.CommercialSegment;
+import com.code.aon.commercial.CommercialTracking;
+import com.code.aon.commercial.TargetItem;
+import com.code.aon.commercial.TargetSegment;
+import com.code.aon.commercial.TargetSeller;
 
 /** 
 * Interface for holding entity properties constants.
@@ -193,6 +199,198 @@ public interface ICommercialAlias {
 	* Hibernate value: Target.withholding
 	*/
 	String  TARGET_WITHHOLDING = TARGET_ENTRY.getAliasNames()[6];
+
+
+
+	/** 
+	* DAOConstantsEntry for CommercialActivity entity.
+	*/ 
+	DAOConstantsEntry COMMERCIAL_ACTIVITY_ENTRY = DAOConstants.getDAOConstant(CommercialActivity.class);
+
+	/** 
+	* Alias value: CommercialActivity_id
+	* Hibernate value: CommercialActivity.id
+	*/
+	String  COMMERCIAL_ACTIVITY_ID = COMMERCIAL_ACTIVITY_ENTRY.getAliasNames()[0];
+
+	/** 
+	* Alias value: CommercialActivity_name
+	* Hibernate value: CommercialActivity.name
+	*/
+	String  COMMERCIAL_ACTIVITY_NAME = COMMERCIAL_ACTIVITY_ENTRY.getAliasNames()[1];
+
+
+
+	/** 
+	* DAOConstantsEntry for CommercialSegment entity.
+	*/ 
+	DAOConstantsEntry COMMERCIAL_SEGMENT_ENTRY = DAOConstants.getDAOConstant(CommercialSegment.class);
+
+	/** 
+	* Alias value: CommercialSegment_id
+	* Hibernate value: CommercialSegment.id
+	*/
+	String  COMMERCIAL_SEGMENT_ID = COMMERCIAL_SEGMENT_ENTRY.getAliasNames()[0];
+
+	/** 
+	* Alias value: CommercialSegment_name
+	* Hibernate value: CommercialSegment.name
+	*/
+	String  COMMERCIAL_SEGMENT_NAME = COMMERCIAL_SEGMENT_ENTRY.getAliasNames()[1];
+
+
+
+	/** 
+	* DAOConstantsEntry for CommercialTracking entity.
+	*/ 
+	DAOConstantsEntry COMMERCIAL_TRACKING_ENTRY = DAOConstants.getDAOConstant(CommercialTracking.class);
+
+	/** 
+	* Alias value: CommercialTracking_activity_id
+	* Hibernate value: CommercialTracking.activity.id
+	*/
+	String  COMMERCIAL_TRACKING_ACTIVITY_ID = COMMERCIAL_TRACKING_ENTRY.getAliasNames()[0];
+
+	/** 
+	* Alias value: CommercialTracking_comments
+	* Hibernate value: CommercialTracking.comments
+	*/
+	String  COMMERCIAL_TRACKING_COMMENTS = COMMERCIAL_TRACKING_ENTRY.getAliasNames()[1];
+
+	/** 
+	* Alias value: CommercialTracking_date
+	* Hibernate value: CommercialTracking.date
+	*/
+	String  COMMERCIAL_TRACKING_DATE = COMMERCIAL_TRACKING_ENTRY.getAliasNames()[2];
+
+	/** 
+	* Alias value: CommercialTracking_id
+	* Hibernate value: CommercialTracking.id
+	*/
+	String  COMMERCIAL_TRACKING_ID = COMMERCIAL_TRACKING_ENTRY.getAliasNames()[3];
+
+	/** 
+	* Alias value: CommercialTracking_next_id
+	* Hibernate value: CommercialTracking.next.id
+	*/
+	String  COMMERCIAL_TRACKING_NEXT_ID = COMMERCIAL_TRACKING_ENTRY.getAliasNames()[4];
+
+	/** 
+	* Alias value: CommercialTracking_seller_id
+	* Hibernate value: CommercialTracking.seller.id
+	*/
+	String  COMMERCIAL_TRACKING_SELLER_ID = COMMERCIAL_TRACKING_ENTRY.getAliasNames()[5];
+
+	/** 
+	* Alias value: CommercialTracking_status
+	* Hibernate value: CommercialTracking.status
+	*/
+	String  COMMERCIAL_TRACKING_STATUS = COMMERCIAL_TRACKING_ENTRY.getAliasNames()[6];
+
+	/** 
+	* Alias value: CommercialTracking_target_id
+	* Hibernate value: CommercialTracking.target.id
+	*/
+	String  COMMERCIAL_TRACKING_TARGET_ID = COMMERCIAL_TRACKING_ENTRY.getAliasNames()[7];
+
+
+
+	/** 
+	* DAOConstantsEntry for TargetItem entity.
+	*/ 
+	DAOConstantsEntry TARGET_ITEM_ENTRY = DAOConstants.getDAOConstant(TargetItem.class);
+
+	/** 
+	* Alias value: TargetItem_id
+	* Hibernate value: TargetItem.id
+	*/
+	String  TARGET_ITEM_ID = TARGET_ITEM_ENTRY.getAliasNames()[0];
+
+	/** 
+	* Alias value: TargetItem_item_id
+	* Hibernate value: TargetItem.item.id
+	*/
+	String  TARGET_ITEM_ITEM_ID = TARGET_ITEM_ENTRY.getAliasNames()[1];
+
+	/** 
+	* Alias value: TargetItem_status
+	* Hibernate value: TargetItem.status
+	*/
+	String  TARGET_ITEM_STATUS = TARGET_ITEM_ENTRY.getAliasNames()[2];
+
+	/** 
+	* Alias value: TargetItem_target_id
+	* Hibernate value: TargetItem.target.id
+	*/
+	String  TARGET_ITEM_TARGET_ID = TARGET_ITEM_ENTRY.getAliasNames()[3];
+
+
+
+	/** 
+	* DAOConstantsEntry for TargetSegment entity.
+	*/ 
+	DAOConstantsEntry TARGET_SEGMENT_ENTRY = DAOConstants.getDAOConstant(TargetSegment.class);
+
+	/** 
+	* Alias value: TargetSegment_id
+	* Hibernate value: TargetSegment.id
+	*/
+	String  TARGET_SEGMENT_ID = TARGET_SEGMENT_ENTRY.getAliasNames()[0];
+
+	/** 
+	* Alias value: TargetSegment_segment_id
+	* Hibernate value: TargetSegment.segment.id
+	*/
+	String  TARGET_SEGMENT_SEGMENT_ID = TARGET_SEGMENT_ENTRY.getAliasNames()[1];
+
+	/** 
+	* Alias value: TargetSegment_target_id
+	* Hibernate value: TargetSegment.target.id
+	*/
+	String  TARGET_SEGMENT_TARGET_ID = TARGET_SEGMENT_ENTRY.getAliasNames()[2];
+
+
+
+	/** 
+	* DAOConstantsEntry for TargetSeller entity.
+	*/ 
+	DAOConstantsEntry TARGET_SELLER_ENTRY = DAOConstants.getDAOConstant(TargetSeller.class);
+
+	/** 
+	* Alias value: TargetSeller_endDate
+	* Hibernate value: TargetSeller.endDate
+	*/
+	String  TARGET_SELLER_END_DATE = TARGET_SELLER_ENTRY.getAliasNames()[0];
+
+	/** 
+	* Alias value: TargetSeller_id
+	* Hibernate value: TargetSeller.id
+	*/
+	String  TARGET_SELLER_ID = TARGET_SELLER_ENTRY.getAliasNames()[1];
+
+	/** 
+	* Alias value: TargetSeller_seller_id
+	* Hibernate value: TargetSeller.seller.id
+	*/
+	String  TARGET_SELLER_SELLER_ID = TARGET_SELLER_ENTRY.getAliasNames()[2];
+
+	/** 
+	* Alias value: TargetSeller_startDate
+	* Hibernate value: TargetSeller.startDate
+	*/
+	String  TARGET_SELLER_START_DATE = TARGET_SELLER_ENTRY.getAliasNames()[3];
+
+	/** 
+	* Alias value: TargetSeller_status
+	* Hibernate value: TargetSeller.status
+	*/
+	String  TARGET_SELLER_STATUS = TARGET_SELLER_ENTRY.getAliasNames()[4];
+
+	/** 
+	* Alias value: TargetSeller_target_id
+	* Hibernate value: TargetSeller.target.id
+	*/
+	String  TARGET_SELLER_TARGET_ID = TARGET_SELLER_ENTRY.getAliasNames()[5];
 
 
 }
