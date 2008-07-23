@@ -52,6 +52,7 @@ public class ArticleDocumentController extends BasicI18nController {
 			String upload_name = inputFile.getName();
 			upload_name = upload_name.replace('\\', '/');
 			upload_name = upload_name.substring(upload_name.lastIndexOf('/'));
+			upload_name = upload_name.replaceAll("[^A-Za-z0-9._-]+", "");
 			String fileName = File.separator+"article_documents";
 			File file_dir = new File( currentPath+fileName);
 			if (!file_dir.exists()) {
