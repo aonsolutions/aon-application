@@ -30,6 +30,7 @@ public class Image implements ITransferObject {
 
 	@Transient
 	public String getThumb() {
+		relativePath = relativePath.replaceAll("[ +]", "%20");
 		return relativePath + ".thumbnail";
 	}
 
