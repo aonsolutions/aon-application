@@ -19,12 +19,10 @@ public class BackDoorPrincipal implements Serializable {
 
 	private AuthPrincipal principal;
 	private String password;
-	private int requestHashcode;
 
-	public BackDoorPrincipal(String principal, String password, int requestHashcode) {
+	public BackDoorPrincipal(String principal, String password) {
 		this.principal = new AuthPrincipal( principal );
 		this.password = password;
-		this.requestHashcode = requestHashcode;
 	}
 
 	/**
@@ -39,13 +37,6 @@ public class BackDoorPrincipal implements Serializable {
 	 */
 	public AuthPrincipal getPrincipal() {
 		return principal;
-	}
-
-	/**
-	 * @return the requestHashcode
-	 */
-	public int getRequestHashcode() {
-		return requestHashcode;
 	}
 
 }
