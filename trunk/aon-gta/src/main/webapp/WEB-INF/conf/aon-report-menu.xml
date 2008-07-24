@@ -41,6 +41,12 @@
     		target="_blank" 
 	    	contextRelative="true"
     		external="true" />	
+		<option id="productivity" 
+			key="aon_labour_productivity" 
+			descriptionKey="aon_labour_productivity_desc" 
+			ref="productivity">
+			<actionListener action="#{labourReport.onEditSearch}"/>
+		</option>		
 	</menu>
 	<menu ref="content" key="aon_purchase" descriptionKey="aon_purchase_desc">
 		<option key="Compras_Anuales.xml" 
