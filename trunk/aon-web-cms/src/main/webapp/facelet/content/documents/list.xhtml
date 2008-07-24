@@ -21,7 +21,7 @@
 					columnClasses="aon-finding-title,aon-finding-subtitle,aon-finding-toolbar">				
 				
 					<aon:div styleClass="aon-finding-title-internal">
-						<aon:outputText value="#{appBundle.gallery}"/>	  						
+						<aon:outputText value="#{appBundle.document_gallery}"/>	  						
 					</aon:div>					
 					
 					<!-- end toolbar navigation -->
@@ -101,13 +101,15 @@
 											</aon:panelGrid>
 										</aon:div>
 										<rich:dataList var="item" value="#{document.model}">	
-											<aon:panelGrid columns="3" cellpadding="5px" cellspacing="0px">
+											<aon:panelGrid columns="2" cellpadding="5px" cellspacing="0px">
 												<aon:outputText value="#{item.name}"/>	  						
-								                <aon:commandLink
-								                	action="document_list"
-								                    actionListener="#{document.onDeleteFile}"
-								                    value="Borrar">
-								        		</aon:commandLink>
+							            		<aon:div>
+													<aon:commandButton
+									                	action="document_list"
+									                    actionListener="#{document.onDeleteFile}"
+														image="/images/cms/icons/24x24-no.png">
+													</aon:commandButton> 
+							            		</aon:div>
 											</aon:panelGrid>
 										</rich:dataList>
 									</aon:panelGroup>
