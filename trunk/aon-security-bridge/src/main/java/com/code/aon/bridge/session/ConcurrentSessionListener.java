@@ -13,7 +13,6 @@ import com.code.aon.bridge.jmx.mbean.ConsoleAdminFactoryManager;
 import com.code.aon.bridge.jmx.mbean.IConsoleAdmin;
 import com.code.aon.bridge.jmx.mbean.IOperation;
 import com.code.aon.jaas.deployment.DeploymentException;
-import com.code.aon.jaas.valves.BackDoorAuthenticationValve;
 
 /**
  * @author Consulting & Development. Iñaki Ayerbe - 15/05/2007
@@ -41,7 +40,6 @@ public class ConcurrentSessionListener implements HttpSessionListener {
 			IConsoleAdmin console = ConsoleAdminFactoryManager.createConsoleAdmin();
 			String oname = console.getAonSessionManagerName();
 			console.invoke( oname, IOperation.REMOVE_SESSION, params, sig );
-			BackDoorAuthenticationValve.removePrincipal( se.getSession().getId() );
 			LOGGER.debug( "Session Destroyed: " + se.getSession().getId() );
 		} catch (DeploymentException e) {
 			LOGGER.fatal( e );
