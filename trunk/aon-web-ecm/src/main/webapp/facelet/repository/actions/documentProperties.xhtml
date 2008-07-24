@@ -2,32 +2,29 @@
 <html xmlns="http://www.w3.org/1999/xhtml"
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:f="http://java.sun.com/jsf/core" 
-	xmlns:aon="http://www.code.es/aon-rich-components">
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:rich="http://richfaces.org/rich">
 <body>
 <ui:composition>
 
 	<aon:panelGrid columns="2" dir="true">
 
-		<aon:outputLabel for="selected_document_name" value="#{appBundle.aon_cdr_name}" />
-		<aon:inputText id="selected_document_name" styleClass="aon-inputText-disabled" readonly="true"
-			value="#{manager.documents.selected.name}" size="80" />
+		<aon:outputLabel value="#{appBundle.aon_cdr_name}" />
+		<aon:outputText value="#{manager.documents.selected.name}" />
  
-		<aon:outputLabel for="selected_document_keywords"  value="#{appBundle.aon_cdr_keywords}" />
-		<aon:inputText id="selected_document_keywords" styleClass="aon-inputText-disabled" readonly="true"
-			value="#{manager.documents.selected.keywords}" size="80" />
+		<aon:outputLabel value="#{appBundle.aon_cdr_keywords}" />
+  		<rich:inplaceInput value="#{manager.documents.selected.keywords}"/>
 
-		<aon:outputLabel for="selected_document_nowords"  value="#{appBundle.aon_cdr_nowords}" />
-		<aon:inputText id="selected_document_nowords" styleClass="aon-inputText-disabled" readonly="true"
-			value="#{manager.documents.selected.nowords}" size="80" />
+		<aon:outputLabel value="#{appBundle.aon_cdr_nowords}" />
+  		<rich:inplaceInput value="#{manager.documents.selected.nowords}" />
 
-		<aon:outputLabel for="selected_document_category"  value="#{appBundle.aon_cdr_category}" />
-		<aon:selectOneMenu id="selected_document_category" value="#{manager.documents.selected.category}" styleClass="aon-inputText-disabled" readonly="true">
+		<aon:outputLabel value="#{appBundle.aon_cdr_category}" />
+		<aon:selectOneMenu value="#{manager.documents.selected.category}" styleClass="aon-inputText-disabled">
 			<f:selectItems value="#{search.parameters.categories}"/>
 		</aon:selectOneMenu>						
 	
-		<aon:outputLabel for="selected_document_language"  value="#{appBundle.aon_cdr_language}" />
-		<aon:selectOneMenu id="selected_document_language" styleClass="aon-inputText-disabled" readonly="true"
-				value="#{manager.documents.selected.language}" >
+		<aon:outputLabel value="#{appBundle.aon_cdr_language}" />
+		<aon:selectOneMenu styleClass="aon-inputText-disabled" value="#{manager.documents.selected.language}" >
 			<f:selectItems value="#{search.parameters.languages}"/>
 		</aon:selectOneMenu>						
 

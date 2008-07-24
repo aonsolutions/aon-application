@@ -125,6 +125,16 @@
 
     <!-- Filter Mappings -->
 
+	<!-- BackDoorAuthentication Filter -->
+	<filter>
+		<filter-name>BackDoorAuthenticationFilter</filter-name>
+		<filter-class>com.code.aon.bridge.session.BackDoorAuthenticationFilter</filter-class>
+	</filter>
+	<filter-mapping>
+		<filter-name>BackDoorAuthenticationFilter</filter-name>
+		<url-pattern>*.jsp</url-pattern>
+	</filter-mapping>
+
 	<!-- extension mapping for adding <script/>, <link/>, and other resource tags to JSF-pages  -->
 	<filter-mapping>
 	    <filter-name>MyFacesExtensionsFilter</filter-name>
@@ -144,16 +154,6 @@
 	</filter-mapping>
 	<filter-mapping>
 		<filter-name>MyFacesExtensionsFilter</filter-name>
-		<url-pattern>*.jsp</url-pattern>
-	</filter-mapping>
-
-	<!-- BackDoorAuthentication Filter -->
-	<filter>
-		<filter-name>BackDoorAuthenticationFilter</filter-name>
-		<filter-class>com.code.aon.bridge.session.BackDoorAuthenticationFilter</filter-class>
-	</filter>
-	<filter-mapping>
-		<filter-name>BackDoorAuthenticationFilter</filter-name>
 		<url-pattern>*.jsp</url-pattern>
 	</filter-mapping>
 
@@ -276,7 +276,12 @@
 			<web-resource-name>actions</web-resource-name>
 			<url-pattern>*.faces</url-pattern>
 		</web-resource-collection>
+		<web-resource-collection>
+			<web-resource-name>jsp</web-resource-name>
+			<url-pattern>*.jsp</url-pattern>
+		</web-resource-collection>
 		<auth-constraint>
+			<role-name>Manager</role-name>
 			<role-name>Acreedores</role-name>
 			<role-name>ApuntesCuotaLeasing</role-name>
 			<role-name>ApuntesCuotaPrestamo</role-name>
@@ -313,6 +318,7 @@
 		</form-login-config>
 	</login-config>
 
+	<security-role><role-name>Manager</role-name></security-role>
 	<security-role><role-name>Acreedores</role-name></security-role>
 	<security-role><role-name>ApuntesCuotaLeasing</role-name></security-role>
 	<security-role><role-name>ApuntesCuotaPrestamo</role-name></security-role>

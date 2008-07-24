@@ -10,9 +10,7 @@
 
 	<aon:div rendered="#{manager.documents.selected != null}" >
 
-		<aon:dataTable id="docVersionList" 
-				value="#{manager.documents.versionHistoryModel}" var="to"
-				 >
+		<aon:dataTable id="docVersionList" value="#{manager.documents.versionHistoryModel}" var="to">
 
 			<aon:column>
 				<f:facet name="header">

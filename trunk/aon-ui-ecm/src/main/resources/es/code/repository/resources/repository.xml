@@ -25,7 +25,7 @@
   <FileSystem class="org.apache.jackrabbit.core.fs.local.LocalFileSystem">
     <param name="path" value="${rep.home}/repository"/>
   </FileSystem>
-  <Security appName="aon-web-ecm">
+  <Security appName="aon-ldap">
 	<AccessManager class="es.code.cdr.security.AccessManagerImpl"></AccessManager>
   </Security>
 
@@ -50,25 +50,25 @@
     persistence of the workspace:
     class: FQN of class implementing PersistenceManager interface
     -->
-    <PersistenceManager
-        class="org.apache.jackrabbit.core.state.obj.ObjectPersistenceManager"/>
+    <PersistenceManager class="org.apache.jackrabbit.core.state.obj.ObjectPersistenceManager"/>
     <!--
     Search index and the file system it uses.
     -->
-    <SearchIndex class="org.apache.jackrabbit.core.query.lucene.SearchIndex">
-      <param name="path" value="${wsp.home}/index"/>
-      <param name="textFilterClasses" value="org.apache.jackrabbit.core.query.lucene.TextPlainTextFilter,org.apache.jackrabbit.core.query.MsExcelTextFilter,org.apache.jackrabbit.core.query.MsPowerPointTextFilter,org.apache.jackrabbit.core.query.MsWordTextFilter,org.apache.jackrabbit.core.query.PdfTextFilter,org.apache.jackrabbit.core.query.HTMLTextFilter,org.apache.jackrabbit.core.query.XMLTextFilter,org.apache.jackrabbit.core.query.RTFTextFilter,org.apache.jackrabbit.core.query.OpenOfficeTextFilter" />
+	<SearchIndex class="org.apache.jackrabbit.core.query.lucene.SearchIndex">
+		<param name="path" value="${wsp.home}/index"/>
 		<param name="useCompoundFile" value="true"/>
-        <param name="minMergeDocs" value="100"/>
-        <param name="volatileIdleTime" value="3"/>
-        <param name="maxMergeDocs" value="100000"/>
-        <param name="mergeFactor" value="10"/>
-        <param name="bufferSize" value="10"/>
-        <param name="cacheSize" value="1000"/>
-        <param name="forceConsistencyCheck" value="false"/>
-        <param name="autoRepair" value="true"/>
-        <param name="analyzer" value="org.apache.lucene.analysis.standard.StandardAnalyzer"/>
-    </SearchIndex>
+		<param name="minMergeDocs" value="100"/>
+		<param name="volatileIdleTime" value="3"/>
+		<param name="maxMergeDocs" value="100000"/>
+		<param name="mergeFactor" value="10"/>
+		<param name="bufferSize" value="10"/>
+		<param name="cacheSize" value="1000"/>
+		<param name="forceConsistencyCheck" value="false"/>
+		<param name="autoRepair" value="true"/>
+		<param name="analyzer" value="org.apache.lucene.analysis.standard.StandardAnalyzer"/>
+		<param name="respectDocumentOrder" value="false"/>
+		<param name="textFilterClasses" value=" org.apache.jackrabbit.core.query.lucene.TextPlainTextFilter, org.apache.jackrabbit.extractor.MsExcelTextExtractor, org.apache.jackrabbit.extractor.MsPowerPointTextExtractor, org.apache.jackrabbit.extractor.MsWordTextExtractor, org.apache.jackrabbit.extractor.PdfTextExtractor, org.apache.jackrabbit.extractor.HTMLTextExtractor, org.apache.jackrabbit.extractor.XMLTextExtractor, org.apache.jackrabbit.extractor.RTFTextExtractor, org.apache.jackrabbit.extractor.OpenOfficeTextExtractor"/>
+	</SearchIndex>
   </Workspace>
 
   <!--
@@ -89,8 +89,7 @@
     a 'normal' persistence manager, but this could change in future
     implementations.
     -->
-    <PersistenceManager
-        class="org.apache.jackrabbit.core.state.obj.ObjectPersistenceManager"/>
+    <PersistenceManager class="org.apache.jackrabbit.core.state.obj.ObjectPersistenceManager"/>
 
   </Versioning>
 

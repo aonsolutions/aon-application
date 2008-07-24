@@ -17,10 +17,12 @@
            	<h:outputText value="#{appBundle.aon_cdr_add_document}"/>
 			</f:facet>
 			<f:facet name="controls">
-				<aon:commandButton type="button" styleClass="aon-popupWindow-close" immediate="true">
-					<f:setPropertyActionListener target="#{manager.menu.showDocumentModalPanel}" value="#{false}" />
-					<rich:componentControl for="documentModalPanel" operation="hide" event="onclick" />
-				</aon:commandButton>
+				<a4j:form ajaxSingle="true">
+					<aon:commandButton type="button" styleClass="aon-popupWindow-close" immediate="true">
+						<f:setPropertyActionListener target="#{manager.menu.showDocumentModalPanel}" value="#{false}" />
+						<rich:componentControl for="documentModalPanel" operation="hide" event="onclick" />
+					</aon:commandButton>
+				</a4j:form>
 			</f:facet>
 			<aon:form id="documentModalPanelForm">
 				<rich:fileUpload id="upload" reRender="table"
@@ -30,8 +32,10 @@
 						uploadControlLabel="#{menuBundle.aon_ecm_uploading}"
 						fileUploadListener="#{manager.documents.upload.listener}"
 						maxFilesQuantity="#{manager.documents.upload.uploadsAvailable}"
-						immediateUpload="true" autoclear="true" listHeight="70px" listWidth="100%">
-					<a4j:support event="onuploadcomplete" reRender="info, closeModalPanel" />
+						immediateUpload="true" autoclear="true" 
+						listHeight="0px"
+						onupload="startUpload();" onuploadcanceled="endUpload();" onerror="endUpload();">
+					<a4j:support event="onuploadcomplete" reRender="info, closeModalPanel" oncomplete="endUpload();" />
 				</rich:fileUpload>
 				<aon:div styleClass="info-scroll">
 				<aon:div id="info">

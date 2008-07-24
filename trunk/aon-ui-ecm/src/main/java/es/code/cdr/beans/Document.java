@@ -17,7 +17,6 @@ import javax.jcr.version.Version;
 import javax.jcr.version.VersionHistory;
 import javax.jcr.version.VersionIterator;
 
-import org.apache.jackrabbit.value.DateValue;
 import org.apache.jackrabbit.value.LongValue;
 import org.apache.jackrabbit.value.StringValue;
 import org.slf4j.Logger;
@@ -36,12 +35,17 @@ import es.code.cdr.ui.util.JCRUtils;
 public class Document implements CDRNode {
 
 	private static final long serialVersionUID = 6783041184514068135L;
-
 	/** Document class Logger */
 	private static final Logger LOGGER = LoggerFactory.getLogger( Document.class.getName() );
 
 	/** Wrapped JCR node. */
-	transient Node node;
+	private transient Node node;
+	/** Document Node wrapped properties. */
+	transient String authorName;
+	transient String keywords;
+	transient String nowords;
+	transient String category;
+	transient String language;
 
 	/**
 	 * Constructs a <code>Document</code> object.
@@ -79,71 +83,43 @@ public class Document implements CDRNode {
 	 */
 	public void setEntryDate(Calendar calendar) throws RepositoryException {
 		String name = ContentRepository.getNodeName( CDRQName.AON_ENTRYDATE );
-		// Initializes time.
-		calendar.set( Calendar.HOUR_OF_DAY, 0 );
-		calendar.set( Calendar.MINUTE, 0 );
-		calendar.set( Calendar.SECOND, 0 );
-		node.setProperty( name, new DateValue( calendar ) );
+		node.setProperty( name, calendar );
 	}
 
-	/**
-	 * @param keywords
-	 */
-	public void setKeywords(String keywords) throws RepositoryException {
-		String name = ContentRepository.getNodeName( CDRQName.AON_KEYWORDS );
-		try {
-			node.setProperty( name, JCRUtils.string2array( keywords ) );
-		} catch (PathNotFoundException e) {
-			if ( LOGGER.isDebugEnabled() )
-				LOGGER.debug( e.getMessage(), e );
-		}
-	}
-
-	/**
-	 * @param nowords
-	 */
-	public void setNowords(String nowords) throws RepositoryException {
-		String name = ContentRepository.getNodeName( CDRQName.AON_NOWORDS );
-		try {
-			node.setProperty( name, JCRUtils.string2array( nowords ) );
-		} catch (PathNotFoundException e) {
-			if ( LOGGER.isDebugEnabled() )
-				LOGGER.debug( e.getMessage(), e );
-		}
-	}
-
-	/**
-	 * @param category
-	 */
-	public void setCategory(String category) throws RepositoryException {
-		String name = ContentRepository.getNodeName( CDRQName.AON_CATEGORY );
-		try {
-			node.setProperty( name, new StringValue( category ) );
-		} catch (PathNotFoundException e) {
-			if ( LOGGER.isDebugEnabled() )
-				LOGGER.debug( e.getMessage(), e );
-		}
-	}
-
-	/**
-	 * @param language
-	 */
-	public void setLanguage(String language) throws RepositoryException {
-		String name = ContentRepository.getNodeName( CDRQName.AON_LANGUAGE );
-		try {
-			node.setProperty( name, new StringValue( language ) );
-		} catch (PathNotFoundException e) {
-			if ( LOGGER.isDebugEnabled() )
-				LOGGER.debug( e.getMessage(), e );
-		}
-	}
-	
 	/**
 	 * @param roles
 	 */
 	public void setRoles(String[] roles) throws RepositoryException {
 		String name = ContentRepository.getNodeName( CDRQName.AON_AUTHREAD );
 		node.setProperty( name, roles );
+	}
+
+	/**
+	 * @param keywords
+	 */
+	public void setKeywords(String keywords) {
+		this.keywords = keywords;
+	}
+
+	/**
+	 * @param nowords
+	 */
+	public void setNowords(String nowords) {
+		this.nowords = nowords;
+	}
+
+	/**
+	 * @param category
+	 */
+	public void setCategory(String category) {
+		this.category = category;
+	}
+
+	/**
+	 * @param language
+	 */
+	public void setLanguage(String language) {
+		this.language = language;
 	}
 
 	/**
@@ -154,13 +130,23 @@ public class Document implements CDRNode {
 	 * @throws RepositoryException
 	 */
 	public void add(DocumentUpload dup) throws IOException, RepositoryException {
+		node.setProperty( ContentRepository.getNodeName( CDRQName.AON_KEYWORDS ), JCRUtils.string2array( dup.getKeywords() ) );
 		setKeywords( dup.getKeywords() );
+
+		node.setProperty( ContentRepository.getNodeName( CDRQName.AON_NOWORDS ), JCRUtils.string2array( dup.getNowords() ) );
 		setNowords( dup.getNowords() );
+
+		node.setProperty( ContentRepository.getNodeName( CDRQName.AON_CATEGORY ), new StringValue( dup.getCategory() ) );
 		setCategory( dup.getCategory() );
+
+		node.setProperty( ContentRepository.getNodeName( CDRQName.AON_LANGUAGE ), new StringValue( dup.getLanguage() ) );
 		setLanguage( dup.getLanguage() );
+
 		setRoles( new String[] {"Manager"} );
+
 		Node resNode = 
-			node.addNode( ContentRepository.getNodeName( CDRQName.AON_CONTENT ), ContentRepository.getNodeName( CDRQName.AON_RESOURCE ) );
+			node.addNode( ContentRepository.getNodeName( CDRQName.AON_CONTENT ), 
+					ContentRepository.getNodeName( CDRQName.AON_RESOURCE ) );
 		setContent( resNode, dup );
 	}
 
@@ -208,59 +194,83 @@ public class Document implements CDRNode {
 	}
 
 	/**
+	 * @return the authorName
+	 */
+	public String getAuthorName() {
+		if ( authorName == null ) {
+			try {
+				authorName = getAuthor();
+				authorName = authorName.substring( 0, authorName.indexOf('@') );
+			} catch (RepositoryException e) {
+				if ( LOGGER.isDebugEnabled() )
+					LOGGER.debug( e.getMessage(), e );
+			}
+		}
+		return authorName;
+	}
+
+	/**
 	 * @return the keywords
 	 */
 	public String getKeywords() throws RepositoryException {
-		String name = ContentRepository.getNodeName( CDRQName.AON_KEYWORDS );
-		try {
-			return JCRUtils.value2String ( node.getProperty( name ).getValues() );
-		} catch (PathNotFoundException e) {
-			if ( LOGGER.isDebugEnabled() )
-				LOGGER.debug( e.getMessage(), e );
+		if ( keywords == null ) {
+			String name = ContentRepository.getNodeName( CDRQName.AON_KEYWORDS );
+			try {
+				keywords = JCRUtils.value2String ( node.getProperty( name ).getValues() );
+			} catch (PathNotFoundException e) {
+				if ( LOGGER.isDebugEnabled() )
+					LOGGER.debug( e.getMessage(), e );
+			}
 		}
-		return null;
+		return keywords;
 	}
 
 	/**
 	 * @return the nowords
 	 */
 	public String getNowords() throws RepositoryException {
-		String name = ContentRepository.getNodeName( CDRQName.AON_NOWORDS );
-		try {
-			return JCRUtils.value2String ( node.getProperty( name ).getValues() );
-		} catch (PathNotFoundException e) {
-			if ( LOGGER.isDebugEnabled() )
-				LOGGER.debug( e.getMessage(), e );
+		if ( nowords == null ) {
+			String name = ContentRepository.getNodeName( CDRQName.AON_NOWORDS );
+			try {
+				nowords = JCRUtils.value2String ( node.getProperty( name ).getValues() );
+			} catch (PathNotFoundException e) {
+				if ( LOGGER.isDebugEnabled() )
+					LOGGER.debug( e.getMessage(), e );
+			}
 		}
-		return null;
-}
+		return nowords;
+	}
 
 	/**
 	 * @return the category
 	 */
 	public String getCategory() throws RepositoryException {
-		String name = ContentRepository.getNodeName( CDRQName.AON_CATEGORY );
-		try {
-			return node.getProperty( name ).getString();
-		} catch (PathNotFoundException e) {
-			if ( LOGGER.isDebugEnabled() )
-				LOGGER.debug( e.getMessage(), e );
+		if ( category == null ) {
+			String name = ContentRepository.getNodeName( CDRQName.AON_CATEGORY );
+			try {
+				category = node.getProperty( name ).getString();
+			} catch (PathNotFoundException e) {
+				if ( LOGGER.isDebugEnabled() )
+					LOGGER.debug( e.getMessage(), e );
+			}
 		}
-		return null;
+		return category;
 	}
 
 	/**
 	 * @return the language
 	 */
 	public String getLanguage() throws RepositoryException {
-		String name = ContentRepository.getNodeName( CDRQName.AON_LANGUAGE );
-		try {
-			return node.getProperty( name ).getString();
-		} catch (PathNotFoundException e) {
-			if ( LOGGER.isDebugEnabled() )
-				LOGGER.debug( e.getMessage(), e );
+		if ( language == null ) {
+			String name = ContentRepository.getNodeName( CDRQName.AON_LANGUAGE );
+			try {
+				language = node.getProperty( name ).getString();
+			} catch (PathNotFoundException e) {
+				if ( LOGGER.isDebugEnabled() )
+					LOGGER.debug( e.getMessage(), e );
+			}
 		}
-		return null;
+		return language;
 	}
 
 	/**
@@ -347,6 +357,10 @@ public class Document implements CDRNode {
 	}
 
 	public void save() throws RepositoryException {
+		node.setProperty( ContentRepository.getNodeName( CDRQName.AON_KEYWORDS ), JCRUtils.string2array( getKeywords() ) );
+		node.setProperty( ContentRepository.getNodeName( CDRQName.AON_NOWORDS ), JCRUtils.string2array( getNowords() ) );
+		node.setProperty( ContentRepository.getNodeName( CDRQName.AON_CATEGORY ), new StringValue( getCategory() ) );
+		node.setProperty( ContentRepository.getNodeName( CDRQName.AON_LANGUAGE ), new StringValue( getLanguage() ) );
 		node.save();
 	}
 

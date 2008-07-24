@@ -16,6 +16,7 @@ import javax.faces.model.SelectItem;
 
 import es.code.cdr.IConstants;
 import es.code.cdr.beans.CDRNode;
+import es.code.cdr.ui.util.CDRUtils;
 import es.code.repository.util.Path;
 
 /**
@@ -32,8 +33,9 @@ public class QueryParameters extends AbstractWidget {
 	String nowords;
 	String phrase;
 
-	String language;
+	String keywords;
 	String category;
+	String language;
 	String fileformat;
 	Date publishDate;
 
@@ -134,6 +136,20 @@ public class QueryParameters extends AbstractWidget {
 	}
 
 	/**
+	 * @return the keywords
+	 */
+	public String getKeywords() {
+		return keywords;
+	}
+
+	/**
+	 * @param keywords the keywords to set
+	 */
+	public void setKeywords(String keywords) {
+		this.keywords = keywords;
+	}
+
+	/**
 	 * @return the fileformat
 	 */
 	public String getFileformat() {
@@ -196,8 +212,7 @@ public class QueryParameters extends AbstractWidget {
      */
     public SelectItem[] getLanguages() {
     	if ( LANGUAGES == null ) {
-    		FacesContext ctx = FacesContext.getCurrentInstance();
-	    	Locale locale = ctx.getExternalContext().getRequestLocale();
+    		Locale locale = CDRUtils.getCurrentLocale( FacesContext.getCurrentInstance() );
 	    	ResourceBundle bundle = ResourceBundle.getBundle( IConstants.CDR_BUNDLE_NAME, locale );
     		LANGUAGES = 
     			new SelectItem[]{
@@ -216,8 +231,7 @@ public class QueryParameters extends AbstractWidget {
      */
     public SelectItem[] getCategories() {
     	if ( CATEGORIES == null ) {
-    		FacesContext ctx = FacesContext.getCurrentInstance();
-	    	Locale locale = ctx.getExternalContext().getRequestLocale();
+    		Locale locale = CDRUtils.getCurrentLocale( FacesContext.getCurrentInstance() );
 	    	ResourceBundle bundle = ResourceBundle.getBundle( IConstants.CDR_BUNDLE_NAME, locale );
 	    	Properties categories = new Properties();
 			try {

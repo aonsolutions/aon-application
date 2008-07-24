@@ -23,6 +23,8 @@ public interface IProvider {
     static final String JAAS_CONFIG_FILE_KEY = "java.security.auth.login.config";
     /** Role mappings file key. */
     static final String PROFILE_MAPPINGS_FILE_KEY = "java.security.auth.PROFILE.mapping";
+	/** Repository connection application context. */
+    static final String REPOSITORY_CONNECTION_CONTEXT = "connection.jcr.context";
 	/** Repository connection user. */
     static final String REPOSITORY_CONNECTION_USER = "connection.jcr.user";
     /** Repository connection password.*/
@@ -136,4 +138,14 @@ public interface IProvider {
      * @throws RepositoryException if any exception occours during registration
      */
     boolean registerWorkspace(String workspaceName) throws RepositoryException;
+
+    /**
+     * Register a new workspace in the current repository using passed by paramenter credentials
+     * @param workspaceName workspace name
+     * @param sc credentials
+     * @return <code>true</code> true if the workspace is registered now of <code>false</code> if it was already
+     * registered
+     * @throws RepositoryException if any exception occours during registration
+     */
+    boolean registerWorkspace(SimpleCredentials sc, String workspaceName) throws RepositoryException;
 }

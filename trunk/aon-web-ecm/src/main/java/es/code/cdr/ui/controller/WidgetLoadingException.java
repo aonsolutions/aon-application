@@ -9,6 +9,8 @@ package es.code.cdr.ui.controller;
  */
 public class WidgetLoadingException extends Exception {
 
+	private static final long serialVersionUID = 2131812171783326927L;
+
 	/**
 	 * @param cause
 	 */

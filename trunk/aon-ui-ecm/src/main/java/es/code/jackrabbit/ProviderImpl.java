@@ -11,7 +11,6 @@ import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.Properties;
 
-import javax.jcr.LoginException;
 import javax.jcr.NamespaceException;
 import javax.jcr.PathNotFoundException;
 import javax.jcr.Repository;
@@ -41,13 +40,12 @@ import org.slf4j.LoggerFactory;
 
 import com.code.aon.jaas.client.ast.IDomain;
 
-import es.code.repository.util.Path;
-
 import es.code.cdr.CDRQName;
 import es.code.cdr.core.ContentRepository;
 import es.code.repository.IProvider;
 import es.code.repository.RepositoryInfo;
 import es.code.repository.RepositoryNotInitializedException;
+import es.code.repository.util.Path;
 
 /**
  * @author Consulting & Development. Iñaki Ayerbe - 19/06/2007
@@ -147,8 +145,7 @@ public class ProviderImpl implements IProvider {
 	}
 
 	@Override
-	public Session getSessionInstance(SimpleCredentials sc, String workspaceId) 
-				throws LoginException, RepositoryException {
+	public Session getSessionInstance(SimpleCredentials sc, String workspaceId) throws RepositoryException {
 		String wsId = getDefaultWorkspaceName( workspaceId );
 		Session jcrSession = this.repository.login( sc, wsId );
 		InputStream xml = getNodeTypeDefinition( StringUtils.EMPTY );
@@ -202,27 +199,33 @@ public class ProviderImpl implements IProvider {
 
 	@Override
 	public void registerNodeTypes(InputStream xmlStream) throws RepositoryException {
+		String user = this.ri.getProps().getProperty( IProvider.REPOSITORY_CONNECTION_USER ) 
+					+ this.ri.getProps().getProperty( IProvider.REPOSITORY_CONNECTION_CONTEXT );
 		SimpleCredentials credentials = 
-			new SimpleCredentials( this.ri.getProps().getProperty( IProvider.REPOSITORY_CONNECTION_USER )
-								, this.ri.getProps().getProperty( IProvider.REPOSITORY_CONNECTION_PSWD ).toCharArray() );
+			new SimpleCredentials( user, this.ri.getProps().getProperty( IProvider.REPOSITORY_CONNECTION_PSWD ).toCharArray() );
 		Session jcrSession = this.repository.login(credentials);
 		registerNodeTypes( jcrSession, xmlStream );
 	}
 
 	@Override
 	public boolean registerWorkspace(String workspaceName) throws RepositoryException {
-		// check if workspace already exists
+		String user = this.ri.getProps().getProperty( IProvider.REPOSITORY_CONNECTION_USER ) 
+					+ this.ri.getProps().getProperty( IProvider.REPOSITORY_CONNECTION_CONTEXT );
 		SimpleCredentials credentials = 
-				new SimpleCredentials( this.ri.getProps().getProperty( IProvider.REPOSITORY_CONNECTION_USER )
-									, this.ri.getProps().getProperty( IProvider.REPOSITORY_CONNECTION_PSWD ).toCharArray() );
-		Session jcrSession = this.repository.login(credentials);
+				new SimpleCredentials( user, this.ri.getProps().getProperty( IProvider.REPOSITORY_CONNECTION_PSWD ).toCharArray() );
+		return registerWorkspace( credentials, workspaceName );
+	}
+
+	@Override
+	public boolean registerWorkspace(SimpleCredentials credentials, String workspaceName) throws RepositoryException {
 		try {
+			Session jcrSession = this.repository.login( credentials );
 			String wsId = getDefaultWorkspaceName( workspaceName );
 			WorkspaceImpl defaultWorkspace = (WorkspaceImpl) jcrSession.getWorkspace();
 			String[] workspaceNames = defaultWorkspace.getAccessibleWorkspaceNames();
 
 			boolean alreadyExists = ArrayUtils.contains( workspaceNames, wsId );
-			if (!alreadyExists) {
+			if ( !alreadyExists ) { // check if workspace already exists
 				defaultWorkspace.createWorkspace( wsId );
 			}
 			jcrSession.logout();
@@ -232,8 +235,6 @@ public class ProviderImpl implements IProvider {
 			// application server like at the moment in Jackrabbit
 			if (LOGGER.isDebugEnabled())
 				LOGGER.debug("Unable to register workspace, will continue", e);
-		} catch (Throwable t) {
-			LOGGER.error("Unable to register workspace, will continue", t);
 		}
 		return false;
 	}
@@ -242,14 +243,17 @@ public class ProviderImpl implements IProvider {
      * Checks if all workspaces are present according to the , 
      * creates any missing workspace
      * 
-	 * @throws RepositoryException
      */
-    private void validateWorkspaces() throws RepositoryException {
-        Iterator<String> names = this.ri.getWorkspaces().iterator();
-        while ( names.hasNext() ) {
-            registerWorkspace( names.next() );
-        }
-    }
+	private void validateWorkspaces() {
+		Iterator<String> names = this.ri.getWorkspaces().iterator();
+		while ( names.hasNext() ) {
+			try {
+				registerWorkspace( names.next() );
+			} catch (RepositoryException e) {
+				LOGGER.error( "Unable to register, " + e.getMessage() + " will continue" );
+			}
+		}
+	}
 
     /**
      * Node type registration is entirely dependent on the implementation. 

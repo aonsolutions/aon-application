@@ -182,30 +182,6 @@
 		<dispatcher>ERROR</dispatcher>
 	</filter-mapping>
 
-	<!-- BackDoorAuthentication Filter -->
-	<filter>
-		<filter-name>BackDoorAuthenticationFilter</filter-name>
-		<filter-class>com.code.aon.bridge.session.BackDoorAuthenticationFilter</filter-class>
-	</filter>
-	<filter-mapping>
-		<filter-name>BackDoorAuthenticationFilter</filter-name>
-		<url-pattern>*.jsp</url-pattern>
-	</filter-mapping>
-	
-	<!-- Deploy Servlet 
-		<servlet>
-		<servlet-name>autodeploy</servlet-name>
-		<servlet-class>
-		com.code.aon.bridge.servlet.DeployServlet
-		</servlet-class>
-		<init-param>
-		<param-name>name</param-name>
-		<param-value>aon-web-cms.war</param-value>
-		</init-param>
-		<load-on-startup>1</load-on-startup>
-		</servlet>
-	-->
-
 	<!-- CID image Servlet -->
 	<servlet>
 		<servlet-name>CidServlet</servlet-name>
@@ -268,6 +244,10 @@
 		<web-resource-collection>
 			<web-resource-name>jsf</web-resource-name>
 			<url-pattern>*.jsf</url-pattern>
+		</web-resource-collection>
+		<web-resource-collection>
+			<web-resource-name>jsp</web-resource-name>
+			<url-pattern>*.jsp</url-pattern>
 		</web-resource-collection>
 		<auth-constraint>
 			<role-name>Manager</role-name>

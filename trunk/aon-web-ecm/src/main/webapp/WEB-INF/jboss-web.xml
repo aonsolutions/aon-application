@@ -10,11 +10,12 @@
 		</loader-repository>
 	</class-loading>
 
-	<security-domain flushOnSessionInvalidation="true">java:/jaas/aon-web-ecm</security-domain>
+	<use-cookies>false</use-cookies>
+	<security-domain flushOnSessionInvalidation="true">java:/jaas/aon-ldap</security-domain>
 
 	<!-- The context-root element specifies the context root of a web
 	application. It may be given here for standalone wars.
 	-->
-	<context-root>/aon-web-ecm</context-root>
+	<context-root>/aon-ecm</context-root>
 	
 </jboss-web>

@@ -11,9 +11,11 @@ import javax.faces.model.SelectItem;
 
 import org.apache.jackrabbit.core.security.AccessManager;
 
+import es.code.cdr.IConstants;
 import es.code.cdr.beans.Permission;
 import es.code.cdr.security.PermissionsManager;
 import es.code.cdr.ui.util.CDRDataModel;
+import es.code.cdr.ui.util.CDRUtils;
 
 /**
  * @author Consulting & Development. Iñaki Ayerbe - 19/12/2007
@@ -39,9 +41,8 @@ public class Permissions implements Serializable {
 
 	public ResourceBundle getBundle() {
 		if ( bundle == null ) {
-			FacesContext ctx = FacesContext.getCurrentInstance();
-			Locale locale = ctx.getExternalContext().getRequestLocale();
-			bundle = ResourceBundle.getBundle( "es.code.cdr.ui.i18n.messages", locale );
+    		Locale locale = CDRUtils.getCurrentLocale( FacesContext.getCurrentInstance() );
+			bundle = ResourceBundle.getBundle( IConstants.CDR_BUNDLE_NAME, locale );
 		}
 		return bundle;
 	}

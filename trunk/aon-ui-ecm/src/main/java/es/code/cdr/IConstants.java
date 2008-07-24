@@ -26,6 +26,7 @@ public interface IConstants {
 	static final String EMPTY_STRING = "";
 	static final String SEMICOLON = ":";
 	static final String UNKNOWN = "unknown";
+	static final String SINGLE_QUOTATION_MARK = "'";
 
 	static String 
 		JCR_ROOTVERSION = QName.NS_JCR_PREFIX + SEMICOLON + QName.JCR_ROOTVERSION.getLocalName(),

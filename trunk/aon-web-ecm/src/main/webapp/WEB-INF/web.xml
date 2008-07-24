@@ -6,6 +6,10 @@
 	xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee 
 						http://java.sun.com/xml/ns/j2ee/web-app_2_4.xsd">
 
+	<session-config>
+		<session-timeout>33</session-timeout>
+	</session-config>
+
 	<context-param>
 		<param-name>javax.faces.CONFIG_FILES</param-name>
 		<param-value>
@@ -28,10 +32,6 @@
 		<param-value>.xhtml</param-value>
 	</context-param>
 
-	<context-param>
-		<param-name>com.sun.faces.serializationProvider</param-name>
-		<param-value>org.jboss.web.jsf.integration.serialization.JBossSerializationProvider</param-value>
-	</context-param> 
 
 	<context-param>
 		<description>
@@ -49,6 +49,16 @@
 	</context-param>
 
 	<context-param>
+		<param-name>facelets.REFRESH_PERIOD</param-name>
+		<param-value>-1</param-value>
+	</context-param>
+
+	<context-param>
+		<param-name>facelets.BUFFER_SIZE</param-name>
+		<param-value>500000</param-value>
+	</context-param>
+
+	<context-param>
 		<description>
 			Set this flag to true if you want the JavaServer Faces
 			Reference Implementation to validate the XML in your
@@ -56,7 +66,7 @@
 			false.
 		</description>
 		<param-name>com.sun.faces.validateXml</param-name>
-		<param-value>true</param-value>
+		<param-value>false</param-value>
 	</context-param>
 
 	<context-param>
@@ -68,31 +78,78 @@
 			created. Default value is false.
 		</description>
 		<param-name>com.sun.faces.verifyObjects</param-name>
-		<param-value>true</param-value>
+		<param-value>false</param-value>
 	</context-param>
 
 	<context-param>
 		<param-name>com.sun.faces.displayConfiguration</param-name>
 		<param-value>true</param-value>
 	</context-param>
+	
+	<context-param>
+		<param-name>com.sun.faces.responseBufferSize</param-name>
+		<param-value>500000</param-value>
+	</context-param>
 
 	<context-param>
-  		<param-name>org.ajax4jsf.VIEW_HANDLERS</param-name>
-  		<param-value>com.sun.facelets.FaceletViewHandler</param-value>
- 	</context-param>
+		<param-name>com.sun.faces.numberOfViewsInSession</param-name>
+		<param-value>5</param-value>
+	</context-param>
+
+	<context-param>
+		<param-name>com.sun.faces.numberOfLogicalViews</param-name>
+		<param-value>10</param-value>
+	</context-param>	
+	
+	<context-param>
+		<param-name>org.ajax4jsf.VIEW_HANDLERS</param-name>
+		<param-value>com.sun.facelets.FaceletViewHandler</param-value>
+	</context-param>
+	
+	<context-param>
+		<description>Define que los recursos no expiren en 100 dias</description>
+		<param-name>org.ajax4jsf.DEFAULT_EXPIRE</param-name>
+		<param-value>8640000</param-value>
+	</context-param>
+	
+	<context-param>
+		<param-name>org.ajax4jsf.RESOURCE_URI_PREFIX</param-name>
+		<param-value>../aon-desktop/richFaces3.2.1/</param-value>
+	</context-param>
 	
 	<context-param>
 		<param-name>org.richfaces.SKIN</param-name>
 		<param-value>aon</param-value>
 	</context-param>
 
+	<context-param>
+		<param-name>com.sun.faces.serializationProvider</param-name>
+		<param-value>org.jboss.web.jsf.integration.serialization.JBossSerializationProvider</param-value>
+	</context-param> 
+
 	<listener>
 		<listener-class>org.jboss.web.tomcat.service.session.NonSerializableAttributeTester</listener-class>
 	</listener>
 
+	<!-- Listener, initializes the application. -->
 	<listener>
 		<listener-class>es.code.cdr.ui.servlets.CDRInitializer</listener-class>
 	</listener>
+
+	<!-- Listener, that enables Concurrent Sessions per User. -->
+	<listener>
+		<listener-class>com.code.aon.bridge.session.ConcurrentSessionListener</listener-class>
+	</listener>
+
+	<!-- Sessions Filter -->
+	<filter>
+		<filter-name>SessionFilter</filter-name>
+		<filter-class>com.code.aon.bridge.session.SessionFilter</filter-class>
+	</filter>
+	<filter-mapping>
+		<filter-name>SessionFilter</filter-name>
+		<url-pattern>*.jsp</url-pattern>
+	</filter-mapping>
 
 	<!-- Sessions Filter -->
 	<filter>
@@ -103,14 +160,32 @@
 	   <filter-name>LoginSessionFilter</filter-name>
 		<url-pattern>*.jsp</url-pattern>
 	</filter-mapping>
-	<!-- BackDoorAuthentication Filter -->
+
+	<!-- Rich Faces Ajax Filter -->
 	<filter>
-		<filter-name>BackDoorAuthenticationFilter</filter-name>
-		<filter-class>com.code.aon.bridge.session.BackDoorAuthenticationFilter</filter-class>
+		<display-name>RichFaces Filter</display-name>
+		<filter-name>richfaces</filter-name>
+		<filter-class>org.ajax4jsf.Filter</filter-class>
+		<init-param>
+			<param-name>createTempFiles</param-name>
+			<param-value>false</param-value>
+		</init-param>
+		<init-param> 
+			<param-name>maxRequestSize</param-name>
+			<param-value>33554432</param-value>
+		</init-param>
+		<init-param>
+			<param-name>forceparser</param-name>
+			<param-value>false</param-value>
+		</init-param>				
 	</filter>
 	<filter-mapping>
-		<filter-name>BackDoorAuthenticationFilter</filter-name>
-		<url-pattern>/auth/*</url-pattern>
+		<filter-name>richfaces</filter-name>
+		<servlet-name>Faces Servlet</servlet-name>
+		<dispatcher>REQUEST</dispatcher>
+		<dispatcher>FORWARD</dispatcher>
+		<dispatcher>INCLUDE</dispatcher>
+		<dispatcher>ERROR</dispatcher>
 	</filter-mapping>
 
 	<!-- Faces Servlet -->
@@ -127,28 +202,6 @@
 		<servlet-name>Faces Servlet</servlet-name>
 		<url-pattern>*.jspx</url-pattern>
 	</servlet-mapping>
-
-	<filter>
-		<display-name>RichFaces Filter</display-name>
-		<filter-name>richfaces</filter-name>
-		<filter-class>org.ajax4jsf.Filter</filter-class>
-		<init-param>
-			<param-name>createTempFiles</param-name>
-			<param-value>false</param-value>
-		</init-param>
-		<init-param> 
-			<param-name>maxRequestSize</param-name>
-			<param-value>12582912</param-value>
-		</init-param>
-	</filter>
-	<filter-mapping>
-		<filter-name>richfaces</filter-name>
-		<servlet-name>Faces Servlet</servlet-name>
-		<dispatcher>REQUEST</dispatcher>
-		<dispatcher>FORWARD</dispatcher>
-		<dispatcher>INCLUDE</dispatcher>
-		<dispatcher>ERROR</dispatcher>
-	</filter-mapping>
 
 	<!-- Resource Servlet -->
 	<servlet>
@@ -172,12 +225,12 @@
 			<url-pattern>/facelet/*</url-pattern>
 		</web-resource-collection>
 		<web-resource-collection>
-			<web-resource-name>jsp</web-resource-name>
-			<url-pattern>/index.jsp</url-pattern>
-		</web-resource-collection>
-		<web-resource-collection>
 			<web-resource-name>jsf</web-resource-name>
 			<url-pattern>*.jsf</url-pattern>
+		</web-resource-collection>
+		<web-resource-collection>
+			<web-resource-name>jsp</web-resource-name>
+			<url-pattern>*.jsp</url-pattern>
 		</web-resource-collection>
 		<auth-constraint>
 			<role-name>Manager</role-name>

@@ -10,7 +10,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.code.aon</groupId>
 	<artifactId>aon.ui.ecm</artifactId>
-	<version>1.0.0</version>
+	<version>1.2.0</version>
 	<name>AON ECM</name>
 	<description>Enterprise Content Management</description>
 	<dependencies>
@@ -71,10 +71,6 @@
 					<artifactId>derby</artifactId>
 				</exclusion>
 				<exclusion>
-					<groupId>nekohtml</groupId>
-					<artifactId>nekohtml</artifactId>
-				</exclusion>
-				<exclusion>
 					<groupId>xerces</groupId>
 					<artifactId>xercesImpl</artifactId>
 				</exclusion>
@@ -83,8 +79,8 @@
 					<artifactId>slf4j-api</artifactId>
 				</exclusion>
 				<exclusion>
-				    <groupId>pdfbox</groupId>
-				    <artifactId>pdfbox</artifactId>
+					<groupId>poi</groupId>
+					<artifactId>poi</artifactId>
 				</exclusion>
 			</exclusions>
 		</dependency> 
@@ -95,10 +91,16 @@
 			<scope>compile</scope>
 			<exclusions>
 				<exclusion>
-					<groupId>nekohtml</groupId>
-					<artifactId>nekohtml</artifactId>
+					<groupId>poi</groupId>
+					<artifactId>poi</artifactId>
 				</exclusion>
 			</exclusions>
+		</dependency>
+
+		<dependency>
+			<groupId>poi</groupId>
+			<artifactId>poi</artifactId>
+			<version>3.1-FINAL</version>
 		</dependency>
 
 		<dependency>
@@ -122,15 +124,22 @@
 
 		<dependency>
 			<groupId>com.code.aon</groupId>
-			<artifactId>aon.security.bridge</artifactId>
-			<version>1.2.7</version>
-			<scope>compile</scope>
+			<artifactId>aon.security</artifactId>
+			<version>1.4.0</version>
+			<scope>provided</scope>
 		</dependency>
 
 		<dependency>
 			<groupId>com.code.aon</groupId>
-			<artifactId>aon.security</artifactId>
-			<version>1.2.7</version>
+			<artifactId>aon.security.bridge</artifactId>
+			<version>1.5.0</version>
+			<scope>compile</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.apache.tomcat</groupId>
+			<artifactId>coyote</artifactId>
+			<version>6.0.13</version>
 			<scope>provided</scope>
 		</dependency>
 

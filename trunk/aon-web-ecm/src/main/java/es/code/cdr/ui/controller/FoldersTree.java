@@ -116,13 +116,17 @@ public class FoldersTree implements Widget {
 	}
 
 	/**
-	 * Resets folder node name.  
+	 * Initializes folders tree.  
 	 * 
 	 * @param event
 	 * @throws RepositoryException 
 	 */
-	public void reset(ActionEvent event) throws RepositoryException {
-		setName( null );
+	public void reset(ActionEvent event) {
+		try {
+			setRootTreeNodeSelected();
+		} catch (WidgetLoadingException e) {
+			CDRUtils.addErrorMessage( e.getMessage() );
+		}
 	}
 
 	/**
@@ -149,7 +153,7 @@ public class FoldersTree implements Widget {
 			TreeNodeImpl newNode = new TreeNodeImpl();
 			newNode.setData( newFolder );
 			selected.addChild( newFolder.getNode().toString(), newNode );
-			setSelected( newNode );
+//			setSelected( newNode );
 		} catch (AccessDeniedException e) {
 			CDRUtils.addWarningMessage( e.getMessage() );
 			selectedNode.refresh( false );
@@ -193,6 +197,7 @@ public class FoldersTree implements Widget {
 	 */
 	public void nodeSelected(NodeSelectedEvent event) throws WidgetLoadingException {
 		UITree tree = (UITree) event.getComponent();
+		System.out.println( tree.getRowIndex() + " " + tree.getRowKey() + " " + tree.getRowKey().getClass() );
 		setSelected( tree.getTreeNode() );
 	}
 

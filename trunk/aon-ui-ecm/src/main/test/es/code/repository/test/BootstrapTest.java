@@ -1,42 +1,24 @@
 package es.code.repository.test;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.LineNumberReader;
-import java.net.URL;
-import java.util.Calendar;
 import java.util.Iterator;
 import java.util.Properties;
 
-import es.code.cdr.CDRQName;
-import es.code.cdr.beans.Document;
-import es.code.cdr.beans.Folder;
-import es.code.cdr.core.ContentRepository;
-import es.code.cdr.core.InvalidStatementException;
-import es.code.cdr.core.QueryManager;
-import es.code.cdr.core.QueryParameters;
-import es.code.repository.IProvider;
-
-import javax.jcr.Node;
-import javax.jcr.NodeIterator;
-import javax.jcr.PathNotFoundException;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
-import javax.jcr.SimpleCredentials;
 import javax.jcr.nodetype.NodeType;
-import javax.jcr.query.Query;
-import javax.jcr.query.QueryResult;
+
+import junit.framework.TestCase;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.jackrabbit.name.QName;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import es.code.cdr.core.ContentRepository;
+import es.code.cdr.ui.util.CDRUtils;
+import es.code.repository.IProvider;
 import es.code.repository.util.Path;
-
-import junit.framework.TestCase;
 
 public class BootstrapTest extends TestCase {
 
@@ -81,7 +63,7 @@ public class BootstrapTest extends TestCase {
             	LOGGER.info("Please make sure JAAS config has all necessary modules (refer config/jaas.config) configured"); //$NON-NLS-1$
             }
         }
-		ContentRepository.init( bootstrap );
+		ContentRepository.init( CDRUtils.getRepositoryInfo( bootstrap ) );
     }
 
 	/**

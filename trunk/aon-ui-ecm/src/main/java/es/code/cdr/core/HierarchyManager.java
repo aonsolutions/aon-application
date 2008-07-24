@@ -1,6 +1,3 @@
-/**
- * Copyright 1993-2006 obinary Ltd. (http://www.obinary.com) All rights reserved.
- */
 package es.code.cdr.core;
 
 import javax.jcr.Node;
@@ -11,10 +8,6 @@ import javax.jcr.Workspace;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/**
- * User: sameercharles Date: Sept 23, 2004 Time: 1:42:48 PM
- * @author Sameer Charles $Id$
- */
 public class HierarchyManager {
 
    /**

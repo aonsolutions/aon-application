@@ -8,6 +8,7 @@ import java.security.Principal;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
+import java.util.Locale;
 
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
@@ -17,11 +18,13 @@ import javax.jcr.AccessDeniedException;
 import javax.jcr.Node;
 import javax.jcr.NodeIterator;
 import javax.jcr.RepositoryException;
+import javax.jcr.lock.LockException;
 import javax.jcr.version.Version;
 
 import org.apache.jackrabbit.core.security.AnonymousPrincipal;
 
 import es.code.cdr.CDRQName;
+import es.code.cdr.IConstants;
 import es.code.cdr.beans.CDRNode;
 import es.code.cdr.beans.Document;
 import es.code.cdr.core.ContentRepository;
@@ -143,14 +146,14 @@ public class DocumentsList implements Widget {
 	 * @throws IOException 
 	 */
 	@SuppressWarnings("unchecked")
-	public void add(Node folderNode) throws RepositoryException, IOException {
+	public synchronized void add(Node folderNode) throws RepositoryException, IOException {
 		DocumentUpload dup = upload.getSelectedDocument();
 		ExternalContext ec = FacesContext.getCurrentInstance().getExternalContext();
 		String author = getAuthor( ec );
 		try {
 			Document document = new Document( folderNode.addNode( dup.getName(), ContentRepository.getNodeName( CDRQName.AON_DOCUMENT ) ) );
 			document.setAuthor( author );
-			document.setEntryDate( Calendar.getInstance( ec.getRequestLocale() ) );
+			document.setEntryDate( Calendar.getInstance() );
 			document.add( dup );
 			folderNode.save();
 			document.checkin();
@@ -170,15 +173,34 @@ public class DocumentsList implements Widget {
 	}
 
 	/**
+	 * Updates selected Document.
+	 * 
+	 * @throws WidgetLoadingException 
+	 * @throws IOException 
+	 */
+	@SuppressWarnings("unchecked")
+	public synchronized void update(ActionEvent event) {
+		try {
+			selected.save();
+		} catch (RepositoryException e) {
+			CDRUtils.addWarningMessage( e.getMessage() );
+		}
+	}
+
+	/**
 	 * Removes selected Document.
 	 * 
 	 * @param event
 	 * @throws WidgetLoadingException 
 	 * @throws RepositoryException 
 	 */
-	public void remove(ActionEvent event) throws RepositoryException, WidgetLoadingException {
+	public synchronized void remove(ActionEvent event) throws RepositoryException, WidgetLoadingException {
 		if( selected.getNode().isLocked() ) {
-			CDRUtils.addErrorMessage( "Can't delete locked document[" + selected.getName() + "]" );
+			String messageId = "aon_cdr_remove_a_locked_document_exception";
+			Locale locale = CDRUtils.getCurrentLocale( FacesContext.getCurrentInstance() );
+			String msg = 
+				CDRUtils.getMessage( IConstants.CDR_BUNDLE_NAME, locale, messageId, new String[] {selected.getName()} ).getSummary();
+			CDRUtils.addErrorMessage( msg );
 			return;
 		}
 
@@ -235,7 +257,7 @@ public class DocumentsList implements Widget {
 	 * @param event
 	 * @throws IOException 
 	 */
-	public void checkin(ActionEvent event) throws IOException {
+	public synchronized void checkin(ActionEvent event) throws IOException {
 		try {
 			ExternalContext ec = FacesContext.getCurrentInstance().getExternalContext();
 			selected.setAuthor( getAuthor( ec ) );
@@ -256,8 +278,10 @@ public class DocumentsList implements Widget {
 			selected.refresh( false );
 			selected.checkout();
 			download( event );
+		} catch (LockException e) {
+			CDRUtils.addErrorMessage( CDRUtils.parseJackrabbitException( e.getMessage() ) );
 		} catch (RepositoryException e) {
-			CDRUtils.addErrorMessage( e.getMessage() );
+			CDRUtils.addFatalMessage( e.getMessage() );
 		}
 	}
 
@@ -310,8 +334,10 @@ public class DocumentsList implements Widget {
         try {
 			selected.refresh( false );
 			selected.lock();
+		} catch (LockException e) {
+			CDRUtils.addErrorMessage( CDRUtils.parseJackrabbitException( e.getMessage() ) );
 		} catch (RepositoryException e) {
-			CDRUtils.addErrorMessage( e.getMessage() );
+			CDRUtils.addFatalMessage( e.getMessage() );
 		}
 	}
 
@@ -326,8 +352,10 @@ public class DocumentsList implements Widget {
         try {
 			selected.refresh( false );
 			selected.unlock();
+		} catch (LockException e) {
+			CDRUtils.addErrorMessage( CDRUtils.parseJackrabbitException( e.getMessage() ) );
 		} catch (RepositoryException e) {
-			CDRUtils.addErrorMessage( e.getMessage() );
+			CDRUtils.addFatalMessage( e.getMessage() );
 		}		
 	}
 
