@@ -23,6 +23,8 @@ public class ImageUtil {
 
 	public static int DEF_MAX_SIZE = 100;
 
+	private static String DEF_DIR = "thumb";
+
 	private static String DEF_NAME = "thumb_";
 
 	private Image imageFile;
@@ -98,8 +100,14 @@ public class ImageUtil {
 			File tmp = null;
 			try {
 				name = f.getParentFile().getPath();
+				name += File.separator + DEF_DIR;
+
+				File dir = new File(name);
+				if (!dir.exists())
+					dir.mkdir();
+
 				name += File.separator + DEF_NAME + f.getName();
-	
+					
 				tmp = File.createTempFile(f.getName(),"tmp");
 	
 				ImageUtil.copyfile(f,tmp);

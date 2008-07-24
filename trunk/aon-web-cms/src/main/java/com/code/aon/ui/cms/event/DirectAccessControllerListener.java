@@ -5,6 +5,7 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
+import com.code.aon.ui.util.AonUtil;
 
 public class DirectAccessControllerListener extends ControllerAdapter {
 
@@ -15,5 +16,11 @@ public class DirectAccessControllerListener extends ControllerAdapter {
 		} catch (ManagerBeanException e) {
 			throw new ControllerListenerException(e);
 		}
+	}
+
+	@Override
+	public void afterBeanRemoved(ControllerEvent event)
+			throws ControllerListenerException {
+		AonUtil.getController("direct_access").onSearch(null);
 	}
 }

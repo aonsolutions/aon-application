@@ -8,6 +8,7 @@ import com.code.aon.ql.Criteria;
 import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
+import com.code.aon.ui.util.AonUtil;
 
 public class ArticleCategoryControllerListener extends ControllerAdapter {
 
@@ -43,4 +44,9 @@ public class ArticleCategoryControllerListener extends ControllerAdapter {
 		}
 	}
 
+	@Override
+	public void afterBeanRemoved(ControllerEvent event)
+			throws ControllerListenerException {
+		AonUtil.getController("article").onSearch(null);
+	}
 }
