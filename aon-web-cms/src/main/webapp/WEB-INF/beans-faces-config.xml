@@ -2096,4 +2096,18 @@
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
 
+	<!-- ************** CROPPER ************** -->
+	<managed-bean>
+		<managed-bean-name>cropper</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.cms.controller.CropperController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
+
+	<!-- ************** RESIZER ************** -->
+	<managed-bean>
+		<managed-bean-name>resizer</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.cms.controller.ResizeController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
+
 </faces-config>

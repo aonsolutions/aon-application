@@ -1,0 +1,150 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j">
+<body>
+
+
+<ui:composition template="/facelet/templates/aon.ui.content.xhtml">
+	<ui:define name="content">
+<script type="text/javascript" charset="utf-8">
+		
+	// setup the callback function
+	function onEndCrop( coords, dimensions ) {
+		onEndCropParsed(coords.x1,
+			coords.y1,
+			coords.x2,
+			coords.y2,
+			dimensions.width,
+			dimensions.height
+			);
+	}
+
+	if( typeof(dump) != 'function' ) {
+		Debug.init(true, '/');
+		
+		function dump( msg ) {
+			Debug.raise( msg );
+		};
+	} else dump( '---------------------------------------\n' );
+	
+	
+</script>
+
+        <a4j:jsFunction name="onEndCropParsed" reRender="x1,y1,x2,y2,width,height">
+            <a4j:actionparam name="x1" assignTo="#{cropper.x1}"  />
+            <a4j:actionparam name="y1" assignTo="#{cropper.y1}"  />
+            <a4j:actionparam name="x2" assignTo="#{cropper.x2}"  />
+            <a4j:actionparam name="y2" assignTo="#{cropper.y2}"  />
+            <a4j:actionparam name="width" assignTo="#{cropper.width}"  />
+            <a4j:actionparam name="height" assignTo="#{cropper.height}"  />
+        </a4j:jsFunction>
+
+		<h:form>
+			<aon:div styleClass="aon-finding-title-toolbar">
+				<aon:panelGrid id="buttonsGrid" columns="3" dir="true" 
+					columnClasses="aon-finding-title,aon-finding-toolbar">				
+				
+					<aon:div styleClass="aon-finding-title-internal">
+						<aon:outputText value="#{appBundle.cropper_cropper}"/>	  						
+					</aon:div>					
+					
+					<!-- start toolbar navigation -->
+					<aon:div styleClass="aon-finding-toolbar-item-group">					
+						<h:commandButton id="cropt"
+							value="#{bundle.aon_accept}"
+							action="gallery_list" 
+							actionListener="#{cropper.onAccept}"
+							styleClass="aon-finding-toolbar-item aon-icon-accept"
+							accesskey="#{bundle.aon_key_accept}">
+						</h:commandButton>
+						<h:commandButton id="exit"
+							value="#{bundle.aon_close}"
+							action="gallery_list" 
+							actionListener="#{cropper.onCancel}"
+							immediate="#{true}"
+							styleClass="aon-finding-toolbar-item aon-icon-cancel"
+							accesskey="#{bundle.aon_key_close}">
+						</h:commandButton>
+				    </aon:div>
+					
+					<!-- end toolbar navigation -->
+				</aon:panelGrid>
+			</aon:div>
+			
+			<aon:div styleClass="aon-scroll-area">
+				<aon:div style="width:99%;">
+						
+					<div id="testWrap">
+						<img src="#{cropper.cropImagePreview}" alt="test image" id="testImage" />
+					</div>
+					
+					<div id="previewArea"></div>
+						
+					<aon:panelGrid columns="2" dir="true">
+					
+						<aon:outputText value="#{appBundle.cropper_x1}" 
+							for="x1"/>
+						<aon:inputText id="x1" 
+							disabled="true"
+							value="#{cropper.x1}" 
+							size="12" />
+
+						<aon:outputText value="#{appBundle.cropper_y1}" 
+							for="y1"/>
+						<aon:inputText id="y1" 
+							disabled="true"
+							value="#{cropper.y1}" 
+							size="12" />
+
+						<aon:outputText value="#{appBundle.cropper_x2}" 
+							for="x2"/>
+						<aon:inputText id="x2" 
+							disabled="true"
+							value="#{cropper.x2}" 
+							size="12" />
+
+						<aon:outputText value="#{appBundle.cropper_y2}" 
+							for="y2"/>
+						<aon:inputText id="y2" 
+							disabled="true"
+							value="#{cropper.y2}" 
+							size="12" />
+
+						<aon:outputText value="#{appBundle.cropper_width}" 
+							for="width"/>
+						<aon:inputText id="width" 
+							disabled="true"
+							value="#{cropper.width}" 
+							size="12" />
+
+						<aon:outputText value="#{appBundle.cropper_height}" 
+							for="height"/>
+						<aon:inputText id="height" 
+							disabled="true"
+							value="#{cropper.height}" 
+							size="12" />
+							
+					</aon:panelGrid>
+				</aon:div>
+			</aon:div>
+		</h:form>
+		<script>
+			new Cropper.Img( 
+				'testImage',
+				{
+					onEndCrop: onEndCrop 
+				}
+			) 
+		</script>			
+	</ui:define>
+
+</ui:composition>
+
+</body>
+</html>

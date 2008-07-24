@@ -572,4 +572,20 @@
     </navigation-case>
   </navigation-rule>
   
+  <!-- ===================================================== CROPPER -->
+  <navigation-rule>
+    <navigation-case>
+      <from-outcome>cropper_form</from-outcome>
+      <to-view-id>/facelet/content/cropper/form.xhtml</to-view-id>
+    </navigation-case>
+  </navigation-rule>
+
+  <!-- ===================================================== CROPPER -->
+  <navigation-rule>
+    <navigation-case>
+      <from-outcome>resizer_form</from-outcome>
+      <to-view-id>/facelet/content/resizer/form.xhtml</to-view-id>
+    </navigation-case>
+  </navigation-rule>
+  
 </faces-config>
