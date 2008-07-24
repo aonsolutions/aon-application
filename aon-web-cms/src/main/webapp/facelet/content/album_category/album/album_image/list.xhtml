@@ -55,6 +55,13 @@
 						styleClass="aon-finding-toolbar-item">
 						<aon:actionListener method="#{album.onSearch}" />
 					</aon:commandButton>
+					<aon:commandButton id="create_album"
+						value="#{appBundle.aon_create_album}" 
+						styleClass="aon-finding-toolbar-item aon-icon-accept">
+						<a4j:support 
+							event="onclick" 
+							onclick="javascript:Richfaces.showModalPanel('album_modal',{width:680, top:100});" />
+					</aon:commandButton>	
 			    </aon:div>
 				
 				<!-- end toolbar navigation -->
@@ -126,6 +133,12 @@
 						showNote="true" />					
 
 			</aon:div>
+			<ui:include src="/facelet/content/utils/album_modal.xhtml">
+				<ui:param name="modalPanelName" value="album_modal" />
+				<ui:param name="roots" value="#{fileSystemBean.imageRoots}" />
+				<ui:param name="galleryBean" value="#{gallery}" />
+				<ui:param name="reRender" value="list" />
+			</ui:include>
 		</aon:form>
 		
 	</ui:define>
