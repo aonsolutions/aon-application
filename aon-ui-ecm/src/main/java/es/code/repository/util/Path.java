@@ -50,7 +50,7 @@ public class Path {
 				}
 			}
 			// 3: defaults to standard repository definition
-			LOGGER.error( "Unable to find {} definition: {}", resourceErrorLabel, resourceName );
+			LOGGER.warn( "Unable to find {} definition: {}", resourceErrorLabel, resourceName );
 		}
 		return IProvider.class.getResource( defaultResourceName );
 	}

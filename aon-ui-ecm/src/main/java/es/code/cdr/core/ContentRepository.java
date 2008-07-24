@@ -1,14 +1,6 @@
 package es.code.cdr.core;
 
-import es.code.cdr.CDRQName;
-import es.code.repository.IProvider;
-import es.code.repository.RepositoryInfo;
-import es.code.repository.RepositoryNotInitializedException;
-
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
 import java.util.Properties;
 
 import javax.jcr.Repository;
@@ -19,6 +11,10 @@ import javax.jcr.SimpleCredentials;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import es.code.cdr.CDRQName;
+import es.code.repository.IProvider;
+import es.code.repository.RepositoryInfo;
+import es.code.repository.RepositoryNotInitializedException;
 import es.code.repository.util.ClassUtil;
 
 /**
@@ -27,18 +23,15 @@ import es.code.repository.util.ClassUtil;
  */
 public final class ContentRepository {
 
+	/** Default repository ID's. */
+	public static final String DEFAULT_WORKSPACE = "default";
+
 	/** ContentRepository Logger */
 	private static final Logger LOGGER = LoggerFactory.getLogger( ContentRepository.class.getName() );
-
-	/**
-     * default repository ID's.
-     */
-	public static final String DEFAULT_WORKSPACE = "default";
-	
     /** JCR provider. */
     private static IProvider provider;
-    /** Predefined Hierarchy managers. */
-	private static Map<String, HierarchyManager> hierarchies = new HashMap<String, HierarchyManager>();
+//    /** Predefined Hierarchy managers. */
+//	private static Map<String, HierarchyManager> hierarchies = new HashMap<String, HierarchyManager>();
 
     /**
      * Utility class, don't instantiate.
@@ -99,19 +92,15 @@ public final class ContentRepository {
     /**
      * Load repository, as configured in bootstrap.properties.
      */
-    public static void init(Properties props) {
+    public static void init(RepositoryInfo ri) {
         provider = null;
         try {
-        	RepositoryInfo ri = new RepositoryInfo();
-        	ri.setProps( props );
-        	String ctx = props.getProperty( RepositoryInfo.CONTEXT_PATH );
-        	ri.setWorkspaces( SessionManager.getInstance().getApplicationDomains( ctx ) );
             loadRepository( ri );
         	if ( LOGGER.isDebugEnabled() )
         		LOGGER.debug( "System : JCR loaded" );
         }
         catch (Exception e) {
-        	LOGGER.error("System : Failed to load JCR \"" + props + "\" " + e.getMessage(), e);
+        	LOGGER.error("System : Failed to load JCR \"" + ri.getProps() + "\" " + e.getMessage(), e);
         }
     }
 
@@ -132,31 +121,33 @@ public final class ContentRepository {
     	ContentRepository.provider = 
         	(IProvider) ClassUtil.newInstance( ri.getProps().getProperty( IProvider.CUSTOM_PROVIDER_KEY ) );
     	ContentRepository.provider.init( ri );
+    	/*
     	// load hierarchy managers for each workspace
         Iterator<String> workspaces = ri.getWorkspaces().iterator();
         while (workspaces.hasNext()) {
             loadHierarchyManager( ContentRepository.provider, workspaces.next() );
         }
+        */
     }
 
-    /**
-     * Load hierarchy manager for the specified workspace.
-     * 
-     * @param workspaceId
-     */
-    private static void loadHierarchyManager(IProvider provider, String workspaceId) {
-        try {
-        	SimpleCredentials sc = getSimpleCredentials();
-            Session jcrSession = provider.getSessionInstance( sc, workspaceId );
-    		HierarchyManager hm = new HierarchyManager( sc.getUserID() );
-    		hm.init( jcrSession.getRootNode() );
-            ContentRepository.hierarchies.put( workspaceId, hm );
-            hm.setQueryManager( QueryManager.getInstance() );
-        } catch (RepositoryException re) {
-        	LOGGER.error( "System : Failed to initialize hierarchy manager for JCR; " + re.getMessage(), re);
-        }
-    }
-
+//    /**
+//     * Load hierarchy manager for the specified workspace.
+//     * 
+//     * @param workspaceId
+//     */
+//    private static void loadHierarchyManager(IProvider provider, String workspaceId) {
+//        try {
+//        	SimpleCredentials sc = getSimpleCredentials();
+//            Session jcrSession = provider.getSessionInstance( sc, workspaceId );
+//    		HierarchyManager hm = new HierarchyManager( sc.getUserID() );
+//    		hm.init( jcrSession.getRootNode() );
+//            ContentRepository.hierarchies.put( workspaceId, hm );
+//            hm.setQueryManager( QueryManager.getInstance() );
+//        } catch (RepositoryException re) {
+//        	LOGGER.error( "System : Failed to initialize hierarchy manager for JCR; " + re.getMessage(), re);
+//        }
+//    }
+//
     /**
      * Re-load all configured repositories.
      * @see #init()
@@ -164,7 +155,7 @@ public final class ContentRepository {
     public static void reload() {
     	if ( LOGGER.isDebugEnabled() )
     		LOGGER.debug("System : reloading JCR");
-        ContentRepository.init( ContentRepository.provider.getRi().getProps() );
+        ContentRepository.init( ContentRepository.provider.getRi() );
     }
 
     /**
@@ -180,8 +171,8 @@ public final class ContentRepository {
 
     private static SimpleCredentials getSimpleCredentials() {
 		Properties props = provider.getRi().getProps();
-		return new SimpleCredentials( props.getProperty( IProvider.REPOSITORY_CONNECTION_USER ) 
-					, props.getProperty( IProvider.REPOSITORY_CONNECTION_PSWD ).toCharArray() );
+		String user = props.getProperty( IProvider.REPOSITORY_CONNECTION_USER ) + props.getProperty( IProvider.REPOSITORY_CONNECTION_CONTEXT );
+		return new SimpleCredentials( user, props.getProperty( IProvider.REPOSITORY_CONNECTION_PSWD ).toCharArray() );
 
     }
 

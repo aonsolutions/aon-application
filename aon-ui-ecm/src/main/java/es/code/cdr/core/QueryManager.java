@@ -12,7 +12,7 @@ import javax.jcr.Session;
 import javax.jcr.Workspace;
 import javax.jcr.query.QueryResult;
 
-import org.apache.jackrabbit.value.DateValue;
+import org.apache.jackrabbit.util.ISO8601;
 
 import es.code.cdr.CDRQName;
 import es.code.cdr.IConstants;
@@ -26,7 +26,7 @@ public class QueryManager {
 	static final QueryManager query = new QueryManager();
 
 	/** Content statement message format. */
-	private MessageFormat jcrContainsFunction = new MessageFormat("jcr:contains({0},\"{1}\")");
+	private MessageFormat jcrContainsFunction = new MessageFormat("jcr:contains({0},{1})");
 
 	/**
 	 * Returns the singleton instance of this class.
@@ -76,17 +76,14 @@ public class QueryManager {
 		StringBuffer sb = new StringBuffer();
 		String defaultRootNode = ContentRepository.getNodeName( CDRQName.AON_CDR );
 		sb.append( (root == null)? defaultRootNode: root.getPath() );		
-		String linker = IConstants.EMPTY_STRING;
 		boolean isEmptyStatement = true;
+		sb.append( "//element(*," + ContentRepository.getNodeName( CDRQName.AON_DOCUMENT ) + ")[" );
 		String statement = createStatementByContent( params );
-		if ( statement != null ) { 
-			sb.append( "//element(*," + ContentRepository.getNodeName( CDRQName.AON_CONTENT ) + ")/jcr:data[" + statement );
-			linker = IConstants.BLANK + IConstants.AND_LINKER + IConstants.BLANK;
+		if ( statement != null ) {
+			sb.append( statement );
 			isEmptyStatement = false;
-		} else {
-			sb.append( "//*[" );
 		}
-		boolean isEmptyProperties = fillStatementWithAdvancedParams( params, sb, linker );
+		boolean isEmptyProperties = fillStatementWithAdvancedParams( params, sb, isEmptyStatement );
 //	Order by score.
         sb.append("] order by @jcr:score descending");
         if ( isEmptyStatement && isEmptyProperties )
@@ -98,46 +95,73 @@ public class QueryManager {
 		String statement = params.getBycontent();
 		if ( statement == null ) {
 			statement = params.getAdvancedSearchContent();
-			if ( statement != null && statement.length() > 0 )
-//	Search inside document content.
-				return jcrContainsFunction.format( new String[] { statement } );
-		} else {
-			return jcrContainsFunction.format( new String[] { ".", statement } );
+		}
+		if ( statement.length() > 0 ) {
+			statement = IConstants.SINGLE_QUOTATION_MARK + escapeContains( statement ) + IConstants.SINGLE_QUOTATION_MARK;
+			String nodeType = ContentRepository.getNodeName( CDRQName.AON_CONTENT );
+			return jcrContainsFunction.format( new String[] { nodeType, statement } );
 		}
 		return null;
 	}
 
-	private boolean fillStatementWithAdvancedParams(QueryParameters params, StringBuffer sb, String linker) {
-//	Search document properties.
+	private boolean fillStatementWithAdvancedParams(QueryParameters params, StringBuffer sb, boolean isEmptyLinker) {
 		boolean isEmpty = true;
+		if ( params.getKeywords() != null && !params.getKeywords().equals( IConstants.EMPTY_STRING ) ) {
+			String statement = 
+				IConstants.SINGLE_QUOTATION_MARK + params.getKeywords() + IConstants.SINGLE_QUOTATION_MARK;
+			String nodeType = ContentRepository.getNodeName( CDRQName.AON_KEYWORDS );
+			sb.append( getLinker( isEmptyLinker ) + jcrContainsFunction.format( new String[] { "@" + nodeType, statement } ) );
+			isEmptyLinker = isEmpty = false;
+		}
+		if ( params.getCategory() != null && !params.getCategory().equals( IConstants.UNKNOWN ) ) {
+			String statement = 
+				IConstants.SINGLE_QUOTATION_MARK + params.getCategory() + IConstants.SINGLE_QUOTATION_MARK;
+			String nodeType = ContentRepository.getNodeName( CDRQName.AON_CATEGORY );
+			sb.append( getLinker( isEmptyLinker ) + jcrContainsFunction.format( new String[] { "@" + nodeType, statement } ) );
+			isEmptyLinker = isEmpty = false;
+		}
 		if ( params.getLanguage() != null && !params.getLanguage().equals( IConstants.UNKNOWN ) ) {
+			String statement = 
+				IConstants.SINGLE_QUOTATION_MARK + params.getLanguage() + IConstants.SINGLE_QUOTATION_MARK;
 			String nodeType = ContentRepository.getNodeName( CDRQName.AON_LANGUAGE );
-			String l = 
-				jcrContainsFunction.format( new String[] { "@" + nodeType, params.getLanguage() } );
-			sb.append( linker + l );
-			linker = IConstants.BLANK + IConstants.AND_LINKER + IConstants.BLANK;
-			isEmpty = false;
+			sb.append( getLinker( isEmptyLinker ) + jcrContainsFunction.format( new String[] { "@" + nodeType, statement } ) );
+			isEmptyLinker = isEmpty = false;
 		}
 		if ( params.getFileformat() != null && !params.getFileformat().equals( IConstants.UNKNOWN ) ) {
-			String nodeType = ContentRepository.getNodeName( CDRQName.AON_CONTENT ) + "/" + IConstants.JCR_MIMETYPE;
-			String l = 
-				jcrContainsFunction.format( new String[] { "@" + nodeType, params.getFileformat() } );
-			sb.append( linker + l );
-			linker = IConstants.BLANK + IConstants.AND_LINKER + IConstants.BLANK;
-			isEmpty = false;
-		}			
+			String statement = 
+				IConstants.SINGLE_QUOTATION_MARK + params.getFileformat() + IConstants.SINGLE_QUOTATION_MARK;
+			String nodeType = 
+				ContentRepository.getNodeName( CDRQName.AON_CONTENT ) + "/" + IConstants.JCR_MIMETYPE;
+			sb.append( getLinker( isEmptyLinker ) + jcrContainsFunction.format( new String[] { "@" + nodeType, statement } ) );
+			isEmptyLinker = isEmpty = false;
+		}
 		if ( params.getPublishDate() != null ) {
 			String nodeType = ContentRepository.getNodeName( CDRQName.AON_ENTRYDATE );
 			Calendar c = Calendar.getInstance();
 			c.setTime( params.getPublishDate() );
-			c.set( Calendar.HOUR_OF_DAY, 0 );
-			c.set( Calendar.MINUTE, 0 );
-			c.set( Calendar.SECOND, 0 );
-			String l = 
-				jcrContainsFunction.format( new Object[] { "@" + nodeType, new DateValue( c ) } );
-			sb.append( linker + l );
-			isEmpty = false;
+			sb.append( getLinker( isEmptyLinker ) + "@" + nodeType + " == xs:dateTime('" + ISO8601.format( c ) + "')" );
+			isEmptyLinker = isEmpty = false;
 		}
 		return isEmpty;
+	}
+
+	private String escapeContains(String str) {
+		String ret = str.replace("\\", "\\\\");
+		ret = ret.replace("'", "\\'");
+		ret = ret.replace("-", "\\-");
+		ret = ret.replace("\"", "\\\"");
+		ret = ret.replace("[", "\\[");
+		ret = ret.replace("]", "\\]");
+		ret = escapeXPath(ret);
+		return ret;
+	}
+
+	private String escapeXPath(String str) {
+		String ret = str.replace("'", "''");
+		return ret;
+	}
+
+	private String getLinker(boolean isEmpty) {
+		return (isEmpty)? IConstants.EMPTY_STRING: IConstants.BLANK + IConstants.AND_LINKER + IConstants.BLANK;
 	}
 }

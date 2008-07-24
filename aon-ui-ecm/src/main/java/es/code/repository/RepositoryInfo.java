@@ -13,8 +13,6 @@ import java.util.Properties;
  */
 public class RepositoryInfo {
 
-	public static final String CONTEXT_PATH = "repository.context.path";
-
 	private Properties props;
 	private List<String> workspaces = new ArrayList<String>();
 

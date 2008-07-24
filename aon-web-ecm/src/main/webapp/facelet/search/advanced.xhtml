@@ -2,8 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml"
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:f="http://java.sun.com/jsf/core" 
-	xmlns:aon="http://www.code.es/aon-rich-components"
-	xmlns:rich="http://richfaces.org/rich">
+	xmlns:aon="http://www.code.es/aon-rich-components">
 <body>
 
 <ui:composition template="/facelet/templates/aon.ui.main.xhtml">
@@ -19,7 +18,6 @@
 						reRender="searchForm" 
 						actionListener="#{search.onExecute}"
 						styleClass="aon-finding-toolbar-item aon-icon-accept" />				
-					
 				</aon:div>
 			
 				 <aon:div id="aon-content-subtitle" styleClass="aon-bold" style="padding-bottom:10px;" forceId="#{true}">
@@ -29,62 +27,52 @@
 				<aon:panelGrid styleClass="aon-panelGrid-formatting" columns="4"  style="width:auto;"
 						columnClasses=",aon-padding-left,aon-padding-left,aon-padding-left">	
 					<aon:div>								
-						<aon:outputLabel for="document_allwords"
-							value="#{appBundle.aon_search_allwords1}" />
-						<aon:outputLabel styleClass="aon-bold"
-							value="#{appBundle.aon_search_allwords2} " />
-						<aon:outputLabel 
-							value="#{appBundle.aon_search_allwords3}" />
+						<aon:outputLabel for="document_allwords" value="#{appBundle.aon_search_allwords1}" />
+						<aon:outputLabel styleClass="aon-bold" value="#{appBundle.aon_search_allwords2} " />
+						<aon:outputLabel  value="#{appBundle.aon_search_allwords3}" />
 					</aon:div>
-					<aon:inputText id="document_allwords"
-						value="#{search.parameters.allwords}" size="50" />				
+					<aon:inputText id="document_allwords" value="#{search.parameters.allwords}" size="50" />				
 					
-					<aon:outputLabel for="document_language"
-						value="#{appBundle.aon_search_language}" />						
-					<aon:selectOneMenu id="document_language" value="#{search.parameters.language}" >
+					<aon:outputLabel for="document_keywords" value="#{appBundle.aon_cdr_keywords}" />
+					<aon:inputText id="document_keywords" value="#{search.parameters.keywords}" size="70" />
+					
+					<aon:div>
+						<aon:outputLabel for="document_phrase" value="#{appBundle.aon_search_phrase1}" />
+						<aon:outputLabel styleClass="aon-bold" value="#{appBundle.aon_search_phrase2}" />
+					</aon:div>					
+					<aon:inputText id="document_phrase" value="#{search.parameters.phrase}" size="50" />
+					
+					<aon:outputLabel value="#{appBundle.aon_cdr_category}" />
+					<aon:selectOneMenu value="#{search.parameters.category}">
+						<f:selectItems value="#{search.parameters.categories}"/>
+					</aon:selectOneMenu>						
+					
+					<aon:div>
+						<aon:outputLabel for="document_somewords" value="#{appBundle.aon_search_somewords1}" />
+						<aon:outputLabel style="font-weight:bold" value="#{appBundle.aon_search_somewords2}" />
+						<aon:outputLabel value="#{appBundle.aon_search_somewords3}" />
+					</aon:div>	
+					<aon:inputText id="document_somewords" value="#{search.parameters.somewords}" size="50" />
+
+					<aon:outputLabel value="#{appBundle.aon_search_language}" />						
+					<aon:selectOneMenu value="#{search.parameters.language}" >
 						<f:selectItems value="#{search.parameters.languages}"/>
 					</aon:selectOneMenu>
-					
-					<aon:div>
-						<aon:outputLabel for="document_phrase "
-						value="#{appBundle.aon_search_phrase1}" />
-						<aon:outputLabel styleClass="aon-bold"
-						value="#{appBundle.aon_search_phrase2}" />
-					</aon:div>					
-					<aon:inputText id="document_phrase"
-						value="#{search.parameters.phrase}" size="50" />
-					
-					<aon:outputLabel for="document_fileformat"
-						value="#{appBundle.aon_search_fileformat}" />
-					<aon:selectOneMenu id="document_fileformat" value="#{search.parameters.fileformat}" >
+
+					<aon:div>	
+						<aon:outputLabel for="document_nowords" value="#{appBundle.aon_search_nowords1}" />
+						<aon:outputLabel styleClass="aon-bold" value="#{appBundle.aon_search_nowords2}" />
+					</aon:div>
+					<aon:inputText id="document_nowords" value="#{search.parameters.nowords}" size="50" />				
+
+					<aon:outputLabel value="#{appBundle.aon_search_fileformat}" />
+					<aon:selectOneMenu value="#{search.parameters.fileformat}" >
 						<f:selectItems value="#{search.parameters.fileFormats}"/>
 					</aon:selectOneMenu>
-					
-					<aon:div>
-						<aon:outputLabel for="document_somewords"
-						value="#{appBundle.aon_search_somewords1}" />
-						<aon:outputLabel style="font-weight:bold"
-						value="#{appBundle.aon_search_somewords2}" />
-						<aon:outputLabel 
-						value="#{appBundle.aon_search_somewords3}" />
-					</aon:div>	
-					<aon:inputText id="document_somewords"
-						value="#{search.parameters.somewords}" size="50" />
-					
-					<aon:outputLabel for="document_publishdate"
-						value="#{appBundle.aon_search_publishdate}" />
-					<aon:selectInputDate id="document_publishdate"
-						value="#{search.parameters.publishDate}"
-						renderAsPopup="true"/>
-					
-					<aon:div>	
-						<aon:outputLabel for="document_nowords"
-						value="#{appBundle.aon_search_nowords1}" />
-						<aon:outputLabel styleClass="aon-bold"
-						value="#{appBundle.aon_search_nowords2}" />
-					</aon:div>
-					<aon:inputText id="document_nowords"
-						value="#{search.parameters.nowords}" size="50" />				
+<!-- 
+					<aon:outputLabel value="#{appBundle.aon_search_publishdate}" />
+					<aon:selectInputDate value="#{search.parameters.publishDate}" renderAsPopup="true"/>
+ -->
 				</aon:panelGrid>
 
 				<ui:include src="/facelet/search/results.xhtml" />

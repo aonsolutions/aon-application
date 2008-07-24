@@ -11,31 +11,24 @@
 	<groupId>com.code.aon</groupId>
 	<artifactId>aon.web.ecm</artifactId>
 	<packaging>war</packaging>
-	<version>1.0.0</version>
+	<version>1.2.0</version>
 	<name>AON Web ECM</name>
 	<description>Enterprise Content Management</description>
 	<build>
-		<finalName>aon-web-ecm</finalName>
+		<finalName>aon-ecm</finalName>
 	</build>
 	<dependencies>
-		<dependency>
+		<dependency> 
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.ecm</artifactId>
-			<version>1.0.0</version>
+			<version>1.2.0</version>
 			<scope>compile</scope>
 		</dependency>
 
 		<dependency>
 			<groupId>com.code.aon</groupId>
-			<artifactId>aon.ui.common</artifactId>
-			<version>2.1.1</version>
-			<scope>runtime</scope>
-		</dependency>
-
-		<dependency>
-			<groupId>com.code.aon</groupId>
 			<artifactId>aon.rich.components</artifactId>
-			<version>1.0.6</version>
+			<version>1.1.4</version>
 			<scope>compile</scope>
 			<exclusions>
 				<exclusion>
@@ -54,11 +47,39 @@
 		</dependency>
 
 		<dependency>
+		    <groupId>commons-io</groupId>
+		    <artifactId>commons-io</artifactId>
+		    <version>1.3.2</version>
+			<scope>compile</scope>
+		</dependency> 
+
+		<dependency>
+			<groupId>com.code.aon</groupId>
+			<artifactId>aon.ui.common</artifactId>
+			<version>2.1.1</version>
+			<scope>runtime</scope>
+		</dependency>
+
+		<dependency>
 			<groupId>com.sun.el</groupId>
 			<artifactId>el.ri</artifactId>
 			<version>1.0.0</version>
 			<scope>runtime</scope>
 		</dependency>
+
+		<dependency>
+		    <groupId>bouncycastle</groupId>
+		    <artifactId>bcmail-jdk14</artifactId>
+		    <version>139</version>
+			<scope>runtime</scope>
+		</dependency> 
+
+		<dependency>
+		    <groupId>bouncycastle</groupId>
+		    <artifactId>bcprov-jdk16</artifactId>
+		    <version>136</version>
+			<scope>runtime</scope>
+		</dependency> 
 
 		<dependency>
 			<groupId>javax.servlet</groupId>

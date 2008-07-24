@@ -5,17 +5,31 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URLEncoder;
 import java.text.MessageFormat;
+import java.util.Enumeration;
 import java.util.Locale;
 import java.util.MissingResourceException;
+import java.util.Properties;
 import java.util.ResourceBundle;
 
 import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
+import javax.faces.event.AbortProcessingException;
 import javax.jcr.RepositoryException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.code.aon.jaas.client.ast.IDomain;
+import com.code.aon.ldap.AonDN;
+import com.code.aon.ldap.BasicLdap;
+import com.code.aon.ldap.DistinguishedName;
+import com.code.aon.ldap.Entry;
+import com.code.aon.ldap.LdapException;
+import com.code.aon.ldap.LdapSession;
+
+import es.code.cdr.IConstants;
 import es.code.cdr.beans.Document;
+import es.code.cdr.core.ContentRepository;
+import es.code.repository.RepositoryInfo;
 
 /**
  * MessagesUtil includes some common message methods.
@@ -136,10 +150,11 @@ public class CDRUtils {
 	public static FacesMessage getMessage(FacesContext context, String messageId, Object params[]) {
 		if (context == null || messageId == null)
 			throw new NullPointerException(" context " + context + " messageId " + messageId);
-		Locale locale = getCurrentLocale();
+		Locale locale = getCurrentLocale( context );
 		if (null == locale)
 			throw new NullPointerException(" locale " + locale);
-		FacesMessage message = getMessage(locale, messageId, params);
+		String bundleName = context.getApplication().getMessageBundle();
+		FacesMessage message = getMessage(bundleName, locale, messageId, params);
 		if (message != null) {
 			return message;
 		}
@@ -148,18 +163,17 @@ public class CDRUtils {
 		// but similar behavior above does not. The methods should probably
 		// behave
 		locale = Locale.getDefault();
-		return getMessage(locale, messageId, params);
+		return getMessage(bundleName, locale, messageId, params);
 
 	}
 
 	/**
 	 * 
+	 * @param context
 	 * @return currently applicable Locale for this request.
 	 */
-	public static Locale getCurrentLocale() {
+	public static Locale getCurrentLocale(FacesContext context) {
 		Locale locale;
-
-		FacesContext context = FacesContext.getCurrentInstance();
 		if (context != null && context.getViewRoot() != null) {
 			locale = context.getViewRoot().getLocale();
 			if (locale == null)
@@ -172,15 +186,15 @@ public class CDRUtils {
 	}
 
 	/**
+	 * @param bundleName
 	 * @param locale
 	 * @param messageId
 	 * @param params
 	 * @return message
 	 */
-	public static FacesMessage getMessage(Locale locale, String messageId, Object params[]) {
+	public static FacesMessage getMessage(String bundleName, Locale locale, String messageId, Object params[]) {
 		String summary = null;
 		String detail = null;
-		String bundleName = FacesContext.getCurrentInstance().getApplication().getMessageBundle();
 		ResourceBundle bundle = null;
 
 		if (bundleName != null) {
@@ -310,4 +324,72 @@ public class CDRUtils {
 		context.responseComplete();
 	}
 
+	/**
+	 * Parse Jackrabbit exception given in english, an internationalized the message.
+	 *  
+	 * @param message
+	 * @return
+	 */
+	public static final String parseJackrabbitException(String message) {
+		ResourceBundle bundle = ResourceBundle.getBundle( IConstants.CDR_BUNDLE_NAME, Locale.ENGLISH );
+		String key = null, value = null;
+		boolean found = false;
+		Enumeration<String> en = bundle.getKeys();
+		while (en.hasMoreElements() && !found) {
+			key = en.nextElement();
+			if ( key.indexOf( "jackrabbit" ) > -1 ) {
+				value = bundle.getString( key );
+				if ( message.indexOf( value ) > -1 ) {
+					found = true;
+				}
+			}
+		}
+		if ( found ) {
+			FacesContext context = FacesContext.getCurrentInstance();
+			bundle = ResourceBundle.getBundle( IConstants.CDR_BUNDLE_NAME, CDRUtils.getCurrentLocale( context ) );
+			return message.replaceAll( value, bundle.getString( key ) );
+		}
+		return message;
+	}
+
+	public static final RepositoryInfo getRepositoryInfo(Properties bootstrap) {
+    	RepositoryInfo ri = new RepositoryInfo();
+    	ri.setProps( bootstrap );
+//    	String ctx = bootstrap.getProperty( IProvider.REPOSITORY_CONNECTION_CONTEXT );
+//    	try {
+    		// TODO Does not work in Linux because getApplicationDomains method is not supported 
+//    		UserManager um = new UserManager();
+//			ri.setWorkspaces( um.getApplicationDomains( ctx ) );
+//		} catch (UnsupportedOperationException e) {
+			ri.addWorkspace( IDomain.DEFAULT_DOMAIN_NAME );
+//		} catch (DeploymentException e) {
+//			// TODO Auto-generated catch block
+//			e.printStackTrace();
+//		}
+		return ri;
+	}
+
+	/**
+	 * Get AonUser defined in a LDAP entry.
+	 * 
+	 * @param domain
+	 * @param userId
+	 * @return
+	 */
+	public static final Entry getAonUser(String domain, String userId) {
+		domain = ( domain.equals( ContentRepository.DEFAULT_WORKSPACE ) )? IDomain.DEFAULT_DOMAIN_NAME: domain;
+		Entry entry = null;
+		BasicLdap ldap = new BasicLdap();
+		try {
+			DistinguishedName dn = AonDN.getUserDN( domain, userId );
+			String filter = LdapSession.getObjectClass("aonUser");
+			entry = ldap.getLdapSession().get(dn.toString(), filter);
+		} catch ( LdapException e ) {
+			throw new AbortProcessingException( "Error getting user for " + userId + ". " + e.getMessage(), e );
+		} finally {
+			ldap.closeSession();
+		}
+		return entry;
+	}		
+    
 }

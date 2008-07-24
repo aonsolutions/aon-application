@@ -9,7 +9,6 @@ import java.util.Properties;
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 
-import com.code.aon.bridge.session.BackDoorAuthenticationFilter;
 import com.code.aon.desktop.controller.AonUserController;
 import com.code.aon.jaas.client.ast.IApplication;
 import com.code.aon.jaas.deployment.DeploymentException;
@@ -32,7 +31,8 @@ public class ApplicationsManager {
 		List list = aonUserController.getUserManager().getUserApplications();
         for (int i = 0; i < list.size(); i++) {
 			IApplication app = (IApplication) list.get(i);
-			String context = app.getContext() + "/?" + BackDoorAuthenticationFilter.AUTH_SSO + "=true";
+//			String context = ec.getRequestContextPath() + app.getContext() + ".auth?aonDesktop=true";
+			String context = app.getContext() + "/?aonDesktop=true";
 			String property = services.getProperty( app.getId() );
 			if ( property != null ) {
 				char[] bar = property.substring( 0, property.indexOf( ';' ) ).toCharArray();

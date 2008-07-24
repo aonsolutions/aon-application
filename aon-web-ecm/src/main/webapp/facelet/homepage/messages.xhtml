@@ -15,7 +15,7 @@
 	<aon:div ajaxRendered="true" layout="none" styleClass="aon-popupWindow">
 		<aon:form rendered="#{facesContext.maximumSeverity != null}">
 			<aon:panelGroup styleClass="aon-popup-panel aon-confirm-box">
-				<rich:modalPanel minWidth="325" minHeight="220" top="190px" left="350"
+				<rich:modalPanel minWidth="375" minHeight="100" top="190px" left="350"
 					id="messagesModalPanel" showWhenRendered="true">
 					<f:facet name="header">
 						<aon:div styleClass="aon-popupWindow-title">
@@ -28,11 +28,9 @@
 							onclick="Richfaces.hideModalPanel('messagesModalPanel');">
 						</aon:commandButton>
 					</f:facet>
-		            <rich:panel bodyClass="body3">
-						<aon:div id="aon-errors" styleClass="aon-popupWindow-content">
-							<aon:messages />
-						</aon:div>
-					</rich:panel>
+					<aon:div id="aon-errors" styleClass="aon-popupWindow-content">
+						<aon:messages />
+					</aon:div>
 				</rich:modalPanel>
 			</aon:panelGroup>
 		</aon:form>

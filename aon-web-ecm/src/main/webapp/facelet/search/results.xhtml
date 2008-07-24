@@ -4,26 +4,24 @@
 	xmlns:f="http://java.sun.com/jsf/core" 
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:aon="http://www.code.es/aon-rich-components">
-
 <body>
-
 <ui:composition>
-	<aon:div styleClass="aon-separator"><aon:outputText value="" /></aon:div>
-	<aon:div>
-		<aon:div styleClass="aon-section-title" rendered="#{search.documents.model.rowCount > 0}">
+
+	<aon:div styleClass="aon-separator"><aon:outputText value="&#160;" /></aon:div>
+
+	<aon:div rendered="#{search.documents.model.rowCount > 0}">
+		<aon:div styleClass="aon-section-title" >
 			<aon:outputText value="#{appBundle.aon_search_results}"/>
 		</aon:div>
-		<aon:dataTable id="searchDataList" value="#{search.documents.model}" var="to"
-				styleClass="aon-dataTable" rendered="#{search.documents.model.rowCount > 0}">
+		<aon:dataTable id="searchDataList" value="#{search.documents.model}" var="to" styleClass="aon-dataTable">
 			<aon:column>
 				<f:facet name="header">
 					<aon:outputText value="" />
 				</f:facet>
-				<h:commandLink id="documentDownload" value=""
+				<h:commandLink id="documentDownload" value="."
 						title="#{menuBundle.aon_admin_document_download}"
 						actionListener="#{search.onDownloadSelectedDocument}"
 						styleClass="aon-icon-commandButton aon-icon-file-download"
-						style="background-position:left 5px;"
 						target="_blank" />
 			</aon:column>
 
@@ -52,7 +50,7 @@
 				<f:facet name="header">
 					<aon:outputText value="#{appBundle.aon_cdr_author}" />
 				</f:facet>
-				<aon:outputText value="#{to.author}"/>
+				<aon:outputText value="#{to.authorName}"/>
 			</aon:column>
 
 			<aon:column>
@@ -65,7 +63,7 @@
 			</aon:column>
 		</aon:dataTable>
 	</aon:div>
-</ui:composition>
 
+</ui:composition>
 </body>
 </html>

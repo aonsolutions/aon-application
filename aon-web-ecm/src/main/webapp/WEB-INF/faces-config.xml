@@ -42,6 +42,10 @@
 		<managed-property>
 			<property-name>applicationBundles</property-name>
 			<map-entries>
+		        <map-entry>
+		          <key>bundle</key>
+		          <value>com.code.aon.ui.common.i18n.messages</value>
+		        </map-entry>
 				<map-entry>
 					<key>appBundle</key>
 					<value>es.code.cdr.ui.i18n.messages</value>

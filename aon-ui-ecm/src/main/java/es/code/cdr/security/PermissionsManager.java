@@ -127,7 +127,10 @@ public class PermissionsManager implements Serializable {
 				Permission p = new Permission( key, (String) profilemappings.get( key ), users );
 				this.permissions.add( p );
 			}
+		} catch (UnsupportedOperationException e) {
+			LOGGER.warning( e.getMessage() );
 		} catch (IOException e) {
+			LOGGER.severe( e.getMessage() );
 		}
 	}
 }

@@ -19,6 +19,7 @@ import javax.jcr.query.Query;
 import javax.jcr.query.QueryResult;
 import javax.servlet.http.HttpSession;
 
+import es.code.cdr.IConstants;
 import es.code.cdr.beans.Document;
 import es.code.cdr.core.InvalidStatementException;
 import es.code.cdr.core.QueryManager;
@@ -39,8 +40,6 @@ import es.code.cdr.ui.util.CDRUtils;
 public class QueryMediator implements WidgetListener, Serializable {
 
 	private static final long serialVersionUID = -1069531467214866277L;
-
-	static final String BUNDLE_BASENAME = "es.code.cdr.ui.i18n.messages";
 
 	QueryMenu menu;
 	QueryParameters parameters;
@@ -84,9 +83,8 @@ public class QueryMediator implements WidgetListener, Serializable {
 	 */
 	public ResourceBundle getBundle() {
 		if ( bundle == null ) {
-			FacesContext ctx = FacesContext.getCurrentInstance();
-			Locale locale = ctx.getExternalContext().getRequestLocale();
-			bundle = ResourceBundle.getBundle( BUNDLE_BASENAME, locale );
+    		Locale locale = CDRUtils.getCurrentLocale( FacesContext.getCurrentInstance() );
+			bundle = ResourceBundle.getBundle( IConstants.CDR_BUNDLE_NAME, locale );
 		}
 		return bundle;
 	}

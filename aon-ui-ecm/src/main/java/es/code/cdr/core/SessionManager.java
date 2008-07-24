@@ -1,10 +1,10 @@
 package es.code.cdr.core;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import javax.jcr.LoginException;
+import javax.jcr.NoSuchWorkspaceException;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.SimpleCredentials;
@@ -12,8 +12,6 @@ import javax.jcr.SimpleCredentials;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.code.aon.bridge.plugin.UserManager;
-import com.code.aon.jaas.deployment.DeploymentException;
 import com.code.aon.jaas.valves.BackDoorPrincipal;
 
 /**
@@ -37,34 +35,12 @@ public class SessionManager {
 		return instance;
 	}
 
-	/** User manager. */
-	private UserManager userManager = new UserManager();
 	/** Hierarchies. */
 	private Map<String, HierarchyManager> hierarchies = new HashMap<String, HierarchyManager>();
 
 	/**
 	 */
 	private SessionManager() {
-	}
-
-	/**
-	 * Returns the authenticated user name.
-	 * 
-	 * @return
-	 */
-	public String getUserName() {
-		return userManager.getUserFromPrincipal().getName();
-	}
-
-	/**
-	 * Returns the list of domains this context belongs to.
-	 * 
-	 * @param ctx
-	 * @return
-	 * @throws DeploymentException
-	 */
-	public List<String> getApplicationDomains(String ctx) throws DeploymentException {
-		return  userManager.getApplicationDomains( ctx );
 	}
 
 	/**
@@ -85,11 +61,10 @@ public class SessionManager {
 	 * @param bdp
 	 * @param workspaceId
 	 */
-	public HierarchyManager getHierarchyManager(
-			String sessionId, BackDoorPrincipal bdp, String workspaceId) {
+	public HierarchyManager getHierarchyManager(String sessionId, BackDoorPrincipal bdp, String workspaceId) {
 		HierarchyManager hm = getHierarchyManager( sessionId );
 		if ( hm == null ) {
-			hm = new HierarchyManager( bdp.getPrincipal().getName() );
+			hm = new HierarchyManager( bdp.getPrincipal().getShortName() );
 			try {
 				hm.init( getSession( sessionId, bdp, workspaceId ).getRootNode() );
 				hierarchies.put( sessionId, hm );
@@ -101,7 +76,8 @@ public class SessionManager {
 	}
 
     /**
-     * Gets access controlled query manager. Use MgnlContext if possible.
+     * Gets access controlled query manager.
+     * 
      * @param request
      * @param repositoryID
      * @param workspaceID
@@ -141,7 +117,15 @@ public class SessionManager {
 		HierarchyManager hm = getHierarchyManager( sessionId );
         if ( hm == null ) {
     		SimpleCredentials sc = new SimpleCredentials( bdp.getPrincipal().getName() , bdp.getPassword().toCharArray() );
-        	return ContentRepository.getSessionInstance( sc, workspaceId );
+    		Session session;
+    		try {
+    			session = ContentRepository.getSessionInstance( sc, workspaceId );
+    		} catch (NoSuchWorkspaceException e) {
+    			ContentRepository.getProvider().getRi().addWorkspace( workspaceId );
+    			ContentRepository.getProvider().registerWorkspace( sc, workspaceId );
+    			session = ContentRepository.getSessionInstance( sc, workspaceId );
+    		}
+    		return session;
         }
         return hm.getWorkspace().getSession();
     }

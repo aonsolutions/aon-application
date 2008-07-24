@@ -9,9 +9,10 @@
 		<aon:div styleClass="aon-toolbar">
 			<h:panelGroup>
 				<h:commandButton id="ECMindex"
-						renderedOnUserRole="Manager"
+						rendered="#{manager.roleManager}"
 						title="#{menuBundle.aon_ecm_repository}"
 						action="admin_repository"
+						actionListener="#{manager.folders.reset}"
 						styleClass="aon-finding-toolbar-item aon-icon-index"
 						value="#{menuBundle.aon_ecm_repository}" />
 				<h:commandButton id="ECMSeach"
@@ -27,7 +28,7 @@
 						styleClass="aon-finding-toolbar-item aon-icon-advanced-search"
 						value="#{menuBundle.aon_search_advanced}" />
 				<h:commandButton id="ECMPermissions"
-						renderedOnUserRole="Manager"
+						rendered="#{manager.roleManager}"
 						title="#{menuBundle.aon_permissions}"
 						action="permissions_list"
 						styleClass="aon-finding-toolbar-item aon-icon-user"

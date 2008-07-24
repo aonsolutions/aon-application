@@ -14,11 +14,10 @@ import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import es.code.repository.util.Path;
-
 import es.code.cdr.core.ContentRepository;
+import es.code.cdr.ui.util.CDRUtils;
 import es.code.repository.IProvider;
-import es.code.repository.RepositoryInfo;
+import es.code.repository.util.Path;
 
 /**
  * @author Consulting & Development. Iñaki Ayerbe - 29/06/2007
@@ -45,7 +44,6 @@ public class CDRInitializer implements ServletContextListener {
 		try {
 			is = getClass().getResourceAsStream( "/bootstrap.properties" );
 			bootstrap.load(is);
-			bootstrap.setProperty( RepositoryInfo.CONTEXT_PATH, "/aon-web-ecm" );
 		} catch (IOException e) {
 			LOGGER.error( "Unable to load due to an IOException: {}", e.getMessage() );
 		} finally {
@@ -85,8 +83,8 @@ public class CDRInitializer implements ServletContextListener {
 						+ "\nProfile mappings in use " + System.getProperty( IProvider.PROFILE_MAPPINGS_FILE_KEY ) );
 			}
 		}
-
-		ContentRepository.init( bootstrap );
+		
+		ContentRepository.init( CDRUtils.getRepositoryInfo( bootstrap ) );
 	}
 
 }
