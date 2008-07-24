@@ -30,13 +30,13 @@ public class MenuController {
 			menus = new LinkedList<SelectItem>();
 			SelectItem item = new SelectItem("AON_APP", "Gestión Taller");
 			menus.add(item);
-			item = new SelectItem("AON_ACCOUNT", "Contabilidad");
-			menus.add(item);
             item = new SelectItem("AON_FINANCE", "Tesorería");
+			menus.add(item);
+			item = new SelectItem("AON_ACCOUNT", "Contabilidad");
             menus.add(item);
             item = new SelectItem("AON_REPORT", "Informes");
             menus.add(item);
-            item = new SelectItem("AON_CONFIG", "Configuración y Utilidades");
+            item = new SelectItem("AON_CONFIG", "Configuración");
             menus.add(item);
 		}
 		return menus;
