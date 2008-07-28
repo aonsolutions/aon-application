@@ -51,6 +51,10 @@ public class CommercialTracking implements ITransferObject {
 	
 	/** The next. */
 	private CommercialTracking next;
+	
+	public CommercialTracking() {
+		this.status = CommercialTrackingStatus.PENDING;
+	}
 
 	/**
 	 * Gets the id.

@@ -24,6 +24,11 @@
 		</converter-class>
 	</converter>
 
+	<converter>
+    	<converter-id>toConverter</converter-id>
+    	<converter-class>com.code.aon.ui.commercial.converter.ITransferObjectConverter</converter-class>
+	</converter>
+
 	<lifecycle>
 		<phase-listener>
 			com.code.aon.faces.component.sandbox.ValueChangePhaseListener
@@ -94,5 +99,5 @@
 		</managed-bean-class>
 		<managed-bean-scope>request</managed-bean-scope>
 	</managed-bean>
-
+   
 </faces-config>
