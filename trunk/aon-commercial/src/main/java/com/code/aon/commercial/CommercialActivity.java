@@ -6,6 +6,8 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
+import org.apache.commons.lang.ObjectUtils;
+
 import com.code.aon.common.ITransferObject;
 
 
@@ -81,6 +83,24 @@ public class CommercialActivity implements ITransferObject {
      */
     public void setName(String name) {
         this.name = name;
+    }
+    
+	public boolean equals(Object obj) {
+		if (this == obj) {
+    	    return true;
+    	}
+    	if (obj instanceof CommercialActivity) {
+    		CommercialActivity d = (CommercialActivity) obj;
+    		if (! ObjectUtils.equals(getId(), d.getId()) ) {
+    			return false;
+    		}
+    		return true;
+    	}
+    	return false;
+	}    
+
+    public int hashCode() {
+        return id != null ? this.getClass().hashCode() + id.hashCode() : super.hashCode();
     }
 
 }
