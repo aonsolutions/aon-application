@@ -7,6 +7,7 @@ import java.util.Locale;
 import javax.faces.context.FacesContext;
 import javax.faces.model.SelectItem;
 
+import com.code.aon.commercial.enumeration.CommercialTrackingStatus;
 import com.code.aon.commercial.enumeration.OfferDetailStatus;
 import com.code.aon.commercial.enumeration.OfferStatus;
 import com.code.aon.commercial.enumeration.OfferType;
@@ -18,20 +19,30 @@ import com.code.aon.commercial.enumeration.OfferType;
  */
 public class CommercialCollectionsController {
 
+	private List<SelectItem> offerStatuses;
+	
+	private List<SelectItem> offerTypes;
+	
+	private List<SelectItem> offerDetailStatuses;
+	
+	private List<SelectItem> commercialTrackingStatuses;
+	
 	/**
 	 * Gets the offer statuses.
 	 * 
 	 * @return the offer statuses
 	 */
 	public List<SelectItem> getOfferStatuses() {
-		Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
-		LinkedList<SelectItem> statuses = new LinkedList<SelectItem>();
-		for (OfferStatus status : OfferStatus.values()) {
-			String name = status.getName(locale);
-			SelectItem item = new SelectItem(status, name);
-			statuses.add(item);
+		if ( offerStatuses == null ) {
+			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
+			offerStatuses = new LinkedList<SelectItem>();
+			for (OfferStatus status : OfferStatus.values()) {
+				String name = status.getName(locale);
+				SelectItem item = new SelectItem(status, name);
+				offerStatuses.add(item);
+			}
 		}
-		return statuses;
+		return offerStatuses;
 	}
 	
 	/**
@@ -40,14 +51,16 @@ public class CommercialCollectionsController {
 	 * @return the offer types
 	 */
 	public List<SelectItem> getOfferTypes() {
-		Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
-		LinkedList<SelectItem> types = new LinkedList<SelectItem>();
-		for (OfferType type : OfferType.values()) {
-			String name = type.getName(locale);
-			SelectItem item = new SelectItem(type, name);
-			types.add(item);
+		if ( offerTypes == null ) {
+			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
+			offerTypes = new LinkedList<SelectItem>();
+			for (OfferType type : OfferType.values()) {
+				String name = type.getName(locale);
+				SelectItem item = new SelectItem(type, name);
+				offerTypes.add(item);
+			}
 		}
-		return types;
+		return offerTypes;
 	}
 
 	/**
@@ -56,13 +69,34 @@ public class CommercialCollectionsController {
 	 * @return the offer detail statuses
 	 */
 	public List<SelectItem> getOfferDetailStatuses() {
-		Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
-		LinkedList<SelectItem> statuses = new LinkedList<SelectItem>();
-		for (OfferDetailStatus status : OfferDetailStatus.values()) {
-			String name = status.getName(locale);
-			SelectItem item = new SelectItem(status, name);
-			statuses.add(item);
+		if ( offerDetailStatuses == null ) {
+			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
+			offerDetailStatuses = new LinkedList<SelectItem>();
+			for (OfferDetailStatus status : OfferDetailStatus.values()) {
+				String name = status.getName(locale);
+				SelectItem item = new SelectItem(status, name);
+				offerDetailStatuses.add(item);
+			}
 		}
-		return statuses;
+		return offerDetailStatuses;
 	}
+
+	/**
+	 * Gets the commercial tracking statuses.
+	 * 
+	 * @return the commercial tracking statuses
+	 */
+	public List<SelectItem> getCommercialTrackingStatuses() {
+		if ( commercialTrackingStatuses == null ) {
+			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
+			commercialTrackingStatuses = new LinkedList<SelectItem>();
+			for (CommercialTrackingStatus status : CommercialTrackingStatus.values()) {
+				String name = status.getName(locale);
+				SelectItem item = new SelectItem(status, name);
+				commercialTrackingStatuses.add(item);
+			}
+		}
+		return commercialTrackingStatuses;
+	}
+
 }

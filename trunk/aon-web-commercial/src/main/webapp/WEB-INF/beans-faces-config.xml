@@ -5,6 +5,15 @@
 
 <faces-config>
 
+	<!--  **** COMMERCIAL COLLECTIONS **** 
+		Controlador que proporciona colecciones del grupo .
+	-->
+	<managed-bean>
+		<managed-bean-name>commecialCollections</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.commercial.controller.CommercialCollectionsController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
+
 	<!-- ************ COMMERCIAL SEGMENT ************** -->
 	<managed-bean>
 		<managed-bean-name>commercialSegment</managed-bean-name>
@@ -46,7 +55,7 @@
 	<!-- ************ COMMERCIAL TRACKING ************** -->
 	<managed-bean>
 		<managed-bean-name>commercialTracking</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.form.BasicController</managed-bean-class>
+		<managed-bean-class>com.code.aon.ui.commercial.controller.CommercialTrackingController</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
 			<property-name>queryOnStartUP</property-name>
@@ -60,8 +69,23 @@
 			<property-name>beanName</property-name>
 			<value>commercialTracking</value> 
 		</managed-property>
+		<managed-property>
+			<property-name>listenerClasses</property-name>
+			<list-entries>
+				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+				<value>#{commercialTrackingListener}</value>
+			</list-entries>
+		</managed-property>		
 	</managed-bean>
 	
+	<managed-bean>
+		<managed-bean-name>commercialTrackingListener</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.commercial.event.CommercialTrackingListener
+		</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+	</managed-bean>
+		
 	<!-- ************ TARGET ************** -->
 	<managed-bean>
 		<managed-bean-name>target</managed-bean-name>
