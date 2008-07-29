@@ -17,23 +17,29 @@
     overflow:auto;
 }
 </style>
-
-        <rich:modalPanel  id="#{modalPanelName}"  
-            height="560" width="675" zindex="2000">
-            <f:facet name="header">
-                <h:outputText value="Album" />
-            </f:facet>
-            <f:facet name="controls">
-                <h:graphicImage value="/images/icefaces/popupclose.gif" style="cursor:pointer" onclick="Richfaces.hideModalPanel('#{modalPanelName}')" />
-            </f:facet>
+    <rich:modalPanel  id="#{modalPanelName}"  
+        height="560" width="675" zindex="2000">
+        <f:facet name="header">
+            <h:outputText value="Album" />
+        </f:facet>
+        <f:facet name="controls">
+			<aon:commandButton id="close"
+				action="album_image_list"
+				actionListener="#{album.onInitGenerateFromGallery}"
+				image="/images/icefaces/popupclose.gif"
+				styleClass="aon-icon-commandButton">
+			</aon:commandButton>	
+        </f:facet>
+        <aon:div id="tree_">
 			<aon:commandButton id="generate"
+				rendered="#{!album.activeLog}"
 				value="#{appBundle.aon_generate}" 
-               	reRender="#{reRender}"
+				reRender="tree_,log_"
 				styleClass="aon-finding-toolbar-item aon-icon-accept">
 				<aon:actionListener method="#{album.onGenerateFromGallery}" />
 				<aon:actionListener method="#{albumImage.onSearch}" />
 			</aon:commandButton>
-			<h:panelGrid id="#{modalPanelName}_treeGrid" columns="2">
+			<h:panelGrid id="#{modalPanelName}_treeGrid" columns="2" rendered="#{!album.activeLog}">
 	            <rich:panel bodyClass="bodyPanel">
 				    <rich:tree style="width:300px"
 				    	switchType="server" 
@@ -59,8 +65,20 @@
 						</rich:dataList>
 					</aon:panelGroup>
 				</rich:panel>
-			</h:panelGrid>		
-        </rich:modalPanel>													
+			</h:panelGrid>
+		</aon:div>
+        <aon:div id="log_">
+			<rich:panel bodyClass="inpanelBody" id="gridLog" rendered="#{album.activeLog}">
+		       	<f:facet name="header">
+		                   Console Log
+		           </f:facet>
+		        <rich:dataList id="dataListLog" var="msg" value="#{album.status}" rows="15">
+					<h:outputText value="#{msg}"/>
+				</rich:dataList>
+				<rich:datascroller align="left"  for="dataListLog" maxPages="20" />
+			</rich:panel>
+		</aon:div>
+	</rich:modalPanel>													
 
 </ui:composition>
 
