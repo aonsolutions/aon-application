@@ -9,7 +9,9 @@
 	<context-param>
 		<param-name>javax.faces.CONFIG_FILES</param-name>
 		<param-value>
-			/WEB-INF/faces-config.xml, /WEB-INF/beans-faces-config.xml,
+			/WEB-INF/faces-config.xml,
+			/WEB-INF/beans-faces-config.xml,
+			/WEB-INF/lookup-beans-faces-config.xml,
 			/WEB-INF/navigation-faces-config.xml
 		</param-value>
 	</context-param>
