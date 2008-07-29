@@ -1,7 +1,9 @@
 package com.code.aon.ui.cms.controller;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.List;
 
 import javax.faces.event.ActionEvent;
@@ -81,11 +83,36 @@ public class AlbumController extends BasicI18nController {
 		return "album_image_form";
 	}
 
+	// ***********************************************
+	// GALLERY GENERATOR AND LOG
+	// ***********************************************
+
+	private boolean activeLog = false;
+
+	private List<String> status = new ArrayList<String>();
+
+	public boolean isActiveLog() {
+		return activeLog;
+	}
+
+	public List<String> getStatus() {
+		return status;
+	}
+
+	public void onInitGenerateFromGallery(ActionEvent event) throws ManagerBeanException {
+		this.activeLog = false;
+		this.status = new ArrayList<String>();
+	}
+
 	public void onGenerateFromGallery(ActionEvent event) throws ManagerBeanException {
+		this.status.add(0,GregorianCalendar.getInstance().getTime()+": Init generator");
+
 		String albumAlias = "AUTO_GENERATED";
 		
 		GalleryController controller = (GalleryController)AonUtil.getRegisteredBean("gallery"); 
 		List<Image> list = (List<Image>) controller.getModel().getWrappedData();
+		
+		this.status.add(0,GregorianCalendar.getInstance().getTime()+": Searching category...");
 		
 		IManagerBean albumCategoryBean = BeanManager.getManagerBean(AlbumCategory.class);
 		Criteria albumCategoryCriteria = new Criteria();
@@ -104,8 +131,12 @@ public class AlbumController extends BasicI18nController {
 			albumCategoryDetail.setLabel(albumAlias);
 			IManagerBean albumCategoryDetailBean = BeanManager.getManagerBean(AlbumCategoryDetail.class);
 			albumCategoryDetail = (AlbumCategoryDetail)albumCategoryDetailBean.insert(albumCategoryDetail);
+			
+			this.status.add(0,GregorianCalendar.getInstance().getTime()+": Not exist. Category created.");
 		}else
 			albumCategory = (AlbumCategory)albumCategoryList.get(0); 
+
+		this.status.add(0,GregorianCalendar.getInstance().getTime()+": Creating album...");
 
 		IManagerBean albumBean = BeanManager.getManagerBean(Album.class);
 		IManagerBean albumImageBean = BeanManager.getManagerBean(AlbumImage.class);
@@ -113,6 +144,11 @@ public class AlbumController extends BasicI18nController {
 		Criteria albumCriteria = new Criteria();
 		String alias = controller.getCurrentRelativePath();
 		alias = alias.replaceAll("[^A-Za-z0-9._-]+", "");
+		if (alias.length()>32)
+			alias = alias.substring(0, 32);
+		
+		this.status.add(0,GregorianCalendar.getInstance().getTime()+": Album name "+alias+".");
+		
 		albumCriteria.addEqualExpression(albumBean.getFieldName(ICMSAlias.ALBUM_ALIAS), alias);
 		List<ITransferObject> albumList = (List<ITransferObject>)albumBean.getList(albumCriteria);
 		Album album;
@@ -131,21 +167,31 @@ public class AlbumController extends BasicI18nController {
 			albumDetail.setLanguage(ControllerUtil.getCurrentLanguage());
 			IManagerBean albumDetailBean = BeanManager.getManagerBean(AlbumDetail.class);
 			albumDetail = (AlbumDetail)albumDetailBean.insert(albumDetail);
+
+			this.status.add(0,GregorianCalendar.getInstance().getTime()+": Not exits, created "+alias+".");
 		}else{
 			album = (Album)albumList.get(0); 
-			
+
+			this.status.add(0,GregorianCalendar.getInstance().getTime()+": Exits, removing content.");
+
 			Criteria albumImageCriteria = new Criteria();
 			albumImageCriteria.addEqualExpression(albumImageBean.getFieldName(ICMSAlias.ALBUM_IMAGE_ALBUM_ID), album.getId());
 			List<ITransferObject> albumImageList = (List<ITransferObject>)albumImageBean.getList(albumImageCriteria);
 			for (ITransferObject transferObject : albumImageList) {
 				albumImageBean.remove(transferObject);
-			}	
+			}
+			
+			this.status.add(0,GregorianCalendar.getInstance().getTime()+": Removed.");
 		}
-		
+
+		this.status.add(0,GregorianCalendar.getInstance().getTime()+": Creating images.");
+
 		AlbumImage albumImage;
 		AlbumImageDetail albumImageDetail;
 		int i = 0;
 		for (Image image : list) {
+			this.status.add(0,GregorianCalendar.getInstance().getTime()+": Image "+image.getRelativePath()+".");
+			
 			if (album.getImage() == null){
 				album.setImage(image.getRelativePath());
 				album = (Album)albumBean.update(album);
@@ -172,6 +218,10 @@ public class AlbumController extends BasicI18nController {
 			
 			++i;
 		}
+
+		this.status.add(0,GregorianCalendar.getInstance().getTime()+": Finished generation.");
+
+		this.activeLog = true;
 	}
 
 }
