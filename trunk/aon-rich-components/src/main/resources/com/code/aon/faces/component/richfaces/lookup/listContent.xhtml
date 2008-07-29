@@ -37,8 +37,8 @@
 				<ui:include src="#{lookup.listPagePath}" />
 			</aon:dataTable>
 
-			<aon:dataScroller dataTable="#{lookup.beanName}Data"
-				model="#{lookup.model}" showNote="true" />
+			<aon:dataScroller for="#{lookup.beanName}Data" rowCount="#{lookup.model.rowCount}" showNote="true" />
+
 		</aon:div>
 	</aon:div>
 </ui:composition>
