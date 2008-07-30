@@ -1,5 +1,8 @@
 package com.code.aon.ui.commercial.event;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 import com.code.aon.commercial.CommercialTracking;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ui.commercial.controller.CommercialTrackingController;
@@ -13,6 +16,18 @@ import com.code.aon.ui.form.event.ControllerListenerException;
  */
 public class CommercialTrackingListener extends ControllerAdapter {
 
+	private static final Logger LOGGER = Logger.getLogger(CommercialTrackingListener.class.getName());
+	
+	@Override
+	public void beforeModelInitialized(ControllerEvent event) throws ControllerListenerException {
+		CommercialTrackingController controller = (CommercialTrackingController) event.getController();
+		try {
+			controller.completeCriteria();
+		} catch (ManagerBeanException e) {
+			LOGGER.log(Level.SEVERE, "Error initializing Task Model", e);
+		}
+	}
+	
 	@Override
 	public void afterBeanCreated(ControllerEvent event)
 			throws ControllerListenerException {
