@@ -13,14 +13,14 @@
 
 	<ui:define name="content">
 
-		<aon:form id="list">
+		<aon:form id="commercialTrackingList">
 		
 			<aon:div styleClass="aon-finding-title-toolbar">
 				<aon:panelGrid id="buttonsGrid" columns="3" dir="true"
 					columnClasses="aon-finding-title,aon-finding-subtitle,aon-finding-toolbar">
 
 					<aon:div styleClass="aon-finding-title-internal">
-						<aon:outputText value="#{appBundle.aon_webmail_mailAccount}" />
+						<aon:outputText value="#{menuBundle.aon_commercial_tracking}" />
 					</aon:div>
 
 					<aon:div styleClass="aon-finding-subtitle-internal">
@@ -29,13 +29,14 @@
 
 					<!-- start toolbar navigation -->
 					<aon:div styleClass="aon-finding-toolbar-item-group">
+						<aon:commandButton id="search" value="#{bundle.aon_search}"
+							action="commercialTracking_search" actionListener="#{commercialTracking.onEditSearch}"
+							styleClass="aon-finding-toolbar-item aon-icon-search"
+							accesskey="#{bundle.aon_key_search}" />				
 						<aon:commandButton id="reset" value="#{bundle.aon_reset}"
-							action="mailAccount_form" actionListener="#{mailAccount.onReset}"
+							action="commercialTracking_form" actionListener="#{commercialTracking.onReset}"
 							styleClass="aon-finding-toolbar-item aon-icon-newMailAccount"
 							accesskey="#{bundle.aon_key_new}" />
-						<aon:commandButton id="back"
-							value="#{bundle.aon_back}" action="folder"
-							styleClass="aon-finding-toolbar-item aon-icon-cancel" />
 					</aon:div>
 
 					<!-- end toolbar navigation -->
@@ -45,69 +46,51 @@
 			<!--  aon-region-body -->
 			<aon:div styleClass="aon-scroll-area">
 
-				<aon:editDataTable id="dataTable" value="#{mailAccount.model}" var="to"
-					rows="20" styleClass="dr-table rich-table aon-editDataTable"
+				<aon:dataTable id="commercialTrackingData" value="#{commercialTracking.model}"
+					var="to" rows="20" rendered="#{commercialTracking.model.rowCount > 0}"
 					columnClasses="aon-editDataTable-textColumn, aon-editDataTable-textColumn,
-								aon-editDataTable-textColumn, aon-editDataTable-textColumn">
+						aon-editDataTable-textColumn, aon-editDataTable-textColumn, aon-editDataTable-textColumn">
 
-					<aon:rowSelector
-						action="mailAccount_form" actionListener="#{mailAccount.onSelect}" />
-
+					<aon:rowSelector action="commercialTracking_form" actionListener="#{commercialTracking.onSelect}" />
+					
 					<aon:column>
 						<f:facet name="header">
-							<aon:outputText value="#{appBundle.aon_webmail_mailAccount_name}" />
+							<aon:outputText value="#{appBundle.aon_commercial_tracking_date}" />
 						</f:facet>
-						<aon:outputText value="#{to.name}" />
+						<aon:outputText value="#{to.date}"/>
 					</aon:column>
 
-					<aon:column>
+ 					<aon:column>
 						<f:facet name="header">
-							<aon:outputText value="#{appBundle.aon_webmail_mailAccount_email}" />
+							<aon:outputText value="#{appBundle.aon_commercial_tracking_seller}" />
 						</f:facet>
-						<aon:outputText value="#{to.email}" />
+						<aon:outputText value="#{to.seller.registry.fullName}"/>
 					</aon:column>
 
-					<aon:column>
+ 					<aon:column>
 						<f:facet name="header">
-							<aon:outputText value="#{appBundle.aon_webmail_signature_signature}" />
+							<aon:outputText value="#{appBundle.aon_commercial_tracking_target}" />
 						</f:facet>
-						<aon:outputText value="#{to.signature.name}" />
+						<aon:outputText value="#{to.target.registry.fullName}"/>
 					</aon:column>
 
-					<aon:column>
+ 					<aon:column>
 						<f:facet name="header">
-							<aon:outputText
-								value="#{appBundle.aon_webmail_mailAccount_active}" />
+							<aon:outputText value="#{appBundle.aon_commercial_tracking_activity}" />
 						</f:facet>
-						<aon:outputText
-							value="#{appBundle.aon_webmail_mailAccount_user_account}"
-							rendered="#{!mailAccount.currentToDefaultAccount}">
-						</aon:outputText>
-						<aon:outputText
-							value="#{appBundle.aon_webmail_mailAccount_default_account}"
-							rendered="#{mailAccount.currentToDefaultAccount}" />
+						<aon:outputText value="#{to.activity.name}"/>
 					</aon:column>
 
-					<aon:column>
+ 					<aon:column>
 						<f:facet name="header">
-							<aon:outputText value="&nbsp;" />
+							<aon:outputText value="#{appBundle.aon_commercial_tracking_status}" />
 						</f:facet>
-						<aon:outputText
-							value="#{appBundle.aon_webmail_signature_active}"
-							rendered="#{webmail.server.account.name==to.name}" />
-						<aon:commandButton id="mailAccountChange"
-							rendered="#{webmail.server.account.name!=to.name}"
-							onmouseover="disableRowSelector();" onmouseout="enableRowSelector();"
-							title="#{appBundle.aon_webmail_mailAccountChange}"
-							action="mailAccount_list" actionListener="#{mailAccount.onChangeServer}"
-							value="#{appBundle.aon_webmail_mailAccountChange}"
-							styleClass="aon-icon-commandButton aon-icon-mailAccountChange">
-						</aon:commandButton>
+						<aon:outputText value="#{to.status}"/>
 					</aon:column>
+ 
+				</aon:dataTable>
 
-				</aon:editDataTable>
-
-				<aon:dataScroller for="dataTable" rowCount="#{mailAccount.model.rowCount}" showNote="true" />
+				<aon:dataScroller for="commercialTrackingData" rowCount="#{commercialTracking.model.rowCount}" showNote="true" />
 
 			</aon:div>
 		</aon:form>
