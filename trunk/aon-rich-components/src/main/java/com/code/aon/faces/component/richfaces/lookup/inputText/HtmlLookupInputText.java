@@ -74,6 +74,11 @@ public class HtmlLookupInputText extends HtmlInputText implements ILookupTags, I
 		return this.joinBindingsMap;
 	}
 	
+	@Override
+	public String getWindowTitle() {
+		return null;
+	}
+
 	/**
      * <p>Gets the state of the instance as a <code>Serializable</code>
      * Object.</p>

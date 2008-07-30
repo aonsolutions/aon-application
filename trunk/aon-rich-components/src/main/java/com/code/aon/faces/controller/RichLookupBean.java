@@ -16,6 +16,8 @@ import javax.faces.event.ActionEvent;
 import javax.faces.event.ValueChangeEvent;
 import javax.faces.model.DataModel;
 
+import org.apache.commons.lang.StringUtils;
+
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
@@ -40,6 +42,8 @@ public class RichLookupBean {
 	private static final String FORM_ID = "form";
 
 	private static final String SEARCH_ID = "search";
+	
+	private static final String DEFAULT_WINDOW_TITLE = "Select Window";
 
 	private static final Logger LOGGER = Logger.getLogger(RichLookupBean.class.getName());
 
@@ -70,6 +74,9 @@ public class RichLookupBean {
 
 	/** The selected panel. */
 	private String selectedPanel;
+	
+	/** The window title. */
+	private String windowTitle;
 
 	/**
 	 * The Constructor.
@@ -557,6 +564,7 @@ public class RichLookupBean {
 	 */
 	public void onShowListWindow(ActionEvent event) throws ManagerBeanException {
 		setBindings(event.getComponent());
+		updateWindowTitle();
 		setShowWindow(true);
 		setSelectedPanel(LIST_ID);
 		getController().clearCriteria();
@@ -572,6 +580,7 @@ public class RichLookupBean {
 	 */
 	public void onShowSearchWindow(ActionEvent event) {
 		setBindings(event.getComponent());
+		updateWindowTitle();
 		setShowWindow(true);
 		setSelectedPanel(SEARCH_ID);
 		onEditSearch(null);
@@ -586,6 +595,7 @@ public class RichLookupBean {
 	 */
 	public void onShowNewWindow(ActionEvent event) {
 		setBindings(event.getComponent());
+		updateWindowTitle();
 		setShowWindow(true);
 		setSelectedPanel(FORM_ID);
 		onReset(null);
@@ -690,6 +700,19 @@ public class RichLookupBean {
 
 	public ILookupComponent getComponent() {
 		return component;
+	}
+
+	public String getWindowTitle() {
+		return windowTitle;
+	}
+
+	public void updateWindowTitle() {
+		if ( this.component != null ) {
+			this.windowTitle = this.component.getWindowTitle();
+		}
+		if ( StringUtils.isEmpty(this.windowTitle) ) {
+			this.windowTitle = DEFAULT_WINDOW_TITLE;	
+		}
 	}
 	
 }

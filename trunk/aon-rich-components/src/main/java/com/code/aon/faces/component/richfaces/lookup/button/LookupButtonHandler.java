@@ -25,7 +25,7 @@ public class LookupButtonHandler extends AonAjaxComponentHandler implements ILoo
 
    	private static final String LIST_STYLE_CLASS = "aon-lookupButton";
 
-   	private static final String NEW_STYLE_CLASS = "aon-form-new-button";
+   	private static final String NEW_STYLE_CLASS = "aon-lookupButton-new";
 
    	private static final String LIST_TITLE = "#{bundle.aon_open_select_window}";
    	

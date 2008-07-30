@@ -11,4 +11,6 @@ public interface ILookupComponent {
 	
 	MethodBinding getValueChangeListener();
 	
+	String getWindowTitle();
+	
 }
