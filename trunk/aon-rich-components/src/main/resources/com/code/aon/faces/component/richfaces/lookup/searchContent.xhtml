@@ -12,7 +12,7 @@
 	<aon:div styleClass="aon-toolbar">
 		<aon:commandButton id="search" value="#{bundle.aon_search}"
 			accesskey="#{bundle.aon_key_search}"
-			actionListener="#{lookup.onFilterSearch}" reRender="lookupContent"
+			actionListener="#{lookup.onFilterSearch}" reRender="#{lookupId}LookupContent"
 			styleClass="aon-finding-toolbar-item aon-icon-accept" />
 		<aon:commandButton id="cancel" value="#{bundle.aon_cancel}"
 			accesskey="#{bundle.aon_key_cancel}"
