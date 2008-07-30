@@ -12,6 +12,7 @@ import javax.faces.model.SelectItem;
 
 import com.code.aon.commercial.CommercialActivity;
 import com.code.aon.commercial.CommercialTracking;
+import com.code.aon.commercial.Target;
 import com.code.aon.commercial.dao.ICommercialAlias;
 import com.code.aon.commercial.enumeration.CommercialTrackingStatus;
 import com.code.aon.common.BeanManager;
@@ -44,6 +45,10 @@ public class CommercialTrackingController extends BasicController {
 	private Date dateFrom;
 	
 	private Date dateTo;
+	
+	private Seller seller;
+	
+	private Target target;
 	
 	private CommercialActivity activity;
 	
@@ -118,6 +123,8 @@ public class CommercialTrackingController extends BasicController {
 	public void onEditSearch(ActionEvent event) {
 		setDateFrom(null);
 		setDateTo(null);
+		setSeller( new Seller() );
+		setTarget( new Target() );
 		setActivity(null);
 		initializeStatusFilter();
 		super.onEditSearch(event);
@@ -158,6 +165,14 @@ public class CommercialTrackingController extends BasicController {
 			String alias = getFieldName(ICommercialAlias.COMMERCIAL_TRACKING_DATE);
 			getCriteria().addLessThanOrEqualExpression(alias, getDateTo());
 		}
+		if (getSeller().getId() != null) {
+			String alias = getFieldName(ICommercialAlias.COMMERCIAL_TRACKING_SELLER_ID);
+			getCriteria().addEqualExpression(alias, getSeller().getId());			
+		}
+		if (getTarget().getId() != null) {
+			String alias = getFieldName(ICommercialAlias.COMMERCIAL_TRACKING_TARGET_ID);
+			getCriteria().addEqualExpression(alias, getTarget().getId());			
+		}
 		if (getActivity() != null) {
 			String alias = getFieldName(ICommercialAlias.COMMERCIAL_TRACKING_ACTIVITY_ID);
 			getCriteria().addEqualExpression(alias, getActivity().getId());			
@@ -185,6 +200,22 @@ public class CommercialTrackingController extends BasicController {
 		this.dateTo = dateTo;
 	}
 	
+	public Seller getSeller() {
+		return seller;
+	}
+
+	public void setSeller(Seller seller) {
+		this.seller = seller;
+	}
+
+	public Target getTarget() {
+		return target;
+	}
+
+	public void setTarget(Target target) {
+		this.target = target;
+	}
+
 	public CommercialActivity getActivity() {
 		return activity;
 	}
