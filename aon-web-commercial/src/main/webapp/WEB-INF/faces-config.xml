@@ -80,6 +80,10 @@
 					<value>com.code.aon.ui.commercial.i18n.messages</value>
 				</map-entry>
 				<map-entry>
+					<key>commercialBundle</key>
+					<value>com.code.aon.commercial.i18n.messages</value>
+				</map-entry>
+				<map-entry>
 					<key>menuBundle</key>
 					<value>com.code.aon.ui.commercial.i18n.menu</value>
 				</map-entry>
