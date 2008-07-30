@@ -4,7 +4,9 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.logging.Logger;
 
+import javax.faces.event.ActionEvent;
 import javax.faces.event.ValueChangeEvent;
 import javax.faces.model.SelectItem;
 
@@ -17,6 +19,8 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ql.Criteria;
+import com.code.aon.ql.ast.Expression;
+import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.sales.Seller;
 import com.code.aon.ui.form.BasicController;
 
@@ -24,6 +28,8 @@ import com.code.aon.ui.form.BasicController;
  * Controller used in the offer maintenance.
  */
 public class CommercialTrackingController extends BasicController {
+	
+	private static final Logger LOGGER = Logger.getLogger(CommercialTrackingController.class.getName());
 	
 	private Date lastDate;
 	
@@ -35,6 +41,16 @@ public class CommercialTrackingController extends BasicController {
 	
 	private List<SelectItem> activities;
 
+	private Date dateFrom;
+	
+	private Date dateTo;
+	
+	private CommercialActivity activity;
+	
+	private boolean statusPending;
+	
+	private boolean statusClosed;
+	
 	public Date getLastDate() {
 		return lastDate;
 	}
@@ -97,5 +113,100 @@ public class CommercialTrackingController extends BasicController {
 			this.next = null;
 		}
 	}
+
+	@Override
+	public void onEditSearch(ActionEvent event) {
+		setDateFrom(null);
+		setDateTo(null);
+		setActivity(null);
+		initializeStatusFilter();
+		super.onEditSearch(event);
+	}
+	
+	private void initializeStatusFilter() {
+		setStatusPending(true);
+		setStatusClosed(true);
+	}
+	
+	private void completeStatusCriteria() throws ManagerBeanException {
+		if (isStatusClosed() || isStatusPending()) {
+			Expression expToAdd = null;
+			String alias = getFieldName(ICommercialAlias.COMMERCIAL_TRACKING_STATUS);
+			if ( isStatusClosed() ) {
+				expToAdd = ExpressionUtilities.getEqualExpression(alias,
+						CommercialTrackingStatus.CLOSED);
+			}
+			if ( isStatusPending() ) {
+				Expression exp  = ExpressionUtilities.getEqualExpression(alias,
+						CommercialTrackingStatus.PENDING);
+				if ( expToAdd != null ) {
+					expToAdd = ExpressionUtilities.getOrExpression(expToAdd, exp);
+				} else {
+					expToAdd = exp;
+				}
+			}
+			getCriteria().addExpression(expToAdd);
+		}		
+	}
+	
+	public void completeCriteria() throws ManagerBeanException {
+		if (getDateFrom() != null) {
+			String alias = getFieldName(ICommercialAlias.COMMERCIAL_TRACKING_DATE); 
+			getCriteria().addGreaterThanOrEqualExpression(alias, getDateFrom());
+		}
+		if (getDateTo() != null) {
+			String alias = getFieldName(ICommercialAlias.COMMERCIAL_TRACKING_DATE);
+			getCriteria().addLessThanOrEqualExpression(alias, getDateTo());
+		}
+		if (getActivity() != null) {
+			String alias = getFieldName(ICommercialAlias.COMMERCIAL_TRACKING_ACTIVITY_ID);
+			getCriteria().addEqualExpression(alias, getActivity().getId());			
+		}
+		completeStatusCriteria();
+	}
+	
+	// -------------------------------------------------
+	// Getters y setters para los campos de la búsqueda.
+	// -------------------------------------------------
+	
+	public Date getDateFrom() {
+		return dateFrom;
+	}
+
+	public void setDateFrom(Date dateFrom) {
+		this.dateFrom = dateFrom;
+	}
+
+	public Date getDateTo() {
+		return dateTo;
+	}
+
+	public void setDateTo(Date dateTo) {
+		this.dateTo = dateTo;
+	}
+	
+	public CommercialActivity getActivity() {
+		return activity;
+	}
+
+	public void setActivity(CommercialActivity activity) {
+		this.activity = activity;
+	}
+
+	public boolean isStatusPending() {
+		return statusPending;
+	}
+
+	public void setStatusPending(boolean statusPending) {
+		this.statusPending = statusPending;
+	}
+
+	public boolean isStatusClosed() {
+		return statusClosed;
+	}
+
+	public void setStatusClosed(boolean statusClosed) {
+		this.statusClosed = statusClosed;
+	}	
 	
 }
