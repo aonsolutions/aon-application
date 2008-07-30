@@ -17,7 +17,7 @@
 
 			<f:facet name="header">
 				<aon:div styleClass="aon-popupWindow-title">
-					<aon:outputText value="Select Window" />
+					<aon:outputText value="#{lookup.windowTitle}" />
 				</aon:div>
 			</f:facet>
 			<f:facet name="controls">
@@ -30,7 +30,7 @@
 				</aon:form>
 			</f:facet>
 
-			<aon:div id="lookupContent" styleClass="aon-popupWindow-content">
+			<aon:div id="#{lookupId}LookupContent" styleClass="aon-popupWindow-content">
 				<aon:div style="width:100%">
 					<aon:div styleClass="aon-popupWindow-content-internal">
 						<aon:div style="width:100%">
