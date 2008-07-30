@@ -1288,7 +1288,14 @@ color:#000;
 	height:20px;
 	margin:0 5px;
 	}
-
+.aon-lookupButton-new{
+	background:transparent url(images/aon-icon/aon-icon-lookup-new.png) center center no-repeat;
+	border:#808080 1px solid;
+	width:20px;
+	height:20px;
+	margin:0 5px;
+	}
+	
 /**********************************************/
 /************   POPUP WINDOW  *************/
 /**********************************************/ 
