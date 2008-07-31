@@ -165,11 +165,11 @@ public class CommercialTrackingController extends BasicController {
 			String alias = getFieldName(ICommercialAlias.COMMERCIAL_TRACKING_DATE);
 			getCriteria().addLessThanOrEqualExpression(alias, getDateTo());
 		}
-		if (getSeller().getId() != null) {
+		if ( (getSeller() != null) && (getSeller().getId() != null) ) {
 			String alias = getFieldName(ICommercialAlias.COMMERCIAL_TRACKING_SELLER_ID);
 			getCriteria().addEqualExpression(alias, getSeller().getId());			
 		}
-		if (getTarget().getId() != null) {
+		if ( (getTarget() != null) && (getTarget().getId() != null) ) {
 			String alias = getFieldName(ICommercialAlias.COMMERCIAL_TRACKING_TARGET_ID);
 			getCriteria().addEqualExpression(alias, getTarget().getId());			
 		}

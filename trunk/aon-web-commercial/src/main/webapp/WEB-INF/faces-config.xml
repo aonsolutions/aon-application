@@ -15,6 +15,14 @@
 
 	<!--  *************** COLLECTIONS ***************** -->
 
+	<managed-bean>
+		<managed-bean-name>registryCollections</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.registry.controller.RegistryCollectionsController
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
+
 	<!--  *************** CONVERTERS ***************** -->
 	<converter>
 		<description>Conversor para los Enum</description>
