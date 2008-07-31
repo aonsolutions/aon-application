@@ -56,6 +56,12 @@
 			<scope>compile</scope>
 		</dependency>		
 		<dependency>
+			<groupId>com.code.aon</groupId>
+			<artifactId>aon.ui.geozone</artifactId>
+			<version>1.0.4</version>
+			<scope>compile</scope>
+		</dependency>		
+		<dependency>
 		    <groupId>commons-el</groupId>
 		    <artifactId>commons-el</artifactId>
 		    <version>1.0</version>

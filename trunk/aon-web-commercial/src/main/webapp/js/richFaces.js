@@ -33,3 +33,7 @@ function resetStatusError() {
 function toUpperCase(obj) {
 	obj.value = obj.value.toUpperCase();
 }
+
+function toLowerCase(obj) {
+	obj.value = obj.value.toLowerCase();
+}
