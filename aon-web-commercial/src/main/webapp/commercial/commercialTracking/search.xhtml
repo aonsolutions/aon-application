@@ -7,7 +7,7 @@
 	template="/facelet/templates/aon.ui.content.xhtml">
 	<ui:define name="content">
 
-		<aon:form id="periodTaskForm">
+		<aon:form id="commercialTrackingSearch">
 
 			<aon:div styleClass="aon-finding-title-toolbar">
 				<aon:panelGrid columns="3" dir="true"
@@ -26,13 +26,13 @@
 							action="commercialTracking_list" actionListener="#{commercialTracking.onSearch}"
 							styleClass="aon-finding-toolbar-item aon-icon-search"
 							accesskey="#{bundle.aon_key_search}" />
-						<aon:commandButton id="clear" value="#{bundle.aon_clear}"
-							type="reset" ajaxSingle="true"
-							styleClass="aon-finding-toolbar-item aon-icon-rubber" />
 						<aon:commandButton id="cancel" value="#{bundle.aon_cancel}"
 							action="commercialTracking_list" actionListener="#{commercialTracking.onCancel}"
 							styleClass="aon-finding-toolbar-item aon-icon-cancel" immediate="true"
 							accesskey="#{bundle.aon_key_cancel}" />
+						<aon:commandButton id="clear" value="#{bundle.aon_clear}"
+							type="reset" ajaxSingle="true"
+							styleClass="aon-finding-toolbar-item aon-icon-rubber" />
 						<aon:commandButton id="reset" value="#{bundle.aon_reset}"
 							action="commercialTracking_form" actionListener="#{commercialTracking.onReset}"
 							styleClass="aon-finding-toolbar-item aon-icon-reset"

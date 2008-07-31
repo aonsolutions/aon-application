@@ -29,6 +29,22 @@
 		</navigation-case>
 	</navigation-rule>		
 
+	<!-- =================== Target ================= -->	
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>target_list</from-outcome>
+			<to-view-id>/commercial/target/list.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>target_form</from-outcome>
+			<to-view-id>/commercial/target/form.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>target_search</from-outcome>
+			<to-view-id>/commercial/target/search.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>		
+
 	<!-- =================== Application Menu Navigation Rules ================= -->
 	<navigation-rule>
 		<navigation-case>
@@ -45,7 +61,7 @@
 		</navigation-case>
 		<navigation-case>
 			<from-outcome>target</from-outcome>
-			<to-view-id>/commercial/target/form.xhtml</to-view-id>
+			<to-view-id>/commercial/target/search.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>
 	

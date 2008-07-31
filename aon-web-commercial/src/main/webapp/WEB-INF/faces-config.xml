@@ -91,6 +91,10 @@
 					<key>securityBundle</key>
 					<value>com.code.aon.bridge.i18n.messages</value>
 				</map-entry>
+				<map-entry>
+					<key>registryBundle</key>
+                    <value>com.code.aon.ui.registry.i18n.messages</value>
+				</map-entry>				
 			</map-entries>
 		</managed-property>
 	</managed-bean>
