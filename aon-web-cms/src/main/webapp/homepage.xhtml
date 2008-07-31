@@ -105,11 +105,19 @@
 				</aon:commandButton> 
 				<aon:commandButton id="cms-icon-album"
 					rendered="#{domainUtils.albumMenu and ( cms.roleEditor or cms.roleRevisor )}"
+					value="#{menuBundle.cms_album}"
+					image="/images/cms/icons/cms-icon-album-list.png"
+					styleClass="aon-icon-commandButton" 
+					action="album_list">
+					<aon:actionListener method="#{album.onSearch}" />
+				</aon:commandButton> 
+				<aon:commandButton id="cms-icon-album_image"
+					rendered="#{domainUtils.albumMenu and ( cms.roleEditor or cms.roleRevisor )}"
 					value="#{menuBundle.cms_album_image}"
 					image="/images/cms/icons/cms-icon-album.png"
 					styleClass="aon-icon-commandButton" 
-					action="album_image_list">
-					<aon:actionListener method="#{albumImage.onSearch}" />
+					action="album_image_form">
+					<aon:actionListener method="#{albumImage.onReset}" />
 				</aon:commandButton> 
 	        </rich:panel>
 		

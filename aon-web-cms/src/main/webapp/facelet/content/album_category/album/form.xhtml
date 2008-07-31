@@ -77,6 +77,14 @@
 							accesskey="#{bundle.aon_key_close}">
 							<aon:actionListener method="#{album.onCancel}" />
 						</aon:commandButton>
+						<aon:commandButton id="images"
+							value="#{appBundle.albumImage}"
+							action="album_image_list"
+							immediate="#{true}"
+							styleClass="aon-finding-toolbar-item">
+							<aon:actionListener method="#{albumImage.onAlbumCriteria}" />
+							<aon:actionListener method="#{albumImage.onSearch}" />
+						</aon:commandButton>
 						<aon:commandButton id="categories"
 							value="#{appBundle.album_category}"
 							action="album_category_list"
