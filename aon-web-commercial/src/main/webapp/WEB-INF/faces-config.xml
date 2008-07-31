@@ -22,6 +22,13 @@
 		</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
+	<managed-bean>
+		<managed-bean-name>geozoneCollections</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.geozone.controller.GeozoneCollectionsController
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
 
 	<!--  *************** CONVERTERS ***************** -->
 	<converter>
