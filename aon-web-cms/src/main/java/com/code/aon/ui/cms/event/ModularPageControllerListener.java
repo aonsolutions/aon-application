@@ -17,7 +17,9 @@ public class ModularPageControllerListener extends ControllerAdapter {
 	@Override
 	public void beforeModelInitialized(ControllerEvent event)
 			throws ControllerListenerException {
+		ModularPageController controller = (ModularPageController)event.getController(); 
 		try {
+			controller.completeCriteria();
 			Criteria criteria = event.getController().getCriteria();
 			IManagerBean bean = BeanManager.getManagerBean(ModularPage.class);
 			criteria.addOrder(bean.getFieldName(ICMSAlias.MODULAR_PAGE_HOMEPAGE),false);
