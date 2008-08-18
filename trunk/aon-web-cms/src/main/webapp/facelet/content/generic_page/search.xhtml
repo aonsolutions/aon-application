@@ -61,6 +61,19 @@
 						value="#{appBundle.generic_page_alias}" />
 					<aon:inputText id="GenericPage_alias" size="50"
 						valueChangeListener="#{generic_page.addExpression}" />
+
+					<aon:outputLabel for="GenericPage_title"
+						value="#{appBundle.generic_page_title}" />
+					<aon:inputText id="GenericPage_title" size="50"
+						value="#{generic_page.title}" />
+
+					<aon:outputLabel for="GenericPage_section_id"
+						value="#{appBundle.section}"/>
+					<aon:selectOneMenu id="GenericPage_section_id"  
+						valueChangeListener="#{generic_page.addExpression}">
+						<f:selectItem itemLabel="-" itemValue="" />
+						<f:selectItems value="#{collections.sectionList}" />
+					</aon:selectOneMenu>
 	
 				</aon:panelGrid>
 			</aon:div>

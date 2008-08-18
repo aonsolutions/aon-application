@@ -6,6 +6,7 @@ import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ql.Criteria;
+import com.code.aon.ui.cms.controller.GenericPageController;
 import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
@@ -15,8 +16,10 @@ public class GenericPageControllerListener extends ControllerAdapter {
 	@Override
 	public void beforeModelInitialized(ControllerEvent event)
 			throws ControllerListenerException {
+		GenericPageController controller = (GenericPageController)event.getController();
 		try {
-			Criteria criteria = event.getController().getCriteria();
+			controller.completeCriteria();
+			Criteria criteria = controller.getCriteria();
 			IManagerBean bean = BeanManager.getManagerBean(GenericPage.class);
 			criteria.addOrder(bean.getFieldName(ICMSAlias.GENERIC_PAGE_ACTIVE),false);
 			criteria.addOrder(bean.getFieldName(ICMSAlias.GENERIC_PAGE_ALIAS));
