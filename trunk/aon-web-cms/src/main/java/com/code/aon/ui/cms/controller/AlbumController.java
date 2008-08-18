@@ -83,6 +83,15 @@ public class AlbumController extends BasicI18nController {
 		return "album_image_form";
 	}
 
+	
+	public void onAlbumImageCriteria(ActionEvent event) throws ManagerBeanException {
+		AlbumImageController albumImageController = (AlbumImageController)AonUtil.getRegisteredBean("albumImage");
+		AlbumImage albumImageTo = (AlbumImage)albumImageController.getTo();
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(this.getFieldName(ICMSAlias.ALBUM_ID),albumImageTo.getAlbum().getId());
+		setCriteria(criteria);
+	}
+	
 	// ***********************************************
 	// GALLERY GENERATOR AND LOG
 	// ***********************************************

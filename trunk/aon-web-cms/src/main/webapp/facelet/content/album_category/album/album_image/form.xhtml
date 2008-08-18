@@ -82,7 +82,6 @@
 							action="album_list"
 							immediate="#{true}"
 							styleClass="aon-finding-toolbar-item">
-							<aon:actionListener method="#{album.onSearch}" />
 						</aon:commandButton>
 				    </aon:div>
 					
@@ -95,12 +94,32 @@
 
 					<aon:outputLabel for="AlbumImage_category"
 						value="#{appBundle.album}"/>
-					<aon:selectOneMenu id="AlbumImage_category"  
-						required="true"
-						value="#{albumImage.to.album.id}">
-						<f:selectItem itemLabel="-" itemValue="" />
-						<f:selectItems value="#{collections.albumList}" />
-					</aon:selectOneMenu>
+					<aon:div>
+						<aon:selectOneMenu id="AlbumImage_category"  
+							required="true"
+							value="#{albumImage.to.album.id}">
+							<f:selectItem itemLabel="-" itemValue="" />
+							<f:selectItems value="#{collections.albumList}" />
+						</aon:selectOneMenu>
+						<aon:commandButton id="categories_new"
+							rendered="#{albumImage.new}" 
+							value="#{appBundle.album}"
+							action="album_form"
+							immediate="#{true}"
+							styleClass="aon-finding-toolbar-item">
+							<aon:actionListener method="#{album.onReset}" />
+						</aon:commandButton>
+						<aon:commandButton id="categories_edit"
+							rendered="#{!albumImage.new}" 
+							value="#{appBundle.album}"
+							action="album_form"
+							immediate="#{true}"
+							styleClass="aon-finding-toolbar-item">
+							<aon:actionListener method="#{album.onAlbumImageCriteria}" />
+							<aon:actionListener method="#{album.onSearch}" />
+							<aon:actionListener method="#{album.onSelectFirst}" />
+						</aon:commandButton>
+					</aon:div>
 	
 					<aon:outputLabel for="AlbumImageDetail_title"
 						value="#{appBundle.albumImage_title}" />
