@@ -83,6 +83,35 @@
 					<aon:inputText id="SportPlayer_number" size="50"
 						valueChangeListener="#{sport_player.addExpression}" />
 	
+					<aon:outputLabel for="SportPlayer_active"
+						value="#{appBundle.sport_player_active}"/>
+					<aon:selectBooleanCheckbox id="SportPlayer_active" 
+						value="true"
+						valueChangeListener="#{sport_player.addExpression}" />
+
+					<aon:outputLabel for="SportPlayer_bornPlace" style="width:100px"
+						value="#{appBundle.sport_player_bornPlace}" />
+					<aon:inputText id="SportPlayer_bornPlace"
+						size="30" maxlength="24"
+						valueChangeListener="#{sport_player.addExpression}" />
+
+					<aon:outputLabel for="SportPlayer_sportNationality_id"
+						value="#{appBundle.sport_player_sportNationality}"/>
+					<aon:selectOneMenu id="SportPlayer_sport_nationality_id"  
+						valueChangeListener="#{sport_player.addExpression}" >
+						<f:selectItem itemLabel="-" itemValue="" />
+						<f:selectItems value="#{collections.sportNationalityList}" />
+					</aon:selectOneMenu>
+
+					<aon:outputLabel for="SportPlayer_comunitary"
+						value="#{appBundle.sport_player_comunitary}"/>
+					<aon:selectOneMenu id="SportPlayer_comunitary"  
+						valueChangeListener="#{sport_player.addExpression}" >
+						<f:selectItem itemLabel="-" itemValue="" />
+						<f:selectItem itemLabel="Y" itemValue="true" />
+						<f:selectItem itemLabel="N" itemValue="false" />
+					</aon:selectOneMenu>
+
 				</aon:panelGrid>
 			</aon:div>
 			
