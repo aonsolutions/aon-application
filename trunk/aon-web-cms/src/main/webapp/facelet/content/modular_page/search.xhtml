@@ -62,6 +62,19 @@
 					<aon:inputText id="ModularPage_alias" size="50"
 						valueChangeListener="#{modular_page.addExpression}" />
 	
+					<aon:outputLabel for="ModularPage_title"
+						value="#{appBundle.modular_page_label}" />
+					<aon:inputText id="ModularPage_title" size="50"
+						value="#{modular_page.title}" />
+
+					<aon:outputLabel for="ModularPage_section_id"
+						value="#{appBundle.section}"/>
+					<aon:selectOneMenu id="ModularPage_section_id"  
+						valueChangeListener="#{modular_page.addExpression}">
+						<f:selectItem itemLabel="-" itemValue="" />
+						<f:selectItems value="#{collections.sectionList}" />
+					</aon:selectOneMenu>
+	
 				</aon:panelGrid>
 			</aon:div>
 			

@@ -67,7 +67,8 @@
 						columnClasses="dr-table-cell rich-table-cell aon-editDataTable-textColumn,
 								dr-table-cell rich-table-cell aon-editDataTable-textColumn,
 								dr-table-cell rich-table-cell aon-editDataTable-iconColumn,
-								dr-table-cell rich-table-cell aon-editDataTable-iconColumn">
+								dr-table-cell rich-table-cell aon-editDataTable-iconColumn,
+								dr-table-cell rich-table-cell aon-editDataTable-textColumn">
 				
 						<aon:column>
 							<a4j:support 
@@ -138,6 +139,14 @@
 									alt="#{appBundle.modular_page_homepage_blocked}"/>
 							</aon:div>
 						</aon:column>
+
+						<aon:column>
+							<f:facet name="header">
+								<aon:outputText value="#{appBundle.section}" />
+							</f:facet>
+							<aon:outputText value="#{to.section.alias}" />
+						</aon:column>
+						
 					</aon:dataTable>
 				
 					<aon:dataScroller for="dataTable"
