@@ -62,6 +62,16 @@
 					<aon:inputText id="Article_alias" size="50"
 						valueChangeListener="#{article.addExpression}" />
 
+					<aon:outputLabel for="ArticleDetail_title"
+						value="#{appBundle.article_title}" />
+					<aon:inputText id="ArticleDetail_title" size="50"
+						value="#{article.title}" />
+
+					<aon:outputLabel for="ArticleDetail_subtitle"
+						value="#{appBundle.article_subtitle}" />
+					<aon:inputText id="ArticleDetail_subtitle" size="50"
+						value="#{article.subtitle}" />
+
 					<aon:outputLabel for="Article_articleCategory_id"
 						value="#{appBundle.article_category}"/>
 					<aon:selectOneMenu id="Article_articleCategory_id"  
@@ -74,6 +84,42 @@
 						value="#{appBundle.article_position}" />
 					<aon:inputText id="Article_position" size="10"
 						valueChangeListener="#{article.addExpression}" />
+
+					<aon:outputLabel for="Article_publishDate"
+						value="#{appBundle.article_publishDate}" />
+					<aon:div>
+						<aon:outputLabel for="Article_publishDate-From"
+							value="#{appBundle.aon_date_from}" />
+						<aon:selectInputDate id="Article_publishDate-From"
+							value="#{article.dateFromPublish}"
+							popupDateFormat="#{bundle.aon_date_pattern}" renderAsPopup="true">
+						</aon:selectInputDate>
+
+						<aon:outputLabel for="Article_publishDate-To"
+							value="#{appBundle.aon_date_to}" />
+						<aon:selectInputDate id="Article_publishDate-To"
+							value="#{article.dateToPublish}"
+							popupDateFormat="#{bundle.aon_date_pattern}" renderAsPopup="true">
+						</aon:selectInputDate>
+					</aon:div>					
+	
+					<aon:outputLabel for="Article_expireDate"
+						value="#{appBundle.article_expireDate}" />
+					<aon:div>
+						<aon:outputLabel for="Article_expireDate-From"
+							value="#{appBundle.aon_date_from}" />
+						<aon:selectInputDate id="Article_expireDate-From"
+							value="#{article.dateFromExpire}"
+							popupDateFormat="#{bundle.aon_date_pattern}" renderAsPopup="true">
+						</aon:selectInputDate>
+
+						<aon:outputLabel for="Article_expireDate-To"
+							value="#{appBundle.aon_date_to}" />
+						<aon:selectInputDate id="Article_expireDate-To"
+							value="#{article.dateToExpire}"
+							popupDateFormat="#{bundle.aon_date_pattern}" renderAsPopup="true">
+						</aon:selectInputDate>
+					</aon:div>					
 	
 				</aon:panelGrid>
 			</aon:div>

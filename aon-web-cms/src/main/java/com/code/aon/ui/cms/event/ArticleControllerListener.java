@@ -17,8 +17,10 @@ public class ArticleControllerListener extends ControllerAdapter {
 
 	@Override
 	public void beforeModelInitialized(ControllerEvent event) throws ControllerListenerException {
+		ArticleController controller = (ArticleController)event.getController(); 
 		try {
-			event.getController().getCriteria().addOrder(event.getController().getFieldName(ICMSAlias.ARTICLE_ALIAS));
+			controller.completeCriteria();
+			controller.getCriteria().addOrder(event.getController().getFieldName(ICMSAlias.ARTICLE_ALIAS));
 		} catch (ManagerBeanException e) {
 			throw new ControllerListenerException(e);
 		}
