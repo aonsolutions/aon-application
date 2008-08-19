@@ -68,7 +68,7 @@
 						accesskey="#{bundle.aon_key_cancel_line}" />
 					<aon:confirmButton id="cancelRemove-targetSegment" title="[#{bundle.aon_remove}]"
 						styleClass="aon-editDataTable-button aon-icon-delete"
-						rendered="#{to==targetSegment.to}"
+						rendered="#{to==targetSegment.to}" reRender="targetSegmentDataScroller"
 						confirmTitle="#{bundle.aon_confirm_title}" 
 						confirmMessage="#{bundle.aon_remove_confirm}"
 						confirmActionListener="#{targetSegment.onRemove}" immediate="true"
