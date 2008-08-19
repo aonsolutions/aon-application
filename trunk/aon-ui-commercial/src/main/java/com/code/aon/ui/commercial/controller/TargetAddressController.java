@@ -19,10 +19,7 @@ import com.code.aon.ui.util.AonUtil;
 /**
  * Controller used in the address maintenance of the target.
  */
-public class TargetAddressController extends BasicController {
-	
-	/** TargetMedia Controller name. */
-	private static final String TARGET_MEDIA_CONTROLLER_NAME = "targetMedia"; 
+public class TargetAddressController extends BasicController implements ICommercialConstants {
 	
     /**
      * On reset. Sends a cancel to the media controller to avoid having both controllers editing
