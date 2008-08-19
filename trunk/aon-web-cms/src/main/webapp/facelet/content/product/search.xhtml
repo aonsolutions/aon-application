@@ -61,6 +61,27 @@
 						value="#{appBundle.product_alias}" />
 					<aon:inputText id="Product_alias" size="50"
 						valueChangeListener="#{product.addExpression}" />
+
+					<aon:outputLabel for="Product_shortDesc"
+						value="#{appBundle.product_shorLabel}" />
+					<aon:inputText id="Product_shortDesc" size="50"
+						value="#{product.shortDesc}" />
+
+					<aon:outputLabel for="Product_productCategory_id"
+						value="#{appBundle.product_category}"/>
+					<aon:selectOneMenu id="Product_productCategory_id"  
+						valueChangeListener="#{product.addExpression}">
+						<f:selectItem itemLabel="-" itemValue="" />
+						<f:selectItems value="#{collections.categories}" />
+					</aon:selectOneMenu>
+
+					<aon:outputLabel for="Product_brand_id"
+						value="#{appBundle.product_brand}"/>
+					<aon:selectOneMenu id="Product_brand_id"  
+						valueChangeListener="#{product.addExpression}">
+						<f:selectItem itemLabel="-" itemValue="" />
+						<f:selectItems value="#{collections.brands}" />
+					</aon:selectOneMenu>
 	
 				</aon:panelGrid>
 			</aon:div>
