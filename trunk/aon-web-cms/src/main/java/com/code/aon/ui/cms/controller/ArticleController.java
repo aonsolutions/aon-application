@@ -175,7 +175,7 @@ public class ArticleController extends BasicI18nController {
 				if (expr==null)
 					expr = ExpressionUtilities.getExpression(((ArticleDetail) iterator.next()).getArticle().getId().toString(),alias);
 				else
-					expr = ExpressionUtilities.getOrExpression(expr, ExpressionUtilities.getExpression(alias, ((ArticleDetail) iterator.next()).getArticle().getId().toString()));
+					expr = ExpressionUtilities.getOrExpression(expr, ExpressionUtilities.getExpression(((ArticleDetail) iterator.next()).getArticle().getId().toString(),alias));
 			}
 			if (expr != null)
 				getCriteria().addExpression(expr);

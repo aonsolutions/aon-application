@@ -112,7 +112,7 @@ public class GenericPageController extends BasicI18nController {
 				if (expr==null)
 					expr = ExpressionUtilities.getExpression(((GenericPageDetail) iterator.next()).getGeneric_page().getId().toString(),alias);
 				else
-					expr = ExpressionUtilities.getOrExpression(expr, ExpressionUtilities.getExpression(alias, ((GenericPageDetail) iterator.next()).getGeneric_page().getId().toString()));
+					expr = ExpressionUtilities.getOrExpression(expr, ExpressionUtilities.getExpression(((GenericPageDetail) iterator.next()).getGeneric_page().getId().toString(),alias));
 			}
 			if (expr != null)
 				getCriteria().addExpression(expr);

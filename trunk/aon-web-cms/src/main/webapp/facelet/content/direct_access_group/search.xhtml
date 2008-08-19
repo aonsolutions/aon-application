@@ -61,6 +61,19 @@
 						value="#{appBundle.direct_access_group_alias}" />
 					<aon:inputText id="DirectAccessGroup_alias" size="50"
 						valueChangeListener="#{direct_access_group.addExpression}" />
+
+					<aon:outputLabel for="DirectAccessGroup_label"
+						value="#{appBundle.direct_access_group_label}" />
+					<aon:inputText id="DirectAccessGroup_label" size="50"
+						value="#{direct_access_group.label}" />
+
+					<aon:outputLabel for="DirectAccessGroup_section_id"
+						value="#{appBundle.section}"/>
+					<aon:selectOneMenu id="DirectAccessGroup_section_id"  
+						valueChangeListener="#{direct_access_group.addExpression}">
+						<f:selectItem itemLabel="-" itemValue="" />
+						<f:selectItems value="#{collections.sectionList}" />
+					</aon:selectOneMenu>
 	
 				</aon:panelGrid>
 			</aon:div>
