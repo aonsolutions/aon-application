@@ -11,6 +11,8 @@ import com.code.aon.commercial.enumeration.CommercialTrackingStatus;
 import com.code.aon.commercial.enumeration.OfferDetailStatus;
 import com.code.aon.commercial.enumeration.OfferStatus;
 import com.code.aon.commercial.enumeration.OfferType;
+import com.code.aon.commercial.enumeration.TargetItemStatus;
+import com.code.aon.commercial.enumeration.TargetSellerStatus;
 
 /**
  * Controller used to get Collections related with clasess in <code>com.code.aon.commercial</code>
@@ -26,6 +28,10 @@ public class CommercialCollectionsController {
 	private List<SelectItem> offerDetailStatuses;
 	
 	private List<SelectItem> commercialTrackingStatuses;
+	
+	private List<SelectItem> targetItemStatuses;
+	
+	private List<SelectItem> targetSellerStatuses;
 	
 	/**
 	 * Gets the offer statuses.
@@ -99,4 +105,40 @@ public class CommercialCollectionsController {
 		return commercialTrackingStatuses;
 	}
 
+	/**
+	 * Gets the target item statuses.
+	 * 
+	 * @return the target item statuses
+	 */
+	public List<SelectItem> getTargetItemStatuses() {
+		if ( targetItemStatuses == null ) {
+			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
+			targetItemStatuses = new LinkedList<SelectItem>();
+			for (TargetItemStatus status : TargetItemStatus.values()) {
+				String name = status.getName(locale);
+				SelectItem item = new SelectItem(status, name);
+				targetItemStatuses.add(item);
+			}
+		}
+		return targetItemStatuses;
+	}
+
+	/**
+	 * Gets the target item statuses.
+	 * 
+	 * @return the target item statuses
+	 */
+	public List<SelectItem> getTargetSellerStatuses() {
+		if ( targetSellerStatuses == null ) {
+			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
+			targetSellerStatuses = new LinkedList<SelectItem>();
+			for (TargetSellerStatus status : TargetSellerStatus.values()) {
+				String name = status.getName(locale);
+				SelectItem item = new SelectItem(status, name);
+				targetSellerStatuses.add(item);
+			}
+		}
+		return targetSellerStatuses;
+	}
+	
 }
