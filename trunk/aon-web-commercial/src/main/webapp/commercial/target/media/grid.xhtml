@@ -4,15 +4,13 @@
 	xmlns:aon="http://www.code.es/aon-rich-components"
 	xmlns:c="http://java.sun.com/jstl/core">
 
-	<aon:panel rendered="#{!target.new}" >
-		<f:facet name="header">
-			<aon:outputLabel for="targetMediaData"
-				value="#{configBundle.scope_scopes}" />
-		</f:facet>
+	<aon:div rendered="#{!target.new}" >
 
 		<aon:editDataTable id="targetMediaData" var="to"
 			value="#{targetMedia.model}" rows="20"
-			columnClasses="aon-editDataTable-iconColumn, aon-editDataTable-textColumn, aon-editDataTable-textColumn, aon-editDataTable-textColumn, aon-editDataTable-buttonsColumn">
+			columnClasses="aon-editDataTable-iconColumn, aon-editDataTable-textColumn,
+				aon-editDataTable-textColumn, aon-editDataTable-textColumn,
+				aon-editDataTable-buttonsColumn">
 
 			<aon:rowSelector toggleOnClick="#{targetMedia.to == null}"
 				actionListener="#{targetMedia.onSelect}" />
@@ -128,5 +126,7 @@
 			</aon:column>
 		</aon:editDataTable>
 
-	</aon:panel>
+		<aon:dataScroller for="targetMediaData" rowCount="#{targetMedia.model.rowCount}" showNote="false" />
+
+	</aon:div>
 </ui:composition>
