@@ -62,6 +62,16 @@
 					<aon:inputText id="Banner_alias" size="50"
 						valueChangeListener="#{banner.addExpression}" />
 
+					<aon:outputLabel for="Banner_label"
+						value="#{appBundle.banner_label}" />
+					<aon:inputText id="Banner_label" size="50"
+						value="#{banner.label}" />
+
+					<aon:outputLabel for="Banner_url"
+						value="#{appBundle.banner_url}" />
+					<aon:inputText id="Banner_url" size="50"
+						value="#{banner.url}" />
+
 					<aon:outputLabel for="Banner_bannerCategory_id"
 						value="#{appBundle.banner_category}"/>
 					<aon:selectOneMenu id="Banner_bannerCategory_id"  
