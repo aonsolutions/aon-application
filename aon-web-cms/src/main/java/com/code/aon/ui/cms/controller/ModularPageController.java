@@ -104,7 +104,7 @@ public class ModularPageController extends BasicI18nController {
 				if (expr==null)
 					expr = ExpressionUtilities.getExpression(((ModularPageDetail) iterator.next()).getModular_page().getId().toString(),alias);
 				else
-					expr = ExpressionUtilities.getOrExpression(expr, ExpressionUtilities.getExpression(alias, ((ModularPageDetail) iterator.next()).getModular_page().getId().toString()));
+					expr = ExpressionUtilities.getOrExpression(expr, ExpressionUtilities.getExpression(((ModularPageDetail) iterator.next()).getModular_page().getId().toString(),alias));
 			}
 			if (expr != null)
 				getCriteria().addExpression(expr);

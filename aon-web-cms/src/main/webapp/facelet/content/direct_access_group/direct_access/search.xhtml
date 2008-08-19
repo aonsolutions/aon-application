@@ -62,6 +62,16 @@
 					<aon:inputText id="DirectAccess_alias" size="50"
 						valueChangeListener="#{direct_access.addExpression}" />
 
+					<aon:outputLabel for="DirectAccessDetail_label"
+						value="#{appBundle.direct_access_label}" />
+					<aon:inputText id="DirectAccessDetail_label" size="50"
+						value="#{direct_access.label}" />
+
+					<aon:outputLabel for="DirectAccessDetail_description"
+						value="#{appBundle.direct_access_description}" />
+					<aon:inputText id="DirectAccessDetail_description" size="50"
+						value="#{direct_access.description}" />
+
 					<aon:outputLabel for="DirectAccess_directAccessGroup_id"
 						value="#{appBundle.direct_access_group}"/>
 					<aon:selectOneMenu id="DirectAccess_directAccessGroup_id"  

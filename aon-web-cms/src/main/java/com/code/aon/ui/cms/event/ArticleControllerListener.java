@@ -20,7 +20,7 @@ public class ArticleControllerListener extends ControllerAdapter {
 		ArticleController controller = (ArticleController)event.getController(); 
 		try {
 			controller.completeCriteria();
-			controller.getCriteria().addOrder(event.getController().getFieldName(ICMSAlias.ARTICLE_ALIAS));
+			controller.getCriteria().addOrder(controller.getFieldName(ICMSAlias.ARTICLE_ALIAS));
 		} catch (ManagerBeanException e) {
 			throw new ControllerListenerException(e);
 		}
