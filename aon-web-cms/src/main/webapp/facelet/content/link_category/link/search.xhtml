@@ -61,6 +61,16 @@
 						value="#{appBundle.link_alias}" />
 					<aon:inputText id="Link_alias" size="50"
 						valueChangeListener="#{link.addExpression}" />
+						
+					<aon:outputLabel for="Link_label"
+						value="#{appBundle.link_label}" />
+					<aon:inputText id="Link_label" size="50"
+						value="#{link.label}" />
+
+					<aon:outputLabel for="Link_url"
+						value="#{appBundle.link_url}" />
+					<aon:inputText id="Link_url" size="50"
+						valueChangeListener="#{link.addExpression}" />
 
 					<aon:outputLabel for="Link_linkCategory_id"
 						value="#{appBundle.link_category}"/>
