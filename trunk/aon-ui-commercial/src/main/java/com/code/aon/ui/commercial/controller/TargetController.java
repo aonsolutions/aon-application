@@ -108,6 +108,8 @@ public class TargetController extends BasicController implements ICommercialCons
     	AonUtil.getController(TARGET_ADDRESS_CONTROLLER_NAME).onCancel(event);
        	AonUtil.getController(TARGET_MEDIA_CONTROLLER_NAME).onCancel(event);
        	AonUtil.getController(TARGET_SEGMENT_CONTROLLER_NAME).onCancel(event);
+       	AonUtil.getController(TARGET_ITEM_CONTROLLER_NAME).onCancel(event);
+       	AonUtil.getController(TARGET_SELLER_CONTROLLER_NAME).onCancel(event);
 	}
 	
 	public List<SelectItem> getSegments() {

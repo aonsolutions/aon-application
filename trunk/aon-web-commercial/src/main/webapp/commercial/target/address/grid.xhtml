@@ -159,6 +159,7 @@
 					<aon:commandButton title="[#{bundle.aon_accept}]"
 						actionListener="#{targetAddress.onAccept}"
 						rendered="#{to==targetAddress.to}" value=""
+						reRender="targetAddressDataScroller"
 						styleClass="aon-editDataTable-button aon-icon-accept"
 						accesskey="#{bundle.aon_key_save_line}" />
 					<aon:commandButton id="cancelEdit-targetAddress"
@@ -182,6 +183,7 @@
 						<aon:commandButton title="#{bundle.aon_save}"
 							actionListener="#{targetAddress.onAccept}"
 							rendered="#{targetAddress.new}" value=""
+							reRender="targetAddressDataScroller"
 							styleClass="aon-editDataTable-button aon-icon-accept"
 							accesskey="#{bundle.aon_key_save_line}" />
 						<aon:confirmButton id="cancelNew-targetAddress"
@@ -197,7 +199,9 @@
 			</aon:column>
 		</aon:editDataTable>
 		
-		<aon:dataScroller for="targetAddressData" rowCount="#{targetAddress.model.rowCount}" showNote="false" />
+		<aon:div id="targetAddressDataScroller" layout="none">
+			<aon:dataScroller for="targetAddressData" rowCount="#{targetAddress.model.rowCount}" showNote="false" />
+		</aon:div>
 
 	</aon:div>
 </ui:composition>
