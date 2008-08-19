@@ -62,6 +62,11 @@
 					<aon:inputText id="Download_alias" size="50"
 						valueChangeListener="#{download.addExpression}" />
 
+					<aon:outputLabel for="Download_title"
+						value="#{appBundle.download_title}" />
+					<aon:inputText id="Download_title" size="50"
+						value="#{download.title}" />
+
 					<aon:outputLabel for="Download_downloadCategory_id"
 						value="#{appBundle.download_category}"/>
 					<aon:selectOneMenu id="Download_downloadCategory_id"  
