@@ -91,6 +91,7 @@
 					<aon:commandButton title="[#{bundle.aon_accept}]" 
 						actionListener="#{targetMedia.onAccept}" 
 						rendered="#{to==targetMedia.to}" value=""
+						reRender="targetMediaDataScroller"
 						styleClass="aon-editDataTable-button aon-icon-accept"
 						accesskey="#{bundle.aon_key_save_line}" />
 					<aon:commandButton id="cancelEdit-targetMedia" title="[#{bundle.aon_cancel}]"
@@ -112,6 +113,7 @@
 						<aon:commandButton title="#{bundle.aon_save}"
 							actionListener="#{targetMedia.onAccept}"
 							rendered="#{targetMedia.new}" value=""
+							reRender="targetMediaDataScroller"
 							styleClass="aon-editDataTable-button aon-icon-accept"
 							accesskey="#{bundle.aon_key_save_line}" />
 						<aon:confirmButton id="cancelNew-targetMedia" title="#{bundle.aon_cancel}"
@@ -126,7 +128,9 @@
 			</aon:column>
 		</aon:editDataTable>
 
-		<aon:dataScroller for="targetMediaData" rowCount="#{targetMedia.model.rowCount}" showNote="false" />
+		<aon:div id="targetMediaDataScroller" layout="none">
+			<aon:dataScroller for="targetMediaData" rowCount="#{targetMedia.model.rowCount}" showNote="false" />
+		</aon:div>
 
 	</aon:div>
 </ui:composition>

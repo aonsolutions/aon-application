@@ -41,7 +41,7 @@
 					<f:selectItems value="#{target.segments}" />
 				</aon:selectOneMenu>								
 				<f:facet name="footer">
-					<aon:selectOneMenu id="TargetSegment_segment-New" rendered="#{targetSegment.new}"
+					<aon:selectOneMenu rendered="#{targetSegment.new}"
 						required="true" value="#{targetSegment.to.segment.id}">
 						<f:selectItem value="#{null}" itemLabel="    " />
 						<f:selectItems value="#{target.segments}" />
@@ -58,6 +58,7 @@
 					<aon:commandButton title="[#{bundle.aon_accept}]" 
 						actionListener="#{targetSegment.onAccept}" 
 						rendered="#{to==targetSegment.to}" value=""
+						reRender="targetSegmentDataScroller"
 						styleClass="aon-editDataTable-button aon-icon-accept"
 						accesskey="#{bundle.aon_key_save_line}" />
 					<aon:commandButton id="cancelEdit-targetSegment" title="[#{bundle.aon_cancel}]"
@@ -79,6 +80,7 @@
 						<aon:commandButton title="#{bundle.aon_save}"
 							actionListener="#{targetSegment.onAccept}"
 							rendered="#{targetSegment.new}" value=""
+							reRender="targetSegmentDataScroller"
 							styleClass="aon-editDataTable-button aon-icon-accept"
 							accesskey="#{bundle.aon_key_save_line}" />
 						<aon:confirmButton id="cancelNew-targetSegment" title="#{bundle.aon_cancel}"
@@ -93,7 +95,9 @@
 			</aon:column>
 		</aon:editDataTable>
 
-		<aon:dataScroller for="targetSegmentData" rowCount="#{targetSegment.model.rowCount}" showNote="false" />
+		<aon:div id="targetSegmentDataScroller" layout="none">
+			<aon:dataScroller for="targetSegmentData" rowCount="#{targetSegment.model.rowCount}" showNote="false" />
+		</aon:div>
 
 	</aon:div>
 </ui:composition>

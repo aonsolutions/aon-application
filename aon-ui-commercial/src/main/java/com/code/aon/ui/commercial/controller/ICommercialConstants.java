@@ -11,4 +11,10 @@ public interface ICommercialConstants {
 	/** TargetSegment Controller name. */
 	String TARGET_SEGMENT_CONTROLLER_NAME = "targetSegment";
 
+	/** TargetItem Controller name. */
+	String TARGET_ITEM_CONTROLLER_NAME = "targetItem";
+
+	/** TargetSeller Controller name. */
+	String TARGET_SELLER_CONTROLLER_NAME = "targetSeller";
+	
 }

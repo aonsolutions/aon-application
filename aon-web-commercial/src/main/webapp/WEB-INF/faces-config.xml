@@ -109,7 +109,11 @@
 				<map-entry>
 					<key>registryBundle</key>
                     <value>com.code.aon.ui.registry.i18n.messages</value>
-				</map-entry>				
+				</map-entry>
+				<map-entry>
+					<key>productBundle</key>
+					<value>com.code.aon.ui.product.i18n.messages</value>
+				</map-entry>			
 			</map-entries>
 		</managed-property>
 	</managed-bean>

@@ -114,7 +114,8 @@
 						<ui:include src="/commercial/target/segment/grid.xhtml" />
                     </aon:panelTab>
 
-					<aon:panelTab name="item" label="#{appBundle.aon_target_item}">
+					<aon:panelTab name="targetItem" label="#{appBundle.aon_target_item}">
+						<ui:include src="/commercial/target/item/grid.xhtml" />
                     </aon:panelTab>
 
 					<aon:panelTab name="seller" label="#{appBundle.aon_target_seller}">
@@ -127,6 +128,8 @@
 
 			</aon:div>
 		</aon:form>
+		<aon:lookupButtonPopup lookup="#{itemLookup}" />
+		<aon:lookupButtonPopup lookup="#{sellerLookup}" />		
 	</ui:define>
 </ui:composition>
 
