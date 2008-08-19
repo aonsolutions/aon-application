@@ -9,11 +9,34 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.customer.Customer;
 import com.code.aon.customer.dao.ICustomerAlias;
 import com.code.aon.ql.Criteria;
+import com.code.aon.ui.commercial.controller.TargetController;
 import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
 
 public class TargetControllerListener extends ControllerAdapter {
+	
+	@Override
+	public void afterBeanCreated(ControllerEvent event)
+			throws ControllerListenerException {
+		TargetController controller = (TargetController) event.getController();
+		try {
+			controller.refreshSegments();
+		} catch (ManagerBeanException e) {
+			throw new ControllerListenerException( e.getMessage(), e );
+		}	
+	}
+
+	@Override
+	public void afterBeanSelected(ControllerEvent event)
+			throws ControllerListenerException {
+		TargetController controller = (TargetController) event.getController();
+		try {
+			controller.refreshSegments();
+		} catch (ManagerBeanException e) {
+			throw new ControllerListenerException( e.getMessage(), e );
+		}
+	}
 	
 	@Override
 	public void beforeBeanRemoved(ControllerEvent event) throws ControllerListenerException {
