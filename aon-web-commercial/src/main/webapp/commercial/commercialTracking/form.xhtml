@@ -74,6 +74,7 @@
 						value="#{appBundle.aon_commercial_tracking_date}" />
 					<aon:selectInputDate id="CommercialTracking_date"
 						value="#{commercialTracking.to.date}" required="#{true}"
+						timeZone="#{timeZoneController.timeZone}"
 						renderAsPopup="true" popupDateFormat="#{bundle.aon_date_pattern}">
 					</aon:selectInputDate>
 
