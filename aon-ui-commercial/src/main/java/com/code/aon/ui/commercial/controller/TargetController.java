@@ -1,28 +1,34 @@
 package com.code.aon.ui.commercial.controller;
 
 import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.faces.event.ActionEvent;
+import javax.faces.model.SelectItem;
 
+import com.code.aon.commercial.CommercialActivity;
+import com.code.aon.commercial.CommercialSegment;
+import com.code.aon.commercial.dao.ICommercialAlias;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.ILookupObject;
 import com.code.aon.common.IManagerBean;
+import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ql.Criteria;
 import com.code.aon.registry.RegistryAddress;
 import com.code.aon.registry.dao.IRegistryAlias;
 import com.code.aon.ui.form.BasicController;
-import com.code.aon.ui.form.IController;
 import com.code.aon.ui.menu.jsf.MenuEvent;
 import com.code.aon.ui.util.AonUtil;
 
 /**
  * Controller used in the target maintenance.
  */
-public class TargetController extends BasicController {
+public class TargetController extends BasicController implements ICommercialConstants {
 	
 	/** The LOGGER. */
 	private static final Logger LOGGER = Logger.getLogger(TargetController.class.getName());
@@ -36,12 +42,8 @@ public class TargetController extends BasicController {
 	/** REGISTRY_ADDRESS_CITY. */
 	private static final String REGISTRY_ADDRESS_CITY = "city";
 	
-	/** TargetMedia Controller name. */
-	private static final String TARGET_MEDIA_CONTROLLER_NAME = "targetMedia";
+	private List<SelectItem> segments;
 	
-	/** TargetAddress Controller name. */
-	private final static String TARGET_ADDRESS_CONTROLLER_NAME = "targetAddress";
-
     /**
      * Adds custom entries into the lookup map
      * 
@@ -87,12 +89,7 @@ public class TargetController extends BasicController {
      */
     @Override
     public void onReset(ActionEvent event) {
-        IController addressController = AonUtil.getController(TARGET_ADDRESS_CONTROLLER_NAME);
-        addressController.onCancel(event);
-
-        IController mediaController = AonUtil.getController(TARGET_MEDIA_CONTROLLER_NAME);
-        mediaController.onCancel(event);
-
+    	cancelChildControllers(event);
         super.onReset(event);
     }
 
@@ -103,12 +100,33 @@ public class TargetController extends BasicController {
      */
     @Override
     public void onSelect(ActionEvent event) {
-    	IController addressController = AonUtil.getController(TARGET_ADDRESS_CONTROLLER_NAME);
-        addressController.onCancel(event);
-
-        IController mediaController = AonUtil.getController(TARGET_MEDIA_CONTROLLER_NAME);
-        mediaController.onCancel(event);
-
+    	cancelChildControllers(event);
         super.onSelect(event);
     }
+
+	private void cancelChildControllers( ActionEvent event ) {
+    	AonUtil.getController(TARGET_ADDRESS_CONTROLLER_NAME).onCancel(event);
+       	AonUtil.getController(TARGET_MEDIA_CONTROLLER_NAME).onCancel(event);
+       	AonUtil.getController(TARGET_SEGMENT_CONTROLLER_NAME).onCancel(event);
+	}
+	
+	public List<SelectItem> getSegments() {
+		return segments;
+	}
+
+	@SuppressWarnings("unchecked")
+	public void refreshSegments() throws ManagerBeanException {
+		segments = new LinkedList<SelectItem>();
+		IManagerBean segmentBean = BeanManager.getManagerBean(CommercialSegment.class);
+		Criteria criteria = new Criteria();
+		criteria.addOrder(segmentBean.getFieldName(ICommercialAlias.COMMERCIAL_SEGMENT_NAME));
+		Iterator<ITransferObject> iter = segmentBean.getList(criteria).iterator();
+		while(iter.hasNext()){
+			CommercialSegment segment = (CommercialSegment)iter.next();
+			SelectItem item = new SelectItem(segment.getId(), segment.getName());
+			segments.add(item);
+		}
+	}
+	
+	    
 }
