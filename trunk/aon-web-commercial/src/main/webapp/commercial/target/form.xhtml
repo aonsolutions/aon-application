@@ -102,15 +102,16 @@
 				</aon:panelGrid>
 
 				<aon:panelTabSet>
-					<aon:panelTab name="address" label="#{registryBundle.aon_address}">
+					<aon:panelTab name="targetAddress" label="#{registryBundle.aon_address}">
 						<ui:include src="/commercial/target/address/grid.xhtml" />
                     </aon:panelTab>
 
-					<aon:panelTab name="media" label="#{registryBundle.aon_media}">
+					<aon:panelTab name="targetMedia" label="#{registryBundle.aon_media}">
 						<ui:include src="/commercial/target/media/grid.xhtml" />					
                     </aon:panelTab>
 
-					<aon:panelTab name="segment" label="#{appBundle.aon_target_segment}">
+					<aon:panelTab name="targetSegment" label="#{appBundle.aon_target_segment}">
+						<ui:include src="/commercial/target/segment/grid.xhtml" />
                     </aon:panelTab>
 
 					<aon:panelTab name="item" label="#{appBundle.aon_target_item}">
@@ -131,175 +132,3 @@
 
 </body>
 </html>
-<!-- 
-									<t:column width="300">
-										<f:facet name="header">
-											<t:outputText
-												value="#{registryBundle.aon_address}" />
-										</f:facet>
-										<t:outputText value="#{to.address} #{to.address2} #{to.address3}"
-											rendered="#{to!=targetAddress.to}" />
-										<t:inputText value="#{targetAddress.to.address}"
-											styleClass="aon-form-input-text" 
-											rendered="#{to==targetAddress.to}" required="#{true}"
-											size="40" />
-										<t:inputText value="#{targetAddress.to.address2}"
-											styleClass="aon-form-input-text" 
-											rendered="#{to==targetAddress.to}"
-											size="40" />
-										<t:inputText value="#{targetAddress.to.address3}"
-											styleClass="aon-form-input-text" 
-											rendered="#{to==targetAddress.to}"
-											size="40" />
-										<f:facet name="footer">
-											<t:div>
-												<h:outputLabel for="Address" 
-													value="#{registryBundle.aon_address}"
-													rendered="#{false}" />
-												<t:inputText id="Address"
-													value="#{targetAddress.to.address}"
-													styleClass="aon-form-input-text" 
-													rendered="#{targetAddress.new}" required="#{true}"
-													size="40" />
-												<t:inputText value="#{targetAddress.to.address2}"
-													styleClass="aon-form-input-text" 
-													rendered="#{targetAddress.new}"
-													size="40" />
-												<t:inputText value="#{targetAddress.to.address3}"
-													styleClass="aon-form-input-text" 
-													rendered="#{targetAddress.new}"
-													size="40" />
-											</t:div>
-										</f:facet>
-									</t:column>
-			
-									<t:column width="50">
-										<f:facet name="header">
-											<t:outputText
-												value="#{registryBundle.aon_zip}" />
-										</f:facet>
-										<t:outputText value="#{to.zip}"
-											rendered="#{to!=targetAddress.to}" />
-										<t:inputText value="#{targetAddress.to.zip}"
-											styleClass="aon-form-input-text" 
-											rendered="#{to==targetAddress.to}" required="#{true}"
-											size="8" />
-										<f:facet name="footer">
-											<t:div>
-												<h:outputLabel for="Zip" 
-													value="#{registryBundle.aon_zip}"
-													rendered="#{false}" />
-												<t:inputText id="Zip"
-													value="#{targetAddress.to.zip}"
-													styleClass="aon-form-input-text" 
-													rendered="#{targetAddress.new}" required="#{true}"
-													size="8" />
-											</t:div>
-										</f:facet>
-									</t:column>
-			
-									<t:column width="150">
-										<f:facet name="header">
-											<t:outputText
-												value="#{registryBundle.aon_city}" />
-										</f:facet>
-										<t:outputText value="#{to.city}"
-											rendered="#{to!=targetAddress.to}" />
-										<t:inputText value="#{targetAddress.to.city}"
-											styleClass="aon-form-input-text" 
-											rendered="#{to==targetAddress.to}" required="#{true}"
-											size="20" />
-										<f:facet name="footer">
-											<t:div>
-												<h:outputLabel for="City" 
-													value="#{registryBundle.aon_city}"
-													rendered="#{false}" />
-												<t:inputText id="City"
-													value="#{targetAddress.to.city}"
-													styleClass="aon-form-input-text" 
-													rendered="#{targetAddress.new}" required="#{true}"
-													size="20" />
-											</t:div>
-										</f:facet>
-									</t:column>
-			
-									<t:column width="130">
-										<f:facet name="header">
-											<t:outputText
-												value="#{registryBundle.aon_geozone}" />
-										</f:facet>
-										<t:outputText value="#{to.geozone.name}"
-											rendered="#{to!=targetAddress.to}" />
-										<h:selectOneMenu value="#{targetAddress.to.geozone.id}"
-											styleClass="aon-form-selectOneMenu-field"
-											rendered="#{to==targetAddress.to}"
-											valueChangeListener="#{targetAddress.onChangeGeoZone}">
-											<f:selectItems value="#{geozoneCollections.geoTrees}" />
-										</h:selectOneMenu>
-										<f:facet name="footer">
-											<t:div>
-												<h:selectOneMenu value="#{targetAddress.to.geozone.id}"
-													styleClass="aon-form-selectOneMenu-field"
-													rendered="#{targetAddress.new}">
-													<f:selectItems value="#{geozoneCollections.geoTrees}" />
-												</h:selectOneMenu>
-											</t:div>
-										</f:facet>
-									</t:column>
-		
-									<h:column>
-										<f:facet name="header">
-											<f:verbatim>&#160;</f:verbatim>
-										</f:facet>
-										<t:div>
-											<f:verbatim rendered="#{to!=targetAddress.to}">&#160;</f:verbatim>
-			
-											<t:commandButton title="#{bundle.aon_save}"
-												actionListener="#{targetAddress.onAccept}"
-												rendered="#{to==targetAddress.to}" value=""
-												styleClass="aon-edit-table-icon-button aon-edit-table-icon-button-save"
-												accesskey="#{bundle.aon_key_save_line}"/>
-											<t:commandButton title="#{bundle.aon_cancel}"
-												actionListener="#{targetAddress.onCancel}"
-												immediate="#{true}"
-												onclick="return (confirm('#{bundle.aon_cancel_confirm}'));"
-												styleClass="aon-edit-table-icon-button aon-edit-table-icon-button-cancel"
-												value="" rendered="#{to==targetAddress.to}" 
-												accesskey="#{bundle.aon_key_cancel_line}"/>
-											<t:commandButton title="#{bundle.aon_remove}"
-												actionListener="#{targetAddress.onRemove}"
-												onclick="return (confirm('#{bundle.aon_remove_confirm}'));"
-												rendered="#{to==targetAddress.to}"
-												styleClass="aon-edit-table-icon-button aon-edit-table-icon-button-delete"
-												value="" accesskey="#{bundle.aon_key_remove_line}"/>
-										</t:div>
-										<f:facet name="footer">
-											<t:div>
-												<f:verbatim rendered="#{!targetAddress.new}">&#160;</f:verbatim>
-												<t:commandButton title="#{bundle.aon_save}"
-													actionListener="#{targetAddress.onAccept}"
-													rendered="#{targetAddress.new}" value=""
-													styleClass="aon-edit-table-icon-button aon-edit-table-icon-button-save"
-													accesskey="#{bundle.aon_key_save_line}"/>
-												<t:commandButton title="#{bundle.aon_cancel}"
-													actionListener="#{targetAddress.onCancel}"
-													immediate="#{true}"
-													onclick="return (confirm('#{bundle.aon_cancel_confirm}'));"
-													rendered="#{targetAddress.new}"
-													styleClass="aon-edit-table-icon-button aon-edit-table-icon-button-cancel"
-													value=""  accesskey="#{bundle.aon_key_cancel_line}"/>
-											</t:div>
-										</f:facet>
-									</h:column>
-								</t:dataTable>
-								
-								<ui:include src="/facelet/shared/dataScroller.xhtml">
-									<ui:param name="dataTable" value="targetAddressDataList" />
-									<ui:param name="model" value="#{targetAddress.model}" />
-									<ui:param name="showNote" value="#{false}" />
-								</ui:include>
-			
-							</t:div>
-						</t:collapsiblePanel>
-					</t:div>
- -->
