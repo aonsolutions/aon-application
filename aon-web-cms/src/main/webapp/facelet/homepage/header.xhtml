@@ -36,40 +36,42 @@
 		<aon:div styleClass="aon-header-additionalInfo">
 			<aon:div styleClass="aon-float-right">
 				<aon:div styleClass="aon-header-menu-item">
-					<h:outputLink styleClass="aon-header-menu-item-link"
-						target="_top" 
-						value="${facesContext.externalContext.requestContextPath}">
-						<h:outputText value="#{bundle.aon_home}" />
-					</h:outputLink>
-					<!-- 
-					<aon:commandLink styleClass="aon-header-menu-item-link" style="border-right:0;margin-left:0.5em;"
-							onclick="parent.window.close();"
-							target="_top" >
-							<aon:outputText value="#{securityBundle.aon_login_user_logout}" />
-					</aon:commandLink>
-					 -->
-					<aon:div >
-						<aon:form id="languaje_form">
-							<a4j:outputPanel ajaxRendered="true">
-								<aon:panelGrid id="aon_languake_panelGrid">
-									<a4j:repeat id="languageSelection" 
-										value="#{i18n.languageList}" 
-										var="column">
-										<aon:commandButton id="changeLanguage"
-											reRender="aon-content-refresh" 
-											actionListener="#{i18n.onChangeLanguage}" 
-											rendered="#{i18n.currentLanguage.id != column.id}"
-											image="/images/flags/#{column.language.locale.language}_off.gif"
-											/>
-										<aon:graphicImage id="changeLanguage_on" 
-											rendered="#{i18n.currentLanguage.id == column.id}"
-											url="/images/flags/#{column.language.locale.language}_on.gif">
-										</aon:graphicImage> 
-									</a4j:repeat>
-								</aon:panelGrid>
-							</a4j:outputPanel>
-						</aon:form>
-					</aon:div>
+					<aon:panelGrid columns="2" columnClasses="aon-header-name,aon-header-name">
+						<h:outputLink styleClass="aon-header-menu-item-link"
+							target="_top" 
+							value="${facesContext.externalContext.requestContextPath}">
+							<h:outputText value="#{bundle.aon_home}" />
+						</h:outputLink>
+						<!-- 
+						<aon:commandLink styleClass="aon-header-menu-item-link" style="border-right:0;margin-left:0.5em;"
+								onclick="parent.window.close();"
+								target="_top" >
+								<aon:outputText value="#{securityBundle.aon_login_user_logout}" />
+						</aon:commandLink>
+						 -->
+						<aon:div >
+							<aon:form id="languaje_form">
+								<a4j:outputPanel ajaxRendered="true">
+									<aon:panelGrid id="aon_languake_panelGrid">
+										<a4j:repeat id="languageSelection" 
+											value="#{i18n.languageList}" 
+											var="column">
+											<aon:commandButton id="changeLanguage"
+												reRender="aon-content-refresh" 
+												actionListener="#{i18n.onChangeLanguage}" 
+												rendered="#{i18n.currentLanguage.id != column.id}"
+												image="/images/flags/#{column.language.locale.language}_off.gif"
+												/>
+											<aon:graphicImage id="changeLanguage_on" 
+												rendered="#{i18n.currentLanguage.id == column.id}"
+												url="/images/flags/#{column.language.locale.language}_on.gif">
+											</aon:graphicImage> 
+										</a4j:repeat>
+									</aon:panelGrid>
+								</a4j:outputPanel>
+							</aon:form>
+						</aon:div>
+					</aon:panelGrid>
 				</aon:div>	
 			</aon:div>
 		</aon:div>
