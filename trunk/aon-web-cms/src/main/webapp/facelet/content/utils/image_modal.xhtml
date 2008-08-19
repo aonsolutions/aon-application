@@ -22,7 +22,7 @@
         <rich:modalPanel  id="#{modalPanelName}"  
             height="560" width="675" zindex="2000">
             <f:facet name="header">
-                <h:outputText value="Modal Panel Title" />
+                <h:outputText value="#{appBundle.image_modal_title}" />
             </f:facet>
             <f:facet name="controls">
                 <h:graphicImage value="/images/icefaces/popupclose.gif" style="cursor:pointer" onclick="Richfaces.hideModalPanel('#{modalPanelName}')" />
@@ -48,25 +48,23 @@
 	            <rich:panel bodyClass="bodyPanel">
 					<aon:panelGroup>
 						<aon:outputLabel value="#{galleryBean.currentRelativePath}" />
-						<rich:dataList var="item" value="#{galleryBean.model}" >	
-							<aon:panelGrid columns="2" cellpadding="5px" cellspacing="0px">
-					                <aon:commandLink
-					                	rendered="#{image}"
-					                	immediate="#{true}"
-					                	reRender="#{reRender}"
-					                    actionListener="#{listenerBean.onSelectImage}"
-					                    value="#{item.name}">
-					            		<aon:graphicImage url="#{item.thumb}" alt="#{item.name}"/>
-					        		</aon:commandLink>
-					                <aon:commandLink
-					                	rendered="#{thumbnail}"
-					                	immediate="#{true}"
-					                	reRender="#{reRender}"
-					                    actionListener="#{listenerBean.onSelectThumbnail}"
-					                    value="#{item.name}">
-					            		<aon:graphicImage url="#{item.thumb}" alt="#{item.name}"/>
-					        		</aon:commandLink>
-							</aon:panelGrid>
+						<rich:dataList var="item" value="#{galleryBean.model}" columns="2">	
+			                <aon:commandLink
+			                	rendered="#{thumbnail}"
+			                	immediate="#{true}"
+			                	reRender="#{reRender}"
+			                    actionListener="#{listenerBean.onSelectThumbnail}">
+			            		<aon:graphicImage url="#{item.thumb}" alt="#{item.name}"/>
+								<aon:outputText value="#{item.name}" />
+			        		</aon:commandLink>
+			                <aon:commandLink
+			                	rendered="#{image}"
+			                	immediate="#{true}"
+			                	reRender="#{reRender}"
+			                    actionListener="#{listenerBean.onSelectImage}">
+			            		<aon:graphicImage url="#{item.thumb}" alt="#{item.name}"/>
+								<aon:outputText value="#{item.name}" />
+			        		</aon:commandLink>
 						</rich:dataList>
 					</aon:panelGroup>
 				</rich:panel>
