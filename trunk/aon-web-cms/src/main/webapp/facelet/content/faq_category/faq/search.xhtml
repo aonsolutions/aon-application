@@ -62,6 +62,11 @@
 					<aon:inputText id="Faq_alias" size="50"
 						valueChangeListener="#{faq.addExpression}" />
 
+					<aon:outputLabel for="Faq_question"
+						value="#{appBundle.faq_question}" />
+					<aon:inputText id="Faq_question" size="50"
+						value="#{faq.question}" />
+
 					<aon:outputLabel for="Faq_faqCategory_id"
 						value="#{appBundle.faq_category}"/>
 					<aon:selectOneMenu id="Faq_faqCategory_id"  
