@@ -4,11 +4,7 @@
 	xmlns:aon="http://www.code.es/aon-rich-components"
 	xmlns:c="http://java.sun.com/jstl/core">
 
-	<aon:panel rendered="#{!target.new}">
-		<f:facet name="header">
-			<aon:outputLabel for="targetAddressData"
-				value="#{configBundle.scope_scopes}" />
-		</f:facet>
+	<aon:div rendered="#{!target.new}">
 
 		<aon:editDataTable id="targetAddressData" var="to"
 			value="#{targetAddress.model}" rows="20"
@@ -200,6 +196,8 @@
 				</f:facet>
 			</aon:column>
 		</aon:editDataTable>
+		
+		<aon:dataScroller for="targetAddressData" rowCount="#{targetAddress.model.rowCount}" showNote="false" />
 
-	</aon:panel>
+	</aon:div>
 </ui:composition>
