@@ -12,8 +12,10 @@ public class DownloadControllerListener extends ControllerAdapter {
 	
 	@Override
 	public void beforeModelInitialized(ControllerEvent event) throws ControllerListenerException {
+		DownloadController controller = (DownloadController)event.getController(); 
 		try {
-			event.getController().getCriteria().addOrder(event.getController().getFieldName(ICMSAlias.DOWNLOAD_ALIAS));
+			controller.completeCriteria();
+			controller.getCriteria().addOrder(controller.getFieldName(ICMSAlias.DOWNLOAD_ALIAS));
 		} catch (ManagerBeanException e) {
 			throw new ControllerListenerException(e);
 		}
