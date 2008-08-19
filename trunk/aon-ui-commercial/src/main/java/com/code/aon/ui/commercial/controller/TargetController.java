@@ -8,9 +8,9 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.faces.event.ActionEvent;
+import javax.faces.event.ValueChangeEvent;
 import javax.faces.model.SelectItem;
 
-import com.code.aon.commercial.CommercialActivity;
 import com.code.aon.commercial.CommercialSegment;
 import com.code.aon.commercial.dao.ICommercialAlias;
 import com.code.aon.common.BeanManager;
@@ -22,13 +22,14 @@ import com.code.aon.ql.Criteria;
 import com.code.aon.registry.RegistryAddress;
 import com.code.aon.registry.dao.IRegistryAlias;
 import com.code.aon.ui.form.BasicController;
+import com.code.aon.ui.form.IController;
 import com.code.aon.ui.menu.jsf.MenuEvent;
 import com.code.aon.ui.util.AonUtil;
 
 /**
  * Controller used in the target maintenance.
  */
-public class TargetController extends BasicController implements ICommercialConstants {
+public class TargetController extends BasicController {
 	
 	/** The LOGGER. */
 	private static final Logger LOGGER = Logger.getLogger(TargetController.class.getName());
@@ -82,36 +83,6 @@ public class TargetController extends BasicController implements ICommercialCons
         this.onReset((ActionEvent)event);
     }
 
-    /**
-     * On reset. Method launched by the menu
-     * 
-     * @param event the event
-     */
-    @Override
-    public void onReset(ActionEvent event) {
-    	cancelChildControllers(event);
-        super.onReset(event);
-    }
-
-    /**
-     * On select. Sends a cancel to the media and address controllers to avoid having editing any of them
-     * 
-     * @param event the event
-     */
-    @Override
-    public void onSelect(ActionEvent event) {
-    	cancelChildControllers(event);
-        super.onSelect(event);
-    }
-
-	private void cancelChildControllers( ActionEvent event ) {
-    	AonUtil.getController(TARGET_ADDRESS_CONTROLLER_NAME).onCancel(event);
-       	AonUtil.getController(TARGET_MEDIA_CONTROLLER_NAME).onCancel(event);
-       	AonUtil.getController(TARGET_SEGMENT_CONTROLLER_NAME).onCancel(event);
-       	AonUtil.getController(TARGET_ITEM_CONTROLLER_NAME).onCancel(event);
-       	AonUtil.getController(TARGET_SELLER_CONTROLLER_NAME).onCancel(event);
-	}
-	
 	public List<SelectItem> getSegments() {
 		return segments;
 	}
@@ -130,5 +101,14 @@ public class TargetController extends BasicController implements ICommercialCons
 		}
 	}
 	
+	public void tabChanged( ValueChangeEvent event ) {
+		Object controllerName = event.getOldValue();
+		if ( controllerName != null ) {
+			IController controller = AonUtil.getController((String) controllerName);
+			if ( controller != null ) {
+				controller.onCancel(null);	
+			}
+		}
+	}
 	    
 }

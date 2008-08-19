@@ -143,6 +143,7 @@
 					<aon:commandButton title="[#{bundle.aon_accept}]" 
 						actionListener="#{targetSeller.onAccept}" 
 						rendered="#{to==targetSeller.to}" value=""
+						reRender="targetSellerDataScroller"
 						styleClass="aon-editDataTable-button aon-icon-accept"
 						accesskey="#{bundle.aon_key_save_line}" />
 					<aon:commandButton id="cancelEdit-targetSeller" title="[#{bundle.aon_cancel}]"

@@ -171,7 +171,7 @@
 					<aon:confirmButton id="cancelRemove-targetAddress"
 						title="[#{bundle.aon_remove}]"
 						styleClass="aon-editDataTable-button aon-icon-delete"
-						rendered="#{to==targetAddress.to}"
+						rendered="#{to==targetAddress.to}" reRender="targetAddressDataScroller"
 						confirmTitle="#{bundle.aon_confirm_title}"
 						confirmMessage="#{bundle.aon_remove_confirm}"
 						confirmActionListener="#{targetAddress.onRemove}" immediate="true"

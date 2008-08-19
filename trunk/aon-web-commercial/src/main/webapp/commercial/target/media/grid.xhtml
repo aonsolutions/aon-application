@@ -101,7 +101,7 @@
 						accesskey="#{bundle.aon_key_cancel_line}" />
 					<aon:confirmButton id="cancelRemove-targetMedia" title="[#{bundle.aon_remove}]"
 						styleClass="aon-editDataTable-button aon-icon-delete"
-						rendered="#{to==targetMedia.to}"
+						rendered="#{to==targetMedia.to}" reRender="targetMediaDataScroller"
 						confirmTitle="#{bundle.aon_confirm_title}" 
 						confirmMessage="#{bundle.aon_remove_confirm}"
 						confirmActionListener="#{targetMedia.onRemove}" immediate="true"
