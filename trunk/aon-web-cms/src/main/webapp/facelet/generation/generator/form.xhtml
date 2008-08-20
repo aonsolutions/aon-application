@@ -216,6 +216,7 @@
 						<aon:panelGrid columns="2" dir="true" >
 						
 							<aon:outputLabel for="isHiruCourseToGenerate"
+								rendered="#{domainUtils.hiruMenu}"
 								styleClass="aon-form-input-text-label"
 								value="#{appBundle.isHiruCourseToGenerate}" />
 							<aon:div>
@@ -232,6 +233,7 @@
 							</aon:div>
 							
 							<aon:outputLabel for="isSportsToGenerate"
+								rendered="#{domainUtils.sportMenu}"
 								styleClass="aon-form-input-text-label"
 								value="#{appBundle.isSportsToGenerate}" />
 							<aon:div>
@@ -254,7 +256,7 @@
 	        	<f:facet name="header">
 	                    Error Console Log
 	            </f:facet>
-		        <rich:dataList id="dataList_Error" var="msg" value="#{generator_status.errors}" rows="20">
+		        <rich:dataList id="dataList_Error" var="msg" value="#{generator_status.errors}" rows="10">
 					<h:outputText style="color:red;" value="#{msg}"/>
 				</rich:dataList>
 				<rich:datascroller align="left"  for="dataList_Error" maxPages="20" />
@@ -267,7 +269,7 @@
 	        	<f:facet name="header">
 	                    Console Log
 	            </f:facet>
-		        <rich:dataList id="dataList" var="msg" value="#{generator_status.status}" rows="20">
+		        <rich:dataList id="dataList" var="msg" value="#{generator_status.status}" rows="10">
 					<h:outputText value="#{msg}"/>
 				</rich:dataList>
 				<rich:datascroller align="left"  for="dataList" maxPages="20" />
