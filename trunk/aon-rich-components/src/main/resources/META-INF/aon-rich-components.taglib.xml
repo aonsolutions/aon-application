@@ -360,6 +360,12 @@
 		</handler-class>
 	</tag>
 	<tag>
+		<tag-name>spin</tag-name>
+		<handler-class>
+			com.code.aon.faces.component.richfaces.spin.SpinHandler
+		</handler-class>
+	</tag>
+	<tag>
 		<tag-name>rowSelector</tag-name>
 		<component>
 			<component-type>
