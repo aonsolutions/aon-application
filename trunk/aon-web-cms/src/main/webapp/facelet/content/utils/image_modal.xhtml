@@ -18,7 +18,9 @@
 }
 </style>
 
-		<a href="javascript:Richfaces.showModalPanel('#{modalPanelName}',{width:820, top:100})">select</a>
+		<a href="javascript:Richfaces.showModalPanel('#{modalPanelName}',{width:820, top:100})">
+			#{appBundle.image_modal_open}
+		</a>
         <rich:modalPanel  id="#{modalPanelName}"  
             height="560" width="810" zindex="2000">
             <f:facet name="header">
