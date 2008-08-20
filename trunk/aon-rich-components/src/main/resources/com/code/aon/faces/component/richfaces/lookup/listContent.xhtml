@@ -11,7 +11,7 @@
 <ui:composition>
 
 	<!-- start toolbar navigation -->
-	<aon:div style="width:100%;">
+	<aon:div>
 		<aon:div rendered="#{lookup.showSearchButtons}"
 			styleClass="aon-toolbar">
 			<aon:commandButton value="#{bundle.aon_search}"
@@ -28,7 +28,7 @@
 		</aon:div>
 
 		<!-- end toolbar navigation -->
-		<aon:div style="width:100%;">
+		<aon:div style="width:98%;">
 			<aon:dataTable id="#{lookup.beanName}Data" var="to"
 				value="#{lookup.model}" rows="20">
 				<aon:rowSelector actionListener="#{lookup.onListSelect}"
