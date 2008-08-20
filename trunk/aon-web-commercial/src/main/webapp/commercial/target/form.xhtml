@@ -101,7 +101,7 @@
 
 				</aon:panelGrid>
 
-				<aon:panelTabSet valueChangeListener="#{target.tabChanged}">
+				<aon:panelTabSet rendered="#{!target.new}" valueChangeListener="#{target.tabChanged}">
 					<aon:panelTab name="targetAddress" label="#{registryBundle.aon_address}">
 						<ui:include src="/commercial/target/address/grid.xhtml" />
                     </aon:panelTab>
@@ -122,7 +122,8 @@
 						<ui:include src="/commercial/target/seller/grid.xhtml" />
                     </aon:panelTab>
 
-					<aon:panelTab name="tracking" label="#{appBundle.aon_target_tracking}">
+					<aon:panelTab name="targetTracking" label="#{appBundle.aon_target_tracking}">
+						<ui:include src="/commercial/target/tracking/list.xhtml" />
                     </aon:panelTab>
 
 				</aon:panelTabSet>
