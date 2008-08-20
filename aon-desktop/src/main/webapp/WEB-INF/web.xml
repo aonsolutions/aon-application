@@ -257,7 +257,7 @@
 		</web-resource-collection>
 		<web-resource-collection>
 			<web-resource-name>jsp</web-resource-name>
-			<url-pattern>/index2.jsp</url-pattern>
+			<url-pattern>*.jsp</url-pattern>
 		</web-resource-collection>
 		<web-resource-collection>
 			<web-resource-name>jsf</web-resource-name>
