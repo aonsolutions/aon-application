@@ -1,13 +1,7 @@
 package com.code.aon.ui.resources.bean;
 
 import java.util.AbstractMap;
-import java.util.Map;
 import java.util.Set;
-
-import javax.faces.context.FacesContext;
-import javax.servlet.http.HttpServletRequest;
-
-import org.apache.commons.lang.StringUtils;
 
 public class ResourceResolver {
 	
