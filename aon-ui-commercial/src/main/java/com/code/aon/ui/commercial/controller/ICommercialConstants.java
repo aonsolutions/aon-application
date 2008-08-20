@@ -17,4 +17,6 @@ public interface ICommercialConstants {
 	/** TargetSeller Controller name. */
 	String TARGET_SELLER_CONTROLLER_NAME = "targetSeller";
 	
+	/** TargetTracking Controller name. */
+	String TARGET_TRACKING_CONTROLLER_NAME = "targetTracking";
 }
