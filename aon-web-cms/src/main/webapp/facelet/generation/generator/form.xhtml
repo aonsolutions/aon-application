@@ -27,9 +27,10 @@
 							actionListener="#{generator.onGenerate}" 
 							styleClass="aon-finding-toolbar-item aon-icon-accept">
 							<a4j:support 
-								event="onclick"
+								event="onclick" 
 								actionListener="#{generator_status.onActivePoll}"  
-								reRender="poll,grid,grid_errors" />
+								reRender="poll,grid,grid_errors" 
+								onclick="javascript:Richfaces.showModalPanel('gen_log',{width:1000, top:50});" />
 						</aon:commandButton>
 						<aon:commandButton id="all"
 							action="generator_form" 
@@ -51,9 +52,10 @@
 							confirmActionListener="#{generator_status.onPublish}"
 							accesskey="#{bundle.aon_key_remove}">
 							<a4j:support 
-								event="onclick"
+								event="onclick" 
 								actionListener="#{generator_status.onActivePoll}"  
-								reRender="poll,grid,grid_errors" />
+								reRender="poll,grid,grid_errors" 
+								onclick="javascript:Richfaces.showModalPanel('gen_log',{width:1000, top:50});" />
 						</aon:confirmButton>
 						<aon:commandButton id="publish_ok"
 							value="#{appBundle.aon_publish}" 
@@ -62,9 +64,10 @@
 							actionListener="#{generator_status.onPublish}" 
 							styleClass="aon-finding-toolbar-item aon-icon-accept">
 							<a4j:support 
-								event="onclick"
+								event="onclick" 
 								actionListener="#{generator_status.onActivePoll}"  
-								reRender="poll,grid,grid_errors" />
+								reRender="poll,grid,grid_errors" 
+								onclick="javascript:Richfaces.showModalPanel('gen_log',{width:1000, top:50});" />
 						</aon:commandButton>
 						
 						<h:outputLink 
@@ -246,35 +249,11 @@
 				</aon:div>
 			</aon:div>
 		</aon:form>
-	    <a4j:region>
-	        <h:form>
-	            <a4j:poll id="poll" interval="2000" enabled="#{generator_status.activePoll}" reRender="poll,grid,grid_errors"/>
-	        </h:form>
-	    </a4j:region>
-		<h:form>
-			<rich:panel bodyClass="inpanelBody" id="grid_errors">
-	        	<f:facet name="header">
-	                    Error Console Log
-	            </f:facet>
-		        <rich:dataList id="dataList_Error" var="msg" value="#{generator_status.errors}" rows="10">
-					<h:outputText style="color:red;" value="#{msg}"/>
-				</rich:dataList>
-				<rich:datascroller align="left"  for="dataList_Error" maxPages="20" />
-			</rich:panel>
-		</h:form>
-		<h:form>
-			<br/>
-			<rich:separator height="2" lineType="dashed"/><br/>
-			<rich:panel bodyClass="inpanelBody" id="grid">
-	        	<f:facet name="header">
-	                    Console Log
-	            </f:facet>
-		        <rich:dataList id="dataList" var="msg" value="#{generator_status.status}" rows="10">
-					<h:outputText value="#{msg}"/>
-				</rich:dataList>
-				<rich:datascroller align="left"  for="dataList" maxPages="20" />
-			</rich:panel>
-	    </h:form>    
+		
+		<ui:include src="/facelet/content/utils/gen_log_modal_2.xhtml">
+			<ui:param name="modalPanelName" value="gen_log" />
+		</ui:include>
+
 	</ui:define>
 </ui:composition>
 
