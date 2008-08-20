@@ -10,38 +10,39 @@
 
 <ui:composition>
 
-<style>
-.bodyPanel {
-	width:300px;
-    height:500px;
-    overflow:auto;
-}
-</style>
-    <a4j:region>
-        <h:form>
-            <a4j:poll id="poll" interval="2000" enabled="#{generator_status.activePoll}" reRender="poll,grid"/>
-        </h:form>
-    </a4j:region>
-	<h:form>
-        <rich:modalPanel  id="#{modalPanelName}"  
-            height="350" width="675" zindex="2000">
-            <f:facet name="header">
-                <h:outputText value="Generator LOG" />
-            </f:facet>
-            <f:facet name="controls">
-                <h:graphicImage value="/images/icefaces/popupclose.gif" style="cursor:pointer" onclick="Richfaces.hideModalPanel('#{modalPanelName}')" />
-            </f:facet>
-			<rich:panel bodyClass="inpanelBody" id="grid">
-	        	<f:facet name="header">
-	                    Console Log
+	    <a4j:region>
+	        <h:form>
+	            <a4j:poll id="poll" interval="2000" enabled="#{generator_status.activePoll}" reRender="poll,grid"/>
+	        </h:form>
+	    </a4j:region>
+		<h:form>
+	        <rich:modalPanel  id="#{modalPanelName}"  
+	            height="550" width="1000" zindex="2000">
+	            <f:facet name="header">
+	                <h:outputText value="Generator" />
 	            </f:facet>
-		        <rich:dataList id="dataList" var="msg" value="#{generator_status.status}" rows="10">
-					<h:outputText value="#{msg}"/>
-				</rich:dataList>
-				<rich:datascroller align="left"  for="dataList" maxPages="20" />
-			</rich:panel>
-        </rich:modalPanel>													
-	</h:form>
+	            <f:facet name="controls">
+	                <h:graphicImage value="/images/icefaces/popupclose.gif" style="cursor:pointer" onclick="Richfaces.hideModalPanel('#{modalPanelName}')" />
+	            </f:facet>
+				<rich:panel bodyClass="inpanelBody" id="grid">
+		        	<f:facet name="header">
+		                    Console Log
+		            </f:facet>
+	                <h:outputText value="Error messages" />
+			        <rich:dataList id="dataList_Error" var="msg" value="#{generator_status.errors}" rows="10">
+						<h:outputText style="color:red;" value="#{msg}"/>
+					</rich:dataList>
+					<rich:datascroller align="left"  for="dataList_Error" maxPages="20" />
+					<br/>
+					<rich:separator height="2" lineType="dashed"/><br/>
+	                <h:outputText value="All messages" />
+			        <rich:dataList id="dataList" var="msg" value="#{generator_status.status}" rows="10">
+						<h:outputText value="#{msg}"/>
+					</rich:dataList>
+					<rich:datascroller align="left"  for="dataList" maxPages="20" />
+				</rich:panel>
+	        </rich:modalPanel>													
+		</h:form>
 </ui:composition>
 
 </body>
