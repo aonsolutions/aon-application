@@ -7,6 +7,7 @@ import java.util.Locale;
 import javax.faces.context.FacesContext;
 import javax.faces.model.SelectItem;
 
+import com.code.aon.commercial.enumeration.Advertising;
 import com.code.aon.commercial.enumeration.CommercialTrackingStatus;
 import com.code.aon.commercial.enumeration.OfferDetailStatus;
 import com.code.aon.commercial.enumeration.OfferStatus;
@@ -32,6 +33,8 @@ public class CommercialCollectionsController {
 	private List<SelectItem> targetItemStatuses;
 	
 	private List<SelectItem> targetSellerStatuses;
+	
+	private List<SelectItem> advertisings;
 	
 	/**
 	 * Gets the offer statuses.
@@ -140,5 +143,22 @@ public class CommercialCollectionsController {
 		}
 		return targetSellerStatuses;
 	}
-	
+
+	/**
+	 * Gets the advertisings.
+	 * 
+	 * @return the advertisings
+	 */
+	public List<SelectItem> getAdvertisings() {
+		if ( advertisings == null ) {
+			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
+			advertisings = new LinkedList<SelectItem>();
+			for (Advertising advertising : Advertising.values()) {
+				String name = advertising.getName(locale);
+				SelectItem item = new SelectItem(advertising, name);
+				advertisings.add(item);
+			}
+		}
+		return advertisings;
+	}
 }
