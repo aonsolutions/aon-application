@@ -159,46 +159,52 @@ public interface ICommercialAlias {
 	DAOConstantsEntry TARGET_ENTRY = DAOConstants.getDAOConstant(Target.class);
 
 	/** 
+	* Alias value: Target_advertising
+	* Hibernate value: Target.advertising
+	*/
+	String  TARGET_ADVERTISING = TARGET_ENTRY.getAliasNames()[0];
+
+	/** 
 	* Alias value: Target_id
 	* Hibernate value: Target.id
 	*/
-	String  TARGET_ID = TARGET_ENTRY.getAliasNames()[0];
+	String  TARGET_ID = TARGET_ENTRY.getAliasNames()[1];
 
 	/** 
 	* Alias value: Target_registry_id
 	* Hibernate value: Target.registry.id
 	*/
-	String  TARGET_REGISTRY_ID = TARGET_ENTRY.getAliasNames()[1];
+	String  TARGET_REGISTRY_ID = TARGET_ENTRY.getAliasNames()[2];
 
 	/** 
 	* Alias value: Target_registry_name
 	* Hibernate value: Target.registry.name
 	*/
-	String  TARGET_REGISTRY_NAME = TARGET_ENTRY.getAliasNames()[2];
+	String  TARGET_REGISTRY_NAME = TARGET_ENTRY.getAliasNames()[3];
 
 	/** 
 	* Alias value: Target_registry_surname
 	* Hibernate value: Target.registry.surname
 	*/
-	String  TARGET_REGISTRY_SURNAME = TARGET_ENTRY.getAliasNames()[3];
+	String  TARGET_REGISTRY_SURNAME = TARGET_ENTRY.getAliasNames()[4];
 
 	/** 
 	* Alias value: Target_registry_alias
 	* Hibernate value: Target.registry.alias
 	*/
-	String  TARGET_REGISTRY_ALIAS = TARGET_ENTRY.getAliasNames()[4];
+	String  TARGET_REGISTRY_ALIAS = TARGET_ENTRY.getAliasNames()[5];
 
 	/** 
 	* Alias value: Target_registry_document
 	* Hibernate value: Target.registry.document
 	*/
-	String  TARGET_REGISTRY_DOCUMENT = TARGET_ENTRY.getAliasNames()[5];
+	String  TARGET_REGISTRY_DOCUMENT = TARGET_ENTRY.getAliasNames()[6];
 
 	/** 
 	* Alias value: Target_withholding
 	* Hibernate value: Target.withholding
 	*/
-	String  TARGET_WITHHOLDING = TARGET_ENTRY.getAliasNames()[6];
+	String  TARGET_WITHHOLDING = TARGET_ENTRY.getAliasNames()[7];
 
 
 
