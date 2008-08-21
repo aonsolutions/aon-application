@@ -122,7 +122,7 @@
 		
 					<aon:commandButton
 						title="#{appBundle.aon_webmail_previous_message}"
-						rendered="#{!message.previousMessage}"
+						rendered="#{!message.previousMessage}" disabled="true"
 						value="#{appBundle.aon_webmail_previous_message}"
 						styleClass="aon-icon-commandButton aon-icon-mailPrevious-dis">
 					</aon:commandButton>
@@ -138,7 +138,7 @@
 					
 					<aon:commandButton
 						title="#{appBundle.aon_webmail_next_message}"
-						rendered="#{!message.nextMessage}"
+						rendered="#{!message.nextMessage}" disabled="true"
 						value="#{appBundle.aon_webmail_next_message}"
 						styleClass="aon-icon-commandButton aon-icon-mailNext-dis">
 					</aon:commandButton>
