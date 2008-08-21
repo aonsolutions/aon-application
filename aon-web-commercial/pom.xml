@@ -13,7 +13,7 @@
 	<artifactId>aon-web-commercial</artifactId>
 	<packaging>war</packaging>
 	<name>AON WEB COMMERCIAL</name>
-	<version>0.5.0</version>
+	<version>0.8.0</version>
 	<description>AON WEB COMMERCIAL</description>
 	<build>
 		<finalName>aon-commercial</finalName>
@@ -34,13 +34,13 @@
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.rich.components</artifactId>
-			<version>1.3.0</version>
+			<version>1.3.1</version>
 			<scope>compile</scope>
 		</dependency>		
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.resources</artifactId>
-			<version>1.3.0</version>
+			<version>1.3.1</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
