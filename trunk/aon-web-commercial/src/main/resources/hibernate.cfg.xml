@@ -37,6 +37,13 @@
 		<mapping class="com.code.aon.commercial.TargetSegment"/>
 		<mapping class="com.code.aon.commercial.TargetSeller"/>
 		
+		<!-- AON-CONFIG Mapping files -->		
+		<mapping class="com.code.aon.config.Scope"/>
+		
+		<!-- AON-CUSTOMER Mapping files -->		
+		<mapping class="com.code.aon.customer.Customer"/>
+		<mapping class="com.code.aon.customer.CustomerSegment"/>
+		
 		<!-- AON-GEOZONE Mapping files -->		
 		<mapping class="com.code.aon.geozone.GeoTree"/>
 		<mapping class="com.code.aon.geozone.GeoZone"/>			
@@ -48,6 +55,7 @@
 		<mapping class="com.code.aon.product.ProductCategory"/>
 		<mapping class="com.code.aon.product.ProductCategoryGroup"/>		
 		<mapping class="com.code.aon.product.Brand"/>
+		<mapping class="com.code.aon.product.Tariff"/>
 		
 		<!-- AON-FINANCE Mapping files -->
 		<mapping class="com.code.aon.finance.PayMethod"/>
