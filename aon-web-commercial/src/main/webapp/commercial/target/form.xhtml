@@ -74,9 +74,9 @@
 				<aon:panelGrid id="menuGrid" columns="2" dir="true" width="100%">
 
 					<aon:outputLabel for="Target_id"
-						value="#{registryBundle.aon_id}" />
+						rendered="#{!target.new}" value="#{registryBundle.aon_id}" />
 					<aon:inputText id="Target_id" value="#{target.to.id}"
-						required="true" size="15" disabled="true" />
+						rendered="#{!target.new}" size="15" disabled="true" />
 	
 					<aon:outputLabel for="Target_document"
 						value="#{registryBundle.aon_nif}" />
@@ -101,6 +101,14 @@
 					<aon:inputText id="Target_alias" maxlength="32"
 						value="#{target.to.registry.alias}" size="32" onblur="toUpperCase(this);">
 					</aon:inputText>
+
+					<aon:outputLabel for="Target_advertising"
+						value="#{appBundle.aon_target_advertising}" />
+					<aon:selectOneMenu id="Target_advertising"
+						required="true" value="#{target.to.advertising}">
+						<f:selectItem value="#{null}" itemLabel="    " />
+						<f:selectItems value="#{commecialCollections.advertisings}" />
+					</aon:selectOneMenu>						
 
 				</aon:panelGrid>
 
