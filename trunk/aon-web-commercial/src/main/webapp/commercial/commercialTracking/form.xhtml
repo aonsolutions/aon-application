@@ -61,6 +61,9 @@
 							actionListener="#{commercialTracking.onCancel}"
 							action="commercialTracking_list"
 							accesskey="#{bundle.aon_key_cancel}" />
+							
+						<aon:spin controller="#{commercialTracking}" action="commercialTracking_form" rendered="#{!commercialTracking.new}" />
+													
 					</aon:div>
 
 					<!-- end toolbar navigation -->
