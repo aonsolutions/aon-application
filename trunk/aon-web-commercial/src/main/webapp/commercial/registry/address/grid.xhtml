@@ -199,7 +199,7 @@
 			</aon:column>
 		</aon:editDataTable>
 		
-		<aon:div id="registryAddressDataScroller" layout="none">
+		<aon:div id="registryAddressDataScroller" layout="none" rendered="#{showDataScroller}">
 			<aon:dataScroller for="registryAddressData" rowCount="#{controller.model.rowCount}" showNote="false" />
 		</aon:div>
 

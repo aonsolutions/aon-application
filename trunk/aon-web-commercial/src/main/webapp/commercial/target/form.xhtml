@@ -91,12 +91,14 @@
 					<aon:panelTab name="targetAddress" label="#{registryBundle.aon_address}">
 						<ui:include src="/commercial/registry/address/grid.xhtml" >
 							<ui:param name="controller" value="#{targetAddress}"/>
+							<ui:param name="showDataScroller" value="#{true}"/>
 						</ui:include>
                     </aon:panelTab>
 
 					<aon:panelTab name="targetMedia" label="#{registryBundle.aon_media}">
 						<ui:include src="/commercial/registry/media/grid.xhtml" >					
 							<ui:param name="controller" value="#{targetMedia}"/>
+							<ui:param name="showDataScroller" value="#{true}"/>
 						</ui:include>
                     </aon:panelTab>
 

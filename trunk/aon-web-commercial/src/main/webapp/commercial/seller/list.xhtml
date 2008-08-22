@@ -13,14 +13,14 @@
 
 	<ui:define name="content">
 
-		<aon:form id="targetList">
+		<aon:form id="sellerList">
 		
 			<aon:div styleClass="aon-finding-title-toolbar">
 				<aon:panelGrid id="buttonsGrid" columns="3" dir="true"
 					columnClasses="aon-finding-title,aon-finding-subtitle,aon-finding-toolbar">
 
 					<aon:div styleClass="aon-finding-title-internal">
-						<aon:outputText value="#{menuBundle.aon_targets}" />
+						<aon:outputText value="#{menuBundle.aon_sellers}" />
 					</aon:div>
 
 					<aon:div styleClass="aon-finding-subtitle-internal">
@@ -30,11 +30,11 @@
 					<!-- start toolbar navigation -->
 					<aon:div styleClass="aon-finding-toolbar-item-group">
 						<aon:commandButton id="search" value="#{bundle.aon_search}"
-							action="target_search" actionListener="#{target.onEditSearch}"
+							action="seller_search" actionListener="#{seller.onEditSearch}"
 							styleClass="aon-finding-toolbar-item aon-icon-search"
 							accesskey="#{bundle.aon_key_search}" />				
 						<aon:commandButton id="reset" value="#{bundle.aon_reset}"
-							action="target_form" actionListener="#{target.onReset}"
+							action="seller_form" actionListener="#{seller.onReset}"
 							styleClass="aon-finding-toolbar-item aon-icon-newMailAccount"
 							accesskey="#{bundle.aon_key_new}" />
 					</aon:div>
@@ -46,12 +46,12 @@
 			<!--  aon-region-body -->
 			<aon:div styleClass="aon-scroll-area">
 
-				<aon:dataTable id="targetData" value="#{target.model}"
-					var="to" rows="20" rendered="#{target.model.rowCount > 0}"
+				<aon:dataTable id="sellerData" value="#{seller.model}"
+					var="to" rows="20" rendered="#{seller.model.rowCount > 0}"
 					columnClasses="aon-editDataTable-numberColumn, aon-editDataTable-textColumn,
 						aon-editDataTable-textColumn, aon-editDataTable-textColumn, aon-editDataTable-textColumn">
 
-					<aon:rowSelector action="target_form" actionListener="#{target.onSelect}" />
+					<aon:rowSelector action="seller_form" actionListener="#{seller.onSelect}" />
 					
 					<aon:column>
 						<f:facet name="header">
@@ -83,14 +83,14 @@
 
  					<aon:column>
 						<f:facet name="header">
-							<aon:outputText value="#{appBundle.aon_target_advertising}" />
+							<aon:outputText value="#{appBundle.aon_description}" />
 						</f:facet>
-						<aon:outputText value="#{to.advertising}"/>
+						<aon:outputText value="#{to.description}"/>
 					</aon:column>
  
 				</aon:dataTable>
 
-				<aon:dataScroller for="targetData" rowCount="#{target.model.rowCount}" showNote="true" />
+				<aon:dataScroller for="sellerData" rowCount="#{seller.model.rowCount}" showNote="true" />
 
 			</aon:div>
 		</aon:form>

@@ -16,7 +16,7 @@ import com.code.aon.ui.form.BasicController;
 /**
  * Controller used in the address maintenance of the target.
  */
-public class TargetAddressController extends BasicController {
+public class RegistryAddressController extends BasicController {
 	
     /**
      * Retrieves the whole <code>GeoZone</code> object when the lookup field changes
