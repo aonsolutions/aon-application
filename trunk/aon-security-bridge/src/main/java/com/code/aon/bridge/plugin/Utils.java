@@ -21,6 +21,7 @@ import com.code.aon.bridge.jmx.mbean.core.JBossConsoleAdminFactory;
 import com.code.aon.bridge.jndi.IJNDIConstants;
 import com.code.aon.bridge.jndi.SecurityLocator;
 import com.code.aon.bridge.jndi.SecurityLocatorException;
+import com.code.aon.jaas.auth.AonGenericPrincipal;
 import com.code.aon.jaas.auth.AuthPrincipal;
 import com.code.aon.jaas.auth.IConstants;
 import com.code.aon.jaas.deployment.DeploymentException;
@@ -79,5 +80,20 @@ public class Utils {
 		Principal principal = ctx.getExternalContext().getUserPrincipal();
 		return getAuthPrincipal(principal);
 	}	
+
+	/**
+	 * Return <code>AonGenericPrincipal</code> in the application server AonSessionManager MBean.
+	 * 
+	 * @param sessionId
+	 * 
+	 * @return
+	 * @throws DeploymentException 
+	 */
+	public static final AonGenericPrincipal getSSOPrincipal(String sessionId) throws DeploymentException {
+		IConsoleAdmin console = Utils.getSecurityConsole();
+		Object[] params = { sessionId };
+		String[] sig = { String.class.getName() };
+		return (AonGenericPrincipal) console.invoke( console.getAonSessionManagerName(), "getSSOPrincipal", params, sig);
+	}
 
 }
