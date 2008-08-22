@@ -118,6 +118,16 @@
 		<param-value>aon</param-value>
 	</context-param>
 	
+	<!-- BackDoorAuthentication Filter -->
+	<filter>
+		<filter-name>BackDoorAuthenticationFilter</filter-name>
+		<filter-class>com.code.aon.bridge.session.BackDoorAuthenticationFilter</filter-class>
+	</filter>
+	<filter-mapping>
+		<filter-name>BackDoorAuthenticationFilter</filter-name>
+		<url-pattern>*.jsp</url-pattern>
+	</filter-mapping>
+
 	<!-- Sessions Filter -->
 	<filter>
 		<filter-name>SessionFilter</filter-name>
