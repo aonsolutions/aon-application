@@ -2,6 +2,7 @@ package com.code.aon.ui.desktop.applications;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.InetAddress;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
@@ -10,6 +11,7 @@ import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 
 import com.code.aon.desktop.controller.AonUserController;
+import com.code.aon.jaas.auth.util.Util;
 import com.code.aon.jaas.client.ast.IApplication;
 import com.code.aon.jaas.deployment.DeploymentException;
 import com.code.aon.ui.util.AonUtil;
@@ -27,12 +29,18 @@ public class ApplicationsManager {
 		services.load(is);
 		applicationList = new ArrayList<App>();
 		ExternalContext ec = FacesContext.getCurrentInstance().getExternalContext();
+		
+		String thisIp = InetAddress.getLocalHost().getHostAddress();
+
+		
 		AonUserController aonUserController = (AonUserController) AonUtil.getController( "currentUser" );
 		List list = aonUserController.getUserManager().getUserApplications();
         for (int i = 0; i < list.size(); i++) {
 			IApplication app = (IApplication) list.get(i);
-//			String context = ec.getRequestContextPath() + app.getContext() + ".auth?aonDesktop=true";
-			String context = app.getContext() + "?aonDesktop=true";
+			String context = app.getContext() + "/?aonDesktop=true";
+			String ip = Util.findStoredApplicationIp( thisIp, app.getContext() );
+			if ( !thisIp.equals( ip ) )
+				context = ec.getRequestContextPath() + app.getContext() + ".auth?aonDesktop=true";
 			String property = services.getProperty( app.getId() );
 			if ( property != null ) {
 				char[] bar = property.substring( 0, property.indexOf( ';' ) ).toCharArray();
@@ -111,4 +119,5 @@ public class ApplicationsManager {
 		}
 
 	}
+
 }
