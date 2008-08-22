@@ -1,0 +1,145 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:c="http://java.sun.com/jstl/core">
+<body>
+
+<ui:composition template="/facelet/templates/aon.ui.content.xhtml">
+
+	<ui:define name="content">
+
+		<aon:form id="contactForm">
+
+			<aon:div styleClass="aon-finding-title-toolbar">
+				<aon:panelGrid columns="3" dir="true"
+					columnClasses="aon-finding-title,aon-finding-subtitle,aon-finding-toolbar">
+
+					<aon:div styleClass="aon-finding-title-internal">
+						<aon:outputText value="#{groupwareBundle.aon_contact}" />
+					</aon:div>
+
+					<aon:div styleClass="aon-finding-subtitle-internal">
+						<aon:outputText
+							value="#{contact.new?(bundle.aon_reset):(bundle.aon_editing)}" />
+					</aon:div>
+
+					<aon:div styleClass="aon-finding-toolbar-item-group">
+						<aon:commandButton id="save" value="#{bundle.aon_save}"
+							rendered="#{contact.to!=null or contact.new}"
+							styleClass="aon-finding-toolbar-item aon-icon-accept"
+							actionListener="#{contact.accept}"
+							action="contact_form"
+							accesskey="#{bundle.aon_key_save}" />
+						<aon:confirmButton id="cancel" value="#{bundle.aon_cancel}"
+							rendered="#{contact.new}"
+							styleClass="aon-finding-toolbar-item aon-icon-cancel"
+							immediate="#{true}" confirmTitle="#{bundle.aon_confirm_title}"
+							confirmMessage="#{bundle.aon_cancel_confirm}"
+							confirmActionListener="#{contact.onCancel}"
+							confirmAction="contact_list"
+							accesskey="#{bundle.aon_key_cancel}" />
+						<aon:confirmButton id="remove" value="#{bundle.aon_remove}"
+							rendered="#{!contact.new}" immediate="true"
+							confirmTitle="#{bundle.aon_confirm_title}"
+							confirmMessage="#{bundle.aon_remove_confirm}"
+							confirmActionListener="#{contact.onRemove}"
+							confirmAction="contact_list"
+							styleClass="aon-finding-toolbar-item aon-icon-delete"
+							accesskey="#{bundle.aon_key_remove}" />
+						<aon:commandButton id="search" value="#{bundle.aon_search}"
+							rendered="#{!contact.new}" immediate="true"
+							action="contact_search" actionListener="#{contact.onEditSearch}"
+							styleClass="aon-finding-toolbar-item aon-icon-search"
+							accesskey="#{bundle.aon_key_search}" />							
+						<aon:commandButton id="back" value="#{bundle.aon_back}"
+							rendered="#{!contact.new}" immediate="true"
+							styleClass="aon-finding-toolbar-item aon-icon-cancel"
+							actionListener="#{contact.onCancel}"
+							action="contact_list"
+							accesskey="#{bundle.aon_key_cancel}" />
+							
+						<aon:spin controller="#{contact}" action="contact_form" rendered="#{!contact.new}" />
+						
+					</aon:div>
+				</aon:panelGrid>
+			</aon:div>
+
+			<aon:div styleClass="aon-scroll-area">
+
+				<aon:panelGrid columns="2" dir="true">
+
+					<aon:outputLabel for="Contact_displayName"
+						value="#{groupwareBundle.contact_displayName}" />
+					<aon:inputText id="Contact_displayName"
+						maxlength="64" size="80" required="true"
+						value="#{contact.to.displayName}" />
+
+					<aon:outputLabel for="Contact_name"
+						value="#{groupwareBundle.contact_name}" />
+					<aon:inputText id="Contact_name"
+						maxlength="64" size="80"
+						value="#{contact.to.name}" />
+
+					<aon:outputLabel for="Contact_surname"
+						value="#{groupwareBundle.contact_surname}" />
+					<aon:inputText id="Contact_surname"
+						maxlength="64" size="80"
+						value="#{contact.to.surname}" />
+
+					<aon:outputLabel for="Contact_organization"
+						value="#{groupwareBundle.contact_organization}" />
+					<aon:inputText id="Contact_organization"
+						maxlength="64" size="80"
+						value="#{contact.to.organization}" />
+
+					<aon:outputLabel for="Contact_phone"
+						value="#{groupwareBundle.contact_phone}" />
+					<aon:inputText id="Contact_phone"
+						maxlength="64" size="15"
+						value="#{contact.to.phone}" />
+
+					<aon:outputLabel for="Contact_cellularPhone"
+						value="#{groupwareBundle.contact_cellular_phone}" />
+					<aon:inputText id="Contact_cellularPhone"
+						maxlength="64" size="15"
+						value="#{contact.to.cellularPhone}" />
+
+					<aon:outputLabel for="Contact_fax"
+						value="#{groupwareBundle.contact_fax}" />
+					<aon:inputText id="Contact_fax"
+						maxlength="64" size="15"
+						value="#{contact.to.fax}" />
+
+					<aon:outputLabel for="Contact_email"
+						value="#{groupwareBundle.contact_email}" />
+					<aon:inputText id="Contact_email"
+						maxlength="64" size="40"
+						value="#{contact.to.email}" />
+
+					<aon:outputLabel for="Contact_address"
+						value="#{groupwareBundle.contact_address}" />
+					<aon:inputText id="Contact_address"
+						maxlength="128" size="80"
+						value="#{contact.to.address}" />
+
+					<aon:outputLabel for="Contact_postal_code"
+						value="#{groupwareBundle.contact_postal_code}" />
+					<aon:inputText id="Contact_postal_code"
+						maxlength="40" size="40"
+						value="#{contact.to.postalCode}" />
+					
+					<aon:outputLabel for="Contact_note" value="#{groupwareBundle.contact_note}" />
+					<aon:inputTextarea id="Contact_note"
+						value="#{contact.to.note}" cols="81" rows="7" />
+
+				</aon:panelGrid>
+
+			</aon:div>
+		</aon:form>
+	</ui:define>
+</ui:composition>
+
+</body>
+</html>
