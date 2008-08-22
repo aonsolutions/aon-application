@@ -128,4 +128,16 @@ public class SessionInfo {
 		this.lastAccessedTime = new Date().getTime();
 	}
 
+	@Override
+	public String toString() {
+		StringBuffer sb = new StringBuffer();
+		sb.append( "SessionInfo[creationTime:" );sb.append( creationTime );sb.append( ";" );
+		sb.append( "lastAccessedTime:" );sb.append( lastAccessedTime );sb.append( ";" );
+		sb.append( "maxInactiveInterval:" );sb.append( maxInactiveInterval );sb.append( ";" );
+		sb.append( "expired:" );sb.append( expired );sb.append( ";" );
+		sb.append( "shortName:" + principal.getShortName() + ";" );
+		sb.append( "domain:" + principal.getDomain() + "]" );
+		return sb.toString();
+	}
+
 }
