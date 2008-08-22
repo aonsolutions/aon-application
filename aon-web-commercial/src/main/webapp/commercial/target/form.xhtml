@@ -73,34 +73,9 @@
 			<aon:div styleClass="aon-scroll-area">
 				<aon:panelGrid id="menuGrid" columns="2" dir="true" width="100%">
 
-					<aon:outputLabel for="Target_id"
-						rendered="#{!target.new}" value="#{registryBundle.aon_id}" />
-					<aon:inputText id="Target_id" value="#{target.to.id}"
-						rendered="#{!target.new}" size="15" disabled="true" />
-	
-					<aon:outputLabel for="Target_document"
-						value="#{registryBundle.aon_nif}" />
-					<aon:inputText id="Target_document" maxlength="16"
-						value="#{target.to.registry.document}" size="16" onblur="toUpperCase(this);">
-					</aon:inputText>
-	
-					<aon:outputLabel for="Target_name"
-						value="#{registryBundle.aon_name}" />
-					<aon:inputText id="Target_name" maxlength="64"
-						value="#{target.to.registry.name}" size="64">
-					</aon:inputText>
-	
-					<aon:outputLabel for="Target_surname"
-						value="#{registryBundle.aon_surname}" />
-					<aon:inputText id="Target_surname" maxlength="64"
-						value="#{target.to.registry.surname}" size="64">
-					</aon:inputText>
-	
-					<aon:outputLabel for="Target_alias"
-						value="#{registryBundle.aon_alias}" />
-					<aon:inputText id="Target_alias" maxlength="32"
-						value="#{target.to.registry.alias}" size="32" onblur="toUpperCase(this);">
-					</aon:inputText>
+					<ui:include src="/commercial/registry/formContent.xhtml">
+						<ui:param name="controller" value="#{target}"/>
+					</ui:include>
 
 					<aon:outputLabel for="Target_advertising"
 						value="#{appBundle.aon_target_advertising}" />
@@ -114,11 +89,15 @@
 
 				<aon:panelTabSet rendered="#{!target.new}" valueChangeListener="#{target.tabChanged}">
 					<aon:panelTab name="targetAddress" label="#{registryBundle.aon_address}">
-						<ui:include src="/commercial/target/address/grid.xhtml" />
+						<ui:include src="/commercial/registry/address/grid.xhtml" >
+							<ui:param name="controller" value="#{targetAddress}"/>
+						</ui:include>
                     </aon:panelTab>
 
 					<aon:panelTab name="targetMedia" label="#{registryBundle.aon_media}">
-						<ui:include src="/commercial/target/media/grid.xhtml" />					
+						<ui:include src="/commercial/registry/media/grid.xhtml" >					
+							<ui:param name="controller" value="#{targetMedia}"/>
+						</ui:include>
                     </aon:panelTab>
 
 					<aon:panelTab name="targetSegment" label="#{appBundle.aon_target_segment}">
