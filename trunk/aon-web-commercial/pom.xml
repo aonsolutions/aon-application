@@ -13,7 +13,7 @@
 	<artifactId>aon-web-commercial</artifactId>
 	<packaging>war</packaging>
 	<name>AON WEB COMMERCIAL</name>
-	<version>0.8.1</version>
+	<version>0.8.2</version>
 	<description>AON WEB COMMERCIAL</description>
 	<build>
 		<finalName>aon-commercial</finalName>
@@ -22,15 +22,15 @@
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.security.bridge</artifactId>
-			<version>1.5.0</version>
+			<version>1.6.0</version>
 			<scope>compile</scope>
-		</dependency>	
-		<dependency>
-			<groupId>com.code.aon</groupId>
-			<artifactId>aon.security</artifactId>
-			<version>1.4.0</version>
-			<scope>provided</scope>
 		</dependency>
+		<dependency>
+			<groupId>com.code.aon</groupId> 
+			<artifactId>aon.security</artifactId>
+			<version>1.5.0</version>
+			<scope>provided</scope>
+		</dependency>	
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.rich.components</artifactId>
