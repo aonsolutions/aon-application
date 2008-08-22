@@ -128,7 +128,7 @@
 			</aon:column>
 		</aon:editDataTable>
 
-		<aon:div id="registryMediaDataScroller" layout="none">
+		<aon:div id="registryMediaDataScroller" layout="none" rendered="#{showDataScroller}">
 			<aon:dataScroller for="registryMediaData" rowCount="#{controller.model.rowCount}" showNote="false" />
 		</aon:div>
 
