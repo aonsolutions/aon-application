@@ -15,13 +15,11 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
-import org.apache.catalina.connector.Request;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.code.aon.jaas.auth.AuthPrincipal;
-import com.code.aon.jaas.auth.IConstants;
-import com.code.aon.jaas.valves.BackDoorAuthenticationValve;
+import com.code.aon.bridge.plugin.Utils;
+import com.code.aon.jaas.auth.AonGenericPrincipal;
 import com.code.aon.jaas.valves.BackDoorPrincipal;
 
 import es.code.cdr.core.ContentRepository;
@@ -55,27 +53,14 @@ public class LoginSessionFilter implements Filter {
 		Principal principal = httpRequest.getUserPrincipal();
 		if ( (principal != null || httpRequest.getServletPath().indexOf( "index.jsp" ) > -1) 
 				&& SessionManager.getInstance().getHierarchyManager( session.getId() ) == null ) {
-			BackDoorPrincipal bdp = null;
 			String workspace = ContentRepository.DEFAULT_WORKSPACE;
-			String requestId = session.getId() + httpRequest.getContextPath();
-			Request activeRequest = BackDoorAuthenticationValve.getActiveRequest( requestId );
-			String username = principal.getName();
-			String authType = httpRequest.getAuthType();
-			if ( authType.equals( BackDoorAuthenticationValve.AUTH_TYPE ) ) {
-				AuthPrincipal auth = new AuthPrincipal( principal.getName() );
-				username = auth.getShortName() + IConstants.IDENTITY_SEPARATOR + auth.getDomain() 
-									+ activeRequest.getContextPath();
+			AonGenericPrincipal agp = null;
+			try {
+				agp = Utils.getSSOPrincipal( httpRequest.getSession().getId() );
+			} catch (Exception e) {
+				LOGGER.error( e.getMessage() );
 			}
-			if ( activeRequest != null ) {
-				String password = (String) activeRequest.getNote( BackDoorAuthenticationValve.AUTH_PASSWORD_NOTE );
-				bdp = new BackDoorPrincipal( username, password );
-			} else {
-				throw new ServletException( "Unable to access Repository[" + username + ", " + session.getId() + "]" );
-//				Properties props = ContentRepository.getProvider().getRi().getProps();
-//				username = props.getProperty( IProvider.REPOSITORY_CONNECTION_USER ) + props.getProperty( IProvider.REPOSITORY_CONNECTION_CONTEXT );
-//				String password = props.getProperty( IProvider.REPOSITORY_CONNECTION_PSWD );
-//				bdp = new BackDoorPrincipal( username, password );
-			}
+			BackDoorPrincipal bdp = new BackDoorPrincipal( agp.getName(), (String) agp.getCredentials() );
 			workspace = bdp.getPrincipal().getDomain();
 			if ( LOGGER.isDebugEnabled() )
 				LOGGER.debug( "Accessing workspace: " + workspace );

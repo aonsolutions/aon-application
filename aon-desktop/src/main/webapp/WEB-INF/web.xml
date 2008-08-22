@@ -104,16 +104,6 @@
 		<param-value>aon</param-value>
 	</context-param>
 
-	<!-- BackDoorAuthentication Bean Servlet
-	<servlet>
-		<servlet-name>BackDoorAuthentication</servlet-name>
-		<servlet-class>com.code.aon.bridge.servlet.BackDoorAuthentication</servlet-class>
-	</servlet>
-	<servlet-mapping>
-		<servlet-name>BackDoorAuthentication</servlet-name>
-		<url-pattern>*.auth</url-pattern>
-	</servlet-mapping>
- -->
 	<!-- Sessions Filter -->
 	<filter>
 		<filter-name>SessionFilter</filter-name>
