@@ -1,5 +1,6 @@
 package com.code.aon.sales;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -82,8 +83,9 @@ public class Seller implements ITransferObject, IRegistry {
 	 * 
 	 * @return the registry
 	 */
-	@OneToOne 
-	@PrimaryKeyJoinColumn
+	@OneToOne(cascade={CascadeType.PERSIST, CascadeType.MERGE})
+	@org.hibernate.annotations.Cascade(value = org.hibernate.annotations.CascadeType.SAVE_UPDATE)
+	@PrimaryKeyJoinColumn 	
 	public Registry getRegistry() {
 		return registry;
 	}
