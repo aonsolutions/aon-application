@@ -11,7 +11,7 @@
 	<groupId>com.code.aon</groupId>
 	<artifactId>aon.ui.webmail</artifactId>
 	<name>AON UI WEBMAIL</name>
-	<version>3.7.0</version>
+	<version>3.7.1</version>
 	<description>AON UI WEBMAIL</description>
 	<dependencies>
 		<dependency>
@@ -23,13 +23,13 @@
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.security</artifactId>
-			<version>1.4.0</version>
+			<version>1.5.0</version>
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.security.bridge</artifactId>
-			<version>1.5.0</version>
+			<version>1.6.0</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
