@@ -45,6 +45,22 @@
 		</navigation-case>
 	</navigation-rule>		
 
+	<!-- =================== Seller ================= -->	
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>seller_list</from-outcome>
+			<to-view-id>/commercial/seller/list.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>seller_form</from-outcome>
+			<to-view-id>/commercial/seller/form.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>seller_search</from-outcome>
+			<to-view-id>/commercial/seller/search.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>		
+
 	<!-- =================== Application Menu Navigation Rules ================= -->
 	<navigation-rule>
 		<navigation-case>
@@ -62,6 +78,10 @@
 		<navigation-case>
 			<from-outcome>target</from-outcome>
 			<to-view-id>/commercial/target/search.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>seller</from-outcome>
+			<to-view-id>/commercial/seller/search.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>
 	
