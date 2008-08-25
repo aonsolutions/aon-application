@@ -55,7 +55,8 @@ public class ByAreaEvolutionReport implements ICollectionProvider {
 				+ "c.area.description,c.area.areaGroup.description,c.area.budget,c.area.estimate," + subStmt_2 + ",c.area.budget,SUM(off.price)," + subStmt
 				+ ") FROM Campaign c,Offer off WHERE ";
 		StringBuilder sentence = new StringBuilder(stmt);
-		sentence.append(" c.startDate <= ? AND c.endDate >= ?");
+		//sentence.append(" c.startDate <= ? AND c.endDate >= ?");
+		sentence.append(" off.offerDate <= ? AND off.offerDate >= ?");
 		sentence.append(" AND c.id = off.campaign.id ");
 		sentence.append(" AND c.area.status = 0 ");
 		sentence.append(" GROUP BY c.area");
