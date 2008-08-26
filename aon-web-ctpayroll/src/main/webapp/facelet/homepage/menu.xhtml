@@ -1,0 +1,220 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core" 
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:aon="http://www.code.es/aon-rich-components">
+<body>
+
+<ui:composition>
+
+	<aon:form id="commercialList">
+	
+		<aon:menuBar>
+		
+			<aon:dropDownMenu value="#{menuBundle.principales}" event="onclick">
+				<aon:menuGroup value="#{menuBundle.principales_clientes}">
+					<aon:menuItem value="#{menuBundle.principales_clientes__cliente}" />
+					<aon:menuItem value="#{menuBundle.principales_clientes__integral_emp}" />
+				</aon:menuGroup>
+				<aon:menuGroup value="#{menuBundle.principales_personas}">
+					<aon:menuItem value="#{menuBundle.principales_personas__personas}" />
+					<aon:menuItem value="#{menuBundle.principales_personas__integral_per}" />
+					<aon:menuItem value="#{menuBundle.principales_personas__percep}" />
+					<aon:menuItem value="#{menuBundle.principales_personas__otrperc}" />
+					<aon:menuItem value="#{menuBundle.principales_personas__embargo}" />
+				</aon:menuGroup>
+				<aon:menuGroup value="#{menuBundle.principales_autonomos}">
+					<aon:menuItem value="#{menuBundle.principales_autonomos__autonomos}" />
+				</aon:menuGroup>
+				<aon:menuGroup value="#{menuBundle.principales_registro_documentos}">
+					<aon:menuItem value="#{menuBundle.principales_registro_documentos__regiempr}" />
+					<aon:menuItem value="#{menuBundle.principales_registro_documentos__regitrab}" />
+				</aon:menuGroup>
+			</aon:dropDownMenu>
+
+			<aon:dropDownMenu value="#{menuBundle.procesos}" event="onclick">
+				<aon:menuGroup value="#{menuBundle.procesos_automaticos_claves}">
+					<aon:menuItem value="#{menuBundle.procesos_automaticos_claves__automat}" />
+				</aon:menuGroup>
+				<aon:menuGroup value="#{menuBundle.procesos_recibos_salarios}">
+					<aon:menuItem value="#{menuBundle.procesos_recibos_salarios__lanzRecibos}" />
+					<aon:menuItem value="#{menuBundle.procesos_recibos_salarios__lanzInfReci}" />
+				</aon:menuGroup>
+				<aon:menuGroup value="#{menuBundle.procesos_seguros_sociales}">
+					<aon:menuItem value="#{menuBundle.procesos_seguros_sociales__lanzSeguros}" />
+					<aon:menuItem value="#{menuBundle.procesos_seguros_sociales__lanzInfSegu}" />
+				</aon:menuGroup>
+				<aon:menuGroup value="#{menuBundle.procesos_irpf}">
+					<aon:menuItem value="#{menuBundle.procesos_irpf__lanzIRPF}" />
+					<aon:menuItem value="#{menuBundle.procesos_irpf__lanzDetIrpf}" />
+					<aon:menuItem value="#{menuBundle.procesos_irpf__lanzInfIrpf}" />
+				</aon:menuGroup>
+				<aon:menuGroup value="#{menuBundle.procesos_sistema_red}">
+					<aon:menuItem value="#{menuBundle.procesos_sistema_red__lanzred}" />
+					<aon:menuItem value="#{menuBundle.procesos_sistema_red__lanzinfred}" />
+				</aon:menuGroup>
+				<aon:menuGroup value="#{menuBundle.procesos_atrasos}">
+					<aon:menuItem value="#{menuBundle.procesos_atrasos__lanzAtrasos}" />
+					<aon:menuItem value="#{menuBundle.procesos_atrasos__lanzInfAtra}" />
+				</aon:menuGroup>
+				<aon:menuGroup value="#{menuBundle.procesos_informes}">
+					<aon:menuItem value="#{menuBundle.procesos_informes__infoEmpr}" />
+					<aon:menuItem value="#{menuBundle.procesos_informes__infoTrab}" />
+					<aon:menuItem value="#{menuBundle.procesos_informes__registrodoc}" />
+				</aon:menuGroup>
+				<aon:menuGroup value="#{menuBundle.procesos_varios}">
+					<aon:menuItem value="#{menuBundle.procesos_varios__lanzapercep}" />
+					<aon:menuItem value="#{menuBundle.procesos_varios__lanzetiqem}" />
+					<aon:menuItem value="#{menuBundle.procesos_varios__campox}" />
+					<aon:menuItem value="#{menuBundle.procesos_varios__lanztraspaso}" />
+				</aon:menuGroup>
+			</aon:dropDownMenu>
+
+			<aon:dropDownMenu value="#{menuBundle.avanzadas}" event="onclick">
+				<aon:menuGroup value="#{menuBundle.avanzadas_hojas_trabajo}">
+					<aon:menuItem value="#{menuBundle.avanzadas_hojas_trabajo__htt}" />
+				</aon:menuGroup>
+				<aon:menuGroup value="#{menuBundle.avanzadas_costes}">
+					<aon:menuItem value="#{menuBundle.avanzadas_costes__costes}" />
+				</aon:menuGroup>
+				<aon:menuGroup value="#{menuBundle.avanzadas_lanzadores}">
+					<aon:menuItem value="#{menuBundle.avanzadas_lanzadores__aceleradores}" />
+					<aon:menuItem value="#{menuBundle.avanzadas_lanzadores__lanzpercep}" />
+					<aon:menuItem value="#{menuBundle.avanzadas_lanzadores__lanzcostes}" />
+					<aon:menuItem value="#{menuBundle.avanzadas_lanzadores__lanzcontinuo}" />
+				</aon:menuGroup>
+				<aon:menuGroup value="#{menuBundle.avanzadas_kartel}">
+					<aon:menuItem value="#{menuBundle.avanzadas_kartel__percepcion}" />
+					<aon:menuItem value="#{menuBundle.avanzadas_kartel__kartel}" />
+				</aon:menuGroup>
+				<aon:menuGroup value="#{menuBundle.avanzadas_gestel}">
+					<aon:menuItem value="#{menuBundle.avanzadas_gestel__variable}" />
+					<aon:menuItem value="#{menuBundle.avanzadas_gestel__gestel}" />
+				</aon:menuGroup>
+				<aon:menuGroup value="#{menuBundle.avanzadas_type_write}">
+					<aon:menuItem value="#{menuBundle.avanzadas_type_write__tc1}" />
+				</aon:menuGroup>
+			</aon:dropDownMenu>
+			
+			<aon:dropDownMenu value="#{menuBundle.resultados}" event="onclick">
+				<aon:menuGroup value="#{menuBundle.resultados_recibos_salarios}">
+					<aon:menuItem value="#{menuBundle.resultados_recibos_salarios__nomina}" />
+					<aon:menuItem value="#{menuBundle.resultados_recibos_salarios__nominaex}" />
+					<aon:menuItem value="#{menuBundle.resultados_recibos_salarios__finiquitos}" />
+				</aon:menuGroup>
+				<aon:menuGroup value="#{menuBundle.resultados_seguros_sociales}">
+					<aon:menuItem value="#{menuBundle.resultados_seguros_sociales__tc2calc}" />
+					<aon:menuItem value="#{menuBundle.resultados_seguros_sociales__tc1calc}" />
+				</aon:menuGroup>
+				<aon:menuGroup value="#{menuBundle.resultados_irpf}">
+					<aon:menuItem value="#{menuBundle.resultados_irpf__m110calc}" />
+					<aon:menuItem value="#{menuBundle.resultados_irpf__m190calc}" />
+					<aon:menuItem value="#{menuBundle.resultados_irpf__result_irpf}" />
+				</aon:menuGroup>
+			</aon:dropDownMenu>			
+
+			<aon:dropDownMenu value="#{menuBundle.utilidades}" event="onclick">
+				<aon:menuGroup value="#{menuBundle.utilidades_seguridad}">
+					<aon:menuItem value="#{menuBundle.utilidades_seguridad__usuarios}" />
+					<aon:menuItem value="#{menuBundle.utilidades_seguridad__grupo}" />
+					<aon:menuItem value="#{menuBundle.utilidades_seguridad__ltabla}" />
+					<aon:menuItem value="#{menuBundle.utilidades_seguridad__menus}" />
+					<aon:menuItem value="#{menuBundle.utilidades_seguridad__grupoip}" />
+					<aon:menuItem value="#{menuBundle.utilidades_seguridad__perfil}" />
+				</aon:menuGroup>
+				<aon:menuGroup value="#{menuBundle.utilidades_ficheros_ascii}">
+					<aon:menuItem value="#{menuBundle.utilidades_ficheros_ascii__carga}" />
+					<aon:menuItem value="#{menuBundle.utilidades_ficheros_ascii__descarga}" />
+				</aon:menuGroup>
+				<aon:menuGroup value="#{menuBundle.utilidades_arreglos}">
+					<aon:menuItem value="#{menuBundle.utilidades_arreglos__interact}" />
+					<aon:menuItem value="#{menuBundle.utilidades_arreglos__genrepo}" />
+				</aon:menuGroup>
+				<aon:menuGroup value="#{menuBundle.utilidades_correo_electronico}">
+					<aon:menuItem value="#{menuBundle.utilidades_correo_electronico__mensaje}" />
+				</aon:menuGroup>
+				<aon:menuGroup value="#{menuBundle.utilidades_ficheros_info_msgs}">
+					<aon:menuItem value="#{menuBundle.utilidades_ficheros_info_msgs__cargamsg}" />
+					<aon:menuItem value="#{menuBundle.utilidades_ficheros_info_msgs__controlmsg}" />
+					<aon:menuItem value="#{menuBundle.utilidades_ficheros_info_msgs__cargadb}" />
+				</aon:menuGroup>
+				<aon:menuGroup value="#{menuBundle.utilidades_impresoras}">
+					<aon:menuItem value="#{menuBundle.utilidades_impresoras__printers}" />
+					<aon:menuItem value="#{menuBundle.utilidades_impresoras__saltos}" />
+				</aon:menuGroup>
+				<aon:menuGroup value="#{menuBundle.utilidades_procesos_masivos_datos}">
+					<aon:menuItem value="#{menuBundle.utilidades_procesos_masivos_datos__lanzborrado}" />
+					<aon:menuItem value="#{menuBundle.utilidades_procesos_masivos_datos__lanzduplicado}" />
+				</aon:menuGroup>
+			</aon:dropDownMenu>			
+
+			<aon:dropDownMenu value="#{menuBundle.auxiliares}" event="onclick">
+				<aon:menuGroup value="#{menuBundle.auxiliares_geograficas}">
+					<aon:menuItem value="#{menuBundle.auxiliares_geograficas__nacion}" />
+					<aon:menuItem value="#{menuBundle.auxiliares_geograficas__paicopro}" />
+				</aon:menuGroup>
+				<aon:menuGroup value="#{menuBundle.auxiliares_cotizacion}">
+					<aon:menuItem value="#{menuBundle.auxiliares_cotizacion__porcoti}" />
+					<aon:menuItem value="#{menuBundle.auxiliares_cotizacion__cotizaciones}" />
+					<aon:menuItem value="#{menuBundle.auxiliares_cotizacion__elemcotizacion}" />
+					<aon:menuItem value="#{menuBundle.auxiliares_cotizacion__ocupacion}" />
+					<aon:menuItem value="#{menuBundle.auxiliares_cotizacion__cnae}" />
+					<aon:menuItem value="#{menuBundle.auxiliares_cotizacion__tipboni}" />
+					<aon:menuItem value="#{menuBundle.auxiliares_cotizacion__epigrafes}" />
+				</aon:menuGroup>
+				<aon:menuGroup value="#{menuBundle.auxiliares_convenios}">
+					<aon:menuItem value="#{menuBundle.auxiliares_convenios__calendar}" />
+					<aon:menuItem value="#{menuBundle.auxiliares_convenios__complemento}" />
+					<aon:menuItem value="#{menuBundle.auxiliares_convenios__convenio}" />
+				</aon:menuGroup>
+				<aon:menuGroup value="#{menuBundle.auxiliares_contratos}">
+					<aon:menuItem value="#{menuBundle.auxiliares_contratos__tipcotc2}" />
+					<aon:menuItem value="#{menuBundle.auxiliares_contratos__tipocont}" />
+				</aon:menuGroup>
+				<aon:menuGroup value="#{menuBundle.auxiliares_organismos_entidades}">
+					<aon:menuItem value="#{menuBundle.auxiliares_organismos_entidades__entidsucur}" />
+					<aon:menuItem value="#{menuBundle.auxiliares_organismos_entidades__admon}" />
+					<aon:menuItem value="#{menuBundle.auxiliares_organismos_entidades__mutua}" />
+					<aon:menuItem value="#{menuBundle.auxiliares_organismos_entidades__delegacion}" />
+				</aon:menuGroup>
+				<aon:menuGroup value="#{menuBundle.auxiliares_tipos}">
+					<aon:menuItem value="#{menuBundle.auxiliares_tipos__tipdoc}" />
+					<aon:menuItem value="#{menuBundle.auxiliares_tipos__tipempr}" />
+					<aon:menuItem value="#{menuBundle.auxiliares_tipos__tipinc}" />
+					<aon:menuItem value="#{menuBundle.auxiliares_tipos__tipreg}" />
+					<aon:menuItem value="#{menuBundle.auxiliares_tipos__tipovia}" />
+					<aon:menuItem value="#{menuBundle.auxiliares_tipos__tipaut}" />
+					<aon:menuItem value="#{menuBundle.auxiliares_tipos__tipocnae}" />
+				</aon:menuGroup>
+				<aon:menuGroup value="#{menuBundle.auxiliares_divisas}">
+					<aon:menuItem value="#{menuBundle.auxiliares_divisas__divisa}" />
+				</aon:menuGroup>
+				<aon:menuGroup value="#{menuBundle.auxiliares_irpf}">
+					<aon:menuItem value="#{menuBundle.auxiliares_irpf__datosirpf}" />
+					<aon:menuItem value="#{menuBundle.auxiliares_irpf__cuota}" />
+					<aon:menuItem value="#{menuBundle.auxiliares_irpf__exclusion}" />
+				</aon:menuGroup>
+				<aon:menuGroup value="#{menuBundle.auxiliares_irpf_foral}">
+					<aon:menuItem value="#{menuBundle.auxiliares_irpf_foral__cuota_01}" />
+					<aon:menuItem value="#{menuBundle.auxiliares_irpf_foral__minor_01}" />
+					<aon:menuItem value="#{menuBundle.auxiliares_irpf_foral__cuota_20}" />
+					<aon:menuItem value="#{menuBundle.auxiliares_irpf_foral__minor_20}" />
+					<aon:menuItem value="#{menuBundle.auxiliares_irpf_foral__cuota_48}" />
+					<aon:menuItem value="#{menuBundle.auxiliares_irpf_foral__minor_48}" />
+					<aon:menuItem value="#{menuBundle.auxiliares_irpf_foral__cuota_31}" />
+					<aon:menuItem value="#{menuBundle.auxiliares_irpf_foral__minor_31}" />
+				</aon:menuGroup>
+				<aon:menuGroup value="#{menuBundle.auxiliares_sistema_red}">
+					<aon:menuItem value="#{menuBundle.auxiliares_sistema_red__colectivos}" />
+				</aon:menuGroup>
+			</aon:dropDownMenu>			
+
+		</aon:menuBar>
+
+	</aon:form>
+
+</ui:composition>
+
+</body>
+</html>
