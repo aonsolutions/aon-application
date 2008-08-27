@@ -11,4 +11,19 @@
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
 
+	<!-- ************* PERIOD TASK ***************** -->
+	<managed-bean>
+		<managed-bean-name>tiposDocumento</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.form.GridController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.payroll.tipos.Documento</value>
+		</managed-property>
+	</managed-bean>
+
 </faces-config>
