@@ -1128,6 +1128,7 @@ color:#000;
 .aon-dropDownMenu{
 	font-family:arial,verdana, "sans-serif";
 	cursor:pointer;
+	height: 20px;	
 	}
 /*  opcion del menu clickable que despliega el menu desplegable  */
 .aon-dropDownMenu-item{
