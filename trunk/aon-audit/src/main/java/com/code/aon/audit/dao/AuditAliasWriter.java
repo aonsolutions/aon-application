@@ -3,7 +3,10 @@ package com.code.aon.audit.dao;
 import java.io.File;
 import java.io.IOException;
 
+import com.code.aon.audit.Application;
 import com.code.aon.audit.Domain;
+import com.code.aon.audit.LoginAudit;
+import com.code.aon.audit.User;
 import com.code.aon.common.dao.AliasWriter;
 
 /**
@@ -20,7 +23,10 @@ public class AuditAliasWriter {
 		File file = new File("/AON-PROJECT/aon-audit/src/main/java/com/code/aon/audit/dao/IAuditAlias.java");
 //		File file = new File("c:/ICommercialAlias.java");
 		String[] classes = new String[] { 
-				Domain.class.getName() };
+				Domain.class.getName(),
+				Application.class.getName(),
+				User.class.getName(),
+				LoginAudit.class.getName() };
 		AliasWriter writer = new AliasWriter("com.code.aon.audit.dao");
 		writer.write(classes, file);
 		System.out.println( file.getAbsolutePath() );
