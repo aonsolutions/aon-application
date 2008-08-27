@@ -6,6 +6,7 @@
 		<project>aon-ui-resources</project>
 		<project>aon-rich-components</project>
 		<project>aon-ui-payroll</project>
+		<project>aon-payroll</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>

@@ -12,13 +12,13 @@
 			<to-view-id>/homepage.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>
-	
-	<!-- =================== Application Menu Navigation Rules ================= -->
-	<navigation-rule>
-		<navigation-case>
-			<from-outcome>seller</from-outcome>
-			<to-view-id>/commercial/seller/search.xhtml</to-view-id>
-		</navigation-case>
-	</navigation-rule>
-	
+
+  <!-- =================== Application Menu Navigation Rules ================= -->	
+  <navigation-rule>
+    <navigation-case>
+        <from-outcome>tipos_documento</from-outcome>
+        <to-view-id>/facelet/tipos/documento/grid.xhtml</to-view-id>
+    </navigation-case>
+  </navigation-rule>
+
 </faces-config>
