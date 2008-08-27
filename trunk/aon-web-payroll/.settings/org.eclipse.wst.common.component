@@ -10,10 +10,10 @@
         <dependent-module deploy-path="/WEB-INF/lib" handle="module:/resource/aon-payroll/aon-payroll">
             <dependency-type>uses</dependency-type>
         </dependent-module>
-        <dependent-module deploy-path="/WEB-INF/lib" handle="module:/resource/aon-ui-resources/aon-ui-resources">
+        <dependent-module deploy-path="/WEB-INF/lib" handle="module:/resource/aon-ui-audit/aon-ui-audit">
             <dependency-type>uses</dependency-type>
         </dependent-module>
-        <dependent-module deploy-path="/WEB-INF/lib" handle="module:/resource/aon-rich-components/aon-rich-components">
+        <dependent-module deploy-path="/WEB-INF/lib" handle="module:/resource/aon-audit/aon-audit">
             <dependency-type>uses</dependency-type>
         </dependent-module>
         <property name="context-root" value="aon-payroll"/>
