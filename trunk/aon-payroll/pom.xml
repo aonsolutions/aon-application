@@ -8,7 +8,7 @@
 		<version>1.0.1</version>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
-	<groupId>aon-payroll</groupId>
+	<groupId>com.code.aon</groupId>
 	<artifactId>aon-payroll</artifactId>
 	<version>0.0.1</version>
 	<description>AON PAYROLL</description>
