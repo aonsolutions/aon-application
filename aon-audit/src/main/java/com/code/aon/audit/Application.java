@@ -2,16 +2,12 @@ package com.code.aon.audit;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
-import org.hibernate.annotations.ForeignKey;
 import org.hibernate.annotations.Index;
 
 import com.code.aon.common.ITransferObject;
@@ -40,11 +36,6 @@ public class Application implements ITransferObject {
 	@Index(name="IDX_APPLICATION_NAME")
     private String name;
 	
-	@ManyToOne (fetch=FetchType.EAGER)
-    @JoinColumn( name="DOMAIN", nullable = false, updatable = false )	
-	@ForeignKey(name = "FK_APPLICATION_DOMAIN")
-	private Domain domain;
-
     /**
      * The empty constructor.
      */
@@ -95,23 +86,5 @@ public class Application implements ITransferObject {
     public void setName(String name) {
         this.name = name;
     }
-
-	/**
-	 * Gets the domain.
-	 * 
-	 * @return the domain
-	 */
-	public Domain getDomain() {
-		return domain;
-	}
-
-	/**
-	 * Sets the domain.
-	 * 
-	 * @param domain the new domain
-	 */
-	public void setDomain(Domain domain) {
-		this.domain = domain;
-	}
 
 }

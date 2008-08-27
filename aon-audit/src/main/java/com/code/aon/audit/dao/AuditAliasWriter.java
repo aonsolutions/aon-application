@@ -21,7 +21,6 @@ public class AuditAliasWriter {
 	 */
 	public static void main(String[] args) throws IOException {
 		File file = new File("/AON-PROJECT/aon-audit/src/main/java/com/code/aon/audit/dao/IAuditAlias.java");
-//		File file = new File("c:/ICommercialAlias.java");
 		String[] classes = new String[] { 
 				Domain.class.getName(),
 				Application.class.getName(),

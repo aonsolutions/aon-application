@@ -7,6 +7,8 @@
 		<project>aon-rich-components</project>
 		<project>aon-ui-payroll</project>
 		<project>aon-payroll</project>
+		<project>aon-ui-audit</project>
+		<project>aon-audit</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>

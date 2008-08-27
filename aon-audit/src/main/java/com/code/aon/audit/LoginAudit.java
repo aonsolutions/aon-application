@@ -43,18 +43,23 @@ public class LoginAudit implements ITransferObject {
 	@Column(name = "SESSION_ID", nullable = false, length = 32)
 	@Index(name="IDX_LOGIN_AUDIT_SESSION_ID")
     private String sessionId;
+
+	@ManyToOne (fetch=FetchType.EAGER)
+    @JoinColumn( name="APPLICATION_ID", nullable = false, updatable = false )	
+	@ForeignKey(name = "FK_LOGIN_AUDIT_APPLICATION")
+	private Application application;
 	
 	@ManyToOne (fetch=FetchType.EAGER)
-    @JoinColumn( name="USER", nullable = false, updatable = false )	
+    @JoinColumn( name="USER_ID", nullable = false, updatable = false )	
 	@ForeignKey(name = "FK_LOGIN_AUDIT_USER")
 	private User user;
 
-	@Temporal(TemporalType.DATE)
+	@Temporal(TemporalType.TIMESTAMP)
 	@Column(nullable = false)
-	private Date start;
+	private Date startDate;
 
-	@Temporal(TemporalType.DATE)
-	private Date end;
+	@Temporal(TemporalType.TIMESTAMP)
+	private Date endDate;
 	
     /**
      * The empty constructor.
@@ -124,14 +129,32 @@ public class LoginAudit implements ITransferObject {
 	public void setUser(User user) {
 		this.user = user;
 	}
+	
+	/**
+	 * Gets the application.
+	 * 
+	 * @return the application
+	 */
+	public Application getApplication() {
+		return application;
+	}
+
+	/**
+	 * Sets the application.
+	 * 
+	 * @param application the new application
+	 */
+	public void setApplication(Application application) {
+		this.application = application;
+	}
 
 	/**
 	 * Gets the start.
 	 * 
 	 * @return the start
 	 */
-	public Date getStart() {
-		return start;
+	public Date getStartDate() {
+		return startDate;
 	}
 
 	/**
@@ -139,8 +162,8 @@ public class LoginAudit implements ITransferObject {
 	 * 
 	 * @param start the new start
 	 */
-	public void setStart(Date start) {
-		this.start = start;
+	public void setStartDate(Date start) {
+		this.startDate = start;
 	}
 
 	/**
@@ -148,8 +171,8 @@ public class LoginAudit implements ITransferObject {
 	 * 
 	 * @return the end
 	 */
-	public Date getEnd() {
-		return end;
+	public Date getEndDate() {
+		return endDate;
 	}
 
 	/**
@@ -157,8 +180,8 @@ public class LoginAudit implements ITransferObject {
 	 * 
 	 * @param end the new end
 	 */
-	public void setEnd(Date end) {
-		this.end = end;
+	public void setEndDate(Date end) {
+		this.endDate = end;
 	}	
 
 }
