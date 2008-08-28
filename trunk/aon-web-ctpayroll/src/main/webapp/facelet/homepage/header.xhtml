@@ -30,7 +30,7 @@
 			</aon:div>
 			
 			<aon:div styleClass="aon-nowrap">
-				<aon:div style="white-space:nowrap;">
+				<aon:div style="white-space:nowrap;" rendered="#{payrollController.mainMenuEnabled}">
 					<aon:outputText value="#{payrollController.companyName}" />
 					<aon:outputText value=" / " />
 					<aon:outputText value="#{payrollController.loggedUserName}" styleClass="aon-bold"/>

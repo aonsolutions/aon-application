@@ -27,11 +27,20 @@ public class PayrollController implements ILdapConstants, IAonObjectClasses {
 	private static final String ORGANIZATION_NAME_ATTRIBUTE = "o";
 
 	private Entry aonUser;
+	private boolean isMainMenuEnabled = true;
 	
     public String getCurrentDate() {
         return FORMATTER.format(new Date()).toUpperCase();
     }
     
+	public boolean isMainMenuEnabled() {
+		return isMainMenuEnabled;
+	}
+
+	public void setMainMenuEnabled(boolean isMainMenuEnabled) {
+		this.isMainMenuEnabled = isMainMenuEnabled;
+	}
+
 	private Entry getAonUser( AuthPrincipal principal ) {
 		Entry entry = null;
 		BasicLdap ldap = new BasicLdap();
