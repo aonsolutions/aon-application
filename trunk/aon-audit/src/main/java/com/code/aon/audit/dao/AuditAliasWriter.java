@@ -3,9 +3,11 @@ package com.code.aon.audit.dao;
 import java.io.File;
 import java.io.IOException;
 
+import com.code.aon.audit.Action;
+import com.code.aon.audit.ActionExecution;
 import com.code.aon.audit.Application;
 import com.code.aon.audit.Domain;
-import com.code.aon.audit.LoginAudit;
+import com.code.aon.audit.Session;
 import com.code.aon.audit.User;
 import com.code.aon.common.dao.AliasWriter;
 
@@ -25,7 +27,9 @@ public class AuditAliasWriter {
 				Domain.class.getName(),
 				Application.class.getName(),
 				User.class.getName(),
-				LoginAudit.class.getName() };
+				Session.class.getName(),
+				Action.class.getName(),
+				ActionExecution.class.getName()};
 		AliasWriter writer = new AliasWriter("com.code.aon.audit.dao");
 		writer.write(classes, file);
 		System.out.println( file.getAbsolutePath() );

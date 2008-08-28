@@ -10,13 +10,11 @@ import javax.servlet.http.HttpSession;
 import javax.servlet.http.HttpSessionEvent;
 import javax.servlet.http.HttpSessionListener;
 
-import com.code.aon.audit.LoginAudit;
+import com.code.aon.audit.Session;
 import com.code.aon.ui.audit.AuditManager;
 
 public class AuditSessionListener implements HttpSessionListener {
 
-	public static final String LOGIN_AUDIT_PROPERTY = "com.code.aon.audit.login";
-	
 	/** Obtiene un logger apropiado. */
 	private static final Logger LOGGER = Logger
 			.getLogger(AuditSessionListener.class.getName());
@@ -32,12 +30,12 @@ public class AuditSessionListener implements HttpSessionListener {
 		closeLoginAudit(session);
 	}
 
-	private void closeLoginAudit( HttpSession session ) {
+	private void closeLoginAudit( HttpSession httpSession ) {
 		AuditManager manager = AuditManager.getInstance();
 		manager.changeToAuditDB();
 		try {
-			LoginAudit audit = (LoginAudit) session.getAttribute( AuditSessionListener.LOGIN_AUDIT_PROPERTY );
-			manager.closeLoginAudit(audit);
+			Session session = (Session) httpSession.getAttribute( AuditManager.AUDIT_SESSION_PROPERTY );
+			manager.closeLoginAudit(session);
 		} catch ( Throwable th ) {
 			LOGGER.log( Level.SEVERE, "Error closing login audit", th );
 		} finally {

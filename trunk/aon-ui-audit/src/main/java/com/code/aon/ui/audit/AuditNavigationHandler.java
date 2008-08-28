@@ -1,9 +1,16 @@
 package com.code.aon.ui.audit;
 
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.faces.application.NavigationHandler;
 import javax.faces.context.FacesContext;
+import javax.servlet.http.HttpSession;
+
+import org.apache.commons.lang.StringUtils;
+
+import com.code.aon.audit.Action;
+import com.code.aon.audit.Session;
 
 public class AuditNavigationHandler extends NavigationHandler {
 
@@ -17,9 +24,26 @@ public class AuditNavigationHandler extends NavigationHandler {
 		_base = base;
 	}	
 	
+	private void insertActionExecution( HttpSession httpSession, String name ) {
+		AuditManager manager = AuditManager.getInstance();
+		manager.changeToAuditDB();
+		try {
+			Session session = (Session) httpSession.getAttribute( AuditManager.AUDIT_SESSION_PROPERTY );
+			Action action = manager.getAction( name, session.getApplication() );
+			manager.createActionExecution(session, action);
+		} catch ( Throwable th ) {
+			LOGGER.log( Level.SEVERE, "Error in insert action execution", th );
+		} finally {
+			manager.restoreToPreviousDB();	
+		}
+	}	
+	
 	@Override
 	public void handleNavigation(FacesContext fc, String actionMethodCurrent, String actionNameCurrent) {
-		LOGGER.info( fc.getViewRoot().getViewId() + " - " + actionMethodCurrent + " - " + actionNameCurrent );
+		if (! StringUtils.isEmpty(actionNameCurrent) ) {
+	    	HttpSession session = (HttpSession) fc.getExternalContext().getSession(false);
+	    	insertActionExecution(session, actionNameCurrent);
+		}
 		_base.handleNavigation(fc, actionMethodCurrent, actionNameCurrent);
 	}
 
