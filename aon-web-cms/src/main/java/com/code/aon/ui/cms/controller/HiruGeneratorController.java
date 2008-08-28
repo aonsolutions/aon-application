@@ -23,12 +23,21 @@ public class HiruGeneratorController implements XmlBuilderListener{
 
 	private String sourceFolder;
 
+	String server;
+	
+	String user;
+	
+	String password;
+
 	public HiruGeneratorController(){
 		super();
 		Config config = ControllerUtil.getCurrentConfig();
 		url = ControllerUtil.getWebURL()+"/"+Constants.DOCUMENTS_PATH+"/"+"hiru";		
 		destinationFolder = config.getFtp_path()+"/"+Constants.DOCUMENTS_PATH+"/"+"hiru";		
 		sourceFolder = ControllerUtil.getDocumentsPath()+"/"+"hiru";
+		server = config.getFtp_server();
+		user = config.getFtp_user();
+		password = config.getFtp_password();
 	}
 	
 	public void onGenerateXmlFiles(ActionEvent event) throws ManagerBeanException{
@@ -50,7 +59,11 @@ public class HiruGeneratorController implements XmlBuilderListener{
 		this.activePoll = true;
 		this.messages = new ArrayList<String>();
 		try {
-			if (FTPUtil.uploadFTP(destinationFolder, sourceFolder))
+			if (FTPUtil.uploadFTP(destinationFolder,
+					sourceFolder,
+					server,
+					user,
+					password))
 				this.published = true;
 		}catch (Exception e) {
 		}finally{

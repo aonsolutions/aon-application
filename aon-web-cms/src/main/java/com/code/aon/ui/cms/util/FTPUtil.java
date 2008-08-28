@@ -20,20 +20,43 @@ public class FTPUtil {
 		config = ControllerUtil.getCurrentConfig();
 		String destinationFolder = config.getFtp_path();
 		String sourceFolder = ControllerUtil.getPreviewPath();
-		return uploadFTP(destinationFolder, sourceFolder);
+		String server = config.getFtp_server();
+		String user = config.getFtp_user();
+		String password = config.getFtp_password();
+		return uploadFTP(destinationFolder,
+				sourceFolder,
+				server,
+				user,
+				password);
+	}
+
+	public static boolean uploadPreviewFTP() throws IOException {
+		config = ControllerUtil.getCurrentConfig();
+		String destinationFolder = config.getPreview_ftp_path();
+		String sourceFolder = ControllerUtil.getPreviewPath();
+		String server = config.getPreview_ftp_server();
+		String user = config.getPreview_ftp_user();
+		String password = config.getPreview_ftp_password();
+		return uploadFTP(destinationFolder,
+				sourceFolder,
+				server,
+				user,
+				password);
 	}
 
 	@SuppressWarnings({ "finally", "finally" })
-	public static boolean uploadFTP(String dest, String source) throws IOException {
+	public static boolean uploadFTP(
+			String dest, 
+			String source,
+			String server,
+			String user,
+			String password
+			) throws IOException {
 		GeneratorStatusController status = (GeneratorStatusController)AonUtil.getRegisteredBean("generator_status");
 		status.addMessage("Publicando via FTP");
 		status.addMessage("Conectando....");
 		
 		boolean error = true;
-		config = ControllerUtil.getCurrentConfig();
-		String server = config.getFtp_server();
-		String user = config.getFtp_user();
-		String password = config.getFtp_password();
 		String destinationFolder = dest;
 		String sourceFolder = source;
 		FTPClient ftp = new FTPClient();

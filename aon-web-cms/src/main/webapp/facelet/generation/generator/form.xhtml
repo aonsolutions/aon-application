@@ -29,7 +29,7 @@
 							<a4j:support 
 								event="onclick" 
 								actionListener="#{generator_status.onActivePoll}"  
-								reRender="poll,grid,grid_errors" 
+								reRender="poll,grid" 
 								onclick="javascript:Richfaces.showModalPanel('gen_log',{width:1000, top:50});" />
 						</aon:commandButton>
 						<aon:commandButton id="all"
@@ -42,6 +42,7 @@
 							value="#{bundle.aon_uncheck_all}"
 							styleClass="aon-finding-toolbar-item aon-icon-cancel"
 							actionListener="#{generator.onDeselectAll}" />
+						<!-- 
 						<aon:confirmButton id="publish_no_ok"
 							rendered="#{generator_status.generated and !generator_status.correct}"
 							value="#{appBundle.aon_publish}" 
@@ -54,25 +55,38 @@
 							<a4j:support 
 								event="onclick" 
 								actionListener="#{generator_status.onActivePoll}"  
-								reRender="poll,grid,grid_errors" 
+								reRender="poll,grid" 
 								onclick="javascript:Richfaces.showModalPanel('gen_log',{width:1000, top:50});" />
 						</aon:confirmButton>
+						 -->
 						<aon:commandButton id="publish_ok"
 							value="#{appBundle.aon_publish}" 
 							reRender="generatorForm"
-							rendered="#{generator_status.generated and generator_status.correct}"
+							rendered="#{generator_status.generated}"
 							actionListener="#{generator_status.onPublish}" 
 							styleClass="aon-finding-toolbar-item aon-icon-accept">
 							<a4j:support 
 								event="onclick" 
 								actionListener="#{generator_status.onActivePoll}"  
-								reRender="poll,grid,grid_errors" 
+								reRender="poll,grid" 
+								onclick="javascript:Richfaces.showModalPanel('gen_log',{width:1000, top:50});" />
+						</aon:commandButton>
+						<aon:commandButton id="publish_preview_ok"
+							value="#{appBundle.aon_publish} PREVIEW" 
+							reRender="generatorForm"
+							rendered="#{generator_status.generated}"
+							actionListener="#{generator_status.onPublishPreview}" 
+							styleClass="aon-finding-toolbar-item aon-icon-accept">
+							<a4j:support 
+								event="onclick" 
+								actionListener="#{generator_status.onActivePoll}"  
+								reRender="poll,grid" 
 								onclick="javascript:Richfaces.showModalPanel('gen_log',{width:1000, top:50});" />
 						</aon:commandButton>
 						
 						<h:outputLink 
 							id="preview_url"
-							rendered="#{generator_status.generated and generator_status.correct}"
+							rendered="#{generator_status.generated}"
 							value="#{generator_status.previewURL}" 
 							target="_blank"
 							style="line-height:18px;">
@@ -248,6 +262,7 @@
 					</aon:panelGrid>
 				</aon:div>
 			</aon:div>
+			
 		</aon:form>
 		
 		<ui:include src="/facelet/content/utils/gen_log_modal.xhtml">
