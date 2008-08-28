@@ -44,7 +44,8 @@
 					<aon:div styleClass="aon-header-menu-item">
 						<h:outputLink 
 							target="_top"
-							value="${facesContext.externalContext.requestContextPath}">
+							value="${facesContext.externalContext.requestContextPath}"
+							rendered="#{payrollController.mainMenuEnabled}">
 							<h:outputText value="#{bundle.aon_home}" />
 						</h:outputLink>
 						<aon:commandLink style="border-right:0;" action="logout" actionListener="#{payrollController.logout}">
