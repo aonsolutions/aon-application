@@ -90,6 +90,19 @@ public class GeneratorStatusController  {
 		}
 	}
 
+	public void onPublishPreview(ActionEvent event) throws ManagerBeanException {
+		this.activePoll = true;
+		this.status = new ArrayList<String>();
+		this.errors = new ArrayList<String>();
+		try {
+			if (FTPUtil.uploadPreviewFTP())
+				this.published = true;
+		}catch (Exception e) {
+		}finally{
+			this.activePoll = false;
+		}
+	}
+
 	public String getPreviewURL() {
 		return ControllerUtil.getPreviewURL();
 	}
