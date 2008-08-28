@@ -46,7 +46,7 @@
 							styleClass="aon-finding-toolbar-item aon-icon-cancel" immediate="true"
 							actionListener="#{tiposDocumento.onCancel}"
 							accesskey="#{bundle.aon_key_cancel}"/>
-						<aon:confirmButton id="remove"
+						<aon:confirmButton id="removeEdit"
 							value="#{bundle.aon_remove}" rendered="#{tiposDocumento.to!=null and !tiposDocumento.new}"
 							styleClass="aon-finding-toolbar-item aon-icon-delete" immediate="true"
 							confirmTitle="#{bundle.aon_confirm_title}" confirmMessage="#{bundle.aon_remove_confirm}"
@@ -128,7 +128,7 @@
 								rendered="#{to==tiposDocumento.to}"
 								actionListener="#{tiposDocumento.onCancel}" immediate="true"
 								accesskey="#{bundle.aon_key_cancel_line}" />
-							<aon:confirmButton title="[#{bundle.aon_remove}]"
+							<aon:confirmButton title="[#{bundle.aon_remove}]" id="removeEditInline"
 								styleClass="aon-editDataTable-button aon-icon-delete"
 								rendered="#{to==tiposDocumento.to}"
 								confirmTitle="#{bundle.aon_confirm_title}" 
@@ -144,7 +144,7 @@
 									rendered="#{tiposDocumento.new}"
 									actionListener="#{tiposDocumento.onAccept}"
 									accesskey="#{bundle.aon_key_save_line}" />
-								<aon:confirmButton title="[#{bundle.aon_cancel}]"
+								<aon:confirmButton title="[#{bundle.aon_cancel}]" id="cancelNewInline"
 									styleClass="aon-editDataTable-button aon-icon-cancel"
 									rendered="#{tiposDocumento.new}"
 									confirmTitle="#{bundle.aon_confirm_title}" 

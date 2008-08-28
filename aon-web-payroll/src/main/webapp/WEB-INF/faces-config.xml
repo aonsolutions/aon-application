@@ -11,6 +11,7 @@
 		<locale-config>
 			<default-locale>es</default-locale>
 		</locale-config>
+		<navigation-handler>com.code.aon.ui.audit.AuditNavigationHandler</navigation-handler>
 	</application>
 
 	<!--  *************** CONVERTERS ***************** -->
