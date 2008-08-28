@@ -4,7 +4,10 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import javax.faces.context.FacesContext;
 import javax.faces.event.AbortProcessingException;
+import javax.faces.event.ActionEvent;
+import javax.servlet.http.HttpSession;
 
 import com.code.aon.bridge.plugin.Utils;
 import com.code.aon.jaas.auth.AuthPrincipal;
@@ -66,4 +69,10 @@ public class PayrollController implements ILdapConstants, IAonObjectClasses {
         return userName;
     }    
 
+    public void logout( ActionEvent event ) {
+    	FacesContext context = FacesContext.getCurrentInstance();
+    	HttpSession session = (HttpSession) context.getExternalContext().getSession(false);
+    	session.invalidate();    	
+    }
+    
 }
