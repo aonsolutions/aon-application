@@ -22,36 +22,36 @@ import com.code.aon.common.ITransferObject;
 
 
 /**
- * Transfer Object that represents the login audit.
+ * Transfer Object that represents the session.
  * 
  * @author Consulting & Development. Aimar Tellitu - 27-ago-2008
  * @since 1.0
  * @version 1.0
  */
 @Entity
-@Table(name = "LOGIN_AUDIT", schema = "AUDIT")
-@SequenceGenerator(name="LOGIN_AUDIT_GENERATOR", sequenceName="SEQ_LOGIN_AUDIT",allocationSize=1)
-public class LoginAudit implements ITransferObject {
+@Table(name = "SESSION", schema = "AUDIT")
+@SequenceGenerator(name="SESSION_GENERATOR", sequenceName="SEQ_SESSION",allocationSize=1)
+public class Session implements ITransferObject {
 
 	private static final long serialVersionUID = -1655581325873540066L;
 
 	@Id
-	@GeneratedValue(strategy=GenerationType.SEQUENCE, generator = "LOGIN_AUDIT_GENERATOR")
+	@GeneratedValue(strategy=GenerationType.SEQUENCE, generator = "SESSION_GENERATOR")
 	@Column(name = "ID", nullable = false)
     private Integer id;
 
 	@Column(name = "SESSION_ID", nullable = false, length = 32)
-	@Index(name="IDX_LOGIN_AUDIT_SESSION_ID")
+	@Index(name="IDX_SESSION_SESSION_ID")
     private String sessionId;
 
 	@ManyToOne (fetch=FetchType.EAGER)
     @JoinColumn( name="APPLICATION_ID", nullable = false, updatable = false )	
-	@ForeignKey(name = "FK_LOGIN_AUDIT_APPLICATION")
+	@ForeignKey(name = "FK_SESSION_APPLICATION")
 	private Application application;
 	
 	@ManyToOne (fetch=FetchType.EAGER)
     @JoinColumn( name="USER_ID", nullable = false, updatable = false )	
-	@ForeignKey(name = "FK_LOGIN_AUDIT_USER")
+	@ForeignKey(name = "FK_SESSION_USER")
 	private User user;
 
 	@Temporal(TemporalType.TIMESTAMP)
@@ -64,7 +64,7 @@ public class LoginAudit implements ITransferObject {
     /**
      * The empty constructor.
      */
-    public LoginAudit() {
+    public Session() {
     }
 
     /**
@@ -72,7 +72,7 @@ public class LoginAudit implements ITransferObject {
      * 
      * @param id the id
      */
-    public LoginAudit(Integer id) {
+    public Session(Integer id) {
         this.id = id;
     }
 

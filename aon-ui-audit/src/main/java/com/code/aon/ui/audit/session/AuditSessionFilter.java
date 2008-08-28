@@ -17,7 +17,7 @@ import javax.servlet.http.HttpSession;
 
 import com.code.aon.audit.Application;
 import com.code.aon.audit.Domain;
-import com.code.aon.audit.LoginAudit;
+import com.code.aon.audit.Session;
 import com.code.aon.audit.User;
 import com.code.aon.jaas.auth.AuthPrincipal;
 import com.code.aon.ui.audit.AuditManager;
@@ -64,8 +64,8 @@ public class AuditSessionFilter implements Filter {
 			Domain domain = manager.getDomain(principal.getDomain());
 			User user = manager.getUser( principal.getShortName(), domain );
 			Date date = new Date( session.getCreationTime() );
-			LoginAudit audit = manager.createLoginAudit(application, user, session.getId(), date );
-			session.setAttribute( AuditSessionListener.LOGIN_AUDIT_PROPERTY, audit );
+			Session audit = manager.createLoginAudit(application, user, session.getId(), date );
+			session.setAttribute( AuditManager.AUDIT_SESSION_PROPERTY, audit );
 		} catch ( Throwable th ) {
 			LOGGER.log( Level.SEVERE, "Error login audit", th );
 		} finally {
@@ -82,7 +82,7 @@ public class AuditSessionFilter implements Filter {
 			HttpServletRequest request = (HttpServletRequest) servletRequest;
 			HttpSession session = request.getSession(false);
 
-			if ( session != null ) {
+			if ( (session != null) && (session.getAttribute(AuditManager.AUDIT_SESSION_PROPERTY) == null) ) {
 				insertLoginAudit(session, getPrincipal(request) );
 			}
 		}

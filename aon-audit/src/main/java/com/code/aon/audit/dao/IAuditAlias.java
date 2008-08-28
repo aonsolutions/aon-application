@@ -5,7 +5,9 @@ import com.code.aon.common.dao.DAOConstantsEntry;
 import com.code.aon.audit.Domain;
 import com.code.aon.audit.Application;
 import com.code.aon.audit.User;
-import com.code.aon.audit.LoginAudit;
+import com.code.aon.audit.Session;
+import com.code.aon.audit.Action;
+import com.code.aon.audit.ActionExecution;
 
 /** 
 * Interface for holding entity properties constants.
@@ -78,45 +80,101 @@ public interface IAuditAlias {
 
 
 	/** 
-	* DAOConstantsEntry for LoginAudit entity.
+	* DAOConstantsEntry for Session entity.
 	*/ 
-	DAOConstantsEntry LOGIN_AUDIT_ENTRY = DAOConstants.getDAOConstant(LoginAudit.class);
+	DAOConstantsEntry SESSION_ENTRY = DAOConstants.getDAOConstant(Session.class);
 
 	/** 
-	* Alias value: LoginAudit_application_id
-	* Hibernate value: LoginAudit.application.id
+	* Alias value: Session_application_id
+	* Hibernate value: Session.application.id
 	*/
-	String  LOGIN_AUDIT_APPLICATION_ID = LOGIN_AUDIT_ENTRY.getAliasNames()[0];
+	String  SESSION_APPLICATION_ID = SESSION_ENTRY.getAliasNames()[0];
 
 	/** 
-	* Alias value: LoginAudit_endDate
-	* Hibernate value: LoginAudit.endDate
+	* Alias value: Session_endDate
+	* Hibernate value: Session.endDate
 	*/
-	String  LOGIN_AUDIT_END_DATE = LOGIN_AUDIT_ENTRY.getAliasNames()[1];
+	String  SESSION_END_DATE = SESSION_ENTRY.getAliasNames()[1];
 
 	/** 
-	* Alias value: LoginAudit_id
-	* Hibernate value: LoginAudit.id
+	* Alias value: Session_id
+	* Hibernate value: Session.id
 	*/
-	String  LOGIN_AUDIT_ID = LOGIN_AUDIT_ENTRY.getAliasNames()[2];
+	String  SESSION_ID = SESSION_ENTRY.getAliasNames()[2];
 
 	/** 
-	* Alias value: LoginAudit_sessionId
-	* Hibernate value: LoginAudit.sessionId
+	* Alias value: Session_sessionId
+	* Hibernate value: Session.sessionId
 	*/
-	String  LOGIN_AUDIT_SESSION_ID = LOGIN_AUDIT_ENTRY.getAliasNames()[3];
+	String  SESSION_SESSION_ID = SESSION_ENTRY.getAliasNames()[3];
 
 	/** 
-	* Alias value: LoginAudit_startDate
-	* Hibernate value: LoginAudit.startDate
+	* Alias value: Session_startDate
+	* Hibernate value: Session.startDate
 	*/
-	String  LOGIN_AUDIT_START_DATE = LOGIN_AUDIT_ENTRY.getAliasNames()[4];
+	String  SESSION_START_DATE = SESSION_ENTRY.getAliasNames()[4];
 
 	/** 
-	* Alias value: LoginAudit_user_id
-	* Hibernate value: LoginAudit.user.id
+	* Alias value: Session_user_id
+	* Hibernate value: Session.user.id
 	*/
-	String  LOGIN_AUDIT_USER_ID = LOGIN_AUDIT_ENTRY.getAliasNames()[5];
+	String  SESSION_USER_ID = SESSION_ENTRY.getAliasNames()[5];
+
+
+
+	/** 
+	* DAOConstantsEntry for Action entity.
+	*/ 
+	DAOConstantsEntry ACTION_ENTRY = DAOConstants.getDAOConstant(Action.class);
+
+	/** 
+	* Alias value: Action_application_id
+	* Hibernate value: Action.application.id
+	*/
+	String  ACTION_APPLICATION_ID = ACTION_ENTRY.getAliasNames()[0];
+
+	/** 
+	* Alias value: Action_id
+	* Hibernate value: Action.id
+	*/
+	String  ACTION_ID = ACTION_ENTRY.getAliasNames()[1];
+
+	/** 
+	* Alias value: Action_name
+	* Hibernate value: Action.name
+	*/
+	String  ACTION_NAME = ACTION_ENTRY.getAliasNames()[2];
+
+
+
+	/** 
+	* DAOConstantsEntry for ActionExecution entity.
+	*/ 
+	DAOConstantsEntry ACTION_EXECUTION_ENTRY = DAOConstants.getDAOConstant(ActionExecution.class);
+
+	/** 
+	* Alias value: ActionExecution_action_id
+	* Hibernate value: ActionExecution.action.id
+	*/
+	String  ACTION_EXECUTION_ACTION_ID = ACTION_EXECUTION_ENTRY.getAliasNames()[0];
+
+	/** 
+	* Alias value: ActionExecution_executionDate
+	* Hibernate value: ActionExecution.executionDate
+	*/
+	String  ACTION_EXECUTION_EXECUTION_DATE = ACTION_EXECUTION_ENTRY.getAliasNames()[1];
+
+	/** 
+	* Alias value: ActionExecution_id
+	* Hibernate value: ActionExecution.id
+	*/
+	String  ACTION_EXECUTION_ID = ACTION_EXECUTION_ENTRY.getAliasNames()[2];
+
+	/** 
+	* Alias value: ActionExecution_session_id
+	* Hibernate value: ActionExecution.session.id
+	*/
+	String  ACTION_EXECUTION_SESSION_ID = ACTION_EXECUTION_ENTRY.getAliasNames()[3];
 
 
 }
