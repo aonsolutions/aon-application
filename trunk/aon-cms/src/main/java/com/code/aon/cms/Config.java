@@ -47,6 +47,14 @@ public class Config implements ITransferObject {
 	private String from_email;
 
 	private String template;
+	
+	private String preview_ftp_server;
+
+	private String preview_ftp_user;
+
+	private String preview_ftp_password;
+	
+	private String preview_ftp_path;
 
 	private Set<ConfigDetail> details;
 
@@ -212,6 +220,42 @@ public class Config implements ITransferObject {
 
 	public void setDetails( Set<ConfigDetail> details ) {
 		this.details = details;
+	}
+
+	@Column(name = "preview_ftp_server", length = 128)
+	public String getPreview_ftp_server() {
+		return preview_ftp_server;
+	}
+
+	public void setPreview_ftp_server(String preview_ftp_server) {
+		this.preview_ftp_server = preview_ftp_server;
+	}
+
+	@Column(name = "preview_ftp_user", length = 32)
+	public String getPreview_ftp_user() {
+		return preview_ftp_user;
+	}
+
+	public void setPreview_ftp_user(String preview_ftp_user) {
+		this.preview_ftp_user = preview_ftp_user;
+	}
+
+	@Column(name = "preview_ftp_password", length = 32)
+	public String getPreview_ftp_password() {
+		return preview_ftp_password;
+	}
+
+	public void setPreview_ftp_password(String preview_ftp_password) {
+		this.preview_ftp_password = preview_ftp_password;
+	}
+
+	@Column(name = "preview_ftp_path", length = 255)
+	public String getPreview_ftp_path() {
+		return preview_ftp_path;
+	}
+
+	public void setPreview_ftp_path(String preview_ftp_path) {
+		this.preview_ftp_path = preview_ftp_path;
 	}
 
 }
