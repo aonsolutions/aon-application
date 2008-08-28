@@ -23,8 +23,8 @@
 	<context-root>/aon-payroll</context-root>
 	
 	<resource-env-ref>
-	  <resource-env-ref-name>jdbc/AonPayroll</resource-env-ref-name>
-	  <jndi-name>java:/AonPayrollDS</jndi-name>
+	  <resource-env-ref-name>jdbc/AonAuditPayroll</resource-env-ref-name>
+	  <jndi-name>java:/AonAuditPayrollDS</jndi-name>
 	</resource-env-ref>
 
 </jboss-web>
