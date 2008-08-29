@@ -8,6 +8,7 @@ import com.code.aon.audit.User;
 import com.code.aon.audit.Session;
 import com.code.aon.audit.Action;
 import com.code.aon.audit.ActionExecution;
+import com.code.aon.audit.DomainApplication;
 
 /** 
 * Interface for holding entity properties constants.
@@ -22,16 +23,22 @@ public interface IAuditAlias {
 	DAOConstantsEntry DOMAIN_ENTRY = DAOConstants.getDAOConstant(Domain.class);
 
 	/** 
+	* Alias value: Domain_enableAudit
+	* Hibernate value: Domain.enableAudit
+	*/
+	String  DOMAIN_ENABLE_AUDIT = DOMAIN_ENTRY.getAliasNames()[0];
+
+	/** 
 	* Alias value: Domain_id
 	* Hibernate value: Domain.id
 	*/
-	String  DOMAIN_ID = DOMAIN_ENTRY.getAliasNames()[0];
+	String  DOMAIN_ID = DOMAIN_ENTRY.getAliasNames()[1];
 
 	/** 
 	* Alias value: Domain_name
 	* Hibernate value: Domain.name
 	*/
-	String  DOMAIN_NAME = DOMAIN_ENTRY.getAliasNames()[1];
+	String  DOMAIN_NAME = DOMAIN_ENTRY.getAliasNames()[2];
 
 
 
@@ -175,6 +182,37 @@ public interface IAuditAlias {
 	* Hibernate value: ActionExecution.session.id
 	*/
 	String  ACTION_EXECUTION_SESSION_ID = ACTION_EXECUTION_ENTRY.getAliasNames()[3];
+
+
+
+	/** 
+	* DAOConstantsEntry for DomainApplication entity.
+	*/ 
+	DAOConstantsEntry DOMAIN_APPLICATION_ENTRY = DAOConstants.getDAOConstant(DomainApplication.class);
+
+	/** 
+	* Alias value: DomainApplication_application_id
+	* Hibernate value: DomainApplication.application.id
+	*/
+	String  DOMAIN_APPLICATION_APPLICATION_ID = DOMAIN_APPLICATION_ENTRY.getAliasNames()[0];
+
+	/** 
+	* Alias value: DomainApplication_auditLevel
+	* Hibernate value: DomainApplication.auditLevel
+	*/
+	String  DOMAIN_APPLICATION_AUDIT_LEVEL = DOMAIN_APPLICATION_ENTRY.getAliasNames()[1];
+
+	/** 
+	* Alias value: DomainApplication_domain_id
+	* Hibernate value: DomainApplication.domain.id
+	*/
+	String  DOMAIN_APPLICATION_DOMAIN_ID = DOMAIN_APPLICATION_ENTRY.getAliasNames()[2];
+
+	/** 
+	* Alias value: DomainApplication_id
+	* Hibernate value: DomainApplication.id
+	*/
+	String  DOMAIN_APPLICATION_ID = DOMAIN_APPLICATION_ENTRY.getAliasNames()[3];
 
 
 }

@@ -7,6 +7,7 @@ import com.code.aon.audit.Action;
 import com.code.aon.audit.ActionExecution;
 import com.code.aon.audit.Application;
 import com.code.aon.audit.Domain;
+import com.code.aon.audit.DomainApplication;
 import com.code.aon.audit.Session;
 import com.code.aon.audit.User;
 import com.code.aon.audit.dao.IAuditAlias;
@@ -22,6 +23,8 @@ import com.code.aon.ql.Criteria;
 public class AuditManager {
 	
 	public static final String AUDIT_SESSION_PROPERTY = "com.code.aon.audit.session";	
+	
+	public static final String AUDIT_DOMAIN_APPLICATION_PROPERTY = "com.code.aon.audit.domainApplication";
 
 	private static final AuditManager SINGLETON = new AuditManager();
 	
@@ -93,6 +96,26 @@ public class AuditManager {
 		return application;
 	}
 
+	public DomainApplication getDomainApplication( Application application, Domain domain ) throws ManagerBeanException {
+		DomainApplication domainApplication = null;
+		IManagerBean bean = BeanManager.getManagerBean(DomainApplication.class);
+		Criteria criteria = new Criteria();
+		String applicationField = bean.getFieldName(IAuditAlias.DOMAIN_APPLICATION_APPLICATION_ID);		
+		criteria.addEqualExpression( applicationField, application.getId() );
+		String domainField = bean.getFieldName(IAuditAlias.DOMAIN_APPLICATION_DOMAIN_ID);		
+		criteria.addEqualExpression( domainField, domain.getId() );
+		List<ITransferObject> list = bean.getList(criteria);
+		if ( list.isEmpty() ) {
+			domainApplication = new DomainApplication();
+			domainApplication.setApplication(application);
+			domainApplication.setDomain( domain );
+			bean.insert( domainApplication );
+		} else {
+			domainApplication = (DomainApplication) list.get(0);
+		}
+		return domainApplication;
+	}
+	
 	public User getUser( String name, Domain domain ) throws ManagerBeanException {
 		User user = null;
 		IManagerBean bean = BeanManager.getManagerBean(User.class);

@@ -17,8 +17,10 @@ import javax.servlet.http.HttpSession;
 
 import com.code.aon.audit.Application;
 import com.code.aon.audit.Domain;
+import com.code.aon.audit.DomainApplication;
 import com.code.aon.audit.Session;
 import com.code.aon.audit.User;
+import com.code.aon.audit.enumeration.AuditLevel;
 import com.code.aon.jaas.auth.AuthPrincipal;
 import com.code.aon.ui.audit.AuditManager;
 
@@ -62,10 +64,14 @@ public class AuditSessionFilter implements Filter {
 			String applicationName = getApplicationName(principal.getContext() );
 			Application application = manager.getApplication(applicationName);
 			Domain domain = manager.getDomain(principal.getDomain());
+			DomainApplication domainApplication = manager.getDomainApplication(application, domain);
 			User user = manager.getUser( principal.getShortName(), domain );
-			Date date = new Date( session.getCreationTime() );
-			Session audit = manager.createLoginAudit(application, user, session.getId(), date );
-			session.setAttribute( AuditManager.AUDIT_SESSION_PROPERTY, audit );
+			if ( domain.isEnableAudit() && (domainApplication.getAuditLevel() != AuditLevel.NONE) ) {
+				Date date = new Date( session.getCreationTime() );
+				Session audit = manager.createLoginAudit(application, user, session.getId(), date );
+				session.setAttribute( AuditManager.AUDIT_SESSION_PROPERTY, audit );				
+				session.setAttribute( AuditManager.AUDIT_DOMAIN_APPLICATION_PROPERTY, domainApplication );
+			}
 		} catch ( Throwable th ) {
 			LOGGER.log( Level.SEVERE, "Error login audit", th );
 		} finally {

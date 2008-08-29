@@ -10,7 +10,9 @@ import javax.servlet.http.HttpSession;
 import org.apache.commons.lang.StringUtils;
 
 import com.code.aon.audit.Action;
+import com.code.aon.audit.DomainApplication;
 import com.code.aon.audit.Session;
+import com.code.aon.audit.enumeration.AuditLevel;
 
 public class AuditNavigationHandler extends NavigationHandler {
 
@@ -29,8 +31,12 @@ public class AuditNavigationHandler extends NavigationHandler {
 		manager.changeToAuditDB();
 		try {
 			Session session = (Session) httpSession.getAttribute( AuditManager.AUDIT_SESSION_PROPERTY );
-			Action action = manager.getAction( name, session.getApplication() );
-			manager.createActionExecution(session, action);
+			if ( session != null ) {
+				Action action = manager.getAction( name, session.getApplication() );
+				if ( isActionExecutionAuditEnabled(httpSession) ) {
+					manager.createActionExecution(session, action);
+				}
+			}
 		} catch ( Throwable th ) {
 			LOGGER.log( Level.SEVERE, "Error in insert action execution", th );
 		} finally {
@@ -38,11 +44,21 @@ public class AuditNavigationHandler extends NavigationHandler {
 		}
 	}	
 	
+	private boolean isActionExecutionAuditEnabled( HttpSession httpSession ) {
+		DomainApplication da = (DomainApplication) httpSession.getAttribute( AuditManager.AUDIT_DOMAIN_APPLICATION_PROPERTY );
+		if ( da != null ) {
+			return da.getAuditLevel() == AuditLevel.MODULE;
+		}
+		return false;
+	}
+	
 	@Override
 	public void handleNavigation(FacesContext fc, String actionMethodCurrent, String actionNameCurrent) {
 		if (! StringUtils.isEmpty(actionNameCurrent) ) {
-	    	HttpSession session = (HttpSession) fc.getExternalContext().getSession(false);
-	    	insertActionExecution(session, actionNameCurrent);
+	    	HttpSession httpSession = (HttpSession) fc.getExternalContext().getSession(false);
+	    	if ( httpSession != null ) {
+	    		insertActionExecution(httpSession, actionNameCurrent);	
+	    	}	
 		}
 		_base.handleNavigation(fc, actionMethodCurrent, actionNameCurrent);
 	}
