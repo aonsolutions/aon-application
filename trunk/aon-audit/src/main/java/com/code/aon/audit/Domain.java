@@ -36,10 +36,14 @@ public class Domain implements ITransferObject {
 	@Index(name="IDX_DOMAIN_NAME")
     private String name;
 
+	@Column(name = "ENABLE_AUDIT", nullable = false)
+	private boolean enableAudit;
+	
     /**
      * The empty constructor.
      */
     public Domain() {
+    	this.enableAudit = true;
     }
 
     /**
@@ -48,6 +52,7 @@ public class Domain implements ITransferObject {
      * @param id the id
      */
     public Domain(Integer id) {
+    	this();
         this.id = id;
     }
 
@@ -87,4 +92,22 @@ public class Domain implements ITransferObject {
         this.name = name;
     }
 
+	/**
+	 * Checks if is enable audit.
+	 * 
+	 * @return true, if is enable audit
+	 */
+	public boolean isEnableAudit() {
+		return enableAudit;
+	}
+
+	/**
+	 * Sets the enable audit.
+	 * 
+	 * @param enableAudit the new enable audit
+	 */
+	public void setEnableAudit(boolean enableAudit) {
+		this.enableAudit = enableAudit;
+	}
+ 
 }

@@ -24,6 +24,7 @@
 		<mapping class="com.code.aon.audit.Session"/>
 		<mapping class="com.code.aon.audit.Action"/>
 		<mapping class="com.code.aon.audit.ActionExecution"/>
+		<mapping class="com.code.aon.audit.DomainApplication"/>
 		
 	</session-factory>
 
