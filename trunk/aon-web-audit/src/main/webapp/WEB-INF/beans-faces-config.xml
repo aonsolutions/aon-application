@@ -11,6 +11,16 @@
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
 	
+	<!--  *************** COLLECTIONS ***************** -->
+
+	<managed-bean>
+		<managed-bean-name>auditCollections</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.audit.controller.AuditCollectionsController
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
+	
 	<!-- ************ APPLICATION ************** -->
 	<managed-bean>
 		<managed-bean-name>auditApplication</managed-bean-name>
