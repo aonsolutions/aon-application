@@ -17,16 +17,16 @@
 				<aon:div id="toolbar" styleClass="aon-finding-toolbar-item-group">
 					<aon:commandButton id="domain" value="#{menuBundle.aon_domains}"
 						immediate="true" action="domain" actionListener="#{domain.onSearch}"
-						styleClass="aon-finding-toolbar-item aon-icon-tree-root" />
+						styleClass="aon-finding-toolbar-item aon-icon-domains" />
 					<aon:commandButton id="application" value="#{menuBundle.aon_applications}"
 						immediate="true" action="application" actionListener="#{auditApplication.onSearch}"
-						styleClass="aon-finding-toolbar-item aon-icon-new" />
+						styleClass="aon-finding-toolbar-item aon-icon-applications" />
 					<aon:commandButton id="session" value="#{menuBundle.aon_sessions}"
 						immediate="true" action="session" actionListener="#{auditSession.onSearch}"
-						styleClass="aon-finding-toolbar-item aon-icon-notes" />
+						styleClass="aon-finding-toolbar-item aon-icon-sessions" />
 					<aon:commandButton id="actionExecution" value="#{menuBundle.aon_action_executions}"
 						immediate="true" action="actionExecution" actionListener="#{actionExecution.onSearch}"
-						styleClass="aon-finding-toolbar-item aon-icon-category" />
+						styleClass="aon-finding-toolbar-item aon-icon-actions" />
 				</aon:div>
 
 			</aon:panelGrid>

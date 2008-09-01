@@ -53,7 +53,6 @@ public class DomainApplication implements ITransferObject {
      * The empty constructor.
      */
     public DomainApplication() {
-    	this.auditLevel = AuditLevel.ACCESS;
     }
 
     /**
@@ -62,7 +61,6 @@ public class DomainApplication implements ITransferObject {
      * @param id the id
      */
     public DomainApplication(Integer id) {
-    	this();
         this.id = id;
     }
 

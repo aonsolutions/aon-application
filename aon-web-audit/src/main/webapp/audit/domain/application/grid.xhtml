@@ -8,7 +8,8 @@
 
 		<aon:editDataTable id="domainApplicationData" var="to"
 			value="#{domainApplication.model}" rows="20"
-			columnClasses="aon-editDataTable-iconColumn, aon-editDataTable-textColumn, aon-editDataTable-buttonsColumn">
+			columnClasses="aon-editDataTable-iconColumn, aon-editDataTable-textColumn,
+				aon-editDataTable-textColumn, aon-editDataTable-buttonsColumn">
 
 			<aon:rowSelector toggleOnClick="#{domainApplication.to == null}"
 				actionListener="#{domainApplication.onSelect}" />
@@ -45,6 +46,26 @@
 				</f:facet>
 			</aon:column>
 
+			<aon:column>
+				<f:facet name="header">
+					<aon:outputText value="#{appBundle.aon_domain_audit_level}" />
+				</f:facet>
+				<aon:outputText value="#{to.auditLevel}"
+					rendered="#{to!=domainApplication.to}" />
+				<aon:selectOneMenu rendered="#{to==domainApplication.to}"
+					required="true" value="#{domainApplication.to.auditLevel}">
+					<f:selectItem value="#{null}" itemLabel="    " />
+					<f:selectItems value="#{auditCollections.auditLevels}" />
+				</aon:selectOneMenu>					
+				<f:facet name="footer">
+					<aon:selectOneMenu rendered="#{domainApplication.new}"
+						required="true" value="#{domainApplication.to.auditLevel}">
+						<f:selectItem value="#{null}" itemLabel="    " />
+						<f:selectItems value="#{auditCollections.auditLevels}" />
+					</aon:selectOneMenu>					
+				</f:facet>
+			</aon:column>
+			
 			<aon:column>
 				<f:facet name="header">
 					<f:verbatim>&#160;</f:verbatim>
