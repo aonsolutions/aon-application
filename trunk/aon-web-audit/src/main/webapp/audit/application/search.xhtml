@@ -24,18 +24,18 @@
 
 					<aon:div styleClass="aon-finding-toolbar-item-group">
 						<aon:commandButton id="search" value="#{bundle.aon_accept}"
-							action="application_list" actionListener="#{application.onSearch}"
+							action="application_list" actionListener="#{auditApplication.onSearch}"
 							styleClass="aon-finding-toolbar-item aon-icon-search"
 							accesskey="#{bundle.aon_key_search}" />
 						<aon:commandButton id="cancel" value="#{bundle.aon_cancel}"
-							action="application_list" actionListener="#{application.onCancel}"
+							action="application_list" actionListener="#{auditApplication.onCancel}"
 							styleClass="aon-finding-toolbar-item aon-icon-cancel" immediate="true"
 							accesskey="#{bundle.aon_key_cancel}" />
 						<aon:commandButton id="clear" value="#{bundle.aon_clear}"
 							type="reset" ajaxSingle="true"
 							styleClass="aon-finding-toolbar-item aon-icon-rubber" />
 						<aon:commandButton id="reset" value="#{bundle.aon_reset}"
-							action="application_form" actionListener="#{application.onReset}"
+							action="application_form" actionListener="#{auditApplication.onReset}"
 							styleClass="aon-finding-toolbar-item aon-icon-reset"
 							accesskey="#{bundle.aon_key_new}" />
 					</aon:div>
@@ -51,12 +51,12 @@
 						<aon:outputLabel for="Application_id"
 							value="#{appBundle.aon_id}" />
 						<aon:inputText id="Application_id" size="60"
-							valueChangeListener="#{application.addExpression}" />
+							valueChangeListener="#{auditApplication.addExpression}" />
 
 						<aon:outputLabel for="Application_name"
 							value="#{appBundle.aon_name}" />
 						<aon:inputText id="Application_name" size="60"
-							valueChangeListener="#{application.addExpression}" />
+							valueChangeListener="#{auditApplication.addExpression}" />
 
 					</aon:panelGrid>
 
