@@ -31,15 +31,15 @@
 
 			<aon:column>
 				<f:facet name="header">
-					<aon:outputText value="#{appBundle.aon_name}" />
+					<aon:outputText value="#{appBundle.aon_application}" />
 				</f:facet>
-				<aon:outputText value="#{to.name}"
+				<aon:outputText value="#{to.application.name}"
 					rendered="#{to!=domainApplication.to}" />
-				<aon:inputText value="#{domainApplication.to.name}"
+				<aon:inputText value="#{domainApplication.to.application.name}"
 					rendered="#{to==domainApplication.to}"
 					required="true" size="40" maxlength="64" />					
 				<f:facet name="footer">
-					<aon:inputText value="#{domainApplication.to.name}"
+					<aon:inputText value="#{domainApplication.to.application.name}"
 						rendered="#{domainApplication.new}"
 						required="true" size="40" maxlength="64" />					
 				</f:facet>
