@@ -30,11 +30,11 @@
 					<!-- start toolbar navigation -->
 					<aon:div styleClass="aon-finding-toolbar-item-group">
 						<aon:commandButton id="search" value="#{bundle.aon_search}"
-							action="application_search" actionListener="#{application.onEditSearch}"
+							action="application_search" actionListener="#{auditApplication.onEditSearch}"
 							styleClass="aon-finding-toolbar-item aon-icon-search"
 							accesskey="#{bundle.aon_key_search}" />				
 						<aon:commandButton id="reset" value="#{bundle.aon_reset}"
-							action="application_form" actionListener="#{application.onReset}"
+							action="application_form" actionListener="#{auditApplication.onReset}"
 							styleClass="aon-finding-toolbar-item aon-icon-newMailAccount"
 							accesskey="#{bundle.aon_key_new}" />
 					</aon:div>
@@ -46,30 +46,30 @@
 			<!--  aon-region-body -->
 			<aon:div styleClass="aon-scroll-area">
 
-				<aon:dataTable id="applicationData" value="#{application.model}"
-					var="to" rows="20" rendered="#{application.model.rowCount > 0}"
+				<aon:dataTable id="applicationData" value="#{auditApplication.model}"
+					var="to" rows="20" rendered="#{auditApplication.model.rowCount > 0}"
 					columnClasses="aon-editDataTable-numberColumn, aon-editDataTable-textColumn,
 						aon-editDataTable-textColumn, aon-editDataTable-textColumn, aon-editDataTable-textColumn">
 
-					<aon:rowSelector action="application_form" actionListener="#{application.onSelect}" />
+					<aon:rowSelector action="application_form" actionListener="#{auditApplication.onSelect}" />
 					
 					<aon:column>
 						<f:facet name="header">
-							<aon:outputText value="#{registryBundle.aon_id}" />
+							<aon:outputText value="#{appBundle.aon_id}" />
 						</f:facet>
 						<aon:outputText value="#{to.id}"/>
 					</aon:column>
 
  					<aon:column>
 						<f:facet name="header">
-							<aon:outputText value="#{registryBundle.aon_name}" />
+							<aon:outputText value="#{appBundle.aon_name}" />
 						</f:facet>
 						<aon:outputText value="#{to.name}"/>
 					</aon:column>
 
 				</aon:dataTable>
 
-				<aon:dataScroller for="applicationData" rowCount="#{application.model.rowCount}" showNote="true" />
+				<aon:dataScroller for="applicationData" rowCount="#{auditApplication.model.rowCount}" showNote="true" />
 
 			</aon:div>
 		</aon:form>
