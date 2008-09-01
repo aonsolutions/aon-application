@@ -72,16 +72,21 @@
 
 			<aon:div styleClass="aon-scroll-area">
 				<aon:panelGrid id="menuGrid" columns="2" dir="true" width="100%">
-					<aon:outputLabel for="Application_id"
+					<aon:outputLabel for="Domain_id"
 						rendered="#{!domain.new}" value="#{appBundle.aon_id}" />
-					<aon:inputText id="Application_id" value="#{domain.to.id}"
+					<aon:inputText id="Domain_id" value="#{domain.to.id}"
 						rendered="#{!domain.new}" size="15" disabled="true" />
 				
-					<aon:outputLabel for="Application_name"
+					<aon:outputLabel for="Domain_name"
 						value="#{appBundle.aon_name}" />
-					<aon:inputText id="Application_name" maxlength="64"
+					<aon:inputText id="Domain_name" maxlength="64" required="true"
 						value="#{domain.to.name}" size="64">
 					</aon:inputText>
+					
+					<aon:outputLabel for="Domain_enableAudit"
+						value="#{appBundle.aon_domain_enable_audit}" />
+					<aon:selectBooleanCheckbox id="Domain_enableAudit" 
+						value="#{domain.to.enableAudit}" />
 				</aon:panelGrid>
 				
 				<aon:panelTabSet rendered="#{!domain.new}" valueChangeListener="#{domain.tabChanged}">
