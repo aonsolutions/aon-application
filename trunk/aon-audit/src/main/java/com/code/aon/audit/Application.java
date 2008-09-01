@@ -1,10 +1,17 @@
 package com.code.aon.audit;
 
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Set;
+
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
@@ -35,6 +42,13 @@ public class Application implements ITransferObject {
 	@Column(name = "NAME", nullable = false, length = 64)
 	@Index(name="IDX_APPLICATION_NAME")
     private String name;
+	
+	@OneToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE,
+			CascadeType.REMOVE }, mappedBy = "application")
+	@org.hibernate.annotations.Cascade( {
+			org.hibernate.annotations.CascadeType.SAVE_UPDATE,
+			org.hibernate.annotations.CascadeType.DELETE_ORPHAN })
+	private List<Action> actions = new LinkedList<Action>();
 	
     /**
      * The empty constructor.
@@ -87,4 +101,22 @@ public class Application implements ITransferObject {
         this.name = name;
     }
 
+	/**
+	 * Gets the actions.
+	 * 
+	 * @return the actions
+	 */
+	public List<Action> getActions() {
+		return this.actions;
+	}
+	
+	/**
+	 * Sets the actions.
+	 * 
+	 * @param addresses the actions
+	 */
+	public void setActions( List<Action> actions ) {
+		this.actions = actions;
+	}
+    
 }
