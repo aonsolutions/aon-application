@@ -1,10 +1,15 @@
 package com.code.aon.audit;
 
+import java.util.LinkedList;
+import java.util.List;
+
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
@@ -38,6 +43,20 @@ public class Domain implements ITransferObject {
 
 	@Column(name = "ENABLE_AUDIT", nullable = false)
 	private boolean enableAudit;
+	
+	@OneToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE,
+			CascadeType.REMOVE }, mappedBy = "domain")
+	@org.hibernate.annotations.Cascade( {
+			org.hibernate.annotations.CascadeType.SAVE_UPDATE,
+			org.hibernate.annotations.CascadeType.DELETE_ORPHAN })
+	private List<User> users = new LinkedList<User>();	
+
+	@OneToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE,
+			CascadeType.REMOVE }, mappedBy = "domain")
+	@org.hibernate.annotations.Cascade( {
+			org.hibernate.annotations.CascadeType.SAVE_UPDATE,
+			org.hibernate.annotations.CascadeType.DELETE_ORPHAN })
+	private List<DomainApplication> applications = new LinkedList<DomainApplication>();	
 	
     /**
      * The empty constructor.
@@ -110,4 +129,39 @@ public class Domain implements ITransferObject {
 		this.enableAudit = enableAudit;
 	}
  
+	/**
+	 * Gets the users.
+	 * 
+	 * @return the users
+	 */
+	public List<User> getUsers() {
+		return this.users;
+	}
+	
+	/**
+	 * Sets the users.
+	 * 
+	 * @param users the users
+	 */
+	public void setUsers( List<User> users ) {
+		this.users = users;
+	}
+	
+	/**
+	 * Gets the applications.
+	 * 
+	 * @return the applications
+	 */
+	public List<DomainApplication> getApplications() {
+		return this.applications;
+	}
+	
+	/**
+	 * Sets the applications.
+	 * 
+	 * @param applications the applications
+	 */
+	public void setApplications( List<DomainApplication> applications ) {
+		this.applications = applications;
+	}	
 }
