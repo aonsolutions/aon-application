@@ -113,17 +113,6 @@
 		<location>/facelet/error/HttpError.jsp?errorCode=403</location>
 	</error-page>
  -->
-
-	<!-- BackDoorAuthentication Filter -->
-	<filter>
-		<filter-name>BackDoorAuthenticationFilter</filter-name>
-		<filter-class>com.code.aon.bridge.session.BackDoorAuthenticationFilter</filter-class>
-	</filter>
-	<filter-mapping>
-		<filter-name>BackDoorAuthenticationFilter</filter-name>
-		<url-pattern>*.jsp</url-pattern>
-	</filter-mapping>
-
    <!-- Extensions Filter -->
 	<filter>
 		<filter-name>MyFacesExtensionsFilter</filter-name>
@@ -161,6 +150,18 @@
 	</filter-mapping>
 	<filter-mapping>
 		<filter-name>MyFacesExtensionsFilter</filter-name>
+		<url-pattern>*.jsp</url-pattern>
+	</filter-mapping>
+
+	<!-- BackDoorAuthentication Filter -->
+	<filter>
+		<filter-name>BackDoorAuthenticationFilter</filter-name>
+		<filter-class>com.code.aon.bridge.session.BackDoorAuthenticationFilter</filter-class>
+	</filter>
+	
+	<!-- Enables and Registers session for concurrent sessions -->
+	<filter-mapping>
+		<filter-name>BackDoorAuthenticationFilter</filter-name>
 		<url-pattern>*.jsp</url-pattern>
 	</filter-mapping>
 
@@ -276,15 +277,14 @@
 			<url-pattern>/_finance/*</url-pattern>
 		</web-resource-collection>
 		<web-resource-collection>
-			<web-resource-name>actions</web-resource-name>
-			<url-pattern>*.faces</url-pattern>
-		</web-resource-collection>
-		<web-resource-collection>
 			<web-resource-name>jsp</web-resource-name>
 			<url-pattern>*.jsp</url-pattern>
 		</web-resource-collection>
+		<web-resource-collection>
+			<web-resource-name>actions</web-resource-name>
+			<url-pattern>*.faces</url-pattern>
+		</web-resource-collection>
 		<auth-constraint>
-			<role-name>Manager</role-name>
 			<role-name>AuxiliaresBancos</role-name>
 			<role-name>AuxiliaresCategorias</role-name>
 			<role-name>AuxiliaresFormasDePago</role-name>
@@ -322,7 +322,6 @@
 		</form-login-config>
 	</login-config>
 
-	<security-role><role-name>Manager</role-name></security-role>
 	<security-role><role-name>AuxiliaresBancos</role-name></security-role>
 	<security-role><role-name>AuxiliaresCategorias</role-name></security-role>
 	<security-role><role-name>AuxiliaresFormasDePago</role-name></security-role>
