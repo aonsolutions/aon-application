@@ -281,7 +281,6 @@
 			<url-pattern>*.jsp</url-pattern>
 		</web-resource-collection>
 		<auth-constraint>
-			<role-name>Manager</role-name>
 			<role-name>Acreedores</role-name>
 			<role-name>ApuntesCuotaLeasing</role-name>
 			<role-name>ApuntesCuotaPrestamo</role-name>
@@ -318,7 +317,6 @@
 		</form-login-config>
 	</login-config>
 
-	<security-role><role-name>Manager</role-name></security-role>
 	<security-role><role-name>Acreedores</role-name></security-role>
 	<security-role><role-name>ApuntesCuotaLeasing</role-name></security-role>
 	<security-role><role-name>ApuntesCuotaPrestamo</role-name></security-role>
