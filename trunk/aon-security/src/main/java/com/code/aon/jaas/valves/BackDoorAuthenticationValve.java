@@ -5,11 +5,8 @@ package com.code.aon.jaas.valves;
 
 import java.io.IOException;
 import java.net.InetAddress;
-import java.net.URL;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
-import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -19,7 +16,6 @@ import javax.management.MBeanException;
 import javax.management.MalformedObjectNameException;
 import javax.management.ObjectName;
 import javax.management.ReflectionException;
-import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.servlet.ServletException;
 import javax.servlet.http.Cookie;
@@ -33,17 +29,12 @@ import org.apache.catalina.deploy.SecurityConstraint;
 import org.apache.catalina.valves.ValveBase;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.jboss.deployment.DeploymentInfo;
-import org.jboss.jmx.adaptor.rmi.RMIAdaptor;
-import org.jboss.mx.util.MBeanServerLocator;
 
 import com.code.aon.jaas.auth.AonGenericPrincipal;
 import com.code.aon.jaas.auth.IConstants;
 import com.code.aon.jaas.auth.util.Util;
 import com.code.aon.jaas.client.ast.IApplication;
 import com.code.aon.jaas.client.ast.IRole;
-import com.code.aon.jaas.vendor.VendorFactoryManager;
-import com.code.aon.jaas.vendor.deployment.ast.IVendorDescriptor;
 
 /**
  * This class validates a user forward using an encrypted file from one context to another
@@ -51,7 +42,7 @@ import com.code.aon.jaas.vendor.deployment.ast.IVendorDescriptor;
  *  
  * @author Consulting & Development. Iñaki Ayerbe - 22/10/2007
  */
-public class BackDoorAuthenticationValve extends ValveBase implements IConstants {
+public abstract class BackDoorAuthenticationValve extends ValveBase implements IConstants {
 
 	/** Authentication SSO name. */
 	public static final String BACKDOOR_PARAM = "aonDesktop";
@@ -60,9 +51,9 @@ public class BackDoorAuthenticationValve extends ValveBase implements IConstants
 	private static final Log LOGGER = LogFactory.getLog( BackDoorAuthenticationValve.class.getName() );
 
 	/** Maintain the application server Principals for programmatic web login */
-	private Map<String, BackDoorPrincipal> backdoorPrincipals = new HashMap<String, BackDoorPrincipal>();
+	protected Map<String, BackDoorPrincipal> backdoorPrincipals = new HashMap<String, BackDoorPrincipal>();
     /** Has this component been deployed? */
-	private boolean deployed = false;
+	protected boolean deployed = false;
 
 	@Override
 	public void invoke(Request request, Response response) throws IOException, ServletException {
@@ -76,6 +67,7 @@ public class BackDoorAuthenticationValve extends ValveBase implements IConstants
 				String username = (String) session.getNote( Constants.SESS_USERNAME_NOTE );
 				LOGGER.debug( "Adding principal: " + username + " session:" + session.getId() );
 				backdoorPrincipals.put( session.getId(), new BackDoorPrincipal( username, nonHashedPassword ) );
+				request.setAttribute( AUTH_PASSWORD_NOTE, nonHashedPassword );
 			}
 		}
 
@@ -84,31 +76,30 @@ public class BackDoorAuthenticationValve extends ValveBase implements IConstants
 			return;
 		}
 
-		if ( isValidRequest( request ) ) {
-			if ( request.getParameter( BACKDOOR_PARAM ) != null ) {
-				session = request.getSessionInternal( true );
-				BackDoorPrincipal bdp = null;
-				if ( backdoorPrincipals.containsKey( session.getId() ) ) {
-					bdp = backdoorPrincipals.get( session.getId() );
-				} else { // Remote access
-					String serSessionId = null;
-					try {
-						serSessionId = getCookie( request.getRequest(), SER_SESSION_ID ).getValue();
-						ObjectName on = new ObjectName( "jboss.admin:service=AonSessionManager" );
-						bdp = (BackDoorPrincipal) Util.getSSOPrincipal( mserver, on, serSessionId );
-					} catch (RuntimeException e) {
-						LOGGER.warn( "Asking for REQUEST parameter. Cookie does no exits." + e.getMessage() + " "  + serSessionId);
-					} catch (Exception e) {
-						LOGGER.error( e );
-					}
+		boolean isApplicationInitialRequest = 
+			request.getRequestURI().equals( request.getContextPath() + "/" );
+		if ( isApplicationInitialRequest && isValidRequest( request ) && request.getParameter( BACKDOOR_PARAM ) != null ) {
+			session = request.getSessionInternal( true );
+			BackDoorPrincipal bdp = null;
+			if ( backdoorPrincipals.containsKey( session.getId() ) ) {
+				bdp = backdoorPrincipals.get( session.getId() );
+			} else { // Remote access
+				String serSessionId = null;
+				try {
+					serSessionId = getCookie( request.getRequest(), SER_SESSION_ID ).getValue();
+					bdp = (BackDoorPrincipal) Util.getSSOPrincipal( mserver, getAonSessionManager(), serSessionId );
+				} catch (RuntimeException e) {
+					LOGGER.warn( "Asking for REQUEST parameter. Cookie does no exits." + e.getMessage() + " "  + serSessionId);
+				} catch (Exception e) {
+					LOGGER.error( e );
 				}
-				LOGGER.debug( "Using Authenticated Principal:" + bdp + " SIZE:" + backdoorPrincipals.size() );
-				if ( bdp != null ) {
-					String username = bdp.getPrincipal().getShortName() + IConstants.IDENTITY_SEPARATOR 
-									+ bdp.getPrincipal().getDomain() + request.getContextPath();
-					List<String> roles = getRoles( request.getContextPath() );
-					register( request, new AonGenericPrincipal( request, username, bdp.getPassword(), roles ), AUTH_TYPE );
-				}
+			}
+			LOGGER.debug( "Using Authenticated Principal:" + bdp + " SIZE:" + backdoorPrincipals.size() );
+			if ( bdp != null ) {
+				String username = bdp.getPrincipal().getShortName() + IConstants.IDENTITY_SEPARATOR 
+								+ bdp.getPrincipal().getDomain() + request.getContextPath();
+				List<String> roles = getRoles( request.getContextPath() );
+				register( request, new AonGenericPrincipal( request, username, bdp.getPassword(), roles ), AUTH_TYPE );
 			}
 		}
 		try {
@@ -117,14 +108,84 @@ public class BackDoorAuthenticationValve extends ValveBase implements IConstants
 			request.removeNote( AUTH_TYPE );
 			request.removeNote( AUTH_USERNAME_NOTE );
 			request.removeNote( AUTH_PASSWORD_NOTE );
+			request.removeAttribute( AUTH_PASSWORD_NOTE );
 			if ( request.getParameter( BACKDOOR_PARAM ) != null )
 				try {
-					ObjectName on = new ObjectName( "jboss.admin:service=AonSessionManager" );
-					Util.removeSSOPrincipal( mserver, on, session.getId() );
+					Util.removeSSOPrincipal( mserver, getAonSessionManager(), session.getId() );
 				} catch (Exception e) {
 					LOGGER.error( "Error removing SSO principal for this session:" + session.getId() + ". " + e.getMessage(), e );
 				}
 		}
+	}
+
+	/**
+	 * Return <code>MainDeployer</code> object name.
+	 * 
+	 * @return
+	 * @throws MalformedObjectNameException
+	 */
+	protected abstract ObjectName getMainDeployer() throws MalformedObjectNameException;
+	/**
+	 * Return <code>AonSessionManager</code> object name.
+	 * 
+	 * @return
+	 * @throws MalformedObjectNameException
+	 */
+	protected abstract ObjectName getAonSessionManager() throws MalformedObjectNameException;
+	/**
+	 * Return <code>AonLdap</code> object name.
+	 * 
+	 * @return
+	 * @throws MalformedObjectNameException
+	 */
+	protected abstract ObjectName getAonLdap() throws MalformedObjectNameException;
+	/**
+	 * Flush <code>BackDoorPrincipal</code> in the AonSessionManager MBean using 
+	 * the <blockquote>IP</blockquote> passed by parameter to allocate the application server.  
+	 * 
+	 * @param IP
+	 * @param sessionId
+	 * @throws NamingException
+	 * @throws MalformedObjectNameException
+	 * @throws NullPointerException
+	 * @throws InstanceNotFoundException
+	 * @throws MBeanException
+	 * @throws ReflectionException
+	 * @throws IOException
+	 */
+	protected abstract void flushRemoteAccess(String IP, String sessionId) 
+				throws NamingException, MalformedObjectNameException, NullPointerException
+				, InstanceNotFoundException, MBeanException, ReflectionException, IOException;
+	/**
+	 * Store deployed applications name in a file.
+	 * 
+	 * @throws IOException
+	 */
+	protected abstract void storeDeployed() throws IOException;
+
+	/**
+	 * Gets cookie.
+	 * 
+	 * @param request
+	 * @param name
+	 * @return
+	 */
+	private Cookie getCookie(HttpServletRequest request, String name) {
+	    boolean found = false;
+	    Cookie result = null;
+	    Cookie[] cookies = request.getCookies();
+	    if (cookies!=null) {
+	        int i = 0;
+	        while (!found && i < cookies.length) {
+	            if (cookies[i].getName().equals(name)) {
+	                found=true;
+	                result = cookies[i];
+	            }
+	            i++;
+	    	  }
+	    }
+
+	    return (result);
 	}
 
 	private boolean isValidRequest(Request request) {
@@ -173,73 +234,14 @@ public class BackDoorAuthenticationValve extends ValveBase implements IConstants
 		flushSessionPrincipal( session.getId(), principal );
 	}
 
-	@SuppressWarnings("unchecked")
-	private void storeDeployed() throws IOException {
-		try {
-			List<String> l = new ArrayList<String>();
-			ObjectName name = new ObjectName( "jboss.system:service=MainDeployer" );
-			Collection<DeploymentInfo> c = 
-				(Collection<DeploymentInfo>) MBeanServerLocator.locateJBoss().invoke( name, "listDeployed", null, null);
-			for (Iterator<DeploymentInfo> iterator = c.iterator(); iterator.hasNext();) {
-				DeploymentInfo di = iterator.next();
-		        if ( di.shortName.endsWith( "war" ) ) {
-		    		String vendorWFile = VendorFactoryManager.create("jboss").getVendorWEBFile();
-		    		if (vendorWFile != null) {
-		    			URL vendorWEB = di.localCl.findResource( "WEB-INF/" + vendorWFile );
-		    			if (vendorWEB != null) {
-							try {
-								IVendorDescriptor jaas = VendorFactoryManager.parse( "jboss", vendorWEB.openStream() );
-								if ( jaas.getContext() != null )
-									l.add( jaas.getContext() );
-							} catch (Exception e) {
-								// Do Nothing
-							}
-		    			} else {
-				        	l.add( "/" + di.shortName );
-		    			}
-		    		}
-		        }
-			}
-			Util.serialize( l );
-			deployed = true;
-		} catch (InstanceNotFoundException e) {
-			LOGGER.fatal( e );
-		} catch (MBeanException e) {
-			LOGGER.fatal( e );
-		} catch (ReflectionException e) {
-			LOGGER.fatal( e );
-		} catch (MalformedObjectNameException e) {
-			LOGGER.fatal( e );
-		} catch (NullPointerException e) {
-			LOGGER.fatal( e );
-		}
-	}
-
 	/**
-	 * Gets cookie.
+	 * Forward request to a remote application server.
 	 * 
 	 * @param request
-	 * @param name
-	 * @return
+	 * @param sessionId
+	 * @throws ServletException
+	 * @throws IOException
 	 */
-	private Cookie getCookie(HttpServletRequest request, String name) {
-	    boolean found = false;
-	    Cookie result = null;
-	    Cookie[] cookies = request.getCookies();
-	    if (cookies!=null) {
-	        int i = 0;
-	        while (!found && i < cookies.length) {
-	            if (cookies[i].getName().equals(name)) {
-	                found=true;
-	                result = cookies[i];
-	            }
-	            i++;
-	    	  }
-	    }
-
-	    return (result);
-	}
-
 	private void forward(Request request, String sessionId) throws ServletException, IOException {
 		String uri = request.getRequestURI();
 		uri = uri.substring( uri.lastIndexOf( "/" ), uri.lastIndexOf( ".auth" ) );
@@ -259,46 +261,6 @@ public class BackDoorAuthenticationValve extends ValveBase implements IConstants
 	}
 
 	/**
-	 * Flush <code>BackDoorPrincipal</code> in the AonSessionManager MBean using the <blockquote>IP</blockquote> 
-	 * passed by parameter to allocate the application server.  
-	 * 
-	 * @param IP
-	 * @param sessionId
-	 * @throws NamingException
-	 * @throws MalformedObjectNameException
-	 * @throws NullPointerException
-	 * @throws InstanceNotFoundException
-	 * @throws MBeanException
-	 * @throws ReflectionException
-	 * @throws IOException
-	 */
-	private void flushRemoteAccess(String IP, String sessionId) 
-				throws NamingException, MalformedObjectNameException, NullPointerException
-				, InstanceNotFoundException, MBeanException, ReflectionException, IOException {
-		final Hashtable<String, String> env = new Hashtable<String, String>();
-		env.put( javax.naming.Context.INITIAL_CONTEXT_FACTORY, "org.jnp.interfaces.NamingContextFactory" );
-		env.put( javax.naming.Context.PROVIDER_URL, "jnp://" + IP + ":1099" );
-		javax.naming.Context ctx = null;
-		try {
-			BackDoorPrincipal bdp = backdoorPrincipals.get( sessionId );
-			LOGGER.debug( "Flushing REMOTE access using IP:" + IP + " session:" + sessionId + " principal:" + bdp.getPrincipal().getName() );
-			ctx = new InitialContext(env);
-			RMIAdaptor server = (RMIAdaptor) ctx.lookup( "jmx/invoker/RMIAdaptor" );
-			ObjectName on = new ObjectName( "jboss.admin:service=AonSessionManager" );
-			Object[] params = { sessionId, bdp };
-			String[] sig = { String.class.getName(), Object.class.getName() };
-			server.invoke( on, "flushSSOPrincipal", params, sig );
-		} finally {
-			if ( ctx != null )
-				try {
-					ctx.close();
-				} catch (NamingException e) {
-					LOGGER.error( e );
-				}
-		}
-	}
-
-	/**
 	 * Flush principal in the AonSessionManager MBean.
 	 * 
 	 * @param sessionId
@@ -307,10 +269,9 @@ public class BackDoorAuthenticationValve extends ValveBase implements IConstants
 	private void flushSessionPrincipal(String sessionId, AonGenericPrincipal principal) {
 		try {
 			LOGGER.debug( "Flushing LOCAL session:" + sessionId + " principal:" + principal.getUserPrincipal() );
-			ObjectName on = new ObjectName( "jboss.admin:service=AonSessionManager" );
 			Object[] params = { sessionId, principal };
 			String[] sig = { String.class.getName(), Object.class.getName() };
-			mserver.invoke( on, "flushSSOPrincipal", params, sig );
+			mserver.invoke( getAonSessionManager(), "flushSSOPrincipal", params, sig );
 		} catch (MalformedObjectNameException e) {
 			LOGGER.error( e );
 		} catch (NullPointerException e) {
@@ -333,10 +294,10 @@ public class BackDoorAuthenticationValve extends ValveBase implements IConstants
 	private List<String> getRoles(String ctx) {
 		try {
 			List<String> roles = new ArrayList<String>();
-			ObjectName on = new ObjectName( "jboss.admin:service=AonLdap" );
 			Object[] params = { ctx };
 			String[] sig = { String.class.getName() };
-			IApplication app = (IApplication) mserver.invoke( on, "getApplication4Ctx", params, sig );
+			IApplication app = 
+				(IApplication) mserver.invoke( getAonLdap(), "getApplication4Ctx", params, sig );
 			Iterator<IRole> iter = app.roles().iterator(); 
 			while ( iter.hasNext() ) {
 				IRole role = iter.next();
