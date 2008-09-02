@@ -36,13 +36,17 @@
 				</f:facet>
 				<aon:outputText value="#{to.application.name}"
 					rendered="#{to!=domainApplication.to}" />
-				<aon:inputText value="#{domainApplication.to.application.name}"
-					rendered="#{to==domainApplication.to}"
-					required="true" size="40" maxlength="64" />					
+				<aon:selectOneMenu rendered="#{to==domainApplication.to}"
+					required="true" value="#{domainApplication.to.application.id}">
+					<f:selectItem value="#{null}" itemLabel="    " />
+					<f:selectItems value="#{auditCollections.applications}" />
+				</aon:selectOneMenu>								
 				<f:facet name="footer">
-					<aon:inputText value="#{domainApplication.to.application.name}"
-						rendered="#{domainApplication.new}"
-						required="true" size="40" maxlength="64" />					
+					<aon:selectOneMenu rendered="#{domainApplication.new}"
+						required="true" value="#{domainApplication.to.application.id}">
+						<f:selectItem value="#{null}" itemLabel="    " />
+						<f:selectItems value="#{auditCollections.applications}" />
+					</aon:selectOneMenu>								
 				</f:facet>
 			</aon:column>
 

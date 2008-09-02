@@ -59,7 +59,7 @@
 							<aon:outputText value="#{appBundle.aon_session_startDate}" />
 						</f:facet>
 						<aon:outputText value="#{to.startDate}">
-							<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+							<f:convertDateTime pattern="#{bundle.aon_timestamp_pattern}"
 							timeZone="#{timeZoneController.timeZoneId}" />
 						</aon:outputText>							
 					</aon:column>
@@ -69,7 +69,7 @@
 							<aon:outputText value="#{appBundle.aon_session_endDate}" />
 						</f:facet>
 						<aon:outputText value="#{to.endDate}">
-							<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+							<f:convertDateTime pattern="#{bundle.aon_timestamp_pattern}"
 							timeZone="#{timeZoneController.timeZoneId}" />
 						</aon:outputText>							
 					</aon:column>
