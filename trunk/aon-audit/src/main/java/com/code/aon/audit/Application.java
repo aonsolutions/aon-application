@@ -39,7 +39,7 @@ public class Application implements ITransferObject {
 	@Column(name = "ID", nullable = false)
     private Integer id;
 
-	@Column(name = "NAME", nullable = false, length = 64)
+	@Column(name = "NAME", nullable = false, length = 64, unique = true)
 	@Index(name="IDX_APPLICATION_NAME")
     private String name;
 	
