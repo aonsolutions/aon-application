@@ -48,15 +48,21 @@
 						<aon:inputText id="Session_id" size="60"
 							valueChangeListener="#{auditSession.addExpression}" />
 
-						<aon:outputLabel for="Session_user_domain_name"
+						<aon:outputLabel for="Session_user_domain_id"
 							value="#{appBundle.aon_domain}" />
-						<aon:inputText id="Session_user_domain_name" size="60"
-							valueChangeListener="#{auditSession.addDirectExpression}" />
+						<aon:selectOneMenu id="Session_user_domain_id"
+							valueChangeListener="#{auditSession.addDirectExpression}">
+							<f:selectItem value="#{null}" itemLabel="    " />
+							<f:selectItems value="#{auditCollections.domains}" />
+						</aon:selectOneMenu>					
 
-						<aon:outputLabel for="Session_application_name"
+						<aon:outputLabel for="Session_application_id"
 							value="#{appBundle.aon_application}" />
-						<aon:inputText id="Session_application_name" size="60"
-							valueChangeListener="#{auditSession.addDirectExpression}" />
+						<aon:selectOneMenu id="Session_application_id"
+							valueChangeListener="#{auditSession.addDirectExpression}">
+							<f:selectItem value="#{null}" itemLabel="    " />
+							<f:selectItems value="#{auditCollections.applications}" />
+						</aon:selectOneMenu>					
 
 						<aon:outputLabel for="Session_user_login"
 							value="#{appBundle.aon_user}" />

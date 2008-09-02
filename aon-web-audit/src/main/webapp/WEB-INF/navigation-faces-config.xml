@@ -60,20 +60,12 @@
 			<to-view-id>/audit/session/list.xhtml</to-view-id>
 		</navigation-case>
 		<navigation-case>
+			<from-outcome>session_form</from-outcome>
+			<to-view-id>/audit/session/form.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
 			<from-outcome>session_search</from-outcome>
 			<to-view-id>/audit/session/search.xhtml</to-view-id>
-		</navigation-case>
-	</navigation-rule>		
-
-	<!-- =================== Action Execution ================= -->	
-	<navigation-rule>
-		<navigation-case>
-			<from-outcome>actionExecution_list</from-outcome>
-			<to-view-id>/audit/actionExecution/list.xhtml</to-view-id>
-		</navigation-case>
-		<navigation-case>
-			<from-outcome>actionExecution_search</from-outcome>
-			<to-view-id>/audit/actionExecution/search.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>		
 
@@ -90,10 +82,6 @@
 		<navigation-case>
 			<from-outcome>session</from-outcome>
 			<to-view-id>/audit/session/list.xhtml</to-view-id>
-		</navigation-case>
-		<navigation-case>
-			<from-outcome>actionExecution</from-outcome>
-			<to-view-id>/audit/actionExecution/list.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>
 	

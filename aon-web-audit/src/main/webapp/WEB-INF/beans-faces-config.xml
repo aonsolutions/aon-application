@@ -20,7 +20,7 @@
 		</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
-	
+
 	<!-- ************ APPLICATION ************** -->
 	<managed-bean>
 		<managed-bean-name>auditApplication</managed-bean-name>
@@ -195,7 +195,44 @@
 			<property-name>beanName</property-name>
 			<value>auditSession</value> 
 		</managed-property>
+		<managed-property>
+			<property-name>listenerClasses</property-name>
+			<list-entries>
+				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+				<value>#{sessionActionExecutionListener}</value>
+				<value>#{sessionControllerListener}</value>
+			</list-entries>
+		</managed-property>					
 	</managed-bean>
+	
+	<managed-bean>
+		<managed-bean-name>sessionActionExecutionListener</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.audit.event.MasterControllerListener
+		</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+		<managed-property>
+			<property-name>childBean</property-name>
+			<value>actionExecution</value>
+		</managed-property>
+		<managed-property>
+			<property-name>aliasMap</property-name>
+			<map-entries>
+				<map-entry>
+					<key>ActionExecution_session_id</key>
+                    <value>id</value>
+				</map-entry>
+			</map-entries>
+		</managed-property>
+	</managed-bean>		
+
+	<managed-bean>
+		<managed-bean-name>sessionControllerListener</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.audit.event.SessionControllerListener
+		</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+	</managed-bean>		
 
 	<!-- ************ ACTION EXECUTION ************** -->
 	<managed-bean>
