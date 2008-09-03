@@ -1,5 +1,7 @@
 package com.code.aon.ui.payroll.controller;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -83,5 +85,8 @@ public class PayrollController implements ILdapConstants, IAonObjectClasses {
     	HttpSession session = (HttpSession) context.getExternalContext().getSession(false);
     	session.invalidate();    	
     }
-    
+
+	public InputStream getLogo() throws IOException {
+		return this.getClass().getResourceAsStream( "/com/code/aon/ui/payroll/logo.jpg" );
+	}
 }

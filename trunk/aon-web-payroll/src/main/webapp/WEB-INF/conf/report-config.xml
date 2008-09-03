@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<!DOCTYPE report-config 
+	PUBLIC "-//CODE-AON//DTD Report Config//EN" 
+	"http://co-de.com/aon/report-config.dtd">
+
+<report-config>
+	<default-config>
+		<fetch-mode paginated="false" />
+	</default-config>
+
+	<!--  *********  Impresion a PDF de los Tipos de Documento  ********* -->
+	<report id="tiposDocumentoList" description="Listado de Tipos de Documento">
+		<template path="/com/code/aon/ui/payroll/report/tiposDocumentoList.jasper" />
+		<bean key="com.code.aon.payroll.tipos.Documento" />
+		<collection provider="#{printer}" />
+		<params>
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.payroll.i18n.messages" />
+			<param id="logoImageFile" value="#{payrollController.getLogo}" />
+			<param id="companyName" value="#{payrollController.getCompanyName}" />
+		</params>
+	</report>
+
+</report-config>
