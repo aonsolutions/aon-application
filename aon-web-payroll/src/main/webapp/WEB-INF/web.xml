@@ -103,6 +103,10 @@
 		<param-name>org.richfaces.SKIN</param-name>
 		<param-value>aon</param-value>
 	</context-param>
+	<context-param>
+        <param-name>com.code.aon.report.config.file</param-name>
+        <param-value>/WEB-INF/conf/report-config.xml</param-value>
+    </context-param>
 
 	<!-- BackDoorAuthentication Filter -->
 	<filter>

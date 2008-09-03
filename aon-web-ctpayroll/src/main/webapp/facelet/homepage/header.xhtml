@@ -48,7 +48,8 @@
 							rendered="#{payrollController.mainMenuEnabled}">
 							<h:outputText value="#{bundle.aon_home}" />
 						</h:outputLink>
-						<aon:commandLink style="border-right:0;" action="logout" actionListener="#{payrollController.logout}">
+						<aon:commandLink style="border-right:0;" rendered="#{payrollController.mainMenuEnabled}"
+								action="logout" actionListener="#{payrollController.logout}">
 							<aon:outputText value="#{securityBundle.aon_login_user_logout}" />
 						</aon:commandLink>
 					</aon:div>	
