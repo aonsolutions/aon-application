@@ -25,7 +25,7 @@
 	<navigation-rule>
 		<navigation-case>
 			<from-outcome>tipos_documento</from-outcome>
-			<to-view-id>/facelet/tipos/documento/grid.xhtml</to-view-id>
+			<to-view-id>/facelet/auxiliares/tipos/documento/grid.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>
 
