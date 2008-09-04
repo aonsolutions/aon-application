@@ -14,6 +14,8 @@ import com.code.aon.common.ITransferObject;
 @Table(name="tipdoc")
 public class Documento implements ITransferObject {
 
+	private static final long serialVersionUID = 4304438088705559359L;
+
 	private String cdg;
 	private String description;
 
