@@ -41,7 +41,7 @@
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.audit</artifactId>
 			<version>0.5.0</version>
-			<scope>compile</scope>
+			<scope>provided</scope>
 		</dependency>
 		<dependency>
 		    <groupId>commons-el</groupId>
