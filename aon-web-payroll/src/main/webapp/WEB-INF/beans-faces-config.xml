@@ -39,10 +39,10 @@
 			<property-name>pojo</property-name>
 			<value>com.code.aon.payroll.tipos.Registro</value>
 		</managed-property>
-		<managed-property>
+		<!--  <managed-property>
 		         <property-name>defaultOrder</property-name>
 		         <value>Registro_cdg</value>
-      </managed-property>
+      </managed-property>-->
 	</managed-bean>
 
 </faces-config>
