@@ -25,7 +25,9 @@
  
 		<!-- TIPOS -->		
 		<mapping class="com.code.aon.payroll.tipos.Documento"/>
-		<mapping class="com.code.aon.payroll.tipos.Registro"/>				
+		<mapping class="com.code.aon.payroll.tipos.Registro"/>
+		<mapping class="com.code.aon.payroll.tipos.Incidencia"/>
+		<mapping class="com.code.aon.payroll.tipos.Autorizacion"/>				
 
 	</session-factory>
 
