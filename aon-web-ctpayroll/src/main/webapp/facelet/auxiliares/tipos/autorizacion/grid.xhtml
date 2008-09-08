@@ -19,12 +19,12 @@
 						columnClasses="aon-finding-title,aon-finding-subtitle,aon-finding-toolbar">
 	
 						<aon:div styleClass="aon-finding-title-internal">
-							<aon:outputText value="#{appBundle.payroll_tipaut_label}" />
+							<aon:outputText value="#{menuBundle.auxiliares_tipos__tipaut}" />
 						</aon:div>
 	
 						<aon:div styleClass="aon-finding-subtitle-internal">
 							<aon:outputText
-								value="#{appBundle.payroll_crud_label}" />
+								value="#{menuBundle.aon_payroll_crud_label}" />
 						</aon:div>
 	
 						<aon:div styleClass="aon-finding-toolbar-item-group">
@@ -55,14 +55,14 @@
 								confirmActionListener="#{tiposAutorizacion.onRemove}"
 								accesskey="#{bundle.aon_key_remove}"/>
 							<h:commandLink id="export2pdf" value="."
-									title="#{appBundle.payroll_export_label} #{appBundle.payroll_to} #{appBundle.payroll_pdf_label}"
+									title="#{appBundle.aon_payroll_export_label} #{appBundle.aon_payroll_to} #{appBundle.aon_payroll_pdf_label}"
 									styleClass="aon-finding-toolbar-item aon-icon-pdf"
 									action="#{report.onExecute}" rendered="#{!tiposAutorizacion.new}" 
 									target="_blank">
 								<f:param name="reportKey" value="tiposAutorizacionList" />
 							</h:commandLink>
 							<h:commandLink id="export2excel" value="."
-									title="#{appBundle.payroll_export_label} #{appBundle.payroll_to} #{appBundle.payroll_excel_label}"
+									title="#{appBundle.aon_payroll_export_label} #{appBundle.aon_payroll_to} #{appBundle.aon_payroll_excel_label}"
 									styleClass="aon-finding-toolbar-item aon-icon-excel"
 									action="#{report.onExecute}" rendered="#{!tiposAutorizacion.new}" 
 									target="_blank">
@@ -70,7 +70,7 @@
 								<f:param name="outputFormat" value="MS Excel" />
 							</h:commandLink>
 							<h:commandLink id="export2csv" value="."
-									title="#{appBundle.payroll_export_label} #{appBundle.payroll_to} #{appBundle.payroll_csv_label}"
+									title="#{appBundle.aon_payroll_export_label} #{appBundle.aon_payroll_to} #{appBundle.aon_payroll_csv_label}"
 									styleClass="aon-finding-toolbar-item aon-icon-excel"
 									action="#{report.onExecute}" rendered="#{!tiposAutorizacion.new}" 
 									target="_blank">
@@ -84,7 +84,7 @@
 				<!-- region-body -->
 	 			<aon:div styleClass="aon-scroll-area">
 					
-					<aon:editDataTable id="autorizacionData" var="to" rows="0"
+					<aon:editDataTable id="autorizacionData" var="to" rows="20"
 						rendered="#{(tiposAutorizacion.model.rowCount > 0) or (tiposAutorizacion.new)}" value="#{tiposAutorizacion.model}"
 						columnClasses="aon-editDataTable-iconColumn, aon-editDataTable-numberColumn, aon-editDataTable-textColumn, aon-editDataTable-buttonsColumn">
 								
@@ -109,7 +109,7 @@
 	
 						<aon:column>
 							<f:facet name="header">
-								<aon:outputText value="#{appBundle.payroll_cdg_label}" />
+								<aon:outputText value="#{appBundle.aon_payroll_cdg}" />
 							</f:facet>
 							<aon:outputText value="#{to.cdg}" rendered="#{to!=tiposAutorizacion.to}" />
 							<aon:inputText styleClass="aon-form-input-text " required="true"
@@ -124,7 +124,7 @@
 	
 						<aon:column>
 							<f:facet name="header">
-								<aon:outputText value="#{appBundle.payroll_description_label}" />
+								<aon:outputText value="#{appBundle.aon_payroll_description}" />
 							</f:facet>
 							<aon:outputText value="#{to.description}" rendered="#{to!=tiposAutorizacion.to}" />
 							<aon:inputText styleClass="aon-form-input-text " required="true"

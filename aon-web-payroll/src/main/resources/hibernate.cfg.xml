@@ -29,6 +29,10 @@
 		<mapping class="com.code.aon.payroll.tipos.Incidencia"/>
 		<mapping class="com.code.aon.payroll.tipos.Autorizacion"/>				
 
+		<!-- COTIZACIONES -->		
+		<mapping class="com.code.aon.payroll.cotizacion.PorcentajeMaestro"/>			
+		<mapping class="com.code.aon.payroll.cotizacion.Porcentaje"/>			
+
 	</session-factory>
 
 </hibernate-configuration>
