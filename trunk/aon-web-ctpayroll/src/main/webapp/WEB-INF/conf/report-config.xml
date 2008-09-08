@@ -32,5 +32,29 @@
 			<param id="companyName" value="#{payrollController.getCompanyName}" />
 		</params>
 	</report>
+	
+	<!--  *********  Impresion a PDF de los Tipos de Incidencia  ********* -->
+	<report id="tiposIncidenciaList" description="Listado de Tipos de Incidencia">
+		<template path="/com/code/aon/ui/payroll/report/tiposIncidenciaList.jasper" />
+		<bean key="com.code.aon.payroll.tipos.Incidencia" />
+		<criteria provider="#{tiposIncidencia}" />
+		<params>
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.payroll.i18n.messages" />
+			<param id="logoImageFile" value="#{payrollController.getLogo}" />
+			<param id="companyName" value="#{payrollController.getCompanyName}" />
+		</params>
+	</report>
+	
+	<!--  *********  Impresion a PDF de los Tipos de Autorizacion  ********* -->
+	<report id="tiposAutorizacionList" description="Listado de Tipos de Autorizacion">
+		<template path="/com/code/aon/ui/payroll/report/tiposAutorizacionList.jasper" />
+		<bean key="com.code.aon.payroll.tipos.Autorizacion" />
+		<criteria provider="#{tiposAutorizacion}" />
+		<params>
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.payroll.i18n.messages" />
+			<param id="logoImageFile" value="#{payrollController.getLogo}" />
+			<param id="companyName" value="#{payrollController.getCompanyName}" />
+		</params>
+	</report>
 
 </report-config>
