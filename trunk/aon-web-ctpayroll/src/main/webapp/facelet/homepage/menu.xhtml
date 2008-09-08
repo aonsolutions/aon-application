@@ -155,7 +155,8 @@
 					<aon:menuItem value="#{menuBundle.auxiliares_geograficas__paicopro}" disabled="true" />
 				</aon:menuGroup>
 				<aon:menuGroup value="#{menuBundle.auxiliares_cotizacion}">
-					<aon:menuItem value="#{menuBundle.auxiliares_cotizacion__porcoti}" disabled="true" />
+					<aon:menuItem value="#{menuBundle.auxiliares_cotizacion__porcoti}" 
+						action="cotizacion_porcentaje" actionListener="#{porcentajeMaestro.onSelectFirst}" />
 					<aon:menuItem value="#{menuBundle.auxiliares_cotizacion__cotizaciones}" disabled="true" />
 					<aon:menuItem value="#{menuBundle.auxiliares_cotizacion__elemcotizacion}" disabled="true" />
 					<aon:menuItem value="#{menuBundle.auxiliares_cotizacion__ocupacion}" disabled="true" />

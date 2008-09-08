@@ -1,4 +1,4 @@
-package com.code.aon.payroll.tipos;
+package com.code.aon.payroll.cotizacion;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -8,24 +8,18 @@ import javax.persistence.Table;
 import com.code.aon.common.ITransferObject;
 
 /**
- * Tipos de Documento.
+ * Agrupador, Maestro de Porcentajes de Cotización.
  */
 @Entity
-@Table(name="tipdoc")
-public class Documento implements ITransferObject {
-
-	private static final long serialVersionUID = 4304438088705559359L;
+@Table(name="porcoti")
+public class PorcentajeMaestro implements ITransferObject {
 
 	private String cdg;
 	private String description;
+	private Integer ordpct;
 
-	/**
-	 * Devuelve el código del tipo de documento.
-	 * 
-	 * @return
-	 */
 	@Id
-	@Column(name="cdg", unique=true, nullable=false, length=1)
+	@Column(name="cdg", unique=true, nullable=false, length=8)
     public String getCdg() {
 		return this.cdg;
     }
@@ -34,18 +28,22 @@ public class Documento implements ITransferObject {
 		this.cdg = cdg;
 	}
     
-	/**
-	 * Devuelve la descripción del tipo de documento.
-	 * 
-	 * @return
-	 */
-	@Column(name="descripcion", nullable=false, length=60)
+	@Column(name="descripcion", nullable=false, length=50)
 	public String getDescription() {
 		return this.description;
 	}
     
 	public void setDescription(String descripcion) {
 		this.description = descripcion;
+	}
+
+	@Column(name="ordpct", length=2)
+	public Integer getOrdpct() {
+		return this.ordpct;
+	}
+
+	public void setOrdpct(Integer ordpct) {
+		this.ordpct = ordpct;
 	}
 
 }

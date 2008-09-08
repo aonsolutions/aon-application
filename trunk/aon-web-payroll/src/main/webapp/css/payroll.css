@@ -1,3 +1,13 @@
+/*************************/
+/******  EDITTABLE  ******/
+/*************************/
+.aon-editDataTable-dateColumn{
+	width:auto;
+	text-align:middle;
+	}
+/*************************/
+/*******  ICONS  *********/
+/*************************/	
 .aon-icon-pdf{
 	background:transparent url(../images/pdficon.png) scroll left center no-repeat;
 }
