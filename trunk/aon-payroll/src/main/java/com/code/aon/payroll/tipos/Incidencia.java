@@ -85,16 +85,4 @@ public class Incidencia  implements ITransferObject {
      this.inddto = inddto;
  }
  
- @Transient
-	public boolean isIsIndresta() {
-		if (this.indresta.equals("S")) return true;
-		else return false;
- }
- 
- @Transient
-	public boolean isIsInddto() {
-		if (this.inddto.equals("S") || this.inddto.equals("s")) return true;
-		else return false;
 }
- 
- } 
