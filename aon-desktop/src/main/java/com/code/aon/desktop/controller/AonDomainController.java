@@ -7,6 +7,8 @@ import java.util.Comparator;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
@@ -15,8 +17,6 @@ import javax.faces.model.ListDataModel;
 import javax.faces.model.SelectItem;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 
 import com.code.aon.bridge.jmx.mbean.IConsoleAdmin;
 import com.code.aon.bridge.plugin.DomainManager;
@@ -45,7 +45,7 @@ import com.code.aon.ui.util.AonUtil;
 public class AonDomainController extends BasicController implements IAonObjectClasses, ILdapConstants {
 
     /** Obtiene un logger apropiado. */
-	private static final Log LOGGER = LogFactory.getLog( AonDomainController.class.getName() );
+	private static final Logger LOGGER = Logger.getLogger(AonDomainController.class.getName());
 	
 	/** Domain manager. */
     private DomainManager domainManager;
@@ -85,7 +85,7 @@ public class AonDomainController extends BasicController implements IAonObjectCl
 			loadProfiles();
 			loadUsers();
 		} catch (DeploymentException e) {
-			e.printStackTrace();
+			LOGGER.log(Level.SEVERE, e.getMessage(), e );
 		}
 	}
 
@@ -168,7 +168,7 @@ public class AonDomainController extends BasicController implements IAonObjectCl
 			Collections.sort(l, getNodeComparator());
 			applications = new ListDataModel(l); 
 		} catch (ManagerBeanException e) {
-			e.printStackTrace();
+			LOGGER.log(Level.SEVERE, e.getMessage(), e );
 		}
 	}
 
@@ -233,7 +233,7 @@ public class AonDomainController extends BasicController implements IAonObjectCl
 		try {
 			setDomainManager(new DomainManager(user));
 		} catch (DeploymentException e) {
-			e.printStackTrace();
+			LOGGER.log(Level.SEVERE, e.getMessage(), e );
 		}
 	}
 
@@ -244,7 +244,7 @@ public class AonDomainController extends BasicController implements IAonObjectCl
 			loadProfiles();
 			flushAuthenticationCache(null);			
 		} catch (DeploymentException e) {
-			e.printStackTrace();
+			LOGGER.log(Level.SEVERE, e.getMessage(), e );
 		}
 	}
 
@@ -253,10 +253,20 @@ public class AonDomainController extends BasicController implements IAonObjectCl
 			getDomainManager().removeProfile();
 			loadProfiles();
 		} catch (DeploymentException e) {
-			e.printStackTrace();
+			LOGGER.log(Level.SEVERE, e.getMessage(), e );
 		}
 	}
 
+	public void removeUser(ActionEvent event) {
+		try {
+			removeUser(getDomainManager().getDomain().getId(),
+					getDomainManager().getApplication().getId(), this.user);			
+			loadUsers();
+		} catch (LdapException e) {
+			LOGGER.log(Level.SEVERE, e.getMessage(), e );
+		}
+	}
+	
 	public void flushAuthenticationCache( String userName ) throws DeploymentException {
 		IConsoleAdmin console = Utils.getSecurityConsole();
 		AuthPrincipal principal = null;
@@ -281,12 +291,18 @@ public class AonDomainController extends BasicController implements IAonObjectCl
 			entry.put( STATUS_ATTRIBUTE, 0 );
 			session.add(entry);
 		} catch ( LdapException e ) {
-			LOGGER.error( e.getMessage(), e );
+			LOGGER.log(Level.SEVERE, "Error añadiendo usuario " + dn, e );
 		} finally {
 			ldap.closeSession();
 		}
 	}
 
+	private void removeUser( String domainId, String applicationId, IRelation user ) throws LdapException {
+		DistinguishedName dn = AonDN.getDomainApplicationUserDN(domainId, applicationId, user.getId());
+		BasicLdap ldap = new BasicLdap();
+		ldap.delete(dn);
+	}
+	
 	public void acceptUser(ActionEvent event) {
 		try {
 			if (isNewUser()) {
@@ -297,8 +313,9 @@ public class AonDomainController extends BasicController implements IAonObjectCl
 				getDomainManager().updateUserProfiles();
 			}
 			flushAuthenticationCache(this.user.getId());
+			setNewUser(false);
 		} catch (DeploymentException e) {
-			e.printStackTrace();
+			LOGGER.log(Level.SEVERE, e.getMessage(), e );
 		}
 	}
 
