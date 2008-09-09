@@ -11,7 +11,7 @@
 	<groupId>com.code.aon</groupId>
 	<artifactId>aon.desktop</artifactId>
 	<packaging>war</packaging>
-	<version>1.5.1</version>
+	<version>1.6.0</version>
 	<description>AON DESKTOP</description>
 	<name>AON DESKTOP</name>
 	<properties>
@@ -48,7 +48,7 @@
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.security.bridge</artifactId>
-			<version>1.6.0</version>
+			<version>1.6.1</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
