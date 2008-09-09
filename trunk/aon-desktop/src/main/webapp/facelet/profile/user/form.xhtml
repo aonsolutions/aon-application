@@ -28,11 +28,18 @@
 						<aon:outputText value="#{appBundle.aon_user}" />
 					</aon:div>
 
-					<aon:div styleClass="aon-finding-toolbar-item-group">
+					<aon:div id="buttonDiv" styleClass="aon-finding-toolbar-item-group">
 						<aon:commandButton id="save" value="#{bundle.aon_save}"
 							styleClass="aon-finding-toolbar-item aon-icon-accept"
 							actionListener="#{domain.acceptUser}"
-							accesskey="#{bundle.aon_key_save}" />
+							accesskey="#{bundle.aon_key_save}" reRender="buttonDiv" />
+						<aon:confirmButton id="remove" value="#{bundle.aon_remove}"
+							rendered="#{!domain.newUser}"
+							styleClass="aon-finding-toolbar-item aon-icon-delete"
+							immediate="true" confirmTitle="#{bundle.aon_confirm_title}"
+							confirmMessage="#{bundle.aon_remove_confirm}"
+							confirmActionListener="#{domain.removeUser}"
+							confirmAction="profile_list"/>							
 						<aon:commandButton id="cancel" value="#{bundle.aon_back}"
 							styleClass="aon-finding-toolbar-item aon-icon-cancel"
 							immediate="#{true}"
