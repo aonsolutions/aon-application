@@ -21,6 +21,53 @@
 		</params>
 	</report>
 	
+	<!--  *********  Impresion a PDF de los Tipos de Empresario  ********* -->
+	<report id="tiposEmpresarioList" description="Listado de Tipos de Empresario">
+		<template path="/com/code/aon/ui/payroll/report/tiposEmpresarioList.jasper" />
+		<bean key="com.code.aon.payroll.tipos.Empresario" />
+		<criteria provider="#{tiposEmpresario}" />
+		<params>
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.payroll.i18n.messages" />
+			<param id="logoImageFile" value="#{payrollController.getLogo}" />
+			<param id="companyName" value="#{payrollController.getCompanyName}" />
+		</params>
+	</report>
+	
+	<!--  *********  Impresion a PDF de los Tipos de Cnae  ********* -->
+	<report id="tiposCnaeList" description="Listado de Tipos de Cnae">
+		<template path="/com/code/aon/ui/payroll/report/tiposCnaeList.jasper" />
+		<bean key="com.code.aon.payroll.tipos.Cnae" />
+		<criteria provider="#{tiposCnae}" />
+		<params>
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.payroll.i18n.messages" />
+			<param id="logoImageFile" value="#{payrollController.getLogo}" />
+			<param id="companyName" value="#{payrollController.getCompanyName}" />
+		</params>
+	</report>
+	
+	<!--  *********  Impresion a PDF de los Organismos de Mantenimiento de Administraciones de Hacienda  ********* -->
+	<report id="organismosAdmonList" description="Listado de Administraciones de Hacienda">
+		<template path="/com/code/aon/ui/payroll/report/organismosAdmonList.jasper" />
+		<bean key="com.code.aon.payroll.organismos_entidades.Admon" />
+		<criteria provider="#{organismosAdmon}" />
+		<params>
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.payroll.i18n.messages" />
+			<param id="logoImageFile" value="#{payrollController.getLogo}" />
+			<param id="companyName" value="#{payrollController.getCompanyName}" />
+		</params>
+	</report>
+	
+	<!--  *********  Impresion a PDF de Sistema Red Colectivos  ********* -->
+	<report id="sistemaRedColectivosList" description="Listado de Colectivos">
+		<template path="/com/code/aon/ui/payroll/report/sistemaRedColectivosList.jasper" />
+		<bean key="com.code.aon.payroll.sistema_red.Colectivos" />
+		<criteria provider="#{sistemaRedColectivos}" />
+		<params>
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.payroll.i18n.messages" />
+			<param id="logoImageFile" value="#{payrollController.getLogo}" />
+			<param id="companyName" value="#{payrollController.getCompanyName}" />
+		</params>
+	</report>
 	<!--  *********  Impresion a PDF de los Tipos de Registro  ********* -->
 	<report id="tiposRegistroList" description="Listado de Tipos de Registro">
 		<template path="/com/code/aon/ui/payroll/report/tiposRegistroList.jasper" />
@@ -56,5 +103,6 @@
 			<param id="companyName" value="#{payrollController.getCompanyName}" />
 		</params>
 	</report>
+	
 
 </report-config>

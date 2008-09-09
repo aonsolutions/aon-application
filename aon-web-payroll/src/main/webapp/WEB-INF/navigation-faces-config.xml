@@ -12,15 +12,15 @@
 			<to-view-id>/homepage.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>
-
+	
 	<navigation-rule>
 		<navigation-case>
 			<from-outcome>logout</from-outcome>
-			<to-view-id>/home.jsf</to-view-id>
-			<redirect />
+			<to-view-id>/home.jsf</to-view-id> 
+			<redirect/>
 		</navigation-case>
 	</navigation-rule>
-
+	
 	<!-- =================== Auxiliares/Cotizacion/Porcentaje ================= -->
 	<navigation-rule>
 		<navigation-case>
@@ -37,7 +37,7 @@
 		</navigation-case>
 	</navigation-rule>
 
-	<!-- =================== Application Menu Navigation Rules ================= -->
+	<!-- =================== Application Menu Navigation Rules ================= -->	
 	<navigation-rule>
 		<navigation-case>
 			<from-outcome>tipos_documento</from-outcome>
@@ -46,6 +46,28 @@
 			</to-view-id>
 		</navigation-case>
 	</navigation-rule>
+	
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>tipos_empresarios</from-outcome>
+			<to-view-id>/facelet/auxiliares/tipos/empresario/grid.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>
+	
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>tipos_cnae</from-outcome>
+			<to-view-id>/facelet/auxiliares/tipos/cnae/grid.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>
+	
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>organismos_admon</from-outcome>
+			<to-view-id>/facelet/auxiliares/organismos_entidades/admon/grid.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>
+	
 	<navigation-rule>
 		<navigation-case>
 			<from-outcome>tipos_registro</from-outcome>
@@ -76,6 +98,13 @@
 			<to-view-id>
 				/facelet/auxiliares/cotizacion/porcentaje/form.xhtml
 			</to-view-id>
+		</navigation-case>
+	</navigation-rule>
+	
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>sistemaRed_colectivos</from-outcome>
+			<to-view-id>/facelet/auxiliares/sistema_red/colectivos/grid.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>
 
