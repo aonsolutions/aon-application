@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Properties;
 
 import org.apache.commons.lang.ArrayUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -378,10 +379,17 @@ public class SecurityLdap extends BasicLdap implements ILdapConstants, ILdapSecu
 			entry.addObjectClass("posixAccount");
 			entry.addObjectClass(TOP);
 			entry.put( ACTIVE_ATTRIBUTE, LdapSession.FALSE_VALUE );
-			entry.put( COMMON_NAME_ATTRIBUTE, user.getName() );
+			String cn = StringUtils.trim(user.getName());
+			String sn = StringUtils.trim(user.getName());
+			int pos = cn.indexOf(" ");
+			if ( pos != -1 ) {
+				cn = cn.substring(0, pos);
+				sn = StringUtils.substring(sn, pos+1);
+			}
+			entry.put( COMMON_NAME_ATTRIBUTE, cn );
 			entry.put( "gidNumber", 100 );
 			entry.put( "homeDirectory", "/home/DOMAINS/" + domainId + "/USERS/" + user.getId() );
-			entry.put( SURNAME_ATTRIBUTE, user.getName() );
+			entry.put( SURNAME_ATTRIBUTE, sn );
 			entry.put( USER_ID_ATTRIBUTE, user.getId() );
 			entry.put( "uidNumber", 10 );
 			entry.put( DESCRIPTION_ATTRIBUTE, user.getDescription() );
