@@ -47,15 +47,22 @@
 
 				<aon:panelGrid columns="2" dir="true">
 
-					<aon:outputLabel for="userId"
+					<aon:outputLabel for="userId" rendered="#{!domain.newUser}"
 						value="#{securityBundle.aon_security_user}" />
 					<aon:inputText id="userId" disabled="#{true}"
-						required="true" size="20"
+						required="true" size="20" rendered="#{!domain.newUser}"
 						maxlength="16" value="#{domain.domainManager.relation.id}" />
+					<aon:outputLabel for="users" rendered="#{domain.newUser}"
+						value="#{securityBundle.aon_security_user}" />
+					<aon:selectOneMenu id="users" rendered="#{domain.newUser}"
+						value="#{domain.domainManager.relation.id}" required="true">
+						<f:selectItem value="#{null}" itemLabel="    " />						
+						<f:selectItems value="#{domain.availableUsers}" />
+					</aon:selectOneMenu>
 
 					<aon:outputLabel for="profileData"
 						value="#{securityBundle.aon_security_profiles}" />
-					<aon:selectManyCheckbox id="profileData"
+					<aon:selectManyCheckbox id="profileData" required="true"
 						value="#{domain.domainManager.relations}" layout="pageDirection"
 						layoutWidth="5">
 						<f:selectItems value="#{domain.domainManager.availableProfiles}" />

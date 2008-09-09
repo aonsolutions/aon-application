@@ -5,14 +5,18 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
 import javax.faces.model.ListDataModel;
+import javax.faces.model.SelectItem;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import com.code.aon.bridge.jmx.mbean.IConsoleAdmin;
 import com.code.aon.bridge.plugin.DomainManager;
@@ -23,20 +27,28 @@ import com.code.aon.jaas.auth.AuthPrincipal;
 import com.code.aon.jaas.client.ast.IDomainApplication;
 import com.code.aon.jaas.client.ast.INode;
 import com.code.aon.jaas.client.ast.IRelation;
+import com.code.aon.jaas.client.ast.IUser;
 import com.code.aon.jaas.client.ast.core.Relation;
 import com.code.aon.jaas.deployment.DeploymentException;
 import com.code.aon.ldap.AonDN;
 import com.code.aon.ldap.BasicLdap;
 import com.code.aon.ldap.DistinguishedName;
+import com.code.aon.ldap.Entry;
 import com.code.aon.ldap.IAonObjectClasses;
+import com.code.aon.ldap.ILdapConstants;
+import com.code.aon.ldap.LdapException;
+import com.code.aon.ldap.LdapSession;
 import com.code.aon.ui.config.util.UserUtils;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.util.AonUtil;
 
-public class AonDomainController extends BasicController implements IAonObjectClasses {
+public class AonDomainController extends BasicController implements IAonObjectClasses, ILdapConstants {
 
+    /** Obtiene un logger apropiado. */
+	private static final Log LOGGER = LogFactory.getLog( AonDomainController.class.getName() );
+	
 	/** Domain manager. */
-    private DomainManager domainManager = null;
+    private DomainManager domainManager;
     private ListDataModel applications;
     private ListDataModel profiles;
     private ListDataModel users;
@@ -45,7 +57,10 @@ public class AonDomainController extends BasicController implements IAonObjectCl
     private Relation user;
     private String currentTab;
     
-    private boolean newProfile = false;
+    private boolean newProfile;
+    private boolean newUser;
+    
+    private List<SelectItem> availableUsers;
     
 	public boolean isNewProfile() {
 		return newProfile;
@@ -53,6 +68,14 @@ public class AonDomainController extends BasicController implements IAonObjectCl
 
 	public void setNewProfile(boolean newProfile) {
 		this.newProfile = newProfile;
+	}
+	
+	public boolean isNewUser() {
+		return newUser;
+	}
+
+	public void setNewUser(boolean newUser) {
+		this.newUser = newUser;
 	}
 
 	public void onSelectApplication(ActionEvent event) throws ManagerBeanException {
@@ -75,6 +98,7 @@ public class AonDomainController extends BasicController implements IAonObjectCl
 	public void onSelectUser(ActionEvent event) throws ManagerBeanException {
         this.user = (Relation)this.users.getRowData();
 		getDomainManager().setRelation(this.user);
+		this.newUser = false;
 	}
 
     /* (non-Javadoc)
@@ -85,6 +109,38 @@ public class AonDomainController extends BasicController implements IAonObjectCl
     	getDomainManager().setRelation(this.profile);
     	newProfile = true;
     }
+    
+    @SuppressWarnings("unchecked")
+	public List<SelectItem> calculaAvailableUsers() throws DeploymentException {
+    	List<SelectItem> list = new LinkedList<SelectItem>();
+    	List<IRelation> relations = (List<IRelation>) users.getWrappedData();
+    	UserManager userManager = new UserManager();
+		for( IUser securityUser : userManager.getUsers() ) {
+    		boolean add = true;
+        	for( IRelation relation : relations ) {
+    			if ( relation.getId().equals(securityUser.getId()) ) {
+    				add = false;
+    				break;
+    			}
+    		}
+    		if ( add ) {
+        		SelectItem item = new SelectItem(securityUser.getId(), securityUser.getId());
+        		list.add(item);    			
+    		}
+    	}
+    	return list;
+    }    
+
+    public void onResetUser(ActionEvent event) throws DeploymentException {
+    	this.user = new Relation();
+    	getDomainManager().setRelation(this.user);
+    	this.availableUsers = calculaAvailableUsers();
+    	newUser = true;
+    }
+    
+	public List<SelectItem> getAvailableUsers() {
+		return availableUsers;
+	}
 
 	/**
 	 * @return Returns the userManager.
@@ -210,10 +266,36 @@ public class AonDomainController extends BasicController implements IAonObjectCl
 		}
 		console.flushAuthenticationCache(UserManager.LDAP_SECURITY_DOMAIN, principal);
 	}
+	
+	private void addUser( String domainId, String applicationId, IRelation user ) {
+		DistinguishedName dn = AonDN.getDomainApplicationUserDN(domainId, applicationId, user.getId());
+		BasicLdap ldap = new BasicLdap();
+		Entry entry = new Entry(dn.toString());
+		try {
+			LdapSession session = ldap.getLdapSession();
+			entry.addObjectClasses(new String[] {TOP, DOMAIN_APPLICATION_USER} );
+			for( String role : user.relations() ) {
+				DistinguishedName member = session.getFullDN( AonDN.getApplicationProfileDN(applicationId, role) );
+				entry.put( MEMBER_ATTRIBUTE, member.toString() );
+			}
+			entry.put( STATUS_ATTRIBUTE, 0 );
+			session.add(entry);
+		} catch ( LdapException e ) {
+			LOGGER.error( e.getMessage(), e );
+		} finally {
+			ldap.closeSession();
+		}
+	}
 
 	public void acceptUser(ActionEvent event) {
 		try {
-			getDomainManager().updateUserProfiles();
+			if (isNewUser()) {
+				addUser(getDomainManager().getDomain().getId(),
+						getDomainManager().getApplication().getId(), this.user);
+				loadUsers();
+			} else {
+				getDomainManager().updateUserProfiles();
+			}
 			flushAuthenticationCache(this.user.getId());
 		} catch (DeploymentException e) {
 			e.printStackTrace();
