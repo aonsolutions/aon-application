@@ -4,7 +4,6 @@
 	<comment></comment>
 	<projects>
 		<project>aon-ui-resources</project>
-		<project>aon-rich-components</project>
 		<project>aon-ui-payroll</project>
 		<project>aon-payroll</project>
 		<project>aon-ui-audit</project>
