@@ -31,10 +31,6 @@
 		<mapping class="com.code.aon.payroll.tipos.Incidencia"/>
 		<mapping class="com.code.aon.payroll.tipos.Autorizacion"/>
 		
-		<!-- ORGANISMOS ENTIDADES -->
-		<mapping class="com.code.aon.payroll.organismos_entidades.Admon"/>
-		<!-- SISTEMA RED -->
-		<mapping class="com.code.aon.payroll.sistema_red.Colectivos"/>			
 		<!-- COTIZACIONES -->		
 		<mapping class="com.code.aon.payroll.cotizacion.PorcentajeMaestro"/>			
 		<mapping class="com.code.aon.payroll.cotizacion.Porcentaje"/>

@@ -25,7 +25,7 @@
 	
 						<aon:div styleClass="aon-finding-subtitle-internal">
 							<aon:outputText
-								value="#{menuBundle.aon_payroll_crud_label}" />
+								value="#{menuBundle.aon_payroll_crud}" />
 						</aon:div>
 	
 						<aon:div styleClass="aon-finding-toolbar-item-group">
@@ -85,7 +85,7 @@
 				<!-- region-body -->
 	 			<aon:div styleClass="aon-scroll-area">
 					
-					<aon:editDataTable id="documentoData" var="to" rows="5"
+					<aon:editDataTable id="documentoData" var="to" rows="20"
 						rendered="#{(tiposDocumento.model.rowCount > 0) or (tiposDocumento.new)}" value="#{tiposDocumento.model}"
 						columnClasses="aon-editDataTable-iconColumn, aon-editDataTable-numberColumn, aon-editDataTable-textColumn, aon-editDataTable-buttonsColumn">
 								
@@ -110,7 +110,7 @@
 	
 						<aon:column>
 							<f:facet name="header">
-								<aon:outputText value="#{appBundle.aon_payroll_cdg_label}" />
+								<aon:outputText value="#{appBundle.aon_payroll_cdg}" />
 							</f:facet>
 							<aon:outputText value="#{to.cdg}" rendered="#{to!=tiposDocumento.to}" />
 							<aon:inputText styleClass="aon-form-input-text " required="true"
@@ -125,7 +125,7 @@
 	
 						<aon:column>
 							<f:facet name="header">
-								<aon:outputText value="#{appBundle.aon_payroll_description_label}" />
+								<aon:outputText value="#{appBundle.aon_payroll_description}" />
 							</f:facet>
 							<aon:outputText value="#{to.description}" rendered="#{to!=tiposDocumento.to}" />
 							<aon:inputText styleClass="aon-form-input-text " required="true"

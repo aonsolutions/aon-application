@@ -23,8 +23,7 @@
 						</aon:div>
 	
 						<aon:div styleClass="aon-finding-subtitle-internal">
-							<aon:outputText
-								value="#{menuBundle.aon_payroll_crud_label}" />
+							<aon:outputText value="#{appBundle.aon_payroll_crud}" />
 						</aon:div>
 	
 						<aon:div styleClass="aon-finding-toolbar-item-group">
@@ -112,7 +111,7 @@
 	
 						<aon:column>
 							<f:facet name="header">
-								<aon:outputText value="#{appBundle.aon_payroll_cdg_label}" />
+								<aon:outputText value="#{appBundle.aon_payroll_cdg}" />
 							</f:facet>
 							<aon:outputText value="#{to.cdg}" rendered="#{to!=tiposIncidencia.to}" />
 							<aon:inputText styleClass="aon-form-input-text " required="true"
@@ -127,7 +126,7 @@
 	
 						<aon:column>
 							<f:facet name="header">
-								<aon:outputText value="#{appBundle.aon_payroll_description_label}" />
+								<aon:outputText value="#{appBundle.aon_payroll_description}" />
 							</f:facet>
 							<aon:outputText value="#{to.description}" rendered="#{to!=tiposIncidencia.to}" />
 							<aon:inputText styleClass="aon-form-input-text " required="true"
@@ -158,7 +157,7 @@
 								</aon:selectBooleanCheckbox>
 							</f:facet>
 						</aon:column>
-						<!-- 
+ 
 						 <aon:column>
 							<f:facet name="header">
 								<aon:outputText value="#{appBundle.aon_payroll_inddto_label}" />
@@ -177,7 +176,7 @@
 								</aon:selectBooleanCheckbox>
 							</f:facet>
 						</aon:column>
-						 -->
+
 						<aon:column>
 							<f:facet name="header">
 								<aon:outputText value="&#160;" />
