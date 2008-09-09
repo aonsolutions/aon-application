@@ -17,7 +17,7 @@
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.security.bridge</artifactId>
-			<version>1.6.0</version>
+			<version>1.6.1</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>

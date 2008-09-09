@@ -11,6 +11,7 @@ import com.code.aon.audit.DomainApplication;
 import com.code.aon.audit.Session;
 import com.code.aon.audit.User;
 import com.code.aon.audit.dao.IAuditAlias;
+import com.code.aon.audit.enumeration.AuditLevel;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
@@ -109,6 +110,7 @@ public class AuditManager {
 			domainApplication = new DomainApplication();
 			domainApplication.setApplication(application);
 			domainApplication.setDomain( domain );
+			domainApplication.setAuditLevel(AuditLevel.MODULE);
 			bean.insert( domainApplication );
 		} else {
 			domainApplication = (DomainApplication) list.get(0);
