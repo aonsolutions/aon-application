@@ -110,7 +110,7 @@ public class AonUserController extends UserController implements ILdapConstants,
 		}
 	}
 
-	private void updateExpirationTimestamp( String userName, boolean today ) {
+	public void updateExpirationTimestamp( String userName, boolean today ) {
 		DistinguishedName userDN = AonDN.getUserDN( domain, userName );
 		BasicLdap ldap = new BasicLdap();
 		if ( ldap.exists(userDN, USER) ) {
