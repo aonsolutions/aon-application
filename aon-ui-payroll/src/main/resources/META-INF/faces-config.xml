@@ -116,15 +116,15 @@
 			<property-name>listenerClasses</property-name>
 			<list-entries>
 				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>				
-				<value>#{resourceControllerListener}</value>									
+				<value>#{tiposCnaeControllerListener}</value>									
 			</list-entries>
 		</managed-property>		
 	</managed-bean>
 	
 	<managed-bean>
-		<managed-bean-name>resourceControllerListener</managed-bean-name>
+		<managed-bean-name>tiposCnaeControllerListener</managed-bean-name>
 		<managed-bean-class>
-			com.esferalia.ui.scheduler.event.ResourceControllerListener
+			com.code.aon.ui.payroll.controller.event.TiposCnaeControllerListener
 		</managed-bean-class>
 		<managed-bean-scope>none</managed-bean-scope>
 	</managed-bean>
@@ -173,7 +173,7 @@
 			<value>com.code.aon.payroll.sistema_red.Colectivos</value>
 		</managed-property>
 	</managed-bean>
-
+	
 	<!-- ************* PORCENTAJE DE COTIZACIÓN ***************** -->
 	<managed-bean>
 		<managed-bean-name>porcentajeMaestro</managed-bean-name>
