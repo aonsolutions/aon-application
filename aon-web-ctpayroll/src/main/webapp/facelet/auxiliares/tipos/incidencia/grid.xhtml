@@ -86,7 +86,10 @@
 					
 					<aon:editDataTable id="incidenciaData" var="to" rows="0"
 						rendered="#{(tiposIncidencia.model.rowCount > 0) or (tiposIncidencia.new)}" value="#{tiposIncidencia.model}"
-						columnClasses="aon-editDataTable-iconColumn, aon-editDataTable-numberColumn, aon-editDataTable-textColumn, aon-editDataTable-buttonsColumn">
+						columnClasses="aon-editDataTable-iconColumn
+							, aon-editDataTable-textColumn, aon-editDataTable-textColumn
+							, aon-editDataTable-iconColumn, aon-editDataTable-iconColumn
+							, aon-editDataTable-buttonsColumn">
 								
 						<aon:rowSelector toggleOnClick="#{tiposIncidencia.to == null}"
 							actionListener="#{tiposIncidencia.onSelect}" />
@@ -137,76 +140,44 @@
 							</f:facet>
 						</aon:column>
 						
-						
 						 <aon:column>
 							<f:facet name="header">
 								<aon:outputText value="#{appBundle.payroll_indresta_label}" />
 							</f:facet>
-							<!--  <aon:outputText value="#{to.indresta}" rendered="#{to!=tiposIncidencia.to}" />
-							<aon:inputText styleClass="aon-form-input-text " required="true"
-								rendered="#{to==tiposIncidencia.to}" size="5"
-								value="#{tiposIncidencia.to.indresta}" maxlength="45" />
+							<aon:outputText value="&#160;" 
+								styleClass="#{(to.indresta=='S')?'aon-icon aon-icon-checked':'aon-icon aon-icon-check'}" 
+								rendered="#{to!=tiposIncidencia.to}" />
+							<aon:selectBooleanCheckbox rendered="#{to==tiposIncidencia.to}"
+									value="#{tiposIncidencia.to.indresta}" >
+								<f:converter converterId="tiposIncidencia" />
+							</aon:selectBooleanCheckbox>
 							<f:facet name="footer">
-								<aon:inputText styleClass="aon-form-input-text" required="true"
-									rendered="#{tiposIncidencia.new}" size="5"
-									value="#{tiposIncidencia.to.indresta}" maxlength="1" />
-							</f:facet>-->
-							
-							
-							 <aon:outputText value="&#160;&#160;&#160;&#160;&#160;"
-							styleClass="aon-icon-check" 
-							rendered="#{to!=tiposIncidencia.to and !to.isIndresta}" />
-							<aon:outputText value="&#160;&#160;&#160;&#160;&#160;"
-								styleClass="aon-icon-checked" 
-								rendered="#{to!=tiposIncidencia.to and to.isIndresta}" />
-								
-					    	<h:selectBooleanCheckbox rendered="#{to==tiposIncidencia.to}"  value="#{tiposIncidencia.to.indresta}" >
-                            
-                           </h:selectBooleanCheckbox>
-                           
-                           <f:facet name="footer">
-							<h:selectBooleanCheckbox rendered="#{tiposIncidencia.new}"  value="#{tiposIncidencia.to.indresta}"  >
-                              
-                             </h:selectBooleanCheckbox>
+								<aon:selectBooleanCheckbox rendered="#{tiposIncidencia.new}"
+										value="#{tiposIncidencia.to.indresta}" >
+									<f:converter converterId="tiposIncidencia" />
+								</aon:selectBooleanCheckbox>
 							</f:facet>
-							
 						</aon:column>
-						
-						
+						<!-- 
 						 <aon:column>
 							<f:facet name="header">
 								<aon:outputText value="#{appBundle.payroll_inddto_label}" />
 							</f:facet>
-							<!--  <aon:outputText value="#{to.inddto}" rendered="#{to!=tiposIncidencia.to}" />
-							<aon:inputText styleClass="aon-form-input-text " required="true"
-								rendered="#{to==tiposIncidencia.to}" size="5"
-								value="#{tiposIncidencia.to.inddto}" maxlength="1" />
+							<aon:outputText value="&#160;" 
+								styleClass="#{(to.inddto=='S')?'aon-icon aon-icon-checked':'aon-icon aon-icon-check'}" 
+								rendered="#{to!=tiposIncidencia.to}" />
+							<aon:selectBooleanCheckbox rendered="#{to==tiposIncidencia.to}"
+									value="#{tiposIncidencia.to.inddto}" >
+								<f:converter converterId="tiposIncidencia" />
+							</aon:selectBooleanCheckbox>
 							<f:facet name="footer">
-								<aon:inputText styleClass="aon-form-input-text" required="true"
-									rendered="#{tiposIncidencia.new}" size="5"
-									value="#{tiposIncidencia.to.inddto}" maxlength="1" />
-							</f:facet>-->
-							
-							
-							  <aon:outputText value="&#160;&#160;&#160;&#160;&#160;"
-							styleClass="aon-icon-check"
-							rendered="#{to!=tiposIncidencia.to and !to.isInddto}" />
-							<aon:outputText value="&#160;&#160;&#160;&#160;&#160;"
-								styleClass="aon-icon-checked"
-								rendered="#{to!=tiposIncidencia.to and to.isInddto}" />
-								
-					    	<h:selectBooleanCheckbox rendered="#{to==tiposIncidencia.to}"  value="#{tiposIncidencia.to.inddto}"  >
-                            
-                           </h:selectBooleanCheckbox>
-                           
-                           <f:facet name="footer">
-							<h:selectBooleanCheckbox rendered="#{tiposIncidencia.new}" value="#{tiposIncidencia.to.inddto}" >
-                              
-                             </h:selectBooleanCheckbox>
+								<aon:selectBooleanCheckbox rendered="#{tiposIncidencia.new}"
+										value="#{tiposIncidencia.to.inddto}" >
+									<f:converter converterId="tiposIncidencia" />
+								</aon:selectBooleanCheckbox>
 							</f:facet>
 						</aon:column>
-						
-	
+						 -->
 						<aon:column>
 							<f:facet name="header">
 								<aon:outputText value="&#160;" />

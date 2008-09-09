@@ -14,20 +14,23 @@
 		<navigation-handler>com.code.aon.ui.audit.AuditNavigationHandler</navigation-handler>
 	</application>
 
-	<!--  *************** CONVERTERS ***************** -->
-	<converter>
-		<description>Conversor para los Enum</description>
-		<converter-for-class>java.lang.Enum</converter-for-class>
-		<converter-class>
-			com.code.aon.ui.converter.EnumLocaleConverter
-		</converter-class>
-	</converter>
-
 	<lifecycle>
 		<phase-listener>
 			com.code.aon.faces.component.sandbox.ValueChangePhaseListener
 		</phase-listener>
 	</lifecycle>
+
+	<!--  *************** CONVERTERS ***************** -->
+	<converter>
+		<description>Conversor para los Enum</description>
+		<converter-for-class>java.lang.Enum</converter-for-class>
+		<converter-class>com.code.aon.ui.converter.EnumLocaleConverter</converter-class>
+	</converter>
+	<converter>
+		<description>Conversor para los Tipos de Incidencia</description>
+		<converter-id>tiposIncidencia</converter-id>
+		<converter-class>com.code.aon.ui.payroll.converter.TiposIncidencia</converter-class>
+	</converter>
 
 	<!-- *************** RESOURCE RESOLVER ***************** --> 
 	<managed-bean>
