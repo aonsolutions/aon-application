@@ -8,6 +8,7 @@ import com.code.aon.payroll.tipos.Documento;
 import com.code.aon.payroll.tipos.Autorizacion;
 import com.code.aon.payroll.tipos.Incidencia;
 import com.code.aon.payroll.tipos.Registro;
+import com.code.aon.payroll.cotizacion.Bonificacion;
 
 /** 
 * Interface for holding entity properties constants.
@@ -175,6 +176,73 @@ public interface IPayrollAlias {
 	* Hibernate value: Registro.description
 	*/
 	String  REGISTRO_DESCRIPTION = REGISTRO_ENTRY.getAliasNames()[1];
+
+
+
+	/** 
+	* DAOConstantsEntry for Bonificacion entity.
+	*/ 
+	DAOConstantsEntry BONIFICACION_ENTRY = DAOConstants.getDAOConstant(Bonificacion.class);
+
+	/** 
+	* Alias value: Bonificacion_boniss
+	* Hibernate value: Bonificacion.boniss
+	*/
+	String  BONIFICACION_BONISS = BONIFICACION_ENTRY.getAliasNames()[0];
+
+	/** 
+	* Alias value: Bonificacion_calculo
+	* Hibernate value: Bonificacion.calculo
+	*/
+	String  BONIFICACION_CALCULO = BONIFICACION_ENTRY.getAliasNames()[1];
+
+	/** 
+	* Alias value: Bonificacion_cdg
+	* Hibernate value: Bonificacion.cdg
+	*/
+	String  BONIFICACION_CDG = BONIFICACION_ENTRY.getAliasNames()[2];
+
+	/** 
+	* Alias value: Bonificacion_description
+	* Hibernate value: Bonificacion.description
+	*/
+	String  BONIFICACION_DESCRIPTION = BONIFICACION_ENTRY.getAliasNames()[3];
+
+	/** 
+	* Alias value: Bonificacion_mayor60
+	* Hibernate value: Bonificacion.mayor60
+	*/
+	String  BONIFICACION_MAYOR60 = BONIFICACION_ENTRY.getAliasNames()[4];
+
+	/** 
+	* Alias value: Bonificacion_prcAcc
+	* Hibernate value: Bonificacion.prcAcc
+	*/
+	String  BONIFICACION_PRC_ACC = BONIFICACION_ENTRY.getAliasNames()[5];
+
+	/** 
+	* Alias value: Bonificacion_prcAccfgs
+	* Hibernate value: Bonificacion.prcAccfgs
+	*/
+	String  BONIFICACION_PRC_ACCFGS = BONIFICACION_ENTRY.getAliasNames()[6];
+
+	/** 
+	* Alias value: Bonificacion_prcCg
+	* Hibernate value: Bonificacion.prcCg
+	*/
+	String  BONIFICACION_PRC_CG = BONIFICACION_ENTRY.getAliasNames()[7];
+
+	/** 
+	* Alias value: Bonificacion_rdl052006
+	* Hibernate value: Bonificacion.rdl052006
+	*/
+	String  BONIFICACION_RDL052006 = BONIFICACION_ENTRY.getAliasNames()[8];
+
+	/** 
+	* Alias value: Bonificacion_restait
+	* Hibernate value: Bonificacion.restait
+	*/
+	String  BONIFICACION_RESTAIT = BONIFICACION_ENTRY.getAliasNames()[9];
 
 
 }

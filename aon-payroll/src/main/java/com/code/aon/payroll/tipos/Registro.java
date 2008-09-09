@@ -18,7 +18,7 @@ import com.code.aon.common.ITransferObject;
 @Table(name="tipreg")
 public class Registro implements ITransferObject{
 	
-	private static final long serialVersionUID = 6239565575500663399L;
+	//private static final long serialVersionUID = 6239565575500663399L;
 
 	private String cdg;
 	private String description;
