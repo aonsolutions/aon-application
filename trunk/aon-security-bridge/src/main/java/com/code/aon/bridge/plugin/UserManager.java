@@ -301,8 +301,8 @@ public class UserManager implements Serializable {
 	 * @return
 	 * @throws DeploymentException
 	 */
-	public List<IUser> getUsers() throws DeploymentException {
-		return (List<IUser>) getDomain().standaloneUsers().values();
+	public Collection<IUser> getUsers() throws DeploymentException {
+		return getDomain().standaloneUsers().values();
 	}
 
 	/**
