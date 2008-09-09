@@ -97,7 +97,4 @@ public class Incidencia  implements ITransferObject {
 		else return false;
 }
  
- 
- 
-
-}
+ } 
