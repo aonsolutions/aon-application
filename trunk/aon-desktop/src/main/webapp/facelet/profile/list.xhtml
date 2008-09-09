@@ -34,7 +34,7 @@
 							styleClass="aon-finding-toolbar-item aon-icon-reset"
 							accesskey="#{bundle.aon_key_new}" />
 						<aon:commandButton id="resetUser" value="#{bundle.aon_reset}"
-							action="user_profile_form" rendered="#{domain.currentTab == 'users'}"
+							action="user_profile_form" rendered="#{(domain.currentTab == 'users') and domain.userManagement}"
 							actionListener="#{domain.onResetUser}"
 							styleClass="aon-finding-toolbar-item aon-icon-reset"
 							accesskey="#{bundle.aon_key_new}" />
