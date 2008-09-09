@@ -47,6 +47,10 @@ public class AonUserController extends UserController implements ILdapConstants,
 		onLoadCurrentUser( null );
 	}
 
+	public String getDomain() {
+		return domain;
+	}
+
 	public boolean isAccepted() {
 		return accepted;
 	}

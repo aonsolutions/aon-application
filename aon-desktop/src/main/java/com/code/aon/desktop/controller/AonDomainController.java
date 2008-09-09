@@ -44,7 +44,9 @@ import com.code.aon.ui.util.AonUtil;
 
 public class AonDomainController extends BasicController implements IAonObjectClasses, ILdapConstants {
 
-    /** Obtiene un logger apropiado. */
+    private static final String USER_MANAGEMENT_ATTRIBUTE = "userManagement";
+
+	/** Obtiene un logger apropiado. */
 	private static final Logger LOGGER = Logger.getLogger(AonDomainController.class.getName());
 	
 	/** Domain manager. */
@@ -56,6 +58,8 @@ public class AonDomainController extends BasicController implements IAonObjectCl
     private Relation profile;
     private Relation user;
     private String currentTab;
+    
+    private Boolean userManagement;
     
     private boolean newProfile;
     private boolean newUser;
@@ -388,6 +392,27 @@ public class AonDomainController extends BasicController implements IAonObjectCl
 	public boolean isCurrentSystemProfile() {
 		Relation profile = (Relation)this.profiles.getRowData();
 		return isSystemProfile(profile.getId());
+	}
+
+	public boolean isUserManagement() {
+		if ( userManagement == null ) {
+			userManagement = Boolean.FALSE;
+			AonUserController userController = (AonUserController) AonUtil.getController("currentUser");
+			DistinguishedName dn = AonDN.getDomainDN(userController.getDomain());			
+			BasicLdap ldap = new BasicLdap();
+			try {
+				String objectClass = LdapSession.getObjectClass(DOMAIN);
+				Entry entry = ldap.getLdapSession().get( dn.toString(), objectClass );
+				if ( (entry != null) && (entry.containsKey(USER_MANAGEMENT_ATTRIBUTE)) ) {
+					userManagement = entry.getAsBoolean(USER_MANAGEMENT_ATTRIBUTE);
+				}
+			} catch ( LdapException e ) {
+				LOGGER.log(Level.SEVERE, "Error añadiendo usuario " + dn, e );
+			} finally {
+				ldap.closeSession();
+			}
+		}
+		return userManagement.booleanValue();
 	}
 	
 }
