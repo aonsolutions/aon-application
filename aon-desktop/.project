@@ -11,6 +11,7 @@
 		<project>aon-groupware</project>
 		<project>aon-common-ldap</project>
 		<project>aon-messaging</project>
+		<project>aon-ldap</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>
