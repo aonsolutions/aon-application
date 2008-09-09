@@ -10,7 +10,7 @@
 
 	<ui:define name="content">
 
-		<aon:form id="autorizacionGrid">
+		<aon:form id="bonificacionGrid">
 	
 			<aon:div ajaxRendered="true" layout="none">
 	
@@ -19,62 +19,62 @@
 						columnClasses="aon-finding-title,aon-finding-subtitle,aon-finding-toolbar">
 	
 						<aon:div styleClass="aon-finding-title-internal">
-							<aon:outputText value="#{menuBundle.auxiliares_tipos__tipaut}" />
+							<aon:outputText value="#{appBundle.aon_payroll_tipboni_label}" />
 						</aon:div>
 	
 						<aon:div styleClass="aon-finding-subtitle-internal">
 							<aon:outputText
-								value="#{menuBundle.aon_payroll_crud_label}" />
+								value="#{appBundle.payroll_crud_label}" />
 						</aon:div>
 	
 						<aon:div styleClass="aon-finding-toolbar-item-group">
 							<aon:commandButton id="reset" value="#{bundle.aon_reset}"
-								actionListener="#{tiposAutorizacion.onReset}" rendered="#{!tiposAutorizacion.new}"
+								actionListener="#{tiposBonificacion.onReset}" rendered="#{!tiposBonificacion.new}"
 								styleClass="aon-finding-toolbar-item aon-icon-reset"
 								accesskey="#{bundle.aon_key_new}"/>
 							<aon:commandButton id="save"
-								value="#{bundle.aon_save}" rendered="#{tiposAutorizacion.to!=null or tiposAutorizacion.new}"
+								value="#{bundle.aon_save}" rendered="#{tiposBonificacion.to!=null or tiposBonificacion.new}"
 								styleClass="aon-finding-toolbar-item aon-icon-accept"
-								actionListener="#{tiposAutorizacion.onAccept}" 
+								actionListener="#{tiposBonificacion.onAccept}" 
 								accesskey="#{bundle.aon_key_new}" />
 							<aon:confirmButton id="cancelNew"
-								value="#{bundle.aon_cancel}" rendered="#{tiposAutorizacion.new}"
+								value="#{bundle.aon_cancel}" rendered="#{tiposBonificacion.new}"
 								styleClass="aon-finding-toolbar-item aon-icon-cancel" immediate="true"
 								confirmTitle="#{bundle.aon_confirm_title}" confirmMessage="#{bundle.aon_cancel_confirm}"
-								confirmActionListener="#{tiposAutorizacion.onCancel}"
+								confirmActionListener="#{tiposBonificacion.onCancel}"
 								accesskey="#{bundle.aon_key_cancel}"/>
 							<aon:commandButton id="cancelEdit"
-								value="#{bundle.aon_cancel}" rendered="#{tiposAutorizacion.to!=null and (!tiposAutorizacion.new)}"
+								value="#{bundle.aon_cancel}" rendered="#{tiposBonificacion.to!=null and (!tiposBonificacion.new)}"
 								styleClass="aon-finding-toolbar-item aon-icon-cancel" immediate="true"
-								actionListener="#{tiposAutorizacion.onCancel}"
+								actionListener="#{tiposBonificacion.onCancel}"
 								accesskey="#{bundle.aon_key_cancel}"/>
 							<aon:confirmButton id="remove"
-								value="#{bundle.aon_remove}" rendered="#{tiposAutorizacion.to!=null and !tiposAutorizacion.new}"
+								value="#{bundle.aon_remove}" rendered="#{tiposBonificacion.to!=null and !tiposBonificacion.new}"
 								styleClass="aon-finding-toolbar-item aon-icon-delete" immediate="true"
 								confirmTitle="#{bundle.aon_confirm_title}" confirmMessage="#{bundle.aon_remove_confirm}"
-								confirmActionListener="#{tiposAutorizacion.onRemove}"
+								confirmActionListener="#{tiposBonificacion.onRemove}"
 								accesskey="#{bundle.aon_key_remove}"/>
 							<h:commandLink id="export2pdf" value="."
-									title="#{appBundle.aon_payroll_export_label} #{appBundle.aon_payroll_to} #{appBundle.aon_payroll_pdf_label}"
+									title="#{appBundle.payroll_export_label} #{appBundle.payroll_to} #{appBundle.payroll_pdf_label}"
 									styleClass="aon-finding-toolbar-item aon-icon-pdf"
-									action="#{report.onExecute}" rendered="#{!tiposAutorizacion.new}" 
+									action="#{report.onExecute}" rendered="#{!tiposBonificacion.new}" 
 									target="_blank">
-								<f:param name="reportKey" value="tiposAutorizacionList" />
+								<f:param name="reportKey" value="tiposBonificacionList" />
 							</h:commandLink>
 							<h:commandLink id="export2excel" value="."
-									title="#{appBundle.aon_payroll_export_label} #{appBundle.aon_payroll_to} #{appBundle.aon_payroll_excel_label}"
+									title="#{appBundle.payroll_export_label} #{appBundle.payroll_to} #{appBundle.payroll_excel_label}"
 									styleClass="aon-finding-toolbar-item aon-icon-excel"
-									action="#{report.onExecute}" rendered="#{!tiposAutorizacion.new}" 
+									action="#{report.onExecute}" rendered="#{!tiposBonificacion.new}" 
 									target="_blank">
-								<f:param name="reportKey" value="tiposAutorizacionList" />
+								<f:param name="reportKey" value="tiposBonificacionList" />
 								<f:param name="outputFormat" value="MS Excel" />
 							</h:commandLink>
 							<h:commandLink id="export2csv" value="."
-									title="#{appBundle.aon_payroll_export_label} #{appBundle.aon_payroll_to} #{appBundle.aon_payroll_csv_label}"
+									title="#{appBundle.payroll_export_label} #{appBundle.payroll_to} #{appBundle.payroll_csv_label}"
 									styleClass="aon-finding-toolbar-item aon-icon-excel"
-									action="#{report.onExecute}" rendered="#{!tiposAutorizacion.new}" 
+									action="#{report.onExecute}" rendered="#{!tiposBonificacion.new}" 
 									target="_blank">
-								<f:param name="reportKey" value="tiposAutorizacionList" />
+								<f:param name="reportKey" value="tiposBonificacionList" />
 								<f:param name="outputFormat" value="CSV" />
 							</h:commandLink>
 						</aon:div>
@@ -84,12 +84,12 @@
 				<!-- region-body -->
 	 			<aon:div styleClass="aon-scroll-area">
 					
-					<aon:editDataTable id="autorizacionData" var="to" rows="20"
-						rendered="#{(tiposAutorizacion.model.rowCount > 0) or (tiposAutorizacion.new)}" value="#{tiposAutorizacion.model}"
+					<aon:editDataTable id="bonificacionData" var="to" rows="0"
+						rendered="#{(tiposBonificacion.model.rowCount > 0) or (tiposBonificacion.new)}" value="#{tiposBonificacion.model}"
 						columnClasses="aon-editDataTable-iconColumn, aon-editDataTable-numberColumn, aon-editDataTable-textColumn, aon-editDataTable-buttonsColumn">
 								
-						<aon:rowSelector toggleOnClick="#{tiposAutorizacion.to == null}"
-							actionListener="#{tiposAutorizacion.onSelect}" />
+						<aon:rowSelector toggleOnClick="#{tiposBonificacion.to == null}"
+							actionListener="#{tiposBonificacion.onSelect}" />
 	
 						<aon:column>
 							<f:facet name="header">
@@ -100,8 +100,8 @@
 								<aon:div>
 									<aon:commandButton alt="[#{bundle.aon_reset}]"
 										styleClass="aon-editDataTable-button aon-icon-reset"
-										actionListener="#{tiposAutorizacion.onReset}" value=""
-										rendered="#{!tiposAutorizacion.new}"
+										actionListener="#{tiposBonificacion.onReset}" value=""
+										rendered="#{!tiposBonificacion.new}"
 										accesskey="#{bundle.aon_key_new_line}" />
 								</aon:div>
 							</f:facet>
@@ -109,31 +109,31 @@
 	
 						<aon:column>
 							<f:facet name="header">
-								<aon:outputText value="#{appBundle.aon_payroll_cdg}" />
+								<aon:outputText value="#{appBundle.payroll_cdg_label}" />
 							</f:facet>
-							<aon:outputText value="#{to.cdg}" rendered="#{to!=tiposAutorizacion.to}" />
+							<aon:outputText value="#{to.cdg}" rendered="#{to!=tiposBonificacion.to}" />
 							<aon:inputText styleClass="aon-form-input-text " required="true"
-								rendered="#{to==tiposAutorizacion.to}" size="2"
-								value="#{tiposAutorizacion.to.cdg}" maxlength="1" />
+								rendered="#{to==tiposBonificacion.to}" size="2"
+								value="#{tiposBonificacion.to.cdg}" maxlength="1" />
 							<f:facet name="footer">
 								<aon:inputText styleClass="aon-form-input-text" required="true"
-									rendered="#{tiposAutorizacion.new}" size="3"
-									value="#{tiposAutorizacion.to.cdg}" maxlength="3" />
+									rendered="#{tiposBonificacion.new}" size="2"
+									value="#{tiposBonificacion.to.cdg}" maxlength="1" />
 							</f:facet>
 						</aon:column>
 	
 						<aon:column>
 							<f:facet name="header">
-								<aon:outputText value="#{appBundle.aon_payroll_description}" />
+								<aon:outputText value="#{appBundle.payroll_description_label}" />
 							</f:facet>
-							<aon:outputText value="#{to.description}" rendered="#{to!=tiposAutorizacion.to}" />
+							<aon:outputText value="#{to.description}" rendered="#{to!=tiposBonificacion.to}" />
 							<aon:inputText styleClass="aon-form-input-text " required="true"
-								rendered="#{to==tiposAutorizacion.to}" size="60"
-								value="#{tiposAutorizacion.to.description}" maxlength="45" />
+								rendered="#{to==tiposBonificacion.to}" size="60"
+								value="#{tiposBonificacion.to.description}" maxlength="45" />
 							<f:facet name="footer">
 								<aon:inputText styleClass="aon-form-input-text" required="true"
-									rendered="#{tiposAutorizacion.new}" size="60"
-									value="#{tiposAutorizacion.to.description}" maxlength="45" />
+									rendered="#{tiposBonificacion.new}" size="60"
+									value="#{tiposBonificacion.to.description}" maxlength="45" />
 							</f:facet>
 						</aon:column>
 	
@@ -142,46 +142,46 @@
 								<aon:outputText value="&#160;" />
 							</f:facet>
 							<aon:div>
-								<f:verbatim rendered="#{to!=tiposAutorizacion.to}">&#160;</f:verbatim>
+								<f:verbatim rendered="#{to!=tiposBonificacion.to}">&#160;</f:verbatim>
 								<aon:commandButton id="acceptEdit-Scope" title="[#{bundle.aon_accept}]" 
-									rendered="#{to==tiposAutorizacion.to}"
+									rendered="#{to==tiposBonificacion.to}"
 									styleClass="aon-editDataTable-button aon-icon-accept"
-									actionListener="#{tiposAutorizacion.onAccept}"
+									actionListener="#{tiposBonificacion.onAccept}"
 									accesskey="#{bundle.aon_key_save_line}" />
 								<aon:commandButton title="[#{bundle.aon_cancel}]"
 									styleClass="aon-editDataTable-button aon-icon-cancel"
-									rendered="#{to==tiposAutorizacion.to}"
-									actionListener="#{tiposAutorizacion.onCancel}" immediate="true"
+									rendered="#{to==tiposBonificacion.to}"
+									actionListener="#{tiposBonificacion.onCancel}" immediate="true"
 									accesskey="#{bundle.aon_key_cancel_line}" />
 								<aon:confirmButton title="[#{bundle.aon_remove}]"
 									styleClass="aon-editDataTable-button aon-icon-delete"
-									rendered="#{to==tiposAutorizacion.to}"
+									rendered="#{to==tiposBonificacion.to}"
 									confirmTitle="#{bundle.aon_confirm_title}" 
 									confirmMessage="#{bundle.aon_remove_confirm}"
-									confirmActionListener="#{tiposAutorizacion.onRemove}" immediate="true"
+									confirmActionListener="#{tiposBonificacion.onRemove}" immediate="true"
 									accesskey="#{bundle.aon_key_remove_line}" />								
 							</aon:div>
 							<f:facet name="footer">
 								<aon:div>
-									<f:verbatim rendered="#{!tiposAutorizacion.new}">&#160;</f:verbatim>
+									<f:verbatim rendered="#{!tiposBonificacion.new}">&#160;</f:verbatim>
 									<aon:commandButton title="[#{bundle.aon_accept}]" 
 										styleClass="aon-editDataTable-button aon-icon-accept"
-										rendered="#{tiposAutorizacion.new}"
-										actionListener="#{tiposAutorizacion.onAccept}"
+										rendered="#{tiposBonificacion.new}"
+										actionListener="#{tiposBonificacion.onAccept}"
 										accesskey="#{bundle.aon_key_save_line}" />
 									<aon:confirmButton title="[#{bundle.aon_cancel}]"
 										styleClass="aon-editDataTable-button aon-icon-cancel"
-										rendered="#{tiposAutorizacion.new}"
+										rendered="#{tiposBonificacion.new}"
 										confirmTitle="#{bundle.aon_confirm_title}" 
 										confirmMessage="#{bundle.aon_cancel_confirm}"
-										confirmActionListener="#{tiposAutorizacion.onCancel}" immediate="true"
+										confirmActionListener="#{tiposBonificacion.onCancel}" immediate="true"
 										accesskey="#{bundle.aon_key_cancel_line}" />
 								</aon:div>
 							</f:facet>
 						</aon:column>
 						
 					</aon:editDataTable>
-					<aon:dataScroller for="autorizacionData" rowCount="#{tiposAutorizacion.model.rowCount}" showNote="true" />
+					<aon:dataScroller for="bonificacionData" rowCount="#{tiposBonificacion.model.rowCount}" showNote="true" />
 				</aon:div>
 			</aon:div>
 		</aon:form>

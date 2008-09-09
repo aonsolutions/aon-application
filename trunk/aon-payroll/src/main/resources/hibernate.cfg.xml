@@ -17,11 +17,13 @@
 		<mapping class="com.code.aon.payroll.tipos.Documento"/>			
 		<mapping class="com.code.aon.payroll.tipos.Registro"/>
 		<mapping class="com.code.aon.payroll.tipos.Incidencia"/>
-		<mapping class="com.code.aon.payroll.tipos.Autorizacion"/>				
+		<mapping class="com.code.aon.payroll.tipos.Autorizacion"/>
+							
 
 		<!-- COTIZACIONES -->		
 		<mapping class="com.code.aon.payroll.cotizacion.PorcentajeMaestro"/>			
-		<mapping class="com.code.aon.payroll.cotizacion.Porcentaje"/>			
+		<mapping class="com.code.aon.payroll.cotizacion.Porcentaje"/>
+		<mapping class="com.code.aon.payroll.cotizacion.Bonificacion"/>				
 
 	</session-factory>
 
