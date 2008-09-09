@@ -7,8 +7,11 @@ import com.code.aon.ui.form.event.ControllerListenerException;
 import com.code.aon.ui.util.AonUtil;
 
 
-public class TiposCnaeListener extends ControllerAdapter {
+public class TiposCnaeControllerListener extends ControllerAdapter {
 	
+	/**
+	 * Comprueba que la clave no sea ni vacía ni esté fuera del rango
+	 */
 	@Override
 	public void beforeBeanAdded(ControllerEvent event)
 			throws ControllerListenerException {
