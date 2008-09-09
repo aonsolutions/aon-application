@@ -2,6 +2,8 @@ package com.code.aon.jaas.ldap;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -109,7 +111,11 @@ public class Domain implements IDomain, ILdapConstants, ILdapSecurityConstants, 
 
 	@Override
 	public Map<String, IUser> standaloneUsers() {
-		throw new UnsupportedOperationException("Not supported!");
+		Map<String,IUser> map = new HashMap<String, IUser>();
+		for( IUser user : ldap.getUsers(this.id) ) {
+			map.put( user.getId(), user);
+		}
+		return map;
 	}
 
 	@Override
