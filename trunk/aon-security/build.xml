@@ -3,7 +3,7 @@
 
 	<property name="mgr" value="aon-security-mgr" />
 	<property name="client" value="aon.security" />
-	<property name="version" value="1.6.0" />
+	<property name="version" value="1.6.1" />
 	<property name="jar.valve.name" value="valve-${version}" />
 
     <property name="src.dir" value="src/main/java" />
