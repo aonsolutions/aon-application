@@ -142,7 +142,7 @@
 							<f:facet name="header">
 								<aon:outputText value="#{appBundle.payroll_indresta_label}" />
 							</f:facet>
-							<aon:outputText value="#{to.indresta}" rendered="#{to!=tiposIncidencia.to}" />
+							<!--  <aon:outputText value="#{to.indresta}" rendered="#{to!=tiposIncidencia.to}" />
 							<aon:inputText styleClass="aon-form-input-text " required="true"
 								rendered="#{to==tiposIncidencia.to}" size="5"
 								value="#{tiposIncidencia.to.indresta}" maxlength="45" />
@@ -150,9 +150,9 @@
 								<aon:inputText styleClass="aon-form-input-text" required="true"
 									rendered="#{tiposIncidencia.new}" size="5"
 									value="#{tiposIncidencia.to.indresta}" maxlength="1" />
-							</f:facet>
+							</f:facet>-->
 							
-							<!-- Con textbox
+							
 							 <aon:outputText value="&#160;&#160;&#160;&#160;&#160;"
 							styleClass="aon-icon-check" 
 							rendered="#{to!=tiposIncidencia.to and !to.isIndresta}" />
@@ -168,7 +168,7 @@
 							<h:selectBooleanCheckbox rendered="#{tiposIncidencia.new}"  value="#{tiposIncidencia.to.indresta}"  >
                               
                              </h:selectBooleanCheckbox>
-							</f:facet>-->
+							</f:facet>
 							
 						</aon:column>
 						
@@ -177,7 +177,7 @@
 							<f:facet name="header">
 								<aon:outputText value="#{appBundle.payroll_inddto_label}" />
 							</f:facet>
-							<aon:outputText value="#{to.inddto}" rendered="#{to!=tiposIncidencia.to}" />
+							<!--  <aon:outputText value="#{to.inddto}" rendered="#{to!=tiposIncidencia.to}" />
 							<aon:inputText styleClass="aon-form-input-text " required="true"
 								rendered="#{to==tiposIncidencia.to}" size="5"
 								value="#{tiposIncidencia.to.inddto}" maxlength="1" />
@@ -185,9 +185,9 @@
 								<aon:inputText styleClass="aon-form-input-text" required="true"
 									rendered="#{tiposIncidencia.new}" size="5"
 									value="#{tiposIncidencia.to.inddto}" maxlength="1" />
-							</f:facet>
+							</f:facet>-->
 							
-							 <!-- Con textbox
+							
 							  <aon:outputText value="&#160;&#160;&#160;&#160;&#160;"
 							styleClass="aon-icon-check"
 							rendered="#{to!=tiposIncidencia.to and !to.isInddto}" />
@@ -200,10 +200,10 @@
                            </h:selectBooleanCheckbox>
                            
                            <f:facet name="footer">
-							<h:selectBooleanCheckbox rendered="#{tiposIncidencia.new}"  value="#{tiposIncidencia.to.inddto}"  >
+							<h:selectBooleanCheckbox rendered="#{tiposIncidencia.new}" value="#{tiposIncidencia.to.inddto}" >
                               
                              </h:selectBooleanCheckbox>
-							</f:facet>-->
+							</f:facet>
 						</aon:column>
 						
 	
