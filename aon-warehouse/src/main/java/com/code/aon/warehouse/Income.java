@@ -343,4 +343,15 @@ public class Income implements ITransferObject, ICalculableContainer, IHeaderObj
 		return new DiscountExpression("0.0");
 	}
 
+    @Override
+    public boolean equals(Object obj) {
+    	if(id == null){
+    		return super.equals(obj);
+    	}
+        if (obj instanceof Income) {
+            return (this.id.equals(((Income)obj).getId()));
+        }
+        return false;
+    }
+
 }
