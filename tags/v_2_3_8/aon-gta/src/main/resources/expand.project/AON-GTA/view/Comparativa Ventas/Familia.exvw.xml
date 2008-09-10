@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<view description="Familia" sqlSentence="SELECT pcategory.id, pcategory.name, SUM(TRUNCATE(invoice_detail.taxable_base,2)) &#xd;&#xa;  FROM pcategory, invoice_detail, invoice, item, product &#xd;&#xa; WHERE invoice_detail.item = item.id &#xd;&#xa;   AND item.product = product.id&#xd;&#xa;   AND product.category = pcategory.id &#xd;&#xa;   AND invoice_detail.invoice = invoice.id &#xd;&#xa;   AND invoice.issue_date&#xd;&#xa;      BETWEEN DATE_SUB(STR_TO_DATE(CONCAT(?,&quot;-&quot;,?,&quot;-&quot;,1), &quot;%Y-%m-%d&quot;), INTERVAL 12 MONTH)&#xd;&#xa;          AND DATE_SUB(STR_TO_DATE(CONCAT(?,&quot;-&quot;,? + 1,&quot;-&quot;,1), &quot;%Y-%m-%d&quot;), INTERVAL 1 DAY) &#xd;&#xa;   AND invoice.type = ?&#xd;&#xa; GROUP BY 1,2">
+    <parameters>
+        <parameter name="year1" type="INTEGER"/>
+        <parameter name="month1" type="INTEGER"/>
+        <parameter name="year1" type="INTEGER"/>
+        <parameter name="month1" type="INTEGER"/>
+        <parameter name="type" type="INTEGER"/>
+    </parameters>
+    <results>
+        <result accessName="CATEGORY_ID" columnId="id" export="true"
+            label="Codigo" tableId="pcategory" type="INTEGER"/>
+        <result accessName="CATEGORY_NAME" columnId="name" export="true"
+            label="Familia" tableId="pcategory" type="STRING"/>
+        <result
+            accessName="SUM(TRUNCATE(invoice_detail.taxable_base,2))"
+            columnId="SUM(TRUNCATE(invoice_detail.taxable_base,2))"
+            label="Total" type="DOUBLE"/>
+    </results>
+    <dataModelReferences/>
+</view>

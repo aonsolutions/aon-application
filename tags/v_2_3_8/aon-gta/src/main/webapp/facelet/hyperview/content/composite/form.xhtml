@@ -1,0 +1,75 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:h="http://java.sun.com/jsf/html">
+<body>
+
+<ui:composition>
+	<t:newspaperTable value="#{compositeContent.metadata}" var="column"
+		newspaperColumns="1"
+		columnClasses="aon-form-table-column-odd,aon-form-table-column-even aon-form-table-mainColumn"
+		styleClass="aon-form-table aon-form-table-mainColumn">
+
+		<f:facet name="footer">
+			<t:div styleClass="aon-form-button-group"
+				rendered="#{compositeContent.linkable}">
+				<h:outputLink styleClass="aon-form-button"
+					value="#{compositeContent.result.linkUrl}" target="_blank">
+					<h:outputText value="#{compositeContent.result.linkLabel}" />
+				</h:outputLink>
+			</t:div>
+		</f:facet>
+
+		<h:column>
+			<h:outputText value="#{column.label}"
+				styleClass="aon-form-input-text-label aon-form-table-column-odd-label" />
+		</h:column>
+		<h:column>
+			<t:div rendered="#{column.string}">
+				<h:outputText 
+					value="#{compositeContent.result.values[column.position]}" />
+			</t:div>
+			<t:div rendered="#{column.integer}">
+				<h:outputText 
+					value="#{compositeContent.result.values[column.position]}">
+					<f:convertNumber integerOnly="#{true}" />
+				</h:outputText>
+			</t:div>
+			<t:div rendered="#{column.double}">
+				<h:outputText 
+					value="#{compositeContent.result.values[column.position]}">
+					<f:convertNumber integerOnly="#{false}" />
+				</h:outputText>
+			</t:div>
+			<t:div rendered="#{column.date}">
+				<h:outputText 
+					value="#{compositeContent.result.values[column.position]}"
+					converter="aonNumericDateConversor" />
+			</t:div>
+			<t:div rendered="#{column.time}">
+				<h:outputText 
+					value="#{compositeContent.result.values[column.position]}">
+					<f:convertDateTime type="time" timeStyle="medium"
+						timeZone="#{timeZoneController.timeZoneId}" />
+				</h:outputText>
+			</t:div>
+			<t:div rendered="#{column.timestamp}">
+				<h:outputText 
+					value="#{compositeContent.result.values[column.position]}">
+					<f:convertDateTime pattern="#{bundle.aon_timestamp_pattern}"
+						type="both" timeZone="#{timeZoneController.timeZoneId}" />
+				</h:outputText>
+			</t:div>
+			<t:div rendered="#{column.boolean}">
+				<h:outputText 
+					value="#{compositeContent.result.values[column.position]}" />
+			</t:div>
+		</h:column>
+	</t:newspaperTable>
+</ui:composition>
+
+</body>
+</html>
+
