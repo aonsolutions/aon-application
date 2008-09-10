@@ -680,8 +680,8 @@ public class SalesInvoicingController extends BasicController {
 				criteria = new Criteria();
 				criteria.addEqualExpression(invoiceDetailBean.getFieldName(IFinanceAlias.INVOICE_DETAIL_DELIVERY_DETAIL), deliveryDetail.getId());
 				Iterator iterator = invoiceDetailBean.getList(criteria).iterator();
-				if(iterator.hasNext()){
-					invoiceDetailBean.remove((ITransferObject)iterator.next());
+				while(iterator.hasNext()){
+					invoiceDetailBean.remove((InvoiceDetail)iterator.next());
 				}
 			}
 		} catch (ManagerBeanException e) {
