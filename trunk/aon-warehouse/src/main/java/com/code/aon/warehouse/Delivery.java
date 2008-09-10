@@ -46,7 +46,7 @@ public class Delivery implements ITransferObject, IHeaderObject, ICalculableCont
 	/**
 	 * The logger of this class
 	 */
-	private static final Logger LOGGER = Logger.getLogger(Income.class.getName());
+	private static final Logger LOGGER = Logger.getLogger(Delivery.class.getName());
 	
 	/**
 	 * Unique key
@@ -315,4 +315,16 @@ public class Delivery implements ITransferObject, IHeaderObject, ICalculableCont
 	public DiscountExpression getDiscountExpression() {
 		return new DiscountExpression("0.0");
 	}
+
+    @Override
+    public boolean equals(Object obj) {
+    	if(id == null){
+    		return super.equals(obj);
+    	}
+        if (obj instanceof Delivery) {
+            return (this.id.equals(((Delivery)obj).getId()));
+        }
+        return false;
+    }
+
 }
