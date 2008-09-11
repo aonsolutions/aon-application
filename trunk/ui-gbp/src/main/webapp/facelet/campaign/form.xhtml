@@ -31,8 +31,9 @@
 							rendered="#{campaign.to!=null or campaign.new}"
 							reRender="gridToolbar,campaignTab"
 							styleClass="aon-finding-toolbar-item aon-icon-accept"
-							actionListener="#{campaign.accept}"
-							accesskey="#{bundle.aon_key_save}" />
+							accesskey="#{bundle.aon_key_save}">
+							<aon:actionListener method="#{campaign.accept}" />
+						</aon:commandButton>
 						<aon:commandButton id="cancel" value="#{bundle.aon_cancel}"
 							rendered="#{campaign.to!=null or campaign.new}"
 							styleClass="aon-finding-toolbar-item aon-icon-cancel"
