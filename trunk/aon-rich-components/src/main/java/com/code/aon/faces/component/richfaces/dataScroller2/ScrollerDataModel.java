@@ -1,13 +1,12 @@
 package com.code.aon.faces.component.richfaces.dataScroller2;
 
-import javax.el.ValueExpression;
 import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
 import javax.faces.model.DataModel;
 
 public class ScrollerDataModel extends DataModel {
 
-	private ValueExpression model;
+	private DataModel model;
 	
 	private int currentPage;
 	
@@ -15,19 +14,17 @@ public class ScrollerDataModel extends DataModel {
 	
 	private int maxPages;
 
-	public ScrollerDataModel( ValueExpression model ) {
+	public ScrollerDataModel( DataModel model ) {
 		this.pageSize = 20;
 		this.maxPages = 5;
 		setModel( model );
 	}
 
 	public DataModel getModel() {
-		FacesContext ctx = FacesContext.getCurrentInstance();
-		DataModel dataModel = (DataModel) model.getValue(ctx.getELContext());
-		return dataModel;
+		return model;
 	}
 
-	public void setModel(ValueExpression model) {
+	public void setModel(DataModel model) {
 		this.model = model;
 	}
 

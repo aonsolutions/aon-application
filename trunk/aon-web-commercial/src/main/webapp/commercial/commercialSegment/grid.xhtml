@@ -57,10 +57,6 @@
 								confirmMessage="#{bundle.aon_remove_confirm}"
 								confirmActionListener="#{commercialSegment.onRemove}"
 								accesskey="#{bundle.aon_key_remove}" />
-							<aon:commandButton id="users" value="#{bundle.aon_back}"
-								rendered="#{commercialSegment.to==null}" action="home"
-								actionListener="#{commercialSegment.onCancel}"
-								styleClass="aon-finding-toolbar-item aon-icon-cancel" />
 						</aon:div>
 					</aon:panelGrid>
 				</aon:div>
@@ -69,7 +65,7 @@
 				<!--  aon-region-body -->
 				<aon:div styleClass="aon-scroll-area">
 
-					<aon:editDataTable id="commercialSegmentData" var="to" rows="0"
+					<aon:editDataTable id="commercialSegmentData" var="to" rows="20"
 						rendered="#{(commercialSegment.model.rowCount > 0) or (commercialSegment.new)}"
 						value="#{commercialSegment.model}"
 						columnClasses="aon-editDataTable-iconColumn, aon-editDataTable-textColumn, aon-editDataTable-textColumn, aon-editDataTable-buttonsColumn">
@@ -165,8 +161,7 @@
 						</aon:column>
 					</aon:editDataTable>
 
-					<aon:dataScroller for="commercialSegmentData"
-						rowCount="#{commercialSegment.model.rowCount}" showNote="true" />
+					<aon:dataScroller2 for="commercialSegmentData" showNote="true" />
 
 				</aon:div>
 			</aon:div>

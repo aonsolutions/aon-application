@@ -57,10 +57,6 @@
 								confirmMessage="#{bundle.aon_remove_confirm}"
 								confirmActionListener="#{commercialActivity.onRemove}"
 								accesskey="#{bundle.aon_key_remove}" />
-							<aon:commandButton id="users" value="#{bundle.aon_back}"
-								rendered="#{commercialActivity.to==null}" action="home"
-								actionListener="#{commercialActivity.onCancel}"
-								styleClass="aon-finding-toolbar-item aon-icon-cancel" />
 						</aon:div>
 					</aon:panelGrid>
 				</aon:div>
@@ -69,7 +65,7 @@
 				<!--  aon-region-body -->
 				<aon:div styleClass="aon-scroll-area">
 
-					<aon:editDataTable id="commercialActivityData" var="to" rows="0"
+					<aon:editDataTable id="commercialActivityData" var="to" rows="20"
 						rendered="#{(commercialActivity.model.rowCount > 0) or (commercialActivity.new)}"
 						value="#{commercialActivity.model}"
 						columnClasses="aon-editDataTable-iconColumn, aon-editDataTable-textColumn, aon-editDataTable-textColumn, aon-editDataTable-buttonsColumn">
@@ -137,7 +133,7 @@
 									rendered="#{to==commercialActivity.to}"
 									actionListener="#{commercialActivity.onCancel}" immediate="true"
 									accesskey="#{bundle.aon_key_cancel_line}" />
-								<aon:confirmButton title="[#{bundle.aon_remove}]"
+								<aon:confirmButton title="[#{bundle.aon_remove}]" id="removeEdit"
 									styleClass="aon-editDataTable-button aon-icon-delete"
 									rendered="#{to==commercialActivity.to}"
 									confirmTitle="#{bundle.aon_confirm_title}"
@@ -153,7 +149,7 @@
 										rendered="#{commercialActivity.new}"
 										styleClass="aon-editDataTable-button aon-icon-accept"
 										accesskey="#{bundle.aon_key_save_line}" />
-									<aon:confirmButton title="[#{bundle.aon_cancel}]"
+									<aon:confirmButton title="[#{bundle.aon_cancel}]" id="cancelNewInline"
 										styleClass="aon-editDataTable-button aon-icon-cancel"
 										rendered="#{commercialActivity.new}"
 										confirmTitle="#{bundle.aon_confirm_title}"
@@ -165,8 +161,7 @@
 						</aon:column>
 					</aon:editDataTable>
 
-					<aon:dataScroller for="commercialActivityData"
-						rowCount="#{commercialActivity.model.rowCount}" showNote="true" />
+					<aon:dataScroller2 for="commercialActivityData" showNote="true" />
 
 				</aon:div>
 			</aon:div>
