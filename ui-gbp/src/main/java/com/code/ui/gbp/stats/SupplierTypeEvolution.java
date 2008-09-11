@@ -28,8 +28,8 @@ public class SupplierTypeEvolution {
 		this.supplierTypeName = supplierTypeName;
 		this.campaignId = campaignId;
 		this.campaignName = campaignName;
-		this.offer = offer.doubleValue();
-		this.invoice = invoice.doubleValue();
+		this.offer = offer == null? 0 : offer.doubleValue();
+		this.invoice = invoice == null? 0 : invoice.doubleValue();
 	}
 
 	public String getSupplierTypeName() {
