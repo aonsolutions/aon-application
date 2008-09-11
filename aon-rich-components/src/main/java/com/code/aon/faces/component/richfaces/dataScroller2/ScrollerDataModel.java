@@ -15,8 +15,8 @@ public class ScrollerDataModel extends DataModel {
 	private int maxPages;
 
 	public ScrollerDataModel( DataModel model ) {
-		this.pageSize = 20;
-		this.maxPages = 5;
+		this.maxPages = 5;		
+		this.pageSize = 0;
 		setModel( model );
 	}
 
@@ -130,16 +130,16 @@ public class ScrollerDataModel extends DataModel {
     	return this.currentPage < getLastPage();
 	}
 	
-    public int getLastPage() {
+    private int getLastPage() {
     	if ( getRowCount() > 0 ) {
-    		return getRowCount() / getPageSize();
+    		return (getRowCount()-1) / getPageSize();
     	}
     	return 0;
     }
     
-    public int getNumberOfPages() {
+    private int getNumberOfPages() {
     	if ( getRowCount() > 0 ) {
-    		return (getRowCount() / getPageSize()) + 1;
+    		return ( (getRowCount()-1) / getPageSize()) + 1;
     	}
     	return 0;
     }
