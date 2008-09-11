@@ -315,7 +315,7 @@
 				com.code.aon.faces.DataTable
 			</component-type>
 			<handler-class>
-				com.code.aon.faces.component.AonComponentHandler
+				com.code.aon.faces.component.richfaces.dataTable.DataTableHandler
 			</handler-class>
 		</component>
 	</tag>

@@ -1,5 +1,7 @@
 package com.code.aon.faces.component.richfaces.dataScroller2;
 
+import java.util.Map;
+
 import javax.el.ValueExpression;
 import javax.el.VariableMapper;
 import javax.faces.component.UIComponent;
@@ -8,6 +10,7 @@ import javax.faces.component.UIViewRoot;
 import javax.faces.model.DataModel;
 
 import com.code.aon.faces.component.myfaces.UIComponentTagUtils;
+import com.code.aon.faces.component.richfaces.form.FormHandler;
 import com.code.aon.faces.component.util.FaceletUtil;
 import com.sun.facelets.FaceletContext;
 import com.sun.facelets.el.VariableMapperWrapper;
@@ -54,8 +57,16 @@ public class DataScroller2Handler extends TagHandler {
 		forTag = getRequiredAttribute(FOR);
 	}
 	
+	@SuppressWarnings("unchecked")
 	private UIData getDataTable( FaceletContext ctx, UIComponent parent ) {
-		return (UIData) ComponentSupport.findChild( parent, forTag.getValue(ctx) );
+		String id = forTag.getValue(ctx);
+		UIData table = (UIData) ComponentSupport.findChild( parent, id );
+		if ( table == null ) {
+			UIViewRoot root = ComponentSupport.getViewRoot(ctx, parent);
+			Map<String,UIData> dataTableMap = (Map<String, UIData>) root.getAttributes().get( FormHandler.CURRENT_FORM_DATA_TABLE_MAP );
+			table = dataTableMap.get( id );
+		}
+		return table;
 	}
 	
 	private int getPageSize( FaceletContext ctx, UIData table ) {
@@ -127,7 +138,7 @@ public class DataScroller2Handler extends TagHandler {
 	
 	@Override
 	public void apply(FaceletContext ctx, UIComponent parent) {
-		if ( isRendered(ctx) ) {
+		if ( isRendered(ctx) && parent.isRendered() ) {
 			UIData table = getDataTable(ctx, parent);
 			insertTemplate( ctx, parent, table );
 			updateDataTableFirst( ctx, table );
