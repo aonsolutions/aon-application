@@ -87,7 +87,7 @@ public class ScrollerDataModel extends DataModel {
 	}
 
 	public int getFirst() {
-		int first = (this.currentPage * getPageSize()) + 1;
+		int first = this.currentPage * getPageSize();
 		return Math.min(first, getRowCount());
 	}
 
@@ -122,7 +122,6 @@ public class ScrollerDataModel extends DataModel {
     	Integer page = (Integer) context.getExternalContext().getRequestMap().get("page");
     	if ( page != null ) {
     		this.currentPage = page - 1;
-    		getModel().setRowIndex( getFirst() );
     	}
     }
     
