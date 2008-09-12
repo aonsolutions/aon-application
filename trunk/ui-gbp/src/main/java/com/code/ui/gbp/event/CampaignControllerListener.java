@@ -5,20 +5,25 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.ql.util.ExpressionException;
 import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
 import com.code.gbp.Campaign;
 import com.code.gbp.dao.IGBPAlias;
+import com.code.gbp.enumeration.CampaignStatus;
 
 public class CampaignControllerListener extends ControllerAdapter {
 
 	@Override
 	public void beforeModelInitialized(ControllerEvent event) throws ControllerListenerException {
 		try {
-			event.getController().getCriteria().addOrder(event.getController().getFieldName(IGBPAlias.CAMPAIGN_START_DATE), false);
-			event.getController().getCriteria().addOrder(event.getController().getFieldName(IGBPAlias.CAMPAIGN_CODE));
+			event.getController().getCriteria().addOrExpression(event.getController().getFieldName(IGBPAlias.CAMPAIGN_STATUS),""+CampaignStatus.ACTIVE.ordinal());
+			event.getController().getCriteria().addOrExpression(event.getController().getFieldName(IGBPAlias.CAMPAIGN_STATUS),""+CampaignStatus.PREPARING.ordinal());
+			event.getController().getCriteria().addOrder(event.getController().getFieldName(IGBPAlias.CAMPAIGN_CODE), false);
 		} catch (ManagerBeanException e) {
+			throw new ControllerListenerException(e);
+		} catch (ExpressionException e) {
 			throw new ControllerListenerException(e);
 		}
 	}
