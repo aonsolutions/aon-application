@@ -7,6 +7,7 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import javax.annotation.PostConstruct;
 import javax.faces.context.FacesContext;
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
@@ -17,20 +18,23 @@ import org.apache.commons.lang.ArrayUtils;
 import org.richfaces.event.DropEvent;
 
 import com.code.aon.ui.util.AonUtil;
-import com.code.aon.ui.webmail.bean.AonConstants;
 import com.code.aon.ui.webmail.bean.AonFolder;
 import com.code.aon.ui.webmail.bean.AonMessage;
 import com.code.aon.ui.webmail.bean.AonMessageSortableList;
+import com.code.aon.ui.webmail.bean.WebMailConstants;
 import com.code.aon.ui.webmail.exception.WebmailException;
-import com.code.aon.ui.webmail.listener.ITreeListener;
 import com.code.aon.ui.webmail.tree.FoldersTreeBean;
 import com.sun.mail.imap.IMAPFolder;
 
-public class FolderController implements ITreeListener, AonConstants {
+public class FolderController implements WebMailConstants {
 
 	private static final Logger LOGGER = Logger.getLogger(FolderController.class.getName());
 	
 	private AonFolder folder;
+	
+	private WebMailController webMailController;
+	
+	private FoldersTreeBean treeController;
 	
 	private int currentPage = 1;
 	
@@ -43,8 +47,16 @@ public class FolderController implements ITreeListener, AonConstants {
 	}
 	
 	public void resetCurrentPage() {
-		this.currentPage = 1;
+		setCurrentPage( 1 );
 	}
+	
+   @PostConstruct
+   public void initBean() {
+	   getWebMailController().setFolderController(this);
+	   getTreeController().setFolderController(this);
+	   // Nos aseguramos que esta creado el managed bean de Login
+	   AonUtil.getRegisteredBean(BEAN_LOGIN);
+   }	
 
 	/**
 	 * @return the folder
@@ -123,12 +135,10 @@ public class FolderController implements ITreeListener, AonConstants {
 			} catch (WebmailException e) {
 			}
 		}else{
-	    	WebMailController webMailController = (WebMailController)AonUtil.getRegisteredBean(BEAN_WEBMAIL);
-	    	AonFolder dest = webMailController.getServer().getAonFolder(AonFolder.TRASH_FOLDER_NAME);
-	    	FoldersTreeBean treeBean = (FoldersTreeBean)AonUtil.getRegisteredBean(BEAN_TREE);
-	    	AonFolder treeDest = treeBean.recoverTreeNode(dest);
+	    	AonFolder dest = getWebMailController().getServer().getAonFolder(AonFolder.TRASH_FOLDER_NAME);
+	    	AonFolder treeDest = getTreeController().recoverTreeNode(dest);
 	    	moveSelectedMessages(treeDest);
-	    	treeBean.loadTree();
+	    	getTreeController().loadTree();
 		}
     }
 
@@ -163,10 +173,10 @@ public class FolderController implements ITreeListener, AonConstants {
     
     private List<AonMessage> currentPageObjects() {
     	List<AonMessage> messages = new ArrayList<AonMessage>();
-    	int currentPage = this.currentPage;
+    	int currentPage = getCurrentPage();
     	currentPage--;
     	AonMessage[] allMessages = folder.getMessageList();
-    	int pageObjectNumber = folder.getModel().getPageSize();
+    	int pageObjectNumber = folder.getPageSize();
     	for (int i = currentPage*pageObjectNumber;i < (currentPage*pageObjectNumber+pageObjectNumber); i++){
     		if (i < allMessages.length) {
     			messages.add(allMessages[i]);
@@ -231,12 +241,10 @@ public class FolderController implements ITreeListener, AonConstants {
 	public void renameFolder(ActionEvent event){
 		try{
 			this.folder.close(false);
-	    	WebMailController webMailController = (WebMailController)AonUtil.getRegisteredBean(BEAN_WEBMAIL);
-			Folder newFolder = webMailController.getServer().getRoot().getFolder(renameFolderName);
+			Folder newFolder = getWebMailController().getServer().getRoot().getFolder(renameFolderName);
 			this.folder.getFolder().renameTo(newFolder);
 			this.folder = webMailController.getServer().getAonFolder(renameFolderName);
-	    	FoldersTreeBean treeBean = (FoldersTreeBean)AonUtil.getRegisteredBean(BEAN_TREE);
-	    	treeBean.loadTree();
+	    	getTreeController().loadTree();
 		} catch (MessagingException e) {
 			AonUtil.addErrorMessage(e.getMessage());
 			throw new AbortProcessingException(e);
@@ -249,10 +257,8 @@ public class FolderController implements ITreeListener, AonConstants {
     //*************************************************************
 
 	public void createFolder(ActionEvent event) {
-    	WebMailController webMailController = (WebMailController)AonUtil.getRegisteredBean(BEAN_WEBMAIL);
-       	webMailController.getServer().createAonFolder(null, newFolderName, Folder.HOLDS_MESSAGES);
-    	FoldersTreeBean treeBean = (FoldersTreeBean)AonUtil.getRegisteredBean(BEAN_TREE);
-    	treeBean.loadTree();
+       	getWebMailController().getServer().createAonFolder(null, newFolderName, Folder.HOLDS_MESSAGES);
+    	getTreeController().loadTree();
     }
 
     //*************************************************************
@@ -263,8 +269,7 @@ public class FolderController implements ITreeListener, AonConstants {
 			if (this.folder.getMessageCount()==0){
 				this.folder.deleteFolder(true);
 				this.folder = null;
-		    	FoldersTreeBean treeBean = (FoldersTreeBean)AonUtil.getRegisteredBean(BEAN_TREE);
-		    	treeBean.loadTree();
+		    	getTreeController().loadTree();
 			}
 		} catch (WebmailException e) {
 			AonUtil.addErrorMessage(e.getMessage());
@@ -402,5 +407,27 @@ public class FolderController implements ITreeListener, AonConstants {
 	       	messageController.setMessage( aonMessage );      				
 		}
     }
-    
+
+	public WebMailController getWebMailController() {
+		if ( webMailController == null ) {
+	    	setWebMailController( (WebMailController)AonUtil.getRegisteredBean(BEAN_WEBMAIL) );
+		}
+		return webMailController;
+	}
+
+	public void setWebMailController(WebMailController webMailController) {
+		this.webMailController = webMailController;
+	}
+
+	public FoldersTreeBean getTreeController() {
+		if ( treeController == null ) {
+	    	setTreeController( (FoldersTreeBean)AonUtil.getRegisteredBean(BEAN_TREE) );
+		}
+		return treeController;
+	}
+
+	public void setTreeController(FoldersTreeBean treeController) {
+		this.treeController = treeController;
+	}
+	
 }

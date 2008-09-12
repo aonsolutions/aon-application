@@ -788,7 +788,7 @@ public class AonMessage implements IMimeType {
 	public static String getMessageEnvelope( Message message, String content, String headerId ) throws MessagingException {
 		StringBuffer sb = new StringBuffer();
 		Locale locale = AonUtil.getCurrentLocale();
-		ResourceBundle bundle = ResourceBundle.getBundle(AonConstants.RESOURCE_BUNDLE, locale);	
+		ResourceBundle bundle = ResourceBundle.getBundle(WebMailConstants.RESOURCE_BUNDLE, locale);	
 		sb.append( "<br/>" );
 		if ( headerId != null ) {
 			sb.append( "<BLOCKQUOTE style='PADDING-RIGHT: 0px; PADDING-LEFT: 10px; MARGIN-LEFT: 5px; BORDER-LEFT: #000000 2px solid; MARGIN-RIGHT: 0px'>" );
