@@ -17,7 +17,7 @@ import com.code.aon.common.ITransferObject;
 
 
 @Entity
-@Table(name="cnae")
+@Table(name="tipocnae")
 public class Cnae implements ITransferObject {
 
   private String cdg;
