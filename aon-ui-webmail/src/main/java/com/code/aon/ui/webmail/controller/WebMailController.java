@@ -27,7 +27,7 @@ import com.code.aon.ldap.LdapException;
 import com.code.aon.ldap.LdapSession;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.util.AonUtil;
-import com.code.aon.ui.webmail.bean.AonConstants;
+import com.code.aon.ui.webmail.bean.WebMailConstants;
 import com.code.aon.ui.webmail.bean.AonFolder;
 import com.code.aon.ui.webmail.bean.AonServer;
 import com.code.aon.ui.webmail.tree.FoldersTreeBean;
@@ -35,7 +35,7 @@ import com.code.aon.webmail.MailAccount;
 import com.code.aon.webmail.Signature;
 import com.code.aon.webmail.dao.IWebMailAlias;
 
-public class WebMailController implements AonConstants, ILdapConstants {
+public class WebMailController implements WebMailConstants, ILdapConstants {
 
 	private static final Logger LOGGER = Logger.getLogger(WebMailController.class.getName());
 	
@@ -44,6 +44,8 @@ public class WebMailController implements AonConstants, ILdapConstants {
 	private AonServer server;
 		
 	private Entry aonUser;
+	
+	private FolderController folderController;
 
 	
 	/**
@@ -94,8 +96,7 @@ public class WebMailController implements AonConstants, ILdapConstants {
 		initBasic(mailAccount);
     	FoldersTreeBean treeBean = (FoldersTreeBean)AonUtil.getRegisteredBean(BEAN_TREE);
     	treeBean.loadTree();
-    	FolderController folderBean = (FolderController)AonUtil.getRegisteredBean(BEAN_FOLDER);
-    	folderBean.nodeSelected(getServer().getAonFolder(AonFolder.INBOX_FOLDER_NAME));
+    	getFolderController().nodeSelected(getServer().getAonFolder(AonFolder.INBOX_FOLDER_NAME));
 	}
 
     private MailAccount getAccount(AuthPrincipal mailUser) throws ManagerBeanException {
@@ -192,4 +193,15 @@ public class WebMailController implements AonConstants, ILdapConstants {
         return userName;
     }
 
+	public FolderController getFolderController() {
+		if ( folderController == null ) {
+	    	setFolderController( (FolderController)AonUtil.getRegisteredBean(BEAN_FOLDER) );
+		}
+		return folderController;
+	}
+
+	public void setFolderController(FolderController folderController) {
+		this.folderController = folderController;
+	}
+	
 }

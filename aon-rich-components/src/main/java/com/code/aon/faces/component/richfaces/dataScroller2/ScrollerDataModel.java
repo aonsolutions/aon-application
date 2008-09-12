@@ -4,6 +4,8 @@ import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
 import javax.faces.model.DataModel;
 
+import org.apache.commons.lang.ObjectUtils;
+
 public class ScrollerDataModel extends DataModel {
 
 	private DataModel model;
@@ -25,6 +27,9 @@ public class ScrollerDataModel extends DataModel {
 	}
 
 	public void setModel(DataModel model) {
+		if (! ObjectUtils.equals(this.model, model) ) {
+			this.currentPage = 0;
+		}
 		this.model = model;
 	}
 

@@ -46,7 +46,7 @@ import com.code.aon.ql.Criteria;
 import com.code.aon.ui.form.IController;
 import com.code.aon.ui.util.AonUtil;
 import com.code.aon.ui.webmail.bean.AonAttachment;
-import com.code.aon.ui.webmail.bean.AonConstants;
+import com.code.aon.ui.webmail.bean.WebMailConstants;
 import com.code.aon.ui.webmail.bean.AonFile;
 import com.code.aon.ui.webmail.bean.AonFolder;
 import com.code.aon.ui.webmail.bean.AonMessage;
@@ -59,7 +59,7 @@ import com.sun.mail.imap.AppendUID;
 import com.sun.mail.imap.IMAPFolder;
 import com.sun.mail.util.LineOutputStream;
 
-public class MessageController implements AonConstants, IAonFileListener {
+public class MessageController implements WebMailConstants, IAonFileListener {
 
 	private static final String REPLIED_MESSAGE = "aon_webmail_replied_message";
 

@@ -29,14 +29,14 @@ import com.code.aon.ldap.Entry;
 import com.code.aon.ldap.LdapException;
 import com.code.aon.ldap.LdapSession;
 import com.code.aon.ui.util.AonUtil;
-import com.code.aon.ui.webmail.bean.AonConstants;
+import com.code.aon.ui.webmail.bean.WebMailConstants;
 import com.code.aon.ui.webmail.bean.AonFolder;
 import com.code.aon.ui.webmail.bean.AonListEmail;
 import com.code.aon.ui.webmail.exception.WebmailException;
 import com.code.aon.webmail.MailAccount;
 import com.code.aon.webmail.enumeration.SpamScoreType;
 
-public class SpamController extends BasicLdap implements AonConstants {
+public class SpamController extends BasicLdap implements WebMailConstants {
 
 	private static final Logger LOGGER = Logger.getLogger(SpamController.class.getName());
 	

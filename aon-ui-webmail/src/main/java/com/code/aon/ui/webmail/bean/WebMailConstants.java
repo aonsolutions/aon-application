@@ -1,6 +1,6 @@
 package com.code.aon.ui.webmail.bean;
 
-public interface AonConstants {
+public interface WebMailConstants {
 
 	// ************************************************************
 	// NAVIGATION
