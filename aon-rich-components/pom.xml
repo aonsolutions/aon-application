@@ -23,7 +23,7 @@
 		<dependency>
 			<groupId>org.richfaces.ui</groupId>
 			<artifactId>richfaces-ui</artifactId>
-			<version>3.2.2.GA</version>
+			<version>3.2.1.GA</version>
 			<scope>compile</scope>			
 			<exclusions>
 				<exclusion>
