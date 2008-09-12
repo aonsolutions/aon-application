@@ -6,7 +6,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.faces.model.ArrayDataModel;
-import javax.faces.model.ListDataModel;
+import javax.faces.model.DataModel;
 import javax.mail.Folder;
 import javax.mail.Message;
 import javax.mail.MessagingException;
@@ -31,7 +31,7 @@ public class AonMessageSortableList extends AonSortableList implements MessageCo
     
     public static String DATE_COLUMN = "date";
 	
-    private ScrollerDataModel model;
+    private DataModel model;
     
     private AonMessage[] messageList;
 
@@ -73,10 +73,10 @@ public class AonMessageSortableList extends AonSortableList implements MessageCo
 	 */
 	public void setMessageList(AonMessage[] messageList) {
 		this.messageList = messageList;
-		this.model = new ScrollerDataModel( this.messageList );
+		this.model = new ArrayDataModel(this.messageList);
 	}
 	
-	public ScrollerDataModel getModel() {
+	public DataModel getModel() {
 		return model;
 	}
 
