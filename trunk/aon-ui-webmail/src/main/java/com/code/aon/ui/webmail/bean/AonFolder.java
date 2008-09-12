@@ -36,8 +36,14 @@ public class AonFolder extends AonMessageSortableList {
 	private static final Logger LOGGER = Logger.getLogger(AonFolder.class
 			.getName());
 	
+	private int pageSize = 20;
+
 	public AonFolder(Folder folder) {
 		super(DATE_COLUMN,folder);
+	}
+
+	public int getPageSize() {
+		return pageSize;
 	}
 
     public void refresh() throws WebmailException {
