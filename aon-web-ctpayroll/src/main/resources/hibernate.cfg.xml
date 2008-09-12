@@ -31,6 +31,12 @@
 		<mapping class="com.code.aon.payroll.tipos.Incidencia"/>
 		<mapping class="com.code.aon.payroll.tipos.Autorizacion"/>
 		
+		<!-- GEOGRAFICAS -->		
+        <mapping class="com.code.aon.payroll.geograficas.Nacion"/>	
+        
+		<!-- IRPF FORAL-->		
+        <mapping class="com.code.aon.payroll.irpfforal.CuotaRetencionAlava"/>	
+
 		<!-- COTIZACIONES -->		
 		<mapping class="com.code.aon.payroll.cotizacion.PorcentajeMaestro"/>			
 		<mapping class="com.code.aon.payroll.cotizacion.Porcentaje"/>
