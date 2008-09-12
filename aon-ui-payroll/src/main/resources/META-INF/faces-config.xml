@@ -118,7 +118,7 @@
 		</managed-property>
 		<managed-property>
 			<property-name>pojo</property-name>
-			<value>com.code.aon.payroll.tipos.Cnae</value>
+			<value>com.code.aon.payroll.tipos.TipoCnae</value>
 		</managed-property>
 		<managed-property>
 			<property-name>listenerClasses</property-name>
@@ -132,7 +132,7 @@
 	<managed-bean>
 		<managed-bean-name>tiposCnaeControllerListener</managed-bean-name>
 		<managed-bean-class>
-			com.code.aon.ui.payroll.controller.event.TiposCnaeControllerListener
+			com.code.aon.ui.payroll.event.TiposCnaeControllerListener
 		</managed-bean-class>
 		<managed-bean-scope>none</managed-bean-scope>
 	</managed-bean>
@@ -284,6 +284,21 @@
 		<managed-bean-name>porcentajeControllerListener</managed-bean-name>
 		<managed-bean-class>com.code.aon.ui.payroll.event.PorcentajeControllerListener</managed-bean-class>
 		<managed-bean-scope>none</managed-bean-scope>
+	</managed-bean>
+	
+	<!-- ************* IRPF CUOTAS ***************** -->
+	<managed-bean>
+		<managed-bean-name>cuotas</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.form.BasicController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.payroll.irpf.Cuotas</value>
+		</managed-property>
 	</managed-bean>
 
 </faces-config>

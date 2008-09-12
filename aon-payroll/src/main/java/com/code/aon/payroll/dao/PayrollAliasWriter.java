@@ -7,12 +7,13 @@ import com.code.aon.common.dao.AliasWriter;
 import com.code.aon.payroll.cotizacion.Bonificacion;
 import com.code.aon.payroll.cotizacion.Porcentaje;
 import com.code.aon.payroll.cotizacion.PorcentajeMaestro;
+import com.code.aon.payroll.irpf.Cuota;
 import com.code.aon.payroll.tipos.Autorizacion;
-import com.code.aon.payroll.tipos.Cnae;
 import com.code.aon.payroll.tipos.Documento;
 import com.code.aon.payroll.tipos.Empresario;
 import com.code.aon.payroll.tipos.Incidencia;
 import com.code.aon.payroll.tipos.Registro;
+import com.code.aon.payroll.tipos.TipoCnae;
 
 public class PayrollAliasWriter {
 
@@ -26,8 +27,9 @@ public class PayrollAliasWriter {
 		classes[4] = Incidencia.class.getName();
 		classes[5] = Registro.class.getName();
 		classes[6] = Empresario.class.getName();
-		classes[7] = Cnae.class.getName();
+		classes[7] = TipoCnae.class.getName();
 		classes[8] = Bonificacion.class.getName();
+		classes[9] = Cuota.class.getName();
 		AliasWriter writer = new AliasWriter("com.code.aon.payroll.dao");
 		writer.write(classes, file);
 		System.out.println( file.getAbsolutePath() );

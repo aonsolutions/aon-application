@@ -9,7 +9,7 @@ import com.code.aon.payroll.tipos.Autorizacion;
 import com.code.aon.payroll.tipos.Incidencia;
 import com.code.aon.payroll.tipos.Registro;
 import com.code.aon.payroll.tipos.Empresario;
-import com.code.aon.payroll.tipos.Cnae;
+import com.code.aon.payroll.tipos.TipoCnae;
 import com.code.aon.payroll.cotizacion.Bonificacion;
 
 /** 
@@ -201,21 +201,21 @@ public interface IPayrollAlias {
 
 
 	/** 
-	* DAOConstantsEntry for Cnae entity.
+	* DAOConstantsEntry for TipoCnae entity.
 	*/ 
-	DAOConstantsEntry CNAE_ENTRY = DAOConstants.getDAOConstant(Cnae.class);
+	DAOConstantsEntry TIPO_CNAE_ENTRY = DAOConstants.getDAOConstant(TipoCnae.class);
 
 	/** 
-	* Alias value: Cnae_cdg
-	* Hibernate value: Cnae.cdg
+	* Alias value: TipoCnae_cdg
+	* Hibernate value: TipoCnae.cdg
 	*/
-	String  CNAE_CDG = CNAE_ENTRY.getAliasNames()[0];
+	String  TIPO_CNAE_CDG = TIPO_CNAE_ENTRY.getAliasNames()[0];
 
 	/** 
-	* Alias value: Cnae_description
-	* Hibernate value: Cnae.description
+	* Alias value: TipoCnae_description
+	* Hibernate value: TipoCnae.description
 	*/
-	String  CNAE_DESCRIPTION = CNAE_ENTRY.getAliasNames()[1];
+	String  TIPO_CNAE_DESCRIPTION = TIPO_CNAE_ENTRY.getAliasNames()[1];
 
 
 
