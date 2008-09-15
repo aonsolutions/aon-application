@@ -49,8 +49,8 @@ font-weight:bold;
 	padding-bottom:5px;
 	}
 .aon-login-label{
-font-weight:bold;
-padding-right:5px;
+	font-weight:bold;
+	margin-right:5px;
 }
 .aon-login-button{
 	border:#003c74 1px solid;
