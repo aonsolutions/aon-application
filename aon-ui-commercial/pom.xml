@@ -22,6 +22,23 @@
 		</dependency>
 		<dependency>
 			<groupId>com.code.aon</groupId>
+			<artifactId>aon.security.bridge</artifactId>
+			<version>1.6.1</version>
+			<scope>compile</scope>
+		</dependency>		
+		<dependency>
+			<groupId>com.code.aon</groupId> 
+			<artifactId>aon.security</artifactId>
+			<version>1.5.0</version>
+			<scope>provided</scope>
+		</dependency>			
+		<dependency>
+			<groupId>com.code.aon</groupId>
+			<artifactId>aon.ldap</artifactId>
+			<version>0.8.4</version>
+		</dependency>		
+		<dependency>
+			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.menu</artifactId>
 			<version>2.1.0</version>
 			<scope>compile</scope>
