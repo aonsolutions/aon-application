@@ -32,35 +32,31 @@
 			
 			<aon:div styleClass="aon-nowrap">
 				<aon:div style="white-space:nowrap;">
-					<aon:outputText value="#{webmail.companyName}" />
-					<aon:outputText value=" / " rendered="#{login.logged}" />
-					<aon:outputText value="#{webmail.loggedUserName}" rendered="#{login.logged}" styleClass="aon-bold"/>
+					<aon:outputText value="#{commercialController.companyName}" />
+					<aon:outputText value=" / " />
+					<aon:outputText value="#{commercialController.loggedUserName}" styleClass="aon-bold"/>
 				</aon:div>
 			</aon:div>	
 		
 		</aon:panelGrid>
-		<aon:div styleClass="aon-header-additionalInfo">				
-			<aon:div styleClass="aon-float-right">
-				<aon:div styleClass="aon-header-menu-item">
-					<h:outputLink 
-						target="_top" 
-						value="${facesContext.externalContext.requestContextPath}">
-						<h:outputText value="#{bundle.aon_home}" />
-					</h:outputLink>
-					<aon:commandLink style="border-right:0;"
-							onclick="parent.window.close();"
-							target="_top" >
+		<aon:form>
+			<aon:div styleClass="aon-header-additionalInfo">				
+				<aon:div styleClass="aon-float-right">
+					<aon:div styleClass="aon-header-menu-item">
+						<h:outputLink 
+							target="_top"
+							value="${facesContext.externalContext.requestContextPath}">
+							<h:outputText value="#{bundle.aon_home}" />
+						</h:outputLink>
+						<aon:commandLink style="border-right:0;" action="logout"
+							actionListener="#{commercialController.logout}">
 							<aon:outputText value="#{securityBundle.aon_login_user_logout}" />
-					</aon:commandLink>
-				</aon:div>	
+						</aon:commandLink>
+					</aon:div>	
+				</aon:div>
+				<aon:outputText value="#{commercialController.currentDate}" />
 			</aon:div>
-			<aon:outputText value="#{webmail.currentDate}" />
-		    <a4j:region>
-		        <h:form>
-		            <a4j:poll id="poll" interval="300000" status="aonStatus" />
-		        </h:form>
-		    </a4j:region>
-		</aon:div>
+		</aon:form>	
 	</aon:div>
 	
 </ui:composition>
