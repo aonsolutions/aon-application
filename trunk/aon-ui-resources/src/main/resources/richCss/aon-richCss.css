@@ -1529,3 +1529,24 @@ rich-fileupload-button-dis, rich-fileupload-button-selection{
 	font-size:0.9em;	
 	display:inline;
 	}
+
+.aon-spin-button{
+	border:0;
+	width:15px;
+	height:15px;
+	margin:0 2px 0 0;
+	}
+
+.aon-spin-button-first{
+	background:transparent url(images/aon-icon/aon-spin/aon-spin-first.gif) center center no-repeat;
+	}
+.aon-spin-button-previous{
+	background:transparent url(images/aon-icon/aon-spin/aon-spin-previous.gif) center center no-repeat;
+	}
+.aon-spin-button-next{
+	background:transparent url(images/aon-icon/aon-spin/aon-spin-next.gif) center center no-repeat;
+	}
+.aon-spin-button-last{
+	background:transparent url(images/aon-icon/aon-spin/aon-spin-last.gif) center center no-repeat;
+	}
+	
