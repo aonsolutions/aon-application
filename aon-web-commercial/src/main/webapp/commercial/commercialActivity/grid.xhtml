@@ -68,7 +68,7 @@
 					<aon:editDataTable id="commercialActivityData" var="to" rows="20"
 						rendered="#{(commercialActivity.model.rowCount > 0) or (commercialActivity.new)}"
 						value="#{commercialActivity.model}"
-						columnClasses="aon-editDataTable-iconColumn, aon-editDataTable-textColumn, aon-editDataTable-textColumn, aon-editDataTable-buttonsColumn">
+						columnClasses="aon-editDataTable-iconColumn,aon-width-60, aon-editDataTable-textColumn, aon-editDataTable-buttonsColumn">
 
 						<aon:rowSelector toggleOnClick="#{commercialActivity.to == null}"
 							actionListener="#{commercialActivity.onSelect}" />

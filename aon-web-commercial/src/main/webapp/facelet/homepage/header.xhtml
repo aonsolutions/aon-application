@@ -17,8 +17,10 @@
 					stopStyleClass="aon-outputConnectionStatus-stop"
 					onstart="resetStatusError();" />
 				<aon:div id="status_error" layout="inline" styleClass="aon-outputConnectionStatus-failed" style="display: none"/>					
-				<aon:outputText value="#{appBundle.aon_application_title}" 
+				
+					<aon:outputText value="#{appBundle.aon_application_title}" 
 					styleClass="aon-applicationName"/>
+				
 			</aon:div>
 	
 			<aon:div>
@@ -34,7 +36,9 @@
 				<aon:div style="white-space:nowrap;">
 					<aon:outputText value="#{commercialController.companyName}" />
 					<aon:outputText value=" / " />
-					<aon:outputText value="#{commercialController.loggedUserName}" styleClass="aon-bold"/>
+					<aon:commandLink styleClass="aon-icon aon-icon-user-change-password">	
+						<aon:outputText value="#{commercialController.loggedUserName}" styleClass="aon-bold"/>
+					</aon:commandLink>
 				</aon:div>
 			</aon:div>	
 		

@@ -71,17 +71,18 @@
 			</aon:div>
 
 			<aon:div styleClass="aon-scroll-area">
-				<aon:panelGrid id="menuGrid" columns="2" dir="true" width="100%">
+				<aon:panelGrid id="menuGrid" columns="2" dir="true" width="100%"
+					columnClasses="aon-panelGrid-odd aon-width-170,aon-panelGrid-even">
 
 					<aon:outputLabel for="CommercialTracking_date"
 						value="#{appBundle.aon_commercial_tracking_date}" />
-					<aon:selectInputDate id="CommercialTracking_date"
+					<aon:selectInputDate id="CommercialTracking_date" 
 						value="#{commercialTracking.to.date}" required="#{true}"
 						timeZone="#{timeZoneController.timeZone}"
 						renderAsPopup="true" popupDateFormat="#{bundle.aon_date_pattern}">
 					</aon:selectInputDate>
 
-					<aon:outputLabel for="CommercialTracking_seller_id"
+					<aon:outputLabel for="CommercialTracking_seller_id" 
 						value="#{appBundle.aon_commercial_tracking_seller}" />
 					<aon:div styleClass="aon-lookup">
 						<aon:lookupInputText id="CommercialTracking_seller_id"

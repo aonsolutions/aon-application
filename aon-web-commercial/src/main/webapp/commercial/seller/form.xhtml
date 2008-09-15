@@ -71,7 +71,8 @@
 			</aon:div>
 
 			<aon:div styleClass="aon-scroll-area">
-				<aon:panelGrid id="menuGrid" columns="2" dir="true" width="100%">
+			
+				<aon:panelGrid id="menuGrid" columns="2" dir="true">
 
 					<ui:include src="/commercial/registry/formContent.xhtml">
 						<ui:param name="controller" value="#{seller}"/>
@@ -87,7 +88,9 @@
 
 				<aon:div styleClass="aon-form-group" rendered="#{!seller.new}">
 					<aon:div styleClass="aon-form-group-title">
-						<aon:outputLabel for="registryAddressData" value="#{registryBundle.aon_address}" />
+						<aon:div styleClass="aon-form-group-title-internal">
+							<aon:outputLabel for="registryAddressData" value="#{registryBundle.aon_address}" />
+						</aon:div>
 					</aon:div>
 					<ui:include src="/commercial/registry/address/grid.xhtml" >
 						<ui:param name="controller" value="#{sellerAddress}"/>
@@ -96,7 +99,9 @@
 
 				<aon:div styleClass="aon-form-group" rendered="#{!seller.new}">
 					<aon:div styleClass="aon-form-group-title">
-						<aon:outputLabel for="registryMediaData" value="#{registryBundle.aon_media}" />
+						<aon:div styleClass="aon-form-group-title-internal">
+							<aon:outputLabel for="registryMediaData" value="#{registryBundle.aon_media}" />
+						</aon:div>
 					</aon:div>
 					<ui:include src="/commercial/registry/media/grid.xhtml" >					
 						<ui:param name="controller" value="#{sellerMedia}"/>
