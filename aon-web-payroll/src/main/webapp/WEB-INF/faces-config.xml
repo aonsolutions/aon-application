@@ -41,7 +41,7 @@
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
 			<property-name>resourceURIPreffix</property-name>
-			<value>/aonResource/1.3.2</value>
+			<value>/aonResource/1.3.9</value>
 		</managed-property>		
 	</managed-bean>
 	
