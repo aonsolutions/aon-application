@@ -19,12 +19,12 @@
 						columnClasses="aon-finding-title,aon-finding-subtitle,aon-finding-toolbar">
 	
 						<aon:div styleClass="aon-finding-title-internal">
-							<aon:outputText value="#{appBundle.aon_payroll_cuota_label}" />
+							<aon:outputText value="#{appBundle.aon_payroll_cuota}" />
 						</aon:div>
 	
 						<aon:div styleClass="aon-finding-subtitle-internal">
 							<aon:outputText
-								value="#{appBundle.aon_payroll_crud_label}" />
+								value="#{appBundle.aon_payroll_crud}" />
 						</aon:div>
 	
 						<aon:div styleClass="aon-finding-toolbar-item-group">
@@ -55,14 +55,14 @@
 								confirmActionListener="#{cuotas.onRemove}"
 								accesskey="#{bundle.aon_key_remove}"/>
 							<h:commandLink id="export2pdf" value="."
-									title="#{appBundle.aon_payroll_export_label} #{appBundle.aon_payroll_to} #{appBundle.aon_payroll_pdf_label}"
+									title="#{appBundle.aon_payroll_export} #{appBundle.aon_payroll_to} #{appBundle.aon_payroll_pdf}"
 									styleClass="aon-finding-toolbar-item aon-icon-pdf"
 									action="#{report.onExecute}" rendered="#{!cuotas.new}" 
 									target="_blank">
 								<f:param name="reportKey" value="irpfCuotaList" />
 							</h:commandLink>
 							<h:commandLink id="export2excel" value="."
-									title="#{appBundle.aon_payroll_export_label} #{appBundle.aon_payroll_to} #{appBundle.aon_payroll_excel_label}"
+									title="#{appBundle.aon_payroll_export} #{appBundle.aon_payroll_to} #{appBundle.aon_payroll_excel}"
 									styleClass="aon-finding-toolbar-item aon-icon-excel"
 									action="#{report.onExecute}" rendered="#{!cuotas.new}" 
 									target="_blank">
@@ -70,7 +70,7 @@
 								<f:param name="outputFormat" value="MS Excel" />
 							</h:commandLink>
 							<h:commandLink id="export2csv" value="."
-									title="#{appBundle.aon_payroll_export_label} #{appBundle.aon_payroll_to} #{appBundle.aon_payroll_csv_label}"
+									title="#{appBundle.aon_payroll_export} #{appBundle.aon_payroll_to} #{appBundle.aon_payroll_csv}"
 									styleClass="aon-finding-toolbar-item aon-icon-excel"
 									action="#{report.onExecute}" rendered="#{!cuotas.new}" 
 									target="_blank">
@@ -109,7 +109,7 @@
 	
 						<aon:column>
 							<f:facet name="header">
-								<aon:outputText value="#{appBundle.payroll_numTramo_label}" />
+								<aon:outputText value="#{appBundle.aon_payroll_numTramo}" />
 							</f:facet>
 							<aon:outputText value="#{to.id.numTramo}" rendered="#{to!=cuotas.to}" />
 							<aon:inputText styleClass="aon-form-input-text " required="true"
@@ -126,7 +126,7 @@
 						
 						<aon:column>
 							<f:facet name="header">
-								<aon:outputText value="#{appBundle.payroll_fecini_label}" />
+								<aon:outputText value="#{appBundle.aon_payroll_fecini}" />
 							</f:facet>
 							<aon:outputText value="#{to.id.fecini}" rendered="#{to!=cuotas.to}" >
 								<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
@@ -151,7 +151,7 @@
 						
 						<aon:column>
 							<f:facet name="header">
-								<aon:outputText value="#{appBundle.payroll_fecfin_label}" />
+								<aon:outputText value="#{appBundle.aon_payroll_fecfin}" />
 							</f:facet>
 							<aon:outputText value="#{to.fecfin}" rendered="#{to!=cuotas.to}" >
 								<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
@@ -175,7 +175,7 @@
 	
 						<aon:column>
 							<f:facet name="header">
-								<aon:outputText value="#{appBundle.payroll_hasta_label}" />
+								<aon:outputText value="#{appBundle.aon_payroll_hasta}" />
 							</f:facet>
 							<aon:outputText value="#{to.hasta}" rendered="#{to!=cuotas.to}" />
 							<aon:inputText styleClass="aon-form-input-text " required="true"
@@ -192,7 +192,7 @@
 						
 						<aon:column>
 							<f:facet name="header">
-								<aon:outputText value="#{appBundle.payroll_pesetas_label}" />
+								<aon:outputText value="#{appBundle.aon_payroll_pesetas}" />
 							</f:facet>
 							<aon:outputText value="#{to.pesetas}" rendered="#{to!=cuotas.to}" />
 							<aon:inputText styleClass="aon-form-input-text"
@@ -208,7 +208,7 @@
 						
 						<aon:column>
 							<f:facet name="header">
-								<aon:outputText value="#{appBundle.payroll_resto_label}" />
+								<aon:outputText value="#{appBundle.aon_payroll_resto}" />
 							</f:facet>
 							<aon:outputText value="#{to.resto}" rendered="#{to!=cuotas.to}" />
 							<aon:inputText styleClass="aon-form-input-text"
@@ -223,7 +223,7 @@
 						
 						<aon:column>
 							<f:facet name="header">
-								<aon:outputText value="#{appBundle.payroll_porcentaje_label}" />
+								<aon:outputText value="#{appBundle.aon_payroll_porcentaje}" />
 							</f:facet>
 							<aon:outputText value="#{to.porcentaje}" rendered="#{to!=cuotas.to}" />
 							<aon:inputText styleClass="aon-form-input-text"
