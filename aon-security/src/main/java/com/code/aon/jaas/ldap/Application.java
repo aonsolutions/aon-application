@@ -67,7 +67,7 @@ public class Application implements IApplication, ILdapConstants, ILdapSecurityC
 	
 	@Override
 	public Collection<IDomain> domains() {
-		throw new UnsupportedOperationException("Not supported!");
+		throw new UnsupportedOperationException(SecurityLdap.NOT_SUPPORTED);
 	}
 	
 	public void setDescription(String description) {
@@ -113,22 +113,22 @@ public class Application implements IApplication, ILdapConstants, ILdapSecurityC
 
 	@Override
 	public IRole getRole(String name) {
-		throw new UnsupportedOperationException("Not supported!");
+		throw new UnsupportedOperationException(SecurityLdap.NOT_SUPPORTED);
 	}
 
 	@Override
 	public String getRoles() {
-		throw new UnsupportedOperationException("Not supported!");
+		throw new UnsupportedOperationException(SecurityLdap.NOT_SUPPORTED);
 	}
 
 	@Override
 	public String getSecurityDomain() {
-		throw new UnsupportedOperationException("Not supported!");
+		throw new UnsupportedOperationException(SecurityLdap.NOT_SUPPORTED);
 	}
 
 	@Override
 	public IDomain remove(IDomain domain) {
-		throw new UnsupportedOperationException("Not supported!");
+		throw new UnsupportedOperationException(SecurityLdap.NOT_SUPPORTED);
 	}
 
 	@Override
@@ -138,7 +138,7 @@ public class Application implements IApplication, ILdapConstants, ILdapSecurityC
 
 	@Override
 	public void accept(INodeVisitor visitor) {
-		throw new UnsupportedOperationException("Not supported!");
+		throw new UnsupportedOperationException(SecurityLdap.NOT_SUPPORTED);
 	}
 
 	@Override
@@ -148,27 +148,27 @@ public class Application implements IApplication, ILdapConstants, ILdapSecurityC
 
 	@Override
 	public void domainFound(SubDeployerEvent event) {
-		throw new UnsupportedOperationException("Not supported!");
+		throw new UnsupportedOperationException(SecurityLdap.NOT_SUPPORTED);
 	}
 
 	@Override
 	public void methodPermissionFound(SubDeployerEvent event) {
-		throw new UnsupportedOperationException("Not supported!");
+		throw new UnsupportedOperationException(SecurityLdap.NOT_SUPPORTED);
 	}
 
 	@Override
 	public void roleFound(SubDeployerEvent event) {
-		throw new UnsupportedOperationException("Not supported!");
+		throw new UnsupportedOperationException(SecurityLdap.NOT_SUPPORTED);
 	}
 
 	@Override
 	public void securityPermissionFound(SubDeployerEvent event) {
-		throw new UnsupportedOperationException("Not supported!");
+		throw new UnsupportedOperationException(SecurityLdap.NOT_SUPPORTED);
 	}
 
 	@Override
 	public void vendorDescriptorFound(SubDeployerEvent event) {
-		throw new UnsupportedOperationException("Not supported!");
+		throw new UnsupportedOperationException(SecurityLdap.NOT_SUPPORTED);
 	}
 
 	public static DistinguishedName getDN( String application ) {
