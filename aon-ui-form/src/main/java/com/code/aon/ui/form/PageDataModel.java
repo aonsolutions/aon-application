@@ -56,7 +56,7 @@ public class PageDataModel extends DataModel implements Serializable {
 	private PageDataModel(IDataModelDataProvider dataProvider, List<ITransferObject> list, int size, int limit ) {
     	this.dataProvider = dataProvider;
     	if (limit == -1 ) {
-    		limit = Integer.MAX_VALUE;
+    		limit = size;
     	}
     	this.limit = limit;
     	this.page = new Page(list, 0);

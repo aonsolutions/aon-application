@@ -254,16 +254,6 @@ public class LinesController extends BasicController {
 	}
 	
 	/**
-	 * Gets the page limit.
-	 * 
-	 * @return the page limit
-	 */
-	@Override
-	public int getPageLimit() {
-		return Integer.MAX_VALUE;
-	}
-
-	/**
 	 * Gets the if the selected row is checked.
 	 * 
 	 * @return the row checked
