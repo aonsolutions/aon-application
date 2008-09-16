@@ -2,6 +2,8 @@ package com.code.aon.ui.audit;
 
 import java.util.Date;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import com.code.aon.audit.Action;
 import com.code.aon.audit.ActionExecution;
@@ -21,7 +23,11 @@ import com.code.aon.common.dao.hibernate.IConfigurationFactory;
 import com.code.aon.common.dao.hibernate.ISessionFactoryNameProvider;
 import com.code.aon.ql.Criteria;
 
-public class AuditManager {
+public class AuditManager implements IAuditAlias {
+	
+	/** Obtiene un logger apropiado. */
+	private static final Logger LOGGER = Logger
+			.getLogger(AuditManager.class.getName());		
 	
 	public static final String AUDIT_SESSION_PROPERTY = "com.code.aon.audit.session";	
 	
@@ -35,11 +41,42 @@ public class AuditManager {
 	
 	private IConfigurationFactory previousConfigurationFactory;
 	
+	private IManagerBean domainBean;
+	
+	private IManagerBean applicationBean;
+	
+	private IManagerBean domainApplicationBean;
+	
+	private IManagerBean userBean;
+	
+	private IManagerBean sessionBean;
+	
+	private IManagerBean actionBean;
+	
+	private IManagerBean actionExecutionBean;
+	
 	private AuditManager() {
 	}
 	
+	
 	public static AuditManager getInstance() {
 		return SINGLETON;
+	}
+	
+	private void initManagerBeans() {
+		if ( actionExecutionBean == null ) {
+			try {
+				domainBean = BeanManager.getManagerBean(Domain.class);
+				applicationBean = BeanManager.getManagerBean(Application.class);
+				domainApplicationBean = BeanManager.getManagerBean(DomainApplication.class);
+				userBean = BeanManager.getManagerBean(User.class);
+				sessionBean = BeanManager.getManagerBean(Session.class);
+				actionBean = BeanManager.getManagerBean(Action.class);
+				actionExecutionBean = BeanManager.getManagerBean(ActionExecution.class);
+			} catch (ManagerBeanException e) {
+				LOGGER.log( Level.SEVERE, "Error initalizing Audit Manager Beans", e );
+			}
+		}
 	}
 	
 	private AuditConfigurationFactory getAuditConfigurationFactory() {
@@ -56,6 +93,7 @@ public class AuditManager {
 		HibernateUtil.setSessionFactoryNameProvider(auditNameProvider);
 		getAuditConfigurationFactory().setSessionFactoryName(auditNameProvider.getName());
 		HibernateUtil.setConfigurationFactory(getAuditConfigurationFactory());
+		initManagerBeans();
 	}
 	
 	public void restoreToPreviousDB() {
@@ -65,15 +103,14 @@ public class AuditManager {
 	
 	public Domain getDomain( String name ) throws ManagerBeanException {
 		Domain domain = null;
-		IManagerBean bean = BeanManager.getManagerBean(Domain.class);
-		String field = bean.getFieldName(IAuditAlias.DOMAIN_NAME);
+		String field = domainBean.getFieldName(DOMAIN_NAME);
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression( field, name );
-		List<ITransferObject> list = bean.getList(criteria);
+		List<ITransferObject> list = domainBean.getList(criteria);
 		if ( list.isEmpty() ) {
 			domain = new Domain();
 			domain.setName( name );
-			bean.insert( domain );
+			domainBean.insert( domain );
 		} else {
 			domain = (Domain) list.get(0);
 		}
@@ -82,15 +119,14 @@ public class AuditManager {
 
 	public Application getApplication( String name ) throws ManagerBeanException {
 		Application application = null;
-		IManagerBean bean = BeanManager.getManagerBean(Application.class);
-		String field = bean.getFieldName(IAuditAlias.APPLICATION_NAME);
+		String field = applicationBean.getFieldName(APPLICATION_NAME);
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression( field, name );
-		List<ITransferObject> list = bean.getList(criteria);
+		List<ITransferObject> list = applicationBean.getList(criteria);
 		if ( list.isEmpty() ) {
 			application = new Application();
 			application.setName( name );
-			bean.insert( application );
+			applicationBean.insert( application );
 		} else {
 			application = (Application) list.get(0);
 		}
@@ -99,19 +135,18 @@ public class AuditManager {
 
 	public DomainApplication getDomainApplication( Application application, Domain domain ) throws ManagerBeanException {
 		DomainApplication domainApplication = null;
-		IManagerBean bean = BeanManager.getManagerBean(DomainApplication.class);
 		Criteria criteria = new Criteria();
-		String applicationField = bean.getFieldName(IAuditAlias.DOMAIN_APPLICATION_APPLICATION_ID);		
+		String applicationField = domainApplicationBean.getFieldName(DOMAIN_APPLICATION_APPLICATION_ID);		
 		criteria.addEqualExpression( applicationField, application.getId() );
-		String domainField = bean.getFieldName(IAuditAlias.DOMAIN_APPLICATION_DOMAIN_ID);		
+		String domainField = domainApplicationBean.getFieldName(DOMAIN_APPLICATION_DOMAIN_ID);		
 		criteria.addEqualExpression( domainField, domain.getId() );
-		List<ITransferObject> list = bean.getList(criteria);
+		List<ITransferObject> list = domainApplicationBean.getList(criteria);
 		if ( list.isEmpty() ) {
 			domainApplication = new DomainApplication();
 			domainApplication.setApplication(application);
 			domainApplication.setDomain( domain );
 			domainApplication.setAuditLevel(AuditLevel.MODULE);
-			bean.insert( domainApplication );
+			domainApplicationBean.insert( domainApplication );
 		} else {
 			domainApplication = (DomainApplication) list.get(0);
 		}
@@ -120,18 +155,17 @@ public class AuditManager {
 	
 	public User getUser( String name, Domain domain ) throws ManagerBeanException {
 		User user = null;
-		IManagerBean bean = BeanManager.getManagerBean(User.class);
 		Criteria criteria = new Criteria();
-		String loginField = bean.getFieldName(IAuditAlias.USER_LOGIN);		
+		String loginField = userBean.getFieldName(USER_LOGIN);		
 		criteria.addEqualExpression( loginField, name );
-		String domainField = bean.getFieldName(IAuditAlias.USER_DOMAIN_ID);		
+		String domainField = userBean.getFieldName(USER_DOMAIN_ID);		
 		criteria.addEqualExpression( domainField, domain.getId() );
-		List<ITransferObject> list = bean.getList(criteria);
+		List<ITransferObject> list = userBean.getList(criteria);
 		if ( list.isEmpty() ) {
 			user = new User();
 			user.setLogin( name );
 			user.setDomain( domain );
-			bean.insert( user );
+			userBean.insert( user );
 		} else {
 			user = (User) list.get(0);
 		}
@@ -139,36 +173,33 @@ public class AuditManager {
 	}
 	
 	public Session createLoginAudit( Application application, User user, String sessionId, Date date ) throws ManagerBeanException {
-		IManagerBean bean = BeanManager.getManagerBean(Session.class);
 		Session loginAudit = new Session();
 		loginAudit.setApplication( application );
 		loginAudit.setUser( user );
 		loginAudit.setSessionId( sessionId );
 		loginAudit.setStartDate( date );
-		bean.insert( loginAudit );
+		sessionBean.insert( loginAudit );
 		return loginAudit;
 	}
 
 	public void closeLoginAudit( Session loginAudit ) throws ManagerBeanException {
-		IManagerBean bean = BeanManager.getManagerBean(Session.class);
 		loginAudit.setEndDate( new Date() );
-		bean.update( loginAudit );
+		sessionBean.update( loginAudit );
 	}
 
 	public Action getAction( String name, Application application ) throws ManagerBeanException {
 		Action action = null;
-		IManagerBean bean = BeanManager.getManagerBean(Action.class);
 		Criteria criteria = new Criteria();
-		String nameField = bean.getFieldName(IAuditAlias.ACTION_NAME);		
+		String nameField = actionBean.getFieldName(ACTION_NAME);		
 		criteria.addEqualExpression( nameField, name );
-		String applicationField = bean.getFieldName(IAuditAlias.ACTION_APPLICATION_ID);		
+		String applicationField = actionBean.getFieldName(ACTION_APPLICATION_ID);		
 		criteria.addEqualExpression( applicationField, application.getId() );
-		List<ITransferObject> list = bean.getList(criteria);
+		List<ITransferObject> list = actionBean.getList(criteria);
 		if ( list.isEmpty() ) {
 			action = new Action();
 			action.setName( name );
 			action.setApplication(application);
-			bean.insert( action );
+			actionBean.insert( action );
 		} else {
 			action = (Action) list.get(0);
 		}
@@ -176,12 +207,11 @@ public class AuditManager {
 	}	
 
 	public void createActionExecution( Session session, Action action ) throws ManagerBeanException {
-		IManagerBean bean = BeanManager.getManagerBean(ActionExecution.class);
 		ActionExecution ae = new ActionExecution();
 		ae.setSession( session );
 		ae.setAction(action);
 		ae.setExecutionDate( new Date() );
-		bean.insert( ae );
+		actionExecutionBean.insert( ae );
 	}
 
 }
