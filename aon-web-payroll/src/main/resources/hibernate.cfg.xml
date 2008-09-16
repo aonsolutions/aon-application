@@ -26,7 +26,7 @@
 		<!-- TIPOS -->		
 		<mapping class="com.code.aon.payroll.tipos.Documento"/>
 		<mapping class="com.code.aon.payroll.tipos.Empresario"/>
-		<mapping class="com.code.aon.payroll.tipos.Cnae"/>
+		<mapping class="com.code.aon.payroll.tipos.TipoCnae"/>
 		<mapping class="com.code.aon.payroll.tipos.Registro"/>
 		<mapping class="com.code.aon.payroll.tipos.Incidencia"/>
 		<mapping class="com.code.aon.payroll.tipos.Autorizacion"/>
@@ -41,6 +41,9 @@
 		<mapping class="com.code.aon.payroll.cotizacion.PorcentajeMaestro"/>			
 		<mapping class="com.code.aon.payroll.cotizacion.Porcentaje"/>
 		<mapping class="com.code.aon.payroll.cotizacion.Bonificacion"/>				
+		
+		<!-- IRPF -->
+		<mapping class="com.code.aon.payroll.irpf.Cuota"/>	
 
 	</session-factory>
 
