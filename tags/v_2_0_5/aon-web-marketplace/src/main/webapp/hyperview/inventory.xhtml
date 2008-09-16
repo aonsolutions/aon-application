@@ -1,0 +1,61 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:h="http://java.sun.com/jsf/html">
+<body>
+
+<ui:composition template="/facelet/templates/aon.ui.form.xhtml">
+	<ui:define name="content">
+	
+		<h:form id="inventoryForm" styleClass="aon-form">
+
+			<t:div styleClass="aon-content-toolbar">
+				<t:div styleClass="aon-content-toolbar-internal">
+				<t:div styleClass="aon-content-toolbar-item-group">
+					<t:commandLink id="accept" inmediate="true" target="_blank"  
+						action="hyperview_comp" value="#{bundle.aon_search}"
+						styleClass="aon-content-toolbar-item aon-content-toolbar-item-accept"
+						onmouseover="this.className='aon-content-toolbar-item aon-content-toolbar-item-hover aon-content-toolbar-item-accept'"
+						onmouseout="this.className='aon-content-toolbar-item aon-content-toolbar-item-accept'" 
+						accesskey="#{bundle.aon_key_search}"/>
+				</t:div>
+				</t:div>
+			</t:div>
+			<t:div styleClass="aon-content-subtitle" id="aon-content-subtitle"
+				forceId="#{true}">
+				<t:div styleClass="aon-content-subtitle-internal">
+				<h:outputText value="#{bundle.aon_search_header}" />
+				</t:div>
+			</t:div>
+			<t:div forceId="#{true}" id="aon-scroll-area">
+				<t:div styleClass="aon-scroll-area-internal">
+					<h:panelGrid columns="2" styleClass="aon-form-table"
+						columnClasses="aon-form-table-column-odd,aon-form-table-column-even">
+
+						<t:outputLabel for="inidate"
+							styleClass="aon-form-input-text-label aon-form-table-column-odd-label"
+							value="#{warehouseBundle.inventory_ini}" />
+						<t:selectOneMenu id="inidate" forceId="#{true}"
+							styleClass="aon-form-selectOneMenu-field">
+							<f:selectItems value="#{warehouseCollections.inventories}" />
+						</t:selectOneMenu>
+						<t:outputLabel for="enddate"
+							styleClass="aon-form-input-text-label aon-form-table-column-odd-label"
+							value="#{warehouseBundle.inventory_end}" />
+						<t:selectOneMenu id="enddate" forceId="#{true}"
+							styleClass="aon-form-selectOneMenu-field">
+							<f:selectItems value="#{warehouseCollections.inventories}" />
+						</t:selectOneMenu>
+						<t:inputHidden id="fileName" forceId="#{true}" value="Comparativa_Beneficios.xml"/>
+					</h:panelGrid>
+				</t:div>
+			</t:div>
+
+		</h:form>
+	</ui:define>
+</ui:composition>
+
+</body>
+</html>

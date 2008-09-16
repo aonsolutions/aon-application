@@ -1,0 +1,138 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:h="http://java.sun.com/jsf/html">
+<body>
+
+<ui:composition template="/facelet/templates/aon.ui.form.xhtml">
+
+	<ui:define name="head">
+		<t:stylesheet path="/jscalendar-1.0/calendar-system.css" />
+		<script type='text/javascript'
+			src="${facesContext.externalContext.requestContextPath}/jscalendar-1.0/calendar.js">
+			// nothing
+		</script>
+		<script type='text/javascript'
+			src="${facesContext.externalContext.requestContextPath}/jscalendar-1.0/lang/calendar-es.js">
+			// nothing
+		</script>
+		<script type='text/javascript'
+			src="${facesContext.externalContext.requestContextPath}/jscalendar-1.0/calendar-setup.js">
+			// nothing
+		</script>
+	</ui:define>		
+				
+	<ui:define name="content">
+		<h:form id="inventoryForm" styleClass="aon-form">
+
+			<t:div styleClass="aon-content-toolbar">
+				<t:div styleClass="aon-content-toolbar-internal">
+				<t:div styleClass="aon-content-toolbar-item-group">
+					<h:commandButton id="accept" 
+						actionListener="#{inventory.onClosing}" 
+						action="inventory_form"
+						value="#{warehouseBundle.inventory_close}" 
+						styleClass="aon-content-toolbar-item aon-content-toolbar-item-accept"
+						onmouseover="this.className='aon-content-toolbar-item aon-content-toolbar-item-hover aon-content-toolbar-item-accept'"
+						onmouseout="this.className='aon-content-toolbar-item aon-content-toolbar-item-accept'" 
+						accesskey="#{bundle.aon_key_accept}"/>
+					<h:commandButton id="cancel" value="#{bundle.aon_cancel}"
+						actionListener="#{inventory.onCancel}" action="inventory_list"
+						immediate="#{true}"
+						onclick="return (confirm('#{bundle.aon_cancel_confirm}'))"
+						styleClass="aon-content-toolbar-item aon-content-toolbar-item-cancel"
+						onmouseover="this.className='aon-content-toolbar-item aon-content-toolbar-item-hover aon-content-toolbar-item-cancel'"
+						onmouseout="this.className='aon-content-toolbar-item aon-content-toolbar-item-cancel'" 
+						accesskey="#{bundle.aon_key_cancel}"/>
+					<h:commandButton id="search" value="#{bundle.aon_search}"
+						immediate="#{true}"
+						styleClass="aon-content-toolbar-item aon-content-toolbar-item-search"
+						onmouseover="this.className='aon-content-toolbar-item aon-content-toolbar-item-hover aon-content-toolbar-item-search'"
+						onmouseout="this.className='aon-content-toolbar-item aon-content-toolbar-item-search'"
+						actionListener="#{inventory.onEditSearch}" action="inventory_search" 
+						accesskey="#{bundle.aon_key_search}"/>
+				</t:div>
+				</t:div>
+			</t:div>
+
+			<t:div forceId="#{true}" id="aon-scroll-area">
+				<t:div styleClass="aon-scroll-area-internal">
+					<h:panelGrid columns="2" styleClass="aon-form-table"
+						columnClasses="aon-form-table-column-odd,aon-form-table-column-even">
+
+					<h:outputLabel for="Inventory_warehouse"
+						styleClass="aon-form-input-text-label aon-form-table-column-odd-label"
+						value="#{warehouseBundle.inventory_warehouse}" forceId="#{true}" />
+					<h:selectOneMenu id="Inventory_warehouse" 
+						valueChangeListener="#{inventory.addWarehouseCriteria}"
+						styleClass="aon-form-input-text" forceId="#{true}"
+						converter="IntegerEmptyConverter">
+						<f:selectItems value="#{warehouseCollections.warehouses}" />
+					</h:selectOneMenu>
+<!-- 
+					<h:outputLabel for="Inventory_category"
+						styleClass="aon-form-input-text-label aon-form-table-column-odd-label"
+						value="#{warehouseBundle.inventory_category}" forceId="#{true}" />
+					<h:selectOneMenu id="Inventory_category" valueChangeListener="#{inventory.addCategoryCriteria}"
+						styleClass="aon-form-input-text"
+						forceId="#{true}">
+						<f:selectItem itemDisabled="true" itemLabel="-" itemValue=""/>
+						<f:selectItems value="#{productCollections.categories}" />
+					</h:selectOneMenu>
+ -->
+					<h:outputLabel for="Inventory_inventory_date"
+						styleClass="aon-form-input-text-label aon-form-table-column-odd-label"
+						value="#{warehouseBundle.inventory_date}" 
+						forceId="#{true}" />
+					<t:div>
+						<t:inputText styleClass="aon-form-input-text"
+							id="Inventory_inventory_date" 
+							forceId="#{true}"
+							required="#{true}"
+							value="#{inventory.to.inventoryDate}"
+							size="10" maxlength="12">
+							<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+								timeZone="#{timeZoneController.timeZoneId}" />
+						</t:inputText>
+						<t:commandButton styleClass="aon-form-calendar-button"
+							id="Inventory_inventory_date_button" forceId="#{true}" value=""
+							immediate="true" />
+						<script type="text/javascript">
+						  Calendar.setup( {
+							inputField  : "Inventory_inventory_date", button : "Inventory_inventory_date_button",
+							ifFormat    : "%d/%m/%Y" } );
+						</script>
+					</t:div>
+							
+					<h:outputLabel for="Inventory_description"
+						styleClass="aon-form-input-text-label aon-form-table-column-odd-label"
+						value="#{warehouseBundle.inventory_description}" forceId="#{true}" />
+					<t:inputText id="Inventory_description" size="64"
+						styleClass="aon-form-input-text"
+						required="#{true}"
+						value="#{inventory.to.description}"
+						/>
+
+					<h:outputLabel for="Inventory_init"
+						styleClass="aon-form-input-text-label aon-form-table-column-odd-label"
+						value="#{warehouseBundle.inventory_init_stock}" forceId="#{true}" />
+					<h:selectOneMenu id="Inventory_init" 
+						valueChangeListener="#{inventory.hasToInitStock}"
+						styleClass="aon-form-input-text"
+						forceId="#{true}">
+						<f:selectItem itemLabel="#{warehouseBundle.inventory_init_stock_false}" itemValue="FALSE"/>
+						<f:selectItem itemLabel="#{warehouseBundle.inventory_init_stock_true}" itemValue="TRUE"/>
+					</h:selectOneMenu>
+
+					</h:panelGrid>
+				</t:div>
+			</t:div>
+
+		</h:form>
+	</ui:define>
+</ui:composition>
+
+</body>
+</html>

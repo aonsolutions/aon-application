@@ -1,0 +1,70 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:h="http://java.sun.com/jsf/html">
+
+<body >
+	
+	<ui:composition>
+		<t:saveState value="#{exceptionBean}"/>
+
+		<t:div styleClass="aon-login">
+			<t:div styleClass="aon-login-box-internal">
+				<t:div styleClass="aon-login-title">
+					<h:outputText value="#{securityBundle.aon_login_legend}" />
+				</t:div>					
+			</t:div>		
+			<t:div styleClass="aon-login-box" >			
+				<t:div styleClass="aon-login-box-internal">
+					<t:div styleClass="aon-login-instruction">						
+						<h:outputText value="#{securityBundle.aon_login_label}" />
+					</t:div>
+					<t:div styleClass="aon-errors" rendered="#{failedLogin.exception}">
+						<t:div styleClass="aon-error-message" >
+							<h:outputText value="#{failedLogin.message}" />
+						</t:div>
+					</t:div>
+					<t:div styleClass="aon-login-form">
+						<form id="login" target="_top" method="post" action="j_security_check" style="display:inline;">			
+							<t:div id="domainDiv" forceId="#{true}" styleClass="aon-login-form-group" style="display:none;">
+								<t:div>
+									<h:outputLabel for="j_domain" value="#{securityBundle.aon_login_domain}:" styleClass="aon-form-input-text-label"/>
+								</t:div>
+								<t:div>
+									<t:inputText id="j_domain" forceId="#{true}" disabledOnClientSide="#{true}"  styleClass="aon-form-input-text"/>
+								</t:div>
+							</t:div>
+							<t:div styleClass="aon-login-form-group">
+								<t:div>
+									<h:outputLabel for="j_username" value="#{securityBundle.aon_login_user}:" styleClass="aon-form-input-text-label"/>
+								</t:div>
+								<t:div>
+									<t:inputText id="j_username" forceId="#{true}" styleClass="aon-form-input-text"/>
+								</t:div>
+							</t:div>
+							<t:div styleClass="aon-login-form-group">
+								<t:div>
+									<h:outputLabel for="j_password" value="#{securityBundle.aon_login_passwd}:" styleClass="aon-form-input-text-label"/>
+								</t:div>
+								<t:div>
+									<t:inputSecret id="j_password" forceId="#{true}" styleClass="aon-form-input-text aon-form-input-text-password" />
+									<f:verbatim>
+									   <input id="login_btn" name="login_btn" type="submit" value="" 
+									   		onclick="concatHost();" class="aon-login-button" />
+									</f:verbatim>	
+								</t:div>	
+							</t:div>							
+						</form>
+					</t:div>										
+					<t:div styleClass="aon-login-copyright">
+						<t:div><h:outputText value="#{appBundle.aon_footer_right}" /></t:div>
+						<t:div><h:outputText value="#{appBundle.aon_footer}" /></t:div>
+					</t:div>
+				</t:div>
+			</t:div>
+		</t:div>				
+	</ui:composition>	
+</body>
+</html>

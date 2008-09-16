@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<table tableName="app_param">
+    <columns>
+        <column label="" length="32" name="name" sqlType="varchar" type="string"/>
+        <column label="" length="64" name="value" sqlType="varchar" type="string"/>
+    </columns>
+    <virtualColumns/>
+    <primaryKey>
+        <column name="name"/>
+    </primaryKey>
+    <joins/>
+    <descriptionColumns/>
+</table>

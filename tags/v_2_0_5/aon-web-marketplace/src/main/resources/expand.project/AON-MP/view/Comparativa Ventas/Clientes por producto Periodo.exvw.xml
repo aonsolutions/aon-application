@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<view description="Productos Periodo" label="Productos Periodo" sqlSentence="SELECT registry.id, document, registry.name, registry.alias, &#xd;&#xa;   &#x9;SUM(IF(invoice.issue_date BETWEEN ? AND ?, TRUNCATE(invoice_detail.quantity, 2), 0)) as Cantidad,&#xd;&#xa;   &#x9;SUM(IF(invoice.issue_date BETWEEN ? AND ?, TRUNCATE(invoice_detail.taxable_base * ((invoice_tax.percentage + invoice.surcharge + 100) / 100), 2), 0)) as Periodo,&#xd;&#xa;   &#x9;SUM(IF(invoice.issue_date BETWEEN ? AND ?, 0, TRUNCATE(invoice_detail.quantity, 2))),&#xd;&#xa;   &#x9;SUM(IF(invoice.issue_date BETWEEN ? AND ?, 0, TRUNCATE(invoice_detail.taxable_base * ((invoice_tax.percentage + invoice.surcharge + 100) / 100), 2)))&#xd;&#xa;  FROM registry, invoice, invoice_detail, item, product, invoice_tax &#xd;&#xa; WHERE invoice.registry = registry.id&#xd;&#xa;   AND invoice.id = invoice_detail.invoice&#xd;&#xa;   AND invoice_detail.item = item.id &#xd;&#xa;   AND item.product = product.id&#xd;&#xa;   AND invoice_tax.invoice_detail = invoice_detail.id&#xd;&#xa;   AND item.id = ?&#xd;&#xa;   AND (&#xd;&#xa;       invoice.issue_date BETWEEN ? AND ?&#xd;&#xa;       OR invoice.issue_date BETWEEN DATE_SUB(?, INTERVAL 1 YEAR) AND DATE_SUB(?, INTERVAL 1 YEAR)&#xd;&#xa;       )&#xd;&#xa;   AND invoice.type = ?&#xd;&#xa; GROUP BY 1,2,3,4">
+    <parameters>
+        <parameter name="iniDate" type="DATE"/>
+        <parameter name="endDate" type="DATE"/>
+        <parameter name="iniDate2" type="DATE"/>
+        <parameter name="endDate2" type="DATE"/>
+        <parameter name="iniDate3" type="DATE"/>
+        <parameter name="endDate3" type="DATE"/>
+        <parameter name="iniDate4" type="DATE"/>
+        <parameter name="endDate4" type="DATE"/>
+        <parameter name="item" type="INTEGER"/>
+        <parameter name="iniDate5" type="DATE"/>
+        <parameter name="endDate5" type="DATE"/>
+        <parameter name="iniDate6" type="DATE"/>
+        <parameter name="endDate6" type="DATE"/>
+        <parameter name="type" type="INTEGER"/>
+    </parameters>
+    <results>
+        <result accessName="id" columnId="id" label="Codigo"
+            tableId="registry" type="INTEGER"/>
+        <result accessName="document" columnId="document"
+            label="Documento" tableId="registry" type="STRING"/>
+        <result accessName="name" columnId="name" label="Nombre"
+            tableId="registry" type="STRING"/>
+        <result accessName="alias" columnId="alias" label="Alias"
+            tableId="registry" type="STRING"/>
+        <result accessName="quantity" columnId="" label="Cantidad" type="DOUBLE"/>
+        <result accessName="period" columnId="" label="Total" type="DOUBLE"/>
+        <result accessName="quantity2" columnId=""
+            label="Cantidad Anterior" type="DOUBLE"/>
+        <result accessName="period2" columnId=""
+            label="Periodo Año Anterior" type="DOUBLE"/>
+    </results>
+    <dataModelReferences/>
+</view>

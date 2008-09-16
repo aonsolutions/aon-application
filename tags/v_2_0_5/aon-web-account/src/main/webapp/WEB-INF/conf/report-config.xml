@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+
+<!DOCTYPE report-config 
+	PUBLIC "-//CODE-AON//DTD Report Config//EN" 
+	"http://co-de.com/aon/report-config.dtd">
+
+<report-config>
+	<default-config>
+		<fetch-mode paginated="false" />
+		<!-- 
+		<params>
+			<param id="logoImageFile" value="com/code/aon/ui/gtm/report/resources/logo.gif" />
+		</params>
+		 -->
+	</default-config>
+
+	<report id="diary" description="Diary">
+		<template path="/com/code/aon/ui/account/report/diary.jasper"/>
+		<bean key="com.code.aon.account.AccountEntryDetail" />
+		<criteria provider="#{accountEntryReport}"/>
+
+		<params>
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.account.i18n.messages" />
+			<param id="logoImageFile" value="#{company.getAttachAsInputStream}" />
+			<param id="company" value="#{company.obtainCompany}" />
+			<param id="fromDate" value="#{accountEntryReport.getFromDate}" />
+			<param id="toDate" value="#{accountEntryReport.getToDate}" />
+			<param id="period" value="#{accountEntryReport.getPeriod}" />
+		</params>
+	</report>
+	
+	<report id="abstract" description="Abstract">
+		<template path="/com/code/aon/ui/account/report/abstract.jasper"/>
+		<bean key="com.code.aon.account.AccountEntryDetail" />
+		<criteria provider="#{accountEntryReport}"/>
+
+		<params>
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.account.i18n.messages" />
+			<param id="logoImageFile" value="#{company.getAttachAsInputStream}" />
+			<param id="company" value="#{company.obtainCompany}" />
+			<param id="fromDate" value="#{accountEntryReport.getFromDate}" />
+			<param id="toDate" value="#{accountEntryReport.getToDate}" />
+			<param id="period" value="#{accountEntryReport.getPeriod}" />
+		</params>
+	</report>
+
+	<report id="profitAndLoss" description="ProfitAndLoss">
+		<template path="/com/code/aon/ui/account/report/profitAndLoss.jasper"/>
+		<collection provider="#{accountSummaryReport}"/>
+
+		<params>
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.account.i18n.messages" />
+			<param id="logoImageFile" value="#{company.getAttachAsInputStream}" />
+			<param id="company" value="#{company.obtainCompany}" />
+			<param id="fromDate" value="#{accountSummaryReport.getFromDate}" />
+			<param id="toDate" value="#{accountSummaryReport.getToDate}" />
+			<param id="period" value="#{accountSummaryReport.getPeriod}" />
+			<param id="grossMargin" value="#{accountSummaryReport.getGrossMargin}" />
+			<param id="totalExpenses" value="#{accountSummaryReport.getTotalExpenses}" />
+			<param id="totalResult" value="#{accountSummaryReport.getTotalResult}" />
+		</params>
+	</report>
+
+	<report id="profitAndLossMonthly" description="ProfitAndLossMonthly">
+		<template path="/com/code/aon/ui/account/report/profitAndLossMonthly.jasper"/>
+		<collection provider="#{accountMonthlyReport}"/>
+
+		<params>
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.account.i18n.messages" />
+			<param id="logoImageFile" value="#{company.getAttachAsInputStream}" />
+			<param id="company" value="#{company.obtainCompany}" />
+			<param id="fromDate" value="#{accountSummaryReport.getFromDate}" />
+			<param id="toDate" value="#{accountSummaryReport.getToDate}" />
+			<param id="period" value="#{accountSummaryReport.getPeriod}" />
+		</params>
+	</report>
+
+</report-config>		

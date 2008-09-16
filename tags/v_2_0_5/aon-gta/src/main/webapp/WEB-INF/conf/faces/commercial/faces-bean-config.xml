@@ -1,0 +1,314 @@
+<?xml version="1.0"?>
+<!DOCTYPE faces-config PUBLIC
+  "-//Sun Microsystems, Inc.//DTD JavaServer Faces Config 1.1//EN"
+  "http://java.sun.com/dtd/web-facesconfig_1_1.dtd">
+
+<faces-config>
+
+	<!--  **** COMMERCIAL COLLECTIONS **** 
+		Controlador que proporciona colecciones del grupo .
+	-->
+	<managed-bean>
+		<managed-bean-name>commecialCollections</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.commercial.controller.CommercialCollectionsController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
+
+	<!-- **** COMMERCIAL **** -->
+	
+	<managed-bean>
+		<managed-bean-name>offer</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.commercial.controller.OfferController
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.commercial.Offer</value>
+		</managed-property>
+		<managed-property>
+			<property-name>listenerClasses</property-name>
+			<list-entries>
+				<value-class>
+					com.code.aon.ui.form.event.IControllerListener
+				</value-class>
+				<value>#{offerHeaderControllerListener}</value>
+				<value>#{offerControllerListener}</value>
+				<value>#{offerWorkPlaceListener}</value>
+				<value>#{tasOfferListener}</value>
+			</list-entries>
+		</managed-property>
+	</managed-bean>
+
+	<managed-bean>
+		<managed-bean-name>offerWorkPlaceListener</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.commercial.event.OfferWorkPlaceListener
+		</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+	</managed-bean>
+	
+	<managed-bean>
+		<managed-bean-name>offerDetail</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.commercial.controller.OfferDetailController
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.commercial.OfferDetail</value>
+		</managed-property>
+		<managed-property>
+			<property-name>masterControllerName</property-name>
+			<value>offer</value>
+		</managed-property>
+		<managed-property>
+			<property-name>propertyMap</property-name>
+			<map-entries>
+			     <!-- Se ha cambiado a un mapa para soportar claves compuestas.
+                 Lo normal en nuestro caso es que halla una entrada en el mapa. -->
+				<map-entry>
+				    <!-- Nombre de la propiedad en el POJO master -->
+				    <!-- Si es una clave compuesta, seria: id.<nombre.propiedad> -->
+					<key>id</key>
+					<!-- Nombre de la propiedad en el POJO detail -->
+				    <!-- Si es una clave compuesta, seria: id.<nombre.propiedad> -->
+					<value>offer.id</value>
+				</map-entry>
+			</map-entries>
+		</managed-property>
+		<managed-property>
+			<property-name>cascadeDelete</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>listenerClasses</property-name>
+			<list-entries>
+				<value-class>
+					com.code.aon.ui.form.event.IControllerListener
+				</value-class>
+				<value>#{compositionOfferDetailListener}</value>
+			</list-entries>
+		</managed-property>
+	</managed-bean>
+	
+	<!-- definido para el report de presupuestos -->
+	<managed-bean>
+		<managed-bean-name>tasOffer</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.tasCommercial.controller.TasOfferController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
+	
+	<!-- definido para el report de alabaranes de venta -->
+	<managed-bean>
+		<managed-bean-name>tasDelivery</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.tasDelivery.controller.TasDeliveryController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
+	
+	<!-- **** TARGET **** -->
+	
+	<managed-bean>
+		<managed-bean-name>target</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.commercial.controller.TargetController
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.commercial.Target</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pageLimit</property-name>
+			<value>20</value>
+		</managed-property>
+		<managed-property>
+			<property-name>listenerClasses</property-name>
+			<list-entries>
+				<value-class>
+					com.code.aon.ui.form.event.IControllerListener
+				</value-class>
+				<value>#{targetAddressListener}</value>
+				<value>#{targetMediaListener}</value>
+			</list-entries>
+		</managed-property>
+	</managed-bean>
+
+	<managed-bean>
+		<managed-bean-name>targetChildListener</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.form.listener.ChildControllerListener
+		</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+		<managed-property>
+			<property-name>masterBean</property-name>
+			<value>target.registry</value>
+		</managed-property>
+		<managed-property>
+			<property-name>masterPropertyName</property-name>
+			<value>registry</value>
+		</managed-property>
+	</managed-bean>
+
+	<!--  **** ADDRESS **** -->
+
+	<managed-bean>
+		<managed-bean-name>targetAddress</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.commercial.controller.TargetAddressController
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.registry.RegistryAddress</value>
+		</managed-property>
+		<managed-property>
+			<property-name>listenerClasses</property-name>
+			<list-entries>
+				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+				<value>#{targetChildListener}</value>
+			</list-entries>
+		</managed-property>
+	</managed-bean>
+	
+	<managed-bean>
+		<managed-bean-name>targetAddressListener</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.form.listener.MasterControllerListener
+		</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+		<managed-property>
+			<property-name>childBean</property-name>
+			<value>targetAddress</value>
+		</managed-property>
+		<managed-property>
+			<property-name>aliasMap</property-name>
+			<map-entries>
+			     <!-- Se ha cambiado a un mapa para soportar claves compuestas.
+                 Lo normal en nuestro caso es que halla una entrada en el mapa. -->
+				<map-entry>
+                    <!-- Alias en el POJO detail de la columna que hace el join con la tabla master -->
+					<key>RegistryAddress_registry_id</key>
+				    <!-- Nombre de la propiedad en el POJO master -->
+				    <!-- Si es una clave compuesta, seria: id.<nombre.propiedad> -->
+                    <value>id</value>
+				</map-entry>
+			</map-entries>
+		</managed-property>
+	</managed-bean>
+
+
+	<!--  **** MEDIA **** -->
+	
+	<managed-bean>
+		<managed-bean-name>targetMedia</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.commercial.controller.TargetMediaController
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.registry.RegistryMedia</value>
+		</managed-property>
+		<managed-property>
+			<property-name>listenerClasses</property-name>
+			<list-entries>
+				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+				<value>#{targetChildListener}</value>
+			</list-entries>
+		</managed-property>
+	</managed-bean>
+
+	<managed-bean>
+		<managed-bean-name>targetMediaListener</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.form.listener.MasterControllerListener
+		</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+		<managed-property>
+			<property-name>childBean</property-name>
+			<value>targetMedia</value>
+		</managed-property>
+		<managed-property>
+			<property-name>aliasMap</property-name>
+			<map-entries>
+			     <!-- Se ha cambiado a un mapa para soportar claves compuestas.
+                 Lo normal en nuestro caso es que halla una entrada en el mapa. -->
+				<map-entry>
+                    <!-- Alias en el POJO detail de la columna que hace el join con la tabla master -->
+					<key>RegistryMedia_registry_id</key>
+				    <!-- Nombre de la propiedad en el POJO master -->
+				    <!-- Si es una clave compuesta, seria: id.<nombre.propiedad> -->
+                    <value>id</value>
+				</map-entry>
+			</map-entries>
+		</managed-property>
+	</managed-bean>
+
+	<!-- ************* LISTENERS ************** -->
+	<managed-bean>
+		<managed-bean-name>offerControllerListener</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.commercial.event.OfferControllerListener
+		</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+		<managed-property>
+			<property-name>childBean</property-name>
+			<value>offerDetail</value>
+		</managed-property>
+		<managed-property>
+			<property-name>aliasMap</property-name>
+			<map-entries>
+			     <!-- Se ha cambiado a un mapa para soportar claves compuestas.
+                 Lo normal en nuestro caso es que halla una entrada en el mapa. -->
+				<map-entry>
+                    <!-- Alias en el POJO detail de la columna que hace el join con la tabla master -->
+					<key>OfferDetail_offer_id</key>
+				    <!-- Nombre de la propiedad en el POJO master -->
+				    <!-- Si es una clave compuesta, seria: id.<nombre.propiedad> -->
+                    <value>id</value>
+				</map-entry>
+			</map-entries>
+		</managed-property>
+	</managed-bean>
+	
+	<managed-bean>
+		<managed-bean-name>compositionOfferDetailListener</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.composition.event.CompositionOfferDetailListener</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+	</managed-bean>
+	
+	<managed-bean>
+		<managed-bean-name>tasOfferListener</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.tasCommercial.event.TasOfferListener</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+	</managed-bean>
+
+ 	<managed-bean>
+		<managed-bean-name>offerTargetListener</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.commercial.event.OfferTargetListener</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+	</managed-bean>
+	
+ 	<managed-bean>
+		<managed-bean-name>offerHeaderControllerListener</managed-bean-name>
+		<managed-bean-class>com.code.aon.gta.event.HeaderControllerListener</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+		<managed-property>
+			<property-name>table</property-name>
+			<value>Offer</value>
+		</managed-property>
+	</managed-bean>
+</faces-config>

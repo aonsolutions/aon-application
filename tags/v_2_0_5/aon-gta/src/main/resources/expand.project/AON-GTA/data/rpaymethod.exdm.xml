@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<table tableName="rpaymethod">
+    <columns>
+        <column label="" name="id" sqlType="integer" type="integer"/>
+        <column label="" name="registry" sqlType="integer" type="integer"/>
+        <column label="" name="pay_method" sqlType="integer" type="integer"/>
+        <column label="" name="rbank" sqlType="integer" type="integer"/>
+        <column label="" name="number_of_pymnts" sqlType="smallint" type="short"/>
+        <column label="" name="days_to_first_pymnt" sqlType="smallint" type="short"/>
+        <column label="" name="days_between_pymnts" sqlType="smallint" type="short"/>
+        <column label="" length="8" name="pymnt_days" sqlType="varchar" type="string"/>
+    </columns>
+    <virtualColumns/>
+    <primaryKey>
+        <column name="id"/>
+    </primaryKey>
+    <joins>
+        <join description="rpaymethod_ibfk_1" foreignPath="data/pay_method.exdm.xml">
+            <sourceColumns>
+                <column name="pay_method"/>
+            </sourceColumns>
+        </join>
+        <join description="rpaymethod_ibfk_2" foreignPath="data/rbank.exdm.xml">
+            <sourceColumns>
+                <column name="rbank"/>
+            </sourceColumns>
+        </join>
+        <join description="rpaymethod_ibfk_3" foreignPath="data/registry.exdm.xml">
+            <sourceColumns>
+                <column name="registry"/>
+            </sourceColumns>
+        </join>
+    </joins>
+    <descriptionColumns/>
+</table>

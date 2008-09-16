@@ -1,0 +1,84 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core" 
+	xmlns:t="http://myfaces.apache.org/tomahawk"            
+	xmlns:h="http://java.sun.com/jsf/html">
+<body>
+
+<ui:composition template="/facelet/templates/aon.ui.formWindow.xhtml">
+
+<ui:define name="head">
+	<ui:include src="/facelet/fileUpload/head.xhtml" />	
+</ui:define>
+
+<ui:define name="content">
+
+<t:saveState value="#{fileUpload.listener}"/>
+<t:saveState value="#{fileUpload.returnPage}"/>
+<t:saveState value="#{fileUpload.fileName}"/>
+<t:saveState value="#{fileUpload.bundle}"/>
+
+<h:form id="fileUploadForm" enctype="multipart/form-data" >
+	<center>
+	<h:panelGrid columns="2" styleClass="ft" columnClasses="lbl,inp" width="400">
+		<f:facet name="header">
+			<t:div>
+				<t:div>
+					<h:outputText value="#{fileUpload.insertLabel}"/>
+				</t:div>
+			</t:div>
+		</f:facet>
+
+		<t:div rendered="#{fileUpload.uploaded}"/>
+		<h:outputFormat
+			value="#{fileUpload.insertedLabel}"
+			rendered="#{fileUpload.uploaded}"
+		>
+			<f:param value="#{fileUpload.fileName}"/>
+		</h:outputFormat>
+
+		<h:outputText value="#{fileUpload.elementLabel}" rendered="#{!fileUpload.uploaded}"/>
+		<t:inputFileUpload
+			binding="#{fileUpload.component}"
+			id="photo"
+			value="#{fileUpload.uploadFile}"
+			accept="image/*"
+			storage="file"
+			rendered="#{!fileUpload.uploaded}"
+		/>
+
+		<f:facet name="footer">
+			<t:div styleClass="fb">
+				<h:commandButton
+					id="accept"
+					value="#{bundle.aon_accept}"
+					actionListener="#{fileUpload.upload}"
+					rendered="#{!fileUpload.uploaded}"
+				/>
+				<h:commandButton
+					id="cancel"
+					value="#{bundle.aon_cancel}"
+					actionListener="#{fileUpload.onCancel}"
+					onclick="window.close();return true;"
+					rendered="#{!fileUpload.uploaded}"					
+				/>
+				<h:commandButton
+					id="close"
+					value="#{bundle.aon_close}"
+					actionListener="#{fileUpload.onClose}"
+					onclick="window.close();reloadOpener();return true;"
+					rendered="#{fileUpload.uploaded}"					
+				/>
+			</t:div>
+		</f:facet>
+		<t:inputText id="returnPage" forceId="#{true}" value="#{fileUpload.returnPage}" style="display:none" />
+	</h:panelGrid>
+	</center>
+</h:form>
+
+</ui:define>
+</ui:composition>
+
+</body>
+</html>

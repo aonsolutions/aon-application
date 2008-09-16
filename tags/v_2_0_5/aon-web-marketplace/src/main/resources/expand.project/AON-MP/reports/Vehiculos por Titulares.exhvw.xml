@@ -1,0 +1,198 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<workstation description="Vehiculos por Titulares" label="Vehiculos por Titulares">
+    <external-parameters>
+        <external-parameter defaultValue="%" label="NIF/DNI del Titular"
+            name="document" prompt="true" type="STRING"/>
+        <external-parameter defaultValue="%" label="Nombre del titular"
+            name="name" prompt="true" type="STRING"/>
+        <external-parameter defaultValue="%"
+            label="Apellidos del titular" name="surname" prompt="true" type="STRING"/>
+    </external-parameters>
+    <node iconClose="icons/icon_users_group.gif"
+        iconOpen="icons/icon_users_group.gif" label="Titulares">
+        <layout type="COLUMN"/>
+        <contents>
+            <viewContent
+                id="view/Vehiculo/Titulares de Vehiculos.exvw.xml" type="LIST">
+                <parameters>
+                    <parameter name="document"/>
+                    <parameter name="name"/>
+                    <parameter name="surname"/>
+                </parameters>
+            </viewContent>
+        </contents>
+        <node
+            dynamicViewId="view/Vehiculo/Titulares de Vehiculos.exvw.xml"
+            iconClose="icons/icon_usuario.gif"
+            iconOpen="icons/icon_usuario.gif" label="${REGISTRY_NAME}">
+            <dynamicParameters>
+                <parameter name="document"/>
+                <parameter name="name"/>
+                <parameter name="surname"/>
+            </dynamicParameters>
+            <layout type="COLUMN"/>
+            <contents>
+                <contentComposite label="Datos del Titular">
+                    <layout type="COLUMN"/>
+                    <contents>
+                        <viewContent id="view/Vehiculo/Datos del cliente.exvw.xml">
+                            <parameters>
+                                <parameter name="REGISTRY_ID"/>
+                            </parameters>
+                        </viewContent>
+                        <viewContent
+                            id="view/Vehiculo/RAddressList.exvw.xml" type="LIST">
+                            <parameters>
+                                <parameter name="REGISTRY_ID"/>
+                            </parameters>
+                        </viewContent>
+                        <viewContent
+                            id="view/Vehiculo/RMediaList.exvw.xml" type="LIST">
+                            <parameters>
+                                <parameter name="REGISTRY_ID"/>
+                            </parameters>
+                        </viewContent>
+                    </contents>
+                </contentComposite>
+            </contents>
+            <node
+                dynamicViewId="view/Vehiculo/Vehiculos de un titular.exvw.xml"
+                iconClose="icons/icon_coche.gif"
+                iconOpen="icons/icon_coche.gif" label="${TAS_ITEM_PUBLIC_CODE}">
+                <dynamicParameters>
+                    <parameter name="REGISTRY_ID"/>
+                </dynamicParameters>
+                <layout type="COLUMN"/>
+                <contents>
+                    <contentComposite label="Datos del Vehículo">
+                        <layout type="COLUMN"/>
+                        <contents>
+                            <viewContent
+                                id="view/Vehiculo/Datos del Vehiculo.exvw.xml" type="FORM">
+                                <parameters>
+                                    <parameter name="TAS_ITEM_PUBLIC_CODE"/>
+                                </parameters>
+                            </viewContent>
+                        </contents>
+                    </contentComposite>
+                </contents>
+                <node
+                    dynamicViewId="view/Vehiculo/Orden de Reparacion.exvw.xml"
+                    iconClose="icons/icon_libro.gif"
+                    iconOpen="icons/icon_libro.gif" label="${SUPPORT_ORDER_SERIES}/${SUPPORT_ORDER_NUMBER} - ${SUPPORT_ORDER_DATE}">
+                    <dynamicParameters>
+                        <parameter name="TAS_ITEM_PUBLIC_CODE"/>
+                    </dynamicParameters>
+                    <layout type="COLUMN"/>
+                    <contents>
+                        <contentComposite label="Datos de Reparación">
+                            <layout type="COLUMN"/>
+                            <contents>
+                                <viewContent
+                                    id="view/Vehiculo/Datos de Reparacion.exvw.xml" type="FORM">
+                                    <parameters>
+                                    <parameter name="ORDER_ID"/>
+                                    </parameters>
+                                </viewContent>
+                            </contents>
+                        </contentComposite>
+                    </contents>
+                    <node
+                        dynamicViewId="view/Vehiculo/Presupuesto.exvw.xml"
+                        iconClose="icons/icon_presupuesto.gif" label="Ppto.: ${OFFER_SERIES}/${OFFER_NUMBER} - ${OFFER_DATE}">
+                        <dynamicParameters>
+                            <parameter name="ORDER_ID"/>
+                        </dynamicParameters>
+                        <layout type="COLUMN"/>
+                        <contents>
+                            <contentComposite label="Presupuesto">
+                                <layout type="COLUMN"/>
+                                <contents>
+                                    <viewContent id="view/Vehiculo/Presupuesto.exvw.xml">
+                                    <parameters>
+                                    <parameter name="OFFER_ID"/>
+                                    </parameters>
+                                    </viewContent>
+                                    <viewContent
+                                    id="view/Vehiculo/Linea de Pruesupuesto.exvw.xml" type="LIST">
+                                    <parameters>
+                                    <parameter name="OFFER_ID"/>
+                                    </parameters>
+                                    </viewContent>
+                                </contents>
+                            </contentComposite>
+                        </contents>
+                    </node>
+                    <node
+                        dynamicViewId="view/Vehiculo/Albaran de Venta.exvw.xml"
+                        iconClose="icons/icon_albaran_venta.gif" label="Albn.: ${DELVRY_SERIES}/${DELVRY_NUMBER} - ${DELVRY_DATE}">
+                        <dynamicParameters>
+                            <parameter name="ORDER_ID"/>
+                        </dynamicParameters>
+                        <layout type="COLUMN"/>
+                        <contents>
+                            <contentComposite label="Albarán">
+                                <layout type="COLUMN"/>
+                                <contents>
+                                    <viewContent id="view/Vehiculo/Albaran de Venta.exvw.xml">
+                                    <parameters>
+                                    <parameter name="ORDER_ID"/>
+                                    </parameters>
+                                    </viewContent>
+                                    <viewContent
+                                    id="view/Vehiculo/Lineas Albaran de Venta.exvw.xml" type="LIST">
+                                    <parameters>
+                                    <parameter name="ORDER_ID"/>
+                                    </parameters>
+                                    </viewContent>
+                                </contents>
+                            </contentComposite>
+                        </contents>
+                    </node>
+                    <node dynamicViewId="view/Vehiculo/Factura.exvw.xml"
+                        iconClose="icons/icon_factura.gif" label="Fra.: ${INVOICE_SERIES}/${INVOICE_NUMBER} - ${INVOICE_DATE}">
+                        <dynamicParameters>
+                            <parameter name="ORDER_ID"/>
+                        </dynamicParameters>
+                        <layout type="COLUMN"/>
+                        <contents>
+                    <contentComposite label="Datos de la Factura">
+                        <layout type="COLUMN"/>
+                        <contents>
+                            <viewContent
+                                id="view/Facturas/DatosFactura.exvw.xml" type="FORM">
+                                <parameters>
+                                    <parameter name="INVOICE_ID"/>
+                                </parameters>
+                            </viewContent>
+                        </contents>
+                    </contentComposite>
+                    <contentComposite label="Datos del Cliente">
+                        <layout type="ROW"/>
+                        <contents>
+                            <viewContent id="view/Vehiculo/Datos del cliente.exvw.xml">
+                                <parameters>
+                                    <parameter name="INVOICE_REGISTRY"/>
+                                </parameters>
+                            </viewContent>
+                            <viewContent
+                                id="view/Facturas/Datos de la Dirección.exvw.xml" type="FORM">
+                                <parameters>
+                                    <parameter name="INVOICE_RADDRESS"/>
+                                </parameters>
+                            </viewContent>
+                        </contents>
+                    </contentComposite>
+                    <viewContent
+                        id="view/Vehiculo/Lineas de Factura.exvw.xml" type="LIST">
+                        <parameters>
+                            <parameter name="INVOICE_ID"/>
+                        </parameters>
+                    </viewContent>
+                        </contents>
+                    </node>
+                </node>
+            </node>
+        </node>
+    </node>
+</workstation>

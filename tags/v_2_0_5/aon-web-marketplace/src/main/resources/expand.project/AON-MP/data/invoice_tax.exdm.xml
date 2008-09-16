@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<table tableName="invoice_tax">
+    <columns>
+        <column label="Identificador unico del Impuesto de la Factura"
+            name="id" sqlType="integer" type="integer"/>
+        <column label="Identificador del Detalle de la Factura"
+            name="invoice_detail" sqlType="integer" type="integer"/>
+        <column label="Tipo de Impuesto del Detalle de la Factura"
+            length="2" name="tax_type" sqlType="tinyint" type="string"/>
+        <column label="Porcentaje de recargo del Detalle de la Factura"
+            name="percentage" sqlType="double" type="double"/>
+        <column
+            label="Porcentaje del recargo de equivalencia del Detalle de la Factura"
+            name="surcharge" sqlType="double" type="double"/>
+    </columns>
+    <virtualColumns/>
+    <primaryKey>
+        <column name="id"/>
+    </primaryKey>
+    <joins>
+        <join description="invoice_tax_ibfk_1" foreignPath="data/invoice_detail.exdm.xml">
+            <sourceColumns>
+                <column name="invoice_detail"/>
+            </sourceColumns>
+        </join>
+    </joins>
+    <descriptionColumns/>
+</table>

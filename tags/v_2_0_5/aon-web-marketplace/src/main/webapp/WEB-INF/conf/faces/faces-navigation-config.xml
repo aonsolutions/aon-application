@@ -1,0 +1,124 @@
+<?xml version="1.0"?>
+<!DOCTYPE faces-config PUBLIC
+  "-//Sun Microsystems, Inc.//DTD JavaServer Faces Config 1.1//EN"
+  "http://java.sun.com/dtd/web-facesconfig_1_1.dtd">
+
+<faces-config>
+  <!-- =================== Navigation Rules ================= -->
+
+  <navigation-rule>
+	<navigation-case>
+		<from-outcome>about</from-outcome>
+		<to-view-id>/facelet/about/content.faces</to-view-id>
+	</navigation-case>
+  </navigation-rule>
+
+  <navigation-rule>
+    <navigation-case>
+      <from-outcome>ticket_compositionlist</from-outcome>
+      <to-view-id>/facelet/tickets/ticket/list.faces</to-view-id>
+    </navigation-case>
+    <navigation-case>
+      <from-outcome>packingticket_compositionlist</from-outcome>
+      <to-view-id>/facelet/tickets/packingticket/list.faces</to-view-id>
+    </navigation-case>
+  </navigation-rule>
+
+  <!-- **************** ITEM DUMP *************** -->	
+  <navigation-rule>
+	<navigation-case>
+		<from-outcome>itemDump_result</from-outcome>
+		<to-view-id>/facelet/itemplu/result.faces</to-view-id>
+	</navigation-case>
+  </navigation-rule>
+  
+
+  <!-- **************** MENU  *************** -->	
+  <navigation-rule>
+	<navigation-case>
+		<from-outcome>content</from-outcome>
+		<to-view-id>/facelet/homepage/content.faces</to-view-id>
+	</navigation-case>
+  </navigation-rule>
+  <navigation-rule>
+	<navigation-case>
+		<from-outcome>dump</from-outcome>
+		<to-view-id>/facelet/dump/result.faces</to-view-id>
+	</navigation-case>
+    <navigation-case>
+      <from-outcome>trace</from-outcome>
+      <to-view-id>/facelet/tickets/trace/form.faces</to-view-id>
+    </navigation-case>
+    <navigation-case>
+      <from-outcome>ticket</from-outcome>
+      <to-view-id>/facelet/tickets/ticket/form.faces</to-view-id>
+    </navigation-case>
+    <navigation-case>
+      <from-outcome>packingticket</from-outcome>
+      <to-view-id>/facelet/tickets/packingticket/form.faces</to-view-id>
+    </navigation-case>
+	<navigation-case>
+		<from-outcome>recover</from-outcome>
+		<to-view-id>/facelet/dump/form.faces</to-view-id>
+	</navigation-case>
+	<navigation-case>
+		<from-outcome>recover_result</from-outcome>
+		<to-view-id>/facelet/dump/result.faces</to-view-id>
+	</navigation-case>
+	<navigation-case>
+		<from-outcome>itemdump</from-outcome>
+		<to-view-id>/facelet/itemplu/form.faces</to-view-id>
+	</navigation-case>
+	<navigation-case>
+		<from-outcome>itemrecover</from-outcome>
+		<to-view-id>/facelet/itemplu/search.faces</to-view-id>
+	</navigation-case>
+  </navigation-rule>
+  <navigation-rule>
+	<navigation-case>
+		<from-outcome>scale</from-outcome>
+		<to-view-id>/facelet/scale/form.faces</to-view-id>
+	</navigation-case>
+  </navigation-rule>
+  <navigation-rule>
+	<navigation-case>
+		<from-outcome>scale_relation</from-outcome>
+		<to-view-id>/facelet/scale/relation/grid.faces</to-view-id>
+	</navigation-case>
+  </navigation-rule>
+  <navigation-rule>
+	<navigation-case>
+		<from-outcome>select_inventory</from-outcome>
+		<to-view-id>/hyperview/inventory.faces</to-view-id>
+	</navigation-case>
+	<navigation-case>
+		<from-outcome>select_inventory_2</from-outcome>
+		<to-view-id>/hyperview/inventory_2.faces</to-view-id>
+	</navigation-case>
+  </navigation-rule>
+
+	<!-- *************************
+		HYPERVIEW NAVIGATION RULES
+		**************************  	 -->
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>hyperview_view</from-outcome>
+			<to-view-id>/facelet/hyperview/run.faces</to-view-id>
+		</navigation-case>
+	</navigation-rule>
+
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>parameters</from-outcome>
+			<to-view-id>/facelet/hyperview/parameters.faces</to-view-id>
+		</navigation-case>
+	</navigation-rule>
+	
+	  <navigation-rule>
+		<navigation-case>
+			<from-outcome>hyperview_comp</from-outcome>
+			<to-view-id>/hyperview.faces</to-view-id>
+		</navigation-case>
+	  </navigation-rule>
+	
+</faces-config>
