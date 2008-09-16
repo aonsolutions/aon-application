@@ -2,7 +2,10 @@ package com.code.aon.ui.common.controller;
 
 import java.io.InputStream;
 import java.io.Serializable;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -13,6 +16,8 @@ import java.util.logging.Logger;
 
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
+import javax.faces.event.ActionEvent;
+import javax.servlet.http.HttpSession;
 
 /**
  * The Class ConfigurationController is used to set some default configurable
@@ -21,8 +26,10 @@ import javax.faces.context.FacesContext;
 public class ConfigurationController implements Serializable {
 	
 	private static final long serialVersionUID = -1159615075844874762L;
-
+	
 	private static final Logger LOGGER = Logger.getLogger(ConfigurationController.class.getName());
+	
+	private static final DateFormat FORMATTER = new SimpleDateFormat("EEEE, dd MMMM yyyy");	
 
 	/** The application logo context relative path. */
 	private String applicationLogoContextRelativePath;
@@ -214,4 +221,25 @@ public class ConfigurationController implements Serializable {
 			return null;
 		}
 	}
+	
+    /**
+     * Gets the current date.
+     * 
+     * @return the current date
+     */
+    public String getCurrentDate() {
+        return FORMATTER.format(new Date()).toUpperCase();
+    }
+
+    /**
+     * Logout from the current session.
+     * 
+     * @param event the event
+     */
+    public void logout( ActionEvent event ) {
+    	FacesContext context = FacesContext.getCurrentInstance();
+    	HttpSession session = (HttpSession) context.getExternalContext().getSession(false);
+    	session.invalidate();    	
+    }
+    
 }
