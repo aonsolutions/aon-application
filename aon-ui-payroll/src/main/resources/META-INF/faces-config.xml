@@ -236,7 +236,7 @@
 
 	<managed-bean>
 		<managed-bean-name>porcentaje</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.form.LinesController</managed-bean-class>
+		<managed-bean-class>com.code.aon.ui.payroll.controller.PorcentajeController</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
 			<property-name>queryOnStartUP</property-name>
@@ -252,7 +252,7 @@
 		</managed-property>
 		<managed-property>
 			<property-name>defaultOrder</property-name>
-			<value>Porcentaje_id_fecini</value>
+			<value>Porcentaje_id_fecini DESC</value>
 		</managed-property>
 		<managed-property>
 			<property-name>cascadeDelete</property-name>
@@ -267,7 +267,7 @@
 			<map-entries>
 				<map-entry>
 					<key>cdg</key>
-					<value>porcentajeMaestro.cdg</value>
+					<value>id.cdg</value>
 				</map-entry>
 			</map-entries>
 		</managed-property>

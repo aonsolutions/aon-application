@@ -12,8 +12,6 @@ import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
 
 import com.code.aon.common.ITransferObject;
 
@@ -43,7 +41,6 @@ public class Porcentaje implements ITransferObject {
 		this.id = id;
 	}
 
-	@Temporal(TemporalType.DATE)
 	@Column(name="fecfin", nullable=false, length=10)
 	public Date getFecfin() {
 		return this.fecfin;

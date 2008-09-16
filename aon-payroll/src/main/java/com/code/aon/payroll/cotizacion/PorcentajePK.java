@@ -28,7 +28,6 @@ public class PorcentajePK implements Serializable {
 		this.cdg = cdg;
 	}
 
-	@Temporal(TemporalType.DATE)
 	@Column(name="fecini", nullable=false, length=10)
 	public Date getFecini() {
 		return this.fecini;
