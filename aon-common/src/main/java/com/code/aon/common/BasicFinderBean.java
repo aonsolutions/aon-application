@@ -101,10 +101,15 @@ public class BasicFinderBean implements IFinderBean {
 	 */
 	public int getCount(Criteria criteria) throws ManagerBeanException {
 		try {
-			OrderByList obl = criteria.getOrderByList();
-			criteria.setOrderByList( null );
+			OrderByList obl = null;
+			if ( criteria != null ) {
+				obl = criteria.getOrderByList();
+				criteria.setOrderByList( null );
+			}
 			int count = dao.getCount(criteria);
-			criteria.setOrderByList( obl );
+			if ( criteria != null ) {
+				criteria.setOrderByList( obl );	
+			}
 			return count;
 		} catch (DAOException e) {
 			throw new ManagerBeanException(e.getMessage(), e);
