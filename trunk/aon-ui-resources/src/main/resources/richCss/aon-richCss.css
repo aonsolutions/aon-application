@@ -197,6 +197,10 @@ color:#000;
 	}
 .aon-icon-big-info{
 	background:transparent url(images/aon-icon-big/aon-icon-big-info.png) center  center no-repeat;
+	padding-top:1px;
+	padding-bottom:1px;
+	line-height:34px;
+	height:34px;
 	}
 .aon-icon-big-commandButton-disabled{
 	}
@@ -818,6 +822,13 @@ color:#000;
 }
 .aon-outputLabel{
 }
+.aon-form-date-label{
+	font-style:italic;
+	font-size:0.9em;
+	padding-left:5px;
+	position:relative;
+	top:-3px;
+	}
 .aon-form-input-text{
 	border:#ccc 1px dotted;
 	background-color:#f6f5e3;
