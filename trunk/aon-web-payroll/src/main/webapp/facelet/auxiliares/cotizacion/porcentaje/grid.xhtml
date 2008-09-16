@@ -40,13 +40,13 @@
 						timeZone="#{timeZoneController.timeZoneId}" />
 				</aon:outputText>
 				<aon:selectInputDate value="#{porcentaje.to.id.fecini}"
-					rendered="#{to==porcentaje.to}"
-					renderAsPopup="true" popupDateFormat="#{appBundle.aon_date_pattern}">
+					rendered="#{to==porcentaje.to}" disabled="#{to==porcentaje.to}"
+					renderAsPopup="true" popupDateFormat="#{bundle.aon_date_pattern}">
 				</aon:selectInputDate>
 				<f:facet name="footer">
 					<aon:selectInputDate value="#{porcentaje.to.id.fecini}"
 						rendered="#{porcentaje.new}"
-						renderAsPopup="true" popupDateFormat="#{appBundle.aon_date_pattern}">
+						renderAsPopup="true" popupDateFormat="#{bundle.aon_date_pattern}">
 					</aon:selectInputDate>
 				</f:facet>
 			</aon:column>
@@ -61,12 +61,12 @@
 				</aon:outputText>
 				<aon:selectInputDate value="#{porcentaje.to.fecfin}"
 					rendered="#{to==porcentaje.to}"
-					renderAsPopup="true" popupDateFormat="#{appBundle.aon_date_pattern}">
+					renderAsPopup="true" popupDateFormat="#{bundle.aon_date_pattern}">
 				</aon:selectInputDate>
 				<f:facet name="footer">
 					<aon:selectInputDate value="#{porcentaje.to.fecfin}"
 						rendered="#{porcentaje.new}"
-						renderAsPopup="true" popupDateFormat="#{appBundle.aon_date_pattern}">
+						renderAsPopup="true" popupDateFormat="#{bundle.aon_date_pattern}">
 					</aon:selectInputDate>
 				</f:facet>
 			</aon:column>
@@ -75,14 +75,18 @@
 				<f:facet name="header">
 					<aon:outputText value="#{appBundle.aon_payroll_cotizacion_empresa}" />
 				</f:facet>
-				<aon:outputText value="#{to.pctemp}" rendered="#{to!=porcentaje.to}" />
-				<aon:inputText styleClass="aon-form-input-text"
+				<aon:outputText value="#{to.pctemp}" rendered="#{to!=porcentaje.to}" >
+					<f:convertNumber minFractionDigits="2" />
+				</aon:outputText>
+				<aon:inputText id="pctemp_edit" styleClass="aon-form-input-text"
 					rendered="#{to==porcentaje.to}" 
-					value="#{porcentaje.to.pctemp}" maxlength="8" size="10" />
+					value="#{porcentaje.to.pctemp}" maxlength="8" size="10" 
+					validator="#{porcentaje.validatePercent}" />
 				<f:facet name="footer">
-					<aon:inputText styleClass="aon-form-input-text"  
+					<aon:inputText id="pctemp_new" styleClass="aon-form-input-text"  
 						rendered="#{porcentaje.new}" 
-						value="#{porcentaje.to.pctemp}" maxlength="8" size="10"/>
+						value="#{porcentaje.to.pctemp}" maxlength="8" size="10" 
+						validator="#{porcentaje.validatePercent}" />
 				</f:facet>
 			</aon:column>
 
@@ -90,14 +94,18 @@
 				<f:facet name="header">
 					<aon:outputText value="#{appBundle.aon_payroll_cotizacion_trabajador}" />
 				</f:facet>
-				<aon:outputText value="#{to.pcttra}" rendered="#{to!=porcentaje.to}" />
-				<aon:inputText styleClass="aon-form-input-text"
+				<aon:outputText value="#{to.pcttra}" rendered="#{to!=porcentaje.to}" >
+					<f:convertNumber minFractionDigits="2" />
+				</aon:outputText>
+				<aon:inputText id="pcttra_edit" styleClass="aon-form-input-text"
 					rendered="#{to==porcentaje.to}" 
-					value="#{porcentaje.to.pcttra}" maxlength="8" size="10" />
+					value="#{porcentaje.to.pcttra}" maxlength="8" size="10"
+					validator="#{porcentaje.validatePercent}" />
 				<f:facet name="footer">
-					<aon:inputText styleClass="aon-form-input-text"  
+					<aon:inputText id="pcttra_new" styleClass="aon-form-input-text"  
 						rendered="#{porcentaje.new}" 
-						value="#{porcentaje.to.pcttra}" maxlength="8" size="10"/>
+						value="#{porcentaje.to.pcttra}" maxlength="8" size="10"
+						validator="#{porcentaje.validatePercent}" />
 				</f:facet>
 			</aon:column>
 
@@ -105,7 +113,9 @@
 				<f:facet name="header">
 					<aon:outputText value="#{appBundle.aon_payroll_cotizacion_total}" />
 				</f:facet>
-				<aon:outputText value="#{to.pcttot}" rendered="#{to!=porcentaje.to}" />
+				<aon:outputText value="#{to.pcttot}" rendered="#{to!=porcentaje.to}" >
+					<f:convertNumber minFractionDigits="2" />
+				</aon:outputText>
 				<aon:inputText styleClass="aon-form-input-text"
 					rendered="#{to==porcentaje.to}" 
 					value="#{porcentaje.to.pcttot}" maxlength="8" size="10" />
@@ -122,7 +132,7 @@
 				</f:facet>
 				<aon:div>
 					<f:verbatim rendered="#{to!=porcentaje.to}">&#160;</f:verbatim>
-					<aon:commandButton id="acceptEdit-Scope" title="[#{bundle.aon_accept}]" 
+					<aon:commandButton title="[#{bundle.aon_accept}]" 
 						rendered="#{to==porcentaje.to}"
 						styleClass="aon-editDataTable-button aon-icon-accept"
 						actionListener="#{porcentaje.onAccept}"
@@ -132,7 +142,7 @@
 						rendered="#{to==porcentaje.to}"
 						actionListener="#{porcentaje.onCancel}" immediate="true"
 						accesskey="#{bundle.aon_key_cancel_line}" />
-					<aon:confirmButton title="[#{bundle.aon_remove}]"
+					<aon:confirmButton id="remove-Porcentaje" title="[#{bundle.aon_remove}]"
 						styleClass="aon-editDataTable-button aon-icon-delete"
 						rendered="#{to==porcentaje.to}"
 						confirmTitle="#{bundle.aon_confirm_title}" 
@@ -148,7 +158,7 @@
 							rendered="#{porcentaje.new}"
 							actionListener="#{porcentaje.onAccept}"
 							accesskey="#{bundle.aon_key_save_line}" />
-						<aon:confirmButton title="[#{bundle.aon_cancel}]"
+						<aon:confirmButton id="cancel-Porcentaje" title="[#{bundle.aon_cancel}]"
 							styleClass="aon-editDataTable-button aon-icon-cancel"
 							rendered="#{porcentaje.new}"
 							confirmTitle="#{bundle.aon_confirm_title}" 

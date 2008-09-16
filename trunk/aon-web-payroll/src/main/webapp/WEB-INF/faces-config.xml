@@ -6,7 +6,7 @@
 <faces-config>
 	<application>
 		<message-bundle>
-			com.code.aon.ui.common.i18n.messages
+			com.code.aon.ui.payroll.i18n.messages
 		</message-bundle>
 		<locale-config>
 			<default-locale>es</default-locale>
