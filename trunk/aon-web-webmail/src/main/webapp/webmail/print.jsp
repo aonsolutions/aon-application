@@ -4,11 +4,11 @@
 		java.util.ResourceBundle.getBundle("com.code.aon.ui.webmail.i18n.messages");
 	com.code.aon.ui.webmail.controller.MessageController messageBean = 
 		(com.code.aon.ui.webmail.controller.MessageController) session.getAttribute("message");
-	com.code.aon.ui.webmail.controller.WebMailController webmailBean = 
-		(com.code.aon.ui.webmail.controller.WebMailController) session.getAttribute("webmail");
+	com.code.aon.bridge.session.LoggedUser loggedUserBean = 
+		(com.code.aon.bridge.session.LoggedUser) session.getAttribute("loggedUser");
 %>
 <%
-	String username = webmailBean.getLoggedUserName();
+	String username = loggedUserBean.getLoggedUserName();
 
 	java.util.Date date = new java.util.Date();
 	java.text.SimpleDateFormat df = new java.text.SimpleDateFormat("EEE, dd/MM/yy-HH:mm");

@@ -43,7 +43,7 @@
 		</managed-property>		
 		<managed-property>
 			<property-name>resourceURIPreffix</property-name>
-			<value>/aonResource/1.3.2</value>
+			<value>/aonResource/1.4.0</value>
 		</managed-property>		
 	</managed-bean>
 
@@ -90,6 +90,13 @@
 		</managed-property>
 	</managed-bean>
 
+	<!-- ***************** LOGGED USER ******************** --> 
+	<managed-bean>
+		<managed-bean-name>loggedUser</managed-bean-name>
+		<managed-bean-class>com.code.aon.bridge.session.LoggedUser</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
+	
 	<!-- ***************** FAILED LOGIN ******************** --> 
 	<managed-bean>
 		<managed-bean-name>failedLogin</managed-bean-name>
