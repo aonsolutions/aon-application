@@ -2,7 +2,6 @@ package com.code.aon.jaas.ldap;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -28,12 +27,10 @@ import com.code.aon.ldap.LdapSession;
 
 public class Domain implements IDomain, ILdapConstants, ILdapSecurityConstants, IAonObjectClasses {
 	
-    /** Obtiene un logger apropiado. */
+	/** Obtiene un logger apropiado. */
 	private static final Log LOGGER = LogFactory.getLog( Domain.class.getName() );
 
 	private static final long serialVersionUID = -8630396330009341954L;
-	
-	public static final String OBJECT_CLASS = "aonDomain";
 
 	/** Domain identifier. */
 	private String id;
@@ -57,7 +54,7 @@ public class Domain implements IDomain, ILdapConstants, ILdapSecurityConstants, 
 	
 	@Override
 	public void add(IUser user) throws UserAlreadyExistException {
-		throw new UnsupportedOperationException("Not supported!");
+		throw new UnsupportedOperationException(SecurityLdap.NOT_SUPPORTED);
 	}
 
 	@Override
@@ -72,7 +69,7 @@ public class Domain implements IDomain, ILdapConstants, ILdapSecurityConstants, 
 
 	@Override
 	public IDataSourceMetaData getDataSourceMetaData() {
-		throw new UnsupportedOperationException("Not supported!");
+		throw new UnsupportedOperationException(SecurityLdap.NOT_SUPPORTED);
 	}
 
 	@Override
@@ -91,22 +88,22 @@ public class Domain implements IDomain, ILdapConstants, ILdapSecurityConstants, 
 
 	@Override
 	public IDomainApplication remove(String appName) {
-		throw new UnsupportedOperationException("Not supported!");
+		throw new UnsupportedOperationException(SecurityLdap.NOT_SUPPORTED);
 	}
 
 	@Override
 	public void remove(IUser user) {
-		throw new UnsupportedOperationException("Not supported!");
+		throw new UnsupportedOperationException(SecurityLdap.NOT_SUPPORTED);
 	}
 
 	@Override
 	public void setAccessPolicy(IAccessPolicy access) {
-		throw new UnsupportedOperationException("Not supported!");
+		throw new UnsupportedOperationException(SecurityLdap.NOT_SUPPORTED);
 	}
 
 	@Override
 	public void setDataSourceMetaData(IDataSourceMetaData dsmt) {
-		throw new UnsupportedOperationException("Not supported!");
+		throw new UnsupportedOperationException(SecurityLdap.NOT_SUPPORTED);
 	}
 
 	@Override
@@ -121,12 +118,12 @@ public class Domain implements IDomain, ILdapConstants, ILdapSecurityConstants, 
 	@Override
 	public IUser update(IUser user, String oldUserId)
 			throws UserAlreadyExistException {
-		throw new UnsupportedOperationException("Not supported!");
+		throw new UnsupportedOperationException(SecurityLdap.NOT_SUPPORTED);
 	}
 
 	@Override
 	public void accept(INodeVisitor visitor) {
-		throw new UnsupportedOperationException("Not supported!");
+		throw new UnsupportedOperationException(SecurityLdap.NOT_SUPPORTED);
 	}
 
 	@Override
@@ -156,7 +153,7 @@ public class Domain implements IDomain, ILdapConstants, ILdapSecurityConstants, 
 	public static Domain get( SecurityLdap ldap, String domainId ) {
 		Domain domain = null;
 		try {
-			String objectClass = LdapSession.getObjectClass(OBJECT_CLASS);
+			String objectClass = LdapSession.getObjectClass(DOMAIN);
 			DistinguishedName dn = getDN(domainId);
 			Entry entry = ldap.getLdapSession().get( dn.toString(), objectClass );
 			domain = getObject(ldap, entry);
@@ -171,10 +168,10 @@ public class Domain implements IDomain, ILdapConstants, ILdapSecurityConstants, 
 	private IAccessPolicy getAccessPolicy( Entry entry ) {
 		AccessPolicy accessPolicy = new AccessPolicy();
 		accessPolicy.setId(entry.getAsString(COMMON_NAME_ATTRIBUTE));
-		accessPolicy.setExceptionThrowableIfMaximumExceeded(entry.getAsBoolean("exceptionThrowableIfMaximumExceeded"));
-		accessPolicy.setMaxAllowedUsers(entry.getAsInteger("maxAllowedUsers"));
-		accessPolicy.setMaxDefinedUsers(entry.getAsInteger("maxDefinedUsers"));
-		accessPolicy.setMaxSessions4User(entry.getAsInteger("maxSessions4User"));
+		accessPolicy.setExceptionThrowableIfMaximumExceeded(entry.getAsBoolean(EXCEPTION_THROWABLE_IF_MAXIMUM_EXCEEDED_ATTRIBUTE));
+		accessPolicy.setMaxAllowedUsers(entry.getAsInteger(MAX_ALLOWED_USERS_ATTRIBUTE));
+		accessPolicy.setMaxDefinedUsers(entry.getAsInteger(MAX_DEFINED_USERS_ATTRIBUTE));
+		accessPolicy.setMaxSessions4User(entry.getAsInteger(MAX_SESSIONS4_USER_ATTRIBUTE));
 		return accessPolicy;
 	}
 

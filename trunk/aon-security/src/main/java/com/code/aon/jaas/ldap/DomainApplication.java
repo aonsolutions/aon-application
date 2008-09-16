@@ -62,7 +62,7 @@ public class DomainApplication implements IDomainApplication, ILdapConstants, IL
 
 	@Override
 	public IRelation getProfile(String name) {
-		throw new UnsupportedOperationException("Not supported!");
+		throw new UnsupportedOperationException(SecurityLdap.NOT_SUPPORTED);
 	}
 
 	@Override
@@ -72,7 +72,7 @@ public class DomainApplication implements IDomainApplication, ILdapConstants, IL
 
 	@Override
 	public boolean isProfileInUsers(String profile) {
-		throw new UnsupportedOperationException("Not supported!");
+		throw new UnsupportedOperationException(SecurityLdap.NOT_SUPPORTED);
 	}
 
 	@Override
@@ -90,7 +90,7 @@ public class DomainApplication implements IDomainApplication, ILdapConstants, IL
 
 	@Override
 	public void removeUser(IRelation relation) {
-		throw new UnsupportedOperationException("Not supported!");
+		throw new UnsupportedOperationException(SecurityLdap.NOT_SUPPORTED);
 	}
 
 	@Override
@@ -100,7 +100,7 @@ public class DomainApplication implements IDomainApplication, ILdapConstants, IL
 
 	@Override
 	public IRelation updateUser(IRelation relation) {
-		throw new UnsupportedOperationException("Not supported!");
+		throw new UnsupportedOperationException(SecurityLdap.NOT_SUPPORTED);
 	}
 
 	@Override
@@ -110,7 +110,7 @@ public class DomainApplication implements IDomainApplication, ILdapConstants, IL
 
 	@Override
 	public void accept(INodeVisitor visitor) {
-		throw new UnsupportedOperationException("Not supported!");
+		throw new UnsupportedOperationException(SecurityLdap.NOT_SUPPORTED);
 	}
 
 	@Override
@@ -136,7 +136,7 @@ public class DomainApplication implements IDomainApplication, ILdapConstants, IL
 		
 	public static DomainApplication getObject( SecurityLdap ldap, Entry entry, String domain ) {
 		DomainApplication domainApplication = new DomainApplication(ldap, domain);
-		domainApplication.setId(entry.getAsString("cn"));
+		domainApplication.setId(entry.getAsString(COMMON_NAME_ATTRIBUTE));
 		domainApplication.setDataSource(entry.getAsString(DATA_SOURCE_ATTRIBUTE));
 		domainApplication.setStatus(entry.getAsInteger(STATUS_ATTRIBUTE));
 		return domainApplication;

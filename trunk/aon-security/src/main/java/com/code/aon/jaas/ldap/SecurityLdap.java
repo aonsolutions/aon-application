@@ -31,10 +31,12 @@ import com.code.aon.ldap.Scope;
 
 public class SecurityLdap extends BasicLdap implements ILdapConstants, ILdapSecurityConstants, IAonObjectClasses {
 	
-    /** Obtiene un logger apropiado. */
+	/** Obtiene un logger apropiado. */
 	private static final Log LOGGER = LogFactory.getLog( SecurityLdap.class.getName() );
 	
 	private static final String LOGIN_ERROR_PREFFIX = "aon_login_error_";
+	
+	public static final String NOT_SUPPORTED = "Not supported!";
 	
 	public SecurityLdap( Properties properties ) {
 		super( properties );
@@ -74,7 +76,7 @@ public class SecurityLdap extends BasicLdap implements ILdapConstants, ILdapSecu
 	
 	public boolean hasDomain( String domainName ) {
 		DistinguishedName dn = Domain.getDN(domainName);
-		return exists(dn, Domain.OBJECT_CLASS);
+		return exists(dn, DOMAIN);
 	}
 
 	public boolean hasUser( String domainId, String applicationId, String user ) throws AuthenticationLoginException {
@@ -241,7 +243,7 @@ public class SecurityLdap extends BasicLdap implements ILdapConstants, ILdapSecu
 	public Entry getDomainApplicationProfile( LdapSession session, IRelation relation, DistinguishedName dn ) {
 		Entry entry = new Entry(dn.toString());
 		String appId = dn.getLevelValue(2);
-		String[] objectClasses = new String[] {TOP, "groupOfNames", DOMAIN_APPLICATION_PROFILE};
+		String[] objectClasses = new String[] {TOP, GROUP_OF_NAMES, DOMAIN_APPLICATION_PROFILE};
 		entry.addObjectClasses( objectClasses );
 		for( String role : relation.relations() ) {
 			DistinguishedName member = session.getFullDN( AonDN.getApplicationProfileDN(appId, role) );
@@ -271,11 +273,11 @@ public class SecurityLdap extends BasicLdap implements ILdapConstants, ILdapSecu
 	
 	public IDataSourceMetaData getDataSourceMetaData( Entry entry ) {
 		DataSourceMetaData dataSource = new DataSourceMetaData();
-		dataSource.setUsername( entry.getAsString("uid") );
-		byte[] password = entry.getAsByteArray("userPassword");
+		dataSource.setUsername( entry.getAsString(USER_ID_ATTRIBUTE) );
+		byte[] password = entry.getAsByteArray(USER_PASSWORD_ATTRIBUTE);
 		dataSource.setPassword( new String(password) );
-		dataSource.setConnectionURL( entry.getAsString("labeledURI") );
-		dataSource.setDriverClass( entry.getAsString("driverClassName") );
+		dataSource.setConnectionURL( entry.getAsString(LABELED_URI_ATTRIBUTE) );
+		dataSource.setDriverClass( entry.getAsString(DRIVER_CLASS_NAME_ATTRIBUTE) );
 		return dataSource;
 	}
 	
@@ -351,7 +353,7 @@ public class SecurityLdap extends BasicLdap implements ILdapConstants, ILdapSecu
 	private String getOrganizationName( String domainId ) {
 		String organizationName = null;
 		try {
-			String objectClass = LdapSession.getObjectClass(Domain.OBJECT_CLASS);
+			String objectClass = LdapSession.getObjectClass(DOMAIN);
 			DistinguishedName dn = Domain.getDN(domainId);
 			Entry entry = getLdapSession().get( dn.toString(), objectClass );
 			if ( (entry != null) && entry.containsKey(ORGANIZATION_NAME_ATTRIBUTE) ) {
@@ -371,12 +373,12 @@ public class SecurityLdap extends BasicLdap implements ILdapConstants, ILdapSecu
 			LdapSession session = getLdapSession();
 			DistinguishedName dn = AonDN.getUserDN( domainId, user.getId());
 			Entry entry = new Entry(dn.toString());
-			entry.addObjectClass("amavisAccount");
+			entry.addObjectClass(AMAVIS_ACCOUNT);
 			entry.addObjectClass(USER);
-			entry.addObjectClass("inetOrgPerson");
-			entry.addObjectClass("organizationalPerson");
-			entry.addObjectClass("person");
-			entry.addObjectClass("posixAccount");
+			entry.addObjectClass(INET_ORG_PERSON);
+			entry.addObjectClass(ORGANIZATIONAL_PERSON);
+			entry.addObjectClass(PERSON);
+			entry.addObjectClass(POSIX_ACCOUNT);
 			entry.addObjectClass(TOP);
 			entry.put( ACTIVE_ATTRIBUTE, LdapSession.FALSE_VALUE );
 			String cn = StringUtils.trim(user.getName());
@@ -387,11 +389,11 @@ public class SecurityLdap extends BasicLdap implements ILdapConstants, ILdapSecu
 				sn = StringUtils.substring(sn, pos+1);
 			}
 			entry.put( COMMON_NAME_ATTRIBUTE, cn );
-			entry.put( "gidNumber", 100 );
-			entry.put( "homeDirectory", "/home/DOMAINS/" + domainId + "/USERS/" + user.getId() );
+			entry.put( GROUP_ID_NUMBER_ATTRIBUTE, 100 );
+			entry.put( HOME_DIRECTORY_ATTRIBUTE, "/home/DOMAINS/" + domainId + "/USERS/" + user.getId() );
 			entry.put( SURNAME_ATTRIBUTE, sn );
 			entry.put( USER_ID_ATTRIBUTE, user.getId() );
-			entry.put( "uidNumber", 10 );
+			entry.put( USER_ID_NUMBER_ATTRIBUTE, 10 );
 			entry.put( DESCRIPTION_ATTRIBUTE, user.getDescription() );
 			String password = user.getPasswd();
 			if ( algorithm != null ) {
