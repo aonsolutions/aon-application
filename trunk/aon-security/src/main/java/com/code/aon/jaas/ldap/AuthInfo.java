@@ -1,15 +1,9 @@
 package com.code.aon.jaas.ldap;
 
-import java.util.List;
-
-import org.apache.commons.lang.ArrayUtils;
-
 import com.code.aon.jaas.auth.IAuthInfo;
 import com.code.aon.jaas.auth.session.AuthenticationLoginException;
 import com.code.aon.jaas.client.ast.IAccessPolicy;
 import com.code.aon.jaas.client.ast.IRelation;
-import com.code.aon.jaas.client.ast.core.Relation;
-import com.code.aon.ldap.DistinguishedName;
 import com.code.aon.ldap.Entry;
 import com.code.aon.ldap.ILdapConstants;
 
