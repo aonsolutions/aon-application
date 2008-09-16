@@ -21,9 +21,9 @@ import com.code.aon.common.ITransferObject;
 public class CuotaRetencionAlava  implements ITransferObject{
 
 	
-	private static final long serialVersionUID = 4304438088705559359L;
 
- //    private Cuota01Id id;
+
+     private Cuota01Id id;
      private Date fecfin;
      private BigDecimal desdeImporte;
      private BigDecimal hastaImporte;
@@ -41,7 +41,7 @@ public class CuotaRetencionAlava  implements ITransferObject{
     @AttributeOverrides( {
         @AttributeOverride(name="numTramo", column=@Column(name="num_tramo", nullable=false, length=2) ), 
         @AttributeOverride(name="fecini", column=@Column(name="fecini", nullable=false, length=10) ) } )
-   /* public Cuota01Id getId() {
+    public Cuota01Id getId() {
         return this.id;
     }
     
@@ -53,7 +53,7 @@ public class CuotaRetencionAlava  implements ITransferObject{
     @Column(name="fecfin", length=10)
     public Date getFecfin() {
         return this.fecfin;
-    }*/
+    }
     
     public void setFecfin(Date fecfin) {
         this.fecfin = fecfin;
