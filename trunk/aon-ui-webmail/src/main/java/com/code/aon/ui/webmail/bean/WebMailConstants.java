@@ -34,6 +34,7 @@ public interface WebMailConstants {
 	String BEAN_AUTOCOMPLETEEMAIL = "autoCompleteEmailBean";
 	String BEAN_MULTISELECTIONEMAIL = "multiSelectionEmailBean";
 	String BEAN_SPAM = "spam";
+	String BEAN_LOGGED_USER = "loggedUser";
 	
 	String RESOURCE_BUNDLE = "com.code.aon.ui.webmail.i18n.messages";
 	
