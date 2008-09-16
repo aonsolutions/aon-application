@@ -99,16 +99,16 @@
 							value="#{appBundle.aon_webmail_attach_file}: " />
 						<aon:div>
 							<aon:fileUpload id="attach_file"
-								addControlLabel="#{appBundle.aon_fileUpload_add}" 
-								stopControlLabel="#{appBundle.aon_fileUpload_stop}" 
-								stopEntryControlLabel="#{appBundle.aon_fileUpload_stop}"
-								uploadControlLabel="#{appBundle.aon_fileUpload_upload}"
+								addControlLabel="#{bundle.aon_fileUpload_add}" 
+								stopControlLabel="#{bundle.aon_fileUpload_stop}" 
+								stopEntryControlLabel="#{bundle.aon_fileUpload_stop}"
+								uploadControlLabel="#{bundle.aon_fileUpload_upload}"
 								fileUploadListener="#{message.fileUploaded}"
 								maxFilesQuantity="20" listHeight="0px"
 								immediateUpload="true" autoclear="true"
 								onupload="startUpload();" onuploadcanceled="endUpload();" onerror="endUpload();">
 								<f:facet name="label">
-									<h:outputText value="#{appBundle.aon_fileUpload_upload_label}" />
+									<h:outputText value="#{bundle.aon_fileUpload_upload_label}" />
 								</f:facet>								
 								<a4j:support event="onuploadcomplete" oncomplete="endUpload();" reRender="attachDataTable" />
 							</aon:fileUpload>								
