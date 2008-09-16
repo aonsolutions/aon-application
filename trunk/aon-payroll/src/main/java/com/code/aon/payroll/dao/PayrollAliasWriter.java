@@ -7,7 +7,6 @@ import com.code.aon.common.dao.AliasWriter;
 import com.code.aon.payroll.cotizacion.Bonificacion;
 import com.code.aon.payroll.cotizacion.Porcentaje;
 import com.code.aon.payroll.cotizacion.PorcentajeMaestro;
-import com.code.aon.payroll.irpf.Cuota;
 import com.code.aon.payroll.tipos.Autorizacion;
 import com.code.aon.payroll.tipos.Documento;
 import com.code.aon.payroll.tipos.Empresario;
