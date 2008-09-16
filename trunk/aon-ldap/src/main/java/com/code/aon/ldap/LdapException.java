@@ -2,6 +2,8 @@ package com.code.aon.ldap;
 
 public class LdapException extends Exception {
 
+	private static final long serialVersionUID = 4327969907077949366L;
+
 	public LdapException() {
 		super();
 	}

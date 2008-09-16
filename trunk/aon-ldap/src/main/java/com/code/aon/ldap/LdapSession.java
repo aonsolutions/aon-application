@@ -174,7 +174,6 @@ public class LdapSession implements ILdapConstants {
 		} catch (NamingException e) {
 			LOGGER.debug(e.getMessage(), e);
 		}
-		List<Object> list = new ArrayList<Object>();
 		while (values.hasMore()) {
 			Object value = values.nextElement();
 			entry.put(name, convertValue(value, syntax));
@@ -364,6 +363,7 @@ public class LdapSession implements ILdapConstants {
 		this.removeAttributes(dn.toString(), attribute, moreAttributes);
 	}
 
+	@SuppressWarnings("unchecked")
 	private Attribute getAttribute( String name, Object value ) {
 		Attribute attribute = new BasicAttribute(name);
 		if ( List.class.isAssignableFrom(value.getClass()) ) {
@@ -414,6 +414,7 @@ public class LdapSession implements ILdapConstants {
 		this.replaceAttribute(dn.toString(), name, value);
 	}
 	
+	@SuppressWarnings("unchecked")
 	private Object getRealValue( Object value ) {
 		if ( value != null ) {
 			if ( List.class.isAssignableFrom(value.getClass()) ) {
