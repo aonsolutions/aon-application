@@ -32,7 +32,7 @@
 	<property name="commons.lang.home" value="/JAVA/commons-lang-2.2" />
 
 	<!-- AON -->
-	<property name="aon.ldap.home" value="${user.home}/.m2/repository/com/code/aon/aon.ldap/0.8.4" />
+	<property name="aon.ldap.home" value="${user.home}/.m2/repository/com/code/aon/aon.ldap/0.9.0" />
 
 	<!-- The classpath required to build classes. -->
     <path id="javac.classpath">
@@ -75,7 +75,7 @@
     <!-- The classpath required to build classes. -->
     <path id="jboss.ldap.javac.classpath">
 		<path refid="jboss.javac.classpath"/>
-        <pathelement path="${aon.ldap.home}/aon.ldap-0.8.4.jar"/>		
+        <pathelement path="${aon.ldap.home}/aon.ldap-0.9.0.jar"/>		
     	<pathelement path="${commons.lang.home}/commons-lang-2.2.jar"/>
     </path>
 
@@ -444,7 +444,7 @@
 				<include name="commons-lang-2.2.jar"/>
 			</fileset>
     		<fileset dir="${aon.ldap.home}">
-				<include name="aon.ldap-0.8.4.jar"/>
+				<include name="aon.ldap-0.9.0.jar"/>
 			</fileset>
 			<fileset dir="${mgr.dist.dir}">
 				<include name="${mgr}-${version}.jar"/>
