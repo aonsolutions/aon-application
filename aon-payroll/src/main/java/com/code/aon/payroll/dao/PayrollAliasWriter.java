@@ -19,17 +19,16 @@ public class PayrollAliasWriter {
 
 	public static void main(String[] args) throws IOException {
 		File file = new File("/AON-PROJECT/aon-payroll/src/main/java/com/code/aon/payroll/dao/IPayrollAlias.java");
-		String[] classes = new String[9];
-		classes[0] = PorcentajeMaestro.class.getName(); 
-		classes[1] = Porcentaje.class.getName();
-		classes[2] = Documento.class.getName();
-		classes[3] = Autorizacion.class.getName();
-		classes[4] = Incidencia.class.getName();
-		classes[5] = Registro.class.getName();
-		classes[6] = Empresario.class.getName();
-		classes[7] = TipoCnae.class.getName();
-		classes[8] = Bonificacion.class.getName();
-		classes[9] = Cuota.class.getName();
+		String[] classes = new String[] {
+				PorcentajeMaestro.class.getName(), 
+				Porcentaje.class.getName(),
+				Documento.class.getName(),
+				Autorizacion.class.getName(),
+				Incidencia.class.getName(),
+				Registro.class.getName(),
+				Empresario.class.getName(),
+				TipoCnae.class.getName(),
+				Bonificacion.class.getName() };
 		AliasWriter writer = new AliasWriter("com.code.aon.payroll.dao");
 		writer.write(classes, file);
 		System.out.println( file.getAbsolutePath() );
