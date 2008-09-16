@@ -63,6 +63,12 @@
 							accesskey="#{bundle.aon_key_search}" />														
 
 						<aon:spin controller="#{porcentajeMaestro}" action="cotizacion_porcentaje_form" rendered="#{!porcentajeMaestro.new}" />
+
+						<ui:include src="/facelet/templates/aon.ui.printbuttons.xhtml">
+							<ui:param name="manager" value="#{porcentajeMaestro}"/>
+							<ui:param name="reportKey" value="porcentajesCotizacion"/>
+						</ui:include>
+
 					</aon:div>
 
 					<!-- end toolbar navigation -->

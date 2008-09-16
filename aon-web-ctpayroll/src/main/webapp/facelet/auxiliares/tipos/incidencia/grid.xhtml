@@ -60,22 +60,10 @@
 									target="_blank">
 								<f:param name="reportKey" value="tiposIncidenciaList" />
 							</h:commandLink>
-							<h:commandLink id="export2excel" value="."
-									title="#{appBundle.aon_payroll_export_label} #{appBundle.aon_payroll_to} #{appBundle.aon_payroll_excel_label}"
-									styleClass="aon-finding-toolbar-item aon-icon-excel"
-									action="#{report.onExecute}" rendered="#{!tiposIncidencia.new}" 
-									target="_blank">
-								<f:param name="reportKey" value="tiposIncidenciaList" />
-								<f:param name="outputFormat" value="MS Excel" />
-							</h:commandLink>
-							<h:commandLink id="export2csv" value="."
-									title="#{appBundle.aon_payroll_export_label} #{appBundle.aon_payroll_to} #{appBundle.aon_payroll_csv_label}"
-									styleClass="aon-finding-toolbar-item aon-icon-excel"
-									action="#{report.onExecute}" rendered="#{!tiposIncidencia.new}" 
-									target="_blank">
-								<f:param name="reportKey" value="tiposIncidenciaList" />
-								<f:param name="outputFormat" value="CSV" />
-							</h:commandLink>
+							<ui:include src="/facelet/templates/aon.ui.printbuttons.xhtml">
+								<ui:param name="manager" value="#{tiposIncidencia}"/>
+								<ui:param name="reportKey" value="tiposIncidenciaList"/>
+							</ui:include>
 						</aon:div>
 					</aon:panelGrid>
 				</aon:div>

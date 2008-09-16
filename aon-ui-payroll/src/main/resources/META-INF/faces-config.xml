@@ -15,7 +15,7 @@
 	<!-- ************* TIPOS DE DOCUMENTO ***************** -->
 	<managed-bean>
 		<managed-bean-name>tiposDocumento</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.form.BasicController</managed-bean-class>
+		<managed-bean-class>com.code.aon.ui.payroll.controller.PayrollBasicController</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
 			<property-name>queryOnStartUP</property-name>
@@ -34,7 +34,7 @@
 	<!-- ************* TIPOS DE REGISTRO ***************** -->
 	<managed-bean>
 		<managed-bean-name>tiposRegistro</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.form.BasicController</managed-bean-class>
+		<managed-bean-class>com.code.aon.ui.payroll.controller.PayrollBasicController</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
 			<property-name>queryOnStartUP</property-name>
@@ -57,7 +57,7 @@
 	<!-- ************* TIPOS DE INCIDENCIA ***************** -->
 	<managed-bean>
 		<managed-bean-name>tiposIncidencia</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.form.BasicController</managed-bean-class>
+		<managed-bean-class>com.code.aon.ui.payroll.controller.PayrollBasicController</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
 			<property-name>queryOnStartUP</property-name>
@@ -72,7 +72,7 @@
 	<!-- ************* TIPOS DE AUTORIZACION ***************** -->
 	<managed-bean>
 		<managed-bean-name>tiposAutorizacion</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.form.BasicController</managed-bean-class>
+		<managed-bean-class>com.code.aon.ui.payroll.controller.PayrollBasicController</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
 			<property-name>queryOnStartUP</property-name>
@@ -91,7 +91,7 @@
 	<!-- ************* TIPOS DE EMPRESARIOS ***************** -->
 	<managed-bean>
 		<managed-bean-name>tiposEmpresario</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.form.BasicController</managed-bean-class>
+		<managed-bean-class>com.code.aon.ui.payroll.controller.PayrollBasicController</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
 			<property-name>queryOnStartUP</property-name>
@@ -106,7 +106,7 @@
 	<!-- ************* TIPOS DE CNAE ***************** -->
 	<managed-bean>
 		<managed-bean-name>tiposCnae</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.form.BasicController</managed-bean-class>
+		<managed-bean-class>com.code.aon.ui.payroll.controller.PayrollBasicController</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
 			<property-name>queryOnStartUP</property-name>
@@ -140,7 +140,7 @@
 	<!-- ************* TIPOS DE BONIFICACION ***************** -->
 	<managed-bean>
 		<managed-bean-name>tiposBonificacion</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.form.BasicController</managed-bean-class>
+		<managed-bean-class>com.code.aon.ui.payroll.controller.PayrollBasicController</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
 			<property-name>queryOnStartUP</property-name>
@@ -152,6 +152,21 @@
 		</managed-property>
 	</managed-bean>
 	
+	<!-- ************* IRPF CUOTAS ***************** -->
+	<managed-bean>
+		<managed-bean-name>cuotas</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.form.BasicController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.payroll.irpf.Cuota</value>
+		</managed-property>
+	</managed-bean>
+
 	<!-- ************* ORGANISMOS DE MNTO. DE ADMINISTRACION DE HACIENDA***************** -->
 	<managed-bean>
 		<managed-bean-name>organismosAdmon</managed-bean-name>
@@ -286,19 +301,4 @@
 		<managed-bean-scope>none</managed-bean-scope>
 	</managed-bean>
 	
-	<!-- ************* IRPF CUOTAS ***************** -->
-	<managed-bean>
-		<managed-bean-name>cuotas</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.form.BasicController</managed-bean-class>
-		<managed-bean-scope>session</managed-bean-scope>
-		<managed-property>
-			<property-name>queryOnStartUP</property-name>
-			<value>true</value>
-		</managed-property>
-		<managed-property>
-			<property-name>pojo</property-name>
-			<value>com.code.aon.payroll.irpf.Cuota</value>
-		</managed-property>
-	</managed-bean>
-
 </faces-config>

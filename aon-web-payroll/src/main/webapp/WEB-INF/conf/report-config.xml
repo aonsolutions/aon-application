@@ -9,6 +9,18 @@
 		<fetch-mode paginated="false" />
 	</default-config>
 
+	<!--  *********  Impresion a PDF de los Porcentajes de Cotización ********* -->
+	<report id="porcentajesCotizacion" description="Listado de Porcentajes de Cotización">
+		<template path="/com/code/aon/ui/payroll/report/porcentajesCotizacion.jasper" />
+		<bean key="com.code.aon.payroll.cotizacion.Porcentaje" />
+		<criteria provider="#{porcentaje}" />
+		<params>
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.payroll.i18n.messages" />
+			<param id="logoImageFile" value="#{payrollController.getLogo}" />
+			<param id="companyName" value="#{payrollController.getCompanyName}" />
+		</params>
+	</report>
+
 	<!--  *********  Impresion a PDF de los Tipos de Documento  ********* -->
 	<report id="tiposDocumentoList" description="Listado de Tipos de Documento">
 		<template path="/com/code/aon/ui/payroll/report/tiposDocumentoList.jasper" />
