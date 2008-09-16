@@ -4,6 +4,18 @@ public interface IAonObjectClasses {
 
 	String TOP = "top";
 	
+	String GROUP_OF_NAMES = "groupOfNames";
+	
+	String AMAVIS_ACCOUNT = "amavisAccount";
+
+	String POSIX_ACCOUNT = "posixAccount";
+
+	String PERSON = "person";
+
+	String ORGANIZATIONAL_PERSON = "organizationalPerson";
+
+	String INET_ORG_PERSON = "inetOrgPerson";	
+	
 	String CONTACT = "aonContact";
 
 	String DB_CONNECTION = "aonDBConnection";
