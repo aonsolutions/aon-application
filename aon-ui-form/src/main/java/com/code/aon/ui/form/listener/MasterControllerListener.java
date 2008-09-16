@@ -129,9 +129,7 @@ public class MasterControllerListener extends ControllerAdapter {
 	 */
 	@Override
 	public void afterBeanSelected(ControllerEvent event) throws ControllerListenerException {
-		if (getDetailController().isNew()) {
-			getDetailController().onCancel(null);	
-		}
+		getDetailController().onCancel(null);	
 		initDetailModel(event.getController(), false);
 	}
 
