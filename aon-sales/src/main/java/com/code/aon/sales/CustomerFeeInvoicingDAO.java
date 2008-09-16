@@ -78,16 +78,21 @@ public class CustomerFeeInvoicingDAO implements IInvoicingDAO {
 	public void insetFinance(Finance finance) {
 		try {
 			IManagerBean financeBean = BeanManager.getManagerBean(Finance.class);
-			finance.setAmount(getPriceStrategy().getTotalPrice(finance.getInvoice(), finance.getInvoice()));
-			financeBean.insert(finance);
-
+			double amount = getPriceStrategy().getTotalPrice(finance.getInvoice(), finance.getInvoice());
+			if(amount != 0.0){
+				finance.setAmount(amount);
+				financeBean.insert(finance);
+			}
 		} catch (ManagerBeanException e) {
 			LOGGER.log(Level.SEVERE, "Error inserting finance for invoice with id= " + finance.getInvoice().getId(), e);
 		}
 	}
 	
 	public void createFinances(Invoice invoice) throws ManagerBeanException {
-		getFinanceGenerator().generateFinances(invoice, getPriceStrategy().getTotalPrice(invoice, invoice));
+		double amount = getPriceStrategy().getTotalPrice(invoice, invoice);
+		if(amount != 0.0){
+			getFinanceGenerator().generateFinances(invoice, invoice.getRegistry(), amount, true);
+		}
 	}
 	
 	@SuppressWarnings("unchecked")

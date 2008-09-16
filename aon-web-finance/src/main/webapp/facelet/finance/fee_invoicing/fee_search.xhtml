@@ -56,7 +56,7 @@
 								value="#{feeInvoicing.invoicingParams.series}"
 								styleClass="aon-form-selectOneMenu-field"
 								onchange="submit();" valueChangeListener="#{feeInvoicing.onSeriesChanged}">
-								<f:selectItem itemValue="" itemDisabled="true" itemLabel="-" />
+								<f:selectItem itemValue="" itemLabel=" " />
 								<f:selectItems value="#{configCollections.series}" />
 							</t:selectOneMenu>
 							<t:inputText id="Invoice_number" required="true"

@@ -128,14 +128,6 @@ public class InvoicePrintController extends BasicController implements ICollecti
 		return Collections.EMPTY_LIST;
 	}
 	
-	
-	
-	@Override
-	@SuppressWarnings("unchecked")
-	public Collection getCollection(boolean forceRefresh) throws ManagerBeanException {
-		return this.getCollection();
-	}
-
 	private Criteria createCriteria() throws ManagerBeanException {
 		Criteria criteria = new Criteria();
 		IManagerBean invoiceBean = getManagerBean();

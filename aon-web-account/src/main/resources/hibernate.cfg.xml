@@ -46,12 +46,10 @@
 		<mapping class="com.code.aon.customer.Customer"/>
 		<mapping class="com.code.aon.customer.CustomerSegment"/>
 		
-		<!-- AON-PURCHASE Mapping files -->	
-		<mapping class="com.code.aon.purchase.Supplier"/>
-		<mapping class="com.code.aon.purchase.SupplierSegment"/>
-		<mapping class="com.code.aon.purchase.Purchase"/>
-		<mapping class="com.code.aon.purchase.PurchaseDetail"/>
-		
+		<!-- AON-SUPPLIER Mapping files -->	
+		<mapping class="com.code.aon.supplier.Supplier"/>
+		<mapping class="com.code.aon.supplier.SupplierSegment"/>
+
 		<!-- AON-FINANCE Mapping files -->	
 		<mapping class="com.code.aon.finance.Creditor"/>
 		<mapping class="com.code.aon.finance.PayMethod"/>
@@ -99,6 +97,7 @@
 		<mapping class="com.code.aon.config.ApplicationParameter"/>
 		<mapping class="com.code.aon.config.Scope"/>
 		<mapping class="com.code.aon.config.User"/>
+		<mapping class="com.code.aon.config.UserScope"/>
 		<mapping class="com.code.aon.config.Series"/>
 		<mapping class="com.code.aon.config.WorkGroup"/>
 		

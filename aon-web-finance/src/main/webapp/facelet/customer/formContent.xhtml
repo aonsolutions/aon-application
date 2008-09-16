@@ -57,6 +57,15 @@
 						<f:validateLength minimum="1" maximum="64" />
 					</t:inputText>
 
+					<t:outputLabel for="Customer_alias"
+						styleClass="aon-form-input-text-label"
+						value="#{customerBundle.customer_alias}" />
+					<t:inputText id="Customer_alias" styleClass="aon-form-input-text"
+						forceId="#{true}" value="#{customerAlias.to.registry.alias}"
+						size="64">
+						<f:validateLength minimum="1" maximum="64" />
+					</t:inputText>
+
 					<h:outputLabel for="Customer_scope_id"
 						styleClass="aon-form-input-text-label"
 						value="#{customerBundle.customer_scope}" />
@@ -74,6 +83,13 @@
 						value="#{customerAlias.to.status}">
 						<f:selectItems value="#{customerCollections.customerStatuses}" />
 					</h:selectOneMenu>
+
+					<t:outputLabel for="Customer_surcharge"
+						styleClass="aon-form-input-text-label"
+						value="#{customerBundle.customer_surcharge}" />
+					<h:selectBooleanCheckbox id="Customer_surcharge"
+						styleClass="aon-form-selectBooleanCheckbox-field"
+						value="#{customerAlias.to.surcharge}" />
 
 				</h:panelGrid>
 				

@@ -24,10 +24,13 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.company.Company;
+import com.code.aon.config.ApplicationParameter;
+import com.code.aon.config.dao.IConfigAlias;
 import com.code.aon.geozone.GeoZone;
 import com.code.aon.geozone.dao.IGeoZoneAlias;
 import com.code.aon.planner.model.CalendarScheduleModel;
 import com.code.aon.ql.Criteria;
+import com.code.aon.registry.RecordData;
 import com.code.aon.registry.Registry;
 import com.code.aon.registry.RegistryAddress;
 import com.code.aon.registry.RegistryAttachment;
@@ -47,6 +50,10 @@ import com.code.aon.ui.util.AonUtil;
 public class CompanyController extends BasicController {
 	
 	public static final String COMPANY_NAME = "company";
+	
+	public static final String printHeaderParam = "APP_PRINT_HEADER_PARAM";
+	
+	public static final String printRecordDataParam = "APP_PRINT_RECORD_DATA_PARAM";
 
 	/** The uploaded file. */
 	private UploadedFile file;
@@ -86,6 +93,10 @@ public class CompanyController extends BasicController {
 
 	/** The calendar. */
 	private AonCalendar calendar;
+	
+	private boolean printHeader;
+	
+	private boolean printRecordData;
 	
     /**
      * The empty constructor.
@@ -545,6 +556,19 @@ public class CompanyController extends BasicController {
 		return null;
 	}
 
+	@SuppressWarnings("unchecked")
+	public RecordData getCompanyRecordData() throws IOException, ManagerBeanException{
+		IManagerBean recordDataBean = BeanManager.getManagerBean(RecordData.class);
+		Company company = (Company)getTo();
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(recordDataBean.getFieldName(IRegistryAlias.RECORD_DATA_REGISTRY_ID), company.getId());
+		Iterator iter = recordDataBean.getList(criteria, 0, 1).iterator();
+		if(iter.hasNext()){
+			return (RecordData)iter.next();
+		}
+		return null;
+	}
+
 	/**
 	 * Obtains company logo.
 	 * 
@@ -602,6 +626,23 @@ public class CompanyController extends BasicController {
 		}
 		return this.getFax();
 	}
+	
+	public boolean isPrintHeader() {
+		return printHeader;
+	}
+
+	public void setPrintHeader(boolean printHeader) {
+		this.printHeader = printHeader;
+	}
+
+	public boolean isPrintRecordData() {
+		return printRecordData;
+	}
+
+	public void setPrintRecordData(boolean printRecordData) {
+		this.printRecordData = printRecordData;
+	}
+
 	
 	/**
 	 * Retrieves the whole <code>GeoZone</code> object when the lookup field changes.
@@ -704,4 +745,25 @@ public class CompanyController extends BasicController {
 	/** COMPANY_ADDRESS_CONTROLLER_NAME. */
 	public static final String COMPANY_ADDRESS_CONTROLLER_NAME = "companyAddress";
 
+	public boolean obtainPrintHeader() throws ManagerBeanException {
+		ApplicationParameter appParam = obtainApplicationParameter(printHeaderParam);
+		return (appParam == null?false:new Boolean(appParam.getValue()).booleanValue());
+	}
+
+	public boolean obtainPrintRecordData() throws ManagerBeanException {
+		ApplicationParameter appParam = obtainApplicationParameter(printRecordDataParam);
+		return (appParam == null?false:new Boolean(appParam.getValue()).booleanValue());
+	}
+
+	@SuppressWarnings("unchecked")
+	public ApplicationParameter obtainApplicationParameter(String paramName) throws ManagerBeanException{
+		IManagerBean appParamBean = BeanManager.getManagerBean(ApplicationParameter.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(appParamBean.getFieldName(IConfigAlias.APPLICATION_PARAMETER_NAME), paramName);
+		Iterator iter = appParamBean.getList(criteria, 0, 1).iterator();
+		if(iter.hasNext()){
+			return (ApplicationParameter)iter.next();
+		}
+		return null;
+	}
 }

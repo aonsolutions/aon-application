@@ -19,6 +19,8 @@ public class ReportMark implements ITransferObject {
 
 	private String courseSchedule;
 	
+	private Integer evaluation;
+	
 	public CourseAlumn getCourseAlumn() {
 		return courseAlumn;
 	}
@@ -83,5 +85,11 @@ public class ReportMark implements ITransferObject {
 		this.courseSchedule = courseSchedule;
 	}
 
-	
+	public Integer getEvaluation() {
+		return evaluation;
+	}
+
+	public void setEvaluation(Integer evaluation) {
+		this.evaluation = evaluation;
+	}
 }

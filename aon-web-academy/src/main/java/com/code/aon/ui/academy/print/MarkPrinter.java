@@ -58,6 +58,8 @@ public class MarkPrinter implements ICollectionProvider{
 			Criteria criteria = new Criteria();
 			criteria.addEqualExpression(courseAlumnBean.getFieldName(IAcademyAlias.COURSE_ALUMN_COURSE_ID), course.getId());
 			criteria.addEqualExpression(courseAlumnBean.getFieldName(IAcademyAlias.COURSE_ALUMN_STATUS), CourseAlumnStatus.ACTIVE);
+			criteria.addOrder(courseAlumnBean.getFieldName(IAcademyAlias.COURSE_ALUMN_CUSTOMER_REGISTRY_SURNAME));
+			criteria.addOrder(courseAlumnBean.getFieldName(IAcademyAlias.COURSE_ALUMN_CUSTOMER_REGISTRY_NAME));
 			List<ITransferObject> courseAlumnList = courseAlumnBean.getList(criteria);
 			Iterator<ITransferObject> courseAlumnListIter = courseAlumnList.iterator();
 			while (courseAlumnListIter.hasNext()){
@@ -76,6 +78,11 @@ public class MarkPrinter implements ICollectionProvider{
 		return reportMarkList;
 	}
 
+	@SuppressWarnings("unchecked")
+	public Collection getCollection(boolean forceRefresh) throws ManagerBeanException {
+		return getCollection();
+	}
+	
 	@SuppressWarnings("unchecked")
 	private List<ReportMarkTo> obtainMarks(CourseAlumn courseAlumn){
 		try {

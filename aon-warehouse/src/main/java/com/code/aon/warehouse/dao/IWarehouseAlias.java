@@ -176,6 +176,18 @@ public interface IWarehouseAlias {
 	*/
 	String  DELIVERY_DETAIL_LABOUR_QUANTITY = DELIVERY_DETAIL_LABOUR_ENTRY.getAliasNames()[3];
 
+	/** 
+	* Alias value: DeliveryDetailLabour_deliveryDetail_delivery_customer_id
+	* Hibernate value: DeliveryDetailLabour.deliveryDetail.delivery.customer.id
+	*/
+	String  DELIVERY_DETAIL_LABOUR_DELIVERY_DETAIL_DELIVERY_CUSTOMER_ID = DELIVERY_DETAIL_LABOUR_ENTRY.getAliasNames()[4];
+
+	/** 
+	* Alias value: DeliveryDetailLabour_deliveryDetail_delivery_issueTime
+	* Hibernate value: DeliveryDetailLabour.deliveryDetail.delivery.issueTime
+	*/
+	String  DELIVERY_DETAIL_LABOUR_DELIVERY_DETAIL_DELIVERY_ISSUE_TIME = DELIVERY_DETAIL_LABOUR_ENTRY.getAliasNames()[5];
+
 
 
 	/** 

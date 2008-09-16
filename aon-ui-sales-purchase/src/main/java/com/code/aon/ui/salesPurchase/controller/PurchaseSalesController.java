@@ -10,12 +10,15 @@ import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.customer.Customer;
+import com.code.aon.customer.dao.ICustomerAlias;
 import com.code.aon.product.Item;
 import com.code.aon.product.Product;
 import com.code.aon.product.ProductCategory;
 import com.code.aon.product.util.DiscountExpression;
 import com.code.aon.ql.Criteria;
 import com.code.aon.registry.Registry;
+import com.code.aon.tas.SupportOrder;
+import com.code.aon.tas.dao.ITASAlias;
 import com.code.aon.tasDelivery.TasDelivery;
 import com.code.aon.tasDelivery.dao.ITasDeliveryAlias;
 import com.code.aon.ui.form.BasicController;
@@ -148,5 +151,21 @@ public class PurchaseSalesController extends BasicController {
 				}
 			}
 		}
+	}
+	
+	public boolean isScopeNeeded() throws ManagerBeanException {
+		IManagerBean suppOrderBean = BeanManager.getManagerBean(SupportOrder.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(suppOrderBean.getFieldName(ITASAlias.SUPPORT_ORDER_ID), supportOrderId);
+		Iterator iter = suppOrderBean.getList(criteria, 0, 1).iterator();
+		if(iter.hasNext()){
+			SupportOrder supportOrder = (SupportOrder)iter.next();
+
+			IManagerBean customerBean = BeanManager.getManagerBean(Customer.class);
+			criteria = new Criteria();
+			criteria.addEqualExpression(customerBean.getFieldName(ICustomerAlias.CUSTOMER_ID), supportOrder.getTarget().getRegistry().getId());
+			return (customerBean.getList(criteria).size() == 0);
+		}
+		return false;
 	}
 }

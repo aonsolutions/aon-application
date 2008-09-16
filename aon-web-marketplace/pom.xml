@@ -10,7 +10,7 @@
 	<groupId>com.code.aon</groupId>
 	<artifactId>aon.web.marketplace</artifactId>
 	<packaging>war</packaging>
-	<version>2.0.4</version>
+	<version>2.0.5</version>
 	<description>AON WEB MARKETPLACE</description>
 	<name>AON WEB MARKETPLACE</name>
 	<properties>
@@ -100,7 +100,17 @@
 					<groupId>com.code.aon</groupId>
 					<artifactId>aon.commercial</artifactId>
 				</exclusion>
+				<exclusion>
+					<groupId>com.code.aon</groupId>
+					<artifactId>aon.ui.warehouse</artifactId>
+				</exclusion>
 			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>com.code.aon</groupId>
+			<artifactId>aon.ui.warehouse</artifactId>
+			<version>2.0.5.MP</version>
+			<scope>compile</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.code.aon</groupId>

@@ -37,11 +37,4 @@ public class FBatchPrinter implements ICollectionProvider {
 		}
 		return reportFBatchList;
 	}
-
-	@Override
-	public Collection getCollection(boolean forceRefresh)
-			throws ManagerBeanException {
-		return getCollection();
-	}
-	
 }

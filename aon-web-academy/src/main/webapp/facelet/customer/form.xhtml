@@ -35,12 +35,12 @@
 							actionListener="#{rnote.onSearch}" action="rnote"
 							styleClass="aon-content-menu-item" visibleOnUserRole="AlumnosSeguimiento"/>
 					</t:panelGroup>	
-					<t:panelGroup>
+					<t:panelGroup rendered="#{customer.naturalType}">
 						<t:commandLink id="customer_relationship" forceId="#{true}" value="#{appBundle.aon_rRelationship}"
 							actionListener="#{rRelationship.onSearch}" action="rrelationship" 
 							styleClass="aon-content-menu-item" visibleOnUserRole="AlumnosRelaciones"/>
 					</t:panelGroup>	
-					<t:panelGroup>
+					<t:panelGroup rendered="#{customer.naturalType}">
 						<t:commandLink id="customer_absence" forceId="#{true}" value="#{appBundle.absence_absences}"
 							action="absence" styleClass="aon-content-menu-item" visibleOnUserRole="AlumnosAusencias"/>
 					</t:panelGroup>	

@@ -114,26 +114,22 @@
 							<h:outputLabel for="Invoice_series"
 								styleClass="aon-form-input-text-label"
 								value="#{financeBundle.aon_series_number}" />
-							<h:panelGrid columns="3" cellpadding="0" cellspacing="0">
-								<t:selectOneMenu id="Series_Lookup_id"
-									value="#{feeInvoicing.to.series}" forceId="#{true}"
-									disabled="#{!feeInvoicing.new or feeInvoicing.recorded}"
+							<h:panelGrid columns="2" cellpadding="0" cellspacing="0">
+								<t:selectOneMenu id="Invoice_series-New"
+									value="#{feeInvoicing.to.series}"
+									rendered="#{feeInvoicing.new}"
 									styleClass="aon-form-selectOneMenu-field"
-									onchange="return findBeanLookupAndSubmitExt(this.form, event,'#{facesContext.externalContext.requestContextPath}','seriesLookup','Series_Lookup_id','Series_id|Series_Lookup_id,Series_description|Series_Lookup_description');" 
-									valueChangeListener="#{feeInvoicing.onSeriesChanged}">
-									<f:selectItem itemValue="" itemDisabled="true" itemLabel="-" />
+									onchange="submit();" valueChangeListener="#{feeInvoicing.onSeriesChanged}">
+									<f:selectItem itemValue="" itemLabel=" " />
 									<f:selectItems value="#{configCollections.series}" />
 								</t:selectOneMenu>
-								<t:inputText id="Invoice_number"
-									value="#{feeInvoicing.to.number}"
-									disabled="#{!feeInvoicing.new or feeInvoicing.recorded}"
-									styleClass="aon-form-input-text" forceId="#{true}"
-									required="true" size="7" />
-								<t:inputText id="Series_Lookup_description"
-									styleClass="aon-form-input-text-disabled" forceId="#{true}"
-									value="#{feeInvoicing.seriesDescripition}"
-									disabledOnClientSide="true" size="50">
-								</t:inputText>
+								<t:inputText id="Invoice_series-Edit" forceId="#{true}"
+									value="#{feeInvoicing.to.series}"
+									rendered="#{!feeInvoicing.new}" disabled="#{true}"
+									styleClass="aon-form-input-text" size="4" />
+								<t:inputText id="Invoice_number" forceId="#{true}"
+									value="#{feeInvoicing.to.number}" disabled="#{!feeInvoicing.new}"
+									styleClass="aon-form-input-text" required="true" size="7" />
 							</h:panelGrid>
 
 							<h:outputLabel for="Invoice_issueDate"
@@ -168,7 +164,7 @@
 								<f:selectItems value="#{financeCollections.invoiceStatuses}" />
 							</h:selectOneMenu>
 						</h:panelGrid>
-
+						
 						<h:panelGrid columns="2" cellpadding="0" cellspacing="0"
 							styleClass="aon-form-table"
 							columnClasses="aon-form-table-column-odd,aon-form-table-column-even">
@@ -215,6 +211,19 @@
 						</h:panelGrid>
 					</h:panelGrid>
 
+					<h:panelGrid columns="2" cellpadding="0" cellspacing="0"
+						styleClass="aon-form-table"
+						columnClasses="aon-form-table-column-odd,aon-form-table-column-even">
+		
+						<h:outputLabel for="Invoice_comments"
+							styleClass="aon-form-input-text-label"
+							value="#{financeBundle.aon_invoice_comments}" />
+						<t:inputTextarea id="Invoice_comments" forceId="#{true}"
+							styleClass="aon-form-input-text" cols="51" rows="5"
+							disabled="#{feeInvoicing.recorded}"
+							value="#{feeInvoicing.to.comments}" />
+					</h:panelGrid>
+
 					<t:div styleClass="aon-form-group"
 						rendered="#{!feeInvoicing.new}">
 						<t:div styleClass="aon-form-group-title">
@@ -254,7 +263,7 @@
 										<t:div>
 											<t:commandButton value=""
 												styleClass="aon-edit-table-icon-button aon-edit-table-icon-button-new"
-												title="#{purchaseBundle.aon_newLine}"
+												title="#{bundle.aon_reset}"
 												actionListener="#{feeInvoicingDetail.onReset}"
 												rendered="#{!feeInvoicingDetail.new and !feeInvoicing.recorded}"
 												accesskey="#{bundle.aon_key_new_line}" />

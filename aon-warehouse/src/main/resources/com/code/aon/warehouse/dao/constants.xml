@@ -14,4 +14,9 @@
 		<alias names="id,inventory_id,item_id,actualQuantity,realQuantity,cost,item_product_name"/>
 		<hibernate names="id,inventory.id,item.id,actualQuantity,realQuantity,cost,item.product.name"/>
 	</bean>
+	
+	<bean class="com.code.aon.warehouse.DeliveryDetailLabour">
+		<alias names="deliveryDetail_id,employee_id,id,quantity,deliveryDetail_delivery_customer_id,deliveryDetail_delivery_issueTime"/>
+		<hibernate names="deliveryDetail.id,employee.id,id,quantity,deliveryDetail.delivery.customer.id,deliveryDetail.delivery.issueTime"/>
+	</bean>
 </dao>

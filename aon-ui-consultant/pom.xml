@@ -10,7 +10,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.code.aon</groupId>
 	<artifactId>aon.ui.consultant</artifactId>
-	<version>2.0.6</version>
+	<version>2.0.5</version>
 	<description>AON UI CONSULTANT</description>
 	<name>AON UI CONSULTANT</name>
 	<dependencies>
@@ -29,7 +29,7 @@
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.campaign</artifactId>
-			<version>2.0.2</version>
+			<version>2.0.1</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
@@ -53,7 +53,7 @@
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.project</artifactId>
-			<version>2.0.2</version>
+			<version>2.0.1</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
@@ -65,7 +65,7 @@
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.customer</artifactId>
-			<version>2.0.4</version>
+			<version>2.0.3</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>

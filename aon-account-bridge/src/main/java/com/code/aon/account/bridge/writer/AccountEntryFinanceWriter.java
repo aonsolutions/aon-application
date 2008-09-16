@@ -65,7 +65,7 @@ public class AccountEntryFinanceWriter {
 			entry.setJournal(null);
 			entry.setType(to.getType());
 			entry.setAccountPeriod(AccountUtil.obtainPeriod(to.getDate()).getId());
-			entry.setSecurityLevel(SecurityLevel.OFFICIAL);
+			entry.setSecurityLevel(to.getSecurityLevel());
 			entry = (AccountEntry) accountEntryBean.insert(entry);
 			return entry;
 		} catch (ManagerBeanException e) {

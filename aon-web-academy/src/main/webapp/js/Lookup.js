@@ -113,6 +113,8 @@ function sendLookup(url) {
             req.onreadystatechange = processReqChange;
             req.open("GET", url, true);
             req.setRequestHeader( "If-Modified-Since", "Sat, 1 Jan 2000 00:00:00 GMT" );
+            req.setRequestHeader("Cache-Control", "no-store, no-cache, must-revalidate");
+			req.setRequestHeader("Pragma","no-cache");
             req.send(null);
         }
     }

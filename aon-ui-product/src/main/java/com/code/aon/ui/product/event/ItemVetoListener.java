@@ -35,10 +35,10 @@ public class ItemVetoListener extends ControllerAdapter {
      * @throws ControllerListenerException the controller listener exception
      */
     @Override
+    @SuppressWarnings("unchecked")
     public void afterBeanCreated(ControllerEvent event) throws ControllerListenerException {
         double vatPercent = 0;
         double surchargePercent = 0;
-        double retentionPercent = 0;
         Criteria criteria;
         ProductCollectionsController collections = (ProductCollectionsController)AonUtil.getRegisteredBean(PRODUCT_COLLECTIONS_CONTROLLER);
         try {
@@ -52,21 +52,11 @@ public class ItemVetoListener extends ControllerAdapter {
                 vatPercent = ((Tax)bean.getList(criteria).get(0)).getPercentage();
                 surchargePercent = ((Tax)bean.getList(criteria).get(0)).getSurcharge();
             }
-            
-            List retentions = collections.getRetentionTaxes();
-            if(retentions.size() > 0){
-            	int retentionId = ((Integer)((SelectItem)retentions.get(0)).getValue()).intValue();
-            	criteria = new Criteria();
-                criteria.addEqualExpression(bean.getFieldName(IProductAlias.TAX_ID), new Integer(retentionId));
-                retentionPercent = ((Tax)bean.getList(criteria).get(0)).getPercentage();
-            }
-
         } catch (ManagerBeanException e) {
             throw new ControllerListenerException(e.getMessage(), e);
         }
         ((Item)event.getController().getTo()).getProduct().getVat().setPercentage(vatPercent);
         ((Item)event.getController().getTo()).getProduct().getVat().setSurcharge(surchargePercent);
-        ((Item)event.getController().getTo()).getProduct().getRetention().setPercentage(retentionPercent);
 
         ((Item)event.getController().getTo()).setStatus(ProductStatus.ACTIVE);
         ((Item)event.getController().getTo()).getProduct().setInventoriable(true);
@@ -93,6 +83,22 @@ public class ItemVetoListener extends ControllerAdapter {
 			} catch (ManagerBeanException e) {
                 throw new ControllerListenerException(e.getMessage(), e);
 			}
+		}
+	}
+	
+	@Override
+	public void afterBeanRemoved(ControllerEvent event) throws ControllerListenerException {
+		try {
+			Item item = (Item)event.getController().getTo();
+			IManagerBean itemBean = BeanManager.getManagerBean(Item.class);
+			Criteria criteria = new Criteria();
+			criteria.addEqualExpression(itemBean.getFieldName(IProductAlias.ITEM_PRODUCT_ID), item.getProduct().getId());
+			if(itemBean.getCount(criteria) == 0){
+				IManagerBean productBean = BeanManager.getManagerBean(Product.class);
+				productBean.remove(item.getProduct());
+			}
+		} catch (ManagerBeanException e) {
+			throw new ControllerListenerException(e.getMessage(), e);
 		}
 	}
 

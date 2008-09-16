@@ -5,7 +5,6 @@ import com.code.aon.common.dao.DAOConstantsEntry;
 import com.code.aon.groupware.Alarm;
 import com.code.aon.groupware.Notice;
 import com.code.aon.groupware.Note;
-import com.code.aon.groupware.Contact;
 import com.code.aon.groupware.FavoriteCategory;
 import com.code.aon.groupware.Favorite;
 
@@ -184,73 +183,6 @@ public interface IGroupWareAlias {
 	* Hibernate value: Note.subject
 	*/
 	String  NOTE_SUBJECT = NOTE_ENTRY.getAliasNames()[4];
-
-
-
-	/** 
-	* DAOConstantsEntry for Contact entity.
-	*/ 
-	DAOConstantsEntry CONTACT_ENTRY = DAOConstants.getDAOConstant(Contact.class);
-
-	/** 
-	* Alias value: Contact_address
-	* Hibernate value: Contact.address
-	*/
-	String  CONTACT_ADDRESS = CONTACT_ENTRY.getAliasNames()[0];
-
-	/** 
-	* Alias value: Contact_cellularPhone
-	* Hibernate value: Contact.cellularPhone
-	*/
-	String  CONTACT_CELLULAR_PHONE = CONTACT_ENTRY.getAliasNames()[1];
-
-	/** 
-	* Alias value: Contact_email
-	* Hibernate value: Contact.email
-	*/
-	String  CONTACT_EMAIL = CONTACT_ENTRY.getAliasNames()[2];
-
-	/** 
-	* Alias value: Contact_fax
-	* Hibernate value: Contact.fax
-	*/
-	String  CONTACT_FAX = CONTACT_ENTRY.getAliasNames()[3];
-
-	/** 
-	* Alias value: Contact_id
-	* Hibernate value: Contact.id
-	*/
-	String  CONTACT_ID = CONTACT_ENTRY.getAliasNames()[4];
-
-	/** 
-	* Alias value: Contact_name
-	* Hibernate value: Contact.name
-	*/
-	String  CONTACT_NAME = CONTACT_ENTRY.getAliasNames()[5];
-
-	/** 
-	* Alias value: Contact_note
-	* Hibernate value: Contact.note
-	*/
-	String  CONTACT_NOTE = CONTACT_ENTRY.getAliasNames()[6];
-
-	/** 
-	* Alias value: Contact_organization
-	* Hibernate value: Contact.organization
-	*/
-	String  CONTACT_ORGANIZATION = CONTACT_ENTRY.getAliasNames()[7];
-
-	/** 
-	* Alias value: Contact_phone
-	* Hibernate value: Contact.phone
-	*/
-	String  CONTACT_PHONE = CONTACT_ENTRY.getAliasNames()[8];
-
-	/** 
-	* Alias value: Contact_user_id
-	* Hibernate value: Contact.user.id
-	*/
-	String  CONTACT_USER_ID = CONTACT_ENTRY.getAliasNames()[9];
 
 
 
