@@ -33,12 +33,10 @@
 			</aon:div>
 			
 			<aon:div styleClass="aon-nowrap">
-				<aon:div style="white-space:nowrap;">
-					<aon:outputText value="#{commercialController.companyName}" />
+				<aon:div style="white-space:nowrap;" rendered="#{loggedUser.logged}">
+					<aon:outputText value="#{loggedUser.companyName}" />
 					<aon:outputText value=" / " />
-					<aon:commandLink styleClass="aon-icon aon-icon-user-change-password">	
-						<aon:outputText value="#{commercialController.loggedUserName}" styleClass="aon-bold"/>
-					</aon:commandLink>
+					<aon:outputText value="#{loggedUser.loggedUserName}" styleClass="aon-bold"/>
 				</aon:div>
 			</aon:div>	
 		
@@ -53,12 +51,12 @@
 							<h:outputText value="#{bundle.aon_home}" />
 						</h:outputLink>
 						<aon:commandLink style="border-right:0;" action="logout"
-							actionListener="#{commercialController.logout}">
+							actionListener="#{aonConfiguration.logout}">
 							<aon:outputText value="#{securityBundle.aon_login_user_logout}" />
 						</aon:commandLink>
 					</aon:div>	
 				</aon:div>
-				<aon:outputText value="#{commercialController.currentDate}" />
+				<aon:outputText value="#{aonConfiguration.currentDate}" />
 			</aon:div>
 		</aon:form>	
 	</aon:div>

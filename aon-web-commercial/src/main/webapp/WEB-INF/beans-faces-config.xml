@@ -5,13 +5,6 @@
 
 <faces-config>
 
-	<!-- ************* CONTROLADOR DE GENERAL DE COMMERCIAL ***************** -->
-	<managed-bean>
-		<managed-bean-name>commercialController</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.commercial.controller.CommercialController</managed-bean-class>
-		<managed-bean-scope>session</managed-bean-scope>
-	</managed-bean>
-
 	<!--  **** COMMERCIAL COLLECTIONS **** 
 		Controlador que proporciona colecciones del grupo .
 	-->
