@@ -63,7 +63,7 @@
 		</managed-property>		
 		<managed-property>
 			<property-name>resourceURIPreffix</property-name>
-			<value>/aonResource/1.4.0-SNAPSHOT</value>
+			<value>/aonResource/1.3.9</value>
 		</managed-property>		
 	</managed-bean>
 
