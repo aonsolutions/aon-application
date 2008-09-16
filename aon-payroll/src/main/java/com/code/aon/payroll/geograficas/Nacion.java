@@ -14,13 +14,13 @@ import com.code.aon.common.ITransferObject;
 @Table(name="nacion")
 public class Nacion implements ITransferObject {
 
-	private static final long serialVersionUID = 4304438088705559359L;
+
 
 	private String cdg;
 	private String description;
 
 	@Id
-	@Column(name="cdg", unique=true, nullable=false, length=1)
+	@Column(name="cdg", unique=true, nullable=false, length=3)
     public String getCdg() {
 		return this.cdg;
     }

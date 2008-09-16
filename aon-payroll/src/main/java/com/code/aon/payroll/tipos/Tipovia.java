@@ -16,7 +16,6 @@ import com.code.aon.common.ITransferObject;
 @Table(name="tipovia")
 public class Tipovia  implements ITransferObject {
 	
-	private static final long serialVersionUID = 4304438088705559359L;
 	
      private String cdg;
      private String description;
