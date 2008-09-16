@@ -24,6 +24,7 @@ import javax.mail.Part;
 import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMultipart;
 
+import com.code.aon.bridge.session.LoggedUser;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.messaging.util.Utils;
@@ -163,8 +164,9 @@ public class FAXManager extends MessageController {
 			AonMessage parentAonMsg,
 			List<AonFile> fileList) 
 			throws MessagingException, WebmailException, UnsupportedEncodingException {
-    	WebMailController webMailController = (WebMailController)AonUtil.getRegisteredBean(BEAN_WEBMAIL);
-    	String personal = webMailController.getLoggedUserName();
+    	LoggedUser loggedUser = (LoggedUser) AonUtil.getRegisteredBean(BEAN_LOGGED_USER);
+    	String personal = loggedUser.getLoggedUserName();
+    	WebMailController webMailController = (WebMailController)AonUtil.getRegisteredBean(BEAN_WEBMAIL);    	
     	AonMessage newMessage = webMailController.getServer().createAonMessage(sender, personal);
        	if (recipientsTo!=null)
        		newMessage.setRecipientsTo(recipientsTo);
