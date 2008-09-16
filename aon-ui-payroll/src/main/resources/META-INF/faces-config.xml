@@ -297,7 +297,7 @@
 		</managed-property>
 		<managed-property>
 			<property-name>pojo</property-name>
-			<value>com.code.aon.payroll.irpf.Cuotas</value>
+			<value>com.code.aon.payroll.irpf.Cuota</value>
 		</managed-property>
 	</managed-bean>
 
