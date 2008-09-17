@@ -5,20 +5,21 @@ import javax.faces.context.FacesContext;
 import javax.faces.convert.Converter;
 import javax.faces.convert.ConverterException;
 
+import org.apache.commons.lang.StringUtils;
+
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.customer.Customer;
 import com.code.aon.registry.Registry;
 
-public class CustomerConverter implements Converter {
+public class CustomerRegistryConverter implements Converter {
 
 	boolean validate;
 	
 	@Override
 	public Object getAsObject(FacesContext ctx, UIComponent comp, String value) {
-		if (value == null || "".equals(value)
-			) {
+		if (StringUtils.isEmpty(value)) {
 			return null;
 		}
 		Integer id;
@@ -40,7 +41,7 @@ public class CustomerConverter implements Converter {
 				Registry r = new Registry();
 				c.setRegistry(r);
 			}
-			return c;
+			return c.getRegistry();
 		} catch (ManagerBeanException e) {
 			throw new ConverterException("No se puedo obtener el Manager de Customer.");
 		}
@@ -51,12 +52,9 @@ public class CustomerConverter implements Converter {
 		if (value == null) {
 			return null;
 		}
-		if (value instanceof Customer) {
-			Customer a = (Customer) value;
-			if (a.getId() == null) {
-				return null;
-			}
-			return a.getId().toString();
+		if (value instanceof Registry) {
+			Registry a = (Registry) value;
+			return a.getId()==null?null:a.getId().toString();
 		}
 		throw new ConverterException("Error de conversión en el cliente, "
 				+ value.getClass().getName() + " no se puede convertir en Customer!.");
