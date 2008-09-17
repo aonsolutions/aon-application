@@ -116,5 +116,36 @@
 		</params>
 	</report>
 	
-
+    <report id="tiposViaList" description="Listado de Tipos de Via">
+		<template path="/com/code/aon/ui/payroll/report/tiposViaList.jasper" />
+		<bean key="com.code.aon.payroll.tipos.Tipovia" />
+		<criteria provider="#{tiposVia}" />
+		<params>
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.payroll.i18n.messages" />
+			<param id="logoImageFile" value="#{payrollController.getLogo}" />
+			<param id="companyName" value="#{payrollController.getCompanyName}" />
+		</params>
+	</report>
+	
+	   <report id="tiposNacion" description="Listado de Nacionalidades">
+		<template path="/com/code/aon/ui/payroll/report/tiposNacion.jasper" />
+		<bean key="com.code.aon.payroll.geograficas.Nacion" />
+		<criteria provider="#{nacion}" />
+		<params>
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.payroll.i18n.messages" />
+			<param id="logoImageFile" value="#{payrollController.getLogo}" />
+			<param id="companyName" value="#{payrollController.getCompanyName}" />
+		</params>
+	</report>
+ 
+       <report id="CuotaRetencionAlava" description="Listado de Cuotas de Retencion Alava">
+		<template path="/com/code/aon/ui/payroll/report/CuotaRetencionAlava.jasper" />
+		<bean key="com.code.aon.payroll.irpfforal.CuotaRetencionAlava" />
+		<criteria provider="#{cuotaRetencionAlava}" />
+		<params>
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.payroll.i18n.messages" />
+			<param id="logoImageFile" value="#{payrollController.getLogo}" />
+			<param id="companyName" value="#{payrollController.getCompanyName}" />
+		</params>
+	</report>    
 </report-config>

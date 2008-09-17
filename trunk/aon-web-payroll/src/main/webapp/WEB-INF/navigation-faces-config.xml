@@ -113,12 +113,32 @@
 			<to-view-id>/facelet/auxiliares/sistema_red/colectivos/grid.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>
-	
+
 	<navigation-rule>
+		<navigation-case>
+			<from-outcome>tipos_via</from-outcome>
+			<to-view-id>/facelet/auxiliares/tipos/tipoVia/grid.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>
+	
+    <navigation-rule>
+		<navigation-case>
+			<from-outcome>naciones</from-outcome>
+			<to-view-id>/facelet/auxiliares/geograficas/nacion/grid.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>
+
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>CuotaRetencionAlava</from-outcome>
+			<to-view-id>/facelet/auxiliares/irpfforal/CuotaRetencionAlava/grid.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>
+	
+    <navigation-rule>
 		<navigation-case>
 			<from-outcome>irpf_cuotas</from-outcome>
 			<to-view-id>/facelet/auxiliares/irpf/CuotaRetencion/grid.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>
-	
 </faces-config>
