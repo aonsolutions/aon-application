@@ -32,7 +32,6 @@ public class CampaignController extends BasicController {
 
     private static final Logger LOGGER = Logger.getLogger(CampaignController.class.getName());
 
-    @SuppressWarnings("unused")
     public void onSearch(MenuEvent event) {
         try {
             String alias = getManagerBean().getFieldName(ICampaignAlias.CAMPAIGN_STATUS);
@@ -119,7 +118,6 @@ public class CampaignController extends BasicController {
         return ((Campaign)this.getTo()).getStatus().equals(CampaignStatus.DELETED);
     }
 
-    @SuppressWarnings("unused")
     public void onStartCampaign(ActionEvent event) {
         Campaign campaign = (Campaign)this.getTo();
         if (campaign.getType().equals(CampaignType.AUTOMATIC)) {
@@ -128,7 +126,8 @@ public class CampaignController extends BasicController {
         changeStatus(CampaignStatus.IN_PROGRESS);
     }
 
-    private void startCampaign(Campaign campaign) {
+    @SuppressWarnings("unchecked")
+	private void startCampaign(Campaign campaign) {
         try {
             IManagerBean campaignDossierBean = BeanManager.getManagerBean(CampaignDossier.class);
 
@@ -146,7 +145,7 @@ public class CampaignController extends BasicController {
                 campaignDossier.setDossier(activity.getDossier());
                 campaignDossier = (CampaignDossier)campaignDossierBean.insert(campaignDossier);
 
-                CampaignTaskManager.addCampaignTask(campaignDossier, 0);
+                CampaignTaskManager.addCampaignTask(campaignDossier, 0, null);
             }
             CampaignDossierController campaignDossierController = (CampaignDossierController)AonUtil.getController("campaignDossier");
             campaignDossierController.setSortColumn(null);
@@ -156,14 +155,14 @@ public class CampaignController extends BasicController {
         }
     }
 
-    @SuppressWarnings("unused")
     public void onFinishCampaign(ActionEvent event) {
         Campaign campaign = (Campaign)this.getTo();
         finishCampaign(campaign);
         changeStatus(CampaignStatus.FINISHED);
     }
 
-    private void finishCampaign(Campaign campaign) {
+	@SuppressWarnings("unchecked")
+	private void finishCampaign(Campaign campaign) {
         try {
             IManagerBean campaignDossierBean = BeanManager.getManagerBean(CampaignDossier.class);
             Criteria criteria = new Criteria();
@@ -189,7 +188,8 @@ public class CampaignController extends BasicController {
         }
     }
 
-    private void removeCampaign(Campaign campaign) {
+    @SuppressWarnings("unchecked")
+	private void removeCampaign(Campaign campaign) {
         try {
             IManagerBean campaignDossierBean = BeanManager.getManagerBean(CampaignDossier.class);
             Criteria criteria = new Criteria();

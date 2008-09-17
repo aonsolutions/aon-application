@@ -5,11 +5,8 @@ import java.util.Iterator;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import javax.faces.component.UIComponent;
 import javax.faces.event.ActionEvent;
 import javax.faces.event.ValueChangeEvent;
-
-import org.apache.myfaces.custom.sortheader.HtmlCommandSortHeader;
 
 import com.code.aon.campaign.CampaignDossier;
 import com.code.aon.campaign.ProcessDetail;
@@ -47,6 +44,11 @@ public class CampaignDossierController extends LinesController {
     }
 
     public void setSortColumn(String sortColumn) {
+    	if (this.sortColumn == sortColumn) {
+    		setAscending( !isAscending() );
+    	} else {
+    		setAscending( true );
+    	}
         this.sortColumn = sortColumn;
     }
 
@@ -54,8 +56,8 @@ public class CampaignDossierController extends LinesController {
         return ascending;
     }
 
-    public void setAscending(String sortColumn) {
-        this.ascending = (sortColumn.equals(getSortColumn())) ? !isAscending() : true;
+    public void setAscending(boolean ascending) {
+        this.ascending = ascending;
     }
 
     public boolean getRowChecked() {
@@ -87,7 +89,11 @@ public class CampaignDossierController extends LinesController {
         try {
             if (model.getRowData() != null) {
                 ProcessDetail currentProcessDetail = CampaignTaskManager.getCurrentProcessDetail((CampaignDossier)model.getRowData());
-                return (currentProcessDetail==null) ? null : currentProcessDetail.getDescription();
+                String ret = (currentProcessDetail==null) ? null : currentProcessDetail.getDescription();
+                if (ret == null) {
+                	ret = "-------------------------";
+                }
+                return ret;
             }
         } catch (ManagerBeanException e) {
             LOGGER.log(Level.SEVERE, "Error obtaining current process detail of dossier with id=" + ((CampaignDossier)model.getRowData()).getId(), e);
@@ -95,11 +101,11 @@ public class CampaignDossierController extends LinesController {
         return null;
     }
 
-    @SuppressWarnings("unused")
     public void onRemoveCampaignDossier(ActionEvent event) {
         removeCampaignDossier();
     }        
 
+    @SuppressWarnings(value = "unchecked")
     private void removeCampaignDossier() {
         try {
             IManagerBean campaignDossierBean = BeanManager.getManagerBean(CampaignDossier.class);
@@ -119,17 +125,12 @@ public class CampaignDossierController extends LinesController {
 
     public void sort(ActionEvent event) {
         try {
-            UIComponent component = event.getComponent();
-            if (component instanceof HtmlCommandSortHeader) {
-                HtmlCommandSortHeader header = (HtmlCommandSortHeader)component;
-                setAscending(header.getColumnName());
                 Criteria criteria = new Criteria();
                 criteria.addExpression(getMainCriteria().getExpression());
-                criteria.addOrder(getFieldName(header.getColumnName()), isAscending());
-                setSortColumn(header.getColumnName());
+                criteria.addOrder(getFieldName(getSortColumn()), isAscending());
+                setSortColumn(getSortColumn());
                 setCriteria(criteria);
                 onSearch(null);
-            }
         } catch (ManagerBeanException e) {
             LOGGER.log(Level.SEVERE, "Error sorting campaign dossier list", e);
         }

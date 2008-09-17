@@ -9,6 +9,7 @@ import javax.faces.context.FacesContext;
 import javax.faces.model.SelectItem;
 
 import com.code.aon.campaign.Process;
+import com.code.aon.campaign.ProcessTransitionType;
 import com.code.aon.campaign.dao.ICampaignAlias;
 import com.code.aon.campaign.enumeration.CampaignStatus;
 import com.code.aon.campaign.enumeration.CampaignType;
@@ -36,6 +37,36 @@ public class CampaignCollectionsController {
 		return processList;
 	}
 	
+	@SuppressWarnings("unchecked")
+	public List<SelectItem> getProcessTransitionTypes() throws ManagerBeanException {
+		List<SelectItem> processList = new LinkedList<SelectItem>();
+		IManagerBean processBean = BeanManager.getManagerBean(ProcessTransitionType.class);
+		Criteria criteria = new Criteria();
+		criteria.addOrder(processBean.getFieldName(ICampaignAlias.PROCESS_TRANSITION_TYPE_DESCRIPTION));
+		Iterator iter = processBean.getList(criteria).iterator();
+		while(iter.hasNext()){
+			ProcessTransitionType ptt = (ProcessTransitionType) iter.next();
+			SelectItem item = new SelectItem(ptt, ptt.getDescription());
+			processList.add(item);
+		}
+		return processList;
+	}
+
+	@SuppressWarnings("unchecked")
+	public List<SelectItem> getProcessEntities() throws ManagerBeanException {
+		List<SelectItem> processList = new LinkedList<SelectItem>();
+		IManagerBean processBean = BeanManager.getManagerBean(Process.class);
+		Criteria criteria = new Criteria();
+		criteria.addOrder(processBean.getFieldName(ICampaignAlias.PROCESS_DESCRIPTION));
+		Iterator iter = processBean.getList(criteria).iterator();
+		while(iter.hasNext()){
+			Process process = (Process)iter.next();
+			SelectItem item = new SelectItem(process, process.getDescription());
+			processList.add(item);
+		}
+		return processList;
+	}
+
 	public List<SelectItem> getDateReferences() throws ManagerBeanException {
 		Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
 		LinkedList<SelectItem> dateReferenceList = new LinkedList<SelectItem>();

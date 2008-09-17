@@ -19,7 +19,8 @@ public class CampaignStatusConverter extends EnumLocaleConverter {
      * 
      * @return the enum class
      */
-    protected Class getEnumClass( FacesContext ctx, UIComponent c ) {
+    @SuppressWarnings("unchecked")
+	protected Class getEnumClass( FacesContext ctx, UIComponent c ) {
     	return CampaignStatus.class;
     }
 }
