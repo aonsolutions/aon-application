@@ -40,14 +40,14 @@
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.payroll</artifactId>
-			<version>0.6.0</version>
+			<version>0.6.1</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.audit</artifactId>
-			<version>0.6.0</version>
-			<scope>provided</scope>
+			<version>0.7.0</version>
+			<scope>compile</scope>
 		</dependency>
 		<dependency>
 		    <groupId>commons-el</groupId>
