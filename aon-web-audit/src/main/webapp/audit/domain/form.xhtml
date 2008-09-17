@@ -73,12 +73,12 @@
 			<aon:div styleClass="aon-scroll-area">
 				<aon:panelGrid id="menuGrid" columns="2" dir="true" width="100%">
 					<aon:outputLabel for="Domain_id"
-						rendered="#{!domain.new}" value="#{appBundle.aon_id}" />
+						rendered="#{!domain.new}" value="#{bundle.aon_id}" />
 					<aon:inputText id="Domain_id" value="#{domain.to.id}"
 						rendered="#{!domain.new}" size="15" disabled="true" />
 				
 					<aon:outputLabel for="Domain_name"
-						value="#{appBundle.aon_name}" />
+						value="#{bundle.aon_name}" />
 					<aon:inputText id="Domain_name" maxlength="64" required="true"
 						value="#{domain.to.name}" size="64">
 					</aon:inputText>
