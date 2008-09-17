@@ -18,18 +18,10 @@
 					</aon:div>
 
 					<aon:div styleClass="aon-finding-subtitle-internal">
-						<aon:outputText value="#{bundle.aon_search}" />
+						<aon:outputText value="#{bundle.aon_toolbar_search}" />
 					</aon:div>
 
 					<aon:div styleClass="aon-finding-toolbar-item-group">
-						<aon:commandButton id="search" value="#{bundle.aon_accept}"
-							action="target_list" actionListener="#{target.onSearch}"
-							styleClass="aon-finding-toolbar-item aon-icon-accept"
-							accesskey="#{bundle.aon_key_search}" />
-						<aon:commandButton id="cancel" value="#{bundle.aon_cancel}"
-							action="target_list" actionListener="#{target.onCancel}"
-							styleClass="aon-finding-toolbar-item aon-icon-cancel" immediate="true"
-							accesskey="#{bundle.aon_key_cancel}" />
 						<aon:commandButton id="clear" value="#{bundle.aon_clear}"
 							type="reset" ajaxSingle="true"
 							styleClass="aon-finding-toolbar-item aon-icon-rubber" />
@@ -37,48 +29,52 @@
 							action="target_form" actionListener="#{target.onReset}"
 							styleClass="aon-finding-toolbar-item aon-icon-reset"
 							accesskey="#{bundle.aon_key_new}" />
+						<aon:commandButton id="back" value="#{bundle.aon_back}"
+							action="target_list" actionListener="#{target.onCancel}"
+							styleClass="aon-finding-toolbar-item aon-icon-cancel" immediate="true"
+							accesskey="#{bundle.aon_key_cancel}" />
 					</aon:div>
 				</aon:panelGrid>
 			</aon:div>
 			<!-- end toolbar navigation -->
 
-			<aon:div styleClass="aon-scroll-area">
-				<aon:div styleClass="aon-scroll-area-internal">
-					<aon:div styleClass="aon-panelGrid-search">
-						<aon:div styleClass="aon-panelGrid-search-info">
-							<aon:outputText value="#{bundle.aon_search_info}" />
-						</aon:div>
-						<aon:panelGrid columns="2">
+			<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/searchContent.xhtml" >
+				<ui:define name="searchContent">
+					<aon:outputLabel for="Target_id"
+						value="#{registryBundle.aon_id}" />
+					<aon:inputText id="Target_id" size="60"
+						valueChangeListener="#{target.addExpression}" />
+
+					<aon:outputLabel for="Target_registry_document"
+						value="#{registryBundle.aon_nif}" />
+					<aon:inputText id="Target_registry_document" size="60"
+						valueChangeListener="#{target.addExpression}" onblur="toUpperCase(this);" />
+
+					<aon:outputLabel for="Target_registry_name"
+						value="#{registryBundle.aon_name}" />
+					<aon:inputText id="Target_registry_name" size="60"
+						valueChangeListener="#{target.addExpression}" />
+
+					<aon:outputLabel for="Target_registry_surname"
+						value="#{registryBundle.aon_surname}" />
+					<aon:inputText id="Target_registry_surname" size="60"
+						valueChangeListener="#{target.addExpression}" />
+
+					<aon:outputLabel for="Target_registry_alias"
+						value="#{registryBundle.aon_alias}" />
+					<aon:inputText id="Target_registry_alias" size="60"
+						valueChangeListener="#{target.addExpression}" onblur="toUpperCase(this);" />
 	
-							<aon:outputLabel for="Target_id"
-								value="#{registryBundle.aon_id}" />
-							<aon:inputText id="Target_id" size="60"
-								valueChangeListener="#{target.addExpression}" />
-	
-							<aon:outputLabel for="Target_registry_document"
-								value="#{registryBundle.aon_nif}" />
-							<aon:inputText id="Target_registry_document" size="60"
-								valueChangeListener="#{target.addExpression}" onblur="toUpperCase(this);" />
-	
-							<aon:outputLabel for="Target_registry_name"
-								value="#{registryBundle.aon_name}" />
-							<aon:inputText id="Target_registry_name" size="60"
-								valueChangeListener="#{target.addExpression}" />
-	
-							<aon:outputLabel for="Target_registry_surname"
-								value="#{registryBundle.aon_surname}" />
-							<aon:inputText id="Target_registry_surname" size="60"
-								valueChangeListener="#{target.addExpression}" />
-	
-							<aon:outputLabel for="Target_registry_alias"
-								value="#{registryBundle.aon_alias}" />
-							<aon:inputText id="Target_registry_alias" size="60"
-								valueChangeListener="#{target.addExpression}" onblur="toUpperCase(this);" />
-	
-						</aon:panelGrid>
+					<aon:outputText value="" />
+					<aon:div styleClass="aon-text-right">
+						<aon:commandButton id="search" value="#{bundle.aon_accept}"
+							action="target_list" actionListener="#{target.onSearch}"
+							styleClass="aon-commandButton"
+							accesskey="#{bundle.aon_key_search}" />
 					</aon:div>
-				</aon:div>
-			</aon:div>
+				</ui:define>
+			
+			</ui:decorate>
 
 		</aon:form>
 	</ui:define>
