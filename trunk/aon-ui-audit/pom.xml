@@ -30,7 +30,7 @@
 			<groupId>com.code.aon</groupId> 
 			<artifactId>aon.audit</artifactId>
 			<version>0.5.2</version>
-			<scope>provided</scope>
+			<scope>compile</scope>
 		</dependency>	
 		<dependency>
 			<groupId>javax.servlet</groupId>
