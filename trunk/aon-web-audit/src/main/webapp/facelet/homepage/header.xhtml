@@ -31,13 +31,12 @@
 			</aon:div>
 			
 			<aon:div styleClass="aon-nowrap">
-				<aon:div style="white-space:nowrap;">
-					<aon:outputText value="#{auditController.companyName}" />
+				<aon:div style="white-space:nowrap;" rendered="#{loggedUser.logged}">
+					<aon:outputText value="#{loggedUser.companyName}" />
 					<aon:outputText value=" / " />
-					<aon:outputText value="#{auditController.loggedUserName}" styleClass="aon-bold"/>
+					<aon:outputText value="#{loggedUser.loggedUserName}" styleClass="aon-bold"/>
 				</aon:div>
-			</aon:div>	
-		
+			</aon:div>			
 		</aon:panelGrid>
 		<aon:form>
 			<aon:div styleClass="aon-header-additionalInfo">				
@@ -48,12 +47,12 @@
 							value="${facesContext.externalContext.requestContextPath}">
 							<h:outputText value="#{bundle.aon_home}" />
 						</h:outputLink>
-						<aon:commandLink style="border-right:0;" action="logout" actionListener="#{auditController.logout}">
+						<aon:commandLink style="border-right:0;" action="logout" actionListener="#{aonConfiguration.logout}">
 							<aon:outputText value="#{securityBundle.aon_login_user_logout}" />
 						</aon:commandLink>
 					</aon:div>	
 				</aon:div>
-				<aon:outputText value="#{auditController.currentDate}" />
+				<aon:outputText value="#{aonConfiguration.currentDate}" />
 			</aon:div>
 		</aon:form>
 	</aon:div>
