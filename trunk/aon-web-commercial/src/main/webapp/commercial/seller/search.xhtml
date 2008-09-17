@@ -22,10 +22,7 @@
 					</aon:div>
 
 					<aon:div styleClass="aon-finding-toolbar-item-group">
-						<aon:commandButton id="search" value="#{bundle.aon_accept}"
-							action="seller_list" actionListener="#{seller.onSearch}"
-							styleClass="aon-finding-toolbar-item aon-icon-accept"
-							accesskey="#{bundle.aon_key_search}" />
+						
 						<aon:commandButton id="cancel" value="#{bundle.aon_cancel}"
 							action="seller_list" actionListener="#{seller.onCancel}"
 							styleClass="aon-finding-toolbar-item aon-icon-cancel" immediate="true"
@@ -33,7 +30,7 @@
 						<aon:commandButton id="clear" value="#{bundle.aon_clear}"
 							type="reset" ajaxSingle="true"
 							styleClass="aon-finding-toolbar-item aon-icon-rubber" />
-						<aon:commandButton id="reset" value="#{bundle.aon_reset}"
+						<aon:commandButton id="reset" value="#{bundle.aon_back}"
 							action="seller_form" actionListener="#{seller.onReset}"
 							styleClass="aon-finding-toolbar-item aon-icon-reset"
 							accesskey="#{bundle.aon_key_new}" />
@@ -78,7 +75,14 @@
 								value="#{bundle.aon_description}" />
 							<aon:inputText id="Seller_description" size="60"
 								valueChangeListener="#{seller.addExpression}" />
-	
+							
+							<aon:outputText value="" />
+							<aon:div styleClass="aon-text-right">
+								<aon:commandButton id="search" value="#{bundle.aon_search}"
+								action="seller_list" actionListener="#{seller.onSearch}"
+								styleClass="aon-commandButton"
+								accesskey="#{bundle.aon_key_search}" />
+							</aon:div>
 						</aon:panelGrid>
 					</aon:div>
 				</aon:div>
