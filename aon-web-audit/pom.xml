@@ -13,7 +13,7 @@
 	<artifactId>aon-web-audit</artifactId>
 	<packaging>war</packaging>
 	<name>AON WEB AUDIT</name>
-	<version>0.5.0</version>
+	<version>0.6.0</version>
 	<description>AON WEB AUDIT</description>
 	<build>
 		<finalName>aon-audit</finalName>
@@ -22,31 +22,31 @@
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.security.bridge</artifactId>
-			<version>1.6.1</version>
+			<version>1.7.0</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.code.aon</groupId> 
 			<artifactId>aon.security</artifactId>
-			<version>1.5.0</version>
+			<version>1.6.0</version>
 			<scope>provided</scope>
 		</dependency>	
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.rich.components</artifactId>
-			<version>1.3.2</version>
+			<version>1.4.0</version>
 			<scope>compile</scope>
 		</dependency>		
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.resources</artifactId>
-			<version>1.3.2</version>
+			<version>1.4.0</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.audit</artifactId>
-			<version>0.5.0</version>
+			<version>0.7.0</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
