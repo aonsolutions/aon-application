@@ -89,13 +89,13 @@ public class AddCampaignDossierController extends BasicController {
         }
     }
 
-    @SuppressWarnings("unused")
     public void onSearchDossiers(ActionEvent event) {
         Campaign campaign = (Campaign)AonUtil.getController("campaign").getTo();
         searchDossiers(campaign);
     }
 
-    private void searchDossiers(Campaign campaign) {
+    @SuppressWarnings("unchecked")
+	private void searchDossiers(Campaign campaign) {
         try {
             IManagerBean activityBean = BeanManager.getManagerBean(Activity.class);
             String alias = activityBean.getFieldName(IProjectAlias.ACTIVITY_DOSSIER_ID);
@@ -131,7 +131,7 @@ public class AddCampaignDossierController extends BasicController {
         }
     }
 
-    @SuppressWarnings("unused")
+    @SuppressWarnings("unchecked" )
     public void onAddCampaignDossiers(ActionEvent event) {
         Campaign campaign = (Campaign)AonUtil.getController("campaign").getTo();
         try {
@@ -145,7 +145,7 @@ public class AddCampaignDossierController extends BasicController {
                 campaignDossier.setDossier(activity.getDossier());
                 campaignDossier = (CampaignDossier)campaignDossierBean.insert(campaignDossier);
 
-                CampaignTaskManager.addCampaignTask(campaignDossier, 0);
+                CampaignTaskManager.addCampaignTask(campaignDossier, 0, null);
             }
             CampaignDossierController campaignDossierController = (CampaignDossierController)AonUtil.getController("campaignDossier");
             campaignDossierController.onSearch(null);

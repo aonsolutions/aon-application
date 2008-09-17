@@ -45,7 +45,9 @@ public class ActivityProcessController extends BasicController {
         this.processDetail = (processDetail == null) ? new ProcessDetail() : processDetail;
     }
 
-    public List getProcessDetailList() throws ManagerBeanException {
+    
+    @SuppressWarnings("unchecked")
+	public List getProcessDetailList() throws ManagerBeanException {
         List<SelectItem> processDetailList = new LinkedList<SelectItem>();
         IManagerBean processDetailBean = BeanManager.getManagerBean(ProcessDetail.class);
         Process process = getCampaignDossier().getCampaign().getProcess();
@@ -60,7 +62,6 @@ public class ActivityProcessController extends BasicController {
         return processDetailList;
     }
 
-    @SuppressWarnings("unused")
     public void onSearchTasks(ActionEvent event) {
         try {
             CampaignDossier campaignDossier = (CampaignDossier)AonUtil.getController("campaignDossier").getModel().getRowData();
@@ -79,7 +80,7 @@ public class ActivityProcessController extends BasicController {
             IManagerBean activityProcessBean = BeanManager.getManagerBean(ActivityProcess.class);
             Criteria criteria = new Criteria();
             criteria.addEqualExpression(activityProcessBean.getFieldName(ICampaignAlias.ACTIVITY_PROCESS_CAMPAIGN_ID), campaignId);
-            criteria.addEqualExpression(activityProcessBean.getFieldName(ICampaignAlias.ACTIVITY_PROCESS_DOSSIER_ID), dossierId);
+            criteria.addEqualExpression(activityProcessBean.getFieldName(ICampaignAlias.ACTIVITY_PROCESS_TASK_DOSSIER_ID), dossierId);
             criteria.addOrder(activityProcessBean.getFieldName(ICampaignAlias.ACTIVITY_PROCESS_TASK_ID));
             setCriteria(criteria);
             onSearch(null);
@@ -88,14 +89,13 @@ public class ActivityProcessController extends BasicController {
         }
     }
 
-    @SuppressWarnings("unused")
     public void onChangeProcessDetail(ActionEvent event) {
         try {
             CampaignTaskManager.finishCampaignTask(getCampaignDossier());
 
             Integer position = CampaignTaskManager.getProcessDetailPosition(getProcessDetail());
             if (position != null) {
-                CampaignTaskManager.addCampaignTask(getCampaignDossier(), position.intValue());
+                CampaignTaskManager.addCampaignTask(getCampaignDossier(), position.intValue(), null);
             }
         } catch (ManagerBeanException e) {
             LOGGER.log(Level.SEVERE, "Error changing process detail to dossier number=" + getCampaignDossier().getDossier().getNumber(), e);

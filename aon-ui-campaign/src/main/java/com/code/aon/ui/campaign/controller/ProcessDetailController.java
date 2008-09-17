@@ -17,6 +17,11 @@ import com.code.aon.ui.form.LinesController;
 
 public class ProcessDetailController extends LinesController {
 
+	public ProcessDetailController() {
+		super();
+		this.addDataModelListener( new ProcessDetailDataModelListener());
+	}
+
 	@SuppressWarnings("unchecked")
 	private void moveMenuOption( ProcessDetail processDetail, int movement ) throws ManagerBeanException {
 		int oldPosition = processDetail.getPosition();
@@ -31,12 +36,10 @@ public class ProcessDetailController extends LinesController {
 		list.set( oldPosition, movedMenuOption );
 	}
 	
-	@SuppressWarnings("unused")
     public void onMoveUp(ActionEvent event) throws ManagerBeanException {
     	moveMenuOption( (ProcessDetail) getSelectedTO(), -1);
     }
 
-	@SuppressWarnings("unused")
     public void onMoveDown(ActionEvent event) throws ManagerBeanException {
     	moveMenuOption( (ProcessDetail) getSelectedTO(), 1);    	
     }
