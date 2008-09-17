@@ -73,20 +73,22 @@
 			<aon:div styleClass="aon-scroll-area">
 				<aon:panelGrid id="menuGrid" columns="2" dir="true" width="100%">
 					<aon:outputLabel for="Application_id"
-						rendered="#{!auditApplication.new}" value="#{appBundle.aon_id}" />
+						rendered="#{!auditApplication.new}" value="#{bundle.aon_id}" />
 					<aon:inputText id="Application_id" value="#{auditApplication.to.id}"
 						rendered="#{!auditApplication.new}" size="15" disabled="true" />
 				
 					<aon:outputLabel for="Application_name"
-						value="#{appBundle.aon_name}" />
+						value="#{bundle.aon_name}" />
 					<aon:inputText id="Application_name" maxlength="64"
 						value="#{auditApplication.to.name}" size="64">
 					</aon:inputText>
 				</aon:panelGrid>
 				
-				<aon:div styleClass="aon-form-group" rendered="#{!auditApplication.new}">
+				<aon:div styleClass="aon-form-group" rendered="#{!seller.new}">
 					<aon:div styleClass="aon-form-group-title">
-						<aon:outputLabel for="applicationActionData" value="#{menuBundle.aon_actions}" />
+						<aon:div styleClass="aon-form-group-title-internal">
+							<aon:outputLabel for="applicationActionData" value="#{menuBundle.aon_actions}" />
+						</aon:div>
 					</aon:div>
 					<ui:include src="/audit/application/action/grid.xhtml"/>
 				</aon:div>

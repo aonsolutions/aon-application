@@ -55,21 +55,21 @@
 					
 					<aon:column>
 						<f:facet name="header">
-							<aon:outputText value="#{appBundle.aon_id}" />
+							<aon:outputText value="#{bundle.aon_id}" />
 						</f:facet>
 						<aon:outputText value="#{to.id}"/>
 					</aon:column>
 
  					<aon:column>
 						<f:facet name="header">
-							<aon:outputText value="#{appBundle.aon_name}" />
+							<aon:outputText value="#{bundle.aon_name}" />
 						</f:facet>
 						<aon:outputText value="#{to.name}"/>
 					</aon:column>
 
 				</aon:dataTable>
 
-				<aon:dataScroller for="applicationData" rowCount="#{auditApplication.model.rowCount}" showNote="true" />
+				<aon:dataScroller2 for="applicationData" showNote="true" />
 
 			</aon:div>
 		</aon:form>
