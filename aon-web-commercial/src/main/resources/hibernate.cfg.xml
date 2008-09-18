@@ -56,6 +56,11 @@
 		<mapping class="com.code.aon.product.ProductCategoryGroup"/>		
 		<mapping class="com.code.aon.product.Brand"/>
 		<mapping class="com.code.aon.product.Tariff"/>
+		<mapping class="com.code.aon.product.ItemAttachment"/>
+		<mapping class="com.code.aon.product.ItemPos"/>
+		<mapping class="com.code.aon.product.ItemTariff"/>		
+		<mapping class="com.code.aon.product.ProductCategoryTree"/>
+		<mapping class="com.code.aon.product.TaxDetail"/>		
 		
 		<!-- AON-FINANCE Mapping files -->
 		<mapping class="com.code.aon.finance.PayMethod"/>
