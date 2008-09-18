@@ -16,9 +16,10 @@
 					
 					<aon:outputText value="" />
 					<aon:div styleClass="aon-text-right">
-						<aon:commandButton id="search" value="#{bundle.aon_search}"
-							action="#{searchAction}" actionListener="#{controller.onSearch}"
-							styleClass="aon-commandButton"
+						<aon:commandButton id="search"
+							value="#{bundle.aon_search}" styleClass="aon-commandButton"
+							action="#{searchAction}" actionListener="#{searchActionListener}"
+							reRender="#{searchReRender}"
 							accesskey="#{bundle.aon_key_search}" />
 					</aon:div>					
 				</aon:panelGrid>

@@ -40,7 +40,7 @@
 
 			<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/searchContent.xhtml" >
 				<ui:define name="searchContent">
-					<ui:param name="controller" value="#{seller}" />
+					<aon:methodParam name="searchActionListener" value="#{seller.onSearch}" type="actionListener"/>
 					<aon:methodParam name="searchAction" value="seller_list" />
 					
 					<aon:outputLabel for="Seller_id"
