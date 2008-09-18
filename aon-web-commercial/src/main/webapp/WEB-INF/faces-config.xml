@@ -41,11 +41,13 @@
 	<converter>
 		<description>Conversor para los Enum</description>
 		<converter-for-class>java.lang.Enum</converter-for-class>
-		<converter-class>
-			com.code.aon.ui.converter.EnumLocaleConverter
-		</converter-class>
+		<converter-class>com.code.aon.ui.converter.EnumLocaleConverter</converter-class>
 	</converter>
-
+	<converter>
+		<description>Conversor para los ProductStatus</description>
+		<converter-id>aonProductStatusConverter</converter-id>
+		<converter-class>com.code.aon.ui.product.converter.ProductStatusConverter</converter-class>
+	</converter>	
 	<converter>
     	<converter-id>toConverter</converter-id>
     	<converter-class>com.code.aon.ui.commercial.converter.ITransferObjectConverter</converter-class>
