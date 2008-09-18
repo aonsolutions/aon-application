@@ -12,21 +12,26 @@
 
 	<!-- start toolbar navigation -->
 	<aon:div>
-		<aon:div rendered="#{lookup.showSearchButtons}"
-			styleClass="aon-toolbar">
-			<aon:commandButton value="#{bundle.aon_search}"
-				actionListener="#{lookup.onListCancel}" reRender="#{lookupId}LookupContent"
-				styleClass="aon-finding-toolbar-item aon-icon-accept"
-				accesskey="#{bundle.aon_key_search}" />
-			<aon:commandButton value="#{bundle.aon_cancel}"
-				actionListener="#{lookup.onCloseWindow}"
-				styleClass="aon-finding-toolbar-item aon-icon-cancel"
-				accesskey="#{bundle.aon_key_cancel}">
-				<rich:componentControl for="#{lookupId}" event="onclick"
-					disableDefault="true" operation="hide" />
-			</aon:commandButton>
+		<aon:div styleClass="aon-finding-title-toolbar" rendered="#{lookup.showSearchButtons}">
+			<aon:panelGrid columns="1" dir="true"
+				columnClasses="aon-finding-toolbar">
+	
+				<aon:div styleClass="aon-finding-toolbar-item-group">
+					<aon:commandButton value="#{bundle.aon_search}"
+						actionListener="#{lookup.onListCancel}" reRender="#{lookupId}LookupContent"
+						styleClass="aon-finding-toolbar-item aon-icon-accept"
+						accesskey="#{bundle.aon_key_search}" />
+					<aon:commandButton value="#{bundle.aon_back}"
+						actionListener="#{lookup.onCloseWindow}" immediate="true"
+						styleClass="aon-finding-toolbar-item aon-icon-cancel"
+						accesskey="#{bundle.aon_key_cancel}">
+						<rich:componentControl for="#{lookupId}" event="onclick"
+							disableDefault="true" operation="hide" />
+					</aon:commandButton>
+				</aon:div>
+				
+			</aon:panelGrid>
 		</aon:div>
-
 		<!-- end toolbar navigation -->
 		<aon:div style="width:98%;">
 			<aon:dataTable id="#{lookup.beanName}Data" var="to"
