@@ -18,14 +18,14 @@ import javax.persistence.TemporalType;
 @Embeddable
 public class CuotaPK implements Serializable{
 	
-	private int numTramo;
+	private Integer numTramo;
 	private Date fecini;
 	
 	@Column(name="num_tramo", nullable=false, length=10)
-	public int getNumTramo() {
+	public Integer getNumTramo() {
 		return numTramo;
 	}
-	public void setNumTramo(int numTramo) {
+	public void setNumTramo(Integer numTramo) {
 		this.numTramo = numTramo;
 	}
 	
