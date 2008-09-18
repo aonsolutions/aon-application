@@ -91,7 +91,7 @@
 	<!-- ************* TIPOS DE EMPRESARIOS ***************** -->
 	<managed-bean>
 		<managed-bean-name>tiposEmpresario</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.payroll.controller.PayrollBasicController</managed-bean-class>
+	<managed-bean-class>com.code.aon.ui.payroll.controller.PayrollBasicController</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
 			<property-name>queryOnStartUP</property-name>
@@ -152,6 +152,21 @@
 		</managed-property>
 	</managed-bean>
 	
+	<!-- ************* IRPF CUOTAS ***************** -->
+	<managed-bean>
+		<managed-bean-name>cuotas</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.form.BasicController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.payroll.irpf.Cuota</value>
+		</managed-property>
+	</managed-bean>
+
 	<!-- ************* ORGANISMOS DE MNTO. DE ADMINISTRACION DE HACIENDA***************** -->
 	<managed-bean>
 		<managed-bean-name>organismosAdmon</managed-bean-name>
@@ -181,7 +196,67 @@
 			<value>com.code.aon.payroll.sistema_red.Colectivos</value>
 		</managed-property>
 	</managed-bean>
+
+	<!-- ************* TIPOS DE VIA ***************** -->
+	<managed-bean>
+		<managed-bean-name>tiposVia</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.form.BasicController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.payroll.tipos.Tipovia</value>
+		</managed-property>
+	</managed-bean>
+	<!-- ************* Nacionalidades ***************** -->
+	<managed-bean>
+		<managed-bean-name>nacion</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.form.BasicController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.payroll.geograficas.Nacion</value>
+		</managed-property>
+	</managed-bean>
+	   <!-- <managed-property>
+			<property-name>listenerClasses</property-name>
+			<list-entries>
+				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>				
+				<value>#{Nacionlistener}</value>									
+			</list-entries>			
+		</managed-property>
+    </managed-bean>
 	
+	<managed-bean>
+		<managed-bean-name>Nacionlistener</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.payroll.event.Nacionlistener
+		</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+	
+	--> 
+	<!-- ************* Cuote retencion ALAVA***************** -->
+	<managed-bean>
+		<managed-bean-name>cuotaRetencionAlava</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.form.BasicController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.payroll.irpfforal.CuotaRetencionAlava</value>
+		</managed-property>
+	</managed-bean>
+
 	<!-- ************* PORCENTAJE DE COTIZACIÓN ***************** -->
 	<managed-bean>
 		<managed-bean-name>porcentajeMaestro</managed-bean-name>
@@ -289,7 +364,7 @@
 	<!-- ************* IRPF CUOTAS ***************** -->
 	<managed-bean>
 		<managed-bean-name>cuotas</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.payroll.controller.CuotaController</managed-bean-class>
+		<managed-bean-class>com.code.aon.ui.form.BasicController</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
 			<property-name>queryOnStartUP</property-name>
@@ -297,8 +372,8 @@
 		</managed-property>
 		<managed-property>
 			<property-name>pojo</property-name>
-			<value>com.code.aon.payroll.irpf.Cuota</value>
+			<value>com.code.aon.payroll.irpf.Cuotas</value>
 		</managed-property>
 	</managed-bean>
-
+	
 </faces-config>
