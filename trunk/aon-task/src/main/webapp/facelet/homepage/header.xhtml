@@ -49,19 +49,18 @@
 				</aon:outputText>
 			</aon:div>
 			<aon:div styleClass="aon-float-right">
-				<h:form>
+				<aon:form>
 					<aon:outputLink styleClass="aon-header-menu-item-link"
 						target="_top"
 						value="${facesContext.externalContext.requestContextPath}">
 						<aon:outputText value="[#{bundle.aon_home}]" />
 					</aon:outputLink>
 					<aon:outputText value="&#160;" />
-					<aon:commandLink styleClass="aon-header-menu-item-link"
-						style="border-right:0;" onclick="parent.window.close();"
-						target="_top" actionListener="#{user.onLogout}">
-						<h:outputText value="[#{securityBundle.aon_login_user_logout}]" />
+					<aon:commandLink style="border-right:0;" action="logout"
+						actionListener="#{aonConfiguration.logout}">
+						<aon:outputText value="#{securityBundle.aon_login_user_logout}" />
 					</aon:commandLink>
-				</h:form>
+				</aon:form>
 					<h:outputText value="#{aonConfiguration.applicationVersion}"
 						styleClass="aon-header-menu-item-link"
 						rendered="#{aonConfiguration.applicationVersion != null}" />

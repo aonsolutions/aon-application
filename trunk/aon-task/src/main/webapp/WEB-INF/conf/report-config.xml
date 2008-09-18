@@ -46,8 +46,6 @@
 		<collection provider="#{dailyTrackingReport}"/>
 		<params>
 			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.project.i18n.messages" />
-			<param id="fromDate" value="#{dailyTracking.getFromDate}" />
-			<param id="toDate" value="#{dailyTracking.getToDate}" />
 			<param id="logoImageFile" value="#{company.getAttachAsInputStream}" />
 			<param id="company" value="#{company.obtainCompany}" />
 		</params>
@@ -60,8 +58,6 @@
 		<params>
 			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.project.i18n.messages" />
 			<param id="logoImageFile" value="#{company.getAttachAsInputStream}" />
-			<param id="fromDate" value="#{dailyTracking.getFromDate}" />
-			<param id="toDate" value="#{dailyTracking.getToDate}" />
 			<param id="company" value="#{company.obtainCompany}" />
 		</params>
 	</report>
@@ -73,8 +69,6 @@
 		<params>
 			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.project.i18n.messages" />
 			<param id="logoImageFile" value="#{company.getAttachAsInputStream}" />
-			<param id="fromDate" value="#{dailyTracking.getFromDate}" />
-			<param id="toDate" value="#{dailyTracking.getToDate}" />
 			<param id="company" value="#{company.obtainCompany}" />
 		</params>
 	</report>
@@ -86,8 +80,6 @@
 		<params>
 			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.project.i18n.messages" />
 			<param id="logoImageFile" value="#{company.getAttachAsInputStream}" />
-			<param id="fromDate" value="#{dailyTracking.getFromDate}" />
-			<param id="toDate" value="#{dailyTracking.getToDate}" />
 			<param id="company" value="#{company.obtainCompany}" />
 		</params>
 	</report>
@@ -99,8 +91,6 @@
 		<params>
 			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.project.i18n.messages" />
 			<param id="logoImageFile" value="#{company.getAttachAsInputStream}" />
-			<param id="fromDate" value="#{dailyTracking.getFromDate}" />
-			<param id="toDate" value="#{dailyTracking.getToDate}" />
 			<param id="company" value="#{company.obtainCompany}" />
 		</params>
 	</report>
@@ -112,8 +102,6 @@
 		<params>
 			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.project.i18n.messages" />
 			<param id="logoImageFile" value="#{company.getAttachAsInputStream}" />
-			<param id="fromDate" value="#{dailyTracking.getFromDate}" />
-			<param id="toDate" value="#{dailyTracking.getToDate}" />
 			<param id="company" value="#{company.obtainCompany}" />
 		</params>
 	</report>
@@ -125,8 +113,6 @@
 		<params>
 			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.project.i18n.messages" />
 			<param id="logoImageFile" value="#{company.getAttachAsInputStream}" />
-			<param id="fromDate" value="#{dailyTracking.getFromDate}" />
-			<param id="toDate" value="#{dailyTracking.getToDate}" />
 			<param id="company" value="#{company.obtainCompany}" />
 		</params>
 	</report>
@@ -138,8 +124,6 @@
 		<params>
 			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.project.i18n.messages" />
 			<param id="logoImageFile" value="#{company.getAttachAsInputStream}" />
-			<param id="fromDate" value="#{dailyTracking.getFromDate}" />
-			<param id="toDate" value="#{dailyTracking.getToDate}" />
 			<param id="company" value="#{company.obtainCompany}" />
 		</params>
 	</report>
@@ -151,8 +135,6 @@
 		<params>
 			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.project.i18n.messages" />
 			<param id="logoImageFile" value="#{company.getAttachAsInputStream}" />
-			<param id="fromDate" value="#{dailyTracking.getFromDate}" />
-			<param id="toDate" value="#{dailyTracking.getToDate}" />
 			<param id="company" value="#{company.obtainCompany}" />
 		</params>
 	</report>
@@ -164,8 +146,6 @@
 		<params>
 			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.project.i18n.messages" />
 			<param id="logoImageFile" value="#{company.getAttachAsInputStream}" />
-			<param id="fromDate" value="#{dailyTracking.getFromDate}" />
-			<param id="toDate" value="#{dailyTracking.getToDate}" />
 			<param id="company" value="#{company.obtainCompany}" />
 		</params>
 	</report>
@@ -177,8 +157,6 @@
 		<params>
 			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.project.i18n.messages" />
 			<param id="logoImageFile" value="#{company.getAttachAsInputStream}" />
-			<param id="fromDate" value="#{dailyTracking.getFromDate}" />
-			<param id="toDate" value="#{dailyTracking.getToDate}" />
 			<param id="company" value="#{company.obtainCompany}" />
 		</params>
 	</report>
