@@ -151,8 +151,8 @@
 		</params>
 	</report>
  
-       <report id="CuotaRetencionAlava" description="Listado de Cuotas de Retencion Alava">
-		<template path="/com/code/aon/ui/payroll/report/CuotaRetencionAlava.jasper" />
+       <report id="CuotaRetencionAlavaList" description="Listado de Cuotas de Retencion Alava">
+		<template path="/com/code/aon/ui/payroll/report/CuotaRetencionAlavaList.jasper" />
 		<bean key="com.code.aon.payroll.irpfforal.CuotaRetencionAlava" />
 		<criteria provider="#{cuotaRetencionAlava}" />
 		<params>

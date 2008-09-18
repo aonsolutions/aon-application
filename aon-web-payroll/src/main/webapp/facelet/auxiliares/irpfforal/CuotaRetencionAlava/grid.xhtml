@@ -19,62 +19,62 @@
 						columnClasses="aon-finding-title,aon-finding-subtitle,aon-finding-toolbar">
 	
 						<aon:div styleClass="aon-finding-title-internal">
-							<aon:outputText value="#{appBundle.payroll_tipdoc_label}" />
+							<aon:outputText value="#{appBundle.aon_payroll_auxiliares_irpf_foral__cuota_01}" />
 						</aon:div>
 	
 						<aon:div styleClass="aon-finding-subtitle-internal">
 							<aon:outputText
-								value="#{appBundle.payroll_crud_label}" />
+								value="#{appBundle.aon_payroll_crud}" />
 						</aon:div>
 	
 						<aon:div styleClass="aon-finding-toolbar-item-group">
 							<aon:commandButton id="reset" value="#{bundle.aon_reset}"
-								actionListener="#{tiposDocumento.onReset}" rendered="#{!tiposDocumento.new}"
+								actionListener="#{cuotaRetencionAlava.onReset}" rendered="#{!cuotaRetencionAlava.new}"
 								styleClass="aon-finding-toolbar-item aon-icon-reset"
 								accesskey="#{bundle.aon_key_new}"/>
 							<aon:commandButton id="save"
-								value="#{bundle.aon_save}" rendered="#{tiposDocumento.to!=null or tiposDocumento.new}"
+								value="#{bundle.aon_save}" rendered="#{cuotaRetencionAlava.to!=null or cuotaRetencionAlava.new}"
 								styleClass="aon-finding-toolbar-item aon-icon-accept"
-								actionListener="#{tiposDocumento.onAccept}" 
+								actionListener="#{cuotaRetencionAlava.onAccept}" 
 								accesskey="#{bundle.aon_key_new}" />
 							<aon:confirmButton id="cancelNew"
-								value="#{bundle.aon_cancel}" rendered="#{tiposDocumento.new}"
+								value="#{bundle.aon_cancel}" rendered="#{cuotaRetencionAlava.new}"
 								styleClass="aon-finding-toolbar-item aon-icon-cancel" immediate="true"
 								confirmTitle="#{bundle.aon_confirm_title}" confirmMessage="#{bundle.aon_cancel_confirm}"
-								confirmActionListener="#{tiposDocumento.onCancel}"
+								confirmActionListener="#{cuotaRetencionAlava.onCancel}"
 								accesskey="#{bundle.aon_key_cancel}"/>
 							<aon:commandButton id="cancelEdit"
-								value="#{bundle.aon_cancel}" rendered="#{tiposDocumento.to!=null and (!tiposDocumento.new)}"
+								value="#{bundle.aon_cancel}" rendered="#{cuotaRetencionAlava.to!=null and (!cuotaRetencionAlava.new)}"
 								styleClass="aon-finding-toolbar-item aon-icon-cancel" immediate="true"
-								actionListener="#{tiposDocumento.onCancel}"
+								actionListener="#{cuotaRetencionAlava.onCancel}"
 								accesskey="#{bundle.aon_key_cancel}"/>
 							<aon:confirmButton id="remove"
-								value="#{bundle.aon_remove}" rendered="#{tiposDocumento.to!=null and !tiposDocumento.new}"
+								value="#{bundle.aon_remove}" rendered="#{cuotaRetencionAlava.to!=null and !cuotaRetencionAlava.new}"
 								styleClass="aon-finding-toolbar-item aon-icon-delete" immediate="true"
 								confirmTitle="#{bundle.aon_confirm_title}" confirmMessage="#{bundle.aon_remove_confirm}"
-								confirmActionListener="#{tiposDocumento.onRemove}"
+								confirmActionListener="#{cuotaRetencionAlava.onRemove}"
 								accesskey="#{bundle.aon_key_remove}"/>
 							<h:commandLink id="export2pdf" value="."
-									title="#{appBundle.payroll_export_label} #{appBundle.payroll_to} #{appBundle.payroll_pdf_label}"
+								    title="#{appBundle.aon_payroll_export_label} #{appBundle.aon_payroll_to} #{appBundle.aon_payroll_pdf_label}"
 									styleClass="aon-finding-toolbar-item aon-icon-pdf"
-									action="#{report.onExecute}" rendered="#{!tiposDocumento.new}" 
+									action="#{report.onExecute}" rendered="#{!cuotaRetencionAlava.new}" 
 									target="_blank">
-								<f:param name="reportKey" value="tiposDocumentoList" />
+								<f:param name="reportKey" value="CuotaRetencionAlavaList" />
 							</h:commandLink>
 							<h:commandLink id="export2excel" value="."
-									title="#{appBundle.payroll_export_label} #{appBundle.payroll_to} #{appBundle.payroll_excel_label}"
+									title="#{appBundle.aon_payroll_export_label} #{appBundle.aon_payroll_to} #{appBundle.aon_payroll_excel_label}"
 									styleClass="aon-finding-toolbar-item aon-icon-excel"
-									action="#{report.onExecute}" rendered="#{!tiposDocumento.new}" 
+									action="#{report.onExecute}" rendered="#{!cuotaRetencionAlava.new}" 
 									target="_blank">
-								<f:param name="reportKey" value="tiposDocumentoList" />
+								<f:param name="reportKey" value="CuotaRetencionAlavaList" />
 								<f:param name="outputFormat" value="MS Excel" />
 							</h:commandLink>
 							<h:commandLink id="export2csv" value="."
-									title="#{appBundle.payroll_export_label} #{appBundle.payroll_to} #{appBundle.payroll_csv_label}"
+									title="#{appBundle.aon_payroll_export_label} #{appBundle.aon_payroll_to} #{appBundle.aon_payroll_csv_label}"
 									styleClass="aon-finding-toolbar-item aon-icon-excel"
-									action="#{report.onExecute}" rendered="#{!tiposDocumento.new}" 
+									action="#{report.onExecute}" rendered="#{!cuotaRetencionAlava.new}" 
 									target="_blank">
-								<f:param name="reportKey" value="tiposDocumentoList" />
+								<f:param name="reportKey" value="CuotaRetencionAlavaList" />
 								<f:param name="outputFormat" value="CSV" />
 							</h:commandLink>
 						</aon:div>
@@ -84,12 +84,12 @@
 				<!-- region-body -->
 	 			<aon:div styleClass="aon-scroll-area">
 					
-					<aon:editDataTable id="documentoData" var="to" rows="0"
-						rendered="#{(tiposDocumento.model.rowCount > 0) or (tiposDocumento.new)}" value="#{tiposDocumento.model}"
-						columnClasses="aon-editDataTable-iconColumn, aon-editDataTable-numberColumn, aon-editDataTable-textColumn, aon-editDataTable-buttonsColumn">
+					<aon:editDataTable id="cuotaRetencionData" var="to" rows="20"
+						rendered="#{(cuotaRetencionAlava.model.rowCount > 0) or (cuotaRetencionAlava.new)}" value="#{cuotaRetencionAlava.model}"
+						columnClasses="aon-editDataTable-iconColumn, aon-editDataTable-numberColumn,aon-editDataTable-numberColumn,aon-editDataTable-numberColumn,aon-editDataTable-numberColumn,aon-editDataTable-numberColumn,aon-editDataTable-numberColumn,aon-editDataTable-numberColumn,aon-editDataTable-numberColumn,aon-editDataTable-numberColumn,aon-editDataTable-numberColumn,aon-editDataTable-numberColumn,aon-editDataTable-numberColumn, aon-editDataTable-buttonsColumn">
 								
-						<aon:rowSelector toggleOnClick="#{tiposDocumento.to == null}"
-							actionListener="#{tiposDocumento.onSelect}" />
+						<aon:rowSelector toggleOnClick="#{cuotaRetencionAlava.to == null}"
+							actionListener="#{cuotaRetencionAlava.onSelect}" />
 	
 						<aon:column>
 							<f:facet name="header">
@@ -100,88 +100,238 @@
 								<aon:div>
 									<aon:commandButton alt="[#{bundle.aon_reset}]"
 										styleClass="aon-editDataTable-button aon-icon-reset"
-										actionListener="#{tiposDocumento.onReset}" value=""
-										rendered="#{!tiposDocumento.new}"
+										actionListener="#{cuotaRetencionAlava.onReset}" value=""
+										rendered="#{!cuotaRetencionAlava.new}"
 										accesskey="#{bundle.aon_key_new_line}" />
 								</aon:div>
 							</f:facet>
 						</aon:column>
-	
-						<aon:column>
+					<aon:column>
 							<f:facet name="header">
-								<aon:outputText value="#{appBundle.payroll_cdg_label}" />
+								<aon:outputText value="#{appBundle.aon_payroll_auxiliares_irpf_foral__cuota_01_tramo}" />
 							</f:facet>
-							<aon:outputText value="#{to.cdg}" rendered="#{to!=tiposDocumento.to}" />
+							<aon:outputText value="#{to.id.numTramo}" rendered="#{to!=cuotaRetencionAlava.to}" />
 							<aon:inputText styleClass="aon-form-input-text " required="true"
-								rendered="#{to==tiposDocumento.to}" size="2"
-								value="#{tiposDocumento.to.cdg}" maxlength="1" />
+								rendered="#{to==cuotaRetencionAlava.to}" size="2"
+								value="#{cuotaRetencionAlava.to.id.numTramo}" maxlength="10" />
 							<f:facet name="footer">
 								<aon:inputText styleClass="aon-form-input-text" required="true"
-									rendered="#{tiposDocumento.new}" size="2"
-									value="#{tiposDocumento.to.cdg}" maxlength="1" />
+									rendered="#{cuotaRetencionAlava.new}" size="2"
+									value="#{cuotaRetencionAlava.to.id.numTramo}" maxlength="10" />
+							</f:facet>
+						</aon:column> 	
+						
+	                      <aon:column>
+							<f:facet name="header">
+								<aon:outputText value="#{appBundle.aon_payroll_auxiliares_irpf_foral__cuota_01_fecini}" />
+							</f:facet>
+							<aon:outputText value="#{to.id.fecini}" rendered="#{to!=cuotaRetencionAlava.to}" >
+							<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+						timeZone="#{timeZoneController.timeZoneId}" />
+						</aon:outputText>
+							<aon:inputText styleClass="aon-form-input-text " required="true"
+								rendered="#{to==cuotaRetencionAlava.to}" size="2"
+								value="#{cuotaRetencionAlava.to.id.fecini}" maxlength="10" />
+							<f:facet name="footer">
+								<aon:inputText styleClass="aon-form-input-text" required="true"
+									rendered="#{cuotaRetencionAlava.new}" size="2"
+									value="#{cuotaRetencionAlava.to.id.fecini}" maxlength="10" />
+							</f:facet>
+						</aon:column>
+						<aon:column>
+							<f:facet name="header">
+								<aon:outputText value="#{appBundle.aon_payroll_auxiliares_irpf_foral__cuota_01_fecfin}" />
+							</f:facet>
+							<aon:outputText value="#{to.fecfin}" rendered="#{to!=cuotaRetencionAlava.to}" >
+							<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+						timeZone="#{timeZoneController.timeZoneId}" />
+						</aon:outputText>
+							<aon:inputText styleClass="aon-form-input-text " required="true"
+								rendered="#{to==cuotaRetencionAlava.to}" size="2"
+								value="#{cuotaRetencionAlava.to.fecfin}" maxlength="10" />
+							<f:facet name="footer">
+								<aon:inputText styleClass="aon-form-input-text" required="true"
+									rendered="#{cuotaRetencionAlava.new}" size="2"
+									value="#{cuotaRetencionAlava.to.fecfin}" maxlength="10" />
 							</f:facet>
 						</aon:column>
 	
 						<aon:column>
 							<f:facet name="header">
-								<aon:outputText value="#{appBundle.payroll_description_label}" />
+								<aon:outputText value="#{appBundle.aon_payroll_auxiliares_irpf_foral__cuota_01_desdeimporte}" />
 							</f:facet>
-							<aon:outputText value="#{to.description}" rendered="#{to!=tiposDocumento.to}" />
+							<aon:outputText value="#{to.desdeImporte}" rendered="#{to!=cuotaRetencionAlava.to}" />
 							<aon:inputText styleClass="aon-form-input-text " required="true"
-								rendered="#{to==tiposDocumento.to}" size="60"
-								value="#{tiposDocumento.to.description}" maxlength="45" />
+								rendered="#{to==cuotaRetencionAlava.to}" size="2"
+								value="#{cuotaRetencionAlava.to.desdeImporte}" maxlength="10" />
 							<f:facet name="footer">
 								<aon:inputText styleClass="aon-form-input-text" required="true"
-									rendered="#{tiposDocumento.new}" size="60"
-									value="#{tiposDocumento.to.description}" maxlength="45" />
+									rendered="#{cuotaRetencionAlava.new}" size="2"
+									value="#{cuotaRetencionAlava.to.desdeImporte}" maxlength="10" />
 							</f:facet>
 						</aon:column>
+						
+						<aon:column>
+							<f:facet name="header">
+								<aon:outputText value="#{appBundle.aon_payroll_auxiliares_irpf_foral__cuota_01_hastaimporte}" />
+							</f:facet>
+							<aon:outputText value="#{to.hastaImporte}" rendered="#{to!=cuotaRetencionAlava.to}" />
+							<aon:inputText styleClass="aon-form-input-text " required="true"
+								rendered="#{to==cuotaRetencionAlava.to}" size="2"
+								value="#{cuotaRetencionAlava.to.hastaImporte}" maxlength="10" />
+							<f:facet name="footer">
+								<aon:inputText styleClass="aon-form-input-text" required="true"
+									rendered="#{cuotaRetencionAlava.new}" size="2"
+									value="#{cuotaRetencionAlava.to.hastaImporte}" maxlength="10" />
+							</f:facet>
+						</aon:column>
+						
+							<aon:column>
+							<f:facet name="header">
+								<aon:outputText value="#{appBundle.aon_payroll_auxiliares_irpf_foral__cuota_01_h0}" />
+							</f:facet>
+							<aon:outputText value="#{to.h0}" rendered="#{to!=cuotaRetencionAlava.to}" />
+							<aon:inputText styleClass="aon-form-input-text " required="true"
+								rendered="#{to==cuotaRetencionAlava.to}" size="2"
+								value="#{cuotaRetencionAlava.to.h0}" maxlength="10" />
+							<f:facet name="footer">
+								<aon:inputText styleClass="aon-form-input-text" required="true"
+									rendered="#{cuotaRetencionAlava.new}" size="2"
+									value="#{cuotaRetencionAlava.to.h0}" maxlength="10" />
+							</f:facet>
+						</aon:column>
+						
+								<aon:column>
+							<f:facet name="header">
+								<aon:outputText value="#{appBundle.aon_payroll_auxiliares_irpf_foral__cuota_01_h1}" />
+							</f:facet>
+							<aon:outputText value="#{to.h1}" rendered="#{to!=cuotaRetencionAlava.to}" />
+							<aon:inputText styleClass="aon-form-input-text " required="true"
+								rendered="#{to==cuotaRetencionAlava.to}" size="2"
+								value="#{cuotaRetencionAlava.to.h1}" maxlength="10" />
+							<f:facet name="footer">
+								<aon:inputText styleClass="aon-form-input-text" required="true"
+									rendered="#{cuotaRetencionAlava.new}" size="2"
+									value="#{cuotaRetencionAlava.to.h1}" maxlength="10" />
+							</f:facet>
+						</aon:column>
+								<aon:column>
+							<f:facet name="header">
+								<aon:outputText value="#{appBundle.aon_payroll_auxiliares_irpf_foral__cuota_01_h2}" />
+							</f:facet>
+							<aon:outputText value="#{to.h2}" rendered="#{to!=cuotaRetencionAlava.to}" />
+							<aon:inputText styleClass="aon-form-input-text " required="true"
+								rendered="#{to==cuotaRetencionAlava.to}" size="2"
+								value="#{cuotaRetencionAlava.to.h2}" maxlength="10" />
+							<f:facet name="footer">
+								<aon:inputText styleClass="aon-form-input-text" required="true"
+									rendered="#{cuotaRetencionAlava.new}" size="2"
+									value="#{cuotaRetencionAlava.to.h2}" maxlength="10" />
+							</f:facet>
+						</aon:column>
+								<aon:column>
+							<f:facet name="header">
+								<aon:outputText value="#{appBundle.aon_payroll_auxiliares_irpf_foral__cuota_01_h3}" />
+							</f:facet>
+							<aon:outputText value="#{to.h3}" rendered="#{to!=cuotaRetencionAlava.to}" />
+							<aon:inputText styleClass="aon-form-input-text " required="true"
+								rendered="#{to==cuotaRetencionAlava.to}" size="2"
+								value="#{cuotaRetencionAlava.to.h3}" maxlength="10" />
+							<f:facet name="footer">
+								<aon:inputText styleClass="aon-form-input-text" required="true"
+									rendered="#{cuotaRetencionAlava.new}" size="2"
+									value="#{cuotaRetencionAlava.to.h3}" maxlength="10" />
+							</f:facet>
+						</aon:column>
+								<aon:column>
+							<f:facet name="header">
+								<aon:outputText value="#{appBundle.aon_payroll_auxiliares_irpf_foral__cuota_01_h4}" />
+							</f:facet>
+							<aon:outputText value="#{to.h4}" rendered="#{to!=cuotaRetencionAlava.to}" />
+							<aon:inputText styleClass="aon-form-input-text " required="true"
+								rendered="#{to==cuotaRetencionAlava.to}" size="2"
+								value="#{cuotaRetencionAlava.to.h4}" maxlength="10" />
+							<f:facet name="footer">
+								<aon:inputText styleClass="aon-form-input-text" required="true"
+									rendered="#{cuotaRetencionAlava.new}" size="2"
+									value="#{cuotaRetencionAlava.to.h4}" maxlength="10" />
+							</f:facet>
+						</aon:column>
+								<aon:column>
+							<f:facet name="header">
+								<aon:outputText value="#{appBundle.aon_payroll_auxiliares_irpf_foral__cuota_01_h5}" />
+							</f:facet>
+							<aon:outputText value="#{to.h5}" rendered="#{to!=cuotaRetencionAlava.to}" />
+							<aon:inputText styleClass="aon-form-input-text " required="true"
+								rendered="#{to==cuotaRetencionAlava.to}" size="2"
+								value="#{cuotaRetencionAlava.to.h5}" maxlength="10" />
+							<f:facet name="footer">
+								<aon:inputText styleClass="aon-form-input-text" required="true"
+									rendered="#{cuotaRetencionAlava.new}" size="2"
+									value="#{cuotaRetencionAlava.to.h5}" maxlength="10" />
+							</f:facet>
+						</aon:column>
+								<aon:column>
+							<f:facet name="header">
+								<aon:outputText value="#{appBundle.aon_payroll_auxiliares_irpf_foral__cuota_01_h6}" />
+							</f:facet>
+							<aon:outputText value="#{to.h6}" rendered="#{to!=cuotaRetencionAlava.to}" />
+							<aon:inputText styleClass="aon-form-input-text " required="true"
+								rendered="#{to==cuotaRetencionAlava.to}" size="2"
+								value="#{cuotaRetencionAlava.to.h6}" maxlength="10" />
+							<f:facet name="footer">
+								<aon:inputText styleClass="aon-form-input-text" required="true"
+									rendered="#{cuotaRetencionAlava.new}" size="2"
+									value="#{cuotaRetencionAlava.to.h6}" maxlength="10" />
+							</f:facet>
+						</aon:column>
+	
 	
 						<aon:column>
 							<f:facet name="header">
 								<aon:outputText value="&#160;" />
 							</f:facet>
 							<aon:div>
-								<f:verbatim rendered="#{to!=tiposDocumento.to}">&#160;</f:verbatim>
+								<f:verbatim rendered="#{to!=cuotaRetencionAlava.to}">&#160;</f:verbatim>
 								<aon:commandButton id="acceptEdit-Scope" title="[#{bundle.aon_accept}]" 
-									rendered="#{to==tiposDocumento.to}"
+									rendered="#{to==cuotaRetencionAlava.to}"
 									styleClass="aon-editDataTable-button aon-icon-accept"
-									actionListener="#{tiposDocumento.onAccept}"
+									actionListener="#{cuotaRetencionAlava.onAccept}"
 									accesskey="#{bundle.aon_key_save_line}" />
 								<aon:commandButton title="[#{bundle.aon_cancel}]"
 									styleClass="aon-editDataTable-button aon-icon-cancel"
-									rendered="#{to==tiposDocumento.to}"
-									actionListener="#{tiposDocumento.onCancel}" immediate="true"
+									rendered="#{to==cuotaRetencionAlava.to}"
+									actionListener="#{cuotaRetencionAlava.onCancel}" immediate="true"
 									accesskey="#{bundle.aon_key_cancel_line}" />
 								<aon:confirmButton title="[#{bundle.aon_remove}]"
 									styleClass="aon-editDataTable-button aon-icon-delete"
-									rendered="#{to==tiposDocumento.to}"
+									rendered="#{to==cuotaRetencionAlava.to}"
 									confirmTitle="#{bundle.aon_confirm_title}" 
 									confirmMessage="#{bundle.aon_remove_confirm}"
-									confirmActionListener="#{tiposDocumento.onRemove}" immediate="true"
+									confirmActionListener="#{cuotaRetencionAlava.onRemove}" immediate="true"
 									accesskey="#{bundle.aon_key_remove_line}" />								
 							</aon:div>
 							<f:facet name="footer">
 								<aon:div>
-									<f:verbatim rendered="#{!tiposDocumento.new}">&#160;</f:verbatim>
+									<f:verbatim rendered="#{!cuotaRetencionAlava.new}">&#160;</f:verbatim>
 									<aon:commandButton title="[#{bundle.aon_accept}]" 
 										styleClass="aon-editDataTable-button aon-icon-accept"
-										rendered="#{tiposDocumento.new}"
-										actionListener="#{tiposDocumento.onAccept}"
+										rendered="#{cuotaRetencionAlava.new}"
+										actionListener="#{cuotaRetencionAlava.onAccept}"
 										accesskey="#{bundle.aon_key_save_line}" />
 									<aon:confirmButton title="[#{bundle.aon_cancel}]"
 										styleClass="aon-editDataTable-button aon-icon-cancel"
-										rendered="#{tiposDocumento.new}"
+										rendered="#{cuotaRetencionAlava.new}"
 										confirmTitle="#{bundle.aon_confirm_title}" 
 										confirmMessage="#{bundle.aon_cancel_confirm}"
-										confirmActionListener="#{tiposDocumento.onCancel}" immediate="true"
+										confirmActionListener="#{cuotaRetencionAlava.onCancel}" immediate="true"
 										accesskey="#{bundle.aon_key_cancel_line}" />
 								</aon:div>
 							</f:facet>
 						</aon:column>
 						
 					</aon:editDataTable>
-					<aon:dataScroller for="documentoData" rowCount="#{tiposDocumento.model.rowCount}" showNote="true" />
+					<aon:dataScroller2 for="cuotaRetencionData" showNote="true" />
 				</aon:div>
 			</aon:div>
 		</aon:form>
