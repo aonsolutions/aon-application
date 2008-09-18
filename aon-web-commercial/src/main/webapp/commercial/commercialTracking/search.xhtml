@@ -41,7 +41,7 @@
 
 			<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/searchContent.xhtml" >
 				<ui:define name="searchContent">
-					<ui:param name="controller" value="#{commercialTracking}" />
+					<aon:methodParam name="searchActionListener" value="#{commercialTracking.onSearch}" type="actionListener" />
 					<aon:methodParam name="searchAction" value="commercialTracking_list" />				
 				
 					<aon:outputText value="#{appBundle.aon_commercial_tracking_date}" />

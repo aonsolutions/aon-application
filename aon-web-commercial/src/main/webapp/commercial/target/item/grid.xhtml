@@ -42,7 +42,7 @@
 						value="#{to.item.id}" size="5">
 					</aon:lookupInputText>
 					<aon:lookupButton id="TargetItem_item_id_lookup"
-						windowTitle="#{appBundle.aon_lookup_item}"
+						windowTitle="#{appBundle.aon_lookup_item}" actionType="search"
 						selectReRender="TargetItem_item_id,TargetItem_item_detail"
 						lookup="#{itemLookup}"
 						property="#{to.item}">
@@ -59,7 +59,7 @@
 							value="#{targetItem.to.item.id}" size="5">
 						</aon:lookupInputText>
 						<aon:lookupButton id="TargetItem_item_id_lookup-New"
-							windowTitle="#{appBundle.aon_lookup_item}"
+							windowTitle="#{appBundle.aon_lookup_item}" actionType="search"
 							selectReRender="TargetItem_item_id-New,TargetItem_item_detail-New"
 							lookup="#{itemLookup}"
 							property="#{targetItem.to.item}">
