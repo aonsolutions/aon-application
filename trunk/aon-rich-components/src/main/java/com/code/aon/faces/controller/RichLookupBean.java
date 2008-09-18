@@ -301,6 +301,21 @@ public class RichLookupBean {
 	}
 
 	/**
+	 * Add a new expression to the criteria to condition the following searches.
+	 * The id component is managed as an alias to resolve the real property
+	 * path.
+	 * 
+	 * @param event
+	 * @throws ManagerBeanException
+	 */
+	public void addEqualExpression(ValueChangeEvent event) throws ManagerBeanException {
+		if (event.getNewValue() != null) {
+			String fieldName = getController().getFieldName(event.getComponent().getId());
+			getController().getCriteria().addEqualExpression(fieldName, event.getNewValue());
+		}
+	}
+	
+	/**
 	 * Execute cancel action.
 	 * 
 	 * @param event
