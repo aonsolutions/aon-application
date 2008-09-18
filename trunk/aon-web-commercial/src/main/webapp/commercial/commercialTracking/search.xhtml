@@ -41,6 +41,9 @@
 
 			<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/searchContent.xhtml" >
 				<ui:define name="searchContent">
+					<ui:param name="controller" value="#{commercialTracking}" />
+					<aon:methodParam name="searchAction" value="commercialTracking_list" />				
+				
 					<aon:outputText value="#{appBundle.aon_commercial_tracking_date}" />
 					<aon:div>
 						<aon:outputLabel for="CommercialTracking_date-From" styleClass="aon-form-date-label"
@@ -119,13 +122,6 @@
 					<aon:inputText id="CommercialTracking_comments" size="75"
 						valueChangeListener="#{commercialTracking.addExpression}" />
 
-					<aon:outputText value="" />
-					<aon:div styleClass="aon-text-right">
-						<aon:commandButton id="search" value="#{bundle.aon_search}"
-						action="commercialTracking_list" actionListener="#{commercialTracking.onSearch}"
-						styleClass="aon-commandButton"
-						accesskey="#{bundle.aon_key_search}" />
-					</aon:div>					
 				</ui:define>
 			
 			</ui:decorate>
