@@ -23,7 +23,7 @@ public class CuotaRetencionAlava  implements ITransferObject{
 	
 
 
-     private Cuota01Id id;
+     private Cuota01PK id;
      private Date fecfin;
      private BigDecimal desdeImporte;
      private BigDecimal hastaImporte;
@@ -41,11 +41,11 @@ public class CuotaRetencionAlava  implements ITransferObject{
     @AttributeOverrides( {
         @AttributeOverride(name="numTramo", column=@Column(name="num_tramo", nullable=false, length=2) ), 
         @AttributeOverride(name="fecini", column=@Column(name="fecini", nullable=false, length=10) ) } )
-    public Cuota01Id getId() {
+    public Cuota01PK getId() {
         return this.id;
     }
     
-    public void setId(Cuota01Id id) {
+    public void setId(Cuota01PK id) {
         this.id = id;
     }
     @Temporal(TemporalType.DATE)

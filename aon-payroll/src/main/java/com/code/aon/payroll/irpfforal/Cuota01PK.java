@@ -12,7 +12,7 @@ import javax.persistence.TemporalType;
  * Clave primaria de Porcentajes de cotización.
  */
 @Embeddable
-public class Cuota01Id implements Serializable {
+public class Cuota01PK implements Serializable {
 
 	
 
