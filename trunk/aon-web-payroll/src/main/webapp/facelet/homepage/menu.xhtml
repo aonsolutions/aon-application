@@ -151,7 +151,7 @@
 
 			<aon:dropDownMenu value="#{menuBundle.auxiliares}">
 				<aon:menuGroup value="#{menuBundle.auxiliares_geograficas}">
-					<aon:menuItem value="#{menuBundle.auxiliares_geograficas__nacion}" disabled="true" />
+					<aon:menuItem value="#{menuBundle.auxiliares_geograficas__nacion}" action="naciones" />
 					<aon:menuItem value="#{menuBundle.auxiliares_geograficas__paicopro}" disabled="true" />
 				</aon:menuGroup>
 				<aon:menuGroup value="#{menuBundle.auxiliares_cotizacion}">
@@ -184,7 +184,7 @@
 					<aon:menuItem value="#{menuBundle.auxiliares_tipos__tipempr}" action="tipos_empresarios" />
 					<aon:menuItem value="#{menuBundle.auxiliares_tipos__tipinc}" action="tipos_incidencia" />
 					<aon:menuItem value="#{menuBundle.auxiliares_tipos__tipreg}" action="tipos_registro" />
-					<aon:menuItem value="#{menuBundle.auxiliares_tipos__tipovia}" disabled="true" />
+					<aon:menuItem value="#{menuBundle.auxiliares_tipos__tipovia}" action="tipos_via" />
 					<aon:menuItem value="#{menuBundle.auxiliares_tipos__tipaut}" action="tipos_autorizacion" />
 					<aon:menuItem value="#{menuBundle.auxiliares_tipos__tipocnae}" action="tipos_cnae" />
 				</aon:menuGroup>
@@ -197,7 +197,7 @@
 					<aon:menuItem value="#{menuBundle.auxiliares_irpf__exclusion}" disabled="true" />
 				</aon:menuGroup>
 				<aon:menuGroup value="#{menuBundle.auxiliares_irpf_foral}">
-					<aon:menuItem value="#{menuBundle.auxiliares_irpf_foral__cuota_01}" disabled="true" />
+					<aon:menuItem value="#{menuBundle.auxiliares_irpf_foral__cuota_01}" action="CuotaRetencionAlava" />
 					<aon:menuItem value="#{menuBundle.auxiliares_irpf_foral__minor_01}" disabled="true" />
 					<aon:menuItem value="#{menuBundle.auxiliares_irpf_foral__cuota_20}" disabled="true" />
 					<aon:menuItem value="#{menuBundle.auxiliares_irpf_foral__minor_20}" disabled="true" />

@@ -30,6 +30,7 @@
 		<mapping class="com.code.aon.payroll.tipos.Registro"/>
 		<mapping class="com.code.aon.payroll.tipos.Incidencia"/>
 		<mapping class="com.code.aon.payroll.tipos.Autorizacion"/>
+		 <mapping class="com.code.aon.payroll.tipos.Tipovia"/>
 		
 		<!-- GEOGRAFICAS -->		
         <mapping class="com.code.aon.payroll.geograficas.Nacion"/>	
@@ -44,6 +45,8 @@
 		
 		<!-- IRPF -->
 		<mapping class="com.code.aon.payroll.irpf.Cuota"/>	
+		<!-- IRPF FORAL-->
+		<mapping class="com.code.aon.payroll.irpfforal.CuotaRetencionAlava"/>	
 
 	</session-factory>
 
