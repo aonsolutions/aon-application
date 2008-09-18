@@ -40,6 +40,9 @@
 
 			<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/searchContent.xhtml" >
 				<ui:define name="searchContent">
+					<ui:param name="controller" value="#{target}" />
+					<aon:methodParam name="searchAction" value="target_list" />
+									
 					<aon:outputLabel for="Target_id"
 						value="#{registryBundle.aon_id}" />
 					<aon:inputText id="Target_id" size="60"
@@ -65,13 +68,6 @@
 					<aon:inputText id="Target_registry_alias" size="60"
 						valueChangeListener="#{target.addExpression}" onblur="toUpperCase(this);" />
 	
-					<aon:outputText value="" />
-					<aon:div styleClass="aon-text-right">
-						<aon:commandButton id="search" value="#{bundle.aon_accept}"
-							action="target_list" actionListener="#{target.onSearch}"
-							styleClass="aon-commandButton"
-							accesskey="#{bundle.aon_key_search}" />
-					</aon:div>
 				</ui:define>
 			
 			</ui:decorate>

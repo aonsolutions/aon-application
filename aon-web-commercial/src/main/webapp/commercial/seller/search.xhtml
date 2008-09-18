@@ -40,6 +40,9 @@
 
 			<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/searchContent.xhtml" >
 				<ui:define name="searchContent">
+					<ui:param name="controller" value="#{seller}" />
+					<aon:methodParam name="searchAction" value="seller_list" />
+					
 					<aon:outputLabel for="Seller_id"
 						value="#{registryBundle.aon_id}" />
 					<aon:inputText id="Seller_id" size="60"
@@ -69,14 +72,6 @@
 						value="#{bundle.aon_description}" />
 					<aon:inputText id="Seller_description" size="60"
 						valueChangeListener="#{seller.addExpression}" />
-					
-					<aon:outputText value="" />
-					<aon:div styleClass="aon-text-right">
-						<aon:commandButton id="search" value="#{bundle.aon_search}"
-							action="seller_list" actionListener="#{seller.onSearch}"
-							styleClass="aon-commandButton"
-							accesskey="#{bundle.aon_key_search}" />
-					</aon:div>
 				</ui:define>
 			
 			</ui:decorate>
