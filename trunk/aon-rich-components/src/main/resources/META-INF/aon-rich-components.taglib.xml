@@ -542,4 +542,10 @@
 			</handler-class>
 		</component>
 	</tag>
+	<tag>
+		<tag-name>methodParam</tag-name>
+		<handler-class>
+			com.code.aon.faces.component.methodParam.MethodParamHandler
+		</handler-class>
+	</tag>
 </facelet-taglib>
