@@ -1,0 +1,69 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	template="/facelet/templates/aon.ui.content.xhtml">
+
+	<ui:define name="content">
+
+		<aon:form id="processList">
+			<aon:div styleClass="aon-finding-title-toolbar">
+				<aon:panelGrid columns="3" dir="true"
+					columnClasses="aon-finding-title,aon-finding-subtitle,aon-finding-toolbar">
+
+					<aon:div styleClass="aon-finding-title-internal">
+						<aon:outputText value="#{menuBundle.aon_process}" />
+					</aon:div>
+
+					<aon:div styleClass="aon-finding-subtitle-internal">
+						<aon:outputText value="#{bundle.aon_listing}" />
+					</aon:div>
+					<aon:div id="toolbar" styleClass="aon-finding-toolbar-item-group">
+						<h:commandButton id="reset" value="#{bundle.aon_reset}"
+							styleClass="aon-finding-toolbar-item aon-icon-reset"
+							actionListener="#{process.onReset}" action="process_form"
+							accesskey="#{bundle.aon_key_new}" />
+						<h:commandButton id="search" value="#{bundle.aon_search}"
+							styleClass="aon-finding-toolbar-item aon-icon-search"
+							actionListener="#{process.onEditSearch}" action="process_search"
+							accesskey="#{bundle.aon_key_search}" />
+					</aon:div>
+				</aon:panelGrid>
+			</aon:div>
+
+			<aon:div id="taskTableContainer" styleClass="aon-scroll-area">
+				<aon:div styleClass="aon-scroll-area-internal">
+
+					<aon:editDataTable id="processDataList" value="#{process.model}"
+						var="to" rows="20" rendered="#{process.model.rowCount > 0}">
+
+						<aon:column styleClass="aon-editDataTable-iconColumn">
+							<f:facet name="header">
+								<aon:outputText value="&#160;" />
+							</f:facet>
+							<h:commandButton
+								styleClass="aon-icon-commandButton aon-icon-rowSelector"
+								actionListener="#{process.onSelect}" action="process_form"
+								value="">
+							</h:commandButton>
+						</aon:column>
+
+						<aon:column>
+							<f:facet name="header">
+								<aon:outputText value="#{campaignBundle.aon_description}" />
+							</f:facet>
+							<aon:outputText value="#{to.description}" />
+						</aon:column>
+
+					</aon:editDataTable>
+
+					<aon:dataScroller for="processDataList"
+						rowCount="#{process.model.rowCount}" showNote="true" />
+
+				</aon:div>
+			</aon:div>
+		</aon:form>
+	</ui:define>
+</ui:composition>
