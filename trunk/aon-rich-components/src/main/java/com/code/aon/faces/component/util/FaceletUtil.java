@@ -9,12 +9,13 @@ import javax.el.MethodExpression;
 import javax.el.ValueExpression;
 import javax.el.VariableMapper;
 import javax.faces.component.UIComponent;
+import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
+import javax.faces.event.ValueChangeEvent;
 
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 
-import com.code.aon.faces.component.myfaces.UIComponentTagUtils;
 import com.sun.facelets.FaceletContext;
 import com.sun.facelets.tag.Tag;
 import com.sun.facelets.tag.TagAttribute;
@@ -27,6 +28,10 @@ public class FaceletUtil {
 	public final static Class[] ACTION_SIG = new Class[0];
 
 	public final static Class[] ACTION_LISTENER_SIG = new Class[] { ActionEvent.class };
+	
+	public final static Class[] VALUE_CHANGE_LISTENER_SIG = new Class[] { ValueChangeEvent.class };
+	
+	public final static Class[] VALIDATOR_SIG = new Class[] { FacesContext.class, UIComponent.class, Object.class };
 	
 	public static URL getTemplate(String resource) {
 		ClassLoader loader = FaceletUtil.class.getClassLoader();
