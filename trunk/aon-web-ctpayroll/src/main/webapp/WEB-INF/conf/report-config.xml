@@ -116,7 +116,20 @@
 		</params>
 	</report>
 	
-    <report id="tiposViaList" description="Listado de Tipos de Via">
+	<!--  *********  Impresion a PDF de las Cuotas de retencion  ********* -->
+	<report id="irpfCuotaList" description="Listado de Cuotas de Retencion">
+		<template path="/com/code/aon/ui/payroll/report/irpfCuotaList.jasper" />
+		<bean key="com.code.aon.payroll.irpf.Cuota" />
+		<criteria provider="#{cuotas}" />
+		<params>
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.payroll.i18n.messages" />
+			<param id="logoImageFile" value="#{payrollController.getLogo}" />
+			<param id="companyName" value="#{payrollController.getCompanyName}" />
+		</params>
+	</report>
+	
+	
+	<report id="tiposViaList" description="Listado de Tipos de Via">
 		<template path="/com/code/aon/ui/payroll/report/tiposViaList.jasper" />
 		<bean key="com.code.aon.payroll.tipos.Tipovia" />
 		<criteria provider="#{tiposVia}" />
@@ -147,5 +160,6 @@
 			<param id="logoImageFile" value="#{payrollController.getLogo}" />
 			<param id="companyName" value="#{payrollController.getCompanyName}" />
 		</params>
-	</report>    
+	</report>
+
 </report-config>
