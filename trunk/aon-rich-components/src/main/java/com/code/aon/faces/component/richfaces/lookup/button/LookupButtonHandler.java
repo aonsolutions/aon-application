@@ -140,6 +140,16 @@ public class LookupButtonHandler extends AonAjaxComponentHandler implements ILoo
 			String value = selectReRender.getValue(ctx);
 			UIComponentTagUtils.setStringProperty(ctx.getFacesContext(), button, SELECT_RE_RENDER, value );
 		}
+		TagAttribute minHeight = getAttribute(MIN_HEIGHT);
+		if ( minHeight != null ) {
+			String value = minHeight.getValue(ctx);
+			UIComponentTagUtils.setStringProperty(ctx.getFacesContext(), button, MIN_HEIGHT, value );
+		}
+		TagAttribute minWidth = getAttribute(MIN_WIDTH);
+		if ( minWidth != null ) {
+			String value = minWidth.getValue(ctx);
+			UIComponentTagUtils.setStringProperty(ctx.getFacesContext(), button, MIN_WIDTH, value );
+		}
 		setActionListener(ctx, button);
 		String id = getModalPanelId(ctx, lookup) + "ReRender";
 		String value = FaceletUtil.updateList(ctx, getAttribute(RERENDER), id);
