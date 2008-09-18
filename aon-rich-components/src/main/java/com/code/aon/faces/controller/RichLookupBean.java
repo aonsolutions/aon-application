@@ -24,6 +24,7 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.AliasEntry;
 import com.code.aon.common.dao.DAOConstantsResolver;
 import com.code.aon.faces.component.richfaces.lookup.ILookupComponent;
+import com.code.aon.faces.component.richfaces.lookup.button.HtmlLookupButton;
 import com.code.aon.faces.component.richfaces.lookup.inputText.HtmlLookupInputText;
 import com.code.aon.faces.component.util.FaceletUtil;
 import com.code.aon.ql.Criteria;
@@ -77,6 +78,12 @@ public class RichLookupBean {
 	
 	/** The window title. */
 	private String windowTitle;
+	
+	/** The minimum width. */
+	private String minWidth;
+	
+	/** The minimum height. */
+	private String minHeight;
 
 	/**
 	 * The Constructor.
@@ -564,7 +571,7 @@ public class RichLookupBean {
 	 */
 	public void onShowListWindow(ActionEvent event) throws ManagerBeanException {
 		setBindings(event.getComponent());
-		updateWindowTitle();
+		updateWindowProperties();
 		setShowWindow(true);
 		setSelectedPanel(LIST_ID);
 		getController().clearCriteria();
@@ -580,7 +587,7 @@ public class RichLookupBean {
 	 */
 	public void onShowSearchWindow(ActionEvent event) {
 		setBindings(event.getComponent());
-		updateWindowTitle();
+		updateWindowProperties();
 		setShowWindow(true);
 		setSelectedPanel(SEARCH_ID);
 		onEditSearch(null);
@@ -595,7 +602,7 @@ public class RichLookupBean {
 	 */
 	public void onShowNewWindow(ActionEvent event) {
 		setBindings(event.getComponent());
-		updateWindowTitle();
+		updateWindowProperties();
 		setShowWindow(true);
 		setSelectedPanel(FORM_ID);
 		onReset(null);
@@ -705,10 +712,21 @@ public class RichLookupBean {
 	public String getWindowTitle() {
 		return windowTitle;
 	}
+	
+	public String getMinWidth() {
+		return minWidth;
+	}
 
-	public void updateWindowTitle() {
-		if ( this.component != null ) {
-			this.windowTitle = this.component.getWindowTitle();
+	public String getMinHeight() {
+		return minHeight;
+	}
+
+	public void updateWindowProperties() {
+		if ( (this.component != null) && (this.component instanceof HtmlLookupButton) ) {
+			HtmlLookupButton lookupButton = (HtmlLookupButton) this.component;
+			this.windowTitle = lookupButton.getWindowTitle();
+			this.minWidth = lookupButton.getMinWidth();
+			this.minHeight = lookupButton.getMinHeight();
 		}
 		if ( StringUtils.isEmpty(this.windowTitle) ) {
 			this.windowTitle = DEFAULT_WINDOW_TITLE;	
