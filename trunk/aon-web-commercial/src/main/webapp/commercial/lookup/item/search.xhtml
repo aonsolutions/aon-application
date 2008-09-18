@@ -17,8 +17,7 @@
 		value="#{productBundle.item_description}" />
 	<aon:inputText id="Item_product_name"
 		size="50" valueChangeListener="#{lookup.addExpression}" />
-	
-	<!-- 
+	 
 	<aon:outputLabel for="Item_product_category_id"
 		value="#{productBundle.item_category}" />
 	<aon:selectOneMenu id="Item_product_category_id"
@@ -30,11 +29,11 @@
 	<aon:outputLabel for="Item_status"
 		value="#{productBundle.item_status}" />
 	<aon:selectOneMenu id="Item_status"
+		converter="aonProductStatusConverter"
 		valueChangeListener="#{lookup.addEqualExpression}">
 		<f:selectItem itemDisabled="true" itemLabel="-" itemValue="" />
 		<f:selectItems value="#{productCollections.productStatuses}" />
 	</aon:selectOneMenu>
-	-->
 	
 </ui:composition>
 
