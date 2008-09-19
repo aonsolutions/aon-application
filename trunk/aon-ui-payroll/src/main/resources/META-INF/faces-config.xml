@@ -333,7 +333,7 @@
 	<!-- ************* IRPF CUOTAS ***************** -->
 	<managed-bean>
 		<managed-bean-name>cuotas</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.payroll.controller.CuotaController</managed-bean-class>
+		<managed-bean-class>com.code.aon.ui.payroll.controller.PayrollBasicController</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
 			<property-name>queryOnStartUP</property-name>

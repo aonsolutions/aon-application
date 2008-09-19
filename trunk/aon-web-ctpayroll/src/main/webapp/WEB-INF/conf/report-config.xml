@@ -48,7 +48,7 @@
 	<!--  *********  Impresion a PDF de los Tipos de Cnae  ********* -->
 	<report id="tiposCnaeList" description="Listado de Tipos de Cnae">
 		<template path="/com/code/aon/ui/payroll/report/tiposCnaeList.jasper" />
-		<bean key="com.code.aon.payroll.tipos.Cnae" />
+		<bean key="com.code.aon.payroll.tipos.TipoCnae" />
 		<criteria provider="#{tiposCnae}" />
 		<params>
 			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.payroll.i18n.messages" />
