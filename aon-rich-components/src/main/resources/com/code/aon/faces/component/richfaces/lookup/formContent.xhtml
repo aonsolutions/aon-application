@@ -8,16 +8,16 @@
 
 <ui:composition>
 
-	<aon:div styleClass="aon-finding-title-toolbar">
+	<!--  <aon:div styleClass="aon-finding-title-toolbar">
 		<aon:panelGrid columns="2" dir="true"
 				columnClasses="aon-finding-title,aon-finding-toolbar">					
-	
+			 
 			<aon:div styleClass="aon-finding-title-internal">
 				<aon:outputText
 					value="#{lookup.new?(bundle.aon_reset):(bundle.aon_editing)}" />
 			</aon:div>
-
-			<aon:div styleClass="aon-finding-toolbar-item-group">
+ 			-->
+			<aon:div styleClass="aon-toolbar">
 				<aon:commandButton id="saveLookup" value="#{bundle.aon_save}"
 					actionListener="#{lookup.accept}" reRender="#{lookupId}LookupContent"
 					styleClass="aon-finding-toolbar-item aon-icon-accept"
@@ -39,8 +39,9 @@
 						disableDefault="true" operation="hide" />					
 				</aon:commandButton>					
 			</aon:div>
+			<!-- 
 	  </aon:panelGrid>
-	</aon:div>	
+	</aon:div>	 -->
 
 	<aon:div styleClass="aon-scroll-area">
 		<aon:panelGrid id="menuGrid" columns="2" dir="true">

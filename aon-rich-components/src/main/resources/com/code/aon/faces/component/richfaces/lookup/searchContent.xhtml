@@ -8,28 +8,17 @@
 
 <ui:composition>
 
-	<aon:div styleClass="aon-finding-title-toolbar">
-		<aon:panelGrid columns="2" dir="true"
-			columnClasses="aon-finding-subtitle,aon-finding-toolbar">
-
-			<aon:div styleClass="aon-finding-subtitle-internal">
-				<aon:outputText value="#{bundle.aon_toolbar_search}" />
-			</aon:div>
-
-			<aon:div styleClass="aon-finding-toolbar-item-group">
-				<aon:commandButton id="clear" value="#{bundle.aon_clear}"
-					type="reset" ajaxSingle="true"
-					styleClass="aon-finding-toolbar-item aon-icon-rubber" />			
-				<aon:commandButton id="back" value="#{bundle.aon_back}"
-					actionListener="#{lookup.onCloseWindow}" immediate="true"
-					styleClass="aon-finding-toolbar-item aon-icon-cancel"
-					accesskey="#{bundle.aon_key_cancel}" >
-					<rich:componentControl for="#{lookupId}" event="onclick"
-						disableDefault="true" operation="hide" />
-				</aon:commandButton>
-			</aon:div>
-			
-		</aon:panelGrid>
+	<aon:div styleClass="aon-toolbar">
+		<aon:commandButton id="clear" value="#{bundle.aon_clear}"
+			type="reset" ajaxSingle="true"
+			styleClass="aon-finding-toolbar-item aon-icon-rubber" />			
+		<aon:commandButton id="back" value="#{bundle.aon_back}"
+			actionListener="#{lookup.onCloseWindow}" immediate="true"
+			styleClass="aon-finding-toolbar-item aon-icon-cancel"
+			accesskey="#{bundle.aon_key_cancel}" >
+			<rich:componentControl for="#{lookupId}" event="onclick"
+				disableDefault="true" operation="hide" />
+		</aon:commandButton>
 	</aon:div>
 	<!-- end toolbar navigation -->
 
