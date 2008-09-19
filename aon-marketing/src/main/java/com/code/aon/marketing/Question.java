@@ -33,7 +33,7 @@ public class Question implements ITransferObject {
 	@Column(nullable = false)
     private Integer id;
 
-	@Column(nullable = false, length = 255)
+	@Column(name = "question_text", nullable = false, length = 255)
     private String text;
 	
 	@Column(nullable = false)

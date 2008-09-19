@@ -32,7 +32,6 @@ public class SurveyQuestion implements ITransferObject {
 	@Column(nullable = false)
     private Integer id;
 
-	@Column(nullable = false)
 	private Integer position;
 	
 	@ManyToOne (fetch=FetchType.EAGER)
