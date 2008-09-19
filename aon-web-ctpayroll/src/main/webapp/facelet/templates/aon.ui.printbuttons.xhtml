@@ -7,14 +7,14 @@
 	<ui:composition>
 	
 		<h:commandLink id="export2pdf" value="PDF"
-				title="#{appBundle.aon_payroll_export_label} #{appBundle.aon_payroll_to} #{appBundle.aon_payroll_pdf_label}"
+				title="#{appBundle.aon_payroll_export} #{appBundle.aon_payroll_to} #{appBundle.aon_payroll_pdf}"
 				styleClass="aon-finding-toolbar-item aon-icon-pdf"
 				action="#{report.onExecute}" rendered="#{!manager.new}" 
 				target="_blank">
 			<f:param name="reportKey" value="#{reportKey}" />
 		</h:commandLink>
 		<h:commandLink id="export2excel" value="XLS"
-				title="#{appBundle.aon_payroll_export_label} #{appBundle.aon_payroll_to} #{appBundle.aon_payroll_excel_label}"
+				title="#{appBundle.aon_payroll_export} #{appBundle.aon_payroll_to} #{appBundle.aon_payroll_excel}"
 				styleClass="aon-finding-toolbar-item aon-icon-excel"
 				action="#{report.onExecute}" rendered="#{!manager.new}" 
 				target="_blank">
@@ -22,7 +22,7 @@
 			<f:param name="outputFormat" value="MS Excel" />
 		</h:commandLink>
 		<h:commandLink id="export2csv" value="CSV"
-				title="#{appBundle.aon_payroll_export_label} #{appBundle.aon_payroll_to} #{appBundle.aon_payroll_csv_label}"
+				title="#{appBundle.aon_payroll_export} #{appBundle.aon_payroll_to} #{appBundle.aon_payroll_csv}"
 				styleClass="aon-finding-toolbar-item aon-icon-excel"
 				action="#{report.onExecute}" rendered="#{!manager.new}" 
 				target="_blank">

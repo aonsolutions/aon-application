@@ -19,7 +19,7 @@
 						columnClasses="aon-finding-title,aon-finding-subtitle,aon-finding-toolbar">
 	
 						<aon:div styleClass="aon-finding-title-internal">
-							<aon:outputText value="#{appBundle.aon_payroll_tipocnae_label}" />
+							<aon:outputText value="#{appBundle.aon_payroll_tipocnae}" />
 						</aon:div>
 	
 						<aon:div styleClass="aon-finding-subtitle-internal">
@@ -105,7 +105,7 @@
 	
 						<aon:column>
 							<f:facet name="header">
-								<aon:outputText value="#{appBundle.aon_payroll_description_label}" />
+								<aon:outputText value="#{appBundle.aon_payroll_description}" />
 							</f:facet>
 							<aon:outputText value="#{to.description}" rendered="#{to!=tiposCnae.to}" />
 							<aon:inputText styleClass="aon-form-input-text " required="true"
@@ -162,7 +162,7 @@
 						</aon:column>
 						
 					</aon:editDataTable>
-					<aon:dataScroller for="cnaeData" rowCount="#{tiposCnae.model.rowCount}"  showNote="true" />
+					<aon:dataScroller2 for="cnaeData" showNote="true" />
 				</aon:div>
 			</aon:div>
 		</aon:form>
