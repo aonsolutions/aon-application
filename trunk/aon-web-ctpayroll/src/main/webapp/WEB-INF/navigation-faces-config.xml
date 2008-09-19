@@ -102,7 +102,7 @@
 	
 	<navigation-rule>
 		<navigation-case>
-			<from-outcome>tipos_bonificacion</from-outcome>
+			<from-outcome>cotizacion_bonificacion</from-outcome>
 			<to-view-id>/facelet/auxiliares/cotizacion/bonificacion/grid.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>
