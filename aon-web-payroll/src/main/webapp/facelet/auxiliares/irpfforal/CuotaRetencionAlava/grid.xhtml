@@ -129,13 +129,21 @@
 							<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
 						timeZone="#{timeZoneController.timeZoneId}" />
 						</aon:outputText>
-							<aon:inputText styleClass="aon-form-input-text " required="true"
-								rendered="#{to==cuotaRetencionAlava.to}" size="2"
-								value="#{cuotaRetencionAlava.to.id.fecini}" maxlength="10" />
+									<aon:selectInputDate required="true"
+								requiredMessage="fecini"
+							rendered="#{to==cuotaRetencionAlava.to}"
+								value="#{cuotaRetencionAlava.to.id.fecini}"
+								renderAsPopup="true" popupDateFormat="#{appBundle.aon_date_pattern}">
+							</aon:selectInputDate>
+															
 							<f:facet name="footer">
-								<aon:inputText styleClass="aon-form-input-text" required="true"
-									rendered="#{cuotaRetencionAlava.new}" size="2"
-									value="#{cuotaRetencionAlava.to.id.fecini}" maxlength="10" />
+										<aon:selectInputDate required="true"
+								requiredMessage="fecini"
+							rendered="#{cuotaRetencionAlava.new}"
+								value="#{cuotaRetencionAlava.to.id.fecini}"
+								renderAsPopup="true" popupDateFormat="#{appBundle.aon_date_pattern}">
+							</aon:selectInputDate>
+							
 							</f:facet>
 						</aon:column>
 						<aon:column>
@@ -146,13 +154,20 @@
 							<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
 						timeZone="#{timeZoneController.timeZoneId}" />
 						</aon:outputText>
-							<aon:inputText styleClass="aon-form-input-text " required="true"
-								rendered="#{to==cuotaRetencionAlava.to}" size="2"
-								value="#{cuotaRetencionAlava.to.fecfin}" maxlength="10" />
+								<aon:selectInputDate required="true"
+								requiredMessage="fecini"
+								rendered="#{to==cuotaRetencionAlava.to}"
+								value="#{cuotaRetencionAlava.to.fecfin}"
+								renderAsPopup="true" popupDateFormat="#{appBundle.aon_date_pattern}">
+							</aon:selectInputDate>
+							
 							<f:facet name="footer">
-								<aon:inputText styleClass="aon-form-input-text" required="true"
-									rendered="#{cuotaRetencionAlava.new}" size="2"
-									value="#{cuotaRetencionAlava.to.fecfin}" maxlength="10" />
+								<aon:selectInputDate required="true"
+								requiredMessage="fecini"
+								rendered="#{cuotaRetencionAlava.new}"
+								value="#{cuotaRetencionAlava.to.fecfin}"
+								renderAsPopup="true" popupDateFormat="#{appBundle.aon_date_pattern}">
+							</aon:selectInputDate>
 							</f:facet>
 						</aon:column>
 	
@@ -160,7 +175,9 @@
 							<f:facet name="header">
 								<aon:outputText value="#{appBundle.aon_payroll_auxiliares_irpf_foral__cuota_01_desdeimporte}" />
 							</f:facet>
-							<aon:outputText value="#{to.desdeImporte}" rendered="#{to!=cuotaRetencionAlava.to}" />
+							<aon:outputText value="#{to.desdeImporte}" rendered="#{to!=cuotaRetencionAlava.to}" >
+								<f:convertNumber type="number" pattern="###,###.###" />
+								</aon:outputText>
 							<aon:inputText styleClass="aon-form-input-text " required="true"
 								rendered="#{to==cuotaRetencionAlava.to}" size="2"
 								value="#{cuotaRetencionAlava.to.desdeImporte}" maxlength="10" />
@@ -174,8 +191,11 @@
 						<aon:column>
 							<f:facet name="header">
 								<aon:outputText value="#{appBundle.aon_payroll_auxiliares_irpf_foral__cuota_01_hastaimporte}" />
+								
 							</f:facet>
-							<aon:outputText value="#{to.hastaImporte}" rendered="#{to!=cuotaRetencionAlava.to}" />
+							<aon:outputText value="#{to.hastaImporte}" rendered="#{to!=cuotaRetencionAlava.to}" >
+								<f:convertNumber type="number" pattern="###,###.###" />
+								</aon:outputText>
 							<aon:inputText styleClass="aon-form-input-text " required="true"
 								rendered="#{to==cuotaRetencionAlava.to}" size="2"
 								value="#{cuotaRetencionAlava.to.hastaImporte}" maxlength="10" />
@@ -190,7 +210,9 @@
 							<f:facet name="header">
 								<aon:outputText value="#{appBundle.aon_payroll_auxiliares_irpf_foral__cuota_01_h0}" />
 							</f:facet>
-							<aon:outputText value="#{to.h0}" rendered="#{to!=cuotaRetencionAlava.to}" />
+							<aon:outputText value="#{to.h0}" rendered="#{to!=cuotaRetencionAlava.to}" >
+								<f:convertNumber minFractionDigits="2" />
+								</aon:outputText>
 							<aon:inputText styleClass="aon-form-input-text " required="true"
 								rendered="#{to==cuotaRetencionAlava.to}" size="2"
 								value="#{cuotaRetencionAlava.to.h0}" maxlength="10" />
@@ -205,7 +227,9 @@
 							<f:facet name="header">
 								<aon:outputText value="#{appBundle.aon_payroll_auxiliares_irpf_foral__cuota_01_h1}" />
 							</f:facet>
-							<aon:outputText value="#{to.h1}" rendered="#{to!=cuotaRetencionAlava.to}" />
+							<aon:outputText value="#{to.h1}" rendered="#{to!=cuotaRetencionAlava.to}">
+								<f:convertNumber minFractionDigits="2" />
+								</aon:outputText>
 							<aon:inputText styleClass="aon-form-input-text " required="true"
 								rendered="#{to==cuotaRetencionAlava.to}" size="2"
 								value="#{cuotaRetencionAlava.to.h1}" maxlength="10" />
@@ -219,7 +243,9 @@
 							<f:facet name="header">
 								<aon:outputText value="#{appBundle.aon_payroll_auxiliares_irpf_foral__cuota_01_h2}" />
 							</f:facet>
-							<aon:outputText value="#{to.h2}" rendered="#{to!=cuotaRetencionAlava.to}" />
+							<aon:outputText value="#{to.h2}" rendered="#{to!=cuotaRetencionAlava.to}" >
+								<f:convertNumber minFractionDigits="2" />
+								</aon:outputText>
 							<aon:inputText styleClass="aon-form-input-text " required="true"
 								rendered="#{to==cuotaRetencionAlava.to}" size="2"
 								value="#{cuotaRetencionAlava.to.h2}" maxlength="10" />
@@ -233,7 +259,9 @@
 							<f:facet name="header">
 								<aon:outputText value="#{appBundle.aon_payroll_auxiliares_irpf_foral__cuota_01_h3}" />
 							</f:facet>
-							<aon:outputText value="#{to.h3}" rendered="#{to!=cuotaRetencionAlava.to}" />
+							<aon:outputText value="#{to.h3}" rendered="#{to!=cuotaRetencionAlava.to}" >
+								<f:convertNumber minFractionDigits="2" />
+								</aon:outputText>
 							<aon:inputText styleClass="aon-form-input-text " required="true"
 								rendered="#{to==cuotaRetencionAlava.to}" size="2"
 								value="#{cuotaRetencionAlava.to.h3}" maxlength="10" />
@@ -247,7 +275,9 @@
 							<f:facet name="header">
 								<aon:outputText value="#{appBundle.aon_payroll_auxiliares_irpf_foral__cuota_01_h4}" />
 							</f:facet>
-							<aon:outputText value="#{to.h4}" rendered="#{to!=cuotaRetencionAlava.to}" />
+							<aon:outputText value="#{to.h4}" rendered="#{to!=cuotaRetencionAlava.to}" >
+								<f:convertNumber minFractionDigits="2" />
+								</aon:outputText>
 							<aon:inputText styleClass="aon-form-input-text " required="true"
 								rendered="#{to==cuotaRetencionAlava.to}" size="2"
 								value="#{cuotaRetencionAlava.to.h4}" maxlength="10" />
@@ -261,7 +291,9 @@
 							<f:facet name="header">
 								<aon:outputText value="#{appBundle.aon_payroll_auxiliares_irpf_foral__cuota_01_h5}" />
 							</f:facet>
-							<aon:outputText value="#{to.h5}" rendered="#{to!=cuotaRetencionAlava.to}" />
+							<aon:outputText value="#{to.h5}" rendered="#{to!=cuotaRetencionAlava.to}" >
+								<f:convertNumber minFractionDigits="2" />
+								</aon:outputText>
 							<aon:inputText styleClass="aon-form-input-text " required="true"
 								rendered="#{to==cuotaRetencionAlava.to}" size="2"
 								value="#{cuotaRetencionAlava.to.h5}" maxlength="10" />
@@ -275,7 +307,9 @@
 							<f:facet name="header">
 								<aon:outputText value="#{appBundle.aon_payroll_auxiliares_irpf_foral__cuota_01_h6}" />
 							</f:facet>
-							<aon:outputText value="#{to.h6}" rendered="#{to!=cuotaRetencionAlava.to}" />
+							<aon:outputText value="#{to.h6}" rendered="#{to!=cuotaRetencionAlava.to}" >
+								<f:convertNumber minFractionDigits="2" />
+								</aon:outputText>
 							<aon:inputText styleClass="aon-form-input-text " required="true"
 								rendered="#{to==cuotaRetencionAlava.to}" size="2"
 								value="#{cuotaRetencionAlava.to.h6}" maxlength="10" />
