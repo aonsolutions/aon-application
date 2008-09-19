@@ -93,7 +93,7 @@
 						<aon:lookupButton id="CommercialTracking_seller_lookup"
 							windowTitle="#{appBundle.aon_lookup_seller}"
 							selectReRender="CommercialTracking_seller_id,CommercialTracking_seller_name"
-							lookup="#{sellerLookup}"
+							lookup="#{sellerLookup}" minHeight="440"
 							property="#{commercialTracking.to.seller}">
 						</aon:lookupButton>
 						<aon:inputText id="CommercialTracking_seller_name"
@@ -112,13 +112,13 @@
 						<aon:lookupButton id="CommercialTracking_target_lookup"
 							windowTitle="#{appBundle.aon_lookup_target}"
 							selectReRender="CommercialTracking_target_id,CommercialTracking_target_name"
-							lookup="#{targetLookup}"
+							lookup="#{targetLookup}" minHeight="440"
 							property="#{commercialTracking.to.target}">
 						</aon:lookupButton>
 						<aon:lookupButton id="CommercialTracking_target_add"
 							windowTitle="#{appBundle.aon_lookup_new_target}"
 							selectReRender="CommercialTracking_target_id,CommercialTracking_target_name"
-							lookup="#{targetLookup}" actionType="new" minWidth="650"
+							lookup="#{targetLookup}" actionType="new" minWidth="650" minHeight="460"
 							property="#{commercialTracking.to.target}">
 						</aon:lookupButton>
 						<aon:inputText id="CommercialTracking_target_name"
@@ -150,17 +150,15 @@
 
 					<aon:outputLabel for="CommercialTracking_next_id"
 						value="#{appBundle.aon_commercial_tracking_next_action}" />
-					<aon:div>
-						<aon:div>
-							<aon:selectBooleanCheckbox id="CommercialTracking_next_id"
-								reRender="next_action" disabled="#{!commercialTracking.new}"
-								valueChangeListener="#{commercialTracking.nextActionChanged}"
-								value="#{commercialTracking.nextAction}">
-							</aon:selectBooleanCheckbox>
-						</aon:div>
-						<aon:div id="next_action">
-
-							<aon:panelGrid rendered="#{commercialTracking.nextAction}" columns="2" dir="true" width="100%">
+						
+					<aon:div>					
+						<aon:selectBooleanCheckbox id="CommercialTracking_next_id"
+							reRender="next_action" disabled="#{!commercialTracking.new}"
+							valueChangeListener="#{commercialTracking.nextActionChanged}"
+							value="#{commercialTracking.nextAction}">
+						</aon:selectBooleanCheckbox>
+						<aon:div id="next_action" styleClass="aon-box aon-box-outstanding aon-padding" style="display:inline;">
+							<aon:panelGrid rendered="#{commercialTracking.nextAction}" columns="2" dir="true">
 
 								<aon:outputLabel for="CommercialTracking_next_date"
 									value="#{appBundle.aon_commercial_tracking_date}" />
@@ -186,11 +184,11 @@
 									rows="4" />
 
 							</aon:panelGrid>
-
 						</aon:div>
 					</aon:div>
 				</aon:panelGrid>
 
+						
 			</aon:div>
 		</aon:form>
 		<aon:lookupButtonPopup lookup="#{sellerLookup}" />

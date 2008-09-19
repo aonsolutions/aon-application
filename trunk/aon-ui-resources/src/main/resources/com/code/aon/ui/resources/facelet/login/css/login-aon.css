@@ -30,13 +30,13 @@ font-weight:bold;
 .aon-login-title{
 	font-size:20px;
 	font-family:tahoma,arial,sans;
-	color:#000;
+	color:#0072cf;
 	text-align:center;
 	display: inline;
 	clear:both;
 	background:transparent url(images/login/aon-solutions.gif) left 51px no-repeat;
 	padding-left: 135px;
-	padding-top: 75px;
+	padding-top: 74px;
 	}
 .aon-login-box{
 	font-weight:normal;
