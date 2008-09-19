@@ -65,7 +65,7 @@
 				<!-- region-body -->
 	 			<aon:div styleClass="aon-scroll-area">
 					
-					<aon:editDataTable id="empresarioData" var="to" rows="0"
+					<aon:editDataTable id="empresarioData" var="to" rows="20"
 						rendered="#{(tiposEmpresario.model.rowCount > 0) or (tiposEmpresario.new)}" value="#{tiposEmpresario.model}"
 						columnClasses="aon-editDataTable-iconColumn, aon-editDataTable-numberColumn, aon-editDataTable-textColumn, aon-editDataTable-buttonsColumn">
 								
@@ -94,11 +94,11 @@
 							</f:facet>
 							<aon:outputText value="#{to.cdg}" rendered="#{to!=tiposEmpresario.to}" />
 							<aon:inputText styleClass="aon-form-input-text " required="true"
-								rendered="#{to==tiposEmpresario.to}" size="2"
+								rendered="#{to==tiposEmpresario.to}" size="1"
 								value="#{tiposEmpresario.to.cdg}" maxlength="1" />
 							<f:facet name="footer">
 								<aon:inputText styleClass="aon-form-input-text" required="true"
-									rendered="#{tiposEmpresario.new}" size="2"
+									rendered="#{tiposEmpresario.new}" size="1"
 									value="#{tiposEmpresario.to.cdg}" maxlength="1" />
 							</f:facet>
 						</aon:column>
@@ -109,12 +109,12 @@
 							</f:facet>
 							<aon:outputText value="#{to.description}" rendered="#{to!=tiposEmpresario.to}" />
 							<aon:inputText styleClass="aon-form-input-text " required="true"
-								rendered="#{to==tiposEmpresario.to}" size="60"
-								value="#{tiposEmpresario.to.description}" maxlength="45" />
+								rendered="#{to==tiposEmpresario.to}" size="25"
+								value="#{tiposEmpresario.to.description}" maxlength="25" />
 							<f:facet name="footer">
 								<aon:inputText styleClass="aon-form-input-text" required="true"
-									rendered="#{tiposEmpresario.new}" size="60"
-									value="#{tiposEmpresario.to.description}" maxlength="45" />
+									rendered="#{tiposEmpresario.new}" size="25"
+									value="#{tiposEmpresario.to.description}" maxlength="25" />
 							</f:facet>
 						</aon:column>
 	
@@ -162,7 +162,7 @@
 						</aon:column>
 						
 					</aon:editDataTable>
-					<aon:dataScroller for="empresarioData" rowCount="#{tiposEmpresario.model.rowCount}" showNote="true" />
+					<aon:dataScroller2 for="empresarioData" showNote="true" />
 				</aon:div>
 			</aon:div>
 		</aon:form>
