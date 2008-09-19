@@ -28,8 +28,8 @@
 	</converter>
 	<converter>
 		<description>Conversor para los Tipos de Incidencia</description>
-		<converter-id>tiposIncidencia</converter-id>
-		<converter-class>com.code.aon.ui.payroll.converter.TiposIncidencia</converter-class>
+		<converter-id>tiposIncidenciaConverter</converter-id>
+		<converter-class>com.code.aon.ui.payroll.converter.TiposIncidenciaConverter</converter-class>
 	</converter>
 
 	<!-- *************** RESOURCE RESOLVER ***************** --> 
@@ -111,5 +111,12 @@
 		<managed-bean-class>com.code.aon.ui.report.controller.ReportManager</managed-bean-class>
 		<managed-bean-scope>request</managed-bean-scope>
 	</managed-bean>
+	
+	<!-- **************** VALIDATORS ********************** -->
+	<validator>
+		<description>Validador para los porcentajes</description>
+		<validator-id>porcentajeValidator</validator-id>
+		<validator-class>com.code.aon.ui.payroll.validator.PorcentajeValidator</validator-class>
+	</validator>
 
 </faces-config>

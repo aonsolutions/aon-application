@@ -155,7 +155,7 @@
 	<!-- ************* SISTEMA RED. COLECTIVOS***************** -->
 	<managed-bean>
 		<managed-bean-name>sistemaRedColectivos</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.form.BasicController</managed-bean-class>
+		<managed-bean-class>com.code.aon.ui.payroll.controller.PayrollBasicController</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
 			<property-name>queryOnStartUP</property-name>
@@ -163,8 +163,21 @@
 		</managed-property>
 		<managed-property>
 			<property-name>pojo</property-name>
-			<value>com.code.aon.payroll.sistema_red.Colectivos</value>
+			<value>com.code.aon.payroll.auxiliares.Colectivos</value>
 		</managed-property>
+	<managed-property>
+			<property-name>listenerClasses</property-name>
+			<list-entries>
+				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+				<value>#{colectivosControllerListener}</value>
+			</list-entries>
+		</managed-property>
+	</managed-bean>
+
+	<managed-bean>
+		<managed-bean-name>colectivosControllerListener</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.payroll.event.ColectivosControllerListener</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
 	</managed-bean>
 
 	<!-- ************* TIPOS DE VIA ***************** -->
