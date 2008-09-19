@@ -44,7 +44,7 @@ public class QuestionValue implements ITransferObject {
 	@Column(name = "value_date")
     private Date date;
 	
-	@Column(name = "value_number")
+	@Column(name = "value_number", precision = 15, scale = 3)
 	private Double number;
 	
 	@ManyToOne (fetch=FetchType.EAGER)

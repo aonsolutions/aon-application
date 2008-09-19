@@ -25,7 +25,7 @@ import com.code.aon.common.ITransferObject;
  * @version 1.0
  */
 @Entity
-@Table(name = "question")
+@Table(name = "survey")
 public class Survey implements ITransferObject {
 
 	private static final long serialVersionUID = 8032426876935464774L;
@@ -42,6 +42,7 @@ public class Survey implements ITransferObject {
 	@Column(nullable = false, length = 64)
     private String description;
 	
+	@Column(nullable = false)
 	private boolean active;
 
 	@OneToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE,

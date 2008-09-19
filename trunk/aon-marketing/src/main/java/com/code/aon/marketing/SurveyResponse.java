@@ -43,7 +43,7 @@ public class SurveyResponse implements ITransferObject {
     private Date creationDate;	
 
 	@Temporal(TemporalType.TIMESTAMP)
-	@Column(nullable = false)
+	@Column(name = "response_date", nullable = false)
     private Date date;	
 	
 	@ManyToOne (fetch=FetchType.EAGER)
