@@ -4,7 +4,7 @@ import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 import javax.faces.convert.Converter;
 
-public class TiposIncidencia implements Converter {
+public class TiposIncidenciaConverter implements Converter {
 
 	@Override
 	public Object getAsObject(FacesContext ctx, UIComponent c, String text) {

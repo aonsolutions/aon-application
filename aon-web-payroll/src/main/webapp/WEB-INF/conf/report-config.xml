@@ -72,7 +72,7 @@
 	<!--  *********  Impresion a PDF de Sistema Red Colectivos  ********* -->
 	<report id="sistemaRedColectivosList" description="Listado de Colectivos">
 		<template path="/com/code/aon/ui/payroll/report/sistemaRedColectivosList.jasper" />
-		<bean key="com.code.aon.payroll.sistema_red.Colectivos" />
+		<bean key="com.code.aon.payroll.auxiliares.Colectivos" />
 		<criteria provider="#{sistemaRedColectivos}" />
 		<params>
 			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.payroll.i18n.messages" />
