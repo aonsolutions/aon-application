@@ -78,6 +78,7 @@ color:#000;
 .img-left 		{ float:left;margin:4px 10px 4px 0; }
 .img-right 		{ float:right;margin:4px 0 4px 10px; }
 
+.aon-padding {padding:0.5em;}
 .aon-nopadding,  .nopadding 		{ padding:0; }
 .aon-padding-left, .padding-left	{padding-left:0.7em;}
 .aon-padding-top, .padding-top  	{padding-top:0.7em;}
@@ -843,6 +844,7 @@ color:#000;
 	overflow:visible;
 	background:#d7d7d7 url(images/aon-content/aon-secondary-menu.png) scroll left top repeat-x;
 }
+
 .aon-commandLink{
 }
 .aon-label{
@@ -887,7 +889,7 @@ color:#000;
 /*****************************************/
 /******  PANELGRID  MANTENIMIENTOS  ******/
 /*****************************************/
-
+/*
 .aon-panelGrid{
 	border-collapse:collapse;
 }
@@ -904,14 +906,29 @@ color:#000;
 	padding:2px 5px 2px 2px;
 	padding:1px 0.5em 1px 0.5em;
 }
-
+*/
+.aon-panelGrid{
+	border-collapse:collapse;
+}
+.aon-panelGrid-odd{
+	font-weight:bold;
+	white-space: nowrap;
+	padding:1px 0.5em 1px 0.5em;
+	vertical-align:top;
+	text-align:right;
+}
+.aon-panelGrid-even{
+	padding:1px 0.5em 1px 0.5em;
+}
 /**********************************************/
-/*      PARA DIFERENCIAR ENTRE TABLA DE BUSQUEDA Y NUEVO  */
+/*      ESTILOS PARA LAS PANTALLAS DE BÚSQUEDA   */
 /**********************************************/
 .aon-panelGrid-search{
-	border:#ccc 1px solid;
-	padding:5px;
+	/*border:#ccc 1px solid;
+	border-top:0;*/
 	background-color:#f6f5e3;
+	margin-top:0.5em;
+	padding-bottom:1em;
 	}
 .aon-panelGrid-search table{
 	border:0;
@@ -926,15 +943,45 @@ color:#000;
 	border:0;
 	padding:2px;
 	}
-.aon-panelGrid-search-info{
-	font-weight:bold;
-	padding:0.3em 0.5em 0 6px;
-	margin-bottom:1em;
-	font-size:1.1em;
-	color:#000;
-	border-bottom:#fff 2px inset;
-	background:transparent url(images/aon-icon/aon-icon-search-title-item.png) scroll left 14px no-repeat;
+.aon-panelGrid-search-title{
+	margin-bottom:1.5em;
+	background:#fff url(images/aon-content/aon-search-box.png) scroll right bottom repeat-x;
 		}
+.aon-panelGrid-search-title-text{
+	background:transparent url(images/aon-content/aon-search-title.png) scroll right top no-repeat;
+	padding:5px 32px 0 1em;
+	font-size:1em;
+	color:#000;
+	font-weight:bold;
+	}
+.aon-panelGrid-search-info{
+	font-style:italic;
+	font-size:0.9em;
+	display:block;
+	margin:0 1em 1em 1.1em;
+	}
+
+.aon-search-commandButton-left {
+	background:transparent url(images/aon-content/aon-search-commandButton-left.png) scroll left center no-repeat;
+	padding:3px 0 3px 6px;
+	margin:1em 0 0.5em 0;
+}
+.aon-search-commandButton-right{		
+	display:inline;
+	background:transparent url(images/aon-content/aon-search-commandButton-right.png) scroll right center no-repeat;
+	padding:3px 1em 3px 0;
+	}
+.aon-search-commandButton-right .aon-commandButton{
+	border:0 !important;
+	background:transparent !important;
+	font-weight:bold;
+	cursor:pointer;	
+	color:#000;
+	font-size:11px;
+	text-transform:uppercase;
+	text-align:center;
+	margin:0 !important;
+	}
 /*********************************************************/
 /******  PANELGRID SIN BORDES, SOLO PARA MAQUETACIÓN ******/
 /*********************************************************/
@@ -1399,13 +1446,10 @@ color:#000;
 	cursor:pointer;
 	}
 .aon-popupWindow-content{
-	padding:0.5em;
 	}	
 .aon-popupWindow-content-internal{
-	height:240px;
-	width:100%;
-	overflow:auto;	
 	}
+
 /**********************************************/
 /*****   LOCALIZACION Y TOOLBAR DE PAGINA ******/
 /**********************************************/ 

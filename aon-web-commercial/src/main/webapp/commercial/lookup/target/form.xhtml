@@ -11,15 +11,20 @@
 
 	<aon:outputLabel for="Company_address" 
 		value="#{registryBundle.aon_address}" />
-	<aon:panelGrid columns="1">
-		<aon:inputText id="Company_address"
-			value="#{targetLookupListener.mainAddress.address}" size="64" maxlength="128"/>
-		<aon:inputText id="Company_address2"
-			value="#{targetLookupListener.mainAddress.address2}" size="64" maxlength="128"/>
-		<aon:inputText id="Company_address3"
-			value="#{targetLookupListener.mainAddress.address3}" size="64" maxlength="128"/>		
-	</aon:panelGrid>
-	
+	<aon:div>
+		<aon:div>
+			<aon:inputText id="Company_address"
+				value="#{targetLookupListener.mainAddress.address}" size="64" maxlength="128"/>
+		</aon:div>
+		<aon:div>
+			<aon:inputText id="Company_address2"
+				value="#{targetLookupListener.mainAddress.address2}" size="64" maxlength="128"/>
+		</aon:div>
+		<aon:div>
+			<aon:inputText id="Company_address3"
+				value="#{targetLookupListener.mainAddress.address3}" size="64" maxlength="128"/>		
+		</aon:div>
+	</aon:div>
 	<aon:outputLabel for="Company_address_city" 
 		value="#{registryBundle.aon_city}" />
 	<aon:inputText id="Company_address_city" 
