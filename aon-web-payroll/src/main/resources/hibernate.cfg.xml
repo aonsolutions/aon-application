@@ -44,7 +44,10 @@
 		<mapping class="com.code.aon.payroll.irpf.Cuota"/>
         
 		<!-- IRPF FORAL-->		
-        <mapping class="com.code.aon.payroll.irpfforal.CuotaRetencionAlava"/>				
+        <mapping class="com.code.aon.payroll.irpfforal.CuotaRetencionAlava"/>		
+        
+        <!-- SISTEMA RED -->			
+        <mapping class="com.code.aon.payroll.auxiliares.Colectivos"/>			
 
 	</session-factory>
 
