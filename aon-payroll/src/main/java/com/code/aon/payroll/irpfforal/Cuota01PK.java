@@ -16,15 +16,15 @@ public class Cuota01PK implements Serializable {
 
 	
 
-	private int numTramo;
+	private Integer numTramo;
 	private Date fecini;
 
 	@Column(name="num_tramo", nullable=false, length=8)
-	public int getnumTramo() {
+	public Integer getnumTramo() {
 		return this.numTramo;
 	}
    
-	public void setnumTramo(int numTramo) {
+	public void setnumTramo(Integer numTramo) {
 		this.numTramo = numTramo;
 	}
 
