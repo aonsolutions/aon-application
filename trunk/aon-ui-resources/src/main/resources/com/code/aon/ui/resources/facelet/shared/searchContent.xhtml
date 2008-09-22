@@ -8,12 +8,9 @@
 	<aon:div styleClass="aon-scroll-area">
 		<aon:div styleClass="aon-scroll-area-internal">
 			<aon:div styleClass="aon-panelGrid-search">
-				<aon:div styleClass="aon-panelGrid-search-title">
-					<!--  <aon:outputText value="#{bundle.aon_search_info}" styleClass="aon-panelGrid-search-info-text"/>-->
-					<aon:outputText value="#{bundle.aon_toolbar_search}" styleClass="aon-panelGrid-search-title-text"/>
-				</aon:div>
-				
-				<aon:outputText value="#{bundle.aon_search_info}" styleClass="aon-panelGrid-search-info"/>
+				<aon:div styleClass="aon-panelGrid-search-info">
+					<aon:outputText value="#{bundle.aon_search_info}" styleClass="aon-panelGrid-search-info-internal"/>
+				</aon:div>			
 				
 				<aon:panelGrid columns="2">
 					<ui:insert name="searchContent" />
