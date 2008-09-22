@@ -41,10 +41,12 @@
 		<param-name>facelets.SKIP_COMMENTS</param-name>
 		<param-value>true</param-value>
 	</context-param>
+	<!-- 
 	<context-param>
 		<param-name>facelets.REFRESH_PERIOD</param-name>
 		<param-value>-1</param-value>
 	</context-param>
+	-->
 	<context-param>
 		<param-name>facelets.BUFFER_SIZE</param-name>
 		<param-value>500000</param-value>
@@ -205,6 +207,10 @@
 		<web-resource-collection>
 			<web-resource-name>commercial</web-resource-name>
 			<url-pattern>/commercial/*</url-pattern>
+		</web-resource-collection>
+		<web-resource-collection>
+			<web-resource-name>marketing</web-resource-name>
+			<url-pattern>/marketing/*</url-pattern>
 		</web-resource-collection>
 		<web-resource-collection>
 			<web-resource-name>jsf</web-resource-name>

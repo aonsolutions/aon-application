@@ -37,8 +37,18 @@
 		<mapping class="com.code.aon.commercial.TargetSegment"/>
 		<mapping class="com.code.aon.commercial.TargetSeller"/>
 		
+		<!-- AON-MARKETING Mapping files -->
+		<mapping class="com.code.aon.marketing.Question"/>
+		<mapping class="com.code.aon.marketing.QuestionValue"/>
+		<mapping class="com.code.aon.marketing.Survey"/>
+		<mapping class="com.code.aon.marketing.SurveyQuestion"/>
+		<mapping class="com.code.aon.marketing.SurveyResponse"/>
+		<mapping class="com.code.aon.marketing.SurveyResponseDetail"/>
+		<mapping class="com.code.aon.marketing.SurveyWorkflow"/>		
+		
 		<!-- AON-CONFIG Mapping files -->		
 		<mapping class="com.code.aon.config.Scope"/>
+		<mapping class="com.code.aon.config.User"/>
 		
 		<!-- AON-CUSTOMER Mapping files -->		
 		<mapping class="com.code.aon.customer.Customer"/>
