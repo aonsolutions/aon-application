@@ -234,13 +234,13 @@
 							<aon:outputText value="#{to.porcentaje}" rendered="#{to!=cuotas.to}" >
 								<f:convertNumber minFractionDigits="2" />
 							</aon:outputText>
-							<aon:inputText id="cuota_porcentaje_edit" styleClass="aon-form-input-text"
+							<aon:inputText id="cuotas_porcentaje_edit" styleClass="aon-form-input-text"
 								rendered="#{to==cuotas.to}" size="5"
 								value="#{cuotas.to.porcentaje}" maxlength="5" >
 								<f:validator validatorId="porcentajeValidator" />
 							</aon:inputText>
 							<f:facet name="footer">
-								<aon:inputText id="cuota_porcentaje_new" styleClass="aon-form-input-text"
+								<aon:inputText id="cuotas_porcentaje_new" styleClass="aon-form-input-text"
 									rendered="#{cuotas.new}" size="5"
 									value="#{cuotas.to.porcentaje}" maxlength="5" >
 								<f:validator validatorId="porcentajeValidator" />
