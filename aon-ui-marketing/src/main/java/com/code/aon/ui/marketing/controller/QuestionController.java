@@ -1,0 +1,100 @@
+package com.code.aon.ui.marketing.controller;
+
+import javax.faces.component.UIComponent;
+import javax.faces.context.FacesContext;
+import javax.faces.convert.Converter;
+import javax.faces.event.ActionEvent;
+import javax.faces.event.ValueChangeEvent;
+
+import com.code.aon.common.ManagerBeanException;
+import com.code.aon.marketing.dao.IMarketingAlias;
+import com.code.aon.marketing.enumeration.QuestionType;
+import com.code.aon.ql.ast.Expression;
+import com.code.aon.ql.util.ExpressionUtilities;
+import com.code.aon.ui.converter.EnumLocaleConverter;
+import com.code.aon.ui.form.BasicController;
+
+/**
+ * Controller used in the offer maintenance.
+ */
+public class QuestionController extends BasicController {
+	
+	private boolean statusActive;
+	
+	private boolean statusInactive;
+	
+	@Override
+	public void onEditSearch(ActionEvent event) {
+		initializeStatusFilter();
+		super.onEditSearch(event);
+	}
+	
+	private void initializeStatusFilter() {
+		setStatusActive(true);
+		setStatusInactive(true);
+	}
+	
+	private void completeStatusCriteria() throws ManagerBeanException {
+		if (isStatusActive() || isStatusInactive()) {
+			Expression expToAdd = null;
+			String alias = getFieldName(IMarketingAlias.QUESTION_ACTIVE);
+			if ( isStatusActive() ) {
+				expToAdd = ExpressionUtilities.getEqualExpression(alias,
+						Boolean.TRUE);
+			}
+			if ( isStatusInactive() ) {
+				Expression exp  = ExpressionUtilities.getEqualExpression(alias,
+						Boolean.FALSE);
+				if ( expToAdd != null ) {
+					expToAdd = ExpressionUtilities.getOrExpression(expToAdd, exp);
+				} else {
+					expToAdd = exp;
+				}
+			}
+			getCriteria().addExpression(expToAdd);
+		}		
+	}
+	
+	public void completeCriteria() throws ManagerBeanException {
+		completeStatusCriteria();
+	}
+	
+	// -------------------------------------------------
+	// Getters y setters para los campos de la búsqueda.
+	// -------------------------------------------------
+
+	public boolean isStatusActive() {
+		return statusActive;
+	}
+
+	public void setStatusActive(boolean statusActive) {
+		this.statusActive = statusActive;
+	}
+
+	public boolean isStatusInactive() {
+		return statusInactive;
+	}
+
+	public void setStatusInactive(boolean statusInactive) {
+		this.statusInactive = statusInactive;
+	}
+	
+	public void addEqualExpression(ValueChangeEvent event) throws ManagerBeanException {
+		if (event.getNewValue() != null) {
+			String fieldName = getFieldName(event.getComponent().getId());
+			getCriteria().addEqualExpression(fieldName, event.getNewValue());
+		}
+	}
+	
+	public Converter getTypeConverter() {
+		return new EnumLocaleConverter() {
+
+			@Override
+			protected Class getEnumClass(FacesContext ctx, UIComponent comp) {
+				return QuestionType.class;
+			}
+			
+		};
+	}
+	
+}

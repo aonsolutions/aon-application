@@ -69,6 +69,22 @@
 		</navigation-case>
 	</navigation-rule>		
 
+	<!-- =================== Question ================= -->	
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>question_list</from-outcome>
+			<to-view-id>/marketing/question/list.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>question_form</from-outcome>
+			<to-view-id>/marketing/question/form.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>question_search</from-outcome>
+			<to-view-id>/marketing/question/search.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>		
+	
 	<!-- =================== Application Menu Navigation Rules ================= -->
 	<navigation-rule>
 		<navigation-case>
@@ -90,6 +106,10 @@
 		<navigation-case>
 			<from-outcome>seller</from-outcome>
 			<to-view-id>/commercial/seller/search.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>question</from-outcome>
+			<to-view-id>/marketing/question/list.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>
 	

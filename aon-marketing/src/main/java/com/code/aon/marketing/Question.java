@@ -56,6 +56,7 @@ public class Question implements ITransferObject {
      * The empty constructor.
      */
     public Question() {
+    	this.active = true;
     }
 
     /**
