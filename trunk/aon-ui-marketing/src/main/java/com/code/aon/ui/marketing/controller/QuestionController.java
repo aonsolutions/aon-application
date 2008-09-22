@@ -1,5 +1,8 @@
 package com.code.aon.ui.marketing.controller;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 import javax.faces.convert.Converter;
@@ -13,12 +16,15 @@ import com.code.aon.marketing.enumeration.QuestionType;
 import com.code.aon.ql.ast.Expression;
 import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.ui.converter.EnumLocaleConverter;
+import com.code.aon.ui.form.AbstractPojoController;
 import com.code.aon.ui.form.BasicController;
 
 /**
  * Controller used in the offer maintenance.
  */
 public class QuestionController extends BasicController {
+	
+	private static final Logger LOGGER = Logger.getLogger(QuestionController.class.getName());
 	
 	private boolean statusActive;
 	
@@ -50,6 +56,16 @@ public class QuestionController extends BasicController {
 		super.onEditSearch(event);
 	}
 	
+	@Override
+	public void onSearch(ActionEvent event) {
+		try {
+			completeStatusCriteria();
+		} catch (ManagerBeanException e) {
+			LOGGER.log( Level.SEVERE, e.getMessage(), e );
+		}
+		super.onSearch(event);
+	}
+
 	private void initializeStatusFilter() {
 		setStatusActive(true);
 		setStatusInactive(true);
@@ -74,10 +90,6 @@ public class QuestionController extends BasicController {
 			}
 			getCriteria().addExpression(expToAdd);
 		}		
-	}
-	
-	public void completeCriteria() throws ManagerBeanException {
-		completeStatusCriteria();
 	}
 	
 	// -------------------------------------------------
