@@ -32,7 +32,6 @@ public class PorcentajeValidator implements Validator {
 		
 		try {
 			String cId = uiComponent.getId();
-			int index = cId.indexOf( '_' );
 			cId = cId.substring( 0, cId.indexOf( '_' ) );
 			BigDecimal value = (BigDecimal) object;
 			ITransferObject to = AonUtil.getController( cId ).getTo();
