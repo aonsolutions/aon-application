@@ -21,24 +21,29 @@
 		<mapping class="com.code.aon.payroll.tipos.Incidencia"/>
 		<mapping class="com.code.aon.payroll.tipos.Autorizacion"/>				
         <mapping class="com.code.aon.payroll.tipos.Tipovia"/>
+		
 		<!-- COTIZACIONES -->		
 		<mapping class="com.code.aon.payroll.cotizacion.PorcentajeMaestro"/>			
 		<mapping class="com.code.aon.payroll.cotizacion.Porcentaje"/>
 		<mapping class="com.code.aon.payroll.cotizacion.Bonificacion"/>				
-        	<!-- GEOGRAFICAS -->		
+        
+        <!-- GEOGRAFICAS -->		
         <mapping class="com.code.aon.payroll.geograficas.Nacion"/>
         
         <!-- IRPF -->
 		<mapping class="com.code.aon.payroll.irpf.Cuota"/>	
 		
-		 <!-- IRPF FORAL-->			
-         <mapping class="com.code.aon.payroll.irpfforal.CuotaRetencionAlava"/>
+		<!-- IRPF FORAL -->			
+        <mapping class="com.code.aon.payroll.irpfforal.CuotaRetencionAlava"/>
         <mapping class="com.code.aon.payroll.irpfforal.CuotaRetencionVizcaya"/>	
         <mapping class="com.code.aon.payroll.irpfforal.CuotaRetencionNavarra"/>	
         <mapping class="com.code.aon.payroll.irpfforal.CuotaRetencionGuipuzcoa"/>	
            
-        <!-- SISTEMA RED -->			
-        <mapping class="com.code.aon.payroll.auxiliares.Colectivos"/>	   	
+		<!-- SISTEMA RED -->			
+        <mapping class="com.code.aon.payroll.auxiliares.Colectivos"/>
+        
+        <!-- ORGANISMOS Y ENTIDADES -->			
+        <mapping class="com.code.aon.payroll.auxiliares.Admon"/>	
 	</session-factory>
 
 </hibernate-configuration>
