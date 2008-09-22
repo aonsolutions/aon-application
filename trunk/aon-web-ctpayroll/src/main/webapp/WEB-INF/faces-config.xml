@@ -27,9 +27,9 @@
 		<converter-class>com.code.aon.ui.converter.EnumLocaleConverter</converter-class>
 	</converter>
 	<converter>
-		<description>Conversor para los Tipos de Incidencia</description>
-		<converter-id>tiposIncidenciaConverter</converter-id>
-		<converter-class>com.code.aon.ui.payroll.converter.TiposIncidenciaConverter</converter-class>
+		<description>Conversor para checkbox</description>
+		<converter-id>checkboxConverter</converter-id>
+		<converter-class>com.code.aon.ui.payroll.converter.CheckboxConverter</converter-class>
 	</converter>
 
 	<!-- *************** RESOURCE RESOLVER ***************** --> 
