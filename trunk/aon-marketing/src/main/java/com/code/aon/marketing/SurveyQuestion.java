@@ -40,7 +40,7 @@ public class SurveyQuestion implements ITransferObject {
 	private Survey survey;
 
 	@ManyToOne (fetch=FetchType.EAGER)
-    @JoinColumn( name="question", nullable = false, updatable = false )	
+    @JoinColumn( name="question", nullable = false )	
 	@ForeignKey(name = "FK_SURVERY_QUESTION_QUESTION")
 	private Question question;
 	

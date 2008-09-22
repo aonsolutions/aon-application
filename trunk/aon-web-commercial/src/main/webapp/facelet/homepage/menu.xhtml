@@ -44,7 +44,7 @@
 			</aon:dropDownMenu>
 			<aon:dropDownMenu value="#{marketingBundle.aon_marketing}">
 				<aon:menuItem value="#{marketingBundle.aon_marketing_surveis}" 
-					action="survey" disabled="true" />
+					action="survey" actionListener="#{survey.onSearch}" />
 				<aon:menuItem value="#{marketingBundle.aon_marketing_questions}"
 					action="question" actionListener="#{question.onSearch}" />
 				<aon:menuItem value="#{marketingBundle.aon_marketing_survey_responses}"
