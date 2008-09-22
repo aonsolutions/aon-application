@@ -134,6 +134,24 @@
 			<to-view-id>/facelet/auxiliares/irpfforal/CuotaRetencionAlava/grid.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>CuotaRetencionGuipuzcoa</from-outcome>
+			<to-view-id>/facelet/auxiliares/irpfforal/CuotaRetencionGuipuzcoa/grid.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>CuotaRetencionNavarra</from-outcome>
+			<to-view-id>/facelet/auxiliares/irpfforal/CuotaRetencionNavarra/grid.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>CuotaRetencionVizcaya</from-outcome>
+			<to-view-id>/facelet/auxiliares/irpfforal/CuotaRetencionVizcaya/grid.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>
 	
     <navigation-rule>
 		<navigation-case>
