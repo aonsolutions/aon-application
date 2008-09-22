@@ -960,13 +960,13 @@ color:#000;
 	}
 .aon-search-commandButton-left {
 	background:transparent url(images/aon-content/aon-search-commandButton-left.png) scroll left center no-repeat;
-	padding:3px 0 3px 6px;
+	padding:5px 0 5px 6px;
 	margin:1em 0 0.5em 0;
 }
 .aon-search-commandButton-right{		
 	display:inline;
 	background:transparent url(images/aon-content/aon-search-commandButton-right.png) scroll right center no-repeat;
-	padding:3px 1em 3px 0;
+	padding:5px 1em 5px 0;
 	}
 .aon-search-commandButton-right .aon-commandButton{
 	border:0 !important;
