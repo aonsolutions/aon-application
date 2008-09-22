@@ -36,7 +36,6 @@ public class PorcentajeValidator implements Validator {
 			BigDecimal value = (BigDecimal) object;
 			ITransferObject to = AonUtil.getController( cId ).getTo();
 			
-			
 			if(to == null){
 		    	FacesMessage fm = AonUtil.getMessage( ctx, "aon_payroll_null_to", null );
 				throw new ValidatorException( fm );
@@ -44,6 +43,10 @@ public class PorcentajeValidator implements Validator {
 			if ( value == null )
 				PropertyUtils.setProperty( to, cId, new BigDecimal( 0d ) );
 		    if ( value.doubleValue() < 0.00) {
+		    	FacesMessage fm = AonUtil.getMessage( ctx, "aon_payroll_1433", null );
+				throw new ValidatorException( fm );
+		    }
+		    if ( value.doubleValue() > 100) {
 		    	FacesMessage fm = AonUtil.getMessage( ctx, "aon_payroll_1433", null );
 				throw new ValidatorException( fm );
 		    }
