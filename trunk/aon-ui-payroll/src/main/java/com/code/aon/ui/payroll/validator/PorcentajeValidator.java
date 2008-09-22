@@ -33,7 +33,7 @@ public class PorcentajeValidator implements Validator {
 		try {
 			String cId = uiComponent.getId();
 			int index = cId.indexOf( '_' );
-			cId = cId.substring( 0, index );
+			cId = cId.substring( 0, cId.indexOf( '_' ) );
 			BigDecimal value = (BigDecimal) object;
 			ITransferObject to = AonUtil.getController( cId ).getTo();
 			
@@ -42,7 +42,6 @@ public class PorcentajeValidator implements Validator {
 		    	FacesMessage fm = AonUtil.getMessage( ctx, "aon_payroll_null_to", null );
 				throw new ValidatorException( fm );
 		    }
-			cId = cId.substring( 0, cId.indexOf( '_' ) );
 			if ( value == null )
 				PropertyUtils.setProperty( to, cId, new BigDecimal( 0d ) );
 		    if ( value.doubleValue() < 0.00) {
