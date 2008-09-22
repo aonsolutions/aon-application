@@ -14,6 +14,13 @@
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
 
+	<!-- ************ COMMUNICATION CENTER ************** -->
+	<managed-bean>
+		<managed-bean-name>communicationCenter</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.marketing.controller.CommunicationCenterController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
+
 	<!-- ************ COMMERCIAL SEGMENT ************** -->
 	<managed-bean>
 		<managed-bean-name>commercialSegment</managed-bean-name>

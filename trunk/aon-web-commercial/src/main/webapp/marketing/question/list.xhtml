@@ -48,7 +48,7 @@
 
 				<aon:dataTable id="questionData" value="#{question.model}"
 					var="to" rows="20" rendered="#{question.model.rowCount > 0}"
-					columnClasses="aon-editDataTable-numberColumn aon-width-70, aon-editDataTable-textColumn,
+					columnClasses="aon-editDataTable-numberColumn aon-width-70, aon-editDataTable-textColumn aon-width-150,
 						aon-editDataTable-textColumn, aon-editDataTable-iconColumn">
 
 					<aon:rowSelector action="question_form" actionListener="#{question.onSelect}" />
