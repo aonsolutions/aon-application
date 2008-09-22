@@ -161,5 +161,39 @@
 			<param id="companyName" value="#{payrollController.getCompanyName}" />
 		</params>
 	</report>
+	
+	   <report id="CuotaRetencionNavarraList" description="Listado de Cuotas de Retencion Navarra">
+		<template path="/com/code/aon/ui/payroll/report/CuotaRetencionNavarraList.jasper" />
+		<bean key="com.code.aon.payroll.irpfforal.CuotaRetencionNavarra" />
+		<criteria provider="#{cuotaRetencionNavarra}" />
+		<params>
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.payroll.i18n.messages" />
+			<param id="logoImageFile" value="#{payrollController.getLogo}" />
+			<param id="companyName" value="#{payrollController.getCompanyName}" />
+		</params>
+	</report>
+	
+	   <report id="CuotaRetencionGuipuzcoaList" description="Listado de Cuotas de Retencion Guipuzcoa">
+		<template path="/com/code/aon/ui/payroll/report/CuotaRetencionGuipuzcoaList.jasper" />
+		<bean key="com.code.aon.payroll.irpfforal.CuotaRetencionGuipuzcoa" />
+		<criteria provider="#{cuotaRetencionGuipuzcoa}" />
+		<params>
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.payroll.i18n.messages" />
+			<param id="logoImageFile" value="#{payrollController.getLogo}" />
+			<param id="companyName" value="#{payrollController.getCompanyName}" />
+		</params>
+	</report>
+	
+	   <report id="CuotaRetencionVizcayaList" description="Listado de Cuotas de Retencion Vizcaya">
+		<template path="/com/code/aon/ui/payroll/report/CuotaRetencionVizcayaList.jasper" />
+		<bean key="com.code.aon.payroll.irpfforal.CuotaRetencionVizcaya" />
+		<criteria provider="#{cuotaRetencionVizcaya}" />
+		<params>
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.payroll.i18n.messages" />
+			<param id="logoImageFile" value="#{payrollController.getLogo}" />
+			<param id="companyName" value="#{payrollController.getCompanyName}" />
+		</params>
+	</report>
+	
 
 </report-config>
