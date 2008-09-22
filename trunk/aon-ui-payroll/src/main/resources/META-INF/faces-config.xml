@@ -241,7 +241,48 @@
 			<value>com.code.aon.payroll.irpfforal.CuotaRetencionAlava</value>
 		</managed-property>
 	</managed-bean>
-
+	<!-- ************* Cuote retencion Navarra***************** -->
+	<managed-bean>
+		<managed-bean-name>cuotaRetencionNavarra</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.form.BasicController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.payroll.irpfforal.CuotaRetencionNavarra</value>
+		</managed-property>
+	</managed-bean>
+		<!-- ************* Cuote retencion Guipuzcoa***************** -->
+	<managed-bean>
+		<managed-bean-name>cuotaRetencionGuipuzcoa</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.form.BasicController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.payroll.irpfforal.CuotaRetencionGuipuzcoa</value>
+		</managed-property>
+	</managed-bean>
+		<!-- ************* Cuote retencion Vizcaya***************** -->
+	<managed-bean>
+		<managed-bean-name>cuotaRetencionVizcaya</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.form.BasicController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.payroll.irpfforal.CuotaRetencionVizcaya</value>
+		</managed-property>
+	</managed-bean>
 	<!-- ************* PORCENTAJE DE COTIZACIÓN ***************** -->
 	<managed-bean>
 		<managed-bean-name>porcentajeMaestro</managed-bean-name>
