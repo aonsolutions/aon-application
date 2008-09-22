@@ -7,6 +7,7 @@ import javax.faces.event.ActionEvent;
 import javax.faces.event.ValueChangeEvent;
 
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.marketing.Question;
 import com.code.aon.marketing.dao.IMarketingAlias;
 import com.code.aon.marketing.enumeration.QuestionType;
 import com.code.aon.ql.ast.Expression;
@@ -22,6 +23,26 @@ public class QuestionController extends BasicController {
 	private boolean statusActive;
 	
 	private boolean statusInactive;
+	
+	public Question getQuestion() {
+		return (Question) getTo();
+	}
+	
+	public boolean isBoolean() {
+		return getQuestion().getType() == QuestionType.BOOLEAN;
+	}
+
+	public boolean isDate() {
+		return getQuestion().getType() == QuestionType.DATE;
+	}
+
+	public boolean isText() {
+		return getQuestion().getType() == QuestionType.TEXT;
+	}
+
+	public boolean isNumber() {
+		return getQuestion().getType() == QuestionType.NUMBER;
+	}
 	
 	@Override
 	public void onEditSearch(ActionEvent event) {
