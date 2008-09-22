@@ -170,6 +170,10 @@
     	<attribute name="event" value="onclick" />
 	</component>
 	
+	<component localName="menuGroup">
+		<attribute name="styleClass" value="aon-menuGroup-styleClass" /> 
+	</component>
+	
 	<component localName="menuItem">
 		<attribute name="styleClass" value="aon-menuItem-styleClass" /> 
 		<attribute name="iconClass" value="aon-menuItem-iconClass" />
