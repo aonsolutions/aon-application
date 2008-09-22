@@ -13,14 +13,14 @@
 
 	<ui:define name="content">
 
-		<aon:form id="questionList">
+		<aon:form id="surveyList">
 		
 			<aon:div styleClass="aon-finding-title-toolbar">
 				<aon:panelGrid id="buttonsGrid" columns="3" dir="true"
 					columnClasses="aon-finding-title,aon-finding-subtitle,aon-finding-toolbar">
 
 					<aon:div styleClass="aon-finding-title-internal">
-						<aon:outputText value="#{marketingBundle.aon_marketing_questions}" />
+						<aon:outputText value="#{marketingBundle.aon_marketing_surveis}" />
 					</aon:div>
 
 					<aon:div styleClass="aon-finding-subtitle-internal">
@@ -30,11 +30,11 @@
 					<!-- start toolbar navigation -->
 					<aon:div styleClass="aon-finding-toolbar-item-group">
 						<aon:commandButton id="search" value="#{bundle.aon_search}"
-							action="question_search" actionListener="#{question.onEditSearch}"
+							action="survey_search" actionListener="#{survey.onEditSearch}"
 							styleClass="aon-finding-toolbar-item aon-icon-search"
 							accesskey="#{bundle.aon_key_search}" />				
 						<aon:commandButton id="reset" value="#{bundle.aon_reset}"
-							action="question_form" actionListener="#{question.onReset}"
+							action="survey_form" actionListener="#{survey.onReset}"
 							styleClass="aon-finding-toolbar-item aon-icon-new"
 							accesskey="#{bundle.aon_key_new}" />
 					</aon:div>
@@ -46,12 +46,12 @@
 			<!--  aon-region-body -->
 			<aon:div styleClass="aon-scroll-area">
 
-				<aon:dataTable id="questionData" value="#{question.model}"
-					var="to" rows="20" rendered="#{question.model.rowCount > 0}"
+				<aon:dataTable id="surveyData" value="#{survey.model}"
+					var="to" rows="20" rendered="#{survey.model.rowCount > 0}"
 					columnClasses="aon-editDataTable-numberColumn aon-width-70, aon-editDataTable-textColumn aon-width-150,
 						aon-editDataTable-textColumn, aon-editDataTable-iconColumn">
 
-					<aon:rowSelector action="question_form" actionListener="#{question.onSelect}" />
+					<aon:rowSelector action="survey_form" actionListener="#{survey.onSelect}" />
 					
 					<aon:column>
 						<f:facet name="header">
@@ -62,16 +62,19 @@
 
  					<aon:column>
 						<f:facet name="header">
-							<aon:outputText value="#{bundle.aon_type}" />
+							<aon:outputText value="#{bundle.aon_date}" />
 						</f:facet>
-						<aon:outputText value="#{to.type}"/>
+						<aon:outputText value="#{to.creationDate}" >
+							<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+							timeZone="#{timeZoneController.timeZoneId}" />
+						</aon:outputText>					
 					</aon:column>
 
  					<aon:column>
 						<f:facet name="header">
-							<aon:outputText value="#{marketingBundle.aon_marketing_question}" />
+							<aon:outputText value="#{bundle.aon_description}" />
 						</f:facet>
-						<aon:outputText value="#{question.textAbbreviated}"/>
+						<aon:outputText value="#{to.description}"/>
 					</aon:column>
 
  					<aon:column>
@@ -85,7 +88,7 @@
  
 				</aon:dataTable>
 
-				<aon:dataScroller2 for="questionData" showNote="true" />
+				<aon:dataScroller2 for="surveyData" showNote="true" />
 
 			</aon:div>
 		</aon:form>

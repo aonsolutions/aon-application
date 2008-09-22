@@ -82,4 +82,23 @@
 		</managed-property>
 	</managed-bean>
 
+	<!-- ************ ITEM LOOKUP ************** -->
+	<managed-bean>
+		<managed-bean-name>questionLookup</managed-bean-name>
+		<managed-bean-class>com.code.aon.faces.controller.RichLookupBean</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>questionLookup</value>
+		</managed-property>
+		<managed-property>
+			<property-name>foreignPojo</property-name>
+			<value>com.code.aon.marketing.Question</value>
+		</managed-property>
+		<managed-property>
+			<property-name>listPagePath</property-name>
+			<value>/marketing/question/lookup/list.xhtml</value>
+		</managed-property>
+	</managed-bean>
+
 </faces-config>

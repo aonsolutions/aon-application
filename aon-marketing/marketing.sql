@@ -21,7 +21,7 @@ CREATE TABLE `question_value` (
 CREATE TABLE `survey` (
   `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico de la Campaña',
   `active` tinyint(1) NOT NULL COMMENT 'Indica si la Campaña esta activa o inactiva',
-  `createDate` datetime NOT NULL COMMENT 'Fecha de cracion de la Campaña',
+  `creationDate` datetime NOT NULL COMMENT 'Fecha de cracion de la Campaña',
   `description` varchar(64) collate latin1_spanish_ci NOT NULL COMMENT 'Descripción de la Campaña',
   PRIMARY KEY  (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci ROW_FORMAT=COMPACT COMMENT='Survey';

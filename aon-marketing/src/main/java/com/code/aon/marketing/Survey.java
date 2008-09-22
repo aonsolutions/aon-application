@@ -56,6 +56,8 @@ public class Survey implements ITransferObject {
      * The empty constructor.
      */
     public Survey() {
+    	setCreationDate( new Date() );
+    	setActive( true );
     }
 
     /**
