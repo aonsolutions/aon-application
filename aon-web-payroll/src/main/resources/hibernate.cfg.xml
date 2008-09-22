@@ -44,17 +44,16 @@
 		<mapping class="com.code.aon.payroll.irpf.Cuota"/>
         
 		<!-- IRPF FORAL-->		
-
         <mapping class="com.code.aon.payroll.irpfforal.CuotaRetencionAlava"/>
         <mapping class="com.code.aon.payroll.irpfforal.CuotaRetencionVizcaya"/>	
         <mapping class="com.code.aon.payroll.irpfforal.CuotaRetencionNavarra"/>	
         <mapping class="com.code.aon.payroll.irpfforal.CuotaRetencionGuipuzcoa"/>			
 
-        <mapping class="com.code.aon.payroll.irpfforal.CuotaRetencionAlava"/>		
-        
         <!-- SISTEMA RED -->			
-        <mapping class="com.code.aon.payroll.auxiliares.Colectivos"/>			
-
+        <mapping class="com.code.aon.payroll.auxiliares.Colectivos"/>	
+        
+         <!-- ORGANISMOS Y ENTIDADES -->			
+        <mapping class="com.code.aon.payroll.auxiliares.Admon"/>			
 	</session-factory>
 
 </hibernate-configuration>

@@ -1,4 +1,4 @@
-package com.code.aon.payroll.organismos_entidades;
+package com.code.aon.payroll.auxiliares;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
