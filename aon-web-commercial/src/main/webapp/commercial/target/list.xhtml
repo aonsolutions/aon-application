@@ -48,7 +48,7 @@
 
 				<aon:dataTable id="targetData" value="#{target.model}"
 					var="to" rows="20" rendered="#{target.model.rowCount > 0}"
-					columnClasses="aon-editDataTable-numberColumn, aon-editDataTable-textColumn,
+					columnClasses="aon-editDataTable-numberColumn aon-width-70, aon-editDataTable-textColumn,
 						aon-editDataTable-textColumn, aon-editDataTable-textColumn, aon-editDataTable-textColumn">
 
 					<aon:rowSelector action="target_form" actionListener="#{target.onSelect}" />

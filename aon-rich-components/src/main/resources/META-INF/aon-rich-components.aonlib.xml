@@ -175,6 +175,7 @@
 		<attribute name="iconClass" value="aon-menuItem-iconClass" />
 		<attribute name="selectClass" value="aon-menuItem-selectClass" /> 				
 		<attribute name="submitMode" value="ajax" />       
+		<attribute name="immediate" value="true" type="1" />
 	</component>
 	
 	<component localName="panelCollapsible">
