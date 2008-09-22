@@ -82,7 +82,7 @@
 					<aon:outputLabel for="Question_type"
 						value="#{bundle.aon_type}" />
 					<aon:selectOneMenu id="Question_type" required="true"
-						value="#{question.to.type}">
+						value="#{question.to.type}" disabled="#{!question.new}">
 						<f:selectItem value="#{null}" itemLabel="    " />
 						<f:selectItems value="#{marketingCollections.questionTypes}" />
 					</aon:selectOneMenu>
@@ -108,15 +108,13 @@
 
 				</aon:panelGrid>
 
-				<aon:div styleClass="aon-form-group" rendered="#{!question.new}">
+				<aon:div styleClass="aon-form-group" rendered="#{(!question.new) and (question.to.type != 'INFO')}">
 					<aon:div styleClass="aon-form-group-title">
 						<aon:div styleClass="aon-form-group-title-internal">
 							<aon:outputLabel for="questionValueData" value="#{marketingBundle.aon_question_values}" />
 						</aon:div>
 					</aon:div>
-					<!-- 
 					<ui:include src="/marketing/question/value/grid.xhtml" />
-					-->
 				</aon:div>
 
 			</aon:div>
