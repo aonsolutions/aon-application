@@ -30,17 +30,19 @@ public class PorcentajeValidator implements Validator {
 			throws ValidatorException {
 		FacesContext ctx = FacesContext.getCurrentInstance();
 		
-		/*try {
+		try {
 			String cId = uiComponent.getId();
-			cId = cId.substring( 0, cId.indexOf( '_' ) );
+			int index = cId.indexOf( '_' );
+			cId = cId.substring( 0, index );
 			BigDecimal value = (BigDecimal) object;
 			ITransferObject to = AonUtil.getController( cId ).getTo();
 			
 			
 			if(to == null){
-		    	FacesMessage fm = AonUtil.getMessage( ctx, "aon_payroll_1401", null );
+		    	FacesMessage fm = AonUtil.getMessage( ctx, "aon_payroll_null_to", null );
 				throw new ValidatorException( fm );
 		    }
+			cId = cId.substring( 0, cId.indexOf( '_' ) );
 			if ( value == null )
 				PropertyUtils.setProperty( to, cId, new BigDecimal( 0d ) );
 		    if ( value.doubleValue() < 0.00) {
@@ -53,7 +55,7 @@ public class PorcentajeValidator implements Validator {
 			throw new ValidatorException( AonUtil.getMessage( ctx, e.getMessage(), null ) );
 		} catch (NoSuchMethodException e) {
 			throw new ValidatorException( AonUtil.getMessage( ctx, e.getMessage(), null ) );
-		}*/
+		}
 		
 	}
 
