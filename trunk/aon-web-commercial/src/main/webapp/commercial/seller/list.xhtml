@@ -48,7 +48,7 @@
 
 				<aon:dataTable id="sellerData" value="#{seller.model}"
 					var="to" rows="20" rendered="#{seller.model.rowCount > 0}"
-					columnClasses="aon-editDataTable-numberColumn, aon-editDataTable-textColumn,
+					columnClasses="aon-editDataTable-numberColumn aon-width-70, aon-editDataTable-textColumn,
 						aon-editDataTable-textColumn, aon-editDataTable-textColumn, aon-editDataTable-textColumn">
 
 					<aon:rowSelector action="seller_form" actionListener="#{seller.onSelect}" />
