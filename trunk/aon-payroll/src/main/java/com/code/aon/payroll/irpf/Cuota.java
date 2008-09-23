@@ -2,7 +2,6 @@ package com.code.aon.payroll.irpf;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.Id;
 import javax.persistence.Table;
 
 import com.code.aon.common.ITransferObject;
@@ -15,14 +14,12 @@ import javax.persistence.EmbeddedId;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
-
 /**
  * I.R.P.F.: Cuotas de Retención
  * 
  * @author eagirrezabal
  *
  */
-
 
 @Entity
 @Table(name="cuota")
