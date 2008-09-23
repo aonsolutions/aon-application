@@ -48,7 +48,7 @@
         <mapping class="com.code.aon.payroll.irpfforal.CuotaRetencionVizcaya"/>	
         <mapping class="com.code.aon.payroll.irpfforal.CuotaRetencionNavarra"/>	
         <mapping class="com.code.aon.payroll.irpfforal.CuotaRetencionGuipuzcoa"/>			
-         <mapping class="com.code.aon.payroll.irpfforal.MinoracionesAlava"/> 
+        <!--   <mapping class="com.code.aon.payroll.irpfforal.MinoracionesAlava"/> -->
        	
         <!-- SISTEMA RED -->			
         <mapping class="com.code.aon.payroll.auxiliares.Colectivos"/>	
