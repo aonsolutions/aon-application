@@ -1257,6 +1257,7 @@ color:#000;
  	font-weight:bold;
 	cursor:pointer;
  	display:block;
+	height: 16px;
 	}
 /* cada una de los opciones del desplegable, siempre que de ellas no dependa otro desplegable*/
 .aon-dropDownMenu-item{
