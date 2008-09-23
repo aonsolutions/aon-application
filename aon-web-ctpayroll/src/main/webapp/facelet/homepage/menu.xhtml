@@ -1,3 +1,4 @@
+
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml"
 	xmlns:ui="http://java.sun.com/jsf/facelets"
@@ -161,6 +162,13 @@
 					<aon:menuItem value="#{menuBundle.auxiliares_cotizacion__elemcotizacion}" disabled="true" />
 					<aon:menuItem value="#{menuBundle.auxiliares_cotizacion__ocupacion}" disabled="true" />
 					<aon:menuItem value="#{menuBundle.auxiliares_cotizacion__cnae}" disabled="true" />
+
+					<aon:menuItem value="#{menuBundle.auxiliares_cotizacion__tipboni}" action="cotizacion_bonificacion" />
+
+					<aon:menuItem value="#{menuBundle.auxiliares_cotizacion__tipboni}" disabled="true" />
+					<!-- aon:menuItem value="#{menuBundle.auxiliares_cotizacion__tipboni}" action="cotizacion_bonificacion" /-->
+
+					<aon:menuItem value="#{menuBundle.auxiliares_cotizacion__epigrafes}" disabled="true" />
 					<aon:menuItem value="#{menuBundle.auxiliares_cotizacion__tipboni}" action="cotizacion_bonificacion" />
 				</aon:menuGroup>
 				<aon:menuGroup value="#{menuBundle.auxiliares_convenios}">
@@ -197,12 +205,12 @@
 				</aon:menuGroup>
 				<aon:menuGroup value="#{menuBundle.auxiliares_irpf_foral}">
 					<aon:menuItem value="#{menuBundle.auxiliares_irpf_foral__cuota_01}" action="CuotaRetencionAlava" />
-					<aon:menuItem value="#{menuBundle.auxiliares_irpf_foral__minor_01}" disabled="true" />
-					<aon:menuItem value="#{menuBundle.auxiliares_irpf_foral__cuota_20}" disabled="true" />
+					<aon:menuItem value="#{menuBundle.auxiliares_irpf_foral__minor_01}" action="MinoracionesAlava" />
+					<aon:menuItem value="#{menuBundle.auxiliares_irpf_foral__cuota_20}" action="CuotaRetencionGuipuzcoa"  />
 					<aon:menuItem value="#{menuBundle.auxiliares_irpf_foral__minor_20}" disabled="true" />
-					<aon:menuItem value="#{menuBundle.auxiliares_irpf_foral__cuota_48}" disabled="true" />
+					<aon:menuItem value="#{menuBundle.auxiliares_irpf_foral__cuota_48}" action="CuotaRetencionVizcaya" />
 					<aon:menuItem value="#{menuBundle.auxiliares_irpf_foral__minor_48}" disabled="true" />
-					<aon:menuItem value="#{menuBundle.auxiliares_irpf_foral__cuota_31}" disabled="true" />
+					<aon:menuItem value="#{menuBundle.auxiliares_irpf_foral__cuota_31}" action="CuotaRetencionNavarra"  />
 					<aon:menuItem value="#{menuBundle.auxiliares_irpf_foral__minor_31}" disabled="true" />
 				</aon:menuGroup>
 				<aon:menuGroup value="#{menuBundle.auxiliares_sistema_red}">

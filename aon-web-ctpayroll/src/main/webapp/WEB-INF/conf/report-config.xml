@@ -194,8 +194,17 @@
 			<param id="companyName" value="#{payrollController.getCompanyName}" />
 		</params>
 	</report>
-	
-	<!--  *********  Impresion a PDF de las Bonificaciones y retenciones  ********* -->
+	<report id="MinoracionesAlavaList" description="Listado de Minoraciones de Alava">
+		<template path="/com/code/aon/ui/payroll/report/MinoracionesAlavaList.jasper" />
+		<bean key="com.code.aon.payroll.irpfforal.MinoracionesAlava" />
+		<criteria provider="#{minoracionesAlava}" />
+		<params>
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.payroll.i18n.messages" />
+			<param id="logoImageFile" value="#{payrollController.getLogo}" />
+			<param id="companyName" value="#{payrollController.getCompanyName}" />
+		</params>
+	</report>
+    <!--  *********  Impresion a PDF de las Bonificaciones y retenciones  ********* -->
 	<report id="cotizacionBonificacionesList" description="Listado de Bonificaciones y retenciones">
 		<template path="/com/code/aon/ui/payroll/report/cotizacionBonificacionesList.jasper" />
 		<bean key="com.code.aon.payroll.cotizacion.Bonificacion" />
@@ -206,5 +215,4 @@
 			<param id="companyName" value="#{payrollController.getCompanyName}" />
 		</params>
 	</report>
-
 </report-config>

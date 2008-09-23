@@ -118,5 +118,11 @@
 		<validator-id>porcentajeValidator</validator-id>
 		<validator-class>com.code.aon.ui.payroll.validator.PorcentajeValidator</validator-class>
 	</validator>
+	
+		<validator>
+		<description>Validador para los solapes</description>
+		<validator-id>overlapValidator</validator-id>
+		<validator-class>com.code.aon.ui.payroll.validator.overlapValidator</validator-class>
+	</validator>
 
 </faces-config>
