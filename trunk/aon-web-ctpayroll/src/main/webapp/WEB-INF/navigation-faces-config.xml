@@ -37,6 +37,16 @@
 		</navigation-case>
 	</navigation-rule>
 
+	<!-- =================== Auxiliares/Tipos ================= -->
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>tipos_documento_search</from-outcome>
+			<to-view-id>
+				/facelet/auxiliares/tipos/documento/search.xhtml
+			</to-view-id>
+		</navigation-case>
+	</navigation-rule>
+
 	<!-- =================== Application Menu Navigation Rules ================= -->	
 	<navigation-rule>
 		<navigation-case>

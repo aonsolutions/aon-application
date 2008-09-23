@@ -33,6 +33,10 @@
 								actionListener="#{tiposDocumento.onReset}" rendered="#{!tiposDocumento.new}"
 								styleClass="aon-finding-toolbar-item aon-icon-reset"
 								accesskey="#{bundle.aon_key_new}"/>
+							<aon:commandButton id="search" value="#{bundle.aon_search}"
+								action="tipos_documento_search" actionListener="#{tiposDocumento.onEditSearch}"
+								styleClass="aon-finding-toolbar-item aon-icon-search"
+								accesskey="#{bundle.aon_key_search}" />				
 							<a4j:commandButton id="save"
 								value="#{bundle.aon_save}" rendered="#{tiposDocumento.to!=null or tiposDocumento.new}"
 								styleClass="aon-finding-toolbar-item aon-icon-accept"
@@ -67,7 +71,8 @@
 	 			<aon:div styleClass="aon-scroll-area">
 					
 					<aon:editDataTable id="documentoData" var="to" rows="20"
-						rendered="#{(tiposDocumento.model.rowCount > 0) or (tiposDocumento.new)}" value="#{tiposDocumento.model}"
+						rendered="#{(tiposDocumento.model.rowCount > 0) or (tiposDocumento.new)}" 
+						value="#{tiposDocumento.model}"
 						columnClasses="aon-editDataTable-iconColumn, aon-editDataTable-numberColumn, aon-editDataTable-textColumn, aon-editDataTable-buttonsColumn">
 								
 						<aon:rowSelector toggleOnClick="#{tiposDocumento.to == null}"

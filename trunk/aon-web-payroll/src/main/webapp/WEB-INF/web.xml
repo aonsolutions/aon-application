@@ -36,12 +36,12 @@
 		<param-name>facelets.SKIP_COMMENTS</param-name>
 		<param-value>true</param-value>
 	</context-param>
-	<!-- 
+ 
 	<context-param>
 		<param-name>facelets.REFRESH_PERIOD</param-name>
 		<param-value>-1</param-value>
 	</context-param>
-	-->
+
 	<context-param>
 		<param-name>facelets.BUFFER_SIZE</param-name>
 		<param-value>500000</param-value>
@@ -91,6 +91,7 @@
 		<param-name>org.ajax4jsf.VIEW_HANDLERS</param-name>
 		<param-value>com.sun.facelets.FaceletViewHandler</param-value>
 	</context-param>
+ 
 	<context-param>
 		<description>
 			Define que los recursos no expiren en 100 dias
@@ -98,6 +99,7 @@
 		<param-name>org.ajax4jsf.DEFAULT_EXPIRE</param-name>
 		<param-value>8640000</param-value>
 	</context-param>
+
 	<context-param>
 		<param-name>org.ajax4jsf.RESOURCE_URI_PREFIX</param-name>
 		<param-value>richFaces3.2.1/</param-value>
