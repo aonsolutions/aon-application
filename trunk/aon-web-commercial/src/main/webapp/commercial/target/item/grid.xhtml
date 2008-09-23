@@ -36,16 +36,16 @@
 				<aon:outputText value="#{to.item.product.name} #{to.item.detail}"
 					rendered="#{to!=targetItem.to}" />
 				<aon:div styleClass="aon-lookup" rendered="#{to==targetItem.to}">
-					<aon:lookupInputText id="TargetItem_item_id"
+					<aon:lookupInputText 
 						lookup="#{itemLookup}" required="true"
 						reRender="TargetItem_item_detail"
-						value="#{to.item.id}" size="5">
+						value="#{targetItem.to.item.id}" size="5">
 					</aon:lookupInputText>
-					<aon:lookupButton id="TargetItem_item_id_lookup"
+					<aon:lookupButton
 						windowTitle="#{appBundle.aon_lookup_item}" actionType="search"
-						selectReRender="TargetItem_item_id,TargetItem_item_detail"
+						selectReRender="targetItemData"
 						lookup="#{itemLookup}" minHeight="460" minWidth="650"
-						property="#{to.item}">
+						property="#{targetItem.to.item}">
 					</aon:lookupButton>
 					<aon:inputText id="TargetItem_item_detail"
 						value="#{(to.item.product.name!=null)?(to.item.product.name):('')}"

@@ -55,7 +55,7 @@
 				<aon:div styleClass="aon-lookup" rendered="#{to==surveyQuestion.to}">
 					<aon:lookupInputText
 						lookup="#{questionLookup}" required="true"
-						reRender="surveyQuestionData"
+						reRender="SurveyQuestion_question_detail"
 						value="#{surveyQuestion.to.question.id}" size="5">
 					</aon:lookupInputText>
 					<aon:lookupButton windowTitle="#{marketingBundle.aon_lookup_question}" 
@@ -63,7 +63,7 @@
 						lookup="#{questionLookup}" minHeight="460" minWidth="650"
 						property="#{surveyQuestion.to.question}">
 					</aon:lookupButton>
-					<aon:inputText
+					<aon:inputText id="SurveyQuestion_question_detail"
 						value="#{surveyQuestion.to.question.text}"
 						size="80" disabled="true" />
 				</aon:div>
