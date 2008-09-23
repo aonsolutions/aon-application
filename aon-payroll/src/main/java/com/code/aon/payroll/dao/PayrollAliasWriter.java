@@ -11,6 +11,7 @@ import com.code.aon.payroll.cotizacion.Porcentaje;
 import com.code.aon.payroll.cotizacion.PorcentajeMaestro;
 import com.code.aon.payroll.geograficas.Nacion;
 import com.code.aon.payroll.irpf.Cuota;
+import com.code.aon.payroll.irpf.Exclusion;
 import com.code.aon.payroll.irpfforal.CuotaRetencionAlava;
 import com.code.aon.payroll.tipos.Autorizacion;
 import com.code.aon.payroll.tipos.Documento;
@@ -39,7 +40,8 @@ public class PayrollAliasWriter {
 				Nacion.class.getName(), 
 				CuotaRetencionAlava.class.getName(),
 				Admon.class.getName(),
-				Colectivos.class.getName()};
+				Colectivos.class.getName(),
+				Exclusion.class.getName()};
 		AliasWriter writer = new AliasWriter("com.code.aon.payroll.dao");
 		writer.write(classes, file);
 		System.out.println( file.getAbsolutePath() );

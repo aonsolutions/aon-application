@@ -99,14 +99,12 @@
 							</f:facet>
 							<aon:outputText value="#{to.id.numTramo}" rendered="#{to!=cuotas.to}" />
 							<aon:inputText styleClass="aon-form-input-text " required="true"
-								requiredMessage="numTramo"
 								rendered="#{to==cuotas.to}" size="2"
 								value="#{cuotas.to.id.numTramo}" maxlength="2" />
 							<f:facet name="footer">
 								<aon:inputText styleClass="aon-form-input-text" required="true"
 									rendered="#{cuotas.new}" size="2"
-									value="#{cuotas.to.id.numTramo}" maxlength="2" 
-									requiredMessage="numTramo" />
+									value="#{cuotas.to.id.numTramo}" maxlength="2" />
 							</f:facet>
 						</aon:column>
 						
@@ -119,14 +117,12 @@
 									timeZone="#{timeZoneController.timeZoneId}" />
 							</aon:outputText>
 							<aon:selectInputDate required="true"
-								requiredMessage="fecini"
 								rendered="#{to==cuotas.to}"
 								value="#{cuotas.to.id.fecini}"
 								renderAsPopup="true" popupDateFormat="#{appBundle.aon_date_pattern}">
 							</aon:selectInputDate>
 							<f:facet name="footer">
 								<aon:selectInputDate required="true"
-									requiredMessage="fecini"
 									rendered="#{cuotas.new}" 
 									value="#{cuotas.to.id.fecini}" 
 									renderAsPopup="true" popupDateFormat="#{appBundle.aon_date_pattern}">
@@ -144,14 +140,12 @@
 									timeZone="#{timeZoneController.timeZoneId}" />
 							</aon:outputText>
 							<aon:selectInputDate required="true"
-								requiredMessage="fecfin"
 								rendered="#{to==cuotas.to}"
 								value="#{cuotas.to.fecfin}"
 								renderAsPopup="true" popupDateFormat="#{appBundle.aon_date_pattern}">
 							</aon:selectInputDate>
 							<f:facet name="footer">
 								<aon:selectInputDate required="true"
-									requiredMessage="fecfin"
 									rendered="#{cuotas.new}" 
 									value="#{cuotas.to.fecfin}" 
 									renderAsPopup="true" popupDateFormat="#{appBundle.aon_date_pattern}">
@@ -167,12 +161,10 @@
 								<f:convertNumber type="number" pattern="###,###.###" />
 							</aon:outputText>
 							<aon:inputText styleClass="aon-form-input-text " required="true"
-								requiredMessage="hasta"
 								rendered="#{to==cuotas.to}" size="11"
 								value="#{cuotas.to.hasta}" maxlength="11" />
 							<f:facet name="footer">
 								<aon:inputText styleClass="aon-form-input-text" required="true"
-									requiredMessage="hasta"
 									rendered="#{cuotas.new}" size="11"
 									value="#{cuotas.to.hasta}" maxlength="11" />
 							</f:facet>
