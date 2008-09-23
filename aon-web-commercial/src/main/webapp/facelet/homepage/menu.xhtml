@@ -51,7 +51,8 @@
 					action="surveyResponse" disabled="true" />
 			</aon:dropDownMenu>
 			<aon:commandLink value="#{menuBundle.aon_communication_center}"
-				immediate="true" action="communicationCenter" styleClass="aon-top-menu-item aon-icon-call" />
+				styleClass="aon-top-menu-item aon-icon-call" immediate="true" 
+				action="communicationCenter" actionListener="#{communicationCenter.onStartSurveyResponse}" />
 		</aon:menuBar>
 			
 	 </aon:form>

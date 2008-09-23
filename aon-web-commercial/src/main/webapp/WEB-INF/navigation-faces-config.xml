@@ -131,6 +131,10 @@
 			<from-outcome>survey</from-outcome>
 			<to-view-id>/marketing/survey/list.xhtml</to-view-id>
 		</navigation-case>
+		<navigation-case>
+			<from-outcome>communicationCenter</from-outcome>
+			<to-view-id>marketing/communicationCenter/formSurvey.xhtml</to-view-id>
+		</navigation-case>
 	</navigation-rule>
 	
 </faces-config>
