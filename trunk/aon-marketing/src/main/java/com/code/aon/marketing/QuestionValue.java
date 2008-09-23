@@ -17,6 +17,7 @@ import javax.persistence.Transient;
 import org.hibernate.annotations.ForeignKey;
 
 import com.code.aon.common.ITransferObject;
+import com.code.aon.marketing.enumeration.QuestionType;
 
 
 /**
@@ -176,4 +177,26 @@ public class QuestionValue implements ITransferObject {
 		this.question = question;
 	}
     
+	/**
+	 * Gets the value.
+	 * 
+	 * @param type the type
+	 * 
+	 * @return the value
+	 */
+	public Object getValue( QuestionType type ) {
+		switch ( type ) {
+			case BOOLEAN:
+				return isBoolean();
+			case DATE:
+				return getDate();
+			case NUMBER:
+				return getNumber();
+			case TEXT:
+			case INFO:
+				return getText();
+		}
+		return null;
+	}
+	
 }

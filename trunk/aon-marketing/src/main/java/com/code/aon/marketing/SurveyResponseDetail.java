@@ -151,7 +151,7 @@ public class SurveyResponseDetail implements ITransferObject {
 	 */
 	@Transient
 	public boolean isBoolean() {
-		return this.number != 0;
+		return (this.number != null) && (this.number != 0);
 	}
 
 	/**
