@@ -3,12 +3,9 @@ package com.code.aon.ui.marketing.controller;
 public interface IMarketingConstants {
 
 	/** Audit Collections Controller name. */
-	String AUDIT_COLLECTIONS_CONTROLLER_NAME = "auditCollections";
+	String MARKETING_COLLECTIONS_CONTROLLER_NAME = "commecialCollections";
 
-	/** Audit Collections Controller name. */
-	String USER_CONTROLLER_NAME = "user";
+	/** Survey Controller name. */
+	String SURVEY_CONTROLLER_NAME = "survey";
 
-	/** Audit Collections Controller name. */
-	String DOMAIN_APPLICATION_CONTROLLER_NAME = "domainApplication";
-	
 }

@@ -36,13 +36,13 @@
 				</f:facet>
 				<aon:outputText value="#{to.position}"
 					rendered="#{to!=surveyQuestion.to}" />
-				<aon:inputText styleClass="aon-form-input-text " required="true"
-					rendered="#{to==surveyQuestion.to}" size="20"
-					value="#{surveyQuestion.to.position}" maxlength="20" />
+				<aon:inputText rendered="#{to==surveyQuestion.to}"
+					value="#{surveyQuestion.to.position}"
+					size="5" required="true" maxlength="10" />
 				<f:facet name="footer">
-					<aon:inputText styleClass="aon-form-input-text" required="true"
-						rendered="#{surveyQuestion.new}" size="20"
-						value="#{surveyQuestion.to.position}" maxlength="20" />
+					<aon:inputText rendered="#{surveyQuestion.new}"
+						value="#{surveyQuestion.to.position}"
+						required="true" size="5" maxlength="10" />
 				</f:facet>
 			</aon:column>
 						
