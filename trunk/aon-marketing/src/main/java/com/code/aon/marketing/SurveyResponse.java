@@ -1,7 +1,10 @@
 package com.code.aon.marketing;
 
 import java.util.Date;
+import java.util.LinkedList;
+import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -9,6 +12,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -60,6 +64,13 @@ public class SurveyResponse implements ITransferObject {
     @JoinColumn( name="user", nullable = false, updatable = false )	
 	@ForeignKey(name = "FK_SURVERY_RESPONSE_USER")
 	private User user;
+	
+	@OneToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE,
+			CascadeType.REMOVE }, mappedBy = "surveyResponse")
+	@org.hibernate.annotations.Cascade( {
+			org.hibernate.annotations.CascadeType.SAVE_UPDATE,
+			org.hibernate.annotations.CascadeType.DELETE_ORPHAN })
+	private List<SurveyResponseDetail> details = new LinkedList<SurveyResponseDetail>();	
 	
     /**
      * The empty constructor.
@@ -182,6 +193,24 @@ public class SurveyResponse implements ITransferObject {
 	 */
 	public void setUser(User user) {
 		this.user = user;
+	}
+
+	/**
+	 * Gets the details.
+	 * 
+	 * @return the details
+	 */
+	public List<SurveyResponseDetail> getDetails() {
+		return details;
+	}
+
+	/**
+	 * Sets the details.
+	 * 
+	 * @param details the new details
+	 */
+	public void setDetails(List<SurveyResponseDetail> details) {
+		this.details = details;
 	}
 	
 }

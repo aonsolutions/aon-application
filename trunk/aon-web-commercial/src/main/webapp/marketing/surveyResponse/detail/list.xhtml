@@ -1,0 +1,51 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:c="http://java.sun.com/jstl/core">
+	
+	<aon:div styleClass="aon-scroll-area">
+	
+		<aon:dataTable id="surveyResponseDetailData" value="#{surveyResponseDetail.model}"
+			var="to" rows="20" rendered="#{surveyResponseDetail.model.rowCount > 0}"
+			columnClasses="aon-editDataTable-textColumn, aon-editDataTable-textColumn">
+		
+			<aon:column>
+				<f:facet name="header">
+					<aon:outputText value="#{marketingBundle.aon_marketing_question}" />
+				</f:facet>
+				<aon:outputText value="#{to.question.text}"/>
+			</aon:column>
+			
+			<aon:column>
+				<f:facet name="header">
+					<aon:outputText value="#{bundle.aon_type}" />
+				</f:facet>
+				<aon:outputText value="#{to.question.type}"/>
+			</aon:column>
+		
+			<aon:column>
+				<f:facet name="header">
+					<aon:outputText value="#{marketingBundle.aon_marketing_response}" />
+				</f:facet>
+				<aon:outputText value="#{to.text}"
+					rendered="#{to.question.type == 'TEXT'}" />
+				<aon:outputText value="#{to.number}"
+					rendered="#{to.question.type == 'NUMBER'}" />
+				<aon:outputText value="&#160;"
+					rendered="#{to.question.type == 'BOOLEAN'}"
+					styleClass="#{(to.boolean)?'aon-icon aon-icon-checked':'aon-icon aon-icon-check'}" />
+				<aon:outputText value="#{to.date}"
+					rendered="#{to.question.type == 'DATE'}">
+					<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+						timeZone="#{timeZoneController.timeZoneId}" />
+				</aon:outputText>
+			</aon:column>
+		
+		</aon:dataTable>
+		
+		<aon:dataScroller2 for="surveyResponseDetailData" showNote="true" />
+
+	</aon:div>
+
+</ui:composition>
