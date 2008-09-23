@@ -53,7 +53,7 @@
 				<aon:outputText value="#{to.question.text}"
 					rendered="#{to!=surveyQuestion.to}" />
 				<aon:div styleClass="aon-lookup" rendered="#{to==surveyQuestion.to}">
-					<aon:lookupInputText id="SurveyQuestion_question_id"
+					<aon:lookupInputText
 						lookup="#{questionLookup}" required="true"
 						reRender="surveyQuestionData"
 						value="#{surveyQuestion.to.question.id}" size="5">
