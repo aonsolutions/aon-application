@@ -175,4 +175,22 @@
 			<to-view-id>/facelet/auxiliares/irpfforal/MinoracionesAlava/grid.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>MinoracionesGuipuzcoa</from-outcome>
+			<to-view-id>/facelet/auxiliares/irpfforal/MinoracionesGuipuzcoa/grid.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>MinoracionesVizcaya</from-outcome>
+			<to-view-id>/facelet/auxiliares/irpfforal/MinoracionesVizcaya/grid.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>MinoracionesNavarra</from-outcome>
+			<to-view-id>/facelet/auxiliares/irpfforal/MinoracionesNavarra/grid.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>
 </faces-config>
