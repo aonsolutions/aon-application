@@ -204,6 +204,36 @@
 			<param id="companyName" value="#{payrollController.getCompanyName}" />
 		</params>
 	</report>
+	<report id="MinoracionesVizcayaList" description="Listado de Minoraciones de Vizcaya">
+		<template path="/com/code/aon/ui/payroll/report/MinoracionesVizcayaList.jasper" />
+		<bean key="com.code.aon.payroll.irpfforal.MinoracionesVizcaya" />
+		<criteria provider="#{minoracionesVizcaya}" />
+		<params>
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.payroll.i18n.messages" />
+			<param id="logoImageFile" value="#{payrollController.getLogo}" />
+			<param id="companyName" value="#{payrollController.getCompanyName}" />
+		</params>
+	</report>
+	<report id="MinoracionesGuipuzcoaList" description="Listado de Minoraciones de Guipuzcoa">
+		<template path="/com/code/aon/ui/payroll/report/MinoracionesGuipuzcoaList.jasper" />
+		<bean key="com.code.aon.payroll.irpfforal.MinoracionesGuipuzcoa" />
+		<criteria provider="#{minoracionesGuipuzcoa}" />
+		<params>
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.payroll.i18n.messages" />
+			<param id="logoImageFile" value="#{payrollController.getLogo}" />
+			<param id="companyName" value="#{payrollController.getCompanyName}" />
+		</params>
+	</report>
+	<report id="MinoracionesNavarraList" description="Listado de Minoraciones de Navarra">
+		<template path="/com/code/aon/ui/payroll/report/MinoracionesNavarraList.jasper" />
+		<bean key="com.code.aon.payroll.irpfforal.MinoracionesNavarra" />
+		<criteria provider="#{minoracionesNavarra}" />
+		<params>
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.payroll.i18n.messages" />
+			<param id="logoImageFile" value="#{payrollController.getLogo}" />
+			<param id="companyName" value="#{payrollController.getCompanyName}" />
+		</params>
+	</report>
     <!--  *********  Impresion a PDF de las Bonificaciones y retenciones  ********* -->
 	<report id="cotizacionBonificacionesList" description="Listado de Bonificaciones y retenciones">
 		<template path="/com/code/aon/ui/payroll/report/cotizacionBonificacionesList.jasper" />
@@ -215,5 +245,4 @@
 			<param id="companyName" value="#{payrollController.getCompanyName}" />
 		</params>
 	</report>
-
 </report-config>

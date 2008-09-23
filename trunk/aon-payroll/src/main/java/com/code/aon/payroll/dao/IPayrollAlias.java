@@ -11,8 +11,10 @@ import com.code.aon.payroll.tipos.Registro;
 import com.code.aon.payroll.tipos.Empresario;
 import com.code.aon.payroll.tipos.TipoCnae;
 import com.code.aon.payroll.cotizacion.Bonificacion;
+import com.code.aon.payroll.irpf.Cuota;
 import com.code.aon.payroll.tipos.Tipovia;
 import com.code.aon.payroll.geograficas.Nacion;
+import com.code.aon.payroll.irpfforal.CuotaRetencionAlava;
 
 /** 
 * Interface for holding entity properties constants.
@@ -289,6 +291,55 @@ public interface IPayrollAlias {
 
 
 	/** 
+	* DAOConstantsEntry for Cuota entity.
+	*/ 
+	DAOConstantsEntry CUOTA_ENTRY = DAOConstants.getDAOConstant(Cuota.class);
+
+	/** 
+	* Alias value: Cuota_fecfin
+	* Hibernate value: Cuota.fecfin
+	*/
+	String  CUOTA_FECFIN = CUOTA_ENTRY.getAliasNames()[0];
+
+	/** 
+	* Alias value: Cuota_hasta
+	* Hibernate value: Cuota.hasta
+	*/
+	String  CUOTA_HASTA = CUOTA_ENTRY.getAliasNames()[1];
+
+	/** 
+	* Alias value: Cuota_id_fecini
+	* Hibernate value: Cuota.id.fecini
+	*/
+	String  CUOTA_ID_FECINI = CUOTA_ENTRY.getAliasNames()[2];
+
+	/** 
+	* Alias value: Cuota_id_numTramo
+	* Hibernate value: Cuota.id.numTramo
+	*/
+	String  CUOTA_ID_NUM_TRAMO = CUOTA_ENTRY.getAliasNames()[3];
+
+	/** 
+	* Alias value: Cuota_pesetas
+	* Hibernate value: Cuota.pesetas
+	*/
+	String  CUOTA_PESETAS = CUOTA_ENTRY.getAliasNames()[4];
+
+	/** 
+	* Alias value: Cuota_porcentaje
+	* Hibernate value: Cuota.porcentaje
+	*/
+	String  CUOTA_PORCENTAJE = CUOTA_ENTRY.getAliasNames()[5];
+
+	/** 
+	* Alias value: Cuota_resto
+	* Hibernate value: Cuota.resto
+	*/
+	String  CUOTA_RESTO = CUOTA_ENTRY.getAliasNames()[6];
+
+
+
+	/** 
 	* DAOConstantsEntry for Tipovia entity.
 	*/ 
 	DAOConstantsEntry TIPOVIA_ENTRY = DAOConstants.getDAOConstant(Tipovia.class);
@@ -323,6 +374,85 @@ public interface IPayrollAlias {
 	* Hibernate value: Nacion.description
 	*/
 	String  NACION_DESCRIPTION = NACION_ENTRY.getAliasNames()[1];
+
+
+
+	/** 
+	* DAOConstantsEntry for CuotaRetencionAlava entity.
+	*/ 
+	DAOConstantsEntry CUOTA_RETENCION_ALAVA_ENTRY = DAOConstants.getDAOConstant(CuotaRetencionAlava.class);
+
+	/** 
+	* Alias value: CuotaRetencionAlava_desdeImporte
+	* Hibernate value: CuotaRetencionAlava.desdeImporte
+	*/
+	String  CUOTA_RETENCION_ALAVA_DESDE_IMPORTE = CUOTA_RETENCION_ALAVA_ENTRY.getAliasNames()[0];
+
+	/** 
+	* Alias value: CuotaRetencionAlava_fecfin
+	* Hibernate value: CuotaRetencionAlava.fecfin
+	*/
+	String  CUOTA_RETENCION_ALAVA_FECFIN = CUOTA_RETENCION_ALAVA_ENTRY.getAliasNames()[1];
+
+	/** 
+	* Alias value: CuotaRetencionAlava_h0
+	* Hibernate value: CuotaRetencionAlava.h0
+	*/
+	String  CUOTA_RETENCION_ALAVA_H0 = CUOTA_RETENCION_ALAVA_ENTRY.getAliasNames()[2];
+
+	/** 
+	* Alias value: CuotaRetencionAlava_h1
+	* Hibernate value: CuotaRetencionAlava.h1
+	*/
+	String  CUOTA_RETENCION_ALAVA_H1 = CUOTA_RETENCION_ALAVA_ENTRY.getAliasNames()[3];
+
+	/** 
+	* Alias value: CuotaRetencionAlava_h2
+	* Hibernate value: CuotaRetencionAlava.h2
+	*/
+	String  CUOTA_RETENCION_ALAVA_H2 = CUOTA_RETENCION_ALAVA_ENTRY.getAliasNames()[4];
+
+	/** 
+	* Alias value: CuotaRetencionAlava_h3
+	* Hibernate value: CuotaRetencionAlava.h3
+	*/
+	String  CUOTA_RETENCION_ALAVA_H3 = CUOTA_RETENCION_ALAVA_ENTRY.getAliasNames()[5];
+
+	/** 
+	* Alias value: CuotaRetencionAlava_h4
+	* Hibernate value: CuotaRetencionAlava.h4
+	*/
+	String  CUOTA_RETENCION_ALAVA_H4 = CUOTA_RETENCION_ALAVA_ENTRY.getAliasNames()[6];
+
+	/** 
+	* Alias value: CuotaRetencionAlava_h5
+	* Hibernate value: CuotaRetencionAlava.h5
+	*/
+	String  CUOTA_RETENCION_ALAVA_H5 = CUOTA_RETENCION_ALAVA_ENTRY.getAliasNames()[7];
+
+	/** 
+	* Alias value: CuotaRetencionAlava_h6
+	* Hibernate value: CuotaRetencionAlava.h6
+	*/
+	String  CUOTA_RETENCION_ALAVA_H6 = CUOTA_RETENCION_ALAVA_ENTRY.getAliasNames()[8];
+
+	/** 
+	* Alias value: CuotaRetencionAlava_hastaImporte
+	* Hibernate value: CuotaRetencionAlava.hastaImporte
+	*/
+	String  CUOTA_RETENCION_ALAVA_HASTA_IMPORTE = CUOTA_RETENCION_ALAVA_ENTRY.getAliasNames()[9];
+
+	/** 
+	* Alias value: CuotaRetencionAlava_id_fecini
+	* Hibernate value: CuotaRetencionAlava.id.fecini
+	*/
+	String  CUOTA_RETENCION_ALAVA_ID_FECINI = CUOTA_RETENCION_ALAVA_ENTRY.getAliasNames()[10];
+
+	/** 
+	* Alias value: CuotaRetencionAlava_id_numTramo
+	* Hibernate value: CuotaRetencionAlava.id.numTramo
+	*/
+	String  CUOTA_RETENCION_ALAVA_ID_NUM_TRAMO = CUOTA_RETENCION_ALAVA_ENTRY.getAliasNames()[11];
 
 
 }
