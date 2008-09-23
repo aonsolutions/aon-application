@@ -27,8 +27,8 @@ public class SurveyQuestionControllerListener extends ControllerAdapter implemen
 			Criteria criteria = new Criteria();
 			String surveyId = controller.getFieldName(IMarketingAlias.SURVEY_QUESTION_SURVEY_ID);
 			criteria.addEqualExpression( surveyId, survey.getId() );
-			String id = controller.getFieldName(IMarketingAlias.SURVEY_QUESTION_ID);
-			Integer result = (Integer) controller.getManagerBean().getUniqueResult(Projection.max(id), criteria);
+			String position = controller.getFieldName(IMarketingAlias.SURVEY_QUESTION_POSITION);
+			Integer result = (Integer) controller.getManagerBean().getUniqueResult(Projection.max(position), criteria);
 			if ( result != null ) {
 				surveyQuestion.setPosition( result+1 );
 			}
