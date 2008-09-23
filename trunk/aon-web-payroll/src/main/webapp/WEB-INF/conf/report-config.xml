@@ -60,7 +60,7 @@
 	<!--  *********  Impresion a PDF de los Organismos de Mantenimiento de Administraciones de Hacienda  ********* -->
 	<report id="organismosAdmonList" description="Listado de Administraciones de Hacienda">
 		<template path="/com/code/aon/ui/payroll/report/organismosAdmonList.jasper" />
-		<bean key="com.code.aon.payroll.organismos_entidades.Admon" />
+		<bean key="com.code.aon.payroll.auxiliares.Admon" />
 		<criteria provider="#{organismosAdmon}" />
 		<params>
 			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.payroll.i18n.messages" />
@@ -215,4 +215,5 @@
 			<param id="companyName" value="#{payrollController.getCompanyName}" />
 		</params>
 	</report>
+
 </report-config>
