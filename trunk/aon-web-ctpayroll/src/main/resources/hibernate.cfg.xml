@@ -42,13 +42,14 @@
         
         <!-- IRPF -->
 		<mapping class="com.code.aon.payroll.irpf.Cuota"/>
+		<mapping class="com.code.aon.payroll.irpf.Exclusion"/>
         
 		<!-- IRPF FORAL-->		
         <mapping class="com.code.aon.payroll.irpfforal.CuotaRetencionAlava"/>
         <mapping class="com.code.aon.payroll.irpfforal.CuotaRetencionVizcaya"/>	
         <mapping class="com.code.aon.payroll.irpfforal.CuotaRetencionNavarra"/>	
         <mapping class="com.code.aon.payroll.irpfforal.CuotaRetencionGuipuzcoa"/>			
-       <mapping class="com.code.aon.payroll.irpfforal.MinoracionesAlava"/> 
+        <mapping class="com.code.aon.payroll.irpfforal.MinoracionesAlava"/> 
         <mapping class="com.code.aon.payroll.irpfforal.MinoracionesGuipuzcoa"/> 
         <mapping class="com.code.aon.payroll.irpfforal.MinoracionesVizcaya"/> 
         <mapping class="com.code.aon.payroll.irpfforal.MinoracionesNavarra"/> 

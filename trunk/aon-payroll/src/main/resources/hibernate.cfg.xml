@@ -31,7 +31,8 @@
         <mapping class="com.code.aon.payroll.geograficas.Nacion"/>
         
         <!-- IRPF -->
-		<mapping class="com.code.aon.payroll.irpf.Cuota"/>	
+		<mapping class="com.code.aon.payroll.irpf.Cuota"/>
+		<mapping class="com.code.aon.payroll.irpf.Exclusion"/>	
 		
 		<!-- IRPF FORAL -->			
         <mapping class="com.code.aon.payroll.irpfforal.CuotaRetencionAlava"/>
