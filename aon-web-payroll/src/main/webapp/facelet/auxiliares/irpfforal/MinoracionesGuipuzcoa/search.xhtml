@@ -8,14 +8,14 @@
 	
 	<ui:define name="content">
 
-		<aon:form id="cuotaRetencionGuipuzcoaSearch">
+		<aon:form id="minoracionesGuipuzcoaSearch">
 
 			<aon:div styleClass="aon-finding-title-toolbar">
 				<aon:panelGrid columns="3" dir="true"
 					columnClasses="aon-finding-title,aon-finding-subtitle,aon-finding-toolbar">
 
 					<aon:div styleClass="aon-finding-title-internal">
-						<aon:outputText value="#{menuBundle.auxiliares_irpf_foral__cuota_20}" />
+						<aon:outputText value="#{menuBundle.auxiliares_irpf_foral__minor_20}" />
 					</aon:div>
 
 					<aon:div styleClass="aon-finding-subtitle-internal">
@@ -27,7 +27,7 @@
 							type="reset" ajaxSingle="true"
 							styleClass="aon-finding-toolbar-item aon-icon-rubber" />
 						<aon:commandButton id="back" value="#{bundle.aon_back}"
-							action="CuotaRetencionGuipuzcoa" actionListener="#{cuotaRetencionGuipuzcoa.onCancel}"
+							action="MinoracionesGuipuzcoa" actionListener="#{minoracionesGuipuzcoa.onCancel}"
 							styleClass="aon-finding-toolbar-item aon-icon-cancel" immediate="true"
 							accesskey="#{bundle.aon_key_cancel}" />
 					</aon:div>
@@ -37,20 +37,20 @@
 
 			<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/searchContent.xhtml" >
 				<ui:define name="searchContent">
-					<aon:methodParam name="searchActionListener" value="#{cuotaRetencionGuipuzcoa.onSearch}" type="actionListener" />
-					<aon:methodParam name="searchAction" value="CuotaRetencionGuipuzcoa" />				
+					<aon:methodParam name="searchActionListener" value="#{minoracionesGuipuzcoa.onSearch}" type="actionListener" />
+					<aon:methodParam name="searchAction" value="MinoracionesGuipuzcoa" />				
 				
-                <aon:outputLabel for="CuotaRetencionGuipuzcoa_id_fecini"
+                  <aon:outputLabel for="MinoracionesGuipuzcoa_id_fecini"
 						value="#{appBundle.aon_payroll_auxiliares_irpf_foral__cuota_01_fecini2}" />
-					<aon:selectInputDate id="CuotaRetencionGuipuzcoa_id_fecini"
+					<aon:selectInputDate id="MinoracionesGuipuzcoa_id_fecini"
 						renderAsPopup="true" popupDateFormat="#{appBundle.aon_date_pattern}"
-						valueChangeListener="#{cuotaRetencionGuipuzcoa.addExpression}">
-					</aon:selectInputDate>  
+						valueChangeListener="#{minoracionesGuipuzcoa.addExpression}">
+					</aon:selectInputDate>
 
-					<aon:outputLabel for="CuotaRetencionGuipuzcoa_id_numTramo"
+					<aon:outputLabel for="MinoracionesGuipuzcoa_id_numTramo"
 						value="#{appBundle.aon_payroll_auxiliares_irpf_foral__cuota_01_tramo}" />
-					<aon:inputText id="CuotaRetencionGuipuzcoa_id_numTramo" size="10" maxlength="4"
-						valueChangeListener="#{cuotaRetencionGuipuzcoa.addExpression}" />
+					<aon:inputText id="MinoracionesGuipuzcoa_id_numTramo" size="10" maxlength="4"
+						valueChangeListener="#{minoracionesGuipuzcoa.addExpression}" />
 						
 						
 				</ui:define>
