@@ -452,6 +452,10 @@
 			<property-name>queryOnStartUP</property-name>
 			<value>true</value>
 		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.payroll.irpfforal.MinoracionesGuipuzcoa</value>
+		</managed-property>
 	</managed-bean>
 	<!-- ************* MINORACIONES VIZCAYA***************** -->
 	<managed-bean>
