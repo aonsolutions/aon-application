@@ -9,6 +9,7 @@ import com.code.aon.marketing.SurveyQuestion;
 import com.code.aon.marketing.SurveyResponse;
 import com.code.aon.marketing.SurveyResponseDetail;
 import com.code.aon.marketing.SurveyWorkflow;
+import com.code.aon.marketing.TargetProfile;
 
 /** 
 * Interface for holding entity properties constants.
@@ -267,6 +268,55 @@ public interface IMarketingAlias {
 	* Hibernate value: SurveyWorkflow.surveyQuestion.id
 	*/
 	String  SURVEY_WORKFLOW_SURVEY_QUESTION_ID = SURVEY_WORKFLOW_ENTRY.getAliasNames()[3];
+
+
+
+	/** 
+	* DAOConstantsEntry for TargetProfile entity.
+	*/ 
+	DAOConstantsEntry TARGET_PROFILE_ENTRY = DAOConstants.getDAOConstant(TargetProfile.class);
+
+	/** 
+	* Alias value: TargetProfile_date
+	* Hibernate value: TargetProfile.date
+	*/
+	String  TARGET_PROFILE_DATE = TARGET_PROFILE_ENTRY.getAliasNames()[0];
+
+	/** 
+	* Alias value: TargetProfile_id
+	* Hibernate value: TargetProfile.id
+	*/
+	String  TARGET_PROFILE_ID = TARGET_PROFILE_ENTRY.getAliasNames()[1];
+
+	/** 
+	* Alias value: TargetProfile_lastUpdate
+	* Hibernate value: TargetProfile.lastUpdate
+	*/
+	String  TARGET_PROFILE_LAST_UPDATE = TARGET_PROFILE_ENTRY.getAliasNames()[2];
+
+	/** 
+	* Alias value: TargetProfile_number
+	* Hibernate value: TargetProfile.number
+	*/
+	String  TARGET_PROFILE_NUMBER = TARGET_PROFILE_ENTRY.getAliasNames()[3];
+
+	/** 
+	* Alias value: TargetProfile_question_id
+	* Hibernate value: TargetProfile.question.id
+	*/
+	String  TARGET_PROFILE_QUESTION_ID = TARGET_PROFILE_ENTRY.getAliasNames()[4];
+
+	/** 
+	* Alias value: TargetProfile_target_id
+	* Hibernate value: TargetProfile.target.id
+	*/
+	String  TARGET_PROFILE_TARGET_ID = TARGET_PROFILE_ENTRY.getAliasNames()[5];
+
+	/** 
+	* Alias value: TargetProfile_text
+	* Hibernate value: TargetProfile.text
+	*/
+	String  TARGET_PROFILE_TEXT = TARGET_PROFILE_ENTRY.getAliasNames()[6];
 
 
 }
