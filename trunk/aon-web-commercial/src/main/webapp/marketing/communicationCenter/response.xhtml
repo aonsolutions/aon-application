@@ -32,6 +32,7 @@
 					<aon:div styleClass="aon-finding-toolbar-item-group">
 						<c:if test="#{!communicationCenter.lastQuestion}" >
 							<aon:commandButton id="skip" value="#{marketingBundle.aon_skip}"
+								rendered="#{communicationCenter.question.type != 'INFO'}"
 								action="communicationCenter_response" actionListener="#{communicationCenter.onNextQuestion}"
 								styleClass="aon-finding-toolbar-item aon-icon-cancel" immediate="true"
 								accesskey="#{bundle.aon_key_cancel}"/>
@@ -42,6 +43,7 @@
 						</c:if>
 						<c:if test="#{communicationCenter.lastQuestion}" >
 							<aon:commandButton id="skip" value="#{marketingBundle.aon_skip}"
+								rendered="#{communicationCenter.question.type != 'INFO'}"							
 								action="communicationCenter" actionListener="#{communicationCenter.onFinishSurveyResponse}"
 								styleClass="aon-finding-toolbar-item aon-icon-accept" immediate="true"
 								accesskey="#{bundle.aon_key_save}" />
