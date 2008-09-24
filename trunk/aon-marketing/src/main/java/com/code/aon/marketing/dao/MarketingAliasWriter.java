@@ -4,6 +4,10 @@ import java.io.File;
 import java.io.IOException;
 
 import com.code.aon.common.dao.AliasWriter;
+import com.code.aon.marketing.Action;
+import com.code.aon.marketing.ActionTarget;
+import com.code.aon.marketing.ActionTargetLog;
+import com.code.aon.marketing.Campaign;
 import com.code.aon.marketing.Question;
 import com.code.aon.marketing.QuestionValue;
 import com.code.aon.marketing.Survey;
@@ -26,6 +30,10 @@ public class MarketingAliasWriter {
 	public static void main(String[] args) throws IOException {
 		File file = new File("/AON-PROJECT/aon-marketing/src/main/java/com/code/aon/marketing/dao/IMarketingAlias.java");
 		String[] classes = new String[] { 
+				Action.class.getName(),
+				ActionTarget.class.getName(),
+				ActionTargetLog.class.getName(),
+				Campaign.class.getName(),
 				Question.class.getName(),
 				QuestionValue.class.getName(),
 				Survey.class.getName(),

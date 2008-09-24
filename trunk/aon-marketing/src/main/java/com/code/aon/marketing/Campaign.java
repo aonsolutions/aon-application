@@ -1,6 +1,5 @@
 package com.code.aon.marketing;
 
-import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -11,34 +10,28 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
 
 import com.code.aon.common.ITransferObject;
 
 
 /**
- * Transfer Object that represents the survey.
+ * Transfer Object that represents the Campaign.
  * 
- * @author Consulting & Development. Aimar Tellitu - 19-sep-2008
+ * @author Consulting & Development. Aimar Tellitu - 24-sep-2008
  * @since 1.0
  * @version 1.0
  */
 @Entity
-@Table(name = "survey")
-public class Survey implements ITransferObject {
+@Table(name = "mk_campaign")
+public class Campaign implements ITransferObject {
 
-	private static final long serialVersionUID = 8032426876935464774L;
+	private static final long serialVersionUID = 1978353768291679400L;
 
 	@Id
 	@GeneratedValue
 	@Column(nullable = false)
     private Integer id;
 
-	@Temporal(TemporalType.TIMESTAMP)
-	@Column(nullable = false)
-    private Date creationDate;	
-	
 	@Column(nullable = false, length = 64)
     private String description;
 	
@@ -46,17 +39,16 @@ public class Survey implements ITransferObject {
 	private boolean active;
 
 	@OneToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE,
-			CascadeType.REMOVE }, mappedBy = "survey")
+			CascadeType.REMOVE }, mappedBy = "campaign")
 	@org.hibernate.annotations.Cascade( {
 			org.hibernate.annotations.CascadeType.SAVE_UPDATE,
 			org.hibernate.annotations.CascadeType.DELETE_ORPHAN })
-	private List<SurveyQuestion> questions = new LinkedList<SurveyQuestion>();	
+	private List<Action> actions = new LinkedList<Action>();	
 	
     /**
      * The empty constructor.
      */
-    public Survey() {
-    	setCreationDate( new Date() );
+    public Campaign() {
     	setActive( true );
     }
 
@@ -65,7 +57,7 @@ public class Survey implements ITransferObject {
      * 
      * @param id the id
      */
-    public Survey(Integer id) {
+    public Campaign(Integer id) {
     	this();
         this.id = id;
     }
@@ -88,24 +80,6 @@ public class Survey implements ITransferObject {
         this.id = id;
     }
   
-	/**
-	 * Gets the creation date.
-	 * 
-	 * @return the creation date
-	 */
-	public Date getCreationDate() {
-		return creationDate;
-	}
-
-	/**
-	 * Sets the creation date.
-	 * 
-	 * @param creationDate the new creation date
-	 */
-	public void setCreationDate(Date creationDate) {
-		this.creationDate = creationDate;
-	}
-
 	/**
 	 * Gets the description.
 	 * 
@@ -143,21 +117,21 @@ public class Survey implements ITransferObject {
 	}
 
 	/**
-	 * Gets the questions.
+	 * Gets the actions.
 	 * 
-	 * @return the questions
+	 * @return the actions
 	 */
-	public List<SurveyQuestion> getQuestions() {
-		return this.questions;
+	public List<Action> getActions() {
+		return actions;
 	}
-	
+
 	/**
-	 * Sets the questions.
+	 * Sets the actions.
 	 * 
-	 * @param users the questions
+	 * @param actions the new actions
 	 */
-	public void setQuestions( List<SurveyQuestion> questions ) {
-		this.questions = questions;
+	public void setActions(List<Action> actions) {
+		this.actions = actions;
 	}
 	
 }

@@ -2,6 +2,10 @@ package com.code.aon.marketing.dao;
 
 import com.code.aon.common.dao.DAOConstants;
 import com.code.aon.common.dao.DAOConstantsEntry;
+import com.code.aon.marketing.Action;
+import com.code.aon.marketing.ActionTarget;
+import com.code.aon.marketing.ActionTargetLog;
+import com.code.aon.marketing.Campaign;
 import com.code.aon.marketing.Question;
 import com.code.aon.marketing.QuestionValue;
 import com.code.aon.marketing.Survey;
@@ -15,6 +19,136 @@ import com.code.aon.marketing.TargetProfile;
 * Interface for holding entity properties constants.
 */ 
 public interface IMarketingAlias {
+
+
+
+	/** 
+	* DAOConstantsEntry for Action entity.
+	*/ 
+	DAOConstantsEntry ACTION_ENTRY = DAOConstants.getDAOConstant(Action.class);
+
+	/** 
+	* Alias value: Action_campaign_id
+	* Hibernate value: Action.campaign.id
+	*/
+	String  ACTION_CAMPAIGN_ID = ACTION_ENTRY.getAliasNames()[0];
+
+	/** 
+	* Alias value: Action_endDate
+	* Hibernate value: Action.endDate
+	*/
+	String  ACTION_END_DATE = ACTION_ENTRY.getAliasNames()[1];
+
+	/** 
+	* Alias value: Action_id
+	* Hibernate value: Action.id
+	*/
+	String  ACTION_ID = ACTION_ENTRY.getAliasNames()[2];
+
+	/** 
+	* Alias value: Action_mediaType
+	* Hibernate value: Action.mediaType
+	*/
+	String  ACTION_MEDIA_TYPE = ACTION_ENTRY.getAliasNames()[3];
+
+	/** 
+	* Alias value: Action_startDate
+	* Hibernate value: Action.startDate
+	*/
+	String  ACTION_START_DATE = ACTION_ENTRY.getAliasNames()[4];
+
+	/** 
+	* Alias value: Action_survey_id
+	* Hibernate value: Action.survey.id
+	*/
+	String  ACTION_SURVEY_ID = ACTION_ENTRY.getAliasNames()[5];
+
+
+
+	/** 
+	* DAOConstantsEntry for ActionTarget entity.
+	*/ 
+	DAOConstantsEntry ACTION_TARGET_ENTRY = DAOConstants.getDAOConstant(ActionTarget.class);
+
+	/** 
+	* Alias value: ActionTarget_action_id
+	* Hibernate value: ActionTarget.action.id
+	*/
+	String  ACTION_TARGET_ACTION_ID = ACTION_TARGET_ENTRY.getAliasNames()[0];
+
+	/** 
+	* Alias value: ActionTarget_id
+	* Hibernate value: ActionTarget.id
+	*/
+	String  ACTION_TARGET_ID = ACTION_TARGET_ENTRY.getAliasNames()[1];
+
+	/** 
+	* Alias value: ActionTarget_target_id
+	* Hibernate value: ActionTarget.target.id
+	*/
+	String  ACTION_TARGET_TARGET_ID = ACTION_TARGET_ENTRY.getAliasNames()[2];
+
+
+
+	/** 
+	* DAOConstantsEntry for ActionTargetLog entity.
+	*/ 
+	DAOConstantsEntry ACTION_TARGET_LOG_ENTRY = DAOConstants.getDAOConstant(ActionTargetLog.class);
+
+	/** 
+	* Alias value: ActionTargetLog_action_id
+	* Hibernate value: ActionTargetLog.action.id
+	*/
+	String  ACTION_TARGET_LOG_ACTION_ID = ACTION_TARGET_LOG_ENTRY.getAliasNames()[0];
+
+	/** 
+	* Alias value: ActionTargetLog_id
+	* Hibernate value: ActionTargetLog.id
+	*/
+	String  ACTION_TARGET_LOG_ID = ACTION_TARGET_LOG_ENTRY.getAliasNames()[1];
+
+	/** 
+	* Alias value: ActionTargetLog_status
+	* Hibernate value: ActionTargetLog.status
+	*/
+	String  ACTION_TARGET_LOG_STATUS = ACTION_TARGET_LOG_ENTRY.getAliasNames()[2];
+
+	/** 
+	* Alias value: ActionTargetLog_surveyResponse_id
+	* Hibernate value: ActionTargetLog.surveyResponse.id
+	*/
+	String  ACTION_TARGET_LOG_SURVEY_RESPONSE_ID = ACTION_TARGET_LOG_ENTRY.getAliasNames()[3];
+
+	/** 
+	* Alias value: ActionTargetLog_target_id
+	* Hibernate value: ActionTargetLog.target.id
+	*/
+	String  ACTION_TARGET_LOG_TARGET_ID = ACTION_TARGET_LOG_ENTRY.getAliasNames()[4];
+
+
+
+	/** 
+	* DAOConstantsEntry for Campaign entity.
+	*/ 
+	DAOConstantsEntry CAMPAIGN_ENTRY = DAOConstants.getDAOConstant(Campaign.class);
+
+	/** 
+	* Alias value: Campaign_active
+	* Hibernate value: Campaign.active
+	*/
+	String  CAMPAIGN_ACTIVE = CAMPAIGN_ENTRY.getAliasNames()[0];
+
+	/** 
+	* Alias value: Campaign_description
+	* Hibernate value: Campaign.description
+	*/
+	String  CAMPAIGN_DESCRIPTION = CAMPAIGN_ENTRY.getAliasNames()[1];
+
+	/** 
+	* Alias value: Campaign_id
+	* Hibernate value: Campaign.id
+	*/
+	String  CAMPAIGN_ID = CAMPAIGN_ENTRY.getAliasNames()[2];
 
 
 
