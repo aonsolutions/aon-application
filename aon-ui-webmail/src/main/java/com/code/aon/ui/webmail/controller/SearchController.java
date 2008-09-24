@@ -2,18 +2,20 @@ package com.code.aon.ui.webmail.controller;
 
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
+import javax.mail.MessagingException;
 
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
 
 import com.code.aon.ui.util.AonUtil;
-import com.code.aon.ui.webmail.bean.WebMailConstants;
 import com.code.aon.ui.webmail.bean.AonFolder;
+import com.code.aon.ui.webmail.bean.AonMessage;
 import com.code.aon.ui.webmail.bean.AonMessageSortableList;
 import com.code.aon.ui.webmail.bean.AonSearcher;
+import com.code.aon.ui.webmail.bean.WebMailConstants;
 import com.code.aon.ui.webmail.exception.WebmailException;
 
-public class SearchController {
+public class SearchController implements WebMailConstants {
 
 	private AonMessageSortableList sortableList;
 	
@@ -139,7 +141,10 @@ public class SearchController {
 	}
 	
 	public boolean isResultFound(){
-		return ! ArrayUtils.isEmpty(this.sortableList.getMessageList());
+		if ( this.sortableList != null ) {
+			return ! ArrayUtils.isEmpty(this.sortableList.getMessageList());	
+		}
+		return false;
 	}
 
 	public boolean isResultSelected(){
@@ -147,5 +152,11 @@ public class SearchController {
 			return false;
 		return true;
 	}
+	
+    public void changeSelectedMessage(ActionEvent event) throws MessagingException {
+    	AonMessage aonMessage = (AonMessage) getSortableList().getModel().getRowData();
+    	MessageController messageController = (MessageController) AonUtil.getRegisteredBean(BEAN_MESSAGE);
+       	messageController.setMessage( aonMessage );      				
+    }	
 
 }
