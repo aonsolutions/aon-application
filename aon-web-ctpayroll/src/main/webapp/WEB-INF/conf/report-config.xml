@@ -128,6 +128,17 @@
 		</params>
 	</report>
 	
+	<!--  *********  Impresion a PDF de las Exclusiones de la obligación a retener  ********* -->
+	<report id="irpfExclusionList" description="Listado de Exclusiones de la obligación a retener">
+		<template path="/com/code/aon/ui/payroll/report/irpfExclusionList.jasper" />
+		<bean key="com.code.aon.payroll.irpf.Exclusion" />
+		<criteria provider="#{exclusion}" />
+		<params>
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.payroll.i18n.messages" />
+			<param id="logoImageFile" value="#{payrollController.getLogo}" />
+			<param id="companyName" value="#{payrollController.getCompanyName}" />
+		</params>
+	</report>
 	
 	<report id="tiposViaList" description="Listado de Tipos de Via">
 		<template path="/com/code/aon/ui/payroll/report/tiposViaList.jasper" />
