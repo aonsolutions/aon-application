@@ -47,21 +47,18 @@
 				</f:facet>
 				<aon:div layout="none" rendered="#{to!=questionValue.to}">
 					<ui:include src="/marketing/outputValue.xhtml" >
-						<ui:param name="value" value="#{to}" />
-						<ui:param name="type" value="#{question.to.type}" />
+						<ui:param name="valueHolder" value="#{to}" />
 					</ui:include>
 				</aon:div>
 				<aon:div layout="none" rendered="#{to==questionValue.to}">
 					<ui:include src="/marketing/inputValue.xhtml" >
-						<ui:param name="value" value="#{questionValue.to}" />
-						<ui:param name="type" value="#{question.to.type}" />
+						<ui:param name="valueHolder" value="#{questionValue.to}" />
 					</ui:include>
 				</aon:div>				
 				<f:facet name="footer">
 					<aon:div layout="none" rendered="#{questionValue.new}">
 						<ui:include src="/marketing/inputValue.xhtml" >
-							<ui:param name="value" value="#{questionValue.to}" />
-							<ui:param name="type" value="#{question.to.type}" />
+							<ui:param name="valueHolder" value="#{questionValue.to}" />
 						</ui:include>
 					</aon:div>
 				</f:facet>

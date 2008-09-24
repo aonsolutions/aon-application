@@ -4,17 +4,17 @@
 	xmlns:aon="http://www.code.es/aon-rich-components"
 	xmlns:c="http://java.sun.com/jstl/core">
 
-	<c:if test="#{type == 'TEXT'}" >
-		<aon:inputText value="#{value.text}" required="true" size="45" maxlength="64" />
+	<c:if test="#{valueHolder.question.type == 'TEXT'}" >
+		<aon:inputText value="#{valueHolder.text}" required="true" size="45" maxlength="64" />
 	</c:if>
-	<c:if test="#{type == 'NUMBER'}" >		
-		<aon:inputText value="#{value.number}" required="true" size="45" maxlength="64" />
+	<c:if test="#{valueHolder.question.type == 'NUMBER'}" >		
+		<aon:inputText value="#{valueHolder.number}" required="true" size="45" maxlength="64" />
 	</c:if>
-	<c:if test="#{type == 'BOOLEAN'}" >
-		<aon:selectBooleanCheckbox value="#{value.boolean}" required="true" />
+	<c:if test="#{valueHolder.question.type == 'BOOLEAN'}" >
+		<aon:selectBooleanCheckbox value="#{valueHolder.boolean}" required="true" />
 	</c:if>
-	<c:if test="#{type == 'DATE'}" >
-		<aon:selectInputDate value="#{value.date}" required="true"
+	<c:if test="#{valueHolder.question.type == 'DATE'}" >
+		<aon:selectInputDate value="#{valueHolder.date}" required="true"
 			timeZone="#{timeZoneController.timeZone}"
 			renderAsPopup="true" popupDateFormat="#{bundle.aon_date_pattern}">
 		</aon:selectInputDate>
