@@ -216,11 +216,13 @@ public class CommunicationCenterController extends ControllerAdapter {
 		saveResponse();
 		onInitSurveyResponse(event);
 	}
-	
+
 	private void updateResponseValue() throws ManagerBeanException {
-		IManagerBean bean = BeanManager.getManagerBean(QuestionValue.class);
-		QuestionValue questionValue = (QuestionValue) bean.get( this.questionValueId );
-		questionValue.copyValues(response);
+		if ( this.questionValueId != null ) {
+			IManagerBean bean = BeanManager.getManagerBean(QuestionValue.class);
+			QuestionValue questionValue = (QuestionValue) bean.get( this.questionValueId );
+			questionValue.copyValues(response);			
+		}
 	}
 
 	private void updateTargetProfile() throws ManagerBeanException {
@@ -269,6 +271,7 @@ public class CommunicationCenterController extends ControllerAdapter {
 			SelectItem item = new SelectItem(questionValue.getId(), ObjectUtils.toString(value));
 			this.questionValues.add(item);
 		}	
+		this.questionValueId = null;
 	}
 	
 	private void updateSurveyResponse( SurveyQuestion sq ) throws ManagerBeanException {

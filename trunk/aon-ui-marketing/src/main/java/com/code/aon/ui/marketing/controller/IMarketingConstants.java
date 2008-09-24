@@ -15,5 +15,7 @@ public interface IMarketingConstants {
 	String MARKETING_COLLECTIONS_CONTROLLER_NAME = "commecialCollections";
 
 	String SURVEY_CONTROLLER_NAME = "survey";
+	
+	String TARGET_PROFILE_CONTROLLER_NAME = "targetProfile";
 
 }
