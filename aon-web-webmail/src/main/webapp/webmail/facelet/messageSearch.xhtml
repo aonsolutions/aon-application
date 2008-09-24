@@ -66,60 +66,49 @@
 					</aon:panelGrid>
 					
 					<aon:div rendered="#{search.resultSelected}">
-					<aon:div rendered="#{!search.resultFound}" styleClass="aon-box aon-box-outstanding2">
-						<aon:div styleClass="aon-icon aon-icon-info" style="padding-top:2px;padding-bottom:2px;font-weight:bold;">
-							<aon:outputText value="#{appBundle.aon_webmail_search_none}"/>
+						<aon:div rendered="#{!search.resultFound}" styleClass="aon-box aon-box-outstanding2">
+							<aon:div styleClass="aon-icon aon-icon-info" style="padding-top:2px;padding-bottom:2px;font-weight:bold;">
+								<aon:outputText value="#{appBundle.aon_webmail_search_none}"/>
+							</aon:div>
+						</aon:div>
+						<aon:div rendered="#{search.resultFound}">
+						
+							<aon:dataTable id="messageDataTable" 
+								value="#{search.sortableList.model}" var="to" rows="10" 
+								cellpadding="0" cellspacing="0"
+								columnClasses="aon-editDataTable-textColumn,
+										aon-editDataTable-textColumn, aon-editDataTable-textColumn">
+										
+								<aon:rowSelector action="message"
+									actionListener="#{search.changeSelectedMessage}" />							
+																				
+								<aon:column>
+									<f:facet name="header">
+										<aon:outputText value="#{appBundle.aon_webmail_from}"/>
+									</f:facet>
+									<aon:outputText escape="false" converter="longString" value="#{to.sender}"/>
+								</aon:column>
+								
+								<aon:column>
+									<f:facet name="header">
+										<aon:outputText value="#{appBundle.aon_webmail_subject}"/>
+									</f:facet>
+									<aon:outputText value="#{to.subject}" />
+								</aon:column>
+										  
+								<aon:column>
+									<f:facet name="header">
+										<aon:outputText value="#{appBundle.aon_webmail_date}"/>
+									</f:facet>
+									<aon:outputText value="#{to.sentDate}"/>
+								</aon:column>		  
+							</aon:dataTable>
+							
+							<aon:dataScroller2 for="messageDataTable" />
+	
 						</aon:div>
 					</aon:div>
-					<aon:div rendered="#{search.resultFound}">
-					
-						<aon:dataTable id="messageDataTable" 
-							value="#{search.sortableList.messageList}" 
-							var="to"
-							rows="10" 
-							styleClass="dr-table rich-table aon-editDataTable"
-							headerClass="dr-table-subheader rich-table-subheader aon-editDataTable-header"
-							footerClass="dr-table-subfooter rich-table-subfooter aon-editDataTable-footer"
-							rowClasses="aon-editDataTable-row-odd,dr-table-firstrow rich-table-firstrow aon-editDataTable-row-even"
-							cellpadding="0" cellspacing="0"
-							columnClasses="dr-table-cell rich-table-cell aon-editDataTable-textColumn,
-									dr-table-cell rich-table-cell aon-editDataTable-textColumn,
-									dr-table-cell rich-table-cell aon-editDataTable-textColumn,
-									dr-table-cell rich-table-cell aon-editDataTable-textColumn">
-							<aon:column>
-								<f:facet name="header">
-									<aon:outputText value="#{appBundle.aon_webmail_from}"/>
-								</f:facet>
-								<aon:commandLink action="message" actionListener="#{to.changeSelectedMessage}">
-									<aon:outputText  escape="false" converter="longString" value="#{to.sender}"/>
-								</aon:commandLink>
-							</aon:column>
-							<aon:column>
-								<f:facet name="header">
-									<aon:outputText value="#{appBundle.aon_webmail_subject}"/>
-								</f:facet>
-								<aon:commandLink action="message" actionListener="#{to.changeSelectedMessage}">
-									<aon:outputText value="#{to.subject}" />
-								</aon:commandLink>
-							</aon:column>		  
-							<aon:column>
-								<f:facet name="header">
-									<aon:outputText value="#{appBundle.aon_webmail_date}"/>
-								</f:facet>
-								<aon:commandLink action="message" actionListener="#{to.changeSelectedMessage}">
-									<aon:outputText value="#{to.sentDate}"/>
-								</aon:commandLink>
-							</aon:column>		  
-						</aon:dataTable>
-						
-						<rich:datascroller
-							id="messageDataScroller" 
-							align="left"  for="messageDataTable" 
-							maxPages="20" />
-
-					</aon:div>
-				</aon:div>
-	        </aon:panelGroup>
+	        	</aon:panelGroup>
 		    </aon:div>		
 		</aon:form>
 
