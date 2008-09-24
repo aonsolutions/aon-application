@@ -21,6 +21,7 @@
 		<mapping class="com.code.aon.marketing.SurveyResponse"/>
 		<mapping class="com.code.aon.marketing.SurveyResponseDetail"/>
 		<mapping class="com.code.aon.marketing.SurveyWorkflow"/>
+		<mapping class="com.code.aon.marketing.TargetProfile"/>
 
 		<!-- AON-GEOZONE Mapping files -->		
 		<mapping class="com.code.aon.geozone.GeoTree"/>
