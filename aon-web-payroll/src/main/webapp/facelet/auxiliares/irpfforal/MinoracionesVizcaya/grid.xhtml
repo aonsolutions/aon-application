@@ -33,6 +33,10 @@
 								actionListener="#{minoracionesVizcaya.onReset}" rendered="#{!minoracionesVizcaya.new}"
 								styleClass="aon-finding-toolbar-item aon-icon-reset"
 								accesskey="#{bundle.aon_key_new}"/>
+								<aon:commandButton id="search" value="#{bundle.aon_search}"
+								action="MinorVizcaya_search" actionListener="#{minoracionesVizcaya.onEditSearch}"
+								styleClass="aon-finding-toolbar-item aon-icon-search"
+								accesskey="#{bundle.aon_key_search}" />		
 							<aon:commandButton id="save"
 								value="#{bundle.aon_save}" rendered="#{minoracionesVizcaya.to!=null or minoracionesVizcaya.new}"
 								styleClass="aon-finding-toolbar-item aon-icon-accept"

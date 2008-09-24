@@ -13,6 +13,13 @@ import com.code.aon.payroll.geograficas.Nacion;
 import com.code.aon.payroll.irpf.Cuota;
 import com.code.aon.payroll.irpf.Exclusion;
 import com.code.aon.payroll.irpfforal.CuotaRetencionAlava;
+import com.code.aon.payroll.irpfforal.CuotaRetencionGuipuzcoa;
+import com.code.aon.payroll.irpfforal.CuotaRetencionNavarra;
+import com.code.aon.payroll.irpfforal.CuotaRetencionVizcaya;
+import com.code.aon.payroll.irpfforal.MinoracionesAlava;
+import com.code.aon.payroll.irpfforal.MinoracionesGuipuzcoa;
+import com.code.aon.payroll.irpfforal.MinoracionesNavarra;
+import com.code.aon.payroll.irpfforal.MinoracionesVizcaya;
 import com.code.aon.payroll.tipos.Autorizacion;
 import com.code.aon.payroll.tipos.Documento;
 import com.code.aon.payroll.tipos.Empresario;
@@ -39,6 +46,13 @@ public class PayrollAliasWriter {
 				Tipovia.class.getName(),
 				Nacion.class.getName(), 
 				CuotaRetencionAlava.class.getName(),
+				CuotaRetencionVizcaya.class.getName(),
+				CuotaRetencionNavarra.class.getName(),
+				CuotaRetencionGuipuzcoa.class.getName(),
+				MinoracionesAlava.class.getName(),
+				MinoracionesVizcaya.class.getName(),
+				MinoracionesGuipuzcoa.class.getName(),
+				MinoracionesNavarra.class.getName(),
 				Admon.class.getName(),
 				Colectivos.class.getName(),
 				Exclusion.class.getName()};

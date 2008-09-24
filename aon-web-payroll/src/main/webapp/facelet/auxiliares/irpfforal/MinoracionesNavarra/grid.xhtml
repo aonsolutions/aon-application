@@ -33,6 +33,10 @@
 								actionListener="#{minoracionesNavarra.onReset}" rendered="#{!minoracionesNavarra.new}"
 								styleClass="aon-finding-toolbar-item aon-icon-reset"
 								accesskey="#{bundle.aon_key_new}"/>
+								<aon:commandButton id="search" value="#{bundle.aon_search}"
+								action="MinorNavarra_search" actionListener="#{minoracionesNavarra.onEditSearch}"
+								styleClass="aon-finding-toolbar-item aon-icon-search"
+								accesskey="#{bundle.aon_key_search}" />		
 							<aon:commandButton id="save"
 								value="#{bundle.aon_save}" rendered="#{minoracionesNavarra.to!=null or minoracionesNavarra.new}"
 								styleClass="aon-finding-toolbar-item aon-icon-accept"

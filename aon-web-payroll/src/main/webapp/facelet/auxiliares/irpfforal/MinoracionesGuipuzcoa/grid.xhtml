@@ -33,6 +33,10 @@
 								actionListener="#{minoracionesGuipuzcoa.onReset}" rendered="#{!minoracionesGuipuzcoa.new}"
 								styleClass="aon-finding-toolbar-item aon-icon-reset"
 								accesskey="#{bundle.aon_key_new}"/>
+								<aon:commandButton id="search" value="#{bundle.aon_search}"
+								action="MinorGuipuzcoa_search" actionListener="#{minoracionesGuipuzcoa.onEditSearch}"
+								styleClass="aon-finding-toolbar-item aon-icon-search"
+								accesskey="#{bundle.aon_key_search}" />		
 							<aon:commandButton id="save"
 								value="#{bundle.aon_save}" rendered="#{minoracionesGuipuzcoa.to!=null or minoracionesGuipuzcoa.new}"
 								styleClass="aon-finding-toolbar-item aon-icon-accept"

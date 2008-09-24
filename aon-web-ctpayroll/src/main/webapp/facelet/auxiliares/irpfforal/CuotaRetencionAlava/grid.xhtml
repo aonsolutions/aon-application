@@ -33,6 +33,10 @@
 								actionListener="#{cuotaRetencionAlava.onReset}" rendered="#{!cuotaRetencionAlava.new}"
 								styleClass="aon-finding-toolbar-item aon-icon-reset"
 								accesskey="#{bundle.aon_key_new}"/>
+								<aon:commandButton id="search" value="#{bundle.aon_search}"
+								action="CuotaAlava_search" actionListener="#{cuotaRetencionAlava.onEditSearch}"
+								styleClass="aon-finding-toolbar-item aon-icon-search"
+								accesskey="#{bundle.aon_key_search}" />		
 							<aon:commandButton id="save"
 								value="#{bundle.aon_save}" rendered="#{cuotaRetencionAlava.to!=null or cuotaRetencionAlava.new}"
 								styleClass="aon-finding-toolbar-item aon-icon-accept"
