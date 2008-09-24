@@ -15,8 +15,16 @@ import com.code.aon.payroll.irpf.Cuota;
 import com.code.aon.payroll.tipos.Tipovia;
 import com.code.aon.payroll.geograficas.Nacion;
 import com.code.aon.payroll.irpfforal.CuotaRetencionAlava;
+import com.code.aon.payroll.irpfforal.CuotaRetencionVizcaya;
+import com.code.aon.payroll.irpfforal.CuotaRetencionNavarra;
+import com.code.aon.payroll.irpfforal.CuotaRetencionGuipuzcoa;
+import com.code.aon.payroll.irpfforal.MinoracionesAlava;
+import com.code.aon.payroll.irpfforal.MinoracionesVizcaya;
+import com.code.aon.payroll.irpfforal.MinoracionesGuipuzcoa;
+import com.code.aon.payroll.irpfforal.MinoracionesNavarra;
 import com.code.aon.payroll.auxiliares.Admon;
 import com.code.aon.payroll.auxiliares.Colectivos;
+import com.code.aon.payroll.irpf.Exclusion;
 
 /** 
 * Interface for holding entity properties constants.
@@ -459,6 +467,457 @@ public interface IPayrollAlias {
 
 
 	/** 
+	* DAOConstantsEntry for CuotaRetencionVizcaya entity.
+	*/ 
+	DAOConstantsEntry CUOTA_RETENCION_VIZCAYA_ENTRY = DAOConstants.getDAOConstant(CuotaRetencionVizcaya.class);
+
+	/** 
+	* Alias value: CuotaRetencionVizcaya_desdeImporte
+	* Hibernate value: CuotaRetencionVizcaya.desdeImporte
+	*/
+	String  CUOTA_RETENCION_VIZCAYA_DESDE_IMPORTE = CUOTA_RETENCION_VIZCAYA_ENTRY.getAliasNames()[0];
+
+	/** 
+	* Alias value: CuotaRetencionVizcaya_fecfin
+	* Hibernate value: CuotaRetencionVizcaya.fecfin
+	*/
+	String  CUOTA_RETENCION_VIZCAYA_FECFIN = CUOTA_RETENCION_VIZCAYA_ENTRY.getAliasNames()[1];
+
+	/** 
+	* Alias value: CuotaRetencionVizcaya_h0
+	* Hibernate value: CuotaRetencionVizcaya.h0
+	*/
+	String  CUOTA_RETENCION_VIZCAYA_H0 = CUOTA_RETENCION_VIZCAYA_ENTRY.getAliasNames()[2];
+
+	/** 
+	* Alias value: CuotaRetencionVizcaya_h1
+	* Hibernate value: CuotaRetencionVizcaya.h1
+	*/
+	String  CUOTA_RETENCION_VIZCAYA_H1 = CUOTA_RETENCION_VIZCAYA_ENTRY.getAliasNames()[3];
+
+	/** 
+	* Alias value: CuotaRetencionVizcaya_h2
+	* Hibernate value: CuotaRetencionVizcaya.h2
+	*/
+	String  CUOTA_RETENCION_VIZCAYA_H2 = CUOTA_RETENCION_VIZCAYA_ENTRY.getAliasNames()[4];
+
+	/** 
+	* Alias value: CuotaRetencionVizcaya_h3
+	* Hibernate value: CuotaRetencionVizcaya.h3
+	*/
+	String  CUOTA_RETENCION_VIZCAYA_H3 = CUOTA_RETENCION_VIZCAYA_ENTRY.getAliasNames()[5];
+
+	/** 
+	* Alias value: CuotaRetencionVizcaya_h4
+	* Hibernate value: CuotaRetencionVizcaya.h4
+	*/
+	String  CUOTA_RETENCION_VIZCAYA_H4 = CUOTA_RETENCION_VIZCAYA_ENTRY.getAliasNames()[6];
+
+	/** 
+	* Alias value: CuotaRetencionVizcaya_h5
+	* Hibernate value: CuotaRetencionVizcaya.h5
+	*/
+	String  CUOTA_RETENCION_VIZCAYA_H5 = CUOTA_RETENCION_VIZCAYA_ENTRY.getAliasNames()[7];
+
+	/** 
+	* Alias value: CuotaRetencionVizcaya_h6
+	* Hibernate value: CuotaRetencionVizcaya.h6
+	*/
+	String  CUOTA_RETENCION_VIZCAYA_H6 = CUOTA_RETENCION_VIZCAYA_ENTRY.getAliasNames()[8];
+
+	/** 
+	* Alias value: CuotaRetencionVizcaya_hastaImporte
+	* Hibernate value: CuotaRetencionVizcaya.hastaImporte
+	*/
+	String  CUOTA_RETENCION_VIZCAYA_HASTA_IMPORTE = CUOTA_RETENCION_VIZCAYA_ENTRY.getAliasNames()[9];
+
+	/** 
+	* Alias value: CuotaRetencionVizcaya_id_fecini
+	* Hibernate value: CuotaRetencionVizcaya.id.fecini
+	*/
+	String  CUOTA_RETENCION_VIZCAYA_ID_FECINI = CUOTA_RETENCION_VIZCAYA_ENTRY.getAliasNames()[10];
+
+	/** 
+	* Alias value: CuotaRetencionVizcaya_id_numTramo
+	* Hibernate value: CuotaRetencionVizcaya.id.numTramo
+	*/
+	String  CUOTA_RETENCION_VIZCAYA_ID_NUM_TRAMO = CUOTA_RETENCION_VIZCAYA_ENTRY.getAliasNames()[11];
+
+
+
+	/** 
+	* DAOConstantsEntry for CuotaRetencionNavarra entity.
+	*/ 
+	DAOConstantsEntry CUOTA_RETENCION_NAVARRA_ENTRY = DAOConstants.getDAOConstant(CuotaRetencionNavarra.class);
+
+	/** 
+	* Alias value: CuotaRetencionNavarra_desdeImporte
+	* Hibernate value: CuotaRetencionNavarra.desdeImporte
+	*/
+	String  CUOTA_RETENCION_NAVARRA_DESDE_IMPORTE = CUOTA_RETENCION_NAVARRA_ENTRY.getAliasNames()[0];
+
+	/** 
+	* Alias value: CuotaRetencionNavarra_fecfin
+	* Hibernate value: CuotaRetencionNavarra.fecfin
+	*/
+	String  CUOTA_RETENCION_NAVARRA_FECFIN = CUOTA_RETENCION_NAVARRA_ENTRY.getAliasNames()[1];
+
+	/** 
+	* Alias value: CuotaRetencionNavarra_h0
+	* Hibernate value: CuotaRetencionNavarra.h0
+	*/
+	String  CUOTA_RETENCION_NAVARRA_H0 = CUOTA_RETENCION_NAVARRA_ENTRY.getAliasNames()[2];
+
+	/** 
+	* Alias value: CuotaRetencionNavarra_h1
+	* Hibernate value: CuotaRetencionNavarra.h1
+	*/
+	String  CUOTA_RETENCION_NAVARRA_H1 = CUOTA_RETENCION_NAVARRA_ENTRY.getAliasNames()[3];
+
+	/** 
+	* Alias value: CuotaRetencionNavarra_h2
+	* Hibernate value: CuotaRetencionNavarra.h2
+	*/
+	String  CUOTA_RETENCION_NAVARRA_H2 = CUOTA_RETENCION_NAVARRA_ENTRY.getAliasNames()[4];
+
+	/** 
+	* Alias value: CuotaRetencionNavarra_h3
+	* Hibernate value: CuotaRetencionNavarra.h3
+	*/
+	String  CUOTA_RETENCION_NAVARRA_H3 = CUOTA_RETENCION_NAVARRA_ENTRY.getAliasNames()[5];
+
+	/** 
+	* Alias value: CuotaRetencionNavarra_h4
+	* Hibernate value: CuotaRetencionNavarra.h4
+	*/
+	String  CUOTA_RETENCION_NAVARRA_H4 = CUOTA_RETENCION_NAVARRA_ENTRY.getAliasNames()[6];
+
+	/** 
+	* Alias value: CuotaRetencionNavarra_h5
+	* Hibernate value: CuotaRetencionNavarra.h5
+	*/
+	String  CUOTA_RETENCION_NAVARRA_H5 = CUOTA_RETENCION_NAVARRA_ENTRY.getAliasNames()[7];
+
+	/** 
+	* Alias value: CuotaRetencionNavarra_h6
+	* Hibernate value: CuotaRetencionNavarra.h6
+	*/
+	String  CUOTA_RETENCION_NAVARRA_H6 = CUOTA_RETENCION_NAVARRA_ENTRY.getAliasNames()[8];
+
+	/** 
+	* Alias value: CuotaRetencionNavarra_hastaImporte
+	* Hibernate value: CuotaRetencionNavarra.hastaImporte
+	*/
+	String  CUOTA_RETENCION_NAVARRA_HASTA_IMPORTE = CUOTA_RETENCION_NAVARRA_ENTRY.getAliasNames()[9];
+
+	/** 
+	* Alias value: CuotaRetencionNavarra_id_fecini
+	* Hibernate value: CuotaRetencionNavarra.id.fecini
+	*/
+	String  CUOTA_RETENCION_NAVARRA_ID_FECINI = CUOTA_RETENCION_NAVARRA_ENTRY.getAliasNames()[10];
+
+	/** 
+	* Alias value: CuotaRetencionNavarra_id_numTramo
+	* Hibernate value: CuotaRetencionNavarra.id.numTramo
+	*/
+	String  CUOTA_RETENCION_NAVARRA_ID_NUM_TRAMO = CUOTA_RETENCION_NAVARRA_ENTRY.getAliasNames()[11];
+
+
+
+	/** 
+	* DAOConstantsEntry for CuotaRetencionGuipuzcoa entity.
+	*/ 
+	DAOConstantsEntry CUOTA_RETENCION_GUIPUZCOA_ENTRY = DAOConstants.getDAOConstant(CuotaRetencionGuipuzcoa.class);
+
+	/** 
+	* Alias value: CuotaRetencionGuipuzcoa_desdeImporte
+	* Hibernate value: CuotaRetencionGuipuzcoa.desdeImporte
+	*/
+	String  CUOTA_RETENCION_GUIPUZCOA_DESDE_IMPORTE = CUOTA_RETENCION_GUIPUZCOA_ENTRY.getAliasNames()[0];
+
+	/** 
+	* Alias value: CuotaRetencionGuipuzcoa_fecfin
+	* Hibernate value: CuotaRetencionGuipuzcoa.fecfin
+	*/
+	String  CUOTA_RETENCION_GUIPUZCOA_FECFIN = CUOTA_RETENCION_GUIPUZCOA_ENTRY.getAliasNames()[1];
+
+	/** 
+	* Alias value: CuotaRetencionGuipuzcoa_h0
+	* Hibernate value: CuotaRetencionGuipuzcoa.h0
+	*/
+	String  CUOTA_RETENCION_GUIPUZCOA_H0 = CUOTA_RETENCION_GUIPUZCOA_ENTRY.getAliasNames()[2];
+
+	/** 
+	* Alias value: CuotaRetencionGuipuzcoa_h1
+	* Hibernate value: CuotaRetencionGuipuzcoa.h1
+	*/
+	String  CUOTA_RETENCION_GUIPUZCOA_H1 = CUOTA_RETENCION_GUIPUZCOA_ENTRY.getAliasNames()[3];
+
+	/** 
+	* Alias value: CuotaRetencionGuipuzcoa_h2
+	* Hibernate value: CuotaRetencionGuipuzcoa.h2
+	*/
+	String  CUOTA_RETENCION_GUIPUZCOA_H2 = CUOTA_RETENCION_GUIPUZCOA_ENTRY.getAliasNames()[4];
+
+	/** 
+	* Alias value: CuotaRetencionGuipuzcoa_h3
+	* Hibernate value: CuotaRetencionGuipuzcoa.h3
+	*/
+	String  CUOTA_RETENCION_GUIPUZCOA_H3 = CUOTA_RETENCION_GUIPUZCOA_ENTRY.getAliasNames()[5];
+
+	/** 
+	* Alias value: CuotaRetencionGuipuzcoa_h4
+	* Hibernate value: CuotaRetencionGuipuzcoa.h4
+	*/
+	String  CUOTA_RETENCION_GUIPUZCOA_H4 = CUOTA_RETENCION_GUIPUZCOA_ENTRY.getAliasNames()[6];
+
+	/** 
+	* Alias value: CuotaRetencionGuipuzcoa_h5
+	* Hibernate value: CuotaRetencionGuipuzcoa.h5
+	*/
+	String  CUOTA_RETENCION_GUIPUZCOA_H5 = CUOTA_RETENCION_GUIPUZCOA_ENTRY.getAliasNames()[7];
+
+	/** 
+	* Alias value: CuotaRetencionGuipuzcoa_h6
+	* Hibernate value: CuotaRetencionGuipuzcoa.h6
+	*/
+	String  CUOTA_RETENCION_GUIPUZCOA_H6 = CUOTA_RETENCION_GUIPUZCOA_ENTRY.getAliasNames()[8];
+
+	/** 
+	* Alias value: CuotaRetencionGuipuzcoa_hastaImporte
+	* Hibernate value: CuotaRetencionGuipuzcoa.hastaImporte
+	*/
+	String  CUOTA_RETENCION_GUIPUZCOA_HASTA_IMPORTE = CUOTA_RETENCION_GUIPUZCOA_ENTRY.getAliasNames()[9];
+
+	/** 
+	* Alias value: CuotaRetencionGuipuzcoa_id_fecini
+	* Hibernate value: CuotaRetencionGuipuzcoa.id.fecini
+	*/
+	String  CUOTA_RETENCION_GUIPUZCOA_ID_FECINI = CUOTA_RETENCION_GUIPUZCOA_ENTRY.getAliasNames()[10];
+
+	/** 
+	* Alias value: CuotaRetencionGuipuzcoa_id_numTramo
+	* Hibernate value: CuotaRetencionGuipuzcoa.id.numTramo
+	*/
+	String  CUOTA_RETENCION_GUIPUZCOA_ID_NUM_TRAMO = CUOTA_RETENCION_GUIPUZCOA_ENTRY.getAliasNames()[11];
+
+
+
+	/** 
+	* DAOConstantsEntry for MinoracionesAlava entity.
+	*/ 
+	DAOConstantsEntry MINORACIONES_ALAVA_ENTRY = DAOConstants.getDAOConstant(MinoracionesAlava.class);
+
+	/** 
+	* Alias value: MinoracionesAlava_desdeImporte
+	* Hibernate value: MinoracionesAlava.desdeImporte
+	*/
+	String  MINORACIONES_ALAVA_DESDE_IMPORTE = MINORACIONES_ALAVA_ENTRY.getAliasNames()[0];
+
+	/** 
+	* Alias value: MinoracionesAlava_fecfin
+	* Hibernate value: MinoracionesAlava.fecfin
+	*/
+	String  MINORACIONES_ALAVA_FECFIN = MINORACIONES_ALAVA_ENTRY.getAliasNames()[1];
+
+	/** 
+	* Alias value: MinoracionesAlava_hastaImporte
+	* Hibernate value: MinoracionesAlava.hastaImporte
+	*/
+	String  MINORACIONES_ALAVA_HASTA_IMPORTE = MINORACIONES_ALAVA_ENTRY.getAliasNames()[2];
+
+	/** 
+	* Alias value: MinoracionesAlava_id_fecini
+	* Hibernate value: MinoracionesAlava.id.fecini
+	*/
+	String  MINORACIONES_ALAVA_ID_FECINI = MINORACIONES_ALAVA_ENTRY.getAliasNames()[3];
+
+	/** 
+	* Alias value: MinoracionesAlava_id_numTramo
+	* Hibernate value: MinoracionesAlava.id.numTramo
+	*/
+	String  MINORACIONES_ALAVA_ID_NUM_TRAMO = MINORACIONES_ALAVA_ENTRY.getAliasNames()[4];
+
+	/** 
+	* Alias value: MinoracionesAlava_minAyuda
+	* Hibernate value: MinoracionesAlava.minAyuda
+	*/
+	String  MINORACIONES_ALAVA_MIN_AYUDA = MINORACIONES_ALAVA_ENTRY.getAliasNames()[5];
+
+	/** 
+	* Alias value: MinoracionesAlava_minGranminus
+	* Hibernate value: MinoracionesAlava.minGranminus
+	*/
+	String  MINORACIONES_ALAVA_MIN_GRANMINUS = MINORACIONES_ALAVA_ENTRY.getAliasNames()[6];
+
+	/** 
+	* Alias value: MinoracionesAlava_minMinus
+	* Hibernate value: MinoracionesAlava.minMinus
+	*/
+	String  MINORACIONES_ALAVA_MIN_MINUS = MINORACIONES_ALAVA_ENTRY.getAliasNames()[7];
+
+
+
+	/** 
+	* DAOConstantsEntry for MinoracionesVizcaya entity.
+	*/ 
+	DAOConstantsEntry MINORACIONES_VIZCAYA_ENTRY = DAOConstants.getDAOConstant(MinoracionesVizcaya.class);
+
+	/** 
+	* Alias value: MinoracionesVizcaya_desdeImporte
+	* Hibernate value: MinoracionesVizcaya.desdeImporte
+	*/
+	String  MINORACIONES_VIZCAYA_DESDE_IMPORTE = MINORACIONES_VIZCAYA_ENTRY.getAliasNames()[0];
+
+	/** 
+	* Alias value: MinoracionesVizcaya_fecfin
+	* Hibernate value: MinoracionesVizcaya.fecfin
+	*/
+	String  MINORACIONES_VIZCAYA_FECFIN = MINORACIONES_VIZCAYA_ENTRY.getAliasNames()[1];
+
+	/** 
+	* Alias value: MinoracionesVizcaya_hastaImporte
+	* Hibernate value: MinoracionesVizcaya.hastaImporte
+	*/
+	String  MINORACIONES_VIZCAYA_HASTA_IMPORTE = MINORACIONES_VIZCAYA_ENTRY.getAliasNames()[2];
+
+	/** 
+	* Alias value: MinoracionesVizcaya_id_fecini
+	* Hibernate value: MinoracionesVizcaya.id.fecini
+	*/
+	String  MINORACIONES_VIZCAYA_ID_FECINI = MINORACIONES_VIZCAYA_ENTRY.getAliasNames()[3];
+
+	/** 
+	* Alias value: MinoracionesVizcaya_id_numTramo
+	* Hibernate value: MinoracionesVizcaya.id.numTramo
+	*/
+	String  MINORACIONES_VIZCAYA_ID_NUM_TRAMO = MINORACIONES_VIZCAYA_ENTRY.getAliasNames()[4];
+
+	/** 
+	* Alias value: MinoracionesVizcaya_minAyuda
+	* Hibernate value: MinoracionesVizcaya.minAyuda
+	*/
+	String  MINORACIONES_VIZCAYA_MIN_AYUDA = MINORACIONES_VIZCAYA_ENTRY.getAliasNames()[5];
+
+	/** 
+	* Alias value: MinoracionesVizcaya_minGranminus
+	* Hibernate value: MinoracionesVizcaya.minGranminus
+	*/
+	String  MINORACIONES_VIZCAYA_MIN_GRANMINUS = MINORACIONES_VIZCAYA_ENTRY.getAliasNames()[6];
+
+	/** 
+	* Alias value: MinoracionesVizcaya_minMinus
+	* Hibernate value: MinoracionesVizcaya.minMinus
+	*/
+	String  MINORACIONES_VIZCAYA_MIN_MINUS = MINORACIONES_VIZCAYA_ENTRY.getAliasNames()[7];
+
+
+
+	/** 
+	* DAOConstantsEntry for MinoracionesGuipuzcoa entity.
+	*/ 
+	DAOConstantsEntry MINORACIONES_GUIPUZCOA_ENTRY = DAOConstants.getDAOConstant(MinoracionesGuipuzcoa.class);
+
+	/** 
+	* Alias value: MinoracionesGuipuzcoa_desdeImporte
+	* Hibernate value: MinoracionesGuipuzcoa.desdeImporte
+	*/
+	String  MINORACIONES_GUIPUZCOA_DESDE_IMPORTE = MINORACIONES_GUIPUZCOA_ENTRY.getAliasNames()[0];
+
+	/** 
+	* Alias value: MinoracionesGuipuzcoa_fecfin
+	* Hibernate value: MinoracionesGuipuzcoa.fecfin
+	*/
+	String  MINORACIONES_GUIPUZCOA_FECFIN = MINORACIONES_GUIPUZCOA_ENTRY.getAliasNames()[1];
+
+	/** 
+	* Alias value: MinoracionesGuipuzcoa_hastaImporte
+	* Hibernate value: MinoracionesGuipuzcoa.hastaImporte
+	*/
+	String  MINORACIONES_GUIPUZCOA_HASTA_IMPORTE = MINORACIONES_GUIPUZCOA_ENTRY.getAliasNames()[2];
+
+	/** 
+	* Alias value: MinoracionesGuipuzcoa_id_fecini
+	* Hibernate value: MinoracionesGuipuzcoa.id.fecini
+	*/
+	String  MINORACIONES_GUIPUZCOA_ID_FECINI = MINORACIONES_GUIPUZCOA_ENTRY.getAliasNames()[3];
+
+	/** 
+	* Alias value: MinoracionesGuipuzcoa_id_numTramo
+	* Hibernate value: MinoracionesGuipuzcoa.id.numTramo
+	*/
+	String  MINORACIONES_GUIPUZCOA_ID_NUM_TRAMO = MINORACIONES_GUIPUZCOA_ENTRY.getAliasNames()[4];
+
+	/** 
+	* Alias value: MinoracionesGuipuzcoa_minAyuda
+	* Hibernate value: MinoracionesGuipuzcoa.minAyuda
+	*/
+	String  MINORACIONES_GUIPUZCOA_MIN_AYUDA = MINORACIONES_GUIPUZCOA_ENTRY.getAliasNames()[5];
+
+	/** 
+	* Alias value: MinoracionesGuipuzcoa_minGranminus
+	* Hibernate value: MinoracionesGuipuzcoa.minGranminus
+	*/
+	String  MINORACIONES_GUIPUZCOA_MIN_GRANMINUS = MINORACIONES_GUIPUZCOA_ENTRY.getAliasNames()[6];
+
+	/** 
+	* Alias value: MinoracionesGuipuzcoa_minMinus
+	* Hibernate value: MinoracionesGuipuzcoa.minMinus
+	*/
+	String  MINORACIONES_GUIPUZCOA_MIN_MINUS = MINORACIONES_GUIPUZCOA_ENTRY.getAliasNames()[7];
+
+
+
+	/** 
+	* DAOConstantsEntry for MinoracionesNavarra entity.
+	*/ 
+	DAOConstantsEntry MINORACIONES_NAVARRA_ENTRY = DAOConstants.getDAOConstant(MinoracionesNavarra.class);
+
+	/** 
+	* Alias value: MinoracionesNavarra_desdeImporte
+	* Hibernate value: MinoracionesNavarra.desdeImporte
+	*/
+	String  MINORACIONES_NAVARRA_DESDE_IMPORTE = MINORACIONES_NAVARRA_ENTRY.getAliasNames()[0];
+
+	/** 
+	* Alias value: MinoracionesNavarra_fecfin
+	* Hibernate value: MinoracionesNavarra.fecfin
+	*/
+	String  MINORACIONES_NAVARRA_FECFIN = MINORACIONES_NAVARRA_ENTRY.getAliasNames()[1];
+
+	/** 
+	* Alias value: MinoracionesNavarra_hastaImporte
+	* Hibernate value: MinoracionesNavarra.hastaImporte
+	*/
+	String  MINORACIONES_NAVARRA_HASTA_IMPORTE = MINORACIONES_NAVARRA_ENTRY.getAliasNames()[2];
+
+	/** 
+	* Alias value: MinoracionesNavarra_id_fecini
+	* Hibernate value: MinoracionesNavarra.id.fecini
+	*/
+	String  MINORACIONES_NAVARRA_ID_FECINI = MINORACIONES_NAVARRA_ENTRY.getAliasNames()[3];
+
+	/** 
+	* Alias value: MinoracionesNavarra_id_numTramo
+	* Hibernate value: MinoracionesNavarra.id.numTramo
+	*/
+	String  MINORACIONES_NAVARRA_ID_NUM_TRAMO = MINORACIONES_NAVARRA_ENTRY.getAliasNames()[4];
+
+	/** 
+	* Alias value: MinoracionesNavarra_minGranminus
+	* Hibernate value: MinoracionesNavarra.minGranminus
+	*/
+	String  MINORACIONES_NAVARRA_MIN_GRANMINUS = MINORACIONES_NAVARRA_ENTRY.getAliasNames()[5];
+
+	/** 
+	* Alias value: MinoracionesNavarra_minMinus
+	* Hibernate value: MinoracionesNavarra.minMinus
+	*/
+	String  MINORACIONES_NAVARRA_MIN_MINUS = MINORACIONES_NAVARRA_ENTRY.getAliasNames()[6];
+
+
+
+	/** 
 	* DAOConstantsEntry for Admon entity.
 	*/ 
 	DAOConstantsEntry ADMON_ENTRY = DAOConstants.getDAOConstant(Admon.class);
@@ -499,6 +958,43 @@ public interface IPayrollAlias {
 	* Hibernate value: Colectivos.description
 	*/
 	String  COLECTIVOS_DESCRIPTION = COLECTIVOS_ENTRY.getAliasNames()[2];
+
+
+
+	/** 
+	* DAOConstantsEntry for Exclusion entity.
+	*/ 
+	DAOConstantsEntry EXCLUSION_ENTRY = DAOConstants.getDAOConstant(Exclusion.class);
+
+	/** 
+	* Alias value: Exclusion_fecfin
+	* Hibernate value: Exclusion.fecfin
+	*/
+	String  EXCLUSION_FECFIN = EXCLUSION_ENTRY.getAliasNames()[0];
+
+	/** 
+	* Alias value: Exclusion_id_fecini
+	* Hibernate value: Exclusion.id.fecini
+	*/
+	String  EXCLUSION_ID_FECINI = EXCLUSION_ENTRY.getAliasNames()[1];
+
+	/** 
+	* Alias value: Exclusion_id_hijos
+	* Hibernate value: Exclusion.id.hijos
+	*/
+	String  EXCLUSION_ID_HIJOS = EXCLUSION_ENTRY.getAliasNames()[2];
+
+	/** 
+	* Alias value: Exclusion_id_situacion
+	* Hibernate value: Exclusion.id.situacion
+	*/
+	String  EXCLUSION_ID_SITUACION = EXCLUSION_ENTRY.getAliasNames()[3];
+
+	/** 
+	* Alias value: Exclusion_importe
+	* Hibernate value: Exclusion.importe
+	*/
+	String  EXCLUSION_IMPORTE = EXCLUSION_ENTRY.getAliasNames()[4];
 
 
 }

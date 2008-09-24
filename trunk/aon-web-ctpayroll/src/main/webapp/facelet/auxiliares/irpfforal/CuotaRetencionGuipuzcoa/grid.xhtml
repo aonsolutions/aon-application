@@ -33,6 +33,10 @@
 								actionListener="#{cuotaRetencionGuipuzcoa.onReset}" rendered="#{!cuotaRetencionGuipuzcoa.new}"
 								styleClass="aon-finding-toolbar-item aon-icon-reset"
 								accesskey="#{bundle.aon_key_new}"/>
+								<aon:commandButton id="search" value="#{bundle.aon_search}"
+								action="CuotaGuipuzcoa_search" actionListener="#{cuotaRetencionGuipuzcoa.onEditSearch}"
+								styleClass="aon-finding-toolbar-item aon-icon-search"
+								accesskey="#{bundle.aon_key_search}" />		
 							<aon:commandButton id="save"
 								value="#{bundle.aon_save}" rendered="#{cuotaRetencionGuipuzcoa.to!=null or cuotaRetencionGuipuzcoa.new}"
 								styleClass="aon-finding-toolbar-item aon-icon-accept"

@@ -32,6 +32,10 @@
 								actionListener="#{cuotas.onReset}" rendered="#{!cuotas.new}"
 								styleClass="aon-finding-toolbar-item aon-icon-reset"
 								accesskey="#{bundle.aon_key_new}"/>
+								<aon:commandButton id="search" value="#{bundle.aon_search}"
+								action="Cuotas_search" actionListener="#{cuotas.onEditSearch}"
+								styleClass="aon-finding-toolbar-item aon-icon-search"
+								accesskey="#{bundle.aon_key_search}" />	
 							<aon:commandButton id="save"
 								value="#{bundle.aon_save}" rendered="#{cuotas.to!=null or cuotas.new}"
 								styleClass="aon-finding-toolbar-item aon-icon-accept"
