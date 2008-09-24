@@ -15,7 +15,7 @@
 	<description>AON DESKTOP</description>
 	<name>AON DESKTOP</name>
 	<properties>
-		<dbVersion>1.9.0</dbVersion>
+		<dbVersion>1.10.0</dbVersion>
 	</properties>
 	<build>
 		<finalName>aon-desktop</finalName> 
