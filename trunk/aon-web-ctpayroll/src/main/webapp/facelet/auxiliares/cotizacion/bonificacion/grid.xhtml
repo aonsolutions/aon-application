@@ -4,7 +4,8 @@
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:aon="http://www.code.es/aon-rich-components"
-	xmlns:c="http://java.sun.com/jstl/core">
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:rich="http://richfaces.org/rich">
 <body>
 <ui:composition template="/facelet/templates/aon.ui.content.xhtml">
 
@@ -81,6 +82,29 @@
 								
 						<aon:rowSelector toggleOnClick="#{cotizacionBonificacion.to == null}"
 							actionListener="#{cotizacionBonificacion.onSelect}" />
+							
+						<f:facet name="header">
+	                        <rich:columnGroup>
+	                            <rich:column colspan="1">
+	                                <rich:spacer />
+	                            </rich:column>
+	                             <rich:column colspan="3" >
+	                                <aon:outputText value="#{appBundle.aon_payroll_auxiliares_cotizacion__tipboni_datos}" />
+	                            </rich:column>
+	                            <rich:column colspan="3">
+	                                <aon:outputText value="#{appBundle.aon_payroll_auxiliares_cotizacion__tipboni_porcentajes}" />
+	                            </rich:column>
+	                            <!--  
+	                            <rich:column colspan="4">
+	                                <aon:outputText value="#{appBundle.aon_payroll_auxiliares_cotizacion__tipboni_marcas}" />
+	                            </rich:column>
+	                            -->
+	                             <rich:column colspan="1">
+	                                <rich:spacer />
+	                            </rich:column>
+	                        </rich:columnGroup>
+	                    </f:facet>
+						
 	
 						<aon:column>
 							<f:facet name="header">
