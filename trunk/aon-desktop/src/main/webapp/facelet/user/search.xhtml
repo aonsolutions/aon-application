@@ -9,7 +9,7 @@
 
 	<ui:define name="content">
 
-		<aon:form id="userForm">
+		<aon:form id="userSearch">
 		
 			<aon:div styleClass="aon-finding-title-toolbar">
 				<aon:panelGrid columns="3" dir="true" 				
@@ -20,17 +20,20 @@
 					</aon:div>						
 		
 					<aon:div styleClass="aon-finding-subtitle-internal">
-						<aon:outputText
-							value="#{bundle.aon_search}" />
+						<aon:outputText value="#{bundle.aon_toolbar_search}" />
 					</aon:div>				
 		
 					<aon:div styleClass="aon-finding-toolbar-item-group">
-						<aon:commandButton id="search" value="#{bundle.aon_accept}"
-							action="user_list" actionListener="#{user.onSearch}"
-							styleClass="aon-finding-toolbar-item aon-icon-search"
-							accesskey="#{bundle.aon_key_search}" />
-						<aon:commandButton id="cancel" value="#{bundle.aon_cancel}"
-							action="user" actionListener="#{workGroup.onSearch}"
+						<aon:commandButton id="clear" value="#{bundle.aon_clear}"
+							type="reset" ajaxSingle="true"
+							styleClass="aon-finding-toolbar-item aon-icon-rubber" />
+						<aon:commandButton id="reset" value="#{bundle.aon_reset}"
+							action="user_form" actionListener="#{user.onReset}"
+							styleClass="aon-finding-toolbar-item aon-icon-reset"
+							rendered="#{domain.userManagement}"
+							accesskey="#{bundle.aon_key_new}" />														
+						<aon:commandButton id="back" value="#{bundle.aon_back}"
+							action="user" actionListener="#{user.onCancel}"
 							styleClass="aon-finding-toolbar-item aon-icon-cancel"
 							immediate="true" accesskey="#{bundle.aon_key_cancel}" />	
 					</aon:div>
@@ -38,25 +41,24 @@
 			</aon:div>
 			<!-- end toolbar navigation -->
 
-			<aon:div styleClass="aon-scroll-area">
-				<aon:div styleClass="aon-scroll-area-internal">		
-			
-					<aon:panelGrid columns="2" >
+			<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/searchContent.xhtml" >
 
-						<aon:outputLabel for="User_name"
-							value="#{configBundle.user_name}" />
-						<aon:inputText id="User_name" size="80"
-							valueChangeListener="#{user.addExpression}" />
+				<ui:define name="searchContent">
+					<aon:methodParam name="searchActionListener" value="#{user.onSearch}" type="actionListener" />
+					<aon:methodParam name="searchAction" value="user_list" />		
 
-						<aon:outputLabel for="User_login"
-							value="#{configBundle.user_login}" />
-						<aon:inputText id="User_login" size="20"
-							valueChangeListener="#{user.addExpression}" />
-							
-					</aon:panelGrid>
+					<aon:outputLabel for="User_name"
+						value="#{configBundle.user_name}" />
+					<aon:inputText id="User_name" size="80"
+						valueChangeListener="#{user.addExpression}" />
 
-				</aon:div>
-			</aon:div>
+					<aon:outputLabel for="User_login"
+						value="#{configBundle.user_login}" />
+					<aon:inputText id="User_login" size="20"
+						valueChangeListener="#{user.addExpression}" />
+				</ui:define>
+				
+			</ui:decorate>							
 
 		</aon:form>
 	</ui:define>
