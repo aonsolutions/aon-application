@@ -18,62 +18,56 @@
 					</aon:div>
 
 					<aon:div styleClass="aon-finding-subtitle-internal">
-						<aon:outputText value="#{bundle.aon_search}" />
+						<aon:outputText value="#{bundle.aon_toolbar_search}" />
 					</aon:div>
 
 					<aon:div styleClass="aon-finding-toolbar-item-group">
-						<aon:commandButton id="search" value="#{bundle.aon_accept}"
-							action="session_list" actionListener="#{auditSession.onSearch}"
-							styleClass="aon-finding-toolbar-item aon-icon-search"
-							accesskey="#{bundle.aon_key_search}" />
-						<aon:commandButton id="cancel" value="#{bundle.aon_cancel}"
-							action="session_list" actionListener="#{auditSession.onCancel}"
-							styleClass="aon-finding-toolbar-item aon-icon-cancel" immediate="true"
-							accesskey="#{bundle.aon_key_cancel}" />
 						<aon:commandButton id="clear" value="#{bundle.aon_clear}"
 							type="reset" ajaxSingle="true"
 							styleClass="aon-finding-toolbar-item aon-icon-rubber" />
+						<aon:commandButton id="back" value="#{bundle.aon_back}"
+							action="session_list" actionListener="#{auditSession.onCancel}"
+							styleClass="aon-finding-toolbar-item aon-icon-cancel" immediate="true"
+							accesskey="#{bundle.aon_key_cancel}" />
 					</aon:div>
 				</aon:panelGrid>
 			</aon:div>
 			<!-- end toolbar navigation -->
 
-			<aon:div styleClass="aon-scroll-area">
-				<aon:div styleClass="aon-scroll-area-internal">
+			<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/searchContent.xhtml" >
 
-					<aon:panelGrid columns="2">
+				<ui:define name="searchContent">
+					<aon:methodParam name="searchActionListener" value="#{auditSession.onSearch}" type="actionListener" />
+					<aon:methodParam name="searchAction" value="session_list" />		
 
-						<aon:outputLabel for="Session_id"
-							value="#{bundle.aon_id}" />
-						<aon:inputText id="Session_id" size="60"
-							valueChangeListener="#{auditSession.addExpression}" />
+					<aon:outputLabel for="Session_id"
+						value="#{bundle.aon_id}" />
+					<aon:inputText id="Session_id" size="60"
+						valueChangeListener="#{auditSession.addExpression}" />
 
-						<aon:outputLabel for="Session_user_domain_id"
-							value="#{appBundle.aon_domain}" />
-						<aon:selectOneMenu id="Session_user_domain_id"
-							valueChangeListener="#{auditSession.addDirectExpression}">
-							<f:selectItem value="#{null}" itemLabel="    " />
-							<f:selectItems value="#{auditCollections.domains}" />
-						</aon:selectOneMenu>					
+					<aon:outputLabel for="Session_user_domain_id"
+						value="#{appBundle.aon_domain}" />
+					<aon:selectOneMenu id="Session_user_domain_id"
+						valueChangeListener="#{auditSession.addDirectExpression}">
+						<f:selectItem value="#{null}" itemLabel="    " />
+						<f:selectItems value="#{auditCollections.domains}" />
+					</aon:selectOneMenu>					
 
-						<aon:outputLabel for="Session_application_id"
-							value="#{appBundle.aon_application}" />
-						<aon:selectOneMenu id="Session_application_id"
-							valueChangeListener="#{auditSession.addDirectExpression}">
-							<f:selectItem value="#{null}" itemLabel="    " />
-							<f:selectItems value="#{auditCollections.applications}" />
-						</aon:selectOneMenu>					
+					<aon:outputLabel for="Session_application_id"
+						value="#{appBundle.aon_application}" />
+					<aon:selectOneMenu id="Session_application_id"
+						valueChangeListener="#{auditSession.addDirectExpression}">
+						<f:selectItem value="#{null}" itemLabel="    " />
+						<f:selectItems value="#{auditCollections.applications}" />
+					</aon:selectOneMenu>					
 
-						<aon:outputLabel for="Session_user_login"
-							value="#{appBundle.aon_user}" />
-						<aon:inputText id="Session_user_login" size="60"
-							valueChangeListener="#{auditSession.addDirectExpression}" />
-
-					</aon:panelGrid>
-
-				</aon:div>
-			</aon:div>
-
+					<aon:outputLabel for="Session_user_login"
+						value="#{appBundle.aon_user}" />
+					<aon:inputText id="Session_user_login" size="60"
+						valueChangeListener="#{auditSession.addDirectExpression}" />
+				</ui:define>
+			</ui:decorate>
+			
 		</aon:form>
 	</ui:define>
 </ui:composition>

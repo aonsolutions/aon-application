@@ -19,18 +19,10 @@
 					</aon:div>
 
 					<aon:div styleClass="aon-finding-subtitle-internal">
-						<aon:outputText value="#{bundle.aon_search}" />
+						<aon:outputText value="#{bundle.aon_toolbar_search}" />
 					</aon:div>
 
 					<aon:div styleClass="aon-finding-toolbar-item-group">
-						<aon:commandButton id="search" value="#{bundle.aon_accept}"
-							action="domain_list" actionListener="#{domain.onSearch}"
-							styleClass="aon-finding-toolbar-item aon-icon-search"
-							accesskey="#{bundle.aon_key_search}" />
-						<aon:commandButton id="cancel" value="#{bundle.aon_cancel}"
-							action="domain_list" actionListener="#{domain.onCancel}"
-							styleClass="aon-finding-toolbar-item aon-icon-cancel" immediate="true"
-							accesskey="#{bundle.aon_key_cancel}" />
 						<aon:commandButton id="clear" value="#{bundle.aon_clear}"
 							type="reset" ajaxSingle="true"
 							styleClass="aon-finding-toolbar-item aon-icon-rubber" />
@@ -38,30 +30,32 @@
 							action="domain_form" actionListener="#{domain.onReset}"
 							styleClass="aon-finding-toolbar-item aon-icon-reset"
 							accesskey="#{bundle.aon_key_new}" />
+						<aon:commandButton id="back" value="#{bundle.aon_back}"
+							action="domain_list" actionListener="#{domain.onCancel}"
+							styleClass="aon-finding-toolbar-item aon-icon-cancel" immediate="true"
+							accesskey="#{bundle.aon_key_cancel}" />
 					</aon:div>
 				</aon:panelGrid>
 			</aon:div>
 			<!-- end toolbar navigation -->
 
-			<aon:div styleClass="aon-scroll-area">
-				<aon:div styleClass="aon-scroll-area-internal">
+			<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/searchContent.xhtml" >
 
-					<aon:panelGrid columns="2">
+				<ui:define name="searchContent">
+					<aon:methodParam name="searchActionListener" value="#{domain.onSearch}" type="actionListener" />
+					<aon:methodParam name="searchAction" value="domain_list" />		
 
-						<aon:outputLabel for="Application_id"
-							value="#{bundle.aon_id}" />
-						<aon:inputText id="Application_id" size="60"
-							valueChangeListener="#{domain.addExpression}" />
+					<aon:outputLabel for="Domain_id"
+						value="#{bundle.aon_id}" />
+					<aon:inputText id="Domain_id" size="60"
+						valueChangeListener="#{domain.addExpression}" />
 
-						<aon:outputLabel for="Application_name"
-							value="#{bundle.aon_name}" />
-						<aon:inputText id="Application_name" size="60"
-							valueChangeListener="#{domain.addExpression}" />
-
-					</aon:panelGrid>
-
-				</aon:div>
-			</aon:div>
+					<aon:outputLabel for="Domain_name"
+						value="#{bundle.aon_name}" />
+					<aon:inputText id="Domain_name" size="60"
+						valueChangeListener="#{domain.addExpression}" />
+				</ui:define>
+			</ui:decorate>
 
 		</aon:form>
 	</ui:define>
