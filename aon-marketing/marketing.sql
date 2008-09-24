@@ -110,8 +110,8 @@ CREATE TABLE `mk_action` (
   PRIMARY KEY  (`id`),
   KEY `survey` (`survey`),
   KEY `campaign` (`campaign`),
-  CONSTRAINT `FK_MK_ACCION_MK_CAMPAIGN` FOREIGN KEY (`campaign`) REFERENCES `mk_campaign` (`id`),
-  CONSTRAINT `FK_MK_ACCTION_SURVEY` FOREIGN KEY (`survey`) REFERENCES `survey` (`id`)
+  CONSTRAINT `FK_MK_ACTION_SURVEY` FOREIGN KEY (`survey`) REFERENCES `survey` (`id`),
+  CONSTRAINT `FK_MK_ACTION_MK_CAMPAIGN` FOREIGN KEY (`campaign`) REFERENCES `mk_campaign` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci ROW_FORMAT=COMPACT COMMENT='Acción de la Campaña';
 
 CREATE TABLE `mk_action_target` (
