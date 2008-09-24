@@ -14,6 +14,10 @@
 		<property name="show_sql">true</property>		
 
 		<!-- AON-MARKETING Mapping files -->
+		<mapping class="com.code.aon.marketing.Action"/>
+		<mapping class="com.code.aon.marketing.ActionTarget"/>
+		<mapping class="com.code.aon.marketing.ActionTargetLog"/>
+		<mapping class="com.code.aon.marketing.Campaign"/>
 		<mapping class="com.code.aon.marketing.Question"/>
 		<mapping class="com.code.aon.marketing.QuestionValue"/>
 		<mapping class="com.code.aon.marketing.Survey"/>
