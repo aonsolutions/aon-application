@@ -77,3 +77,18 @@ CREATE TABLE `survey_response_detail` (
   `surveyResponse` int(4) NOT NULL COMMENT 'Identificador de la Respuesta de la Campaña',
   PRIMARY KEY  (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci ROW_FORMAT=COMPACT COMMENT='Survy Response Detail';
+
+CREATE TABLE `target_profile` (
+  `id` int(4) NOT NULL auto_increment COMMENT 'Identificador unico del Perfil de Cliente Potencial',
+  `target` int(4) NOT NULL COMMENT 'Identificador del Cliente Potencial',
+  `last_update` datetime NOT NULL COMMENT 'Fecha de la ultima modificación del Perfil del Cliente Potencial',
+  `question` int(4) NOT NULL COMMENT 'Identificador de la Pregunta',
+  `value_text` varchar(64) collate latin1_spanish_ci default NULL COMMENT 'Valor de tipo Texto',
+  `value_number` double(15,3) default NULL COMMENT 'Valor de tipo Numerico',
+  `value_date` datetime default NULL COMMENT 'Valor de tipo Fecha',
+  PRIMARY KEY  (`id`),
+  KEY `question` (`question`),
+  KEY `target` (`target`),
+  CONSTRAINT `FK_TARGET_PROFILE_TARGET` FOREIGN KEY (`target`) REFERENCES `target` (`registry`),
+  CONSTRAINT `FK_TARGET_PROFILE_QUESTION` FOREIGN KEY (`question`) REFERENCES `question` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_spanish_ci ROW_FORMAT=COMPACT COMMENT='Perfil de Cliente Potencial';
