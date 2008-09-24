@@ -46,40 +46,23 @@
 						value="#{bundle.aon_value}" />
 				</f:facet>
 				<aon:div layout="none" rendered="#{to!=questionValue.to}">
-					<aon:outputText value="#{to.text}" rendered="#{question.text}" />
-					<aon:outputText value="#{to.number}" rendered="#{question.number}" />
-					<aon:outputText value="&#160;" rendered="#{question.boolean}"
-						styleClass="#{(to.boolean)?'aon-icon aon-icon-checked':'aon-icon aon-icon-check'}" 
-					/>
-					<aon:outputText value="#{to.date}" rendered="#{question.date}">
-						<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
-						timeZone="#{timeZoneController.timeZoneId}" />
-					</aon:outputText>					
+					<ui:include src="/marketing/outputValue.xhtml" >
+						<ui:param name="value" value="#{to}" />
+						<ui:param name="type" value="#{question.to.type}" />
+					</ui:include>
 				</aon:div>
 				<aon:div layout="none" rendered="#{to==questionValue.to}">
-					<aon:inputText value="#{questionValue.to.text}" rendered="#{question.text}"
-						required="true" size="45" maxlength="64" />
-					<aon:inputText value="#{questionValue.to.number}" rendered="#{question.number}"
-						required="true" size="45" maxlength="64" />
-					<aon:selectBooleanCheckbox value="#{questionValue.to.boolean}"
-						required="true" rendered="#{question.boolean}" />
-					<aon:selectInputDate value="#{questionValue.to.date}" required="true"
-						rendered="#{question.date}" timeZone="#{timeZoneController.timeZone}"
-						renderAsPopup="true" popupDateFormat="#{bundle.aon_date_pattern}">
-					</aon:selectInputDate>		
+					<ui:include src="/marketing/inputValue.xhtml" >
+						<ui:param name="value" value="#{questionValue.to}" />
+						<ui:param name="type" value="#{question.to.type}" />
+					</ui:include>
 				</aon:div>				
 				<f:facet name="footer">
 					<aon:div layout="none" rendered="#{questionValue.new}">
-						<aon:inputText value="#{questionValue.to.text}" rendered="#{question.text}"
-							required="true" size="45" maxlength="64" />
-						<aon:inputText value="#{questionValue.to.number}" rendered="#{question.number}"
-							required="true" size="45" maxlength="64" />
-						<aon:selectBooleanCheckbox value="#{questionValue.to.boolean}"
-							required="true" rendered="#{question.boolean}" />
-						<aon:selectInputDate value="#{questionValue.to.date}" required="true"
-							rendered="#{question.date}" timeZone="#{timeZoneController.timeZone}"
-							renderAsPopup="true" popupDateFormat="#{bundle.aon_date_pattern}">
-						</aon:selectInputDate>		
+						<ui:include src="/marketing/inputValue.xhtml" >
+							<ui:param name="value" value="#{questionValue.to}" />
+							<ui:param name="type" value="#{question.to.type}" />
+						</ui:include>
 					</aon:div>
 				</f:facet>
 			</aon:column>
