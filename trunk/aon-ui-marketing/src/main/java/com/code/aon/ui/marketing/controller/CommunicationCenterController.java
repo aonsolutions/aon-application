@@ -24,10 +24,9 @@ import com.code.aon.marketing.Survey;
 import com.code.aon.marketing.SurveyQuestion;
 import com.code.aon.marketing.SurveyResponse;
 import com.code.aon.marketing.SurveyResponseDetail;
+import com.code.aon.marketing.TargetProfile;
 import com.code.aon.marketing.dao.IMarketingAlias;
 import com.code.aon.marketing.enumeration.QuestionType;
-import com.code.aon.product.Brand;
-import com.code.aon.product.dao.IProductAlias;
 import com.code.aon.ql.Criteria;
 import com.code.aon.registry.RegistryAddress;
 import com.code.aon.registry.RegistryMedia;
@@ -212,7 +211,7 @@ public class CommunicationCenterController extends ControllerAdapter {
 		saveResponse();
 		updateSurveyResponse( this.nextQuestion );
 	}
-	
+
 	public void onFinishSurveyResponse( ActionEvent event ) throws ManagerBeanException {
 		saveResponse();
 		onInitSurveyResponse(event);
@@ -221,9 +220,26 @@ public class CommunicationCenterController extends ControllerAdapter {
 	private void updateResponseValue() throws ManagerBeanException {
 		IManagerBean bean = BeanManager.getManagerBean(QuestionValue.class);
 		QuestionValue questionValue = (QuestionValue) bean.get( this.questionValueId );
-		response.setNumber( questionValue.getNumber() );
-		response.setDate( questionValue.getDate() );
-		response.setText( questionValue.getText() );
+		questionValue.copyValues(response);
+	}
+
+	private void updateTargetProfile() throws ManagerBeanException {
+		IManagerBean bean = BeanManager.getManagerBean(TargetProfile.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(bean.getFieldName(IMarketingAlias.TARGET_PROFILE_TARGET_ID), this.target.getId());
+		criteria.addEqualExpression(bean.getFieldName(IMarketingAlias.TARGET_PROFILE_QUESTION_ID), getQuestion().getId());
+		TargetProfile targetProfile = null;
+		List<ITransferObject> list = bean.getList(criteria);
+		if (! list.isEmpty() ) {
+			targetProfile = (TargetProfile) list.get(0);
+		} else {
+			targetProfile = new TargetProfile();
+			targetProfile.setTarget( this.target );
+			targetProfile.setQuestion( getQuestion() );
+		}
+		targetProfile.setLastUpdate( new Date() );
+		this.response.copyValues(targetProfile);
+		bean.insertOrUpdate( targetProfile );
 	}
 	
 	private void saveResponse() throws ManagerBeanException {	
@@ -235,6 +251,9 @@ public class CommunicationCenterController extends ControllerAdapter {
 			this.response.setQuestion( getQuestion() );
 			IManagerBean bean = BeanManager.getManagerBean(SurveyResponseDetail.class);		
 			bean.insert( this.response );
+			if (! this.response.isNotFilled() ) {
+				updateTargetProfile();
+			}
 		}
 	}
 	
