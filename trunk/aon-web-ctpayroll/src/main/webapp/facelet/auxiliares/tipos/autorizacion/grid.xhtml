@@ -32,6 +32,10 @@
 								actionListener="#{tiposAutorizacion.onReset}" rendered="#{!tiposAutorizacion.new}"
 								styleClass="aon-finding-toolbar-item aon-icon-reset"
 								accesskey="#{bundle.aon_key_new}"/>
+							<aon:commandButton id="search" value="#{bundle.aon_search}"
+								action="tipos_autorizacion_search" actionListener="#{tiposAutorizacion.onEditSearch}"
+								styleClass="aon-finding-toolbar-item aon-icon-search"
+								accesskey="#{bundle.aon_key_search}" />		
 							<aon:commandButton id="save"
 								value="#{bundle.aon_save}" rendered="#{tiposAutorizacion.to!=null or tiposAutorizacion.new}"
 								styleClass="aon-finding-toolbar-item aon-icon-accept"
@@ -94,8 +98,8 @@
 							</f:facet>
 							<aon:outputText value="#{to.cdg}" rendered="#{to!=tiposAutorizacion.to}" />
 							<aon:inputText styleClass="aon-form-input-text " required="true"
-								rendered="#{to==tiposAutorizacion.to}" size="2"
-								value="#{tiposAutorizacion.to.cdg}" maxlength="1" />
+								rendered="#{to==tiposAutorizacion.to}" size="3"
+								value="#{tiposAutorizacion.to.cdg}" maxlength="3" />
 							<f:facet name="footer">
 								<aon:inputText styleClass="aon-form-input-text" required="true"
 									rendered="#{tiposAutorizacion.new}" size="3"

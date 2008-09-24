@@ -32,6 +32,10 @@
 								actionListener="#{exclusion.onReset}" rendered="#{!exclusion.new}"
 								styleClass="aon-finding-toolbar-item aon-icon-reset"
 								accesskey="#{bundle.aon_key_new}"/>
+							<aon:commandButton id="search" value="#{bundle.aon_search}"
+								action="irpf_exclusion_search" actionListener="#{exclusion.onEditSearch}"
+								styleClass="aon-finding-toolbar-item aon-icon-search"
+								accesskey="#{bundle.aon_key_search}" />		
 							<aon:commandButton id="save"
 								value="#{bundle.aon_save}" rendered="#{exclusion.to!=null or exclusion.new}"
 								styleClass="aon-finding-toolbar-item aon-icon-accept"

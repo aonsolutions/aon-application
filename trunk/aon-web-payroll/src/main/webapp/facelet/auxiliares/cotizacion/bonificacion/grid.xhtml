@@ -32,6 +32,10 @@
 								actionListener="#{cotizacionBonificacion.onReset}" rendered="#{!cotizacionBonificacion.new}"
 								styleClass="aon-finding-toolbar-item aon-icon-reset"
 								accesskey="#{bundle.aon_key_new}"/>
+							<aon:commandButton id="search" value="#{bundle.aon_search}"
+								action="cotizacion_bonificacion_search" actionListener="#{cotizacionBonificacion.onEditSearch}"
+								styleClass="aon-finding-toolbar-item aon-icon-search"
+								accesskey="#{bundle.aon_key_search}" />		
 							<aon:commandButton id="save"
 								value="#{bundle.aon_save}" rendered="#{cotizacionBonificacion.to!=null or cotizacionBonificacion.new}"
 								styleClass="aon-finding-toolbar-item aon-icon-accept"
@@ -100,11 +104,11 @@
 							</f:facet>
 							<aon:outputText value="#{to.cdg}" rendered="#{to!=cotizacionBonificacion.to}" />
 							<aon:inputText styleClass="aon-form-input-text " required="true"
-								rendered="#{to==cotizacionBonificacion.to}" size="1"
+								rendered="#{to==cotizacionBonificacion.to}" size="2"
 								value="#{cotizacionBonificacion.to.cdg}" maxlength="2" />
 							<f:facet name="footer">
 								<aon:inputText styleClass="aon-form-input-text" required="true"
-									rendered="#{cotizacionBonificacion.new}" size="1"
+									rendered="#{cotizacionBonificacion.new}" size="2"
 									value="#{cotizacionBonificacion.to.cdg}" maxlength="2" />
 							</f:facet>
 						</aon:column>

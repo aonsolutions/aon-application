@@ -32,6 +32,10 @@
 								actionListener="#{tiposCnae.onReset}" rendered="#{!tiposCnae.new}"
 								styleClass="aon-finding-toolbar-item aon-icon-reset"
 								accesskey="#{bundle.aon_key_new}"/>
+							<aon:commandButton id="search" value="#{bundle.aon_search}"
+								action="tipos_cnae_search" actionListener="#{tiposCnae.onEditSearch}"
+								styleClass="aon-finding-toolbar-item aon-icon-search"
+								accesskey="#{bundle.aon_key_search}" />		
 							<aon:commandButton id="save"
 								value="#{bundle.aon_save}" rendered="#{tiposCnae.to!=null or tiposCnae.new}"
 								styleClass="aon-finding-toolbar-item aon-icon-accept"
@@ -114,7 +118,7 @@
 							<f:facet name="footer">
 								<aon:inputText styleClass="aon-form-input-text" required="true"
 									rendered="#{tiposCnae.new}" size="60"
-									value="#{tiposCnae.to.description}" maxlength="45" />
+									value="#{tiposCnae.to.description}" maxlength="60" />
 							</f:facet>
 						</aon:column>
 	
