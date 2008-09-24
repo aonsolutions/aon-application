@@ -4,7 +4,8 @@
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:aon="http://www.code.es/aon-rich-components"
-	xmlns:c="http://java.sun.com/jstl/core">
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:rich="http://richfaces.org/rich">
 <body>
 <ui:composition template="/facelet/templates/aon.ui.content.xhtml">
 
@@ -90,6 +91,26 @@
 								
 						<aon:rowSelector toggleOnClick="#{cuotaRetencionNavarra.to == null}"
 							actionListener="#{cuotaRetencionNavarra.onSelect}" />
+							
+						<f:facet name="header">
+	                        <rich:columnGroup>
+	                            <rich:column colspan="2">
+	                                <rich:spacer />
+	                            </rich:column>
+	                             <rich:column colspan="2" >
+	                                <aon:outputText value="#{appBundle.aon_payroll_auxiliares_irpf_foral__cuota_01_vigencia}" />
+	                            </rich:column>
+	                            <rich:column colspan="2">
+	                                <aon:outputText value="#{appBundle.aon_payroll_auxiliares_irpf_foral__cuota_01_importe}" />
+	                            </rich:column>
+	                            <rich:column colspan="7">
+	                                <aon:outputText value="#{appBundle.aon_payroll_auxiliares_irpf_foral__cuota_01_descendientes}" />
+	                            </rich:column>
+	                             <rich:column colspan="1">
+	                                <rich:spacer />
+	                            </rich:column>
+	                        </rich:columnGroup>
+	                    </f:facet>
 	
 						<aon:column>
 							<f:facet name="header">
