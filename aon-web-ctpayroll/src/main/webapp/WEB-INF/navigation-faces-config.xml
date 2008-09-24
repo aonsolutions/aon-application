@@ -62,11 +62,24 @@
 			<from-outcome>tipos_empresarios</from-outcome>
 			<to-view-id>/facelet/auxiliares/tipos/empresario/grid.xhtml</to-view-id>
 		</navigation-case>
-	</navigation-rule>	
+	</navigation-rule>
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>tipos_empresarios_search</from-outcome>
+			<to-view-id>/facelet/auxiliares/tipos/empresario/search.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>
+		
 	<navigation-rule>
 		<navigation-case>
 			<from-outcome>tipos_cnae</from-outcome>
 			<to-view-id>/facelet/auxiliares/tipos/cnae/grid.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>tipos_cnae_search</from-outcome>
+			<to-view-id>/facelet/auxiliares/tipos/cnae/search.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>
 	
@@ -74,6 +87,12 @@
 		<navigation-case>
 			<from-outcome>organismos_admon</from-outcome>
 			<to-view-id>/facelet/auxiliares/organismos_entidades/admon/grid.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>organismos_admon_search</from-outcome>
+			<to-view-id>/facelet/auxiliares/organismos_entidades/admon/search.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>
 	
@@ -87,6 +106,15 @@
 	</navigation-rule>
 	<navigation-rule>
 		<navigation-case>
+			<from-outcome>tipos_registro_search</from-outcome>
+			<to-view-id>
+				/facelet/auxiliares/tipos/registro/search.xhtml
+			</to-view-id>
+		</navigation-case>
+	</navigation-rule>
+	
+	<navigation-rule>
+		<navigation-case>
 			<from-outcome>tipos_incidencia</from-outcome>
 			<to-view-id>
 				/facelet/auxiliares/tipos/incidencia/grid.xhtml
@@ -95,12 +123,30 @@
 	</navigation-rule>
 	<navigation-rule>
 		<navigation-case>
+			<from-outcome>tipos_incidencia_search</from-outcome>
+			<to-view-id>
+				/facelet/auxiliares/tipos/incidencia/search.xhtml
+			</to-view-id>
+		</navigation-case>
+	</navigation-rule>
+	
+	<navigation-rule>
+		<navigation-case>
 			<from-outcome>tipos_autorizacion</from-outcome>
 			<to-view-id>
 				/facelet/auxiliares/tipos/autorizacion/grid.xhtml
 			</to-view-id>
 		</navigation-case>
 	</navigation-rule>
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>tipos_autorizacion_search</from-outcome>
+			<to-view-id>
+				/facelet/auxiliares/tipos/autorizacion/search.xhtml
+			</to-view-id>
+		</navigation-case>
+	</navigation-rule>
+	
 	<navigation-rule>
 		<navigation-case>
 			<from-outcome>cotizacion_porcentaje</from-outcome>
@@ -116,11 +162,23 @@
 			<to-view-id>/facelet/auxiliares/cotizacion/bonificacion/grid.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>cotizacion_bonificacion_search</from-outcome>
+			<to-view-id>/facelet/auxiliares/cotizacion/bonificacion/search.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>
 	
 	<navigation-rule>
 		<navigation-case>
 			<from-outcome>sistemaRed_colectivos</from-outcome>
 			<to-view-id>/facelet/auxiliares/sistema_red/colectivos/grid.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>sistemaRed_colectivos_search</from-outcome>
+			<to-view-id>/facelet/auxiliares/sistema_red/colectivos/search.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>
 
@@ -169,6 +227,7 @@
 			<to-view-id>/facelet/auxiliares/irpf/CuotaRetencion/grid.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>
+	
 	<navigation-rule>
 		<navigation-case>
 			<from-outcome>MinoracionesAlava</from-outcome>
@@ -199,6 +258,12 @@
 		<navigation-case>
 			<from-outcome>irpf_exclusion</from-outcome>
 			<to-view-id>/facelet/auxiliares/irpf/Exclusion/grid.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>irpf_exclusion_search</from-outcome>
+			<to-view-id>/facelet/auxiliares/irpf/Exclusion/search.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>
 </faces-config>

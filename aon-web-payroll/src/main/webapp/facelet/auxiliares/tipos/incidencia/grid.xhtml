@@ -31,6 +31,10 @@
 								actionListener="#{tiposIncidencia.onReset}" rendered="#{!tiposIncidencia.new}"
 								styleClass="aon-finding-toolbar-item aon-icon-reset"
 								accesskey="#{bundle.aon_key_new}"/>
+							<aon:commandButton id="search" value="#{bundle.aon_search}"
+								action="tipos_incidencia_search" actionListener="#{tiposIncidencia.onEditSearch}"
+								styleClass="aon-finding-toolbar-item aon-icon-search"
+								accesskey="#{bundle.aon_key_search}" />		
 							<aon:commandButton id="save"
 								value="#{bundle.aon_save}" rendered="#{tiposIncidencia.to!=null or tiposIncidencia.new}"
 								styleClass="aon-finding-toolbar-item aon-icon-accept"
@@ -97,11 +101,11 @@
 							</f:facet>
 							<aon:outputText value="#{to.cdg}" rendered="#{to!=tiposIncidencia.to}" />
 							<aon:inputText styleClass="aon-form-input-text " required="true"
-								rendered="#{to==tiposIncidencia.to}" size="30"
-								value="#{tiposIncidencia.to.cdg}" maxlength="1" />
+								rendered="#{to==tiposIncidencia.to}" size="10"
+								value="#{tiposIncidencia.to.cdg}" maxlength="10" />
 							<f:facet name="footer">
 								<aon:inputText styleClass="aon-form-input-text" required="true"
-									rendered="#{tiposIncidencia.new}" size="30"
+									rendered="#{tiposIncidencia.new}" size="10" maxlength="10"
 									value="#{tiposIncidencia.to.cdg}" />
 							</f:facet>
 						</aon:column>
@@ -112,12 +116,12 @@
 							</f:facet>
 							<aon:outputText value="#{to.description}" rendered="#{to!=tiposIncidencia.to}" />
 							<aon:inputText styleClass="aon-form-input-text " required="true"
-								rendered="#{to==tiposIncidencia.to}" size="60"
-								value="#{tiposIncidencia.to.description}" maxlength="45" />
+								rendered="#{to==tiposIncidencia.to}" size="25"
+								value="#{tiposIncidencia.to.description}" maxlength="25" />
 							<f:facet name="footer">
 								<aon:inputText styleClass="aon-form-input-text" required="true"
-									rendered="#{tiposIncidencia.new}" size="60"
-									value="#{tiposIncidencia.to.description}" maxlength="45" />
+									rendered="#{tiposIncidencia.new}" size="25"
+									value="#{tiposIncidencia.to.description}" maxlength="25" />
 							</f:facet>
 						</aon:column>
 						
