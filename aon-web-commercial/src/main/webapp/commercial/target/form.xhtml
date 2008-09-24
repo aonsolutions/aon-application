@@ -106,6 +106,10 @@
 						<ui:include src="/commercial/target/seller/grid.xhtml" />
                     </aon:panelTab>
 
+					<aon:panelTab name="targetProfile" label="#{marketingBundle.aon_target_profile}">
+						<ui:include src="/commercial/target/profile/grid.xhtml" />
+                    </aon:panelTab>
+
 					<aon:panelTab name="targetTracking" label="#{appBundle.aon_target_tracking}">
 						<ui:include src="/commercial/target/tracking/list.xhtml" />
                     </aon:panelTab>
@@ -116,6 +120,7 @@
 		</aon:form>
 		<aon:lookupButtonPopup lookup="#{itemLookup}" />
 		<aon:lookupButtonPopup lookup="#{sellerLookup}" />		
+		<aon:lookupButtonPopup lookup="#{questionLookup}" />
 	</ui:define>
 </ui:composition>
 
