@@ -15,6 +15,8 @@ import com.code.aon.payroll.irpf.Cuota;
 import com.code.aon.payroll.tipos.Tipovia;
 import com.code.aon.payroll.geograficas.Nacion;
 import com.code.aon.payroll.irpfforal.CuotaRetencionAlava;
+import com.code.aon.payroll.auxiliares.Admon;
+import com.code.aon.payroll.auxiliares.Colectivos;
 
 /** 
 * Interface for holding entity properties constants.
@@ -453,6 +455,50 @@ public interface IPayrollAlias {
 	* Hibernate value: CuotaRetencionAlava.id.numTramo
 	*/
 	String  CUOTA_RETENCION_ALAVA_ID_NUM_TRAMO = CUOTA_RETENCION_ALAVA_ENTRY.getAliasNames()[11];
+
+
+
+	/** 
+	* DAOConstantsEntry for Admon entity.
+	*/ 
+	DAOConstantsEntry ADMON_ENTRY = DAOConstants.getDAOConstant(Admon.class);
+
+	/** 
+	* Alias value: Admon_cdg
+	* Hibernate value: Admon.cdg
+	*/
+	String  ADMON_CDG = ADMON_ENTRY.getAliasNames()[0];
+
+	/** 
+	* Alias value: Admon_description
+	* Hibernate value: Admon.description
+	*/
+	String  ADMON_DESCRIPTION = ADMON_ENTRY.getAliasNames()[1];
+
+
+
+	/** 
+	* DAOConstantsEntry for Colectivos entity.
+	*/ 
+	DAOConstantsEntry COLECTIVOS_ENTRY = DAOConstants.getDAOConstant(Colectivos.class);
+
+	/** 
+	* Alias value: Colectivos_cdg
+	* Hibernate value: Colectivos.cdg
+	*/
+	String  COLECTIVOS_CDG = COLECTIVOS_ENTRY.getAliasNames()[0];
+
+	/** 
+	* Alias value: Colectivos_descripcorta
+	* Hibernate value: Colectivos.descripcorta
+	*/
+	String  COLECTIVOS_DESCRIPCORTA = COLECTIVOS_ENTRY.getAliasNames()[1];
+
+	/** 
+	* Alias value: Colectivos_description
+	* Hibernate value: Colectivos.description
+	*/
+	String  COLECTIVOS_DESCRIPTION = COLECTIVOS_ENTRY.getAliasNames()[2];
 
 
 }
