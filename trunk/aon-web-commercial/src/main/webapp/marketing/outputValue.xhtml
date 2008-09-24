@@ -1,0 +1,30 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:c="http://java.sun.com/jstl/core">
+
+	<c:if test="#{!value.notFilled}" >
+		<c:if test="#{type == 'TEXT'}" >
+			<aon:outputText value="#{value.text}" />
+		</c:if>
+		<c:if test="#{type == 'NUMBER'}" >		
+			<aon:outputText value="#{value.number}" />
+		</c:if>
+		<c:if test="#{type == 'BOOLEAN'}" >
+			<aon:outputText value="&#160;"
+				styleClass="#{(value.boolean)?'aon-icon aon-icon-checked':'aon-icon aon-icon-check'}" 
+			/>
+		</c:if>
+		<c:if test="#{type == 'DATE'}" >
+			<aon:outputText value="#{value.date}">
+				<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+				timeZone="#{timeZoneController.timeZoneId}" />
+			</aon:outputText>
+		</c:if>					
+	</c:if>
+	<c:if test="#{value.notFilled}" >
+		<aon:outputText value="#{marketing.aon_not_responsed}" />
+	</c:if>
+
+</ui:composition>
