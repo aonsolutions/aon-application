@@ -30,16 +30,26 @@
 
 					<!-- start toolbar navigation -->
 					<aon:div styleClass="aon-finding-toolbar-item-group">
-						<aon:commandButton id="next" value="#{marketingBundle.aon_next}"
-							action="communicationCenter_response" actionListener="#{communicationCenter.onNextQuestion}"
-							styleClass="aon-finding-toolbar-item aon-icon-accept"
-							accesskey="#{bundle.aon_key_save}"
-							rendered="#{!communicationCenter.lastQuestion}"/>
-						<aon:commandButton id="finish" value="#{marketingBundle.aon_finish}"
-							action="communicationCenter" actionListener="#{communicationCenter.onFinishSurveyResponse}"
-							styleClass="aon-finding-toolbar-item aon-icon-accept"
-							accesskey="#{bundle.aon_key_save}"
-							rendered="#{communicationCenter.lastQuestion}"/>
+						<c:if test="#{!communicationCenter.lastQuestion}" >
+							<aon:commandButton id="skip" value="#{marketingBundle.aon_skip}"
+								action="communicationCenter_response" actionListener="#{communicationCenter.onNextQuestion}"
+								styleClass="aon-finding-toolbar-item aon-icon-cancel" immediate="true"
+								accesskey="#{bundle.aon_key_cancel}"/>
+							<aon:commandButton id="next" value="#{marketingBundle.aon_next}"
+								action="communicationCenter_response" actionListener="#{communicationCenter.onNextQuestion}"
+								styleClass="aon-finding-toolbar-item aon-icon-accept"
+								accesskey="#{bundle.aon_key_save}"/>
+						</c:if>
+						<c:if test="#{communicationCenter.lastQuestion}" >
+							<aon:commandButton id="skip" value="#{marketingBundle.aon_skip}"
+								action="communicationCenter" actionListener="#{communicationCenter.onFinishSurveyResponse}"
+								styleClass="aon-finding-toolbar-item aon-icon-accept" immediate="true"
+								accesskey="#{bundle.aon_key_save}" />
+							<aon:commandButton id="finish" value="#{marketingBundle.aon_finish}"
+								action="communicationCenter" actionListener="#{communicationCenter.onFinishSurveyResponse}"
+								styleClass="aon-finding-toolbar-item aon-icon-accept"
+								accesskey="#{bundle.aon_key_save}" />
+						</c:if>
 					</aon:div>
 
 					<!-- end toolbar navigation -->
