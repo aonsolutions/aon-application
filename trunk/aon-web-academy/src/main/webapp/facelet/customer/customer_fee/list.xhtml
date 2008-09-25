@@ -37,14 +37,15 @@
 					aon-table-body aon-table-body-string,								
 					aon-table-body aon-table-body-string,								
 					aon-table-body aon-table-body-string,								
+					aon-table-body aon-table-body-string,								
 					aon-table-body aon-table-body-string">
 	
 				<t:column width="270">
 					<f:facet name="header">
-						<t:outputText value="#{appBundle.fee_item}" />
+						<t:outputText value="#{customerBundle.fee_item}" />
 					</f:facet>
 					<t:outputText value="#{to.description}"/>
-					<t:commandLink  
+					<t:commandLink immediate="#{true}"  
 						styleClass="aon-table-row-selected"
 						actionListener="#{customerFee.onSelect}" />
 					<f:verbatim>&#160;</f:verbatim>
@@ -52,7 +53,7 @@
 				
 				<t:column width="30">
 					<f:facet name="header">
-						<h:outputText value="#{appBundle.fee_quantity}" />
+						<h:outputText value="#{customerBundle.fee_quantity}" />
 					</f:facet>
 					<h:outputText value="#{to.quantity}">
 						<f:convertNumber pattern="#,##0.00" />
@@ -61,7 +62,7 @@
 				
 				<t:column width="70">
 					<f:facet name="header">
-						<h:outputText value="#{salesBundle.aon_customer_fee_price}" />
+						<h:outputText value="#{customerBundle.aon_customer_fee_price}" />
 					</f:facet>
 					<h:outputText value="#{to.price}" >
 						<f:convertNumber pattern="#,##0.00" />
@@ -70,14 +71,14 @@
 				
 				<t:column width="30">
 					<f:facet name="header">
-						<h:outputText value="#{appBundle.fee_discount_expr}" />
+						<h:outputText value="#{customerBundle.fee_discount_expr}" />
 					</f:facet>
 					<h:outputText value="#{to.discountExpression.discountExpr}"/>
 				</t:column>
 				
 				<t:column width="75">
 					<f:facet name="header">
-						<h:outputText value="#{appBundle.aon_initial_date_abrv}" />
+						<h:outputText value="#{customerBundle.aon_initial_date_abrv}" />
 					</f:facet>
 					<t:outputText value="#{to.initialDate}" >
 						<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
@@ -87,7 +88,7 @@
 				
 				<t:column width="75">
 					<f:facet name="header">
-						<h:outputText value="#{appBundle.aon_final_date_abrv}" />
+						<h:outputText value="#{customerBundle.aon_final_date_abrv}" />
 					</f:facet>
 					<t:outputText value="#{to.finalDate}" >
 						<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
@@ -97,7 +98,7 @@
 	
 				<t:column width="105">
 					<f:facet name="header">
-						<h:outputText value="#{appBundle.aon_billing_date_abrv}" />
+						<h:outputText value="#{customerBundle.aon_billing_date_abrv}" />
 					</f:facet>
 					<h:outputText value="#{to.billingDateMonth}" />
 					<h:outputText value=" / #{to.billingDateYear}" />
@@ -105,14 +106,21 @@
 				
 				<t:column width="70">
 					<f:facet name="header">
-						<h:outputText value="#{appBundle.fee_period}" />
+						<h:outputText value="#{customerBundle.fee_period}" />
 					</f:facet>
 					<h:outputText value="#{to.period}" />
 				</t:column>
 				
 				<t:column width="50">
 					<f:facet name="header">
-						<h:outputText value="#{salesBundle.aon_customer_fee_workplace_abrv}" />
+						<h:outputText value="#{customerBundle.security_level_abrv}" />
+					</f:facet>
+					<h:outputText value="#{to.securityLevel}" />
+				</t:column>
+				
+				<t:column width="50">
+					<f:facet name="header">
+						<h:outputText value="#{customerBundle.aon_customer_fee_workplace_abrv}" />
 					</f:facet>
 					<h:outputText value="#{to.workPlace.description}" />
 				</t:column>

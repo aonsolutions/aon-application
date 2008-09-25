@@ -56,8 +56,8 @@
 							styleClass="aon-form-input-text-label"
 							value="#{customerBundle.fee_item}" />
 						<t:div>
-							<t:inputText id="Item_Lookup_product_code" size="5" forceId="#{true}"
-								styleClass="aon-form-input-text"
+							<t:inputText id="Item_Lookup_product_code" size="15" forceId="#{true}"
+								styleClass="aon-form-input-text" maxlength="15"
 								onchange="return findBeanLookupExt(event,'#{facesContext.externalContext.requestContextPath}','itemLookup','Item_Lookup_product_code','Item_product_code|Item_Lookup_product_code,Item_id|Item_Lookup_id,Item_price|Item_Lookup_price,Item_full_name|Item_full_name');"
 								value="#{customerFee.to.item.product.code}" />
 							<h:commandButton id="find_Item_Lookup_id"
@@ -67,7 +67,7 @@
 								value="#{customerFee.to.item.id}" required="true" />
 							<t:inputText id="Item_full_name" forceId="#{true}"
 								styleClass="aon-form-input-text"
-								size="27" value="#{customerFee.to.description}" />
+								size="64" value="#{customerFee.to.description}" />
 						</t:div>
 		
 						<t:outputLabel for="CustomerFee_quantity"
@@ -145,6 +145,15 @@
 							<f:selectItems value="#{salesCollections.billingPeriods}" />
 						</h:selectOneMenu>	
 
+						<t:outputLabel for="CustomerFee_securityLevel"
+							styleClass="aon-form-input-text-label"
+							value="#{customerBundle.security_level}" />
+						<h:selectOneMenu id="CustomerFee_securityLevel" 
+							value="#{customerFee.to.securityLevel}"
+							styleClass="aon-form-selectOneMenu-field">
+							<f:selectItems value="#{financeCollections.securityLevels}" />
+						</h:selectOneMenu>	
+
 						<t:outputLabel for="CustomerFee_workPlace_id"
 							styleClass="aon-form-input-text-label"
 							value="#{customerBundle.aon_customer_fee_workplace_abrv}" />
@@ -158,6 +167,7 @@
 
 				</t:div>
 			</t:div>
+
 </ui:composition>
 
 </body>
