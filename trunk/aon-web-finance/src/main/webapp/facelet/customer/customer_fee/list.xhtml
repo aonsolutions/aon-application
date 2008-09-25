@@ -37,6 +37,7 @@
 					aon-table-body aon-table-body-string,								
 					aon-table-body aon-table-body-string,								
 					aon-table-body aon-table-body-string,								
+					aon-table-body aon-table-body-string,								
 					aon-table-body aon-table-body-string">
 	
 				<t:column width="270">
@@ -112,9 +113,16 @@
 				
 				<t:column width="50">
 					<f:facet name="header">
+						<h:outputText value="#{customerBundle.security_level_abrv}" />
+					</f:facet>
+					<h:outputText value="#{to.securityLevel}" />
+				</t:column>
+				
+				<t:column width="50">
+					<f:facet name="header">
 						<h:outputText value="#{customerBundle.aon_customer_fee_workplace_abrv}" />
 					</f:facet>
-					<h:outputText value="#{to.workPlace.id}" />
+					<h:outputText value="#{to.workPlace.description}" />
 				</t:column>
 				
 			</t:dataTable>
