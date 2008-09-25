@@ -1,0 +1,80 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:aon="http://www.code.es/aon-rich-components">
+<body>
+
+<ui:composition>
+
+	<aon:div styleClass="aon-note"
+		rendered="#{model.rowCount == 0 and showNote}">
+		<aon:div styleClass="aon-note-internal">
+			<aon:panelGroup>
+				<aon:outputText value="#{bundle.aon_search_no_results}" />
+			</aon:panelGroup>
+		</aon:div>
+	</aon:div>
+
+	<aon:div styleClass="aon-dataScroller" rendered="#{model.rowCount>0}">					
+	    	
+			<aon:dataPaginator for="#{dataTable}" rowsCountVar="rowsCount"
+				firstRowIndexVar="firstRowIndex" lastRowIndexVar="lastRowIndex"
+				styleClass="aon-dataScroller-text">
+				<f:facet name="pages">
+					<h:outputFormat value="#{bundle.aon_scroll}">
+						<f:param value="#{firstRowIndex}" />
+						<f:param value="#{lastRowIndex}" />
+						<f:param value="#{rowsCount}" />
+					</h:outputFormat>
+				</f:facet>
+			</aon:dataPaginator>
+		
+			<aon:dataPaginator for="#{dataTable}" fastStep="5" paginator="true"
+				paginatorMaxPages="5"
+				rendered="#{(pageSize != 0) and (model.rowCount > pageSize)}"
+				styleClass="aon-dataScroller-buttons"
+				boundaryControls="show" stepControls="show"
+				>
+	
+				<f:facet name="first">
+					<aon:div styleClass="aon-dataScroller-button aon-dataScroller-button-first">&#160;</aon:div>
+				</f:facet>
+				<f:facet name="first_disabled">
+					<aon:div styleClass="aon-dataScroller-button aon-dataScroller-button-first">&#160;</aon:div>
+				</f:facet>
+				<f:facet name="last">
+					<aon:div styleClass="aon-dataScroller-button aon-dataScroller-button-last">&#160;</aon:div>
+				</f:facet>
+				<f:facet name="last_disabled">
+					<aon:div styleClass="aon-dataScroller-button aon-dataScroller-button-last">&#160;</aon:div>
+				</f:facet>
+				<f:facet name="previous">
+					<aon:div styleClass="aon-dataScroller-button aon-dataScroller-button-previous">&#160;</aon:div>
+				</f:facet>
+				<f:facet name="previous_disabled">
+					<aon:div styleClass="aon-dataScroller-button aon-dataScroller-button-previous">&#160;</aon:div>
+				</f:facet>
+				<f:facet name="next">
+					<aon:div styleClass="aon-dataScroller-button aon-dataScroller-button-next">&#160;</aon:div>
+				</f:facet>
+				<f:facet name="next_disabled">
+					<aon:div styleClass="aon-dataScroller-button aon-dataScroller-button-next">&#160;</aon:div>
+				</f:facet>
+				<f:facet name="fastforward">
+					<aon:div styleClass="aon-dataScroller-button aon-dataScroller-button-fastForward">&#160;</aon:div>
+				</f:facet>
+				<f:facet name="fastrewind">
+					<aon:div styleClass="aon-dataScroller-button aon-dataScroller-button-fastRewind">&#160;</aon:div>
+				</f:facet>
+				
+			</aon:dataPaginator>
+		
+	</aon:div>
+
+</ui:composition>
+
+</body>
+</html>
+
