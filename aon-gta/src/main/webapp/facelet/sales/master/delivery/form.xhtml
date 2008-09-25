@@ -249,7 +249,7 @@
 								<f:selectItems value="#{delivery.relatedTASOffers}" />
 							</t:selectOneMenu>
 							<h:panelGrid columns="1"
-								rendered="#{delivery.offerId != null}">
+								rendered="#{!delivery.new and delivery.offerId != null}">
 								<t:outputText value="#{tasDeliveryImport.offerData}" />
 							</h:panelGrid>
 							<h:panelGrid columns="1"

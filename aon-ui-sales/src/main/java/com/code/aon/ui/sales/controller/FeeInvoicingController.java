@@ -143,16 +143,19 @@ public class FeeInvoicingController extends BasicController {
 	
 	public void onSeriesChanged(ValueChangeEvent event) throws ManagerBeanException{
 		if (event.getPhaseId() == PhaseId.ANY_PHASE) {
-			event.setPhaseId(PhaseId.INVOKE_APPLICATION );
+			event.setPhaseId(PhaseId.INVOKE_APPLICATION);
 			event.queue();
 		}
 		if (event.getPhaseId() == PhaseId.INVOKE_APPLICATION) {
 			int number = obtainMaxNumber((String)event.getNewValue());
+			SecurityLevel securityLevel = obtainSeriesSecurityLevel((String)event.getNewValue());
 			if(this.getTo() != null){
-				((Invoice)this.getTo()).setNumber(number);	
+				((Invoice)this.getTo()).setNumber(number);
+				((Invoice)this.getTo()).setSecurityLevel(securityLevel);
 			}
 			if(getInvoicingParams() != null){
 				getInvoicingParams().setNumber(number);
+				getInvoicingParams().setSecurityLevel(securityLevel);
 				getInvoicingParams().setWorkPlaceId(obtainSeriesWorkPlace((String)event.getNewValue()));
 			}
 		}
@@ -169,6 +172,21 @@ public class FeeInvoicingController extends BasicController {
 	}
 
 	@SuppressWarnings("unchecked")
+	private SecurityLevel obtainSeriesSecurityLevel(String seriesId) throws ManagerBeanException {
+		IManagerBean seriesBean = BeanManager.getManagerBean(Series.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(seriesBean.getFieldName(IConfigAlias.SERIES_ID), seriesId);
+		Iterator iter = seriesBean.getList(criteria).iterator();
+		if(iter.hasNext()){
+			Series series = (Series)iter.next(); 
+			if(series.getSecurityLevel() != null){
+				return series.getSecurityLevel();
+			}
+		}
+		return null;
+	}
+
+	@SuppressWarnings("unchecked")
 	private Integer obtainSeriesWorkPlace(String seriesId) throws ManagerBeanException {
 		IManagerBean seriesBean = BeanManager.getManagerBean(Series.class);
 		Criteria criteria = new Criteria();
@@ -176,7 +194,7 @@ public class FeeInvoicingController extends BasicController {
 		Iterator iter = seriesBean.getList(criteria).iterator();
 		if(iter.hasNext()){
 			Series series = (Series)iter.next(); 
-			if( series.getWorkPlace() != null){
+			if(series.getWorkPlace() != null){
 				return series.getWorkPlace().getId();
 			}
 		}
