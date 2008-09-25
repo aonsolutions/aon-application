@@ -24,15 +24,31 @@
 	<!-- =================== Auxiliares/Cotizacion/Porcentaje ================= -->
 	<navigation-rule>
 		<navigation-case>
-			<from-outcome>cotizacion_porcentaje_form</from-outcome>
+			<from-outcome>cotizacion_porcentaje_list</from-outcome>
 			<to-view-id>
-				/facelet/auxiliares/cotizacion/porcentaje/form.xhtml
+				/facelet/auxiliares/cotizacion/porcentaje/list.xhtml
 			</to-view-id>
 		</navigation-case>
 		<navigation-case>
 			<from-outcome>cotizacion_porcentaje_search</from-outcome>
 			<to-view-id>
 				/facelet/auxiliares/cotizacion/porcentaje/search.xhtml
+			</to-view-id>
+		</navigation-case>
+	</navigation-rule>
+
+	<!-- =================== Auxiliares/Contratos/Internos ================= -->
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>contratos_internos_list</from-outcome>
+			<to-view-id>
+				/facelet/auxiliares/contratos/internos/list.xhtml
+			</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>contratos_internos_search</from-outcome>
+			<to-view-id>
+				/facelet/auxiliares/contratos/internos/search.xhtml
 			</to-view-id>
 		</navigation-case>
 	</navigation-rule>
@@ -270,6 +286,15 @@
 		<navigation-case>
 			<from-outcome>cotizacion_bonificacion_search</from-outcome>
 			<to-view-id>/facelet/auxiliares/cotizacion/bonificacion/search.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>
+
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>contratos_internos</from-outcome>
+			<to-view-id>
+				/facelet/auxiliares/contratos/internos/form.xhtml
+			</to-view-id>
 		</navigation-case>
 	</navigation-rule>
 	

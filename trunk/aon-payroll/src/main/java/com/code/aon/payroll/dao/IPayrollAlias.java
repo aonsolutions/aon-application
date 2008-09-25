@@ -2,6 +2,7 @@ package com.code.aon.payroll.dao;
 
 import com.code.aon.common.dao.DAOConstants;
 import com.code.aon.common.dao.DAOConstantsEntry;
+import com.code.aon.payroll.auxiliares.contratos.ContratosInternos;
 import com.code.aon.payroll.cotizacion.PorcentajeMaestro;
 import com.code.aon.payroll.cotizacion.Porcentaje;
 import com.code.aon.payroll.tipos.Documento;
@@ -30,6 +31,67 @@ import com.code.aon.payroll.irpf.Exclusion;
 * Interface for holding entity properties constants.
 */ 
 public interface IPayrollAlias {
+
+
+
+	/** 
+	* DAOConstantsEntry for ContratosInternos entity.
+	*/ 
+	DAOConstantsEntry CONTRATOS_INTERNOS_ENTRY = DAOConstants.getDAOConstant(ContratosInternos.class);
+
+	/** 
+	* Alias value: ContratosInternos_cdg
+	* Hibernate value: ContratosInternos.cdg
+	*/
+	String  CONTRATOS_INTERNOS_CDG = CONTRATOS_INTERNOS_ENTRY.getAliasNames()[0];
+
+	/** 
+	* Alias value: ContratosInternos_description
+	* Hibernate value: ContratosInternos.description
+	*/
+	String  CONTRATOS_INTERNOS_DESCRIPTION = CONTRATOS_INTERNOS_ENTRY.getAliasNames()[1];
+
+	/** 
+	* Alias value: ContratosInternos_desemple
+	* Hibernate value: ContratosInternos.desemple
+	*/
+	String  CONTRATOS_INTERNOS_DESEMPLE = CONTRATOS_INTERNOS_ENTRY.getAliasNames()[2];
+
+	/** 
+	* Alias value: ContratosInternos_excsocial
+	* Hibernate value: ContratosInternos.excsocial
+	*/
+	String  CONTRATOS_INTERNOS_EXCSOCIAL = CONTRATOS_INTERNOS_ENTRY.getAliasNames()[3];
+
+	/** 
+	* Alias value: ContratosInternos_gradomin
+	* Hibernate value: ContratosInternos.gradomin
+	*/
+	String  CONTRATOS_INTERNOS_GRADOMIN = CONTRATOS_INTERNOS_ENTRY.getAliasNames()[4];
+
+	/** 
+	* Alias value: ContratosInternos_incaread
+	* Hibernate value: ContratosInternos.incaread
+	*/
+	String  CONTRATOS_INTERNOS_INCAREAD = CONTRATOS_INTERNOS_ENTRY.getAliasNames()[5];
+
+	/** 
+	* Alias value: ContratosInternos_mujersub
+	* Hibernate value: ContratosInternos.mujersub
+	*/
+	String  CONTRATOS_INTERNOS_MUJERSUB = CONTRATOS_INTERNOS_ENTRY.getAliasNames()[6];
+
+	/** 
+	* Alias value: ContratosInternos_porcentajeMaestro_cdg
+	* Hibernate value: ContratosInternos.porcentajeMaestro.cdg
+	*/
+	String  CONTRATOS_INTERNOS_PORCENTAJE_MAESTRO_CDG = CONTRATOS_INTERNOS_ENTRY.getAliasNames()[7];
+
+	/** 
+	* Alias value: ContratosInternos_primertra
+	* Hibernate value: ContratosInternos.primertra
+	*/
+	String  CONTRATOS_INTERNOS_PRIMERTRA = CONTRATOS_INTERNOS_ENTRY.getAliasNames()[8];
 
 
 

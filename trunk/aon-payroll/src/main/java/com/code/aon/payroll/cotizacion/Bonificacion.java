@@ -5,6 +5,8 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.persistence.Transient;
+
 import com.code.aon.common.ITransferObject;
 
 
@@ -172,4 +174,37 @@ public class Bonificacion  implements ITransferObject {
         this.restait = restait;
     }
 
+//TODO A la espera de implementar un SelectBooleanCheckboxRenderer.
+	@Transient 
+	public Boolean getBonissbol() {
+		return (getBoniss() != null && getBoniss().equals("S")?true:false );
+	}
+	public void setBonissbol(Boolean bol) {
+		setBoniss( (bol!=null && bol)? "S":"N" );
+	}
+
+	@Transient 
+	public Boolean getMayor60bol() {
+		return (getMayor60() != null && getMayor60().equals("S")?true:false );
+	}
+	public void setMayor60bol(Boolean bol) {
+		setMayor60( (bol!=null && bol)? "S":"N" );
+	}
+
+	@Transient 
+	public Boolean getRdl052006bol() {
+		return (getRdl052006() != null && getRdl052006().equals("S")?true:false );
+	}
+	public void setRdl052006bol(Boolean bol) {
+		setRdl052006( (bol!=null && bol)? "S":"N" );
+	}
+
+	@Transient 
+	public Boolean getRestaitbol() {
+		return (getRestait() != null && getRestait().equals("S")?true:false );
+	}
+	public void setRestaitbol(Boolean bol) {
+		setRestait( (bol!=null && bol)? "S":"N" );
+	}
+//	******************************************************************
 }

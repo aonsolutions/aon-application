@@ -162,14 +162,8 @@
 					<aon:menuItem value="#{menuBundle.auxiliares_cotizacion__elemcotizacion}" disabled="true" />
 					<aon:menuItem value="#{menuBundle.auxiliares_cotizacion__ocupacion}" disabled="true" />
 					<aon:menuItem value="#{menuBundle.auxiliares_cotizacion__cnae}" disabled="true" />
-
 					<aon:menuItem value="#{menuBundle.auxiliares_cotizacion__tipboni}" action="cotizacion_bonificacion" />
-
-					<aon:menuItem value="#{menuBundle.auxiliares_cotizacion__tipboni}" disabled="true" />
-					<!-- aon:menuItem value="#{menuBundle.auxiliares_cotizacion__tipboni}" action="cotizacion_bonificacion" /-->
-
 					<aon:menuItem value="#{menuBundle.auxiliares_cotizacion__epigrafes}" disabled="true" />
-					<aon:menuItem value="#{menuBundle.auxiliares_cotizacion__tipboni}" action="cotizacion_bonificacion" />
 				</aon:menuGroup>
 				<aon:menuGroup value="#{menuBundle.auxiliares_convenios}">
 					<aon:menuItem value="#{menuBundle.auxiliares_convenios__calendar}" disabled="true" />
@@ -178,7 +172,8 @@
 				</aon:menuGroup>
 				<aon:menuGroup value="#{menuBundle.auxiliares_contratos}">
 					<aon:menuItem value="#{menuBundle.auxiliares_contratos__tipcotc2}" disabled="true" />
-					<aon:menuItem value="#{menuBundle.auxiliares_contratos__tipocont}" disabled="true" />
+					<aon:menuItem value="#{menuBundle.auxiliares_contratos__tipocont}" 
+						action="contratos_internos" actionListener="#{contratosInternos.onSelectFirst}" />
 				</aon:menuGroup>
 				<aon:menuGroup value="#{menuBundle.auxiliares_organismos_entidades}">
 					<aon:menuItem value="#{menuBundle.auxiliares_organismos_entidades__entidsucur}" disabled="true" />

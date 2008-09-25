@@ -122,34 +122,6 @@
 		</managed-property>
 	</managed-bean>
 	
-	<!-- ************* COTIZACIONES - BONIFICACION ***************** -->
-	<managed-bean>
-		<managed-bean-name>cotizacionBonificacion</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.payroll.controller.PayrollBasicController</managed-bean-class>
-		<managed-bean-scope>session</managed-bean-scope>
-		<managed-property>
-			<property-name>queryOnStartUP</property-name>
-			<value>true</value>
-		</managed-property>
-		<managed-property>
-			<property-name>pojo</property-name>
-			<value>com.code.aon.payroll.cotizacion.Bonificacion</value>
-		</managed-property>
-	<managed-property>
-			<property-name>listenerClasses</property-name>
-			<list-entries>
-				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
-				<value>#{bonificacionListener}</value>
-			</list-entries>
-		</managed-property>
-	</managed-bean>
-
-	<managed-bean>
-		<managed-bean-name>bonificacionListener</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.payroll.event.BonificacionControllerListener</managed-bean-class>
-		<managed-bean-scope>none</managed-bean-scope>
-	</managed-bean>
-	
 	<!-- ************* ORGANISMOS DE MNTO. DE ADMINISTRACION DE HACIENDA***************** -->
 	<managed-bean>
 		<managed-bean-name>organismosAdmon</managed-bean-name>
@@ -297,6 +269,35 @@
 			<value>com.code.aon.payroll.irpfforal.CuotaRetencionVizcaya</value>
 		</managed-property>
 	</managed-bean>
+
+	<!-- ************* COTIZACIONES - BONIFICACION ***************** -->
+	<managed-bean>
+		<managed-bean-name>cotizacionBonificacion</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.payroll.controller.PayrollBasicController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.payroll.cotizacion.Bonificacion</value>
+		</managed-property>
+	<managed-property>
+			<property-name>listenerClasses</property-name>
+			<list-entries>
+				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+				<value>#{bonificacionListener}</value>
+			</list-entries>
+		</managed-property>
+	</managed-bean>
+
+	<managed-bean>
+		<managed-bean-name>bonificacionListener</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.payroll.event.BonificacionControllerListener</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+	</managed-bean>
+
 	<!-- ************* PORCENTAJE DE COTIZACIÓN ***************** -->
 	<managed-bean>
 		<managed-bean-name>porcentajeMaestro</managed-bean-name>
@@ -400,7 +401,39 @@
 		<managed-bean-class>com.code.aon.ui.payroll.event.PorcentajeControllerListener</managed-bean-class>
 		<managed-bean-scope>none</managed-bean-scope>
 	</managed-bean>
-	
+
+	<!-- ************* CONTRATOS ***************** -->
+	<managed-bean>
+		<managed-bean-name>contratosInternos</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.payroll.controller.ContratosInternos</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.payroll.auxiliares.contratos.ContratosInternos</value>
+		</managed-property>
+		<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>ContratosInternos_cdg</value>
+		</managed-property>
+		<managed-property>
+			<property-name>listenerClasses</property-name>
+			<list-entries>
+				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+				<value>#{contratosInternosControllerListener}</value>
+			</list-entries>
+		</managed-property>
+	</managed-bean>
+
+	<managed-bean>
+		<managed-bean-name>contratosInternosControllerListener</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.payroll.event.ContratosInternosControllerListener</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+	</managed-bean>
+
 	<!-- ************* IRPF CUOTAS ***************** -->
 	<managed-bean>
 		<managed-bean-name>cuotas</managed-bean-name>

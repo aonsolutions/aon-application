@@ -50,7 +50,7 @@ public class Porcentaje implements ITransferObject {
 		this.fecfin = fecfin;
 	}
 
-	@Column(name="pctemp", precision=8)
+	@Column(name="pctemp", precision=3, scale=2)
 	public BigDecimal getPctemp() {
 		return this.pctemp;
 	}
@@ -59,7 +59,7 @@ public class Porcentaje implements ITransferObject {
 		this.pctemp = pctemp;
 	}
 
-	@Column(name="pcttra", precision=8)
+	@Column(name="pcttra", precision=3, scale=2)
 	public BigDecimal getPcttra() {
 		return this.pcttra;
 	}
@@ -68,7 +68,7 @@ public class Porcentaje implements ITransferObject {
 		this.pcttra = pcttra;
 	}
 
-	@Column(name="pcttot", precision=8)
+	@Column(name="pcttot", precision=3, scale=2)
 	public BigDecimal getPcttot() {
 		return this.pcttot;
 	}

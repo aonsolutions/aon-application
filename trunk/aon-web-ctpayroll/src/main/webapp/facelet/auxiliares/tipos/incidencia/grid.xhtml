@@ -133,14 +133,10 @@
 								styleClass="#{(to.indresta=='S')?'aon-icon aon-icon-checked':'aon-icon aon-icon-check'}" 
 								rendered="#{to!=tiposIncidencia.to}" />
 							<aon:selectBooleanCheckbox rendered="#{to==tiposIncidencia.to}"
-									value="#{tiposIncidencia.to.indresta}" >
-								<f:converter converterId="checkboxConverter" />
-							</aon:selectBooleanCheckbox>
+									value="#{tiposIncidencia.to.indresta}" />
 							<f:facet name="footer">
 								<aon:selectBooleanCheckbox rendered="#{tiposIncidencia.new}"
-										value="#{tiposIncidencia.to.indresta}" >
-									<f:converter converterId="checkboxConverter" />
-								</aon:selectBooleanCheckbox>
+										value="#{tiposIncidencia.to.indrestabol}" />
 							</f:facet>
 						</aon:column>
  
@@ -152,14 +148,10 @@
 								styleClass="#{(to.inddto=='S')?'aon-icon aon-icon-checked':'aon-icon aon-icon-check'}" 
 								rendered="#{to!=tiposIncidencia.to}" />
 							<aon:selectBooleanCheckbox rendered="#{to==tiposIncidencia.to}"
-									value="#{tiposIncidencia.to.inddto}" >
-								<f:converter converterId="checkboxConverter" />
-							</aon:selectBooleanCheckbox>
+									value="#{tiposIncidencia.to.inddtobol}" />
 							<f:facet name="footer">
 								<aon:selectBooleanCheckbox rendered="#{tiposIncidencia.new}"
-										value="#{tiposIncidencia.to.inddto}" >
-									<f:converter converterId="checkboxConverter" />
-								</aon:selectBooleanCheckbox>
+										value="#{tiposIncidencia.to.inddtobol}" />
 							</f:facet>
 						</aon:column>
 

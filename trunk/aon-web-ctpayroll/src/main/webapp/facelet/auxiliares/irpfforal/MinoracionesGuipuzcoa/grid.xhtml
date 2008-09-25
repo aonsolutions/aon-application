@@ -59,29 +59,10 @@
 								confirmTitle="#{bundle.aon_confirm_title}" confirmMessage="#{bundle.aon_remove_confirm}"
 								confirmActionListener="#{minoracionesGuipuzcoa.onRemove}"
 								accesskey="#{bundle.aon_key_remove}"/>
-							<h:commandLink id="export2pdf" value="."
-									title="#{appBundle.aon_payroll_export} #{appBundle.aon_payroll_to} #{appBundle.aon_payroll_pdf}"
-									styleClass="aon-finding-toolbar-item aon-icon-pdf"
-									action="#{report.onExecute}" rendered="#{!minoracionesGuipuzcoa.new}" 
-									target="_blank">
-								<f:param name="reportKey" value="MinoracionesGuipuzcoaList" />
-							</h:commandLink>
-							<h:commandLink id="export2excel" value="."
-									title="#{appBundle.aon_payroll_export} #{appBundle.aon_payroll_to} #{appBundle.aon_payroll_excel}"
-									styleClass="aon-finding-toolbar-item aon-icon-excel"
-									action="#{report.onExecute}" rendered="#{!minoracionesGuipuzcoa.new}" 
-									target="_blank">
-								<f:param name="reportKey" value="MinoracionesGuipuzcoaList" />
-								<f:param name="outputFormat" value="MS Excel" />
-							</h:commandLink>
-							<h:commandLink id="export2csv" value="."
-									title="#{appBundle.aon_payroll_export} #{appBundle.aon_payroll_to} #{appBundle.aon_payroll_csv}"
-									styleClass="aon-finding-toolbar-item aon-icon-excel"
-									action="#{report.onExecute}" rendered="#{!minoracionesGuipuzcoa.new}" 
-									target="_blank">
-								<f:param name="reportKey" value="MinoracionesGuipuzcoaList" />
-								<f:param name="outputFormat" value="CSV" />
-							</h:commandLink>
+							<ui:include src="/facelet/templates/aon.ui.printbuttons.xhtml">
+								<ui:param name="manager" value="#{minoracionesGuipuzcoa}"/>
+								<ui:param name="reportKey" value="MinoracionesGuipuzcoaList"/>
+							</ui:include>
 						</aon:div>
 					</aon:panelGrid>
 				</aon:div>
