@@ -257,6 +257,10 @@
 			<property-name>pojo</property-name>
 			<value>com.code.aon.payroll.irpfforal.CuotaRetencionAlava</value>
 		</managed-property>
+		<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>CuotaRetencionAlava_fecfin DESC,CuotaRetencionAlava_id_fecini DESC,CuotaRetencionAlava_desdeImporte </value>
+		</managed-property>
     </managed-bean>
 	   
 	<!-- ************* Cuote retencion Navarra***************** -->
@@ -272,6 +276,10 @@
 			<property-name>pojo</property-name>
 			<value>com.code.aon.payroll.irpfforal.CuotaRetencionNavarra</value>
 		</managed-property>
+			<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>CuotaRetencionNavarra_fecfin DESC,CuotaRetencionNavarra_id_fecini DESC,CuotaRetencioNavarra_desdeImporte </value>
+		</managed-property>
 	</managed-bean>
 		<!-- ************* Cuote retencion Guipuzcoa***************** -->
 	<managed-bean>
@@ -286,6 +294,10 @@
 			<property-name>pojo</property-name>
 			<value>com.code.aon.payroll.irpfforal.CuotaRetencionGuipuzcoa</value>
 		</managed-property>
+			<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>CuotaRetencionGuipuzcoa_fecfin DESC,CuotaRetencionGuipuzcoa_id_fecini DESC,CuotaRetencionGuipuzcoa_desdeImporte </value>
+		</managed-property>
 	</managed-bean>
 		<!-- ************* Cuote retencion Vizcaya***************** -->
 	<managed-bean>
@@ -299,6 +311,10 @@
 		<managed-property>
 			<property-name>pojo</property-name>
 			<value>com.code.aon.payroll.irpfforal.CuotaRetencionVizcaya</value>
+		</managed-property>
+			<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>CuotaRetencionVizcaya_fecfin DESC,CuotaRetencionVizcaya_id_fecini DESC,CuotaRetencioVizcaya_desdeImporte </value>
 		</managed-property>
 	</managed-bean>
 	<!-- ************* PORCENTAJE DE COTIZACIÓN ***************** -->
@@ -470,7 +486,7 @@
 		</managed-property>
 		<managed-property>
 			<property-name>defaultOrder</property-name>
-			<value>Cuota_fecfin DESC,Cuota_id_fecini DESC,Cuota_hasta </value>
+			<value>MinoracionesAlava_fecfin DESC,MinoracionesAlava_id_fecini DESC,MinoracionesAlava_desdeImporte </value>
 		</managed-property>
 	</managed-bean>
 	<!-- ************* MINORACIONES NAVARRA***************** -->
@@ -486,6 +502,10 @@
 			<property-name>pojo</property-name>
 			<value>com.code.aon.payroll.irpfforal.MinoracionesNavarra</value>
 		</managed-property>
+		<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>MinoracionesNavarra_fecfin DESC,MinoracionesNavarra_id_fecini DESC,MinoracionesNavarra_desdeImporte </value>
+		</managed-property>
 	</managed-bean>
 	<!-- ************* MINORACIONES GUIPUZCOA***************** -->
 	<managed-bean>
@@ -499,6 +519,10 @@
 		<managed-property>
 			<property-name>pojo</property-name>
 			<value>com.code.aon.payroll.irpfforal.MinoracionesGuipuzcoa</value>
+		</managed-property>
+		<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>MinoracionesGuipuzcoa_fecfin DESC,MinoracionesGuipuzcoa_id_fecini DESC,MinoracionesGuipuzcoa_desdeImporte </value>
 		</managed-property>
 	</managed-bean>
 	<!-- ************* MINORACIONES VIZCAYA***************** -->
@@ -514,6 +538,10 @@
 			<property-name>pojo</property-name>
 			<value>com.code.aon.payroll.irpfforal.MinoracionesVizcaya</value>
 		</managed-property>
+		<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>MinoracionesVizcaya_fecfin DESC,MinoracionesVizcaya_id_fecini DESC,MinoracionesVizcaya_desdeImporte </value>
+		</managed-property>
 	</managed-bean>
 	
 	<!-- ************* IRPF EXCLUSION ***************** -->
@@ -528,6 +556,10 @@
 		<managed-property>
 			<property-name>pojo</property-name>
 			<value>com.code.aon.payroll.irpf.Exclusion</value>
+		</managed-property>
+			<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>Exclusion_fecfin DESC,Exclusion_id_fecini DESC,Exclusion_id_situacion,Exclusion_id_hijos </value>
 		</managed-property>
 	</managed-bean>
 

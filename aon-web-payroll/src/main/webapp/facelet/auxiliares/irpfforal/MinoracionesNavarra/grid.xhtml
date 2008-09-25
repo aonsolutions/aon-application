@@ -59,7 +59,7 @@
 								confirmTitle="#{bundle.aon_confirm_title}" confirmMessage="#{bundle.aon_remove_confirm}"
 								confirmActionListener="#{minoracionesNavarra.onRemove}"
 								accesskey="#{bundle.aon_key_remove}"/>
-							<ui:include src="/facelet/templates/aon.ui.printbuttons.xhtml">
+								<ui:include src="/facelet/templates/aon.ui.printbuttons.xhtml">
 								<ui:param name="manager" value="#{minoracionesNavarra}"/>
 								<ui:param name="reportKey" value="MinoracionesNavarraList"/>
 							</ui:include>
@@ -139,14 +139,14 @@
 									timeZone="#{timeZoneController.timeZoneId}" />
 							</aon:outputText>
 							<aon:selectInputDate required="true"
-								requiredMessage="fecini"
+								requiredMessage="fecini" inputSize="10"
 								rendered="#{to==minoracionesNavarra.to}"
 								value="#{minoracionesNavarra.to.id.fecini}"
 								renderAsPopup="true" popupDateFormat="#{appBundle.aon_date_pattern}">
 							</aon:selectInputDate>
 							<f:facet name="footer">
 								<aon:selectInputDate required="true"
-									requiredMessage="fecini"
+									requiredMessage="fecini" inputSize="10"
 									rendered="#{minoracionesNavarra.new}" 
 									value="#{minoracionesNavarra.to.id.fecini}" 
 									renderAsPopup="true" popupDateFormat="#{appBundle.aon_date_pattern}">
@@ -164,14 +164,14 @@
 									timeZone="#{timeZoneController.timeZoneId}" />
 							</aon:outputText>
 							<aon:selectInputDate required="true"
-								requiredMessage="fecfin"
+								requiredMessage="fecfin" inputSize="10"
 								rendered="#{to==minoracionesNavarra.to}"
 								value="#{minoracionesNavarra.to.fecfin}"
 								renderAsPopup="true" popupDateFormat="#{appBundle.aon_date_pattern}">
 							</aon:selectInputDate>
 							<f:facet name="footer">
 								<aon:selectInputDate required="true"
-									requiredMessage="fecfin"
+									requiredMessage="fecfin" inputSize="10"
 									rendered="#{minoracionesNavarra.new}" 
 									value="#{minoracionesNavarra.to.fecfin}" 
 									renderAsPopup="true" popupDateFormat="#{appBundle.aon_date_pattern}">

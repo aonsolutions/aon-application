@@ -58,11 +58,12 @@
 								confirmTitle="#{bundle.aon_confirm_title}" confirmMessage="#{bundle.aon_remove_confirm}"
 								confirmActionListener="#{nacion.onRemove}"
 								accesskey="#{bundle.aon_key_remove}"/>
-
 							<ui:include src="/facelet/templates/aon.ui.printbuttons.xhtml">
 								<ui:param name="manager" value="#{nacion}"/>
 								<ui:param name="reportKey" value="tiposNacion"/>
 							</ui:include>
+
+	
 
 						</aon:div>
 					</aon:panelGrid>

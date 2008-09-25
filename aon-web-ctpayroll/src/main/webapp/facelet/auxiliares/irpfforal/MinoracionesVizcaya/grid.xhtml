@@ -139,14 +139,14 @@
 									timeZone="#{timeZoneController.timeZoneId}" />
 							</aon:outputText>
 							<aon:selectInputDate required="true"
-								requiredMessage="fecini"
+								requiredMessage="fecini" inputSize="10"
 								rendered="#{to==minoracionesVizcaya.to}"
 								value="#{minoracionesVizcaya.to.id.fecini}"
 								renderAsPopup="true" popupDateFormat="#{appBundle.aon_date_pattern}">
 							</aon:selectInputDate>
 							<f:facet name="footer">
 								<aon:selectInputDate required="true"
-									requiredMessage="fecini"
+									requiredMessage="fecini" inputSize="10"
 									rendered="#{minoracionesVizcaya.new}" 
 									value="#{minoracionesVizcaya.to.id.fecini}" 
 									renderAsPopup="true" popupDateFormat="#{appBundle.aon_date_pattern}">
@@ -164,14 +164,14 @@
 									timeZone="#{timeZoneController.timeZoneId}" />
 							</aon:outputText>
 							<aon:selectInputDate required="true"
-								requiredMessage="fecfin"
+								requiredMessage="fecfin" inputSize="10"
 								rendered="#{to==minoracionesVizcaya.to}"
 								value="#{minoracionesVizcaya.to.fecfin}"
 								renderAsPopup="true" popupDateFormat="#{appBundle.aon_date_pattern}">
 							</aon:selectInputDate>
 							<f:facet name="footer">
 								<aon:selectInputDate required="true"
-									requiredMessage="fecfin"
+									requiredMessage="fecfin" inputSize="10"
 									rendered="#{minoracionesVizcaya.new}" 
 									value="#{minoracionesVizcaya.to.fecfin}" 
 									renderAsPopup="true" popupDateFormat="#{appBundle.aon_date_pattern}">
