@@ -3,11 +3,13 @@ package com.code.aon.faces.component.methodParam;
 import java.io.IOException;
 
 import javax.el.ELException;
+import javax.el.MethodExpression;
 import javax.el.ValueExpression;
 import javax.faces.FacesException;
 import javax.faces.component.UIComponent;
 
 import com.code.aon.faces.component.util.FaceletUtil;
+import com.code.aon.faces.component.util.MethodValueExpression;
 import com.sun.facelets.FaceletContext;
 import com.sun.facelets.FaceletException;
 import com.sun.facelets.tag.TagAttribute;
@@ -21,6 +23,8 @@ public class MethodParamHandler extends TagHandler {
 	private static final String NAME = "name";
 	
 	private static final String TYPE = "type";
+	
+	private static final String RESOLVE = "resolve";
 	
 	private static final String ACTION = "action";
 	
@@ -64,7 +68,24 @@ public class MethodParamHandler extends TagHandler {
 			this.paramTypes = FaceletUtil.VALIDATOR_SIG;			
 		}
 	}
+	
+	private boolean isResolve( FaceletContext ctx ) {
+		if ( this.returnType != null ) {
+			TagAttribute resolveTag = getAttribute(RESOLVE);
+			if ( resolveTag != null ) {
+				return resolveTag.getBoolean(ctx);
+			}			
+		}
+		return false;
+	}
 
+	private ValueExpression getResolvedMethodExpression( FaceletContext ctx, TagAttribute valueTag, Class type, Class[] paramTypes ) {
+		String expression = valueTag.getValue(ctx);
+		ValueExpression ve = FaceletUtil.getValueExpression(ctx, expression, Object.class );
+		MethodExpression methodExpression = FaceletUtil.getMethodExpression( ctx, expression, type, paramTypes );
+		return new MethodValueExpression( ve, methodExpression );
+	}
+	
 	public void apply(FaceletContext ctx, UIComponent parent)
 			throws IOException, FacesException, FaceletException, ELException {
 		String nameStr = this.name.getValue(ctx);
@@ -72,7 +93,11 @@ public class MethodParamHandler extends TagHandler {
 		ValueExpression valueVE = null;
 		TagAttribute valueTag = getAttribute(VALUE);
 		if ( valueTag != null ) {
-			valueVE = FaceletUtil.getMethodExpression(ctx, valueTag, returnType, paramTypes);
+			if ( isResolve(ctx) ) {
+				valueVE = getResolvedMethodExpression(ctx, valueTag, returnType, paramTypes);
+			} else {
+				valueVE = FaceletUtil.getMethodExpression(ctx, valueTag, returnType, paramTypes);
+			}
 		} else {
 			valueVE = FaceletUtil.getMethodEmptyExpression(ctx, nameStr, returnType, paramTypes);
 		}
