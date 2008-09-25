@@ -13,12 +13,9 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.finance.enumeration.PayMethodType;
 import com.code.aon.finance.print.CheckingTo;
-import com.code.aon.ui.util.AonUtil;
 
 public class FinanceCheckingPrinter implements ICollectionProvider {
-
-	private static final String FINANCE_PRINTER_CONTROLLER = "financePrint";
-
+	
 	@Override
 	@SuppressWarnings("unchecked")
 	public Collection getCollection() {
@@ -30,22 +27,18 @@ public class FinanceCheckingPrinter implements ICollectionProvider {
 		list.add(checkingTo);
 		return list;
 	}
-
 	@Override
-	@SuppressWarnings("unchecked")
-	public Collection getCollection(boolean forceRefresh) throws ManagerBeanException {
+	public Collection getCollection(boolean forceRefresh)
+			throws ManagerBeanException {
 		return getCollection();
 	}
+
 	
-	@SuppressWarnings({"unchecked", "unused"})
+	@SuppressWarnings("unchecked")
 	private List<ITransferObject> obtainNoPaymethodList() {
 		String select = "SELECT finance " +
-						"FROM Finance finance, Customer customer " +
-						"WHERE finance.registry.id = customer.registry.id " +
-						"AND finance.payment = 0 " +
-						"AND finance.payMethod.id IS NULL " +
-						obtainPrintCondition() +
-						"ORDER BY finance.registry.surname, finance.registry.name";
+						"FROM Finance finance " +
+						"WHERE finance.payMethod.id IS NULL";
 		Session session = HibernateUtil.getSession();
 		Query query = session.createQuery(select);
 		return query.list();
@@ -54,13 +47,9 @@ public class FinanceCheckingPrinter implements ICollectionProvider {
 	@SuppressWarnings("unchecked")
 	private List<ITransferObject> obtainNegotiableNoBankAccountList() {
 		String select = "SELECT finance " +
-						"FROM Finance finance, Customer customer " +
-						"WHERE finance.registry.id = customer.registry.id " +
-						"AND finance.payment = 0 " +
-						"AND finance.payMethod.type = " + PayMethodType.NEGOTIABLE_DOCUMENT.ordinal() + " " +
-						"AND (finance.bankAccount IS NULL OR finance.bankAccount = '') " +
-						obtainPrintCondition() +
-						"ORDER BY finance.registry.surname, finance.registry.name";
+						"FROM Finance finance " +
+						"WHERE finance.payMethod.type = " + PayMethodType.NEGOTIABLE_DOCUMENT.ordinal() + " " +
+						"AND ( finance.bankAccount IS NULL OR finance.bankAccount = '' )"; 
 		Session session = HibernateUtil.getSession();
 		Query query = session.createQuery(select);
 		return query.list();
@@ -69,28 +58,12 @@ public class FinanceCheckingPrinter implements ICollectionProvider {
 	@SuppressWarnings("unchecked")
 	private List<ITransferObject> obtainNoNegotiableBankAccountList() {
 		String select = "SELECT finance " +
-						"FROM Finance finance, Customer customer " +
-						"WHERE finance.registry.id = customer.registry.id " +
-						"AND finance.payment = 0 " +
-						"AND finance.payMethod.type <> " + PayMethodType.NEGOTIABLE_DOCUMENT.ordinal() + " " +
+						"FROM Finance finance " +
+						"WHERE finance.payMethod.type <> " + PayMethodType.NEGOTIABLE_DOCUMENT.ordinal() + " " +
 						"AND finance.bankAccount IS NOT NULL " +
-						"AND finance.bankAccount <> '' " +
-						obtainPrintCondition() +
-						"ORDER BY finance.registry.surname, finance.registry.name";
+						"AND finance.bankAccount <> '' ";
 		Session session = HibernateUtil.getSession();
 		Query query = session.createQuery(select);
 		return query.list();
-	}
-
-	private String obtainPrintCondition() { 
-		FinancePrinter printer = (FinancePrinter)AonUtil.getController(FINANCE_PRINTER_CONTROLLER);
-		String condition = "";
-		if (printer.getCustomerStatus() != null) {
-			condition += "AND customer.status = " + printer.getCustomerStatus().ordinal() + " ";
-		}
-		if (printer.getFinanceStatus() != null) {
-			condition += "AND finance.financeStatus = " + printer.getFinanceStatus().ordinal() + " ";
-		}
-		return condition;
 	}
 }

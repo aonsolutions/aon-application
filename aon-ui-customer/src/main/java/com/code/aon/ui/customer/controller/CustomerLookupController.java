@@ -51,7 +51,11 @@ public class CustomerLookupController extends LookupController {
 				map.put(REGISTRY_ADDRESS_ID, rAddress.getId());
 				map.put(REGISTRY_ADDRESS,((rAddress.getAddress() != null) ? rAddress.getAddress() : ""));
 				map.put(REGISTRY_ADDRESS_CITY, rAddress.getCity());
-				map.put(REGISTRY_ADDRESS_INFO, ((rAddress.getZip() != null) ? rAddress.getZip() + " ": "") + ((rAddress.getCity() != null) ? rAddress.getCity() + " ": "") + ((rAddress.getGeozone().getName() != null) ? rAddress.getGeozone().getName() + " " : ""));
+				StringBuilder sb = new StringBuilder();
+				sb.append((rAddress.getZip() != null) ? rAddress.getZip() + " ": "");
+				sb.append((rAddress.getCity() != null) ? rAddress.getCity() + " ": "");
+				sb.append((rAddress.getGeozone()!= null && rAddress.getGeozone().getName() != null) ? rAddress.getGeozone().getName() + " " : "");
+				map.put(REGISTRY_ADDRESS_INFO, sb.toString());
 			} else {
 				map.put(REGISTRY_ADDRESS_ID, null);
 				map.put(REGISTRY_ADDRESS, "");

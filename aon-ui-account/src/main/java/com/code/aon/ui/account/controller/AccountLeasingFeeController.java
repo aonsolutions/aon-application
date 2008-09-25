@@ -2,15 +2,20 @@ package com.code.aon.ui.account.controller;
 
 import java.util.Date;
 import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.faces.event.ActionEvent;
 import javax.faces.event.ValueChangeEvent;
+import javax.faces.model.DataModel;
+import javax.faces.model.ListDataModel;
 
 import com.code.aon.account.Account;
 import com.code.aon.account.AccountEntry;
 import com.code.aon.account.AccountEntryDetail;
+import com.code.aon.account.AccountInvoiceDetail;
 import com.code.aon.account.AccountLeasingFeeHeader;
 import com.code.aon.account.DefaultAccounts;
 import com.code.aon.account.Leasing;
@@ -34,9 +39,12 @@ import com.code.aon.finance.dao.IFinanceAlias;
 import com.code.aon.finance.enumeration.InvoiceSource;
 import com.code.aon.finance.enumeration.InvoiceStatus;
 import com.code.aon.finance.enumeration.InvoiceType;
+import com.code.aon.product.Tax;
+import com.code.aon.product.dao.IProductAlias;
 import com.code.aon.product.enumeration.TaxType;
 import com.code.aon.product.util.DiscountExpression;
 import com.code.aon.ql.Criteria;
+import com.code.aon.ql.Projection;
 import com.code.aon.ui.account.utils.AccountPeriodValidator;
 import com.code.aon.ui.menu.jsf.MenuEvent;
 import com.code.aon.ui.util.AonUtil;
@@ -51,8 +59,14 @@ public class AccountLeasingFeeController {
 	
 	private boolean isNew;
 	
+	private boolean isNewDetail;
+	
 	private AccountLeasingFeeHeader header;
 
+	private DataModel details;
+	
+	private AccountInvoiceDetail currentDetail;
+	
 
 	public AccountEntryInvoice getAccountEntryInvoice() {
 		return accountEntryInvoice;
@@ -70,12 +84,39 @@ public class AccountLeasingFeeController {
 		this.isNew = isNew;
 	}
 
+	public boolean isNewDetail() {
+		return isNewDetail;
+	}
+
+	public void setNewDetail(boolean isNewDetail) {
+		this.isNewDetail = isNewDetail;
+	}
+
 	public AccountLeasingFeeHeader getHeader() {
 		return header;
 	}
 
 	public void setHeader(AccountLeasingFeeHeader header) {
 		this.header = header;
+	}
+
+	public DataModel getDetails() {
+		if(details == null){
+			details = new ListDataModel(new LinkedList<AccountInvoiceDetail>());
+		}
+		return details;
+	}
+
+	public void setDetails(DataModel details) {
+		this.details = details;
+	}
+	
+	public AccountInvoiceDetail getCurrentDetail() {
+		return currentDetail;
+	}
+
+	public void setCurrentDetail(AccountInvoiceDetail currentDetail) {
+		this.currentDetail = currentDetail;
 	}
 
 	@SuppressWarnings("unused")
@@ -91,6 +132,7 @@ public class AccountLeasingFeeController {
 	private void reset(){
 		this.isNew = true;
 		this.header = initializeHeader();
+		this.details = new ListDataModel(new LinkedList<AccountInvoiceDetail>());
 	}
 
 	private AccountLeasingFeeHeader initializeHeader() {
@@ -102,6 +144,57 @@ public class AccountLeasingFeeController {
 		header.setLeasing(leasing);
 		header.setRegistryBank(new RegistryBank());
 		return header;
+	}
+	
+	@SuppressWarnings("unused")
+	public void onNewDetail(ActionEvent event){
+		this.isNewDetail = true;
+		this.currentDetail = new AccountInvoiceDetail();
+	}
+	
+	@SuppressWarnings("unused")
+	public void onSelectDetail(ActionEvent event){
+		this.currentDetail = (AccountInvoiceDetail)details.getRowData();
+	}
+	
+	@SuppressWarnings({"unchecked", "unused"})
+	public void onAddDetail(ActionEvent event){
+		((LinkedList)this.details.getWrappedData()).add(this.currentDetail);
+		this.currentDetail = new AccountInvoiceDetail();
+		this.setNewDetail(false);
+	}
+	
+	@SuppressWarnings({"unchecked", "unused"})
+	public void onRemoveDetail(ActionEvent event){
+		((LinkedList)this.details.getWrappedData()).remove(this.currentDetail);
+	}
+
+	@SuppressWarnings("unused")
+	public void onCancelDetail(ActionEvent event){
+		this.currentDetail = new AccountInvoiceDetail();
+		this.setNewDetail(false);
+	}
+	
+	@SuppressWarnings({"unused", "unchecked"})
+	public void onUpdateDetail(ActionEvent event){
+		int i = ((LinkedList)this.details.getWrappedData()).indexOf(this.currentDetail);
+		((LinkedList)this.details.getWrappedData()).remove(i);
+		((LinkedList)this.details.getWrappedData()).add(i, this.currentDetail);
+		this.currentDetail = new AccountInvoiceDetail();
+	}
+	
+	@SuppressWarnings("unchecked")
+	public void onTaxChange(ValueChangeEvent event) throws ManagerBeanException{
+		if(event.getNewValue() != null){
+			IManagerBean taxBean = BeanManager.getManagerBean(Tax.class);
+			Criteria criteria = new Criteria();
+			criteria.addEqualExpression(taxBean.getFieldName(IProductAlias.TAX_ID), event.getNewValue());
+			Iterator iter = taxBean.getList(criteria).iterator();
+			if(iter.hasNext()){
+				Tax tax = (Tax)iter.next();
+				this.currentDetail.setVat(tax);
+			}
+		}
 	}
 	
 	@SuppressWarnings("unused")
@@ -122,7 +215,7 @@ public class AccountLeasingFeeController {
 		account = obtainLeasingAccount(getHeader().getLeasing());
 		entry.setType(AccountEntryType.LEASING_FEE);
 		Invoice invoice = insertInvoice();
-		insertInvoiceDetail(invoice);
+		insertInvoiceDetails(invoice);
 		entry = insertorUpdateAccountEntry(entry);
 		insertEntryDetails(entry, invoice);
 		this.setAccountEntryInvoice(insertAccountEntryInvoice(entry, invoice));
@@ -130,22 +223,6 @@ public class AccountLeasingFeeController {
 		loadAccountEntryController(entry);
 	}
 	
-	private void insertInvoiceDetail(Invoice invoice) throws ManagerBeanException {
-		InvoiceDetail detail = new InvoiceDetail();
-		detail.setInvoice(invoice);
-		detail.setDiscountExpression(new DiscountExpression("0.0"));
-		detail.setItem(null);
-		detail.setPrice(getHeader().getTotal());
-		detail.setQuantity(1.0);
-		detail.setSource(InvoiceSource.ACCOUNT);
-		detail.setTaxableBase(getHeader().getTaxableBase());
-		detail.setTaxes(0.0);
-		detail.setWorkPlace(obtainWorkPlace());
-		IManagerBean invoiceDetailBean = BeanManager.getManagerBean(InvoiceDetail.class);
-		invoiceDetailBean.insert(detail);
-		insertInvoiceTaxes(detail);
-	}
-
 	/* NO se llama a AccountUtil porque este aquí no se genera si no existe */
 	@SuppressWarnings({"unchecked", "unused"})
 	private Account obtainLeasingAccount(Leasing leasing) throws ManagerBeanException {
@@ -179,47 +256,47 @@ public class AccountLeasingFeeController {
 			// Primer Apunte
 			AccountEntryDetail detail = new AccountEntryDetail();
 			Account rBankAccount = AccountUtil.obtainRBankAccount(getHeader().getRegistryBank());
-			Account leasingAccount = AccountUtil.obtainLeasingAccount(getHeader().getLeasing());
 			detail.setAccount(rBankAccount);
 			detail.setAccountEntry(entry);
+			detail.setBalancingAccount(null);
 			detail.setConcept("N/Fra: " + invoice.getSeries() + "/" + invoice.getNumber());
-			detail.setCredit(getHeader().getTotal());
-			detail.setBalancingAccount(leasingAccount);
+			detail.setCredit(getInvoiceTotal());
 			accountEntryDetailBean.insert(detail);
 			// Segundo Apunte
-			detail = new AccountEntryDetail();
-			detail.setAccount(leasingAccount);
-			detail.setAccountEntry(entry);
-			detail.setConcept("N/Fra: " + invoice.getSeries() + "/" + invoice.getNumber());
-			detail.setDebit(getHeader().getAmortization());
-			detail.setBalancingAccount(rBankAccount);
-			accountEntryDetailBean.insert(detail);
-			// Tercer Apunte
-			detail = new AccountEntryDetail();
-			Account debtInterestAccount = AccountUtil.obtainDefaultAccount(DefaultAccounts.DEBT_INTEREST_ACCOUNT);
-			detail.setAccount(debtInterestAccount);
-			detail.setAccountEntry(entry);
-			detail.setConcept("Intereses Leasing");
-			detail.setDebit(getHeader().getInterest());
-			detail.setBalancingAccount(rBankAccount);
-			accountEntryDetailBean.insert(detail);
-			// Cuarto Apunte
-			detail = new AccountEntryDetail();
-			Account financialExpensesAccount = AccountUtil.obtainDefaultAccount(DefaultAccounts.FINANCIAL_EXPENSES_ACCOUNT);
-			detail.setAccount(financialExpensesAccount);
-			detail.setAccountEntry(entry);
-			detail.setConcept("Gastos Financieros");
-			detail.setDebit(getHeader().getExpenses());
-			detail.setBalancingAccount(rBankAccount);
-			accountEntryDetailBean.insert(detail);
-			// Quinto Apunte
 			detail = new AccountEntryDetail();
 			Account vatAccount = AccountUtil.obtainDefaultAccount(DefaultAccounts.PAID_VAT_ACCOUNT);
 			detail.setAccount(vatAccount);
 			detail.setAccountEntry(entry);
+			detail.setBalancingAccount(null);
 			detail.setConcept("N/Fra: " + invoice.getSeries() + "/" + invoice.getNumber());
-			detail.setDebit(getHeader().getVatQuota());
-			detail.setBalancingAccount(rBankAccount);
+			detail.setDebit(obtainVATandSurchargeQuota());
+			accountEntryDetailBean.insert(detail);
+			// Tercer Apunte
+			detail = new AccountEntryDetail();
+			Account leasingAccount = obtainLeasingAccount(getHeader().getLeasing());
+			detail.setAccount(leasingAccount);
+			detail.setAccountEntry(entry);
+			detail.setBalancingAccount(null);
+			detail.setConcept("N/Fra: " + invoice.getSeries() + "/" + invoice.getNumber());
+			detail.setDebit(obtainTotalTaxableBase());
+			accountEntryDetailBean.insert(detail);
+			// Cuarto Apunte
+			detail = new AccountEntryDetail();
+			Account account272 = AccountUtil.obtainAccount("272");
+			Account account663 = AccountUtil.obtainAccount("663");
+			detail.setAccount(account272);
+			detail.setAccountEntry(entry);
+			detail.setBalancingAccount(account663);
+			detail.setConcept("Intereses Leasing");
+			detail.setCredit(getHeader().getInterest());
+			accountEntryDetailBean.insert(detail);
+			// Quinto Apunte
+			detail = new AccountEntryDetail();
+			detail.setAccount(account663);
+			detail.setAccountEntry(entry);
+			detail.setBalancingAccount(account272);
+			detail.setConcept("Intereses Leasing");
+			detail.setDebit(getHeader().getInterest());
 			accountEntryDetailBean.insert(detail);
 		} catch (ManagerBeanException e) {
 			LOGGER.log(Level.SEVERE, "Error inserting details for AccountEntry with id = " + entry.getId(), e);
@@ -232,6 +309,54 @@ public class AccountLeasingFeeController {
 		accountEntryInvoice.setInvoice(invoice);
 		accountEntryInvoice.setAccountEntry(entry);
 		return (AccountEntryInvoice)accountEntryInvoiceBean.insert(accountEntryInvoice);
+	}
+	
+	/**
+	 * Gets the invoice total.
+	 * 
+	 * @return the invoice total
+	 */
+	@SuppressWarnings("unchecked")
+	private double getInvoiceTotal() {
+		double total = 0.0;
+		Iterator iter = ((List)details.getWrappedData()).iterator();
+		while(iter.hasNext()){
+			AccountInvoiceDetail detail = (AccountInvoiceDetail)iter.next();
+			total += detail.getTotal();
+		}
+		return total;
+	}
+	
+	/**
+	 * Obtain VA tand surcharge quota.
+	 * 
+	 * @return the double
+	 */
+	@SuppressWarnings("unchecked")
+	private double obtainVATandSurchargeQuota() {
+		double total = 0.0;
+		Iterator iter = ((List)details.getWrappedData()).iterator();
+		while(iter.hasNext()){
+			AccountInvoiceDetail detail = (AccountInvoiceDetail)iter.next();
+			total += detail.getVatQuota() + detail.getSurcharge();
+		}
+		return total;
+	}
+	
+	/**
+	 * Obtain total taxable base.
+	 * 
+	 * @return the double
+	 */
+	@SuppressWarnings("unchecked")
+	private double obtainTotalTaxableBase() {
+		double total = 0.0;
+		Iterator iter = ((List)details.getWrappedData()).iterator();
+		while(iter.hasNext()){
+			AccountInvoiceDetail detail = (AccountInvoiceDetail)iter.next();
+			total += detail.getTaxableBase();
+		}
+		return total;
 	}
 	
 	@SuppressWarnings("unused")
@@ -247,13 +372,12 @@ public class AccountLeasingFeeController {
 			IManagerBean invoiceBean = BeanManager.getManagerBean(Invoice.class);
 			Invoice invoice = new Invoice();
 			invoice.setIssueDate(getHeader().getLeasingFeeDate());
-			invoice.setSeries(getHeader().getSeries());
-			invoice.setNumber(getHeader().getNumber());
-			invoice.setReferenceCode(getHeader().getReferenceCode());
+			invoice.setNumber(calculateNextNumber(getHeader().getSeries()));
 			// A INVOICE SE LE METE COMPANY EN REGISTRY
 			invoice.setRegistry(obtainCompany());
 			invoice.setRegistryDocument(getHeader().getLeasing().getSupplierDocument());
 			invoice.setRegistryName(getHeader().getLeasing().getSupplierName());
+			invoice.setSeries(getHeader().getSeries());
 			invoice.setStatus(InvoiceStatus.SCORED);
 			invoice.setType(InvoiceType.LEASING);
 			invoice.setSecurityLevel(getHeader().getSecurityLevel());
@@ -264,6 +388,41 @@ public class AccountLeasingFeeController {
 		return null;
 	}
 	
+	private int calculateNextNumber(String series) throws ManagerBeanException {
+		IManagerBean invoiceBean = BeanManager.getManagerBean(Invoice.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(invoiceBean.getFieldName(IFinanceAlias.INVOICE_SERIES), series);
+		Projection projection = Projection.max(invoiceBean.getFieldName(IFinanceAlias.INVOICE_NUMBER));
+		Object value = invoiceBean.getUniqueResult(projection, criteria);
+		if(value != null){
+			return ((Integer)value).intValue() + 1;
+		}
+		return 1;
+	}
+
+	@SuppressWarnings("unchecked")
+	private void insertInvoiceDetails(Invoice invoice) {
+		try {
+			IManagerBean invoiceDetailBean = BeanManager.getManagerBean(InvoiceDetail.class);
+			Iterator iter = ((LinkedList)details.getWrappedData()).iterator();
+			while(iter.hasNext()){
+				AccountInvoiceDetail detail = (AccountInvoiceDetail)iter.next();
+				InvoiceDetail invoiceDetail = new InvoiceDetail();
+				invoiceDetail.setDeliveryDetail(null);
+				invoiceDetail.setDiscountExpression(new DiscountExpression("0.0"));
+				invoiceDetail.setInvoice(invoice);
+				invoiceDetail.setItem(null);
+				invoiceDetail.setSource(InvoiceSource.ACCOUNT);
+				invoiceDetail.setWorkPlace(obtainWorkPlace());
+				invoiceDetail.setTaxableBase(detail.getTaxableBase());
+				invoiceDetail = (InvoiceDetail) invoiceDetailBean.insert(invoiceDetail);
+				insertInvoiceTaxes(invoiceDetail, detail);
+			}
+		} catch (ManagerBeanException e) {
+			LOGGER.log(Level.SEVERE, "Error inserting invoiceDetails for invoice with id= " + invoice.getId(), e);
+		}
+	}
+
 	@SuppressWarnings("unchecked")
 	private WorkPlace obtainWorkPlace() throws ManagerBeanException {
 		IManagerBean workPlaceBean = BeanManager.getManagerBean(WorkPlace.class);
@@ -274,14 +433,14 @@ public class AccountLeasingFeeController {
 		return null;
 	}
 
-	private void insertInvoiceTaxes(InvoiceDetail invoiceDetail) {
+	private void insertInvoiceTaxes(InvoiceDetail invoiceDetail, AccountInvoiceDetail detail) {
 		try {
 			IManagerBean invoiceTaxBean = BeanManager.getManagerBean(InvoiceTax.class);
 			InvoiceTax invoiceTax = new InvoiceTax();
-			if(getHeader().getLeasing().getVat().getPercentage() > 0){
+			if(detail.getVat().getPercentage() > 0){
 				invoiceTax.setInvoiceDetail(invoiceDetail);
-				invoiceTax.setPercentage(getHeader().getLeasing().getVat().getPercentage());
-				invoiceTax.setSurcharge(getHeader().getLeasing().getVat().getSurcharge());
+				invoiceTax.setPercentage(detail.getVat().getPercentage());
+				invoiceTax.setSurcharge(detail.getVat().getSurcharge());
 				invoiceTax.setTaxType(TaxType.VAT);
 				invoiceTaxBean.insert(invoiceTax);
 			}
@@ -365,20 +524,7 @@ public class AccountLeasingFeeController {
 			criteria.addEqualExpression(rBankBean.getFieldName(IFinanceAlias.REGISTRY_BANK_ID), event.getNewValue());
 			Iterator iter = rBankBean.getList(criteria).iterator();
 			if(iter.hasNext()){
-				this.getHeader().setRegistryBank((RegistryBank)iter.next());
-			}
-		}
-	}
-	
-	@SuppressWarnings("unchecked")
-	public void onLeasingChange(ValueChangeEvent event) throws ManagerBeanException{
-		if(event.getNewValue() != null){
-			IManagerBean leasingBean = BeanManager.getManagerBean(Leasing.class);
-			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(leasingBean.getFieldName(IAccountAlias.LEASING_ID), event.getNewValue());
-			Iterator iter = leasingBean.getList(criteria).iterator();
-			if(iter.hasNext()){
-				this.getHeader().setLeasing((Leasing)iter.next());
+				this.getHeader().getLeasing().setRegistryBank((RegistryBank)iter.next());
 			}
 		}
 	}

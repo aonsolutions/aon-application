@@ -2,7 +2,6 @@ package com.code.aon.ui.finance.csb;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Collection;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
@@ -29,46 +28,43 @@ import com.code.aon.ui.finance.controller.FBatchDetailController;
 import com.code.aon.ui.util.AonUtil;
 
 public class CSB58Writer {
-
+	
 	private static final String FINANCE_BATCH_DETAIL_CONTROLLER_NAME = "fBatchDetail";
 
 	@SuppressWarnings("unchecked")
 	public CSBOutput createCSB58(Company company, FinanceBatch fbatch) throws ManagerBeanException {
-		FBatchDetailController fBatchDetailController = (FBatchDetailController)AonUtil.getController(FINANCE_BATCH_DETAIL_CONTROLLER_NAME);
-		return createCSB58(company, fbatch, (List)fBatchDetailController.getModel().getWrappedData());
-	}
-	
-	@SuppressWarnings("unchecked")
-	public CSBOutput createCSB58(Company company, FinanceBatch fbatch, Collection fbatchDetailCollection) throws ManagerBeanException {
-		Lot lot = new Lot();
-		RegistryBank companyRBank = fbatch.getRegistryBank();
-		Presenter presenter = new Presenter();
-		presenter.setCode(company.getDocument());
-		presenter.setSufix(companyRBank.getSufix());
-		presenter.setMakeDate(fbatch.getIssueDate());
-		presenter.setName(company.getName());
-		presenter.setEntity(companyRBank.getBankAccount().substring(0,3));
-		presenter.setOffice(companyRBank.getBankAccount().substring(4,7));
-		lot.setPresenter(presenter);
-
-		Orderer orderer = new Orderer();
-		Account companyAccount = new Account();
-		companyAccount.parse(companyRBank.getBankAccount());
-		orderer.setAccount(companyAccount);
-		orderer.setCode(company.getDocument());
-		orderer.setName(company.getName());
-		orderer.setSufix(companyRBank.getSufix());
-		orderer.setCodeINE(new Integer(1));
-
-		Iterator iter = fbatchDetailCollection.iterator();
-		while(iter.hasNext()){
-			FinanceBatchDetail fBatchDetail = (FinanceBatchDetail)iter.next();
-			Individual individual  = createIndividual(fBatchDetail);
-			orderer.addIndividual(individual);
-		}
-		lot.addOrderer(orderer);
-
 		try {
+			Lot lot = new Lot();
+			
+			RegistryBank companyRBank = fbatch.getRegistryBank();
+			Presenter presenter = new Presenter();
+			presenter.setCode(company.getDocument());
+			presenter.setSufix(companyRBank.getSufix());
+			presenter.setMakeDate(fbatch.getIssueDate());
+			presenter.setName(company.getName());
+			presenter.setEntity(companyRBank.getBankAccount().substring(0,3));
+			presenter.setOffice(companyRBank.getBankAccount().substring(4,7));
+			
+			lot.setPresenter(presenter);
+			
+			Orderer orderer = new Orderer();
+			Account companyAccount = new Account();
+			companyAccount.parse(companyRBank.getBankAccount());
+			orderer.setAccount(companyAccount);
+			orderer.setCode(company.getDocument());
+			orderer.setName(company.getName());
+			orderer.setSufix(companyRBank.getSufix());
+			orderer.setCodeINE(new Integer(1));
+			
+			FBatchDetailController fBatchDetailController = (FBatchDetailController)AonUtil.getController(FINANCE_BATCH_DETAIL_CONTROLLER_NAME);
+			Iterator iter = ((List)fBatchDetailController.getModel().getWrappedData()).iterator();
+			while(iter.hasNext()){
+				FinanceBatchDetail fBatchDetail = (FinanceBatchDetail)iter.next();
+				Individual individual  = createIndividual(fBatchDetail);
+				orderer.addIndividual(individual);
+			}
+			lot.addOrderer(orderer);
+		
 			File file = File.createTempFile("CSB58_", ".txt");
 			FileFiller csb58 = new CSB58(lot, file.getAbsolutePath());
 			CSBOutput output = new CSBOutput();

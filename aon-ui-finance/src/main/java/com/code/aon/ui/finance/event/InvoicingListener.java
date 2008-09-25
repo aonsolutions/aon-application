@@ -87,13 +87,11 @@ public class InvoicingListener extends ControllerAdapter {
 	 */
 	@Override
 	public void beforeModelInitialized(ControllerEvent event) throws ControllerListenerException {
+		InvoicingController invoicingController = (InvoicingController)event.getController();
 		Criteria criteria;
 		try {
-			criteria = event.getController().getCriteria();
-			criteria.addEqualExpression(event.getController().getFieldName(IFinanceAlias.INVOICE_TYPE), InvoiceType.PURCHASE);
-			criteria.addOrder(event.getController().getFieldName(IFinanceAlias.INVOICE_ISSUE_DATE));
-			criteria.addOrder(event.getController().getFieldName(IFinanceAlias.INVOICE_SERIES));
-			criteria.addOrder(event.getController().getFieldName(IFinanceAlias.INVOICE_NUMBER));
+			criteria = invoicingController.getCriteria();
+			criteria.addEqualExpression(invoicingController.getManagerBean().getFieldName(IFinanceAlias.INVOICE_TYPE), InvoiceType.PURCHASE);
 		} catch (ManagerBeanException e) {
 			throw new ControllerListenerException(e.getMessage(), e.getCause());
 		}
@@ -104,7 +102,6 @@ public class InvoicingListener extends ControllerAdapter {
 	 * 
 	 * @param invoice related invoice
 	 */
-	@SuppressWarnings("unchecked")
 	private void fillTaxInfo(Invoice invoice) {
 		try {
 			IManagerBean companyBean = BeanManager.getManagerBean(Company.class);

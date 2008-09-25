@@ -5,10 +5,13 @@ import java.util.Date;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.config.User;
 import com.code.aon.groupware.Alarm;
 import com.code.aon.groupware.Notice;
+import com.code.aon.groupware.dao.IGroupWareAlias;
 import com.code.aon.groupware.enumeration.AlarmSource;
 import com.code.aon.groupware.enumeration.AlarmStatus;
+import com.code.aon.ql.Criteria;
 import com.code.aon.ui.config.util.UserUtils;
 import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
@@ -20,7 +23,7 @@ public class NoticeControllerListener extends ControllerAdapter {
 	@Override
 	public void beforeBeanAdded(ControllerEvent event) throws ControllerListenerException {
 		Notice notice = (Notice)event.getController().getTo();
-		notice.setSender(UserUtils.getInstance().getLoggedUser());
+		notice.setSender(UserUtils.getLoggedUser());
 	}
 	
 	@Override
@@ -41,6 +44,19 @@ public class NoticeControllerListener extends ControllerAdapter {
 		Notice notice = (Notice)noticeController.getTo();
 		if(notice.getWorkGroup() != null && notice.getWorkGroup().getId() != null){
 			noticeController.loadUsers(notice.getWorkGroup().getId());
+		}
+	}
+	
+	@Override
+	public void beforeModelInitialized(ControllerEvent event) throws ControllerListenerException {
+		try {
+			NoticeController noticeController = (NoticeController)event.getController();
+			Criteria criteria = noticeController.getCriteria();
+			User user = UserUtils.getLoggedUser();
+			criteria.addEqualExpression(noticeController.getFieldName(IGroupWareAlias.NOTICE_SENDER_ID), user.getId());
+			criteria.addOrder(noticeController.getFieldName(IGroupWareAlias.NOTICE_DATE),false);
+		} catch (ManagerBeanException e) {
+			throw new ControllerListenerException("Error before model initialized", e);
 		}
 	}
 

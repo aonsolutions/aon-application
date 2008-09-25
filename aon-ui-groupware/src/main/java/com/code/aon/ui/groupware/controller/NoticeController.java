@@ -1,13 +1,11 @@
 package com.code.aon.ui.groupware.controller;
 
-import java.util.Date;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import javax.faces.event.ActionEvent;
 import javax.faces.event.ValueChangeEvent;
 import javax.faces.model.SelectItem;
 
@@ -26,9 +24,6 @@ public class NoticeController extends BasicController {
 
 	private List<SelectItem> users = new LinkedList<SelectItem>();
 	
-	private Date fromDate;
-	
-	private Date toDate;
 
 	public List<SelectItem> getUsers() {
 		return users;
@@ -65,48 +60,23 @@ public class NoticeController extends BasicController {
         }
     }
     
-    public Date getFromDate() {
-		return fromDate;
-	}
-
-	public void setFromDate(Date fromDate) {
-		this.fromDate = fromDate;
-	}
-
-	public Date getToDate() {
-		return toDate;
-	}
-
-	public void setToDate(Date toDate) {
-		this.toDate = toDate;
-	}
-
-	@Override
-	public void onSearch(ActionEvent event) {
-		addFromDateExpression();
-		addToDateExpression();
-		super.onSearch(event);
-	}
-
-	public void addFromDateExpression(){
-        if(this.fromDate != null) {
+	public void addFromDateExpression(ValueChangeEvent event){
+        if(event.getNewValue() != null) {
             try {
-                getCriteria().addGreaterThanOrEqualExpression(getFieldName(IGroupWareAlias.NOTICE_DATE), this.fromDate);
+                getCriteria().addGreaterThanOrEqualExpression(getFieldName(IGroupWareAlias.NOTICE_DATE), event.getNewValue());
             } catch (ManagerBeanException e) {
                 LOGGER.log(Level.SEVERE, "Error adding FROM due date expression", e);
             }
-    		setFromDate(null);
         }
     }
     
-    public void addToDateExpression(){
-        if(this.toDate != null) {
+    public void addToDateExpression(ValueChangeEvent event){
+        if(event.getNewValue() != null) {
             try {
-                getCriteria().addLessThanOrEqualExpression(getFieldName(IGroupWareAlias.NOTICE_DATE), this.toDate);
+                getCriteria().addLessThanOrEqualExpression(getFieldName(IGroupWareAlias.NOTICE_DATE), event.getNewValue());
             } catch (ManagerBeanException e) {
                 LOGGER.log(Level.SEVERE, "Error adding TO due date expression", e);
             }
-            setToDate(null);
         }
     }
 }
