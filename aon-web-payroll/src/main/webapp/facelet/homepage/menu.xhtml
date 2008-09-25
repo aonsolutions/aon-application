@@ -157,7 +157,11 @@
 				</aon:menuGroup>
 				<aon:menuGroup value="#{menuBundle.auxiliares_cotizacion}">
 					<aon:menuItem value="#{menuBundle.auxiliares_cotizacion__porcoti}" 
-						action="cotizacion_porcentaje" actionListener="#{porcentajeMaestro.onEnter}" />
+							action="cotizacion_porcentaje"  >
+						<aon:actionListener method="#{porcentajeMaestro.onEditSearch}" />
+						<aon:actionListener method="#{porcentajeMaestro.onSearch}" />
+						<aon:actionListener method="#{porcentajeMaestro.onSelectFirst}" />
+					</aon:menuItem>
 					<aon:menuItem value="#{menuBundle.auxiliares_cotizacion__cotizaciones}" disabled="true" />
 					<aon:menuItem value="#{menuBundle.auxiliares_cotizacion__elemcotizacion}" disabled="true" />
 					<aon:menuItem value="#{menuBundle.auxiliares_cotizacion__ocupacion}" disabled="true" />
@@ -174,7 +178,11 @@
 				<aon:menuGroup value="#{menuBundle.auxiliares_contratos}">
 					<aon:menuItem value="#{menuBundle.auxiliares_contratos__tipcotc2}" disabled="true" />
 					<aon:menuItem value="#{menuBundle.auxiliares_contratos__tipocont}" 
-						action="contratos_internos" actionListener="#{contratosInternos.onEnter}" />
+							action="contratos_internos" >
+						<aon:actionListener method="#{contratosInternos.onEditSearch}" />
+						<aon:actionListener method="#{contratosInternos.onSearch}" />
+						<aon:actionListener method="#{contratosInternos.onSelectFirst}" />
+					</aon:menuItem>
 				</aon:menuGroup>
 				<aon:menuGroup value="#{menuBundle.auxiliares_organismos_entidades}">
 					<aon:menuItem value="#{menuBundle.auxiliares_organismos_entidades__entidsucur}" disabled="true" />
