@@ -11,7 +11,7 @@
 	<groupId>com.code.aon</groupId>
 	<artifactId>aon.web.consultant</artifactId>
 	<packaging>war</packaging>
-	<version>2.3.3</version>
+	<version>2.3.4</version>
 	<description>AON WEB CONSULTANT</description>
 	<name>AON WEB CONSULTANT</name>
 	<properties>
@@ -126,7 +126,7 @@
 			<groupId>fop</groupId>
 			<artifactId>fop</artifactId>
 			<version>0.20.5</version>
-			<scope>runtime</scope>
+			<scope>provided</scope>
 			<exclusions>
 				<exclusion>
 					<groupId>xalan</groupId>
@@ -160,7 +160,7 @@
 		<dependency>
 			<groupId>commons-collections</groupId>
 			<artifactId>commons-collections</artifactId>
-			<version>[2.1.1,)</version>
+			<version>3.1</version>
 			<scope>provided</scope>
 		</dependency>
 		<!-- COMENTAR EN LA VERSION CD [end]-->

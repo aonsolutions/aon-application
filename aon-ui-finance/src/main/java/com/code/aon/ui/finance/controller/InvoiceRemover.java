@@ -10,8 +10,6 @@ import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 import javax.faces.event.ValueChangeEvent;
 
-import com.code.aon.account.bridge.InvoiceDetailAccount;
-import com.code.aon.account.bridge.dao.IAccountBridgeAlias;
 import com.code.aon.account.bridge.writer.AccountEntryInvoiceWriter;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
@@ -43,6 +41,7 @@ public class InvoiceRemover extends BasicController {
 	private AccountEntryInvoiceWriter accountEntryInvoiceWriter;
 	
 	private ArrayList<Invoice> checks = new ArrayList<Invoice>();
+	
 
 	public InvoiceRemovingParameters getRemovingParams() {
 		return removingParams;
@@ -156,22 +155,32 @@ public class InvoiceRemover extends BasicController {
 				if(invoice.getStatus().equals(InvoiceStatus.SCORED)){
 					getAccountEntryInvoiceWriter().unrecordInvoice(invoice);
 				}
+				removeInvoiceAddress(invoice);
 				removeFinanceTrackings(invoice);
 				removeFinances(invoice);
-				removeInvoiceDetailAccounts(invoice);
 				removeInvoiceDetails(invoice);
-				removeInvoiceAddress(invoice);
 				getManagerBean().remove(invoice);
+				clearCheckedInvoices();
+				this.onSearch(null);
 			} catch (ManagerBeanException e) {
 				LOGGER.log(Level.SEVERE, "Error deleting invoice with id=" + invoice.getId(), e);
 				AonUtil.addErrorMessage("Error deleting invoice with id=" + invoice.getId());
 				throw new AbortProcessingException("Error deleting invoice with id=" + invoice.getId());
 			}
 		}
-		clearCheckedInvoices();
-		this.onSearch(null);
 	}
 
+	@SuppressWarnings("unchecked")
+	private void removeInvoiceAddress(Invoice invoice) throws ManagerBeanException {
+		IManagerBean invoiceAddressBean = BeanManager.getManagerBean(InvoiceAddress.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(invoiceAddressBean.getFieldName(IFinanceAlias.INVOICE_ADDRESS_INVOICE_ID), invoice.getId());
+		Iterator iter = invoiceAddressBean.getList(criteria, 0, 1).iterator();
+		if(iter.hasNext()){
+			invoiceAddressBean.remove((InvoiceAddress)iter.next());
+		}
+	}
+	
 	@SuppressWarnings("unchecked")
 	private void removeFinanceTrackings(Invoice invoice) throws ManagerBeanException {
 		IManagerBean financeTrackingBean = BeanManager.getManagerBean(FinanceTracking.class);
@@ -195,17 +204,6 @@ public class InvoiceRemover extends BasicController {
 	}
 
 	@SuppressWarnings("unchecked")
-	private void removeInvoiceDetailAccounts(Invoice invoice) throws ManagerBeanException {
-		IManagerBean invoiceAccountBean = BeanManager.getManagerBean(InvoiceDetailAccount.class);
-		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(invoiceAccountBean.getFieldName(IAccountBridgeAlias.INVOICE_DETAIL_ACCOUNT_INVOICE_DETAIL_INVOICE_ID), invoice.getId());
-		Iterator iter = invoiceAccountBean.getList(criteria).iterator();
-		while(iter.hasNext()){
-			invoiceAccountBean.remove((InvoiceDetailAccount)iter.next());
-		}
-	}
-	
-	@SuppressWarnings("unchecked")
 	private void removeInvoiceDetails(Invoice invoice) {
 		try {
 			Iterator iter = obtainInvoiceDetails(invoice).iterator();
@@ -225,17 +223,6 @@ public class InvoiceRemover extends BasicController {
 		}
 	}
 
-	@SuppressWarnings("unchecked")
-	private void removeInvoiceAddress(Invoice invoice) throws ManagerBeanException {
-		IManagerBean invoiceAddressBean = BeanManager.getManagerBean(InvoiceAddress.class);
-		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(invoiceAddressBean.getFieldName(IFinanceAlias.INVOICE_ADDRESS_INVOICE_ID), invoice.getId());
-		Iterator iter = invoiceAddressBean.getList(criteria, 0, 1).iterator();
-		if(iter.hasNext()){
-			invoiceAddressBean.remove((InvoiceAddress)iter.next());
-		}
-	}
-	
 	@SuppressWarnings("unchecked")
 	private List obtainInvoiceDetails(Invoice invoice) throws ManagerBeanException {
 		IManagerBean invoiceDetailBean = BeanManager.getManagerBean(InvoiceDetail.class);

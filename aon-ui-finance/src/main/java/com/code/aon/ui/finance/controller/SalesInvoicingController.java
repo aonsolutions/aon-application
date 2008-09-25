@@ -9,6 +9,8 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import javax.faces.context.FacesContext;
+import javax.faces.el.ValueBinding;
 import javax.faces.event.ActionEvent;
 import javax.faces.event.PhaseId;
 import javax.faces.event.ValueChangeEvent;
@@ -17,7 +19,6 @@ import javax.faces.model.SelectItem;
 import com.code.aon.account.Account;
 import com.code.aon.account.AccountEntry;
 import com.code.aon.account.DefaultAccounts;
-import com.code.aon.account.bridge.AccountEntryInvoice;
 import com.code.aon.account.bridge.InvoiceDetailAccount;
 import com.code.aon.account.bridge.ProductAccount;
 import com.code.aon.account.bridge.dao.IAccountBridgeAlias;
@@ -94,8 +95,6 @@ public class SalesInvoicingController extends BasicController {
 	/** SalesFinance controllers name. */
 	private static final String SALES_FINANCE_CONTROLLER_NAME = "salesFinance";
 	
-	private static final String MENU_MANAGER_NAME = "menuManager";
-
 	/** The price strategy. */
 	private IPriceStrategy priceStrategy;
 	
@@ -500,9 +499,11 @@ public class SalesInvoicingController extends BasicController {
 	 */
 	@SuppressWarnings("unchecked")
 	private void updateBreadCrumb() {
-		MenuManager menuManager = (MenuManager)AonUtil.getRegisteredBean(MENU_MANAGER_NAME);
-        menuManager.setCurrentMenu("AON_APP");
-        menuManager.getCurrentMenuModel().setSelectedNode(menuManager.getCurrentMenuModel().getOptionByKey("aon_sales_invoicing").getId());
+		FacesContext ctx = FacesContext.getCurrentInstance();
+		ValueBinding vb = ctx.getApplication().createValueBinding("#{menuManager}");
+		MenuManager menuManager = (MenuManager)vb.getValue(ctx);
+		menuManager.setCurrentMenu("AON_APP");
+		menuManager.getCurrentMenuModel().setSelectedNode("aon_app.sales.salesInvoicing");
 	}
 	
 	/**
@@ -652,10 +653,7 @@ public class SalesInvoicingController extends BasicController {
 				Finance finance = (Finance)iter.next();
 				financeBean.remove(finance);
 			}
-			double totalPrice = getPriceStrategy().getTotalPrice(invoice, invoice);
-			if (totalPrice > 0) {
-				getFinanceGenerator().generateFinances(invoice,invoice.getRegistry(), totalPrice);
-			}
+			getFinanceGenerator().generateFinances(invoice,invoice.getRegistry(), getPriceStrategy().getTotalPrice(invoice, invoice));
 			salesFinanceController.onSearch(null);
 		} catch (ManagerBeanException e) {
 			throw new ManagerBeanException("Error generating finances for invoice with id= " + invoice.getId(),e);
@@ -934,21 +932,5 @@ public class SalesInvoicingController extends BasicController {
 			return ((Integer)value).intValue() + 1;
 		}
 		return 1;
-	}
-
-	@SuppressWarnings("unchecked")
-	public Integer getAccountEntryId() throws ManagerBeanException {
-    	Invoice invoice = (Invoice)this.getTo();
-		if (invoice != null && invoice.getId() != null) {
-			IManagerBean accountEntryInvoiceBean = BeanManager.getManagerBean(AccountEntryInvoice.class);
-			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(accountEntryInvoiceBean.getFieldName(IAccountBridgeAlias.ACCOUNT_ENTRY_INVOICE_INVOICE_ID), invoice.getId());
-			Iterator iterator = accountEntryInvoiceBean.getList(criteria).iterator();
-			if (iterator.hasNext()) {
-				AccountEntryInvoice accountEntryInvoice = (AccountEntryInvoice)iterator.next();
-				return accountEntryInvoice.getAccountEntry().getId();
-			}
-		}
-    	return null;
 	}
 }

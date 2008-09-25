@@ -46,7 +46,6 @@
 		</title>
 		<pageHeader>
 			<band height="80"  isSplitAllowed="true" >
-				<printWhenExpression><![CDATA[$P{printHeaders}]]></printWhenExpression>
 				<image  scaleImage="RetainShape" vAlign="Top" hAlign="Left" onErrorType="Blank" isUsingCache="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						mode="Opaque"
@@ -92,7 +91,6 @@
 		</pageHeader>
 		<columnHeader>
 			<band height="15"  isSplitAllowed="true" >
-				<printWhenExpression><![CDATA[new Boolean($P{printHeaders}.booleanValue() || $V{PAGE_NUMBER}.intValue()==1)]]></printWhenExpression>
 				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						mode="Opaque"
