@@ -5,21 +5,18 @@
 	xmlns:aon="http://www.code.es/aon-rich-components">
 
 	<ui:decorate template="/facelet/shared/toolbar.xhtml" >
-		<ui:param name="toolbarDescription" value="#{bundle.aon_toolbar_search}" />
+		<ui:param name="toolbarDescription" value="#{bundle.aon_listing}" />
 		<ui:define name="toolbarContent">
-			<aon:commandButton value="#{bundle.aon_clear}"
-				type="reset" ajaxSingle="true"
-				styleClass="aon-finding-toolbar-item aon-icon-rubber" />
-			<c:if test="#{!readOnly}">
+			<aon:commandButton value="#{bundle.aon_search}"
+				action="#{searchAction}" actionListener="#{searchActionListener}"
+				styleClass="aon-finding-toolbar-item aon-icon-search"
+				accesskey="#{bundle.aon_key_search}" />
+			<c:if test="#{!readOnly}">								
 				<aon:commandButton value="#{bundle.aon_reset}"
 					action="#{resetAction}" actionListener="#{resetActionListener}"
-					styleClass="aon-finding-toolbar-item aon-icon-reset"
+					styleClass="aon-finding-toolbar-item aon-icon-new"
 					accesskey="#{bundle.aon_key_new}" />
-			</c:if>
-			<aon:commandButton value="#{bundle.aon_back}"
-				action="#{backAction}" actionListener="#{backActionListener}"
-				styleClass="aon-finding-toolbar-item aon-icon-cancel" immediate="true"
-				accesskey="#{bundle.aon_key_cancel}" />			
+			</c:if>		
 		</ui:define>
 	</ui:decorate>
 	
