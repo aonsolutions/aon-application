@@ -8,14 +8,14 @@
 	
 	<ui:define name="content">
 
-		<aon:form id="sistemaRedColectivosSearch">
+		<aon:form id="porcentajeMaestroSearch">
 
 			<aon:div styleClass="aon-finding-title-toolbar">
 				<aon:panelGrid columns="3" dir="true"
 					columnClasses="aon-finding-title,aon-finding-subtitle,aon-finding-toolbar">
 
 					<aon:div styleClass="aon-finding-title-internal">
-						<aon:outputText value="#{menuBundle.auxiliares_sistema_red__colectivos}" />
+						<aon:outputText value="#{menuBundle.auxiliares_cotizacion__porcoti}" />
 					</aon:div>
 
 					<aon:div styleClass="aon-finding-subtitle-internal">
@@ -27,7 +27,7 @@
 							type="reset" ajaxSingle="true"
 							styleClass="aon-finding-toolbar-item aon-icon-rubber" />
 						<aon:commandButton id="back" value="#{bundle.aon_back}"
-							action="sistemaRed_colectivos" actionListener="#{sistemaRedColectivos.onCancel}"
+							action="cotizacion_porcentaje_form" actionListener="#{porcentajeMaestro.onCancel}"
 							styleClass="aon-finding-toolbar-item aon-icon-cancel" immediate="true"
 							accesskey="#{bundle.aon_key_cancel}" />
 					</aon:div>
@@ -37,18 +37,23 @@
 
 			<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/searchContent.xhtml" >
 				<ui:define name="searchContent">
-					<aon:methodParam name="searchActionListener" value="#{sistemaRedColectivos.onSearch}" type="actionListener" />
-					<aon:methodParam name="searchAction" value="sistemaRed_colectivos" />				
+					<aon:methodParam name="searchActionListener" value="#{porcentajeMaestro.onSearch}" type="actionListener" />
+					<aon:methodParam name="searchAction" value="cotizacion_porcentaje_form" />				
 				
-					<aon:outputLabel for="Colectivos_cdg"
+					<aon:outputLabel for="PorcentajeMaestro_cdg"
 						value="#{appBundle.aon_payroll_cdg}" />
-					<aon:inputText id="Colectivos_cdg" size="4" maxlength="4"
-						valueChangeListener="#{sistemaRedColectivos.addExpression}" />
+					<aon:inputText id="PorcentajeMaestro_cdg" size="10" maxlength="8"
+						valueChangeListener="#{porcentajeMaestro.addExpression}" />
 
-					<aon:outputLabel for="Colectivos_description"
-						value="#{appBundle.aon_payroll_long_description}" />
-					<aon:inputText id="Colectivos_description" size="60" maxlength="45"
-						valueChangeListener="#{sistemaRedColectivos.addExpression}" />
+					<aon:outputLabel for="PorcentajeMaestro_description"
+						value="#{appBundle.aon_payroll_description}" />
+					<aon:inputText id="PorcentajeMaestro_description" size="60" maxlength="50"
+						valueChangeListener="#{porcentajeMaestro.addExpression}" />
+						
+					<aon:outputLabel for="PorcentajeMaestro_ordpct"
+						value="#{appBundle.aon_payroll_order}" />
+					<aon:inputText id="PorcentajeMaestro_ordpct" size="2" maxlength="2"
+						valueChangeListener="#{porcentajeMaestro.addExpression}" />
 				</ui:define>
 			</ui:decorate>
 

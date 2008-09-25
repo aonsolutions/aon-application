@@ -12,7 +12,6 @@ import javax.faces.validator.ValidatorException;
 import org.apache.commons.beanutils.PropertyUtils;
 
 import com.code.aon.common.ITransferObject;
-import com.code.aon.payroll.irpf.Cuota;
 import com.code.aon.ui.util.AonUtil;
 
 public class PorcentajeValidator implements Validator {

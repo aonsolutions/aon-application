@@ -138,8 +138,8 @@
 						timeZone="#{timeZoneController.timeZoneId}" />
 						</aon:outputText>
 									<aon:selectInputDate required="true"
-								requiredMessage="fecini"
-							rendered="#{to==cuotaRetencionAlava.to}"
+								requiredMessage="fecini" 
+							rendered="#{to==cuotaRetencionAlava.to}"  inputSize="10"
 								value="#{cuotaRetencionAlava.to.id.fecini}"
 								renderAsPopup="true" popupDateFormat="#{appBundle.aon_date_pattern}">
 							</aon:selectInputDate>
@@ -148,7 +148,7 @@
 										<aon:selectInputDate required="true"
 								requiredMessage="fecini"
 							rendered="#{cuotaRetencionAlava.new}"
-								value="#{cuotaRetencionAlava.to.id.fecini}"
+								value="#{cuotaRetencionAlava.to.id.fecini}" inputSize="10"
 								renderAsPopup="true" popupDateFormat="#{appBundle.aon_date_pattern}">
 							</aon:selectInputDate>
 							
@@ -165,7 +165,7 @@
 								<aon:selectInputDate required="true"
 								requiredMessage="fecini"
 								rendered="#{to==cuotaRetencionAlava.to}"
-								value="#{cuotaRetencionAlava.to.fecfin}"
+								value="#{cuotaRetencionAlava.to.fecfin}" inputSize="10"
 								renderAsPopup="true" popupDateFormat="#{appBundle.aon_date_pattern}">
 							</aon:selectInputDate>
 							
@@ -173,7 +173,7 @@
 								<aon:selectInputDate required="true"
 								requiredMessage="fecini"
 								rendered="#{cuotaRetencionAlava.new}"
-								value="#{cuotaRetencionAlava.to.fecfin}"
+								value="#{cuotaRetencionAlava.to.fecfin}" inputSize="10"
 								renderAsPopup="true" popupDateFormat="#{appBundle.aon_date_pattern}">
 							</aon:selectInputDate>
 							</f:facet>
