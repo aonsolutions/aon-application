@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.Locale;
 
 import javax.faces.context.FacesContext;
-import javax.faces.event.ActionEvent;
 import javax.faces.model.SelectItem;
 
 import com.code.aon.common.BeanManager;
@@ -65,14 +64,6 @@ public class ContratosInternos extends PayrollBasicController {
 			SelectItem item = new SelectItem( pm.getCdg(), pm.getDescription() );
 			asimilados.add(item);
 		}
-	}
-
-	public void onEnter(ActionEvent event) {
-		if ( super.model != null ) {
-			super.onEditSearch( event );
-			super.onSearch( event );
-		}
-		super.onSelectFirst( event );
 	}
 
 }
