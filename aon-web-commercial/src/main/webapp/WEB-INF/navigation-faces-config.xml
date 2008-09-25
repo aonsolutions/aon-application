@@ -101,19 +101,19 @@
 		</navigation-case>
 	</navigation-rule>				
 
-	<!-- =================== Survey Response ================= -->	
+	<!-- =================== Campaign ================= -->	
 	<navigation-rule>
 		<navigation-case>
-			<from-outcome>surveyResponse_list</from-outcome>
-			<to-view-id>/marketing/surveyResponse/list.xhtml</to-view-id>
+			<from-outcome>campaign_list</from-outcome>
+			<to-view-id>/marketing/campaign/list.xhtml</to-view-id>
 		</navigation-case>
 		<navigation-case>
-			<from-outcome>surveyResponse_form</from-outcome>
-			<to-view-id>/marketing/surveyResponse/form.xhtml</to-view-id>
+			<from-outcome>campaign_form</from-outcome>
+			<to-view-id>/marketing/campaign/form.xhtml</to-view-id>
 		</navigation-case>
 		<navigation-case>
-			<from-outcome>surveyResponse_search</from-outcome>
-			<to-view-id>/marketing/surveyResponse/search.xhtml</to-view-id>
+			<from-outcome>campaign_search</from-outcome>
+			<to-view-id>/marketing/campaign/search.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>				
 
@@ -156,8 +156,8 @@
 			<to-view-id>/marketing/survey/list.xhtml</to-view-id>
 		</navigation-case>
 		<navigation-case>
-			<from-outcome>surveyResponse</from-outcome>
-			<to-view-id>/marketing/surveyResponse/list.xhtml</to-view-id>
+			<from-outcome>campaign</from-outcome>
+			<to-view-id>/marketing/campaign/list.xhtml</to-view-id>
 		</navigation-case>
 		<navigation-case>
 			<from-outcome>communicationCenter</from-outcome>
