@@ -13,22 +13,22 @@
 
 	<ui:define name="content">
 
-		<aon:form id="questionList">
+		<aon:form id="campaignList">
 		
 			<ui:include src="/facelet/shared/listToolbar.xhtml" >
-				<ui:param name="toolbarTitle" value="#{marketingBundle.aon_marketing_questions}" />
-				<ui:param name="controller" value="#{question}" />
+				<ui:param name="toolbarTitle" value="#{marketingBundle.aon_marketing_campaigns}" />
+				<ui:param name="controller" value="#{campaign}" />
 			</ui:include>
 
 			<!--  aon-region-body -->
 			<aon:div styleClass="aon-scroll-area">
 
-				<aon:dataTable id="questionData" value="#{question.model}"
-					var="to" rows="20" rendered="#{question.model.rowCount > 0}"
+				<aon:dataTable id="campaignData" value="#{campaign.model}"
+					var="to" rows="20" rendered="#{campaign.model.rowCount > 0}"
 					columnClasses="aon-editDataTable-numberColumn aon-width-70, aon-editDataTable-textColumn aon-width-150,
 						aon-editDataTable-textColumn, aon-editDataTable-iconColumn">
 
-					<aon:rowSelector action="question_form" actionListener="#{question.onSelect}" />
+					<aon:rowSelector action="campaign_form" actionListener="#{campaign.onSelect}" />
 					
 					<aon:column>
 						<f:facet name="header">
@@ -39,16 +39,9 @@
 
  					<aon:column>
 						<f:facet name="header">
-							<aon:outputText value="#{bundle.aon_type}" />
+							<aon:outputText value="#{bundle.aon_description}" />
 						</f:facet>
-						<aon:outputText value="#{to.type}"/>
-					</aon:column>
-
- 					<aon:column>
-						<f:facet name="header">
-							<aon:outputText value="#{marketingBundle.aon_marketing_question}" />
-						</f:facet>
-						<aon:outputText value="#{question.textAbbreviated}"/>
+						<aon:outputText value="#{to.description}"/>
 					</aon:column>
 
  					<aon:column>
@@ -62,7 +55,7 @@
  
 				</aon:dataTable>
 
-				<aon:dataScroller2 for="questionData" showNote="true" />
+				<aon:dataScroller2 for="campaignData" showNote="true" />
 
 			</aon:div>
 		</aon:form>
