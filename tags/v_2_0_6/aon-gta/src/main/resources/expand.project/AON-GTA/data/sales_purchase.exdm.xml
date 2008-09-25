@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<table tableName="sales_purchase">
+    <columns>
+        <column label="" name="id" sqlType="integer" type="integer"/>
+        <column label="" name="sales_detail" sqlType="integer" type="integer"/>
+        <column label="" name="purchase_detail" sqlType="integer" type="integer"/>
+    </columns>
+    <virtualColumns/>
+    <primaryKey>
+        <column name="id"/>
+    </primaryKey>
+    <joins>
+        <join description="sales_purchase_ibfk_1" foreignPath="data/sales_detail.exdm.xml">
+            <sourceColumns>
+                <column name="sales_detail"/>
+            </sourceColumns>
+        </join>
+        <join description="sales_purchase_ibfk_2" foreignPath="data/purchase_detail.exdm.xml">
+            <sourceColumns>
+                <column name="purchase_detail"/>
+            </sourceColumns>
+        </join>
+    </joins>
+    <descriptionColumns/>
+</table>

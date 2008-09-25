@@ -1,0 +1,121 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:h="http://java.sun.com/jsf/html">
+<body>
+
+<ui:composition template="/facelet/templates/template.xhtml">
+	<ui:define name="content">
+	<h:form id="reportManager">
+		
+		
+			<t:div id="aon-general-title" forceId="#{true}" styleClass="aon-general-title">
+				<t:div styleClass="aon-general-title-internal">
+					<h:outputText value="#{runnableTree.hyperViewLabel}" />
+				</t:div>
+			</t:div>
+			<t:div id="aon-general-toolbar" styleClass="aon-general-toolbar"  forceId="#{true}">
+						<t:div styleClass="aon-content-toolbar-item-group">
+					<t:commandButton id="accept"
+						styleClass="aon-general-toolbar-item"
+						onmouseover="this.className='aon-general-toolbar-item aon-general-toolbar-item-hover aon-general-toolbar-item-new'"
+						onmouseout="this.className='aon-general-toolbar-item aon-general-toolbar-item-new'"
+						value="#{bundle.aon_accept}" action="#{exportManager.export}" />
+					<t:commandButton id="cancel"
+						styleClass="aon-general-toolbar-item aon-general-toolbar-item-list"
+						onmouseover="this.className='aon-general-toolbar-item aon-general-toolbar-item-hover aon-general-toolbar-item-new'"
+						onmouseout="this.className='aon-general-toolbar-item aon-general-toolbar-item-new'"
+						value="#{bundle.aon_cancel}"
+						onclick="window.close();return false;" />
+				</t:div>
+			</t:div>
+			
+			<t:div id="aon-window-popup-title" styleClass="aon-content-title" forceId="#{true}">
+				<t:div styleClass="aon-content-title-internal">
+					<h:outputText value="#{hyperviewBundle.hyperview_export_options}" />
+				</t:div>
+			</t:div>
+			
+				<t:div id="aon-scroll-area" forceId="#{true}">
+					<t:div styleClass="aon-scroll-area-internal">
+						<t:div styleClass="aon-form-selectBooleanCheckbox-group">
+							<t:div styleClass="aon-form-selectBooleanCheckbox-title">
+								<h:outputText value="#{hyperviewBundle.hyperview_child_nodes}" />
+							</t:div>
+	
+							<t:div styleClass="aon-form-selectBooleanCheckbox">
+								<h:selectBooleanCheckbox id="exportChildNodes"
+									value="#{exportManager.exportChildNodes}"
+									styleClass="aon-form-selectBooleanCheckbox-field">
+								</h:selectBooleanCheckbox>
+								<h:outputLabel for="exportChildNodes"
+									value="#{hyperviewBundle.hyperview_export_child_nodes}"
+									styleClass="aon-form-selectBooleanCheckbox-label" />
+							</t:div>
+				
+						</t:div>
+						<t:div styleClass="aon-form-selectOneRadio">
+							<t:div styleClass="aon-form-selectOneRadio-title">
+								<h:outputLabel for="pdf" value="#{hyperviewBundle.hyperview_export_format}" />
+							</t:div>
+	
+							<t:selectOneRadio id="pdf" forceId="#{true}" layout="spread"
+								value="#{exportManager.pdf}" styleClass="aon-form-selectOneRadio-field">
+								<f:selectItem itemValue="#{true}" itemLabel="&#160;" />
+								<f:selectItem itemValue="#{false}" itemLabel="&#160;" />
+							</t:selectOneRadio>
+							<t:div>
+								<t:radio for="pdf" index="0" />
+								<t:div styleClass="aon-pdf-icon">
+									<t:outputText
+										value="#{hyperviewBundle.hyperview_export_format_pdf}" />
+								</t:div>
+							</t:div>
+							<t:div>
+								<t:radio for="pdf" index="1" />
+								<t:div styleClass="aon-xls-icon">
+									<h:outputText
+										value="#{hyperviewBundle.hyperview_export_format_xls}" />
+								</t:div>
+							</t:div>
+					
+						</t:div>
+						<t:div styleClass="aon-form-selectOneRadio">
+							<t:div styleClass="aon-form-selectOneRadio-title">
+								<h:outputLabel for="download" value="#{hyperviewBundle.hyperview_export_option}" />
+							</t:div>
+							<t:selectOneRadio id="download" forceId="#{true}"
+								layout="pageDirection" value="#{exportManager.download}"
+								onclick="this.form.submit();" styleClass="aon-form-selectOneRadio-field">
+								<f:selectItem itemValue="#{false}"
+									itemLabel="#{hyperviewBundle.hyperview_export_option_view}" />
+								<f:selectItem itemValue="#{true}"
+									itemLabel="#{hyperviewBundle.hyperview_export_option_download}" />
+							</t:selectOneRadio>
+		
+							<t:div rendered="#{exportManager.download}"
+								styleClass="aon-form-unit">
+								<t:div styleClass="aon-form-input-text-label">
+									<h:outputLabel for="fileName"
+										value="#{hyperviewBundle.hyperview_export_filename}" />
+								</t:div>
+								<t:div styleClass="aon-form-input-text">
+									<t:inputText id="fileName" value="#{exportManager.fileName}"
+										size="30" forceId="#{true}" />
+								</t:div>
+							</t:div>
+
+					
+			</t:div>
+		</t:div>
+	</t:div>
+
+	</h:form>
+		
+	</ui:define>
+</ui:composition>
+
+</body>
+</html>
