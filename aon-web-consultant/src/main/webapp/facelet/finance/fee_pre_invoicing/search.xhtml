@@ -60,10 +60,10 @@
 								styleClass="aon-form-input-text-disabled" size="40" />
 						</t:div>
  
- 						<h:outputLabel value="#{appBundle.aon_date}"
+ 						<h:outputLabel value="#{customerBundle.aon_date}"
 							styleClass="aon-form-input-text-label" />
 						<h:panelGrid columns="4">
-							<h:outputLabel for="BillingDate_Month" value="#{appBundle.aon_month}"
+							<h:outputLabel for="BillingDate_Month" value="#{customerBundle.aon_month}"
 								styleClass="aon-form-input-text-label" />
 							<h:selectOneMenu id="BillingDate_Month"
 								value="#{preInvoicing.invoicingParams.month}"
@@ -71,12 +71,21 @@
 								<f:selectItems value="#{salesCollections.months}" />
 							</h:selectOneMenu>
 
-							<h:outputLabel for="BillingDate_Year" value="#{appBundle.aon_year}"
+							<h:outputLabel for="BillingDate_Year" value="#{customerBundle.aon_year}"
 								styleClass="aon-form-input-text-label" />
 							<h:inputText id="BillingDate_Year"
 								styleClass="aon-form-input-text" size="5"
 								value="#{preInvoicing.invoicingParams.year}" />
 						</h:panelGrid>
+
+						<t:outputLabel for="CustomerFee_securityLevel"
+							styleClass="aon-form-selectOneMenu-label"
+							value="#{customerBundle.security_level}" />
+						<h:selectOneMenu id="CustomerFee_securityLevel"
+							styleClass="aon-form-selectOneMenu-field"
+							value="#{preInvoicing.invoicingParams.securityLevel}">
+							<f:selectItems value="#{financeCollections.securityLevels}" />
+						</h:selectOneMenu>
 
  						<h:outputLabel for="CustomerFee_WorkPlace"
  							value="#{customerBundle.aon_customer_fee_workplace_abrv}"
