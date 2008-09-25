@@ -9,31 +9,12 @@
 	<ui:define name="content">
 
 		<aon:form id="surveyResponseSearch">
-
-			<aon:div styleClass="aon-finding-title-toolbar">
-				<aon:panelGrid columns="3" dir="true"
-					columnClasses="aon-finding-title,aon-finding-subtitle,aon-finding-toolbar">
-
-					<aon:div styleClass="aon-finding-title-internal">
-						<aon:outputText value="#{marketingBundle.aon_marketing_surveis}" />
-					</aon:div>
-
-					<aon:div styleClass="aon-finding-subtitle-internal">
-						<aon:outputText value="#{bundle.aon_toolbar_search}" />
-					</aon:div>
-
-					<aon:div styleClass="aon-finding-toolbar-item-group">
-						<aon:commandButton id="clear" value="#{bundle.aon_clear}"
-							type="reset" ajaxSingle="true"
-							styleClass="aon-finding-toolbar-item aon-icon-rubber" />
-						<aon:commandButton id="back" value="#{bundle.aon_back}"
-							action="surveyResponse_list" actionListener="#{surveyResponse.onCancel}"
-							styleClass="aon-finding-toolbar-item aon-icon-cancel" immediate="true"
-							accesskey="#{bundle.aon_key_cancel}" />
-					</aon:div>
-				</aon:panelGrid>
-			</aon:div>
-			<!-- end toolbar navigation -->
+		
+			<ui:include src="/facelet/shared/searchToolbar.xhtml" >
+				<ui:param name="toolbarTitle" value="#{marketingBundle.aon_marketing_surveis}" />
+				<ui:param name="controller" value="#{survey}" />
+				<ui:param name="readOnly" value="true" />
+			</ui:include>
 
 			<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/searchContent.xhtml" >
 				<ui:define name="searchContent">
@@ -45,8 +26,7 @@
 					<aon:inputText id="SurveyResponse_id" size="60"
 						valueChangeListener="#{surveyResponse.addExpression}" />		
 			
-				</ui:define>
-			
+				</ui:define>			
 			</ui:decorate>
 							 
 		</aon:form>
