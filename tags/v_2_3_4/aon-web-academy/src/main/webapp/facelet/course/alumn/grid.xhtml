@@ -1,0 +1,273 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:h="http://java.sun.com/jsf/html">
+<body>
+
+<ui:composition template="/facelet/templates/aon.ui.form.xhtml">
+
+	<ui:define name="head">
+		<ui:include src="/facelet/shared/head.xhtml" />
+	</ui:define>
+
+	<ui:define name="content">
+
+		<h:form id="courseAlumnList">
+		
+			<t:div id="aon-content-menu" styleClass="aon-content-menu-aux"
+				forceId="#{true}">
+				<h:outputText
+					value="#{appBundle.course_code} #{course.to.code}, #{course.to.courseSubject.description} #{course.to.courseLevel.description} #{course.to.academicYear.description}" />
+			</t:div>
+			
+			<t:div styleClass="aon-content-menu" rendered="#{!customer.new}" id="aon-content-menu" forceId="#{true}">
+				<t:panelGrid columns="7" cellpadding="0" cellspacing="0" border="0">
+					<t:panelGroup>						
+						<t:commandLink id="course_data" value="#{appBundle.course_course}" 
+							action="course_form" styleClass="aon-content-menu-item"	visibleOnUserRole="GruposGrupo"/>					
+					</t:panelGroup>
+					<t:panelGroup>						
+						<t:commandLink id="academicSkill_data" value="#{appBundle.academicSkill_academicSkills}" 
+							action="course_academicSkill_data" visibleOnUserRole="GruposHabilidades"
+							styleClass="aon-content-menu-item"	/>					
+					</t:panelGroup>
+					<t:panelGroup>						
+						<t:commandLink id="alumn_data" value="#{appBundle.aon_alumns}" 
+							styleClass="aon-content-menu-item-active" visibleOnUserRole="GruposAlumnos"/>
+					</t:panelGroup>
+					<t:panelGroup>						
+						<t:commandLink id="alumn_absence_data" value="#{appBundle.absence_absences}" 
+							actionListener="#{courseAlumnAbsence.onSearch}" 
+							action="course_alumn_absence_data" visibleOnUserRole="GruposAusencias"
+							styleClass="aon-content-menu-item"	/>					
+					</t:panelGroup>
+					<t:panelGroup>						
+						<t:commandLink id="evaluation_data" 
+							value="#{appBundle.course_evaluation}" 
+							action="course_evaluation_data" visibleOnUserRole="GruposVCalidad"
+							styleClass="aon-content-menu-item"	/>					
+					</t:panelGroup>
+					<t:panelGroup>						
+						<t:commandLink id="course_mark_data" 
+							value="#{appBundle.aon_mark_data}" 
+							action="course_mark_data" visibleOnUserRole="GruposCalificaciones"
+							actionListener="#{courseMark.onSearch}" 
+							styleClass="aon-content-menu-item"	/>					
+					</t:panelGroup>
+					<t:panelGroup>						
+						<t:commandLink id="alumn_mark_data" value="#{appBundle.mark_print}" 
+							actionListener="#{courseAlumnMark.onSearch}" 
+							action="course_alumn_mark_data" visibleOnUserRole="GruposObservaciones"
+							styleClass="aon-content-menu-item"	/>					
+					</t:panelGroup>
+				</t:panelGrid>
+			</t:div>
+		
+			<!--  toolbar navigation -->
+			<t:div styleClass="aon-content-toolbar" forceId="#{true}"
+				id="aon-content-toolbar">
+				<t:div styleClass="aon-content-toolbar-internal">
+				<t:div styleClass="aon-content-toolbar-item-group">
+					<h:commandButton id="save" value="#{bundle.aon_save}"
+						styleClass="aon-content-toolbar-item aon-content-toolbar-item-save"
+						onmouseover="this.className='aon-content-toolbar-item aon-content-toolbar-item-hover aon-content-toolbar-item-save'"
+						onmouseout="this.className='aon-content-toolbar-item aon-content-toolbar-item-save'"
+						actionListener="#{courseAlumn.onAccept}"
+						rendered="#{courseAlumn.to!=null}"
+						onclick="return (confirm('#{bundle.aon_save_confirm}'));" 
+						accesskey="#{bundle.aon_key_save}"/>
+					<h:commandButton id="cancel" value="#{bundle.aon_cancel}"
+						immediate="#{true}" 
+						styleClass="aon-content-toolbar-item aon-content-toolbar-item-cancel"
+						onmouseover="this.className='aon-content-toolbar-item aon-content-toolbar-item-hover aon-content-toolbar-item-cancel'"
+						onmouseout="this.className='aon-content-toolbar-item aon-content-toolbar-item-cancel'"
+						actionListener="#{courseAlumn.onCancel}"
+						rendered="#{courseAlumn.to!=null}"
+						onclick="return (confirm('#{bundle.aon_cancel_confirm}'));" 
+						accesskey="#{bundle.aon_key_cancel}"/>
+					<h:commandButton id="remove" value="#{bundle.aon_remove}"
+						styleClass="aon-content-toolbar-item aon-content-toolbar-item-delete"
+						onmouseover="this.className='aon-content-toolbar-item aon-content-toolbar-item-hover aon-content-toolbar-item-delete'"
+						onmouseout="this.className='aon-content-toolbar-item aon-content-toolbar-item-delete'"
+						actionListener="#{courseAlumn.onRemove}" 
+						rendered="#{courseAlumn.to!=null and !courseAlumn.new}"
+						onclick="return (confirm('#{bundle.aon_remove_confirm}'));" 
+						accesskey="#{bundle.aon_key_remove}"/>
+					<h:commandButton id="reset" value="#{bundle.aon_reset}"
+						styleClass="aon-content-toolbar-item aon-content-toolbar-item-new"
+						onmouseover="this.className='aon-content-toolbar-item aon-content-toolbar-item-hover aon-content-toolbar-item-new'"
+						onmouseout="this.className='aon-content-toolbar-item aon-content-toolbar-item-new'"
+						actionListener="#{courseAlumn.onReset}"
+						rendered="#{!courseAlumn.new}" 
+						accesskey="#{bundle.aon_key_new}"/>
+					<t:commandButton id="absenceTemplateList" value="#{appBundle.aon_absences_listing}"
+						forceId="#{true}"
+						onclick="reportWindow(this, 'placeList', '${facesContext.externalContext.requestContextPath}/facelet/report/preferences.faces');return false;"
+						styleClass="aon-content-toolbar-item aon-content-toolbar-item-print"
+						onmouseover="this.className='aon-content-toolbar-item aon-content-toolbar-item-hover aon-content-toolbar-item-print'"
+						onmouseout="this.className='aon-content-toolbar-item aon-content-toolbar-item-print'"
+						accesskey="#{bundle.aon_key_print}" />
+				</t:div>
+				</t:div>
+			</t:div>
+
+			<t:div styleClass="aon-errors">
+				<h:outputText styleClass="aon-error-message"
+					style="padding-left:20px" rendered="#{courseAlumn.limitExceeded}"
+					value="#{appBundle.aon_alumn_limit_exceeded}" />
+			</t:div>
+			
+			<t:div forceId="#{true}" id="aon-scroll-area">
+				<t:div styleClass="aon-scroll-area-internal">
+					<t:div styleClass="aon-table-hack">
+
+						<t:dataTable id="courseAlumnDataTable"
+							value="#{courseAlumn.model}" var="to"
+							rowOnMouseOver="selectRow( this )"
+							rowOnMouseOut="unselectRow( this )" rowOnClick="sendRow( this )"
+							styleClass="aon-edit-table" headerClass="aon-edit-table-header"
+							footerClass="aon-edit-table-footer" rows="20" rowIndexVar="rowIndex"
+							rowClasses="aon-edit-table-row-odd,aon-edit-table-row-even"
+							columnClasses="aon-edit-table-body aon-edit-table-body-icon,
+								aon-edit-table-body aon-edit-table-body-string,
+								aon-edit-table-body aon-edit-table-body-string,
+								aon-edit-table-body aon-edit-table-body-buttons">
+			
+							<h:column>
+								<f:facet name="header">
+									<f:verbatim>&#160;</f:verbatim>
+								</f:facet>
+								<f:verbatim>&#160;</f:verbatim>
+								<t:commandLink immediate="#{true}"
+									rendered="#{to!=courseAlumn.to}"
+									styleClass="aon-table-row-selected"
+									actionListener="#{courseAlumn.onSelect}">
+								</t:commandLink>
+								<f:facet name="footer">
+									<t:div>
+										<t:commandButton id="reset"
+											styleClass="aon-edit-table-icon-button aon-edit-table-icon-button-new"
+											value="" immediate="#{true}" rendered="#{!courseAlumn.new}"
+											actionListener="#{courseAlumn.onReset}"
+											accesskey="#{bundle.aon_key_new_line}">
+										</t:commandButton>
+									</t:div>
+								</f:facet>
+							</h:column>
+			
+							<h:column>
+								<f:facet name="header">
+									<h:outputText value="#{appBundle.course_alumn}" />
+								</f:facet>
+								<t:div rendered="#{!courseAlumn.new or to!=courseAlumn.to}">
+									<h:outputText value="#{to.customer.registry.surname}, " rendered="#{to.customer.registry.surname != null and to.customer.registry.surname != ''}"/>								
+									<h:outputText value="#{to.customer.registry.name}" />
+								</t:div>
+								<f:facet name="footer">
+									<t:div rendered="#{courseAlumn.new}">
+										<t:inputText id="Customer_Lookup_id-New" forceId="#{true}"
+											styleClass="aon-form-input-text" size="5" 
+											onchange="return findBeanLookupExt(event,'#{facesContext.externalContext.requestContextPath}','customerLookup','Customer_Lookup_id-New','Customer_id|Customer_Lookup_id-New,Customer_full_name|Customer_full_name-New');"
+											value="#{courseAlumn.to.customer.id}" />
+										<h:commandButton id="find_Customer_Lookup_id-New"
+											styleClass="aon-form-lookup-button" value="" immediate="true"
+											onclick="lookupSearchWindow(this, 'placeList', '#{customerLookup.encodedSearchPagePath}','Customer_id|Customer_Lookup_id-New,Customer_full_name|Customer_full_name-New');return false;" />
+										<t:inputText id="Customer_full_name-New" 
+											disabled="true" forceId="#{true}"
+											value="#{courseAlumn.to.customer.registry.name} #{courseAlumn.to.customer.registry.surname}"
+											styleClass="aon-form-input-text-disabled" size="40" />
+									</t:div>
+								</f:facet>
+							</h:column>
+			
+							<t:column>
+								<f:facet name="header">
+									<t:outputText value="#{appBundle.course_status}" />
+								</f:facet>
+								<t:outputText value="#{to.status}"
+									rendered="#{to!=courseAlumn.to}" />
+								<t:div>
+									<h:selectOneMenu 
+										rendered="#{to==courseAlumn.to}" 
+										styleClass="aon-form-selectOneMenu-field"
+										value="#{courseAlumn.to.status}">
+										<f:selectItems value="#{academyCollections.courseAlumnStatuses}" />
+									</h:selectOneMenu>
+								</t:div>
+								<f:facet name="footer">
+									<t:div>
+										<h:selectOneMenu 
+											rendered="#{courseAlumn.new}" 
+											styleClass="aon-form-selectOneMenu-field"
+											value="#{courseAlumn.to.status}">
+											<f:selectItems value="#{academyCollections.courseAlumnStatuses}" />
+										</h:selectOneMenu>
+									</t:div>
+								</f:facet>
+							</t:column>
+							
+							<h:column>
+								<f:facet name="header">
+									<f:verbatim>&#160;</f:verbatim>
+								</f:facet>
+								<t:div>
+									<f:verbatim rendered="#{!courseAlumn.new or to!=courseAlumn.to}">&#160;</f:verbatim>
+			
+									<t:commandButton title="#{bundle.aon_save}"
+										actionListener="#{courseAlumn.onAccept}"
+										rendered="#{to==courseAlumn.to}" value=""
+										styleClass="aon-edit-table-icon-button aon-edit-table-icon-button-save"
+										accesskey="#{bundle.aon_key_save_line}" />
+									<t:commandButton title="#{bundle.aon_cancel}"
+										actionListener="#{courseAlumn.onCancel}" immediate="#{true}"
+										onclick="return (confirm('#{bundle.aon_cancel_confirm}'));"
+										styleClass="aon-edit-table-icon-button aon-edit-table-icon-button-cancel"
+										value="" rendered="#{to==courseAlumn.to}"
+										accesskey="#{bundle.aon_key_cancel_line}" />
+									<t:commandButton title="#{bundle.aon_remove}"
+										actionListener="#{courseAlumn.onRemove}"
+										onclick="return (confirm('#{bundle.aon_remove_confirm}'));"
+										rendered="#{to==courseAlumn.to}"
+										styleClass="aon-edit-table-icon-button aon-edit-table-icon-button-delete"
+										value="" accesskey="#{bundle.aon_key_remove_line}" />
+								</t:div>
+								<f:facet name="footer">
+									<t:div>
+										<f:verbatim rendered="#{!courseAlumn.new}">&#160;</f:verbatim>
+										<t:commandButton title="#{bundle.aon_save}"
+											actionListener="#{courseAlumn.onAccept}"
+											rendered="#{courseAlumn.new}" value=""
+											styleClass="aon-edit-table-icon-button aon-edit-table-icon-button-save"
+											accesskey="#{bundle.aon_key_save_line}" />
+										<t:commandButton title="#{bundle.aon_cancel}"
+											actionListener="#{courseAlumn.onCancel}"
+											immediate="#{true}"
+											onclick="return (confirm('#{bundle.aon_cancel_confirm}'));"
+											rendered="#{courseAlumn.new}"
+											styleClass="aon-edit-table-icon-button aon-edit-table-icon-button-cancel"
+											value="" accesskey="#{bundle.aon_key_cancel_line}" />
+									</t:div>
+								</f:facet>
+							</h:column>
+						</t:dataTable>
+
+					</t:div>
+
+					<ui:include src="/facelet/shared/dataScroller.xhtml">
+						<ui:param name="dataTable" value="courseAlumnDataTable" />
+						<ui:param name="model" value="#{courseAlumn.model}" />
+						<ui:param name="showNote" value="#{false}" />
+					</ui:include>
+					
+				</t:div>
+			</t:div>
+		</h:form>
+		<h:form id="placeList" target="list" />
+	</ui:define>
+
+</ui:composition>
+
+</body>
+</html>
