@@ -122,13 +122,13 @@
 							</aon:outputText>
 							<aon:selectInputDate required="true"
 								rendered="#{to==cuotas.to}"
-								value="#{cuotas.to.id.fecini}"
+								value="#{cuotas.to.id.fecini}" inputSize="10"
 								renderAsPopup="true" popupDateFormat="#{appBundle.aon_date_pattern}">
 							</aon:selectInputDate>
 							<f:facet name="footer">
 								<aon:selectInputDate required="true"
 									rendered="#{cuotas.new}" 
-									value="#{cuotas.to.id.fecini}" 
+									value="#{cuotas.to.id.fecini}"  inputSize="10"
 									renderAsPopup="true" popupDateFormat="#{appBundle.aon_date_pattern}">
 								</aon:selectInputDate>
 									
@@ -145,13 +145,13 @@
 							</aon:outputText>
 							<aon:selectInputDate required="true"
 								rendered="#{to==cuotas.to}"
-								value="#{cuotas.to.fecfin}"
+								value="#{cuotas.to.fecfin}" inputSize="10"
 								renderAsPopup="true" popupDateFormat="#{appBundle.aon_date_pattern}">
 							</aon:selectInputDate>
 							<f:facet name="footer">
 								<aon:selectInputDate required="true"
 									rendered="#{cuotas.new}" 
-									value="#{cuotas.to.fecfin}" 
+									value="#{cuotas.to.fecfin}"  inputSize="10"
 									renderAsPopup="true" popupDateFormat="#{appBundle.aon_date_pattern}">
 								</aon:selectInputDate>
 							</f:facet>
