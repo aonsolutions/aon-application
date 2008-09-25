@@ -12,31 +12,37 @@ import javax.persistence.Table;
 
 import com.code.aon.common.ITransferObject;
 import com.code.aon.company.resources.Employee;
-import com.code.aon.record.enumeration.ContractType;
 
 @Entity
-@Table(name="lh_contract")
-public class Contract implements ITransferObject {
+@Table(name="lh_course")
+public class LHCourse implements ITransferObject {
 	
-	private static final long serialVersionUID = -6365401274115311112L;
+	private static final long serialVersionUID = -5584410544741478146L;
 
-	/** Identifier */
+	/**
+	 * Identificador único
+	 */
 	private Integer id;
 	
-	/** Employee */
+	/**
+	 * Empleado
+	 */
 	private Employee employee;
 	
-	/** Starting date */
+	/**
+	 * Fecha de inicio
+	 */
 	private Date startingDate;
-	
-	/** Ending date */
+
+	/**
+	 * Fecha de fin
+	 */
 	private Date endingDate;
 	
-	/** Contract type */
-	private ContractType contractType;
-	
-	/** Gross salary */
-	private double grossSalary;
+	/**
+	 * Descripción
+	 */
+	private String description;
 
 	@Id
 	@GeneratedValue
@@ -77,22 +83,12 @@ public class Contract implements ITransferObject {
 		this.endingDate = endingDate;
 	}
 
-	@Column(name="contract_type")
-	public ContractType getContractType() {
-		return contractType;
+	@Column(length=64)
+	public String getDescription() {
+		return description;
 	}
 
-	public void setContractType(ContractType contractType) {
-		this.contractType = contractType;
+	public void setDescription(String description) {
+		this.description = description;
 	}
-
-	@Column(name="gross_salary")
-	public double getGrossSalary() {
-		return grossSalary;
-	}
-
-	public void setGrossSalary(double grossSalary) {
-		this.grossSalary = grossSalary;
-	}
-
 }

@@ -630,15 +630,15 @@
 				</map-entry>
 				<map-entry>
 					<key>ACC_DEFAULT_CHARGED_VAT_ACC</key>
-					<value>47701</value>
+					<value>47700</value>
 				</map-entry>
 				<map-entry>
 					<key>ACC_DEFAULT_PAID_VAT_ACC</key>
-					<value>47201</value>
+					<value>47200</value>
 				</map-entry>
 				<map-entry>
 					<key>ACC_DEFAULT_PAID_RET_ACC</key>
-					<value>47301</value>
+					<value>47300</value>
 				</map-entry>
 				<map-entry>
 					<key>ACC_DEFAULT_CHARGED_RET_ACC</key>
