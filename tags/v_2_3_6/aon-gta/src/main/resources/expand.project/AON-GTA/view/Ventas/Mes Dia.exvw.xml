@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<view description="Mes Dia" sqlSentence="SELECT &#xd;&#xa; MONTH(invoice.issue_date),&#xd;&#xa; CASE MONTH(invoice.issue_date)&#xd;&#xa;&#x9;WHEN 1 THEN 'Enero'&#xd;&#xa;&#x9;WHEN 2 THEN 'Febrero'&#xd;&#xa;&#x9;WHEN 3 THEN 'Marzo'&#xd;&#xa;&#x9;WHEN 4 THEN 'Abril'&#xd;&#xa;&#x9;WHEN 5 THEN 'Mayo'&#xd;&#xa;&#x9;WHEN 6 THEN 'Junio'&#xd;&#xa;&#x9;WHEN 7 THEN 'Julio'&#xd;&#xa;&#x9;WHEN 8 THEN 'Agosto'&#xd;&#xa;&#x9;WHEN 9 THEN 'Septiembre'&#xd;&#xa;&#x9;WHEN 10 THEN 'Octubre'&#xd;&#xa;&#x9;WHEN 11 THEN 'Noviembre'&#xd;&#xa;&#x9;WHEN 12 THEN 'Diciembre'&#xd;&#xa;END&#xd;&#xa;, SUM(TRUNCATE(invoice_detail.taxable_base,2))&#xd;&#xa;  FROM invoice_detail, invoice, item, product&#xd;&#xa; WHERE product.id = item.product&#xd;&#xa;   AND invoice_detail.item = item.id&#xd;&#xa;   AND invoice_detail.invoice = invoice.id&#xd;&#xa;   AND invoice.type = ?&#xd;&#xa;   AND YEAR(invoice.issue_date) = ?&#xd;&#xa; GROUP BY 1">
+    <parameters>
+        <parameter name="type" type="INTEGER"/>
+        <parameter name="year" type="INTEGER"/>
+    </parameters>
+    <results>
+        <result accessName="DELIVERY_MONTH"
+            columnId="MONTH(invoice.issue_date)" export="true"
+            label="Mes" type="INTEGER"/>
+        <result accessName="DELIVERY_MONTHNAME"
+            columnId="CASE MONTH(invoice.issue_date)&#xd;&#xa;&#x9;WHEN 1 THEN 'Enero'&#xd;&#xa;&#x9;WHEN 2 THEN 'Febrero'&#xd;&#xa;&#x9;WHEN 3 THEN 'Marzo'&#xd;&#xa;&#x9;WHEN 4 THEN 'Abril'&#xd;&#xa;&#x9;WHEN 5 THEN 'Mayo'&#xd;&#xa;&#x9;WHEN 6 THEN 'Junio'&#xd;&#xa;&#x9;WHEN 7 THEN 'Julio'&#xd;&#xa;&#x9;WHEN 8 THEN 'Agosto'&#xd;&#xa;&#x9;WHEN 9 THEN 'Septiembre'&#xd;&#xa;&#x9;WHEN 10 THEN 'Oct"
+            export="true" label="Mes" type="STRING"/>
+        <result
+            accessName="SUM(TRUNCATE(invoice_detail.taxable_base,2))"
+            columnId="SUM(TRUNCATE(invoice_detail.taxable_base,2))"
+            label="Total" type="DOUBLE"/>
+    </results>
+    <dataModelReferences/>
+</view>

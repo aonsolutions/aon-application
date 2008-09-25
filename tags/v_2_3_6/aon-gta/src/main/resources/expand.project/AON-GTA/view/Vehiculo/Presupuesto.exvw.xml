@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<view description="Presupuesto" label="Presupuesto" sqlSentence="SELECT offer.id, offer.series, offer.number, offer.issue_date &#xd;&#xa;  FROM tas_offer, offer &#xd;&#xa; WHERE tas_offer.offer = offer.id &#xd;&#xa;  AND tas_offer.support_order = ?">
+    <parameters>
+        <parameter name="support_order" type="INTEGER"/>
+    </parameters>
+    <results>
+        <result accessName="OFFER_ID" columnId="id" export="true"
+            label="CODIGO" tableId="offer" type="INTEGER"/>
+        <result accessName="OFFER_SERIES" columnId="series"
+            export="true" label="SERIE" tableId="offer" type="STRING"/>
+        <result accessName="OFFER_NUMBER" columnId="number"
+            export="true" label="NUMERO" tableId="offer" type="INTEGER"/>
+        <result accessName="OFFER_DATE" columnId="issue_date"
+            export="true" label="FECHA" tableId="offer" type="DATE"/>
+    </results>
+    <dataModelReferences/>
+</view>

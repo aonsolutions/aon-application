@@ -1,0 +1,1 @@
+<?xml version="1.0" encoding="UTF-8"?><report><datasheet name="Model" description="Model"><field><name>id</name><fieldlabel>id</fieldlabel></field><lookup name="input_make" description="make"><displayColumns>name</displayColumns></lookup><field><name>name</name><fieldlabel>name</fieldlabel></field></datasheet></report>
