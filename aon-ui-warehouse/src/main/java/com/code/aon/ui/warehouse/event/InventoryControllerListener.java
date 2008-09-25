@@ -43,7 +43,6 @@ public class InventoryControllerListener extends ControllerAdapter {
 	 * @see com.code.aon.ui.form.event.ControllerAdapter#beforeBeanRemoved(com.code.aon.ui.form.event.ControllerEvent)
 	 */
 	@Override
-	@SuppressWarnings("unchecked")
 	public void beforeBeanRemoved(ControllerEvent event) throws ControllerListenerException {
 		Inventory inventory = (Inventory)event.getController().getTo();
 		try {

@@ -211,7 +211,6 @@ public class DeliveryDetailControllerListener extends ControllerAdapter {
 	 * @param posId the ident of the point of sale
 	 * @return the point of sale
 	 */
-	@SuppressWarnings("unchecked")
 	private PointOfSale obtainPos(Integer posId) {
 		try {
 			IManagerBean posBean = BeanManager.getManagerBean(PointOfSale.class);

@@ -602,13 +602,6 @@
 			<value>com.code.aon.warehouse.DeliveryDetailLabour</value>
 		</managed-property>
 	</managed-bean>
-
-	<!--  **** DELIVERY DETAIL LABOUR REPORT **** -->
-	<managed-bean>
-		<managed-bean-name>labourReport</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.warehouse.controller.LabourReportController</managed-bean-class>
-		<managed-bean-scope>session</managed-bean-scope>
-	</managed-bean>
 	
 	<!-- ************* LISTENERS ************** -->
 

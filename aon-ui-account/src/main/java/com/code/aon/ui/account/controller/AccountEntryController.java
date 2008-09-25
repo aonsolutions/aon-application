@@ -19,7 +19,6 @@ import com.code.aon.account.AccountLeasingFeeHeader;
 import com.code.aon.account.AccountLoanFeeHeader;
 import com.code.aon.account.AccountSalaryHeader;
 import com.code.aon.account.AccountSocialInsuranceHeader;
-import com.code.aon.account.DefaultAccounts;
 import com.code.aon.account.Leasing;
 import com.code.aon.account.Loan;
 import com.code.aon.account.Period;
@@ -28,8 +27,6 @@ import com.code.aon.account.bridge.LeasingAccount;
 import com.code.aon.account.bridge.LoanAccount;
 import com.code.aon.account.bridge.RegistryBankAccount;
 import com.code.aon.account.bridge.dao.IAccountBridgeAlias;
-import com.code.aon.account.bridge.util.AccountConstants;
-import com.code.aon.account.bridge.util.AccountUtil;
 import com.code.aon.account.dao.IAccountAlias;
 import com.code.aon.account.enumeration.AccountEntryType;
 import com.code.aon.common.BeanManager;
@@ -194,7 +191,6 @@ public class AccountEntryController extends BasicController {
 				header.setSeries(accountEntryInvoice.getInvoice().getSeries());
 				header.setPeriod(new Period());
 				header.getPeriod().setId(entry.getAccountPeriod());
-				header.setSecurityLevel(entry.getSecurityLevel());
 				header.setRegistry(accountEntryInvoice.getInvoice().getRegistry());
 				accountInvoiceController.setHeader(header);
 				accountInvoiceController.setFinances(new ListDataModel(obtainFinances(accountEntryInvoice.getInvoice())));
@@ -220,7 +216,6 @@ public class AccountEntryController extends BasicController {
 		header.setDescription(accountEntryDetail.getConcept());
 		header.setAmount(accountEntryDetail.getDebit());
 		header.setRBank(obtainRBank(accountEntryDetail.getBalancingAccount().getId()));
-		header.setSecurityLevel(entry.getSecurityLevel());
 		accountExpensesController.setHeader(header);
 	}
 	
@@ -234,7 +229,6 @@ public class AccountEntryController extends BasicController {
 		period.setId(entry.getAccountPeriod());
 		header.setPeriod(period);
 		header.setDate(entry.getEntryDate());
-		header.setSecurityLevel(entry.getSecurityLevel());
 		AccountEntryDetail accountEntryDetail = obtainEntryDetailFromAccountPattern(entry, "6*");
 		header.setGrossSalary(accountEntryDetail.getDebit());
 		header.setDescription(accountEntryDetail.getConcept());
@@ -257,11 +251,10 @@ public class AccountEntryController extends BasicController {
 		period.setId(entry.getAccountPeriod());
 		header.setPeriod(period);
 		header.setDate(entry.getEntryDate());
-		AccountEntryDetail accountEntryDetail = obtainEntryDetailFromAccountPattern(entry, AccountConstants.BANK_ACCOUNT_PREFIX + "*");
+		AccountEntryDetail accountEntryDetail = obtainEntryDetailFromAccountPattern(entry, "572*");
 		header.setAmount(accountEntryDetail.getCredit());
 		header.setRegistryBank(obtainRBank(accountEntryDetail.getAccount().getId()));
 		header.setDescription(accountEntryDetail.getConcept());
-		header.setSecurityLevel(entry.getSecurityLevel());
 		socialInsController.setHeader(header);
 	}
 
@@ -286,13 +279,13 @@ public class AccountEntryController extends BasicController {
 			loanFeeController.setAccountEntry(entry);
 			AccountLoanFeeHeader header = new AccountLoanFeeHeader();
 			Loan loan = obtainLoan(entry);
-			AccountEntryDetail accountEntryDetail = obtainEntryDetailFromAccountPattern(entry, AccountConstants.LOAN_ACCOUNT_PREFIX + "*");
+			AccountEntryDetail accountEntryDetail = obtainEntryDetailFromAccountPattern(entry, "52000*");
 			header.setAmortization(accountEntryDetail.getDebit());
 			header.setDescription(accountEntryDetail.getConcept());
 			header.setFeeDate(entry.getEntryDate());
 			header.setLoan(loan);
 			header.setRegistryBank(obtainRBank(accountEntryDetail.getBalancingAccount().getId()));
-			accountEntryDetail = obtainEntryDetailFromAccountPattern(entry, AccountUtil.obtainDefaultAccount(DefaultAccounts.DEBT_INTEREST_ACCOUNT).getId() + "*");
+			accountEntryDetail = obtainEntryDetailFromAccountPattern(entry, "663");
 			header.setInterest(accountEntryDetail.getDebit());
 			loanFeeController.setHeader(header);
 		} catch (ManagerBeanException e) {
@@ -309,7 +302,7 @@ public class AccountEntryController extends BasicController {
 			Leasing leasing = obtainLeasing(entry);
 			leasingController.setLeasing(leasing);
 		} catch (ManagerBeanException e) {
-			LOGGER.log(Level.SEVERE, "Error loading AccountLeasingController", e);
+			LOGGER.log(Level.SEVERE, "Error loading AccountLeasingFeeController", e);
 		}
 	}
 	
@@ -327,22 +320,23 @@ public class AccountEntryController extends BasicController {
 				AccountEntryInvoice accountEntryInvoice = (AccountEntryInvoice)iter.next();
 				accountLeasingFeeController.setAccountEntryInvoice(accountEntryInvoice);
 				AccountLeasingFeeHeader header = new AccountLeasingFeeHeader();
-				AccountEntryDetail detail = obtainEntryDetailFromAccountPattern(entry, AccountConstants.BANK_ACCOUNT_PREFIX + "*");
+				AccountEntryDetail detail = obtainEntryDetailFromAccountPattern(entry, "572*");
 				header.setRegistryBank(obtainRBank(detail.getAccount().getId()));
-				detail = obtainEntryDetailFromAccountPattern(entry, AccountUtil.obtainDefaultAccount(DefaultAccounts.DEBT_INTEREST_ACCOUNT).getId() + "");
-				header.setInterest(detail.getDebit());
-				detail = obtainEntryDetailFromAccountPattern(entry, AccountConstants.LEASING_ACCOUNT_PREFIX + "*");
-				header.setAmortization(detail.getDebit());
-				header.setTaxableBase(header.getAmortization() + header.getInterest());
-				detail = obtainEntryDetailFromAccountPattern(entry, AccountUtil.obtainDefaultAccount(DefaultAccounts.FINANCIAL_EXPENSES_ACCOUNT).getId() + "");
-				header.setExpenses(detail.getDebit());
+				detail = obtainEntryDetailFromAccountPattern(entry, "52000*");
+				double taxableBase = detail.getDebit();
+				header.setTaxableBase(taxableBase);
+				detail = obtainEntryDetailFromAccountPattern(entry, "272");
+				header.setInterest(detail.getCredit());
+				header.setAmortization(taxableBase - detail.getCredit());
 				header.setLeasing(obtainLeasing(entry));
 				header.setLeasingFeeDate(accountEntryInvoice.getInvoice().getIssueDate());
 				header.setNumber(accountEntryInvoice.getInvoice().getNumber());
 				header.setSecurityLevel(accountEntryInvoice.getInvoice().getSecurityLevel());
 				header.setSeries(accountEntryInvoice.getInvoice().getSeries());
 				
+				
 				accountLeasingFeeController.setHeader(header);
+				accountLeasingFeeController.setDetails(new ListDataModel(obtainDetails(accountEntryInvoice.getInvoice())));
 			}
 		} catch (ManagerBeanException e) {
 			LOGGER.log(Level.SEVERE, "Error loading AccountInvoiceController", e);
@@ -436,7 +430,7 @@ public class AccountEntryController extends BasicController {
 	
 	@SuppressWarnings("unchecked")
 	private Loan obtainLoan(AccountEntry entry) throws ManagerBeanException {
-		AccountEntryDetail detail = obtainEntryDetailFromAccountPattern(entry, AccountConstants.LOAN_ACCOUNT_PREFIX + "*");
+		AccountEntryDetail detail = obtainEntryDetailFromAccountPattern(entry, "52000*");
 		IManagerBean loanAccountBean = BeanManager.getManagerBean(LoanAccount.class);
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(loanAccountBean.getFieldName(IAccountBridgeAlias.LOAN_ACCOUNT_ACCOUNT_ID), detail.getAccount().getId());
@@ -449,7 +443,7 @@ public class AccountEntryController extends BasicController {
 	
 	@SuppressWarnings("unchecked")
 	private Leasing obtainLeasing(AccountEntry entry) throws ManagerBeanException {
-		AccountEntryDetail detail = obtainEntryDetailFromAccountPattern(entry, AccountConstants.LEASING_ACCOUNT_PREFIX + "*");
+		AccountEntryDetail detail = obtainEntryDetailFromAccountPattern(entry, "52000*");
 		IManagerBean loanAccountBean = BeanManager.getManagerBean(LeasingAccount.class);
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(loanAccountBean.getFieldName(IAccountBridgeAlias.LEASING_ACCOUNT_ACCOUNT_ID), detail.getAccount().getId());

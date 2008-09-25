@@ -71,7 +71,7 @@
 						styleClass="aon-content-toolbar-item aon-content-toolbar-item-save"
 						onmouseover="this.className='aon-content-toolbar-item aon-content-toolbar-item-hover aon-content-toolbar-item-save'"
 						onmouseout="this.className='aon-content-toolbar-item aon-content-toolbar-item-save'" 
-						rendered="#{SupportOrder.pending or SupportOrder.new}" 
+						rendered="#{SupportOrder.pending}" 
 						action="SupportOrder_form"
 						accesskey="#{bundle.aon_key_save}"/>
 					<h:commandButton id="cancel" value="#{bundle.aon_cancel}"
@@ -146,22 +146,18 @@
 										styleClass="aon-form-input-text-label"
 										value="#{tasBundle.aon_series_number}" />
 									<t:div>
-										<t:selectOneMenu id="SupportOrder_series-New"
+										<t:selectOneMenu id="SupportOrder_series"
 											value="#{SupportOrder.to.series}"
-											rendered="#{SupportOrder.new}"
+											disabled="#{!SupportOrder.pending}"
 											styleClass="aon-form-selectOneMenu-field"
 											onchange="disableRequiredFields();submit();" valueChangeListener="#{SupportOrder.onSeriesChanged}">
-											<f:selectItem itemValue="" itemLabel=" " />
+											<f:selectItem itemValue="" itemDisabled="true" itemLabel="-" />
 											<f:selectItems value="#{configCollections.series}" />
 										</t:selectOneMenu>
-										<h:inputText id="SupportOrder_series-Edit" forceId="#{true}"
-											value="#{SupportOrder.to.series}" 
-											rendered="#{!SupportOrder.new}" disabled="#{true}"
-											styleClass="aon-form-input-text" size="4" />
-										<h:inputText id="SupportOrder_number" forceId="#{true}"
-											value="#{SupportOrder.to.number}" 
-											disabled="#{!SupportOrder.new}"
-											styleClass="aon-form-input-text" required="true" size="7" tabIndex="2" />
+										<h:inputText id="SupportOrder_number"
+											value="#{SupportOrder.to.number}" disabled="#{!SupportOrder.pending}"
+											styleClass="aon-form-input-text" forceId="#{true}"
+											required="true" size="7" tabIndex="2"/>
 									</t:div>							
 		
 									<h:outputLabel for="SupportOrder_counterti"
@@ -171,7 +167,7 @@
 										<t:inputText styleClass="aon-form-input-text"
 											id="SupportOrder_counterti" forceId="#{true}"
 											value="#{SupportOrder.to.counterti}" size="10" maxlength="10"
-											disabled="#{!SupportOrder.pending and !SupportOrder.new}">
+											disabled="#{!SupportOrder.pending}">
 											<f:convertNumber integerOnly="true" />
 										</t:inputText>	
 										<h:outputLabel for="SupportOrder_levelti"
@@ -180,7 +176,7 @@
 										<t:inputText styleClass="aon-form-input-text"
 											id="SupportOrder_levelti" forceId="#{true}"
 											value="#{SupportOrder.to.levelti}" size="8" maxlength="8"
-											disabled="#{!SupportOrder.pending  and !SupportOrder.new}"/>
+											disabled="#{!SupportOrder.pending}"/>
 									</t:div>
 									
 									<h:outputLabel for="SupportOrder_startDate"
@@ -190,13 +186,13 @@
 										<t:inputText styleClass="aon-form-input-text"
 											id="SupportOrder_startDate" required="true" forceId="#{true}"
 											value="#{SupportOrder.to.startDate}" size="10" maxlength="12"
-											disabledOnClientSide="#{!SupportOrder.pending and !SupportOrder.new}" >
+											disabledOnClientSide="#{!SupportOrder.pending}" >
 											<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
 												timeZone="#{timeZoneController.timeZoneId}" />
 										</t:inputText>
 										<t:commandButton styleClass="aon-form-lookup-button"
 											id="SupportOrder_startDate_button" forceId="#{true}" value=""
-											disabled="#{!SupportOrder.pending and !SupportOrder.new}"
+											disabled="#{!SupportOrder.pending}"
 											immediate="true" tabIndex="3" />
 										<script type="text/javascript">
 										  Calendar.setup( {
@@ -229,7 +225,7 @@
 										styleClass="aon-form-input-text-label aon-form-table-column-odd-label"/>
 									<h:selectOneMenu id="SupportOrder_operation"
 										styleClass="aon-form-selectOneMenu-field"
-										disabled="#{!SupportOrder.pending and !SupportOrder.new}"
+										disabled="#{!SupportOrder.pending}"
 										value="#{SupportOrder.to.operation}">
 										<f:selectItems
 											value="#{TASCollections.supportOrderOperations}" />
@@ -250,7 +246,7 @@
 										<t:inputTextarea styleClass="aon-form-input-text"
 											id="SupportOrder_description" forceId="#{true}"
 											value="#{SupportOrder.to.description}" cols="100" rows="6"
-											disabled="#{!SupportOrder.pending and !SupportOrder.new}" >
+											disabled="#{!SupportOrder.pending}" >
 										</t:inputTextarea>
 									</t:panelGroup>
 								</t:panelGrid>		
@@ -281,7 +277,7 @@
 											required="true" forceId="#{true}"
 											value="#{SupportOrder.tasItem.publicCode}"
 											onchange="return findTasItemLookup(event, '#{facesContext.externalContext.request.contextPath}', 'com.code.aon.tas.TasItem');"
-											disabledOnClientSide="#{!SupportOrder.pending and !SupportOrder.new}" onblur="toUpperCase(this);" />
+											disabledOnClientSide="#{!SupportOrder.pending}" onblur="toUpperCase(this);" />
 									</t:div>
 
 									<h:outputLabel for="TasItem_privateCode"
@@ -291,7 +287,7 @@
 										styleClass="aon-form-input-text"
 										value="#{SupportOrder.tasItem.privateCode}"
 										valueChangeListener="#{SupportOrder.tasItemChanged}"
-										disabledOnClientSide="#{!SupportOrder.pending and !SupportOrder.new}" 
+										disabledOnClientSide="#{!SupportOrder.pending}" 
 										required="#{appParams.parameters['AON_TAS_PRIVATE_CODE_REQUIRED']=='true'}"
 										size="64" forceId="#{true}" onblur="toUpperCase(this);" />
 										
@@ -301,17 +297,17 @@
 									<h:panelGroup>
 										<t:inputText id="Model_id" size="5" forceId="#{true}"
 											styleClass="aon-form-input-text" required="true"
-											disabled="#{!SupportOrder.pending and !SupportOrder.new}"
+											disabled="#{!SupportOrder.pending}"
 											onchange="return findLookup(event,'#{facesContext.externalContext.request.contextPath}','com.code.aon.tas.Model');"
 											value="#{SupportOrder.tasItem.model.id}" />
 										<h:commandButton id="findTasModel"
 											styleClass="aon-form-lookup-button"
-											disabled="#{!SupportOrder.pending and !SupportOrder.new}"
+											disabled="#{!SupportOrder.pending}"
 											onclick="selectWindow(this, 'placeList', '#{TASModelSearch.encodedPagePath}');return false;"
 											value="" immediate="true" />
 										<h:commandButton id="addModel" 
 											styleClass="aon-form-new-button"
-											disabled="#{!SupportOrder.pending and !SupportOrder.new}"
+											disabled="#{!SupportOrder.pending}"
 											onclick="selectWindow(this, 'placeList', '#{TASModelAdd.encodedPagePath}');return false;"
 											value="" immediate="true" />
 										<t:inputText id="Make_name" forceId="#{true}"
@@ -330,7 +326,7 @@
 									<t:inputText id="TasItem_description" style="padding-left:3px;"
 										styleClass="aon-form-input-text"
 										value="#{SupportOrder.tasItem.description}"
-										disabledOnClientSide="#{!SupportOrder.pending and !SupportOrder.new}" 
+										disabledOnClientSide="#{!SupportOrder.pending}" 
 										valueChangeListener="#{SupportOrder.tasItemChanged}"
 										size="64" forceId="#{true}" />
 
@@ -351,14 +347,15 @@
 											value="#{tasBundle.supportOrder_registry_document}"
 											styleClass="aon-form-input-text-label aon-form-table-column-odd-label"/>
 										<t:div>
-											<t:inputHidden id="Target_registry_id"
+											<t:inputHidden id="Target_registry_id" 
 												forceId="#{true}"
 												valueChangeListener="#{SupportOrder.targetChanged}"
 												value="#{SupportOrder.target.id}" />
 											<t:inputText size="10" id="Target_registry_document"
-												styleClass="aon-form-input-text" forceId="#{true}"
+												styleClass="aon-form-input-text"
+												required="true" forceId="#{true}"
 												value="#{SupportOrder.target.registry.document}"
-												disabledOnClientSide="#{!SupportOrder.pending and !SupportOrder.new}" onblur="toUpperCase(this);"
+												disabledOnClientSide="#{!SupportOrder.pending}" onblur="toUpperCase(this);"
 												onchange="return findTargetLookup(event, '#{facesContext.externalContext.request.contextPath}', 'com.code.aon.commercial.Target');"/>
 										</t:div>
 
@@ -368,7 +365,7 @@
 										<t:inputText id="Target_registry_name" style="padding-left:3px;"
 											styleClass="aon-form-input-text"
 											value="#{SupportOrder.target.registry.name}"
-											disabledOnClientSide="#{!SupportOrder.pending and !SupportOrder.new}" 
+											disabledOnClientSide="#{!SupportOrder.pending}" 
 											valueChangeListener="#{SupportOrder.targetChanged}"
 											size="64" forceId="#{true}" />
 
@@ -379,7 +376,7 @@
 											styleClass="aon-form-input-text"
 											value="#{SupportOrder.target.registry.surname}"
 											valueChangeListener="#{SupportOrder.targetChanged}"
-											disabledOnClientSide="#{!SupportOrder.pending and !SupportOrder.new}" 
+											disabledOnClientSide="#{!SupportOrder.pending}" 
 											size="64" forceId="#{true}" />
 
 										<h:outputLabel for="Target_registry_alias"
@@ -389,7 +386,7 @@
 											styleClass="aon-form-input-text"
 											value="#{SupportOrder.target.registry.alias}" onblur="toUpperCase(this);"
 											valueChangeListener="#{SupportOrder.targetChanged}"
-											disabledOnClientSide="#{!SupportOrder.pending and !SupportOrder.new}" 
+											disabledOnClientSide="#{!SupportOrder.pending}" 
 											size="32" forceId="#{true}" />
 
 										<h:outputLabel for="Registry_phone"
@@ -404,7 +401,7 @@
 													styleClass="aon-form-input-text"
 													value="#{SupportOrder.phone.value}"
 													valueChangeListener="#{SupportOrder.targetChanged}"
-													disabledOnClientSide="#{!SupportOrder.pending and !SupportOrder.new}" 
+													disabledOnClientSide="#{!SupportOrder.pending}" 
 													size="15" forceId="#{true}" />
 												
 										</t:div>
@@ -417,7 +414,7 @@
 													styleClass="aon-form-input-text"
 													value="#{SupportOrder.cellular.value}"
 													valueChangeListener="#{SupportOrder.targetChanged}"
-													disabledOnClientSide="#{!SupportOrder.pending and !SupportOrder.new}" 
+													disabledOnClientSide="#{!SupportOrder.pending}" 
 													size="15" forceId="#{true}" />
 										</t:div>
 									</t:div>

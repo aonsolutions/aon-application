@@ -4,6 +4,7 @@ import java.util.Iterator;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import javax.faces.application.FacesMessage;
 import javax.faces.event.AbortProcessingException;
 
 import com.code.aon.common.BeanManager;
@@ -104,7 +105,6 @@ public class IncomeControllerListener extends ControllerAdapter {
 	 * @see com.code.aon.ui.form.event.ControllerAdapter#afterBeanUpdated(com.code.aon.ui.form.event.ControllerEvent)
 	 */
 	@Override
-	@SuppressWarnings("unchecked")
 	public void afterBeanUpdated(ControllerEvent event) throws ControllerListenerException {
 		try {
 			IManagerBean incomeDetailBean = BeanManager.getManagerBean(IncomeDetail.class);
@@ -136,7 +136,6 @@ public class IncomeControllerListener extends ControllerAdapter {
 	 * @param id registry ident
 	 * @return registry address
 	 */
-	@SuppressWarnings("unchecked")
 	private RegistryAddress obtainRegistryAddress(Integer id) {
 		try {
 			IManagerBean registryAddressBean = BeanManager.getManagerBean(RegistryAddress.class);
@@ -158,7 +157,6 @@ public class IncomeControllerListener extends ControllerAdapter {
 	 * @param income related income
 	 * @return the warehouse ident
 	 */
-	@SuppressWarnings("unchecked")
 	private Integer obtainWarehouseId(Income income) {
 		try {
 			IManagerBean incomeDetailBean = BeanManager.getManagerBean(IncomeDetail.class);

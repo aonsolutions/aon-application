@@ -118,9 +118,9 @@
 							value="#{purchaseBundle.aon_series_number}" />
 						<t:div>
 							<t:inputText id="Income_series" value="#{income.to.series}" disabled="#{!income.new}"
-								styleClass="aon-form-input-text" forceId="#{true}" size="4"
-								maxlength="5" onblur="toUpperCase(this);">
-								<f:validateLength maximum="5" />
+								styleClass="aon-form-input-text" forceId="#{true}" size="3"
+								maxlength="3" onblur="toUpperCase(this);">
+								<f:validateLength maximum="3" />
 							</t:inputText>
 							<h:inputText id="Income_number" value="#{income.to.number}" disabled="#{!income.new}"
 								styleClass="aon-form-input-text" forceId="#{true}"

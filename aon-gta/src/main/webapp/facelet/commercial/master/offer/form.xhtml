@@ -128,14 +128,14 @@
 							styleClass="aon-form-input-text-label"
 							value="#{commercialBundle.aon_support_order}" />
 						<t:selectOneMenu id="SupportOrder_id" forceId="#{true}" disabled="#{!offer.editable}"
-							rendered="#{offer.new}"
+							rendered="#{offer.supportOrderId == null}"
 							styleClass="aon-form-selectOneMenu-field"
 							value="#{offer.supportOrderId}"
 							onchange="return validateAndLookup(this);">
 							<f:selectItem itemDisabled="true" itemLabel="#{commercialBundle.aon_select_support_order}" itemValue=""/>
 							<f:selectItems value="#{TASCollections.pendingSupportOrders}" />
 						</t:selectOneMenu>
-						<h:panelGrid columns="1" rendered="#{!offer.new}">
+						<h:panelGrid columns="1" rendered="#{offer.supportOrderId != null}">
 							<t:outputText id="Id" value="#{tasOffer.supportOrderData}"/>
 						</h:panelGrid>
 						
@@ -156,21 +156,18 @@
 							rendered="false"
 							value="#{commercialBundle.aon_series_number}" />
 						<t:div>
-							<t:selectOneMenu id="Offer_series-New"
+							<t:selectOneMenu id="Offer_series"
 								value="#{offer.to.series}"
-								rendered="#{offer.new}"
+								disabled="#{!offer.editable}"
 								styleClass="aon-form-selectOneMenu-field"
 								onchange="submit();" valueChangeListener="#{offer.onSeriesChanged}">
-								<f:selectItem itemValue="" itemLabel=" " />
+								<f:selectItem itemValue="" itemDisabled="true" itemLabel="-" />
 								<f:selectItems value="#{configCollections.series}" />
 							</t:selectOneMenu>
-							<h:inputText id="Offer_series-Edit" forceId="#{true}"
-								value="#{offer.to.series}" 
-								rendered="#{!offer.new}" disabled="#{true}"
-								styleClass="aon-form-input-text" size="4" />
-							<h:inputText id="Offer_number" forceId="#{true}"
-								value="#{offer.to.number}" disabled="#{!offer.new}"
-								styleClass="aon-form-input-text" required="true" size="7" />
+							<h:inputText id="Offer_number"
+								value="#{offer.to.number}" disabled="#{!offer.editable}"
+								styleClass="aon-form-input-text" forceId="#{true}"
+								required="true" size="7" />
 						</t:div>
 
 						<t:outputLabel for="SupportOrder_target_id"
@@ -180,7 +177,6 @@
 							<t:inputText id="SupportOrder_target_id" size="5" forceId="#{true}"
 								styleClass="aon-form-input-text"
 								disabledOnClientSide="true"
-								valueChangeListener="#{offer.targetChanged}"
 								value="#{offer.to.target.id}" />
 							<t:inputText id="SupportOrder_target_name" forceId="#{true}"
 								styleClass="aon-form-input-text-disabled"

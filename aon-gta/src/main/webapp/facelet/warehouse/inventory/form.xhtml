@@ -114,7 +114,7 @@
 						var="to" value="#{inventoryDetail.model}" rows="20" 
 						styleClass="aon-table" headerClass="aon-table-header"
 						rowClasses="aon-table-row-odd,aon-table-row-even"
-						columnClasses="aon-table-body aon-table-body-string,aon-edit-table-mainColumn aon-table-body aon-table-body-string,aon-table-body aon-table-body-number,aon-table-body aon-table-body-number,aon-table-body aon-table-body-number,aon-table-body aon-table-body-string"
+						columnClasses="aon-table-body aon-table-body-number,aon-edit-table-mainColumn aon-table-body aon-table-body-string,aon-table-body aon-table-body-number,aon-table-body aon-table-body-number,aon-table-body aon-table-body-number,aon-table-body aon-table-body-string"
 						rowOnMouseOver="selectRow( this )"
 						rowOnMouseOut="unselectRow( this )" rowOnClick="sendRow( this )">
 						<h:column>
@@ -126,7 +126,7 @@
 									styleClass="aon-table-row-selected"
 									rendered="#{to.id!=inventoryDetail.to.id}"
 									actionListener="#{inventoryDetail.onSelect}" />
-								<h:outputText value="#{to.item.product.code}" />
+								<h:outputText value="#{to.id}" />
 							</t:div>
 							<f:facet name="footer">
 								<f:verbatim>&#160;</f:verbatim>
@@ -211,7 +211,7 @@
 								actionListener="#{inventoryDetail.onCancel}"
 								immediate="#{true}" 
 								onclick="return (confirm('#{bundle.aon_cancel_confirm}'));" 
-								styleClass="aon-edit-table-icon-button aon-edit-table-icon-button-cancel"
+								styleClass="aon-edit-table-icon-button aon-edit-table-icon-button-save"
 								value="" accesskey="#{bundle.aon_key_cancel_line}"
 								rendered="#{to.id==inventoryDetail.to.id}" />
 							</t:div>

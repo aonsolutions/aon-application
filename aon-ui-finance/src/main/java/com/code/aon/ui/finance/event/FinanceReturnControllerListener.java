@@ -4,7 +4,6 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.finance.dao.IFinanceAlias;
 import com.code.aon.finance.enumeration.FinanceStatus;
 import com.code.aon.ql.Criteria;
-import com.code.aon.ql.util.ExpressionException;
 import com.code.aon.ui.finance.controller.FinanceReturnController;
 import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
@@ -34,10 +33,10 @@ public class FinanceReturnControllerListener extends ControllerAdapter {
 				criteria.addEqualExpression(financeReturnController.getFieldName(IFinanceAlias.FINANCE_REGISTRY_ID),financeReturnController.getRegistryId());
 			}
 			if(financeReturnController.getSeries() != null && !"".equals(financeReturnController.getSeries())){
-				criteria.addExpression(financeReturnController.getFieldName(IFinanceAlias.FINANCE_INVOICE_SERIES),financeReturnController.getSeries());
+				criteria.addEqualExpression(financeReturnController.getFieldName(IFinanceAlias.FINANCE_INVOICE_SERIES),financeReturnController.getSeries());
 			}
-			if(financeReturnController.getNumber() != null && !"".equals(financeReturnController.getNumber())){
-				criteria.addExpression(financeReturnController.getFieldName(IFinanceAlias.FINANCE_INVOICE_NUMBER),financeReturnController.getNumber());
+			if(financeReturnController.getNumber() != null){
+				criteria.addEqualExpression(financeReturnController.getFieldName(IFinanceAlias.FINANCE_INVOICE_NUMBER),financeReturnController.getNumber());
 			}
 			if(financeReturnController.getFromDate() != null){
 				criteria.addGreaterThanOrEqualExpression(financeReturnController.getFieldName(IFinanceAlias.FINANCE_DUE_DATE),financeReturnController.getFromDate());
@@ -47,8 +46,6 @@ public class FinanceReturnControllerListener extends ControllerAdapter {
 			}
 			financeReturnController.setCriteria(criteria);
 		} catch (ManagerBeanException e) {
-			throw new ControllerListenerException("Error creating criteria",e);
-		} catch (ExpressionException e) {
 			throw new ControllerListenerException("Error creating criteria",e);
 		}
 	}

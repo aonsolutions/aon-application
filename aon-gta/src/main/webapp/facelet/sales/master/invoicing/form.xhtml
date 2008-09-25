@@ -104,7 +104,7 @@
 							disabled="#{salesInvoicingDetail.to != null || salesFinance.to != null}" />
 						<t:commandButton id="finances" value="#{financeBundle.finance_generate}"
 							actionListener="#{salesInvoicing.generateFinances}"
-							rendered="#{!salesInvoicing.new and salesInvoicingDetail.model.rowCount > 0}"
+							rendered="#{salesInvoicing.model.rowCount > 0}"
 							styleClass="aon-content-toolbar-item aon-content-toolbar-item-new"
 							onmouseover="this.className='aon-content-toolbar-item aon-content-toolbar-item-hover aon-content-toolbar-item-new'"
 							onmouseout="this.className='aon-content-toolbar-item aon-content-toolbar-item-new'"
@@ -146,21 +146,19 @@
 							styleClass="aon-form-input-text-label"
 							value="#{financeBundle.aon_series_number}" />
 						<h:panelGrid columns="2" cellpadding="0" cellspacing="0"> 
-							<t:selectOneMenu id="Invoice_series-New"
+							<t:selectOneMenu id="Invoice_series"
 								value="#{salesInvoicing.to.series}"
-								rendered="#{salesInvoicing.new}"
+								disabled="#{!salesInvoicing.new and !salesInvoicing.editable}"
 								styleClass="aon-form-selectOneMenu-field"
 								onchange="submit();" valueChangeListener="#{salesInvoicing.onSeriesChanged}">
-								<f:selectItem itemValue="" itemLabel=" " />
+								<f:selectItem itemValue="" itemDisabled="true" itemLabel="-" />
 								<f:selectItems value="#{configCollections.series}" />
 							</t:selectOneMenu>
-							<t:inputText id="Invoice_series-Edit" forceId="#{true}"
-								value="#{salesInvoicing.to.series}"
-								rendered="#{!salesInvoicing.new}" disabled="#{true}"
-								styleClass="aon-form-input-text" size="4" />
-							<t:inputText id="Invoice_number" forceId="#{true}"
-								value="#{salesInvoicing.to.number}" disabled="#{!salesInvoicing.new}"
-								styleClass="aon-form-input-text" required="true" size="7" />
+							<t:inputText id="Invoice_number"
+								value="#{salesInvoicing.to.number}"
+								disabled="#{!salesInvoicing.new and !salesInvoicing.editable}"
+								styleClass="aon-form-input-text" forceId="#{true}"
+								required="true" size="7" />
 						</h:panelGrid>
 
 						<t:outputLabel for="Invoice_status"

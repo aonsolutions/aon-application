@@ -849,6 +849,18 @@
 					<key>id</key>
 					<value>invoice.id</value>
 				</map-entry>
+				<map-entry>
+					<key>surcharge</key>
+					<value>invoice.surcharge</value>
+				</map-entry>
+				<map-entry>
+					<key>taxFree</key>
+					<value>invoice.taxFree</value>
+				</map-entry>
+				<map-entry>
+					<key>withholding</key>
+					<value>invoice.withholding</value>
+				</map-entry>
 			</map-entries>
 		</managed-property>
 		<managed-property>

@@ -1,12 +1,19 @@
 package com.code.aon.ui.salesPurchase.controller;
 
+import java.util.Iterator;
+
 import javax.faces.event.ActionEvent;
 
+import com.code.aon.common.BeanManager;
+import com.code.aon.common.IManagerBean;
+import com.code.aon.common.ManagerBeanException;
 import com.code.aon.product.Item;
 import com.code.aon.product.Product;
 import com.code.aon.product.ProductCategory;
+import com.code.aon.product.dao.IProductAlias;
 import com.code.aon.product.util.DiscountExpression;
-import com.code.aon.purchase.Supplier;
+import com.code.aon.supplier.Supplier;
+import com.code.aon.ql.Criteria;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.util.AonUtil;
 import com.code.aon.ui.warehouse.controller.DeliveryDetailController;
@@ -54,8 +61,17 @@ public class SalesPurchaseController extends BasicController {
 	}
 
 	@SuppressWarnings("unused")
-	public void onSave(ActionEvent event) {
+	public void onSave(ActionEvent event) throws ManagerBeanException {
 		setIncomeRelated(true);
+
+		IManagerBean itemBean = BeanManager.getManagerBean(Item.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(itemBean.getFieldName(IProductAlias.ITEM_ID), getIncomeDetail().getItem().getId());
+		Iterator iterator = itemBean.getList(criteria, 0, 1).iterator();
+		if (iterator.hasNext()) {
+			getIncomeDetail().setItem((Item)iterator.next());
+		}
+
 		DeliveryDetailController deliveryDetailController = (DeliveryDetailController)AonUtil.getController(DELIVERY_DETAIL_CONTROLLER_NAME);
 		((DeliveryDetail)deliveryDetailController.getTo()).setItem(getIncomeDetail().getItem());
 		((DeliveryDetail)deliveryDetailController.getTo()).setDescription(getIncomeDetail().getDescription());

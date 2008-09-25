@@ -405,7 +405,6 @@
 			<list-entries>
 				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
 				<value>#{invoicingDetailControllerListener}</value>
-				<value>#{invoicingDetailWorkPlaceListener}</value>
 			</list-entries>
 		</managed-property>
 	</managed-bean>
@@ -413,12 +412,6 @@
 	<managed-bean>
 		<managed-bean-name>invoicingDetailControllerListener</managed-bean-name>
 		<managed-bean-class>com.code.aon.ui.finance.event.InvoicingDetailControllerListener</managed-bean-class>
-		<managed-bean-scope>none</managed-bean-scope>
-	</managed-bean>
-	
-	<managed-bean>
-		<managed-bean-name>invoicingDetailWorkPlaceListener</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.finance.event.InvoicingDetailWorkPlaceListener</managed-bean-class>
 		<managed-bean-scope>none</managed-bean-scope>
 	</managed-bean>
 	

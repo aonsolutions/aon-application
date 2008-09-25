@@ -34,9 +34,7 @@ public class FeeCheckingPrinter implements ICollectionProvider {
 						"FROM Customer customer " +
 						"WHERE customer.id NOT IN( " +
 							"SELECT rPayMethod.registry.id " +
-							"FROM RegistryPayMethod rPayMethod ) " +
-						"ORDER BY customer.registry.surname, " +
-								 "customer.registry.name";
+							"FROM RegistryPayMethod rPayMethod ) ";
 		Session session = HibernateUtil.getSession();
 		Query query = session.createQuery(select);
 		return query.list();
@@ -50,9 +48,7 @@ public class FeeCheckingPrinter implements ICollectionProvider {
 						"AND rPayMethod.payment.type = " + PayMethodType.NEGOTIABLE_DOCUMENT.ordinal() + " " + 
 						"AND customer.id NOT IN( " +
 							"SELECT rBank.registry.id " +
-							"FROM RegistryBank rBank ) " +
-						"ORDER BY customer.registry.surname, " +
-							 "customer.registry.name";
+							"FROM RegistryBank rBank ) ";
 		Session session = HibernateUtil.getSession();
 		Query query = session.createQuery(select);
 		return query.list();
@@ -64,17 +60,14 @@ public class FeeCheckingPrinter implements ICollectionProvider {
 						"FROM Customer customer, RegistryBank rBank, RegistryPayMethod rPayMethod " +
 						"WHERE customer.id = rBank.registry.id " +
 						"AND customer.id = rPayMethod.registry.id " +
-						"AND rPayMethod.payment.type <> " + PayMethodType.NEGOTIABLE_DOCUMENT.ordinal() + " " +
-						"ORDER BY customer.registry.surname, " +
-								 "customer.registry.name";
+						"AND rPayMethod.payment.type <> " + PayMethodType.NEGOTIABLE_DOCUMENT.ordinal();
 		Session session = HibernateUtil.getSession();
 		Query query = session.createQuery(select);
 		return query.list();
 	}
-	
 	@Override
-	@SuppressWarnings("unchecked")
-	public Collection getCollection(boolean forceRefresh) throws ManagerBeanException {
+	public Collection getCollection(boolean forceRefresh)
+			throws ManagerBeanException {
 		return getCollection();
 	}
 }

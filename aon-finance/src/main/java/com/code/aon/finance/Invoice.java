@@ -98,8 +98,6 @@ public class Invoice implements ITransferObject, IHeaderObject, ICalculableConta
     
     private boolean withholding;
     
-    private String comments;
-    
     /** The detail of this invoice. */
 	private Set<InvoiceDetail> lines = new HashSet<InvoiceDetail>();
 
@@ -362,15 +360,6 @@ public class Invoice implements ITransferObject, IHeaderObject, ICalculableConta
 		this.withholding = withholding;
 	}
 	
-	@Column(length=65535)
-	public String getComments() {
-		return comments;
-	}
-
-	public void setComments(String comments) {
-		this.comments = comments;
-	}
-
 	/**
 	 * Gets the lines.
 	 * 

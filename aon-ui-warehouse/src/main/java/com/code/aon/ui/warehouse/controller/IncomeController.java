@@ -8,6 +8,8 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import javax.faces.context.FacesContext;
+import javax.faces.el.ValueBinding;
 import javax.faces.event.ActionEvent;
 import javax.faces.event.ValueChangeEvent;
 
@@ -25,6 +27,7 @@ import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionException;
 import com.code.aon.ui.company.controller.CompanyController;
 import com.code.aon.ui.form.BasicController;
+import com.code.aon.ui.form.IController;
 import com.code.aon.ui.form.PageDataModel;
 import com.code.aon.ui.menu.jsf.MenuEvent;
 import com.code.aon.ui.report.OutputFormat;
@@ -260,7 +263,7 @@ public class IncomeController extends BasicController {
 	 * @throws ManagerBeanException
 	 */
 	public double getIncomeTotalPrice() throws ManagerBeanException{
-		CompanyController companyController = (CompanyController)AonUtil.getController(COMPANY_CONTROLLER_NAME);
+		CompanyController companyController = (CompanyController)getController(COMPANY_CONTROLLER_NAME);
 		return getPriceStrategy().getTotalPrice((ICalculableContainer)this.getModel().getRowData(),companyController.obtainCompany());
 	}
 	
@@ -271,7 +274,7 @@ public class IncomeController extends BasicController {
 	 * @throws ManagerBeanException
 	 */
 	public double getIncomeTotalTaxRate() throws ManagerBeanException {
-		CompanyController companyController = (CompanyController)AonUtil.getController(COMPANY_CONTROLLER_NAME);
+		CompanyController companyController = (CompanyController)getController(COMPANY_CONTROLLER_NAME);
 		Income income = (Income)this.getModel().getRowData();
 		Iterator<TaxBreakDown> iter = getPriceStrategy().getTaxBreakDowns(income,companyController.obtainCompany()).iterator();
 		double total = 0;
@@ -288,7 +291,7 @@ public class IncomeController extends BasicController {
 	 * @throws ManagerBeanException
 	 */
 	public double getIncomeTotalSurchargeRate() throws ManagerBeanException {
-		CompanyController companyController = (CompanyController)AonUtil.getController(COMPANY_CONTROLLER_NAME);
+		CompanyController companyController = (CompanyController)getController(COMPANY_CONTROLLER_NAME);
 		Income income = (Income)this.getModel().getRowData();
 		Iterator<TaxBreakDown> iter = getPriceStrategy().getTaxBreakDowns(income,companyController.obtainCompany()).iterator();
 		double total = 0;
@@ -305,7 +308,6 @@ public class IncomeController extends BasicController {
 	 * @param event contains suppliers ident
 	 * @throws ManagerBeanException
 	 */
-	@SuppressWarnings("unchecked")
 	public void supplierData(ValueChangeEvent event) throws ManagerBeanException{
 		if(event.getNewValue() != null){
 			IManagerBean supplierBean = BeanManager.getManagerBean(Supplier.class);
@@ -317,6 +319,18 @@ public class IncomeController extends BasicController {
 				((Income)this.getTo()).setSupplier(supplier);
 			}
 		}
+	}
+	
+	/**
+	 * Returns the controller linked to this controller name
+	 * 
+	 * @param controllerName the name of the controller to be returned
+	 * @return the controller named like the param
+	 */
+	private IController getController(String controllerName) {
+		FacesContext ctx = FacesContext.getCurrentInstance();
+		ValueBinding vb = ctx.getApplication().createValueBinding( "#{" + controllerName + "}" );
+		return (IController)vb.getValue(ctx);
 	}
 	
 	/**
@@ -334,7 +348,6 @@ public class IncomeController extends BasicController {
 	/* (non-Javadoc)
 	 * @see com.code.aon.ui.form.BasicController#getCollection()
 	 */
-	@SuppressWarnings("unchecked")
 	public Collection getCollection(){
 		List<ITransferObject> l = new LinkedList<ITransferObject>();
 		l.add(obtainIncome(((Income)this.getTo()).getId()));
@@ -347,7 +360,6 @@ public class IncomeController extends BasicController {
 	 * @param incomeId income ident
 	 * @return the income searched
 	 */
-	@SuppressWarnings("unchecked")
 	private ITransferObject obtainIncome(Integer incomeId) {
 		try {
 			IManagerBean incomeBean = BeanManager.getManagerBean(Income.class);
@@ -402,7 +414,6 @@ public class IncomeController extends BasicController {
 	 * @throws ManagerBeanException
 	 * @throws ExpressionException
 	 */
-	@SuppressWarnings("unchecked")
 	public void addSupplierExpression(ValueChangeEvent event)
 		throws ManagerBeanException, ExpressionException {
 	    if ((event.getNewValue() != null)
@@ -412,7 +423,8 @@ public class IncomeController extends BasicController {
 			IManagerBean bean = BeanManager.getManagerBean(Supplier.class);
 			String identifier = bean.getFieldName(IPurchaseAlias.SUPPLIER_DOCUMENT);
 			criteria.addEqualExpression(identifier, event.getNewValue());
-			Iterator iter = bean.getList(criteria).iterator();
+			List list = bean.getList(criteria);
+			Iterator iter = list.iterator();
 	    	Criteria c = getCriteria();
 	    	if (iter.hasNext()){
 				while (iter.hasNext()){

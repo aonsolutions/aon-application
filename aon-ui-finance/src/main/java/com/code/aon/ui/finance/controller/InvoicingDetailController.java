@@ -103,7 +103,6 @@ public class InvoicingDetailController extends LinesController {
 	 * @param event event that contains the value
 	 * @throws ManagerBeanException
 	 */
-	@SuppressWarnings("unchecked")
 	public void itemData(ValueChangeEvent event) throws ManagerBeanException{
 		if(event.getNewValue() != null){
 			IManagerBean itemBean = BeanManager.getManagerBean(Item.class);

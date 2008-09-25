@@ -44,8 +44,6 @@ public class DailyTrackingController extends BasicController {
 
     private static final Logger LOGGER = Logger.getLogger(DailyTrackingController.class.getName());
 
-	private static final String DAILY_TRACKING_CUSTOMER_STATUS = "DailyTracking.customer.status";
-    
     private List<SelectItem> dossiers = new LinkedList<SelectItem>();
     private List<SelectItem> activities = new LinkedList<SelectItem>();
     private List<SelectItem> users = new LinkedList<SelectItem>();
@@ -404,17 +402,21 @@ public class DailyTrackingController extends BasicController {
 		setWorkgroupId(null);
 		setUserId(null);
 		setDossierId(null);
+        dossiers = new LinkedList<SelectItem>();
 		setActivityId(null);
+		activities = new LinkedList<SelectItem>();
 		setJobTypeId(null);
 		setFromDate(null);
 		setToDate(null);
-		setCustomerStatus(CustomerStatus.ACTIVE);
+		setCustomerStatus(null);
 	}
 
     private Criteria createCriteria() throws ManagerBeanException {
 		Criteria criteria = new Criteria();
 		IManagerBean bean = getManagerBean();
-		criteria.addEqualExpression(DAILY_TRACKING_CUSTOMER_STATUS, getCustomerStatus());
+		if(getCustomerStatus() != null){
+			criteria.addEqualExpression(bean.getFieldName(IProjectAlias.DAILY_TRACKING_CUSTOMER_STATUS), getCustomerStatus());
+		}
 		if(getCustomerId() != null){
 			criteria.addEqualExpression(bean.getFieldName(IProjectAlias.DAILY_TRACKING_CUSTOMER_ID), getCustomerId());
 		}

@@ -76,10 +76,14 @@
 							for="Offer_series" 
 							value="#{commercialBundle.aon_series_number}" />
 						<t:div>
-							<t:inputText id="Offer_series" size="4"
-								styleClass="aon-form-input-text"
-								valueChangeListener="#{offer.addExpression}" />
-							<t:inputText id="Offer_number" size="7"
+							<t:selectOneMenu id="Offer_series"
+								value="#{offer.to.series}"
+								styleClass="aon-form-selectOneMenu-field"
+								valueChangeListener="#{offer.addExpression}">
+								<f:selectItem itemValue="" itemDisabled="true" itemLabel="-" />
+								<f:selectItems value="#{configCollections.series}" />
+							</t:selectOneMenu>
+							<t:inputText id="Offer_number" size="15"
 								styleClass="aon-form-input-text"
 								valueChangeListener="#{offer.addExpression}" />
 						</t:div>

@@ -18,7 +18,6 @@ public class IncomeStatusConverter extends EnumLocaleConverter {
     /* (non-Javadoc)
      * @see com.code.aon.ui.converter.EnumLocaleConverter#getEnumClass(javax.faces.context.FacesContext, javax.faces.component.UIComponent)
      */
-	@SuppressWarnings("unchecked")
     protected Class getEnumClass( FacesContext ctx, UIComponent c ) {
     	return IncomeStatus.class;
     }

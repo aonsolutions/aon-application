@@ -45,7 +45,6 @@ public class DeliveryDetailListener extends ControllerAdapter {
 	 * @see com.code.aon.ui.form.event.ControllerAdapter#afterBeanSelected(com.code.aon.ui.form.event.ControllerEvent)
 	 */
 	@Override
-	@SuppressWarnings("unchecked")
 	public void afterBeanSelected(ControllerEvent event) throws ControllerListenerException {
 		Delivery delivery = (Delivery)event.getController().getTo();
 		Criteria criteria = new Criteria();
@@ -70,7 +69,6 @@ public class DeliveryDetailListener extends ControllerAdapter {
 	 * @see com.code.aon.ui.form.event.ControllerAdapter#afterBeanRemoved(com.code.aon.ui.form.event.ControllerEvent)
 	 */
 	@Override
-	@SuppressWarnings("unchecked")
 	public void afterBeanRemoved(ControllerEvent event) throws ControllerListenerException {
 		DeliveryDetailController deliveryDetailController = (DeliveryDetailController)AonUtil.getController(DELIVERY_DETAIL_CONTROLLER_NAME);
 		Sales sales = deliveryDetailController.getSales();

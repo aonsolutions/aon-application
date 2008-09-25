@@ -10,6 +10,7 @@ import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.temp.SeriesNumberUtil;
 import com.code.aon.company.WorkPlace;
+import com.code.aon.config.Scope;
 import com.code.aon.purchase.Purchase;
 import com.code.aon.purchase.PurchaseDetail;
 import com.code.aon.purchase.dao.IPurchaseAlias;

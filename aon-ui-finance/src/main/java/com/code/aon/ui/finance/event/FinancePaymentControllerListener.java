@@ -5,7 +5,6 @@ import com.code.aon.finance.dao.IFinanceAlias;
 import com.code.aon.finance.enumeration.FinanceStatus;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.ast.Expression;
-import com.code.aon.ql.util.ExpressionException;
 import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.ui.finance.controller.FinancePaymentController;
 import com.code.aon.ui.form.event.ControllerAdapter;
@@ -38,10 +37,10 @@ public class FinancePaymentControllerListener extends ControllerAdapter {
 				criteria.addEqualExpression(financePaymentController.getFieldName(IFinanceAlias.FINANCE_REGISTRY_ID),financePaymentController.getRegistryId());
 			}
 			if(financePaymentController.getSeries() != null && !"".equals(financePaymentController.getSeries())){
-				criteria.addExpression(financePaymentController.getFieldName(IFinanceAlias.FINANCE_INVOICE_SERIES),financePaymentController.getSeries());
+				criteria.addEqualExpression(financePaymentController.getFieldName(IFinanceAlias.FINANCE_INVOICE_SERIES),financePaymentController.getSeries());
 			}
-			if(financePaymentController.getNumber() != null && !"".equals(financePaymentController.getNumber())){
-				criteria.addExpression(financePaymentController.getFieldName(IFinanceAlias.FINANCE_INVOICE_NUMBER),financePaymentController.getNumber());
+			if(financePaymentController.getNumber() != null){
+				criteria.addEqualExpression(financePaymentController.getFieldName(IFinanceAlias.FINANCE_INVOICE_NUMBER),financePaymentController.getNumber());
 			}
 			if(financePaymentController.getFromDate() != null){
 				criteria.addGreaterThanOrEqualExpression(financePaymentController.getFieldName(IFinanceAlias.FINANCE_DUE_DATE),financePaymentController.getFromDate());
@@ -51,8 +50,6 @@ public class FinancePaymentControllerListener extends ControllerAdapter {
 			}
 			financePaymentController.setCriteria(criteria);
 		} catch (ManagerBeanException e) {
-			throw new ControllerListenerException("Error creating criteria",e);
-		} catch (ExpressionException e) {
 			throw new ControllerListenerException("Error creating criteria",e);
 		}
 	}

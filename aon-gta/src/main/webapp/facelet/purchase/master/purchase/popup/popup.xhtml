@@ -13,8 +13,8 @@
 		style="position: absolute;left: 290px;_left:110px; top: 230px;">
 		<t:div styleClass="aon-popup-window-title">
 			<t:commandButton id="popupClose" value=" "
-				onclick="document.getElementById('Item_product_code-New').disabled = true;"
 				actionListener="#{purchaseSales.onClose}"
+				onclick="document.getElementById('Item_product_code-New').disabled = true;"
 				styleClass="aon-popup-window-close"
 				accesskey="#{bundle.aon_key_close}" />
 
@@ -37,35 +37,20 @@
 			<t:div styleClass="aon-popup-window-scroll-area">
 				<h:panelGrid columns="2" styleClass="aon-form-table"
 					columnClasses="aon-form-table-column-odd,aon-form-table-column-even">
+
 					
 					<h:outputLabel for="SupportOrder_id"
 						styleClass="aon-form-input-text-label"
 						value="#{tasBundle.supportOrder_order}" />
-					<t:div>	
-						<t:selectOneMenu id="SupportOrder_id" forceId="#{true}"
-							styleClass="aon-form-selectOneMenu-field"
-							value="#{purchaseSales.supportOrderId}"
-							onchange="document.getElementById('Item_product_code-New').disabled = true; submit();"
-							valueChangeListener="#{purchaseSales.supportOrderChanged}">
-							<f:selectItem itemDisabled="true" itemLabel="-" itemValue="" />
-							<f:selectItems value="#{TASCollections.pendingOrActiveSupportOrders}" />
-						</t:selectOneMenu>
-						<t:outputText id="SupportOrder_required" forceId="#{true}"
-							value="#{tasBundle.aon_supportorder_required}"
-							style="display:none;color:#cc3333" />
-					</t:div>	
-					
-					<t:outputLabel for="Customer_scope_id"
-						rendered="#{purchaseSales.scopeNeeded}"
-						styleClass="aon-form-selectOneMenu-label"
-						value="#{configBundle.scope_scope}" />
-					<h:selectOneMenu id="Customer_scope_id"
-						rendered="#{purchaseSales.scopeNeeded}"
+					<t:selectOneMenu id="SupportOrder_id" forceId="#{true}"
 						styleClass="aon-form-selectOneMenu-field"
-						value="#{delivery.scopeId}">
-						<f:selectItems value="#{configCollections.currentUserScopes}" />
-					</h:selectOneMenu>
-
+						value="#{purchaseSales.supportOrderId}"
+						onchange="document.getElementById('Item_product_code-New').disabled = true; submit();"
+						valueChangeListener="#{purchaseSales.supportOrderChanged}">
+						<f:selectItem itemDisabled="true" itemLabel="-" itemValue="" />
+						<f:selectItems value="#{TASCollections.pendingOrActiveSupportOrders}" />
+					</t:selectOneMenu>
+					
 					<t:outputLabel for="Delivery_series"
 						styleClass="aon-form-input-text-label"
 						value="#{purchaseBundle.aon_inc_num}" />
@@ -74,7 +59,7 @@
 							value="#{purchaseSales.delivery.series}"
 							disabled="#{purchaseSales.delivery.id != null}"
 							styleClass="aon-form-selectOneMenu-field">
-							<f:selectItem itemValue="" itemLabel=" " />
+							<f:selectItem itemValue="" itemDisabled="true" itemLabel="-" />
 							<f:selectItems value="#{configCollections.series}" />
 						</t:selectOneMenu>
 						<t:inputText id="Delivery_number"
@@ -127,18 +112,16 @@
 							value="#{purchaseSales.deliveryDetail.item.id}" />
 						<t:inputHidden id="Item_product_id-Popup" forceId="#{true}"
 							value="#{purchaseSales.deliveryDetail.item.product.id}" />
-						<t:inputHidden id="Item_purchase_price-Popup" forceId="#{true}"
-							value="#{purchaseSales.deliveryDetail.item.purchasePrice}" />
 						<t:inputText size="10" id="Item_product_code-Popup"
 							forceId="#{true}" value="#{purchaseSales.deliveryDetail.item.product.code}"
 							styleClass="aon-form-input-text" onblur="toUpperCase(this);"
-							onchange="return findItemLookup(event,'#{facesContext.externalContext.request.contextPath}','com.code.aon.product.Item','Item_id-Popup,Item_product_code-Popup,Item_full_name-Popup,Item_price-Popup,Item_product_category_id-Popup,Item_product_id-Popup,Item_purchase_price-Popup');" />
+							onchange="return findItemLookup(event,'#{facesContext.externalContext.request.contextPath}','com.code.aon.product.Item','Item_id-Popup,Item_product_code-Popup,Item_full_name-Popup,Item_price-Popup,Item_product_category_id-Popup,Item_product_id-Popup');" />
 						<h:commandButton id="findPopup_Item"
-							onclick="selectWindow(this, 'placeList', '#{itemSearch.encodedPagePath}', 'Item_id-Popup,Item_product_code-Popup,Item_full_name-Popup,Item_price-Popup,Item_product_category_id-Popup,Item_product_id-Popup,Item_purchase_price-Popup'); return false;"
+							onclick="selectWindow(this, 'placeList', '#{itemSearch.encodedPagePath}', 'Item_id-Popup,Item_product_code-Popup,Item_full_name-Popup,Item_price-Popup,Item_product_category_id-Popup,Item_product_id-Popup'); return false;"
 							action="showPlace" value="" immediate="true"
 							styleClass="aon-form-lookup-button"/>
 						<h:commandButton id="addPopup_Item"
-							onclick="selectWindow(this, 'placeList', '#{itemAdd.encodedPagePath}', 'Item_id-Popup,Item_product_code-Popup,Item_full_name-Popup,Item_price-Popup,Item_product_category_id-Popup,Item_product_id-Popup,Item_purchase_price-Popup'); return false;"
+							onclick="selectWindow(this, 'placeList', '#{itemAdd.encodedPagePath}', 'Item_id-Popup,Item_product_code-Popup,Item_full_name-Popup,Item_price-Popup,Item_product_category_id-Popup,Item_product_id-Popup'); return false;"
 							action="showPlace" value="" immediate="true"
 							styleClass="aon-form-new-button" />
 						<t:inputText id="Item_full_name-Popup" size="36"
@@ -155,7 +138,7 @@
 					<t:outputLabel for="Item_product_category_id-Popup"
 						styleClass="aon-form-input-text-label"
 						value="#{productBundle.item_category}" />
-					<t:div styleClass="aon-form-nowrap">
+					<h:panelGrid columns="3">
 						<t:selectOneMenu id="Item_product_category_id-Popup"
 							forceId="#{true}" styleClass="aon-form-selectOneMenu-field"
 							value="#{purchaseSales.deliveryDetail.item.product.category.id}">
@@ -165,35 +148,23 @@
 							forceId="#{true}"
 							value="#{productBundle.aon_category_required}"
 							style="display:none;color:#cc3333" />
-					</t:div>
+					</h:panelGrid>
 
 					<t:outputLabel for="Item_price-Popup"
 						styleClass="aon-form-input-text-label"
-						value="#{warehouseBundle.aon_price}" />
-					<t:div styleClass="aon-form-nowrap">
-						<t:inputText id="Item_price-Popup"
-							styleClass="aon-form-input-text"
-							forceId="#{true}" size="20" maxlength="20"
-							value="#{purchaseSales.deliveryDetail.price}" />
-						<t:outputText id="Item_price_required"
-							forceId="#{true}"
-							value="#{productBundle.aon_price_required}"
-							style="display:none;color:#cc3333" />
-					</t:div>
+						value="#{productBundle.item_initialPrice}" />
+					<t:inputText id="Item_price-Popup"
+						styleClass="aon-form-input-text" required="true"
+						forceId="#{true}" size="20" maxlength="20"
+						value="#{purchaseSales.deliveryDetail.price}" />
 
 					<t:outputLabel for="Item_quantity-Popup"
 						styleClass="aon-form-input-text-label"
 						value="#{warehouseBundle.aon_quantity}" />
-					<t:div styleClass="aon-form-nowrap">
-						<t:inputText id="Item_quantity-Popup"
-							styleClass="aon-form-input-text"
-							forceId="#{true}" size="20" maxlength="20"
-							value="#{purchaseSales.deliveryDetail.quantity}" />
-						<t:outputText id="Item_quantity_required"
-							forceId="#{true}"
-							value="#{productBundle.aon_quantity_required}"
-							style="display:none;color:#cc3333" />
-					</t:div>
+					<t:inputText id="Item_quantity-Popup"
+						styleClass="aon-form-input-text" required="true"
+						forceId="#{true}" size="20" maxlength="20"
+						value="#{purchaseSales.deliveryDetail.quantity}" />
 				</h:panelGrid>
 			</t:div>
 		</t:div>
@@ -202,120 +173,80 @@
 		function hidePopup(){
 			document.getElementById( "DeliveryDetail_warehouse_id" ).disabled = false;
 			document.getElementById( "popup" ).style.display='none';
-			document.getElementById( "SupportOrder_required" ).style.display = 'none';
 			document.getElementById( "Number_required" ).style.display = 'none';
+			document.getElementById( "Supplier_required" ).style.display = 'none';
 			document.getElementById( "Date_required" ).style.display = 'none';
 			document.getElementById( "Product_code_required" ).style.display = 'none';
-			document.getElementById( "Product_name_required" ).style.display = 'none';
 			document.getElementById( "Item_product_category_required" ).style.display = 'none';
-			document.getElementById( "Item_price_required" ).style.display = 'none';
-			document.getElementById( "Item_quantity_required" ).style.display = 'none';
+			document.getElementById( "Product_name_required" ).style.display = 'none';
 		}
 		function validate(isNew){ 
-			if(document.getElementById( "SupportOrder_id" ).value == ""){
-				document.getElementById( "SupportOrder_required" ).style.display = 'block';
+			if(document.getElementById( "Delivery_number" ).value == ""){
+				document.getElementById( "Number_required" ).style.display = 'block';
+				document.getElementById( "Supplier_required" ).style.display = 'none';
+				document.getElementById( "Date_required" ).style.display = 'none';
+				document.getElementById( "Product_code_required" ).style.display = 'none';
+				document.getElementById( "Product_name_required" ).style.display = 'none';
+				document.getElementById( "Item_product_category_required" ).style.display = 'none';
+				document.getElementById( "Delivery_number" ).focus();
+				return false;
+			}
+			if(document.getElementById( "Supplier_Lookup_id" ).value == ""){
+				document.getElementById( "Supplier_required" ).style.display = 'block';
 				document.getElementById( "Number_required" ).style.display = 'none';
 				document.getElementById( "Date_required" ).style.display = 'none';
 				document.getElementById( "Product_code_required" ).style.display = 'none';
 				document.getElementById( "Product_name_required" ).style.display = 'none';
-				document.getElementById( "Item_product_category_required" ).style.display = 'none';
-				document.getElementById( "Item_price_required" ).style.display = 'none';
-				document.getElementById( "Item_quantity_required" ).style.display = 'none';
-				document.getElementById( "Delivery_number" ).focus();
-				return false;
-			}
-			if(document.getElementById( "Delivery_number" ).value == ""){
-				document.getElementById( "Number_required" ).style.display = 'block';
-				document.getElementById( "SupportOrder_required" ).style.display = 'none';
-				document.getElementById( "Date_required" ).style.display = 'none';
-				document.getElementById( "Product_code_required" ).style.display = 'none';
-				document.getElementById( "Product_name_required" ).style.display = 'none';
-				document.getElementById( "Item_product_category_required" ).style.display = 'none';
-				document.getElementById( "Item_price_required" ).style.display = 'none';
-				document.getElementById( "Item_quantity_required" ).style.display = 'none';
-				document.getElementById( "Delivery_number" ).focus();
+				document.getElementById( "Item_product_category_required" ).style.display = 'none';					
+				document.getElementById( "Supplier_Lookup_id" ).focus();
 				return false;
 			}
 			if(document.getElementById( "Delivery_issueTime" ).value == ""){
 				document.getElementById( "Date_required" ).style.display = 'block';
-				document.getElementById( "SupportOrder_required" ).style.display = 'none';
 				document.getElementById( "Number_required" ).style.display = 'none';
+				document.getElementById( "Supplier_required" ).style.display = 'none';
 				document.getElementById( "Product_code_required" ).style.display = 'none';
 				document.getElementById( "Product_name_required" ).style.display = 'none';
 				document.getElementById( "Item_product_category_required" ).style.display = 'none';
-				document.getElementById( "Item_price_required" ).style.display = 'none';
-				document.getElementById( "Item_quantity_required" ).style.display = 'none';
 				document.getElementById( "Delivery_issueTime" ).focus();
 				return false;
 			}
 			if(document.getElementById( "Item_product_code-Popup" ).value == ""){
 				document.getElementById( "Product_code_required" ).style.display = 'block';
-				document.getElementById( "SupportOrder_required" ).style.display = 'none';
-				document.getElementById( "Number_required" ).style.display = 'none';
 				document.getElementById( "Date_required" ).style.display = 'none';
+				document.getElementById( "Number_required" ).style.display = 'none';
+				document.getElementById( "Supplier_required" ).style.display = 'none';
 				document.getElementById( "Product_name_required" ).style.display = 'none';
 				document.getElementById( "Item_product_category_required" ).style.display = 'none';
-				document.getElementById( "Item_price_required" ).style.display = 'none';
-				document.getElementById( "Item_quantity_required" ).style.display = 'none';
 				document.getElementById( "Item_product_code-Popup" ).focus();
 				return false;
 			}
 			if(document.getElementById( "Item_full_name-Popup" ).value == ""){
 				document.getElementById( "Product_name_required" ).style.display = 'block';
-				document.getElementById( "SupportOrder_required" ).style.display = 'none';
-				document.getElementById( "Number_required" ).style.display = 'none';
 				document.getElementById( "Date_required" ).style.display = 'none';
+				document.getElementById( "Number_required" ).style.display = 'none';
+				document.getElementById( "Supplier_required" ).style.display = 'none';
 				document.getElementById( "Product_code_required" ).style.display = 'none';
 				document.getElementById( "Item_product_category_required" ).style.display = 'none';
-				document.getElementById( "Item_price_required" ).style.display = 'none';
-				document.getElementById( "Item_quantity_required" ).style.display = 'none';
 				document.getElementById( "Item_full_name-Popup" ).focus();
 				return false;
 			}
 			if(document.getElementById( "Item_product_category_id-Popup" ).value == ""){
 				document.getElementById( "Item_product_category_required" ).style.display = 'block';
-				document.getElementById( "SupportOrder_required" ).style.display = 'none';
-				document.getElementById( "Number_required" ).style.display = 'none';
-				document.getElementById( "Date_required" ).style.display = 'none';
-				document.getElementById( "Product_code_required" ).style.display = 'none';
 				document.getElementById( "Product_name_required" ).style.display = 'none';
-				document.getElementById( "Item_price_required" ).style.display = 'none';
-				document.getElementById( "Item_quantity_required" ).style.display = 'none';
+				document.getElementById( "Date_required" ).style.display = 'none';
+				document.getElementById( "Number_required" ).style.display = 'none';
+				document.getElementById( "Supplier_required" ).style.display = 'none';
+				document.getElementById( "Product_code_required" ).style.display = 'none';
 				document.getElementById( "Item_product_category_id-Popup" ).focus();
 				return false;
 			}
-			if(document.getElementById( "Item_price-Popup" ).value == ""){
-				document.getElementById( "Item_price_required" ).style.display = 'block';
-				document.getElementById( "SupportOrder_required" ).style.display = 'none';
-				document.getElementById( "Number_required" ).style.display = 'none';
-				document.getElementById( "Date_required" ).style.display = 'none';
-				document.getElementById( "Product_code_required" ).style.display = 'none';
-				document.getElementById( "Product_name_required" ).style.display = 'none';
-				document.getElementById( "Item_product_category_required" ).style.display = 'none';
-				document.getElementById( "Item_quantity_required" ).style.display = 'none';
-				document.getElementById( "Item_price-Popup" ).focus();
-				return false;
-			}
-			if(document.getElementById( "Item_quantity-Popup" ).value == ""){
-				document.getElementById( "Item_quantity_required" ).style.display = 'block';
-				document.getElementById( "SupportOrder_required" ).style.display = 'none';
-				document.getElementById( "Number_required" ).style.display = 'none';
-				document.getElementById( "Date_required" ).style.display = 'none';
-				document.getElementById( "Product_code_required" ).style.display = 'none';
-				document.getElementById( "Product_name_required" ).style.display = 'none';
-				document.getElementById( "Item_product_category_required" ).style.display = 'none';
-				document.getElementById( "Item_price_required" ).style.display = 'none';
-				document.getElementById( "Item_quantity-Popup" ).focus();
-				return false;
-			}
-			document.getElementById( "SupportOrder_required" ).style.display = 'none';
-			document.getElementById( "Number_required" ).style.display = 'none';
-			document.getElementById( "Date_required" ).style.display = 'none';
 			document.getElementById( "Product_code_required" ).style.display = 'none';
 			document.getElementById( "Product_name_required" ).style.display = 'none';
+			document.getElementById( "Number_required" ).style.display = 'none';
+			document.getElementById( "Supplier_required" ).style.display = 'none';
+			document.getElementById( "Date_required" ).style.display = 'none';
 			document.getElementById( "Item_product_category_required" ).style.display = 'none';
-			document.getElementById( "Item_price_required" ).style.display = 'none';
-			document.getElementById( "Item_quantity_required" ).style.display = 'none';
 			if(isNew){
 				document.getElementById( "Item_product_code-New" ).disabled = true;
 			}
@@ -330,4 +261,4 @@
 </ui:composition>
 
 </body>
-	</html>
+</html>

@@ -1,5 +1,6 @@
 package com.code.aon.ui.warehouse.event;
 
+import javax.faces.application.FacesMessage;
 import javax.faces.event.AbortProcessingException;
 
 import com.code.aon.ui.form.event.ControllerAdapter;

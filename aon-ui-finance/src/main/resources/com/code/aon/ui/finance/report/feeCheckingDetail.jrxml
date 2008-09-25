@@ -88,7 +88,7 @@
 					<textElement verticalAlignment="Middle">
 						<font size="8"/>
 					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[($F{registry}.getSurname()!=null?$F{registry}.getSurname():"") + " " + ($F{registry}.getName()!=null?$F{registry}.getName():"")]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.String"><![CDATA[($F{registry}.getName()!=null?$F{registry}.getName():"") + " " + ($F{registry}.getSurname()!=null?$F{registry}.getSurname():"")]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement

@@ -229,7 +229,7 @@ public class AccountUtil {
 	public static Account obtainCashAccount() throws ManagerBeanException {
 		IManagerBean accountBean = BeanManager.getManagerBean(Account.class);
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(accountBean.getFieldName(IAccountAlias.ACCOUNT_ID), obtainDefaultAccount(DefaultAccounts.CASH_ACCOUNT));
+		criteria.addEqualExpression(accountBean.getFieldName(IAccountAlias.ACCOUNT_ID), ((Account)obtainDefaultAccount(DefaultAccounts.CASH_ACCOUNT)).getId());
 		List list = accountBean.getList(criteria);
 		if(list.size() > 0){
 			return (Account)list.iterator().next();
@@ -245,9 +245,7 @@ public class AccountUtil {
 		Iterator iter = accAppParamBean.getList(criteria).iterator();
 		if(iter.hasNext()){
 			ApplicationParameter param = (ApplicationParameter)iter.next();
-			Account account = new Account();
-			account.setId(param.getValue());
-			return account;
+			return obtainAccount(param.getValue());
 		}
 		return null;
 	}

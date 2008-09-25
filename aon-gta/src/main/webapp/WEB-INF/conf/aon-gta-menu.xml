@@ -16,10 +16,6 @@
 			<actionListener action="#{deliveryDetail.onCancel}"/>
 			<actionListener action="#{delivery.onReset}"/>
 		</option>
-		<option id="productivity" key="aon_labour_productivity" descriptionKey="aon_labour_productivity_desc" 
-			ref="productivity">
-			<actionListener action="#{labourReport.onEditSearch}"/>
-		</option>		
 		<option id="salesInvoicing" key="aon_sales_invoicing" descriptionKey="aon_sales_invoicing_desc" 
 			ref="sales_invoicing">
 			<actionListener action="#{salesInvoicingDetail.onCancel}" />
@@ -83,9 +79,6 @@
 		<option ref="inventory" key="aon_inventory_remake" descriptionKey="aon_inventory_remake_desc">
 			<actionListener action="#{inventoryDetail.onReset}"/>
 			<actionListener action="#{inventory.onReset}"/>
-		</option>
-		<option ref="stock" key="aon_stock" descriptionKey="aon_stock_desc">
-			<actionListener action="#{stock.onEditSearch}"/>
 		</option>
 	</menu>
 </root>

@@ -176,31 +176,6 @@
 	</report>
 	
 	<!--  **********************************************************
-						      STOCK
-		  ********************************************************** -->
-	<report id="stockWarehouseList" description="Stock report By Warehouse">
-		<template path="/com/code/aon/ui/warehouse/report/stockWarehouseList.jasper" />
-		<bean key="com.code.aon.warehouse.Stock" />
-		<criteria provider="#{stock}" />
-		<params>
-			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.warehouse.i18n.messages" />
-			<param id="logoImageFile" value="#{company.getAttachAsInputStream}" />
-			<param id="company" value="#{company.obtainCompany}" />
-		</params>
-	</report>	  
-
-	<report id="stockItemList" description="Stock report By Item">
-		<template path="/com/code/aon/ui/warehouse/report/stockItemList.jasper" />
-		<bean key="com.code.aon.warehouse.Stock" />
-		<criteria provider="#{stock}" />
-		<params>
-			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.warehouse.i18n.messages" />
-			<param id="logoImageFile" value="#{company.getAttachAsInputStream}" />
-			<param id="company" value="#{company.obtainCompany}" />
-		</params>
-	</report>	  
-	
-	<!--  **********************************************************
 						OFFER 
 		  ********************************************************** -->
 		  
@@ -380,21 +355,6 @@
 			<param id="company" value="#{company.obtainCompany}" />
 		</params>
 	</report>
-
-	<!--  **********************************************************
-					Labour Report
-	  ********************************************************** -->
-	<report id="labourReportList" description="Labour Report">
-		<template path="/com/code/aon/ui/warehouse/report/labourReportList.jasper"/>
-		<collection provider="#{labourReport}"/>
-
-		<params>
-			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.warehouse.i18n.messages" />
-			<param id="logoImageFile" value="#{company.getAttachAsInputStream}" />
-			<param id="company" value="#{company.obtainCompany}" />
-		</params>
-	</report>
-
 	
 		<!--  **********************************************************
 						FinanceList
@@ -433,8 +393,7 @@
 			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.finance.i18n.messages" />
 			<param id="company" value="#{company.obtainCompany}" />
 			<param id="logoImageFile" value="#{company.getAttachAsInputStream}" />
-			<param id="total" value="#{fbatch.getToTotalAmount}" />
-			<param id="totalRegs" value="#{fbatch.getToTotalDetails}" />
+			<param id="total" value="#{fbatch.getToTotal}" />
 		</params>
 		
 		<nested-report report="fBatchDetail"/>

@@ -21,9 +21,9 @@ import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
-import com.code.aon.company.Company;
 import com.code.aon.company.WorkPlace;
 import com.code.aon.config.ApplicationParameter;
+import com.code.aon.config.Scope;
 import com.code.aon.config.dao.IConfigAlias;
 import com.code.aon.finance.Finance;
 import com.code.aon.finance.Invoice;
@@ -37,10 +37,11 @@ import com.code.aon.finance.invoicing.InvoicePriceStrategy;
 import com.code.aon.product.enumeration.TaxType;
 import com.code.aon.product.strategy.IPriceStrategy;
 import com.code.aon.product.strategy.TaxBreakDown;
+import com.code.aon.purchase.Supplier;
+import com.code.aon.purchase.dao.IPurchaseAlias;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionException;
-import com.code.aon.supplier.Supplier;
-import com.code.aon.supplier.dao.ISupplierAlias;
+import com.code.aon.registry.Registry;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.form.IController;
 import com.code.aon.ui.menu.jsf.MenuEvent;
@@ -149,16 +150,20 @@ public class InvoicingController extends BasicController {
 	 * @param event contains a supplier ident
 	 * @throws ManagerBeanException
 	 */
-	@SuppressWarnings("unchecked")
 	public void supplierData(ValueChangeEvent event) throws ManagerBeanException{
 		if(event.getNewValue() != null){
 			IManagerBean supplierBean = BeanManager.getManagerBean(Supplier.class);
 			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(supplierBean.getFieldName(ISupplierAlias.SUPPLIER_ID),event.getNewValue());
+			criteria.addEqualExpression(supplierBean.getFieldName(IPurchaseAlias.SUPPLIER_ID),event.getNewValue());
 			Iterator iter = supplierBean.getList(criteria).iterator();
 			if(iter.hasNext()){
 				Supplier supplier = (Supplier)iter.next();
-				((Invoice)this.getTo()).setRegistry(supplier.getRegistry());
+				Registry registry = new Registry();
+				registry.setAlias(supplier.getAlias());
+				registry.setDocument(supplier.getDocument());
+				registry.setName(supplier.getName());
+				registry.setSurname(supplier.getSurname());
+				((Invoice)this.getTo()).setRegistry(registry);
 			}
 		}
 	}
@@ -169,7 +174,7 @@ public class InvoicingController extends BasicController {
 	 * @param event the action event
 	 * @throws ManagerBeanException
 	 */
-	@SuppressWarnings({"unused","unchecked"})
+	@SuppressWarnings("unused")
 	public void onInvoice(ActionEvent event) throws ManagerBeanException{
 		IncomeController incomeController = (IncomeController)AonUtil.getController(INCOME_CONTROLLER_NAME);
 		Iterator iter = ((List)incomeController.getModel().getWrappedData()).iterator();
@@ -206,7 +211,6 @@ public class InvoicingController extends BasicController {
 		invoiceBean.update(invoice);
 	}
 	
-	@SuppressWarnings("unchecked")
 	private void recordInvoice(Invoice invoice) throws ManagerBeanException, ExpressionException {
 		AccountEntry entry = new AccountEntry();
 		entry.setAccountPeriod(AccountUtil.obtainPeriod(invoice.getIssueDate()).getId());
@@ -232,7 +236,6 @@ public class InvoicingController extends BasicController {
 		return accountEntryInvoiceWriter;
 	}
 	
-	@SuppressWarnings("unchecked")
 	private Account obtainBalancingAccount(Invoice invoice) throws ManagerBeanException {
 		String paramName = (invoice.getType().equals(InvoiceType.SALES)?DefaultAccounts.SALES_ACCOUNT:DefaultAccounts.PURCHASE_ACCOUNT);
 		IManagerBean appParamsBean = BeanManager.getManagerBean(ApplicationParameter.class);
@@ -252,7 +255,6 @@ public class InvoicingController extends BasicController {
 		return null;
 	}
 	
-	@SuppressWarnings("unchecked")
 	private double getRetentionTotal(List taxBreakDownList) {
 		Iterator iter = taxBreakDownList.iterator();
 		double retentionQuota = 0;
@@ -265,7 +267,6 @@ public class InvoicingController extends BasicController {
 		return retentionQuota;
 	}
 	
-	@SuppressWarnings("unchecked")
 	private double getTaxQuota(List taxBreakDownList) {
 		Iterator iter = taxBreakDownList.iterator();
 		double taxQuota = 0;
@@ -305,7 +306,6 @@ public class InvoicingController extends BasicController {
 	 * @param invoice
 	 * @param income
 	 */
-	@SuppressWarnings("unchecked")
 	private void insertInvoiceDetails(Invoice invoice, Income income) {
 		try {
 			IManagerBean incomeDetailBean = BeanManager.getManagerBean(IncomeDetail.class);
@@ -410,7 +410,7 @@ public class InvoicingController extends BasicController {
 		return financeGenerator;
 	}
 	
-	@SuppressWarnings({"unused","unchecked"})
+	@SuppressWarnings("unused")
 	public void generateFinances(ActionEvent event) throws ManagerBeanException{
 		Invoice invoice = (Invoice)this.getTo();
 		try {
@@ -421,22 +421,11 @@ public class InvoicingController extends BasicController {
 				Finance finance = (Finance)iter.next();
 				financeBean.remove(finance);
 			}
-			Company company = obtainCompany();
-			getFinanceGenerator().generateFinances(invoice, company, getPriceStrategy().getTotalPrice(invoice, invoice));
+			getFinanceGenerator().generateFinances(invoice, getPriceStrategy().getTotalPrice(invoice, invoice));
 			salesFinanceController.onSearch(null);
 		} catch (ManagerBeanException e) {
 			throw new ManagerBeanException("Error generating finances for invoice with id= " + invoice.getId(),e);
 		}
-	}
-
-	@SuppressWarnings("unchecked")
-	private Company obtainCompany() throws ManagerBeanException {
-		IManagerBean companyBean = BeanManager.getManagerBean(Company.class);
-		Iterator iter = companyBean.getList(null, 0, 1).iterator();
-		if(iter.hasNext()){
-			return (Company)iter.next();
-		}
-		return null;
 	}
 
 	/**
@@ -445,7 +434,6 @@ public class InvoicingController extends BasicController {
 	 * 
 	 * @param incomeId the income ident
 	 */
-	@SuppressWarnings("unchecked")
 	public void removeInvoiceDetails(Integer incomeId) {
 		try {
 			IManagerBean incomeDetailBean = BeanManager.getManagerBean(IncomeDetail.class);
@@ -472,7 +460,6 @@ public class InvoicingController extends BasicController {
 	 * 
 	 * @see com.code.aon.ui.form.BasicController#getCollection()
 	 */
-	@SuppressWarnings("unchecked")
 	public Collection getCollection(){
 		List<ITransferObject> l = new LinkedList<ITransferObject>();
 		l.add(obtainInvoice(((Invoice)this.getTo()).getId()));
@@ -485,7 +472,6 @@ public class InvoicingController extends BasicController {
 	 * @param invoiceId invoice ident
 	 * @return related invoice
 	 */
-	@SuppressWarnings("unchecked")
 	private ITransferObject obtainInvoice(Integer invoiceId) {
 		try {
 			IManagerBean invoiceBean = BeanManager.getManagerBean(Invoice.class);
