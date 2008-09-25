@@ -11,9 +11,9 @@
 		<aon:form id="surveyResponseSearch">
 		
 			<ui:include src="/facelet/shared/searchToolbar.xhtml" >
-				<ui:param name="toolbarTitle" value="#{marketingBundle.aon_marketing_surveis}" />
+				<ui:param name="toolbarTitle" value="#{marketingBundle.aon_marketing_survey_responses}" />
 				<ui:param name="controller" value="#{survey}" />
-				<ui:param name="readOnly" value="true" />
+				<ui:param name="skipResetButton" value="true" />
 			</ui:include>
 
 			<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/searchContent.xhtml" >

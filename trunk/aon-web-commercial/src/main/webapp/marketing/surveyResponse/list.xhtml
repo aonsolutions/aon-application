@@ -16,9 +16,9 @@
 		<aon:form id="surveyResponseList">
 		
 			<ui:include src="/facelet/shared/listToolbar.xhtml" >
-				<ui:param name="toolbarTitle" value="#{marketingBundle.aon_marketing_campaigns}" />
+				<ui:param name="toolbarTitle" value="#{marketingBundle.aon_marketing_survey_responses}" />
 				<ui:param name="controller" value="#{surveyResponse}" />
-				<ui:param name="readOnly" value="true" />
+				<ui:param name="skipResetButton" value="true" />
 			</ui:include>
 
 			<!--  aon-region-body -->

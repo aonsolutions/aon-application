@@ -6,7 +6,7 @@
 
 	<ui:include src="/facelet/shared/searchToolbarEx.xhtml" >
 		<aon:methodParam name="backActionListener" value="#{controller.onCancel}" type="actionListener" />
-		<aon:methodParam name="backAction" value="#{controller.beanName}_list" resolve="true" />			
+		<aon:methodParam name="backAction" value="#{controller.beanName}_list" resolve="true" />		
 		<aon:methodParam name="resetActionListener" value="#{controller.onReset}" type="actionListener" />
 		<aon:methodParam name="resetAction" value="#{controller.beanName}_form" resolve="true" />									
 	</ui:include>
