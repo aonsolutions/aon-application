@@ -49,7 +49,6 @@
 							confirmActionListener="#{contratosInternos.onRemove}"
 							confirmAction="contratos_internos_list"
 							accesskey="#{bundle.aon_key_remove}" />
-
 						<aon:commandButton id="reset" value="#{bundle.aon_reset}"
 							rendered="#{!contratosInternos.new}"
 							action="contratos_internos" 
@@ -57,10 +56,10 @@
 							styleClass="aon-finding-toolbar-item aon-icon-reset"
 							accesskey="#{bundle.aon_key_new}" />
 						<aon:commandButton id="search" value="#{bundle.aon_search}"
-							rendered="#{!contratosInternos.new}" immediate="true"
+							rendered="#{!contratosInternos.new}"
 							action="contratos_internos_search" actionListener="#{contratosInternos.onEditSearch}"
 							styleClass="aon-finding-toolbar-item aon-icon-search"
-							accesskey="#{bundle.aon_key_search}" />														
+							accesskey="#{bundle.aon_key_search}" />				
 
 						<aon:spin controller="#{contratosInternos}" action="contratos_internos" rendered="#{!contratosInternos.new}" />
 
@@ -81,15 +80,13 @@
 					</aon:inputText>
 
 					<aon:outputLabel value="#{appBundle.aon_payroll_asimiladoa}" />
-					<aon:selectOneMenu id="Asimilados" required="true" 
-							value="#{contratosInternos.to.porcentajeMaestro}">
-						<f:converter converterId="toConverter" />
-						<f:selectItem value="#{null}" itemLabel="    " />
+					<aon:selectOneMenu id="Asimilados" value="#{contratosInternos.to.porcentajeMaestro.cdg}">
 						<f:selectItems value="#{contratosInternos.asimilados}" />
 					</aon:selectOneMenu>
 
 					<aon:outputLabel value="#{appBundle.aon_payroll_desempleado}" />
-					<aon:selectOneMenu id="Desempleados" required="true" value="#{contratosInternos.to.desemple}">
+					<aon:selectOneMenu id="Desempleados" value="#{contratosInternos.to.desempleenum}">
+						<f:selectItem value="#{null}" itemLabel="    " />
 						<f:selectItems value="#{contratosInternos.desempleados}" />
 					</aon:selectOneMenu>
 

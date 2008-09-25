@@ -27,7 +27,7 @@
 							type="reset" ajaxSingle="true"
 							styleClass="aon-finding-toolbar-item aon-icon-rubber" />
 						<aon:commandButton id="back" value="#{bundle.aon_back}"
-							action="cotizacion_porcentaje_form" actionListener="#{porcentajeMaestro.onCancel}"
+							action="cotizacion_porcentaje_list" actionListener="#{porcentajeMaestro.onCancel}"
 							styleClass="aon-finding-toolbar-item aon-icon-cancel" immediate="true"
 							accesskey="#{bundle.aon_key_cancel}" />
 					</aon:div>
@@ -38,7 +38,7 @@
 			<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/searchContent.xhtml" >
 				<ui:define name="searchContent">
 					<aon:methodParam name="searchActionListener" value="#{porcentajeMaestro.onSearch}" type="actionListener" />
-					<aon:methodParam name="searchAction" value="cotizacion_porcentaje_form" />				
+					<aon:methodParam name="searchAction" value="cotizacion_porcentaje_list" />				
 				
 					<aon:outputLabel for="PorcentajeMaestro_cdg"
 						value="#{appBundle.aon_payroll_cdg}" />

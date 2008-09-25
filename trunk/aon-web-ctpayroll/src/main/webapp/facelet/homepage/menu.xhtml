@@ -114,7 +114,7 @@
 					<aon:menuItem value="#{menuBundle.resultados_irpf__result_irpf}" disabled="true" />
 				</aon:menuGroup>
 			</aon:dropDownMenu>			
-
+<!-- 
 			<aon:dropDownMenu value="#{menuBundle.utilidades}">
 				<aon:menuGroup value="#{menuBundle.utilidades_seguridad}">
 					<aon:menuItem value="#{menuBundle.utilidades_seguridad__usuarios}" disabled="true" />
@@ -149,7 +149,7 @@
 					<aon:menuItem value="#{menuBundle.utilidades_procesos_masivos_datos__lanzduplicado}" disabled="true" />
 				</aon:menuGroup>
 			</aon:dropDownMenu>			
-
+ -->
 			<aon:dropDownMenu value="#{menuBundle.auxiliares}">
 				<aon:menuGroup value="#{menuBundle.auxiliares_geograficas}">
 					<aon:menuItem value="#{menuBundle.auxiliares_geograficas__nacion}" action="naciones" />
@@ -157,12 +157,13 @@
 				</aon:menuGroup>
 				<aon:menuGroup value="#{menuBundle.auxiliares_cotizacion}">
 					<aon:menuItem value="#{menuBundle.auxiliares_cotizacion__porcoti}" 
-						action="cotizacion_porcentaje" actionListener="#{porcentajeMaestro.onSelectFirst}" />
+						action="cotizacion_porcentaje" actionListener="#{porcentajeMaestro.onEnter}" />
 					<aon:menuItem value="#{menuBundle.auxiliares_cotizacion__cotizaciones}" disabled="true" />
 					<aon:menuItem value="#{menuBundle.auxiliares_cotizacion__elemcotizacion}" disabled="true" />
 					<aon:menuItem value="#{menuBundle.auxiliares_cotizacion__ocupacion}" disabled="true" />
 					<aon:menuItem value="#{menuBundle.auxiliares_cotizacion__cnae}" disabled="true" />
-					<aon:menuItem value="#{menuBundle.auxiliares_cotizacion__tipboni}" action="cotizacion_bonificacion" />
+					<aon:menuItem value="#{menuBundle.auxiliares_cotizacion__tipboni}" 
+						action="cotizacion_bonificacion" />
 					<aon:menuItem value="#{menuBundle.auxiliares_cotizacion__epigrafes}" disabled="true" />
 				</aon:menuGroup>
 				<aon:menuGroup value="#{menuBundle.auxiliares_convenios}">
@@ -173,7 +174,7 @@
 				<aon:menuGroup value="#{menuBundle.auxiliares_contratos}">
 					<aon:menuItem value="#{menuBundle.auxiliares_contratos__tipcotc2}" disabled="true" />
 					<aon:menuItem value="#{menuBundle.auxiliares_contratos__tipocont}" 
-						action="contratos_internos" actionListener="#{contratosInternos.onSelectFirst}" />
+						action="contratos_internos" actionListener="#{contratosInternos.onEnter}" />
 				</aon:menuGroup>
 				<aon:menuGroup value="#{menuBundle.auxiliares_organismos_entidades}">
 					<aon:menuItem value="#{menuBundle.auxiliares_organismos_entidades__entidsucur}" disabled="true" />

@@ -8,7 +8,7 @@
 	
 	<ui:define name="content">
 
-		<aon:form id="tiposDocumentoSearch">
+		<aon:form id="contratosInternosSearch">
 
 			<aon:div styleClass="aon-finding-title-toolbar">
 				<aon:panelGrid columns="3" dir="true"
@@ -27,7 +27,7 @@
 							type="reset" ajaxSingle="true"
 							styleClass="aon-finding-toolbar-item aon-icon-rubber" />
 						<aon:commandButton id="back" value="#{bundle.aon_back}"
-							action="tipos_documento" actionListener="#{tiposDocumento.onCancel}"
+							action="contratos_internos_list" actionListener="#{contratosInternos.onCancel}"
 							styleClass="aon-finding-toolbar-item aon-icon-cancel" immediate="true"
 							accesskey="#{bundle.aon_key_cancel}" />
 					</aon:div>
@@ -37,18 +37,18 @@
 
 			<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/searchContent.xhtml" >
 				<ui:define name="searchContent">
-					<aon:methodParam name="searchActionListener" value="#{tiposDocumento.onSearch}" type="actionListener" />
-					<aon:methodParam name="searchAction" value="tipos_documento" />				
+					<aon:methodParam name="searchActionListener" value="#{contratosInternos.onSearch}" type="actionListener" />
+					<aon:methodParam name="searchAction" value="contratos_internos_list" />				
 				
-					<aon:outputLabel for="Documento_cdg"
+					<aon:outputLabel for="ContratosInternos_cdg"
 						value="#{appBundle.aon_payroll_cdg}" />
-					<aon:inputText id="Documento_cdg" size="2" maxlength="1"
-						valueChangeListener="#{tiposDocumento.addExpression}" />
+					<aon:inputText id="ContratosInternos_cdg" size="1" maxlength="3"
+						valueChangeListener="#{contratosInternos.addExpression}" />
 
-					<aon:outputLabel for="Documento_description"
+					<aon:outputLabel for="ContratosInternos_description"
 						value="#{appBundle.aon_payroll_description}" />
-					<aon:inputText id="Documento_description" size="60" maxlength="45"
-						valueChangeListener="#{tiposDocumento.addExpression}" />
+					<aon:inputText id="ContratosInternos_description" size="60" maxlength="45"
+						valueChangeListener="#{contratosInternos.addExpression}" />
 				</ui:define>
 			</ui:decorate>
 

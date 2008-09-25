@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Locale;
 
 import javax.faces.context.FacesContext;
+import javax.faces.event.ActionEvent;
 import javax.faces.model.SelectItem;
 
 import com.code.aon.common.BeanManager;
@@ -53,6 +54,7 @@ public class ContratosInternos extends PayrollBasicController {
 	@SuppressWarnings("unchecked")
 	public void refreshAsimilados() throws ManagerBeanException {
 		asimilados = new LinkedList<SelectItem>();
+		asimilados.add( new SelectItem( IPayrollConstants.EMPTY_STRING, IPayrollConstants.EMPTY_STRING ) );
 		IManagerBean bean = BeanManager.getManagerBean(PorcentajeMaestro.class);
 		Criteria criteria = new Criteria();
 		String identifier = bean.getFieldName( IPayrollAlias.PORCENTAJE_MAESTRO_CDG );
@@ -60,9 +62,17 @@ public class ContratosInternos extends PayrollBasicController {
 		Iterator<ITransferObject> iter = bean.getList(criteria).iterator();
 		while(iter.hasNext()){
 			PorcentajeMaestro pm = (PorcentajeMaestro) iter.next();
-			SelectItem item = new SelectItem( pm, pm.getDescription() );
+			SelectItem item = new SelectItem( pm.getCdg(), pm.getDescription() );
 			asimilados.add(item);
 		}
+	}
+
+	public void onEnter(ActionEvent event) {
+		if ( super.model != null ) {
+			super.onEditSearch( event );
+			super.onSearch( event );
+		}
+		super.onSelectFirst( event );
 	}
 
 }
