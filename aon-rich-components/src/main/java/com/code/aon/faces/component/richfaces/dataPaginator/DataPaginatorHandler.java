@@ -1,10 +1,5 @@
 package com.code.aon.faces.component.richfaces.dataPaginator;
 
-import java.io.IOException;
-
-import javax.el.ELException;
-import javax.el.VariableMapper;
-import javax.faces.FacesException;
 import javax.faces.component.UIComponent;
 
 import org.richfaces.component.UIDatascroller;
@@ -20,15 +15,11 @@ import com.sun.facelets.tag.jsf.ComponentConfig;
 
 public class DataPaginatorHandler extends DataScrollerTagHandler {
 
-	private static final String TEMPLATE_PATH = "com/code/aon/faces/component/richfaces/dataPaginator/";
-
-	private static final String TEMPLATE = TEMPLATE_PATH + "dataPaginator.xhtml";
-	
 	private static final String PAGINATOR_ATTRIBUTE = "paginator";
 	
 	private static final String FOR_ATTRIBUTE = "for";
 	
-	private static final String SHOW_VALUE = "show";
+	private static final String AUTO_VALUE = "auto";
 	
 	private static final String HIDE_VALUE = "hide";
 
@@ -58,7 +49,7 @@ public class DataPaginatorHandler extends DataScrollerTagHandler {
 			UIComponentTagUtils.setStringProperty( ctx.getFacesContext(), component, STEP_CONTROLS_ATTRIBUTE, value );
 		}
 		if (! FaceletUtil.hasValue(ctx, tag, FAST_CONTROLS_ATTRIBUTE) ) {
-			UIComponentTagUtils.setStringProperty( ctx.getFacesContext(), component, FAST_CONTROLS_ATTRIBUTE, HIDE_VALUE );
+			UIComponentTagUtils.setStringProperty( ctx.getFacesContext(), component, FAST_CONTROLS_ATTRIBUTE, value );
 		}
 	}
 	
@@ -92,20 +83,10 @@ public class DataPaginatorHandler extends DataScrollerTagHandler {
 		UIComponent component = (UIComponent) instance;
 		updateForAttribute(ctx, component);
 		if ( isPaginator(ctx) ) {
-			setControlsValue(ctx, component, SHOW_VALUE);
+			setControlsValue(ctx, component, AUTO_VALUE);
 		} else {
 			setControlsValue(ctx, component, HIDE_VALUE);			
 		}
-	}
-	
-	@Override
-	protected void applyNextHandler(FaceletContext ctx, UIComponent c)
-			throws IOException, FacesException, ELException {
-		if ( isPaginator(ctx) ) {
-			VariableMapper mapper = ctx.getVariableMapper();
-			FaceletUtil.insertTemplate(ctx, tag, c, FaceletUtil.getTemplate(TEMPLATE), mapper);
-		}
-		super.applyNextHandler(ctx, c);
 	}
 	
 }
