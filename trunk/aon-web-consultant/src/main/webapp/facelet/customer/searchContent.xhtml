@@ -20,6 +20,13 @@
 			<h:panelGrid columns="2" styleClass="aon-form-table"
 				columnClasses="aon-form-table-column-odd,aon-form-table-column-even">
 
+				<t:outputLabel for="Customer_id"
+					value="#{customerBundle.customer_code}"
+					styleClass="aon-form-input-text-label aon-form-table-column-odd-label" />
+				<t:inputText id="Customer_id" size="6"
+					valueChangeListener="#{customerAlias.addExpression}"
+					styleClass="aon-form-input-text" />
+					
 				<t:outputLabel for="Customer_registry_document"
 					value="#{registryBundle.aon_nif}"
 					styleClass="aon-form-input-text-label aon-form-table-column-odd-label" />
@@ -47,6 +54,28 @@
 				<t:inputText id="Customer_registry_alias" size="40"
 					valueChangeListener="#{customerAlias.addExpression}"
 					styleClass="aon-form-input-text"  onblur="toUpperCase(this);"/>
+
+				<t:outputLabel for="Customer_scope_id"
+					value="#{customerBundle.customer_scope}"
+					styleClass="aon-form-input-text-label aon-form-table-column-odd-label" />
+				<h:selectOneMenu id="Customer_scope_id"
+					styleClass="aon-form-selectOneMenu-field"
+					converter="IntegerEmptyConverter" forceId="#{true}"
+					valueChangeListener="#{customerAlias.addExpression}">
+					<f:selectItem itemDisabled="true" itemLabel="-" itemValue="" />
+					<f:selectItems value="#{configCollections.currentUserScopes}" />
+				</h:selectOneMenu>
+
+				<t:outputLabel for="Customer_status"
+					value="#{customerBundle.customer_status}"
+					styleClass="aon-form-input-text-label aon-form-table-column-odd-label" />
+				<h:selectOneMenu id="Customer_status"
+					styleClass="aon-form-selectOneMenu-field"
+					converter="aonCustomerStatusConverter" forceId="#{true}"
+					valueChangeListener="#{customerAlias.addExpression}">
+					<f:selectItem itemDisabled="true" itemLabel="-" itemValue="" />
+					<f:selectItems value="#{customerCollections.customerStatuses}" />
+				</h:selectOneMenu>
 
 			</h:panelGrid>
 		</t:div>
