@@ -1,0 +1,45 @@
+<!DOCTYPE hibernate-configuration PUBLIC
+	"-//Hibernate/Hibernate Configuration DTD 3.0//EN"
+	"http://hibernate.sourceforge.net/hibernate-configuration-3.0.dtd">
+
+<hibernate-configuration>
+
+	<session-factory>
+
+		<property name="connection.datasource">java:comp/env/jdbc/AonComposite</property>		
+
+		<!-- AON-PRODUCT Mapping files -->		
+		<mapping class="com.code.aon.product.Product"/>
+		<mapping class="com.code.aon.product.Brand"/>
+		<mapping class="com.code.aon.product.Tariff"/>
+		<mapping class="com.code.aon.product.ProductCategory"/>
+		<mapping class="com.code.aon.product.TaxDetail"/>
+		<mapping class="com.code.aon.product.Tax"/>
+		<mapping class="com.code.aon.product.Item"/>
+		<mapping class="com.code.aon.product.ItemTariff"/>
+		<mapping class="com.code.aon.product.ItemAttachment"/>		
+		<mapping class="com.code.aon.product.ItemPos"/>		
+		<mapping class="com.code.aon.product.ProductCategoryTax"/>
+		<mapping class="com.code.aon.product.ProductCategoryTree"/>
+
+		<!-- AON-COMPOSITE Mapping files -->		
+		<mapping class="com.code.aon.ui.composition.Composition"/>
+		<mapping class="com.code.aon.ui.composition.CompositionDetail"/>
+		<mapping class="com.code.aon.ui.composition.CompositionExpense"/>
+		
+		<!-- AON-REGISTRY Mapping files -->	
+		<mapping class="com.code.aon.company.Company"/>
+		<mapping class="com.code.aon.registry.Registry"/>
+		<mapping class="com.code.aon.registry.RegistryAddress"/>
+		<mapping class="com.code.aon.registry.RegistryMedia"/>
+		<mapping class="com.code.aon.registry.RegistryAttachment"/>
+		<mapping class="com.code.aon.registry.Category"/>
+		<mapping class="com.code.aon.registry.RegistryUser"/>
+		
+		<!-- AON-GEOZONE Mapping files -->		
+		<mapping class="com.code.aon.geozone.GeoZone"/>			
+		<mapping class="com.code.aon.geozone.Country"/>
+		
+	</session-factory>
+
+</hibernate-configuration>
