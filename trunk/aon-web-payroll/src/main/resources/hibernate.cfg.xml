@@ -38,7 +38,8 @@
 		<mapping class="com.code.aon.payroll.cotizacion.Bonificacion"/>	
 		
 		<!-- CONTRATOS -->		
-		<mapping class="com.code.aon.payroll.auxiliares.contratos.ContratosInternos"/>			
+		<mapping class="com.code.aon.payroll.auxiliares.contratos.ContratosInternos"/>
+		<mapping class="com.code.aon.payroll.auxiliares.contratos.ContratosTc2"/>			
 
 		<!-- GEOGRAFICAS -->		
         <mapping class="com.code.aon.payroll.geograficas.Nacion"/>	

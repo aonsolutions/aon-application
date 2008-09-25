@@ -52,6 +52,22 @@
 			</to-view-id>
 		</navigation-case>
 	</navigation-rule>
+	
+	<!-- =================== Auxiliares/Contratos/Tc2 ================= -->
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>contratos_tc2_list</from-outcome>
+			<to-view-id>
+				/facelet/auxiliares/contratos/tc2/list.xhtml
+			</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>contratos_tc2_search</from-outcome>
+			<to-view-id>
+				/facelet/auxiliares/contratos/tc2/search.xhtml
+			</to-view-id>
+		</navigation-case>
+	</navigation-rule>
 
 	<!-- =================== Auxiliares/Tipos ================= -->
 	<navigation-rule>
@@ -294,6 +310,15 @@
 			<from-outcome>contratos_internos</from-outcome>
 			<to-view-id>
 				/facelet/auxiliares/contratos/internos/form.xhtml
+			</to-view-id>
+		</navigation-case>
+	</navigation-rule>
+	
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>contratos_tc2</from-outcome>
+			<to-view-id>
+				/facelet/auxiliares/contratos/tc2/form.xhtml
 			</to-view-id>
 		</navigation-case>
 	</navigation-rule>
