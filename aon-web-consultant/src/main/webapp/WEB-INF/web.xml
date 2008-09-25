@@ -164,7 +164,7 @@
 	<!-- Enables and Registers session for concurrent sessions -->
 	<filter-mapping>
 		<filter-name>BackDoorAuthenticationFilter</filter-name>
-		<url-pattern>/auth/*</url-pattern>
+		<url-pattern>*.jsp</url-pattern>
 	</filter-mapping>
 
 	<!-- Enables and Registers session for concurrent sessions -->
@@ -284,7 +284,7 @@
 		</web-resource-collection>
 		<web-resource-collection>
 			<web-resource-name>jsp</web-resource-name>
-			<url-pattern>/index.jsp</url-pattern>
+			<url-pattern>*.jsp</url-pattern>
 		</web-resource-collection>
 		<web-resource-collection>
 			<web-resource-name>actions</web-resource-name>
