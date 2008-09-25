@@ -13,7 +13,7 @@
 
 	<ui:define name="content">
 
-		<aon:form id="porcentajeMaestroList">
+		<aon:form id="contratosInternosList">
 		
 			<aon:div styleClass="aon-finding-title-toolbar">
 				<aon:panelGrid id="buttonsGrid" columns="3" dir="true"
@@ -30,12 +30,12 @@
 					<!-- start toolbar navigation -->
 					<aon:div styleClass="aon-finding-toolbar-item-group">
 						<aon:commandButton id="search" value="#{bundle.aon_search}"
-							action="cotizacion_porcentaje_search" actionListener="#{porcentajeMaestro.onEditSearch}"
+							action="contratos_internos_search" actionListener="#{contratosInternos.onEditSearch}"
 							styleClass="aon-finding-toolbar-item aon-icon-search"
 							accesskey="#{bundle.aon_key_search}" />				
 						<aon:commandButton id="reset" value="#{bundle.aon_reset}"
-							action="cotizacion_porcentaje_form" actionListener="#{porcentajeMaestro.onReset}"
-							styleClass="aon-finding-toolbar-item aon-icon-newMailAccount"
+							action="contratos_internos" actionListener="#{contratosInternos.onReset}"
+							styleClass="aon-finding-toolbar-item aon-icon-reset"
 							accesskey="#{bundle.aon_key_new}" />
 					</aon:div>
 					<!-- end toolbar navigation -->
@@ -45,12 +45,11 @@
 			<!--  aon-region-body -->
 			<aon:div styleClass="aon-scroll-area">
 
-				<aon:dataTable id="porcentajeMaestroData" value="#{porcentajeMaestro.model}"
-					var="to" rows="20" rendered="#{porcentajeMaestro.model.rowCount > 0}"
-					columnClasses="aon-editDataTable-textColumn, aon-editDataTable-textColumn, aon-editDataTable-numberColumn">
+				<aon:dataTable id="contratosInternosData" value="#{contratosInternos.model}"
+					var="to" rows="20" rendered="#{contratosInternos.model.rowCount > 0}"
+					columnClasses="aon-editDataTable-textColumn, aon-editDataTable-textColumn, aon-editDataTable-textColumn">
 
-					<aon:rowSelector action="cotizacion_porcentaje_form" 
-						actionListener="#{porcentajeMaestro.onSelect}" />
+					<aon:rowSelector action="contratos_internos" actionListener="#{contratosInternos.onSelect}" />
 					
 					<aon:column>
 						<f:facet name="header">
@@ -68,13 +67,13 @@
 
  					<aon:column>
 						<f:facet name="header">
-							<aon:outputText value="#{appBundle.aon_payroll_order}" />
+							<aon:outputText value="#{appBundle.aon_payroll_asimiladoa}" />
 						</f:facet>
-						<aon:outputText value="#{to.ordpct}"/>
+						<aon:outputText value="#{to.porcentajeMaestro.description}"/>
 					</aon:column>
 				</aon:dataTable>
 
-				<aon:dataScroller for="porcentajeMaestroData" rowCount="#{porcentajeMaestro.model.rowCount}" showNote="true" />
+				<aon:dataScroller for="contratosInternosData" rowCount="#{contratosInternos.model.rowCount}" showNote="true" />
 
 			</aon:div>
 		</aon:form>

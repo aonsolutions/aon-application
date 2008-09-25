@@ -49,12 +49,11 @@
 							confirmActionListener="#{porcentajeMaestro.onRemove}"
 							confirmAction="cotizacion_porcentaje_list"
 							accesskey="#{bundle.aon_key_remove}" />
-
 						<aon:commandButton id="reset" value="#{bundle.aon_reset}"
 							rendered="#{!porcentajeMaestro.new}"
 							action="cotizacion_porcentaje" 
 							actionListener="#{porcentajeMaestro.onReset}"
-							styleClass="aon-finding-toolbar-item aon-icon-newMailAccount"
+							styleClass="aon-finding-toolbar-item aon-icon-reset"
 							accesskey="#{bundle.aon_key_new}" />
 						<aon:commandButton id="search" value="#{bundle.aon_search}"
 							rendered="#{!porcentajeMaestro.new}" immediate="true"

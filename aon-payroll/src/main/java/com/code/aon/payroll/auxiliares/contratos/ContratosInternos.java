@@ -9,10 +9,9 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
-import org.hibernate.annotations.ForeignKey;
-
 import com.code.aon.common.ITransferObject;
 import com.code.aon.payroll.cotizacion.PorcentajeMaestro;
+import com.code.aon.payroll.enumeration.Desempleado;
 
 /**
  * Contratos Internos.
@@ -51,7 +50,7 @@ public class ContratosInternos implements ITransferObject {
 	}
 
 	@ManyToOne(fetch=FetchType.EAGER)
-	@JoinColumn(name="cdg", insertable=false, updatable=false)
+	@JoinColumn(name="codpct", insertable=false, updatable=false)
 	public PorcentajeMaestro getPorcentajeMaestro() {
 		return this.maestro;
 	}
@@ -67,6 +66,7 @@ public class ContratosInternos implements ITransferObject {
 
 	public void setDesemple(String desemple) {
 		this.desemple = desemple;
+		this.desempleenum = ( this.desemple != null)? Desempleado.valueOf( "D" + this.desemple ): null;
 	}
 
 	@Column(name="mujersub", length=1)
@@ -114,6 +114,16 @@ public class ContratosInternos implements ITransferObject {
 		this.gradomin = gradomin;
 	}
 
+//TODO Problemas en la creacion del enumerado a partir de un String.
+	private Desempleado desempleenum;
+	@Transient 
+	public Desempleado getDesempleenum() {
+		return desempleenum;
+	}
+	public void setDesempleenum(Desempleado desempleenum) {
+		this.desempleenum = desempleenum;
+		setDesemple( (this.desempleenum != null)? this.desempleenum.name().substring( 1 ) : null );
+	}
 //TODO A la espera de implementar un SelectBooleanCheckboxRenderer.
 	@Transient 
 	public Boolean getMujersubbol() {
