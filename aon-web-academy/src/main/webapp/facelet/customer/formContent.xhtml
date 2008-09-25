@@ -34,18 +34,11 @@
 					<t:outputLabel for="Customer_document"
 						styleClass="aon-form-input-text-label"
 						value="#{customerBundle.customer_document}" />
-					<h:panelGrid columns="3">	
-						<t:inputText id="Customer_document"
-							styleClass="aon-form-input-text" forceId="#{true}"
-							onblur="toUpperCase(this);"
-							value="#{customerAlias.to.registry.document}" size="16"
-							maxlength="16"/>
-						<t:selectOneRadio id="Customer_registry_type" 
-							value="#{customerAlias.to.registry.type}" 
-							onclick="submit();" disabled="#{!customerAlias.new}">
-							<f:selectItems value="#{registryCollections.registryTypes}" />
-						</t:selectOneRadio>	
-					</h:panelGrid>
+					<t:inputText id="Customer_document"
+						styleClass="aon-form-input-text" forceId="#{true}"
+						onblur="toUpperCase(this);"
+						value="#{customerAlias.to.registry.document}" size="16"
+						maxlength="16"/>
 
 					<t:outputLabel for="Customer_name"
 						styleClass="aon-form-input-text-label"
@@ -82,7 +75,6 @@
 						value="#{customerAlias.to.scope.id}">
 						<f:selectItems value="#{configCollections.currentUserScopes}" />
 					</h:selectOneMenu>
-
 				</h:panelGrid>
 
 				<h:panelGrid columns="2" cellpadding="0" cellspacing="0"
@@ -107,10 +99,20 @@
 						<f:selectItems value="#{customerCollections.customerSegments}" />
 					</h:selectOneMenu>
 
+					<h:outputLabel for="Customer_registry_type"
+						styleClass="aon-form-input-text-label"
+						value="#{registryBundle.aon_type}" />
+					<h:selectOneMenu id="Customer_registry_type"
+						styleClass="aon-form-selectOneMenu-field"
+						value="#{customerAlias.to.registry.type}"
+						onchange="submit();" disabled="#{!customerAlias.new}">
+						<f:selectItems value="#{registryCollections.registryTypes}" />
+					</h:selectOneMenu>
+
 					<h:outputLabel for="Customer_Person_BirthDate"
 						styleClass="aon-form-input-text-label"
 						value="#{registryBundle.aon_birth_date}" 
-						rendered="#{customerAlias.naturalType}"/>
+						rendered="#{customerAlias.naturalType}" />
 					<t:inputCalendar id="Customer_Person_BirthDate" size="8"
 						rendered="#{customerAlias.naturalType}"
 						value="#{customerAlias.person.birthDate}"
@@ -120,6 +122,14 @@
 						popupButtonStyleClass="aon-form-calendar-button"
 						popupTodayString="#{bundle.aon_popup_today}"
 						popupWeekString="#{bundle.aon_popup_week}" />
+					<t:outputLabel for="Customer_surcharge"
+						styleClass="aon-form-input-text-label"
+						value="#{customerBundle.customer_surcharge}"
+						rendered="#{!customerAlias.naturalType}" />
+					<h:selectBooleanCheckbox id="Customer_surcharge"
+						styleClass="aon-form-selectBooleanCheckbox-field"
+						value="#{customerAlias.to.surcharge}"
+						rendered="#{!customerAlias.naturalType}" />
 
 					<h:outputLabel for="Customer_Person_Gender"
 						rendered="#{customerAlias.naturalType}"
@@ -131,6 +141,14 @@
 						value="#{customerAlias.person.gender}">
 						<f:selectItems value="#{registryCollections.genders}" />
 					</h:selectOneMenu>
+					<t:outputLabel for="Customer_taxFree" 
+						styleClass="aon-form-input-text-label"
+						value="#{customerBundle.customer_taxfree}"
+						rendered="#{!customerAlias.naturalType}" />
+					<h:selectBooleanCheckbox id="Customer_taxFree" 
+						styleClass="aon-form-selectBooleanCheckbox-field"
+						value="#{customerAlias.to.taxFree}"		
+						rendered="#{!customerAlias.naturalType}" />
 
 					<h:outputLabel for="Customer_Person_MaritalStatus"
 						rendered="#{customerAlias.naturalType}"
@@ -142,25 +160,31 @@
 						value="#{customerAlias.person.maritalStatus}">
 						<f:selectItems value="#{registryCollections.maritalStatuses}" />
 					</h:selectOneMenu>
-
+					<t:outputLabel for="Customer_withholding" 
+						styleClass="aon-form-input-text-label"
+						value="#{customerBundle.customer_withholding}"
+						rendered="#{!customerAlias.naturalType}" />
+					<h:selectBooleanCheckbox id="Customer_withholding" 
+						styleClass="aon-form-selectBooleanCheckbox-field"
+						value="#{customerAlias.to.withholding}"
+						rendered="#{!customerAlias.naturalType}" />
 				</h:panelGrid>
-				
 			</h:panelGrid>
 
-				<h:panelGrid columns="2" cellpadding="0" cellspacing="0"
-					styleClass="aon-form-table"
-					columnClasses="aon-form-table-column-odd,aon-form-table-column-even">
-					
-					<h:outputLabel for="Observation"
-						styleClass="aon-form-input-text-label"
-						value="#{appBundle.aon_alumn_observation}" />
-					<t:inputTextarea id="Observation"
-						forceId="#{true}" 
-						styleClass="aon-form-input-text"
-						cols="95" rows="5"
-						value="#{customerObservation.observation.comments}" />
-					
-				</h:panelGrid>
+			<h:panelGrid columns="2" cellpadding="0" cellspacing="0"
+				styleClass="aon-form-table"
+				columnClasses="aon-form-table-column-odd,aon-form-table-column-even">
+				
+				<h:outputLabel for="Observation"
+					styleClass="aon-form-input-text-label"
+					value="#{appBundle.aon_alumn_observation}" />
+				<t:inputTextarea id="Observation"
+					forceId="#{true}" 
+					styleClass="aon-form-input-text"
+					cols="97" rows="5"
+					value="#{customerObservation.observation.comments}" />
+				
+			</h:panelGrid>
 
 			<t:div rendered="#{customerAlias.naturalType}">
 				<ui:include src="/facelet/customer/academic_data/grid.xhtml">
