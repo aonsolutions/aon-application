@@ -14,48 +14,12 @@
 	<ui:define name="content">
 
 		<aon:form id="surveyResponseForm">
-			<aon:div styleClass="aon-finding-title-toolbar">
-				<aon:panelGrid id="buttonsGrid" columns="3" dir="true"
-					columnClasses="aon-finding-title,aon-finding-subtitle,aon-finding-toolbar">
-
-					<aon:div styleClass="aon-finding-title-internal">
-						<aon:outputText value="#{marketingBundle.aon_marketing_surveis}" />
-					</aon:div>
-
-					<aon:div styleClass="aon-finding-subtitle-internal">
-						<aon:outputText
-							value="#{surveyResponse.new?(bundle.aon_reset):(bundle.aon_editing)}" />
-					</aon:div>
-
-					<!-- start toolbar navigation -->
-					<aon:div styleClass="aon-finding-toolbar-item-group">
-						<aon:confirmButton id="remove" value="#{bundle.aon_remove}"
-							rendered="#{!surveyResponse.new}"
-							styleClass="aon-finding-toolbar-item aon-icon-delete"
-							immediate="true" confirmTitle="#{bundle.aon_confirm_title}"
-							confirmMessage="#{bundle.aon_remove_confirm}"
-							confirmActionListener="#{surveyResponse.onRemove}"
-							confirmAction="surveyResponse_list"
-							accesskey="#{bundle.aon_key_remove}" />
-						<aon:commandButton id="search" value="#{bundle.aon_search}"
-							rendered="#{!surveyResponse.new}" immediate="true"
-							action="surveyResponse_search" actionListener="#{surveyResponse.onEditSearch}"
-							styleClass="aon-finding-toolbar-item aon-icon-search"
-							accesskey="#{bundle.aon_key_search}" />														
-						<aon:commandButton id="back" value="#{bundle.aon_back}"
-							rendered="#{!surveyResponse.new}" immediate="true"
-							styleClass="aon-finding-toolbar-item aon-icon-cancel"
-							actionListener="#{surveyResponse.onCancel}"
-							action="surveyResponse_list"
-							accesskey="#{bundle.aon_key_cancel}" />
-							
-						<aon:spin controller="#{surveyResponse}" action="surveyResponse_form" rendered="#{!surveyResponse.new}" />
-							
-					</aon:div>
-
-					<!-- end toolbar navigation -->
-				</aon:panelGrid>
-			</aon:div>
+		
+			<ui:include src="/facelet/shared/formToolbar.xhtml" >
+				<ui:param name="toolbarTitle" value="#{marketingBundle.aon_marketing_survey_responses}" />
+				<ui:param name="controller" value="#{surveyResponse}" />
+				<ui:param name="skipSaveButton" value="true" />
+			</ui:include>
 
 			<aon:div styleClass="aon-scroll-area">
 			
