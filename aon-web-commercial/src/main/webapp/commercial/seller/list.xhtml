@@ -15,33 +15,10 @@
 
 		<aon:form id="sellerList">
 		
-			<aon:div styleClass="aon-finding-title-toolbar">
-				<aon:panelGrid id="buttonsGrid" columns="3" dir="true"
-					columnClasses="aon-finding-title,aon-finding-subtitle,aon-finding-toolbar">
-
-					<aon:div styleClass="aon-finding-title-internal">
-						<aon:outputText value="#{menuBundle.aon_sellers}" />
-					</aon:div>
-
-					<aon:div styleClass="aon-finding-subtitle-internal">
-						<aon:outputText value="#{bundle.aon_listing}" />
-					</aon:div>
-
-					<!-- start toolbar navigation -->
-					<aon:div styleClass="aon-finding-toolbar-item-group">
-						<aon:commandButton id="search" value="#{bundle.aon_search}"
-							action="seller_search" actionListener="#{seller.onEditSearch}"
-							styleClass="aon-finding-toolbar-item aon-icon-search"
-							accesskey="#{bundle.aon_key_search}" />				
-						<aon:commandButton id="reset" value="#{bundle.aon_reset}"
-							action="seller_form" actionListener="#{seller.onReset}"
-							styleClass="aon-finding-toolbar-item aon-icon-new"
-							accesskey="#{bundle.aon_key_new}" />
-					</aon:div>
-
-					<!-- end toolbar navigation -->
-				</aon:panelGrid>
-			</aon:div>
+			<ui:include src="/facelet/shared/listToolbar.xhtml" >
+				<ui:param name="toolbarTitle" value="#{menuBundle.aon_sellers}" />
+				<ui:param name="controller" value="#{seller}" />
+			</ui:include>
 
 			<!--  aon-region-body -->
 			<aon:div styleClass="aon-scroll-area">
