@@ -11,7 +11,7 @@
 				action="#{searchAction}" actionListener="#{searchActionListener}"
 				styleClass="aon-finding-toolbar-item aon-icon-search"
 				accesskey="#{bundle.aon_key_search}" />
-			<c:if test="#{!readOnly}">								
+			<c:if test="#{!skipResetButton}">								
 				<aon:commandButton value="#{bundle.aon_reset}"
 					action="#{resetAction}" actionListener="#{resetActionListener}"
 					styleClass="aon-finding-toolbar-item aon-icon-new"

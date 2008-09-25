@@ -25,8 +25,8 @@
 
 				<aon:dataTable id="campaignData" value="#{campaign.model}"
 					var="to" rows="20" rendered="#{campaign.model.rowCount > 0}"
-					columnClasses="aon-editDataTable-numberColumn aon-width-70, aon-editDataTable-textColumn aon-width-150,
-						aon-editDataTable-textColumn, aon-editDataTable-iconColumn">
+					columnClasses="aon-editDataTable-numberColumn aon-width-70, aon-editDataTable-textColumn,
+						aon-editDataTable-iconColumn">
 
 					<aon:rowSelector action="campaign_form" actionListener="#{campaign.onSelect}" />
 					
