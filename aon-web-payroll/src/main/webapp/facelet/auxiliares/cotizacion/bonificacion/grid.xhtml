@@ -223,7 +223,7 @@
 								</aon:inputText>
 							</f:facet>
 						</aon:column>
-						<!-- 
+ 
 						<aon:column>
 							<f:facet name="header">
 								<aon:outputText value="#{appBundle.aon_payroll_auxiliares_cotizacion__tipboni_boniss}" />
@@ -232,14 +232,10 @@
 								styleClass="#{(to.boniss=='S')?'aon-icon aon-icon-checked':'aon-icon aon-icon-check'}" 
 								rendered="#{to!=cotizacionBonificacion.to}" />
 							<aon:selectBooleanCheckbox rendered="#{to==cotizacionBonificacion.to}"
-									value="#{cotizacionBonificacion.to.boniss}" >
-								<f:converter converterId="checkboxConverter" />
-							</aon:selectBooleanCheckbox>
+									value="#{cotizacionBonificacion.to.bonissbol}" />
 							<f:facet name="footer">
 								<aon:selectBooleanCheckbox rendered="#{cotizacionBonificacion.new}"
-										value="#{cotizacionBonificacion.to.boniss}" >
-									<f:converter converterId="checkboxConverter" />
-								</aon:selectBooleanCheckbox>
+										value="#{cotizacionBonificacion.to.bonissbol}" />
 							</f:facet>
 						</aon:column>
 						
@@ -251,14 +247,10 @@
 								styleClass="#{(to.mayor60=='S')?'aon-icon aon-icon-checked':'aon-icon aon-icon-check'}" 
 								rendered="#{to!=cotizacionBonificacion.to}" />
 							<aon:selectBooleanCheckbox rendered="#{to==cotizacionBonificacion.to}"
-									value="#{cotizacionBonificacion.to.mayor60}" >
-								<f:converter converterId="checkboxConverter" />
-							</aon:selectBooleanCheckbox>
+									value="#{cotizacionBonificacion.to.mayor60bol}" />
 							<f:facet name="footer">
 								<aon:selectBooleanCheckbox rendered="#{cotizacionBonificacion.new}"
-										value="#{cotizacionBonificacion.to.mayor60}" >
-									<f:converter converterId="checkboxConverter" />
-								</aon:selectBooleanCheckbox>
+										value="#{cotizacionBonificacion.to.mayor60bol}" />
 							</f:facet>
 						</aon:column>
 						
@@ -270,14 +262,10 @@
 								styleClass="#{(to.rdl052006=='S')?'aon-icon aon-icon-checked':'aon-icon aon-icon-check'}" 
 								rendered="#{to!=cotizacionBonificacion.to}" />
 							<aon:selectBooleanCheckbox rendered="#{to==cotizacionBonificacion.to}"
-									value="#{cotizacionBonificacion.to.rdl052006}" >
-								<f:converter converterId="checkboxConverter" />
-							</aon:selectBooleanCheckbox>
+									value="#{cotizacionBonificacion.to.rdl052006bol}" />
 							<f:facet name="footer">
 								<aon:selectBooleanCheckbox rendered="#{cotizacionBonificacion.new}"
-										value="#{cotizacionBonificacion.to.rdl052006}" >
-									<f:converter converterId="checkboxConverter" />
-								</aon:selectBooleanCheckbox>
+										value="#{cotizacionBonificacion.to.rdl052006bol}" />
 							</f:facet>
 						</aon:column>
 						
@@ -289,16 +277,12 @@
 								styleClass="#{(to.restait=='S')?'aon-icon aon-icon-checked':'aon-icon aon-icon-check'}" 
 								rendered="#{to!=cotizacionBonificacion.to}" />
 							<aon:selectBooleanCheckbox rendered="#{to==cotizacionBonificacion.to}"
-									value="#{cotizacionBonificacion.to.restait}" >
-								<f:converter converterId="checkboxConverter" />
-							</aon:selectBooleanCheckbox>
+									value="#{cotizacionBonificacion.to.restaitbol}" />
 							<f:facet name="footer">
 								<aon:selectBooleanCheckbox rendered="#{cotizacionBonificacion.new}"
-										value="#{cotizacionBonificacion.to.restait}" >
-									<f:converter converterId="checkboxConverter" />
-								</aon:selectBooleanCheckbox>
+										value="#{cotizacionBonificacion.to.restaitbol}" />
 							</f:facet>
-						</aon:column>-->
+						</aon:column>
 	
 						<aon:column>
 							<f:facet name="header">

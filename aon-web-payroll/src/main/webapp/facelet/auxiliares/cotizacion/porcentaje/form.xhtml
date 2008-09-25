@@ -29,7 +29,7 @@
 					<!-- start toolbar navigation -->
 					<aon:div styleClass="aon-finding-toolbar-item-group">
 						<aon:commandButton id="save" value="#{bundle.aon_save}"
-							action="cotizacion_porcentaje_form"
+							action="cotizacion_porcentaje"
 							actionListener="#{porcentajeMaestro.accept}"
 							styleClass="aon-finding-toolbar-item aon-icon-accept"
 							accesskey="#{bundle.aon_key_save}" />
@@ -52,7 +52,7 @@
 
 						<aon:commandButton id="reset" value="#{bundle.aon_reset}"
 							rendered="#{!porcentajeMaestro.new}"
-							action="cotizacion_porcentaje_form" 
+							action="cotizacion_porcentaje" 
 							actionListener="#{porcentajeMaestro.onReset}"
 							styleClass="aon-finding-toolbar-item aon-icon-newMailAccount"
 							accesskey="#{bundle.aon_key_new}" />
@@ -62,7 +62,7 @@
 							styleClass="aon-finding-toolbar-item aon-icon-search"
 							accesskey="#{bundle.aon_key_search}" />														
 
-						<aon:spin controller="#{porcentajeMaestro}" action="cotizacion_porcentaje_form" rendered="#{!porcentajeMaestro.new}" />
+						<aon:spin controller="#{porcentajeMaestro}" action="cotizacion_porcentaje" rendered="#{!porcentajeMaestro.new}" />
 
 						<ui:include src="/facelet/templates/aon.ui.printbuttons.xhtml">
 							<ui:param name="manager" value="#{porcentajeMaestro}"/>

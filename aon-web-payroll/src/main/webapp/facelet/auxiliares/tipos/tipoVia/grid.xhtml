@@ -58,29 +58,10 @@
 								confirmTitle="#{bundle.aon_confirm_title}" confirmMessage="#{bundle.aon_remove_confirm}"
 								confirmActionListener="#{tiposVia.onRemove}"
 								accesskey="#{bundle.aon_key_remove}"/>
-							<h:commandLink id="export2pdf" value="."
-									title="#{appBundle.aon_payroll_export_label} #{appBundle.aon_payroll_to} #{appBundle.aon_payroll_pdf_label}"
-									styleClass="aon-finding-toolbar-item aon-icon-pdf"
-									action="#{report.onExecute}" rendered="#{!tiposVia.new}" 
-									target="_blank">
-								<f:param name="reportKey" value="tiposViaList" />
-							</h:commandLink>
-							<h:commandLink id="export2excel" value="."
-									title="#{appBundle.aon_payroll_export_label} #{appBundle.aon_payroll_to} #{appBundle.aon_payroll_excel_label}"
-									styleClass="aon-finding-toolbar-item aon-icon-excel"
-									action="#{report.onExecute}" rendered="#{!tiposVia.new}" 
-									target="_blank">
-								<f:param name="reportKey" value="tiposViaList" />
-								<f:param name="outputFormat" value="MS Excel" />
-							</h:commandLink>
-							<h:commandLink id="export2csv" value="."
-									title="#{appBundle.aon_payroll_export_label} #{appBundle.aon_payroll_to} #{appBundle.aon_payroll_csv_label}"
-									styleClass="aon-finding-toolbar-item aon-icon-excel"
-									action="#{report.onExecute}" rendered="#{!tiposVia.new}"
-									target="_blank">
-								<f:param name="reportKey" value="tiposViaList" />
-								<f:param name="outputFormat" value="CSV" />
-							</h:commandLink>
+							<ui:include src="/facelet/templates/aon.ui.printbuttons.xhtml">
+								<ui:param name="manager" value="#{tiposVia}"/>
+								<ui:param name="reportKey" value="tiposViaList"/>
+							</ui:include>
 						</aon:div>
 					</aon:panelGrid>
 				</aon:div>

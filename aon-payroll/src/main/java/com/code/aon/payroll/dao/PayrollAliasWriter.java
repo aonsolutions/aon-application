@@ -6,6 +6,7 @@ import java.io.IOException;
 import com.code.aon.common.dao.AliasWriter;
 import com.code.aon.payroll.auxiliares.Admon;
 import com.code.aon.payroll.auxiliares.Colectivos;
+import com.code.aon.payroll.auxiliares.contratos.ContratosInternos;
 import com.code.aon.payroll.cotizacion.Bonificacion;
 import com.code.aon.payroll.cotizacion.Porcentaje;
 import com.code.aon.payroll.cotizacion.PorcentajeMaestro;
@@ -33,6 +34,7 @@ public class PayrollAliasWriter {
 	public static void main(String[] args) throws IOException {
 		File file = new File("/AON-PROJECT/aon-payroll/src/main/java/com/code/aon/payroll/dao/IPayrollAlias.java");
 		String[] classes = new String[] {
+				ContratosInternos.class.getName(), 
 				PorcentajeMaestro.class.getName(), 
 				Porcentaje.class.getName(),
 				Documento.class.getName(),
