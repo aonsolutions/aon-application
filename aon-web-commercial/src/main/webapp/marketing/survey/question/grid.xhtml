@@ -51,7 +51,9 @@
 					<aon:outputText value="#{marketingBundle.aon_marketing_question}" />
 				</f:facet>
 				<aon:outputText value="#{to.question.text}"
-					rendered="#{to!=surveyQuestion.to}" />
+					rendered="#{to!=surveyQuestion.to}" >
+					<aon:abbreviateConverter maxWidth="80" />
+				</aon:outputText>
 				<aon:div styleClass="aon-lookup" rendered="#{to==surveyQuestion.to}">
 					<aon:lookupInputText
 						lookup="#{questionLookup}" required="true"

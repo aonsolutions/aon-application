@@ -48,7 +48,9 @@
 						<f:facet name="header">
 							<aon:outputText value="#{marketingBundle.aon_marketing_question}" />
 						</f:facet>
-						<aon:outputText value="#{question.textAbbreviated}"/>
+						<aon:outputText value="#{to.text}">
+							<aon:abbreviateConverter maxWidth="80" />
+						</aon:outputText>
 					</aon:column>
 
  					<aon:column>
