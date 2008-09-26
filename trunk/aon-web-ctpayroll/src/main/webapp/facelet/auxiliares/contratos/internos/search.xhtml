@@ -15,7 +15,7 @@
 					columnClasses="aon-finding-title,aon-finding-subtitle,aon-finding-toolbar">
 
 					<aon:div styleClass="aon-finding-title-internal">
-						<aon:outputText value="#{menuBundle.auxiliares_tipos__tipdoc}" />
+						<aon:outputText value="#{menuBundle.auxiliares_contratos__tipocont}" />
 					</aon:div>
 
 					<aon:div styleClass="aon-finding-subtitle-internal">
@@ -49,6 +49,11 @@
 						value="#{appBundle.aon_payroll_description}" />
 					<aon:inputText id="ContratosInternos_description" size="60" maxlength="45"
 						valueChangeListener="#{contratosInternos.addExpression}" />
+						
+					<aon:outputLabel value="#{appBundle.aon_payroll_asimiladoa}" />
+					<aon:selectOneMenu id="Asimilados" value="#{contratosInternos.to.porcentajeMaestro.cdg}">
+						<f:selectItems value="#{contratosInternos.asimilados}" />
+					</aon:selectOneMenu>
 				</ui:define>
 			</ui:decorate>
 

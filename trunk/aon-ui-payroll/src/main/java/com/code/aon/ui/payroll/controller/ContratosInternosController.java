@@ -18,7 +18,7 @@ import com.code.aon.payroll.enumeration.Desempleado;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionUtilities;
 
-public class ContratosInternos extends PayrollBasicController {
+public class ContratosInternosController extends PayrollBasicController {
 
 	private List<SelectItem> asimilados;
 	private List<SelectItem> desempleados;

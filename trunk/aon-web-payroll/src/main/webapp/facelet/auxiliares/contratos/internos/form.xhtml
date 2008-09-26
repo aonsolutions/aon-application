@@ -18,7 +18,7 @@
 					columnClasses="aon-finding-title,aon-finding-subtitle,aon-finding-toolbar">
 
 					<aon:div styleClass="aon-finding-title-internal">
-						<aon:outputText value="#{menuBundle.auxiliares_cotizacion__porcoti}" />
+						<aon:outputText value="#{menuBundle.auxiliares_contratos__tipocont}" />
 					</aon:div>
 
 					<aon:div styleClass="aon-finding-subtitle-internal">
@@ -62,6 +62,11 @@
 							accesskey="#{bundle.aon_key_search}" />				
 
 						<aon:spin controller="#{contratosInternos}" action="contratos_internos" rendered="#{!contratosInternos.new}" />
+						
+						<ui:include src="/facelet/templates/aon.ui.printbuttons.xhtml">
+							<ui:param name="manager" value="#{contratosInternos}"/>
+							<ui:param name="reportKey" value="contratosInternosList"/>
+						</ui:include>
 
 					</aon:div>
 					<!-- end tool bar navigation -->
@@ -74,13 +79,14 @@
 					<aon:inputText value="#{contratosInternos.to.cdg}" disabled="#{!contratosInternos.new}" 
 						required="true" size="1" maxlength="2" />
 				
-					<aon:outputLabel for="Domain_name" value="#{appBundle.aon_payroll_description}" />
+					<aon:outputLabel value="#{appBundle.aon_payroll_description}" />
 					<aon:inputText value="#{contratosInternos.to.description}" 
 						required="true" size="90" maxlength="60" >
 					</aon:inputText>
 
 					<aon:outputLabel value="#{appBundle.aon_payroll_asimiladoa}" />
-					<aon:selectOneMenu id="Asimilados" value="#{contratosInternos.to.porcentajeMaestro.cdg}">
+					<aon:selectOneMenu id="Asimilados"
+						value="#{contratosInternos.to.porcentajeMaestro.cdg}">
 						<f:selectItems value="#{contratosInternos.asimilados}" />
 					</aon:selectOneMenu>
 

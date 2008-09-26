@@ -424,7 +424,7 @@
 	<!-- ************* CONTRATOS ***************** -->
 	<managed-bean>
 		<managed-bean-name>contratosInternos</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.payroll.controller.ContratosInternos</managed-bean-class>
+		<managed-bean-class>com.code.aon.ui.payroll.controller.ContratosInternosController</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
 			<property-name>queryOnStartUP</property-name>
