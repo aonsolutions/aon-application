@@ -3,7 +3,8 @@
 
 	<property name="mgr" value="aon-security-mgr" />
 	<property name="client" value="aon.security" />
-	<property name="version" value="1.6.1" />
+	<property name="version" value="1.7.0" />
+	<property name="vendor" value="Consulting &amp; Development" />
 	<property name="jar.valve.name" value="valve-${version}" />
 
     <property name="src.dir" value="src/main/java" />
@@ -357,6 +358,12 @@
 			depends="compile-tomcat-6.0.x, security-client.jar">
 	    <!-- Build aon-security-mgr.jar -->
 		<jar jarfile="${tomcat.6.home}/lib/${mgr}-${version}.jar">
+			<manifest>
+				<attribute name="Built-By" value="${user.name}"/>
+				<attribute name="Implementation-Title" value="${mgr}"/>
+				<attribute name="Implementation-Version" value="${version}"/> 
+				<attribute name="Implementation-Vendor" value="${vendor}"/>
+			</manifest>
   	      <fileset dir="${build.dir}">
   	        <include name="com/code/aon/**"/>
   	      	<exclude name="com/code/aon/jaas/auth/Utilities.*" />
@@ -397,8 +404,13 @@
   	      	<exclude name="com/code/aon/jaas/vendor/tomcat/**" />
 	      </fileset>
 	    </jar>
-    	<jar jarfile="${jboss.server.home}/deploy/${mgr}-${version}.sar">
-
+    	<jar jarfile="${jboss.server.home}/deploy/${mgr}.sar">
+			<manifest>
+				<attribute name="Built-By" value="${user.name}"/>
+				<attribute name="Implementation-Title" value="${mgr}"/>
+				<attribute name="Implementation-Version" value="${version}"/> 
+				<attribute name="Implementation-Vendor" value="${vendor}"/>
+			</manifest>
 			<fileset dir="${commons.beanutils.home}">
 				<include name="commons-beanutils.jar"/>
 			</fileset>
@@ -433,8 +445,14 @@
 		<mkdir dir="${ldap.dir}" />
 		<copy file="${resources.dir}/META-INF/jboss-service.xml.ldap"
 			tofile="${ldap.dir}/META-INF/jboss-service.xml"/>
-    	<jar jarfile="${jboss.server.home}/deploy/${mgr}-ldap-${version}.sar">
-			<fileset dir="${commons.beanutils.home}">
+		<jar jarfile="${jboss.server.home}/deploy/${mgr}-ldap.sar">
+			<manifest>
+				<attribute name="Built-By" value="${user.name}"/>
+				<attribute name="Implementation-Title" value="${mgr}"/>
+				<attribute name="Implementation-Version" value="${version}"/> 
+				<attribute name="Implementation-Vendor" value="${vendor}"/>
+			</manifest>
+    		<fileset dir="${commons.beanutils.home}">
 				<include name="commons-beanutils.jar"/>
 			</fileset>
        		<fileset dir="${commons.digester.home}">
