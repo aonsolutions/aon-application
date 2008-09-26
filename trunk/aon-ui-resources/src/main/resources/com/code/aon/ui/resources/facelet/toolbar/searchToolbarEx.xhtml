@@ -16,10 +16,12 @@
 					styleClass="aon-finding-toolbar-item aon-icon-reset"
 					accesskey="#{bundle.aon_key_new}" />
 			</c:if>
-			<aon:commandButton value="#{bundle.aon_back}"
-				action="#{backAction}" actionListener="#{backActionListener}"
-				styleClass="aon-finding-toolbar-item aon-icon-cancel" immediate="true"
-				accesskey="#{bundle.aon_key_cancel}" />			
+			<c:if test="#{!skipBackButton}">
+				<aon:commandButton value="#{bundle.aon_back}"
+					action="#{backAction}" actionListener="#{backActionListener}"
+					styleClass="aon-finding-toolbar-item aon-icon-cancel" immediate="true"
+					accesskey="#{bundle.aon_key_cancel}" />			
+			</c:if>
 		</ui:define>
 	</ui:decorate>
 	
