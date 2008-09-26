@@ -99,6 +99,7 @@ public abstract class BackDoorAuthenticationValve extends ValveBase implements I
 				String username = bdp.getPrincipal().getShortName() + IConstants.IDENTITY_SEPARATOR 
 								+ bdp.getPrincipal().getDomain() + request.getContextPath();
 				List<String> roles = getRoles( request.getContextPath() );
+				LOGGER.debug( "Registering: " + username + ", with the following roles: " + roles );
 				register( request, new AonGenericPrincipal( request, username, bdp.getPassword(), roles ), AUTH_TYPE );
 			}
 		}

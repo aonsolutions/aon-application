@@ -34,10 +34,10 @@ import org.apache.commons.logging.LogFactory;
  * @author iayerbe
  *
  */
-public class SecurityValve extends ValveBase {
+public class JBPMAuthenticationValve extends ValveBase {
 
 	/** SecurityValve Log */
-	private static final Log LOGGER = LogFactory.getLog( SecurityValve.class.getName() );
+	private static final Log LOGGER = LogFactory.getLog( JBPMAuthenticationValve.class.getName() );
 
 	/* (non-Javadoc)
 	 * @see org.apache.catalina.valves.ValveBase#invoke(org.apache.catalina.connector.Request, org.apache.catalina.connector.Response)
