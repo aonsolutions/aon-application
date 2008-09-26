@@ -3,51 +3,24 @@ package com.code.aon.ui.marketing.controller;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import javax.faces.component.UIComponent;
-import javax.faces.context.FacesContext;
-import javax.faces.convert.Converter;
 import javax.faces.event.ActionEvent;
-import javax.faces.event.ValueChangeEvent;
 
 import com.code.aon.common.ManagerBeanException;
-import com.code.aon.marketing.Question;
 import com.code.aon.marketing.dao.IMarketingAlias;
-import com.code.aon.marketing.enumeration.QuestionType;
 import com.code.aon.ql.ast.Expression;
 import com.code.aon.ql.util.ExpressionUtilities;
-import com.code.aon.ui.converter.EnumLocaleConverter;
 import com.code.aon.ui.form.BasicController;
 
 /**
  * Controller used in the offer maintenance.
  */
-public class QuestionController extends BasicController {
+public class CampaignController extends BasicController {
 	
-	private static final Logger LOGGER = Logger.getLogger(QuestionController.class.getName());
+	private static final Logger LOGGER = Logger.getLogger(CampaignController.class.getName());
 	
 	private boolean statusActive;
 	
 	private boolean statusInactive;
-	
-	public Question getQuestion() {
-		return (Question) getTo();
-	}
-	
-	public boolean isBoolean() {
-		return getQuestion().getType() == QuestionType.BOOLEAN;
-	}
-
-	public boolean isDate() {
-		return getQuestion().getType() == QuestionType.DATE;
-	}
-
-	public boolean isText() {
-		return getQuestion().getType() == QuestionType.TEXT;
-	}
-
-	public boolean isNumber() {
-		return getQuestion().getType() == QuestionType.NUMBER;
-	}
 	
 	@Override
 	public void onEditSearch(ActionEvent event) {
@@ -73,7 +46,7 @@ public class QuestionController extends BasicController {
 	private void completeStatusCriteria() throws ManagerBeanException {
 		if (isStatusActive() || isStatusInactive()) {
 			Expression expToAdd = null;
-			String alias = getFieldName(IMarketingAlias.QUESTION_ACTIVE);
+			String alias = getFieldName(IMarketingAlias.SURVEY_ACTIVE);
 			if ( isStatusActive() ) {
 				expToAdd = ExpressionUtilities.getEqualExpression(alias,
 						Boolean.TRUE);
@@ -110,23 +83,5 @@ public class QuestionController extends BasicController {
 	public void setStatusInactive(boolean statusInactive) {
 		this.statusInactive = statusInactive;
 	}
-	
-	public void addEqualExpression(ValueChangeEvent event) throws ManagerBeanException {
-		if (event.getNewValue() != null) {
-			String fieldName = getFieldName(event.getComponent().getId());
-			getCriteria().addEqualExpression(fieldName, event.getNewValue());
-		}
-	}
-	
-	public Converter getTypeConverter() {
-		return new EnumLocaleConverter() {
-
-			@Override
-			protected Class getEnumClass(FacesContext ctx, UIComponent comp) {
-				return QuestionType.class;
-			}
-			
-		};
-	}
-	
+		
 }
