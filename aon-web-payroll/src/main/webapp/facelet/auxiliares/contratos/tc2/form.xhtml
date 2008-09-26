@@ -62,6 +62,11 @@
 							accesskey="#{bundle.aon_key_search}" />				
 
 						<aon:spin controller="#{contratosTc2}" action="contratos_tc2" rendered="#{!contratosTc2.new}" />
+						
+						<ui:include src="/facelet/templates/aon.ui.printbuttons.xhtml">
+							<ui:param name="manager" value="#{contratosTc2}"/>
+							<ui:param name="reportKey" value="contratosTc2List"/>
+						</ui:include>
 
 					</aon:div>
 					<!-- end tool bar navigation -->

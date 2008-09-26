@@ -256,4 +256,27 @@
 			<param id="companyName" value="#{payrollController.getCompanyName}" />
 		</params>
 	</report>
+	
+	<!--  *********  Impresion a PDF de los Contratos internos  ********* -->
+	<report id="contratosInternosList" description="Listado de Contratos internos">
+		<template path="/com/code/aon/ui/payroll/report/contratosInternosList.jasper" />
+		<bean key="com.code.aon.payroll.auxiliares.contratos.ContratosInternos" />
+		<criteria provider="#{contratosInternos}" />
+		<params>
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.payroll.i18n.messages" />
+			<param id="logoImageFile" value="#{payrollController.getLogo}" />
+			<param id="companyName" value="#{payrollController.getCompanyName}" />
+		</params>
+	</report>
+	<!--  *********  Impresion a PDF de los Contratos tc2  ********* -->
+	<report id="contratosTc2List" description="Listado de Contratos TC2">
+		<template path="/com/code/aon/ui/payroll/report/contratosTc2List.jasper" />
+		<bean key="com.code.aon.payroll.auxiliares.contratos.ContratosTc2" />
+		<criteria provider="#{contratosTc2}" />
+		<params>
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.payroll.i18n.messages" />
+			<param id="logoImageFile" value="#{payrollController.getLogo}" />
+			<param id="companyName" value="#{payrollController.getCompanyName}" />
+		</params>
+	</report>
 </report-config>
