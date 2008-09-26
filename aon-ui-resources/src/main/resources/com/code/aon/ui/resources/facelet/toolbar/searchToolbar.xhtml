@@ -1,0 +1,14 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:aon="http://www.code.es/aon-rich-components">
+
+	<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/searchToolbarEx.xhtml" >
+		<aon:methodParam name="backActionListener" value="#{controller.onCancel}" type="actionListener" />
+		<aon:methodParam name="backAction" value="#{controller.beanName}_list" resolve="true" />		
+		<aon:methodParam name="resetActionListener" value="#{controller.onReset}" type="actionListener" />
+		<aon:methodParam name="resetAction" value="#{controller.beanName}_form" resolve="true" />									
+	</ui:include>
+	
+</ui:composition>
