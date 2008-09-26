@@ -595,6 +595,16 @@ color:#000;
 		background:transparent url(images/aon-icon/aon-icon-tree-root.png) scroll left center no-repeat;
 	}
 
+/*  report icon  */
+.aon-icon-pdf{
+	background:transparent url(images/aon-icon/aon-icon-pdf-file.png) scroll left center no-repeat;
+}
+.aon-icon-excel{
+	background:transparent url(images/aon-icon/aon-icon-excel-file.png) scroll left center no-repeat;
+}
+.aon-icon-csv{
+	background:transparent url(images/aon-icon/aon-icon-csv-file.png) scroll left center no-repeat;
+}
 /******* GROUP  **********/
 #aon-content  .aon-form-group{
 	margin:1em 0;
