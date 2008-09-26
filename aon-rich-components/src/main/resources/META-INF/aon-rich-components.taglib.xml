@@ -548,4 +548,10 @@
 			com.code.aon.faces.component.methodParam.MethodParamHandler
 		</handler-class>
 	</tag>
+   <tag>
+      <tag-name>abbreviateConverter</tag-name>
+      <converter>
+         <converter-id>com.code.aon.faces.AbbreviateConverter</converter-id>
+      </converter>
+   </tag>	
 </facelet-taglib>

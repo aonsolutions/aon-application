@@ -217,4 +217,12 @@
             <renderer-class>com.code.aon.faces.component.richfaces.inputRichText.InputRichtTextRenderer</renderer-class>
         </renderer>
     </render-kit>
+	<converter>
+		<converter-id>com.code.aon.faces.AbbreviateConverter</converter-id>
+		<converter-class>com.code.aon.faces.component.converter.AbbreviateConverter</converter-class>
+		<property>
+			<property-name>maxWidth</property-name>
+			<property-class>java.lang.Integer</property-class>
+		</property>
+	</converter>    
 </faces-config>
