@@ -19,7 +19,7 @@
 		</managed-property>
 		<managed-property>
 			<property-name>listPagePath</property-name>
-			<value>/audit/lookup/application/list.xhtml</value>
+			<value>/audit/application/lookup/list.xhtml</value>
 		</managed-property>
 	</managed-bean>
 
