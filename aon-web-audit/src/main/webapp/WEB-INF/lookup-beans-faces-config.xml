@@ -15,7 +15,7 @@
 		</managed-property>
 		<managed-property>
 			<property-name>foreignPojo</property-name>
-			<value>com.code.aon.audit.Application.java</value>
+			<value>com.code.aon.audit.Application</value>
 		</managed-property>
 		<managed-property>
 			<property-name>listPagePath</property-name>
