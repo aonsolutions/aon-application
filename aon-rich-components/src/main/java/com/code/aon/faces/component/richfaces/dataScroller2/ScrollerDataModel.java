@@ -4,11 +4,11 @@ import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
 import javax.faces.model.DataModel;
 
-import org.apache.commons.lang.ObjectUtils;
-
 public class ScrollerDataModel extends DataModel {
 
 	private DataModel model;
+	
+	private int rowCount;
 	
 	private int currentPage;
 	
@@ -26,11 +26,16 @@ public class ScrollerDataModel extends DataModel {
 		return model;
 	}
 
+	private boolean isDataModelChanged( DataModel model ) {
+		return (this.model != model) || (this.model.getRowCount() != this.rowCount);
+	}
+	
 	public void setModel(DataModel model) {
-		if (! ObjectUtils.equals(this.model, model) ) {
+		if ( isDataModelChanged(model) ) {
 			this.currentPage = 0;
 		}
 		this.model = model;
+		this.rowCount = model.getRowCount();
 	}
 
 	@Override
