@@ -14,40 +14,13 @@
 	<ui:define name="content">
 
 		<aon:form id="sessionForm">
-			<aon:div styleClass="aon-finding-title-toolbar">
-				<aon:panelGrid id="buttonsGrid" columns="3" dir="true"
-					columnClasses="aon-finding-title,aon-finding-subtitle,aon-finding-toolbar">
 
-					<aon:div styleClass="aon-finding-title-internal">
-						<aon:outputText value="#{menuBundle.aon_sessions}" />
-					</aon:div>
-
-					<aon:div styleClass="aon-finding-subtitle-internal">
-						<aon:outputText
-							value="#{auditSession.new?(bundle.aon_reset):(bundle.aon_editing)}" />
-					</aon:div>
-
-					<!-- start toolbar navigation -->
-					<aon:div styleClass="aon-finding-toolbar-item-group">
-						<aon:commandButton id="search" value="#{bundle.aon_search}"
-							rendered="#{!auditSession.new}" immediate="true"
-							action="session_search" actionListener="#{auditSession.onEditSearch}"
-							styleClass="aon-finding-toolbar-item aon-icon-search"
-							accesskey="#{bundle.aon_key_search}" />														
-						<aon:commandButton id="back" value="#{bundle.aon_back}"
-							rendered="#{!auditSession.new}" immediate="true"
-							styleClass="aon-finding-toolbar-item aon-icon-cancel"
-							actionListener="#{auditSession.onCancel}"
-							action="session_list"
-							accesskey="#{bundle.aon_key_cancel}" />
-							
-						<aon:spin controller="#{auditSession}" action="session_form" rendered="#{!auditSession.new}" />
-							
-					</aon:div>
-
-					<!-- end toolbar navigation -->
-				</aon:panelGrid>
-			</aon:div>
+			<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml" >
+				<ui:param name="toolbarTitle" value="#{menuBundle.aon_sessions}" />
+				<ui:param name="controller" value="#{auditSession}" />
+				<ui:param name="skipSaveButton" value="true" />
+				<ui:param name="skipRemoveButton" value="true" />
+			</ui:include>
 
 			<aon:div styleClass="aon-scroll-area">
 				<aon:panelGrid id="menuGrid" columns="2" dir="true" width="100%">
