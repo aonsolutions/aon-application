@@ -115,6 +115,18 @@
 			<from-outcome>campaign_search</from-outcome>
 			<to-view-id>/marketing/campaign/search.xhtml</to-view-id>
 		</navigation-case>
+	</navigation-rule>			
+	
+	<!-- =================== Campaign Action ================= -->	
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>campaignAction_list</from-outcome>
+			<to-view-id>/marketing/campaign/form.xhtml</to-view-id>
+		</navigation-case>	
+		<navigation-case>
+			<from-outcome>campaignAction_form</from-outcome>
+			<to-view-id>/marketing/action/form.xhtml</to-view-id>
+		</navigation-case>
 	</navigation-rule>				
 
 	<!-- =================== Communication Center ================= -->	

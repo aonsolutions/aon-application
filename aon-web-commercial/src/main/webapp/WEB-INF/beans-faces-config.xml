@@ -818,7 +818,7 @@
 	<!-- ************ CAMPAIGN ************** -->
 	<managed-bean>
 		<managed-bean-name>campaign</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.form.BasicController</managed-bean-class>
+		<managed-bean-class>com.code.aon.ui.marketing.controller.CampaignController</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
 			<property-name>queryOnStartUP</property-name>
@@ -832,15 +832,76 @@
 			<property-name>beanName</property-name>
 			<value>campaign</value> 
 		</managed-property>
-		<!-- 
 		<managed-property>
 			<property-name>listenerClasses</property-name>
 			<list-entries>
 				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
-				<value>#{surveyResponseDetailListener}</value>
+				<value>#{campaignActionListener}</value>
 			</list-entries>
 		</managed-property>
-		-->
 	</managed-bean>		
+
+	<managed-bean>
+		<managed-bean-name>campaignActionListener</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.form.listener.MasterControllerListener
+		</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+		<managed-property>
+			<property-name>childBean</property-name>
+			<value>campaignAction</value>
+		</managed-property>
+		<managed-property>
+			<property-name>aliasMap</property-name>
+			<map-entries>
+				<map-entry>
+					<key>Action_campaign_id</key>
+                    <value>id</value>
+				</map-entry>
+			</map-entries>
+		</managed-property>
+	</managed-bean>
+	
+	<managed-bean>
+		<managed-bean-name>campaignChildListener</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.form.listener.ChildControllerListener
+		</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+		<managed-property>
+			<property-name>masterBean</property-name>
+			<value>campaign</value>
+		</managed-property>
+		<managed-property>
+			<property-name>masterPropertyName</property-name>
+			<value>campaign</value>
+		</managed-property>
+	</managed-bean>			
+	
+	<!-- ************ CAMPAIGN ACTION ************** -->
+	<managed-bean>
+		<managed-bean-name>campaignAction</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.form.BasicController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.marketing.Action</value>
+		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>campaignAction</value> 
+		</managed-property>
+		<managed-property>
+			<property-name>listenerClasses</property-name>
+			<list-entries>
+				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+				<value>#{campaignChildListener}</value>
+			</list-entries>
+		</managed-property>		
+	</managed-bean>
 
 </faces-config>

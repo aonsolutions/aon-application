@@ -55,7 +55,7 @@ public class Action implements ITransferObject {
 
 	@ManyToOne (fetch=FetchType.EAGER)
     @JoinColumn( name="survey" )	
-	@ForeignKey(name = "FK_MK_ACTION_MK_CAMPAIGN")
+	@ForeignKey(name = "FK_MK_ACTION_SURVEY")
 	private Survey survey;
 	
     /**

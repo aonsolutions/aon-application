@@ -46,7 +46,7 @@ public class CampaignController extends BasicController {
 	private void completeStatusCriteria() throws ManagerBeanException {
 		if (isStatusActive() || isStatusInactive()) {
 			Expression expToAdd = null;
-			String alias = getFieldName(IMarketingAlias.SURVEY_ACTIVE);
+			String alias = getFieldName(IMarketingAlias.CAMPAIGN_ACTIVE);
 			if ( isStatusActive() ) {
 				expToAdd = ExpressionUtilities.getEqualExpression(alias,
 						Boolean.TRUE);
