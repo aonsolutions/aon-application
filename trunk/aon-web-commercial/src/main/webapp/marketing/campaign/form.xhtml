@@ -43,15 +43,14 @@
 
 				</aon:panelGrid>
 
-				<!-- 
-				<aon:panelTabSet rendered="#{!campaign.new}">
-
-					<aon:panelTab name="campaignQuestion" label="#{marketingBundle.aon_marketing_questions}">
-						<ui:include src="/marketing/campaign/question/grid.xhtml" />
-                    </aon:panelTab>
-
-				</aon:panelTabSet>
-				-->
+				<aon:div styleClass="aon-form-group" rendered="#{!campaign.new}">
+					<aon:div styleClass="aon-form-group-title">
+						<aon:div styleClass="aon-form-group-title-internal">
+							<aon:outputLabel for="campaignActionData" value="#{marketingBundle.aon_marketing_actions}" />
+						</aon:div>
+					</aon:div>
+					<ui:include src="/marketing/action/list.xhtml" />
+				</aon:div>
 
 			</aon:div>
 		</aon:form>
