@@ -94,7 +94,7 @@ public class ScrollerDataModel extends DataModel {
 	}
 
 	public int getLast() {
-		int last = (this.currentPage+1) * getPageSize();
+		int last = (getPageSize()==0)?(this.currentPage+1):(this.currentPage+1) * getPageSize();
 		return Math.min(last, getRowCount());
 	}
 	
@@ -137,6 +137,9 @@ public class ScrollerDataModel extends DataModel {
 	
     private int getLastPage() {
     	if ( getRowCount() > 0 ) {
+    		if (getPageSize() == 0) {
+    			return 1;
+    		}
     		return (getRowCount()-1) / getPageSize();
     	}
     	return 0;
