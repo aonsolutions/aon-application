@@ -11,34 +11,10 @@
 
 		<aon:form id="favoriteSearch">
 
-			<aon:div styleClass="aon-finding-title-toolbar">
-				<aon:panelGrid columns="3" dir="true" 				
-					columnClasses="aon-finding-title,aon-finding-subtitle,aon-finding-toolbar">				
-								
-					<aon:div styleClass="aon-finding-title-internal">
-						<aon:outputText value="#{groupwareBundle.aon_favorite}" />
-					</aon:div>						
-		
-					<aon:div styleClass="aon-finding-subtitle-internal">
-						<aon:outputText value="#{bundle.aon_toolbar_search}" />
-					</aon:div>				
-		
-					<aon:div styleClass="aon-finding-toolbar-item-group">
-						<aon:commandButton id="clear" value="#{bundle.aon_clear}"
-							type="reset" ajaxSingle="true"
-							styleClass="aon-finding-toolbar-item aon-icon-rubber" />					
-						<aon:commandButton id="reset" value="#{bundle.aon_reset}"
-							action="favorite_form" actionListener="#{favorite.onReset}"
-							styleClass="aon-finding-toolbar-item aon-icon-reset"
-							accesskey="#{bundle.aon_key_new}" />
-						<aon:commandButton id="back" value="#{bundle.aon_back}"
-							action="favorite_list" actionListener="#{favorite.onCancel}"
-							styleClass="aon-finding-toolbar-item aon-icon-cancel"
-							immediate="true" accesskey="#{bundle.aon_key_cancel}" />	
-					</aon:div>
-				</aon:panelGrid>
-			</aon:div>
-			<!-- end toolbar navigation -->
+			<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/searchToolbar.xhtml" >
+				<ui:param name="toolbarTitle" value="#{groupwareBundle.aon_favorite}" />
+				<ui:param name="controller" value="#{favorite}" />
+			</ui:include>
 
 			<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/searchContent.xhtml" >
 				<ui:define name="searchContent">
