@@ -463,7 +463,7 @@
 	<managed-bean>
 		<managed-bean-name>taxRetentionLookup</managed-bean-name>
 		<managed-bean-class>
-			com.code.aon.ui.form.LookupController
+			com.code.aon.ui.product.controller.RetentionLookupController
 		</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
@@ -476,7 +476,7 @@
 		</managed-property>
 		<managed-property>
 			<property-name>aliasPrefix</property-name>
-			<value>Tax_retention_Lookup</value>
+			<value>Tax</value>
 		</managed-property>
 		<managed-property>
 			<property-name>foreignJoinProperties</property-name>
