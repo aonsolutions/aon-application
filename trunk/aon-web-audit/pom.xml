@@ -34,13 +34,13 @@
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.rich.components</artifactId>
-			<version>1.5.0</version>
+			<version>1.6.0</version>
 			<scope>compile</scope>
 		</dependency>		
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.resources</artifactId>
-			<version>1.5.0</version>
+			<version>1.6.0</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
