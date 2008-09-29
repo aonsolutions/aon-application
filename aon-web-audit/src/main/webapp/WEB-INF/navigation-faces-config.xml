@@ -24,15 +24,15 @@
 	<!-- =================== Application ================= -->	
 	<navigation-rule>
 		<navigation-case>
-			<from-outcome>application_list</from-outcome>
+			<from-outcome>auditApplication_list</from-outcome>
 			<to-view-id>/audit/application/list.xhtml</to-view-id>
 		</navigation-case>
 		<navigation-case>
-			<from-outcome>application_form</from-outcome>
+			<from-outcome>auditApplication_form</from-outcome>
 			<to-view-id>/audit/application/form.xhtml</to-view-id>
 		</navigation-case>
 		<navigation-case>
-			<from-outcome>application_search</from-outcome>
+			<from-outcome>auditApplication_search</from-outcome>
 			<to-view-id>/audit/application/search.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>		
@@ -56,15 +56,15 @@
 	<!-- =================== Session ================= -->	
 	<navigation-rule>
 		<navigation-case>
-			<from-outcome>session_list</from-outcome>
+			<from-outcome>auditSession_list</from-outcome>
 			<to-view-id>/audit/session/list.xhtml</to-view-id>
 		</navigation-case>
 		<navigation-case>
-			<from-outcome>session_form</from-outcome>
+			<from-outcome>auditSession_form</from-outcome>
 			<to-view-id>/audit/session/form.xhtml</to-view-id>
 		</navigation-case>
 		<navigation-case>
-			<from-outcome>session_search</from-outcome>
+			<from-outcome>auditSession_search</from-outcome>
 			<to-view-id>/audit/session/search.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>		
@@ -72,7 +72,7 @@
 	<!-- =================== Application Menu Navigation Rules ================= -->
 	<navigation-rule>
 		<navigation-case>
-			<from-outcome>application</from-outcome>
+			<from-outcome>auditApplication</from-outcome>
 			<to-view-id>/audit/application/list.xhtml</to-view-id>
 		</navigation-case>
 		<navigation-case>
@@ -80,7 +80,7 @@
 			<to-view-id>/audit/domain/list.xhtml</to-view-id>
 		</navigation-case>
 		<navigation-case>
-			<from-outcome>session</from-outcome>
+			<from-outcome>auditSession</from-outcome>
 			<to-view-id>/audit/session/list.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>
