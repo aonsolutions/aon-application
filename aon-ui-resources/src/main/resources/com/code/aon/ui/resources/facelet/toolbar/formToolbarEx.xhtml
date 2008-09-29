@@ -32,11 +32,13 @@
 					confirmAction="#{removeAction}"
 					accesskey="#{bundle.aon_key_remove}" />
 			</c:if>
-			<aon:commandButton value="#{bundle.aon_search}"
-				rendered="#{!formNew}" immediate="true"
-				action="#{searchAction}" actionListener="#{searchActionListener}"
-				styleClass="aon-finding-toolbar-item aon-icon-search"
-				accesskey="#{bundle.aon_key_search}" />														
+			<c:if test="#{!skipSearchButton}">			
+				<aon:commandButton value="#{bundle.aon_search}"
+					rendered="#{!formNew}" immediate="true"
+					action="#{searchAction}" actionListener="#{searchActionListener}"
+					styleClass="aon-finding-toolbar-item aon-icon-search"
+					accesskey="#{bundle.aon_key_search}" />
+			</c:if>														
 			<aon:commandButton value="#{bundle.aon_back}"
 				rendered="#{!formNew}" immediate="true"
 				styleClass="aon-finding-toolbar-item aon-icon-cancel"
