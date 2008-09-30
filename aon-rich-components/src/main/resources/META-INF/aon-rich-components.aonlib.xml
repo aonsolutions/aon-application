@@ -105,7 +105,8 @@
 	</component>
 
 	<component localName="selectOneRadio">
-    	<attribute name="styleClass" value="aon-selectOneRadio" />			
+    	<attribute name="styleClass" value="aon-selectOneRadio" />
+    	<attribute name="partialSubmit" value="onclick" ignore="true"/>			
 	</component>
 
 	<component localName="selectBooleanCheckbox">
