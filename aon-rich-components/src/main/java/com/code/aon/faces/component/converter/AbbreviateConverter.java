@@ -1,12 +1,13 @@
 package com.code.aon.faces.component.converter;
 
+import javax.faces.component.StateHolder;
 import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 import javax.faces.convert.Converter;
 
 import org.apache.commons.lang.StringUtils;
 
-public class AbbreviateConverter implements Converter {
+public class AbbreviateConverter implements Converter, StateHolder {
 
 	private Integer maxWidth;
 	
@@ -48,6 +49,34 @@ public class AbbreviateConverter implements Converter {
 
 	public void setMaxWidth(Integer maxWidth) {
 		this.maxWidth = maxWidth;
+	}
+
+    // ----------------------------------------------------- StateHolder Methods
+
+	
+	@Override
+	public void restoreState(FacesContext context, Object state) {
+        Object values[] = (Object[]) state;
+        maxWidth = (Integer) values[0];		
+	}
+
+	@Override
+	public Object saveState(FacesContext context) {
+        Object values[] = new Object[1];
+        values[0] = this.maxWidth;
+        return (values);
+	}	
+	
+	private boolean transientFlag = false;
+	
+	@Override
+	public boolean isTransient() {
+		return transientFlag;
+	}
+
+	@Override
+	public void setTransient(boolean newTransientValue) {
+		this.transientFlag = newTransientValue;
 	}
 	
 }
