@@ -56,7 +56,7 @@
 						value="#{marketingBundle.aon_marketing_survey}" />
 					<aon:div styleClass="aon-lookup">
 						<aon:lookupInputText id="CommunicationCenter_survey_id"
-							lookup="#{surveyLookup}"
+							lookup="#{surveyLookup}" required="true"
 							reRender="CommunicationCenter_survey_detail"
 							value="#{communicationCenter.survey.id}" size="5">
 						</aon:lookupInputText>
@@ -76,7 +76,7 @@
 					<aon:div>
 						<aon:div styleClass="aon-lookup">
 							<aon:lookupInputText id="CommunicationCenter_target_id"
-								lookup="#{targetLookup}"
+								lookup="#{targetLookup}" required="true"
 								reRender="CommunicationCenter_target_detail"
 								value="#{communicationCenter.target.id}" size="5">
 							</aon:lookupInputText>
