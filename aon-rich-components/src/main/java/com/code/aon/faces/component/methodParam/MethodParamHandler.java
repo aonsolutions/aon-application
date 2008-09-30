@@ -5,9 +5,13 @@ import java.io.IOException;
 import javax.el.ELException;
 import javax.el.MethodExpression;
 import javax.el.ValueExpression;
+import javax.el.VariableMapper;
 import javax.faces.FacesException;
 import javax.faces.component.UIComponent;
 
+import org.apache.commons.lang.StringUtils;
+
+import com.code.aon.faces.component.param.ParamHandler;
 import com.code.aon.faces.component.util.FaceletUtil;
 import com.code.aon.faces.component.util.MethodValueExpression;
 import com.sun.facelets.FaceletContext;
@@ -18,10 +22,6 @@ import com.sun.facelets.tag.TagHandler;
 
 public class MethodParamHandler extends TagHandler {
 
-	private static final String VALUE = "value";
-
-	private static final String NAME = "name";
-	
 	private static final String TYPE = "type";
 	
 	private static final String RESOLVE = "resolve";
@@ -45,7 +45,7 @@ public class MethodParamHandler extends TagHandler {
 	 */
 	public MethodParamHandler(TagConfig config) {
 		super(config);
-		this.name = this.getRequiredAttribute(NAME);
+		this.name = this.getRequiredAttribute(ParamHandler.NAME);
 	}
 	
 	private void resolveTypes( FaceletContext ctx ) {
@@ -81,27 +81,47 @@ public class MethodParamHandler extends TagHandler {
 
 	private ValueExpression getResolvedMethodExpression( FaceletContext ctx, TagAttribute valueTag, Class type, Class[] paramTypes ) {
 		String expression = valueTag.getValue(ctx);
-		ValueExpression ve = FaceletUtil.getValueExpression(ctx, expression, Object.class );
-		MethodExpression methodExpression = FaceletUtil.getMethodExpression( ctx, expression, type, paramTypes );
-		return new MethodValueExpression( ve, methodExpression );
+		ValueExpression valueVE = null;
+		if ( StringUtils.isBlank(expression) ) {
+			valueVE = FaceletUtil.getMethodEmptyExpression(ctx, name.getValue(ctx), returnType, paramTypes);
+		} else {
+			ValueExpression ve = FaceletUtil.getValueExpression(ctx, expression, Object.class );
+			MethodExpression methodExpression = FaceletUtil.getMethodExpression( ctx, expression, type, paramTypes );
+			valueVE = new MethodValueExpression( ve, methodExpression );			
+		}
+		return valueVE;
+	}
+	
+	private ValueExpression getValueExmpression( FaceletContext ctx, String nameStr, TagAttribute tag ) {
+		ValueExpression valueVE = null;
+		if ( (tag == null) || (StringUtils.isBlank(tag.getValue())) ) {
+			valueVE = FaceletUtil.getMethodEmptyExpression(ctx, nameStr, returnType, paramTypes);
+		} else {
+			if ( isResolve(ctx) ) {
+				valueVE = getResolvedMethodExpression(ctx, tag, returnType, paramTypes);
+			} else {
+				valueVE = FaceletUtil.getMethodExpression(ctx, tag, returnType, paramTypes);
+			}			
+		}
+		return valueVE;
 	}
 	
 	public void apply(FaceletContext ctx, UIComponent parent)
 			throws IOException, FacesException, FaceletException, ELException {
 		String nameStr = this.name.getValue(ctx);
+		VariableMapper mapper = ctx.getVariableMapper();
 		resolveTypes(ctx);
 		ValueExpression valueVE = null;
-		TagAttribute valueTag = getAttribute(VALUE);
-		if ( valueTag != null ) {
-			if ( isResolve(ctx) ) {
-				valueVE = getResolvedMethodExpression(ctx, valueTag, returnType, paramTypes);
-			} else {
-				valueVE = FaceletUtil.getMethodExpression(ctx, valueTag, returnType, paramTypes);
-			}
+		TagAttribute defaultTag = getAttribute(ParamHandler.DEFAULT);
+		if ( defaultTag != null ) {
+        	if ( mapper.resolveVariable(nameStr) == null ) {
+        		valueVE = getValueExmpression(ctx, nameStr, defaultTag);      		
+        	}			
 		} else {
-			valueVE = FaceletUtil.getMethodEmptyExpression(ctx, nameStr, returnType, paramTypes);
+			TagAttribute valueTag = getAttribute(ParamHandler.VALUE);
+			valueVE = getValueExmpression(ctx, nameStr, valueTag);
 		}
-		ctx.getVariableMapper().setVariable(nameStr, valueVE);
+		mapper.setVariable(nameStr, valueVE);
 	}
 
 }
