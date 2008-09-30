@@ -5,7 +5,7 @@
 	xmlns:aon="http://www.code.es/aon-rich-components">
 
 	<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml" >
-		<ui:param name="toolbarDescription" value="#{bundle.aon_toolbar_search}" />
+		<aon:param name="toolbarDescription" default="#{bundle.aon_toolbar_search}" />
 		<ui:define name="toolbarContent">
 			<aon:commandButton value="#{bundle.aon_clear}"
 				type="reset" ajaxSingle="true"

@@ -5,17 +5,18 @@
 	xmlns:aon="http://www.code.es/aon-rich-components">
 
 	<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/formToolbarEx.xhtml" >
-		<ui:param name="formNew" value="#{controller.new}" />
-		<aon:methodParam name="saveActionListener" value="#{controller.accept}" type="actionListener" />
-		<aon:methodParam name="saveAction" value="#{controller.beanName}_form" resolve="true" />			
-		<aon:methodParam name="cancelActionListener" value="#{controller.onCancel}" type="actionListener" />
-		<aon:methodParam name="cancelAction" value="#{controller.beanName}_list" resolve="true" />			
-		<aon:methodParam name="removeActionListener" value="#{controller.onRemove}" type="actionListener" />
-		<aon:methodParam name="removeAction" value="#{controller.beanName}_list" resolve="true" />			
-		<aon:methodParam name="searchActionListener" value="#{controller.onEditSearch}" type="actionListener" />
-		<aon:methodParam name="searchAction" value="#{controller.beanName}_search" resolve="true" />			
-		<aon:methodParam name="backActionListener" value="#{controller.onCancel}" type="actionListener" />
-		<aon:methodParam name="backAction" value="#{controller.beanName}_list" resolve="true" />									
+		<aon:param name="formNew" default="#{controller.new}" />
+		<aon:param name="idSuffix" default="#{controller.beanName}" />
+		<aon:methodParam name="saveActionListener" default="#{controller.accept}" type="actionListener" />
+		<aon:methodParam name="saveAction" default="#{controller.beanName}_form" resolve="true" />			
+		<aon:methodParam name="cancelActionListener" default="#{controller.onCancel}" type="actionListener" />
+		<aon:methodParam name="cancelAction" default="#{controller.beanName}_list" resolve="true" />			
+		<aon:methodParam name="removeActionListener" default="#{controller.onRemove}" type="actionListener" />
+		<aon:methodParam name="removeAction" default="#{controller.beanName}_list" resolve="true" />			
+		<aon:methodParam name="searchActionListener" default="#{controller.onEditSearch}" type="actionListener" />
+		<aon:methodParam name="searchAction" default="#{controller.beanName}_search" resolve="true" />			
+		<aon:methodParam name="backActionListener" default="#{controller.onCancel}" type="actionListener" />
+		<aon:methodParam name="backAction" default="#{controller.beanName}_list" resolve="true" />									
 	</ui:include>
 	
 </ui:composition>
