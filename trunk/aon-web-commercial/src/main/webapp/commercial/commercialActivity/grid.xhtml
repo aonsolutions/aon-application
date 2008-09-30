@@ -14,53 +14,11 @@
 		<aon:form id="commercialActivityList">
 
 			<aon:div ajaxRendered="true" layout="none">
-
-				<aon:div styleClass="aon-finding-title-toolbar">
-					<aon:panelGrid columns="3" dir="true"
-						columnClasses="aon-finding-title,aon-finding-subtitle,aon-finding-toolbar">
-
-						<aon:div styleClass="aon-finding-title-internal">
-							<aon:outputText value="#{menuBundle.aon_commercial_activities}" />
-						</aon:div>
-
-						<aon:div styleClass="aon-finding-subtitle-internal">
-							<aon:outputText value="#{bundle.aon_editing}" />
-						</aon:div>
-
-						<aon:div styleClass="aon-finding-toolbar-item-group">
-							<aon:commandButton id="reset" value="#{bundle.aon_reset}"
-								actionListener="#{commercialActivity.onReset}"
-								rendered="#{!commercialActivity.new}"
-								styleClass="aon-finding-toolbar-item aon-icon-reset"
-								accesskey="#{bundle.aon_key_new}" />
-							<aon:commandButton id="save" value="#{bundle.aon_save}"
-								actionListener="#{commercialActivity.onAccept}"
-								rendered="#{commercialActivity.to!=null or commercialActivity.new}"
-								styleClass="aon-finding-toolbar-item aon-icon-accept"
-								accesskey="#{bundle.aon_key_new}" />
-							<aon:confirmButton id="cancelNew" value="#{bundle.aon_cancel}"
-								rendered="#{commercialActivity.new}"
-								styleClass="aon-finding-toolbar-item aon-icon-cancel"
-								immediate="true" confirmTitle="#{bundle.aon_confirm_title}"
-								confirmMessage="#{bundle.aon_cancel_confirm}"
-								confirmActionListener="#{commercialActivity.onCancel}"
-								accesskey="#{bundle.aon_key_cancel}" />
-							<aon:commandButton id="cancelEdit" value="#{bundle.aon_cancel}"
-								rendered="#{commercialActivity.to!=null and (!commercialActivity.new)}"
-								styleClass="aon-finding-toolbar-item aon-icon-cancel"
-								immediate="true" actionListener="#{commercialActivity.onCancel}"
-								accesskey="#{bundle.aon_key_cancel}" />
-							<aon:confirmButton id="remove" value="#{bundle.aon_remove}"
-								rendered="#{commercialActivity.to!=null and !commercialActivity.new}"
-								styleClass="aon-finding-toolbar-item aon-icon-delete"
-								immediate="true" confirmTitle="#{bundle.aon_confirm_title}"
-								confirmMessage="#{bundle.aon_remove_confirm}"
-								confirmActionListener="#{commercialActivity.onRemove}"
-								accesskey="#{bundle.aon_key_remove}" />
-						</aon:div>
-					</aon:panelGrid>
-				</aon:div>
-				<!-- end toolbar navigation -->
+			
+				<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/gridToolbar.xhtml" >
+					<ui:param name="toolbarTitle" value="#{menuBundle.aon_commercial_activities}" />
+					<ui:param name="controller" value="#{commercialActivity}" />
+				</ui:include>			
 
 				<!--  aon-region-body -->
 				<aon:div styleClass="aon-scroll-area">
