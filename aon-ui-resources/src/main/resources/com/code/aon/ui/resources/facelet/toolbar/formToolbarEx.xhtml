@@ -14,14 +14,16 @@
 					styleClass="aon-finding-toolbar-item aon-icon-accept"
 					accesskey="#{bundle.aon_key_save}" />
 			</c:if>
-			<aon:confirmButton id="cancel" value="#{bundle.aon_cancel}"
-				rendered="#{formNew}" immediate="true" 
-				styleClass="aon-finding-toolbar-item aon-icon-cancel"
-				confirmTitle="#{bundle.aon_confirm_title}"
-				confirmMessage="#{bundle.aon_cancel_confirm}"
-				confirmActionListener="#{cancelActionListener}"
-				confirmAction="#{cancelAction}"
-				accesskey="#{bundle.aon_key_cancel}" />
+			<c:if test="#{!skipCancelButton}">
+				<aon:confirmButton id="cancel" value="#{bundle.aon_cancel}"
+					rendered="#{formNew}" immediate="true" 
+					styleClass="aon-finding-toolbar-item aon-icon-cancel"
+					confirmTitle="#{bundle.aon_confirm_title}"
+					confirmMessage="#{bundle.aon_cancel_confirm}"
+					confirmActionListener="#{cancelActionListener}"
+					confirmAction="#{cancelAction}"
+					accesskey="#{bundle.aon_key_cancel}" />
+			</c:if>				
 			<c:if test="#{!skipRemoveButton}">				
 				<aon:confirmButton id="remove" value="#{bundle.aon_remove}"
 					rendered="#{!formNew}" immediate="true"
