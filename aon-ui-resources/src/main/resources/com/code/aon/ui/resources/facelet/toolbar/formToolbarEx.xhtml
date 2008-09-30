@@ -47,6 +47,8 @@
 				action="#{backAction}"
 				accesskey="#{bundle.aon_key_cancel}" />
 				
+			<ui:insert name="beforeSpinToolbarContent"/>				
+				
 			<c:if test="#{controller != null}">
 				<aon:spin controller="#{controller}" action="#{saveAction}" rendered="#{!formNew}" />
 			</c:if>
