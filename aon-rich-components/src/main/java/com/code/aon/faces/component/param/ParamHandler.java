@@ -32,14 +32,9 @@ public class ParamHandler extends TagHandler {
         this.name = this.getRequiredAttribute(NAME);
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see com.sun.facelets.FaceletHandler#apply(com.sun.facelets.FaceletContext,
-     *      javax.faces.component.UIComponent)
-     */
-    public void apply(FaceletContext ctx, UIComponent parent)
-            throws IOException, FacesException, FaceletException, ELException {
+	@Override
+	public void apply(FaceletContext ctx, UIComponent parent)
+			throws IOException, FacesException, FaceletException, ELException {
         String nameStr = this.name.getValue(ctx);
         VariableMapper mapper = ctx.getVariableMapper();
         TagAttribute defaultTag = getAttribute(DEFAULT);
@@ -53,6 +48,6 @@ public class ParamHandler extends TagHandler {
             ValueExpression valueVE = value.getValueExpression(ctx, Object.class);
             mapper.setVariable(nameStr, valueVE);
         }
-    }
+	}
     
 }

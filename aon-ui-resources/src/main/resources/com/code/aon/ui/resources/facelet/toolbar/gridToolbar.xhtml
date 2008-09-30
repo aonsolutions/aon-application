@@ -5,10 +5,11 @@
 	xmlns:aon="http://www.code.es/aon-rich-components">
 
 	<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/gridToolbarEx.xhtml" >
-		<aon:param name="formNew" default="#{controller.new}" />
-		<aon:param name="formEdit" default="#{controller.to != null}" />
-		<aon:param name="idSuffix" default="#{controller.beanName}" />
-		<aon:param name="skipSearchButton" default="true" />
+		<aon:valueParam name="toolbarDescription" default="#{bundle.aon_editing}" />	
+		<aon:valueParam name="formNew" default="#{controller.new}" />
+		<aon:valueParam name="formEdit" default="#{controller.to != null}" />
+		<aon:valueParam name="idSuffix" default="#{controller.beanName}" />
+		<aon:valueParam name="skipSearchButton" default="true" />
 		<aon:methodParam name="resetActionListener" default="#{controller.onReset}" type="actionListener" />
 		<aon:methodParam name="resetAction" default="" />											
 		<aon:methodParam name="saveActionListener" default="#{controller.onAccept}" type="actionListener" />

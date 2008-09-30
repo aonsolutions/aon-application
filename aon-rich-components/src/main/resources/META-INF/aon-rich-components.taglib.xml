@@ -544,15 +544,11 @@
 	</tag>
 	<tag>
 		<tag-name>methodParam</tag-name>
-		<handler-class>
-			com.code.aon.faces.component.methodParam.MethodParamHandler
-		</handler-class>
+		<handler-class>com.code.aon.faces.component.methodParam.MethodParamHandler</handler-class>
 	</tag>
 	<tag>
-		<tag-name>param</tag-name>
-		<handler-class>
-			com.code.aon.faces.component.param.ParamHandler
-		</handler-class>
+		<tag-name>valueParam</tag-name>
+		<handler-class>com.code.aon.faces.component.param.ParamHandler</handler-class>
 	</tag>
    <tag>
       <tag-name>abbreviateConverter</tag-name>
