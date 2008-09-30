@@ -1,8 +1,10 @@
 package com.code.aon.ui.resources;
 
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.logging.Logger;
 
+import com.code.aon.common.net.DummyHandler;
 import com.sun.facelets.impl.DefaultResourceResolver;
 import com.sun.facelets.impl.ResourceResolver;
 
@@ -30,6 +32,11 @@ public class TemplateResolver extends DefaultResourceResolver
             }
             url = Thread.currentThread().getContextClassLoader().
                     getResource(path);
+    		try {
+    			url = new URL(null, url.toExternalForm(), new DummyHandler() );
+    		} catch (MalformedURLException e) {
+    			LOGGER.severe( e.getMessage() );
+    		}           
         }
         return url;
     }
