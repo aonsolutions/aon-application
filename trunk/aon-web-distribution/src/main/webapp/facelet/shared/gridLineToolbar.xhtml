@@ -1,0 +1,64 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html">
+<body>
+
+<ui:composition>
+
+	<h:column>
+		<f:facet name="header">
+			<f:verbatim>&#160;</f:verbatim>
+		</f:facet>
+
+		<t:commandButton title="#{bundle.aon_accept}"
+			actionListener="#{controller.onAccept}"
+			onclick="return (confirm('#{bundle.aon_accept_confirm}'));"
+			styleClass="aon-edit-table-icon-button aon-edit-table-icon-button-save"
+			value=""
+			rendered="#{to.id==controller.to.id}"
+			accesskey="#{bundle.aon_key_save_line}" />
+
+		<t:commandButton title="#{bundle.aon_cancel}"
+			actionListener="#{controller.onCancel}" immediate="#{true}"
+			onclick="return (confirm('#{bundle.aon_cancel_confirm}'));"
+			styleClass="aon-edit-table-icon-button aon-edit-table-icon-button-cancel"
+			value=""
+			accesskey="#{bundle.aon_key_cancel_line}"
+			rendered="#{to.id==controller.to.id}" />
+
+		<t:commandButton title="#{bundle.aon_remove}"
+			actionListener="#{controller.onRemove}"
+			onclick="return (confirm('#{bundle.aon_remove_confirm}'));"
+			styleClass="aon-edit-table-icon-button aon-edit-table-icon-button-delete"
+			value=""
+			accesskey="#{bundle.aon_key_remove_line}"
+			rendered="#{to.id==controller.to.id}" />
+		<f:verbatim rendered="#{to.id!=controller.to.id}">&#160;</f:verbatim>
+		<f:facet name="footer">
+			<t:div>
+				<f:verbatim rendered="#{!controller.new}">&#160;</f:verbatim>
+				<t:commandButton title="#{bundle.aon_accept}"
+					actionListener="#{controller.onAccept}"
+					onclick="return (confirm('#{bundle.aon_accept_confirm}'));"
+					styleClass="aon-edit-table-icon-button aon-edit-table-icon-button-save"
+					value=""
+					accesskey="#{bundle.aon_key_save_line}" rendered="#{controller.new}" />
+
+				<t:commandButton title="#{bundle.aon_cancel}"
+					actionListener="#{controller.onCancel}" immediate="#{true}"
+					onclick="return (confirm('#{bundle.aon_cancel_confirm}'));"
+					styleClass="aon-edit-table-icon-button aon-edit-table-icon-button-cancel"
+					value="" accesskey="#{bundle.aon_key_cancel_line}"
+					rendered="#{controller.new}" />
+			</t:div>
+		</f:facet>
+	</h:column>
+
+</ui:composition>
+
+</body>
+</html>
+
