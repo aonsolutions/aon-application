@@ -650,6 +650,10 @@
 			<value>com.code.aon.marketing.QuestionValue</value>
 		</managed-property>
 		<managed-property>
+			<property-name>beanName</property-name>
+			<value>questionValue</value> 
+		</managed-property>		
+		<managed-property>
 			<property-name>listenerClasses</property-name>
 			<list-entries>
 				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
@@ -731,6 +735,10 @@
 			<property-name>pojo</property-name>
 			<value>com.code.aon.marketing.SurveyQuestion</value>
 		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>surveyQuestion</value> 
+		</managed-property>		
 		<managed-property>
 			<property-name>listenerClasses</property-name>
 			<list-entries>

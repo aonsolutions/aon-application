@@ -103,7 +103,8 @@ public class CommercialTrackingController extends BasicController {
 	}
 
 	public void setNext(CommercialTracking next) {
-		this.next = next;
+		this.next = ( next.getId() != null ) ? next : null;
+		setNextAction( this.next != null );
 	}	
 
 	public void nextActionChanged( ValueChangeEvent event ) {
