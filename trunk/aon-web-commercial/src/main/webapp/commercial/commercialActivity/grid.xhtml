@@ -23,103 +23,39 @@
 				<!--  aon-region-body -->
 				<aon:div styleClass="aon-scroll-area">
 
-					<aon:editDataTable id="commercialActivityData" var="to" rows="20"
-						rendered="#{(commercialActivity.model.rowCount > 0) or (commercialActivity.new)}"
-						value="#{commercialActivity.model}"
-						columnClasses="aon-editDataTable-iconColumn,aon-width-60, aon-editDataTable-textColumn, aon-editDataTable-buttonsColumn">
-
-						<aon:rowSelector toggleOnClick="#{commercialActivity.to == null}"
-							actionListener="#{commercialActivity.onSelect}" />
-
-						<aon:column>
-							<f:facet name="header">
-								<aon:outputText value="&#160;" />
-							</f:facet>
-							<aon:outputText value="&#160;" />
-							<f:facet name="footer">
-								<aon:div>
-									<aon:commandButton alt="[#{bundle.aon_reset}]"
-										styleClass="aon-editDataTable-button aon-icon-reset"
-										actionListener="#{commercialActivity.onReset}" value=""
-										rendered="#{!commercialActivity.new}"
-										accesskey="#{bundle.aon_key_new_line}" />
-								</aon:div>
-							</f:facet>
-						</aon:column>
-
-						<aon:column>
-							<f:facet name="header">
-								<aon:outputText
-									value="#{bundle.aon_id}" />
-							</f:facet>
-							<aon:outputText value="#{to.id}" />
-							<f:facet name="footer">
-								<aon:outputText value="&#160;" />
-							</f:facet>
-						</aon:column>
-
-						<aon:column>
-							<f:facet name="header">
-								<aon:outputText
-									value="#{bundle.aon_name}" />
-							</f:facet>
-							<aon:outputText value="#{to.name}"
-								rendered="#{to!=commercialActivity.to}" />
-							<aon:inputText styleClass="aon-form-input-text " required="true"
-								rendered="#{to==commercialActivity.to}" size="32"
-								value="#{commercialActivity.to.name}" maxlength="32" />
-							<f:facet name="footer">
-								<aon:inputText styleClass="aon-form-input-text" required="true"
-									rendered="#{commercialActivity.new}" size="32"
+					<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/grid.xhtml" >
+						<ui:param name="controller" value="#{commercialActivity}" />
+						<ui:param name="columnClasses" value="aon-width-60, aon-editDataTable-textColumn" />
+						<ui:define name="columns">
+							<aon:column>
+								<f:facet name="header">
+									<aon:outputText
+										value="#{bundle.aon_id}" />
+								</f:facet>
+								<aon:outputText value="#{to.id}" />
+								<f:facet name="footer">
+									<aon:outputText value="&#160;" />
+								</f:facet>
+							</aon:column>
+	
+							<aon:column>
+								<f:facet name="header">
+									<aon:outputText
+										value="#{bundle.aon_name}" />
+								</f:facet>
+								<aon:outputText value="#{to.name}"
+									rendered="#{to!=commercialActivity.to}" />
+								<aon:inputText styleClass="aon-form-input-text " required="true"
+									rendered="#{to==commercialActivity.to}" size="32"
 									value="#{commercialActivity.to.name}" maxlength="32" />
-							</f:facet>
-						</aon:column>
-
-						<aon:column>
-							<f:facet name="header">
-								<aon:outputText value="&#160;" />
-							</f:facet>
-							<aon:div>
-								<f:verbatim rendered="#{to!=commercialActivity.to}">&#160;</f:verbatim>
-								<aon:commandButton title="[#{bundle.aon_accept}]"
-									actionListener="#{commercialActivity.onAccept}"
-									rendered="#{to==commercialActivity.to}"
-									styleClass="aon-editDataTable-button aon-icon-accept"
-									accesskey="#{bundle.aon_key_save_line}" />
-								<aon:commandButton title="[#{bundle.aon_cancel}]"
-									styleClass="aon-editDataTable-button aon-icon-cancel"
-									rendered="#{to==commercialActivity.to}"
-									actionListener="#{commercialActivity.onCancel}" immediate="true"
-									accesskey="#{bundle.aon_key_cancel_line}" />
-								<aon:confirmButton title="[#{bundle.aon_remove}]" id="removeInline"
-									styleClass="aon-editDataTable-button aon-icon-delete"
-									rendered="#{to==commercialActivity.to}"
-									confirmTitle="#{bundle.aon_confirm_title}"
-									confirmMessage="#{bundle.aon_remove_confirm}"
-									confirmActionListener="#{commercialActivity.onRemove}" immediate="true"
-									accesskey="#{bundle.aon_key_remove_line}" />
-							</aon:div>
-							<f:facet name="footer">
-								<aon:div>
-									<f:verbatim rendered="#{!commercialActivity.new}">&#160;</f:verbatim>
-									<aon:commandButton title="[#{bundle.aon_accept}]"
-										actionListener="#{commercialActivity.onAccept}"
-										rendered="#{commercialActivity.new}"
-										styleClass="aon-editDataTable-button aon-icon-accept"
-										accesskey="#{bundle.aon_key_save_line}" />
-									<aon:confirmButton title="[#{bundle.aon_cancel}]" id="cancelNewInline"
-										styleClass="aon-editDataTable-button aon-icon-cancel"
-										rendered="#{commercialActivity.new}"
-										confirmTitle="#{bundle.aon_confirm_title}"
-										confirmMessage="#{bundle.aon_cancel_confirm}"
-										confirmActionListener="#{commercialActivity.onCancel}" immediate="true"
-										accesskey="#{bundle.aon_key_cancel_line}" />
-								</aon:div>
-							</f:facet>
-						</aon:column>
-					</aon:editDataTable>
-
-					<aon:dataScroller2 for="commercialActivityData" showNote="true" />
+								<f:facet name="footer">
+									<aon:inputText styleClass="aon-form-input-text" required="true"
+										rendered="#{commercialActivity.new}" size="32"
+										value="#{commercialActivity.to.name}" maxlength="32" />
+								</f:facet>
+							</aon:column>
+						</ui:define>
+					</ui:decorate>
 
 				</aon:div>
 			</aon:div>
