@@ -79,7 +79,7 @@
 						<aon:div>
 							<aon:inputText id="Address" value="#{controller.to.address}"
 								rendered="#{controller.new}"
-								required="#{true}" size="40"  maxlength="128" />
+								required="true" size="40"  maxlength="128" />
 						</aon:div>
 						<aon:div>						
 							<aon:inputText value="#{controller.to.address2}"
@@ -102,12 +102,12 @@
 				<aon:outputText value="#{to.zip}" rendered="#{to!=controller.to}" />
 				<aon:inputText value="#{controller.to.zip}"
 					rendered="#{to==controller.to}"
-					required="true" size="8" maxlength="16" />
+					size="8" maxlength="16" />
 				<f:facet name="footer">
 					<aon:div>
 						<aon:inputText id="Zip" value="#{controller.to.zip}"
 							rendered="#{controller.new}"
-							required="#{true}" size="8" maxlength="16" />
+							size="8" maxlength="16" />
 					</aon:div>
 				</f:facet>
 			</aon:column>
@@ -138,12 +138,14 @@
 				<aon:selectOneMenu value="#{controller.to.geozone.id}"
 					rendered="#{to==controller.to}"
 					valueChangeListener="#{controller.onChangeGeoZone}">
+					<f:selectItem value="#{null}" itemLabel="    " />
 					<f:selectItems value="#{geozoneCollections.geoTrees}" />
 				</aon:selectOneMenu>
 				<f:facet name="footer">
 					<aon:div>
 						<aon:selectOneMenu value="#{controller.to.geozone.id}"
 							rendered="#{controller.new}">
+							<f:selectItem value="#{null}" itemLabel="    " />
 							<f:selectItems value="#{geozoneCollections.geoTrees}" />
 						</aon:selectOneMenu>
 					</aon:div>
