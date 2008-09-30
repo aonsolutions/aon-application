@@ -5,10 +5,10 @@
 	xmlns:aon="http://www.code.es/aon-rich-components">
 
 	<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/listToolbarEx.xhtml" >
-		<aon:methodParam name="searchActionListener" value="#{controller.onEditSearch}" type="actionListener" />
-		<aon:methodParam name="searchAction" value="#{controller.beanName}_search" resolve="true" />		
-		<aon:methodParam name="resetActionListener" value="#{controller.onReset}" type="actionListener" />
-		<aon:methodParam name="resetAction" value="#{controller.beanName}_form" resolve="true" />									
+		<aon:methodParam name="searchActionListener" default="#{controller.onEditSearch}" type="actionListener" />
+		<aon:methodParam name="searchAction" default="#{controller.beanName}_search" resolve="true" />		
+		<aon:methodParam name="resetActionListener" default="#{controller.onReset}" type="actionListener" />
+		<aon:methodParam name="resetAction" default="#{controller.beanName}_form" resolve="true" />									
 	</ui:include>
 	
 </ui:composition>
