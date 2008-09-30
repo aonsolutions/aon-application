@@ -27,7 +27,7 @@
 					<aon:outputLabel for="CommercialTracking_date"
 						value="#{appBundle.aon_commercial_tracking_date}" />
 					<aon:selectInputDate id="CommercialTracking_date" 
-						value="#{commercialTracking.to.date}" required="#{true}"
+						value="#{commercialTracking.to.date}" required="true"
 						timeZone="#{timeZoneController.timeZone}"
 						renderAsPopup="true" popupDateFormat="#{bundle.aon_date_pattern}">
 					</aon:selectInputDate>
@@ -36,7 +36,7 @@
 						value="#{appBundle.aon_commercial_tracking_seller}" />
 					<aon:div styleClass="aon-lookup">
 						<aon:lookupInputText id="CommercialTracking_seller_id"
-							lookup="#{sellerLookup}"
+							lookup="#{sellerLookup}" required="true"
 							reRender="CommercialTracking_seller_name"
 							value="#{commercialTracking.to.seller.id}" size="5">
 						</aon:lookupInputText>
@@ -55,14 +55,14 @@
 						value="#{appBundle.aon_commercial_tracking_target}" />
 					<aon:div styleClass="aon-lookup">
 						<aon:lookupInputText id="CommercialTracking_target_id"
-							lookup="#{targetLookup}"
+							lookup="#{targetLookup}" required="true"
 							reRender="CommercialTracking_target_name"
 							value="#{commercialTracking.to.target.id}" size="5">
 						</aon:lookupInputText>
 						<aon:lookupButton id="CommercialTracking_target_lookup"
-							windowTitle="#{appBundle.aon_lookup_target}"
+							windowTitle="#{appBundle.aon_lookup_target}" actionType="search"
 							selectReRender="CommercialTracking_target_id,CommercialTracking_target_name"
-							lookup="#{targetLookup}" minHeight="440"
+							lookup="#{targetLookup}" minHeight="460" minWidth="650"
 							property="#{commercialTracking.to.target}">
 						</aon:lookupButton>
 						<aon:lookupButton id="CommercialTracking_target_add"
@@ -113,7 +113,7 @@
 								<aon:outputLabel for="CommercialTracking_next_date"
 									value="#{appBundle.aon_commercial_tracking_date}" />
 								<aon:selectInputDate id="CommercialTracking_next_date"
-									value="#{commercialTracking.to.next.date}" required="#{true}"
+									value="#{commercialTracking.next.date}" required="true"
 									renderAsPopup="true"
 									popupDateFormat="#{bundle.aon_date_pattern}">
 								</aon:selectInputDate>
@@ -121,7 +121,7 @@
 								<aon:outputLabel for="CommercialTracking_next_activity_id"
 									value="#{appBundle.aon_commercial_tracking_activity}" />
 								<aon:selectOneMenu id="CommercialTracking_next_activity_id"
-									required="true" value="#{commercialTracking.to.next.activity}">
+									required="true" value="#{commercialTracking.next.activity}">
 									<f:converter converterId="toConverter" />
 									<f:selectItem value="#{null}" itemLabel="    " />
 									<f:selectItems value="#{commercialTracking.activities}" />
@@ -130,7 +130,7 @@
 								<aon:outputLabel for="CommercialTracking_next_comments"
 									value="#{appBundle.aon_commercial_tracking_comments}" />
 								<aon:inputTextarea id="CommercialTracking_next_comments"
-									value="#{commercialTracking.to.next.comments}" cols="51"
+									value="#{commercialTracking.next.comments}" cols="51"
 									rows="4" />
 
 							</aon:panelGrid>
