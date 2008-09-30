@@ -14,29 +14,19 @@
 
 		<aon:form id="faxForm" enctype="multipart/form-data">
 
-			<aon:div styleClass="aon-finding-title-toolbar">
-				<aon:panelGrid columns="3" dir="true"
-					columnClasses="aon-finding-title,aon-finding-subtitle,aon-finding-toolbar">
-
-					<aon:div styleClass="aon-finding-title-internal">
-						<aon:outputText value="#{appBundle.aon_desktop_fax}" />
-					</aon:div>
-
-					<aon:div styleClass="aon-finding-subtitle-internal">
-						<aon:outputText value="#{bundle.aon_editing}" />
-					</aon:div> 
-
-					<aon:div styleClass="aon-finding-toolbar-item-group">
-						<aon:commandButton id="sendFAX"
-							value="#{appBundle.aon_messaging_send}"
-							styleClass="aon-icon-accept aon-finding-toolbar-item"
-							actionListener="#{fax.send}"
-							onclick="Richfaces.showModalPanel('waitProccess')" 
-		     				oncomplete="Richfaces.hideModalPanel('waitProccess')"
-							 />						
-					</aon:div>
-				</aon:panelGrid>
-			</aon:div>
+			<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml" >
+				<ui:param name="toolbarTitle" value="#{appBundle.aon_desktop_fax}" />
+				<ui:param name="toolbarDescription" value="#{bundle.aon_editing}" />
+				<ui:define name="toolbarContent">
+					<aon:commandButton id="sendFAX"
+						value="#{appBundle.aon_messaging_send}"
+						styleClass="aon-icon-accept aon-finding-toolbar-item"
+						actionListener="#{fax.send}"
+						onclick="Richfaces.showModalPanel('waitProccess')" 
+	     				oncomplete="Richfaces.hideModalPanel('waitProccess')"
+						 />						
+				</ui:define>
+			</ui:decorate>
 
 			<aon:div styleClass="aon-scroll-area">
 				<aon:panelGrid columns="2"  style="border:0;width:auto;"
