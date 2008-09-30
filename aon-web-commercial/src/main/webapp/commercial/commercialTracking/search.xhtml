@@ -65,9 +65,9 @@
 							value="#{commercialTracking.target.id}" size="5">
 						</aon:lookupInputText>
 						<aon:lookupButton id="CommercialTracking_target_lookup"
-							windowTitle="#{appBundle.aon_lookup_target}"
+							windowTitle="#{appBundle.aon_lookup_target}" actionType="search"
 							selectReRender="CommercialTracking_target_id,CommercialTracking_target_name"
-							lookup="#{targetLookup}"
+							lookup="#{targetLookup}" minHeight="460" minWidth="650"
 							property="#{commercialTracking.target}">
 						</aon:lookupButton>
 						<aon:inputText id="CommercialTracking_target_name"
