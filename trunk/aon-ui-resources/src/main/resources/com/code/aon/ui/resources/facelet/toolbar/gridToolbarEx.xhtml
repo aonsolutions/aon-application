@@ -5,7 +5,6 @@
 	xmlns:aon="http://www.code.es/aon-rich-components">
 
 	<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml" >
-		<aon:param name="toolbarDescription" default="#{bundle.aon_editing}" />
 		<ui:define name="toolbarContent">
 			<c:if test="#{!skipResetButton}">								
 				<aon:commandButton value="#{bundle.aon_reset}" rendered="#{!formNew}" 
