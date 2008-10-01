@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<table tableName="reason">
+    <columns>
+        <column label="" name="id" sqlType="integer" type="integer"/>
+        <column label="" length="25" name="name" sqlType="varchar" type="string"/>
+        <column label="" length="1" name="finished" sqlType="bit" type="string"/>
+    </columns>
+    <virtualColumns/>
+    <primaryKey>
+        <column name="id"/>
+    </primaryKey>
+    <joins/>
+    <descriptionColumns/>
+</table>

@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<table tableName="tax">
+    <columns>
+        <column label="" name="id" sqlType="integer" type="integer"/>
+        <column label="" length="30" name="name" sqlType="varchar" type="string"/>
+        <column label="" length="4" name="tax_type" sqlType="tinyint" type="string"/>
+        <column label="" name="percentage" sqlType="double" type="double"/>
+        <column label="" name="surcharge" sqlType="double" type="double"/>
+        <column label="" name="start_date" sqlType="date" type="date"/>
+    </columns>
+    <virtualColumns/>
+    <primaryKey>
+        <column name="id"/>
+    </primaryKey>
+    <joins/>
+    <descriptionColumns/>
+</table>

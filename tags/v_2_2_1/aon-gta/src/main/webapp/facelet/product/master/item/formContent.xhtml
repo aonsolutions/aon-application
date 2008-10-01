@@ -1,0 +1,147 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:h="http://java.sun.com/jsf/html">
+
+<body>
+
+<ui:composition>
+
+	<t:div styleClass="aon-content-subtitle" id="aon-content-subtitle"
+		forceId="#{true}">
+		<t:div styleClass="aon-content-subtitle-internal">
+			<h:outputText
+				value="#{itemAlias.new?(bundle.aon_reset):(bundle.aon_editing)}" />
+		</t:div>
+	</t:div>
+
+	<t:div id="aon-scroll-area" forceId="#{true}">
+		<t:div styleClass="aon-scroll-area-internal">
+			<!-- start of bag panel -->
+			<!-- start of flow layout -->
+			<h:panelGrid columns="2" dir="true" styleClass="aon-form-table"
+				columnClasses="aon-form-table-column-odd,aon-form-table-column-even">
+				<h:outputLabel for="Item_code" value="#{productBundle.item_code}"
+					styleClass="aon-form-input-text-label aon-form-table-column-odd-label" />
+				<t:inputText id="Item_code" styleClass="aon-form-input-text"
+					onblur="toUpperCase(this);" value="#{itemAlias.to.product.code}"
+					required="#{true}" size="16" forceId="#{true}"
+					disabledOnClientSide="false">
+					<f:validateLength maximum="15" />
+				</t:inputText>
+
+				<h:outputLabel for="Item_status" value="#{productBundle.item_status}"
+					styleClass="aon-form-selectOneMenu-label aon-form-table-column-odd-label" />
+				<h:selectOneMenu styleClass="aon-form-selectOneMenu-field"
+					id="Item_status" value="#{itemAlias.to.status}" required="#{false}"
+					forceId="#{true}" disabledOnClientSide="false">
+					<f:selectItems value="#{productCollections.productStatuses}" />
+				</h:selectOneMenu>
+
+				<h:outputLabel for="Item_name" value="#{productBundle.item_name}"
+					styleClass="aon-form-input-text-label aon-form-table-column-odd-label" />
+				<t:inputText styleClass="aon-form-input-text" id="Item_name"
+					value="#{itemAlias.to.product.name}" required="#{true}"
+					forceId="#{true}" size="64" maxlength="64"
+					disabledOnClientSide="false">
+					<f:validateLength minimum="1" maximum="64" />
+				</t:inputText>
+
+				<h:outputLabel for="Item_Category"
+					value="#{productBundle.item_category}"
+					styleClass="aon-form-selectOneMenu-label aon-form-table-column-odd-label" />
+				<h:selectOneMenu styleClass="aon-form-selectOneMenu-field"
+					id="Item_Category" value="#{itemAlias.to.product.category.id}"
+					forceId="#{true}" disabledOnClientSide="false">
+					<f:selectItems value="#{productCollections.categories}" />
+				</h:selectOneMenu>
+
+				<h:outputLabel for="Item_Type" value="#{productBundle.item_type}"
+					styleClass="aon-form-selectOneMenu-label aon-form-table-column-odd-label" />
+				<h:selectOneMenu styleClass="aon-form-selectOneMenu-field"
+					id="Item_Type" value="#{itemAlias.to.product.type}" forceId="#{true}"
+					disabledOnClientSide="false">
+					<f:selectItems value="#{productCollections.productTypes}" />
+				</h:selectOneMenu>
+
+				<h:outputLabel for="Item_initialPrice2"
+					value="#{productBundle.item_initialPrice}"
+					styleClass="aon-form-input-text-label aon-form-table-column-odd-label" />
+				<t:inputText styleClass="aon-form-input-text"
+					id="Item_initialPrice2" value="#{itemAlias.to.purchasePrice}"
+					required="#{true}" forceId="#{true}" size="10">
+					<f:validateDoubleRange />
+				</t:inputText>
+
+				<h:outputLabel for="Item_price" value="#{productBundle.item_price}"
+					styleClass="aon-form-input-text-label aon-form-table-column-odd-label" />
+				<t:inputText styleClass="aon-form-input-text" id="Item_price"
+					value="#{itemAlias.to.price}" required="#{true}" forceId="#{true}"
+					size="10" onblur="onExit(this);calculate(this);">
+					<f:validateDoubleRange />
+				</t:inputText>
+
+
+				<h:outputLabel for="Tax_id" value="#{productBundle.item_tax}"
+					styleClass="aon-form-selectOneMenu-label aon-form-table-column-odd-label" />
+				<t:div>
+					<t:selectOneMenu styleClass="aon-form-selectOneMenu-field"
+						id="Tax_id" forceId="#{true}"
+						onchange="return findLookup(event,'#{facesContext.externalContext.request.contextPath}','com.code.aon.product.Tax');"
+						onblur="calculate(this);" value="#{itemAlias.to.product.vat.id}">
+						<f:selectItems value="#{productCollections.vatTaxes}" />
+					</t:selectOneMenu>
+					<t:inputText id="Tax_percentage"
+						styleClass="aon-form-input-text-disabled" forceId="#{true}"
+						readonly="true" disabledOnClientSide="true" size="5"
+						value="#{itemAlias.to.product.vat.percentage}">
+						<f:validateDoubleRange />
+					</t:inputText>
+					<t:outputLabel for="Tax_percentage" value="%" forceId="#{true}" />
+				</t:div>
+
+
+				<h:outputLabel for="Item_salesPrice"
+					value="#{productBundle.item_salesPrice}"
+					styleClass="aon-form-input-text-label aon-form-layout-label-block" />
+				<t:div>
+					<t:inputText id="Item_salesPrice" value=""
+						styleClass="aon-form-input-text" size="10" forceId="#{true}"
+						onfocus="this.select();" onblur="onExit(this);calculate(this);">
+					</t:inputText>
+					<t:htmlTag value="span" styleClass="aon-form-selectBooleanCheckbox">
+						<t:selectBooleanCheckbox id="Product_inventoriable"
+							styleClass="aon-form-selectBooleanCheckbox-field"
+							value="#{itemAlias.to.product.inventoriable}" forceId="#{true}" />
+						<t:outputLabel for="Product_inventoriable"
+							styleClass="aon-form-selectBooleanCheckbox-label"
+							value="#{productBundle.item_inventoriable}" forceId="#{true}" />
+					</t:htmlTag>
+				</t:div>
+
+			</h:panelGrid>
+
+			<t:div id="hiddenInputs">
+				<t:inputHidden id="Item_expensesPercentReal" forceId="#{true}"
+					value="#{itemAlias.to.expensesPercent}" />
+				<t:inputHidden id="Item_expensesFixedReal" forceId="#{true}"
+					value="#{itemAlias.to.expensesFixed}" />
+				<t:inputHidden id="Item_benefitPercentReal" forceId="#{true}"
+					value="#{itemAlias.to.profitPercent}" />
+			</t:div>
+
+			<!-- end of flow layout -->
+			<!-- end of bag panel -->
+		</t:div>
+	</t:div>
+	<script>
+		try {
+			onLoad();
+		} catch(e) {
+		}
+	</script>
+</ui:composition>
+</body>
+</html>

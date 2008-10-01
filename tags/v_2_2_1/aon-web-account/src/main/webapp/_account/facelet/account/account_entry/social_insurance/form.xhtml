@@ -1,0 +1,137 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:h="http://java.sun.com/jsf/html">
+<body>
+
+<ui:composition template="/facelet/templates/aon.ui.content.xhtml">
+
+	<ui:define name="head">
+		<ui:include src="/facelet/shared/head.xhtml" />
+	</ui:define>
+
+	<ui:define name="content">
+
+		<h:form id="accountSocialInsuranceForm" styleClass="aon-form">
+
+			<!-- start toolbar navigation -->
+			<t:div styleClass="aon-content-toolbar" forceId="#{true}"
+				id="aon-content-toolbar">
+				<t:div styleClass="aon-content-toolbar-internal">
+					<t:div styleClass="aon-content-toolbar-item-group">
+
+						<h:commandButton id="save" value="#{bundle.aon_save}"
+							accesskey="#{bundle.aon_key_save}"
+							actionListener="#{accountSocialInsurance.accept}" action="account_entry_form"
+							styleClass="aon-content-toolbar-item"
+							onclick="return (confirm('#{bundle.aon_save_confirm}'))"
+							onmouseout="this.className='aon-content-toolbar-item'"
+							onmouseover="this.className='aon-content-toolbar-item aon-content-toolbar-item-hover'">
+						</h:commandButton>
+						<h:commandButton id="reset" value="#{bundle.aon_reset}"
+							accesskey="#{bundle.aon_key_new}"
+							actionListener="#{accountSocialInsurance.onReset}" rendered="#{!accountSocialInsurance.new}"
+							styleClass="aon-content-toolbar-item"
+							onmouseout="this.className='aon-content-toolbar-item'"
+							onmouseover="this.className='aon-content-toolbar-item aon-content-toolbar-item-hover'">
+						</h:commandButton>
+						<h:commandButton id="remove" value="#{bundle.aon_remove}"
+							accesskey="#{bundle.aon_key_remove}" action="account_entry_search"
+							actionListener="#{accountSocialInsurance.onRemove}" rendered="#{!accountSocialInsurance.new}"
+							styleClass="aon-content-toolbar-item" immediate="true"
+							onclick="return (confirm('#{bundle.aon_remove_confirm}'))"
+							onmouseout="this.className='aon-content-toolbar-item'"
+							onmouseover="this.className='aon-content-toolbar-item aon-content-toolbar-item-hover'">
+						</h:commandButton>
+					</t:div>
+				</t:div>
+			</t:div>
+			<!-- end toolbar navigation -->
+
+			<t:div id="aon-scroll-area" forceId="#{true}">
+				<t:div styleClass="aon-scroll-area-internal">
+					<!-- start of bag panel -->
+					<!-- start of grid layout -->
+					<h:panelGrid columns="2" dir="true" styleClass="aon-form-table"
+						columnClasses="aon-form-table-column-odd,aon-form-table-column-even">
+						
+						<t:outputLabel for="Account_date"
+							styleClass="aon-form-input-text-label"
+							value="#{accountBundle.aon_date}" />						
+						<t:inputCalendar id="Account_date"
+							value="#{accountSocialInsurance.header.date}" size="8" required="true" 
+							monthYearRowClass="yearMonthHeader" weekRowClass="weekHeader"
+							currentDayCellClass="currentDayCell" renderAsPopup="true"
+							styleClass="aon-form-input-text" popupButtonStyleClass="aon-form-calendar-button"
+							popupTodayString="#{bundle.aon_popup_today}"
+							popupWeekString="#{bundle.aon_popup_week}" />
+							
+						<h:outputLabel for="Account_Period"
+							value="#{accountBundle.aon_accPeriod_period}"
+							styleClass="aon-form-input-text-label aon-form-table-column-odd-label" />
+						<h:selectOneMenu id="Account_Period"
+							styleClass="aon-form-selectOneMenu-field"
+							value="#{accountSocialInsurance.header.period.id}">
+							<f:selectItems value="#{accountCollections.accountPeriods}" />
+						</h:selectOneMenu>	
+							
+						<h:outputLabel for="Account_description"
+							styleClass="aon-form-input-text-label"
+							value="#{accountBundle.aon_description}" />
+						<t:inputText id="Account_description"
+							value="#{accountSocialInsurance.header.description}" size="60"
+							styleClass="aon-form-input-text" forceId="#{true}" />
+							
+						<h:outputLabel for="Account_amount"
+							styleClass="aon-form-input-text-label"
+							value="#{accountBundle.aon_amount}" />
+						<t:inputText id="Account_amount"
+							value="#{accountSocialInsurance.header.amount}" size="15"
+							styleClass="aon-form-input-text" forceId="#{true}" >
+							<f:validateDoubleRange  />
+						</t:inputText>
+						
+						<h:outputLabel for="RegistryBank_Lookup_id"
+							styleClass="aon-form-input-text-label"
+							value="#{accountBundle.aon_bank}" />
+						<t:selectOneMenu id="RegistryBank_Lookup_id"
+							styleClass="aon-form-selectOneMenu-field" required="true"
+							value="#{accountSocialInsurance.header.registryBank.id}" forceId="#{true}"
+							onchange="return findBeanLookupExt(event,'#{facesContext.externalContext.requestContextPath}','rBankLookup','RegistryBank_Lookup_id','RegistryBank_id|RegistryBank_Lookup_id,RegistryBank_bankAccount|RegistryBank_Lookup_bankAccount');"
+							valueChangeListener="#{accountSocialInsurance.onRBankChange}">
+							<f:selectItem itemDisabled="true" itemValue="" itemLabel="-" />
+							<f:selectItems value="#{financeCollections.companyBanks}" />
+						</t:selectOneMenu>
+
+						<h:outputLabel for="RegistryBank_Lookup_bankAccount"
+							styleClass="aon-form-input-text-label" value="#{financeBundle.aon_bank_account}" />
+						<t:inputText id="RegistryBank_Lookup_bankAccount"
+							styleClass="aon-form-input-text-disabled" forceId="#{true}"
+							value="#{accountSocialInsurance.header.registryBank.bankAccount}"
+							disabled="true" size="35" />
+
+						<h:outputLabel for="AccountEntry_securityLevel"
+							value="#{accountBundle.aon_account_security_level}"
+							styleClass="aon-form-input-text-label aon-form-table-column-odd-label" />
+						<h:selectOneMenu id="AccountEntry_securityLevel"
+							styleClass="aon-form-selectOneMenu-field"
+							forceId="#{true}" value="#{accountSocialInsurance.header.securityLevel}">
+							<f:selectItems value="#{accountCollections.securityLevels}" />
+						</h:selectOneMenu>
+							
+					</h:panelGrid>
+					<!-- end of grid layout -->
+					<!-- end of bag panel -->
+					
+				</t:div>
+			</t:div>
+		</h:form>
+		<h:form id="placeList" target="list" />
+	</ui:define>
+</ui:composition>
+
+</body>
+</html>
