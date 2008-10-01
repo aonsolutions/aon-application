@@ -63,6 +63,12 @@ public interface IMarketingAlias {
 	*/
 	String  ACTION_SURVEY_ID = ACTION_ENTRY.getAliasNames()[5];
 
+	/** 
+	* Alias value: Action_campaign_active
+	* Hibernate value: Action.campaign.active
+	*/
+	String  ACTION_CAMPAIGN_ACTIVE = ACTION_ENTRY.getAliasNames()[6];
+
 
 
 	/** 
