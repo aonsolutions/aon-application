@@ -42,6 +42,9 @@
 		<option key="aon_catalogue" descriptionKey="aon_catalogue_desc" ref="catalogue">
 			<actionListener action="#{catalogue.onSearch}" />
 		</option>
+		<option key="aon_tariff" descriptionKey="aon_tariff_desc" ref="tariff">
+			<actionListener action="#{tariff.onSearch}" />
+		</option>
 		<option key="aon_bank" descriptionKey="aon_bank_desc" ref="bank" />
 		<option key="aon_pay_method" descriptionKey="aon_pay_method_desc" ref="pay_method" />
 	</menu>
