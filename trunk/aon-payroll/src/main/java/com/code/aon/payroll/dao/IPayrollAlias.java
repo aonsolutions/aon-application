@@ -3,10 +3,16 @@ package com.code.aon.payroll.dao;
 import com.code.aon.common.dao.DAOConstants;
 import com.code.aon.common.dao.DAOConstantsEntry;
 import com.code.aon.payroll.auxiliares.contratos.ContratosInternos;
+import com.code.aon.payroll.auxiliares.contratos.ContratosTc2;
+import com.code.aon.payroll.auxiliares.convenios.Complemento;
 import com.code.aon.payroll.cotizacion.PorcentajeMaestro;
 import com.code.aon.payroll.cotizacion.Porcentaje;
+import com.code.aon.payroll.cotizacion.ElementoMaestro;
+import com.code.aon.payroll.cotizacion.Elemento;
 import com.code.aon.payroll.tipos.Documento;
 import com.code.aon.payroll.tipos.Autorizacion;
+import com.code.aon.payroll.cotizacion.Base;
+import com.code.aon.payroll.cotizacion.Linbasec;
 import com.code.aon.payroll.tipos.Incidencia;
 import com.code.aon.payroll.tipos.Registro;
 import com.code.aon.payroll.tipos.Empresario;
@@ -96,6 +102,92 @@ public interface IPayrollAlias {
 
 
 	/** 
+	* DAOConstantsEntry for ContratosTc2 entity.
+	*/ 
+	DAOConstantsEntry CONTRATOS_TC2_ENTRY = DAOConstants.getDAOConstant(ContratosTc2.class);
+
+	/** 
+	* Alias value: ContratosTc2_cdg
+	* Hibernate value: ContratosTc2.cdg
+	*/
+	String  CONTRATOS_TC2_CDG = CONTRATOS_TC2_ENTRY.getAliasNames()[0];
+
+	/** 
+	* Alias value: ContratosTc2_cdgant
+	* Hibernate value: ContratosTc2.cdgant
+	*/
+	String  CONTRATOS_TC2_CDGANT = CONTRATOS_TC2_ENTRY.getAliasNames()[1];
+
+	/** 
+	* Alias value: ContratosTc2_desabr
+	* Hibernate value: ContratosTc2.desabr
+	*/
+	String  CONTRATOS_TC2_DESABR = CONTRATOS_TC2_ENTRY.getAliasNames()[2];
+
+	/** 
+	* Alias value: ContratosTc2_description
+	* Hibernate value: ContratosTc2.description
+	*/
+	String  CONTRATOS_TC2_DESCRIPTION = CONTRATOS_TC2_ENTRY.getAliasNames()[3];
+
+
+
+	/** 
+	* DAOConstantsEntry for Complemento entity.
+	*/ 
+	DAOConstantsEntry COMPLEMENTO_ENTRY = DAOConstants.getDAOConstant(Complemento.class);
+
+	/** 
+	* Alias value: Complemento_cdg
+	* Hibernate value: Complemento.cdg
+	*/
+	String  COMPLEMENTO_CDG = COMPLEMENTO_ENTRY.getAliasNames()[0];
+
+	/** 
+	* Alias value: Complemento_desabr
+	* Hibernate value: Complemento.desabr
+	*/
+	String  COMPLEMENTO_DESABR = COMPLEMENTO_ENTRY.getAliasNames()[1];
+
+	/** 
+	* Alias value: Complemento_description
+	* Hibernate value: Complemento.description
+	*/
+	String  COMPLEMENTO_DESCRIPTION = COMPLEMENTO_ENTRY.getAliasNames()[2];
+
+	/** 
+	* Alias value: Complemento_dinesp
+	* Hibernate value: Complemento.dinesp
+	*/
+	String  COMPLEMENTO_DINESP = COMPLEMENTO_ENTRY.getAliasNames()[3];
+
+	/** 
+	* Alias value: Complemento_fijovar
+	* Hibernate value: Complemento.fijovar
+	*/
+	String  COMPLEMENTO_FIJOVAR = COMPLEMENTO_ENTRY.getAliasNames()[4];
+
+	/** 
+	* Alias value: Complemento_indcom
+	* Hibernate value: Complemento.indcom
+	*/
+	String  COMPLEMENTO_INDCOM = COMPLEMENTO_ENTRY.getAliasNames()[5];
+
+	/** 
+	* Alias value: Complemento_tipcom
+	* Hibernate value: Complemento.tipcom
+	*/
+	String  COMPLEMENTO_TIPCOM = COMPLEMENTO_ENTRY.getAliasNames()[6];
+
+	/** 
+	* Alias value: Complemento_tipcot
+	* Hibernate value: Complemento.tipcot
+	*/
+	String  COMPLEMENTO_TIPCOT = COMPLEMENTO_ENTRY.getAliasNames()[7];
+
+
+
+	/** 
 	* DAOConstantsEntry for PorcentajeMaestro entity.
 	*/ 
 	DAOConstantsEntry PORCENTAJE_MAESTRO_ENTRY = DAOConstants.getDAOConstant(PorcentajeMaestro.class);
@@ -170,6 +262,68 @@ public interface IPayrollAlias {
 
 
 	/** 
+	* DAOConstantsEntry for ElementoMaestro entity.
+	*/ 
+	DAOConstantsEntry ELEMENTO_MAESTRO_ENTRY = DAOConstants.getDAOConstant(ElementoMaestro.class);
+
+	/** 
+	* Alias value: ElementoMaestro_cdg
+	* Hibernate value: ElementoMaestro.cdg
+	*/
+	String  ELEMENTO_MAESTRO_CDG = ELEMENTO_MAESTRO_ENTRY.getAliasNames()[0];
+
+	/** 
+	* Alias value: ElementoMaestro_description
+	* Hibernate value: ElementoMaestro.description
+	*/
+	String  ELEMENTO_MAESTRO_DESCRIPTION = ELEMENTO_MAESTRO_ENTRY.getAliasNames()[1];
+
+
+
+	/** 
+	* DAOConstantsEntry for Elemento entity.
+	*/ 
+	DAOConstantsEntry ELEMENTO_ENTRY = DAOConstants.getDAOConstant(Elemento.class);
+
+	/** 
+	* Alias value: Elemento_dato1
+	* Hibernate value: Elemento.dato1
+	*/
+	String  ELEMENTO_DATO1 = ELEMENTO_ENTRY.getAliasNames()[0];
+
+	/** 
+	* Alias value: Elemento_dato2
+	* Hibernate value: Elemento.dato2
+	*/
+	String  ELEMENTO_DATO2 = ELEMENTO_ENTRY.getAliasNames()[1];
+
+	/** 
+	* Alias value: Elemento_elementoMaestro_cdg
+	* Hibernate value: Elemento.elementoMaestro.cdg
+	*/
+	String  ELEMENTO_ELEMENTO_MAESTRO_CDG = ELEMENTO_ENTRY.getAliasNames()[2];
+
+	/** 
+	* Alias value: Elemento_fecfin
+	* Hibernate value: Elemento.fecfin
+	*/
+	String  ELEMENTO_FECFIN = ELEMENTO_ENTRY.getAliasNames()[3];
+
+	/** 
+	* Alias value: Elemento_id_cdg
+	* Hibernate value: Elemento.id.cdg
+	*/
+	String  ELEMENTO_ID_CDG = ELEMENTO_ENTRY.getAliasNames()[4];
+
+	/** 
+	* Alias value: Elemento_id_fecini
+	* Hibernate value: Elemento.id.fecini
+	*/
+	String  ELEMENTO_ID_FECINI = ELEMENTO_ENTRY.getAliasNames()[5];
+
+
+
+	/** 
 	* DAOConstantsEntry for Documento entity.
 	*/ 
 	DAOConstantsEntry DOCUMENTO_ENTRY = DAOConstants.getDAOConstant(Documento.class);
@@ -204,6 +358,110 @@ public interface IPayrollAlias {
 	* Hibernate value: Autorizacion.description
 	*/
 	String  AUTORIZACION_DESCRIPTION = AUTORIZACION_ENTRY.getAliasNames()[1];
+
+
+
+	/** 
+	* DAOConstantsEntry for Base entity.
+	*/ 
+	DAOConstantsEntry BASE_ENTRY = DAOConstants.getDAOConstant(Base.class);
+
+	/** 
+	* Alias value: Base_cdg
+	* Hibernate value: Base.cdg
+	*/
+	String  BASE_CDG = BASE_ENTRY.getAliasNames()[0];
+
+	/** 
+	* Alias value: Base_description
+	* Hibernate value: Base.description
+	*/
+	String  BASE_DESCRIPTION = BASE_ENTRY.getAliasNames()[1];
+
+	/** 
+	* Alias value: Base_indpro
+	* Hibernate value: Base.indpro
+	*/
+	String  BASE_INDPRO = BASE_ENTRY.getAliasNames()[2];
+
+
+
+	/** 
+	* DAOConstantsEntry for Linbasec entity.
+	*/ 
+	DAOConstantsEntry LINBASEC_ENTRY = DAOConstants.getDAOConstant(Linbasec.class);
+
+	/** 
+	* Alias value: Linbasec_acdiaart
+	* Hibernate value: Linbasec.acdiaart
+	*/
+	String  LINBASEC_ACDIAART = LINBASEC_ENTRY.getAliasNames()[0];
+
+	/** 
+	* Alias value: Linbasec_base_cdg
+	* Hibernate value: Linbasec.base.cdg
+	*/
+	String  LINBASEC_BASE_CDG = LINBASEC_ENTRY.getAliasNames()[1];
+
+	/** 
+	* Alias value: Linbasec_fecfin
+	* Hibernate value: Linbasec.fecfin
+	*/
+	String  LINBASEC_FECFIN = LINBASEC_ENTRY.getAliasNames()[2];
+
+	/** 
+	* Alias value: Linbasec_id_cdg
+	* Hibernate value: Linbasec.id.cdg
+	*/
+	String  LINBASEC_ID_CDG = LINBASEC_ENTRY.getAliasNames()[3];
+
+	/** 
+	* Alias value: Linbasec_id_fecini
+	* Hibernate value: Linbasec.id.fecini
+	*/
+	String  LINBASEC_ID_FECINI = LINBASEC_ENTRY.getAliasNames()[4];
+
+	/** 
+	* Alias value: Linbasec_jordiaagr
+	* Hibernate value: Linbasec.jordiaagr
+	*/
+	String  LINBASEC_JORDIAAGR = LINBASEC_ENTRY.getAliasNames()[5];
+
+	/** 
+	* Alias value: Linbasec_maxcot
+	* Hibernate value: Linbasec.maxcot
+	*/
+	String  LINBASEC_MAXCOT = LINBASEC_ENTRY.getAliasNames()[6];
+
+	/** 
+	* Alias value: Linbasec_mincot
+	* Hibernate value: Linbasec.mincot
+	*/
+	String  LINBASEC_MINCOT = LINBASEC_ENTRY.getAliasNames()[7];
+
+	/** 
+	* Alias value: Linbasec_mindia
+	* Hibernate value: Linbasec.mindia
+	*/
+	String  LINBASEC_MINDIA = LINBASEC_ENTRY.getAliasNames()[8];
+
+	/** 
+	* Alias value: Linbasec_mindiaart1
+	* Hibernate value: Linbasec.mindiaart1
+	*/
+	String  LINBASEC_MINDIAART1 = LINBASEC_ENTRY.getAliasNames()[9];
+
+	/** 
+	* Alias value: Linbasec_mindiaart2
+	* Hibernate value: Linbasec.mindiaart2
+	*/
+	String  LINBASEC_MINDIAART2 = LINBASEC_ENTRY.getAliasNames()[10];
+
+	/** 
+	* Alias value: Linbasec_minhor
+	* Hibernate value: Linbasec.minhor
+	*/
+	String  LINBASEC_MINHOR = LINBASEC_ENTRY.getAliasNames()[11];
 
 
 
