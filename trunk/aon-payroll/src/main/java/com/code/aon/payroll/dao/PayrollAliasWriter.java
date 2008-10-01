@@ -7,9 +7,9 @@ import com.code.aon.common.dao.AliasWriter;
 import com.code.aon.payroll.auxiliares.Admon;
 import com.code.aon.payroll.auxiliares.Colectivos;
 import com.code.aon.payroll.auxiliares.contratos.ContratosInternos;
-import com.code.aon.payroll.auxiliares.contratos.ContratosTc2;
-import com.code.aon.payroll.auxiliares.convenios.Complemento;
+import com.code.aon.payroll.cotizacion.Base;
 import com.code.aon.payroll.cotizacion.Bonificacion;
+import com.code.aon.payroll.cotizacion.Linbasec;
 import com.code.aon.payroll.cotizacion.Porcentaje;
 import com.code.aon.payroll.cotizacion.PorcentajeMaestro;
 import com.code.aon.payroll.geograficas.Nacion;
@@ -23,6 +23,10 @@ import com.code.aon.payroll.irpfforal.MinoracionesAlava;
 import com.code.aon.payroll.irpfforal.MinoracionesGuipuzcoa;
 import com.code.aon.payroll.irpfforal.MinoracionesNavarra;
 import com.code.aon.payroll.irpfforal.MinoracionesVizcaya;
+import com.code.aon.payroll.organismosyentidades.Comunidad;
+import com.code.aon.payroll.organismosyentidades.Delegacion;
+import com.code.aon.payroll.organismosyentidades.Pais;
+import com.code.aon.payroll.organismosyentidades.Provincia;
 import com.code.aon.payroll.tipos.Autorizacion;
 import com.code.aon.payroll.tipos.Documento;
 import com.code.aon.payroll.tipos.Empresario;
@@ -37,12 +41,12 @@ public class PayrollAliasWriter {
 		File file = new File("/AON-PROJECT/aon-payroll/src/main/java/com/code/aon/payroll/dao/IPayrollAlias.java");
 		String[] classes = new String[] {
 				ContratosInternos.class.getName(),
-				ContratosTc2.class.getName(),
-				Complemento.class.getName(),
 				PorcentajeMaestro.class.getName(), 
 				Porcentaje.class.getName(),
-				Documento.class.getName(),
+		     	Documento.class.getName(),
 				Autorizacion.class.getName(),
+				Base.class.getName(),
+				Linbasec.class.getName(),
 				Incidencia.class.getName(),
 				Registro.class.getName(),
 				Empresario.class.getName(),
@@ -61,7 +65,11 @@ public class PayrollAliasWriter {
 				MinoracionesNavarra.class.getName(),
 				Admon.class.getName(),
 				Colectivos.class.getName(),
-				Exclusion.class.getName()};
+				Exclusion.class.getName(), 
+		        Pais.class.getName(),
+		        Comunidad.class.getName(),
+		        Provincia.class.getName(),
+		        Delegacion.class.getName()};
 		AliasWriter writer = new AliasWriter("com.code.aon.payroll.dao");
 		writer.write(classes, file);
 		System.out.println( file.getAbsolutePath() );
