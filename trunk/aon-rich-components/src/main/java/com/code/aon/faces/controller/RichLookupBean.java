@@ -309,10 +309,7 @@ public class RichLookupBean {
 	 * @throws ManagerBeanException
 	 */
 	public void addEqualExpression(ValueChangeEvent event) throws ManagerBeanException {
-		if (event.getNewValue() != null) {
-			String fieldName = getController().getFieldName(event.getComponent().getId());
-			getController().getCriteria().addEqualExpression(fieldName, event.getNewValue());
-		}
+		getController().addEqualExpression(event);
 	}
 	
 	/**
