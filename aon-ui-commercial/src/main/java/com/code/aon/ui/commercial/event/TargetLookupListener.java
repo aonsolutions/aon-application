@@ -110,7 +110,7 @@ public class TargetLookupListener extends ControllerAdapter implements ICommerci
 		if (! isEmpty(mainAddress) ) {
 			mainAddress.setRegistry(registry);
 			registryAddressBean.insertOrUpdate(mainAddress);
-		} else if ( mainAddress.getId() == null ) {
+		} else if ( mainAddress.getId() != null ) {
 			registryAddressBean.remove(mainAddress);
 		}
 		updateRegistryMedia(registry, phone);
