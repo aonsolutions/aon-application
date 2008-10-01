@@ -74,9 +74,19 @@
 					</aon:div>
 				</aon:panelGrid>
 
+				<aon:div styleClass="aon-form-group" rendered="#{!campaign.new}">
+					<aon:div styleClass="aon-form-group-title">
+						<aon:div styleClass="aon-form-group-title-internal">
+							<aon:outputLabel for="campaignActionTargetData" value="#{menuBundle.aon_targets}" />
+						</aon:div>
+					</aon:div>
+					<ui:include src="/marketing/action/target/grid.xhtml" />
+				</aon:div>
+				
 			</aon:div>
 		</aon:form>	
 		<aon:lookupButtonPopup lookup="#{surveyLookup}" />
+		<aon:lookupButtonPopup lookup="#{targetLookup}" />
 	</ui:define>
 </ui:composition>
 
