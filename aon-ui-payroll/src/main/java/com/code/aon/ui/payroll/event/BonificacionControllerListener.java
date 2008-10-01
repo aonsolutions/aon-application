@@ -1,10 +1,14 @@
 package com.code.aon.ui.payroll.event;
 
+import javax.faces.application.FacesMessage;
+import javax.faces.context.FacesContext;
+
 import com.code.aon.payroll.cotizacion.Bonificacion;
 import com.code.aon.ui.form.IController;
 import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
+import com.code.aon.ui.util.AonUtil;
 
 
 public class BonificacionControllerListener extends ControllerAdapter {
@@ -17,7 +21,9 @@ public class BonificacionControllerListener extends ControllerAdapter {
 		Bonificacion bon = (Bonificacion) c.getTo();
 		
 		if (bon.getCdg()==0) {
-			throw new ControllerListenerException( "Código reservado. Por favor, introduzca otro." );
+			FacesMessage fm = 
+	    		AonUtil.getMessage( FacesContext.getCurrentInstance(), "aon_payroll_reserved_cdg", null );
+			throw new ControllerListenerException( fm.getSummary() );
 		}
 	}
 

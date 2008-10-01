@@ -1,7 +1,6 @@
 package com.code.aon.ui.payroll.event;
 
 import com.code.aon.common.ManagerBeanException;
-import com.code.aon.payroll.auxiliares.contratos.ContratosTc2;
 import com.code.aon.ui.form.IController;
 import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;

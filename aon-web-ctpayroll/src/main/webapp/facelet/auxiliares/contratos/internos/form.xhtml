@@ -91,28 +91,35 @@
 					</aon:selectOneMenu>
 
 					<aon:outputLabel value="#{appBundle.aon_payroll_desempleado}" />
-					<aon:selectOneMenu id="Desempleados" value="#{contratosInternos.to.desempleenum}">
+					<aon:selectOneMenu id="Desempleados" 
+						value="#{contratosInternos.to.desempleenum}">
 						<f:selectItem value="#{null}" itemLabel="    " />
 						<f:selectItems value="#{contratosInternos.desempleados}" />
 					</aon:selectOneMenu>
 
 					<aon:outputLabel value="#{appBundle.aon_payroll_minusvalia}" />
+					<aon:inputText value="#{contratosInternos.to.gradomin}" size="1" maxlength="2" >
+						<f:validator validatorId="porcentajeValidator" />
+					</aon:inputText>
+					<aon:outputLabel value="" />
 					<aon:panelGroup>
-						<aon:inputText value="#{contratosInternos.to.gradomin}" size="1" maxlength="2" >
-							<f:validator validatorId="porcentajeValidator" />
-						</aon:inputText>
 						<aon:div>
-							<aon:selectBooleanCheckbox value="#{contratosInternos.to.mujersubbol}" />
-							<aon:outputLabel value="#{appBundle.aon_payroll_mujersub}" />
-		
-							<aon:selectBooleanCheckbox value="#{contratosInternos.to.incareadbol}" />
-							<aon:outputLabel value="#{appBundle.aon_payroll_incaread}" />
-		
-							<aon:selectBooleanCheckbox value="#{contratosInternos.to.primertrabol}" />
-							<aon:outputLabel value="#{appBundle.aon_payroll_primertra}" />
-		
-							<aon:selectBooleanCheckbox value="#{contratosInternos.to.excsocialbol}" />
-							<aon:outputLabel value="#{appBundle.aon_payroll_excsocial}" />
+							<aon:div>
+								<aon:selectBooleanCheckbox value="#{contratosInternos.to.mujersubbol}" />
+								<aon:outputLabel value="#{appBundle.aon_payroll_mujersub}" />
+							</aon:div>
+							<aon:div>
+								<aon:selectBooleanCheckbox value="#{contratosInternos.to.incareadbol}" />
+								<aon:outputLabel value="#{appBundle.aon_payroll_incaread}" />
+							</aon:div>
+							<aon:div>
+								<aon:selectBooleanCheckbox value="#{contratosInternos.to.primertrabol}" />
+								<aon:outputLabel value="#{appBundle.aon_payroll_primertra}" />
+							</aon:div>
+							<aon:div>
+								<aon:selectBooleanCheckbox value="#{contratosInternos.to.excsocialbol}" />
+								<aon:outputLabel value="#{appBundle.aon_payroll_excsocial}" />
+							</aon:div>
 						</aon:div>
 					</aon:panelGroup>
 				</aon:panelGrid>
