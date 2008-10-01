@@ -105,6 +105,15 @@
 			<value>com.code.aon.marketing.Question</value>
 		</managed-property>
 		<managed-property>
+			<property-name>defaultExpressions</property-name>
+			<map-entries>
+				<map-entry>
+					<key>Question_active</key>
+					<value>#{true}</value>
+				</map-entry>
+			</map-entries>
+		</managed-property>				
+		<managed-property>
 			<property-name>listPagePath</property-name>
 			<value>/marketing/question/lookup/list.xhtml</value>
 		</managed-property>
@@ -124,9 +133,46 @@
 			<value>com.code.aon.marketing.Survey</value>
 		</managed-property>
 		<managed-property>
+			<property-name>defaultExpressions</property-name>
+			<map-entries>
+				<map-entry>
+					<key>Survey_active</key>
+					<value>#{true}</value>
+				</map-entry>
+			</map-entries>
+		</managed-property>						
+		<managed-property>
 			<property-name>listPagePath</property-name>
 			<value>/marketing/survey/lookup/list.xhtml</value>
 		</managed-property>
 	</managed-bean>	
 
+	<!-- ************ CAMPAIGN ACTION LOOKUP ************** -->
+	<managed-bean>
+		<managed-bean-name>campaignActionLookup</managed-bean-name>
+		<managed-bean-class>com.code.aon.faces.controller.RichLookupBean</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>campaignActionLookup</value>
+		</managed-property>
+		<managed-property>
+			<property-name>foreignPojo</property-name>
+			<value>com.code.aon.marketing.Action</value>
+		</managed-property>
+		<managed-property>
+			<property-name>defaultExpressions</property-name>
+			<map-entries>
+				<map-entry>
+					<key>Action_campaign_active</key>
+					<value>#{true}</value>
+				</map-entry>
+			</map-entries>
+		</managed-property>								
+		<managed-property>
+			<property-name>listPagePath</property-name>
+			<value>/marketing/action/lookup/list.xhtml</value>
+		</managed-property>
+	</managed-bean>	
+	
 </faces-config>
