@@ -227,11 +227,6 @@ public class FBatchController extends BasicController implements ICollectionProv
 
             Criteria criteria = new Criteria();
             criteria.addEqualExpression(controller.getFieldName(IFinanceAlias.FINANCE_PAYMENT), new Boolean(payment));
-            Expression amountExpr = 
-                ExpressionUtilities.getNotEqualExpression(controller.getFieldName(IFinanceAlias.FINANCE_AMOUNT), new Double(0));
-            Expression expensesExpr = 
-                ExpressionUtilities.getNotEqualExpression(controller.getFieldName(IFinanceAlias.FINANCE_EXPENSES), new Double(0));
-            criteria.addExpression(ExpressionUtilities.getOrExpression(amountExpr, expensesExpr));
             Expression pendingExpr = 
                 ExpressionUtilities.getEqualExpression(controller.getFieldName(IFinanceAlias.FINANCE_FINANCE_STATUS), FinanceStatus.PENDING);
             Expression returnedExpr = 
@@ -281,7 +276,6 @@ public class FBatchController extends BasicController implements ICollectionProv
             try {
                 fBatch.setFinanceBatchStatus(FinanceBatchStatus.TODO);
                 getManagerBean().update(fBatch);
-                setCsbOutput(null);
             } catch (ManagerBeanException e) {
                 LOGGER.log(Level.SEVERE, "Error updating FinanceBatch with id=" + fBatch.getId(), e);
             }
@@ -327,7 +321,6 @@ public class FBatchController extends BasicController implements ICollectionProv
             try {
                 fBatch.setFinanceBatchStatus(FinanceBatchStatus.TODO);
                 getManagerBean().update(fBatch);
-                setCsbOutput(null);
             } catch (ManagerBeanException e) {
                 LOGGER.log(Level.SEVERE, "Error updating FinanceBatch with id=" + fBatch.getId(), e);
             }
@@ -513,6 +506,11 @@ public class FBatchController extends BasicController implements ICollectionProv
             fbatchDetail.getFinance().setFinanceStatus(FinanceStatus.PAID);
             financeBean.update(fbatchDetail.getFinance());
 
+            if (!fbatchDetail.getFinance().getInvoice().getStatus().equals(InvoiceStatus.SCORED)) {
+                fbatchDetail.getFinance().getInvoice().setStatus(InvoiceStatus.PAID);
+                invoiceBean.update(fbatchDetail.getFinance().getInvoice());
+            }
+
             FinanceTrackingWriter.addFinanceTracking(fbatchDetail.getFinance(), FinanceTrackingType.RECORDED, trackingDescription);
         }
 
@@ -652,26 +650,6 @@ public class FBatchController extends BasicController implements ICollectionProv
 			LOGGER.log(Level.SEVERE, "Error obtaining fbatch total details", e);
 		}
 		return new Integer(0);
-	}
-
-	@SuppressWarnings("unchecked")
-	public Integer getAccountEntryId() {
-    	FinanceBatch fbatch = (FinanceBatch)this.getTo();
-		try {
-			if (fbatch != null && fbatch.getId() != null) {
-				IManagerBean accountEntryFbatchBean = BeanManager.getManagerBean(AccountEntryFinanceBatch.class);
-				Criteria criteria = new Criteria();
-				criteria.addEqualExpression(accountEntryFbatchBean.getFieldName(IAccountBridgeAlias.ACCOUNT_ENTRY_FINANCE_BATCH_FINANCE_BATCH_ID), fbatch.getId());
-				Iterator iterator = accountEntryFbatchBean.getList(criteria).iterator();
-				if (iterator.hasNext()) {
-					AccountEntryFinanceBatch accountEntryFbatch = (AccountEntryFinanceBatch)iterator.next();
-					return accountEntryFbatch.getAccountEntry().getId();
-				}
-			}
-		}catch (ManagerBeanException e) {
-			LOGGER.log(Level.SEVERE, "Error obtaining account entry id", e);
-		}
-    	return null;
 	}
 
 	@SuppressWarnings("unused")

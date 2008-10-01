@@ -145,11 +145,7 @@ public class FinanceController extends BasicController {
 	}
 	
     public boolean isPending() {
-    	return ((Finance)this.getTo()).getFinanceStatus().equals(FinanceStatus.PENDING);
-    }
-    
-    public boolean isReturned(){
-    	return ((Finance)this.getTo()).getFinanceStatus().equals(FinanceStatus.RETURNED);
+        return ((Finance)this.getTo()).getFinanceStatus().equals(FinanceStatus.PENDING);
     }
 
 	public void onEditSearch(MenuEvent event) throws ManagerBeanException {
