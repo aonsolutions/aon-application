@@ -421,22 +421,6 @@
 	    </navigation-case>
 	</navigation-rule>
 	
-	<!-- =================== Periodical Task ================= -->	
-	<navigation-rule>
-		<navigation-case>
-			<from-outcome>period_task_list</from-outcome>
-			<to-view-id>/facelet/period_task/list.faces</to-view-id>
-		</navigation-case>
-		<navigation-case>
-	        <from-outcome>period_task_form</from-outcome>
-	        <to-view-id>/facelet/period_task/form.faces</to-view-id>
-	    </navigation-case>
-		<navigation-case>
-	        <from-outcome>period_task_search</from-outcome>
-	        <to-view-id>/facelet/period_task/search.faces</to-view-id>
-	    </navigation-case>
-	</navigation-rule>
-
   <!-- =================== Application Menu Navigation Rules ================= -->	
   <navigation-rule>
 	<navigation-case>
@@ -470,10 +454,6 @@
  	<navigation-case>
         <from-outcome>task_monitor</from-outcome>
         <to-view-id>/facelet/task/monitor/search.faces</to-view-id>
-    </navigation-case>
-    <navigation-case>
-        <from-outcome>period_task</from-outcome>
-        <to-view-id>/facelet/period_task/form.faces</to-view-id>
     </navigation-case>
   </navigation-rule>
 </faces-config>

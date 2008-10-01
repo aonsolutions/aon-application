@@ -18,9 +18,9 @@ import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
 
 /**
- * MasterControllerListener is a listener that must be registered in <code>faces-bean-config.xml</code> asociated
- * with the master Controller.
- * It handles the relation between master and child controllers. 
+ * MasterControllerListener is a listener that must be registered in
+ * <code>faces-bean-config.xml</code> asociated with the master Controller. It
+ * handles the relation between master and child controllers.
  */
 public class MasterControllerListener extends ControllerAdapter {
 
@@ -28,13 +28,13 @@ public class MasterControllerListener extends ControllerAdapter {
 	private String childBean;
 
 	/** The alias map. */
-	private Map<String,String> aliasMap;
-	
+	private Map<String, String> aliasMap;
 
 	/**
 	 * Sets the child bean.
 	 * 
-	 * @param childBean the child bean
+	 * @param childBean
+	 *            the child bean
 	 */
 	public void setChildBean(String childBean) {
 		this.childBean = childBean;
@@ -43,12 +43,13 @@ public class MasterControllerListener extends ControllerAdapter {
 	/**
 	 * Sets the alias map.
 	 * 
-	 * @param aliasMap the alias map
+	 * @param aliasMap
+	 *            the alias map
 	 */
 	public void setAliasMap(Map<String, String> aliasMap) {
 		this.aliasMap = aliasMap;
 	}
-	
+
 	/**
 	 * Gets the detail controller.
 	 * 
@@ -60,33 +61,39 @@ public class MasterControllerListener extends ControllerAdapter {
 		ValueBinding vb = app.createValueBinding("#{" + this.childBean + "}");
 		return (IController) vb.getValue(ctx);
 	}
-	
+
 	/**
-	 * Updates detail controller criteria to load only the objects related with the <code>to</code> of the 
-	 * <code>masterController</code>.
+	 * Updates detail controller criteria to load only the objects related with
+	 * the <code>to</code> of the <code>masterController</code>.
 	 * 
-	 * @param reset the reset
-	 * @param master the master
+	 * @param reset
+	 *            the reset
+	 * @param master
+	 *            the master
 	 * 
-	 * @throws ControllerListenerException the controller listener exception
+	 * @throws ControllerListenerException
+	 *             the controller listener exception
 	 */
-	protected void updateDetailCriteria( IController master, boolean reset) throws ControllerListenerException {
+	protected void updateDetailCriteria(IController master, boolean reset)
+			throws ControllerListenerException {
 		IController detail = getDetailController();
 		ITransferObject to = master.getTo();
-		Criteria criteria = new Criteria();
+		// Criteria criteria = new Criteria();
 		try {
-			for( Map.Entry<String,String> entry : this.aliasMap.entrySet() ) {	
+			detail.clearCriteria();
+			Criteria criteria = detail.getCriteria();
+			for (Map.Entry<String, String> entry : this.aliasMap.entrySet()) {
 				String alias = entry.getKey();
 				String reg = detail.getFieldName(alias);
-		if ( reset ) {
-			criteria.addNullExpression(reg);
-		} else {
+				if (reset) {
+					criteria.addNullExpression(reg);
+				} else {
 					String propertyName = entry.getValue();
-					Object value = PropertyUtils.getProperty(to, propertyName );
+					Object value = PropertyUtils.getProperty(to, propertyName);
 					criteria.addEqualExpression(reg, value);
 				}
-		}
-		detail.setCriteria(criteria);
+			}
+			detail.setCriteria(criteria);
 		} catch (ManagerBeanException e) {
 			throw new ControllerListenerException(e.getMessage(), e);
 		} catch (IllegalAccessException e) {
@@ -97,43 +104,52 @@ public class MasterControllerListener extends ControllerAdapter {
 			throw new ControllerListenerException(e.getMessage(), e);
 		}
 	}
-	
+
 	/**
 	 * Inits the detail model.
 	 * 
-	 * @param reset the reset
-	 * @param master the master
+	 * @param reset
+	 *            the reset
+	 * @param master
+	 *            the master
 	 * 
-	 * @throws ControllerListenerException the controller listener exception
+	 * @throws ControllerListenerException
+	 *             the controller listener exception
 	 */
-	private void initDetailModel( IController master, boolean reset) throws ControllerListenerException {
-		updateDetailCriteria( master, reset );
+	private void initDetailModel(IController master, boolean reset)
+			throws ControllerListenerException {
+		updateDetailCriteria(master, reset);
 		getDetailController().initializeModel();
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see com.code.aon.ui.form.event.ControllerAdapter#afterBeanSelected(com.code.aon.ui.form.event.ControllerEvent)
 	 */
 	@Override
-	public void afterBeanSelected(ControllerEvent event)
-			throws ControllerListenerException {
-		initDetailModel( event.getController(), false );
+	public void afterBeanSelected(ControllerEvent event) throws ControllerListenerException {
+		initDetailModel(event.getController(), false);
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see com.code.aon.ui.form.event.ControllerAdapter#afterBeanCreated(com.code.aon.ui.form.event.ControllerEvent)
 	 */
 	@Override
 	public void afterBeanCreated(ControllerEvent event) throws ControllerListenerException {
-		initDetailModel( event.getController(), true );
+		initDetailModel(event.getController(), true);
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see com.code.aon.ui.form.event.ControllerAdapter#afterBeanAdded(com.code.aon.ui.form.event.ControllerEvent)
 	 */
 	@Override
 	public void afterBeanAdded(ControllerEvent event) throws ControllerListenerException {
-		initDetailModel( event.getController(), false );
+		initDetailModel(event.getController(), false);
 	}
 
 }

@@ -12,6 +12,8 @@ import com.code.aon.common.ITransferObject;
 @Table(name="process")
 public class Process implements ITransferObject {
 	
+	private static final long serialVersionUID = -5491663246478443959L;
+
 	private Integer id;
 	
 	private String description;
@@ -35,4 +37,16 @@ public class Process implements ITransferObject {
 	public void setDescription(String description) {
 		this.description = description;
 	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (id == null) {
+			return super.equals(obj);
+		}
+		if (obj instanceof Process) {
+			return (this.id.equals(((Process) obj).getId()));
+		}
+		return false;
+	}
+	
 }

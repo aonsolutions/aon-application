@@ -1,7 +1,11 @@
 package com.code.aon.ui.common.controller;
 
 import java.io.InputStream;
+import java.io.Serializable;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -12,31 +16,20 @@ import java.util.logging.Logger;
 
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
+import javax.faces.event.ActionEvent;
+import javax.servlet.http.HttpSession;
 
 /**
  * The Class ConfigurationController is used to set some default configurable
  * parameters of the application.
  */
-public class ConfigurationController {
+public class ConfigurationController implements Serializable {
+	
+	private static final long serialVersionUID = -1159615075844874762L;
 	
 	private static final Logger LOGGER = Logger.getLogger(ConfigurationController.class.getName());
-
-	/** The Constant STYLE_SHEET_DIRECTORY. */
-	private static final String STYLE_SHEET_DIRECTORY = "/css/";
-
-	/** The Constant STYLE_SHEET_EXTENSION. */
-	private static final String STYLE_SHEET_EXTENSION = ".css";
-
-	/** The Constant AON_STYLE_SHEET. */
-	private static final String AON_STYLE_SHEET = STYLE_SHEET_DIRECTORY + "aon"
-			+ STYLE_SHEET_EXTENSION;
-
-	/** The Constant LAYOUT_STYLE_SHEET. */
-	private static final String LAYOUT_STYLE_SHEET = STYLE_SHEET_DIRECTORY
-			+ "layout" + STYLE_SHEET_EXTENSION;
-
-	/** The Constant CUSTOMIZED_STYLE_SHEET_PREFIX. */
-	private static final String CUSTOMIZED_STYLE_SHEET_PREFIX = "/aon-";
+	
+	private static final DateFormat FORMATTER = new SimpleDateFormat("EEEE, dd MMMM yyyy");	
 
 	/** The application logo context relative path. */
 	private String applicationLogoContextRelativePath;
@@ -46,12 +39,6 @@ public class ConfigurationController {
 
 	/** The application report context relative path. */
 	private String applicationReportContextRelativePath;
-
-	/** The style of the application. */
-	private String style;
-
-	/** The user style sheets. */
-	private List<String> userStyleSheets;
 
 	/** The all style sheets. */
 	private List<String> styleSheets;
@@ -68,7 +55,7 @@ public class ConfigurationController {
 	public ConfigurationController() {
 		this.properties = new HashMap<String, String>();
 		this.applicationBundles = new HashMap<String, String>();
-		calculateStyleSheets();
+		this.styleSheets = new ArrayList<String>();
 	}
 
 	/**
@@ -193,34 +180,6 @@ public class ConfigurationController {
 	}
 
 	/**
-	 * Gets the style.
-	 * 
-	 * @return the style
-	 */
-	public String getStyle() {
-		return style;
-	}
-
-	/**
-	 * Sets the style.
-	 * 
-	 * @param style the style
-	 */
-	public void setStyle(String style) {
-		this.style = style;
-		calculateStyleSheets();		
-	}
-
-	/**
-	 * Gets the style path.
-	 * 
-	 * @return the style path
-	 */
-	public String getStylePath() {
-		return STYLE_SHEET_DIRECTORY + this.style;
-	}
-	
-	/**
 	 * Gets the style sheets.
 	 * 
 	 * @return the style sheets
@@ -229,41 +188,16 @@ public class ConfigurationController {
 		return styleSheets;
 	}
 
-	/**
-	 * Gets the user style sheets.
-	 * 
-	 * @return the user style sheets
-	 */
-	public List<String> getUserStyleSheets() {
-		return userStyleSheets;
-	}
-
-	/**
-	 * Sets the user style sheets.
-	 * 
-	 * @param userStyleSheets the user style sheets
-	 */
-	public void setUserStyleSheets(List<String> userStyleSheets) {
-		this.userStyleSheets = userStyleSheets;
-		calculateStyleSheets();
-	}
-
-	/**
-	 * Calculate style sheets.
-	 */
-	private void calculateStyleSheets() {
-		this.styleSheets = new ArrayList<String>();
-		this.styleSheets.add( AON_STYLE_SHEET );
-		this.styleSheets.add( LAYOUT_STYLE_SHEET );
-		if ( this.style != null ) {
-			String css = getStylePath() + CUSTOMIZED_STYLE_SHEET_PREFIX + this.style + STYLE_SHEET_EXTENSION;
-			this.styleSheets.add( css );
-		}
-		if ( this.userStyleSheets != null ) {
-			this.styleSheets.addAll( this.userStyleSheets );			
-		}
-	}
 	
+	/**
+	 * Sets the style sheets.
+	 * 
+	 * @param styleSheets the new style sheets
+	 */
+	public void setStyleSheets(List<String> styleSheets) {
+		this.styleSheets = styleSheets;
+	}
+
 	/**
 	 * Calculate application version.
 	 * 
@@ -287,4 +221,25 @@ public class ConfigurationController {
 			return null;
 		}
 	}
+	
+    /**
+     * Gets the current date.
+     * 
+     * @return the current date
+     */
+    public String getCurrentDate() {
+        return FORMATTER.format(new Date()).toUpperCase();
+    }
+
+    /**
+     * Logout from the current session.
+     * 
+     * @param event the event
+     */
+    public void logout( ActionEvent event ) {
+    	FacesContext context = FacesContext.getCurrentInstance();
+    	HttpSession session = (HttpSession) context.getExternalContext().getSession(false);
+    	session.invalidate();    	
+    }
+    
 }

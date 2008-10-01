@@ -10,20 +10,20 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.code.aon</groupId>
 	<artifactId>aon.ui.project</artifactId>
-	<version>2.0.9</version>
+	<version>2.2.1</version>
 	<description>AON UI PROJECT</description>
 	<name>AON UI PROJECT</name>
 	<dependencies>
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.form</artifactId>
-			<version>2.0.3</version>
+			<version>2.3.0</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.menu</artifactId>
-			<version>2.0.3</version>
+			<version>2.1.0</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
@@ -31,95 +31,60 @@
 			<artifactId>aon.ui.report</artifactId>
 			<version>2.0.0-SNAPSHOT</version>
 			<scope>compile</scope>
-			<!--
-				*** ELIMINAR LAS EXCLUSIONS CUANDO SE ACTUALICE A LAS ULTIMAS VERSIONES *** 
-			 -->
-			<exclusions>
-				<exclusion>
-					<groupId>com.code.aon</groupId>
-					<artifactId>aon.ui.form</artifactId>
-				</exclusion>
-			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.campaign</artifactId>
-			<version>2.0.4</version>
+			<version>2.1.0</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.config</artifactId>
-			<version>2.0.5</version>
+			<version>2.1.0</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.customer</artifactId>
-			<version>2.1.1</version>
+			<version>2.2.4</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.groupware</artifactId>
-			<version>2.0.3</version>
+			<version>2.1.1</version>
 			<scope>compile</scope>
-			<!--
-				*** ELIMINAR LAS EXCLUSIONS CUANDO SE ACTUALICE A LAS ULTIMAS VERSIONES *** 
-			 -->
-			<exclusions>
-				<exclusion>
-					<groupId>com.code.aon</groupId>
-					<artifactId>aon.common</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>com.code.aon</groupId>
-					<artifactId>aon.config</artifactId>
-				</exclusion>
-			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.project</artifactId>
-			<version>2.0.5</version>
+			<version>2.3.0</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.registry</artifactId>
-			<version>2.1.1</version>
+			<version>2.1.4</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.config</artifactId>
-			<version>2.0.7</version>
+			<version>2.1.0</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.customer</artifactId>
-			<version>2.0.12</version>
+			<version>2.2.0</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.groupware</artifactId>
-			<version>2.1.1</version>
+			<version>2.1.15</version>
 			<scope>compile</scope>
-			<!--
-				*** ELIMINAR LAS EXCLUSIONS CUANDO SE ACTUALICE A LAS ULTIMAS VERSIONES *** 
-			 -->
-			<exclusions>
-				<exclusion>
-					<groupId>com.code.aon</groupId>
-					<artifactId>aon.ui.form</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>com.code.aon</groupId>
-					<artifactId>aon.ui.config</artifactId>
-				</exclusion>
-			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>javax.servlet</groupId>

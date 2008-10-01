@@ -36,7 +36,7 @@ public class DailyTrackingControllerListener extends ControllerAdapter {
     @Override
     public void beforeBeanAdded(ControllerEvent event) throws ControllerListenerException {
         DailyTracking dailyTracking = (DailyTracking)event.getController().getTo();
-        User user = UserUtils.getLoggedUser();
+        User user = UserUtils.getInstance().getLoggedUser();
         if(user != null){
         	dailyTracking.setUser(user);
         }
@@ -64,7 +64,7 @@ public class DailyTrackingControllerListener extends ControllerAdapter {
     		DailyTrackingController trackingController = (DailyTrackingController)event.getController();
     		if(!trackingController.isReportMode()){
     			IManagerBean dailyTrackingBean = BeanManager.getManagerBean(DailyTracking.class);
-    			trackingController.getCriteria().addEqualExpression(dailyTrackingBean.getFieldName(IProjectAlias.DAILY_TRACKING_USER_ID), UserUtils.getLoggedUser().getId());
+    			trackingController.getCriteria().addEqualExpression(dailyTrackingBean.getFieldName(IProjectAlias.DAILY_TRACKING_USER_ID), UserUtils.getInstance().getLoggedUser().getId());
     		}
 		} catch (ManagerBeanException e) {
 			throw new ControllerListenerException(e);

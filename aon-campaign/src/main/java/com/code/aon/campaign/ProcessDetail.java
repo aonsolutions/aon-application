@@ -8,6 +8,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import org.apache.commons.lang.ObjectUtils;
+
 import com.code.aon.campaign.enumeration.DateReference;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.config.WorkGroup;
@@ -15,6 +17,8 @@ import com.code.aon.config.WorkGroup;
 @Entity
 @Table(name="process_detail")
 public class ProcessDetail implements ITransferObject {
+
+	private static final long serialVersionUID = 1030141795904320316L;
 
 	private Integer id;
 	
@@ -105,4 +109,20 @@ public class ProcessDetail implements ITransferObject {
 	public void setWorkgroup(WorkGroup workgroup) {
 		this.workgroup = workgroup;
 	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		}
+		if (obj instanceof ProcessDetail) {
+			ProcessDetail dt = (ProcessDetail) obj;
+			if (!ObjectUtils.equals(getId(), dt.getId())) {
+				return false;
+			}
+			return true;
+		}
+		return false;
+	}
+
 }

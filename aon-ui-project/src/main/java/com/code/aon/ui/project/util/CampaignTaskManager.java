@@ -51,7 +51,7 @@ public class CampaignTaskManager {
             task.setStatus(TaskStatus.PENDING);
             task.setPercent(0);
             task.setWorkGroup(processDetail.getWorkgroup() != null ? processDetail.getWorkgroup() : activity.getWorkgroup());
-            task.setSource(TaskSource.AON_CONSULTANT);
+            task.setSource(TaskSource.PROCESS);
             task.setDossier(campaignDossier.getDossier());
             task.setActivity(activity);
             task = addTask(task);
@@ -81,7 +81,7 @@ public class CampaignTaskManager {
         if (currentTask != null) {
             currentTask.setEndDate(new Date());
             currentTask.setStatus(TaskStatus.FINISHED);
-            currentTask.setUser(UserUtils.getLoggedUser());
+            currentTask.setUser(UserUtils.getInstance().getLoggedUser());
             updateTask(currentTask);
 
             finishTaskAlarm(currentTask);
@@ -93,7 +93,7 @@ public class CampaignTaskManager {
         if (currentTask != null) {
             currentTask.setEndDate(new Date());
             currentTask.setStatus(TaskStatus.DELETED);
-            currentTask.setUser(UserUtils.getLoggedUser());
+            currentTask.setUser(UserUtils.getInstance().getLoggedUser());
             updateTask(currentTask);
 
             finishTaskAlarm(currentTask);
@@ -104,7 +104,7 @@ public class CampaignTaskManager {
         Alarm taskAlarm = CampaignTaskManager.getTaskAlarm(task);
         if (taskAlarm != null) {
             taskAlarm.setStatus(AlarmStatus.FINISHED);
-            taskAlarm.setUser(UserUtils.getLoggedUser());
+            taskAlarm.setUser(UserUtils.getInstance().getLoggedUser());
             updateAlarm(taskAlarm);
         }
     }

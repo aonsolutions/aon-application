@@ -73,7 +73,11 @@ public class CustomerFeeInvoicingDAO implements IInvoicingDAO {
 				billingCalendar.setTime(customerFee.getBillingDate());
 				billingCalendar.add(Calendar.MONTH, customerFee.getPeriod().getValue());
 				customerFee.setBillingDate(billingCalendar.getTime());
-				customerFeeBean.update(customerFee);
+				if (customerFee.getBillingDate().after(customerFee.getFinalDate())) {
+					customerFeeBean.remove(customerFee);
+				} else {
+					customerFeeBean.update(customerFee);
+				}
 			}
 		} catch (ManagerBeanException e) {
 			LOGGER.log(Level.SEVERE, "Error updating customerFee with id=" + customerFee.getId(), e);

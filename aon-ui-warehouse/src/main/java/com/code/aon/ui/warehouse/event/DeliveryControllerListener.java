@@ -49,6 +49,24 @@ public class DeliveryControllerListener extends LinesControllerListener {
 	 */
 	private static final String DELIVERY_CONTROLLER_NAME = "delivery";
 	
+	/**
+	 * Fills the criteria  
+	 * 
+	 * @see com.code.aon.ui.form.event.ControllerAdapter#beforeModelInitialized(com.code.aon.ui.form.event.ControllerEvent)
+	 */
+	@Override
+	public void beforeModelInitialized(ControllerEvent event) throws ControllerListenerException {
+		Criteria criteria;
+		try {
+			criteria = event.getController().getCriteria();
+			criteria.addOrder(event.getController().getFieldName(IWarehouseAlias.DELIVERY_ISSUE_TIME));
+			criteria.addOrder(event.getController().getFieldName(IWarehouseAlias.DELIVERY_SERIES));
+			criteria.addOrder(event.getController().getFieldName(IWarehouseAlias.DELIVERY_NUMBER));
+		} catch (ManagerBeanException e) {
+			throw new ControllerListenerException(e.getMessage(), e.getCause());
+		}
+	}
+
 	/** 
 	 * Sets DeliveryDetail controller new flag to false
 	 * 
