@@ -602,6 +602,13 @@ public class BasicController extends AbstractPojoController implements IControll
 			addExpression(getFieldName(event.getComponent().getId()), value);
 		}
 	}
+	
+	public void addEqualExpression(ValueChangeEvent event) throws ManagerBeanException {
+		if (event.getNewValue() != null) {
+			String fieldName = getFieldName(event.getComponent().getId());
+			criteria.addEqualExpression(fieldName, event.getNewValue());
+		}
+	}	
 
 	/*
 	 * (non-Javadoc)

@@ -226,8 +226,12 @@ public class NewWindowController extends AbstractPojoController implements ICont
     public void addExpression(ValueChangeEvent event) throws ManagerBeanException {
         throw new NoSuchMethodError("Not implemented");
     }
+    
+	public void addEqualExpression(ValueChangeEvent event) throws ManagerBeanException {
+		throw new NoSuchMethodError("Not implemented");
+	}
 
-    /* (non-Javadoc)
+	/* (non-Javadoc)
      * @see com.code.aon.ui.form.ISearchable#addDirectExpression(javax.faces.event.ValueChangeEvent)
      */
     public void addDirectExpression(ValueChangeEvent event) throws ManagerBeanException {
