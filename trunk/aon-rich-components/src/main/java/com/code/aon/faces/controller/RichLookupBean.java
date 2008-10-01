@@ -237,6 +237,26 @@ public class RichLookupBean {
 	}
 
 	/**
+	 * Sets the init expressions.
+	 * 
+	 * @param expressions
+	 *            the expressions
+	 */
+	public void setDefaultExpressions(Map<String, Object> expressions) {
+		getController().setDefaultExpressions(expressions);
+	}
+	
+	/**
+	 * Sets the order list.
+	 * 
+	 * @param value
+	 *            the new order list
+	 */
+	public void setDefaultOrder(String value) {
+		getController().setDefaultOrder(value);
+	}
+	
+	/**
 	 * Return the model associated to controller. The model represents a list of
 	 * <code>ITransferObject</code> with which we will be able to interact.
 	 * 
