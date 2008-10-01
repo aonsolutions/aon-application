@@ -4,19 +4,31 @@ import javax.faces.context.FacesContext;
 
 public class CmsController {
 
+	private boolean adminProfile = false;
+
+	public static String NAME = "cms";
+
+	public void assignAdminProfile(){
+		adminProfile = true;
+	}
+	
     public boolean isRoleDesigner() {
+		if (adminProfile) return true;
     	return FacesContext.getCurrentInstance().getExternalContext().isUserInRole(DESIGNER_ROLE);
     }
 
     public boolean isRoleEditor() {
+		if (adminProfile) return true;
     	return FacesContext.getCurrentInstance().getExternalContext().isUserInRole(EDITOR_ROLE);
     }
 
     public boolean isRoleRevisor() {
+		if (adminProfile) return true;
     	return FacesContext.getCurrentInstance().getExternalContext().isUserInRole(REVISOR_ROLE);
     }
 
     public boolean isRolePublisher() {
+		if (adminProfile) return true;
     	return FacesContext.getCurrentInstance().getExternalContext().isUserInRole(PUBLISHER_ROLE);
     }
 
