@@ -44,7 +44,7 @@
 
 							<h:column>
 								<f:facet name="header">
-									<h:outputText value="#{supplierBundle.supplier_code}" />
+									<h:outputText value="#{purchaseBundle.supplier_code}" />
 								</f:facet>
 								<t:commandLink immediate="#{true}"
 									styleClass="aon-table-row-selected" action="supplier_form"
@@ -56,37 +56,37 @@
 							<h:column>
 								<f:facet name="header">
 									<h:panelGroup>
-										<h:outputText value="#{supplierBundle.supplier_name}" />
+										<h:outputText value="#{purchaseBundle.supplier_name}" />
 									</h:panelGroup>
 								</f:facet>
-								<h:outputText value="#{to.registry.name}" />
+								<h:outputText value="#{to.name}" />
 								<f:verbatim>&#160;</f:verbatim>
 							</h:column>
 
 							<h:column>
 								<f:facet name="header">
 									<h:panelGroup>
-										<h:outputText value="#{supplierBundle.supplier_surname}" />
+										<h:outputText value="#{purchaseBundle.supplier_surname}" />
 									</h:panelGroup>
 								</f:facet>
-								<h:outputText value="#{to.registry.surname}" />
+								<h:outputText value="#{to.surname}" />
 								<f:verbatim>&#160;</f:verbatim>
 							</h:column>
 
 							<h:column>
 								<f:facet name="header">
 									<h:panelGroup>
-										<h:outputText value="#{supplierBundle.supplier_alias}" />
+										<h:outputText value="#{purchaseBundle.supplier_alias}" />
 									</h:panelGroup>
 								</f:facet>
-								<h:outputText value="#{to.registry.alias}" />
+								<h:outputText value="#{to.alias}" />
 								<f:verbatim>&#160;</f:verbatim>
 							</h:column>
 
 							<h:column>
 								<f:facet name="header">
 									<h:panelGroup>
-										<h:outputText value="#{supplierBundle.supplier_status}" />
+										<h:outputText value="#{purchaseBundle.supplier_status}" />
 									</h:panelGroup>
 								</f:facet>
 								<h:outputText value="#{to.status}" />

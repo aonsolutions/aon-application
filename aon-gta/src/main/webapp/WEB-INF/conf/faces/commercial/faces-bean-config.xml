@@ -140,19 +140,12 @@
 				<value-class>
 					com.code.aon.ui.form.event.IControllerListener
 				</value-class>
-				<value>#{targetControllerListener}</value>
 				<value>#{targetAddressListener}</value>
 				<value>#{targetMediaListener}</value>
 			</list-entries>
 		</managed-property>
 	</managed-bean>
 
-	<managed-bean>
-		<managed-bean-name>targetControllerListener</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.commercial.event.TargetControllerListener</managed-bean-class>
-		<managed-bean-scope>none</managed-bean-scope>
-	</managed-bean>
-	
 	<managed-bean>
 		<managed-bean-name>targetChildListener</managed-bean-name>
 		<managed-bean-class>
@@ -261,22 +254,6 @@
                     <value>id</value>
 				</map-entry>
 			</map-entries>
-		</managed-property>
-	</managed-bean>
-
-	<managed-bean>
-		<managed-bean-name>targetSearch</managed-bean-name>
-		<managed-bean-class>
-			com.code.aon.ui.commercial.controller.TargetLookupController
-		</managed-bean-class>
-		<managed-bean-scope>session</managed-bean-scope>
-		<managed-property>
-			<property-name>pojo</property-name>
-			<value>com.code.aon.commercial.Target</value>
-		</managed-property>
-		<managed-property>
-			<property-name>pagePath</property-name>
-			<value>/facelet/sw/targetSearch.faces</value>
 		</managed-property>
 	</managed-bean>
 

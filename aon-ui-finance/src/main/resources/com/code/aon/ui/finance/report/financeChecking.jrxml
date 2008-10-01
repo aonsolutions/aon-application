@@ -2,7 +2,7 @@
 <!-- Created with iReport - A designer for JasperReports -->
 <!DOCTYPE jasperReport PUBLIC "//JasperReports//DTD Report Design//EN" "http://jasperreports.sourceforge.net/dtds/jasperreport.dtd">
 <jasperReport
-		 name="financeChecking"
+		 name="feeChecking"
 		 columnCount="1"
 		 printOrder="Vertical"
 		 orientation="Portrait"
@@ -41,12 +41,12 @@
 			</band>
 		</title>
 		<pageHeader>
-			<band height="65"  isSplitAllowed="true" >
+			<band height="80"  isSplitAllowed="true" >
 				<image  scaleImage="RetainShape" vAlign="Top" hAlign="Left" onErrorType="Blank" isUsingCache="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						mode="Opaque"
 						x="5"
-						y="3"
+						y="8"
 						width="83"
 						height="59"
 						forecolor="#000000"
@@ -60,7 +60,7 @@
 				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						x="88"
-						y="3"
+						y="8"
 						width="445"
 						height="17"
 						key="textField-1"/>
@@ -73,7 +73,7 @@
 				<textField isStretchWithOverflow="false" pattern="dd/MM/yyyy" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						x="88"
-						y="20"
+						y="25"
 						width="444"
 						height="12"
 						key="textField-2"/>
@@ -109,12 +109,10 @@
 						y="0"
 						width="445"
 						height="17"
-						key="textField-15">
-							<printWhenExpression><![CDATA[new Boolean($F{noPaymethodList}.size() > 0)]]></printWhenExpression>
-						</reportElement>
+						key="textField-15"/>
 					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
 					<textElement textAlignment="Left" verticalAlignment="Middle">
-						<font pdfFontName="Helvetica-Bold" size="9" isBold="true"/>
+						<font pdfFontName="Helvetica-Bold" size="10" isBold="true"/>
 					</textElement>
 				<textFieldExpression   class="java.lang.String"><![CDATA[$R{finance_checking_no_pay_method}]]></textFieldExpression>
 				</textField>
@@ -125,12 +123,10 @@
 						width="445"
 						height="17"
 						key="textField-16"
-						positionType="Float">
-							<printWhenExpression><![CDATA[new Boolean($F{negotiableNoBankAccountList}.size() > 0)]]></printWhenExpression>
-						</reportElement>
+						positionType="Float"/>
 					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
 					<textElement textAlignment="Left" verticalAlignment="Middle">
-						<font pdfFontName="Helvetica-Bold" size="9" isBold="true"/>
+						<font pdfFontName="Helvetica-Bold" size="10" isBold="true"/>
 					</textElement>
 				<textFieldExpression   class="java.lang.String"><![CDATA[$R{finance_checking_negotiable_no_bank}]]></textFieldExpression>
 				</textField>
@@ -154,12 +150,10 @@
 						width="445"
 						height="17"
 						key="textField-17"
-						positionType="Float">
-							<printWhenExpression><![CDATA[new Boolean($F{noNegotiableBankAccountList}.size() > 0)]]></printWhenExpression>
-						</reportElement>
+						positionType="Float"/>
 					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
 					<textElement textAlignment="Left" verticalAlignment="Middle">
-						<font pdfFontName="Helvetica-Bold" size="9" isBold="true"/>
+						<font pdfFontName="Helvetica-Bold" size="10" isBold="true"/>
 					</textElement>
 				<textFieldExpression   class="java.lang.String"><![CDATA[$R{finance_checking_bank_no_negotiable}]]></textFieldExpression>
 				</textField>
@@ -186,9 +180,9 @@
 			<band height="14"  isSplitAllowed="true" >
 				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Report" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
-						x="511"
+						x="522"
 						y="0"
-						width="24"
+						width="13"
 						height="14"
 						key="textField"/>
 					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
@@ -199,7 +193,7 @@
 				</textField>
 				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
-						x="452"
+						x="463"
 						y="0"
 						width="57"
 						height="14"

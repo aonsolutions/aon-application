@@ -273,32 +273,26 @@
 		<template path="/com/code/aon/ui/gta/report/salesInvoice.jasper"/>
 		<collection provider="#{salesInvoicing}"/>
 
+		<!-- 
+		<nested-report report="finance"/>
+		 -->
 		<params>
 			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.finance.i18n.messages" />
 			<param id="company" value="#{company.obtainCompany}" />
 			<param id="PriceStrategy" value="#{salesInvoicingDetail.getPriceStrategy}" />
 			<param id="logoImageFile" value="#{company.getAttachAsInputStream}" />
-			<param id="recordData" value="#{company.getCompanyRecordData}" />
 			<param id="customer" value="#{salesInvoicing.getCustomer}" />
 			<param id="phone" value="#{company.obtainPhone}" />
 			<param id="fax" value="#{company.obtainFax}" />
 			<param id="address" value="#{company.obtainAddress}" />
 			<param id="tasDelivery" value="#{salesInvoicing.obtainTasDelivery}" />
-			<param id="supportOrderInsurance" value="#{salesInvoicing.obtainSupportOrderInsurance}" />
-			<param id="printHeader" value="#{company.isPrintHeader}" />
-			<param id="printRecordData" value="#{company.isPrintRecordData}" />
 		</params>
 		<nested-report report="invoiceDetail"/>
-		<nested-report report="taxBreakDown"/>
-		<nested-report report="finance"/>
+		<nested-report report="vatBreakDown"/>
 	</report>
 	
 	<report id="invoiceDetail" description="InvoiceDetail's Subreport">
 		<template path="/com/code/aon/ui/gta/report/invoiceDetail.jasper"/>
-	</report>
-
-	<report id="taxBreakDown" description="VatBreakDown's Subreport">
-		<template path="/com/code/aon/ui/finance/report/taxBreakDown.jasper"/>
 	</report>
 	
 	<report id="salesInvoiceList" description="Sales Invoice's List">
@@ -439,8 +433,7 @@
 			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.finance.i18n.messages" />
 			<param id="company" value="#{company.obtainCompany}" />
 			<param id="logoImageFile" value="#{company.getAttachAsInputStream}" />
-			<param id="total" value="#{fbatch.getToTotalAmount}" />
-			<param id="totalRegs" value="#{fbatch.getToTotalDetails}" />
+			<param id="total" value="#{fbatch.getToTotal}" />
 		</params>
 		
 		<nested-report report="fBatchDetail"/>

@@ -84,12 +84,12 @@
 				rendered="#{to!=controllerAlias.to}" />
 			<t:inputText value="#{controllerAlias.to.zip}"
 				styleClass="aon-form-input-text"
-				rendered="#{to==controllerAlias.to}" size="8" />
+				rendered="#{to==controllerAlias.to}" required="#{true}" size="8" />
 			<f:facet name="footer">
 				<t:div>
 					<t:inputText value="#{controllerAlias.to.zip}"
 						styleClass="aon-form-input-text"
-						rendered="#{controllerAlias.new}" size="8" />
+						rendered="#{controllerAlias.new}" required="#{true}" size="8" />
 				</t:div>
 			</f:facet>
 		</t:column>
@@ -102,12 +102,12 @@
 				rendered="#{to!=controllerAlias.to}" />
 			<t:inputText value="#{controllerAlias.to.city}"
 				styleClass="aon-form-input-text"
-				rendered="#{to==controllerAlias.to}" size="20" />
+				rendered="#{to==controllerAlias.to}" required="#{true}" size="20" />
 			<f:facet name="footer">
 				<t:div>
 					<t:inputText value="#{controllerAlias.to.city}"
 						styleClass="aon-form-input-text"
-						rendered="#{controllerAlias.new}" size="20" />
+						rendered="#{controllerAlias.new}" required="#{true}" size="20" />
 				</t:div>
 			</f:facet>
 		</t:column>

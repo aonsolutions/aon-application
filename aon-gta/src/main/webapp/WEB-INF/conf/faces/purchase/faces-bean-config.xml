@@ -37,13 +37,6 @@
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
 	<managed-bean>
-		<managed-bean-name>supplierCollections</managed-bean-name>
-		<managed-bean-class>
-			com.code.aon.ui.supplier.controller.SupplierCollectionsController
-		</managed-bean-class>
-		<managed-bean-scope>session</managed-bean-scope>
-	</managed-bean>
-	<managed-bean>
 		<managed-bean-name>warehouseCollections</managed-bean-name>
 		<managed-bean-class>
 			com.code.aon.ui.warehouse.controller.WarehouseCollectionsController
@@ -54,7 +47,7 @@
 	<!--  **** SUPPLIER **** -->
 	<managed-bean>
 		<managed-bean-name>supplier</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.supplier.controller.SupplierController</managed-bean-class>
+		<managed-bean-class>com.code.aon.ui.purchase.controller.SupplierController</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
 			<property-name>queryOnStartUP</property-name>
@@ -62,14 +55,14 @@
 		</managed-property>
 		<managed-property>
 			<property-name>pojo</property-name>
-			<value>com.code.aon.supplier.Supplier</value>
+			<value>com.code.aon.purchase.Supplier</value>
 		</managed-property>
 		<managed-property>
 			<property-name>listenerClasses</property-name>
 			<list-entries>
 				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
-				<value>#{supplierAddressListener}</value>
-				<value>#{supplierMediaListener}</value>
+				<value>#{registryAddressListener}</value>
+				<value>#{registryMediaListener}</value>
 				<value>#{supplierRBankChildListener}</value>
 				<value>#{supplierRPayMethodChildListener}</value>
 				<value>#{supplierScopeListener}</value>
@@ -78,14 +71,14 @@
 	</managed-bean>
 
 	<managed-bean>
-		<managed-bean-name>supplierChildListener</managed-bean-name>
+		<managed-bean-name>registryChildListener</managed-bean-name>
 		<managed-bean-class>
 			com.code.aon.ui.form.listener.ChildControllerListener
 		</managed-bean-class>
 		<managed-bean-scope>none</managed-bean-scope>
 		<managed-property>
 			<property-name>masterBean</property-name>
-			<value>supplier.registry</value>
+			<value>supplier</value>
 		</managed-property>
 		<managed-property>
 			<property-name>masterPropertyName</property-name>
@@ -98,7 +91,7 @@
 	<managed-bean>
 		<managed-bean-name>supplierAddress</managed-bean-name>
 		<managed-bean-class>
-			com.code.aon.ui.supplier.controller.SupplierAddressController
+			com.code.aon.ui.purchase.controller.SupplierAddressController
 		</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
@@ -109,13 +102,13 @@
 			<property-name>listenerClasses</property-name>
 			<list-entries>
 				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
-				<value>#{supplierChildListener}</value>
+				<value>#{registryChildListener}</value>
 			</list-entries>
 		</managed-property>
 	</managed-bean>
 
 	<managed-bean>
-		<managed-bean-name>supplierAddressListener</managed-bean-name>
+		<managed-bean-name>registryAddressListener</managed-bean-name>
 		<managed-bean-class>
 			com.code.aon.ui.form.listener.MasterControllerListener
 		</managed-bean-class>
@@ -141,7 +134,7 @@
 	<managed-bean>
 		<managed-bean-name>supplierMedia</managed-bean-name>
 		<managed-bean-class>
-			com.code.aon.ui.supplier.controller.SupplierMediaController
+			com.code.aon.ui.purchase.controller.SupplierMediaController
 		</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
@@ -152,13 +145,13 @@
 			<property-name>listenerClasses</property-name>
 			<list-entries>
 				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
-				<value>#{supplierChildListener}</value>
+				<value>#{registryChildListener}</value>
 			</list-entries>
 		</managed-property>
 	</managed-bean>
 
 	<managed-bean>
-		<managed-bean-name>supplierMediaListener</managed-bean-name>
+		<managed-bean-name>registryMediaListener</managed-bean-name>
 		<managed-bean-class>
 			com.code.aon.ui.form.listener.MasterControllerListener
 		</managed-bean-class>
@@ -307,7 +300,7 @@
 		</managed-property>
 		<managed-property>
 			<property-name>pojo</property-name>
-			<value>com.code.aon.supplier.SupplierSegment</value>
+			<value>com.code.aon.purchase.SupplierSegment</value>
 		</managed-property>
 	</managed-bean>
 

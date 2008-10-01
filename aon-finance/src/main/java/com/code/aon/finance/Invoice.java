@@ -67,9 +67,6 @@ public class Invoice implements ITransferObject, IHeaderObject, ICalculableConta
     /** The number. */
     private int number;
 
-    /** The reference code. */
-    private String referenceCode;
-
     /** The registry. */
     private Registry registry;
     
@@ -216,7 +213,7 @@ public class Invoice implements ITransferObject, IHeaderObject, ICalculableConta
      * 
      * @return the issue date
      */
-    @Column(name="issue_date")
+    @Column(name = "issue_date")
     public Date getIssueDate() {
         return issueDate;
     }
@@ -288,30 +285,11 @@ public class Invoice implements ITransferObject, IHeaderObject, ICalculableConta
     }
 
     /**
-     * Gets the reference code.
-     * 
-     * @return the reference code
-     */
-	@Column(name="reference_code", length=32)
-    public String getReferenceCode() {
-		return referenceCode;
-	}
-
-	/**
-	 * Sets the reference code.
-	 * 
-	 * @param referenceCode the reference code
-	 */
-	public void setReferenceCode(String referenceCode) {
-		this.referenceCode = referenceCode;
-	}
-
-    /**
      * Gets the status.
      * 
      * @return the status
      */
-    @Column(name="status")
+    @Column(name = "status")
     public InvoiceStatus getStatus() {
         return status;
     }

@@ -161,13 +161,11 @@ public class SalesInvoicingListener extends ControllerAdapter {
 	 */
 	@Override
 	public void beforeModelInitialized(ControllerEvent event) throws ControllerListenerException {
+		SalesInvoicingController salesInvoicingController = (SalesInvoicingController)event.getController();
 		Criteria criteria;
 		try {
-			criteria = event.getController().getCriteria();
-			criteria.addEqualExpression(event.getController().getFieldName(IFinanceAlias.INVOICE_TYPE), InvoiceType.SALES);
-			criteria.addOrder(event.getController().getFieldName(IFinanceAlias.INVOICE_ISSUE_DATE));
-			criteria.addOrder(event.getController().getFieldName(IFinanceAlias.INVOICE_SERIES));
-			criteria.addOrder(event.getController().getFieldName(IFinanceAlias.INVOICE_NUMBER));
+			criteria = salesInvoicingController.getCriteria();
+			criteria.addEqualExpression(salesInvoicingController.getManagerBean().getFieldName(IFinanceAlias.INVOICE_TYPE), InvoiceType.SALES);
 		} catch (ManagerBeanException e) {
 			throw new ControllerListenerException(e.getMessage(), e.getCause());
 		}
@@ -186,16 +184,13 @@ public class SalesInvoicingListener extends ControllerAdapter {
 			Iterator iter = customerBean.getList(criteria).iterator();
 			boolean surcharge = false;
 			boolean taxFree = false;
-			boolean withholding = false;
 			if(iter.hasNext()){
 				Customer customer = (Customer)iter.next();
 				surcharge = customer.isSurcharge();
 				taxFree = customer.isTaxFree();
-				withholding = customer.isWithholding();
 			}
-			invoice.setSurcharge(surcharge);
 			invoice.setTaxFree(taxFree);
-			invoice.setWithholding(withholding);
+			invoice.setSurcharge(surcharge);
 		} catch (ManagerBeanException e) {
 			LOGGER.log(Level.SEVERE, "error obtaining customer", e);
 		}

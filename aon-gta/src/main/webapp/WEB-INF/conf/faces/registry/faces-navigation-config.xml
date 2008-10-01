@@ -16,14 +16,6 @@
       <from-outcome>company_init</from-outcome>
       <to-view-id>/facelet/homepage/firstContent.faces</to-view-id>
     </navigation-case>
-	<navigation-case>
-		<from-outcome>company_record_data_list</from-outcome>
-		<to-view-id>/facelet/registry/company/record_data/list.faces</to-view-id>
-	</navigation-case>
-	<navigation-case>
-		<from-outcome>company_record_data_form</from-outcome>
-		<to-view-id>/facelet/registry/company/record_data/form.faces</to-view-id>
-	</navigation-case>
   </navigation-rule>
 
   <!-- ********************************* -->

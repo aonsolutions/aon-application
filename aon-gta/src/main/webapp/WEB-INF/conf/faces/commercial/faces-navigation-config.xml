@@ -40,14 +40,6 @@
       <from-outcome>target_search</from-outcome>
       <to-view-id>/facelet/commercial/master/target/search.faces</to-view-id>
     </navigation-case>
-    <navigation-case>
-      <from-outcome>target_sw</from-outcome>
-      <to-view-id>/facelet/sw/target.faces</to-view-id>
-    </navigation-case>
-    <navigation-case>
-      <from-outcome>target_sw_search</from-outcome>
-      <to-view-id>/facelet/sw/targetSearch.faces</to-view-id>
-    </navigation-case>
   </navigation-rule>
 
   <!-- ********************************* -->

@@ -75,17 +75,17 @@
 							for="Income_series" 
 							value="#{purchaseBundle.aon_series_number}" />
 						<t:div>
-							<t:inputText id="Income_series" size="4"
+							<t:inputText id="Income_series" size="5"
 								styleClass="aon-form-input-text" onblur="toUpperCase(this);"
 								valueChangeListener="#{income.addExpression}" />
-							<t:inputText id="Income_number" size="7"
+							<t:inputText id="Income_number" size="15"
 								styleClass="aon-form-input-text"
 								valueChangeListener="#{income.addExpression}" />
 						</t:div>
 						
 						<t:outputLabel for="Supplier_Lookup_id"
 							styleClass="aon-form-input-text-label"
-							value="#{supplierBundle.aon_supplier}" />
+							value="#{purchaseBundle.aon_supplier}" />
 						<t:div>
 							<t:inputText id="Supplier_Lookup_id" size="5" forceId="#{true}"
 								styleClass="aon-form-input-text"
@@ -157,10 +157,10 @@
 							styleClass="aon-form-input-text"
 							valueChangeListener="#{income.addSupplierExpression}" />
 
-						<t:outputLabel for="Income_incomeStatus"
+						<t:outputLabel for="Income_status"
 							styleClass="aon-form-selectOneMenu-label"
 							value="#{purchaseBundle.aon_status}" />
-						<h:selectOneMenu id="Income_incomeStatus" 
+						<h:selectOneMenu id="Income_status" 
 							styleClass="aon-form-selectOneMenu-field"
 							valueChangeListener="#{income.addEqualExpression}"
 							converter="aonIncomeStatusConverter">

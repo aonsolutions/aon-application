@@ -4,8 +4,6 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.Collection;
-import java.util.Date;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -19,9 +17,6 @@ import javax.faces.event.ActionEvent;
 import javax.faces.event.ValueChangeEvent;
 import javax.servlet.http.HttpServletResponse;
 
-import org.hibernate.Query;
-import org.hibernate.Session;
-
 import com.code.aon.account.AccountEntry;
 import com.code.aon.account.AccountEntryDetail;
 import com.code.aon.account.bridge.AccountEntryFinanceBatch;
@@ -34,9 +29,7 @@ import com.code.aon.common.BeanManager;
 import com.code.aon.common.ICollectionProvider;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
-import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.common.enumeration.MimeType;
-import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.company.Company;
 import com.code.aon.finance.Finance;
 import com.code.aon.finance.FinanceBatch;
@@ -84,8 +77,6 @@ public class FBatchController extends BasicController implements ICollectionProv
 	/** Determines if the fbatch is a payment or a charge. */
 	private Boolean payment;
 
-	private Date recordDate;
-
 	public CSBOutput getCsbOutput() {
 		return csbOutput;
 	}
@@ -112,14 +103,6 @@ public class FBatchController extends BasicController implements ICollectionProv
 		this.payment = payment;
 	}
 
-	public Date getRecordDate() {
-		return recordDate;
-	}
-
-	public void setRecordDate(Date recordDate) {
-		this.recordDate = recordDate;
-	}
-
 	@Override
 	public void onEditSearch(ActionEvent event) {
 		setPayment(null);
@@ -140,10 +123,6 @@ public class FBatchController extends BasicController implements ICollectionProv
 
     public boolean isDiskMode() {
         return !FinanceBatchType.NONE.equals(((FinanceBatch)this.getTo()).getFinanceBatchType());
-    }
-
-    public boolean isFilled() {
-        return getToTotalDetails().intValue() > 0;
     }
 
     @SuppressWarnings("unchecked")
@@ -227,11 +206,6 @@ public class FBatchController extends BasicController implements ICollectionProv
 
             Criteria criteria = new Criteria();
             criteria.addEqualExpression(controller.getFieldName(IFinanceAlias.FINANCE_PAYMENT), new Boolean(payment));
-            Expression amountExpr = 
-                ExpressionUtilities.getNotEqualExpression(controller.getFieldName(IFinanceAlias.FINANCE_AMOUNT), new Double(0));
-            Expression expensesExpr = 
-                ExpressionUtilities.getNotEqualExpression(controller.getFieldName(IFinanceAlias.FINANCE_EXPENSES), new Double(0));
-            criteria.addExpression(ExpressionUtilities.getOrExpression(amountExpr, expensesExpr));
             Expression pendingExpr = 
                 ExpressionUtilities.getEqualExpression(controller.getFieldName(IFinanceAlias.FINANCE_FINANCE_STATUS), FinanceStatus.PENDING);
             Expression returnedExpr = 
@@ -376,23 +350,22 @@ public class FBatchController extends BasicController implements ICollectionProv
 		return false;
 	}
 
-	@SuppressWarnings({"unused","unchecked"})
+    @SuppressWarnings("unused")
 	public void onCreateDisk(ActionEvent event) throws ManagerBeanException {
-    	FinanceBatch fbatch = (FinanceBatch)this.getTo();
+		FinanceBatch fbatch = (FinanceBatch)this.getTo();
 
         Company company = obtainCompany();
-        Collection fbatchDetailCollection = obtainDetailsCollection(fbatch);
         if (fbatch.getFinanceBatchType().equals(FinanceBatchType.CSB_19_D) || fbatch.getFinanceBatchType().equals(FinanceBatchType.CSB_19)) {
 			CSB19Writer csb19Writer = new CSB19Writer();
-			csbOutput = csb19Writer.createCSB19(company, fbatch, fbatchDetailCollection);
+			csbOutput = csb19Writer.createCSB19(company, fbatch);
 		}
 		else if (fbatch.getFinanceBatchType().equals(FinanceBatchType.CSB_32)) {
 			CSB32Writer csb32Writer = new CSB32Writer();
-			csbOutput = csb32Writer.createCSB32(company, fbatch, fbatchDetailCollection);
+			csbOutput = csb32Writer.createCSB32(company, fbatch);
 		}
 		else if (fbatch.getFinanceBatchType().equals(FinanceBatchType.CSB_58)) {
 			CSB58Writer csb58Writer = new CSB58Writer();
-			csbOutput = csb58Writer.createCSB58(company, fbatch, fbatchDetailCollection);
+			csbOutput = csb58Writer.createCSB58(company, fbatch);
 		}
 
         if (csbOutput != null) {
@@ -416,17 +389,6 @@ public class FBatchController extends BasicController implements ICollectionProv
         }
         return null;
     }
-
-	@SuppressWarnings("unchecked")
-	private Collection obtainDetailsCollection(FinanceBatch fbatch) {
-		String select = "select fbatchDetail " +
-    					"from FinanceBatchDetail as fbatchDetail " +
-    					"where fbatchDetail.financeBatch.id = " + fbatch.getId() + " " +
-    					"order by substring(fbatchDetail.finance.bankAccount, 1, 8), fbatchDetail.finance.invoice.registry.id";
-    	Session session = HibernateUtil.getSession();
-    	Query query = session.createQuery(select);
-    	return query.list(); 
-	}
 
 	@SuppressWarnings({"unused"})
 	public boolean isDiskOk() throws ManagerBeanException {
@@ -480,11 +442,10 @@ public class FBatchController extends BasicController implements ICollectionProv
         }
 
         FinanceRecordingTo recordingTo = new FinanceRecordingTo();
-        recordingTo.setDate((getRecordDate()!=null)?getRecordDate():fbatch.getIssueDate());
+        recordingTo.setDate(fbatch.getIssueDate());
         recordingTo.setType(fbatch.isPayment() ? AccountEntryType.PAYMENT : AccountEntryType.COLLECTION);
         recordingTo.setRegistryBank(fbatch.getRegistryBank());
         recordingTo.setFinanceList(financeList);
-        recordingTo.setSecurityLevel(SecurityLevel.OFFICIAL);
 
         AccountEntryFinanceWriter accountEntryWriter = new AccountEntryFinanceWriter();
         AccountEntry entry = accountEntryWriter.recordFinances(recordingTo);
@@ -510,6 +471,11 @@ public class FBatchController extends BasicController implements ICollectionProv
 
             fbatchDetail.getFinance().setFinanceStatus(FinanceStatus.PAID);
             financeBean.update(fbatchDetail.getFinance());
+
+            if (!fbatchDetail.getFinance().getInvoice().getStatus().equals(InvoiceStatus.SCORED)) {
+                fbatchDetail.getFinance().getInvoice().setStatus(InvoiceStatus.PAID);
+                invoiceBean.update(fbatchDetail.getFinance().getInvoice());
+            }
 
             FinanceTrackingWriter.addFinanceTracking(fbatchDetail.getFinance(), FinanceTrackingType.RECORDED, trackingDescription);
         }

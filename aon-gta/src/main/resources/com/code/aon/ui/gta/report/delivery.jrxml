@@ -55,7 +55,7 @@
 						mode="Opaque"
 						x="5"
 						y="8"
-						width="244"
+						width="83"
 						height="59"
 						forecolor="#000000"
 						backcolor="#FFFFFF"
@@ -67,81 +67,81 @@
 				</image>
 				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
+						x="100"
+						y="30"
+						width="201"
+						height="24"
+						key="textField-27"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font fontName="Arial Narrow" pdfFontName="Helvetica-Bold" size="14" isBold="true"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$P{company}.getName()]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
 						x="332"
-						y="51"
+						y="40"
 						width="112"
 						height="12"
 						key="textField-65"/>
 					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
 					<textElement>
-						<font fontName="Arial Narrow" pdfFontName="Helvetica" size="9"/>
+						<font fontName="Arial Narrow" pdfFontName="Helvetica" size="10"/>
 					</textElement>
 				<textFieldExpression   class="java.lang.String"><![CDATA[$R{offer_tel} + ": " + $P{phone}.getValue()]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						x="444"
-						y="51"
+						y="40"
 						width="111"
 						height="12"
 						key="textField-66"/>
 					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
 					<textElement>
-						<font fontName="Arial Narrow" pdfFontName="Helvetica" size="9"/>
+						<font fontName="Arial Narrow" pdfFontName="Helvetica" size="10"/>
 					</textElement>
 				<textFieldExpression   class="java.lang.String"><![CDATA[$R{offer_fax} + ": " + $P{fax}.getValue()]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						x="332"
-						y="39"
+						y="28"
 						width="223"
 						height="12"
 						key="textField-67"/>
 					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
 					<textElement>
-						<font fontName="Arial Narrow" pdfFontName="Helvetica" size="9"/>
+						<font fontName="Arial Narrow" pdfFontName="Helvetica" size="10"/>
 					</textElement>
 				<textFieldExpression   class="java.lang.String"><![CDATA[($P{address}.getZip()==null?"":$P{address}.getZip() + " ") + ($P{address}.getCity()==null?"":$P{address}.getCity() + " ") + "(" + $P{address}.getGeozone().getName() + ")"]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						x="332"
-						y="27"
+						y="16"
 						width="223"
 						height="12"
 						key="textField-68"/>
 					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
 					<textElement>
-						<font fontName="Arial Narrow" pdfFontName="Helvetica" size="9"/>
+						<font fontName="Arial Narrow" pdfFontName="Helvetica" size="10"/>
 					</textElement>
 				<textFieldExpression   class="java.lang.String"><![CDATA[($P{address}.getAddress()==null?"":$P{address}.getAddress() + " ") + ($P{address}.getAddress2()==null?"":$P{address}.getAddress2() + " ") + ($P{address}.getAddress3()==null?"":$P{address}.getAddress3())]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						x="332"
-						y="63"
+						y="52"
 						width="223"
 						height="12"
 						key="textField-69"/>
 					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
 					<textElement>
-						<font fontName="Arial Narrow" pdfFontName="Helvetica" size="9"/>
+						<font fontName="Arial Narrow" pdfFontName="Helvetica" size="10"/>
 					</textElement>
 				<textFieldExpression   class="java.lang.String"><![CDATA[$R{target_document} + ": " + $P{company}.getDocument()]]></textFieldExpression>
-				</textField>
-				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
-					<reportElement
-						x="332"
-						y="3"
-						width="223"
-						height="24"
-						key="textField-70"/>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
-					<textElement textAlignment="Left" verticalAlignment="Middle">
-						<font fontName="Arial Narrow" pdfFontName="Helvetica-Bold" size="10" isBold="true"/>
-					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$P{company}.getName()]]></textFieldExpression>
 				</textField>
 			</band>
 		</pageHeader>

@@ -12,7 +12,6 @@ import com.code.aon.account.Account;
 import com.code.aon.account.AccountEntry;
 import com.code.aon.account.AccountEntryDetail;
 import com.code.aon.account.AccountLoanFeeHeader;
-import com.code.aon.account.DefaultAccounts;
 import com.code.aon.account.Loan;
 import com.code.aon.account.bridge.LoanAccount;
 import com.code.aon.account.bridge.dao.IAccountBridgeAlias;
@@ -106,7 +105,6 @@ public class AccountLoanFeeController {
 		entry.setAccountPeriod(AccountUtil.obtainPeriod(getHeader().getFeeDate()).getId());
 		entry.setJournal(null);
 		entry.setType(AccountEntryType.LOAN_FEE);
-		entry.setSecurityLevel(getHeader().getSecurityLevel());
 		entry = insertorUpdateAccountEntry(entry);
 		insertEntryDetails(entry);
 		setAccountEntry(entry);
@@ -143,25 +141,25 @@ public class AccountLoanFeeController {
 			Account loanAccount = obtainLoanAccount(getHeader().getLoan());
 			detail.setAccount(rBankAccount);
 			detail.setAccountEntry(entry);
+			detail.setBalancingAccount(loanAccount);
 			detail.setConcept(getHeader().getDescription());
 			detail.setCredit(getHeader().getAmortization() + getHeader().getInterest());
-			detail.setBalancingAccount(loanAccount);
 			accountEntryDetailBean.insert(detail);
 			// Segundo Apunte
 			detail = new AccountEntryDetail();
 			detail.setAccount(loanAccount);
 			detail.setAccountEntry(entry);
+			detail.setBalancingAccount(rBankAccount);
 			detail.setConcept(getHeader().getDescription());
 			detail.setDebit(getHeader().getAmortization());
-			detail.setBalancingAccount(rBankAccount);
 			accountEntryDetailBean.insert(detail);
 			// Tercer Apunte
 			detail = new AccountEntryDetail();
-			detail.setAccount(AccountUtil.obtainDefaultAccount(DefaultAccounts.DEBT_INTEREST_ACCOUNT));
+			detail.setAccount(AccountUtil.obtainAccount("663"));
 			detail.setAccountEntry(entry);
+			detail.setBalancingAccount(loanAccount);
 			detail.setConcept(getHeader().getDescription());
 			detail.setDebit(getHeader().getInterest());
-			detail.setBalancingAccount(rBankAccount);
 			accountEntryDetailBean.insert(detail);
 		} catch (ManagerBeanException e) {
 			LOGGER.log(Level.SEVERE, "Error inserting details for AccountEntry with id = " + entry.getId(), e);

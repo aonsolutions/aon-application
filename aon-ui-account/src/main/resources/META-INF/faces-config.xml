@@ -13,14 +13,6 @@
 		</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
-
-	<managed-bean>
-		<managed-bean-name>nullItem</managed-bean-name>
-		<managed-bean-class>
-			com.code.aon.ui.account.controller.NullSelectItemController
-		</managed-bean-class>
-		<managed-bean-scope>application</managed-bean-scope>
-	</managed-bean>
 	
 	<!-- **************** ACCOUNTING PERIOD ************************** -->
 	<managed-bean>
@@ -70,7 +62,6 @@
 				</value-class>
 				<value>#{accountControllerLevelListener}</value>
 				<value>#{accountControllerListener}</value>
-				<value>#{accountControllerCascadeListener}</value>
 				<value>#{accountAppParamsControllerListener}</value>
 			</list-entries>
 		</managed-property>
@@ -93,14 +84,6 @@
 	</managed-bean>
 
 	<managed-bean>
-		<managed-bean-name>accountControllerCascadeListener</managed-bean-name>
-		<managed-bean-class>
-			com.code.aon.ui.account.event.AccountControllerCascadeListener
-		</managed-bean-class>
-		<managed-bean-scope>none</managed-bean-scope>
-	</managed-bean>
-
-	<managed-bean>
 		<managed-bean-name>accountAppParamsControllerListener</managed-bean-name>
 		<managed-bean-class>
 			com.code.aon.ui.account.event.AccountAppParamsControllerListener
@@ -108,7 +91,7 @@
 		<managed-bean-scope>none</managed-bean-scope>
 	</managed-bean>
 	
-	<!-- **************** AUTOMATIC CONCEPTS ************************** -->
+	<!-- **************** AUTHOMATIC CONCEPTS ************************** -->
 	<managed-bean>
 		<managed-bean-name>autConcept</managed-bean-name>
 		<managed-bean-class>
@@ -207,7 +190,7 @@
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
 			<property-name>queryOnStartUP</property-name>
-			<value>true</value>
+			<value>false</value>
 		</managed-property>
 		<managed-property>
 			<property-name>pojo</property-name>
@@ -233,10 +216,6 @@
 					<value>accountEntry.accountPeriod</value>
 				</map-entry>
 				<map-entry>
-					<key>securityLevel</key>
-					<value>accountEntry.securityLevel</value>
-				</map-entry>
-				<map-entry>
 					<key>entryDate</key>
 					<value>accountEntry.entryDate</value>
 				</map-entry>
@@ -249,7 +228,6 @@
 					com.code.aon.ui.form.event.IControllerListener
 				</value-class>
 				<value>#{accountEntryDetailControllerValidatorListener}</value>
-				<value>#{accountEntryDetailControllerListener}</value>
 			</list-entries>
 		</managed-property>
 	</managed-bean>
@@ -258,14 +236,6 @@
 		<managed-bean-name>accountEntryDetailControllerValidatorListener</managed-bean-name>
 		<managed-bean-class>
 			com.code.aon.ui.account.event.AccountEntryDetailControllerValidatorListener
-		</managed-bean-class>
-		<managed-bean-scope>none</managed-bean-scope>
-	</managed-bean>
-
-	<managed-bean>
-		<managed-bean-name>accountEntryDetailControllerListener</managed-bean-name>
-		<managed-bean-class>
-			com.code.aon.ui.account.event.AccountEntryDetailControllerListener
 		</managed-bean-class>
 		<managed-bean-scope>none</managed-bean-scope>
 	</managed-bean>
@@ -356,20 +326,11 @@
 		</managed-property>
 		<managed-property>
 			<property-name>pojo</property-name>
-			<value>com.code.aon.supplier.Supplier</value>
+			<value>com.code.aon.purchase.Supplier</value>
 		</managed-property>
 		<managed-property>
 			<property-name>beanName</property-name>
 			<value>accBasicSupplier</value>
-		</managed-property>
-		<managed-property>
-			<property-name>listenerClasses</property-name>
-			<list-entries>
-				<value-class>
-					com.code.aon.ui.form.event.IControllerListener
-				</value-class>
-				<value>#{invoiceRegistryVetoListener}</value>
-			</list-entries>
 		</managed-property>
 	</managed-bean>
 
@@ -391,15 +352,6 @@
 		<managed-property>
 			<property-name>beanName</property-name>
 			<value>accBasicCreditor</value>
-		</managed-property>
-		<managed-property>
-			<property-name>listenerClasses</property-name>
-			<list-entries>
-				<value-class>
-					com.code.aon.ui.form.event.IControllerListener
-				</value-class>
-				<value>#{invoiceRegistryVetoListener}</value>
-			</list-entries>
 		</managed-property>
 	</managed-bean>
 	
@@ -511,7 +463,6 @@
 				<value>description</value>
 				<value>supplierName</value>
 				<value>supplierDocument</value>
-				<value>vat.percentage</value>
 			</list-entries>
 		</managed-property>
 		<managed-property>
@@ -520,40 +471,6 @@
 			<value>/_account/facelet/sw/leasingSearch.faces</value>
 		</managed-property>
 	</managed-bean>
-	
-		<!-- ************* AUTOMATIC CONCEPT LOOKUP ***************** -->
-	<managed-bean>
-		<managed-bean-name>autConceptLookup</managed-bean-name>
-		<managed-bean-class>
-			com.code.aon.ui.form.LookupController
-		</managed-bean-class>
-		<managed-bean-scope>session</managed-bean-scope>
-		<managed-property>
-			<property-name>queryOnStartUP</property-name>
-			<value>true</value>
-		</managed-property>
-		<managed-property>
-			<property-name>foreignPojo</property-name>
-			<value>com.code.aon.account.AutoConcept</value>
-		</managed-property>
-		<managed-property>
-			<property-name>aliasPrefix</property-name>
-			<value>AutoConcept</value>
-		</managed-property>
-		<managed-property>
-			<property-name>foreignJoinProperties</property-name>
-			<list-entries>
-				<value>id</value>
-			</list-entries>
-		</managed-property>
-		<managed-property>
-			<property-name>foreignDisplayProperties</property-name>
-			<list-entries>
-				<value>description</value>
-			</list-entries>
-		</managed-property>
-	</managed-bean>
-	
 	
 	<!-- ********** ACCOUNT ENTRY REPORT CONTROLLER ********* -->
 	<managed-bean>
@@ -615,19 +532,6 @@
 		</managed-property>
 	</managed-bean>
 
-	<!-- ********** ACCOUNT SUMMARY REGENERATOR CONTROLLER ********* -->
-	<managed-bean>
-		<managed-bean-name>accountSummaryRegenerator</managed-bean-name>
-		<managed-bean-class>
-			com.code.aon.ui.account.controller.AccountSummaryRegeneratorController
-		</managed-bean-class>
-		<managed-bean-scope>session</managed-bean-scope>
-		<managed-property>
-			<property-name>queryOnStartUP</property-name>
-			<value>false</value>
-		</managed-property>
-	</managed-bean>
-	
 	<!--  *************** ACCOUNT APP PARAMS ***************** -->
 	<managed-bean>
 		<managed-bean-name>accAppParams</managed-bean-name>
@@ -648,23 +552,19 @@
 				</map-entry>
 				<map-entry>
 					<key>ACC_DEFAULT_CHARGED_VAT_ACC</key>
-					<value>47700</value>
+					<value>47701</value>
 				</map-entry>
 				<map-entry>
 					<key>ACC_DEFAULT_PAID_VAT_ACC</key>
-					<value>47200</value>
+					<value>47201</value>
 				</map-entry>
 				<map-entry>
 					<key>ACC_DEFAULT_PAID_RET_ACC</key>
-					<value>47300</value>
+					<value>47301</value>
 				</map-entry>
 				<map-entry>
 					<key>ACC_DEFAULT_CHARGED_RET_ACC</key>
 					<value>47501</value>
-				</map-entry>
-				<map-entry>
-					<key>ACC_DEFAULT_CASH_ACC</key>
-					<value>570</value>
 				</map-entry>
 				<map-entry>
 					<key>ACC_DEFAULT_SALARY_ACC</key>
@@ -677,18 +577,6 @@
 				<map-entry>
 					<key>ACC_DEFAULT_SOCIAL_INSURANCE_ACC</key>
 					<value>476</value>
-				</map-entry>
-				<map-entry>
-					<key>ACC_DEFAULT_COMPANY_SOC_INS_ACC</key>
-					<value>642</value>
-				</map-entry>
-				<map-entry>
-					<key>ACC_DEFAULT_DEBT_INTEREST_ACC</key>
-					<value>662</value>
-				</map-entry>
-				<map-entry>
-					<key>ACC_DEFAULT_FINAN_EXPENSES_ACC</key>
-					<value>669</value>
 				</map-entry>
 			</map-entries>
 		</managed-property>
@@ -900,10 +788,6 @@
 	<navigation-case>
 		<from-outcome>accCreditor</from-outcome>
 		<to-view-id>/_account/facelet/creditor/search.faces</to-view-id>
-	</navigation-case>	
-	<navigation-case>
-		<from-outcome>regenerateAccountSummary</from-outcome>
-		<to-view-id>/_account/facelet/util/summary/search.faces</to-view-id>
 	</navigation-case>	
 	
   <!-- =================== Application Select Windows Navigation Rules ================= -->	

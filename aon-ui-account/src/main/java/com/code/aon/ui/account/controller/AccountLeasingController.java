@@ -23,7 +23,6 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.finance.Bank;
 import com.code.aon.finance.RegistryBank;
 import com.code.aon.finance.dao.IFinanceAlias;
-import com.code.aon.product.Tax;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.account.utils.AccountPeriodValidator;
 import com.code.aon.ui.menu.jsf.MenuEvent;
@@ -40,7 +39,7 @@ public class AccountLeasingController {
 	private AccountEntry accountEntry;
 	
 	private Leasing leasing;
-	
+
 
 	public boolean isNew() {
 		return isNew;
@@ -86,8 +85,6 @@ public class AccountLeasingController {
 		leasing.setRegistryBank(new RegistryBank());
 		leasing.getRegistryBank().setBank(new Bank());
 		leasing.setLeasingDate(new Date());
-		leasing.setFixedAssetAccount(new Account());
-		leasing.setVat(new Tax());
 		return leasing;
 	}
 	
@@ -104,7 +101,6 @@ public class AccountLeasingController {
 		entry.setAccountPeriod(AccountUtil.obtainPeriod(getLeasing().getLeasingDate()).getId());
 		entry.setJournal(null);
 		entry.setType(AccountEntryType.LEASING);
-		entry.setSecurityLevel(getLeasing().getSecurityLevel());
 		entry = insertorUpdateAccountEntry(entry);
 		insertEntryDetails(entry);
 		setAccountEntry(entry);
@@ -148,20 +144,48 @@ public class AccountLeasingController {
 			IManagerBean accountEntryDetailBean = BeanManager.getManagerBean(AccountEntryDetail.class);
 			// Primer Apunte
 			AccountEntryDetail detail = new AccountEntryDetail();
-			detail.setAccount(getLeasing().getFixedAssetAccount());
-			detail.setAccountEntry(entry);
-			detail.setConcept(getLeasing().getDescription());
-			detail.setDebit(getLeasing().getAmount());
 			Account leasingAccount = AccountUtil.obtainLeasingAccount(getLeasing());
-			detail.setBalancingAccount(leasingAccount);
+			detail.setAccount(leasingAccount);
+			detail.setAccountEntry(entry);
+			detail.setBalancingAccount(null);
+			detail.setConcept(getLeasing().getDescription());
+			detail.setCredit(getLeasing().getAmount() + getLeasing().getInterest());
 			accountEntryDetailBean.insert(detail);
 			// Segundo Apunte
 			detail = new AccountEntryDetail();
-			detail.setAccount(leasingAccount);
+			Account account217 = AccountUtil.obtainAccount("217");
+			detail.setAccount(account217);
 			detail.setAccountEntry(entry);
+			detail.setBalancingAccount(leasingAccount);
 			detail.setConcept(getLeasing().getDescription());
-			detail.setCredit(getLeasing().getAmount());
-			detail.setBalancingAccount(getLeasing().getFixedAssetAccount());
+			detail.setDebit(getLeasing().getAmount());
+			accountEntryDetailBean.insert(detail);
+			// Tercer Apunte
+			detail = new AccountEntryDetail();
+			Account account272 = AccountUtil.obtainAccount("272");
+			detail.setAccount(account272);
+			detail.setAccountEntry(entry);
+			detail.setBalancingAccount(leasingAccount);
+			detail.setConcept(getLeasing().getDescription());
+			detail.setDebit(getLeasing().getInterest());
+			accountEntryDetailBean.insert(detail);
+			// Cuarto Apunte
+			detail = new AccountEntryDetail();
+			Account account540 = AccountUtil.obtainAccount("540");
+			detail.setAccount(account540);
+			detail.setAccountEntry(entry);
+			detail.setBalancingAccount(leasingAccount);
+			detail.setConcept(getLeasing().getDescription());
+			detail.setDebit(getLeasing().getExpenses());
+			accountEntryDetailBean.insert(detail);
+			// Quinto Apunte
+			detail = new AccountEntryDetail();
+			Account rBankAccount = AccountUtil.obtainRBankAccount(getLeasing().getRegistryBank());
+			detail.setAccount(rBankAccount);
+			detail.setAccountEntry(entry);
+			detail.setBalancingAccount(leasingAccount);
+			detail.setConcept(getLeasing().getDescription());
+			detail.setCredit(getLeasing().getExpenses());
 			accountEntryDetailBean.insert(detail);
 		} catch (ManagerBeanException e) {
 			LOGGER.log(Level.SEVERE, "Error inserting details for AccountEntry with id = " + entry.getId(), e);

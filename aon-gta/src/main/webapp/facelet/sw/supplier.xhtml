@@ -19,7 +19,7 @@
 			<t:div styleClass="aon-content-title" forceId="#{true}"
 				id="aon-window-popup-title">
 				<t:div styleClass="aon-content-title-internal">
-					<h:outputText value="#{supplierBundle.supplier_supplier}" />
+					<h:outputText value="#{purchaseBundle.supplier_supplier}" />
 				</t:div>
 			</t:div>
 
@@ -62,17 +62,17 @@
 
 							<t:column>
 								<f:facet name="header">
-									<h:outputText value="#{supplierBundle.supplier_document}" />
+									<h:outputText value="#{purchaseBundle.supplier_document}" />
 								</f:facet>
 								<h:commandLink styleClass="aon-table-row-selected"
 									onclick="window.opener.update('#{supplierLookup.lookupsAsXML}');window.close();return false;" />
-								<h:outputText value="#{to.registry.document}" />
+								<h:outputText value="#{to.document}" />
 							</t:column>
 							<t:column>
 								<f:facet name="header">
-									<h:outputText value="#{supplierBundle.supplier_name}" />
+									<h:outputText value="#{purchaseBundle.supplier_name}" />
 								</f:facet>
-								<h:outputText value="#{to.registry.name} #{to.registry.surname}" />
+								<h:outputText value="#{to.name} #{to.surname}" />
 							</t:column>
 						</t:dataTable>
 					</t:div>

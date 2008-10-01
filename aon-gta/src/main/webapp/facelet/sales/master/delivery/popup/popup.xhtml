@@ -42,13 +42,13 @@
 						value="#{purchaseBundle.aon_inc_num}" />
 					<t:div>
 						<t:inputText id="Income_series"
-							styleClass="aon-form-input-text" forceId="#{true}" size="4"
-							maxlength="5" onblur="toUpperCase(this);"
+							styleClass="aon-form-input-text" forceId="#{true}" size="3"
+							maxlength="3" onblur="toUpperCase(this);"
 							value="#{salesPurchase.income.series}">
-							<f:validateLength maximum="5" />
+							<f:validateLength maximum="3" />
 						</t:inputText>
 						<t:inputText id="Income_number"
-							styleClass="aon-form-input-text" forceId="#{true}" size="7"
+							styleClass="aon-form-input-text" forceId="#{true}"
 							value="#{salesPurchase.income.number}" />
 						<t:outputText id="Number_required" forceId="#{true}"
 							value="#{purchaseBundle.aon_income_number_required}"
@@ -57,7 +57,7 @@
 
 					<t:outputLabel for="Supplier_Lookup_id"
 						styleClass="aon-form-input-text-label"
-						value="#{supplierBundle.aon_supplier}" />
+						value="#{purchaseBundle.aon_supplier}" />
 					<t:div>
 						<t:inputText id="Supplier_Lookup_id" size="5" forceId="#{true}"
 							styleClass="aon-form-input-text"
@@ -72,7 +72,7 @@
 						<t:inputText id="Supplier_full_name" forceId="#{true}"
 							styleClass="aon-form-input-text-disabled"
 							size="40" disabled="true"
-							value="#{salesPurchase.income.supplier.registry.name} #{salesPurchase.income.supplier.registry.surname==null?' ':(salesPurchase.income.supplier.registry.surname)}" />
+							value="#{salesPurchase.income.supplier.name} #{salesPurchase.income.supplier.surname==null?' ':(salesPurchase.income.supplier.surname)}" />
 						<t:outputText id="Supplier_required" forceId="#{true}"
 							value="#{purchaseBundle.aon_income_supplier_required}"
 							style="display:none;color:#cc3333" />
@@ -94,7 +94,7 @@
 							immediate="true" />
 						<t:outputText id="Date_required" forceId="#{true}"
 							value="#{purchaseBundle.aon_income_date_required}"
-							style="display:none;color:#cc3333" />
+							styleClass="aon-form-input-text-disabled" />
 						<script type="text/javascript">
 						  Calendar.setup( {
 							inputField  : "Income_issueTime", button : "Income_issueTime_button",
@@ -119,19 +119,17 @@
 							value="#{salesPurchase.incomeDetail.item.id}" />
 						<t:inputHidden id="Item_product_id-Popup" forceId="#{true}"
 							value="#{salesPurchase.incomeDetail.item.product.id}" />
-						<t:inputHidden id="Item_price-Popup" forceId="#{true}"
-							value="#{salesPurchase.incomeDetail.item.price}" />
 						<t:inputText size="10" id="Item_product_code-Popup"
 							forceId="#{true}"
 							value="#{salesPurchase.incomeDetail.item.product.code}"
 							styleClass="aon-form-input-text" onblur="toUpperCase(this);"
-							onchange="return findItemLookup(event,'#{facesContext.externalContext.request.contextPath}','com.code.aon.product.Item','Item_id-Popup,Item_product_code-Popup,Item_full_name-Popup,Item_purchase_price-Popup,Item_product_category_id-Popup,Item_product_id-Popup,Item_price-Popup');" />
+							onchange="return findItemLookup(event,'#{facesContext.externalContext.request.contextPath}','com.code.aon.product.Item','Item_id-Popup,Item_product_code-Popup,Item_full_name-Popup,Item_purchase_price-Popup,Item_product_category_id-Popup,Item_product_id-Popup');" />
 						<h:commandButton id="findPopup_Item"
-							onclick="selectWindow(this, 'placeList', '#{itemSearch.encodedPagePath}', 'Item_id-Popup,Item_product_code-Popup,Item_full_name-Popup,Item_purchase_price-Popup,Item_product_category_id-Popup,Item_product_id-Popup,Item_price-Popup'); return false;"
+							onclick="selectWindow(this, 'placeList', '#{itemSearch.encodedPagePath}', 'Item_id-Popup,Item_product_code-Popup,Item_full_name-Popup,Item_purchase_price-Popup,Item_product_category_id-Popup,Item_product_id-Popup'); return false;"
 							action="showPlace" value="" immediate="true"
 							styleClass="aon-form-lookup-button" />
 						<h:commandButton id="addPopup_Item"
-							onclick="selectWindow(this, 'placeList', '#{itemAdd.encodedPagePath}', 'Item_id-Popup,Item_product_code-Popup,Item_full_name-Popup,Item_purchase_price-Popup,Item_product_category_id-Popup,Item_product_id-Popup,Item_price-Popup'); return false;"
+							onclick="selectWindow(this, 'placeList', '#{itemAdd.encodedPagePath}', 'Item_id-Popup,Item_product_code-Popup,Item_full_name-Popup,Item_purchase_price-Popup,Item_product_category_id-Popup,Item_product_id-Popup'); return false;"
 							action="showPlace" value="" immediate="true"
 							styleClass="aon-form-new-button" />
 						<t:inputText id="Item_full_name-Popup" size="36"
@@ -148,7 +146,7 @@
 					<t:outputLabel for="Item_product_category_id-Popup"
 						styleClass="aon-form-input-text-label"
 						value="#{productBundle.item_category}" />
-					<t:div styleClass="aon-form-nowrap">
+					<h:panelGrid columns="3">
 						<t:selectOneMenu id="Item_product_category_id-Popup"
 							forceId="#{true}" styleClass="aon-form-selectOneMenu-field"
 							value="#{salesPurchase.incomeDetail.item.product.category.id}">
@@ -158,35 +156,23 @@
 							forceId="#{true}"
 							value="#{productBundle.aon_category_required}"
 							style="display:none;color:#cc3333" />
-					</t:div>
+					</h:panelGrid>
 
 					<t:outputLabel for="Item_purchase_price-Popup"
 						styleClass="aon-form-input-text-label"
 						value="#{productBundle.item_initialPrice}" />
-					<t:div styleClass="aon-form-nowrap">
-						<t:inputText id="Item_purchase_price-Popup"
-							styleClass="aon-form-input-text"
-							forceId="#{true}" size="20" maxlength="20"
-							value="#{salesPurchase.incomeDetail.price}" />
-						<t:outputText id="Item_purchase_price_required"
-							forceId="#{true}"
-							value="#{productBundle.aon_purchase_price_required}"
-							style="display:none;color:#cc3333" />
-					</t:div>
+					<t:inputText id="Item_purchase_price-Popup"
+						styleClass="aon-form-input-text" required="true"
+						forceId="#{true}" size="20" maxlength="20"
+						value="#{salesPurchase.incomeDetail.price}" />
 
 					<t:outputLabel for="Item_quantity-Popup"
 						styleClass="aon-form-input-text-label"
 						value="#{warehouseBundle.aon_quantity}" />
-					<t:div styleClass="aon-form-nowrap">
-						<t:inputText id="Item_quantity-Popup"
-							styleClass="aon-form-input-text"
-							forceId="#{true}" size="20" maxlength="20"
-							value="#{salesPurchase.incomeDetail.quantity}" />
-						<t:outputText id="Item_quantity_required"
-							forceId="#{true}"
-							value="#{productBundle.aon_quantity_required}"
-							style="display:none;color:#cc3333" />
-					</t:div>
+					<t:inputText id="Item_quantity-Popup"
+						styleClass="aon-form-input-text" required="true"
+						forceId="#{true}" size="20" maxlength="20"
+						value="#{salesPurchase.incomeDetail.quantity}" />
 				</h:panelGrid>
 			</t:div>
 		</t:div>
@@ -199,10 +185,8 @@
 			document.getElementById( "Supplier_required" ).style.display = 'none';
 			document.getElementById( "Date_required" ).style.display = 'none';
 			document.getElementById( "Product_code_required" ).style.display = 'none';
-			document.getElementById( "Product_name_required" ).style.display = 'none';
 			document.getElementById( "Item_product_category_required" ).style.display = 'none';
-			document.getElementById( "Item_purchase_price_required" ).style.display = 'none';
-			document.getElementById( "Item_quantity_required" ).style.display = 'none';
+			document.getElementById( "Product_name_required" ).style.display = 'none';
 		}
 		function validate(isNew){ 
 			if(document.getElementById( "Income_number" ).value == ""){
@@ -212,8 +196,6 @@
 				document.getElementById( "Product_code_required" ).style.display = 'none';
 				document.getElementById( "Product_name_required" ).style.display = 'none';
 				document.getElementById( "Item_product_category_required" ).style.display = 'none';
-				document.getElementById( "Item_purchase_price_required" ).style.display = 'none';
-				document.getElementById( "Item_quantity_required" ).style.display = 'none';
 				document.getElementById( "Income_number" ).focus();
 				return false;
 			}
@@ -224,8 +206,6 @@
 				document.getElementById( "Product_code_required" ).style.display = 'none';
 				document.getElementById( "Product_name_required" ).style.display = 'none';
 				document.getElementById( "Item_product_category_required" ).style.display = 'none';					
-				document.getElementById( "Item_purchase_price_required" ).style.display = 'none';
-				document.getElementById( "Item_quantity_required" ).style.display = 'none';
 				document.getElementById( "Supplier_Lookup_id" ).focus();
 				return false;
 			}
@@ -236,79 +216,45 @@
 				document.getElementById( "Product_code_required" ).style.display = 'none';
 				document.getElementById( "Product_name_required" ).style.display = 'none';
 				document.getElementById( "Item_product_category_required" ).style.display = 'none';
-				document.getElementById( "Item_purchase_price_required" ).style.display = 'none';
-				document.getElementById( "Item_quantity_required" ).style.display = 'none';
 				document.getElementById( "Income_issueTime" ).focus();
 				return false;
 			}
 			if(document.getElementById( "Item_product_code-Popup" ).value == ""){
 				document.getElementById( "Product_code_required" ).style.display = 'block';
+				document.getElementById( "Date_required" ).style.display = 'none';
 				document.getElementById( "Number_required" ).style.display = 'none';
 				document.getElementById( "Supplier_required" ).style.display = 'none';
-				document.getElementById( "Date_required" ).style.display = 'none';
 				document.getElementById( "Product_name_required" ).style.display = 'none';
 				document.getElementById( "Item_product_category_required" ).style.display = 'none';
-				document.getElementById( "Item_purchase_price_required" ).style.display = 'none';
-				document.getElementById( "Item_quantity_required" ).style.display = 'none';
 				document.getElementById( "Item_product_code-Popup" ).focus();
 				return false;
 			}
 			if(document.getElementById( "Item_full_name-Popup" ).value == ""){
 				document.getElementById( "Product_name_required" ).style.display = 'block';
+				document.getElementById( "Date_required" ).style.display = 'none';
 				document.getElementById( "Number_required" ).style.display = 'none';
 				document.getElementById( "Supplier_required" ).style.display = 'none';
-				document.getElementById( "Date_required" ).style.display = 'none';
 				document.getElementById( "Product_code_required" ).style.display = 'none';
 				document.getElementById( "Item_product_category_required" ).style.display = 'none';
-				document.getElementById( "Item_purchase_price_required" ).style.display = 'none';
-				document.getElementById( "Item_quantity_required" ).style.display = 'none';
 				document.getElementById( "Item_full_name-Popup" ).focus();
 				return false;
 			}
 			if(document.getElementById( "Item_product_category_id-Popup" ).value == ""){
 				document.getElementById( "Item_product_category_required" ).style.display = 'block';
+				document.getElementById( "Product_name_required" ).style.display = 'none';
+				document.getElementById( "Date_required" ).style.display = 'none';
 				document.getElementById( "Number_required" ).style.display = 'none';
 				document.getElementById( "Supplier_required" ).style.display = 'none';
-				document.getElementById( "Date_required" ).style.display = 'none';
 				document.getElementById( "Product_code_required" ).style.display = 'none';
-				document.getElementById( "Product_name_required" ).style.display = 'none';
-				document.getElementById( "Item_purchase_price_required" ).style.display = 'none';
-				document.getElementById( "Item_quantity_required" ).style.display = 'none';
 				document.getElementById( "Item_product_category_id-Popup" ).focus();
 				return false;
 			}
-			if(document.getElementById( "Item_purchase_price-Popup" ).value == ""){
-				document.getElementById( "Item_purchase_price_required" ).style.display = 'block';
-				document.getElementById( "Number_required" ).style.display = 'none';
-				document.getElementById( "Supplier_required" ).style.display = 'none';
-				document.getElementById( "Date_required" ).style.display = 'none';
-				document.getElementById( "Product_code_required" ).style.display = 'none';
-				document.getElementById( "Product_name_required" ).style.display = 'none';
-				document.getElementById( "Item_product_category_required" ).style.display = 'none';
-				document.getElementById( "Item_quantity_required" ).style.display = 'none';
-				document.getElementById( "Item_purchase_price-Popup" ).focus();
-				return false;
-			}
-			if(document.getElementById( "Item_quantity-Popup" ).value == ""){
-				document.getElementById( "Item_quantity_required" ).style.display = 'block';
-				document.getElementById( "Number_required" ).style.display = 'none';
-				document.getElementById( "Supplier_required" ).style.display = 'none';
-				document.getElementById( "Date_required" ).style.display = 'none';
-				document.getElementById( "Product_code_required" ).style.display = 'none';
-				document.getElementById( "Product_name_required" ).style.display = 'none';
-				document.getElementById( "Item_product_category_required" ).style.display = 'none';
-				document.getElementById( "Item_purchase_price_required" ).style.display = 'none';
-				document.getElementById( "Item_quantity-Popup" ).focus();
-				return false;
-			}
+			document.getElementById( "Product_code_required" ).style.display = 'none';
+			document.getElementById( "Product_name_required" ).style.display = 'none';
 			document.getElementById( "Number_required" ).style.display = 'none';
 			document.getElementById( "Supplier_required" ).style.display = 'none';
 			document.getElementById( "Date_required" ).style.display = 'none';
-			document.getElementById( "Product_code_required" ).style.display = 'none';
-			document.getElementById( "Product_name_required" ).style.display = 'none';
 			document.getElementById( "Item_product_category_required" ).style.display = 'none';
-			document.getElementById( "Item_purchase_price_required" ).style.display = 'none';
-			document.getElementById( "Item_quantity_required" ).style.display = 'none';
 			if(isNew){
 				document.getElementById( "Item_product_code-New" ).disabled = true;
 			}
