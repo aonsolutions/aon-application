@@ -43,12 +43,14 @@
 					action="offer" disabled="true" />					
 			</aon:dropDownMenu>
 			<aon:dropDownMenu value="#{marketingBundle.aon_marketing}">
-				<aon:menuItem value="#{marketingBundle.aon_marketing_surveis}" 
-					action="survey" actionListener="#{survey.onSearch}" />
-				<aon:menuItem value="#{marketingBundle.aon_marketing_questions}"
-					action="question" actionListener="#{question.onSearch}" />
 				<aon:menuItem value="#{marketingBundle.aon_marketing_campaigns}"
 					action="campaign" actionListener="#{campaign.onSearch}" />
+				<aon:menuItem value="#{marketingBundle.aon_marketing_surveis}" 
+					action="survey" actionListener="#{survey.onSearch}" />
+				<aon:menuItem value="#{marketingBundle.aon_marketing_survey_responses}" 
+					action="surveyResponse" actionListener="#{surveyResponse.onSearch}" />
+				<aon:menuItem value="#{marketingBundle.aon_marketing_questions}"
+					action="question" actionListener="#{question.onSearch}" />
 			</aon:dropDownMenu>
 			<aon:commandLink value="#{menuBundle.aon_communication_center}"
 				styleClass="aon-top-menu-item aon-icon-call" immediate="true" 
