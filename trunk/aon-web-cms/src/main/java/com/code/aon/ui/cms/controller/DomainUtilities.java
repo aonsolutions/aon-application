@@ -12,6 +12,8 @@ import com.code.aon.ui.cms.util.ControllerUtil;
 
 public class DomainUtilities {
 
+	private boolean adminProfile = false;
+	
 	public static String NAME = "domainUtils";
 	
 	public DomainUtilities(){
@@ -19,6 +21,10 @@ public class DomainUtilities {
 		initSidebarType();
 		initModularPageOptionType();
 		initMenu();
+	}
+	
+	public void assignAdminProfile(){
+		adminProfile = true;
 	}
 	
 	//*************************************************************
@@ -48,6 +54,7 @@ public class DomainUtilities {
 	}
 
 	public boolean hasPageType(PageType type){
+		if (adminProfile) return true;
 		try{
 			if (propDomainPageType.get(type.toString())!=null){
 				if ("true".equalsIgnoreCase(""+propDomainPageType.get(type.toString())))
@@ -90,6 +97,7 @@ public class DomainUtilities {
 	}
 	
 	public boolean hasSidebarType(SidebarType type){
+		if (adminProfile) return true;
 		try{
 			if (propDomainSidebarType.get(type.toString())!=null){
 				if ("true".equalsIgnoreCase(""+propDomainSidebarType.get(type.toString())))
@@ -132,6 +140,7 @@ public class DomainUtilities {
 	}
 	
 	public boolean hasModularPageOptionType(ModularPageOptionType type){
+		if (adminProfile) return true;
 		try{
 			if (propDomainModularPageOptionType.get(type.toString())!=null){
 				if ("true".equalsIgnoreCase(""+propDomainModularPageOptionType.get(type.toString())))
@@ -174,6 +183,7 @@ public class DomainUtilities {
 	}
 	
 	public boolean hasMenuOption(String option){
+		if (adminProfile) return true;
 		try{
 			if (propDomainMenu.get(option)!=null){
 				if ("true".equalsIgnoreCase(""+propDomainMenu.get(option)))

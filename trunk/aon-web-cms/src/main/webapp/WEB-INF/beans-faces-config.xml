@@ -2110,4 +2110,11 @@
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
 
+	<!-- ************** ADMIN ************** -->
+	<managed-bean>
+		<managed-bean-name>admin</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.cms.controller.AdminController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
+
 </faces-config>
