@@ -420,4 +420,28 @@
 			<to-view-id>/facelet/auxiliares/irpf/Exclusion/search.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>
+	
+	<!-- =================== Convenios - Complementos ================= -->
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>convenios_complementos</from-outcome>
+			<to-view-id>
+				/facelet/auxiliares/convenios/complementos/form.xhtml
+			</to-view-id>
+		</navigation-case>
+	</navigation-rule> 
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>convenios_complementos_search</from-outcome>
+			<to-view-id>
+				/facelet/auxiliares/convenios/complementos/search.xhtml
+			</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>convenios_complementos_list</from-outcome>
+			<to-view-id>
+				/facelet/auxiliares/convenios/complementos/list.xhtml
+			</to-view-id>
+		</navigation-case>
+	</navigation-rule> 
 </faces-config>

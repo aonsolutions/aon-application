@@ -8,6 +8,7 @@ import com.code.aon.payroll.auxiliares.Admon;
 import com.code.aon.payroll.auxiliares.Colectivos;
 import com.code.aon.payroll.auxiliares.contratos.ContratosInternos;
 import com.code.aon.payroll.auxiliares.contratos.ContratosTc2;
+import com.code.aon.payroll.auxiliares.convenios.Complemento;
 import com.code.aon.payroll.cotizacion.Bonificacion;
 import com.code.aon.payroll.cotizacion.Porcentaje;
 import com.code.aon.payroll.cotizacion.PorcentajeMaestro;
@@ -37,6 +38,7 @@ public class PayrollAliasWriter {
 		String[] classes = new String[] {
 				ContratosInternos.class.getName(),
 				ContratosTc2.class.getName(),
+				Complemento.class.getName(),
 				PorcentajeMaestro.class.getName(), 
 				Porcentaje.class.getName(),
 				Documento.class.getName(),

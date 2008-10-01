@@ -172,8 +172,12 @@
 				</aon:menuGroup>
 				<aon:menuGroup value="#{menuBundle.auxiliares_convenios}">
 					<aon:menuItem value="#{menuBundle.auxiliares_convenios__calendar}" disabled="true" />
-					<aon:menuItem value="#{menuBundle.auxiliares_convenios__complemento}" disabled="true" />
-					<aon:menuItem value="#{menuBundle.auxiliares_convenios__convenio}" disabled="true" />
+					<aon:menuItem value="#{menuBundle.auxiliares_convenios__complemento}" action="convenios_complementos" >
+						<aon:actionListener method="#{complemento.onEditSearch}" />
+						<aon:actionListener method="#{complemento.onSearch}" />
+						<aon:actionListener method="#{complemento.onSelectFirst}" />
+					</aon:menuItem>
+					<aon:menuItem value="#{menuBundle.auxiliares_convenios__convenio}"  disabled="true"/>
 				</aon:menuGroup>
 				<aon:menuGroup value="#{menuBundle.auxiliares_contratos}">
 					<aon:menuItem value="#{menuBundle.auxiliares_contratos__tipcotc2}" 

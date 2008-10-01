@@ -39,7 +39,10 @@
 		
 		<!-- CONTRATOS -->		
 		<mapping class="com.code.aon.payroll.auxiliares.contratos.ContratosInternos"/>
-		<mapping class="com.code.aon.payroll.auxiliares.contratos.ContratosTc2"/>			
+		<mapping class="com.code.aon.payroll.auxiliares.contratos.ContratosTc2"/>	
+		
+		<!-- CONVENIOS -->		
+		<mapping class="com.code.aon.payroll.auxiliares.convenios.Complemento"/>		
 
 		<!-- GEOGRAFICAS -->		
         <mapping class="com.code.aon.payroll.geograficas.Nacion"/>	
