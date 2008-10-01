@@ -1,0 +1,173 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:s="http://myfaces.apache.org/sandbox"
+	xmlns:h="http://java.sun.com/jsf/html">
+<body>
+
+<ui:composition template="/facelet/templates/aon.ui.content.xhtml">
+
+	<ui:define name="head">
+		<ui:include src="/facelet/shared/head.xhtml" />
+	</ui:define>
+
+	<ui:define name="content">
+		<h:form id="addCampaignDossierForm" styleClass="aon-form">
+			<t:div styleClass="aon-content-toolbar" id="aon-content-toolbar"
+				forceId="#{true}">
+				<t:div styleClass="aon-content-toolbar-internal">
+				<t:div styleClass="aon-content-toolbar-item-group">
+					<t:commandButton id="save" value="#{bundle.aon_accept}"
+						actionListener="#{addCampaignDossier.onAddCampaignDossiers}" action="campaign_form"
+						forceId="#{true}" 
+						onclick="if(confirm('#{bundle.aon_accept_confirm}')){viewDialog.show();}else{ return false; }"
+						styleClass="aon-content-toolbar-item aon-content-toolbar-item-save"
+						onmouseover="this.className='aon-content-toolbar-item aon-content-toolbar-item-hover aon-content-toolbar-item-save'"
+						onmouseout="this.className='aon-content-toolbar-item aon-content-toolbar-item-save'" 
+						accesskey="#{bundle.aon_key_accept}"/>
+					<h:commandButton id="cancel" value="#{bundle.aon_cancel}"
+						actionListener="#{addCampaignDossier.onCancel}" action="campaign_form"
+						immediate="#{true}"
+						onclick="if(confirm('#{bundle.aon_cancel_confirm}')){viewDialog.show();}else{ return false; }"
+						styleClass="aon-content-toolbar-item aon-content-toolbar-item-cancel"
+						onmouseover="this.className='aon-content-toolbar-item aon-content-toolbar-item-hover aon-content-toolbar-item-cancel'"
+						onmouseout="this.className='aon-content-toolbar-item aon-content-toolbar-item-cancel'" 
+						accesskey="#{bundle.aon_key_cancel}"/>
+				</t:div>
+				</t:div>
+			</t:div>
+
+			<t:div styleClass="aon-content-subtitle" id="aon-content-subtitle"
+				forceId="#{true}">
+				<t:div styleClass="aon-content-subtitle-internal">
+					<h:outputText
+						value="#{campaignBundle.campaign_add_dossier}" />
+				</t:div>
+			</t:div>
+
+			<t:div id="aon-scroll-area" forceId="#{true}">
+				<t:div styleClass="aon-scroll-area-internal">
+					<h:panelGrid columns="2" dir="true" styleClass="aon-form-table"
+						columnClasses="aon-form-table-column-odd,aon-form-table-column-even">
+
+						<h:outputLabel for="Campaign_description" value="#{campaignBundle.campaign_label}"
+							styleClass="aon-form-input-text-label aon-form-table-column-odd-label" />
+						<t:inputText id="Campaign_description" forceId="#{true}"
+							value="#{campaign.to.description}"
+							styleClass="aon-form-input-text" size="60"
+							disabled="#{true}" />
+
+					</h:panelGrid>
+
+					<t:div styleClass="aon-form-group">
+						<t:div styleClass="aon-form-group-title">
+							<t:outputLabel for="AddCampaignDossierDataList"
+								value="#{campaignBundle.campaign_dossiers}" />
+						</t:div>
+						<t:div styleClass="aon-form-group-body">
+							<t:dataTable id="AddCampaignDossierDataList" var="to"
+								styleClass="aon-table" headerClass="aon-table-header"
+								footerClass="aon-table-footer" cellpadding="0"
+								cellspacing="0" value="#{addCampaignDossier.model}"
+								rowOnMouseOver="selectRow( this )"
+								rowOnMouseOut="unselectRow( this )" rowIndexVar="rowIndex" rows="20"
+								rowClasses="aon-table-row-odd,aon-table-row-even"
+								columnClasses="aon-table-body aon-table-body-icon,
+									aon-table-body aon-table-body-string,
+									aon-table-body aon-table-body-string,
+									aon-table-body aon-table-body-string,
+									aon-table-body aon-table-body-string">
+
+								<t:column>
+									<f:facet name="header">
+										<h:panelGroup>
+											<f:verbatim>&#160;</f:verbatim>
+										</h:panelGroup>
+									</f:facet>
+									<t:selectBooleanCheckbox id="Row_checked" forceId="#{true}"
+										value="#{addCampaignDossier.rowChecked}"
+										valueChangeListener="#{addCampaignDossier.rowSelected}"
+										onmouseover="enableRowSubmit(false)"
+										onmouseout="enableRowSubmit(true)"
+										styleClass="aon-form-selectBooleanCheckbox-field" />
+									<t:commandLink immediate="#{true}" 
+										styleClass="aon-table-row-selected"
+										actionListener="#{addCampaignDossier.onSelect}" />
+								</t:column>
+
+								<t:column>
+									<f:facet name="header">
+										<t:commandSortHeader columnName="Activity_customer_name" arrow="#{true}"
+											actionListener="#{addCampaignDossier.sort}" 
+											styleClass="aon-table-header-link">
+											<t:outputText value="#{customerBundle.customer_name}" />
+										</t:commandSortHeader>
+									</f:facet>
+									<t:outputText value="#{to.dossier.customer.registry.name}" />
+								</t:column>
+
+								<t:column>
+									<f:facet name="header">
+										<t:commandSortHeader columnName="Activity_customer_surname" arrow="#{true}"
+											actionListener="#{addCampaignDossier.sort}" 
+											styleClass="aon-table-header-link">
+											<t:outputText value="#{customerBundle.customer_surname}" />
+										</t:commandSortHeader>
+									</f:facet>
+									<t:outputText value="#{to.dossier.customer.registry.surname}" />
+								</t:column>
+
+								<t:column>
+									<f:facet name="header">
+										<t:commandSortHeader columnName="Activity_customer_document" arrow="#{true}"
+											actionListener="#{addCampaignDossier.sort}" 
+											styleClass="aon-table-header-link">
+											<t:outputText value="#{customerBundle.customer_document}" />
+										</t:commandSortHeader>
+									</f:facet>
+									<t:outputText value="#{to.dossier.customer.registry.document}" />
+								</t:column>
+
+								<t:column>
+									<f:facet name="header">
+										<t:commandSortHeader columnName="Activity_dossier_number" arrow="#{true}"
+											actionListener="#{addCampaignDossier.sort}" 
+											styleClass="aon-table-header-link">
+											<t:outputText value="#{projectBundle.aon_daily_tracking_dossier}" />
+										</t:commandSortHeader>
+									</f:facet>
+									<t:outputText value="#{to.dossier.number}" />
+								</t:column>
+
+							</t:dataTable>
+
+							<ui:include src="/facelet/shared/dataScroller.xhtml">
+								<ui:param name="dataTable" value="AddCampaignDossierDataList" />
+								<ui:param name="model" value="#{addCampaignDossier.model}" />
+								<ui:param name="showNote" value="#{true}" />
+							</ui:include>
+						</t:div>
+					</t:div>
+				</t:div>
+			</t:div>
+
+			<s:modalDialog
+		       dialogId="viewDialog"
+		       dialogVar="viewDialog"
+		       closeButton="false">
+		       <t:div styleClass="aon-timer">		       		
+		       		<h:graphicImage value="/css/images/content/aon-timer.gif" />
+		       		<t:div styleClass="aon-timer-title" >
+		       			<t:outputText value="#{appBundle.aon_in_progress}" /> 
+		       		</t:div>
+  			   </t:div>
+			</s:modalDialog>
+
+		</h:form>
+		<h:form id="placeList" target="list" />
+	</ui:define>
+</ui:composition>
+</body>
+</html>

@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<table tableName="support_order">
+    <columns>
+        <column label="" name="id" sqlType="integer" type="integer"/>
+        <column label="" name="tas_item" sqlType="integer" type="integer"/>
+        <column label="" name="target" sqlType="integer" type="integer"/>
+        <column label="" length="3" name="series" sqlType="char" type="string"/>
+        <column label="" name="number" sqlType="integer" type="integer"/>
+        <column label="" length="65535" name="description"
+            sqlType="longvarchar" type="string"/>
+        <column label="" name="final_date" sqlType="date" type="date"/>
+        <column label="" length="4" name="status" sqlType="tinyint" type="string"/>
+        <column label="" name="start_date" sqlType="date" type="date"/>
+        <column label="" name="employee" sqlType="integer" type="integer"/>
+        <column label="" name="counterti" sqlType="double" type="double"/>
+    </columns>
+    <virtualColumns/>
+    <primaryKey>
+        <column name="id"/>
+    </primaryKey>
+    <joins>
+        <join description="support_order_ibfk_1" foreignPath="data/tas_item.exdm.xml">
+            <sourceColumns>
+                <column name="tas_item"/>
+            </sourceColumns>
+        </join>
+        <join description="support_order_ibfk_2" foreignPath="data/target.exdm.xml">
+            <sourceColumns>
+                <column name="target"/>
+            </sourceColumns>
+        </join>
+        <join description="support_order_ibfk_3" foreignPath="data/employee.exdm.xml">
+            <sourceColumns>
+                <column name="employee"/>
+            </sourceColumns>
+        </join>
+    </joins>
+    <descriptionColumns/>
+</table>

@@ -1,0 +1,315 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:h="http://java.sun.com/jsf/html">
+
+<body>
+
+<ui:composition template="/facelet/templates/aon.ui.content.xhtml">
+
+	<ui:define name="head">
+		<ui:include src="/facelet/shared/head.xhtml" />
+	</ui:define>
+
+	<ui:define name="content">
+		<h:form id="taskForm" styleClass="aon-form">
+			<t:div styleClass="aon-content-toolbar" id="aon-content-toolbar"
+				forceId="#{true}">
+				<t:div styleClass="aon-content-toolbar-internal">
+				<t:div styleClass="aon-content-toolbar-item-group">
+					<t:commandButton id="save" forceId="#{true}" value="#{bundle.aon_save}"
+						actionListener="#{task.accept}"
+						onclick="return (confirm('#{bundle.aon_save_confirm}'))"
+						styleClass="aon-content-toolbar-item aon-content-toolbar-item-save"
+						onmouseover="this.className='aon-content-toolbar-item aon-content-toolbar-item-hover aon-content-toolbar-item-save'"
+						onmouseout="this.className='aon-content-toolbar-item aon-content-toolbar-item-save'" 
+						accesskey="#{bundle.aon_key_save}"
+						disabled="#{task.finished or task.deleted}" />
+					<h:commandButton id="cancel" forceId="#{true}" value="#{bundle.aon_cancel}"
+						actionListener="#{task.onCancel}" action="task_list" immediate="#{true}"
+						onclick="return (confirm('#{bundle.aon_cancel_confirm}'))"
+						styleClass="aon-content-toolbar-item aon-content-toolbar-item-cancel"
+						onmouseover="this.className='aon-content-toolbar-item aon-content-toolbar-item-hover aon-content-toolbar-item-cancel'"
+						onmouseout="this.className='aon-content-toolbar-item aon-content-toolbar-item-cancel'" 
+						accesskey="#{bundle.aon_key_cancel}" />
+					<t:commandButton id="remove" forceId="#{true}" value="#{bundle.aon_remove}"
+						actionListener="#{task.onRemoveTask}"
+						onclick="return (confirm('#{bundle.aon_remove_confirm}'))"
+						styleClass="aon-content-toolbar-item aon-content-toolbar-item-delete"
+						onmouseover="this.className='aon-content-toolbar-item aon-content-toolbar-item-hover aon-content-toolbar-item-delete'"
+						onmouseout="this.className='aon-content-toolbar-item aon-content-toolbar-item-delete'" 
+						accesskey="#{bundle.aon_key_remove}"
+						rendered="#{!task.new}"
+						disabled="#{task.sourceCampaign or task.finished or task.deleted}" />
+					<h:commandButton id="reset" forceId="#{true}" value="#{bundle.aon_reset}"
+						actionListener="#{task.onReset}"
+						styleClass="aon-content-toolbar-item aon-content-toolbar-item-new"
+						onmouseover="this.className='aon-content-toolbar-item aon-content-toolbar-item-hover aon-content-toolbar-item-new'"
+						onmouseout="this.className='aon-content-toolbar-item aon-content-toolbar-item-new'"
+						accesskey="#{bundle.aon_key_new}"
+						rendered="#{!task.new}" />
+					<h:commandButton id="search" forceId="#{true}" value="#{bundle.aon_search}"
+						action="task_search" immediate="#{true}"
+						styleClass="aon-content-toolbar-item aon-content-toolbar-item-search"
+						onmouseover="this.className='aon-content-toolbar-item aon-content-toolbar-item-hover aon-content-toolbar-item-search'"
+						onmouseout="this.className='aon-content-toolbar-item aon-content-toolbar-item-search'"
+						actionListener="#{task.onEditSearch}"
+						accesskey="#{bundle.aon_key_search}" />
+					<h:commandButton id="assumeTask" forceId="#{true}" value="#{projectBundle.task_assume}"
+						actionListener="#{task.onAssumeTask}"
+						styleClass="aon-content-toolbar-item aon-content-toolbar-item-search"
+						onmouseover="this.className='aon-content-toolbar-item aon-content-toolbar-item-hover aon-content-toolbar-item-search'"
+						onmouseout="this.className='aon-content-toolbar-item aon-content-toolbar-item-search'"
+						rendered="#{!task.new and task.to.user.id == null}" />
+					<h:commandButton id="startTask" forceId="#{true}" value="#{projectBundle.task_start}"
+						actionListener="#{task.onStartTask}"
+						styleClass="aon-content-toolbar-item aon-content-toolbar-item-search"
+						onmouseover="this.className='aon-content-toolbar-item aon-content-toolbar-item-hover aon-content-toolbar-item-search'"
+						onmouseout="this.className='aon-content-toolbar-item aon-content-toolbar-item-search'"
+						rendered="#{task.myTask and task.pending}" />
+					<h:commandButton id="stopTask" forceId="#{true}" value="#{projectBundle.task_stop}"
+						actionListener="#{task.onStopTask}"
+						styleClass="aon-content-toolbar-item aon-content-toolbar-item-search"
+						onmouseover="this.className='aon-content-toolbar-item aon-content-toolbar-item-hover aon-content-toolbar-item-search'"
+						onmouseout="this.className='aon-content-toolbar-item aon-content-toolbar-item-search'"
+						rendered="#{task.myTask and task.inProgress}" />
+					<h:commandButton id="releaseTask" forceId="#{true}" value="#{projectBundle.task_release}"
+						actionListener="#{task.onReleaseTask}"
+						styleClass="aon-content-toolbar-item aon-content-toolbar-item-search"
+						onmouseover="this.className='aon-content-toolbar-item aon-content-toolbar-item-hover aon-content-toolbar-item-search'"
+						onmouseout="this.className='aon-content-toolbar-item aon-content-toolbar-item-search'"
+						rendered="#{task.myTask and !task.finished and !task.deleted}" />
+					<h:commandButton id="finishTask" forceId="#{true}" value="#{projectBundle.task_finish}"
+						actionListener="#{task.onFinishTask}"
+						styleClass="aon-content-toolbar-item aon-content-toolbar-item-search"
+						onmouseover="this.className='aon-content-toolbar-item aon-content-toolbar-item-hover aon-content-toolbar-item-search'"
+						onmouseout="this.className='aon-content-toolbar-item aon-content-toolbar-item-search'"
+						rendered="#{!task.new and !task.finished and !task.deleted}" />
+					<h:commandButton id="reopenTask" forceId="#{true}" value="#{projectBundle.task_reopen}"
+						actionListener="#{task.onReopenTask}"
+						styleClass="aon-content-toolbar-item aon-content-toolbar-item-search"
+						onmouseover="this.className='aon-content-toolbar-item aon-content-toolbar-item-hover aon-content-toolbar-item-search'"
+						onmouseout="this.className='aon-content-toolbar-item aon-content-toolbar-item-search'"
+						rendered="#{task.myTask and !task.sourceCampaign and task.finished}" />
+				</t:div>
+				</t:div>
+			</t:div>
+
+			<t:div styleClass="aon-content-subtitle" id="aon-content-subtitle"
+				forceId="#{true}">
+				<t:div styleClass="aon-content-subtitle-internal">
+					<h:outputText
+						value="#{task.new?(bundle.aon_reset):(bundle.aon_editing)}" />
+				</t:div>
+			</t:div>
+
+			<t:div id="aon-scroll-area" forceId="#{true}">
+				<t:div styleClass="aon-scroll-area-internal">
+					<h:panelGrid columns="2" dir="true" styleClass="aon-form-table"
+						columnClasses="aon-form-table-column-odd,aon-form-table-column-even">
+
+						<t:div style="width:120px;">
+							<h:outputLabel for="Task_descripcion" value="#{projectBundle.aon_description}"
+								styleClass="aon-form-input-text-label aon-form-table-column-odd-label" />
+						</t:div>
+						<t:inputText id="Task_descripcion" forceId="#{true}"
+							value="#{task.to.description}" required="#{true}"
+							styleClass="aon-form-input-text" size="60"
+							disabled="#{!task.new}" />
+
+						<h:outputLabel for="Task_startDate" value="#{projectBundle.aon_initial_date}"
+							styleClass="aon-form-input-text-label aon-form-table-column-odd-label" />
+						<t:inputCalendar id="Task_startDate" forceId="#{true}"
+							value="#{task.to.startDate}" size="12"
+							monthYearRowClass="yearMonthHeader" weekRowClass="weekHeader"
+							currentDayCellClass="currentDayCell" renderAsPopup="true"
+							styleClass="aon-form-input-text" popupButtonStyleClass="aon-form-calendar-button"
+							popupTodayString="#{bundle.aon_popup_today}"
+							popupWeekString="#{bundle.aon_popup_week}"
+							disabled="#{!task.new}" />
+
+						<h:outputLabel for="Task_endDate" value="#{projectBundle.aon_final_date}"
+							styleClass="aon-form-input-text-label aon-form-table-column-odd-label"
+							rendered="#{task.finished or task.deleted}" />
+						<t:inputCalendar id="Task_endDate" forceId="#{true}"
+							value="#{task.to.endDate}" size="12"
+							monthYearRowClass="yearMonthHeader" weekRowClass="weekHeader"
+							currentDayCellClass="currentDayCell" renderAsPopup="true"
+							styleClass="aon-form-input-text" popupButtonStyleClass="aon-form-calendar-button"
+							popupTodayString="#{bundle.aon_popup_today}"
+							popupWeekString="#{bundle.aon_popup_week}"
+							disabled="#{true}" rendered="#{task.finished or task.deleted}" />
+
+						<h:outputLabel for="Task_dueDate" value="#{projectBundle.aon_due_date}"
+							styleClass="aon-form-input-text-label aon-form-table-column-odd-label" />
+						<t:inputCalendar id="Task_dueDate" forceId="#{true}"
+							value="#{task.to.dueDate}" size="12" required="#{true}"
+							monthYearRowClass="yearMonthHeader" weekRowClass="weekHeader"
+							currentDayCellClass="currentDayCell" renderAsPopup="true"
+							styleClass="aon-form-input-text" popupButtonStyleClass="aon-form-calendar-button"
+							popupTodayString="#{bundle.aon_popup_today}"
+							popupWeekString="#{bundle.aon_popup_week}"
+							disabled="#{!task.new}" />
+
+						<h:outputLabel for="Task_priority" value="#{projectBundle.task_priority}"
+							styleClass="aon-form-input-text-label aon-form-table-column-odd-label" />
+						<h:selectOneMenu id="Task_priority" forceId="#{true}"
+							value="#{task.to.priority}"
+							styleClass="aon-form-selectOneMenu-field"
+							disabled="#{!task.new}">
+							<f:selectItems value="#{projectCollections.taskPriorities}" />
+						</h:selectOneMenu>
+
+						<h:outputLabel for="Task_percent" value="#{projectBundle.task_percent}"
+							styleClass="aon-form-input-text-label aon-form-table-column-odd-label"
+							rendered="#{!task.new}" />
+						<t:inputText id="Task_percent" forceId="#{true}"
+							value="#{task.to.percent}" required="#{true}"
+							styleClass="aon-form-input-text" size="5"
+							disabled="#{task.finished or task.deleted}" rendered="#{!task.new}" />
+
+						<h:outputLabel for="Task_status" value="#{projectBundle.aon_status}"
+							styleClass="aon-form-input-text-label aon-form-table-column-odd-label"
+							rendered="#{!task.new}" />
+						<h:selectOneMenu id="Task_status" forceId="#{true}"
+							value="#{task.to.status}"
+							styleClass="aon-form-selectOneMenu-field"
+							disabled="#{true}" rendered="#{!task.new}">
+							<f:selectItems value="#{projectCollections.taskStatus}" />
+						</h:selectOneMenu>
+
+						<h:outputLabel for="Task_workgroup" value="#{projectBundle.aon_work_group}"
+							styleClass="aon-form-input-text-label aon-form-table-column-odd-label"
+							rendered="#{task.new}" />
+						<h:selectOneMenu id="Task_workgroup" forceId="#{true}"
+							value="#{task.to.workGroup.id}" required="#{true}"
+							styleClass="aon-form-selectOneMenu-field"
+							onchange="submit();"
+							valueChangeListener="#{task.workGroupChange}"
+							rendered="#{task.new}">
+							<f:selectItem itemLabel="-" itemValue="" itemDisabled="true" />
+							<f:selectItems value="#{configCollections.workgroups}" />
+						</h:selectOneMenu>
+
+						<h:outputLabel for="Task_user_id" value="#{projectBundle.task_assigned}"
+							styleClass="aon-form-input-text-label aon-form-table-column-odd-label"
+							rendered="#{task.new}" />
+						<h:selectOneMenu id="Task_user_id" forceId="#{true}"
+							value="#{task.to.user.id}"
+							styleClass="aon-form-selectOneMenu-field"
+							rendered="#{task.new}">
+							<f:selectItem itemLabel="-" itemValue="" itemDisabled="true" />
+							<f:selectItems value="#{task.users}" />
+						</h:selectOneMenu>
+
+						<h:outputLabel for="Customer_Lookup_id" value="#{customerBundle.customer_customer}"
+							styleClass="aon-form-input-text-label aon-form-table-column-odd-label"
+							rendered="#{task.new or task.to.dossier.id != null}" />
+						<t:div rendered="#{task.new}">
+							<t:inputText id="Customer_Lookup_id" forceId="#{true}"
+								value="#{task.customer.id}"
+								styleClass="aon-form-input-text" size="5" 
+								onchange="return findBeanLookupAndSubmitExt(this.form, event,'#{facesContext.externalContext.requestContextPath}','customerLookup','Customer_Lookup_id','Customer_id|Customer_Lookup_id,Customer_full_name|Customer_full_name');"
+								valueChangeListener="#{task.customerChange}" />
+							<h:commandButton id="find_Customer_Lookup_id"
+								styleClass="aon-form-lookup-button" value="" immediate="true"
+								onclick="lookupSearchWindow(this, 'placeList', '#{customerLookup.encodedSearchPagePath}','Customer_id|Customer_Lookup_id,Customer_full_name|Customer_full_name');return false;" />	
+							<t:inputText id="Customer_full_name" forceId="#{true}"
+								value="#{task.customer.registry.name}"
+								styleClass="aon-form-input-text" size="48"
+								disabledOnClientSide="#{true}" />
+						</t:div>
+						<t:inputText id="Task_customer" forceId="#{true}"
+							value="#{task.to.dossier.customer.registry.name} #{task.to.dossier.customer.registry.surname}" required="#{true}"
+							styleClass="aon-form-input-text" size="60"
+							disabled="#{true}" rendered="#{!task.new and task.to.dossier.id != null}" />
+
+						<h:outputLabel for="Task_dossier" value="#{projectBundle.dossier_dossier}"
+							styleClass="aon-form-input-text-label aon-form-table-column-odd-label"
+							rendered="#{task.new or task.to.dossier.id != null}" />
+						<h:selectOneMenu id="Task_select_dossier" forceId="#{true}"
+							value="#{task.to.dossier.id}"
+							styleClass="aon-form-selectOneMenu-field"
+							rendered="#{task.new}"
+							valueChangeListener="#{task.dossierChange}"
+							onchange="submit();">
+							<f:selectItem itemLabel="-" itemValue="" itemDisabled="true" />
+							<f:selectItems value="#{task.dossiers}" />
+						</h:selectOneMenu>
+						<t:inputText id="Task_dossier" forceId="#{true}"
+							value="#{task.to.dossier.number}" required="#{true}"
+							styleClass="aon-form-input-text" size="25"
+							disabled="#{true}" rendered="#{!task.new and task.to.dossier.id != null}" />
+
+						<h:outputLabel for="Task_activity" value="#{projectBundle.activity_activity}"
+							styleClass="aon-form-input-text-label aon-form-table-column-odd-label"
+							rendered="#{task.new or task.to.activity.id != null}" />
+						<h:selectOneMenu id="Task_select_activity" forceId="#{true}"
+							value="#{task.to.activity.id}"
+							styleClass="aon-form-selectOneMenu-field"
+							rendered="#{task.new}">
+							<f:selectItem itemLabel="-" itemValue="" itemDisabled="true" />
+							<f:selectItems value="#{task.activities}" />
+						</h:selectOneMenu>
+						<t:inputText id="Task_activity" forceId="#{true}"
+							value="#{task.to.activity.activityType.description}" required="#{true}"
+							styleClass="aon-form-input-text" size="25"
+							disabled="#{true}" rendered="#{!task.new and task.to.activity.id != null}" />
+
+						<h:outputLabel for="Task_sender" value="#{projectBundle.task_sender}"
+							styleClass="aon-form-input-text-label aon-form-table-column-odd-label"
+							rendered="#{task.sourceAssigned}" />
+						<t:inputText id="Task_sender" forceId="#{true}"
+							value="#{task.to.sender.name}" required="#{true}"
+							styleClass="aon-form-input-text" size="60"
+							disabled="#{true}" rendered="#{task.sourceAssigned}" />
+
+						<h:outputLabel for="Task_comments" value="#{projectBundle.aon_comments}"
+							styleClass="aon-form-input-text-label aon-form-table-column-odd-label" />
+						<t:inputTextarea id="Task_comments" forceId="#{true}"
+							value="#{task.to.comments}" cols="60" rows="5"
+							styleClass="aon-form-input-text"
+							disabled="#{task.finished or task.deleted}" />
+
+					</h:panelGrid>
+
+					<h:panelGrid columns="2" dir="true" styleClass="aon-form-table"
+						columnClasses="aon-form-table-column-odd,aon-form-table-column-even"
+						rendered="#{task.sourceCampaign}">
+
+						<t:div style="width:120px;">
+							<h:outputLabel for="Task_campaign" value="#{campaignBundle.campaign_label}"
+								styleClass="aon-form-input-text-label aon-form-table-column-odd-label" />
+						</t:div>
+						<t:inputText id="Task_campaign" forceId="#{true}"
+							value="#{task.taskCampaign.description}"
+							styleClass="aon-form-input-text" size="60"
+							disabled="#{true}" />
+
+						<h:outputLabel for="Task_previousTask" value="#{projectBundle.task_previous_task}"
+							styleClass="aon-form-input-text-label aon-form-table-column-odd-label" />
+						<t:inputText id="Task_previousTask" forceId="#{true}"
+							value="#{task.previousTaskDescription}"
+							styleClass="aon-form-input-text" size="60"
+							disabled="#{true}" />
+
+						<h:outputLabel for="Task_previousUser" value="#{projectBundle.task_previous_user}"
+							styleClass="aon-form-input-text-label aon-form-table-column-odd-label" />
+						<t:inputText id="Task_previousUser" forceId="#{true}"
+							value="#{task.previousTaskEmployee}"
+							styleClass="aon-form-input-text" size="60"
+							disabled="#{true}" />
+
+					</h:panelGrid>
+
+				</t:div>
+			</t:div>
+		</h:form>
+		<h:form id="placeList" target="list" />
+	</ui:define>
+</ui:composition>
+</body>
+</html>
+		 

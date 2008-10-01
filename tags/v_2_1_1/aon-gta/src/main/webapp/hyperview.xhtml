@@ -1,0 +1,32 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:h="http://java.sun.com/jsf/html">
+<body>
+
+<ui:composition template="/facelet/templates/template.xhtml">
+
+	<ui:define name="content">
+
+		<script type='text/javascript'>
+			function init() {
+				but = document.getElementById("launcher");
+				but.click();
+			}
+		    window.onload=init;
+		</script>
+
+		<h:form id="hyperviewRunnerForm">
+			<input type="hidden" value="#{hyperviewRunner}" />
+			<t:commandButton id="launcher" forceId="#{true}" style="display:none"
+				actionListener="#{hyperviewRunner.onLaunch}"
+				action="#{hyperviewRunner.launch}" />
+		</h:form>
+
+	</ui:define>
+
+</ui:composition>
+
+</body>
+</html>

@@ -1,0 +1,173 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:h="http://java.sun.com/jsf/html">
+<body>
+
+<ui:composition template="/facelet/templates/aon.ui.content.xhtml">
+
+	<ui:define name="head">
+		<ui:include src="/facelet/shared/head.xhtml" />
+	</ui:define>
+
+	<ui:define name="content">
+
+		<h:form id="deliveryDetailList">
+
+			<t:div styleClass="aon-content-toolbar" forceId="#{true}"
+				id="aon-content-toolbar">
+				<t:div styleClass="aon-content-toolbar-internal">
+					<t:div styleClass="aon-content-toolbar-item-group">
+						<t:commandButton value="#{bundle.aon_cancel}" forceId="#{true}"
+							immediate="true" action="sales_invoicing_form"
+							onclick="return (confirm('#{bundle.aon_cancel_confirm}'))"
+							styleClass="aon-content-toolbar-item aon-content-toolbar-item-cancel"
+							onmouseover="this.className='aon-content-toolbar-item aon-content-toolbar-item-hover aon-content-toolbar-item-cancel'"
+							onmouseout="this.className='aon-content-toolbar-item aon-content-toolbar-item-cancel'" 
+							accesskey="#{bundle.aon_key_cancel}"/>
+					</t:div>
+				</t:div>
+			</t:div>
+
+			<t:div id="aon-scroll-area" forceId="#{true}">
+				<t:div styleClass="aon-scroll-area-internal">
+
+					<h:panelGrid columns="2" cellpadding="0" cellspacing="0"
+						styleClass="aon-form-table"
+						columnClasses="aon-form-table-column-odd,aon-form-table-column-even">
+						
+						<h:outputLabel for="Delivery_series"
+							styleClass="aon-form-input-text-label"
+							value="#{warehouseBundle.aon_series_number}" />
+						<h:panelGroup>
+							<h:outputText
+								value="#{delivery.to.series} / #{delivery.to.number}" />
+						</h:panelGroup>
+
+						<h:outputLabel for="Delivery_issue_date"
+							value="#{warehouseBundle.aon_date}"
+							styleClass="aon-form-input-text-label" />
+						<t:outputText id="Delivery_issue_date"
+							value="#{delivery.to.issueTime}">
+							<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+								timeZone="#{timeZoneController.timeZoneId}" />
+						</t:outputText>
+
+						<t:outputLabel for="Customer_id"
+							value="#{warehouseBundle.aon_customer}"
+							styleClass="aon-form-input-text-label" />
+						<h:panelGroup>
+							<t:outputText id="Customer_id" size="5"
+								value="#{delivery.to.customer.id} " />
+							<t:outputText id="Customer_registry_name" size="20"
+								value="#{delivery.to.customer.registry.name} " />
+							<t:outputText id="Customer_registry_surname" size="20"
+								value="#{delivery.to.customer.registry.surname}" />
+						</h:panelGroup>
+
+						<t:outputLabel for="Delivery_securityLevel"
+							value="#{warehouseBundle.aon_security_level}"
+							styleClass="aon-form-input-text-label" />
+						<t:outputText id="Delivery_securityLevel"
+							value="#{delivery.to.securityLevel}" />
+
+						<t:outputLabel for="Delivery_status"
+							value="#{warehouseBundle.aon_status}"
+							styleClass="aon-form-input-text-label" />
+						<t:outputText id="Delivery_status" value="#{delivery.to.status}" />
+					</h:panelGrid>
+					
+					<t:div styleClass="aon-form-group-body">
+						<t:dataTable id="deliveryDetailDataList" var="to"
+							value="#{deliveryDetail.model}" styleClass="aon-edit-table"
+							rendered="#{deliveryDetail.model.rowCount > 0}"
+							headerClass="aon-edit-table-header"
+							footerClass="aon-edit-table-footer"
+							columnClasses="aon-edit-table-body aon-edit-table-body-string,aon-edit-table-body aon-edit-table-body-string,aon-edit-table-body aon-edit-table-body-number,aon-edit-table-body aon-edit-table-body-number,aon-edit-table-body aon-edit-table-body-number,aon-edit-table-body aon-edit-table-body-number">
+
+							<h:column>
+								<f:facet name="header">
+									<h:outputText value="#{productBundle.item_code}" />
+								</f:facet>
+								<t:outputText value="#{to.item.product.code}" />
+								<t:commandLink immediate="#{true}"
+									styleClass="aon-table-row-selected"
+									actionListener="#{deliveryDetail.onSelect}"
+									action="income_lines" />
+							</h:column>
+
+							<h:column>
+								<f:facet name="header">
+									<t:outputText value="#{productBundle.item_description}" />
+								</f:facet>
+								<t:outputText id="Item_description"
+									value="#{to.description}" />
+							</h:column>
+
+							<t:column width="60" >
+								<f:facet name="header">
+									<t:outputText value="#{warehouseBundle.aon_quantity}" />
+								</f:facet>
+								<t:outputText value="#{to.quantity}">
+									<f:convertNumber pattern="#,##0.00" />
+								</t:outputText>
+							</t:column>
+
+							<t:column width="60" >
+								<f:facet name="header">
+									<t:outputText value="#{warehouseBundle.aon_price}" />
+								</f:facet>
+								<t:outputText id="Item_price" value="#{to.price}"
+									forceId="#{true}">
+									<f:convertNumber pattern="#,##0.00" />
+								</t:outputText>
+							</t:column>
+							
+							<t:column width="60" >
+								<f:facet name="header">
+									<t:outputText value="#{warehouseBundle.aon_discount}" />
+								</f:facet>
+								<t:outputText id="Item_price" value="#{to.discountExpression.discountExpr}"
+									forceId="#{true}">
+									<f:convertNumber pattern="#,##0.00" />
+								</t:outputText>
+							</t:column>
+							
+							<t:column width="60" >
+								<f:facet name="header">
+									<t:outputText value="#{warehouseBundle.aon_amount}" />
+								</f:facet>
+								<t:outputText id="Item_price_new-Edit"
+									value="#{deliveryDetail.modelToBasePrice}" forceId="#{true}">
+									<f:convertNumber pattern="#,##0.00" />
+								</t:outputText>
+								<f:facet name="footer">
+									<t:div style="text-align:right;">
+										<t:outputText id="Item_details_total"
+											value="#{deliveryDetail.taxableBase}">
+											<f:convertNumber pattern="#,##0.00" />
+										</t:outputText>
+									</t:div>
+								</f:facet>
+							</t:column>
+
+						</t:dataTable>
+					</t:div>
+					
+					<ui:include src="/facelet/shared/dataScroller.xhtml">
+						<ui:param name="dataTable" value="deliveryDetailDataList" />
+						<ui:param name="model" value="#{deliveryDetail.model}" />
+						<ui:param name="showNote" value="#{true}" />
+					</ui:include>
+
+				</t:div>
+			</t:div>
+		</h:form>
+		<h:form id="placeList" target="list" />
+	</ui:define>
+</ui:composition>
+
+</body>
+</html>
