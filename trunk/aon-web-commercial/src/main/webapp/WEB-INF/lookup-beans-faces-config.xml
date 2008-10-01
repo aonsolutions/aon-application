@@ -78,6 +78,10 @@
 			<value>com.code.aon.product.Item</value>
 		</managed-property>
 		<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>Item_product_code</value>
+		</managed-property>		
+		<managed-property>
 			<property-name>listPagePath</property-name>
 			<value>/commercial/item/lookup/list.xhtml</value>
 		</managed-property>
