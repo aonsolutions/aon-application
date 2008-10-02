@@ -8,6 +8,7 @@ import javax.faces.context.FacesContext;
 import javax.faces.model.SelectItem;
 
 import com.code.aon.marketing.enumeration.ActionMediaType;
+import com.code.aon.marketing.enumeration.ActionTargetStatus;
 import com.code.aon.marketing.enumeration.QuestionType;
 
 public class MarketingCollectionsController {
@@ -16,10 +17,12 @@ public class MarketingCollectionsController {
 	
 	private List<SelectItem> actionMediaTypes;
 	
+	private List<SelectItem> actionTargetStatuses;
+	
 	/**
-	 * Gets the audit levels.
+	 * Gets the question types.
 	 * 
-	 * @return the audit levels
+	 * @return the question types.
 	 */
 	public List<SelectItem> getQuestionTypes() {
 		if ( questionTypes == null ) {
@@ -35,9 +38,9 @@ public class MarketingCollectionsController {
 	}	
 
 	/**
-	 * Gets the audit levels.
+	 * Gets the action media types.
 	 * 
-	 * @return the audit levels
+	 * @return the action media types
 	 */
 	public List<SelectItem> getActionMediaTypes() {
 		if ( actionMediaTypes == null ) {
@@ -51,5 +54,23 @@ public class MarketingCollectionsController {
 		}
 		return actionMediaTypes;
 	}	
-	
+
+	/**
+	 * Gets the action target statuses.
+	 * 
+	 * @return the action target statuses
+	 */
+	public List<SelectItem> getActionTargetStatuses() {
+		if ( actionTargetStatuses == null ) {
+			Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
+			actionTargetStatuses = new LinkedList<SelectItem>();
+			for (ActionTargetStatus status : ActionTargetStatus.values()) {
+				String name = status.getName(locale);
+				SelectItem item = new SelectItem(status, name);
+				actionTargetStatuses.add(item);
+			}
+		}
+		return actionTargetStatuses;
+	}	
+
 }
