@@ -53,7 +53,7 @@
 			<list-entries>
 				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
 				<value>#{targetLookupListener}</value>
-				<value>#{communicationCenter}</value>
+				<value>#{communicationCenterTargetListener}</value>
 			</list-entries>
 		</managed-property>				
 	</managed-bean>
@@ -62,6 +62,12 @@
 		<managed-bean-name>targetLookupListener</managed-bean-name>
 		<managed-bean-class>com.code.aon.ui.commercial.event.TargetLookupListener</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>	
+
+	<managed-bean>
+		<managed-bean-name>communicationCenterTargetListener</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.marketing.event.CommunicationCenterTargetListener</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
 	</managed-bean>	
 
 	<!-- ************ ITEM LOOKUP ************** -->
@@ -173,6 +179,19 @@
 			<property-name>listPagePath</property-name>
 			<value>/marketing/action/lookup/list.xhtml</value>
 		</managed-property>
+		<managed-property>
+			<property-name>listenerClasses</property-name>
+			<list-entries>
+				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+				<value>#{communicationCenterActionListener}</value>
+			</list-entries>
+		</managed-property>				
+	</managed-bean>	
+
+	<managed-bean>
+		<managed-bean-name>communicationCenterActionListener</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.marketing.event.CommunicationCenterActionListener</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
 	</managed-bean>	
 	
 </faces-config>

@@ -4,7 +4,6 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.logging.Logger;
 
 import javax.faces.event.ActionEvent;
 import javax.faces.model.SelectItem;
@@ -18,6 +17,8 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.config.User;
+import com.code.aon.marketing.Action;
+import com.code.aon.marketing.ActionTarget;
 import com.code.aon.marketing.Question;
 import com.code.aon.marketing.QuestionValue;
 import com.code.aon.marketing.Survey;
@@ -26,27 +27,29 @@ import com.code.aon.marketing.SurveyResponse;
 import com.code.aon.marketing.SurveyResponseDetail;
 import com.code.aon.marketing.TargetProfile;
 import com.code.aon.marketing.dao.IMarketingAlias;
+import com.code.aon.marketing.enumeration.ActionTargetStatus;
 import com.code.aon.marketing.enumeration.QuestionType;
 import com.code.aon.ql.Criteria;
+import com.code.aon.ql.ast.Expression;
+import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.registry.RegistryAddress;
 import com.code.aon.registry.RegistryMedia;
 import com.code.aon.registry.dao.IRegistryAlias;
 import com.code.aon.registry.enumeration.AddressType;
 import com.code.aon.registry.enumeration.MediaType;
 import com.code.aon.ui.config.util.UserUtils;
-import com.code.aon.ui.form.event.ControllerAdapter;
-import com.code.aon.ui.form.event.ControllerEvent;
-import com.code.aon.ui.form.event.ControllerListenerException;
 
-public class CommunicationCenterController extends ControllerAdapter {
-	
-	private static final Logger LOGGER = Logger.getLogger(CommunicationCenterController.class.getName());
+public class CommunicationCenterController {
 	
 	private Date date;
+	
+	private Action action;
 	
 	private Survey survey;
 	
 	private Target target;
+	
+	private ActionTarget actionTarget;
 	
 	private SurveyResponse surveyResponse;
 	
@@ -74,6 +77,8 @@ public class CommunicationCenterController extends ControllerAdapter {
 	
 	private boolean targetSelected;
 	
+	private boolean actionSelected;
+	
 	public CommunicationCenterController() {
 		this.date = new Date();
 		this.questionValues = new LinkedList<SelectItem>();
@@ -85,6 +90,15 @@ public class CommunicationCenterController extends ControllerAdapter {
 
 	public void setDate(Date date) {
 		this.date = date;
+	}
+
+	public Action getAction() {
+		return action;
+	}
+
+	public void setAction(Action action) {
+		this.action = ( action != null ) ? action : new Action();
+		this.actionSelected = (this.action.getId() != null);
 	}
 
 	public Survey getSurvey() {
@@ -100,17 +114,26 @@ public class CommunicationCenterController extends ControllerAdapter {
 	}
 
 	public void setTarget(Target target) {
-		this.target = target;
+		this.target = ( target != null ) ? target : new Target();
+		this.targetSelected = (this.target.getId() != null);
 	}
 	
+	public ActionTarget getActionTarget() {
+		return actionTarget;
+	}
+
+	public void setActionTarget(ActionTarget actionTarget) {
+		this.actionTarget = actionTarget;
+	}
+
 	public boolean isTargetSelected() {
 		return targetSelected;
 	}
 
-	public void setTargetSelected(boolean targetSelected) {
-		this.targetSelected = targetSelected;
+	public boolean isActionSelected() {
+		return actionSelected;
 	}
-	
+
 	public boolean isRenderTargetAlias() {
 		return ! StringUtils.isEmpty(target.getRegistry().getAlias());
 	}
@@ -163,11 +186,15 @@ public class CommunicationCenterController extends ControllerAdapter {
 	}
 
 	public void onInitSurveyResponse( ActionEvent event ) {
-		resetTarget();
+		if ( this.action == null ) {
+			setAction( null );
+		}
 		if ( this.survey == null ) {
 			this.survey = new Survey();	
 		}
+		setTarget(null);
 		this.surveyResponse = null;
+		this.actionTarget = null;
 	}
 	
 	public Question getQuestion() {
@@ -331,13 +358,7 @@ public class CommunicationCenterController extends ControllerAdapter {
 		return null;
 	}	
 	
-	private void resetTarget() {
-		this.targetSelected = false;
-		this.target = new Target();		
-	}
-	
-	private void initTarget( Target target ) throws ManagerBeanException {
-		this.targetSelected = true;
+	public void initTarget( Target target ) throws ManagerBeanException {
 		Integer id = target.getRegistry().getId();
 		this.phone = getTargetMedia( id, MediaType.FIXED_PHONE );
 		this.cellular = getTargetMedia( id, MediaType.CELLULAR );
@@ -347,20 +368,28 @@ public class CommunicationCenterController extends ControllerAdapter {
 		this.mainAddress = getTargetAddress(id);
 	}
 	
-	@Override
-	public void afterBeanCreated(ControllerEvent event)
-			throws ControllerListenerException {
-		resetTarget();
-	}
-
-	@Override
-	public void afterBeanSelected(ControllerEvent event)
-			throws ControllerListenerException {
-		try {
-			Target newTarget = (Target) event.getController().getTo();
-			initTarget( newTarget );
-		} catch (ManagerBeanException e) {
-			throw new ControllerListenerException( e.getMessage(), e );
+	public void onNextTarget( ActionEvent event ) throws ManagerBeanException {
+		IManagerBean bean = BeanManager.getManagerBean(ActionTarget.class);
+		Criteria criteria = new Criteria();
+		String id = bean.getFieldName(IMarketingAlias.ACTION_TARGET_ID);
+		criteria.addOrder( id );
+		if ( this.actionTarget != null ) {
+			criteria.addGreaterThanExpression( id, this.actionTarget.getId() );	
+		}
+		criteria.addEqualExpression(bean.getFieldName(IMarketingAlias.ACTION_TARGET_ACTION_ID), this.action.getId());
+		String status = bean.getFieldName(IMarketingAlias.ACTION_TARGET_STATUS);
+		Expression expression1 = ExpressionUtilities.getNotEqualExpression(status, ActionTargetStatus.FINISHED);
+		criteria.addExpression(expression1);
+		Expression expression2 = ExpressionUtilities.getNotEqualExpression(status, ActionTargetStatus.SENT);
+		criteria.addExpression(expression2);
+		List<ITransferObject> list = bean.getList(criteria, 0, 1);
+		if (! list.isEmpty() ) {
+			this.actionTarget = (ActionTarget) list.get(0);
+			setTarget( this.actionTarget.getTarget() );
+			initTarget(this.target); 
+		} else {
+			this.actionTarget = null;
+			setTarget( null );
 		}
 	}
 	
