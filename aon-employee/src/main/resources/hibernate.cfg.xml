@@ -26,6 +26,8 @@
 		<mapping class="com.code.aon.registry.RegistryRelationship"/>
 		<mapping class="com.code.aon.registry.RegistryNote"/>
 		<mapping class="com.code.aon.registry.Category"/>
+		<mapping class="com.code.aon.registry.RegistryDirStaff"/>
+		<mapping class="com.code.aon.registry.RecordData"/>
 
 		<!-- AON-COMPANY Mapping files -->
 		<mapping class="com.code.aon.company.Company"/>
@@ -36,8 +38,8 @@
 		<mapping class="com.code.aon.company.resources.Employee"/>
 
 		<!-- AON-GEOZONE Mapping files -->	
+		<mapping class="com.code.aon.geozone.GeoTree"/>			
 		<mapping class="com.code.aon.geozone.GeoZone"/>			
-		<mapping class="com.code.aon.geozone.Country"/>
 
 		<!-- AON-EMPLOYEE Mapping files -->		
 		<mapping class="com.code.aon.employee.Expenditures"/>
@@ -55,7 +57,7 @@
 
 		<!-- AON-EMPLOYEE Record Mapping files -->		
 		<mapping class="com.code.aon.record.Work"/>
-		<mapping class="com.code.aon.record.Course"/>
+		<mapping class="com.code.aon.record.LHCourse"/>
 		<mapping class="com.code.aon.record.Position"/>
 		<mapping class="com.code.aon.record.Contract"/>		
 

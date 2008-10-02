@@ -3,7 +3,7 @@ package com.code.aon.record.dao;
 import com.code.aon.common.dao.DAOConstants;
 import com.code.aon.common.dao.DAOConstantsEntry;
 import com.code.aon.record.Work;
-import com.code.aon.record.Course;
+import com.code.aon.record.LHCourse;
 import com.code.aon.record.Position;
 import com.code.aon.record.Contract;
 
@@ -52,39 +52,39 @@ public interface IRecordAlias {
 
 
 	/** 
-	* DAOConstantsEntry for Course entity.
+	* DAOConstantsEntry for LHCourse entity.
 	*/ 
-	DAOConstantsEntry COURSE_ENTRY = DAOConstants.getDAOConstant(Course.class);
+	DAOConstantsEntry LHCOURSE_ENTRY = DAOConstants.getDAOConstant(LHCourse.class);
 
 	/** 
-	* Alias value: Course_description
-	* Hibernate value: Course.description
+	* Alias value: LHCourse_description
+	* Hibernate value: LHCourse.description
 	*/
-	String  COURSE_DESCRIPTION = COURSE_ENTRY.getAliasNames()[0];
+	String  LHCOURSE_DESCRIPTION = LHCOURSE_ENTRY.getAliasNames()[0];
 
 	/** 
-	* Alias value: Course_employee_id
-	* Hibernate value: Course.employee.id
+	* Alias value: LHCourse_employee_id
+	* Hibernate value: LHCourse.employee.id
 	*/
-	String  COURSE_EMPLOYEE_ID = COURSE_ENTRY.getAliasNames()[1];
+	String  LHCOURSE_EMPLOYEE_ID = LHCOURSE_ENTRY.getAliasNames()[1];
 
 	/** 
-	* Alias value: Course_endingDate
-	* Hibernate value: Course.endingDate
+	* Alias value: LHCourse_endingDate
+	* Hibernate value: LHCourse.endingDate
 	*/
-	String  COURSE_ENDING_DATE = COURSE_ENTRY.getAliasNames()[2];
+	String  LHCOURSE_ENDING_DATE = LHCOURSE_ENTRY.getAliasNames()[2];
 
 	/** 
-	* Alias value: Course_id
-	* Hibernate value: Course.id
+	* Alias value: LHCourse_id
+	* Hibernate value: LHCourse.id
 	*/
-	String  COURSE_ID = COURSE_ENTRY.getAliasNames()[3];
+	String  LHCOURSE_ID = LHCOURSE_ENTRY.getAliasNames()[3];
 
 	/** 
-	* Alias value: Course_startingDate
-	* Hibernate value: Course.startingDate
+	* Alias value: LHCourse_startingDate
+	* Hibernate value: LHCourse.startingDate
 	*/
-	String  COURSE_STARTING_DATE = COURSE_ENTRY.getAliasNames()[4];
+	String  LHCOURSE_STARTING_DATE = LHCOURSE_ENTRY.getAliasNames()[4];
 
 
 

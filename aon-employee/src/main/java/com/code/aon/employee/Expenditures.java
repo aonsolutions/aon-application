@@ -23,6 +23,8 @@ import com.code.aon.common.ITransferObject;
 @Table(name="expenditures")
 public class Expenditures implements ITransferObject {
 
+	private static final long serialVersionUID = 4435185915356406070L;
+
 	/** Expenditures identifier. */
 	private Integer id;
 	private Integer resource;

@@ -17,6 +17,8 @@ import com.code.aon.company.resources.Employee;
 @Table(name="lh_work")
 public class Work implements ITransferObject {
 	
+	private static final long serialVersionUID = 3153170496404593041L;
+
 	/**
 	 * Identificador único
 	 */
