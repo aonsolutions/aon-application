@@ -16,6 +16,10 @@ public interface IMarketingConstants {
 
 	String SURVEY_CONTROLLER_NAME = "survey";
 	
+	String CAMPAIGN_ACTION_CONTROLLER_NAME = "campaignAction";
+	
+	String CAMPAIGN_ACTION_TARGET_CONTROLLER_NAME = "campaignActionTarget";
+	
 	String TARGET_PROFILE_CONTROLLER_NAME = "targetProfile";
 
 }

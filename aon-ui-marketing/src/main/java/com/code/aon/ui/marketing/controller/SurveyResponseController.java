@@ -8,14 +8,17 @@ import javax.faces.event.ActionEvent;
 import com.code.aon.commercial.Target;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.marketing.Action;
+import com.code.aon.marketing.ActionTarget;
 import com.code.aon.marketing.Survey;
 import com.code.aon.marketing.dao.IMarketingAlias;
 import com.code.aon.ui.form.BasicController;
+import com.code.aon.ui.form.IController;
+import com.code.aon.ui.util.AonUtil;
 
 /**
  * Controller used in the offer maintenance.
  */
-public class SurveyResponseController extends BasicController {
+public class SurveyResponseController extends BasicController implements IMarketingConstants {
 	
 	private static final Logger LOGGER = Logger.getLogger(SurveyResponseController.class.getName());
 
@@ -24,6 +27,13 @@ public class SurveyResponseController extends BasicController {
 	private Target target;
 	
 	private Action action;
+	
+	public void onSelectSurveyResponse( ActionEvent event ) throws NumberFormatException, ManagerBeanException {
+		IController actionTargetController = AonUtil.getController(CAMPAIGN_ACTION_TARGET_CONTROLLER_NAME);
+		ActionTarget actionTarget = (ActionTarget) actionTargetController.getTo();
+		setTo( actionTarget.getSurveyResponse() );
+		actionTargetController.onCancel( event );
+	}
 		
 	public Survey getSurvey() {
 		return survey;
