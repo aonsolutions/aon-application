@@ -15,11 +15,16 @@
 
 		<aon:form id="surveyResponseForm">
 		
-			<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml" >
+			<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml" >
 				<ui:param name="toolbarTitle" value="#{marketingBundle.aon_marketing_survey_responses}" />
-				<ui:param name="controller" value="#{surveyResponse}" />
-				<ui:param name="skipSaveButton" value="true" />
-			</ui:include>
+				<ui:param name="toolbarDescription" value="#{bundle.aon_editing}" />
+				<ui:define name="toolbarContent">
+					<aon:commandButton value="#{bundle.aon_back}"
+						action="campaignAction_form" immediate="true"
+						styleClass="aon-finding-toolbar-item aon-icon-cancel"
+						accesskey="#{bundle.aon_key_cancel}" />
+				</ui:define>
+			</ui:decorate>
 
 			<ui:include src="/marketing/surveyResponse/formContent.xhtml" />
 
