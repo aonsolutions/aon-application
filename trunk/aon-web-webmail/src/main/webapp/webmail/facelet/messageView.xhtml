@@ -72,24 +72,20 @@
 						value="#{appBundle.aon_webmail_deletemail}"
 						styleClass="aon-finding-toolbar-item aon-icon-mailDelete">
 					</aon:commandButton>									
-				
-					<h:outputLink 
-						id="save"
-						value="#{webmail.context}/webmail/save.jsp" 
-						target="_blank"
+
+					<a4j:htmlCommandLink id="save" target="_blank"
+						actionListener="#{message.save}"
 						styleClass="aon-icon aon-icon-mail-save aon-finding-toolbar-item"
 						style="line-height:16px;">
 						<aon:outputText value="#{appBundle.aon_webmail_save}" />
-					</h:outputLink>
-				
-					<h:outputLink 
-						id="print"
-						value="#{webmail.context}/webmail/print.jsp" 
-						target="_blank"
+					</a4j:htmlCommandLink> 					
+
+					<a4j:htmlCommandLink id="print" target="_blank"
+						actionListener="#{message.print}"
 						styleClass="aon-icon aon-icon-printer aon-finding-toolbar-item"
 						style="line-height:16px;">
 						<aon:outputText value="#{appBundle.aon_webmail_print}" />
-					</h:outputLink>
+					</a4j:htmlCommandLink> 					
 						
 					<!-- Move button  -->
 					<aon:commandButton
