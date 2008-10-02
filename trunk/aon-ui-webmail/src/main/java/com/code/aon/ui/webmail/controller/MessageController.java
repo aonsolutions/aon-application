@@ -5,17 +5,23 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.io.UnsupportedEncodingException;
+import java.io.Writer;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
+import java.util.ResourceBundle;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.activation.DataHandler;
 import javax.activation.FileDataSource;
+import javax.faces.context.FacesContext;
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 import javax.faces.event.ValueChangeEvent;
@@ -39,19 +45,23 @@ import org.richfaces.event.UploadEvent;
 import org.richfaces.model.UploadItem;
 
 import com.code.aon.bridge.session.LoggedUser;
+import com.code.aon.common.AonException;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.common.enumeration.MimeType;
+import com.code.aon.common.velocity.TemplateHelper;
+import com.code.aon.common.velocity.VelocityHelper;
 import com.code.aon.groupware.Contact;
 import com.code.aon.groupware.dao.IContactAlias;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.form.IController;
 import com.code.aon.ui.util.AonUtil;
 import com.code.aon.ui.webmail.bean.AonAttachment;
-import com.code.aon.ui.webmail.bean.WebMailConstants;
 import com.code.aon.ui.webmail.bean.AonFile;
 import com.code.aon.ui.webmail.bean.AonFolder;
 import com.code.aon.ui.webmail.bean.AonMessage;
 import com.code.aon.ui.webmail.bean.AonMessageUtils;
+import com.code.aon.ui.webmail.bean.WebMailConstants;
 import com.code.aon.ui.webmail.converter.MaxLenghtStringConverter;
 import com.code.aon.ui.webmail.exception.WebmailException;
 import com.code.aon.ui.webmail.listener.IAonFileListener;
@@ -65,6 +75,10 @@ public class MessageController implements WebMailConstants, IAonFileListener {
 	private static final String REPLIED_MESSAGE = "aon_webmail_replied_message";
 
 	private static final String FORWARDED_MESSAGE = "aon_webmail_forwarded_message";
+	
+	private static final String VM_PATH_DEFAULT = "com/code/aon/ui/webmail/";
+	
+	private static final String PRINT_TEMPLATE = "print.html.vm";
 
 	private static final Logger LOGGER = Logger.getLogger(MessageController.class.getName());
 	
@@ -93,6 +107,8 @@ public class MessageController implements WebMailConstants, IAonFileListener {
     private String senderMailAccountId;
     
     private String messageBody;
+    
+    private VelocityHelper velocityHelper;
     
 	/**
 	 * @return the message
@@ -719,7 +735,8 @@ public class MessageController implements WebMailConstants, IAonFileListener {
 			    out.write(block, 0, read);
 			}
 			in.close();
-			out.flush();
+			response.flushBuffer();
+			out.close();
 		} catch (IOException e) {
 			e.printStackTrace();
 		} catch (MessagingException e) {
@@ -956,4 +973,70 @@ public class MessageController implements WebMailConstants, IAonFileListener {
 		}
 	}	
 	
+	private VelocityHelper getVelocityHelper() {
+		if ( this.velocityHelper == null ) {
+			this.velocityHelper = new VelocityHelper();
+			try {
+				this.velocityHelper.init( VM_PATH_DEFAULT );
+			} catch (Exception e) {
+				LOGGER.log(Level.SEVERE, "Velocity engine could not be initialized", e );
+			}
+		}
+		return this.velocityHelper;
+	}
+	
+	
+	private void printMessage( HttpServletResponse response, AonMessage message ) {
+		try {
+			response.setContentType(MimeType.MIME_HTML.getName());
+			Writer out = new OutputStreamWriter( response.getOutputStream() );
+			TemplateHelper th = getVelocityHelper().getTemplateHelper();
+			FacesContext context = FacesContext.getCurrentInstance();
+			th.putInContext("contextPath", context.getExternalContext().getRequestContextPath());
+			LoggedUser loggerUser = (LoggedUser) AonUtil.getRegisteredBean(BEAN_LOGGED_USER);
+			th.putInContext("username", loggerUser.getLoggedUserName());
+			SimpleDateFormat df = new SimpleDateFormat("EEE, dd/MM/yy-HH:mm");
+			th.putInContext("nowDate", df.format(new Date()));
+			Locale locale = AonUtil.getCurrentLocale();
+			ResourceBundle bundle = ResourceBundle.getBundle(WebMailConstants.RESOURCE_BUNDLE, locale);	
+			th.putInContext("fromLiteral", bundle.getString("aon_webmail_from"));
+			th.putInContext("sender", message.getSender());
+			th.putInContext("toLiteral", bundle.getString("aon_webmail_to"));
+			th.putInContext("recipientsTo", message.getRecipientsTo());
+			String cc = message.getRecipientsCc();
+			if (! StringUtils.isEmpty(cc) ) {
+				th.putInContext("ccLiteral", bundle.getString("aon_webmail_cc"));
+				th.putInContext("recipientsCc", cc );				
+			}
+			th.putInContext("dateLiteral", bundle.getString("aon_webmail_date"));
+			th.putInContext("sentDateString", message.getSentDateString());
+			th.putInContext("subjectLiteral", bundle.getString("aon_webmail_subject"));
+			th.putInContext("subject", message.getSubject());
+			th.putInContext("messageContent", message.getContent());
+			th.processTemplate(PRINT_TEMPLATE, out);
+			response.flushBuffer();
+			out.close();
+		} catch (IOException e) {
+			LOGGER.log( Level.SEVERE, e.getMessage(), e );
+		} catch (AonException e) {
+			LOGGER.log( Level.SEVERE, e.getMessage(), e );
+		} catch (WebmailException e) {
+			LOGGER.log( Level.SEVERE, e.getMessage(), e );			
+		}		
+	}
+	
+    public void print( ActionEvent event ) throws MessagingException, WebmailException {
+        FacesContext context = FacesContext.getCurrentInstance();
+        HttpServletResponse response = (HttpServletResponse) context.getExternalContext().getResponse();
+        printMessage(response, this.message);
+        context.responseComplete();    	
+    }
+
+    public void save( ActionEvent event ) throws MessagingException, WebmailException {
+        FacesContext context = FacesContext.getCurrentInstance();
+        HttpServletResponse response = (HttpServletResponse) context.getExternalContext().getResponse();
+        save(response);
+        context.responseComplete();    	
+    }
+    
 }
