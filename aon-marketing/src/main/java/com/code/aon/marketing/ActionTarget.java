@@ -56,6 +56,7 @@ public class ActionTarget implements ITransferObject {
      * The empty constructor.
      */
     public ActionTarget() {
+    	this.status = ActionTargetStatus.PENDING;
     }
 
     /**
@@ -64,6 +65,7 @@ public class ActionTarget implements ITransferObject {
      * @param id the id
      */
     public ActionTarget(Integer id) {
+    	this();
         this.id = id;
     }
 
