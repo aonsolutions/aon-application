@@ -8,7 +8,7 @@
 
 		<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/grid.xhtml" >
 			<ui:param name="controller" value="#{campaignActionTarget}" />
-			<ui:param name="columnClasses" value="aon-editDataTable-textColumn" />
+			<ui:param name="columnClasses" value="aon-editDataTable-textColumn, aon-editDataTable-textColumn, aon-text-center" />
 			<ui:define name="columns">
 
 				<aon:column>
@@ -52,6 +52,36 @@
 						</aon:div>
 					</f:facet>
 				</aon:column>
+				
+				<aon:column width="80">
+					<f:facet name="header">
+						<aon:outputText value="#{bundle.aon_status}" />
+					</f:facet>
+					<aon:outputText value="#{to.status}"
+						rendered="#{to!=controller.to}" />
+					<aon:selectOneMenu rendered="#{to==controller.to}"
+						value="#{controller.to.status}">
+						<f:selectItems value="#{marketingCollections.actionTargetStatuses}" />
+					</aon:selectOneMenu>
+					<f:facet name="footer">
+						<aon:selectOneMenu rendered="#{controller.new}"
+							value="#{controller.to.status}">
+							<f:selectItems value="#{marketingCollections.actionTargetStatuses}" />
+						</aon:selectOneMenu>
+					</f:facet>
+				</aon:column>		
+				
+				<aon:column width="80">
+					<f:facet name="header">
+						<aon:outputText value="#{marketingBundle.aon_marketing_survey_response}" />
+					</f:facet>
+					<aon:commandLink style="padding:1px 5px 1px 16px; margin:0 0 0 5px; border:0; width:auto;overflow:visible;"
+						styleClass="aon-finding-toolbar-item aon-icon-file-entrance"
+						rendered="#{to.surveyResponse.id!=null}"
+						actionListener="#{controller.onSelectSurveyResponse}">
+						<aon:outputText value="&#160;" />
+					</aon:commandLink>
+				</aon:column>		
 
 			</ui:define>
 		</ui:decorate>
