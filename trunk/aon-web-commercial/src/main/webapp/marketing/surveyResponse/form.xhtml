@@ -34,6 +34,13 @@
 						value="#{marketingBundle.aon_marketing_survey}" />
 					<aon:outputText id="SurveyResponse_survey_id"
 						value="#{surveyResponse.to.survey.id} (#{surveyResponse.to.survey.description})" />
+
+					<c:if test="#{surveyResponse.to.action.id != null}" >
+						<aon:outputLabel for="SurveyResponse_action_id" 
+							value="#{marketingBundle.aon_campaign_action}" />
+						<aon:outputText id="SurveyResponse_action_id"
+							value="#{surveyResponse.to.action.id} (#{surveyResponse.to.action.campaign.description})" />
+					</c:if>
 						
 					<aon:outputLabel for="SurveyResponse_target_id"
 						value="#{appBundle.aon_commercial_tracking_target}" />
