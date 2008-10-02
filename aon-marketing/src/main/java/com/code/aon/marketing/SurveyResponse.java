@@ -65,6 +65,11 @@ public class SurveyResponse implements ITransferObject {
 	@ForeignKey(name = "FK_SURVERY_RESPONSE_USER")
 	private User user;
 	
+	@ManyToOne (fetch=FetchType.EAGER)
+    @JoinColumn( name="campaign_action" )	
+	@ForeignKey(name = "FK_MK_ACTION_TARGET_MK_ACTION")
+	private Action action;
+	
 	@OneToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE,
 			CascadeType.REMOVE }, mappedBy = "surveyResponse")
 	@org.hibernate.annotations.Cascade( {
@@ -195,6 +200,24 @@ public class SurveyResponse implements ITransferObject {
 		this.user = user;
 	}
 
+	/**
+	 * Gets the action.
+	 * 
+	 * @return the action
+	 */
+	public Action getAction() {
+		return action;
+	}
+
+	/**
+	 * Sets the action.
+	 * 
+	 * @param action the new action
+	 */
+	public void setAction(Action action) {
+		this.action = action;
+	}
+	
 	/**
 	 * Gets the details.
 	 * 
