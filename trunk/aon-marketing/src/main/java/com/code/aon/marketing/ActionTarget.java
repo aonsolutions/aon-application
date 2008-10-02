@@ -13,6 +13,7 @@ import org.hibernate.annotations.ForeignKey;
 
 import com.code.aon.commercial.Target;
 import com.code.aon.common.ITransferObject;
+import com.code.aon.marketing.enumeration.ActionTargetStatus;
 
 
 /**
@@ -43,6 +44,14 @@ public class ActionTarget implements ITransferObject {
 	@ForeignKey(name = "FK_MK_ACTION_TARGET_TARGET")
 	private Target target;
 
+	@Column(nullable = false)
+	private ActionTargetStatus status;	
+	
+	@ManyToOne (fetch=FetchType.EAGER)
+    @JoinColumn( name="survey_response" )	
+	@ForeignKey(name = "FK_MK_ACTION_TARGET_SURVEY_RESPONSE")
+	private SurveyResponse surveyResponse;	
+	
     /**
      * The empty constructor.
      */
@@ -110,6 +119,42 @@ public class ActionTarget implements ITransferObject {
 	 */
 	public void setAction(Action action) {
 		this.action = action;
+	}
+	
+	/**
+	 * Gets the status.
+	 * 
+	 * @return the status
+	 */
+	public ActionTargetStatus getStatus() {
+		return status;
+	}
+
+	/**
+	 * Sets the status.
+	 * 
+	 * @param status the new status
+	 */
+	public void setStatus(ActionTargetStatus status) {
+		this.status = status;
+	}
+
+	/**
+	 * Gets the survey response.
+	 * 
+	 * @return the survey response
+	 */
+	public SurveyResponse getSurveyResponse() {
+		return surveyResponse;
+	}
+
+	/**
+	 * Sets the survey response.
+	 * 
+	 * @param surveyResponse the new survey response
+	 */
+	public void setSurveyResponse(SurveyResponse surveyResponse) {
+		this.surveyResponse = surveyResponse;
 	}
 	
 }
