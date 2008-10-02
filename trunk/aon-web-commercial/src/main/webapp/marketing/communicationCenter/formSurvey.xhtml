@@ -115,25 +115,24 @@
 								styleClass="aon-lookupButton-next" ajaxSingle="true" value="" 
 								actionListener="#{communicationCenter.onNextTarget}" 
 								rendered="#{communicationCenter.actionSelected}" 
-								reRender="CommunicationCenter_target_detail,CommunicationCenter_target" />
+								reRender="CommunicationCenter_target_detail,CommunicationCenter_target_id" />
 						</aon:div>
 						<aon:div id="CommunicationCenter_target_detail" layout="inline">
 							<aon:panelGrid rendered="#{communicationCenter.targetSelected}" columns="2" dir="true">		
 							
 								<ui:include src="/marketing/communicationCenter/targetSummary.xhtml" />
+
+								<aon:outputLabel for="CommunicationCenter_status"
+									value="#{bundle.aon_status}" rendered="#{communicationCenter.actionTarget != null}" />
+								<aon:selectOneMenu id="CommunicationCenter_status" required="true"
+									value="#{communicationCenter.actionTarget.status}"
+									rendered="#{communicationCenter.actionTarget != null}">
+									<f:selectItems value="#{marketingCollections.actionTargetStatuses}" />
+								</aon:selectOneMenu>
 									
 							</aon:panelGrid>
 						</aon:div>
 					</aon:div>
-
-					<c:if test="#{communicationCenter.actionTarget != null}" >
-						<aon:outputLabel for="CommunicationCenter_status"
-							value="#{bundle.aon_status}" />
-						<aon:selectOneMenu id="CommunicationCenter_status" required="true"
-							value="#{communicationCenter.actionTarget.status}">
-							<f:selectItems value="#{marketingCollections.actionTargetStatuses}" />
-						</aon:selectOneMenu>
-					</c:if>					
 
 				</aon:panelGrid>
 
