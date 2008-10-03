@@ -369,7 +369,6 @@
 					com.code.aon.ui.form.event.IControllerListener
 				</value-class>
 				<value>#{invoiceRegistryVetoListener}</value>
-				<value>#{supplierScopeListener}</value>
 			</list-entries>
 		</managed-property>
 	</managed-bean>
@@ -400,7 +399,6 @@
 					com.code.aon.ui.form.event.IControllerListener
 				</value-class>
 				<value>#{invoiceRegistryVetoListener}</value>
-				<value>#{creditorScopeListener}</value>
 			</list-entries>
 		</managed-property>
 	</managed-bean>
