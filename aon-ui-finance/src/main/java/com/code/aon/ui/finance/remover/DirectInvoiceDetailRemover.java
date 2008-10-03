@@ -28,7 +28,7 @@ public class DirectInvoiceDetailRemover implements IInvoiceDetailRemover {
 		try {
 			IManagerBean invoiceDetailBean = BeanManager.getManagerBean(InvoiceDetail.class);
 			if(invoiceDetail.getDeliveryDetail() != null){
-				removeDeliveryDetail(invoiceDetail.getDeliveryDetail());
+					removeDeliveryDetail(invoiceDetail.getDeliveryDetail());
 			}
 			invoiceDetailBean.remove(invoiceDetail);
 		} catch (ManagerBeanException e) {

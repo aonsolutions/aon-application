@@ -88,4 +88,10 @@
 		<converter-for-class>com.code.aon.customer.Customer</converter-for-class>
 		<converter-class>com.code.aon.ui.customer.converter.CustomerConverter</converter-class>
 	</converter>
+	<converter>
+		<converter-id>CustomerRegistryConverter</converter-id>
+		<converter-class>com.code.aon.ui.customer.converter.CustomerRegistryConverter</converter-class>
+	</converter>
+	
+	
 </faces-config>

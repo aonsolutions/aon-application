@@ -38,7 +38,6 @@ public class CustomerConverter implements Converter {
 				c = new Customer();
 				c.setId(id);
 				Registry r = new Registry();
-				r.setName(" ¡Cliente no válido! ");
 				c.setRegistry(r);
 			}
 			return c;
