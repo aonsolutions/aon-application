@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<view description="Beneficio" label="Beneficio" sqlSentence="SELECT line, product.code, product.name, invoice_detail.quantity, invoice_detail.price&#xd;&#xa;  FROM invoice_detail, product, item&#xd;&#xa; WHERE invoice_detail.item = item.id&#xd;&#xa;   AND item.product = product.id&#xd;&#xa;   AND delivery_detail IN (&#xd;&#xa;       SELECT delivery_detail.id&#xd;&#xa;         FROM delivery_detail, delivery, tas_delivery&#xd;&#xa;        WHERE delivery_detail.delivery = delivery.id&#xd;&#xa;          AND tas_delivery.delivery = delivery.id&#xd;&#xa;          AND tas_delivery.support_order = ?)">
+    <parameters>
+        <parameter name="support_order" type="INTEGER"/>
+    </parameters>
+    <results>
+        <result accessName="line" columnId="line" label="LINEA"
+            tableId="invoice_detail" type="INTEGER"/>
+        <result accessName="code" columnId="code" label="CODIGO"
+            tableId="product" type="STRING"/>
+        <result accessName="name" columnId="name" label="NAME"
+            tableId="product" type="STRING"/>
+        <result accessName="quantity" columnId="quantity"
+            label="QUANTITY" tableId="invoice_detail" type="DOUBLE"/>
+        <result accessName="price" columnId="price" label="PRECIO"
+            tableId="invoice_detail" type="DOUBLE"/>
+    </results>
+    <dataModelReferences/>
+</view>

@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<table tableName="target_list">
+    <columns>
+        <column label="" name="id" sqlType="integer" type="integer"/>
+        <column label="" name="target" sqlType="integer" type="integer"/>
+        <column label="" name="calllist" sqlType="integer" type="integer"/>
+    </columns>
+    <virtualColumns/>
+    <primaryKey>
+        <column name="id"/>
+    </primaryKey>
+    <joins>
+        <join description="target_list_ibfk_1" foreignPath="data/calllist.exdm.xml">
+            <sourceColumns>
+                <column name="calllist"/>
+            </sourceColumns>
+        </join>
+        <join description="target_list_ibfk_2" foreignPath="data/target.exdm.xml">
+            <sourceColumns>
+                <column name="target"/>
+            </sourceColumns>
+        </join>
+    </joins>
+    <descriptionColumns/>
+</table>
