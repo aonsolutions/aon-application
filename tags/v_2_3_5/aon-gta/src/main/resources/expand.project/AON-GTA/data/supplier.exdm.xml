@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<table tableName="supplier">
+    <columns>
+        <column label="" name="registry" sqlType="integer" type="integer"/>
+        <column label="" length="4" name="status" sqlType="tinyint" type="string"/>
+    </columns>
+    <virtualColumns/>
+    <primaryKey>
+        <column name="registry"/>
+    </primaryKey>
+    <joins>
+        <join description="supplier_ibfk_1" foreignPath="data/registry.exdm.xml">
+            <sourceColumns>
+                <column name="registry"/>
+            </sourceColumns>
+        </join>
+    </joins>
+    <descriptionColumns/>
+</table>

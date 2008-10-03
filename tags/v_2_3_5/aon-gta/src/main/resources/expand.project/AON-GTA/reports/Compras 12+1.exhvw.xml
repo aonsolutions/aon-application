@@ -1,0 +1,234 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<workstation description="" label="Compras 12+1">
+    <external-parameters>
+        <external-parameter defaultValue="${currentMonth}" label="Mes"
+            name="month" prompt="true" type="INTEGER"/>
+        <external-parameter defaultValue="${currentYear}" label="Año"
+            name="year" prompt="true" type="INTEGER"/>
+        <external-parameter defaultValue="0" name="type" type="INTEGER"/>
+    </external-parameters>
+    <node iconClose="icons/icon_comparativa.gif"
+        iconOpen="icons/icon_comparativa.gif" label="12 + 1">
+        <layout type="COLUMN"/>
+        <contents>
+            <viewContent id="view/Comparativa Ventas/12+1.exvw.xml" type="LIST">
+                <parameters>
+                    <parameter name="year"/>
+                    <parameter name="month"/>
+                    <parameter name="year"/>
+                    <parameter name="month"/>
+                    <parameter name="type"/>
+                </parameters>
+            </viewContent>
+        </contents>
+        <node iconClose="icons/icon_users_group.gif"
+            iconOpen="icons/icon_users_group.gif" label="Proveedores">
+            <layout type="COLUMN"/>
+            <contents>
+                <viewContent
+                    id="view/Comparativa Ventas/Cliente 12+1.exvw.xml" type="LIST">
+                    <parameters>
+                        <parameter name="type"/>
+                        <parameter name="year"/>
+                        <parameter name="month"/>
+                        <parameter name="year"/>
+                        <parameter name="month"/>
+                    </parameters>
+                </viewContent>
+            </contents>
+            <node
+                dynamicViewId="view/Comparativa Ventas/Cliente 12+1.exvw.xml"
+                iconClose="icons/icon_usuario.gif"
+                iconOpen="icons/icon_usuario.gif" label="${CUSTOMER_NAME}">
+                <dynamicParameters>
+                    <parameter name="type"/>
+                    <parameter name="year"/>
+                    <parameter name="month"/>
+                    <parameter name="year"/>
+                    <parameter name="month"/>
+                </dynamicParameters>
+                <layout type="COLUMN"/>
+                <contents>
+                    <viewContent
+                        id="view/Comparativa Ventas/Cliente Mes 12+1.exvw.xml" type="LIST">
+                        <parameters>
+                            <parameter name="type"/>
+                            <parameter name="CUSTOMER_ID"/>
+                            <parameter name="year"/>
+                            <parameter name="month"/>
+                            <parameter name="year"/>
+                            <parameter name="month"/>
+                        </parameters>
+                    </viewContent>
+                </contents>
+                <node
+                    dynamicViewId="view/Comparativa Ventas/Productos por cliente 12+1.exvw.xml"
+                    iconClose="icons/icon_articulo.gif"
+                    iconOpen="icons/icon_articulo.gif" label="${ITEM_NAME}">
+                    <dynamicParameters>
+                        <parameter name="CUSTOMER_ID"/>
+                        <parameter name="year"/>
+                        <parameter name="month"/>
+                        <parameter name="year"/>
+                        <parameter name="month"/>
+                        <parameter name="type"/>
+                    </dynamicParameters>
+                    <layout type="COLUMN"/>
+                    <contents>
+                        <viewContent
+                            id="view/Comparativa Ventas/Productos por cliente Mes 12+1.exvw.xml" type="LIST">
+                            <parameters>
+                                <parameter name="ITEM_ID"/>
+                                <parameter name="CUSTOMER_ID"/>
+                                <parameter name="year"/>
+                                <parameter name="month"/>
+                                <parameter name="year"/>
+                                <parameter name="month"/>
+                                <parameter name="type"/>
+                            </parameters>
+                        </viewContent>
+                    </contents>
+                </node>
+            </node>
+        </node>
+        <node iconClose="icons/icon_familia.gif"
+            iconOpen="icons/icon_familia.gif" label="Familias">
+            <layout type="COLUMN"/>
+            <contents>
+                <viewContent
+                    id="view/Comparativa Ventas/Familia.exvw.xml" type="LIST">
+                    <parameters>
+                        <parameter name="year"/>
+                        <parameter name="month"/>
+                        <parameter name="year"/>
+                        <parameter name="month"/>
+                        <parameter name="type"/>
+                    </parameters>
+                </viewContent>
+            </contents>
+            <node
+                dynamicViewId="view/Comparativa Ventas/Familia.exvw.xml"
+                iconClose="icons/icon_categoria.gif"
+                iconOpen="icons/icon_categoria.gif" label="${CATEGORY_NAME}">
+                <dynamicParameters>
+                    <parameter name="year"/>
+                    <parameter name="month"/>
+                    <parameter name="year"/>
+                    <parameter name="month"/>
+                    <parameter name="type"/>
+                </dynamicParameters>
+                <layout type="COLUMN"/>
+                <contents>
+                    <viewContent
+                        id="view/Comparativa Ventas/Familias 12+1.exvw.xml" type="LIST">
+                        <parameters>
+                            <parameter name="CATEGORY_ID"/>
+                            <parameter name="year"/>
+                            <parameter name="month"/>
+                            <parameter name="year"/>
+                            <parameter name="month"/>
+                            <parameter name="type"/>
+                        </parameters>
+                    </viewContent>
+                </contents>
+                <node
+                    dynamicViewId="view/Comparativa Ventas/Productos por familia.exvw.xml"
+                    iconClose="icons/icon_articulo.gif" label="${PRODUCT_NAME}">
+                    <dynamicParameters>
+                        <parameter name="CATEGORY_ID"/>
+                        <parameter name="year"/>
+                        <parameter name="month"/>
+                        <parameter name="year"/>
+                        <parameter name="month"/>
+                        <parameter name="type"/>
+                    </dynamicParameters>
+                    <layout type="COLUMN"/>
+                    <contents>
+                        <viewContent
+                            id="view/Comparativa Ventas/Productos por familia 12+1.exvw.xml" type="LIST">
+                            <parameters>
+                                <parameter name="CATEGORY_ID"/>
+                                <parameter name="PRODUCT_ID"/>
+                                <parameter name="year"/>
+                                <parameter name="month"/>
+                                <parameter name="year"/>
+                                <parameter name="month"/>
+                                <parameter name="type"/>
+                            </parameters>
+                        </viewContent>
+                    </contents>
+                </node>
+            </node>
+        </node>
+        <node iconClose="icons/icon_comparativa.gif"
+            iconOpen="icons/icon_comparativa.gif" label="Articulos">
+            <layout type="COLUMN"/>
+            <contents>
+                <viewContent
+                    id="view/Comparativa Ventas/Productos.exvw.xml" type="LIST">
+                    <parameters>
+                        <parameter name="year"/>
+                        <parameter name="month"/>
+                        <parameter name="year"/>
+                        <parameter name="month"/>
+                        <parameter name="type"/>
+                    </parameters>
+                </viewContent>
+            </contents>
+            <node
+                dynamicViewId="view/Comparativa Ventas/Productos.exvw.xml"
+                iconClose="icons/icon_articulo.gif"
+                iconOpen="icons/icon_articulo.gif" label="${ITEM_NAME}">
+                <dynamicParameters>
+                    <parameter name="year"/>
+                    <parameter name="month"/>
+                    <parameter name="year"/>
+                    <parameter name="month"/>
+                    <parameter name="type"/>
+                </dynamicParameters>
+                <layout type="COLUMN"/>
+                <contents>
+                    <viewContent
+                        id="view/Comparativa Ventas/Clientes por producto Mes 12+1.exvw.xml" type="LIST">
+                        <parameters>
+                            <parameter name="ITEM_ID"/>
+                            <parameter name="year"/>
+                            <parameter name="month"/>
+                            <parameter name="year"/>
+                            <parameter name="month"/>
+                            <parameter name="type"/>
+                        </parameters>
+                    </viewContent>
+                </contents>
+                <node
+                    dynamicViewId="view/Comparativa Ventas/Clientes por producto 12+1.exvw.xml"
+                    iconClose="icons/icon_usuario.gif"
+                    iconOpen="icons/icon_usuario.gif" label="${REGISTRY_NAME}">
+                    <dynamicParameters>
+                        <parameter name="ITEM_ID"/>
+                        <parameter name="year"/>
+                        <parameter name="month"/>
+                        <parameter name="year"/>
+                        <parameter name="month"/>
+                        <parameter name="type"/>
+                    </dynamicParameters>
+                    <layout type="COLUMN"/>
+                    <contents>
+                        <viewContent
+                            id="view/Comparativa Ventas/Productos por cliente Mes 12+1.exvw.xml" type="LIST">
+                            <parameters>
+                                <parameter name="ITEM_ID"/>
+                                <parameter name="REGISTRY_ID"/>
+                                <parameter name="year"/>
+                                <parameter name="month"/>
+                                <parameter name="year"/>
+                                <parameter name="month"/>
+                                <parameter name="type"/>
+                            </parameters>
+                        </viewContent>
+                    </contents>
+                </node>
+            </node>
+        </node>
+    </node>
+</workstation>

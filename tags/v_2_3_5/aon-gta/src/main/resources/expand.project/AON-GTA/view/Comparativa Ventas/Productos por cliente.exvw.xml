@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<view description="Productos por cliente" sqlSentence="SELECT invoice_detail.item, product.name description,&#xd;&#xa;   &#x9;SUM(IF(invoice.issue_date BETWEEN ? AND ?, TRUNCATE(invoice_detail.taxable_base, 2), 0)),&#xd;&#xa;   &#x9;SUM(IF(invoice.issue_date BETWEEN ? AND ?, 0, TRUNCATE(invoice_detail.taxable_base, 2)))&#xd;&#xa;  FROM invoice_detail, invoice, registry, item, product&#xd;&#xa; WHERE product.id = item.product&#xd;&#xa;   AND invoice_detail.item = item.id&#xd;&#xa;   AND invoice_detail.invoice = invoice.id&#xd;&#xa;   AND invoice.registry = registry.id&#xd;&#xa;   AND registry.id = ?&#xd;&#xa;   AND (&#xd;&#xa;       invoice.issue_date BETWEEN ? AND ?&#xd;&#xa;       OR invoice.issue_date BETWEEN DATE_SUB(?, INTERVAL 1 YEAR) AND DATE_SUB(?, INTERVAL 1 YEAR)&#xd;&#xa;       )&#xd;&#xa;   AND invoice.type = ?&#xd;&#xa; GROUP BY invoice_detail.item">
+    <parameters>
+        <parameter name="initdate1" type="DATE"/>
+        <parameter name="enddate1" type="DATE"/>
+        <parameter name="initdate2" type="DATE"/>
+        <parameter name="enddate2" type="DATE"/>
+        <parameter columnReference="data/registry.exdm.xml/id" label=""
+            name="registry" type="INTEGER"/>
+        <parameter name="initdate3" type="DATE"/>
+        <parameter name="enddate3" type="DATE"/>
+        <parameter name="initdate4" type="DATE"/>
+        <parameter name="enddate4" type="DATE"/>
+        <parameter name="type" type="INTEGER"/>
+    </parameters>
+    <results>
+        <result accessName="item" columnId="item" label="Codigo"
+            tableId="invoice_detail" type="INTEGER"/>
+        <result accessName="name" columnId="name"
+            columnReference="data/registry.exdm.xml/name"
+            label="Articulo" tableId="product" type="STRING"/>
+        <result accessName="periodo" columnId="" label="Periodo" type="DOUBLE"/>
+        <result accessName="periodo2" columnId=""
+            label="Mismo periodo Año Anterior" type="DOUBLE"/>
+    </results>
+    <dataModelReferences>
+        <dataModelReference id="data/registry.exdm.xml"/>
+    </dataModelReferences>
+</view>
