@@ -144,21 +144,17 @@
 							styleClass="aon-form-input-text-label"
 							value="#{warehouseBundle.aon_series_number}" />
 						<t:div>
-							<t:selectOneMenu id="Delivery_series-New"
+							<t:selectOneMenu id="Delivery_series"
 								value="#{delivery.to.series}"
-								rendered="#{delivery.new}"
+								disabled="#{!delivery.new}"
 								styleClass="aon-form-selectOneMenu-field"
 								onchange="submit();" valueChangeListener="#{delivery.onSeriesChanged}">
-								<f:selectItem itemValue="" itemLabel=" " />
+								<f:selectItem itemValue="" itemDisabled="true" itemLabel="-" />
 								<f:selectItems value="#{configCollections.series}" />
 							</t:selectOneMenu>
-							<t:inputText id="Delivery_series-Edit" forceId="#{true}" 
-								value="#{delivery.to.series}"
-								rendered="#{!delivery.new}" disabled="#{true}" 
-								styleClass="aon-form-input-text" size="4" />
-							<t:inputText id="Delivery_number" forceId="#{true}"
-								value="#{delivery.to.number}" disabled="#{!delivery.new}" 
-								styleClass="aon-form-input-text" required="true" size="7" />
+							<t:inputText id="Delivery_number" value="#{delivery.to.number}"
+								disabled="#{!delivery.new}" styleClass="aon-form-input-text"
+								forceId="#{true}" required="true" size="7" />
 						</t:div>
 
 						<t:outputLabel for="Delivery_status"

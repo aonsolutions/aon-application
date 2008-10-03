@@ -37,7 +37,6 @@
 	<field name="id" class="java.lang.Integer"/>
 	<field name="registry" class="com.code.aon.registry.Registry"/>
 	<field name="registryName" class="java.lang.String"/>
-	<field name="address" class="com.code.aon.registry.IAddress"/>
 
 
 		<group  name="invoiceGroup" minHeightToStartNewPage="300" >
@@ -186,7 +185,7 @@
 					<textElement verticalAlignment="Middle">
 						<font pdfFontName="Helvetica" size="10" isBold="false"/>
 					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[($F{address}.getAddress()==null?"":$F{address}.getAddress() + " ") + ($F{address}.getAddress2()==null?"":$F{address}.getAddress2() + " ")]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.String"><![CDATA[($F{registry}.getDefaultAddress().getAddress()==null?"":$F{registry}.getDefaultAddress().getAddress() + " ") + ($F{registry}.getDefaultAddress().getAddress2()==null?"":$F{registry}.getDefaultAddress().getAddress2() + " ") + ($F{registry}.getDefaultAddress().getAddress3()==null?"":$F{registry}.getDefaultAddress().getAddress3())]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
@@ -199,7 +198,7 @@
 					<textElement verticalAlignment="Middle">
 						<font pdfFontName="Helvetica" size="10" isBold="false"/>
 					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[($F{address}.getZip()==null?"":$F{address}.getZip() + " ") + ($F{address}.getCity()==null?"":$F{address}.getCity())]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.String"><![CDATA[($F{registry}.getDefaultAddress().getZip()==null?"":$F{registry}.getDefaultAddress().getZip() + " ") + ($F{registry}.getDefaultAddress().getCity()==null?"":$F{registry}.getDefaultAddress().getCity() + " ")]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
@@ -212,7 +211,7 @@
 					<textElement verticalAlignment="Middle">
 						<font pdfFontName="Helvetica" size="10" isBold="false"/>
 					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$F{address}.getGeozone().getName()]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{registry}.getDefaultAddress().getGeozone().getName()]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement

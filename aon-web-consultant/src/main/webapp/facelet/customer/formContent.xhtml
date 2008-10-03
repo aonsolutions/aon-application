@@ -95,24 +95,6 @@
 					<f:selectItems value="#{configCollections.scopes}" />
 				</h:selectOneMenu>
 
-				<t:outputLabel 
-					for="Customer_taxFree" 
-					styleClass="aon-form-input-text-label"
-					value="#{customerBundle.customer_taxfree}" />
-				<h:selectBooleanCheckbox 
-					styleClass="aon-form-selectBooleanCheckbox-field"
-					id="Customer_taxFree" 
-					value="#{customerAlias.to.taxFree}" />		
-
-				<t:outputLabel 
-					for="Customer_withholding" 
-					styleClass="aon-form-input-text-label"
-					value="#{customerBundle.customer_withholding}" />
-				<h:selectBooleanCheckbox 
-					styleClass="aon-form-selectBooleanCheckbox-field"
-					id="Customer_withholding" 
-					value="#{customerAlias.to.withholding}" />		
-
 			</h:panelGrid>
 
 			<h:panelGrid columns="2" cellpadding="0" cellspacing="0"

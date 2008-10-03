@@ -118,9 +118,9 @@
 							value="#{purchaseBundle.aon_series_number}" />
 						<t:div>
 							<t:inputText id="Income_series" value="#{income.to.series}" disabled="#{!income.new}"
-								styleClass="aon-form-input-text" forceId="#{true}" size="4"
-								maxlength="5" onblur="toUpperCase(this);">
-								<f:validateLength maximum="5" />
+								styleClass="aon-form-input-text" forceId="#{true}" size="3"
+								maxlength="3" onblur="toUpperCase(this);">
+								<f:validateLength maximum="3" />
 							</t:inputText>
 							<h:inputText id="Income_number" value="#{income.to.number}" disabled="#{!income.new}"
 								styleClass="aon-form-input-text" forceId="#{true}"
@@ -168,7 +168,7 @@
 						
 						<t:outputLabel for="Supplier_Lookup_id"
 							styleClass="aon-form-input-text-label"
-							value="#{supplierBundle.aon_supplier}" />
+							value="#{purchaseBundle.aon_supplier}" />
 						<t:div>
 							<t:inputText id="Supplier_Lookup_id" size="5" forceId="#{true}"
 								styleClass="aon-form-input-text"
@@ -183,7 +183,7 @@
 							<t:inputText id="Supplier_full_name" forceId="#{true}"
 								styleClass="aon-form-input-text-disabled"
 								disabled="true" size="40"
-								value="#{income.to.supplier.registry.name} #{income.to.supplier.registry.surname==null?' ':(income.to.supplier.registry.surname)}" />	 		
+								value="#{income.to.supplier.name} #{income.to.supplier.surname==null?' ':(income.to.supplier.surname)}" />	 		
 						</t:div>
 
 						<t:outputLabel for="IncomeDetail_warehouse_id"

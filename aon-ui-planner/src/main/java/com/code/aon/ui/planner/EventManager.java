@@ -449,18 +449,31 @@ public class EventManager {
     		_event.setRealEndTime( _event.getEndTime() );
 			_event.setDirty(true);
         	try {
-				if (isNew()) {
-		        	if ( !this.cb.hasEvents( this.event.getStartTime(), this.event.getEndTime(), null, this.event.getId() ) ) {
+//	Primero mira a ver si hay eventos en esa fecha y despues comprueba si es un evento nuevo.
+	        	if ( !this.cb.hasEvents( this.event.getStartTime(), this.event.getEndTime(), null, this.event.getId() ) ) {
+	        		if (isNew()) {
 		        		this.cb.add(this.event);
 		        		isNew = false;
 		        		fireEventAdded(this.event);
-		        	} else {
-		                addMessage( FacesMessage.SEVERITY_INFO, "aon_hasevents_indate_error", new Date[] {this.event.getStartTime(), this.event.getEndTime()} );
-		        	}
-				} else {
-					this.cb.update(this.event);
-				    fireEventUpdated(this.event);
-				}
+					} else {
+						this.cb.update(this.event);
+					    fireEventUpdated(this.event);
+					}
+	        	} else {
+	                addMessage( FacesMessage.SEVERITY_INFO, "aon_hasevents_indate_error", new Date[] {this.event.getStartTime(), this.event.getEndTime()} );
+	        	}
+//				if (isNew()) {
+//		        	if ( !this.cb.hasEvents( this.event.getStartTime(), this.event.getEndTime(), null, this.event.getId() ) ) {
+//		        		this.cb.add(this.event);
+//		        		isNew = false;
+//		        		fireEventAdded(this.event);
+//		        	} else {
+//		                addMessage( FacesMessage.SEVERITY_INFO, "aon_hasevents_indate_error", new Date[] {this.event.getStartTime(), this.event.getEndTime()} );
+//		        	}
+//				} else {
+//					this.cb.update(this.event);
+//				    fireEventUpdated(this.event);
+//				}
 			} catch (EventException e) {
 				String messageId = e.getMessage();
 				Object[] obj = e.getParameters();

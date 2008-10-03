@@ -38,19 +38,6 @@
 		</params>
 	</report>
 
-	<report id="invoiceList" description="Purchase Invoice's List">
-		<template path="/com/code/aon/ui/finance/report/invoiceList.jasper"/>
-		<bean key="com.code.aon.finance.Invoice" />
-		<criteria provider="#{purchaseDirectInvoicing}"/>
-
-		<params>
-			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.finance.i18n.messages" />
-			<param id="company" value="#{company.obtainCompany}" />
-			<param id="PriceStrategy" value="#{purchaseDirectInvoicing.getPriceStrategy}" />
-			<param id="logoImageFile" value="#{company.getAttachAsInputStream}" />
-		</params>
-	</report>
-
 	<!--  **********************************************************
 						      PreInvoicing  
 		  ********************************************************** -->

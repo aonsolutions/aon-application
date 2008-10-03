@@ -2,7 +2,6 @@ package com.code.aon.ui.finance.csb;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Collection;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
@@ -33,42 +32,38 @@ public class CSB32Writer {
 
 	@SuppressWarnings("unchecked")
 	public CSBOutput createCSB32(Company company, FinanceBatch fbatch) throws ManagerBeanException {
-		FBatchDetailController fBatchDetailController = (FBatchDetailController)AonUtil.getController(FINANCE_BATCH_DETAIL_CONTROLLER_NAME);
-		return createCSB32(company, fbatch, (List)fBatchDetailController.getModel().getWrappedData());
-	}
-	
-	@SuppressWarnings("unchecked")
-	public CSBOutput createCSB32(Company company, FinanceBatch fbatch, Collection fbatchDetailCollection) throws ManagerBeanException {
-		Lot lot = new Lot();
-		RegistryBank companyRBank = fbatch.getRegistryBank();
-		lot.setEntity(new Integer(companyRBank.getBankAccount().substring(0, 3)));
-		lot.setOffice(new Integer(companyRBank.getBankAccount().substring(4, 7)));
-		lot.setFileDate(new Date());
-		lot.setFileNumber(new Integer(1));
-
-		Delivery delivery = new Delivery();
-		delivery.setDeliveyNumber(fbatch.getId());
-		delivery.setGiverCode(company.getDocument());
-		Account ccc1 = new Account();
-		ccc1.parse(companyRBank.getBankAccount());
-		delivery.setNotPayedAccount(ccc1);
-		Account ccc2 = new Account();
-		ccc2.parse(companyRBank.getBankAccount());
-		delivery.setOweAccount(ccc2);
-		Account ccc3 = new Account();
-		ccc3.parse(companyRBank.getBankAccount());
-		delivery.setPaymentAccount(ccc3);
-		delivery.setTruncatedEffects(new Integer(1));
-
-		Iterator iter = fbatchDetailCollection.iterator();
-		while(iter.hasNext()){
-			FinanceBatchDetail fBatchDetail = (FinanceBatchDetail)iter.next();
-			Individual individual = createIndividual(company, fBatchDetail);
-			delivery.addIndividual(individual);
-		}
-		lot.addDelivery(delivery);
-
 		try {
+			Lot lot = new Lot();
+			RegistryBank companyRBank = fbatch.getRegistryBank();
+			lot.setEntity(new Integer(companyRBank.getBankAccount().substring(0, 3)));
+			lot.setOffice(new Integer(companyRBank.getBankAccount().substring(4, 7)));
+			lot.setFileDate(new Date());
+			lot.setFileNumber(new Integer(1));
+			
+			Delivery delivery = new Delivery();
+			delivery.setDeliveyNumber(fbatch.getId());
+			delivery.setGiverCode(company.getDocument());
+			Account ccc1 = new Account();
+			ccc1.parse(companyRBank.getBankAccount());
+			delivery.setNotPayedAccount(ccc1);
+			Account ccc2 = new Account();
+			ccc2.parse(companyRBank.getBankAccount());
+			delivery.setOweAccount(ccc2);
+			Account ccc3 = new Account();
+			ccc3.parse(companyRBank.getBankAccount());
+			delivery.setPaymentAccount(ccc3);
+			delivery.setTruncatedEffects(new Integer(1));
+	
+			FBatchDetailController fBatchDetailController = (FBatchDetailController)AonUtil.getController(FINANCE_BATCH_DETAIL_CONTROLLER_NAME);
+			Iterator iter = ((List)fBatchDetailController.getModel().getWrappedData()).iterator();
+			while(iter.hasNext()){
+				FinanceBatchDetail fBatchDetail = (FinanceBatchDetail)iter.next();
+				Individual individual = createIndividual(company, fBatchDetail);
+				delivery.addIndividual(individual);
+			}
+			
+			lot.addDelivery(delivery);
+			
 			File file = File.createTempFile("CSB32_", ".txt");
 			FileFiller csb32 = new CSB32(lot, file.getAbsolutePath());
 			CSBOutput output = new CSBOutput();

@@ -7,20 +7,6 @@
 <bean-config>
 	
 	<bean description="">
-		<pojo>com.code.aon.tas.TasItem</pojo>
-		<vetoListeners>
-	        <vetoListener>com.code.aon.ui.tas.event.TasItemBeanVetoListener</vetoListener>
-		</vetoListeners>
-	</bean>
-	
-	<bean description="">
-		<pojo>com.code.aon.customer.Customer</pojo>
-		<listeners>
-	        <listener>com.code.aon.commercial.event.TargetFromCustomerBeanListener</listener>
-		</listeners>
-	</bean>
-	
-	<bean description="">
 		<pojo>com.code.aon.finance.InvoiceDetail</pojo>
 		<listeners>
 	        <listener>com.code.aon.finance.event.InvoiceDetailBeanListener</listener>
@@ -31,17 +17,17 @@
 	</bean>
 
 	<bean description="">
-		<pojo>com.code.aon.finance.Invoice</pojo>
+		<pojo>com.code.aon.product.Item</pojo>
 		<listeners>
-	        <listener>com.code.aon.finance.event.InvoiceBeanListener</listener>
+	        <listener>com.code.aon.ui.product.event.ItemListener</listener>
 		</listeners>
 	</bean>
 	
 	<bean description="">
-		<pojo>com.code.aon.finance.Finance</pojo>
-		<vetoListeners>
-	        <vetoListener>com.code.aon.finance.event.FinanceBeanVetoListener</vetoListener>
-		</vetoListeners>
+		<pojo>com.code.aon.finance.Invoice</pojo>
+		<listeners>
+	        <listener>com.code.aon.finance.event.InvoiceBeanListener</listener>
+		</listeners>
 	</bean>
 	
 	<bean description="Listener para controlar el stock al haber movientos en albaranes de compra">
@@ -64,34 +50,21 @@
 		</vetoListeners>
 	</bean>
 
-	<bean description="Listener para controlar el check de permite apuntes de cuentas">
-		<pojo>com.code.aon.account.Account</pojo>
-		<listeners>
-	        <listener>com.code.aon.account.event.AccountBeanListener</listener>
-		</listeners>
+	<bean description="">
+		<pojo>com.code.aon.tas.TasItem</pojo>
 		<vetoListeners>
-	        <vetoListener>com.code.aon.account.event.AccountBeanVetoListener</vetoListener>
-		</vetoListeners>
-	</bean>
-
-	<bean description="Listener para escribir los acumulados por cuenta">
-		<pojo>com.code.aon.account.AccountEntry</pojo>
-		<listeners>
-	        <listener>com.code.aon.account.event.AccountEntrySummaryBeanListener</listener>
-		</listeners>
-		<vetoListeners>
-	        <vetoListener>com.code.aon.account.event.AccountEntrySummaryBeanVetoListener</vetoListener>
-		</vetoListeners>
-	</bean>
-
-	<bean description="Listener para escribir los acumulados por cuenta">
-		<pojo>com.code.aon.account.AccountEntryDetail</pojo>
-		<listeners>
-	        <listener>com.code.aon.account.event.AccountEntryDetailSummaryBeanListener</listener>
-		</listeners>
-		<vetoListeners>
-	        <vetoListener>com.code.aon.account.event.AccountEntryDetailSummaryBeanVetoListener</vetoListener>
+	        <vetoListener>com.code.aon.ui.tas.event.TasItemBeanVetoListener</vetoListener>
 		</vetoListeners>
 	</bean>
 	
+	<bean description="">
+		<pojo>com.code.aon.account.AccountEntryDetail</pojo>
+		<listeners>
+	        <listener>com.code.aon.account.event.AccountSummaryBeanListener</listener>
+		</listeners>
+		<vetoListeners>
+	        <vetoListener>com.code.aon.account.event.AccountSummaryBeanVetoListener</vetoListener>
+		</vetoListeners>
+	</bean>
+
 </bean-config>

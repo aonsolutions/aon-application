@@ -129,10 +129,6 @@
                     <value>com.code.aon.ui.purchase.i18n.messages</value>
 				</map-entry>
 				<map-entry>
-					<key>supplierBundle</key>
-                    <value>com.code.aon.ui.supplier.i18n.messages</value>
-				</map-entry>
-				<map-entry>
 					<key>salesBundle</key>
                     <value>com.code.aon.ui.sales.i18n.messages</value>
 				</map-entry>

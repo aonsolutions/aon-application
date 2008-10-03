@@ -29,6 +29,13 @@
 						onmouseover="this.className='aon-content-toolbar-item aon-content-toolbar-item-hover aon-content-toolbar-item-search'"
 						onmouseout="this.className='aon-content-toolbar-item aon-content-toolbar-item-search'" 
 						accesskey="#{bundle.aon_key_search}"/>
+<!-- 
+					<t:commandButton id="fee" value="#{salesBundle.aon_customer_fees}"
+						action="fee_invoicing_fee_search"
+						styleClass="aon-content-toolbar-item aon-content-toolbar-item-new"
+						onmouseover="this.className='aon-content-toolbar-item aon-content-toolbar-item-hover aon-content-toolbar-item-new'"
+						onmouseout="this.className='aon-content-toolbar-item aon-content-toolbar-item-new'" />
+ -->
 					<t:commandButton id="salesInvoiceList" value="#{bundle.aon_listing}"
 						forceId="#{true}"
 						onclick="reportWindow(this, 'placeList', '${facesContext.externalContext.requestContextPath}/facelet/report/preferences.faces');return false;"
@@ -73,7 +80,7 @@
 									</h:panelGroup>
 								</f:facet>
 								<h:outputText
-									value="#{to.registryName}" />
+									value="#{to.registry.name}, #{to.registry.surname}" />
 							</h:column>
 
 							<h:column>

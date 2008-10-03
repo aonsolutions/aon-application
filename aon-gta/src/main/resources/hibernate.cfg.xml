@@ -46,12 +46,10 @@
 		<mapping class="com.code.aon.product.ProductCategoryTree"/>
 		
 		<!-- AON-PURCHASE Mapping files -->
+		<mapping class="com.code.aon.purchase.Supplier"/>
+		<mapping class="com.code.aon.purchase.SupplierSegment"/>
 		<mapping class="com.code.aon.purchase.Purchase"/>
 		<mapping class="com.code.aon.purchase.PurchaseDetail"/>
-
-		<!-- AON-SUPPLIER Mapping files -->
-		<mapping class="com.code.aon.supplier.Supplier"/>
-		<mapping class="com.code.aon.supplier.SupplierSegment"/>
 		
 		<!-- AON-FINANCE Mapping files -->	
 		<mapping class="com.code.aon.finance.InvoiceTax"/>
@@ -103,9 +101,6 @@
 		<mapping class="com.code.aon.registry.RegistryNote"/>
 		<mapping class="com.code.aon.registry.RegistryRelationship"/>
 		<mapping class="com.code.aon.registry.Relationship"/>
-		<mapping class="com.code.aon.registry.Category"/>
-		<mapping class="com.code.aon.registry.RegistryDirStaff"/>
-		<mapping class="com.code.aon.registry.RecordData"/>
 		<mapping class="com.code.aon.registry.Category"/>
 		<mapping class="com.code.aon.config.User"/>
 		

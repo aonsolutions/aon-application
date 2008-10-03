@@ -12,6 +12,8 @@ import com.code.aon.common.ITransferObject;
 @Table(name="scope")
 public class Scope implements ITransferObject {
 	
+	private static final long serialVersionUID = 426210469334561749L;
+
 	private Integer id;
 	
 	private String description;

@@ -6,9 +6,9 @@
 		 columnCount="1"
 		 printOrder="Vertical"
 		 orientation="Portrait"
-		 pageWidth="480"
+		 pageWidth="515"
 		 pageHeight="842"
-		 columnWidth="480"
+		 columnWidth="515"
 		 columnSpacing="0"
 		 leftMargin="0"
 		 rightMargin="0"
@@ -46,12 +46,12 @@
 			</band>
 		</pageHeader>
 		<columnHeader>
-			<band height="15"  isSplitAllowed="true" >
+			<band height="20"  isSplitAllowed="true" >
 				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						mode="Opaque"
 						x="260"
-						y="0"
+						y="5"
 						width="65"
 						height="15"
 						forecolor="#000000"
@@ -67,7 +67,7 @@
 					<reportElement
 						mode="Opaque"
 						x="325"
-						y="0"
+						y="5"
 						width="75"
 						height="15"
 						forecolor="#000000"
@@ -83,7 +83,7 @@
 					<reportElement
 						mode="Opaque"
 						x="107"
-						y="0"
+						y="5"
 						width="65"
 						height="15"
 						forecolor="#000000"
@@ -99,7 +99,7 @@
 					<reportElement
 						mode="Opaque"
 						x="172"
-						y="0"
+						y="5"
 						width="88"
 						height="15"
 						forecolor="#000000"
@@ -115,7 +115,7 @@
 					<reportElement
 						mode="Opaque"
 						x="0"
-						y="0"
+						y="5"
 						width="107"
 						height="15"
 						forecolor="#000000"
@@ -131,7 +131,7 @@
 					<reportElement
 						mode="Opaque"
 						x="400"
-						y="0"
+						y="5"
 						width="80"
 						height="15"
 						forecolor="#000000"
@@ -216,9 +216,9 @@
 				</textField>
 				<textField isStretchWithOverflow="false" pattern="#,##0.00" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
-						x="0"
+						x="27"
 						y="0"
-						width="107"
+						width="80"
 						height="14"
 						key="textField-13"/>
 					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" leftPadding="2" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>

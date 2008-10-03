@@ -4,6 +4,8 @@ import java.util.Locale;
 
 import org.apache.myfaces.custom.tree2.TreeNode;
 
+import com.code.aon.ui.menu.IMenuItem;
+import com.code.aon.ui.menu.IOption;
 import com.code.aon.ui.menu.MenuBeanException;
 
 /**
@@ -88,4 +90,17 @@ public interface IMenuModel {
 	 * @return the menu id
 	 */
 	String getMenuId();
+	
+	/**
+	 * @param key
+	 * @return IMenuItem
+	 */
+	IMenuItem getMenuItemByKey(String key);
+
+	/**
+	 * @param key
+	 * @return IOption
+	 */
+	IOption getOptionByKey(String key);
+	
 }

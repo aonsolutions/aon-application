@@ -156,21 +156,18 @@
 							rendered="false"
 							value="#{commercialBundle.aon_series_number}" />
 						<t:div>
-							<t:selectOneMenu id="Offer_series-New"
+							<t:selectOneMenu id="Offer_series"
 								value="#{offer.to.series}"
-								rendered="#{offer.new}"
+								disabled="#{!offer.editable}"
 								styleClass="aon-form-selectOneMenu-field"
 								onchange="submit();" valueChangeListener="#{offer.onSeriesChanged}">
-								<f:selectItem itemValue="" itemLabel=" " />
+								<f:selectItem itemValue="" itemDisabled="true" itemLabel="-" />
 								<f:selectItems value="#{configCollections.series}" />
 							</t:selectOneMenu>
-							<h:inputText id="Offer_series-Edit" forceId="#{true}"
-								value="#{offer.to.series}" 
-								rendered="#{!offer.new}" disabled="#{true}"
-								styleClass="aon-form-input-text" size="4" />
-							<h:inputText id="Offer_number" forceId="#{true}"
-								value="#{offer.to.number}" disabled="#{!offer.new}"
-								styleClass="aon-form-input-text" required="true" size="7" />
+							<h:inputText id="Offer_number"
+								value="#{offer.to.number}" disabled="#{!offer.editable}"
+								styleClass="aon-form-input-text" forceId="#{true}"
+								required="true" size="7" />
 						</t:div>
 
 						<t:outputLabel for="SupportOrder_target_id"

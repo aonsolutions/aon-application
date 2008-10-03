@@ -22,10 +22,8 @@
           ,/WEB-INF/conf/faces/product/faces-navigation-config.xml
           ,/WEB-INF/conf/faces/product/faces-converter-config.xml
           ,/WEB-INF/conf/faces/purchase/faces-bean-config.xml
-          ,/WEB-INF/conf/faces/purchase/faces-converter-config.xml
           ,/WEB-INF/conf/faces/purchase/faces-navigation-config.xml
           ,/WEB-INF/conf/faces/sales/faces-bean-config.xml
-          ,/WEB-INF/conf/faces/sales/faces-converter-config.xml
           ,/WEB-INF/conf/faces/sales/faces-navigation-config.xml
           ,/WEB-INF/conf/faces/sales-purchase/faces-bean-config.xml
           ,/WEB-INF/conf/faces/warehouse/faces-bean-config.xml

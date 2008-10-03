@@ -20,55 +20,34 @@
 			<h:panelGrid columns="2" styleClass="aon-form-table"
 				columnClasses="aon-form-table-column-odd,aon-form-table-column-even">
 
-				<t:outputLabel for="Supplier_registry_document"
-					value="#{supplierBundle.supplier_document}"
+				<t:outputLabel for="Supplier_document"
+					value="#{purchaseBundle.supplier_document}"
 					styleClass="aon-form-input-text-label aon-form-table-column-odd-label" />
-				<t:inputText id="Supplier_registry_document" size="20"
+				<t:inputText id="Supplier_document" size="20"
 					valueChangeListener="#{supplierAlias.addExpression}"
 					styleClass="aon-form-input-text" onblur="toUpperCase(this);"/>
 
-				<t:outputLabel for="Supplier_registry_name"
-					value="#{supplierBundle.supplier_name}"
+				<t:outputLabel for="Supplier_name"
+					value="#{purchaseBundle.supplier_name}"
 					styleClass="aon-form-input-text-label aon-form-table-column-odd-label" />
-				<t:inputText id="Supplier_registry_name" size="40"
+				<t:inputText id="Supplier_name" size="40"
 					valueChangeListener="#{supplierAlias.addExpression}"
 					styleClass="aon-form-input-text" />
 
-				<t:outputLabel for="Supplier_registry_surname"
-					value="#{supplierBundle.supplier_surname}"
+				<t:outputLabel for="Supplier_surname"
+					value="#{purchaseBundle.supplier_surname}"
 					styleClass="aon-form-input-text-label aon-form-table-column-odd-label" />
-				<t:inputText id="Supplier_registry_surname" size="40"
+				<t:inputText id="Supplier_surname" size="40"
 					valueChangeListener="#{supplierAlias.addExpression}"
 					styleClass="aon-form-input-text" />
 
-				<t:outputLabel for="Supplier_registry_alias"
-					value="#{supplierBundle.supplier_alias}"
+				<t:outputLabel for="Supplier_alias"
+					value="#{purchaseBundle.supplier_alias}"
 					styleClass="aon-form-input-text-label aon-form-table-column-odd-label" />
-				<t:inputText id="Supplier_registry_alias" size="40"
+				<t:inputText id="Supplier_alias" size="40"
 					valueChangeListener="#{supplierAlias.addExpression}"
 					styleClass="aon-form-input-text"  onblur="toUpperCase(this);"/>
 
-				<t:outputLabel for="Supplier_supplierSegment_id"
-					value="#{supplierBundle.aon_supplier_segment}"
-					styleClass="aon-form-input-text-label aon-form-table-column-odd-label" />
-				<h:selectOneMenu id="Supplier_supplierSegment_id"
-					styleClass="aon-form-selectOneMenu-field"
-					converter="IntegerEmptyConverter" forceId="#{true}"
-					valueChangeListener="#{supplierAlias.addExpression}">
-					<f:selectItem itemDisabled="true" itemLabel="-" itemValue="" />
-					<f:selectItems value="#{supplierCollections.supplierSegments}" />
-				</h:selectOneMenu>
-
-				<t:outputLabel for="Supplier_status"
-					value="#{registryBundle.aon_status}"
-					styleClass="aon-form-input-text-label aon-form-table-column-odd-label" />
-				<h:selectOneMenu id="Supplier_status"
-					styleClass="aon-form-selectOneMenu-field"
-					converter="aonSupplierStatusConverter" forceId="#{true}"
-					valueChangeListener="#{supplierAlias.addExpression}">
-					<f:selectItem itemDisabled="true" itemLabel="-" itemValue="" />
-					<f:selectItems value="#{supplierCollections.supplierStatuses}" />
-				</h:selectOneMenu>
 			</h:panelGrid>
 		</t:div>
 	</t:div>
