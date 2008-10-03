@@ -12,60 +12,44 @@
 <ui:composition template="/facelet/templates/aon.ui.content.xhtml">
 
 	<ui:define name="content">
+	
+		<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml" >
+			<ui:param name="toolbarTitle" value="#{menuBundle.aon_communication_center}" />
+			<ui:param name="toolbarDescription" value="#{bundle.aon_reset}" />
+			<ui:define name="toolbarContent">
+				<c:if test="#{!communicationCenter.lastQuestion}" >
+					<aon:commandButton id="next" value="#{marketingBundle.aon_next}"
+						action="communicationCenter_response" actionListener="#{communicationCenter.onNextQuestion}"
+						styleClass="aon-finding-toolbar-item aon-icon-accept"
+						accesskey="#{bundle.aon_key_save}"/>
+					<aon:commandButton id="skip" value="#{marketingBundle.aon_skip}"
+						rendered="#{communicationCenter.question.type != 'INFO'}"
+						action="communicationCenter_response" actionListener="#{communicationCenter.onNextQuestion}"
+						styleClass="aon-finding-toolbar-item aon-icon-cancel" immediate="true"
+						accesskey="#{bundle.aon_key_cancel}"/>
+				</c:if>
+				<c:if test="#{communicationCenter.lastQuestion}" >
+					<aon:commandButton id="finish" value="#{marketingBundle.aon_finish}"
+						action="communicationCenter" actionListener="#{communicationCenter.onFinishSurveyResponse}"
+						styleClass="aon-finding-toolbar-item aon-icon-accept"
+						accesskey="#{bundle.aon_key_save}" />
+					<aon:commandButton id="skip" value="#{marketingBundle.aon_skip}"
+						rendered="#{communicationCenter.question.type != 'INFO'}"							
+						action="communicationCenter" actionListener="#{communicationCenter.onFinishSurveyResponse}"
+						styleClass="aon-finding-toolbar-item aon-icon-accept" immediate="true"
+						accesskey="#{bundle.aon_key_save}" />
+				</c:if>
+			</ui:define>
+		</ui:decorate>	
 
-		<aon:form id="communicationCenterSurveyForm"> 
-		
-			<aon:div styleClass="aon-finding-title-toolbar">
-				<aon:panelGrid id="buttonsGrid" columns="3" dir="true"
-					columnClasses="aon-finding-title,aon-finding-subtitle,aon-finding-toolbar">
+		<aon:div styleClass="aon-scroll-area">
+			<aon:panelGrid columns="2" dir="true" width="100%"
+				columnClasses="aon-panelGrid-odd aon-width-170,aon-panelGrid-even">
 
-					<aon:div styleClass="aon-finding-title-internal">
-						<aon:outputText value="#{menuBundle.aon_communication_center}" />
-					</aon:div>
-
-					<aon:div styleClass="aon-finding-subtitle-internal">
-						<aon:outputText
-							value="#{bundle.aon_reset}" />
-					</aon:div>
-
-					<!-- start toolbar navigation -->
-					<aon:div styleClass="aon-finding-toolbar-item-group">
-						<c:if test="#{!communicationCenter.lastQuestion}" >
-							<aon:commandButton id="skip" value="#{marketingBundle.aon_skip}"
-								rendered="#{communicationCenter.question.type != 'INFO'}"
-								action="communicationCenter_response" actionListener="#{communicationCenter.onNextQuestion}"
-								styleClass="aon-finding-toolbar-item aon-icon-cancel" immediate="true"
-								accesskey="#{bundle.aon_key_cancel}"/>
-							<aon:commandButton id="next" value="#{marketingBundle.aon_next}"
-								action="communicationCenter_response" actionListener="#{communicationCenter.onNextQuestion}"
-								styleClass="aon-finding-toolbar-item aon-icon-accept"
-								accesskey="#{bundle.aon_key_save}"/>
-						</c:if>
-						<c:if test="#{communicationCenter.lastQuestion}" >
-							<aon:commandButton id="skip" value="#{marketingBundle.aon_skip}"
-								rendered="#{communicationCenter.question.type != 'INFO'}"							
-								action="communicationCenter" actionListener="#{communicationCenter.onFinishSurveyResponse}"
-								styleClass="aon-finding-toolbar-item aon-icon-accept" immediate="true"
-								accesskey="#{bundle.aon_key_save}" />
-							<aon:commandButton id="finish" value="#{marketingBundle.aon_finish}"
-								action="communicationCenter" actionListener="#{communicationCenter.onFinishSurveyResponse}"
-								styleClass="aon-finding-toolbar-item aon-icon-accept"
-								accesskey="#{bundle.aon_key_save}" />
-						</c:if>
-					</aon:div>
-
-					<!-- end toolbar navigation -->
-				</aon:panelGrid>
-			</aon:div>
-
-			<aon:div styleClass="aon-scroll-area">
-				<aon:panelGrid columns="2" dir="true" width="100%"
-					columnClasses="aon-panelGrid-odd aon-width-170,aon-panelGrid-even">
-
-					<aon:outputLabel for="CommunicationCenter_date"
-						value="#{bundle.aon_date}" />
-					<aon:outputText id="CommunicationCenter_date" value="#{communicationCenter.date}" >
-						<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+				<aon:outputLabel for="CommunicationCenter_date"
+					value="#{bundle.aon_date}" />
+				<aon:outputText id="CommunicationCenter_date" value="#{communicationCenter.date}" >
+					<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
 						timeZone="#{timeZoneController.timeZoneId}" />
 					</aon:outputText>							
 
