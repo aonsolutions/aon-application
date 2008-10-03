@@ -32,15 +32,6 @@ public class CourseController extends BasicController implements ICollectionProv
 		this.onEditSearch((ActionEvent)event);
 	}
 
-	public void addEqualExpression(ValueChangeEvent event) throws ManagerBeanException, ExpressionException {
-	    if (event.getNewValue() != null && !event.getNewValue().equals(new Integer(Integer.MAX_VALUE))) {
-	    	Criteria c = getCriteria();
-			Object value = event.getNewValue();
-			c.addExpression(getFieldName(event.getComponent().getId()), value.toString());
-			setCriteria(c);
-		}
-	}
-	
 	@SuppressWarnings("unchecked")
 	public Collection getCollection(){
 		List<ReportCourse> reportCourseList = new LinkedList<ReportCourse>();
