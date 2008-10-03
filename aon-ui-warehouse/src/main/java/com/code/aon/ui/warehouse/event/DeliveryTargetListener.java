@@ -15,6 +15,7 @@ import com.code.aon.config.Scope;
 import com.code.aon.config.dao.IConfigAlias;
 import com.code.aon.customer.Customer;
 import com.code.aon.customer.dao.ICustomerAlias;
+import com.code.aon.customer.enumeration.CustomerStatus;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
@@ -61,6 +62,7 @@ public class DeliveryTargetListener extends ControllerAdapter {
 					Target target = (Target)iter.next();
 					delivery.getCustomer().setRegistry(target.getRegistry());
 					delivery.getCustomer().setScope(obtainScope(deliveryController.getScopeId()));
+					delivery.getCustomer().setStatus(CustomerStatus.ACTIVE);
 					customerBean.insert(delivery.getCustomer());
 				}
 			}else{
@@ -96,6 +98,7 @@ public class DeliveryTargetListener extends ControllerAdapter {
 					Target target = (Target)iter.next();
 					delivery.getCustomer().setRegistry(target.getRegistry());
 					delivery.getCustomer().setScope(obtainScope(deliveryController.getScopeId()));
+					delivery.getCustomer().setStatus(CustomerStatus.ACTIVE);
 					customerBean.insert(delivery.getCustomer());
 				}
 			}else{

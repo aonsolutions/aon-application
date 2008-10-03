@@ -19,10 +19,10 @@ import com.code.aon.product.strategy.ICalculableContainer;
 import com.code.aon.product.strategy.IPriceStrategy;
 import com.code.aon.product.strategy.PriceStrategyFactory;
 import com.code.aon.product.strategy.TaxBreakDown;
-import com.code.aon.purchase.Supplier;
-import com.code.aon.purchase.dao.IPurchaseAlias;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionException;
+import com.code.aon.supplier.Supplier;
+import com.code.aon.supplier.dao.ISupplierAlias;
 import com.code.aon.ui.company.controller.CompanyController;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.form.PageDataModel;
@@ -310,7 +310,7 @@ public class IncomeController extends BasicController {
 		if(event.getNewValue() != null){
 			IManagerBean supplierBean = BeanManager.getManagerBean(Supplier.class);
 			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(supplierBean.getFieldName(IPurchaseAlias.SUPPLIER_ID),event.getNewValue());
+			criteria.addEqualExpression(supplierBean.getFieldName(ISupplierAlias.SUPPLIER_ID),event.getNewValue());
 			Iterator iter = supplierBean.getList(criteria).iterator();
 			if(iter.hasNext()){
 				Supplier supplier = (Supplier)iter.next();
@@ -410,7 +410,7 @@ public class IncomeController extends BasicController {
 	    		) {
 			Criteria criteria = new Criteria();
 			IManagerBean bean = BeanManager.getManagerBean(Supplier.class);
-			String identifier = bean.getFieldName(IPurchaseAlias.SUPPLIER_DOCUMENT);
+			String identifier = bean.getFieldName(ISupplierAlias.SUPPLIER_REGISTRY_DOCUMENT);
 			criteria.addEqualExpression(identifier, event.getNewValue());
 			Iterator iter = bean.getList(criteria).iterator();
 	    	Criteria c = getCriteria();

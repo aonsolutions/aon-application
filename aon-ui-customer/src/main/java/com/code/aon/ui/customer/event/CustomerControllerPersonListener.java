@@ -10,6 +10,7 @@ import com.code.aon.person.Person;
 import com.code.aon.person.dao.IPersonAlias;
 import com.code.aon.ql.Criteria;
 import com.code.aon.registry.Registry;
+import com.code.aon.registry.enumeration.RegistryType;
 import com.code.aon.ui.customer.controller.CustomerController;
 import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
@@ -24,27 +25,34 @@ public class CustomerControllerPersonListener extends ControllerAdapter {
 		person.setRegistry(new Registry());
 		customerController.setPerson(person);
 		customerController.setNewPerson(true);
+		((Customer)customerController.getTo()).getRegistry().setType(RegistryType.NATURAL);
 	}
 	
 	@Override
 	public void afterBeanAdded(ControllerEvent event) throws ControllerListenerException {
 		CustomerController customerController = (CustomerController)event.getController();
-		Person person = customerController.getPerson();
-		Registry registry = ((Customer)customerController.getTo()).getRegistry();
-		person.setRegistry(registry);
-		person.setId(registry.getId());
-		createOrUpdatePerson(person, customerController.isNewPerson());
+		Customer customer = (Customer)customerController.getTo();
+		if(customer.getRegistry().getType().equals(RegistryType.NATURAL)){
+			Person person = customerController.getPerson();
+			Registry registry = ((Customer)customerController.getTo()).getRegistry();
+			person.setRegistry(registry);
+			person.setId(registry.getId());
+			createOrUpdatePerson(person, customerController.isNewPerson());
+		}
 		customerController.setNewPerson(false);
 	}
 	
 	@Override
 	public void afterBeanUpdated(ControllerEvent event) throws ControllerListenerException {
 		CustomerController customerController = (CustomerController)event.getController();
-		Person person = customerController.getPerson();
-		Registry registry = ((Customer)customerController.getTo()).getRegistry();
-		person.setRegistry(registry);
-		person.setId(registry.getId());
-		createOrUpdatePerson(person, customerController.isNewPerson());
+		Customer customer = (Customer)customerController.getTo();
+		if(customer.getRegistry().getType().equals(RegistryType.NATURAL)){
+			Person person = customerController.getPerson();
+			Registry registry = ((Customer)customerController.getTo()).getRegistry();
+			person.setRegistry(registry);
+			person.setId(registry.getId());
+			createOrUpdatePerson(person, customerController.isNewPerson());
+		}
 		customerController.setNewPerson(false);
 	}
 	

@@ -7,8 +7,6 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
-import javax.faces.context.FacesContext;
-import javax.faces.el.ValueBinding;
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 import javax.faces.event.PhaseId;
@@ -68,6 +66,7 @@ public class FeeInvoicingController extends BasicController {
 	
 	private static final String FEE_INVOICING_DETAIL_CONTROLLER_NAME = "feeInvoicingDetail";
 	private static final String FEE_FINANCE_CONTROLLER_NAME = "feeFinance";
+	private static final String MENU_MANAGER_NAME = "menuManager";
 
 	private InvoicingParameters invoicingParams;
 
@@ -341,9 +340,7 @@ public class FeeInvoicingController extends BasicController {
     }
 	
 	private void updateBreadCrumb() {
-        FacesContext ctx = FacesContext.getCurrentInstance();
-        ValueBinding vb = ctx.getApplication().createValueBinding("#{menuManager}");
-        MenuManager menuManager = (MenuManager)vb.getValue(ctx);
+		MenuManager menuManager = (MenuManager)AonUtil.getRegisteredBean(MENU_MANAGER_NAME);
         menuManager.setCurrentMenu("AON_APP");
         menuManager.getCurrentMenuModel().setSelectedNode("root.aon_administrative_management.aon_invoice_management");
     }
@@ -373,7 +370,7 @@ public class FeeInvoicingController extends BasicController {
 					Finance finance = (Finance)iter.next();
 					financeBean.remove(finance);
 				}
-				getFinanceGenerator().generateFinances(invoice, getPriceStrategy().getTotalPrice(invoice, invoice));
+				getFinanceGenerator().generateFinances(invoice,invoice.getRegistry(), getPriceStrategy().getTotalPrice(invoice, invoice));
 				feeFinanceController.onSearch(null);
 			}
 		} catch (ManagerBeanException e) {
@@ -421,6 +418,7 @@ public class FeeInvoicingController extends BasicController {
 		entry.setEntryDate(invoice.getIssueDate());
 		entry.setJournal(null);
 		entry.setType((invoice.getType().equals(InvoiceType.SALES)?AccountEntryType.SALES_INVOICE:AccountEntryType.PURCHASE_INVOICE));
+		entry.setSecurityLevel(invoice.getSecurityLevel());
 		entry = getAccountEntryInvoiceWriter().insertorUpdateAccountEntry(entry, true);
 		List taxBreakDown = getPriceStrategy().getTaxBreakDowns(invoice, invoice);
 		getAccountEntryInvoiceWriter().insertEntryDetails(entry, AccountUtil.obtainCustomerAccount(invoice.getRegistry()), obtainBalancingAccount(invoice), invoice.getSeries(), invoice.getNumber(), getPriceStrategy().getTotalPrice(invoice, invoice), getRetentionTotal(taxBreakDown), getTaxQuota(taxBreakDown), getPriceStrategy().getTaxableBase(invoice));

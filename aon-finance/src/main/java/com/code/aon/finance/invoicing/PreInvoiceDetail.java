@@ -41,7 +41,7 @@ public class PreInvoiceDetail extends InvoiceDetail {
 	
 	public void addInvoiceTaxes(InvoiceDetail detail) throws ManagerBeanException{
 		addTax(detail, detail.getItem().getProduct().getVat());
-		if(detail.getItem().getProduct().getRetention() != null){
+		if(detail.getInvoice().isWithholding() && detail.getItem().getProduct().getRetention() != null){
 			addTax(detail, detail.getItem().getProduct().getRetention());
 		}
 	}

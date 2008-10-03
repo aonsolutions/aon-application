@@ -2,7 +2,9 @@ package com.code.aon.ui.customer.controller;
 
 import javax.faces.event.ActionEvent;
 
+import com.code.aon.customer.Customer;
 import com.code.aon.person.Person;
+import com.code.aon.registry.enumeration.RegistryType;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.form.IController;
 import com.code.aon.ui.menu.jsf.MenuEvent;
@@ -58,6 +60,11 @@ public class CustomerController extends BasicController {
         this.onEditSearch((ActionEvent)event);
     }
 
+    public boolean isNaturalType(){
+    	Customer customer = (Customer)getTo();
+    	return customer.getRegistry().getType().equals(RegistryType.NATURAL);
+    }
+    
     /**
      * On reset. Sends a cancel to the media and address controllers to avoid having editing any of them
      * 

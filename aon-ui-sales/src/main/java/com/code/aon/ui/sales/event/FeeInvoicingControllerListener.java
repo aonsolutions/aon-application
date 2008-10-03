@@ -11,6 +11,7 @@ import com.code.aon.customer.Customer;
 import com.code.aon.customer.dao.ICustomerAlias;
 import com.code.aon.finance.Invoice;
 import com.code.aon.finance.InvoiceDetail;
+import com.code.aon.finance.dao.IFinanceAlias;
 import com.code.aon.finance.enumeration.InvoiceSource;
 import com.code.aon.finance.enumeration.InvoiceStatus;
 import com.code.aon.finance.enumeration.InvoiceType;
@@ -29,6 +30,15 @@ public class FeeInvoicingControllerListener extends ControllerAdapter {
 	
 	private static final String FEE_INVOINCING_DETAIL_CONTROLLER_NAME = "feeInvoicingDetail";
 
+	@Override
+	public void beforeModelInitialized(ControllerEvent event) throws ControllerListenerException {
+		try {
+			event.getController().getCriteria().addEqualExpression(event.getController().getFieldName(IFinanceAlias.INVOICE_TYPE), InvoiceType.SALES);
+		} catch (ManagerBeanException e) {
+			throw new ControllerListenerException(e);
+		}
+	}
+	
 	@Override
 	public void beforeBeanAdded(ControllerEvent event) throws ControllerListenerException {
 		Invoice invoice = (Invoice)event.getController().getTo();

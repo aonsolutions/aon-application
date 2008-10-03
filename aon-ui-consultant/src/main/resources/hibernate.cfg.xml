@@ -14,10 +14,6 @@
 		<property name="connection.datasource">java:comp/env/jdbc/AonConsultant</property>		
 		<property name="dialect">org.hibernate.dialect.MySQLDialect</property>
 
-		<!-- AON-CONSULTANT Mapping files -->
-		<mapping class="com.code.aon.consultant.RegistryDirStaff"/>
-		<mapping class="com.code.aon.consultant.RecordData"/>
-
 		<!-- AON-PROJECT Mapping files -->
 		<mapping class="com.code.aon.project.Activity"/>
 		<mapping class="com.code.aon.project.ActivityType"/>
@@ -102,6 +98,8 @@
 		<mapping class="com.code.aon.registry.Relationship"/>
 		<mapping class="com.code.aon.registry.RegistryRelationship"/>
 		<mapping class="com.code.aon.registry.RegistryNote"/>
+		<mapping class="com.code.aon.registry.RegistryDirStaff"/>
+		<mapping class="com.code.aon.registry.RecordData"/>
 
 		<!-- AON-COMPANY Mapping files -->
 		<mapping class="com.code.aon.company.Company"/>
