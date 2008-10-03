@@ -66,21 +66,26 @@
 								<f:facet name="header">
 									<h:outputText value="#{productBundle.item_description}" />
 								</f:facet>
-								<h:outputText value="#{to.product.name} #{to.detail}" />
+								
+								<h:outputText value="#{to.product.name} #{to.detail}">
+
+								</h:outputText>
 							</h:column>
 							
 							<h:column>
 								<f:facet name="header">
 									<h:outputText value="#{productBundle.item_category}" />
 								</f:facet>
-								<h:outputText value="#{to.product.category.name}" />
+								<h:outputText value="#{to.product.category.name}" >
+								</h:outputText>
 							</h:column>
 							
 							<h:column>
 								<f:facet name="header">
 									<h:outputText value="#{productBundle.item_status}" />
 								</f:facet>
-								<h:outputText value="#{to.status}" />
+								<h:outputText value="#{to.status}" >
+								</h:outputText>
 							</h:column>
 							
 							<h:column>

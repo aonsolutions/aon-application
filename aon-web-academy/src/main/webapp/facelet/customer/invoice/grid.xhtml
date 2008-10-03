@@ -25,6 +25,7 @@
 				columnClasses="aon-table-body aon-table-body-string,
 					aon-table-body aon-table-body-string,
 					aon-table-body aon-table-body-string,
+					aon-table-body aon-table-body-string,
 					aon-table-body aon-table-body-number">
 
 				<h:column>
@@ -32,6 +33,16 @@
 						<h:outputText value="#{financeBundle.aon_series_number}" />
 					</f:facet>
 					<h:outputText value="#{to.series} / #{to.number}" />
+				</h:column>
+
+				<h:column>
+					<f:facet name="header">
+						<h:panelGroup>
+							<h:outputText value="#{customerBundle.customer_customer}" />
+						</h:panelGroup>
+					</f:facet>
+					<h:outputText
+						value="#{to.registryName}" />
 				</h:column>
 
 				<h:column>

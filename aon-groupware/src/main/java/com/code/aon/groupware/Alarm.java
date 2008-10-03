@@ -21,6 +21,8 @@ import com.code.aon.groupware.enumeration.Priority;
 @Table(name="alarm")
 public class Alarm implements ITransferObject {
 
+	private static final long serialVersionUID = 5331239358786123832L;
+
 	private Integer id;
 	
 	private String description;
