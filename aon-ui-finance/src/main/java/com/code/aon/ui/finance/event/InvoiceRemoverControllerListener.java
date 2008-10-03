@@ -16,7 +16,6 @@ public class InvoiceRemoverControllerListener extends ControllerAdapter {
 	public void beforeModelInitialized(ControllerEvent event) throws ControllerListenerException {
 		try {
 			Criteria criteria = event.getController().getCriteria();
-			criteria.addOrder(event.getController().getFieldName(IFinanceAlias.INVOICE_ISSUE_DATE));
 			criteria.addOrder(event.getController().getFieldName(IFinanceAlias.INVOICE_SERIES));
 			criteria.addOrder(event.getController().getFieldName(IFinanceAlias.INVOICE_NUMBER));
 		} catch (ManagerBeanException e) {
@@ -43,11 +42,8 @@ public class InvoiceRemoverControllerListener extends ControllerAdapter {
 				if(invoiceRemover.getRemovingParams().getSeries() != null && !"".equals(invoiceRemover.getRemovingParams().getSeries())){
 					criteria.addExpression(invoiceRemover.getFieldName(IFinanceAlias.INVOICE_SERIES),invoiceRemover.getRemovingParams().getSeries());
 				}
-				if(invoiceRemover.getRemovingParams().getFromNumber() != null){
-					criteria.addGreaterThanOrEqualExpression(invoiceRemover.getFieldName(IFinanceAlias.INVOICE_NUMBER),invoiceRemover.getRemovingParams().getFromNumber());
-				}
-				if(invoiceRemover.getRemovingParams().getToNumber() != null){
-					criteria.addLessThanOrEqualExpression(invoiceRemover.getFieldName(IFinanceAlias.INVOICE_NUMBER),invoiceRemover.getRemovingParams().getToNumber());
+				if(invoiceRemover.getRemovingParams().getNumber() != null && !"".equals(invoiceRemover.getRemovingParams().getNumber())){
+					criteria.addExpression(invoiceRemover.getFieldName(IFinanceAlias.INVOICE_NUMBER),invoiceRemover.getRemovingParams().getNumber());
 				}
 				if(invoiceRemover.getRemovingParams().getSecurityLevel() != null){
 					criteria.addEqualExpression(invoiceRemover.getFieldName(IFinanceAlias.INVOICE_SECURITY_LEVEL),invoiceRemover.getRemovingParams().getSecurityLevel());
