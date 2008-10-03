@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<table tableName="delivery_detail">
+    <columns>
+        <column label="" name="id" sqlType="integer" type="integer"/>
+        <column label="" name="line" sqlType="smallint" type="short"/>
+        <column label="" name="delivery" sqlType="integer" type="integer"/>
+        <column label="" name="item" sqlType="integer" type="integer"/>
+        <column label="" length="64" name="description"
+            sqlType="varchar" type="string"/>
+        <column label="" name="warehouse" sqlType="integer" type="integer"/>
+        <column label="" name="quantity" sqlType="double" type="double"/>
+        <column label="" name="price" sqlType="double" type="double"/>
+        <column label="" length="32" name="discount_expr"
+            sqlType="varchar" type="string"/>
+        <column label="" name="sales_detail" sqlType="integer" type="integer"/>
+    </columns>
+    <virtualColumns/>
+    <primaryKey>
+        <column name="id"/>
+    </primaryKey>
+    <joins>
+        <join description="delivery_detail_ibfk_1" foreignPath="data/delivery.exdm.xml">
+            <sourceColumns>
+                <column name="delivery"/>
+            </sourceColumns>
+        </join>
+        <join description="delivery_detail_ibfk_2" foreignPath="data/warehouse.exdm.xml">
+            <sourceColumns>
+                <column name="warehouse"/>
+            </sourceColumns>
+        </join>
+        <join description="delivery_detail_ibfk_3" foreignPath="data/item.exdm.xml">
+            <sourceColumns>
+                <column name="item"/>
+            </sourceColumns>
+        </join>
+        <join description="delivery_detail_ibfk_4" foreignPath="data/sales_detail.exdm.xml">
+            <sourceColumns>
+                <column name="sales_detail"/>
+            </sourceColumns>
+        </join>
+    </joins>
+    <descriptionColumns/>
+</table>

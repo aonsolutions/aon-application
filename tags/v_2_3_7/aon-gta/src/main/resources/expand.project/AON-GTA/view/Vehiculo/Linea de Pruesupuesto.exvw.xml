@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<view description="Linea de Pruesupuesto" label="Linea de Pruesupuesto" sqlSentence="SELECT product.code, product.name, offer_detail.quantity, offer_detail.price &#xd;&#xa;FROM offer_detail, item, product, offer, tas_offer &#xd;&#xa;WHERE offer_detail.item = item.id &#xd;&#xa;  AND offer.id = offer_detail.offer &#xd;&#xa;  AND offer.id = tas_offer.offer &#xd;&#xa;  AND item.product = product.id &#xd;&#xa;  AND tas_offer.support_order = ?">
+    <parameters>
+        <parameter name="support_order" type="INTEGER"/>
+    </parameters>
+    <results>
+        <result accessName="code" columnId="code" label="CODIGO"
+            tableId="product" type="STRING"/>
+        <result accessName="name" columnId="name" label="ARTICULO"
+            tableId="product" type="STRING"/>
+        <result accessName="quantity" columnId="quantity"
+            label="CANTIDAD" tableId="offer_detail" type="DOUBLE"/>
+        <result accessName="price" columnId="price" label="PRECIO"
+            tableId="offer_detail" type="DOUBLE"/>
+    </results>
+    <dataModelReferences/>
+</view>

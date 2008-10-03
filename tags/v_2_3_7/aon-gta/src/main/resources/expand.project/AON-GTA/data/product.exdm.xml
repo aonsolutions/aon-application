@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<table tableName="product">
+    <columns>
+        <column label="" name="id" sqlType="integer" type="integer"/>
+        <column label="" length="64" name="name" sqlType="varchar" type="string"/>
+        <column label="" length="15" name="code" sqlType="varchar" type="string"/>
+        <column label="" name="brand" sqlType="integer" type="integer"/>
+        <column label="" name="category" sqlType="integer" type="integer"/>
+        <column label="" length="1" name="inventoriable" sqlType="bit" type="string"/>
+        <column label="" length="4" name="status" sqlType="tinyint" type="string"/>
+        <column label="" name="vat" sqlType="integer" type="integer"/>
+        <column label="" length="4" name="type" sqlType="tinyint" type="string"/>
+        <column label="" length="1" name="composition" sqlType="bit" type="string"/>
+    </columns>
+    <virtualColumns/>
+    <primaryKey>
+        <column name="id"/>
+    </primaryKey>
+    <joins>
+        <join description="product_ibfk_1" foreignPath="data/pcategory.exdm.xml">
+            <sourceColumns>
+                <column name="category"/>
+            </sourceColumns>
+        </join>
+        <join description="product_ibfk_2" foreignPath="data/brand.exdm.xml">
+            <sourceColumns>
+                <column name="brand"/>
+            </sourceColumns>
+        </join>
+        <join description="product_ibfk_3" foreignPath="data/tax.exdm.xml">
+            <sourceColumns>
+                <column name="vat"/>
+            </sourceColumns>
+        </join>
+    </joins>
+    <descriptionColumns/>
+</table>

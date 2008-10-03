@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<table tableName="fbatch">
+    <columns>
+        <column label="" name="id" sqlType="integer" type="integer"/>
+        <column label="" length="30" name="description"
+            sqlType="varchar" type="string"/>
+        <column label="" name="issue_date" sqlType="date" type="date"/>
+        <column label="" length="4" name="type" sqlType="tinyint" type="string"/>
+        <column label="" length="4" name="status" sqlType="tinyint" type="string"/>
+        <column label="" name="bank" sqlType="integer" type="integer"/>
+        <column label="" length="8" name="bic" sqlType="varchar" type="string"/>
+    </columns>
+    <virtualColumns/>
+    <primaryKey>
+        <column name="id"/>
+    </primaryKey>
+    <joins>
+        <join description="fbatch_ibfk_1" foreignPath="data/bank.exdm.xml">
+            <sourceColumns>
+                <column name="bank"/>
+            </sourceColumns>
+        </join>
+    </joins>
+    <descriptionColumns/>
+</table>
