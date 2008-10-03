@@ -33,7 +33,7 @@
 
 	<field name="series" class="java.lang.String"/>
 	<field name="number" class="java.lang.Integer"/>
-	<field name="supplier" class="com.code.aon.purchase.Supplier"/>
+	<field name="supplier" class="com.code.aon.supplier.Supplier"/>
 	<field name="issueTime" class="java.util.Date"/>
 	<field name="lines" class="java.util.Set"/>
 
@@ -58,7 +58,7 @@
 					<textElement textAlignment="Center" verticalAlignment="Middle">
 						<font fontName="Arial Narrow" pdfFontName="Helvetica-Bold" size="14" isBold="true"/>
 					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$F{supplier}.getName()]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{supplier}.getRegistry().getName()]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
@@ -71,7 +71,7 @@
 					<textElement>
 						<font fontName="Arial Narrow" pdfFontName="Helvetica" size="10"/>
 					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$R{offer_tel} + ": " + $F{supplier}.getPhone().getValue()]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$R{offer_tel} + ": " + $F{supplier}.getRegistry().getPhone().getValue()]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
@@ -84,7 +84,7 @@
 					<textElement>
 						<font fontName="Arial Narrow" pdfFontName="Helvetica" size="10"/>
 					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$R{offer_fax} + ": " + $F{supplier}.getFax().getValue()]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$R{offer_fax} + ": " + $F{supplier}.getRegistry().getFax().getValue()]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
@@ -97,7 +97,7 @@
 					<textElement>
 						<font fontName="Arial Narrow" pdfFontName="Helvetica" size="10"/>
 					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[($F{supplier}.getDefaultAddress().getZip()==null?"":$F{supplier}.getDefaultAddress().getZip() + " ") + ($F{supplier}.getDefaultAddress().getCity()==null?"":$F{supplier}.getDefaultAddress().getCity() + " ") + "(" + $F{supplier}.getDefaultAddress().getGeozone().getName() + ")"]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.String"><![CDATA[($F{supplier}.getRegistry().getDefaultAddress().getZip()==null?"":$F{supplier}.getRegistry().getDefaultAddress().getZip() + " ") + ($F{supplier}.getRegistry().getDefaultAddress().getCity()==null?"":$F{supplier}.getRegistry().getDefaultAddress().getCity() + " ") + "(" + $F{supplier}.getRegistry().getDefaultAddress().getGeozone().getName() + ")"]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
@@ -110,7 +110,7 @@
 					<textElement>
 						<font fontName="Arial Narrow" pdfFontName="Helvetica" size="10"/>
 					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[($F{supplier}.getDefaultAddress().getAddress()==null?"":$F{supplier}.getDefaultAddress().getAddress() + " ") + ($F{supplier}.getDefaultAddress().getAddress2()==null?"":$F{supplier}.getDefaultAddress().getAddress2() + " ") + ($F{supplier}.getDefaultAddress().getAddress3()==null?"":$F{supplier}.getDefaultAddress().getAddress3())]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.String"><![CDATA[($F{supplier}.getRegistry().getDefaultAddress().getAddress()==null?"":$F{supplier}.getRegistry().getDefaultAddress().getAddress() + " ") + ($F{supplier}.getRegistry().getDefaultAddress().getAddress2()==null?"":$F{supplier}.getRegistry().getDefaultAddress().getAddress2() + " ") + ($F{supplier}.getRegistry().getDefaultAddress().getAddress3()==null?"":$F{supplier}.getRegistry().getDefaultAddress().getAddress3())]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
@@ -123,7 +123,7 @@
 					<textElement>
 						<font fontName="Arial Narrow" pdfFontName="Helvetica" size="10"/>
 					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$R{aon_supplier_document} + ": " + $F{supplier}.getDocument()]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$R{aon_supplier_document} + ": " + $F{supplier}.getRegistry().getDocument()]]></textFieldExpression>
 				</textField>
 				<staticText>
 					<reportElement
