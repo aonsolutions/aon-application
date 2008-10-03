@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<view description="Productos 12+1" sqlSentence="SELECT CAST(CONCAT(YEAR(invoice.issue_date), &quot;/&quot;, LPAD(MONTH(invoice.issue_date),2,&quot;0&quot;)) AS CHAR), &#xd;&#xa;       SUM(TRUNCATE(invoice_detail.taxable_base, 2))&#xd;&#xa;  FROM pcategory, invoice_detail, invoice, item, product &#xd;&#xa; WHERE invoice_detail.item = item.id &#xd;&#xa;   AND item.product = product.id&#xd;&#xa;   AND product.category = pcategory.id &#xd;&#xa;   AND invoice_detail.invoice = invoice.id &#xd;&#xa;   AND pcategory.id = ?&#xd;&#xa;   AND item.id = ?&#xd;&#xa;   AND invoice.issue_date&#xd;&#xa;      BETWEEN DATE_SUB(STR_TO_DATE(CONCAT(?,&quot;-&quot;,?,&quot;-&quot;,1), &quot;%Y-%m-%d&quot;), INTERVAL 12 MONTH)&#xd;&#xa;          AND DATE_SUB(STR_TO_DATE(CONCAT(?,&quot;-&quot;,? + 1,&quot;-&quot;,1), &quot;%Y-%m-%d&quot;), INTERVAL 1 DAY)&#xd;&#xa;   AND invoice.type = ?&#xd;&#xa; GROUP BY 1&#xd;&#xa; ORDER BY 1&#xd;&#xa;">
+    <parameters>
+        <parameter columnReference="data/pcategory.exdm.xml/id" label=""
+            name="pcategory" type="INTEGER"/>
+        <parameter columnReference="data/item.exdm.xml/id" label=""
+            name="item" type="INTEGER"/>
+        <parameter name="year1" type="INTEGER"/>
+        <parameter name="month1" type="INTEGER"/>
+        <parameter name="year2" type="INTEGER"/>
+        <parameter name="month2" type="INTEGER"/>
+        <parameter name="type" type="INTEGER"/>
+    </parameters>
+    <results>
+        <result accessName="month" columnId="" label="Mes" type="STRING"/>
+        <result accessName="total" columnId="" label="Total" type="DOUBLE"/>
+    </results>
+    <dataModelReferences>
+        <dataModelReference id="data/item.exdm.xml"/>
+        <dataModelReference id="data/pcategory.exdm.xml"/>
+    </dataModelReferences>
+</view>

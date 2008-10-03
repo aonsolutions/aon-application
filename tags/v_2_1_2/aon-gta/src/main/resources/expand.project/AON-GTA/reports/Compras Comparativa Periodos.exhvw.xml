@@ -1,0 +1,186 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<workstation description="" label="Ventas Comparativa Periodos">
+    <external-parameters>
+        <external-parameter defaultValue="${currentYearFirstDay}"
+            label="Desde" name="inidate" prompt="true" type="DATE"/>
+        <external-parameter defaultValue="${currentYearLastDay}"
+            label="Hasta" name="enddate" prompt="true" type="DATE"/>
+        <external-parameter defaultValue="0" name="type" type="INTEGER"/>
+    </external-parameters>
+    <node iconClose="icons/icon_comparativa.gif"
+        iconOpen="icons/icon_comparativa.gif" label="Comparativa Periodos">
+        <layout type="COLUMN"/>
+        <contents/>
+        <node iconClose="icons/icon_users_group.gif"
+            iconOpen="icons/icon_users_group.gif" label="Clientes">
+            <layout type="COLUMN"/>
+            <contents>
+                <viewContent
+                    id="view/Comparativa Ventas/Cliente.exvw.xml" type="LIST">
+                    <parameters>
+                        <parameter name="inidate"/>
+                        <parameter name="enddate"/>
+                        <parameter name="inidate"/>
+                        <parameter name="enddate"/>
+                        <parameter name="inidate"/>
+                        <parameter name="enddate"/>
+                        <parameter name="inidate"/>
+                        <parameter name="enddate"/>
+                        <parameter name="type"/>
+                    </parameters>
+                </viewContent>
+            </contents>
+            <node
+                dynamicViewId="view/Comparativa Ventas/Cliente.exvw.xml"
+                iconClose="icons/icon_usuario.gif" label="${CUSTOMER_NAME}">
+                <dynamicParameters>
+                    <parameter name="inidate"/>
+                    <parameter name="enddate"/>
+                    <parameter name="inidate"/>
+                    <parameter name="enddate"/>
+                    <parameter name="inidate"/>
+                    <parameter name="enddate"/>
+                    <parameter name="inidate"/>
+                    <parameter name="enddate"/>
+                    <parameter name="type"/>
+                </dynamicParameters>
+                <layout type="COLUMN"/>
+                <contents>
+                    <viewContent
+                        id="view/Comparativa Ventas/Productos por cliente.exvw.xml" type="LIST">
+                        <parameters>
+                            <parameter name="inidate"/>
+                            <parameter name="enddate"/>
+                            <parameter name="inidate"/>
+                            <parameter name="enddate"/>
+                            <parameter name="CUSTOMER_ID"/>
+                            <parameter name="inidate"/>
+                            <parameter name="enddate"/>
+                            <parameter name="inidate"/>
+                            <parameter name="enddate"/>
+                            <parameter name="type"/>
+                        </parameters>
+                    </viewContent>
+                </contents>
+            </node>
+        </node>
+        <node iconClose="icons/icon_familia.gif"
+            iconOpen="icons/icon_familia.gif" label="Familias">
+            <dynamicParameters>
+                <parameter name=""/>
+                <parameter name=""/>
+                <parameter name=""/>
+                <parameter name=""/>
+                <parameter name=""/>
+                <parameter name=""/>
+                <parameter name=""/>
+                <parameter name=""/>
+            </dynamicParameters>
+            <layout type="COLUMN"/>
+            <contents>
+                <viewContent
+                    id="view/Comparativa Ventas/Familias Periodo.exvw.xml" type="LIST">
+                    <parameters>
+                        <parameter name="inidate"/>
+                        <parameter name="enddate"/>
+                        <parameter name="inidate"/>
+                        <parameter name="enddate"/>
+                        <parameter name="inidate"/>
+                        <parameter name="enddate"/>
+                        <parameter name="inidate"/>
+                        <parameter name="enddate"/>
+                        <parameter name="type"/>
+                    </parameters>
+                </viewContent>
+            </contents>
+            <node
+                dynamicViewId="view/Comparativa Ventas/Familias Periodo.exvw.xml"
+                iconClose="icons/icon_categoria.gif"
+                iconOpen="icons/icon_categoria.gif" label="${CATEGORY_NAME}">
+                <dynamicParameters>
+                    <parameter name="inidate"/>
+                    <parameter name="enddate"/>
+                    <parameter name="inidate"/>
+                    <parameter name="enddate"/>
+                    <parameter name="inidate"/>
+                    <parameter name="enddate"/>
+                    <parameter name="inidate"/>
+                    <parameter name="enddate"/>
+                    <parameter name="type"/>
+                </dynamicParameters>
+                <layout type="COLUMN"/>
+                <contents>
+                    <viewContent
+                        id="view/Comparativa Ventas/Productos por familia Periodo.exvw.xml" type="LIST">
+                        <parameters>
+                            <parameter name="inidate"/>
+                            <parameter name="enddate"/>
+                            <parameter name="inidate"/>
+                            <parameter name="enddate"/>
+                            <parameter name="CATEGORY_ID"/>
+                            <parameter name="inidate"/>
+                            <parameter name="enddate"/>
+                            <parameter name="inidate"/>
+                            <parameter name="enddate"/>
+                            <parameter name="type"/>
+                        </parameters>
+                    </viewContent>
+                </contents>
+            </node>
+        </node>
+        <node iconClose="icons/icon_comparativa.gif"
+            iconOpen="icons/icon_comparativa.gif" label="Articulos">
+            <layout type="COLUMN"/>
+            <contents>
+                <viewContent
+                    id="view/Comparativa Ventas/Productos Periodo.exvw.xml" type="LIST">
+                    <parameters>
+                        <parameter name="inidate"/>
+                        <parameter name="enddate"/>
+                        <parameter name="inidate"/>
+                        <parameter name="enddate"/>
+                        <parameter name="inidate"/>
+                        <parameter name="enddate"/>
+                        <parameter name="inidate"/>
+                        <parameter name="enddate"/>
+                        <parameter name="type"/>
+                    </parameters>
+                </viewContent>
+            </contents>
+            <node
+                dynamicViewId="view/Comparativa Ventas/Productos Periodo.exvw.xml"
+                iconClose="icons/icon_articulo.gif"
+                iconOpen="icons/icon_articulo.gif" label="${ITEM_NAME}">
+                <dynamicParameters>
+                    <parameter name="inidate"/>
+                    <parameter name="enddate"/>
+                    <parameter name="inidate"/>
+                    <parameter name="enddate"/>
+                    <parameter name="inidate"/>
+                    <parameter name="enddate"/>
+                    <parameter name="inidate"/>
+                    <parameter name="enddate"/>
+                    <parameter name="type"/>
+                </dynamicParameters>
+                <layout type="COLUMN"/>
+                <contents>
+                    <viewContent
+                        id="view/Comparativa Ventas/Clientes por producto Periodo.exvw.xml" type="LIST">
+                        <parameters>
+                            <parameter name="inidate"/>
+                            <parameter name="enddate"/>
+                            <parameter name="inidate"/>
+                            <parameter name="enddate"/>
+                            <parameter name="ITEM_ID"/>
+                            <parameter name="inidate"/>
+                            <parameter name="enddate"/>
+                            <parameter name="inidate"/>
+                            <parameter name="enddate"/>
+                            <parameter name="type"/>
+                        </parameters>
+                    </viewContent>
+                </contents>
+            </node>
+        </node>
+    </node>
+</workstation>

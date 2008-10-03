@@ -1,0 +1,43 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core" 
+	xmlns:t="http://myfaces.apache.org/tomahawk"            
+	xmlns:h="http://java.sun.com/jsf/html">
+<body>
+
+<ui:composition template="/facelet/templates/aon.ui.formWindow.xhtml">
+
+<ui:define name="content">
+
+<h:form id="fopReportManager">
+	<center>
+	<h1>#{bundle.aon_generating_report}</h1>
+	<h:panelGrid>
+		<t:inputText id="reportKey" value="#{fopReport.controllerName}" forceId="#{true}" style="visibility: hidden"/>
+		<t:inputText id="id" value="#{fopReport.id}" forceId="#{true}" style="visibility: hidden"/>				
+	
+		<h:commandLink id="accept" value="#{bundle.aon_accept}" forceId="#{true}" actionListener="#{fopReport.onReport}" style="visibility: hidden"/>
+	</h:panelGrid>
+	</center>
+</h:form>
+<script type='text/javascript'>
+	
+	function getParameter (sParam) {
+		var sKey = sParam + "=";
+		var oParams = location.search.substring(1).split('&amp;');
+		for(var i = 0; i &lt; oParams.length; i++)
+		    if(oParams[i].indexOf(sKey) == 0)
+		        return oParams[i].substring(sKey.length);
+		return null;
+	};
+	document.getElementById("reportKey").value = getParameter("reportKey");
+	document.getElementById("id").value = getParameter("id");				
+	document.getElementById('fopReportManager:accept').onclick();
+</script>
+
+</ui:define>
+</ui:composition>
+
+</body>
+</html>
