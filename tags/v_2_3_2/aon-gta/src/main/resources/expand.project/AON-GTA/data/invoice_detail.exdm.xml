@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<table tableName="invoice_detail">
+    <columns>
+        <column label="" name="id" sqlType="integer" type="integer"/>
+        <column label="" name="invoice" sqlType="integer" type="integer"/>
+        <column label="" name="line" sqlType="smallint" type="short"/>
+        <column label="" name="item" sqlType="integer" type="integer"/>
+        <column label="" length="64" name="description"
+            sqlType="varchar" type="string"/>
+        <column label="" name="quantity" sqlType="double" type="double"/>
+        <column label="" name="price" sqlType="double" type="double"/>
+        <column label="" length="32" name="discount_expr"
+            sqlType="varchar" type="string"/>
+        <column label="" length="4" name="source" sqlType="tinyint" type="string"/>
+        <column label="" name="delivery_detail" sqlType="integer" type="integer"/>
+        <column label="" name="taxable_base" sqlType="double" type="double"/>
+    </columns>
+    <virtualColumns/>
+    <primaryKey>
+        <column name="id"/>
+    </primaryKey>
+    <joins>
+        <join description="invoice_detail_ibfk_1" foreignPath="data/invoice.exdm.xml">
+            <sourceColumns>
+                <column name="invoice"/>
+            </sourceColumns>
+        </join>
+        <join description="invoice_detail_ibfk_2" foreignPath="data/item.exdm.xml">
+            <sourceColumns>
+                <column name="item"/>
+            </sourceColumns>
+        </join>
+    </joins>
+    <descriptionColumns/>
+</table>

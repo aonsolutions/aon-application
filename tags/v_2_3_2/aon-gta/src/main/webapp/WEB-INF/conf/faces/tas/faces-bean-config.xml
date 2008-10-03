@@ -1,0 +1,727 @@
+<?xml version="1.0"?>
+<!DOCTYPE faces-config PUBLIC
+  "-//Sun Microsystems, Inc.//DTD JavaServer Faces Config 1.1//EN"
+  "http://java.sun.com/dtd/web-facesconfig_1_1.dtd">
+
+<faces-config>
+
+	<managed-bean>
+		<managed-bean-name>TASModel</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.tas.controller.TasModelController
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.tas.Model</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pageLimit</property-name>
+			<value>20</value>
+		</managed-property>
+		<managed-property>
+			<property-name>listenerClasses</property-name>
+			<list-entries>
+				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+				<value>#{TASModelMakeListener}</value>
+			</list-entries>
+		</managed-property>
+	</managed-bean>
+
+	<managed-bean>
+		<managed-bean-name>TASModelSearch</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.form.SelectWindowController
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.tas.Model</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pagePath</property-name>
+			<value>/facelet/sw/modelSearch.faces</value>
+		</managed-property>
+	</managed-bean>
+	
+	<managed-bean>
+		<managed-bean-name>TASModelAdd</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.form.NewWindowController
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.tas.Model</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pagePath</property-name>
+			<value>/facelet/TAS/Model/formWindow.faces</value>
+		</managed-property>
+		<managed-property>
+			<property-name>listenerClasses</property-name>
+			<list-entries>
+				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+				<value>#{TASModelMakeListener}</value>
+			</list-entries>
+		</managed-property>
+	</managed-bean>
+	
+	<managed-bean>
+		<managed-bean-name>TASModelMakeListener</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.tas.listener.TASModelMakeListener</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+	</managed-bean>
+
+	<managed-bean>
+		<managed-bean-name>TASModel_TASMake_Lookup</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.form.lookup.HibernateLookupBean
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+			<!-- La clase del POJO del cual se va a obtener la información de Lookup -->
+		<managed-property>
+			<property-name>foreignPojo</property-name>
+			<value>com.code.aon.tas.Model</value>
+		</managed-property>
+		<!-- Prefijo que se va a utilizar para componer los ids. Estos ids se deben corresponder con los ids de
+			los componentes cuyos valores queremos que se actualizen al hacer el lookup -->
+		<managed-property>
+			<property-name>aliasPrefix</property-name>
+			<value>Model</value>
+		</managed-property>
+		<!-- Lista de las propiedades del “foreignPojo” que componen la clave primaria -->
+		<managed-property>
+			<property-name>foreignJoinProperties</property-name>
+			<list-entries>
+				<value>id</value>
+			</list-entries>
+		</managed-property>
+		<!-- Lista de propiedades del “foreignPojo” que se van a mostrar en el lookup -->
+		<managed-property>
+			<property-name>foreignDisplayProperties</property-name>
+			<list-entries>
+				<value>make.name</value>
+			</list-entries>
+		</managed-property>
+	</managed-bean>
+
+	<managed-bean>
+		<managed-bean-name>TASMake</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.tas.controller.TasMakeController
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.tas.Make</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pageLimit</property-name>
+			<value>20</value>
+		</managed-property>
+		<managed-property>
+			<property-name>listenerClasses</property-name>
+			<list-entries>
+				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+				<value>#{TasMakeControllerListener}</value>
+			</list-entries>
+		</managed-property>
+	</managed-bean>
+	
+	<managed-bean>
+		<managed-bean-name>TasMakeControllerListener</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.tas.event.TasMakeControllerListener</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+	</managed-bean>
+
+	<managed-bean>
+		<managed-bean-name>TASItem</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.tas.controller.TasItemController
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.tas.TasItem</value>
+		</managed-property>
+	</managed-bean>
+
+	<managed-bean>
+		<managed-bean-name>SupportOrder</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.tas.controller.SupportOrderController
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.tas.SupportOrder</value>
+		</managed-property>
+		<managed-property>
+			<property-name>listenerClasses</property-name>
+			<list-entries>
+				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+				<value>#{supportOrderHeaderControllerListener}</value>
+				<value>#{SupportOrderControllerListener}</value>
+				<value>#{SupportOrderWorkPlaceListener}</value>
+			</list-entries>
+		</managed-property>
+	</managed-bean>
+
+	<managed-bean>
+		<managed-bean-name>SupportOrderControllerListener</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.tas.event.SupportOrderControllerListener
+		</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+	</managed-bean>
+
+	<managed-bean>
+		<managed-bean-name>SupportOrderWorkPlaceListener</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.tas.event.SupportOrderWorkPlaceListener
+		</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+	</managed-bean>
+
+	<managed-bean>
+		<managed-bean-name>tasDeliveryImport</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.tasDelivery.controller.TasDeliveryImportController
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>	
+	
+	<!-- **** APPRAISER **** -->
+	<managed-bean>
+		<managed-bean-name>appraiser</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.tas.controller.AppraiserController
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.tas.Appraiser</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pageLimit</property-name>
+			<value>20</value>
+		</managed-property>
+	</managed-bean>
+	
+	<!--  **** WORKPLACE **** -->
+	<managed-bean>
+		<managed-bean-name>workplace</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.company.controller.WorkPlaceController
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.company.WorkPlace</value>
+		</managed-property>
+	</managed-bean>
+
+	<!-- ****** EMPLOYEE ****** -->
+	<managed-bean>
+		<managed-bean-name>employee</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.employee.controller.EmployeeController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.company.resources.Employee</value>
+		</managed-property>
+		<managed-property>
+			<property-name>listenerClasses</property-name>
+			<list-entries>
+				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+				<value>#{employeeListener}</value>
+				<value>#{employeeAddressListener}</value>
+				<value>#{employeeMediaListener}</value>
+			</list-entries>
+		</managed-property>
+	</managed-bean>
+	
+	<managed-bean>
+		<managed-bean-name>employeeAddressListener</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.form.listener.MasterControllerListener
+		</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+		<managed-property>
+			<property-name>childBean</property-name>
+			<value>employeeAddress</value>
+		</managed-property>
+		<managed-property>
+			<property-name>aliasMap</property-name>
+			<map-entries>
+			     <!-- Se ha cambiado a un mapa para soportar claves compuestas.
+                 Lo normal en nuestro caso es que halla una entrada en el mapa. -->
+				<map-entry>
+                    <!-- Alias en el POJO detail de la columna que hace el join con la tabla master -->
+					<key>RegistryAddress_registry_id</key>
+				    <!-- Nombre de la propiedad en el POJO master -->
+				    <!-- Si es una clave compuesta, seria: id.<nombre.propiedad> -->
+                    <value>id</value>
+				</map-entry>
+			</map-entries>
+		</managed-property>
+	</managed-bean>
+	
+	<managed-bean>
+		<managed-bean-name>employeeMediaListener</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.form.listener.MasterControllerListener
+		</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+		<managed-property>
+			<property-name>childBean</property-name>
+			<value>employeeMedia</value>
+		</managed-property>
+		<managed-property>
+			<property-name>aliasMap</property-name>
+			<map-entries>
+			     <!-- Se ha cambiado a un mapa para soportar claves compuestas.
+                 Lo normal en nuestro caso es que halla una entrada en el mapa. -->
+				<map-entry>
+                    <!-- Alias en el POJO detail de la columna que hace el join con la tabla master -->
+					<key>RegistryMedia_registry_id</key>
+				    <!-- Nombre de la propiedad en el POJO master -->
+				    <!-- Si es una clave compuesta, seria: id.<nombre.propiedad> -->
+                    <value>id</value>
+				</map-entry>
+			</map-entries>
+		</managed-property>
+	</managed-bean>
+	
+	<!-- ****** Used by the EmployeeController ****** -->
+	<managed-bean>
+		<managed-bean-name>calendars</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.employee.controller.CalendarsController
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
+	
+	<managed-bean>
+		<managed-bean-name>treecalendar</managed-bean-name>
+		<managed-bean-class>com.code.aon.common.tree.jsf.TreeCalendar</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>bundleBaseName</property-name>
+			<value>com.code.aon.ui.employee.i18n.messages</value>
+		</managed-property>		
+    </managed-bean> 
+	
+	<!--  **** ADDRESS **** -->
+
+	<managed-bean>
+		<managed-bean-name>employeeAddress</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.employee.controller.EmployeeAddressController
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.registry.RegistryAddress</value>
+		</managed-property>
+		<managed-property>
+			<property-name>listenerClasses</property-name>
+			<list-entries>
+				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+				<value>#{employeeChildListener}</value>
+			</list-entries>
+		</managed-property>
+	</managed-bean>
+	
+	<!--  **** MEDIA **** -->
+	<managed-bean>
+		<managed-bean-name>employeeMedia</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.employee.controller.EmployeeMediaController
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.registry.RegistryMedia</value>
+		</managed-property>
+		<managed-property>
+			<property-name>listenerClasses</property-name>
+			<list-entries>
+				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+				<value>#{employeeChildListener}</value>
+			</list-entries>
+		</managed-property>
+	</managed-bean>
+	
+	<managed-bean>
+		<managed-bean-name>employeeChildListener</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.form.listener.ChildControllerListener
+		</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+		<managed-property>
+			<property-name>masterBean</property-name>
+			<value>employee.registry</value>
+		</managed-property>
+		<managed-property>
+			<property-name>masterPropertyName</property-name>
+			<value>registry</value>
+		</managed-property>
+	</managed-bean>
+	
+	<!-- ************ USER ************** -->
+	<managed-bean>
+		<managed-bean-name>user</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.config.controller.UserController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.config.User</value>
+		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>user</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pageLimit</property-name>
+			<value>20</value>
+		</managed-property>
+		<managed-property>
+			<property-name>listenerClasses</property-name>
+			<list-entries>
+				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+				<value>#{securityActivationListener}</value>
+			</list-entries>
+		</managed-property>
+	</managed-bean>
+
+	<managed-bean>
+		<managed-bean-name>securityActivationListener</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.config.event.UserSecurityActivationListener</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+	</managed-bean>
+	
+
+	<!-- ****** SUPPORT ORDER INSURANCE ****** -->
+	<managed-bean>
+		<managed-bean-name>supportOrderInsurance</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.tas.controller.SupportOrderInsuranceController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>false</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.tas.SupportOrderInsurance</value>
+		</managed-property>
+	</managed-bean>
+	
+	<!-- ****** SUPPORT ORDER TARGET ****** -->
+	<managed-bean>
+		<managed-bean-name>supportOrderTarget</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.tas.controller.SupportOrderTargetController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>false</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.commercial.Target</value>
+		</managed-property>
+		<managed-property>
+			<property-name>listenerClasses</property-name>
+			<list-entries>
+				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+				<value>#{supportOrderTargetAddressListener}</value>
+				<value>#{supportOrderTargetMediaListener}</value>
+				<value>#{supportOrderTargetRBankChildListener}</value>
+				<value>#{supportOrderTargetRPayMethodChildListener}</value>
+			</list-entries>
+		</managed-property>
+	</managed-bean>
+	
+	<managed-bean>
+		<managed-bean-name>supportOrderTargetAddressListener</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.form.listener.MasterControllerListener
+		</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+		<managed-property>
+			<property-name>childBean</property-name>
+			<value>supportOrderTargetAddress</value>
+		</managed-property>
+		<managed-property>
+			<property-name>aliasMap</property-name>
+			<map-entries>
+				<map-entry>
+					<key>RegistryAddress_registry_id</key>
+                    <value>id</value>
+				</map-entry>
+			</map-entries>
+		</managed-property>
+	</managed-bean>
+	
+	<managed-bean>
+		<managed-bean-name>supportOrderTargetMediaListener</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.form.listener.MasterControllerListener
+		</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+		<managed-property>
+			<property-name>childBean</property-name>
+			<value>supportOrderTargetMedia</value>
+		</managed-property>
+		<managed-property>
+			<property-name>aliasMap</property-name>
+			<map-entries>
+				<map-entry>
+					<key>RegistryMedia_registry_id</key>
+                    <value>id</value>
+				</map-entry>
+			</map-entries>
+		</managed-property>
+	</managed-bean>
+	
+	<managed-bean>
+		<managed-bean-name>supportOrderTargetRBankChildListener</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.form.listener.LinesControllerListener
+		</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+		<managed-property>
+			<property-name>childBean</property-name>
+			<value>supportOrderTargetRbank</value>
+		</managed-property>
+		<managed-property>
+			<property-name>aliasMap</property-name>
+			<map-entries>
+				<map-entry>
+					<key>RegistryBank_registry_id</key>
+                    <value>id</value>
+				</map-entry>
+			</map-entries>
+		</managed-property>
+	</managed-bean>
+	
+	<managed-bean>
+		<managed-bean-name>supportOrderTargetRPayMethodChildListener</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.form.listener.LinesControllerListener
+		</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+		<managed-property>
+			<property-name>childBean</property-name>
+			<value>supportOrderTargetRpayMethod</value>
+		</managed-property>
+		<managed-property>
+			<property-name>aliasMap</property-name>
+			<map-entries>
+				<map-entry>
+					<key>RegistryPayMethod_registry_id</key>
+                    <value>id</value>
+				</map-entry>
+			</map-entries>
+		</managed-property>
+	</managed-bean>
+
+	<!-- **** SUPPORT ORDER TARGET RBANK **** -->
+	<managed-bean>
+		<managed-bean-name>supportOrderTargetRbank</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.finance.controller.RegistryBankController
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.finance.RegistryBank</value>
+		</managed-property>
+		<managed-property>
+			<property-name>cascadeDelete</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>masterControllerName</property-name>
+			<value>supportOrderTarget</value>
+		</managed-property>
+		<managed-property>
+			<property-name>propertyMap</property-name>
+			<map-entries>
+				<map-entry>
+					<key>id</key>
+					<value>registry.id</value>
+				</map-entry>
+			</map-entries>
+		</managed-property>
+		<managed-property>
+			<property-name>listenerClasses</property-name>
+			<list-entries>
+				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+				<value>#{rBankValidatorListener}</value>
+				<value>#{rBankControllerListener}</value>
+			</list-entries>
+		</managed-property>
+	</managed-bean>
+
+	<managed-bean>
+		<managed-bean-name>rBankControllerListener</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.finance.event.RegistryBankControllerListener</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+	</managed-bean>
+
+	<managed-bean>
+		<managed-bean-name>rBankValidatorListener</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.finance.event.RegistryBankValidationListener</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+	</managed-bean>
+
+	<!-- **** SUPPORT ORDER TARGET RPAYMETHOD **** -->
+	<managed-bean>
+		<managed-bean-name>supportOrderTargetRpayMethod</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.finance.controller.RegistryRPayMethodController
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.finance.RegistryPayMethod</value>
+		</managed-property>
+		<managed-property>
+			<property-name>cascadeDelete</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>masterControllerName</property-name>
+			<value>supportOrderTarget</value>
+		</managed-property>
+		<managed-property>
+			<property-name>propertyMap</property-name>
+			<map-entries>
+				<map-entry>
+					<key>id</key>
+					<value>registry.id</value>
+				</map-entry>
+			</map-entries>
+		</managed-property>
+	</managed-bean>
+
+	<!-- **** SUPPORT ORDER TARGET RADDRESS **** -->
+	<managed-bean>
+		<managed-bean-name>supportOrderTargetAddress</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.form.LinesController
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.registry.RegistryAddress</value>
+		</managed-property>
+		<managed-property>
+			<property-name>cascadeDelete</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>masterControllerName</property-name>
+			<value>supportOrderTarget</value>
+		</managed-property>
+		<managed-property>
+			<property-name>propertyMap</property-name>
+			<map-entries>
+				<map-entry>
+					<key>id</key>
+					<value>registry.id</value>
+				</map-entry>
+			</map-entries>
+		</managed-property>
+	</managed-bean>
+
+	<!-- **** SUPPORT ORDER TARGET RMEDIA **** -->
+	<managed-bean>
+		<managed-bean-name>supportOrderTargetMedia</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.form.LinesController
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.registry.RegistryMedia</value>
+		</managed-property>
+		<managed-property>
+			<property-name>cascadeDelete</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>masterControllerName</property-name>
+			<value>supportOrderTarget</value>
+		</managed-property>
+		<managed-property>
+			<property-name>propertyMap</property-name>
+			<map-entries>
+				<map-entry>
+					<key>id</key>
+					<value>registry.id</value>
+				</map-entry>
+			</map-entries>
+		</managed-property>
+	</managed-bean>
+	
+	<!--  **** MAKE COLLECTIONS **** 
+	-->
+	<managed-bean>
+		<managed-bean-name>TASCollections</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.tas.controller.TASCollectionsController</managed-bean-class>
+		<managed-bean-scope>request</managed-bean-scope>
+	</managed-bean>
+	
+	<!--  **** EMPLOYEE COLLECTIONS **** -->
+	<managed-bean>
+		<managed-bean-name>employeeCollections</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.employee.controller.EmployeeCollectionsController</managed-bean-class>
+		<managed-bean-scope>request</managed-bean-scope>
+	</managed-bean>
+	
+	<managed-bean>
+		<managed-bean-name>supportOrderHeaderControllerListener</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.finance.event.HeaderControllerListener</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+		<managed-property>
+			<property-name>table</property-name>
+			<value>SupportOrder</value>
+		</managed-property>
+	</managed-bean>	
+	
+</faces-config>
