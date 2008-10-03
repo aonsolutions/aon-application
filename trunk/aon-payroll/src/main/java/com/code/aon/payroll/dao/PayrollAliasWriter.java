@@ -9,6 +9,8 @@ import com.code.aon.payroll.auxiliares.Colectivos;
 import com.code.aon.payroll.auxiliares.contratos.ContratosInternos;
 import com.code.aon.payroll.cotizacion.Base;
 import com.code.aon.payroll.cotizacion.Bonificacion;
+import com.code.aon.payroll.cotizacion.Epigrafe;
+import com.code.aon.payroll.cotizacion.Linepigr;
 import com.code.aon.payroll.cotizacion.Linbasec;
 import com.code.aon.payroll.cotizacion.Porcentaje;
 import com.code.aon.payroll.cotizacion.PorcentajeMaestro;
@@ -69,7 +71,9 @@ public class PayrollAliasWriter {
 		        Pais.class.getName(),
 		        Comunidad.class.getName(),
 		        Provincia.class.getName(),
-		        Delegacion.class.getName()};
+		        Delegacion.class.getName(),
+		        Epigrafe.class.getName(),
+		        Linepigr.class.getName()};
 		AliasWriter writer = new AliasWriter("com.code.aon.payroll.dao");
 		writer.write(classes, file);
 		System.out.println( file.getAbsolutePath() );
