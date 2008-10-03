@@ -62,7 +62,6 @@
 								aon-table-body aon-table-body-string,
 								aon-table-body aon-table-body-string,
 								aon-table-body aon-table-body-string,
-								aon-table-body aon-table-body-string,
 								aon-table-body aon-table-body-string"
 							rowOnMouseOver="selectRow( this )"
 							rowOnMouseOut="unselectRow( this )" rowOnClick="sendRow( this )">
@@ -95,16 +94,6 @@
 									</h:panelGroup>
 								</f:facet>
 								<h:outputText value="#{to.registry.surname}" />
-								<f:verbatim>&#160;</f:verbatim>
-							</h:column>
-
-							<h:column>
-								<f:facet name="header">
-									<h:panelGroup>
-										<h:outputText value="#{appBundle.aon_customer_alias}" />
-									</h:panelGroup>
-								</f:facet>
-								<h:outputText value="#{to.registry.alias}" />
 								<f:verbatim>&#160;</f:verbatim>
 							</h:column>
 

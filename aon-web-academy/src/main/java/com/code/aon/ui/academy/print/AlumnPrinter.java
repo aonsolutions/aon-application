@@ -64,7 +64,6 @@ public class AlumnPrinter implements ICollectionProvider{
 	
 	@SuppressWarnings("unchecked")
 	protected String obtainPhone(Registry registry) {
-		String phone = "";
 		try {
 			IManagerBean registryMediaBean = BeanManager.getManagerBean(RegistryMedia.class);
 			Criteria criteria = new Criteria();
@@ -72,32 +71,29 @@ public class AlumnPrinter implements ICollectionProvider{
 			criteria.addEqualExpression(registryMediaBean.getFieldName(IRegistryAlias.REGISTRY_MEDIA_MEDIA_TYPE), MediaType.FIXED_PHONE);
 			Iterator iter = registryMediaBean.getList(criteria).iterator();
 			if(iter.hasNext()){
-				RegistryMedia media = (RegistryMedia)iter.next(); 
-				phone += (phone.equals("")?"":" | ") + media.getValue();
+				return ((RegistryMedia)iter.next()).getValue();
 			}
 		} catch (ManagerBeanException e) {
 			LOGGER.log(Level.SEVERE, "Error obtaining phone of alumn with id= " + registry.getId(), e);
 		}
-		return phone;
+		return null;
 	}
 	
 	@SuppressWarnings("unchecked")
 	protected String obtainCellular(Registry registry) {
-		String cellular = "";
 		try {
 			IManagerBean registryMediaBean = BeanManager.getManagerBean(RegistryMedia.class);
 			Criteria criteria = new Criteria();
 			criteria.addEqualExpression(registryMediaBean.getFieldName(IRegistryAlias.REGISTRY_MEDIA_REGISTRY_ID), registry.getId());
 			criteria.addEqualExpression(registryMediaBean.getFieldName(IRegistryAlias.REGISTRY_MEDIA_MEDIA_TYPE), MediaType.CELLULAR);
 			Iterator iter = registryMediaBean.getList(criteria).iterator();
-			while(iter.hasNext()){
-				RegistryMedia media = (RegistryMedia)iter.next();
-				cellular += (cellular.equals("")?"":" | ") + media.getValue();
+			if(iter.hasNext()){
+				return ((RegistryMedia)iter.next()).getValue();
 			}
 		} catch (ManagerBeanException e) {
 			LOGGER.log(Level.SEVERE, "Error obtaining cellular of alumn with id= " + registry.getId(), e);
 		}
-		return cellular;
+		return null;
 	}
 	
 	@SuppressWarnings("unchecked")
