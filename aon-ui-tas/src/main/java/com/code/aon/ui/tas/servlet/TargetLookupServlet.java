@@ -93,31 +93,6 @@ public class TargetLookupServlet extends HttpServlet {
 	 */
 	private static final String IDS_PARAMETER = "ids";	
 
-	/**
-	 * Alias for the address of the target
-	 */
-	private static final String ADDRESS = "RegistryAddress_address";
-	/**
-	 * Alias for the address2 of the target
-	 */
-	private static final String ADDRESS2 = "RegistryAddress_address2";
-	/**
-	 * Alias for the address3 of the target
-	 */
-	private static final String ADDRESS3 = "RegistryAddress_address3";
-	/**
-	 * Alias for the city of the target
-	 */
-	private static final String CITY = "RegistryAddress_city";
-	/**
-	 * Alias for the zip of the target
-	 */
-	private static final String ZIP = "RegistryAddress_zip";
-	/**
-	 * Alias for the geozone of the target
-	 */
-	private static final String GEOZONE = "Geozone_id";
-
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -197,7 +172,7 @@ public class TargetLookupServlet extends HttpServlet {
 	 * @param map the map
      * @see com.code.aon.ui.common.lookup.LookupServlet#customizeLookupMap(com.code.aon.common.ILookupObject, java.util.Map)
      */
-	@SuppressWarnings("unused")
+	@SuppressWarnings({"unused","unchecked"})
 	protected void customizeLookupMap(ILookupObject ito, Map<String, Object> map) {
 		try {
 			// BUSCAR LOS TELEFONOS
@@ -222,33 +197,7 @@ public class TargetLookupServlet extends HttpServlet {
 			} else {
 				map.put(PHONE, "");
 				map.put(CELLULAR, "");
-				map.put(FAX, "");
-				map.put(EMAIL, "");
 			}
-			// BUSCAR LAS DIRECCIONES
-			IManagerBean rAddressBean = BeanManager.getManagerBean(RegistryAddress.class);
-			Criteria criteriaAddress = new Criteria();
-			criteriaAddress.addEqualExpression(rAddressBean.getFieldName(IRegistryAlias.REGISTRY_ADDRESS_REGISTRY_ID),map.get("Target_registry_id"));
-			criteriaAddress.addEqualExpression(rAddressBean.getFieldName(IRegistryAlias.REGISTRY_ADDRESS_ADDRESS_TYPE),AddressType.MAIN);
-			Iterator iterAddress = rAddressBean.getList(criteria).iterator();
-
-			if (iterAddress.hasNext()) {
-				RegistryAddress raddress = (RegistryAddress)iterAddress.next();
-				map.put(ADDRESS, raddress.getAddress());
-				map.put(ADDRESS2, raddress.getAddress2());
-				map.put(ADDRESS3, raddress.getAddress3());
-				map.put(CITY, raddress.getCity());
-				map.put(ZIP, raddress.getZip());
-				map.put(GEOZONE, raddress.getGeozone().getId());
-			} else {
-				map.put(ADDRESS, "");
-				map.put(ADDRESS2, "");
-				map.put(ADDRESS3, "");
-				map.put(CITY, "");
-				map.put(ZIP, "");
-				map.put(GEOZONE, "");
-			}
-
 		} catch (ManagerBeanException e) {
 			LOGGER.log(Level.SEVERE, "Error customizing lookup map", e);
 		}

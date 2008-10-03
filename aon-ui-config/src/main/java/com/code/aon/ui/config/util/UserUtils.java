@@ -11,42 +11,70 @@ import javax.faces.context.FacesContext;
 
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
+import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
-import com.code.aon.jaas.auth.AuthPrincipal;
-import com.code.aon.ql.Criteria;
-import com.code.aon.ql.ast.Expression;
-import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.config.Scope;
 import com.code.aon.config.User;
 import com.code.aon.config.UserScope;
 import com.code.aon.config.UserWorkGroup;
 import com.code.aon.config.dao.IConfigAlias;
+import com.code.aon.jaas.auth.AuthPrincipal;
+import com.code.aon.ql.Criteria;
+import com.code.aon.ql.ast.Expression;
+import com.code.aon.ql.util.ExpressionUtilities;
+import com.code.aon.ui.config.controller.ConfigConstants;
+import com.code.aon.ui.util.AonUtil;
 
 public class UserUtils {
 	
 	private static final Logger LOGGER = Logger.getLogger(UserUtils.class.getName());
+	
+	private AuthPrincipal principal;
+	
+	private User loggedUser;
+	
+	public UserUtils() {
+		this.principal = resolvePrincipal();
+		this.loggedUser = resolveUser();
+	}
+	
+	public AuthPrincipal getPrincipal() {
+		return principal;
+	}
 
-	@SuppressWarnings("unchecked")
-	public static User getLoggedUser(){
+	public User getLoggedUser() {
+		return loggedUser;
+	}
+
+	private AuthPrincipal resolvePrincipal() {
+		AuthPrincipal user = null;
+		Principal principal = FacesContext.getCurrentInstance().getExternalContext().getUserPrincipal();
+		if ( principal instanceof AuthPrincipal ) {
+			user = (AuthPrincipal) principal;
+		} else {
+			user = new AuthPrincipal( principal.getName() );
+		}
+		return user;
+	}
+	
+	private User resolveUser() {
 		try {
-			String name = null;
-            Principal principal = FacesContext.getCurrentInstance().getExternalContext().getUserPrincipal();
-    		if ( principal != null && principal instanceof AuthPrincipal ) {
-    			name = ( (AuthPrincipal) principal ).getShortName(); 
-    		} else if ( principal != null ) {
-    			name = new AuthPrincipal( principal.getName() ).getShortName(); 
-    		}
             IManagerBean bean = BeanManager.getManagerBean(User.class);
             Criteria criteria = new Criteria();
-            criteria.addEqualExpression( bean.getFieldName(IConfigAlias.USER_LOGIN), name );
-            Iterator iterator = bean.getList(criteria).iterator();
-            if (iterator.hasNext()) {
-                return ((User)iterator.next());
+            criteria.addEqualExpression( bean.getFieldName(IConfigAlias.USER_LOGIN), getPrincipal().getShortName() );
+            List<ITransferObject> list = bean.getList(criteria);
+            if ( (list!=null) && (list.size() == 1) ) {
+                return (User) list.get(0);
             }
         } catch (ManagerBeanException e) {
-        	LOGGER.log(Level.SEVERE, "Error obtaining the USER related with the logged in user", e);
+        	LOGGER.log(Level.SEVERE, "Error obtaining the USER related with the logged user: " + getPrincipal(), e);
         }
-        return null;
+        return null;		
+	}
+
+	public static UserUtils getInstance() {
+		UserUtils bean = (UserUtils) AonUtil.getRegisteredBean(ConfigConstants.USER_UTILS);
+		return bean;
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -68,19 +96,18 @@ public class UserUtils {
     }
 	
 	@SuppressWarnings("unchecked")
-	public static List<Scope> getCurrentUserScopes(){
+	public List<Scope> getCurrentUserScopes(){
 		List<Scope> scopes = new LinkedList<Scope>();
-		User user = UserUtils.getLoggedUser();
 		try {
 			IManagerBean userScopeBean = BeanManager.getManagerBean(UserScope.class);
 			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(userScopeBean.getFieldName(IConfigAlias.USER_SCOPE_USER_ID), user.getId());
+			criteria.addEqualExpression(userScopeBean.getFieldName(IConfigAlias.USER_SCOPE_USER_ID), getLoggedUser().getId());
 			Iterator iter = userScopeBean.getList(criteria).iterator();
 			while(iter.hasNext()){
 				scopes.add(((UserScope)iter.next()).getScope());
 			}
 		} catch (ManagerBeanException e) {
-			LOGGER.log(Level.SEVERE, "Error scopes related with the user" + user.getLogin(), e);
+			LOGGER.log(Level.SEVERE, "Error scopes related with the user" + getLoggedUser().getLogin(), e);
 		}
 		return scopes;
 	}

@@ -27,7 +27,23 @@ public class ItemRetentionListener extends ControllerAdapter {
 			}
 		}
 	}
-	
+
+	@Override
+	public void afterBeanAdded(ControllerEvent event) throws ControllerListenerException {
+		Item item = (Item)event.getController().getTo();
+		if(item.getProduct().getRetention() == null){
+			item.getProduct().setRetention(new Tax());
+		}
+	}
+
+	@Override
+	public void afterBeanUpdated(ControllerEvent event) throws ControllerListenerException {
+		Item item = (Item)event.getController().getTo();
+		if(item.getProduct().getRetention() == null){
+			item.getProduct().setRetention(new Tax());
+		}
+	}
+
 	@Override
 	public void afterBeanSelected(ControllerEvent event) throws ControllerListenerException {
 		Item item = (Item)event.getController().getTo();

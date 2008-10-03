@@ -1,10 +1,7 @@
 package com.code.aon.ui.config.event;
 
-import java.security.Principal;
 import java.util.Iterator;
 import java.util.List;
-
-import javax.faces.context.FacesContext;
 
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
@@ -12,11 +9,11 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.config.User;
 import com.code.aon.config.UserScope;
 import com.code.aon.config.dao.IConfigAlias;
-import com.code.aon.jaas.auth.AuthPrincipal;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.ast.Expression;
 import com.code.aon.ql.util.ExpressionException;
 import com.code.aon.ql.util.ExpressionUtilities;
+import com.code.aon.ui.config.util.UserUtils;
 import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
@@ -37,7 +34,7 @@ public class ScopeFilterListener extends ControllerAdapter {
 	@SuppressWarnings("unchecked")
 	public void beforeModelInitialized(ControllerEvent event) throws ControllerListenerException {
 		try {
-			User user = obtainLoggedUser();
+			User user = UserUtils.getInstance().getLoggedUser();
 			Expression exp = null;
 			if (user != null) {
 				Iterator iter = obtainUserScopeList(user).iterator();
@@ -57,25 +54,6 @@ public class ScopeFilterListener extends ControllerAdapter {
 		} catch (ExpressionException e) {
 			throw new ControllerListenerException("Error adding scopeFilter",e);
 		}
-	}
-
-	@SuppressWarnings("unchecked")
-	private User obtainLoggedUser() throws ManagerBeanException {
-		String name = null;
-		Principal principal = FacesContext.getCurrentInstance().getExternalContext().getUserPrincipal();
-		if (principal != null && principal instanceof AuthPrincipal) {
-			name = ((AuthPrincipal) principal).getShortName();
-		} else if (principal != null) {
-			name = new AuthPrincipal(principal.getName()).getShortName();
-		}
-		IManagerBean bean = BeanManager.getManagerBean(User.class);
-		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(bean.getFieldName(IConfigAlias.USER_LOGIN), name);
-		Iterator iterator = bean.getList(criteria).iterator();
-		if (iterator.hasNext()) {
-			return ((User) iterator.next());
-		}
-		return null;
 	}
 
 	@SuppressWarnings("unchecked")

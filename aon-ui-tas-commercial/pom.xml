@@ -10,38 +10,38 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.code.aon</groupId>
 	<artifactId>aon.ui.tas.commercial</artifactId>
-	<version>2.0.3</version>
+	<version>2.0.9</version>
 	<description>AON UI TAS COMMERCIAL</description>
 	<name>AON UI TAS COMMERCIAL</name>
 	<dependencies>
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.form</artifactId>
-			<version>2.0.0</version>
+			<version>2.4.0</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.commercial</artifactId>
-			<version>2.0.2</version>
+			<version>2.1.4</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.tas</artifactId>
-			<version>2.0.2</version>
+			<version>2.1.5</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.tas.commercial</artifactId>
-			<version>2.0.2</version>
+			<version>2.0.8</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.commercial</artifactId>
-			<version>2.0.4</version>
+			<version>2.0.10</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
