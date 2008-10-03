@@ -77,7 +77,7 @@ public class CommunicationCenterController {
 	
 	private boolean targetSelected;
 	
-	private boolean actionSelected;
+	private boolean nextTargetRendered;
 	
 	public CommunicationCenterController() {
 		this.date = new Date();
@@ -98,7 +98,7 @@ public class CommunicationCenterController {
 
 	public void setAction(Action action) {
 		this.action = ( action != null ) ? action : new Action();
-		this.actionSelected = (this.action.getId() != null);
+		this.nextTargetRendered = (this.action.getId() != null);
 	}
 
 	public Survey getSurvey() {
@@ -130,8 +130,12 @@ public class CommunicationCenterController {
 		return targetSelected;
 	}
 
-	public boolean isActionSelected() {
-		return actionSelected;
+	public boolean isNextTargetRendered() {
+		return nextTargetRendered;
+	}
+
+	public void setNextTargetRendered(boolean nextTargetRendered) {
+		this.nextTargetRendered = nextTargetRendered;
 	}
 
 	public boolean isRenderTargetAlias() {
@@ -223,6 +227,9 @@ public class CommunicationCenterController {
 
 	public void onStartSurveyResponse( ActionEvent event ) throws ManagerBeanException {
 		this.surveyResponse = new SurveyResponse();
+		if ( this.action.getId() != null ) {
+			this.surveyResponse.setAction( this.action );
+		}
 		this.surveyResponse.setSurvey( this.survey );
 		this.surveyResponse.setTarget( this.target );
 		this.surveyResponse.setCreationDate( new Date() );
@@ -241,6 +248,7 @@ public class CommunicationCenterController {
 
 	public void onFinishSurveyResponse( ActionEvent event ) throws ManagerBeanException {
 		saveResponse();
+		finishActionTarget();
 		onInitSurveyResponse(event);
 	}
 
@@ -252,6 +260,15 @@ public class CommunicationCenterController {
 		}
 	}
 
+	private void finishActionTarget() throws ManagerBeanException {
+		if ( this.actionTarget != null ) {
+			this.actionTarget.setSurveyResponse(this.surveyResponse);
+			this.actionTarget.setStatus(ActionTargetStatus.FINISHED);
+			IManagerBean bean = BeanManager.getManagerBean(ActionTarget.class);
+			bean.update(this.actionTarget);
+		}
+	}
+	
 	private void updateTargetProfile() throws ManagerBeanException {
 		IManagerBean bean = BeanManager.getManagerBean(TargetProfile.class);
 		Criteria criteria = new Criteria();
@@ -388,9 +405,15 @@ public class CommunicationCenterController {
 			setTarget( this.actionTarget.getTarget() );
 			initTarget(this.target); 
 		} else {
-			this.actionTarget = null;
+			setActionTarget( null );
 			setTarget( null );
 		}
+	}
+	
+	public void onUpdateActionTarget( ActionEvent event ) throws ManagerBeanException {
+		IManagerBean bean = BeanManager.getManagerBean(ActionTarget.class);
+		bean.update(this.actionTarget);
+		setTarget( null );
 	}
 	
 }
