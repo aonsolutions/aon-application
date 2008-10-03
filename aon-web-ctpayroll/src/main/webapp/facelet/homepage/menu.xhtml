@@ -163,8 +163,18 @@
 						<aon:actionListener method="#{porcentajeMaestro.onSelectFirst}" />
 					</aon:menuItem>
 					<aon:menuItem value="#{menuBundle.auxiliares_cotizacion__cotizaciones}" disabled="true" />
-					<aon:menuItem value="#{menuBundle.auxiliares_cotizacion__elemcotizacion}" disabled="true" />
-					<aon:menuItem value="#{menuBundle.auxiliares_cotizacion__ocupacion}" disabled="true" />
+					<aon:menuItem value="#{menuBundle.auxiliares_cotizacion__elemcotizacion}"  
+							action="cotizacion_elemento"  >
+						<aon:actionListener method="#{elementoMaestro.onEditSearch}" />
+						<aon:actionListener method="#{elementoMaestro.onSearch}" />
+						<aon:actionListener method="#{elementoMaestro.onSelectFirst}" />
+					</aon:menuItem>
+					<aon:menuItem value="#{menuBundle.auxiliares_cotizacion__ocupacion}"  
+							action="cotizacion_ocupacion"  >
+						<aon:actionListener method="#{ocupacionMaestro.onEditSearch}" />
+						<aon:actionListener method="#{ocupacionMaestro.onSearch}" />
+						<aon:actionListener method="#{ocupacionMaestro.onSelectFirst}" />
+					</aon:menuItem>
 					<aon:menuItem value="#{menuBundle.auxiliares_cotizacion__cnae}" disabled="true" />
 					<aon:menuItem value="#{menuBundle.auxiliares_cotizacion__tipboni}" 
 						action="cotizacion_bonificacion" />
