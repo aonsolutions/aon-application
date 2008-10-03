@@ -36,7 +36,17 @@
 		<mapping class="com.code.aon.payroll.cotizacion.PorcentajeMaestro"/>			
 		<mapping class="com.code.aon.payroll.cotizacion.Porcentaje"/>
 		<mapping class="com.code.aon.payroll.cotizacion.Bonificacion"/>	
-		
+	  	<mapping class="com.code.aon.payroll.cotizacion.Base"/>
+		<mapping class="com.code.aon.payroll.cotizacion.Linbasec"/>	
+	    <mapping class="com.code.aon.payroll.cotizacion.Epigrafe"/>
+		<mapping class="com.code.aon.payroll.cotizacion.Linepigr"/>	
+					
+	
+		  <!-- ORGANISMOS Y ENTIDADES-->		
+	    <mapping class="com.code.aon.payroll.organismosyentidades.Delegacion"/>		
+		<mapping class="com.code.aon.payroll.organismosyentidades.Pais"/>
+		<mapping class="com.code.aon.payroll.organismosyentidades.Provincia"/>		
+		<mapping class="com.code.aon.payroll.organismosyentidades.Comunidad"/>
 		<!-- CONTRATOS -->		
 		<mapping class="com.code.aon.payroll.auxiliares.contratos.ContratosInternos"/>
 		<mapping class="com.code.aon.payroll.auxiliares.contratos.ContratosTc2"/>	
