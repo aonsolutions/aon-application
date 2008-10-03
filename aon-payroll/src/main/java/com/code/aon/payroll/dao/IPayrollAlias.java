@@ -9,6 +9,8 @@ import com.code.aon.payroll.cotizacion.PorcentajeMaestro;
 import com.code.aon.payroll.cotizacion.Porcentaje;
 import com.code.aon.payroll.cotizacion.ElementoMaestro;
 import com.code.aon.payroll.cotizacion.Elemento;
+import com.code.aon.payroll.cotizacion.OcupacionMaestro;
+import com.code.aon.payroll.cotizacion.Ocupacion;
 import com.code.aon.payroll.tipos.Documento;
 import com.code.aon.payroll.tipos.Autorizacion;
 import com.code.aon.payroll.cotizacion.Base;
@@ -32,6 +34,8 @@ import com.code.aon.payroll.irpfforal.MinoracionesNavarra;
 import com.code.aon.payroll.auxiliares.Admon;
 import com.code.aon.payroll.auxiliares.Colectivos;
 import com.code.aon.payroll.irpf.Exclusion;
+import com.code.aon.payroll.cotizacion.Epigrafe;
+import com.code.aon.payroll.cotizacion.Linepigr;
 
 /** 
 * Interface for holding entity properties constants.
@@ -320,6 +324,80 @@ public interface IPayrollAlias {
 	* Hibernate value: Elemento.id.fecini
 	*/
 	String  ELEMENTO_ID_FECINI = ELEMENTO_ENTRY.getAliasNames()[5];
+
+
+
+	/** 
+	* DAOConstantsEntry for OcupacionMaestro entity.
+	*/ 
+	DAOConstantsEntry OCUPACION_MAESTRO_ENTRY = DAOConstants.getDAOConstant(OcupacionMaestro.class);
+
+	/** 
+	* Alias value: OcupacionMaestro_cdg
+	* Hibernate value: OcupacionMaestro.cdg
+	*/
+	String  OCUPACION_MAESTRO_CDG = OCUPACION_MAESTRO_ENTRY.getAliasNames()[0];
+
+	/** 
+	* Alias value: OcupacionMaestro_description
+	* Hibernate value: OcupacionMaestro.description
+	*/
+	String  OCUPACION_MAESTRO_DESCRIPTION = OCUPACION_MAESTRO_ENTRY.getAliasNames()[1];
+
+	/** 
+	* Alias value: OcupacionMaestro_exclusivo
+	* Hibernate value: OcupacionMaestro.exclusivo
+	*/
+	String  OCUPACION_MAESTRO_EXCLUSIVO = OCUPACION_MAESTRO_ENTRY.getAliasNames()[2];
+
+
+
+	/** 
+	* DAOConstantsEntry for Ocupacion entity.
+	*/ 
+	DAOConstantsEntry OCUPACION_ENTRY = DAOConstants.getDAOConstant(Ocupacion.class);
+
+	/** 
+	* Alias value: Ocupacion_fecfin
+	* Hibernate value: Ocupacion.fecfin
+	*/
+	String  OCUPACION_FECFIN = OCUPACION_ENTRY.getAliasNames()[0];
+
+	/** 
+	* Alias value: Ocupacion_id_cdg
+	* Hibernate value: Ocupacion.id.cdg
+	*/
+	String  OCUPACION_ID_CDG = OCUPACION_ENTRY.getAliasNames()[1];
+
+	/** 
+	* Alias value: Ocupacion_id_fecini
+	* Hibernate value: Ocupacion.id.fecini
+	*/
+	String  OCUPACION_ID_FECINI = OCUPACION_ENTRY.getAliasNames()[2];
+
+	/** 
+	* Alias value: Ocupacion_ocupacionMaestro_cdg
+	* Hibernate value: Ocupacion.ocupacionMaestro.cdg
+	*/
+	String  OCUPACION_OCUPACION_MAESTRO_CDG = OCUPACION_ENTRY.getAliasNames()[3];
+
+	/** 
+	* Alias value: Ocupacion_pctims
+	* Hibernate value: Ocupacion.pctims
+	*/
+	String  OCUPACION_PCTIMS = OCUPACION_ENTRY.getAliasNames()[4];
+
+	/** 
+	* Alias value: Ocupacion_pctit
+	* Hibernate value: Ocupacion.pctit
+	*/
+	String  OCUPACION_PCTIT = OCUPACION_ENTRY.getAliasNames()[5];
+
+	/** 
+	* Alias value: Ocupacion_pcttotal
+	* Hibernate value: Ocupacion.pcttotal
+	*/
+	String  OCUPACION_PCTTOTAL = OCUPACION_ENTRY.getAliasNames()[6];
 
 
 
@@ -1315,6 +1393,80 @@ public interface IPayrollAlias {
 	* Hibernate value: Exclusion.importe
 	*/
 	String  EXCLUSION_IMPORTE = EXCLUSION_ENTRY.getAliasNames()[4];
+
+
+
+	/** 
+	* DAOConstantsEntry for Epigrafe entity.
+	*/ 
+	DAOConstantsEntry EPIGRAFE_ENTRY = DAOConstants.getDAOConstant(Epigrafe.class);
+
+	/** 
+	* Alias value: Epigrafe_cdg
+	* Hibernate value: Epigrafe.cdg
+	*/
+	String  EPIGRAFE_CDG = EPIGRAFE_ENTRY.getAliasNames()[0];
+
+	/** 
+	* Alias value: Epigrafe_descripcion
+	* Hibernate value: Epigrafe.descripcion
+	*/
+	String  EPIGRAFE_DESCRIPCION = EPIGRAFE_ENTRY.getAliasNames()[1];
+
+
+
+	/** 
+	* DAOConstantsEntry for Linepigr entity.
+	*/ 
+	DAOConstantsEntry LINEPIGR_ENTRY = DAOConstants.getDAOConstant(Linepigr.class);
+
+	/** 
+	* Alias value: Linepigr_canipm
+	* Hibernate value: Linepigr.canipm
+	*/
+	String  LINEPIGR_CANIPM = LINEPIGR_ENTRY.getAliasNames()[0];
+
+	/** 
+	* Alias value: Linepigr_canit
+	* Hibernate value: Linepigr.canit
+	*/
+	String  LINEPIGR_CANIT = LINEPIGR_ENTRY.getAliasNames()[1];
+
+	/** 
+	* Alias value: Linepigr_epigrafe_cdg
+	* Hibernate value: Linepigr.epigrafe.cdg
+	*/
+	String  LINEPIGR_EPIGRAFE_CDG = LINEPIGR_ENTRY.getAliasNames()[2];
+
+	/** 
+	* Alias value: Linepigr_fecfin
+	* Hibernate value: Linepigr.fecfin
+	*/
+	String  LINEPIGR_FECFIN = LINEPIGR_ENTRY.getAliasNames()[3];
+
+	/** 
+	* Alias value: Linepigr_id_cdg
+	* Hibernate value: Linepigr.id.cdg
+	*/
+	String  LINEPIGR_ID_CDG = LINEPIGR_ENTRY.getAliasNames()[4];
+
+	/** 
+	* Alias value: Linepigr_id_fecini
+	* Hibernate value: Linepigr.id.fecini
+	*/
+	String  LINEPIGR_ID_FECINI = LINEPIGR_ENTRY.getAliasNames()[5];
+
+	/** 
+	* Alias value: Linepigr_indipm
+	* Hibernate value: Linepigr.indipm
+	*/
+	String  LINEPIGR_INDIPM = LINEPIGR_ENTRY.getAliasNames()[6];
+
+	/** 
+	* Alias value: Linepigr_indit
+	* Hibernate value: Linepigr.indit
+	*/
+	String  LINEPIGR_INDIT = LINEPIGR_ENTRY.getAliasNames()[7];
 
 
 }
