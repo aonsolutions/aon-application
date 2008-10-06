@@ -17,8 +17,16 @@
 		
 			<aon:div styleClass="aon-finding-title-toolbar">
 				<aon:panelGrid id="buttonsGrid" columns="3" dir="true" 
-					columnClasses="aon-finding-toolbar">				
+					columnClasses="aon-finding-title,aon-finding-subtitle,aon-finding-toolbar">
 				
+					<aon:div styleClass="aon-finding-title-internal">
+						<aon:outputText value="HIRU"/>	  						
+					</aon:div>					
+
+					<aon:div styleClass="aon-finding-subtitle-internal">
+						<aon:outputText value="#{bundle.aon_editing}" />
+					</aon:div>
+					
 					<!-- start toolbar navigation -->
 					<aon:div styleClass="aon-finding-toolbar-item-group">
 						<aon:commandButton id="generate"

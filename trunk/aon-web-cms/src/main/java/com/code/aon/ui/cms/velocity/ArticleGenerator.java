@@ -197,7 +197,7 @@ public class ArticleGenerator extends Generator {
 					}
 					ahlist = null;
 					if (emptyCategory){
-						VelocityUtil.addMessage("La categoria de articulos " + articleCategory.getAlias() + " no tiene articulos.", VelocityUtil.WARN);
+						VelocityUtil.addMessage("La categoria de articulos " + articleCategory.getAlias() + " no tiene " + articleType.getName() + ".", VelocityUtil.WARN);
 					}
 				}
 				vu.finalize();

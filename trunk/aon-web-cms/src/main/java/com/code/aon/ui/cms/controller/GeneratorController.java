@@ -155,6 +155,20 @@ public class GeneratorController extends BasicController implements Constants {
 		finalizeGenerator();
 	}
 	
+	public void onGenerateArticles(ActionEvent event) throws ManagerBeanException, ExpressionException {
+		initGenerator();
+		ArticleGenerator.generate(ArticleType.NEWS);
+		System.gc();
+		ArticleGenerator.generate(ArticleType.SERVICES);
+		System.gc();
+		ArticleGenerator.generate(ArticleType.EVENTS);
+		System.gc();
+		ArticleGenerator.generate(ArticleType.OTHER);
+		System.gc();
+		ArticleCalendarGenerator.generate();
+		finalizeGenerator();
+	}
+
 	public void onGenerateCurrentArticle(ActionEvent event) throws ManagerBeanException, ExpressionException {
 		initGenerator();
 		ArticleController controller = (ArticleController)AonUtil.getRegisteredBean("article");
@@ -172,6 +186,12 @@ public class GeneratorController extends BasicController implements Constants {
 		finalizeGenerator();
 	}
 
+	public void onGenerateModular(ActionEvent event) throws ManagerBeanException, ExpressionException {
+		initGenerator();
+		ModularPageGenerator.generate();
+		finalizeGenerator();
+	}
+
 	public void onGenerateCurrentModular(ActionEvent event) throws ManagerBeanException, ExpressionException {
 		initGenerator();
 		ModularPageController controller = (ModularPageController)AonUtil.getRegisteredBean("modular_page");
@@ -179,6 +199,12 @@ public class GeneratorController extends BasicController implements Constants {
 		finalizeGenerator();
 	}
 
+	public void onGenerateGenericPages(ActionEvent event) throws ManagerBeanException, ExpressionException {
+		initGenerator();
+		GenericGenerator.generate();
+		finalizeGenerator();
+	}
+	
 	public void onGenerateCurrentGenericPage(ActionEvent event) throws ManagerBeanException, ExpressionException {
 		initGenerator();
 		GenericPageController controller = (GenericPageController)AonUtil.getRegisteredBean("generic_page");
@@ -186,10 +212,22 @@ public class GeneratorController extends BasicController implements Constants {
 		finalizeGenerator();
 	}
 	
+	public void onGenerateLinks(ActionEvent event) throws ManagerBeanException, ExpressionException {
+		initGenerator();
+		LinkGenerator.generate();
+		finalizeGenerator();
+	}
+
 	public void onGenerateCurrentLinkCategory(ActionEvent event) throws ManagerBeanException, ExpressionException {
 		initGenerator();
 		LinkCategoryController controller = (LinkCategoryController)AonUtil.getRegisteredBean("link_category");
 		LinkGenerator.generate((LinkCategory) controller.getTo());
+		finalizeGenerator();
+	}
+
+	public void onGenerateFaqs(ActionEvent event) throws ManagerBeanException, ExpressionException {
+		initGenerator();
+		FaqGenerator.generate();
 		finalizeGenerator();
 	}
 
@@ -200,6 +238,12 @@ public class GeneratorController extends BasicController implements Constants {
 		finalizeGenerator();
 	}
 
+	public void onGenerateDownloads(ActionEvent event) throws ManagerBeanException, ExpressionException {
+		initGenerator();
+		DownloadsGenerator.generate();
+		finalizeGenerator();
+	}
+	
 	public void onGenerateCurrentDownloadCategory(ActionEvent event) throws ManagerBeanException, ExpressionException {
 		initGenerator();
 		DownloadCategoryController controller = (DownloadCategoryController)AonUtil.getRegisteredBean("download_category");
@@ -207,10 +251,22 @@ public class GeneratorController extends BasicController implements Constants {
 		finalizeGenerator();
 	}
 
+	public void onGenerateAlbums(ActionEvent event) throws ManagerBeanException, ExpressionException {
+		initGenerator();
+		AlbumGenerator.generate();
+		finalizeGenerator();
+	}
+		
 	public void onGenerateCurrentAlbumCategory(ActionEvent event) throws ManagerBeanException, ExpressionException {
 		initGenerator();
 		AlbumCategoryController controller = (AlbumCategoryController)AonUtil.getRegisteredBean("album_category");
 		AlbumGenerator.generate((AlbumCategory) controller.getTo());
+		finalizeGenerator();
+	}
+
+	public void onGenerateDirectAccess(ActionEvent event) throws ManagerBeanException, ExpressionException {
+		initGenerator();
+		DirectAccessGenerator.generate();
 		finalizeGenerator();
 	}
 
@@ -221,7 +277,26 @@ public class GeneratorController extends BasicController implements Constants {
 		finalizeGenerator();
 	}
 
+	public void onGenerateProducts(ActionEvent event) throws ManagerBeanException, ExpressionException {
+		initGenerator();
+		ProductGenerator.generate();
+		finalizeGenerator();
+	}
+
+	public void onGenerateSports(ActionEvent event) throws ManagerBeanException, ExpressionException {
+		initGenerator();
+		SportGenerator.generate();
+		finalizeGenerator();
+	}
+
+	public void onGenerateHiru(ActionEvent event) throws ManagerBeanException, ExpressionException {
+		initGenerator();
+		HiruGenerator.generate();
+		finalizeGenerator();
+	}
+
 	private void initGenerator(){
+		System.gc();
 		status.onInit(null);
 		//Copy css and js files from current template
 		FileUtil.copyDir(ControllerUtil.getCssTemplatePath(), ControllerUtil.getPreviewPath());
@@ -233,6 +308,7 @@ public class GeneratorController extends BasicController implements Constants {
 	private void finalizeGenerator(){
 		status.addMessage("¡¡¡¡¡ YOUR WEB IS DONE !!!!! ;-DDDD");
 		status.finalized();
+		System.gc();
 	}
 
 	private boolean isModularPageToGenerate = true;

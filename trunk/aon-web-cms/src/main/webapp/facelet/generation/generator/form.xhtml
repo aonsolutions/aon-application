@@ -17,8 +17,17 @@
 		
 			<aon:div styleClass="aon-finding-title-toolbar">
 				<aon:panelGrid id="buttonsGrid" columns="3" dir="true" 
-					columnClasses="aon-finding-toolbar">				
+					columnClasses="aon-finding-title,aon-finding-subtitle,aon-finding-toolbar">				
 				
+					<aon:div styleClass="aon-finding-title-internal">
+						<aon:outputText value="#{appBundle.aon_generate}"/>	  						
+					</aon:div>					
+					
+					<aon:div styleClass="aon-finding-subtitle-internal">
+						<aon:outputText
+							value="#{appBundle.aon_editing}" />
+					</aon:div>					
+						
 					<!-- start toolbar navigation -->
 					<aon:div styleClass="aon-finding-toolbar-item-group">
 						<aon:commandButton id="generate"
@@ -32,6 +41,7 @@
 								reRender="poll,grid" 
 								onclick="javascript:Richfaces.showModalPanel('gen_log',{width:1000, top:50});" />
 						</aon:commandButton>
+						<!-- 
 						<aon:commandButton id="all"
 							action="generator_form" 
 							value="#{bundle.aon_check_all}"
@@ -42,6 +52,7 @@
 							value="#{bundle.aon_uncheck_all}"
 							styleClass="aon-finding-toolbar-item aon-icon-cancel"
 							actionListener="#{generator.onDeselectAll}" />
+						 -->
 						<!-- 
 						<aon:confirmButton id="publish_no_ok"
 							rendered="#{generator_status.generated and !generator_status.correct}"
@@ -117,6 +128,7 @@
 
 			<aon:div styleClass="aon-scroll-area">
 				<aon:div style="width:99%;">
+				<!-- 
 					<aon:panelGrid columns="5" dir="true" >
 						<aon:panelGrid columns="2" dir="true" >
 
@@ -232,15 +244,6 @@
 
 						<aon:panelGrid columns="2" dir="true" >
 						
-							<aon:outputLabel for="isHiruCourseToGenerate"
-								rendered="#{domainUtils.hiruMenu}"
-								styleClass="aon-form-input-text-label"
-								value="#{appBundle.isHiruCourseToGenerate}" />
-							<aon:div>
-								<aon:selectBooleanCheckbox id="isHiruCourseToGenerate" 
-									value="#{generator.hiruCoursesToGenerate}" />
-							</aon:div>
-							
 							<aon:outputLabel for="isProductsToGenerate"
 								styleClass="aon-form-input-text-label"
 								value="#{appBundle.isProductsToGenerate}" />
@@ -249,17 +252,29 @@
 									value="#{generator.productsToGenerate}" />
 							</aon:div>
 							
+							<aon:outputLabel for="isHiruCourseToGenerate"
+								rendered="#{domainUtils.hiruMenu}"
+								styleClass="aon-form-input-text-label"
+								value="#{appBundle.isHiruCourseToGenerate}" />
+							<aon:div>
+								<aon:selectBooleanCheckbox id="isHiruCourseToGenerate" 
+									rendered="#{domainUtils.hiruMenu}"
+									value="#{generator.hiruCoursesToGenerate}" />
+							</aon:div>
+							
 							<aon:outputLabel for="isSportsToGenerate"
 								rendered="#{domainUtils.sportMenu}"
 								styleClass="aon-form-input-text-label"
 								value="#{appBundle.isSportsToGenerate}" />
 							<aon:div>
 								<aon:selectBooleanCheckbox id="isSportsToGenerate" 
+									rendered="#{domainUtils.sportMenu}"
 									value="#{generator.sportsToGenerate}" />
 							</aon:div>
 							
 						</aon:panelGrid>						
 					</aon:panelGrid>
+				 -->
 				</aon:div>
 			</aon:div>
 			
