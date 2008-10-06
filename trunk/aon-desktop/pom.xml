@@ -11,11 +11,11 @@
 	<groupId>com.code.aon</groupId>
 	<artifactId>aon.desktop</artifactId>
 	<packaging>war</packaging>
-	<version>1.9.0</version>
+	<version>1.9.1</version>
 	<description>AON DESKTOP</description>
 	<name>AON DESKTOP</name>
 	<properties>
-		<dbVersion>1.10.0</dbVersion>
+		<dbVersion>1.10.1</dbVersion>
 	</properties>
 	<build>
 		<finalName>aon-desktop</finalName> 
@@ -36,13 +36,13 @@
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.resources</artifactId>
-			<version>1.6.1</version>
+			<version>1.6.2</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.rich.components</artifactId>
-			<version>1.6.1</version>
+			<version>1.6.2</version>
 			<scope>compile</scope>
 		</dependency>				
 		<dependency>
