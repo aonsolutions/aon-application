@@ -24,9 +24,9 @@ public class CampaignEvolution {
 
 		this.campaign = campaign;
 		this.supplier = supplier;
-		this.campaignTotal = campaignTotal.doubleValue();
+		this.campaignTotal = campaignTotal==null?new Double(0):new Double(campaignTotal.doubleValue());
 		this.invoiceCount = invoiceCount;
-		this.invoice = invoice.doubleValue();
+		this.invoice = invoice==null?new Double(0):new Double(invoice.doubleValue()); 
 	}
 
 	public Campaign getCampaign() {
