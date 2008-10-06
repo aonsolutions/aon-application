@@ -13,7 +13,7 @@ import javax.persistence.Table;
  */
 @Entity
 @Table(name = "question_value")
-public class QuestionValue extends ValueHolder {
+public class QuestionValue extends ValueQuestionHolder {
 
 	private static final long serialVersionUID = -7135601793952520234L;
 	

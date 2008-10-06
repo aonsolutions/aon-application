@@ -3,11 +3,8 @@ package com.code.aon.marketing;
 import java.util.Date;
 
 import javax.persistence.Column;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.MappedSuperclass;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -43,10 +40,6 @@ public abstract class ValueHolder implements ITransferObject {
 	
 	@Column(name = "value_number", precision = 15, scale = 3)
 	private Double number;
-	
-	@ManyToOne (fetch=FetchType.EAGER)
-    @JoinColumn( name="question", nullable = false, updatable = false )	
-	private Question question;
 
     /**
      * The empty constructor.
@@ -154,24 +147,6 @@ public abstract class ValueHolder implements ITransferObject {
 		this.number = b ? 1.0 : 0;
 	}
 
-	/**
-	 * Gets the question.
-	 * 
-	 * @return the question
-	 */
-	public Question getQuestion() {
-		return question;
-	}
-
-	/**
-	 * Sets the question.
-	 * 
-	 * @param application the new question
-	 */
-	public void setQuestion(Question question) {
-		this.question = question;
-	}
-    
 	@Transient
 	public boolean isNotFilled() {
 		return (number == null) && (date == null) && StringUtils.isEmpty(text);

@@ -18,7 +18,7 @@ import org.hibernate.annotations.ForeignKey;
  */
 @Entity
 @Table(name = "survey_response_detail")
-public class SurveyResponseDetail extends ValueHolder {
+public class SurveyResponseDetail extends ValueQuestionHolder {
 
 	private static final long serialVersionUID = -6982817430708927980L;
 
@@ -27,21 +27,6 @@ public class SurveyResponseDetail extends ValueHolder {
 	@ForeignKey(name = "FK_SURVEY_RESPONSE_DETAIL_SURVEY_RESPONSE")
 	private SurveyResponse surveyResponse;
 	
-    /**
-     * The empty constructor.
-     */
-    public SurveyResponseDetail() {
-    }
-
-    /**
-     * The constructor using the id.
-     * 
-     * @param id the id
-     */
-    public SurveyResponseDetail(Integer id) {
-    	super(id);
-    }
-
 	/**
 	 * Gets the survey response.
 	 * 

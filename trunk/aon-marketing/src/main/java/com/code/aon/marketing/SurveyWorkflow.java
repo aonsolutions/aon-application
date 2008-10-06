@@ -1,17 +1,14 @@
 package com.code.aon.marketing;
 
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.ForeignKey;
 
-import com.code.aon.common.ITransferObject;
+import com.code.aon.marketing.enumeration.Operator;
 
 
 /**
@@ -23,14 +20,11 @@ import com.code.aon.common.ITransferObject;
  */
 @Entity
 @Table(name = "survey_workflow")
-public class SurveyWorkflow implements ITransferObject {
+public class SurveyWorkflow extends ValueHolder {
 
 	private static final long serialVersionUID = -6533787102207004333L;
 
-	@Id
-	@GeneratedValue
-	@Column(nullable = false)
-    private Integer id;
+	private Operator operator;
 
 	@ManyToOne (fetch=FetchType.EAGER)
     @JoinColumn( name="questionValue", updatable = false )	
@@ -47,39 +41,6 @@ public class SurveyWorkflow implements ITransferObject {
 	@ForeignKey(name = "FK_SURVERY_WORKFLOW_NEXT_SURVERY_QUESTION")
 	private SurveyQuestion nextSurveyQuestion;
 	
-    /**
-     * The empty constructor.
-     */
-    public SurveyWorkflow() {
-    }
-
-    /**
-     * The constructor using the id.
-     * 
-     * @param id the id
-     */
-    public SurveyWorkflow(Integer id) {
-        this.id = id;
-    }
-
-    /**
-     * Gets the id.
-     * 
-     * @return the id
-     */
-	public Integer getId() {
-        return id;
-    }
-
-    /**
-     * Sets the id.
-     * 
-     * @param id the id
-     */
-    public void setId(Integer id) {
-        this.id = id;
-    }
-
 	/**
 	 * Gets the question value.
 	 * 
