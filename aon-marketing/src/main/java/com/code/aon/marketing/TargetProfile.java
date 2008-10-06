@@ -25,7 +25,7 @@ import com.code.aon.commercial.Target;
  */
 @Entity
 @Table(name = "target_profile")
-public class TargetProfile extends ValueHolder {
+public class TargetProfile extends ValueQuestionHolder {
 
 	private static final long serialVersionUID = -2073655594982258016L;
 	
@@ -38,21 +38,6 @@ public class TargetProfile extends ValueHolder {
 	@Column(name = "last_update", nullable = false)
     private Date lastUpdate;	
 	
-    /**
-     * The empty constructor.
-     */
-    public TargetProfile() {
-    }
-
-    /**
-     * The constructor using the id.
-     * 
-     * @param id the id
-     */
-    public TargetProfile(Integer id) {
-    	super(id);
-    }
-
     /**
      * Gets the last update.
      * 
