@@ -42,13 +42,11 @@
 		<mapping class="com.code.aon.payroll.cotizacion.Linepigr"/>	
 		<mapping class="com.code.aon.payroll.cotizacion.ElementoMaestro"/>			
 		<mapping class="com.code.aon.payroll.cotizacion.Elemento"/>			
-	    		<mapping class="com.code.aon.payroll.cotizacion.OcupacionMaestro"/>			
+	    <mapping class="com.code.aon.payroll.cotizacion.OcupacionMaestro"/>			
 		<mapping class="com.code.aon.payroll.cotizacion.Ocupacion"/>
-				<mapping class="com.code.aon.payroll.cotizacion.CnaeMaestro"/>			
+		<mapping class="com.code.aon.payroll.cotizacion.CnaeMaestro"/>			
 		<mapping class="com.code.aon.payroll.cotizacion.Cnae"/>	 
-	     <!--DIVISAS -->		
-		<mapping class="com.code.aon.payroll.divisa.Divisa"/>			
-		<mapping class="com.code.aon.payroll.divisa.LinDivisa"/>	
+	 
 		
 		  <!-- ORGANISMOS Y ENTIDADES-->		
 	    <mapping class="com.code.aon.payroll.organismosyentidades.Delegacion"/>		
@@ -68,7 +66,10 @@
         <!-- IRPF -->
 		<mapping class="com.code.aon.payroll.irpf.Cuota"/>
 		<mapping class="com.code.aon.payroll.irpf.Exclusion"/>
-        
+		
+          <!--DIVISAS -->		
+		<mapping class="com.code.aon.payroll.divisa.Divisa"/>			
+		<mapping class="com.code.aon.payroll.divisa.LinDivisa"/>	
 		<!-- IRPF FORAL-->		
         <mapping class="com.code.aon.payroll.irpfforal.CuotaRetencionAlava"/>
         <mapping class="com.code.aon.payroll.irpfforal.CuotaRetencionVizcaya"/>	

@@ -22,6 +22,8 @@ import com.code.aon.payroll.cotizacion.Ocupacion;
 import com.code.aon.payroll.cotizacion.OcupacionMaestro;
 import com.code.aon.payroll.cotizacion.Porcentaje;
 import com.code.aon.payroll.cotizacion.PorcentajeMaestro;
+import com.code.aon.payroll.divisa.Divisa;
+import com.code.aon.payroll.divisa.LinDivisa;
 import com.code.aon.payroll.geograficas.Nacion;
 import com.code.aon.payroll.irpf.Cuota;
 import com.code.aon.payroll.irpf.Exclusion;
@@ -33,6 +35,10 @@ import com.code.aon.payroll.irpfforal.MinoracionesAlava;
 import com.code.aon.payroll.irpfforal.MinoracionesGuipuzcoa;
 import com.code.aon.payroll.irpfforal.MinoracionesNavarra;
 import com.code.aon.payroll.irpfforal.MinoracionesVizcaya;
+import com.code.aon.payroll.organismosyentidades.Comunidad;
+import com.code.aon.payroll.organismosyentidades.Delegacion;
+import com.code.aon.payroll.organismosyentidades.Pais;
+import com.code.aon.payroll.organismosyentidades.Provincia;
 import com.code.aon.payroll.tipos.Autorizacion;
 import com.code.aon.payroll.tipos.Documento;
 import com.code.aon.payroll.tipos.Empresario;
@@ -79,9 +85,16 @@ public class PayrollAliasWriter {
 				MinoracionesNavarra.class.getName(),
 				Admon.class.getName(),
 				Colectivos.class.getName(),
-				Exclusion.class.getName(),
-				Epigrafe.class.getName(),
-		        Linepigr.class.getName()};
+				Exclusion.class.getName(), 
+		        Pais.class.getName(),
+		        Comunidad.class.getName(),
+		        Provincia.class.getName(),
+		        Delegacion.class.getName(),
+		        Epigrafe.class.getName(),
+		        Linepigr.class.getName(),
+		        Divisa.class.getName(),
+		        LinDivisa.class.getName()};
+		
 		AliasWriter writer = new AliasWriter("com.code.aon.payroll.dao");
 		writer.write(classes, file);
 		System.out.println( file.getAbsolutePath() );

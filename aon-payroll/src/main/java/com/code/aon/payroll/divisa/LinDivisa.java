@@ -20,6 +20,7 @@ import javax.persistence.TemporalType;
   
 @Entity
 @Table(name="lin_divisa")
+
 public class LinDivisa  implements  ITransferObject {
 
      private LinDivisaId id;

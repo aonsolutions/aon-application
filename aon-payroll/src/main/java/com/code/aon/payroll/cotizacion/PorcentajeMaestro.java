@@ -1,4 +1,4 @@
-package com.code.aon.payroll.cotizacion;
+ package com.code.aon.payroll.cotizacion;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
