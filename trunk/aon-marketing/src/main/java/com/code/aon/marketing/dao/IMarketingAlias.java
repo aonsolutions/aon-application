@@ -366,28 +366,52 @@ public interface IMarketingAlias {
 	DAOConstantsEntry SURVEY_WORKFLOW_ENTRY = DAOConstants.getDAOConstant(SurveyWorkflow.class);
 
 	/** 
+	* Alias value: SurveyWorkflow_date
+	* Hibernate value: SurveyWorkflow.date
+	*/
+	String  SURVEY_WORKFLOW_DATE = SURVEY_WORKFLOW_ENTRY.getAliasNames()[0];
+
+	/** 
 	* Alias value: SurveyWorkflow_id
 	* Hibernate value: SurveyWorkflow.id
 	*/
-	String  SURVEY_WORKFLOW_ID = SURVEY_WORKFLOW_ENTRY.getAliasNames()[0];
+	String  SURVEY_WORKFLOW_ID = SURVEY_WORKFLOW_ENTRY.getAliasNames()[1];
 
 	/** 
 	* Alias value: SurveyWorkflow_nextSurveyQuestion_id
 	* Hibernate value: SurveyWorkflow.nextSurveyQuestion.id
 	*/
-	String  SURVEY_WORKFLOW_NEXT_SURVEY_QUESTION_ID = SURVEY_WORKFLOW_ENTRY.getAliasNames()[1];
+	String  SURVEY_WORKFLOW_NEXT_SURVEY_QUESTION_ID = SURVEY_WORKFLOW_ENTRY.getAliasNames()[2];
+
+	/** 
+	* Alias value: SurveyWorkflow_number
+	* Hibernate value: SurveyWorkflow.number
+	*/
+	String  SURVEY_WORKFLOW_NUMBER = SURVEY_WORKFLOW_ENTRY.getAliasNames()[3];
+
+	/** 
+	* Alias value: SurveyWorkflow_operator
+	* Hibernate value: SurveyWorkflow.operator
+	*/
+	String  SURVEY_WORKFLOW_OPERATOR = SURVEY_WORKFLOW_ENTRY.getAliasNames()[4];
 
 	/** 
 	* Alias value: SurveyWorkflow_questionValue_id
 	* Hibernate value: SurveyWorkflow.questionValue.id
 	*/
-	String  SURVEY_WORKFLOW_QUESTION_VALUE_ID = SURVEY_WORKFLOW_ENTRY.getAliasNames()[2];
+	String  SURVEY_WORKFLOW_QUESTION_VALUE_ID = SURVEY_WORKFLOW_ENTRY.getAliasNames()[5];
 
 	/** 
 	* Alias value: SurveyWorkflow_surveyQuestion_id
 	* Hibernate value: SurveyWorkflow.surveyQuestion.id
 	*/
-	String  SURVEY_WORKFLOW_SURVEY_QUESTION_ID = SURVEY_WORKFLOW_ENTRY.getAliasNames()[3];
+	String  SURVEY_WORKFLOW_SURVEY_QUESTION_ID = SURVEY_WORKFLOW_ENTRY.getAliasNames()[6];
+
+	/** 
+	* Alias value: SurveyWorkflow_text
+	* Hibernate value: SurveyWorkflow.text
+	*/
+	String  SURVEY_WORKFLOW_TEXT = SURVEY_WORKFLOW_ENTRY.getAliasNames()[7];
 
 
 
