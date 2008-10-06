@@ -34,9 +34,9 @@ public class SupplierEvolution {
 		this.supplierStatus = supplierStatus;
 		this.campaignId = campaignId;
 		this.campaignName = campaignName;
-		this.offer = offer.doubleValue();
-		this.invoice = invoice.doubleValue();
-		this.invoiceTotal = invoiceTotal.doubleValue();
+		this.offer = offer==null?new Double(0):new Double(offer.doubleValue()); 
+		this.invoice = invoice==null?new Double(0):new Double(invoice.doubleValue()); 
+		this.invoiceTotal = invoiceTotal==null?new Double(0):new Double(invoiceTotal.doubleValue());
 	}
 
 			
