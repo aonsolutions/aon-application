@@ -15,19 +15,42 @@
 		<aon:form id="list">
 			<aon:div styleClass="aon-finding-title-toolbar">
 				<aon:panelGrid id="buttonsGrid" columns="3" dir="true" 
-					columnClasses="aon-finding-title,aon-finding-toolbar">				
+					columnClasses="aon-finding-title,aon-finding-subtitle,aon-finding-toolbar">
 				
 					<aon:div styleClass="aon-finding-title-internal">
 						<aon:outputText value="#{appBundle.sport_config}"/>	  						
 					</aon:div>					
+
+					<aon:div styleClass="aon-finding-subtitle-internal">
+						<aon:outputText value="#{bundle.aon_editing}" />
+					</aon:div>
 					
 					<!-- start toolbar navigation -->
 					<aon:div styleClass="aon-finding-toolbar-item-group">					
-						<aon:commandButton id="save"
-							value="#{bundle.aon_save}" 
+						<aon:commandButton id="save" value="#{bundle.aon_save}"
 							action="sport_config_form"
-							styleClass="aon-content-toolbar-item aon-icon-accept">
+							styleClass="aon-finding-toolbar-item aon-icon-accept"
+							accesskey="#{bundle.aon_key_save}">
 							<aon:actionListener method="#{generator_config.onSaveSportConfig}" />
+						</aon:commandButton>
+						<aon:commandButton id="generate"
+							value="#{appBundle.aon_generate}" 
+							rendered="#{cms.roleEditor}"
+							styleClass="aon-finding-toolbar-item aon-icon-accept"
+							accesskey="#{bundle.aon_key_save}">
+							<aon:actionListener method="#{generator.onGenerateSports}" />
+							<a4j:support 
+								event="onclick" 
+								actionListener="#{generator_status.onActivePoll}"  
+								reRender="poll,grid" 
+								onclick="javascript:Richfaces.showModalPanel('gen_log',{width:680, top:100});" />
+						</aon:commandButton>	
+						<aon:commandButton id="exit"
+							value="#{bundle.aon_close}"
+							action="home" 
+							immediate="#{true}"
+							styleClass="aon-finding-toolbar-item aon-icon-cancel"
+							accesskey="#{bundle.aon_key_close}">
 						</aon:commandButton>
 				    </aon:div>
 					
@@ -47,6 +70,10 @@
 					
 			</aon:div>
 		</aon:form>
+
+		<ui:include src="/facelet/content/utils/gen_log_modal.xhtml">
+			<ui:param name="modalPanelName" value="gen_log" />
+		</ui:include>
 		
 	</ui:define>
 

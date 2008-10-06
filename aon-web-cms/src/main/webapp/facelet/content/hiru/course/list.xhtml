@@ -35,6 +35,25 @@
 							accesskey="#{bundle.aon_key_new}">
 							<aon:actionListener method="#{hiru_course.onReset}" />
 						</aon:commandButton>
+						<aon:commandButton id="generate"
+							value="#{appBundle.aon_generate}" 
+							rendered="#{cms.roleEditor}"
+							styleClass="aon-finding-toolbar-item aon-icon-accept"
+							accesskey="#{bundle.aon_key_save}">
+							<aon:actionListener method="#{generator.onGenerateHiru}" />
+							<a4j:support 
+								event="onclick" 
+								actionListener="#{generator_status.onActivePoll}"  
+								reRender="poll,grid" 
+								onclick="javascript:Richfaces.showModalPanel('gen_log',{width:680, top:100});" />
+						</aon:commandButton>	
+						<aon:commandButton id="exit"
+							value="#{bundle.aon_close}"
+							action="home" 
+							immediate="#{true}"
+							styleClass="aon-finding-toolbar-item aon-icon-cancel"
+							accesskey="#{bundle.aon_key_close}">
+						</aon:commandButton>
 				    </aon:div>
 					
 					<!-- end toolbar navigation -->
@@ -113,6 +132,10 @@
 					
 				</aon:div>
 		</aon:form>
+
+		<ui:include src="/facelet/content/utils/gen_log_modal.xhtml">
+			<ui:param name="modalPanelName" value="gen_log" />
+		</ui:include>
 		
 	</ui:define>
 
