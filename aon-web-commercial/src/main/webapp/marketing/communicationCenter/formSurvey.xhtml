@@ -21,14 +21,20 @@
 				<ui:define name="toolbarContent">
 					<aon:commandButton id="save" value="#{bundle.aon_save}"
 						action="communicationCenter" actionListener="#{communicationCenter.onUpdateActionTarget}"
-						rendered="#{communicationCenter.targetSelected and (communicationCenter.actionTarget != null)}"
+						rendered="#{communicationCenter.actionSelected}"
 						reRender="CommunicationCenter_target,aonToolbar"
-						styleClass="aon-finding-toolbar-item aon-icon-accept"
+						styleClass="aon-finding-toolbar-item aon-icon-save"
 						accesskey="#{bundle.aon_key_save}" />
 					<aon:commandButton id="accept" value="#{bundle.aon_accept}"
 						action="communicationCenter_response" actionListener="#{communicationCenter.onStartSurveyResponse}"
+						rendered="#{communicationCenter.surveySelected and communicationCenter.targetSelected}"
 						styleClass="aon-finding-toolbar-item aon-icon-accept"
 						accesskey="#{bundle.aon_key_accept}" />				
+					<aon:commandButton id="skip" value="#{marketingBundle.aon_skip}"
+						rendered="#{communicationCenter.actionSelected}"
+						action="communicationCenter" actionListener="#{communicationCenter.onNextTarget}"
+						styleClass="aon-finding-toolbar-item aon-icon-cancel" immediate="true"
+						accesskey="#{bundle.aon_key_cancel}"/>						
 				</ui:define>
 			</ui:decorate>
 
@@ -49,12 +55,12 @@
 					<aon:div styleClass="aon-lookup">
 						<aon:lookupInputText id="CommunicationCenter_action_id"
 							lookup="#{campaignActionLookup}"
-							reRender="CommunicationCenter_action_detail,CommunicationCenter_survey,CommunicationCenter_target_lookup,aonToolbar"
+							reRender="CommunicationCenter_action_detail,CommunicationCenter_survey,CommunicationCenter_target,aonToolbar"
 							value="#{communicationCenter.action.id}" size="5">
 						</aon:lookupInputText>
 						<aon:lookupButton
 							windowTitle="#{marketingBundle.aon_lookup_action}"
-							selectReRender="CommunicationCenter_action_id,CommunicationCenter_action_detail,CommunicationCenter_survey,CommunicationCenter_target_lookup,aonToolbar"
+							selectReRender="CommunicationCenter_action_id,CommunicationCenter_action_detail,CommunicationCenter_survey,CommunicationCenter_target,aonToolbar"
 							lookup="#{campaignActionLookup}" minHeight="440"
 							property="#{communicationCenter.action}">
 						</aon:lookupButton>
@@ -68,12 +74,14 @@
 					<aon:div styleClass="aon-lookup" id="CommunicationCenter_survey">
 						<aon:lookupInputText id="CommunicationCenter_survey_id"
 							lookup="#{surveyLookup}" required="true"
-							reRender="CommunicationCenter_survey_detail"
+							disabled="#{communicationCenter.actionSelected}" 
+							reRender="CommunicationCenter_survey_detail,aonToolbar"
 							value="#{communicationCenter.survey.id}" size="5">
 						</aon:lookupInputText>
 						<aon:lookupButton 
 							windowTitle="#{marketingBundle.aon_lookup_survey}"
-							selectReRender="CommunicationCenter_survey_id,CommunicationCenter_survey_detail"
+							selectReRender="CommunicationCenter_survey_id,CommunicationCenter_survey_detail,aonToolbar"
+							disabled="#{communicationCenter.actionSelected}"
 							lookup="#{surveyLookup}" minHeight="440"
 							property="#{communicationCenter.survey}">
 						</aon:lookupButton>
@@ -88,12 +96,14 @@
 						<aon:div styleClass="aon-lookup" id="CommunicationCenter_target_lookup">
 							<aon:lookupInputText id="CommunicationCenter_target_id"
 								lookup="#{targetLookup}" required="true"
+								disabled="#{communicationCenter.actionSelected}"
 								reRender="CommunicationCenter_target_detail,aonToolbar"
 								value="#{communicationCenter.target.id}" size="5">
 							</aon:lookupInputText>
 							<aon:lookupButton 
 								windowTitle="#{appBundle.aon_lookup_target}" actionType="search"
 								selectReRender="CommunicationCenter_target_id,CommunicationCenter_target_detail,aonToolbar"
+								disabled="#{communicationCenter.actionSelected}"
 								lookup="#{targetLookup}" minHeight="460" minWidth="650"
 								property="#{communicationCenter.target}">
 							</aon:lookupButton>
@@ -101,13 +111,9 @@
 								windowTitle="#{appBundle.aon_lookup_new_target}"
 								selectReRender="CommunicationCenter_target_id,CommunicationCenter_target_detail,aonToolbar"
 								lookup="#{targetLookup}" actionType="new" minWidth="650" minHeight="460"
+								disabled="#{communicationCenter.actionSelected}"
 								property="#{communicationCenter.target}">
 							</aon:lookupButton>
-							<aon:commandButton 
-								styleClass="aon-lookupButton-next" ajaxSingle="true" value="" 
-								actionListener="#{communicationCenter.onNextTarget}" 
-								rendered="#{communicationCenter.nextTargetRendered}" 
-								reRender="CommunicationCenter_target_id,CommunicationCenter_target_detail,aonToolbar" />
 						</aon:div>
 						<aon:div id="CommunicationCenter_target_detail" layout="inline">
 							<aon:panelGrid rendered="#{communicationCenter.targetSelected}" columns="2" dir="true">		
