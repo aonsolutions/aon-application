@@ -9,6 +9,7 @@ import javax.persistence.Embeddable;
 import com.code.aon.common.ITransferObject;
 
 
+
 @Embeddable
 public class LinDivisaId  implements  ITransferObject {
 

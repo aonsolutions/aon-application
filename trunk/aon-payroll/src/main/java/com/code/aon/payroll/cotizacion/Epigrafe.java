@@ -21,7 +21,7 @@ import com.code.aon.common.ITransferObject;
 public class Epigrafe  implements ITransferObject {
 
      private String cdg;
-     private String descripcion;
+     private String description;
 
 
     @Id     
@@ -35,12 +35,12 @@ public class Epigrafe  implements ITransferObject {
     }
     
     @Column(name="descripcion", length=50)
-    public String getDescripcion() {
-        return this.descripcion;
+    public String getDescription() {
+        return this.description;
     }
     
-    public void setDescripcion(String descripcion) {
-        this.descripcion = descripcion;
+    public void setDescription(String description) {
+        this.description = description;
     }
 
 

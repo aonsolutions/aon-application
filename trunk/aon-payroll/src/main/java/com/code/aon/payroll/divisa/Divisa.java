@@ -16,6 +16,7 @@ import com.code.aon.common.ITransferObject;
 
 @Entity
 @Table(name="divisa")
+
 public class Divisa  implements  ITransferObject {
 
      private String cdg;
