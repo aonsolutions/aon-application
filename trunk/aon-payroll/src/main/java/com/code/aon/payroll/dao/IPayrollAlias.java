@@ -11,6 +11,8 @@ import com.code.aon.payroll.cotizacion.ElementoMaestro;
 import com.code.aon.payroll.cotizacion.Elemento;
 import com.code.aon.payroll.cotizacion.OcupacionMaestro;
 import com.code.aon.payroll.cotizacion.Ocupacion;
+import com.code.aon.payroll.cotizacion.CnaeMaestro;
+import com.code.aon.payroll.cotizacion.Cnae;
 import com.code.aon.payroll.tipos.Documento;
 import com.code.aon.payroll.tipos.Autorizacion;
 import com.code.aon.payroll.cotizacion.Base;
@@ -34,8 +36,14 @@ import com.code.aon.payroll.irpfforal.MinoracionesNavarra;
 import com.code.aon.payroll.auxiliares.Admon;
 import com.code.aon.payroll.auxiliares.Colectivos;
 import com.code.aon.payroll.irpf.Exclusion;
+import com.code.aon.payroll.organismosyentidades.Pais;
+import com.code.aon.payroll.organismosyentidades.Comunidad;
+import com.code.aon.payroll.organismosyentidades.Provincia;
+import com.code.aon.payroll.organismosyentidades.Delegacion;
 import com.code.aon.payroll.cotizacion.Epigrafe;
 import com.code.aon.payroll.cotizacion.Linepigr;
+import com.code.aon.payroll.divisa.Divisa;
+import com.code.aon.payroll.divisa.LinDivisa;
 
 /** 
 * Interface for holding entity properties constants.
@@ -398,6 +406,80 @@ public interface IPayrollAlias {
 	* Hibernate value: Ocupacion.pcttotal
 	*/
 	String  OCUPACION_PCTTOTAL = OCUPACION_ENTRY.getAliasNames()[6];
+
+
+
+	/** 
+	* DAOConstantsEntry for CnaeMaestro entity.
+	*/ 
+	DAOConstantsEntry CNAE_MAESTRO_ENTRY = DAOConstants.getDAOConstant(CnaeMaestro.class);
+
+	/** 
+	* Alias value: CnaeMaestro_cdg
+	* Hibernate value: CnaeMaestro.cdg
+	*/
+	String  CNAE_MAESTRO_CDG = CNAE_MAESTRO_ENTRY.getAliasNames()[0];
+
+	/** 
+	* Alias value: CnaeMaestro_description
+	* Hibernate value: CnaeMaestro.description
+	*/
+	String  CNAE_MAESTRO_DESCRIPTION = CNAE_MAESTRO_ENTRY.getAliasNames()[1];
+
+	/** 
+	* Alias value: CnaeMaestro_ocupacion
+	* Hibernate value: CnaeMaestro.ocupacion
+	*/
+	String  CNAE_MAESTRO_OCUPACION = CNAE_MAESTRO_ENTRY.getAliasNames()[2];
+
+
+
+	/** 
+	* DAOConstantsEntry for Cnae entity.
+	*/ 
+	DAOConstantsEntry CNAE_ENTRY = DAOConstants.getDAOConstant(Cnae.class);
+
+	/** 
+	* Alias value: Cnae_cnaeMaestro_cdg
+	* Hibernate value: Cnae.cnaeMaestro.cdg
+	*/
+	String  CNAE_CNAE_MAESTRO_CDG = CNAE_ENTRY.getAliasNames()[0];
+
+	/** 
+	* Alias value: Cnae_fecfin
+	* Hibernate value: Cnae.fecfin
+	*/
+	String  CNAE_FECFIN = CNAE_ENTRY.getAliasNames()[1];
+
+	/** 
+	* Alias value: Cnae_id_cdg
+	* Hibernate value: Cnae.id.cdg
+	*/
+	String  CNAE_ID_CDG = CNAE_ENTRY.getAliasNames()[2];
+
+	/** 
+	* Alias value: Cnae_id_fecini
+	* Hibernate value: Cnae.id.fecini
+	*/
+	String  CNAE_ID_FECINI = CNAE_ENTRY.getAliasNames()[3];
+
+	/** 
+	* Alias value: Cnae_pctims
+	* Hibernate value: Cnae.pctims
+	*/
+	String  CNAE_PCTIMS = CNAE_ENTRY.getAliasNames()[4];
+
+	/** 
+	* Alias value: Cnae_pctit
+	* Hibernate value: Cnae.pctit
+	*/
+	String  CNAE_PCTIT = CNAE_ENTRY.getAliasNames()[5];
+
+	/** 
+	* Alias value: Cnae_pcttotal
+	* Hibernate value: Cnae.pcttotal
+	*/
+	String  CNAE_PCTTOTAL = CNAE_ENTRY.getAliasNames()[6];
 
 
 
@@ -1397,6 +1479,142 @@ public interface IPayrollAlias {
 
 
 	/** 
+	* DAOConstantsEntry for Pais entity.
+	*/ 
+	DAOConstantsEntry PAIS_ENTRY = DAOConstants.getDAOConstant(Pais.class);
+
+	/** 
+	* Alias value: Pais_cdg
+	* Hibernate value: Pais.cdg
+	*/
+	String  PAIS_CDG = PAIS_ENTRY.getAliasNames()[0];
+
+	/** 
+	* Alias value: Pais_descripcion
+	* Hibernate value: Pais.descripcion
+	*/
+	String  PAIS_DESCRIPCION = PAIS_ENTRY.getAliasNames()[1];
+
+
+
+	/** 
+	* DAOConstantsEntry for Comunidad entity.
+	*/ 
+	DAOConstantsEntry COMUNIDAD_ENTRY = DAOConstants.getDAOConstant(Comunidad.class);
+
+	/** 
+	* Alias value: Comunidad_cdg
+	* Hibernate value: Comunidad.cdg
+	*/
+	String  COMUNIDAD_CDG = COMUNIDAD_ENTRY.getAliasNames()[0];
+
+	/** 
+	* Alias value: Comunidad_descripcion
+	* Hibernate value: Comunidad.descripcion
+	*/
+	String  COMUNIDAD_DESCRIPCION = COMUNIDAD_ENTRY.getAliasNames()[1];
+
+	/** 
+	* Alias value: Comunidad_pais_cdg
+	* Hibernate value: Comunidad.pais.cdg
+	*/
+	String  COMUNIDAD_PAIS_CDG = COMUNIDAD_ENTRY.getAliasNames()[2];
+
+
+
+	/** 
+	* DAOConstantsEntry for Provincia entity.
+	*/ 
+	DAOConstantsEntry PROVINCIA_ENTRY = DAOConstants.getDAOConstant(Provincia.class);
+
+	/** 
+	* Alias value: Provincia_cdg
+	* Hibernate value: Provincia.cdg
+	*/
+	String  PROVINCIA_CDG = PROVINCIA_ENTRY.getAliasNames()[0];
+
+	/** 
+	* Alias value: Provincia_comunidad_cdg
+	* Hibernate value: Provincia.comunidad.cdg
+	*/
+	String  PROVINCIA_COMUNIDAD_CDG = PROVINCIA_ENTRY.getAliasNames()[1];
+
+	/** 
+	* Alias value: Provincia_descripcion
+	* Hibernate value: Provincia.descripcion
+	*/
+	String  PROVINCIA_DESCRIPCION = PROVINCIA_ENTRY.getAliasNames()[2];
+
+
+
+	/** 
+	* DAOConstantsEntry for Delegacion entity.
+	*/ 
+	DAOConstantsEntry DELEGACION_ENTRY = DAOConstants.getDAOConstant(Delegacion.class);
+
+	/** 
+	* Alias value: Delegacion_cdg
+	* Hibernate value: Delegacion.cdg
+	*/
+	String  DELEGACION_CDG = DELEGACION_ENTRY.getAliasNames()[0];
+
+	/** 
+	* Alias value: Delegacion_codpos
+	* Hibernate value: Delegacion.codpos
+	*/
+	String  DELEGACION_CODPOS = DELEGACION_ENTRY.getAliasNames()[1];
+
+	/** 
+	* Alias value: Delegacion_descripcion
+	* Hibernate value: Delegacion.descripcion
+	*/
+	String  DELEGACION_DESCRIPCION = DELEGACION_ENTRY.getAliasNames()[2];
+
+	/** 
+	* Alias value: Delegacion_localidad
+	* Hibernate value: Delegacion.localidad
+	*/
+	String  DELEGACION_LOCALIDAD = DELEGACION_ENTRY.getAliasNames()[3];
+
+	/** 
+	* Alias value: Delegacion_nomvia
+	* Hibernate value: Delegacion.nomvia
+	*/
+	String  DELEGACION_NOMVIA = DELEGACION_ENTRY.getAliasNames()[4];
+
+	/** 
+	* Alias value: Delegacion_numero
+	* Hibernate value: Delegacion.numero
+	*/
+	String  DELEGACION_NUMERO = DELEGACION_ENTRY.getAliasNames()[5];
+
+	/** 
+	* Alias value: Delegacion_otrdir
+	* Hibernate value: Delegacion.otrdir
+	*/
+	String  DELEGACION_OTRDIR = DELEGACION_ENTRY.getAliasNames()[6];
+
+	/** 
+	* Alias value: Delegacion_provincia_cdg
+	* Hibernate value: Delegacion.provincia.cdg
+	*/
+	String  DELEGACION_PROVINCIA_CDG = DELEGACION_ENTRY.getAliasNames()[7];
+
+	/** 
+	* Alias value: Delegacion_telefono
+	* Hibernate value: Delegacion.telefono
+	*/
+	String  DELEGACION_TELEFONO = DELEGACION_ENTRY.getAliasNames()[8];
+
+	/** 
+	* Alias value: Delegacion_tipovia_cdg
+	* Hibernate value: Delegacion.tipovia.cdg
+	*/
+	String  DELEGACION_TIPOVIA_CDG = DELEGACION_ENTRY.getAliasNames()[9];
+
+
+
+	/** 
 	* DAOConstantsEntry for Epigrafe entity.
 	*/ 
 	DAOConstantsEntry EPIGRAFE_ENTRY = DAOConstants.getDAOConstant(Epigrafe.class);
@@ -1408,10 +1626,10 @@ public interface IPayrollAlias {
 	String  EPIGRAFE_CDG = EPIGRAFE_ENTRY.getAliasNames()[0];
 
 	/** 
-	* Alias value: Epigrafe_descripcion
-	* Hibernate value: Epigrafe.descripcion
+	* Alias value: Epigrafe_description
+	* Hibernate value: Epigrafe.description
 	*/
-	String  EPIGRAFE_DESCRIPCION = EPIGRAFE_ENTRY.getAliasNames()[1];
+	String  EPIGRAFE_DESCRIPTION = EPIGRAFE_ENTRY.getAliasNames()[1];
 
 
 
@@ -1467,6 +1685,98 @@ public interface IPayrollAlias {
 	* Hibernate value: Linepigr.indit
 	*/
 	String  LINEPIGR_INDIT = LINEPIGR_ENTRY.getAliasNames()[7];
+
+
+
+	/** 
+	* DAOConstantsEntry for Divisa entity.
+	*/ 
+	DAOConstantsEntry DIVISA_ENTRY = DAOConstants.getDAOConstant(Divisa.class);
+
+	/** 
+	* Alias value: Divisa_cdg
+	* Hibernate value: Divisa.cdg
+	*/
+	String  DIVISA_CDG = DIVISA_ENTRY.getAliasNames()[0];
+
+	/** 
+	* Alias value: Divisa_descripcion
+	* Hibernate value: Divisa.descripcion
+	*/
+	String  DIVISA_DESCRIPCION = DIVISA_ENTRY.getAliasNames()[1];
+
+	/** 
+	* Alias value: Divisa_mask1
+	* Hibernate value: Divisa.mask1
+	*/
+	String  DIVISA_MASK1 = DIVISA_ENTRY.getAliasNames()[2];
+
+	/** 
+	* Alias value: Divisa_mask2
+	* Hibernate value: Divisa.mask2
+	*/
+	String  DIVISA_MASK2 = DIVISA_ENTRY.getAliasNames()[3];
+
+	/** 
+	* Alias value: Divisa_redondeo
+	* Hibernate value: Divisa.redondeo
+	*/
+	String  DIVISA_REDONDEO = DIVISA_ENTRY.getAliasNames()[4];
+
+
+
+	/** 
+	* DAOConstantsEntry for LinDivisa entity.
+	*/ 
+	DAOConstantsEntry LIN_DIVISA_ENTRY = DAOConstants.getDAOConstant(LinDivisa.class);
+
+	/** 
+	* Alias value: LinDivisa_divisa1_cdg
+	* Hibernate value: LinDivisa.divisa1.cdg
+	*/
+	String  LIN_DIVISA_DIVISA1_CDG = LIN_DIVISA_ENTRY.getAliasNames()[0];
+
+	/** 
+	* Alias value: LinDivisa_divisa_cdg
+	* Hibernate value: LinDivisa.divisa.cdg
+	*/
+	String  LIN_DIVISA_DIVISA_CDG = LIN_DIVISA_ENTRY.getAliasNames()[1];
+
+	/** 
+	* Alias value: LinDivisa_fecfin
+	* Hibernate value: LinDivisa.fecfin
+	*/
+	String  LIN_DIVISA_FECFIN = LIN_DIVISA_ENTRY.getAliasNames()[2];
+
+	/** 
+	* Alias value: LinDivisa_id_cdg
+	* Hibernate value: LinDivisa.id.cdg
+	*/
+	String  LIN_DIVISA_ID_CDG = LIN_DIVISA_ENTRY.getAliasNames()[3];
+
+	/** 
+	* Alias value: LinDivisa_id_divisaFinal
+	* Hibernate value: LinDivisa.id.divisaFinal
+	*/
+	String  LIN_DIVISA_ID_DIVISA_FINAL = LIN_DIVISA_ENTRY.getAliasNames()[4];
+
+	/** 
+	* Alias value: LinDivisa_id_fecini
+	* Hibernate value: LinDivisa.id.fecini
+	*/
+	String  LIN_DIVISA_ID_FECINI = LIN_DIVISA_ENTRY.getAliasNames()[5];
+
+	/** 
+	* Alias value: LinDivisa_importe
+	* Hibernate value: LinDivisa.importe
+	*/
+	String  LIN_DIVISA_IMPORTE = LIN_DIVISA_ENTRY.getAliasNames()[6];
+
+	/** 
+	* Alias value: LinDivisa_unidades
+	* Hibernate value: LinDivisa.unidades
+	*/
+	String  LIN_DIVISA_UNIDADES = LIN_DIVISA_ENTRY.getAliasNames()[7];
 
 
 }
