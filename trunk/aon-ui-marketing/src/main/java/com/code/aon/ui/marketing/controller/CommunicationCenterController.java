@@ -77,7 +77,9 @@ public class CommunicationCenterController {
 	
 	private boolean targetSelected;
 	
-	private boolean nextTargetRendered;
+	private boolean actionSelected;
+	
+	private boolean surveySelected;
 	
 	public CommunicationCenterController() {
 		this.date = new Date();
@@ -98,7 +100,7 @@ public class CommunicationCenterController {
 
 	public void setAction(Action action) {
 		this.action = ( action != null ) ? action : new Action();
-		this.nextTargetRendered = (this.action.getId() != null);
+		this.actionSelected = (this.action.getId() != null);
 	}
 
 	public Survey getSurvey() {
@@ -106,7 +108,8 @@ public class CommunicationCenterController {
 	}
 
 	public void setSurvey(Survey survey) {
-		this.survey = survey;
+		this.survey = ( survey != null ) ? survey : new Survey();
+		this.surveySelected = (this.survey.getId() != null);
 	}
 
 	public Target getTarget() {
@@ -130,12 +133,12 @@ public class CommunicationCenterController {
 		return targetSelected;
 	}
 
-	public boolean isNextTargetRendered() {
-		return nextTargetRendered;
+	public boolean isActionSelected() {
+		return actionSelected;
 	}
-
-	public void setNextTargetRendered(boolean nextTargetRendered) {
-		this.nextTargetRendered = nextTargetRendered;
+	
+	public boolean isSurveySelected() {
+		return surveySelected;
 	}
 
 	public boolean isRenderTargetAlias() {
@@ -189,14 +192,10 @@ public class CommunicationCenterController {
 		return web;
 	}
 
-	public void onInitSurveyResponse( ActionEvent event ) {
-		if ( this.action == null ) {
-			setAction( null );
-		}
-		if ( this.survey == null ) {
-			this.survey = new Survey();	
-		}
+	public void onInit( ActionEvent event ) {
+		setAction( null );
 		setTarget(null);
+		setSurvey( null );
 		this.surveyResponse = null;
 		this.actionTarget = null;
 	}
@@ -249,7 +248,11 @@ public class CommunicationCenterController {
 	public void onFinishSurveyResponse( ActionEvent event ) throws ManagerBeanException {
 		saveResponse();
 		finishActionTarget();
-		onInitSurveyResponse(event);
+		if ( isActionSelected() ) {
+			onNextTarget(event);
+		} else {
+			onInit(event);	
+		}
 	}
 
 	private void updateResponseValue() throws ManagerBeanException {
@@ -405,15 +408,14 @@ public class CommunicationCenterController {
 			setTarget( this.actionTarget.getTarget() );
 			initTarget(this.target); 
 		} else {
-			setActionTarget( null );
-			setTarget( null );
+			onInit(event);
 		}
 	}
 	
 	public void onUpdateActionTarget( ActionEvent event ) throws ManagerBeanException {
 		IManagerBean bean = BeanManager.getManagerBean(ActionTarget.class);
 		bean.update(this.actionTarget);
-		setTarget( null );
+		onNextTarget(event);
 	}
 	
 }

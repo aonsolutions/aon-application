@@ -17,14 +17,11 @@
 .aon-target-iconClass{
 	background:transparent url(../images/aon-icon-comercial-potential-customer.png) left center no-repeat;
 }
+
+.aon-icon-save{
+	background:transparent url(../images/aon-icon-save.png) scroll left center no-repeat;	
+ }
+ 
 .aon-width-170{
 	width:170px;
 }
-
-.aon-lookupButton-next{
-	background:#fff url(../images/aon-icon-lookup-next.png) center center no-repeat;
-	border:#808080 1px solid;
-	width:18px;
-	height:18px;
-	margin:0 2px 0 2px;
-	}
