@@ -35,18 +35,26 @@
 		<!-- COTIZACIONES -->		
 		<mapping class="com.code.aon.payroll.cotizacion.PorcentajeMaestro"/>			
 		<mapping class="com.code.aon.payroll.cotizacion.Porcentaje"/>
-		<mapping class="com.code.aon.payroll.cotizacion.Bonificacion"/>
+		<mapping class="com.code.aon.payroll.cotizacion.Bonificacion"/>	
+	  	<mapping class="com.code.aon.payroll.cotizacion.Base"/>
+		<mapping class="com.code.aon.payroll.cotizacion.Linbasec"/>	
+	    <mapping class="com.code.aon.payroll.cotizacion.Epigrafe"/>
+		<mapping class="com.code.aon.payroll.cotizacion.Linepigr"/>	
 		<mapping class="com.code.aon.payroll.cotizacion.ElementoMaestro"/>			
-		<mapping class="com.code.aon.payroll.cotizacion.Elemento"/>
-		<mapping class="com.code.aon.payroll.cotizacion.Base"/>	
-		<mapping class="com.code.aon.payroll.cotizacion.Linbasec"/>
-		<mapping class="com.code.aon.payroll.cotizacion.OcupacionMaestro"/>			
-		<mapping class="com.code.aon.payroll.cotizacion.Ocupacion"/>	
-		<mapping class="com.code.aon.payroll.cotizacion.Epigrafe"/>
-		<mapping class="com.code.aon.payroll.cotizacion.Linepigr"/>
-		<mapping class="com.code.aon.payroll.cotizacion.CnaeMaestro"/>			
-		<mapping class="com.code.aon.payroll.cotizacion.Cnae"/>	
+		<mapping class="com.code.aon.payroll.cotizacion.Elemento"/>			
+	    		<mapping class="com.code.aon.payroll.cotizacion.OcupacionMaestro"/>			
+		<mapping class="com.code.aon.payroll.cotizacion.Ocupacion"/>
+				<mapping class="com.code.aon.payroll.cotizacion.CnaeMaestro"/>			
+		<mapping class="com.code.aon.payroll.cotizacion.Cnae"/>	 
+	     <!--DIVISAS -->		
+		<mapping class="com.code.aon.payroll.divisa.Divisa"/>			
+		<mapping class="com.code.aon.payroll.divisa.LinDivisa"/>	
 		
+		  <!-- ORGANISMOS Y ENTIDADES-->		
+	    <mapping class="com.code.aon.payroll.organismosyentidades.Delegacion"/>		
+		<mapping class="com.code.aon.payroll.organismosyentidades.Pais"/>
+		<mapping class="com.code.aon.payroll.organismosyentidades.Provincia"/>		
+		<mapping class="com.code.aon.payroll.organismosyentidades.Comunidad"/>
 		<!-- CONTRATOS -->		
 		<mapping class="com.code.aon.payroll.auxiliares.contratos.ContratosInternos"/>
 		<mapping class="com.code.aon.payroll.auxiliares.contratos.ContratosTc2"/>	
