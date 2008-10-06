@@ -11,6 +11,7 @@ import com.code.aon.marketing.Action;
 import com.code.aon.marketing.ActionTarget;
 import com.code.aon.marketing.Survey;
 import com.code.aon.marketing.dao.IMarketingAlias;
+import com.code.aon.ql.Criteria;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.form.IController;
 import com.code.aon.ui.util.AonUtil;
@@ -29,10 +30,15 @@ public class SurveyResponseController extends BasicController implements IMarket
 	private Action action;
 	
 	public void onSelectSurveyResponse( ActionEvent event ) throws NumberFormatException, ManagerBeanException {
-		IController actionTargetController = AonUtil.getController(CAMPAIGN_ACTION_TARGET_CONTROLLER_NAME);
-		ActionTarget actionTarget = (ActionTarget) actionTargetController.getTo();
-		setTo( actionTarget.getSurveyResponse() );
-		actionTargetController.onCancel( event );
+		IController controller = AonUtil.getController(CAMPAIGN_ACTION_TARGET_CONTROLLER_NAME);
+		ActionTarget actionTarget = (ActionTarget) controller.getTo();
+		Criteria oldCriteria = getCriteria();
+		clearCriteria();
+		getCriteria().addEqualExpression( getFieldName(IMarketingAlias.SURVEY_RESPONSE_ID), actionTarget.getSurveyResponse().getId());
+		onSearch( event );
+		onSelectFirst( event );
+		setCriteria(oldCriteria);
+		controller.onCancel(event);
 	}
 		
 	public Survey getSurvey() {
