@@ -13,5 +13,13 @@
 		<to-view-id>/facelet/company/form.jsf</to-view-id>
 	</navigation-case>
   </navigation-rule>
+  
+   <navigation-rule>
+      <navigation-case>
+         <from-outcome>logout</from-outcome>
+         <to-view-id>/home.jsf</to-view-id> 
+         <redirect/>
+      </navigation-case>
+   </navigation-rule>
 
 </faces-config>

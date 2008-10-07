@@ -5,10 +5,12 @@
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:t="http://myfaces.apache.org/tomahawk"
 	xmlns:rich="http://richfaces.org/rich"
-	xmlns:aon="http://www.code.es/aon-rich-components">
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:a4j="http://richfaces.org/a4j">
 <body>
 
 <ui:composition>
+	<aon:form id="generalForm">
 
 	<aon:div styleClass="aon-toolbar">
 		<aon:confirmButton id="save" value="#{bundle.aon_save}"
@@ -55,28 +57,49 @@
 				valueChangeListener="#{company.webChanged}"/>
 		</aon:panelGrid>
 	</aon:div>		
-	<aon:div id="logoDiv" style="float:left;">	
+	<aon:div id="logoDiv" style="float:left;" ajaxRendered="true">	
 		<aon:div styleClass="aon-group" >		
 			<aon:div styleClass="aon-group-title">							
 			<aon:outputLabel for="Company_logo" rendered="#{!company.new}"
 				value="#{registryBundle.aon_company_logo}" />
 			</aon:div>
 			<aon:div styleClass="aon-group-body">
-				<aon:div styleClass="aon-toolbar" >
+				<aon:div styleClass="aon-toolbar" rendered="#{company.fileData != null}" >
 					<aon:commandButton id="Company_logo_remove" value="#{bundle.aon_fileupload_remove}"
 						styleClass="aon-icon-delete aon-finding-toolbar-item"
-						rendered="#{company.fileData != null}" reRender="logoDiv"
+						reRender="logoDiv"
 						actionListener="#{company.fileRemove}"/>
-					<h:commandButton id="Company_logo_upload" value="#{bundle.aon_fileupload_insert}"
-						styleClass="aon-icon-attach aon-finding-toolbar-item"
-						rendered="#{company.fileData == null}"
-						actionListener="#{company.fileUploaded}"/>
 				</aon:div>		
 				
-				<aon:panelGrid columns="2" style="margin-left:10px;margin-right:10px;">
+				<aon:panelGrid id="upload_logo" columns="2" style="width:400px;margin-left:10px;margin-right:10px;">
 						
-					<aon:outputLabel value="#{registryBundle.aon_registry_attach_file}" />
+					<aon:outputLabel value="#{registryBundle.aon_registry_attach_file}" style="width:100px"/>
 					<aon:div>
+						<rich:fileUpload id="Company_logo" width="100%" rendered="#{company.fileData == null}"
+								addControlLabel="#{appBundle.aon_web_info_add}" 
+								stopControlLabel="#{appBundle.aon_web_info_stop}" 
+								stopEntryControlLabel="#{appBundle.aon_web_info_stop}"
+								uploadControlLabel="#{appBundle.aon_web_info_uploading}"
+								cancelEntryControlLabel="#{appBundle.aon_web_info_cancel}"
+								clearAllControlLabel="#{appBundle.aon_web_info_clear_all}" 
+								clearControlLabel="#{appBundle.aon_web_info_clear}"
+								doneLabel="#{appBundle.aon_web_info_done}" 
+								progressLabel="#{appBundle.aon_web_info_progress}" 
+								sizeErrorLabel="#{appBundle.aon_web_info_size_error}" 
+								transferErrorLabel="#{appBundle.aon_web_info_transfer_error}" 
+								fileUploadListener="#{company.uploadListener}"
+								immediateUpload="true" autoclear="true" listHeight="70px" listWidth="100%">
+							<a4j:support event="onuploadcomplete" reRender="logoDiv" />
+						</rich:fileUpload>
+
+						<aon:panelGroup id="logo_preview" styleClass="aon-text-center" rendered="#{company.fileData != null}">
+							<aon:mediaOutput 
+								element="img" cacheable="false"
+								createContent="#{company.paint}" 
+								mimeType="#{company.mimeType}"/>
+						</aon:panelGroup>
+					</aon:div>
+					<!--aon:div>
 						<t:inputFileUpload id="Company_logo"
 							value="#{company.inputFile}" rendered="#{company.fileData == null}"
 							accept="image/*" storage="file" size="45"/>
@@ -86,7 +109,7 @@
 								createContent="#{company.paint}" 
 								mimeType="#{company.mimeType}"/>
 						</aon:panelGroup>
-					</aon:div>
+					</aon:div-->
 				</aon:panelGrid>				
 			</aon:div>
 		</aon:div>
@@ -144,7 +167,7 @@
 					<aon:selectOneMenu id="Company_address_geozone"
 						value="#{company.mainAddress.geozone.id}"
 						valueChangeListener="#{company.addressChanged}">
-						<f:selectItems value="#{registryCollections.geoZones}" />
+						<f:selectItems value="#{geozoneCollections.geoZones}" />
 					</aon:selectOneMenu>
 			</aon:div>
 		</aon:panelGrid>
@@ -156,6 +179,8 @@
 			</ui:include>
 		</aon:div>
 	</aon:div>
+	
+	</aon:form>
 </ui:composition>
 </body>
 </html>
