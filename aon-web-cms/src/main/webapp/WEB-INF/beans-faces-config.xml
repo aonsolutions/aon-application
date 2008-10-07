@@ -1325,10 +1325,13 @@
 		<managed-bean-name>generator</managed-bean-name>
 		<managed-bean-class>com.code.aon.ui.cms.controller.GeneratorController</managed-bean-class>
 		<managed-bean-scope>request</managed-bean-scope>
-		<managed-property>
-			<property-name>pojo</property-name>
-			<value>com.code.aon.cms.Config</value>
-		</managed-property>
+	</managed-bean>
+
+	<!-- ************** GENERATOR ************** -->
+	<managed-bean>
+		<managed-bean-name>generatorApplication</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.cms.controller.GeneratorApplicationController</managed-bean-class>
+		<managed-bean-scope>application</managed-bean-scope>
 	</managed-bean>
 
 	<!-- ************** GENERATOR STATUS ************** -->

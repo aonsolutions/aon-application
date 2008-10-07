@@ -34,9 +34,13 @@ import com.code.aon.ui.cms.velocity.SportGenerator;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.util.AonUtil;
 
-public class GeneratorController extends BasicController implements Constants {
+public class GeneratorController implements Constants {
 
 	private GeneratorStatusController status;
+
+	public GeneratorStatusController getStatus() {
+		return status;
+	}
 
 	public GeneratorController(){
 		super();
@@ -45,113 +49,49 @@ public class GeneratorController extends BasicController implements Constants {
 	
 	public void onGenerate(ActionEvent event) throws ManagerBeanException {
 		initGenerator();
-
-		if (isModularPageToGenerate){
-			//Generar index.html del idioma seleccionado
-			ModularPageGenerator.generate();
-		}
-		
+		//Generar index.html del idioma seleccionado
+		ModularPageGenerator.generate();
 		System.gc();
-
-		if (isMenuToGenerate){
-			//Generar menus
-			MenuGenerator.generate();
-		}
-		
+		//Generar menus
+		MenuGenerator.generate();
 		System.gc();
-
-		if (isGenericToGenerate){
-			//Generar generic
-			GenericGenerator.generate();
-		}
-		
+		//Generar generic
+		GenericGenerator.generate();
 		System.gc();
-
-		if (isFaqToGenerate){
-			FaqGenerator.generate();
-		}
-		
+		//Generar faq
+		FaqGenerator.generate();
 		System.gc();
-
-		if (isLinkToGenerate){
-			//Generar link
-			LinkGenerator.generate();
-		}
-		
+		//Generar link
+		LinkGenerator.generate();
 		System.gc();
-
-		if (isDirectAccessToGenerate){
-			//Generar direct access
-			DirectAccessGenerator.generate();
-		}
-		
+		//Generar direct access
+		DirectAccessGenerator.generate();
 		System.gc();
-
-		if (isAlbumToGenerate){
-			//Generar image album
-			AlbumGenerator.generate();
-		}
-		
+		//Generar image album
+		AlbumGenerator.generate();
 		System.gc();
-
-		if (isArticleCalendarToGenerate){
-			ArticleCalendarGenerator.generate();
-		}
-		
+		ArticleCalendarGenerator.generate();
 		System.gc();
-
-		if (isArticleNEWSToGenerate){
-			ArticleGenerator.generate(ArticleType.NEWS);
-		}
-
+		ArticleGenerator.generate(ArticleType.NEWS);
 		System.gc();
-
-		if (isArticleSERVICESToGenerate){
-			ArticleGenerator.generate(ArticleType.SERVICES);
-		}
-
+		ArticleGenerator.generate(ArticleType.SERVICES);
 		System.gc();
-
-		if (isArticleEVENTSToGenerate){
-			ArticleGenerator.generate(ArticleType.EVENTS);
-		}
-
+		ArticleGenerator.generate(ArticleType.EVENTS);
 		System.gc();
-
-		if (isArticleOTHERToGenerate){
-			ArticleGenerator.generate(ArticleType.OTHER);
-		}
-		
+		ArticleGenerator.generate(ArticleType.OTHER);
 		System.gc();
-
-		if (isDownloadsToGenerate){
-			//Generar articulo
-			DownloadsGenerator.generate();
-		}
-		
+		//Generar articulo
+		DownloadsGenerator.generate();
 		System.gc();
-
-		if (isHiruCoursesToGenerate){
-			//Generar articulo
-			HiruGenerator.generate();
-		}
-		
+		//Generar articulo
+		HiruGenerator.generate();
 		System.gc();
-
-		if (isProductsToGenerate){
-			//Generar productos
-			ProductGenerator.generate();
-		}
-		
+		//Generar productos
+		ProductGenerator.generate();
 		System.gc();
-		
-		if (isSportsToGenerate){
-			//Generar productos
-			SportGenerator.generate();
-		}
-		
+		//Generar productos
+		SportGenerator.generate();
 		System.gc();
-		
 		finalizeGenerator();
 	}
 	
@@ -310,157 +250,5 @@ public class GeneratorController extends BasicController implements Constants {
 		status.finalized();
 		System.gc();
 	}
-
-	private boolean isModularPageToGenerate = true;
-	private boolean isMenuToGenerate = true;
-	private boolean isGenericToGenerate = true;
-	private boolean isFaqToGenerate = true;
-	private boolean isLinkToGenerate = true;
-	private boolean isDirectAccessToGenerate = true;
-	private boolean isAlbumToGenerate = true;
-	private boolean isArticleCalendarToGenerate = true;
-	private boolean isDownloadsToGenerate = true;
-	private boolean isArticleNEWSToGenerate = true;
-	private boolean isArticleSERVICESToGenerate = true;
-	private boolean isArticleEVENTSToGenerate = true;
-	private boolean isArticleOTHERToGenerate = true;
-	private boolean isHiruCoursesToGenerate = true;
-	private boolean isProductsToGenerate = true;
-	private boolean isSportsToGenerate = true;
-	
-	public boolean isModularPageToGenerate() {
-		return isModularPageToGenerate;
-	}
-	public void setModularPageToGenerate(boolean isModularPageToGenerate) {
-		this.isModularPageToGenerate = isModularPageToGenerate;
-	}
-	public boolean isMenuToGenerate() {
-		return isMenuToGenerate;
-	}
-	public void setMenuToGenerate(boolean isMenuToGenerate) {
-		this.isMenuToGenerate = isMenuToGenerate;
-	}
-	public boolean isGenericToGenerate() {
-		return isGenericToGenerate;
-	}
-	public void setGenericToGenerate(boolean isGenericToGenerate) {
-		this.isGenericToGenerate = isGenericToGenerate;
-	}
-	public boolean isFaqToGenerate() {
-		return isFaqToGenerate;
-	}
-	public void setFaqToGenerate(boolean isFaqToGenerate) {
-		this.isFaqToGenerate = isFaqToGenerate;
-	}
-	public boolean isLinkToGenerate() {
-		return isLinkToGenerate;
-	}
-	public void setLinkToGenerate(boolean isLinkToGenerate) {
-		this.isLinkToGenerate = isLinkToGenerate;
-	}
-	public boolean isDirectAccessToGenerate() {
-		return isDirectAccessToGenerate;
-	}
-	public void setDirectAccessToGenerate(boolean isDirectAccessToGenerate) {
-		this.isDirectAccessToGenerate = isDirectAccessToGenerate;
-	}
-	public boolean isAlbumToGenerate() {
-		return isAlbumToGenerate;
-	}
-	public void setAlbumToGenerate(boolean isAlbumToGenerate) {
-		this.isAlbumToGenerate = isAlbumToGenerate;
-	}
-	public boolean isDownloadsToGenerate() {
-		return isDownloadsToGenerate;
-	}
-	public void setDownloadsToGenerate(boolean isDownloadsToGenerate) {
-		this.isDownloadsToGenerate = isDownloadsToGenerate;
-	}
-	public boolean isArticleCalendarToGenerate() {
-		return isArticleCalendarToGenerate;
-	}
-	public void setArticleCalendarToGenerate(boolean isArticleCalendarToGenerate) {
-		this.isArticleCalendarToGenerate = isArticleCalendarToGenerate;
-	}
-	public boolean isArticleNEWSToGenerate() {
-		return isArticleNEWSToGenerate;
-	}
-	public void setArticleNEWSToGenerate(boolean isArticleNEWSToGenerate) {
-		this.isArticleNEWSToGenerate = isArticleNEWSToGenerate;
-	}
-	public boolean isArticleSERVICESToGenerate() {
-		return isArticleSERVICESToGenerate;
-	}
-	public void setArticleSERVICESToGenerate(boolean isArticleSERVICESToGenerate) {
-		this.isArticleSERVICESToGenerate = isArticleSERVICESToGenerate;
-	}
-	public boolean isArticleEVENTSToGenerate() {
-		return isArticleEVENTSToGenerate;
-	}
-	public void setArticleEVENTSToGenerate(boolean isArticleEVENTSToGenerate) {
-		this.isArticleEVENTSToGenerate = isArticleEVENTSToGenerate;
-	}
-	public boolean isArticleOTHERToGenerate() {
-		return isArticleOTHERToGenerate;
-	}
-	public void setArticleOTHERToGenerate(boolean isArticleOTHERToGenerate) {
-		this.isArticleOTHERToGenerate = isArticleOTHERToGenerate;
-	}
-	public boolean isHiruCoursesToGenerate() {
-		return isHiruCoursesToGenerate;
-	}
-	public void setHiruCoursesToGenerate(boolean isHiruCoursesToGenerate) {
-		this.isHiruCoursesToGenerate = isHiruCoursesToGenerate;
-	}
-	public boolean isProductsToGenerate() {
-		return isProductsToGenerate;
-	}
-	public void setProductsToGenerate(boolean isProductsToGenerate) {
-		this.isProductsToGenerate = isProductsToGenerate;
-	}
-	public boolean isSportsToGenerate() {
-		return isSportsToGenerate;
-	}
-	public void setSportsToGenerate(boolean isSportsToGenerate) {
-		this.isSportsToGenerate = isSportsToGenerate;
-	}
-
-	public void onSelectAll(ActionEvent event) {
-		isModularPageToGenerate = true;
-		isMenuToGenerate = true;
-		isGenericToGenerate = true;
-		isFaqToGenerate = true;
-		isLinkToGenerate = true;
-		isDirectAccessToGenerate = true;
-		isAlbumToGenerate = true;
-		isDownloadsToGenerate = true;
-		isArticleCalendarToGenerate = true;
-		isArticleNEWSToGenerate = true;
-		isArticleSERVICESToGenerate = true;
-		isArticleEVENTSToGenerate = true;
-		isArticleOTHERToGenerate = true;
-		isHiruCoursesToGenerate = true;
-		isProductsToGenerate = true;
-		isSportsToGenerate = true;
-	}
-	public void onDeselectAll(ActionEvent event) {
-		isModularPageToGenerate = false;
-		isMenuToGenerate = false;
-		isGenericToGenerate = false;
-		isFaqToGenerate = false;
-		isLinkToGenerate = false;
-		isDirectAccessToGenerate = false;
-		isAlbumToGenerate = false;
-		isArticleCalendarToGenerate = false;
-		isDownloadsToGenerate = false;
-		isArticleNEWSToGenerate = false;
-		isArticleSERVICESToGenerate = false;
-		isArticleEVENTSToGenerate = false;
-		isArticleOTHERToGenerate = false;
-		isHiruCoursesToGenerate = false;
-		isProductsToGenerate = false;
-		isSportsToGenerate = false;
-	}
-	
 
 }
