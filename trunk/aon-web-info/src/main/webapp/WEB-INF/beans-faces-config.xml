@@ -9,7 +9,7 @@
 	<managed-bean>
 		<managed-bean-name>company</managed-bean-name>
 		<managed-bean-class>
-			com.code.aon.webinfo.controller.TomahawkCompanyController
+			com.code.aon.ui.webinfo.controller.CompanyController
 		</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
@@ -39,7 +39,7 @@
 	<managed-bean>
 		<managed-bean-name>companyLogoControllerListener</managed-bean-name>
 		<managed-bean-class>
-			com.code.aon.webinfo.event.CompanyLogoControllerListener
+			com.code.aon.ui.webinfo.event.CompanyLogoControllerListener
 		</managed-bean-class>
 		<managed-bean-scope>none</managed-bean-scope>
 	</managed-bean>
@@ -47,7 +47,7 @@
 	<managed-bean>
 		<managed-bean-name>companyControllerListener</managed-bean-name>
 		<managed-bean-class>
-			com.code.aon.webinfo.event.CompanyControllerListener
+			com.code.aon.ui.webinfo.event.CompanyControllerListener
 		</managed-bean-class>
 		<managed-bean-scope>none</managed-bean-scope>
 	</managed-bean>
@@ -55,7 +55,7 @@
 	<managed-bean>
 		<managed-bean-name>webInfoControllerListener</managed-bean-name>
 		<managed-bean-class>
-			com.code.aon.webinfo.event.WebInfoControllerListener
+			com.code.aon.ui.webinfo.event.WebInfoControllerListener
 		</managed-bean-class>
 		<managed-bean-scope>none</managed-bean-scope>
 	</managed-bean>
@@ -63,7 +63,7 @@
 	<managed-bean>
 		<managed-bean-name>companyControllerImagesListener</managed-bean-name>
 		<managed-bean-class>
-			com.code.aon.webinfo.event.CompanyControllerImagesListener
+			com.code.aon.ui.webinfo.event.CompanyControllerImagesListener
 		</managed-bean-class>
 		<managed-bean-scope>none</managed-bean-scope>
 	</managed-bean>
@@ -119,20 +119,28 @@
 	<managed-bean>
 		<managed-bean-name>companyWebInfo</managed-bean-name>
 		<managed-bean-class>
-			com.code.aon.webinfo.controller.CompanyWebInfoController
+			com.code.aon.ui.webinfo.controller.CompanyWebInfoController
 		</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
 			<property-name>pojo</property-name>
-			<value>com.code.aon.company.WebInfo</value>
+			<value>com.code.aon.webinfo.WebInfo</value>
+		</managed-property>
+		<managed-property>
+			<property-name>listenerClasses</property-name>
+			<list-entries>
+				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+				<value>#{webInfoControllerListener}</value>
+			</list-entries>
 		</managed-property>
 	</managed-bean>
+
 
 	<!-- **** COMPANY IMAGES **** --> 
 	<managed-bean>
 		<managed-bean-name>companyImages</managed-bean-name>
 		<managed-bean-class>
-			com.code.aon.webinfo.controller.TomahawkFileController
+			com.code.aon.ui.webinfo.controller.FileController
 		</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
@@ -155,18 +163,70 @@
 	<managed-bean>
 		<managed-bean-name>companyImagesControllerListener</managed-bean-name>
 		<managed-bean-class>
-			com.code.aon.webinfo.event.CompanyImagesControllerListener
+			com.code.aon.ui.webinfo.event.CompanyImagesControllerListener
 		</managed-bean-class>
 		<managed-bean-scope>none</managed-bean-scope>
 	</managed-bean>
-	
+
+	<managed-bean>
+		<managed-bean-name>webPage</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.webinfo.controller.CompanyWebInfoPageController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.webinfo.WebInfoPage</value>
+		</managed-property>
+		<managed-property>
+			<property-name>listenerClasses</property-name>
+			<list-entries>
+				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+				<value>#{webPageControllerListener}</value>
+			</list-entries>
+		</managed-property>
+	</managed-bean>
+
+	<managed-bean>
+		<managed-bean-name>webPageControllerListener</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.webinfo.event.CompanyWebInfoPageControllerListener</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+	</managed-bean>
+
+	<managed-bean>
+		<managed-bean-name>webPageStyle</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.webinfo.controller.CompanyWebInfoStyleController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.webinfo.WebInfoStyle</value>
+		</managed-property>
+	</managed-bean>
+
+	<!-- ******************
+		COLLECTIONS CONTROLLER
+		*******************  	 -->
+	<managed-bean>
+		<managed-bean-name>webinfoCollections</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.webinfo.controller.CollectionsController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
+
 	<managed-bean>
 		<managed-bean-name>generator</managed-bean-name>
 		<managed-bean-class>
-			com.code.aon.webinfo.controller.GeneratorController
+			com.code.aon.ui.webinfo.controller.GeneratorController
 		</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
-	
-		
+
+   <!-- ***************** LOGGED USER ******************** --> 
+   <managed-bean>
+      <managed-bean-name>loggedUser</managed-bean-name>
+      <managed-bean-class>com.code.aon.bridge.session.LoggedUser</managed-bean-class>
+      <managed-bean-scope>session</managed-bean-scope>
+   </managed-bean>
+
 </faces-config>
