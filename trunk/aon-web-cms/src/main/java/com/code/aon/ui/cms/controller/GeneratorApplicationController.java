@@ -11,11 +11,11 @@ public class GeneratorApplicationController {
 		GeneratorController generator = (GeneratorController)AonUtil.getRegisteredBean("generator");
 		generator.getStatus().onInit(event);
 		generator.getStatus().addMessage("ALL PROCESS WORKING...PLEASE WAIT TO START.");
-		waitIfNedded(generator);
+		process(generator);
 	}
 
-	private synchronized void waitIfNedded(GeneratorController generator) throws ManagerBeanException {
+	private synchronized void process(GeneratorController generator) throws ManagerBeanException {
 		generator.onGenerate(null);
 	}
-	
+
 }
