@@ -85,14 +85,6 @@
 							styleClass="aon-finding-toolbar-item">
 							<aon:actionListener method="#{article_category.onSearch}" />
 						</aon:commandButton>
-						<aon:commandButton id="diary"
-							rendered="#{article.diary}"
-							value="#{appBundle.diary}"
-							action="diary_form"
-							immediate="#{true}"
-							styleClass="aon-finding-toolbar-item">
-							<aon:actionListener method="#{diary.onInit}" />
-						</aon:commandButton>
 				    </aon:div>
 					
 					<!-- end toolbar navigation -->
@@ -330,14 +322,7 @@
 									<f:facet name="header">
 										<aon:outputText value="&#160;" />
 									</f:facet>
-									<aon:outputText value="&#160;" rendered="#{to==articleRelated.to}" />
-									<aon:commandButton id="lineRemove" title="[#{bundle.aon_remove}]"
-										rendered="#{to!=articleRelated.to}"
-										styleClass="aon-editDataTable-button aon-icon-delete"
-										reRender="articleRelatedData" 
-										immediate="true">
-										<aon:actionListener method="#{articleRelated.onRemove}" />
-									</aon:commandButton>
+									<aon:outputText value="&#160;" />
 									<f:facet name="footer">
 										<aon:div>
 											<aon:commandButton id="reset"
@@ -358,8 +343,12 @@
 									<f:facet name="header">
 										<aon:outputText value="#{appBundle.article_related_name}" />
 									</f:facet>
-									<aon:outputText value="#{to.articleRelated.alias}" 
-										rendered="#{to!=articleRelated.to}" />
+									<aon:outputText value="#{to.articleRelated.alias}">
+										<a4j:support 
+											reRender="articleRelatedData"
+											actionListener="#{articleRelated.onSelect}"
+											event="onclick" />
+									</aon:outputText>					
 									<f:facet name="footer">
 										<aon:selectOneMenu styleClass="aon-form-selectOneMenu-field"
 											rendered="#{articleRelated.new}" 
@@ -374,6 +363,13 @@
 										<aon:outputText value="&#160;" />
 									</f:facet>
 									<f:verbatim rendered="#{to!=articleRelated.to}">&#160;</f:verbatim>
+									<aon:commandButton id="lineRemove" title="[#{bundle.aon_remove}]"
+										rendered="#{to==articleRelated.to}"
+										styleClass="aon-editDataTable-button aon-icon-delete"
+										reRender="articleRelatedData" 
+										immediate="true">
+										<aon:actionListener method="#{articleRelated.onRemove}" />
+									</aon:commandButton>
 									<f:facet name="footer">
 										<aon:div rendered="#{articleRelated.new}">
 											<f:verbatim rendered="#{!articleRelated.new}">&#160;</f:verbatim>

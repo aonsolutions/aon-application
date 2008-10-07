@@ -69,6 +69,13 @@
 						styleClass="aon-finding-toolbar-item">
 						<aon:actionListener method="#{article_category.onSearch}" />
 					</aon:commandButton>
+					<aon:commandButton id="diary"
+						value="#{appBundle.diary}"
+						action="diary_form"
+						immediate="#{true}"
+						styleClass="aon-finding-toolbar-item">
+						<aon:actionListener method="#{diary.onInit}" />
+					</aon:commandButton>
 			    </aon:div>
 				
 				<!-- end toolbar navigation -->
