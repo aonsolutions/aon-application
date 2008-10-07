@@ -81,7 +81,7 @@
 								maxlength="50" value="#{companyImages.to.description}" />		
 	
 							<aon:outputLabel for="RegistryAttachment_inputFile" value="#{registryBundle.aon_registry_attach_file}" />
-							<rich:fileUpload id="RegistryAttachment_inputFile" width="100%" rendered="#{companyImages.fileData == null}"
+							<aon:fileUpload id="RegistryAttachment_inputFile" width="100%" rendered="#{companyImages.fileData == null}"
 									addControlLabel="#{appBundle.aon_web_info_add}" 
 									stopControlLabel="#{appBundle.aon_web_info_stop}" 
 									stopEntryControlLabel="#{appBundle.aon_web_info_stop}"
@@ -96,7 +96,7 @@
 									fileUploadListener="#{companyImages.uploadListener}"
 									immediateUpload="true" autoclear="false" listHeight="70px" listWidth="100%">
 								<a4j:support event="onuploadcomplete" reRender="image_preview" />
-							</rich:fileUpload>
+							</aon:fileUpload>
 	
 							<aon:panelGroup id="image_preview" styleClass="aon-text-center" rendered="#{companyImages.fileData != null}">
 								<a4j:mediaOutput id="RegistryAttachment_preview" 
