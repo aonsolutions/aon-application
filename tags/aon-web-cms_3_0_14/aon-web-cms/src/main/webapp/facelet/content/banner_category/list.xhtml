@@ -1,0 +1,141 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j">
+<body>
+
+<ui:composition template="/facelet/templates/aon.ui.content.xhtml">
+	<ui:define name="content">
+
+		<aon:form id="list">
+		<aon:div styleClass="aon-finding-title-toolbar">
+			<aon:panelGrid id="buttonsGrid" columns="3" dir="true" 
+				columnClasses="aon-finding-title,aon-finding-subtitle,aon-finding-toolbar">				
+			
+				<aon:div styleClass="aon-finding-title-internal">
+					<aon:outputText value="#{appBundle.banner_category}"/>	  						
+				</aon:div>					
+				
+				<aon:div styleClass="aon-finding-subtitle-internal">
+					<aon:outputText
+						value="#{appBundle.aon_listing}" />
+				</aon:div>					
+					
+				<!-- start toolbar navigation -->
+				<aon:div styleClass="aon-finding-toolbar-item-group">					
+					<aon:commandButton id="reset" value="#{bundle.aon_reset}"
+						action="banner_category_form"
+						rendered="#{cms.roleEditor}"
+						styleClass="aon-finding-toolbar-item aon-icon-reset"
+						accesskey="#{bundle.aon_key_new}">
+						<aon:actionListener method="#{banner_category.onReset}" />
+					</aon:commandButton>
+					<aon:commandButton id="search" value="#{bundle.aon_search}"
+						action="banner_category_search"
+						styleClass="aon-finding-toolbar-item aon-icon-search"
+						accesskey="#{bundle.aon_key_search}">
+						<aon:actionListener method="#{banner_category.onEditSearch}" />
+					</aon:commandButton>
+					<aon:commandButton id="exit"
+						value="#{bundle.aon_close}"
+						action="#{banner_category.getBack}" 
+						immediate="#{true}"
+						styleClass="aon-finding-toolbar-item aon-icon-cancel"
+						accesskey="#{bundle.aon_key_close}">
+					</aon:commandButton>
+			    </aon:div>
+				
+				<!-- end toolbar navigation -->
+			</aon:panelGrid>
+		</aon:div>
+		<!--  aon-region-body -->
+		<aon:div styleClass="aon-scroll-area">
+					
+					<aon:dataTable id="dataTable" value="#{banner_category.model}" var="to"
+						rows="#{banner_category.pageLimit}" 
+						styleClass="dr-table rich-table aon-editDataTable"
+						headerClass="dr-table-subheader rich-table-subheader aon-editDataTable-header"
+						footerClass="dr-table-subfooter rich-table-subfooter aon-editDataTable-footer"
+						rowClasses="aon-editDataTable-row-odd,dr-table-firstrow rich-table-firstrow aon-editDataTable-row-even"
+						cellpadding="0" cellspacing="0"
+						columnClasses="dr-table-cell rich-table-cell aon-editDataTable-textColumn,
+								dr-table-cell rich-table-cell aon-editDataTable-textColumn,
+								dr-table-cell rich-table-cell aon-editDataTable-textColumn,
+								dr-table-cell rich-table-cell aon-editDataTable-iconColumn">
+				
+						<aon:column>
+							<a4j:support 
+								action="banner_category_form"
+								actionListener="#{banner_category.onSelect}"
+								event="onclick" />
+							<f:facet name="header">
+								<aon:outputText value="#{appBundle.banner_category_alias}" />
+							</f:facet>
+							<aon:outputText value="#{to.alias}" styleClass="aon-editDataTable-button"/>
+						</aon:column>
+
+						<aon:column>
+							<a4j:support 
+								action="banner_category_form"
+								actionListener="#{banner_category.onSelect}"
+								event="onclick" />
+							<f:facet name="header">
+								<aon:outputText value="#{appBundle.banner_category_label}" />
+							</f:facet>
+							<aon:outputText value="#{banner_category.i18nLabel}"
+								styleClass="aon-editDataTable-button"/>
+						</aon:column>
+
+						<aon:column>
+							<a4j:support 
+								action="banner_category_form"
+								actionListener="#{banner_category.onSelect}"
+								event="onclick" />
+							<f:facet name="header">
+								<aon:outputText for="BannerCategory_position" 
+									value="#{appBundle.banner_category_position}" />
+							</f:facet>
+							<aon:outputText value="#{to.position}" styleClass="aon-editDataTable-button" />
+						</aon:column>
+
+						<aon:column>
+							<f:facet name="header">
+								<aon:outputText value="#{appBundle.banner_category_active}" />
+							</f:facet>
+							<aon:commandLink title="#{appBundle.banner_category_activate}" 
+								action="banner_category_list"
+								actionListener="#{banner_category.onActivate}" 
+								rendered="#{!to.active}">
+								<aon:graphicImage id="BannerCategory_active" alt="#{appBundle.banner_category_activate}"
+									url="/images/cms/inactive.png" />
+							</aon:commandLink>
+							<aon:commandLink title="#{appBundle.banner_category_deactivate}" 
+								action="banner_category_list"
+								actionListener="#{banner_category.onDeactivate}" 
+								rendered="#{to.active}">
+								<aon:graphicImage id="BannerCategory_deactive" alt="#{appBundle.banner_category_deactivate}"
+									url="/images/cms/active.png" />
+							</aon:commandLink>
+						</aon:column>
+
+					</aon:dataTable>
+				
+					<aon:dataScroller for="dataTable"
+						rowCount="#{banner_category.model.rowCount}" 
+						page="#{banner_category.page}"
+						showNote="true" />					
+
+			</aon:div>
+		</aon:form>
+		
+	</ui:define>
+
+</ui:composition>
+
+</body>
+</html>
