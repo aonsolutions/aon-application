@@ -22,24 +22,24 @@ import com.code.aon.common.ManagerBeanException;
  * LinesController is used to implement child Controllers.
  */
 public class LinesController extends BasicController {
-	
+
 	/** The master controller. */
 	private BasicController masterController;
-	
+
 	/** The master controller name. */
 	private String masterControllerName;
-	
+
 	/** The property map. */
-	private Map<String,String> propertyMap;	
-	
+	private Map<String, String> propertyMap;
+
 	/** cascade delete. */
 	private boolean cascadeDelete;
-	
+
 	/** A list that contains the selected objects of the model. */
 	private ArrayList<ITransferObject> checkList;
-	
+
 	/**
-	 * Default constructor 
+	 * Default constructor
 	 */
 	public LinesController() {
 		this.checkList = new ArrayList<ITransferObject>();
@@ -48,7 +48,8 @@ public class LinesController extends BasicController {
 	/**
 	 * Sets the master controller name.
 	 * 
-	 * @param masterControllerName the master controller name
+	 * @param masterControllerName
+	 *            the master controller name
 	 */
 	public void setMasterControllerName(String masterControllerName) {
 		this.masterControllerName = masterControllerName;
@@ -57,21 +58,23 @@ public class LinesController extends BasicController {
 	/**
 	 * Sets the property map.
 	 * 
-	 * @param propertyMap the property map
+	 * @param propertyMap
+	 *            the property map
 	 */
 	public void setPropertyMap(Map<String, String> propertyMap) {
 		this.propertyMap = propertyMap;
 	}
-	
+
 	/**
 	 * Sets the cascade delete.
 	 * 
-	 * @param cascadeDelete the cascade delete
+	 * @param cascadeDelete
+	 *            the cascade delete
 	 */
 	public void setCascadeDelete(boolean cascadeDelete) {
 		this.cascadeDelete = cascadeDelete;
 	}
-	
+
 	/**
 	 * Checks if is master new.
 	 * 
@@ -80,14 +83,14 @@ public class LinesController extends BasicController {
 	private boolean isMasterNew() {
 		return getMasterController().isNew();
 	}
-	
+
 	/**
 	 * Gets the master controller.
 	 * 
 	 * @return the master controller
 	 */
 	public BasicController getMasterController() {
-		if ( this.masterController == null ) {
+		if (this.masterController == null) {
 			FacesContext ctx = FacesContext.getCurrentInstance();
 			Application app = ctx.getApplication();
 			ValueBinding vb = app.createValueBinding("#{" + masterControllerName + "}");
@@ -95,33 +98,39 @@ public class LinesController extends BasicController {
 		}
 		return this.masterController;
 	}
-	
+
 	/**
 	 * Initializes the model.
 	 */
 	public void initModel() {
-		if ( isMasterNew() ) {
+		if (isMasterNew()) {
 			this.model = new ListDataModel(new ArrayList());
 		} else {
 			this.model = null;
 		}
 		resetTo();
 	}
-	
+
 	/**
 	 * Update join property.
 	 * 
-	 * @param masterTO The Transfer Object of the master bean.
-	 * @param masterProperty the master property  
-	 * @param lineTo the line to
-	 * @param lineProperty the line property
+	 * @param masterTO
+	 *            The Transfer Object of the master bean.
+	 * @param masterProperty
+	 *            the master property
+	 * @param lineTo
+	 *            the line to
+	 * @param lineProperty
+	 *            the line property
 	 * 
-	 * @throws ManagerBeanException the manager bean exception
+	 * @throws ManagerBeanException
+	 *             the manager bean exception
 	 */
-	private void updateJoinProperty( ITransferObject masterTO, String masterProperty, ITransferObject lineTo, String lineProperty ) throws ManagerBeanException {
+	private void updateJoinProperty(ITransferObject masterTO, String masterProperty,
+			ITransferObject lineTo, String lineProperty) throws ManagerBeanException {
 		try {
-			Object masterPropertyValue = PropertyUtils.getProperty( masterTO, masterProperty );
-			PropertyUtils.setProperty( lineTo, lineProperty, masterPropertyValue );
+			Object masterPropertyValue = PropertyUtils.getProperty(masterTO, masterProperty);
+			PropertyUtils.setProperty(lineTo, lineProperty, masterPropertyValue);
 		} catch (IllegalAccessException e) {
 			throw new ManagerBeanException(e.getMessage(), e);
 		} catch (InvocationTargetException e) {
@@ -134,125 +143,150 @@ public class LinesController extends BasicController {
 	/**
 	 * Update join properties.
 	 * 
-	 * @param masterTO The Transfer Object of the master bean. 
-	 * @param to the to
+	 * @param masterTO
+	 *            The Transfer Object of the master bean.
+	 * @param to
+	 *            the to
 	 * 
-	 * @throws ManagerBeanException the manager bean exception
+	 * @throws ManagerBeanException
+	 *             the manager bean exception
 	 */
-	private void updateJoinProperties( ITransferObject masterTO, ITransferObject to ) throws ManagerBeanException {
-		for( Map.Entry<String,String> entry : this.propertyMap.entrySet() ) {
-			updateJoinProperty( masterTO, entry.getKey(), to,  entry.getValue() );
+	private void updateJoinProperties(ITransferObject masterTO, ITransferObject to)
+			throws ManagerBeanException {
+		for (Map.Entry<String, String> entry : this.propertyMap.entrySet()) {
+			updateJoinProperty(masterTO, entry.getKey(), to, entry.getValue());
 		}
 	}
-	
+
 	/**
 	 * Save model.
 	 * 
-	 * @param masterTO The Transfer Object of the master bean. 
-	 * @throws ManagerBeanException the manager bean exception
+	 * @param masterTO
+	 *            The Transfer Object of the master bean.
+	 * @throws ManagerBeanException
+	 *             the manager bean exception
 	 */
-	public void saveModel( ITransferObject masterTO ) throws ManagerBeanException {
-		if ( this.masterController == null ) {
-			throw new AbortProcessingException("Unable to locate Master Controller!"); 
+	public void saveModel(ITransferObject masterTO) throws ManagerBeanException {
+		if (this.masterController == null) {
+			throw new AbortProcessingException("Unable to locate Master Controller!");
 		}
 		List list = (List) this.model.getWrappedData();
 		Iterator i = list.iterator();
-		while ( i.hasNext() ) {
+		while (i.hasNext()) {
 			ITransferObject object = (ITransferObject) i.next();
-			updateJoinProperties( masterTO, object );
-			getManagerBean().insertOrUpdate( object );
+			updateJoinProperties(masterTO, object);
+			getManagerBean().insertOrUpdate(object);
 		}
 		this.model = null;
 		initializeModel();
 	}
-	
+
 	/**
-	 * Delete deletes the objects loaded in the model is <code>cascadeDelete</code> is true.
+	 * Delete deletes the objects loaded in the model is
+	 * <code>cascadeDelete</code> is true.
 	 * 
-	 * @throws ManagerBeanException the manager bean exception
+	 * @throws ManagerBeanException
+	 *             the manager bean exception
 	 */
 	public void deleteOrphans() throws ManagerBeanException {
-		if ( this.masterController == null ) {
-			throw new AbortProcessingException("Unable to locate Master Controller!"); 
-		}
-		if ( this.cascadeDelete ) {
-			List list = (List) getModel().getWrappedData();
-			Iterator i = list.iterator();
-			while ( i.hasNext() ) {
-				ITransferObject to = (ITransferObject) i.next();
-				getManagerBean().remove( to );
+		int pageLimit = getPageLimit();
+		try {
+			if (this.masterController == null) {
+				throw new AbortProcessingException("Unable to locate Master Controller!");
 			}
+			if (this.cascadeDelete) {
+				setPageLimit( -1 );
+				initModel();
+				List list = (List) getModel().getWrappedData();
+				Iterator i = list.iterator();
+				while (i.hasNext()) {
+					ITransferObject to = (ITransferObject) i.next();
+					getManagerBean().remove(to);
+				}
+			}
+		} finally {
+			setPageLimit(pageLimit);
 		}
 	}
-	
+
 	/**
 	 * Initializes the model.
 	 */
 	@Override
 	public void initializeModel() {
-		if (! isMasterNew() ) {
+		if (!isMasterNew()) {
 			super.initializeModel();
 		}
 		getCheckList().clear();
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see com.code.aon.ui.form.BasicController#add()
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
 	protected ITransferObject add() throws ManagerBeanException {
-		if ( isMasterNew() ) {
+		if (isMasterNew()) {
 			List<ITransferObject> list = (List) this.model.getWrappedData();
-			list.add( getTo() );
+			list.add(getTo());
 			return getTo();
-		} 
+		}
 		return super.add();
 	}
-	
-	/* (non-Javadoc)
-	 * @see com.code.aon.ui.form.BasicController#accept(javax.faces.event.ActionEvent)
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * com.code.aon.ui.form.BasicController#accept(javax.faces.event.ActionEvent
+	 * )
 	 */
 	@Override
-	public void accept(ActionEvent event)  {
-		if ( this.masterController == null ) {
-			throw new AbortProcessingException("Unable to locate Master Controller!"); 
+	public void accept(ActionEvent event) {
+		if (this.masterController == null) {
+			throw new AbortProcessingException("Unable to locate Master Controller!");
 		}
-        try {
+		try {
 			if (isNew()) {
-				updateJoinProperties( getMasterController().getTo(), getTo() );
+				updateJoinProperties(getMasterController().getTo(), getTo());
 			}
 			super.accept(event);
-        } catch (ManagerBeanException e) {
-            addMessage(e.getMessage());
-            throw new AbortProcessingException(e.getMessage(), e);
-        }
+		} catch (ManagerBeanException e) {
+			addMessage(e.getMessage());
+			throw new AbortProcessingException(e.getMessage(), e);
+		}
 	}
-	
-	/* (non-Javadoc)
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see com.code.aon.ui.form.BasicController#remove()
 	 */
 	@Override
 	protected void remove() throws ManagerBeanException {
-		if ( isMasterNew() ) {
+		if (isMasterNew()) {
 			List list = (List) this.model.getWrappedData();
-			list.remove( getTo() );
+			list.remove(getTo());
 		} else {
 			super.remove();
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see com.code.aon.ui.form.BasicController#update()
 	 */
 	@Override
 	protected ITransferObject update() throws ManagerBeanException {
-		if ( isMasterNew() ) {
+		if (isMasterNew()) {
 			return getTo();
-		} 
+		}
 		return super.update();
 	}
-	
+
 	/**
 	 * Gets the if the selected row is checked.
 	 * 
@@ -260,28 +294,29 @@ public class LinesController extends BasicController {
 	 */
 	public boolean getRowChecked() {
 		ITransferObject to = (ITransferObject) model.getRowData();
-		return checkList.contains( to );
+		return checkList.contains(to);
 	}
-	
+
 	/**
 	 * Sets the selected row checked.
 	 * 
-	 * @param rowChecked the row checked
+	 * @param rowChecked
+	 *            the row checked
 	 */
 	public void setRowChecked(boolean rowChecked) {
-		if ( rowChecked ) {
+		if (rowChecked) {
 			ITransferObject to = (ITransferObject) model.getRowData();
-			if (!checkList.contains( to )) {
-				checkList.add( to );
+			if (!checkList.contains(to)) {
+				checkList.add(to);
 			}
 		} else {
 			ITransferObject to = (ITransferObject) model.getRowData();
-			if (checkList.contains( to )) {
-				checkList.remove( to );
+			if (checkList.contains(to)) {
+				checkList.remove(to);
 			}
 		}
 	}
-	
+
 	/**
 	 * Gets the check list.
 	 * 
@@ -294,18 +329,19 @@ public class LinesController extends BasicController {
 	/**
 	 * Removes all the selected objects.
 	 * 
-	 * @param event the event
+	 * @param event
+	 *            the event
 	 */
 	public void onRemoveSelected(ActionEvent event) {
-		try{
-			for (ITransferObject to: checkList) {
+		try {
+			for (ITransferObject to : checkList) {
 				getManagerBean().remove(to);
 			}
-			onSearch( event );
+			onSearch(event);
 		} catch (ManagerBeanException e) {
 			addMessage(e.getMessage());
 			throw new AbortProcessingException(e.getMessage(), e);
 		}
 	}
-	
+
 }
