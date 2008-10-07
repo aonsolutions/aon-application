@@ -11,11 +11,35 @@ public class GeneratorApplicationController {
 		GeneratorController generator = (GeneratorController)AonUtil.getRegisteredBean("generator");
 		generator.getStatus().onInit(event);
 		generator.getStatus().addMessage("ALL PROCESS WORKING...PLEASE WAIT TO START.");
-		process(generator);
-	}
+        this.limitar();
+        this.incCuenta();
+        this.process(generator);
+		this.decCuenta(); // 
+	    this.desbloquear();	}
 
-	private synchronized void process(GeneratorController generator) throws ManagerBeanException {
+	private void process(GeneratorController generator) throws ManagerBeanException {
 		generator.onGenerate(null);
 	}
+
+    private int cuenta = 0;
+    
+    public synchronized void incCuenta() {
+        cuenta++;
+    }
+    public synchronized void decCuenta() {
+        cuenta--; 
+    }
+    
+    public synchronized void limitar() {
+    	while (cuenta == 2) {
+    		try {
+    			this.wait();
+    		}catch (InterruptedException e) {}
+    	}
+    }
+
+    public synchronized void desbloquear() {
+        this.notifyAll();             
+    }
 
 }
