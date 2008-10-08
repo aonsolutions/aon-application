@@ -69,7 +69,8 @@
 		
           <!--DIVISAS -->		
 		<mapping class="com.code.aon.payroll.divisa.Divisa"/>			
-		<mapping class="com.code.aon.payroll.divisa.LinDivisa"/>	
+		<mapping class="com.code.aon.payroll.divisa.LinDivisa"/>
+			
 		<!-- IRPF FORAL-->		
         <mapping class="com.code.aon.payroll.irpfforal.CuotaRetencionAlava"/>
         <mapping class="com.code.aon.payroll.irpfforal.CuotaRetencionVizcaya"/>	

@@ -13,14 +13,14 @@
 
 	<ui:define name="content">
 
-		<aon:form id="baseMaestroList">
+		<aon:form id="divisaMaestroList">
 		
 			<aon:div styleClass="aon-finding-title-toolbar">
 				<aon:panelGrid id="buttonsGrid" columns="3" dir="true"
 					columnClasses="aon-finding-title,aon-finding-subtitle,aon-finding-toolbar">
 
 					<aon:div styleClass="aon-finding-title-internal">
-						<aon:outputText value="#{appBundle.aon_payroll_cotizacion_bases}" />
+						<aon:outputText value="#{appBundle.aon_payroll_auxiliares_divisa}" />
 					</aon:div>
 
 					<aon:div styleClass="aon-finding-subtitle-internal">
@@ -29,14 +29,14 @@
 
 					<!-- start toolbar navigation -->
 					<aon:div styleClass="aon-finding-toolbar-item-group">
-				  		<aon:commandButton id="search" value="#{bundle.aon_search}"
-							action="basecoti_search" actionListener="#{baseMaestro.onEditSearch}"
+						<aon:commandButton id="search" value="#{bundle.aon_search}"
+							action="divisas_search" actionListener="#{divisaMaestro.onEditSearch}"
 							styleClass="aon-finding-toolbar-item aon-icon-search"
 							accesskey="#{bundle.aon_key_search}" />				
 						<aon:commandButton id="reset" value="#{bundle.aon_reset}"
-							action="basecoti"  actionListener="#{baseMaestro.onReset}"
+							action="divisas_form" actionListener="#{divisaMaestro.onReset}"
 							styleClass="aon-finding-toolbar-item aon-icon-reset"
-							accesskey="#{bundle.aon_key_new}" /> 
+							accesskey="#{bundle.aon_key_new}" />
 					</aon:div>
 					<!-- end toolbar navigation -->
 				</aon:panelGrid>
@@ -45,11 +45,11 @@
 			<!--  aon-region-body -->
 			<aon:div styleClass="aon-scroll-area">
 
-				<aon:dataTable id="baseMaestroData" value="#{baseMaestro.model}"
-					var="to" rows="20" rendered="#{baseMaestro.model.rowCount > 0}"
+				<aon:dataTable id="divisaMaestroData" value="#{divisaMaestro.model}"
+					var="to" rows="20" rendered="#{divisaMaestro.model.rowCount > 0}"
 					columnClasses="aon-editDataTable-textColumn, aon-editDataTable-textColumn, aon-editDataTable-numberColumn">
 
-					<aon:rowSelector action="basecoti" actionListener="#{baseMaestro.onSelect}" />
+					<aon:rowSelector action="divisas_form" actionListener="#{divisaMaestro.onSelect}" />
 					
 					<aon:column>
 						<f:facet name="header">
@@ -64,11 +64,12 @@
 						</f:facet>
 						<aon:outputText value="#{to.description}"/>
 					</aon:column>
-
- 				
+	
 				</aon:dataTable>
 
-				<aon:dataScroller2 for="baseMaestroData"  />
+ 				
+
+				<aon:dataScroller for="divisaMaestroData" rowCount="#{divisaMaestro.model.rowCount}" showNote="true" />
 
 			</aon:div>
 		</aon:form>

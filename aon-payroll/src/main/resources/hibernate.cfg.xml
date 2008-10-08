@@ -36,7 +36,7 @@
 		<mapping class="com.code.aon.payroll.cotizacion.Linepigr"/>	
 			 
 	    <!--DIVISAS -->		
-		<mapping class="com.code.aon.payroll.divisa.Divisa"/>			
+	    <mapping class="com.code.aon.payroll.divisa.Divisa"/>			
 		<mapping class="com.code.aon.payroll.divisa.LinDivisa"/>	 		 	
         
         <!-- ORGANISMOS Y ENTIDADES-->		

@@ -1,10 +1,12 @@
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:rich="http://richfaces.org/rich"
 	xmlns:aon="http://www.code.es/aon-rich-components"
 	xmlns:c="http://java.sun.com/jstl/core">
 
 	<aon:div>
+	 <rich:spacer />
 		<aon:editDataTable id="linbaseData" value="#{linbase.model}" 
 			var="to" rows="0"
 			rendered="#{(linbase.model.rowCount > 0) or (linbase.new)}" 
@@ -16,7 +18,51 @@
 				,aon-editDataTable-numberColumn, aon-editDataTable-buttonsColumn">
 					
 			<aon:rowSelector toggleOnClick="#{linbase.to == null}" actionListener="#{linbase.onSelect}" />
-
+                <f:facet name="header">
+                        
+	                        
+	                        <rich:columnGroup >
+	                        
+	                             <rich:column colspan="3" >
+                               
+                                 </rich:column>
+                                 
+                                 <rich:column colspan="4">
+                                  <aon:outputText value="#{appBundle.aon_payroll_auxiliares_cotizacion_rg}" />
+                                 </rich:column>
+                                 
+                                 
+                                 <rich:column colspan="1" rowspan="2">
+                               <aon:outputText value="#{appBundle.aon_payroll_auxiliares_cotizacion_ra}" />
+                                </rich:column>
+                                 <rich:column colspan="4">
+                               <aon:outputText value="#{appBundle.aon_payroll_auxiliares_cotizacion_rag}" />
+                                </rich:column>
+                                
+	                            <rich:column breakBefore="true" colspan="1">
+	                                <rich:spacer />
+	                            </rich:column>
+	                            <rich:column colspan="2">
+	                                <aon:outputText value="#{appBundle.aon_payroll_auxiliares_cotizacion_peri}" />
+	                            </rich:column>
+	                             <rich:column colspan="2" >
+	                                <aon:outputText value="#{appBundle.aon_payroll_auxiliares_cotizacion_cc}" />
+	                            </rich:column>
+	                            <rich:column colspan="2">
+	                                <aon:outputText value="#{appBundle.aon_payroll_auxiliares_cotizacion_ccp}" />
+	                            </rich:column>
+	                            
+	                             <rich:column colspan="2">
+	                                <aon:outputText value="#{appBundle.aon_payroll_auxiliares_cotizacion_min}" />
+	                            </rich:column>
+	                           <rich:column colspan="2">
+	                       
+	                            </rich:column>
+	                            
+	                       
+	                            
+	                          </rich:columnGroup>
+	                    </f:facet>
 			<aon:column>
 				<f:facet name="header">
 					<aon:outputText value="&#160;" />
@@ -89,7 +135,7 @@
 									value="#{linbase.to.mincot}" maxlength="10" />
 							</f:facet>
 						</aon:column>
-					<!--
+					
 						      <aon:column>
 							<f:facet name="header">
 								<aon:outputText value="#{appBundle.aon_payroll_auxiliares_cotizacion__maxcot}" />
@@ -199,8 +245,7 @@
 						</aon:column>
  
  
- 			
- -->
+
  
  
 			

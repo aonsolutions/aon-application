@@ -10,8 +10,11 @@ import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import com.code.aon.common.ITransferObject;
+import com.code.aon.payroll.enumeration.Divisas;
+import com.code.aon.payroll.enumeration.Prorateo;
 
 
 @Entity
@@ -20,7 +23,7 @@ import com.code.aon.common.ITransferObject;
 public class Divisa  implements  ITransferObject {
 
      private String cdg;
-     private String descripcion;
+     private String description;
      private Integer redondeo;
      private Integer mask1;
      private Integer mask2;
@@ -40,12 +43,12 @@ public class Divisa  implements  ITransferObject {
     
 
     @Column(name="descripcion", length=25)
-    public String getDescripcion() {
-        return this.descripcion;
+    public String getDescription() {
+        return this.description;
     }
     
-    public void setDescripcion(String descripcion) {
-        this.descripcion = descripcion;
+    public void setDescription(String descripcion) {
+        this.description = descripcion;
     }
     
 
