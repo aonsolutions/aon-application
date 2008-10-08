@@ -28,12 +28,12 @@
 			<aon:dropDownMenu value="#{menuBundle.aon_masters}">
 				<aon:menuItem value="#{menuBundle.aon_targets}" 
 					iconClass="aon-target-iconClass"
-					action="target" actionListener="#{target.onSearch}" />
+					action="target" actionListener="#{target.onEditSearch}" />
 				<aon:menuItem value="#{menuBundle.aon_products}" 
 					action="product" disabled="true" />
 				<aon:menuItem value="#{menuBundle.aon_sellers}"
 					iconClass="aon-seller-iconClass"
-					action="seller" actionListener="#{seller.onSearch}" />
+					action="seller" actionListener="#{seller.onEditSearch}" />
 			</aon:dropDownMenu>
 			<aon:dropDownMenu value="#{menuBundle.aon_commercial}">
 				<aon:menuItem value="#{menuBundle.aon_commercial_tracking}" 

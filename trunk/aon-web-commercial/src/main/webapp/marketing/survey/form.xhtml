@@ -53,14 +53,15 @@
 				<aon:panelTabSet rendered="#{!survey.new}">
 
 					<aon:panelTab name="surveyQuestion" label="#{marketingBundle.aon_marketing_questions}">
-						<ui:include src="/marketing/survey/question/grid.xhtml" />
+						<ui:include src="/marketing/surveyQuestion/grid.xhtml" />
                     </aon:panelTab>
 
 				</aon:panelTabSet>
 
 			</aon:div>
 		</aon:form>
-		<aon:lookupButtonPopup lookup="#{questionLookup}" />		
+		<aon:lookupButtonPopup lookup="#{questionLookup}" />
+		<ui:include src="/marketing/surveyQuestion/workflow/grid.xhtml" />		
 	</ui:define>
 </ui:composition>
 
