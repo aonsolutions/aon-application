@@ -63,11 +63,6 @@
 
 						<aon:spin controller="#{ocupacionMaestro}" action="cotizacion_ocupacion" rendered="#{!ocupacionMaestro.new}" />
 
-						<ui:include src="/facelet/templates/aon.ui.printbuttons.xhtml">
-							<ui:param name="manager" value="#{ocupacionMaestro}"/>
-							<ui:param name="reportKey" value="ocupacionCotizacion"/>
-						</ui:include>
-
 					</aon:div>
 
 					<!-- end toolbar navigation -->
@@ -84,8 +79,11 @@
 					<aon:inputText id="OcupacionMaestro_description" value="#{ocupacionMaestro.to.description}" 
 						size="70" maxlength="50" >
 					</aon:inputText>
-
 					
+					<aon:outputLabel for="OcupacionMaestro_exclusivo" value="#{appBundle.aon_payroll_cotizacion_exclusivo}" />
+					<aon:selectBooleanCheckbox id="OcupacionMaestro_exclusivo" 
+						value="#{ocupacionMaestro.to.exclusivobol}" />
+			
 				</aon:panelGrid>
 
 				<ui:include src="grid.xhtml" rendered="#{!ocupacionMaestro.new}" />				

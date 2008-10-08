@@ -279,4 +279,15 @@
 			<param id="companyName" value="#{payrollController.getCompanyName}" />
 		</params>
 	</report>
+	<!--  *********  Impresion a PDF de los Complementos de convenios  ********* -->
+	<report id="convenioComplementoList" description="Listado de Complementos">
+		<template path="/com/code/aon/ui/payroll/report/conveniosComplementosList.jasper" />
+		<bean key="com.code.aon.payroll.auxiliares.convenios.Complemento" />
+		<criteria provider="#{complemento}" />
+		<params>
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.payroll.i18n.messages" />
+			<param id="logoImageFile" value="#{payrollController.getLogo}" />
+			<param id="companyName" value="#{payrollController.getCompanyName}" />
+		</params>
+	</report>
 </report-config>

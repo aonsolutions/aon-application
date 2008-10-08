@@ -23,12 +23,12 @@ public class ElementoControllerListener extends ControllerAdapter {
 			Calendar c = Calendar.getInstance(); 
 			c.set(9999, 12, 31);
 			elem.setFecfin(c.getTime());
-		}else if(elem.getFecfin().before(elem.getId().getFecini())){
+		} else if(elem.getFecfin().before(elem.getId().getFecini())) {
 			FacesMessage fm = 
 	    		AonUtil.getMessage( FacesContext.getCurrentInstance(), "aon_payroll_1405", null );
 			throw new ControllerListenerException( fm.getSummary() );
 		}
-		if(elem.getDato1().intValue()<0||elem.getDato2().intValue()<0){
+		if(elem.getDato1().intValue()<0 || elem.getDato2().intValue()<0){
 			FacesMessage fm = 
 	    		AonUtil.getMessage( FacesContext.getCurrentInstance(), "aon_payroll_1437", null );
 			throw new ControllerListenerException( fm.getSummary() );

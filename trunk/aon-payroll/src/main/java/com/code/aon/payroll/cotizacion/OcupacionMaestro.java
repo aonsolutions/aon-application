@@ -4,6 +4,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import com.code.aon.common.ITransferObject;
 
@@ -60,6 +61,16 @@ public class OcupacionMaestro implements ITransferObject {
 
 	public void setExclusivo(String exclusivo) {
 		this.exclusivo = exclusivo;
+	}
+	
+	//TODO A la espera de implementar un SelectBooleanCheckboxRenderer.
+	@Transient 
+	public Boolean getExclusivobol() {
+		return (getExclusivo() != null && getExclusivo().equals("S")?true:false );
+	}
+
+	public void setExclusivobol(Boolean bol) {
+		setExclusivo( (bol!=null && bol)? "S":"N" );
 	}
 
 }

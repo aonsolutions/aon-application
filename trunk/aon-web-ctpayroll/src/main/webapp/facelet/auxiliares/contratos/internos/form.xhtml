@@ -75,30 +75,30 @@
 
 			<aon:div id="contratosInternos" styleClass="aon-scroll-area">
 				<aon:panelGrid columns="2" dir="true" width="100%" style="margin-bottom=2px;">
-					<aon:outputLabel value="#{appBundle.aon_payroll_cdg}" />
-					<aon:inputText value="#{contratosInternos.to.cdg}" disabled="#{!contratosInternos.new}" 
+					<aon:outputLabel for="codigo" value="#{appBundle.aon_payroll_cdg}" />
+					<aon:inputText id="codigo" value="#{contratosInternos.to.cdg}" disabled="#{!contratosInternos.new}" 
 						required="true" size="2" maxlength="2" />
 				
-					<aon:outputLabel value="#{appBundle.aon_payroll_description}" />
-					<aon:inputText value="#{contratosInternos.to.description}" 
+					<aon:outputLabel for="descripcion" value="#{appBundle.aon_payroll_description}" />
+					<aon:inputText id="descripcion" value="#{contratosInternos.to.description}" 
 						required="true" size="90" maxlength="60" >
 					</aon:inputText>
 
-					<aon:outputLabel value="#{appBundle.aon_payroll_asimiladoa}" />
-					<aon:selectOneMenu id="Asimilados"
+					<aon:outputLabel for="asimilado" value="#{appBundle.aon_payroll_asimiladoa}" />
+					<aon:selectOneMenu id="asimilado"
 						value="#{contratosInternos.to.porcentajeMaestro.cdg}">
 						<f:selectItems value="#{contratosInternos.asimilados}" />
 					</aon:selectOneMenu>
 
-					<aon:outputLabel value="#{appBundle.aon_payroll_desempleado}" />
-					<aon:selectOneMenu id="Desempleados" 
+					<aon:outputLabel for="desempleados" value="#{appBundle.aon_payroll_desempleado}" />
+					<aon:selectOneMenu id="desempleados" 
 						value="#{contratosInternos.to.desempleenum}">
 						<f:selectItem value="#{null}" itemLabel="    " />
 						<f:selectItems value="#{contratosInternos.desempleados}" />
 					</aon:selectOneMenu>
-
-					<aon:outputLabel value="#{appBundle.aon_payroll_minusvalia}" />
-					<aon:inputText value="#{contratosInternos.to.gradomin}" size="1" maxlength="2" >
+					
+					<aon:outputLabel for="contratosInternos_porcentaje_edit" value="#{appBundle.aon_payroll_minusvalia}" />
+					<aon:inputText id="contratosInternos_porcentaje_edit" value="#{contratosInternos.to.gradomin}" size="1" maxlength="2" >
 						<f:validator validatorId="porcentajeValidator" />
 					</aon:inputText>
 					<aon:outputLabel value="" />
