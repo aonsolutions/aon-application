@@ -1,5 +1,8 @@
 package com.code.aon.payroll.auxiliares.contratos;
 
+import java.math.BigDecimal;
+import java.util.Locale;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -24,7 +27,7 @@ public class ContratosInternos implements ITransferObject {
 	private String description;
 	private PorcentajeMaestro maestro;
 	private String desemple;
-	private Integer gradomin;
+	private BigDecimal gradomin;
 	private String mujersub;
 	private String incaread;
 	private String primertra;
@@ -106,11 +109,11 @@ public class ContratosInternos implements ITransferObject {
 	}
 
 	@Column(name="gradomin", length=2)
-	public Integer getGradomin() {
+	public BigDecimal getGradomin() {
 		return this.gradomin;
 	}
 
-	public void setGradomin(Integer gradomin) {
+	public void setGradomin(BigDecimal gradomin) {
 		this.gradomin = gradomin;
 	}
 
@@ -124,6 +127,7 @@ public class ContratosInternos implements ITransferObject {
 		this.desempleenum = desempleenum;
 		setDesemple( (this.desempleenum != null)? this.desempleenum.name().substring( 1 ) : null );
 	}
+	
 //TODO A la espera de implementar un SelectBooleanCheckboxRenderer.
 	@Transient 
 	public Boolean getMujersubbol() {

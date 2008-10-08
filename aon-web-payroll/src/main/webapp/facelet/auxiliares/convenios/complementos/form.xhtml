@@ -64,7 +64,7 @@
 						<aon:spin controller="#{complemento}" action="convenios_complementos" rendered="#{!complemento.new}" />
 						
 						<ui:include src="/facelet/templates/aon.ui.printbuttons.xhtml">
-							<ui:param name="manager" value="#{convenioComplemento}"/>
+							<ui:param name="manager" value="#{complemento}"/>
 							<ui:param name="reportKey" value="convenioComplementoList"/>
 						</ui:include>
 
@@ -109,7 +109,7 @@
 						<f:selectItems value="#{complemento.listaFijoVariable}"/>											
 					</aon:selectOneRadio>
 					
-					<aon:outputLabel value=" " />
+					<aon:outputLabel value="#{appBundle.aon_payroll_auxiliares_convenios__complemento_indcom}" />
 					<aon:selectOneRadio id="IndComplemento" value="#{complemento.to.indiceComplemento}" >	
 						<f:selectItems value="#{complemento.listaIndiceComplemento}"/>											
 					</aon:selectOneRadio>

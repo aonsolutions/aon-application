@@ -15,6 +15,8 @@ public enum TipoComplemento implements IResourceable {
 	ComT,
 	ComC,
 	ComD,
+	ComI,
+	ComG,
 	ComO;
 	
 	private static final String BASE_NAME = "com.code.aon.payroll.i18n.messages";

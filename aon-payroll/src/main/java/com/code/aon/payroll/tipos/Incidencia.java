@@ -11,7 +11,7 @@ import com.code.aon.common.ITransferObject;
 /**
  * Tipos de Incidencias.
  * 
- * @author alatorre
+ * @author alatorre & eagirrezabal
  *
  */
 @Entity
