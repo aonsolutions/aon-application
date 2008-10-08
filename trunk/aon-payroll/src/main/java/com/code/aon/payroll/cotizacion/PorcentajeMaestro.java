@@ -22,6 +22,7 @@ public class PorcentajeMaestro implements ITransferObject {
 	@Column(name="cdg", unique=true, nullable=false, length=8)
     public String getCdg() {
 		return this.cdg;
+		
     }
 
 	public void setCdg(String cdg) {

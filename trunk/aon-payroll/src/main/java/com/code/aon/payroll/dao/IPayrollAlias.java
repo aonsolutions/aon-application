@@ -1737,10 +1737,10 @@ public interface IPayrollAlias {
 	String  LIN_DIVISA_DIVISA1_CDG = LIN_DIVISA_ENTRY.getAliasNames()[0];
 
 	/** 
-	* Alias value: LinDivisa_divisa_cdg
-	* Hibernate value: LinDivisa.divisa.cdg
+	* Alias value: LinDivisa_divisa0_cdg
+	* Hibernate value: LinDivisa.divisa0.cdg
 	*/
-	String  LIN_DIVISA_DIVISA_CDG = LIN_DIVISA_ENTRY.getAliasNames()[1];
+	String  LIN_DIVISA_DIVISA0_CDG = LIN_DIVISA_ENTRY.getAliasNames()[1];
 
 	/** 
 	* Alias value: LinDivisa_fecfin

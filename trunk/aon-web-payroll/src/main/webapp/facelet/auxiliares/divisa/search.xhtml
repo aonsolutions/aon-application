@@ -8,14 +8,14 @@
 	
 	<ui:define name="content">
 
-		<aon:form id="baseMaestroSearch">
+		<aon:form id="divisaMaestroSearch">
 
 			<aon:div styleClass="aon-finding-title-toolbar">
 				<aon:panelGrid columns="3" dir="true"
 					columnClasses="aon-finding-title,aon-finding-subtitle,aon-finding-toolbar">
 
 					<aon:div styleClass="aon-finding-title-internal">
-						<aon:outputText value="#{appBundle.aon_payroll_cotizacion_bases}" />
+						<aon:outputText value="#{appBundle.aon_payroll_auxiliares_divisa}" />
 					</aon:div>
 
 					<aon:div styleClass="aon-finding-subtitle-internal">
@@ -27,7 +27,7 @@
 							type="reset" ajaxSingle="true"
 							styleClass="aon-finding-toolbar-item aon-icon-rubber" />
 						<aon:commandButton id="back" value="#{bundle.aon_back}"
-							action="basecoti_list" actionListener="#{baseMaestro.onCancel}"
+							action="divisas_list" actionListener="#{divisaMaestro.onCancel}"
 							styleClass="aon-finding-toolbar-item aon-icon-cancel" immediate="true"
 							accesskey="#{bundle.aon_key_cancel}" />
 					</aon:div>
@@ -37,18 +37,18 @@
 
 			<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/searchContent.xhtml" >
 				<ui:define name="searchContent">
-					<aon:methodParam name="searchActionListener" value="#{baseMaestro.onSearch}" type="actionListener" />
-					<aon:methodParam name="searchAction" value="basecoti_list" />				
+					<aon:methodParam name="searchActionListener" value="#{divisaMaestro.onSearch}" type="actionListener" />
+					<aon:methodParam name="searchAction" value="divisas_list" />				
 				
-					<aon:outputLabel for="Base_cdg" 
+					<aon:outputLabel for="Divisa_cdg"
 						value="#{appBundle.aon_payroll_cdg}" />
-					<aon:inputText id="Base_cdg" size="10" maxlength="8"
-						valueChangeListener="#{baseMaestro.addExpression}" />
+					<aon:inputText id="divisa_cdg" size="10" maxlength="8"
+						valueChangeListener="#{divisaMaestro.addExpression}" />
 
-					<aon:outputLabel for="Base_description"
+					<aon:outputLabel for="Divisa_description"
 						value="#{appBundle.aon_payroll_description}" />
-					<aon:inputText id="Base_description" size="60" maxlength="50"
-						valueChangeListener="#{baseMaestro.addExpression}" />
+					<aon:inputText id="Divisa_description" size="60" maxlength="50"
+						valueChangeListener="#{divisaMaestro.addExpression}" />
 						
 					
 				</ui:define>

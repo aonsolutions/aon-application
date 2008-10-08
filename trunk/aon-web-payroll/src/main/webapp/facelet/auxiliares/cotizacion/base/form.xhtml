@@ -18,7 +18,7 @@
 					columnClasses="aon-finding-title,aon-finding-subtitle,aon-finding-toolbar">
 
 					<aon:div styleClass="aon-finding-title-internal">
-						<aon:outputText value="#{menuBundle.auxiliares_cotizacion__porcoti}" />
+						<aon:outputText value="#{appBundle.aon_payroll_cotizacion_bases}" />
 					</aon:div>
 
 					<aon:div styleClass="aon-finding-subtitle-internal">
@@ -65,7 +65,7 @@
 
 						<ui:include src="/facelet/templates/aon.ui.printbuttons.xhtml">
 							<ui:param name="manager" value="#{baseMaestro}"/>
-							<ui:param name="reportKey" value="porcentajesCotizacion"/>
+							<ui:param name="reportKey" value="BasesList"/>
 						</ui:include>
 
 					</aon:div>

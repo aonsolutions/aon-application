@@ -91,10 +91,9 @@ public class PayrollAliasWriter {
 		        Provincia.class.getName(),
 		        Delegacion.class.getName(),
 		        Epigrafe.class.getName(),
-		        Linepigr.class.getName(),
+		        Linepigr.class.getName()/*,
 		        Divisa.class.getName(),
-		        LinDivisa.class.getName()};
-		
+		        LinDivisa.class.getName()*/};		
 		AliasWriter writer = new AliasWriter("com.code.aon.payroll.dao");
 		writer.write(classes, file);
 		System.out.println( file.getAbsolutePath() );

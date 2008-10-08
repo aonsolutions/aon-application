@@ -27,7 +27,7 @@ public class LinDivisa  implements  ITransferObject {
      private Date fecfin;
      private BigDecimal unidades;
      private BigDecimal importe;
-     private Divisa divisa;
+     private Divisa divisa0;
      private Divisa divisa1;
 
     @EmbeddedId    
@@ -72,14 +72,14 @@ public class LinDivisa  implements  ITransferObject {
         this.importe = importe;
     }
     
-	@ManyToOne(fetch=FetchType.LAZY)
+	@ManyToOne(fetch=FetchType.LAZY)   
     @JoinColumn(name="divisa_final", insertable=false, updatable=false)
-    public Divisa getDivisa() {
-        return this.divisa;
+    public Divisa getDivisa0() {
+        return this.divisa0;
     }
     
-    public void setDivisa(Divisa divisa) {
-        this.divisa = divisa;
+    public void setDivisa0(Divisa divisa) {
+        this.divisa0 = divisa;
     }
     
 	@ManyToOne(fetch=FetchType.LAZY)
