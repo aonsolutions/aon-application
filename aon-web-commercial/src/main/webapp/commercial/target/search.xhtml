@@ -23,6 +23,106 @@
 						<ui:param name="controller" value="#{target}"/>
 					</ui:include>
 	
+					<aon:outputText value="" />	
+					<aon:panelCollapsible expanded="false" label="#{registryBundle.aon_address}">
+						<aon:panelGrid columns="2">
+							<aon:outputLabel for="Target_registry_addresses_address"
+								value="#{registryBundle.aon_address}" />
+							<aon:inputText id="Target_registry_addresses_address" size="60"
+								valueChangeListener="#{target.addDirectExpression}" />
+							<aon:outputLabel for="Target_registry_addresses_zip"
+								value="#{registryBundle.aon_zip}" />
+							<aon:inputText id="Target_registry_addresses_zip" size="60"
+								valueChangeListener="#{target.addDirectExpression}" />
+							<aon:outputLabel for="Target_registry_addresses_city"
+								value="#{registryBundle.aon_city}" />
+							<aon:inputText id="Target_registry_addresses_city" size="60"
+								valueChangeListener="#{target.addDirectExpression}" />
+							<aon:outputLabel for="Target_registry_addresses_geozone_id"
+								value="#{registryBundle.aon_geozone}" />
+							<aon:selectOneMenu id="Target_registry_addresses_geozone_id" 
+								valueChangeListener="#{target.addDirectExpression}">
+								<f:selectItem value="#{null}" itemLabel="    " />
+								<f:selectItems value="#{geozoneCollections.geoTrees}" />
+							</aon:selectOneMenu>				
+						</aon:panelGrid>
+					</aon:panelCollapsible>	
+
+					<aon:outputText value="" />	
+					<aon:panelCollapsible expanded="false" label="#{appBundle.aon_target_segment}">
+						<aon:panelGrid columns="2">					
+							<aon:outputLabel for="Target_segments_segment_id"
+								value="#{bundle.aon_name}" />
+							<aon:selectOneMenu id="Target_segments_segment_id"
+								valueChangeListener="#{target.addDirectExpression}">
+								<f:selectItem value="#{null}" itemLabel="    " />
+								<f:selectItems value="#{target.segments}" />
+							</aon:selectOneMenu>
+						</aon:panelGrid>								
+					</aon:panelCollapsible>	
+
+					<aon:outputText value="" />	
+					<aon:panelCollapsible expanded="false" label="#{appBundle.aon_target_item}">
+						<aon:panelGrid columns="2">					
+							<aon:outputLabel for="Target_items_item_product_code"
+								value="#{productBundle.item_code}" />
+							<aon:inputText id="Target_items_item_product_code"
+								size="20" valueChangeListener="#{target.addDirectExpression}" />
+							
+							<aon:outputLabel for="Target_items_item_product_name"
+								value="#{productBundle.item_description}" />
+							<aon:inputText id="Target_items_item_product_name"
+								size="60" valueChangeListener="#{target.addDirectExpression}" />
+							 
+							<aon:outputLabel for="Target_items_item_product_category_id"
+								value="#{productBundle.item_category}" />
+							<aon:selectOneMenu id="Target_items_item_product_category_id"
+								valueChangeListener="#{target.addDirectExpression}">
+								<f:selectItem itemDisabled="true" itemLabel="-" itemValue="" />
+								<f:selectItems value="#{productCollections.categories}" />
+							</aon:selectOneMenu>
+							
+							<aon:outputLabel for="Target_items_item_status"
+								value="#{productBundle.item_status}" />
+							<aon:selectOneMenu id="Target_items_item_status"
+								converter="aonProductStatusConverter"
+								valueChangeListener="#{target.addDirectExpression}">
+								<f:selectItem itemDisabled="true" itemLabel="-" itemValue="" />
+								<f:selectItems value="#{productCollections.productStatuses}" />
+							</aon:selectOneMenu>
+						</aon:panelGrid>
+					</aon:panelCollapsible>	
+
+					<aon:outputText value="" />	
+					<aon:panelCollapsible expanded="false" label="#{appBundle.aon_target_seller}">
+						<!-- 
+						<aon:outputLabel for="Target_registry_addresses_city"
+							value="#{registryBundle.aon_city}" />
+						<aon:inputText id="Target_registry_addresses_city" size="60"
+							valueChangeListener="#{target.addDirectExpression}" />
+						-->
+					</aon:panelCollapsible>	
+
+					<aon:outputText value="" />	
+					<aon:panelCollapsible expanded="false" label="#{marketingBundle.aon_target_profile}">
+						<!-- 
+						<aon:outputLabel for="Target_registry_addresses_city"
+							value="#{registryBundle.aon_city}" />
+						<aon:inputText id="Target_registry_addresses_city" size="60"
+							valueChangeListener="#{target.addDirectExpression}" />
+						-->
+					</aon:panelCollapsible>	
+
+					<aon:outputText value="" />	
+					<aon:panelCollapsible expanded="false" label="#{appBundle.aon_target_tracking}">
+						<!-- 
+						<aon:outputLabel for="Target_registry_addresses_city"
+							value="#{registryBundle.aon_city}" />
+						<aon:inputText id="Target_registry_addresses_city" size="60"
+							valueChangeListener="#{target.addDirectExpression}" />
+						-->
+					</aon:panelCollapsible>	
+	
 				</ui:define>
 			</ui:decorate>
 
