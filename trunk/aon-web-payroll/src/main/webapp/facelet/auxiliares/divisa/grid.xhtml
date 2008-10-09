@@ -42,7 +42,7 @@
 				<f:facet name="header">
 					<aon:outputText value="#{appBundle.aon_payroll_auxiliares_divisa_divdest}" />
 				</f:facet>
-				<aon:outputText value="#{to.id.cdg}" rendered="#{to!=divisa.to}" >
+				<aon:outputText value="#{to.divisa0.cdg}" rendered="#{to!=divisa.to}" >
 					<f:convertNumber minFractionDigits="2" />
 				</aon:outputText>
 				<aon:inputText styleClass="aon-form-input-text"
@@ -60,12 +60,9 @@
 				<f:facet name="header">
 					<aon:outputText value="#{appBundle.aon_payroll_auxiliares_divisa_destdec}" />
 				</f:facet>
-				<aon:outputText value="#{to.divisa0.cdg}" rendered="#{to!=divisa.to}" >
-					<f:convertNumber minFractionDigits="2" />
-				</aon:outputText>
-				<aon:inputText styleClass="aon-form-input-text" disabled="true" 
-					rendered="#{to==divisa.to.divisa0.cdg}" 
-					value="#{divisa.to.divisa0.description}" maxlength="8" size="10" />
+				<aon:outputText value="#{to.id.divisaFinal}"  />
+				
+				
 				<f:facet name="footer">
 					<aon:inputText styleClass="aon-form-input-text"  
 						rendered="#{divisa.new}" 

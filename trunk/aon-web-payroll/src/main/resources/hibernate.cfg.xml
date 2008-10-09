@@ -46,8 +46,8 @@
 		<mapping class="com.code.aon.payroll.cotizacion.Ocupacion"/>
 		<mapping class="com.code.aon.payroll.cotizacion.CnaeMaestro"/>			
 		<mapping class="com.code.aon.payroll.cotizacion.Cnae"/>	 
-	 
-		
+	
+			
 		  <!-- ORGANISMOS Y ENTIDADES-->		
 	    <mapping class="com.code.aon.payroll.organismosyentidades.Delegacion"/>		
 		<mapping class="com.code.aon.payroll.organismosyentidades.Pais"/>

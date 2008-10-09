@@ -290,4 +290,16 @@
 			<param id="companyName" value="#{payrollController.getCompanyName}" />
 		</params>
 	</report>
+	
+		<!--  *********  Impresion a PDF de las delegaciones  ********* -->
+	<report id="DelegacionList" description="Listado de Delegaciones">
+		<template path="/com/code/aon/ui/payroll/report/DelegacionList.jasper" />
+		<bean key="com.code.aon.payroll.organismosyentidades.Delegacion" />
+		<criteria provider="#{complemento}" />
+		<params>
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.payroll.i18n.messages" />
+			<param id="logoImageFile" value="#{payrollController.getLogo}" />
+			<param id="companyName" value="#{payrollController.getCompanyName}" />
+		</params>
+	</report>
 </report-config>
