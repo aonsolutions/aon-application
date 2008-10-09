@@ -52,11 +52,14 @@ public class Target implements ITransferObject, ILookupObject, ITaxInfo, IRegist
 	/** The segments. */
 	private Set<TargetSegment> segments = new HashSet<TargetSegment>();
 
-	/** The segments. */
+	/** The items. */
 	private Set<TargetItem> items = new HashSet<TargetItem>();
 
-	/** The segments. */
+	/** The sellers. */
 	private Set<TargetSeller> sellers = new HashSet<TargetSeller>();
+
+	/** The sellers. */
+	private Set<CommercialTracking> trackings = new HashSet<CommercialTracking>();
 	
 	/**
 	 * The empty onstructor.
@@ -240,6 +243,25 @@ public class Target implements ITransferObject, ILookupObject, ITaxInfo, IRegist
 	 */
 	public void setSellers(Set<TargetSeller> sellers) {
 		this.sellers = sellers;
+	}
+
+	/**
+	 * Gets the trackings.
+	 * 
+	 * @return the trackings
+	 */
+	@OneToMany(mappedBy = "target", cascade={CascadeType.REMOVE})
+	public Set<CommercialTracking> getTrackings() {
+		return trackings;
+	}
+
+	/**
+	 * Sets the trackings.
+	 * 
+	 * @param trackings the new trackings
+	 */
+	public void setTrackings(Set<CommercialTracking> trackings) {
+		this.trackings = trackings;
 	}
 	
 }
