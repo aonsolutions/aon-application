@@ -3,6 +3,7 @@ package com.code.aon.ui.marketing.controller;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
 
 import com.code.aon.commercial.Target;
@@ -30,15 +31,14 @@ public class SurveyResponseController extends BasicController implements IMarket
 	private Action action;
 	
 	public void onSelectSurveyResponse( ActionEvent event ) throws NumberFormatException, ManagerBeanException {
-		IController controller = AonUtil.getController(CAMPAIGN_ACTION_TARGET_CONTROLLER_NAME);
-		ActionTarget actionTarget = (ActionTarget) controller.getTo();
+        FacesContext context = FacesContext.getCurrentInstance();
+		String id = context.getExternalContext().getRequestParameterMap().get("surveyResponseId");		
 		Criteria oldCriteria = getCriteria();
 		clearCriteria();
-		getCriteria().addEqualExpression( getFieldName(IMarketingAlias.SURVEY_RESPONSE_ID), actionTarget.getSurveyResponse().getId());
+		getCriteria().addEqualExpression( getFieldName(IMarketingAlias.SURVEY_RESPONSE_ID), Integer.valueOf(id));
 		onSearch( event );
 		onSelectFirst( event );
 		setCriteria(oldCriteria);
-		controller.onCancel(event);
 	}
 		
 	public Survey getSurvey() {
