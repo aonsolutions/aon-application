@@ -10,8 +10,14 @@
 
 <ui:composition template="/facelet/templates/aon.ui.content.xhtml">
 	<ui:define name="content">
+
+			<aon:div styleClass="aon-scroll-area">
+
+				<aon:panelTabSet id="tabPanelTypesForm"> 
+					<aon:panelTab id="content" label="#{appBundle.aon_content}">
+
+
 		<aon:form id="main_form">
-		
 			<aon:div styleClass="aon-finding-title-toolbar">
 				<aon:panelGrid id="buttonsGrid" columns="3" dir="true" 
 					columnClasses="aon-finding-title,aon-finding-subtitle,aon-finding-toolbar">				
@@ -89,12 +95,7 @@
 					<!-- end toolbar navigation -->
 				</aon:panelGrid>
 			</aon:div>
-			
-			<aon:div styleClass="aon-scroll-area">
-
-				<aon:panelTabSet id="tabPanelTypesForm"> 
-					<aon:panelTab id="content" label="#{appBundle.aon_content}">
-					
+								
 						<aon:panelGrid id="main_panel" columns="2" dir="true">
 	
 							<aon:outputLabel for="Article_alias" style="width:100px"
@@ -295,11 +296,15 @@
 								value="#{article.to.active}" />
 
 						</aon:panelGrid>
+
+		</aon:form>
+						
 					</aon:panelTab>
 
 					<aon:panelTab id="meta_tags" label="#{appBundle.article_related_list}"
 						rendered="#{!article.new}">
 						
+		<aon:form id="main_form_1">
 						<aon:div id="articleRelatedData">
 						
 							<aon:dataTable id="articleRelatedDataTable" 
@@ -394,12 +399,14 @@
 								showNote="true" />					
 								
 						</aon:div>
+		</aon:form>
 							
                     </aon:panelTab>
 
 					<aon:panelTab id="files" label="#{appBundle.document_related_list}"
 						rendered="#{!article.new}">
 
+		<aon:form id="main_form_2">
 						<aon:div id="articleDocumentData">
 							<aon:dataTable id="articleDocumentDataTable" 
 								value="#{articleDocument.model}" var="to"
@@ -574,12 +581,12 @@
 
 						</aon:div>
 
+		</aon:form>
                     </aon:panelTab>
 
 				</aon:panelTabSet>					
 			</aon:div>
 		
-		</aon:form>
 	</ui:define>
 
 </ui:composition>
