@@ -72,14 +72,13 @@
 					<f:facet name="header">
 						<aon:outputText value="#{marketingBundle.aon_survey_workflow}" />
 					</f:facet>
-					<aon:outputText value="#{surveyQuestion.numberOfWorkflows}" rendered="#{to!=controller.to}" />
-					<aon:commandLink style="padding:1px 5px 1px 16px; margin:0 0 0 5px; border:0; width:auto;overflow:visible;"
-						styleClass="aon-finding-toolbar-item aon-icon-file-entrance"
+					<aon:commandButton style="border:0;" styleClass="aon-finding-toolbar-item aon-icon-file-entrance"
 						actionListener="#{surveyQuestion.onShowSurveyWorflow}"
-						reRender="surveyWorkflowWindow"
-						rendered="#{to==controller.to}">
+						onmouseover="disableRowSelector();" oncomplete="enableRowSelector();" onmouseout="enableRowSelector();"
+						rendered="#{to.question.type != 'INFO'}"
+						reRender="surveyWorkflowWindow">
 						<aon:outputText value="&#160;" />
-					</aon:commandLink>
+					</aon:commandButton>					
 				</aon:column>
 										
 			</ui:define>
