@@ -2,11 +2,9 @@
 <html xmlns="http://www.w3.org/1999/xhtml"
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:f="http://java.sun.com/jsf/core"
-	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:aon="http://www.code.es/aon-rich-components"
 	xmlns:c="http://java.sun.com/jstl/core"
 	xmlns:rich="http://richfaces.org/rich"
-	xmlns:t="http://myfaces.apache.org/tomahawk"
 	xmlns:a4j="http://richfaces.org/a4j">
 <body>
 
@@ -43,15 +41,23 @@
 			<!--  aon-region-body -->
 			<aon:div styleClass="aon-scroll-area">
 
-							<t:inputFileUpload id="Template_file"
-								value="#{template.inputFile}"
-								accept="*/*" size="45"
-								storage="file"
-								required="true"/>
-							<h:commandButton value="#{bundle.aon_fileupload_insert}"
-								action="template_form"
-								styleClass="aon-icon-attach aon-finding-toolbar-item"
-								actionListener="#{template.fileUploaded}"/>
+				<aon:fileUpload id="Template_file" 
+						width="100%" 
+						addControlLabel="#{appBundle.aon_upload_add}" 
+						stopControlLabel="#{appBundle.aon_upload_stop}" 
+						stopEntryControlLabel="#{appBundle.aon_upload_stop}"
+						uploadControlLabel="#{appBundle.aon_upload_upload}"
+						cancelEntryControlLabel="#{appBundle.aon_upload_cancel}"
+						clearAllControlLabel="#{appBundle.aon_upload_clear_all}" 
+						clearControlLabel="#{appBundle.aon_upload_clear}"
+						doneLabel="#{appBundle.aon_upload_done}" 
+						progressLabel="#{appBundle.aon_upload_progress}" 
+						sizeErrorLabel="#{appBundle.aon_upload_size_error}" 
+						transferErrorLabel="#{appBundle.aon_upload_transfer_error}" 
+						fileUploadListener="#{template.fileUploaded}"
+						immediateUpload="true" autoclear="false" listHeight="70px" listWidth="100%">
+					<a4j:support event="onuploadcomplete" action="template_list" />
+				</aon:fileUpload>
 
 			</aon:div>
 		</aon:form>

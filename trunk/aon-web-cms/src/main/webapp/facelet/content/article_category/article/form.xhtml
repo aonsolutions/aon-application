@@ -2,17 +2,16 @@
 <html xmlns="http://www.w3.org/1999/xhtml"
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:f="http://java.sun.com/jsf/core"
-	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:aon="http://www.code.es/aon-rich-components"
 	xmlns:c="http://java.sun.com/jstl/core"
 	xmlns:rich="http://richfaces.org/rich"
-	xmlns:t="http://myfaces.apache.org/tomahawk"
 	xmlns:a4j="http://richfaces.org/a4j">
 <body>
 
 <ui:composition template="/facelet/templates/aon.ui.content.xhtml">
 	<ui:define name="content">
-		<aon:form id="main_form" enctype="multipart/form-data">
+		<aon:form id="main_form">
+		
 			<aon:div styleClass="aon-finding-title-toolbar">
 				<aon:panelGrid id="buttonsGrid" columns="3" dir="true" 
 					columnClasses="aon-finding-title,aon-finding-subtitle,aon-finding-toolbar">				
@@ -465,23 +464,9 @@
 												value="#{articleDocument.toI18n.title}" />
 												
 											<aon:outputText value="#{appBundle.document_related}" />
-											<aon:div rendered="#{articleDocument.toI18n.file!=null or articleDocument.inputFile!=null}">
-												<aon:outputText 
-													size="60" maxlength="255"
-													value="#{articleDocument.toI18n.file}" />
-											</aon:div>
-											<aon:div rendered="#{articleDocument.toI18n.file==null and articleDocument.inputFile==null}">
-												<t:inputFileUpload id="ArticleDocument_inputFile_edit"
-													value="#{articleDocument.inputFile}"
-													accept="*/*" size="45"
-													storage="file"
-													required="true"/>
-												<h:commandButton value="#{bundle.aon_fileupload_insert}"
-													reRender="articleDocumentData"
-													styleClass="aon-icon-attach aon-finding-toolbar-item"
-													actionListener="#{articleDocument.fileUploaded}"/>
-											</aon:div>
-											
+											<aon:outputText 
+												size="60" maxlength="255"
+												value="#{articleDocument.toI18n.file}" />
 											<aon:outputText value="#{appBundle.document_related_description}" 
 												for="Description" />
 											<aon:inputTextarea
@@ -509,23 +494,29 @@
 													
 												<aon:outputText value="#{appBundle.document_related}" 
 													for="Description" />
-												<aon:div rendered="#{articleDocument.inputFile!=null}">
+												<aon:div>
 													<aon:outputText 
-														size="90" maxlength="255"
+														size="60" maxlength="255"
 														value="#{articleDocument.toI18n.file}" />
+													<aon:fileUpload id="attach_file" 
+															width="100%" 
+															addControlLabel="#{appBundle.aon_upload_add}" 
+															stopControlLabel="#{appBundle.aon_upload_stop}" 
+															stopEntryControlLabel="#{appBundle.aon_upload_stop}"
+															uploadControlLabel="#{appBundle.aon_upload_upload}"
+															cancelEntryControlLabel="#{appBundle.aon_upload_cancel}"
+															clearAllControlLabel="#{appBundle.aon_upload_clear_all}" 
+															clearControlLabel="#{appBundle.aon_upload_clear}"
+															doneLabel="#{appBundle.aon_upload_done}" 
+															progressLabel="#{appBundle.aon_upload_progress}" 
+															sizeErrorLabel="#{appBundle.aon_upload_size_error}" 
+															transferErrorLabel="#{appBundle.aon_upload_transfer_error}" 
+															fileUploadListener="#{articleDocument.fileUploaded}"
+															immediateUpload="true" autoclear="false" listHeight="70px" listWidth="100%">
+														<a4j:support event="onuploadcomplete" reRender="articleDocumentData" />
+													</aon:fileUpload>
 												</aon:div>
-												<aon:div rendered="#{articleDocument.inputFile==null}">
-													<t:inputFileUpload id="ArticleDocument_inputFile"
-														value="#{articleDocument.inputFile}"
-														accept="*/*" size="45"
-														storage="file"
-														required="true"/>
-													<h:commandButton value="#{bundle.aon_fileupload_insert}"
-														reRender="articleDocumentData"
-														styleClass="aon-icon-attach aon-finding-toolbar-item"
-														actionListener="#{articleDocument.fileUploaded}"/>
-												</aon:div>
-												
+
 												<aon:outputText value="#{appBundle.document_related_description}" 
 													for="Description_" />
 												<aon:inputTextarea
@@ -564,8 +555,7 @@
 											<f:verbatim rendered="#{!articleDocument.new}">&#160;</f:verbatim>
 											<aon:commandButton title="[#{bundle.aon_accept}]"
 												styleClass="aon-editDataTable-button aon-icon-accept"
-												reRender="articleDocumentData"
-												rendered="#{articleDocument.inputFile != null}" >
+												reRender="articleDocumentData" >
 												<aon:actionListener method="#{articleDocument.accept}" />
 											</aon:commandButton>
 											<aon:commandButton title="[#{bundle.aon_cancel}]"
@@ -577,7 +567,7 @@
 									</f:facet>
 								</aon:column>
 							</aon:dataTable>
-							
+														
 							<aon:dataScroller for="articleDocumentDataTable"
 								rowCount="#{articleDocument.model.rowCount}" 
 								showNote="true" />					

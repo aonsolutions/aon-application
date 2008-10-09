@@ -21,9 +21,10 @@
 	</c:forEach>
 
 	<a4j:loadScript src="/fckfaces/FCKeditor/fckeditor.js"/>
+	<link rel="shortcut icon" type="image/x-icon" href="#{facesContext.externalContext.requestContextPath}/#{aonResource.resolve['/images/favicon.ico']}" />
 	<ui:insert name="head" />
 </head>
-<body class="aon-body" onresize="aonResizeBody();">
+<body class="aon-body">
 	<aon:div id="aon-content">			
 		<ui:insert name="mainHeader" />		
 		<ui:insert name="mainContent" />

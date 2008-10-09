@@ -2,11 +2,9 @@
 <html xmlns="http://www.w3.org/1999/xhtml"
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:f="http://java.sun.com/jsf/core"
-	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:aon="http://www.code.es/aon-rich-components"
 	xmlns:c="http://java.sun.com/jstl/core"
 	xmlns:rich="http://richfaces.org/rich"
-	xmlns:t="http://myfaces.apache.org/tomahawk"
 	xmlns:a4j="http://richfaces.org/a4j">	
 <body>
 
@@ -15,7 +13,7 @@
 
 	<ui:define name="content">
 
-		<aon:form id="main_form" enctype="multipart/form-data">
+		<aon:form id="main_form">
 			<aon:div styleClass="aon-finding-title-toolbar">
 				<aon:panelGrid id="buttonsGrid" columns="1" dir="true" 
 					columnClasses="aon-finding-title,aon-finding-subtitle,aon-finding-toolbar">				
@@ -29,29 +27,52 @@
 			</aon:div>
 			
 			<aon:div styleClass="aon-scroll-area">
-<style>
-.bodyGalleryImages {
-	width:250px;
-    height:500px;
-    overflow:auto;
-}
-.bodyImages {
-	width:400px;
-    height:500px;
-    overflow:auto;
-}
-</style>
-							<h:panelGrid id="treeGrid" columns="2">
-							
-								<t:inputFileUpload id="image_file"
-									value="#{document.inputFile}"
-									accept="*/*" size="45"
-									storage="file"/>
-								<h:commandButton value="#{bundle.aon_fileupload_insert}"
-									action="document_list"
-									styleClass="aon-icon-attach aon-finding-toolbar-item"
-									actionListener="#{document.fileUploaded}"/>
-							
+
+					<aon:panelGrid columns="2"> 
+								<aon:div styleClass="aon-finding-title-toolbar">
+									<aon:panelGrid columns="1" dir="true" 
+										columnClasses="aon-finding-toolbar">				
+										<aon:div styleClass="aon-finding-toolbar-item-group">
+											<aon:outputText value="#{document.currentRelativePath}"/>	  						
+											<aon:commandButton value="#{bundle.aon_remove}"
+												rendered="#{document.emptyDir}"
+												action="document_list"
+												actionListener="#{document.deleteFolder}"/>
+										</aon:div>					
+									</aon:panelGrid>
+									<aon:panelGrid columns="1" dir="true" 
+										columnClasses="aon-finding-toolbar">				
+									
+										<aon:div styleClass="aon-finding-toolbar-item-group">
+											<aon:inputText 
+												size="25" maxlength="30"
+												value="#{document.folderName}">
+												<f:validator validatorId="AliasValidator" />
+											</aon:inputText>
+											<aon:commandButton value="crear carpeta"
+												action="document_list"
+												actionListener="#{document.createFolder}"/>
+										</aon:div>					
+										
+									</aon:panelGrid>
+								</aon:div>
+								<aon:fileUpload id="attach_file" 
+										width="100%" 
+										addControlLabel="#{appBundle.aon_upload_add}" 
+										stopControlLabel="#{appBundle.aon_upload_stop}" 
+										stopEntryControlLabel="#{appBundle.aon_upload_stop}"
+										uploadControlLabel="#{appBundle.aon_upload_upload}"
+										cancelEntryControlLabel="#{appBundle.aon_upload_cancel}"
+										clearAllControlLabel="#{appBundle.aon_upload_clear_all}" 
+										clearControlLabel="#{appBundle.aon_upload_clear}"
+										doneLabel="#{appBundle.aon_upload_done}" 
+										progressLabel="#{appBundle.aon_upload_progress}" 
+										sizeErrorLabel="#{appBundle.aon_upload_size_error}" 
+										transferErrorLabel="#{appBundle.aon_upload_transfer_error}" 
+										fileUploadListener="#{document.fileUploaded}"
+										immediateUpload="true" autoclear="false" listHeight="70px" listWidth="100%">
+									<a4j:support event="onuploadcomplete" action="document_list" />
+								</aon:fileUpload>
 					            <rich:panel bodyClass="bodyGalleryImages">
 								    <rich:tree
 								    	switchType="server" 
@@ -64,42 +85,13 @@
 								                	action="#{item.onSelectFolder}" 
 								                	value="#{item}"
 								                	immediate="#{true}"
-								                	reRender="treeGrid" />
+								                	reRender="main_form" />
 											</rich:treeNode>
 								        </rich:recursiveTreeNodesAdaptor>
 								    </rich:tree>
 								</rich:panel>
 					            <rich:panel bodyClass="bodyImages">
 									<aon:panelGroup>
-										<aon:div styleClass="aon-finding-title-toolbar">
-											<aon:panelGrid columns="1" dir="true" 
-												columnClasses="aon-finding-toolbar">				
-											
-												<aon:div styleClass="aon-finding-toolbar-item-group">
-													<aon:outputText value="#{document.currentRelativePath}"/>	  						
-													<h:commandButton value="#{bundle.aon_remove}"
-														rendered="#{document.emptyDir}"
-														action="document_list"
-														actionListener="#{document.deleteFolder}"/>
-												</aon:div>					
-												
-											</aon:panelGrid>
-											<aon:panelGrid columns="1" dir="true" 
-												columnClasses="aon-finding-toolbar">				
-											
-												<aon:div styleClass="aon-finding-toolbar-item-group">
-													<aon:inputText 
-														size="25" maxlength="30"
-														value="#{document.folderName}">
-														<f:validator validatorId="AliasValidator" />
-													</aon:inputText>
-													<h:commandButton value="crear carpeta"
-														action="document_list"
-														actionListener="#{document.createFolder}"/>
-												</aon:div>					
-												
-											</aon:panelGrid>
-										</aon:div>
 										<rich:dataList var="item" value="#{document.model}">	
 											<aon:panelGrid columns="2" cellpadding="5px" cellspacing="0px">
 												<aon:outputText value="#{item.name}"/>	  						
@@ -113,9 +105,10 @@
 											</aon:panelGrid>
 										</rich:dataList>
 									</aon:panelGroup>
-								</rich:panel>
-							</h:panelGrid>				
-			
+								</rich:panel>					
+					
+					
+					</aon:panelGrid>					
 			</aon:div>
 					
 		</aon:form>

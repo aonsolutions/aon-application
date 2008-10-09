@@ -46,7 +46,7 @@
 	<!--  *************** 
 		AON CONFIGURATION
 		***************** -->
-	<managed-bean>
+   <managed-bean>
 		<managed-bean-name>aonConfiguration</managed-bean-name>
 		<managed-bean-class>
 			com.code.aon.ui.common.controller.ConfigurationController
@@ -65,14 +65,11 @@
 			<value>/__theme_images/html/aon-home.jpg</value>
 		</managed-property>
 		<managed-property>
-			<property-name>style</property-name>
-			<value>richCss</value>
-		</managed-property>
-		<managed-property>
-			<property-name>userStyleSheets</property-name>
-			<list-entries>
-				<value>/css/aon-richCss.css</value>
-			</list-entries>
+		   <property-name>styleSheets</property-name>
+		   <list-entries>
+			  <value>#{aonResource.resolve['/aon-richCss.css']}</value>
+		      <value>#{aonResource.resolveLocal['/css/richCss/aon-richCss.css']}</value>
+		   </list-entries>
 		</managed-property>
 		<managed-property>
 			<property-name>applicationBundles</property-name>
@@ -111,7 +108,7 @@
 	<managed-bean>
 		<managed-bean-name>nullSelectItem</managed-bean-name>
 		<managed-bean-class>
-			com.code.ui.cms.controller.NullSelectItemController
+			com.code.aon.ui.cms.controller.NullSelectItemController
 		</managed-bean-class>
 		<managed-bean-scope>application</managed-bean-scope>
 	</managed-bean>
@@ -144,4 +141,24 @@
 		<managed-bean-scope>request</managed-bean-scope>
 	</managed-bean>
 
+   <!-- *************** RESOURCE RESOLVER ***************** --> 
+   <managed-bean>
+      <managed-bean-name>aonResource</managed-bean-name>
+      <managed-bean-class>
+         com.code.aon.ui.resources.bean.ResourceResolver
+      </managed-bean-class>
+      <managed-bean-scope>session</managed-bean-scope>
+      <managed-property>
+         <property-name>resourceURIPreffix</property-name>
+         <value>/aonResource/1.6.2</value>
+      </managed-property>      
+   </managed-bean>
+   
+      <!-- ***************** LOGGED USER ******************** --> 
+   <managed-bean>
+      <managed-bean-name>loggedUser</managed-bean-name>
+      <managed-bean-class>com.code.aon.bridge.session.LoggedUser</managed-bean-class>
+      <managed-bean-scope>session</managed-bean-scope>
+   </managed-bean>
+   
 </faces-config>

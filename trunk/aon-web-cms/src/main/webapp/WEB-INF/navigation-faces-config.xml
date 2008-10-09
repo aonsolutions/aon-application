@@ -13,6 +13,15 @@
     </navigation-case>
   </navigation-rule>
 
+  <!-- ===================================================== LOGOUT -->
+   <navigation-rule>
+      <navigation-case>
+         <from-outcome>logout</from-outcome>
+         <to-view-id>/home.jsf</to-view-id> 
+         <redirect/>
+      </navigation-case>
+   </navigation-rule>
+   
   <!-- ===================================================== LANGUAGE -->
   <navigation-rule>
     <navigation-case>

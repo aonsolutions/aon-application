@@ -6,20 +6,16 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.EventObject;
 import java.util.HashMap;
 
-import javax.faces.application.FacesMessage;
-import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
-import javax.faces.event.ValueChangeEvent;
 import javax.faces.model.ListDataModel;
-import javax.faces.validator.LengthValidator;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 
-import org.apache.myfaces.custom.fileupload.UploadedFile;
+import org.richfaces.event.UploadEvent;
+import org.richfaces.model.UploadItem;
 import org.xml.sax.SAXException;
 
 import com.code.aon.cms.Config;
@@ -224,45 +220,28 @@ public class TemplateController extends BasicController implements Constants {
 	    }
 	}
 
-	private UploadedFile inputFile;
-	private long maximumSize = -1;;
-
-	public UploadedFile getInputFile() {
-		return inputFile;
-	}
-
-	public void setInputFile(UploadedFile inputFile) {
-		this.inputFile = inputFile;
-	}
-	
-	public void fileUploaded( ActionEvent event ) throws IOException {
-		if ( this.inputFile!= null ) {
-			long size = this.inputFile.getSize();
-			String upload_name = inputFile.getName();
-			String separator = "/";
-			if (upload_name.lastIndexOf(separator) < 0) separator = "\\";
-	        upload_name = upload_name.substring(upload_name.lastIndexOf(separator));
-			File file = new File( getUploadDirectory()+File.separator+upload_name);
-			if ( (maximumSize != -1) && (size > maximumSize) ) {
-				FacesContext ctx = FacesContext.getCurrentInstance();
-				FacesMessage message = AonUtil.getMessage( ctx,
-						LengthValidator.MAXIMUM_MESSAGE_ID, new Object[]{maximumSize, upload_name} );
-				ctx.addMessage(AonUtil.AON_ERROR, message);
-			} else {
-				byte[] data = this.inputFile.getBytes();
-		        FileOutputStream outputStream = new FileOutputStream(file);
-		        outputStream.write(data);
-		        outputStream.close();
-				if (inputFile.getContentType().indexOf("zip") >= 0) {
-					ZipUtil.uncompressZipFile(file.getAbsolutePath(), ControllerUtil.getTemplatePath(), TEMPLATE_DETAILS_FILE);
-					FileUtil.delete(file.getAbsolutePath());
-				}
+	public void fileUploaded(UploadEvent event) {
+		UploadItem item = event.getUploadItem();
+		String upload_name = item.getFileName();
+		String separator = "/";
+		if (upload_name.lastIndexOf(separator) < 0) separator = "\\";
+        upload_name = upload_name.substring(upload_name.lastIndexOf(separator));
+		File file = new File( getUploadDirectory()+File.separator+upload_name);
+		FileOutputStream outputStream = null;
+		try{
+			byte[] data = item.getData();
+	        outputStream = new FileOutputStream(file);
+	        outputStream.write(data);
+			if (item.getContentType().indexOf("zip") >= 0) {
+				ZipUtil.uncompressZipFile(file.getAbsolutePath(), ControllerUtil.getTemplatePath(), TEMPLATE_DETAILS_FILE);
+				FileUtil.delete(file.getAbsolutePath());
 			}
-		}
-		try {
-			this.onInit(event);
-		} catch (ManagerBeanException e) {
+			this.onInit(null);
+		}catch (Exception e) {
 			AonUtil.addErrorMessage("Error loading templates: "+e.getMessage());
-		}
+		}finally{
+	        try{outputStream.close();}catch (Exception e) {}			
+		}		
 	}
+
 }
