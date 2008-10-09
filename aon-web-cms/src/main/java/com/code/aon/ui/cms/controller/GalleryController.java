@@ -6,21 +6,18 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 
-import javax.faces.application.FacesMessage;
-import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
 import javax.faces.model.DataModel;
 import javax.faces.model.ListDataModel;
-import javax.faces.validator.LengthValidator;
 
-import org.apache.myfaces.custom.fileupload.UploadedFile;
+import org.richfaces.event.UploadEvent;
+import org.richfaces.model.UploadItem;
 
 import com.code.aon.cms.Image;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ui.cms.IGalleryController;
 import com.code.aon.ui.cms.util.ImageComparator;
 import com.code.aon.ui.form.BasicController;
-import com.code.aon.ui.util.AonUtil;
 
 public abstract class GalleryController extends BasicController implements IGalleryController{
 
@@ -82,44 +79,24 @@ public abstract class GalleryController extends BasicController implements IGall
 		chargeImageList();
 	}
 
-	private UploadedFile inputFile;
-	private long maximumSize = -1;;
-
-	public UploadedFile getInputFile() {
-		return inputFile;
-	}
-
-	public void setInputFile(UploadedFile inputFile) {
-		this.inputFile = inputFile;
-	}
-	
-	public void fileUploaded( ActionEvent event ){
-		if ( this.inputFile!= null ) {
-			long size = this.inputFile.getSize();
-			String upload_name = inputFile.getName();
-			upload_name = upload_name.replace('\\', '/');
-			upload_name = upload_name.substring(upload_name.lastIndexOf('/'));
-			upload_name = upload_name.replaceAll("[^A-Za-z0-9._-]+", "");
-			String fileName = File.separator+upload_name;
-			File file = new File( currentPath+File.separator+fileName);
-			if ( (maximumSize != -1) && (size > maximumSize) ) {
-				FacesContext ctx = FacesContext.getCurrentInstance();
-				FacesMessage message = AonUtil.getMessage( ctx,
-						LengthValidator.MAXIMUM_MESSAGE_ID, new Object[]{maximumSize, fileName} );
-				ctx.addMessage(AonUtil.AON_ERROR, message);
-			} else {
-				FileOutputStream outputStream = null; 
-				try{
-					byte[] data = this.inputFile.getBytes();
-			        outputStream = new FileOutputStream(file);
-			        outputStream.write(data);
-					chargeImageList();
-				}catch (Exception e) {
-				}finally{
-			        try{outputStream.close();}catch (Exception e) {}			
-				}
-			}
-		}
+	public void fileUploaded(UploadEvent event) {
+		UploadItem item = event.getUploadItem();
+		String upload_name = item.getFileName();
+		upload_name = upload_name.replace('\\', '/');
+		upload_name = upload_name.substring(upload_name.lastIndexOf('/'));
+		upload_name = upload_name.replaceAll("[^A-Za-z0-9._-]+", "");
+		String fileName = File.separator+upload_name;
+		File file = new File( currentPath+File.separator+fileName);
+		FileOutputStream outputStream = null; 
+		try{
+			byte[] data = item.getData();
+	        outputStream = new FileOutputStream(file);
+	        outputStream.write(data);
+			chargeImageList();
+		}catch (Exception e) {
+		}finally{
+	        try{outputStream.close();}catch (Exception e) {}			
+		}		
 	}
 
 	private String folderName;
