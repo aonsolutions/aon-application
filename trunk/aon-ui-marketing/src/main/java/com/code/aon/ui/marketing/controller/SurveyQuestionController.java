@@ -7,14 +7,15 @@ import java.util.List;
 import javax.faces.event.ActionEvent;
 import javax.faces.model.SelectItem;
 
+import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.StringUtils;
 
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.marketing.QuestionValue;
 import com.code.aon.marketing.SurveyQuestion;
-import com.code.aon.marketing.SurveyWorkflow;
 import com.code.aon.marketing.dao.IMarketingAlias;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.ast.Expression;
@@ -29,6 +30,8 @@ public class SurveyQuestionController extends BasicController implements IMarket
 	private boolean showSurveyWorkflowWindow;
 	
 	private List<SelectItem> questions;
+	
+	private List<SelectItem> questionValues;
 
 	public List<SelectItem> getQuestions() {
 		return questions;
@@ -52,12 +55,22 @@ public class SurveyQuestionController extends BasicController implements IMarket
 		}
 	}	
 	
-	public int getNumberOfWorkflows() throws ManagerBeanException {
-		SurveyQuestion surveyQuestion = (SurveyQuestion) getSelectedTO();
-		IManagerBean bean = BeanManager.getManagerBean(SurveyWorkflow.class);
+	public List<SelectItem> getQuestionValues() {
+		return questionValues;
+	}
+
+	private void refreshQuestionValues( SurveyQuestion sq ) throws ManagerBeanException {
+		questionValues = new LinkedList<SelectItem>();
+		IManagerBean bean = BeanManager.getManagerBean(QuestionValue.class);
 		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(bean.getFieldName(IMarketingAlias.SURVEY_WORKFLOW_ID), surveyQuestion.getId());
-		return bean.getCount( criteria );
+		criteria.addEqualExpression(bean.getFieldName(IMarketingAlias.QUESTION_VALUE_QUESTION_ID), sq.getQuestion().getId());
+		Iterator<ITransferObject> iter = bean.getList(criteria).iterator();
+		while (iter.hasNext()) {
+			QuestionValue questionValue = (QuestionValue) iter.next();
+			Object value = questionValue.getValue( sq.getQuestion().getType() );
+			SelectItem item = new SelectItem(questionValue.getId(), ObjectUtils.toString(value));
+			this.questionValues.add(item);
+		}	
 	}
 	
 	public boolean isShowSurveyWorkflowWindow() {
@@ -69,8 +82,12 @@ public class SurveyQuestionController extends BasicController implements IMarket
 	}
 
 	public void onShowSurveyWorflow( ActionEvent event ) throws ManagerBeanException {
-		SurveyQuestion sq = (SurveyQuestion) ( getModel().isRowAvailable() ? getSelectedTO() : getTo());
+		if ( getModel().isRowAvailable() ) {
+			onSelect(event);
+		}
+		SurveyQuestion sq = (SurveyQuestion) getTo();
 		refreshQuestions( sq );
+		refreshQuestionValues( sq );
 		setShowSurveyWorkflowWindow(true);
 	}
 	

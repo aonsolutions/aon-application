@@ -79,7 +79,7 @@
 						styleClass="aon-finding-toolbar-item aon-icon-file-entrance"
 						action="surveyResponse_action_form" actionListener="#{surveyResponse.onSelectSurveyResponse}"
 						onmouseover="disableRowSelector();" oncomplete="enableRowSelector();" onmouseout="enableRowSelector();"
-						rendered="#{to.surveyResponse.id != null}">
+						rendered="#{to.surveyResponse.id != null}" immediate="true">
 						<aon:outputText value="&#160;" />
 						<f:param name="surveyResponseId" value="#{to.surveyResponse.id}" />
 					</aon:commandButton>

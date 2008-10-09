@@ -22,7 +22,7 @@
 					<aon:commandButton alt="[#{bundle.aon_reset}]"
 						styleClass="aon-editDataTable-button aon-icon-reset"
 						actionListener="#{controller.onReset}" value=""
-						rendered="#{!controller.new}"
+						rendered="#{!formNew}"
 						accesskey="#{bundle.aon_key_new_line}" />
 				</aon:div>
 			</f:facet>
@@ -35,23 +35,23 @@
 				<f:verbatim>&#160;</f:verbatim>
 			</f:facet>
 			<aon:div>
-				<f:verbatim rendered="#{to!=controller.to}">&#160;</f:verbatim>
+				<f:verbatim rendered="#{formList}">&#160;</f:verbatim>
 				<aon:commandButton title="[#{bundle.aon_accept}]"
 					actionListener="#{controller.onAccept}"
-					rendered="#{to==controller.to}" value=""
+					rendered="#{formEdit}" value=""
 					reRender="#{dataTableId}DataScroller"
 					styleClass="aon-editDataTable-button aon-icon-accept"
 					accesskey="#{bundle.aon_key_save_line}" />
 				<aon:commandButton 
 					title="[#{bundle.aon_cancel}]"
 					styleClass="aon-editDataTable-button aon-icon-cancel"
-					rendered="#{to==controller.to}"
+					rendered="#{formEdit}"
 					actionListener="#{controller.onCancel}" immediate="true"
 					accesskey="#{bundle.aon_key_cancel_line}" />
 				<aon:confirmButton id="#{dataTableId}-CancelRemove"
 					title="[#{bundle.aon_remove}]"
 					styleClass="aon-editDataTable-button aon-icon-delete"
-					rendered="#{to==controller.to}" reRender="#{dataTableId}DataScroller"
+					rendered="#{formEdit}" reRender="#{dataTableId}DataScroller"
 					confirmTitle="#{bundle.aon_confirm_title}"
 					confirmMessage="#{bundle.aon_remove_confirm}"
 					confirmActionListener="#{controller.onRemove}" immediate="true"
@@ -59,17 +59,17 @@
 			</aon:div>
 			<f:facet name="footer">
 				<aon:div>
-					<f:verbatim rendered="#{!controller.new}">&#160;</f:verbatim>
+					<f:verbatim rendered="#{!formNew}">&#160;</f:verbatim>
 					<aon:commandButton title="#{bundle.aon_save}"
 						actionListener="#{controller.onAccept}"
-						rendered="#{controller.new}" value=""
+						rendered="#{formNew}" value=""
 						reRender="#{dataTableId}DataScroller"
 						styleClass="aon-editDataTable-button aon-icon-accept"
 						accesskey="#{bundle.aon_key_save_line}" />
 					<aon:confirmButton id="#{dataTableId}-CancelNew"
 						title="#{bundle.aon_cancel}"
 						styleClass="aon-editDataTable-button aon-icon-cancel"
-						rendered="#{controller.new}"
+						rendered="#{formNew}"
 						confirmTitle="#{bundle.aon_confirm_title}"
 						confirmMessage="#{bundle.aon_cancel_confirm}"
 						confirmActionListener="#{controller.onCancel}"
