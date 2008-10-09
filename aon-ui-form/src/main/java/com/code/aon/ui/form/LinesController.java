@@ -196,7 +196,7 @@ public class LinesController extends BasicController {
 			}
 			if (this.cascadeDelete) {
 				setPageLimit( -1 );
-				initModel();
+				initializeModel();
 				List list = (List) getModel().getWrappedData();
 				Iterator i = list.iterator();
 				while (i.hasNext()) {
