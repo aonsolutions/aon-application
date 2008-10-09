@@ -35,11 +35,10 @@ public class SurveyQuestionController extends BasicController implements IMarket
 	}
 
 	@SuppressWarnings("unchecked")
-	public void refreshQuestions() throws ManagerBeanException {
+	public void refreshQuestions( SurveyQuestion sq ) throws ManagerBeanException {
 		questions = new LinkedList<SelectItem>();
 		IManagerBean bean = getManagerBean();
 		Criteria criteria = new Criteria();
-		SurveyQuestion sq = (SurveyQuestion) getTo();
 		criteria.addEqualExpression(bean.getFieldName(IMarketingAlias.SURVEY_QUESTION_SURVEY_ID), sq.getSurvey().getId());
 		Expression expression = ExpressionUtilities.getNotEqualExpression(bean.getFieldName(IMarketingAlias.SURVEY_QUESTION_ID), sq.getId());
 		criteria.addExpression( expression );
@@ -70,7 +69,8 @@ public class SurveyQuestionController extends BasicController implements IMarket
 	}
 
 	public void onShowSurveyWorflow( ActionEvent event ) throws ManagerBeanException {
-		refreshQuestions();
+		SurveyQuestion sq = (SurveyQuestion) ( getModel().isRowAvailable() ? getSelectedTO() : getTo());
+		refreshQuestions( sq );
 		setShowSurveyWorkflowWindow(true);
 	}
 	
