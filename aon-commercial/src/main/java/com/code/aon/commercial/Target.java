@@ -1,13 +1,16 @@
 package com.code.aon.commercial;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.PrimaryKeyJoinColumn;
 import javax.persistence.Table;
@@ -46,6 +49,18 @@ public class Target implements ITransferObject, ILookupObject, ITaxInfo, IRegist
 	/** The advertising. */
 	private Advertising advertising;
 
+	/** The segments. */
+	private Set<TargetSegment> segments = new HashSet<TargetSegment>();
+
+	/** The items. */
+	private Set<TargetItem> items = new HashSet<TargetItem>();
+
+	/** The sellers. */
+	private Set<TargetSeller> sellers = new HashSet<TargetSeller>();
+
+	/** The sellers. */
+	private Set<CommercialTracking> trackings = new HashSet<CommercialTracking>();
+	
 	/**
 	 * The empty onstructor.
 	 */
@@ -172,4 +187,81 @@ public class Target implements ITransferObject, ILookupObject, ITaxInfo, IRegist
 	public boolean isWithholding() {
 		return false;
 	}
+
+	/**
+	 * Gets the segments.
+	 * 
+	 * @return the segments
+	 */
+	@OneToMany(mappedBy = "target", cascade={CascadeType.REMOVE})
+	public Set<TargetSegment> getSegments() {
+		return segments;
+	}
+
+	/**
+	 * Sets the segments.
+	 * 
+	 * @param segments the new segments
+	 */
+	public void setSegments(Set<TargetSegment> segments) {
+		this.segments = segments;
+	}
+
+	/**
+	 * Gets the items.
+	 * 
+	 * @return the items
+	 */
+	@OneToMany(mappedBy = "target", cascade={CascadeType.REMOVE})	
+	public Set<TargetItem> getItems() {
+		return items;
+	}
+
+	/**
+	 * Sets the items.
+	 * 
+	 * @param items the new items
+	 */
+	public void setItems(Set<TargetItem> items) {
+		this.items = items;
+	}
+
+	/**
+	 * Gets the sellers.
+	 * 
+	 * @return the sellers
+	 */
+	@OneToMany(mappedBy = "target", cascade={CascadeType.REMOVE})	
+	public Set<TargetSeller> getSellers() {
+		return sellers;
+	}
+
+	/**
+	 * Sets the sellers.
+	 * 
+	 * @param sellers the new sellers
+	 */
+	public void setSellers(Set<TargetSeller> sellers) {
+		this.sellers = sellers;
+	}
+
+	/**
+	 * Gets the trackings.
+	 * 
+	 * @return the trackings
+	 */
+	@OneToMany(mappedBy = "target", cascade={CascadeType.REMOVE})
+	public Set<CommercialTracking> getTrackings() {
+		return trackings;
+	}
+
+	/**
+	 * Sets the trackings.
+	 * 
+	 * @param trackings the new trackings
+	 */
+	public void setTrackings(Set<CommercialTracking> trackings) {
+		this.trackings = trackings;
+	}
+	
 }
