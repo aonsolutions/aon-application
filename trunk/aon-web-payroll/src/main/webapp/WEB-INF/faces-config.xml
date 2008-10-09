@@ -52,7 +52,7 @@
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
 			<property-name>resourceURIPreffix</property-name>
-			<value>/aonResource/1.5.0</value>
+			<value>/aonResource/1.6.2</value>
 		</managed-property>		
 	</managed-bean>
 	
