@@ -5,27 +5,30 @@
 	xmlns:rich="http://richfaces.org/rich"
 	xmlns:c="http://java.sun.com/jstl/core">
 
-	<aon:form id="surveyWorkflowForm">
+
 		<aon:panelGroup id="surveyWorkflowWindow">
 			<c:if test="#{surveyQuestion.showSurveyWorkflowWindow}">
 				<rich:modalPanel id="surveyWorkflowModalPanel"
 					rendered="#{surveyQuestion.showSurveyWorkflowWindow}" showWhenRendered="true"
-					minHeight="390" height="390" width="650" top="50">
+					minHeight="390" height="390" width="680" top="50">
 					<f:facet name="header">
 						<aon:div styleClass="aon-popupWindow-title">
 							<aon:outputText value="#{marketingBundle.aon_survey_workflows}" />
 						</aon:div>
 					</f:facet>
 					<f:facet name="controls">
+						<aon:form>
 						<aon:commandButton type="button" styleClass="aon-popupWindow-close"
-							immediate="true">
+							immediate="true" >
 							<f:setPropertyActionListener target="#{surveyQuestion.showSurveyWorkflowWindow}"
 								value="#{false}" />
 							<rich:componentControl for="surveyWorkflowModalPanel" operation="hide"
 								event="onclick" />
 						</aon:commandButton>
+						</aon:form>
 					</f:facet>
 
+					<aon:form id="surveyWorkflowForm">
 					<aon:div>
 
 						<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/grid.xhtml" >
@@ -37,7 +40,43 @@
 									<f:facet name="header">
 										<aon:outputText value="#{bundle.aon_value}" />
 									</f:facet>
+									<aon:div layout="none" rendered="#{formList and (to.questionValue.id != null)}">
+										<ui:include src="/marketing/outputValue.xhtml" >
+											<ui:param name="valueHolder" value="#{to.questionValue}" />
+										</ui:include>
+									</aon:div>									
+									<aon:div layout="none" rendered="#{formList and (to.questionValue.id == null)}">
+										<ui:include src="/marketing/outputValue.xhtml" >
+											<ui:param name="valueHolder" value="#{to}" />
+										</ui:include>
+									</aon:div>									
+									<aon:div layout="none" rendered="#{formEdit}">
+										<c:if test="#{!(empty surveyQuestion.questionValues)}">
+											<aon:selectOneMenu 
+												required="true" value="#{controller.to.questionValue.id}">
+												<f:selectItems value="#{surveyQuestion.questionValues}" />
+											</aon:selectOneMenu>											
+										</c:if>									
+										<c:if test="#{empty surveyQuestion.questionValues}">
+											<ui:include src="/marketing/inputValue.xhtml" >
+												<ui:param name="valueHolder" value="#{controller.to}" />
+											</ui:include>
+										</c:if>
+									</aon:div>																			
 									<f:facet name="footer">
+										<aon:div layout="none" rendered="#{controller.new}">
+											<c:if test="#{!(empty surveyQuestion.questionValues)}">
+												<aon:selectOneMenu id="SurveyWorkflow_questionValue"
+													required="true" value="#{controller.to.questionValue.id}">
+													<f:selectItems value="#{surveyQuestion.questionValues}" />
+												</aon:selectOneMenu>											
+											</c:if>									
+											<c:if test="#{empty surveyQuestion.questionValues}">
+												<ui:include src="/marketing/inputValue.xhtml" >
+													<ui:param name="valueHolder" value="#{controller.to}" />
+												</ui:include>
+											</c:if>
+										</aon:div>									
 									</f:facet>
 								</aon:column>								
 											
@@ -45,9 +84,9 @@
 									<f:facet name="header">
 										<aon:outputText value="#{marketingBundle.aon_survey_workflow_next_question}" />
 									</f:facet>
-									<aon:outputText value="#{to.nextSurveyQuestion.text}"
+									<aon:outputText value="#{to.nextSurveyQuestion.question.text}"
 										rendered="#{to!=controller.to}" >
-										<aon:abbreviateConverter maxWidth="80" />
+										<aon:abbreviateConverter maxWidth="40" />
 									</aon:outputText>		
 									<aon:selectOneMenu rendered="#{to==controller.to}"
 										required="true" value="#{controller.to.nextSurveyQuestion.id}">
@@ -55,7 +94,8 @@
 										<f:selectItems value="#{surveyQuestion.questions}" />
 									</aon:selectOneMenu>								
 									<f:facet name="footer">
-										<aon:selectOneMenu rendered="#{controller.new}"
+										<aon:selectOneMenu id="SurveyWorkflow_nextSurveyQuestion" 
+											rendered="#{controller.new}"
 											required="true" value="#{controller.to.nextSurveyQuestion.id}">
 											<f:selectItem value="#{null}" itemLabel="    " />
 											<f:selectItems value="#{surveyQuestion.questions}" />
@@ -67,10 +107,9 @@
 						</ui:decorate>
 
 					</aon:div>
-					
+					</aon:form>					
 				</rich:modalPanel>
 			</c:if>
 		</aon:panelGroup>
-	</aon:form>
 	
 </ui:composition>
