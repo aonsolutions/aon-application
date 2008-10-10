@@ -14,15 +14,8 @@ import org.apache.commons.beanutils.PropertyUtils;
 import com.code.aon.ui.form.LinesController;
 import com.code.aon.ui.util.AonUtil;
 
-public class DivisaController extends LinesController {
+public class DivisaControllerListener extends LinesController {
 
-	@Override
-	public void onAccept(ActionEvent event) {
-		boolean bol = isNew();
-		super.onAccept(event);
-		if ( bol )
-			super.onReset( event );
-	}
 
 
 

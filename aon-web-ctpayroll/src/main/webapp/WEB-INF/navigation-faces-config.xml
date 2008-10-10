@@ -522,21 +522,7 @@
 
 	
 	
-	<!-- =================== Auxiliares/Cotizacion/Porcentaje ================= -->
-	<navigation-rule>
-		<navigation-case>
-			<from-outcome>cotizacion_porcentaje_list</from-outcome>
-			<to-view-id>
-				/facelet/auxiliares/cotizacion/porcentaje/list.xhtml
-			</to-view-id>
-		</navigation-case>
-		<navigation-case>
-			<from-outcome>cotizacion_porcentaje_search</from-outcome>
-			<to-view-id>
-				/facelet/auxiliares/cotizacion/porcentaje/search.xhtml
-			</to-view-id>
-		</navigation-case>
-	</navigation-rule>
+	
 
 	<!-- =================== Auxiliares/Contratos/Internos ================= -->
 	<navigation-rule>
@@ -783,15 +769,7 @@
 			</to-view-id>
 		</navigation-case>
 	</navigation-rule>
-	
-	<navigation-rule>
-		<navigation-case>
-			<from-outcome>cotizacion_porcentaje</from-outcome>
-			<to-view-id>
-				/facelet/auxiliares/cotizacion/porcentaje/form.xhtml
-			</to-view-id>
-		</navigation-case>
-	</navigation-rule>
+
 	
 	<navigation-rule>
 		<navigation-case>
@@ -993,4 +971,29 @@
 			</to-view-id>
 		</navigation-case>
 	</navigation-rule>
+	
+		<!-- =================== Divisas================= -->
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>divisas_form</from-outcome>
+			<to-view-id>
+				/facelet/auxiliares/divisa/form.xhtml
+			</to-view-id>
+		</navigation-case>
+	</navigation-rule>
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>divisas_list</from-outcome>
+			<to-view-id>
+				/facelet/auxiliares/divisa/list.xhtml
+			</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>divisas_search</from-outcome>
+			<to-view-id>
+				/facelet/auxiliares/divisa/search.xhtml
+			</to-view-id>
+		</navigation-case>
+	</navigation-rule>
+	
 </faces-config>

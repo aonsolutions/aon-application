@@ -16,7 +16,7 @@ import com.code.aon.payroll.enumeration.IndiceComplemento;
 import com.code.aon.payroll.enumeration.Prorateo;
 import com.code.aon.ui.form.BasicController;
 
-public class BasesController extends BasicController {
+public class BasesController extends PayrollBasicController {
 
 	
 	private List<SelectItem> prorateos;
