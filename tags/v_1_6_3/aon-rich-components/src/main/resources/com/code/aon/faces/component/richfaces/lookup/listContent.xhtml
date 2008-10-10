@@ -1,0 +1,45 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:h="http://java.sun.com/jsf/html">
+<body>
+
+<ui:composition>
+
+	<!-- start toolbar navigation -->
+	<aon:div>
+		<aon:div styleClass="aon-toolbar" rendered="#{lookup.showSearchButtons}">
+			<aon:commandButton value="#{bundle.aon_search}"
+				actionListener="#{lookup.onListCancel}" reRender="#{lookupId}LookupContent"
+				styleClass="aon-finding-toolbar-item aon-icon-accept"
+				accesskey="#{bundle.aon_key_search}" />
+			<aon:commandButton value="#{bundle.aon_back}"
+				actionListener="#{lookup.onCloseWindow}" immediate="true"
+				styleClass="aon-finding-toolbar-item aon-icon-cancel"
+				accesskey="#{bundle.aon_key_cancel}">
+				<rich:componentControl for="#{lookupId}" event="onclick"
+					disableDefault="true" operation="hide" />
+			</aon:commandButton>
+		</aon:div>
+		<!-- end toolbar navigation -->
+		<aon:div style="width:98%;">
+			<aon:dataTable id="#{lookup.beanName}Data" var="to"
+				value="#{lookup.model}" rows="15">
+				<aon:rowSelector actionListener="#{lookup.onListSelect}"
+					reRender="#{lookup.component.selectReRender}"
+					oncomplete="Richfaces.hideModalPanel('#{lookupId}')" />
+				<ui:include src="#{lookup.listPagePath}" />
+			</aon:dataTable>
+
+			<aon:dataScroller2 for="#{lookup.beanName}Data" showNote="true" />
+
+		</aon:div>
+	</aon:div>
+</ui:composition>
+
+</body>
+</html>
