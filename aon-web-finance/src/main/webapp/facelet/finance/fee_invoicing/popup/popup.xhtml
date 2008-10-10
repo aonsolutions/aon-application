@@ -10,7 +10,8 @@
 <ui:composition>
 
 	<t:div id="popup" forceId="#{true}" styleClass="aon-popup-window"
-		style="position: absolute;left: 290px;_left:110px; top: 125px;display:none;">
+		style="position: absolute;left: 290px;_left:110px; top: 125px;display:none;"
+		rendered="#{!feeInvoicing.new}">
 		<t:div styleClass="aon-popup-window-title">
 
 			<t:commandButton id="popupClose" value=" "
