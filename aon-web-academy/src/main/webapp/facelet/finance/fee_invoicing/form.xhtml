@@ -498,11 +498,13 @@
 									</f:facet>
 								</t:column>
 							</t:dataTable>
+
 							<ui:include src="/facelet/shared/dataScroller.xhtml">
 								<ui:param name="dataTable" value="feeInvoicingLineData" />
 								<ui:param name="model" value="#{feeInvoicingDetail.model}" />
 								<ui:param name="showNote" value="#{false}" />
 							</ui:include>
+
 							<ui:include src="/facelet/finance/fee_invoicing/popup/popup.xhtml"/>
 						</t:div>
 					</t:div>
