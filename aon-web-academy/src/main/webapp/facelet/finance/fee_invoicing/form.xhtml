@@ -498,54 +498,11 @@
 									</f:facet>
 								</t:column>
 							</t:dataTable>
-							<t:div styleClass="aon-datascroller"
-								rendered="#{feeInvoicingDetail.model.rowCount > 20}">
-								<h:panelGrid columns="2"
-									columnClasses="aon-datascroller-text,aon-datascroller-buttons">
-									<t:dataScroller id="scroll_0" for="feeInvoicingLineData"
-										pageCountVar="pageCount" pageIndexVar="pageIndex"
-										rowsCountVar="rowsCount"
-										displayedRowsCountVar="displayedRowsCountVar"
-										firstRowIndexVar="firstRowIndex"
-										lastRowIndexVar="lastRowIndex"
-										rendered="#{feeInvoicingDetail.model.rowCount > 20}">
-										<h:outputFormat value="#{bundle.aon_scroll}">
-											<f:param value="#{displayedRowsCountVar}" />
-											<f:param value="#{rowsCount}" />
-											<f:param value="#{pageIndex}" />
-											<f:param value="#{pageCount}" />
-										</h:outputFormat>
-									</t:dataScroller>
-
-									<t:div id="navigation1">
-										<t:dataScroller id="scroll_1" for="feeInvoicingLineData"
-											fastStep="5" paginator="#{true}" paginatorMaxPages="5"
-											paginatorActiveColumnClass="aon-datascroller-buton-currentpage"
-											paginatorColumnClass="aon-page-navigation-page"
-											rendered="#{feeInvoicingDetail.model.rowCount > 20}">
-
-											<f:facet name="first">
-												<t:div styleClass="aon-datascroller-button-first">&#160;</t:div>
-											</f:facet>
-											<f:facet name="last">
-												<t:div styleClass="aon-datascroller-button-last">&#160;</t:div>
-											</f:facet>
-											<f:facet name="previous">
-												<t:div styleClass="aon-datascroller-button-previous">&#160;</t:div>
-											</f:facet>
-											<f:facet name="next">
-												<t:div styleClass="aon-datascroller-button-next">&#160;</t:div>
-											</f:facet>
-											<f:facet name="fastforward">
-												<t:div styleClass="aon-datascroller-button-fastforward">&#160;</t:div>
-											</f:facet>
-											<f:facet name="fastrewind">
-												<t:div styleClass="aon-datascroller-button-fastrewind">&#160;</t:div>
-											</f:facet>
-										</t:dataScroller>
-									</t:div>
-								</h:panelGrid>
-							</t:div>
+							<ui:include src="/facelet/shared/dataScroller.xhtml">
+								<ui:param name="dataTable" value="feeInvoicingLineData" />
+								<ui:param name="model" value="#{feeInvoicingDetail.model}" />
+								<ui:param name="showNote" value="#{false}" />
+							</ui:include>
 							<ui:include src="/facelet/finance/fee_invoicing/popup/popup.xhtml"/>
 						</t:div>
 					</t:div>
