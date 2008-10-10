@@ -17,28 +17,15 @@
 				<ui:param name="toolbarTitle" value="#{menuBundle.aon_communication_center}" />
 				<ui:param name="toolbarDescription" value="#{bundle.aon_reset}" />
 				<ui:define name="toolbarContent">
-					<c:if test="#{!communicationCenter.lastQuestion}" >
-						<aon:commandButton id="next" value="#{marketingBundle.aon_next}"
-							action="communicationCenter_response" actionListener="#{communicationCenter.onNextQuestion}"
-							styleClass="aon-finding-toolbar-item aon-icon-accept"
-							accesskey="#{bundle.aon_key_save}"/>
-						<aon:commandButton id="skip" value="#{marketingBundle.aon_skip}"
-							rendered="#{communicationCenter.question.type != 'INFO'}"
-							action="communicationCenter_response" actionListener="#{communicationCenter.onNextQuestion}"
-							styleClass="aon-finding-toolbar-item aon-icon-cancel" immediate="true"
-							accesskey="#{bundle.aon_key_cancel}"/>
-					</c:if>
-					<c:if test="#{communicationCenter.lastQuestion}" >
-						<aon:commandButton id="finish" value="#{marketingBundle.aon_finish}"
-							action="communicationCenter" actionListener="#{communicationCenter.onFinishSurveyResponse}"
-							styleClass="aon-finding-toolbar-item aon-icon-accept"
-							accesskey="#{bundle.aon_key_save}" />
-						<aon:commandButton id="skip" value="#{marketingBundle.aon_skip}"
-							rendered="#{communicationCenter.question.type != 'INFO'}"							
-							action="communicationCenter" actionListener="#{communicationCenter.onFinishSurveyResponse}"
-							styleClass="aon-finding-toolbar-item aon-icon-cancel" immediate="true"
-							accesskey="#{bundle.aon_key_save}" />
-					</c:if>
+					<aon:commandButton id="next" value="#{marketingBundle.aon_next}"
+						action="#{communicationCenter.nextQuestionAction}" actionListener="#{communicationCenter.onNextQuestion}"
+						styleClass="aon-finding-toolbar-item aon-icon-accept"
+						accesskey="#{bundle.aon_key_save}"/>
+					<aon:commandButton id="skip" value="#{marketingBundle.aon_skip}"
+						rendered="#{communicationCenter.question.type != 'INFO'}"
+						action="#{communicationCenter.nextQuestionAction}" actionListener="#{communicationCenter.onNextQuestion}"
+						styleClass="aon-finding-toolbar-item aon-icon-cancel" immediate="true"
+						accesskey="#{bundle.aon_key_cancel}"/>
 				</ui:define>
 			</ui:decorate>	
 

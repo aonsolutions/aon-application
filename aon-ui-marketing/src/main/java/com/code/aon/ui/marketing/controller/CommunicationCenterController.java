@@ -25,6 +25,7 @@ import com.code.aon.marketing.Survey;
 import com.code.aon.marketing.SurveyQuestion;
 import com.code.aon.marketing.SurveyResponse;
 import com.code.aon.marketing.SurveyResponseDetail;
+import com.code.aon.marketing.SurveyWorkflow;
 import com.code.aon.marketing.TargetProfile;
 import com.code.aon.marketing.dao.IMarketingAlias;
 import com.code.aon.marketing.enumeration.ActionTargetStatus;
@@ -39,7 +40,7 @@ import com.code.aon.registry.enumeration.AddressType;
 import com.code.aon.registry.enumeration.MediaType;
 import com.code.aon.ui.config.util.UserUtils;
 
-public class CommunicationCenterController {
+public class CommunicationCenterController implements IMarketingConstants {
 	
 	private Date date;
 	
@@ -57,11 +58,11 @@ public class CommunicationCenterController {
 	
 	private SurveyQuestion surveyQuestion;
 	
+	private String nextQuestionAction;
+	
 	private Integer questionValueId;
 	
 	private List<SelectItem> questionValues;
-	
-	private SurveyQuestion nextQuestion;
 	
 	private RegistryAddress mainAddress;
 	
@@ -216,10 +217,6 @@ public class CommunicationCenterController {
 		return questionValues;
 	}
 
-	public boolean isLastQuestion() {
-		return this.nextQuestion == null;
-	}
-	
 	public SurveyResponseDetail getResponse() {
 		return response;
 	}
@@ -237,30 +234,34 @@ public class CommunicationCenterController {
 		this.surveyResponse.setUser( user );
 		IManagerBean surveyResponseBean = BeanManager.getManagerBean(SurveyResponse.class);
 		surveyResponseBean.insert( surveyResponse );
-		updateSurveyResponse( getFirstSurveyQuestion() );
+		updateSurveyQuestion( getFirstSurveyQuestion() );
+		this.nextQuestionAction = NAVIGATION_COMMUNICATION_CENTER_RESPONSE;
 	}
 	
 	public void onNextQuestion( ActionEvent event ) throws ManagerBeanException {
 		saveResponse();
-		updateSurveyResponse( this.nextQuestion );
-	}
-
-	public void onFinishSurveyResponse( ActionEvent event ) throws ManagerBeanException {
-		saveResponse();
-		finishActionTarget();
-		if ( isActionSelected() ) {
-			onNextTarget(event);
+		SurveyQuestion surveyQuestion = getNextSurveyQuestion();
+		if ( surveyQuestion != null ) {
+			updateSurveyQuestion( surveyQuestion );			
 		} else {
-			onInit(event);	
+			this.nextQuestionAction = NAVIGATION_COMMUNICATION_CENTER;
+			finishActionTarget();
+			if ( isActionSelected() ) {
+				onNextTarget(event);
+			} else {
+				onInit(event);	
+			}			
 		}
+	}
+	
+	public String nextQuestionAction() {
+		return this.nextQuestionAction;
 	}
 
 	private void updateResponseValue() throws ManagerBeanException {
-		if ( this.questionValueId != null ) {
-			IManagerBean bean = BeanManager.getManagerBean(QuestionValue.class);
-			QuestionValue questionValue = (QuestionValue) bean.get( this.questionValueId );
-			questionValue.copyValues(response);			
-		}
+		IManagerBean bean = BeanManager.getManagerBean(QuestionValue.class);
+		QuestionValue questionValue = (QuestionValue) bean.get( this.questionValueId );
+		questionValue.copyValues(response);			
 	}
 
 	private void finishActionTarget() throws ManagerBeanException {
@@ -293,7 +294,7 @@ public class CommunicationCenterController {
 	
 	private void saveResponse() throws ManagerBeanException {	
 		if ( getQuestion().getType() != QuestionType.INFO ) {
-			if (! getQuestionValues().isEmpty() ) {
+			if (this.questionValueId != null ) {
 				updateResponseValue();
 			}
 			this.response.setSurveyResponse( this.surveyResponse );
@@ -321,11 +322,10 @@ public class CommunicationCenterController {
 		this.questionValueId = null;
 	}
 	
-	private void updateSurveyResponse( SurveyQuestion sq ) throws ManagerBeanException {
+	private void updateSurveyQuestion( SurveyQuestion sq ) throws ManagerBeanException {
 		this.surveyQuestion = sq;
-		refreshQuestionValues( this.surveyQuestion );
-		this.nextQuestion = getNextQuestion( this.surveyQuestion );
 		this.response = new SurveyResponseDetail();
+		refreshQuestionValues( this.surveyQuestion );
 	}
 
 	private SurveyQuestion getFirstSurveyQuestion() throws ManagerBeanException {
@@ -339,8 +339,47 @@ public class CommunicationCenterController {
 		}
 		return null;
 	}
+
+	private SurveyWorkflow getSurveyWorkflow( SurveyQuestion surveyQuestion ) throws ManagerBeanException {
+		IManagerBean bean = BeanManager.getManagerBean(SurveyWorkflow.class);
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression( bean.getFieldName(IMarketingAlias.SURVEY_WORKFLOW_SURVEY_QUESTION_ID), surveyQuestion.getId() );
+		if (this.questionValueId != null ) {
+			criteria.addEqualExpression( bean.getFieldName(IMarketingAlias.SURVEY_WORKFLOW_QUESTION_VALUE_ID), this.questionValueId );
+		} else {
+			String textField = bean.getFieldName(IMarketingAlias.SURVEY_WORKFLOW_TEXT);
+			if (this.response.getText() != null) {
+				criteria.addEqualExpression( textField, this.response.getDate() );
+			} else {
+				criteria.addNullExpression(textField);
+			}
+			String dateField = bean.getFieldName(IMarketingAlias.SURVEY_WORKFLOW_DATE);
+			if (this.response.getDate() != null) {
+				criteria.addEqualExpression( dateField, this.response.getDate() );			
+			} else {
+				criteria.addNullExpression(dateField);
+			}
+			String numberField = bean.getFieldName(IMarketingAlias.SURVEY_WORKFLOW_NUMBER);
+			if (this.response.getNumber() != null) {
+				criteria.addEqualExpression( numberField, this.response.getNumber() );			
+			} else {
+				criteria.addNullExpression(numberField);
+			}
+		}
+		List<ITransferObject> list = bean.getList(criteria, 0, 1);
+		if (! list.isEmpty() ) {
+			return (SurveyWorkflow) list.get(0);
+		}
+		return null;
+	}
 	
-	private SurveyQuestion getNextQuestion( SurveyQuestion surveyQuestion ) throws ManagerBeanException {
+	private SurveyQuestion getNextSurveyQuestion() throws ManagerBeanException {
+		if ( getQuestion().getType() != QuestionType.INFO ) {
+			SurveyWorkflow workflow = getSurveyWorkflow( surveyQuestion );
+			if ( workflow != null ) {
+				return workflow.getNextSurveyQuestion();
+			}
+		}
 		IManagerBean bean = BeanManager.getManagerBean(SurveyQuestion.class);
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression( bean.getFieldName(IMarketingAlias.SURVEY_QUESTION_SURVEY_ID), this.survey.getId() );
