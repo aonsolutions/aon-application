@@ -90,6 +90,13 @@
 					<aon:div><aon:outputText value="#{appBundle.aon_profiles}" /></aon:div>
 				</aon:commandLink>
 			</aon:div>
+
+			<aon:div styleClass="aon-sidebarIcons-icon">
+				<aon:commandLink action="corporate_identity">
+					<h:graphicImage url="#{aonResource.resolveLocal['/images/aon-icon-big-identity.gif']}" />
+					<aon:div><aon:outputText value="#{appBundle.aon_corporate_identity}" /></aon:div>
+				</aon:commandLink>
+			</aon:div>
 			
 		</aon:div>
 	</aon:form>

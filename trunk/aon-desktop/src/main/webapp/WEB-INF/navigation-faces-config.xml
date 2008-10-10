@@ -92,5 +92,13 @@
 	        <to-view-id>/facelet/messaging/fax/form.xhtml</to-view-id>
 	    </navigation-case>
 	</navigation-rule>
+
+	<!-- =================== Corporate Identity Navigation Rules ================= -->
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>corporate_identity</from-outcome>
+			<to-view-id>/facelet/corporateIdentity/form.xhtml</to-view-id>
+		</navigation-case>
+	</navigation-rule>
 	
 </faces-config>
