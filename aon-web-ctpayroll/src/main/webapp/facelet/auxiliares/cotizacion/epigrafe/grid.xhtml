@@ -45,12 +45,12 @@
 						timeZone="#{timeZoneController.timeZoneId}" />
 				</aon:outputText>
 				<aon:selectInputDate value="#{epigrafe.to.id.fecini}"
-					rendered="#{to==epigrafe.to}"
+					rendered="#{to==epigrafe.to}" inputSize="10"
 					renderAsPopup="true" popupDateFormat="#{bundle.aon_date_pattern}">
 				</aon:selectInputDate>
 				<f:facet name="footer">
 					<aon:selectInputDate value="#{epigrafe.to.id.fecini}"
-						rendered="#{epigrafe.new}"
+						rendered="#{epigrafe.new}" inputSize="10"
 						renderAsPopup="true" popupDateFormat="#{bundle.aon_date_pattern}">
 					</aon:selectInputDate>
 				</f:facet>
@@ -65,12 +65,12 @@
 						timeZone="#{timeZoneController.timeZoneId}" />
 				</aon:outputText>
 				<aon:selectInputDate value="#{epigrafe.to.fecfin}"
-					rendered="#{to==epigrafe.to}"
+					rendered="#{to==epigrafe.to}" inputSize="10"
 					renderAsPopup="true" popupDateFormat="#{bundle.aon_date_pattern}">
 				</aon:selectInputDate>
 				<f:facet name="footer">
 					<aon:selectInputDate value="#{epigrafe.to.fecfin}"
-						rendered="#{epigrafe.new}"
+						rendered="#{epigrafe.new}" inputSize="10"
 						renderAsPopup="true" popupDateFormat="#{bundle.aon_date_pattern}">
 					</aon:selectInputDate>
 				</f:facet>

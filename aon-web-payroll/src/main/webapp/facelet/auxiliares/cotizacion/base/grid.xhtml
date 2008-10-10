@@ -89,13 +89,13 @@
 					<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
 						timeZone="#{timeZoneController.timeZoneId}" />
 				</aon:outputText>
-				<aon:selectInputDate value="#{linbase.to.id.fecini}"
+				<aon:selectInputDate value="#{linbase.to.id.fecini}" inputSize="10"
 					rendered="#{to==linbase.to}" disabled="#{to==linbase.to}"
 					renderAsPopup="true" popupDateFormat="#{bundle.aon_date_pattern}">
 				</aon:selectInputDate>
 				<f:facet name="footer">
 					<aon:selectInputDate value="#{linbase.to.id.fecini}"
-						rendered="#{linbase.new}"
+						rendered="#{linbase.new}" inputSize="10"
 						renderAsPopup="true" popupDateFormat="#{bundle.aon_date_pattern}">
 					</aon:selectInputDate>
 				</f:facet>
@@ -110,12 +110,12 @@
 						timeZone="#{timeZoneController.timeZoneId}" />
 				</aon:outputText>
 				<aon:selectInputDate value="#{linbase.to.fecfin}"
-					rendered="#{to==linbase.to}"
+					rendered="#{to==linbase.to}" inputSize="10"
 					renderAsPopup="true" popupDateFormat="#{bundle.aon_date_pattern}">
 				</aon:selectInputDate>
 				<f:facet name="footer">
 					<aon:selectInputDate value="#{linbase.to.fecfin}"
-						rendered="#{linbase.new}"
+						rendered="#{linbase.new}" inputSize="10"
 						renderAsPopup="true" popupDateFormat="#{bundle.aon_date_pattern}">
 					</aon:selectInputDate>
 				</f:facet>
