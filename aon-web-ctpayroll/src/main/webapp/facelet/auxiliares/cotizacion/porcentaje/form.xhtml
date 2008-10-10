@@ -63,10 +63,12 @@
 
 						<aon:spin controller="#{porcentajeMaestro}" action="cotizacion_porcentaje" rendered="#{!porcentajeMaestro.new}" />
 
+						
 						<ui:include src="/facelet/templates/aon.ui.printbuttons.xhtml">
-							<ui:param name="manager" value="#{porcentajeMaestro}"/>
-							<ui:param name="reportKey" value="porcentajesCotizacion"/>
+							<ui:param name="manager" value="#{porcentaje}"/>
+							<ui:param name="reportKey" value="cotizacionPorcentajesList"/>
 						</ui:include>
+						
 
 					</aon:div>
 

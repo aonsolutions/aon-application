@@ -290,8 +290,19 @@
 			<param id="companyName" value="#{payrollController.getCompanyName}" />
 		</params>
 	</report>
+	<!--  *********  Impresion a PDF de los Porcentajes de cotizacion  ********* -->
+	<report id="cotizacionPorcentajesList" description="Listado de Porcentajes">
+		<template path="/com/code/aon/ui/payroll/report/porcentajesCotizacion.jasper" />
+		<bean key="com.code.aon.payroll.cotizacion.Porcentaje" />
+		<criteria provider="#{porcentaje}" />
+		<params>
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.payroll.i18n.messages" />
+			<param id="logoImageFile" value="#{payrollController.getLogo}" />
+			<param id="companyName" value="#{payrollController.getCompanyName}" />
+		</params>
+	</report>
 	
-		<!--  *********  Impresion a PDF de las delegaciones  ********* -->
+	<!--  *********  Impresion a PDF de las delegaciones  ********* -->
 	<report id="DelegacionList" description="Listado de Delegaciones">
 		<template path="/com/code/aon/ui/payroll/report/DelegacionList.jasper" />
 		<bean key="com.code.aon.payroll.organismosyentidades.Delegacion" />
@@ -302,4 +313,5 @@
 			<param id="companyName" value="#{payrollController.getCompanyName}" />
 		</params>
 	</report>
+	
 </report-config>

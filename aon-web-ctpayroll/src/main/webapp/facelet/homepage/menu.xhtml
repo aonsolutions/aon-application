@@ -174,12 +174,17 @@
 						<aon:actionListener method="#{elementoMaestro.onSelectFirst}" />
 					</aon:menuItem>
 					<aon:menuItem value="#{menuBundle.auxiliares_cotizacion__ocupacion}"  
-							action="cotizacion_ocupacion"  >
+							action="cotizacion_ocupacion" >
 						<aon:actionListener method="#{ocupacionMaestro.onEditSearch}" />
 						<aon:actionListener method="#{ocupacionMaestro.onSearch}" />
 						<aon:actionListener method="#{ocupacionMaestro.onSelectFirst}" />
 					</aon:menuItem>
-					<aon:menuItem value="#{menuBundle.auxiliares_cotizacion__cnae}" disabled="true" />
+					<aon:menuItem value="#{menuBundle.auxiliares_cotizacion__cnae}"   
+							action="cotizacion_cnae" >
+						<aon:actionListener method="#{cnaeMaestro.onEditSearch}" />
+						<aon:actionListener method="#{cnaeMaestro.onSearch}" />
+						<aon:actionListener method="#{cnaeMaestro.onSelectFirst}" />
+					</aon:menuItem>
 					<aon:menuItem value="#{menuBundle.auxiliares_cotizacion__tipboni}" 
 						action="cotizacion_bonificacion" />
 					<aon:menuItem value="#{menuBundle.auxiliares_cotizacion__epigrafes}" action="cotizacion_epigrafe_form" > 
