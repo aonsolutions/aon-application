@@ -42,8 +42,6 @@ import com.code.aon.payroll.organismosyentidades.Provincia;
 import com.code.aon.payroll.organismosyentidades.Delegacion;
 import com.code.aon.payroll.cotizacion.Epigrafe;
 import com.code.aon.payroll.cotizacion.Linepigr;
-import com.code.aon.payroll.divisa.Divisa;
-import com.code.aon.payroll.divisa.LinDivisa;
 
 /** 
 * Interface for holding entity properties constants.
@@ -390,22 +388,28 @@ public interface IPayrollAlias {
 	String  OCUPACION_OCUPACION_MAESTRO_CDG = OCUPACION_ENTRY.getAliasNames()[3];
 
 	/** 
+	* Alias value: Ocupacion_ocupacionMaestro_exclusivo
+	* Hibernate value: Ocupacion.ocupacionMaestro.exclusivo
+	*/
+	String  OCUPACION_OCUPACION_MAESTRO_EXCLUSIVO = OCUPACION_ENTRY.getAliasNames()[4];
+
+	/** 
 	* Alias value: Ocupacion_pctims
 	* Hibernate value: Ocupacion.pctims
 	*/
-	String  OCUPACION_PCTIMS = OCUPACION_ENTRY.getAliasNames()[4];
+	String  OCUPACION_PCTIMS = OCUPACION_ENTRY.getAliasNames()[5];
 
 	/** 
 	* Alias value: Ocupacion_pctit
 	* Hibernate value: Ocupacion.pctit
 	*/
-	String  OCUPACION_PCTIT = OCUPACION_ENTRY.getAliasNames()[5];
+	String  OCUPACION_PCTIT = OCUPACION_ENTRY.getAliasNames()[6];
 
 	/** 
 	* Alias value: Ocupacion_pcttotal
 	* Hibernate value: Ocupacion.pcttotal
 	*/
-	String  OCUPACION_PCTTOTAL = OCUPACION_ENTRY.getAliasNames()[6];
+	String  OCUPACION_PCTTOTAL = OCUPACION_ENTRY.getAliasNames()[7];
 
 
 
@@ -1685,98 +1689,6 @@ public interface IPayrollAlias {
 	* Hibernate value: Linepigr.indit
 	*/
 	String  LINEPIGR_INDIT = LINEPIGR_ENTRY.getAliasNames()[7];
-
-
-
-	/** 
-	* DAOConstantsEntry for Divisa entity.
-	*/ 
-	DAOConstantsEntry DIVISA_ENTRY = DAOConstants.getDAOConstant(Divisa.class);
-
-	/** 
-	* Alias value: Divisa_cdg
-	* Hibernate value: Divisa.cdg
-	*/
-	String  DIVISA_CDG = DIVISA_ENTRY.getAliasNames()[0];
-
-	/** 
-	* Alias value: Divisa_descripcion
-	* Hibernate value: Divisa.descripcion
-	*/
-	String  DIVISA_DESCRIPCION = DIVISA_ENTRY.getAliasNames()[1];
-
-	/** 
-	* Alias value: Divisa_mask1
-	* Hibernate value: Divisa.mask1
-	*/
-	String  DIVISA_MASK1 = DIVISA_ENTRY.getAliasNames()[2];
-
-	/** 
-	* Alias value: Divisa_mask2
-	* Hibernate value: Divisa.mask2
-	*/
-	String  DIVISA_MASK2 = DIVISA_ENTRY.getAliasNames()[3];
-
-	/** 
-	* Alias value: Divisa_redondeo
-	* Hibernate value: Divisa.redondeo
-	*/
-	String  DIVISA_REDONDEO = DIVISA_ENTRY.getAliasNames()[4];
-
-
-
-	/** 
-	* DAOConstantsEntry for LinDivisa entity.
-	*/ 
-	DAOConstantsEntry LIN_DIVISA_ENTRY = DAOConstants.getDAOConstant(LinDivisa.class);
-
-	/** 
-	* Alias value: LinDivisa_divisa1_cdg
-	* Hibernate value: LinDivisa.divisa1.cdg
-	*/
-	String  LIN_DIVISA_DIVISA1_CDG = LIN_DIVISA_ENTRY.getAliasNames()[0];
-
-	/** 
-	* Alias value: LinDivisa_divisa0_cdg
-	* Hibernate value: LinDivisa.divisa0.cdg
-	*/
-	String  LIN_DIVISA_DIVISA0_CDG = LIN_DIVISA_ENTRY.getAliasNames()[1];
-
-	/** 
-	* Alias value: LinDivisa_fecfin
-	* Hibernate value: LinDivisa.fecfin
-	*/
-	String  LIN_DIVISA_FECFIN = LIN_DIVISA_ENTRY.getAliasNames()[2];
-
-	/** 
-	* Alias value: LinDivisa_id_cdg
-	* Hibernate value: LinDivisa.id.cdg
-	*/
-	String  LIN_DIVISA_ID_CDG = LIN_DIVISA_ENTRY.getAliasNames()[3];
-
-	/** 
-	* Alias value: LinDivisa_id_divisaFinal
-	* Hibernate value: LinDivisa.id.divisaFinal
-	*/
-	String  LIN_DIVISA_ID_DIVISA_FINAL = LIN_DIVISA_ENTRY.getAliasNames()[4];
-
-	/** 
-	* Alias value: LinDivisa_id_fecini
-	* Hibernate value: LinDivisa.id.fecini
-	*/
-	String  LIN_DIVISA_ID_FECINI = LIN_DIVISA_ENTRY.getAliasNames()[5];
-
-	/** 
-	* Alias value: LinDivisa_importe
-	* Hibernate value: LinDivisa.importe
-	*/
-	String  LIN_DIVISA_IMPORTE = LIN_DIVISA_ENTRY.getAliasNames()[6];
-
-	/** 
-	* Alias value: LinDivisa_unidades
-	* Hibernate value: LinDivisa.unidades
-	*/
-	String  LIN_DIVISA_UNIDADES = LIN_DIVISA_ENTRY.getAliasNames()[7];
 
 
 }

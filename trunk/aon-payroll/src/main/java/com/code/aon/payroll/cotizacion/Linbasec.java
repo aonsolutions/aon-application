@@ -79,8 +79,8 @@ public class Linbasec  implements ITransferObject{
         return this.maxcot;
     }
     
-    public void setMaxcot(BigDecimal maxcot) {
-        this.maxcot = maxcot;
+    public void setMaxcot(BigDecimal d) {
+        this.maxcot = d;
     }
     
 	
