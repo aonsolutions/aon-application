@@ -7,8 +7,8 @@
 		<param-name>javax.faces.CONFIG_FILES</param-name>
 		<param-value>
 			/WEB-INF/faces-config.xml,
-			/WEB-INF/navigation-faces-config.xml,
-			/WEB-INF/lookup-beans-faces-config.xml
+			/WEB-INF/lookup-beans-faces-config.xml,
+			/WEB-INF/navigation-faces-config.xml
 		</param-value>
 	</context-param>
 	<context-param>
@@ -37,12 +37,12 @@
 		<param-name>facelets.SKIP_COMMENTS</param-name>
 		<param-value>true</param-value>
 	</context-param>
- 
-<!--  	<context-param>
+ <!-- 
+	<context-param>
 		<param-name>facelets.REFRESH_PERIOD</param-name>
 		<param-value>-1</param-value>
-	</context-param>-->
- 
+	</context-param>
+ -->
 	<context-param>
 		<param-name>facelets.BUFFER_SIZE</param-name>
 		<param-value>500000</param-value>
