@@ -39,8 +39,6 @@ public class CommercialTrackingController extends BasicController {
 	private boolean nextAction;
 	
 	private CommercialTracking next;
-	
-	private List<SelectItem> activities;
 
 	private Date dateFrom;
 	
@@ -70,24 +68,6 @@ public class CommercialTrackingController extends BasicController {
 
 	public void setLastSeller(Seller lastSeller) {
 		this.lastSeller = lastSeller;
-	}
-
-	public List<SelectItem> getActivities() {
-		return activities;
-	}	
-
-	@SuppressWarnings("unchecked")
-	public void refreshActivities() throws ManagerBeanException {
-		activities = new LinkedList<SelectItem>();
-		IManagerBean activityBean = BeanManager.getManagerBean(CommercialActivity.class);
-		Criteria criteria = new Criteria();
-		criteria.addOrder(activityBean.getFieldName(ICommercialAlias.COMMERCIAL_ACTIVITY_NAME));
-		Iterator<ITransferObject> iter = activityBean.getList(criteria).iterator();
-		while(iter.hasNext()){
-			CommercialActivity activity = (CommercialActivity)iter.next();
-			SelectItem item = new SelectItem(activity, activity.getName());
-			activities.add(item);
-		}
 	}
 
 	public boolean isNextAction() {
