@@ -29,5 +29,14 @@
 		value="#{registryBundle.aon_alias}" />
 	<aon:inputText id="Target_registry_alias" size="60"
 		valueChangeListener="#{controller.addExpression}" onblur="toUpperCase(this);" />
+		
+	<aon:outputLabel for="Target_advertising"
+		value="#{appBundle.aon_target_advertising}" />
+	<aon:selectOneMenu id="Target_advertising"
+		converter="aonAdvertisingConverter"
+		valueChangeListener="#{target.addDirectExpression}">
+		<f:selectItems value="#{commecialCollections.advertisings}" />
+		<f:selectItem value="#{null}" itemLabel="    " />		
+	</aon:selectOneMenu>	
 	
 </ui:composition>
