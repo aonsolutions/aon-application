@@ -48,7 +48,7 @@
 									valueChangeListener="#{target.addDirectExpression}">
 									<f:selectItem value="#{null}" itemLabel="    " />
 									<f:selectItems value="#{geozoneCollections.geoTrees}" />
-								</aon:selectOneMenu>				
+								</aon:selectOneMenu>			
 							</aon:panelGrid>
 						</aon:panelCollapsible>
 								
@@ -123,11 +123,77 @@
 									valueChangeListener="#{target.addDirectExpression}" />
 							</aon:panelGrid>
 						</aon:panelCollapsible>
+						<aon:panelCollapsible expanded="false" label="#{appBundle.aon_target_tracking}">
+							<aon:panelGrid columns="2" columnClasses="tbl-tab-search-odd,tbl-tab-search-even">
+								<aon:outputText value="#{appBundle.aon_commercial_tracking_date}" />
+								<aon:div>
+									<aon:outputLabel for="Target_trackings_date-From" styleClass="aon-form-date-label"
+										value="#{bundle.aon_date_from}:" />
+									<aon:selectInputDate id="Target_trackings_date-From"
+										value="#{targetSearch.dateFrom}"
+										popupDateFormat="#{bundle.aon_date_pattern}" renderAsPopup="true">
+									</aon:selectInputDate>
+						
+									<aon:outputLabel for="Target_trackings_date-To" styleClass="aon-form-date-label"
+										value="#{bundle.aon_date_to}:" />
+									<aon:selectInputDate id="Target_trackings_date-To"
+										value="#{targetSearch.dateTo}"
+										popupDateFormat="#{bundle.aon_date_pattern}" renderAsPopup="true">
+									</aon:selectInputDate>
+								</aon:div>
+						
+								<aon:outputLabel for="Target_trackings_seller_id"
+									value="#{appBundle.aon_commercial_tracking_seller}" />
+								<aon:div styleClass="aon-lookup">
+									<aon:lookupInputText id="Target_trackings_seller_id"
+										lookup="#{sellerLookup}"
+										reRender="Target_trackings_seller_name"
+										value="#{targetSearch.seller.id}" size="5">
+									</aon:lookupInputText>
+									<aon:lookupButton id="Target_trackings_seller_lookup"
+										windowTitle="#{appBundle.aon_lookup_seller}"
+										selectReRender="Target_trackings_seller_id,Target_trackings_seller_name"
+										lookup="#{sellerLookup}" minHeight="440"
+										property="#{targetSearch.seller}">
+									</aon:lookupButton>
+									<aon:inputText id="Target_trackings_seller_name"
+										value="#{(targetSearch.seller.registry.name!=null)?(targetSearch.seller.registry.fullName):('')}"
+										size="60" disabled="true" />
+								</aon:div>		
+								<aon:outputLabel for="Target_trackings_activity_id"
+									value="#{appBundle.aon_commercial_tracking_activity}" />
+								<aon:selectOneMenu id="Target_trackings_activity_id" 
+									value="#{targetSearch.activity}">
+									<f:converter converterId="toConverter" />
+									<f:selectItem value="#{null}" itemLabel="    " />
+									<f:selectItems value="#{commecialCollections.activities}" />
+								</aon:selectOneMenu>
+							
+								<!-- 
+								<aon:outputText value="#{bundle.aon_status}"/>
+								<aon:div>
+									<aon:selectBooleanCheckbox id="Target_trackings_status_0"
+										value="#{targetSearch.statusPending}" />
+									<aon:outputLabel for="Target_trackings_status_0"
+										value="#{commercialBundle.aon_enum_commercial_tracking_status_PENDING}" />
+									<aon:selectBooleanCheckbox id="Target_trackings_status_1"
+										value="#{targetSearch.statusClosed}" />
+									<aon:outputLabel for="Target_trackings_status_1"
+										value="#{commercialBundle.aon_enum_commercial_tracking_status_CLOSED}" />
+								</aon:div>
+								-->								
+								<aon:outputLabel for="Target_trackings_comments"
+									value="#{appBundle.aon_commercial_tracking_comments}" />
+								<aon:inputText id="Target_trackings_comments" size="60"
+									valueChangeListener="#{target.addDirectExpression}" />													
+							</aon:panelGrid>
+						</aon:panelCollapsible>						
 					</aon:div>
 					
 				</ui:define>
 			</ui:decorate>
 
 		</aon:form>
+		<aon:lookupButtonPopup lookup="#{sellerLookup}" />				
 	</ui:define>
 </ui:composition>
