@@ -37,10 +37,12 @@
 		<param-name>facelets.SKIP_COMMENTS</param-name>
 		<param-value>true</param-value>
 	</context-param>
+	<!-- 
 	<context-param>
 		<param-name>facelets.REFRESH_PERIOD</param-name>
 		<param-value>-1</param-value>
 	</context-param>
+	 -->
 	<context-param>
 		<param-name>facelets.BUFFER_SIZE</param-name>
 		<param-value>500000</param-value>
@@ -220,6 +222,22 @@
 		<session-timeout>240</session-timeout>
 	</session-config>
 
+	<!-- FCK Faces Servlet -->
+	<servlet>
+		<servlet-name>InputRichText Servlet</servlet-name>
+		<servlet-class>
+			com.code.aon.faces.component.richfaces.inputRichText.InputRichTextServlet
+		</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>InputRichText Servlet</servlet-name>
+		<url-pattern>/fckfaces/*</url-pattern>
+	</servlet-mapping>
+	<context-param>
+		<param-name>org.fckfaces.CUSTOM_CONFIGURATIONS_PATH</param-name>
+		<param-value>/js/fckconfig.js</param-value>
+	</context-param>
+	
 	<!-- Resource Servlet -->
 	<servlet>
 		<servlet-name>ResourceServlet</servlet-name>

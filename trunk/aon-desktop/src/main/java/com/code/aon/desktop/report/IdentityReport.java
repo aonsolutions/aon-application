@@ -3,8 +3,10 @@ package com.code.aon.desktop.report;
 import com.code.aon.company.Company;
 import com.code.aon.registry.RegistryAddress;
 
-public class CompanyReport {
+public class IdentityReport {
 
+	// COMMON
+	
 	private Company company;
 
 	private RegistryAddress address;
@@ -21,7 +23,24 @@ public class CompanyReport {
 	
 	private String web;
 
+	// FAX
+
+	private String fax_to;
 	
+	private String fax_from;
+	
+	private String fax_subject;
+	
+	private String fax_content;
+
+	// LETTER
+
+	private String letter_to;
+	
+	private String letter_from;
+	
+	private String letter_content;
+
 	public Company getCompany() {
 		return company;
 	}
@@ -95,5 +114,64 @@ public class CompanyReport {
 		this.web = web;
 	}
 
+	// FAX
+	
+	public String getFax_to() {
+		return fax_to;
+	}
 
+	public void setFax_to(String fax_to) {
+		this.fax_to = fax_to;
+	}
+
+	public String getFax_from() {
+		return fax_from;
+	}
+
+	public void setFax_from(String fax_from) {
+		this.fax_from = fax_from;
+	}
+
+	public String getFax_subject() {
+		return fax_subject;
+	}
+
+	public void setFax_subject(String fax_subject) {
+		this.fax_subject = fax_subject;
+	}
+
+	public String getFax_content() {
+		return fax_content;
+	}
+
+	public void setFax_content(String fax_content) {
+		this.fax_content = fax_content;
+	}
+
+	// LETTER
+
+	public String getLetter_to() {
+		return letter_to;
+	}
+
+	public void setLetter_to(String letter_to) {
+		this.letter_to = letter_to;
+	}
+
+	public String getLetter_from() {
+		return letter_from;
+	}
+
+	public void setLetter_from(String letter_from) {
+		this.letter_from = letter_from;
+	}
+
+	public String getLetter_content() {
+		return letter_content;
+	}
+
+	public void setLetter_content(String letter_content) {
+		this.letter_content = letter_content;
+	}
+	
 }
