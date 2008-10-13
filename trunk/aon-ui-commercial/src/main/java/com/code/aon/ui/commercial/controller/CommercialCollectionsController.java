@@ -1,5 +1,6 @@
 package com.code.aon.ui.commercial.controller;
 
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
@@ -7,6 +8,8 @@ import java.util.Locale;
 import javax.faces.context.FacesContext;
 import javax.faces.model.SelectItem;
 
+import com.code.aon.commercial.CommercialActivity;
+import com.code.aon.commercial.dao.ICommercialAlias;
 import com.code.aon.commercial.enumeration.Advertising;
 import com.code.aon.commercial.enumeration.CommercialTrackingStatus;
 import com.code.aon.commercial.enumeration.OfferDetailStatus;
@@ -14,6 +17,11 @@ import com.code.aon.commercial.enumeration.OfferStatus;
 import com.code.aon.commercial.enumeration.OfferType;
 import com.code.aon.commercial.enumeration.TargetItemStatus;
 import com.code.aon.commercial.enumeration.TargetSellerStatus;
+import com.code.aon.common.BeanManager;
+import com.code.aon.common.IManagerBean;
+import com.code.aon.common.ITransferObject;
+import com.code.aon.common.ManagerBeanException;
+import com.code.aon.ql.Criteria;
 
 /**
  * Controller used to get Collections related with clasess in <code>com.code.aon.commercial</code>
@@ -35,6 +43,8 @@ public class CommercialCollectionsController {
 	private List<SelectItem> targetSellerStatuses;
 	
 	private List<SelectItem> advertisings;
+
+	private List<SelectItem> activities;
 	
 	/**
 	 * Gets the offer statuses.
@@ -161,4 +171,26 @@ public class CommercialCollectionsController {
 		}
 		return advertisings;
 	}
+
+	public List<SelectItem> getActivities() throws ManagerBeanException {
+		if ( activities == null ) {
+			refreshActivities();
+		}
+		return activities;
+	}	
+
+	@SuppressWarnings("unchecked")
+	public void refreshActivities() throws ManagerBeanException {
+		activities = new LinkedList<SelectItem>();
+		IManagerBean activityBean = BeanManager.getManagerBean(CommercialActivity.class);
+		Criteria criteria = new Criteria();
+		criteria.addOrder(activityBean.getFieldName(ICommercialAlias.COMMERCIAL_ACTIVITY_NAME));
+		Iterator<ITransferObject> iter = activityBean.getList(criteria).iterator();
+		while(iter.hasNext()){
+			CommercialActivity activity = (CommercialActivity)iter.next();
+			SelectItem item = new SelectItem(activity, activity.getName());
+			activities.add(item);
+		}
+	}
+	
 }
