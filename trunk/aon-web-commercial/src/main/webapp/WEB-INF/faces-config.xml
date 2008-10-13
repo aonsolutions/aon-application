@@ -37,6 +37,13 @@
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
 	<managed-bean>
+		<managed-bean-name>commecialCollections</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.commercial.controller.CommercialCollectionsController
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>	
+	<managed-bean>
 		<managed-bean-name>marketingCollections</managed-bean-name>
 		<managed-bean-class>
 			com.code.aon.ui.marketing.controller.MarketingCollectionsController
@@ -54,6 +61,11 @@
 		<description>Conversor para los ProductStatus</description>
 		<converter-id>aonProductStatusConverter</converter-id>
 		<converter-class>com.code.aon.ui.product.converter.ProductStatusConverter</converter-class>
+	</converter>	
+	<converter>
+		<description>Conversor para los Advertising</description>
+		<converter-id>aonAdvertisingConverter</converter-id>
+		<converter-class>com.code.aon.ui.commercial.converter.AdvertisingConverter</converter-class>
 	</converter>	
 	<converter>
     	<converter-id>toConverter</converter-id>
