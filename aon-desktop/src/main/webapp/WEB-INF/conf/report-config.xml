@@ -9,16 +9,6 @@
 		<fetch-mode paginated="false" />
 	</default-config>
 
-	<!--  *********  FAX  ********* -->
-	<report id="fax_to" description="Fax report">
-		<template path="/com/code/aon/ui/desktop/report/fax_to.jasper" />
-		<collection provider="#{corporateIdentity}"/>
-		<params>
-			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.desktop.i18n.messages" />
-			<param id="logoImageFile" value="#{corporateIdentity.getAttachAsInputStream}" />
-		</params>
-	</report>
-	
 	<!--  *********  LETTER  ********* -->
 	<report id="letter_to" description="Letter report">
 		<template path="/com/code/aon/ui/desktop/report/letter_to.jasper" />

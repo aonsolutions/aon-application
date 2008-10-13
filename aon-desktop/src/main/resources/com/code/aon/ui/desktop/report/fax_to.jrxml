@@ -24,7 +24,7 @@
 	<import value="net.sf.jasperreports.engine.data.*" />
 
 	<parameter name="printHeaders" isForPrompting="false" class="java.lang.Boolean"/>
-	<parameter name="logoImageFile" isForPrompting="false" class="java.io.InputStream"/>
+	<parameter name="logoImageFile" isForPrompting="false" class="java.lang.String"/>
 
 	<field name="company" class="com.code.aon.company.Company"/>
 	<field name="addressStr" class="java.lang.String"/>
@@ -33,6 +33,10 @@
 	<field name="cellular" class="java.lang.String"/>
 	<field name="email" class="java.lang.String"/>
 	<field name="web" class="java.lang.String"/>
+	<field name="fax_to" class="java.lang.String"/>
+	<field name="fax_content" class="java.lang.String"/>
+	<field name="fax_from" class="java.lang.String"/>
+	<field name="fax_subject" class="java.lang.String"/>
 
 		<background>
 			<band height="0"  isSplitAllowed="true" >
@@ -43,129 +47,77 @@
 			</band>
 		</title>
 		<pageHeader>
-			<band height="80"  isSplitAllowed="true" >
-				<textField isStretchWithOverflow="false" pattern="dd/MM/yyyy" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
-					<reportElement
-						x="420"
-						y="63"
-						width="111"
-						height="12"
-						key="textField-42"/>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
-					<textElement textAlignment="Right" verticalAlignment="Middle">
-						<font size="8"/>
-					</textElement>
-				<textFieldExpression   class="java.util.Date"><![CDATA[new Date()]]></textFieldExpression>
-				</textField>
+			<band height="160"  isSplitAllowed="true" >
 				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
-						x="3"
-						y="2"
-						width="111"
-						height="14"
-						key="textField-12"/>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" leftPadding="5" rightBorder="None" rightBorderColor="#000000" rightPadding="5" bottomBorder="None" bottomBorderColor="#999999"/>
-					<textElement verticalAlignment="Middle">
-						<font size="8"/>
-					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$F{company}.getDocument()]]></textFieldExpression>
-				</textField>
-				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
-					<reportElement
-						x="234"
-						y="17"
-						width="184"
-						height="14"
-						key="textField-43"/>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" leftPadding="5" rightBorder="None" rightBorderColor="#000000" rightPadding="5" bottomBorder="None" bottomBorderColor="#999999"/>
-					<textElement verticalAlignment="Middle">
-						<font size="8"/>
-					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$F{company}.getSurname()]]></textFieldExpression>
-				</textField>
-				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
-					<reportElement
-						x="3"
-						y="17"
-						width="226"
-						height="14"
-						key="textField-44"/>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" leftPadding="5" rightBorder="None" rightBorderColor="#000000" rightPadding="5" bottomBorder="None" bottomBorderColor="#999999"/>
-					<textElement verticalAlignment="Middle">
-						<font size="8"/>
-					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$F{company}.getName()]]></textFieldExpression>
-				</textField>
-				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
-					<reportElement
-						x="67"
-						y="32"
+						x="93"
+						y="14"
 						width="351"
-						height="14"
+						height="10"
 						key="textField-45"/>
 					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" leftPadding="5" rightBorder="None" rightBorderColor="#000000" rightPadding="5" bottomBorder="None" bottomBorderColor="#999999"/>
 					<textElement verticalAlignment="Middle">
-						<font size="8"/>
+						<font size="5"/>
 					</textElement>
 				<textFieldExpression   class="java.lang.String"><![CDATA[$F{addressStr}]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
-						x="67"
-						y="47"
+						x="105"
+						y="26"
 						width="128"
-						height="14"
+						height="10"
 						key="textField-46"/>
 					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" leftPadding="5" rightBorder="None" rightBorderColor="#000000" rightPadding="5" bottomBorder="None" bottomBorderColor="#999999"/>
 					<textElement verticalAlignment="Middle">
-						<font size="8"/>
+						<font size="5"/>
 					</textElement>
 				<textFieldExpression   class="java.lang.String"><![CDATA[$F{phone}]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
-						x="234"
-						y="47"
-						width="110"
-						height="14"
+						x="105"
+						y="38"
+						width="127"
+						height="10"
 						key="textField-47"/>
 					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" leftPadding="5" rightBorder="None" rightBorderColor="#000000" rightPadding="5" bottomBorder="None" bottomBorderColor="#999999"/>
 					<textElement verticalAlignment="Middle">
-						<font size="8"/>
+						<font size="5"/>
 					</textElement>
 				<textFieldExpression   class="java.lang.String"><![CDATA[$F{fax}]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
-						x="47"
-						y="63"
-						width="148"
-						height="14"
+						x="93"
+						y="50"
+						width="105"
+						height="10"
 						key="textField-48"/>
 					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" leftPadding="5" rightBorder="None" rightBorderColor="#000000" rightPadding="5" bottomBorder="None" bottomBorderColor="#999999"/>
 					<textElement verticalAlignment="Middle">
-						<font size="8"/>
+						<font size="5"/>
 					</textElement>
 				<textFieldExpression   class="java.lang.String"><![CDATA[$F{email}]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
-						x="234"
-						y="63"
+						x="204"
+						y="50"
 						width="182"
-						height="14"
+						height="10"
 						key="textField-49"/>
 					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" leftPadding="5" rightBorder="None" rightBorderColor="#000000" rightPadding="5" bottomBorder="None" bottomBorderColor="#999999"/>
 					<textElement verticalAlignment="Middle">
-						<font size="8"/>
+						<font size="5"/>
 					</textElement>
 				<textFieldExpression   class="java.lang.String"><![CDATA[$F{web}]]></textFieldExpression>
 				</textField>
 				<image  scaleImage="RetainShape" vAlign="Top" hAlign="Left" isUsingCache="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						mode="Opaque"
-						x="447"
-						y="2"
+						x="2"
+						y="3"
 						width="83"
 						height="59"
 						forecolor="#000000"
@@ -174,72 +126,182 @@
 						positionType="Float"/>
 					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
 					<graphicElement stretchType="NoStretch" pen="None" fill="Solid" />
-					<imageExpression class="java.io.InputStream"><![CDATA[$P{logoImageFile}]]></imageExpression>
+					<imageExpression class="java.lang.String"><![CDATA[$P{logoImageFile}]]></imageExpression>
 				</image>
 				<staticText>
 					<reportElement
-						x="3"
-						y="32"
+						x="93"
+						y="26"
+						width="11"
+						height="10"
+						key="staticText-6"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font size="5"/>
+					</textElement>
+				<text><![CDATA[t]]></text>
+				</staticText>
+				<staticText>
+					<reportElement
+						x="93"
+						y="38"
+						width="11"
+						height="10"
+						key="staticText-7"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font size="5"/>
+					</textElement>
+				<text><![CDATA[f]]></text>
+				</staticText>
+				<line direction="TopDown">
+					<reportElement
+						x="10"
+						y="70"
+						width="510"
+						height="0"
+						key="line-1"/>
+					<graphicElement stretchType="NoStretch"/>
+				</line>
+				<line direction="TopDown">
+					<reportElement
+						x="10"
+						y="87"
+						width="510"
+						height="0"
+						key="line-2"/>
+					<graphicElement stretchType="NoStretch"/>
+				</line>
+				<line direction="TopDown">
+					<reportElement
+						x="10"
+						y="104"
+						width="510"
+						height="0"
+						key="line-3"/>
+					<graphicElement stretchType="NoStretch"/>
+				</line>
+				<line direction="TopDown">
+					<reportElement
+						x="10"
+						y="121"
+						width="510"
+						height="0"
+						key="line-4"/>
+					<graphicElement stretchType="NoStretch"/>
+				</line>
+				<line direction="TopDown">
+					<reportElement
+						x="10"
+						y="139"
+						width="510"
+						height="0"
+						key="line-5"/>
+					<graphicElement stretchType="NoStretch"/>
+				</line>
+				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="158"
+						y="74"
+						width="362"
+						height="10"
+						key="textField-50"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#999999"/>
+					<textElement verticalAlignment="Middle">
+						<font size="5"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{fax_to}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="158"
+						y="91"
+						width="362"
+						height="10"
+						key="textField-51"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#999999"/>
+					<textElement verticalAlignment="Middle">
+						<font size="5"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{fax_from}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="158"
+						y="108"
+						width="362"
+						height="10"
+						key="textField-52"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#999999"/>
+					<textElement verticalAlignment="Middle">
+						<font size="5"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{fax_subject}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="false" pattern="dd/MM/yyyy" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="158"
+						y="124"
+						width="120"
+						height="12"
+						key="textField-54"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Left" verticalAlignment="Middle">
+						<font size="8"/>
+					</textElement>
+				<textFieldExpression   class="java.util.Date"><![CDATA[new Date()]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement
+						x="93"
+						y="73"
 						width="58"
-						height="14"
-						key="staticText-1"/>
+						height="12"
+						key="staticText-8"/>
 					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
-					<textElement>
-						<font/>
+					<textElement textAlignment="Right">
+						<font size="8"/>
 					</textElement>
-				<text><![CDATA[Dirección:]]></text>
+				<text><![CDATA[Para]]></text>
 				</staticText>
 				<staticText>
 					<reportElement
-						x="3"
-						y="62"
-						width="41"
-						height="14"
-						key="staticText-2"/>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
-					<textElement>
-						<font/>
-					</textElement>
-				<text><![CDATA[Email:]]></text>
-				</staticText>
-				<staticText>
-					<reportElement
-						x="3"
-						y="47"
+						x="93"
+						y="90"
 						width="58"
-						height="14"
-						key="staticText-3"/>
+						height="12"
+						key="staticText-10"/>
 					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
-					<textElement>
-						<font/>
+					<textElement textAlignment="Right">
+						<font size="8"/>
 					</textElement>
-				<text><![CDATA[Telefono:]]></text>
+				<text><![CDATA[De]]></text>
 				</staticText>
 				<staticText>
 					<reportElement
-						x="198"
-						y="47"
-						width="31"
-						height="14"
-						key="staticText-4"/>
+						x="93"
+						y="107"
+						width="58"
+						height="12"
+						key="staticText-11"/>
 					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
-					<textElement>
-						<font/>
+					<textElement textAlignment="Right">
+						<font size="8"/>
 					</textElement>
-				<text><![CDATA[Fax:]]></text>
+				<text><![CDATA[Asunto]]></text>
 				</staticText>
 				<staticText>
 					<reportElement
-						x="198"
-						y="63"
-						width="31"
-						height="14"
-						key="staticText-5"/>
+						x="93"
+						y="124"
+						width="58"
+						height="12"
+						key="staticText-12"/>
 					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
-					<textElement>
-						<font/>
+					<textElement textAlignment="Right">
+						<font size="8"/>
 					</textElement>
-				<text><![CDATA[Web:]]></text>
+				<text><![CDATA[Fecha]]></text>
 				</staticText>
 			</band>
 		</pageHeader>
@@ -248,7 +310,20 @@
 			</band>
 		</columnHeader>
 		<detail>
-			<band height="550"  isSplitAllowed="true" >
+			<band height="500"  isSplitAllowed="true" >
+				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="10"
+						y="10"
+						width="510"
+						height="476"
+						key="textField-53"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" leftPadding="5" rightBorder="None" rightBorderColor="#000000" rightPadding="5" bottomBorder="None" bottomBorderColor="#999999"/>
+					<textElement verticalAlignment="Top" isStyledText="true">
+						<font size="5" isPdfEmbedded ="false" isStrikeThrough="false" />
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{fax_content}]]></textFieldExpression>
+				</textField>
 			</band>
 		</detail>
 		<columnFooter>

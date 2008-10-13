@@ -33,6 +33,9 @@
 	<field name="cellular" class="java.lang.String"/>
 	<field name="email" class="java.lang.String"/>
 	<field name="web" class="java.lang.String"/>
+	<field name="letter_from" class="java.lang.String"/>
+	<field name="letter_to" class="java.lang.String"/>
+	<field name="letter_content" class="java.lang.String"/>
 
 		<background>
 			<band height="0"  isSplitAllowed="true" >
@@ -43,7 +46,7 @@
 			</band>
 		</title>
 		<pageHeader>
-			<band height="80"  isSplitAllowed="true" >
+			<band height="100"  isSplitAllowed="true" >
 				<textField isStretchWithOverflow="false" pattern="dd/MM/yyyy" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						x="410"
@@ -98,6 +101,19 @@
 					<graphicElement stretchType="NoStretch" pen="None" fill="Solid" />
 					<imageExpression class="java.io.InputStream"><![CDATA[$P{logoImageFile}]]></imageExpression>
 				</image>
+				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="5"
+						y="79"
+						width="235"
+						height="16"
+						key="textField-46"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA["Estimado "+$F{letter_to}+","]]></textFieldExpression>
+				</textField>
 			</band>
 		</pageHeader>
 		<columnHeader>
@@ -106,24 +122,32 @@
 		</columnHeader>
 		<detail>
 			<band height="550"  isSplitAllowed="true" >
-				<staticText>
+				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						x="5"
-						y="7"
-						width="91"
-						height="13"
-						key="staticText-1"/>
+						y="8"
+						width="525"
+						height="537"
+						key="textField-45"/>
 					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
 					<textElement>
 						<font/>
 					</textElement>
-				<text><![CDATA[Estimado:]]></text>
-				</staticText>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{letter_content}]]></textFieldExpression>
+				</textField>
+			</band>
+		</detail>
+		<columnFooter>
+			<band height="0"  isSplitAllowed="true" >
+			</band>
+		</columnFooter>
+		<pageFooter>
+			<band height="50"  isSplitAllowed="true" >
 				<staticText>
 					<reportElement
-						x="369"
-						y="459"
-						width="91"
+						x="311"
+						y="3"
+						width="78"
 						height="13"
 						key="staticText-2"/>
 					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
@@ -132,14 +156,19 @@
 					</textElement>
 				<text><![CDATA[Atentamente,]]></text>
 				</staticText>
-			</band>
-		</detail>
-		<columnFooter>
-			<band height="0"  isSplitAllowed="true" >
-			</band>
-		</columnFooter>
-		<pageFooter>
-			<band height="0"  isSplitAllowed="true" >
+				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="389"
+						y="30"
+						width="131"
+						height="16"
+						key="textField-47"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement>
+						<font/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{letter_from}]]></textFieldExpression>
+				</textField>
 			</band>
 		</pageFooter>
 		<summary>
