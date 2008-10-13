@@ -82,7 +82,7 @@
 						required="true" value="#{commercialTracking.to.activity}">
 						<f:converter converterId="toConverter" />
 						<f:selectItem value="#{null}" itemLabel="    " />
-						<f:selectItems value="#{commercialTracking.activities}" />
+						<f:selectItems value="#{commecialCollections.activities}" />
 					</aon:selectOneMenu>
 
 					<aon:outputLabel for="CommercialTracking_status"
@@ -124,7 +124,7 @@
 									required="true" value="#{commercialTracking.next.activity}">
 									<f:converter converterId="toConverter" />
 									<f:selectItem value="#{null}" itemLabel="    " />
-									<f:selectItems value="#{commercialTracking.activities}" />
+									<f:selectItems value="#{commecialCollections.activities}" />
 								</aon:selectOneMenu>
 
 								<aon:outputLabel for="CommercialTracking_next_comments"
