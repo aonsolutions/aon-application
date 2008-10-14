@@ -4,10 +4,14 @@ import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import org.apache.commons.lang.ArrayUtils;
+
 import com.code.aon.commercial.CommercialActivity;
-import com.code.aon.commercial.dao.ICommercialAlias;
+import com.code.aon.commercial.enumeration.CommercialTrackingStatus;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ql.Criteria;
+import com.code.aon.ql.ast.Expression;
+import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.sales.Seller;
 import com.code.aon.ui.commercial.controller.CommercialCollectionsController;
 import com.code.aon.ui.commercial.controller.ICommercialConstants;
@@ -29,6 +33,8 @@ public class TargetSearchListener extends ControllerAdapter implements ICommerci
 	private Seller seller;
 	
 	private CommercialActivity activity;
+	
+	private CommercialTrackingStatus[] trackingStatuses;
 	
 	public Date getDateFrom() {
 		return dateFrom;
@@ -61,6 +67,14 @@ public class TargetSearchListener extends ControllerAdapter implements ICommerci
 	public void setActivity(CommercialActivity activity) {
 		this.activity = activity;
 	}	
+	
+	public CommercialTrackingStatus[] getTrackingStatuses() {
+		return trackingStatuses;
+	}
+
+	public void setTrackingStatuses(CommercialTrackingStatus[] trackingStatuses) {
+		this.trackingStatuses = trackingStatuses;
+	}
 
 	@Override
 	public void beforeModelInitialized(ControllerEvent event) throws ControllerListenerException {
@@ -90,10 +104,24 @@ public class TargetSearchListener extends ControllerAdapter implements ICommerci
 		setDateFrom(null);
 		setDateTo(null);
 		setActivity(null);
+		setTrackingStatuses( null );
 		setSeller( new Seller() );
     	CommercialCollectionsController collections = (CommercialCollectionsController) AonUtil.getRegisteredBean(ICommercialConstants.COLLECTIONS_CONTROLLER_NAME);
 		collections.refreshActivities();		
 	}
+	
+	private void addEnumToCriteria( Criteria criteria, String alias, Object[] values ) throws ManagerBeanException {
+		Expression expToAdd = null;
+		for( Object value : values ) {
+			if ( expToAdd == null ) {
+				expToAdd = ExpressionUtilities.getEqualExpression(alias, value);				
+			} else {
+				Expression exp  = ExpressionUtilities.getEqualExpression(alias, value);
+				expToAdd = ExpressionUtilities.getOrExpression(expToAdd, exp);
+			}
+		}
+		criteria.addExpression(expToAdd);	
+	}	
 	
 	private void completeCriteria() throws ManagerBeanException {
 		Criteria criteria = getController().getCriteria();
@@ -109,6 +137,9 @@ public class TargetSearchListener extends ControllerAdapter implements ICommerci
 		if (getActivity() != null) {
 			criteria.addEqualExpression("Target.trackings.activity.id", getActivity().getId());			
 		}		
+		if (! ArrayUtils.isEmpty(getTrackingStatuses()) ) {
+			addEnumToCriteria( criteria, "Target.trackings.status", getTrackingStatuses() );
+		}
 	}
 	
 }
