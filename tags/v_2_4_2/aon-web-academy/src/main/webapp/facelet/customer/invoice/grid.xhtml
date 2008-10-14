@@ -1,0 +1,82 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:h="http://java.sun.com/jsf/html">
+<body>
+
+<ui:composition>
+
+	<t:div styleClass="aon-form-group" rendered="#{!customer.new}">
+		<t:div styleClass="aon-form-group-title">
+			<t:outputLabel for="alumnInvoiceDataList"
+				value="#{financeBundle.aon_invoice}s" />
+		</t:div>
+
+		<t:div styleClass="aon-form-group-body">
+			<t:dataTable id="alumnInvoiceDataList" value="#{alumnInvoice.model}"
+				rows="20" var="to" rowIndexVar="rowIndex"
+				rowOnMouseOver="selectRow( this )"
+				rowOnMouseOut="unselectRow( this )" rowOnClick="sendRow( this )"
+				styleClass="aon-edit-table" headerClass="aon-edit-table-header"
+				footerClass="aon-edit-table-footer"
+				rowClasses="aon-edit-table-row-odd,aon-edit-table-row-even"
+				columnClasses="aon-table-body aon-table-body-string,
+					aon-table-body aon-table-body-string,
+					aon-table-body aon-table-body-string,
+					aon-table-body aon-table-body-number">
+
+				<h:column>
+					<f:facet name="header">
+						<h:outputText value="#{financeBundle.aon_series_number}" />
+					</f:facet>
+					<h:outputText value="#{to.series} / #{to.number}" />
+				</h:column>
+
+				<h:column>
+					<f:facet name="header">
+						<h:panelGroup>
+							<h:outputText value="#{financeBundle.aon_date}" />
+						</h:panelGroup>
+					</f:facet>
+					<h:outputText value="#{to.issueDate}">
+						<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
+							timeZone="#{timeZoneController.timeZoneId}" />
+					</h:outputText>
+				</h:column>
+
+				<h:column>
+					<f:facet name="header">
+						<h:panelGroup>
+							<h:outputText value="#{financeBundle.aon_status}" />
+						</h:panelGroup>
+					</f:facet>
+					<h:outputText value="#{to.status}" />
+				</h:column>
+
+				<h:column>
+					<f:facet name="header">
+						<h:panelGroup>
+							<h:outputText value="#{financeBundle.aon_total}" />
+						</h:panelGroup>
+					</f:facet>
+					<h:outputText value="#{alumnInvoice.invoiceTotalPrice}" >
+						<f:convertNumber pattern="#,##0.00" />
+					</h:outputText>
+				</h:column>
+
+			</t:dataTable>
+
+			<ui:include src="/facelet/shared/dataScroller.xhtml">
+				<ui:param name="dataTable" value="alumnInvoiceDataList" />
+				<ui:param name="model" value="#{alumnInvoice.model}" />
+				<ui:param name="showNote" value="#{false}" />
+			</ui:include>
+
+		</t:div>
+	</t:div>
+
+</ui:composition>
+</body>
+</html>
