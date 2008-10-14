@@ -225,7 +225,8 @@ public class TemplateController extends BasicController implements Constants {
 		String upload_name = item.getFileName();
 		String separator = "/";
 		if (upload_name.lastIndexOf(separator) < 0) separator = "\\";
-        upload_name = upload_name.substring(upload_name.lastIndexOf(separator));
+		if (upload_name.lastIndexOf('/')!=-1)
+			upload_name = upload_name.substring(upload_name.lastIndexOf(separator));
 		File file = new File( getUploadDirectory()+File.separator+upload_name);
 		FileOutputStream outputStream = null;
 		try{
