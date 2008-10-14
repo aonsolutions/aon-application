@@ -4,6 +4,7 @@
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:aon="http://www.code.es/aon-rich-components"
 	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a4j="http://richfaces.org/a4j"
 	xmlns:c="http://java.sun.com/jstl/core">
 <body>
 
@@ -54,6 +55,58 @@
 						<h:graphicImage url="#{aonResource.resolveLocal['/images/aon-icon-big-abonare.png']}" />
 					</aon:div>
 				</aon:div>
+
+			</aon:panelGrid>
+
+			<aon:panelGrid columns="2" dir="true">
+
+				<aon:outputLabel for="pagare_num"
+					value="#{appBundle.aon_corporate_identity_pagare_num}" />
+				<aon:inputText id="pagare_num" 
+					size="15" 
+					value="#{corporateIdentity.identityReport.pagare_num}" />
+
+				<aon:outputLabel for="pagare_de"
+					value="#{appBundle.aon_corporate_identity_pagare_de}" />
+				<aon:inputText id="pagare_de" 
+					size="85" 
+					value="#{corporateIdentity.identityReport.pagare_de}" />
+
+				<aon:outputLabel for="pagare_catidad_num"
+					value="#{appBundle.aon_corporate_identity_pagare_cantidad_num}" />
+				<aon:inputText id="pagare_catidad_num" 
+					size="85" 
+					value="#{corporateIdentity.identityReport.pagare_cantidad_num}">
+					<a4j:support 
+						event="onblur" 
+						actionListener="#{corporateIdentity.onN2T}"  
+						reRender="pagare_catidad" />					
+				</aon:inputText>
+
+				<aon:outputLabel for="pagare_catidad"
+					value="#{appBundle.aon_corporate_identity_pagare_cantidad}" />
+				<aon:inputTextarea id="pagare_catidad"
+					value="#{corporateIdentity.identityReport.pagare_cantidad}"
+					style="width:90%"
+					cols="80" rows="5"/>
+
+				<aon:outputLabel for="pagare_fecha_dia"
+					value="#{appBundle.aon_corporate_identity_pagare_fecha_dia}" />
+				<aon:inputText id="pagare_fecha_dia" 
+					size="85" 
+					value="#{corporateIdentity.identityReport.pagare_fecha_dia}" />
+
+				<aon:outputLabel for="pagare_fecha_mes"
+					value="#{appBundle.aon_corporate_identity_pagare_fecha_mes}" />
+				<aon:inputText id="pagare_fecha_mes" 
+					size="85" 
+					value="#{corporateIdentity.identityReport.pagare_fecha_mes}" />
+
+				<aon:outputLabel for="pagare_fecha_ano"
+					value="#{appBundle.aon_corporate_identity_pagare_fecha_ano}" />
+				<aon:inputText id="pagare_fecha_ano" 
+					size="85" 
+					value="#{corporateIdentity.identityReport.pagare_fecha_ano}" />
 
 			</aon:panelGrid>
 

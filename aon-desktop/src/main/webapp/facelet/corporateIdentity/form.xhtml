@@ -44,7 +44,8 @@
 						<aon:outputText value="#{appBundle.aon_corporate_identity_fax}" styleClass="aon-portlet-title-text"/>
 					</aon:div>
 					<aon:div styleClass="aon-portlet-body">
-						<aon:commandLink action="corporate_identity_fax">
+						<aon:commandLink action="corporate_identity_fax"
+							actionListener="#{corporateIdentity.onInit}">
 							<h:graphicImage url="#{aonResource.resolveLocal['/images/aon-icon-big-fax.png']}" />
 						</aon:commandLink>
 					</aon:div>
@@ -55,7 +56,8 @@
 						<aon:outputText value="#{appBundle.aon_corporate_identity_letter}" styleClass="aon-portlet-title-text"/>
 					</aon:div>
 					<aon:div styleClass="aon-portlet-body">
-						<aon:commandLink action="corporate_identity_letter">
+						<aon:commandLink action="corporate_identity_letter"
+							actionListener="#{corporateIdentity.onInit}">
 							<h:graphicImage url="#{aonResource.resolveLocal['/images/aon-icon-big-carta.png']}" />
 						</aon:commandLink>
 					</aon:div>
@@ -66,7 +68,8 @@
 						<aon:outputText value="#{appBundle.aon_corporate_identity_label}" styleClass="aon-portlet-title-text"/>
 					</aon:div>
 					<aon:div styleClass="aon-portlet-body">
-						<aon:commandLink action="corporate_identity_label">
+						<aon:commandLink action="corporate_identity_label"
+							actionListener="#{corporateIdentity.onInit}">
 							<h:graphicImage url="#{aonResource.resolveLocal['/images/aon-icon-big-etiquetas.png']}" />
 						</aon:commandLink>
 					</aon:div>
@@ -77,7 +80,8 @@
 						<aon:outputText value="#{appBundle.aon_corporate_identity_recibi}" styleClass="aon-portlet-title-text"/>
 					</aon:div>
 					<aon:div styleClass="aon-portlet-body">
-						<aon:commandLink action="corporate_identity_recibi">
+						<aon:commandLink action="corporate_identity_recibi"
+							actionListener="#{corporateIdentity.onInit}">
 							<h:graphicImage url="#{aonResource.resolveLocal['/images/aon-icon-big-recibi.png']}" />
 						</aon:commandLink>
 					</aon:div>
@@ -88,7 +92,8 @@
 						<aon:outputText value="#{appBundle.aon_corporate_identity_abonare}" styleClass="aon-portlet-title-text"/>
 					</aon:div>
 					<aon:div styleClass="aon-portlet-body">
-						<aon:commandLink action="corporate_identity_abonare">
+						<aon:commandLink action="corporate_identity_abonare"
+							actionListener="#{corporateIdentity.onInit}">
 							<h:graphicImage url="#{aonResource.resolveLocal['/images/aon-icon-big-abonare.png']}" />
 						</aon:commandLink>
 					</aon:div>

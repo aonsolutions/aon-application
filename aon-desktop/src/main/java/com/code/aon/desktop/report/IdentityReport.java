@@ -41,6 +41,22 @@ public class IdentityReport {
 	
 	private String letter_content;
 
+	// PAGARE
+
+	private String pagare_num;
+
+	private String pagare_de;
+
+	private String pagare_cantidad;
+	
+	private String pagare_cantidad_num;
+	
+	private String pagare_fecha_dia;
+
+	private String pagare_fecha_mes;
+
+	private String pagare_fecha_ano;
+
 	public Company getCompany() {
 		return company;
 	}
@@ -172,6 +188,76 @@ public class IdentityReport {
 
 	public void setLetter_content(String letter_content) {
 		this.letter_content = letter_content;
+	}
+
+	// PAGARE
+	
+	public String getPagare_num() {
+		return pagare_num;
+	}
+
+	public void setPagare_num(String pagare_num) {
+		this.pagare_num = pagare_num;
+	}
+
+	public String getPagare_de() {
+		return pagare_de;
+	}
+
+	public void setPagare_de(String pagare_de) {
+		this.pagare_de = pagare_de;
+	}
+
+	public String getPagare_cantidad() {
+		return pagare_cantidad;
+	}
+
+	public void setPagare_cantidad(String pagare_cantidad) {
+		this.pagare_cantidad = pagare_cantidad;
+	}
+
+	public String getPagare_cantidad_line1() {
+		if (pagare_cantidad.length()>90)
+			return pagare_cantidad.substring(0,90);
+		return pagare_cantidad;
+	}
+
+	public String getPagare_cantidad_line2() {
+		if (pagare_cantidad.length()>90)
+			return pagare_cantidad.substring(90, pagare_cantidad.length());
+		return "";
+	}
+
+	public String getPagare_cantidad_num() {
+		return pagare_cantidad_num;
+	}
+
+	public void setPagare_cantidad_num(String pagare_cantidad_num) {
+		this.pagare_cantidad_num = pagare_cantidad_num;
+	}
+
+	public String getPagare_fecha_dia() {
+		return pagare_fecha_dia;
+	}
+
+	public void setPagare_fecha_dia(String pagare_fecha_dia) {
+		this.pagare_fecha_dia = pagare_fecha_dia;
+	}
+
+	public String getPagare_fecha_mes() {
+		return pagare_fecha_mes;
+	}
+
+	public void setPagare_fecha_mes(String pagare_fecha_mes) {
+		this.pagare_fecha_mes = pagare_fecha_mes;
+	}
+
+	public String getPagare_fecha_ano() {
+		return pagare_fecha_ano;
+	}
+
+	public void setPagare_fecha_ano(String pagare_fecha_ano) {
+		this.pagare_fecha_ano = pagare_fecha_ano;
 	}
 	
 }
