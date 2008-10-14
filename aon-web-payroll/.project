@@ -5,7 +5,6 @@
 	<projects>
 		<project>aon-ui-payroll</project>
 		<project>aon-payroll</project>
-		<project>aon-ui-form</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>
