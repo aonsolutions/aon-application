@@ -57,7 +57,7 @@
 	
 			</aon:panelGrid>
 
-			<aon:panelGrid columns="2" dir="true">
+			<aon:panelGrid columns="2" dir="true" style="width:90%;">
 
 				<aon:outputLabel for="fax_from"
 					value="#{appBundle.aon_corporate_identity_from}" />
@@ -79,10 +79,13 @@
 	
 				<aon:outputLabel for="fax_content"
 					value="#{appBundle.aon_corporate_identity_content}" />
-				<aon:inputRichText style="width:100%" 
-					id="fax_content" 
-					value="#{corporateIdentity.identityReport.fax_content}"
-					cols="80" rows="20"/>
+				<aon:panelGroup scrollWidth="90%">
+					<aon:inputRichText style="width:90%" 
+						id="fax_content" 
+						toolbarSet="AonDesktop"
+						value="#{corporateIdentity.identityReport.fax_content}"
+						cols="80" rows="20"/>
+				</aon:panelGroup>
 			</aon:panelGrid>
 	
 		</aon:form>

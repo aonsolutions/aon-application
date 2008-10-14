@@ -31,6 +31,7 @@ import com.code.aon.common.velocity.TemplateHelper;
 import com.code.aon.common.velocity.VelocityHelper;
 import com.code.aon.company.Company;
 import com.code.aon.desktop.report.IdentityReport;
+import com.code.aon.desktop.utils.identity.n2t;
 import com.code.aon.ql.Criteria;
 import com.code.aon.registry.RegistryAddress;
 import com.code.aon.registry.RegistryAttachment;
@@ -83,6 +84,13 @@ public class CorporateIdentity implements ICollectionProvider{
     	identityReport.setLetter_to("");
     	identityReport.setLetter_from("");
     	identityReport.setLetter_content("");
+    	identityReport.setPagare_num("");
+    	identityReport.setPagare_de("");
+    	identityReport.setPagare_cantidad("");
+    	identityReport.setPagare_cantidad_num("");
+    	identityReport.setPagare_fecha_dia("");
+    	identityReport.setPagare_fecha_mes("");
+    	identityReport.setPagare_fecha_ano("");
     }
 
 	private Company recoverCompany() throws ManagerBeanException{
@@ -203,4 +211,28 @@ public class CorporateIdentity implements ICollectionProvider{
 		context.responseComplete();    	
     }
 	
+    public void onN2T(ActionEvent event){
+    	try{
+			String res;
+			n2t numero;
+			String num = identityReport.getPagare_cantidad_num();
+			if (num.lastIndexOf(".")!= -1){
+				String str1 = num.substring(0,num.lastIndexOf("."));
+				String str2 = num.substring(num.lastIndexOf(".")+1);
+		        int num_ = Integer.parseInt(str1);
+		        int dec_ = Integer.parseInt(str2);
+		        numero = new n2t();
+		        res = numero.convertirLetras(num_);
+		        res += " con ";
+		        res += numero.convertirLetras(dec_);
+			}else{
+		        int num_ = Integer.parseInt(num);
+		        numero = new n2t();
+		        res = numero.convertirLetras(num_);
+			}
+			identityReport.setPagare_cantidad(res);
+    	}catch (Exception e) {
+		}
+    }
+    
 }
