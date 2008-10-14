@@ -160,6 +160,7 @@
 										value="#{(targetSearch.seller.registry.name!=null)?(targetSearch.seller.registry.fullName):('')}"
 										size="60" disabled="true" />
 								</aon:div>		
+								
 								<aon:outputLabel for="Target_trackings_activity_id"
 									value="#{appBundle.aon_commercial_tracking_activity}" />
 								<aon:selectOneMenu id="Target_trackings_activity_id" 
@@ -168,20 +169,12 @@
 									<f:selectItem value="#{null}" itemLabel="    " />
 									<f:selectItems value="#{commecialCollections.activities}" />
 								</aon:selectOneMenu>
-							
-								<!-- 
+
 								<aon:outputText value="#{bundle.aon_status}"/>
-								<aon:div>
-									<aon:selectBooleanCheckbox id="Target_trackings_status_0"
-										value="#{targetSearch.statusPending}" />
-									<aon:outputLabel for="Target_trackings_status_0"
-										value="#{commercialBundle.aon_enum_commercial_tracking_status_PENDING}" />
-									<aon:selectBooleanCheckbox id="Target_trackings_status_1"
-										value="#{targetSearch.statusClosed}" />
-									<aon:outputLabel for="Target_trackings_status_1"
-										value="#{commercialBundle.aon_enum_commercial_tracking_status_CLOSED}" />
-								</aon:div>
-								-->								
+								<aon:selectManyCheckbox value="#{targetSearch.trackingStatuses}">
+									<f:selectItems value="#{commecialCollections.commercialTrackingStatuses}"/>
+								</aon:selectManyCheckbox>							
+
 								<aon:outputLabel for="Target_trackings_comments"
 									value="#{appBundle.aon_commercial_tracking_comments}" />
 								<aon:inputText id="Target_trackings_comments" size="60"
