@@ -69,14 +69,6 @@
 							accesskey="#{bundle.aon_key_close}">
 							<aon:actionListener method="#{article_category.onCancel}" />
 						</aon:commandButton>
-						<aon:commandButton id="exit"
-							value="#{bundle.aon_close}"
-							action="#{article_category.getBack}" 
-							immediate="#{true}"
-							styleClass="aon-finding-toolbar-item aon-icon-cancel"
-							accesskey="#{bundle.aon_key_close}">
-							<aon:actionListener method="#{article_category.onCancel}" />
-						</aon:commandButton>
 						<aon:commandButton id="generate_articleCategory"
 							value="#{appBundle.aon_generate}" 
 							rendered="#{article_category.to!=null and cms.roleEditor}"
@@ -89,6 +81,14 @@
 								reRender="poll,grid" 
 								onclick="javascript:Richfaces.showModalPanel('gen_log',{width:680, top:100});" />
 						</aon:commandButton>	
+						<aon:commandButton id="exit"
+							value="#{bundle.aon_close}"
+							action="#{article_category.getBack}" 
+							immediate="#{true}"
+							styleClass="aon-finding-toolbar-item aon-icon-cancel"
+							accesskey="#{bundle.aon_key_close}">
+							<aon:actionListener method="#{article_category.onCancel}" />
+						</aon:commandButton>
 				    </aon:div>
 					
 					<!-- end toolbar navigation -->

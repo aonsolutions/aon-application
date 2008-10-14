@@ -95,8 +95,17 @@ public class GeneratorController implements Constants {
 		finalizeGenerator();
 	}
 	
+	public void onGenerateDiary(ActionEvent event) throws ManagerBeanException, ExpressionException {
+		initGenerator();
+		ArticleCalendarGenerator.generate();
+		System.gc();
+		finalizeGenerator();
+	}
+	
 	public void onGenerateArticles(ActionEvent event) throws ManagerBeanException, ExpressionException {
 		initGenerator();
+		ArticleCalendarGenerator.generate();
+		System.gc();
 		ArticleGenerator.generate(ArticleType.NEWS);
 		System.gc();
 		ArticleGenerator.generate(ArticleType.SERVICES);
@@ -105,7 +114,6 @@ public class GeneratorController implements Constants {
 		System.gc();
 		ArticleGenerator.generate(ArticleType.OTHER);
 		System.gc();
-		ArticleCalendarGenerator.generate();
 		finalizeGenerator();
 	}
 
