@@ -193,6 +193,23 @@ public class FinanceController extends BasicController {
 	}
 	
 	/**
+	 * Adds to criteria the generic equal expression.
+	 * 
+	 * @param event the event that contains the new value
+	 * 
+	 * @throws ManagerBeanException the manager bean exception
+	 * @throws ExpressionException the expression exception
+	 */
+	public void addEqualExpression(ValueChangeEvent event) throws ManagerBeanException, ExpressionException {
+	    if (event.getNewValue() != null && !event.getNewValue().equals(new Integer(Integer.MAX_VALUE))) {
+	    	Criteria c = getCriteria();
+			Object value = event.getNewValue();
+			c.addExpression(getFieldName(event.getComponent().getId()), value.toString());
+			setCriteria(c);
+		}
+	}
+	
+	/**
 	 * Adds to criteria the invoice issueDate. Greater than or equal
 	 * 
 	 * @param event the event that contains the new value

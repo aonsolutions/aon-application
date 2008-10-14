@@ -20,9 +20,13 @@ public interface ICommercialConstants {
 	/** TargetTracking Controller name. */
 	String TARGET_TRACKING_CONTROLLER_NAME = "targetTracking";
 
-	/** TargetMedia Controller name. */
+	/** Seller Media Controller name. */
 	String SELLER_MEDIA_CONTROLLER_NAME = "sellerMedia";
 	
-	/** TargetAddress Controller name. */
+	/** Seller Address Controller name. */
 	String SELLER_ADDRESS_CONTROLLER_NAME = "sellerAddress";
+
+	/** Collections Controller name. */
+	String COLLECTIONS_CONTROLLER_NAME = "commecialCollections";
+	
 }

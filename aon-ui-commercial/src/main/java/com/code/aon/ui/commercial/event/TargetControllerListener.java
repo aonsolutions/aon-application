@@ -45,6 +45,19 @@ public class TargetControllerListener extends ControllerAdapter implements IComm
 	}
 	
 	@Override
+	public void afterBeanReset(ControllerEvent event)
+			throws ControllerListenerException {
+		TargetController controller = (TargetController) event.getController();
+		if ( controller.getTo() != null ) {
+			try {
+				controller.refreshSegments();
+			} catch (ManagerBeanException e) {
+				throw new ControllerListenerException( e.getMessage(), e );
+			}			
+		}
+	}
+
+	@Override
 	public void beforeBeanRemoved(ControllerEvent event) throws ControllerListenerException {
 		Target target = (Target)event.getController().getTo();
 		try {

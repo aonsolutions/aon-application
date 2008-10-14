@@ -199,8 +199,8 @@ public class InvoiceRemover extends BasicController {
 		IManagerBean invoiceAccountBean = BeanManager.getManagerBean(InvoiceDetailAccount.class);
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(invoiceAccountBean.getFieldName(IAccountBridgeAlias.INVOICE_DETAIL_ACCOUNT_INVOICE_DETAIL_INVOICE_ID), invoice.getId());
-		Iterator iter = invoiceAccountBean.getList(criteria).iterator();
-		while(iter.hasNext()){
+		Iterator iter = invoiceAccountBean.getList(criteria, 0, 1).iterator();
+		if(iter.hasNext()){
 			invoiceAccountBean.remove((InvoiceDetailAccount)iter.next());
 		}
 	}
