@@ -13,7 +13,7 @@
 	<artifactId>aon-web-commercial</artifactId>
 	<packaging>war</packaging>
 	<name>AON WEB COMMERCIAL</name>
-	<version>1.1.0</version>
+	<version>1.1.1</version>
 	<description>AON WEB COMMERCIAL</description>
 	<properties>
 		<dbVersion>1.10.1</dbVersion>
@@ -55,7 +55,7 @@
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.commercial</artifactId>
-			<version>2.4.1</version>
+			<version>2.4.2</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
