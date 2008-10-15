@@ -174,7 +174,7 @@
 						<aon:actionListener method="#{elementoMaestro.onSelectFirst}" />
 					</aon:menuItem>
 					<aon:menuItem value="#{menuBundle.auxiliares_cotizacion__ocupacion}"  
-							action="cotizacion_ocupacion" >
+							action="cotizacion_ocupacion"  >
 						<aon:actionListener method="#{ocupacionMaestro.onEditSearch}" />
 						<aon:actionListener method="#{ocupacionMaestro.onSearch}" />
 						<aon:actionListener method="#{ocupacionMaestro.onSelectFirst}" />
@@ -218,9 +218,17 @@
 					</aon:menuItem>
 				</aon:menuGroup>
 				<aon:menuGroup value="#{menuBundle.auxiliares_organismos_entidades}">
-					<aon:menuItem value="#{menuBundle.auxiliares_organismos_entidades__entidsucur}" disabled="true" />
+					<aon:menuItem value="#{menuBundle.auxiliares_organismos_entidades__entidsucur}" action="entidades_form" >
+						<aon:actionListener method="#{entidadMaestro.onEditSearch}" />
+						<aon:actionListener method="#{entidadMaestro.onSearch}" />
+						<aon:actionListener method="#{entidadMaestro.onSelectFirst}" />
+						</aon:menuItem>
 					<aon:menuItem value="#{menuBundle.auxiliares_organismos_entidades__admon}" action="organismos_admon" />
-					<aon:menuItem value="#{menuBundle.auxiliares_organismos_entidades__mutua}" disabled="true" />
+					<aon:menuItem value="#{menuBundle.auxiliares_organismos_entidades__mutua}" action="mutuas_form"  >
+						<aon:actionListener method="#{mutuaMaestro.onEditSearch}" />
+						<aon:actionListener method="#{mutuaMaestro.onSearch}" />
+						<aon:actionListener method="#{mutuaMaestro.onSelectFirst}" />
+						</aon:menuItem>
 					<aon:menuItem value="#{menuBundle.auxiliares_organismos_entidades__delegacion}" action="delegacion_form" >
 						<aon:actionListener method="#{delegacion.onEditSearch}" />
 						<aon:actionListener method="#{delegacion.onSearch}" />
