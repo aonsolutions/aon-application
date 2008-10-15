@@ -12,84 +12,89 @@
 
 	<ui:define name="content">
 
-		<aon:form id="porcentajeForm">
+		<aon:form id="mutuaMaestroForm">
 			<aon:div styleClass="aon-finding-title-toolbar">
 				<aon:panelGrid id="buttonsGrid" columns="3" dir="true"
 					columnClasses="aon-finding-title,aon-finding-subtitle,aon-finding-toolbar">
 
 					<aon:div styleClass="aon-finding-title-internal">
-						<aon:outputText value="#{appBundle.aon_payroll_cotizacion_epigrafes}" />
+						<aon:outputText value="#{appBundle.aon_payroll_auxiliares_organismos_entidades__mutua}" />
 					</aon:div>
 
 					<aon:div styleClass="aon-finding-subtitle-internal">
 						<aon:outputText
-							value="#{epigrafeMaestro.new?(bundle.aon_reset):(bundle.aon_editing)}" />
+							value="#{mutuaMaestro.new?(bundle.aon_reset):(bundle.aon_editing)}" />
 					</aon:div>
 
 					<!-- start toolbar navigation -->
 					<aon:div styleClass="aon-finding-toolbar-item-group">
 						<aon:commandButton id="save" value="#{bundle.aon_save}"
-							action="cotizacion_epigrafe_form"
-							actionListener="#{epigrafeMaestro.accept}"
+							action="mutuas_form"
+							actionListener="#{mutuaMaestro.accept}"
 							styleClass="aon-finding-toolbar-item aon-icon-accept"
 							accesskey="#{bundle.aon_key_save}" />
 						<aon:confirmButton id="cancel" immediate="true"
-							value="#{bundle.aon_cancel}" rendered="#{epigrafeMaestro.new}"
+							value="#{bundle.aon_cancel}" rendered="#{mutuaMaestro.new}"
 							styleClass="aon-finding-toolbar-item aon-icon-cancel"
 							confirmTitle="#{bundle.aon_confirm_title}"
 							confirmMessage="#{bundle.aon_cancel_confirm}"
-							confirmActionListener="#{epigrafeMaestro.onCancel}"
-							confirmAction="cotizacion_epigrafe_list"
+							confirmActionListener="#{mutuaMaestro.onCancel}"
+							confirmAction="mutuas_form"
 							accesskey="#{bundle.aon_key_cancel}" />
 						<aon:confirmButton id="remove" value="#{bundle.aon_remove}"
-							rendered="#{!epigrafeMaestro.new}"
+							rendered="#{!mutuaMaestro.new}"
 							styleClass="aon-finding-toolbar-item aon-icon-delete"
 							immediate="true" confirmTitle="#{bundle.aon_confirm_title}"
 							confirmMessage="#{bundle.aon_remove_confirm}"
-							confirmActionListener="#{epigrafeMaestro.onRemove}"
-							confirmAction="cotizacion_epigrafe_list"
+							confirmActionListener="#{mutuaMaestro.onRemove}"
+							confirmAction="mutuas_list"
 							accesskey="#{bundle.aon_key_remove}" />
 						<aon:commandButton id="reset" value="#{bundle.aon_reset}"
-							rendered="#{!epigrafeMaestro.new}"
-							action="cotizacion_epigrafe_form" 
-							actionListener="#{epigrafeMaestro.onReset}"
+							rendered="#{!mutuaMaestro.new}"
+							action="mutuas_form" 
+							actionListener="#{mutuaMaestro.onReset}"
 							styleClass="aon-finding-toolbar-item aon-icon-reset"
 							accesskey="#{bundle.aon_key_new}" />
 						<aon:commandButton id="search" value="#{bundle.aon_search}"
-							rendered="#{!epigrafeMaestro.new}" immediate="true"
-							action="cotizacion_epigrafe_search" actionListener="#{epigrafeMaestro.onEditSearch}"
+							rendered="#{!mutuaMaestro.new}" immediate="true"
+							action="mutuas_search" actionListener="#{mutuaMaestro.onEditSearch}"
 							styleClass="aon-finding-toolbar-item aon-icon-search"
 							accesskey="#{bundle.aon_key_search}" />														
 
-						<aon:spin controller="#{epigrafeMaestro}" action="cotizacion_epigrafe_form" rendered="#{!epigrafeMaestro.new}" />
-
+					<aon:spin controller="#{mutuaMaestro}" action="mutuas_form" rendered="#{!mutuaMaestro.new}" />
+<!--  
 						<ui:include src="/facelet/templates/aon.ui.printbuttons.xhtml">
-							<ui:param name="manager" value="#{linepigr}"/>
-							<ui:param name="reportKey" value="EpigrafeList"/>
+							<ui:param name="manager" value="#{mutuaMaestro}"/>
+							<ui:param name="reportKey" value="mutuaMaestroesCotizacion"/>
 						</ui:include>
-
+-->
 					</aon:div>
 
 					<!-- end toolbar navigation -->
 				</aon:panelGrid>
 			</aon:div>
 
-			<aon:div styleClass="aon-scroll-area">
-				<aon:panelGrid id="epigrafeMaestro" columns="2" dir="true" width="100%" style="margin-bottom=2px;">
+	<aon:div styleClass="aon-scroll-area">
+				<aon:panelGrid id="mutuaMaestro" columns="2" dir="true" width="100%" style="margin-bottom=2px;">
+				
+				
 					<aon:outputLabel value="#{appBundle.aon_payroll_cdg}" />
-					<aon:inputText value="#{epigrafeMaestro.to.cdg}" disabled="#{!epigrafeMaestro.new}" 
-						required="true" size="10" maxlength="8" />
+					<aon:inputText value="#{mutuaMaestro.to.cdg}" disabled="#{!mutuaMaestro.new}" 
+						required="true" size="20" maxlength="3" />
 				
-					<aon:outputLabel for="Domain_name" value="#{appBundle.aon_payroll_description}" />
-					<aon:inputText value="#{epigrafeMaestro.to.description}" 
-						required="true" size="60" maxlength="50" >
+					<aon:outputLabel  value="#{appBundle.aon_payroll_description}" />
+					<aon:inputText value="#{mutuaMaestro.to.description}" 
+						required="true" size="30" maxlength="30" >
 					</aon:inputText>
-
-				
+						
+			
+				 
 				</aon:panelGrid>
 
-				<ui:include src="grid.xhtml" rendered="#{!epigrafeMaestro.new}" />				
+			 	<ui:include src="grid.xhtml" rendered="#{!mutuaMaestro.new}" />		 		
 			</aon:div>
+
+		
 		</aon:form>
 	</ui:define>
 </ui:composition>

@@ -610,5 +610,54 @@
 			</to-view-id>
 		</navigation-case>
 	</navigation-rule>
+		<!-- =================== Entidades y Sucursales================= -->
+		
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>entidades_form</from-outcome>
+			<to-view-id>
+				/facelet/auxiliares/organismos_entidades/entidades/form.xhtml
+			</to-view-id>
+		</navigation-case>
+	</navigation-rule>
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>entidades_list</from-outcome>
+			<to-view-id>
+				/facelet/auxiliares/organismos_entidades/entidades/list.xhtml
+			</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>entidades_search</from-outcome>
+			<to-view-id>
+				/facelet/auxiliares/organismos_entidades/entidades/search.xhtml
+			</to-view-id>
+		</navigation-case>
+	</navigation-rule>
+	
+		<!-- ===================Mutuas================ -->
+		
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>mutuas_form</from-outcome>
+			<to-view-id>
+				/facelet/auxiliares/organismos_entidades/mutua/form.xhtml
+			</to-view-id>
+		</navigation-case>
+	</navigation-rule>
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>mutuas_list</from-outcome>
+			<to-view-id>
+				/facelet/auxiliares/organismos_entidades/mutua/list.xhtml
+			</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>mutuas_search</from-outcome>
+			<to-view-id>
+				/facelet/auxiliares/organismos_entidades/mutua/search.xhtml
+			</to-view-id>
+		</navigation-case>
+	</navigation-rule>
 	
 </faces-config>
