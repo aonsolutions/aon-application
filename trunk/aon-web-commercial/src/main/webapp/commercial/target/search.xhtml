@@ -25,6 +25,14 @@
 								<ui:include src="/commercial/target/searchContent.xhtml">
 									<ui:param name="controller" value="#{target}"/>
 								</ui:include>
+								<aon:outputLabel for="MarketingTarget_customer"
+									value="#{appBundle.aon_customer}" />
+								<aon:selectOneMenu id="MarketingTarget_customer" 
+									valueChangeListener="#{target.addDirectExpression}">
+									<f:selectItem value="#{null}" itemLabel="" />
+									<f:selectItem itemValue="#{true}" itemLabel="#{bundle.aon_yes}" />
+									<f:selectItem itemValue="#{false}" itemLabel="#{bundle.aon_no}" />
+								</aon:selectOneMenu>									
 							</aon:panelGrid>
 						</aon:panelCollapsible>					
 					
@@ -123,6 +131,43 @@
 									valueChangeListener="#{target.addDirectExpression}" />
 							</aon:panelGrid>
 						</aon:panelCollapsible>
+						<aon:panelCollapsible expanded="false" label="#{marketingBundle.aon_target_profile}">
+							<aon:panelGrid columns="2" columnClasses="tbl-tab-search-odd,tbl-tab-search-even">
+								<aon:outputText value="#{appBundle.aon_commercial_tracking_date}" />
+								<aon:div>
+									<aon:outputLabel for="MarketingTarget_profiles_lastUpdate-From" styleClass="aon-form-date-label"
+										value="#{bundle.aon_date_from}:" />
+									<aon:selectInputDate id="MarketingTarget_profiles_lastUpdate-From"
+										value="#{targetSearch.profileDateFrom}"
+										popupDateFormat="#{bundle.aon_date_pattern}" renderAsPopup="true">
+									</aon:selectInputDate>
+						
+									<aon:outputLabel for="MarketingTarget_profiles_lastUpdate-To" styleClass="aon-form-date-label"
+										value="#{bundle.aon_date_to}:" />
+									<aon:selectInputDate id="MarketingTarget_profiles_lastUpdate-To"
+										value="#{targetSearch.profileDateTo}"
+										popupDateFormat="#{bundle.aon_date_pattern}" renderAsPopup="true">
+									</aon:selectInputDate>
+								</aon:div>							
+								<aon:outputLabel for="MarketingTarget_profiles_question_id"
+									value="#{marketingBundle.aon_marketing_question}" />
+								<aon:div styleClass="aon-lookup">
+									<aon:lookupInputText id="MarketingTarget_profiles_question_id"
+										lookup="#{questionLookup}"
+										reRender="MarketingTarget_profiles_question_detail"
+										value="#{targetSearch.question.id}" size="5">
+									</aon:lookupInputText>
+									<aon:lookupButton windowTitle="#{marketingBundle.aon_lookup_question}" 
+										selectReRender="MarketingTarget_profiles_question_id,MarketingTarget_profiles_question_detail"
+										lookup="#{questionLookup}" minHeight="460" minWidth="650"
+										property="#{targetSearch.question}">
+									</aon:lookupButton>
+									<aon:inputText id="MarketingTarget_profiles_question_detail"
+										value="#{targetSearch.question.text}"
+										size="60" disabled="true" />
+								</aon:div>														
+							</aon:panelGrid>
+						</aon:panelCollapsible>
 						<aon:panelCollapsible expanded="false" label="#{appBundle.aon_target_tracking}">
 							<aon:panelGrid columns="2" columnClasses="tbl-tab-search-odd,tbl-tab-search-even">
 								<aon:outputText value="#{appBundle.aon_commercial_tracking_date}" />
@@ -130,14 +175,14 @@
 									<aon:outputLabel for="Target_trackings_date-From" styleClass="aon-form-date-label"
 										value="#{bundle.aon_date_from}:" />
 									<aon:selectInputDate id="Target_trackings_date-From"
-										value="#{targetSearch.dateFrom}"
+										value="#{targetSearch.trackingDateFrom}"
 										popupDateFormat="#{bundle.aon_date_pattern}" renderAsPopup="true">
 									</aon:selectInputDate>
 						
 									<aon:outputLabel for="Target_trackings_date-To" styleClass="aon-form-date-label"
 										value="#{bundle.aon_date_to}:" />
 									<aon:selectInputDate id="Target_trackings_date-To"
-										value="#{targetSearch.dateTo}"
+										value="#{targetSearch.trackingDateTo}"
 										popupDateFormat="#{bundle.aon_date_pattern}" renderAsPopup="true">
 									</aon:selectInputDate>
 								</aon:div>
@@ -187,6 +232,7 @@
 			</ui:decorate>
 
 		</aon:form>
-		<aon:lookupButtonPopup lookup="#{sellerLookup}" />				
+		<aon:lookupButtonPopup lookup="#{sellerLookup}" />			
+		<aon:lookupButtonPopup lookup="#{questionLookup}" />	
 	</ui:define>
 </ui:composition>
