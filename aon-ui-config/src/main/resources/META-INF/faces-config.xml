@@ -4,12 +4,12 @@
   "http://java.sun.com/dtd/web-facesconfig_1_1.dtd">
 
 <faces-config>
+
 	<!--  ********* WORKGROUP CONVERTER ***************** -->
 	<converter>
 		<converter-for-class>com.code.aon.config.WorkGroup</converter-for-class>
 		<converter-class>com.code.aon.ui.config.converter.WorkGroupConverter</converter-class>
 	</converter>
-
 	<!--  *************** COLLECTIONS ***************** -->
 	<managed-bean>
 		<managed-bean-name>configCollections</managed-bean-name>
@@ -231,6 +231,21 @@
 		</managed-property>		
 	</managed-bean>
 	
+	<!-- ************* SERIES ***************** -->
+	<managed-bean>
+		<managed-bean-name>series</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.form.BasicController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.config.Series</value>
+		</managed-property>
+	</managed-bean>
+
 	<!-- ************* USER UTILS ***************** -->
 	<managed-bean>
 		<managed-bean-name>userUtils</managed-bean-name>
@@ -239,5 +254,16 @@
 		</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
+
+  <!-- *************************************** -->
+  <!-- ************ NAVIGATION *************** -->
+  <!-- *************************************** -->
+  
+	<navigation-rule>
+	    <navigation-case>
+	      <from-outcome>series</from-outcome>
+	      <to-view-id>/com/code/aon/ui/config/facelet/series/grid.xhtml</to-view-id>
+	    </navigation-case>
+	</navigation-rule>
 
 </faces-config>
