@@ -132,20 +132,20 @@
 							</aon:panelGrid>
 						</aon:panelCollapsible>
 						<aon:panelCollapsible expanded="false" label="#{marketingBundle.aon_target_profile}">
-							<aon:panelGrid columns="2" columnClasses="tbl-tab-search-odd,tbl-tab-search-even">
+							<aon:panelGrid columns="2" columnClasses="tbl-tab-search-odd aon-vertical-align-top,tbl-tab-search-even">
 								<aon:outputText value="#{appBundle.aon_commercial_tracking_date}" />
 								<aon:div>
 									<aon:outputLabel for="MarketingTarget_profiles_lastUpdate-From" styleClass="aon-form-date-label"
 										value="#{bundle.aon_date_from}:" />
 									<aon:selectInputDate id="MarketingTarget_profiles_lastUpdate-From"
-										value="#{targetSearch.profileDateFrom}"
+										value="#{targetSearch.profileDateFrom}" inputSize="10"
 										popupDateFormat="#{bundle.aon_date_pattern}" renderAsPopup="true">
 									</aon:selectInputDate>
 						
 									<aon:outputLabel for="MarketingTarget_profiles_lastUpdate-To" styleClass="aon-form-date-label"
 										value="#{bundle.aon_date_to}:" />
 									<aon:selectInputDate id="MarketingTarget_profiles_lastUpdate-To"
-										value="#{targetSearch.profileDateTo}"
+										value="#{targetSearch.profileDateTo}" inputSize="10"
 										popupDateFormat="#{bundle.aon_date_pattern}" renderAsPopup="true">
 									</aon:selectInputDate>
 								</aon:div>							
@@ -164,8 +164,32 @@
 									</aon:lookupButton>
 									<aon:inputText id="MarketingTarget_profiles_question_detail"
 										value="#{targetSearch.question.text}"
-										size="60" disabled="true" />
-								</aon:div>														
+										size="44" disabled="true" />
+								</aon:div>
+								<aon:div styleClass="aon-padding-top">				
+									<aon:outputText value="#{bundle.aon_value}" />
+								</aon:div>
+								<aon:div>
+									<aon:div styleClass="aon-padding-top">
+										<aon:outputLabel for="MarketingTarget_profiles_question_date-From" styleClass="aon-form-date-label"
+											value="#{bundle.aon_date_from}:" />
+										<aon:selectInputDate id="MarketingTarget_profiles_question_date-From"
+											value="#{targetSearch.questionDateFrom}" inputSize="10"
+											popupDateFormat="#{bundle.aon_date_pattern}" renderAsPopup="true">
+										</aon:selectInputDate>
+							
+										<aon:outputLabel for="MarketingTarget_profiles_question_date-To" styleClass="aon-form-date-label"
+											value="#{bundle.aon_date_to}:" />
+										<aon:selectInputDate id="MarketingTarget_profiles_question_date-To"
+											value="#{targetSearch.questionDateTo}" inputSize="10"
+											popupDateFormat="#{bundle.aon_date_pattern}" renderAsPopup="true">
+										</aon:selectInputDate>
+									</aon:div>
+									<aon:div styleClass="aon-padding-top">
+										<aon:inputText id="MarketingTarget_profiles_text" size="60"
+											value="#{targetSearch.questionText}" />													
+									</aon:div>								
+								</aon:div>
 							</aon:panelGrid>
 						</aon:panelCollapsible>
 						<aon:panelCollapsible expanded="false" label="#{appBundle.aon_target_tracking}">
@@ -175,14 +199,14 @@
 									<aon:outputLabel for="Target_trackings_date-From" styleClass="aon-form-date-label"
 										value="#{bundle.aon_date_from}:" />
 									<aon:selectInputDate id="Target_trackings_date-From"
-										value="#{targetSearch.trackingDateFrom}"
+										value="#{targetSearch.trackingDateFrom}" inputSize="10"
 										popupDateFormat="#{bundle.aon_date_pattern}" renderAsPopup="true">
 									</aon:selectInputDate>
 						
 									<aon:outputLabel for="Target_trackings_date-To" styleClass="aon-form-date-label"
 										value="#{bundle.aon_date_to}:" />
 									<aon:selectInputDate id="Target_trackings_date-To"
-										value="#{targetSearch.trackingDateTo}"
+										value="#{targetSearch.trackingDateTo}" inputSize="10"
 										popupDateFormat="#{bundle.aon_date_pattern}" renderAsPopup="true">
 									</aon:selectInputDate>
 								</aon:div>
@@ -203,7 +227,7 @@
 									</aon:lookupButton>
 									<aon:inputText id="Target_trackings_seller_name"
 										value="#{(targetSearch.seller.registry.name!=null)?(targetSearch.seller.registry.fullName):('')}"
-										size="60" disabled="true" />
+										size="44" disabled="true" />
 								</aon:div>		
 								
 								<aon:outputLabel for="Target_trackings_activity_id"
