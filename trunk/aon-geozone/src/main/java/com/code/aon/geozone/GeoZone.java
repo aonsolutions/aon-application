@@ -19,6 +19,8 @@ import com.code.aon.common.ITransferObject;
 @Table(name="geozone")
 public class GeoZone implements ITransferObject {
 
+	private static final long serialVersionUID = 8190182167605884507L;
+
 	/** The id. */
     private Integer id;
 
@@ -74,4 +76,16 @@ public class GeoZone implements ITransferObject {
 	public String toString() {
 		return "GeoZoneTO[id=" + this.id + ",name=" + this.name + "]";
 	}
+	
+	@Override
+	public boolean equals(Object obj) {
+		if (id == null) {
+			return super.equals(obj);
+		}
+		if (obj instanceof GeoZone) {
+			return (this.id.equals(((GeoZone) obj).getId()));
+		}
+		return false;
+	}
+	
 }
