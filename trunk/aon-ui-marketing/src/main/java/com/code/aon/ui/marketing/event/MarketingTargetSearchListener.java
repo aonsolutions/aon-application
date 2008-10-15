@@ -5,6 +5,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.apache.commons.lang.ArrayUtils;
+import org.apache.commons.lang.StringUtils;
 
 import com.code.aon.commercial.CommercialActivity;
 import com.code.aon.commercial.enumeration.CommercialTrackingStatus;
@@ -12,6 +13,7 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.marketing.Question;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.ast.Expression;
+import com.code.aon.ql.util.ExpressionException;
 import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.sales.Seller;
 import com.code.aon.ui.commercial.controller.CommercialCollectionsController;
@@ -42,7 +44,13 @@ public class MarketingTargetSearchListener extends ControllerAdapter implements 
 	private Date profileDateTo;	
 
 	private Question question;
-		
+
+	private Date questionDateFrom;
+	
+	private Date questionDateTo;	
+	
+	private String questionText;
+	
 	public Date getTrackingDateFrom() {
 		return trackingDateFrom;
 	}
@@ -106,6 +114,30 @@ public class MarketingTargetSearchListener extends ControllerAdapter implements 
 	public void setProfileDateTo(Date profileDateTo) {
 		this.profileDateTo = profileDateTo;
 	}
+	
+	public Date getQuestionDateFrom() {
+		return questionDateFrom;
+	}
+
+	public void setQuestionDateFrom(Date questionDateFrom) {
+		this.questionDateFrom = questionDateFrom;
+	}
+
+	public Date getQuestionDateTo() {
+		return questionDateTo;
+	}
+
+	public void setQuestionDateTo(Date questionDateTo) {
+		this.questionDateTo = questionDateTo;
+	}
+	
+	public String getQuestionText() {
+		return questionText;
+	}
+
+	public void setQuestionText(String questionText) {
+		this.questionText = questionText;
+	}
 
 	@Override
 	public void beforeModelInitialized(ControllerEvent event) throws ControllerListenerException {
@@ -115,6 +147,8 @@ public class MarketingTargetSearchListener extends ControllerAdapter implements 
 				criteria = getController().getCriteria();
 			}
 		} catch (ManagerBeanException e) {
+			LOGGER.log(Level.SEVERE, "Error initializing Task Model", e);
+		} catch (ExpressionException e) {
 			LOGGER.log(Level.SEVERE, "Error initializing Task Model", e);
 		}
 	}
@@ -140,6 +174,9 @@ public class MarketingTargetSearchListener extends ControllerAdapter implements 
 		setQuestion( new Question() );
 		setProfileDateFrom(null);
 		setProfileDateTo(null);
+		setQuestionDateFrom(null);
+		setQuestionDateTo(null);
+		setQuestionText(null);
     	CommercialCollectionsController collections = (CommercialCollectionsController) AonUtil.getRegisteredBean(ICommercialConstants.COLLECTIONS_CONTROLLER_NAME);
 		collections.refreshActivities();		
 	}
@@ -157,7 +194,7 @@ public class MarketingTargetSearchListener extends ControllerAdapter implements 
 		criteria.addExpression(expToAdd);	
 	}	
 	
-	private void completeCriteria() throws ManagerBeanException {
+	private void completeCriteria() throws ManagerBeanException, ExpressionException {
 		Criteria criteria = getController().getCriteria();
 		if (getTrackingDateFrom() != null) {
 			criteria.addGreaterThanOrEqualExpression("MarketingTarget.target.trackings.date", getTrackingDateFrom());
@@ -182,6 +219,22 @@ public class MarketingTargetSearchListener extends ControllerAdapter implements 
 		}
 		if (getProfileDateTo() != null) {
 			criteria.addLessThanOrEqualExpression("MarketingTarget.profiles.lastUpdate", getProfileDateTo());
+		}
+		if (getQuestionDateFrom() != null) {
+			criteria.addGreaterThanOrEqualExpression("MarketingTarget.profiles.date", getQuestionDateFrom());
+		}
+		if (getQuestionDateTo() != null) {
+			criteria.addLessThanOrEqualExpression("MarketingTarget.profiles.date", getQuestionDateTo());
+		}
+		if (! StringUtils.isEmpty(getQuestionText()) ) {
+			Expression expText = ExpressionUtilities.getExpression(getQuestionText(), "MarketingTarget.profiles.text");
+			Expression expNumber = null;
+			try {
+				expNumber = ExpressionUtilities.getExpression(getQuestionText(), "MarketingTarget.profiles.number");
+			} catch (ExpressionException ee ) {
+				criteria.addExpression( expText );
+			}
+			criteria.addExpression( ExpressionUtilities.getOrExpression(expText, expNumber) );
 		}
 	}
 	
