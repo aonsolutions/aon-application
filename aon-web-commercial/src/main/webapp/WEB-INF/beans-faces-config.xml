@@ -91,7 +91,7 @@
 	<!-- ************ TARGET ************** -->
 	<managed-bean>
 		<managed-bean-name>target</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.commercial.controller.TargetController</managed-bean-class>
+		<managed-bean-class>com.code.aon.ui.marketing.controller.MarketingTargetController</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
 			<property-name>queryOnStartUP</property-name>
@@ -99,7 +99,7 @@
 		</managed-property>
 		<managed-property>
 			<property-name>pojo</property-name>
-			<value>com.code.aon.commercial.Target</value>
+			<value>com.code.aon.marketing.MarketingTarget</value>
 		</managed-property>
 		<managed-property>
 			<property-name>beanName</property-name>
@@ -129,7 +129,7 @@
 
 	<managed-bean>
 		<managed-bean-name>targetSearch</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.commercial.event.TargetSearchListener</managed-bean-class>
+		<managed-bean-class>com.code.aon.ui.marketing.event.MarketingTargetSearchListener</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
 	

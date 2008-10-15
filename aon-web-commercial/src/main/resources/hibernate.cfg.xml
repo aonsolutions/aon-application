@@ -56,6 +56,7 @@
 		<mapping class="com.code.aon.marketing.SurveyResponseDetail"/>
 		<mapping class="com.code.aon.marketing.SurveyWorkflow"/>
 		<mapping class="com.code.aon.marketing.TargetProfile"/>
+		<mapping class="com.code.aon.marketing.MarketingTarget"/>		
 		
 		<!-- AON-CONFIG Mapping files -->		
 		<mapping class="com.code.aon.config.ApplicationParameter"/>
