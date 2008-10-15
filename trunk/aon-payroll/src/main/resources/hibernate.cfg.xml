@@ -40,16 +40,19 @@
 		<mapping class="com.code.aon.payroll.divisa.LinDivisa"/>	 		 	
         
         <!-- ORGANISMOS Y ENTIDADES-->		
-	  	<mapping class="com.code.aon.payroll.organismosyentidades.Delegacion"/>		
-		<mapping class="com.code.aon.payroll.organismosyentidades.Pais"/>
-		<mapping class="com.code.aon.payroll.organismosyentidades.Provincia"/>		
-		<mapping class="com.code.aon.payroll.organismosyentidades.Comunidad"/>	
-		<mapping class="com.code.aon.payroll.organismosyentidades.Entidad"/>		
-		<mapping class="com.code.aon.payroll.organismosyentidades.Sucursal"/>	
-		
-		
+	  	<mapping class="com.code.aon.payroll.auxiliares.organismosyentidades.Delegacion"/>		
+		<mapping class="com.code.aon.payroll.auxiliares.organismosyentidades.Pais"/>
+		<mapping class="com.code.aon.payroll.auxiliares.organismosyentidades.Provincia"/>		
+		<mapping class="com.code.aon.payroll.auxiliares.organismosyentidades.Comunidad"/>	
+		<mapping class="com.code.aon.payroll.auxiliares.organismosyentidades.Mutua"/>		
+		<mapping class="com.code.aon.payroll.auxiliares.organismosyentidades.Linmutua"/>	
+	    <mapping class="com.code.aon.payroll.auxiliares.organismosyentidades.Entidad"/>		
+		<mapping class="com.code.aon.payroll.auxiliares.organismosyentidades.Sucursal"/>			
         <mapping class="com.code.aon.payroll.cotizacion.CnaeMaestro"/>			
 		<mapping class="com.code.aon.payroll.cotizacion.Cnae"/>	
+
+		
+		
 		<!-- CONTRATOS -->		
 		<mapping class="com.code.aon.payroll.auxiliares.contratos.ContratosInternos"/>
 		<mapping class="com.code.aon.payroll.auxiliares.contratos.ContratosTc2"/>	
