@@ -9,6 +9,14 @@ import com.code.aon.payroll.auxiliares.Colectivos;
 import com.code.aon.payroll.auxiliares.contratos.ContratosInternos;
 import com.code.aon.payroll.auxiliares.contratos.ContratosTc2;
 import com.code.aon.payroll.auxiliares.convenios.Complemento;
+import com.code.aon.payroll.auxiliares.organismosyentidades.Comunidad;
+import com.code.aon.payroll.auxiliares.organismosyentidades.Delegacion;
+import com.code.aon.payroll.auxiliares.organismosyentidades.Entidad;
+import com.code.aon.payroll.auxiliares.organismosyentidades.Linmutua;
+import com.code.aon.payroll.auxiliares.organismosyentidades.Mutua;
+import com.code.aon.payroll.auxiliares.organismosyentidades.Pais;
+import com.code.aon.payroll.auxiliares.organismosyentidades.Provincia;
+import com.code.aon.payroll.auxiliares.organismosyentidades.Sucursal;
 import com.code.aon.payroll.cotizacion.Base;
 import com.code.aon.payroll.cotizacion.Cnae;
 import com.code.aon.payroll.cotizacion.CnaeMaestro;
@@ -35,12 +43,6 @@ import com.code.aon.payroll.irpfforal.MinoracionesAlava;
 import com.code.aon.payroll.irpfforal.MinoracionesGuipuzcoa;
 import com.code.aon.payroll.irpfforal.MinoracionesNavarra;
 import com.code.aon.payroll.irpfforal.MinoracionesVizcaya;
-import com.code.aon.payroll.organismosyentidades.Comunidad;
-import com.code.aon.payroll.organismosyentidades.Delegacion;
-import com.code.aon.payroll.organismosyentidades.Entidad;
-import com.code.aon.payroll.organismosyentidades.Pais;
-import com.code.aon.payroll.organismosyentidades.Provincia;
-import com.code.aon.payroll.organismosyentidades.Sucursal;
 import com.code.aon.payroll.tipos.Autorizacion;
 import com.code.aon.payroll.tipos.Documento;
 import com.code.aon.payroll.tipos.Empresario;
@@ -96,8 +98,10 @@ public class PayrollAliasWriter {
 		        Linepigr.class.getName(),
 		        Divisa.class.getName(),
 		        LinDivisa.class.getName(),
+		        Entidad.class.getName(),
 		        Sucursal.class.getName(),
-		        Entidad.class.getName()
+		        Mutua.class.getName(),
+		        Linmutua.class.getName()
 		        };		
 		AliasWriter writer = new AliasWriter("com.code.aon.payroll.dao");
 		writer.write(classes, file);

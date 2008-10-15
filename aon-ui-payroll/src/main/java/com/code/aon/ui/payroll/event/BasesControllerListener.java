@@ -40,6 +40,11 @@ public class BasesControllerListener extends ControllerAdapter {
 	    		AonUtil.getMessage( FacesContext.getCurrentInstance(), "aon_payroll_1405", null );
 			throw new ControllerListenerException( fm.getSummary() );
 		}
+		if(lin.getMincot().intValue()<0) {
+			FacesMessage fm = 
+	    		AonUtil.getMessage( FacesContext.getCurrentInstance(), "aon_payroll_1405", null );
+			throw new ControllerListenerException( fm.getSummary() );
+		}
 		
 	
 		

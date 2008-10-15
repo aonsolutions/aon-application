@@ -1,4 +1,4 @@
-package com.code.aon.payroll.organismosyentidades;
+package com.code.aon.payroll.auxiliares.organismosyentidades;
 
 
 import java.util.ArrayList;
