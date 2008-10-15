@@ -17,6 +17,8 @@ import com.code.aon.common.ITransferObject;
 @Table(name="geotree")
 public class GeoTree implements ITransferObject {
 
+	private static final long serialVersionUID = -3277559566165396535L;
+
 	/** The id. */
     private Integer id;
 
@@ -89,4 +91,14 @@ public class GeoTree implements ITransferObject {
 		this.child = child;
 	}
 	
+	@Override
+	public boolean equals(Object obj) {
+		if (id == null) {
+			return super.equals(obj);
+		}
+		if (obj instanceof GeoTree) {
+			return (this.id.equals(((GeoTree) obj).getId()));
+		}
+		return false;
+	}
 }
