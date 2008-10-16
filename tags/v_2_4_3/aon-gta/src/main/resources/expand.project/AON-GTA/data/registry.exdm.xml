@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<table tableName="registry">
+    <columns>
+        <column label="" name="id" sqlType="integer" type="integer"/>
+        <column label="" length="16" name="document" sqlType="varchar" type="string"/>
+        <column label="" length="64" name="name" sqlType="varchar" type="string"/>
+        <column label="" length="64" name="surname" sqlType="varchar" type="string"/>
+        <column label="" length="32" name="alias" sqlType="varchar" type="string"/>
+    </columns>
+    <virtualColumns/>
+    <primaryKey>
+        <column name="id"/>
+    </primaryKey>
+    <joins/>
+    <descriptionColumns/>
+</table>

@@ -1,0 +1,52 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:jstl="http://java.sun.com/jstl/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:h="http://java.sun.com/jsf/html">
+<body>
+
+<ui:composition>
+
+	<t:div styleClass="aon-content-subtitle" id="aon-content-subtitle"
+		forceId="#{true}">
+		<t:div styleClass="aon-content-subtitle-internal">
+			<h:outputText
+				value="#{(TASModelAlias.new)?(bundle.aon_reset):(bundle.aon_editing)}" />
+		</t:div>
+	</t:div>
+
+	<t:div id="aon-scroll-area" forceId="#{true}">
+		<t:div styleClass="aon-scroll-area-internal">
+			<!-- start of bag panel -->
+			<!-- start of flow layout -->
+			<h:panelGrid columns="2" dir="true" styleClass="aon-form-table"
+				columnClasses="aon-form-table-column-odd,aon-form-table-column-even">
+
+				<h:outputLabel for="Model_make"
+					styleClass="aon-form-input-text-label"
+					value="#{tasBundle.model_make}" />
+				<t:selectOneMenu id="Model_make" forceId="#{true}"
+					styleClass="aon-form-selectOneMenu-field"
+					value="#{TASModelAlias.to.make.id}" required="true">
+					<f:selectItems value="#{TASCollections.makes}" />
+				</t:selectOneMenu>
+
+				<h:outputLabel for="Model_name" value="#{tasBundle.model_name}"
+					styleClass="aon-form-input-text-label aon-form-layout-label-block" />
+				<h:inputText id="Model_name" styleClass="aon-form-input-text"
+					required="true" value="#{TASModelAlias.to.name}" size="55">
+					<f:validateLength maximum="64" />
+				</h:inputText>
+			</h:panelGrid>
+			<!-- end of flow layout -->
+			<!-- end of bag panel -->
+			<t:inputText id="pojoName" value="TasModel" forceId="#{true}"
+				style="display: none" />
+		</t:div>
+	</t:div>
+
+</ui:composition>
+</body>
+</html>

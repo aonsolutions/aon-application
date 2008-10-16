@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root key="AON_ACCOUNT" descriptionKey="aon_application_menu_title" ref="firstContent">
+	<option contextRelative="false" external="false" key="account_entry" descriptionKey="account_entry_desc" ref="accountEntry" role="GestionApuntes"/>
+	<menu ref="content" key="aon_account_entries" descriptionKey="aon_account_entries_desc" role="MenuApuntes">
+		<option key="account_invoice_entry" descriptionKey="account_invoice_entry_desc" ref="accountInvoiceEntry" role="ApuntesFacturas">
+			<actionListener action="#{accountInvoice.onReset}" />
+		</option>
+		<option key="account_expense_entry" descriptionKey="account_expense_entry_desc" ref="accountExpenseEntry" role="ApuntesGastos">
+			<actionListener action="#{accountExpense.onReset}" />
+		</option>
+		<option key="account_salary_entry" descriptionKey="account_salary_entry_desc" ref="accountSalaryEntry" role="ApuntesNominas">
+			<actionListener action="#{accountSalary.onReset}" />
+		</option>
+		<option key="account_social_insurance_entry" descriptionKey="account_social_insurance_entry_desc" ref="accountSocialInsuranceEntry" role="ApuntesSegSocial">
+			<actionListener action="#{accountSocialInsurance.onReset}" />
+		</option>
+		<option key="account_loan_fee_entry" descriptionKey="account_loan_fee_entry_desc" ref="accountLoanFeeEntry" role="ApuntesCuotaPrestamo">
+			<actionListener action="#{accountLoanFee.onReset}" />
+		</option>
+		<option key="account_leasing_fee_entry" descriptionKey="account_leasing_fee_entry_desc" ref="accountLeasingFeeEntry" role="ApuntesCuotaLeasing">
+			<actionListener action="#{accountLeasingFee.onReset}" />
+		</option>
+	</menu>
+	<menu ref="content" key="aon_masters" descriptionKey="aon_masters_desc" role="MenuMaestros">
+		<option key="account" descriptionKey="account_desc" ref="account" role="PlanGeneralContable"/>
+		<option key="autConcept" descriptionKey="autConcept_desc" ref="autConcept" role="ConceptosAutomaticos"/>
+		<option key="account_supplier" descriptionKey="account_supplier_desc" ref="accSupplier" role="Proveedores">
+			<actionListener action="#{accBasicSupplier.onEditSearch}" />
+		</option>
+		<option key="account_creditor" descriptionKey="account_creditor_desc" ref="accCreditor" role="Acreedores">
+			<actionListener action="#{accBasicCreditor.onEditSearch}" />
+		</option>
+	</menu>
+	<menu ref="content" key="aon_reports" descriptionKey="aon_reports_desc" role="MenuListados">
+		<option key="account_profit_and_loss" descriptionKey="account_profit_and_loss_desc" ref="accountEntryProfitAndLoss" role="ExplotacionPyG">
+			<actionListener action="#{accountEntryReport.onProfitAndLoss}" />
+		</option>
+		<option key="account_abstract" descriptionKey="account_abstract_desc" ref="accountEntryAbstract" role="ExtractoCuentas">
+			<actionListener action="#{accountEntryReport.onAbstract}" />
+		</option>	
+		<option key="account_daybook" descriptionKey="account_daybook_desc" ref="accountEntryDaybook" role="DiarioMovimientos">
+			<actionListener action="#{accountEntryReport.onDayBook}" />
+		</option>	
+	</menu>
+	<menu ref="content" key="aon_utilities" descriptionKey="aon_utilities_desc" role="MenuUtilidades">
+		<option key="account_loan_entry" descriptionKey="account_loan_entry_desc" ref="accountLoanEntry" role="CreacionPrestamos">
+			<actionListener action="#{accountLoan.onReset}" />
+		</option>
+		<option key="account_leasing_entry" descriptionKey="account_leasing_entry_desc" ref="accountLeasingEntry" role="CreacionLeasing">
+			<actionListener action="#{accountLeasing.onReset}" />
+		</option>
+		<option key="accPeriod" descriptionKey="accPeriod_desc" ref="accPeriod" role="EjerciciosContables"/>
+		<option key="account_default_params_desc" descriptionKey="account_default_params_desc" ref="defaultParams" role="ParametrosContables">
+			<actionListener action="#{accAppParams.loadParameters}" />
+		</option>	
+		<option key="account_regenerate_summary" descriptionKey="account_regenerate_summary_desc" ref="regenerateAccountSummary" role="RegenerarAcumulados"/>
+	</menu>
+</root>
