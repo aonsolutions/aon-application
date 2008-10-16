@@ -91,7 +91,7 @@ public class Alarm implements ITransferObject {
 		this.source = source;
 	}
 
-	@Column(name="source_id", nullable=false)
+	@Column(name="source_id")
 	public Integer getSourceId() {
 		return sourceId;
 	}
