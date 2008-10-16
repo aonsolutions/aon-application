@@ -9,6 +9,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.ResourceBundle;
 import java.util.Map.Entry;
 import java.util.jar.Attributes;
 import java.util.jar.Manifest;
@@ -48,6 +49,8 @@ public class ConfigurationController implements Serializable {
 	
 	/** The user bundles. */
 	private Map<String, String> applicationBundles;
+
+	private Map<String, ResourceBundle> bundles;
 
 	/**
 	 * The Constructor.
@@ -241,5 +244,31 @@ public class ConfigurationController implements Serializable {
     	HttpSession session = (HttpSession) context.getExternalContext().getSession(false);
     	session.invalidate();    	
     }
+    
+    
+    /**
+     * @param bundleKey
+     * @param messageKey
+     * @return String
+     */
+    public String getMessage(String bundleKey, String messageKey) {
+    	ResourceBundle bundle = getBundle( bundleKey );
+    	return bundle.getString(messageKey);
+    }
+
+	private ResourceBundle getBundle(String bundleKey) {
+		if (bundles == null) {
+			bundles = new HashMap<String, ResourceBundle>();
+		}
+		if (!bundles.containsKey(bundleKey) ) {
+			if (!applicationBundles.containsKey(bundleKey) ) {
+				throw new IllegalArgumentException( "ResourceBundle '"+bundleKey+"' not found in ConfigurationController.");
+			}
+			String baseName = applicationBundles.get(bundleKey);
+			ResourceBundle bundle = ResourceBundle.getBundle(baseName);
+			bundles.put(bundleKey,bundle);
+		}
+		return bundles.get(bundleKey);
+	}
     
 }
