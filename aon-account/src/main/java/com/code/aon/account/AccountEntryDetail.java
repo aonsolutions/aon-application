@@ -8,6 +8,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import com.code.aon.common.ITransferObject;
 
@@ -17,7 +18,9 @@ import com.code.aon.common.ITransferObject;
 @Entity
 @Table(name = "account_entry_detail")
 public class AccountEntryDetail implements ITransferObject {
-	
+
+	private static final long serialVersionUID = -1771463579504113080L;
+
 	/** The id. */
 	private Integer id;
 	
@@ -195,4 +198,27 @@ public class AccountEntryDetail implements ITransferObject {
 	public void setCredit(double credit) {
 		this.credit = credit;
 	}
+
+
+	@Transient
+	public double getUnpaidBalance() {
+		if (getDebit() > getCredit()) {
+			return round(getDebit() - getCredit());
+		}
+		return 0;
+	}
+	
+	@Transient
+	public double getCreditBalance() {
+		if (getCredit() > getDebit()) {
+			return round(getCredit() - getDebit());
+		}
+		return 0;
+	}
+
+	private double round(double value) {
+		double decimal = Math.pow(10, 2);
+		return Math.round(decimal * value) / decimal;
+	}
+	
 }

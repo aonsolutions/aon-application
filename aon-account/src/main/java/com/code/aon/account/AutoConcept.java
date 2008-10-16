@@ -19,7 +19,9 @@ import com.code.aon.common.ITransferObject;
 @Table(name="auto_concept")
 public class AutoConcept implements ITransferObject {
 
-    /**
+	private static final long serialVersionUID = -57443534394518460L;
+
+	/**
      * Unique key.
      */
     private Integer id;

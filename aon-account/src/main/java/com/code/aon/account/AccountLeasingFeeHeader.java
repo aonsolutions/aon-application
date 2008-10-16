@@ -11,6 +11,8 @@ import com.code.aon.finance.RegistryBank;
  */
 public class AccountLeasingFeeHeader implements ITransferObject {
 
+	private static final long serialVersionUID = 6319898333754554449L;
+
 	/** The leasing. */
 	private Leasing leasing;
 	
@@ -31,9 +33,6 @@ public class AccountLeasingFeeHeader implements ITransferObject {
 	
 	/** The interest. */
 	private double interest;
-	
-	/** The taxable base. */
-	private double taxableBase;
 	
 	private double expenses;
 	
@@ -176,16 +175,7 @@ public class AccountLeasingFeeHeader implements ITransferObject {
 	 * @return the taxable base
 	 */
 	public double getTaxableBase() {
-		return taxableBase;
-	}
-
-	/**
-	 * Sets the taxable base.
-	 * 
-	 * @param taxableBase the taxable base
-	 */
-	public void setTaxableBase(double taxableBase) {
-		this.taxableBase = taxableBase;
+		return (getAmortization() + getInterest());
 	}
 
 	public double getExpenses() {
@@ -237,7 +227,10 @@ public class AccountLeasingFeeHeader implements ITransferObject {
 	}
 
 	public double getVatQuota() {
-		return round((getTaxableBase() * getLeasing().getVat().getPercentage()) / 100, 2);
+		if (getLeasing() != null && getLeasing().getVat() != null) {
+			return round((getTaxableBase() * getLeasing().getVat().getPercentage()) / 100, 2);	
+		}
+		return 0;
 	}
 	
     private double round(double value, int precision) {

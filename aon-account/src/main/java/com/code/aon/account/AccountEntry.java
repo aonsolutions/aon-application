@@ -7,6 +7,8 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 
 import com.code.aon.account.enumeration.AccountEntryType;
 import com.code.aon.common.ITransferObject;
@@ -19,6 +21,8 @@ import com.code.aon.common.enumeration.SecurityLevel;
 @Table(name = "account_entry")
 public class AccountEntry implements ITransferObject {
 	
+	private static final long serialVersionUID = -3297371099219203320L;
+
 	/** The id. */
 	private Integer id;
 	
@@ -84,6 +88,7 @@ public class AccountEntry implements ITransferObject {
 	 * @return the entry date
 	 */
 	@Column(name="entry_date")
+	@Temporal(value=TemporalType.DATE)
 	public Date getEntryDate() {
 		return entryDate;
 	}

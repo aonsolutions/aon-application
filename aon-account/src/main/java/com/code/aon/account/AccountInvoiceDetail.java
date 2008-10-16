@@ -9,11 +9,15 @@ import com.code.aon.product.enumeration.TaxType;
  */
 public class AccountInvoiceDetail implements ITransferObject {
 
+	private static final long serialVersionUID = -2335488721813209995L;
+
 	/** The taxable base. */
 	private double taxableBase;
 
 	/** The vat. */
 	private Tax vat;
+	
+	private double vatPercent;
 
 	/** The surcharge. */
 	private double surcharge;
@@ -21,8 +25,26 @@ public class AccountInvoiceDetail implements ITransferObject {
 	/** The retention. */
 	private Tax retention;
 
-	/** The retention. */
-	private String account;
+	private double retentionPercent;
+
+	public double getVatPercent() {
+		return vatPercent;
+	}
+
+	public void setVatPercent(double vatPercent) {
+		this.vatPercent = vatPercent;
+	}
+
+	public double getRetentionPercent() {
+		return retentionPercent;
+	}
+
+	public void setRetentionPercent(double retentionPercent) {
+		this.retentionPercent = retentionPercent;
+	}
+
+	/** The account. */
+	private Account account;
 
 	/**
 	 * The constructor.
@@ -114,7 +136,7 @@ public class AccountInvoiceDetail implements ITransferObject {
 	 * 
 	 * @return the account
 	 */
-	public String getAccount() {
+	public Account getAccount() {
 		return account;
 	}
 
@@ -123,7 +145,7 @@ public class AccountInvoiceDetail implements ITransferObject {
 	 * 
 	 * @param account the account
 	 */
-	public void setAccount(String account) {
+	public void setAccount(Account account) {
 		this.account = account;
 	}
 

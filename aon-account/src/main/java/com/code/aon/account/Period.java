@@ -19,6 +19,8 @@ import com.code.aon.common.ITransferObject;
 @Table(name = "account_period")
 public class Period implements ITransferObject {
 
+	private static final long serialVersionUID = -5079105553105179167L;
+
 	/**
 	 * The ID of this accounting period
 	 */
