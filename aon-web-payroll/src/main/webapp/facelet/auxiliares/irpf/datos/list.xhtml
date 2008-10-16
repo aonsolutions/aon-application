@@ -13,14 +13,14 @@
 
 	<ui:define name="content">
 
-		<aon:form id="mutuasMaestroList">
+		<aon:form id="irpfMaestroList">
 		
 			<aon:div styleClass="aon-finding-title-toolbar">
 				<aon:panelGrid id="buttonsGrid" columns="3" dir="true"
 					columnClasses="aon-finding-title,aon-finding-subtitle,aon-finding-toolbar">
 
 					<aon:div styleClass="aon-finding-title-internal">
-						<aon:outputText value="#{appBundle.aon_payroll_auxiliares_organismos_entidades__mutua}" />
+						<aon:outputText value="#{appBundle.aon_payroll_auxiliares_irpf__datos}" />
 					</aon:div>
 
 					<aon:div styleClass="aon-finding-subtitle-internal">
@@ -30,11 +30,11 @@
 					<!-- start toolbar navigation -->
 					<aon:div styleClass="aon-finding-toolbar-item-group">
 						<aon:commandButton id="search" value="#{bundle.aon_search}"
-							action="mutuas_search" actionListener="#{mutuaMaestro.onEditSearch}"
+							action="datos_search" actionListener="#{irpfMaestro.onEditSearch}"
 							styleClass="aon-finding-toolbar-item aon-icon-search"
 							accesskey="#{bundle.aon_key_search}" />				
 						<aon:commandButton id="reset" value="#{bundle.aon_reset}"
-							action="mutuas_form" actionListener="#{mutuaMaestro.onReset}"
+							action="datos_form" actionListener="#{irpfMaestro.onReset}"
 							styleClass="aon-finding-toolbar-item aon-icon-reset"
 							accesskey="#{bundle.aon_key_new}" />
 					</aon:div>
@@ -45,11 +45,11 @@
 			<!--  aon-region-body -->
 			<aon:div styleClass="aon-scroll-area">
 
-				<aon:dataTable id="mutuaMaestroData" value="#{mutuaMaestro.model}"
-					var="to" rows="20" rendered="#{mutuaMaestro.model.rowCount > 0}"
+				<aon:dataTable id="irpfMaestroData" value="#{irpfMaestro.model}"
+					var="to" rows="20" rendered="#{irpfMaestro.model.rowCount > 0}"
 					columnClasses="aon-editDataTable-textColumn, aon-editDataTable-textColumn, aon-editDataTable-numberColumn">
 
-					<aon:rowSelector action="mutuas_form" actionListener="#{mutuaMaestro.onSelect}" />
+					<aon:rowSelector action="datos_form" actionListener="#{irpfMaestro.onSelect}" />
 					
 					<aon:column>
 						<f:facet name="header">
@@ -68,7 +68,7 @@
  					
 				</aon:dataTable>
 
-				<aon:dataScroller for="mutuaMaestroData" rowCount="#{mutuaMaestro.model.rowCount}" showNote="true" />
+				<aon:dataScroller for="irpfMaestroData" rowCount="#{irpfMaestro.model.rowCount}" showNote="true" />
 
 			</aon:div>
 		</aon:form>

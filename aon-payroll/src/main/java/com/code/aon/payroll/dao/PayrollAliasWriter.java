@@ -34,7 +34,9 @@ import com.code.aon.payroll.divisa.Divisa;
 import com.code.aon.payroll.divisa.LinDivisa;
 import com.code.aon.payroll.geograficas.Nacion;
 import com.code.aon.payroll.irpf.Cuota;
+import com.code.aon.payroll.irpf.Elemirpf;
 import com.code.aon.payroll.irpf.Exclusion;
+import com.code.aon.payroll.irpf.Linirpf;
 import com.code.aon.payroll.irpfforal.CuotaRetencionAlava;
 import com.code.aon.payroll.irpfforal.CuotaRetencionGuipuzcoa;
 import com.code.aon.payroll.irpfforal.CuotaRetencionNavarra;
@@ -101,7 +103,9 @@ public class PayrollAliasWriter {
 		        Entidad.class.getName(),
 		        Sucursal.class.getName(),
 		        Mutua.class.getName(),
-		        Linmutua.class.getName()
+		        Linmutua.class.getName(),
+		        Elemirpf.class.getName(),
+		        Linirpf.class.getName()
 		        };		
 		AliasWriter writer = new AliasWriter("com.code.aon.payroll.dao");
 		writer.write(classes, file);

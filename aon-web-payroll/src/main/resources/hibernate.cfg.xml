@@ -71,6 +71,9 @@
         <!-- IRPF -->
 		<mapping class="com.code.aon.payroll.irpf.Cuota"/>
 		<mapping class="com.code.aon.payroll.irpf.Exclusion"/>
+		<mapping class="com.code.aon.payroll.irpf.Elemirpf"/>
+		<mapping class="com.code.aon.payroll.irpf.Linirpf"/>	
+		
 		
           <!--DIVISAS -->		
 		<mapping class="com.code.aon.payroll.divisa.Divisa"/>			

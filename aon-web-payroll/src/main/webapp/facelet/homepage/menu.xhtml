@@ -252,7 +252,11 @@
 						</aon:menuItem>
 				</aon:menuGroup>
 				<aon:menuGroup value="#{menuBundle.auxiliares_irpf}">
-					<aon:menuItem value="#{menuBundle.auxiliares_irpf__datosirpf}" disabled="true" />
+					<aon:menuItem value="#{menuBundle.auxiliares_irpf__datosirpf}" action="datos_form">
+						<aon:actionListener method="#{irpfMaestro.onEditSearch}" />
+						<aon:actionListener method="#{irpfMaestro.onSearch}" />
+						<aon:actionListener method="#{irpfMaestro.onSelectFirst}" />
+						</aon:menuItem>
 					<aon:menuItem value="#{menuBundle.auxiliares_irpf__cuota}" action="irpf_cuotas" />
 					<aon:menuItem value="#{menuBundle.auxiliares_irpf__exclusion}" action="irpf_exclusion" />
 				</aon:menuGroup>

@@ -65,7 +65,9 @@
         
         <!-- IRPF -->
 		<mapping class="com.code.aon.payroll.irpf.Cuota"/>
-		<mapping class="com.code.aon.payroll.irpf.Exclusion"/>	
+		<mapping class="com.code.aon.payroll.irpf.Exclusion"/>
+		<mapping class="com.code.aon.payroll.irpf.Elemirpf"/>
+		<mapping class="com.code.aon.payroll.irpf.Linirpf"/>	
 		
 		<!-- IRPF FORAL -->			
         <mapping class="com.code.aon.payroll.irpfforal.CuotaRetencionAlava"/>

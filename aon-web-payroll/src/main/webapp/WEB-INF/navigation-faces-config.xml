@@ -660,4 +660,29 @@
 		</navigation-case>
 	</navigation-rule>
 	
+			<!-- ===================Datos clave IRPF================ -->
+		
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>datos_form</from-outcome>
+			<to-view-id>
+				/facelet/auxiliares/irpf/datos/form.xhtml
+			</to-view-id>
+		</navigation-case>
+	</navigation-rule>
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>datos_list</from-outcome>
+			<to-view-id>
+				/facelet/auxiliares/irpf/datos/list.xhtml
+			</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>datos_search</from-outcome>
+			<to-view-id>
+				/facelet/auxiliares/irpf/datos/search.xhtml
+			</to-view-id>
+		</navigation-case>
+	</navigation-rule>
+	
 </faces-config>
