@@ -15,17 +15,40 @@
 
 		<aon:form id="targetList">
 		
-			<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/listToolbar.xhtml" >
-				<ui:param name="toolbarTitle" value="#{menuBundle.aon_targets}" />
-				<ui:param name="controller" value="#{target}" />
-			</ui:include>
+			<aon:div styleClass="aon-finding-title-toolbar">
+				<aon:panelGrid id="buttonsGrid" columns="3" dir="true"
+					columnClasses="aon-finding-title,aon-finding-subtitle,aon-finding-toolbar">
+
+					<aon:div styleClass="aon-finding-title-internal">
+						<aon:outputText value="#{menuBundle.aon_targets}" />
+					</aon:div>
+
+					<aon:div styleClass="aon-finding-subtitle-internal">
+						<aon:outputText value="#{bundle.aon_listing}" />
+					</aon:div>
+
+					<!-- start toolbar navigation -->
+					<aon:div styleClass="aon-finding-toolbar-item-group">
+						<aon:commandButton id="search" value="#{bundle.aon_search}"
+							action="target_search" actionListener="#{target.onEditSearch}"
+							styleClass="aon-finding-toolbar-item aon-icon-search"
+							accesskey="#{bundle.aon_key_search}" />				
+						<aon:commandButton id="reset" value="#{bundle.aon_reset}"
+							action="target_form" actionListener="#{target.onReset}"
+							styleClass="aon-finding-toolbar-item aon-icon-newMailAccount"
+							accesskey="#{bundle.aon_key_new}" />
+					</aon:div>
+
+					<!-- end toolbar navigation -->
+				</aon:panelGrid>
+			</aon:div>
 
 			<!--  aon-region-body -->
 			<aon:div styleClass="aon-scroll-area">
 
 				<aon:dataTable id="targetData" value="#{target.model}"
 					var="to" rows="20" rendered="#{target.model.rowCount > 0}"
-					columnClasses="aon-editDataTable-numberColumn aon-width-70, aon-editDataTable-textColumn,
+					columnClasses="aon-editDataTable-numberColumn, aon-editDataTable-textColumn,
 						aon-editDataTable-textColumn, aon-editDataTable-textColumn, aon-editDataTable-textColumn">
 
 					<aon:rowSelector action="target_form" actionListener="#{target.onSelect}" />
@@ -67,7 +90,7 @@
  
 				</aon:dataTable>
 
-				<aon:dataScroller2 for="targetData" showNote="true" />
+				<aon:dataScroller for="targetData" rowCount="#{target.model.rowCount}" showNote="true" />
 
 			</aon:div>
 		</aon:form>

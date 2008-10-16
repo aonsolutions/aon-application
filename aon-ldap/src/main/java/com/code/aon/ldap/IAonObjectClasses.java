@@ -4,27 +4,11 @@ public interface IAonObjectClasses {
 
 	String TOP = "top";
 	
-	String GROUP_OF_NAMES = "groupOfNames";
-	
-	String AMAVIS_ACCOUNT = "amavisAccount";
-
-	String POSIX_ACCOUNT = "posixAccount";
-
-	String PERSON = "person";
-
-	String ORGANIZATIONAL_PERSON = "organizationalPerson";
-
-	String INET_ORG_PERSON = "inetOrgPerson";	
-	
 	String CONTACT = "aonContact";
 
-	String DB_CONNECTION = "aonDBConnection";
+	String DB_CONNECTION = "aonContact";
 	
 	String DOMAIN = "aonDomain";
-	
-	String ACCESS_POLICY = "aonAccessPolicy";
-	
-	String APPLICATION = "aonApplication";
 	
 	String DOMAIN_APPLICATION = "aonDomainApplication";
 	
@@ -41,7 +25,5 @@ public interface IAonObjectClasses {
 	String SIGNATURE = "aonSignature";
 	
 	String USER = "aonUser";
-	
-	String MESSAGE = "aonMessage";
 	
 }

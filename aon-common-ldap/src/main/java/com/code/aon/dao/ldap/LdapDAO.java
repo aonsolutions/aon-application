@@ -16,7 +16,7 @@ import org.apache.commons.lang.StringUtils;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.dao.IDAO;
 import com.code.aon.common.dao.sql.DAOException;
-import com.code.aon.ldap.BasicLdap;
+import com.code.aon.ldap.AbstractLdap;
 import com.code.aon.ldap.DistinguishedName;
 import com.code.aon.ldap.Entry;
 import com.code.aon.ldap.LdapException;
@@ -30,7 +30,7 @@ import com.code.aon.ql.ProjectionList;
 /**
  * The Class LdapDAO.
  */
-public class LdapDAO extends BasicLdap implements IDAO  {
+public class LdapDAO extends AbstractLdap implements IDAO  {
 
 	/**
 	 * Obtain a suitable <code>Logger</code>.
@@ -49,7 +49,7 @@ public class LdapDAO extends BasicLdap implements IDAO  {
 	 */
 	public LdapDAO( Class<? extends ITransferObject> pojoClass ) {
 		this.metadata = EntityMetadataManager.getMetadata(pojoClass);
-		setBaseDN( this.metadata.getBaseDN() );
+		this.baseDN = this.metadata.getBaseDN();
 	}
 	
 	/**
@@ -61,7 +61,7 @@ public class LdapDAO extends BasicLdap implements IDAO  {
 	public LdapDAO( Properties properties, Class<? extends ITransferObject> pojoClass ) {
 		super( properties );
 		this.metadata = EntityMetadataManager.getMetadata(pojoClass);
-		setBaseDN( this.metadata.getBaseDN() );			
+		this.baseDN = this.metadata.getBaseDN();
 	}
 	
 	public String getBaseDN() {
@@ -69,21 +69,7 @@ public class LdapDAO extends BasicLdap implements IDAO  {
 	}
 
 	public void setBaseDN(String baseDN) {
-		this.baseDN = baseDN; 
-		try {
-			String base = getLdapSession().getBaseDN();
-			if (! StringUtils.isEmpty(base) ) {
-				if ( StringUtils.isEmpty(this.baseDN) ) {
-					this.baseDN = base;
-				} else {
-					this.baseDN = baseDN + "," + base;	
-				}
-			}
-		} catch ( LdapException e ) {
-			LOGGER.info( "Error obtaining base DN of the LDAP connection" );
-		} finally {
-			closeSession();
-		}
+		this.baseDN = baseDN;
 	}
 
 	private void setDN( ITransferObject to, DistinguishedName dn ) throws DAOException {
@@ -121,12 +107,14 @@ public class LdapDAO extends BasicLdap implements IDAO  {
 	
 	@Override
 	public int getCount(Criteria criteria) throws DAOException {
+		LdapSession session = null;
 		int count = 0;
 		try {
+			session = getLdapSession();
 			String dn = getDN(criteria);
 			String filter = getFilter(criteria);
 			LOGGER.info( "getCount, dn=" + dn + ",filter=" + filter );
-			count = getLdapSession().getCount(dn.toString(), filter, Scope.SUBTREE_SCOPE );
+			count = session.getCount(dn.toString(), filter, Scope.SUBTREE_SCOPE );
 		} catch ( LdapException e ) {
 			throw new DAOException( "Error getting count of " + metadata.getMainObjectClass(), e );
 		} finally {
@@ -194,12 +182,14 @@ public class LdapDAO extends BasicLdap implements IDAO  {
 	
 	@Override
 	public ITransferObject insert(ITransferObject to) throws DAOException {
+		LdapSession session = null;
 		try {
+			session = getLdapSession();
 			Entry entry = new Entry( calculateDN(to) );
 			entry.addObjectClass(metadata.getMainObjectClass());
 			entry.addObjectClasses(metadata.getObjectClasses());
 			setProperties(to, entry);
-			getLdapSession().add(entry);
+			session.add(entry);
 			setDN( to, entry.getDN() );
 		} catch ( LdapException e ) {
 			throw new DAOException( "Error in insert of " + metadata.getMainObjectClass(), e );
@@ -211,9 +201,11 @@ public class LdapDAO extends BasicLdap implements IDAO  {
 	
 	@Override
 	public boolean remove(ITransferObject to) throws DAOException {
+		LdapSession session = null;
 		try {
+			session = getLdapSession();
 			String dn = getDN(to);
-			getLdapSession().delete(dn);
+			session.delete(dn);
 		} catch ( LdapException e ) {
 			throw new DAOException( "Error in remove of " + metadata.getMainObjectClass(), e );
 		} finally {
@@ -303,12 +295,14 @@ public class LdapDAO extends BasicLdap implements IDAO  {
 	@Override
 	public List<ITransferObject> getList(Criteria criteria, int offset,
 			int count) throws DAOException {
+		LdapSession session = null;
 		List<ITransferObject> tos = null;
 		try {
+			session = getLdapSession();
 			String dn = getDN(criteria);
 			String filter = getFilter(criteria);
 			LOGGER.info( "getList, dn=" + dn + ",filter=" + filter );
-			List<Entry> list = getLdapSession().search(dn.toString(), filter, Scope.SUBTREE_SCOPE );
+			List<Entry> list = session.search(dn.toString(), filter, Scope.SUBTREE_SCOPE );
 			list = sortList(list, criteria);
 			list = getSubList(list, offset, count);
 			tos = convertList(list);
@@ -339,16 +333,15 @@ public class LdapDAO extends BasicLdap implements IDAO  {
 	@Override
 	public ITransferObject get(Serializable pk) throws DAOException {
 		LOGGER.info( "Get: " + pk );
+		LdapSession session = null;
 		ITransferObject to = null;
 		try {
-			LdapSession session = getLdapSession();
+			session = getLdapSession();
 			String dn = (String) pk;
 			String filter = LdapSession.getObjectClass(metadata.getMainObjectClass());
-			if ( session.exists(dn, filter) ) {
-				Entry entry = session.get(dn, filter);
-				if ( entry != null ) {
-					to = convert(entry);
-				}
+			Entry entry = session.get(dn, filter);
+			if ( entry != null ) {
+				to = convert(entry);
 			}
 		} catch ( LdapException e ) {
 			throw new DAOException( "Error in get of " + metadata.getMainObjectClass(), e );
@@ -360,8 +353,9 @@ public class LdapDAO extends BasicLdap implements IDAO  {
 	
 	@Override
 	public ITransferObject update(ITransferObject to) throws DAOException {
+		LdapSession session = null;
 		try {
-			LdapSession session = getLdapSession();
+			session = getLdapSession();
 			String dn = getDN(to);
 			String filter = LdapSession.getObjectClass(metadata.getMainObjectClass());
 			Entry entry = session.get(dn, filter);

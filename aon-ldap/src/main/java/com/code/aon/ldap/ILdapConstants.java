@@ -16,17 +16,4 @@ public interface ILdapConstants {
 	
 	String MEMBER_ATTRIBUTE = "member";
 	
-	String STATUS_ATTRIBUTE = "status";
-	
-	String MESSAGE_ATTRIBUTE = "message";
-
-	String ORGANIZATION_NAME_ATTRIBUTE = "o";
-	
-	String GROUP_ID_NUMBER_ATTRIBUTE = "gidNumber";
-
-	String HOME_DIRECTORY_ATTRIBUTE = "homeDirectory";
-
-	String USER_ID_NUMBER_ATTRIBUTE = "uidNumber";
-
-	
 }

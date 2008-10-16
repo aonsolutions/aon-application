@@ -29,44 +29,16 @@
 		</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
-	<managed-bean>
-		<managed-bean-name>productCollections</managed-bean-name>
-		<managed-bean-class>
-			com.code.aon.ui.product.controller.ProductCollectionsController
-		</managed-bean-class>
-		<managed-bean-scope>session</managed-bean-scope>
-	</managed-bean>
-	<managed-bean>
-		<managed-bean-name>commecialCollections</managed-bean-name>
-		<managed-bean-class>
-			com.code.aon.ui.commercial.controller.CommercialCollectionsController
-		</managed-bean-class>
-		<managed-bean-scope>session</managed-bean-scope>
-	</managed-bean>	
-	<managed-bean>
-		<managed-bean-name>marketingCollections</managed-bean-name>
-		<managed-bean-class>
-			com.code.aon.ui.marketing.controller.MarketingCollectionsController
-		</managed-bean-class>
-		<managed-bean-scope>session</managed-bean-scope>
-	</managed-bean>
 
 	<!--  *************** CONVERTERS ***************** -->
 	<converter>
 		<description>Conversor para los Enum</description>
 		<converter-for-class>java.lang.Enum</converter-for-class>
-		<converter-class>com.code.aon.ui.converter.EnumLocaleConverter</converter-class>
+		<converter-class>
+			com.code.aon.ui.converter.EnumLocaleConverter
+		</converter-class>
 	</converter>
-	<converter>
-		<description>Conversor para los ProductStatus</description>
-		<converter-id>aonProductStatusConverter</converter-id>
-		<converter-class>com.code.aon.ui.product.converter.ProductStatusConverter</converter-class>
-	</converter>	
-	<converter>
-		<description>Conversor para los Advertising</description>
-		<converter-id>aonAdvertisingConverter</converter-id>
-		<converter-class>com.code.aon.ui.commercial.converter.AdvertisingConverter</converter-class>
-	</converter>	
+
 	<converter>
     	<converter-id>toConverter</converter-id>
     	<converter-class>com.code.aon.ui.commercial.converter.ITransferObjectConverter</converter-class>
@@ -91,7 +63,7 @@
 		</managed-property>		
 		<managed-property>
 			<property-name>resourceURIPreffix</property-name>
-			<value>/aonResource/1.6.2</value>
+			<value>/aonResource/1.3.1</value>
 		</managed-property>		
 	</managed-bean>
 
@@ -142,10 +114,6 @@
 					<key>productBundle</key>
 					<value>com.code.aon.ui.product.i18n.messages</value>
 				</map-entry>			
-				<map-entry>
-					<key>marketingBundle</key>
-					<value>com.code.aon.ui.marketing.i18n.messages</value>
-				</map-entry>			
 			</map-entries>
 		</managed-property>
 	</managed-bean>
@@ -158,13 +126,6 @@
 		<managed-bean-class>
 			com.code.aon.ui.common.controller.TimeZoneController
 		</managed-bean-class>
-		<managed-bean-scope>session</managed-bean-scope>
-	</managed-bean>
-
-	<!-- ***************** LOGGED USER ******************** --> 
-	<managed-bean>
-		<managed-bean-name>loggedUser</managed-bean-name>
-		<managed-bean-class>com.code.aon.bridge.session.LoggedUser</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
 	

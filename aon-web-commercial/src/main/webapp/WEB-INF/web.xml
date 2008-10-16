@@ -50,10 +50,6 @@
 		<param-value>500000</param-value>
 	</context-param>
 	<context-param>
-		<param-name>facelets.RESOURCE_RESOLVER</param-name>
-		<param-value>com.code.aon.ui.resources.TemplateResolver</param-value>
-	</context-param>	
-	<context-param>
 		<description>
 			Set this flag to true if you want the JavaServer Faces
 			Reference Implementation to validate the XML in your
@@ -183,10 +179,6 @@
 		<servlet-class>
 			com.code.aon.ui.resources.servlet.ResourceServlet
 		</servlet-class>
-		<init-param>
-			<param-name>debug</param-name>
-			<param-value>false</param-value>
-		</init-param>				
 	</servlet>
 	<servlet-mapping>
 		<servlet-name>ResourceServlet</servlet-name>
@@ -207,10 +199,6 @@
 			<url-pattern>/commercial/*</url-pattern>
 		</web-resource-collection>
 		<web-resource-collection>
-			<web-resource-name>marketing</web-resource-name>
-			<url-pattern>/marketing/*</url-pattern>
-		</web-resource-collection>
-		<web-resource-collection>
 			<web-resource-name>jsf</web-resource-name>
 			<url-pattern>*.jsf</url-pattern>
 		</web-resource-collection>
@@ -226,8 +214,8 @@
 	<login-config>
 		<auth-method>FORM</auth-method>
 		<form-login-config>
-			<form-login-page>/com/code/aon/ui/resources/facelet/login/login.jspx</form-login-page>
-			<form-error-page>/com/code/aon/ui/resources/facelet/login/errorlogin.jspx</form-error-page>
+			<form-login-page>/login/login.jspx</form-login-page>
+			<form-error-page>/login/errorlogin.jspx</form-error-page>
 		</form-login-config>
 	</login-config>
 	<security-role>
