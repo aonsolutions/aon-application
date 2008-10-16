@@ -193,7 +193,6 @@ public class NoticeControllerListener extends ControllerAdapter implements WebMa
 	}
 
 	private void sendNoticeSMS(Notice notice, String smsList) {
-		System.out.println("SEND MESSAGE TO: "+smsList);
 		Message message = new Message();
 		message.init();
 		AuthPrincipal user = UserUtils.getInstance().getPrincipal();
@@ -208,7 +207,6 @@ public class NoticeControllerListener extends ControllerAdapter implements WebMa
 			String recipient = recipients[i];
 			recipient = recipient.trim();
 			message.add(recipient);
-			System.out.println("SEND MESSAGE TO: "+recipient);
 		}
 		try {
 			Sender sender = new Sender();
