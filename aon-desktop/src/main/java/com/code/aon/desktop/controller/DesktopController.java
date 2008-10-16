@@ -48,8 +48,10 @@ public class DesktopController extends BasicController {
     private static final String NOTICE_CONTROLLER_NAME = "notice";
 
 	private static final SelectItem NULL_SELECT_ITEM = new SelectItem(null, " ");	
+	private static final SelectItem ALL_SELECT_ITEM = new SelectItem(null, "Todos");	
     
     private ListDataModel recentNoteModel;
+    private ListDataModel nextAlarmModel;
     private ListDataModel todayAlarmModel;
     private ListDataModel recentAlarmModel;
     private ListDataModel ancientAlarmModel;
@@ -57,7 +59,11 @@ public class DesktopController extends BasicController {
 	public SelectItem getNullValue() {
 		return NULL_SELECT_ITEM;
 	}
-    
+
+	public SelectItem getAllValue() {
+		return ALL_SELECT_ITEM;
+	}
+
     @SuppressWarnings("unchecked")
     public List<DesktopNoticeSummary> getNoticeSummaryModel() {
         List<DesktopNoticeSummary> noticeSummaryList = new LinkedList<DesktopNoticeSummary>();
@@ -116,6 +122,22 @@ public class DesktopController extends BasicController {
         }
     }
 
+    public ListDataModel getNextAlarmModel() throws ManagerBeanException{
+        Calendar from = new GregorianCalendar();
+        from.add(Calendar.DATE, 1);
+        from.set(Calendar.HOUR_OF_DAY, 0);
+        from.set(Calendar.MINUTE, 0);
+        from.set(Calendar.SECOND, 0);
+        Calendar to = new GregorianCalendar();
+        to.add(Calendar.DATE, 6);
+        to.set(Calendar.HOUR_OF_DAY, 23);
+        to.set(Calendar.MINUTE, 59);
+        to.set(Calendar.SECOND, 59);
+
+        this.nextAlarmModel = new ListDataModel(this.createQuery(getUserAlarmSentence(from.getTime(), to.getTime())));
+        return this.nextAlarmModel;
+    }
+
     public ListDataModel getTodayAlarmModel() throws ManagerBeanException{
         Calendar from = new GregorianCalendar();
         from.set(Calendar.HOUR_OF_DAY, 0);
@@ -160,11 +182,13 @@ public class DesktopController extends BasicController {
     private String getUserAlarmSentence(Date from, Date to) throws ManagerBeanException {
         DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
-        String select = "select new com.code.aon.desktop.DesktopAlarm(alarm.id, alarm.description, alarm.alarmDate, notice.type, alarm.priority) " +
-                        "from Notice as notice, Alarm as alarm " +
-                        "where notice.id = alarm.sourceId " +
-                        "and alarm.source = " + AlarmSource.NOTICE.ordinal() + " " +
-                        "and alarm.status = " + AlarmStatus.PENDING.ordinal() + " " +
+//        String select = "select new com.code.aon.desktop.DesktopAlarm(alarm.id, alarm.description, alarm.alarmDate, notice.type, alarm.priority) " +
+//                        "from Notice as notice, Alarm as alarm " +
+//                        "where notice.id = alarm.sourceId " +
+//        					"and alarm.source = " + AlarmSource.NOTICE.ordinal() + " " +
+        String select = "select new com.code.aon.desktop.DesktopAlarm(alarm.id, alarm.description, alarm.alarmDate, alarm.source, alarm.sourceId, alarm.priority) " +
+      					"from Alarm as alarm " +
+                        "where alarm.status = " + AlarmStatus.PENDING.ordinal() + " " +
                         "and alarm.user = " + UserUtils.getInstance().getLoggedUser().getId() + " ";
         if (from != null) {
             select += "and alarm.alarmDate >= '" + formatter.format(from) + "' ";
@@ -191,6 +215,17 @@ public class DesktopController extends BasicController {
         } catch (ManagerBeanException e) {
             throw new ManagerBeanException("Error obtaining note with id=" + note.getId(), e);
         }
+    }
+
+    public String getTodayDate() {
+        DateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
+        Calendar date = new GregorianCalendar();
+        return formatter.format(date);
+    }
+    
+    @SuppressWarnings("unused")
+    public void onSelectNextAlarm(ActionEvent event) throws ManagerBeanException{
+        onSelectAlarm(nextAlarmModel);
     }
 
     @SuppressWarnings("unused")

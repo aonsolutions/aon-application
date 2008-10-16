@@ -32,11 +32,27 @@ import com.code.aon.ui.util.AonUtil;
 public class SecurityUserListener extends ControllerAdapter implements ILdapConstants, IAonObjectClasses {
 
 	private static final Logger LOGGER = Logger.getLogger(SecurityUserListener.class.getName());
-	
+
+	private static final String USER_UID_NUMBER_ATTRIBUTE = "uidNumber";
+
 	private static final String ACTIVE_ATTRIBUTE = "active";
+
+	private static final String USER_ALTERNATIVE_EMAIL = "mail";
+
+	private static final String USER_CELLULAR_NUMBER = "mobile";
+
+	private boolean showUserNotExistsWindow = false;
 	
 	private boolean active;
-	
+
+	private String name;
+
+	private String surname;
+
+	private String alternativeEmail;
+
+	private String cellular;
+
 	private boolean disabled;
 
 	private String domain;
@@ -78,6 +94,7 @@ public class SecurityUserListener extends ControllerAdapter implements ILdapCons
 			throws ControllerListenerException {
 		User user = (User) event.getController().getTo();
 		user.setAvailable(this.active);
+		user.setName(this.name + " " + this.surname);
 		user.setStatus(0);
 		UserController uc = (UserController) event.getController();
 		UserManager userManager = uc.getUserManager();
@@ -94,31 +111,55 @@ public class SecurityUserListener extends ControllerAdapter implements ILdapCons
 	}
 
 	@Override
+	public void beforeBeanUpdated(ControllerEvent event)
+			throws ControllerListenerException {
+		User user = (User) event.getController().getTo();
+		user.setAvailable(this.active);
+		user.setName(this.name + " " + this.surname);
+	}
+
+	@Override
 	public void afterBeanUpdated(ControllerEvent event)
 			throws ControllerListenerException {
 		setProperties( (User) event.getController().getTo(), false );
 	}
 
 	private void retrieveProperties( User user ) {
+		this.name = null;
+		this.surname = null;
+		this.cellular = null;
+		this.alternativeEmail = null;
 		if ( user.getId() == null ) {
 			this.disabled = false;
-			this.active = true;			
+			this.active = true;
 		} else {
 			this.disabled = calculateDisabled(user);
 			DistinguishedName userDN = AonDN.getUserDN( domain, user.getLogin() );
 			BasicLdap ldap = new BasicLdap();
 			if ( ldap.exists(userDN, USER) ) {
+				this.showUserNotExistsWindow = false;
 				try {
 					LdapSession session = ldap.getLdapSession();
 					String filter = LdapSession.getObjectClass(USER);
-					Entry userEntry = session.get(userDN.toString(), filter, ACTIVE_ATTRIBUTE);
+					Entry userEntry = session.get(userDN.toString(), filter, 
+							COMMON_NAME_ATTRIBUTE, SURNAME_ATTRIBUTE, USER_ALTERNATIVE_EMAIL, USER_CELLULAR_NUMBER, ACTIVE_ATTRIBUTE);
+					name = userEntry.getAsString(COMMON_NAME_ATTRIBUTE);
+					surname = userEntry.getAsString(SURNAME_ATTRIBUTE);
 					active = userEntry.getAsBoolean(ACTIVE_ATTRIBUTE);
+					try {
+						alternativeEmail = userEntry.getAsString(USER_ALTERNATIVE_EMAIL);
+					}catch (NullPointerException npe) {}
+					try {
+						cellular = userEntry.getAsString(USER_CELLULAR_NUMBER);
+					}catch (NullPointerException npe) {}
 				} catch (LdapException e) {
-					AonUtil.addErrorMessage( "Error obteniendo la propiedad active de " + user.getLogin() );
+					AonUtil.addErrorMessage( "Error obteniendo una propiedad de " + user.getLogin() );
 				} finally {
 					ldap.closeSession();
 				}
 			} else {
+				this.showUserNotExistsWindow = true;
+				//AonUtil.addErrorMessage("El usuario no existe en el sistema.\nPongase en contacto con el Administrador.");
 				LOGGER.severe( "No existe en LDAP el usuario " + user.getLogin() + " para el dominio " + domain );
 			}
 		}
@@ -130,16 +171,35 @@ public class SecurityUserListener extends ControllerAdapter implements ILdapCons
 		if ( ldap.exists(userDN, USER) ) {
 			try {
 				LdapSession session = ldap.getLdapSession();
+				session.replaceAttribute(userDN, COMMON_NAME_ATTRIBUTE, name);
+				session.replaceAttribute(userDN, SURNAME_ATTRIBUTE, surname);
 				session.replaceAttribute(userDN, ACTIVE_ATTRIBUTE, active);
-				if ( updateId ) {
-					session.replaceAttribute(userDN, "uidNumber", user.getId().toString());	
+				session.replaceAttribute(userDN, USER_UID_NUMBER_ATTRIBUTE, user.getId().toString());
+
+				String filter = LdapSession.getObjectClass(USER);
+				Entry u = session.get(userDN.toString(), filter, USER_ALTERNATIVE_EMAIL, USER_CELLULAR_NUMBER);
+				String old_mail = null;
+				String old_cellular = null;
+				try {
+					old_mail = u.getAsString(USER_ALTERNATIVE_EMAIL);
+					old_cellular = u.getAsString(USER_CELLULAR_NUMBER);
 				}
+				catch (NullPointerException npe) {
+				}
+				
+				session.updateAttribute(userDN, USER_ALTERNATIVE_EMAIL, old_mail, alternativeEmail);
+				session.updateAttribute(userDN, USER_CELLULAR_NUMBER, old_cellular, cellular);
+
+//				if ( updateId ) {
+//					session.replaceAttribute(userDN, "uidNumber", user.getId().toString());	
+//				}
 			} catch (LdapException e) {
-				AonUtil.addErrorMessage( "Error obteniendo la propiedad active de " + user.getLogin() );
+				AonUtil.addErrorMessage( "Error obteniendo las propiedades del usuario " + user.getLogin() );
 			} finally {
 				ldap.closeSession();
 			}
 		} else {
+			AonUtil.addErrorMessage("El usuario no existe en el sistema.\nPongase en contacto con su administrador.");
 			LOGGER.severe( "No existe en LDAP el usuario " + user.getLogin() + " para el dominio " + domain );
 		}			
 		try {
@@ -154,7 +214,15 @@ public class SecurityUserListener extends ControllerAdapter implements ILdapCons
 		User loggedUser = UserUtils.getInstance().getLoggedUser();
 		return ObjectUtils.equals(user.getId(), loggedUser.getId());
 	}
-	
+
+	public boolean isShowUserNotExistsWindow() {
+		return showUserNotExistsWindow;
+	}
+
+	public void setShowUserNotExistsWindow(boolean showUserNotExistsWindow ) {
+		this.showUserNotExistsWindow = showUserNotExistsWindow;
+	}
+
 	public boolean isActive() {
 		return active;
 	}
@@ -165,6 +233,40 @@ public class SecurityUserListener extends ControllerAdapter implements ILdapCons
 
 	public boolean isDisabled() {
 		return disabled;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public String getSurname() {
+		return surname;
+	}
+
+	public void setSurname(String surname) {
+		this.surname = surname;
+	}
+
+	public String getAlternativeEmail() {
+		return alternativeEmail;
+	}
+
+	public void setAlternativeEmail(String alternativeEmail) {
+		if (alternativeEmail.trim().equals("")) this.alternativeEmail = null;
+		else this.alternativeEmail = alternativeEmail;
+	}
+
+	public String getCellular() {
+		return cellular;
+	}
+
+	public void setCellular(String cellular) {
+		if (cellular.trim().equals("")) this.cellular = null;
+		else this.cellular = cellular;
 	}
 
 }

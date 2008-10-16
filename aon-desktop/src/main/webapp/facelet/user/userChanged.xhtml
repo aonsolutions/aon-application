@@ -5,14 +5,14 @@
 	xmlns:rich="http://richfaces.org/rich"
 	xmlns:aon="http://www.code.es/aon-rich-components">
 
-	<aon:form id="passwordChanged">
+	<aon:form id="userChanged">
 
-		<aon:panelGroup id="passwordChangedWindow"
+		<aon:panelGroup id="userChangedWindow"
 			styleClass="aon-popupWindow">
 
-			<rich:modalPanel id="passwordChangedModalPanel"
-				rendered="#{currentUser.showPasswordChangedWindow}"
-				showWhenRendered="true" minWidth="400" width="400" height="120">
+			<rich:modalPanel id="userChangedModalPanel"
+				rendered="#{currentUser.showUserChangedWindow}"
+				showWhenRendered="true" minWidth="600" width="600" height="120">
 
 				<f:facet name="header">
 					<aon:div styleClass="aon-popupWindow-title">
@@ -23,9 +23,9 @@
 					<aon:commandButton type="button" styleClass="aon-popupWindow-close"
 						immediate="true">
 						<f:setPropertyActionListener
-							target="#{currentUser.showPasswordChangedWindow}"
+							target="#{currentUser.showUserChangedWindow}"
 							value="#{false}" />
-						<rich:componentControl for="passwordChangedModalPanel"
+						<rich:componentControl for="userChangedModalPanel"
 							event="onclick" disableDefault="true" operation="hide" />
 					</aon:commandButton>
 				</f:facet>
@@ -34,7 +34,7 @@
 					<aon:div styleClass="aon-popupWindow-content-internal">
 
 						<aon:div styleClass="aon-message-big aon-icon-big-info">
-							<aon:outputText value="#{appBundle.user_password_changed}" />
+							<aon:outputText value="#{appBundle.user_user_changed}" />
 						</aon:div>
 
 						<aon:div styleClass="aon-text-center">
@@ -43,9 +43,9 @@
 								action="#{currentUser.returnAction}"
 								styleClass="aon-commandButton">
 								<f:setPropertyActionListener
-									target="#{currentUser.showPasswordChangedWindow}"
+									target="#{currentUser.showUserChangedWindow}"
 									value="#{false}" />
-								<rich:componentControl for="passwordChangedModalPanel"
+								<rich:componentControl for="userChangedModalPanel"
 									event="onclick" disableDefault="true" operation="hide" />
 							</aon:commandButton>
 						</aon:div>

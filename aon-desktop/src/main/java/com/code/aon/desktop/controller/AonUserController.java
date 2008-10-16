@@ -10,6 +10,7 @@ import javax.faces.event.ActionEvent;
 
 import org.apache.commons.lang.time.DateUtils;
 
+import com.code.aon.common.AonException;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.config.User;
 import com.code.aon.jaas.auth.AuthPrincipal;
@@ -31,14 +32,28 @@ public class AonUserController extends UserController implements ILdapConstants,
 
 	private static final String PASSWORD_EXPIRATION_TIMESTAMP = "passwordExpirationTimestamp";
 
+	private static final String USER_ALTERNATIVE_EMAIL = "mail";
+
+	private static final String USER_CELLULAR_NUMBER = "mobile";
+
 	private static final Logger LOGGER = Logger.getLogger(AonUserController.class.getName());
 	
+	private String name;
+	
+	private String surname;
+
+	private String alternativeEmail;
+
+	private String cellular;
+
 	private String domain;
 	
 	private boolean managerChangingPassword;
 	
 	private boolean showPasswordChangedWindow;
-	
+
+	private boolean showUserChangedWindow;
+
 	private boolean accepted;
 	
 	public AonUserController() {
@@ -90,6 +105,7 @@ public class AonUserController extends UserController implements ILdapConstants,
 	@SuppressWarnings("unchecked")
 	private void loadUser( User user ) throws ManagerBeanException {
 		setShowPasswordChangedWindow(false);
+		setShowUserChangedWindow(false);
 		getUserManager().findUser(user.getLogin());
 		setUserTO(user);
 	}
@@ -138,9 +154,33 @@ public class AonUserController extends UserController implements ILdapConstants,
 	
 	public void accept(ActionEvent event) {
 		User user = (User) getTo();
+		user.setName(this.name + " " + this.surname);
+		try {
+			super.accept(event);
+			if (cellular != null) cellular = cellular.replace(" ", "");
+			updateUserLdapProperties(user.getLogin(), name, surname, alternativeEmail, cellular);
+			setShowUserChangedWindow(true);
+		} catch (Exception e) {
+			LOGGER.log(Level.SEVERE, "Error cambiando datos del usuario.", e );
+		}
+	}
+
+	public void acceptPassword(ActionEvent event) {
+		User user = (User) getTo();
 		int status = user.getStatus();
 		user.setStatus(status + 2);
 		try {
+			if (!managerChangingPassword && (getUserManager().getPassword() == null || getUserManager().getPassword().equals("")  
+					|| getUserManager().getNewPassword() == null || getUserManager().getNewPassword().equals("")
+					|| getUserManager().getConfirmPassword() == null || getUserManager().getConfirmPassword().equals(""))) {
+				AonUtil.addErrorMessage("Debe rellenar todos los campos de contraseña.");
+				throw new AonException();
+			}
+			if (!getUserManager().areEqualPasswords()) {
+				AonUtil.addErrorMessage("Las contraseña nueva no coincide con la confirmacion.");
+				throw new AonException();
+			}
+
 			if ( managerChangingPassword ) {
 				getUserManager().savePassword();
 			} else {
@@ -159,13 +199,21 @@ public class AonUserController extends UserController implements ILdapConstants,
 			user.setStatus(status);
 		}
 	}
-	
+
 	public boolean isShowPasswordChangedWindow() {
 		return showPasswordChangedWindow;
 	}
 
 	public void setShowPasswordChangedWindow(boolean showPasswordChangedWindow) {
 		this.showPasswordChangedWindow = showPasswordChangedWindow;
+	}
+
+	public boolean isShowUserChangedWindow() {
+		return showUserChangedWindow;
+	}
+
+	public void setShowUserChangedWindow(boolean showUserChangedWindow) {
+		this.showUserChangedWindow = showUserChangedWindow;
 	}
 
 	public boolean isPasswordExpired() {
@@ -211,5 +259,136 @@ public class AonUserController extends UserController implements ILdapConstants,
 		}
 		return name;
 	}
-	
+
+	public void updateUserLdapProperties( String userName, String name, String surname, String mail, String mobile ) {
+		DistinguishedName userDN = AonDN.getUserDN( domain, userName );
+		BasicLdap ldap = new BasicLdap();
+		if ( ldap.exists(userDN, USER) ) {
+			try {
+				LdapSession session = ldap.getLdapSession();
+				session.replaceAttribute(userDN, COMMON_NAME_ATTRIBUTE, name);
+				session.replaceAttribute(userDN, SURNAME_ATTRIBUTE, surname);
+
+				String filter = LdapSession.getObjectClass(USER);
+				Entry user = session.get(userDN.toString(), filter, USER_ALTERNATIVE_EMAIL, USER_CELLULAR_NUMBER);
+				String old_mail = null;
+				String old_mobile = null;
+				try {
+					old_mail = user.getAsString(USER_ALTERNATIVE_EMAIL);
+					old_mobile = user.getAsString(USER_CELLULAR_NUMBER);
+				}
+				catch (NullPointerException npe) {
+				}
+				session.updateAttribute(userDN, USER_ALTERNATIVE_EMAIL, old_mail, mail);
+				session.updateAttribute(userDN, USER_CELLULAR_NUMBER, old_mobile, mobile);
+			} catch (LdapException e) {
+				AonUtil.addErrorMessage("Error actualizando los datos de usuario." );
+			} finally {
+				ldap.closeSession();
+			}
+		} else {
+			LOGGER.severe( "No existe en LDAP el usuario " + userName + " para el dominio " + domain );
+		}
+	}
+
+	public String getName() {
+		User user = (User) getTo();
+		String login = user.getLogin();
+		BasicLdap ldap = new BasicLdap();
+		try {
+			DistinguishedName dn = AonDN.getUserDN(domain, login);
+			String filter = LdapSession.getObjectClass("aonUser");
+			Entry entry = ldap.getLdapSession().get(dn.toString(), filter, COMMON_NAME_ATTRIBUTE);
+			if ( entry != null ) {
+		    	name = entry.getAsString(COMMON_NAME_ATTRIBUTE);
+			}
+		} catch ( LdapException e ) {
+			throw new AbortProcessingException( "Error getting name for " + login + ". " + e.getMessage(), e );
+		} finally {
+			ldap.closeSession();
+		}
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public String getSurname() {
+		User user = (User) getTo();
+		String login = user.getLogin();
+		BasicLdap ldap = new BasicLdap();
+		try {
+			DistinguishedName dn = AonDN.getUserDN(domain, login);
+			String filter = LdapSession.getObjectClass("aonUser");
+			Entry entry = ldap.getLdapSession().get(dn.toString(), filter, SURNAME_ATTRIBUTE);
+			if ( entry != null ) {
+		    	surname = entry.getAsString(SURNAME_ATTRIBUTE);
+			}
+		} catch ( LdapException e ) {
+			throw new AbortProcessingException( "Error getting surname for " + login + ". " + e.getMessage(), e );
+		} finally {
+			ldap.closeSession();
+		}
+		return surname;
+	}
+
+	public void setSurname(String surname) {
+		this.surname = surname;
+	}
+
+	public String getAlternativeEmail() {
+		User user = (User) getTo();
+		String login = user.getLogin();
+		BasicLdap ldap = new BasicLdap();
+		try {
+			DistinguishedName dn = AonDN.getUserDN(domain, login);
+			String filter = LdapSession.getObjectClass("aonUser");
+			Entry entry = ldap.getLdapSession().get(dn.toString(), filter, USER_ALTERNATIVE_EMAIL);
+			if ( entry != null ) {
+				try {
+					alternativeEmail = entry.getAsString(USER_ALTERNATIVE_EMAIL);
+				}
+				catch (NullPointerException npe) {}
+			}
+		} catch ( LdapException e ) {
+			throw new AbortProcessingException( "Error getting email for " + login + ". " + e.getMessage(), e );
+		} finally {
+			ldap.closeSession();
+		}
+		return alternativeEmail;
+	}
+
+	public void setAlternativeEmail(String alternativeEmail) {
+		if (alternativeEmail.trim().equals("")) this.alternativeEmail = null;
+		else this.alternativeEmail = alternativeEmail;
+	}
+
+	public String getCellular() {
+		User user = (User) getTo();
+		String login = user.getLogin();
+		BasicLdap ldap = new BasicLdap();
+		try {
+			DistinguishedName dn = AonDN.getUserDN(domain, login);
+			String filter = LdapSession.getObjectClass("aonUser");
+			Entry entry = ldap.getLdapSession().get(dn.toString(), filter, USER_CELLULAR_NUMBER);
+			if ( entry != null ) {
+				try {
+					cellular = entry.getAsString(USER_CELLULAR_NUMBER);
+				}
+				catch (NullPointerException npe) {}
+			}
+		} catch ( LdapException e ) {
+			throw new AbortProcessingException( "Error getting cellular for " + login + ". " + e.getMessage(), e );
+		} finally {
+			ldap.closeSession();
+		}
+		return cellular;
+	}
+
+	public void setCellular(String cellular) {
+		if (cellular.trim().equals("")) this.cellular = null;
+		else this.cellular = cellular;
+	}
+
 }

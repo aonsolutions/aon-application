@@ -3,7 +3,9 @@
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:aon="http://www.code.es/aon-rich-components"
-	xmlns:c="http://java.sun.com/jstl/core">
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:a4j="http://richfaces.org/a4j">
+
 <body>
 
 <ui:composition template="/facelet/templates/aon.ui.content.xhtml">
@@ -31,19 +33,25 @@
 
 						<aon:outputLabel for="Notice_workGroup_id"
 							value="#{groupwareBundle.notice_work_group}" />
-						<aon:selectOneMenu id="Notice_workGroup_id" required="true"
-							value="#{notice.to.workGroup.id}" reRender="Notice_recipient_id"
+						<aon:selectOneMenu id="Notice_workGroup_id" 
+							value="#{notice.to.workGroup.id}" reRender="Notice_recipient_area"
 							valueChangeListener="#{notice.workGroupChange}">
-							<f:selectItem value="#{desktop.nullValue}" />
+							<f:selectItem value="#{desktop.allValue}" />
 							<f:selectItems value="#{configCollections.workgroups}" />
+							<a4j:support event="onchange" reRender="Notice_recipient_area, Notice_sendEmail, Notice_sendSMS"></a4j:support>
 						</aon:selectOneMenu>
 
 						<aon:outputLabel for="Notice_recipient_id" 
 							value="#{groupwareBundle.notice_recipient}" />
-						<aon:selectOneMenu id="Notice_recipient_id"
-							value="#{notice.to.recipient.id}">
-							<f:selectItems value="#{notice.users}" />
-						</aon:selectOneMenu>
+						<aon:div id="Notice_recipient_area">
+							<aon:selectOneMenu id="Notice_recipient_id"
+								value="#{notice.to.recipient.id}" reRender="Notice_sendEmail, Notice_sendSMS"
+								valueChangeListener="#{notice.recipientChange}">
+								<f:selectItem value="#{desktop.allValue}" />
+								<f:selectItems value="#{notice.users}" />
+								<a4j:support event="onchange" reRender="Notice_sendEmail, Notice_sendSMS"></a4j:support>
+							</aon:selectOneMenu>
+						</aon:div>
 
 						<aon:outputLabel for="Notice_source"
 							value="#{groupwareBundle.notice_source}" />
@@ -88,6 +96,23 @@
 							value="#{groupwareBundle.notice_subject}" />
 						<aon:inputTextarea id="Notice_subject"
 							value="#{notice.to.subject}" cols="100" rows="7" />	
+
+						<aon:outputLabel for="Notice_sendEmail" value="#{groupwareBundle.notice_send_email}" rendered="#{notice.new}"/>
+						<aon:div id="Notice_sendEmail" style="vertical-align:top" rendered="#{notice.new}">
+							<aon:selectBooleanCheckbox id="Notice_sendEmail_checkbox" value="#{notice.sendMail}" style="vertical-align:top">
+ 								<a4j:support event="onclick" reRender="Notice_sendEmail" />
+							</aon:selectBooleanCheckbox>
+							<aon:inputTextarea id="Notice_sendEmail_list" value="#{notice.mailList}" cols="97" rows="4" rendered="#{notice.sendMail}"/>	
+						</aon:div>
+
+						<aon:outputLabel for="Notice_sendSMS" value="#{groupwareBundle.notice_send_sms}" rendered="#{notice.new}"/>
+						<aon:div id="Notice_sendSMS" style="vertical-align:top" rendered="#{notice.new}">
+							<aon:selectBooleanCheckbox id="Notice_sendSMS_checkbox" value="#{notice.sendSMS}" style="vertical-align:top">
+ 								<a4j:support event="onclick" reRender="Notice_sendSMS" />
+							</aon:selectBooleanCheckbox>
+
+							<aon:inputTextarea id="Notice_sendSMS_list" value="#{notice.smsList}" cols="97" rows="4" rendered="#{notice.sendSMS}"/>	
+						</aon:div>
 
 					</aon:panelGrid>
 					

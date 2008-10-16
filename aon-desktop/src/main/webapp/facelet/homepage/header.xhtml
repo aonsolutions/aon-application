@@ -35,9 +35,9 @@
 						<aon:outputText value="#{loggedUser.companyName}" />						
 						<aon:outputText value="/" styleClass="padding-left"/>																				
 						<aon:form>
-							<h:commandLink title="#{appBundle.aon_change_password}"
+							<h:commandLink title="#{appBundle.aon_user_data}"
 								actionListener="#{currentUser.onLoadCurrentUser}" styleClass="aon-icon aon-icon-user-change-password"
-								action="user_changepassword_form">								
+								action="user_change_form">								
 								<aon:outputText value="#{loggedUser.loggedUserName}" styleClass="aon-bold"/>											
 							</h:commandLink>
 						</aon:form>		
