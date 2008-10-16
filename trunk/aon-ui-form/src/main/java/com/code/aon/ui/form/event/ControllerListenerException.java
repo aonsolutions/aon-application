@@ -2,13 +2,14 @@ package com.code.aon.ui.form.event;
 
 import com.code.aon.common.AonException;
 
-// TODO: Auto-generated Javadoc
 /**
  * ControllerListenerException represents exceptions than can be generated within an IController.
  */
 public class ControllerListenerException extends AonException {
 
-    /**
+	private static final long serialVersionUID = 3004694419410628899L;
+
+	/**
      * Creates a new Exception with a <code>null</code> message.
      */
     public ControllerListenerException() {

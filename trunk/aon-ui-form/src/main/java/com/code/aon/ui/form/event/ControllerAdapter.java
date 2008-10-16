@@ -222,4 +222,32 @@ public class ControllerAdapter implements IControllerListener {
 	public void beforeModelInitialized(ControllerEvent event) throws ControllerListenerException {
 	}
 
+	/* (non-Javadoc)
+	 * @see com.code.aon.ui.form.event.IControllerListener#afterEditSearch(com.code.aon.ui.form.event.ControllerEvent)
+	 */
+	@Override
+	public void afterEditSearch(ControllerEvent event) throws ControllerListenerException {
+	}
+
+	/* (non-Javadoc)
+	 * @see com.code.aon.ui.form.event.IControllerListener#afterModelSearched(com.code.aon.ui.form.event.ControllerEvent)
+	 */
+	@Override
+	public void afterModelSearched(ControllerEvent event) throws ControllerListenerException {
+	}
+
+	/* (non-Javadoc)
+	 * @see com.code.aon.ui.form.event.IControllerListener#beforeEditSearch(com.code.aon.ui.form.event.ControllerEvent)
+	 */
+	@Override
+	public void beforeEditSearch(ControllerEvent event) throws ControllerListenerException {
+	}
+
+	/* (non-Javadoc)
+	 * @see com.code.aon.ui.form.event.IControllerListener#beforeModelSearched(com.code.aon.ui.form.event.ControllerEvent)
+	 */
+	@Override
+	public void beforeModelSearched(ControllerEvent event) throws ControllerListenerException {
+	}
+
 }
