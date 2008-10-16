@@ -4,7 +4,6 @@ import javax.faces.event.ActionEvent;
 
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.form.IController;
-import com.code.aon.ui.menu.jsf.MenuEvent;
 import com.code.aon.ui.util.AonUtil;
 
 /**
@@ -17,16 +16,6 @@ public class SupplierController extends BasicController {
 	
 	/** Media Controller name. */
 	private static final String MEDIA_CONTROLLER_NAME = "supplierMedia";
-	
-    /**
-     * On reset. Method launched by the menu
-     * 
-     * @param event the event
-     */
-    @SuppressWarnings("unused")
-    public void onReset(MenuEvent event) {
-        this.onReset((ActionEvent)event);
-    }
 
     /**
      * On reset. Sends a cancel to the media and address controllers to avoid having editing any of them

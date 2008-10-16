@@ -12,7 +12,6 @@ import com.code.aon.product.dao.IProductAlias;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.form.GridController;
 import com.code.aon.ui.form.PageDataModel;
-import com.code.aon.ui.menu.jsf.MenuEvent;
 import com.code.aon.ui.product.util.ItemPriceProvider;
 
 /**
@@ -33,18 +32,6 @@ public class ItemController extends GridController {
 		super();
 	}
 	
-	/**
-	 * On start. Method launched by the menu. Clears the model
-	 * 
-	 * @param event the event
-	 * 
-	 * @throws ManagerBeanException the manager bean exception
-	 */
-	@SuppressWarnings("unused")
-	public void onStart(MenuEvent event) throws ManagerBeanException{
-		((PageDataModel)this.getModel()).resize(0);
-	}
-
     /**
      * Adds an equal expression of the field category to the <code>criteria</code>.
      * 
@@ -390,12 +377,4 @@ public class ItemController extends GridController {
 		}
 	}
 
-    /**
-     * On reset. Method launched by the menu
-     * 
-     * @param event the event
-     */
-    public void onReset(MenuEvent event) {
-        super.onReset(event);
-    }
 }

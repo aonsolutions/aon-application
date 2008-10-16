@@ -8,9 +8,7 @@ import java.io.InputStream;
 import java.io.Serializable;
 import java.util.Iterator;
 
-import javax.faces.application.Application;
 import javax.faces.context.FacesContext;
-import javax.faces.el.ValueBinding;
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 import javax.faces.event.ValueChangeEvent;
@@ -23,7 +21,6 @@ import com.code.aon.company.Company;
 import com.code.aon.config.ApplicationParameter;
 import com.code.aon.config.dao.IConfigAlias;
 import com.code.aon.geozone.GeoZone;
-import com.code.aon.geozone.dao.IGeoZoneAlias;
 import com.code.aon.ql.Criteria;
 import com.code.aon.registry.RecordData;
 import com.code.aon.registry.Registry;
@@ -34,7 +31,6 @@ import com.code.aon.registry.dao.IRegistryAlias;
 import com.code.aon.registry.enumeration.AddressType;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.form.IController;
-import com.code.aon.ui.menu.jsf.MenuEvent;
 import com.code.aon.ui.util.AonUtil;
 
 /**
@@ -287,21 +283,10 @@ public class CompanyParentController extends BasicController implements ICompany
 	 * 
 	 * @param event the event
 	 */
-	@SuppressWarnings("unused")
 	public void onLoad(ActionEvent event) {
 		onLoad();
 	}
 	
-	/**
-	 * On load.
-	 * 
-	 * @param event the event
-	 */
-	@SuppressWarnings("unused")
-	public void onLoad(MenuEvent event){
-		onLoad();
-	}
-
 	/**
 	 * On load.
 	 */
@@ -344,7 +329,6 @@ public class CompanyParentController extends BasicController implements ICompany
 	 * 
 	 * @throws ManagerBeanException the manager bean exception
 	 */
-	@SuppressWarnings("unused")
 	public void phoneChanged(ValueChangeEvent event) throws ManagerBeanException {
 		phoneDirty = true;
 	}
@@ -356,7 +340,6 @@ public class CompanyParentController extends BasicController implements ICompany
 	 * 
 	 * @throws ManagerBeanException the manager bean exception
 	 */
-	@SuppressWarnings("unused")
 	public void faxChanged(ValueChangeEvent event) throws ManagerBeanException {
 		faxDirty = true;
 	}
@@ -368,7 +351,6 @@ public class CompanyParentController extends BasicController implements ICompany
 	 * 
 	 * @throws ManagerBeanException the manager bean exception
 	 */
-	@SuppressWarnings("unused")
 	public void emailChanged(ValueChangeEvent event) throws ManagerBeanException {
 		emailDirty = true;
 	}
@@ -380,7 +362,6 @@ public class CompanyParentController extends BasicController implements ICompany
 	 * 
 	 * @throws ManagerBeanException the manager bean exception
 	 */
-	@SuppressWarnings("unused")
 	public void webChanged(ValueChangeEvent event) throws ManagerBeanException {
 		webDirty = true;
 	}
@@ -392,7 +373,6 @@ public class CompanyParentController extends BasicController implements ICompany
 	 * 
 	 * @throws ManagerBeanException the manager bean exception
 	 */
-	@SuppressWarnings("unused")
 	public void addressChanged(ValueChangeEvent event) throws ManagerBeanException {
 		addressDirty = true;
 	}
@@ -402,7 +382,6 @@ public class CompanyParentController extends BasicController implements ICompany
 	 * 
 	 * @param event the event
 	 */
-	@SuppressWarnings("unused")
 	public void onAddresses(ActionEvent event){
 		loadAddresses();
 	}
@@ -414,7 +393,7 @@ public class CompanyParentController extends BasicController implements ICompany
 		try {
 			IManagerBean rAddressBean = BeanManager.getManagerBean(RegistryAddress.class);
 			IController master = this;
-			IController detail = getDetailController();
+			IController detail = AonUtil.getController(getChildBean());
 			ITransferObject to = master.getTo();
 			String reg = detail.getFieldName(getMasterFieldName());
 			Criteria criteria = new Criteria();
@@ -477,18 +456,7 @@ public class CompanyParentController extends BasicController implements ICompany
 		this.web = new RegistryMedia();
 	}
 	
-	/**
-	 * Gets the detail controller.
-	 * 
-	 * @return the detail controller
-	 */
-	public IController getDetailController() {
-		FacesContext ctx = FacesContext.getCurrentInstance();
-		Application app = ctx.getApplication();
-		ValueBinding vb = app.createValueBinding("#{" + getChildBean() + "}");
-		return (IController) vb.getValue(ctx);
-	}
-	
+
 	public boolean isWithLogo() throws ManagerBeanException {
 		return !(obtainCompanyLogo() == null);
 	}
@@ -603,26 +571,6 @@ public class CompanyParentController extends BasicController implements ICompany
 	}
 
 	
-	/**
-	 * Retrieves the whole <code>GeoZone</code> object when the lookup field changes.
-	 * 
-	 * @param event the event
-	 * 
-	 * @throws ManagerBeanException the manager bean exception
-	 */
-	@SuppressWarnings("unchecked")
-	public void onChangeGeoZone(ValueChangeEvent event) throws ManagerBeanException {
-    	if(event.getNewValue() != null){
-    		IManagerBean geoZoneBean = BeanManager.getManagerBean(GeoZone.class);
-    		Criteria criteria = new Criteria();
-    		criteria.addEqualExpression(geoZoneBean.getFieldName(IGeoZoneAlias.GEO_ZONE_ID), event.getNewValue());
-    		Iterator iter = geoZoneBean.getList(criteria).iterator();
-    		if(iter.hasNext()){
-    			((RegistryAddress)AonUtil.getController(COMPANY_ADDRESS_CONTROLLER_NAME).getTo()).setGeozone((GeoZone)iter.next());
-    		}
-    	}
-    }
-
 	/**
 	 * Gets the child bean.
 	 * 

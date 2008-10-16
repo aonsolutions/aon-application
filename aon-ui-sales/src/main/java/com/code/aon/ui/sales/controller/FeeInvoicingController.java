@@ -61,13 +61,11 @@ import com.code.aon.ql.Projection;
 import com.code.aon.ql.util.ExpressionException;
 import com.code.aon.registry.RegistryAddress;
 import com.code.aon.registry.dao.IRegistryAlias;
+import com.code.aon.report.OutputFormat;
 import com.code.aon.sales.CustomerFeeInvoicingDAO;
 import com.code.aon.sales.CustomerFeeInvoicingEngine;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.form.IController;
-import com.code.aon.ui.menu.jsf.MenuEvent;
-import com.code.aon.ui.menu.jsf.MenuManager;
-import com.code.aon.ui.report.OutputFormat;
 import com.code.aon.ui.report.controller.ReportManager;
 import com.code.aon.ui.util.AonUtil;
 
@@ -76,7 +74,6 @@ public class FeeInvoicingController extends BasicController {
 	private static final String FEE_INVOICING_ADDRESS_CONTROLLER_NAME = "feeInvoicingAddress";
 	private static final String FEE_INVOICING_DETAIL_CONTROLLER_NAME = "feeInvoicingDetail";
 	private static final String FEE_FINANCE_CONTROLLER_NAME = "feeFinance";
-	private static final String MENU_MANAGER_NAME = "menuManager";
 
 	private InvoicingParameters invoicingParams;
 
@@ -112,12 +109,7 @@ public class FeeInvoicingController extends BasicController {
 		this.invoicingParams = invoicingParams;
 	}
 	
-	public void onEditSearch(MenuEvent event){
-		this.onEditSearch((ActionEvent)event);
-	}
-	
-	@SuppressWarnings("unused")
-	public void onInitialize(MenuEvent event) throws ManagerBeanException{
+	public void onInitialize(ActionEvent event) throws ManagerBeanException{
 		this.invoicingParams = new InvoicingParameters();
 		this.invoicingParams.setNumber(obtainMaxNumber(null));
 		this.invoicingParams.setSecurityLevel(SecurityLevel.OFFICIAL);
@@ -201,7 +193,7 @@ public class FeeInvoicingController extends BasicController {
 		return null;
 	}
 
-	@SuppressWarnings({"unused","unchecked"})
+	@SuppressWarnings("unchecked")
 	public void onInvoice(ActionEvent event) throws InvoicingException, ManagerBeanException, ExpressionException {
 	    IManagerBean periodBean = BeanManager.getManagerBean(Period.class);
         Criteria criteria = new Criteria();
@@ -229,7 +221,6 @@ public class FeeInvoicingController extends BasicController {
     		}
     		setCriteria(criteria);
     		this.onSearch(null);
-    		updateBreadCrumb();
         }
     }
 
@@ -387,17 +378,10 @@ public class FeeInvoicingController extends BasicController {
 		return null;
 	}
 	
-	@SuppressWarnings("unused")
     public void onReport(ActionEvent event) {
         ReportManager manager = (ReportManager)AonUtil.getRegisteredBean("report");
         manager.setReportKey("feeInvoice");
         manager.setOutputFormat(OutputFormat.PDF);
-    }
-	
-	private void updateBreadCrumb() {
-		MenuManager menuManager = (MenuManager)AonUtil.getRegisteredBean(MENU_MANAGER_NAME);
-        menuManager.setCurrentMenu("AON_APP");
-        menuManager.getCurrentMenuModel().setSelectedNode(menuManager.getCurrentMenuModel().getOptionByKey("aon_invoice_management").getId());
     }
 	
 	public boolean isRemovable(){
@@ -409,7 +393,7 @@ public class FeeInvoicingController extends BasicController {
 		return false;
 	}
 	
-	@SuppressWarnings({"unused","unchecked"})
+	@SuppressWarnings("unchecked")
 	public void generateFinances(ActionEvent event) throws ManagerBeanException{
 		Invoice invoice = (Invoice)this.getTo();
 		try {
@@ -448,13 +432,11 @@ public class FeeInvoicingController extends BasicController {
 		return false;
 	}
 
-	@SuppressWarnings("unused")
 	public void onRecordInvoice(ActionEvent event) throws ManagerBeanException, ExpressionException{
 		Invoice invoice = (Invoice)this.getTo();
 		recordInvoice(invoice);
 	}
 	
-	@SuppressWarnings("unused")
 	public void onUnrecordInvoice(ActionEvent event) throws ManagerBeanException, ExpressionException{
 		Invoice invoice = (Invoice)this.getTo();
 		removeInvoiceDetailAccount(invoice);

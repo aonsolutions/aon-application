@@ -2,9 +2,7 @@ package com.code.aon.ui.product.controller;
 
 import javax.faces.event.ActionEvent;
 
-import com.code.aon.product.dao.IProductAlias;
 import com.code.aon.ui.form.GridController;
-import com.code.aon.ui.menu.jsf.MenuEvent;
 
 /**
  * Controller used in the tax maintenance.
@@ -16,16 +14,6 @@ public class TaxController extends GridController {
 	 */
 	public TaxController() {
 		super();
-	}
-	
-	/**
-	 * On reset. Method launched by the menu
-	 * 
-	 * @param event the event
-	 */
-	@SuppressWarnings("unused")
-	public void onReset(MenuEvent event) {
-		super.onReset(null);
 	}
 
     /**

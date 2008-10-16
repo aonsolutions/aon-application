@@ -252,11 +252,7 @@ public class SalesInvoicingDeliveryListener extends ControllerAdapter {
 	@Override
 	public void afterBeanRemoved(ControllerEvent event) throws ControllerListenerException {
 		DeliveryController deliveryController = (DeliveryController)AonUtil.getController(DELIVERY_CONTROLLER_NAME);
-		try {
-			deliveryController.onReset(null);
-		} catch (ManagerBeanException e) {
-			throw new ControllerListenerException(e);
-		}
+		deliveryController.onReset(null);
 	}
 	
 	/**

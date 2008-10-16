@@ -268,11 +268,7 @@ public class InvoicingIncomeListener extends ControllerAdapter {
 	@Override
 	public void afterBeanRemoved(ControllerEvent event) throws ControllerListenerException {
 		IncomeController incomeController = (IncomeController)AonUtil.getController(INCOME_CONTROLLER_NAME);
-		try {
-			incomeController.onReset(null);
-		} catch (ManagerBeanException e) {
-			throw new ControllerListenerException(e);
-		}
+		incomeController.onReset(null);
 	}
 	
 	/**

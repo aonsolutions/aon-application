@@ -61,12 +61,12 @@
 									value="#{to.workPlace.description}" />
 								<aon:selectOneMenu rendered="#{to.id==series.to.id}"
 									value="#{series.to.workPlace}">
-									<f:selectItems value="#{companyCollections.workPlacesDetailed}" />
+									<f:selectItems value="#{companyCollections.workPlaces}" />
 								</aon:selectOneMenu>
 								<f:facet name="footer">
 									<aon:selectOneMenu rendered="#{series.new}"
 										value="#{series.to.workPlace}">
-										<f:selectItems value="#{companyCollections.workPlacesDetailed}" />
+										<f:selectItems value="#{companyCollections.workPlaces}" />
 									</aon:selectOneMenu>
 								</f:facet>
 							</aon:column>

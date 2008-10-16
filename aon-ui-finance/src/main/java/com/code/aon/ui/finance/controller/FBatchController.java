@@ -58,12 +58,12 @@ import com.code.aon.ql.Projection;
 import com.code.aon.ql.ast.Expression;
 import com.code.aon.ql.util.ExpressionException;
 import com.code.aon.ql.util.ExpressionUtilities;
+import com.code.aon.report.OutputFormat;
 import com.code.aon.ui.finance.csb.CSB19Writer;
 import com.code.aon.ui.finance.csb.CSB32Writer;
 import com.code.aon.ui.finance.csb.CSB58Writer;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.form.LinesController;
-import com.code.aon.ui.report.OutputFormat;
 import com.code.aon.ui.report.controller.ReportManager;
 import com.code.aon.ui.util.AonUtil;
 

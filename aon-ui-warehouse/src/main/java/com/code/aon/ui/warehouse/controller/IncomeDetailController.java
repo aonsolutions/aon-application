@@ -18,7 +18,6 @@ import com.code.aon.product.strategy.PriceStrategyFactory;
 import com.code.aon.purchase.Purchase;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.form.LinesController;
-import com.code.aon.ui.menu.jsf.MenuEvent;
 import com.code.aon.ui.util.AonUtil;
 import com.code.aon.warehouse.IncomeDetail;
 
@@ -57,7 +56,6 @@ public class IncomeDetailController extends LinesController {
 	 * 
 	 * @param event the event of the menu
 	 */
-	@SuppressWarnings("unused")
     public void onAcceptEditNew(ActionEvent event) {
 		super.onAccept(event);
 		super.onReset(event);
@@ -69,23 +67,11 @@ public class IncomeDetailController extends LinesController {
 	 * @param event the event of the menu
 	 * @throws ManagerBeanException
 	 */
-	@SuppressWarnings("unused")
-	public void onReset(MenuEvent event) throws ManagerBeanException{
+	public void onStart(ActionEvent event) throws ManagerBeanException{
 		super.onReset(null);
 		setPurchase(null);
 	}
 	
-	/**
-	 * Cancels the controller
-	 * 
-	 * @param event the event of the menu
-	 * @throws ManagerBeanException
-	 */
-	@SuppressWarnings("unused")
-	public void onCancel(MenuEvent event) throws ManagerBeanException{
-		super.onCancel(null);
-	}
-
 	/**
 	 * Returns the invoice date
 	 * 

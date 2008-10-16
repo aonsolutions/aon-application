@@ -7,26 +7,25 @@ import java.util.Locale;
 import javax.faces.context.FacesContext;
 import javax.faces.model.SelectItem;
 
-import org.apache.myfaces.custom.fileupload.UploadedFile;
-
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.registry.RegistryAttachment;
 import com.code.aon.registry.enumeration.RegistryAttachmentType;
+import com.code.aon.ui.common.io.AonFile;
 import com.code.aon.ui.form.LinesController;
 
 public class CompanyImagesController extends LinesController {
 
-	private UploadedFile file;
+	private AonFile aonFile;
 	
 	private RegistryAttachment attach;
 
 	
-	public UploadedFile getFile() {
-		return file;
+	public AonFile getAonFile() {
+		return aonFile;
 	}
 
-	public void setFile(UploadedFile file) {
-		this.file = file;
+	public void setAonFile(AonFile aonFile) {
+		this.aonFile = aonFile;
 	}
 
 	public RegistryAttachment getAttach() {

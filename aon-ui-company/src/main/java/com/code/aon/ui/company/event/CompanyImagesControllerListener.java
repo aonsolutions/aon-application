@@ -3,8 +3,6 @@ package com.code.aon.ui.company.event;
 import java.io.IOException;
 import java.util.ResourceBundle;
 
-import org.apache.myfaces.custom.fileupload.UploadedFile;
-
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
@@ -14,6 +12,7 @@ import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.registry.RegistryAttachment;
 import com.code.aon.registry.dao.IRegistryAlias;
 import com.code.aon.registry.enumeration.RegistryAttachmentType;
+import com.code.aon.ui.common.io.AonFile;
 import com.code.aon.ui.company.controller.CompanyImagesController;
 import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
@@ -41,17 +40,17 @@ public class CompanyImagesControllerListener extends ControllerAdapter {
 	public void beforeBeanAdded(ControllerEvent event) throws ControllerListenerException {
 		try {
 			CompanyImagesController imagesController = (CompanyImagesController)event.getController();
-			if(imagesController.getFile() != null){
-				UploadedFile file = imagesController.getFile();
-				if (file.getSize()>1000000){
+			if(imagesController.getAonFile().getData() != null){
+				AonFile aonFile = imagesController.getAonFile(); 
+				if (aonFile.getSize() >1000000){
 			        ResourceBundle bundle = ResourceBundle.getBundle(BASE_NAME); 
 					throw new ControllerListenerException(bundle.getString("aon_company_image_max_size_error"));
 				}
 				RegistryAttachment attach = (RegistryAttachment)imagesController.getTo();
 				attach.setCategory(null);
-				attach.setData(file.getBytes());
-				attach.setDescription(file.getName().substring(file.getName().lastIndexOf("\\") + 1, file.getName().lastIndexOf(".")));
-				attach.setMimeType(MimeType.getByExtension(file.getName().substring(file.getName().lastIndexOf(".") + 1)));
+				attach.setData(aonFile.getData());
+				attach.setDescription(aonFile.getFileName().substring(aonFile.getFileName().lastIndexOf("\\") + 1, aonFile.getFileName().lastIndexOf(".")));
+				attach.setMimeType(MimeType.getByExtension(aonFile.getFileName().substring(aonFile.getFileName().lastIndexOf(".") + 1)));
 			}	
 		} catch (IOException e) {
 			throw new ControllerListenerException("Error uploading file");

@@ -17,7 +17,6 @@ import com.code.aon.common.ICollectionProvider;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ql.Criteria;
-import com.code.aon.ui.menu.jsf.MenuEvent;
 import com.code.aon.ui.util.AonUtil;
 import com.code.aon.warehouse.DeliveryDetailLabour;
 import com.code.aon.warehouse.LabourReportTo;
@@ -45,10 +44,6 @@ public class LabourReportController implements ICollectionProvider{
 
 	public void setCriteria(Criteria criteria) {
 		this.criteria = criteria;
-	}
-
-	public void onEditSearch(MenuEvent event){
-		this.criteria = new Criteria();
 	}
 
 	public void onEditSearch(ActionEvent event){

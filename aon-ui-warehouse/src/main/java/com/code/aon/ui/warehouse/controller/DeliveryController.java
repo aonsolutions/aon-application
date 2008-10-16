@@ -29,14 +29,13 @@ import com.code.aon.product.strategy.TaxBreakDown;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.Projection;
 import com.code.aon.ql.util.ExpressionException;
+import com.code.aon.report.OutputFormat;
 import com.code.aon.tasCommercial.TasOffer;
 import com.code.aon.tasCommercial.dao.ITasCommercialAlias;
 import com.code.aon.tasDelivery.TasDelivery;
 import com.code.aon.tasDelivery.dao.ITasDeliveryAlias;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.form.PageDataModel;
-import com.code.aon.ui.menu.jsf.MenuEvent;
-import com.code.aon.ui.report.OutputFormat;
 import com.code.aon.ui.report.controller.ReportManager;
 import com.code.aon.ui.util.AonUtil;
 import com.code.aon.warehouse.Delivery;
@@ -233,22 +232,6 @@ public class DeliveryController extends BasicController {
 	 */
 	public boolean isClosed() throws ManagerBeanException{
 		return ((Delivery)this.getModel().getRowData()).getStatus().equals(DeliveryStatus.CLOSED);
-	}
-	
-	/**
-	 * Reset and initializes the controller
-	 * Called from the menu
-	 * 
-	 * @param event a menu event
-	 * @throws ManagerBeanException
-	 */
-	@SuppressWarnings("unused")
-	public void onReset(MenuEvent event) throws ManagerBeanException{
-        setSupportOrderId(null);
-        setOfferId(null);
-		this.setModel(new PageDataModel(this,0,20));
-		this.clearCriteria();
-		super.onReset(null);
 	}
 	
 	/**
@@ -657,7 +640,6 @@ public class DeliveryController extends BasicController {
      * 
      * @param event that launched report
      */
-	@SuppressWarnings("unused")
     public void onReport(ActionEvent event) {
         ReportManager manager = (ReportManager)AonUtil.getRegisteredBean("report");
         manager.setReportKey("delivery");

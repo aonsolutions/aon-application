@@ -18,7 +18,6 @@ import com.code.aon.product.strategy.PriceStrategyFactory;
 import com.code.aon.purchase.Purchase;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.form.LinesController;
-import com.code.aon.ui.menu.jsf.MenuEvent;
 import com.code.aon.ui.util.AonUtil;
 import com.code.aon.warehouse.Income;
 
@@ -159,13 +158,4 @@ public class InvoicingDetailController extends LinesController {
 		return getPriceStrategy().getTaxableBase((ICalculableContainer)invoicingController.getTo());
 	}
 
-	/**
-	 * Cancels the controller
-	 * 
-	 * @param event menu event
-	 */
-	@SuppressWarnings("unused")
-    public void onCancel(MenuEvent event) {
-        super.onCancel(null);
-    }
 }
