@@ -59,6 +59,27 @@
 								</aon:selectOneMenu>			
 							</aon:panelGrid>
 						</aon:panelCollapsible>
+
+						<aon:panelCollapsible expanded="false" label="#{registryBundle.aon_media}" >
+							<aon:panelGrid columns="2" columnClasses="tbl-tab-search-odd,tbl-tab-search-even">
+								<aon:outputLabel for="Target_registry_medias_mediaType"
+									value="#{registryBundle.aon_media}" />
+								<aon:selectOneMenu id="Target_registry_medias_mediaType" 
+									converter="aonMediaTypeConverter"
+									valueChangeListener="#{target.addDirectExpression}">
+									<f:selectItem value="#{null}" itemLabel="    " />
+									<f:selectItems value="#{registryCollections.mediaTypes}" />
+								</aon:selectOneMenu>			
+								<aon:outputLabel for="Target_registry_medias_value"
+									value="#{bundle.aon_value}" />
+								<aon:inputText id="Target_registry_medias_value" size="60"
+									valueChangeListener="#{target.addDirectExpression}" />
+								<aon:outputLabel for="Target_registry_medias_comment"
+									value="#{bundle.aon_comment}" />
+								<aon:inputText id="Target_registry_medias_comment" size="60"
+									valueChangeListener="#{target.addDirectExpression}" />
+							</aon:panelGrid>
+						</aon:panelCollapsible>
 								
 						<aon:panelCollapsible expanded="false" label="#{appBundle.aon_target_segment}">
 							<aon:panelGrid columns="2" columnClasses="tbl-tab-search-odd,tbl-tab-search-even" style="width:460px;">					

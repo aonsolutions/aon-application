@@ -79,7 +79,7 @@
 
 				</aon:panelGrid>
 
-				<aon:panelTabSet rendered="#{!target.new}" valueChangeListener="#{target.tabChanged}">
+				<aon:panelTabSet rendered="#{!target.new}" selectedTab="#{target.selectedTab}" valueChangeListener="#{target.tabChanged}">
 					<aon:panelTab name="targetAddress" label="#{registryBundle.aon_address}">
 						<ui:include src="/commercial/registry/address/grid.xhtml" >
 							<ui:param name="controller" value="#{targetAddress}"/>
