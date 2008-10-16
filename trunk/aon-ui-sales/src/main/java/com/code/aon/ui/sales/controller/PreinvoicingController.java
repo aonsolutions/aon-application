@@ -19,11 +19,10 @@ import com.code.aon.finance.invoicing.InvoicingEngineFactory;
 import com.code.aon.finance.invoicing.InvoicingException;
 import com.code.aon.finance.invoicing.InvoicingParameters;
 import com.code.aon.product.strategy.IPriceStrategy;
+import com.code.aon.report.OutputFormat;
+import com.code.aon.report.ReportException;
 import com.code.aon.sales.CustomerFeeInvoicingEngine;
 import com.code.aon.sales.CustomerFeePreInvoicingDAO;
-import com.code.aon.ui.menu.jsf.MenuEvent;
-import com.code.aon.ui.report.OutputFormat;
-import com.code.aon.ui.report.ReportException;
 import com.code.aon.ui.report.controller.ReportManager;
 import com.code.aon.ui.util.AonUtil;
 
@@ -46,7 +45,7 @@ public class PreinvoicingController implements ICollectionProvider{
 	}
 	
 	@SuppressWarnings("unused")
-	public void onInitialize(MenuEvent event){
+	public void onInitialize(ActionEvent event){
 		this.invoicingParams = new InvoicingParameters();
 		this.invoicingParams.setSecurityLevel(SecurityLevel.OFFICIAL);
 		this.invoicingParams.setInvoiceDate(new Date());
@@ -74,11 +73,10 @@ public class PreinvoicingController implements ICollectionProvider{
 	}
 
 	@Override
-	@SuppressWarnings("unchecked")
 	public Collection getCollection(boolean forceRefresh) throws ManagerBeanException {
 		return this.getCollection();
 	}
-
+	
 	public String onExecute() throws ReportException, DAOException{
 		ReportManager manager = (ReportManager)AonUtil.getRegisteredBean("report");
         manager.setReportKey("preInvoicing");
@@ -93,5 +91,6 @@ public class PreinvoicingController implements ICollectionProvider{
 	public IPriceStrategy getPriceStrategy(){
 		return new InvoicePriceStrategy();
 	}
+
 
 }

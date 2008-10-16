@@ -8,14 +8,13 @@ import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.myfaces.custom.fileupload.UploadedFile;
-
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.registry.RecordData;
 import com.code.aon.registry.Registry;
 import com.code.aon.registry.RegistryAttachment;
+import com.code.aon.ui.common.io.AonFile;
 import com.code.aon.ui.form.LinesController;
 
 public class RecordDataController extends LinesController {
@@ -25,7 +24,7 @@ public class RecordDataController extends LinesController {
 	public String listNavigation;
 	public String formNavigation;
 	
-	private UploadedFile file;
+	private AonFile aonFile;
 	
 	public String getListNavigation() {
 		return listNavigation;
@@ -43,12 +42,12 @@ public class RecordDataController extends LinesController {
 		this.formNavigation = formNavigation;
 	}
 
-	public UploadedFile getFile() {
-		return file;
+	public AonFile getAonFile() {
+		return aonFile;
 	}
 
-	public void setFile(UploadedFile file) {
-		this.file = file;
+	public void setAonFile(AonFile aonFile) {
+		this.aonFile = aonFile;
 	}
 
 	@SuppressWarnings("unused")

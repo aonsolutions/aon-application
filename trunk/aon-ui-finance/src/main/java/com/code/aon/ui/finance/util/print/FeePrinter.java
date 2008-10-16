@@ -16,7 +16,6 @@ import com.code.aon.ql.ast.Expression;
 import com.code.aon.ql.util.ExpressionUtilities;
 import com.code.aon.sales.dao.ISalesAlias;
 import com.code.aon.ui.form.BasicController;
-import com.code.aon.ui.menu.jsf.MenuEvent;
 
 public class FeePrinter extends BasicController {
 	
@@ -80,10 +79,6 @@ public class FeePrinter extends BasicController {
 		setBillingDateYear(calendar.get(Calendar.YEAR));
 		setCustomerStatus(null);
 		setCustomerScopeId(null);
-	}
-	
-	public void onEditSearch(MenuEvent event){
-		this.onEditSearch((ActionEvent)event);
 	}
 	
 	@Override

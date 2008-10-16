@@ -24,7 +24,6 @@ import com.code.aon.product.ProductCategory;
 import com.code.aon.product.dao.IProductAlias;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.form.BasicController;
-import com.code.aon.ui.menu.jsf.MenuEvent;
 import com.code.aon.ui.util.AonUtil;
 import com.code.aon.warehouse.Inventory;
 
@@ -110,8 +109,7 @@ public class InventoryDetailController extends BasicController implements IColle
 	 * 
 	 * @param event a menu event
 	 */
-	@SuppressWarnings("unused")
-	public void onReset(MenuEvent event){
+	public void onStart(ActionEvent event){
 		this.model = null;
 		super.onReset(null);
 	}
@@ -148,7 +146,6 @@ public class InventoryDetailController extends BasicController implements IColle
 	/**
 	 * Assigns a new list of inventory detail.
 	 */
-	@SuppressWarnings("unused")
 	public void loadDetailModel(ActionEvent event) {
 		this.setModel(new ListDataModel(getDetailList(false)));
 	}

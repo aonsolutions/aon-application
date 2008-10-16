@@ -7,7 +7,6 @@ import com.code.aon.person.Person;
 import com.code.aon.registry.enumeration.RegistryType;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.form.IController;
-import com.code.aon.ui.menu.jsf.MenuEvent;
 import com.code.aon.ui.util.AonUtil;
 
 /**
@@ -39,26 +38,6 @@ public class CustomerController extends BasicController {
 	public void setNewPerson(boolean newPerson) {
 		this.newPerson = newPerson;
 	}
-
-	/**
-     * On reset. Method launched by the menu
-     * 
-     * @param event the event
-     */
-    @SuppressWarnings("unused")
-    public void onReset(MenuEvent event) {
-        this.onReset((ActionEvent)event);
-    }
-
-	/**
-     * On editSearch. Method launched by the menu
-     * 
-     * @param event the event
-     */
-    @SuppressWarnings("unused")
-    public void onEditSearch(MenuEvent event) {
-        this.onEditSearch((ActionEvent)event);
-    }
 
     public boolean isNaturalType(){
     	Customer customer = (Customer)getTo();

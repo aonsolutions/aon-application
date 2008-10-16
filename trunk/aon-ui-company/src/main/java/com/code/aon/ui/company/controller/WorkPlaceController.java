@@ -4,13 +4,11 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import javax.faces.event.ActionEvent;
 import javax.faces.model.SelectItem;
 
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.company.WorkPlace;
 import com.code.aon.ui.form.BasicController;
-import com.code.aon.ui.menu.jsf.MenuEvent;
 
 /**
  * Controller used in the workPlace maintenance.
@@ -60,14 +58,5 @@ public class WorkPlaceController extends BasicController {
 		}
 		return workplaces;
 	}
-
-	/**
-	 * Execute a search each time the WorkPlace menu option is pressed.
-	 * 
-	 * @param event
-	 */
-	public void onSearch(MenuEvent event) {
-        this.onSearch((ActionEvent)event);
-    }
 
 }

@@ -19,10 +19,9 @@ import com.code.aon.common.dao.sql.DAOException;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.ast.Expression;
 import com.code.aon.ql.util.ExpressionUtilities;
+import com.code.aon.report.OutputFormat;
+import com.code.aon.report.ReportException;
 import com.code.aon.ui.form.BasicController;
-import com.code.aon.ui.menu.jsf.MenuEvent;
-import com.code.aon.ui.report.OutputFormat;
-import com.code.aon.ui.report.ReportException;
 import com.code.aon.ui.report.controller.ReportManager;
 import com.code.aon.ui.util.AonUtil;
 import com.code.aon.warehouse.Stock;
@@ -78,10 +77,6 @@ public class StockController extends BasicController {
 		this.movingQuantity = movingQuantity;
 	}
 
-	public void onEditSearch(MenuEvent event){
-		super.onEditSearch((ActionEvent)event);
-	}
-	
 	@SuppressWarnings("unchecked")
 	public void move(ActionEvent event){
 		try {

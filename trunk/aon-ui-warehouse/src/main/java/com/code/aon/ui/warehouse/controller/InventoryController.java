@@ -19,7 +19,6 @@ import com.code.aon.product.Item;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.form.PageDataModel;
-import com.code.aon.ui.menu.jsf.MenuEvent;
 import com.code.aon.ui.product.util.ItemPriceProvider;
 import com.code.aon.ui.util.AonUtil;
 import com.code.aon.warehouse.Inventory;
@@ -146,20 +145,8 @@ public class InventoryController extends BasicController {
 	 * @param event action event
 	 * @throws Exception
 	 */
-	@SuppressWarnings("unused")
 	public void onClosing(ActionEvent event) throws Exception {
 		closeInventary();
-	}
-	
-	/**
-	 * Reset the controller
-	 * 
-	 * @param event menu event
-	 * @throws Exception
-	 */
-	@SuppressWarnings("unused")
-	public void onReset(MenuEvent event) throws Exception {
-		super.onReset(null);
 	}
 	
 	/**
@@ -168,8 +155,7 @@ public class InventoryController extends BasicController {
 	 * @param event menu event
 	 * @throws Exception
 	 */
-	@SuppressWarnings("unused")
-	public void onEditSearch(MenuEvent event) throws Exception {
+	public void onStartSearch(ActionEvent event) throws Exception {
 		categoryId = null;
 		super.onEditSearch(null);
 	}
@@ -304,8 +290,8 @@ public class InventoryController extends BasicController {
 	 * @param event the menu event
 	 * @throws ManagerBeanException
 	 */
-	@SuppressWarnings({"unused","unchecked"})
-	public void onSearchToday(MenuEvent event) throws ManagerBeanException{
+	@SuppressWarnings("unchecked")
+	public void onSearchToday(ActionEvent event) throws ManagerBeanException{
 		IManagerBean inventoryBean = BeanManager.getManagerBean(Inventory.class);
 		List list = getTodayList();
 		if (list.size()>0){
@@ -327,7 +313,6 @@ public class InventoryController extends BasicController {
 	 * @param event the action event
 	 * @throws ManagerBeanException
 	 */
-	@SuppressWarnings("unused")
 	public void onInitDetailAndSelect(ActionEvent event) throws ManagerBeanException{
 		InventoryDetailController idc = (InventoryDetailController)AonUtil.getController(INVENTORY_DETAIL_CONTROLLER_NAME);
 		idc.setCategoryId(new Integer(-1));

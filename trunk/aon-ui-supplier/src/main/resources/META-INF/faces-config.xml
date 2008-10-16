@@ -5,6 +5,26 @@
 
 <faces-config>
 
+	<!--  ********* SUPPLIER WIZARD  ***************** -->
+	<managed-bean>
+		<managed-bean-name>supplierWizard</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.supplier.controller.SupplierWizard
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
+
+	<!--  ********* SUPPLIER CONVERTER ***************** -->
+	<converter>
+		<converter-for-class>com.code.aon.supplier.Supplier</converter-for-class>
+		<converter-class>com.code.aon.ui.supplier.converter.SupplierConverter</converter-class>
+	</converter>
+	<converter>
+		<description>Se utiliza cuando se quiere seleccionar un Registry a partir de un Supplier</description>
+		<converter-id>SupplierRegistryConverter</converter-id>
+		<converter-class>com.code.aon.ui.supplier.converter.SupplierRegistryConverter</converter-class>
+	</converter>
+
 	<managed-bean>
 		<managed-bean-name>supplierLookup</managed-bean-name>
 		<managed-bean-class>

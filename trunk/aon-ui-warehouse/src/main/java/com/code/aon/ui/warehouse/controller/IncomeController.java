@@ -21,13 +21,12 @@ import com.code.aon.product.strategy.PriceStrategyFactory;
 import com.code.aon.product.strategy.TaxBreakDown;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionException;
+import com.code.aon.report.OutputFormat;
 import com.code.aon.supplier.Supplier;
 import com.code.aon.supplier.dao.ISupplierAlias;
 import com.code.aon.ui.company.controller.CompanyController;
 import com.code.aon.ui.form.BasicController;
 import com.code.aon.ui.form.PageDataModel;
-import com.code.aon.ui.menu.jsf.MenuEvent;
-import com.code.aon.ui.report.OutputFormat;
 import com.code.aon.ui.report.controller.ReportManager;
 import com.code.aon.ui.util.AonUtil;
 import com.code.aon.warehouse.Income;
@@ -188,19 +187,6 @@ public class IncomeController extends BasicController {
 	 */
 	public void clearCheckList(){
 		this.checkList = new ArrayList<Income>();
-	}
-	
-	/**
-	 * Resets the controller
-	 * 
-	 * @param event an event from the menu
-	 * @throws ManagerBeanException
-	 */
-	@SuppressWarnings("unused")
-	public void onReset(MenuEvent event) throws ManagerBeanException{
-		this.setModel(new PageDataModel(this,0,20));
-		this.clearCriteria();
-		super.onReset(null);
 	}
 	
 	/* (non-Javadoc)

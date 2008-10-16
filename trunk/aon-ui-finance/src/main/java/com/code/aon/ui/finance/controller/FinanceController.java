@@ -23,7 +23,6 @@ import com.code.aon.finance.enumeration.FinanceStatus;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionException;
 import com.code.aon.ui.form.BasicController;
-import com.code.aon.ui.menu.jsf.MenuEvent;
 
 /**
  * Controller used in the finance maintenance.
@@ -151,10 +150,6 @@ public class FinanceController extends BasicController {
     public boolean isReturned(){
     	return ((Finance)this.getTo()).getFinanceStatus().equals(FinanceStatus.RETURNED);
     }
-
-	public void onEditSearch(MenuEvent event) throws ManagerBeanException {
-		this.onEditSearch((ActionEvent)event);
-	}
 
 	@Override
 	public void onEditSearch(ActionEvent event) {
