@@ -11,6 +11,8 @@ import com.code.aon.finance.RegistryBank;
  */
 public class AccountLoanFeeHeader implements ITransferObject {
 
+	private static final long serialVersionUID = -8273893100974866857L;
+
 	/** The fee date. */
 	private Date feeDate;
 	

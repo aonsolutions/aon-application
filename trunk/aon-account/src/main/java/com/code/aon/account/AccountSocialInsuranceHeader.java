@@ -11,6 +11,8 @@ import com.code.aon.finance.RegistryBank;
  */
 public class AccountSocialInsuranceHeader implements ITransferObject{
 
+	private static final long serialVersionUID = 9083596439112054168L;
+
 	/** The date. */
 	private Date date;
 	

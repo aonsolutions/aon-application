@@ -12,6 +12,8 @@ import com.code.aon.registry.Registry;
  */
 public class AccountInvoiceHeader implements ITransferObject {
 	
+	private static final long serialVersionUID = 7455764834130396589L;
+
 	/** The type. */
 	private InvoiceType type;
 	

@@ -11,6 +11,8 @@ import com.code.aon.finance.RegistryBank;
  */
 public class AccountExpenseHeader implements ITransferObject {
 	
+	private static final long serialVersionUID = -3850406267453485925L;
+
 	/** The account. */
 	private Account account;
 	

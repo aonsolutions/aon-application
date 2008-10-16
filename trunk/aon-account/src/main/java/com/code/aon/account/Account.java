@@ -4,6 +4,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import org.apache.commons.lang.ObjectUtils;
 import org.hibernate.annotations.Formula;
@@ -19,6 +20,8 @@ import com.code.aon.common.ITransferObject;
 @Entity
 @Table(name = "account")
 public class Account implements ITransferObject {
+
+	private static final long serialVersionUID = -4744515826050552526L;
 
 	/**
 	 * The ID of this account
@@ -132,9 +135,18 @@ public class Account implements ITransferObject {
 	 * 
 	 * @return The level of this account.
 	 */
-	@Formula("LENGTH(id)")
+	@Transient
 	public int getLevel() {
-		return level;
+		if (id != null) {
+			if (id.length() > 5) {
+				return 5;
+			} else if (id.length() == 5 ) {
+				return 4;
+			} else {
+				return id.length();
+			}
+		}
+		return -1;
 	}
 
 	/**

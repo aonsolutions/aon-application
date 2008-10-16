@@ -4,8 +4,10 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
+
 import org.hibernate.Query;
 import org.hibernate.Session;
+import org.hibernate.Transaction;
 
 import com.code.aon.account.Account;
 import com.code.aon.account.AccountEntryDetail;
@@ -74,20 +76,24 @@ public class AccountSummaryManager {
 		String delete = "delete from AccountSummary as summary";
 		delete += (accountPeriod != null)?" where summary.accountPeriod = '" + accountPeriod.getId() + "'":"";
         Session session = HibernateUtil.getSession();
+        Transaction t = session.beginTransaction();
         Query query = session.createQuery(delete);
-        query.executeUpdate();
+        int rows = query.executeUpdate();
+        t.commit();
+        session.flush();
+        System.out.println( "Filas borradas: "  +  rows );
 	}
 
 	@SuppressWarnings("unchecked")
 	public static void regenerateAccountSummary(Period accountPeriod) throws ManagerBeanException {
 		deleteAccountSummary(accountPeriod);
 
-		String select = "select entryDetail.account, entry.securityLevel, entry.entryDate, month(entry.entryDate), " +
+		String select = "select entryDetail.account, entry.securityLevel, entry.entryDate, " +
 						"sum(entryDetail.debit), sum(entryDetail.credit) " +
 						"from AccountEntry as entry, AccountEntryDetail as entryDetail " +
 						"where entry.id = entryDetail.accountEntry.id " +
 						"and entry.accountPeriod = '" + accountPeriod.getId() + "' " + 
-						"group by entryDetail.account, entry.securityLevel, entry.entryDate, month(entry.entryDate)";
+						"group by entryDetail.account, entry.securityLevel, entry.entryDate ";
         Session session = HibernateUtil.getSession();
         Query query = session.createQuery(select);
         List list = query.list();
@@ -100,8 +106,8 @@ public class AccountSummaryManager {
         	accountSummary.setAccount((Account)obj[0]);
         	accountSummary.setSecurityLevel((SecurityLevel)obj[1]);
         	accountSummary.setEntryDate((Date)obj[2]);
-        	accountSummary.setDebit((Double)obj[4]);
-        	accountSummary.setCredit((Double)obj[5]);
+        	accountSummary.setDebit(round(((Double)obj[3]).doubleValue(),2));
+        	accountSummary.setCredit(round(((Double)obj[4]).doubleValue(),2));
         	addAccountSummary(accountSummary);
         }
 	}

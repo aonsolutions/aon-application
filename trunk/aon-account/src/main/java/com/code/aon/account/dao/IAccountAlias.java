@@ -47,12 +47,6 @@ public interface IAccountAlias {
 	*/
 	String  ACCOUNT_ID = ACCOUNT_ENTRY.getAliasNames()[3];
 
-	/** 
-	* Alias value: Account_level
-	* Hibernate value: Account.level
-	*/
-	String  ACCOUNT_LEVEL = ACCOUNT_ENTRY.getAliasNames()[4];
-
 
 
 	/** 
@@ -154,58 +148,64 @@ public interface IAccountAlias {
 	String  ACCOUNT_ENTRY_DETAIL_ACCOUNT_ENTRY_ID = ACCOUNT_ENTRY_DETAIL_ENTRY.getAliasNames()[0];
 
 	/** 
+	* Alias value: AccountEntryDetail_accountEntry_type
+	* Hibernate value: AccountEntryDetail.accountEntry.type
+	*/
+	String  ACCOUNT_ENTRY_DETAIL_ACCOUNT_ENTRY_TYPE = ACCOUNT_ENTRY_DETAIL_ENTRY.getAliasNames()[1];
+
+	/** 
 	* Alias value: AccountEntryDetail_accountEntry_entryDate
 	* Hibernate value: AccountEntryDetail.accountEntry.entryDate
 	*/
-	String  ACCOUNT_ENTRY_DETAIL_ACCOUNT_ENTRY_ENTRY_DATE = ACCOUNT_ENTRY_DETAIL_ENTRY.getAliasNames()[1];
+	String  ACCOUNT_ENTRY_DETAIL_ACCOUNT_ENTRY_ENTRY_DATE = ACCOUNT_ENTRY_DETAIL_ENTRY.getAliasNames()[2];
 
 	/** 
 	* Alias value: AccountEntryDetail_accountEntry_accountPeriod
 	* Hibernate value: AccountEntryDetail.accountEntry.accountPeriod
 	*/
-	String  ACCOUNT_ENTRY_DETAIL_ACCOUNT_ENTRY_ACCOUNT_PERIOD = ACCOUNT_ENTRY_DETAIL_ENTRY.getAliasNames()[2];
+	String  ACCOUNT_ENTRY_DETAIL_ACCOUNT_ENTRY_ACCOUNT_PERIOD = ACCOUNT_ENTRY_DETAIL_ENTRY.getAliasNames()[3];
 
 	/** 
 	* Alias value: AccountEntryDetail_account_id
 	* Hibernate value: AccountEntryDetail.account.id
 	*/
-	String  ACCOUNT_ENTRY_DETAIL_ACCOUNT_ID = ACCOUNT_ENTRY_DETAIL_ENTRY.getAliasNames()[3];
+	String  ACCOUNT_ENTRY_DETAIL_ACCOUNT_ID = ACCOUNT_ENTRY_DETAIL_ENTRY.getAliasNames()[4];
 
 	/** 
 	* Alias value: AccountEntryDetail_balancingAccount_id
 	* Hibernate value: AccountEntryDetail.balancingAccount.id
 	*/
-	String  ACCOUNT_ENTRY_DETAIL_BALANCING_ACCOUNT_ID = ACCOUNT_ENTRY_DETAIL_ENTRY.getAliasNames()[4];
+	String  ACCOUNT_ENTRY_DETAIL_BALANCING_ACCOUNT_ID = ACCOUNT_ENTRY_DETAIL_ENTRY.getAliasNames()[5];
 
 	/** 
 	* Alias value: AccountEntryDetail_concept
 	* Hibernate value: AccountEntryDetail.concept
 	*/
-	String  ACCOUNT_ENTRY_DETAIL_CONCEPT = ACCOUNT_ENTRY_DETAIL_ENTRY.getAliasNames()[5];
+	String  ACCOUNT_ENTRY_DETAIL_CONCEPT = ACCOUNT_ENTRY_DETAIL_ENTRY.getAliasNames()[6];
 
 	/** 
 	* Alias value: AccountEntryDetail_credit
 	* Hibernate value: AccountEntryDetail.credit
 	*/
-	String  ACCOUNT_ENTRY_DETAIL_CREDIT = ACCOUNT_ENTRY_DETAIL_ENTRY.getAliasNames()[6];
+	String  ACCOUNT_ENTRY_DETAIL_CREDIT = ACCOUNT_ENTRY_DETAIL_ENTRY.getAliasNames()[7];
 
 	/** 
 	* Alias value: AccountEntryDetail_debit
 	* Hibernate value: AccountEntryDetail.debit
 	*/
-	String  ACCOUNT_ENTRY_DETAIL_DEBIT = ACCOUNT_ENTRY_DETAIL_ENTRY.getAliasNames()[7];
+	String  ACCOUNT_ENTRY_DETAIL_DEBIT = ACCOUNT_ENTRY_DETAIL_ENTRY.getAliasNames()[8];
 
 	/** 
 	* Alias value: AccountEntryDetail_id
 	* Hibernate value: AccountEntryDetail.id
 	*/
-	String  ACCOUNT_ENTRY_DETAIL_ID = ACCOUNT_ENTRY_DETAIL_ENTRY.getAliasNames()[8];
+	String  ACCOUNT_ENTRY_DETAIL_ID = ACCOUNT_ENTRY_DETAIL_ENTRY.getAliasNames()[9];
 
 	/** 
 	* Alias value: AccountEntryDetail_line
 	* Hibernate value: AccountEntryDetail.line
 	*/
-	String  ACCOUNT_ENTRY_DETAIL_LINE = ACCOUNT_ENTRY_DETAIL_ENTRY.getAliasNames()[9];
+	String  ACCOUNT_ENTRY_DETAIL_LINE = ACCOUNT_ENTRY_DETAIL_ENTRY.getAliasNames()[10];
 
 
 
@@ -312,10 +312,16 @@ public interface IAccountAlias {
 	String  LOAN_REVIEW = LOAN_ENTRY.getAliasNames()[7];
 
 	/** 
+	* Alias value: Loan_securityLevel
+	* Hibernate value: Loan.securityLevel
+	*/
+	String  LOAN_SECURITY_LEVEL = LOAN_ENTRY.getAliasNames()[8];
+
+	/** 
 	* Alias value: Loan_term
 	* Hibernate value: Loan.term
 	*/
-	String  LOAN_TERM = LOAN_ENTRY.getAliasNames()[8];
+	String  LOAN_TERM = LOAN_ENTRY.getAliasNames()[9];
 
 
 

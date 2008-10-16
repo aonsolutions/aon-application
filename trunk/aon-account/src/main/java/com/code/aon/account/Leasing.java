@@ -22,6 +22,8 @@ import com.code.aon.product.Tax;
 @Table(name="leasing")
 public class Leasing implements ITransferObject {
 
+	private static final long serialVersionUID = -7130430601713491089L;
+
 	/** The id. */
 	private Integer id;
 	

@@ -21,6 +21,8 @@ import com.code.aon.common.enumeration.SecurityLevel;
 @Table(name = "account_summary")
 public class AccountSummary implements ITransferObject {
 	
+	private static final long serialVersionUID = -8220548741479656597L;
+
 	/** The id. */
 	private Integer id;
 	
