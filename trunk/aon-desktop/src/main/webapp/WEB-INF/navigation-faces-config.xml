@@ -51,6 +51,14 @@
 			<from-outcome>changepassword_form</from-outcome>
 			<to-view-id>/facelet/user/changePasswordContent.xhtml</to-view-id>
 		</navigation-case>
+		<navigation-case>
+			<from-outcome>user_change_form</from-outcome>
+			<to-view-id>/facelet/user/changeUser.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>changeuser_form</from-outcome>
+			<to-view-id>/facelet/user/changeUserContent.xhtml</to-view-id>
+		</navigation-case>
 	</navigation-rule>
 	
 	<!-- =================== Application Menu Navigation Rules ================= -->
@@ -98,6 +106,26 @@
 		<navigation-case>
 			<from-outcome>corporate_identity</from-outcome>
 			<to-view-id>/facelet/corporateIdentity/form.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>corporate_identity_fax</from-outcome>
+			<to-view-id>/facelet/corporateIdentity/fax/form.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>corporate_identity_letter</from-outcome>
+			<to-view-id>/facelet/corporateIdentity/letter/form.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>corporate_identity_label</from-outcome>
+			<to-view-id>/facelet/corporateIdentity/label/form.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>corporate_identity_recibi</from-outcome>
+			<to-view-id>/facelet/corporateIdentity/recibi/form.xhtml</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>corporate_identity_abonare</from-outcome>
+			<to-view-id>/facelet/corporateIdentity/abonare/form.xhtml</to-view-id>
 		</navigation-case>
 		<navigation-case>
 			<from-outcome>corporate_identity_fax</from-outcome>

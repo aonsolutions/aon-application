@@ -34,17 +34,35 @@
 
 				<aon:panelGrid columns="2" dir="true">
 
-					<aon:outputLabel for="User_name"
+					<aon:outputLabel for="User_name" style="width:200px"
 						value="#{configBundle.user_name}" />
 					<aon:inputText id="User_name"
 						required="true" size="80"
-						maxlength="64" value="#{user.to.name}" />
+						maxlength="64" value="#{securityUser.name}" />
+
+					<aon:outputLabel for="User_surname" style="width:200px"
+						value="#{appBundle.user_surname}" />
+					<aon:inputText id="User_surname"
+						required="true" size="80"
+						maxlength="64" value="#{securityUser.surname}" />
 
 					<aon:outputLabel for="User_login"
 						value="#{configBundle.user_login}" />
 					<aon:inputText id="User_login" disabled="#{!user.new}"
 						required="true" size="20"
 						maxlength="16" value="#{user.to.login}" />
+
+					<aon:outputLabel for="User_email"
+						value="#{appBundle.user_email}" />
+					<aon:inputText id="User_email"
+						size="64"
+						maxlength="64" value="#{securityUser.alternativeEmail}" />
+
+					<aon:outputLabel for="User_cellular"
+						value="#{appBundle.user_cellular}" />
+					<aon:inputText id="User_cellular"
+						size="20"
+						maxlength="16" value="#{securityUser.cellular}" />
 
 					<aon:outputLabel for="User_active"
 						value="#{configBundle.series_active}" />
@@ -70,6 +88,8 @@
 			</aon:div>
 
 		</aon:form>
+
+		<ui:include src="/facelet/user/userNotExist.xhtml" />
 
 	</ui:define>
 </ui:composition>

@@ -5,13 +5,13 @@
 	xmlns:rich="http://richfaces.org/rich"
 	xmlns:aon="http://www.code.es/aon-rich-components">
 
-	<aon:form id="passwordChanged">
+	<aon:form id="userNotExists">
 
-		<aon:panelGroup id="passwordChangedWindow"
+		<aon:panelGroup id="userNotExistsWindow"
 			styleClass="aon-popupWindow">
 
-			<rich:modalPanel id="passwordChangedModalPanel"
-				rendered="#{currentUser.showPasswordChangedWindow}"
+			<rich:modalPanel id="userNotExistsModalPanel"
+				rendered="#{securityUser.showUserNotExistsWindow}"
 				showWhenRendered="true" minWidth="400" width="400" height="120">
 
 				<f:facet name="header">
@@ -19,33 +19,23 @@
 						<aon:outputText value="#{appBundle.aon_application_title}" />
 					</aon:div>
 				</f:facet>
-				<f:facet name="controls">
-					<aon:commandButton type="button" styleClass="aon-popupWindow-close"
-						immediate="true">
-						<f:setPropertyActionListener
-							target="#{currentUser.showPasswordChangedWindow}"
-							value="#{false}" />
-						<rich:componentControl for="passwordChangedModalPanel"
-							event="onclick" disableDefault="true" operation="hide" />
-					</aon:commandButton>
-				</f:facet>
 
 				<aon:div styleClass="aon-popupWindow-content">
 					<aon:div styleClass="aon-popupWindow-content-internal">
 
 						<aon:div styleClass="aon-message-big aon-icon-big-info">
-							<aon:outputText value="#{appBundle.user_password_changed}" />
+							<aon:outputText value="#{appBundle.user_user_not_exist}" />
 						</aon:div>
 
 						<aon:div styleClass="aon-text-center">
 							<aon:commandButton value="#{bundle.aon_close}"
-								actionListener="#{currentUser.cancel}"
-								action="#{currentUser.returnAction}"
+								actionListener="#{user.cancel}"
+								action="user_list"
 								styleClass="aon-commandButton">
 								<f:setPropertyActionListener
-									target="#{currentUser.showPasswordChangedWindow}"
+									target="#{securityUser.showUserNotExistsWindow}"
 									value="#{false}" />
-								<rich:componentControl for="passwordChangedModalPanel"
+								<rich:componentControl for="userNotExistsModalPanel"
 									event="onclick" disableDefault="true" operation="hide" />
 							</aon:commandButton>
 						</aon:div>
