@@ -5,6 +5,12 @@
 
 <faces-config>
 
+	<!--  ********* GEOZONE CONVERTER ***************** -->
+	<converter>
+		<converter-for-class>com.code.aon.geozone.GeoZone</converter-for-class>
+		<converter-class>com.code.aon.ui.geozone.converter.GeoZoneConverter</converter-class>
+	</converter>
+
 	<!-- ************ COLLECTION **************** -->
 	<managed-bean>
 		<managed-bean-name>geozoneCollections</managed-bean-name>
@@ -18,7 +24,7 @@
 	<managed-bean>
 		<managed-bean-name>geotreeParent</managed-bean-name>
 		<managed-bean-class>
-			com.code.aon.ui.geozone.controller.GeoTreeParentController
+			com.code.aon.ui.form.BasicController
 		</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>

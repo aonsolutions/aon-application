@@ -44,14 +44,13 @@ public class GeozoneCollectionsController {
             Iterator<ITransferObject> iter = geozoneBean.getList(criteria).iterator();
             while (iter.hasNext()){
                 GeoZone geozone = (GeoZone) iter.next();
-                SelectItem item = new SelectItem(geozone.getId(), geozone.getName());
+                SelectItem item = new SelectItem(geozone, geozone.getName());
                 geoZones.add( item );
             }
         }
         return geoZones;
     }
 
-	@SuppressWarnings("unchecked")
 	public List<SelectItem> getGeoTrees() throws ManagerBeanException {
 		if (geoTrees == null) {
 			geoTrees = new LinkedList<SelectItem>();
@@ -79,7 +78,7 @@ public class GeozoneCollectionsController {
 		Iterator iter = geoTreeBean.getList(criteria).iterator();
 		while(iter.hasNext()){
 			GeoTree geoTree = (GeoTree)iter.next();
-			SelectItem item = new SelectItem(geoTree.getChild().getId(),geoTree.getChild().getName());
+			SelectItem item = new SelectItem(geoTree.getChild(),geoTree.getChild().getName());
 			items.add(item);
 		}
 		return items.toArray(new SelectItem[items.size()]);
