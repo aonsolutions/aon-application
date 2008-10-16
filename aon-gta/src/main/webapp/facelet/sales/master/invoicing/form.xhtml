@@ -689,6 +689,19 @@
 							
 				</t:div>
 			</t:div>
+
+			<s:modalDialog
+		       dialogId="viewDialog"
+		       dialogVar="viewDialog"
+		       closeButton="false">
+		       <t:div styleClass="aon-timer">		       		
+		       		<h:graphicImage value="/css/images/content/aon-timer.gif" />
+		       		<t:div styleClass="aon-timer-title" >
+		       			<t:outputText value="#{appBundle.aon_in_progress}" /> 
+		       		</t:div>
+  			   </t:div>
+			</s:modalDialog>
+
 		</h:form>
 		<script>
 			function calcPrice(index){
