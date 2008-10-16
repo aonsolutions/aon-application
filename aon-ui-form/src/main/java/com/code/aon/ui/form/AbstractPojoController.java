@@ -3,19 +3,16 @@ package com.code.aon.ui.form;
 import java.beans.PropertyDescriptor;
 import java.io.Serializable;
 import java.lang.reflect.InvocationTargetException;
-import java.util.Map;
 import java.util.logging.Logger;
 
 import org.apache.commons.beanutils.PropertyUtils;
 import org.hibernate.annotations.Cascade;
 
 import com.code.aon.common.BeanManager;
-import com.code.aon.common.ILookupObject;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.annotations.AonPOJOInitializationInvalidateRestoreNull;
-import com.code.aon.ui.common.lookup.LookupUtils;
 import com.code.aon.ui.util.AonUtil;
 
 /**
@@ -115,6 +112,7 @@ public class AbstractPojoController {
 	 * @param to
 	 * @throws ManagerBeanException
 	 */
+	@SuppressWarnings("unchecked")
 	protected void restoreNullSubPOJOs(ITransferObject to) throws ManagerBeanException {
 		try {
 			Class clazz = to.getClass();
@@ -150,29 +148,6 @@ public class AbstractPojoController {
 		} catch (NoSuchMethodException e) {
 			throw new ManagerBeanException(e.getMessage());
 		}
-	}
-
-	/**
-	 * Return lookups in XML Format.
-	 * 
-	 * @param lo
-	 * @param ids
-	 * @return String
-	 */
-	protected String getLookupsAsXML(ILookupObject lo, String ids) {
-		Map<String, Object> map = lo.getLookups();
-		customizeLookupMap(lo, map);
-		return LookupUtils.getResponseXML(map, ids);
-	}
-
-	/**
-	 * To redefine in childs when you want to customize your lookups.
-	 * 
-	 * @param ito
-	 * @param map
-	 */
-	@SuppressWarnings("unused")
-	protected void customizeLookupMap(ILookupObject ito, Map<String, Object> map) {
 	}
 
 	/**
