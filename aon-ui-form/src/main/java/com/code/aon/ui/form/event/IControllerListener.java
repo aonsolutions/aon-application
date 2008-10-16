@@ -171,4 +171,40 @@ public interface IControllerListener {
 	 * @throws ControllerListenerException the controller listener exception
 	 */
 	void beforeModelInitialized(ControllerEvent event) throws ControllerListenerException;
+
+	/**
+	 * Método invocado cuando se procede a la búsqueda.
+	 * 
+	 * @param event ChangeEvent Evento propagado.
+	 * 
+	 * @throws ControllerListenerException the controller listener exception
+	 */
+	void afterModelSearched(ControllerEvent event) throws ControllerListenerException;
+	
+	/**
+	 * Método invocado después de realizar una búsqueda
+	 * 
+	 * @param event ChangeEvent Evento propagado.
+	 * 
+	 * @throws ControllerListenerException the controller listener exception
+	 */
+	void beforeModelSearched(ControllerEvent event) throws ControllerListenerException;
+
+	/**
+	 * Método invocado cuando se procede a la edición de la búsqueda.
+	 * 
+	 * @param event ChangeEvent Evento propagado.
+	 * 
+	 * @throws ControllerListenerException the controller listener exception
+	 */
+	void afterEditSearch(ControllerEvent event) throws ControllerListenerException;
+	
+	/**
+	 * Método invocado después de realizar la edición de la búsqueda
+	 * 
+	 * @param event ChangeEvent Evento propagado.
+	 * 
+	 * @throws ControllerListenerException the controller listener exception
+	 */
+	void beforeEditSearch(ControllerEvent event) throws ControllerListenerException;
 }

@@ -11,8 +11,6 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import javax.faces.context.ExternalContext;
-import javax.faces.context.FacesContext;
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 import javax.faces.event.ValueChangeEvent;
@@ -24,7 +22,6 @@ import org.apache.commons.lang.SerializationUtils;
 import org.apache.commons.lang.StringUtils;
 
 import com.code.aon.common.ICollectionProvider;
-import com.code.aon.common.ILookupObject;
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ql.Criteria;
@@ -291,7 +288,6 @@ public class BasicController extends AbstractPojoController implements IControll
 	 * 
 	 * @param event
 	 */
-	@SuppressWarnings("unused")
 	public void accept(ActionEvent event) {
 		try {
 			restoreNullSubPOJOs(getTo());
@@ -352,10 +348,12 @@ public class BasicController extends AbstractPojoController implements IControll
 	public void onSearch(ActionEvent event) {
 		try {
 			ControllerEvent evt = new ControllerEvent(this);
+			controllerListenerSupport.fireBeforeModelSearched(evt);
 			controllerListenerSupport.fireBeforeBeanReset(evt);
 			initializeModel();
 			resetTo();
 			controllerListenerSupport.fireAfterBeanReset(evt);
+			controllerListenerSupport.fireAfterModelSearched(evt);
 		} catch (ControllerListenerException e) {
 			LOGGER.severe(">>>> onSearch " + e.getMessage());
 			addMessage(e.getMessage());
@@ -379,7 +377,6 @@ public class BasicController extends AbstractPojoController implements IControll
 	 * 
 	 * @param event
 	 */
-	@SuppressWarnings("unused")
 	public void remove(ActionEvent event) {
 		try {
 			ControllerEvent evt = new ControllerEvent(this);
@@ -463,10 +460,12 @@ public class BasicController extends AbstractPojoController implements IControll
 	public void onEditSearch(ActionEvent event) {
 		try {
 			ControllerEvent evt = new ControllerEvent(this);
+			controllerListenerSupport.fireBeforeEditSearch(evt);
 			controllerListenerSupport.fireBeforeBeanReset(evt);
 			clearCriteria();
 			setTo(getManagerBean().createNewTo());
 			controllerListenerSupport.fireAfterBeanReset(evt);
+			controllerListenerSupport.fireAfterEditSearch(evt);
 		} catch (ControllerListenerException e) {
 			LOGGER.severe(">>>> onEditSearch " + e.getMessage());
 			addMessage(e.getMessage());
@@ -677,7 +676,6 @@ public class BasicController extends AbstractPojoController implements IControll
 	 * 
 	 * @see com.code.aon.ui.form.IController#initializeModel()
 	 */
-	@SuppressWarnings("unchecked")
 	public void initializeModel() {
 		try {
 			ControllerEvent evt = new ControllerEvent(this);
@@ -814,19 +812,6 @@ public class BasicController extends AbstractPojoController implements IControll
 	}
 
 	/**
-	 * Return lookups in XML Format.
-	 * 
-	 * @return String
-	 */
-	public String getLookupsAsXML() {
-		this.selectedIndex = getSelectedTOIndex();
-		ExternalContext ec = FacesContext.getCurrentInstance().getExternalContext();
-		String ids = (String) ec.getRequestParameterMap().get("ids");
-		LOGGER.fine(">>>> getLookups rowIndex:[" + selectedIndex + "] ids:[" + ids + "]");
-		return getLookupsAsXML((ILookupObject) getSelectedTO(), ids);
-	}
-
-	/**
 	 * Add all listeners from variable listenerClasses to controller.
 	 * 
 	 */
@@ -845,6 +830,7 @@ public class BasicController extends AbstractPojoController implements IControll
 	 * 
 	 * @return Collection
 	 */
+	@SuppressWarnings("unchecked")
 	public Collection getCollection() {
 		if (this.getTo() != null) {
 			List<ITransferObject> l = new LinkedList<ITransferObject>();
@@ -861,6 +847,7 @@ public class BasicController extends AbstractPojoController implements IControll
 	 * @return Collection
 	 * @throws ManagerBeanException
 	 */
+	@SuppressWarnings("unchecked")
 	public Collection getCollection(boolean forceRefresh) throws ManagerBeanException {
 		if (!forceRefresh) {
 			return this.getCollection();

@@ -17,6 +17,8 @@ import com.code.aon.ui.form.IController;
  
 public class ControllerEvent extends EventObject {
 
+	private static final long serialVersionUID = -3713191797729523559L;
+
 	/**
 	 * The empty constructor.
 	 * 

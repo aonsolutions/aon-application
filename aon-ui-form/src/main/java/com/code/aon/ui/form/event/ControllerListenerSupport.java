@@ -4,7 +4,6 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
-// TODO: Auto-generated Javadoc
 /**
  * The Class ControllerListenerSupport.
  */
@@ -321,6 +320,76 @@ public class ControllerListenerSupport {
 			while (iter.hasNext()) {
 				IControllerListener l = iter.next();
 				l.beforeModelInitialized(event);
+			}
+		}
+	}
+
+	/**
+	 * Propaga un <code>ControllerEvent</code> a todos los subscriptores
+	 * registrados.
+	 * 
+	 * @param event El evento de esta acción.
+	 * 
+	 * @throws ControllerListenerException the controller listener exception
+	 */
+	public void fireBeforeEditSearch(ControllerEvent event) throws ControllerListenerException {
+		if (listeners!= null && !listeners.isEmpty()){
+			Iterator<IControllerListener> iter = listeners.iterator();
+			while (iter.hasNext()) {
+				IControllerListener l = iter.next();
+				l.beforeEditSearch(event);
+			}
+		}
+	}
+	/**
+	 * Propaga un <code>ControllerEvent</code> a todos los subscriptores
+	 * registrados.
+	 * 
+	 * @param event El evento de esta acción.
+	 * 
+	 * @throws ControllerListenerException the controller listener exception
+	 */
+	public void fireAfterEditSearch(ControllerEvent event) throws ControllerListenerException {
+		if (listeners!= null && !listeners.isEmpty()){
+			Iterator<IControllerListener> iter = listeners.iterator();
+			while (iter.hasNext()) {
+				IControllerListener l = iter.next();
+				l.afterEditSearch(event);
+			}
+		}
+	}
+
+	/**
+	 * Propaga un <code>ControllerEvent</code> a todos los subscriptores
+	 * registrados.
+	 * 
+	 * @param event El evento de esta acción.
+	 * 
+	 * @throws ControllerListenerException the controller listener exception
+	 */
+	public void fireBeforeModelSearched(ControllerEvent event) throws ControllerListenerException {
+		if (listeners!= null && !listeners.isEmpty()){
+			Iterator<IControllerListener> iter = listeners.iterator();
+			while (iter.hasNext()) {
+				IControllerListener l = iter.next();
+				l.beforeModelSearched(event);
+			}
+		}
+	}
+	/**
+	 * Propaga un <code>ControllerEvent</code> a todos los subscriptores
+	 * registrados.
+	 * 
+	 * @param event El evento de esta acción.
+	 * 
+	 * @throws ControllerListenerException the controller listener exception
+	 */
+	public void fireAfterModelSearched(ControllerEvent event) throws ControllerListenerException {
+		if (listeners!= null && !listeners.isEmpty()){
+			Iterator<IControllerListener> iter = listeners.iterator();
+			while (iter.hasNext()) {
+				IControllerListener l = iter.next();
+				l.afterModelSearched(event);
 			}
 		}
 	}
