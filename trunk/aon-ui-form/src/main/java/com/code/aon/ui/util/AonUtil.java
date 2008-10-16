@@ -1,20 +1,18 @@
 package com.code.aon.ui.util;
 
 import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
 import java.text.MessageFormat;
 import java.util.Locale;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 import java.util.logging.Logger;
 
+import javax.el.ELContext;
+import javax.el.ExpressionFactory;
+import javax.el.ValueExpression;
 import javax.faces.application.FacesMessage;
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
-import javax.faces.el.ValueBinding;
-import javax.faces.event.AbortProcessingException;
 
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
@@ -22,6 +20,7 @@ import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.ql.Criteria;
+import com.code.aon.ui.common.ICommonConstants;
 import com.code.aon.ui.common.controller.ConfigurationController;
 import com.code.aon.ui.form.IController;
 
@@ -71,8 +70,10 @@ public class AonUtil {
 	 */
 	public static Object getRegisteredBean(String name) {
 		FacesContext ctx = FacesContext.getCurrentInstance();
-		ValueBinding vb = ctx.getApplication().createValueBinding("#{" + name + "}");
-		return vb.getValue(ctx);
+		ELContext elctx = ctx.getELContext();
+		ExpressionFactory ef = ctx.getApplication().getExpressionFactory();
+		ValueExpression ve = ef.createValueExpression(elctx,"#{" + name + "}",Object.class);
+		return ve.getValue(elctx);
 	}
 
 	/**
@@ -238,68 +239,6 @@ public class AonUtil {
 	}
 
 	/**
-	 * Gets the sql value.
-	 * 
-	 * @param sqlQuery
-	 *            the sql query
-	 * 
-	 * @return the sql value
-	 */
-	@Deprecated
-	// Will be removed in next Version.
-	public static String getSqlValue(String sqlQuery) {
-		String[] values = getSqlValues(sqlQuery);
-		if (values != null && values.length > 0) {
-			return values[0];
-		}
-		return null;
-	}
-
-	/**
-	 * Gets the sql values.
-	 * 
-	 * @param sqlQuery
-	 *            the sql query
-	 * 
-	 * @return the sql values
-	 */
-	@Deprecated
-	// Will be removed in next Version.
-	public static String[] getSqlValues(String sqlQuery) {
-		Connection conn = AonUtil.getSQLConnection();
-		Statement stmt = null;
-		ResultSet rs = null;
-		String[] values = null;
-		try {
-			stmt = conn.createStatement();
-			rs = stmt.executeQuery(sqlQuery);
-			if (rs.next()) {
-				values = new String[rs.getMetaData().getColumnCount()];
-				for (int i = 0; i < values.length; i++) {
-					values[i] = rs.getString(i + 1);
-				}
-			}
-		} catch (SQLException e) {
-			throw new AbortProcessingException(e);
-		} finally {
-			if (rs != null) {
-				try {
-					rs.close();
-				} catch (SQLException e) {
-				}
-			}
-			if (stmt != null) {
-				try {
-					stmt.close();
-				} catch (SQLException e) {
-				}
-			}
-		}
-
-		return values;
-	}
-
-	/**
 	 * Adds <code>message</code> to the messages collection
 	 * 
 	 * @param message
@@ -411,10 +350,6 @@ public class AonUtil {
 		if (message != null) {
 			return message;
 		}
-		// TODO /FIX: Note that this has fallback behavior to default Locale for
-		// message,
-		// but similar behavior above does not. The methods should probably
-		// behave
 		locale = Locale.getDefault();
 		return getMessage(locale, messageId, params);
 
@@ -534,4 +469,107 @@ public class AonUtil {
 		}
 		return localizedStr;
 	}
+	
+    /**
+     * Returns the message of the given ResourceBundle.
+     * @param bundleKey
+     * @param messageKey
+     * @return String 
+     */
+    public static String getMessage(String bundleKey, String messageKey) {
+    	return AonUtil.getConfigurationController().getMessage(bundleKey, messageKey);
+    }
+    
+    /**
+     * @param messageKey
+     * @return String
+     */
+    public static String getMessage(String messageKey) {
+    	return AonUtil.getMessage(ICommonConstants.DEFAULT_BUNDLE, messageKey);
+    }
+	
+    /**
+     * @param bundleKey
+     * @param messageKey
+     * @return String
+     */
+    public static String addFatalMessageFromBundle(String bundleKey,String messageKey) {
+    	String msg = AonUtil.getMessage(bundleKey, messageKey);
+    	addFatalMessage(msg);
+    	return msg;
+    }
+
+    /**
+     * @param messageKey
+     * @return String
+     */
+    public static String addFatalMessageFromBundle(String messageKey) {
+    	String msg = AonUtil.getMessage(messageKey);
+    	addFatalMessage(msg);
+    	return msg;
+    }
+
+    /**
+     * @param bundleKey
+     * @param messageKey
+     * @return String
+     */
+    public static String addErrorMessageFromBundle(String bundleKey,String messageKey) {
+    	String msg = AonUtil.getMessage(bundleKey, messageKey);
+    	addErrorMessage(msg);
+    	return msg;
+    }
+
+    /**
+     * @param messageKey
+     * @return String
+     */
+    public static String addErrorMessageFromBundle(String messageKey) {
+    	String msg = AonUtil.getMessage(messageKey);
+    	addErrorMessage(msg);
+    	return msg;
+    }
+
+    /**
+     * @param bundleKey
+     * @param messageKey
+     * @return String
+     */
+    public static String addInfoMessageFromBundle(String bundleKey,String messageKey) {
+    	String msg = AonUtil.getMessage(bundleKey, messageKey);
+    	addInfoMessage(msg);
+    	return msg;
+    }
+
+    /**
+     * @param messageKey
+     * @return String
+     */
+    public static String addInfoMessageFromBundle(String messageKey) {
+    	String msg = AonUtil.getMessage(messageKey);
+    	addInfoMessage(msg);
+    	return msg;
+    }
+
+    /**
+     * @param bundleKey
+     * @param messageKey
+     * @return String
+     */
+    public static String addWarningMessageFromBundle(String bundleKey,String messageKey) {
+    	String msg = AonUtil.getMessage(bundleKey, messageKey);
+    	addWarningMessage(msg);
+    	return msg;
+    }
+
+    /**
+     * @param messageKey
+     * @return String
+     */
+    public static String addWarningMessageFromBundle(String messageKey) {
+    	String msg = AonUtil.getMessage(messageKey);
+    	addWarningMessage(msg);
+    	return msg;
+    }
+
 }
