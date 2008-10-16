@@ -3,11 +3,11 @@ package com.code.aon.ui.converter;
 import java.util.Collection;
 import java.util.Locale;
 
+import javax.el.ValueExpression;
 import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 import javax.faces.convert.Converter;
 import javax.faces.convert.ConverterException;
-import javax.faces.el.ValueBinding;
 import javax.faces.model.SelectItem;
 
 import com.code.aon.common.enumeration.IResourceable;
@@ -47,14 +47,14 @@ public class EnumLocaleConverter implements Converter {
 	 */
 	@SuppressWarnings("unchecked")
 	protected Class getEnumClass(FacesContext ctx, UIComponent comp) {
-		ValueBinding vb = comp.getValueBinding("value");
-		Class enumType = vb == null ? null : vb.getType(ctx);
+		ValueExpression vb = comp.getValueExpression("value");
+		Class enumType = vb == null ? null : vb.getType(ctx.getELContext());
 		if (enumType == null || !enumType.isEnum()) {
 			for (Object child : comp.getChildren()) {
 				if (child instanceof UIComponent) {
 					UIComponent c = (UIComponent) child;
-					vb = c.getValueBinding("value");
-					Object val = vb == null ? null : vb.getValue(ctx);
+					vb = c.getValueExpression("value");
+					Object val = vb == null ? null : vb.getValue(ctx.getELContext());
 					if (val == null) {
 						throw new ConverterException("Cannot get items");
 					}

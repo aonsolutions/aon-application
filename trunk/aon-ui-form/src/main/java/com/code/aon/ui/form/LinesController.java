@@ -6,9 +6,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import javax.faces.application.Application;
-import javax.faces.context.FacesContext;
-import javax.faces.el.ValueBinding;
 import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 import javax.faces.model.ListDataModel;
@@ -17,6 +14,7 @@ import org.apache.commons.beanutils.PropertyUtils;
 
 import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.ui.util.AonUtil;
 
 /**
  * LinesController is used to implement child Controllers.
@@ -24,7 +22,7 @@ import com.code.aon.common.ManagerBeanException;
 public class LinesController extends BasicController {
 
 	/** The master controller. */
-	private BasicController masterController;
+	private IController masterController;
 
 	/** The master controller name. */
 	private String masterControllerName;
@@ -89,12 +87,9 @@ public class LinesController extends BasicController {
 	 * 
 	 * @return the master controller
 	 */
-	public BasicController getMasterController() {
+	public IController getMasterController() {
 		if (this.masterController == null) {
-			FacesContext ctx = FacesContext.getCurrentInstance();
-			Application app = ctx.getApplication();
-			ValueBinding vb = app.createValueBinding("#{" + masterControllerName + "}");
-			this.masterController = (BasicController) vb.getValue(ctx);
+			this.masterController = AonUtil.getController(masterControllerName);
 		}
 		return this.masterController;
 	}
@@ -102,6 +97,7 @@ public class LinesController extends BasicController {
 	/**
 	 * Initializes the model.
 	 */
+	@SuppressWarnings("unchecked")
 	public void initModel() {
 		if (isMasterNew()) {
 			this.model = new ListDataModel(new ArrayList());
@@ -166,6 +162,7 @@ public class LinesController extends BasicController {
 	 * @throws ManagerBeanException
 	 *             the manager bean exception
 	 */
+	@SuppressWarnings("unchecked")
 	public void saveModel(ITransferObject masterTO) throws ManagerBeanException {
 		if (this.masterController == null) {
 			throw new AbortProcessingException("Unable to locate Master Controller!");
@@ -188,6 +185,7 @@ public class LinesController extends BasicController {
 	 * @throws ManagerBeanException
 	 *             the manager bean exception
 	 */
+	@SuppressWarnings("unchecked")
 	public void deleteOrphans() throws ManagerBeanException {
 		int pageLimit = getPageLimit();
 		try {
@@ -264,6 +262,7 @@ public class LinesController extends BasicController {
 	 * 
 	 * @see com.code.aon.ui.form.BasicController#remove()
 	 */
+	@SuppressWarnings("unchecked")
 	@Override
 	protected void remove() throws ManagerBeanException {
 		if (isMasterNew()) {
