@@ -45,6 +45,8 @@ public class TargetController extends BasicController {
 	
 	private List<SelectItem> segments;
 	
+	private String selectedTab;
+	
     /**
      * Adds custom entries into the lookup map
      * 
@@ -110,5 +112,13 @@ public class TargetController extends BasicController {
 			}
 		}
 	}
-	    
+
+	public String getSelectedTab() {
+		return selectedTab;
+	}
+
+	public void setSelectedTab(String selectedTab) {
+		this.selectedTab = selectedTab;
+	}
+	
 }
