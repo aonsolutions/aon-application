@@ -224,5 +224,13 @@
 			<property-name>maxWidth</property-name>
 			<property-class>java.lang.Integer</property-class>
 		</property>
-	</converter>    
+	</converter>
+	<converter>
+		<converter-id>com.code.aon.faces.EnumConverter</converter-id>
+		<converter-class>com.code.aon.faces.component.converter.EnumConverter</converter-class>
+		<property>
+			<property-name>enum</property-name>
+			<property-class>java.lang.String</property-class>
+		</property>
+	</converter>	    
 </faces-config>
