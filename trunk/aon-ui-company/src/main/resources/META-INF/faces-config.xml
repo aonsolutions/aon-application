@@ -2,12 +2,6 @@
 	xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/web-facesconfig_1_2.xsd"
 	version="1.2">
 
-	<!--  ********* WORKPLACE CONVERTER ***************** -->
-	<converter>
-		<converter-for-class>com.code.aon.company.WorkPlace</converter-for-class>
-		<converter-class>com.code.aon.ui.company.converter.WorkPlaceConverter</converter-class>
-	</converter>
-
 	<!-- ************** EXTERNAL COLLECTIONS (RELOCATE) ****************** -->
 	<managed-bean>
 		<managed-bean-name>companyCollections</managed-bean-name>
