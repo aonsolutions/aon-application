@@ -6,10 +6,12 @@
 
 	<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml" >
 		<ui:define name="toolbarContent">
-			<aon:commandButton value="#{bundle.aon_search}"
-				action="#{searchAction}" actionListener="#{searchActionListener}"
-				styleClass="aon-finding-toolbar-item aon-icon-search"
-				accesskey="#{bundle.aon_key_search}" />
+			<c:if test="#{!skipSearchButton}">
+				<aon:commandButton value="#{bundle.aon_search}"
+					action="#{searchAction}" actionListener="#{searchActionListener}"
+					styleClass="aon-finding-toolbar-item aon-icon-search"
+					accesskey="#{bundle.aon_key_search}" />
+			</c:if>
 			<c:if test="#{!skipResetButton}">								
 				<aon:commandButton value="#{bundle.aon_reset}"
 					action="#{resetAction}" actionListener="#{resetActionListener}"
