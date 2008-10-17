@@ -46,12 +46,14 @@
 					styleClass="aon-finding-toolbar-item aon-icon-new"
 					accesskey="#{bundle.aon_key_new}" />
 			</c:if>															
-			<aon:commandButton value="#{bundle.aon_back}"
-				rendered="#{!formNew}" immediate="true"
-				styleClass="aon-finding-toolbar-item aon-icon-cancel"
-				actionListener="#{backActionListener}"
-				action="#{backAction}"
-				accesskey="#{bundle.aon_key_cancel}" />
+			<c:if test="#{!skipBackButton}">								
+				<aon:commandButton value="#{bundle.aon_back}"
+					rendered="#{!formNew}" immediate="true"
+					styleClass="aon-finding-toolbar-item aon-icon-cancel"
+					actionListener="#{backActionListener}"
+					action="#{backAction}"
+					accesskey="#{bundle.aon_key_cancel}" />
+			</c:if>															
 				
 			<ui:insert name="beforeSpinToolbarContent"/>				
 				
