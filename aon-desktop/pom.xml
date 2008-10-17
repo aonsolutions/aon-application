@@ -36,13 +36,13 @@
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.resources</artifactId>
-			<version>1.6.2</version>
+			<version>1.6.4</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.rich.components</artifactId>
-			<version>1.6.2</version>
+			<version>1.6.4</version>
 			<scope>compile</scope>
 		</dependency>				
 		<dependency>
