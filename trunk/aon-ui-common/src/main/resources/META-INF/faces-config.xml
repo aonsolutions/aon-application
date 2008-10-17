@@ -4,6 +4,12 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-facesconfig_1_2.xsd">
 
+	<!-- ********* ITransferObject CONVERTER ************* -->
+	<converter>
+	 <converter-for-class>com.code.aon.common.ITransferObject</converter-for-class>
+	 <converter-class>com.code.aon.ui.common.converter.TransferObjectConverter</converter-class>
+	</converter>
+
 	<!-- ************ TIMEZONE CONTROLLER	************** -->
 	<managed-bean>
 		<managed-bean-name>timeZoneController</managed-bean-name>
