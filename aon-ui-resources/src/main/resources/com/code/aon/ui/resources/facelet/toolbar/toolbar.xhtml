@@ -14,8 +14,8 @@
 			<aon:div styleClass="aon-finding-subtitle-internal">
 				<aon:outputText value="#{toolbarDescription}" />			
 			</aon:div>
-
-			<aon:div id="aonToolbar" styleClass="aon-finding-toolbar-item-group">
+			<ui:insert name="toolbarActions"/>
+			<aon:div id="#{toolbarID}" styleClass="aon-finding-toolbar-item-group">
 				<ui:insert name="toolbarContent"/>
 				<ui:insert name="additionalToolbarContent"/>
 			</aon:div>
