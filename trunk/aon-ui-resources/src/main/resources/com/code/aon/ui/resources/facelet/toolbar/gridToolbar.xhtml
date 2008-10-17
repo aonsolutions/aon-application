@@ -5,6 +5,7 @@
 	xmlns:aon="http://www.code.es/aon-rich-components">
 
 	<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/gridToolbarEx.xhtml" >
+		<aon:valueParam name="toolbarID" default="aonToolbar" />	
 		<aon:valueParam name="toolbarDescription" default="#{bundle.aon_editing}" />	
 		<aon:valueParam name="formNew" default="#{controller.new}" />
 		<aon:valueParam name="formEdit" default="#{controller.to != null}" />
