@@ -556,4 +556,10 @@
          <converter-id>com.code.aon.faces.AbbreviateConverter</converter-id>
       </converter>
    </tag>	
+   <tag>
+      <tag-name>enumConverter</tag-name>
+      <converter>
+         <converter-id>com.code.aon.faces.EnumConverter</converter-id>
+      </converter>
+   </tag>
 </facelet-taglib>
