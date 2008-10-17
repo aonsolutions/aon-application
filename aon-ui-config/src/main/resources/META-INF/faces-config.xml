@@ -5,11 +5,6 @@
 
 <faces-config>
 
-	<!--  ********* WORKGROUP CONVERTER ***************** -->
-	<converter>
-		<converter-for-class>com.code.aon.config.WorkGroup</converter-for-class>
-		<converter-class>com.code.aon.ui.config.converter.WorkGroupConverter</converter-class>
-	</converter>
 	<!--  *************** COLLECTIONS ***************** -->
 	<managed-bean>
 		<managed-bean-name>configCollections</managed-bean-name>
