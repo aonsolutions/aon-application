@@ -52,7 +52,6 @@ public class AccountControllerListener extends ControllerAdapter {
 		}
 	}
 
-	@SuppressWarnings("unchecked")
 	private boolean hasAccountEntryDetails(Account account) throws ManagerBeanException {
 		IManagerBean accountEntryDetailBean = BeanManager.getManagerBean(AccountEntryDetail.class);
 		Criteria criteria = new Criteria();

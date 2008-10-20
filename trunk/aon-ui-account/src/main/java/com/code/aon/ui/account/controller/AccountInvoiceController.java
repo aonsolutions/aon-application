@@ -59,7 +59,6 @@ import com.code.aon.ql.Criteria;
 import com.code.aon.ql.Projection;
 import com.code.aon.registry.Registry;
 import com.code.aon.registry.dao.IRegistryAlias;
-import com.code.aon.ui.menu.jsf.MenuEvent;
 import com.code.aon.ui.util.AonUtil;
 
 public class AccountInvoiceController {
@@ -212,34 +211,29 @@ public class AccountInvoiceController {
 		this.registryBankId = registryBankId;
 	}
 
-	@SuppressWarnings("unused")
-	public void onReset(MenuEvent event){
-		reset();
-	}
-	
-	@SuppressWarnings("unused")
 	public void onReset(ActionEvent event){
 		reset();
 	}
 	
 	private void reset(){
 		this.isNew = true;
-		this.header = initializeHeader();
+		this.header = new AccountInvoiceHeader();
+		initializeHeader();
+		header.setType(InvoiceType.SALES);
 		this.details = new ListDataModel(new LinkedList<AccountInvoiceDetail>());
 		this.finances = new ListDataModel(new LinkedList<Finance>());
+		this.currentDetail = null;
+		this.setNewDetail(false);		
 	}
 
-	private AccountInvoiceHeader initializeHeader() {
-		AccountInvoiceHeader header = new AccountInvoiceHeader();
+	private void initializeHeader() {
 		Account account = new Account();
 		account.setEntryEnabled(true);
 		header.setAccount(account);
 		header.setRegistry(new Registry());
 		header.setDate(new Date());
-		header.setType(InvoiceType.SALES);
 		header.setPeriod(new Period());
 		header.setSecurityLevel(SecurityLevel.OFFICIAL);
-		return header;
 	}
 	
 	public boolean isSales(){
@@ -263,40 +257,39 @@ public class AccountInvoiceController {
 		return false;
 	}
 	
-	@SuppressWarnings("unused")
 	public void onNewDetail(ActionEvent event){
 		this.isNewDetail = true;
 		this.currentDetail = new AccountInvoiceDetail();
-		this.currentDetail.setAccount((header.getAccount()!=null)?header.getAccount().getId():null);
+		Account a = (header.getAccount()!=null)?header.getAccount():null;
+		this.currentDetail.setAccount(a);
 	}
 	
-	@SuppressWarnings("unused")
 	public void onSelectDetail(ActionEvent event){
 		this.currentDetail = (AccountInvoiceDetail)details.getRowData();
 	}
 	
-	@SuppressWarnings({"unchecked", "unused"})
+	@SuppressWarnings("unchecked")
 	public void onAddDetail(ActionEvent event) throws ManagerBeanException{
 		if (validateDetail(this.currentDetail)) {
 			applySurcharge();
 			((LinkedList)this.details.getWrappedData()).add(this.currentDetail);
 			this.currentDetail = new AccountInvoiceDetail();
 			this.setNewDetail(false);
+			onNewDetail(event);
 		}
 	}
 	
-	@SuppressWarnings({"unchecked", "unused"})
+	@SuppressWarnings("unchecked")
 	public void onRemoveDetail(ActionEvent event){
 		((LinkedList)this.details.getWrappedData()).remove(this.currentDetail);
 	}
 
-	@SuppressWarnings("unused")
 	public void onCancelDetail(ActionEvent event){
 		this.currentDetail = new AccountInvoiceDetail();
 		this.setNewDetail(false);
 	}
 	
-	@SuppressWarnings({"unchecked", "unused"})
+	@SuppressWarnings("unchecked")
 	public void onUpdateDetail(ActionEvent event) throws ManagerBeanException{
 		if (validateDetail(this.currentDetail)) {
 			applySurcharge();
@@ -309,11 +302,11 @@ public class AccountInvoiceController {
 
 	@SuppressWarnings("unchecked")
 	private boolean validateDetail(AccountInvoiceDetail detail) {
-		if (detail.getAccount()!=null && !detail.getAccount().equals("")) {
+		if (detail.getAccount()!=null && !detail.getAccount().equals("") && detail.getAccount().getId() != null) {
 			try {
 				IManagerBean accountBean = BeanManager.getManagerBean(Account.class);
 				Criteria criteria = new Criteria();
-				criteria.addEqualExpression(accountBean.getFieldName(IAccountAlias.ACCOUNT_ID), detail.getAccount());
+				criteria.addEqualExpression(accountBean.getFieldName(IAccountAlias.ACCOUNT_ID), detail.getAccount().getId());
 				Iterator iterator = accountBean.getList(criteria).iterator();
 				if (iterator.hasNext()) {
 					Account account = (Account)iterator.next();
@@ -333,13 +326,11 @@ public class AccountInvoiceController {
 		return true;
 	}
 
-	@SuppressWarnings("unused")
 	public void onNewFinance(ActionEvent event){
 		this.isNewFinance = true;
 		this.currentFinance = initializeFinance();
 	}
 	
-	@SuppressWarnings("unused")
 	public void onSelectFinance(ActionEvent event) throws ManagerBeanException{
 		this.currentFinance = (Finance)finances.getRowData();
 		if (currentFinance.getPayMethod() == null) {
@@ -381,7 +372,7 @@ public class AccountInvoiceController {
 		return null;
 	}
 	
-	@SuppressWarnings({"unchecked", "unused"})
+	@SuppressWarnings("unchecked")
 	public void onAddFinance(ActionEvent event){
 		if(!header.getType().equals(InvoiceType.SALES)){
 			RegistryBank rBank = obtainRBank(this.registryBankId);
@@ -408,18 +399,17 @@ public class AccountInvoiceController {
 		return null;
 	}
 
-	@SuppressWarnings({"unchecked", "unused"})
+	@SuppressWarnings("unchecked")
 	public void onRemoveFinance(ActionEvent event){
 		((LinkedList)this.finances.getWrappedData()).remove(this.currentFinance);
 	}
 
-	@SuppressWarnings("unused")
 	public void onCancelFinance(ActionEvent event){
 		this.currentFinance = initializeFinance();
 		this.setNewFinance(false);
 	}
 	
-	@SuppressWarnings({"unchecked", "unused"})
+	@SuppressWarnings("unchecked")
 	public void onUpdateFinance(ActionEvent event){
 		int i = ((LinkedList)this.finances.getWrappedData()).indexOf(this.currentFinance);
 		((LinkedList)this.finances.getWrappedData()).remove(i);
@@ -500,11 +490,10 @@ public class AccountInvoiceController {
 		}
 	}
 	
-	public void onTypeChanged(ValueChangeEvent event){
+	public void onTypeChanged(ActionEvent event){
 		initializeHeader();
 	}
 	
-	@SuppressWarnings("unused")
 	public void accept(ActionEvent event) throws ManagerBeanException{
 		AccountEntry entry = new AccountEntry();
 		if(!this.isNew){
@@ -585,8 +574,7 @@ public class AccountInvoiceController {
 		Iterator iterator = ((LinkedList)details.getWrappedData()).iterator();
 		while (iterator.hasNext()) {
 			AccountInvoiceDetail detail = (AccountInvoiceDetail)iterator.next();
-			Account account = new Account();
-			account.setId(detail.getAccount());
+			Account account = detail.getAccount();
 			double base = detail.getTaxableBase();
 			base += (basesPerAccount.containsKey(account))?((Double)basesPerAccount.get(account)).doubleValue():0;
 			basesPerAccount.put(account, new Double(base));
@@ -610,7 +598,6 @@ public class AccountInvoiceController {
 		return total;
 	}
 	
-	@SuppressWarnings("unused")
 	public void onRemove(ActionEvent event){
 		deleteAccountEntryInvoice(this.getAccountEntryInvoice());
 		deleteInvoice(getAccountEntryInvoice().getInvoice());
@@ -725,8 +712,7 @@ public class AccountInvoiceController {
 		try {
 			IManagerBean invoiceAccountBean = BeanManager.getManagerBean(InvoiceDetailAccount.class);
 			if (detail.getAccount() != null && !detail.getAccount().equals("")) {
-				Account account = new Account();
-				account.setId(detail.getAccount());
+				Account account = detail.getAccount();
 
 				InvoiceDetailAccount invoiceDetailAccount = new InvoiceDetailAccount();
 				invoiceDetailAccount.setInvoiceDetail(invoiceDetail);

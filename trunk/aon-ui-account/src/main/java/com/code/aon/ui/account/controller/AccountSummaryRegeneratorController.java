@@ -31,7 +31,7 @@ public class AccountSummaryRegeneratorController extends BasicController {
         this.setPeriod(null);
     }
 
-	@SuppressWarnings({"unused", "unchecked"})
+	@SuppressWarnings("unchecked")
     public void regenerateAccountSummary(ActionEvent event) {
 		try {
 			IManagerBean periodBean = BeanManager.getManagerBean(Period.class);

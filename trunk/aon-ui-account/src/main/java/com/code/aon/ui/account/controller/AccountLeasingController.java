@@ -26,7 +26,6 @@ import com.code.aon.finance.dao.IFinanceAlias;
 import com.code.aon.product.Tax;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.account.utils.AccountPeriodValidator;
-import com.code.aon.ui.menu.jsf.MenuEvent;
 import com.code.aon.ui.util.AonUtil;
 
 public class AccountLeasingController {
@@ -66,12 +65,7 @@ public class AccountLeasingController {
 		this.leasing = leasing;
 	}
 
-	@SuppressWarnings("unused")
-	public void onReset(MenuEvent event){
-		reset();
-	}
 	
-	@SuppressWarnings("unused")
 	public void onReset(ActionEvent event){
 		reset();
 	}
@@ -91,7 +85,6 @@ public class AccountLeasingController {
 		return leasing;
 	}
 	
-	@SuppressWarnings("unused")
 	public void accept(ActionEvent event) throws ManagerBeanException {
 		AccountPeriodValidator.validateAccountPeriod(getLeasing().getLeasingDate());
 		AccountEntry entry = new AccountEntry();
@@ -99,7 +92,7 @@ public class AccountLeasingController {
 			deleteAccountEntryDetails(getAccountEntry());
 			entry = this.getAccountEntry();
 		}
-		Leasing leasing = insertLeasing(getLeasing());
+		insertLeasing(getLeasing());
 		entry.setEntryDate(getLeasing().getLeasingDate());
 		entry.setAccountPeriod(AccountUtil.obtainPeriod(getLeasing().getLeasingDate()).getId());
 		entry.setJournal(null);
@@ -117,7 +110,6 @@ public class AccountLeasingController {
 		return (Leasing) leasingBean.insert(leasing);
 	}
 
-	@SuppressWarnings("unused")
 	public void onRemove(ActionEvent event) throws ManagerBeanException{
 		try {
 			deleteAccountEntryDetails(getAccountEntry());

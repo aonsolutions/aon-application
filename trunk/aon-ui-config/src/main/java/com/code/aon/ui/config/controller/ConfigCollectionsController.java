@@ -49,7 +49,7 @@ public class ConfigCollectionsController {
 		Iterator iter = scopeBean.getList(criteria).iterator();
 		while(iter.hasNext()){
 			Scope scope = (Scope)iter.next();
-			SelectItem item = new SelectItem(scope.getId(), scope.getDescription());
+			SelectItem item = new SelectItem(scope, scope.getDescription());
 			scopes.add(item);
 		}
 		return scopes;
@@ -64,7 +64,7 @@ public class ConfigCollectionsController {
 		Iterator<ITransferObject> iter = workGroupBean.getList(criteria).iterator();
 		while (iter.hasNext()) {
 			WorkGroup workGroup = (WorkGroup) iter.next();
-			SelectItem item = new SelectItem(workGroup.getId(), workGroup.getDescription());
+			SelectItem item = new SelectItem(workGroup, workGroup.getDescription());
 			workgroups.add(item);
 		}
 		return workgroups;
@@ -104,7 +104,7 @@ public class ConfigCollectionsController {
 		Iterator iter = UserUtils.getInstance().getCurrentUserScopes().iterator();
 		while(iter.hasNext()){
 			Scope scope = (Scope)iter.next();
-			SelectItem item = new SelectItem(scope.getId(), scope.getDescription());
+			SelectItem item = new SelectItem(scope, scope.getDescription());
 			currentUserScopes.add(item);
 		}
 		return currentUserScopes;

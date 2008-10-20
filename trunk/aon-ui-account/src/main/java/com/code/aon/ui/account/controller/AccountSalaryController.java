@@ -24,7 +24,6 @@ import com.code.aon.finance.Bank;
 import com.code.aon.finance.RegistryBank;
 import com.code.aon.finance.dao.IFinanceAlias;
 import com.code.aon.ql.Criteria;
-import com.code.aon.ui.menu.jsf.MenuEvent;
 import com.code.aon.ui.util.AonUtil;
 
 public class AccountSalaryController {
@@ -64,12 +63,6 @@ public class AccountSalaryController {
 		this.header = header;
 	}
 	
-	@SuppressWarnings("unused")
-	public void onReset(MenuEvent event){
-		reset();
-	}
-	
-	@SuppressWarnings("unused")
 	public void onReset(ActionEvent event){
 		reset();
 	}
@@ -88,7 +81,6 @@ public class AccountSalaryController {
 		return header;
 	}
 	
-	@SuppressWarnings("unused")
 	public void accept(ActionEvent event) throws ManagerBeanException {
 		AccountEntry entry = new AccountEntry();
 		if(!this.isNew){
@@ -107,7 +99,6 @@ public class AccountSalaryController {
 		loadAccountEntryController(entry);
 	}
 	
-	@SuppressWarnings("unused")
 	public void onRemove(ActionEvent event){
 		deleteAccountEntryDetails(getAccountEntry());
 		deleteAccountEntry(getAccountEntry());

@@ -7,13 +7,15 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 
+import javax.faces.event.AbortProcessingException;
 import javax.faces.event.ActionEvent;
 
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
+import com.code.aon.common.ITransferObject;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.config.ApplicationParameter;
-import com.code.aon.ui.menu.jsf.MenuEvent;
+import com.code.aon.ui.util.AonUtil;
 
 public class AccountAppParamsController{
 	
@@ -38,22 +40,31 @@ public class AccountAppParamsController{
 		this.defaultParameters = defaultParameters;
 	}
 
-	@SuppressWarnings("unused")
 	public void onAccept(ActionEvent event) throws ManagerBeanException{
 		IManagerBean managerBean = BeanManager.getManagerBean(ApplicationParameter.class);
 		Collection<ApplicationParameter>params = parameters.values();
 		for(ApplicationParameter param : params){
 			managerBean.update(param);
 		}
-		loadParameters(null);
+		loadParameters();
+		AonUtil.addInfoMessage("Los parámetros se guardaron correctamente.");		
 	}
 	
-	@SuppressWarnings({"unchecked", "unused"})
-	public void loadParameters(MenuEvent event) throws ManagerBeanException{
+	public void onLoad(ActionEvent event) {
+		try {
+			loadParameters();
+		} catch (ManagerBeanException e) {
+			String msg = "Unable to load defaultParameters";
+			AonUtil.addErrorMessage(msg);
+			throw new AbortProcessingException(msg);
+		}
+	}
+
+	public void loadParameters() throws ManagerBeanException{
 		parameters = new TreeMap<String, ApplicationParameter>();
 		IManagerBean managerBean = BeanManager.getManagerBean(ApplicationParameter.class);
-		List list = managerBean.getList(null);
-		Iterator iter = list.iterator();
+		List<ITransferObject> list = managerBean.getList(null);
+		Iterator<ITransferObject> iter = list.iterator();
 		while (iter.hasNext()) {
 			ApplicationParameter appParam = (ApplicationParameter) iter.next();
 			parameters.put(appParam.getName(), appParam);

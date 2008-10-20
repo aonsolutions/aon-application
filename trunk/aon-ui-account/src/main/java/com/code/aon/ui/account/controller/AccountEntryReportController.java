@@ -7,14 +7,15 @@ import java.util.logging.Logger;
 import javax.faces.event.ActionEvent;
 import javax.faces.event.ValueChangeEvent;
 
+import com.code.aon.account.Account;
 import com.code.aon.account.AccountEntryDetail;
 import com.code.aon.account.dao.IAccountAlias;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ui.form.BasicController;
-import com.code.aon.ui.menu.jsf.MenuEvent;
 
+@Deprecated
 public class AccountEntryReportController extends BasicController {
 	
 	private static final Logger LOGGER = Logger.getLogger(AccountEntryReportController.class.getName());
@@ -24,7 +25,12 @@ public class AccountEntryReportController extends BasicController {
     private String period;
     private Date fromDate;
 	private Date toDate;
-	
+	private Account account;
+
+	public AccountEntryReportController() {
+		super();
+		this.account = new Account();
+	}
     public boolean isDaybookMode() {
         return daybookMode;
     }
@@ -120,22 +126,19 @@ public class AccountEntryReportController extends BasicController {
         }
     }
     
-	@SuppressWarnings("unused")
-	public void onDayBook(MenuEvent event) throws ManagerBeanException {
+	public void onDayBook(ActionEvent event) throws ManagerBeanException {
 		this.setDaybookMode(true);
 		this.setAbstractMode(false);
 		this.onEditSearch(null);
 	}
 
-    @SuppressWarnings("unused")
-    public void onAbstract(MenuEvent event) throws ManagerBeanException{
+    public void onAbstract(ActionEvent event) throws ManagerBeanException{
         this.setDaybookMode(false);
         this.setAbstractMode(true);
         this.onEditSearch(null);
     }
 
-    @SuppressWarnings("unused")
-    public void onProfitAndLoss(MenuEvent event) throws ManagerBeanException{
+    public void onProfitAndLoss(ActionEvent event) throws ManagerBeanException{
         this.setDaybookMode(false);
         this.setAbstractMode(false);
         this.onEditSearch(null);
@@ -149,4 +152,15 @@ public class AccountEntryReportController extends BasicController {
 		this.setPeriod(null);
 	}
 
+	public Account getAccount() {
+		return account;
+	}
+
+	public void setAccount(Account account) {
+		this.account = account;
+	}
+
+	public void accountLookup(ActionEvent event) {
+		this.account.setDescription("Descripcion buscada");
+	}
 }
