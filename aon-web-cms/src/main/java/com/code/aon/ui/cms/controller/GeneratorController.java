@@ -49,6 +49,8 @@ public class GeneratorController implements Constants {
 	
 	public void onGenerate(ActionEvent event) throws ManagerBeanException {
 		initGenerator();
+		System.gc();
+
 		//Generar index.html del idioma seleccionado
 		ModularPageGenerator.generate();
 		System.gc();

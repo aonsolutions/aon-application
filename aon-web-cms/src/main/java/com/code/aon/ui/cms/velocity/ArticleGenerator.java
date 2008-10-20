@@ -136,6 +136,7 @@ public class ArticleGenerator extends Generator {
 			ArrayList<ArticleCategoryHandler> achlist = new ArrayList<ArticleCategoryHandler>(); 
 			for (int j=0; j < articleCategoryList.size(); j++) {
 				
+				System.gc();
 				VelocityUtil vu = ArticleGenerator.initVelocity();
 
 				articleCategory = (ArticleCategory)articleCategoryList.get(j);
