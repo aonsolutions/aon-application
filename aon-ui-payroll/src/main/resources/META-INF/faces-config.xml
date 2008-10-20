@@ -223,7 +223,7 @@
 		</managed-property>
 		<managed-property>
 			<property-name>pojo</property-name>
-			<value>com.code.aon.payroll.organismosyentidades.Delegacion</value>
+			<value>com.code.aon.payroll.auxiliares.organismosyentidades.Delegacion</value>
 		</managed-property>
 		   <managed-property>
 			<property-name>listenerClasses</property-name>
@@ -232,10 +232,7 @@
 				<value>#{DelegacionControllerListener}</value>									
 			</list-entries>			
 		</managed-property>
-		<managed-property>
-			<property-name>defaultOrder</property-name>
-			<value>Delegacion_cdg</value>
-		</managed-property>
+	
     </managed-bean>
     
 	    <managed-bean>

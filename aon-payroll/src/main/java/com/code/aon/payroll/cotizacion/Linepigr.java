@@ -71,7 +71,7 @@ public class Linepigr  implements ITransferObject {
     
     public void setIndit(String indit) {
         this.indit = indit;
-        this.e = (this.indit != null)? Epigrafes.valueOf( "epi" + this.indit ): null;
+        this.epi1 = (this.indit != null)? Epigrafes.valueOf( "epi" + this.indit ): null;
     }
     
 
@@ -92,7 +92,7 @@ public class Linepigr  implements ITransferObject {
     
     public void setIndipm(String indipm) {
         this.indipm = indipm;
-        this.ep = (this.indipm != null)? Epigrafes.valueOf( "epi" + this.indipm ): null;
+        this.epi2 = (this.indipm != null)? Epigrafes.valueOf( "epi" + this.indipm ): null;
     }
     
 
@@ -116,28 +116,28 @@ public class Linepigr  implements ITransferObject {
     }
     
     //TODO Problemas en la creacion del enumerado a partir de un String.
-  	private  Epigrafes e;
+  	private  Epigrafes epi1;
   	@Transient 
   	public Epigrafes getEpi() {
   		
-  		return e;
+  		return epi1;
   	}
   	public void setEpi( Epigrafes e) {
-  		this.e = e;
-  		setIndit( (this.e != null)? this.e.name().substring( 3 ) : null );
+  		this.epi1 = e;
+  		setIndit( (this.epi1 != null)? this.epi1.name().substring( 3 ) : null );
   	}
   	
   	
   	
     //TODO Problemas en la creacion del enumerado a partir de un String.
-  	private  Epigrafes ep;
+  	private  Epigrafes epi2;
   	@Transient 
   	public Epigrafes getEpi2() {
-  		return ep;
+  		return epi2;
   	}
   	public void setEpi2( Epigrafes e) {
-  		this.ep = e;
-  		setIndipm( (this.ep != null)? this.ep.name().substring( 3 ) : null );
+  		this.epi2 = e;
+  		setIndipm( (this.epi2 != null)? this.epi2.name().substring( 3 ) : null );
   	}
   	
 

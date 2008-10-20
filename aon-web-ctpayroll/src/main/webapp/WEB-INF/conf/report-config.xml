@@ -302,11 +302,11 @@
 		</params>
 	</report>
 	
-	<!--  *********  Impresion a PDF de las delegaciones  ********* -->
+		<!--  *********  Impresion a PDF de las delegaciones  ********* -->
 	<report id="DelegacionList" description="Listado de Delegaciones">
 		<template path="/com/code/aon/ui/payroll/report/DelegacionList.jasper" />
-		<bean key="com.code.aon.payroll.organismosyentidades.Delegacion" />
-		<criteria provider="#{complemento}" />
+		<bean key="com.code.aon.payroll.auxiliares.organismosyentidades.Delegacion" />
+		<criteria provider="#{delegacion}" />
 		<params>
 			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.payroll.i18n.messages" />
 			<param id="logoImageFile" value="#{payrollController.getLogo}" />
@@ -314,4 +314,69 @@
 		</params>
 	</report>
 	
+			<!--  *********  Impresion a PDF de los epigrafes ********* -->
+	<report id="EpigrafeList" description="Listado de Epigrafes">
+		<template path="/com/code/aon/ui/payroll/report/EpigrafeList.jasper" />
+		<bean key="com.code.aon.payroll.cotizacion.Linepigr" />
+		<criteria provider="#{epigrafe}" />
+		<params>
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.payroll.i18n.messages" />
+			<param id="logoImageFile" value="#{payrollController.getLogo}" />
+			<param id="companyName" value="#{payrollController.getCompanyName}" />
+		</params>
+	</report>
+	<report id="EpigrafeList2" description="Listado de Epigrafes">
+		<template path="/com/code/aon/ui/payroll/report/EpigrafeList2.jasper" />
+		<bean key="com.code.aon.payroll.cotizacion.Linepigr" />
+		<criteria provider="#{epigrafe}" />
+		<params>
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.payroll.i18n.messages" />
+			<param id="logoImageFile" value="#{payrollController.getLogo}" />
+			<param id="companyName" value="#{payrollController.getCompanyName}" />
+		</params>
+	</report>
+	
+			<!--  *********  Impresion a PDF de los Divisas ********* -->
+	<report id="DivisaList" description="Listado de Divisas">
+		<template path="/com/code/aon/ui/payroll/report/DivisaList.jasper" />
+		<bean key="com.code.aon.payroll.divisa.LinDivisa" />
+		<criteria provider="#{divisa}" />
+		<params>
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.payroll.i18n.messages" />
+			<param id="logoImageFile" value="#{payrollController.getLogo}" />
+			<param id="companyName" value="#{payrollController.getCompanyName}" />
+		</params>
+	</report>
+	
+		<report id="DivisaList2" description="Listado de Divisas">
+		<template path="/com/code/aon/ui/payroll/report/DivisaList2.jasper" />
+		<bean key="com.code.aon.payroll.divisa.LinDivisa" />
+		<criteria provider="#{divisa}" />
+		<params>
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.payroll.i18n.messages" />
+			<param id="logoImageFile" value="#{payrollController.getLogo}" />
+			<param id="companyName" value="#{payrollController.getCompanyName}" />
+		</params>
+	</report>
+				<!--  *********  Impresion a PDF de las Bases de Cotizacion ********* -->
+	<report id="BasesList" description="Listado de Bases de cotizacion">
+		<template path="/com/code/aon/ui/payroll/report/BasesList.jasper" />
+		<bean key="com.code.aon.payroll.cotizacion.Linbasec" />
+		<criteria provider="#{linbase}" />
+		<params>
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.payroll.i18n.messages" />
+			<param id="logoImageFile" value="#{payrollController.getLogo}" />
+			<param id="companyName" value="#{payrollController.getCompanyName}" />
+		</params>
+	</report>
+	<report id="BasesList2" description="Listado de Bases de cotizacion2">
+		<template path="/com/code/aon/ui/payroll/report/BasesList2.jasper" />
+		<bean key="com.code.aon.payroll.cotizacion.Linbasec" />
+		<criteria provider="#{linbase}" />
+		<params>
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.payroll.i18n.messages" />
+			<param id="logoImageFile" value="#{payrollController.getLogo}" />
+			<param id="companyName" value="#{payrollController.getCompanyName}" />
+		</params>
+	</report>
 </report-config>
