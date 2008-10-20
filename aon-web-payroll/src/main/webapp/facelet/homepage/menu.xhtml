@@ -153,7 +153,11 @@
 			<aon:dropDownMenu value="#{menuBundle.auxiliares}">
 				<aon:menuGroup value="#{menuBundle.auxiliares_geograficas}">
 					<aon:menuItem value="#{menuBundle.auxiliares_geograficas__nacion}" action="naciones" />
-					<aon:menuItem value="#{menuBundle.auxiliares_geograficas__paicopro}" disabled="true" />
+					<aon:menuItem value="#{menuBundle.auxiliares_geograficas__paicopro}" 
+								action="pais"  >
+						<aon:actionListener method="#{pais.onEditSearch}" />
+						<aon:actionListener method="#{pais.onSearch}" />
+					</aon:menuItem>
 				</aon:menuGroup>
 				<aon:menuGroup value="#{menuBundle.auxiliares_cotizacion}">
 					<aon:menuItem value="#{menuBundle.auxiliares_cotizacion__porcoti}" 
@@ -201,7 +205,11 @@
 						<aon:actionListener method="#{complemento.onSearch}" />
 						<aon:actionListener method="#{complemento.onSelectFirst}" />
 					</aon:menuItem>
-					<aon:menuItem value="#{menuBundle.auxiliares_convenios__convenio}"  disabled="true"/>
+					<aon:menuItem value="#{menuBundle.auxiliares_convenios__convenio}"  action="convenios_colectivos" >
+						<aon:actionListener method="#{convenio.onEditSearch}" />
+						<aon:actionListener method="#{convenio.onSearch}" />
+						<aon:actionListener method="#{convenio.onSelectFirst}" />
+					</aon:menuItem>
 				</aon:menuGroup>
 				<aon:menuGroup value="#{menuBundle.auxiliares_contratos}">
 					<aon:menuItem value="#{menuBundle.auxiliares_contratos__tipcotc2}" 

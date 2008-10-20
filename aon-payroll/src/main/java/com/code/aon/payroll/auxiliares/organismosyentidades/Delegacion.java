@@ -1,5 +1,6 @@
 package com.code.aon.payroll.auxiliares.organismosyentidades;
 
+import com.code.aon.payroll.geograficas.Provincia;
 import com.code.aon.payroll.tipos.Tipovia;
 
 
