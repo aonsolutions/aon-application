@@ -5,7 +5,6 @@
 	xmlns:aon="http://www.code.es/aon-rich-components">
 
 	<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/formToolbarEx.xhtml" >
-		<aon:valueParam name="toolbarID" default="aonToolbar" />
 		<aon:valueParam name="toolbarDescription" default="#{formNew?(bundle.aon_reset):(bundle.aon_editing)}" />	
 		<aon:valueParam name="formNew" default="#{controller.new}" />
 		<aon:valueParam name="idSuffix" default="#{controller.beanName}" />
