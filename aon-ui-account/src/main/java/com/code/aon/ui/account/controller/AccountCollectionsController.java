@@ -9,6 +9,8 @@ import javax.faces.context.FacesContext;
 import javax.faces.model.SelectItem;
 
 import com.code.aon.account.Account;
+import com.code.aon.account.Leasing;
+import com.code.aon.account.Loan;
 import com.code.aon.account.Period;
 import com.code.aon.account.dao.IAccountAlias;
 import com.code.aon.account.enumeration.AccountEntryType;
@@ -27,6 +29,8 @@ import com.code.aon.ql.util.ExpressionUtilities;
  * @author Consulting & Development.
  */
 public class AccountCollectionsController {
+	
+	private LinkedList<SelectItem> accountLevels;
 	
 	/**
 	 * Gets the sales accounts.
@@ -337,5 +341,43 @@ public class AccountCollectionsController {
 			levels.add(item);
 		}
 		return levels;
+	}
+
+	public List<SelectItem> getAccountLevels() {
+		if (accountLevels == null) {
+			accountLevels = new LinkedList<SelectItem>();
+			accountLevels.add(new SelectItem(1,"1"));
+			accountLevels.add(new SelectItem(2,"2"));
+			accountLevels.add(new SelectItem(3,"3"));
+			accountLevels.add(new SelectItem(4,"4"));
+			accountLevels.add(new SelectItem(5,"5"));
+		}
+		return accountLevels;
+	}
+
+	@SuppressWarnings("unchecked")
+	public List<SelectItem> getAccountLoans() throws ManagerBeanException, ExpressionException {
+		List loans = new LinkedList<SelectItem>();
+		IManagerBean loanBean = BeanManager.getManagerBean(Loan.class);
+		Iterator iter = loanBean.getList(null).iterator();
+		while(iter.hasNext()){
+			Loan loan = (Loan) iter.next();
+			SelectItem item = new SelectItem(loan.getId(), loan.getDescription());
+			loans.add(item);
+		}
+		return loans;
+	}
+	
+	@SuppressWarnings("unchecked")
+	public List<SelectItem> getAccountLeasings() throws ManagerBeanException, ExpressionException {
+		List loans = new LinkedList<SelectItem>();
+		IManagerBean leasingBean = BeanManager.getManagerBean(Leasing.class);
+		Iterator iter = leasingBean.getList(null).iterator();
+		while(iter.hasNext()){
+			Leasing leasing = (Leasing) iter.next();
+			SelectItem item = new SelectItem(leasing, leasing.getDescription());
+			loans.add(item);
+		}
+		return loans;
 	}
 }

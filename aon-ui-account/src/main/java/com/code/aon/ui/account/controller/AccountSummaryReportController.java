@@ -21,29 +21,35 @@ import com.code.aon.ui.account.report.resources.ProfitAndLossMonthly;
 import com.code.aon.ui.account.report.resources.ProfitAndLossMonthlySummary;
 import com.code.aon.ui.account.report.resources.ProfitAndLossSummary;
 import com.code.aon.ui.form.BasicController;
+import com.code.aon.ui.util.AonUtil;
 
 public class AccountSummaryReportController extends BasicController {
-	
-    private String period;
-    private Date fromDate;
+
+	private static final String ACCOUNT_STATEMENT_CONTROLLER_NAME = "accStatement";
+
+	private String period;
+	private Date date;
+	private Date fromDate;
 	private Date toDate;
 	private SecurityLevel securityLevel;
-	
+
+	private String accountStatement;
+
 	@SuppressWarnings("unchecked")
 	private Collection grossMarginSummaryCollection;
 	@SuppressWarnings("unchecked")
 	private Collection totalExpensesSummaryCollection;
-    
-	private double grossMargin;
-    private double totalExpenses;
-	
-    public String getPeriod() {
-        return period;
-    }
 
-    public void setPeriod(String period) {
-        this.period = period;
-    }
+	private double grossMargin;
+	private double totalExpenses;
+
+	public String getPeriod() {
+		return period;
+	}
+
+	public void setPeriod(String period) {
+		this.period = period;
+	}
 
 	public Date getFromDate() {
 		return fromDate;
@@ -61,6 +67,14 @@ public class AccountSummaryReportController extends BasicController {
 		this.toDate = toDate;
 	}
 
+	public Date getDate() {
+		return date;
+	}
+
+	public void setDate(Date date) {
+		this.date = date;
+	}
+
 	public SecurityLevel getSecurityLevel() {
 		return securityLevel;
 	}
@@ -71,191 +85,223 @@ public class AccountSummaryReportController extends BasicController {
 
 	@SuppressWarnings("unchecked")
 	public Collection getGrossMarginSummaryCollection() {
-        return grossMarginSummaryCollection;
-    }
+		return grossMarginSummaryCollection;
+	}
 
 	@SuppressWarnings("unchecked")
-    public void setGrossMarginSummaryCollection(Collection grossMarginSummaryCollection) {
-        this.grossMarginSummaryCollection = grossMarginSummaryCollection;
-    }
+	public void setGrossMarginSummaryCollection(Collection grossMarginSummaryCollection) {
+		this.grossMarginSummaryCollection = grossMarginSummaryCollection;
+	}
 
-    @SuppressWarnings("unchecked")
-    public Collection getTotalExpensesSummaryCollection() {
-        return totalExpensesSummaryCollection;
-    }
+	@SuppressWarnings("unchecked")
+	public Collection getTotalExpensesSummaryCollection() {
+		return totalExpensesSummaryCollection;
+	}
 
-    @SuppressWarnings("unchecked")
-    public void setTotalExpensesSummaryCollection(Collection totalExpensesSummaryCollection) {
-        this.totalExpensesSummaryCollection = totalExpensesSummaryCollection;
-    }
+	@SuppressWarnings("unchecked")
+	public void setTotalExpensesSummaryCollection(Collection totalExpensesSummaryCollection) {
+		this.totalExpensesSummaryCollection = totalExpensesSummaryCollection;
+	}
 
-    public double getGrossMargin() {
-        return grossMargin;
-    }
+	public double getGrossMargin() {
+		return grossMargin;
+	}
 
-    public void setGrossMargin(double grossMargin) {
-        this.grossMargin = grossMargin;
-    }
+	public void setGrossMargin(double grossMargin) {
+		this.grossMargin = grossMargin;
+	}
 
-    public double getTotalExpenses() {
-        return totalExpenses;
-    }
+	public double getTotalExpenses() {
+		return totalExpenses;
+	}
 
-    public void setTotalExpenses(double totalExpenses) {
-        this.totalExpenses = totalExpenses;
-    }
+	public void setTotalExpenses(double totalExpenses) {
+		this.totalExpenses = totalExpenses;
+	}
 
-    public double getTotalResult() {
-        return (grossMargin - totalExpenses);
-    }
+	public double getTotalResult() {
+		return (grossMargin - totalExpenses);
+	}
 
-    @Override
-    public void onEditSearch(ActionEvent event) {
-        this.setPeriod(null);
-        this.setFromDate(null);
-        this.setToDate(null);
-    }
+	public String getAccountStatement() {
+		return accountStatement;
+	}
 
-    @SuppressWarnings("unused")
-    public void calculateSummaryCollections(ActionEvent event) {
-        this.calculateGrossMarginSummaryCollection();
-        this.calculateTotalExpensesSummaryCollection();
-    }
+	public void setAccountStatement(String accountStatement) {
+		this.accountStatement = accountStatement;
+	}
 
-    @SuppressWarnings("unchecked")
-    private void calculateGrossMarginSummaryCollection() {
-        DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+	public void onStatement(ActionEvent event) {
+		AccountStatementController c = (AccountStatementController) AonUtil
+				.getRegisteredBean(ACCOUNT_STATEMENT_CONTROLLER_NAME);
+		c.onReset(event);
+		c.setAccount(getAccountStatement());
+		c.setDate(getDate());
+		c.setFromDate(getFromDate());
+		c.setToDate(getToDate());
+		c.setPeriod(getPeriod());
+		c.onSearch(event);
+	}
 
-        String select = "select new com.code.aon.ui.account.report.resources.ProfitAndLossSummary(" +
-                        "substring(summary.account.id,1,3), account.description, " +
-                        "sum(summary.debit), sum(summary.credit)) " +
-                        "from AccountSummary as summary, Account as account " +
-                        "where account.id = substring(summary.account.id,1,3) " +
-                        "and (summary.account.id like '60%' or summary.account.id like '7%') " +
-                        "and summary.accountPeriod = '" + getPeriod() + "' ";
-        select += (getSecurityLevel() != null) ? "and summary.securityLevel = " + getSecurityLevel().ordinal() + " " : "";
-        select += (getFromDate() != null) ? "and summary.entryDate >= '" + formatter.format(getFromDate()) + "' " : "";
-        select += (getToDate() != null) ? "and summary.entryDate <= '" + formatter.format(getToDate()) + "' " : "";
-        select += "group by substring(summary.account.id,1,3) ";
-        select += "order by substring(summary.account.id,1,3) desc";
+	@Override
+	public void onEditSearch(ActionEvent event) {
+		this.setPeriod(null);
+		this.setFromDate(null);
+		this.setToDate(null);
+		this.setDate(new Date() );
+	}
 
-        Session session = HibernateUtil.getSession();
-        Query query = session.createQuery(select);
+	public void calculateSummaryCollections(ActionEvent event) {
+		this.calculateGrossMarginSummaryCollection();
+		this.calculateTotalExpensesSummaryCollection();
+	}
 
-        List list = query.list();
-        Comparator comparator = new ProfitAndLossComparator();
-        Collections.sort(list, comparator);
-        this.setGrossMarginSummaryCollection(list);
+	@SuppressWarnings("unchecked")
+	private void calculateGrossMarginSummaryCollection() {
+		DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
 
-        double totalDebit = 0;
-        double totalCredit = 0;
-        Iterator iterator = list.iterator();
-        while (iterator.hasNext()) {
-            ProfitAndLossSummary profitAndLoss = (ProfitAndLossSummary)iterator.next();
-            totalDebit += profitAndLoss.getDebit();
-            totalCredit += profitAndLoss.getCredit();
-        }
-        this.setGrossMargin(totalCredit - totalDebit);
-    }
+		String select = "select new com.code.aon.ui.account.report.resources.ProfitAndLossSummary("
+				+ "substring(summary.account.id,1,3), account.description, "
+				+ "sum(summary.debit), sum(summary.credit)) "
+				+ "from AccountSummary as summary, Account as account "
+				+ "where account.id = substring(summary.account.id,1,3) "
+				+ "and (summary.account.id like '60%' or summary.account.id like '7%') "
+				+ "and summary.accountPeriod = '" + getPeriod() + "' ";
+		select += (getSecurityLevel() != null) ? "and summary.securityLevel = "
+				+ getSecurityLevel().ordinal() + " " : "";
+		select += (getFromDate() != null) ? "and summary.entryDate >= '"
+				+ formatter.format(getFromDate()) + "' " : "";
+		select += (getToDate() != null) ? "and summary.entryDate <= '"
+				+ formatter.format(getToDate()) + "' " : "";
+		select += "group by substring(summary.account.id,1,3) ";
+		select += "order by substring(summary.account.id,1,3) desc";
 
-    @SuppressWarnings("unchecked")
-    private void calculateTotalExpensesSummaryCollection() {
-        DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+		Session session = HibernateUtil.getSession();
+		Query query = session.createQuery(select);
 
-        String select = "select new com.code.aon.ui.account.report.resources.ProfitAndLossSummary(" +
-                        "substring(summary.account.id,1,3), account.description, " +
-                        "sum(summary.debit), sum(summary.credit)) " +
-                        "from AccountSummary as summary, Account as account " +
-                        "where account.id = substring(summary.account.id,1,3) " +
-                        "and (summary.account.id >= '610' and summary.account.id < '7') " +
-                        "and summary.accountPeriod = '" + getPeriod() + "' ";
-        select += (getSecurityLevel() != null) ? "and summary.securityLevel = " + getSecurityLevel().ordinal() + " " : "";
-        select += (getFromDate() != null) ? "and summary.entryDate >= '" + formatter.format(getFromDate()) + "' " : "";
-        select += (getToDate() != null) ? "and summary.entryDate <= '" + formatter.format(getToDate()) + "' " : "";
-        select += "group by substring(summary.account.id,1,3) ";
-        select += "order by substring(summary.account.id,1,3) desc";
+		List list = query.list();
+		Comparator comparator = new ProfitAndLossComparator();
+		Collections.sort(list, comparator);
+		this.setGrossMarginSummaryCollection(list);
 
-        Session session = HibernateUtil.getSession();
-        Query query = session.createQuery(select);
+		double totalDebit = 0;
+		double totalCredit = 0;
+		Iterator iterator = list.iterator();
+		while (iterator.hasNext()) {
+			ProfitAndLossSummary profitAndLoss = (ProfitAndLossSummary) iterator.next();
+			totalDebit += profitAndLoss.getDebit();
+			totalCredit += profitAndLoss.getCredit();
+		}
+		this.setGrossMargin(totalCredit - totalDebit);
+	}
 
-        List list = query.list();
-        Comparator comparator = new ProfitAndLossComparator();
-        Collections.sort(list, comparator);
-        this.setTotalExpensesSummaryCollection(list);
+	@SuppressWarnings("unchecked")
+	private void calculateTotalExpensesSummaryCollection() {
+		DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
 
-        double totalDebit = 0;
-        double totalCredit = 0;
-        Iterator iterator = list.iterator();
-        while (iterator.hasNext()) {
-            ProfitAndLossSummary profitAndLoss = (ProfitAndLossSummary)iterator.next();
-            totalDebit += profitAndLoss.getDebit();
-            totalCredit += profitAndLoss.getCredit();
-        }
-        this.setTotalExpenses(totalDebit - totalCredit);
-    }
+		String select = "select new com.code.aon.ui.account.report.resources.ProfitAndLossSummary("
+				+ "substring(summary.account.id,1,3), account.description, "
+				+ "sum(summary.debit), sum(summary.credit)) "
+				+ "from AccountSummary as summary, Account as account "
+				+ "where account.id = substring(summary.account.id,1,3) "
+				+ "and (summary.account.id >= '610' and summary.account.id < '7') "
+				+ "and summary.accountPeriod = '" + getPeriod() + "' ";
+		select += (getSecurityLevel() != null) ? "and summary.securityLevel = "
+				+ getSecurityLevel().ordinal() + " " : "";
+		select += (getFromDate() != null) ? "and summary.entryDate >= '"
+				+ formatter.format(getFromDate()) + "' " : "";
+		select += (getToDate() != null) ? "and summary.entryDate <= '"
+				+ formatter.format(getToDate()) + "' " : "";
+		select += "group by substring(summary.account.id,1,3) ";
+		select += "order by substring(summary.account.id,1,3) desc";
 
-    @SuppressWarnings("unchecked")
-	public Collection getCollection(){
-    	Collection list = new LinkedList();
-        list.addAll(getGrossMarginSummaryCollection());
-    	list.addAll(getTotalExpensesSummaryCollection());
-    	return list;
-    }
+		Session session = HibernateUtil.getSession();
+		Query query = session.createQuery(select);
 
-    @SuppressWarnings("unchecked")
-    public Collection getMonthlyCollection() {
-        DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+		List list = query.list();
+		Comparator comparator = new ProfitAndLossComparator();
+		Collections.sort(list, comparator);
+		this.setTotalExpensesSummaryCollection(list);
 
-        String select = "select new com.code.aon.ui.account.report.resources.ProfitAndLossMonthly(" +
-                        "substring(summary.account.id,1,3), account.description, month(summary.entryDate), " +
-                        "sum(summary.debit), sum(summary.credit)) " +
-                        "from AccountSummary as summary, Account as account " +
-                        "where account.id = substring(summary.account.id,1,3) " +
-                        "and (summary.account.id like '6%' or summary.account.id like '7%') " +
-                        "and summary.accountPeriod = '" + getPeriod() + "' ";
-        select += (getSecurityLevel() != null) ? "and summary.securityLevel = " + getSecurityLevel().ordinal() + " " : "";
-        select += (getFromDate() != null) ? "and summary.entryDate >= '" + formatter.format(getFromDate()) + "' " : "";
-        select += (getToDate() != null) ? "and summary.entryDate <= '" + formatter.format(getToDate()) + "' " : "";
-        select += "group by substring(summary.account.id,1,3), month(summary.entryDate) ";
-        select += "order by substring(summary.account.id,1,3), month(summary.entryDate) ";
+		double totalDebit = 0;
+		double totalCredit = 0;
+		Iterator iterator = list.iterator();
+		while (iterator.hasNext()) {
+			ProfitAndLossSummary profitAndLoss = (ProfitAndLossSummary) iterator.next();
+			totalDebit += profitAndLoss.getDebit();
+			totalCredit += profitAndLoss.getCredit();
+		}
+		this.setTotalExpenses(totalDebit - totalCredit);
+	}
 
-        Session session = HibernateUtil.getSession();
-        Query query = session.createQuery(select);
+	@SuppressWarnings("unchecked")
+	public Collection getCollection() {
+		Collection list = new LinkedList();
+		list.addAll(getGrossMarginSummaryCollection());
+		list.addAll(getTotalExpensesSummaryCollection());
+		return list;
+	}
 
-        List list = query.list();
-        Comparator comparator = new ProfitAndLossComparator();
-        Collections.sort(list, comparator);
+	@SuppressWarnings("unchecked")
+	public Collection getMonthlyCollection() {
+		DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
 
-        List summaryList = new LinkedList();
-        ProfitAndLossMonthlySummary palMonthlySummary = null;
-        String oldAccount = null;
-        Iterator iterator = list.iterator();
-        while (iterator.hasNext()) {
-            ProfitAndLossMonthly palMonthly = (ProfitAndLossMonthly)iterator.next();
-            if (oldAccount == null || !palMonthly.getAccount().equals(oldAccount)) {
-                palMonthlySummary = new ProfitAndLossMonthlySummary(palMonthly.getAccount(), palMonthly.getDescription());
-                summaryList.add(palMonthlySummary);
+		String select = "select new com.code.aon.ui.account.report.resources.ProfitAndLossMonthly("
+				+ "substring(summary.account.id,1,3), account.description, month(summary.entryDate), "
+				+ "sum(summary.debit), sum(summary.credit)) "
+				+ "from AccountSummary as summary, Account as account "
+				+ "where account.id = substring(summary.account.id,1,3) "
+				+ "and (summary.account.id like '6%' or summary.account.id like '7%') "
+				+ "and summary.accountPeriod = '" + getPeriod() + "' ";
+		select += (getSecurityLevel() != null) ? "and summary.securityLevel = "
+				+ getSecurityLevel().ordinal() + " " : "";
+		select += (getFromDate() != null) ? "and summary.entryDate >= '"
+				+ formatter.format(getFromDate()) + "' " : "";
+		select += (getToDate() != null) ? "and summary.entryDate <= '"
+				+ formatter.format(getToDate()) + "' " : "";
+		select += "group by substring(summary.account.id,1,3), month(summary.entryDate) ";
+		select += "order by substring(summary.account.id,1,3), month(summary.entryDate) ";
 
-                oldAccount = palMonthlySummary.getAccount();
-            }
-            palMonthlySummary.addTotalMonthValue(palMonthly.getDifference(), palMonthly.getMonth().intValue()-1);
-        }
+		Session session = HibernateUtil.getSession();
+		Query query = session.createQuery(select);
 
-        return summaryList;
-    }
+		List list = query.list();
+		Comparator comparator = new ProfitAndLossComparator();
+		Collections.sort(list, comparator);
+
+		List summaryList = new LinkedList();
+		ProfitAndLossMonthlySummary palMonthlySummary = null;
+		String oldAccount = null;
+		Iterator iterator = list.iterator();
+		while (iterator.hasNext()) {
+			ProfitAndLossMonthly palMonthly = (ProfitAndLossMonthly) iterator.next();
+			if (oldAccount == null || !palMonthly.getAccount().equals(oldAccount)) {
+				palMonthlySummary = new ProfitAndLossMonthlySummary(palMonthly.getAccount(),
+						palMonthly.getDescription());
+				summaryList.add(palMonthlySummary);
+
+				oldAccount = palMonthlySummary.getAccount();
+			}
+			palMonthlySummary.addTotalMonthValue(palMonthly.getDifference(), palMonthly.getMonth()
+					.intValue() - 1);
+		}
+
+		return summaryList;
+	}
 
 }
 
 @SuppressWarnings("unchecked")
 class ProfitAndLossComparator implements Comparator {
 
-    public int compare(Object obj1, Object obj2) {
-        String account1 = ((ProfitAndLossSummary)obj1).getAccount();
-        String account2 = ((ProfitAndLossSummary)obj2).getAccount();
+	public int compare(Object obj1, Object obj2) {
+		String account1 = ((ProfitAndLossSummary) obj1).getAccount();
+		String account2 = ((ProfitAndLossSummary) obj2).getAccount();
 
-        if (account1.substring(0, 1).equals(account2.substring(0, 1)) ) {
-            return account1.compareTo(account2);
-        } 
-        return (account1.substring(0, 1).equals("7"))? -1 : 1;
-    }
+		if (account1.substring(0, 1).equals(account2.substring(0, 1))) {
+			return account1.compareTo(account2);
+		}
+		return (account1.substring(0, 1).equals("7")) ? -1 : 1;
+	}
+
 }

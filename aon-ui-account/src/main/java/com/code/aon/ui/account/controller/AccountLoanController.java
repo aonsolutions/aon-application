@@ -26,7 +26,6 @@ import com.code.aon.finance.RegistryBank;
 import com.code.aon.finance.dao.IFinanceAlias;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.account.utils.AccountPeriodValidator;
-import com.code.aon.ui.menu.jsf.MenuEvent;
 import com.code.aon.ui.util.AonUtil;
 
 public class AccountLoanController {
@@ -66,12 +65,7 @@ public class AccountLoanController {
 		this.loan = loan;
 	}
 
-	@SuppressWarnings("unused")
-	public void onReset(MenuEvent event){
-		reset();
-	}
 	
-	@SuppressWarnings("unused")
 	public void onReset(ActionEvent event){
 		reset();
 	}
@@ -89,7 +83,6 @@ public class AccountLoanController {
 		return loan;
 	}
 	
-	@SuppressWarnings("unused")
 	public void accept(ActionEvent event) throws ManagerBeanException {
 		AccountPeriodValidator.validateAccountPeriod(getLoan().getLoanDate());
 		AccountEntry entry = new AccountEntry();
@@ -97,7 +90,7 @@ public class AccountLoanController {
 			deleteAccountEntryDetails(getAccountEntry());
 			entry = this.getAccountEntry();
 		}
-		Loan loan = insertLoan(getLoan());
+		insertLoan(getLoan());
 		entry.setEntryDate(getLoan().getLoanDate());
 		entry.setAccountPeriod(AccountUtil.obtainPeriod(getLoan().getLoanDate()).getId());
 		entry.setJournal(null);
@@ -115,7 +108,6 @@ public class AccountLoanController {
 		return (Loan) loanBean.insert(loan);
 	}
 
-	@SuppressWarnings("unused")
 	public void onRemove(ActionEvent event) throws ManagerBeanException{
 		try {
 			deleteAccountEntryDetails(getAccountEntry());

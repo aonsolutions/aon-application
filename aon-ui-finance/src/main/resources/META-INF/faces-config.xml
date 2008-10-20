@@ -1158,7 +1158,7 @@
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
 			<property-name>beanName</property-name>
-			<value>sellerLookup</value>
+			<value>bankLookup</value>
 		</managed-property>
 		<managed-property>
 			<property-name>foreignPojo</property-name>

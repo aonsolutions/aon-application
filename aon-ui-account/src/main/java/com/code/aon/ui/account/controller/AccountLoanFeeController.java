@@ -27,7 +27,6 @@ import com.code.aon.finance.RegistryBank;
 import com.code.aon.finance.dao.IFinanceAlias;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.account.utils.AccountPeriodValidator;
-import com.code.aon.ui.menu.jsf.MenuEvent;
 import com.code.aon.ui.util.AonUtil;
 
 public class AccountLoanFeeController {
@@ -67,12 +66,6 @@ public class AccountLoanFeeController {
 		this.header = header;
 	}
 
-	@SuppressWarnings("unused")
-	public void onReset(MenuEvent event){
-		reset();
-	}
-	
-	@SuppressWarnings("unused")
 	public void onReset(ActionEvent event){
 		reset();
 	}
@@ -94,7 +87,6 @@ public class AccountLoanFeeController {
 		return header;
 	}
 	
-	@SuppressWarnings("unused")
 	public void accept(ActionEvent event) throws ManagerBeanException {
 		AccountPeriodValidator.validateAccountPeriod(getHeader().getFeeDate());
 		AccountEntry entry = new AccountEntry();
@@ -114,7 +106,6 @@ public class AccountLoanFeeController {
 		loadAccountEntryController(entry);
 	}
 	
-	@SuppressWarnings("unused")
 	public void onRemove(ActionEvent event){
 		deleteAccountEntryDetails(getAccountEntry());
 		deleteAccountEntry(getAccountEntry());

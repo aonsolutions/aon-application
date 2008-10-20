@@ -1,0 +1,78 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:h="http://java.sun.com/jsf/html"
+	template="/facelet/templates/aon.ui.content.xhtml">
+
+	<ui:define name="content">
+
+		<aon:form id="accountForm">
+
+			<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/searchToolbar.xhtml" >
+				<ui:param name="toolbarTitle" value="#{menuBundle.account}" />
+				<ui:param name="controller" value="#{account}" />
+			</ui:include>
+
+<!-- 
+			<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/toolbar.xhtml">
+				<ui:define name="toolbarTitle">
+					<aon:outputText value="#{menuBundle.account}" />
+				</ui:define>
+
+				<ui:define name="toolbarDescription">
+					<aon:outputText value="#{bundle.aon_search}" />
+				</ui:define>
+
+				<ui:define name="toolbarContent">
+					<h:commandButton type="reset" id="clear"
+						value="#{bundle.aon_clear}"
+						styleClass="aon-finding-toolbar-item aon-icon-rubber" />
+					<h:commandButton id="reset" value="#{bundle.aon_reset}"
+						accesskey="#{bundle.aon_key_new}" action="account_form"
+						actionListener="#{account.onReset}"
+						styleClass="aon-finding-toolbar-item aon-icon-reset" />
+					<h:commandButton id="back" value="#{bundle.aon_back}"
+						accesskey="#{bundle.aon_key_cancel}" action="account_list"
+						actionListener="#{account.onCancel}" immediate="true"
+						styleClass="aon-finding-toolbar-item aon-icon-cancel" />
+				</ui:define>
+			</ui:decorate>
+ -->
+
+			<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/searchContent.xhtml" >
+				<ui:define name="searchContent">
+					<aon:methodParam name="searchActionListener" value="#{account.onSearch}" type="actionListener" />
+					<aon:methodParam name="searchAction" value="account_list" />				
+				
+					<aon:outputLabel for="Account_id"
+						value="#{accountBundle.aon_account_id}" />
+					<aon:inputText id="Account_id" size="50"
+						valueChangeListener="#{account.addExpression}" />
+
+					<aon:outputLabel for="Account_description"
+						value="#{accountBundle.aon_account_description}" />
+					<aon:inputText id="Account_description" size="50"
+						valueChangeListener="#{account.addExpression}" />
+
+					<aon:outputLabel for="Account_alias"
+						value="#{accountBundle.aon_account_alias}" />
+					<aon:inputText id="Account_alias" size="50"
+						valueChangeListener="#{account.addExpression}" />
+
+					<aon:outputLabel for="Account_entryEnabled"
+						value="#{accountBundle.aon_account_entryEnabled}" />
+					<aon:selectOneMenu id="Account_entryEnabled"
+						valueChangeListener="#{account.addExpression}">
+						<f:selectItem itemLabel="-" itemDisabled="true" itemValue="" />
+						<f:selectItem itemLabel="#{accountBundle.aon_yes}"
+							itemValue="true" />
+						<f:selectItem itemLabel="#{accountBundle.aon_no}"
+							itemValue="false" />
+					</aon:selectOneMenu>
+				</ui:define>
+			</ui:decorate>
+		</aon:form>
+	</ui:define>
+</ui:composition>

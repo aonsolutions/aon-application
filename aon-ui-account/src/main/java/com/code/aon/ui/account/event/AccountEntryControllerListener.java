@@ -1,5 +1,7 @@
 package com.code.aon.ui.account.event;
 
+import java.util.Date;
+
 import com.code.aon.account.AccountEntry;
 import com.code.aon.account.dao.IAccountAlias;
 import com.code.aon.account.enumeration.AccountEntryType;
@@ -20,6 +22,7 @@ public class AccountEntryControllerListener extends ControllerAdapter {
     public void afterBeanCreated(ControllerEvent event) throws ControllerListenerException {
         AccountEntry to = (AccountEntry)event.getController().getTo();
         to.setType(AccountEntryType.MANUAL);
+        to.setEntryDate(new Date());
     }
 
     @Override

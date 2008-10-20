@@ -38,7 +38,6 @@ import com.code.aon.product.enumeration.TaxType;
 import com.code.aon.product.util.DiscountExpression;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.account.utils.AccountPeriodValidator;
-import com.code.aon.ui.menu.jsf.MenuEvent;
 import com.code.aon.ui.util.AonUtil;
 
 public class AccountLeasingFeeController {
@@ -78,12 +77,6 @@ public class AccountLeasingFeeController {
 		this.header = header;
 	}
 
-	@SuppressWarnings("unused")
-	public void onReset(MenuEvent event){
-		reset();
-	}
-	
-	@SuppressWarnings("unused")
 	public void onReset(ActionEvent event){
 		reset();
 	}
@@ -104,7 +97,6 @@ public class AccountLeasingFeeController {
 		return header;
 	}
 	
-	@SuppressWarnings("unused")
 	public void accept(ActionEvent event) throws ManagerBeanException{
 		AccountPeriodValidator.validateAccountPeriod(getHeader().getLeasingFeeDate());
 		AccountEntry entry = new AccountEntry();
@@ -118,8 +110,9 @@ public class AccountLeasingFeeController {
 		entry.setEntryDate(getHeader().getLeasingFeeDate());
 		entry.setJournal(null);
 		entry.setSecurityLevel(getHeader().getSecurityLevel());
-		Account account = new Account();
-		account = obtainLeasingAccount(getHeader().getLeasing());
+		// TODO euke ¿¿¿y esto???
+		Account account = obtainLeasingAccount(getHeader().getLeasing());
+
 		entry.setType(AccountEntryType.LEASING_FEE);
 		Invoice invoice = insertInvoice();
 		insertInvoiceDetail(invoice);
@@ -147,7 +140,7 @@ public class AccountLeasingFeeController {
 	}
 
 	/* NO se llama a AccountUtil porque este aquí no se genera si no existe */
-	@SuppressWarnings({"unchecked", "unused"})
+	@SuppressWarnings("unchecked")
 	private Account obtainLeasingAccount(Leasing leasing) throws ManagerBeanException {
 		IManagerBean leasingAccountBean = BeanManager.getManagerBean(LeasingAccount.class);
 		Criteria criteria = new Criteria();
@@ -234,7 +227,6 @@ public class AccountLeasingFeeController {
 		return (AccountEntryInvoice)accountEntryInvoiceBean.insert(accountEntryInvoice);
 	}
 	
-	@SuppressWarnings("unused")
 	public void onRemove(ActionEvent event){
 		deleteAccountEntryInvoice(this.getAccountEntryInvoice());
 		deleteInvoice(getAccountEntryInvoice().getInvoice());
