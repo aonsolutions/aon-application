@@ -52,6 +52,18 @@
 		</dependency>
 		<dependency>
 			<groupId>com.code.aon</groupId>
+			<artifactId>aon.ui.webmail</artifactId>
+			<version>3.9.1</version>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>javax.mail</groupId>
+			<artifactId>mail</artifactId>
+			<version>1.4</version>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.code.aon</groupId>
 			<artifactId>aon.messaging</artifactId>
 			<version>0.1.0</version>
 			<scope>compile</scope>
