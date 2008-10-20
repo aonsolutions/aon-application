@@ -9,22 +9,17 @@ import com.code.aon.payroll.auxiliares.Colectivos;
 import com.code.aon.payroll.auxiliares.contratos.ContratosInternos;
 import com.code.aon.payroll.auxiliares.contratos.ContratosTc2;
 import com.code.aon.payroll.auxiliares.convenios.Complemento;
-import com.code.aon.payroll.auxiliares.organismosyentidades.Comunidad;
-import com.code.aon.payroll.auxiliares.organismosyentidades.Delegacion;
-import com.code.aon.payroll.auxiliares.organismosyentidades.Entidad;
-import com.code.aon.payroll.auxiliares.organismosyentidades.Linmutua;
-import com.code.aon.payroll.auxiliares.organismosyentidades.Mutua;
-import com.code.aon.payroll.auxiliares.organismosyentidades.Pais;
-import com.code.aon.payroll.auxiliares.organismosyentidades.Provincia;
-import com.code.aon.payroll.auxiliares.organismosyentidades.Sucursal;
+import com.code.aon.payroll.auxiliares.convenios.Convenio;
+import com.code.aon.payroll.auxiliares.convenios.Nivel;
+import com.code.aon.payroll.auxiliares.convenios.Pagaext;
 import com.code.aon.payroll.cotizacion.Base;
+import com.code.aon.payroll.cotizacion.Bonificacion;
 import com.code.aon.payroll.cotizacion.Cnae;
 import com.code.aon.payroll.cotizacion.CnaeMaestro;
-import com.code.aon.payroll.cotizacion.Epigrafe;
-import com.code.aon.payroll.cotizacion.Linbasec;
-import com.code.aon.payroll.cotizacion.Bonificacion;
 import com.code.aon.payroll.cotizacion.Elemento;
 import com.code.aon.payroll.cotizacion.ElementoMaestro;
+import com.code.aon.payroll.cotizacion.Epigrafe;
+import com.code.aon.payroll.cotizacion.Linbasec;
 import com.code.aon.payroll.cotizacion.Linepigr;
 import com.code.aon.payroll.cotizacion.Ocupacion;
 import com.code.aon.payroll.cotizacion.OcupacionMaestro;
@@ -32,7 +27,10 @@ import com.code.aon.payroll.cotizacion.Porcentaje;
 import com.code.aon.payroll.cotizacion.PorcentajeMaestro;
 import com.code.aon.payroll.divisa.Divisa;
 import com.code.aon.payroll.divisa.LinDivisa;
+import com.code.aon.payroll.geograficas.Comunidad;
 import com.code.aon.payroll.geograficas.Nacion;
+import com.code.aon.payroll.geograficas.Pais;
+import com.code.aon.payroll.geograficas.Provincia;
 import com.code.aon.payroll.irpf.Cuota;
 import com.code.aon.payroll.irpf.Elemirpf;
 import com.code.aon.payroll.irpf.Exclusion;
@@ -45,6 +43,11 @@ import com.code.aon.payroll.irpfforal.MinoracionesAlava;
 import com.code.aon.payroll.irpfforal.MinoracionesGuipuzcoa;
 import com.code.aon.payroll.irpfforal.MinoracionesNavarra;
 import com.code.aon.payroll.irpfforal.MinoracionesVizcaya;
+import com.code.aon.payroll.auxiliares.organismosyentidades.Delegacion;
+import com.code.aon.payroll.auxiliares.organismosyentidades.Entidad;
+import com.code.aon.payroll.auxiliares.organismosyentidades.Linmutua;
+import com.code.aon.payroll.auxiliares.organismosyentidades.Mutua;
+import com.code.aon.payroll.auxiliares.organismosyentidades.Sucursal;
 import com.code.aon.payroll.tipos.Autorizacion;
 import com.code.aon.payroll.tipos.Documento;
 import com.code.aon.payroll.tipos.Empresario;
@@ -100,6 +103,9 @@ public class PayrollAliasWriter {
 		        Linepigr.class.getName(),
 		        Divisa.class.getName(),
 		        LinDivisa.class.getName(),
+		        Convenio.class.getName(),
+		        Nivel.class.getName(),
+		        Pagaext.class.getName(),
 		        Entidad.class.getName(),
 		        Sucursal.class.getName(),
 		        Mutua.class.getName(),
