@@ -1,0 +1,49 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:h="http://java.sun.com/jsf/html"
+	template="/facelet/templates/aon.ui.content.xhtml">
+
+	<ui:define name="content">
+		<aon:form id="accBasicSupplierSearch">
+
+			<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/searchToolbar.xhtml" >
+				<ui:param name="toolbarTitle" value="#{menuBundle.account_supplier}" />
+				<ui:param name="controller" value="#{accBasicSupplier}" />
+			</ui:include>
+
+			<ui:decorate
+				template="/com/code/aon/ui/resources/facelet/shared/searchContent.xhtml">
+				<ui:define name="searchContent">
+
+					<aon:methodParam name="searchActionListener"
+						value="#{accBasicSupplier.onSearch}" type="actionListener" />
+					<aon:methodParam name="searchAction" value="accBasicSupplier_list" />
+
+					<aon:outputLabel for="Supplier_registry_document"
+						value="#{financeBundle.aon_document}" />
+					<aon:inputText id="Supplier_registry_document" size="20"
+						valueChangeListener="#{accBasicSupplier.addExpression}" />
+
+					<aon:outputLabel for="Supplier_registry_name"
+						value="#{registryBundle.aon_name}" />
+					<aon:inputText id="Supplier_registry_name" size="40"
+						valueChangeListener="#{accBasicSupplier.addExpression}" />
+
+					<aon:outputLabel for="Supplier_registry_surname"
+						value="#{registryBundle.aon_surname}" />
+					<aon:inputText id="Supplier_registry_surname" size="40"
+						valueChangeListener="#{accBasicSupplier.addExpression}" />
+
+					<aon:outputLabel for="Supplier_registry_alias"
+						value="#{registryBundle.aon_alias}"
+						styleClass="aon-form-input-text-label aon-form-table-column-odd-label" />
+					<aon:inputText id="Supplier_registry_alias" size="40"
+						valueChangeListener="#{accBasicSupplier.addExpression}" />
+				</ui:define>
+			</ui:decorate>
+		</aon:form>
+	</ui:define>
+</ui:composition>
