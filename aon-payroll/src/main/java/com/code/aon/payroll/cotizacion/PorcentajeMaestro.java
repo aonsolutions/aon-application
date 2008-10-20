@@ -1,8 +1,13 @@
  package com.code.aon.payroll.cotizacion;
 
+import java.util.HashSet;
+import java.util.Set;
+
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import com.code.aon.common.ITransferObject;
@@ -17,6 +22,10 @@ public class PorcentajeMaestro implements ITransferObject {
 	private String cdg;
 	private String description;
 	private Integer ordpct;
+
+	/** The porcentajes. */
+	private Set<Porcentaje> porcentajes = new HashSet<Porcentaje>();
+	
 
 	@Id
 	@Column(name="cdg", unique=true, nullable=false, length=8)
@@ -47,4 +56,14 @@ public class PorcentajeMaestro implements ITransferObject {
 		this.ordpct = ordpct;
 	}
 
+	@OneToMany(mappedBy = "porcentajeMaestro", cascade={CascadeType.REMOVE})
+	public Set<Porcentaje> getPorcentajes() {
+		return porcentajes;
+	}
+
+	public void setPorcentajes(Set<Porcentaje> porcentajes) {
+		this.porcentajes = porcentajes;
+	}
+	
 }
+
