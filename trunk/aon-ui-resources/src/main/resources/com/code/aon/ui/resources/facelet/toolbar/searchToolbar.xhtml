@@ -5,7 +5,6 @@
 	xmlns:aon="http://www.code.es/aon-rich-components">
 
 	<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/searchToolbarEx.xhtml" >
-		<aon:valueParam name="toolbarID" default="aonToolbar" />
 		<aon:valueParam name="toolbarDescription" default="#{bundle.aon_toolbar_search}" />	
 		<aon:methodParam name="backActionListener" default="#{controller.onCancel}" type="actionListener" />
 		<aon:methodParam name="backAction" default="#{controller.beanName}_list" resolve="true" />		
