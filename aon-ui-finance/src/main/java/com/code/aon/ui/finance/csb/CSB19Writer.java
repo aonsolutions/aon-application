@@ -2,8 +2,6 @@ package com.code.aon.ui.finance.csb;
 
 import java.io.File;
 import java.io.IOException;
-import java.text.DecimalFormat;
-import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.Collection;
 import java.util.Iterator;
@@ -22,7 +20,6 @@ import com.code.aon.csb.fd0.model.CSB19.data.Individual;
 import com.code.aon.csb.fd0.model.CSB19.data.Lot;
 import com.code.aon.csb.fd0.model.CSB19.data.Orderer;
 import com.code.aon.csb.fd0.model.CSB19.data.Presenter;
-import com.code.aon.finance.Finance;
 import com.code.aon.finance.FinanceBatch;
 import com.code.aon.finance.FinanceBatchDetail;
 import com.code.aon.finance.Invoice;
@@ -106,7 +103,7 @@ public class CSB19Writer {
 		Account detailAccount = new Account();
 		detailAccount.parse(fBatchDetail.getFinance().getBankAccount());
 		individual.setAccount(detailAccount);
-		individual.setConcept(createIndividualConcept(fBatchDetail.getFinance()));
+		individual.setConcept(fBatchDetail.getFinance().getConcept());
 		individual.setInternalCode(fBatchDetail.getFinance().getInvoice().getSeries() + "/" + fBatchDetail.getFinance().getInvoice().getNumber());
 		individual.setName(fBatchDetail.getFinance().getRegistry().getName() + " " + fBatchDetail.getFinance().getRegistry().getSurname());
 		individual.setReferenceCode(fBatchDetail.getFinance().getRegistry().getId().toString());
@@ -127,54 +124,34 @@ public class CSB19Writer {
 		}
 		return individual;
 	}
-
-	private String createIndividualConcept(Finance finance) {
-		String concept = "";
-		if (finance.getInvoice() != null) {
-			SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yy");
-			String series = finance.getInvoice().getSeries();
-			String number = Integer.toString(finance.getInvoice().getNumber());
-			String date = formatter.format(finance.getInvoice().getDate());
-			String document = finance.getInvoice().getRegistryDocument();
-
-			concept = "FRA:" + series + "/" + number + " " + date + " NIF:" + document;
-		}
-		return (concept.length() > 40)?concept.substring(0, 39):concept;
-	}
-
+	
 	@SuppressWarnings("unchecked")
 	private void addExtendedData(Individual individual, Invoice invoice) throws ManagerBeanException {
-		NumberFormat formatter = new DecimalFormat("###,###,##0.00");
-
-		individual.addConcept("         CANT.   PRECIO   %DTO     TOTAL");
+		SimpleDateFormat format = new SimpleDateFormat();
+		format.applyLocalizedPattern("dd/MM/yy");
+		individual.addConcept("DEL " + format.format(invoice.getDate()));
 		IManagerBean invoiceDetailBean = BeanManager.getManagerBean(InvoiceDetail.class);
 		InvoicePriceStrategy strategy = new InvoicePriceStrategy();
 		Criteria criteria = new Criteria();
 		criteria.addEqualExpression(invoiceDetailBean.getFieldName(IFinanceAlias.INVOICE_DETAIL_INVOICE_ID), invoice.getId());
 		Iterator iter = invoiceDetailBean.getList(criteria).iterator();
-		for(int i=0; i<5&&iter.hasNext(); i++){
+		for(int i = 0;i<5 && iter.hasNext();i++){
 			InvoiceDetail detail = (InvoiceDetail)iter.next();
 			String descConcept = new String();
-			String priceConcept = new String();
+			String priceConcep = new String();
 			if(detail.getDescription().length() > 40){
 				descConcept = detail.getDescription().substring(0,39);
-				priceConcept = (detail.getDescription().length() > 48)?detail.getDescription().substring(40, 47):detail.getDescription().substring(40, detail.getDescription().length());
+				priceConcep = (detail.getDescription().length() > 48?detail.getDescription().substring(40,47):detail.getDescription().substring(40,detail.getDescription().length()));
 			}else{
 				descConcept = detail.getDescription();
 			}
 			individual.addConcept(descConcept);
-
-			String quantity = (detail.getQuantity()==0)?"":formatter.format(detail.getQuantity());
-			String price = (detail.getPrice()==0)?"":formatter.format(detail.getPrice());
-			double[] discounts = detail.getDiscountExpression().getDiscounts();
-			String discount = (discounts==null||discounts[0]==0)?"":formatter.format(discounts[0]);
-			String base = (strategy.getBasePrice(detail)==0)?"":formatter.format(strategy.getBasePrice(detail));
-			priceConcept = priceConcept + StringUtils.repeat(" ", 8-priceConcept.length()) +
-							StringUtils.repeat(" ", 6-quantity.length()) + quantity +
-							StringUtils.repeat(" ", 9-price.length()) + price +
-							StringUtils.repeat(" ", 7-discount.length()) + discount +
-							StringUtils.repeat(" ", 10-base.length()) + base;
-			individual.addConcept(priceConcept);
+			priceConcep = priceConcep + " " 
+						  + detail.getQuantity() + " " 
+						  + detail.getPrice() + " "
+						  + detail.getItem().getProduct().getVat().getPercentage() + "% "
+						  + strategy.getBasePrice(detail);
+			individual.addConcept(priceConcep);
 		}
 		if(iter.hasNext()){
 			double total = 0.0;
@@ -182,26 +159,18 @@ public class CSB19Writer {
 				InvoiceDetail detail = (InvoiceDetail)iter.next();
 				total += detail.getTaxableBase();
 			}
-			individual.addConcept("OTROS CONCEPTOS NO DETALLADOS...");
-			String base = (total==0)?"":formatter.format(total);
-			individual.addConcept(StringUtils.repeat(" ", 30) + StringUtils.repeat(" ", 10-base.length()) + base);
+			individual.addConcept("OTROS CONCEPTOS");
+			individual.addConcept(StringUtils.repeat(" ", 30) + total);
 		}
 		Iterator taxIter = strategy.getTaxBreakDowns(invoice, invoice).iterator();
 		for(int i=0;i<2;i++){
 			if(taxIter.hasNext()){
 				TaxBreakDown taxBreakDown = (TaxBreakDown)taxIter.next();
 				if(taxBreakDown.getTaxType().equals(TaxType.VAT)){
-					String taxConcept = formatter.format(taxBreakDown.getTaxPercent()) + "% IVA  SOBRE  " + 
-										formatter.format(taxBreakDown.getBase()) + "  =  " + 
-										formatter.format(taxBreakDown.getTaxQuota());
+					String taxConcept = "BASE:" + taxBreakDown.getBase();
+					taxConcept = taxConcept + StringUtils.repeat(" ", 19 - taxConcept.length());
+					taxConcept = taxConcept + taxBreakDown.getTaxPercent() + "% IVA" + ": " + taxBreakDown.getTaxQuota();
 					individual.addConcept(taxConcept);
-
-					if (invoice.isSurcharge()) {
-						String surchargeConcept = formatter.format(taxBreakDown.getSurchargePercent()) + "% RE   SOBRE  " +
-												  formatter.format(taxBreakDown.getBase()) + "  =  " +
-												  formatter.format(taxBreakDown.getSurchargeQuota());
-						individual.addConcept(surchargeConcept);
-					}
 				}
 			}
 		}

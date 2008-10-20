@@ -25,6 +25,8 @@ import com.code.aon.groupware.enumeration.Priority;
 @Table(name="notice")
 public class Notice implements ITransferObject {
 
+	private static final long serialVersionUID = 8420760868787119520L;
+
 	private Integer id;
 	
 	private Date date;
@@ -82,7 +84,7 @@ public class Notice implements ITransferObject {
 	}
 
 	@ManyToOne
-	@JoinColumn(name="work_group", nullable=false)
+	@JoinColumn(name="work_group")
 	public WorkGroup getWorkGroup() {
 		return workGroup;
 	}

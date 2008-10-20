@@ -21,17 +21,16 @@ import javax.faces.event.ActionEvent;
 import javax.faces.event.ValueChangeEvent;
 import javax.faces.model.SelectItem;
 
-import org.apache.commons.beanutils.PropertyUtils;
-import org.apache.myfaces.custom.date.HtmlInputDate;
-import org.apache.myfaces.custom.tabbedpane.HtmlPanelTabbedPane;
-
 import net.fortuna.ical4j.model.Recur;
+
+import org.apache.commons.beanutils.PropertyUtils;
+import org.apache.myfaces.custom.tabbedpane.HtmlPanelTabbedPane;
 
 import com.code.aon.calendar.CalendarUtil;
 import com.code.aon.calendar.enumeration.EventCategory;
 import com.code.aon.planner.EventException;
-import com.code.aon.planner.IPlannerListener;
 import com.code.aon.planner.IEvent;
+import com.code.aon.planner.IPlannerListener;
 import com.code.aon.planner.IRecurrence;
 import com.code.aon.planner.enumeration.EventStatus;
 import com.code.aon.ui.planner.core.Event;
@@ -71,10 +70,13 @@ public class EventManager {
 	private boolean isNew = true;
 	/** Indica si están habilitadas las opciones de Aceptar y Borrar. */
 	private boolean isEnabled = true;
+
 	/** Fecha de inicio del evento. */
 	private Date startDate;
 	/** Hora de inicio del evento. */
 	private Date startTime;
+	/** Hora de finalización del evento. */
+	private Date endTime;
 
 	private Integer subcategory = 2;
 	/**
@@ -248,6 +250,18 @@ public class EventManager {
 	}
 
 	/**
+	 * @return the endTime
+	 */
+	public Date getEndTime() {
+		return endTime;
+	}
+	/**
+	 * @param endTime the endTime to set
+	 */
+	public void setEndTime(Date endTime) {
+		this.endTime = endTime;
+	}
+	/**
 	 * Initialize Manager event object.
 	 * 
 	 * @param event
@@ -268,6 +282,7 @@ public class EventManager {
 		}
 		setEnabled( this.event.getId() != null );
 		this.startDate = this.startTime = this.event.getStartTime();
+		this.endTime = this.event.getEndTime();
 	}
 
 	/**
@@ -340,10 +355,6 @@ public class EventManager {
 			PlannerUtil.setAllDayTimeEvent( (Event) this.event, this.startDate );
 			this.startDate = this.startTime = this.event.getStartTime();
 		}
-		HtmlInputDate start = 
-			(HtmlInputDate) event.getComponent().findComponent("Event_startTime_recur");
-		if ( start != null )
-			start.setValue( this.event.getStartTime() );
     }
 
 	/**
@@ -352,18 +363,10 @@ public class EventManager {
 	 * @param event
 	 */
 	public void endTimeChanged(ValueChangeEvent event) {
-		this.event.getEndTime().setTime( ( (Date) event.getNewValue() ).getTime() ); 
+		this.event.getEndTime().setTime( ( (Date) event.getNewValue() ).getTime() );
 		if ( this.startDate.after( this.event.getEndTime() ) ) {
 			PlannerUtil.setCurrentTimeEvent( (Event) this.event, this.startDate );
-			HtmlInputDate end = 
-				(HtmlInputDate) event.getComponent().findComponent("Event_endTime");
-			if ( end != null )
-				end.setValue( this.event.getEndTime() );
 		}
-		HtmlInputDate endRecur = 
-			(HtmlInputDate) event.getComponent().findComponent("Event_endTime_recur");
-		if ( endRecur != null )
-			endRecur.setValue( this.event.getEndTime() );
 	}
 
     /**
@@ -378,14 +381,6 @@ public class EventManager {
 		} else {
 			PlannerUtil.setCurrentTimeEvent( (Event) this.event, new Date() );
 		}
-		HtmlInputDate start = 
-			(HtmlInputDate) event.getComponent().findComponent("Event_startTime_recur");
-		if ( start != null )
-			start.setValue( this.event.getStartTime() );
-		HtmlInputDate end = 
-			(HtmlInputDate) event.getComponent().findComponent("Event_endTime_recur");
-		if ( end != null )
-			end.setValue( this.event.getEndTime() );
 	}
 
     /**
@@ -399,13 +394,8 @@ public class EventManager {
 		Recur r = new Recur(Recur.DAILY, CalendarUtil.getICalDate( this.event.getEndTime() ) );
 		this.recurrence = new Recurrence(r);
 		this.recurrence.setUntilType( IRecurrence.UNTILDATE );
-//	TODO Falla la implementacion de Tomahawk 1.1.5 
-//		y no recupera el componente usando el metodo findComponent
-//		HtmlPanelTabbedPane tabbedPane = 
-//			(HtmlPanelTabbedPane)event.getComponent().findComponent("schedule_event");
 		HtmlPanelTabbedPane tabbedPane = 
 			(HtmlPanelTabbedPane)event.getComponent().getParent().getParent().getParent().getParent();
-//	**********************************************
 		if (tabbedPane != null) {
 			if (this.recur)
 				tabbedPane.setSelectedIndex(1);
@@ -435,8 +425,8 @@ public class EventManager {
      */
     public void accept(ActionEvent evt) throws ParseException {
         if ( this.cb != null ) {
-        	fillEventStartTime();
         	Event _event = (Event) this.event;
+        	fillEventTime( _event );
     		_event.setRecurrences( new HashSet<Recur>() );
         	if (this.recur) {
         		HashSet<Recur> set = new HashSet<Recur>();
@@ -450,29 +440,29 @@ public class EventManager {
 			_event.setDirty(true);
         	try {
 //	Primero mira a ver si hay eventos en esa fecha y despues comprueba si es un evento nuevo.
-	        	if ( !this.cb.hasEvents( this.event.getStartTime(), this.event.getEndTime(), null, this.event.getId() ) ) {
+	        	if ( !this.cb.hasEvents( _event.getStartTime(), _event.getEndTime(), null, _event.getId() ) ) {
 	        		if (isNew()) {
-		        		this.cb.add(this.event);
+		        		this.cb.add( _event );
 		        		isNew = false;
-		        		fireEventAdded(this.event);
+		        		fireEventAdded( _event );
 					} else {
-						this.cb.update(this.event);
-					    fireEventUpdated(this.event);
+						this.cb.update( _event );
+					    fireEventUpdated( _event );
 					}
 	        	} else {
-	                addMessage( FacesMessage.SEVERITY_INFO, "aon_hasevents_indate_error", new Date[] {this.event.getStartTime(), this.event.getEndTime()} );
+	                addMessage( FacesMessage.SEVERITY_INFO, "aon_hasevents_indate_error", new Date[] { _event.getStartTime(), _event.getEndTime()} );
 	        	}
 //				if (isNew()) {
-//		        	if ( !this.cb.hasEvents( this.event.getStartTime(), this.event.getEndTime(), null, this.event.getId() ) ) {
-//		        		this.cb.add(this.event);
+//		        	if ( !this.cb.hasEvents( _event.getStartTime(), _event.getEndTime(), null, _event.getId() ) ) {
+//		        		this.cb.add(_event);
 //		        		isNew = false;
-//		        		fireEventAdded(this.event);
+//		        		fireEventAdded(_event);
 //		        	} else {
-//		                addMessage( FacesMessage.SEVERITY_INFO, "aon_hasevents_indate_error", new Date[] {this.event.getStartTime(), this.event.getEndTime()} );
+//		                addMessage( FacesMessage.SEVERITY_INFO, "aon_hasevents_indate_error", new Date[] {_event.getStartTime(), _event.getEndTime()} );
 //		        	}
 //				} else {
-//					this.cb.update(this.event);
-//				    fireEventUpdated(this.event);
+//					this.cb.update(_event);
+//				    fireEventUpdated(_event);
 //				}
 			} catch (EventException e) {
 				String messageId = e.getMessage();
@@ -570,10 +560,11 @@ public class EventManager {
     }
 
 	/**
-	 * Fill Event start time before saving it to the database.
+	 * Fill Event time before saving it to the database.
 	 */
-	private void fillEventStartTime() {
+	private void fillEventTime(Event _event) {
 		if ( isRecur() ) {
+			// Setting starting date and time
 			Calendar startCalendarDate = Calendar.getInstance();
 			startCalendarDate.setTime( this.startDate );
 			Calendar startCalendarTime = Calendar.getInstance();
@@ -581,7 +572,16 @@ public class EventManager {
 			startCalendarTime.set( Calendar.YEAR, startCalendarDate.get(Calendar.YEAR) );
 			startCalendarTime.set( Calendar.MONDAY, startCalendarDate.get(Calendar.MONTH) );
 			startCalendarTime.set( Calendar.DATE, startCalendarDate.get(Calendar.DATE) );
-			this.event.getStartTime().setTime( startCalendarTime.getTimeInMillis() );
+			_event.setStartTime( startCalendarTime.getTime() );
+			// Setting ending date and time
+			Calendar endCalendarDate = Calendar.getInstance();
+			endCalendarDate.setTime( _event.getEndTime() );
+			Calendar endCalendarTime = Calendar.getInstance();
+			endCalendarTime.setTime( this.endTime );
+			endCalendarTime.set( Calendar.YEAR, endCalendarDate.get(Calendar.YEAR) );
+			endCalendarTime.set( Calendar.MONDAY, endCalendarDate.get(Calendar.MONTH) );
+			endCalendarTime.set( Calendar.DATE, endCalendarDate.get(Calendar.DATE) );
+			_event.setEndTime( endCalendarTime.getTime() );
 		} else if ( this.event.isAllDay() ) {
 			this.event.getStartTime().setTime( this.startDate.getTime() );
 		}

@@ -126,7 +126,7 @@ public class AccountEntryDetail implements ITransferObject {
 	 * 
 	 * @return the concept
 	 */
-	@Column(length=30)
+	@Column(length=32)
 	public String getConcept() {
 		return concept;
 	}
