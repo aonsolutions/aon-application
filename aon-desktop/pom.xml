@@ -15,7 +15,7 @@
 	<description>AON DESKTOP</description>
 	<name>AON DESKTOP</name>
 	<properties>
-		<dbVersion>1.10.1</dbVersion>
+		<dbVersion>1.10.2</dbVersion>
 	</properties> 
 	<build>
 		<finalName>aon-desktop</finalName> 
@@ -59,12 +59,6 @@
 		</dependency>
 		<dependency>
 			<groupId>com.code.aon</groupId>
-			<artifactId>aon.ui.webmail</artifactId>
-			<version>3.9.1</version>
-			<scope>compile</scope>
-		</dependency>
-		<dependency>
-			<groupId>com.code.aon</groupId>
 			<artifactId>aon.company</artifactId>
 			<version>2.2.2</version>
 			<scope>compile</scope>
@@ -105,12 +99,6 @@
 			<groupId>com.code.aon</groupId>
 			<artifactId>aon.ui.groupware</artifactId>
 			<version>2.1.20</version>
-			<scope>compile</scope>
-		</dependency>
-		<dependency>
-			<groupId>com.code.aon</groupId>
-			<artifactId>aon.messaging</artifactId>
-			<version>0.1.0</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
