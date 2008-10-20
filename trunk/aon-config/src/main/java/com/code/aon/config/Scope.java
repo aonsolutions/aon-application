@@ -37,4 +37,15 @@ public class Scope implements ITransferObject {
 	public void setDescription(String description) {
 		this.description = description;
 	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (id == null) {
+			return super.equals(obj);
+		}
+		if (obj instanceof Scope) {
+			return (this.id.equals(((Scope) obj).getId()));
+		}
+		return false;
+	}
 }
