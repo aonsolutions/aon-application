@@ -1,20 +1,12 @@
 package com.code.aon.product;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
 import javax.persistence.Table;
-import javax.persistence.Transient;
 
-import com.code.aon.common.ILookupObject;
 import com.code.aon.common.ITransferObject;
-import com.code.aon.product.dao.IProductAlias;
 
 /**
  * Transfer Object that represents a tariff
@@ -25,10 +17,11 @@ import com.code.aon.product.dao.IProductAlias;
  */
 @Entity
 @Table(name="tariff")
-@Inheritance(strategy=InheritanceType.JOINED )
-public class Tariff implements ITransferObject, ILookupObject {
+public class Tariff implements ITransferObject {
 
-    /**
+	private static final long serialVersionUID = 324027393235801481L;
+
+	/**
      * Primary key.
      */
     private Integer id;
@@ -95,19 +88,6 @@ public class Tariff implements ITransferObject, ILookupObject {
      */
     public void setName(String name) {
         this.name = name;
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see com.code.aon.common.ILookupObject#lookups()
-     */
-    @Transient
-    public Map<String,Object> getLookups() {
-    	Map<String,Object> map = new HashMap<String,Object>();
-        map.put(IProductAlias.TARIFF_ID, getId());
-        map.put(IProductAlias.TARIFF_NAME, getName());
-        return map;
     }
 
 }
