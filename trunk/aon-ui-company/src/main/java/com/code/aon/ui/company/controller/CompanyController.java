@@ -5,7 +5,6 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Date;
-import java.util.Iterator;
 
 import javax.faces.event.AbortProcessingException;
 
@@ -13,17 +12,9 @@ import org.apache.commons.io.IOUtils;
 import org.richfaces.event.UploadEvent;
 import org.richfaces.model.UploadItem;
 
-import com.code.aon.common.BeanManager;
-import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
-import com.code.aon.company.Company;
-import com.code.aon.ql.Criteria;
-import com.code.aon.registry.RegistryAttachment;
-import com.code.aon.registry.dao.IRegistryAlias;
-import com.code.aon.registry.enumeration.RegistryAttachmentType;
 import com.code.aon.ui.common.io.AonFile;
 import com.code.aon.ui.common.io.IAonFileListener;
-import com.code.aon.ui.util.AonUtil;
 
 /**
  * Controller used in the company maintenance.
