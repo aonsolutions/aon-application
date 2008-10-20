@@ -46,27 +46,38 @@
 		<mapping class="com.code.aon.payroll.cotizacion.Ocupacion"/>
 		<mapping class="com.code.aon.payroll.cotizacion.CnaeMaestro"/>			
 		<mapping class="com.code.aon.payroll.cotizacion.Cnae"/>	 
+		
 	
 			
-		  <!-- ORGANISMOS Y ENTIDADES-->		
-		
-        <mapping class="com.code.aon.payroll.auxiliares.organismosyentidades.Delegacion"/>		
+		<!-- ORGANISMOS Y ENTIDADES-->		
+		<mapping class="com.code.aon.payroll.auxiliares.organismosyentidades.Delegacion"/>		
+		<!--
 		<mapping class="com.code.aon.payroll.auxiliares.organismosyentidades.Pais"/>
 		<mapping class="com.code.aon.payroll.auxiliares.organismosyentidades.Provincia"/>		
 		<mapping class="com.code.aon.payroll.auxiliares.organismosyentidades.Comunidad"/>	
+		-->
 		<mapping class="com.code.aon.payroll.auxiliares.organismosyentidades.Mutua"/>		
 		<mapping class="com.code.aon.payroll.auxiliares.organismosyentidades.Linmutua"/>	
 	    <mapping class="com.code.aon.payroll.auxiliares.organismosyentidades.Entidad"/>		
 		<mapping class="com.code.aon.payroll.auxiliares.organismosyentidades.Sucursal"/>	
+		
+		
+		
 		<!-- CONTRATOS -->		
 		<mapping class="com.code.aon.payroll.auxiliares.contratos.ContratosInternos"/>
 		<mapping class="com.code.aon.payroll.auxiliares.contratos.ContratosTc2"/>	
 		
 		<!-- CONVENIOS -->		
-		<mapping class="com.code.aon.payroll.auxiliares.convenios.Complemento"/>		
+		<mapping class="com.code.aon.payroll.auxiliares.convenios.Complemento"/>
+		<mapping class="com.code.aon.payroll.auxiliares.convenios.Convenio"/>
+		<mapping class="com.code.aon.payroll.auxiliares.convenios.Nivel"/>
+		<mapping class="com.code.aon.payroll.auxiliares.convenios.Pagaext"/>		
 
 		<!-- GEOGRAFICAS -->		
         <mapping class="com.code.aon.payroll.geograficas.Nacion"/>	
+        <mapping class="com.code.aon.payroll.geograficas.Pais"/>
+		<mapping class="com.code.aon.payroll.geograficas.Provincia"/>		
+		<mapping class="com.code.aon.payroll.geograficas.Comunidad"/>
         
         <!-- IRPF -->
 		<mapping class="com.code.aon.payroll.irpf.Cuota"/>

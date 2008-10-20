@@ -167,6 +167,7 @@
 			</to-view-id>
 		</navigation-case>
 	</navigation-rule>
+	
 	<!-- =================== Irpf================= -->
 	<navigation-rule>
 	<navigation-case>
@@ -515,6 +516,30 @@
 		</navigation-case>
 	</navigation-rule> 
 	
+	<!-- =================== Convenios - Colectivos ================= -->
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>convenios_colectivos</from-outcome>
+			<to-view-id>
+				/facelet/auxiliares/convenios/colectivos/form.xhtml
+			</to-view-id>
+		</navigation-case>
+	</navigation-rule> 
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>convenios_colectivos_search</from-outcome>
+			<to-view-id>
+				/facelet/auxiliares/convenios/colectivos/search.xhtml
+			</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>convenios_colectivos_list</from-outcome>
+			<to-view-id>
+				/facelet/auxiliares/convenios/colectivos/list.xhtml
+			</to-view-id>
+		</navigation-case>
+	</navigation-rule> 
+	
 	<!-- =================== Cotizacion - Elementos ================= -->
 	<navigation-rule>
 		<navigation-case>
@@ -607,6 +632,30 @@
 			<from-outcome>divisas_search</from-outcome>
 			<to-view-id>
 				/facelet/auxiliares/divisa/search.xhtml
+			</to-view-id>
+		</navigation-case>
+	</navigation-rule>
+	
+	<!-- =================== Pais/Cominudad/Provincia ================= -->
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>pais</from-outcome>
+			<to-view-id>
+				/facelet/auxiliares/geograficas/pais/form.xhtml
+			</to-view-id>
+		</navigation-case>
+	</navigation-rule>
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>pais_list</from-outcome>
+			<to-view-id>
+				/facelet/auxiliares/geograficas/pais/list.xhtml
+			</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>pais_search</from-outcome>
+			<to-view-id>
+				/facelet/auxiliares/geograficas/pais/search.xhtml
 			</to-view-id>
 		</navigation-case>
 	</navigation-rule>
