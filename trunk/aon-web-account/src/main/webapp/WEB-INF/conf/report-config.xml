@@ -29,18 +29,35 @@
 		</params>
 	</report>
 	
-	<report id="abstract" description="Abstract">
-		<template path="/com/code/aon/ui/account/report/abstract.jasper"/>
-		<bean key="com.code.aon.account.AccountEntryDetail" />
-		<criteria provider="#{accountEntryReport}"/>
 
+
+<!--
+	************************************* 
+	******* VERSION 3.0.0 *************** 
+	************************************* 
+ -->
+	<report id="trialBalance" description="trialBalance">
+		<template path="/com/code/aon/ui/account/report/trialBalance.jasper"/>
+		<collection provider="#{accStatement}"/>
 		<params>
 			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.account.i18n.messages" />
 			<param id="logoImageFile" value="#{company.getAttachAsInputStream}" />
 			<param id="company" value="#{company.obtainCompany}" />
-			<param id="fromDate" value="#{accountEntryReport.getFromDate}" />
-			<param id="toDate" value="#{accountEntryReport.getToDate}" />
-			<param id="period" value="#{accountEntryReport.getPeriod}" />
+			<param id="summaryCollection" value="#{accStatement.getSummaryCollection}" />
+			<param id="params" value="#{accStatement.getSummaryProviderParameters}" />
+		</params>
+	</report>
+
+	<report id="statement" description="Account Statement">
+		<template path="/com/code/aon/ui/account/report/statement.jasper"/>
+		<collection provider="#{statementAccount}"/>
+		<params>
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.account.i18n.messages" />
+			<param id="company" value="#{company.obtainCompany}" />
+			<param id="openingEntry" value="#{statementAccount.getOpeningEntry}" />
+			<param id="fromOpeningEntry" value="#{statementAccount.getFromOpeningEntry}" />
+			<param id="periodBalance" value="#{statementAccount.getPeriodBalance}" />
+			<param id="params" value="#{accStatement.getSummaryProviderParameters}" />
 		</params>
 	</report>
 
@@ -50,10 +67,10 @@
 
 		<params>
 			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.account.i18n.messages" />
-			<param id="logoImageFile" value="#{company.getAttachAsInputStream}" />
 			<param id="company" value="#{company.obtainCompany}" />
 			<param id="fromDate" value="#{accountSummaryReport.getFromDate}" />
 			<param id="toDate" value="#{accountSummaryReport.getToDate}" />
+			<param id="date" value="#{accountSummaryReport.getDate}" />
 			<param id="period" value="#{accountSummaryReport.getPeriod}" />
 			<param id="grossMargin" value="#{accountSummaryReport.getGrossMargin}" />
 			<param id="totalExpenses" value="#{accountSummaryReport.getTotalExpenses}" />
@@ -71,6 +88,7 @@
 			<param id="company" value="#{company.obtainCompany}" />
 			<param id="fromDate" value="#{accountSummaryReport.getFromDate}" />
 			<param id="toDate" value="#{accountSummaryReport.getToDate}" />
+			<param id="date" value="#{accountSummaryReport.getDate}" />
 			<param id="period" value="#{accountSummaryReport.getPeriod}" />
 		</params>
 	</report>
