@@ -16,7 +16,6 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
-
 import com.code.aon.common.ITransferObject;
 
 
@@ -145,11 +144,11 @@ public class Linbasec  implements ITransferObject{
     
 	@ManyToOne(fetch=FetchType.LAZY)
     @JoinColumn(name="cdg", insertable=false, updatable=false)
-    public Base getBase() {
+    public Base getBasecoti() {
         return this.basecoti;
     }
     
-    public void setBase(Base basecoti) {
+    public void setBasecoti(Base basecoti) {
         this.basecoti = basecoti;
     }
 
