@@ -10,13 +10,13 @@
 		<aon:form>
 			<aon:div style="width:80%;text-align:left;">
 				<aon:panelCollapsible
-					label="#{menuBundle.account_predefined_entries}">
+					label="#{appBundle.account_predefined_entries}">
 					<h:panelGrid columns="2" style="width:100%"
 						styleClass="aon-text-left"
 						columnClasses="aon-column-middle-width,aon-column-middle-width">
 						<aon:div>
 							<aon:div styleClass="aonSubMenu aonSubMenuOptionEntry">
-								<aon:outputText value="#{menuBundle.account_invoice_entry}"
+								<aon:outputText value="#{appBundle.account_invoice_entry}"
 									style="color:red;" />
 								<h:commandLink immediate="true"
 									actionListener="#{accountInvoice.onReset}"
@@ -25,13 +25,13 @@
 								</h:commandLink>
 							</aon:div>
 							<aon:div styleClass="aonSubMenuDescription">
-								<aon:outputText value="#{menuBundle.account_invoice_entry}" />
+								<aon:outputText value="#{appBundle.account_invoice_entry}" />
 							</aon:div>
 						</aon:div>
 
 						<aon:div>
 							<aon:div styleClass="aonSubMenu aonSubMenuOptionEntry">
-								<aon:outputText value="#{menuBundle.account_expense_entry}" />
+								<aon:outputText value="#{appBundle.account_expense_entry}" />
 								<h:commandLink immediate="true"
 									actionListener="#{accountExpense.onStart}"
 									action="accountExpenseEntry">
@@ -39,13 +39,13 @@
 								</h:commandLink>
 							</aon:div>
 							<aon:div styleClass="aonSubMenuDescription">
-								<aon:outputText value="#{menuBundle.account_expense_entry}" />
+								<aon:outputText value="#{appBundle.account_expense_entry}" />
 							</aon:div>
 						</aon:div>
 
 						<aon:div>
 							<aon:div styleClass="aonSubMenu aonSubMenuOptionEntry">
-								<aon:outputText value="#{menuBundle.account_salary_entry}" />
+								<aon:outputText value="#{appBundle.account_salary_entry}" />
 								<h:commandLink immediate="true"
 									actionListener="#{accountSalary.onReset}"
 									action="accountSalaryEntry">
@@ -53,14 +53,14 @@
 								</h:commandLink>
 							</aon:div>
 							<aon:div styleClass="aonSubMenuDescription">
-								<aon:outputText value="#{menuBundle.account_salary_entry}" />
+								<aon:outputText value="#{appBundle.account_salary_entry}" />
 							</aon:div>
 						</aon:div>
 
 						<aon:div>
 							<aon:div styleClass="aonSubMenu aonSubMenuOptionEntry">
 								<aon:outputText
-									value="#{menuBundle.account_social_insurance_entry}" />
+									value="#{appBundle.account_social_insurance_entry}" />
 								<h:commandLink immediate="true"
 									actionListener="#{accountSocialInsurance.onReset}"
 									action="accountSocialInsuranceEntry">
@@ -69,7 +69,7 @@
 							</aon:div>
 							<aon:div styleClass="aonSubMenuDescription">
 								<aon:outputText
-									value="#{menuBundle.account_social_insurance_entry}" />
+									value="#{appBundle.account_social_insurance_entry}" />
 							</aon:div>
 						</aon:div>
 
@@ -78,12 +78,12 @@
 				</aon:panelCollapsible>
 
 
-				<aon:panelCollapsible label="#{menuBundle.aon_masters}">
+				<aon:panelCollapsible label="#{appBundle.aon_masters}">
 					<h:panelGrid styleClass="aon-text-left" columns="2" style="width:100%; margin-top: 20px;"
 						columnClasses="aon-column-middle-width,aon-column-middle-width">
 						<aon:div>
 							<aon:div styleClass="aonSubMenu aonSubMenuOption">
-								<aon:outputText value="#{menuBundle.account_entry}" />
+								<aon:outputText value="#{appBundle.account_entry}" />
 								<h:commandLink immediate="true"
 									actionListener="#{accountEntry.onReset}"
 									action="account_entry_form">
@@ -96,13 +96,13 @@
 								</h:commandLink>
 							</aon:div>
 							<aon:div styleClass="aonSubMenuDescription">
-								<aon:outputText value="#{menuBundle.account_entry}" />
+								<aon:outputText value="#{appBundle.account_entry}" />
 							</aon:div>
 						</aon:div>
 
 						<aon:div>
 							<aon:div styleClass="aonSubMenu aonSubMenuOption">
-								<aon:outputText value="#{menuBundle.account_invoice_entry}" />
+								<aon:outputText value="#{appBundle.account_invoice_entry}" />
 								<h:commandLink immediate="true"
 									actionListener="#{accountInvoice.onReset}"
 									action="accountInvoiceEntry">
@@ -110,7 +110,7 @@
 								</h:commandLink>
 							</aon:div>
 							<aon:div styleClass="aonSubMenuDescription">
-								<aon:outputText value="#{menuBundle.account_invoice_entry}" />
+								<aon:outputText value="#{appBundle.account_invoice_entry}" />
 							</aon:div>
 						</aon:div>
 
@@ -118,7 +118,7 @@
 
 						<aon:div>
 							<aon:div styleClass="aonSubMenu aonSubMenuOption">
-								<aon:outputText value="#{menuBundle.customer}" />
+								<aon:outputText value="#{customerBundle.customer_module}" />
 								<h:commandLink immediate="true"
 									actionListener="#{customer.onReset}" action="customer_form">
 									<aon:outputText value="[#{bundle.aon_reset}]" />
@@ -130,32 +130,32 @@
 								</h:commandLink>
 							</aon:div>
 							<aon:div styleClass="aonSubMenuDescription">
-								<aon:outputText value="#{menuBundle.customer}" />
+								<aon:outputText value="#{customerBundle.customer_module}" />
 							</aon:div>
 						</aon:div>
 
 						<aon:div>
 							<aon:div styleClass="aonSubMenu aonSubMenuOption">
-								<aon:outputText value="#{menuBundle.account_supplier}" />
+								<aon:outputText value="#{supplierBundle.supplier_module}" />
 								<h:commandLink immediate="true"
-									actionListener="#{accBasicSupplier.onReset}"
-									action="accSupplier_form">
+									actionListener="#{supplier.onReset}"
+									action="supplier_form">
 									<aon:outputText value="[#{bundle.aon_reset}]" />
 								</h:commandLink>
 								<h:commandLink immediate="true"
-									actionListener="#{accBasicSupplier.onEditSearch}"
-									action="accSupplier_search">
+									actionListener="#{supplier.onEditSearch}"
+									action="supplier_search">
 									<aon:outputText value="[#{bundle.aon_search}]" />
 								</h:commandLink>
 							</aon:div>
 							<aon:div styleClass="aonSubMenuDescription">
-								<aon:outputText value="#{menuBundle.account_supplier}" />
+								<aon:outputText value="#{supplierBundle.supplier_module}" />
 							</aon:div>
 						</aon:div>
 
 						<aon:div>
 							<aon:div styleClass="aonSubMenu aonSubMenuOption">
-								<aon:outputText value="#{menuBundle.account_creditor}" />
+								<aon:outputText value="#{appBundle.account_creditor}" />
 								<h:commandLink immediate="true"
 									actionListener="#{accBasicCreditor.onReset}"
 									action="accCreditor_form">
@@ -168,13 +168,32 @@
 								</h:commandLink>
 							</aon:div>
 							<aon:div styleClass="aonSubMenuDescription">
-								<aon:outputText value="#{menuBundle.account_creditor}" />
+								<aon:outputText value="#{appBundle.account_creditor}" />
+							</aon:div>
+						</aon:div>
+
+						<aon:div>
+							<aon:div styleClass="aonSubMenu aonSubMenuOption">
+								<aon:outputText value="#{accountBundle.account_account_module}" />
+								<h:commandLink immediate="true"
+									actionListener="#{account.onReset}"
+									action="account_form">
+									<aon:outputText value="[#{bundle.aon_reset}]" />
+								</h:commandLink>
+								<h:commandLink immediate="true"
+									actionListener="#{account.onEditSearch}"
+									action="account_search">
+									<aon:outputText value="[#{bundle.aon_search}]" />
+								</h:commandLink>
+							</aon:div>
+							<aon:div styleClass="aonSubMenuDescription">
+								<aon:outputText value="#{accountBundle.account_account_module}" />
 							</aon:div>
 						</aon:div>
 					</h:panelGrid>
 				</aon:panelCollapsible>
 
-				<aon:panelCollapsible label="#{menuBundle.aon_reports}">
+				<aon:panelCollapsible label="#{appBundle.aon_reports}">
 					<h:panelGrid styleClass="aon-text-left" columns="2" style="width:100%; margin-top: 20px;"
 						columnClasses="aon-column-middle-width,aon-column-middle-width">
 						<aon:div>
@@ -182,11 +201,11 @@
 								<h:commandLink immediate="true"
 									actionListener="#{accStatement.onReset}"
 									action="accStatement_search">
-									<aon:outputText value="#{menuBundle.account_abstract}" />
+									<aon:outputText value="#{appBundle.account_abstract}" />
 								</h:commandLink>
 							</aon:div>
 							<aon:div styleClass="aonSubMenuDescription">
-								<aon:outputText value="#{menuBundle.account_abstract}" />
+								<aon:outputText value="#{appBundle.account_abstract}" />
 							</aon:div>
 						</aon:div>
 
@@ -195,11 +214,11 @@
 								<h:commandLink immediate="true"
 									actionListener="#{accStatement.onReset}"
 									action="trialBalance_search">
-									<aon:outputText value="#{menuBundle.account_trial_balance}" />
+									<aon:outputText value="#{appBundle.account_trial_balance}" />
 								</h:commandLink>
 							</aon:div>
 							<aon:div styleClass="aonSubMenuDescription">
-								<aon:outputText value="#{menuBundle.account_trial_balance}" />
+								<aon:outputText value="#{appBundle.account_trial_balance}" />
 							</aon:div>
 						</aon:div>
 
@@ -208,11 +227,11 @@
 								<h:commandLink immediate="true"
 									actionListener="#{accountEntryReport.onProfitAndLoss}"
 									action="profit_and_loss_search">
-									<aon:outputText value="#{menuBundle.account_profit_and_loss}" />
+									<aon:outputText value="#{appBundle.account_profit_and_loss}" />
 								</h:commandLink>
 							</aon:div>
 							<aon:div styleClass="aonSubMenuDescription">
-								<aon:outputText value="#{menuBundle.account_profit_and_loss}" />
+								<aon:outputText value="#{appBundle.account_profit_and_loss}" />
 							</aon:div>
 						</aon:div>
 

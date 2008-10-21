@@ -7,81 +7,81 @@
 
 	<aon:form>
 		<aon:menuBar id="mainMenu"> 
-			<aon:dropDownMenu value="#{menuBundle.aon_masters}">
-				<aon:menuItem value="#{menuBundle.account_entry}" action="accountEntry" style="color:red;"/>
+			<aon:dropDownMenu value="#{appBundle.account_masters}">
+				<aon:menuItem value="#{appBundle.account_entry}" action="accountEntry" style="color:red;"/>
 				<aon:menuSeparator/>
-				<aon:menuItem action="account_list" value="#{menuBundle.account}"/>
-				<aon:menuItem action="autConcept" value="#{menuBundle.autConcept}"/>
-				<aon:menuItem actionListener="#{customer.onEditSearch}" action="customer_search" value="#{customerBundle.customer_customers}"/>
-				<aon:menuItem actionListener="#{accBasicSupplier.onEditSearch}" action="accBasicSupplier_search" value="#{menuBundle.account_supplier}"/>
-				<aon:menuItem actionListener="#{accBasicCreditor.onEditSearch}" action="accBasicCreditor_search" value="#{menuBundle.account_creditor}"/>
+				<aon:menuItem action="account_list" value="#{accountBundle.account_account_module}"/>
+				<aon:menuItem action="autConcept" value="#{accountBundle.account_aut_concept_module}"/>
+				<aon:menuItem actionListener="#{customer.onEditSearch}" action="customer_search" value="#{customerBundle.customer_module}"/>
+				<aon:menuItem actionListener="#{accBasicSupplier.onEditSearch}" action="supplier_search" value="#{supplierBundle.supplier_module}"/>
+				<aon:menuItem actionListener="#{accBasicCreditor.onEditSearch}" action="accBasicCreditor_search" value="#{appBundle.account_creditor}"/>
 			</aon:dropDownMenu>
 						
-			<aon:dropDownMenu value="#{menuBundle.account_predefined_entries}">
-				<aon:menuItem actionListener="#{accountInvoice.onReset}" action="accountInvoiceEntry" value="#{menuBundle.account_invoice_entry}" style="color:red;"/>
-				<aon:menuItem actionListener="#{accountExpense.onStart}" action="accountExpenseEntry" value="#{menuBundle.account_expense_entry}"/>
-				<aon:menuItem actionListener="#{accountSalary.onReset}" action="accountSalaryEntry" value="#{menuBundle.account_salary_entry}"/>
-				<aon:menuItem actionListener="#{accountSocialInsurance.onReset}" action="accountSocialInsuranceEntry" value="#{menuBundle.account_social_insurance_entry}"/>
-				<aon:menuItem actionListener="#{accountLoanFee.onReset}" action="accountLoanFeeEntry" value="#{menuBundle.account_loan_fee_entry}" />
-				<aon:menuItem actionListener="#{accountLeasingFee.onReset}" action="accountLeasingFeeEntry" value="#{menuBundle.account_leasing_fee_entry}"/>
-				<aon:menuItem value="#{menuBundle.account_periodic_entries}" disabled="true"/>
-				<aon:menuGroup value="#{menuBundle.account_end_period_entries}">
-					<aon:menuItem action="accountOperatingEntry" value="#{menuBundle.account_operating_entry}"/>
-					<aon:menuItem action="accountClosingEntry" value="#{menuBundle.account_closing_entry}" />
-					<aon:menuItem action="accountOpeningEntry" value="#{menuBundle.account_opening_entry}" />
+			<aon:dropDownMenu value="#{appBundle.account_pred_entries}">
+				<aon:menuItem actionListener="#{accountInvoice.onReset}" action="accountInvoiceEntry" value="#{appBundle.account_invoice_entry}" style="color:red;"/>
+				<aon:menuItem actionListener="#{accountExpense.onStart}" action="accountExpenseEntry" value="#{appBundle.account_expense_entry}"/>
+				<aon:menuItem actionListener="#{accountSalary.onReset}" action="accountSalaryEntry" value="#{appBundle.account_salary_entry}"/>
+				<aon:menuItem actionListener="#{accountSocialInsurance.onReset}" action="accountSocialInsuranceEntry" value="#{appBundle.account_social_insurance_entry}"/>
+				<aon:menuItem actionListener="#{accountLoanFee.onReset}" action="accountLoanFeeEntry" value="#{appBundle.account_loan_fee_entry}" />
+				<aon:menuItem actionListener="#{accountLeasingFee.onReset}" action="accountLeasingFeeEntry" value="#{appBundle.account_leasing_fee_entry}"/>
+				<aon:menuItem value="#{appBundle.account_periodic_entries}" disabled="true"/>
+				<aon:menuGroup value="#{appBundle.account_end_period_entries}">
+					<aon:menuItem action="accountOperatingEntry" value="#{appBundle.account_operating_entry}"/>
+					<aon:menuItem action="accountClosingEntry" value="#{appBundle.account_closing_entry}" />
+					<aon:menuItem action="accountOpeningEntry" value="#{appBundle.account_opening_entry}" />
 				</aon:menuGroup>
 			</aon:dropDownMenu>
 			
-			<aon:dropDownMenu value="#{menuBundle.aon_reports}">
-				<aon:menuItem actionListener="#{accStatement.onReset}" action="accStatement_search" value="#{menuBundle.account_abstract}"/>
-				<aon:menuItem actionListener="#{accountEntryReport.onDayBook}" action="accountEntryDaybook" value="#{menuBundle.account_daybook}"/>
-				<aon:menuItem value="#{menuBundle.account_trial_balance}" actionListener="#{accStatement.onReset}" action="trialBalance_search"/>
-				<aon:menuItem actionListener="#{accountEntryReport.onProfitAndLoss}" action="profit_and_loss_search" value="#{menuBundle.account_profit_and_loss}"/>
-				<aon:menuGroup value="#{menuBundle.account_balances}">
-					<aon:menuItem disabled="true" value="#{menuBundle.account_monthly_profit_and_loss}"/>
-					<aon:menuItem disabled="true" value="#{menuBundle.account_balance_sheet}"/>
-					<aon:menuGroup value="#{menuBundle.account_official_balances}">
-						<aon:menuItem disabled="true" value="#{menuBundle.account_profit_and_loss}"/>
-						<aon:menuItem disabled="true" value="#{menuBundle.account_balance_sheet}"/>
+			<aon:dropDownMenu value="#{appBundle.account_reports}">
+				<aon:menuItem actionListener="#{accStatement.onReset}" action="accStatement_search" value="#{appBundle.account_abstract}"/>
+				<aon:menuItem actionListener="#{accountEntryReport.onDayBook}" action="accountEntryDaybook" value="#{appBundle.account_daybook}"/>
+				<aon:menuItem value="#{appBundle.account_trial_balance}" actionListener="#{accStatement.onReset}" action="trialBalance_search"/>
+				<aon:menuItem actionListener="#{accountEntryReport.onProfitAndLoss}" action="profit_and_loss_search" value="#{appBundle.account_profit_and_loss}"/>
+				<aon:menuGroup value="#{appBundle.account_balances}">
+					<aon:menuItem disabled="true" value="#{appBundle.account_monthly_profit_and_loss}"/>
+					<aon:menuItem disabled="true" value="#{appBundle.account_balance_sheet}"/>
+					<aon:menuGroup value="#{appBundle.account_official_balances}">
+						<aon:menuItem disabled="true" value="#{appBundle.account_profit_and_loss}"/>
+						<aon:menuItem disabled="true" value="#{appBundle.account_balance_sheet}"/>
 					</aon:menuGroup>
 				</aon:menuGroup>
 			</aon:dropDownMenu>
 			
-			<aon:dropDownMenu value="#{menuBundle.account_vat}">
-				<aon:menuItem disabled="true" value="#{menuBundle.account_vat_book}"/>
-				<aon:menuItem disabled="true" value="#{menuBundle.account_vat_summary}"/>
-				<aon:menuItem disabled="true" value="#{menuBundle.account_outsiders_operations}"/>
+			<aon:dropDownMenu value="#{appBundle.account_vat}">
+				<aon:menuItem disabled="true" value="#{appBundle.account_vat_book}"/>
+				<aon:menuItem disabled="true" value="#{appBundle.account_vat_summary}"/>
+				<aon:menuItem disabled="true" value="#{appBundle.account_outsiders_operations}"/>
 			</aon:dropDownMenu>
 			
-			<aon:dropDownMenu value="#{menuBundle.account_fixed_assets}">
-				<aon:menuItem disabled="true" value="#{menuBundle.accoung_amortization_form}"/>
-				<aon:menuItem disabled="true" value="#{menuBundle.accoung_amortization_report}"/>
-				<aon:menuItem disabled="true" value="#{menuBundle.accoung_amortization_entries}"/>
+			<aon:dropDownMenu value="#{appBundle.account_fixed_assets}">
+				<aon:menuItem disabled="true" value="#{appBundle.accoung_amortization_form}"/>
+				<aon:menuItem disabled="true" value="#{appBundle.accoung_amortization_report}"/>
+				<aon:menuItem disabled="true" value="#{appBundle.accoung_amortization_entries}"/>
 			</aon:dropDownMenu>
 
-			<aon:dropDownMenu value="#{menuBundle.account_budget}">
-				<aon:menuItem disabled="true" value="#{menuBundle.account_budget_control}"/>
-				<aon:menuItem disabled="true" value="#{menuBundle.account_budgeted_balance_sheet}"/>
-				<aon:menuItem disabled="true" value="#{menuBundle.account_compared_budgeted_balance_sheet}"/>
+			<aon:dropDownMenu value="#{appBundle.account_budget}">
+				<aon:menuItem disabled="true" value="#{appBundle.account_budget_control}"/>
+				<aon:menuItem disabled="true" value="#{appBundle.account_budgeted_balance_sheet}"/>
+				<aon:menuItem disabled="true" value="#{appBundle.account_compared_budgeted_balance_sheet}"/>
 			</aon:dropDownMenu>
 
-			<aon:dropDownMenu value="#{menuBundle.aon_utilities}">
-				<aon:menuItem actionListener="#{accountLoan.onReset}" action="accountLoanEntry" value="#{menuBundle.account_loan_entry}"/>
-				<aon:menuItem actionListener="#{accountLeasing.onReset}" action="accountLeasingEntry" value="#{menuBundle.account_leasing_entry}"/>
-				<aon:menuItem style="color:red;" action="regenerateAccountSummary" value="#{menuBundle.account_regenerate_summary}"/>
-				<aon:menuItem disabled="true" value="#{menuBundle.account_transfer}"/>
-				<aon:menuItem disabled="true" value="#{menuBundle.account_import_data}"/>
-				<aon:menuItem disabled="true" value="#{menuBundle.account_export_data}"/>
+			<aon:dropDownMenu value="#{appBundle.account_utilities}">
+				<aon:menuItem actionListener="#{accountLoan.onReset}" action="accountLoanEntry" value="#{appBundle.account_loan_entry}"/>
+				<aon:menuItem actionListener="#{accountLeasing.onReset}" action="accountLeasingEntry" value="#{appBundle.account_leasing_entry}"/>
+				<aon:menuItem style="color:red;" action="regenerateAccountSummary" value="#{appBundle.account_regenerate_summary}"/>
+				<aon:menuItem disabled="true" value="#{appBundle.account_transfer}"/>
+				<aon:menuItem disabled="true" value="#{appBundle.account_import_data}"/>
+				<aon:menuItem disabled="true" value="#{appBundle.account_export_data}"/>
 			</aon:dropDownMenu>
 
-			<aon:dropDownMenu value="#{menuBundle.aon_configuration}">
-				<aon:menuItem action="company" actionListener="#{company.onLoad}" value="#{companyBundle.company_data}"/>
-				<aon:menuItem action="accPeriod" value="#{menuBundle.accPeriod}"/>
-				<aon:menuItem action="defaultParams" actionListener="#{accAppParams.onLoad}" value="#{menuBundle.account_default_params}"/>
-				<aon:menuItem action="series" value="#{menuBundle.aon_series}"/>
-				<aon:menuItem action="tax" style="color:red;" value="#{menuBundle.aon_product_tax}"/>
-				<aon:menuItem disabled="true"  value="#{menuBundle.account_official_balance_sheet}"/>
-				<aon:menuItem disabled="true" value="#{menuBundle.account_official_trading_balance}" />
+			<aon:dropDownMenu value="#{appBundle.account_configuration}">
+				<aon:menuItem action="company" actionListener="#{company.onLoad}" value="#{companyBundle.company_data_module}"/>
+				<aon:menuItem action="accPeriod" value="#{accountBundle.account_accPeriod_module}"/>
+				<aon:menuItem action="defaultParams" actionListener="#{accAppParams.onLoad}" value="#{accountBundle.account_default_params_module}"/>
+				<aon:menuItem action="series" value="#{configBundle.config_series_module}"/>
+				<aon:menuItem action="tax" style="color:red;" value="#{appBundle.aon_product_tax}"/>
+				<aon:menuItem disabled="true"  value="#{appBundle.account_official_balance_sheet}"/>
+				<aon:menuItem disabled="true" value="#{appBundle.account_official_trading_balance}" />
 			</aon:dropDownMenu>
 		</aon:menuBar>
 	</aon:form>

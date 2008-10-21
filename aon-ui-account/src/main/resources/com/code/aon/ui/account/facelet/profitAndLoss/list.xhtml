@@ -13,7 +13,7 @@
 			<ui:decorate
 				template="/com/code/aon/ui/resources/facelet/toolbar/listToolbarEx.xhtml">
 				<ui:param name="toolbarTitle"
-					value="#{menuBundle.account_profit_and_loss}" />
+					value="#{appBundle.account_profit_and_loss}" />
 				<ui:param name="skipResetButton" value="true" />
 
 				<ui:define name="toolbarActions">
@@ -65,7 +65,7 @@
 							<aon:outputText value="#{accountBundle.aon_account}" />
 						</f:facet>
 						<aon:commandLink immediate="#{true}" 
-							title="#{menuBundle.account_abstract}"
+							title="#{accountBundle.account_abstract}"
 							styleClass="aon-dataTable-link"
 							action="#{accStatement.getNextView}">
 							<f:setPropertyActionListener value="#{to.account}" target="#{accountSummaryReport.accountStatement}" />
@@ -131,7 +131,7 @@
 
 					<aon:column styleClass="aon-width-100">
 						<aon:commandLink immediate="#{true}" 
-							title="#{menuBundle.account_abstract}"
+							title="#{accountBundle.account_abstract}"
 							styleClass="aon-dataTable-link"
 							action="#{accStatement.getNextView}">
 							<f:setPropertyActionListener value="#{to.account}" target="#{accountSummaryReport.accountStatement}" />

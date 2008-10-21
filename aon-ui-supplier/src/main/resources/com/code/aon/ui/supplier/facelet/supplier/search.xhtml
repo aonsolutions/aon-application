@@ -7,11 +7,11 @@
 	template="/facelet/templates/aon.ui.content.xhtml">
 
 	<ui:define name="content">
-		<aon:form id="accBasicSupplierSearch">
+		<aon:form>
 
 			<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/searchToolbar.xhtml" >
-				<ui:param name="toolbarTitle" value="#{menuBundle.account_supplier}" />
-				<ui:param name="controller" value="#{accBasicSupplier}" />
+				<ui:param name="toolbarTitle" value="#{supplierBundle.supplier_module}" />
+				<ui:param name="controller" value="#{supplier}" />
 			</ui:include>
 
 			<ui:decorate
@@ -19,29 +19,29 @@
 				<ui:define name="searchContent">
 
 					<aon:methodParam name="searchActionListener"
-						value="#{accBasicSupplier.onSearch}" type="actionListener" />
-					<aon:methodParam name="searchAction" value="accBasicSupplier_list" />
+						value="#{supplier.onSearch}" type="actionListener" />
+					<aon:methodParam name="searchAction" value="supplier_list" />
 
 					<aon:outputLabel for="Supplier_registry_document"
-						value="#{financeBundle.aon_document}" />
+						value="#{supplierBundle.supplier_document}" />
 					<aon:inputText id="Supplier_registry_document" size="20"
-						valueChangeListener="#{accBasicSupplier.addExpression}" />
+						valueChangeListener="#{supplier.addExpression}" />
 
 					<aon:outputLabel for="Supplier_registry_name"
-						value="#{registryBundle.aon_name}" />
+						value="#{bundle.aon_name}" />
 					<aon:inputText id="Supplier_registry_name" size="40"
-						valueChangeListener="#{accBasicSupplier.addExpression}" />
+						valueChangeListener="#{supplier.addExpression}" />
 
 					<aon:outputLabel for="Supplier_registry_surname"
-						value="#{registryBundle.aon_surname}" />
+						value="#{supplierBundle.supplier_surname}" />
 					<aon:inputText id="Supplier_registry_surname" size="40"
-						valueChangeListener="#{accBasicSupplier.addExpression}" />
+						valueChangeListener="#{supplier.addExpression}" />
 
 					<aon:outputLabel for="Supplier_registry_alias"
-						value="#{registryBundle.aon_alias}"
+						value="#{supplierBundle.supplier_alias}"
 						styleClass="aon-form-input-text-label aon-form-table-column-odd-label" />
 					<aon:inputText id="Supplier_registry_alias" size="40"
-						valueChangeListener="#{accBasicSupplier.addExpression}" />
+						valueChangeListener="#{supplier.addExpression}" />
 				</ui:define>
 			</ui:decorate>
 		</aon:form>

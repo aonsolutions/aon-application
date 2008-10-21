@@ -13,51 +13,44 @@
 
 				<ui:include
 					src="/com/code/aon/ui/resources/facelet/toolbar/gridToolbar.xhtml">
-					<ui:param name="toolbarTitle" value="#{menuBundle.accPeriod}" />
+					<ui:param name="toolbarTitle"
+						value="#{accountBundle.account_accPeriod_module}" />
 					<ui:param name="controller" value="#{accPeriod}" />
 				</ui:include>
 				<aon:div styleClass="aon-scroll-area">
 					<ui:decorate
 						template="/com/code/aon/ui/resources/facelet/shared/grid.xhtml">
 						<ui:param name="controller" value="#{accPeriod}" />
-						<ui:param name="columnClasses" value="aon-width-60,aon-editDataTable-text,aon-editDataTable-text" />
+						<ui:param name="columnClasses"
+							value="aon-width-60,aon-editDataTable-text,aon-editDataTable-text" />
 						<ui:define name="columns">
 
 
 							<aon:column>
 								<f:facet name="header">
-									<aon:outputText value="#{accountBundle.aon_accPeriod_id}" />
+									<aon:outputText value="#{bundle.aon_id}" />
 								</f:facet>
 
 								<aon:outputText value="#{to.id}" id="Period_id-LABEL"
 									rendered="#{to.id!=accPeriod.to.id}" />
-								<aon:outputLabel for="Period_id-EDIT"
-									value="#{accountBundle.aon_accPeriod_id}" rendered="#{false}" />
 								<aon:inputText rendered="#{to.id==accPeriod.to.id}"
 									disabled="true" id="Period_id-EDIT" style="width:100%"
-									value="#{accPeriod.to.id}" required="#{true}" />
-
+									value="#{accPeriod.to.id}" required="true" />
 								<f:facet name="footer">
-									<aon:div id="Period_id-NEW-DIV">
-										<aon:outputLabel for="Period_id-NEW"
-											value="#{accountBundle.aon_accPeriod_id}" rendered="#{false}" />
-										<aon:inputText id="Period_id-NEW" rendered="#{accPeriod.new}"
-											style="width:100%" value="#{accPeriod.to.id}"
-											required="#{true}" />
-									</aon:div>
+									<aon:inputText id="Period_id-NEW" rendered="#{accPeriod.new}"
+										style="width:100%" value="#{accPeriod.to.id}" required="true" />
 								</f:facet>
 							</aon:column>
 
 							<aon:column>
 								<f:facet name="header">
-									<aon:outputText
-										value="#{accountBundle.aon_accPeriod_initiation_date}" />
+									<aon:outputText value="#{bundle.aon_date_from}" />
 								</f:facet>
 
 								<aon:outputText value="#{to.initiationDate}"
 									id="Period_initiationDate-LABEL"
 									rendered="#{to.id!=accPeriod.to.id}">
-									<f:convertDateTime type="date" 
+									<f:convertDateTime type="date"
 										pattern="#{bundle.aon_date_pattern}"
 										timeZone="#{timeZoneController.timeZoneId}" />
 								</aon:outputText>
@@ -71,20 +64,21 @@
 								<f:facet name="footer">
 									<aon:selectInputDate size="8" required="true"
 										id="Period_initiationDate-NEW" rendered="#{accPeriod.new}"
-										value="#{accPeriod.to.initiationDate}" enableManualInput="true"
-										datePattern="dd/MM/yyyy"
+										value="#{accPeriod.to.initiationDate}"
+										enableManualInput="true" datePattern="dd/MM/yyyy"
 										timeZone="#{timeZoneController.timeZone}" />
 								</f:facet>
 							</aon:column>
 
 							<aon:column>
 								<f:facet name="header">
-									<aon:outputText value="#{accountBundle.aon_accPeriod_deadline}" />
+									<aon:outputText value="#{bundle.aon_date_to}" />
 								</f:facet>
 
 								<aon:outputText value="#{to.deadline}"
 									id="Period_deadline-LABEL" rendered="#{to.id!=accPeriod.to.id}">
-									<f:convertDateTime type="date" pattern="#{bundle.aon_date_pattern}"
+									<f:convertDateTime type="date"
+										pattern="#{bundle.aon_date_pattern}"
 										timeZone="#{timeZoneController.timeZoneId}" />
 								</aon:outputText>
 								<aon:selectInputDate size="8" required="true"
