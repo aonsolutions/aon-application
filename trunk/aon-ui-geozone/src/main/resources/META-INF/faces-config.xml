@@ -35,7 +35,7 @@
 		</managed-property>
 		<managed-property>
 			<property-name>defaultOrder</property-name>
-			<value>GeoTree_parent_name</value>
+			<value>GeoTree_child_name</value>
 		</managed-property>
 		<managed-property>
 			<property-name>listenerClasses</property-name>
