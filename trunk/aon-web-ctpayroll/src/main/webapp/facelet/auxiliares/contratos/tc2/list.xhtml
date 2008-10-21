@@ -47,7 +47,7 @@
 
 				<aon:dataTable id="contratosTc2Data" value="#{contratosTc2.model}"
 					var="to" rows="20" rendered="#{contratosTc2.model.rowCount > 0}"
-					columnClasses="aon-editDataTable-textColumn, aon-editDataTable-textColumn">
+					columnClasses="aon-editDataTable-textColumn, aon-editDataTable-textColumn, aon-editDataTable-textColumn, aon-editDataTable-textColumn">
 
 					<aon:rowSelector action="contratos_tc2" actionListener="#{contratosTc2.onSelect}" />
 					
@@ -63,6 +63,20 @@
 							<aon:outputText value="#{appBundle.aon_payroll_description}" />
 						</f:facet>
 						<aon:outputText value="#{to.description}"/>
+					</aon:column>
+					
+					<aon:column>
+						<f:facet name="header">
+							<aon:outputText value="#{appBundle.aon_payroll_auxiliares_contratos__tipcotc2_desabr}" />
+						</f:facet>
+							<aon:outputText value="#{to.desabr}" />
+					</aon:column>
+					
+					<aon:column>
+						<f:facet name="header">
+							<aon:outputText value="#{appBundle.aon_payroll_auxiliares_contratos__tipcotc2_cdgant}" />
+						</f:facet>
+							<aon:outputText value="#{to.cdgant}" />
 					</aon:column>
 					
 				</aon:dataTable>

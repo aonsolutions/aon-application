@@ -42,13 +42,24 @@
 				
 					<aon:outputLabel for="ContratosTc2_cdg"
 						value="#{appBundle.aon_payroll_cdg}" />
-					<aon:inputText id="ContratosTc2_cdg" size="1" maxlength="3"
+					<aon:inputText id="ContratosTc2_cdg" size="10" maxlength="10"
 						valueChangeListener="#{contratosTc2.addExpression}" />
 
 					<aon:outputLabel for="ContratosTc2_description"
 						value="#{appBundle.aon_payroll_description}" />
 					<aon:inputText id="ContratosTc2_description" size="100" maxlength="150"
 						valueChangeListener="#{contratosTc2.addExpression}" />
+						
+					<aon:outputLabel for="ContratosTc2_desabr"
+						value="#{appBundle.aon_payroll_auxiliares_contratos__tipcotc2_desabr}" />
+					<aon:inputText id="ContratosTc2_desabr" size="60" maxlength="60"
+						valueChangeListener="#{contratosTc2.addExpression}" />
+						
+					<aon:outputLabel for="ContratosTc2_cdgant"
+						value="#{appBundle.aon_payroll_auxiliares_contratos__tipcotc2_cdgant}" />
+					<aon:inputText id="ContratosTc2_cdgant" size="60" maxlength="60"
+						valueChangeListener="#{contratosTc2.addExpression}" />
+					
 				</ui:define>
 			</ui:decorate>
 
