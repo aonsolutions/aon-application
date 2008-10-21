@@ -42,12 +42,7 @@
 		<mapping class="com.code.aon.payroll.divisa.LinDivisa"/>	 		 	
         
         <!-- ORGANISMOS Y ENTIDADES-->		
-	  	<mapping class="com.code.aon.payroll.auxiliares.organismosyentidades.Delegacion"/>		
-		<!--
-		<mapping class="com.code.aon.payroll.auxiliares.organismosyentidades.Pais"/>
-		<mapping class="com.code.aon.payroll.auxiliares.organismosyentidades.Provincia"/>		
-		<mapping class="com.code.aon.payroll.auxiliares.organismosyentidades.Comunidad"/>
-		-->	
+	  	<mapping class="com.code.aon.payroll.auxiliares.organismosyentidades.Delegacion"/>			
 		<mapping class="com.code.aon.payroll.auxiliares.organismosyentidades.Mutua"/>		
 		<mapping class="com.code.aon.payroll.auxiliares.organismosyentidades.Linmutua"/>	
 	    <mapping class="com.code.aon.payroll.auxiliares.organismosyentidades.Entidad"/>		
