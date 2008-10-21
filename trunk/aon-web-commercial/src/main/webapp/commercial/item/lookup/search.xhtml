@@ -29,8 +29,8 @@
 	<aon:outputLabel for="Item_status"
 		value="#{productBundle.item_status}" />
 	<aon:selectOneMenu id="Item_status"
-		converter="aonProductStatusConverter"
 		valueChangeListener="#{lookup.addEqualExpression}">
+		<aon:enumConverter enum="com.code.aon.product.enumeration.ProductStatus" />
 		<f:selectItem itemDisabled="true" itemLabel="-" itemValue="" />
 		<f:selectItems value="#{productCollections.productStatuses}" />
 	</aon:selectOneMenu>
