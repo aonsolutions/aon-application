@@ -628,19 +628,7 @@
 		</navigation-case>
 	</navigation-rule>
 
-	<!--
-		<navigation-rule> <navigation-case> <from-outcome>content</from-outcome>
-		<to-view-id>/facelet/homepage/content.xhtml</to-view-id> </navigation-case> <navigation-case>
-		<from-outcome>firstContent</from-outcome>
-		<to-view-id>/facelet/homepage/firstContent.xhtml</to-view-id> </navigation-case> <navigation-case>
-		<from-outcome>account_sw</from-outcome>
-		<to-view-id>/_account/facelet/sw/account.xhtml</to-view-id> </navigation-case> <navigation-case>
-		<from-outcome>account_sw_search</from-outcome>
-		<to-view-id>/_account/facelet/sw/accountSearch.xhtml</to-view-id> </navigation-case>
-	-->
- 
- 
- 	<!-- **************** ACCOUNT ************************** -->
+ 	<!-- **************** STATEMENT ACCOUNT ************************** -->
 	<managed-bean>
 		<managed-bean-name>statementAccount</managed-bean-name>
 		<managed-bean-class>com.code.aon.ui.account.controller.StatementAccountController</managed-bean-class>
