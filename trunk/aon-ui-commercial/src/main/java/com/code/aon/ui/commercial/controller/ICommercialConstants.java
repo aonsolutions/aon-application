@@ -2,6 +2,9 @@ package com.code.aon.ui.commercial.controller;
 
 public interface ICommercialConstants {
 
+	/** Target Controller name. */
+	String TARGET_CONTROLLER_NAME = "target";
+	
 	/** TargetMedia Controller name. */
 	String TARGET_MEDIA_CONTROLLER_NAME = "targetMedia";
 	
@@ -27,6 +30,6 @@ public interface ICommercialConstants {
 	String SELLER_ADDRESS_CONTROLLER_NAME = "sellerAddress";
 
 	/** Collections Controller name. */
-	String COLLECTIONS_CONTROLLER_NAME = "commecialCollections";
+	String COLLECTIONS_CONTROLLER_NAME = "commercialCollections";
 	
 }
