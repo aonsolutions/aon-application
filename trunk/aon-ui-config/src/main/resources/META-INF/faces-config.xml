@@ -32,10 +32,6 @@
 			<value>user</value>
 		</managed-property>
 		<managed-property>
-			<property-name>pageLimit</property-name>
-			<value>20</value>
-		</managed-property>
-		<managed-property>
 			<property-name>defaultOrder</property-name>
 			<value>User_name</value>
 		</managed-property>		
@@ -190,10 +186,6 @@
 			<value>workGroup</value>
 		</managed-property>
 		<managed-property>
-			<property-name>pageLimit</property-name>
-			<value>20</value>
-		</managed-property>
-		<managed-property>
 			<property-name>defaultOrder</property-name>
 			<value>WorkGroup_description</value>
 		</managed-property>		
@@ -217,10 +209,6 @@
 			<value>scope</value>
 		</managed-property>
 		<managed-property>
-			<property-name>pageLimit</property-name>
-			<value>20</value>
-		</managed-property>
-		<managed-property>
 			<property-name>defaultOrder</property-name>
 			<value>Scope_description</value>
 		</managed-property>		
@@ -239,6 +227,14 @@
 			<property-name>pojo</property-name>
 			<value>com.code.aon.config.Series</value>
 		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>series</value>
+		</managed-property>
+		<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>Series_id</value>
+		</managed-property>		
 	</managed-bean>
 
 	<!-- ************* USER UTILS ***************** -->
