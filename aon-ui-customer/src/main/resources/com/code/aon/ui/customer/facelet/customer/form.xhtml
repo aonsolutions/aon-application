@@ -12,7 +12,7 @@
 			<ui:include
 				src="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml">
 				<ui:param name="toolbarTitle"
-					value="#{customerBundle.customer_customers}" />
+					value="#{customerBundle.customer_module}" />
 				<ui:param name="controller" value="#{customer}" />
 			</ui:include>
 
@@ -77,7 +77,7 @@
 					<aon:panelTabSet id="customerTab">
 
 						<aon:panelTab id="customer_address"
-							label="#{registryBundle.registry_addresses}">
+							label="#{registryBundle.registry_address_module}">
 							<ui:include
 								src="/com/code/aon/ui/registry/facelet/raddress/tab_grid.xhtml">
 								<ui:param name="controllerAlias" value="#{customerAddress}" />
@@ -85,7 +85,7 @@
 							</ui:include>
 						</aon:panelTab>
 
-						<aon:panelTab id="medias" label="#{registryBundle.registry_media}">
+						<aon:panelTab id="medias" label="#{registryBundle.registry_media_module}">
 							<ui:include
 								src="/com/code/aon/ui/registry/facelet/rmedia/tab_grid.xhtml">
 								<ui:param name="controllerAlias" value="#{customerMedia}" />
@@ -94,7 +94,7 @@
 						</aon:panelTab>
 
 						<aon:panelTab id="customer_finance"
-							label="#{financeBundle.finance_data}">
+							label="#{financeBundle.finance_data_module}">
 							<ui:include
 								src="/com/code/aon/ui/finance/facelet/rbank/tab_grid.xhtml">
 								<ui:param name="controllerAlias" value="#{customerRbank}" />
