@@ -37,7 +37,7 @@
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
 	<managed-bean>
-		<managed-bean-name>commecialCollections</managed-bean-name>
+		<managed-bean-name>commercialCollections</managed-bean-name>
 		<managed-bean-class>
 			com.code.aon.ui.commercial.controller.CommercialCollectionsController
 		</managed-bean-class>
@@ -96,7 +96,7 @@
 		</managed-property>		
 		<managed-property>
 			<property-name>resourceURIPreffix</property-name>
-			<value>/aonResource/1.6.2</value>
+			<value>/aonResource/1.6.4</value>
 		</managed-property>		
 	</managed-bean>
 

@@ -1,0 +1,62 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:aon="http://www.code.es/aon-rich-components">
+
+	<!--  aon-region-body -->
+	<aon:div styleClass="aon-scroll-area">
+
+		<aon:dataTable id="targetData" value="#{target.model}"
+			var="to" rows="20" rendered="#{target.model.rowCount > 0}"
+			columnClasses="aon-editDataTable-numberColumn aon-width-70, aon-editDataTable-textColumn,
+				aon-editDataTable-textColumn, aon-editDataTable-textColumn, aon-editDataTable-textColumn">
+
+			<c:if test="#{!skipRowSelector}">
+				<aon:rowSelector action="target_form" actionListener="#{target.onSelect}" />
+			</c:if>
+			
+			<aon:column>
+				<f:facet name="header">
+					<aon:outputText value="#{registryBundle.aon_id}" />
+				</f:facet>
+				<aon:outputText value="#{to.id}"/>
+			</aon:column>
+
+				<aon:column>
+				<f:facet name="header">
+					<aon:outputText value="#{registryBundle.aon_name}" />
+				</f:facet>
+				<aon:outputText value="#{to.registry.name}"/>
+			</aon:column>
+
+				<aon:column>
+				<f:facet name="header">
+					<aon:outputText value="#{registryBundle.aon_surname}" />
+				</f:facet>
+				<aon:outputText value="#{to.registry.surname}"/>
+			</aon:column>
+
+				<aon:column>
+				<f:facet name="header">
+					<aon:outputText value="#{registryBundle.aon_alias}" />
+				</f:facet>
+				<aon:outputText value="#{to.registry.alias}"/>
+			</aon:column>
+
+				<aon:column>
+				<f:facet name="header">
+					<aon:outputText value="#{appBundle.aon_target_advertising}" />
+				</f:facet>
+				<aon:outputText value="#{to.advertising}"/>
+			</aon:column>
+
+		</aon:dataTable>
+
+		<aon:dataScroller2 for="targetData" showNote="true" />
+
+	</aon:div>
+
+</ui:composition>

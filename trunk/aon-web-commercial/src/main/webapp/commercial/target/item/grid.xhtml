@@ -62,13 +62,13 @@
 					<aon:selectOneMenu rendered="#{to==targetItem.to}"
 						required="true" value="#{to.status}">
 						<f:selectItem value="#{null}" itemLabel="    " />
-						<f:selectItems value="#{commecialCollections.targetItemStatuses}" />
+						<f:selectItems value="#{commercialCollections.targetItemStatuses}" />
 					</aon:selectOneMenu>								
 					<f:facet name="footer">
 						<aon:selectOneMenu rendered="#{targetItem.new}"
 							required="true" value="#{targetItem.to.status}">
 							<f:selectItem value="#{null}" itemLabel="    " />
-							<f:selectItems value="#{commecialCollections.targetItemStatuses}" />
+							<f:selectItems value="#{commercialCollections.targetItemStatuses}" />
 						</aon:selectOneMenu>								
 					</f:facet>
 				</aon:column>

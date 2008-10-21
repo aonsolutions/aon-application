@@ -20,56 +20,8 @@
 				<ui:param name="controller" value="#{target}" />
 			</ui:include>
 
-			<!--  aon-region-body -->
-			<aon:div styleClass="aon-scroll-area">
+			<ui:include src="/commercial/target/listContent.xhtml" />
 
-				<aon:dataTable id="targetData" value="#{target.model}"
-					var="to" rows="20" rendered="#{target.model.rowCount > 0}"
-					columnClasses="aon-editDataTable-numberColumn aon-width-70, aon-editDataTable-textColumn,
-						aon-editDataTable-textColumn, aon-editDataTable-textColumn, aon-editDataTable-textColumn">
-
-					<aon:rowSelector action="target_form" actionListener="#{target.onSelect}" />
-					
-					<aon:column>
-						<f:facet name="header">
-							<aon:outputText value="#{registryBundle.aon_id}" />
-						</f:facet>
-						<aon:outputText value="#{to.id}"/>
-					</aon:column>
-
- 					<aon:column>
-						<f:facet name="header">
-							<aon:outputText value="#{registryBundle.aon_name}" />
-						</f:facet>
-						<aon:outputText value="#{to.registry.name}"/>
-					</aon:column>
-
- 					<aon:column>
-						<f:facet name="header">
-							<aon:outputText value="#{registryBundle.aon_surname}" />
-						</f:facet>
-						<aon:outputText value="#{to.registry.surname}"/>
-					</aon:column>
-
- 					<aon:column>
-						<f:facet name="header">
-							<aon:outputText value="#{registryBundle.aon_alias}" />
-						</f:facet>
-						<aon:outputText value="#{to.registry.alias}"/>
-					</aon:column>
-
- 					<aon:column>
-						<f:facet name="header">
-							<aon:outputText value="#{appBundle.aon_target_advertising}" />
-						</f:facet>
-						<aon:outputText value="#{to.advertising}"/>
-					</aon:column>
- 
-				</aon:dataTable>
-
-				<aon:dataScroller2 for="targetData" showNote="true" />
-
-			</aon:div>
 		</aon:form>
 
 	</ui:define>

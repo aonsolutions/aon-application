@@ -12,12 +12,14 @@
 			<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/searchToolbar.xhtml" >
 				<ui:param name="toolbarTitle" value="#{menuBundle.aon_targets}" />
 				<ui:param name="controller" value="#{target}" />
+				<aon:methodParam name="backAction" value="campaignAction_form"/>				
+				<ui:param name="skipResetButton" value="#{true}" />
 			</ui:include>
 
 			<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/searchContent.xhtml" >
 				<ui:define name="searchContent">
 					<aon:methodParam name="searchActionListener" value="#{target.onSearch}" type="actionListener" />
-					<aon:methodParam name="searchAction" value="target_list" />
+					<aon:methodParam name="searchAction" value="campaignActionTarget_list" />
 
 					<ui:include src="/commercial/target/searchContent.xhtml">
 						<ui:param name="controller" value="#{target}"/>

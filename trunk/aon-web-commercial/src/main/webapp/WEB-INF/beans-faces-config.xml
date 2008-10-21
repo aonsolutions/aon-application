@@ -8,14 +8,18 @@
 	<!-- ************ COMMUNICATION CENTER ************** -->
 	<managed-bean>
 		<managed-bean-name>communicationCenter</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.marketing.controller.CommunicationCenterController</managed-bean-class>
+		<managed-bean-class>
+			com.code.aon.ui.marketing.controller.CommunicationCenterController
+		</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
 
 	<!-- ************ COMMERCIAL SEGMENT ************** -->
 	<managed-bean>
 		<managed-bean-name>commercialSegment</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.form.BasicController</managed-bean-class>
+		<managed-bean-class>
+			com.code.aon.ui.form.BasicController
+		</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
 			<property-name>queryOnStartUP</property-name>
@@ -34,7 +38,9 @@
 	<!-- ************ COMMERCIAL ACTIVITY ************** -->
 	<managed-bean>
 		<managed-bean-name>commercialActivity</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.form.BasicController</managed-bean-class>
+		<managed-bean-class>
+			com.code.aon.ui.form.BasicController
+		</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
 			<property-name>queryOnStartUP</property-name>
@@ -46,14 +52,16 @@
 		</managed-property>
 		<managed-property>
 			<property-name>beanName</property-name>
-			<value>commercialActivity</value> 
+			<value>commercialActivity</value>
 		</managed-property>
 	</managed-bean>
 
 	<!-- ************ COMMERCIAL TRACKING ************** -->
 	<managed-bean>
 		<managed-bean-name>commercialTracking</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.commercial.controller.CommercialTrackingController</managed-bean-class>
+		<managed-bean-class>
+			com.code.aon.ui.commercial.controller.CommercialTrackingController
+		</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
 			<property-name>queryOnStartUP</property-name>
@@ -65,33 +73,39 @@
 		</managed-property>
 		<managed-property>
 			<property-name>beanName</property-name>
-			<value>commercialTracking</value> 
+			<value>commercialTracking</value>
 		</managed-property>
 		<managed-property>
 			<property-name>defaultOrder</property-name>
 			<value>CommercialTracking_date</value>
-		</managed-property>				
+		</managed-property>
 		<managed-property>
 			<property-name>listenerClasses</property-name>
 			<list-entries>
-				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+				<value-class>
+					com.code.aon.ui.form.event.IControllerListener
+				</value-class>
 				<value>#{commercialTrackingListener}</value>
 			</list-entries>
-		</managed-property>		
+		</managed-property>
 	</managed-bean>
-	
+
 	<managed-bean>
-		<managed-bean-name>commercialTrackingListener</managed-bean-name>
+		<managed-bean-name>
+			commercialTrackingListener
+		</managed-bean-name>
 		<managed-bean-class>
 			com.code.aon.ui.commercial.event.CommercialTrackingListener
 		</managed-bean-class>
 		<managed-bean-scope>none</managed-bean-scope>
 	</managed-bean>
-		
+
 	<!-- ************ TARGET ************** -->
 	<managed-bean>
 		<managed-bean-name>target</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.marketing.controller.MarketingTargetController</managed-bean-class>
+		<managed-bean-class>
+			com.code.aon.ui.marketing.controller.MarketingTargetController
+		</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
 			<property-name>queryOnStartUP</property-name>
@@ -103,12 +117,14 @@
 		</managed-property>
 		<managed-property>
 			<property-name>beanName</property-name>
-			<value>target</value> 
+			<value>target</value>
 		</managed-property>
 		<managed-property>
 			<property-name>listenerClasses</property-name>
 			<list-entries>
-				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+				<value-class>
+					com.code.aon.ui.form.event.IControllerListener
+				</value-class>
 				<value>#{targetControllerListener}</value>
 				<value>#{targetSearch}</value>
 				<value>#{targetAddressListener}</value>
@@ -118,21 +134,25 @@
 				<value>#{targetSellerListener}</value>
 				<value>#{targetProfileListener}</value>
 			</list-entries>
-		</managed-property>		
-	</managed-bean>		
-	
+		</managed-property>
+	</managed-bean>
+
 	<managed-bean>
 		<managed-bean-name>targetControllerListener</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.commercial.event.TargetControllerListener</managed-bean-class>
+		<managed-bean-class>
+			com.code.aon.ui.commercial.event.TargetControllerListener
+		</managed-bean-class>
 		<managed-bean-scope>none</managed-bean-scope>
 	</managed-bean>
 
 	<managed-bean>
 		<managed-bean-name>targetSearch</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.marketing.event.MarketingTargetSearchListener</managed-bean-class>
+		<managed-bean-class>
+			com.code.aon.ui.marketing.event.MarketingTargetSearchListener
+		</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
-	
+
 	<managed-bean>
 		<managed-bean-name>targetAddressListener</managed-bean-name>
 		<managed-bean-class>
@@ -148,12 +168,12 @@
 			<map-entries>
 				<map-entry>
 					<key>RegistryAddress_registry_id</key>
-                    <value>id</value>
+					<value>id</value>
 				</map-entry>
 			</map-entries>
 		</managed-property>
 	</managed-bean>
-	
+
 	<managed-bean>
 		<managed-bean-name>targetMediaListener</managed-bean-name>
 		<managed-bean-class>
@@ -169,7 +189,7 @@
 			<map-entries>
 				<map-entry>
 					<key>RegistryMedia_registry_id</key>
-                    <value>id</value>
+					<value>id</value>
 				</map-entry>
 			</map-entries>
 		</managed-property>
@@ -190,7 +210,7 @@
 			<map-entries>
 				<map-entry>
 					<key>TargetSegment_target_id</key>
-                    <value>id</value>
+					<value>id</value>
 				</map-entry>
 			</map-entries>
 		</managed-property>
@@ -211,11 +231,11 @@
 			<map-entries>
 				<map-entry>
 					<key>TargetItem_target_id</key>
-                    <value>id</value>
+					<value>id</value>
 				</map-entry>
 			</map-entries>
 		</managed-property>
-	</managed-bean>		
+	</managed-bean>
 
 	<managed-bean>
 		<managed-bean-name>targetSellerListener</managed-bean-name>
@@ -232,11 +252,11 @@
 			<map-entries>
 				<map-entry>
 					<key>TargetSeller_target_id</key>
-                    <value>id</value>
+					<value>id</value>
 				</map-entry>
 			</map-entries>
 		</managed-property>
-	</managed-bean>		
+	</managed-bean>
 
 	<managed-bean>
 		<managed-bean-name>targetProfileListener</managed-bean-name>
@@ -253,12 +273,12 @@
 			<map-entries>
 				<map-entry>
 					<key>TargetProfile_target_id</key>
-                    <value>id</value>
+					<value>id</value>
 				</map-entry>
 			</map-entries>
 		</managed-property>
 	</managed-bean>
-				
+
 	<managed-bean>
 		<managed-bean-name>targetChildListener</managed-bean-name>
 		<managed-bean-class>
@@ -273,7 +293,7 @@
 			<property-name>masterPropertyName</property-name>
 			<value>registry</value>
 		</managed-property>
-	</managed-bean>	
+	</managed-bean>
 
 	<managed-bean>
 		<managed-bean-name>targetChildListener2</managed-bean-name>
@@ -289,8 +309,8 @@
 			<property-name>masterPropertyName</property-name>
 			<value>target</value>
 		</managed-property>
-	</managed-bean>	
-	
+	</managed-bean>
+
 	<!--  **** TARGET ADDRESS **** -->
 
 	<managed-bean>
@@ -305,19 +325,21 @@
 		</managed-property>
 		<managed-property>
 			<property-name>beanName</property-name>
-			<value>targetAddress</value> 
-		</managed-property>						
+			<value>targetAddress</value>
+		</managed-property>
 		<managed-property>
 			<property-name>listenerClasses</property-name>
 			<list-entries>
-				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+				<value-class>
+					com.code.aon.ui.form.event.IControllerListener
+				</value-class>
 				<value>#{targetChildListener}</value>
 			</list-entries>
 		</managed-property>
 	</managed-bean>
-		
+
 	<!--  **** TARGET MEDIA **** -->
-	
+
 	<managed-bean>
 		<managed-bean-name>targetMedia</managed-bean-name>
 		<managed-bean-class>
@@ -330,19 +352,21 @@
 		</managed-property>
 		<managed-property>
 			<property-name>beanName</property-name>
-			<value>targetMedia</value> 
-		</managed-property>		
+			<value>targetMedia</value>
+		</managed-property>
 		<managed-property>
 			<property-name>listenerClasses</property-name>
 			<list-entries>
-				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+				<value-class>
+					com.code.aon.ui.form.event.IControllerListener
+				</value-class>
 				<value>#{targetChildListener}</value>
 			</list-entries>
 		</managed-property>
 	</managed-bean>
 
 	<!--  **** TARGET SEGMENT **** -->
-	
+
 	<managed-bean>
 		<managed-bean-name>targetSegment</managed-bean-name>
 		<managed-bean-class>
@@ -355,19 +379,21 @@
 		</managed-property>
 		<managed-property>
 			<property-name>beanName</property-name>
-			<value>targetSegment</value> 
-		</managed-property>						
+			<value>targetSegment</value>
+		</managed-property>
 		<managed-property>
 			<property-name>listenerClasses</property-name>
 			<list-entries>
-				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+				<value-class>
+					com.code.aon.ui.form.event.IControllerListener
+				</value-class>
 				<value>#{targetChildListener2}</value>
 			</list-entries>
 		</managed-property>
 	</managed-bean>
 
 	<!--  **** TARGET ITEM **** -->
-	
+
 	<managed-bean>
 		<managed-bean-name>targetItem</managed-bean-name>
 		<managed-bean-class>
@@ -380,19 +406,21 @@
 		</managed-property>
 		<managed-property>
 			<property-name>beanName</property-name>
-			<value>targetItem</value> 
-		</managed-property>				
+			<value>targetItem</value>
+		</managed-property>
 		<managed-property>
 			<property-name>listenerClasses</property-name>
 			<list-entries>
-				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+				<value-class>
+					com.code.aon.ui.form.event.IControllerListener
+				</value-class>
 				<value>#{targetChildListener2}</value>
 			</list-entries>
 		</managed-property>
 	</managed-bean>
 
 	<!--  **** TARGET SELLER **** -->
-	
+
 	<managed-bean>
 		<managed-bean-name>targetSeller</managed-bean-name>
 		<managed-bean-class>
@@ -405,19 +433,21 @@
 		</managed-property>
 		<managed-property>
 			<property-name>beanName</property-name>
-			<value>targetSeller</value> 
-		</managed-property>						
+			<value>targetSeller</value>
+		</managed-property>
 		<managed-property>
 			<property-name>listenerClasses</property-name>
 			<list-entries>
-				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+				<value-class>
+					com.code.aon.ui.form.event.IControllerListener
+				</value-class>
 				<value>#{targetChildListener2}</value>
 			</list-entries>
 		</managed-property>
 	</managed-bean>
 
 	<!--  **** TARGET PROFILE **** -->
-	
+
 	<managed-bean>
 		<managed-bean-name>targetProfile</managed-bean-name>
 		<managed-bean-class>
@@ -430,12 +460,14 @@
 		</managed-property>
 		<managed-property>
 			<property-name>beanName</property-name>
-			<value>targetProfile</value> 
-		</managed-property>								
+			<value>targetProfile</value>
+		</managed-property>
 		<managed-property>
 			<property-name>listenerClasses</property-name>
 			<list-entries>
-				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+				<value-class>
+					com.code.aon.ui.form.event.IControllerListener
+				</value-class>
 				<value>#{targetChildListener2}</value>
 			</list-entries>
 		</managed-property>
@@ -444,7 +476,9 @@
 	<!-- ************ TARGET TRACKING ************** -->
 	<managed-bean>
 		<managed-bean-name>targetTracking</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.form.BasicController</managed-bean-class>
+		<managed-bean-class>
+			com.code.aon.ui.form.BasicController
+		</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
 			<property-name>queryOnStartUP</property-name>
@@ -456,18 +490,20 @@
 		</managed-property>
 		<managed-property>
 			<property-name>beanName</property-name>
-			<value>targetTracking</value> 
+			<value>targetTracking</value>
 		</managed-property>
 		<managed-property>
 			<property-name>defaultOrder</property-name>
 			<value>CommercialTracking_date</value>
-		</managed-property>				
+		</managed-property>
 	</managed-bean>
 
 	<!-- ************ SELLER ************** -->
 	<managed-bean>
 		<managed-bean-name>seller</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.form.BasicController</managed-bean-class>
+		<managed-bean-class>
+			com.code.aon.ui.form.BasicController
+		</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
 			<property-name>queryOnStartUP</property-name>
@@ -479,25 +515,29 @@
 		</managed-property>
 		<managed-property>
 			<property-name>beanName</property-name>
-			<value>seller</value> 
+			<value>seller</value>
 		</managed-property>
 		<managed-property>
 			<property-name>listenerClasses</property-name>
 			<list-entries>
-				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+				<value-class>
+					com.code.aon.ui.form.event.IControllerListener
+				</value-class>
 				<value>#{sellerControllerListener}</value>
 				<value>#{sellerAddressListener}</value>
 				<value>#{sellerMediaListener}</value>
 			</list-entries>
-		</managed-property>		
-	</managed-bean>		
-	
+		</managed-property>
+	</managed-bean>
+
 	<managed-bean>
 		<managed-bean-name>sellerControllerListener</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.commercial.event.SellerControllerListener</managed-bean-class>
+		<managed-bean-class>
+			com.code.aon.ui.commercial.event.SellerControllerListener
+		</managed-bean-class>
 		<managed-bean-scope>none</managed-bean-scope>
 	</managed-bean>
-	
+
 	<managed-bean>
 		<managed-bean-name>sellerAddressListener</managed-bean-name>
 		<managed-bean-class>
@@ -513,12 +553,12 @@
 			<map-entries>
 				<map-entry>
 					<key>RegistryAddress_registry_id</key>
-                    <value>id</value>
+					<value>id</value>
 				</map-entry>
 			</map-entries>
 		</managed-property>
 	</managed-bean>
-	
+
 	<managed-bean>
 		<managed-bean-name>sellerMediaListener</managed-bean-name>
 		<managed-bean-class>
@@ -534,12 +574,12 @@
 			<map-entries>
 				<map-entry>
 					<key>RegistryMedia_registry_id</key>
-                    <value>id</value>
+					<value>id</value>
 				</map-entry>
 			</map-entries>
 		</managed-property>
 	</managed-bean>
-	
+
 	<managed-bean>
 		<managed-bean-name>sellerChildListener</managed-bean-name>
 		<managed-bean-class>
@@ -554,7 +594,7 @@
 			<property-name>masterPropertyName</property-name>
 			<value>registry</value>
 		</managed-property>
-	</managed-bean>	
+	</managed-bean>
 
 	<!--  **** SELLER ADDRESS **** -->
 
@@ -570,19 +610,21 @@
 		</managed-property>
 		<managed-property>
 			<property-name>beanName</property-name>
-			<value>sellerAddress</value> 
-		</managed-property>								
+			<value>sellerAddress</value>
+		</managed-property>
 		<managed-property>
 			<property-name>listenerClasses</property-name>
 			<list-entries>
-				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+				<value-class>
+					com.code.aon.ui.form.event.IControllerListener
+				</value-class>
 				<value>#{sellerChildListener}</value>
 			</list-entries>
 		</managed-property>
 	</managed-bean>
-		
+
 	<!--  **** SELLER MEDIA **** -->
-	
+
 	<managed-bean>
 		<managed-bean-name>sellerMedia</managed-bean-name>
 		<managed-bean-class>
@@ -595,12 +637,14 @@
 		</managed-property>
 		<managed-property>
 			<property-name>beanName</property-name>
-			<value>sellerMedia</value> 
-		</managed-property>				
+			<value>sellerMedia</value>
+		</managed-property>
 		<managed-property>
 			<property-name>listenerClasses</property-name>
 			<list-entries>
-				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+				<value-class>
+					com.code.aon.ui.form.event.IControllerListener
+				</value-class>
 				<value>#{sellerChildListener}</value>
 			</list-entries>
 		</managed-property>
@@ -609,7 +653,9 @@
 	<!-- ************ QUESTION ************** -->
 	<managed-bean>
 		<managed-bean-name>question</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.marketing.controller.QuestionController</managed-bean-class>
+		<managed-bean-class>
+			com.code.aon.ui.marketing.controller.QuestionController
+		</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
 			<property-name>queryOnStartUP</property-name>
@@ -621,17 +667,19 @@
 		</managed-property>
 		<managed-property>
 			<property-name>beanName</property-name>
-			<value>question</value> 
+			<value>question</value>
 		</managed-property>
 		<managed-property>
 			<property-name>listenerClasses</property-name>
 			<list-entries>
-				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+				<value-class>
+					com.code.aon.ui.form.event.IControllerListener
+				</value-class>
 				<value>#{questionValueListener}</value>
 			</list-entries>
-		</managed-property>		
-	</managed-bean>		
-	
+		</managed-property>
+	</managed-bean>
+
 	<managed-bean>
 		<managed-bean-name>questionValueListener</managed-bean-name>
 		<managed-bean-class>
@@ -647,12 +695,12 @@
 			<map-entries>
 				<map-entry>
 					<key>QuestionValue_question_id</key>
-                    <value>id</value>
+					<value>id</value>
 				</map-entry>
 			</map-entries>
 		</managed-property>
 	</managed-bean>
-	
+
 	<managed-bean>
 		<managed-bean-name>questionChildListener</managed-bean-name>
 		<managed-bean-class>
@@ -667,13 +715,15 @@
 			<property-name>masterPropertyName</property-name>
 			<value>question</value>
 		</managed-property>
-	</managed-bean>		
+	</managed-bean>
 
 	<!--  **** QUESTION VALUE **** -->
 
 	<managed-bean>
 		<managed-bean-name>questionValue</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.form.BasicController</managed-bean-class>
+		<managed-bean-class>
+			com.code.aon.ui.form.BasicController
+		</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
 			<property-name>pojo</property-name>
@@ -681,12 +731,14 @@
 		</managed-property>
 		<managed-property>
 			<property-name>beanName</property-name>
-			<value>questionValue</value> 
-		</managed-property>		
+			<value>questionValue</value>
+		</managed-property>
 		<managed-property>
 			<property-name>listenerClasses</property-name>
 			<list-entries>
-				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+				<value-class>
+					com.code.aon.ui.form.event.IControllerListener
+				</value-class>
 				<value>#{questionChildListener}</value>
 			</list-entries>
 		</managed-property>
@@ -695,7 +747,9 @@
 	<!-- ************ SURVEY ************** -->
 	<managed-bean>
 		<managed-bean-name>survey</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.marketing.controller.SurveyController</managed-bean-class>
+		<managed-bean-class>
+			com.code.aon.ui.marketing.controller.SurveyController
+		</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
 			<property-name>queryOnStartUP</property-name>
@@ -707,17 +761,19 @@
 		</managed-property>
 		<managed-property>
 			<property-name>beanName</property-name>
-			<value>survey</value> 
+			<value>survey</value>
 		</managed-property>
 		<managed-property>
 			<property-name>listenerClasses</property-name>
 			<list-entries>
-				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+				<value-class>
+					com.code.aon.ui.form.event.IControllerListener
+				</value-class>
 				<value>#{surveyQuestionListener}</value>
 			</list-entries>
-		</managed-property>		
-	</managed-bean>		
-	
+		</managed-property>
+	</managed-bean>
+
 	<managed-bean>
 		<managed-bean-name>surveyQuestionListener</managed-bean-name>
 		<managed-bean-class>
@@ -733,12 +789,12 @@
 			<map-entries>
 				<map-entry>
 					<key>SurveyQuestion_survey_id</key>
-                    <value>id</value>
+					<value>id</value>
 				</map-entry>
 			</map-entries>
 		</managed-property>
 	</managed-bean>
-	
+
 	<managed-bean>
 		<managed-bean-name>surveyChildListener</managed-bean-name>
 		<managed-bean-class>
@@ -753,13 +809,15 @@
 			<property-name>masterPropertyName</property-name>
 			<value>survey</value>
 		</managed-property>
-	</managed-bean>		
+	</managed-bean>
 
 	<!--  **** SURVEY QUESTION **** -->
 
 	<managed-bean>
 		<managed-bean-name>surveyQuestion</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.marketing.controller.SurveyQuestionController</managed-bean-class>
+		<managed-bean-class>
+			com.code.aon.ui.marketing.controller.SurveyQuestionController
+		</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
 			<property-name>pojo</property-name>
@@ -767,26 +825,30 @@
 		</managed-property>
 		<managed-property>
 			<property-name>beanName</property-name>
-			<value>surveyQuestion</value> 
-		</managed-property>		
+			<value>surveyQuestion</value>
+		</managed-property>
 		<managed-property>
 			<property-name>listenerClasses</property-name>
 			<list-entries>
-				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+				<value-class>
+					com.code.aon.ui.form.event.IControllerListener
+				</value-class>
 				<value>#{surveyChildListener}</value>
 				<value>#{surveyQuestionControllerListener}</value>
 				<value>#{surveyWorkflowListener}</value>
 			</list-entries>
 		</managed-property>
 	</managed-bean>
-	
+
 	<managed-bean>
-		<managed-bean-name>surveyQuestionControllerListener</managed-bean-name>
+		<managed-bean-name>
+			surveyQuestionControllerListener
+		</managed-bean-name>
 		<managed-bean-class>
 			com.code.aon.ui.marketing.event.SurveyQuestionControllerListener
 		</managed-bean-class>
 		<managed-bean-scope>none</managed-bean-scope>
-	</managed-bean>	
+	</managed-bean>
 
 	<managed-bean>
 		<managed-bean-name>surveyWorkflowListener</managed-bean-name>
@@ -803,14 +865,16 @@
 			<map-entries>
 				<map-entry>
 					<key>SurveyWorkflow_surveyQuestion_id</key>
-                    <value>id</value>
+					<value>id</value>
 				</map-entry>
 			</map-entries>
 		</managed-property>
 	</managed-bean>
-	
+
 	<managed-bean>
-		<managed-bean-name>surveyQuestionChildListener</managed-bean-name>
+		<managed-bean-name>
+			surveyQuestionChildListener
+		</managed-bean-name>
 		<managed-bean-class>
 			com.code.aon.ui.form.listener.ChildControllerListener
 		</managed-bean-class>
@@ -823,13 +887,15 @@
 			<property-name>masterPropertyName</property-name>
 			<value>surveyQuestion</value>
 		</managed-property>
-	</managed-bean>		
+	</managed-bean>
 
 	<!--  **** SURVEY WORKFLOW **** -->
 
 	<managed-bean>
 		<managed-bean-name>surveyWorkflow</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.form.BasicController</managed-bean-class>
+		<managed-bean-class>
+			com.code.aon.ui.form.BasicController
+		</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
 			<property-name>pojo</property-name>
@@ -837,12 +903,14 @@
 		</managed-property>
 		<managed-property>
 			<property-name>beanName</property-name>
-			<value>surveyWorkflow</value> 
-		</managed-property>		
+			<value>surveyWorkflow</value>
+		</managed-property>
 		<managed-property>
 			<property-name>listenerClasses</property-name>
 			<list-entries>
-				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+				<value-class>
+					com.code.aon.ui.form.event.IControllerListener
+				</value-class>
 				<value>#{surveyQuestionChildListener}</value>
 			</list-entries>
 		</managed-property>
@@ -851,7 +919,9 @@
 	<!-- ************ SURVEY RESPONSE ************** -->
 	<managed-bean>
 		<managed-bean-name>surveyResponse</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.marketing.controller.SurveyResponseController</managed-bean-class>
+		<managed-bean-class>
+			com.code.aon.ui.marketing.controller.SurveyResponseController
+		</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
 			<property-name>queryOnStartUP</property-name>
@@ -863,19 +933,23 @@
 		</managed-property>
 		<managed-property>
 			<property-name>beanName</property-name>
-			<value>surveyResponse</value> 
+			<value>surveyResponse</value>
 		</managed-property>
 		<managed-property>
 			<property-name>listenerClasses</property-name>
 			<list-entries>
-				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+				<value-class>
+					com.code.aon.ui.form.event.IControllerListener
+				</value-class>
 				<value>#{surveyResponseDetailListener}</value>
 			</list-entries>
 		</managed-property>
-	</managed-bean>		
+	</managed-bean>
 
 	<managed-bean>
-		<managed-bean-name>surveyResponseDetailListener</managed-bean-name>
+		<managed-bean-name>
+			surveyResponseDetailListener
+		</managed-bean-name>
 		<managed-bean-class>
 			com.code.aon.ui.form.listener.MasterControllerListener
 		</managed-bean-class>
@@ -889,16 +963,18 @@
 			<map-entries>
 				<map-entry>
 					<key>SurveyResponseDetail_surveyResponse_id</key>
-                    <value>id</value>
+					<value>id</value>
 				</map-entry>
 			</map-entries>
 		</managed-property>
 	</managed-bean>
-	
+
 	<!-- ************ SURVEY RESPONSE DETAIL ************** -->
 	<managed-bean>
 		<managed-bean-name>surveyResponseDetail</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.form.BasicController</managed-bean-class>
+		<managed-bean-class>
+			com.code.aon.ui.form.BasicController
+		</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
 			<property-name>queryOnStartUP</property-name>
@@ -910,14 +986,16 @@
 		</managed-property>
 		<managed-property>
 			<property-name>beanName</property-name>
-			<value>surveyResponseDetail</value> 
+			<value>surveyResponseDetail</value>
 		</managed-property>
 	</managed-bean>
 
 	<!-- ************ CAMPAIGN ************** -->
 	<managed-bean>
 		<managed-bean-name>campaign</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.marketing.controller.CampaignController</managed-bean-class>
+		<managed-bean-class>
+			com.code.aon.ui.marketing.controller.CampaignController
+		</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
 			<property-name>queryOnStartUP</property-name>
@@ -929,16 +1007,18 @@
 		</managed-property>
 		<managed-property>
 			<property-name>beanName</property-name>
-			<value>campaign</value> 
+			<value>campaign</value>
 		</managed-property>
 		<managed-property>
 			<property-name>listenerClasses</property-name>
 			<list-entries>
-				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+				<value-class>
+					com.code.aon.ui.form.event.IControllerListener
+				</value-class>
 				<value>#{campaignActionListener}</value>
 			</list-entries>
 		</managed-property>
-	</managed-bean>		
+	</managed-bean>
 
 	<managed-bean>
 		<managed-bean-name>campaignActionListener</managed-bean-name>
@@ -955,12 +1035,12 @@
 			<map-entries>
 				<map-entry>
 					<key>Action_campaign_id</key>
-                    <value>id</value>
+					<value>id</value>
 				</map-entry>
 			</map-entries>
 		</managed-property>
 	</managed-bean>
-	
+
 	<managed-bean>
 		<managed-bean-name>campaignChildListener</managed-bean-name>
 		<managed-bean-class>
@@ -975,12 +1055,14 @@
 			<property-name>masterPropertyName</property-name>
 			<value>campaign</value>
 		</managed-property>
-	</managed-bean>			
-	
+	</managed-bean>
+
 	<!-- ************ CAMPAIGN ACTION ************** -->
 	<managed-bean>
 		<managed-bean-name>campaignAction</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.form.BasicController</managed-bean-class>
+		<managed-bean-class>
+			com.code.aon.ui.form.BasicController
+		</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
 			<property-name>queryOnStartUP</property-name>
@@ -992,20 +1074,24 @@
 		</managed-property>
 		<managed-property>
 			<property-name>beanName</property-name>
-			<value>campaignAction</value> 
+			<value>campaignAction</value>
 		</managed-property>
 		<managed-property>
 			<property-name>listenerClasses</property-name>
 			<list-entries>
-				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+				<value-class>
+					com.code.aon.ui.form.event.IControllerListener
+				</value-class>
 				<value>#{campaignChildListener}</value>
 				<value>#{campaignActionTargetListener}</value>
 			</list-entries>
-		</managed-property>		
+		</managed-property>
 	</managed-bean>
 
 	<managed-bean>
-		<managed-bean-name>campaignActionTargetListener</managed-bean-name>
+		<managed-bean-name>
+			campaignActionTargetListener
+		</managed-bean-name>
 		<managed-bean-class>
 			com.code.aon.ui.form.listener.MasterControllerListener
 		</managed-bean-class>
@@ -1019,14 +1105,16 @@
 			<map-entries>
 				<map-entry>
 					<key>ActionTarget_action_id</key>
-                    <value>id</value>
+					<value>id</value>
 				</map-entry>
 			</map-entries>
 		</managed-property>
 	</managed-bean>
 
 	<managed-bean>
-		<managed-bean-name>campaignActionChildListener</managed-bean-name>
+		<managed-bean-name>
+			campaignActionChildListener
+		</managed-bean-name>
 		<managed-bean-class>
 			com.code.aon.ui.form.listener.ChildControllerListener
 		</managed-bean-class>
@@ -1039,12 +1127,14 @@
 			<property-name>masterPropertyName</property-name>
 			<value>action</value>
 		</managed-property>
-	</managed-bean>			
+	</managed-bean>
 
 	<!-- ************ CAMPAIGN ACTION TARGET ************** -->
 	<managed-bean>
 		<managed-bean-name>campaignActionTarget</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.form.BasicController</managed-bean-class>
+		<managed-bean-class>
+			com.code.aon.ui.marketing.controller.CampaignActionTargetController
+		</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
 			<property-name>queryOnStartUP</property-name>
@@ -1056,15 +1146,17 @@
 		</managed-property>
 		<managed-property>
 			<property-name>beanName</property-name>
-			<value>campaignActionTarget</value> 
+			<value>campaignActionTarget</value>
 		</managed-property>
 		<managed-property>
 			<property-name>listenerClasses</property-name>
 			<list-entries>
-				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+				<value-class>
+					com.code.aon.ui.form.event.IControllerListener
+				</value-class>
 				<value>#{campaignActionChildListener}</value>
 			</list-entries>
-		</managed-property>		
+		</managed-property>
 	</managed-bean>
-	
+
 </faces-config>

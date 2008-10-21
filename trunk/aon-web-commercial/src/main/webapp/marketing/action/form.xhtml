@@ -15,11 +15,17 @@
 
 		<aon:form id="campaignActionForm">
 		
-			<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml" >
+			<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml" >
 				<ui:param name="toolbarTitle" value="#{marketingBundle.aon_marketing_actions}" />
 				<ui:param name="controller" value="#{campaignAction}" />
 				<ui:param name="skipSearchButton" value="true" />
-			</ui:include>
+				
+				<ui:define name="beforeSpinToolbarContent">
+					<aon:commandButton value="#{marketingBundle.aon_action_add_targets}"
+						action="campaignActionTarget_search" actionListener="#{target.onEditSearch}"
+						styleClass="aon-finding-toolbar-item aon-icon-new" />
+				</ui:define>				
+			</ui:decorate>		
 
 			<aon:div styleClass="aon-scroll-area">
 			

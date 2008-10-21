@@ -82,7 +82,7 @@
 						required="true" value="#{commercialTracking.to.activity}">
 						<f:converter converterId="toConverter" />
 						<f:selectItem value="#{null}" itemLabel="    " />
-						<f:selectItems value="#{commecialCollections.activities}" />
+						<f:selectItems value="#{commercialCollections.activities}" />
 					</aon:selectOneMenu>
 
 					<aon:outputLabel for="CommercialTracking_status"
@@ -90,7 +90,7 @@
 					<aon:selectOneRadio id="CommercialTracking_status"
 						value="#{commercialTracking.to.status}">
 						<f:selectItems
-							value="#{commecialCollections.commercialTrackingStatuses}" />
+							value="#{commercialCollections.commercialTrackingStatuses}" />
 					</aon:selectOneRadio>
 
 					<aon:outputLabel for="CommercialTracking_comments"
@@ -124,7 +124,7 @@
 									required="true" value="#{commercialTracking.next.activity}">
 									<f:converter converterId="toConverter" />
 									<f:selectItem value="#{null}" itemLabel="    " />
-									<f:selectItems value="#{commecialCollections.activities}" />
+									<f:selectItems value="#{commercialCollections.activities}" />
 								</aon:selectOneMenu>
 
 								<aon:outputLabel for="CommercialTracking_next_comments"
