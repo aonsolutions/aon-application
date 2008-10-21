@@ -58,21 +58,6 @@
 		<converter-class>com.code.aon.ui.converter.EnumLocaleConverter</converter-class>
 	</converter>
 	<converter>
-		<description>Conversor para los ProductStatus</description>
-		<converter-id>aonProductStatusConverter</converter-id>
-		<converter-class>com.code.aon.ui.product.converter.ProductStatusConverter</converter-class>
-	</converter>	
-	<converter>
-		<description>Conversor para los Advertising</description>
-		<converter-id>aonAdvertisingConverter</converter-id>
-		<converter-class>com.code.aon.ui.commercial.converter.AdvertisingConverter</converter-class>
-	</converter>	
-	<converter>
-		<description>Conversor para los MediaType</description>
-		<converter-id>aonMediaTypeConverter</converter-id>
-		<converter-class>com.code.aon.ui.commercial.converter.MediaTypeConverter</converter-class>
-	</converter>	
-	<converter>
     	<converter-id>toConverter</converter-id>
     	<converter-class>com.code.aon.ui.commercial.converter.ITransferObjectConverter</converter-class>
 	</converter>

@@ -33,8 +33,8 @@
 	<aon:outputLabel for="Target_advertising"
 		value="#{appBundle.aon_target_advertising}" />
 	<aon:selectOneMenu id="Target_advertising"
-		converter="aonAdvertisingConverter"
 		valueChangeListener="#{controller.addDirectExpression}">
+		<aon:enumConverter enum="com.code.aon.commercial.enumeration.Advertising" />
 		<f:selectItems value="#{commercialCollections.advertisings}" />
 		<f:selectItem value="#{null}" itemLabel="    " />		
 	</aon:selectOneMenu>	
