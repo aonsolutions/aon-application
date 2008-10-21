@@ -229,12 +229,34 @@
 		</managed-property>
 	</managed-bean>
 
+	<!--  **** WORKPLACE **** -->
+	<managed-bean>
+		<managed-bean-name>workplace</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.form.BasicController
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.company.WorkPlace</value>
+		</managed-property>
+	</managed-bean>
+	
 
 	<!-- =================== Company ========================== -->
 	<navigation-rule>
 		<navigation-case>
 			<from-outcome>company</from-outcome>
 			<to-view-id>/com/code/aon/ui/company/facelet/company/form.xhtml
+			</to-view-id>
+		</navigation-case>
+		<navigation-case>
+			<from-outcome>workplace</from-outcome>
+			<to-view-id>/com/code/aon/ui/company/facelet/workplace/grid.xhtml
 			</to-view-id>
 		</navigation-case>
 	</navigation-rule>
