@@ -13,8 +13,9 @@
 				<aon:menuItem action="account_list" value="#{accountBundle.account_account_module}"/>
 				<aon:menuItem action="autConcept" value="#{accountBundle.account_aut_concept_module}"/>
 				<aon:menuItem actionListener="#{customer.onEditSearch}" action="customer_search" value="#{customerBundle.customer_module}"/>
-				<aon:menuItem actionListener="#{accBasicSupplier.onEditSearch}" action="supplier_search" value="#{supplierBundle.supplier_module}"/>
-				<aon:menuItem actionListener="#{accBasicCreditor.onEditSearch}" action="accBasicCreditor_search" value="#{appBundle.account_creditor}"/>
+				<aon:menuItem actionListener="#{supplier.onEditSearch}" action="supplier_search" value="#{supplierBundle.supplier_module}"/>
+				<aon:menuItem actionListener="#{creditor.onEditSearch}" action="creditor_search" value="#{financeBundle.finance_creditor_module}"/>
+				<aon:menuItem action="geozone_list" value="#{geozoneBundle.geozone_module}"/>
 			</aon:dropDownMenu>
 						
 			<aon:dropDownMenu value="#{appBundle.account_pred_entries}">

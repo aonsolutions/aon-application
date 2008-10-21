@@ -155,20 +155,20 @@
 
 						<aon:div>
 							<aon:div styleClass="aonSubMenu aonSubMenuOption">
-								<aon:outputText value="#{appBundle.account_creditor}" />
+								<aon:outputText value="#{financeBundle.finance_creditor_module}" />
 								<h:commandLink immediate="true"
-									actionListener="#{accBasicCreditor.onReset}"
-									action="accCreditor_form">
+									actionListener="#{creditor.onReset}"
+									action="creditor_form">
 									<aon:outputText value="[#{bundle.aon_reset}]" />
 								</h:commandLink>
 								<h:commandLink immediate="true"
-									actionListener="#{accBasicCreditor.onEditSearch}"
-									action="accCreditor_search">
+									actionListener="#{creditor.onEditSearch}"
+									action="creditor_search">
 									<aon:outputText value="[#{bundle.aon_search}]" />
 								</h:commandLink>
 							</aon:div>
 							<aon:div styleClass="aonSubMenuDescription">
-								<aon:outputText value="#{appBundle.account_creditor}" />
+								<aon:outputText value="#{financeBundle.finance_creditor_module}" />
 							</aon:div>
 						</aon:div>
 
