@@ -13,7 +13,7 @@
 
 				<ui:include
 					src="/com/code/aon/ui/resources/facelet/toolbar/gridToolbar.xhtml">
-					<ui:param name="toolbarTitle" value="#{menuBundle.autConcept}" />
+					<ui:param name="toolbarTitle" value="#{accountBundle.account_aut_concept_module}" />
 					<ui:param name="controller" value="#{autConcept}" />
 				</ui:include>
 
@@ -27,7 +27,7 @@
 							<aon:column>
 								<f:facet name="header">
 									<aon:outputText
-										value="#{accountBundle.aon_autConcept_description}" />
+										value="#{bundle.aon_description}" />
 								</f:facet>
 								<aon:outputText value="#{to.description}"
 									id="autConcept_description-LABEL"

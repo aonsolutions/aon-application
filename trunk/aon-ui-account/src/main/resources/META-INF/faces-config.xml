@@ -304,33 +304,6 @@
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
 	
-	<!-- **************** ACCOUNT BASIC SUPPLIER ************************** -->
-	<managed-bean>
-		<managed-bean-name>accBasicSupplier</managed-bean-name>
-		<managed-bean-class> com.code.aon.ui.form.BasicController </managed-bean-class>
-		<managed-bean-scope>session</managed-bean-scope>
-		<managed-property>
-			<property-name>queryOnStartUP</property-name>
-			<value>false</value>
-		</managed-property>
-		<managed-property>
-			<property-name>pojo</property-name>
-			<value>com.code.aon.supplier.Supplier</value>
-		</managed-property>
-		<managed-property>
-			<property-name>beanName</property-name>
-			<value>accBasicSupplier</value>
-		</managed-property>
-		<managed-property>
-			<property-name>listenerClasses</property-name>
-			<list-entries>
-				<value-class> com.code.aon.ui.form.event.IControllerListener </value-class>
-				<value>#{invoiceRegistryVetoListener}</value>
-				<value>#{supplierScopeListener}</value>
-			</list-entries>
-		</managed-property>
-	</managed-bean>
-
 	<!-- **************** ACCOUNT BASIC CREDITOR ************************** -->
 	<managed-bean>
 		<managed-bean-name>accBasicCreditor</managed-bean-name>
@@ -585,22 +558,6 @@
 		</navigation-case>
 	</navigation-rule>
   
-  <!-- =================== ACCOUNT SUPPLIER ================= -->
-	<navigation-rule>
-		<navigation-case>
-			<from-outcome>accBasicSupplier_form</from-outcome>
-			<to-view-id>/facelet/supplier/form.xhtml</to-view-id>
-		</navigation-case>
-		<navigation-case>
-			<from-outcome>accBasicSupplier_list</from-outcome>
-			<to-view-id>/facelet/supplier/list.xhtml</to-view-id>
-		</navigation-case>
-		<navigation-case>
-			<from-outcome>accBasicSupplier_search</from-outcome>
-			<to-view-id>/facelet/supplier/search.xhtml</to-view-id>
-		</navigation-case>
-	</navigation-rule>
-
   <!-- =================== ACCOUNT CREDITOR ================= -->
 	<navigation-rule>
 		<navigation-case>

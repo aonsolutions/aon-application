@@ -40,7 +40,7 @@
 		</managed-property>		
 		<managed-property>
 			<property-name>resourceURIPreffix</property-name>
-			<value>/aonResource/1.5.0</value>
+			<value>/aonResource/1.6.5</value>
 		</managed-property>		
 	</managed-bean>
 
@@ -52,22 +52,6 @@
 		<managed-bean-class>com.code.aon.ui.common.controller.ConfigurationController
 		</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
-		<managed-property>
-			<property-name>applicationLogoContextRelativePath
-			</property-name>
-			<value>/images/logo.gif</value>
-		</managed-property>
-		<managed-property>
-			<property-name>applicationWelcomeContextRelativePath
-			</property-name>
-			<value>/images/aon-home.jpg</value>
-		</managed-property>
-		<managed-property>
-			<property-name>applicationReportContextRelativePath
-			</property-name>
-			<value>com/code/aon/ui/report/resources/expand_logo.gif
-			</value>
-		</managed-property>
 		<managed-property>
 			<property-name>styleSheets</property-name>
 			<list-entries>
@@ -81,10 +65,6 @@
 				<map-entry>
 					<key>bundle</key>
 					<value>com.code.aon.ui.common.i18n.messages</value>
-				</map-entry>
-				<map-entry>
-					<key>menuBundle</key>
-					<value>com.code.aon.ui.account.i18n.menu</value>
 				</map-entry>
 				<map-entry>
 					<key>companyBundle</key>
@@ -138,33 +118,6 @@
 			</map-entries>
 		</managed-property>
 	</managed-bean>
-
-	<!-- ************** EXTERNAL COLLECTIONS (RELOCATE) ****************** -->
-	<managed-bean>
-		<managed-bean-name>financeCollections</managed-bean-name>
-		<managed-bean-class> com.code.aon.ui.finance.controller.FinanceCollectionsController
-		</managed-bean-class>
-		<managed-bean-scope>session</managed-bean-scope>
-	</managed-bean>
-	<managed-bean>
-		<managed-bean-name>productCollections</managed-bean-name>
-		<managed-bean-class> com.code.aon.ui.product.controller.ProductCollectionsController
-		</managed-bean-class>
-		<managed-bean-scope>session</managed-bean-scope>
-	</managed-bean>
-	<managed-bean>
-		<managed-bean-name>registryCollections</managed-bean-name>
-		<managed-bean-class> com.code.aon.ui.registry.controller.RegistryCollectionsController
-		</managed-bean-class>
-		<managed-bean-scope>session</managed-bean-scope>
-	</managed-bean>
-	<managed-bean>
-		<managed-bean-name>supplierCollections</managed-bean-name>
-		<managed-bean-class> com.code.aon.ui.supplier.controller.SupplierCollectionsController
-		</managed-bean-class>
-		<managed-bean-scope>session</managed-bean-scope>
-	</managed-bean>
-
 
 	<!--  **** TAX ****	-->
 	<managed-bean>
@@ -247,27 +200,5 @@
          <redirect/>
       </navigation-case>
    </navigation-rule>
-
-	<!-- ************* MENU ***************** -->
-	<navigation-rule>
-		<navigation-case>
-			<from-outcome>tax</from-outcome>
-			<to-view-id>/facelet/product/auxiliary/tax/grid.jsf
-			</to-view-id>
-		</navigation-case>
-	</navigation-rule>
-	
-	
-	<!-- PREVIOUS -->
-	<navigation-rule>
-		<navigation-case>
-			<from-outcome>acc_bank_sw</from-outcome>
-			<to-view-id>/facelet/sw/bank.jsf</to-view-id>
-		</navigation-case>
-		<navigation-case>
-			<from-outcome>acc_bank_sw_search</from-outcome>
-			<to-view-id>/facelet/sw/bankSearch.jsf</to-view-id>
-		</navigation-case>
-	</navigation-rule>
 	
 </faces-config>

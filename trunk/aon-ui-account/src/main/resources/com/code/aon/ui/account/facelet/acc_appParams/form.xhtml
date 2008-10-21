@@ -14,7 +14,7 @@
 			<ui:decorate
 				template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml">
 				<ui:param name="toolbarTitle"
-					value="#{menuBundle.account_default_params_desc}" />
+					value="#{accountBundle.account_default_params_module}" />
 				<ui:param name="toolbarDescription" value="#{bundle.aon_editing}" />
 
 				<ui:define name="toolbarContent">
@@ -33,49 +33,49 @@
 				<aon:panelGrid columns="2">
 
 					<aon:outputLabel for="ACC_default_sales_account"
-						value="#{accountBundle.default_sales_account}" />
+						value="#{accountBundle.account_def_sales_acc}" />
 					<aon:selectOneMenu id="ACC_default_sales_account"
 						value="#{accAppParams.parameters['ACC_DEFAULT_SALES_ACC'].value}">
 						<f:selectItems value="#{accountCollections.salesAccounts}" />
 					</aon:selectOneMenu>
 
 					<aon:outputLabel for="ACC_default_purchase_account"
-						value="#{accountBundle.default_purchase_account}" />
+						value="#{accountBundle.account_def_purchase_acc}" />
 					<aon:selectOneMenu id="ACC_default_purchase_account"
 						value="#{accAppParams.parameters['ACC_DEFAULT_PURCHASE_ACC'].value}">
 						<f:selectItems value="#{accountCollections.purchaseAccounts}" />
 					</aon:selectOneMenu>
 
 					<aon:outputLabel for="ACC_default_cash_account"
-						value="#{accountBundle.default_cash_account}" />
+						value="#{accountBundle.account_def_cash_acc}" />
 					<aon:selectOneMenu id="ACC_default_cash_account"
 						value="#{accAppParams.parameters['ACC_DEFAULT_CASH_ACC'].value}">
 						<f:selectItems value="#{accountCollections.cashAccounts}" />
 					</aon:selectOneMenu>
 
 					<aon:outputLabel for="ACC_default_charged_vat_account"
-						value="#{accountBundle.default_charged_vat_account}" />
+						value="#{accountBundle.account_def_charged_vat_acc}" />
 					<aon:selectOneMenu id="ACC_default_charged_vat_account"
 						value="#{accAppParams.parameters['ACC_DEFAULT_CHARGED_VAT_ACC'].value}">
 						<f:selectItems value="#{accountCollections.chargedVatAccounts}" />
 					</aon:selectOneMenu>
 
 					<aon:outputLabel for="ACC_default_paid_vat_account"
-						value="#{accountBundle.default_paid_vat_account}" />
+						value="#{accountBundle.account_def_paid_vat_acc}" />
 					<aon:selectOneMenu id="ACC_default_paid_vat_account"
 						value="#{accAppParams.parameters['ACC_DEFAULT_PAID_VAT_ACC'].value}">
 						<f:selectItems value="#{accountCollections.paidVatAccounts}" />
 					</aon:selectOneMenu>
 
 					<aon:outputLabel for="ACC_default_paid_retention_account"
-						value="#{accountBundle.default_paid_retention_account}" />
+						value="#{accountBundle.account_def_paid_ret_acc}" />
 					<aon:selectOneMenu id="ACC_default_paid_retention_account"
 						value="#{accAppParams.parameters['ACC_DEFAULT_PAID_RET_ACC'].value}">
 						<f:selectItems value="#{accountCollections.paidRetentionAccounts}" />
 					</aon:selectOneMenu>
 
 					<aon:outputLabel for="ACC_default_charged_retention_account"
-						value="#{accountBundle.default_charged_retention_account}" />
+						value="#{accountBundle.account_def_charged_ret_acc}" />
 					<aon:selectOneMenu id="ACC_default_charged_retention_account"
 						value="#{accAppParams.parameters['ACC_DEFAULT_CHARGED_RET_ACC'].value}">
 						<f:selectItems
@@ -83,21 +83,21 @@
 					</aon:selectOneMenu>
 
 					<aon:outputLabel for="ACC_default_salary_account"
-						value="#{accountBundle.default_salary_account}" />
+						value="#{accountBundle.account_def_salary_acc}" />
 					<aon:selectOneMenu id="ACC_default_salary_account"
 						value="#{accAppParams.parameters['ACC_DEFAULT_SALARY_ACC'].value}">
 						<f:selectItems value="#{accountCollections.salaryAccounts}" />
 					</aon:selectOneMenu>
 
 					<aon:outputLabel for="ACC_default_pending_salary_account"
-						value="#{accountBundle.default_pending_salary_account}" />
+						value="#{accountBundle.account_def_pending_salary_acc}" />
 					<aon:selectOneMenu id="ACC_default_pending_salary_account"
 						value="#{accAppParams.parameters['ACC_DEFAULT_PENDING_SALARY_ACC'].value}">
 						<f:selectItems value="#{accountCollections.pendingSalaryAccounts}" />
 					</aon:selectOneMenu>
 
 					<aon:outputLabel for="ACC_default_social_insurance_account"
-						value="#{accountBundle.default_social_insurance_account}" />
+						value="#{accountBundle.account_def_social_insurance_acc}" />
 					<aon:selectOneMenu id="ACC_default_social_insurance_account"
 						value="#{accAppParams.parameters['ACC_DEFAULT_SOCIAL_INSURANCE_ACC'].value}">
 						<f:selectItems
@@ -106,14 +106,13 @@
 
 					<aon:outputLabel
 						for="ACC_default_enterprise_social_insurance_account"
-						value="#{accountBundle.default_enterprise_social_insurance_account}" />
+						value="#{accountBundle.account_def_enterprise_social_insurance_acc}" />
 					<aon:selectOneMenu
 						id="ACC_default_enterprise_social_insurance_account"
 						value="#{accAppParams.parameters['ACC_DEFAULT_COMPANY_SOC_INS_ACC'].value}">
 						<f:selectItems
 							value="#{accountCollections.enterpriseSocialInsuranceAccounts}" />
 					</aon:selectOneMenu>
-
 				</aon:panelGrid>
 			</aon:div>
 		</aon:form>
