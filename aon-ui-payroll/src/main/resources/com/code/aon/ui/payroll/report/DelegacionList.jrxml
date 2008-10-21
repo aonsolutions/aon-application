@@ -34,7 +34,7 @@
 	<field name="numero" class="java.lang.String"/>
 	<field name="codpos" class="java.lang.String"/>
 	<field name="localidad" class="java.lang.String"/>
-	<field name="provincia" class="com.code.aon.payroll.organismosyentidades.Provincia"/>
+	<field name="provincia" class="com.code.aon.payroll.geograficas.Provincia"/>
 	<field name="telefono" class="java.lang.String"/>
 
 		<background>

@@ -2,7 +2,7 @@
 <!-- Created with iReport - A designer for JasperReports -->
 <!DOCTYPE jasperReport PUBLIC "//JasperReports//DTD Report Design//EN" "http://jasperreports.sourceforge.net/dtds/jasperreport.dtd">
 <jasperReport
-		 name="EpigrafeList"
+		 name="EntidadList"
 		 columnCount="1"
 		 printOrder="Vertical"
 		 orientation="Portrait"
@@ -27,52 +27,47 @@
 	<parameter name="logoImageFile" isForPrompting="true" class="java.io.InputStream"/>
 	<parameter name="companyName" isForPrompting="false" class="java.lang.String"/>
 
-	<field name="epigrafe" class="com.code.aon.payroll.cotizacion.Epigrafe"/>
-	<field name="id" class="com.code.aon.payroll.cotizacion.LinepigrId"/>
-	<field name="fecfin" class="java.util.Date"/>
-	<field name="epi1" class="com.code.aon.payroll.enumeration.Epigrafes"/>
-	<field name="canit" class="java.math.BigDecimal"/>
-	<field name="epi2" class="com.code.aon.payroll.enumeration.Epigrafes"/>
-	<field name="canipm" class="java.math.BigDecimal"/>
+	<field name="entidad" class="com.code.aon.payroll.auxiliares.organismosyentidades.Entidad"/>
+	<field name="id" class="com.code.aon.payroll.auxiliares.organismosyentidades.SucursalId"/>
+	<field name="domsuc" class="java.lang.String"/>
+	<field name="munsuc" class="java.lang.String"/>
+	<field name="cpsuc" class="java.lang.String"/>
 
-	<variable name="groupCdg" class="java.lang.String" resetType="Report" calculation="Nothing">
-		<variableExpression><![CDATA[$F{epigrafe}.getCdg()]]></variableExpression>
-	</variable>
 
 		<group  name="group" >
-			<groupExpression><![CDATA[$F{epigrafe}]]></groupExpression>
+			<groupExpression><![CDATA[$F{entidad}]]></groupExpression>
 			<groupHeader>
-			<band height="23"  isSplitAllowed="true" >
+			<band height="22"  isSplitAllowed="true" >
 				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
-						x="0"
-						y="6"
-						width="68"
+						x="5"
+						y="5"
+						width="20"
 						height="14"
 						key="textField-46"/>
 					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" leftPadding="5" rightBorder="None" rightBorderColor="#000000" rightPadding="5" bottomBorder="Thin" bottomBorderColor="#999999"/>
 					<textElement textAlignment="Right" verticalAlignment="Middle">
 						<font size="8"/>
 					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$F{epigrafe}.getCdg()]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{entidad}.getCdg()]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
-						x="68"
-						y="6"
-						width="77"
+						x="25"
+						y="5"
+						width="267"
 						height="14"
 						key="textField-47"/>
 					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" leftPadding="5" rightBorder="None" rightBorderColor="#000000" rightPadding="5" bottomBorder="Thin" bottomBorderColor="#999999"/>
 					<textElement textAlignment="Right" verticalAlignment="Middle">
 						<font size="8"/>
 					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$F{epigrafe}.getDescription()]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{entidad}.getDescription()]]></textFieldExpression>
 				</textField>
 			</band>
 			</groupHeader>
 			<groupFooter>
-			<band height="5"  isSplitAllowed="true" >
+			<band height="0"  isSplitAllowed="true" >
 			</band>
 			</groupFooter>
 		</group>
@@ -113,7 +108,7 @@
 					<textElement textAlignment="Right" verticalAlignment="Middle">
 						<font pdfFontName="Helvetica-Bold" size="10" isBold="true"/>
 					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$R{aon_payroll_print} + " " + $R{aon_payroll_cotizacion_epigrafes}]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$R{aon_payroll_print} + " " + $R{aon_payroll_cotizacion_entidades}]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="false" pattern="dd/MM/yyyy" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
@@ -131,29 +126,13 @@
 			</band>
 		</pageHeader>
 		<columnHeader>
-			<band height="52"  isSplitAllowed="true" >
+			<band height="31"  isSplitAllowed="true" >
 				<printWhenExpression><![CDATA[new Boolean(($P{printHeaders}).booleanValue() || $V{PAGE_NUMBER}.intValue() == 1)]]></printWhenExpression>
 				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						mode="Opaque"
-						x="145"
-						y="14"
-						width="89"
-						height="15"
-						forecolor="#FFFFFF"
-						backcolor="#000000"
-						key="textField-29"/>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="Thin" rightBorderColor="#FFFFFF" bottomBorder="None" bottomBorderColor="#000000"/>
-					<textElement textAlignment="Center" verticalAlignment="Middle">
-						<font pdfFontName="Helvetica-Bold" size="9" isBold="true"/>
-					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$R{aon_payroll_cotizacion_epigrafes_indiIT}]]></textFieldExpression>
-				</textField>
-				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
-					<reportElement
-						mode="Opaque"
-						x="234"
-						y="14"
+						x="238"
+						y="15"
 						width="91"
 						height="15"
 						forecolor="#FFFFFF"
@@ -163,14 +142,14 @@
 					<textElement textAlignment="Center" verticalAlignment="Middle">
 						<font pdfFontName="Helvetica-Bold" size="9" isBold="true"/>
 					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$R{aon_payroll_cotizacion_epigrafes_impIT}]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$R{aon_payroll_auxiliares_organismos_entidades__entidad_dom}]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						mode="Opaque"
-						x="325"
-						y="14"
-						width="119"
+						x="329"
+						y="15"
+						width="110"
 						height="15"
 						forecolor="#FFFFFF"
 						backcolor="#000000"
@@ -179,14 +158,14 @@
 					<textElement textAlignment="Center" verticalAlignment="Middle">
 						<font pdfFontName="Helvetica-Bold" size="9" isBold="true"/>
 					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$R{aon_payroll_cotizacion_epigrafes_indIMS}]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$R{aon_payroll_auxiliares_organismos_entidades__entidad_mun}]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						mode="Opaque"
-						x="444"
-						y="14"
-						width="88"
+						x="439"
+						y="15"
+						width="93"
 						height="15"
 						forecolor="#FFFFFF"
 						backcolor="#000000"
@@ -195,13 +174,13 @@
 					<textElement textAlignment="Center" verticalAlignment="Middle">
 						<font pdfFontName="Helvetica-Bold" size="9" isBold="true"/>
 					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$R{aon_payroll_cotizacion_epigrafes_impIMS}]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$R{aon_payroll_auxiliares_organismos_entidades__entidad_codpos}]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						mode="Opaque"
-						x="68"
-						y="14"
+						x="161"
+						y="15"
 						width="77"
 						height="15"
 						forecolor="#FFFFFF"
@@ -211,46 +190,14 @@
 					<textElement textAlignment="Center" verticalAlignment="Middle">
 						<font pdfFontName="Helvetica-Bold" size="9" isBold="true"/>
 					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$R{aon_payroll_cotizacion_fecfin}]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$R{aon_payroll_auxiliares_organismos_entidades__entidad_cod}]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						mode="Opaque"
 						x="0"
-						y="14"
-						width="68"
-						height="15"
-						forecolor="#FFFFFF"
-						backcolor="#000000"
-						key="textField-44"/>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="Thin" rightBorderColor="#FFFFFF" bottomBorder="None" bottomBorderColor="#000000"/>
-					<textElement textAlignment="Center" verticalAlignment="Middle">
-						<font pdfFontName="Helvetica-Bold" size="9" isBold="true"/>
-					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$R{aon_payroll_cotizacion_fecini}]]></textFieldExpression>
-				</textField>
-				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
-					<reportElement
-						mode="Opaque"
-						x="68"
-						y="34"
-						width="77"
-						height="15"
-						forecolor="#FFFFFF"
-						backcolor="#000000"
-						key="textField-49"/>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="Thin" rightBorderColor="#FFFFFF" bottomBorder="None" bottomBorderColor="#000000"/>
-					<textElement textAlignment="Center" verticalAlignment="Middle">
-						<font pdfFontName="Helvetica-Bold" size="9" isBold="true"/>
-					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$R{aon_payroll_cotizacion_epigrafes_desc}]]></textFieldExpression>
-				</textField>
-				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
-					<reportElement
-						mode="Opaque"
-						x="0"
-						y="34"
-						width="68"
+						y="0"
+						width="88"
 						height="15"
 						forecolor="#FFFFFF"
 						backcolor="#000000"
@@ -259,42 +206,58 @@
 					<textElement textAlignment="Center" verticalAlignment="Middle">
 						<font pdfFontName="Helvetica-Bold" size="9" isBold="true"/>
 					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$R{aon_payroll_cotizacion_epigrafes_cod}]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$R{aon_payroll_auxiliares_organismos_entidades__entidad_codent}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						mode="Opaque"
+						x="88"
+						y="0"
+						width="73"
+						height="15"
+						forecolor="#FFFFFF"
+						backcolor="#000000"
+						key="textField-51"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="Thin" rightBorderColor="#FFFFFF" bottomBorder="None" bottomBorderColor="#000000"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font pdfFontName="Helvetica-Bold" size="9" isBold="true"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$R{aon_payroll_auxiliares_organismos_entidades__entidad_desc}]]></textFieldExpression>
 				</textField>
 			</band>
 		</columnHeader>
 		<detail>
-			<band height="17"  isSplitAllowed="true" >
-				<textField isStretchWithOverflow="false" pattern="dd/MM/yyyy" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+			<band height="25"  isSplitAllowed="true" >
+				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
-						x="0"
-						y="0"
-						width="68"
+						x="152"
+						y="9"
+						width="77"
 						height="14"
 						key="textField-8"/>
 					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" leftPadding="5" rightBorder="None" rightBorderColor="#000000" rightPadding="5" bottomBorder="Thin" bottomBorderColor="#999999"/>
 					<textElement textAlignment="Right" verticalAlignment="Middle">
 						<font size="8"/>
 					</textElement>
-				<textFieldExpression   class="java.util.Date"><![CDATA[$F{id}.getFecini()]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{id}.getCdg()]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="false" pattern="dd/MM/yyyy" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
-						x="68"
-						y="0"
-						width="77"
+						x="229"
+						y="9"
+						width="91"
 						height="14"
 						key="textField-12"/>
 					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" leftPadding="5" rightBorder="None" rightBorderColor="#000000" rightPadding="5" bottomBorder="Thin" bottomBorderColor="#999999"/>
 					<textElement verticalAlignment="Middle">
 						<font size="8"/>
 					</textElement>
-				<textFieldExpression   class="java.util.Date"><![CDATA[$F{fecfin}]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{domsuc}]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
-						x="234"
-						y="0"
+						x="439"
+						y="9"
 						width="91"
 						height="14"
 						key="textField-17"/>
@@ -302,46 +265,20 @@
 					<textElement verticalAlignment="Middle">
 						<font size="8"/>
 					</textElement>
-				<textFieldExpression   class="java.math.BigDecimal"><![CDATA[$F{canit}]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{cpsuc}]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
-						x="444"
-						y="0"
-						width="88"
-						height="14"
-						key="textField-18"/>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" leftPadding="5" rightBorder="None" rightBorderColor="#000000" rightPadding="5" bottomBorder="Thin" bottomBorderColor="#999999"/>
-					<textElement verticalAlignment="Middle">
-						<font size="8"/>
-					</textElement>
-				<textFieldExpression   class="java.math.BigDecimal"><![CDATA[$F{canipm}]]></textFieldExpression>
-				</textField>
-				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
-					<reportElement
-						x="325"
-						y="0"
+						x="320"
+						y="9"
 						width="119"
-						height="14"
-						key="textField-19"/>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" leftPadding="5" rightBorder="None" rightBorderColor="#000000" rightPadding="5" bottomBorder="Thin" bottomBorderColor="#999999"/>
-					<textElement verticalAlignment="Middle">
-						<font size="8"/>
-					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$F{epi2}]]></textFieldExpression>
-				</textField>
-				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
-					<reportElement
-						x="145"
-						y="0"
-						width="89"
 						height="14"
 						key="textField-48"/>
 					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" leftPadding="5" rightBorder="None" rightBorderColor="#000000" rightPadding="5" bottomBorder="Thin" bottomBorderColor="#999999"/>
 					<textElement verticalAlignment="Middle">
 						<font size="8"/>
 					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$F{epi1}]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{munsuc}]]></textFieldExpression>
 				</textField>
 			</band>
 		</detail>

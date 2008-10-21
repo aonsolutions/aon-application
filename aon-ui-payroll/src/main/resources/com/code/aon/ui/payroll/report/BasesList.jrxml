@@ -267,7 +267,7 @@
 						mode="Opaque"
 						x="450"
 						y="32"
-						width="82"
+						width="83"
 						height="15"
 						forecolor="#FFFFFF"
 						backcolor="#000000"
@@ -450,7 +450,7 @@
 					<reportElement
 						x="287"
 						y="0"
-						width="73"
+						width="74"
 						height="14"
 						key="textField-19"/>
 					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" leftPadding="5" rightBorder="None" rightBorderColor="#000000" rightPadding="5" bottomBorder="Thin" bottomBorderColor="#999999"/>
@@ -463,7 +463,7 @@
 					<reportElement
 						x="449"
 						y="0"
-						width="83"
+						width="84"
 						height="14"
 						key="textField-20"/>
 					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" leftPadding="5" rightBorder="None" rightBorderColor="#000000" rightPadding="5" bottomBorder="Thin" bottomBorderColor="#999999"/>
@@ -476,7 +476,7 @@
 					<reportElement
 						x="533"
 						y="0"
-						width="68"
+						width="69"
 						height="14"
 						key="textField-21"/>
 					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" leftPadding="5" rightBorder="None" rightBorderColor="#000000" rightPadding="5" bottomBorder="Thin" bottomBorderColor="#999999"/>

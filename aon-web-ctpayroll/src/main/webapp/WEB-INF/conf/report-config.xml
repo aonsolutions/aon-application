@@ -379,4 +379,70 @@
 			<param id="companyName" value="#{payrollController.getCompanyName}" />
 		</params>
 	</report>
+			<!--  *********  Impresion a PDF de las Mutuas ********* -->
+	<report id="MutuasList" description="Listado de Mutuas">
+		<template path="/com/code/aon/ui/payroll/report/MutuasList.jasper" />
+		<bean key="com.code.aon.payroll.auxiliares.organismosyentidades.Linmutua" />
+		<criteria provider="#{mutua}" />
+		<params>
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.payroll.i18n.messages" />
+			<param id="logoImageFile" value="#{payrollController.getLogo}" />
+			<param id="companyName" value="#{payrollController.getCompanyName}" />
+		</params>
+	</report>
+	
+		<report id="MutuasListXLS" description="Listado de Mutuas">
+		<template path="/com/code/aon/ui/payroll/report/MutuasListXLS.jasper" />
+		<bean key="com.code.aon.payroll.auxiliares.organismosyentidades.Linmutua" />
+		<criteria provider="#{mutua}" />
+		<params>
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.payroll.i18n.messages" />
+			<param id="logoImageFile" value="#{payrollController.getLogo}" />
+			<param id="companyName" value="#{payrollController.getCompanyName}" />
+		</params>
+	</report>
+				<!--  *********  Impresion a PDF de las Entidades y sucursales ********* -->
+	<report id="EntidadList" description="Listado de Entidades">
+		<template path="/com/code/aon/ui/payroll/report/EntidadList.jasper" />
+		<bean key="com.code.aon.payroll.auxiliares.organismosyentidades.Sucursal" />
+		<criteria provider="#{sucursal}" />
+		<params>
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.payroll.i18n.messages" />
+			<param id="logoImageFile" value="#{payrollController.getLogo}" />
+			<param id="companyName" value="#{payrollController.getCompanyName}" />
+		</params>
+	</report>
+	
+		<report id="EntidadListXLS" description="Listado de Entidades">
+		<template path="/com/code/aon/ui/payroll/report/EntidadListXLS.jasper" />
+		<bean key="com.code.aon.payroll.auxiliares.organismosyentidades.Sucursal" />
+		<criteria provider="#{sucursal}" />
+		<params>
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.payroll.i18n.messages" />
+			<param id="logoImageFile" value="#{payrollController.getLogo}" />
+			<param id="companyName" value="#{payrollController.getCompanyName}" />
+		</params>
+	</report>
+				<!--  *********  Impresion a PDF de los datos clave de IRPF ********* -->
+	<report id="DatosList" description="Listado de datos clave para el IRPF">
+		<template path="/com/code/aon/ui/payroll/report/DatosList.jasper" />
+		<bean key="com.code.aon.payroll.irpf.Linirpf" />
+		<criteria provider="#{irpf}" />
+		<params>
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.payroll.i18n.messages" />
+			<param id="logoImageFile" value="#{payrollController.getLogo}" />
+			<param id="companyName" value="#{payrollController.getCompanyName}" />
+		</params>
+	</report>
+	
+	<report id="DatosListXLS" description="Listado de datos clave para el IRPF en excel">
+		<template path="/com/code/aon/ui/payroll/report/DatosListXLS.jasper" />
+		<bean key="com.code.aon.payroll.irpf.Linirpf" />
+		<criteria provider="#{irpf}" />
+		<params>
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.payroll.i18n.messages" />
+			<param id="logoImageFile" value="#{payrollController.getLogo}" />
+			<param id="companyName" value="#{payrollController.getCompanyName}" />
+		</params>
+	</report>
 </report-config>
