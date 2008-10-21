@@ -5,9 +5,8 @@
 	
    	<!-- ************* ENUM CONVERTER ***************** -->
 	<converter>
-		<description>Conversor para los Enum</description>
-		<converter-id>enumConverter</converter-id>
-		<converter-class>com.code.aon.ui.converter.EnumLocaleConverter
-		</converter-class>
+		<description>Conversor para intenacionalizar las opciones de los enumerados.</description>
+		<converter-for-class>com.code.aon.common.enumeration.IResourceable</converter-for-class>
+		<converter-class>com.code.aon.ui.converter.EnumLocaleConverter</converter-class>
 	</converter>
 </faces-config>
