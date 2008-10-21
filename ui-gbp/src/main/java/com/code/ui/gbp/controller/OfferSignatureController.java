@@ -2,6 +2,8 @@ package com.code.ui.gbp.controller;
 
 import java.security.Principal;
 import java.util.Date;
+import java.util.Iterator;
+import java.util.List;
 
 import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
@@ -42,6 +44,27 @@ public class OfferSignatureController extends LinesController {
 		}  
 	}
 	
+	public String getSignatures() throws ManagerBeanException{
+		IController offerController = (IController)AonUtil.getController(OFFER_CONTROLLER_NAME);
+		Offer offer = (Offer)offerController.getModel().getRowData();
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(getFieldName(IGBPAlias.OFFER_SIGNATURE_OFFER_ID), offer.getId());
+		List signatures = getManagerBean().getList(criteria);
+		Iterator iterator = signatures.iterator();
+		if (iterator.hasNext()){
+			String signaturesStr = "";
+			while( iterator.hasNext() ){
+				signaturesStr += ((OfferSignature) iterator.next()).getUserName();
+				if (iterator.hasNext()){
+					signaturesStr += ", ";
+				}
+			}
+			return signaturesStr;
+		}else{
+			return "-------------";
+		}
+	}
+
 	public boolean isSignedByUser() throws ManagerBeanException{
 		Principal principal = FacesContext.getCurrentInstance().getExternalContext().getUserPrincipal();
 		if ( principal != null ) {

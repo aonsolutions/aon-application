@@ -4,6 +4,7 @@
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:c="http://java.sun.com/jstl/core"
 	xmlns:t="http://myfaces.apache.org/tomahawk"            
+	xmlns:rich="http://richfaces.org/rich"
 	xmlns:aon="http://www.code.es/aon-rich-components">
 <body>
 
@@ -47,6 +48,7 @@
 				columnClasses="aon-width-auto aon-text-left,
 							   aon-width-auto aon-text-left,
 							   aon-width-auto aon-text-left,
+							   aon-width-auto aon-text-left,
 							   aon-width-auto aon-text-right,
 							   aon-width-auto aon-text-left">
 							   
@@ -57,6 +59,19 @@
 							<aon:outputText value="#{appBundle.gbp_offer_campaign_code}" />
 						</f:facet>
 						<aon:outputText value="#{to.campaign.code} #{to.campaign.name}"/>
+					</aon:column>
+
+					<aon:column styleClass="aon-editDataTable-iconColumn">
+						<f:facet name="header">
+							<aon:outputText value="#{appBundle.gbp_offer_signature_signatures}" />
+						</f:facet>
+						<aon:div style="display:inline;cursor:pointer;">
+							<aon:graphicImage url="/css/richCss/images/aon-icon/aon-task-comment.gif" />
+		                    <rich:toolTip direction="top-right" mode="ajax" hideDelay="1000"
+		                        styleClass="tooltip" layout="block">
+								<aon:outputText value="#{offerSignature.signatures}" />
+		                    </rich:toolTip>
+						</aon:div>
 					</aon:column>
 
 					<aon:column>

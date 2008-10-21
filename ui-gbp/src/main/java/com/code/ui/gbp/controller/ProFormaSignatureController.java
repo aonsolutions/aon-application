@@ -2,6 +2,8 @@ package com.code.ui.gbp.controller;
 
 import java.security.Principal;
 import java.util.Date;
+import java.util.Iterator;
+import java.util.List;
 
 import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
@@ -86,4 +88,26 @@ public class ProFormaSignatureController extends LinesController {
         }
         return null;
 	}
+	
+	public String getSignatures() throws ManagerBeanException{
+		IController proFormaInvoiceController = (IController)AonUtil.getController(PRO_FORMA_INVOICE_CONTROLLER_NAME);
+		ProFormaInvoice proFormaInvoice = (ProFormaInvoice)proFormaInvoiceController.getModel().getRowData();
+		Criteria criteria = new Criteria();
+		criteria.addEqualExpression(getFieldName(IGBPAlias.PRO_FORMA_SIGNATURE_PRO_FORMA_INVOICE_ID), proFormaInvoice.getId());
+		List signatures = getManagerBean().getList(criteria);
+		Iterator iterator = signatures.iterator();
+		if (iterator.hasNext()){
+			String signaturesStr = "";
+			while( iterator.hasNext() ){
+				signaturesStr += ((ProFormaSignature) iterator.next()).getUserName();
+				if (iterator.hasNext()){
+					signaturesStr += ", ";
+				}
+			}
+			return signaturesStr;
+		}else{
+			return "-------------";
+		}
+	}
+
 }
