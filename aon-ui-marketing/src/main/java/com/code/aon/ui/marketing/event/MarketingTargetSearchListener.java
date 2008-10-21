@@ -1,8 +1,13 @@
 package com.code.aon.ui.marketing.event;
 
 import java.util.Date;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import javax.faces.context.FacesContext;
+import javax.faces.event.ActionEvent;
 
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang.StringUtils;
@@ -15,6 +20,7 @@ import com.code.aon.ql.Criteria;
 import com.code.aon.ql.ast.Expression;
 import com.code.aon.ql.util.ExpressionException;
 import com.code.aon.ql.util.ExpressionUtilities;
+import com.code.aon.registry.enumeration.MediaType;
 import com.code.aon.sales.Seller;
 import com.code.aon.ui.commercial.controller.CommercialCollectionsController;
 import com.code.aon.ui.commercial.controller.ICommercialConstants;
@@ -50,6 +56,8 @@ public class MarketingTargetSearchListener extends ControllerAdapter implements 
 	private Date questionDateTo;	
 	
 	private String questionText;
+	
+	private List<MediaType> mediaTypes;
 	
 	public Date getTrackingDateFrom() {
 		return trackingDateFrom;
@@ -138,7 +146,19 @@ public class MarketingTargetSearchListener extends ControllerAdapter implements 
 	public void setQuestionText(String questionText) {
 		this.questionText = questionText;
 	}
+	
+	public List<MediaType> getMediaTypes() {
+		return mediaTypes;
+	}
 
+	public void setMediaTypes(List<MediaType> mediaTypes) {
+		this.mediaTypes = mediaTypes;
+	}
+
+	public int getMediaTypesSize() {
+		return mediaTypes.size();
+	}
+	
 	@Override
 	public void beforeModelInitialized(ControllerEvent event) throws ControllerListenerException {
 		try {
@@ -179,19 +199,25 @@ public class MarketingTargetSearchListener extends ControllerAdapter implements 
 		setQuestionText(null);
     	CommercialCollectionsController collections = (CommercialCollectionsController) AonUtil.getRegisteredBean(ICommercialConstants.COLLECTIONS_CONTROLLER_NAME);
 		collections.refreshActivities();		
+		setMediaTypes( new LinkedList<MediaType>() );
+		getMediaTypes().add( null );
 	}
 	
 	private void addEnumToCriteria( Criteria criteria, String alias, Object[] values ) throws ManagerBeanException {
 		Expression expToAdd = null;
 		for( Object value : values ) {
-			if ( expToAdd == null ) {
-				expToAdd = ExpressionUtilities.getEqualExpression(alias, value);				
-			} else {
-				Expression exp  = ExpressionUtilities.getEqualExpression(alias, value);
-				expToAdd = ExpressionUtilities.getOrExpression(expToAdd, exp);
+			if ( value != null ) {
+				if ( expToAdd == null ) {
+					expToAdd = ExpressionUtilities.getEqualExpression(alias, value);				
+				} else {
+					Expression exp  = ExpressionUtilities.getEqualExpression(alias, value);
+					expToAdd = ExpressionUtilities.getOrExpression(expToAdd, exp);
+				}
 			}
 		}
-		criteria.addExpression(expToAdd);	
+		if ( expToAdd != null ) {
+			criteria.addExpression(expToAdd);
+		}
 	}	
 	
 	private void completeCriteria() throws ManagerBeanException, ExpressionException {
@@ -236,6 +262,19 @@ public class MarketingTargetSearchListener extends ControllerAdapter implements 
 			}
 			criteria.addExpression( ExpressionUtilities.getOrExpression(expText, expNumber) );
 		}
+		addEnumToCriteria( criteria, "MarketingTarget.target.registry.medias.mediaType", getMediaTypes().toArray() );
 	}
 	
+	public void onAddMediaType( ActionEvent event ) {
+		this.mediaTypes.add( null );
+	}
+	
+	public void onRemoveMediaType( ActionEvent event ) {
+        FacesContext context = FacesContext.getCurrentInstance();
+		int index = Integer.valueOf( context.getExternalContext().getRequestParameterMap().get("index") );		
+		this.mediaTypes.remove( index );
+		if ( this.mediaTypes.isEmpty() ) {
+			this.mediaTypes.add( null );
+		}
+	}
 }

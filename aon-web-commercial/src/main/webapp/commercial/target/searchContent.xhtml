@@ -3,6 +3,7 @@
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a4j="http://richfaces.org/a4j"
 	xmlns:aon="http://www.code.es/aon-rich-components">
 
 	<aon:outputText value="" />
@@ -48,15 +49,30 @@
 		</aon:panelCollapsible>
 
 		<aon:panelCollapsible expanded="false" label="#{registryBundle.aon_media}" >
-			<aon:panelGrid columns="2" columnClasses="tbl-tab-search-odd,tbl-tab-search-even">
+			<aon:panelGrid columns="2" columnClasses="tbl-tab-search-odd aon-vertical-align-top,tbl-tab-search-even">
 				<aon:outputLabel for="Target_registry_medias_mediaType"
 					value="#{registryBundle.aon_media}" />
-				<aon:selectOneMenu id="Target_registry_medias_mediaType" 
-					converter="aonMediaTypeConverter"
-					valueChangeListener="#{controller.addDirectExpression}">
-					<f:selectItem value="#{null}" itemLabel="    " />
-					<f:selectItems value="#{registryCollections.mediaTypes}" />
-				</aon:selectOneMenu>			
+				<aon:div id="mediaTypeDiv">
+					<a4j:repeat value="#{targetSearch.mediaTypes}" rowKeyVar="index" var="mediaType">
+						<aon:div styleClass="#{(index != 0)?'aon-padding-top':''}">
+							<aon:selectOneMenu id="Target_registry_medias_mediaType" 
+								value="#{targetSearch.mediaTypes[index]}">
+								<aon:enumConverter enum="com.code.aon.registry.enumeration.MediaType" />
+								<f:selectItem value="#{null}" itemLabel="    " />
+								<f:selectItems value="#{registryCollections.mediaTypes}" />
+								<a4j:support event="onchange" reRender="mediaTypeDiv"/>
+							</aon:selectOneMenu>
+							<aon:commandButton styleClass="aon-finding-toolbar-item aon-search-minus" reRender="mediaTypeDiv"
+								actionListener="#{targetSearch.onRemoveMediaType}"
+								rendered="#{mediaType != null}">
+								<f:param name="index" value="#{index}" />
+							</aon:commandButton>
+							<aon:commandButton styleClass="aon-finding-toolbar-item aon-search-add" reRender="mediaTypeDiv"
+								actionListener="#{targetSearch.onAddMediaType}"
+								rendered="#{(mediaType != null) and (index == (targetSearch.mediaTypesSize-1))}"/>
+						</aon:div>						
+					</a4j:repeat>
+				</aon:div>			
 				<aon:outputLabel for="Target_registry_medias_value"
 					value="#{bundle.aon_value}" />
 				<aon:inputText id="Target_registry_medias_value" size="60"
@@ -103,8 +119,8 @@
 				<aon:outputLabel for="Target_items_item_status"
 					value="#{productBundle.item_status}" />
 				<aon:selectOneMenu id="Target_items_item_status"
-					converter="aonProductStatusConverter"
 					valueChangeListener="#{controller.addDirectExpression}">
+					<aon:enumConverter enum="com.code.aon.product.enumeration.ProductStatus" />
 					<f:selectItem itemDisabled="true" itemLabel="-" itemValue="" />
 					<f:selectItems value="#{productCollections.productStatuses}" />
 				</aon:selectOneMenu>
