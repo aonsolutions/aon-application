@@ -1,12 +1,17 @@
 package com.code.aon.common.dao.hibernate;
 
 import java.io.Serializable;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
 import org.hibernate.EntityMode;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
+import org.hibernate.criterion.CriteriaSpecification;
+import org.hibernate.criterion.Expression;
+import org.hibernate.criterion.Projections;
+import org.hibernate.impl.CriteriaImpl;
 import org.hibernate.metadata.ClassMetadata;
 
 import com.code.aon.common.AbstractFieldMapper;
@@ -108,7 +113,30 @@ public class HibernateDAO extends AbstractFieldMapper implements IDAO {
     public ITransferObject get(Serializable pk) throws DAOException {
     	return get( this.entry.getPojo(), pk );
     }
+    
+    private boolean isDistinctProblem( org.hibernate.Criteria criteria, int count ) {
+    	if ( count != -1 ) {
+    		CriteriaImpl criteriaImpl = (CriteriaImpl) criteria;
+    		return criteriaImpl.getResultTransformer() == CriteriaSpecification.DISTINCT_ROOT_ENTITY;
+    	}
+    	return false;
+    }
+    
+    private List<ITransferObject> getDistinctList( Session session, org.hibernate.Criteria criteria ) {
+    	criteria.setProjection(Projections.distinct(Projections.id()));
+    	List<Serializable> idlist = criteria.list();
 
+    	if (! idlist.isEmpty()) {
+    		criteria = session.createCriteria(this.entry.getPojo());
+    		ClassMetadata cm = session.getSessionFactory().getClassMetadata(this.entry.getPojo());
+    		String id = cm.getIdentifierPropertyName();
+    		criteria.add(Expression.in(id, idlist));
+    		return criteria.list();
+    	} else {
+    		return Collections.EMPTY_LIST;
+    	}    	
+    }
+    
     /* 
      * (non-Javadoc)
 	 * @see com.code.aon.common.dao.IDAO#getList(com.code.aon.ql.Criteria, int, int)
@@ -129,7 +157,11 @@ public class HibernateDAO extends AbstractFieldMapper implements IDAO {
 				hibernateCriteria.setFirstResult(offset);
 				hibernateCriteria.setMaxResults(count);
 			}
-			list = hibernateCriteria.list();
+			if (! isDistinctProblem(hibernateCriteria, count) ) {
+				list = hibernateCriteria.list();				
+			} else {
+				list = getDistinctList(session, hibernateCriteria);
+			}	
 			if (HibernateUtil.mustBeginTransaction()) {
 				HibernateUtil.getSession().getTransaction().commit();
 			}
