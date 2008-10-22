@@ -36,14 +36,23 @@ import com.code.aon.payroll.irpfforal.MinoracionesNavarra;
 import com.code.aon.payroll.auxiliares.Admon;
 import com.code.aon.payroll.auxiliares.Colectivos;
 import com.code.aon.payroll.irpf.Exclusion;
-import com.code.aon.payroll.organismosyentidades.Pais;
-import com.code.aon.payroll.organismosyentidades.Comunidad;
-import com.code.aon.payroll.organismosyentidades.Provincia;
-import com.code.aon.payroll.organismosyentidades.Delegacion;
+import com.code.aon.payroll.geograficas.Pais;
+import com.code.aon.payroll.geograficas.Comunidad;
+import com.code.aon.payroll.geograficas.Provincia;
+import com.code.aon.payroll.auxiliares.organismosyentidades.Delegacion;
 import com.code.aon.payroll.cotizacion.Epigrafe;
 import com.code.aon.payroll.cotizacion.Linepigr;
 import com.code.aon.payroll.divisa.Divisa;
 import com.code.aon.payroll.divisa.LinDivisa;
+import com.code.aon.payroll.auxiliares.convenios.Convenio;
+import com.code.aon.payroll.auxiliares.convenios.Nivel;
+import com.code.aon.payroll.auxiliares.convenios.Pagaext;
+import com.code.aon.payroll.auxiliares.organismosyentidades.Entidad;
+import com.code.aon.payroll.auxiliares.organismosyentidades.Sucursal;
+import com.code.aon.payroll.auxiliares.organismosyentidades.Mutua;
+import com.code.aon.payroll.auxiliares.organismosyentidades.Linmutua;
+import com.code.aon.payroll.irpf.Elemirpf;
+import com.code.aon.payroll.irpf.Linirpf;
 
 /** 
 * Interface for holding entity properties constants.
@@ -564,10 +573,10 @@ public interface IPayrollAlias {
 	String  LINBASEC_ACDIAART = LINBASEC_ENTRY.getAliasNames()[0];
 
 	/** 
-	* Alias value: Linbasec_base_cdg
-	* Hibernate value: Linbasec.base.cdg
+	* Alias value: Linbasec_basecoti_cdg
+	* Hibernate value: Linbasec.basecoti.cdg
 	*/
-	String  LINBASEC_BASE_CDG = LINBASEC_ENTRY.getAliasNames()[1];
+	String  LINBASEC_BASECOTI_CDG = LINBASEC_ENTRY.getAliasNames()[1];
 
 	/** 
 	* Alias value: Linbasec_fecfin
@@ -1783,6 +1792,321 @@ public interface IPayrollAlias {
 	* Hibernate value: LinDivisa.unidades
 	*/
 	String  LIN_DIVISA_UNIDADES = LIN_DIVISA_ENTRY.getAliasNames()[7];
+
+
+
+	/** 
+	* DAOConstantsEntry for Convenio entity.
+	*/ 
+	DAOConstantsEntry CONVENIO_ENTRY = DAOConstants.getDAOConstant(Convenio.class);
+
+	/** 
+	* Alias value: Convenio_cdg
+	* Hibernate value: Convenio.cdg
+	*/
+	String  CONVENIO_CDG = CONVENIO_ENTRY.getAliasNames()[0];
+
+	/** 
+	* Alias value: Convenio_description
+	* Hibernate value: Convenio.description
+	*/
+	String  CONVENIO_DESCRIPTION = CONVENIO_ENTRY.getAliasNames()[1];
+
+	/** 
+	* Alias value: Convenio_inddia
+	* Hibernate value: Convenio.inddia
+	*/
+	String  CONVENIO_INDDIA = CONVENIO_ENTRY.getAliasNames()[2];
+
+	/** 
+	* Alias value: Convenio_tipcon
+	* Hibernate value: Convenio.tipcon
+	*/
+	String  CONVENIO_TIPCON = CONVENIO_ENTRY.getAliasNames()[3];
+
+
+
+	/** 
+	* DAOConstantsEntry for Nivel entity.
+	*/ 
+	DAOConstantsEntry NIVEL_ENTRY = DAOConstants.getDAOConstant(Nivel.class);
+
+	/** 
+	* Alias value: Nivel_convenio_cdg
+	* Hibernate value: Nivel.convenio.cdg
+	*/
+	String  NIVEL_CONVENIO_CDG = NIVEL_ENTRY.getAliasNames()[0];
+
+	/** 
+	* Alias value: Nivel_id_cdg
+	* Hibernate value: Nivel.id.cdg
+	*/
+	String  NIVEL_ID_CDG = NIVEL_ENTRY.getAliasNames()[1];
+
+	/** 
+	* Alias value: Nivel_id_codcon
+	* Hibernate value: Nivel.id.codcon
+	*/
+	String  NIVEL_ID_CODCON = NIVEL_ENTRY.getAliasNames()[2];
+
+
+
+	/** 
+	* DAOConstantsEntry for Pagaext entity.
+	*/ 
+	DAOConstantsEntry PAGAEXT_ENTRY = DAOConstants.getDAOConstant(Pagaext.class);
+
+	/** 
+	* Alias value: Pagaext_complemento_cdg
+	* Hibernate value: Pagaext.complemento.cdg
+	*/
+	String  PAGAEXT_COMPLEMENTO_CDG = PAGAEXT_ENTRY.getAliasNames()[0];
+
+	/** 
+	* Alias value: Pagaext_convenio_cdg
+	* Hibernate value: Pagaext.convenio.cdg
+	*/
+	String  PAGAEXT_CONVENIO_CDG = PAGAEXT_ENTRY.getAliasNames()[1];
+
+	/** 
+	* Alias value: Pagaext_feccob
+	* Hibernate value: Pagaext.feccob
+	*/
+	String  PAGAEXT_FECCOB = PAGAEXT_ENTRY.getAliasNames()[2];
+
+	/** 
+	* Alias value: Pagaext_id_cdg
+	* Hibernate value: Pagaext.id.cdg
+	*/
+	String  PAGAEXT_ID_CDG = PAGAEXT_ENTRY.getAliasNames()[3];
+
+	/** 
+	* Alias value: Pagaext_id_codcom
+	* Hibernate value: Pagaext.id.codcom
+	*/
+	String  PAGAEXT_ID_CODCOM = PAGAEXT_ENTRY.getAliasNames()[4];
+
+	/** 
+	* Alias value: Pagaext_indfin
+	* Hibernate value: Pagaext.indfin
+	*/
+	String  PAGAEXT_INDFIN = PAGAEXT_ENTRY.getAliasNames()[5];
+
+	/** 
+	* Alias value: Pagaext_indini
+	* Hibernate value: Pagaext.indini
+	*/
+	String  PAGAEXT_INDINI = PAGAEXT_ENTRY.getAliasNames()[6];
+
+	/** 
+	* Alias value: Pagaext_perfin
+	* Hibernate value: Pagaext.perfin
+	*/
+	String  PAGAEXT_PERFIN = PAGAEXT_ENTRY.getAliasNames()[7];
+
+	/** 
+	* Alias value: Pagaext_perini
+	* Hibernate value: Pagaext.perini
+	*/
+	String  PAGAEXT_PERINI = PAGAEXT_ENTRY.getAliasNames()[8];
+
+	/** 
+	* Alias value: Pagaext_prorat
+	* Hibernate value: Pagaext.prorat
+	*/
+	String  PAGAEXT_PRORAT = PAGAEXT_ENTRY.getAliasNames()[9];
+
+
+
+	/** 
+	* DAOConstantsEntry for Entidad entity.
+	*/ 
+	DAOConstantsEntry ENTIDAD_ENTRY = DAOConstants.getDAOConstant(Entidad.class);
+
+	/** 
+	* Alias value: Entidad_cdg
+	* Hibernate value: Entidad.cdg
+	*/
+	String  ENTIDAD_CDG = ENTIDAD_ENTRY.getAliasNames()[0];
+
+	/** 
+	* Alias value: Entidad_description
+	* Hibernate value: Entidad.description
+	*/
+	String  ENTIDAD_DESCRIPTION = ENTIDAD_ENTRY.getAliasNames()[1];
+
+
+
+	/** 
+	* DAOConstantsEntry for Sucursal entity.
+	*/ 
+	DAOConstantsEntry SUCURSAL_ENTRY = DAOConstants.getDAOConstant(Sucursal.class);
+
+	/** 
+	* Alias value: Sucursal_cpsuc
+	* Hibernate value: Sucursal.cpsuc
+	*/
+	String  SUCURSAL_CPSUC = SUCURSAL_ENTRY.getAliasNames()[0];
+
+	/** 
+	* Alias value: Sucursal_domsuc
+	* Hibernate value: Sucursal.domsuc
+	*/
+	String  SUCURSAL_DOMSUC = SUCURSAL_ENTRY.getAliasNames()[1];
+
+	/** 
+	* Alias value: Sucursal_entidad_cdg
+	* Hibernate value: Sucursal.entidad.cdg
+	*/
+	String  SUCURSAL_ENTIDAD_CDG = SUCURSAL_ENTRY.getAliasNames()[2];
+
+	/** 
+	* Alias value: Sucursal_id_cdg
+	* Hibernate value: Sucursal.id.cdg
+	*/
+	String  SUCURSAL_ID_CDG = SUCURSAL_ENTRY.getAliasNames()[3];
+
+	/** 
+	* Alias value: Sucursal_id_codent
+	* Hibernate value: Sucursal.id.codent
+	*/
+	String  SUCURSAL_ID_CODENT = SUCURSAL_ENTRY.getAliasNames()[4];
+
+	/** 
+	* Alias value: Sucursal_munsuc
+	* Hibernate value: Sucursal.munsuc
+	*/
+	String  SUCURSAL_MUNSUC = SUCURSAL_ENTRY.getAliasNames()[5];
+
+
+
+	/** 
+	* DAOConstantsEntry for Mutua entity.
+	*/ 
+	DAOConstantsEntry MUTUA_ENTRY = DAOConstants.getDAOConstant(Mutua.class);
+
+	/** 
+	* Alias value: Mutua_cdg
+	* Hibernate value: Mutua.cdg
+	*/
+	String  MUTUA_CDG = MUTUA_ENTRY.getAliasNames()[0];
+
+	/** 
+	* Alias value: Mutua_description
+	* Hibernate value: Mutua.description
+	*/
+	String  MUTUA_DESCRIPTION = MUTUA_ENTRY.getAliasNames()[1];
+
+
+
+	/** 
+	* DAOConstantsEntry for Linmutua entity.
+	*/ 
+	DAOConstantsEntry LINMUTUA_ENTRY = DAOConstants.getDAOConstant(Linmutua.class);
+
+	/** 
+	* Alias value: Linmutua_fecfin
+	* Hibernate value: Linmutua.fecfin
+	*/
+	String  LINMUTUA_FECFIN = LINMUTUA_ENTRY.getAliasNames()[0];
+
+	/** 
+	* Alias value: Linmutua_id_cdg
+	* Hibernate value: Linmutua.id.cdg
+	*/
+	String  LINMUTUA_ID_CDG = LINMUTUA_ENTRY.getAliasNames()[1];
+
+	/** 
+	* Alias value: Linmutua_id_fecini
+	* Hibernate value: Linmutua.id.fecini
+	*/
+	String  LINMUTUA_ID_FECINI = LINMUTUA_ENTRY.getAliasNames()[2];
+
+	/** 
+	* Alias value: Linmutua_mutua_cdg
+	* Hibernate value: Linmutua.mutua.cdg
+	*/
+	String  LINMUTUA_MUTUA_CDG = LINMUTUA_ENTRY.getAliasNames()[3];
+
+	/** 
+	* Alias value: Linmutua_prcacctrab
+	* Hibernate value: Linmutua.prcacctrab
+	*/
+	String  LINMUTUA_PRCACCTRAB = LINMUTUA_ENTRY.getAliasNames()[4];
+
+	/** 
+	* Alias value: Linmutua_prcit
+	* Hibernate value: Linmutua.prcit
+	*/
+	String  LINMUTUA_PRCIT = LINMUTUA_ENTRY.getAliasNames()[5];
+
+
+
+	/** 
+	* DAOConstantsEntry for Elemirpf entity.
+	*/ 
+	DAOConstantsEntry ELEMIRPF_ENTRY = DAOConstants.getDAOConstant(Elemirpf.class);
+
+	/** 
+	* Alias value: Elemirpf_cdg
+	* Hibernate value: Elemirpf.cdg
+	*/
+	String  ELEMIRPF_CDG = ELEMIRPF_ENTRY.getAliasNames()[0];
+
+	/** 
+	* Alias value: Elemirpf_description
+	* Hibernate value: Elemirpf.description
+	*/
+	String  ELEMIRPF_DESCRIPTION = ELEMIRPF_ENTRY.getAliasNames()[1];
+
+	/** 
+	* Alias value: Elemirpf_porcentaje
+	* Hibernate value: Elemirpf.porcentaje
+	*/
+	String  ELEMIRPF_PORCENTAJE = ELEMIRPF_ENTRY.getAliasNames()[2];
+
+
+
+	/** 
+	* DAOConstantsEntry for Linirpf entity.
+	*/ 
+	DAOConstantsEntry LINIRPF_ENTRY = DAOConstants.getDAOConstant(Linirpf.class);
+
+	/** 
+	* Alias value: Linirpf_elemirpf_cdg
+	* Hibernate value: Linirpf.elemirpf.cdg
+	*/
+	String  LINIRPF_ELEMIRPF_CDG = LINIRPF_ENTRY.getAliasNames()[0];
+
+	/** 
+	* Alias value: Linirpf_fecfin
+	* Hibernate value: Linirpf.fecfin
+	*/
+	String  LINIRPF_FECFIN = LINIRPF_ENTRY.getAliasNames()[1];
+
+	/** 
+	* Alias value: Linirpf_hasta
+	* Hibernate value: Linirpf.hasta
+	*/
+	String  LINIRPF_HASTA = LINIRPF_ENTRY.getAliasNames()[2];
+
+	/** 
+	* Alias value: Linirpf_id_cdg
+	* Hibernate value: Linirpf.id.cdg
+	*/
+	String  LINIRPF_ID_CDG = LINIRPF_ENTRY.getAliasNames()[3];
+
+	/** 
+	* Alias value: Linirpf_id_fecini
+	* Hibernate value: Linirpf.id.fecini
+	*/
+	String  LINIRPF_ID_FECINI = LINIRPF_ENTRY.getAliasNames()[4];
+
+	/** 
+	* Alias value: Linirpf_importe
+	* Hibernate value: Linirpf.importe
+	*/
+	String  LINIRPF_IMPORTE = LINIRPF_ENTRY.getAliasNames()[5];
 
 
 }
