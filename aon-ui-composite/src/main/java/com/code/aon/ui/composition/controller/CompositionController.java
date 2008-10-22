@@ -20,7 +20,6 @@ import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionException;
 import com.code.aon.ui.composition.util.CompositionPriceProvider;
 import com.code.aon.ui.form.BasicController;
-import com.code.aon.ui.menu.jsf.MenuEvent;
 import com.code.aon.ui.util.AonUtil;
 
 /**
@@ -59,7 +58,7 @@ public class CompositionController extends BasicController {
      * @throws ManagerBeanException
      */
     @SuppressWarnings("unused")
-    public void setQuarteringMode(MenuEvent event) throws ManagerBeanException {
+    public void setQuarteringMode(ActionEvent event) throws ManagerBeanException {
         type = Short.valueOf((short)0);
         clearCriteria();
         initializeModel();
@@ -72,7 +71,7 @@ public class CompositionController extends BasicController {
      * @throws ManagerBeanException
      */
     @SuppressWarnings("unused")
-    public void setManufactureMode(MenuEvent event) throws ManagerBeanException {
+    public void setManufactureMode(ActionEvent event) throws ManagerBeanException {
         type = Short.valueOf((short)1);
         clearCriteria();
         initializeModel();
@@ -244,17 +243,6 @@ public class CompositionController extends BasicController {
         List<ITransferObject> list = new LinkedList<ITransferObject>();
         list.add(this.getTo());
         return list;
-    }
-
-    /**
-     * On reset. Method launched by the menu.
-     * 
-     * @param event
-     * @throws ManagerBeanException
-     */
-    @SuppressWarnings("unused")
-    public void onReset(MenuEvent event) {
-        this.onReset((ActionEvent)event);
     }
 
     /**

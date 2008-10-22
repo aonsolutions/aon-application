@@ -24,8 +24,6 @@ import com.code.aon.composition.dao.ICompositionAlias;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.composition.util.ProductionPriceProvider;
 import com.code.aon.ui.form.BasicController;
-import com.code.aon.ui.menu.jsf.MenuEvent;
-import com.code.aon.ui.menu.jsf.MenuManager;
 import com.code.aon.ui.util.AonUtil;
 
 /**
@@ -37,8 +35,6 @@ public class ProductionController extends BasicController {
 
     /** The LOGGER. */
     private final static Logger LOGGER = Logger.getLogger(ProductionController.class.getName()); 
-
-	private static final String MENU_MANAGER_NAME = "menuManager";
 
 	/**
      * Object that provides the different prices that take part in the product production.
@@ -151,17 +147,6 @@ public class ProductionController extends BasicController {
     }
 
     /**
-     * On reset. Method launched by the menu.
-     * 
-     * @param event
-     * @throws ManagerBeanException
-     */
-    @SuppressWarnings("unused")
-    public void onReset(MenuEvent event) {
-        this.onReset((ActionEvent)event);
-    }
-
-    /**
      * On reset.
      * 
      * @param event
@@ -243,8 +228,6 @@ public class ProductionController extends BasicController {
         } catch (ManagerBeanException e) {
             LOGGER.log(Level.SEVERE, "Error creating production.", e);
         }
-
-        updateBreadCrumb();
     }
 
     /**
@@ -315,15 +298,6 @@ public class ProductionController extends BasicController {
 
             expenseBean.insert(expense);
         }
-    }
-
-    /**
-     * Updates the bread crumb. 
-     */
-    private void updateBreadCrumb() {
-		MenuManager menuManager = (MenuManager)AonUtil.getRegisteredBean(MENU_MANAGER_NAME);
-        menuManager.setCurrentMenu("AON_APP");
-        menuManager.getCurrentMenuModel().setSelectedNode(menuManager.getCurrentMenuModel().getOptionByKey("aon_production").getId());
     }
 
     /**
