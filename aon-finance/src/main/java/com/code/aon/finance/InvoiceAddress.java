@@ -8,6 +8,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import org.apache.commons.lang.ObjectUtils;
+
 import com.code.aon.common.ITransferObject;
 import com.code.aon.geozone.GeoZone;
 import com.code.aon.registry.IAddress;
@@ -15,6 +17,8 @@ import com.code.aon.registry.IAddress;
 @Entity
 @Table(name="invoice_address")
 public class InvoiceAddress implements ITransferObject, IAddress {
+
+	private static final long serialVersionUID = 1873769542411802117L;
 
 	private Integer id;
 	
@@ -95,5 +99,24 @@ public class InvoiceAddress implements ITransferObject, IAddress {
 
 	public void setGeozone(GeoZone geozone) {
 		this.geozone = geozone;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj) {
+			return super.equals(obj);
+		}
+		if (obj instanceof InvoiceAddress) {
+			InvoiceAddress o = (InvoiceAddress) obj;
+			if (ObjectUtils.equals(getId(), o.getId())) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	@Override
+	public int hashCode() {
+		return 0;
 	}
 }
