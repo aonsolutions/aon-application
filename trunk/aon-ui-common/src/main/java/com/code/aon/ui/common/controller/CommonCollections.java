@@ -8,12 +8,13 @@ import javax.faces.context.FacesContext;
 import javax.faces.model.SelectItem;
 
 import com.code.aon.common.enumeration.Month;
+import com.code.aon.common.enumeration.SecurityLevel;
 
 /**
  * Controller used to get Collections related with clasess in <code>com.code.aon.common</code>.
  * 
  */
-public class CommonsCollections {
+public class CommonCollections {
 
 	/**
      * Get year months.
@@ -31,6 +32,20 @@ public class CommonsCollections {
 			monthList.add(item);
 		}
 		return monthList;
+	}
+
+	/**
+	 * @return List<SelectItem>
+	 */
+	public List<SelectItem> getSecurityLevels() {
+		Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
+		LinkedList<SelectItem> levels = new LinkedList<SelectItem>();
+		for (SecurityLevel level : SecurityLevel.values()) {
+			String name = level.getName(locale);
+			SelectItem item = new SelectItem(level, name);
+			levels.add(item);
+		}
+		return levels;
 	}
 
 }
