@@ -16,7 +16,6 @@ import com.code.aon.product.strategy.IPriceStrategy;
 import com.code.aon.product.strategy.PriceStrategyFactory;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.form.LinesController;
-import com.code.aon.ui.menu.jsf.MenuEvent;
 import com.code.aon.ui.util.AonUtil;
 
 /**
@@ -30,30 +29,6 @@ public class OfferDetailController extends LinesController {
 	/** The price strategy. */
 	private IPriceStrategy priceStrategy;
 	
-	/**
-	 * On reset. Method launched by the menu
-	 * 
-	 * @param event the menu event
-	 * 
-	 * @throws ManagerBeanException the manager bean exception
-	 */
-	@SuppressWarnings("unused")
-	public void onReset(MenuEvent event) throws ManagerBeanException{
-		super.onReset(null);
-	}
-
-	/**
-	 * On cancel. Method launched by the menu
-	 * 
-	 * @param event the menu event
-	 * 
-	 * @throws ManagerBeanException the manager bean exception
-	 */
-	@SuppressWarnings("unused")
-    public void onCancel(MenuEvent event) throws ManagerBeanException{
-        super.onCancel(null);
-    }
-
 	/**
 	 * Retrieves the whole <code>Item</code> object when the lookup field changes
 	 * 
