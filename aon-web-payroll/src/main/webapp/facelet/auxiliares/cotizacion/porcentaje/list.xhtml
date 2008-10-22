@@ -30,11 +30,11 @@
 					<!-- start toolbar navigation -->
 					<aon:div styleClass="aon-finding-toolbar-item-group">
 						<aon:commandButton id="search" value="#{bundle.aon_search}"
-							action="cotizacion_porcentaje_search" actionListener="#{porcentajeMaestro.onEditSearch}"
+							action="porcentajeMaestro_search" actionListener="#{porcentajeMaestro.onEditSearch}"
 							styleClass="aon-finding-toolbar-item aon-icon-search"
 							accesskey="#{bundle.aon_key_search}" />				
 						<aon:commandButton id="reset" value="#{bundle.aon_reset}"
-							action="cotizacion_porcentaje" actionListener="#{porcentajeMaestro.onReset}"
+							action="porcentajeMaestro_form" actionListener="#{porcentajeMaestro.onReset}"
 							styleClass="aon-finding-toolbar-item aon-icon-reset"
 							accesskey="#{bundle.aon_key_new}" />
 					</aon:div>
@@ -49,7 +49,7 @@
 					var="to" rows="20" rendered="#{porcentajeMaestro.model.rowCount > 0}"
 					columnClasses="aon-editDataTable-textColumn, aon-editDataTable-textColumn, aon-editDataTable-numberColumn">
 
-					<aon:rowSelector action="cotizacion_porcentaje" actionListener="#{porcentajeMaestro.onSelect}" />
+					<aon:rowSelector action="porcentajeMaestro_form" actionListener="#{porcentajeMaestro.onSelect}" />
 					
 					<aon:column>
 						<f:facet name="header">
