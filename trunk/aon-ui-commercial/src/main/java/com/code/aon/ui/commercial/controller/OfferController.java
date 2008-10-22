@@ -17,10 +17,8 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.Projection;
 import com.code.aon.ql.util.ExpressionException;
+import com.code.aon.report.OutputFormat;
 import com.code.aon.ui.form.BasicController;
-import com.code.aon.ui.form.PageDataModel;
-import com.code.aon.ui.menu.jsf.MenuEvent;
-import com.code.aon.ui.report.OutputFormat;
 import com.code.aon.ui.report.controller.ReportManager;
 import com.code.aon.ui.util.AonUtil;
 
@@ -85,21 +83,6 @@ public class OfferController extends BasicController {
 			}
 		}
 		return true;
-	}
-	
-	
-	/**
-	 * On reset. Method launched by the menu
-	 * 
-	 * @param event the menu event
-	 * 
-	 * @throws ManagerBeanException the manager bean exception
-	 */
-	@SuppressWarnings("unused")
-	public void onReset(MenuEvent event) throws ManagerBeanException{
-		this.setModel(new PageDataModel(this,0,20));
-		this.clearCriteria();
-		super.onReset(null);
 	}
 	
 	/**
