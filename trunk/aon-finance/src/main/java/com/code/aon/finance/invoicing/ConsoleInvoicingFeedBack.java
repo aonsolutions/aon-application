@@ -9,6 +9,7 @@ public class ConsoleInvoicingFeedBack implements IInvoicingFeedBack {
 		System.out.println(message);
 	}
 
+	@SuppressWarnings("unchecked")
 	public List getMessages() {
 		return Collections.EMPTY_LIST;
 	}

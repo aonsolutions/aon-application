@@ -15,6 +15,7 @@ public interface IInvoicingDAO {
 	
 	public void createFinances(Invoice invoice) throws ManagerBeanException;
 	
+	@SuppressWarnings("unchecked")
 	public Collection getCollection();
 	
 	public void updateSource(ITransferObject to);
