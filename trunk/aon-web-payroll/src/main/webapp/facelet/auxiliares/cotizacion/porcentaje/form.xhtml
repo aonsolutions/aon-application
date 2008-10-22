@@ -2,6 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml"
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:aon="http://www.code.es/aon-rich-components"
 	xmlns:c="http://java.sun.com/jstl/core"
 	xmlns:rich="http://richfaces.org/rich"
@@ -29,7 +30,7 @@
 					<!-- start toolbar navigation -->
 					<aon:div styleClass="aon-finding-toolbar-item-group">
 						<aon:commandButton id="save" value="#{bundle.aon_save}"
-							action="cotizacion_porcentaje"
+							action="porcentajeMaestro_form"
 							actionListener="#{porcentajeMaestro.accept}"
 							styleClass="aon-finding-toolbar-item aon-icon-accept"
 							accesskey="#{bundle.aon_key_save}" />
@@ -39,7 +40,7 @@
 							confirmTitle="#{bundle.aon_confirm_title}"
 							confirmMessage="#{bundle.aon_cancel_confirm}"
 							confirmActionListener="#{porcentajeMaestro.onCancel}"
-							confirmAction="cotizacion_porcentaje_list"
+							confirmAction="porcentajeMaestro_list"
 							accesskey="#{bundle.aon_key_cancel}" />
 						<aon:confirmButton id="remove" value="#{bundle.aon_remove}"
 							rendered="#{!porcentajeMaestro.new}"
@@ -47,27 +48,46 @@
 							immediate="true" confirmTitle="#{bundle.aon_confirm_title}"
 							confirmMessage="#{bundle.aon_remove_confirm}"
 							confirmActionListener="#{porcentajeMaestro.onRemove}"
-							confirmAction="cotizacion_porcentaje_list"
+							confirmAction="porcentajeMaestro_list"
 							accesskey="#{bundle.aon_key_remove}" />
 						<aon:commandButton id="reset" value="#{bundle.aon_reset}"
 							rendered="#{!porcentajeMaestro.new}"
-							action="cotizacion_porcentaje" 
+							action="porcentajeMaestro_form" 
 							actionListener="#{porcentajeMaestro.onReset}"
 							styleClass="aon-finding-toolbar-item aon-icon-reset"
 							accesskey="#{bundle.aon_key_new}" />
 						<aon:commandButton id="search" value="#{bundle.aon_search}"
 							rendered="#{!porcentajeMaestro.new}" immediate="true"
-							action="cotizacion_porcentaje_search" actionListener="#{porcentajeMaestro.onEditSearch}"
+							action="porcentajeMaestro_search" actionListener="#{porcentajeMaestro.onEditSearch}"
 							styleClass="aon-finding-toolbar-item aon-icon-search"
 							accesskey="#{bundle.aon_key_search}" />														
 
-						<aon:spin controller="#{porcentajeMaestro}" action="cotizacion_porcentaje" rendered="#{!porcentajeMaestro.new}" />
-
+						<aon:spin controller="#{porcentajeMaestro}" action="porcentajeMaestro_form" rendered="#{!porcentajeMaestro.new}" />
 						
-						<ui:include src="/facelet/templates/aon.ui.printbuttons.xhtml">
-							<ui:param name="manager" value="#{porcentaje}"/>
-							<ui:param name="reportKey" value="cotizacionPorcentajesList"/>
-						</ui:include>
+						<h:commandLink id="export2pdf" value="PDF"
+		             		title="#{appBundle.aon_payroll_export} #{appBundle.aon_payroll_to} #{appBundle.aon_payroll_pdf}"
+			             	styleClass="aon-finding-toolbar-item aon-icon-pdf"
+			            	action="#{report.onExecute}" rendered="#{!porcentajeMaestro.new}" 
+			             	target="_blank">
+			                <f:param name="reportKey" value="cotizacionPorcentajesList" />
+		               </h:commandLink>
+	                	<h:commandLink id="export2excel" value="XLS"
+	              			title="#{appBundle.aon_payroll_export} #{appBundle.aon_payroll_to} #{appBundle.aon_payroll_excel}"
+		            		styleClass="aon-finding-toolbar-item aon-icon-excel"
+		             		action="#{report.onExecute}" rendered="#{!porcentajeMaestro.new}" 
+			            	target="_blank">
+								<f:param name="reportKey" value="cotizacionPorcentajesXlsList" />
+								<f:param name="outputFormat" value="MS Excel" />
+		                </h:commandLink>
+		                <h:commandLink id="export2csv" value="CSV"
+		            		title="#{appBundle.aon_payroll_export} #{appBundle.aon_payroll_to} #{appBundle.aon_payroll_csv}"
+		             		styleClass="aon-finding-toolbar-item aon-icon-csv"
+		            		action="#{report.onExecute}" rendered="#{!porcentajeMaestro.new}" 
+		            		target="_blank">
+								<f:param name="reportKey" value="cotizacionPorcentajesXlsList" />
+								<f:param name="outputFormat" value="CSV" />
+		                </h:commandLink>
+						
 						
 
 					</aon:div>
