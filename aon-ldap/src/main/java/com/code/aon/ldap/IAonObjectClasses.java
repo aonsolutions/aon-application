@@ -6,13 +6,9 @@ public interface IAonObjectClasses {
 	
 	String CONTACT = "aonContact";
 
-	String DB_CONNECTION = "aonDBConnection";
+	String DB_CONNECTION = "aonContact";
 	
 	String DOMAIN = "aonDomain";
-	
-	String ACCESS_POLICY = "aonAccessPolicy";
-	
-	String APPLICATION = "aonApplication";
 	
 	String DOMAIN_APPLICATION = "aonDomainApplication";
 	
@@ -29,7 +25,5 @@ public interface IAonObjectClasses {
 	String SIGNATURE = "aonSignature";
 	
 	String USER = "aonUser";
-	
-	String MESSAGE = "aonMessage";
 	
 }

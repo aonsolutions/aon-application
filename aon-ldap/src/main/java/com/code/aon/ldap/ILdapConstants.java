@@ -16,8 +16,4 @@ public interface ILdapConstants {
 	
 	String MEMBER_ATTRIBUTE = "member";
 	
-	String STATUS_ATTRIBUTE = "status";
-	
-	String MESSAGE_ATTRIBUTE = "message";
-	
 }

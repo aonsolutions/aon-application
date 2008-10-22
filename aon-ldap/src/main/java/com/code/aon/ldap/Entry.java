@@ -1,6 +1,5 @@
 package com.code.aon.ldap;
 
-import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -77,10 +76,6 @@ public class Entry implements ILdapConstants {
 
 	public Boolean getAsBoolean( String key ) {
 		return (Boolean) getAsObject(key);
-	}
-
-	public Date getAsDate( String key ) {
-		return (Date) getAsObject(key);
 	}
 	
 }
