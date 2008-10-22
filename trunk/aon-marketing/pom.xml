@@ -10,7 +10,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.code.aon</groupId>
 	<artifactId>aon.marketing</artifactId>
-	<version>0.8.2</version>
+	<version>0.8.3</version>
 	<description>AON MARKETING</description>
 	<name>AON-MARKETING</name>
 	<dependencies>
