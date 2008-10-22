@@ -9,6 +9,8 @@ import com.code.aon.finance.InvoiceDetail;
 
 public class PreInvoice extends Invoice {
 	
+	private static final long serialVersionUID = 6315145312817823828L;
+
 	private List<PreInvoiceDetail> details;
 	
 	public PreInvoice(){
@@ -33,6 +35,7 @@ public class PreInvoice extends Invoice {
 		this.details = new LinkedList<PreInvoiceDetail>();
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public List getDetailList() {
 		return details;

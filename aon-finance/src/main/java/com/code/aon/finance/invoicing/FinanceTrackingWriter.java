@@ -34,7 +34,8 @@ public class FinanceTrackingWriter {
         return tracking;
     }
     
-    public static void removeLastTrackingByType(Finance finance, FinanceTrackingType type){
+    @SuppressWarnings("unchecked")
+	public static void removeLastTrackingByType(Finance finance, FinanceTrackingType type){
     	try {
 			IManagerBean financeTrackingBean = BeanManager.getManagerBean(FinanceTracking.class);
 			Criteria criteria = new Criteria();
