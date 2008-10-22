@@ -8,6 +8,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import org.apache.commons.lang.ObjectUtils;
+
 import com.code.aon.common.ITransferObject;
 import com.code.aon.finance.enumeration.FinanceStatus;
 
@@ -21,7 +23,9 @@ import com.code.aon.finance.enumeration.FinanceStatus;
 @Table(name = "fbatch_detail")
 public class FinanceBatchDetail implements ITransferObject {
 
-    /** The id. */
+    private static final long serialVersionUID = 1L;
+
+	/** The id. */
     private Integer id;
 
     /** The finance batch. */
@@ -132,14 +136,22 @@ public class FinanceBatchDetail implements ITransferObject {
         this.status = status;
     }
     
-    @Override
-    public boolean equals(Object obj) {
-    	if(id == null){
-    		return super.equals(obj);
-    	}
-        if (obj instanceof FinanceBatchDetail) {
-            return (this.id.equals(((FinanceBatchDetail)obj).getId()));
-        }
-        return false;
-    }
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj) {
+			return super.equals(obj);
+		}
+		if (obj instanceof FinanceBatchDetail) {
+			FinanceBatchDetail o = (FinanceBatchDetail) obj;
+			if (ObjectUtils.equals(getId(), o.getId())) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	@Override
+	public int hashCode() {
+		return 0;
+	}
 }

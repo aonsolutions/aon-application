@@ -6,6 +6,8 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
+import org.apache.commons.lang.ObjectUtils;
+
 import com.code.aon.common.ITransferObject;
 import com.code.aon.finance.enumeration.PayMethodType;
 
@@ -16,6 +18,8 @@ import com.code.aon.finance.enumeration.PayMethodType;
 @Table(name = "pay_method")
 public class PayMethod implements ITransferObject{
 	
+	private static final long serialVersionUID = 6017204177473343703L;
+
 	/** The id. */
 	private Integer id;
 	
@@ -83,4 +87,24 @@ public class PayMethod implements ITransferObject{
 	public void setType(PayMethodType type) {
 		this.type = type;
 	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj) {
+			return super.equals(obj);
+		}
+		if (obj instanceof PayMethod) {
+			PayMethod o = (PayMethod) obj;
+			if (ObjectUtils.equals(getId(), o.getId())) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	@Override
+	public int hashCode() {
+		return 0;
+	}
+
 }

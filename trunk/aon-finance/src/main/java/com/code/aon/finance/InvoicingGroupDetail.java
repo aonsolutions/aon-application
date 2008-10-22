@@ -8,6 +8,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import org.apache.commons.lang.ObjectUtils;
+
 
 import com.code.aon.common.ITransferObject;
 import com.code.aon.registry.Registry;
@@ -19,6 +21,8 @@ import com.code.aon.registry.Registry;
 @Table(name="invoicing_group_detail")
 public class InvoicingGroupDetail implements ITransferObject {
 	
+	private static final long serialVersionUID = 1579515712994525181L;
+
 	/** The id. */
 	private Integer id;
 	
@@ -109,5 +113,24 @@ public class InvoicingGroupDetail implements ITransferObject {
 	 */
 	public void setGrouped(boolean grouped) {
 		this.grouped = grouped;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj) {
+			return super.equals(obj);
+		}
+		if (obj instanceof InvoicingGroupDetail) {
+			InvoicingGroupDetail o = (InvoicingGroupDetail) obj;
+			if (ObjectUtils.equals(getId(), o.getId())) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	@Override
+	public int hashCode() {
+		return 0;
 	}
 }
