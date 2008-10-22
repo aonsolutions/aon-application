@@ -25,4 +25,11 @@
 		<managed-bean-scope>request</managed-bean-scope>
 	</managed-bean>
 
+	<!--  *************** COLLECTIONS ***************** -->
+	<managed-bean>
+		<managed-bean-name>commonCollections</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.common.controller.CommonCollections</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
+
 </faces-config>
