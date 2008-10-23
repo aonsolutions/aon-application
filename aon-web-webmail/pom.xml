@@ -47,6 +47,10 @@
 					<groupId>com.code.aon</groupId>
 					<artifactId>aon.ui.config</artifactId>
 				</exclusion>
+				<exclusion>
+					<artifactId>aon.messaging</artifactId>
+					<groupId>com.code.aon</groupId>
+				</exclusion>
 			</exclusions>			
 		</dependency>
 		<dependency>
