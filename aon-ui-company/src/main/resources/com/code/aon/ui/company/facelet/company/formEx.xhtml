@@ -148,6 +148,7 @@
 							label="#{registryBundle.registry_addresses}">
 							<ui:include
 								src="/com/code/aon/ui/registry/facelet/raddress/tab_grid.xhtml">
+								<ui:param name="skipTypeColumn" value="true" />
 								<ui:param name="controllerAlias" value="#{companyAddress}" />
 								<ui:param name="dataTableId" value="companyAddressData" />
 							</ui:include>
