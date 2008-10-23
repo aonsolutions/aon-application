@@ -36,20 +36,6 @@
 		</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
-	<managed-bean>
-		<managed-bean-name>commercialCollections</managed-bean-name>
-		<managed-bean-class>
-			com.code.aon.ui.commercial.controller.CommercialCollectionsController
-		</managed-bean-class>
-		<managed-bean-scope>session</managed-bean-scope>
-	</managed-bean>	
-	<managed-bean>
-		<managed-bean-name>marketingCollections</managed-bean-name>
-		<managed-bean-class>
-			com.code.aon.ui.marketing.controller.MarketingCollectionsController
-		</managed-bean-class>
-		<managed-bean-scope>session</managed-bean-scope>
-	</managed-bean>
 
 	<lifecycle>
 		<phase-listener>
@@ -70,7 +56,7 @@
 		</managed-property>		
 		<managed-property>
 			<property-name>resourceURIPreffix</property-name>
-			<value>/aonResource/1.6.4</value>
+			<value>/aonResource/3.0.0</value>
 		</managed-property>		
 	</managed-bean>
 
