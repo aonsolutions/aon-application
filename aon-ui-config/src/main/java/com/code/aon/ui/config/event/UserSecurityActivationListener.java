@@ -61,10 +61,11 @@ public class UserSecurityActivationListener extends ControllerAdapter {
 		String name = user.getName();
 		name = ( name.equals( userManager.getUser().getName() ) )? userManager.getUser().getName(): name;
 		String password = userManager.getPassword();
-		if ( password == null || password.equals( "" ) || password.equals( userManager.getUser().getPasswd() ) )
+		if ( password == null || password.equals( "" ) || password.equals( userManager.getUser().getPasswd() ) ) {
 			userManager.setChangePassword( false );
-		else
-			changePassword( userManager );
+		} else {
+			userManager.setChangePassword( true );
+		}
 		userManager.setName( name );
 		try {
 			userManager.accept( null );

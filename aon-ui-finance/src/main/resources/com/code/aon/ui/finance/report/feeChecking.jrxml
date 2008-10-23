@@ -98,7 +98,6 @@
 						width="535"
 						height="29"
 						key="subreport-1"
-						positionType="Float"
 						isPrintWhenDetailOverflows="true"/>
 					<parametersMapExpression><![CDATA[$P{REPORT_PARAMETERS_MAP}]]></parametersMapExpression>
 					<dataSourceExpression><![CDATA[new com.code.aon.ui.report.jr.JRBeanCollectionDataSource($F{noPaymethodList})]]></dataSourceExpression>
@@ -110,9 +109,7 @@
 						y="0"
 						width="445"
 						height="17"
-						key="textField-15">
-							<printWhenExpression><![CDATA[new Boolean($F{noPaymethodList}.size()>0)]]></printWhenExpression>
-						</reportElement>
+						key="textField-15"/>
 					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
 					<textElement textAlignment="Left" verticalAlignment="Middle">
 						<font pdfFontName="Helvetica-Bold" size="10" isBold="true"/>
@@ -126,9 +123,7 @@
 						width="445"
 						height="17"
 						key="textField-16"
-						positionType="Float">
-							<printWhenExpression><![CDATA[new Boolean($F{negotiableNoBankAccountList}.size() > 0)]]></printWhenExpression>
-						</reportElement>
+						positionType="Float"/>
 					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
 					<textElement textAlignment="Left" verticalAlignment="Middle">
 						<font pdfFontName="Helvetica-Bold" size="10" isBold="true"/>
@@ -155,9 +150,7 @@
 						width="445"
 						height="17"
 						key="textField-17"
-						positionType="Float">
-							<printWhenExpression><![CDATA[new Boolean($F{noNegotiableBankAccountList}.size()>0)]]></printWhenExpression>
-						</reportElement>
+						positionType="Float"/>
 					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
 					<textElement textAlignment="Left" verticalAlignment="Middle">
 						<font pdfFontName="Helvetica-Bold" size="10" isBold="true"/>

@@ -77,7 +77,7 @@ public class DeliveryDetailControllerLabourListener extends ControllerAdapter {
 	}
 
 	private void createDeliveryDetailLabour(DeliveryDetail deliveryDetail, Integer employeeId) throws ManagerBeanException {
-		if(deliveryDetail.getItem().getProduct().getId() != null && deliveryDetail.getItem().getProduct().getType().equals(ProductType.LABOUR)){
+		if(deliveryDetail.getItem().getProduct() != null && deliveryDetail.getItem().getProduct().getType().equals(ProductType.LABOUR)){
 			DeliveryDetailLabour detailLabour = new DeliveryDetailLabour();
 			detailLabour.setDeliveryDetail(deliveryDetail);
 			detailLabour.setQuantity(deliveryDetail.getQuantity());

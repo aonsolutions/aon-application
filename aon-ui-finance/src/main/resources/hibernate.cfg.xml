@@ -48,7 +48,7 @@
 		<mapping class="com.code.aon.customer.Customer"/>
 		
 		<!-- AON-REGISTRY Mapping files -->	
-		<mapping class="com.code.aon.supplier.Supplier"/>
+		<mapping class="com.code.aon.purchase.Supplier"/>
 		
 		<!-- AON-GEOZONE Mapping files -->		
 		<mapping class="com.code.aon.geozone.GeoZone"/>			
