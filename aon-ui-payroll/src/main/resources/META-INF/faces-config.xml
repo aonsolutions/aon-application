@@ -1346,6 +1346,10 @@
 			<value>com.code.aon.payroll.cotizacion.OcupacionMaestro</value>
 		</managed-property>
 		<managed-property>
+			<property-name>beanName</property-name>
+			<value>ocupacionMaestro</value>
+		</managed-property>
+		<managed-property>
 			<property-name>defaultOrder</property-name>
 			<value>OcupacionMaestro_cdg DESC</value>
 		</managed-property>

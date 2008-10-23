@@ -567,7 +567,7 @@
 	<!-- =================== Mantenimiento de ocupaciones ================= -->
 	<navigation-rule>
 		<navigation-case>
-			<from-outcome>cotizacion_ocupacion</from-outcome>
+			<from-outcome>ocupacionMaestro_form</from-outcome>
 			<to-view-id>
 				/facelet/auxiliares/cotizacion/ocupacion/form.xhtml
 			</to-view-id>
@@ -575,13 +575,13 @@
 	</navigation-rule>
 	<navigation-rule>
 		<navigation-case>
-			<from-outcome>cotizacion_ocupacion_list</from-outcome>
+			<from-outcome>ocupacionMaestro_list</from-outcome>
 			<to-view-id>
 				/facelet/auxiliares/cotizacion/ocupacion/list.xhtml
 			</to-view-id>
 		</navigation-case>
 		<navigation-case>
-			<from-outcome>cotizacion_ocupacion_search</from-outcome>
+			<from-outcome>ocupacionMaestro_search</from-outcome>
 			<to-view-id>
 				/facelet/auxiliares/cotizacion/ocupacion/search.xhtml
 			</to-view-id>

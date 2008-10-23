@@ -13,7 +13,8 @@
 	<ui:define name="content">
 
 		<aon:form id="ocupacionForm">
-			<aon:div styleClass="aon-finding-title-toolbar">
+			
+			 <!--   <aon:div styleClass="aon-finding-title-toolbar">
 				<aon:panelGrid id="buttonsGrid" columns="3" dir="true"
 					columnClasses="aon-finding-title,aon-finding-subtitle,aon-finding-toolbar">
 
@@ -26,10 +27,10 @@
 							value="#{porcentajeMaestro.new?(bundle.aon_reset):(bundle.aon_editing)}" />
 					</aon:div>
 
-					<!-- start toolbar navigation -->
+					
 					<aon:div styleClass="aon-finding-toolbar-item-group">
 						<aon:commandButton id="save" value="#{bundle.aon_save}"
-							action="cotizacion_ocupacion"
+							action="ocupacionMaestro_form"
 							actionListener="#{ocupacionMaestro.accept}"
 							styleClass="aon-finding-toolbar-item aon-icon-accept"
 							accesskey="#{bundle.aon_key_save}" />
@@ -39,7 +40,7 @@
 							confirmTitle="#{bundle.aon_confirm_title}"
 							confirmMessage="#{bundle.aon_cancel_confirm}"
 							confirmActionListener="#{ocupacionMaestro.onCancel}"
-							confirmAction="cotizacion_ocupacion_list"
+							confirmAction="ocupacionMaestro_list"
 							accesskey="#{bundle.aon_key_cancel}" />
 						<aon:confirmButton id="remove" value="#{bundle.aon_remove}"
 							rendered="#{!ocupacionMaestro.new}"
@@ -47,27 +48,32 @@
 							immediate="true" confirmTitle="#{bundle.aon_confirm_title}"
 							confirmMessage="#{bundle.aon_remove_confirm}"
 							confirmActionListener="#{ocupacionMaestro.onRemove}"
-							confirmAction="cotizacion_ocupacion_list"
+							confirmAction="ocupacionMaestro_list"
 							accesskey="#{bundle.aon_key_remove}" />
 						<aon:commandButton id="reset" value="#{bundle.aon_reset}"
 							rendered="#{!ocupacionMaestro.new}"
-							action="cotizacion_ocupacion" 
+							action="ocupacionMaestro_form" 
 							actionListener="#{ocupacionMaestro.onReset}"
 							styleClass="aon-finding-toolbar-item aon-icon-reset"
 							accesskey="#{bundle.aon_key_new}" />
 						<aon:commandButton id="search" value="#{bundle.aon_search}"
 							rendered="#{!ocupacionMaestro.new}" immediate="true"
-							action="cotizacion_ocupacion_search" actionListener="#{ocupacionMaestro.onEditSearch}"
+							action="ocupacionMaestro_search" actionListener="#{ocupacionMaestro.onEditSearch}"
 							styleClass="aon-finding-toolbar-item aon-icon-search"
 							accesskey="#{bundle.aon_key_search}" />														
 
-						<aon:spin controller="#{ocupacionMaestro}" action="cotizacion_ocupacion" rendered="#{!ocupacionMaestro.new}" />
+						<aon:spin controller="#{ocupacionMaestro}" action="ocupacionMaestro_form" rendered="#{!ocupacionMaestro.new}" />
 
 					</aon:div>
 
-					<!-- end toolbar navigation -->
 				</aon:panelGrid>
-			</aon:div>
+			</aon:div>-->
+			
+			 <ui:include src="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml" >
+				<ui:param name="toolbarTitle" value="#{menuBundle.auxiliares_cotizacion__ocupacion}" />
+				<ui:param name="controller" value="#{ocupacionMaestro}" />
+			</ui:include>
+			
 
 			<aon:div styleClass="aon-scroll-area">
 				<aon:panelGrid id="ocupacionMaestro" columns="2" dir="true" width="100%" style="margin-bottom=2px;">
