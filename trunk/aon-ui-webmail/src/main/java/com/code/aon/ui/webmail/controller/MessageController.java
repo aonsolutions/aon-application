@@ -62,7 +62,6 @@ import com.code.aon.ui.webmail.bean.AonFolder;
 import com.code.aon.ui.webmail.bean.AonMessage;
 import com.code.aon.ui.webmail.bean.AonMessageUtils;
 import com.code.aon.ui.webmail.bean.WebMailConstants;
-import com.code.aon.ui.webmail.converter.MaxLenghtStringConverter;
 import com.code.aon.ui.webmail.exception.WebmailException;
 import com.code.aon.ui.webmail.listener.IAonFileListener;
 import com.code.aon.webmail.MailAccount;
@@ -71,6 +70,8 @@ import com.sun.mail.imap.IMAPFolder;
 import com.sun.mail.util.LineOutputStream;
 
 public class MessageController implements WebMailConstants, IAonFileListener {
+
+	private static final int MAX_LENGTH_STRING = 120;
 
 	private static final String REPLIED_MESSAGE = "aon_webmail_replied_message";
 
@@ -851,7 +852,7 @@ public class MessageController implements WebMailConstants, IAonFileListener {
 
 	private boolean isShotMessageToControl(){
     	try {
-			if (message.getRecipientsTo().length()>MaxLenghtStringConverter.getMax())
+			if (message.getRecipientsTo().length()>MAX_LENGTH_STRING)
 				return true;
 		} catch (Exception e) {
 		}
@@ -878,7 +879,7 @@ public class MessageController implements WebMailConstants, IAonFileListener {
 	
     private boolean isShotMessageCcControl() {
     	try {
-			if (message.getRecipientsCc().length()>MaxLenghtStringConverter.getMax())
+			if (message.getRecipientsCc().length()>MAX_LENGTH_STRING)
 				return true;
 		} catch (Exception e) {
 		}
