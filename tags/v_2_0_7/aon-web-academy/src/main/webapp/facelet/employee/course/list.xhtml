@@ -1,0 +1,67 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:t="http://myfaces.apache.org/tomahawk"
+	xmlns:h="http://java.sun.com/jsf/html">
+<body>
+
+<ui:composition>
+
+	<t:div styleClass="aon-form-group" rendered="#{!employee.new and instructorCourse.model.rowCount > 0}">
+		<t:div styleClass="aon-form-group-title">
+			<t:outputLabel for="instructorCourseDataList"
+				value="#{appBundle.course_courses}" />
+		</t:div>
+
+		<t:div styleClass="aon-form-group-body">
+			<t:dataTable id="instructorCourseDataList" cellpadding="0" cellspacing="0"
+				var="to" value="#{instructorCourse.model}" rows="20"
+				rendered="#{instructorCourse.model.rowCount > 0}"
+				styleClass="aon-table" headerClass="aon-table-header"
+				rowClasses="aon-table-row-odd,aon-table-row-even"
+				columnClasses="aon-table-body aon-table-body-string,
+					aon-table-body aon-table-body-string,
+					aon-table-body aon-table-body-string"
+				rowOnMouseOver="selectRow( this )"
+				rowOnMouseOut="unselectRow( this )" rowOnClick="sendRow( this )">
+
+				<h:column>
+					<f:facet name="header">
+						<h:outputText value="#{appBundle.course_code}" />
+					</f:facet>
+					<h:outputText value="#{to.course.code}" />
+				</h:column>
+
+				<h:column>
+					<f:facet name="header">
+						<h:panelGroup>
+							<h:outputText value="#{appBundle.aon_description}" />
+						</h:panelGroup>
+					</f:facet>
+					<h:outputText value="#{to.course.description}" />
+					<f:verbatim>&#160;</f:verbatim>
+				</h:column>
+				<h:column>
+					<f:facet name="header">
+						<h:panelGroup>
+							<h:outputText value="#{appBundle.schedule_schedule}" />
+						</h:panelGroup>
+					</f:facet>
+					<h:outputText value="#{instructorCourse.courseSchedule}" />
+					<f:verbatim>&#160;</f:verbatim>
+				</h:column>
+			</t:dataTable>
+
+			<ui:include src="/facelet/shared/dataScroller.xhtml">
+				<ui:param name="dataTable" value="instructorCourseDataList" />
+				<ui:param name="model" value="#{instructorCourse.model}" />
+				<ui:param name="showNote" value="#{false}" />
+			</ui:include>
+
+		</t:div>
+	</t:div>
+
+</ui:composition>
+</body>
+</html>
