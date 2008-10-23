@@ -270,18 +270,22 @@ public class AonUserController extends UserController implements ILdapConstants,
 				session.replaceAttribute(userDN, SURNAME_ATTRIBUTE, surname);
 
 				String filter = LdapSession.getObjectClass(USER);
-				Entry user = session.get(userDN.toString(), filter, USER_ALTERNATIVE_EMAIL, USER_CELLULAR_NUMBER);
+				Entry userEntry = session.get(userDN.toString(), filter, COMMON_NAME_ATTRIBUTE, USER_ALTERNATIVE_EMAIL, USER_CELLULAR_NUMBER);
 				String old_mail = null;
 				String old_mobile = null;
 				try {
-					old_mail = user.getAsString(USER_ALTERNATIVE_EMAIL);
-					old_mobile = user.getAsString(USER_CELLULAR_NUMBER);
+					old_mail = userEntry.getAsString(USER_ALTERNATIVE_EMAIL);
 				}
-				catch (NullPointerException npe) {
+				catch (NullPointerException npe) {}
+				try {
+					old_mobile = userEntry.getAsString(USER_CELLULAR_NUMBER);
 				}
+				catch (NullPointerException npe) {}
+				
 				session.updateAttribute(userDN, USER_ALTERNATIVE_EMAIL, old_mail, mail);
 				session.updateAttribute(userDN, USER_CELLULAR_NUMBER, old_mobile, mobile);
 			} catch (LdapException e) {
+				e.printStackTrace();
 				AonUtil.addErrorMessage("Error actualizando los datos de usuario." );
 			} finally {
 				ldap.closeSession();
