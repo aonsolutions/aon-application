@@ -24,7 +24,7 @@
 						required="#{true}" size="15" disabled="#{true}" />
 
 					<aon:outputLabel for="Customer_document"
-						value="#{customerBundle.customer_document}" />
+						value="#{bundle.aon_company_document}" />
 					<aon:inputText id="Customer_document"
 						value="#{customer.to.registry.document}" size="16">
 						<f:validateLength minimum="1" maximum="16" />
@@ -37,27 +37,27 @@
 					</aon:inputText>
 
 					<aon:outputLabel for="Customer_surname"
-						value="#{customerBundle.customer_surname}" />
+						value="#{registryBundle.registry_surname}" />
 					<aon:inputText id="Customer_surname"
 						value="#{customer.to.registry.surname}" size="64">
 						<f:validateLength minimum="1" maximum="64" />
 					</aon:inputText>
 
 					<aon:outputLabel for="Customer_alias"
-						value="#{customerBundle.customer_alias}" />
+						value="#{bundle.aon_company_alias}" />
 					<aon:inputText id="Customer_alias"
 						value="#{customer.to.registry.alias}" size="32">
 						<f:validateLength minimum="1" maximum="32" />
 					</aon:inputText>
 
 					<h:outputLabel for="Customer_scope_id"
-						value="#{customerBundle.customer_scope}" />
+						value="#{bundle.aon_scope}" />
 					<h:selectOneMenu id="Customer_scope_id"
 						value="#{customer.to.scope}">
 						<f:selectItems value="#{configCollections.scopes}" />
 					</h:selectOneMenu>
 
-					<h:outputLabel for="Customer_status" value="#{bundle.aon_status}" />
+					<h:outputLabel for="Customer_status" value="#{bundle.aon_company_name}" />
 					<h:selectOneMenu id="Customer_status" value="#{customer.to.status}">
 						<f:selectItems value="#{customerCollections.customerStatuses}" />
 					</h:selectOneMenu>
