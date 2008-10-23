@@ -62,7 +62,7 @@
 							styleClass="aon-finding-toolbar-item aon-icon-search"
 							accesskey="#{bundle.aon_key_search}" />														
 
-	<aon:spin controller="#{entidadMaestro}" action="entidades_form" rendered="#{!entidadMaestro.new}" />
+
                        <h:commandLink id="export2pdf" value="PDF"
 		             		title="#{appBundle.aon_payroll_export} #{appBundle.aon_payroll_to} #{appBundle.aon_payroll_pdf}"
 			             	styleClass="aon-finding-toolbar-item aon-icon-pdf"
@@ -86,7 +86,7 @@
 								<f:param name="reportKey" value="EntidadListXLS" />
 								<f:param name="outputFormat" value="CSV" />
 		                </h:commandLink>
-	
+		<aon:spin controller="#{entidadMaestro}" action="entidades_form" rendered="#{!entidadMaestro.new}" />
 					</aon:div>
 
 					<!-- end toolbar navigation -->
