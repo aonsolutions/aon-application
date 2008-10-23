@@ -13,23 +13,6 @@
 		</locale-config>
 	</application>
 
-	<!--  *************** COLLECTIONS ***************** -->
-
-	<!--  *************** CONVERTERS ***************** -->
-	<converter>
-		<description>Conversor para los Enum</description>
-		<converter-for-class>java.lang.Enum</converter-for-class>
-		<converter-class>
-			com.code.aon.ui.converter.EnumLocaleConverter
-		</converter-class>
-	</converter>
-
-	<lifecycle>
-		<phase-listener>
-			com.code.aon.faces.component.sandbox.ValueChangePhaseListener
-		</phase-listener>
-	</lifecycle>
-
 	<!-- *************** RESOURCE RESOLVER ***************** --> 
 	<managed-bean>
 		<managed-bean-name>aonResource</managed-bean-name>
@@ -43,7 +26,7 @@
 		</managed-property>		
 		<managed-property>
 			<property-name>resourceURIPreffix</property-name>
-			<value>/aonResource/1.6.4</value>
+			<value>/aonResource/3.0.0</value>
 		</managed-property>		
 	</managed-bean>
 
@@ -88,22 +71,6 @@
 				</map-entry>
 			</map-entries>
 		</managed-property>
-	</managed-bean>
-
-	<!-- ***************** LOGGED USER ******************** --> 
-	<managed-bean>
-		<managed-bean-name>loggedUser</managed-bean-name>
-		<managed-bean-class>com.code.aon.bridge.session.LoggedUser</managed-bean-class>
-		<managed-bean-scope>session</managed-bean-scope>
-	</managed-bean>
-	
-	<!-- ***************** FAILED LOGIN ******************** --> 
-	<managed-bean>
-		<managed-bean-name>failedLogin</managed-bean-name>
-		<managed-bean-class>
-			com.code.aon.bridge.session.FailedLogin
-		</managed-bean-class>
-		<managed-bean-scope>request</managed-bean-scope>
 	</managed-bean>
 
 </faces-config>
