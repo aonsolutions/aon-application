@@ -175,13 +175,6 @@
             </converter-class>
     </converter>
 
-    <converter>
-            <converter-id>maxLenghtString</converter-id>
-            <converter-class>
-                com.code.aon.ui.webmail.converter.MaxLenghtStringConverter
-            </converter-class>
-    </converter>
-
   <!-- ======================================================================= -->	
   <!-- =========================== Navigation Rules ========================== -->	
   <!-- ======================================================================= -->
