@@ -7,7 +7,6 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 
 import org.apache.commons.lang.ObjectUtils;
-import org.hibernate.annotations.Formula;
 
 import com.code.aon.common.ITransferObject;
 
@@ -42,11 +41,6 @@ public class Account implements ITransferObject {
 	 * TRUE if account entries are enabled, FALSE otherwise.
 	 */
 	private boolean entryEnabled;
-
-	/**
-	 * Level of this account.
-	 */
-	private int level;
 
 	/**
 	 * Gets the ID of this account.
@@ -150,16 +144,15 @@ public class Account implements ITransferObject {
 	}
 
 	/**
-	 * Sets the level of this account.
+	 * Returns the level of this account.
 	 * 
-	 * @param level
-	 *            The level of this account.
-	 * 
+	 * @return The level of this account.
 	 */
-	public void setLevel(int level) {
-		this.level = level;
+	@Transient
+	public String getFullDescription() {
+		return (getId() + " " + getDescription());
 	}
-	
+
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj) {

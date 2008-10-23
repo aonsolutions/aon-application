@@ -72,7 +72,6 @@
 						value="#{accountBundle.aon_account_security_level}" />
 					<aon:selectOneMenu
 						id="AccountEntryDetail_accountEntry_securityLevel"
-						converter="enumConverter" forceId="#{true}"
 						valueChangeListener="#{accountEntryReport.addDirectExpression}">
 						<f:selectItem value="#{nullItem.value}" />
 						<f:selectItems value="#{accountCollections.securityLevels}" />

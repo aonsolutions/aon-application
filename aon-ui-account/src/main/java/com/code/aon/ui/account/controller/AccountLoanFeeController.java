@@ -6,7 +6,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.faces.event.ActionEvent;
-import javax.faces.event.ValueChangeEvent;
 
 import com.code.aon.account.Account;
 import com.code.aon.account.AccountEntry;
@@ -22,9 +21,6 @@ import com.code.aon.account.enumeration.AccountEntryType;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
-import com.code.aon.finance.Bank;
-import com.code.aon.finance.RegistryBank;
-import com.code.aon.finance.dao.IFinanceAlias;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.account.utils.AccountPeriodValidator;
 import com.code.aon.ui.util.AonUtil;
@@ -77,13 +73,7 @@ public class AccountLoanFeeController {
 	
 	private AccountLoanFeeHeader initializeHeader() {
 		AccountLoanFeeHeader header = new AccountLoanFeeHeader();
-		header.setRegistryBank(new RegistryBank());
-		header.getRegistryBank().setBank(new Bank());
 		header.setFeeDate(new Date());
-		Loan loan = new Loan();
-		loan.setRegistryBank(header.getRegistryBank());
-		loan.setLoanDate(new Date());
-		header.setLoan(loan);
 		return header;
 	}
 	
@@ -195,19 +185,6 @@ public class AccountLoanFeeController {
 			return loanAccount.getAccount();
 		}
 		return null;
-	}
-	
-	@SuppressWarnings("unchecked")
-	public void onRBankChange(ValueChangeEvent event) throws ManagerBeanException {
-		if(event.getNewValue() != null){
-			IManagerBean rBankBean = BeanManager.getManagerBean(RegistryBank.class);
-			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(rBankBean.getFieldName(IFinanceAlias.REGISTRY_BANK_ID), event.getNewValue());
-			Iterator iter = rBankBean.getList(criteria).iterator();
-			if(iter.hasNext()){
-				this.getHeader().setRegistryBank((RegistryBank)iter.next());
-			}
-		}
 	}
 	
 	private void loadAccountEntryController(AccountEntry entry) {

@@ -266,7 +266,7 @@ public class AccountEntryController extends BasicController {
 		header.setDate(entry.getEntryDate());
 		AccountEntryDetail accountEntryDetail = obtainEntryDetailFromAccountPattern(entry, AccountConstants.BANK_ACCOUNT_PREFIX + "*");
 		header.setAmount(accountEntryDetail.getCredit());
-		header.setRegistryBank(obtainRBank(accountEntryDetail.getAccount().getId()));
+		header.setRBank(obtainRBank(accountEntryDetail.getAccount().getId()));
 		header.setDescription(accountEntryDetail.getConcept());
 		header.setSecurityLevel(entry.getSecurityLevel());
 		socialInsController.setHeader(header);
@@ -335,7 +335,7 @@ public class AccountEntryController extends BasicController {
 				accountLeasingFeeController.setAccountEntryInvoice(accountEntryInvoice);
 				AccountLeasingFeeHeader header = new AccountLeasingFeeHeader();
 				AccountEntryDetail detail = obtainEntryDetailFromAccountPattern(entry, AccountConstants.BANK_ACCOUNT_PREFIX + "*");
-				header.setRegistryBank(obtainRBank(detail.getAccount().getId()));
+				header.setRBank(obtainRBank(detail.getAccount().getId()));
 				detail = obtainEntryDetailFromAccountPattern(entry, AccountUtil.obtainDefaultAccount(DefaultAccounts.DEBT_INTEREST_ACCOUNT).getId() + "");
 				header.setInterest(detail.getDebit());
 				detail = obtainEntryDetailFromAccountPattern(entry, AccountConstants.LEASING_ACCOUNT_PREFIX + "*");

@@ -25,23 +25,23 @@
 						valueChangeListener="#{customer.addExpression}" />
 
 					<aon:outputLabel for="Customer_registry_document"
-						value="#{customerBundle.customer_document}"
+						value="#{bundle.aon_company_document}"
 						styleClass="aon-form-input-text-label aon-form-table-column-odd-label" />
 					<aon:inputText id="Customer_registry_document" size="20"
 						valueChangeListener="#{customer.addExpression}" />
 
 					<aon:outputLabel for="Customer_registry_name"
-						value="#{bundle.aon_name}" />
+						value="#{bundle.aon_company_name}" />
 					<aon:inputText id="Customer_registry_name" size="40"
 						valueChangeListener="#{customer.addExpression}" />
 
 					<aon:outputLabel for="Customer_registry_surname"
-						value="#{customerBundle.customer_surname}" />
+						value="#{registryBundle.registry_surname}" />
 					<aon:inputText id="Customer_registry_surname" size="40"
 						valueChangeListener="#{customer.addExpression}" />
 
 					<aon:outputLabel for="Customer_registry_alias"
-						value="#{customerBundle.customer_alias}" />
+						value="#{bundle.aon_company_alias}" />
 					<aon:inputText id="Customer_registry_alias" size="40"
 						valueChangeListener="#{customer.addExpression}" />
 				</ui:define>
