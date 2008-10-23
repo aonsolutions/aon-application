@@ -177,7 +177,7 @@ public class SecurityUserListener extends ControllerAdapter implements ILdapCons
 				session.replaceAttribute(userDN, USER_UID_NUMBER_ATTRIBUTE, user.getId().toString());
 
 				String filter = LdapSession.getObjectClass(USER);
-				Entry u = session.get(userDN.toString(), filter, USER_ALTERNATIVE_EMAIL, USER_CELLULAR_NUMBER);
+				Entry u = session.get(userDN.toString(), filter, COMMON_NAME_ATTRIBUTE, USER_ALTERNATIVE_EMAIL, USER_CELLULAR_NUMBER);
 				String old_mail = null;
 				String old_cellular = null;
 				try {
