@@ -125,7 +125,9 @@
 							<f:facet name="header">
 								<aon:outputText value="#{appBundle.aon_payroll_auxiliares_cotizacion__mincot}" />
 							</f:facet>
-							<aon:outputText value="#{to.mincot}" rendered="#{to!=linbase.to}" />
+							<aon:outputText value="#{to.mincot}" rendered="#{to!=linbase.to}" >
+								<f:convertNumber type="number" minFractionDigits="2" pattern="###,###.###" />
+								</aon:outputText>
 							
 							<aon:inputText styleClass="aon-form-input-text " required="true"
 								rendered="#{to==linbase.to}" size="5"
@@ -141,7 +143,9 @@
 							<f:facet name="header">
 								<aon:outputText value="#{appBundle.aon_payroll_auxiliares_cotizacion__maxcot}" />
 							</f:facet>
-							<aon:outputText value="#{to.maxcot}" rendered="#{to!=linbase.to}" />
+							<aon:outputText value="#{to.maxcot}" rendered="#{to!=linbase.to}" >
+								<f:convertNumber type="number"  minFractionDigits="2" pattern="###,###.###" />
+								</aon:outputText>
 							<aon:inputText styleClass="aon-form-input-text " required="true"
 								rendered="#{to==linbase.to}" size="5"
 								value="#{linbase.to.maxcot}" maxlength="10" />
@@ -157,7 +161,9 @@
 							<f:facet name="header">
 								<aon:outputText value="#{appBundle.aon_payroll_auxiliares_cotizacion__minhor}" />
 							</f:facet>
-							<aon:outputText value="#{to.minhor}" rendered="#{to!=linbase.to}" />
+							<aon:outputText value="#{to.minhor}" rendered="#{to!=linbase.to}" >
+								<f:convertNumber type="number" minFractionDigits="2" pattern="###,###.###" />
+								</aon:outputText>
 							<aon:inputText styleClass="aon-form-input-text " required="true"
 								rendered="#{to==linbase.to}" size="5"
 								value="#{linbase.to.minhor}" maxlength="10" />
@@ -172,7 +178,9 @@
 							<f:facet name="header">
 								<aon:outputText value="#{appBundle.aon_payroll_auxiliares_cotizacion__mindia}" />
 							</f:facet>
-							<aon:outputText value="#{to.mindia}" rendered="#{to!=linbase.to}" />
+							<aon:outputText value="#{to.mindia}" rendered="#{to!=linbase.to}" >
+								<f:convertNumber type="number"  minFractionDigits="2" pattern="###,###.###" />
+								</aon:outputText>
 							<aon:inputText styleClass="aon-form-input-text " required="true"
 								rendered="#{to==linbase.to}" size="5"
 								value="#{linbase.to.mindia}" maxlength="10" />
@@ -189,7 +197,9 @@
 							<f:facet name="header">
 								<aon:outputText value="#{appBundle.aon_payroll_auxiliares_cotizacion__jordiaagr}" />
 							</f:facet>
-							<aon:outputText value="#{to.jordiaagr}" rendered="#{to!=linbase.to}" />
+							<aon:outputText value="#{to.jordiaagr}" rendered="#{to!=linbase.to}" >
+								<f:convertNumber type="number" minFractionDigits="2" pattern="###,###.###" />
+								</aon:outputText>
 							<aon:inputText styleClass="aon-form-input-text " required="true"
 								rendered="#{to==linbase.to}" size="5"
 								value="#{linbase.to.jordiaagr}" maxlength="10" />
@@ -204,7 +214,9 @@
 							<f:facet name="header">
 								<aon:outputText value="#{appBundle.aon_payroll_auxiliares_cotizacion__mindiaart1}" />
 							</f:facet>
-							<aon:outputText value="#{to.mindiaart1}" rendered="#{to!=linbase.to}" />
+							<aon:outputText value="#{to.mindiaart1}" rendered="#{to!=linbase.to}" >
+								<f:convertNumber type="number" minFractionDigits="2" pattern="###,###.###" />
+								</aon:outputText>
 							<aon:inputText styleClass="aon-form-input-text " required="true"
 								rendered="#{to==linbase.to}" size="5"
 								value="#{linbase.to.mindiaart1}" maxlength="10" />
@@ -219,7 +231,9 @@
 							<f:facet name="header">
 								<aon:outputText value="#{appBundle.aon_payroll_auxiliares_cotizacion__mindiaart2}" />
 							</f:facet>
-							<aon:outputText value="#{to.mindiaart2}" rendered="#{to!=linbase.to}" />
+							<aon:outputText value="#{to.mindiaart2}" rendered="#{to!=linbase.to}" >
+								<f:convertNumber type="number"  minFractionDigits="2" pattern="###,###.###" />
+								</aon:outputText>
 							<aon:inputText styleClass="aon-form-input-text " required="true"
 								rendered="#{to==linbase.to}" size="5"
 								value="#{linbase.to.mindiaart2}" maxlength="10" />
@@ -234,7 +248,9 @@
 							<f:facet name="header">
 								<aon:outputText value="#{appBundle.aon_payroll_auxiliares_cotizacion__acdiaart}" />
 							</f:facet>
-							<aon:outputText value="#{to.acdiaart}" rendered="#{to!=linbase.to}" />
+							<aon:outputText value="#{to.acdiaart}" rendered="#{to!=linbase.to}" >
+								<f:convertNumber type="number"  minFractionDigits="2" pattern="###,###.###" />
+								</aon:outputText>
 							<aon:inputText styleClass="aon-form-input-text " required="true"
 								rendered="#{to==linbase.to}" size="5"
 								value="#{linbase.to.acdiaart}" maxlength="10" />

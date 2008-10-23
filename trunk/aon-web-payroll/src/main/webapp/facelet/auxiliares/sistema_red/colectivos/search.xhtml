@@ -42,12 +42,17 @@
 				
 					<aon:outputLabel for="Colectivos_cdg"
 						value="#{appBundle.aon_payroll_cdg}" />
-					<aon:inputText id="Colectivos_cdg" size="4" maxlength="4"
+					<aon:inputText id="Colectivos_cdg" size="10" maxlength="4"
 						valueChangeListener="#{sistemaRedColectivos.addExpression}" />
 
 					<aon:outputLabel for="Colectivos_description"
 						value="#{appBundle.aon_payroll_long_description}" />
 					<aon:inputText id="Colectivos_description" size="60" maxlength="45"
+						valueChangeListener="#{sistemaRedColectivos.addExpression}" />
+						
+					<aon:outputLabel for="Colectivos_descripcorta"
+						value="#{appBundle.aon_payroll_short_description}" />
+					<aon:inputText id="Colectivos_descripcorta" size="60" maxlength="45"
 						valueChangeListener="#{sistemaRedColectivos.addExpression}" />
 				</ui:define>
 			</ui:decorate>

@@ -49,6 +49,58 @@
 						value="#{appBundle.aon_payroll_description}" />
 					<aon:inputText id="Bonificacion_description" size="30" maxlength="50"
 						valueChangeListener="#{cotizacionBonificacion.addExpression}" />
+						
+						<aon:outputLabel for="Bonificacion_calculo"
+						value="#{appBundle.aon_payroll_auxiliares_cotizacion__tipboni_calculo}" />
+					<aon:inputText id="Bonificacion_calculo" size="30" maxlength="50"
+						valueChangeListener="#{cotizacionBonificacion.addExpression}" />
+						
+				  	<aon:outputLabel 
+						value="#{appBundle.aon_payroll_auxiliares_cotizacion__tipboni_porcentajes}" />
+						
+					<aon:panelGrid columns="8"  >	
+						<aon:outputLabel for="Bonificacion_prcCg"
+						value="#{appBundle.aon_payroll_auxiliares_cotizacion__tipboni_cg}" />
+					<aon:inputText id="Bonificacion_prcCg" size="15" maxlength="50"
+						valueChangeListener="#{cotizacionBonificacion.addExpression}" />
+						
+						<aon:outputLabel for="Bonificacion_prcAcc"
+						value="#{appBundle.aon_payroll_auxiliares_cotizacion__tipboni_acc}" />
+					<aon:inputText id="Bonificacion_prcAcc" size="15" maxlength="50"
+						valueChangeListener="#{cotizacionBonificacion.addExpression}" />
+						
+						<aon:outputLabel for="Bonificacion_prcAccfgs"
+						value="#{appBundle.aon_payroll_auxiliares_cotizacion__tipboni_conj}" />
+					<aon:inputText id="Bonificacion_prcAccfgs" size="15" maxlength="50"
+						valueChangeListener="#{cotizacionBonificacion.addExpression}" />
+						
+			         	</aon:panelGrid>
+			         	
+			         	<aon:outputLabel 
+						value="#{appBundle.aon_payroll_auxiliares_cotizacion__tipboni_marcas}" />
+						
+		          <aon:panelGrid columns="10"  >
+			         
+						<aon:outputLabel for="Bonificacion_boniss"
+						value="#{appBundle.aon_payroll_auxiliares_cotizacion__tipboni_boniss}" />	
+			         <aon:selectBooleanCheckbox id="Bonificacion_boniss"
+							valueChangeListener="#{cotizacionBonificacion.addExpression}" />
+							
+							<aon:outputLabel for="Bonificacion_mayor60"
+						value="#{appBundle.aon_payroll_auxiliares_cotizacion__tipboni_60}" />	
+			         <aon:selectBooleanCheckbox id="Bonificacion_mayor60"
+							valueChangeListener="#{cotizacionBonificacion.addExpression}" />
+							
+							<aon:outputLabel for="Bonificacion_rdl052006"
+						value="#{appBundle.aon_payroll_auxiliares_cotizacion__tipboni_rdl5}" />	
+			         <aon:selectBooleanCheckbox id="Bonificacion_rdl052006"
+							valueChangeListener="#{cotizacionBonificacion.addExpression}" />
+							
+										<aon:outputLabel for="Bonificacion_restait"
+						value="#{appBundle.aon_payroll_auxiliares_cotizacion__tipboni_restait}" />	
+			         <aon:selectBooleanCheckbox id="Bonificacion_restait"
+							valueChangeListener="#{cotizacionBonificacion.addExpression}" />
+							 </aon:panelGrid>
 				</ui:define>
 			</ui:decorate>
 

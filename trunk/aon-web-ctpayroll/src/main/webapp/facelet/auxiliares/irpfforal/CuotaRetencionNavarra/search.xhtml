@@ -40,18 +40,35 @@
 					<aon:methodParam name="searchActionListener" value="#{cuotaRetencionNavarra.onSearch}" type="actionListener" />
 					<aon:methodParam name="searchAction" value="CuotaRetencionNavarra" />				
 				
-                   <aon:outputLabel for="CuotaRetencionNavarra_id_fecini"
-						value="#{appBundle.aon_payroll_auxiliares_irpf_foral__cuota_01_fecini2}" />
-					<aon:selectInputDate id="CuotaRetencionNavarra_id_fecini"
-						renderAsPopup="true" popupDateFormat="#{appBundle.aon_date_pattern}"
-						valueChangeListener="#{cuotaRetencionNavarra.addExpression}">
-					</aon:selectInputDate>
-
-					<aon:outputLabel for="CuotaRetencionNavarra_id_numTramo"
+          <aon:outputLabel for="CuotaRetencionNavarra_id_numTramo"
 						value="#{appBundle.aon_payroll_auxiliares_irpf_foral__cuota_01_tramo}" />
 					<aon:inputText id="CuotaRetencionNavarra_id_numTramo" size="10" maxlength="4"
 						valueChangeListener="#{cuotaRetencionNavarra.addExpression}" />
 						
+              <!--    <aon:outputLabel for="CuotaRetencionNavarra_id_fecini"
+						value="#{appBundle.aon_payroll_auxiliares_irpf_foral__cuota_01_fecini}" />
+					<aon:selectInputDate id="CuotaRetencionNavarra_id_fecini"
+						renderAsPopup="true" popupDateFormat="#{appBundle.aon_date_pattern}"
+						valueChangeListener="#{cuotaRetencionNavarra.addExpression}">
+					</aon:selectInputDate>
+					
+					<aon:outputLabel for="CuotaRetencionNavarra_fecfin"
+						value="#{appBundle.aon_payroll_auxiliares_irpf_foral__cuota_01_fecfin}" />
+					<aon:selectInputDate id="CuotaRetencionNavarra_fecfin"
+						renderAsPopup="true" popupDateFormat="#{appBundle.aon_date_pattern}"
+						valueChangeListener="#{cuotaRetencionNavarra.addExpression}">
+					</aon:selectInputDate>
+ -->
+						
+				<aon:outputLabel for="CuotaRetencionNavarra_desdeImporte"
+						value="#{appBundle.aon_payroll_auxiliares_irpf_foral__cuota_01_desdeimporte2}" />
+					<aon:inputText id="CuotaRetencionNavarra_desdeImporte" size="30" maxlength="30"
+						valueChangeListener="#{cuotaRetencionNavarra.addExpression}" />
+						
+				<aon:outputLabel for="CuotaRetencionNavarra_hastaImporte"
+						value="#{appBundle.aon_payroll_auxiliares_irpf_foral__cuota_01_hastaimporte2}" />
+					<aon:inputText id="CuotaRetencionNavarra_hastaImporte" size="30" maxlength="30"
+						valueChangeListener="#{cuotaRetencionNavarra.addExpression}" />
 						
 				</ui:define>
 			</ui:decorate>
