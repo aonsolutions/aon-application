@@ -23,25 +23,12 @@
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
 	<managed-bean>
-		<managed-bean-name>geozoneCollections</managed-bean-name>
-		<managed-bean-class>
-			com.code.aon.ui.geozone.controller.GeozoneCollectionsController
-		</managed-bean-class>
-		<managed-bean-scope>session</managed-bean-scope>
-	</managed-bean>
-	<managed-bean>
 		<managed-bean-name>productCollections</managed-bean-name>
 		<managed-bean-class>
 			com.code.aon.ui.product.controller.ProductCollectionsController
 		</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
-
-	<lifecycle>
-		<phase-listener>
-			com.code.aon.faces.component.sandbox.ValueChangePhaseListener
-		</phase-listener>
-	</lifecycle>
 
 	<!-- *************** RESOURCE RESOLVER ***************** --> 
 	<managed-bean>
