@@ -11,17 +11,21 @@
 
 			<ui:decorate
 				template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml">
-				<ui:param name="toolbarTitle" value="#{appBundle.account_regenerate_summary}" />
+				<ui:param name="toolbarTitle"
+					value="#{accountBundle.account_regenerate_summary_module}" />
 				<ui:param name="toolbarDescription" value="" />
 
 				<ui:define name="toolbarContent">
-					<h:commandButton id="regenerate"
-						value="#{accountBundle.aon_regenerate}"
+					<aon:commandButton id="regenerate"
+						value="#{accountBundle.account_regenerate}"
 						accesskey="#{bundle.aon_key_search}"
 						actionListener="#{accountSummaryRegenerator.regenerateAccountSummary}"
-						styleClass="aon-content-toolbar-item" />
+						styleClass="aon-finding-toolbar-item aon-icon-accept"
+						onclick="Richfaces.showModalPanel('waitProccess')"
+						oncomplete="Richfaces.hideModalPanel('waitProccess')" />
 					<h:commandButton type="reset" id="clear"
-						value="#{bundle.aon_clear}" styleClass="aon-content-toolbar-item" />
+						value="#{bundle.aon_clear}"
+						styleClass="aon-finding-toolbar-item aon-icon-rubber" />
 				</ui:define>
 			</ui:decorate>
 
@@ -30,7 +34,7 @@
 
 					<aon:outputLabel
 						for="AccountEntryDetail_accountEntry_accountPeriod"
-						value="#{accountBundle.aon_accPeriod_period}" />
+						value="#{accountBundle.account_period}" />
 					<aon:selectOneMenu
 						id="AccountEntryDetail_accountEntry_accountPeriod"
 						value="#{accountSummaryRegenerator.period}">
@@ -39,5 +43,10 @@
 				</aon:panelGrid>
 			</aon:div>
 		</aon:form>
+		<ui:include src="/facelet/shared/wait.xhtml">
+			<ui:param name="progressLabel"
+				value="#{accountBundle.account_regenerate_summary_module} ..." />
+			<ui:param name="progressBarBean" value="#{accountSummaryRegenerator}" />
+		</ui:include>
 	</ui:define>
 </ui:composition>

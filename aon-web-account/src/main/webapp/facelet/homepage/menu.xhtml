@@ -8,18 +8,20 @@
 	<aon:form>
 		<aon:menuBar id="mainMenu"> 
 			<aon:dropDownMenu value="#{appBundle.account_masters}">
-				<aon:menuItem value="#{appBundle.account_entry}" action="accountEntry" style="color:red;"/>
+				<aon:menuItem value="#{accountBundle.account_entry_module}" action="accountEntry"/>
 				<aon:menuSeparator/>
-				<aon:menuItem action="account_list" value="#{accountBundle.account_account_module}"/>
+				<aon:menuItem action="account_list" value="#{accountBundle.account_module}"/>
 				<aon:menuItem action="autConcept" value="#{accountBundle.account_aut_concept_module}"/>
+				<aon:menuSeparator/>
 				<aon:menuItem actionListener="#{customer.onEditSearch}" action="customer_search" value="#{customerBundle.customer_module}"/>
 				<aon:menuItem actionListener="#{supplier.onEditSearch}" action="supplier_search" value="#{supplierBundle.supplier_module}"/>
 				<aon:menuItem actionListener="#{creditor.onEditSearch}" action="creditor_search" value="#{financeBundle.finance_creditor_module}"/>
+				<aon:menuSeparator/>
 				<aon:menuItem action="geozone_list" value="#{geozoneBundle.geozone_module}"/>
 			</aon:dropDownMenu>
 						
 			<aon:dropDownMenu value="#{appBundle.account_pred_entries}">
-				<aon:menuItem actionListener="#{accountInvoice.onReset}" action="accountInvoiceEntry" value="#{accountBundle.account_invoice_entry}" style="color:red;"/>
+				<aon:menuItem actionListener="#{accountInvoice.onReset}" action="accountInvoiceEntry" value="#{accountBundle.account_entry_invoice_module}" style="color:red;"/>
 				<aon:menuItem actionListener="#{accountExpense.onStart}" action="accountExpenseEntry" value="#{accountBundle.account_expense_entry_module}"/>
 				<aon:menuItem actionListener="#{accountSalary.onReset}" action="accountSalaryEntry" value="#{accountBundle.account_salary_entry_module}"/>
 				<aon:menuItem actionListener="#{accountSocialInsurance.onReset}" action="accountSocialInsuranceEntry" value="#{accountBundle.account_social_insurance_entry_module}"/>
@@ -67,23 +69,16 @@
 			</aon:dropDownMenu>
 
 			<aon:dropDownMenu value="#{appBundle.account_utilities}">
-				<aon:menuItem actionListener="#{accountLoan.onReset}" action="accountLoanEntry" value="#{appBundle.account_loan_entry}"/>
-				<aon:menuItem actionListener="#{accountLeasing.onReset}" action="accountLeasingEntry" value="#{appBundle.account_leasing_entry}"/>
-				<aon:menuItem style="color:red;" action="regenerateAccountSummary" value="#{appBundle.account_regenerate_summary}"/>
+				<aon:menuItem actionListener="#{accountLoan.onReset}" action="accountLoanEntry" value="#{accountBundle.account_loan_entry_module}"/>
+				<aon:menuItem actionListener="#{accountLeasing.onReset}" action="accountLeasingEntry" value="#{accountBundle.account_leasing_entry_module}"/>
+				<aon:menuItem action="regenerateAccountSummary" value="#{accountBundle.account_regenerate_summary_module}"/>
 				<aon:menuItem disabled="true" value="#{appBundle.account_transfer}"/>
 				<aon:menuItem disabled="true" value="#{appBundle.account_import_data}"/>
 				<aon:menuItem disabled="true" value="#{appBundle.account_export_data}"/>
 			</aon:dropDownMenu>
 
 			<aon:dropDownMenu value="#{appBundle.account_configuration}">
-
-				<aon:menuItem action="company" actionListener="#{company.onLoad}" value="#{companyBundle.company_data_module} SIN">
-					<f:param name="skipTabFolder" value="true"/>
-				</aon:menuItem>
-
-				<aon:menuItem action="company" actionListener="#{company.onLoad}" value="#{companyBundle.company_data_module} CON">
-				</aon:menuItem>
-
+				<aon:menuItem action="company" actionListener="#{company.onLoad}" value="#{companyBundle.company_data_module}"/>
 				<aon:menuItem action="accPeriod" value="#{accountBundle.account_accPeriod_module}"/>
 				<aon:menuItem action="defaultParams" actionListener="#{accAppParams.onLoad}" value="#{accountBundle.account_default_params_module}"/>
 				<aon:menuItem action="series" value="#{configBundle.config_series_module}"/>
