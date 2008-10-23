@@ -9,22 +9,11 @@
 
 	<ui:define name="content">
 		<aon:form id="accountEntryList">
-			<ui:decorate
-				template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml">
-				<ui:param name="toolbarTitle" value="#{appBundle.account_entry}" />
-				<ui:param name="toolbarDescription" value="#{account_entry.new?(bundle.aon_reset):(bundle.aon_editing)}" />
 
-				<ui:define name="additionalToolbarContent">
-					<h:commandButton id="reset" value="#{bundle.aon_reset}"
-						accesskey="#{bundle.aon_key_new}" action="account_entry_form"
-						actionListener="#{accountEntry.onReset}"
-						styleClass="aon-finding-toolbar-item aon-icon-reset" />
-					<h:commandButton id="search" value="#{bundle.aon_search}"
-						accesskey="#{bundle.aon_key_search}" action="account_entry_search"
-						actionListener="#{accountEntry.onEditSearch}"
-						styleClass="aon-finding-toolbar-item aon-icon-search" />
-				</ui:define>
-			</ui:decorate>
+			<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/listToolbar.xhtml" >
+				<ui:param name="toolbarTitle" value="#{accountBundle.account_entry_module}" />
+				<ui:param name="controller" value="#{account_entry}" />
+			</ui:include>
 
 			<aon:div id="accountEntryData" styleClass="aon-scroll-area">
 				<aon:dataTable id="accountEntryDataList"
@@ -43,21 +32,21 @@
 
 					<aon:column>
 						<f:facet name="header">
-							<aon:outputText value="#{accountBundle.aon_account_id}" />
+							<aon:outputText value="#{bundle.aon_id}" />
 						</f:facet>
 						<aon:outputText value="#{to.id}" />
 					</aon:column>
 
 					<aon:column>
 						<f:facet name="header">
-							<aon:outputText value="#{accountBundle.aon_accPeriod_period}" />
+							<aon:outputText value="#{accountBundle.account_period}" />
 						</f:facet>
 						<aon:outputText value="#{to.accountPeriod}" />
 					</aon:column>
 
 					<aon:column>
 						<f:facet name="header">
-							<aon:outputText value="#{accountBundle.aon_date}" />
+							<aon:outputText value="#{bundle.aon_date}" />
 						</f:facet>
 						<aon:outputText value="#{to.entryDate}">
 							<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
@@ -67,14 +56,13 @@
 
 					<aon:column>
 						<f:facet name="header">
-							<aon:outputText value="#{accountBundle.aon_type}" />
+							<aon:outputText value="#{bundle.aon_type}" />
 						</f:facet>
 						<aon:outputText value="#{to.type}" />
 					</aon:column>
 
 				</aon:dataTable>
-				<aon:dataScroller for="accountEntryDataList"
-					rowCount="#{accountEntry.model.rowCount}" showNote="true" />
+				<aon:dataScroller2 for="accountEntryDataList" showNote="true" />
 			</aon:div>
 		</aon:form>
 	</ui:define>

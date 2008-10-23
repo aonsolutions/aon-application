@@ -85,7 +85,7 @@ public class AccountSummaryManager {
 	}
 
 	@SuppressWarnings("unchecked")
-	public static void regenerateAccountSummary(Period accountPeriod) throws ManagerBeanException {
+	public static void regenerateAccountSummary(Period accountPeriod, IProgressionBean progressionBean) throws ManagerBeanException {
 		deleteAccountSummary(accountPeriod);
 
 		String select = "select entryDetail.account, entry.securityLevel, entry.entryDate, " +
@@ -97,6 +97,8 @@ public class AccountSummaryManager {
         Session session = HibernateUtil.getSession();
         Query query = session.createQuery(select);
         List list = query.list();
+        int count = list.size();
+        int i = 0;
         Iterator iterator = list.iterator();
         while (iterator.hasNext()) {
         	Object[] obj = (Object[])iterator.next();
@@ -109,6 +111,8 @@ public class AccountSummaryManager {
         	accountSummary.setDebit(round(((Double)obj[3]).doubleValue(),2));
         	accountSummary.setCredit(round(((Double)obj[4]).doubleValue(),2));
         	addAccountSummary(accountSummary);
+        	i++;    	
+        	progressionBean.setProgressionCurrentValue((long) ( i * 100 / count));
         }
 	}
 
