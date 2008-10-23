@@ -12,20 +12,6 @@ faces-config PUBLIC "-//Sun Microsystems, Inc.//DTD JavaServer Faces Config 1.1/
 		</locale-config>
 	</application>
 
-	<!--  *************** CONVERTERS ***************** -->
-	<converter>
-		<description>Conversor para los Enum</description>
-		<converter-for-class>java.lang.Enum</converter-for-class>
-		<converter-class>
-			com.code.aon.ui.converter.EnumLocaleConverter
-		</converter-class>
-	</converter>
-	<lifecycle>
-		<phase-listener>
-			com.code.aon.faces.component.sandbox.ValueChangePhaseListener
-		</phase-listener>
-	</lifecycle>
-
 	<!-- *************** RESOURCE RESOLVER ***************** --> 
 	<managed-bean>
 		<managed-bean-name>aonResource</managed-bean-name>
@@ -35,7 +21,7 @@ faces-config PUBLIC "-//Sun Microsystems, Inc.//DTD JavaServer Faces Config 1.1/
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
 			<property-name>resourceURIPreffix</property-name>
-			<value>/aonResource/1.6.5</value>
+			<value>/aonResource/3.0.0</value>
 		</managed-property>		
 	</managed-bean>
 
@@ -88,40 +74,6 @@ faces-config PUBLIC "-//Sun Microsystems, Inc.//DTD JavaServer Faces Config 1.1/
 				</map-entry>
 			</map-entries>
 		</managed-property>
-	</managed-bean>
-	
-	<!-- ******************
-		TIMEZONE CONTROLLER
-		*******************      -->
-	<managed-bean>
-		<managed-bean-name>timeZoneController</managed-bean-name>
-		<managed-bean-class>
-			com.code.aon.ui.common.controller.TimeZoneController
-		</managed-bean-class>
-		<managed-bean-scope>session</managed-bean-scope>
-	</managed-bean>
-	
-	<!-- ***************** LOGGED USER ******************** --> 
-	<managed-bean>
-		<managed-bean-name>loggedUser</managed-bean-name>
-		<managed-bean-class>com.code.aon.bridge.session.LoggedUser</managed-bean-class>
-		<managed-bean-scope>session</managed-bean-scope>
-	</managed-bean>
-	
-	<!-- ***************** FAILED LOGIN ******************** -->
-	<managed-bean>
-		<managed-bean-name>failedLogin</managed-bean-name>
-		<managed-bean-class>
-			com.code.aon.bridge.session.FailedLogin
-		</managed-bean-class>
-		<managed-bean-scope>request</managed-bean-scope>
-	</managed-bean>
-
-   	<!-- **************** REPORT ************************** -->
-	<managed-bean>
-		<managed-bean-name>report</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.report.controller.ReportManager</managed-bean-class>
-		<managed-bean-scope>request</managed-bean-scope>
 	</managed-bean>
 
 </faces-config>
