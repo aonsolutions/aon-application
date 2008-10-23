@@ -14,28 +14,29 @@
 				template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml">
 
 				<ui:param name="toolbarTitle"
-					value="#{appBundle.account_leasing_fee_entry}" />
+					value="#{accountBundle.account_leasing_fee_entry_module}" />
 				<ui:param name="toolbarDescription"
-					value="#{account_entry.new?(bundle.aon_reset):(bundle.aon_editing)}" />
+					value="#{accountLeasingFee.new?(bundle.aon_reset):(bundle.aon_editing)}" />
 
 				<ui:define name="toolbarContent">
 					<aon:commandButton id="save" value="#{bundle.aon_save}"
 						accesskey="#{bundle.aon_key_save}"
 						actionListener="#{accountLeasingFee.accept}"
-						action="account_entry_form" styleClass="aon-content-toolbar-item"
+						action="account_entry_form" 
+						styleClass="aon-finding-toolbar-item aon-icon-accept"
 						onclick="if (!confirm('#{bundle.aon_save_confirm}')) return true;">
 					</aon:commandButton>
 					<aon:commandButton id="reset" value="#{bundle.aon_reset}"
 						accesskey="#{bundle.aon_key_new}"
 						actionListener="#{accountLeasingFee.onReset}"
 						rendered="#{!accountLeasingFee.new}"
-						styleClass="aon-content-toolbar-item">
+						styleClass="aon-content-toolbar-item aon-icon-reset">
 					</aon:commandButton>
 					<aon:commandButton id="remove" value="#{bundle.aon_remove}"
 						accesskey="#{bundle.aon_key_remove}" action="account_entry_search"
 						actionListener="#{accountLeasingFee.onRemove}"
 						rendered="#{!accountLeasingFee.new}"
-						styleClass="aon-content-toolbar-item" immediate="true"
+						styleClass="aon-content-toolbar-item aon-icon-delete" immediate="true"
 						onclick="if (confirm('#{bundle.aon_remove_confirm}')) return true;">
 					</aon:commandButton>
 				</ui:define>
@@ -44,125 +45,103 @@
 			<aon:div id="entryContainer" styleClass="aon-scroll-area">
 				<aon:panelGrid columns="2">
 
-					<aon:outputLabel for="Account_invoice_series"
-						value="#{accountBundle.aon_series_number}" />
+					<aon:outputLabel for="invoice_series"
+						value="#{accountBundle.account_series_number}" />
 					<aon:div>
-						<aon:inputText id="Account_invoice_series"
+						<aon:inputText id="invoice_series"
 							value="#{accountLeasingFee.header.series}" size="4" maxlength="5" />
-						<aon:inputText id="Account_invoice_number"
+						<aon:inputText id="invoice_number"
 							value="#{accountLeasingFee.header.number}" size="7" maxlength="7">
 							<f:validateLength maximum="7" />
 						</aon:inputText>
 					</aon:div>
 
-					<aon:outputLabel for="Account_date"
-						value="#{accountBundle.aon_date}" />
-					<aon:selectInputDate size="8" id="Account_date" required="true"
+					<aon:outputLabel for="date"
+						value="#{bundle.aon_date}" />
+					<aon:selectInputDate size="8" id="date" required="true"
 						value="#{accountLeasingFee.header.leasingFeeDate}"
 						enableManualInput="true" datePattern="dd/MM/yyyy"
 						timeZone="#{timeZoneController.timeZone}" />
 
-					<aon:outputLabel for="Leasing_Lookup_id"
-						value="#{accountBundle.aon_leasing}" />
-					<aon:selectOneMenu id="Leasing_Lookup_id" required="true"
+					<aon:outputLabel for="leasing"
+						value="#{accountBundle.account_leasing}" />
+					<aon:selectOneMenu id="leasing" required="true"
 						ajaxSingle="true"
-						reRender="Leasing_Lookup_vat_percentage,Account_taxableBase,Account_total,Leasing_Lookup_supplierName,Leasing_Lookup_supplierDocument"
+						reRender="vat_percentage,taxableBase,total,supplierName,supplierDocument"
 						value="#{accountLeasingFee.header.leasing}">
 						<f:selectItem itemDisabled="true" itemValue="" itemLabel="-" />
 						<f:selectItems value="#{accountCollections.accountLeasings}" />
 					</aon:selectOneMenu>
 
-					<aon:outputLabel for="Leasing_Lookup_supplierName"
-						value="#{accountBundle.aon_leasing_supplier_name}" />
-					<aon:inputText id="Leasing_Lookup_supplierName"
+					<aon:outputLabel for="supplierName"
+						value="#{bundle.aon_company_name}" />
+					<aon:inputText id="supplierName"
 						value="#{accountLeasingFee.header.leasing.supplierName}" size="60" />
 
-					<aon:outputLabel for="Leasing_Lookup_supplierDocument"
-						value="#{accountBundle.aon_leasing_supplier_document}" />
-					<aon:inputText id="Leasing_Lookup_supplierDocument"
+					<aon:outputLabel for="supplierDocument"
+						value="#{bundle.aon_cif}" />
+					<aon:inputText id="supplierDocument"
 						value="#{accountLeasingFee.header.leasing.supplierDocument}"
 						size="12" />
 
-					<aon:outputLabel for="Account_amortization"
-						value="#{accountBundle.aon_leasing_amortization}" />
-					<aon:inputText id="Account_amortization"
-						reRender="Account_taxableBase" ajaxSingle="true"
+					<aon:outputLabel for="amortization"
+						value="#{accountBundle.account_amortization}" />
+					<aon:inputText id="amortization"
+						reRender="taxableBase,total" ajaxSingle="true"
 						value="#{accountLeasingFee.header.amortization}" size="7" />
 
-					<aon:outputLabel for="Account_interest"
-						value="#{accountBundle.aon_leasing_interest}" />
-					<aon:inputText id="Account_interest" reRender="Account_taxableBase"
+					<aon:outputLabel for="interest"
+						value="#{accountBundle.account_interest}" />
+					<aon:inputText id="interest" reRender="taxableBase,total"
 						ajaxSingle="true" value="#{accountLeasingFee.header.interest}"
 						size="7" />
 
-					<aon:outputLabel for="Account_taxableBase"
-						value="#{accountBundle.aon_leasing_taxableBase}" />
-					<aon:inputText id="Account_taxableBase"
+					<aon:outputLabel for="taxableBase"
+						value="#{accountBundle.account_taxableBase}" />
+					<aon:inputText id="taxableBase"
 						value="#{accountLeasingFee.header.taxableBase}" disabled="true"
 						size="7" />
 
-					<aon:outputLabel for="Leasing_Lookup_vat_percentage"
-						value="#{accountBundle.aon_leasing_vat}" />
-					<aon:inputText id="Leasing_Lookup_vat_percentage" disabled="true"
+					<aon:outputLabel for="vat_percentage"
+						value="#{accountBundle.account_vat}" />
+					<aon:inputText id="vat_percentage" disabled="true"
 						value="#{accountLeasingFee.header.leasing.vat.percentage}"
 						size="7" />
 
-					<aon:outputLabel for="Account_expenses"
-						value="#{accountBundle.aon_leasing_expenses}" />
-					<aon:inputText id="Account_expenses" reRender="Account_total"
+					<aon:outputLabel for="expenses"
+						value="#{accountBundle.account_expenses}" />
+					<aon:inputText id="expenses" reRender="total"
 						ajaxSingle="true" value="#{accountLeasingFee.header.expenses}"
 						size="7" />
 
-					<aon:outputLabel for="Account_total"
-						value="#{accountBundle.aon_leasing_invoiceTotal}" />
-					<aon:inputText id="Account_total"
+					<aon:outputLabel for="total"
+						value="#{accountBundle.account_total}" />
+					<aon:inputText id="total"
 						value="#{accountLeasingFee.header.total}" disabled="true" size="7" />
 
 					<aon:outputLabel for="RegistryBank_Lookup_id"
-						value="#{accountBundle.aon_bank}" />
+						value="#{financeBundle.finance_bank}" />
 					<aon:selectOneMenu id="RegistryBank_Lookup_id" required="true"
-						value="#{accountLeasingFee.header.registryBank.id}"
-						reRender="RegistryBank_bankAccount" ajaxSingle="true"
-						valueChangeListener="#{accountLeasingFee.onRBankChange}">
+						value="#{accountLeasingFee.header.RBank}"
+						reRender="RegistryBank_bankAccount" ajaxSingle="true">
 						<f:selectItem itemDisabled="true" itemValue="" itemLabel="-" />
 						<f:selectItems value="#{financeCollections.companyBanks}" />
 					</aon:selectOneMenu>
 
-					<aon:outputLabel for="RegistryBank_bankAccount"
-						value="#{financeBundle.aon_bank_account}" />
-					<aon:inputText id="RegistryBank_bankAccount"
-						value="#{accountLeasingFee.header.registryBank.bankAccount}"
-						disabledOnClientSide="true" size="35" />
+					<aon:outputText value="#{financeBundle.finance_bank_account}" />
+					<aon:div id="RegistryBank_bankAccount">
+						<aon:outputText value="#{accountLeasingFee.header.RBank.bankAccount}" />
+						<aon:outputText value="&#160;" />
+					</aon:div>
 
 					<aon:outputLabel for="AccountEntry_securityLevel"
-						value="#{accountBundle.aon_account_security_level}" />
+						value="#{bundle.aon_security_level}" />
 					<aon:selectOneMenu id="AccountEntry_securityLevel"
 						value="#{accountLeasingFee.header.securityLevel}">
-						<f:selectItems value="#{accountCollections.securityLevels}" />
+						<f:selectItems value="#{commonCollections.securityLevels}" />
 					</aon:selectOneMenu>
 				</aon:panelGrid>
 			</aon:div>
 		</aon:form>
 	</ui:define>
 </ui:composition>
-
-<!-- 
- 		<script>
-			function calculateFee() {
-				amortization = document.getElementById("Account_amortization").value;
-				interest = document.getElementById("Account_interest").value;
-				expenses = document.getElementById("Account_expenses").value;
-				vat = document.getElementById("Leasing_Lookup_vat_percentage").value;
-
-				taxableBase = eval(amortization + "+" + interest);
-				document.getElementById("Account_taxableBase").value = taxableBase;
-				document.getElementById("Account_taxableBase").onchange();
-
-		    	value = Math.pow(10,2);
-		        total = Math.round(parseFloat(taxableBase*(1+(vat/100)))*value)/value;
-				total = eval(total + "+" + expenses);
-				document.getElementById("Account_total").value = total;
-			}
-			calculateFee();
-		</script>
- -->

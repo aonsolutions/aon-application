@@ -6,7 +6,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.faces.event.ActionEvent;
-import javax.faces.event.ValueChangeEvent;
 
 import com.code.aon.account.Account;
 import com.code.aon.account.AccountEntry;
@@ -181,19 +180,6 @@ public class AccountSalaryController {
 			accountEntryBean.remove(accountEntry);
 		} catch (ManagerBeanException e) {
 			LOGGER.log(Level.SEVERE, "Error deleting AccountEntry with id= " + accountEntry.getId(), e);
-		}
-	}
-	
-	@SuppressWarnings("unchecked")
-	public void onRBankChange(ValueChangeEvent event) throws ManagerBeanException {
-		if(event.getNewValue() != null){
-			IManagerBean rBankBean = BeanManager.getManagerBean(RegistryBank.class);
-			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(rBankBean.getFieldName(IFinanceAlias.REGISTRY_BANK_ID), event.getNewValue());
-			Iterator iter = rBankBean.getList(criteria).iterator();
-			if(iter.hasNext()){
-				this.header.setRBank((RegistryBank)iter.next());
-			}
 		}
 	}
 	

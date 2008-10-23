@@ -6,13 +6,11 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.faces.event.ActionEvent;
-import javax.faces.event.ValueChangeEvent;
 
 import com.code.aon.account.Account;
 import com.code.aon.account.AccountEntry;
 import com.code.aon.account.AccountEntryDetail;
 import com.code.aon.account.AccountExpenseHeader;
-import com.code.aon.account.Period;
 import com.code.aon.account.bridge.util.AccountUtil;
 import com.code.aon.account.dao.IAccountAlias;
 import com.code.aon.account.enumeration.AccountEntryType;
@@ -20,9 +18,6 @@ import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.enumeration.SecurityLevel;
-import com.code.aon.finance.Bank;
-import com.code.aon.finance.RegistryBank;
-import com.code.aon.finance.dao.IFinanceAlias;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.util.AonUtil;
 
@@ -78,13 +73,13 @@ public class AccountExpensesController {
 	
 	private AccountExpenseHeader initializeHeader() {
 		AccountExpenseHeader header = new AccountExpenseHeader();
-		Account account = new Account();
-		account.setEntryEnabled(true);
-		header.setAccount(account);
-		header.setRBank(new RegistryBank());
-		header.getRBank().setBank(new Bank());
+		//Account account = new Account();
+		//account.setEntryEnabled(true);
+		//header.setAccount(account);
+		//header.setRBank(new RegistryBank());
+		//header.getRBank().setBank(new Bank());
 		header.setDate(new Date());
-		header.setPeriod(new Period());
+		//header.setPeriod(new Period());
 		header.setSecurityLevel(SecurityLevel.OFFICIAL);
 		return header;
 	}
@@ -174,20 +169,7 @@ public class AccountExpensesController {
 		}
 		return entry;
 	}
-	
-	@SuppressWarnings("unchecked")
-	public void onRBankChange(ValueChangeEvent event) throws ManagerBeanException {
-		if(event.getNewValue() != null){
-			IManagerBean rBankBean = BeanManager.getManagerBean(RegistryBank.class);
-			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(rBankBean.getFieldName(IFinanceAlias.REGISTRY_BANK_ID), event.getNewValue());
-			Iterator iter = rBankBean.getList(criteria).iterator();
-			if(iter.hasNext()){
-				this.header.setRBank((RegistryBank)iter.next());
-			}
-		}
-	}
-	
+
 	private void loadAccountEntryController(AccountEntry entry) {
 		try {
 			AccountEntryController entryController = (AccountEntryController)AonUtil.getController(ACCOUNT_ENTRY_CONTROLLER_NAME);

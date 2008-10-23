@@ -17,7 +17,6 @@ import com.code.aon.account.enumeration.AccountEntryType;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
-import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.ast.Expression;
 import com.code.aon.ql.util.ExpressionException;
@@ -50,7 +49,7 @@ public class AccountCollectionsController {
 		Iterator iter = accountBean.getList(criteria).iterator();
 		while(iter.hasNext()){
 			Account account = (Account)iter.next();
-			SelectItem item = new SelectItem(account.getId(), account.getId() + " " + account.getDescription());
+			SelectItem item = new SelectItem(account, account.getFullDescription());
 			salesAccounts.add(item);
 		}
 		return salesAccounts;
@@ -73,7 +72,7 @@ public class AccountCollectionsController {
 		Iterator iter = accountBean.getList(criteria).iterator();
 		while(iter.hasNext()){
 			Account account = (Account)iter.next();
-			SelectItem item = new SelectItem(account.getId(), account.getId() + " " + account.getDescription());
+			SelectItem item = new SelectItem(account, account.getFullDescription());
 			purchaseAccounts.add(item);
 		}
 		return purchaseAccounts;
@@ -89,7 +88,7 @@ public class AccountCollectionsController {
 		Iterator iter = accountBean.getList(criteria).iterator();
 		while(iter.hasNext()){
 			Account account = (Account)iter.next();
-			SelectItem item = new SelectItem(account.getId(), account.getId() + " " + account.getDescription());
+			SelectItem item = new SelectItem(account, account.getFullDescription());
 			cashAccounts.add(item);
 		}
 		return cashAccounts;
@@ -115,7 +114,7 @@ public class AccountCollectionsController {
 		Iterator iter = accountBean.getList(criteria).iterator();
 		while(iter.hasNext()){
 			Account account = (Account)iter.next();
-			SelectItem item = new SelectItem(account.getId(), account.getId() + " " + account.getDescription());
+			SelectItem item = new SelectItem(account, account.getFullDescription());
 			expensesAccounts.add(item);
 		}
 		return expensesAccounts;
@@ -131,7 +130,7 @@ public class AccountCollectionsController {
 		Iterator iter = accountBean.getList(criteria).iterator();
 		while(iter.hasNext()){
 			Account account = (Account)iter.next();
-			SelectItem item = new SelectItem(account.getId(), account.getId() + " " + account.getDescription());
+			SelectItem item = new SelectItem(account, account.getFullDescription());
 			chargedVatAccounts.add(item);
 		}
 		return chargedVatAccounts;
@@ -147,7 +146,7 @@ public class AccountCollectionsController {
 		Iterator iter = accountBean.getList(criteria).iterator();
 		while(iter.hasNext()){
 			Account account = (Account)iter.next();
-			SelectItem item = new SelectItem(account.getId(), account.getId() + " " + account.getDescription());
+			SelectItem item = new SelectItem(account, account.getFullDescription());
 			paidVatAccounts.add(item);
 		}
 		return paidVatAccounts;
@@ -163,7 +162,7 @@ public class AccountCollectionsController {
 		Iterator iter = accountBean.getList(criteria).iterator();
 		while(iter.hasNext()){
 			Account account = (Account)iter.next();
-			SelectItem item = new SelectItem(account.getId(), account.getId() + " " + account.getDescription());
+			SelectItem item = new SelectItem(account, account.getFullDescription());
 			paidRetentionAccounts.add(item);
 		}
 		return paidRetentionAccounts;
@@ -179,7 +178,7 @@ public class AccountCollectionsController {
 		Iterator iter = accountBean.getList(criteria).iterator();
 		while(iter.hasNext()){
 			Account account = (Account)iter.next();
-			SelectItem item = new SelectItem(account.getId(), account.getId() + " " + account.getDescription());
+			SelectItem item = new SelectItem(account, account.getFullDescription());
 			chargedRetentionAccounts.add(item);
 		}
 		return chargedRetentionAccounts;
@@ -195,7 +194,7 @@ public class AccountCollectionsController {
 		Iterator iter = accountBean.getList(criteria).iterator();
 		while(iter.hasNext()){
 			Account account = (Account)iter.next();
-			SelectItem item = new SelectItem(account.getId(), account.getId() + " " + account.getDescription());
+			SelectItem item = new SelectItem(account, account.getFullDescription());
 			salaryAccounts.add(item);
 		}
 		return salaryAccounts;
@@ -211,7 +210,7 @@ public class AccountCollectionsController {
 		Iterator iter = accountBean.getList(criteria).iterator();
 		while(iter.hasNext()){
 			Account account = (Account)iter.next();
-			SelectItem item = new SelectItem(account.getId(), account.getId() + " " + account.getDescription());
+			SelectItem item = new SelectItem(account, account.getFullDescription());
 			pendingSalaryAccounts.add(item);
 		}
 		return pendingSalaryAccounts;
@@ -227,7 +226,7 @@ public class AccountCollectionsController {
 		Iterator iter = accountBean.getList(criteria).iterator();
 		while(iter.hasNext()){
 			Account account = (Account)iter.next();
-			SelectItem item = new SelectItem(account.getId(), account.getId() + " " + account.getDescription());
+			SelectItem item = new SelectItem(account, account.getFullDescription());
 			socialInsuranceAccounts.add(item);
 		}
 		return socialInsuranceAccounts;
@@ -243,7 +242,7 @@ public class AccountCollectionsController {
 		Iterator iter = accountBean.getList(criteria).iterator();
 		while(iter.hasNext()){
 			Account account = (Account)iter.next();
-			SelectItem item = new SelectItem(account.getId(), account.getId() + " " + account.getDescription());
+			SelectItem item = new SelectItem(account, account.getFullDescription());
 			enterpriseSocialInsuranceAccounts.add(item);
 		}
 		return enterpriseSocialInsuranceAccounts;
@@ -259,7 +258,7 @@ public class AccountCollectionsController {
 		Iterator iter = accountBean.getList(criteria).iterator();
 		while(iter.hasNext()){
 			Account account = (Account)iter.next();
-			SelectItem item = new SelectItem(account.getId(), account.getId() + " " + account.getDescription());
+			SelectItem item = new SelectItem(account, account.getFullDescription());
 			fixedAssestsAccounts.add(item);
 		}
 		return fixedAssestsAccounts;
@@ -275,7 +274,7 @@ public class AccountCollectionsController {
 		Iterator iter = accountBean.getList(criteria).iterator();
 		while(iter.hasNext()){
 			Account account = (Account)iter.next();
-			SelectItem item = new SelectItem(account.getId(), account.getId() + " " + account.getDescription());
+			SelectItem item = new SelectItem(account, account.getFullDescription());
 			debtInterestAccounts.add(item);
 		}
 		return debtInterestAccounts;
@@ -291,7 +290,7 @@ public class AccountCollectionsController {
 		Iterator iter = accountBean.getList(criteria).iterator();
 		while(iter.hasNext()){
 			Account account = (Account)iter.next();
-			SelectItem item = new SelectItem(account.getId(), account.getId() + " " + account.getDescription());
+			SelectItem item = new SelectItem(account, account.getFullDescription());
 			financialExpensesAccounts.add(item);
 		}
 		return financialExpensesAccounts;
@@ -313,7 +312,7 @@ public class AccountCollectionsController {
 		Iterator iter = periodBean.getList(criteria).iterator();
 		while(iter.hasNext()){
 			Period period = (Period)iter.next();
-			SelectItem item = new SelectItem(period.getId(), period.getId());
+			SelectItem item = new SelectItem(period, period.getId());
 			accountPeriods.add(item);
 		}
 		return accountPeriods;
@@ -332,17 +331,6 @@ public class AccountCollectionsController {
 		return types;
 	}
 	
-	public List<SelectItem> getSecurityLevels() {
-		Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
-		LinkedList<SelectItem> levels = new LinkedList<SelectItem>();
-		for (SecurityLevel level : SecurityLevel.values()) {
-			String name = level.getName(locale);
-			SelectItem item = new SelectItem(level, name);
-			levels.add(item);
-		}
-		return levels;
-	}
-
 	public List<SelectItem> getAccountLevels() {
 		if (accountLevels == null) {
 			accountLevels = new LinkedList<SelectItem>();
@@ -362,7 +350,7 @@ public class AccountCollectionsController {
 		Iterator iter = loanBean.getList(null).iterator();
 		while(iter.hasNext()){
 			Loan loan = (Loan) iter.next();
-			SelectItem item = new SelectItem(loan.getId(), loan.getDescription());
+			SelectItem item = new SelectItem(loan, loan.getDescription());
 			loans.add(item);
 		}
 		return loans;

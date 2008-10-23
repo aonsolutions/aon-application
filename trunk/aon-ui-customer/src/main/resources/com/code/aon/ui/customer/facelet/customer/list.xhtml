@@ -30,7 +30,7 @@
 
 					<aon:column>
 						<f:facet name="header">
-							<aon:outputText value="#{customerBundle.customer_document}" />
+							<aon:outputText value="#{bundle.aon_company_document}" />
 						</f:facet>
 						<aon:outputText value="#{to.registry.document}" />
 					</aon:column>
@@ -44,14 +44,14 @@
 
 					<aon:column>
 						<f:facet name="header">
-							<aon:outputText value="#{customerBundle.customer_surname}" />
+							<aon:outputText value="#{registryBundle.registry_surname}" />
 						</f:facet>
 						<aon:outputText value="#{to.registry.surname}" />
 					</aon:column>
 
 					<aon:column>
 						<f:facet name="header">
-							<aon:outputText value="#{customerBundle.customer_alias}" />
+							<aon:outputText value="#{bundle.aon_company_alias}" />
 						</f:facet>
 						<aon:outputText value="#{to.registry.alias}" />
 					</aon:column>
@@ -63,8 +63,7 @@
 						<aon:outputText value="#{to.status}" />
 					</aon:column>
 				</aon:dataTable>
-				<aon:dataScroller for="customerDataList"
-					rowCount="#{customer.model.rowCount}" showNote="true" />
+				<aon:dataScroller2 for="customerDataList" showNote="true" />
 			</aon:div>
 		</aon:form>
 	</ui:define>

@@ -77,10 +77,9 @@
 					<aon:outputLabel for="AccountEntry_securityLevel"
 						value="#{accountBundle.aon_account_security_level}" />
 					<aon:selectOneMenu id="AccountEntry_securityLevel"
-						converter="enumConverter"
 						valueChangeListener="#{accountEntry.addDirectExpression}">
 						<f:selectItem value="#{nullItem.value}" />
-						<f:selectItems value="#{accountCollections.securityLevels}" />
+						<f:selectItems value="#{commonCollections.securityLevels}" />
 					</aon:selectOneMenu>
 				</ui:define>
 			</ui:decorate>

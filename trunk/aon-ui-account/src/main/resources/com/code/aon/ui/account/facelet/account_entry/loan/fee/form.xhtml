@@ -16,9 +16,9 @@
 				template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml">
 
 				<ui:param name="toolbarTitle"
-					value="#{appBundle.account_loan_fee_entry}" />
+					value="#{accountBundle.account_loan_fee_entry_module}" />
 				<ui:param name="toolbarDescription"
-					value="#{account_entry.new?(bundle.aon_reset):(bundle.aon_editing)}" />
+					value="#{accountLoanFee.new?(bundle.aon_reset):(bundle.aon_editing)}" />
 
 				<ui:define name="toolbarContent">
 					<aon:commandButton id="save" value="#{bundle.aon_save}"
@@ -45,67 +45,65 @@
 				</ui:define>
 			</ui:decorate>
 
-
 			<aon:div id="entryContainer" styleClass="aon-scroll-area">
 				<aon:panelGrid columns="2">
 
 					<aon:outputLabel for="Account_date"
-						value="#{accountBundle.aon_date}" />
+						value="#{bundle.aon_date}" />
 					<aon:selectInputDate size="8" id="Account_date" required="true"
 						value="#{accountLoanFee.header.feeDate}" enableManualInput="true"
 						datePattern="dd/MM/yyyy" timeZone="#{timeZoneController.timeZone}" />
 
 					<aon:outputLabel for="Loan_Lookup_id"
-						value="#{accountBundle.aon_loan}" />
+						value="#{accountBundle.account_loan}" />
 					<aon:selectOneMenu id="Loan_Lookup_id" required="true"
-						value="#{accountLoanFee.header.loan.id}">
+						value="#{accountLoanFee.header.loan}">
 						<f:selectItem itemDisabled="true" itemValue="" itemLabel="-" />
 						<f:selectItems value="#{accountCollections.accountLoans}" />
 					</aon:selectOneMenu>
 
 					<aon:outputLabel for="Account_description"
-						value="#{accountBundle.aon_description}" />
+						value="#{bundle.aon_description}" />
 					<aon:inputText id="Account_description"
 						value="#{accountLoanFee.header.description}" size="60" />
 
 					<aon:outputLabel for="Account_amortization"
-						value="#{accountBundle.aon_loan_amortization}" />
+						value="#{accountBundle.account_amortization}" />
 					<aon:inputText id="Account_amortization"
 						reRender="Account_fee" 
 						value="#{accountLoanFee.header.amortization}" size="7"/>
 
 					<aon:outputLabel for="Account_interest"
-						value="#{accountBundle.aon_loan_interest}" />
+						value="#{accountBundle.account_interest}" />
 					<aon:inputText id="Account_interest"
 						reRender="Account_fee" 
 						value="#{accountLoanFee.header.interest}" size="7" />
 
 					<aon:outputLabel for="Account_fee"
-						value="#{accountBundle.aon_loan_fee}" />
+						value="#{accountBundle.account_fee}" />
 					<aon:inputText id="Account_fee"
-						value="#{accountLoanFee.header.fee}" disabled="#{true}" size="7"/>
+						value="#{accountLoanFee.header.fee}" disabled="true" size="7"/>
 
 					<aon:outputLabel for="RegistryBank_Lookup_id"
-						value="#{accountBundle.aon_bank}" />
+						value="#{financeBundle.finance_bank}" />
 					<aon:selectOneMenu id="RegistryBank_Lookup_id" required="true"
-						value="#{accountLoanFee.header.registryBank.id}"
-						reRender="RegistryBank_bankAccount"
-						valueChangeListener="#{accountLoanFee.onRBankChange}">
+						value="#{accountLoanFee.header.registryBank}"
+						reRender="RegistryBank_bankAccount">
 						<f:selectItem itemDisabled="true" itemValue="" itemLabel="-" />
 						<f:selectItems value="#{financeCollections.companyBanks}" />
 					</aon:selectOneMenu>
 
-					<aon:outputLabel for="RegistryBank_bankAccount"
-						value="#{financeBundle.aon_bank_account}" />
-					<aon:inputText id="RegistryBank_bankAccount"
-						value="#{accountLoanFee.header.registryBank.bankAccount}"
-						disabled="true" size="35" />
+					<aon:outputText value="#{financeBundle.finance_bank_account}" />
+					<aon:div id="RegistryBank_bankAccount">
+						<aon:outputText value="#{accountLoanFee.header.registryBank.bankAccount}" />
+						<aon:outputText value="&#160;" />
+					</aon:div>
 
 					<aon:outputLabel for="AccountEntry_securityLevel"
-						value="#{accountBundle.aon_account_security_level}"/>
+						value="#{bundle.aon_security_level}"/>
 					<aon:selectOneMenu id="AccountEntry_securityLevel"
 						value="#{accountLoanFee.header.securityLevel}">
-						<f:selectItems value="#{accountCollections.securityLevels}" />
+						<f:selectItems value="#{commonCollections.securityLevels}" />
 					</aon:selectOneMenu>
 				</aon:panelGrid>
 			</aon:div>

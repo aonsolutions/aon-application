@@ -37,7 +37,7 @@ public class AccountLeasingFeeHeader implements ITransferObject {
 	private double expenses;
 	
 	/** The registry bank. */
-	private RegistryBank registryBank;
+	private RegistryBank rBank;
 
 	/** The security level. */
 	private SecurityLevel securityLevel;
@@ -191,8 +191,8 @@ public class AccountLeasingFeeHeader implements ITransferObject {
 	 * 
 	 * @return the registry bank
 	 */
-	public RegistryBank getRegistryBank() {
-		return registryBank;
+	public RegistryBank getRBank() {
+		return rBank;
 	}
 
 	/**
@@ -200,8 +200,8 @@ public class AccountLeasingFeeHeader implements ITransferObject {
 	 * 
 	 * @param registryBank the registry bank
 	 */
-	public void setRegistryBank(RegistryBank registryBank) {
-		this.registryBank = registryBank;
+	public void setRBank(RegistryBank registryBank) {
+		this.rBank = registryBank;
 	}
 
 	/**

@@ -117,7 +117,7 @@ disabled="#{!accountEntry.manual}"
 								styleClass="aon-form-selectOneMenu-field"
 								value="#{accountEntry.to.securityLevel}"
 								rendered="#{accountEntry.manual and accountEntry.new}">
-								<f:selectItems value="#{accountCollections.securityLevels}" />
+								<f:selectItems value="#{commonCollections.securityLevels}" />
 							</aon:selectOneMenu>
 							<aon:outputText value="#{accountEntry.to.securityLevel}&#160;"
 								rendered="#{!accountEntry.manual or !accountEntry.new}" />

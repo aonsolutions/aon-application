@@ -6,17 +6,13 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.faces.event.ActionEvent;
-import javax.faces.event.ValueChangeEvent;
 
 import com.code.aon.account.Account;
 import com.code.aon.account.AccountEntry;
 import com.code.aon.account.AccountEntryDetail;
 import com.code.aon.account.AccountLeasingFeeHeader;
 import com.code.aon.account.DefaultAccounts;
-import com.code.aon.account.Leasing;
 import com.code.aon.account.bridge.AccountEntryInvoice;
-import com.code.aon.account.bridge.LeasingAccount;
-import com.code.aon.account.bridge.dao.IAccountBridgeAlias;
 import com.code.aon.account.bridge.util.AccountUtil;
 import com.code.aon.account.dao.IAccountAlias;
 import com.code.aon.account.enumeration.AccountEntryType;
@@ -29,7 +25,6 @@ import com.code.aon.company.WorkPlace;
 import com.code.aon.finance.Invoice;
 import com.code.aon.finance.InvoiceDetail;
 import com.code.aon.finance.InvoiceTax;
-import com.code.aon.finance.RegistryBank;
 import com.code.aon.finance.dao.IFinanceAlias;
 import com.code.aon.finance.enumeration.InvoiceSource;
 import com.code.aon.finance.enumeration.InvoiceStatus;
@@ -90,10 +85,6 @@ public class AccountLeasingFeeController {
 		AccountLeasingFeeHeader header = new AccountLeasingFeeHeader();
 		header.setLeasingFeeDate(new Date());
 		header.setSecurityLevel(SecurityLevel.OFFICIAL);
-		Leasing leasing = new Leasing();
-		leasing.setRegistryBank(new RegistryBank());
-		header.setLeasing(leasing);
-		header.setRegistryBank(new RegistryBank());
 		return header;
 	}
 	
@@ -110,9 +101,6 @@ public class AccountLeasingFeeController {
 		entry.setEntryDate(getHeader().getLeasingFeeDate());
 		entry.setJournal(null);
 		entry.setSecurityLevel(getHeader().getSecurityLevel());
-		// TODO euke ¿¿¿y esto???
-		Account account = obtainLeasingAccount(getHeader().getLeasing());
-
 		entry.setType(AccountEntryType.LEASING_FEE);
 		Invoice invoice = insertInvoice();
 		insertInvoiceDetail(invoice);
@@ -139,19 +127,6 @@ public class AccountLeasingFeeController {
 		insertInvoiceTaxes(detail);
 	}
 
-	/* NO se llama a AccountUtil porque este aquí no se genera si no existe */
-	@SuppressWarnings("unchecked")
-	private Account obtainLeasingAccount(Leasing leasing) throws ManagerBeanException {
-		IManagerBean leasingAccountBean = BeanManager.getManagerBean(LeasingAccount.class);
-		Criteria criteria = new Criteria();
-		criteria.addEqualExpression(leasingAccountBean.getFieldName(IAccountBridgeAlias.LEASING_ACCOUNT_LEASING_ID), leasing.getId());
-		Iterator iter = leasingAccountBean.getList(criteria).iterator();
-		if(iter.hasNext()){
-			return ((LeasingAccount)iter.next()).getAccount();
-		}
-		return null;
-	}
-	
 	private AccountEntry insertorUpdateAccountEntry(AccountEntry entry) {
 		try {
 			IManagerBean entryBean = BeanManager.getManagerBean(AccountEntry.class);
@@ -171,7 +146,7 @@ public class AccountLeasingFeeController {
 			IManagerBean accountEntryDetailBean = BeanManager.getManagerBean(AccountEntryDetail.class);
 			// Primer Apunte
 			AccountEntryDetail detail = new AccountEntryDetail();
-			Account rBankAccount = AccountUtil.obtainRBankAccount(getHeader().getRegistryBank());
+			Account rBankAccount = AccountUtil.obtainRBankAccount(getHeader().getRBank());
 			Account leasingAccount = AccountUtil.obtainLeasingAccount(getHeader().getLeasing());
 			detail.setAccount(rBankAccount);
 			detail.setAccountEntry(entry);
@@ -346,32 +321,6 @@ public class AccountLeasingFeeController {
 			accountEntryInvoiceBean.remove(accountEntryInvoice);
 		} catch (ManagerBeanException e) {
 			LOGGER.log(Level.SEVERE,"Error deleting accountEntryInvoice with id= " + accountEntryInvoice.getId(), e);
-		}
-	}
-	
-	@SuppressWarnings("unchecked")
-	public void onRBankChange(ValueChangeEvent event) throws ManagerBeanException {
-		if(event.getNewValue() != null){
-			IManagerBean rBankBean = BeanManager.getManagerBean(RegistryBank.class);
-			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(rBankBean.getFieldName(IFinanceAlias.REGISTRY_BANK_ID), event.getNewValue());
-			Iterator iter = rBankBean.getList(criteria).iterator();
-			if(iter.hasNext()){
-				this.getHeader().setRegistryBank((RegistryBank)iter.next());
-			}
-		}
-	}
-	
-	@SuppressWarnings("unchecked")
-	public void onLeasingChange(ValueChangeEvent event) throws ManagerBeanException{
-		if(event.getNewValue() != null){
-			IManagerBean leasingBean = BeanManager.getManagerBean(Leasing.class);
-			Criteria criteria = new Criteria();
-			criteria.addEqualExpression(leasingBean.getFieldName(IAccountAlias.LEASING_ID), event.getNewValue());
-			Iterator iter = leasingBean.getList(criteria).iterator();
-			if(iter.hasNext()){
-				this.getHeader().setLeasing((Leasing)iter.next());
-			}
 		}
 	}
 

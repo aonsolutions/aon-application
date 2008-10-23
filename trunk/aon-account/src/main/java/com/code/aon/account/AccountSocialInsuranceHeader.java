@@ -26,7 +26,7 @@ public class AccountSocialInsuranceHeader implements ITransferObject{
 	private double amount;
 	
 	/** The registry bank. */
-	private RegistryBank registryBank;
+	private RegistryBank rBank;
 	
 	private SecurityLevel securityLevel;
 
@@ -107,8 +107,8 @@ public class AccountSocialInsuranceHeader implements ITransferObject{
 	 * 
 	 * @return the registry bank
 	 */
-	public RegistryBank getRegistryBank() {
-		return registryBank;
+	public RegistryBank getRBank() {
+		return rBank;
 	}
 
 	/**
@@ -116,8 +116,8 @@ public class AccountSocialInsuranceHeader implements ITransferObject{
 	 * 
 	 * @param registryBank the registry bank
 	 */
-	public void setRegistryBank(RegistryBank registryBank) {
-		this.registryBank = registryBank;
+	public void setRBank(RegistryBank registryBank) {
+		this.rBank = registryBank;
 	}
 
 	public SecurityLevel getSecurityLevel() {
