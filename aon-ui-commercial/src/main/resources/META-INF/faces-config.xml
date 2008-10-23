@@ -1,0 +1,100 @@
+<faces-config version="1.2"
+	xmlns="http://java.sun.com/xml/ns/javaee"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-facesconfig_1_2.xsd">
+
+	<!--  *************** COLLECTIONS ***************** -->
+
+	<managed-bean>
+		<managed-bean-name>commercialCollections</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.commercial.controller.CommercialCollectionsController
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>	
+
+	<!-- ************ COMMERCIAL SEGMENT ************** -->
+	<managed-bean>
+		<managed-bean-name>commercialSegment</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.form.BasicController
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.commercial.CommercialSegment</value>
+		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>commercialSegment</value>
+		</managed-property>
+	</managed-bean>
+
+	<!-- ************ COMMERCIAL ACTIVITY ************** -->
+	<managed-bean>
+		<managed-bean-name>commercialActivity</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.form.BasicController
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.commercial.CommercialActivity</value>
+		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>commercialActivity</value>
+		</managed-property>
+	</managed-bean>
+
+	<!-- ************ COMMERCIAL TRACKING ************** -->
+	<managed-bean>
+		<managed-bean-name>commercialTracking</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.commercial.controller.CommercialTrackingController
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.commercial.CommercialTracking</value>
+		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>commercialTracking</value>
+		</managed-property>
+		<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>CommercialTracking_date</value>
+		</managed-property>
+		<managed-property>
+			<property-name>listenerClasses</property-name>
+			<list-entries>
+				<value-class>
+					com.code.aon.ui.form.event.IControllerListener
+				</value-class>
+				<value>#{commercialTrackingListener}</value>
+			</list-entries>
+		</managed-property>
+	</managed-bean>
+
+	<managed-bean>
+		<managed-bean-name>commercialTrackingListener</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.commercial.event.CommercialTrackingListener
+		</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+	</managed-bean>
+	
+</faces-config>
