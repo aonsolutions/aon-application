@@ -61,13 +61,26 @@
 						popupDateFormat="#{appBundle.aon_date_pattern}"
 						valueChangeListener="#{cuotas.addExpression}">
 					</aon:selectInputDate>-->
-					
+
 					<aon:outputLabel for="Cuota_hasta"
 						value="#{appBundle.aon_payroll_auxiliares_irpf__cuota_hasta}" />
 					<aon:inputText id="Cuota_hasta" size="20" maxlength="20"
 						valueChangeListener="#{cuotas.addExpression}" />
+
+					<aon:outputLabel for="Cuota_pesetas"
+						value="#{appBundle.aon_payroll_auxiliares_irpf__cuota_pesetas}" />
+					<aon:inputText id="Cuota_pesetas" size="20" maxlength="20"
+						valueChangeListener="#{cuotas.addExpression}" />
+
+					<aon:outputLabel for="Cuota_resto"
+						value="#{appBundle.aon_payroll_auxiliares_irpf__cuota_resto}" />
+					<aon:inputText id="Cuota_resto" size="20" maxlength="20"
+						valueChangeListener="#{cuotas.addExpression}" />
 						
-					
+					<aon:outputLabel for="Cuota_porcentaje"
+						value="#{appBundle.aon_payroll_auxiliares_irpf__cuota_porcentaje}" />
+					<aon:inputText id="Cuota_porcentaje" size="20" maxlength="20"
+						valueChangeListener="#{cuotas.addExpression}" />
 
 
 				</ui:define>

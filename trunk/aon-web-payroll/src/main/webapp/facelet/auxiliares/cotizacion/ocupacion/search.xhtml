@@ -10,7 +10,7 @@
 
 		<aon:form id="ocupacionMaestroSearch">
 
-			<aon:div styleClass="aon-finding-title-toolbar">
+			<!-- <aon:div styleClass="aon-finding-title-toolbar">
 				<aon:panelGrid columns="3" dir="true"
 					columnClasses="aon-finding-title,aon-finding-subtitle,aon-finding-toolbar">
 
@@ -33,7 +33,14 @@
 					</aon:div>
 				</aon:panelGrid>
 			</aon:div>
-			<!-- end toolbar navigation -->
+			 -->
+			 
+			 <ui:include src="/com/code/aon/ui/resources/facelet/toolbar/searchToolbar.xhtml" >
+				<ui:param name="toolbarTitle" value="#{menuBundle.auxiliares_cotizacion__ocupacion}" />
+				<ui:param name="controller" value="#{porcentajeMaestro}" />
+				<aon:methodParam name="resetAction" value="cotizacion_ocupacion"/>
+				<aon:methodParam name="backAction" value="cotizacion_ocupacion_list"/>
+			</ui:include>
 
 			<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/searchContent.xhtml" >
 				<ui:define name="searchContent">
@@ -42,13 +49,23 @@
 				
 					<aon:outputLabel for="OcupacionMaestro_cdg"
 						value="#{appBundle.aon_payroll_cdg}" />
-					<aon:inputText id="OcupacionMaestro_cdg" size="10" maxlength="8"
+					<aon:inputText id="OcupacionMaestro_cdg" size="10" maxlength="10"
 						valueChangeListener="#{ocupacionMaestro.addExpression}" />
 
 					<aon:outputLabel for="OcupacionMaestro_description"
 						value="#{appBundle.aon_payroll_description}" />
-					<aon:inputText id="OcupacionMaestro_description" size="60" maxlength="50"
+					<aon:inputText id="OcupacionMaestro_description" size="60" maxlength="60"
 						valueChangeListener="#{ocupacionMaestro.addExpression}" />
+						
+					<!--  <aon:outputLabel for="OcupacionMaestro_exclusivo"
+						value="#{appBundle.aon_payroll_cotizacion_exclusivo}" />
+					<h:selectBooleanCheckbox id="OcupacionMaestro_exclusivo" value="#{ocupacionMaestro.exclusivobol}" 
+						valueChangeListener="#{ocupacionMaestro.addDirectExpression}"/>-->
+						
+					<aon:outputLabel for="OcupacionMaestro_ocupaciones_pctit"
+						value="#{appBundle.aon_payroll_cotizacion_pctit}" />
+					<aon:inputText id="OcupacionMaestro_ocupaciones_pctit" size="20" maxlength="20"
+						valueChangeListener="#{ocupacionMaestro.addDirectExpression}" />
 						
 				</ui:define>
 			</ui:decorate>

@@ -1,8 +1,13 @@
 package com.code.aon.payroll.cotizacion;
 
+import java.util.HashSet;
+import java.util.Set;
+
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
@@ -24,6 +29,9 @@ public class OcupacionMaestro implements ITransferObject {
 	 * 
 	 * @return
 	 */
+	
+	/** ocupaciones */
+	private Set<Ocupacion> ocupaciones = new HashSet<Ocupacion>();
 
 	@Id
 	@Column(name = "cdg", unique = true, nullable = false, length = 1)
@@ -71,6 +79,15 @@ public class OcupacionMaestro implements ITransferObject {
 
 	public void setExclusivobol(Boolean bol) {
 		setExclusivo( (bol!=null && bol)? "S":"N" );
+	}
+	
+	@OneToMany(mappedBy = "ocupacionMaestro", cascade={CascadeType.REMOVE})
+	public Set<Ocupacion> getOcupaciones() {
+		return ocupaciones;
+	}
+
+	public void setOcupaciones(Set<Ocupacion> ocupaciones) {
+		this.ocupaciones = ocupaciones;
 	}
 
 }
