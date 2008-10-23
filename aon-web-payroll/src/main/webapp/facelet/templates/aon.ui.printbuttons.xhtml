@@ -5,7 +5,6 @@
 	xmlns:h="http://java.sun.com/jsf/html">
 <body>
 	<ui:composition>
-	
 		<h:commandLink id="export2pdf" value="PDF"
 				title="#{appBundle.aon_payroll_export} #{appBundle.aon_payroll_to} #{appBundle.aon_payroll_pdf}"
 				styleClass="aon-finding-toolbar-item aon-icon-pdf"
@@ -18,7 +17,7 @@
 				styleClass="aon-finding-toolbar-item aon-icon-excel"
 				action="#{report.onExecute}" rendered="#{!manager.new}" 
 				target="_blank">
-			<f:param name="reportKey" value="#{reportKey}" />
+			<f:param name="reportKey" value="#{(reportKeyXls==null)?(reportKey):(reportKeyXls)}" />
 			<f:param name="outputFormat" value="MS Excel" />
 		</h:commandLink>
 		<h:commandLink id="export2csv" value="CSV"
@@ -26,7 +25,7 @@
 				styleClass="aon-finding-toolbar-item aon-icon-csv"
 				action="#{report.onExecute}" rendered="#{!manager.new}" 
 				target="_blank">
-			<f:param name="reportKey" value="#{reportKey}" />
+			<f:param name="reportKey" value="#{(reportKeyXls==null)?(reportKey):(reportKeyXls)}" />
 			<f:param name="outputFormat" value="CSV" />
 		</h:commandLink>
 	
