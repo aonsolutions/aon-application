@@ -36,7 +36,6 @@ import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.common.enumeration.MimeType;
-import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.company.Company;
 import com.code.aon.finance.Finance;
 import com.code.aon.finance.FinanceBatch;
@@ -227,11 +226,6 @@ public class FBatchController extends BasicController implements ICollectionProv
 
             Criteria criteria = new Criteria();
             criteria.addEqualExpression(controller.getFieldName(IFinanceAlias.FINANCE_PAYMENT), new Boolean(payment));
-            Expression amountExpr = 
-                ExpressionUtilities.getNotEqualExpression(controller.getFieldName(IFinanceAlias.FINANCE_AMOUNT), new Double(0));
-            Expression expensesExpr = 
-                ExpressionUtilities.getNotEqualExpression(controller.getFieldName(IFinanceAlias.FINANCE_EXPENSES), new Double(0));
-            criteria.addExpression(ExpressionUtilities.getOrExpression(amountExpr, expensesExpr));
             Expression pendingExpr = 
                 ExpressionUtilities.getEqualExpression(controller.getFieldName(IFinanceAlias.FINANCE_FINANCE_STATUS), FinanceStatus.PENDING);
             Expression returnedExpr = 
@@ -484,7 +478,6 @@ public class FBatchController extends BasicController implements ICollectionProv
         recordingTo.setType(fbatch.isPayment() ? AccountEntryType.PAYMENT : AccountEntryType.COLLECTION);
         recordingTo.setRegistryBank(fbatch.getRegistryBank());
         recordingTo.setFinanceList(financeList);
-        recordingTo.setSecurityLevel(SecurityLevel.OFFICIAL);
 
         AccountEntryFinanceWriter accountEntryWriter = new AccountEntryFinanceWriter();
         AccountEntry entry = accountEntryWriter.recordFinances(recordingTo);
@@ -510,6 +503,11 @@ public class FBatchController extends BasicController implements ICollectionProv
 
             fbatchDetail.getFinance().setFinanceStatus(FinanceStatus.PAID);
             financeBean.update(fbatchDetail.getFinance());
+
+            if (!fbatchDetail.getFinance().getInvoice().getStatus().equals(InvoiceStatus.SCORED)) {
+                fbatchDetail.getFinance().getInvoice().setStatus(InvoiceStatus.PAID);
+                invoiceBean.update(fbatchDetail.getFinance().getInvoice());
+            }
 
             FinanceTrackingWriter.addFinanceTracking(fbatchDetail.getFinance(), FinanceTrackingType.RECORDED, trackingDescription);
         }

@@ -19,7 +19,6 @@ import com.code.aon.account.enumeration.AccountEntryType;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
-import com.code.aon.common.enumeration.SecurityLevel;
 import com.code.aon.finance.Finance;
 import com.code.aon.finance.FinanceBatchDetail;
 import com.code.aon.finance.FinanceTracking;
@@ -183,7 +182,6 @@ public class FinanceReturnController extends BasicController {
 			recordingTo.setFinanceList(list);
 			recordingTo.setDate(getReturnDate());
 			recordingTo.setType((finance.isPayment()?AccountEntryType.RETURNED_PAYMENT:AccountEntryType.RETURNED_COLLECTION));
-			recordingTo.setSecurityLevel(finance.getSecurityLevel()==null?SecurityLevel.OFFICIAL:finance.getSecurityLevel());
 			AccountEntry entry = getWriter().returnFinance(recordingTo);
 			return entry;
 		} catch (ManagerBeanException e) {

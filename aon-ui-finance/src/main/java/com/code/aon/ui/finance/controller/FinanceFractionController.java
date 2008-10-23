@@ -198,7 +198,7 @@ public class FinanceFractionController {
 			Finance finance = (Finance)iter.next();
 			pending -= finance.getTotalAmount();
 		}
-		return round(pending, 2);
+		return pending;
 	}
 	
 	public boolean isFractionable(){
@@ -208,9 +208,4 @@ public class FinanceFractionController {
 	public boolean isRemovableFraction(){
 		return (getCurrentFinance().getId() == null);
 	}
-
-	private double round(double value, int precision) {
-        double decimal = Math.pow(10, precision);
-        return Math.round(decimal*value) / decimal;
-    }
 }

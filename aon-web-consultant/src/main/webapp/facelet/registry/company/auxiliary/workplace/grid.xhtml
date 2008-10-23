@@ -66,7 +66,7 @@
 
 							<h:column>
 								<f:facet name="header">
-									<h:outputText value="#{salesBundle.pos_id}" />
+									<h:outputText value="#{appBundle.aon_id}" />
 								</f:facet>
 								<t:commandLink immediate="#{true}"  
 									styleClass="aon-table-row-selected"
@@ -78,7 +78,7 @@
 							
 							<h:column>
 								<f:facet name="header">
-									<h:outputText value="#{salesBundle.pos_description}" />
+									<h:outputText value="#{appBundle.aon_description}" />
 								</f:facet>
 								<h:outputText value="#{to.description}" rendered="#{to.id!=workplace.to.id}" />
 								<t:inputText rendered="#{to.id==workplace.to.id}" 

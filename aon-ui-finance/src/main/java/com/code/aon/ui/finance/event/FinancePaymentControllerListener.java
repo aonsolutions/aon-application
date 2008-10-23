@@ -1,7 +1,6 @@
 package com.code.aon.ui.finance.event;
 
 import com.code.aon.common.ManagerBeanException;
-import com.code.aon.finance.Finance;
 import com.code.aon.finance.dao.IFinanceAlias;
 import com.code.aon.finance.enumeration.FinanceStatus;
 import com.code.aon.ql.Criteria;
@@ -28,13 +27,7 @@ public class FinancePaymentControllerListener extends ControllerAdapter {
 			throw new ControllerListenerException("Cannot add criteria before model Initialized", e);
 		}
 	}
-
-	@Override
-	public void afterBeanSelected(ControllerEvent event) throws ControllerListenerException {
-		FinancePaymentController financePaymentController = (FinancePaymentController)event.getController();
-		financePaymentController.setPayedAmount(((Finance)financePaymentController.getTo()).getTotalAmount());
-	}
-
+	
 	@Override
 	public void beforeBeanReset(ControllerEvent event) throws ControllerListenerException {
 		FinancePaymentController financePaymentController = (FinancePaymentController)event.getController();

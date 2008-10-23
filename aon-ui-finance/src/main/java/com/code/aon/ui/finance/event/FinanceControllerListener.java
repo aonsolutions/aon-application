@@ -25,12 +25,8 @@ public class FinanceControllerListener extends ControllerAdapter{
 	@Override
 	public void beforeModelInitialized(ControllerEvent event) throws ControllerListenerException {
 		Criteria criteria;
-		FinanceController financeController = (FinanceController)event.getController();
 		try {
-			criteria = financeController.getCriteria();
-			if(financeController.getPayment() != null){
-				criteria.addEqualExpression(financeController.getFieldName(IFinanceAlias.FINANCE_PAYMENT), financeController.getPayment());
-			}
+			criteria = event.getController().getCriteria();
 			criteria.addOrder(event.getController().getFieldName(IFinanceAlias.FINANCE_DUE_DATE));
 			criteria.addOrder(event.getController().getFieldName(IFinanceAlias.FINANCE_INVOICE_SERIES));
 			criteria.addOrder(event.getController().getFieldName(IFinanceAlias.FINANCE_INVOICE_NUMBER));

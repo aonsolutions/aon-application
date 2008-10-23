@@ -44,7 +44,7 @@
 
 		<h:outputLabel for="RecordData_creationDate"
 			styleClass="aon-form-input-text-label"
-			value="#{registryBundle.aon_record_data_creation_date}" />
+			value="#{appBundle.aon_date}" />
 		<t:inputCalendar size="8" id="RecordData_creationDate"
 			value="#{recordData.to.creationDate}"
 			monthYearRowClass="yearMonthHeader" weekRowClass="weekHeader"
@@ -56,7 +56,7 @@
 
 		<t:outputLabel for="RecordData_description"
 			styleClass="aon-form-input-text-label"
-			value="#{registryBundle.aon_description}" />
+			value="#{appBundle.aon_description}" />
 		<t:inputText id="RecordData_description"
 			styleClass="aon-form-input-text" forceId="#{true}"
 			value="#{recordData.to.description}" size="64" />

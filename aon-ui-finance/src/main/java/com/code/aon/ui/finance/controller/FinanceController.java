@@ -145,11 +145,7 @@ public class FinanceController extends BasicController {
 	}
 	
     public boolean isPending() {
-    	return ((Finance)this.getTo()).getFinanceStatus().equals(FinanceStatus.PENDING);
-    }
-    
-    public boolean isReturned(){
-    	return ((Finance)this.getTo()).getFinanceStatus().equals(FinanceStatus.RETURNED);
+        return ((Finance)this.getTo()).getFinanceStatus().equals(FinanceStatus.PENDING);
     }
 
 	public void onEditSearch(MenuEvent event) throws ManagerBeanException {
@@ -160,6 +156,21 @@ public class FinanceController extends BasicController {
 	public void onEditSearch(ActionEvent event) {
 		setPayment(new Boolean(false));
 		super.onEditSearch(event);
+	}
+
+	/**
+	 * Adds to criteria the finance_payment, depending on the value of <code>payment</code>.
+	 * 
+	 * @param event the event
+	 * 
+	 * @throws ManagerBeanException the manager bean exception
+	 */
+	public void onPaymentChange(ValueChangeEvent event) throws ManagerBeanException{
+		if(event.getNewValue() != null){
+			Criteria criteria = new Criteria();
+			criteria.addEqualExpression(getManagerBean().getFieldName(IFinanceAlias.FINANCE_PAYMENT), event.getNewValue());
+			this.setCriteria(criteria);
+		}
 	}
 
 	/**
