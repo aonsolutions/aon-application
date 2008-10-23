@@ -101,21 +101,5 @@
 			</map-entries>
 		</managed-property>
 	</managed-bean>
-
-	<!-- ***************** LOGGED USER ******************** --> 
-	<managed-bean>
-		<managed-bean-name>loggedUser</managed-bean-name>
-		<managed-bean-class>com.code.aon.bridge.session.LoggedUser</managed-bean-class>
-		<managed-bean-scope>session</managed-bean-scope>
-	</managed-bean>
-	
-	<!-- ***************** FAILED LOGIN ******************** --> 
-	<managed-bean>
-		<managed-bean-name>failedLogin</managed-bean-name>
-		<managed-bean-class>
-			com.code.aon.bridge.session.FailedLogin
-		</managed-bean-class>
-		<managed-bean-scope>request</managed-bean-scope>
-	</managed-bean>
    
 </faces-config>
