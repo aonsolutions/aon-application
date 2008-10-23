@@ -42,18 +42,68 @@
 				
 					<aon:outputLabel for="ContratosInternos_cdg"
 						value="#{appBundle.aon_payroll_cdg}" />
-					<aon:inputText id="ContratosInternos_cdg" size="1" maxlength="3"
+					<aon:inputText id="ContratosInternos_cdg" size="10" maxlength="10"
 						valueChangeListener="#{contratosInternos.addExpression}" />
 
 					<aon:outputLabel for="ContratosInternos_description"
 						value="#{appBundle.aon_payroll_description}" />
-					<aon:inputText id="ContratosInternos_description" size="60" maxlength="45"
+					<aon:inputText id="ContratosInternos_description" size="60" maxlength="60"
 						valueChangeListener="#{contratosInternos.addExpression}" />
 						
-					<aon:outputLabel value="#{appBundle.aon_payroll_asimiladoa}" />
-					<aon:selectOneMenu id="Asimilados" value="#{contratosInternos.to.porcentajeMaestro.cdg}">
+					<aon:outputLabel for="ContratosInternos_porcentajeMaestro_cdg" 
+						value="#{appBundle.aon_payroll_asimiladoa}" />
+					<aon:selectOneMenu id="ContratosInternos_porcentajeMaestro_cdg" 
+						valueChangeListener="#{contratosInternos.addExpression}" >
 						<f:selectItems value="#{contratosInternos.asimilados}" />
 					</aon:selectOneMenu>
+					
+					<!--  
+					<aon:outputLabel for="ContratosInternos_desemple" 
+						value="#{appBundle.aon_payroll_desempleado}" />
+					<aon:selectOneMenu id="ContratosInternos_desemple" 
+						valueChangeListener="#{contratosInternos.addExpression}" >
+						<f:selectItem value="#{null}" itemLabel="    " />
+						<f:selectItems value="#{contratosInternos.desempleados}" />
+					</aon:selectOneMenu>
+					-->
+					
+					<aon:outputLabel for="ContratosInternos_gradomin" 
+						value="#{appBundle.aon_payroll_minusvalia}" />
+					<aon:inputText id="ContratosInternos_gradomin" size="10" maxlength="10" 
+						valueChangeListener="#{contratosInternos.addExpression}" >
+					</aon:inputText>
+					
+					<!--  
+					<aon:outputLabel value="" />
+					<aon:panelGroup>
+						<aon:div>
+							<aon:div>
+								<aon:selectBooleanCheckbox id="ContratosInternos_mujersubbol"
+									valueChangeListener="#{contratosInternos.addExpression}" />
+								<aon:outputLabel for="ContratosInternos_mujersubbol"
+									value="#{appBundle.aon_payroll_mujersub}" />
+							</aon:div>
+							<aon:div>
+								<aon:selectBooleanCheckbox id="ContratosInternos_incareadbol"
+									valueChangeListener="#{contratosInternos.addExpression}" />
+								<aon:outputLabel for="ContratosInternos_incareadbol"
+									value="#{appBundle.aon_payroll_incaread}" />
+							</aon:div>
+							<aon:div>
+								<aon:selectBooleanCheckbox id="ContratosInternos_primertrabol"
+									valueChangeListener="#{contratosInternos.addExpression}" />
+								<aon:outputLabel for="ContratosInternos_primertrabol"
+									value="#{appBundle.aon_payroll_primertra}" />
+							</aon:div>
+							<aon:div>
+								<aon:selectBooleanCheckbox id="ContratosInternos_excsocialbol"
+									valueChangeListener="#{contratosInternos.addExpression}" />
+								<aon:outputLabel for="ContratosInternos_excsocialbol"
+									value="#{appBundle.aon_payroll_excsocial}" />
+							</aon:div>
+						</aon:div>
+					</aon:panelGroup>
+					-->
 				</ui:define>
 			</ui:decorate>
 

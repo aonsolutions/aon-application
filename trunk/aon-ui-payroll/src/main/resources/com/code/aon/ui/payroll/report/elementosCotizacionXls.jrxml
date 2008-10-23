@@ -2,7 +2,7 @@
 <!-- Created with iReport - A designer for JasperReports -->
 <!DOCTYPE jasperReport PUBLIC "//JasperReports//DTD Report Design//EN" "http://jasperreports.sourceforge.net/dtds/jasperreport.dtd">
 <jasperReport
-		 name="porcentajesCotizacionXls"
+		 name="elementosCotizacionXls"
 		 columnCount="1"
 		 printOrder="Vertical"
 		 orientation="Portrait"
@@ -27,19 +27,15 @@
 	<parameter name="logoImageFile" isForPrompting="true" class="java.io.InputStream"/>
 	<parameter name="companyName" isForPrompting="false" class="java.lang.String"/>
 
-	<field name="porcentajeMaestro" class="com.code.aon.payroll.cotizacion.PorcentajeMaestro"/>
-	<field name="id" class="com.code.aon.payroll.cotizacion.PorcentajePK"/>
+	<field name="elementoMaestro" class="com.code.aon.payroll.cotizacion.ElementoMaestro"/>
+	<field name="id" class="com.code.aon.payroll.cotizacion.ElementoPK"/>
 	<field name="fecfin" class="java.util.Date"/>
-	<field name="pctemp" class="java.math.BigDecimal"/>
-	<field name="pcttra" class="java.math.BigDecimal"/>
-	<field name="pcttot" class="java.math.BigDecimal"/>
+	<field name="dato1" class="java.math.BigDecimal"/>
+	<field name="dato2" class="java.math.BigDecimal"/>
 
-	<variable name="groupPcttot" class="java.math.BigDecimal" resetType="Group" resetGroup="maestro" calculation="Sum">
-		<variableExpression><![CDATA[$F{pcttot}]]></variableExpression>
-	</variable>
 
 		<group  name="maestro" >
-			<groupExpression><![CDATA[$F{porcentajeMaestro}.getCdg()]]></groupExpression>
+			<groupExpression><![CDATA[$F{elementoMaestro}.getCdg()]]></groupExpression>
 			<groupHeader>
 			<band height="0"  isSplitAllowed="true" >
 			</band>
@@ -85,7 +81,7 @@
 					<textElement textAlignment="Right" verticalAlignment="Middle">
 						<font pdfFontName="Helvetica-Bold" size="10" isBold="true"/>
 					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$R{aon_payroll_print} + " " + $R{aon_auxiliares_cotizacion_porcoti_report}]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$R{aon_payroll_print} + " " + $R{aon_auxiliares_cotizacion_linelem_report}]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="false" pattern="dd/MM/yyyy" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
@@ -107,7 +103,7 @@
 				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						mode="Opaque"
-						x="185"
+						x="255"
 						y="0"
 						width="80"
 						height="15"
@@ -123,7 +119,7 @@
 				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						mode="Opaque"
-						x="345"
+						x="415"
 						y="0"
 						width="70"
 						height="15"
@@ -134,12 +130,12 @@
 					<textElement textAlignment="Center" verticalAlignment="Middle">
 						<font pdfFontName="Helvetica-Bold" size="9" isBold="true"/>
 					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$R{aon_payroll_cotizacion_empresa}]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$R{aon_payroll_cotizacion_dato1}]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						mode="Opaque"
-						x="485"
+						x="3"
 						y="0"
 						width="70"
 						height="15"
@@ -150,12 +146,12 @@
 					<textElement textAlignment="Center" verticalAlignment="Middle">
 						<font pdfFontName="Helvetica-Bold" size="9" isBold="true"/>
 					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$R{aon_payroll_cotizacion_total}]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$R{aon_payroll_cdg}]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						mode="Opaque"
-						x="415"
+						x="485"
 						y="0"
 						width="70"
 						height="15"
@@ -166,12 +162,12 @@
 					<textElement textAlignment="Center" verticalAlignment="Middle">
 						<font pdfFontName="Helvetica-Bold" size="9" isBold="true"/>
 					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$R{aon_payroll_cotizacion_trabajador}]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$R{aon_payroll_cotizacion_dato2}]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						mode="Opaque"
-						x="265"
+						x="335"
 						y="0"
 						width="80"
 						height="15"
@@ -187,7 +183,7 @@
 				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						mode="Opaque"
-						x="3"
+						x="73"
 						y="0"
 						width="182"
 						height="15"
@@ -198,7 +194,7 @@
 					<textElement textAlignment="Center" verticalAlignment="Middle">
 						<font pdfFontName="Helvetica-Bold" size="9" isBold="true"/>
 					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$R{aon_payroll_cotizacion}]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$R{aon_payroll_description}]]></textFieldExpression>
 				</textField>
 			</band>
 		</columnHeader>
@@ -206,7 +202,7 @@
 			<band height="14"  isSplitAllowed="true" >
 				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
-						x="3"
+						x="73"
 						y="0"
 						width="181"
 						height="14"
@@ -215,11 +211,11 @@
 					<textElement textAlignment="Left" verticalAlignment="Middle">
 						<font pdfFontName="Helvetica" size="9" isBold="true"/>
 					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$F{porcentajeMaestro}.getDescription()]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{elementoMaestro}.getDescription()]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="false" pattern="dd/MM/yyyy" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
-						x="185"
+						x="255"
 						y="0"
 						width="80"
 						height="14"
@@ -232,7 +228,7 @@
 				</textField>
 				<textField isStretchWithOverflow="false" pattern="##0,00 %" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
-						x="415"
+						x="485"
 						y="0"
 						width="70"
 						height="14"
@@ -241,11 +237,11 @@
 					<textElement textAlignment="Right" verticalAlignment="Middle">
 						<font size="8"/>
 					</textElement>
-				<textFieldExpression   class="java.math.BigDecimal"><![CDATA[$F{pcttra}]]></textFieldExpression>
+				<textFieldExpression   class="java.math.BigDecimal"><![CDATA[$F{dato2}]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="false" pattern="##0,00 %" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
-						x="345"
+						x="415"
 						y="0"
 						width="70"
 						height="14"
@@ -255,11 +251,11 @@
 					<textElement textAlignment="Right" verticalAlignment="Middle">
 						<font size="8"/>
 					</textElement>
-				<textFieldExpression   class="java.math.BigDecimal"><![CDATA[$F{pctemp}]]></textFieldExpression>
+				<textFieldExpression   class="java.math.BigDecimal"><![CDATA[$F{dato1}]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="false" pattern="dd/MM/yyyy" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
-						x="265"
+						x="335"
 						y="0"
 						width="80"
 						height="14"
@@ -270,9 +266,9 @@
 					</textElement>
 				<textFieldExpression   class="java.util.Date"><![CDATA[$F{fecfin}]]></textFieldExpression>
 				</textField>
-				<textField isStretchWithOverflow="false" pattern="##0,00 %" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+				<textField isStretchWithOverflow="false" pattern="" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
-						x="485"
+						x="3"
 						y="0"
 						width="70"
 						height="14"
@@ -281,7 +277,7 @@
 					<textElement textAlignment="Right" verticalAlignment="Middle">
 						<font size="8"/>
 					</textElement>
-				<textFieldExpression   class="java.math.BigDecimal"><![CDATA[$F{pcttot}]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{elementoMaestro}.getCdg()]]></textFieldExpression>
 				</textField>
 			</band>
 		</detail>

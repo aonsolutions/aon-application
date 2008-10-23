@@ -14,33 +14,14 @@
 	<ui:define name="content">
 
 		<aon:form id="elementoMaestroList">
-		
-			<aon:div styleClass="aon-finding-title-toolbar">
-				<aon:panelGrid id="buttonsGrid" columns="3" dir="true"
-					columnClasses="aon-finding-title,aon-finding-subtitle,aon-finding-toolbar">
-
-					<aon:div styleClass="aon-finding-title-internal">
-						<aon:outputText value="#{menuBundle.auxiliares_cotizacion__elemcotizacion}" />
-					</aon:div>
-
-					<aon:div styleClass="aon-finding-subtitle-internal">
-						<aon:outputText value="#{bundle.aon_listing}" />
-					</aon:div>
-
-					<!-- start toolbar navigation -->
-					<aon:div styleClass="aon-finding-toolbar-item-group">
-						<aon:commandButton id="search" value="#{bundle.aon_search}"
-							action="cotizacion_elemento_search" actionListener="#{elementoMaestro.onEditSearch}"
-							styleClass="aon-finding-toolbar-item aon-icon-search"
-							accesskey="#{bundle.aon_key_search}" />				
-						<aon:commandButton id="reset" value="#{bundle.aon_reset}"
-							action="cotizacion_elemento" actionListener="#{elementoMaestro.onReset}"
-							styleClass="aon-finding-toolbar-item aon-icon-reset"
-							accesskey="#{bundle.aon_key_new}" />
-					</aon:div>
-					<!-- end toolbar navigation -->
-				</aon:panelGrid>
-			</aon:div>
+						
+			<!-- start toolbar navigation -->
+			<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/listToolbar.xhtml" >
+				<ui:param name="toolbarTitle" value="#{menuBundle.auxiliares_cotizacion__elemcotizacion}" />
+				<ui:param name="controller" value="#{elementoMaestro}" />
+				
+			</ui:include>
+			<!-- end toolbar navigation -->
 
 			<!--  aon-region-body -->
 			<aon:div styleClass="aon-scroll-area">
@@ -49,7 +30,7 @@
 					var="to" rows="20" rendered="#{elementoMaestro.model.rowCount > 0}"
 					columnClasses="aon-editDataTable-textColumn, aon-editDataTable-textColumn, aon-editDataTable-numberColumn">
 
-					<aon:rowSelector action="cotizacion_elemento" actionListener="#{elementoMaestro.onSelect}" />
+					<aon:rowSelector action="elementoMaestro_form" actionListener="#{elementoMaestro.onSelect}" />
 					
 					<aon:column>
 						<f:facet name="header">

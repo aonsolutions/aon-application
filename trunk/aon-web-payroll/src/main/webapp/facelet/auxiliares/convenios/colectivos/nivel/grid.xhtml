@@ -6,7 +6,7 @@
 
 	<aon:div>
 		<aon:editDataTable id="nivelData" value="#{nivel.model}" 
-			var="to" rows="0"
+			var="to" rows="10"
 			rendered="#{(nivel.model.rowCount > 0) or (nivel.new)}" 
 			columnClasses="aon-editDataTable-iconColumn
 				, aon-editDataTable-numberColumn
@@ -89,6 +89,7 @@
 			</aon:column>
 			
 		</aon:editDataTable>
+		<aon:dataScroller2 for="nivelData" showNote="true" />
 	</aon:div>
 
 </ui:composition>

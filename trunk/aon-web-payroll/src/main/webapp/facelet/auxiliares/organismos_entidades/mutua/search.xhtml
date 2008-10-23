@@ -9,7 +9,7 @@
 	<ui:define name="content">
 
 		<aon:form id="mutuaMaestroSearch">
-
+			<!-- 
 			<aon:div styleClass="aon-finding-title-toolbar">
 				<aon:panelGrid columns="3" dir="true"
 					columnClasses="aon-finding-title,aon-finding-subtitle,aon-finding-toolbar">
@@ -33,12 +33,18 @@
 					</aon:div>
 				</aon:panelGrid>
 			</aon:div>
-			<!-- end toolbar navigation -->
+			-->
+			
+			<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/searchToolbar.xhtml" >
+				<ui:param name="toolbarTitle" value="#{appBundle.aon_payroll_auxiliares_organismos_entidades__mutua}" />
+				<ui:param name="controller" value="#{mutuaMaestro}" />
+				
+			</ui:decorate>
 
 			<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/searchContent.xhtml" >
 				<ui:define name="searchContent">
 					<aon:methodParam name="searchActionListener" value="#{mutuaMaestro.onSearch}" type="actionListener" />
-					<aon:methodParam name="searchAction" value="mutuas_list" />				
+					<aon:methodParam name="searchAction" value="mutuaMaestro_list" />				
 				
 					<aon:outputLabel for="Mutua_cdg"
 						value="#{appBundle.aon_payroll_cdg}" />

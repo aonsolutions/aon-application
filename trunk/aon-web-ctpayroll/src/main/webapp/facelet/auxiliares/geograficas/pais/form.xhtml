@@ -77,10 +77,21 @@
 								
 				<ui:include src="grid.xhtml" rendered="#{!pais.new}" />
 				
-				<aon:panelGrid id="comunidadPanelGrid" columns="2" dir="true" width="100%" style="margin-bottom=2px;">
+				<!-- aon:panelGrid id="comunidadPanelGrid" columns="2" dir="true" width="100%" style="margin-bottom=2px;">
 				 	<ui:include src="comunidad/grid.xhtml" rendered="#{false}" />
 				 	<ui:include src="provincia/grid.xhtml" rendered="#{!pais.new or !comunidad.new}" />
-			 	</aon:panelGrid>
+			 	</aon:panelGrid-->
+			 	
+			 	<aon:div>
+				 	<aon:div id="comunidadDiv" style="width:47%; float: left; margin: 3em; margin-left: 0;">
+					 	<ui:include src="comunidad/grid.xhtml" rendered="#{false}" />
+					</aon:div>
+					<aon:div id="provinciaDiv" style="float: left; margin: 3em 20px 3em 0;" > 	
+					 	<ui:include src="provincia/grid.xhtml" rendered="#{!pais.new or !comunidad.new}" />
+				 	</aon:div>
+				 	<aon:div style="clear: both"/>
+			 	</aon:div>
+			 	
 			 			 		
 			</aon:div>
 		</aon:form>

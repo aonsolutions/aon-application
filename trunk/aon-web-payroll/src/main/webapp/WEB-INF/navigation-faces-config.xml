@@ -12,15 +12,15 @@
 			<to-view-id>/homepage.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>
-	
+
 	<navigation-rule>
 		<navigation-case>
 			<from-outcome>logout</from-outcome>
-			<to-view-id>/home.jsf</to-view-id> 
-			<redirect/>
+			<to-view-id>/home.jsf</to-view-id>
+			<redirect />
 		</navigation-case>
 	</navigation-rule>
-	
+
 	<!-- =================== Auxiliares/Cotizacion/Porcentaje ================= -->
 	<navigation-rule>
 		<navigation-case>
@@ -36,10 +36,10 @@
 			</to-view-id>
 		</navigation-case>
 	</navigation-rule>
-	
+
 	<!-- =================== Auxiliares/Cotizacion/Epigrafe ================= -->
 	<navigation-rule>
-	<navigation-case>
+		<navigation-case>
 			<from-outcome>cotizacion_epigrafe_form</from-outcome>
 			<to-view-id>
 				/facelet/auxiliares/cotizacion/epigrafe/form.xhtml
@@ -58,7 +58,7 @@
 			</to-view-id>
 		</navigation-case>
 	</navigation-rule>
-	
+
 	<navigation-rule>
 		<navigation-case>
 			<from-outcome>basecoti</from-outcome>
@@ -66,20 +66,20 @@
 				/facelet/auxiliares/cotizacion/base/form.xhtml
 			</to-view-id>
 		</navigation-case>
-		</navigation-rule>
-		
-		<navigation-rule>
-	
+	</navigation-rule>
+
+	<navigation-rule>
+
 		<navigation-case>
 			<from-outcome>basecoti_list</from-outcome>
 			<to-view-id>
 				/facelet/auxiliares/cotizacion/base/list.xhtml
 			</to-view-id>
 		</navigation-case>
-		</navigation-rule>
-		
-		<navigation-rule>
-		
+	</navigation-rule>
+
+	<navigation-rule>
+
 		<navigation-case>
 			<from-outcome>basecoti_search</from-outcome>
 			<to-view-id>
@@ -87,23 +87,29 @@
 			</to-view-id>
 		</navigation-case>
 	</navigation-rule>
-	
+
 	<navigation-rule>
 		<navigation-case>
 			<from-outcome>delegacion_form</from-outcome>
-			<to-view-id>/facelet/auxiliares/organismos_entidades/delegaciones/form.xhtml</to-view-id>
+			<to-view-id>
+				/facelet/auxiliares/organismos_entidades/delegaciones/form.xhtml
+			</to-view-id>
 		</navigation-case>
 	</navigation-rule>
 	<navigation-rule>
 		<navigation-case>
 			<from-outcome>delegacion_search</from-outcome>
-			<to-view-id>/facelet/auxiliares/organismos_entidades/delegaciones/search.xhtml</to-view-id>
+			<to-view-id>
+				/facelet/auxiliares/organismos_entidades/delegaciones/search.xhtml
+			</to-view-id>
 		</navigation-case>
 	</navigation-rule>
-		<navigation-rule>
+	<navigation-rule>
 		<navigation-case>
 			<from-outcome>delegacion_list</from-outcome>
-			<to-view-id>/facelet/auxiliares/organismos_entidades/delegaciones/list.xhtml</to-view-id>
+			<to-view-id>
+				/facelet/auxiliares/organismos_entidades/delegaciones/list.xhtml
+			</to-view-id>
 		</navigation-case>
 	</navigation-rule>
 
@@ -122,7 +128,7 @@
 			</to-view-id>
 		</navigation-case>
 	</navigation-rule>
-	
+
 	<!-- =================== Auxiliares/Contratos/Tc2 ================= -->
 	<navigation-rule>
 		<navigation-case>
@@ -148,7 +154,7 @@
 			</to-view-id>
 		</navigation-case>
 	</navigation-rule>
-	
+
 	<navigation-rule>
 		<navigation-case>
 			<from-outcome>tipos_via_search</from-outcome>
@@ -157,9 +163,9 @@
 			</to-view-id>
 		</navigation-case>
 	</navigation-rule>
-	
+
 	<!-- =================== Auxiliares/Geograficas================= -->
-     <navigation-rule>
+	<navigation-rule>
 		<navigation-case>
 			<from-outcome>tipos_nacion_search</from-outcome>
 			<to-view-id>
@@ -167,31 +173,27 @@
 			</to-view-id>
 		</navigation-case>
 	</navigation-rule>
-	
+
 	<!-- =================== Irpf================= -->
 	<navigation-rule>
-	<navigation-case>
+		<navigation-case>
 			<from-outcome>Cuotas_search</from-outcome>
 			<to-view-id>
 				/facelet/auxiliares/irpf/CuotaRetencion/search.xhtml
 			</to-view-id>
 		</navigation-case>
-	</navigation-rule> 
-	
-	
-	
-	
-  <!-- =================== Irpfforal/Cuotas y minoraciones================= -->
-		
-		
+	</navigation-rule>
+
+	<!-- =================== Irpfforal/Cuotas y minoraciones================= -->
+
 	<navigation-rule>
-	<navigation-case>
+		<navigation-case>
 			<from-outcome>CuotaAlava_search</from-outcome>
 			<to-view-id>
 				/facelet/auxiliares/irpfforal/CuotaRetencionAlava/search.xhtml
 			</to-view-id>
 		</navigation-case>
-	</navigation-rule> 
+	</navigation-rule>
 	<navigation-rule>
 		<navigation-case>
 			<from-outcome>CuotaVizcaya_search</from-outcome>
@@ -199,7 +201,7 @@
 				/facelet/auxiliares/irpfforal/CuotaRetencionVizcaya/search.xhtml
 			</to-view-id>
 		</navigation-case>
-	</navigation-rule> 
+	</navigation-rule>
 	<navigation-rule>
 		<navigation-case>
 			<from-outcome>CuotaGuipuzcoa_search</from-outcome>
@@ -207,7 +209,7 @@
 				/facelet/auxiliares/irpfforal/CuotaRetencionGuipuzcoa/search.xhtml
 			</to-view-id>
 		</navigation-case>
-	</navigation-rule> 
+	</navigation-rule>
 	<navigation-rule>
 		<navigation-case>
 			<from-outcome>CuotaNavarra_search</from-outcome>
@@ -215,8 +217,8 @@
 				/facelet/auxiliares/irpfforal/CuotaRetencionNavarra/search.xhtml
 			</to-view-id>
 		</navigation-case>
-	</navigation-rule> 
-	
+	</navigation-rule>
+
 	<navigation-rule>
 		<navigation-case>
 			<from-outcome>MinorAlava_search</from-outcome>
@@ -233,7 +235,7 @@
 			</to-view-id>
 		</navigation-case>
 	</navigation-rule>
-	
+
 	<navigation-rule>
 		<navigation-case>
 			<from-outcome>MinorGuipuzcoa_search</from-outcome>
@@ -242,7 +244,7 @@
 			</to-view-id>
 		</navigation-case>
 	</navigation-rule>
-	
+
 	<navigation-rule>
 		<navigation-case>
 			<from-outcome>MinorNavarra_search</from-outcome>
@@ -251,10 +253,8 @@
 			</to-view-id>
 		</navigation-case>
 	</navigation-rule>
-		
-		
-		
-	<!-- =================== Application Menu Navigation Rules ================= -->	
+
+	<!-- =================== Application Menu Navigation Rules ================= -->
 	<navigation-rule>
 		<navigation-case>
 			<from-outcome>tipos_documento</from-outcome>
@@ -263,46 +263,58 @@
 			</to-view-id>
 		</navigation-case>
 	</navigation-rule>
-	
+
 	<navigation-rule>
 		<navigation-case>
 			<from-outcome>tipos_empresarios</from-outcome>
-			<to-view-id>/facelet/auxiliares/tipos/empresario/grid.xhtml</to-view-id>
+			<to-view-id>
+				/facelet/auxiliares/tipos/empresario/grid.xhtml
+			</to-view-id>
 		</navigation-case>
 	</navigation-rule>
 	<navigation-rule>
 		<navigation-case>
 			<from-outcome>tipos_empresarios_search</from-outcome>
-			<to-view-id>/facelet/auxiliares/tipos/empresario/search.xhtml</to-view-id>
+			<to-view-id>
+				/facelet/auxiliares/tipos/empresario/search.xhtml
+			</to-view-id>
 		</navigation-case>
 	</navigation-rule>
-		
+
 	<navigation-rule>
 		<navigation-case>
 			<from-outcome>tipos_cnae</from-outcome>
-			<to-view-id>/facelet/auxiliares/tipos/cnae/grid.xhtml</to-view-id>
+			<to-view-id>
+				/facelet/auxiliares/tipos/cnae/grid.xhtml
+			</to-view-id>
 		</navigation-case>
 	</navigation-rule>
 	<navigation-rule>
 		<navigation-case>
 			<from-outcome>tipos_cnae_search</from-outcome>
-			<to-view-id>/facelet/auxiliares/tipos/cnae/search.xhtml</to-view-id>
+			<to-view-id>
+				/facelet/auxiliares/tipos/cnae/search.xhtml
+			</to-view-id>
 		</navigation-case>
 	</navigation-rule>
-	
+
 	<navigation-rule>
 		<navigation-case>
 			<from-outcome>organismos_admon</from-outcome>
-			<to-view-id>/facelet/auxiliares/organismos_entidades/admon/grid.xhtml</to-view-id>
+			<to-view-id>
+				/facelet/auxiliares/organismos_entidades/admon/grid.xhtml
+			</to-view-id>
 		</navigation-case>
 	</navigation-rule>
 	<navigation-rule>
 		<navigation-case>
 			<from-outcome>organismos_admon_search</from-outcome>
-			<to-view-id>/facelet/auxiliares/organismos_entidades/admon/search.xhtml</to-view-id>
+			<to-view-id>
+				/facelet/auxiliares/organismos_entidades/admon/search.xhtml
+			</to-view-id>
 		</navigation-case>
 	</navigation-rule>
-	
+
 	<navigation-rule>
 		<navigation-case>
 			<from-outcome>tipos_registro</from-outcome>
@@ -319,7 +331,7 @@
 			</to-view-id>
 		</navigation-case>
 	</navigation-rule>
-	
+
 	<navigation-rule>
 		<navigation-case>
 			<from-outcome>tipos_incidencia</from-outcome>
@@ -336,7 +348,7 @@
 			</to-view-id>
 		</navigation-case>
 	</navigation-rule>
-	
+
 	<navigation-rule>
 		<navigation-case>
 			<from-outcome>tipos_autorizacion</from-outcome>
@@ -353,7 +365,7 @@
 			</to-view-id>
 		</navigation-case>
 	</navigation-rule>
-	
+
 	<navigation-rule>
 		<navigation-case>
 			<from-outcome>porcentajeMaestro_form</from-outcome>
@@ -362,17 +374,21 @@
 			</to-view-id>
 		</navigation-case>
 	</navigation-rule>
-	
+
 	<navigation-rule>
 		<navigation-case>
 			<from-outcome>cotizacion_bonificacion</from-outcome>
-			<to-view-id>/facelet/auxiliares/cotizacion/bonificacion/grid.xhtml</to-view-id>
+			<to-view-id>
+				/facelet/auxiliares/cotizacion/bonificacion/grid.xhtml
+			</to-view-id>
 		</navigation-case>
 	</navigation-rule>
 	<navigation-rule>
 		<navigation-case>
 			<from-outcome>cotizacion_bonificacion_search</from-outcome>
-			<to-view-id>/facelet/auxiliares/cotizacion/bonificacion/search.xhtml</to-view-id>
+			<to-view-id>
+				/facelet/auxiliares/cotizacion/bonificacion/search.xhtml
+			</to-view-id>
 		</navigation-case>
 	</navigation-rule>
 
@@ -384,7 +400,7 @@
 			</to-view-id>
 		</navigation-case>
 	</navigation-rule>
-	
+
 	<navigation-rule>
 		<navigation-case>
 			<from-outcome>contratos_tc2</from-outcome>
@@ -393,105 +409,135 @@
 			</to-view-id>
 		</navigation-case>
 	</navigation-rule>
-	
+
 	<navigation-rule>
 		<navigation-case>
 			<from-outcome>sistemaRed_colectivos</from-outcome>
-			<to-view-id>/facelet/auxiliares/sistema_red/colectivos/grid.xhtml</to-view-id>
+			<to-view-id>
+				/facelet/auxiliares/sistema_red/colectivos/grid.xhtml
+			</to-view-id>
 		</navigation-case>
 	</navigation-rule>
 	<navigation-rule>
 		<navigation-case>
 			<from-outcome>sistemaRed_colectivos_search</from-outcome>
-			<to-view-id>/facelet/auxiliares/sistema_red/colectivos/search.xhtml</to-view-id>
+			<to-view-id>
+				/facelet/auxiliares/sistema_red/colectivos/search.xhtml
+			</to-view-id>
 		</navigation-case>
 	</navigation-rule>
 
 	<navigation-rule>
 		<navigation-case>
 			<from-outcome>tipos_via</from-outcome>
-			<to-view-id>/facelet/auxiliares/tipos/tipoVia/grid.xhtml</to-view-id>
+			<to-view-id>
+				/facelet/auxiliares/tipos/tipoVia/grid.xhtml
+			</to-view-id>
 		</navigation-case>
 	</navigation-rule>
-	
-    <navigation-rule>
+
+	<navigation-rule>
 		<navigation-case>
 			<from-outcome>naciones</from-outcome>
-			<to-view-id>/facelet/auxiliares/geograficas/nacion/grid.xhtml</to-view-id>
+			<to-view-id>
+				/facelet/auxiliares/geograficas/nacion/grid.xhtml
+			</to-view-id>
 		</navigation-case>
 	</navigation-rule>
 
 	<navigation-rule>
 		<navigation-case>
 			<from-outcome>CuotaRetencionAlava</from-outcome>
-			<to-view-id>/facelet/auxiliares/irpfforal/CuotaRetencionAlava/grid.xhtml</to-view-id>
+			<to-view-id>
+				/facelet/auxiliares/irpfforal/CuotaRetencionAlava/grid.xhtml
+			</to-view-id>
 		</navigation-case>
 	</navigation-rule>
 	<navigation-rule>
 		<navigation-case>
 			<from-outcome>CuotaRetencionGuipuzcoa</from-outcome>
-			<to-view-id>/facelet/auxiliares/irpfforal/CuotaRetencionGuipuzcoa/grid.xhtml</to-view-id>
+			<to-view-id>
+				/facelet/auxiliares/irpfforal/CuotaRetencionGuipuzcoa/grid.xhtml
+			</to-view-id>
 		</navigation-case>
 	</navigation-rule>
 	<navigation-rule>
 		<navigation-case>
 			<from-outcome>CuotaRetencionNavarra</from-outcome>
-			<to-view-id>/facelet/auxiliares/irpfforal/CuotaRetencionNavarra/grid.xhtml</to-view-id>
+			<to-view-id>
+				/facelet/auxiliares/irpfforal/CuotaRetencionNavarra/grid.xhtml
+			</to-view-id>
 		</navigation-case>
 	</navigation-rule>
 	<navigation-rule>
 		<navigation-case>
 			<from-outcome>CuotaRetencionVizcaya</from-outcome>
-			<to-view-id>/facelet/auxiliares/irpfforal/CuotaRetencionVizcaya/grid.xhtml</to-view-id>
+			<to-view-id>
+				/facelet/auxiliares/irpfforal/CuotaRetencionVizcaya/grid.xhtml
+			</to-view-id>
 		</navigation-case>
 	</navigation-rule>
-	
-    <navigation-rule>
+
+	<navigation-rule>
 		<navigation-case>
 			<from-outcome>irpf_cuotas</from-outcome>
-			<to-view-id>/facelet/auxiliares/irpf/CuotaRetencion/grid.xhtml</to-view-id>
+			<to-view-id>
+				/facelet/auxiliares/irpf/CuotaRetencion/grid.xhtml
+			</to-view-id>
 		</navigation-case>
 	</navigation-rule>
-	
+
 	<navigation-rule>
 		<navigation-case>
 			<from-outcome>MinoracionesAlava</from-outcome>
-			<to-view-id>/facelet/auxiliares/irpfforal/MinoracionesAlava/grid.xhtml</to-view-id>
+			<to-view-id>
+				/facelet/auxiliares/irpfforal/MinoracionesAlava/grid.xhtml
+			</to-view-id>
 		</navigation-case>
 	</navigation-rule>
-	
+
 	<navigation-rule>
 		<navigation-case>
 			<from-outcome>MinoracionesGuipuzcoa</from-outcome>
-			<to-view-id>/facelet/auxiliares/irpfforal/MinoracionesGuipuzcoa/grid.xhtml</to-view-id>
+			<to-view-id>
+				/facelet/auxiliares/irpfforal/MinoracionesGuipuzcoa/grid.xhtml
+			</to-view-id>
 		</navigation-case>
 	</navigation-rule>
 	<navigation-rule>
 		<navigation-case>
 			<from-outcome>MinoracionesVizcaya</from-outcome>
-			<to-view-id>/facelet/auxiliares/irpfforal/MinoracionesVizcaya/grid.xhtml</to-view-id>
+			<to-view-id>
+				/facelet/auxiliares/irpfforal/MinoracionesVizcaya/grid.xhtml
+			</to-view-id>
 		</navigation-case>
 	</navigation-rule>
 	<navigation-rule>
 		<navigation-case>
 			<from-outcome>MinoracionesNavarra</from-outcome>
-			<to-view-id>/facelet/auxiliares/irpfforal/MinoracionesNavarra/grid.xhtml</to-view-id>
+			<to-view-id>
+				/facelet/auxiliares/irpfforal/MinoracionesNavarra/grid.xhtml
+			</to-view-id>
 		</navigation-case>
 	</navigation-rule>
-	
+
 	<navigation-rule>
 		<navigation-case>
 			<from-outcome>irpf_exclusion</from-outcome>
-			<to-view-id>/facelet/auxiliares/irpf/Exclusion/grid.xhtml</to-view-id>
+			<to-view-id>
+				/facelet/auxiliares/irpf/Exclusion/grid.xhtml
+			</to-view-id>
 		</navigation-case>
 	</navigation-rule>
 	<navigation-rule>
 		<navigation-case>
 			<from-outcome>irpf_exclusion_search</from-outcome>
-			<to-view-id>/facelet/auxiliares/irpf/Exclusion/search.xhtml</to-view-id>
+			<to-view-id>
+				/facelet/auxiliares/irpf/Exclusion/search.xhtml
+			</to-view-id>
 		</navigation-case>
 	</navigation-rule>
-	
+
 	<!-- =================== Convenios - Complementos ================= -->
 	<navigation-rule>
 		<navigation-case>
@@ -500,7 +546,7 @@
 				/facelet/auxiliares/convenios/complementos/form.xhtml
 			</to-view-id>
 		</navigation-case>
-	</navigation-rule> 
+	</navigation-rule>
 	<navigation-rule>
 		<navigation-case>
 			<from-outcome>convenios_complementos_search</from-outcome>
@@ -514,8 +560,8 @@
 				/facelet/auxiliares/convenios/complementos/list.xhtml
 			</to-view-id>
 		</navigation-case>
-	</navigation-rule> 
-	
+	</navigation-rule>
+
 	<!-- =================== Convenios - Colectivos ================= -->
 	<navigation-rule>
 		<navigation-case>
@@ -524,7 +570,7 @@
 				/facelet/auxiliares/convenios/colectivos/form.xhtml
 			</to-view-id>
 		</navigation-case>
-	</navigation-rule> 
+	</navigation-rule>
 	<navigation-rule>
 		<navigation-case>
 			<from-outcome>convenios_colectivos_search</from-outcome>
@@ -538,12 +584,12 @@
 				/facelet/auxiliares/convenios/colectivos/list.xhtml
 			</to-view-id>
 		</navigation-case>
-	</navigation-rule> 
-	
+	</navigation-rule>
+
 	<!-- =================== Cotizacion - Elementos ================= -->
 	<navigation-rule>
 		<navigation-case>
-			<from-outcome>cotizacion_elemento</from-outcome>
+			<from-outcome>elementoMaestro_form</from-outcome>
 			<to-view-id>
 				/facelet/auxiliares/cotizacion/elemento/form.xhtml
 			</to-view-id>
@@ -551,19 +597,19 @@
 	</navigation-rule>
 	<navigation-rule>
 		<navigation-case>
-			<from-outcome>cotizacion_elemento_list</from-outcome>
+			<from-outcome>elementoMaestro_list</from-outcome>
 			<to-view-id>
 				/facelet/auxiliares/cotizacion/elemento/list.xhtml
 			</to-view-id>
 		</navigation-case>
 		<navigation-case>
-			<from-outcome>cotizacion_elemento_search</from-outcome>
+			<from-outcome>elementoMaestro_search</from-outcome>
 			<to-view-id>
 				/facelet/auxiliares/cotizacion/elemento/search.xhtml
 			</to-view-id>
 		</navigation-case>
 	</navigation-rule>
-	
+
 	<!-- =================== Mantenimiento de ocupaciones ================= -->
 	<navigation-rule>
 		<navigation-case>
@@ -587,7 +633,7 @@
 			</to-view-id>
 		</navigation-case>
 	</navigation-rule>
-	
+
 	<!-- =================== Mantenimiento de CNAE ================= -->
 	<navigation-rule>
 		<navigation-case>
@@ -611,8 +657,8 @@
 			</to-view-id>
 		</navigation-case>
 	</navigation-rule>
-	
-		<!-- =================== Divisas================= -->
+
+	<!-- =================== Divisas================= -->
 	<navigation-rule>
 		<navigation-case>
 			<from-outcome>divisas_form</from-outcome>
@@ -635,7 +681,7 @@
 			</to-view-id>
 		</navigation-case>
 	</navigation-rule>
-	
+
 	<!-- =================== Pais/Cominudad/Provincia ================= -->
 	<navigation-rule>
 		<navigation-case>
@@ -659,8 +705,8 @@
 			</to-view-id>
 		</navigation-case>
 	</navigation-rule>
-		<!-- =================== Entidades y Sucursales================= -->
-		
+	<!-- =================== Entidades y Sucursales================= -->
+
 	<navigation-rule>
 		<navigation-case>
 			<from-outcome>entidades_form</from-outcome>
@@ -683,12 +729,12 @@
 			</to-view-id>
 		</navigation-case>
 	</navigation-rule>
-	
-		<!-- ===================Mutuas================ -->
-		
+
+	<!-- ===================Mutuas================ -->
+
 	<navigation-rule>
 		<navigation-case>
-			<from-outcome>mutuas_form</from-outcome>
+			<from-outcome>mutuaMaestro_form</from-outcome>
 			<to-view-id>
 				/facelet/auxiliares/organismos_entidades/mutua/form.xhtml
 			</to-view-id>
@@ -696,21 +742,21 @@
 	</navigation-rule>
 	<navigation-rule>
 		<navigation-case>
-			<from-outcome>mutuas_list</from-outcome>
+			<from-outcome>mutuaMaestro_list</from-outcome>
 			<to-view-id>
 				/facelet/auxiliares/organismos_entidades/mutua/list.xhtml
 			</to-view-id>
 		</navigation-case>
 		<navigation-case>
-			<from-outcome>mutuas_search</from-outcome>
+			<from-outcome>mutuaMaestro_search</from-outcome>
 			<to-view-id>
 				/facelet/auxiliares/organismos_entidades/mutua/search.xhtml
 			</to-view-id>
 		</navigation-case>
 	</navigation-rule>
-	
-			<!-- ===================Datos clave IRPF================ -->
-		
+
+	<!-- ===================Datos clave IRPF================ -->
+
 	<navigation-rule>
 		<navigation-case>
 			<from-outcome>datos_form</from-outcome>
@@ -733,5 +779,5 @@
 			</to-view-id>
 		</navigation-case>
 	</navigation-rule>
-	
+
 </faces-config>

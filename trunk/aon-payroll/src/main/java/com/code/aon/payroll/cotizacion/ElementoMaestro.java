@@ -1,8 +1,13 @@
 package com.code.aon.payroll.cotizacion;
 
+import java.util.HashSet;
+import java.util.Set;
+
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import com.code.aon.common.ITransferObject;
@@ -17,6 +22,9 @@ public class ElementoMaestro  implements ITransferObject {
 
      private String cdg;
      private String description;
+     
+     /** The element. */
+  	private Set<Elemento> elementos = new HashSet<Elemento>();
 
      /**
       * Codigo de Elemento
@@ -47,6 +55,15 @@ public class ElementoMaestro  implements ITransferObject {
     public void setDescription(String description) {
         this.description = description;
     }
+    
+    @OneToMany(mappedBy = "elementoMaestro", cascade={CascadeType.REMOVE})
+	public Set<Elemento> getElementos() {
+		return elementos;
+	}
+
+	public void setElementos(Set<Elemento> elementos) {
+		this.elementos = elementos;
+	}
 
 }
 
