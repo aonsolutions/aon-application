@@ -51,6 +51,20 @@
 			<artifactId>aon.ui.resources</artifactId>
 			<version>3.0.0</version>
 			<scope>compile</scope>
+			<exclusions>
+				<exclusion>
+					<artifactId>velocity</artifactId>
+					<groupId>velocity</groupId>
+				</exclusion>
+				<exclusion>
+					<artifactId>velocity-tools</artifactId>
+					<groupId>velocity-tools</groupId>
+				</exclusion>
+				<exclusion>
+					<artifactId>jmimemagic</artifactId>
+					<groupId>jmimemagic</groupId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>com.code.aon</groupId>
