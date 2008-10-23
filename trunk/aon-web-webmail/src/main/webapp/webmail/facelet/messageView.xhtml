@@ -187,8 +187,9 @@
 						</aon:commandButton>
 						<aon:outputText escape="false"
 							rendered="#{!message.shotMessageTo}" 
-							converter="maxLenghtString" 
-							value="#{message.message.recipientsTo}" />
+							value="#{message.message.recipientsTo}" >
+							<aon:abbreviateConverter maxWidth="120" />
+						</aon:outputText>
 						<aon:outputText escape="false" 
 							rendered="#{message.shotMessageTo}" 
 							converter="longString" 
@@ -219,8 +220,9 @@
 						</aon:commandButton>
 						<aon:outputText escape="false"
 							rendered="#{!message.shotMessageCc}" 
-							converter="maxLenghtString" 
-							value="#{message.message.recipientsCc}" />
+							value="#{message.message.recipientsCc}" >
+							<aon:abbreviateConverter maxWidth="120" />
+						</aon:outputText>
 						<aon:outputText escape="false" 
 							rendered="#{message.shotMessageCc}" 
 							converter="longString" 
