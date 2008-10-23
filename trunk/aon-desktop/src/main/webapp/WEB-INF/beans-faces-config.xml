@@ -96,13 +96,6 @@
 
 	<!-- ************ Collections ************** -->
 	<managed-bean>
-		<managed-bean-name>commonsCollections</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.common.controller.CommonsCollections</managed-bean-class>
-		<managed-bean-scope>session</managed-bean-scope>
-	</managed-bean>
-
-	<!-- ************ Collections ************** -->
-	<managed-bean>
 		<managed-bean-name>corporateIdentity</managed-bean-name>
 		<managed-bean-class>com.code.aon.desktop.controller.CorporateIdentity</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
