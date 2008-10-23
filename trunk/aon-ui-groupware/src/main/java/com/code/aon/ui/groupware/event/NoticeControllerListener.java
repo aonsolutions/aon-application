@@ -3,7 +3,6 @@ package com.code.aon.ui.groupware.event;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
@@ -12,8 +11,6 @@ import javax.mail.MessagingException;
 import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
 import javax.xml.soap.SOAPException;
-
-import org.apache.commons.lang.StringUtils;
 
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
@@ -28,7 +25,6 @@ import com.code.aon.groupware.enumeration.AlarmStatus;
 import com.code.aon.jaas.auth.AuthPrincipal;
 import com.code.aon.messaging.sms.Message;
 import com.code.aon.messaging.sms.Sender;
-import com.code.aon.messaging.sms.Message.Recipient;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ui.config.util.UserUtils;
 import com.code.aon.ui.form.event.ControllerAdapter;
@@ -57,8 +53,8 @@ public class NoticeControllerListener extends ControllerAdapter implements WebMa
 		if (noticeController.isSendMail() && noticeController.getMailList() != null) {
 			sendNoticeMail(notice, noticeController.getMailList());
 		}
-		if (noticeController.isSendSMS() && noticeController.getSmsList() != null) {
-			sendNoticeSMS(notice, noticeController.getSmsList());
+		if (noticeController.isSendSMS() && noticeController.getRecipients().size() > 0) {
+			sendNoticeSMS(notice, noticeController.getRecipients());
 		}
 	}
 
@@ -72,7 +68,7 @@ public class NoticeControllerListener extends ControllerAdapter implements WebMa
 	public void afterBeanSelected(ControllerEvent event) throws ControllerListenerException {
 		NoticeController noticeController = (NoticeController)event.getController();
 		noticeController.setMailList(null);
-		noticeController.setSmsList(null);
+		noticeController.resetSMS();
 		noticeController.setSendMail(false);
 		noticeController.setSendSMS(false);
 		Notice notice = (Notice)noticeController.getTo();
@@ -90,7 +86,7 @@ public class NoticeControllerListener extends ControllerAdapter implements WebMa
 		Notice notice = (Notice)noticeController.getTo();
 		notice.setDate(new Date());
 		noticeController.setMailList(null);
-		noticeController.setSmsList(null);
+		noticeController.resetSMS();
 		noticeController.setSendMail(false);
 		noticeController.setSendSMS(false);
 		noticeController.setWorkGroupId(null);
@@ -192,7 +188,7 @@ public class NoticeControllerListener extends ControllerAdapter implements WebMa
 		}
 	}
 
-	private void sendNoticeSMS(Notice notice, String smsList) {
+	private void sendNoticeSMS(Notice notice, List<String> recipients) {
 		Message message = new Message();
 		message.init();
 		AuthPrincipal user = UserUtils.getInstance().getPrincipal();
@@ -202,10 +198,11 @@ public class NoticeControllerListener extends ControllerAdapter implements WebMa
 		String content = notice.getSource() + " " + notice.getCompany() + " " + notice.getPhone() + " " + notice.getSubject();
 		content = content.trim();
 		message.getInfo().setMessage(content);
-		String[] recipients = StringUtils.split(smsList, ",");
-		for (int i=0;i<recipients.length;i++) {
-			String recipient = recipients[i];
-			recipient = recipient.trim();
+		for (int i=0;i<recipients.size();i++) {
+			String recipient = recipients.get(i);
+			if (recipient.indexOf("-") >= 0) {
+				recipient = recipient.substring(recipient.lastIndexOf("-"));
+			}
 			message.add(recipient);
 		}
 		try {
