@@ -80,7 +80,6 @@
 						value="#{appBundle.aon_commercial_tracking_activity}" />
 					<aon:selectOneMenu id="CommercialTracking_activity_id"
 						required="true" value="#{commercialTracking.to.activity}">
-						<f:converter converterId="toConverter" />
 						<f:selectItem value="#{null}" itemLabel="    " />
 						<f:selectItems value="#{commercialCollections.activities}" />
 					</aon:selectOneMenu>
@@ -122,7 +121,6 @@
 									value="#{appBundle.aon_commercial_tracking_activity}" />
 								<aon:selectOneMenu id="CommercialTracking_next_activity_id"
 									required="true" value="#{commercialTracking.next.activity}">
-									<f:converter converterId="toConverter" />
 									<f:selectItem value="#{null}" itemLabel="    " />
 									<f:selectItems value="#{commercialCollections.activities}" />
 								</aon:selectOneMenu>
