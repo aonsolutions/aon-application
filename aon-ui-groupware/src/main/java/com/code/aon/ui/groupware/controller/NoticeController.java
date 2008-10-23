@@ -1,5 +1,6 @@
 package com.code.aon.ui.groupware.controller;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -10,7 +11,6 @@ import java.util.logging.Logger;
 import javax.faces.event.ActionEvent;
 import javax.faces.event.ValueChangeEvent;
 import javax.faces.model.SelectItem;
-import javax.swing.ListModel;
 
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
@@ -38,6 +38,10 @@ public class NoticeController extends BasicController implements IAonObjectClass
 
 	private List<SelectItem> users = new LinkedList<SelectItem>();
 	
+	private static final String COMMONNAME = "cn";
+
+	private static final String SURNAME = "sn";
+
 	private static final String USER_ALTERNATIVE_EMAIL = "mail";
 
 	private static final String DOMAIN_MEMBER_ATTRIBUTE = "member";
@@ -50,7 +54,13 @@ public class NoticeController extends BasicController implements IAonObjectClass
 
 	private boolean sendSMS = false;
 
-	private String smsList = "";
+	private boolean modify = false;
+
+	private List<String> recipients = new ArrayList<String>();
+
+	private String recipient;
+	
+	private int selected = -1;
 
 	private Date fromDate;
 	
@@ -69,7 +79,7 @@ public class NoticeController extends BasicController implements IAonObjectClass
 	
 	public void workGroupChange(ValueChangeEvent event) {
 		mailList = null;
-		smsList = null;
+		resetSMS();
         if (event.getNewValue() != null && !"".equals(event.getNewValue())) {
         	workGroupId = new Integer(event.getNewValue().toString());
         	((Notice)getTo()).getRecipient().setId(null);
@@ -77,14 +87,13 @@ public class NoticeController extends BasicController implements IAonObjectClass
         } else {
         	workGroupId = null;
             loadUsers();
-        	//users = new LinkedList<SelectItem>();
         }
     }
 
 	public void recipientChange(ValueChangeEvent event) {
 		mailList = null;
-		smsList = null;
-        if (event.getNewValue() != null && !"".equals(event.getNewValue())) {
+		resetSMS();
+		if (event.getNewValue() != null && !"".equals(event.getNewValue())) {
         	((Notice)getTo()).getRecipient().setId(new Integer(""+event.getNewValue()));
         }
     }
@@ -186,7 +195,6 @@ public class NoticeController extends BasicController implements IAonObjectClass
 			//Se envia a un solo usuario.
 			Integer usernameId = ((Notice)getTo()).getRecipient().getId();
 			String username = getUserName(usernameId);
-			//mailList = ""+username+"@"+domain+"";
 			String userEmail = getLdapUserMail(domain, username);
 			if (userEmail != null) mailList = userEmail;
 		}
@@ -208,27 +216,21 @@ public class NoticeController extends BasicController implements IAonObjectClass
 	private void chargeSMS() {
 		AuthPrincipal user = UserUtils.getInstance().getPrincipal();
 		String domain = user.getDomain();
-		smsList = "";
-		
+		resetSMS();
 		if (((Notice)getTo()).getRecipient().getId() != null) {
 			//Se envia a un solo usuario.
 			Integer usernameId = ((Notice)getTo()).getRecipient().getId();
 			String username = getUserName(usernameId);
-			//mailList = ""+username+"@"+domain+"";
 			String userSMS = getLdapUserSMS(domain, username);
-			if (userSMS != null) smsList = userSMS;
+			if (userSMS != null) this.recipients.add(userSMS);
 		}
 		else {
 			//Se envia a un grupo.
-			String SEP = "";
 			for (int i=0;i<users.size();i++) {
 				Integer usernameId = new Integer(""+users.get(i).getValue());
 				String username = getUserName(usernameId);
 				String userSMS = getLdapUserSMS(domain, username);
-				if (userSMS != null) {
-					smsList += SEP+userSMS;
-					SEP = ", ";
-				}
+				if (userSMS != null) this.recipients.add(userSMS);
 			}
 		}
 	}
@@ -255,16 +257,21 @@ public class NoticeController extends BasicController implements IAonObjectClass
 		BasicLdap ldap = new BasicLdap();
 		String email = null;
 		if ( ldap.exists(userDN, USER) ) {
-			email = ""+username+"@"+domain+"";
+			email = "<"+username+"@"+domain+">";
 			try {
 				LdapSession session = ldap.getLdapSession();
 				String filter = LdapSession.getObjectClass(USER);
-				Entry userEntry = session.get(userDN.toString(), filter,USER_ALTERNATIVE_EMAIL);
+				Entry userEntry = session.get(userDN.toString(), filter,USER_ALTERNATIVE_EMAIL, COMMONNAME, SURNAME);
 				String alternativeEmail = null;
+				String name = username;
 				try {
+					String cn = userEntry.getAsString(COMMONNAME);
+					String sn = userEntry.getAsString(SURNAME);
+					name = "" + cn + " " + sn + "";
 					alternativeEmail = userEntry.getAsString(USER_ALTERNATIVE_EMAIL);
 				}catch (NullPointerException npe) {}
-				if (alternativeEmail != null) email += ", "+alternativeEmail+"";
+				email = ""+name+" "+email+"";
+				if (alternativeEmail != null) email = "" + email + ", "+ name +" <"+alternativeEmail+">";
 			} catch (LdapException e) {
                 LOGGER.log(Level.SEVERE, "Error obteniendo propiedades del usuario " + username, e);
 			} finally {
@@ -288,16 +295,21 @@ public class NoticeController extends BasicController implements IAonObjectClass
 							altdomain = altdomain.substring(3, altdomain.indexOf(","));
 							DistinguishedName altuserDN = AonDN.getUserDN( altdomain, username );
 							if ( ldap.exists(altuserDN, USER) ) {
-								email = ""+username+"@"+altdomain+"";
+								email = "<"+username+"@"+altdomain+">";
 								try {
 									LdapSession altsession = ldap.getLdapSession();
 									String altfilter = LdapSession.getObjectClass(USER);
-									Entry userEntry = altsession.get(altuserDN.toString(), altfilter, USER_ALTERNATIVE_EMAIL);
+									Entry userEntry = altsession.get(altuserDN.toString(), altfilter, USER_ALTERNATIVE_EMAIL, COMMONNAME, SURNAME);
 									String alternativeEmail = null;
+									String name = username;
 									try {
+										String cn = userEntry.getAsString(COMMONNAME);
+										String sn = userEntry.getAsString(SURNAME);
+										name = "" + cn + " " + sn + "";
 										alternativeEmail = userEntry.getAsString(USER_ALTERNATIVE_EMAIL);
 									}catch (NullPointerException npe) {}
-									if (alternativeEmail != null) email += ", "+alternativeEmail+"";
+									email = ""+name+" "+email+"";
+									if (alternativeEmail != null) email = "" + email + ", "+ name +" <"+alternativeEmail+">";
 								} catch (LdapException e) {
 					                LOGGER.log(Level.SEVERE, "Error obteniendo propiedades del usuario " + username, e);
 								}
@@ -322,9 +334,13 @@ public class NoticeController extends BasicController implements IAonObjectClass
 			try {
 				LdapSession session = ldap.getLdapSession();
 				String filter = LdapSession.getObjectClass(USER);
-				Entry userEntry = session.get(userDN.toString(), filter,USER_CELLULAR_NUMBER);
+				Entry userEntry = session.get(userDN.toString(), filter,USER_CELLULAR_NUMBER, COMMONNAME, SURNAME);
 				try {
+					String cn = userEntry.getAsString(COMMONNAME);
+					String sn = userEntry.getAsString(SURNAME);
+					String name = "" + cn + " " + sn + "";
 					sms = userEntry.getAsString(USER_CELLULAR_NUMBER);
+					sms = ""+name+"-"+sms+"";
 				}catch (NullPointerException npe) {}
 			} catch (LdapException e) {
                 LOGGER.log(Level.SEVERE, "Error obteniendo propiedades del usuario " + username, e);
@@ -349,7 +365,7 @@ public class NoticeController extends BasicController implements IAonObjectClass
 	}
 
 	public void setSendSMS(boolean sendSMS) {
-		smsList = null;
+		if (!sendSMS) resetSMS();
 		this.sendSMS = sendSMS;
 	}
 
@@ -363,13 +379,44 @@ public class NoticeController extends BasicController implements IAonObjectClass
 		this.mailList = mailList;
 	}
 
-	public String getSmsList() {
-		if (sendSMS && smsList == null) chargeSMS();
-		else if (!sendSMS) smsList = null;
-		return smsList;
+	public void add2List(ActionEvent event) {
+		if ( this.recipient != null && !this.recipient.equals( "" ) ) {
+			this.recipients.add( this.recipient );
+			this.recipient = null;
+		}
 	}
 
-	public void setSmsList(String smsList) {
-		this.smsList = smsList;
+	public void removeFromList(ActionEvent event) {
+		modify = true;
+		this.recipients.remove( this.selected );
+	}
+
+	public String getRecipient() {
+		return recipient;
+	}
+
+	public void setRecipient(String recipient) {
+		this.recipient = recipient;
+	}
+
+	public List<String> getRecipients() {
+		if (sendSMS && this.recipients.size() <= 0 && !modify) chargeSMS();
+		else if (!sendSMS) resetSMS();
+		return this.recipients;
+	}
+
+	public void setRecipients(List<String> recipients) {
+		this.recipients = recipients;
+	}
+
+	public void setSelected(int selected) {
+		this.selected = selected;
+	}
+
+	public void resetSMS() {
+		recipients = new ArrayList<String>();
+		recipient = null;
+		selected = -1;
+		modify = false;
 	}
 }
