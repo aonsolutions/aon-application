@@ -23,22 +23,22 @@
 					<aon:methodParam name="searchAction" value="creditor_list" />
 
 					<aon:outputLabel for="Creditor_registry_document"
-						value="#{financeBundle.finance_document}" />
+						value="#{bundle.aon_company_document}" />
 					<aon:inputText id="Creditor_registry_document" size="20"
 						valueChangeListener="#{creditor.addExpression}" />
 
 					<aon:outputLabel for="Creditor_registry_name"
-						value="#{bundle.aon_name}" />
+						value="#{bundle.aon_company_name}" />
 					<aon:inputText id="Creditor_registry_name" size="40"
 						valueChangeListener="#{creditor.addExpression}" />
 
 					<aon:outputLabel for="Creditor_registry_surname"
-						value="#{financeBundle.finance_surname}" />
+						value="#{registryBundle.registry_surname}" />
 					<aon:inputText id="Creditor_registry_surname" size="40"
 						valueChangeListener="#{creditor.addExpression}" />
 
 					<aon:outputLabel for="Creditor_registry_alias"
-						value="#{financeBundle.finance_alias}" />
+						value="#{bundle.aon_company_alias}" />
 					<aon:inputText id="Creditor_registry_alias" size="40"
 						valueChangeListener="#{creditor.addExpression}" />
 				</ui:define>
