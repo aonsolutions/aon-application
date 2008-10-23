@@ -22,35 +22,35 @@
 						required="true" size="15" disabled="true" />
 
 					<aon:outputLabel for="Supplier_registry_document"
-						value="#{supplierBundle.supplier_document}" />
+						value="#{bundle.aon_company_document}" />
 					<aon:inputText id="Supplier_registry_document"
 						value="#{supplier.to.registry.document}" size="16">
 						<f:validateLength minimum="1" maximum="16" />
 					</aon:inputText>
 
 					<aon:outputLabel for="Supplier_registry_name"
-						value="#{bundle.aon_name}" />
+						value="#{bundle.aon_company_name}" />
 					<aon:inputText id="Supplier_registry_name"
 						value="#{supplier.to.registry.name}" size="64">
 						<f:validateLength minimum="1" maximum="64" />
 					</aon:inputText>
 
 					<aon:outputLabel for="Supplier_registry_surname"
-						value="#{supplierBundle.supplier_surname}" />
+						value="#{registryBundle.registry_surname}" />
 					<aon:inputText id="Supplier_registry_surname"
 						value="#{supplier.to.registry.surname}" size="64">
 						<f:validateLength minimum="1" maximum="64" />
 					</aon:inputText>
 
 					<aon:outputLabel for="Supplier_registry_alias"
-						value="#{supplierBundle.supplier_alias}" />
+						value="#{bundle.aon_company_alias}" />
 					<aon:inputText id="Supplier_registry_alias"
 						value="#{supplier.to.registry.alias}" size="32">
 						<f:validateLength minimum="1" maximum="32" />
 					</aon:inputText>
 
 					<aon:outputLabel for="Supplier_scope_id"
-						value="#{supplierBundle.supplier_scope}" />
+						value="#{bundle.aon_scope}" />
 					<aon:selectOneMenu id="Supplier_scope_id"
 						value="#{supplier.to.scope}">
 						<f:selectItems value="#{configCollections.scopes}" />
