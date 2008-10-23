@@ -79,7 +79,6 @@
 						value="#{appBundle.aon_commercial_tracking_activity}" />
 					<aon:selectOneMenu id="CommercialTracking_next_activity_id" 
 						value="#{commercialTracking.activity}">
-						<f:converter converterId="toConverter" />
 						<f:selectItem value="#{null}" itemLabel="    " />
 						<f:selectItems value="#{commercialCollections.activities}" />
 					</aon:selectOneMenu>

@@ -260,7 +260,6 @@
 					value="#{appBundle.aon_commercial_tracking_activity}" />
 				<aon:selectOneMenu id="Target_trackings_activity_id" 
 					value="#{targetSearch.activity}">
-					<f:converter converterId="toConverter" />
 					<f:selectItem value="#{null}" itemLabel="    " />
 					<f:selectItems value="#{commercialCollections.activities}" />
 				</aon:selectOneMenu>
