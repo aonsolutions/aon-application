@@ -8,10 +8,12 @@ import com.code.aon.payroll.auxiliares.Admon;
 import com.code.aon.payroll.auxiliares.Colectivos;
 import com.code.aon.payroll.auxiliares.contratos.ContratosInternos;
 import com.code.aon.payroll.auxiliares.contratos.ContratosTc2;
+import com.code.aon.payroll.auxiliares.convenios.Categoria;
 import com.code.aon.payroll.auxiliares.convenios.Complemento;
 import com.code.aon.payroll.auxiliares.convenios.Convenio;
 import com.code.aon.payroll.auxiliares.convenios.Nivel;
 import com.code.aon.payroll.auxiliares.convenios.Pagaext;
+import com.code.aon.payroll.auxiliares.convenios.Percniv;
 import com.code.aon.payroll.cotizacion.Base;
 import com.code.aon.payroll.cotizacion.Bonificacion;
 import com.code.aon.payroll.cotizacion.Cnae;
@@ -106,6 +108,8 @@ public class PayrollAliasWriter {
 		        Convenio.class.getName(),
 		        Nivel.class.getName(),
 		        Pagaext.class.getName(),
+		        Categoria.class.getName(),
+		        Percniv.class.getName(),
 		        Entidad.class.getName(),
 		        Sucursal.class.getName(),
 		        Mutua.class.getName(),

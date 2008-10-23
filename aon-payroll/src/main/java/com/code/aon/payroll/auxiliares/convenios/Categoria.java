@@ -23,7 +23,7 @@ public class Categoria implements ITransferObject {
 
 	private CategoriaPK id;
 	private String nivel;
-	private String descripcion;
+	private String description;
 	private String cno;
 	private Base base;
 	private Convenio convenio;
@@ -60,13 +60,13 @@ public class Categoria implements ITransferObject {
 	 * 
 	 * @return
 	 */
-	@Column(name = "description", length = 35)
-	public String getDescripcion() {
-		return this.descripcion;
+	@Column(name = "descripcion", length = 35)
+	public String getDescription() {
+		return this.description;
 	}
 
-	public void setDescripcion(String descripcion) {
-		this.descripcion = descripcion;
+	public void setDescription(String description) {
+		this.description = description;
 	}
 
 	/**

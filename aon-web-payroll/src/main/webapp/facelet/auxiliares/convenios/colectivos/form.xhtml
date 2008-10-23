@@ -112,12 +112,20 @@
 							rendered="#{!convenio.new}" immediate="true" disabled="#{convenio.new}"
 							action="convenios_colectivos_search" actionListener="#{convenio.onEditSearch}"
 							styleClass="aon-finding-toolbar-item aon-icon-notes"
-							accesskey="#{bundle.aon_key_search}" />			
-						<ui:include src="nivel/grid.xhtml" />
-						<!--  
-						<ui:include src="categoria/grid.xhtml" />
-						<ui:include src="percepcion/grid.xhtml" />
-						-->
+							accesskey="#{bundle.aon_key_search}" />
+							
+						<aon:div id="nivelDiv" style="width:15%; margin-right:5px; float: left;">	
+							<aon:outputLabel value="#{appBundle.aon_payroll_nivel}" />		
+							<ui:include src="nivel/grid.xhtml" />
+						</aon:div>
+						<aon:div id="categoriaDiv" style="width:40%; margin-right:5px; float: left;">
+							<aon:outputLabel value="#{appBundle.aon_payroll_categoria}" />
+							<ui:include src="categoria/grid.xhtml" />
+						</aon:div>
+						<aon:div id="percepcionDiv" style="width:40%; margin-right:5px; float: left;">
+							<aon:outputLabel value="#{appBundle.aon_payroll_percepciones}" />
+							<ui:include src="percepcion/grid.xhtml" />
+						</aon:div>
 					</rich:tab>
 					<rich:tab id="pagas" label="#{appBundle.aon_payroll_auxiliares_convenios__pagas}">
 						<ui:include src="pagas/grid.xhtml" />

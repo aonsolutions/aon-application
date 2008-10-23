@@ -1,7 +1,6 @@
 package com.code.aon.payroll.auxiliares.contratos;
 
 import java.math.BigDecimal;
-import java.util.Locale;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -130,7 +129,7 @@ public class ContratosInternos implements ITransferObject {
 	
 //TODO A la espera de implementar un SelectBooleanCheckboxRenderer.
 	@Transient 
-	public Boolean getMujersubbol() {
+	public Boolean getMujersubbol() { 
 		return (getMujersub() != null && getMujersub().equals("S")?true:false );
 	}
 	public void setMujersubbol(Boolean bol) {
