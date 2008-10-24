@@ -70,3 +70,8 @@
 	font-size: 8pt;
 	font-style: italic;
 }
+
+.aon-panelGrid-search-body {
+	margin: 0px 0px 0px 0px;
+	padding: 5px 0px 0px 3px;
+}

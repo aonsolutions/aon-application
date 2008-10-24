@@ -98,7 +98,7 @@ public class SupplierWizard extends AbstractWizard {
 			ExpressionFactory factory = ctx.getApplication().getExpressionFactory();
 			ValueExpression ve = factory.createValueExpression(elctx, getELValueExpression(),
 					Registry.class);
-			Supplier a = (Supplier) getModel().getRowData();
+			Supplier a = (Supplier) getController().getModel().getRowData();
 			ve.setValue(elctx, a.getRegistry());
 			assignExtendedLookupAttributes(a.getRegistry());
 			reset();
@@ -111,6 +111,10 @@ public class SupplierWizard extends AbstractWizard {
 			FacesMessage message = new FacesMessage(e.getMessage());
 			context.addMessage(null, message);
 		} catch (NoSuchMethodException e) {
+			FacesContext context = FacesContext.getCurrentInstance();
+			FacesMessage message = new FacesMessage(e.getMessage());
+			context.addMessage(null, message);
+		} catch (ManagerBeanException e) {
 			FacesContext context = FacesContext.getCurrentInstance();
 			FacesMessage message = new FacesMessage(e.getMessage());
 			context.addMessage(null, message);
