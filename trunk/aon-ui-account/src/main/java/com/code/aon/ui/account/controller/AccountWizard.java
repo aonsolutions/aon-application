@@ -99,6 +99,7 @@ public class AccountWizard extends AbstractWizard {
 		if (!StringUtils.isBlank(alias)) {
 			criteria.addExpression(ExpressionUtilities.getExpression(getAlias(), ALIAS));
 		}
+		criteria.addEqualExpression(ENTRY_ENABLED, true);
 	}
 
 	@Override

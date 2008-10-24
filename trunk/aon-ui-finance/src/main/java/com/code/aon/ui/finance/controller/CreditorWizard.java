@@ -98,7 +98,7 @@ public class CreditorWizard extends AbstractWizard {
 			ExpressionFactory factory = ctx.getApplication().getExpressionFactory();
 			ValueExpression ve = factory.createValueExpression(elctx, getELValueExpression(),
 					Registry.class);
-			Creditor a = (Creditor) getModel().getRowData();
+			Creditor a = (Creditor) getController().getModel().getRowData();
 			ve.setValue(elctx, a.getRegistry());
 			assignExtendedLookupAttributes(a.getRegistry());
 			reset();
@@ -111,6 +111,10 @@ public class CreditorWizard extends AbstractWizard {
 			FacesMessage message = new FacesMessage(e.getMessage());
 			context.addMessage(null, message);
 		} catch (NoSuchMethodException e) {
+			FacesContext context = FacesContext.getCurrentInstance();
+			FacesMessage message = new FacesMessage(e.getMessage());
+			context.addMessage(null, message);
+		} catch (ManagerBeanException e) {
 			FacesContext context = FacesContext.getCurrentInstance();
 			FacesMessage message = new FacesMessage(e.getMessage());
 			context.addMessage(null, message);

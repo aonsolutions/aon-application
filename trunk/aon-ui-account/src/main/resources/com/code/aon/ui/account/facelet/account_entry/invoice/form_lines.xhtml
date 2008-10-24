@@ -12,20 +12,19 @@
 		<aon:editDataTable id="TaxesData" var="to" rows="0"
 			value="#{accountInvoice.details}">
 
+			<aon:rowSelector immediate="true"
+				rendered="#{!accountInvoice.newDetail and to!=accountInvoice.currentDetail}"
+				disabled="#{!accountInvoice.accountSource}"
+				actionListener="#{accountInvoice.onSelectDetail}" />
+
 			<aon:column styleClass="aon-editDataTable-iconColumn aon-column-5">
 				<f:facet name="header">
 					<aon:outputText value="&#160;" />
 				</f:facet>
-				<aon:commandButton immediate="#{true}" reRender="TaxesData"
-					styleClass="aon-icon-commandButton aon-icon-rowSelector"
-					rendered="#{!accountInvoice.newDetail and to!=accountInvoice.currentDetail}"
-					disabled="#{!accountInvoice.accountSource}"
-					actionListener="#{accountInvoice.onSelectDetail}" />
 				<f:facet name="footer">
 					<aon:commandButton value=""
 						styleClass="aon-editDataTable-button aon-icon-new"
-						reRender="TaxesData,invoiceTables"
-						title="#{accountBundle.aon_newLine}"
+						reRender="TaxesData,invoiceTables" 
 						actionListener="#{accountInvoice.onNewDetail}"
 						rendered="#{!accountInvoice.newDetail}"
 						disabled="#{!accountInvoice.accountSource}"
@@ -36,7 +35,7 @@
 
 			<aon:column styleClass="aon-editDataTable-numberColumn aon-column-10">
 				<f:facet name="header">
-					<aon:outputText value="#{accountBundle.aon_taxable_base}" />
+					<aon:outputText value="#{accountBundle.account_taxablebase}" />
 				</f:facet>
 				<aon:outputText id="Account_Taxable_Base"
 					rendered="#{to!=accountInvoice.currentDetail}"
@@ -60,13 +59,13 @@
 
 			<aon:column styleClass="aon-editDataTable-textColumn aon-column-10">
 				<f:facet name="header">
-					<aon:outputText value="#{accountBundle.aon_retention}" />
+					<aon:outputText value="#{accountBundle.account_retention}" />
 				</f:facet>
 				<aon:outputText value="#{to.retention.percentage}"
 					rendered="#{to!=accountInvoice.currentDetail}">
 					<f:convertNumber pattern="#,##0.00" />
 				</aon:outputText>
-					
+
 				<aon:selectOneMenu id="Account_Retention-Edit"
 					styleClass="aon-form-selectOneMenu-field"
 					rendered="#{to==accountInvoice.currentDetail}"
@@ -91,7 +90,7 @@
 
 			<aon:column styleClass="aon-editDataTable-textColumn aon-column-15">
 				<f:facet name="header">
-					<aon:outputText value="#{accountBundle.aon_vat}" />
+					<aon:outputText value="#{accountBundle.account_vat}" />
 				</f:facet>
 				<aon:outputText value="#{to.vat.percentage}"
 					rendered="#{to!=accountInvoice.currentDetail}">
@@ -128,7 +127,8 @@
 				</aon:outputText>
 				<f:facet name="footer">
 					<aon:div id="newRetention" rendered="#{accountInvoice.newDetail}">
-						<aon:outputText value="#{accountInvoice.currentDetail.retentionQuota}">
+						<aon:outputText
+							value="#{accountInvoice.currentDetail.retentionQuota}">
 							<f:convertNumber pattern="#,##0.00" />
 						</aon:outputText>
 					</aon:div>
@@ -169,7 +169,7 @@
 
 			<aon:column styleClass="aon-editDataTable-numberColumn aon-column-10">
 				<f:facet name="header">
-					<aon:outputText value="#{accountBundle.aon_total}" />
+					<aon:outputText value="#{accountBundle.account_total}" />
 				</f:facet>
 				<aon:outputText value="#{to.total}">
 					<f:convertNumber pattern="#,##0.00" />
@@ -185,40 +185,42 @@
 
 			<aon:column styleClass="aon-editDataTable-textColumn">
 				<f:facet name="header">
-					<aon:outputText value="#{accountBundle.aon_account}" />
+					<aon:outputText value="#{accountBundle.account_account}" />
 				</f:facet>
 				<aon:outputText value="#{to.account}"
 					rendered="#{to!=accountInvoice.currentDetail}" />
 				<ui:include
 					src="/com/code/aon/ui/account/facelet/lookup/account/accountIdInput.xhtml">
 					<ui:param name="wizard" value="#{accountWizard}" />
-					<ui:param name="fieldID" value="accountUpdateId" />
+					<ui:param name="id" value="accountUpdateId" />
 					<ui:param name="required" value="#{false}" />
+					<ui:param name="size" value="12" />
 					<ui:param name="renderDescription" value="#{false}" />
 					<ui:param name="renderedAttr"
 						value="#{to==accountInvoice.currentDetail}" />
 					<ui:param name="disabled" value="#{false}" />
 					<ui:param name="reRenderAttr" value="none" />
 					<ui:param name="required" value="false" />
-					<ui:param name="fieldValue"
+					<ui:param name="entity"
 						value="#{accountInvoice.currentDetail.account}" />
-					<ui:param name="fieldValueExpression"
+					<ui:param name="ELExpression"
 						value="accountInvoice.currentDetail.account" />
 				</ui:include>
 				<f:facet name="footer">
 					<ui:include
 						src="/com/code/aon/ui/account/facelet/lookup/account/accountIdInput.xhtml">
 						<ui:param name="wizard" value="#{accountWizard}" />
-						<ui:param name="fieldID" value="accountNewId" />
+						<ui:param name="id" value="accountNewId" />
 						<ui:param name="required" value="#{false}" />
 						<ui:param name="renderDescription" value="#{false}" />
 						<ui:param name="renderedAttr" value="#{accountInvoice.newDetail}" />
 						<ui:param name="disabled" value="#{false}" />
+						<ui:param name="size" value="12" />
 						<ui:param name="reRenderAttr" value="none" />
 						<ui:param name="required" value="false" />
-						<ui:param name="fieldValue"
+						<ui:param name="entity"
 							value="#{accountInvoice.currentDetail.account}" />
-						<ui:param name="fieldValueExpression"
+						<ui:param name="ELExpression"
 							value="accountInvoice.currentDetail.account" />
 					</ui:include>
 				</f:facet>
@@ -229,7 +231,8 @@
 					<aon:outputText value="&#160;" />
 				</f:facet>
 				<aon:div rendered="#{to==accountInvoice.currentDetail}">
-					<aon:commandButton title="#{bundle.aon_save}" reRender="TaxesData,aonToolbar"
+					<aon:commandButton title="#{bundle.aon_save}"
+						reRender="TaxesData,aonToolbar"
 						actionListener="#{accountInvoice.onUpdateDetail}"
 						styleClass="aon-editDataTable-button aon-icon-accept" value=""
 						accesskey="#{bundle.aon_key_save_line}" />

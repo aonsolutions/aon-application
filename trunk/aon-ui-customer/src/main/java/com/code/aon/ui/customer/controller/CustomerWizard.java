@@ -91,14 +91,14 @@ public class CustomerWizard extends AbstractWizard {
 		}
 	}
 
-	public void onSelectToRegistry(ActionEvent event) {
+	public void onSelectToRegistry(ActionEvent event)  {
 		try {
 			FacesContext ctx = FacesContext.getCurrentInstance();
 			ELContext elctx = ctx.getELContext();
 			ExpressionFactory factory = ctx.getApplication().getExpressionFactory();
 			ValueExpression ve = factory.createValueExpression(elctx, getELValueExpression(),
 					Registry.class);
-			Customer a = (Customer) getModel().getRowData();
+			Customer a = (Customer) getController().getModel().getRowData();
 			ve.setValue(elctx, a.getRegistry());
 			assignExtendedLookupAttributes(a.getRegistry());
 			reset();
@@ -111,6 +111,10 @@ public class CustomerWizard extends AbstractWizard {
 			FacesMessage message = new FacesMessage(e.getMessage());
 			context.addMessage(null, message);
 		} catch (NoSuchMethodException e) {
+			FacesContext context = FacesContext.getCurrentInstance();
+			FacesMessage message = new FacesMessage(e.getMessage());
+			context.addMessage(null, message);
+		} catch (ManagerBeanException e) {
 			FacesContext context = FacesContext.getCurrentInstance();
 			FacesMessage message = new FacesMessage(e.getMessage());
 			context.addMessage(null, message);

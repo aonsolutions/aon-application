@@ -2,8 +2,8 @@
 <ui:composition xmlns="http://www.w3.org/1999/xhtml"
 	xmlns:ui="http://java.sun.com/jsf/facelets"
 	xmlns:aon="http://www.code.es/aon-rich-components"
-	xmlns:a4j="http://richfaces.org/a4j"
 	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:a4j="http://richfaces.org/a4j"
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:f="http://java.sun.com/jsf/core"
 	xmlns:rich="http://richfaces.org/rich">
@@ -12,6 +12,7 @@
 		<a4j:region>
 			<aon:inputText id="#{id}" value="#{entity}" disabled="#{disabled}"
 				required="#{required}" size="#{size}">
+				<f:converter converterId="CreditorRegistryConverter" />
 				<a4j:support event="onkeyup"
 					onsubmit="if(event.keyCode != 113) return false;"
 					eventsQueue="#{id}KeyUp" ignoreDupResponses="true"
@@ -21,7 +22,6 @@
 				</a4j:support>
 
 				<a4j:support eventsQueue="#{id}OnChange"
-					onsubmit="validateOnChange(this)"
 					actionListener="#{wizard.onLookup}" ignoreDupResponses="true"
 					requestDelay="100" event="onchange"
 					reRender="#{id}Name,#{reRenderAttr}">
@@ -39,39 +39,20 @@
 				</a4j:support>
 			</aon:inputText>
 		</a4j:region>
-		<rich:suggestionbox for="#{id}"
-			suggestionAction="#{wizard.autocompleteId}" var="result"
-			onsubmit="if (!activateSuggestionBox(this)) return false;"
-			immediate="true" eventsQueue="#{id}Sug" ignoreDupResponses="true"
-			requestDelay="100" width="500" height="200"
-			nothingLabel="#{bundle.aon_search_no_results}">
-			<aon:column>
-				<aon:outputText value="#{result.id}" />
-			</aon:column>
-			<aon:column>
-				<aon:outputText value="#{result.description}" />
-			</aon:column>
-			<a4j:support event="onselect" reRender="#{id}Container">
-				<f:setPropertyActionListener target="#{entity}" value="#{result}" />
-			</a4j:support>
-		</rich:suggestionbox>
 		<a4j:commandButton styleClass="aon-lookupButton" value=""
 			disabled="#{disabled}" actionListener="#{wizard.onShow}"
 			immediate="true" oncomplete="searchFieldForFocus('#{id}searchName')"
 			reRender="#{id}Container" />
-		<aon:div id="#{id}Name" style="display:inline"
-			rendered="#{renderDescription}">
-			<aon:outputText rendered="#{entity.description != null}"
-				value="#{entity.description}">
-				<aon:abbreviateConverter maxWidth="35" />
-			</aon:outputText>
-			<aon:outputText rendered="#{entity.description == null}"
+		<aon:div id="#{id}Name" style="display:inline">
+			<aon:outputText rendered="#{entity.name != null}"
+				value="#{entity.fullName}" />
+			<aon:outputText rendered="#{entity.name == null}"
 				value="---------------------------------" />
 		</aon:div>
 		<c:if test="#{wizard.visible}">
-			<rich:modalPanel id="#{id}modalPanel" minHeight="600"
+			<rich:modalPanel id="#{id}Panel" minHeight="620"
 				rendered="#{wizard.visible}" showWhenRendered="true" minWidth="650"
-				top="50" left="100" height="600" width="650" zindex="2000"
+				top="50" left="100" height="620" width="650" zindex="2000"
 				resizeable="true">
 
 				<a4j:support event="onkeyup"
@@ -84,7 +65,8 @@
 
 				<f:facet name="header">
 					<aon:div styleClass="aon-popupWindow-title">
-						<aon:outputText value="#{accountBundle.account_selection}" />
+						<aon:outputText
+							value="#{financeBundle.finance_creditor_selection}" />
 					</aon:div>
 				</f:facet>
 				<f:facet name="controls">
@@ -102,58 +84,64 @@
 						bodyClass="aon-panelGrid-search-body">
 
 						<aon:panelGrid columns="2" style="width:100%;">
-							<aon:outputText value="#{bundle.aon_description}" />
-							<aon:inputText value="#{wizard.description}" size="40">
+							<aon:outputText value="#{bundle.aon_company_name}" />
+							<aon:inputText value="#{wizard.name}" size="40">
 								<a4j:support event="onchange" ajaxSingle="true"
 									eventsQueue="#{id}nm" ignoreDupResponses="true"
 									requestDelay="100" actionListener="#{wizard.inputChanged}" />
 							</aon:inputText>
 
-							<aon:outputText value="#{bundle.aon_alias}" />
+							<aon:outputText value="#{registryBundle.registry_surname}" />
+							<aon:inputText value="#{wizard.surname}" size="40">
+								<a4j:support event="onchange" ajaxSingle="true"
+									eventsQueue="#{id}sn" ignoreDupResponses="true"
+									requestDelay="100" actionListener="#{wizard.inputChanged}" />
+							</aon:inputText>
+
+							<aon:outputText value="#{bundle.aon_company_alias}" />
 							<aon:inputText value="#{wizard.alias}" size="20">
 								<a4j:support event="onchange" ajaxSingle="true"
 									eventsQueue="#{id}ac" ignoreDupResponses="true"
 									requestDelay="100" actionListener="#{wizard.inputChanged}" />
 							</aon:inputText>
 
-							<aon:outputText value="#{accountBundle.account_account}" />
+							<aon:outputText value="#{bundle.aon_company_document}" />
 							<aon:div>
-								<aon:inputText value="#{wizard.id}" size="15">
+								<aon:inputText value="#{wizard.document}" size="15">
 									<a4j:support event="onchange" ajaxSingle="true"
 										eventsQueue="#{id}ic" ignoreDupResponses="true"
 										requestDelay="100" actionListener="#{wizard.inputChanged}" />
 								</aon:inputText>
-								<a4j:commandButton value="#{bundle.aon_search}"
-									style="margin-left: 5px;" actionListener="#{wizard.onSearch}"
+								<aon:commandButton value="#{bundle.aon_search}"
+									actionListener="#{wizard.onSearch}"
 									accesskey="#{bundle.aon_key_search}"
 									eventsQueue="#{id}SearchQueue" ignoreDupResponses="true"
 									requestDelay="100" reRender="#{id}tableContainer"
-									oncomplete="selectFirstRow('#{id}table')">
-								</a4j:commandButton>
+									oncomplete="selectFirstRow('#{id}table')" />
 							</aon:div>
 						</aon:panelGrid>
 					</rich:simpleTogglePanel>
 				</a4j:region>
 
-				<rich:separator height="2px;"
-					style="margin-top: 5px;margin-bottom: 5px;" />
+				<rich:separator height="2px;" />
 
 				<aon:div id="#{id}tableContainer">
 					<aon:editDataTable id="#{id}table" value="#{wizard.model}"
-						var="acc" rows="15" rendered="#{wizard.model.rowCount > 0}"
+						var="cred" rendered="#{wizard.model.rowCount > 0}" rows="15"
 						columnClasses="aon-editDataTable-iconColumn,
-						aon-editDataTable-textColumn,
-						aon-editDataTable-textColumn,
+						aon-editDataTable-textColumn aon-width-80,
+						aon-editDataTable-textColumn aon-width-100,
 						aon-editDataTable-textColumn">
+
 						<aon:column>
 							<aon:commandButton id="#{id}RowSelector"
 								styleClass="aon-editDataTable-button aon-icon-rowSelector"
-								actionListener="#{wizard.onSelect}" immediate="true"
+								actionListener="#{wizard.onSelectToRegistry}" immediate="true"
 								ajaxSingle="true" eventsQueue="#{id}SelectQueue"
 								requestDelay="100" ignoreDupResponses="true"
 								onkeyup="tableKeyUp(event.keyCode)"
 								reRender="#{id}Container,#{reRenderAttr}">
-								<a4j:actionparam name="actionParam" value="#{ELExpression}"
+								<a4j:actionparam name="ActionParam" value="#{ELExpression}"
 									assignTo="#{wizard.valueExpression}">
 								</a4j:actionparam>
 								<a4j:actionparam name="lookupActionParam"
@@ -169,28 +157,30 @@
 
 						<aon:column>
 							<f:facet name="header">
-								<aon:outputText value="#{accountBundle.account_account}" />
+								<aon:outputText value="#{bundle.aon_id}" />
 							</f:facet>
-							<aon:outputText value="#{acc.id}" />
+							<aon:outputText value="#{cred.id}" />
 						</aon:column>
-
 						<aon:column>
 							<f:facet name="header">
-								<aon:outputText value="#{bundle.aon_description}" />
+								<aon:outputText value="#{bundle.aon_company_document}" />
 							</f:facet>
-							<aon:outputText value="#{acc.description}">
-								<aon:abbreviateConverter maxWidth="75" />
-							</aon:outputText>
+							<aon:outputText value="#{cred.registry.document}" />
+						</aon:column>
+						<aon:column>
+							<f:facet name="header">
+								<aon:outputText value="#{bundle.aon_company_name}" />
+							</f:facet>
+							<aon:outputText value="#{cred.registry.fullName}" />
 						</aon:column>
 					</aon:editDataTable>
 
 					<aon:dataScroller2 for="#{id}table" showNote="true" />
+
 				</aon:div>
 			</rich:modalPanel>
 		</c:if>
 		<a4j:loadScript src="/js/extendedInput.js" />
-		<a4j:loadScript
-			src="/aonResource/com/code/aon/ui/account/facelet/account/lookup/accountIdInput.js" />
 
 	</aon:div>
 </ui:composition>

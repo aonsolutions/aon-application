@@ -882,18 +882,6 @@ public class AccountInvoiceController {
 		}
 	}
 	
-	public List<SelectItem> getInvoiceTypes(){
-		Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
-		LinkedList<SelectItem> types = new LinkedList<SelectItem>();
-		SelectItem item = new SelectItem(InvoiceType.SALES, InvoiceType.SALES.getName(locale));
-		types.add(item);
-		item = new SelectItem(InvoiceType.PURCHASE, InvoiceType.PURCHASE.getName(locale));
-		types.add(item);
-		item = new SelectItem(InvoiceType.EXPENSES, InvoiceType.EXPENSES.getName(locale));
-		types.add(item);
-		return types;
-	}
-
     private double round(double value, int precision) {
         double decimal = Math.pow(10, precision);
         return Math.round(decimal*value) / decimal;

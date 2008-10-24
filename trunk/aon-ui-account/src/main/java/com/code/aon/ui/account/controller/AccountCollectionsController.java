@@ -17,6 +17,7 @@ import com.code.aon.account.enumeration.AccountEntryType;
 import com.code.aon.common.BeanManager;
 import com.code.aon.common.IManagerBean;
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.finance.enumeration.InvoiceType;
 import com.code.aon.ql.Criteria;
 import com.code.aon.ql.ast.Expression;
 import com.code.aon.ql.util.ExpressionException;
@@ -399,5 +400,17 @@ public class AccountCollectionsController {
 			loans.add(item);
 		}
 		return loans;
+	}
+
+	public List<SelectItem> getInvoiceTypes(){
+		Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
+		LinkedList<SelectItem> types = new LinkedList<SelectItem>();
+		SelectItem item = new SelectItem(InvoiceType.SALES, InvoiceType.SALES.getName(locale));
+		types.add(item);
+		item = new SelectItem(InvoiceType.PURCHASE, InvoiceType.PURCHASE.getName(locale));
+		types.add(item);
+		item = new SelectItem(InvoiceType.EXPENSES, InvoiceType.EXPENSES.getName(locale));
+		types.add(item);
+		return types;
 	}
 }
