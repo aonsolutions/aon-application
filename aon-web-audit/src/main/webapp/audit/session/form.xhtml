@@ -57,15 +57,28 @@
 						value="#{appBundle.aon_user}" />
 					<aon:outputText id="Session_user_login"
 						value="#{auditSession.to.user.login}"/>
+
+					<aon:outputLabel for="Session_remoteAddress"
+						value="#{appBundle.aon_session_remoteAddress}" />
+					<aon:outputText id="Session_remoteAddress"
+						value="#{auditSession.to.remoteAddress}"/>
+
+					<aon:outputLabel for="Session_remoteHost"
+						value="#{appBundle.aon_session_remoteHost}" />
+					<aon:outputText id="Session_remoteHost"
+						value="#{auditSession.to.remoteHost}"/>
 					
 				</aon:panelGrid>
 				
-				<aon:div styleClass="aon-form-group" rendered="#{!auditSession.new}">
+				<aon:div styleClass="aon-form-group" rendered="#{!seller.new}">
 					<aon:div styleClass="aon-form-group-title">
-						<aon:outputLabel for="actionExecutionData" value="#{menuBundle.aon_actions}" />
+						<aon:div styleClass="aon-form-group-title-internal">
+							<aon:outputLabel for="actionExecutionData" value="#{menuBundle.aon_actions}" />
+						</aon:div>
 					</aon:div>
 					<ui:include src="/audit/session/action/list.xhtml"/>
 				</aon:div>
+				
 				
 			</aon:div>
 		</aon:form>

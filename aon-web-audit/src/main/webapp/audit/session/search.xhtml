@@ -46,6 +46,17 @@
 						value="#{appBundle.aon_user}" />
 					<aon:inputText id="Session_user_login" size="60"
 						valueChangeListener="#{auditSession.addDirectExpression}" />
+						
+					<aon:outputLabel for="Session_remoteAddress"
+						value="#{appBundle.aon_session_remoteAddress}" />
+					<aon:inputText id="Session_remoteAddress" size="60"
+						valueChangeListener="#{auditSession.addDirectExpression}" />
+
+					<aon:outputLabel for="Session_remoteHost"
+						value="#{appBundle.aon_session_remoteHost}" />
+					<aon:inputText id="Session_remoteHost" size="60"
+						valueChangeListener="#{auditSession.addDirectExpression}" />						
+						
 				</ui:define>
 			</ui:decorate>
 			
