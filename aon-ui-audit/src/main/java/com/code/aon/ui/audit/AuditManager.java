@@ -172,19 +172,13 @@ public class AuditManager implements IAuditAlias {
 		return user;
 	}
 	
-	public Session createLoginAudit( Application application, User user, String sessionId, Date date ) throws ManagerBeanException {
-		Session loginAudit = new Session();
-		loginAudit.setApplication( application );
-		loginAudit.setUser( user );
-		loginAudit.setSessionId( sessionId );
-		loginAudit.setStartDate( date );
-		sessionBean.insert( loginAudit );
-		return loginAudit;
+	public void insertSession( Session session ) throws ManagerBeanException {
+		sessionBean.insert( session );
 	}
 
-	public void closeLoginAudit( Session loginAudit ) throws ManagerBeanException {
-		loginAudit.setEndDate( new Date() );
-		sessionBean.update( loginAudit );
+	public void closeLoginAudit( Session session ) throws ManagerBeanException {
+		session.setEndDate( new Date() );
+		sessionBean.update( session );
 	}
 
 	public Action getAction( String name, Application application ) throws ManagerBeanException {
