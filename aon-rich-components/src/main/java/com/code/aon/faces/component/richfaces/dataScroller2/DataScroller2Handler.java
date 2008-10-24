@@ -95,7 +95,7 @@ public class DataScroller2Handler extends TagHandler {
 		return model;
 	}
 	
-	private ValueExpression getScrollerModelExpression( FaceletContext ctx, UIData table ) {
+	private ScrollerDataModel getScrollerDataModel( FaceletContext ctx, UIData table ) {
 		UIViewRoot root = ComponentSupport.getViewRoot(ctx, table);
 		String scrollerId = getScrollerModelId();
 		DataModel model = getDataModel(ctx, table);		
@@ -105,8 +105,12 @@ public class DataScroller2Handler extends TagHandler {
 			root.getAttributes().put( scrollerId, scrollerModel );
 		} else {
 			scrollerModel.setModel( model );
-		}
-		scrollerModel.setPageSize( getPageSize(ctx, table) );
+		}		
+		scrollerModel.setPageSize( getPageSize(ctx, table) );		
+		return scrollerModel;
+	}
+	
+	private ValueExpression getScrollerModelExpression( FaceletContext ctx ) {
 		String expression = "#{" + getScrollerDataExpression()+  "}";
 		return ctx.getExpressionFactory().createValueExpression( ctx, expression, Object.class);
 	}
@@ -114,7 +118,7 @@ public class DataScroller2Handler extends TagHandler {
 	private void insertTemplate(FaceletContext ctx, UIComponent component, UIData table ) {
 		VariableMapper newMapper = new VariableMapperWrapper(ctx.getVariableMapper());
 		newMapper.setVariable(DATA_TABLE, forTag.getValueExpression(ctx, String.class));
-		newMapper.setVariable( MODEL, getScrollerModelExpression(ctx, table) );	
+		newMapper.setVariable( MODEL, getScrollerModelExpression(ctx) );	
 		ValueExpression showNote = FaceletUtil.getBooleanValueExpression(ctx, getAttribute(SHOW_NOTE));
 		newMapper.setVariable(SHOW_NOTE, showNote);
 		FaceletUtil.insertTemplate(ctx, tag, component, FaceletUtil.getTemplate(TEMPLATE), newMapper);
@@ -135,11 +139,21 @@ public class DataScroller2Handler extends TagHandler {
 			UIComponentTagUtils.setStringProperty( ctx.getFacesContext(), table, FIRST, expression );
 		}		
 	}
+
+	private void updatePage( FaceletContext ctx, ScrollerDataModel scrollerModel ) {
+		TagAttribute pageTag = getAttribute(PAGE);
+		if ( pageTag != null ) {
+			ValueExpression ve = pageTag.getValueExpression(ctx, Integer.class);
+			scrollerModel.setPage( ve );
+		}
+	}
 	
 	@Override
 	public void apply(FaceletContext ctx, UIComponent parent) {
 		if ( isRendered(ctx) && parent.isRendered() ) {
 			UIData table = getDataTable(ctx, parent);
+			ScrollerDataModel scrollerModel = getScrollerDataModel( ctx, table );
+			updatePage(ctx, scrollerModel);
 			insertTemplate( ctx, parent, table );
 			updateDataTableFirst( ctx, table );
 		}
