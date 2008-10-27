@@ -17,6 +17,39 @@
 		
 			<aon:div styleClass="aon-scroll-area">
 				<aon:div styleClass="aon-section-title">
+					<aon:div styleClass="aon-float-right aon-text-smaller">
+					<aon:commandButton
+						title="#{appBundle.aon_webmail_previous_message}"
+						rendered="#{message.previousMessage}"
+						action="message"
+						actionListener="#{message.previousMessage}"
+						value="#{appBundle.aon_webmail_previous_message}"
+						styleClass="aon-icon-commandButton aon-icon-mailPrevious">
+					</aon:commandButton>
+		
+					<aon:commandButton
+						title="#{appBundle.aon_webmail_previous_message}"
+						rendered="#{!message.previousMessage}" disabled="true"
+						value="#{appBundle.aon_webmail_previous_message}"
+						styleClass="aon-icon-commandButton aon-icon-mailPrevious-dis">
+					</aon:commandButton>
+		
+					<aon:commandButton
+						title="#{appBundle.aon_webmail_next_message}"
+						rendered="#{message.nextMessage}"
+						action="message"
+						actionListener="#{message.nextMessage}"
+						value="#{appBundle.aon_webmail_next_message}"
+						styleClass="aon-icon-commandButton aon-icon-mailNext">
+					</aon:commandButton>
+					
+					<aon:commandButton
+						title="#{appBundle.aon_webmail_next_message}"
+						rendered="#{!message.nextMessage}" disabled="true"
+						value="#{appBundle.aon_webmail_next_message}"
+						styleClass="aon-icon-commandButton aon-icon-mailNext-dis">
+					</aon:commandButton>
+				</aon:div>
 					<aon:outputText value="#{folder.folder.name}"/>
 				</aon:div>
 
@@ -106,39 +139,7 @@
 
 				</aon:div>
 				<!-- icon to collapse message details -->
-				<aon:div>
-					<aon:commandButton
-						title="#{appBundle.aon_webmail_previous_message}"
-						rendered="#{message.previousMessage}"
-						action="message"
-						actionListener="#{message.previousMessage}"
-						value="#{appBundle.aon_webmail_previous_message}"
-						styleClass="aon-icon-commandButton aon-icon-mailPrevious">
-					</aon:commandButton>
-		
-					<aon:commandButton
-						title="#{appBundle.aon_webmail_previous_message}"
-						rendered="#{!message.previousMessage}" disabled="true"
-						value="#{appBundle.aon_webmail_previous_message}"
-						styleClass="aon-icon-commandButton aon-icon-mailPrevious-dis">
-					</aon:commandButton>
-		
-					<aon:commandButton
-						title="#{appBundle.aon_webmail_next_message}"
-						rendered="#{message.nextMessage}"
-						action="message"
-						actionListener="#{message.nextMessage}"
-						value="#{appBundle.aon_webmail_next_message}"
-						styleClass="aon-icon-commandButton aon-icon-mailNext">
-					</aon:commandButton>
-					
-					<aon:commandButton
-						title="#{appBundle.aon_webmail_next_message}"
-						rendered="#{!message.nextMessage}" disabled="true"
-						value="#{appBundle.aon_webmail_next_message}"
-						styleClass="aon-icon-commandButton aon-icon-mailNext-dis">
-					</aon:commandButton>
-				</aon:div>
+				
 			<aon:div>
 
 			<aon:panelGrid columns="2" style="width:100%;" columnClasses="aon-width-100 aon-panelGrid-odd,aon-width-auto aon-panelGrid-even">
@@ -284,7 +285,7 @@
 				</aon:div>
 					
 			</aon:panelGrid>
-
+			
 			<!-- Message Body -->
 			<aon:div styleClass="aon-border-newmessage aon-padding-top">
 				<aon:panelGroup>

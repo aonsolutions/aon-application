@@ -62,34 +62,48 @@
 			</aon:div>
 			
 			<aon:div styleClass="aon-scroll-area">
-				<aon:panelGrid id="menuGrid" columns="2" dir="true"  width="100%">
-
-					<aon:outputLabel for="MailAccount_name"
-						value="#{appBundle.aon_webmail_mailAccount_name}" />
-					<aon:inputText id="MailAccount_name" disabled="#{mailAccount.to.default}"
-						size="60" maxlength="45" required="true"
-						value="#{mailAccount.to.name}" />
+			<div>
+				<div style="margin-bottom:1.5em;">
+					<aon:div styleClass="aon-form-group-title">
+						<aon:div styleClass="aon-form-group-title-internal">
+							Datos de la cuenta
+						</aon:div>
+					</aon:div>
+					<aon:panelGrid id="menuGrid" columns="2" dir="true" style="width:500px;">
+						<aon:outputLabel for="MailAccount_name"
+							value="#{appBundle.aon_webmail_mailAccount_name}" />
+						<aon:inputText id="MailAccount_name" disabled="#{mailAccount.to.default}"
+							size="60" maxlength="45" required="true"
+							value="#{mailAccount.to.name}" />
+		
+						<aon:outputLabel for="MailAccount_email"
+							value="#{appBundle.aon_webmail_mailAccount_email}" />
+						<aon:inputText id="MailAccount_email" disabled="#{mailAccount.to.default}"
+							size="60" maxlength="45" required="true"
+							value="#{mailAccount.to.email}" />
 	
-					<aon:outputLabel for="MailAccount_email"
-						value="#{appBundle.aon_webmail_mailAccount_email}" />
-					<aon:inputText id="MailAccount_email" disabled="#{mailAccount.to.default}"
-						size="60" maxlength="45" required="true"
-						value="#{mailAccount.to.email}" />
-
-					<aon:outputLabel for="MailAccount_signature"
-						value="#{appBundle.aon_webmail_signature_signature}" />
-					<aon:selectOneMenu id="MailAccount_signature"
-						value="#{mailAccount.to.signature.id}">
-						<f:selectItems value="#{signature.signatures}" />
-					</aon:selectOneMenu>
-
-					<aon:outputLabel for="MailAccount_protocol"
-						value="#{appBundle.aon_webmail_mailAccount_protocol}" />
-					<aon:inputText id="MailAccount_protocol"
-						size="60" maxlength="45"
-						disabled="true"
-						value="#{mailAccount.to.protocol}" />
-
+						<aon:outputLabel for="MailAccount_signature"
+							value="#{appBundle.aon_webmail_signature_signature}" />
+						<aon:selectOneMenu id="MailAccount_signature"
+							value="#{mailAccount.to.signature.id}">
+							<f:selectItems value="#{signature.signatures}" />
+						</aon:selectOneMenu>
+	
+						<aon:outputLabel for="MailAccount_protocol"
+							value="#{appBundle.aon_webmail_mailAccount_protocol}" />
+						<aon:inputText id="MailAccount_protocol"
+							size="60" maxlength="45"
+							disabled="true"
+							value="#{mailAccount.to.protocol}" />
+				</aon:panelGrid>
+			</div>
+			<div style="margin-bottom:1.5em;">
+				<aon:div styleClass="aon-form-group-title">
+					<aon:div styleClass="aon-form-group-title-internal">
+						Datos de la cuenta
+					</aon:div>
+				</aon:div>
+				<aon:panelGrid columns="2" dir="true" style="width:500px;">
 					<aon:outputLabel for="MailAccount_host"
 						value="#{appBundle.aon_webmail_mailAccount_host}" />
 					<aon:inputText id="MailAccount_host"
@@ -113,7 +127,15 @@
 	                <aon:selectBooleanCheckbox id="MailAccount_incomingSsl"
 						disabled="#{mailAccount.to.default}"
 						value="#{mailAccount.to.incomingSsl}"/>
-					
+			</aon:panelGrid>
+		   </div>
+		   <div>
+				<aon:div styleClass="aon-form-group-title">
+					<aon:div styleClass="aon-form-group-title-internal">
+						Datos de la cuenta
+					</aon:div>
+				</aon:div>
+				<aon:panelGrid columns="2" dir="true" style="width:500px;">	
 					<aon:outputLabel for="MailAccount_outgoingVerification"
 						value="#{appBundle.aon_webmail_mailAccount_outgoingVerification}" />
 	                <aon:selectBooleanCheckbox id="MailAccount_outgoingVerification"
@@ -151,7 +173,10 @@
 						value="#{mailAccount.to.passwordString}" />							
 						
 				</aon:panelGrid>
+				</div>
+			</div>
 			</aon:div>
+			
 		</aon:form>
 	</ui:define>
 </ui:composition>

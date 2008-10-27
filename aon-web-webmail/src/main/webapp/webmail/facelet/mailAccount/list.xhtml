@@ -31,11 +31,9 @@
 					<aon:div styleClass="aon-finding-toolbar-item-group">
 						<aon:commandButton id="reset" value="#{bundle.aon_reset}"
 							action="mailAccount_form" actionListener="#{mailAccount.onReset}"
-							styleClass="aon-finding-toolbar-item aon-icon-newMailAccount"
+							styleClass="aon-finding-toolbar-item aon-icon-reset"
 							accesskey="#{bundle.aon_key_new}" />
-						<aon:commandButton id="back"
-							value="#{bundle.aon_back}" action="folder"
-							styleClass="aon-finding-toolbar-item aon-icon-cancel" />
+		
 					</aon:div>
 
 					<!-- end toolbar navigation -->
@@ -101,7 +99,7 @@
 							title="#{appBundle.aon_webmail_mailAccountChange}"
 							action="mailAccount_list" actionListener="#{mailAccount.onChangeServer}"
 							value="#{appBundle.aon_webmail_mailAccountChange}"
-							styleClass="aon-icon-commandButton aon-icon-mailAccountChange">
+							styleClass="aon-icon-commandButton aon-icon-predetermine">
 						</aon:commandButton>
 					</aon:column>
 

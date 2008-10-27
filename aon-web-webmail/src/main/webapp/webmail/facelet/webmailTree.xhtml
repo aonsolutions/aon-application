@@ -62,7 +62,7 @@
 			<h:outputText value="#{tree.account}" styleClass="aon-icon-tree-root aon-icon"/>
 		</aon:div>	
 	    
-		<rich:tree nodeSelectListener="#{tree.processSelection}"
+		<rich:tree nodeSelectListener="#{tree.processSelection}" selectedClass="aon-tree-node-active" 
 				id="foldersTree" styleClass="aon-normal"
 				reRender="buttonsGrid,messageGrid" ajaxSubmitSelection="true"  switchType="ajax"
 				value="#{tree.treeNode}" var="item"
