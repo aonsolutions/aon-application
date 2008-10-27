@@ -43,11 +43,12 @@
 		<param-name>facelets.SKIP_COMMENTS</param-name>
 		<param-value>true</param-value>
 	</context-param>
-
+	<!-- 
 	<context-param>
 		<param-name>facelets.REFRESH_PERIOD</param-name>
 		<param-value>-1</param-value>
 	</context-param>
+	-->
 
 	<context-param>
 		<param-name>facelets.BUFFER_SIZE</param-name>
@@ -215,6 +216,10 @@
 		<servlet-class>
 			com.code.aon.ui.resources.servlet.ResourceServlet
 		</servlet-class>
+		<init-param>
+			<param-name>debug</param-name>
+			<param-value>true</param-value>
+		</init-param>				
 	</servlet>
 	<servlet-mapping>
 		<servlet-name>ResourceServlet</servlet-name>

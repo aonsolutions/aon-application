@@ -10,45 +10,43 @@
 <body>
 
 <ui:composition>
-
-	<aon:div id="treeButtonsGrid" styleClass="aon-toolbar" style="margin-bottom:0;">
-
-		<aon:commandButton id="refreshAccounts" action="folder"
-			actionListener="#{folder.refresh}"
-			title="#{appBundle.aon_webmail_refresh}"
-			value="#{appBundle.aon_webmail_refresh}"
-			styleClass="aon-finding-toolbar-item aon-icon-refresh">
-		</aon:commandButton>
-
-		<aon:commandButton id="contacts"
-			title="#{appBundle.aon_webmail_email}" action="contact_list"
-			value="#{appBundle.aon_webmail_email}"
-			styleClass="aon-finding-toolbar-item aon-icon-agenda">
-		</aon:commandButton>
-
-
-		<aon:commandButton id="signature"
-			title="#{appBundle.aon_webmail_signature}" action="signature_list"
-			value="#{appBundle.aon_webmail_signature}" actionListener="#{signature.onSearch}"
-			styleClass="aon-finding-toolbar-item aon-icon-signature">
-		</aon:commandButton>
-
-		<aon:commandButton id="mailAccountCahnge"
-			title="#{appBundle.aon_webmail_mailAccount}" actionListener="#{mailAccount.onSearch}"
-			action="mailAccount_list" value="#{appBundle.aon_webmail_mailAccount}"
-			styleClass="aon-finding-toolbar-item aon-icon-mailAccountChange">
-		</aon:commandButton>
-
-		<aon:commandButton id="spam"
-			rendered="#{spam.spamEnabled}"
-			title="#{appBundle.aon_webmail_spam}" action="spam"
-			actionListener="#{spam.onLoad}"
-			value="#{appBundle.aon_webmail_spam}"
-			styleClass="aon-finding-toolbar-item aon-icon-mail-spam">
-		</aon:commandButton>
-
+<aon:form>
+	<aon:div id="treeButtonsGrid" styleClass="aon-top-menu">
+		
+			<aon:commandLink id="mail"
+				title="Correo" action="folder"
+				value="Correo"
+				styleClass="aon-top-menu-item aon-icon-webmail2">
+			</aon:commandLink>
+						
+			<aon:commandLink id="contacts"
+				title="#{appBundle.aon_webmail_email}" action="contact_list"
+				value="#{appBundle.aon_webmail_email}"
+				styleClass="aon-top-menu-item aon-icon-agenda">
+			</aon:commandLink>
+	
+			<aon:commandLink id="signature"
+				title="#{appBundle.aon_webmail_signature}" action="signature_list"
+				value="#{appBundle.aon_webmail_signature}" actionListener="#{signature.onSearch}"
+				styleClass="aon-top-menu-item aon-icon-signature">
+			</aon:commandLink>
+	
+			<aon:commandLink id="mailAccountCahnge"
+				title="#{appBundle.aon_webmail_mailAccount}" actionListener="#{mailAccount.onSearch}"
+				action="mailAccount_list" value="#{appBundle.aon_webmail_mailAccount}"
+				styleClass="aon-top-menu-item aon-icon-mailAccountChange">
+			</aon:commandLink>
+	
+			<aon:commandLink id="spam"
+				rendered="#{spam.spamEnabled}"
+				title="#{appBundle.aon_webmail_spam}" action="spam"
+				actionListener="#{spam.onLoad}"
+				value="#{appBundle.aon_webmail_spam}"
+				styleClass="aon-top-menu-item aon-icon-mail-spam">
+			</aon:commandLink>
+		
 	</aon:div>
-
+</aon:form>
 </ui:composition>
 
 </body>
