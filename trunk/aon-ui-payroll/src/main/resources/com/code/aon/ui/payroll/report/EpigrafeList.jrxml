@@ -354,8 +354,8 @@
 				<printWhenExpression><![CDATA[$P{printHeaders}]]></printWhenExpression>
 				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
-						x="6"
-						y="0"
+						x="13"
+						y="-8"
 						width="262"
 						height="14"
 						key="textField-14"/>

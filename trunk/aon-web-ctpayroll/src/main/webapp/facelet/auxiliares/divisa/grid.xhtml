@@ -95,7 +95,7 @@
 						<aon:lookupInputText id="Divisa1_cdg"
 							lookup="#{divisaLookup}"
 							reRender="Divisa1_description" rendered="#{divisa.new}"
-							value="#{divisa.divisa0.cdg}" size="5">
+							value="#{id.cdg}" size="5">
 						</aon:lookupInputText>	
 						
 				</f:facet>
@@ -108,7 +108,7 @@
 							windowTitle="#{appBundle.aon_payroll_auxiliares_tipos__tipovia}"
 							selectReRender="Divisa1_cdg,Divisa1_description" rendered="#{divisa.new}"
 							lookup="#{divisaLookup}" minHeight="440"
-							property="#{divisa.to.divisa0}">
+							property="#{divisa.to.id.cdg}">
 						</aon:lookupButton>						
 			      	</f:facet>
 		        	</aon:column>
@@ -125,7 +125,7 @@
 			    	<f:facet name="footer">
 				
 						<aon:inputText id="Divisa1_description" rendered="#{divisa.new}"
-							value="#{(divisa.divisa0.description!=null)?(divisa.divisa0.description):('')}"
+							value="#{(id.divisaFinal!=null)?(id.divisaFinal):('')}"
 							size="34" disabled="true" />
 					
 						

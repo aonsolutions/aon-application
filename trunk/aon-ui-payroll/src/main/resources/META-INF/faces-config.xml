@@ -246,7 +246,7 @@
 		<managed-bean-scope>none</managed-bean-scope>	
 	    </managed-bean>
 	
-		<!-- ************* Pais***************** -->
+	<!-- ************* Pais***************** -->
 		
 	<managed-bean>
 		<managed-bean-name>pais</managed-bean-name>
@@ -363,7 +363,7 @@
 			</map-entries>
 		</managed-property>
 	</managed-bean>
-		<!-- ************* Provincia***************** -->
+	<!-- ************* Provincia***************** -->
 	<managed-bean>
 		<managed-bean-name>provincia</managed-bean-name>
 		<managed-bean-class>com.code.aon.ui.form.LinesController</managed-bean-class>
@@ -583,6 +583,10 @@
 			<property-name>pojo</property-name>
 			<value>com.code.aon.payroll.cotizacion.Epigrafe</value>
 		</managed-property>
+			<managed-property>
+			<property-name>beanName</property-name>
+			<value>epigrafeMaestro</value>
+		</managed-property>
 		<managed-property>
 			<property-name>listenerClasses</property-name>
 			<list-entries>
@@ -642,6 +646,10 @@
 			<property-name>masterControllerName</property-name>
 			<value>epigrafeMaestro</value>
 		</managed-property>
+			<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>Linepigr_fecfin DESC</value>
+		</managed-property>
 		<managed-property>
 			<property-name>propertyMap</property-name>
 			<map-entries>
@@ -675,6 +683,10 @@
 		<managed-property>
 			<property-name>queryOnStartUP</property-name>
 			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>divisaMaestro</value>
 		</managed-property>
 		<managed-property>
 			<property-name>pojo</property-name>
@@ -713,6 +725,7 @@
 				</map-entry>
 			</map-entries>
 		</managed-property>
+	
 	</managed-bean>
 
 	<managed-bean>
@@ -882,6 +895,10 @@
 			<value>true</value>
 		</managed-property>
 		<managed-property>
+			<property-name>beanName</property-name>
+			<value>baseMaestro</value>
+		</managed-property>
+		<managed-property>
 			<property-name>pojo</property-name>
 			<value>com.code.aon.payroll.cotizacion.Base</value>
 		</managed-property>
@@ -939,6 +956,12 @@
 			<property-name>masterControllerName</property-name>
 			<value>baseMaestro</value>
 		</managed-property>
+		
+			<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>Linbasec_fecfin DESC</value>
+		</managed-property>
+		
 		<managed-property>
 			<property-name>propertyMap</property-name>
 			<map-entries>
@@ -1242,10 +1265,6 @@
 			<value>com.code.aon.payroll.cotizacion.ElementoMaestro</value>
 		</managed-property>
 		<managed-property>
-			<property-name>beanName</property-name>
-			<value>elementoMaestro</value>
-		</managed-property>
-		<managed-property>
 			<property-name>defaultOrder</property-name>
 			<value>ElementoMaestro_cdg</value>
 		</managed-property>
@@ -1348,10 +1367,6 @@
 		<managed-property>
 			<property-name>pojo</property-name>
 			<value>com.code.aon.payroll.cotizacion.OcupacionMaestro</value>
-		</managed-property>
-		<managed-property>
-			<property-name>beanName</property-name>
-			<value>ocupacionMaestro</value>
 		</managed-property>
 		<managed-property>
 			<property-name>defaultOrder</property-name>
@@ -1562,10 +1577,6 @@
 			<value>com.code.aon.payroll.auxiliares.convenios.Convenio</value>
 		</managed-property>
 		<managed-property>
-			<property-name>beanName</property-name>
-			<value>convenio</value>
-		</managed-property>
-		<managed-property>
 			<property-name>defaultOrder</property-name>
 			<value>Convenio_cdg</value>
 		</managed-property>
@@ -1689,7 +1700,7 @@
 	
 	<managed-bean>
 		<managed-bean-name>categoria</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.form.LinesController</managed-bean-class>
+		<managed-bean-class>com.code.aon.ui.payroll.controller.LinesController</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
 			<property-name>queryOnStartUP</property-name>
@@ -1701,42 +1712,7 @@
 		</managed-property>
 		<managed-property>
 			<property-name>defaultOrder</property-name>
-			<value>Categoria_id_cdg</value>
-		</managed-property>
-		<managed-property>
-			<property-name>cascadeDelete</property-name>
-			<value>true</value>
-		</managed-property>
-		<managed-property>
-			<property-name>masterControllerName</property-name>
-			<value>convenio</value>
-		</managed-property>
-		<managed-property>
-			<property-name>propertyMap</property-name>
-			<map-entries>
-				<map-entry>
-					<key>cdg</key>
-					<value>id.cdg</value>
-				</map-entry>
-			</map-entries>
-		</managed-property>
-	</managed-bean>
-	
-	<managed-bean>
-		<managed-bean-name>percniv</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.form.LinesController</managed-bean-class>
-		<managed-bean-scope>session</managed-bean-scope>
-		<managed-property>
-			<property-name>queryOnStartUP</property-name>
-			<value>true</value>
-		</managed-property>
-		<managed-property>
-			<property-name>pojo</property-name>
-			<value>com.code.aon.payroll.auxiliares.convenios.Categoria</value>
-		</managed-property>
-		<managed-property>
-			<property-name>defaultOrder</property-name>
-			<value>Categoria_id_cdg</value>
+			<value>Pagaext_complemento_cdg</value>
 		</managed-property>
 		<managed-property>
 			<property-name>cascadeDelete</property-name>
@@ -1769,6 +1745,10 @@
 		<managed-property>
 			<property-name>pojo</property-name>
 			<value>com.code.aon.payroll.auxiliares.organismosyentidades.Entidad</value>
+		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>entidadMaestro</value>
 		</managed-property>
 		<managed-property>
 			<property-name>listenerClasses</property-name>
