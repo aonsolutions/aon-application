@@ -15,7 +15,7 @@
 
 		<aon:form id="irpfMaestroList">
 		
-			<aon:div styleClass="aon-finding-title-toolbar">
+			<!--  <aon:div styleClass="aon-finding-title-toolbar">
 				<aon:panelGrid id="buttonsGrid" columns="3" dir="true"
 					columnClasses="aon-finding-title,aon-finding-subtitle,aon-finding-toolbar">
 
@@ -27,7 +27,7 @@
 						<aon:outputText value="#{bundle.aon_listing}" />
 					</aon:div>
 
-					<!-- start toolbar navigation -->
+					
 					<aon:div styleClass="aon-finding-toolbar-item-group">
 						<aon:commandButton id="search" value="#{bundle.aon_search}"
 							action="datos_search" actionListener="#{irpfMaestro.onEditSearch}"
@@ -38,9 +38,14 @@
 							styleClass="aon-finding-toolbar-item aon-icon-reset"
 							accesskey="#{bundle.aon_key_new}" />
 					</aon:div>
-					<!-- end toolbar navigation -->
+				
 				</aon:panelGrid>
-			</aon:div>
+			</aon:div>-->
+			
+			<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/listToolbar.xhtml" >
+				<ui:param name="toolbarTitle" value="#{menuBundle.auxiliares_irpf__datosirpf}" />
+				<ui:param name="controller" value="#{irpfMaestro}" />
+			</ui:include>
 
 			<!--  aon-region-body -->
 			<aon:div styleClass="aon-scroll-area">
@@ -49,7 +54,7 @@
 					var="to" rows="20" rendered="#{irpfMaestro.model.rowCount > 0}"
 					columnClasses="aon-editDataTable-textColumn, aon-editDataTable-textColumn, aon-editDataTable-numberColumn">
 
-					<aon:rowSelector action="datos_form" actionListener="#{irpfMaestro.onSelect}" />
+					<aon:rowSelector action="irpfMaestro_form" actionListener="#{irpfMaestro.onSelect}" />
 					
 					<aon:column>
 						<f:facet name="header">

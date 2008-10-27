@@ -14,8 +14,8 @@
 	<ui:define name="content">
 
 		<aon:form id="irpfMaestroForm">
-		
-			<!--  <aon:div styleClass="aon-finding-title-toolbar">
+
+			<!--    <aon:div styleClass="aon-finding-title-toolbar">
 				<aon:panelGrid id="buttonsGrid" columns="3" dir="true"
 					columnClasses="aon-finding-title,aon-finding-subtitle,aon-finding-toolbar">
 
@@ -94,35 +94,47 @@
 					
 				</aon:panelGrid>
 			</aon:div>-->
-			
-			<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml" >
-				<ui:param name="toolbarTitle" value="#{menuBundle.auxiliares_irpf__datosirpf}" />
-				<ui:param name="controller" value="#{irpfMaestro}" />
-			</ui:include>
 
-	<aon:div styleClass="aon-scroll-area">
-				<aon:panelGrid id="irpfMaestro" columns="2" dir="true" width="100%" style="margin-bottom=2px;">
-				
-				
+			<ui:decorate
+				template="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml">
+				<ui:param name="toolbarTitle"
+					value="#{menuBundle.auxiliares_irpf__datosirpf}" />
+				<ui:param name="controller" value="#{irpfMaestro}" />
+
+				<ui:define name="beforeSpinToolbarContent">
+					<ui:include src="/facelet/templates/aon.ui.printbuttons.xhtml">
+						<ui:param name="manager" value="#{irpfMaestro}" />
+						<ui:param name="reportKey" value="DatosList" />
+						<ui:param name="reportKeyXls" value="DatosListXLS" />
+					</ui:include>
+				</ui:define>
+			</ui:decorate>
+
+			<aon:div styleClass="aon-scroll-area">
+				<aon:panelGrid id="irpfMaestro" columns="2" dir="true" width="100%"
+					style="margin-bottom=2px;">
+
+
 					<aon:outputLabel value="#{appBundle.aon_payroll_cdg}" />
-					<aon:inputText value="#{irpfMaestro.to.cdg}" disabled="#{!irpfMaestro.new}" 
-						required="true" size="20" maxlength="3" />
-				
-					<aon:outputLabel  value="#{appBundle.aon_payroll_description}" />
-					<aon:inputText value="#{irpfMaestro.to.description}" 
-						required="true" size="70" maxlength="30" >
+					<aon:inputText value="#{irpfMaestro.to.cdg}"
+						disabled="#{!irpfMaestro.new}" required="true" size="20"
+						maxlength="3" />
+
+					<aon:outputLabel value="#{appBundle.aon_payroll_description}" />
+					<aon:inputText value="#{irpfMaestro.to.description}"
+						required="true" size="70" maxlength="30">
 					</aon:inputText>
-						
-			        	<aon:outputLabel  value="#{appBundle.aon_payroll_auxiliares_irpf__datos_porcen}" />	
-				<aon:selectBooleanCheckbox 
-						value="#{irpfMaestro.to.porcentajebol}" />
-				 
+
+					<aon:outputLabel
+						value="#{appBundle.aon_payroll_auxiliares_irpf__datos_porcen}" />
+					<aon:selectBooleanCheckbox value="#{irpfMaestro.to.porcentajebol}" />
+
 				</aon:panelGrid>
 
-			 	<ui:include src="grid.xhtml" rendered="#{!irpfMaestro.new}" />		 		
+				<ui:include src="grid.xhtml" rendered="#{!irpfMaestro.new}" />
 			</aon:div>
 
-		
+
 		</aon:form>
 	</ui:define>
 </ui:composition>
