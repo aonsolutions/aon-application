@@ -1,6 +1,10 @@
 package com.code.aon.payroll.cotizacion;
 
 import java.math.BigDecimal;
+import java.util.HashSet;
+import java.util.Set;
+
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
@@ -23,7 +27,7 @@ public class Base  implements ITransferObject {
      private String description;
      private String indpro;
  
-
+ 	private Set<Linbasec> linbases = new HashSet<Linbasec>();
  
 
     @Id     
@@ -69,6 +73,15 @@ public class Base  implements ITransferObject {
   		setIndpro( (this.pro != null)? this.pro.name().substring( 3 ) : null );
   	}
 
+  	@OneToMany(mappedBy = "basecoti", cascade={CascadeType.REMOVE})
+	public Set<Linbasec> getLinbases() {
+		return linbases;
+	}
+
+	public void setLinbases(Set<Linbasec> linbases) {
+		this.linbases = linbases;
+	}
+  	
 }
 
 

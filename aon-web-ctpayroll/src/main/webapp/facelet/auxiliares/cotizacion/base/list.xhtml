@@ -15,33 +15,11 @@
 
 		<aon:form id="baseMaestroList">
 		
-			<aon:div styleClass="aon-finding-title-toolbar">
-				<aon:panelGrid id="buttonsGrid" columns="3" dir="true"
-					columnClasses="aon-finding-title,aon-finding-subtitle,aon-finding-toolbar">
-
-					<aon:div styleClass="aon-finding-title-internal">
-						<aon:outputText value="#{appBundle.aon_payroll_cotizacion_bases}" />
-					</aon:div>
-
-					<aon:div styleClass="aon-finding-subtitle-internal">
-						<aon:outputText value="#{bundle.aon_listing}" />
-					</aon:div>
-
-					<!-- start toolbar navigation -->
-					<aon:div styleClass="aon-finding-toolbar-item-group">
-				  		<aon:commandButton id="search" value="#{bundle.aon_search}"
-							action="basecoti_search" actionListener="#{baseMaestro.onEditSearch}"
-							styleClass="aon-finding-toolbar-item aon-icon-search"
-							accesskey="#{bundle.aon_key_search}" />				
-						<aon:commandButton id="reset" value="#{bundle.aon_reset}"
-							action="basecoti"  actionListener="#{baseMaestro.onReset}"
-							styleClass="aon-finding-toolbar-item aon-icon-reset"
-							accesskey="#{bundle.aon_key_new}" /> 
-					</aon:div>
-					<!-- end toolbar navigation -->
-				</aon:panelGrid>
-			</aon:div>
-
+			<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/listToolbar.xhtml" >
+				<ui:param name="toolbarTitle" value="#{appBundle.aon_payroll_cotizacion_bases}" />
+				<ui:param name="controller" value="#{baseMaestro}" />
+				
+			</ui:include>
 			<!--  aon-region-body -->
 			<aon:div styleClass="aon-scroll-area">
 
@@ -49,7 +27,7 @@
 					var="to" rows="20" rendered="#{baseMaestro.model.rowCount > 0}"
 					columnClasses="aon-editDataTable-textColumn, aon-editDataTable-textColumn, aon-editDataTable-numberColumn">
 
-					<aon:rowSelector action="basecoti" actionListener="#{baseMaestro.onSelect}" />
+					<aon:rowSelector action="baseMaestro_form" actionListener="#{baseMaestro.onSelect}" />
 					
 					<aon:column>
 						<f:facet name="header">

@@ -2,7 +2,10 @@ package com.code.aon.payroll.cotizacion;
 
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -23,7 +26,9 @@ public class Epigrafe  implements ITransferObject {
      private String cdg;
      private String description;
 
-
+ 	/** The porcentajes. */
+ 	private Set<Linepigr> epigrafes = new HashSet<Linepigr>();
+ 	
     @Id     
     @Column(name="cdg", unique=true, nullable=false, length=3)
     public String getCdg() {
@@ -43,7 +48,15 @@ public class Epigrafe  implements ITransferObject {
         this.description = description;
     }
 
+	@OneToMany(mappedBy = "epigrafe", cascade={CascadeType.REMOVE})
+	public Set<Linepigr> getEpigrafes() {
+		return epigrafes;
+	}
 
+	public void setEpigrafes(Set<Linepigr> epigrafes) {
+		this.epigrafes = epigrafes;
+	}
+	
 
 }
 
