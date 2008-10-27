@@ -380,6 +380,7 @@
 			<param id="companyName" value="#{payrollController.getCompanyName}" />
 		</params>
 	</report>
+	
 	<report id="BasesList2" description="Listado de Bases de cotizacion2">
 		<template path="/com/code/aon/ui/payroll/report/BasesList2.jasper" />
 		<bean key="com.code.aon.payroll.cotizacion.Linbasec" />
@@ -390,7 +391,6 @@
 			<param id="companyName" value="#{payrollController.getCompanyName}" />
 		</params>
 	</report>
-	
 	<!--  *********  Impresion a PDF de los Elementos de cotizacion  ********* -->
 	<report id="cotizacionElementosList" description="Listado de Elementos">
 		<template path="/com/code/aon/ui/payroll/report/elementosCotizacion.jasper" />
@@ -414,8 +414,7 @@
 			<param id="companyName" value="#{payrollController.getCompanyName}" />
 		</params>
 	</report>
-	
-	<!--  *********  Impresion a PDF de las Mutuas ********* -->
+			<!--  *********  Impresion a PDF de las Mutuas ********* -->
 	<report id="MutuasList" description="Listado de Mutuas">
 		<template path="/com/code/aon/ui/payroll/report/MutuasList.jasper" />
 		<bean key="com.code.aon.payroll.auxiliares.organismosyentidades.Linmutua" />
@@ -426,7 +425,8 @@
 			<param id="companyName" value="#{payrollController.getCompanyName}" />
 		</params>
 	</report>
-	<report id="MutuasListXLS" description="Listado de Mutuas">
+	
+		<report id="MutuasListXLS" description="Listado de Mutuas">
 		<template path="/com/code/aon/ui/payroll/report/MutuasListXLS.jasper" />
 		<bean key="com.code.aon.payroll.auxiliares.organismosyentidades.Linmutua" />
 		<criteria provider="#{mutua}" />
@@ -436,8 +436,7 @@
 			<param id="companyName" value="#{payrollController.getCompanyName}" />
 		</params>
 	</report>
-	
-	<!--  *********  Impresion a PDF de las Entidades y sucursales ********* -->
+				<!--  *********  Impresion a PDF de las Entidades y sucursales ********* -->
 	<report id="EntidadList" description="Listado de Entidades">
 		<template path="/com/code/aon/ui/payroll/report/EntidadList.jasper" />
 		<bean key="com.code.aon.payroll.auxiliares.organismosyentidades.Sucursal" />
@@ -448,7 +447,8 @@
 			<param id="companyName" value="#{payrollController.getCompanyName}" />
 		</params>
 	</report>
-	<report id="EntidadListXLS" description="Listado de Entidades">
+	
+		<report id="EntidadListXLS" description="Listado de Entidades">
 		<template path="/com/code/aon/ui/payroll/report/EntidadListXLS.jasper" />
 		<bean key="com.code.aon.payroll.auxiliares.organismosyentidades.Sucursal" />
 		<criteria provider="#{sucursal}" />
@@ -469,6 +469,7 @@
 			<param id="companyName" value="#{payrollController.getCompanyName}" />
 		</params>
 	</report>
+	
 	<report id="DatosListXLS" description="Listado de datos clave para el IRPF en excel">
 		<template path="/com/code/aon/ui/payroll/report/DatosListXLS.jasper" />
 		<bean key="com.code.aon.payroll.irpf.Linirpf" />
