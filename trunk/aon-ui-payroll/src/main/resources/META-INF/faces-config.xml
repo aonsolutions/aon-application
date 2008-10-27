@@ -1265,6 +1265,10 @@
 			<value>com.code.aon.payroll.cotizacion.ElementoMaestro</value>
 		</managed-property>
 		<managed-property>
+			<property-name>beanName</property-name>
+			<value>elementoMaestro</value>
+		</managed-property>
+		<managed-property>
 			<property-name>defaultOrder</property-name>
 			<value>ElementoMaestro_cdg</value>
 		</managed-property>
@@ -1367,6 +1371,10 @@
 		<managed-property>
 			<property-name>pojo</property-name>
 			<value>com.code.aon.payroll.cotizacion.OcupacionMaestro</value>
+		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>ocupacionMaestro</value>
 		</managed-property>
 		<managed-property>
 			<property-name>defaultOrder</property-name>
@@ -1577,6 +1585,10 @@
 			<value>com.code.aon.payroll.auxiliares.convenios.Convenio</value>
 		</managed-property>
 		<managed-property>
+			<property-name>beanName</property-name>
+			<value>convenio</value>
+		</managed-property>
+		<managed-property>
 			<property-name>defaultOrder</property-name>
 			<value>Convenio_cdg</value>
 		</managed-property>
@@ -1713,6 +1725,41 @@
 		<managed-property>
 			<property-name>defaultOrder</property-name>
 			<value>Pagaext_complemento_cdg</value>
+		</managed-property>
+		<managed-property>
+			<property-name>cascadeDelete</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>masterControllerName</property-name>
+			<value>convenio</value>
+		</managed-property>
+		<managed-property>
+			<property-name>propertyMap</property-name>
+			<map-entries>
+				<map-entry>
+					<key>cdg</key>
+					<value>id.cdg</value>
+				</map-entry>
+			</map-entries>
+		</managed-property>
+	</managed-bean>
+	
+	<managed-bean>
+		<managed-bean-name>percniv</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.form.LinesController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.payroll.auxiliares.convenios.Categoria</value>
+		</managed-property>
+		<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>Categoria_id_cdg</value>
 		</managed-property>
 		<managed-property>
 			<property-name>cascadeDelete</property-name>
@@ -1953,6 +2000,7 @@
 			<property-name>pageLimit</property-name>
 			<value>20</value>
 		</managed-property>
+		
 		<managed-property>
 			<property-name>pojo</property-name>
 			<value>com.code.aon.payroll.irpf.Linirpf</value>
