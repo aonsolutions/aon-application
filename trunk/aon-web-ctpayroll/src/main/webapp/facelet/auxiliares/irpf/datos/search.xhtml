@@ -20,20 +20,42 @@
 			<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/searchContent.xhtml" >
 				<ui:define name="searchContent">
 					<aon:methodParam name="searchActionListener" value="#{irpfMaestro.onSearch}" type="actionListener" />
-					<aon:methodParam name="searchAction" value="datos_list" />				
+					<aon:methodParam name="searchAction" value="irpfMaestro_list" />				
 				
-					<aon:outputLabel for="irpfMaestro_cdg"
+					<aon:outputLabel for="Elemirpf_cdg"
 						value="#{appBundle.aon_payroll_cdg}" />
-					<aon:inputText id="irpfMaestro_cdg" size="10" maxlength="8"
+					<aon:inputText id="Elemirpf_cdg" size="20" maxlength="20"
 						valueChangeListener="#{irpfMaestro.addExpression}" />
 
-					<aon:outputLabel for="irpfMaestro_description"
+					<aon:outputLabel for="Elemirpf_description"
 						value="#{appBundle.aon_payroll_description}" />
-					<aon:inputText id="irpfMaestro_description" size="60" maxlength="50"
+					<aon:inputText id="Elemirpf_description" size="60" maxlength="60"
 						valueChangeListener="#{irpfMaestro.addExpression}" />
 						
+					<!--  <aon:outputLabel for="Elemirpf_porcentaje"
+						value="#{appBundle.aon_payroll_auxiliares_irpf__datos_porcen}" />
+					<h:selectBooleanCheckbox id="Elemirpf_porcentaje" value="#{elemirpf.porcentajebol}" 
+						valueChangeListener="#{irpfMaestro.addDirectExpression}"/>-->
+						
+					<aon:outputLabel for="Elemirpf_id_fecini"
+						value="#{appBundle.aon_payroll_auxiliares_irpf__datos_desde}" />
+					<aon:selectInputDate id="Elemirpf_id_fecini" renderAsPopup="true"
+						popupDateFormat="#{appBundle.aon_date_pattern}"
+						valueChangeListener="#{irpfMaestro.addExpression}">
+					</aon:selectInputDate>
 					
+					<aon:outputLabel for="Elemirpf_fecfin"
+						value="#{appBundle.aon_payroll_auxiliares_irpf__datos_hasta}" />
+					<aon:selectInputDate id="Elemirpf_fecfin" renderAsPopup="true"
+						popupDateFormat="#{appBundle.aon_date_pattern}"
+						valueChangeListener="#{irpfMaestro.addExpression}">
+					</aon:selectInputDate>			
 					
+					<aon:outputLabel for="Elemirpf_linirpfs_importe"
+						value="#{appBundle.aon_payroll_auxiliares_irpf__datos_impelem}" />
+					<aon:inputText id="Elemirpf_linirpfs_importe" size="20" maxlength="20"
+						valueChangeListener="#{irpfMaestro.addDirectExpression}" />			
+										
 				</ui:define>
 			</ui:decorate>
 

@@ -47,6 +47,8 @@ import com.code.aon.payroll.divisa.LinDivisa;
 import com.code.aon.payroll.auxiliares.convenios.Convenio;
 import com.code.aon.payroll.auxiliares.convenios.Nivel;
 import com.code.aon.payroll.auxiliares.convenios.Pagaext;
+import com.code.aon.payroll.auxiliares.convenios.Categoria;
+import com.code.aon.payroll.auxiliares.convenios.Percniv;
 import com.code.aon.payroll.auxiliares.organismosyentidades.Entidad;
 import com.code.aon.payroll.auxiliares.organismosyentidades.Sucursal;
 import com.code.aon.payroll.auxiliares.organismosyentidades.Mutua;
@@ -1915,6 +1917,224 @@ public interface IPayrollAlias {
 	* Hibernate value: Pagaext.prorat
 	*/
 	String  PAGAEXT_PRORAT = PAGAEXT_ENTRY.getAliasNames()[9];
+
+
+
+	/** 
+	* DAOConstantsEntry for Categoria entity.
+	*/ 
+	DAOConstantsEntry CATEGORIA_ENTRY = DAOConstants.getDAOConstant(Categoria.class);
+
+	/** 
+	* Alias value: Categoria_base_cdg
+	* Hibernate value: Categoria.base.cdg
+	*/
+	String  CATEGORIA_BASE_CDG = CATEGORIA_ENTRY.getAliasNames()[0];
+
+	/** 
+	* Alias value: Categoria_cno
+	* Hibernate value: Categoria.cno
+	*/
+	String  CATEGORIA_CNO = CATEGORIA_ENTRY.getAliasNames()[1];
+
+	/** 
+	* Alias value: Categoria_convenio_cdg
+	* Hibernate value: Categoria.convenio.cdg
+	*/
+	String  CATEGORIA_CONVENIO_CDG = CATEGORIA_ENTRY.getAliasNames()[2];
+
+	/** 
+	* Alias value: Categoria_description
+	* Hibernate value: Categoria.description
+	*/
+	String  CATEGORIA_DESCRIPTION = CATEGORIA_ENTRY.getAliasNames()[3];
+
+	/** 
+	* Alias value: Categoria_epigrafe_cdg
+	* Hibernate value: Categoria.epigrafe.cdg
+	*/
+	String  CATEGORIA_EPIGRAFE_CDG = CATEGORIA_ENTRY.getAliasNames()[4];
+
+	/** 
+	* Alias value: Categoria_id_cdg
+	* Hibernate value: Categoria.id.cdg
+	*/
+	String  CATEGORIA_ID_CDG = CATEGORIA_ENTRY.getAliasNames()[5];
+
+	/** 
+	* Alias value: Categoria_id_codcon
+	* Hibernate value: Categoria.id.codcon
+	*/
+	String  CATEGORIA_ID_CODCON = CATEGORIA_ENTRY.getAliasNames()[6];
+
+	/** 
+	* Alias value: Categoria_nivel
+	* Hibernate value: Categoria.nivel
+	*/
+	String  CATEGORIA_NIVEL = CATEGORIA_ENTRY.getAliasNames()[7];
+
+
+
+	/** 
+	* DAOConstantsEntry for Percniv entity.
+	*/ 
+	DAOConstantsEntry PERCNIV_ENTRY = DAOConstants.getDAOConstant(Percniv.class);
+
+	/** 
+	* Alias value: Percniv_calculo
+	* Hibernate value: Percniv.calculo
+	*/
+	String  PERCNIV_CALCULO = PERCNIV_ENTRY.getAliasNames()[0];
+
+	/** 
+	* Alias value: Percniv_complemento1_cdg
+	* Hibernate value: Percniv.complemento1.cdg
+	*/
+	String  PERCNIV_COMPLEMENTO1_CDG = PERCNIV_ENTRY.getAliasNames()[1];
+
+	/** 
+	* Alias value: Percniv_complemento_cdg
+	* Hibernate value: Percniv.complemento.cdg
+	*/
+	String  PERCNIV_COMPLEMENTO_CDG = PERCNIV_ENTRY.getAliasNames()[2];
+
+	/** 
+	* Alias value: Percniv_convenio_cdg
+	* Hibernate value: Percniv.convenio.cdg
+	*/
+	String  PERCNIV_CONVENIO_CDG = PERCNIV_ENTRY.getAliasNames()[3];
+
+	/** 
+	* Alias value: Percniv_desabr
+	* Hibernate value: Percniv.desabr
+	*/
+	String  PERCNIV_DESABR = PERCNIV_ENTRY.getAliasNames()[4];
+
+	/** 
+	* Alias value: Percniv_descom
+	* Hibernate value: Percniv.descom
+	*/
+	String  PERCNIV_DESCOM = PERCNIV_ENTRY.getAliasNames()[5];
+
+	/** 
+	* Alias value: Percniv_dinesp
+	* Hibernate value: Percniv.dinesp
+	*/
+	String  PERCNIV_DINESP = PERCNIV_ENTRY.getAliasNames()[6];
+
+	/** 
+	* Alias value: Percniv_fecmod
+	* Hibernate value: Percniv.fecmod
+	*/
+	String  PERCNIV_FECMOD = PERCNIV_ENTRY.getAliasNames()[7];
+
+	/** 
+	* Alias value: Percniv_fecnew
+	* Hibernate value: Percniv.fecnew
+	*/
+	String  PERCNIV_FECNEW = PERCNIV_ENTRY.getAliasNames()[8];
+
+	/** 
+	* Alias value: Percniv_fijovar
+	* Hibernate value: Percniv.fijovar
+	*/
+	String  PERCNIV_FIJOVAR = PERCNIV_ENTRY.getAliasNames()[9];
+
+	/** 
+	* Alias value: Percniv_garilt
+	* Hibernate value: Percniv.garilt
+	*/
+	String  PERCNIV_GARILT = PERCNIV_ENTRY.getAliasNames()[10];
+
+	/** 
+	* Alias value: Percniv_hormod
+	* Hibernate value: Percniv.hormod
+	*/
+	String  PERCNIV_HORMOD = PERCNIV_ENTRY.getAliasNames()[11];
+
+	/** 
+	* Alias value: Percniv_hornew
+	* Hibernate value: Percniv.hornew
+	*/
+	String  PERCNIV_HORNEW = PERCNIV_ENTRY.getAliasNames()[12];
+
+	/** 
+	* Alias value: Percniv_id_cdg
+	* Hibernate value: Percniv.id.cdg
+	*/
+	String  PERCNIV_ID_CDG = PERCNIV_ENTRY.getAliasNames()[13];
+
+	/** 
+	* Alias value: Percniv_id_codcom
+	* Hibernate value: Percniv.id.codcom
+	*/
+	String  PERCNIV_ID_CODCOM = PERCNIV_ENTRY.getAliasNames()[14];
+
+	/** 
+	* Alias value: Percniv_id_nivel
+	* Hibernate value: Percniv.id.nivel
+	*/
+	String  PERCNIV_ID_NIVEL = PERCNIV_ENTRY.getAliasNames()[15];
+
+	/** 
+	* Alias value: Percniv_importe
+	* Hibernate value: Percniv.importe
+	*/
+	String  PERCNIV_IMPORTE = PERCNIV_ENTRY.getAliasNames()[16];
+
+	/** 
+	* Alias value: Percniv_impuni
+	* Hibernate value: Percniv.impuni
+	*/
+	String  PERCNIV_IMPUNI = PERCNIV_ENTRY.getAliasNames()[17];
+
+	/** 
+	* Alias value: Percniv_indcom
+	* Hibernate value: Percniv.indcom
+	*/
+	String  PERCNIV_INDCOM = PERCNIV_ENTRY.getAliasNames()[18];
+
+	/** 
+	* Alias value: Percniv_mes
+	* Hibernate value: Percniv.mes
+	*/
+	String  PERCNIV_MES = PERCNIV_ENTRY.getAliasNames()[19];
+
+	/** 
+	* Alias value: Percniv_nivel_id_cdg
+	* Hibernate value: Percniv.nivel.id.cdg
+	*/
+	String  PERCNIV_NIVEL_ID_CDG = PERCNIV_ENTRY.getAliasNames()[20];
+
+	/** 
+	* Alias value: Percniv_nivel_id_codcon
+	* Hibernate value: Percniv.nivel.id.codcon
+	*/
+	String  PERCNIV_NIVEL_ID_CODCON = PERCNIV_ENTRY.getAliasNames()[21];
+
+	/** 
+	* Alias value: Percniv_redext
+	* Hibernate value: Percniv.redext
+	*/
+	String  PERCNIV_REDEXT = PERCNIV_ENTRY.getAliasNames()[22];
+
+	/** 
+	* Alias value: Percniv_tipcom
+	* Hibernate value: Percniv.tipcom
+	*/
+	String  PERCNIV_TIPCOM = PERCNIV_ENTRY.getAliasNames()[23];
+
+	/** 
+	* Alias value: Percniv_tipcot
+	* Hibernate value: Percniv.tipcot
+	*/
+	String  PERCNIV_TIPCOT = PERCNIV_ENTRY.getAliasNames()[24];
+
+	/** 
+	* Alias value: Percniv_unidades
+	* Hibernate value: Percniv.unidades
+	*/
+	String  PERCNIV_UNIDADES = PERCNIV_ENTRY.getAliasNames()[25];
 
 
 
