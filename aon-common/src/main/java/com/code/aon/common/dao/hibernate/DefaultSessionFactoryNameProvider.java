@@ -29,7 +29,7 @@ public class DefaultSessionFactoryNameProvider implements ISessionFactoryNamePro
     	return SINGLETON;
     }
     
-	public String getName() {
+	public String getName( String pojoClass ) {
         InitialContext ic;
         try {
             ic = new InitialContext();
