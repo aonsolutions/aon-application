@@ -35,7 +35,7 @@
 					<!--  <aon:outputLabel for="Elemirpf_porcentaje"
 						value="#{appBundle.aon_payroll_auxiliares_irpf__datos_porcen}" />
 					<h:selectBooleanCheckbox id="Elemirpf_porcentaje" value="#{elemirpf.porcentajebol}" 
-						valueChangeListener="#{irpfMaestro.addDirectExpression}"/>-->
+						valueChangeListener="#{irpfMaestro.addDirectExpression}"/>
 						
 					<aon:outputLabel for="Elemirpf_id_fecini"
 						value="#{appBundle.aon_payroll_auxiliares_irpf__datos_desde}" />
@@ -47,14 +47,21 @@
 					<aon:outputLabel for="Elemirpf_fecfin"
 						value="#{appBundle.aon_payroll_auxiliares_irpf__datos_hasta}" />
 					<aon:selectInputDate id="Elemirpf_fecfin" renderAsPopup="true"
-						popupDateFormat="#{appBundle.aon_date_pattern}"
+						popupDateFormat="#{bundle.aon_date_pattern}"
 						valueChangeListener="#{irpfMaestro.addExpression}">
-					</aon:selectInputDate>			
+					</aon:selectInputDate>-->
+					
+					<aon:outputLabel for="Elemirpf_linirpfs_hasta"
+						value="#{appBundle.aon_payroll_auxiliares_irpf__datos_Hastaimp}" />
+					<aon:inputText id="Elemirpf_linirpfs_hasta" size="20" maxlength="20"
+						valueChangeListener="#{irpfMaestro.addDirectExpression}" />			
 					
 					<aon:outputLabel for="Elemirpf_linirpfs_importe"
 						value="#{appBundle.aon_payroll_auxiliares_irpf__datos_impelem}" />
 					<aon:inputText id="Elemirpf_linirpfs_importe" size="20" maxlength="20"
-						valueChangeListener="#{irpfMaestro.addDirectExpression}" />			
+						valueChangeListener="#{irpfMaestro.addDirectExpression}" />		
+						
+				
 										
 				</ui:define>
 			</ui:decorate>
