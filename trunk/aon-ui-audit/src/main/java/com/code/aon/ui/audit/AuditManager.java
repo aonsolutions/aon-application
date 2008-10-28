@@ -29,17 +29,15 @@ public class AuditManager implements IAuditAlias {
 	private static final Logger LOGGER = Logger
 			.getLogger(AuditManager.class.getName());		
 	
+	public static final String AUDIT = "aon-audit";
+	
 	public static final String AUDIT_SESSION_PROPERTY = "com.code.aon.audit.session";	
 	
 	public static final String AUDIT_DOMAIN_APPLICATION_PROPERTY = "com.code.aon.audit.domainApplication";
 
 	private static final AuditManager SINGLETON = new AuditManager();
 	
-	private ISessionFactoryNameProvider previousNameProvider;
-	
-	private AuditConfigurationFactory auditConfigurationFactory;
-	
-	private IConfigurationFactory previousConfigurationFactory;
+	private boolean auditConfigured;
 	
 	private IManagerBean domainBean;
 	
@@ -79,26 +77,17 @@ public class AuditManager implements IAuditAlias {
 		}
 	}
 	
-	private AuditConfigurationFactory getAuditConfigurationFactory() {
-		if ( this.auditConfigurationFactory == null ) {
-			this.auditConfigurationFactory = new AuditConfigurationFactory();
-		}
-		return this.auditConfigurationFactory;
+	public boolean isAuditConfigured() {
+		return auditConfigured;
 	}
-	
-	public void changeToAuditDB() {
-		this.previousNameProvider = HibernateUtil.getSessionFactoryNameProvider();
-		this.previousConfigurationFactory = HibernateUtil.getConfigurationFactory();
-		ISessionFactoryNameProvider auditNameProvider = new AuditSessionFactoryNameProvider();
+
+	public void configureAudit() {
+		ISessionFactoryNameProvider auditNameProvider = new AuditSessionFactoryNameProvider(HibernateUtil.getSessionFactoryNameProvider());
 		HibernateUtil.setSessionFactoryNameProvider(auditNameProvider);
-		getAuditConfigurationFactory().setSessionFactoryName(auditNameProvider.getName());
-		HibernateUtil.setConfigurationFactory(getAuditConfigurationFactory());
+		IConfigurationFactory auditConfigurationFactory = new AuditConfigurationFactory(HibernateUtil.getConfigurationFactory());
+		HibernateUtil.setConfigurationFactory(auditConfigurationFactory);
+		this.auditConfigured = true;
 		initManagerBeans();
-	}
-	
-	public void restoreToPreviousDB() {
-		HibernateUtil.setSessionFactoryNameProvider(this.previousNameProvider);
-		HibernateUtil.setConfigurationFactory(this.previousConfigurationFactory);
 	}
 	
 	public Domain getDomain( String name ) throws ManagerBeanException {
