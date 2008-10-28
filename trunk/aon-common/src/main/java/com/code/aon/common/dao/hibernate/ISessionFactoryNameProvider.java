@@ -9,8 +9,9 @@ public interface ISessionFactoryNameProvider {
     /**
      * Retrieve the sessionFactory named instance.
      * 
+     * @param pojoClass 
      * @return The SessionFactory. 
      */
-	String getName();
+	String getName( String pojoClass );
 	
 }
