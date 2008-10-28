@@ -30,7 +30,7 @@ public class DAOConstants {
 	/**
 	 * Reset the DAO Constants Entry information.
 	 */
-	public static void reset() {
+	private static void reset() {
 		DAO_CONSTANTS = new HashMap<String,DAOConstantsEntry>();
 		CHECKED_RESOURCES = new HashSet<String>();
 	}
@@ -104,14 +104,7 @@ public class DAOConstants {
 	}
 	
 	static {
-		// De esta forma se obliga a crear el SessionFactory y a que 
-		// se resuelvan todos los DAOConstantsEntry. Es para evitar tener
-		// que guardar la referencia del Configuration
-		try {
-			HibernateUtil.getSessionFactory();
-        } catch (Throwable te) {
-        	LOGGER.log(Level.SEVERE, "Error initializing session factory", te);
-		}
+		reset();
 	}
 	
 }
