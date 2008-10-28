@@ -11,13 +11,9 @@ import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.hibernate.cfg.Configuration;
-import org.hibernate.impl.SessionFactoryImpl;
 import org.hibernate.metadata.ClassMetadata;
-import org.hibernate.type.AssociationType;
 import org.hibernate.type.ComponentType;
 import org.hibernate.type.EntityType;
-import org.hibernate.type.IdentifierType;
-import org.hibernate.type.NullableType;
 import org.hibernate.type.Type;
 
 import com.code.aon.common.dao.DAOConstantsResolver;
@@ -97,111 +93,200 @@ public class HibernateUtil {
      * @return The session.
      * @throws HibernateException
      */
+    @Deprecated
     public static Session getSession() throws HibernateException {
-        if (session.get(getSessionFactoryName()) == null) {
-            getSessionFactory();
-        }
-        Session s = session.get(getSessionFactoryName()).get(); 
-        //Open a new Session, if this Thread has none yet 
-        if (s == null) { 
-            s = sessionFactory.get(getSessionFactoryName()).openSession(); 
-            session.get(getSessionFactoryName()).set(s); 
-        } 
-        return s; 
+    	return getSession(getSessionFactoryName());
     } 
 
     /**
      * Open session from named instance.
      * 
+     * @param sessionFactoryName  
+     * @return The session.
      * @throws HibernateException
      */
+    public static Session getSession( String sessionFactoryName ) throws HibernateException {
+        if (session.get(sessionFactoryName) == null) {
+            getSessionFactory(sessionFactoryName);
+        }
+        Session s = session.get(sessionFactoryName).get(); 
+        //Open a new Session, if this Thread has none yet 
+        if (s == null) { 
+            s = sessionFactory.get(sessionFactoryName).openSession(); 
+            session.get(sessionFactoryName).set(s); 
+        } 
+        return s; 
+    } 
+    
+    /**
+     * Open session from named instance.
+     * 
+     * @throws HibernateException
+     */
+    @Deprecated
     public static void startSession() {
-    	HibernateUtil.getSession();
+    	startSession(getSessionFactoryName());
     }
 
+    /**
+     * Open session from named instance.
+     * 
+     * @param sessionFactoryName  
+     * @throws HibernateException
+     */
+    public static void startSession( String sessionFactoryName ) {
+    	HibernateUtil.getSession(sessionFactoryName);
+    }
+    
     /**
      *  Close session from named instance.
      * 
      * @throws HibernateException
      */
+    @Deprecated
     public static void closeSession() { 
-        Session s = session.get(getSessionFactoryName()).get(); 
-        session.get(getSessionFactoryName()).set(null); 
+    	closeSession(getSessionFactoryName());
+    } 
+
+    /**
+     *  Close session from named instance.
+     *  
+     * @param sessionFactoryName  
+     * @throws HibernateException
+     */
+    public static void closeSession( String sessionFactoryName ) { 
+        Session s = session.get(sessionFactoryName).get(); 
+        session.get(sessionFactoryName).set(null); 
         if (s != null) {
             s.close();
             LOGGER.finest("** Hibernate session closed" );
         } 
     } 
-
+    
     /**
      * Retrieve a sessionFactory from named instance.
      * 
      * @return The SessionFactory. 
      */
+    @Deprecated
     public static SessionFactory getSessionFactory() {
-        SessionFactory sf = sessionFactory.get(getSessionFactoryName()); 
+    	return getSessionFactory(getSessionFactoryName());
+    }
+
+    /**
+     * Retrieve a sessionFactory from named instance.
+     * 
+     * @param sessionFactoryName  
+     * @return The SessionFactory. 
+     */
+    public static SessionFactory getSessionFactory( String sessionFactoryName ) {
+        SessionFactory sf = sessionFactory.get(sessionFactoryName); 
         // Open a new Session, if this Thread has none yet 
         if (sf == null) { 
-            sf = createSessionFactory(); 
+            sf = createSessionFactory( sessionFactoryName ); 
         } 
         return sf; 
     }
-
+    
     /**
      * Retrieve the sessionFactory named instance.
      * 
      * @return The SessionFactory. 
      */
+    @Deprecated
     public static String getSessionFactoryName() {
-    	return sessionFactoryNameProvider.getName();
+    	return getSessionFactoryName(null);
     }
 
+    /**
+     * Retrieve the sessionFactory named instance.
+     * 
+     * @param pojoClass  
+     * @return The SessionFactory. 
+     */
+    public static String getSessionFactoryName( String pojoClass ) {
+    	return sessionFactoryNameProvider.getName(pojoClass);
+    }
+    
     /**
      * Start a new database transaction.
      * 
      * @throws DAOException
      */
+    @Deprecated
     public static void beginTransaction() throws DAOException {
-        Transaction tx = transaction.get(getSessionFactoryName()).get(); 
+    	beginTransaction(getSessionFactoryName());
+    }
+
+    /**
+     * Start a new database transaction.
+     * 
+     * @param sessionFactoryName  
+     * @throws DAOException
+     */
+    public static void beginTransaction( String sessionFactoryName ) throws DAOException {
+        Transaction tx = transaction.get(sessionFactoryName).get(); 
         try {
             if (tx == null) {
                 LOGGER.fine("Starting new database transaction in this thread.");
-                tx = getSession().beginTransaction();
-                transaction.get(getSessionFactoryName()).set(tx);
+                tx = getSession(sessionFactoryName).beginTransaction();
+                transaction.get(sessionFactoryName).set(tx);
             }
         } catch (HibernateException ex) {
             throw new DAOException(ex.getMessage(), ex);
         }
     }
-
+    
     /**
      * Commit the database transaction.
      * 
      * @throws DAOException
      */
+    @Deprecated
     public static void commitTransaction() throws DAOException {
-        Transaction tx = transaction.get(getSessionFactoryName()).get(); 
+    	commitTransaction(getSessionFactoryName()); 
+    }
+
+    /**
+     * Commit the database transaction.
+     * 
+     * @param sessionFactoryName  
+     * @throws DAOException
+     */
+    public static void commitTransaction( String sessionFactoryName ) throws DAOException {
+        Transaction tx = transaction.get(sessionFactoryName).get(); 
         try {
             if (tx != null && !tx.wasCommitted() && !tx.wasRolledBack()) {
                 LOGGER.fine("Committing database transaction of this thread.");
                 tx.commit();
             }
-            transaction.get(getSessionFactoryName()).set(null); 
+            transaction.get(sessionFactoryName).set(null); 
         } catch (HibernateException ex) {
             rollbackTransaction();
             throw new DAOException(ex.getMessage(), ex);
         }
     }
-
+    
     /**
      * Commit the database transaction.
      * 
      * @throws DAOException
      */
+    @Deprecated
     public static void rollbackTransaction() throws DAOException {
-        Transaction tx = transaction.get(getSessionFactoryName()).get(); 
+    	rollbackTransaction( getSessionFactoryName() );
+    }
+
+    /**
+     * Commit the database transaction.
+     * 
+     * @param sessionFactoryName 
+     * @throws DAOException
+     */
+    public static void rollbackTransaction( String sessionFactoryName ) throws DAOException {
+        Transaction tx = transaction.get(sessionFactoryName).get(); 
         try {
-            transaction.get(getSessionFactoryName()).set(null); 
+            transaction.get(sessionFactoryName).set(null); 
             if (tx != null && !tx.wasCommitted() && !tx.wasRolledBack()) {
                 LOGGER.fine("Tyring to rollback database transaction of this thread.");
                 tx.rollback();
@@ -209,10 +294,10 @@ public class HibernateUtil {
         } catch (HibernateException ex) {
             throw new DAOException(ex.getMessage(), ex);
         } finally {
-            closeSession();
+            closeSession( sessionFactoryName );
         }
     }
-
+    
     /**
      * TODO
      * 
@@ -264,41 +349,6 @@ public class HibernateUtil {
     }
     
     /**
-     * Method getMappingTypes
-     * 
-     * @param persistenClass
-     *            Class
-     * @param properties
-     *            String[]
-     * @return Map
-     */
-    public static Map<String,Type> getMappingTypes(String persistenClass, String[] properties) {
-        HashMap<String,Type> result = new HashMap<String,Type>();
-
-        ClassMetadata cmd = getSessionFactory()
-                .getClassMetadata(persistenClass);
-        if (cmd != null) {
-            if (properties != null) {
-                for (int i = 0; i < properties.length; i++) {
-                    String property = properties[i];
-                    String propertyName = property.substring(StringUtils.indexOfAny( property, HibernateRenderer.SEPARATORS ) + 1);
-                    Type type = getType(cmd, propertyName);
-                    if ((type != null)
-                            && ((type instanceof IdentifierType) || (type instanceof NullableType))) {
-                        result.put(property, type);
-                    } else {
-                        LOGGER.warning("No se ha encontrado el type para " + property);
-                    }
-                }
-            }
-        } else {
-            LOGGER.severe("No se ha encontrado el mapping de la clase " + persistenClass);
-        }
-
-        return result;
-    }
-
-    /**
      * TODO
      * @param mustCloseSession
      */
@@ -336,10 +386,9 @@ public class HibernateUtil {
      * @return a SessionFactory.
      * @see com.code.aon.common.dao.hibernate.HibernateUtil#getSessionFactoryName()
      */
-    private static SessionFactory createSessionFactory() {
+    private static SessionFactory createSessionFactory( String sessionFactoryName ) {
         SessionFactory factory = null;
         try {
-        	String sessionFactoryName = getSessionFactoryName();
             Configuration configuration = configurationFactory.getConfiguration(sessionFactoryName);
             factory = configuration.buildSessionFactory();
             sessionFactory.put(sessionFactoryName, factory); 
@@ -355,86 +404,26 @@ public class HibernateUtil {
     }
 
     /**
-     * Method getType
-     * 
-     * @param componentType
-     *            ComponentType
-     * @param property
-     *            String
-     * @return Type
-     */
-    private static Type getType(ComponentType componentType, String property) {
-        String[] names = componentType.getPropertyNames();
-        for (int i = 0; i < names.length; i++) {
-            if (property.equals(names[i])) {
-                return componentType.getSubtypes()[i];
-            }
-        }
-        return null;
-    }
-
-    /**
-     * Method getType
-     * 
-     * @param associationType
-     *            AssociationType
-     * @param property
-     *            String
-     * @return Type
-     */
-    private static Type getType(AssociationType associationType, String property) {
-		SessionFactoryImpl sessionFactory = (SessionFactoryImpl) HibernateUtil.getSessionFactory();
-		String entityName = associationType.getAssociatedEntityName( sessionFactory );
-        ClassMetadata cmd =	sessionFactory.getClassMetadata( entityName );
-        return getType(cmd, property);
-    }
-
-    /**
-     * Method getType
-     * 
-     * @param cmd
-     *            ClassMetadata
-     * @param property
-     *            String
-     * @return Type
-     */
-    public static Type getType(ClassMetadata cmd, String property) {
-        Type type = null;
-        String moreProperty = null;
-        int pos = StringUtils.indexOfAny( property, HibernateRenderer.SEPARATORS );
-        if (pos != -1) {
-            moreProperty = property.substring(pos + 1);
-            property = property.substring(0, pos);
-        }
-        try {
-            String idName = cmd.getIdentifierPropertyName();
-            if (property.equals(idName)) {
-                type = cmd.getIdentifierType();
-            } else {
-                type = cmd.getPropertyType(property);
-            }
-            if (type != null) {
-                if (type.isComponentType()) {
-                    type = getType((ComponentType) type, moreProperty);
-                } else if (type.isAssociationType()) {
-                    type = getType((AssociationType) type, moreProperty);
-                }
-            }
-        } catch (HibernateException he) {
-            LOGGER.severe("Error obteniendo el Type de la propiedad " + property);
-        }
-        return type;
-    }
-    
-    /**
      * Returns the java.sql.Connection returned by <code>HibernateUtil.getSession().connection()</code> method.
      * 
      * @return A java.sql.Connection.
      */
+    @Deprecated
 	public static Connection getSQLConnection() {
-		return HibernateUtil.getSession().connection();
+		return getSQLConnection( getSessionFactoryName() );
 	}
 
+    /**
+     * Returns the java.sql.Connection returned by <code>HibernateUtil.getSession().connection()</code> method.
+     * 
+     * @param sessionFactoryName  
+     * @return A java.sql.Connection.
+     */
+    @Deprecated
+	public static Connection getSQLConnection( String sessionFactoryName ) {
+		return HibernateUtil.getSession(sessionFactoryName).connection();
+	}
+	
 	/**
 	 * Gets the configuration factory.
 	 * 
