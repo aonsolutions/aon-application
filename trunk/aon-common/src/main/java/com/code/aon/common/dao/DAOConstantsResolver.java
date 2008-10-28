@@ -48,7 +48,6 @@ public class DAOConstantsResolver {
 	 * Create a new DAO Constants.
 	 */
 	public void createDAOConstants() {
-		DAOConstants.reset();
 		Iterator i = configuration.getClassMappings();
 		while (i.hasNext()) {
 			PersistentClass persistentClass = (PersistentClass) i.next();
