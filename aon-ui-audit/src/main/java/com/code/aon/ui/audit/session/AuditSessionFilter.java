@@ -59,7 +59,6 @@ public class AuditSessionFilter implements Filter {
 	
 	private void insertLoginAudit( HttpSession httpSession, HttpServletRequest request ) {
 		AuditManager manager = AuditManager.getInstance();
-		manager.changeToAuditDB();
 		try {
 			AuthPrincipal principal = getPrincipal(request);
 			String applicationName = getApplicationName(principal.getContext() );
@@ -81,8 +80,6 @@ public class AuditSessionFilter implements Filter {
 			}
 		} catch ( Throwable th ) {
 			LOGGER.log( Level.SEVERE, "Error login audit", th );
-		} finally {
-			manager.restoreToPreviousDB();	
 		}
 	}
 
