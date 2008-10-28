@@ -120,7 +120,7 @@ public class CriteriaUtilities {
 		boolean hasProjections = (projectionList != null) && (!projectionList.isEmpty()); 
 		if ( hasCriteria || hasProjections ) {
 			HibernateRenderer hibernateRenderer = new HibernateRenderer(
-					hibernateCriteria, daoEntry.getPojo());
+					hibernateCriteria, session.getSessionFactory(), daoEntry.getPojo());
 			if ( hasCriteria ) {
 				criteria.accept(hibernateRenderer);
 			}
