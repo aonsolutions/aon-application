@@ -13,6 +13,8 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.apache.commons.lang.StringUtils;
+import org.hibernate.HibernateException;
+import org.hibernate.SessionFactory;
 import org.hibernate.criterion.CriteriaSpecification;
 import org.hibernate.criterion.Criterion;
 import org.hibernate.criterion.ProjectionList;
@@ -21,6 +23,7 @@ import org.hibernate.criterion.Restrictions;
 import org.hibernate.impl.SessionFactoryImpl;
 import org.hibernate.metadata.ClassMetadata;
 import org.hibernate.type.AssociationType;
+import org.hibernate.type.ComponentType;
 import org.hibernate.type.IdentifierType;
 import org.hibernate.type.NullableType;
 import org.hibernate.type.StringType;
@@ -84,6 +87,11 @@ public class HibernateRenderer implements CriterionVisitor {
 	 * Field classMetaData
 	 */
 	private ClassMetadata classMetaData;
+	
+	/**
+	 * Field sessionFactory
+	 */
+	private SessionFactory sessionFactory;
 
 	/**
 	 * Field aliasCriterias
@@ -134,11 +142,13 @@ public class HibernateRenderer implements CriterionVisitor {
 	 * Constructor for HibernateRenderer
 	 * 
 	 * @param criteria
+	 * @param sessionFactory 
 	 * @param pojo
 	 */
-	public HibernateRenderer(org.hibernate.Criteria criteria, String pojo) {
+	public HibernateRenderer(org.hibernate.Criteria criteria, SessionFactory sessionFactory, String pojo) {
 		this.criteria = criteria;
-		this.classMetaData = HibernateUtil.getSessionFactory().getClassMetadata(pojo);
+		this.sessionFactory = sessionFactory;
+		this.classMetaData = sessionFactory.getClassMetadata(pojo);
 		this.aliasSet = new HashSet<String>();
 	}
 
@@ -332,8 +342,7 @@ public class HibernateRenderer implements CriterionVisitor {
 	private ClassMetadata getEntityMetaData( AssociationType associationType ) {
 		ClassMetadata cmd = null;
 		if ( associationType != null ) {
-			SessionFactoryImpl sessionFactory = (SessionFactoryImpl) HibernateUtil.getSessionFactory();
-			String entityName = associationType.getAssociatedEntityName( sessionFactory );
+			String entityName = associationType.getAssociatedEntityName( (SessionFactoryImpl) sessionFactory );
 			cmd = sessionFactory.getClassMetadata( entityName );
 		}
 		return cmd;
@@ -550,7 +559,7 @@ public class HibernateRenderer implements CriterionVisitor {
 	
 	private Type getType( String property ) {
 		String propertyName = property.substring(StringUtils.indexOfAny( property, HibernateRenderer.SEPARATORS ) + 1);		
-		Type type = HibernateUtil.getType(this.classMetaData, propertyName);
+		Type type = getType(this.classMetaData, propertyName);
 		if ( (type != null) && ((type instanceof IdentifierType) || (type instanceof NullableType))) {
 			return type;
 		}
@@ -582,5 +591,76 @@ public class HibernateRenderer implements CriterionVisitor {
 		}
 		return result;
 	}
+	
+    /**
+     * Method getType
+     * 
+     * @param componentType
+     *            ComponentType
+     * @param property
+     *            String
+     * @return Type
+     */
+    private Type getType(ComponentType componentType, String property) {
+        String[] names = componentType.getPropertyNames();
+        for (int i = 0; i < names.length; i++) {
+            if (property.equals(names[i])) {
+                return componentType.getSubtypes()[i];
+            }
+        }
+        return null;
+    }
 
+    /**
+     * Method getType
+     * 
+     * @param associationType
+     *            AssociationType
+     * @param property
+     *            String
+     * @return Type
+     */
+    private Type getType(AssociationType associationType, String property) {
+		String entityName = associationType.getAssociatedEntityName( (SessionFactoryImpl) sessionFactory );
+        ClassMetadata cmd =	sessionFactory.getClassMetadata( entityName );
+        return getType(cmd, property);
+    }
+
+    /**
+     * Method getType
+     * 
+     * @param cmd
+     *            ClassMetadata
+     * @param property
+     *            String
+     * @return Type
+     */
+    private Type getType(ClassMetadata cmd, String property) {
+        Type type = null;
+        String moreProperty = null;
+        int pos = StringUtils.indexOfAny( property, HibernateRenderer.SEPARATORS );
+        if (pos != -1) {
+            moreProperty = property.substring(pos + 1);
+            property = property.substring(0, pos);
+        }
+        try {
+            String idName = cmd.getIdentifierPropertyName();
+            if (property.equals(idName)) {
+                type = cmd.getIdentifierType();
+            } else {
+                type = cmd.getPropertyType(property);
+            }
+            if (type != null) {
+                if (type.isComponentType()) {
+                    type = getType((ComponentType) type, moreProperty);
+                } else if (type.isAssociationType()) {
+                    type = getType((AssociationType) type, moreProperty);
+                }
+            }
+        } catch (HibernateException he) {
+            LOGGER.severe("Error obteniendo el Type de la propiedad " + property);
+        }
+        return type;
+    }    
+	
 }
