@@ -44,6 +44,12 @@ public class Session implements ITransferObject {
 	@Index(name="IDX_SESSION_SESSION_ID")
     private String sessionId;
 
+	@Column(name = "REMOTE_ADDRESS", nullable = false, length = 15)
+    private String remoteAddress;
+
+	@Column(name = "REMOTE_HOST", nullable = false, length = 64)
+    private String remoteHost;
+	
 	@ManyToOne (fetch=FetchType.EAGER)
     @JoinColumn( name="APPLICATION_ID", nullable = false, updatable = false )	
 	@ForeignKey(name = "FK_SESSION_APPLICATION")
@@ -182,6 +188,42 @@ public class Session implements ITransferObject {
 	 */
 	public void setEndDate(Date end) {
 		this.endDate = end;
-	}	
+	}
 
+	/**
+	 * Gets the remote address.
+	 * 
+	 * @return the remote address
+	 */
+	public String getRemoteAddress() {
+		return remoteAddress;
+	}
+
+	/**
+	 * Sets the remote address.
+	 * 
+	 * @param remoteAddress the new remote address
+	 */
+	public void setRemoteAddress(String remoteAddress) {
+		this.remoteAddress = remoteAddress;
+	}
+
+	/**
+	 * Gets the remote host.
+	 * 
+	 * @return the remote host
+	 */
+	public String getRemoteHost() {
+		return remoteHost;
+	}
+
+	/**
+	 * Sets the remote host.
+	 * 
+	 * @param remoteHost the new remote host
+	 */
+	public void setRemoteHost(String remoteHost) {
+		this.remoteHost = remoteHost;
+	}	
+	
 }
