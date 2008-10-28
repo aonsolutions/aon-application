@@ -328,7 +328,7 @@
 					<textElement verticalAlignment="Middle">
 						<font size="8"/>
 					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$F{epi2}]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{epi2}.getName($P{REPORT_LOCALE})]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
@@ -341,7 +341,7 @@
 					<textElement verticalAlignment="Middle">
 						<font size="8"/>
 					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$F{epi1}]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{epi1}.getName($P{REPORT_LOCALE})]]></textFieldExpression>
 				</textField>
 			</band>
 		</detail>
