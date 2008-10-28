@@ -49,14 +49,14 @@
 				
 					<aon:outputLabel for="Epigrafe_cdg"
 						value="#{appBundle.aon_payroll_cdg}" />
-					<aon:inputText id="EpigrafeMaestro_cdg" size="10" maxlength="8"
+					<aon:inputText id="Epigrafe_cdg" size="10" maxlength="8"
 						valueChangeListener="#{epigrafeMaestro.addExpression}" />
 
 					<aon:outputLabel for="Epigrafe_description"
 						value="#{appBundle.aon_payroll_description}" />
-					<aon:inputText id="EpigrafeMaestro_description" size="60" maxlength="50"
+					<aon:inputText id="Epigrafe_description" size="60" maxlength="50"
 						valueChangeListener="#{epigrafeMaestro.addExpression}" />
-			<!--  			
+			<!--   			
 					<aon:outputLabel for="Epigrafe_epigrafes_id_fecini"
 						value="#{appBundle.aon_payroll_cotizacion_fecini}" />
 					<aon:selectInputDate id="Epigrafe_epigrafes_id_fecini"
@@ -68,31 +68,35 @@
 					<aon:selectInputDate id="Epigrafe_epigrafes__fecfin"
 						renderAsPopup="true" popupDateFormat="#{appBundle.aon_date_pattern}"
 						valueChangeListener="#{epigrafeMaestro.addDirectExpression}" />
-				
-						
-						<aon:outputLabel for="Epigrafe_epigrafes_indiIT"
+				--> 
+					
+					<aon:outputLabel for="Epigrafe_epigrafes_indit"
 						value="#{appBundle.aon_payroll_cotizacion_epigrafes_indiIT}" />	
-					<aon:selectOneMenu  styleClass="aon-form-input-text"  rendered="#{to==epigrafe.to}"					
-					  id="Epigrafsup"  value="#{epigrafe.to.epi}" >				
+					<aon:selectOneMenu id="Epigrafe_epigrafes_indit"					
+					   valueChangeListener="#{epigrafeMaestro.addDirectEqualExpression}" >	
+					   <aon:enumConverter enum="com.code.aon.payroll.enumeration.Epigrafes" />
+					    <f:selectItem value="#{null}" itemLabel="    " />
 						<f:selectItems value="#{epigrafe.listaEpigrafes}" />
-						</aon:selectOneMenu>	
-				-->		
+					</aon:selectOneMenu>	
+				
 					<aon:outputLabel for="Epigrafe_epigrafes_indiIT"
-						value="#{appBundle.aon_payroll_cotizacion_epigrafes_indiIT}" />
+						value="#{appBundle.aon_payroll_cotizacion_epigrafes_impIT}" />
 					<aon:inputText id="Epigrafe_epigrafes_indiIT" size="20" maxlength="15"
-						valueChangeListener="#{porcentajeMaestro.addDirectExpression}" />
-				<!-- 	
-						<aon:outputLabel for="Epigrafe_epigrafes_indIMS"
+						valueChangeListener="#{epigrafeMaestro.addDirectExpression}" />
+				 	
+					<aon:outputLabel for="Epigrafe_epigrafes_indipm"
 						value="#{appBundle.aon_payroll_cotizacion_epigrafes_indIMS}" />
-					<aon:selectOneMenu  styleClass="aon-form-input-text"  rendered="#{to==epigrafe.to}"
-					  id="Epigrafsp"  value="#{epigrafe.to.epi}" >				
+					<aon:selectOneMenu id="Epigrafe_epigrafes_indipm"
+					    valueChangeListener="#{epigrafeMaestro.addDirectEqualExpression}" >			
+						<aon:enumConverter enum="com.code.aon.payroll.enumeration.Epigrafes" />
+						<f:selectItem value="#{null}" itemLabel="    " />
 						<f:selectItems value="#{epigrafe.listaEpigrafes}" />
-						</aon:selectOneMenu>
-					 -->	
+					</aon:selectOneMenu>
+					 	
 					<aon:outputLabel for="Epigrafe_epigrafes_impIMS"
 						value="#{appBundle.aon_payroll_cotizacion_epigrafes_impIMS}" />
 					<aon:inputText id="Epigrafe_epigrafes_impIMS" size="20" maxlength="15"
-						valueChangeListener="#{porcentajeMaestro.addDirectExpression}" />
+						valueChangeListener="#{epigrafeMaestro.addDirectExpression}" />
 					
 					
 				</ui:define>

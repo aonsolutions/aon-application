@@ -10,8 +10,8 @@ import com.code.aon.common.enumeration.IResourceable;
  */
 public enum Epigrafes implements IResourceable {
 
-	epiP,
-	epiF;
+	P,
+	F;
 	
 	
 	private static final String BASE_NAME = "com.code.aon.payroll.i18n.messages";
