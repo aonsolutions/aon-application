@@ -9,14 +9,15 @@ import javax.persistence.AttributeOverrides;
 import javax.persistence.Column;
 import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+
+import org.hibernate.annotations.Parameter;
+import org.hibernate.annotations.Type;
 
 import com.code.aon.common.ITransferObject;
 import com.code.aon.payroll.enumeration.Epigrafes;
@@ -57,7 +58,7 @@ public class Linepigr  implements ITransferObject {
         this.fecfin = fecfin;
     }
     
-    @Enumerated(EnumType.STRING)
+    @Type(type="stringEnum",parameters= { @Parameter(name="enumClassname", value="com.code.aon.payroll.enumeration.Epigrafes")} )
     @Column(name="indit", length=1)
     public Epigrafes getIndit() {
         return this.indit;
@@ -76,8 +77,8 @@ public class Linepigr  implements ITransferObject {
     public void setCanit(BigDecimal canit) {
         this.canit = canit;
     }
-    
-    @Enumerated(EnumType.STRING)
+
+    @Type(type="stringEnum",parameters= { @Parameter(name="enumClassname", value="com.code.aon.payroll.enumeration.Epigrafes")} )
     @Column(name="indipm", length=1)
     public Epigrafes getIndipm() {
         return this.indipm;
