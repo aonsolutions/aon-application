@@ -333,6 +333,19 @@ public class RichLookupBean {
 	}
 	
 	/**
+	 * Add a new expression to the criteria to condition the following searches.
+	 * The id component is managed as an alias to resolve the real property
+	 * path.
+	 * 
+	 * @param event
+	 * @throws ManagerBeanException
+	 */
+	public void addDirectEqualExpression(ValueChangeEvent event) throws ManagerBeanException {
+		getController().addDirectEqualExpression(event);
+	}
+		
+	
+	/**
 	 * Execute cancel action.
 	 * 
 	 * @param event
