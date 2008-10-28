@@ -64,10 +64,11 @@ public class BeanManager {
 	 * @throws ManagerBeanException
 	 */
 	public static IManagerBean getManagerBean(Class pojoClass) throws ManagerBeanException {
-        String key = HibernateUtil.getSessionFactoryName() + "/" + pojoClass ;
+		String sessionFactoryName = HibernateUtil.getSessionFactoryName(pojoClass.getName());
+        String key = sessionFactoryName + "/" + pojoClass ;
         BasicManagerBean managerBean = (BasicManagerBean) beans.get( key );
 		if ( managerBean == null ) {
-			managerBean = (BasicManagerBean) BeanConfigManager.getBean( pojoClass );
+			managerBean = (BasicManagerBean) BeanConfigManager.getBean( pojoClass, sessionFactoryName );
 			if ( managerBean != null ) {
 				register( key, managerBean );
 			}

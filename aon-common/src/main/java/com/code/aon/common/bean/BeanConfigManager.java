@@ -54,16 +54,17 @@ public class BeanConfigManager {
 	 * Return the <code>IFinderBean</code> bound to the given POJO Class.
 	 * 
 	 * @param pojoClass
+	 * @param sessionFactoryName 
 	 * @return The <code>IFinderBean</code>.
 	 * @throws ManagerBeanException
 	 */
-	public static IFinderBean getBean( Class pojoClass ) throws ManagerBeanException {
+	public static IFinderBean getBean( Class pojoClass, String sessionFactoryName ) throws ManagerBeanException {
         if (beans.containsKey(pojoClass)) {
-            return getBean( beans.get(pojoClass) );
+            return getBean( beans.get(pojoClass), sessionFactoryName );
         }
 		BeanConfig beanConfig = new BeanConfig();
 		beanConfig.setPojoClass( pojoClass );
-		return getBean( beanConfig );
+		return getBean( beanConfig, sessionFactoryName );
 	}
 	
 	/**
@@ -73,15 +74,15 @@ public class BeanConfigManager {
 	 * @return The DAO bound to the POJO Class.
 	 * @throws ManagerBeanException
 	 */
-	private static IDAO getPojoDAO( Class pojoClass ) throws ManagerBeanException {
+	private static IDAO getPojoDAO( Class pojoClass, String sessionFactoryName ) throws ManagerBeanException {
 		if (! ITransferObject.class.isAssignableFrom(pojoClass) ) {
 			throw new ManagerBeanException( pojoClass + " must implement ITransferObject" );
 		}
-		ClassMetadata cmd = HibernateUtil.getSessionFactory().getClassMetadata( pojoClass );
+		ClassMetadata cmd = HibernateUtil.getSessionFactory(sessionFactoryName).getClassMetadata( pojoClass );
 		if ( cmd == null ) {
 			throw new ManagerBeanException( pojoClass + " must have Hiberante mapping" );
 		}
-		return new HibernateDAO( pojoClass );
+		return new HibernateDAO( pojoClass, sessionFactoryName );
 	}
 
 	/**
@@ -91,7 +92,7 @@ public class BeanConfigManager {
 	 * @return The <code>IFinderBean</code> boundt to <code>BeanConfig</code> parameter.
 	 * @throws ManagerBeanException
 	 */
-	private static IFinderBean getBean(BeanConfig config) throws ManagerBeanException {
+	private static IFinderBean getBean(BeanConfig config, String sessionFactoryName) throws ManagerBeanException {
 		try {
 			IDAO dao = null;
 			if ( config.getDaoFactory() != null ) {
@@ -101,7 +102,7 @@ public class BeanConfigManager {
 				Method method = factory.getMethod(config.getDaoMethod(), BeanConfig.class );
 				dao = (IDAO) method.invoke(manager, config);
 			} else {
-				dao = getPojoDAO( config.getPojoClass() );
+				dao = getPojoDAO( config.getPojoClass(), sessionFactoryName );
 			}
 			BasicManagerBean bean = new BasicManagerBean(dao);
 			if (config.getListeners() != null) {
