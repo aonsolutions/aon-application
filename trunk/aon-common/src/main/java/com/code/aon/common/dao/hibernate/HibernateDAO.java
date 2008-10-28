@@ -11,6 +11,7 @@ import org.apache.commons.lang.StringUtils;
 import org.hibernate.EntityMode;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
+import org.hibernate.SessionFactory;
 import org.hibernate.criterion.CriteriaSpecification;
 import org.hibernate.criterion.Expression;
 import org.hibernate.criterion.Projections;
@@ -42,16 +43,20 @@ public class HibernateDAO extends AbstractFieldMapper implements IDAO {
 	private DAOConstantsEntry entry;
 	private ClassMetadata classMetaData;
 	private Class POJOClass;
+	private String sessionFactoryName;
 
 	/**
 	 * Construct an Hibernate DAO.
 	 * 
 	 * @param POJOClass
+	 * @param sessionFactoryName 
 	 */
-	public HibernateDAO(Class POJOClass) {
+	public HibernateDAO(Class POJOClass, String sessionFactoryName) {
 		this.POJOClass = POJOClass;
+		this.sessionFactoryName = sessionFactoryName;
 		this.entry = DAOConstants.getDAOConstant(this.POJOClass);
-		this.classMetaData = HibernateUtil.getSessionFactory().getClassMetadata( this.POJOClass );
+		SessionFactory factory = HibernateUtil.getSessionFactory(sessionFactoryName);
+		this.classMetaData = factory.getClassMetadata( this.POJOClass );
 	}
 
 	/**
@@ -63,12 +68,12 @@ public class HibernateDAO extends AbstractFieldMapper implements IDAO {
 	 * @throws DAOException
 	 */
 	protected ITransferObject get(String entityName, Serializable pk) throws DAOException {
-        Session session = HibernateUtil.getSession();
+        Session session = HibernateUtil.getSession(sessionFactoryName);
 		try {
 			return (ITransferObject) session.get(entityName, pk);
 		} catch (HibernateException he) {
 			if (HibernateUtil.mustCloseSession()) {
-                HibernateUtil.closeSession();
+                HibernateUtil.closeSession(sessionFactoryName);
 			}
 			if (he.getCause() != null) {
 				throw new DAOException(he.getCause().getMessage(), he.getCause());	
@@ -159,10 +164,10 @@ public class HibernateDAO extends AbstractFieldMapper implements IDAO {
 	public List<ITransferObject> getList(Criteria criteria, int offset, int count)
 			throws DAOException {
 		List<ITransferObject> list = null;
-        Session session = HibernateUtil.getSession();
+        Session session = HibernateUtil.getSession(sessionFactoryName);
 		try {
 			if (HibernateUtil.mustBeginTransaction()) {
-				HibernateUtil.getSession().beginTransaction();	
+				session.beginTransaction();	
 			}
 
 			org.hibernate.Criteria hibernateCriteria = CriteriaUtilities
@@ -177,11 +182,11 @@ public class HibernateDAO extends AbstractFieldMapper implements IDAO {
 				list = getDistinctList(session, (CriteriaImpl) hibernateCriteria);
 			}	
 			if (HibernateUtil.mustBeginTransaction()) {
-				HibernateUtil.getSession().getTransaction().commit();
+				session.getTransaction().commit();
 			}
 		} catch (HibernateException he) {
 			if (HibernateUtil.mustBeginTransaction()) {
-				HibernateUtil.getSession().getTransaction().rollback();
+				session.getTransaction().rollback();
 			}
 			if (he.getCause() != null) {
 				throw new DAOException(he.getCause().getMessage(), he.getCause());	
@@ -189,7 +194,7 @@ public class HibernateDAO extends AbstractFieldMapper implements IDAO {
 			throw new DAOException(he.getMessage(), he);
 		} finally {
 			if (HibernateUtil.mustCloseSession()) {
-                HibernateUtil.closeSession();
+                HibernateUtil.closeSession(sessionFactoryName);
 			}
 		}
 		return list;
@@ -208,11 +213,11 @@ public class HibernateDAO extends AbstractFieldMapper implements IDAO {
 	 * @see com.code.aon.common.dao.IDAO#remove(com.code.aon.common.ITransferObject)
 	 */
 	public boolean remove(ITransferObject t) throws DAOException {
-        Session session = HibernateUtil.getSession();
+        Session session = HibernateUtil.getSession(sessionFactoryName);
 		boolean removed = false;
 		try {
 			if (HibernateUtil.mustBeginTransaction()) {
-				HibernateUtil.getSession().beginTransaction();	
+				session.beginTransaction();	
 			}
 			Serializable pk = getId( t );
 			Object to = session.get(this.entry.getPojo(), pk);
@@ -222,11 +227,11 @@ public class HibernateDAO extends AbstractFieldMapper implements IDAO {
 			}
 
 			if (HibernateUtil.mustBeginTransaction()) {
-				HibernateUtil.getSession().getTransaction().commit();
+				session.getTransaction().commit();
 			}
 		} catch (HibernateException he) {
 			if (HibernateUtil.mustBeginTransaction()) {
-				HibernateUtil.getSession().getTransaction().rollback();
+				session.getTransaction().rollback();
 			}
 			if (he.getCause() != null) {
 				throw new DAOException(he.getCause().getMessage(), he.getCause());	
@@ -234,7 +239,7 @@ public class HibernateDAO extends AbstractFieldMapper implements IDAO {
 			throw new DAOException(he.getMessage(), he);
 		} finally {
 			if (HibernateUtil.mustCloseSession()) {
-                HibernateUtil.closeSession();
+                HibernateUtil.closeSession(sessionFactoryName);
 			}
 		}
 		return removed;
@@ -245,20 +250,20 @@ public class HibernateDAO extends AbstractFieldMapper implements IDAO {
 	 * @see com.code.aon.common.dao.IDAO#update(com.code.aon.common.ITransferObject)
 	 */
 	public ITransferObject update(ITransferObject to) throws DAOException {
-        Session session = HibernateUtil.getSession();
+        Session session = HibernateUtil.getSession(sessionFactoryName);
 		try {
 			if (HibernateUtil.mustBeginTransaction()) {
-                HibernateUtil.getSession().beginTransaction();  
+				session.beginTransaction();  
 			}
 
 			session.update(to);
 			
 			if (HibernateUtil.mustBeginTransaction()) {
-                HibernateUtil.getSession().getTransaction().commit();
+				session.getTransaction().commit();
 			}
 		} catch (HibernateException he) {
 			if (HibernateUtil.mustBeginTransaction()) {
-                HibernateUtil.getSession().getTransaction().rollback();
+				session.getTransaction().rollback();
 			}
 			if (he.getCause() != null) {
 				throw new DAOException(he.getCause().getMessage(), he.getCause());	
@@ -266,7 +271,7 @@ public class HibernateDAO extends AbstractFieldMapper implements IDAO {
 			throw new DAOException(he.getMessage(), he);
 		} finally {
 			if (HibernateUtil.mustCloseSession()) {
-                HibernateUtil.closeSession();
+                HibernateUtil.closeSession(sessionFactoryName);
 			}
 		}
 		return to;
@@ -277,20 +282,20 @@ public class HibernateDAO extends AbstractFieldMapper implements IDAO {
 	 * @see com.code.aon.common.dao.IDAO#insert(com.code.aon.common.ITransferObject)
 	 */
 	public ITransferObject insert(ITransferObject to) throws DAOException {
-        Session session = HibernateUtil.getSession();
+        Session session = HibernateUtil.getSession(sessionFactoryName);
 		try {
 			if (HibernateUtil.mustBeginTransaction()) {
-				HibernateUtil.getSession().beginTransaction();	
+				session.beginTransaction();	
 			}
 
 			session.save(to);
 			
 			if (HibernateUtil.mustBeginTransaction()) {
-				HibernateUtil.getSession().getTransaction().commit();
+				session.getTransaction().commit();
 			}
 		} catch (HibernateException he) {
 			if (HibernateUtil.mustBeginTransaction()) {
-				HibernateUtil.getSession().getTransaction().rollback();
+				session.getTransaction().rollback();
 			}
 			if (he.getCause() != null) {
 				throw new DAOException(he.getCause().getMessage(), he.getCause());	
@@ -299,7 +304,7 @@ public class HibernateDAO extends AbstractFieldMapper implements IDAO {
 			
 		} finally {
 			if (HibernateUtil.mustCloseSession()) {
-                HibernateUtil.closeSession();
+                HibernateUtil.closeSession(sessionFactoryName);
 			}
 		}
 		return to;
@@ -310,20 +315,20 @@ public class HibernateDAO extends AbstractFieldMapper implements IDAO {
 	 * @see com.code.aon.common.dao.IDAO#insert(com.code.aon.common.ITransferObject)
 	 */
 	public ITransferObject insertOrUpdate(ITransferObject to) throws DAOException {
-        Session session = HibernateUtil.getSession();
+        Session session = HibernateUtil.getSession(sessionFactoryName);
 		try {
 			if (HibernateUtil.mustBeginTransaction()) {
-				HibernateUtil.getSession().beginTransaction();	
+				session.beginTransaction();	
 			}
 
 			session.saveOrUpdate(to);
 			
 			if (HibernateUtil.mustBeginTransaction()) {
-				HibernateUtil.getSession().getTransaction().commit();
+				session.getTransaction().commit();
 			}
 		} catch (HibernateException he) {
 			if (HibernateUtil.mustBeginTransaction()) {
-				HibernateUtil.getSession().getTransaction().rollback();
+				session.getTransaction().rollback();
 			}
 			if (he.getCause() != null) {
 				throw new DAOException(he.getCause().getMessage(), he.getCause());	
@@ -331,7 +336,7 @@ public class HibernateDAO extends AbstractFieldMapper implements IDAO {
 			throw new DAOException(he.getMessage(), he);
 		} finally {
 			if (HibernateUtil.mustCloseSession()) {
-                HibernateUtil.closeSession();
+                HibernateUtil.closeSession(sessionFactoryName);
 			}
 		}
 		return to;
@@ -346,7 +351,7 @@ public class HibernateDAO extends AbstractFieldMapper implements IDAO {
 	}
 
 	public Object getUniqueResult(Projection projection, Criteria criteria) throws DAOException {
-        Session session = HibernateUtil.getSession();
+        Session session = HibernateUtil.getSession(sessionFactoryName);
 		try {
 			org.hibernate.Criteria hibernateCriteria = CriteriaUtilities
 					.toHibernateCriteria(criteria, new ProjectionList(projection), session, this.entry);
@@ -358,13 +363,13 @@ public class HibernateDAO extends AbstractFieldMapper implements IDAO {
 			throw new DAOException(he.getMessage(), he);
 		} finally {
 			if (HibernateUtil.mustCloseSession()) {
-                HibernateUtil.closeSession();
+                HibernateUtil.closeSession(sessionFactoryName);
 			}
 		}
 	}
 
 	public List getList(ProjectionList projectionList, Criteria criteria) throws DAOException {
-        Session session = HibernateUtil.getSession();
+        Session session = HibernateUtil.getSession(sessionFactoryName);
 		try {
 			org.hibernate.Criteria hibernateCriteria = CriteriaUtilities
 					.toHibernateCriteria(criteria, projectionList, session, this.entry);
@@ -376,7 +381,7 @@ public class HibernateDAO extends AbstractFieldMapper implements IDAO {
 			throw new DAOException(he.getMessage(), he);
 		} finally {
 			if (HibernateUtil.mustCloseSession()) {
-                HibernateUtil.closeSession();
+                HibernateUtil.closeSession(sessionFactoryName);
 			}
 		}
 	}
