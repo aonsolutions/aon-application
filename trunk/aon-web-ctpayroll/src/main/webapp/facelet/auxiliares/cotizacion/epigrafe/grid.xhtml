@@ -80,16 +80,16 @@
 				<f:facet name="header">
 					<aon:outputText value="#{appBundle.aon_payroll_cotizacion_epigrafes_indiIT}" />
 				</f:facet>
-			     	<aon:outputText value="#{to.epi}" rendered="#{to!=epigrafe.to}" />
+			     	<aon:outputText value="#{to.indit}" rendered="#{to!=epigrafe.to}" />
 			
 				    <aon:selectOneMenu  styleClass="aon-form-input-text"  rendered="#{to==epigrafe.to}"
-					  id="Epigrafsup"  value="#{epigrafe.to.epi}" >				
+					  id="Epigrafsup"  value="#{epigrafe.to.indit}" >				
 						<f:selectItems value="#{epigrafe.listaEpigrafes}" />
 						</aon:selectOneMenu>
 						
 				<f:facet name="footer">
 					<aon:selectOneMenu  styleClass="aon-form-input-text"  
-						rendered="#{epigrafe.new}"  id="Epigrafesnew" value="#{epigrafe.to.epi}" >	
+						rendered="#{epigrafe.new}"  id="Epigrafesnew" value="#{epigrafe.to.indit}" >	
 						<f:selectItems value="#{epigrafe.listaEpigrafes}"/>
 						</aon:selectOneMenu>
 				</f:facet>
@@ -119,16 +119,16 @@
 					<aon:outputText value="#{appBundle.aon_payroll_cotizacion_epigrafes_indIMS}" />
 				</f:facet>
 				
-				  <aon:outputText value="#{to.epi2}" rendered="#{to!=epigrafe.to}" />
+				  <aon:outputText value="#{to.indipm}" rendered="#{to!=epigrafe.to}" />
 				
 				 	    <aon:selectOneMenu  styleClass="aon-form-input-text"  rendered="#{to==epigrafe.to}"
-					  id="Epigrafesu" value="#{epigrafe.to.epi2}" >
+					  id="Epigrafesu" value="#{epigrafe.to.indipm}" >
 						<f:selectItems value="#{epigrafe.listaEpigrafes}" />
 						</aon:selectOneMenu>
 			
 				<f:facet name="footer">
 					<aon:selectOneMenu  styleClass="aon-form-input-text"  
-						rendered="#{epigrafe.new}"  id="Epigrafesne" value="#{epigrafe.to.epi2}" >	
+						rendered="#{epigrafe.new}"  id="Epigrafesne" value="#{epigrafe.to.indipm}" >	
 						<f:selectItems value="#{epigrafe.listaEpigrafes}"/>
 						</aon:selectOneMenu>
 				</f:facet>
