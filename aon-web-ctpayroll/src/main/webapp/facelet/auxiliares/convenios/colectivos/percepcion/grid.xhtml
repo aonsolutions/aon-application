@@ -9,9 +9,8 @@
 			var="to" rows="10"
 			rendered="#{(elemento.model.rowCount > 0) or (elemento.new)}" 
 			columnClasses="aon-editDataTable-iconColumn
-				, aon-editDataTable-dateColumn, aon-editDataTable-dateColumn
-				, aon-editDataTable-numberColumn, aon-editDataTable-numberColumn
-				, aon-editDataTable-buttonsColumn">
+				, aon-editDataTable-dateColumn, aon-editDataTable-numberColumn
+				, aon-editDataTable-numberColumn">
 					
 			<aon:rowSelector toggleOnClick="#{elemento.to == null}" actionListener="#{elemento.onSelect}" />
 
@@ -28,26 +27,6 @@
 							rendered="#{!elemento.new}"
 							accesskey="#{bundle.aon_key_new_line}" />
 					</aon:div>
-				</f:facet>
-			</aon:column>
-
-			<aon:column>
-				<f:facet name="header">
-					<aon:outputText value="#{appBundle.aon_payroll_cotizacion_fecini}" />
-				</f:facet>
-				<aon:outputText value="#{to.id.fecini}" rendered="#{to!=elemento.to}" >
-					<f:convertDateTime pattern="#{bundle.aon_date_pattern}"
-						timeZone="#{timeZoneController.timeZoneId}" />
-				</aon:outputText>
-				<aon:selectInputDate value="#{elemento.to.id.fecini}" id="FechaInicio" inputSize="8"
-					rendered="#{to==elemento.to}" disabled="#{to==elemento.to}" required="true"
-					renderAsPopup="true" popupDateFormat="#{bundle.aon_date_pattern}">
-				</aon:selectInputDate>
-				<f:facet name="footer">
-					<aon:selectInputDate value="#{elemento.to.id.fecini}" id="FechaInicioNew"
-						rendered="#{elemento.new}" required="true" inputSize="8"
-						renderAsPopup="true" popupDateFormat="#{bundle.aon_date_pattern}">
-					</aon:selectInputDate>
 				</f:facet>
 			</aon:column>
 
@@ -111,16 +90,19 @@
 				</f:facet>
 				<aon:div>
 					<f:verbatim rendered="#{to!=elemento.to}">&#160;</f:verbatim>
+<!-- 
 					<aon:commandButton title="[#{bundle.aon_accept}]" 
 						rendered="#{to==elemento.to}"
 						styleClass="aon-editDataTable-button aon-icon-accept"
 						actionListener="#{elemento.onAccept}"
 						accesskey="#{bundle.aon_key_save_line}" />
+-->						
 					<aon:commandButton title="[#{bundle.aon_cancel}]"
 						styleClass="aon-editDataTable-button aon-icon-cancel"
 						rendered="#{to==elemento.to}"
 						actionListener="#{elemento.onCancel}" immediate="true"
 						accesskey="#{bundle.aon_key_cancel_line}" />
+<!--  
 					<aon:confirmButton id="remove-elemento" title="[#{bundle.aon_remove}]"
 						styleClass="aon-editDataTable-button aon-icon-delete"
 						rendered="#{to==elemento.to}"
@@ -128,6 +110,7 @@
 						confirmMessage="#{bundle.aon_remove_confirm}"
 						confirmActionListener="#{elemento.onRemove}" immediate="true"
 						accesskey="#{bundle.aon_key_remove_line}" />								
+-->
 				</aon:div>
 				<f:facet name="footer">
 					<aon:div>

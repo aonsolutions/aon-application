@@ -9,7 +9,7 @@
 	<ui:define name="content">
 
 		<aon:form id="convenioSearch">
-
+			<!-- 
 			<aon:div styleClass="aon-finding-title-toolbar">
 				<aon:panelGrid columns="3" dir="true"
 					columnClasses="aon-finding-title,aon-finding-subtitle,aon-finding-toolbar">
@@ -33,12 +33,25 @@
 					</aon:div>
 				</aon:panelGrid>
 			</aon:div>
-			<!-- end toolbar navigation -->
+			 -->
+			 
+			 <ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/searchToolbar.xhtml" >
+				<ui:param name="toolbarTitle" value="#{menuBundle.auxiliares_convenios__convenio}" />
+				<ui:param name="controller" value="#{convenio}" />
+				
+				<ui:define name="beforeSpinToolbarContent">
+					<ui:include src="/facelet/templates/aon.ui.printbuttons.xhtml">
+						<ui:param name="manager" value="#{convenio}"/>
+						<ui:param name="reportKey" value=""/>
+						<ui:param name="reportKeyXls" value=""/>
+					</ui:include>	
+				</ui:define>
+			</ui:decorate>
 
 			<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/searchContent.xhtml" >
 				<ui:define name="searchContent">
 					<aon:methodParam name="searchActionListener" value="#{convenio.onSearch}" type="actionListener" />
-					<aon:methodParam name="searchAction" value="convenios_colectivos_list" />				
+					<aon:methodParam name="searchAction" value="convenio_list" />				
 				
 					<aon:outputLabel for="Convenio_cdg"
 						value="#{appBundle.aon_payroll_cdg}" />

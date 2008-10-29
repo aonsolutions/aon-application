@@ -8,9 +8,8 @@
 		<aon:editDataTable id="categoriaData" value="#{categoria.model}" 
 			var="to" rows="10"
 			rendered="#{(categoria.model.rowCount > 0) or (categoria.new)}" 
-			columnClasses="aon-editDataTable-iconColumn
-				, aon-editDataTable-textColumn, aon-editDataTable-textColumn
-				, aon-editDataTable-buttonsColumn">
+			columnClasses="aon-editDataTable-iconColumn, aon-editDataTable-textColumn
+			, aon-editDataTable-textColumn">
 			
 			<aon:rowSelector toggleOnClick="#{categoria.to == null}" actionListener="#{categoria.onSelect}" />
 			
@@ -66,16 +65,19 @@
 				</f:facet>
 				<aon:div>
 					<f:verbatim rendered="#{to!=categoria.to}">&#160;</f:verbatim>
+<!-- 
 					<aon:commandButton title="[#{bundle.aon_accept}]" 
 						rendered="#{to==categoria.to}"
 						styleClass="aon-editDataTable-button aon-icon-accept"
 						actionListener="#{categoria.onAccept}"
 						accesskey="#{bundle.aon_key_save_line}" />
+-->
 					<aon:commandButton title="[#{bundle.aon_cancel}]"
 						styleClass="aon-editDataTable-button aon-icon-cancel"
 						rendered="#{to==categoria.to}"
 						actionListener="#{categoria.onCancel}" immediate="true"
 						accesskey="#{bundle.aon_key_cancel_line}" />
+<!-- 
 					<aon:confirmButton id="remove-categoria" title="[#{bundle.aon_remove}]"
 						styleClass="aon-editDataTable-button aon-icon-delete"
 						rendered="#{to==categoria.to}"
@@ -83,6 +85,7 @@
 						confirmMessage="#{bundle.aon_remove_confirm}"
 						confirmActionListener="#{categoria.onRemove}" immediate="true"
 						accesskey="#{bundle.aon_key_remove_line}" />								
+-->
 				</aon:div>
 				<f:facet name="footer">
 					<aon:div>
