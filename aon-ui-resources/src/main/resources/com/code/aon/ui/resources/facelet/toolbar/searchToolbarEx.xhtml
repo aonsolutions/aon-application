@@ -18,7 +18,7 @@
 					accesskey="#{bundle.aon_key_new}" />
 			</c:if>
 			<c:if test="#{!skipBackButton}">
-				<aon:commandButton id="#{searchButtonId}" 
+				<aon:commandButton id="#{toolbarID}-Back" 
 					value="#{bundle.aon_back}"
 					action="#{backAction}" actionListener="#{backActionListener}"
 					styleClass="aon-finding-toolbar-item aon-icon-cancel" immediate="true"
