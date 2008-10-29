@@ -61,7 +61,7 @@
 							styleClass="aon-finding-toolbar-item aon-icon-search"
 							accesskey="#{bundle.aon_key_search}" />				
 	                          <ui:include src="/facelet/templates/aon.ui.printbuttons.xhtml">
-								<ui:param name="manager" value="#{delegacion}"/>
+								<ui:param name="controller" value="#{delegacion}"/>
 								<ui:param name="reportKey" value="DelegacionList"/>
 							</ui:include>
 						<aon:spin controller="#{delegacion}" action="delegacion_form" rendered="#{!delegacion.new}" />

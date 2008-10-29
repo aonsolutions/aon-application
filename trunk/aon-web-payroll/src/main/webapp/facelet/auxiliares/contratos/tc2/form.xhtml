@@ -14,17 +14,11 @@
 
 		<aon:form id="contratosTc2Form">
 
-			<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml" >
+			<ui:include src="/facelet/templates/formPrintToolbar.xhtml">
 				<ui:param name="toolbarTitle" value="#{menuBundle.auxiliares_contratos__tipcotc2}" />				
 				<ui:param name="controller" value="#{contratosTc2}" />
-				
-				<ui:define name="beforeSpinToolbarContent">
-					<ui:include src="/facelet/templates/aon.ui.printbuttons.xhtml">
-						<ui:param name="manager" value="#{contratosTc2}"/>
-						<ui:param name="reportKey" value="contratosTc2List"/>
-					</ui:include>
-				</ui:define>				
-			</ui:decorate>				
+				<ui:param name="reportKey" value="contratosTc2List"/>
+			</ui:include>
 
 			<aon:div id="contratosTc2" styleClass="aon-scroll-area">
 				<aon:panelGrid columns="2" dir="true" width="100%" style="margin-bottom=2px;">
