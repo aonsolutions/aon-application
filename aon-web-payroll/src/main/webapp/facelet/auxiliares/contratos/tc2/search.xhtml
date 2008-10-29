@@ -27,7 +27,7 @@
 							type="reset" ajaxSingle="true"
 							styleClass="aon-finding-toolbar-item aon-icon-rubber" />
 						<aon:commandButton id="back" value="#{bundle.aon_back}"
-							action="contratos_tc2_list" actionListener="#{contratosTc2.onCancel}"
+							action="contratosTc2_list" actionListener="#{contratosTc2.onCancel}"
 							styleClass="aon-finding-toolbar-item aon-icon-cancel" immediate="true"
 							accesskey="#{bundle.aon_key_cancel}" />
 					</aon:div>
@@ -38,7 +38,7 @@
 			<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/searchContent.xhtml" >
 				<ui:define name="searchContent">
 					<aon:methodParam name="searchActionListener" value="#{contratosTc2.onSearch}" type="actionListener" />
-					<aon:methodParam name="searchAction" value="contratos_tc2_list" />				
+					<aon:methodParam name="searchAction" value="contratosTc2_list" />				
 				
 					<aon:outputLabel for="ContratosTc2_cdg"
 						value="#{appBundle.aon_payroll_cdg}" />

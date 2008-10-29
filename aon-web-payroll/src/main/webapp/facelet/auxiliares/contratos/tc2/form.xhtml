@@ -29,7 +29,7 @@
 					<!-- start toolbar navigation -->
 					<aon:div styleClass="aon-finding-toolbar-item-group">
 						<aon:commandButton id="save" value="#{bundle.aon_save}"
-							action="contratos_tc2"
+							action="contratosTc2_form"
 							actionListener="#{contratosTc2.onAccept}"
 							styleClass="aon-finding-toolbar-item aon-icon-accept"
 							accesskey="#{bundle.aon_key_save}" />
@@ -39,7 +39,7 @@
 							confirmTitle="#{bundle.aon_confirm_title}"
 							confirmMessage="#{bundle.aon_cancel_confirm}"
 							confirmActionListener="#{contratosTc2.onCancel}"
-							confirmAction="contratos_tc2_list"
+							confirmAction="contratosTc2_list"
 							accesskey="#{bundle.aon_key_cancel}" />
 						<aon:confirmButton id="remove" value="#{bundle.aon_remove}"
 							rendered="#{!contratosTc2.new}"
@@ -47,21 +47,21 @@
 							immediate="true" confirmTitle="#{bundle.aon_confirm_title}"
 							confirmMessage="#{bundle.aon_remove_confirm}"
 							confirmActionListener="#{contratosTc2.onRemove}"
-							confirmAction="contratos_tc2_list"
+							confirmAction="contratosTc2_list"
 							accesskey="#{bundle.aon_key_remove}" />
 						<aon:commandButton id="reset" value="#{bundle.aon_reset}"
 							rendered="#{!contratosTc2.new}"
-							action="contratos_tc2" 
+							action="contratosTc2_form" 
 							actionListener="#{contratosTc2.onReset}"
 							styleClass="aon-finding-toolbar-item aon-icon-reset"
 							accesskey="#{bundle.aon_key_new}" />
 						<aon:commandButton id="search" value="#{bundle.aon_search}"
 							rendered="#{!contratosTc2.new}"
-							action="contratos_tc2_search" actionListener="#{contratosTc2.onEditSearch}"
+							action="contratosTc2_search" actionListener="#{contratosTc2.onEditSearch}"
 							styleClass="aon-finding-toolbar-item aon-icon-search"
 							accesskey="#{bundle.aon_key_search}" />				
 
-						<aon:spin controller="#{contratosTc2}" action="contratos_tc2" rendered="#{!contratosTc2.new}" />
+						<aon:spin controller="#{contratosTc2}" action="contratosTc2_form" rendered="#{!contratosTc2.new}" />
 						
 						<ui:include src="/facelet/templates/aon.ui.printbuttons.xhtml">
 							<ui:param name="manager" value="#{contratosTc2}"/>
