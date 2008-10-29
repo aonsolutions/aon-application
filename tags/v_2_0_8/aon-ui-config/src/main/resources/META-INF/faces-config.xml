@@ -1,0 +1,238 @@
+<?xml version="1.0"?>
+<!DOCTYPE faces-config PUBLIC
+  "-//Sun Microsystems, Inc.//DTD JavaServer Faces Config 1.1//EN"
+  "http://java.sun.com/dtd/web-facesconfig_1_1.dtd">
+
+<faces-config>
+
+	<!--  *************** COLLECTIONS ***************** -->
+	<managed-bean>
+		<managed-bean-name>configCollections</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.config.controller.ConfigCollectionsController
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
+
+	<!-- ************ USER ************** -->
+	<managed-bean>
+		<managed-bean-name>user</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.config.controller.UserController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.config.User</value>
+		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>user</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pageLimit</property-name>
+			<value>20</value>
+		</managed-property>
+		<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>User_name</value>
+		</managed-property>		
+		<managed-property>
+			<property-name>listenerClasses</property-name>
+			<list-entries>
+				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+				<value>#{userSecurityActivationListener}</value>
+				<value>#{userScopeListener}</value>
+				<value>#{userWorkGroupListener}</value>
+			</list-entries>
+		</managed-property>
+	</managed-bean>
+	
+	<managed-bean>
+		<managed-bean-name>userSecurityActivationListener</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.config.event.UserSecurityActivationListener
+		</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+	</managed-bean>
+
+	<managed-bean>
+		<managed-bean-name>userScopeListener</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.form.listener.LinesControllerListener
+		</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+		<managed-property>
+			<property-name>childBean</property-name>
+			<value>userScope</value>
+		</managed-property>
+		<managed-property>
+			<property-name>aliasMap</property-name>
+			<map-entries>
+				<map-entry>
+					<key>UserScope_user_id</key>
+                    <value>id</value>
+				</map-entry>
+			</map-entries>
+		</managed-property>
+	</managed-bean>
+
+	<managed-bean>
+		<managed-bean-name>userWorkGroupListener</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.form.listener.LinesControllerListener
+		</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+		<managed-property>
+			<property-name>childBean</property-name>
+			<value>userWorkGroup</value>
+		</managed-property>
+		<managed-property>
+			<property-name>aliasMap</property-name>
+			<map-entries>
+				<map-entry>
+					<key>UserWorkGroup_user_id</key>
+                    <value>id</value>
+				</map-entry>
+			</map-entries>
+		</managed-property>
+	</managed-bean>
+
+	<!-- ************* USERSCOPE ***************** -->
+	<managed-bean>
+		<managed-bean-name>userScope</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.config.controller.UserScopeController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.config.UserScope</value>
+		</managed-property>
+		<managed-property>
+			<property-name>cascadeDelete</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>masterControllerName</property-name>
+			<value>user</value>
+		</managed-property>
+		<managed-property>
+			<property-name>propertyMap</property-name>
+			<map-entries>
+				<map-entry>
+					<key>id</key>
+					<value>user.id</value>
+				</map-entry>
+			</map-entries>
+		</managed-property>
+		<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>UserScope_scope_description</value>
+		</managed-property>		
+	</managed-bean>
+
+	<!-- ************* USERWORKGROUP ***************** -->
+	<managed-bean>
+		<managed-bean-name>userWorkGroup</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.config.controller.UserWorkGroupController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.config.UserWorkGroup</value>
+		</managed-property>
+		<managed-property>
+			<property-name>cascadeDelete</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>masterControllerName</property-name>
+			<value>user</value>
+		</managed-property>
+		<managed-property>
+			<property-name>propertyMap</property-name>
+			<map-entries>
+				<map-entry>
+					<key>id</key>
+					<value>user.id</value>
+				</map-entry>
+			</map-entries>
+		</managed-property>
+		<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>UserWorkGroup_workGroup_description</value>
+		</managed-property>		
+	</managed-bean>
+
+	<!-- ************ WORK GROUP ************** -->
+	<managed-bean>
+		<managed-bean-name>workGroup</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.form.BasicController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.config.WorkGroup</value>
+		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>workGroup</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pageLimit</property-name>
+			<value>20</value>
+		</managed-property>
+		<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>WorkGroup_description</value>
+		</managed-property>		
+	</managed-bean>
+	
+	<!-- ************ SCOPE ************** -->
+	<managed-bean>
+		<managed-bean-name>scope</managed-bean-name>
+		<managed-bean-class>com.code.aon.ui.form.BasicController</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+		<managed-property>
+			<property-name>queryOnStartUP</property-name>
+			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pojo</property-name>
+			<value>com.code.aon.config.Scope</value>
+		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>scope</value>
+		</managed-property>
+		<managed-property>
+			<property-name>pageLimit</property-name>
+			<value>20</value>
+		</managed-property>
+		<managed-property>
+			<property-name>defaultOrder</property-name>
+			<value>Scope_description</value>
+		</managed-property>		
+	</managed-bean>
+	
+	<!-- ************* USER UTILS ***************** -->
+	<managed-bean>
+		<managed-bean-name>userUtils</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.config.util.UserUtils
+		</managed-bean-class>
+		<managed-bean-scope>session</managed-bean-scope>
+	</managed-bean>
+
+</faces-config>
