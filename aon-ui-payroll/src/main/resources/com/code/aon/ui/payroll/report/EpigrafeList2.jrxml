@@ -30,9 +30,9 @@
 	<field name="epigrafe" class="com.code.aon.payroll.cotizacion.Epigrafe"/>
 	<field name="id" class="com.code.aon.payroll.cotizacion.LinepigrId"/>
 	<field name="fecfin" class="java.util.Date"/>
-	<field name="indit" class="java.lang.String"/>
+	<field name="indit" class="com.code.aon.payroll.enumeration.Epigrafes"/>
 	<field name="canit" class="java.math.BigDecimal"/>
-	<field name="indipm" class="java.lang.String"/>
+	<field name="indipm" class="com.code.aon.payroll.enumeration.Epigrafes"/>
 	<field name="canipm" class="java.math.BigDecimal"/>
 
 	<variable name="groupCdg" class="java.lang.String" resetType="Report" calculation="Nothing">
@@ -302,7 +302,7 @@
 					<textElement verticalAlignment="Middle">
 						<font size="8"/>
 					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$F{indipm}]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{indipm}.getName($P{REPORT_LOCALE})]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
@@ -341,7 +341,7 @@
 					<textElement verticalAlignment="Middle">
 						<font size="8"/>
 					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$F{indit}]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{indit}.getName($P{REPORT_LOCALE})]]></textFieldExpression>
 				</textField>
 			</band>
 		</detail>
