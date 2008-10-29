@@ -6,17 +6,20 @@
 
 	<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/toolbar.xhtml" >
 		<ui:define name="toolbarContent">
-			<aon:commandButton value="#{bundle.aon_clear}"
+			<aon:commandButton id="#{toolbarID}-Clear"
+				value="#{bundle.aon_clear}"
 				type="reset" ajaxSingle="true"
 				styleClass="aon-finding-toolbar-item aon-icon-rubber" />
 			<c:if test="#{!skipResetButton}">
-				<aon:commandButton value="#{bundle.aon_reset}"
+				<aon:commandButton id="#{toolbarID}-Reset"
+					value="#{bundle.aon_reset}"
 					action="#{resetAction}" actionListener="#{resetActionListener}"
 					styleClass="aon-finding-toolbar-item aon-icon-reset"
 					accesskey="#{bundle.aon_key_new}" />
 			</c:if>
 			<c:if test="#{!skipBackButton}">
-				<aon:commandButton value="#{bundle.aon_back}"
+				<aon:commandButton id="#{searchButtonId}" 
+					value="#{bundle.aon_back}"
 					action="#{backAction}" actionListener="#{backActionListener}"
 					styleClass="aon-finding-toolbar-item aon-icon-cancel" immediate="true"
 					accesskey="#{bundle.aon_key_cancel}" />			
