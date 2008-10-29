@@ -102,7 +102,7 @@
 			<to-view-id>/facelet/auxiliares/organismos_entidades/delegaciones/search.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>
-		<navigation-rule>
+	<navigation-rule>
 		<navigation-case>
 			<from-outcome>delegacion_list</from-outcome>
 			<to-view-id>/facelet/auxiliares/organismos_entidades/delegaciones/list.xhtml</to-view-id>
@@ -112,13 +112,21 @@
 	<!-- =================== Auxiliares/Contratos/Internos ================= -->
 	<navigation-rule>
 		<navigation-case>
-			<from-outcome>contratos_internos_list</from-outcome>
+			<from-outcome>contratosInternos_form</from-outcome>
+			<to-view-id>
+				/facelet/auxiliares/contratos/internos/form.xhtml
+			</to-view-id>
+		</navigation-case>
+	</navigation-rule>
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>contratosInternos_list</from-outcome>
 			<to-view-id>
 				/facelet/auxiliares/contratos/internos/list.xhtml
 			</to-view-id>
 		</navigation-case>
 		<navigation-case>
-			<from-outcome>contratos_internos_search</from-outcome>
+			<from-outcome>contratosInternos_search</from-outcome>
 			<to-view-id>
 				/facelet/auxiliares/contratos/internos/search.xhtml
 			</to-view-id>
@@ -294,13 +302,13 @@
 	
 	<navigation-rule>
 		<navigation-case>
-			<from-outcome>organismos_admon</from-outcome>
+			<from-outcome>admon_grid</from-outcome>
 			<to-view-id>/facelet/auxiliares/organismos_entidades/admon/grid.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>
 	<navigation-rule>
 		<navigation-case>
-			<from-outcome>organismos_admon_search</from-outcome>
+			<from-outcome>admon_search</from-outcome>
 			<to-view-id>/facelet/auxiliares/organismos_entidades/admon/search.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>
@@ -378,14 +386,7 @@
 		</navigation-case>
 	</navigation-rule>
 
-	<navigation-rule>
-		<navigation-case>
-			<from-outcome>contratos_internos</from-outcome>
-			<to-view-id>
-				/facelet/auxiliares/contratos/internos/form.xhtml
-			</to-view-id>
-		</navigation-case>
-	</navigation-rule>
+	
 	
 	<navigation-rule>
 		<navigation-case>
@@ -497,7 +498,7 @@
 	<!-- =================== Convenios - Complementos ================= -->
 	<navigation-rule>
 		<navigation-case>
-			<from-outcome>convenios_complementos</from-outcome>
+			<from-outcome>complemento_form</from-outcome>
 			<to-view-id>
 				/facelet/auxiliares/convenios/complementos/form.xhtml
 			</to-view-id>
@@ -505,13 +506,13 @@
 	</navigation-rule> 
 	<navigation-rule>
 		<navigation-case>
-			<from-outcome>convenios_complementos_search</from-outcome>
+			<from-outcome>complemento_search</from-outcome>
 			<to-view-id>
 				/facelet/auxiliares/convenios/complementos/search.xhtml
 			</to-view-id>
 		</navigation-case>
 		<navigation-case>
-			<from-outcome>convenios_complementos_list</from-outcome>
+			<from-outcome>complemento_list</from-outcome>
 			<to-view-id>
 				/facelet/auxiliares/convenios/complementos/list.xhtml
 			</to-view-id>

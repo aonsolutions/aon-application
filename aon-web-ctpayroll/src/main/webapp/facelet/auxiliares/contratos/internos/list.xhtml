@@ -15,32 +15,17 @@
 
 		<aon:form id="contratosInternosList">
 		
-			<aon:div styleClass="aon-finding-title-toolbar">
-				<aon:panelGrid id="buttonsGrid" columns="3" dir="true"
-					columnClasses="aon-finding-title,aon-finding-subtitle,aon-finding-toolbar">
-
-					<aon:div styleClass="aon-finding-title-internal">
-						<aon:outputText value="#{menuBundle.auxiliares_contratos__tipocont}" />
-					</aon:div>
-
-					<aon:div styleClass="aon-finding-subtitle-internal">
-						<aon:outputText value="#{bundle.aon_listing}" />
-					</aon:div>
-
-					<!-- start toolbar navigation -->
-					<aon:div styleClass="aon-finding-toolbar-item-group">
-						<aon:commandButton id="search" value="#{bundle.aon_search}"
-							action="contratos_internos_search" actionListener="#{contratosInternos.onEditSearch}"
-							styleClass="aon-finding-toolbar-item aon-icon-search"
-							accesskey="#{bundle.aon_key_search}" />				
-						<aon:commandButton id="reset" value="#{bundle.aon_reset}"
-							action="contratos_internos" actionListener="#{contratosInternos.onReset}"
-							styleClass="aon-finding-toolbar-item aon-icon-reset"
-							accesskey="#{bundle.aon_key_new}" />
-					</aon:div>
-					<!-- end toolbar navigation -->
-				</aon:panelGrid>
-			</aon:div>
+			<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/listToolbar.xhtml" >
+				<ui:param name="toolbarTitle" value="#{menuBundle.auxiliares_contratos__tipocont}" />
+				<ui:param name="controller" value="#{contratosInternos}" />
+				
+				<ui:define name="additionalToolbarContent">
+					<ui:include src="/facelet/templates/aon.ui.printbuttons.xhtml">
+						<ui:param name="controller" value="#{contratosInternos}"/>
+						<ui:param name="reportKey" value="contratosInternosList"/>
+					</ui:include>	
+				</ui:define>
+			</ui:decorate>
 
 			<!--  aon-region-body -->
 			<aon:div styleClass="aon-scroll-area">
@@ -49,7 +34,7 @@
 					var="to" rows="20" rendered="#{contratosInternos.model.rowCount > 0}"
 					columnClasses="aon-editDataTable-textColumn, aon-editDataTable-textColumn, aon-editDataTable-textColumn">
 
-					<aon:rowSelector action="contratos_internos" actionListener="#{contratosInternos.onSelect}" />
+					<aon:rowSelector action="contratosInternos_form" actionListener="#{contratosInternos.onSelect}" />
 					
 					<aon:column>
 						<f:facet name="header">
