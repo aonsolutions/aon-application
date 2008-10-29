@@ -31,14 +31,20 @@
 						value="#{appBundle.aon_payroll_description}" />
 					<aon:inputText id="Base_description" size="60" maxlength="50"
 						valueChangeListener="#{baseMaestro.addExpression}" />
-		
 						
-			<!--			<aon:outputLabel for="Base_prorateo" value="#{appBundle.aon_payroll_auxiliares_cotizacion__pro}" />
+							<aon:outputLabel for="Base_prorateo" value="#{appBundle.aon_payroll_auxiliares_cotizacion__pro}" />
 					<aon:selectOneRadio id="Base_prorateo" value="#{baseMaestro.to.prorateo}" >	
 						<f:selectItems value="#{baseMaestro.listaProrateos}"/>											
 					</aon:selectOneRadio>
-					-->
-				<aon:outputLabel for="Base_linbases_id_fecini"
+						
+						
+						
+			<aon:outputLabel for="Base_description"
+						value="                " />			
+		<aon:panelCollapsible expanded="false" label="Busqueda avanzada">
+						<aon:panelGrid columns="2">
+				
+			    		<aon:outputLabel for="Base_linbases_id_fecini"
 						value="#{appBundle.aon_payroll_cotizacion_fecini}" />
 					<aon:selectInputDate id="Base_linbases_id_fecini"
 						renderAsPopup="true" popupDateFormat="#{appBundle.aon_date_pattern}"
@@ -91,7 +97,9 @@
 						value="#{appBundle.aon_payroll_auxiliares_cotizacion__acdiaart}" />
 					<aon:inputText id="Base_linbases_acdiaart" size="60" maxlength="60"
 						valueChangeListener="#{baseMaestro.addDirectExpression}" />
-					 
+						</aon:panelGrid>
+				</aon:panelCollapsible>	
+				 
 				</ui:define>
 			</ui:decorate>
 
