@@ -159,6 +159,21 @@ public class FinanceController extends BasicController {
 	}
 
 	/**
+	 * Adds to criteria the finance_payment, depending on the value of <code>payment</code>.
+	 * 
+	 * @param event the event
+	 * 
+	 * @throws ManagerBeanException the manager bean exception
+	 */
+	public void onPaymentChange(ValueChangeEvent event) throws ManagerBeanException{
+		if(event.getNewValue() != null){
+			Criteria criteria = new Criteria();
+			criteria.addEqualExpression(getManagerBean().getFieldName(IFinanceAlias.FINANCE_PAYMENT), event.getNewValue());
+			this.setCriteria(criteria);
+		}
+	}
+
+	/**
 	 * Adds to criteria the finance status.
 	 * 
 	 * @param event the event that contains the new value

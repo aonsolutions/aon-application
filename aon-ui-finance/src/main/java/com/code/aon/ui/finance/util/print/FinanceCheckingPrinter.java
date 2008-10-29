@@ -38,9 +38,7 @@ public class FinanceCheckingPrinter implements ICollectionProvider {
 	private List<ITransferObject> obtainNoPaymethodList() {
 		String select = "SELECT finance " +
 						"FROM Finance finance " +
-						"WHERE finance.payMethod.id IS NULL " +
-						"ORDER BY finance.registry.surname, " +
-						 "finance.registry.name";
+						"WHERE finance.payMethod.id IS NULL";
 		Session session = HibernateUtil.getSession();
 		Query query = session.createQuery(select);
 		return query.list();
@@ -51,9 +49,7 @@ public class FinanceCheckingPrinter implements ICollectionProvider {
 		String select = "SELECT finance " +
 						"FROM Finance finance " +
 						"WHERE finance.payMethod.type = " + PayMethodType.NEGOTIABLE_DOCUMENT.ordinal() + " " +
-						"AND ( finance.bankAccount IS NULL OR finance.bankAccount = '' ) " +
-						"ORDER BY finance.registry.surname, " +
-								 "finance.registry.name";
+						"AND ( finance.bankAccount IS NULL OR finance.bankAccount = '' )"; 
 		Session session = HibernateUtil.getSession();
 		Query query = session.createQuery(select);
 		return query.list();
@@ -65,9 +61,7 @@ public class FinanceCheckingPrinter implements ICollectionProvider {
 						"FROM Finance finance " +
 						"WHERE finance.payMethod.type <> " + PayMethodType.NEGOTIABLE_DOCUMENT.ordinal() + " " +
 						"AND finance.bankAccount IS NOT NULL " +
-						"AND finance.bankAccount <> '' " +
-						"ORDER BY finance.registry.surname, " +
-								 "finance.registry.name";
+						"AND finance.bankAccount <> '' ";
 		Session session = HibernateUtil.getSession();
 		Query query = session.createQuery(select);
 		return query.list();

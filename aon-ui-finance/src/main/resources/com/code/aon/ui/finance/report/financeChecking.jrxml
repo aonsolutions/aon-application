@@ -109,9 +109,7 @@
 						y="0"
 						width="445"
 						height="17"
-						key="textField-15">
-							<printWhenExpression><![CDATA[new Boolean($F{noPaymethodList}.size() > 0)]]></printWhenExpression>
-						</reportElement>
+						key="textField-15"/>
 					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
 					<textElement textAlignment="Left" verticalAlignment="Middle">
 						<font pdfFontName="Helvetica-Bold" size="10" isBold="true"/>
@@ -125,9 +123,7 @@
 						width="445"
 						height="17"
 						key="textField-16"
-						positionType="Float">
-							<printWhenExpression><![CDATA[new Boolean($F{negotiableNoBankAccountList}.size() > 0)]]></printWhenExpression>
-						</reportElement>
+						positionType="Float"/>
 					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
 					<textElement textAlignment="Left" verticalAlignment="Middle">
 						<font pdfFontName="Helvetica-Bold" size="10" isBold="true"/>
@@ -154,9 +150,7 @@
 						width="445"
 						height="17"
 						key="textField-17"
-						positionType="Float">
-							<printWhenExpression><![CDATA[new Boolean($F{noNegotiableBankAccountList}.size() > 0)]]></printWhenExpression>
-						</reportElement>
+						positionType="Float"/>
 					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" rightBorder="None" rightBorderColor="#000000" bottomBorder="None" bottomBorderColor="#000000"/>
 					<textElement textAlignment="Left" verticalAlignment="Middle">
 						<font pdfFontName="Helvetica-Bold" size="10" isBold="true"/>

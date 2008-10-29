@@ -4,20 +4,33 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.Transient;
+
+import org.apache.commons.lang.StringUtils;
+import org.hibernate.annotations.Cascade;
+import org.hibernate.annotations.CascadeType;
 
 import com.code.aon.common.ITransferObject;
-import com.code.aon.config.User;
-import com.code.aon.webmail.enumeration.MailAccountStatus;
+import com.code.aon.dao.ldap.annotations.Attribute;
+import com.code.aon.dao.ldap.annotations.BaseDN;
+import com.code.aon.dao.ldap.annotations.EntryObject;
+import com.code.aon.dao.ldap.annotations.RDN;
 
 @Entity
 @Table(name="mail_account")
+@EntryObject(mainObjectClass="aonMailAccount", objectClasses={"top"})
 public class MailAccount implements ITransferObject{
+	
+	public static final String DEFAULT_MAIL_ACCOUNT_NAME = "default";
+
+	private static final long serialVersionUID = 3319001240608653621L;
 
 	// ident
-	private Integer id;
+	private String id;
+	
+	// name;
+	private String name;
 
 	// email
     private String email;
@@ -53,19 +66,35 @@ public class MailAccount implements ITransferObject{
     private String mailUsername;
 
     // UserAccount password
-    private String password;
+    private byte[] password;
     
-	// User
-    private User user;
+    // Signature
+    private Signature signature;
+    
+	/**
+	 * Gets the name.
+	 * 
+	 * @return the name
+	 */
+	@RDN
+	@Attribute(name="cn", length=32768, nullable=false)    
+	public String getName() {
+		return name;
+	}
 
-    private MailAccountStatus status;
-    
-	// User
-    private String blackList;
+	/**
+	 * Sets the name.
+	 * 
+	 * @param name the new name
+	 */
+	public void setName(String name) {
+		this.name = name;
+	}
 
 	/**
 	 * @return the email
 	 */
+    @Attribute(name="mail", length=256, nullable=false)
 	public String getEmail() {
 		return email;
 	}
@@ -80,6 +109,7 @@ public class MailAccount implements ITransferObject{
 	/**
 	 * @return the host
 	 */
+	@Attribute(name="host", length=256)
 	public String getHost() {
 		return host;
 	}
@@ -97,14 +127,14 @@ public class MailAccount implements ITransferObject{
 	@Id
 	@GeneratedValue
 	@Column(nullable=false)
-	public Integer getId() {
+	public String getId() {
 		return id;
 	}
 
 	/**
 	 * @param id the id to set
 	 */
-	public void setId(Integer id) {
+	public void setId(String id) {
 		this.id = id;
 	}
 
@@ -112,6 +142,7 @@ public class MailAccount implements ITransferObject{
 	 * @return the incomingHost
 	 */
 	@Column(name="incoming_host")
+	@Attribute(name="incomingHost", length=256)
 	public String getIncomingHost() {
 		return incomingHost;
 	}
@@ -127,6 +158,7 @@ public class MailAccount implements ITransferObject{
 	 * @return the incomingPort
 	 */
 	@Column(name="incoming_port")
+	@Attribute(name="incomingPort")
 	public int getIncomingPort() {
 		return incomingPort;
 	}
@@ -142,6 +174,7 @@ public class MailAccount implements ITransferObject{
 	 * @return the incomingSsl
 	 */
 	@Column(name="incoming_ssl")
+	@Attribute(name="incomingSsl")
 	public boolean isIncomingSsl() {
 		return incomingSsl;
 	}
@@ -157,6 +190,7 @@ public class MailAccount implements ITransferObject{
 	 * @return the mailUsername
 	 */
 	@Column(name="mail_username")
+	@Attribute(name="uid",length=256)
 	public String getMailUsername() {
 		return mailUsername;
 	}
@@ -172,6 +206,7 @@ public class MailAccount implements ITransferObject{
 	 * @return the outgoingHost
 	 */
 	@Column(name="outgoing_host")
+	@Attribute(name="outgoingHost",length=256)
 	public String getOutgoingHost() {
 		return outgoingHost;
 	}
@@ -187,6 +222,7 @@ public class MailAccount implements ITransferObject{
 	 * @return the outgoingPort
 	 */
 	@Column(name="outgoing_port")
+	@Attribute(name="outgoingPort")
 	public int getOutgoingPort() {
 		return outgoingPort;
 	}
@@ -202,6 +238,7 @@ public class MailAccount implements ITransferObject{
 	 * @return the outgoingSsl
 	 */
 	@Column(name="outgoing_ssl")
+	@Attribute(name="outgoingSsl")
 	public boolean isOutgoingSsl() {
 		return outgoingSsl;
 	}
@@ -217,6 +254,7 @@ public class MailAccount implements ITransferObject{
 	 * @return the outgoingVerification
 	 */
 	@Column(name="outgoing_verification")
+	@Attribute(name="outgoingVerification")
 	public boolean isOutgoingVerification() {
 		return outgoingVerification;
 	}
@@ -228,23 +266,34 @@ public class MailAccount implements ITransferObject{
 		this.outgoingVerification = outgoingVerification;
 	}
 
+	@Transient
+	public String getPasswordString() {
+		return (password != null) ? new String( password ) : null;
+	}
+	
+	public void setPasswordString( String value ) {
+		this.password = (value != null) ? value.getBytes() : null;
+	}
+	
 	/**
 	 * @return the password
 	 */
-	public String getPassword() {
+	@Attribute(name="userPassword",length=128)
+	public byte[] getPassword() {
 		return password;
 	}
 
 	/**
 	 * @param password the password to set
 	 */
-	public void setPassword(String password) {
+	public void setPassword(byte[] password) {
 		this.password = password;
 	}
 
 	/**
 	 * @return the protocol
 	 */
+	@Attribute(name="ipServiceProtocol",length=32768)
 	public String getProtocol() {
 		return protocol;
 	}
@@ -256,45 +305,20 @@ public class MailAccount implements ITransferObject{
 		this.protocol = protocol;
 	}
 
-	/**
-	 * @return the User
-	 */
-	@ManyToOne
-	@JoinColumn(name = "user", nullable = false)
-	public User getUser() {
-		return user;
+	@Cascade(CascadeType.ALL)
+	@BaseDN("ou=signatures,{parent}")
+	@Attribute(name="signatureMember")
+	public Signature getSignature() {
+		return signature;
 	}
 
-	/**
-	 * @param User the User to set
-	 */
-	public void setUser(User user) {
-		this.user = user;
+	public void setSignature(Signature signature) {
+		this.signature = signature;
 	}
-
-	/**
-	 * @return the status
-	 */
-	@Column(name="status")
-	public MailAccountStatus getStatus() {
-		return status;
+	
+	@Transient
+	public boolean isDefault() {
+		return StringUtils.equalsIgnoreCase(DEFAULT_MAIL_ACCOUNT_NAME, getName());
 	}
-
-	/**
-	 * @param status the status to set
-	 */
-	public void setStatus(MailAccountStatus status) {
-		this.status = status;
-	}
-
-	@Column(name="black_list")
-	public String getBlackList() {
-		return blackList;
-	}
-
-	public void setBlackList(String blackList) {
-		this.blackList = blackList;
-	}
-
 	
 }

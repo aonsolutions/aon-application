@@ -128,9 +128,7 @@ public class InvoicePrintController extends BasicController implements ICollecti
 		return Collections.EMPTY_LIST;
 	}
 	
-	public boolean isSales(){
-		return getType().equals(InvoiceType.SALES);
-	}
+	
 	
 	@Override
 	@SuppressWarnings("unchecked")
