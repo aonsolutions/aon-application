@@ -10,73 +10,27 @@
 
 	<ui:define name="content">
 
-		<aon:form id="documentoGrid">
+		<aon:form id="admonGrid">
 	
 			<aon:div ajaxRendered="true" layout="none">
-	
-				<aon:div styleClass="aon-finding-title-toolbar">
-					<aon:panelGrid columns="3" dir="true"
-						columnClasses="aon-finding-title,aon-finding-subtitle,aon-finding-toolbar">
-	
-						<aon:div styleClass="aon-finding-title-internal">
-							<aon:outputText value="#{appBundle.aon_payroll_auxiliares_organismos_entidades__admon}" />
-						</aon:div>
-	
-						<aon:div styleClass="aon-finding-subtitle-internal">
-							<aon:outputText
-								value="#{appBundle.aon_payroll_crud}" />
-						</aon:div>
-	
-						<aon:div styleClass="aon-finding-toolbar-item-group">
-							<aon:commandButton id="reset" value="#{bundle.aon_reset}"
-								actionListener="#{organismosAdmon.onReset}" rendered="#{!organismosAdmon.new}"
-								styleClass="aon-finding-toolbar-item aon-icon-reset"
-								accesskey="#{bundle.aon_key_new}"/>
-							<aon:commandButton id="search" value="#{bundle.aon_search}"
-								action="organismos_admon_search" actionListener="#{organismosAdmon.onEditSearch}"
-								styleClass="aon-finding-toolbar-item aon-icon-search"
-								accesskey="#{bundle.aon_key_search}" />		
-							<aon:commandButton id="save"
-								value="#{bundle.aon_save}" rendered="#{organismosAdmon.to!=null or organismosAdmon.new}"
-								styleClass="aon-finding-toolbar-item aon-icon-accept"
-								actionListener="#{organismosAdmon.onAccept}" 
-								accesskey="#{bundle.aon_key_new}" />
-							<aon:confirmButton id="cancelNew"
-								value="#{bundle.aon_cancel}" rendered="#{organismosAdmon.new}"
-								styleClass="aon-finding-toolbar-item aon-icon-cancel" immediate="true"
-								confirmTitle="#{bundle.aon_confirm_title}" confirmMessage="#{bundle.aon_cancel_confirm}"
-								confirmActionListener="#{organismosAdmon.onCancel}"
-								accesskey="#{bundle.aon_key_cancel}"/>
-							<aon:commandButton id="cancelEdit"
-								value="#{bundle.aon_cancel}" rendered="#{organismosAdmon.to!=null and (!organismosAdmon.new)}"
-								styleClass="aon-finding-toolbar-item aon-icon-cancel" immediate="true"
-								actionListener="#{organismosAdmon.onCancel}"
-								accesskey="#{bundle.aon_key_cancel}"/>
-							<aon:confirmButton id="remove"
-								value="#{bundle.aon_remove}" rendered="#{organismosAdmon.to!=null and !organismosAdmon.new}"
-								styleClass="aon-finding-toolbar-item aon-icon-delete" immediate="true"
-								confirmTitle="#{bundle.aon_confirm_title}" confirmMessage="#{bundle.aon_remove_confirm}"
-								confirmActionListener="#{organismosAdmon.onRemove}"
-								accesskey="#{bundle.aon_key_remove}"/>
-							<ui:include src="/facelet/templates/aon.ui.printbuttons.xhtml">
-								<ui:param name="controller" value="#{organismosAdmon}"/>
-								<ui:param name="reportKey" value="organismosAdmonList"/>
-							</ui:include>
-						</aon:div>
-					</aon:panelGrid>
-				</aon:div>
+				
+			<ui:include src="/facelet/templates/gridPrintToolbar.xhtml">
+				<ui:param name="toolbarTitle" value="#{appBundle.aon_payroll_auxiliares_organismos_entidades__admon}" />				
+				<ui:param name="controller" value="#{admon}" />
+				<ui:param name="reportKey" value="organismosAdmonList"/>
+			</ui:include>
 	
 				<!-- region-body -->
 	 			<aon:div styleClass="aon-scroll-area">
 					
 					<aon:editDataTable id="admonData" var="to" rows="20"
-						rendered="#{(organismosAdmon.model.rowCount > 0) or (organismosAdmon.new)}" value="#{organismosAdmon.model}"
+						rendered="#{(admon.model.rowCount > 0) or (admon.new)}" value="#{admon.model}"
 						columnClasses="aon-editDataTable-iconColumn, 
 						aon-editDataTable-numberColumn, aon-editDataTable-textColumn, 
 						aon-editDataTable-buttonsColumn">
 								
-						<aon:rowSelector toggleOnClick="#{organismosAdmon.to == null}"
-							actionListener="#{organismosAdmon.onSelect}" />
+						<aon:rowSelector toggleOnClick="#{admon.to == null}"
+							actionListener="#{admon.onSelect}" />
 	
 						<aon:column>
 							<f:facet name="header">
@@ -87,8 +41,8 @@
 								<aon:div>
 									<aon:commandButton alt="[#{bundle.aon_reset}]"
 										styleClass="aon-editDataTable-button aon-icon-reset"
-										actionListener="#{organismosAdmon.onReset}" value=""
-										rendered="#{!organismosAdmon.new}"
+										actionListener="#{admon.onReset}" value=""
+										rendered="#{!admon.new}"
 										accesskey="#{bundle.aon_key_new_line}" />
 								</aon:div>
 							</f:facet>
@@ -98,14 +52,14 @@
 							<f:facet name="header">
 								<aon:outputText value="#{appBundle.aon_payroll_cdg}" />
 							</f:facet>
-							<aon:outputText value="#{to.cdg}" rendered="#{to!=organismosAdmon.to}" />
+							<aon:outputText value="#{to.cdg}" rendered="#{to!=admon.to}" />
 							<aon:inputText styleClass="aon-form-input-text " required="true"
-								rendered="#{to==organismosAdmon.to}" size="5"
-								value="#{organismosAdmon.to.cdg}" maxlength="5" />
+								rendered="#{to==admon.to}" size="5"
+								value="#{admon.to.cdg}" maxlength="5" />
 							<f:facet name="footer">
 								<aon:inputText styleClass="aon-form-input-text" required="true"
-									rendered="#{organismosAdmon.new}" size="5"
-									value="#{organismosAdmon.to.cdg}" maxlength="5" />
+									rendered="#{admon.new}" size="5"
+									value="#{admon.to.cdg}" maxlength="5" />
 							</f:facet>
 						</aon:column>
 	
@@ -113,14 +67,14 @@
 							<f:facet name="header">
 								<aon:outputText value="#{appBundle.aon_payroll_description}" />
 							</f:facet>
-							<aon:outputText value="#{to.description}" rendered="#{to!=organismosAdmon.to}" />
+							<aon:outputText value="#{to.description}" rendered="#{to!=admon.to}" />
 							<aon:inputText styleClass="aon-form-input-text " required="true"
-								rendered="#{to==organismosAdmon.to}" size="35"
-								value="#{organismosAdmon.to.description}" maxlength="35" />
+								rendered="#{to==admon.to}" size="35"
+								value="#{admon.to.description}" maxlength="35" />
 							<f:facet name="footer">
 								<aon:inputText styleClass="aon-form-input-text" required="true"
-									rendered="#{organismosAdmon.new}" size="35"
-									value="#{organismosAdmon.to.description}" maxlength="35" />
+									rendered="#{admon.new}" size="35"
+									value="#{admon.to.description}" maxlength="35" />
 							</f:facet>
 						</aon:column>
 	
@@ -129,39 +83,39 @@
 								<aon:outputText value="&#160;" />
 							</f:facet>
 							<aon:div>
-								<f:verbatim rendered="#{to!=organismosAdmon.to}">&#160;</f:verbatim>
+								<f:verbatim rendered="#{to!=admon.to}">&#160;</f:verbatim>
 								<aon:commandButton id="acceptEdit-Scope" title="[#{bundle.aon_accept}]" 
-									rendered="#{to==organismosAdmon.to}"
+									rendered="#{to==admon.to}"
 									styleClass="aon-editDataTable-button aon-icon-accept"
-									actionListener="#{organismosAdmon.onAccept}"
+									actionListener="#{admon.onAccept}"
 									accesskey="#{bundle.aon_key_save_line}" />
 								<aon:commandButton title="[#{bundle.aon_cancel}]"
 									styleClass="aon-editDataTable-button aon-icon-cancel"
-									rendered="#{to==organismosAdmon.to}"
-									actionListener="#{organismosAdmon.onCancel}" immediate="true"
+									rendered="#{to==admon.to}"
+									actionListener="#{admon.onCancel}" immediate="true"
 									accesskey="#{bundle.aon_key_cancel_line}" />
 								<aon:confirmButton title="[#{bundle.aon_remove}]"
 									styleClass="aon-editDataTable-button aon-icon-delete"
-									rendered="#{to==organismosAdmon.to}"
+									rendered="#{to==admon.to}"
 									confirmTitle="#{bundle.aon_confirm_title}" 
 									confirmMessage="#{bundle.aon_remove_confirm}"
-									confirmActionListener="#{organismosAdmon.onRemove}" immediate="true"
+									confirmActionListener="#{admon.onRemove}" immediate="true"
 									accesskey="#{bundle.aon_key_remove_line}" />								
 							</aon:div>
 							<f:facet name="footer">
 								<aon:div>
-									<f:verbatim rendered="#{!organismosAdmon.new}">&#160;</f:verbatim>
+									<f:verbatim rendered="#{!admon.new}">&#160;</f:verbatim>
 									<aon:commandButton title="[#{bundle.aon_accept}]" 
 										styleClass="aon-editDataTable-button aon-icon-accept"
-										rendered="#{organismosAdmon.new}"
-										actionListener="#{organismosAdmon.onAccept}"
+										rendered="#{admon.new}"
+										actionListener="#{admon.onAccept}"
 										accesskey="#{bundle.aon_key_save_line}" />
 									<aon:confirmButton title="[#{bundle.aon_cancel}]"
 										styleClass="aon-editDataTable-button aon-icon-cancel"
-										rendered="#{organismosAdmon.new}"
+										rendered="#{admon.new}"
 										confirmTitle="#{bundle.aon_confirm_title}" 
 										confirmMessage="#{bundle.aon_cancel_confirm}"
-										confirmActionListener="#{organismosAdmon.onCancel}" immediate="true"
+										confirmActionListener="#{admon.onCancel}" immediate="true"
 										accesskey="#{bundle.aon_key_cancel_line}" />
 								</aon:div>
 							</f:facet>

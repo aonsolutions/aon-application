@@ -13,65 +13,12 @@
 	<ui:define name="content">
 
 		<aon:form id="complementoForm">
-			<aon:div styleClass="aon-finding-title-toolbar">
-				<aon:panelGrid id="buttonsGrid" columns="3" dir="true"
-					columnClasses="aon-finding-title,aon-finding-subtitle,aon-finding-toolbar">
-
-					<aon:div styleClass="aon-finding-title-internal">
-						<aon:outputText value="#{menuBundle.auxiliares_convenios__complemento}" />
-					</aon:div>
-
-					<aon:div styleClass="aon-finding-subtitle-internal">
-						<aon:outputText
-							value="#{complemento.new?(bundle.aon_reset):(bundle.aon_editing)}" />
-					</aon:div>
-
-					<!-- start toolbar navigation -->
-					<aon:div styleClass="aon-finding-toolbar-item-group">
-						<aon:commandButton id="save" value="#{bundle.aon_save}"
-							action="convenios_complementos"
-							actionListener="#{complemento.onAccept}"
-							styleClass="aon-finding-toolbar-item aon-icon-accept"
-							accesskey="#{bundle.aon_key_save}" />
-						<aon:confirmButton id="cancel" immediate="true"
-							value="#{bundle.aon_cancel}" rendered="#{complemento.new}"
-							styleClass="aon-finding-toolbar-item aon-icon-cancel"
-							confirmTitle="#{bundle.aon_confirm_title}"
-							confirmMessage="#{bundle.aon_cancel_confirm}"
-							confirmActionListener="#{complemento.onCancel}"
-							confirmAction="convenios_complementos_list"
-							accesskey="#{bundle.aon_key_cancel}" />
-						<aon:confirmButton id="remove" value="#{bundle.aon_remove}"
-							rendered="#{!complemento.new}"
-							styleClass="aon-finding-toolbar-item aon-icon-delete"
-							immediate="true" confirmTitle="#{bundle.aon_confirm_title}"
-							confirmMessage="#{bundle.aon_remove_confirm}"
-							confirmActionListener="#{complemento.onRemove}"
-							confirmAction="convenios_complementos_list"
-							accesskey="#{bundle.aon_key_remove}" />
-						<aon:commandButton id="reset" value="#{bundle.aon_reset}"
-							rendered="#{!complemento.new}"
-							action="convenios_complementos" 
-							actionListener="#{complemento.onReset}"
-							styleClass="aon-finding-toolbar-item aon-icon-reset"
-							accesskey="#{bundle.aon_key_new}" />
-						<aon:commandButton id="search" value="#{bundle.aon_search}"
-							rendered="#{!complemento.new}"
-							action="convenios_complementos_search" actionListener="#{complemento.onEditSearch}"
-							styleClass="aon-finding-toolbar-item aon-icon-search"
-							accesskey="#{bundle.aon_key_search}" />				
-
-						<aon:spin controller="#{complemento}" action="convenios_complementos" rendered="#{!complemento.new}" />
-						
-						<ui:include src="/facelet/templates/aon.ui.printbuttons.xhtml">
-							<ui:param name="controller" value="#{complemento}"/>
-							<ui:param name="reportKey" value="convenioComplementoList"/>
-						</ui:include>
-
-					</aon:div>
-					<!-- end tool bar navigation -->
-				</aon:panelGrid>
-			</aon:div>
+			
+			<ui:include src="/facelet/templates/formPrintToolbar.xhtml">
+				<ui:param name="toolbarTitle" value="#{menuBundle.auxiliares_convenios__complemento}" />				
+				<ui:param name="controller" value="#{complemento}" />
+				<ui:param name="reportKey" value="convenioComplementoList"/>
+			</ui:include>
 
 			<aon:div id="complemento" styleClass="aon-scroll-area">
 				<aon:panelGrid columns="2" dir="true" width="100%" style="margin-bottom=2px;">

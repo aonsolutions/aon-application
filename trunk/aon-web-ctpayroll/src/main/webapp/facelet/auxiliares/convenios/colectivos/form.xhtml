@@ -13,80 +13,13 @@
 	<ui:define name="content">
 
 		<aon:form id="conveniosForm">
-			<!--  
-			<aon:div styleClass="aon-finding-title-toolbar">
-				<aon:panelGrid id="buttonsGrid" columns="3" dir="true"
-					columnClasses="aon-finding-title,aon-finding-subtitle,aon-finding-toolbar">
-
-					<aon:div styleClass="aon-finding-title-internal">
-						<aon:outputText value="#{menuBundle.auxiliares_convenios__convenio}" />
-					</aon:div>
-
-					<aon:div styleClass="aon-finding-subtitle-internal">
-						<aon:outputText
-							value="#{convenios.new?(bundle.aon_reset):(bundle.aon_editing)}" />
-					</aon:div>
-
-					<aon:div styleClass="aon-finding-toolbar-item-group">
-						<aon:commandButton id="save" value="#{bundle.aon_save}"
-							action="convenios_colectivos"
-							actionListener="#{convenio.onAccept}"
-							styleClass="aon-finding-toolbar-item aon-icon-accept"
-							accesskey="#{bundle.aon_key_save}" />
-						<aon:confirmButton id="cancel" immediate="true"
-							value="#{bundle.aon_cancel}" rendered="#{convenio.new}"
-							styleClass="aon-finding-toolbar-item aon-icon-cancel"
-							confirmTitle="#{bundle.aon_confirm_title}"
-							confirmMessage="#{bundle.aon_cancel_confirm}"
-							confirmActionListener="#{convenio.onCancel}"
-							confirmAction="convenios_colectivos"
-							accesskey="#{bundle.aon_key_cancel}" />
-						<aon:confirmButton id="remove" value="#{bundle.aon_remove}"
-							rendered="#{!convenio.new}"
-							styleClass="aon-finding-toolbar-item aon-icon-delete"
-							immediate="true" confirmTitle="#{bundle.aon_confirm_title}"
-							confirmMessage="#{bundle.aon_remove_confirm}"
-							confirmActionListener="#{convenio.onRemove}"
-							confirmAction="convenios_colectivos"
-							accesskey="#{bundle.aon_key_remove}" />
-						<aon:commandButton id="reset" value="#{bundle.aon_reset}"
-							rendered="#{!convenio.new}"
-							action="convenios_colectivos" 
-							actionListener="#{convenio.onReset}"
-							styleClass="aon-finding-toolbar-item aon-icon-reset"
-							accesskey="#{bundle.aon_key_new}" />
-						<aon:commandButton id="search" value="#{bundle.aon_search}"
-							rendered="#{!convenio.new}" immediate="true"
-							action="convenios_colectivos_search" actionListener="#{convenio.onEditSearch}"
-							styleClass="aon-finding-toolbar-item aon-icon-search"
-							accesskey="#{bundle.aon_key_search}" />														
-						
-						<aon:spin controller="#{convenio}" action="convenios_colectivos" rendered="#{!convenio.new}" />
-						
-						 
-						<ui:include src="/facelet/templates/aon.ui.printbuttons.xhtml">
-							<ui:param name="controller" value="#{convenio}"/>
-							<ui:param name="reportKey" value="BasesList"/>
-						</ui:include>
-						
-					</aon:div>
-				
-				</aon:panelGrid>
-			</aon:div>
-			-->
 			
-			<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml" >
-				<ui:param name="toolbarTitle" value="#{menuBundle.auxiliares_convenios__convenio}" />
-				<ui:param name="controller" value="#{convenio}" />
-				
-				<ui:define name="beforeSpinToolbarContent">
-					<ui:include src="/facelet/templates/aon.ui.printbuttons.xhtml">
-						<ui:param name="controller" value="#{convenio}"/>
-						<ui:param name="reportKey" value=""/>
-						<ui:param name="reportKeyXls" value=""/>
-					</ui:include>	
-				</ui:define>
-			</ui:decorate>
+			<ui:include src="/facelet/templates/formPrintToolbar.xhtml">
+				<ui:param name="toolbarTitle" value="#{menuBundle.auxiliares_convenios__convenio}" />				
+				<ui:param name="controller" value="#{convenio}"/>
+				<ui:param name="reportKey" value=""/>
+				<ui:param name="reportKeyXls" value=""/>
+			</ui:include>
 			
 			<aon:div styleClass="aon-scroll-area">
 				<aon:panelGrid id="convenio" columns="2" dir="true" width="100%" style="margin-bottom=2px;">
@@ -129,15 +62,15 @@
 							accesskey="#{bundle.aon_key_search}" />
 							
 						<aon:div id="nivelDiv" style="width:15%; margin-right:5px; float: left;">	
-							<aon:outputLabel value="#{appBundle.aon_payroll_nivel}" />		
+							<aon:outputLabel value="#{appBundle.aon_payroll_auxiliares_convenios__tabnivel}" />		
 							<ui:include src="nivel/grid.xhtml" />
 						</aon:div>
 						<aon:div id="categoriaDiv" style="width:40%; margin-right:5px; float: left;">
-							<aon:outputLabel value="#{appBundle.aon_payroll_categoria}" />
+							<aon:outputLabel value="#{appBundle.aon_payroll_auxiliares_convenios__tabcat}" />
 							<ui:include src="categoria/grid.xhtml" />
 						</aon:div>
 						<aon:div id="percepcionDiv" style="width:40%; margin-right:5px; float: left;">
-							<aon:outputLabel value="#{appBundle.aon_payroll_percepciones}" />
+							<aon:outputLabel value="#{appBundle.aon_payroll_auxiliares_convenios__tabperc}" />
 							<ui:include src="percepcion/grid.xhtml" />
 						</aon:div>
 					</rich:tab>

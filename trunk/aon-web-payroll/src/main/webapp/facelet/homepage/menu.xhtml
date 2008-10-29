@@ -202,8 +202,8 @@
 				</aon:menuGroup>
 				<aon:menuGroup value="#{menuBundle.auxiliares_convenios}">
 					<aon:menuItem value="#{menuBundle.auxiliares_convenios__calendar}" disabled="true" />
-					<aon:menuItem value="#{menuBundle.auxiliares_convenios__complemento}" id="convenios_complementos"
-						action="convenios_complementos" >
+					<aon:menuItem value="#{menuBundle.auxiliares_convenios__complemento}" id="complemento"
+						action="complemento_form" >
 						<aon:actionListener method="#{complemento.onEditSearch}" />
 						<aon:actionListener method="#{complemento.onSearch}" />
 						<aon:actionListener method="#{complemento.onSelectFirst}" />
@@ -222,8 +222,8 @@
 						<aon:actionListener method="#{contratosTc2.onSearch}" />
 						<aon:actionListener method="#{contratosTc2.onSelectFirst}" />
 					</aon:menuItem>
-					<aon:menuItem value="#{menuBundle.auxiliares_contratos__tipocont}" id="contratos_internos" 
-							action="contratos_internos" >
+					<aon:menuItem value="#{menuBundle.auxiliares_contratos__tipocont}" id="contratosInternos" 
+							action="contratosInternos_form" >
 						<aon:actionListener method="#{contratosInternos.onEditSearch}" />
 						<aon:actionListener method="#{contratosInternos.onSearch}" />
 						<aon:actionListener method="#{contratosInternos.onSelectFirst}" />
@@ -236,8 +236,8 @@
 						<aon:actionListener method="#{entidadMaestro.onSearch}" />
 						<aon:actionListener method="#{entidadMaestro.onSelectFirst}" />
 						</aon:menuItem>
-					<aon:menuItem value="#{menuBundle.auxiliares_organismos_entidades__admon}" id="organismos_admon"
-						action="organismos_admon" />
+					<aon:menuItem value="#{menuBundle.auxiliares_organismos_entidades__admon}" id="admon"
+						action="admon_grid" />
 					<aon:menuItem value="#{menuBundle.auxiliares_organismos_entidades__mutua}" id="mutuaMaestro"
 						action="mutuaMaestro_form"  >
 						<aon:actionListener method="#{mutuaMaestro.onEditSearch}" />

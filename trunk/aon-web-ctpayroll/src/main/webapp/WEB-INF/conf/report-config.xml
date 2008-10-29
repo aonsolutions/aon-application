@@ -61,7 +61,7 @@
 	<report id="organismosAdmonList" description="Listado de Administraciones de Hacienda">
 		<template path="/com/code/aon/ui/payroll/report/organismosAdmonList.jasper" />
 		<bean key="com.code.aon.payroll.auxiliares.Admon" />
-		<criteria provider="#{organismosAdmon}" />
+		<criteria provider="#{admon}" />
 		<params>
 			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.payroll.i18n.messages" />
 			<param id="logoImageFile" value="#{payrollController.getLogo}" />
