@@ -11,12 +11,5 @@ public class EpigrafeMaestroController extends BasicController {
 	public void onExit(ActionEvent event) {
 		// TODO Auto-generated method stub
 	}
-
-	public void addDirectEqualExpression(ValueChangeEvent event) throws ManagerBeanException {
-		if (event.getNewValue() != null) {
-			String property = event.getComponent().getId().replace('_', '.');
-			getCriteria().addEqualExpression(property, event.getNewValue());
-		}
-	}			
 	
 }

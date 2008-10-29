@@ -13,6 +13,8 @@
 		<property name="connection.password">ctl</property>	
 		<property name="show_sql">true</property>		
 
+		<mapping package="com.code.aon.payroll"/>
+
 		<!-- TIPOS -->		
 		<mapping class="com.code.aon.payroll.tipos.Documento"/>			
 		<mapping class="com.code.aon.payroll.tipos.Empresario"/>
