@@ -11,7 +11,8 @@
 		<aon:rowSelector id="#{dataTableId}-select" toggleOnClick="#{controller.to == null}"
 			actionListener="#{controller.onSelect}" />
 
-		<aon:column styleClass="aon-editDataTable-iconColumn aon-vertical-align-top">
+		<aon:column id="#{dataTableId}-selectColumn" 
+			styleClass="aon-editDataTable-iconColumn aon-vertical-align-top">
 			<f:facet name="header">
 				<aon:outputText value="&#160;" />
 			</f:facet>

@@ -64,7 +64,7 @@
 			<ui:insert name="beforeSpinToolbarContent"/>				
 				
 			<c:if test="#{controller != null}">
-				<aon:spin controller="#{controller}" action="#{saveAction}" rendered="#{!formNew}" />
+				<aon:spin id="#{controller.beanName}Spin" controller="#{controller}" action="#{saveAction}" rendered="#{!formNew}" />
 			</c:if>
 		</ui:define>
 	</ui:decorate>
