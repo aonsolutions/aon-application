@@ -9,8 +9,7 @@
 			var="to" rows="10"
 			rendered="#{(nivel.model.rowCount > 0) or (nivel.new)}" 
 			columnClasses="aon-editDataTable-iconColumn
-				, aon-editDataTable-numberColumn
-				, aon-editDataTable-buttonsColumn">
+				, aon-editDataTable-numberColumn">
 					
 			<aon:rowSelector toggleOnClick="#{nivel.to == null}" actionListener="#{nivel.onSelect}" />
 
@@ -56,7 +55,7 @@
 						styleClass="aon-editDataTable-button aon-icon-accept"
 						actionListener="#{nivel.onAccept}"
 						accesskey="#{bundle.aon_key_save_line}" />
-					<aon:commandButton title="[#{bundle.aon_cancel}]"
+ 					<aon:commandButton title="[#{bundle.aon_cancel}]"
 						styleClass="aon-editDataTable-button aon-icon-cancel"
 						rendered="#{to==nivel.to}"
 						actionListener="#{nivel.onCancel}" immediate="true"

@@ -521,7 +521,7 @@
 	<!-- =================== Convenios - Colectivos ================= -->
 	<navigation-rule>
 		<navigation-case>
-			<from-outcome>convenios_colectivos</from-outcome>
+			<from-outcome>convenio_form</from-outcome>
 			<to-view-id>
 				/facelet/auxiliares/convenios/colectivos/form.xhtml
 			</to-view-id>
@@ -529,13 +529,13 @@
 	</navigation-rule> 
 	<navigation-rule>
 		<navigation-case>
-			<from-outcome>convenios_colectivos_search</from-outcome>
+			<from-outcome>convenio_search</from-outcome>
 			<to-view-id>
 				/facelet/auxiliares/convenios/colectivos/search.xhtml
 			</to-view-id>
 		</navigation-case>
 		<navigation-case>
-			<from-outcome>convenios_colectivos_list</from-outcome>
+			<from-outcome>convenio_list</from-outcome>
 			<to-view-id>
 				/facelet/auxiliares/convenios/colectivos/list.xhtml
 			</to-view-id>

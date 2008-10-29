@@ -13,6 +13,7 @@
 	<ui:define name="content">
 
 		<aon:form id="conveniosForm">
+			<!--  
 			<aon:div styleClass="aon-finding-title-toolbar">
 				<aon:panelGrid id="buttonsGrid" columns="3" dir="true"
 					columnClasses="aon-finding-title,aon-finding-subtitle,aon-finding-toolbar">
@@ -26,7 +27,6 @@
 							value="#{convenios.new?(bundle.aon_reset):(bundle.aon_editing)}" />
 					</aon:div>
 
-					<!-- start toolbar navigation -->
 					<aon:div styleClass="aon-finding-toolbar-item-group">
 						<aon:commandButton id="save" value="#{bundle.aon_save}"
 							action="convenios_colectivos"
@@ -63,16 +63,30 @@
 						
 						<aon:spin controller="#{convenio}" action="convenios_colectivos" rendered="#{!convenio.new}" />
 						
-						<!--  
+						 
 						<ui:include src="/facelet/templates/aon.ui.printbuttons.xhtml">
 							<ui:param name="manager" value="#{convenio}"/>
 							<ui:param name="reportKey" value="BasesList"/>
 						</ui:include>
-						-->
+						
 					</aon:div>
-					<!-- end toolbar navigation -->
+				
 				</aon:panelGrid>
 			</aon:div>
+			-->
+			
+			<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml" >
+				<ui:param name="toolbarTitle" value="#{menuBundle.auxiliares_convenios__convenio}" />
+				<ui:param name="controller" value="#{convenio}" />
+				
+				<ui:define name="beforeSpinToolbarContent">
+					<ui:include src="/facelet/templates/aon.ui.printbuttons.xhtml">
+						<ui:param name="manager" value="#{convenio}"/>
+						<ui:param name="reportKey" value=""/>
+						<ui:param name="reportKeyXls" value=""/>
+					</ui:include>	
+				</ui:define>
+			</ui:decorate>
 			
 			<aon:div styleClass="aon-scroll-area">
 				<aon:panelGrid id="convenio" columns="2" dir="true" width="100%" style="margin-bottom=2px;">
