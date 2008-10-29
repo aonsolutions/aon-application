@@ -128,13 +128,13 @@
 	<!-- =================== Auxiliares/Contratos/Tc2 ================= -->
 	<navigation-rule>
 		<navigation-case>
-			<from-outcome>contratos_tc2_list</from-outcome>
+			<from-outcome>contratosTc2_list</from-outcome>
 			<to-view-id>
 				/facelet/auxiliares/contratos/tc2/list.xhtml
 			</to-view-id>
 		</navigation-case>
 		<navigation-case>
-			<from-outcome>contratos_tc2_search</from-outcome>
+			<from-outcome>contratosTc2_search</from-outcome>
 			<to-view-id>
 				/facelet/auxiliares/contratos/tc2/search.xhtml
 			</to-view-id>
@@ -389,7 +389,7 @@
 	
 	<navigation-rule>
 		<navigation-case>
-			<from-outcome>contratos_tc2</from-outcome>
+			<from-outcome>contratosTc2_form</from-outcome>
 			<to-view-id>
 				/facelet/auxiliares/contratos/tc2/form.xhtml
 			</to-view-id>
