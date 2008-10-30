@@ -425,6 +425,10 @@
 			<property-name>defaultOrder</property-name>
 			<value>Nacion_cdg</value>
 		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>nacion</value>
+		</managed-property>
 	   <managed-property>
 			<property-name>listenerClasses</property-name>
 			<list-entries>

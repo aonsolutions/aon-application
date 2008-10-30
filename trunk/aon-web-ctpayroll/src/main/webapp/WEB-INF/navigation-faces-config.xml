@@ -171,10 +171,17 @@
 	<!-- =================== Auxiliares/Geograficas================= -->
      <navigation-rule>
 		<navigation-case>
-			<from-outcome>tipos_nacion_search</from-outcome>
+			<from-outcome>nacion_search</from-outcome>
 			<to-view-id>
 				/facelet/auxiliares/geograficas/nacion/search.xhtml
 			</to-view-id>
+		</navigation-case>
+	</navigation-rule>
+	
+	<navigation-rule>
+		<navigation-case>
+			<from-outcome>nacion_grid</from-outcome>
+			<to-view-id>/facelet/auxiliares/geograficas/nacion/grid.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>
 	
@@ -387,7 +394,6 @@
 	</navigation-rule>
 
 	
-	
 	<navigation-rule>
 		<navigation-case>
 			<from-outcome>contratosTc2_form</from-outcome>
@@ -417,13 +423,7 @@
 		</navigation-case>
 	</navigation-rule>
 	
-    <navigation-rule>
-		<navigation-case>
-			<from-outcome>naciones</from-outcome>
-			<to-view-id>/facelet/auxiliares/geograficas/nacion/grid.xhtml</to-view-id>
-		</navigation-case>
-	</navigation-rule>
-
+    
 	<navigation-rule>
 		<navigation-case>
 			<from-outcome>CuotaRetencionAlava</from-outcome>
