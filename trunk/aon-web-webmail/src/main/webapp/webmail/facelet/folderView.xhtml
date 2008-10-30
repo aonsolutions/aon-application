@@ -25,15 +25,15 @@
 
 			<!--  webmail toolbar -->
 			<aon:div styleClass="aon-finding-title-toolbar">
-				<aon:panelGrid  columns="3" dir="true"
+				<aon:panelGrid id="folderButtonsGrid" columns="3" dir="true"
 					columnClasses="aon-finding-title,aon-finding-subtitle,aon-finding-toolbar">
 					
 					<aon:div styleClass="aon-finding-title-internal">
-						<aon:outputText value="Correo" />
+						<aon:outputText value="#{appBundle.aon_webmail_main}" />
 					</aon:div>
 					
 					<aon:div styleClass="aon-finding-subtitle-internal">
-						<aon:outputText 	value="Mensajes" />
+						<aon:outputText value="#{appBundle.aon_webmail_messages}" />
 					</aon:div>
 					
 					<aon:div styleClass="aon-finding-toolbar-item-group">
@@ -62,9 +62,9 @@
 						</aon:commandButton>
 		
 						<aon:commandButton id="searchMail"
-							title="#{appBundle.aon_webmail_search}" action="messageSearch"
+							title="#{bundle.aon_search}" action="messageSearch"
 							actionListener="#{search.init}"
-							value="#{appBundle.aon_webmail_search}"
+							value="#{bundle.aon_search}"
 							styleClass="aon-icon-mailSearch aon-finding-toolbar-item">
 						</aon:commandButton>
 		
