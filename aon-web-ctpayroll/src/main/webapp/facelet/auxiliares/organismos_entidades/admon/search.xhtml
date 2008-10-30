@@ -13,12 +13,14 @@
 			<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/searchToolbar.xhtml" >
 				<ui:param name="toolbarTitle" value="#{menuBundle.auxiliares_organismos_entidades__admon}" />
 				<ui:param name="controller" value="#{admon}" />
+				<ui:param name="skipResetButton" value="true" />
+				<aon:methodParam name="backAction" value="admon_form"/>
 			</ui:include>
 
 			<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/searchContent.xhtml" >
 				<ui:define name="searchContent">
 					<aon:methodParam name="searchActionListener" value="#{admon.onSearch}" type="actionListener" />
-					<aon:methodParam name="searchAction" value="admon_grid" />				
+					<aon:methodParam name="searchAction" value="admon_form" />				
 				
 					<aon:outputLabel for="Admon_cdg"
 						value="#{appBundle.aon_payroll_cdg}" />

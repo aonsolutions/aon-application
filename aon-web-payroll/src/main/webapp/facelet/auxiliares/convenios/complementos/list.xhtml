@@ -19,18 +19,6 @@
 				<ui:param name="toolbarTitle" value="#{menuBundle.auxiliares_convenios__complemento}" />
 				<ui:param name="controller" value="#{complemento}" />
 			</ui:include>
-			
-			<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/listToolbar.xhtml" >
-				<ui:param name="toolbarTitle" value="#{menuBundle.auxiliares_convenios__complemento}" />
-				<ui:param name="controller" value="#{complemento}" />
-				
-				<ui:define name="additionalToolbarContent">
-					<ui:include src="/facelet/templates/aon.ui.printbuttons.xhtml">
-						<ui:param name="controller" value="#{complemento}"/>
-						<ui:param name="reportKey" value="convenioComplementoList"/>
-					</ui:include>	
-				</ui:define>
-			</ui:decorate>
 
 			<!--  aon-region-body -->
 			<aon:div styleClass="aon-scroll-area">
