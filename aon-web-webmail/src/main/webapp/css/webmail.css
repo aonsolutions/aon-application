@@ -49,6 +49,11 @@
 .aon-tree-node-active{
 	background-color:#fffadc;
 	border:#d3c061 1px solid;
+	font-weight:bold;
+	}
+.aon-tree-node-active:hover{
+	text-decoration:none;
+	color:#000000;
 	}
 .aon-table-button{
 	border-left:#d7d7d7 1px solid;
