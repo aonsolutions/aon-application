@@ -15,17 +15,11 @@
 
 		<aon:form id="contratosInternosList">
 		
-			<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/listToolbar.xhtml" >
+			<ui:include src="/facelet/templates/listPrintToolbar.xhtml">
 				<ui:param name="toolbarTitle" value="#{menuBundle.auxiliares_contratos__tipocont}" />
 				<ui:param name="controller" value="#{contratosInternos}" />
-				
-				<ui:define name="additionalToolbarContent">
-					<ui:include src="/facelet/templates/aon.ui.printbuttons.xhtml">
-						<ui:param name="controller" value="#{contratosInternos}"/>
-						<ui:param name="reportKey" value="contratosInternosList"/>
-					</ui:include>	
-				</ui:define>
-			</ui:decorate>
+				<ui:param name="reportKey" value="contratosInternosList"/>
+			</ui:include>	
 
 			<!--  aon-region-body -->
 			<aon:div styleClass="aon-scroll-area">

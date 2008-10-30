@@ -14,46 +14,13 @@
 	<ui:define name="content">
 
 		<aon:form id="mutuasMaestroList">
-			<!-- 
-			<aon:div styleClass="aon-finding-title-toolbar">
-				<aon:panelGrid id="buttonsGrid" columns="3" dir="true"
-					columnClasses="aon-finding-title,aon-finding-subtitle,aon-finding-toolbar">
-
-					<aon:div styleClass="aon-finding-title-internal">
-						<aon:outputText value="#{appBundle.aon_payroll_auxiliares_organismos_entidades__mutua}" />
-					</aon:div>
-
-					<aon:div styleClass="aon-finding-subtitle-internal">
-						<aon:outputText value="#{bundle.aon_listing}" />
-					</aon:div>
-
-					<aon:div styleClass="aon-finding-toolbar-item-group">
-						<aon:commandButton id="search" value="#{bundle.aon_search}"
-							action="mutuas_search" actionListener="#{mutuaMaestro.onEditSearch}"
-							styleClass="aon-finding-toolbar-item aon-icon-search"
-							accesskey="#{bundle.aon_key_search}" />				
-						<aon:commandButton id="reset" value="#{bundle.aon_reset}"
-							action="mutuas_form" actionListener="#{mutuaMaestro.onReset}"
-							styleClass="aon-finding-toolbar-item aon-icon-reset"
-							accesskey="#{bundle.aon_key_new}" />
-					</aon:div>
-
-				</aon:panelGrid>
-			</aon:div>
-			-->
 			
-			<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/listToolbar.xhtml" >
+			<ui:include src="/facelet/templates/listPrintToolbar.xhtml">
 				<ui:param name="toolbarTitle" value="#{appBundle.aon_payroll_auxiliares_organismos_entidades__mutua}" />
 				<ui:param name="controller" value="#{mutuaMaestro}" />
-				
-				<ui:define name="additionalToolbarContent">
-					<ui:include src="/facelet/templates/aon.ui.printbuttons.xhtml">
-						<ui:param name="controller" value="#{mutuaMaestro}"/>
-						<ui:param name="reportKey" value="MutuasList"/>
-							<ui:param name="reportKeyXls" value="MutuasListXLS"/>
-					</ui:include>	
-				</ui:define>
-			</ui:decorate>
+				<ui:param name="reportKey" value="MutuasList"/>
+				<ui:param name="reportKeyXls" value="MutuasListXLS"/>
+			</ui:include>
 
 			<!--  aon-region-body -->
 			<aon:div styleClass="aon-scroll-area">
