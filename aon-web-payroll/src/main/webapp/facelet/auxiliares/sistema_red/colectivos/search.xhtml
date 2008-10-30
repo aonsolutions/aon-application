@@ -10,35 +10,20 @@
 
 		<aon:form id="sistemaRedColectivosSearch">
 
-			<aon:div styleClass="aon-finding-title-toolbar">
-				<aon:panelGrid columns="3" dir="true"
-					columnClasses="aon-finding-title,aon-finding-subtitle,aon-finding-toolbar">
-
-					<aon:div styleClass="aon-finding-title-internal">
-						<aon:outputText value="#{menuBundle.auxiliares_sistema_red__colectivos}" />
-					</aon:div>
-
-					<aon:div styleClass="aon-finding-subtitle-internal">
-						<aon:outputText value="#{menuBundle.aon_toolbar_search}" />
-					</aon:div>
-
-					<aon:div styleClass="aon-finding-toolbar-item-group">
-						<aon:commandButton id="clear" value="#{bundle.aon_clear}"
-							type="reset" ajaxSingle="true"
-							styleClass="aon-finding-toolbar-item aon-icon-rubber" />
-						<aon:commandButton id="back" value="#{bundle.aon_back}"
-							action="sistemaRed_colectivos" actionListener="#{sistemaRedColectivos.onCancel}"
-							styleClass="aon-finding-toolbar-item aon-icon-cancel" immediate="true"
-							accesskey="#{bundle.aon_key_cancel}" />
-					</aon:div>
-				</aon:panelGrid>
-			</aon:div>
+		
+			<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/searchToolbar.xhtml" >
+				<ui:param name="toolbarTitle" value="#{menuBundle.auxiliares_sistema_red__colectivos}" />
+				<ui:param name="controller" value="#{sistemaRedColectivos}"/>
+				<ui:param name="skipResetButton" value="true" />
+				<aon:methodParam name="backAction" value="sistemaRedColectivos_form"/>
+		     	</ui:include>
 			<!-- end toolbar navigation -->
+		
 
 			<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/searchContent.xhtml" >
 				<ui:define name="searchContent">
 					<aon:methodParam name="searchActionListener" value="#{sistemaRedColectivos.onSearch}" type="actionListener" />
-					<aon:methodParam name="searchAction" value="sistemaRed_colectivos" />				
+					<aon:methodParam name="searchAction" value="sistemaRedColectivos_form" />				
 				
 					<aon:outputLabel for="Colectivos_cdg"
 						value="#{appBundle.aon_payroll_cdg}" />
