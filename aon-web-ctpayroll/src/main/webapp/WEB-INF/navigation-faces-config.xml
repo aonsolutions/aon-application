@@ -203,7 +203,7 @@
 		
 	<navigation-rule>
 	<navigation-case>
-			<from-outcome>CuotaAlava_search</from-outcome>
+			<from-outcome>cuotaRetencionAlava_search</from-outcome>
 			<to-view-id>
 				/facelet/auxiliares/irpfforal/CuotaRetencionAlava/search.xhtml
 			</to-view-id>
@@ -211,7 +211,7 @@
 	</navigation-rule> 
 	<navigation-rule>
 		<navigation-case>
-			<from-outcome>CuotaVizcaya_search</from-outcome>
+			<from-outcome>cuotaRetencionVizcaya_search</from-outcome>
 			<to-view-id>
 				/facelet/auxiliares/irpfforal/CuotaRetencionVizcaya/search.xhtml
 			</to-view-id>
@@ -219,7 +219,7 @@
 	</navigation-rule> 
 	<navigation-rule>
 		<navigation-case>
-			<from-outcome>CuotaGuipuzcoa_search</from-outcome>
+			<from-outcome>cuotaRetencionGuipuzcoa_search</from-outcome>
 			<to-view-id>
 				/facelet/auxiliares/irpfforal/CuotaRetencionGuipuzcoa/search.xhtml
 			</to-view-id>
@@ -227,7 +227,7 @@
 	</navigation-rule> 
 	<navigation-rule>
 		<navigation-case>
-			<from-outcome>CuotaNavarra_search</from-outcome>
+			<from-outcome>cuotaRetencionNavarra_search</from-outcome>
 			<to-view-id>
 				/facelet/auxiliares/irpfforal/CuotaRetencionNavarra/search.xhtml
 			</to-view-id>
@@ -236,7 +236,7 @@
 	
 	<navigation-rule>
 		<navigation-case>
-			<from-outcome>MinorAlava_search</from-outcome>
+			<from-outcome>minoracionesAlava_search</from-outcome>
 			<to-view-id>
 				/facelet/auxiliares/irpfforal/MinoracionesAlava/search.xhtml
 			</to-view-id>
@@ -244,7 +244,7 @@
 	</navigation-rule>
 	<navigation-rule>
 		<navigation-case>
-			<from-outcome>MinorVizcaya_search</from-outcome>
+			<from-outcome>minoracionesVizcaya_search</from-outcome>
 			<to-view-id>
 				/facelet/auxiliares/irpfforal/MinoracionesVizcaya/search.xhtml
 			</to-view-id>
@@ -253,7 +253,7 @@
 	
 	<navigation-rule>
 		<navigation-case>
-			<from-outcome>MinorGuipuzcoa_search</from-outcome>
+			<from-outcome>minoracionesGuipuzcoa_search</from-outcome>
 			<to-view-id>
 				/facelet/auxiliares/irpfforal/MinoracionesGuipuzcoa/search.xhtml
 			</to-view-id>
@@ -262,7 +262,7 @@
 	
 	<navigation-rule>
 		<navigation-case>
-			<from-outcome>MinorNavarra_search</from-outcome>
+			<from-outcome>minoracionesNavarra_search</from-outcome>
 			<to-view-id>
 				/facelet/auxiliares/irpfforal/MinoracionesNavarra/search.xhtml
 			</to-view-id>
@@ -426,25 +426,25 @@
     
 	<navigation-rule>
 		<navigation-case>
-			<from-outcome>CuotaRetencionAlava</from-outcome>
+			<from-outcome>cuotaRetencionAlava_form</from-outcome>
 			<to-view-id>/facelet/auxiliares/irpfforal/CuotaRetencionAlava/grid.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>
 	<navigation-rule>
 		<navigation-case>
-			<from-outcome>CuotaRetencionGuipuzcoa</from-outcome>
+			<from-outcome>cuotaRetencionGuipuzcoa_form</from-outcome>
 			<to-view-id>/facelet/auxiliares/irpfforal/CuotaRetencionGuipuzcoa/grid.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>
 	<navigation-rule>
 		<navigation-case>
-			<from-outcome>CuotaRetencionNavarra</from-outcome>
+			<from-outcome>cuotaRetencionNavarra_form</from-outcome>
 			<to-view-id>/facelet/auxiliares/irpfforal/CuotaRetencionNavarra/grid.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>
 	<navigation-rule>
 		<navigation-case>
-			<from-outcome>CuotaRetencionVizcaya</from-outcome>
+			<from-outcome>cuotaRetencionVizcaya_form</from-outcome>
 			<to-view-id>/facelet/auxiliares/irpfforal/CuotaRetencionVizcaya/grid.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>
@@ -458,26 +458,26 @@
 	
 	<navigation-rule>
 		<navigation-case>
-			<from-outcome>MinoracionesAlava</from-outcome>
+			<from-outcome>minoracionesAlava_form</from-outcome>
 			<to-view-id>/facelet/auxiliares/irpfforal/MinoracionesAlava/grid.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>
 	
 	<navigation-rule>
 		<navigation-case>
-			<from-outcome>MinoracionesGuipuzcoa</from-outcome>
+			<from-outcome>minoracionesGuipuzcoa_form</from-outcome>
 			<to-view-id>/facelet/auxiliares/irpfforal/MinoracionesGuipuzcoa/grid.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>
 	<navigation-rule>
 		<navigation-case>
-			<from-outcome>MinoracionesVizcaya</from-outcome>
+			<from-outcome>minoracionesVizcaya_form</from-outcome>
 			<to-view-id>/facelet/auxiliares/irpfforal/MinoracionesVizcaya/grid.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>
 	<navigation-rule>
 		<navigation-case>
-			<from-outcome>MinoracionesNavarra</from-outcome>
+			<from-outcome>minoracionesNavarra_form</from-outcome>
 			<to-view-id>/facelet/auxiliares/irpfforal/MinoracionesNavarra/grid.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>
@@ -642,7 +642,7 @@
 	<!-- =================== Pais/Cominudad/Provincia ================= -->
 	<navigation-rule>
 		<navigation-case>
-			<from-outcome>pais</from-outcome>
+			<from-outcome>pais_form</from-outcome>
 			<to-view-id>
 				/facelet/auxiliares/geograficas/pais/form.xhtml
 			</to-view-id>

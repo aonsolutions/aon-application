@@ -5,47 +5,38 @@
 	xmlns:h="http://java.sun.com/jsf/html"
 	xmlns:aon="http://www.code.es/aon-rich-components"
 	template="/facelet/templates/aon.ui.content.xhtml">
-	
+
 	<ui:define name="content">
 
 		<aon:form id="cuotaRetencionAlavaSearch">
 
-			<aon:div styleClass="aon-finding-title-toolbar">
-				<aon:panelGrid columns="3" dir="true"
-					columnClasses="aon-finding-title,aon-finding-subtitle,aon-finding-toolbar">
+			<ui:include
+				src="/com/code/aon/ui/resources/facelet/toolbar/searchToolbar.xhtml">
+				<ui:param name="toolbarTitle"
+					value="#{menuBundle.auxiliares_irpf_foral__cuota_01}" />
+				<ui:param name="controller" value="#{cuotaRetencionAlava}" />
+				<ui:param name="skipResetButton" value="true" />
+				<aon:methodParam name="backAction" value="cuotaRetencionAlava_form" />
+			</ui:include>
 
-					<aon:div styleClass="aon-finding-title-internal">
-						<aon:outputText value="#{menuBundle.auxiliares_irpf_foral__cuota_01}" />
-					</aon:div>
 
-					<aon:div styleClass="aon-finding-subtitle-internal">
-						<aon:outputText value="#{menuBundle.aon_toolbar_search}" />
-					</aon:div>
-
-					<aon:div styleClass="aon-finding-toolbar-item-group">
-						<aon:commandButton id="clear" value="#{bundle.aon_clear}"
-							type="reset" ajaxSingle="true"
-							styleClass="aon-finding-toolbar-item aon-icon-rubber" />
-						<aon:commandButton id="back" value="#{bundle.aon_back}"
-							action="CuotaRetencionAlava" actionListener="#{cuotaRetencionAlava.onCancel}"
-							styleClass="aon-finding-toolbar-item aon-icon-cancel" immediate="true"
-							accesskey="#{bundle.aon_key_cancel}" />
-					</aon:div>
-				</aon:panelGrid>
-			</aon:div>
-			<!-- end toolbar navigation -->
-
-			<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/searchContent.xhtml" >
+			<ui:decorate
+				template="/com/code/aon/ui/resources/facelet/shared/searchContent.xhtml">
 				<ui:define name="searchContent">
-					<aon:methodParam name="searchActionListener" value="#{cuotaRetencionAlava.onSearch}" type="actionListener" />
-					<aon:methodParam name="searchAction" value="CuotaRetencionAlava" />				
-				
-					
-						
-				<aon:outputLabel for="CuotaRetencionAlava_id_numTramo"
+					<aon:methodParam name="searchActionListener"
+						value="#{cuotaRetencionAlava.onSearch}" type="actionListener" />
+					<aon:methodParam name="searchAction"
+						value="cuotaRetencionAlava_form" />
+
+
+
+					<aon:outputLabel for="CuotaRetencionAlava_id_numTramo"
 						value="#{appBundle.aon_payroll_auxiliares_irpf_foral__cuota_01_tramo}" />
-					<aon:inputText id="CuotaRetencionAlava_id_numTramo" size="10" maxlength="4"
+					<aon:inputText id="CuotaRetencionAlava_id_numTramo" size="10"
+						maxlength="4"
 						valueChangeListener="#{cuotaRetencionAlava.addExpression}" />
+
+					<!--    <aon:outputLabel for="CuotaRetencionAlava_id_fecini"
 						
                   <aon:outputLabel for="CuotaRetencionAlava_id_fecini"
 						value="#{appBundle.aon_payroll_auxiliares_irpf_foral__cuota_01_fecini}" />
@@ -58,6 +49,16 @@
 						value="#{appBundle.aon_payroll_auxiliares_irpf_foral__cuota_01_fecfin}" />
 					<aon:selectInputDate id="CuotaRetencionAlava_fecfin"
 						renderAsPopup="true" popupDateFormat="#{appBundle.aon_date_pattern}"
+						valueChangeListener="#{cuotaRetencionAlava.addExpression}">
+					</aon:selectInputDate>
+ -->
+
+					<aon:outputLabel for="CuotaRetencionAlava_desdeImporte"
+						value="#{appBundle.aon_payroll_auxiliares_irpf_foral__minor_01_desdeimporte2}" />
+					<aon:inputText id="CuotaRetencionAlava_desdeImporte" size="30"
+						maxlength="30"
+						value="#{cuotaRetencionAlava.searchFecfin}"
+						enableManualInput="true"/>
 						value="#{cuotaRetencionAlava.searchFecfin}"
 						enableManualInput="true"/>
 						
@@ -65,14 +66,15 @@
 						value="#{appBundle.aon_payroll_auxiliares_irpf_foral__cuota_01_desdeimporte2}" />
 					<aon:inputText id="CuotaRetencionAlava_desdeImporte" size="30" maxlength="30"
 						valueChangeListener="#{cuotaRetencionAlava.addExpression}" />
-						
-				<aon:outputLabel for="CuotaRetencionAlava_hastaImporte"
+
+					<aon:outputLabel for="CuotaRetencionAlava_hastaImporte"
 						value="#{appBundle.aon_payroll_auxiliares_irpf_foral__minor_01_hastaimporte2}" />
-					<aon:inputText id="CuotaRetencionAlava_hastaImporte" size="30" maxlength="30"
+					<aon:inputText id="CuotaRetencionAlava_hastaImporte" size="30"
+						maxlength="30"
 						valueChangeListener="#{cuotaRetencionAlava.addExpression}" />
-						
-						
-		<!--  		
+
+
+					<!--  		
 				<aon:outputLabel 
 						value="#{appBundle.aon_payroll_auxiliares_irpf_foral__cuota_01_descendientes}" />
 			
@@ -113,11 +115,11 @@
 						valueChangeListener="#{cuotaRetencionAlava.addExpression}" />
 					</aon:panelGrid>		
 					-->
-					
+
 				</ui:define>
 			</ui:decorate>
 
 		</aon:form>
 	</ui:define>
-		
+
 </ui:composition>
