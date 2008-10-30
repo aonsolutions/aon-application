@@ -37,12 +37,9 @@
 					</aon:inputText>
 					
                		<aon:outputLabel value="#{appBundle.aon_payroll_auxiliares_divisa_redondeo}" />
-					<aon:selectOneRadio id="Redondeo" value="#{divisaMaestro.to.redondeo}" >	
-						<f:selectItem itemValue="0" itemLabel="tipo 0"/>	
-						<f:selectItem itemValue="1" itemLabel="tipo 1"/>
-						<f:selectItem itemValue="2" itemLabel="tipo 2"/>
-						<f:selectItem itemValue="3" itemLabel="tipo 3"/>										
-					</aon:selectOneRadio>
+					<aon:selectOneMenu id="Redondeo" value="#{divisaMaestro.to.redondeo}" >	
+						<f:selectItems value="#{divisaMaestro.listaRedondeos}"/>								
+					</aon:selectOneMenu>
 					
 				
 				</aon:panelGrid>

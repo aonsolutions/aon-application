@@ -32,10 +32,12 @@
 					<aon:inputText id="Base_description" size="60" maxlength="50"
 						valueChangeListener="#{baseMaestro.addExpression}" />
 						
-							<aon:outputLabel for="Base_prorateo" value="#{appBundle.aon_payroll_auxiliares_cotizacion__pro}" />
-					<aon:selectOneRadio id="Base_prorateo" value="#{baseMaestro.to.prorateo}" >	
+							<aon:outputLabel for="Base_indpro" value="#{appBundle.aon_payroll_auxiliares_cotizacion__pro}" />
+					<aon:selectOneMenu id="Base_indpro" value="#{baseMaestro.to.indpro}" valueChangeListener="#{baseMaestro.addDirectEqualExpression}" >	
+					   <aon:enumConverter enum="com.code.aon.payroll.enumeration.Prorateo" />	
+					    <f:selectItem value="#{null}" itemLabel="    " />
 						<f:selectItems value="#{baseMaestro.listaProrateos}"/>											
-					</aon:selectOneRadio>
+					</aon:selectOneMenu>
 						
 						
 						

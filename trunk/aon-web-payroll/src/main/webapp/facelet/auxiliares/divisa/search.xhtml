@@ -31,7 +31,13 @@
 					<aon:inputText id="Divisa_description" size="60" maxlength="50"
 						valueChangeListener="#{divisaMaestro.addExpression}" />
 						
-					
+					<aon:outputLabel for="Divisa_redondeo" value="#{appBundle.aon_payroll_auxiliares_cotizacion__pro}" />
+					<aon:selectOneMenu id="Divisa_redondeo" value="#{divisaMaestro.to.redondeo}" valueChangeListener="#{divisaMaestro.addDirectEqualExpression}" >	
+					   <aon:enumConverter enum="com.code.aon.payroll.enumeration.Divisas" />	
+					    <f:selectItem value="#{null}" itemLabel="    " />
+						<f:selectItems value="#{divisaMaestro.listaRedondeos}"/>											
+					</aon:selectOneMenu>
+						
 				</ui:define>
 			</ui:decorate>
 

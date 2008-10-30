@@ -4,20 +4,26 @@ import java.util.Locale;
 import java.util.ResourceBundle;
 
 import com.code.aon.common.enumeration.IResourceable;
+import com.code.aon.common.enumeration.IStringEnum;
 
 
-public enum Divisas implements IResourceable {
+public enum Divisas implements IResourceable, IStringEnum {
 
-	divisa0, 
-	divisa1,
-	divisa2,
-	divisa3;
+	DIVISA0("0"), 
+	DIVISA1("1"),
+	DIVISA2("2"),
+	DIVISA3("3");
 	
 	private static final String BASE_NAME = "com.code.aon.payroll.i18n.messages";
 
 	/** Message key prefix. */
     private static final String MSG_KEY_PREFIX = "aon_enum_divisa_";
-	
+    private String value;
+    
+    Divisas( String value ) {
+    	this.value = value;
+	}
+    
 	/**
 	 * Returns a <code>String</code> with the transalation <code>Locale</code>
 	 * for the locale.
@@ -30,4 +36,10 @@ public enum Divisas implements IResourceable {
         ResourceBundle bundle = ResourceBundle.getBundle(BASE_NAME, locale); 
 		return bundle.getString(MSG_KEY_PREFIX + toString());
     }
+
+	@Override
+	public String getValue() {
+		return value;
+	}
+    
 }
