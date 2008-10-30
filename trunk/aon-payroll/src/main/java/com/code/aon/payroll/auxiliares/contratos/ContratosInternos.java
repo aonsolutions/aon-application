@@ -11,6 +11,9 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
+import org.hibernate.annotations.Parameter;
+import org.hibernate.annotations.Type;
+
 import com.code.aon.common.ITransferObject;
 import com.code.aon.payroll.cotizacion.PorcentajeMaestro;
 import com.code.aon.payroll.enumeration.Desempleado;
@@ -25,7 +28,7 @@ public class ContratosInternos implements ITransferObject {
 	private String cdg;
 	private String description;
 	private PorcentajeMaestro maestro;
-	private String desemple;
+	private Desempleado desemple;
 	private BigDecimal gradomin;
 	private String mujersub;
 	private String incaread;
@@ -61,14 +64,14 @@ public class ContratosInternos implements ITransferObject {
 		this.maestro = maestro;
 	}
 
+	@Type(type="stringEnum",parameters= { @Parameter(name="enumClassname", value="com.code.aon.payroll.enumeration.Desempleado")} )
 	@Column(name="desemple", length=1)
-	public String getDesemple() {
+	public Desempleado getDesemple() {
 		return this.desemple;
 	}
 
-	public void setDesemple(String desemple) {
+	public void setDesemple(Desempleado desemple) {
 		this.desemple = desemple;
-		this.desempleenum = ( this.desemple != null)? Desempleado.valueOf( "D" + this.desemple ): null;
 	}
 
 	@Column(name="mujersub", length=1)
@@ -114,17 +117,6 @@ public class ContratosInternos implements ITransferObject {
 
 	public void setGradomin(BigDecimal gradomin) {
 		this.gradomin = gradomin;
-	}
-
-//TODO Problemas en la creacion del enumerado a partir de un String.
-	private Desempleado desempleenum;
-	@Transient 
-	public Desempleado getDesempleenum() {
-		return desempleenum;
-	}
-	public void setDesempleenum(Desempleado desempleenum) {
-		this.desempleenum = desempleenum;
-		setDesemple( (this.desempleenum != null)? this.desempleenum.name().substring( 1 ) : null );
 	}
 	
 //TODO A la espera de implementar un SelectBooleanCheckboxRenderer.
