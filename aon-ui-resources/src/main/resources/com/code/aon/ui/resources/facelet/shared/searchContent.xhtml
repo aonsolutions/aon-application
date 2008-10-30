@@ -6,8 +6,8 @@
 
 	<ui:include src="/com/code/aon/ui/resources/facelet/shared/searchContentEx.xhtml" >
 		<aon:valueParam name="searchButtonId" default="search" />	
-		<aon:methodParam name="searchActionListener" default="#{controller.onEditSearch}" type="actionListener" />
-		<aon:methodParam name="searchAction" default="#{controller.beanName}_search" resolve="true" />		
+		<aon:methodParam name="searchActionListener" default="#{controller.onSearch}" type="actionListener" />
+		<aon:methodParam name="searchAction" default="#{controller.beanName}_list" resolve="true" />		
 	</ui:include>
 	
 </ui:composition>
