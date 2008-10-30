@@ -10,7 +10,6 @@ public interface WebMailConstants {
 	String NAVIGATION_MESSAGE = "message";
 	String NAVIGATION_MESSAGE_NEW = "messageNew";
 	String NAVIGATION_SEARCH = "messageSearch"; 
-	String NAVIGATION_EMAILS = "emails";
 	String NAVIGATION_SIGNATURE_FORM = "signature_form";
 	String NAVIGATION_MAILACCOUNT_FORM = "mailAccount_form";
 	String NAVIGATION_MAILACCOUNT_LIST = "mailAccount_list";
