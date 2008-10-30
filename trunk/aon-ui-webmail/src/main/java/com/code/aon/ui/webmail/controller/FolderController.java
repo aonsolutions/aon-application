@@ -269,7 +269,7 @@ public class FolderController implements WebMailConstants {
 			if (this.folder.getMessageCount()==0){
 				this.folder.deleteFolder(true);
 				this.folder = null;
-		    	getTreeController().loadTree();
+		    	getTreeController().initTree();
 			}
 		} catch (WebmailException e) {
 			AonUtil.addErrorMessage(e.getMessage());

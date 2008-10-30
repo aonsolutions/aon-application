@@ -123,7 +123,7 @@ public class MailAccountController extends BasicController {
 			AonUtil.addErrorMessage( e.getMessage() );
 		}
     	FoldersTreeBean treeBean = (FoldersTreeBean)AonUtil.getRegisteredBean(WebMailConstants.BEAN_TREE);
-    	treeBean.loadTree();
+    	treeBean.initTree();
 	}
 
 	public boolean isToDefaultAccount(){
