@@ -1,15 +1,18 @@
 package com.code.aon.ui.payroll.controller;
 
 import java.util.Collection;
+import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 
 import javax.faces.context.FacesContext;
+import javax.faces.event.ActionEvent;
 import javax.faces.model.DataModel;
 import javax.faces.model.SelectItem;
 
 import com.code.aon.common.ManagerBeanException;
+import com.code.aon.payroll.dao.IPayrollAlias;
 import com.code.aon.payroll.enumeration.TipoComplemento;
 import com.code.aon.payroll.enumeration.TipoCotizaciones;
 import com.code.aon.payroll.enumeration.Retribuciones;
@@ -45,19 +48,48 @@ public class BasesController extends PayrollBasicController {
 	}
 
 	
+	private Date searchFecini;
+	private Date searchFecfin;
 	
-@Override
-public Collection getCollection() {
-   
-    
-	return super.getCollection();
+	public Date getSearchFecini() {
+		return searchFecini;
+	}
+
+	public void setSearchFecini(Date searchFecini) {
+		this.searchFecini = searchFecini;
+	}
+
+	public Date getSearchFecfin() {
+		return searchFecfin;
+	}
+
+	public void setSearchFecfin(Date searchFecfin) {
+		this.searchFecfin = searchFecfin;
+	}
+
+	//añade la fecha al criteria para realizar busquedas
+	@Override
+	public void onSearch(ActionEvent event) {
+		System.out.println("------------"+searchFecini);
+		System.out.println("------------"+searchFecfin);
+		try {
+			if(searchFecini != null){
+				getCriteria().addEqualExpression(getFieldName(IPayrollAlias.LINBASEC_ID_FECINI), searchFecini);
+			}
+			if(searchFecfin != null){
+				//getCriteria().addEqualExpression(getFieldName(event.getComponent().getId()), searchFecfin);
+				getCriteria().addEqualExpression(getFieldName(IPayrollAlias.LINBASEC_FECFIN), searchFecfin);
+			}
+		} catch (ManagerBeanException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		searchFecini=null;
+		searchFecfin=null;
+		
+		super.onSearch(event);
+	}
 	
-	
-}
-
-
-
-
 
 
 
