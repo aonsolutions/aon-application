@@ -16,7 +16,7 @@
 					columnClasses="aon-finding-title,aon-finding-subtitle,aon-finding-toolbar">				
 				
 					<aon:div styleClass="aon-finding-title-internal">
-						<aon:outputText value="#{appBundle.aon_webmail_mailAccount}"/>: 
+						<aon:outputText value="#{appBundle.aon_webmail_mailAccount}"/> 
 					</aon:div>					
 					
 					<aon:div styleClass="aon-finding-subtitle-internal">
@@ -66,7 +66,7 @@
 				<div style="margin-bottom:1.5em;">
 					<aon:div styleClass="aon-form-group-title">
 						<aon:div styleClass="aon-form-group-title-internal">
-							Datos de la cuenta
+							<aon:outputText value="#{appBundle.aon_webmail_mailAccount_data}"/>
 						</aon:div>
 					</aon:div>
 					<aon:panelGrid id="menuGrid" columns="2" dir="true" style="width:500px;">
@@ -100,7 +100,7 @@
 			<div style="margin-bottom:1.5em;">
 				<aon:div styleClass="aon-form-group-title">
 					<aon:div styleClass="aon-form-group-title-internal">
-						Datos de la cuenta
+						<aon:outputText value="#{appBundle.aon_webmail_mailAccount_incoming_host}"/>
 					</aon:div>
 				</aon:div>
 				<aon:panelGrid columns="2" dir="true" style="width:500px;">
@@ -132,7 +132,7 @@
 		   <div>
 				<aon:div styleClass="aon-form-group-title">
 					<aon:div styleClass="aon-form-group-title-internal">
-						Datos de la cuenta
+						<aon:outputText value="#{appBundle.aon_webmail_mailAccount_outgoing_host}"/>
 					</aon:div>
 				</aon:div>
 				<aon:panelGrid columns="2" dir="true" style="width:500px;">	
