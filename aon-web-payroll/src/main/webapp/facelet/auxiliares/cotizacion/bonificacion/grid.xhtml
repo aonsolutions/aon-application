@@ -15,58 +15,13 @@
 	
 			<aon:div ajaxRendered="true" layout="none">
 	
-				<aon:div styleClass="aon-finding-title-toolbar">
-					<aon:panelGrid columns="3" dir="true"
-						columnClasses="aon-finding-title,aon-finding-subtitle,aon-finding-toolbar">
-	
-						<aon:div styleClass="aon-finding-title-internal">
-							<aon:outputText value="#{appBundle.aon_payroll_auxiliares_cotizacion__tipboni}" />
-						</aon:div>
-	
-						<aon:div styleClass="aon-finding-subtitle-internal">
-							<aon:outputText
-								value="#{appBundle.aon_payroll_crud}" />
-						</aon:div>
-	
-						<aon:div styleClass="aon-finding-toolbar-item-group">
-							<aon:commandButton id="reset" value="#{bundle.aon_reset}"
-								actionListener="#{cotizacionBonificacion.onReset}" rendered="#{!cotizacionBonificacion.new}"
-								styleClass="aon-finding-toolbar-item aon-icon-reset"
-								accesskey="#{bundle.aon_key_new}"/>
-							<aon:commandButton id="search" value="#{bundle.aon_search}"
-								action="cotizacion_bonificacion_search" actionListener="#{cotizacionBonificacion.onEditSearch}"
-								styleClass="aon-finding-toolbar-item aon-icon-search"
-								accesskey="#{bundle.aon_key_search}" />		
-							<aon:commandButton id="save"
-								value="#{bundle.aon_save}" rendered="#{cotizacionBonificacion.to!=null or cotizacionBonificacion.new}"
-								styleClass="aon-finding-toolbar-item aon-icon-accept"
-								actionListener="#{cotizacionBonificacion.onAccept}" 
-								accesskey="#{bundle.aon_key_new}" />
-							<aon:confirmButton id="cancelNew"
-								value="#{bundle.aon_cancel}" rendered="#{cotizacionBonificacion.new}"
-								styleClass="aon-finding-toolbar-item aon-icon-cancel" immediate="true"
-								confirmTitle="#{bundle.aon_confirm_title}" confirmMessage="#{bundle.aon_cancel_confirm}"
-								confirmActionListener="#{cotizacionBonificacion.onCancel}"
-								accesskey="#{bundle.aon_key_cancel}"/>
-							<aon:commandButton id="cancelEdit"
-								value="#{bundle.aon_cancel}" rendered="#{cotizacionBonificacion.to!=null and (!cotizacionBonificacion.new)}"
-								styleClass="aon-finding-toolbar-item aon-icon-cancel" immediate="true"
-								actionListener="#{cotizacionBonificacion.onCancel}"
-								accesskey="#{bundle.aon_key_cancel}"/>
-							<aon:confirmButton id="remove"
-								value="#{bundle.aon_remove}" rendered="#{cotizacionBonificacion.to!=null and !cotizacionBonificacion.new}"
-								styleClass="aon-finding-toolbar-item aon-icon-delete" immediate="true"
-								confirmTitle="#{bundle.aon_confirm_title}" confirmMessage="#{bundle.aon_remove_confirm}"
-								confirmActionListener="#{cotizacionBonificacion.onRemove}"
-								accesskey="#{bundle.aon_key_remove}"/>
-							<ui:include src="/facelet/templates/aon.ui.printbuttons.xhtml">
-								<ui:param name="controller" value="#{cotizacionBonificacion}"/>
-								<ui:param name="reportKey" value="cotizacionBonificacionesList"/>
-							</ui:include>
-						</aon:div>
-					</aon:panelGrid>
-				</aon:div>
-	
+				<ui:include src="/facelet/templates/gridPrintToolbar.xhtml" >
+					<ui:param name="toolbarTitle" value="#{appBundle.aon_payroll_auxiliares_cotizacion__tipboni}" />
+					<ui:param name="controller" value="#{cotizacionBonificacion}" />
+					<ui:param name="reportKey" value="cotizacionBonificacionesList"/>
+					<aon:valueParam name="skipSearchButton" default="false" />
+		      	</ui:include>	
+	 
 				<!-- region-body -->
 	 			<aon:div styleClass="aon-scroll-area">
 					
