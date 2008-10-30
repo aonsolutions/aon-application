@@ -14,18 +14,15 @@
 	<ui:define name="content">
 
 		<aon:form id="porcentajeForm">
-				<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml" >
-				<ui:param name="toolbarTitle" value="#{appBundle.aon_payroll_cotizacion_bases}" />
+			
+			
+			<ui:include src="/facelet/templates/formPrintToolbar.xhtml">
+				<ui:param name="toolbarTitle" value="#{appBundle.aon_payroll_cotizacion_bases}" />				
 				<ui:param name="controller" value="#{baseMaestro}" />
-				
-				<ui:define name="beforeSpinToolbarContent">
-					<ui:include src="/facelet/templates/aon.ui.printbuttons.xhtml">
-						<ui:param name="controller" value="#{baseMaestro}"/>
-						<ui:param name="reportKey" value="BasesList"/>
+					<ui:param name="reportKey" value="BasesList"/>
 						<ui:param name="reportKeyXls" value="BasesList2"/>
-					</ui:include>	
-				</ui:define>
-			</ui:decorate>
+			</ui:include>
+			
 
 			
 

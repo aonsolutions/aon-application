@@ -15,29 +15,14 @@
 
 		<aon:form id="elementoForm">
 						
-			<!-- start toolbar navigation -->
-			<!-- 
-			<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml" >
-				<ui:param name="toolbarTitle" value="#{menuBundle.auxiliares_cotizacion__elemcotizacion}" />
+            <ui:include src="/facelet/templates/formPrintToolbar.xhtml">
+				<ui:param name="toolbarTitle" value="#{menuBundle.auxiliares_cotizacion__elemcotizacion}" />				
 				<ui:param name="controller" value="#{elementoMaestro}" />
-				<aon:methodParam name="saveActionListener" default="#{controller.accept}" type="actionListener" />
-				<aon:methodParam name="saveAction" default="#{controller.beanName}_form" resolve="true" />			
+				<ui:param name="reportKey" value="cotizacionElementosList"/>
+				<ui:param name="reportKeyXls" value="cotizacionElementosXlsList"/>	
 			</ui:include>
-			-->
-			<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml" >
-				<ui:param name="toolbarTitle" value="#{menuBundle.auxiliares_cotizacion__elemcotizacion}" />
-				<ui:param name="controller" value="#{elementoMaestro}" />
-				
-								
-				<ui:define name="beforeSpinToolbarContent">
-					<ui:include src="/facelet/templates/aon.ui.printbuttons.xhtml">
-						<ui:param name="controller" value="#{irpfMaestro}"/>
-						<ui:param name="reportKey" value="cotizacionElementosList"/>
-						<ui:param name="reportKeyXls" value="cotizacionElementosXlsList"/>
-					</ui:include>	
-				</ui:define>				
-			</ui:decorate>				
-			<!-- end toolbar navigation -->
+			
+		
 
 			<aon:div styleClass="aon-scroll-area">
 				<aon:panelGrid id="elementoMaestro" columns="2" dir="true" width="100%" style="margin-bottom=2px;">
