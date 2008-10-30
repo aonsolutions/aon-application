@@ -28,7 +28,7 @@
 					var="to" rows="20" rendered="#{cnaeMaestro.model.rowCount > 0}"
 					columnClasses="aon-editDataTable-textColumn, aon-editDataTable-textColumn, aon-editDataTable-numberColumn">
 
-					<aon:rowSelector action="cotizacion_cnae" actionListener="#{cnaeMaestro.onSelect}" />
+					<aon:rowSelector action="cnaeMaestro_form" actionListener="#{cnaeMaestro.onSelect}" />
 					
 					<aon:column>
 						<f:facet name="header">

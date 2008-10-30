@@ -1600,7 +1600,7 @@
 		</managed-property>
 		<managed-property>
 			<property-name>beanName</property-name>
-			<value>cnae</value>
+			<value>cnaeMaestro</value>
 		</managed-property>
 		<managed-property>
 			<property-name>defaultOrder</property-name>

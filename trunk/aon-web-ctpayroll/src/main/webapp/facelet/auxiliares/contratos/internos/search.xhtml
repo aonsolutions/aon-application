@@ -13,6 +13,7 @@
 			<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/searchToolbar.xhtml" >
 				<ui:param name="toolbarTitle" value="#{menuBundle.auxiliares_contratos__tipocont}" />
 				<ui:param name="controller" value="#{contratosInternos}" />
+				<ui:param name="skipResetButton" value="#{true}" />
 			</ui:include>
 
 			<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/searchContent.xhtml" >

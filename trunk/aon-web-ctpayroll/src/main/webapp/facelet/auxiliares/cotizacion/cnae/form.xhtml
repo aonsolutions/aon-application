@@ -14,18 +14,16 @@
 
 		<aon:form id="cnaeForm">
 			
-			
-			
 			<ui:include src="/facelet/templates/formPrintToolbar.xhtml">
 				<ui:param name="toolbarTitle" value="#{menuBundle.auxiliares_cotizacion__cnae}" />				
 				<ui:param name="controller" value="#{cnaeMaestro}" />
-				<ui:param name="reportKey" value="cnaeCotizacion"/>
+				<ui:param name="reportKey" value="cnaeCotizacionList"/>
 				
 			</ui:include>
 
 		
 			<aon:div styleClass="aon-scroll-area">
-				<aon:panelGrid id="cnaeMaestro"  columns="2" dir="true" width="50%" style="margin-bottom=2px;">
+				<aon:panelGrid id="cnaeMaestro"  columns="2" dir="true" width="100%" style="margin-bottom=2px;">
 						<aon:outputLabel for="CnaeMaestro_cdg" value="#{appBundle.aon_payroll_cdg}" />
 						<aon:inputText id="CnaeMaestro_cdg" value="#{cnaeMaestro.to.cdg}" disabled="#{!cnaeMaestro.new}" 
 							required="true" size="15" maxlength="10" />
@@ -34,6 +32,9 @@
 						<aon:inputText id="CnaeMaestro_ocupacion" value="#{cnaeMaestro.to.ocupacion}" 
 							size="30" maxlength="25" >
 						</aon:inputText>
+						
+						<aon:outputLabel value="" />
+						<ui:include src="ocupacion/grid.xhtml" />
 						
 						<aon:outputLabel for="CnaeMaestro_description" value="#{appBundle.aon_payroll_description}" />
 						<aon:inputText id="CnaeMaestro_description" value="#{cnaeMaestro.to.description}" 
@@ -44,9 +45,7 @@
 				</aon:panelGrid>
 				
 				<aon:panelGrid id="cnaeMaestroOcupaciones"  columns="1" width="50%">
-					<aon:outputLabel value="#{appBundle.aon_payroll_cotizacion_ocupacion}" />
 					
-					<ui:include src="ocupacion/grid.xhtml" />
 					
 				</aon:panelGrid>
 	
