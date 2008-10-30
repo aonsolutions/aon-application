@@ -1,9 +1,12 @@
 package com.code.aon.ui.webmail.tree;
 
 import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.faces.FacesException;
 
+import org.apache.commons.lang.ObjectUtils;
 import org.richfaces.component.UITree;
 import org.richfaces.event.NodeSelectedEvent;
 import org.richfaces.model.TreeNode;
@@ -19,6 +22,8 @@ import com.code.aon.ui.webmail.exception.WebmailException;
 
 public class FoldersTreeBean implements WebMailConstants {
 
+	private static final Logger LOGGER = Logger.getLogger(FoldersTreeBean.class.getName());
+	
 	private String account = null;
 	
 	private TreeNode rootNode = null;
@@ -43,6 +48,12 @@ public class FoldersTreeBean implements WebMailConstants {
 		}
 	}
 
+	public void initTree() {
+		loadTree();
+		setCurrent( (AonFolder) rootNode.getChild(1).getData() );
+		getFolderController().nodeSelected( getCurrent() );
+	}
+	
 	public void loadTree() {
 		WebMailController webMailController = (WebMailController) AonUtil
 				.getRegisteredBean(WebMailConstants.BEAN_WEBMAIL);
@@ -58,7 +69,8 @@ public class FoldersTreeBean implements WebMailConstants {
 		if (rootNode == null) {
 			try{
 				loadTree();
-			}catch (Exception e) {
+			} catch (Exception e) {
+				LOGGER.log(Level.SEVERE, "Error loading folder tree", e);
 			}
 		}
 		return rootNode;
@@ -90,6 +102,10 @@ public class FoldersTreeBean implements WebMailConstants {
 
 	public AonFolder getCurrent() {
 		return current;
+	}
+	
+	public void setCurrent(AonFolder current) {
+		this.current = current;
 	}
 
 	public void moveMessagesToFolder(NodeSelectedEvent event) {
@@ -124,5 +140,15 @@ public class FoldersTreeBean implements WebMailConstants {
 	public void setFolderController(FolderController folderController) {
 		this.folderController = folderController;
 	}
+	
+	public Boolean adviseNodeSelected(UITree tree) {
+		boolean selected = false;
+		if ( tree.isRowAvailable() ) {
+			AonFolder folder = (AonFolder) tree.getRowData();
+			selected = ObjectUtils.equals(folder, getCurrent());
+		}
+		return selected;
+	}
+	
 
 }
