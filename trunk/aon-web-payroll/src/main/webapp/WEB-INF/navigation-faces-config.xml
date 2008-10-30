@@ -382,13 +382,13 @@
 	
 	<navigation-rule>
 		<navigation-case>
-			<from-outcome>cotizacion_bonificacion</from-outcome>
+			<from-outcome>cotizacionBonificacion_form</from-outcome>
 			<to-view-id>/facelet/auxiliares/cotizacion/bonificacion/grid.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>
 	<navigation-rule>
 		<navigation-case>
-			<from-outcome>cotizacion_bonificacion_search</from-outcome>
+			<from-outcome>cotizacionBonificacion_search</from-outcome>
 			<to-view-id>/facelet/auxiliares/cotizacion/bonificacion/search.xhtml</to-view-id>
 		</navigation-case>
 	</navigation-rule>
