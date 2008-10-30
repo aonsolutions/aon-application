@@ -530,7 +530,7 @@
 	<!-- ************* Cuote retencion Navarra***************** -->
 	<managed-bean>
 		<managed-bean-name>cuotaRetencionNavarra</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.form.BasicController</managed-bean-class>
+		<managed-bean-class>com.code.aon.ui.payroll.controller.CuotaRetencionNavarraController</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
 			<property-name>queryOnStartUP</property-name>
@@ -567,7 +567,7 @@
 		<!-- ************* Cuote retencion Guipuzcoa***************** -->
 	<managed-bean>
 		<managed-bean-name>cuotaRetencionGuipuzcoa</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.form.BasicController</managed-bean-class>
+		<managed-bean-class>com.code.aon.ui.payroll.controller.CuotaRetencionGuipuzcoaController</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
 			<property-name>queryOnStartUP</property-name>
@@ -604,7 +604,7 @@
 		<!-- ************* Cuote retencion Vizcaya***************** -->
 	<managed-bean>
 		<managed-bean-name>cuotaRetencionVizcaya</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.form.BasicController</managed-bean-class>
+		<managed-bean-class>com.code.aon.ui.payroll.controller.CuotaRetencionVizcayaController</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
 			<property-name>queryOnStartUP</property-name>
@@ -1128,7 +1128,7 @@
 	<!-- ************* IRPF CUOTAS ***************** -->
 	<managed-bean>
 		<managed-bean-name>cuotas</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.payroll.controller.PayrollBasicController</managed-bean-class>
+		<managed-bean-class>com.code.aon.ui.payroll.controller.CuotaRetencionController</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
 			<property-name>queryOnStartUP</property-name>
@@ -1150,7 +1150,7 @@
 <!-- ************* MINORACIONES ALAVA***************** -->
 	<managed-bean>
 		<managed-bean-name>minoracionesAlava</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.payroll.controller.PayrollBasicController</managed-bean-class>
+		<managed-bean-class>com.code.aon.ui.payroll.controller.MinoracionAlavaController</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
 			<property-name>queryOnStartUP</property-name>
@@ -1187,7 +1187,7 @@
 	<!-- ************* MINORACIONES NAVARRA***************** -->
 	<managed-bean>
 		<managed-bean-name>minoracionesNavarra</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.payroll.controller.PayrollBasicController</managed-bean-class>
+		<managed-bean-class>com.code.aon.ui.payroll.controller.MinoracionNavarraController</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
 			<property-name>queryOnStartUP</property-name>
@@ -1224,7 +1224,7 @@
 	<!-- ************* MINORACIONES GUIPUZCOA***************** -->
 	<managed-bean>
 		<managed-bean-name>minoracionesGuipuzcoa</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.payroll.controller.PayrollBasicController</managed-bean-class>
+		<managed-bean-class>com.code.aon.ui.payroll.controller.MinoracionGuipuzcoaController</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
 			<property-name>queryOnStartUP</property-name>
@@ -1261,7 +1261,7 @@
 	<!-- ************* MINORACIONES VIZCAYA***************** -->
 	<managed-bean>
 		<managed-bean-name>minoracionesVizcaya</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.payroll.controller.PayrollBasicController</managed-bean-class>
+		<managed-bean-class>com.code.aon.ui.payroll.controller.MinoracionVizcayaController</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
 			<property-name>queryOnStartUP</property-name>
