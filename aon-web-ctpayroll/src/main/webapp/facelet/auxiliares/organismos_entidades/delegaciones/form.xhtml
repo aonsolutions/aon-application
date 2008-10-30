@@ -13,63 +13,12 @@
 	<ui:define name="content">
 
 		<aon:form id="delegacionForm">
-			<aon:div styleClass="aon-finding-title-toolbar">
-				<aon:panelGrid id="buttonsGrid" columns="3" dir="true"
-					columnClasses="aon-finding-title,aon-finding-subtitle,aon-finding-toolbar">
-
-					<aon:div styleClass="aon-finding-title-internal">
-						<aon:outputText value="#{menuBundle.auxiliares_organismos_entidades__delegacion}" />
-					</aon:div>
-
-					<aon:div styleClass="aon-finding-subtitle-internal">
-						<aon:outputText
-							value="#{delegacion.new?(bundle.aon_reset):(bundle.aon_editing)}" />
-					</aon:div>
-
-					<!-- start toolbar navigation -->
-					<aon:div styleClass="aon-finding-toolbar-item-group">
-						<aon:commandButton id="save" value="#{bundle.aon_save}"
-							action="delegacion_list"
-							actionListener="#{delegacion.onAccept}"
-							styleClass="aon-finding-toolbar-item aon-icon-accept"
-							accesskey="#{bundle.aon_key_save}" />
-						<aon:confirmButton id="cancel" immediate="true"
-							value="#{bundle.aon_cancel}" rendered="#{delegacion.new}"
-							styleClass="aon-finding-toolbar-item aon-icon-cancel"
-							confirmTitle="#{bundle.aon_confirm_title}"
-							confirmActionListener="#{delegacion.onCancel}"
-							confirmMessage="#{bundle.aon_remove_confirm}"
-							confirmAction="delegacion_list"
-							accesskey="#{bundle.aon_key_cancel}" />
-						<aon:confirmButton id="remove" value="#{bundle.aon_remove}"
-							rendered="#{!delegacion.new}"
-							styleClass="aon-finding-toolbar-item aon-icon-delete"
-							immediate="true" confirmTitle="#{bundle.aon_confirm_title}"
-							confirmMessage="#{bundle.aon_remove_confirm}"
-							confirmActionListener="#{delegacion.onRemove}"
-							confirmAction="delegacion_list"
-							accesskey="#{bundle.aon_key_remove}" />
-						<aon:commandButton id="reset" value="#{bundle.aon_reset}"
-							rendered="#{!delegacion.new}"
-							action="delegacion_form" 
-							actionListener="#{delegacion.onReset}"
-							styleClass="aon-finding-toolbar-item aon-icon-reset"
-							accesskey="#{bundle.aon_key_new}" />
-						<aon:commandButton id="search" value="#{bundle.aon_search}"
-							rendered="#{!delegacion.new}"
-							action="delegacion_search" actionListener="#{delegacion.onEditSearch}"
-							styleClass="aon-finding-toolbar-item aon-icon-search"
-							accesskey="#{bundle.aon_key_search}" />				
-	                          <ui:include src="/facelet/templates/aon.ui.printbuttons.xhtml">
-								<ui:param name="controller" value="#{delegacion}"/>
-								<ui:param name="reportKey" value="DelegacionList"/>
-							</ui:include>
-						<aon:spin controller="#{delegacion}" action="delegacion_form" rendered="#{!delegacion.new}" />
-
-					</aon:div>
-					<!-- end tool bar navigation -->
-				</aon:panelGrid>
-			</aon:div>
+			
+			<ui:include src="/facelet/templates/formPrintToolbar.xhtml">
+				<ui:param name="toolbarTitle" value="#{menuBundle.auxiliares_organismos_entidades__delegacion}" />
+				<ui:param name="controller" value="#{delegacion}"/>
+				<ui:param name="reportKey" value="DelegacionList"/>
+			</ui:include>	
 
 			<aon:div id="delegacion" styleClass="aon-scroll-area">
 				<aon:panelGrid columns="2" dir="true" width="100%" style="margin-bottom=2px;">

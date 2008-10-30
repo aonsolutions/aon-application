@@ -86,6 +86,10 @@
 			<property-name>pojo</property-name>
 			<value>com.code.aon.payroll.tipos.Autorizacion</value>
 		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>tiposAutorizacion</value>
+		</managed-property>
 	</managed-bean>
 
 	<!-- ************* TIPOS DE EMPRESARIOS ***************** -->
@@ -228,6 +232,10 @@
 		<managed-property>
 			<property-name>pojo</property-name>
 			<value>com.code.aon.payroll.auxiliares.organismosyentidades.Delegacion</value>
+		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>delegacion</value>
 		</managed-property>
 		   <managed-property>
 			<property-name>listenerClasses</property-name>

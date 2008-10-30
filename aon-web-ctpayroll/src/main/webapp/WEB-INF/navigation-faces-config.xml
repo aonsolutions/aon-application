@@ -356,7 +356,7 @@
 	
 	<navigation-rule>
 		<navigation-case>
-			<from-outcome>tipos_autorizacion</from-outcome>
+			<from-outcome>tiposAutorizacion_grid</from-outcome>
 			<to-view-id>
 				/facelet/auxiliares/tipos/autorizacion/grid.xhtml
 			</to-view-id>
@@ -364,7 +364,7 @@
 	</navigation-rule>
 	<navigation-rule>
 		<navigation-case>
-			<from-outcome>tipos_autorizacion_search</from-outcome>
+			<from-outcome>tiposAutorizacion_search</from-outcome>
 			<to-view-id>
 				/facelet/auxiliares/tipos/autorizacion/search.xhtml
 			</to-view-id>
