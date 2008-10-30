@@ -14,58 +14,13 @@
 		<aon:form id="documentoGrid">
 	
 			<aon:div ajaxRendered="true" layout="none">
-	
-				<aon:div styleClass="aon-finding-title-toolbar">
-					<aon:panelGrid columns="3" dir="true"
-						columnClasses="aon-finding-title,aon-finding-subtitle,aon-finding-toolbar">
-	
-						<aon:div styleClass="aon-finding-title-internal">
-							<aon:outputText value="#{menuBundle.auxiliares_tipos__tipdoc}" />
-						</aon:div>
-	
-						<aon:div styleClass="aon-finding-subtitle-internal">
-							<aon:outputText
-								value="#{menuBundle.aon_payroll_crud}" />
-						</aon:div>
-	
-						<aon:div styleClass="aon-finding-toolbar-item-group">
-							<aon:commandButton id="reset" value="#{bundle.aon_reset}"
-								actionListener="#{tiposDocumento.onReset}" rendered="#{!tiposDocumento.new}"
-								styleClass="aon-finding-toolbar-item aon-icon-reset"
-								accesskey="#{bundle.aon_key_new}"/>
-							<aon:commandButton id="search" value="#{bundle.aon_search}"
-								action="tipos_documento_search" actionListener="#{tiposDocumento.onEditSearch}"
-								styleClass="aon-finding-toolbar-item aon-icon-search"
-								accesskey="#{bundle.aon_key_search}" />				
-							<a4j:commandButton id="save"
-								value="#{bundle.aon_save}" rendered="#{tiposDocumento.to!=null or tiposDocumento.new}"
-								styleClass="aon-finding-toolbar-item aon-icon-accept"
-								actionListener="#{tiposDocumento.onAccept}" 
-								accesskey="#{bundle.aon_key_new}" />
-							<aon:confirmButton id="cancelNew"
-								value="#{bundle.aon_cancel}" rendered="#{tiposDocumento.new}"
-								styleClass="aon-finding-toolbar-item aon-icon-cancel" immediate="true"
-								confirmTitle="#{bundle.aon_confirm_title}" confirmMessage="#{bundle.aon_cancel_confirm}"
-								confirmActionListener="#{tiposDocumento.onCancel}"
-								accesskey="#{bundle.aon_key_cancel}"/>
-							<aon:commandButton id="cancelEdit"
-								value="#{bundle.aon_cancel}" rendered="#{tiposDocumento.to!=null and (!tiposDocumento.new)}"
-								styleClass="aon-finding-toolbar-item aon-icon-cancel" immediate="true"
-								actionListener="#{tiposDocumento.onCancel}"
-								accesskey="#{bundle.aon_key_cancel}"/>
-							<aon:confirmButton id="remove"
-								value="#{bundle.aon_remove}" rendered="#{tiposDocumento.to!=null and !tiposDocumento.new}"
-								styleClass="aon-finding-toolbar-item aon-icon-delete" immediate="true"
-								confirmTitle="#{bundle.aon_confirm_title}" confirmMessage="#{bundle.aon_remove_confirm}"
-								confirmActionListener="#{tiposDocumento.onRemove}"
-								accesskey="#{bundle.aon_key_remove}"/>
-							<ui:include src="/facelet/templates/aon.ui.printbuttons.xhtml">
-								<ui:param name="controller" value="#{tiposDocumento}"/>
-								<ui:param name="reportKey" value="tiposDocumentoList"/>
-							</ui:include>
-						</aon:div>
-					</aon:panelGrid>
-				</aon:div>
+				
+				<ui:include src="/facelet/templates/gridPrintToolbar.xhtml">
+					<ui:param name="toolbarTitle" value="#{menuBundle.auxiliares_tipos__tipdoc}" />
+					<ui:param name="controller" value="#{tiposDocumento}"/>
+					<ui:param name="reportKey" value="tiposDocumentoList"/>
+					<aon:valueParam name="skipSearchButton" default="false" />
+				</ui:include>
 	
 				<!-- region-body -->
 	 			<aon:div styleClass="aon-scroll-area">

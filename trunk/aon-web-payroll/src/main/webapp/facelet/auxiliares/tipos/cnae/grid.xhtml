@@ -14,57 +14,12 @@
 	
 			<aon:div ajaxRendered="true" layout="none">
 	
-				<aon:div styleClass="aon-finding-title-toolbar">
-					<aon:panelGrid columns="3" dir="true"
-						columnClasses="aon-finding-title,aon-finding-subtitle,aon-finding-toolbar">
-	
-						<aon:div styleClass="aon-finding-title-internal">
-							<aon:outputText value="#{appBundle.aon_payroll_tipocnae}" />
-						</aon:div>
-	
-						<aon:div styleClass="aon-finding-subtitle-internal">
-							<aon:outputText
-								value="#{menuBundle.aon_payroll_crud}" />
-						</aon:div>
-	
-						<aon:div styleClass="aon-finding-toolbar-item-group">
-							<aon:commandButton id="reset" value="#{bundle.aon_reset}"
-								actionListener="#{tiposCnae.onReset}" rendered="#{!tiposCnae.new}"
-								styleClass="aon-finding-toolbar-item aon-icon-reset"
-								accesskey="#{bundle.aon_key_new}"/>
-							<aon:commandButton id="search" value="#{bundle.aon_search}"
-								action="tipos_cnae_search" actionListener="#{tiposCnae.onEditSearch}"
-								styleClass="aon-finding-toolbar-item aon-icon-search"
-								accesskey="#{bundle.aon_key_search}" />		
-							<aon:commandButton id="save"
-								value="#{bundle.aon_save}" rendered="#{tiposCnae.to!=null or tiposCnae.new}"
-								styleClass="aon-finding-toolbar-item aon-icon-accept"
-								actionListener="#{tiposCnae.onAccept}" 
-								accesskey="#{bundle.aon_key_new}" />
-							<aon:confirmButton id="cancelNew"
-								value="#{bundle.aon_cancel}" rendered="#{tiposCnae.new}"
-								styleClass="aon-finding-toolbar-item aon-icon-cancel" immediate="true"
-								confirmTitle="#{bundle.aon_confirm_title}" confirmMessage="#{bundle.aon_cancel_confirm}"
-								confirmActionListener="#{tiposCnae.onCancel}"
-								accesskey="#{bundle.aon_key_cancel}"/>
-							<aon:commandButton id="cancelEdit"
-								value="#{bundle.aon_cancel}" rendered="#{tiposCnae.to!=null and (!tiposCnae.new)}"
-								styleClass="aon-finding-toolbar-item aon-icon-cancel" immediate="true"
-								actionListener="#{tiposCnae.onCancel}"
-								accesskey="#{bundle.aon_key_cancel}"/>
-							<aon:confirmButton id="remove"
-								value="#{bundle.aon_remove}" rendered="#{tiposCnae.to!=null and !tiposCnae.new}"
-								styleClass="aon-finding-toolbar-item aon-icon-delete" immediate="true"
-								confirmTitle="#{bundle.aon_confirm_title}" confirmMessage="#{bundle.aon_remove_confirm}"
-								confirmActionListener="#{tiposCnae.onRemove}"
-								accesskey="#{bundle.aon_key_remove}"/>
-							<ui:include src="/facelet/templates/aon.ui.printbuttons.xhtml">
-								<ui:param name="controller" value="#{tiposCnae}"/>
-								<ui:param name="reportKey" value="tiposCnaeList"/>
-							</ui:include>
-						</aon:div>
-					</aon:panelGrid>
-				</aon:div>
+				<ui:include src="/facelet/templates/gridPrintToolbar.xhtml">
+					<ui:param name="toolbarTitle" value="#{appBundle.aon_payroll_tipocnae}" />
+					<ui:param name="controller" value="#{tiposCnae}"/>
+					<ui:param name="reportKey" value="tiposCnaeList"/>
+					<aon:valueParam name="skipSearchButton" default="false" />
+				</ui:include>
 	
 				<!-- region-body -->
 	 			<aon:div styleClass="aon-scroll-area">
