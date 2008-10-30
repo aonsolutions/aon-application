@@ -135,6 +135,10 @@
 			<property-name>queryOnStartUP</property-name>
 			<value>true</value>
 		</managed-property>
+	    <managed-property>
+			<property-name>beanName</property-name>
+			<value>cotizacionBonificacion</value>
+		</managed-property>
 		<managed-property>
 			<property-name>pojo</property-name>
 			<value>com.code.aon.payroll.cotizacion.Bonificacion</value>
@@ -181,6 +185,10 @@
 		<managed-property>
 			<property-name>queryOnStartUP</property-name>
 			<value>true</value>
+		</managed-property>
+		  <managed-property>
+			<property-name>beanName</property-name>
+			<value>sistemaRedColectivos</value>
 		</managed-property>
 		<managed-property>
 			<property-name>pojo</property-name>
@@ -456,7 +464,7 @@
 	<!-- ************* Cuote retencion ALAVA***************** -->
 	<managed-bean>
 		<managed-bean-name>cuotaRetencionAlava</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.form.BasicController</managed-bean-class>
+		<managed-bean-class>com.code.aon.ui.payroll.controller.CuotaRetencionAlavaController</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
 			<property-name>queryOnStartUP</property-name>
@@ -1083,6 +1091,10 @@
 			<value>true</value>
 		</managed-property>
 		<managed-property>
+			<property-name>beanName</property-name>
+			<value>cuotas</value>
+		</managed-property>	
+		<managed-property>
 			<property-name>pojo</property-name>
 			<value>com.code.aon.payroll.irpf.Cuota</value>
 		</managed-property>
@@ -1232,6 +1244,10 @@
 		<managed-property>
 			<property-name>queryOnStartUP</property-name>
 			<value>true</value>
+		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>exclusion</value>
 		</managed-property>
 		<managed-property>
 			<property-name>pojo</property-name>
@@ -1521,6 +1537,10 @@
 		<managed-property>
 			<property-name>pojo</property-name>
 			<value>com.code.aon.payroll.cotizacion.CnaeMaestro</value>
+		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>cnae</value>
 		</managed-property>
 		<managed-property>
 			<property-name>defaultOrder</property-name>

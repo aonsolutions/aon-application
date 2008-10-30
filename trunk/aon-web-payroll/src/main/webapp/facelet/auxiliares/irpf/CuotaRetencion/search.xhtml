@@ -10,29 +10,13 @@
 
 		<aon:form id="cuotasSearch">
 
-			<aon:div styleClass="aon-finding-title-toolbar">
-				<aon:panelGrid columns="3" dir="true"
-					columnClasses="aon-finding-title,aon-finding-subtitle,aon-finding-toolbar">
-
-					<aon:div styleClass="aon-finding-title-internal">
-						<aon:outputText value="#{menuBundle.auxiliares_irpf__cuota}" />
-					</aon:div>
-
-					<aon:div styleClass="aon-finding-subtitle-internal">
-						<aon:outputText value="#{menuBundle.aon_toolbar_search}" />
-					</aon:div>
-
-					<aon:div styleClass="aon-finding-toolbar-item-group">
-						<aon:commandButton id="clear" value="#{bundle.aon_clear}"
-							type="reset" ajaxSingle="true"
-							styleClass="aon-finding-toolbar-item aon-icon-rubber" />
-						<aon:commandButton id="back" value="#{bundle.aon_back}"
-							action="irpf_cuotas" actionListener="#{cuotas.onCancel}"
-							styleClass="aon-finding-toolbar-item aon-icon-cancel"
-							immediate="true" accesskey="#{bundle.aon_key_cancel}" />
-					</aon:div>
-				</aon:panelGrid>
-			</aon:div>
+			
+			<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/searchToolbar.xhtml" >
+				<ui:param name="toolbarTitle" value="#{menuBundle.auxiliares_irpf__cuota}" />
+				<ui:param name="controller" value="#{cuotas}" />
+				<ui:param name="skipResetButton" value="true" />
+				<aon:methodParam name="backAction" value="cuotas_form"/>
+		     </ui:include>
 			<!-- end toolbar navigation -->
 
 			<ui:decorate
@@ -40,7 +24,7 @@
 				<ui:define name="searchContent">
 					<aon:methodParam name="searchActionListener"
 						value="#{cuotas.onSearch}" type="actionListener" />
-					<aon:methodParam name="searchAction" value="irpf_cuotas" />
+					<aon:methodParam name="searchAction" value="cuotas_form" />
 
 
 					<aon:outputLabel for="Cuota_id_numTramo"

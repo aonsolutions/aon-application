@@ -190,8 +190,8 @@
 						<aon:actionListener method="#{cnaeMaestro.onSearch}" />
 						<aon:actionListener method="#{cnaeMaestro.onSelectFirst}" />
 					</aon:menuItem>
-					<aon:menuItem value="#{menuBundle.auxiliares_cotizacion__tipboni}" id="cotizacion_bonificacion" 
-						action="cotizacion_bonificacion" />
+					<aon:menuItem value="#{menuBundle.auxiliares_cotizacion__tipboni}" id="cotizacion_Bonificacion" 
+						action="cotizacionBonificacion_form" />
 					<aon:menuItem value="#{menuBundle.auxiliares_cotizacion__epigrafes}" id="epigrafeMaestro"
 						action="epigrafeMaestro_form" > 
 					    <aon:actionListener method="#{epigrafeMaestro.onEditSearch}" />
@@ -273,8 +273,8 @@
 						<aon:actionListener method="#{irpfMaestro.onSearch}" />
 						<aon:actionListener method="#{irpfMaestro.onSelectFirst}" />
 						</aon:menuItem>
-					<aon:menuItem value="#{menuBundle.auxiliares_irpf__cuota}" id="irpf_cuotas" action="irpf_cuotas" />
-					<aon:menuItem value="#{menuBundle.auxiliares_irpf__exclusion}" id="irpf_exclusion" action="irpf_exclusion" />
+					<aon:menuItem value="#{menuBundle.auxiliares_irpf__cuota}" id="irpf_cuotas" action="cuotas_form" />
+					<aon:menuItem value="#{menuBundle.auxiliares_irpf__exclusion}" id="irpf_exclusion" action="exclusion_form" />
 				</aon:menuGroup>
 				<aon:menuGroup value="#{menuBundle.auxiliares_irpf_foral}">
 					<aon:menuItem value="#{menuBundle.auxiliares_irpf_foral__cuota_01}" id="CuotaRetencionAlava" action="CuotaRetencionAlava" />
@@ -287,7 +287,7 @@
 					<aon:menuItem value="#{menuBundle.auxiliares_irpf_foral__minor_31}" id="MinoracionesNavarra" action="MinoracionesNavarra" />
 				</aon:menuGroup>
 				<aon:menuGroup value="#{menuBundle.auxiliares_sistema_red}">
-					<aon:menuItem value="#{menuBundle.auxiliares_sistema_red__colectivos}" id="sistemaRed_colectivos" action="sistemaRed_colectivos" />
+					<aon:menuItem value="#{menuBundle.auxiliares_sistema_red__colectivos}" id="sistemaRed_colectivos" action="sistemaRedColectivos_form" />
 				</aon:menuGroup>
 			</aon:dropDownMenu>			
 

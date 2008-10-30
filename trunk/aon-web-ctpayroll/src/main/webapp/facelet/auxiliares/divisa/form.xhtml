@@ -14,19 +14,15 @@
 	<ui:define name="content">
 
 		<aon:form id="porcentajeForm">
-				<ui:decorate template="/com/code/aon/ui/resources/facelet/toolbar/formToolbar.xhtml" >
-				<ui:param name="toolbarTitle" value="#{appBundle.aon_payroll_auxiliares_divisa}" />
-				<ui:param name="controller" value="#{divisaMaestro}" />
 				
-				<ui:define name="beforeSpinToolbarContent">
-					<ui:include src="/facelet/templates/aon.ui.printbuttons.xhtml">
-						<ui:param name="controller" value="#{divisaMaestro}"/>
-						<ui:param name="reportKey" value="DivisaList"/>
-						<ui:param name="reportKeyXls" value="DivisaList2"/>
-					</ui:include>	
-				</ui:define>
-			</ui:decorate>
-
+			
+           <ui:include src="/facelet/templates/formPrintToolbar.xhtml">
+				<ui:param name="toolbarTitle" value="#{appBundle.aon_payroll_auxiliares_divisa}" />>				
+				<ui:param name="controller" value="#{divisaMaestro}"/>
+			    <ui:param name="reportKey" value="DivisaList"/>
+			    <ui:param name="reportKeyXls" value="DivisaList2"/>	
+			</ui:include>
+					
 
 			<aon:div styleClass="aon-scroll-area">
 				<aon:panelGrid id="divisaMaestro" columns="2" dir="true" width="100%" style="margin-bottom=2px;">

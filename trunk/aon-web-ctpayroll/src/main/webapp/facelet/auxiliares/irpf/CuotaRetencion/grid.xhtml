@@ -12,60 +12,16 @@
 
 		<aon:form id="cuotasGrid">
 	
-			<aon:div ajaxRendered="true" layout="none">
+	<aon:div ajaxRendered="true" layout="none">
 	
-				<aon:div styleClass="aon-finding-title-toolbar">
-					<aon:panelGrid columns="3" dir="true"
-						columnClasses="aon-finding-title,aon-finding-subtitle,aon-finding-toolbar">
 	
-						<aon:div styleClass="aon-finding-title-internal">
-							<aon:outputText value="#{appBundle.aon_payroll_auxiliares_irpf__cuota}" />
-						</aon:div>
-	
-						<aon:div styleClass="aon-finding-subtitle-internal">
-							<aon:outputText
-								value="#{appBundle.aon_payroll_crud}" />
-						</aon:div>
-	
-						<aon:div styleClass="aon-finding-toolbar-item-group">
-							<aon:commandButton id="reset" value="#{bundle.aon_reset}"
-								actionListener="#{cuotas.onReset}" rendered="#{!cuotas.new}"
-								styleClass="aon-finding-toolbar-item aon-icon-reset"
-								accesskey="#{bundle.aon_key_new}"/>
-								<aon:commandButton id="search" value="#{bundle.aon_search}"
-								action="Cuotas_search" actionListener="#{cuotas.onEditSearch}"
-								styleClass="aon-finding-toolbar-item aon-icon-search"
-								accesskey="#{bundle.aon_key_search}" />	
-							<aon:commandButton id="save"
-								value="#{bundle.aon_save}" rendered="#{cuotas.to!=null or cuotas.new}"
-								styleClass="aon-finding-toolbar-item aon-icon-accept"
-								actionListener="#{cuotas.onAccept}" 
-								accesskey="#{bundle.aon_key_new}" />
-							<aon:confirmButton id="cancelNew"
-								value="#{bundle.aon_cancel}" rendered="#{cuotas.new}"
-								styleClass="aon-finding-toolbar-item aon-icon-cancel" immediate="true"
-								confirmTitle="#{bundle.aon_confirm_title}" confirmMessage="#{bundle.aon_cancel_confirm}"
-								confirmActionListener="#{cuotas.onCancel}"
-								accesskey="#{bundle.aon_key_cancel}"/>
-							<aon:commandButton id="cancelEdit"
-								value="#{bundle.aon_cancel}" rendered="#{cuotas.to!=null and (!cuotas.new)}"
-								styleClass="aon-finding-toolbar-item aon-icon-cancel" immediate="true"
-								actionListener="#{cuotas.onCancel}"
-								accesskey="#{bundle.aon_key_cancel}"/>
-							<aon:confirmButton id="remove"
-								value="#{bundle.aon_remove}" rendered="#{cuotas.to!=null and !cuotas.new}"
-								styleClass="aon-finding-toolbar-item aon-icon-delete" immediate="true"
-								confirmTitle="#{bundle.aon_confirm_title}" confirmMessage="#{bundle.aon_remove_confirm}"
-								confirmActionListener="#{cuotas.onRemove}"
-								accesskey="#{bundle.aon_key_remove}"/>
-							<ui:include src="/facelet/templates/aon.ui.printbuttons.xhtml">
-								<ui:param name="controller" value="#{cuotas}"/>
-								<ui:param name="reportKey" value="irpfCuotaList"/>
-							</ui:include>
-						</aon:div>
-					</aon:panelGrid>
-				</aon:div>
-	
+	            <ui:include src="/facelet/templates/gridPrintToolbar.xhtml" >
+					<ui:param name="toolbarTitle" value="#{appBundle.aon_payroll_auxiliares_irpf__cuota}" />
+					<ui:param name="controller" value="#{cuotas}"/>
+			     	<ui:param name="reportKey" value="irpfCuotaList"/>
+					<aon:valueParam name="skipSearchButton" default="false" />
+		      	</ui:include>	
+	 
 				<!-- region-body -->
 	 			<aon:div styleClass="aon-scroll-area">
 					
