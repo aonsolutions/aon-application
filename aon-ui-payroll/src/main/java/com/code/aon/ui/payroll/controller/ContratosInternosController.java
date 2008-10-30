@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Locale;
 
 import javax.faces.context.FacesContext;
+import javax.faces.event.ActionEvent;
 import javax.faces.model.SelectItem;
 
 import com.code.aon.common.BeanManager;
@@ -64,6 +65,70 @@ public class ContratosInternosController extends PayrollBasicController {
 			SelectItem item = new SelectItem( pm.getCdg(), pm.getDescription() );
 			asimilados.add(item);
 		}
+	}
+	
+	
+	private boolean searchMujersub;
+	private boolean searchIncaread;
+	private boolean searchPrimertra;
+	private boolean searchExcsocial;
+	
+	//añade el valor de los checkbox al criteria para realizar busquedas
+	@Override
+	public void onSearch(ActionEvent event) {
+		
+		try {
+			if(searchMujersub)
+				getCriteria().addEqualExpression(getFieldName(IPayrollAlias.CONTRATOS_INTERNOS_MUJERSUB), "S");
+			if(searchIncaread)
+				getCriteria().addEqualExpression(getFieldName(IPayrollAlias.CONTRATOS_INTERNOS_INCAREAD), "S");
+			if(searchPrimertra)
+				getCriteria().addEqualExpression(getFieldName(IPayrollAlias.CONTRATOS_INTERNOS_PRIMERTRA), "S");
+			if(searchExcsocial)
+				getCriteria().addEqualExpression(getFieldName(IPayrollAlias.CONTRATOS_INTERNOS_EXCSOCIAL), "S");	
+		} catch (ManagerBeanException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		searchMujersub=false;
+		searchIncaread=false;
+		searchPrimertra=false;
+		searchExcsocial=false;
+		
+		super.onSearch(event);
+	}
+
+	public boolean getSearchMujersub() {
+		return searchMujersub;
+	}
+
+	public void setSearchMujersub(boolean searchMujersub) {
+		this.searchMujersub = searchMujersub;
+	}
+
+	public boolean getSearchIncaread() {
+		return searchIncaread;
+	}
+
+	public void setSearchIncaread(boolean searchIncaread) {
+		this.searchIncaread = searchIncaread;
+	}
+
+	public boolean getSearchPrimertra() {
+		return searchPrimertra;
+	}
+
+	public void setSearchPrimertra(boolean searchPrimertra) {
+		this.searchPrimertra = searchPrimertra;
+	}
+
+	public boolean getSearchExcsocial() {
+		return searchExcsocial;
+	}
+
+	public void setSearchExcsocial(boolean searchExcsocial) {
+		this.searchExcsocial = searchExcsocial;
 	}
 
 }
