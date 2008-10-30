@@ -313,6 +313,10 @@
 			<value>Pais_cdg</value>
 		</managed-property>
 		<managed-property>
+			<property-name>beanName</property-name>
+			<value>pais</value>
+		</managed-property>
+		<managed-property>
 			<property-name>listenerClasses</property-name>
 			<list-entries>
 				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
@@ -502,6 +506,10 @@
 			<property-name>defaultOrder</property-name>
 			<value>CuotaRetencionAlava_fecfin DESC,CuotaRetencionAlava_id_fecini DESC,CuotaRetencionAlava_desdeImporte </value>
 		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>cuotaRetencionAlava</value>
+		</managed-property>
      <managed-property>
 			<property-name>listenerClasses</property-name>
 			<list-entries>
@@ -536,6 +544,10 @@
 			<property-name>defaultOrder</property-name>
 			<value>CuotaRetencionNavarra_fecfin DESC,CuotaRetencionNavarra_id_fecini DESC,CuotaRetencioNavarra_desdeImporte </value>
 		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>cuotaRetencionNavarra</value>
+		</managed-property>
 	     <managed-property>
 			<property-name>listenerClasses</property-name>
 			<list-entries>
@@ -569,6 +581,10 @@
 			<property-name>defaultOrder</property-name>
 			<value>CuotaRetencionGuipuzcoa_fecfin DESC,CuotaRetencionGuipuzcoa_id_fecini DESC,CuotaRetencionGuipuzcoa_desdeImporte </value>
 		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>cuotaRetencionGuipuzcoa</value>
+		</managed-property>
 	     <managed-property>
 			<property-name>listenerClasses</property-name>
 			<list-entries>
@@ -601,6 +617,10 @@
 			<managed-property>
 			<property-name>defaultOrder</property-name>
 			<value>CuotaRetencionVizcaya_fecfin DESC,CuotaRetencionVizcaya_id_fecini DESC,CuotaRetencioVizcaya_desdeImporte </value>
+		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>cuotaRetencionVizcaya</value>
 		</managed-property>
 	     <managed-property>
 			<property-name>listenerClasses</property-name>
@@ -1144,6 +1164,10 @@
 			<property-name>defaultOrder</property-name>
 			<value>MinoracionesAlava_fecfin DESC,MinoracionesAlava_id_fecini DESC,MinoracionesAlava_desdeImporte </value>
 		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>minoracionesAlava</value>
+		</managed-property>
 	     <managed-property>
 			<property-name>listenerClasses</property-name>
 			<list-entries>
@@ -1176,6 +1200,10 @@
 		<managed-property>
 			<property-name>defaultOrder</property-name>
 			<value>MinoracionesNavarra_fecfin DESC,MinoracionesNavarra_id_fecini DESC,MinoracionesNavarra_desdeImporte </value>
+		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>minoracionesNavarra</value>
 		</managed-property>
 		     <managed-property>
 			<property-name>listenerClasses</property-name>
@@ -1210,6 +1238,10 @@
 			<property-name>defaultOrder</property-name>
 			<value>MinoracionesGuipuzcoa_fecfin DESC,MinoracionesGuipuzcoa_id_fecini DESC,MinoracionesGuipuzcoa_desdeImporte </value>
 		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>minoracionesGuipuzcoa</value>
+		</managed-property>
 		     <managed-property>
 			<property-name>listenerClasses</property-name>
 			<list-entries>
@@ -1242,6 +1274,10 @@
 		<managed-property>
 			<property-name>defaultOrder</property-name>
 			<value>MinoracionesVizcaya_fecfin DESC,MinoracionesVizcaya_id_fecini DESC,MinoracionesVizcaya_desdeImporte </value>
+		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>minoracionesVizcaya</value>
 		</managed-property>
 		     <managed-property>
 			<property-name>listenerClasses</property-name>
