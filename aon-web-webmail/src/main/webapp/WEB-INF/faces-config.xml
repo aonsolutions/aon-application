@@ -26,7 +26,7 @@
 		</managed-property>		
 		<managed-property>
 			<property-name>resourceURIPreffix</property-name>
-			<value>/aonResource/3.0.0</value>
+			<value>/aonResource/3.1.0</value>
 		</managed-property>		
 	</managed-bean>
 
@@ -56,10 +56,6 @@
 				<map-entry>
 					<key>appBundle</key>
 					<value>com.code.aon.ui.webmail.i18n.messages</value>
-				</map-entry>
-				<map-entry>
-					<key>menuBundle</key>
-					<value>com.code.aon.ui.webmail.i18n.menu</value>
 				</map-entry>
 				<map-entry>
 					<key>securityBundle</key>

@@ -82,8 +82,7 @@ public class WebMailController implements WebMailConstants {
 	public void initFull(MailAccount mailAccount) {
 		initBasic(mailAccount);
     	FoldersTreeBean treeBean = (FoldersTreeBean)AonUtil.getRegisteredBean(BEAN_TREE);
-    	treeBean.loadTree();
-    	getFolderController().nodeSelected(getServer().getAonFolder(AonFolder.INBOX_FOLDER_NAME));
+    	treeBean.initTree();
 	}
 
     private MailAccount getAccount(AuthPrincipal mailUser) throws ManagerBeanException {
