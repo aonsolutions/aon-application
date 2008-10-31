@@ -14,9 +14,10 @@ import com.code.aon.ui.form.IController;
 import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
+import com.code.aon.ui.payroll.controller.IPayrollConstants;
 import com.code.aon.ui.util.AonUtil;
 
-public class PaisControllerListener extends ControllerAdapter {
+public class PaisControllerListener extends ControllerAdapter implements IPayrollConstants {
 
 	@Override
 		public void afterBeanSelected(ControllerEvent event)
@@ -44,7 +45,7 @@ public class PaisControllerListener extends ControllerAdapter {
 	@Override
 	public void afterBeanCanceled(ControllerEvent event)
 			throws ControllerListenerException {
-		IController comunidad = AonUtil.getController("comunidad");
+		IController comunidad = AonUtil.getController(COMUNIDAD_CONTROLLER_NAME);
 		IController provincia= AonUtil.getController("provincia");
 		try {
 			IManagerBean comunidadBean = BeanManager.getManagerBean( Comunidad.class );
