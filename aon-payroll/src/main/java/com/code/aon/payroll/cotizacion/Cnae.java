@@ -29,7 +29,7 @@ public class Cnae  implements ITransferObject {
      private BigDecimal pctit;
      private BigDecimal pctims;
      private BigDecimal pcttotal;
-     private CnaeMaestro maestro;
+     private CnaeMaestro cnaeMaestro;
 
     @EmbeddedId    
     @AttributeOverrides( {
@@ -83,11 +83,11 @@ public class Cnae  implements ITransferObject {
 	@ManyToOne(fetch=FetchType.LAZY)
     @JoinColumn(name="cdg", insertable=false, updatable=false)
     public CnaeMaestro getCnaeMaestro() {
-        return this.maestro;
+        return this.cnaeMaestro;
     }
     
     public void setCnaeMaestro(CnaeMaestro maestro) {
-        this.maestro = maestro;
+        this.cnaeMaestro = maestro;
     }
 
 

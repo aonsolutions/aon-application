@@ -29,7 +29,7 @@ public class Ocupacion  implements ITransferObject {
      private BigDecimal pctit;
      private BigDecimal pctims;
      private BigDecimal pcttotal;
-     private OcupacionMaestro maestro;
+     private OcupacionMaestro ocupacionMaestro;
 
     @EmbeddedId    
     @AttributeOverrides( {
@@ -99,11 +99,11 @@ public class Ocupacion  implements ITransferObject {
 	@ManyToOne(fetch=FetchType.LAZY)
     @JoinColumn(name="cdg", insertable=false, updatable=false)
     public OcupacionMaestro getOcupacionMaestro() {
-        return this.maestro;
+        return this.ocupacionMaestro;
     }
     
     public void setOcupacionMaestro(OcupacionMaestro maestro) {
-        this.maestro = maestro;
+        this.ocupacionMaestro = maestro;
     }
     
 }

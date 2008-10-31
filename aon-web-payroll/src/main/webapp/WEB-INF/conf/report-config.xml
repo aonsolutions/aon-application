@@ -480,4 +480,38 @@
 			<param id="companyName" value="#{payrollController.getCompanyName}" />
 		</params>
 	</report>
+		
+     <report id="OcupacionList" description="Listado de ocupaciones">
+		<template path="/com/code/aon/ui/payroll/report/OcupacionesList.jasper" />
+		<bean key="com.code.aon.payroll.cotizacion.Ocupacion" />
+		<criteria provider="#{ocupacion}" />
+		<params>
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.payroll.i18n.messages" />
+			<param id="logoImageFile" value="#{payrollController.getLogo}" />
+			<param id="companyName" value="#{payrollController.getCompanyName}" />
+		</params>
+	</report>
+	
+	 <report id="OcupacionListXLS" description="Listado de ocupaciones">
+		<template path="/com/code/aon/ui/payroll/report/OcupacionesListXLS.jasper" />
+		<bean key="com.code.aon.payroll.cotizacion.Ocupacion" />
+		<criteria provider="#{ocupacion}" />
+		<params>
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.payroll.i18n.messages" />
+			<param id="logoImageFile" value="#{payrollController.getLogo}" />
+			<param id="companyName" value="#{payrollController.getCompanyName}" />
+		</params>
+	</report>
+	
+	 <report id="CnaeList" description="Listado de Cnae">
+		<template path="/com/code/aon/ui/payroll/report/CnaeList.jasper" />
+		<bean key="com.code.aon.payroll.cotizacion.Cnae" />
+		<criteria provider="#{cnae}" />
+		<params>
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.payroll.i18n.messages" />
+			<param id="logoImageFile" value="#{payrollController.getLogo}" />
+			<param id="companyName" value="#{payrollController.getCompanyName}" />
+		</params>
+	</report>
+	
 </report-config>
