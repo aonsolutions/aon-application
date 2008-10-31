@@ -1,7 +1,6 @@
 package com.code.aon.ui.payroll.controller;
 
 import javax.faces.event.ActionEvent;
-
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.payroll.dao.IPayrollAlias;
 
