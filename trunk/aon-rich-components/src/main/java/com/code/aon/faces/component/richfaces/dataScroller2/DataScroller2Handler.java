@@ -77,13 +77,13 @@ public class DataScroller2Handler extends TagHandler {
 		return rows;
 	}
 	
-	private String getScrollerModelId() {
-		String id = forTag.getValue() + "Model";
+	private String getScrollerModelId( FaceletContext ctx ) {
+		String id = forTag.getValue(ctx) + "Model";
 		return id;
 	}
 	
-	private String getScrollerDataExpression() {
-		return "view.attributes['" + getScrollerModelId() +  "']";
+	private String getScrollerDataExpression( FaceletContext ctx ) {
+		return "view.attributes['" + getScrollerModelId(ctx) +  "']";
 	}
 	
 	private DataModel getDataModel( FaceletContext ctx, UIData table ) {
@@ -97,7 +97,7 @@ public class DataScroller2Handler extends TagHandler {
 	
 	private ScrollerDataModel getScrollerDataModel( FaceletContext ctx, UIData table ) {
 		UIViewRoot root = ComponentSupport.getViewRoot(ctx, table);
-		String scrollerId = getScrollerModelId();
+		String scrollerId = getScrollerModelId(ctx);
 		DataModel model = getDataModel(ctx, table);		
 		ScrollerDataModel scrollerModel = (ScrollerDataModel) root.getAttributes().get(scrollerId);
 		if ( scrollerModel == null ) {
@@ -111,7 +111,7 @@ public class DataScroller2Handler extends TagHandler {
 	}
 	
 	private ValueExpression getScrollerModelExpression( FaceletContext ctx ) {
-		String expression = "#{" + getScrollerDataExpression()+  "}";
+		String expression = "#{" + getScrollerDataExpression(ctx)+  "}";
 		return ctx.getExpressionFactory().createValueExpression( ctx, expression, Object.class);
 	}
 	
@@ -135,7 +135,7 @@ public class DataScroller2Handler extends TagHandler {
 	
 	private void updateDataTableFirst( FaceletContext ctx, UIComponent table ) {
 		if ( table != null ) {
-			String expression = "#{" + getScrollerDataExpression()+  ".first}";
+			String expression = "#{" + getScrollerDataExpression(ctx)+  ".first}";
 			UIComponentTagUtils.setStringProperty( ctx.getFacesContext(), table, FIRST, expression );
 		}		
 	}
