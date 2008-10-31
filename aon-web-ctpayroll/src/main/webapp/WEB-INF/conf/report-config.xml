@@ -514,4 +514,15 @@
 		</params>
 	</report>
 	
+	 <report id="CnaeListXls" description="Listado de Cnae">
+		<template path="/com/code/aon/ui/payroll/report/CnaeListXls.jasper" />
+		<bean key="com.code.aon.payroll.cotizacion.Cnae" />
+		<criteria provider="#{cnae}" />
+		<params>
+			<param id="REPORT_RESOURCE_BUNDLE" value="com.code.aon.ui.payroll.i18n.messages" />
+			<param id="logoImageFile" value="#{payrollController.getLogo}" />
+			<param id="companyName" value="#{payrollController.getCompanyName}" />
+		</params>
+	</report>
+	
 </report-config>
