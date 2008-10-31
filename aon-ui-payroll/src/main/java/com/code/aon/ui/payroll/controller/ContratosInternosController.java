@@ -79,13 +79,13 @@ public class ContratosInternosController extends PayrollBasicController {
 		
 		try {
 			if(searchMujersub)
-				getCriteria().addEqualExpression(getFieldName(IPayrollAlias.CONTRATOS_INTERNOS_MUJERSUB), "S");
+				getCriteria().addEqualExpression(getFieldName(IPayrollAlias.CONTRATOS_INTERNOS_MUJERSUB), true);
 			if(searchIncaread)
-				getCriteria().addEqualExpression(getFieldName(IPayrollAlias.CONTRATOS_INTERNOS_INCAREAD), "S");
+				getCriteria().addEqualExpression(getFieldName(IPayrollAlias.CONTRATOS_INTERNOS_INCAREAD), true);
 			if(searchPrimertra)
-				getCriteria().addEqualExpression(getFieldName(IPayrollAlias.CONTRATOS_INTERNOS_PRIMERTRA), "S");
+				getCriteria().addEqualExpression(getFieldName(IPayrollAlias.CONTRATOS_INTERNOS_PRIMERTRA), true);
 			if(searchExcsocial)
-				getCriteria().addEqualExpression(getFieldName(IPayrollAlias.CONTRATOS_INTERNOS_EXCSOCIAL), "S");	
+				getCriteria().addEqualExpression(getFieldName(IPayrollAlias.CONTRATOS_INTERNOS_EXCSOCIAL), true);	
 		} catch (ManagerBeanException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
