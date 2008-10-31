@@ -24,13 +24,34 @@
 				
 					<aon:outputLabel for="Incidencia_cdg"
 						value="#{appBundle.aon_payroll_cdg}" />
-					<aon:inputText id="Incidencia_cdg" size="10" maxlength="10"
+					<aon:inputText id="Incidencia_cdg" size="20" maxlength="20"
 						valueChangeListener="#{tiposIncidencia.addExpression}" />
 
 					<aon:outputLabel for="Incidencia_description"
 						value="#{appBundle.aon_payroll_description}" />
-					<aon:inputText id="Incidencia_description" size="25" maxlength="25"
+					<aon:inputText id="Incidencia_description" size="40" maxlength="40"
 						valueChangeListener="#{tiposIncidencia.addExpression}" />
+						
+					<aon:outputLabel value="" />
+					<aon:panelGroup>
+						<aon:div>
+							<aon:div>
+								<aon:selectBooleanCheckbox id="Incidencia_indresta"
+									value="#{tiposIncidencia.searchIndresta}" />
+								<aon:outputLabel for="Incidencia_indresta"
+									value="#{appBundle.aon_payroll_indresta}" />
+							</aon:div>
+							<aon:div>
+								<aon:selectBooleanCheckbox id="Incidencia_inddto"
+									value="#{tiposIncidencia.searchInddto}" />
+								<aon:outputLabel for="Incidencia_inddto"
+									value="#{appBundle.aon_payroll_inddto}" />
+							</aon:div>
+							
+						</aon:div>
+					</aon:panelGroup>	
+						
+						
 				</ui:define>
 			</ui:decorate>
 
