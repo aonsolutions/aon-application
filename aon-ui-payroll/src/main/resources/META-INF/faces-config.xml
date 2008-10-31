@@ -409,9 +409,17 @@
 			<value>true</value>
 		</managed-property>
 		<managed-property>
+			<property-name>pageLimit</property-name>
+			<value>5</value>
+		</managed-property>		
+		<managed-property>
 			<property-name>pojo</property-name>
 			<value>com.code.aon.payroll.geograficas.Comunidad</value>
 		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>comunidad</value>
+		</managed-property>		
 		<managed-property>
 			<property-name>defaultOrder</property-name>
 			<value>Comunidad_cdg</value>
@@ -440,6 +448,7 @@
 					com.code.aon.ui.form.event.IControllerListener
 				</value-class>
 				<value>#{comunidadListener}</value>
+				<value>#{comunidadControllerListener}</value>
 			</list-entries>
 		</managed-property>
 	</managed-bean>
@@ -463,6 +472,15 @@
 			</map-entries>
 		</managed-property>
 	</managed-bean>
+
+	<managed-bean>
+		<managed-bean-name>comunidadControllerListener</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.payroll.event.ComunidadControllerListener
+		</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+	</managed-bean>
+
 	<!-- ************* Provincia***************** -->
 	<managed-bean>
 		<managed-bean-name>provincia</managed-bean-name>
@@ -482,6 +500,10 @@
 			<property-name>pojo</property-name>
 			<value>com.code.aon.payroll.geograficas.Provincia</value>
 		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>provincia</value>
+		</managed-property>				
 		<managed-property>
 			<property-name>defaultOrder</property-name>
 			<value>Provincia_cdg</value>

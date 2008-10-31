@@ -12,6 +12,11 @@
 			<ui:param name="columnClasses" value="aon-editDataTable-textColumn, aon-editDataTable-textColumn" />
 			<ui:param name="showDataScroller" value="#{(!pais.new) and (pais.to != null)}" />			
 			<ui:param name="skipResetButton" value="#{pais.new or (pais.to == null)}" />
+			<ui:param name="rowSelectorReRender" value="provinciaDataDiv" />
+			<ui:param name="saveButtonReRender" value="provinciaDataDiv" />
+			<ui:param name="cancelButtonReRender" value="provinciaDataDiv" />
+			<ui:param name="removeButtonReRender" value="provinciaDataDiv" />
+			
 			<ui:define name="columns">
 			
 	     	    <aon:column>
