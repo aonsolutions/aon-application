@@ -76,8 +76,8 @@ public class ContratosInternos implements ITransferObject {
 
 	@Type(type="siNoType" )
 	@Column(name="mujersub", length=1)
-	public Boolean isMujersub() {
-		return this.mujersub;
+	public Boolean getMujersub() {
+		return mujersub;
 	}
 
 	public void setMujersub(Boolean mujersub) {
@@ -86,8 +86,8 @@ public class ContratosInternos implements ITransferObject {
 
 	@Type(type="siNoType" )
 	@Column(name="incaread", length=1)
-	public Boolean isIncaread() {
-		return this.incaread;
+	public Boolean getIncaread() {
+		return incaread;
 	}
 
 	public void setIncaread(Boolean incaread) {
@@ -96,8 +96,8 @@ public class ContratosInternos implements ITransferObject {
 
 	@Type(type="siNoType" )
 	@Column(name="primertra", length=1)
-	public Boolean isPrimertra() {
-		return this.primertra;
+	public Boolean getPrimertra() {
+		return primertra;
 	}
 
 	public void setPrimertra(Boolean primertra) {
@@ -106,8 +106,8 @@ public class ContratosInternos implements ITransferObject {
 
 	@Type(type="siNoType" )
 	@Column(name="excsocial", length=1)
-	public Boolean isExcsocial() {
-		return this.excsocial;
+	public Boolean getExcsocial() {
+		return excsocial;
 	}
 
 	public void setExcsocial(Boolean excsocial) {
