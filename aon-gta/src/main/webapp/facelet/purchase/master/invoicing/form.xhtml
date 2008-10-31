@@ -410,7 +410,7 @@
 											valueChangeListener="#{invoicingDetail.itemData}" />
 										<t:inputText size="10" id="Item_product_code-Edit"
 											styleClass="aon-form-input-text" required="true"
-											forceId="#{true}"
+											forceId="#{true}" maxlength="15"
 											value="#{invoicingDetail.to.item.product.code}"
 											onchange="return findItemLookup(event,'#{facesContext.externalContext.request.contextPath}','com.code.aon.product.Item','Item_id-Edit[#{rowIndex}],Item_product_code-Edit[#{rowIndex}],Item_full_name-Edit[#{rowIndex}],Item_purchase_price-Edit[#{rowIndex}]');" />
 										<h:commandButton id="findInvoice_item"
@@ -421,7 +421,7 @@
 											value="" immediate="true" styleClass="aon-form-new-button" />
 										<t:inputText id="Item_full_name-Edit" size="40"
 											forceId="#{true}" required="#{true}"
-											styleClass="aon-form-input-text"
+											styleClass="aon-form-input-text" maxlength="64"
 											value="#{invoicingDetail.to.description}" />
 									</h:panelGroup>
 
@@ -433,7 +433,7 @@
 													valueChangeListener="#{invoicingDetail.itemData}" />
 												<t:inputText size="10" id="Item_product_code-New"
 													styleClass="aon-form-input-text" required="true"
-													forceId="#{true}"
+													forceId="#{true}" maxlength="15"
 													value="#{invoicingDetail.to.item.product.code}"
 													onchange="return findItemLookup(event,'#{facesContext.externalContext.request.contextPath}','com.code.aon.product.Item','Item_id-New,Item_product_code-New,Item_full_name-New,Item_purchase_price-New');" />
 												<h:commandButton id="findInvoice_item_new"
@@ -445,7 +445,7 @@
 													value="" immediate="true" styleClass="aon-form-new-button" />
 												<t:inputText id="Item_full_name-New" size="40"
 													forceId="#{true}" required="#{true}"
-													styleClass="aon-form-input-text"
+													styleClass="aon-form-input-text" maxlength="64"
 													value="#{invoicingDetail.to.description}" />
 											</h:panelGroup>
 										</t:div>

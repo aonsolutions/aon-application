@@ -251,7 +251,7 @@
 											valueChangeListener="#{incomeDetail.itemData}" />
 										<t:inputText size="10" id="Item_product_code-Edit"
 											required="true" forceId="#{true}"
-											styleClass="aon-form-input-text"
+											styleClass="aon-form-input-text" maxlength="15"
 											value="#{incomeDetail.to.item.product.code}"
 											onchange="return findItemLookup(event,'#{facesContext.externalContext.request.contextPath}','com.code.aon.product.Item','Item_id-Edit[#{rowIndex}],Item_product_code-Edit[#{rowIndex}],Item_full_name-Edit[#{rowIndex}]'),Item_purchase_price-Edit[#{rowIndex}];" />
 										<h:commandButton id="findInvoice_item"
@@ -262,7 +262,7 @@
 											value="" immediate="true" styleClass="aon-form-new-button" />
 										<t:inputText id="Item_full_name-Edit"
 											size="40" forceId="#{true}"
-											styleClass="aon-form-input-text"
+											styleClass="aon-form-input-text" maxlength="64"
 											value="#{incomeDetail.to.description}" />
 									</h:panelGroup>
 
@@ -281,7 +281,7 @@
 												<t:inputText size="10" id="Item_product_code-New"
 													required="true" forceId="#{true}"
 													disabled="#{purchaseSales.deliveryRelated}"
-													styleClass="aon-form-input-text"
+													styleClass="aon-form-input-text" maxlength="15"
 													value="#{incomeDetail.to.item.product.code}"
 													onchange="return findItemLookup(event,'#{facesContext.externalContext.request.contextPath}','com.code.aon.product.Item','Item_id-New,Item_product_code-New,Item_full_name-New,Item_purchase_price-New');" />
 												<h:commandButton id="findInvoice_item_new"
@@ -296,7 +296,7 @@
 													styleClass="aon_button aon-form-new-button" />
 												<t:inputText id="Item_full_name-New"
 													size="40" forceId="#{true}"
-													styleClass="aon-form-input-text"
+													styleClass="aon-form-input-text" maxlength="64"
 													value="#{incomeDetail.to.description}" />
 											</h:panelGroup>
 											<f:verbatim rendered="#{!incomeDetail.new}">&#160;</f:verbatim>
