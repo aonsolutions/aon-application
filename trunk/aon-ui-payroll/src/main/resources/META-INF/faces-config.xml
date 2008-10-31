@@ -8,14 +8,18 @@
 	<!-- ************* CONTROLADOR DE GENERAL DE NOMINAS ***************** -->
 	<managed-bean>
 		<managed-bean-name>payrollController</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.payroll.controller.PayrollController</managed-bean-class>
+		<managed-bean-class>
+			com.code.aon.ui.payroll.controller.PayrollController
+		</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 	</managed-bean>
 
 	<!-- ************* TIPOS DE DOCUMENTO ***************** -->
 	<managed-bean>
 		<managed-bean-name>tiposDocumento</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.payroll.controller.PayrollBasicController</managed-bean-class>
+		<managed-bean-class>
+			com.code.aon.ui.payroll.controller.PayrollBasicController
+		</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
 			<property-name>queryOnStartUP</property-name>
@@ -38,7 +42,9 @@
 	<!-- ************* TIPOS DE REGISTRO ***************** -->
 	<managed-bean>
 		<managed-bean-name>tiposRegistro</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.payroll.controller.PayrollBasicController</managed-bean-class>
+		<managed-bean-class>
+			com.code.aon.ui.payroll.controller.PayrollBasicController
+		</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
 			<property-name>queryOnStartUP</property-name>
@@ -61,11 +67,13 @@
 			<value>tiposRegistro</value>
 		</managed-property>
 	</managed-bean>
-	
+
 	<!-- ************* TIPOS DE INCIDENCIA ***************** -->
 	<managed-bean>
 		<managed-bean-name>tiposIncidencia</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.payroll.controller.PayrollBasicController</managed-bean-class>
+		<managed-bean-class>
+			com.code.aon.ui.payroll.controller.PayrollBasicController
+		</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
 			<property-name>queryOnStartUP</property-name>
@@ -80,11 +88,13 @@
 			<value>tiposIncidencia</value>
 		</managed-property>
 	</managed-bean>
-	
+
 	<!-- ************* TIPOS DE AUTORIZACION ***************** -->
 	<managed-bean>
 		<managed-bean-name>tiposAutorizacion</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.payroll.controller.PayrollBasicController</managed-bean-class>
+		<managed-bean-class>
+			com.code.aon.ui.payroll.controller.PayrollBasicController
+		</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
 			<property-name>queryOnStartUP</property-name>
@@ -107,7 +117,9 @@
 	<!-- ************* TIPOS DE EMPRESARIOS ***************** -->
 	<managed-bean>
 		<managed-bean-name>tiposEmpresario</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.payroll.controller.PayrollBasicController</managed-bean-class>
+		<managed-bean-class>
+			com.code.aon.ui.payroll.controller.PayrollBasicController
+		</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
 			<property-name>queryOnStartUP</property-name>
@@ -122,11 +134,13 @@
 			<value>tiposEmpresario</value>
 		</managed-property>
 	</managed-bean>
-	
+
 	<!-- ************* TIPOS DE CNAE ***************** -->
 	<managed-bean>
 		<managed-bean-name>tiposCnae</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.payroll.controller.PayrollBasicController</managed-bean-class>
+		<managed-bean-class>
+			com.code.aon.ui.payroll.controller.PayrollBasicController
+		</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
 			<property-name>queryOnStartUP</property-name>
@@ -145,17 +159,19 @@
 			<value>tiposCnae</value>
 		</managed-property>
 	</managed-bean>
-	
+
 	<!-- ************* COTIZACIONES - BONIFICACION ***************** -->
 	<managed-bean>
 		<managed-bean-name>cotizacionBonificacion</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.payroll.controller.PayrollBasicController</managed-bean-class>
+		<managed-bean-class>
+			com.code.aon.ui.payroll.controller.CotizacionBonificacionController
+		</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
 			<property-name>queryOnStartUP</property-name>
 			<value>true</value>
 		</managed-property>
-	    <managed-property>
+		<managed-property>
 			<property-name>beanName</property-name>
 			<value>cotizacionBonificacion</value>
 		</managed-property>
@@ -163,10 +179,12 @@
 			<property-name>pojo</property-name>
 			<value>com.code.aon.payroll.cotizacion.Bonificacion</value>
 		</managed-property>
-	<managed-property>
+		<managed-property>
 			<property-name>listenerClasses</property-name>
 			<list-entries>
-				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+				<value-class>
+					com.code.aon.ui.form.event.IControllerListener
+				</value-class>
 				<value>#{bonificacionListener}</value>
 			</list-entries>
 		</managed-property>
@@ -174,14 +192,18 @@
 
 	<managed-bean>
 		<managed-bean-name>bonificacionListener</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.payroll.event.BonificacionControllerListener</managed-bean-class>
+		<managed-bean-class>
+			com.code.aon.ui.payroll.event.BonificacionControllerListener
+		</managed-bean-class>
 		<managed-bean-scope>none</managed-bean-scope>
 	</managed-bean>
-	
+
 	<!-- ************* ORGANISMOS DE MNTO. DE ADMINISTRACION DE HACIENDA***************** -->
 	<managed-bean>
 		<managed-bean-name>admon</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.payroll.controller.PayrollBasicController</managed-bean-class>
+		<managed-bean-class>
+			com.code.aon.ui.payroll.controller.PayrollBasicController
+		</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
 			<property-name>queryOnStartUP</property-name>
@@ -196,17 +218,19 @@
 			<value>admon</value>
 		</managed-property>
 	</managed-bean>
-	
+
 	<!-- ************* SISTEMA RED. COLECTIVOS***************** -->
 	<managed-bean>
 		<managed-bean-name>sistemaRedColectivos</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.payroll.controller.PayrollBasicController</managed-bean-class>
+		<managed-bean-class>
+			com.code.aon.ui.payroll.controller.PayrollBasicController
+		</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
 			<property-name>queryOnStartUP</property-name>
 			<value>true</value>
 		</managed-property>
-		  <managed-property>
+		<managed-property>
 			<property-name>beanName</property-name>
 			<value>sistemaRedColectivos</value>
 		</managed-property>
@@ -217,22 +241,30 @@
 		<managed-property>
 			<property-name>listenerClasses</property-name>
 			<list-entries>
-				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+				<value-class>
+					com.code.aon.ui.form.event.IControllerListener
+				</value-class>
 				<value>#{colectivosControllerListener}</value>
 			</list-entries>
 		</managed-property>
 	</managed-bean>
 
 	<managed-bean>
-		<managed-bean-name>colectivosControllerListener</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.payroll.event.ColectivosControllerListener</managed-bean-class>
+		<managed-bean-name>
+			colectivosControllerListener
+		</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.payroll.event.ColectivosControllerListener
+		</managed-bean-class>
 		<managed-bean-scope>none</managed-bean-scope>
 	</managed-bean>
 
 	<!-- ************* TIPOS DE VIA ***************** -->
 	<managed-bean>
 		<managed-bean-name>tiposVia</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.payroll.controller.PayrollBasicController</managed-bean-class>
+		<managed-bean-class>
+			com.code.aon.ui.payroll.controller.PayrollBasicController
+		</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
 			<property-name>queryOnStartUP</property-name>
@@ -251,11 +283,13 @@
 			<value>Tipovia_cdg</value>
 		</managed-property>
 	</managed-bean>
-	
+
 	<!-- ************* DELEGACIONES***************** -->
 	<managed-bean>
 		<managed-bean-name>delegacion</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.payroll.controller.PayrollBasicController</managed-bean-class>
+		<managed-bean-class>
+			com.code.aon.ui.payroll.controller.PayrollBasicController
+		</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
 			<property-name>queryOnStartUP</property-name>
@@ -263,38 +297,46 @@
 		</managed-property>
 		<managed-property>
 			<property-name>pojo</property-name>
-			<value>com.code.aon.payroll.auxiliares.organismosyentidades.Delegacion</value>
+			<value>
+				com.code.aon.payroll.auxiliares.organismosyentidades.Delegacion
+			</value>
 		</managed-property>
 		<managed-property>
 			<property-name>beanName</property-name>
 			<value>delegacion</value>
 		</managed-property>
-		   <managed-property>
+		<managed-property>
 			<property-name>listenerClasses</property-name>
 			<list-entries>
-				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>				
-				<value>#{DelegacionControllerListener}</value>									
-			</list-entries>			
+				<value-class>
+					com.code.aon.ui.form.event.IControllerListener
+				</value-class>
+				<value>#{DelegacionControllerListener}</value>
+			</list-entries>
 		</managed-property>
 		<managed-property>
 			<property-name>defaultOrder</property-name>
 			<value>Delegacion_cdg</value>
 		</managed-property>
-    </managed-bean>
-    
-	    <managed-bean>
-		   <managed-bean-name>DelegacionControllerListener</managed-bean-name>
-	     	<managed-bean-class>
+	</managed-bean>
+
+	<managed-bean>
+		<managed-bean-name>
+			DelegacionControllerListener
+		</managed-bean-name>
+		<managed-bean-class>
 			com.code.aon.ui.payroll.event.DelegacionControllerListener
-		   </managed-bean-class>
-		<managed-bean-scope>none</managed-bean-scope>	
-	    </managed-bean>
-	
+		</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+	</managed-bean>
+
 	<!-- ************* Pais***************** -->
-		
+
 	<managed-bean>
 		<managed-bean-name>pais</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.payroll.controller.PayrollBasicController</managed-bean-class>
+		<managed-bean-class>
+			com.code.aon.ui.payroll.controller.PayrollBasicController
+		</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
 			<property-name>queryOnStartUP</property-name>
@@ -319,7 +361,9 @@
 		<managed-property>
 			<property-name>listenerClasses</property-name>
 			<list-entries>
-				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+				<value-class>
+					com.code.aon.ui.form.event.IControllerListener
+				</value-class>
 				<value>#{paisLinesListener}</value>
 				<value>#{paisControllerListener}</value>
 			</list-entries>
@@ -327,7 +371,9 @@
 	</managed-bean>
 	<managed-bean>
 		<managed-bean-name>paisLinesListener</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.form.listener.LinesControllerListener</managed-bean-class>
+		<managed-bean-class>
+			com.code.aon.ui.form.listener.LinesControllerListener
+		</managed-bean-class>
 		<managed-bean-scope>none</managed-bean-scope>
 		<managed-property>
 			<property-name>childBean</property-name>
@@ -338,23 +384,25 @@
 			<map-entries>
 				<map-entry>
 					<key>Comunidad_pais_cdg</key>
-                    <value>cdg</value>
+					<value>cdg</value>
 				</map-entry>
 			</map-entries>
 		</managed-property>
 	</managed-bean>
-	
+
 	<managed-bean>
 		<managed-bean-name>paisControllerListener</managed-bean-name>
-	     	<managed-bean-class>
+		<managed-bean-class>
 			com.code.aon.ui.payroll.event.PaisControllerListener
-		   </managed-bean-class>
-		<managed-bean-scope>none</managed-bean-scope>	
+		</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
 	</managed-bean>
-		<!-- ************* Comunidad***************** -->
+	<!-- ************* Comunidad***************** -->
 	<managed-bean>
 		<managed-bean-name>comunidad</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.form.LinesController</managed-bean-class>
+		<managed-bean-class>
+			com.code.aon.ui.form.LinesController
+		</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
 			<property-name>queryOnStartUP</property-name>
@@ -388,14 +436,18 @@
 		<managed-property>
 			<property-name>listenerClasses</property-name>
 			<list-entries>
-				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+				<value-class>
+					com.code.aon.ui.form.event.IControllerListener
+				</value-class>
 				<value>#{comunidadListener}</value>
 			</list-entries>
 		</managed-property>
 	</managed-bean>
 	<managed-bean>
 		<managed-bean-name>comunidadListener</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.form.listener.LinesControllerListener</managed-bean-class>
+		<managed-bean-class>
+			com.code.aon.ui.form.listener.LinesControllerListener
+		</managed-bean-class>
 		<managed-bean-scope>none</managed-bean-scope>
 		<managed-property>
 			<property-name>childBean</property-name>
@@ -406,7 +458,7 @@
 			<map-entries>
 				<map-entry>
 					<key>Provincia_comunidad_cdg</key>
-                    <value>cdg</value>
+					<value>cdg</value>
 				</map-entry>
 			</map-entries>
 		</managed-property>
@@ -414,7 +466,9 @@
 	<!-- ************* Provincia***************** -->
 	<managed-bean>
 		<managed-bean-name>provincia</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.form.LinesController</managed-bean-class>
+		<managed-bean-class>
+			com.code.aon.ui.form.LinesController
+		</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
 			<property-name>queryOnStartUP</property-name>
@@ -450,12 +504,14 @@
 			</map-entries>
 		</managed-property>
 	</managed-bean>
-	
-	
+
+
 	<!-- ************* Nacionalidades ***************** -->
 	<managed-bean>
 		<managed-bean-name>nacion</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.form.BasicController</managed-bean-class>
+		<managed-bean-class>
+			com.code.aon.ui.form.BasicController
+		</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
 			<property-name>queryOnStartUP</property-name>
@@ -473,26 +529,30 @@
 			<property-name>beanName</property-name>
 			<value>nacion</value>
 		</managed-property>
-	   <managed-property>
+		<managed-property>
 			<property-name>listenerClasses</property-name>
 			<list-entries>
-				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>				
-				<value>#{NacionListener}</value>									
-			</list-entries>			
+				<value-class>
+					com.code.aon.ui.form.event.IControllerListener
+				</value-class>
+				<value>#{NacionListener}</value>
+			</list-entries>
 		</managed-property>
-    </managed-bean>
-    
-	    <managed-bean>
-		   <managed-bean-name>NacionListener</managed-bean-name>
-	     	<managed-bean-class>
+	</managed-bean>
+
+	<managed-bean>
+		<managed-bean-name>NacionListener</managed-bean-name>
+		<managed-bean-class>
 			com.code.aon.ui.payroll.event.NacionListener
-		   </managed-bean-class>
-		<managed-bean-scope>none</managed-bean-scope>	
-	    </managed-bean>
+		</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+	</managed-bean>
 	<!-- ************* Cuote retencion ALAVA***************** -->
 	<managed-bean>
 		<managed-bean-name>cuotaRetencionAlava</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.payroll.controller.CuotaRetencionAlavaController</managed-bean-class>
+		<managed-bean-class>
+			com.code.aon.ui.payroll.controller.CuotaRetencionAlavaController
+		</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
 			<property-name>queryOnStartUP</property-name>
@@ -500,37 +560,49 @@
 		</managed-property>
 		<managed-property>
 			<property-name>pojo</property-name>
-			<value>com.code.aon.payroll.irpfforal.CuotaRetencionAlava</value>
+			<value>
+				com.code.aon.payroll.irpfforal.CuotaRetencionAlava
+			</value>
 		</managed-property>
 		<managed-property>
 			<property-name>defaultOrder</property-name>
-			<value>CuotaRetencionAlava_fecfin DESC,CuotaRetencionAlava_id_fecini DESC,CuotaRetencionAlava_desdeImporte </value>
+			<value>
+				CuotaRetencionAlava_fecfin
+				DESC,CuotaRetencionAlava_id_fecini
+				DESC,CuotaRetencionAlava_desdeImporte
+			</value>
 		</managed-property>
 		<managed-property>
 			<property-name>beanName</property-name>
 			<value>cuotaRetencionAlava</value>
 		</managed-property>
-     <managed-property>
+		<managed-property>
 			<property-name>listenerClasses</property-name>
 			<list-entries>
-				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>				
-				<value>#{CuotaRetencionAlavaListener}</value>									
-			</list-entries>			
+				<value-class>
+					com.code.aon.ui.form.event.IControllerListener
+				</value-class>
+				<value>#{CuotaRetencionAlavaListener}</value>
+			</list-entries>
 		</managed-property>
-    </managed-bean>
-    
-	    <managed-bean>
-		   <managed-bean-name>CuotaRetencionAlavaListener</managed-bean-name>
-	     	<managed-bean-class>
+	</managed-bean>
+
+	<managed-bean>
+		<managed-bean-name>
+			CuotaRetencionAlavaListener
+		</managed-bean-name>
+		<managed-bean-class>
 			com.code.aon.ui.payroll.event.CuotaRetencionAlavaListener
-		   </managed-bean-class>
-		<managed-bean-scope>none</managed-bean-scope>	
-	    </managed-bean>
-	   
+		</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+	</managed-bean>
+
 	<!-- ************* Cuote retencion Navarra***************** -->
 	<managed-bean>
 		<managed-bean-name>cuotaRetencionNavarra</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.payroll.controller.CuotaRetencionNavarraController</managed-bean-class>
+		<managed-bean-class>
+			com.code.aon.ui.payroll.controller.CuotaRetencionNavarraController
+		</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
 			<property-name>queryOnStartUP</property-name>
@@ -538,36 +610,48 @@
 		</managed-property>
 		<managed-property>
 			<property-name>pojo</property-name>
-			<value>com.code.aon.payroll.irpfforal.CuotaRetencionNavarra</value>
+			<value>
+				com.code.aon.payroll.irpfforal.CuotaRetencionNavarra
+			</value>
 		</managed-property>
-			<managed-property>
+		<managed-property>
 			<property-name>defaultOrder</property-name>
-			<value>CuotaRetencionNavarra_fecfin DESC,CuotaRetencionNavarra_id_fecini DESC,CuotaRetencioNavarra_desdeImporte </value>
+			<value>
+				CuotaRetencionNavarra_fecfin
+				DESC,CuotaRetencionNavarra_id_fecini
+				DESC,CuotaRetencioNavarra_desdeImporte
+			</value>
 		</managed-property>
 		<managed-property>
 			<property-name>beanName</property-name>
 			<value>cuotaRetencionNavarra</value>
 		</managed-property>
-	     <managed-property>
+		<managed-property>
 			<property-name>listenerClasses</property-name>
 			<list-entries>
-				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>				
-				<value>#{CuotaRetencionNavarraListener}</value>									
-			</list-entries>			
+				<value-class>
+					com.code.aon.ui.form.event.IControllerListener
+				</value-class>
+				<value>#{CuotaRetencionNavarraListener}</value>
+			</list-entries>
 		</managed-property>
-    </managed-bean>
-    
-	    <managed-bean>
-		   <managed-bean-name>CuotaRetencionNavarraListener</managed-bean-name>
-	     	<managed-bean-class>
+	</managed-bean>
+
+	<managed-bean>
+		<managed-bean-name>
+			CuotaRetencionNavarraListener
+		</managed-bean-name>
+		<managed-bean-class>
 			com.code.aon.ui.payroll.event.CuotaRetencionNavarraListener
-		   </managed-bean-class>
-		<managed-bean-scope>none</managed-bean-scope>	
-	    </managed-bean>
-		<!-- ************* Cuote retencion Guipuzcoa***************** -->
+		</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+	</managed-bean>
+	<!-- ************* Cuote retencion Guipuzcoa***************** -->
 	<managed-bean>
 		<managed-bean-name>cuotaRetencionGuipuzcoa</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.payroll.controller.CuotaRetencionGuipuzcoaController</managed-bean-class>
+		<managed-bean-class>
+			com.code.aon.ui.payroll.controller.CuotaRetencionGuipuzcoaController
+		</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
 			<property-name>queryOnStartUP</property-name>
@@ -575,36 +659,48 @@
 		</managed-property>
 		<managed-property>
 			<property-name>pojo</property-name>
-			<value>com.code.aon.payroll.irpfforal.CuotaRetencionGuipuzcoa</value>
+			<value>
+				com.code.aon.payroll.irpfforal.CuotaRetencionGuipuzcoa
+			</value>
 		</managed-property>
-			<managed-property>
+		<managed-property>
 			<property-name>defaultOrder</property-name>
-			<value>CuotaRetencionGuipuzcoa_fecfin DESC,CuotaRetencionGuipuzcoa_id_fecini DESC,CuotaRetencionGuipuzcoa_desdeImporte </value>
+			<value>
+				CuotaRetencionGuipuzcoa_fecfin
+				DESC,CuotaRetencionGuipuzcoa_id_fecini
+				DESC,CuotaRetencionGuipuzcoa_desdeImporte
+			</value>
 		</managed-property>
 		<managed-property>
 			<property-name>beanName</property-name>
 			<value>cuotaRetencionGuipuzcoa</value>
 		</managed-property>
-	     <managed-property>
+		<managed-property>
 			<property-name>listenerClasses</property-name>
 			<list-entries>
-				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>				
-				<value>#{CuotaRetencionGuipuzcoaListener}</value>									
-			</list-entries>			
+				<value-class>
+					com.code.aon.ui.form.event.IControllerListener
+				</value-class>
+				<value>#{CuotaRetencionGuipuzcoaListener}</value>
+			</list-entries>
 		</managed-property>
-    </managed-bean>
-    
-	    <managed-bean>
-		   <managed-bean-name>CuotaRetencionGuipuzcoaListener</managed-bean-name>
-	     	<managed-bean-class>
+	</managed-bean>
+
+	<managed-bean>
+		<managed-bean-name>
+			CuotaRetencionGuipuzcoaListener
+		</managed-bean-name>
+		<managed-bean-class>
 			com.code.aon.ui.payroll.event.CuotaRetencionGuipuzcoaListener
-		   </managed-bean-class>
-		<managed-bean-scope>none</managed-bean-scope>	
-	    </managed-bean>
-		<!-- ************* Cuote retencion Vizcaya***************** -->
+		</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+	</managed-bean>
+	<!-- ************* Cuote retencion Vizcaya***************** -->
 	<managed-bean>
 		<managed-bean-name>cuotaRetencionVizcaya</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.payroll.controller.CuotaRetencionVizcayaController</managed-bean-class>
+		<managed-bean-class>
+			com.code.aon.ui.payroll.controller.CuotaRetencionVizcayaController
+		</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
 			<property-name>queryOnStartUP</property-name>
@@ -612,36 +708,48 @@
 		</managed-property>
 		<managed-property>
 			<property-name>pojo</property-name>
-			<value>com.code.aon.payroll.irpfforal.CuotaRetencionVizcaya</value>
+			<value>
+				com.code.aon.payroll.irpfforal.CuotaRetencionVizcaya
+			</value>
 		</managed-property>
-			<managed-property>
+		<managed-property>
 			<property-name>defaultOrder</property-name>
-			<value>CuotaRetencionVizcaya_fecfin DESC,CuotaRetencionVizcaya_id_fecini DESC,CuotaRetencioVizcaya_desdeImporte </value>
+			<value>
+				CuotaRetencionVizcaya_fecfin
+				DESC,CuotaRetencionVizcaya_id_fecini
+				DESC,CuotaRetencioVizcaya_desdeImporte
+			</value>
 		</managed-property>
 		<managed-property>
 			<property-name>beanName</property-name>
 			<value>cuotaRetencionVizcaya</value>
 		</managed-property>
-	     <managed-property>
+		<managed-property>
 			<property-name>listenerClasses</property-name>
 			<list-entries>
-				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>				
-				<value>#{CuotaRetencionVizcayaListener}</value>									
-			</list-entries>			
+				<value-class>
+					com.code.aon.ui.form.event.IControllerListener
+				</value-class>
+				<value>#{CuotaRetencionVizcayaListener}</value>
+			</list-entries>
 		</managed-property>
-    </managed-bean>
-    
-	    <managed-bean>
-		   <managed-bean-name>CuotaRetencionVizcayaListener</managed-bean-name>
-	     	<managed-bean-class>
+	</managed-bean>
+
+	<managed-bean>
+		<managed-bean-name>
+			CuotaRetencionVizcayaListener
+		</managed-bean-name>
+		<managed-bean-class>
 			com.code.aon.ui.payroll.event.CuotaRetencionVizcayaListener
-		   </managed-bean-class>
-		<managed-bean-scope>none</managed-bean-scope>	
-	    </managed-bean>
-	    <!-- ************* EPIGRAFES ***************** -->
+		</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+	</managed-bean>
+	<!-- ************* EPIGRAFES ***************** -->
 	<managed-bean>
 		<managed-bean-name>epigrafeMaestro</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.payroll.controller.EpigrafeMaestroController</managed-bean-class>
+		<managed-bean-class>
+			com.code.aon.ui.payroll.controller.EpigrafeMaestroController
+		</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
 			<property-name>queryOnStartUP</property-name>
@@ -651,14 +759,16 @@
 			<property-name>pojo</property-name>
 			<value>com.code.aon.payroll.cotizacion.Epigrafe</value>
 		</managed-property>
-			<managed-property>
+		<managed-property>
 			<property-name>beanName</property-name>
 			<value>epigrafeMaestro</value>
 		</managed-property>
 		<managed-property>
 			<property-name>listenerClasses</property-name>
 			<list-entries>
-				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+				<value-class>
+					com.code.aon.ui.form.event.IControllerListener
+				</value-class>
 				<value>#{epigrafeMaestroControllerListener}</value>
 				<value>#{epigrafeListener}</value>
 			</list-entries>
@@ -666,14 +776,20 @@
 	</managed-bean>
 
 	<managed-bean>
-		<managed-bean-name>epigrafeMaestroControllerListener</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.payroll.event.EpigrafeMaestroControllerListener</managed-bean-class>
+		<managed-bean-name>
+			epigrafeMaestroControllerListener
+		</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.payroll.event.EpigrafeMaestroControllerListener
+		</managed-bean-class>
 		<managed-bean-scope>none</managed-bean-scope>
 	</managed-bean>
 
 	<managed-bean>
 		<managed-bean-name>epigrafeListener</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.form.listener.LinesControllerListener</managed-bean-class>
+		<managed-bean-class>
+			com.code.aon.ui.form.listener.LinesControllerListener
+		</managed-bean-class>
 		<managed-bean-scope>none</managed-bean-scope>
 		<managed-property>
 			<property-name>childBean</property-name>
@@ -684,7 +800,7 @@
 			<map-entries>
 				<map-entry>
 					<key>Linepigr_epigrafe_cdg</key>
-                    <value>cdg</value>
+					<value>cdg</value>
 				</map-entry>
 			</map-entries>
 		</managed-property>
@@ -692,7 +808,9 @@
 
 	<managed-bean>
 		<managed-bean-name>epigrafe</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.payroll.controller.EpigrafeController</managed-bean-class>
+		<managed-bean-class>
+			com.code.aon.ui.payroll.controller.EpigrafeController
+		</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
 			<property-name>queryOnStartUP</property-name>
@@ -714,7 +832,7 @@
 			<property-name>masterControllerName</property-name>
 			<value>epigrafeMaestro</value>
 		</managed-property>
-			<managed-property>
+		<managed-property>
 			<property-name>defaultOrder</property-name>
 			<value>Linepigr_fecfin DESC</value>
 		</managed-property>
@@ -727,26 +845,34 @@
 				</map-entry>
 			</map-entries>
 		</managed-property>
-			<managed-property>
+		<managed-property>
 			<property-name>listenerClasses</property-name>
 			<list-entries>
-				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+				<value-class>
+					com.code.aon.ui.form.event.IControllerListener
+				</value-class>
 				<value>#{epigrafeControllerListener}</value>
-				
+
 			</list-entries>
 		</managed-property>
-	
+
 	</managed-bean>
 
 	<managed-bean>
-		<managed-bean-name>epigrafeControllerListener</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.payroll.event.EpigrafeControllerListener</managed-bean-class>
+		<managed-bean-name>
+			epigrafeControllerListener
+		</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.payroll.event.EpigrafeControllerListener
+		</managed-bean-class>
 		<managed-bean-scope>none</managed-bean-scope>
 	</managed-bean>
 	<!-- ************* Divisas ***************** -->
 	<managed-bean>
 		<managed-bean-name>divisaMaestro</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.payroll.controller.DivisaMaestroController</managed-bean-class>
+		<managed-bean-class>
+			com.code.aon.ui.payroll.controller.DivisaMaestroController
+		</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
 			<property-name>queryOnStartUP</property-name>
@@ -763,7 +889,9 @@
 		<managed-property>
 			<property-name>listenerClasses</property-name>
 			<list-entries>
-				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+				<value-class>
+					com.code.aon.ui.form.event.IControllerListener
+				</value-class>
 				<value>#{divisaMaestroControllerListener}</value>
 				<value>#{divisaListener}</value>
 			</list-entries>
@@ -771,14 +899,20 @@
 	</managed-bean>
 
 	<managed-bean>
-		<managed-bean-name>divisaMaestroControllerListener</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.payroll.event.DivisaMaestroControllerListener</managed-bean-class>
+		<managed-bean-name>
+			divisaMaestroControllerListener
+		</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.payroll.event.DivisaMaestroControllerListener
+		</managed-bean-class>
 		<managed-bean-scope>none</managed-bean-scope>
 	</managed-bean>
 
 	<managed-bean>
 		<managed-bean-name>divisaListener</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.form.listener.LinesControllerListener</managed-bean-class>
+		<managed-bean-class>
+			com.code.aon.ui.form.listener.LinesControllerListener
+		</managed-bean-class>
 		<managed-bean-scope>none</managed-bean-scope>
 		<managed-property>
 			<property-name>childBean</property-name>
@@ -789,16 +923,18 @@
 			<map-entries>
 				<map-entry>
 					<key>LinDivisa_divisa1_cdg</key>
-                    <value>cdg</value>
+					<value>cdg</value>
 				</map-entry>
 			</map-entries>
 		</managed-property>
-	
+
 	</managed-bean>
 
 	<managed-bean>
 		<managed-bean-name>divisa</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.form.LinesController</managed-bean-class>
+		<managed-bean-class>
+			com.code.aon.ui.form.LinesController
+		</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
 			<property-name>queryOnStartUP</property-name>
@@ -820,7 +956,7 @@
 			<property-name>masterControllerName</property-name>
 			<value>divisaMaestro</value>
 		</managed-property>
-		  <managed-property>
+		<managed-property>
 			<property-name>propertyMap</property-name>
 			<map-entries>
 				<map-entry>
@@ -829,10 +965,12 @@
 				</map-entry>
 			</map-entries>
 		</managed-property>
-        	<managed-property>
+		<managed-property>
 			<property-name>listenerClasses</property-name>
 			<list-entries>
-				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+				<value-class>
+					com.code.aon.ui.form.event.IControllerListener
+				</value-class>
 				<value>#{divisaControllerListener}</value>
 			</list-entries>
 		</managed-property>
@@ -841,13 +979,17 @@
 
 	<managed-bean>
 		<managed-bean-name>divisaControllerListener</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.payroll.event.DivisaControllerListener</managed-bean-class>
+		<managed-bean-class>
+			com.code.aon.ui.payroll.event.DivisaControllerListener
+		</managed-bean-class>
 		<managed-bean-scope>none</managed-bean-scope>
 	</managed-bean>
 	<!-- ************* PORCENTAJE DE COTIZACIÓN ***************** -->
 	<managed-bean>
 		<managed-bean-name>porcentajeMaestro</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.payroll.controller.PorcentajeMaestroController</managed-bean-class>
+		<managed-bean-class>
+			com.code.aon.ui.payroll.controller.PorcentajeMaestroController
+		</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
 			<property-name>queryOnStartUP</property-name>
@@ -855,7 +997,9 @@
 		</managed-property>
 		<managed-property>
 			<property-name>pojo</property-name>
-			<value>com.code.aon.payroll.cotizacion.PorcentajeMaestro</value>
+			<value>
+				com.code.aon.payroll.cotizacion.PorcentajeMaestro
+			</value>
 		</managed-property>
 		<managed-property>
 			<property-name>beanName</property-name>
@@ -868,7 +1012,9 @@
 		<managed-property>
 			<property-name>listenerClasses</property-name>
 			<list-entries>
-				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+				<value-class>
+					com.code.aon.ui.form.event.IControllerListener
+				</value-class>
 				<value>#{porcentajeMaestroControllerListener}</value>
 				<value>#{porcentajeListener}</value>
 			</list-entries>
@@ -876,14 +1022,20 @@
 	</managed-bean>
 
 	<managed-bean>
-		<managed-bean-name>porcentajeMaestroControllerListener</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.payroll.event.PorcentajeMaestroControllerListener</managed-bean-class>
+		<managed-bean-name>
+			porcentajeMaestroControllerListener
+		</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.payroll.event.PorcentajeMaestroControllerListener
+		</managed-bean-class>
 		<managed-bean-scope>none</managed-bean-scope>
 	</managed-bean>
 
 	<managed-bean>
 		<managed-bean-name>porcentajeListener</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.form.listener.LinesControllerListener</managed-bean-class>
+		<managed-bean-class>
+			com.code.aon.ui.form.listener.LinesControllerListener
+		</managed-bean-class>
 		<managed-bean-scope>none</managed-bean-scope>
 		<managed-property>
 			<property-name>childBean</property-name>
@@ -894,7 +1046,7 @@
 			<map-entries>
 				<map-entry>
 					<key>Porcentaje_porcentajeMaestro_cdg</key>
-                    <value>cdg</value>
+					<value>cdg</value>
 				</map-entry>
 			</map-entries>
 		</managed-property>
@@ -902,7 +1054,9 @@
 
 	<managed-bean>
 		<managed-bean-name>porcentaje</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.payroll.controller.PorcentajeController</managed-bean-class>
+		<managed-bean-class>
+			com.code.aon.ui.payroll.controller.PorcentajeController
+		</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
 			<property-name>queryOnStartUP</property-name>
@@ -940,23 +1094,31 @@
 		<managed-property>
 			<property-name>listenerClasses</property-name>
 			<list-entries>
-				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+				<value-class>
+					com.code.aon.ui.form.event.IControllerListener
+				</value-class>
 				<value>#{porcentajeControllerListener}</value>
 			</list-entries>
 		</managed-property>
-	
+
 	</managed-bean>
 
 	<managed-bean>
-		<managed-bean-name>porcentajeControllerListener</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.payroll.event.PorcentajeControllerListener</managed-bean-class>
+		<managed-bean-name>
+			porcentajeControllerListener
+		</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.payroll.event.PorcentajeControllerListener
+		</managed-bean-class>
 		<managed-bean-scope>none</managed-bean-scope>
 	</managed-bean>
-	
-<!-- ************* BASE DE COTIZACIÓN ***************** -->
+
+	<!-- ************* BASE DE COTIZACIÓN ***************** -->
 	<managed-bean>
 		<managed-bean-name>baseMaestro</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.payroll.controller.BasesController</managed-bean-class>
+		<managed-bean-class>
+			com.code.aon.ui.payroll.controller.BasesController
+		</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
 			<property-name>queryOnStartUP</property-name>
@@ -973,36 +1135,42 @@
 		<managed-property>
 			<property-name>listenerClasses</property-name>
 			<list-entries>
-				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+				<value-class>
+					com.code.aon.ui.form.event.IControllerListener
+				</value-class>
 				<value>#{baseListener}</value>
 			</list-entries>
 		</managed-property>
 	</managed-bean>
-	
+
 
 
 	<managed-bean>
 		<managed-bean-name>baseListener</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.form.listener.LinesControllerListener</managed-bean-class>
+		<managed-bean-class>
+			com.code.aon.ui.form.listener.LinesControllerListener
+		</managed-bean-class>
 		<managed-bean-scope>none</managed-bean-scope>
 		<managed-property>
 			<property-name>childBean</property-name>
 			<value>linbase</value>
 		</managed-property>
-	  	<managed-property>
+		<managed-property>
 			<property-name>aliasMap</property-name>
 			<map-entries>
 				<map-entry>
 					<key>Linbasec_id_cdg</key>
-                    <value>cdg</value>
+					<value>cdg</value>
 				</map-entry>
 			</map-entries>
 		</managed-property>
 	</managed-bean>
-	
-		<managed-bean>
+
+	<managed-bean>
 		<managed-bean-name>linbase</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.form.LinesController</managed-bean-class>
+		<managed-bean-class>
+			com.code.aon.ui.form.LinesController
+		</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
 			<property-name>queryOnStartUP</property-name>
@@ -1024,12 +1192,12 @@
 			<property-name>masterControllerName</property-name>
 			<value>baseMaestro</value>
 		</managed-property>
-		
-			<managed-property>
+
+		<managed-property>
 			<property-name>defaultOrder</property-name>
 			<value>Linbasec_fecfin DESC</value>
 		</managed-property>
-		
+
 		<managed-property>
 			<property-name>propertyMap</property-name>
 			<map-entries>
@@ -1039,25 +1207,31 @@
 				</map-entry>
 			</map-entries>
 		</managed-property>
-	    <managed-property>
+		<managed-property>
 			<property-name>listenerClasses</property-name>
 			<list-entries>
-				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+				<value-class>
+					com.code.aon.ui.form.event.IControllerListener
+				</value-class>
 				<value>#{basesControllerListener}</value>
 			</list-entries>
-		 </managed-property>
-	    </managed-bean>
+		</managed-property>
+	</managed-bean>
 
 	<managed-bean>
 		<managed-bean-name>basesControllerListener</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.payroll.event.BasesControllerListener</managed-bean-class>
+		<managed-bean-class>
+			com.code.aon.ui.payroll.event.BasesControllerListener
+		</managed-bean-class>
 		<managed-bean-scope>none</managed-bean-scope>
 	</managed-bean>
-	
+
 	<!-- ************* CONTRATOS ***************** -->
 	<managed-bean>
 		<managed-bean-name>contratosInternos</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.payroll.controller.ContratosInternosController</managed-bean-class>
+		<managed-bean-class>
+			com.code.aon.ui.payroll.controller.ContratosInternosController
+		</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
 			<property-name>queryOnStartUP</property-name>
@@ -1065,12 +1239,14 @@
 		</managed-property>
 		<managed-property>
 			<property-name>pojo</property-name>
-			<value>com.code.aon.payroll.auxiliares.contratos.ContratosInternos</value>
+			<value>
+				com.code.aon.payroll.auxiliares.contratos.ContratosInternos
+			</value>
 		</managed-property>
 		<managed-property>
 			<property-name>beanName</property-name>
 			<value>contratosInternos</value>
-		</managed-property>	
+		</managed-property>
 		<managed-property>
 			<property-name>defaultOrder</property-name>
 			<value>ContratosInternos_cdg</value>
@@ -1078,21 +1254,29 @@
 		<managed-property>
 			<property-name>listenerClasses</property-name>
 			<list-entries>
-				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+				<value-class>
+					com.code.aon.ui.form.event.IControllerListener
+				</value-class>
 				<value>#{contratosInternosControllerListener}</value>
 			</list-entries>
 		</managed-property>
 	</managed-bean>
 
 	<managed-bean>
-		<managed-bean-name>contratosInternosControllerListener</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.payroll.event.ContratosInternosControllerListener</managed-bean-class>
+		<managed-bean-name>
+			contratosInternosControllerListener
+		</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.payroll.event.ContratosInternosControllerListener
+		</managed-bean-class>
 		<managed-bean-scope>none</managed-bean-scope>
 	</managed-bean>
-	
+
 	<managed-bean>
 		<managed-bean-name>contratosTc2</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.payroll.controller.PayrollBasicController</managed-bean-class>
+		<managed-bean-class>
+			com.code.aon.ui.payroll.controller.PayrollBasicController
+		</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
 			<property-name>queryOnStartUP</property-name>
@@ -1100,12 +1284,14 @@
 		</managed-property>
 		<managed-property>
 			<property-name>pojo</property-name>
-			<value>com.code.aon.payroll.auxiliares.contratos.ContratosTc2</value>
+			<value>
+				com.code.aon.payroll.auxiliares.contratos.ContratosTc2
+			</value>
 		</managed-property>
 		<managed-property>
 			<property-name>beanName</property-name>
 			<value>contratosTc2</value>
-		</managed-property>		
+		</managed-property>
 		<managed-property>
 			<property-name>defaultOrder</property-name>
 			<value>ContratosTc2_cdg</value>
@@ -1113,22 +1299,30 @@
 		<managed-property>
 			<property-name>listenerClasses</property-name>
 			<list-entries>
-				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+				<value-class>
+					com.code.aon.ui.form.event.IControllerListener
+				</value-class>
 				<value>#{contratosTc2ControllerListener}</value>
 			</list-entries>
 		</managed-property>
 	</managed-bean>
 
 	<managed-bean>
-		<managed-bean-name>contratosTc2ControllerListener</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.payroll.event.ContratosTc2ControllerListener</managed-bean-class>
+		<managed-bean-name>
+			contratosTc2ControllerListener
+		</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.payroll.event.ContratosTc2ControllerListener
+		</managed-bean-class>
 		<managed-bean-scope>none</managed-bean-scope>
 	</managed-bean>
-	
+
 	<!-- ************* IRPF CUOTAS ***************** -->
 	<managed-bean>
 		<managed-bean-name>cuotas</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.payroll.controller.CuotaRetencionController</managed-bean-class>
+		<managed-bean-class>
+			com.code.aon.ui.payroll.controller.CuotaRetencionController
+		</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
 			<property-name>queryOnStartUP</property-name>
@@ -1137,20 +1331,24 @@
 		<managed-property>
 			<property-name>beanName</property-name>
 			<value>cuotas</value>
-		</managed-property>	
+		</managed-property>
 		<managed-property>
 			<property-name>pojo</property-name>
 			<value>com.code.aon.payroll.irpf.Cuota</value>
 		</managed-property>
 		<managed-property>
 			<property-name>defaultOrder</property-name>
-			<value>Cuota_fecfin DESC,Cuota_id_fecini DESC,Cuota_hasta </value>
+			<value>
+				Cuota_fecfin DESC,Cuota_id_fecini DESC,Cuota_hasta
+			</value>
 		</managed-property>
 	</managed-bean>
-<!-- ************* MINORACIONES ALAVA***************** -->
+	<!-- ************* MINORACIONES ALAVA***************** -->
 	<managed-bean>
 		<managed-bean-name>minoracionesAlava</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.payroll.controller.MinoracionAlavaController</managed-bean-class>
+		<managed-bean-class>
+			com.code.aon.ui.payroll.controller.MinoracionAlavaController
+		</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
 			<property-name>queryOnStartUP</property-name>
@@ -1158,36 +1356,46 @@
 		</managed-property>
 		<managed-property>
 			<property-name>pojo</property-name>
-			<value>com.code.aon.payroll.irpfforal.MinoracionesAlava</value>
+			<value>
+				com.code.aon.payroll.irpfforal.MinoracionesAlava
+			</value>
 		</managed-property>
 		<managed-property>
 			<property-name>defaultOrder</property-name>
-			<value>MinoracionesAlava_fecfin DESC,MinoracionesAlava_id_fecini DESC,MinoracionesAlava_desdeImporte </value>
+			<value>
+				MinoracionesAlava_fecfin
+				DESC,MinoracionesAlava_id_fecini
+				DESC,MinoracionesAlava_desdeImporte
+			</value>
 		</managed-property>
 		<managed-property>
 			<property-name>beanName</property-name>
 			<value>minoracionesAlava</value>
 		</managed-property>
-	     <managed-property>
+		<managed-property>
 			<property-name>listenerClasses</property-name>
 			<list-entries>
-				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>				
-				<value>#{MinoracionesAlavaListener}</value>									
-			</list-entries>			
+				<value-class>
+					com.code.aon.ui.form.event.IControllerListener
+				</value-class>
+				<value>#{MinoracionesAlavaListener}</value>
+			</list-entries>
 		</managed-property>
-    </managed-bean>
-    
-	    <managed-bean>
-		   <managed-bean-name>MinoracionesAlavaListener</managed-bean-name>
-	     	<managed-bean-class>
+	</managed-bean>
+
+	<managed-bean>
+		<managed-bean-name>MinoracionesAlavaListener</managed-bean-name>
+		<managed-bean-class>
 			com.code.aon.ui.payroll.event.MinoracionesAlavaListener
-		   </managed-bean-class>
-		<managed-bean-scope>none</managed-bean-scope>	
-	    </managed-bean>
+		</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+	</managed-bean>
 	<!-- ************* MINORACIONES NAVARRA***************** -->
 	<managed-bean>
 		<managed-bean-name>minoracionesNavarra</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.payroll.controller.MinoracionNavarraController</managed-bean-class>
+		<managed-bean-class>
+			com.code.aon.ui.payroll.controller.MinoracionNavarraController
+		</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
 			<property-name>queryOnStartUP</property-name>
@@ -1195,36 +1403,48 @@
 		</managed-property>
 		<managed-property>
 			<property-name>pojo</property-name>
-			<value>com.code.aon.payroll.irpfforal.MinoracionesNavarra</value>
+			<value>
+				com.code.aon.payroll.irpfforal.MinoracionesNavarra
+			</value>
 		</managed-property>
 		<managed-property>
 			<property-name>defaultOrder</property-name>
-			<value>MinoracionesNavarra_fecfin DESC,MinoracionesNavarra_id_fecini DESC,MinoracionesNavarra_desdeImporte </value>
+			<value>
+				MinoracionesNavarra_fecfin
+				DESC,MinoracionesNavarra_id_fecini
+				DESC,MinoracionesNavarra_desdeImporte
+			</value>
 		</managed-property>
 		<managed-property>
 			<property-name>beanName</property-name>
 			<value>minoracionesNavarra</value>
 		</managed-property>
-		     <managed-property>
+		<managed-property>
 			<property-name>listenerClasses</property-name>
 			<list-entries>
-				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>				
-				<value>#{MinoracionesNavarraListener}</value>									
-			</list-entries>			
+				<value-class>
+					com.code.aon.ui.form.event.IControllerListener
+				</value-class>
+				<value>#{MinoracionesNavarraListener}</value>
+			</list-entries>
 		</managed-property>
-    </managed-bean>
-    
-	    <managed-bean>
-		   <managed-bean-name>MinoracionesNavarraListener</managed-bean-name>
-	     	<managed-bean-class>
+	</managed-bean>
+
+	<managed-bean>
+		<managed-bean-name>
+			MinoracionesNavarraListener
+		</managed-bean-name>
+		<managed-bean-class>
 			com.code.aon.ui.payroll.event.MinoracionesNavarraListener
-		   </managed-bean-class>
-		<managed-bean-scope>none</managed-bean-scope>	
-	    </managed-bean>
+		</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+	</managed-bean>
 	<!-- ************* MINORACIONES GUIPUZCOA***************** -->
 	<managed-bean>
 		<managed-bean-name>minoracionesGuipuzcoa</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.payroll.controller.MinoracionGuipuzcoaController</managed-bean-class>
+		<managed-bean-class>
+			com.code.aon.ui.payroll.controller.MinoracionGuipuzcoaController
+		</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
 			<property-name>queryOnStartUP</property-name>
@@ -1232,36 +1452,48 @@
 		</managed-property>
 		<managed-property>
 			<property-name>pojo</property-name>
-			<value>com.code.aon.payroll.irpfforal.MinoracionesGuipuzcoa</value>
+			<value>
+				com.code.aon.payroll.irpfforal.MinoracionesGuipuzcoa
+			</value>
 		</managed-property>
 		<managed-property>
 			<property-name>defaultOrder</property-name>
-			<value>MinoracionesGuipuzcoa_fecfin DESC,MinoracionesGuipuzcoa_id_fecini DESC,MinoracionesGuipuzcoa_desdeImporte </value>
+			<value>
+				MinoracionesGuipuzcoa_fecfin
+				DESC,MinoracionesGuipuzcoa_id_fecini
+				DESC,MinoracionesGuipuzcoa_desdeImporte
+			</value>
 		</managed-property>
 		<managed-property>
 			<property-name>beanName</property-name>
 			<value>minoracionesGuipuzcoa</value>
 		</managed-property>
-		     <managed-property>
+		<managed-property>
 			<property-name>listenerClasses</property-name>
 			<list-entries>
-				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>				
-				<value>#{MinoracionesGuipuzcoaListener}</value>									
-			</list-entries>			
+				<value-class>
+					com.code.aon.ui.form.event.IControllerListener
+				</value-class>
+				<value>#{MinoracionesGuipuzcoaListener}</value>
+			</list-entries>
 		</managed-property>
-    </managed-bean>
-    
-	    <managed-bean>
-		   <managed-bean-name>MinoracionesGuipuzcoaListener</managed-bean-name>
-	     	<managed-bean-class>
+	</managed-bean>
+
+	<managed-bean>
+		<managed-bean-name>
+			MinoracionesGuipuzcoaListener
+		</managed-bean-name>
+		<managed-bean-class>
 			com.code.aon.ui.payroll.event.MinoracionesGuipuzcoaListener
-		   </managed-bean-class>
-		<managed-bean-scope>none</managed-bean-scope>	
-	    </managed-bean>
+		</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+	</managed-bean>
 	<!-- ************* MINORACIONES VIZCAYA***************** -->
 	<managed-bean>
 		<managed-bean-name>minoracionesVizcaya</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.payroll.controller.MinoracionVizcayaController</managed-bean-class>
+		<managed-bean-class>
+			com.code.aon.ui.payroll.controller.MinoracionVizcayaController
+		</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
 			<property-name>queryOnStartUP</property-name>
@@ -1269,37 +1501,49 @@
 		</managed-property>
 		<managed-property>
 			<property-name>pojo</property-name>
-			<value>com.code.aon.payroll.irpfforal.MinoracionesVizcaya</value>
+			<value>
+				com.code.aon.payroll.irpfforal.MinoracionesVizcaya
+			</value>
 		</managed-property>
 		<managed-property>
 			<property-name>defaultOrder</property-name>
-			<value>MinoracionesVizcaya_fecfin DESC,MinoracionesVizcaya_id_fecini DESC,MinoracionesVizcaya_desdeImporte </value>
+			<value>
+				MinoracionesVizcaya_fecfin
+				DESC,MinoracionesVizcaya_id_fecini
+				DESC,MinoracionesVizcaya_desdeImporte
+			</value>
 		</managed-property>
 		<managed-property>
 			<property-name>beanName</property-name>
 			<value>minoracionesVizcaya</value>
 		</managed-property>
-		     <managed-property>
+		<managed-property>
 			<property-name>listenerClasses</property-name>
 			<list-entries>
-				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>				
-				<value>#{MinoracionesVizcayaListener}</value>									
-			</list-entries>			
+				<value-class>
+					com.code.aon.ui.form.event.IControllerListener
+				</value-class>
+				<value>#{MinoracionesVizcayaListener}</value>
+			</list-entries>
 		</managed-property>
-    </managed-bean>
-    
-	    <managed-bean>
-		   <managed-bean-name>MinoracionesVizcayaListener</managed-bean-name>
-	     	<managed-bean-class>
+	</managed-bean>
+
+	<managed-bean>
+		<managed-bean-name>
+			MinoracionesVizcayaListener
+		</managed-bean-name>
+		<managed-bean-class>
 			com.code.aon.ui.payroll.event.MinoracionesVizcayaListener
-		   </managed-bean-class>
-		<managed-bean-scope>none</managed-bean-scope>	
-	    </managed-bean>
-	
+		</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+	</managed-bean>
+
 	<!-- ************* IRPF EXCLUSION ***************** -->
 	<managed-bean>
 		<managed-bean-name>exclusion</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.payroll.controller.ExclusionController</managed-bean-class>
+		<managed-bean-class>
+			com.code.aon.ui.payroll.controller.ExclusionController
+		</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
 			<property-name>queryOnStartUP</property-name>
@@ -1313,30 +1557,39 @@
 			<property-name>pojo</property-name>
 			<value>com.code.aon.payroll.irpf.Exclusion</value>
 		</managed-property>
-			<managed-property>
+		<managed-property>
 			<property-name>defaultOrder</property-name>
-			<value>Exclusion_fecfin DESC,Exclusion_id_fecini DESC,Exclusion_id_situacion,Exclusion_id_hijos </value>
+			<value>
+				Exclusion_fecfin DESC,Exclusion_id_fecini
+				DESC,Exclusion_id_situacion,Exclusion_id_hijos
+			</value>
 		</managed-property>
 		<managed-property>
 			<property-name>listenerClasses</property-name>
 			<list-entries>
-				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>				
-				<value>#{ExclusionControllerListener}</value>									
-			</list-entries>			
+				<value-class>
+					com.code.aon.ui.form.event.IControllerListener
+				</value-class>
+				<value>#{ExclusionControllerListener}</value>
+			</list-entries>
 		</managed-property>
 	</managed-bean>
 	<managed-bean>
-		   <managed-bean-name>ExclusionControllerListener</managed-bean-name>
-	     	<managed-bean-class>
+		<managed-bean-name>
+			ExclusionControllerListener
+		</managed-bean-name>
+		<managed-bean-class>
 			com.code.aon.ui.payroll.event.ExclusionControllerListener
-		   </managed-bean-class>
-		<managed-bean-scope>none</managed-bean-scope>	
-	 </managed-bean>
-	
+		</managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>
+	</managed-bean>
+
 	<!-- ************* CONVENIOS - COMPLEMENTOS ***************** -->
 	<managed-bean>
 		<managed-bean-name>complemento</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.payroll.controller.ConveniosComplementoController</managed-bean-class>
+		<managed-bean-class>
+			com.code.aon.ui.payroll.controller.ConveniosComplementoController
+		</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
 			<property-name>queryOnStartUP</property-name>
@@ -1344,7 +1597,9 @@
 		</managed-property>
 		<managed-property>
 			<property-name>pojo</property-name>
-			<value>com.code.aon.payroll.auxiliares.convenios.Complemento</value>
+			<value>
+				com.code.aon.payroll.auxiliares.convenios.Complemento
+			</value>
 		</managed-property>
 		<managed-property>
 			<property-name>beanName</property-name>
@@ -1357,7 +1612,9 @@
 		<managed-property>
 			<property-name>listenerClasses</property-name>
 			<list-entries>
-				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+				<value-class>
+					com.code.aon.ui.form.event.IControllerListener
+				</value-class>
 				<value>#{complementoListener}</value>
 			</list-entries>
 		</managed-property>
@@ -1365,14 +1622,18 @@
 
 	<managed-bean>
 		<managed-bean-name>complementoListener</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.payroll.event.ConveniosComplementoControllerListener</managed-bean-class>
+		<managed-bean-class>
+			com.code.aon.ui.payroll.event.ConveniosComplementoControllerListener
+		</managed-bean-class>
 		<managed-bean-scope>none</managed-bean-scope>
 	</managed-bean>
-	
+
 	<!-- ************* ELEMENTO DE COTIZACIÓN ***************** -->
 	<managed-bean>
 		<managed-bean-name>elementoMaestro</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.payroll.controller.PayrollBasicController</managed-bean-class>
+		<managed-bean-class>
+			com.code.aon.ui.payroll.controller.PayrollBasicController
+		</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
 			<property-name>queryOnStartUP</property-name>
@@ -1380,7 +1641,9 @@
 		</managed-property>
 		<managed-property>
 			<property-name>pojo</property-name>
-			<value>com.code.aon.payroll.cotizacion.ElementoMaestro</value>
+			<value>
+				com.code.aon.payroll.cotizacion.ElementoMaestro
+			</value>
 		</managed-property>
 		<managed-property>
 			<property-name>beanName</property-name>
@@ -1393,7 +1656,9 @@
 		<managed-property>
 			<property-name>listenerClasses</property-name>
 			<list-entries>
-				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+				<value-class>
+					com.code.aon.ui.form.event.IControllerListener
+				</value-class>
 				<value>#{elementoMaestroControllerListener}</value>
 				<value>#{elementoListener}</value>
 			</list-entries>
@@ -1401,14 +1666,20 @@
 	</managed-bean>
 
 	<managed-bean>
-		<managed-bean-name>elementoMaestroControllerListener</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.payroll.event.ElementoMaestroControllerListener</managed-bean-class>
+		<managed-bean-name>
+			elementoMaestroControllerListener
+		</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.payroll.event.ElementoMaestroControllerListener
+		</managed-bean-class>
 		<managed-bean-scope>none</managed-bean-scope>
 	</managed-bean>
 
 	<managed-bean>
 		<managed-bean-name>elementoListener</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.form.listener.LinesControllerListener</managed-bean-class>
+		<managed-bean-class>
+			com.code.aon.ui.form.listener.LinesControllerListener
+		</managed-bean-class>
 		<managed-bean-scope>none</managed-bean-scope>
 		<managed-property>
 			<property-name>childBean</property-name>
@@ -1419,7 +1690,7 @@
 			<map-entries>
 				<map-entry>
 					<key>Elemento_elementoMaestro_cdg</key>
-                    <value>cdg</value>
+					<value>cdg</value>
 				</map-entry>
 			</map-entries>
 		</managed-property>
@@ -1427,7 +1698,9 @@
 
 	<managed-bean>
 		<managed-bean-name>elemento</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.form.LinesController</managed-bean-class>
+		<managed-bean-class>
+			com.code.aon.ui.form.LinesController
+		</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
 			<property-name>queryOnStartUP</property-name>
@@ -1465,22 +1738,30 @@
 		<managed-property>
 			<property-name>listenerClasses</property-name>
 			<list-entries>
-				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+				<value-class>
+					com.code.aon.ui.form.event.IControllerListener
+				</value-class>
 				<value>#{elementoControllerListener}</value>
 			</list-entries>
 		</managed-property>
 	</managed-bean>
 
 	<managed-bean>
-		<managed-bean-name>elementoControllerListener</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.payroll.event.ElementoControllerListener</managed-bean-class>
+		<managed-bean-name>
+			elementoControllerListener
+		</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.payroll.event.ElementoControllerListener
+		</managed-bean-class>
 		<managed-bean-scope>none</managed-bean-scope>
 	</managed-bean>
-	
+
 	<!-- ************* MANTENIMIENTO DE OCUPACIONES ***************** -->
 	<managed-bean>
 		<managed-bean-name>ocupacionMaestro</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.payroll.controller.PayrollBasicController</managed-bean-class>
+		<managed-bean-class>
+			com.code.aon.ui.payroll.controller.PayrollBasicController
+		</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
 			<property-name>queryOnStartUP</property-name>
@@ -1488,7 +1769,9 @@
 		</managed-property>
 		<managed-property>
 			<property-name>pojo</property-name>
-			<value>com.code.aon.payroll.cotizacion.OcupacionMaestro</value>
+			<value>
+				com.code.aon.payroll.cotizacion.OcupacionMaestro
+			</value>
 		</managed-property>
 		<managed-property>
 			<property-name>beanName</property-name>
@@ -1501,7 +1784,9 @@
 		<managed-property>
 			<property-name>listenerClasses</property-name>
 			<list-entries>
-				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+				<value-class>
+					com.code.aon.ui.form.event.IControllerListener
+				</value-class>
 				<value>#{ocupacionMaestroControllerListener}</value>
 				<value>#{ocupacionListener}</value>
 			</list-entries>
@@ -1509,14 +1794,20 @@
 	</managed-bean>
 
 	<managed-bean>
-		<managed-bean-name>ocupacionMaestroControllerListener</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.payroll.event.OcupacionMaestroControllerListener</managed-bean-class>
+		<managed-bean-name>
+			ocupacionMaestroControllerListener
+		</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.payroll.event.OcupacionMaestroControllerListener
+		</managed-bean-class>
 		<managed-bean-scope>none</managed-bean-scope>
 	</managed-bean>
 
 	<managed-bean>
 		<managed-bean-name>ocupacionListener</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.form.listener.LinesControllerListener</managed-bean-class>
+		<managed-bean-class>
+			com.code.aon.ui.form.listener.LinesControllerListener
+		</managed-bean-class>
 		<managed-bean-scope>none</managed-bean-scope>
 		<managed-property>
 			<property-name>childBean</property-name>
@@ -1527,7 +1818,7 @@
 			<map-entries>
 				<map-entry>
 					<key>Ocupacion_ocupacionMaestro_cdg</key>
-                    <value>cdg</value>
+					<value>cdg</value>
 				</map-entry>
 			</map-entries>
 		</managed-property>
@@ -1535,7 +1826,9 @@
 
 	<managed-bean>
 		<managed-bean-name>ocupacion</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.form.LinesController</managed-bean-class>
+		<managed-bean-class>
+			com.code.aon.ui.form.LinesController
+		</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
 			<property-name>queryOnStartUP</property-name>
@@ -1573,22 +1866,30 @@
 		<managed-property>
 			<property-name>listenerClasses</property-name>
 			<list-entries>
-				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+				<value-class>
+					com.code.aon.ui.form.event.IControllerListener
+				</value-class>
 				<value>#{ocupacionControllerListener}</value>
 			</list-entries>
 		</managed-property>
 	</managed-bean>
 
 	<managed-bean>
-		<managed-bean-name>ocupacionControllerListener</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.payroll.event.OcupacionControllerListener</managed-bean-class>
+		<managed-bean-name>
+			ocupacionControllerListener
+		</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.payroll.event.OcupacionControllerListener
+		</managed-bean-class>
 		<managed-bean-scope>none</managed-bean-scope>
 	</managed-bean>
-	
+
 	<!-- ************* MANTENIMIENTO DE CNAE ***************** -->
 	<managed-bean>
 		<managed-bean-name>cnaeMaestro</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.payroll.controller.PayrollBasicController</managed-bean-class>
+		<managed-bean-class>
+			com.code.aon.ui.payroll.controller.PayrollBasicController
+		</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
 			<property-name>queryOnStartUP</property-name>
@@ -1609,7 +1910,9 @@
 		<managed-property>
 			<property-name>listenerClasses</property-name>
 			<list-entries>
-				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+				<value-class>
+					com.code.aon.ui.form.event.IControllerListener
+				</value-class>
 				<value>#{cnaeMaestroControllerListener}</value>
 				<value>#{cnaeListener}</value>
 			</list-entries>
@@ -1617,14 +1920,20 @@
 	</managed-bean>
 
 	<managed-bean>
-		<managed-bean-name>cnaeMaestroControllerListener</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.payroll.event.CnaeMaestroControllerListener</managed-bean-class>
+		<managed-bean-name>
+			cnaeMaestroControllerListener
+		</managed-bean-name>
+		<managed-bean-class>
+			com.code.aon.ui.payroll.event.CnaeMaestroControllerListener
+		</managed-bean-class>
 		<managed-bean-scope>none</managed-bean-scope>
 	</managed-bean>
 
 	<managed-bean>
 		<managed-bean-name>cnaeListener</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.form.listener.LinesControllerListener</managed-bean-class>
+		<managed-bean-class>
+			com.code.aon.ui.form.listener.LinesControllerListener
+		</managed-bean-class>
 		<managed-bean-scope>none</managed-bean-scope>
 		<managed-property>
 			<property-name>childBean</property-name>
@@ -1635,7 +1944,7 @@
 			<map-entries>
 				<map-entry>
 					<key>Cnae_cnaeMaestro_cdg</key>
-                    <value>cdg</value>
+					<value>cdg</value>
 				</map-entry>
 			</map-entries>
 		</managed-property>
@@ -1643,7 +1952,9 @@
 
 	<managed-bean>
 		<managed-bean-name>cnae</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.form.LinesController</managed-bean-class>
+		<managed-bean-class>
+			com.code.aon.ui.form.LinesController
+		</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
 			<property-name>queryOnStartUP</property-name>
@@ -1681,7 +1992,9 @@
 		<managed-property>
 			<property-name>listenerClasses</property-name>
 			<list-entries>
-				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+				<value-class>
+					com.code.aon.ui.form.event.IControllerListener
+				</value-class>
 				<value>#{cnaeControllerListener}</value>
 			</list-entries>
 		</managed-property>
@@ -1689,14 +2002,18 @@
 
 	<managed-bean>
 		<managed-bean-name>cnaeControllerListener</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.payroll.event.CnaeControllerListener</managed-bean-class>
+		<managed-bean-class>
+			com.code.aon.ui.payroll.event.CnaeControllerListener
+		</managed-bean-class>
 		<managed-bean-scope>none</managed-bean-scope>
 	</managed-bean>
-	
+
 	<!-- ************* CONVENIOS - CONVENIOS COLECTIVOS ***************** -->
 	<managed-bean>
 		<managed-bean-name>convenio</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.payroll.controller.ConveniosColectivoController</managed-bean-class>
+		<managed-bean-class>
+			com.code.aon.ui.payroll.controller.ConveniosColectivoController
+		</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
 			<property-name>queryOnStartUP</property-name>
@@ -1704,7 +2021,9 @@
 		</managed-property>
 		<managed-property>
 			<property-name>pojo</property-name>
-			<value>com.code.aon.payroll.auxiliares.convenios.Convenio</value>
+			<value>
+				com.code.aon.payroll.auxiliares.convenios.Convenio
+			</value>
 		</managed-property>
 		<managed-property>
 			<property-name>beanName</property-name>
@@ -1717,7 +2036,9 @@
 		<managed-property>
 			<property-name>listenerClasses</property-name>
 			<list-entries>
-				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+				<value-class>
+					com.code.aon.ui.form.event.IControllerListener
+				</value-class>
 				<value>#{convenioNivelListener}</value>
 				<value>#{convenioPagaextListener}</value>
 			</list-entries>
@@ -1726,7 +2047,9 @@
 
 	<managed-bean>
 		<managed-bean-name>convenioNivelListener</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.form.listener.LinesControllerListener</managed-bean-class>
+		<managed-bean-class>
+			com.code.aon.ui.form.listener.LinesControllerListener
+		</managed-bean-class>
 		<managed-bean-scope>none</managed-bean-scope>
 		<managed-property>
 			<property-name>childBean</property-name>
@@ -1737,15 +2060,17 @@
 			<map-entries>
 				<map-entry>
 					<key>Nivel_convenio_cdg</key>
-                    <value>cdg</value>
+					<value>cdg</value>
 				</map-entry>
 			</map-entries>
 		</managed-property>
 	</managed-bean>
-	
+
 	<managed-bean>
 		<managed-bean-name>convenioPagaextListener</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.form.listener.LinesControllerListener</managed-bean-class>
+		<managed-bean-class>
+			com.code.aon.ui.form.listener.LinesControllerListener
+		</managed-bean-class>
 		<managed-bean-scope>none</managed-bean-scope>
 		<managed-property>
 			<property-name>childBean</property-name>
@@ -1756,15 +2081,17 @@
 			<map-entries>
 				<map-entry>
 					<key>Pagaext_convenio_cdg</key>
-                    <value>cdg</value>
+					<value>cdg</value>
 				</map-entry>
 			</map-entries>
 		</managed-property>
 	</managed-bean>
-	
+
 	<managed-bean>
 		<managed-bean-name>nivel</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.form.LinesController</managed-bean-class>
+		<managed-bean-class>
+			com.code.aon.ui.form.LinesController
+		</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
 			<property-name>queryOnStartUP</property-name>
@@ -1772,7 +2099,9 @@
 		</managed-property>
 		<managed-property>
 			<property-name>pojo</property-name>
-			<value>com.code.aon.payroll.auxiliares.convenios.Nivel</value>
+			<value>
+				com.code.aon.payroll.auxiliares.convenios.Nivel
+			</value>
 		</managed-property>
 		<managed-property>
 			<property-name>defaultOrder</property-name>
@@ -1796,10 +2125,12 @@
 			</map-entries>
 		</managed-property>
 	</managed-bean>
-	
+
 	<managed-bean>
 		<managed-bean-name>pagaext</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.payroll.controller.PagaextLinesController</managed-bean-class>
+		<managed-bean-class>
+			com.code.aon.ui.payroll.controller.PagaextLinesController
+		</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
 			<property-name>queryOnStartUP</property-name>
@@ -1807,7 +2138,9 @@
 		</managed-property>
 		<managed-property>
 			<property-name>pojo</property-name>
-			<value>com.code.aon.payroll.auxiliares.convenios.Pagaext</value>
+			<value>
+				com.code.aon.payroll.auxiliares.convenios.Pagaext
+			</value>
 		</managed-property>
 		<managed-property>
 			<property-name>defaultOrder</property-name>
@@ -1831,10 +2164,12 @@
 			</map-entries>
 		</managed-property>
 	</managed-bean>
-	
+
 	<managed-bean>
 		<managed-bean-name>categoria</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.form.LinesController</managed-bean-class>
+		<managed-bean-class>
+			com.code.aon.ui.form.LinesController
+		</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
 			<property-name>queryOnStartUP</property-name>
@@ -1842,7 +2177,9 @@
 		</managed-property>
 		<managed-property>
 			<property-name>pojo</property-name>
-			<value>com.code.aon.payroll.auxiliares.convenios.Categoria</value>
+			<value>
+				com.code.aon.payroll.auxiliares.convenios.Categoria
+			</value>
 		</managed-property>
 		<managed-property>
 			<property-name>defaultOrder</property-name>
@@ -1866,10 +2203,12 @@
 			</map-entries>
 		</managed-property>
 	</managed-bean>
-	
+
 	<managed-bean>
 		<managed-bean-name>percniv</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.form.LinesController</managed-bean-class>
+		<managed-bean-class>
+			com.code.aon.ui.form.LinesController
+		</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
 			<property-name>queryOnStartUP</property-name>
@@ -1877,7 +2216,9 @@
 		</managed-property>
 		<managed-property>
 			<property-name>pojo</property-name>
-			<value>com.code.aon.payroll.auxiliares.convenios.Categoria</value>
+			<value>
+				com.code.aon.payroll.auxiliares.convenios.Categoria
+			</value>
 		</managed-property>
 		<managed-property>
 			<property-name>defaultOrder</property-name>
@@ -1901,11 +2242,13 @@
 			</map-entries>
 		</managed-property>
 	</managed-bean>
-	
-<!-- ************* ENTIDADES Y SUCURSALES ***************** -->
+
+	<!-- ************* ENTIDADES Y SUCURSALES ***************** -->
 	<managed-bean>
 		<managed-bean-name>entidadMaestro</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.payroll.controller.PayrollBasicController</managed-bean-class>
+		<managed-bean-class>
+			com.code.aon.ui.payroll.controller.PayrollBasicController
+		</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
 			<property-name>queryOnStartUP</property-name>
@@ -1913,7 +2256,9 @@
 		</managed-property>
 		<managed-property>
 			<property-name>pojo</property-name>
-			<value>com.code.aon.payroll.auxiliares.organismosyentidades.Entidad</value>
+			<value>
+				com.code.aon.payroll.auxiliares.organismosyentidades.Entidad
+			</value>
 		</managed-property>
 		<managed-property>
 			<property-name>beanName</property-name>
@@ -1922,15 +2267,19 @@
 		<managed-property>
 			<property-name>listenerClasses</property-name>
 			<list-entries>
-				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+				<value-class>
+					com.code.aon.ui.form.event.IControllerListener
+				</value-class>
 				<value>#{entidadListener}</value>
 			</list-entries>
 		</managed-property>
 	</managed-bean>
-	
+
 	<managed-bean>
 		<managed-bean-name>entidadListener</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.form.listener.LinesControllerListener</managed-bean-class>
+		<managed-bean-class>
+			com.code.aon.ui.form.listener.LinesControllerListener
+		</managed-bean-class>
 		<managed-bean-scope>none</managed-bean-scope>
 		<managed-property>
 			<property-name>childBean</property-name>
@@ -1941,7 +2290,7 @@
 			<map-entries>
 				<map-entry>
 					<key>Sucursal_entidad_cdg</key>
-                    <value>cdg</value>
+					<value>cdg</value>
 				</map-entry>
 			</map-entries>
 		</managed-property>
@@ -1949,7 +2298,9 @@
 
 	<managed-bean>
 		<managed-bean-name>sucursal</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.form.LinesController</managed-bean-class>
+		<managed-bean-class>
+			com.code.aon.ui.form.LinesController
+		</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
 			<property-name>queryOnStartUP</property-name>
@@ -1961,7 +2312,9 @@
 		</managed-property>
 		<managed-property>
 			<property-name>pojo</property-name>
-			<value>com.code.aon.payroll.auxiliares.organismosyentidades.Sucursal</value>
+			<value>
+				com.code.aon.payroll.auxiliares.organismosyentidades.Sucursal
+			</value>
 		</managed-property>
 		<managed-property>
 			<property-name>cascadeDelete</property-name>
@@ -1983,11 +2336,13 @@
 	</managed-bean>
 
 
-		
+
 	<!-- ************* MANTENIMIENTO DE MUTUA ***************** -->
 	<managed-bean>
 		<managed-bean-name>mutuaMaestro</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.payroll.controller.PayrollBasicController</managed-bean-class>
+		<managed-bean-class>
+			com.code.aon.ui.payroll.controller.PayrollBasicController
+		</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
 			<property-name>queryOnStartUP</property-name>
@@ -1995,24 +2350,30 @@
 		</managed-property>
 		<managed-property>
 			<property-name>pojo</property-name>
-			<value>com.code.aon.payroll.auxiliares.organismosyentidades.Mutua</value>
+			<value>
+				com.code.aon.payroll.auxiliares.organismosyentidades.Mutua
+			</value>
 		</managed-property>
 		<managed-property>
 			<property-name>beanName</property-name>
 			<value>mutuaMaestro</value>
 		</managed-property>
 		<managed-property>
-		<property-name>listenerClasses</property-name>
+			<property-name>listenerClasses</property-name>
 			<list-entries>
-				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+				<value-class>
+					com.code.aon.ui.form.event.IControllerListener
+				</value-class>
 				<value>#{mutuaListener}</value>
 			</list-entries>
 		</managed-property>
 	</managed-bean>
-  
+
 	<managed-bean>
 		<managed-bean-name>mutuaListener</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.form.listener.LinesControllerListener</managed-bean-class>
+		<managed-bean-class>
+			com.code.aon.ui.form.listener.LinesControllerListener
+		</managed-bean-class>
 		<managed-bean-scope>none</managed-bean-scope>
 		<managed-property>
 			<property-name>childBean</property-name>
@@ -2023,7 +2384,7 @@
 			<map-entries>
 				<map-entry>
 					<key>Linmutua_mutua_cdg</key>
-                    <value>cdg</value>
+					<value>cdg</value>
 				</map-entry>
 			</map-entries>
 		</managed-property>
@@ -2031,7 +2392,9 @@
 
 	<managed-bean>
 		<managed-bean-name>mutua</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.form.LinesController</managed-bean-class>
+		<managed-bean-class>
+			com.code.aon.ui.form.LinesController
+		</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
 			<property-name>queryOnStartUP</property-name>
@@ -2043,8 +2406,10 @@
 		</managed-property>
 		<managed-property>
 			<property-name>pojo</property-name>
-			<value>com.code.aon.payroll.auxiliares.organismosyentidades.Linmutua</value>
-		</managed-property>	
+			<value>
+				com.code.aon.payroll.auxiliares.organismosyentidades.Linmutua
+			</value>
+		</managed-property>
 		<managed-property>
 			<property-name>cascadeDelete</property-name>
 			<value>true</value>
@@ -2065,10 +2430,12 @@
 
 	</managed-bean>
 
-		<!-- ************* MANTENIMIENTO DE DATOS CLAVE IRPF ***************** -->
+	<!-- ************* MANTENIMIENTO DE DATOS CLAVE IRPF ***************** -->
 	<managed-bean>
 		<managed-bean-name>irpfMaestro</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.payroll.controller.DatosIrpfController</managed-bean-class>
+		<managed-bean-class>
+			com.code.aon.ui.payroll.controller.DatosIrpfController
+		</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
 			<property-name>queryOnStartUP</property-name>
@@ -2083,17 +2450,21 @@
 			<value>irpfMaestro</value>
 		</managed-property>
 		<managed-property>
-		<property-name>listenerClasses</property-name>
+			<property-name>listenerClasses</property-name>
 			<list-entries>
-				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>
+				<value-class>
+					com.code.aon.ui.form.event.IControllerListener
+				</value-class>
 				<value>#{irpfListener}</value>
 			</list-entries>
 		</managed-property>
 	</managed-bean>
-  
+
 	<managed-bean>
 		<managed-bean-name>irpfListener</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.form.listener.LinesControllerListener</managed-bean-class>
+		<managed-bean-class>
+			com.code.aon.ui.form.listener.LinesControllerListener
+		</managed-bean-class>
 		<managed-bean-scope>none</managed-bean-scope>
 		<managed-property>
 			<property-name>childBean</property-name>
@@ -2104,7 +2475,7 @@
 			<map-entries>
 				<map-entry>
 					<key>Linirpf_elemirpf_cdg</key>
-                    <value>cdg</value>
+					<value>cdg</value>
 				</map-entry>
 			</map-entries>
 		</managed-property>
@@ -2112,7 +2483,9 @@
 
 	<managed-bean>
 		<managed-bean-name>irpf</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.form.LinesController</managed-bean-class>
+		<managed-bean-class>
+			com.code.aon.ui.form.LinesController
+		</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
 			<property-name>queryOnStartUP</property-name>
@@ -2122,11 +2495,11 @@
 			<property-name>pageLimit</property-name>
 			<value>20</value>
 		</managed-property>
-		
+
 		<managed-property>
 			<property-name>pojo</property-name>
 			<value>com.code.aon.payroll.irpf.Linirpf</value>
-		</managed-property>	
+		</managed-property>
 		<managed-property>
 			<property-name>cascadeDelete</property-name>
 			<value>true</value>
@@ -2146,6 +2519,6 @@
 		</managed-property>
 
 	</managed-bean>
-	
-	 
+
+
 </faces-config>
