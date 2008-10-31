@@ -67,32 +67,37 @@
 
 					</aon:panelGrid>
 
+					<aon:outputLabel value="#{appBundle.aon_payroll_auxiliares_cotizacion__tipboni_marcas}" />
+					<aon:panelGroup>
+						<aon:div>
+							<aon:div>
+								<aon:selectBooleanCheckbox id="Bonificacion_boniss"
+									value="#{cotizacionBonificacion.searchBoniss}" />
+								<aon:outputLabel for="Bonificacion_boniss"
+									value="#{appBundle.aon_payroll_auxiliares_cotizacion__tipboni_boniss}" />
+							</aon:div>
+							<aon:div>
+								<aon:selectBooleanCheckbox id="Bonificacion_mayor60"
+									value="#{cotizacionBonificacion.searchMayor60}" />
+								<aon:outputLabel for="Bonificacion_mayor60"
+									value="#{appBundle.aon_payroll_auxiliares_cotizacion__tipboni_60}" />
+							</aon:div>
+							<aon:div>
+								<aon:selectBooleanCheckbox id="Bonificacion_rdl052006"
+									value="#{cotizacionBonificacion.searchRdl052006}" />
+								<aon:outputLabel for="Bonificacion_rdl052006"
+									value="#{appBundle.aon_payroll_auxiliares_cotizacion__tipboni_rdl5}" />
+							</aon:div>
+							<aon:div>
+								<aon:selectBooleanCheckbox id="Bonificacion_restait"
+									value="#{cotizacionBonificacion.searchRestait}" />
+								<aon:outputLabel for="Bonificacion_restait"
+									value="#{appBundle.aon_payroll_auxiliares_cotizacion__tipboni_restait}" />
+							</aon:div>
 
-					<aon:outputLabel
-						value="#{appBundle.aon_payroll_auxiliares_cotizacion__tipboni_marcas}" />
+						</aon:div>
+					</aon:panelGroup>
 
-					<aon:panelGrid columns="10">
-
-						<aon:outputLabel for="Bonificacion_boniss"
-							value="#{appBundle.aon_payroll_auxiliares_cotizacion__tipboni_boniss}" />
-						<aon:selectBooleanCheckbox id="Bonificacion_boniss"
-							value="#{cotizacionBonificacion.searchBoniss}" />
-
-						<aon:outputLabel for="Bonificacion_mayor60"
-							value="#{appBundle.aon_payroll_auxiliares_cotizacion__tipboni_60}" />
-						<aon:selectBooleanCheckbox id="Bonificacion_mayor60"
-							value="#{cotizacionBonificacion.searchMayor60}" />
-
-						<aon:outputLabel for="Bonificacion_rdl052006"
-							value="#{appBundle.aon_payroll_auxiliares_cotizacion__tipboni_rdl5}" />
-						<aon:selectBooleanCheckbox id="Bonificacion_rdl052006"
-							value="#{cotizacionBonificacion.searchRdl052006}" />
-
-						<aon:outputLabel for="Bonificacion_restait"
-							value="#{appBundle.aon_payroll_auxiliares_cotizacion__tipboni_restait}" />
-						<aon:selectBooleanCheckbox id="Bonificacion_restait"
-							value="#{cotizacionBonificacion.searchRestait}" />
-					</aon:panelGrid>
 
 				</ui:define>
 			</ui:decorate>
