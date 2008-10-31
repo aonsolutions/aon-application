@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<dao>
+	
+	<bean class="com.code.aon.payroll.cotizacion.Ocupacion" sqlName="linocupacion">
+		<alias names="fecfin,id_cdg,id_fecini,ocupacionMaestro_cdg,ocupacionMaestro_exclusivo,pctims,pctit,pcttotal" />
+		<hibernate names="fecfin,id.cdg,id.fecini,ocupacionMaestro.cdg,ocupacionMaestro.exclusivo,pctims,pctit,pcttotal" />
+	</bean>
+	
+	<bean class="com.code.aon.payroll.cotizacion.PorcentajeMaestro" sqlName="porcoti">
+		<alias names="cdg,description,ordpct,porcentajes_fecfin,porcentajes_id_cdg,porcentajes_id_fecini" />
+		<hibernate names="cdg,description,ordpct,porcentajes.fecfin,porcentajes.id.cdg,porcentajes.id.fecini" />
+	</bean>
+	
+</dao>
+
+ 
+
+
+
