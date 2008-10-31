@@ -3,7 +3,10 @@ package com.code.aon.payroll.dao;
 import java.io.File;
 import java.io.IOException;
 
+import org.hibernate.Hibernate;
+
 import com.code.aon.common.dao.AliasWriter;
+import com.code.aon.common.dao.hibernate.HibernateUtil;
 import com.code.aon.payroll.auxiliares.Admon;
 import com.code.aon.payroll.auxiliares.Colectivos;
 import com.code.aon.payroll.auxiliares.contratos.ContratosInternos;
@@ -118,6 +121,7 @@ public class PayrollAliasWriter {
 		        Linirpf.class.getName()
 		        };		
 		AliasWriter writer = new AliasWriter("com.code.aon.payroll.dao");
+		HibernateUtil.getSessionFactory();
 		writer.write(classes, file);
 		System.out.println( file.getAbsolutePath() );
 		System.out.println("Alias generados");
