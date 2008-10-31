@@ -11,9 +11,9 @@
 		<hibernate names="cdg,description,ordpct,porcentajes.fecfin,porcentajes.id.cdg,porcentajes.id.fecini" />
 	</bean>
 	
+	<bean class="com.code.aon.payroll.cotizacion.OcupacionMaestro" sqlName="ocupacion">
+		<alias names="cdg,description,exclusivo,ocupaciones_fecfin,ocupaciones_id_cdg,ocupaciones_id_fecini" />
+		<hibernate names="cdg,description,exclusivo,ocupaciones.fecfin,ocupaciones.id.cdg,ocupaciones.id.fecini" />
+	</bean>
+	
 </dao>
-
- 
-
-
-
