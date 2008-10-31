@@ -13,9 +13,10 @@ import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
 import com.code.aon.ui.util.AonUtil;
+import com.code.aon.ui.payroll.controller.IPayrollConstants;
 
 
-public class CnaeMaestroControllerListener extends ControllerAdapter {
+public class CnaeMaestroControllerListener extends ControllerAdapter implements IPayrollConstants {
 
 	@Override
 	public void afterBeanCreated(ControllerEvent event)
@@ -52,7 +53,7 @@ public class CnaeMaestroControllerListener extends ControllerAdapter {
 			Criteria criteria = new Criteria();
 			
 			IManagerBean ocupacionBean = BeanManager.getManagerBean( Ocupacion.class );
-			IController ocupacion = AonUtil.getController("ocupacion");
+			IController ocupacion = AonUtil.getController(OCUPACION_CONTROLLER_NAME);
 			
 			if(ocupaciones!=null){
 				for (int i = 0; i < ocupaciones.length(); i++) {

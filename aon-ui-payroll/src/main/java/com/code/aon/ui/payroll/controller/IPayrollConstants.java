@@ -6,4 +6,5 @@ public interface IPayrollConstants {
 	
 	String COMUNIDAD_CONTROLLER_NAME = "comunidad";
 	String PROVINCIA_CONTROLLER_NAME = "provincia";
+	String OCUPACION_CONTROLLER_NAME = "ocupacion";
 }
