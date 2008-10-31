@@ -10,6 +10,8 @@
 		<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/grid.xhtml" >
 			<ui:param name="controller" value="#{provincia}" />
 			<ui:param name="columnClasses" value="aon-editDataTable-textColumn, aon-editDataTable-textColumn" />
+			<ui:param name="showDataScroller" value="#{(!comunidad.new) and (comunidad.to != null)}" />			
+			<ui:param name="skipResetButton" value="#{comunidad.new or (comunidad.to == null)}" />			
 			<ui:define name="columns">
 
 	     	    <aon:column>
