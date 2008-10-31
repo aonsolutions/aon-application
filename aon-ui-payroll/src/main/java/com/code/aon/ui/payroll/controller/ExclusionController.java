@@ -31,8 +31,6 @@ public class ExclusionController extends PayrollBasicController {
 	//añade la fecha al criteria para realizar busquedas
 	@Override
 	public void onSearch(ActionEvent event) {
-		System.out.println("------------"+searchFecini);
-		System.out.println("------------"+searchFecfin);
 		try {
 			if(searchFecini != null){
 				getCriteria().addEqualExpression(getFieldName(IPayrollAlias.EXCLUSION_ID_FECINI), searchFecini);

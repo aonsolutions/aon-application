@@ -2,5 +2,7 @@ package com.code.aon.ui.payroll.controller;
 
 public interface IPayrollConstants {
 
-	static final String EMPTY_STRING = "";
+	String EMPTY_STRING = "";
+	
+	String COMUNIDAD_CONTROLLER_NAME = "comunidad";
 }
