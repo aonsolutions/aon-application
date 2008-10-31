@@ -111,16 +111,22 @@ public interface IPayrollAlias {
 	String  CONTRATOS_INTERNOS_MUJERSUB = CONTRATOS_INTERNOS_ENTRY.getAliasNames()[6];
 
 	/** 
+	* Alias value: ContratosInternos_mujersubbol
+	* Hibernate value: ContratosInternos.mujersubbol
+	*/
+	String  CONTRATOS_INTERNOS_MUJERSUBBOL = CONTRATOS_INTERNOS_ENTRY.getAliasNames()[7];
+
+	/** 
 	* Alias value: ContratosInternos_porcentajeMaestro_cdg
 	* Hibernate value: ContratosInternos.porcentajeMaestro.cdg
 	*/
-	String  CONTRATOS_INTERNOS_PORCENTAJE_MAESTRO_CDG = CONTRATOS_INTERNOS_ENTRY.getAliasNames()[7];
+	String  CONTRATOS_INTERNOS_PORCENTAJE_MAESTRO_CDG = CONTRATOS_INTERNOS_ENTRY.getAliasNames()[8];
 
 	/** 
 	* Alias value: ContratosInternos_primertra
 	* Hibernate value: ContratosInternos.primertra
 	*/
-	String  CONTRATOS_INTERNOS_PRIMERTRA = CONTRATOS_INTERNOS_ENTRY.getAliasNames()[8];
+	String  CONTRATOS_INTERNOS_PRIMERTRA = CONTRATOS_INTERNOS_ENTRY.getAliasNames()[9];
 
 
 
@@ -232,6 +238,24 @@ public interface IPayrollAlias {
 	* Hibernate value: PorcentajeMaestro.ordpct
 	*/
 	String  PORCENTAJE_MAESTRO_ORDPCT = PORCENTAJE_MAESTRO_ENTRY.getAliasNames()[2];
+
+	/** 
+	* Alias value: PorcentajeMaestro_porcentajes_fecfin
+	* Hibernate value: PorcentajeMaestro.porcentajes.fecfin
+	*/
+	String  PORCENTAJE_MAESTRO_PORCENTAJES_FECFIN = PORCENTAJE_MAESTRO_ENTRY.getAliasNames()[3];
+
+	/** 
+	* Alias value: PorcentajeMaestro_porcentajes_id_cdg
+	* Hibernate value: PorcentajeMaestro.porcentajes.id.cdg
+	*/
+	String  PORCENTAJE_MAESTRO_PORCENTAJES_ID_CDG = PORCENTAJE_MAESTRO_ENTRY.getAliasNames()[4];
+
+	/** 
+	* Alias value: PorcentajeMaestro_porcentajes_id_fecini
+	* Hibernate value: PorcentajeMaestro.porcentajes.id.fecini
+	*/
+	String  PORCENTAJE_MAESTRO_PORCENTAJES_ID_FECINI = PORCENTAJE_MAESTRO_ENTRY.getAliasNames()[5];
 
 
 

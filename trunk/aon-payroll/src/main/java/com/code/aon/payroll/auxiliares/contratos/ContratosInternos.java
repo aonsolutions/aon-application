@@ -30,10 +30,10 @@ public class ContratosInternos implements ITransferObject {
 	private PorcentajeMaestro maestro;
 	private Desempleado desemple;
 	private BigDecimal gradomin;
-	private String mujersub;
-	private String incaread;
-	private String primertra;
-	private String excsocial;
+	private Boolean mujersub;
+	private Boolean incaread;
+	private Boolean primertra;
+	private Boolean excsocial;
 
 	@Id     
 	@Column(name="cdg", unique=true, nullable=false, length=2)
@@ -74,39 +74,43 @@ public class ContratosInternos implements ITransferObject {
 		this.desemple = desemple;
 	}
 
+	@Type(type="siNoType" )
 	@Column(name="mujersub", length=1)
-	public String getMujersub() {
+	public Boolean isMujersub() {
 		return this.mujersub;
 	}
 
-	public void setMujersub(String mujersub) {
+	public void setMujersub(Boolean mujersub) {
 		this.mujersub = mujersub;
 	}
 
+	@Type(type="siNoType" )
 	@Column(name="incaread", length=1)
-	public String getIncaread() {
+	public Boolean isIncaread() {
 		return this.incaread;
 	}
 
-	public void setIncaread(String incaread) {
+	public void setIncaread(Boolean incaread) {
 		this.incaread = incaread;
 	}
 
+	@Type(type="siNoType" )
 	@Column(name="primertra", length=1)
-	public String getPrimertra() {
+	public Boolean isPrimertra() {
 		return this.primertra;
 	}
 
-	public void setPrimertra(String primertra) {
+	public void setPrimertra(Boolean primertra) {
 		this.primertra = primertra;
 	}
 
+	@Type(type="siNoType" )
 	@Column(name="excsocial", length=1)
-	public String getExcsocial() {
+	public Boolean isExcsocial() {
 		return this.excsocial;
 	}
 
-	public void setExcsocial(String excsocial) {
+	public void setExcsocial(Boolean excsocial) {
 		this.excsocial = excsocial;
 	}
 
@@ -118,38 +122,5 @@ public class ContratosInternos implements ITransferObject {
 	public void setGradomin(BigDecimal gradomin) {
 		this.gradomin = gradomin;
 	}
-	
-//TODO A la espera de implementar un SelectBooleanCheckboxRenderer.
-	@Transient 
-	public Boolean getMujersubbol() { 
-		return (getMujersub() != null && getMujersub().equals("S")?true:false );
-	}
-	public void setMujersubbol(Boolean bol) {
-		setMujersub( (bol!=null && bol)? "S":"N" );
-	}
 
-	@Transient 
-	public Boolean getIncareadbol() {
-		return (getIncaread() != null && getIncaread().equals("S")?true:false );
-	}
-	public void setIncareadbol(Boolean bol) {
-		setIncaread( (bol!=null && bol)? "S":"N" );
-	}
-
-	@Transient 
-	public Boolean getPrimertrabol() {
-		return (getPrimertra() != null && getPrimertra().equals("S")?true:false );
-	}
-	public void setPrimertrabol(Boolean bol) {
-		setPrimertra( (bol!=null && bol)? "S":"N" );
-	}
-
-	@Transient 
-	public Boolean getExcsocialbol() {
-		return (getExcsocial() != null && getExcsocial().equals("S")?true:false );
-	}
-	public void setExcsocialbol(Boolean bol) {
-		setExcsocial( (bol!=null && bol)? "S":"N" );
-	}
-//	******************************************************************
 }
