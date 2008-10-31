@@ -46,7 +46,7 @@ public class PaisControllerListener extends ControllerAdapter implements IPayrol
 	public void afterBeanCanceled(ControllerEvent event)
 			throws ControllerListenerException {
 		IController comunidad = AonUtil.getController(COMUNIDAD_CONTROLLER_NAME);
-		IController provincia= AonUtil.getController("provincia");
+		IController provincia= AonUtil.getController(PROVINCIA_CONTROLLER_NAME);
 		try {
 			IManagerBean comunidadBean = BeanManager.getManagerBean( Comunidad.class );
 			IManagerBean provinciaBean = BeanManager.getManagerBean( Provincia.class );
