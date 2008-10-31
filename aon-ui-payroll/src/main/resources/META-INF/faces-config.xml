@@ -2068,7 +2068,7 @@
 		<!-- ************* MANTENIMIENTO DE DATOS CLAVE IRPF ***************** -->
 	<managed-bean>
 		<managed-bean-name>irpfMaestro</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.payroll.controller.PayrollBasicController</managed-bean-class>
+		<managed-bean-class>com.code.aon.ui.payroll.controller.DatosIrpfController</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
 			<property-name>queryOnStartUP</property-name>

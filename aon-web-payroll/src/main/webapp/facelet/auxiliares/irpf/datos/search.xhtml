@@ -34,9 +34,11 @@
 						
 				    <aon:outputLabel for="Elemirpf_porcentaje"
 						value="#{appBundle.aon_payroll_auxiliares_irpf__datos_porcen}" />
-					<h:selectBooleanCheckbox id="Elemirpf_porcentaje" value="#{elemirpf.porcentajebol}" 
-						valueChangeListener="#{irpfMaestro.addDirectExpression}"/>
+					<h:selectBooleanCheckbox id="Elemirpf_porcentaje" value="#{irpfMaestro.searchPorcentaje}" 
+						/>
+					
 					<!--  	
+											
 					<aon:outputLabel for="Elemirpf_id_fecini"
 						value="#{appBundle.aon_payroll_auxiliares_irpf__datos_desde}" />
 					<aon:selectInputDate id="Elemirpf_id_fecini" renderAsPopup="true"
