@@ -1,10 +1,16 @@
 package com.code.aon.ui.payroll.controller;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 import javax.faces.event.ActionEvent;
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.payroll.dao.IPayrollAlias;
 
+
 public class CotizacionBonificacionController extends PayrollBasicController{
+	
+	private static final Logger LOGGER = Logger.getLogger(CotizacionBonificacionController.class.getName());
 	
 	private boolean searchBoniss;
 	private boolean searchMayor60;
@@ -26,8 +32,7 @@ public class CotizacionBonificacionController extends PayrollBasicController{
 				getCriteria().addEqualExpression(getFieldName(IPayrollAlias.BONIFICACION_RESTAIT), "S");
 				
 		} catch (ManagerBeanException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			LOGGER.log( Level.SEVERE, e.getMessage(), e );
 		}
 		
 		searchBoniss=false;

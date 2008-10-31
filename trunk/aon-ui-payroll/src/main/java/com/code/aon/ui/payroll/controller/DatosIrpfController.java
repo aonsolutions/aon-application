@@ -4,6 +4,8 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
@@ -20,7 +22,8 @@ import com.code.aon.ql.Criteria;
 import com.code.aon.ql.util.ExpressionUtilities;
 
 public class DatosIrpfController extends PayrollBasicController {
-
+	
+	private static final Logger LOGGER = Logger.getLogger(DatosIrpfController.class.getName());
 	
 	private boolean searchPorcentaje;
 	
@@ -34,8 +37,7 @@ public class DatosIrpfController extends PayrollBasicController {
 				getCriteria().addEqualExpression(getFieldName(IPayrollAlias.ELEMIRPF_PORCENTAJE), "S");
 				
 		} catch (ManagerBeanException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			LOGGER.log( Level.SEVERE, e.getMessage(), e );
 		}
 		
 		searchPorcentaje=false;

@@ -1,11 +1,16 @@
 package com.code.aon.ui.payroll.controller;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 import javax.faces.event.ActionEvent;
 
 import com.code.aon.common.ManagerBeanException;
 import com.code.aon.payroll.dao.IPayrollAlias;
 
 public class TiposIncidenciaController extends PayrollBasicController{
+	
+	private static final Logger LOGGER = Logger.getLogger(TiposIncidenciaController.class.getName());
 	
 	private boolean searchIndresta;
 	private boolean searchInddto;
@@ -21,8 +26,7 @@ public class TiposIncidenciaController extends PayrollBasicController{
 				getCriteria().addEqualExpression(getFieldName(IPayrollAlias.INCIDENCIA_INDDTO), "S");
 				
 		} catch (ManagerBeanException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			LOGGER.log( Level.SEVERE, e.getMessage(), e );
 		}
 		
 		searchIndresta=false;
