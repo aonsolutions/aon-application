@@ -6,6 +6,9 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
+import org.hibernate.annotations.Parameter;
+import org.hibernate.annotations.Type;
+
 import com.code.aon.common.ITransferObject;
 import com.code.aon.payroll.enumeration.FijoVariable;
 import com.code.aon.payroll.enumeration.IndiceComplemento;
@@ -21,13 +24,13 @@ import com.code.aon.payroll.enumeration.TipoCotizaciones;
 public class Complemento  implements ITransferObject {
 	
      private String cdg;
-     private String tipcot;
+     private TipoCotizaciones tipcot;
      private String description;
      private String desabr;
-     private String tipcom;
-     private String fijovar;
-     private String indcom;
-     private String dinesp;
+     private TipoComplemento tipcom;
+     private FijoVariable fijovar;
+     private IndiceComplemento indcom;
+     private Retribuciones dinesp;
     
 
     @Id     
@@ -45,14 +48,14 @@ public class Complemento  implements ITransferObject {
      * 
      * @return
      */
+    @Type(type="stringEnum",parameters= { @Parameter(name="enumClassname", value="com.code.aon.payroll.enumeration.TipoCotizaciones")} )
     @Column(name="tipcot", length=1)
-    public String getTipcot() {
+    public TipoCotizaciones getTipcot() {
         return this.tipcot;
     }
     
-    public void setTipcot(String tipcot) {
+    public void setTipcot(TipoCotizaciones tipcot) {
         this.tipcot = tipcot;
-        this.tipcotenum = ( this.tipcot != null)? TipoCotizaciones.valueOf( "Cot" + this.tipcot ): null;
     }
     
     /**
@@ -87,14 +90,14 @@ public class Complemento  implements ITransferObject {
      * 
      * @return
      */
+    @Type(type="stringEnum",parameters= { @Parameter(name="enumClassname", value="com.code.aon.payroll.enumeration.TipoComplemento")} )
     @Column(name="tipcom", nullable=false, length=1)
-    public String getTipcom() {
+    public TipoComplemento getTipcom() {
         return this.tipcom;
     }
     
-    public void setTipcom(String tipcom) {
+    public void setTipcom(TipoComplemento tipcom) {
         this.tipcom = tipcom;
-        this.tipcomenum = ( this.tipcom != null)? TipoComplemento.valueOf( "Com" + this.tipcom ): null;
     }
     
     /**
@@ -102,12 +105,13 @@ public class Complemento  implements ITransferObject {
      * 
      * @return
      */
+    @Type(type="stringEnum",parameters= { @Parameter(name="enumClassname", value="com.code.aon.payroll.enumeration.FijoVariable")} )
     @Column(name="fijovar", length=1)
-    public String getFijovar() {
+    public FijoVariable getFijovar() {
         return this.fijovar;
     }
     
-    public void setFijovar(String fijovar) {
+    public void setFijovar(FijoVariable fijovar) {
         this.fijovar = fijovar;
     }
     
@@ -116,12 +120,13 @@ public class Complemento  implements ITransferObject {
      * 
      * @return
      */
+    @Type(type="stringEnum",parameters= { @Parameter(name="enumClassname", value="com.code.aon.payroll.enumeration.IndiceComplemento")} )
     @Column(name="indcom", length=1)
-    public String getIndcom() {
+    public IndiceComplemento getIndcom() {
         return this.indcom;
     }
     
-    public void setIndcom(String indcom) {
+    public void setIndcom(IndiceComplemento indcom) {
         this.indcom = indcom;
     }
     
@@ -129,71 +134,16 @@ public class Complemento  implements ITransferObject {
      * Devuelve si es Dinerario o en Especie
      * @return
      */
+    @Type(type="stringEnum",parameters= { @Parameter(name="enumClassname", value="com.code.aon.payroll.enumeration.Retribuciones")} )
     @Column(name="dinesp", nullable=false, length=1)
-    public String getDinesp() {
+    public Retribuciones getDinesp() {
         return this.dinesp;
     }
     
-    public void setDinesp(String dinesp) {
+    public void setDinesp(Retribuciones dinesp) {
         this.dinesp = dinesp;
-        this.retribuciones = ( this.dinesp != null)? Retribuciones.valueOf( "retrib" + this.dinesp ): null;
     }
     
-    
-  //TODO Problemas en la creacion del enumerado a partir de un String.
-	private TipoCotizaciones tipcotenum;
-	@Transient 
-	public TipoCotizaciones getTipcotenum() {
-		return tipcotenum;
-	}
-	public void setTipcotenum(TipoCotizaciones tipcotenum) {
-		this.tipcotenum = tipcotenum;
-		setTipcot( (this.tipcotenum != null)? this.tipcotenum.name().substring( 3 ) : null );
-	}
-	
-	//TODO Problemas en la creacion del enumerado a partir de un String.
-	private TipoComplemento tipcomenum;
-	@Transient 
-	public TipoComplemento getTipcomenum() {
-		return tipcomenum;
-	}
-	public void setTipcomenum(TipoComplemento tipcomenum) {
-		this.tipcomenum = tipcomenum;
-		setTipcom( (this.tipcomenum != null)? this.tipcomenum.name().substring( 3 ) : null );
-	}
-	
-	//TODO Problemas en la creacion del enumerado a partir de un String.
-	private Retribuciones retribuciones;
-	@Transient 
-	public Retribuciones getRetribuciones() {
-		return retribuciones;
-	}
-	public void setRetribuciones(Retribuciones retribuciones) {
-		this.retribuciones = retribuciones;
-		setDinesp( (this.retribuciones != null)? this.retribuciones.name().substring( 6 ) : null );
-	}
-	
-	//TODO Problemas en la creacion del enumerado a partir de un String.
-	private FijoVariable fijoVariable;
-	@Transient 
-	public FijoVariable getFijoVariable() {
-		return fijoVariable;
-	}
-	public void setFijoVariable(FijoVariable fijoVariable) {
-		this.fijoVariable = fijoVariable;
-		setFijovar( (this.fijoVariable != null)? this.fijoVariable.name().substring( 7 ) : null );
-	}
-	
-	//TODO Problemas en la creacion del enumerado a partir de un String.
-	private IndiceComplemento indComplemento;
-	@Transient 
-	public IndiceComplemento getIndiceComplemento() {
-		return indComplemento;
-	}
-	public void setIndiceComplemento(IndiceComplemento indComplemento) {
-		this.indComplemento = indComplemento;
-		setIndcom( (this.indComplemento != null)? this.indComplemento.name().substring( 7 ) : null );
-	}
 
 }
 

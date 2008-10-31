@@ -27,7 +27,7 @@
 						required="true" size="1" maxlength="2" />
 					
 					<aon:outputLabel value="#{appBundle.aon_payroll_auxiliares_convenios__complemento_tipcot}" />
-					<aon:selectOneMenu id="TipoCotizacion" value="#{complemento.to.tipcotenum}" >
+					<aon:selectOneMenu id="TipoCotizacion" value="#{complemento.to.tipcot}" >
 						<f:selectItem value="#{null}" itemLabel=" -  " />
 						<f:selectItems value="#{complemento.listaCotizaciones}" />
 					</aon:selectOneMenu>
@@ -41,23 +41,23 @@
 						size="20" maxlength="15" />
 						
 					<aon:outputLabel value="#{appBundle.aon_payroll_auxiliares_convenios__complemento_tipcom}" />
-					<aon:selectOneMenu id="TipoComplemento" value="#{complemento.to.tipcomenum}" >	
+					<aon:selectOneMenu id="TipoComplemento" value="#{complemento.to.tipcom}" >	
 						<f:selectItem value="#{null}" itemLabel=" -  " />											
 						<f:selectItems value="#{complemento.listaComplementos}"/>
 					</aon:selectOneMenu>
 
 					<aon:outputLabel value="#{appBundle.aon_payroll_auxiliares_convenios__complemento_dinesp}" />
-					<aon:selectOneRadio id="Retribucion" value="#{complemento.to.retribuciones}" >	
+					<aon:selectOneRadio id="Retribucion" value="#{complemento.to.dinesp}" >	
 						<f:selectItems value="#{complemento.listaRetribuciones}"/>											
 					</aon:selectOneRadio>
 					
 					<aon:outputLabel value="#{appBundle.aon_payroll_auxiliares_convenios__complemento_fijovar}" />
-					<aon:selectOneRadio id="FijoVariable" value="#{complemento.to.fijoVariable}" >	
+					<aon:selectOneRadio id="FijoVariable" value="#{complemento.to.fijovar}" >	
 						<f:selectItems value="#{complemento.listaFijoVariable}"/>											
 					</aon:selectOneRadio>
 					
 					<aon:outputLabel value="#{appBundle.aon_payroll_auxiliares_convenios__complemento_indcom}" />
-					<aon:selectOneRadio id="IndComplemento" value="#{complemento.to.indiceComplemento}" >	
+					<aon:selectOneRadio id="IndComplemento" value="#{complemento.to.indcom}" >	
 						<f:selectItems value="#{complemento.listaIndiceComplemento}"/>											
 					</aon:selectOneRadio>
 					
