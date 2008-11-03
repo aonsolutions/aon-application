@@ -40,33 +40,7 @@
 		<group  name="g" >
 			<groupExpression><![CDATA[$F{cnaeMaestro}]]></groupExpression>
 			<groupHeader>
-			<band height="24"  isSplitAllowed="true" >
-				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
-					<reportElement
-						x="0"
-						y="0"
-						width="68"
-						height="14"
-						key="textField-51"/>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" leftPadding="5" rightBorder="None" rightBorderColor="#000000" rightPadding="5" bottomBorder="Thin" bottomBorderColor="#999999"/>
-					<textElement textAlignment="Right" verticalAlignment="Middle">
-						<font size="8"/>
-					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$F{cnaeMaestro}.getCdg()]]></textFieldExpression>
-				</textField>
-				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
-					<reportElement
-						x="68"
-						y="0"
-						width="77"
-						height="14"
-						key="textField-52"/>
-					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" leftPadding="5" rightBorder="None" rightBorderColor="#000000" rightPadding="5" bottomBorder="Thin" bottomBorderColor="#999999"/>
-					<textElement textAlignment="Right" verticalAlignment="Middle">
-						<font size="8"/>
-					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$F{cnaeMaestro}.getDescription()]]></textFieldExpression>
-				</textField>
+			<band height="4"  isSplitAllowed="true" >
 			</band>
 			</groupHeader>
 			<groupFooter>
@@ -111,7 +85,7 @@
 					<textElement textAlignment="Right" verticalAlignment="Middle">
 						<font pdfFontName="Helvetica-Bold" size="10" isBold="true"/>
 					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$R{aon_payroll_print} + " " + $R{aon_payroll_cotizacion_epigrafes}]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$R{aon_payroll_print} + " " + $R{aon_payroll_cotizacion_cnae_report}]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="false" pattern="dd/MM/yyyy" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
@@ -129,8 +103,34 @@
 			</band>
 		</pageHeader>
 		<columnHeader>
-			<band height="50"  isSplitAllowed="true" >
+			<band height="78"  isSplitAllowed="true" >
 				<printWhenExpression><![CDATA[new Boolean(($P{printHeaders}).booleanValue() || $V{PAGE_NUMBER}.intValue() == 1)]]></printWhenExpression>
+				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="0"
+						y="23"
+						width="68"
+						height="14"
+						key="textField-51"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" leftPadding="5" rightBorder="None" rightBorderColor="#000000" rightPadding="5" bottomBorder="Thin" bottomBorderColor="#999999"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font size="8"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{cnaeMaestro}.getCdg()]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
+					<reportElement
+						x="68"
+						y="23"
+						width="77"
+						height="14"
+						key="textField-52"/>
+					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" leftPadding="5" rightBorder="None" rightBorderColor="#000000" rightPadding="5" bottomBorder="Thin" bottomBorderColor="#999999"/>
+					<textElement textAlignment="Right" verticalAlignment="Middle">
+						<font size="8"/>
+					</textElement>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{cnaeMaestro}.getDescription()]]></textFieldExpression>
+				</textField>
 				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						mode="Opaque"
@@ -167,7 +167,7 @@
 					<reportElement
 						mode="Opaque"
 						x="240"
-						y="30"
+						y="55"
 						width="82"
 						height="15"
 						forecolor="#FFFFFF"
@@ -183,7 +183,7 @@
 					<reportElement
 						mode="Opaque"
 						x="322"
-						y="30"
+						y="55"
 						width="91"
 						height="15"
 						forecolor="#FFFFFF"
@@ -199,7 +199,7 @@
 					<reportElement
 						mode="Opaque"
 						x="413"
-						y="30"
+						y="55"
 						width="121"
 						height="15"
 						forecolor="#FFFFFF"
@@ -215,7 +215,7 @@
 					<reportElement
 						mode="Opaque"
 						x="156"
-						y="30"
+						y="55"
 						width="84"
 						height="15"
 						forecolor="#FFFFFF"
@@ -231,7 +231,7 @@
 					<reportElement
 						mode="Opaque"
 						x="88"
-						y="30"
+						y="55"
 						width="68"
 						height="15"
 						forecolor="#FFFFFF"
@@ -246,11 +246,11 @@
 			</band>
 		</columnHeader>
 		<detail>
-			<band height="27"  isSplitAllowed="true" >
+			<band height="21"  isSplitAllowed="true" >
 				<textField isStretchWithOverflow="false" pattern="dd/MM/yyyy" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						x="90"
-						y="6"
+						y="3"
 						width="68"
 						height="14"
 						key="textField-8"/>
@@ -263,7 +263,7 @@
 				<textField isStretchWithOverflow="false" pattern="dd/MM/yyyy" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						x="158"
-						y="6"
+						y="3"
 						width="84"
 						height="14"
 						key="textField-12"/>
@@ -276,7 +276,7 @@
 				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						x="324"
-						y="6"
+						y="3"
 						width="91"
 						height="14"
 						key="textField-17"/>
@@ -289,7 +289,7 @@
 				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						x="415"
-						y="6"
+						y="3"
 						width="119"
 						height="14"
 						key="textField-19"/>
@@ -302,7 +302,7 @@
 				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						x="242"
-						y="6"
+						y="3"
 						width="82"
 						height="14"
 						key="textField-48"/>
