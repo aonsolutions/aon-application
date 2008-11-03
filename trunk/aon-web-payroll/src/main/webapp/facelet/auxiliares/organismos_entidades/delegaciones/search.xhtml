@@ -30,26 +30,26 @@
 					<aon:inputText id="Delegacion_descripcion" size="60" maxlength="45"
 						valueChangeListener="#{delegacion.addExpression}" />
 						
-						
-					 <aon:outputLabel for="Tipovia_cdg" 
+			  			
+					 <aon:outputLabel for="Delegacion_tipovia_cdg" 
 						value="#{appBundle.aon_payroll_auxiliares_organismos_entidades__delegacion_tipovia}" />
 					<aon:div styleClass="aon-lookup">
-						<aon:lookupInputText id="Tipovia_cdg"
+						<aon:lookupInputText id="Delegacion_tipovia_cdg"
 							lookup="#{tipoviaLookup}"
 							reRender="Tipovia_description"
-							value="#{delegacion.to.tipovia.cdg}" size="5">
+							value="#{delegacion.tipovia.cdg}" size="5">
 						</aon:lookupInputText>
 						<aon:lookupButton id="Tipovia_lookup"
 							windowTitle="#{appBundle.aon_payroll_auxiliares_tipos__tipovia}"
-							selectReRender="Tipovia_cdg,Tipovia_description"
+							selectReRender="Delegacion_tipovia_cdg,Delegacion_tipovia_description"
 							lookup="#{tipoviaLookup}" minHeight="440"
-							property="#{delegacion.to.tipovia}">
+							property="#{delegacion.tipovia}">
 						</aon:lookupButton>
-						<aon:inputText id="Tipovia_description"
-							value="#{(delegacion.to.tipovia.description!=null)?(delegacion.to.tipovia.description):('')}"
+						<aon:inputText id="Delegacion_tipovia_description"
+							value="#{(delegacion.tipovia.description!=null)?(delegacion.tipovia.description):('')}"
 							size="34" disabled="true" />
 							</aon:div>
-							
+						
 							
 						<aon:outputLabel for="Delegacion_nomvia"
 						value="#{appBundle.aon_payroll_auxiliares_organismos_entidades__delegacion_nomvia}" />
@@ -82,22 +82,22 @@
 					<aon:inputText id="Delegacion_codpos" size="60" maxlength="45"
 						valueChangeListener="#{delegacion.addExpression}" />
 						
-						 <aon:outputLabel for="Provincia_cdg" 
+						 <aon:outputLabel for="Delegacion_provincia_cdg" 
 						value="#{appBundle.aon_payroll_auxiliares_organismos_entidades__delegacion_provincia}" />
 					<aon:div styleClass="aon-lookup">
-						<aon:lookupInputText id="Provincia_cdg"
+						<aon:lookupInputText id="Delegacion_provincia_cdg"
 							lookup="#{provinciaLookup}"
 							reRender="Provincia_descripcion"
-							value="#{delegacion.to.provincia.cdg}" size="5">
+							value="#{delegacion.provincia.cdg}" size="5">
 						</aon:lookupInputText>
 						<aon:lookupButton id="Provincia_lookup"
 							windowTitle="#{appBundle.aon_payroll_auxiliares_tipos__provincia}"
-							selectReRender="Provincia_cdg,Provincia_descripcion"
+							selectReRender="Delegacion_provincia_cdg,Delegacion_provincia_description"
 							lookup="#{provinciaLookup}" minHeight="440"
-							property="#{delegacion.to.provincia}">
+							property="#{delegacion.provincia}">
 						</aon:lookupButton>
-						<aon:inputText id="Provincia_descripcion"
-							value="#{(delegacion.to.provincia.descripcion!=null)?(delegacion.to.provincia.descripcion):('')}"
+						<aon:inputText id="Delegacion_provincia_description"
+							value="#{(delegacion.provincia.descripcion!=null)?(delegacion.provincia.descripcion):('')}"
 							size="34" disabled="true" />
 					</aon:div>			
 				

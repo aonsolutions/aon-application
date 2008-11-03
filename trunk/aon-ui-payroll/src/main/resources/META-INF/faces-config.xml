@@ -288,7 +288,7 @@
 	<managed-bean>
 		<managed-bean-name>delegacion</managed-bean-name>
 		<managed-bean-class>
-			com.code.aon.ui.payroll.controller.PayrollBasicController
+			com.code.aon.ui.payroll.controller.DelegacionController
 		</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
@@ -2363,7 +2363,7 @@
 	<managed-bean>
 		<managed-bean-name>mutuaMaestro</managed-bean-name>
 		<managed-bean-class>
-			com.code.aon.ui.payroll.controller.PayrollBasicController
+			com.code.aon.ui.payroll.controller.MutuasController
 		</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
