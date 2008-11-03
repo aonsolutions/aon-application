@@ -10,30 +10,7 @@
 
 		<aon:form id="epigrafeMaestroSearch">
 
-		<!--  	<aon:div styleClass="aon-finding-title-toolbar">
-				<aon:panelGrid columns="3" dir="true"
-					columnClasses="aon-finding-title,aon-finding-subtitle,aon-finding-toolbar">
-
-					<aon:div styleClass="aon-finding-title-internal">
-						<aon:outputText value="#{menuBundle.aon_payroll_cotizacion_epigrafes}" />
-					</aon:div>
-
-					<aon:div styleClass="aon-finding-subtitle-internal">
-						<aon:outputText value="#{appBundle.aon_toolbar_search}" />
-					</aon:div>
-
-					<aon:div styleClass="aon-finding-toolbar-item-group">
-						<aon:commandButton id="clear" value="#{bundle.aon_clear}"
-							type="reset" ajaxSingle="true"
-							styleClass="aon-finding-toolbar-item aon-icon-rubber" />
-						<aon:commandButton id="back" value="#{bundle.aon_back}"
-							action="cotizacion_epigrafe_list" actionListener="#{epigrafeMaestro.onCancel}"
-							styleClass="aon-finding-toolbar-item aon-icon-cancel" immediate="true"
-							accesskey="#{bundle.aon_key_cancel}" />
-					</aon:div>
-				</aon:panelGrid>
-			</aon:div>
-			-->
+	
 			
 			<ui:include src="/com/code/aon/ui/resources/facelet/toolbar/searchToolbar.xhtml" >
 				<ui:param name="toolbarTitle" value="#{appBundle.aon_payroll_cotizacion_epigrafes}" />
@@ -56,19 +33,19 @@
 						value="#{appBundle.aon_payroll_description}" />
 					<aon:inputText id="Epigrafe_description" size="60" maxlength="50"
 						valueChangeListener="#{epigrafeMaestro.addExpression}" />
-			<!--   			
+			  			
 					<aon:outputLabel for="Epigrafe_epigrafes_id_fecini"
 						value="#{appBundle.aon_payroll_cotizacion_fecini}" />
 					<aon:selectInputDate id="Epigrafe_epigrafes_id_fecini"
 						renderAsPopup="true" popupDateFormat="#{appBundle.aon_date_pattern}"
-						valueChangeListener="#{epigrafeMaestro.addDirectExpression}" />
+						value="#{epigrafeMaestro.searchFecini}" />
 						
 					<aon:outputLabel for="Epigrafe_epigrafes_fecfin"
 						value="#{appBundle.aon_payroll_cotizacion_fecfin}" />
 					<aon:selectInputDate id="Epigrafe_epigrafes__fecfin"
 						renderAsPopup="true" popupDateFormat="#{appBundle.aon_date_pattern}"
-						valueChangeListener="#{epigrafeMaestro.addDirectExpression}" />
-				--> 
+						value="#{epigrafeMaestro.searchFecfin}" />
+				 
 					
 					<aon:outputLabel for="Epigrafe_epigrafes_indit"
 						value="#{appBundle.aon_payroll_cotizacion_epigrafes_indiIT}" />	
