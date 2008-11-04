@@ -45,17 +45,17 @@
 	<variable name="taxTotal" class="java.lang.Double" resetType="Group" resetGroup="invoiceGroup" calculation="Nothing">
 	</variable>
 	<variable name="taxTotalAmount" class="java.lang.Double" resetType="None" incrementType="Report" calculation="Nothing">
-		<variableExpression><![CDATA[$V{taxTotal}!=null?new Double($V{taxTotalAmount}.doubleValue()+$V{taxTotal}.doubleValue()):$V{taxTotalAmount}!=null?$V{taxTotalAmount}:new Double(0)]]></variableExpression>
+		<variableExpression><![CDATA[$V{taxTotalAmount}]]></variableExpression>
 	</variable>
 	<variable name="surchargeTotal" class="java.lang.Double" resetType="Group" resetGroup="invoiceGroup" calculation="Nothing">
 	</variable>
 	<variable name="surchargeTotalAmount" class="java.lang.Double" resetType="None" calculation="Nothing">
-		<variableExpression><![CDATA[$V{surchargeTotal}!=null?new Double($V{surchargeTotalAmount}.doubleValue()+$V{surchargeTotal}.doubleValue()):$V{surchargeTotalAmount}!=null?$V{surchargeTotalAmount}:new Double(0)]]></variableExpression>
+		<variableExpression><![CDATA[$V{surchargeTotalAmount}]]></variableExpression>
 	</variable>
 	<variable name="retentionTotal" class="java.lang.Double" resetType="Group" resetGroup="invoiceGroup" calculation="Nothing">
 	</variable>
 	<variable name="retentionTotalAmount" class="java.lang.Double" resetType="None" calculation="Nothing">
-		<variableExpression><![CDATA[$V{retentionTotal}!=null?new Double($V{retentionTotalAmount}.doubleValue()+$V{retentionTotal}.doubleValue()):$V{retentionTotalAmount}!=null?$V{retentionTotalAmount}:new Double(0)]]></variableExpression>
+		<variableExpression><![CDATA[$V{retentionTotalAmount}]]></variableExpression>
 	</variable>
 	<variable name="reportTotal" class="java.lang.Double" resetType="None" calculation="Sum">
 		<variableExpression><![CDATA[$V{invoiceTotal}]]></variableExpression>
