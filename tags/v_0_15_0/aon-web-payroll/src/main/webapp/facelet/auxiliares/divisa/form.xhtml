@@ -1,0 +1,56 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:rich="http://richfaces.org/rich"
+    xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a4j="http://richfaces.org/a4j">
+<body>
+
+<ui:composition template="/facelet/templates/aon.ui.content.xhtml">
+
+	<ui:define name="content">
+
+		<aon:form id="porcentajeForm">
+				
+			
+           <ui:include src="/facelet/templates/formPrintToolbar.xhtml">
+				<ui:param name="toolbarTitle" value="#{appBundle.aon_payroll_auxiliares_divisa}" />>				
+				<ui:param name="controller" value="#{divisaMaestro}"/>
+			    <ui:param name="reportKey" value="DivisaList"/>
+			    <ui:param name="reportKeyXls" value="DivisaList2"/>	
+			</ui:include>
+					
+
+			<aon:div styleClass="aon-scroll-area">
+				<aon:panelGrid id="divisaMaestro" columns="2" dir="true" width="100%" style="margin-bottom=2px;">
+					
+					<aon:outputLabel value="#{appBundle.aon_payroll_auxiliares_divisa_codigodivisa}" />
+					<aon:inputText value="#{divisaMaestro.to.cdg}" disabled="true" 
+						required="true" size="10" maxlength="8" />
+				
+					<aon:outputLabel for="Domain_name" value="#{appBundle.aon_payroll_auxiliares_divisa_desc}" />
+					<aon:inputText value="#{divisaMaestro.to.description}" 
+						required="true" size="60" maxlength="50" >
+					</aon:inputText>
+					
+               		<aon:outputLabel value="#{appBundle.aon_payroll_auxiliares_divisa_redondeo}" />
+					<aon:selectOneMenu id="Redondeo" value="#{divisaMaestro.to.redondeo}" >	
+						<f:selectItems value="#{divisaMaestro.listaRedondeos}"/>								
+					</aon:selectOneMenu>
+					
+				
+				</aon:panelGrid>
+
+			  <ui:include src="grid.xhtml" rendered="#{!divisaMaestro.new}" />	
+			 
+			 	</aon:div>
+		</aon:form>
+				<aon:lookupButtonPopup lookup="#{divisaLookup}" />	
+	</ui:define>
+</ui:composition>
+
+</body>
+</html>

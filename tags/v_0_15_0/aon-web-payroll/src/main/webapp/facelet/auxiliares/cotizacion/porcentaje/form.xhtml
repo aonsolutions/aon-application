@@ -1,0 +1,52 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j">
+<body>
+
+<ui:composition template="/facelet/templates/aon.ui.content.xhtml">
+
+	<ui:define name="content">
+
+		<aon:form id="porcentajeForm">
+		
+		
+			<ui:include src="/facelet/templates/formPrintToolbar.xhtml">
+				<ui:param name="toolbarTitle" value="#{menuBundle.auxiliares_cotizacion__porcoti}" />
+				<ui:param name="controller" value="#{porcentajeMaestro}"/>
+			    <ui:param name="reportKey" value="cotizacionPorcentajesList"/>
+			    <ui:param name="reportKeyXls" value="cotizacionPorcentajesXlsList"/>
+				
+			</ui:include>	
+							
+			
+
+			<aon:div styleClass="aon-scroll-area">
+				<aon:panelGrid id="porcentajeMaestro" columns="2" dir="true" width="100%" style="margin-bottom=2px;">
+					<aon:outputLabel value="#{appBundle.aon_payroll_cdg}" />
+					<aon:inputText value="#{porcentajeMaestro.to.cdg}" disabled="#{!porcentajeMaestro.new}" 
+						required="true" size="10" maxlength="8" />
+				
+					<aon:outputLabel for="Domain_name" value="#{appBundle.aon_payroll_description}" />
+					<aon:inputText value="#{porcentajeMaestro.to.description}" 
+						required="true" size="60" maxlength="50" >
+					</aon:inputText>
+
+					<aon:outputLabel value="#{appBundle.aon_payroll_order}" />
+					<aon:inputText value="#{porcentajeMaestro.to.ordpct}"
+						size="1" maxlength="2" />
+				</aon:panelGrid>
+
+				<ui:include src="grid.xhtml" rendered="#{!porcentajeMaestro.new}" />				
+			</aon:div>
+		</aon:form>
+	</ui:define>
+</ui:composition>
+
+</body>
+</html>

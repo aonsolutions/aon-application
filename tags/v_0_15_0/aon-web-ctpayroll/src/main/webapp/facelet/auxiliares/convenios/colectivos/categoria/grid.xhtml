@@ -1,0 +1,65 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:c="http://java.sun.com/jstl/core">
+
+	<aon:div id="categoriaDataDiv">
+		<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/grid.xhtml" >
+			<ui:param name="controller" value="#{categoria}" />
+			<ui:param name="columnClasses" value="aon-editDataTable-textColumn, aon-editDataTable-textColumn" />
+			<ui:param name="showDataScroller" value="#{(!nivel.new) and (nivel.to != null)}" />			
+			<ui:param name="skipResetButton" value="#{nivel.new or (nivel.to == null)}" />			
+			<ui:define name="columns">
+
+				<aon:column>
+					<f:facet name="header">
+						<aon:outputText value="to.id.cdg" />
+					</f:facet>
+					<aon:outputText value="#{to.id.cdg}" rendered="#{to!=categoria.to}" />
+					<aon:inputText id="cdg_edit" styleClass="aon-form-input-text"
+						rendered="#{to==categoria.to}"  required="true"
+						value="#{categoria.to.id.cdg}" maxlength="8" size="10" />
+					<f:facet name="footer">
+						<aon:inputText id="cdg_new" styleClass="aon-form-input-text"  
+							rendered="#{categoria.new}" required="true"
+							value="#{categoria.to.id.cdg}" maxlength="8" size="10"  />
+					</f:facet>
+				</aon:column>
+				
+				<aon:column>
+					<f:facet name="header">
+						<aon:outputText value="to.nivel" />
+					</f:facet>
+					<aon:outputText value="#{to.nivel}" rendered="#{to!=categoria.to}" />
+					<aon:inputText id="nivel_edit" styleClass="aon-form-input-text"
+						rendered="#{to==categoria.to}"  required="true"
+						value="#{categoria.to.nivel}" maxlength="8" size="10" />
+					<f:facet name="footer">
+						<aon:inputText id="nivel_new" styleClass="aon-form-input-text"  
+							rendered="#{categoria.new}" required="true"
+							value="#{categoria.to.nivel}" maxlength="8" size="10"  />
+					</f:facet>
+				</aon:column>
+
+				<aon:column>
+					<f:facet name="header">
+						<aon:outputText value="#{appBundle.aon_payroll_description}" />
+					</f:facet>
+					<aon:outputText value="#{to.description}" rendered="#{to!=categoria.to}" />
+					<aon:inputText id="description_edit" styleClass="aon-form-input-text"
+						rendered="#{to==categoria.to}"  required="true"
+						value="#{categoria.to.description}" maxlength="8" size="10" />
+					<f:facet name="footer">
+						<aon:inputText id="description_new" styleClass="aon-form-input-text"  
+							rendered="#{categoria.new}" required="true"
+							value="#{categoria.to.description}" maxlength="8" size="10"  />
+					</f:facet>
+				</aon:column>
+			
+		</ui:define>
+		</ui:decorate>
+					
+	</aon:div>
+
+</ui:composition>

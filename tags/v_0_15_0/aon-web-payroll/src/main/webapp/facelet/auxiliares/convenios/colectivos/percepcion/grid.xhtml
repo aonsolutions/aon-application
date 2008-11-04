@@ -1,0 +1,67 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:c="http://java.sun.com/jstl/core">
+
+	<aon:div id="percepcionDataDiv">
+		<ui:decorate template="/com/code/aon/ui/resources/facelet/shared/grid.xhtml" >
+			<ui:param name="controller" value="#{percepcion}" />
+			<ui:param name="columnClasses" value="aon-editDataTable-textColumn, aon-editDataTable-textColumn" />
+			<ui:param name="showDataScroller" value="#{(!nivel.new) and (nivel.to != null)}" />			
+			<ui:param name="skipResetButton" value="#{nivel.new or (nivel.to == null)}" />			
+			<ui:define name="columns">
+			
+			<aon:column>
+				<f:facet name="header">
+					<aon:outputText value="to.id.cdg" />
+				</f:facet>
+				<aon:outputText value="#{to.id.cdg}" rendered="#{to!=percepcion.to}" />
+				<aon:inputText id="cdg_edit" styleClass="aon-form-input-text"
+					rendered="#{to==percepcion.to}"  required="true"
+					value="#{percepcion.to.id.cdg}" maxlength="8" size="10" />
+				<f:facet name="footer">
+					<aon:inputText id="cdg_new" styleClass="aon-form-input-text"  
+						rendered="#{percepcion.new}" required="true"
+						value="#{percepcion.to.id.cdg}" maxlength="8" size="10"  />
+				</f:facet>
+			</aon:column>
+
+			<aon:column>
+					<f:facet name="header">
+						<aon:outputText value="#{appBundle.aon_payroll_description}" />
+					</f:facet>
+					<aon:outputText value="#{to.descom}" rendered="#{to!=percepcion.to}" />
+					<aon:inputText id="descom_edit" styleClass="aon-form-input-text"
+						rendered="#{to==percepcion.to}"  required="true"
+						value="#{percepcion.to.descom}" maxlength="8" size="10" />
+					<f:facet name="footer">
+						<aon:inputText id="descom_new" styleClass="aon-form-input-text"  
+							rendered="#{percepcion.new}" required="true"
+							value="#{percepcion.to.descom}" maxlength="8" size="10"  />
+					</f:facet>
+				</aon:column>
+			
+			<aon:column>
+				<f:facet name="header">
+					<aon:outputText value="#{appBundle.aon_payroll_cotizacion_dato2}" />
+				</f:facet>
+				<aon:outputText value="#{to.importe}" rendered="#{to!=percepcion.to}" >
+					<f:convertNumber minFractionDigits="2" />
+				</aon:outputText>
+				<aon:inputText id="dato2_edit" styleClass="aon-form-input-text"
+					rendered="#{to==percepcion.to}" required="true"
+					value="#{percepcion.to.importe}" maxlength="8" size="10" />
+				<f:facet name="footer">
+					<aon:inputText id="dato2_new" styleClass="aon-form-input-text"  
+						rendered="#{percepcion.new}" required="true"
+						value="#{percepcion.to.importe}" maxlength="8" size="10"  />
+				</f:facet>
+			</aon:column>
+			
+		</ui:define>
+		</ui:decorate>
+					
+	</aon:div>
+
+</ui:composition>

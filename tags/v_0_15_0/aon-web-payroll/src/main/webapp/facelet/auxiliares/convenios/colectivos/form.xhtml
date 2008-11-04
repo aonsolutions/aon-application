@@ -1,0 +1,88 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:aon="http://www.code.es/aon-rich-components"
+	xmlns:c="http://java.sun.com/jstl/core"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:a4j="http://richfaces.org/a4j">
+<body>
+
+<ui:composition template="/facelet/templates/aon.ui.content.xhtml">
+
+	<ui:define name="content">
+
+		<aon:form id="conveniosForm">
+			
+			<ui:include src="/facelet/templates/formPrintToolbar.xhtml">
+				<ui:param name="toolbarTitle" value="#{menuBundle.auxiliares_convenios__convenio}" />				
+				<ui:param name="controller" value="#{convenio}"/>
+				<ui:param name="reportKey" value=""/>
+				<ui:param name="reportKeyXls" value=""/>
+			</ui:include>
+			
+			<aon:div styleClass="aon-scroll-area">
+				<aon:panelGrid id="convenio" columns="2" dir="true" width="100%" style="margin-bottom=2px;">
+					<aon:outputLabel for="Convenio_cdg" value="#{appBundle.aon_payroll_cdg} #{appBundle.aon_payroll_auxiliares_convenios__convenio}"/>
+					<aon:inputText id="Convenio_cdg" value="#{convenio.to.cdg}" disabled="#{!convenio.new}" 
+						required="true" size="15" maxlength="10" />
+				
+					<aon:outputLabel for="Convenio_description" value="#{appBundle.aon_payroll_description} #{appBundle.aon_payroll_auxiliares_convenios__convenio}" />
+					<aon:inputText id="Convenio_description" value="#{convenio.to.description}" 
+						size="70" maxlength="50" >
+					</aon:inputText>
+					
+					<aon:outputLabel value="#{appBundle.aon_payroll_auxiliares_convenios__indicador}" />
+					<aon:selectOneMenu id="IndicadorDias" value="#{convenio.to.inddiaenum}" >						
+						<f:selectItem value="#{null}" itemLabel=" -  " />
+						<f:selectItems value="#{convenio.listaIndicadorDias}"/>
+					</aon:selectOneMenu>
+					
+					<aon:outputLabel value="#{appBundle.aon_payroll_auxiliares_convenios__tipo}" />
+					<aon:selectOneMenu id="TipoConvenio" value="#{convenio.to.tipconenum}" >												
+						<f:selectItem value="#{null}" itemLabel=" -  " />
+						<f:selectItems value="#{convenio.listaTipoConvenios}" />
+					</aon:selectOneMenu>
+					
+				</aon:panelGrid>
+
+
+				<!-- rich:tabPanel switchType="client" selectedTab="#{(pagaext.to!=null)?'niveles':'pagas'}"-->
+				<rich:tabPanel switchType="ajax" >
+					<rich:tab id="niveles" label="#{appBundle.aon_payroll_auxiliares_convenios__niveles}">
+						<aon:commandButton id="categoriasButtom2" title="[#{bundle.aon_categorias}]"
+							rendered="#{!convenio.new}" immediate="true" disabled="#{convenio.new}"
+							action="convenios_colectivos_search" actionListener="#{convenio.onEditSearch}"
+							styleClass="aon-finding-toolbar-item aon-icon-category"
+							accesskey="#{bundle.aon_key_search}" />				
+						<aon:commandButton id="percepcionesButtom2" title="[#{bundle.aon_percepciones}]"
+							rendered="#{!convenio.new}" immediate="true" disabled="#{convenio.new}"
+							action="convenios_colectivos_search" actionListener="#{convenio.onEditSearch}"
+							styleClass="aon-finding-toolbar-item aon-icon-notes"
+							accesskey="#{bundle.aon_key_search}" />
+							
+						<aon:div id="nivelDiv" style="width:15%; margin-right:5px; float: left;">	
+							<aon:outputLabel value="#{appBundle.aon_payroll_auxiliares_convenios__tabnivel}" />		
+							<ui:include src="nivel/grid.xhtml" />
+						</aon:div>
+						<aon:div id="categoriaDiv" style="width:40%; margin-right:5px; float: left;">
+							<aon:outputLabel value="#{appBundle.aon_payroll_auxiliares_convenios__tabcat}" />
+							<ui:include src="categoria/grid.xhtml" />
+						</aon:div>											
+						<aon:div id="percepcionDiv" style="width:40%; margin-right:5px; float: left;">
+							<aon:outputLabel value="#{appBundle.aon_payroll_auxiliares_convenios__tabperc}" />
+							<ui:include src="percepcion/grid.xhtml" />
+						</aon:div>
+					</rich:tab>
+					<rich:tab id="pagas" label="#{appBundle.aon_payroll_auxiliares_convenios__pagas}">
+						<ui:include src="pagas/grid.xhtml" />
+					</rich:tab>
+				</rich:tabPanel>
+			
+			</aon:div>
+		</aon:form>
+	</ui:define>
+</ui:composition>
+
+</body>
+</html>
