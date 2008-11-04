@@ -1031,6 +1031,10 @@
 			<value>com.code.aon.payroll.auxiliares.contratos.ContratosTc2</value>
 		</managed-property>
 		<managed-property>
+			<property-name>beanName</property-name>
+			<value>contratosTc2</value>
+		</managed-property>		
+		<managed-property>
 			<property-name>defaultOrder</property-name>
 			<value>ContratosTc2_cdg</value>
 		</managed-property>
@@ -1203,7 +1207,7 @@
 	<!-- ************* IRPF EXCLUSION ***************** -->
 	<managed-bean>
 		<managed-bean-name>exclusion</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.payroll.controller.PayrollBasicController</managed-bean-class>
+		<managed-bean-class>com.code.aon.ui.payroll.controller.ExclusionController</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
 			<property-name>queryOnStartUP</property-name>
@@ -1217,7 +1221,21 @@
 			<property-name>defaultOrder</property-name>
 			<value>Exclusion_fecfin DESC,Exclusion_id_fecini DESC,Exclusion_id_situacion,Exclusion_id_hijos </value>
 		</managed-property>
+		<managed-property>
+			<property-name>listenerClasses</property-name>
+			<list-entries>
+				<value-class>com.code.aon.ui.form.event.IControllerListener</value-class>				
+				<value>#{ExclusionControllerListener}</value>									
+			</list-entries>			
+		</managed-property>
 	</managed-bean>
+	<managed-bean>
+		   <managed-bean-name>ExclusionControllerListener</managed-bean-name>
+	     	<managed-bean-class>
+			com.code.aon.ui.payroll.event.ExclusionControllerListener
+		   </managed-bean-class>
+		<managed-bean-scope>none</managed-bean-scope>	
+	 </managed-bean>
 	
 	<!-- ************* CONVENIOS - COMPLEMENTOS ***************** -->
 	<managed-bean>
@@ -1712,7 +1730,7 @@
 	
 	<managed-bean>
 		<managed-bean-name>categoria</managed-bean-name>
-		<managed-bean-class>com.code.aon.ui.payroll.controller.LinesController</managed-bean-class>
+		<managed-bean-class>com.code.aon.ui.form.LinesController</managed-bean-class>
 		<managed-bean-scope>session</managed-bean-scope>
 		<managed-property>
 			<property-name>queryOnStartUP</property-name>

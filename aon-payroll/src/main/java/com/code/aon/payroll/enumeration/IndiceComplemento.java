@@ -4,21 +4,29 @@ import java.util.Locale;
 import java.util.ResourceBundle;
 
 import com.code.aon.common.enumeration.IResourceable;
+import com.code.aon.common.enumeration.IStringEnum;
 
 /**
  * The Enum EnumIndiceComplemento.
  */
-public enum IndiceComplemento implements IResourceable {
+public enum IndiceComplemento implements IResourceable, IStringEnum {
 
-	indcompP, 
-	indcompV,
-	indcompH;
+	PAGAEXT("P"), 
+	VACACIONES("V"),
+	HORAS("H");
 	
 	private static final String BASE_NAME = "com.code.aon.payroll.i18n.messages";
 
 	/** Message key prefix. */
     private static final String MSG_KEY_PREFIX = "aon_enum_indcomp_";
 	
+    
+    private String value;
+    
+    IndiceComplemento( String value ) {
+      	this.value = value;
+  	}
+    
 	/**
 	 * Returns a <code>String</code> with the transalation <code>Locale</code>
 	 * for the locale.
@@ -31,4 +39,9 @@ public enum IndiceComplemento implements IResourceable {
         ResourceBundle bundle = ResourceBundle.getBundle(BASE_NAME, locale); 
 		return bundle.getString(MSG_KEY_PREFIX + toString());
     }
+    
+    @Override
+	public String getValue() {
+		return value;
+	}
 }

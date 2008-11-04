@@ -13,6 +13,9 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
+import org.hibernate.annotations.Parameter;
+import org.hibernate.annotations.Type;
+
 import com.code.aon.common.ITransferObject;
 import com.code.aon.payroll.enumeration.Divisas;
 import com.code.aon.payroll.enumeration.Prorateo;
@@ -25,7 +28,7 @@ public class Divisa  implements  ITransferObject {
 
      private String cdg;
      private String description;
-     private Integer redondeo;
+     private Divisas redondeo;
      private Integer mask1;
      private Integer mask2;
     
@@ -52,13 +55,13 @@ public class Divisa  implements  ITransferObject {
         this.description = descripcion;
     }
     
-
+    @Type(type="stringEnum",parameters= { @Parameter(name="enumClassname", value="com.code.aon.payroll.enumeration.Divisas")} )
     @Column(name="redondeo", length=2)
-    public Integer getRedondeo() {
+    public Divisas getRedondeo() {
         return this.redondeo;
     }
     
-    public void setRedondeo(Integer redondeo) {
+    public void setRedondeo(Divisas redondeo) {
         this.redondeo = redondeo;
     }
     

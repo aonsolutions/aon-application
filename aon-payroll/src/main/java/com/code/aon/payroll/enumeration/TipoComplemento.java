@@ -4,26 +4,32 @@ import java.util.Locale;
 import java.util.ResourceBundle;
 
 import com.code.aon.common.enumeration.IResourceable;
+import com.code.aon.common.enumeration.IStringEnum;
 
 /**
  * The Enum EnumComplemento.
  */
-public enum TipoComplemento implements IResourceable {
+public enum TipoComplemento implements IResourceable, IStringEnum {
 
-	ComS,
-	ComP,
-	ComT,
-	ComC,
-	ComD,
-	ComI,
-	ComG,
-	ComO;
+	SALARIO("S"),
+	PERSONALES("P"),
+	PUESTO("T"),
+	CANTIDAD("C"),
+	DEVENGO("D"),
+	INDEMNIZACIONES("I"),
+	PRESTACIONES("G"),
+	OTROS("O");
 	
 	private static final String BASE_NAME = "com.code.aon.payroll.i18n.messages";
 
 	/** Message key prefix. */
     private static final String MSG_KEY_PREFIX = "aon_enum_complementos_";
 	
+    private String value;
+    
+    TipoComplemento( String value ) {
+      	this.value = value;
+  	}
 	/**
 	 * Returns a <code>String</code> with the transalation <code>Locale</code>
 	 * for the locale.
@@ -36,4 +42,9 @@ public enum TipoComplemento implements IResourceable {
         ResourceBundle bundle = ResourceBundle.getBundle(BASE_NAME, locale); 
 		return bundle.getString(MSG_KEY_PREFIX + toString());
     }
+    
+    @Override
+	public String getValue() {
+		return value;
+	}
 }

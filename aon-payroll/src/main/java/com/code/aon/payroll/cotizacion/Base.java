@@ -12,6 +12,9 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
+import org.hibernate.annotations.Parameter;
+import org.hibernate.annotations.Type;
+
 import com.code.aon.common.ITransferObject;
 import com.code.aon.payroll.enumeration.Prorateo;
 import com.code.aon.payroll.enumeration.TipoCotizaciones;
@@ -25,7 +28,7 @@ public class Base  implements ITransferObject {
 
      private String cdg;
      private String description;
-     private String indpro;
+     private Prorateo indpro;
  
  	private Set<Linbasec> linbases = new HashSet<Linbasec>();
  
@@ -50,28 +53,18 @@ public class Base  implements ITransferObject {
         this.description = description;
     }
     
-
+    @Type(type="stringEnum",parameters= { @Parameter(name="enumClassname", value="com.code.aon.payroll.enumeration.Prorateo")} )
     @Column(name="indpro", length=5)
-    public String getIndpro() {
+    public Prorateo getIndpro() {
         return this.indpro;
     }
     
-    public void setIndpro(String indpro) {
+    public void setIndpro(Prorateo indpro) {
         this.indpro = indpro;
-        this.pro = ( this.indpro != null)? Prorateo.valueOf( "pro" + this.indpro ): null;
+        
     }
 
     
-    //TODO Problemas en la creacion del enumerado a partir de un String.
-  	private  Prorateo pro;
-  	@Transient 
-  	public Prorateo getProrateo() {
-  		return pro;
-  	}
-  	public void setProrateo( Prorateo pro) {
-  		this.pro = pro;
-  		setIndpro( (this.pro != null)? this.pro.name().substring( 3 ) : null );
-  	}
 
   	@OneToMany(mappedBy = "basecoti", cascade={CascadeType.REMOVE})
 	public Set<Linbasec> getLinbases() {

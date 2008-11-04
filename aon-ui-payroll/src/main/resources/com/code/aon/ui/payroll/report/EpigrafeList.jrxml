@@ -29,10 +29,10 @@
 
 	<field name="epigrafe" class="com.code.aon.payroll.cotizacion.Epigrafe"/>
 	<field name="id" class="com.code.aon.payroll.cotizacion.LinepigrId"/>
+	<field name="indit" class="com.code.aon.payroll.enumeration.Epigrafes"/>
 	<field name="fecfin" class="java.util.Date"/>
-	<field name="epi1" class="com.code.aon.payroll.enumeration.Epigrafes"/>
 	<field name="canit" class="java.math.BigDecimal"/>
-	<field name="epi2" class="com.code.aon.payroll.enumeration.Epigrafes"/>
+	<field name="indipm" class="com.code.aon.payroll.enumeration.Epigrafes"/>
 	<field name="canipm" class="java.math.BigDecimal"/>
 
 	<variable name="groupCdg" class="java.lang.String" resetType="Report" calculation="Nothing">
@@ -264,7 +264,7 @@
 			</band>
 		</columnHeader>
 		<detail>
-			<band height="17"  isSplitAllowed="true" >
+			<band height="20"  isSplitAllowed="true" >
 				<textField isStretchWithOverflow="false" pattern="dd/MM/yyyy" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						x="0"
@@ -328,7 +328,7 @@
 					<textElement verticalAlignment="Middle">
 						<font size="8"/>
 					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$F{epi2}.getName($P{REPORT_LOCALE})]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{indipm}.getName($P{REPORT_LOCALE})]]></textFieldExpression>
 				</textField>
 				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
@@ -341,7 +341,7 @@
 					<textElement verticalAlignment="Middle">
 						<font size="8"/>
 					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$F{epi1}.getName($P{REPORT_LOCALE})]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.String"><![CDATA[$F{indit}.getName($P{REPORT_LOCALE})]]></textFieldExpression>
 				</textField>
 			</band>
 		</detail>
@@ -354,8 +354,8 @@
 				<printWhenExpression><![CDATA[$P{printHeaders}]]></printWhenExpression>
 				<textField isStretchWithOverflow="false" isBlankWhenNull="false" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
-						x="13"
-						y="-8"
+						x="5"
+						y="0"
 						width="262"
 						height="14"
 						key="textField-14"/>

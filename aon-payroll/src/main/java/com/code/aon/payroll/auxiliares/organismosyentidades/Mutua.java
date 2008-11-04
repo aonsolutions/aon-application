@@ -15,6 +15,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import com.code.aon.common.ITransferObject;
+import com.code.aon.payroll.cotizacion.Linepigr;
 import com.code.aon.payroll.cotizacion.Porcentaje;
 
 /**

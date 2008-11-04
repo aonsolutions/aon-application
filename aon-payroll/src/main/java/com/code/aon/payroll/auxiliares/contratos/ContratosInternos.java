@@ -9,7 +9,9 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-import javax.persistence.Transient;
+
+import org.hibernate.annotations.Parameter;
+import org.hibernate.annotations.Type;
 
 import com.code.aon.common.ITransferObject;
 import com.code.aon.payroll.cotizacion.PorcentajeMaestro;
@@ -25,12 +27,12 @@ public class ContratosInternos implements ITransferObject {
 	private String cdg;
 	private String description;
 	private PorcentajeMaestro maestro;
-	private String desemple;
+	private Desempleado desemple;
 	private BigDecimal gradomin;
-	private String mujersub;
-	private String incaread;
-	private String primertra;
-	private String excsocial;
+	private Boolean mujersub;
+	private Boolean incaread;
+	private Boolean primertra;
+	private Boolean excsocial;
 
 	@Id     
 	@Column(name="cdg", unique=true, nullable=false, length=2)
@@ -61,49 +63,53 @@ public class ContratosInternos implements ITransferObject {
 		this.maestro = maestro;
 	}
 
+	@Type(type="stringEnum",parameters= { @Parameter(name="enumClassname", value="com.code.aon.payroll.enumeration.Desempleado")} )
 	@Column(name="desemple", length=1)
-	public String getDesemple() {
+	public Desempleado getDesemple() {
 		return this.desemple;
 	}
 
-	public void setDesemple(String desemple) {
+	public void setDesemple(Desempleado desemple) {
 		this.desemple = desemple;
-		this.desempleenum = ( this.desemple != null)? Desempleado.valueOf( "D" + this.desemple ): null;
 	}
 
+	@Type(type="siNoType" )
 	@Column(name="mujersub", length=1)
-	public String getMujersub() {
-		return this.mujersub;
+	public Boolean getMujersub() {
+		return mujersub;
 	}
 
-	public void setMujersub(String mujersub) {
+	public void setMujersub(Boolean mujersub) {
 		this.mujersub = mujersub;
 	}
 
+	@Type(type="siNoType" )
 	@Column(name="incaread", length=1)
-	public String getIncaread() {
-		return this.incaread;
+	public Boolean getIncaread() {
+		return incaread;
 	}
 
-	public void setIncaread(String incaread) {
+	public void setIncaread(Boolean incaread) {
 		this.incaread = incaread;
 	}
 
+	@Type(type="siNoType" )
 	@Column(name="primertra", length=1)
-	public String getPrimertra() {
-		return this.primertra;
+	public Boolean getPrimertra() {
+		return primertra;
 	}
 
-	public void setPrimertra(String primertra) {
+	public void setPrimertra(Boolean primertra) {
 		this.primertra = primertra;
 	}
 
+	@Type(type="siNoType" )
 	@Column(name="excsocial", length=1)
-	public String getExcsocial() {
-		return this.excsocial;
+	public Boolean getExcsocial() {
+		return excsocial;
 	}
 
-	public void setExcsocial(String excsocial) {
+	public void setExcsocial(Boolean excsocial) {
 		this.excsocial = excsocial;
 	}
 
@@ -116,48 +122,4 @@ public class ContratosInternos implements ITransferObject {
 		this.gradomin = gradomin;
 	}
 
-//TODO Problemas en la creacion del enumerado a partir de un String.
-	private Desempleado desempleenum;
-	@Transient 
-	public Desempleado getDesempleenum() {
-		return desempleenum;
-	}
-	public void setDesempleenum(Desempleado desempleenum) {
-		this.desempleenum = desempleenum;
-		setDesemple( (this.desempleenum != null)? this.desempleenum.name().substring( 1 ) : null );
-	}
-	
-//TODO A la espera de implementar un SelectBooleanCheckboxRenderer.
-	@Transient 
-	public Boolean getMujersubbol() { 
-		return (getMujersub() != null && getMujersub().equals("S")?true:false );
-	}
-	public void setMujersubbol(Boolean bol) {
-		setMujersub( (bol!=null && bol)? "S":"N" );
-	}
-
-	@Transient 
-	public Boolean getIncareadbol() {
-		return (getIncaread() != null && getIncaread().equals("S")?true:false );
-	}
-	public void setIncareadbol(Boolean bol) {
-		setIncaread( (bol!=null && bol)? "S":"N" );
-	}
-
-	@Transient 
-	public Boolean getPrimertrabol() {
-		return (getPrimertra() != null && getPrimertra().equals("S")?true:false );
-	}
-	public void setPrimertrabol(Boolean bol) {
-		setPrimertra( (bol!=null && bol)? "S":"N" );
-	}
-
-	@Transient 
-	public Boolean getExcsocialbol() {
-		return (getExcsocial() != null && getExcsocial().equals("S")?true:false );
-	}
-	public void setExcsocialbol(Boolean bol) {
-		setExcsocial( (bol!=null && bol)? "S":"N" );
-	}
-//	******************************************************************
 }
