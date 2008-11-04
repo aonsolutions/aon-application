@@ -111,22 +111,16 @@ public interface IPayrollAlias {
 	String  CONTRATOS_INTERNOS_MUJERSUB = CONTRATOS_INTERNOS_ENTRY.getAliasNames()[6];
 
 	/** 
-	* Alias value: ContratosInternos_mujersubbol
-	* Hibernate value: ContratosInternos.mujersubbol
-	*/
-	String  CONTRATOS_INTERNOS_MUJERSUBBOL = CONTRATOS_INTERNOS_ENTRY.getAliasNames()[7];
-
-	/** 
 	* Alias value: ContratosInternos_porcentajeMaestro_cdg
 	* Hibernate value: ContratosInternos.porcentajeMaestro.cdg
 	*/
-	String  CONTRATOS_INTERNOS_PORCENTAJE_MAESTRO_CDG = CONTRATOS_INTERNOS_ENTRY.getAliasNames()[8];
+	String  CONTRATOS_INTERNOS_PORCENTAJE_MAESTRO_CDG = CONTRATOS_INTERNOS_ENTRY.getAliasNames()[7];
 
 	/** 
 	* Alias value: ContratosInternos_primertra
 	* Hibernate value: ContratosInternos.primertra
 	*/
-	String  CONTRATOS_INTERNOS_PRIMERTRA = CONTRATOS_INTERNOS_ENTRY.getAliasNames()[9];
+	String  CONTRATOS_INTERNOS_PRIMERTRA = CONTRATOS_INTERNOS_ENTRY.getAliasNames()[8];
 
 
 
@@ -393,6 +387,24 @@ public interface IPayrollAlias {
 	*/
 	String  OCUPACION_MAESTRO_EXCLUSIVO = OCUPACION_MAESTRO_ENTRY.getAliasNames()[2];
 
+	/** 
+	* Alias value: OcupacionMaestro_ocupaciones_fecfin
+	* Hibernate value: OcupacionMaestro.ocupaciones.fecfin
+	*/
+	String  OCUPACION_MAESTRO_OCUPACIONES_FECFIN = OCUPACION_MAESTRO_ENTRY.getAliasNames()[3];
+
+	/** 
+	* Alias value: OcupacionMaestro_ocupaciones_id_cdg
+	* Hibernate value: OcupacionMaestro.ocupaciones.id.cdg
+	*/
+	String  OCUPACION_MAESTRO_OCUPACIONES_ID_CDG = OCUPACION_MAESTRO_ENTRY.getAliasNames()[4];
+
+	/** 
+	* Alias value: OcupacionMaestro_ocupaciones_id_fecini
+	* Hibernate value: OcupacionMaestro.ocupaciones.id.fecini
+	*/
+	String  OCUPACION_MAESTRO_OCUPACIONES_ID_FECINI = OCUPACION_MAESTRO_ENTRY.getAliasNames()[5];
+
 
 
 	/** 
@@ -584,6 +596,24 @@ public interface IPayrollAlias {
 	* Hibernate value: Base.indpro
 	*/
 	String  BASE_INDPRO = BASE_ENTRY.getAliasNames()[2];
+
+	/** 
+	* Alias value: Base_linbases_fecfin
+	* Hibernate value: Base.linbases.fecfin
+	*/
+	String  BASE_LINBASES_FECFIN = BASE_ENTRY.getAliasNames()[3];
+
+	/** 
+	* Alias value: Base_linbases_id_cdg
+	* Hibernate value: Base.linbases.id.cdg
+	*/
+	String  BASE_LINBASES_ID_CDG = BASE_ENTRY.getAliasNames()[4];
+
+	/** 
+	* Alias value: Base_linbases_id_fecini
+	* Hibernate value: Base.linbases.id.fecini
+	*/
+	String  BASE_LINBASES_ID_FECINI = BASE_ENTRY.getAliasNames()[5];
 
 
 
@@ -1672,6 +1702,24 @@ public interface IPayrollAlias {
 	*/
 	String  EPIGRAFE_DESCRIPTION = EPIGRAFE_ENTRY.getAliasNames()[1];
 
+	/** 
+	* Alias value: Epigrafe_epigrafes_fecfin
+	* Hibernate value: Epigrafe.epigrafes.fecfin
+	*/
+	String  EPIGRAFE_EPIGRAFES_FECFIN = EPIGRAFE_ENTRY.getAliasNames()[2];
+
+	/** 
+	* Alias value: Epigrafe_epigrafes_id_cdg
+	* Hibernate value: Epigrafe.epigrafes.id.cdg
+	*/
+	String  EPIGRAFE_EPIGRAFES_ID_CDG = EPIGRAFE_ENTRY.getAliasNames()[3];
+
+	/** 
+	* Alias value: Epigrafe_epigrafes_id_fecini
+	* Hibernate value: Epigrafe.epigrafes.id.fecini
+	*/
+	String  EPIGRAFE_EPIGRAFES_ID_FECINI = EPIGRAFE_ENTRY.getAliasNames()[4];
+
 
 
 	/** 
@@ -2240,6 +2288,24 @@ public interface IPayrollAlias {
 	* Hibernate value: Mutua.description
 	*/
 	String  MUTUA_DESCRIPTION = MUTUA_ENTRY.getAliasNames()[1];
+
+	/** 
+	* Alias value: Mutua_mutuas_fecfin
+	* Hibernate value: Mutua.mutuas.fecfin
+	*/
+	String  MUTUA_MUTUAS_FECFIN = MUTUA_ENTRY.getAliasNames()[2];
+
+	/** 
+	* Alias value: Mutua_mutuas_id_cdg
+	* Hibernate value: Mutua.mutuas.id.cdg
+	*/
+	String  MUTUA_MUTUAS_ID_CDG = MUTUA_ENTRY.getAliasNames()[3];
+
+	/** 
+	* Alias value: Mutua_mutuas_id_fecini
+	* Hibernate value: Mutua.mutuas.id.fecini
+	*/
+	String  MUTUA_MUTUAS_ID_FECINI = MUTUA_ENTRY.getAliasNames()[4];
 
 
 
