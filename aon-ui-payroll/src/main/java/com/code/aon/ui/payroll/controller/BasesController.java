@@ -67,18 +67,18 @@ public class BasesController extends PayrollBasicController {
 		this.searchFecfin = searchFecfin;
 	}
 
-	//añade la fecha al criteria para realizar busquedas
+	
 	@Override
 	public void onSearch(ActionEvent event) {
 		System.out.println("------------"+searchFecini);
 		System.out.println("------------"+searchFecfin);
 		try {
 			if(searchFecini != null){
-				getCriteria().addEqualExpression(getFieldName(IPayrollAlias.LINBASEC_ID_FECINI), searchFecini);
+				getCriteria().addEqualExpression(getFieldName(IPayrollAlias.BASE_LINBASES_ID_FECINI), searchFecini);
 			}
 			if(searchFecfin != null){
-				//getCriteria().addEqualExpression(getFieldName(event.getComponent().getId()), searchFecfin);
-				getCriteria().addEqualExpression(getFieldName(IPayrollAlias.LINBASEC_FECFIN), searchFecfin);
+			
+				getCriteria().addEqualExpression(getFieldName(IPayrollAlias.BASE_LINBASES_FECFIN), searchFecfin);
 			}
 		} catch (ManagerBeanException e) {
 			// TODO Auto-generated catch block
