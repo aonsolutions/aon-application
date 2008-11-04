@@ -28,8 +28,6 @@ public class Contact implements ITransferObject {
 	
 	private String surname;
 	
-	private String organization;
-	
 	private String phone;
 	
 	private String cellularPhone;
@@ -42,8 +40,30 @@ public class Contact implements ITransferObject {
 	
 	private String postalCode;
 	
+	private String city;
+	
+	private String state;
+	
 	private String note;
 
+	private String organization;
+	
+	private String category;
+	
+	private String organizationPhone;
+	
+	private String organizationFax;
+
+	private String organizationAddress;
+	
+	private String organizationPostalCode;
+	
+	private String organizationCity;
+	
+	private String organizationState;
+	
+	private String web;
+	
 	@Id
 	@GeneratedValue
 	@Column(nullable=false)
@@ -86,7 +106,7 @@ public class Contact implements ITransferObject {
 	}
 
 	@Column(length=64)
-	@Attribute(name="organizationName", length=64)
+	@Attribute(name="o", length=64)
 	public String getOrganization() {
 		return organization;
 	}
@@ -95,8 +115,8 @@ public class Contact implements ITransferObject {
 		this.organization = organization;
 	}
 
-	@Column(length=64)
-	@Attribute(name="homePhone", length=64)
+	@Column(length=20)
+	@Attribute(name="homePhone", length=20)
 	public String getPhone() {
 		return phone;
 	}
@@ -105,8 +125,8 @@ public class Contact implements ITransferObject {
 		this.phone = phone;
 	}
 
-	@Column(name="cellular_phone", length=64)
-	@Attribute(name="mobile", length=64)
+	@Column(name="cellular_phone", length=20)
+	@Attribute(name="mobile", length=20)
 	public String getCellularPhone() {
 		return cellularPhone;
 	}
@@ -115,8 +135,8 @@ public class Contact implements ITransferObject {
 		this.cellularPhone = cellularPhone;
 	}
 
-	@Column(length=64)
-	@Attribute(name="facsimileTelephoneNumber", length=64)
+	@Column(length=20)
+	@Attribute(name="facsimileTelephoneNumber", length=20)
 	public String getFax() {
 		return fax;
 	}
@@ -146,7 +166,7 @@ public class Contact implements ITransferObject {
 	}
 
 	@Transient
-	@Attribute(name="postalCode",length=40)
+	@Attribute(name="postalCode",length=16)
 	public String getPostalCode() {
 		return postalCode;
 	}
@@ -163,5 +183,105 @@ public class Contact implements ITransferObject {
 
 	public void setNote(String note) {
 		this.note = note;
+	}
+
+	@Column(length=64)
+	@Attribute(name="city",length=64)
+	public String getCity() {
+		return city;
+	}
+
+	public void setCity(String city) {
+		this.city = city;
+	}
+
+	@Column(length=64)
+	@Attribute(name="st",length=64)
+	public String getState() {
+		return state;
+	}
+
+	public void setState(String state) {
+		this.state = state;
+	}
+
+	@Column(length=128)
+	@Attribute(name="businessCategory",length=128)
+	public String getCategory() {
+		return category;
+	}
+
+	public void setCategory(String category) {
+		this.category = category;
+	}
+
+	@Column(length=20)
+	@Attribute(name="telephoneNumber",length=20)
+	public String getOrganizationPhone() {
+		return organizationPhone;
+	}
+
+	public void setOrganizationPhone(String organizationPhone) {
+		this.organizationPhone = organizationPhone;
+	}
+
+	@Column(length=20)
+	@Attribute(name="oFacsimileTelephoneNumber",length=20)
+	public String getOrganizationFax() {
+		return organizationFax;
+	}
+
+	public void setOrganizationFax(String organizationFax) {
+		this.organizationFax = organizationFax;
+	}
+
+	@Column(length=128)
+	@Attribute(name="oPostalAddress",length=128)
+	public String getOrganizationAddress() {
+		return organizationAddress;
+	}
+
+	public void setOrganizationAddress(String organizationAddress) {
+		this.organizationAddress = organizationAddress;
+	}
+
+	@Transient
+	@Attribute(name="oPostalCode",length=16)
+	public String getOrganizationPostalCode() {
+		return organizationPostalCode;
+	}
+
+	public void setOrganizationPostalCode(String organizationPostalCode) {
+		this.organizationPostalCode = organizationPostalCode;
+	}
+
+	@Column(length=64)
+	@Attribute(name="oCity",length=64)
+	public String getOrganizationCity() {
+		return organizationCity;
+	}
+
+	public void setOrganizationCity(String organizationCity) {
+		this.organizationCity = organizationCity;
+	}
+
+	@Column(length=64)
+	@Attribute(name="oSt",length=64)
+	public String getOrganizationState() {
+		return organizationState;
+	}
+
+	public void setOrganizationState(String organizationState) {
+		this.organizationState = organizationState;
+	}
+
+	@Column(length=128)
+	@Attribute(name="labeledURI",length=128)
+	public String getWeb() {
+		return web;
+	}
+
+	public void setWeb(String web) {
+		this.web = web;
 	}
 }
