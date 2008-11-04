@@ -1,0 +1,106 @@
+* { font-size: 100%; 
+    padding: 0; 
+    margin: 0;}
+html{height:100%;}
+
+td{
+	vertical-align:top;
+	}
+
+body{
+	font: 11px/1.333 arial, verdana, helvetica, sans-serif ! important ;
+	margin:0;
+	padding:0;
+	color: #414142;
+	background-color: #f4f4f4;
+	height:100%;
+	scrollbar-base-color: #E7E7E7;
+	scrollbar-arrow-color: #666;
+	overflow:hidden;
+	margin:20% 30%;
+	}
+.aon-login{
+	width:255px;
+	text-align:left;
+	background-color:#e8e7e4;
+	border:#8c8883 1px solid;
+	padding:1px;
+	}
+
+.aon-login-title{
+	background-color:#999999;
+	color:#fff;
+	border:#fff 1px solid;
+	padding:2px 1em;
+	}
+.aon-login-box{
+	
+	}
+.aon-login-box-internal{
+	border:#c3c1be 1px solid;
+	margin-bottom:1px;
+	background: #f4f4f4 url("../images/aon-login-box-background.jpg") left top repeat-x;
+	}
+.aon-login-instruction{
+	background: transparent url("../images/aon-login-serverIcon.gif") 10px 10px no-repeat;
+	padding:10px 10px 10px 65px;
+	border-bottom:#c3c1be 1px solid;
+	border-left:#fff 1px solid;
+	border-top:#fff 1px solid;
+	}
+.aon-login-form{
+	border-bottom:#fff 2px solid;	
+	border-left:#fff 1px solid;
+	border-right:#fff 1px solid;
+	padding:5px 1em;
+	}
+.aon-login-form-group{
+	padding-top:3px;
+	}
+.aon-login-copyright{
+	border-top:#c3c1be 1px solid;
+	color:#666;
+	padding:5px 1em;
+	border-left:#fff 1px solid;
+	border-bottom:#fff 1px solid;
+	font-size:0.8em;
+	font-weight:bold;
+	}
+.aon-login-copyright div{
+	padding-bottom:5px;
+	}
+.aon-form-input-text-label{
+	text-transform:uppercase;
+	}
+.aon-form-input-text{
+	border-left:#4a4944 1px solid;
+	border-top:#4a4944 1px solid;
+	border-right:#c3c1be 1px solid;
+	border-bottom:#c3c1be 1px solid;
+	font-size:14px;
+	width:16em;
+	}
+.aon-form-input-text-password{
+	width:14em !important;
+	
+	}
+.aon-login-button{
+	background: transparent url("../images/aon-login-button.gif") left top no-repeat;
+	border:0;
+	width:19px;
+	height:19px;
+	cursor:pointer;
+	}
+
+/* Layer that contains all the error messages. Use a id with the same name and a forceId if you don´t want them to scroll */
+.aon-errors{
+	/* BE CAREFUL. DO NOT USE A MARGIN DECLARION. THERE ARE PROBLEMS WITH INTERNET EXPLORER*/
+	padding:0 1em 3PX 20px;
+	}
+/* Simple error message. You can tell the diference of the several error types with a background image.  */
+.aon-error-message{
+	background:transparent url("images/icons/aon-error-message.gif") left center no-repeat;
+	padding:5px 0 5px 20px;
+	color:#ff0000;
+	}
+	
