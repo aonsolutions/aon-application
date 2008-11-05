@@ -352,7 +352,7 @@
 		</managed-property>
 		<managed-property>
 			<property-name>defaultOrder</property-name>
-			<value>Pais_cdg</value>
+			<value>Pais_descripcion</value>
 		</managed-property>
 		<managed-property>
 			<property-name>beanName</property-name>
@@ -420,7 +420,7 @@
 		</managed-property>		
 		<managed-property>
 			<property-name>defaultOrder</property-name>
-			<value>Comunidad_cdg</value>
+			<value>Comunidad_descripcion</value>
 		</managed-property>
 		<managed-property>
 			<property-name>cascadeDelete</property-name>
