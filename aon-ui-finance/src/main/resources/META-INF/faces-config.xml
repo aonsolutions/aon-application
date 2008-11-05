@@ -900,25 +900,8 @@
 			<property-name>pojo</property-name>
 			<value>com.code.aon.finance.Invoice</value>
 		</managed-property>
-		<managed-property>
-			<property-name>listenerClasses</property-name>
-			<list-entries>
-				<value-class>
-					com.code.aon.ui.form.event.IControllerListener
-				</value-class>
-				<value>#{invoiceRecordingControllerListener}</value>
-			</list-entries>
-		</managed-property>
 	</managed-bean>
 	
-	<managed-bean>
-		<managed-bean-name>invoiceRecordingControllerListener</managed-bean-name>
-		<managed-bean-class>
-			com.code.aon.ui.finance.event.InvoiceRecordingControllerListener
-		</managed-bean-class>
-		<managed-bean-scope>none</managed-bean-scope>
-	</managed-bean>
-
 	<!-- **************** CONVERTERS  *************** -->
 	<converter>
 		<description>Conversor para FinanceBatchStatus</description>
@@ -987,12 +970,12 @@
       <to-view-id>/_finance/facelet/invoice_recording/search.faces</to-view-id>
     </navigation-case>
     <navigation-case>
-      <from-outcome>invoiceRemoving</from-outcome>
-      <to-view-id>/_finance/facelet/invoice_removing/search.faces</to-view-id>
-    </navigation-case>
-    <navigation-case>
       <from-outcome>invoicePrint</from-outcome>
       <to-view-id>/facelet/finance/invoice_print/search.faces</to-view-id>
+    </navigation-case>
+    <navigation-case>
+      <from-outcome>invoiceRemoving</from-outcome>
+      <to-view-id>/_finance/facelet/invoice_removing/search.faces</to-view-id>
     </navigation-case>
     <navigation-case>
       <from-outcome>util_checking</from-outcome>
@@ -1104,18 +1087,6 @@
     </navigation-case>
   </navigation-rule>
 
-  <!-- =================== Invoice Recording ========================== -->
-  <navigation-rule>
-    <navigation-case>
-      <from-outcome>invoice_recording_list</from-outcome>
-      <to-view-id>/_finance/facelet/invoice_recording/list.faces</to-view-id>
-    </navigation-case>
-    <navigation-case>
-      <from-outcome>invoice_recording_search</from-outcome>
-      <to-view-id>/_finance/facelet/invoice_recording/search.faces</to-view-id>
-    </navigation-case>
-   </navigation-rule> 
-  
   <!-- =================== Invoice Remover ========================== -->
   <navigation-rule>
     <navigation-case>

@@ -239,5 +239,15 @@ public class WorkPlace implements ITransferObject, IEntity {
 	public void accept(IEntityVisitor visitor) {
 		visitor.visitWorkPlace( this );
 	}
-
+	
+	@Override
+	public boolean equals(Object obj) {
+		if (id == null) {
+			return super.equals(obj);
+		}
+		if (obj instanceof WorkPlace) {
+			return (this.id.equals(((WorkPlace) obj).getId()));
+		}
+		return false;
+	}
 }

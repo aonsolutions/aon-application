@@ -104,7 +104,7 @@
 							disabled="#{salesInvoicingDetail.to != null || salesFinance.to != null}" />
 						<t:commandButton id="finances" value="#{financeBundle.finance_generate}"
 							actionListener="#{salesInvoicing.generateFinances}"
-							rendered="#{!salesInvoicing.new and salesInvoicingDetail.model.rowCount > 0}"
+							rendered="#{salesInvoicingDetail.model.rowCount > 0 and salesFinance.allPending}"
 							styleClass="aon-content-toolbar-item aon-content-toolbar-item-new"
 							onmouseover="this.className='aon-content-toolbar-item aon-content-toolbar-item-hover aon-content-toolbar-item-new'"
 							onmouseout="this.className='aon-content-toolbar-item aon-content-toolbar-item-new'"
@@ -414,6 +414,13 @@
 									<h:outputText value="#{to.status}" />
 								</h:column>
 							</t:dataTable>
+
+							<ui:include src="/facelet/shared/dataScroller.xhtml">
+								<ui:param name="dataTable" value="deliveryData" />
+								<ui:param name="model" value="#{delivery.model}" />
+								<ui:param name="showNote" value="#{false}" />
+							</ui:include>
+
 							<t:div style="text-align:right;">
 								<t:commandButton title="#{financeBundle.aon_transfer}"
 									styleClass="aon-form-button"
@@ -674,13 +681,13 @@
 
 							<ui:include src="/facelet/sales/master/invoicing/popup/popup.xhtml"/>
 
-							<t:div rendered="#{salesInvoicingDetail.model.rowCount > 0 or salesFinance.model.rowCount > 0}" >
-								<ui:include src="/facelet/sales/master/invoicing/finance/grid.xhtml" />
-							</t:div>	
-							
 						</t:div>
 					</t:div>
 
+					<t:div rendered="#{salesInvoicingDetail.model.rowCount > 0 or salesFinance.model.rowCount > 0}" >
+						<ui:include src="/facelet/sales/master/invoicing/finance/grid.xhtml" />
+					</t:div>	
+							
 				</t:div>
 			</t:div>
 		</h:form>

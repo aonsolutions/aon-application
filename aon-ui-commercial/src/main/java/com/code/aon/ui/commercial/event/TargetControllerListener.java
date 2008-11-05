@@ -9,11 +9,40 @@ import com.code.aon.common.ManagerBeanException;
 import com.code.aon.customer.Customer;
 import com.code.aon.customer.dao.ICustomerAlias;
 import com.code.aon.ql.Criteria;
+import com.code.aon.ui.commercial.controller.ICommercialConstants;
+import com.code.aon.ui.commercial.controller.TargetController;
+import com.code.aon.ui.form.IController;
 import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
+import com.code.aon.ui.util.AonUtil;
 
-public class TargetControllerListener extends ControllerAdapter {
+public class TargetControllerListener extends ControllerAdapter implements ICommercialConstants {
+	
+	@Override
+	public void afterBeanCreated(ControllerEvent event)
+			throws ControllerListenerException {
+		TargetController controller = (TargetController) event.getController();
+		try {
+			controller.refreshSegments();
+		} catch (ManagerBeanException e) {
+			throw new ControllerListenerException( e.getMessage(), e );
+		}	
+		cancelChildControllers();
+	}
+
+	@Override
+	public void afterBeanSelected(ControllerEvent event)
+			throws ControllerListenerException {
+		TargetController controller = (TargetController) event.getController();
+		try {
+			controller.refreshSegments();
+			resetTargetTracking( (Target) controller.getTo() );
+		} catch (ManagerBeanException e) {
+			throw new ControllerListenerException( e.getMessage(), e );
+		}
+		cancelChildControllers();
+	}
 	
 	@Override
 	public void beforeBeanRemoved(ControllerEvent event) throws ControllerListenerException {
@@ -36,5 +65,22 @@ public class TargetControllerListener extends ControllerAdapter {
 			throw new ControllerListenerException(e);
 		}
 	}
+	
+	private void cancelChildControllers() {
+    	AonUtil.getController(TARGET_ADDRESS_CONTROLLER_NAME).onCancel(null);
+       	AonUtil.getController(TARGET_MEDIA_CONTROLLER_NAME).onCancel(null);
+       	AonUtil.getController(TARGET_SEGMENT_CONTROLLER_NAME).onCancel(null);
+       	AonUtil.getController(TARGET_ITEM_CONTROLLER_NAME).onCancel(null);
+       	AonUtil.getController(TARGET_SELLER_CONTROLLER_NAME).onCancel(null);
+	}
 
+	private void resetTargetTracking( Target target ) throws ManagerBeanException {
+		IController controller = AonUtil.getController(TARGET_TRACKING_CONTROLLER_NAME);
+		controller.clearCriteria();
+		Criteria criteria = controller.getCriteria();
+		String field = controller.getFieldName(ICommercialAlias.COMMERCIAL_TRACKING_TARGET_ID);
+		criteria.addEqualExpression( field, target.getId() );
+		controller.onSearch(null);
+	}
+	
 }

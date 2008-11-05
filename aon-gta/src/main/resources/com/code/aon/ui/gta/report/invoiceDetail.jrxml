@@ -220,7 +220,7 @@
 					<textElement verticalAlignment="Middle">
 						<font pdfFontName="Helvetica-Bold" size="9" isBold="true" isUnderline="false" isPdfEmbedded ="false"/>
 					</textElement>
-				<textFieldExpression   class="java.lang.String"><![CDATA[$F{supportOrderInsurance}.getInsurance().getRegistry().getName()]]></textFieldExpression>
+				<textFieldExpression   class="java.lang.String"><![CDATA[($F{supportOrderInsurance}.getInsurance().getRegistry().getName()==null?"":$F{supportOrderInsurance}.getInsurance().getRegistry().getName()+" ") + ($F{supportOrderInsurance}.getInsurance().getRegistry().getSurname()==null?"":$F{supportOrderInsurance}.getInsurance().getRegistry().getSurname())]]></textFieldExpression>
 				</textField>
 			</band>
 			</groupFooter>

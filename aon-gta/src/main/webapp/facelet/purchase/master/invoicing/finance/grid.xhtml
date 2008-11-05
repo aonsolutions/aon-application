@@ -27,6 +27,7 @@
 					aon-edit-table-body aon-edit-table-body-string,
 					aon-edit-table-body aon-edit-table-body-string,
 					aon-edit-table-body aon-edit-table-body-string,
+					aon-edit-table-body aon-edit-table-body-string,
 					aon-edit-table-body aon-edit-table-body-number,
 					aon-edit-table-body aon-edit-table-body-buttons">
 
@@ -36,7 +37,7 @@
 					</f:facet>
 					<t:commandLink immediate="#{true}"
 						styleClass="aon-table-row-selected"
-						rendered="#{to.id!=purchaseFinance.to.id}"
+						rendered="#{to.id!=purchaseFinance.to.id and purchaseFinance.modelToEditable}"
 						actionListener="#{purchaseFinance.onSelect}" />
 					<f:verbatim>&#160;</f:verbatim>
 					<f:facet name="footer">
@@ -58,14 +59,16 @@
 					<h:outputText value="#{to.payMethod.name}" rendered="#{to.id!=purchaseFinance.to.id}" />
 					<h:selectOneMenu value="#{purchaseFinance.to.payMethod.id}"
 						styleClass="aon-form-selectOneMenu-field"
-						rendered="#{to==purchaseFinance.to}">
+						rendered="#{to==purchaseFinance.to}"
+						valueChangeListener="#{purchaseFinance.payMethodChanged}">
 						<f:selectItems value="#{financeCollections.payMethods}" />
 					</h:selectOneMenu>
 					<f:verbatim>&#160;</f:verbatim>
 					<f:facet name="footer">
 						<h:selectOneMenu value="#{purchaseFinance.to.payMethod.id}"
 							styleClass="aon-form-selectOneMenu-field"
-							rendered="#{purchaseFinance.new}">
+							rendered="#{purchaseFinance.new}"
+							valueChangeListener="#{purchaseFinance.payMethodChanged}">
 							<f:selectItems value="#{financeCollections.payMethods}" />
 						</h:selectOneMenu>
 					</f:facet>
@@ -82,7 +85,7 @@
 						onchange="return findBeanLookupExt(event,'#{facesContext.externalContext.requestContextPath}','rBankLookup','RegistryBank_Lookup_id-Edit[#{rowIndex}]','RegistryBank_id|RegistryBank_Lookup_id-Edit[#{rowIndex}],RegistryBank_bankAccount|RegistryBank_Lookup_bankAccount-Edit[#{rowIndex}]');"
 						rendered="#{to==purchaseFinance.to}">
 						<f:selectItem itemDisabled="true" itemLabel ="-" itemValue="" />
-						<f:selectItems value="#{purchaseFinance.companyBanks}" />
+						<f:selectItems value="#{purchaseFinance.registryBanks}" />
 					</t:selectOneMenu>
 					<f:facet name="footer">
 						<t:selectOneMenu id="RegistryBank_Lookup_id-New"
@@ -91,7 +94,7 @@
 							onchange="return findBeanLookupExt(event,'#{facesContext.externalContext.requestContextPath}','rBankLookup','RegistryBank_Lookup_id-New','RegistryBank_id|RegistryBank_Lookup_id-New,RegistryBank_bankAccount|RegistryBank_Lookup_bankAccount-New');"
 							rendered="#{purchaseFinance.new}">
 							<f:selectItem itemDisabled="true" itemLabel ="-" itemValue="" />
-							<f:selectItems value="#{purchaseFinance.companyBanks}" />
+							<f:selectItems value="#{purchaseFinance.registryBanks}" />
 						</t:selectOneMenu>
 					</f:facet>
 				</t:column>
@@ -152,6 +155,13 @@
 								popupWeekString="#{bundle.aon_popup_week}" />
 						</t:div>
 					</f:facet>
+				</t:column>
+				
+				<t:column>
+					<f:facet name="header">
+						<h:outputText value="#{financeBundle.finance_status}" />
+					</f:facet>
+					<h:outputText value="#{to.financeStatus}"/>
 				</t:column>
 				
 				<t:column width="70">
