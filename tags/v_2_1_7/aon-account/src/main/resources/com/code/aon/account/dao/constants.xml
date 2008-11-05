@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<dao>
+	<bean class="com.code.aon.account.AccountEntryDetail" sqlName="account_entry_detail">
+		<alias names="accountEntry_id,accountEntry_entryDate,accountEntry_accountPeriod,account_id,balancingAccount_id,concept,credit,debit,id,line" />
+		<hibernate names="accountEntry.id,accountEntry.entryDate,accountEntry.accountPeriod,account.id,balancingAccount.id,concept,credit,debit,id,line" />
+	</bean>
+	<bean class="com.code.aon.account.Leasing" sqlName="leasing">
+		<alias names="id,leasingDate,supplierName,supplierDocument,description,term,interestPercent,review,amount,registryBank_id,fixedAssetAccount_id,vat_id,vat_percentage,securityLevel" />
+		<hibernate names="id,leasingDate,supplierName,supplierDocument,description,term,interestPercent,review,amount,registryBank.id,fixedAssetAccount.id,vat.id,vat.percentage,securityLevel" />
+	</bean>
+</dao>
