@@ -15,7 +15,11 @@
 		
 			<aon:dropDownMenu value="#{menuBundle.principales}">
 				<aon:menuGroup value="#{menuBundle.principales_clientes}">
-					<aon:menuItem value="#{menuBundle.principales_clientes__cliente}" disabled="true" />
+					<aon:menuItem value="#{menuBundle.principales_clientes__cliente}" action="cliente_form" >
+						<aon:actionListener method="#{cliente.onEditSearch}" />
+						<aon:actionListener method="#{cliente.onSearch}" />
+						<aon:actionListener method="#{cliente.onSelectFirst}" />
+						</aon:menuItem>
 					<aon:menuItem value="#{menuBundle.principales_clientes__integral_emp}" disabled="true" />
 				</aon:menuGroup>
 				<aon:menuGroup value="#{menuBundle.principales_personas}">

@@ -729,4 +729,16 @@
 		</navigation-case>
 	</navigation-rule>
 	
+	
+		<!-- ===================cliente================ -->
+		<navigation-rule>
+			<navigation-case>
+			<from-outcome>cliente_form</from-outcome>
+			<to-view-id>
+				/facelet/principales/clientes/form.xhtml
+			</to-view-id>
+		   </navigation-case>
+	    </navigation-rule>
 </faces-config>
+
+
