@@ -362,16 +362,6 @@
 			<property-name>beanName</property-name>
 			<value>accBasicSupplier</value>
 		</managed-property>
-		<managed-property>
-			<property-name>listenerClasses</property-name>
-			<list-entries>
-				<value-class>
-					com.code.aon.ui.form.event.IControllerListener
-				</value-class>
-				<value>#{invoiceRegistryVetoListener}</value>
-				<value>#{supplierScopeListener}</value>
-			</list-entries>
-		</managed-property>
 	</managed-bean>
 
 	<!-- **************** ACCOUNT BASIC CREDITOR ************************** -->
@@ -392,16 +382,6 @@
 		<managed-property>
 			<property-name>beanName</property-name>
 			<value>accBasicCreditor</value>
-		</managed-property>
-		<managed-property>
-			<property-name>listenerClasses</property-name>
-			<list-entries>
-				<value-class>
-					com.code.aon.ui.form.event.IControllerListener
-				</value-class>
-				<value>#{invoiceRegistryVetoListener}</value>
-				<value>#{creditorScopeListener}</value>
-			</list-entries>
 		</managed-property>
 	</managed-bean>
 	
@@ -650,15 +630,15 @@
 				</map-entry>
 				<map-entry>
 					<key>ACC_DEFAULT_CHARGED_VAT_ACC</key>
-					<value>47700</value>
+					<value>47701</value>
 				</map-entry>
 				<map-entry>
 					<key>ACC_DEFAULT_PAID_VAT_ACC</key>
-					<value>47200</value>
+					<value>47201</value>
 				</map-entry>
 				<map-entry>
 					<key>ACC_DEFAULT_PAID_RET_ACC</key>
-					<value>47300</value>
+					<value>47301</value>
 				</map-entry>
 				<map-entry>
 					<key>ACC_DEFAULT_CHARGED_RET_ACC</key>

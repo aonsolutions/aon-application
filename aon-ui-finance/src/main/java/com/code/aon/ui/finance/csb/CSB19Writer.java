@@ -195,13 +195,6 @@ public class CSB19Writer {
 										formatter.format(taxBreakDown.getBase()) + "  =  " + 
 										formatter.format(taxBreakDown.getTaxQuota());
 					individual.addConcept(taxConcept);
-
-					if (invoice.isSurcharge()) {
-						String surchargeConcept = formatter.format(taxBreakDown.getSurchargePercent()) + "% RE   SOBRE  " +
-												  formatter.format(taxBreakDown.getBase()) + "  =  " +
-												  formatter.format(taxBreakDown.getSurchargeQuota());
-						individual.addConcept(surchargeConcept);
-					}
 				}
 			}
 		}

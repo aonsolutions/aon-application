@@ -50,13 +50,13 @@
 			</band>
 		</columnHeader>
 		<detail>
-			<band height="12"  isSplitAllowed="true" >
+			<band height="14"  isSplitAllowed="true" >
 				<textField isStretchWithOverflow="false" isBlankWhenNull="true" evaluationTime="Now" hyperlinkType="None"  hyperlinkTarget="Self" >
 					<reportElement
 						x="0"
 						y="0"
 						width="227"
-						height="12"
+						height="14"
 						key="textField-1"/>
 					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" leftPadding="5" rightBorder="None" rightBorderColor="#000000" rightPadding="5" bottomBorder="None" bottomBorderColor="#999999"/>
 					<textElement verticalAlignment="Middle">
@@ -69,7 +69,7 @@
 						x="227"
 						y="0"
 						width="71"
-						height="12"
+						height="14"
 						key="textField-2">
 							<printWhenExpression><![CDATA[new Boolean($F{price}.doubleValue() != 0)]]></printWhenExpression>
 						</reportElement>
@@ -84,7 +84,7 @@
 						x="298"
 						y="0"
 						width="72"
-						height="12"
+						height="14"
 						key="textField-3">
 							<printWhenExpression><![CDATA[new Boolean($F{price}.doubleValue() != 0)]]></printWhenExpression>
 						</reportElement>
@@ -99,7 +99,7 @@
 						x="370"
 						y="0"
 						width="71"
-						height="12"
+						height="14"
 						key="textField-4"/>
 					<box topBorder="None" topBorderColor="#000000" leftBorder="None" leftBorderColor="#000000" leftPadding="5" rightBorder="None" rightBorderColor="#000000" rightPadding="5" bottomBorder="None" bottomBorderColor="#999999"/>
 					<textElement textAlignment="Right" verticalAlignment="Middle">
@@ -112,7 +112,7 @@
 						x="441"
 						y="0"
 						width="93"
-						height="12"
+						height="14"
 						key="textField-5">
 							<printWhenExpression><![CDATA[new Boolean($F{price}.doubleValue() != 0)]]></printWhenExpression>
 						</reportElement>

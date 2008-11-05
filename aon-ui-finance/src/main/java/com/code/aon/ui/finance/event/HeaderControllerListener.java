@@ -1,7 +1,7 @@
 package com.code.aon.ui.finance.event;
 
 import com.code.aon.common.IHeaderObject;
-import com.code.aon.config.util.SeriesNumberUtil;
+import com.code.aon.common.temp.SeriesNumberUtil;
 import com.code.aon.ui.form.event.ControllerAdapter;
 import com.code.aon.ui.form.event.ControllerEvent;
 import com.code.aon.ui.form.event.ControllerListenerException;
