@@ -28,6 +28,10 @@
 			<value>com.code.aon.company.Company</value>
 		</managed-property>
 		<managed-property>
+			<property-name>beanName</property-name>
+			<value>company</value>
+		</managed-property>
+		<managed-property>
 			<property-name>listenerClasses</property-name>
 			<list-entries>
 				<value-class>
@@ -76,6 +80,10 @@
 		<managed-property>
 			<property-name>pojo</property-name>
 			<value>com.code.aon.registry.RegistryAddress</value>
+		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>companyAddress</value>
 		</managed-property>
 		<managed-property>
 			<property-name>listenerClasses</property-name>
@@ -131,6 +139,10 @@
 		<managed-property>
 			<property-name>pojo</property-name>
 			<value>com.code.aon.finance.RegistryBank</value>
+		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>companyRbank</value>
 		</managed-property>
 		<managed-property>
 			<property-name>cascadeDelete</property-name>
@@ -195,6 +207,10 @@
 		<managed-property>
 			<property-name>pojo</property-name>
 			<value>com.code.aon.registry.RecordData</value>
+		</managed-property>
+		<managed-property>
+			<property-name>beanName</property-name>
+			<value>companyRecordData</value>
 		</managed-property>
 		<managed-property>
 			<property-name>cascadeDelete</property-name>

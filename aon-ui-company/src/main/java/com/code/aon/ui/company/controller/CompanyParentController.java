@@ -81,6 +81,10 @@ public class CompanyParentController extends BasicController implements ICompany
 	
 	private boolean printRecordData;
 	
+	private boolean showFinanceRegistryBank = true;
+
+	private boolean showCompanyOtherData = true;
+
     /**
      * The empty constructor.
      * 
@@ -630,5 +634,21 @@ public class CompanyParentController extends BasicController implements ICompany
 			return (ApplicationParameter)iter.next();
 		}
 		return null;
+	}
+
+	public boolean isShowFinanceRegistryBank() {
+		return showFinanceRegistryBank;
+	}
+
+	public void setShowFinanceRegistryBank(boolean showFinanceRegistryBank) {
+		this.showFinanceRegistryBank = showFinanceRegistryBank;
+	}
+
+	public boolean isShowCompanyOtherData() {
+		return showCompanyOtherData;
+	}
+
+	public void setShowCompanyOtherData(boolean showCompanyOtherData) {
+		this.showCompanyOtherData = showCompanyOtherData;
 	}
 }

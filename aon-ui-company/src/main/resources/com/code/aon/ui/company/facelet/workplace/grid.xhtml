@@ -14,7 +14,8 @@
 				<ui:decorate
 					template="/com/code/aon/ui/resources/facelet/toolbar/gridToolbar.xhtml">
 					<ui:param name="skipResetButton" value="true" />
-					<ui:param name="toolbarTitle" value="#{companyBundle.company_workplace_module}" />
+					<ui:param name="toolbarTitle"
+						value="#{companyBundle.company_workplace_module}" />
 					<ui:param name="controller" value="#{workplace}" />
 				</ui:decorate>
 
@@ -41,15 +42,18 @@
 								</f:facet>
 								<aon:outputText rendered="#{to.id!=workplace.to.id}"
 									value="#{to.description}" />
-								<aon:inputText rendered="#{to.id==workplace.to.id}" size="40" maxlength="32" 
-									value="#{workplace.to.description}" required="#{true}" />
+								<aon:inputText rendered="#{to.id==workplace.to.id}" size="40"
+									maxlength="32" value="#{workplace.to.description}"
+									required="#{true}" />
 							</aon:column>
 
 							<aon:column>
 								<f:facet name="header">
-									<aon:outputText value="#{companyBundle.company_workplace_address}" />
+									<aon:outputText
+										value="#{companyBundle.company_workplace_address}" />
 								</f:facet>
-								<aon:outputText value="#{to.address.address} #{to.address.address2} #{to.address.address3}" />
+								<aon:outputText
+									value="#{to.address.address} #{to.address.address2} #{to.address.address3}" />
 							</aon:column>
 						</ui:define>
 					</ui:decorate>
